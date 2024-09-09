@@ -251,6 +251,7 @@ export default class EggSummaryUiHandler extends MessageUiHandler {
 
     let success = false;
     const error = false;
+    console.log("processing input" + button);
     if (button === Button.CANCEL) {
       const phase = this.scene.getCurrentPhase();
       if (phase instanceof EggSummaryPhase) {

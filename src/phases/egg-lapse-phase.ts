@@ -82,6 +82,7 @@ export class EggLapsePhase extends Phase {
   showSummary() {
     this.scene.unshiftPhase(new EggSummaryPhase(this.scene, this.eggHatchData));
     this.end();
+    console.log("end of lapse phase");
   }
 
   /**

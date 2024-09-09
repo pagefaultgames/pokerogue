@@ -44,7 +44,10 @@ export class EggSummaryPhase extends Phase {
 
   end() {
     this.eggHatchHandler.clear();
-    this.scene.ui.setModeForceTransition(Mode.MESSAGE).then(() => {});
+    this.scene.ui.setModeForceTransition(Mode.MESSAGE).then(() => {
+      console.log("ui transitioned");
+    });
+    console.log("phase ending");
     this.scene.time.delayedCall(250, () => this.scene.setModifiersVisible(true));
     super.end();
   }
