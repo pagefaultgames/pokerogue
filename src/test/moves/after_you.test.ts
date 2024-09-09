@@ -7,7 +7,6 @@ import { Species } from "#enums/species";
 import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import { SPLASH_ONLY } from "../utils/testUtils";
 
 const TIMEOUT = 20 * 1000;
 
@@ -32,7 +31,7 @@ describe("Moves - After You", () => {
       .enemyLevel(5)
       .enemySpecies(Species.PIKACHU)
       .enemyAbility(Abilities.BALL_FETCH)
-      .enemyMoveset(SPLASH_ONLY)
+      .enemyMoveset(Moves.SPLASH)
       .ability(Abilities.BALL_FETCH)
       .moveset([Moves.AFTER_YOU, Moves.SPLASH]);
   });
