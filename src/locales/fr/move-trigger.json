@@ -66,5 +66,6 @@
   "revivalBlessing": "{{pokemonName}} a repris connaissance\net est prêt à se battre de nouveau !",
   "swapArenaTags": "Les effets affectant chaque côté du terrain\nont été échangés par {{pokemonName}} !",
   "exposedMove": "{{targetPokemonName}} est identifié\npar {{pokemonName}} !",
-  "safeguard": "{{targetName}} est protégé\npar la capacité Rune Protect !"
+  "safeguard": "{{targetName}} est protégé\npar la capacité Rune Protect !",
+  "afterYou": "{{pokemonName}} accepte\navec joie !"
 }
