@@ -16,6 +16,7 @@ import { initSceneWithoutEncounterPhase } from "#test/utils/gameManagerUtils";
 import { getPokemonSpecies } from "#app/data/pokemon-species";
 import { Moves } from "#enums/moves";
 import { ShinyRateBoosterModifier } from "#app/modifier/modifier";
+import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
 
 const namespace = "mysteryEncounter:offerYouCantRefuse";
 /** Gyarados for Indimidate */
@@ -203,6 +204,7 @@ describe("An Offer You Can't Refuse - Mystery Encounter", () => {
       const expBefore = gyarados.exp;
 
       await runMysteryEncounterToEnd(game, 2);
+      await game.phaseInterceptor.to(SelectModifierPhase, false);
 
       expect(gyarados.exp).toBe(expBefore + Math.floor(getPokemonSpecies(Species.LIEPARD).baseExp * defaultWave / 5 + 1));
     });
@@ -215,6 +217,7 @@ describe("An Offer You Can't Refuse - Mystery Encounter", () => {
       const expBefore = abra.exp;
 
       await runMysteryEncounterToEnd(game, 2);
+      await game.phaseInterceptor.to(SelectModifierPhase, false);
 
       expect(abra.exp).toBe(expBefore + Math.floor(getPokemonSpecies(Species.LIEPARD).baseExp * defaultWave / 5 + 1));
     });
