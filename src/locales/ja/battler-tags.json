@@ -70,5 +70,5 @@
   "stockpilingOnAdd": "{{pokemonNameWithAffix}}は　{{stockpiledCount}}つ　たくわえた!",
   "disabledOnAdd": "{{pokemonNameWithAffix}}の\n{{moveName}}\nを　封じこめた！",
   "disabledLapse": "{{pokemonNameWithAffix}}の\nかなしばりが　解けた！",
-  "tarShotOnAdd": "{{pokemonNameWithAffix}} became weaker to fire!"
+  "tarShotOnAdd": "{{pokemonNameWithAffix}}は　ほのおに　弱くなった！"
 }
