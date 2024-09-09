@@ -2179,6 +2179,33 @@ export class ExposedTag extends BattlerTag {
 }
 
 /**
+ * Describes the behavior of a Heal Block Tag.
+ */
+export class HealBlockTag extends BattlerTag {
+  constructor() {
+    super(BattlerTagType.HEAL_BLOCK, BattlerTagLapseType.TURN_END, 5, Moves.HEAL_BLOCK);
+  }
+
+  onAdd(pokemon: Pokemon): void {
+    super.onAdd(pokemon);
+  }
+
+  lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
+    return super.lapse(pokemon, lapseType);
+  }
+
+  onActivation(pokemon: Pokemon): string {
+    return i18next.t("battle:battlerTagsHealBlock", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) });
+  }
+
+  onRemove(pokemon: Pokemon): void {
+    super.onRemove(pokemon);
+
+    pokemon.scene.queueMessage(i18next.t("battle:battlerTagsHealBlockOnRemove", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }), null, false, null);
+  }
+}
+
+/**
  * Tag that doubles the type effectiveness of Fire-type moves.
  * @extends BattlerTag
  */
@@ -2490,6 +2517,8 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: number, source
     return new SubstituteTag(sourceMove, sourceId);
   case BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON:
     return new MysteryEncounterPostSummonTag();
+  case BattlerTagType.HEAL_BLOCK:
+    return new HealBlockTag();
   case BattlerTagType.NONE:
   default:
     return new BattlerTag(tagType, BattlerTagLapseType.CUSTOM, turnCount, sourceMove, sourceId);
