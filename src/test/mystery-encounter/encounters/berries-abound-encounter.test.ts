@@ -39,6 +39,8 @@ describe("Berries Abound - Mystery Encounter", () => {
     game.override.startingWave(defaultWave);
     game.override.startingBiome(defaultBiome);
     game.override.disableTrainerWaves();
+    game.override.startingModifier([]);
+    game.override.startingHeldItems([]);
 
     vi.spyOn(MysteryEncounters, "mysteryEncountersByBiome", "get").mockReturnValue(
       new Map<Biome, MysteryEncounterType[]>([
@@ -130,11 +132,15 @@ describe("Berries Abound - Mystery Encounter", () => {
       expect(enemyField[0].species.speciesId).toBe(speciesToSpawn);
     });
 
-    it("should reward the player with X berries based on wave", { retry: 5 }, async () => {
+    it("should reward the player with X berries based on wave", async () => {
       await game.runToMysteryEncounter(MysteryEncounterType.BERRIES_ABOUND, defaultParty);
 
       const numBerries = game.scene.currentBattle.mysteryEncounter!.misc.numBerries;
-      scene.modifiers = [];
+
+      // Clear out any pesky mods that slipped through test spin-up
+      scene.modifiers.forEach(mod => {
+        scene.removeModifier(mod);
+      });
 
       await runMysteryEncounterToEnd(game, 1, undefined, true);
       await skipBattleRunMysteryEncounterRewardsPhase(game);

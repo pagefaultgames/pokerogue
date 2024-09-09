@@ -1,7 +1,7 @@
 {
   "intro": "Something shiny is sparkling\non the ground near that Pokémon!",
   "title": "Fight or Flight",
-  "description": "It looks like there's a strong Pokémon guarding an item. Battling is the straightforward approach, but this Pokémon looks strong. You could also try to sneak around, though the Pokémon might catch you.",
+  "description": "It looks like there's a strong Pokémon guarding an item. Battling is the straightforward approach, but it looks strong. Perhaps you could steal the item, if you have the right Pokémon for the job.",
   "query": "What will you do?",
   "option": {
     "1": {

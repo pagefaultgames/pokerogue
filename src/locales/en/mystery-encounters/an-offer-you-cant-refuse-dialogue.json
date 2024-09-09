@@ -15,12 +15,12 @@
       "label": "Extort the Kid",
       "tooltip": "(+) {{option2PrimaryName}} uses {{moveOrAbility}}\n(+) Gain {{price, money}}",
       "tooltip_disabled": "Your Pokémon need to have certain moves or abilities to choose this",
-      "selected": "My word, we're being robbed, Liepard!\n       $You'll be hearing from my lawyers for this!"
+      "selected": "My word, we're being robbed, {{liepardName}}!$You'll be hearing from my lawyers for this!"
     },
     "3": {
       "label": "Leave",
       "tooltip": "(-) No Rewards",
-      "selected": "What a rotten day...$Ah, well. Let's return to the yacht club then, Liepard."
+      "selected": "What a rotten day...$Ah, well. Let's return to the yacht club then, {{liepardName}}."
     }
   }
 }

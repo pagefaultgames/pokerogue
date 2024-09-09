@@ -162,6 +162,8 @@ export const DancingLessonsEncounter: MysteryEncounter =
         oricorioData
       };
 
+      encounter.setDialogueToken("oricorioName", getPokemonSpecies(Species.ORICORIO).getName());
+
       return true;
     })
     .withOption(

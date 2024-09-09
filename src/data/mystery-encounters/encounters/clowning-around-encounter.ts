@@ -129,7 +129,7 @@ export const ClowningAroundEncounter: MysteryEncounter =
           },
           { // Blacephalon has the random ability from pool, and 2 entirely random types to fit with the theme of the encounter
             species: getPokemonSpecies(Species.BLACEPHALON),
-            mysteryEncounterPokemonData: new MysteryEncounterPokemonData(undefined, ability, undefined, [randSeedInt(18), randSeedInt(18)]),
+            mysteryEncounterPokemonData: new MysteryEncounterPokemonData({ ability: ability, types: [randSeedInt(18), randSeedInt(18)] }),
             isBoss: true,
             moveSet: [Moves.TRICK, Moves.HYPNOSIS, Moves.SHADOW_BALL, Moves.MIND_BLOWN]
           },
@@ -139,6 +139,8 @@ export const ClowningAroundEncounter: MysteryEncounter =
 
       // Load animations/sfx for start of fight moves
       loadCustomMovesForEncounter(scene, [Moves.ROLE_PLAY, Moves.TAUNT]);
+
+      encounter.setDialogueToken("blacephalonName", getPokemonSpecies(Species.BLACEPHALON).getName());
 
       return true;
     })
@@ -345,10 +347,9 @@ export const ClowningAroundEncounter: MysteryEncounter =
             }
             newTypes.push(secondType);
             if (!pokemon.mysteryEncounterPokemonData) {
-              pokemon.mysteryEncounterPokemonData = new MysteryEncounterPokemonData(undefined, undefined, undefined, newTypes);
-            } else {
-              pokemon.mysteryEncounterPokemonData.types = newTypes;
+              pokemon.mysteryEncounterPokemonData = new MysteryEncounterPokemonData();
             }
+            pokemon.mysteryEncounterPokemonData.types = newTypes;
           }
         })
         .withOptionPhase(async (scene: BattleScene) => {
@@ -410,11 +411,12 @@ function displayYesNoOptions(scene: BattleScene, resolve) {
 function onYesAbilitySwap(scene: BattleScene, resolve) {
   const onPokemonSelected = (pokemon: PlayerPokemon) => {
     // Do ability swap
+    const encounter = scene.currentBattle.mysteryEncounter!;
     if (!pokemon.mysteryEncounterPokemonData) {
-      pokemon.mysteryEncounterPokemonData = new MysteryEncounterPokemonData(undefined, Abilities.AERILATE);
+      pokemon.mysteryEncounterPokemonData = new MysteryEncounterPokemonData();
     }
-    pokemon.mysteryEncounterPokemonData.ability = scene.currentBattle.mysteryEncounter!.misc.ability;
-    scene.currentBattle.mysteryEncounter!.setDialogueToken("chosenPokemon", pokemon.getNameToRender());
+    pokemon.mysteryEncounterPokemonData.ability = encounter.misc.ability;
+    encounter.setDialogueToken("chosenPokemon", pokemon.getNameToRender());
     scene.ui.setMode(Mode.MESSAGE).then(() => resolve(true));
   };
 

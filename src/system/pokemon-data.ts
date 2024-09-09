@@ -103,7 +103,7 @@ export default class PokemonData {
     this.fusionLuck = source.fusionLuck !== undefined ? source.fusionLuck : (source.fusionShiny ? source.fusionVariant + 1 : 0);
     this.usedTMs = source.usedTMs ?? [];
 
-    this.mysteryEncounterPokemonData = source.mysteryEncounterPokemonData ?? new MysteryEncounterPokemonData();
+    this.mysteryEncounterPokemonData = new MysteryEncounterPokemonData(source.mysteryEncounterPokemonData);
 
     if (!forHistory) {
       this.boss = (source instanceof EnemyPokemon && !!source.bossSegments) || (!this.player && !!source.boss);

@@ -12,7 +12,7 @@
       "good": "Some pretty nice tools and items.",
       "great": "A couple great tools and items!",
       "amazing": "Whoa! An amazing item!",
-      "bad": "Oh no!@d{32}\nThe chest was actually a Gimmighoul in disguise!$Your {{pokeName}} jumps in front of you\nbut is KOed in the process!"
+      "bad": "Oh no!@d{32}\nThe chest was actually a {{gimmighoulName}} in disguise!$Your {{pokeName}} jumps in front of you\nbut is KOed in the process!"
     },
     "2": {
       "label": "Too Risky, Leave",

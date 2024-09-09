@@ -76,7 +76,7 @@ export const TheStrongStuffEncounter: MysteryEncounter =
             species: getPokemonSpecies(Species.SHUCKLE),
             isBoss: true,
             bossSegments: 5,
-            mysteryEncounterPokemonData: new MysteryEncounterPokemonData(1.25),
+            mysteryEncounterPokemonData: new MysteryEncounterPokemonData({ spriteScale: 1.25 }),
             nature: Nature.BOLD,
             moveSet: [Moves.INFESTATION, Moves.SALT_CURE, Moves.GASTRO_ACID, Moves.HEAL_ORDER],
             modifierConfigs: [
@@ -109,6 +109,8 @@ export const TheStrongStuffEncounter: MysteryEncounter =
       encounter.enemyPartyConfigs = [config];
 
       loadCustomMovesForEncounter(scene, [Moves.GASTRO_ACID, Moves.STEALTH_ROCK]);
+
+      encounter.setDialogueToken("shuckleName", getPokemonSpecies(Species.SHUCKLE).getName());
 
       return true;
     })

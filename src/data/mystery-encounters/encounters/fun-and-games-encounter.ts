@@ -77,7 +77,9 @@ export const FunAndGamesEncounter: MysteryEncounter =
     .withDescription(`${namespace}.description`)
     .withQuery(`${namespace}.query`)
     .withOnInit((scene: BattleScene) => {
+      const encounter = scene.currentBattle.mysteryEncounter!;
       scene.loadBgm("mystery_encounter_fun_and_games", "mystery_encounter_fun_and_games.mp3");
+      encounter.setDialogueToken("wobbuffetName", getPokemonSpecies(Species.WOBBUFFET).getName());
       return true;
     })
     .withOnVisualsStart((scene: BattleScene) => {

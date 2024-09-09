@@ -1,5 +1,5 @@
 import {
-  EnemyPartyConfig,
+  EnemyPartyConfig, generateModifierType,
   generateModifierTypeOption,
   initBattleWithEnemyConfig,
   leaveEncounterWithoutBattle,
@@ -223,6 +223,15 @@ export const BugTypeSuperfanEncounter: MysteryEncounter =
         },
       ];
 
+      const requiredItems = [
+        generateModifierType(scene, modifierTypes.QUICK_CLAW),
+        generateModifierType(scene, modifierTypes.GRIP_CLAW),
+        generateModifierType(scene, modifierTypes.ATTACK_TYPE_BOOSTER, [Type.BUG]),
+      ];
+
+      const requiredItemString = requiredItems.map(m => m?.name ?? "unknown").join("/");
+      encounter.setDialogueToken("requiredBugItems", requiredItemString);
+
       return true;
     })
     .withTitle(`${namespace}.title`)
@@ -361,6 +370,7 @@ export const BugTypeSuperfanEncounter: MysteryEncounter =
       })
       .withPreOptionPhase(async (scene: BattleScene): Promise<boolean> => {
         const encounter = scene.currentBattle.mysteryEncounter!;
+
         const onPokemonSelected = (pokemon: PlayerPokemon) => {
           // Get Pokemon held items and filter for valid ones
           const validItems = pokemon.getHeldItems().filter(item => {

@@ -952,7 +952,7 @@ export class GameData {
       gameVersion: scene.game.config.gameVersion,
       timestamp: new Date().getTime(),
       challenges: scene.gameMode.challenges.map(c => new ChallengeData(c)),
-      mysteryEncounterType: scene.currentBattle.mysteryEncounter?.encounterType,
+      mysteryEncounterType: scene.currentBattle.mysteryEncounter?.encounterType ?? -1,
       mysteryEncounterSaveData: scene.mysteryEncounterSaveData
     } as SessionSaveData;
   }
@@ -1044,7 +1044,7 @@ export class GameData {
           scene.score = sessionData.score;
           scene.updateScoreText();
 
-          scene.mysteryEncounterSaveData = sessionData?.mysteryEncounterSaveData ?? new MysteryEncounterSaveData(null);
+          scene.mysteryEncounterSaveData = new MysteryEncounterSaveData(sessionData.mysteryEncounterSaveData);
 
           scene.newArena(sessionData.arena.biome);
 
