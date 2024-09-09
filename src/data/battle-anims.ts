@@ -424,7 +424,7 @@ class AnimTimedAddBgEvent extends AnimTimedBgEvent {
     moveAnim.bgSprite.setScale(1.25);
     moveAnim.bgSprite.setAlpha(this.opacity / 255);
     scene.field.add(moveAnim.bgSprite);
-    const fieldPokemon = scene.getEnemyPokemonOnScreen() || scene.getPlayerPokemonOnScreen();
+    const fieldPokemon = scene.getNonSwitchedEnemyPokemon() || scene.getNonSwitchedPlayerPokemon();
     if (fieldPokemon?.isOnField()) {
       scene.field.moveBelow(moveAnim.bgSprite as Phaser.GameObjects.GameObject, fieldPokemon);
     }
@@ -887,7 +887,7 @@ export abstract class BattleAnim {
                 const setSpritePriority = (priority: integer) => {
                   switch (priority) {
                   case 0:
-                    scene.field.moveBelow(moveSprite as Phaser.GameObjects.GameObject, scene.getEnemyPokemonOnScreen() || scene.getPlayerPokemonOnScreen()!); // this bang is correct to ensure a GameObject is passed in as a second arg (as opposed to undefined)
+                    scene.field.moveBelow(moveSprite as Phaser.GameObjects.GameObject, scene.getNonSwitchedEnemyPokemon() || scene.getNonSwitchedPlayerPokemon()!); // this bang is correct to ensure a GameObject is passed in as a second arg (as opposed to undefined)
                     break;
                   case 1:
                     scene.field.moveTo(moveSprite, scene.field.getAll().length - 1);
