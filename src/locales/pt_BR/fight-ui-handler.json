@@ -4,5 +4,5 @@
   "accuracy": "Precisão",
   "abilityFlyInText": " {{passive}}{{pokemonName}}\n{{abilityName}}",
   "passive": "Passiva de ",
-  "teraHover": "{{type}} Terastallized"
+  "teraHover": "Terastalizado {{type}}"
 }
