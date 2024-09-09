@@ -27,7 +27,7 @@ describe("Abilities - Gorilla Tactics", () => {
     game.override
       .battleType("single")
       .enemyAbility(Abilities.BALL_FETCH)
-      .enemyMoveset(Moves.SPLASH)
+      .enemyMoveset([Moves.SPLASH, Moves.DISABLE])
       .enemySpecies(Species.MAGIKARP)
       .enemyLevel(30)
       .moveset([Moves.SPLASH, Moves.TACKLE])
@@ -41,6 +41,7 @@ describe("Abilities - Gorilla Tactics", () => {
     const initialAtkStat = darmanitan.getStat(Stat.ATK);
 
     game.move.select(Moves.SPLASH);
+    await game.forceEnemyMove(Moves.SPLASH);
 
     await game.phaseInterceptor.to("TurnEndPhase");
 
@@ -62,9 +63,10 @@ describe("Abilities - Gorilla Tactics", () => {
 
     // Turn where Tackle is interrupted by Disable
     await game.toNextTurn();
-    game.override.enemyMoveset(Array(4).fill(Moves.DISABLE));
 
     game.move.select(Moves.SPLASH);
+    await game.forceEnemyMove(Moves.DISABLE);
+
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
 
     await game.phaseInterceptor.to("TurnEndPhase");
