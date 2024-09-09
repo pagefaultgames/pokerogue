@@ -3,5 +3,6 @@
   "power": "Potencia",
   "accuracy": "Precisión",
   "abilityFlyInText": " {{passive}}{{pokemonName}}\n{{abilityName}}",
-  "passive": "Pasiva de "
+  "passive": "Pasiva de ",
+  "teraHover": "{{type}} Terastallized"
 }
