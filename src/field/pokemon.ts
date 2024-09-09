@@ -2370,6 +2370,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         const destinyTag = this.getTag(BattlerTagType.DESTINY_BOND);
 
         if (damage.value) {
+          this.lapseTags(BattlerTagLapseType.HIT);
+
           if (this.isFullHp()) {
             applyPreDefendAbAttrs(PreDefendFullHpEndureAbAttr, this, source, move, cancelled, false, damage);
           } else if (!this.isPlayer() && damage.value >= this.hp) {
