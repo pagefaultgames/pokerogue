@@ -330,7 +330,7 @@ export class ShellTrapTag extends BattlerTag {
 /**
  * BattlerTag implementing Rage
  * Pokémon with this tag will recieve an attack boost when successfully damaged by an attacking move
- * This tag will be lost if a target reaches the MOVE_EFFECT lapse condition with a move other than Rage
+ * This tag will be lost if a target reaches the `MOVE_EFFECT` lapse condition with a move other than Rage
  * @see {@link https://bulbapedia.bulbagarden.net/wiki/Rage_(move) | Rage}
  */
 export class RageTag extends BattlerTag {
