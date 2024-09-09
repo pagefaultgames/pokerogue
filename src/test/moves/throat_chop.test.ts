@@ -50,6 +50,6 @@ describe("Moves - Throat Chop", () => {
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
 
     await game.phaseInterceptor.to("MoveEndPhase");
-    expect(game.scene.getEnemyPokemon()!.hp).toBeLessThan(game.scene.getEnemyPokemon()!.getMaxHp());
+    expect(game.scene.getEnemyPokemon()!.isFullHp()).toBe(false);
   }, TIMEOUT);
 });
