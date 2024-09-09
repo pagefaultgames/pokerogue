@@ -47,7 +47,7 @@ import { ReloadSessionPhase } from "#app/phases/reload-session-phase";
 import { RUN_HISTORY_LIMIT } from "#app/ui/run-history-ui-handler";
 import { applySessionDataPatches, applySettingsDataPatches, applySystemDataPatches } from "./version-converter";
 import { MysteryEncounterSaveData } from "../data/mystery-encounters/mystery-encounter-save-data";
-import MysteryEncounter from "../data/mystery-encounters/mystery-encounter";
+import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 
 export const defaultStarterSpecies: Species[] = [
   Species.BULBASAUR, Species.CHARMANDER, Species.SQUIRTLE,
@@ -132,7 +132,7 @@ export interface SessionSaveData {
   gameVersion: string;
   timestamp: integer;
   challenges: ChallengeData[];
-  mysteryEncounter: MysteryEncounter;
+  mysteryEncounterType: MysteryEncounterType | -1; // Only defined when current wave is ME,
   mysteryEncounterSaveData: MysteryEncounterSaveData;
 }
 
@@ -952,7 +952,7 @@ export class GameData {
       gameVersion: scene.game.config.gameVersion,
       timestamp: new Date().getTime(),
       challenges: scene.gameMode.challenges.map(c => new ChallengeData(c)),
-      mysteryEncounter: scene.currentBattle.mysteryEncounter,
+      mysteryEncounterType: scene.currentBattle.mysteryEncounter?.encounterType,
       mysteryEncounterSaveData: scene.mysteryEncounterSaveData
     } as SessionSaveData;
   }
@@ -1050,8 +1050,8 @@ export class GameData {
 
           const battleType = sessionData.battleType || 0;
           const trainerConfig = sessionData.trainer ? trainerConfigs[sessionData.trainer.trainerType] : null;
-          const mysteryEncounterConfig = sessionData?.mysteryEncounter;
-          const battle = scene.newBattle(sessionData.waveIndex, battleType, sessionData.trainer, battleType === BattleType.TRAINER ? trainerConfig?.doubleOnly || sessionData.trainer?.variant === TrainerVariant.DOUBLE : sessionData.enemyParty.length > 1, mysteryEncounterConfig)!; // TODO: is this bang correct?
+          const mysteryEncounterType = sessionData.mysteryEncounterType !== -1 ? sessionData.mysteryEncounterType : undefined;
+          const battle = scene.newBattle(sessionData.waveIndex, battleType, sessionData.trainer, battleType === BattleType.TRAINER ? trainerConfig?.doubleOnly || sessionData.trainer?.variant === TrainerVariant.DOUBLE : sessionData.enemyParty.length > 1, mysteryEncounterType)!; // TODO: is this bang correct?
           battle.enemyLevels = sessionData.enemyParty.map(p => p.level);
 
           scene.arena.init();
@@ -1263,8 +1263,8 @@ export class GameData {
         return ret;
       }
 
-      if (k === "mysteryEncounter") {
-        return new MysteryEncounter(v);
+      if (k === "mysteryEncounterType") {
+        return v as MysteryEncounterType;
       }
 
       if (k === "mysteryEncounterSaveData") {

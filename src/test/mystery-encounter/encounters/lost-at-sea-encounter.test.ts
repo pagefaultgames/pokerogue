@@ -14,6 +14,7 @@ import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { initSceneWithoutEncounterPhase } from "#test/utils/gameManagerUtils";
 import BattleScene from "#app/battle-scene";
 import { MysteryEncounterPhase } from "#app/phases/mystery-encounter-phases";
+import { PartyExpPhase } from "#app/phases/party-exp-phase";
 
 const namespace = "mysteryEncounter:lostAtSea";
 /** Blastoise for surf. Pidgeot for fly. Abra for none. */
@@ -133,6 +134,7 @@ describe("Lost at Sea - Mystery Encounter", () => {
       const expBefore = blastoise!.exp;
 
       await runMysteryEncounterToEnd(game, 1);
+      await game.phaseInterceptor.to(PartyExpPhase);
 
       expect(blastoise?.exp).toBe(expBefore + Math.floor(laprasSpecies.baseExp * defaultWave / 5 + 1));
     });
@@ -197,6 +199,7 @@ describe("Lost at Sea - Mystery Encounter", () => {
       const expBefore = pidgeot!.exp;
 
       await runMysteryEncounterToEnd(game, 2);
+      await game.phaseInterceptor.to(PartyExpPhase);
 
       expect(pidgeot!.exp).toBe(expBefore + Math.floor(laprasBaseExp * defaultWave / 5 + 1));
     });

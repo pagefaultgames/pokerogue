@@ -5,7 +5,7 @@ import { variantData } from "#app/data/variant";
 import BattleInfo, { PlayerBattleInfo, EnemyBattleInfo } from "../ui/battle-info";
 import Move, { HighCritAttr, HitsTagAttr, applyMoveAttrs, FixedDamageAttr, VariableAtkAttr, allMoves, MoveCategory, TypelessAttr, CritOnlyAttr, getMoveTargets, OneHitKOAttr, VariableMoveTypeAttr, VariableDefAttr, AttackMove, ModifiedDamageAttr, VariableMoveTypeMultiplierAttr, IgnoreOpponentStatStagesAttr, SacrificialAttr, VariableMoveCategoryAttr, CounterDamageAttr, StatStageChangeAttr, RechargeAttr, ChargeAttr, IgnoreWeatherTypeDebuffAttr, BypassBurnDamageReductionAttr, SacrificialAttrOnHit, OneHitKOAccuracyAttr, RespectAttackTypeImmunityAttr } from "../data/move";
 import { default as PokemonSpecies, PokemonSpeciesForm, SpeciesFormKey, getFusedSpeciesName, getPokemonSpecies, getPokemonSpeciesForm, getStarterValueFriendshipCap, speciesStarters, starterPassiveAbilities } from "../data/pokemon-species";
-import { Constructor, isNullOrUndefined, randSeedInt } from "#app/utils";
+import { Constructor, randSeedInt } from "#app/utils";
 import * as Utils from "../utils";
 import { Type, TypeDamageMultiplier, getTypeDamageMultiplier, getTypeRgb } from "../data/type";
 import { getLevelTotalExp } from "../data/exp";
@@ -223,6 +223,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         this.variant = this.shiny ? this.generateVariant() : 0;
       }
 
+      this.mysteryEncounterPokemonData = new MysteryEncounterPokemonData();
+
       if (nature !== undefined) {
         this.setNature(nature);
       } else {
@@ -250,7 +252,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       }
       this.luck = (this.shiny ? this.variant + 1 : 0) + (this.fusionShiny ? this.fusionVariant + 1 : 0);
       this.fusionLuck = this.luck;
-      this.mysteryEncounterPokemonData = new MysteryEncounterPokemonData();
     }
 
     this.generateName();
@@ -578,8 +579,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     const formKey = this.getFormKey();
     if (formKey.indexOf(SpeciesFormKey.GIGANTAMAX) > -1 || formKey.indexOf(SpeciesFormKey.ETERNAMAX) > -1) {
       return 1.5;
-    } else if (!isNullOrUndefined(this.mysteryEncounterPokemonData.spriteScale) && this.mysteryEncounterPokemonData.spriteScale !== 0) {
-      return this.mysteryEncounterPokemonData.spriteScale!;
+    } else if (this.mysteryEncounterPokemonData.spriteScale > 0) {
+      return this.mysteryEncounterPokemonData.spriteScale;
     }
     return 1;
   }
@@ -1150,7 +1151,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     if (Overrides.OPP_ABILITY_OVERRIDE && !this.isPlayer()) {
       return allAbilities[Overrides.OPP_ABILITY_OVERRIDE];
     }
-    if (this.mysteryEncounterPokemonData?.ability) {
+    if (this.mysteryEncounterPokemonData.ability !== -1) {
       return allAbilities[this.mysteryEncounterPokemonData.ability];
     }
     if (this.isFusion()) {
@@ -1177,7 +1178,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     if (Overrides.OPP_PASSIVE_ABILITY_OVERRIDE && !this.isPlayer()) {
       return allAbilities[Overrides.OPP_PASSIVE_ABILITY_OVERRIDE];
     }
-    if (this.mysteryEncounterPokemonData?.passive) {
+    if (this.mysteryEncounterPokemonData.passive !== -1) {
       return allAbilities[this.mysteryEncounterPokemonData.passive];
     }
 

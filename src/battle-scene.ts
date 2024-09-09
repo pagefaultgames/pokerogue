@@ -897,6 +897,12 @@ export default class BattleScene extends SceneBase {
     return pokemon;
   }
 
+  /**
+   * Removes a PlayerPokemon from the party, and clears modifiers for that Pokemon's id
+   * Useful for MEs/Challenges that remove Pokemon from the player party temporarily or permanently
+   * @param pokemon
+   * @param destroy - Default true. If true, will destroy the Pokemon object after removing
+   */
   removePokemonFromPlayerParty(pokemon: PlayerPokemon, destroy: boolean = true) {
     if (!pokemon) {
       return;
@@ -1113,7 +1119,7 @@ export default class BattleScene extends SceneBase {
     }
   }
 
-  newBattle(waveIndex?: integer, battleType?: BattleType, trainerData?: TrainerData, double?: boolean, mysteryEncounter?: MysteryEncounter): Battle | null {
+  newBattle(waveIndex?: integer, battleType?: BattleType, trainerData?: TrainerData, double?: boolean, mysteryEncounterType?: MysteryEncounterType): Battle | null {
     const _startingWave = Overrides.STARTING_WAVE_OVERRIDE || startingWave;
     const newWaveIndex = waveIndex || ((this.currentBattle?.waveIndex || (_startingWave - 1)) + 1);
     let newDouble: boolean | undefined;
@@ -1236,7 +1242,7 @@ export default class BattleScene extends SceneBase {
       // Disable double battle on mystery encounters (it may be re-enabled as part of encounter)
       this.currentBattle.double = false;
       this.executeWithSeedOffset(() => {
-        this.currentBattle.mysteryEncounter = this.getMysteryEncounter(mysteryEncounter);
+        this.currentBattle.mysteryEncounter = this.getMysteryEncounter(mysteryEncounterType);
       }, this.currentBattle.waveIndex << 4);
     }
 
@@ -3016,16 +3022,16 @@ export default class BattleScene extends SceneBase {
 
   /**
    * Loads or generates a mystery encounter
-   * @param override - used to load session encounter when restarting game, etc.
+   * @param encounterType - used to load session encounter when restarting game, etc.
    * @returns
    */
-  getMysteryEncounter(override: MysteryEncounter | undefined): MysteryEncounter {
+  getMysteryEncounter(encounterType?: MysteryEncounterType): MysteryEncounter {
     // Loading override or session encounter
     let encounter: MysteryEncounter | null;
     if (!isNullOrUndefined(Overrides.MYSTERY_ENCOUNTER_OVERRIDE) && allMysteryEncounters.hasOwnProperty(Overrides.MYSTERY_ENCOUNTER_OVERRIDE!)) {
       encounter = allMysteryEncounters[Overrides.MYSTERY_ENCOUNTER_OVERRIDE!];
     } else {
-      encounter = override?.encounterType && override.encounterType >= 0 ? allMysteryEncounters[override.encounterType] : null;
+      encounter = !isNullOrUndefined(encounterType) ? allMysteryEncounters[encounterType!] : null;
     }
 
     // Check for queued encounters first

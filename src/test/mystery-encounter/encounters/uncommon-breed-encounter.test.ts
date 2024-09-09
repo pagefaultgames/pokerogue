@@ -19,6 +19,8 @@ import { MovePhase } from "#app/phases/move-phase";
 import { speciesEggMoves } from "#app/data/egg-moves";
 import { getPokemonSpecies } from "#app/data/pokemon-species";
 import { BerryType } from "#enums/berry-type";
+import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
+import { Stat } from "#enums/stat";
 
 const namespace = "mysteryEncounter:uncommonBreed";
 const defaultParty = [Species.LAPRAS, Species.GENGAR, Species.ABRA];
@@ -119,6 +121,7 @@ describe("Uncommon Breed - Mystery Encounter", () => {
 
     it("should start a fight against the boss", async () => {
       const phaseSpy = vi.spyOn(scene, "pushPhase");
+      const unshiftPhaseSpy = vi.spyOn(scene, "unshiftPhase");
       await game.runToMysteryEncounter(MysteryEncounterType.UNCOMMON_BREED, defaultParty);
 
       const config = game.scene.currentBattle.mysteryEncounter!.enemyPartyConfigs[0];
@@ -130,7 +133,9 @@ describe("Uncommon Breed - Mystery Encounter", () => {
       expect(scene.getCurrentPhase()?.constructor.name).toBe(CommandPhase.name);
       expect(enemyField.length).toBe(1);
       expect(enemyField[0].species.speciesId).toBe(speciesToSpawn);
-      expect(enemyField[0].summonData.statStages).toEqual([1, 1, 1, 1, 1, 0, 0]);
+
+      const statStagePhases = unshiftPhaseSpy.mock.calls.filter(p => p[0] instanceof StatStageChangePhase)[0][0] as any;
+      expect(statStagePhases.stats).toEqual([Stat.ATK, Stat.DEF, Stat.SPATK, Stat.SPDEF, Stat.SPD]);
 
       // Should have used its egg move pre-battle
       const movePhases = phaseSpy.mock.calls.filter(p => p[0] instanceof MovePhase).map(p => p[0]);

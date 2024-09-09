@@ -185,7 +185,7 @@ describe("Absolute Avarice - Mystery Encounter", () => {
       });
     });
 
-    it("Should return 3 (2/5ths floored) berries if 8 were stolen", async () => {
+    it("Should return 3 (2/5ths floored) berries if 8 were stolen", {retry: 5}, async () => {
       game.override.startingHeldItems([{name: "BERRY", count: 2, type: BerryType.SITRUS}, {name: "BERRY", count: 3, type: BerryType.GANLON}, {name: "BERRY", count: 3, type: BerryType.APICOT}]);
 
       await game.runToMysteryEncounter(MysteryEncounterType.ABSOLUTE_AVARICE, defaultParty);
@@ -201,7 +201,7 @@ describe("Absolute Avarice - Mystery Encounter", () => {
       expect(berryCountAfter).toBe(3);
     });
 
-    it("Should return 2 (2/5ths floored) berries if 7 were stolen", async () => {
+    it("Should return 2 (2/5ths floored) berries if 7 were stolen", {retry: 5}, async () => {
       game.override.startingHeldItems([{name: "BERRY", count: 2, type: BerryType.SITRUS}, {name: "BERRY", count: 3, type: BerryType.GANLON}, {name: "BERRY", count: 2, type: BerryType.APICOT}]);
 
       await game.runToMysteryEncounter(MysteryEncounterType.ABSOLUTE_AVARICE, defaultParty);

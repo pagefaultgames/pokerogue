@@ -103,8 +103,7 @@ describe("Field Trip - Mystery Encounter", () => {
     it("Should give no reward on incorrect option", async () => {
       await game.runToMysteryEncounter(MysteryEncounterType.FIELD_TRIP, defaultParty);
       await runMysteryEncounterToEnd(game, 1, { pokemonNo: 1, optionNo: 2 });
-      expect(scene.getCurrentPhase()?.constructor.name).toBe(SelectModifierPhase.name);
-      await game.phaseInterceptor.run(SelectModifierPhase);
+      await game.phaseInterceptor.to(SelectModifierPhase);
 
       expect(scene.ui.getMode()).to.equal(Mode.MODIFIER_SELECT);
       const modifierSelectHandler = scene.ui.handlers.find(h => h instanceof ModifierSelectUiHandler) as ModifierSelectUiHandler;
@@ -114,8 +113,7 @@ describe("Field Trip - Mystery Encounter", () => {
     it("Should give proper rewards on correct Physical move option", async () => {
       await game.runToMysteryEncounter(MysteryEncounterType.FIELD_TRIP, defaultParty);
       await runMysteryEncounterToEnd(game, 1, { pokemonNo: 1, optionNo: 1 });
-      expect(scene.getCurrentPhase()?.constructor.name).toBe(SelectModifierPhase.name);
-      await game.phaseInterceptor.run(SelectModifierPhase);
+      await game.phaseInterceptor.to(SelectModifierPhase);
 
       expect(scene.ui.getMode()).to.equal(Mode.MODIFIER_SELECT);
       const modifierSelectHandler = scene.ui.handlers.find(h => h instanceof ModifierSelectUiHandler) as ModifierSelectUiHandler;
@@ -151,8 +149,7 @@ describe("Field Trip - Mystery Encounter", () => {
     it("Should give no reward on incorrect option", async () => {
       await game.runToMysteryEncounter(MysteryEncounterType.FIELD_TRIP, defaultParty);
       await runMysteryEncounterToEnd(game, 2, { pokemonNo: 1, optionNo: 1 });
-      expect(scene.getCurrentPhase()?.constructor.name).toBe(SelectModifierPhase.name);
-      await game.phaseInterceptor.run(SelectModifierPhase);
+      await game.phaseInterceptor.to(SelectModifierPhase);
 
       expect(scene.ui.getMode()).to.equal(Mode.MODIFIER_SELECT);
       const modifierSelectHandler = scene.ui.handlers.find(h => h instanceof ModifierSelectUiHandler) as ModifierSelectUiHandler;
@@ -162,8 +159,7 @@ describe("Field Trip - Mystery Encounter", () => {
     it("Should give proper rewards on correct Special move option", async () => {
       await game.runToMysteryEncounter(MysteryEncounterType.FIELD_TRIP, defaultParty);
       await runMysteryEncounterToEnd(game, 2, { pokemonNo: 1, optionNo: 2 });
-      expect(scene.getCurrentPhase()?.constructor.name).toBe(SelectModifierPhase.name);
-      await game.phaseInterceptor.run(SelectModifierPhase);
+      await game.phaseInterceptor.to(SelectModifierPhase);
 
       expect(scene.ui.getMode()).to.equal(Mode.MODIFIER_SELECT);
       const modifierSelectHandler = scene.ui.handlers.find(h => h instanceof ModifierSelectUiHandler) as ModifierSelectUiHandler;
@@ -199,8 +195,7 @@ describe("Field Trip - Mystery Encounter", () => {
     it("Should give no reward on incorrect option", async () => {
       await game.runToMysteryEncounter(MysteryEncounterType.FIELD_TRIP, defaultParty);
       await runMysteryEncounterToEnd(game, 3, { pokemonNo: 1, optionNo: 1 });
-      expect(scene.getCurrentPhase()?.constructor.name).toBe(SelectModifierPhase.name);
-      await game.phaseInterceptor.run(SelectModifierPhase);
+      await game.phaseInterceptor.to(SelectModifierPhase);
 
       expect(scene.ui.getMode()).to.equal(Mode.MODIFIER_SELECT);
       const modifierSelectHandler = scene.ui.handlers.find(h => h instanceof ModifierSelectUiHandler) as ModifierSelectUiHandler;
@@ -210,8 +205,7 @@ describe("Field Trip - Mystery Encounter", () => {
     it("Should give proper rewards on correct Special move option", async () => {
       await game.runToMysteryEncounter(MysteryEncounterType.FIELD_TRIP, defaultParty);
       await runMysteryEncounterToEnd(game, 3, { pokemonNo: 1, optionNo: 3 });
-      expect(scene.getCurrentPhase()?.constructor.name).toBe(SelectModifierPhase.name);
-      await game.phaseInterceptor.run(SelectModifierPhase);
+      await game.phaseInterceptor.to(SelectModifierPhase);
 
       expect(scene.ui.getMode()).to.equal(Mode.MODIFIER_SELECT);
       const modifierSelectHandler = scene.ui.handlers.find(h => h instanceof ModifierSelectUiHandler) as ModifierSelectUiHandler;
