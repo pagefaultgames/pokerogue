@@ -8,7 +8,7 @@ import { Constructor } from "#app/utils";
 import * as Utils from "../utils";
 import { WeatherType } from "./weather";
 import { ArenaTagSide, ArenaTrapTag, WeakenMoveTypeTag } from "./arena-tag";
-import { UnswappableAbilityAbAttr, UncopiableAbilityAbAttr, UnsuppressableAbilityAbAttr, BlockRecoilDamageAttr, BlockOneHitKOAbAttr, IgnoreContactAbAttr, MaxMultiHitAbAttr, applyAbAttrs, BlockNonDirectDamageAbAttr, MoveAbilityBypassAbAttr, ReverseDrainAbAttr, FieldPreventExplosiveMovesAbAttr, ForceSwitchOutImmunityAbAttr, BlockItemTheftAbAttr, applyPostAttackAbAttrs, ConfusionOnStatusEffectAbAttr, HealFromBerryUseAbAttr, IgnoreProtectOnContactAbAttr, IgnoreMoveEffectsAbAttr, applyPreDefendAbAttrs, MoveEffectChanceMultiplierAbAttr, WonderSkinAbAttr, applyPreAttackAbAttrs, MoveTypeChangeAbAttr, UserFieldMoveTypePowerBoostAbAttr, FieldMoveTypePowerBoostAbAttr, AllyMoveCategoryPowerBoostAbAttr, VariableMovePowerAbAttr } from "./ability";
+import { UnswappableAbilityAbAttr, UncopiableAbilityAbAttr, UnsuppressableAbilityAbAttr, BlockRecoilDamageAttr, BlockOneHitKOAbAttr, IgnoreContactAbAttr, MaxMultiHitAbAttr, applyAbAttrs, BlockNonDirectDamageAbAttr, MoveAbilityBypassAbAttr, ReverseDrainAbAttr, FieldPreventExplosiveMovesAbAttr, ForceSwitchOutImmunityAbAttr, BlockItemTheftAbAttr, applyPostAttackAbAttrs, ConfusionOnStatusEffectAbAttr, HealFromBerryUseAbAttr, IgnoreProtectOnContactAbAttr, IgnoreMoveEffectsAbAttr, applyPreDefendAbAttrs, MoveEffectChanceMultiplierAbAttr, WonderSkinAbAttr, applyPreAttackAbAttrs, MoveTypeChangeAbAttr, UserFieldMoveTypePowerBoostAbAttr, FieldMoveTypePowerBoostAbAttr, AllyMoveCategoryPowerBoostAbAttr, VariableMovePowerAbAttr, ProtectStatAbAttr } from "./ability";
 import { allAbilities } from "./ability";
 import { PokemonHeldItemModifier, BerryModifier, PreserveBerryModifier, PokemonMoveAccuracyBoosterModifier, AttackTypeBoosterModifier, PokemonMultiHitModifier } from "../modifier/modifier";
 import { BattlerIndex, BattleType } from "../battle";
@@ -5147,8 +5147,10 @@ export class PartingShotAttr extends ForceSwitchOutAttr {
     return (user, target, move) => {
       // conditions on if move should fail or not don't depend on if user is able to switch
       // getCondition() is called before move is applied: move will only switch out if canLowerStats === true
-      if (target.hasAbility(Abilities.CLEAR_BODY, true, false) ||
-          (target.getStatStage(Stat.ATK) === -6 && target.getStatStage(Stat.SPATK) === -6) || target.scene.arena.findTagsOnSide(t => t.tagType === ArenaTagType.MIST, ArenaTagSide.ENEMY).length > 0
+      if (target.hasAbilityWithAttr(ProtectStatAbAttr) ||
+          (target.getStatStage(Stat.ATK) === -6 && target.getStatStage(Stat.SPATK) === -6 && !target.hasAbility(Abilities.CONTRARY, true, false)) ||
+          target.scene.arena.findTagsOnSide(t => t.tagType === ArenaTagType.MIST, ArenaTagSide.ENEMY).length > 0 ||
+          (target.getStatStage(Stat.ATK) === 6 && target.getStatStage(Stat.SPATK) === 6 && target.hasAbility(Abilities.CONTRARY, true, false))
       ) {
         this.canLowerStats = false;
       } else {
