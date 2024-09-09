@@ -7,7 +7,6 @@ import { doPokeballBounceAnim, getPokeballAtlasKey, getPokeballCatchMultiplier, 
 import { PlayerGender } from "#enums/player-gender";
 import { addPokeballCaptureStars, addPokeballOpenParticles } from "#app/field/anims";
 import { getStatusEffectCatchRateMultiplier, StatusEffect } from "#app/data/status-effect";
-import { BattlerIndex } from "#app/battle";
 import { achvs } from "#app/system/achv";
 import { Mode } from "#app/ui/ui";
 import { PartyOption, PartyUiMode } from "#app/ui/party-ui-handler";
@@ -482,7 +481,7 @@ function failCatch(scene: BattleScene, pokemon: EnemyPokemon, originalY: number,
  * @param isObtain
  */
 export async function catchPokemon(scene: BattleScene, pokemon: EnemyPokemon, pokeball: Phaser.GameObjects.Sprite | null, pokeballType: PokeballType, showCatchObtainMessage: boolean = true, isObtain: boolean = false): Promise<void> {
-  scene.unshiftPhase(new VictoryPhase(scene, BattlerIndex.ENEMY, true));
+  scene.unshiftPhase(new VictoryPhase(scene, pokemon.id, true));
 
   const speciesForm = !pokemon.fusionSpecies ? pokemon.getSpeciesForm() : pokemon.getFusionSpeciesForm();
 

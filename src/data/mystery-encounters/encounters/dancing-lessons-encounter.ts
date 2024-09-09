@@ -1,4 +1,4 @@
-import { EnemyPartyConfig, initBattleWithEnemyConfig, leaveEncounterWithoutBattle, selectPokemonForOption, setEncounterRewards, transitionMysteryEncounterIntroVisuals, } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
+import { EnemyPartyConfig, initBattleWithEnemyConfig, leaveEncounterWithoutBattle, selectPokemonForOption, setEncounterRewards } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import Pokemon, { EnemyPokemon, PlayerPokemon, PokemonMove } from "#app/field/pokemon";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { Species } from "#enums/species";
@@ -132,13 +132,16 @@ export const DancingLessonsEncounter: MysteryEncounter =
 
       const oricorioData = new PokemonData(enemyPokemon);
       const oricorio = scene.addEnemyPokemon(species, scene.currentBattle.enemyLevels![0], TrainerSlot.NONE, false, oricorioData);
-      oricorio.setVisible(false);
-      oricorio.loadAssets().then(() => oricorio.setVisible(true));
 
       // Adds a real Pokemon sprite to the field (required for the animation)
-      scene.getEnemyParty().forEach(enemyPokemon => enemyPokemon.destroy());
+      scene.getEnemyParty().forEach(enemyPokemon => {
+        scene.field.remove(enemyPokemon, true);
+      });
       scene.currentBattle.enemyParty = [oricorio];
       scene.field.add(oricorio);
+      // Spawns on offscreen field
+      oricorio.x -= 300;
+      encounter.loadAssets.push(oricorio.loadAssets());
 
       const config: EnemyPartyConfig = {
         levelAdditiveMultiplier: 1,
@@ -177,8 +180,6 @@ export const DancingLessonsEncounter: MysteryEncounter =
           // Pick battle
           const encounter = scene.currentBattle.mysteryEncounter!;
 
-          transitionMysteryEncounterIntroVisuals(scene, true, true, 500);
-
           encounter.startOfBattleEffects.push({
             sourceBattlerIndex: BattlerIndex.ENEMY,
             targets: [BattlerIndex.PLAYER],
@@ -186,6 +187,7 @@ export const DancingLessonsEncounter: MysteryEncounter =
             ignorePp: true
           });
 
+          await hideOricorioPokemon(scene);
           setEncounterRewards(scene, { guaranteedModifierTypeFuncs: [modifierTypes.BATON], fillRemaining: true });
           await initBattleWithEnemyConfig(scene, encounter.enemyPartyConfigs[0]);
         })
@@ -220,6 +222,7 @@ export const DancingLessonsEncounter: MysteryEncounter =
         })
         .withOptionPhase(async (scene: BattleScene) => {
           // Learn its Dance
+          hideOricorioPokemon(scene);
           leaveEncounterWithoutBattle(scene, true);
         })
         .build()
@@ -291,10 +294,28 @@ export const DancingLessonsEncounter: MysteryEncounter =
             }
           }
 
-          transitionMysteryEncounterIntroVisuals(scene, true, true, 500);
+          hideOricorioPokemon(scene);
           await catchPokemon(scene, oricorio, null, PokeballType.POKEBALL, false);
           leaveEncounterWithoutBattle(scene, true);
         })
         .build()
     )
     .build();
+
+function hideOricorioPokemon(scene: BattleScene) {
+  return new Promise<void>(resolve => {
+    const oricorioSprite = scene.getEnemyParty()[0];
+    scene.tweens.add({
+      targets: oricorioSprite,
+      x: "+=16",
+      y: "-=16",
+      alpha: 0,
+      ease: "Sine.easeInOut",
+      duration: 750,
+      onComplete: () => {
+        scene.field.remove(oricorioSprite, true);
+        resolve();
+      }
+    });
+  });
+}

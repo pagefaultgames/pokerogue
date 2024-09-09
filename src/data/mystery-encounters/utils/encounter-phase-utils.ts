@@ -4,7 +4,6 @@ import MysteryEncounterOption from "#app/data/mystery-encounters/mystery-encount
 import { AVERAGE_ENCOUNTERS_PER_RUN_TARGET, WEIGHT_INCREMENT_ON_SPAWN_MISS } from "#app/data/mystery-encounters/mystery-encounters";
 import { showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
 import Pokemon, { FieldPosition, PlayerPokemon, PokemonMove, PokemonSummonData } from "#app/field/pokemon";
-import { ExpBalanceModifier, ExpShareModifier, MultipleParticipantExpBonusModifier, PokemonExpBoosterModifier } from "#app/modifier/modifier";
 import { CustomModifierSettings, ModifierPoolType, ModifierType, ModifierTypeGenerator, ModifierTypeOption, modifierTypes, regenerateModifierPoolThresholds } from "#app/modifier/modifier-type";
 import { MysteryEncounterBattlePhase, MysteryEncounterBattleStartCleanupPhase, MysteryEncounterPhase, MysteryEncounterRewardsPhase } from "#app/phases/mystery-encounter-phases";
 import PokemonData from "#app/system/pokemon-data";
@@ -27,7 +26,6 @@ import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
 import { Status, StatusEffect } from "#app/data/status-effect";
 import { TrainerConfig, trainerConfigs, TrainerSlot } from "#app/data/trainer-config";
 import PokemonSpecies from "#app/data/pokemon-species";
-import Overrides from "#app/overrides";
 import { Egg, IEggOptions } from "#app/data/egg";
 import { MysteryEncounterPokemonData } from "#app/data/mystery-encounters/mystery-encounter-pokemon-data";
 import HeldModifierConfig from "#app/interfaces/held-modifier-config";
@@ -36,9 +34,8 @@ import { EggLapsePhase } from "#app/phases/egg-lapse-phase";
 import { TrainerVictoryPhase } from "#app/phases/trainer-victory-phase";
 import { BattleEndPhase } from "#app/phases/battle-end-phase";
 import { GameOverPhase } from "#app/phases/game-over-phase";
-import { ExpPhase } from "#app/phases/exp-phase";
-import { ShowPartyExpBarPhase } from "#app/phases/show-party-exp-bar-phase";
 import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
+import { PartyExpPhase } from "#app/phases/party-exp-phase";
 
 /**
  * Animates exclamation sprite over trainer's head at start of encounter
@@ -72,7 +69,7 @@ export interface EnemyPokemonConfig {
   isBoss: boolean;
   bossSegments?: number;
   bossSegmentModifier?: number; // Additive to the determined segment number
-  mysteryEncounterData?: MysteryEncounterPokemonData;
+  mysteryEncounterPokemonData?: MysteryEncounterPokemonData;
   formIndex?: number;
   abilityIndex?: number;
   level?: number;
@@ -146,7 +143,9 @@ export async function initBattleWithEnemyConfig(scene: BattleScene, partyConfig:
     battle.enemyLevels = new Array(numEnemies).fill(null).map(() => scene.currentBattle.getLevelForWave());
   }
 
-  scene.getEnemyParty().forEach(enemyPokemon => enemyPokemon.destroy());
+  scene.getEnemyParty().forEach(enemyPokemon => {
+    scene.field.remove(enemyPokemon, true);
+  });
   battle.enemyParty = [];
   battle.double = doubleBattle;
 
@@ -229,8 +228,8 @@ export async function initBattleWithEnemyConfig(scene: BattleScene, partyConfig:
       }
 
       // Set custom mystery encounter data fields (such as sprite scale, custom abilities, types, etc.)
-      if (!isNullOrUndefined(config.mysteryEncounterData)) {
-        enemyPokemon.mysteryEncounterData = config.mysteryEncounterData!;
+      if (!isNullOrUndefined(config.mysteryEncounterPokemonData)) {
+        enemyPokemon.mysteryEncounterPokemonData = config.mysteryEncounterPokemonData!;
       }
 
       // Set Boss
@@ -635,90 +634,11 @@ export function setEncounterRewards(scene: BattleScene, customShopRewards?: Cust
  * https://bulbapedia.bulbagarden.net/wiki/List_of_Pok%C3%A9mon_by_effort_value_yield_(Generation_IX)
  * @param useWaveIndex - set to false when directly passing the the full exp value instead of baseExpValue
  */
-export function setEncounterExp(scene: BattleScene, participantId: integer | integer[], baseExpValue: number, useWaveIndex: boolean = true) {
+export function setEncounterExp(scene: BattleScene, participantId: number | number[], baseExpValue: number, useWaveIndex: boolean = true) {
   const participantIds = Array.isArray(participantId) ? participantId : [participantId];
 
   scene.currentBattle.mysteryEncounter!.doEncounterExp = (scene: BattleScene) => {
-    const party = scene.getParty();
-    const expShareModifier = scene.findModifier(m => m instanceof ExpShareModifier) as ExpShareModifier;
-    const expBalanceModifier = scene.findModifier(m => m instanceof ExpBalanceModifier) as ExpBalanceModifier;
-    const multipleParticipantExpBonusModifier = scene.findModifier(m => m instanceof MultipleParticipantExpBonusModifier) as MultipleParticipantExpBonusModifier;
-    const nonFaintedPartyMembers = party.filter(p => p.hp);
-    const expPartyMembers = nonFaintedPartyMembers.filter(p => p.level < scene.getMaxExpLevel());
-    const partyMemberExp: number[] = [];
-    // EXP value calculation is based off Pokemon.getExpValue
-    let expValue = Math.floor(baseExpValue * (useWaveIndex ? scene.currentBattle.waveIndex : 1) / 5 + 1);
-
-    if (participantIds?.length > 0) {
-      if (scene.currentBattle.mysteryEncounter!.encounterMode === MysteryEncounterMode.TRAINER_BATTLE) {
-        expValue = Math.floor(expValue * 1.5);
-      }
-      for (const partyMember of nonFaintedPartyMembers) {
-        const pId = partyMember.id;
-        const participated = participantIds.includes(pId);
-        if (participated) {
-          partyMember.addFriendship(2);
-        }
-        if (!expPartyMembers.includes(partyMember)) {
-          continue;
-        }
-        if (!participated && !expShareModifier) {
-          partyMemberExp.push(0);
-          continue;
-        }
-        let expMultiplier = 0;
-        if (participated) {
-          expMultiplier += (1 / participantIds.length);
-          if (participantIds.length > 1 && multipleParticipantExpBonusModifier) {
-            expMultiplier += multipleParticipantExpBonusModifier.getStackCount() * 0.2;
-          }
-        } else if (expShareModifier) {
-          expMultiplier += (expShareModifier.getStackCount() * 0.2) / participantIds.length;
-        }
-        if (partyMember.pokerus) {
-          expMultiplier *= 1.5;
-        }
-        if (Overrides.XP_MULTIPLIER_OVERRIDE !== null) {
-          expMultiplier = Overrides.XP_MULTIPLIER_OVERRIDE;
-        }
-        const pokemonExp = new Utils.NumberHolder(expValue * expMultiplier);
-        scene.applyModifiers(PokemonExpBoosterModifier, true, partyMember, pokemonExp);
-        partyMemberExp.push(Math.floor(pokemonExp.value));
-      }
-
-      if (expBalanceModifier) {
-        let totalLevel = 0;
-        let totalExp = 0;
-        expPartyMembers.forEach((expPartyMember, epm) => {
-          totalExp += partyMemberExp[epm];
-          totalLevel += expPartyMember.level;
-        });
-
-        const medianLevel = Math.floor(totalLevel / expPartyMembers.length);
-
-        const recipientExpPartyMemberIndexes: number[] = [];
-        expPartyMembers.forEach((expPartyMember, epm) => {
-          if (expPartyMember.level <= medianLevel) {
-            recipientExpPartyMemberIndexes.push(epm);
-          }
-        });
-
-        const splitExp = Math.floor(totalExp / recipientExpPartyMemberIndexes.length);
-
-        expPartyMembers.forEach((_partyMember, pm) => {
-          partyMemberExp[pm] = Phaser.Math.Linear(partyMemberExp[pm], recipientExpPartyMemberIndexes.indexOf(pm) > -1 ? splitExp : 0, 0.2 * expBalanceModifier.getStackCount());
-        });
-      }
-
-      for (let pm = 0; pm < expPartyMembers.length; pm++) {
-        const exp = partyMemberExp[pm];
-
-        if (exp) {
-          const partyMemberIndex = party.indexOf(expPartyMembers[pm]);
-          scene.unshiftPhase(expPartyMembers[pm].isOnField() ? new ExpPhase(scene, partyMemberIndex, exp) : new ShowPartyExpBarPhase(scene, partyMemberIndex, exp));
-        }
-      }
-    }
+    scene.unshiftPhase(new PartyExpPhase(scene, baseExpValue, useWaveIndex, new Set(participantIds)));
 
     return true;
   };

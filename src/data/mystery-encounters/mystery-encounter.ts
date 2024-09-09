@@ -225,6 +225,10 @@ export default class MysteryEncounter implements IMysteryEncounter {
    */
   expMultiplier: number;
   /**
+   * Can add any asset load promises here during onInit() to make sure the scene awaits the loads properly
+   */
+  loadAssets: Promise<void>[];
+  /**
    * Generic property to set any custom data required for the encounter
    * Extremely useful for carrying state/data between onPreOptionPhase/onOptionPhase/onPostOptionPhase
    */
@@ -260,6 +264,7 @@ export default class MysteryEncounter implements IMysteryEncounter {
     this.introVisuals = undefined;
     this.misc = null;
     this.expMultiplier = 1;
+    this.loadAssets = [];
   }
 
   /**

@@ -1984,6 +1984,33 @@ export class ExposedTag extends BattlerTag {
   }
 }
 
+/**
+ * Tag that doubles the type effectiveness of Fire-type moves.
+ * @extends BattlerTag
+ */
+export class TarShotTag extends BattlerTag {
+  constructor() {
+    super(BattlerTagType.TAR_SHOT, BattlerTagLapseType.CUSTOM, 0);
+  }
+
+  /**
+   * If the Pokemon is terastallized, the tag cannot be added.
+   * @param {Pokemon} pokemon the {@linkcode Pokemon} to which the tag is added
+   * @returns whether the tag is applied
+   */
+  override canAdd(pokemon: Pokemon): boolean {
+    return !pokemon.isTerastallized();
+  }
+
+  override onAdd(pokemon: Pokemon): void {
+    pokemon.scene.queueMessage(i18next.t("battlerTags:tarShotOnAdd", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }));
+  }
+}
+
+/**
+ * Tag that adds extra post-summon effects to a battle for a specific Pokemon
+ * Currently used only in MysteryEncounters to provide start of fight stat buffs
+ */
 export class MysteryEncounterPostSummonTag extends BattlerTag {
   constructor(sourceMove: Moves) {
     super(BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON, BattlerTagLapseType.CUSTOM, 1, sourceMove);
@@ -2016,6 +2043,15 @@ export class MysteryEncounterPostSummonTag extends BattlerTag {
   }
 }
 
+/**
+ * Retrieves a {@linkcode BattlerTag} based on the provided tag type, turn count, source move, and source ID.
+ *
+ * @param {BattlerTagType} tagType the type of the {@linkcode BattlerTagType}.
+ * @param turnCount the turn count.
+ * @param {Moves} sourceMove the source {@linkcode Moves}.
+ * @param sourceId the source ID.
+ * @returns {BattlerTag} the corresponding {@linkcode BattlerTag} object.
+ */
 export function getBattlerTag(tagType: BattlerTagType, turnCount: number, sourceMove: Moves, sourceId: number): BattlerTag {
   switch (tagType) {
   case BattlerTagType.RECHARGING:
@@ -2156,6 +2192,8 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: number, source
   case BattlerTagType.GULP_MISSILE_ARROKUDA:
   case BattlerTagType.GULP_MISSILE_PIKACHU:
     return new GulpMissileTag(tagType, sourceMove);
+  case BattlerTagType.TAR_SHOT:
+    return new TarShotTag();
   case BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON:
     return new MysteryEncounterPostSummonTag(sourceMove);
   case BattlerTagType.NONE:

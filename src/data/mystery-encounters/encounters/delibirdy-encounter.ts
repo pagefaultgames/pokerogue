@@ -40,7 +40,7 @@ export const DelibirdyEncounter: MysteryEncounter =
   MysteryEncounterBuilder.withEncounterType(MysteryEncounterType.DELIBIRDY)
     .withEncounterTier(MysteryEncounterTier.GREAT)
     .withSceneWaveRangeRequirement(10, 180)
-    .withSceneRequirement(new MoneyRequirement(0, 2.75)) // Must have enough money for it to spawn at the very least
+    .withSceneRequirement(new MoneyRequirement(0, 2)) // Must have enough money for it to spawn at the very least
     .withPrimaryPokemonRequirement(new CombinationPokemonRequirement( // Must also have either option 2 or 3 available to spawn
       new HeldItemRequirement(OPTION_2_ALLOWED_MODIFIERS),
       new HeldItemRequirement(OPTION_3_DISALLOWED_MODIFIERS, 1, true)
@@ -91,7 +91,7 @@ export const DelibirdyEncounter: MysteryEncounter =
     .withOption(
       MysteryEncounterOptionBuilder
         .newOptionWithMode(MysteryEncounterOptionMode.DISABLED_OR_DEFAULT)
-        .withSceneMoneyRequirement(0, 2.75) // Must have money to spawn
+        .withSceneMoneyRequirement(0, 2) // Must have money to spawn
         .withDialogue({
           buttonLabel: `${namespace}.option.1.label`,
           buttonTooltip: `${namespace}.option.1.tooltip`,

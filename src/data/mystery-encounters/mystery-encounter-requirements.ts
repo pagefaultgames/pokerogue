@@ -123,11 +123,11 @@ export class PreviousEncounterRequirement extends EncounterSceneRequirement {
   }
 
   meetsRequirement(scene: BattleScene): boolean {
-    return scene.mysteryEncounterData.encounteredEvents.some(e => e.type === this.previousEncounterRequirement);
+    return scene.mysteryEncounterSaveData.encounteredEvents.some(e => e.type === this.previousEncounterRequirement);
   }
 
   getDialogueToken(scene: BattleScene, pokemon?: PlayerPokemon): [string, string] {
-    return ["previousEncounter", scene.mysteryEncounterData.encounteredEvents.find(e => e.type === this.previousEncounterRequirement)?.[0].toString() ?? ""];
+    return ["previousEncounter", scene.mysteryEncounterSaveData.encounteredEvents.find(e => e.type === this.previousEncounterRequirement)?.[0].toString() ?? ""];
   }
 }
 

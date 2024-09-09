@@ -1,11 +1,11 @@
-import BattleScene from "#app/battle-scene.js";
-import { ExpNotification } from "#app/enums/exp-notification.js";
-import { EvolutionPhase } from "#app/phases/evolution-phase.js";
-import { PlayerPokemon } from "#app/field/pokemon.js";
-import { getPokemonNameWithAffix } from "#app/messages.js";
-import { LevelAchv } from "#app/system/achv.js";
+import BattleScene from "#app/battle-scene";
+import { ExpNotification } from "#app/enums/exp-notification";
+import { EvolutionPhase } from "#app/phases/evolution-phase";
+import { PlayerPokemon } from "#app/field/pokemon";
+import { getPokemonNameWithAffix } from "#app/messages";
+import { LevelAchv } from "#app/system/achv";
 import i18next from "i18next";
-import * as Utils from "#app/utils.js";
+import * as Utils from "#app/utils";
 import { PlayerPartyMemberPokemonPhase } from "./player-party-member-pokemon-phase";
 import { LearnMovePhase } from "./learn-move-phase";
 

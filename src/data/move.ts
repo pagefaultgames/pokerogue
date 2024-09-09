@@ -3472,7 +3472,7 @@ export class SpitUpPowerAttr extends VariablePowerAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     const stockpilingTag = user.getTag(StockpilingTag);
 
-    if (stockpilingTag !== null && stockpilingTag.stockpiledCount > 0) {
+    if (stockpilingTag && stockpilingTag.stockpiledCount > 0) {
       const power = args[0] as Utils.IntegerHolder;
       power.value = this.multiplier * stockpilingTag.stockpiledCount;
       return true;
@@ -3490,7 +3490,7 @@ export class SwallowHealAttr extends HealAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     const stockpilingTag = user.getTag(StockpilingTag);
 
-    if (stockpilingTag !== null && stockpilingTag?.stockpiledCount > 0) {
+    if (stockpilingTag && stockpilingTag.stockpiledCount > 0) {
       const stockpiled = stockpilingTag.stockpiledCount;
       let healRatio: number;
 
@@ -8644,7 +8644,7 @@ export function initMoves() {
       .condition((user, target, move) => user.getTag(TrappedTag)?.sourceMove !== Moves.NO_RETREAT), // fails if the user is currently trapped by No Retreat
     new StatusMove(Moves.TAR_SHOT, Type.ROCK, 100, 15, -1, 0, 8)
       .attr(StatStageChangeAttr, [ Stat.SPD ], -1)
-      .partial(),
+      .attr(AddBattlerTagAttr, BattlerTagType.TAR_SHOT, false),
     new StatusMove(Moves.MAGIC_POWDER, Type.PSYCHIC, 100, 20, -1, 0, 8)
       .attr(ChangeTypeAttr, Type.PSYCHIC)
       .powderMove(),

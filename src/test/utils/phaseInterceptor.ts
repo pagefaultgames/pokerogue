@@ -51,6 +51,7 @@ import {
 } from "#app/phases/mystery-encounter-phases";
 import { LearnMovePhase } from "#app/phases/learn-move-phase";
 import { ModifierRewardPhase } from "#app/phases/modifier-reward-phase";
+import { PartyExpPhase } from "#app/phases/party-exp-phase";
 
 export interface PromptHandler {
   phaseTarget?;
@@ -125,7 +126,8 @@ export default class PhaseInterceptor {
     [MysteryEncounterRewardsPhase, this.startPhase],
     [PostMysteryEncounterPhase, this.startPhase],
     [LearnMovePhase, this.startPhase],
-    [ModifierRewardPhase, this.startPhase]
+    [ModifierRewardPhase, this.startPhase],
+    [PartyExpPhase, this.startPhase]
   ];
 
   private endBySetMode = [
