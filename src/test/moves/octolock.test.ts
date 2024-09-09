@@ -7,7 +7,6 @@ import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/utils/gameManager";
-import { SPLASH_ONLY } from "#test/utils/testUtils";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
@@ -30,7 +29,7 @@ describe("Moves - Octolock", () => {
 
     game.override.battleType("single")
       .enemySpecies(Species.RATTATA)
-      .enemyMoveset(SPLASH_ONLY)
+      .enemyMoveset(Moves.SPLASH)
       .enemyAbility(Abilities.BALL_FETCH)
       .startingLevel(2000)
       .moveset([ Moves.OCTOLOCK, Moves.SPLASH ])
