@@ -6217,23 +6217,27 @@ export class VariableTargetAttr extends MoveAttr {
   }
 }
 
+/**
+ * Attribute for {@linkcode Moves.AFTER_YOU}
+ *
+ * [After You - Move | Bulbapedia](https://bulbapedia.bulbagarden.net/wiki/After_You_(move))
+ */
 export class AfterYouAttr extends MoveEffectAttr {
   /**
    * Allows the target of this move to act right after the user.
+   *
    * @param user {@linkcode Pokemon} that is using the move.
    * @param target {@linkcode Pokemon} that will move right after this move is used.
    * @param move {@linkcode Move} {@linkcode Moves.AFTER_YOU}
-   * @param {any[]} args N/A
+   * @param _args N/A
    * @returns true
    */
-  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    user.scene.queueMessage(i18next.t("moveTriggers:afterYou", {pokemonName: getPokemonNameWithAffix(target)}));
+  override apply(user: Pokemon, target: Pokemon, _move: Move, _args: any[]): boolean {
+    user.scene.queueMessage(i18next.t("moveTriggers:afterYou", {targetName: getPokemonNameWithAffix(target)}));
 
-    /* Will find next acting phase of the targeted pokémon,
-    delete it and queue it next on successful delete. */
-
-    const nextAttackPhase: MovePhase = target.scene.findPhase((phase: MovePhase) => phase.pokemon === target) as MovePhase;
-    if (target.scene.tryRemovePhase((phase: MovePhase) => phase.pokemon === target)) {
+    //Will find next acting phase of the targeted pokémon, delete it and queue it next on successful delete.
+    const nextAttackPhase = target.scene.findPhase<MovePhase>((phase) => phase.pokemon === target);
+    if (nextAttackPhase && target.scene.tryRemovePhase((phase: MovePhase) => phase.pokemon === target)) {
       target.scene.prependToPhase(new MovePhase(target.scene, target, [...nextAttackPhase.targets], nextAttackPhase.move), MovePhase);
     }
 
