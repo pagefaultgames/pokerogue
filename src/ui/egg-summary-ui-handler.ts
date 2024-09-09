@@ -91,9 +91,7 @@ export default class EggSummaryUiHandler extends MessageUiHandler {
 
   clear() {
     super.clear();
-    console.log("starting to clear");
-
-    this.cursor = 0;
+    this.cursor = -1;
     this.summaryContainer.setVisible(false);
     this.pokemonIconSpritesContainer.removeAll(true);
     this.pokemonIconsContainer.removeAll(true);
@@ -258,11 +256,8 @@ export default class EggSummaryUiHandler extends MessageUiHandler {
 
     let success = false;
     const error = false;
-    console.log("processing input" + button);
     if (button === Button.CANCEL) {
       const phase = this.scene.getCurrentPhase();
-      // ui.revertMode();
-      // this.clear();
       if (phase instanceof EggSummaryPhase) {
         phase.end();
       }
