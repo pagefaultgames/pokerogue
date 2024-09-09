@@ -528,7 +528,7 @@ export function printDRPD(inData: string, indent: string, drpd: DRPD): string {
     inData += ",\n" + indent + "  \"waves\": [\n"
     var isFirst = true
     for (var i = 0; i < drpd.waves.length; i++) {
-      if (drpd.waves[i] != undefined && drpd.waves[i] != null) {
+      if (drpd.waves[i] != undefined && drpd.waves[i] != null && drpd.waves[i].id > 0) {
         if (isFirst) {
           isFirst = false;
         } else {
