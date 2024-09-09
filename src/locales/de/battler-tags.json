@@ -70,5 +70,5 @@
   "stockpilingOnAdd": "{{pokemonNameWithAffix}} hortet {{stockpiledCount}}!",
   "disabledOnAdd": " {{moveName}} von {{pokemonNameWithAffix}} wurde blockiert!",
   "disabledLapse": "{{moveName}} von {{pokemonNameWithAffix}} ist nicht länger blockiert!",
-  "tarShotOnAdd": "{{pokemonNameWithAffix}} became weaker to fire!"
+  "tarShotOnAdd": "{{pokemonNameWithAffix}} ist nun schwach gegenüber Feuer-Attacken!"
 }
