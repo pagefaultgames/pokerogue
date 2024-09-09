@@ -3923,7 +3923,7 @@ export class PostBattleLootAbAttr extends PostBattleAbAttr {
 }
 
 export class PostFaintAbAttr extends AbAttr {
-  applyPostFaint(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker: Pokemon | undefined, move: Move | undefined, hitResult: HitResult | undefined, args: any[]): boolean {
+  applyPostFaint(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker?: Pokemon, move?: Move, hitResult?: HitResult, ...args: any[]): boolean {
     return false;
   }
 }
@@ -3974,7 +3974,7 @@ export class PostFaintClearWeatherAbAttr extends PostFaintAbAttr {
    * @param args N/A
    * @returns {boolean} Returns true if the weather clears, otherwise false.
    */
-  applyPostFaint(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker: Pokemon | undefined, move: Move | undefined, hitResult: HitResult | undefined, args: any[]): boolean {
+  applyPostFaint(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker?: Pokemon, move?: Move, hitResult?: HitResult, ...args: any[]): boolean {
     const weatherType = pokemon.scene.arena.weather?.weatherType;
     let turnOffWeather = false;
 
@@ -4022,7 +4022,7 @@ export class PostFaintContactDamageAbAttr extends PostFaintAbAttr {
     this.damageRatio = damageRatio;
   }
 
-  applyPostFaint(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker: Pokemon | undefined, move: Move | undefined, hitResult: HitResult | undefined, args: any[]): boolean {
+  applyPostFaint(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker?: Pokemon, move?: Move, hitResult?: HitResult, ...args: any[]): boolean {
     if (move !== undefined && attacker !== undefined && move.checkFlag(MoveFlags.MAKES_CONTACT, attacker, pokemon)) {  //If the mon didn't die to indirect damage
       const cancelled = new Utils.BooleanHolder(false);
       pokemon.scene.getField(true).map(p => applyAbAttrs(FieldPreventExplosiveMovesAbAttr, p, cancelled, simulated));
@@ -4052,7 +4052,7 @@ export class PostFaintHPDamageAbAttr extends PostFaintAbAttr {
     super ();
   }
 
-  applyPostFaint(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker: Pokemon | undefined, move: Move | undefined, hitResult: HitResult | undefined, args: any[]): boolean {
+  applyPostFaint(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker?: Pokemon, move?: Move, hitResult?: HitResult, ...args: any[]): boolean {
     if (move !== undefined && attacker !== undefined && !simulated) { //If the mon didn't die to indirect damage
       const damage = pokemon.turnData.attacksReceived[0].damage;
       attacker.damageAndUpdate((damage), HitResult.OTHER);
