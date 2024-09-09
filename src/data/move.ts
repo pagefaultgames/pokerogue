@@ -2005,9 +2005,7 @@ export class PsychoShiftEffectAttr extends MoveEffectAttr {
 
     if (target.status) {
       return false;
-    }
-    //@ts-ignore - how can target.status.effect be checked when we return `false` before when it's defined?
-    if (!target.status || (target.status.effect === statusToApply && move.chance < 0)) { // TODO: resolve ts-ignore
+    } else {
       const canSetStatus = target.canSetStatus(statusToApply, true, false, user);
 
       if (canSetStatus) {
@@ -2021,8 +2019,6 @@ export class PsychoShiftEffectAttr extends MoveEffectAttr {
 
       return canSetStatus;
     }
-
-    return false;
   }
 
   getTargetBenefitScore(user: Pokemon, target: Pokemon, move: Move): number {
