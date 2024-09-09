@@ -91,12 +91,16 @@ export default class EggSummaryUiHandler extends MessageUiHandler {
 
   clear() {
     super.clear();
-    this.cursor = -1;
+    console.log("starting to clear");
+
+    this.cursor = 0;
     this.summaryContainer.setVisible(false);
     this.pokemonIconSpritesContainer.removeAll(true);
     this.pokemonIconsContainer.removeAll(true);
     this.eggHatchBg.setVisible(false);
     this.getUi().hideTooltip();
+    console.time("clearing keys");
+
     // Note: Questions on garbage collection go to @frutescens
     const activeKeys = this.scene.getActiveKeys();
     // Removing unnecessary sprites from animation manager
@@ -117,7 +121,10 @@ export default class EggSummaryUiHandler extends MessageUiHandler {
     this.eggHatchData.length = 0;
     // Removes Pokemon icons in EggSummaryUiHandler
     this.iconAnimHandler.removeAll();
+    console.timeEnd("clearing keys");
+
     console.log("Egg Summary Handler cleared");
+    console.log("Egg Summary Handler cleared cursor ", this.cursor);
   }
 
   /**
@@ -254,10 +261,11 @@ export default class EggSummaryUiHandler extends MessageUiHandler {
     console.log("processing input" + button);
     if (button === Button.CANCEL) {
       const phase = this.scene.getCurrentPhase();
+      // ui.revertMode();
+      // this.clear();
       if (phase instanceof EggSummaryPhase) {
         phase.end();
       }
-      ui.revertMode();
       success = true;
     } else {
       const count = this.eggHatchData.length;

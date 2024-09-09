@@ -424,7 +424,6 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
       } else {
         this.cursorObj.setPosition(sliceWidth * (cursor + 1) + (sliceWidth * 0.5) - 16, (-this.scene.game.canvas.height / 12 - this.scene.game.canvas.height / 32) - (-16 + 28 * (this.rowCursor - (this.shopOptionsRows.length - 1))));
       }
-
       const type = options[this.cursor].modifierTypeOption.type;
       type && ui.showText(type.getDescription(this.scene));
       if (type instanceof TmModifierType) {
