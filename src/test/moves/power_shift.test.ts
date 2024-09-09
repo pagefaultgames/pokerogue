@@ -3,7 +3,6 @@ import { Species } from "#app/enums/species";
 import { Stat } from "#app/enums/stat";
 import { Abilities } from "#enums/abilities";
 import GameManager from "#test/utils/gameManager";
-import { SPLASH_ONLY } from "#test/utils/testUtils";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
@@ -29,7 +28,7 @@ describe("Moves - Power Shift", () => {
       .battleType("single")
       .ability(Abilities.BALL_FETCH)
       .enemyAbility(Abilities.BALL_FETCH)
-      .enemyMoveset(SPLASH_ONLY);
+      .enemyMoveset(Moves.SPLASH);
   });
 
   it("switches the user's raw Attack stat with its raw Defense stat", async () => {
