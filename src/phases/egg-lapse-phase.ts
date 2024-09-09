@@ -32,7 +32,6 @@ export class EggLapsePhase extends Phase {
     this.eggHatchData= [];
 
     if (eggsToHatchCount > 0) {
-      console.log("checked eggs to hatch");
 
       if (eggsToHatchCount >= this.minEggsToPromptSkip) {
         this.scene.ui.showText(i18next.t("battle:eggHatching"), 0, () => {
@@ -49,8 +48,7 @@ export class EggLapsePhase extends Phase {
         }, 100, true);
       } else {
         // regular hatches, no summary
-        this.scene.ui.showText(i18next.t("battle:eggSkipPrompt"), 0);
-        // this.scene.queueMessage(i18next.t("battle:eggHatching"));
+        this.scene.queueMessage(i18next.t("battle:eggHatching"));
         this.hatchEggsRegular(eggsToHatch);
         this.end();
       }
@@ -84,7 +82,6 @@ export class EggLapsePhase extends Phase {
   showSummary() {
     this.scene.unshiftPhase(new EggSummaryPhase(this.scene, this.eggHatchData));
     this.end();
-    console.log("end of lapse phase");
   }
 
   /**
