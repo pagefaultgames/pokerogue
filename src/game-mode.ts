@@ -9,6 +9,7 @@ import * as Utils from "./utils";
 import { Biome } from "#enums/biome";
 import { Species } from "#enums/species";
 import { Challenges } from "./enums/challenges";
+import MAX_SAFE_INTEGER = Phaser.Math.MAX_SAFE_INTEGER;
 
 export enum GameModes {
   CLASSIC,
@@ -30,6 +31,8 @@ interface GameModeConfig {
   isSplicedOnly?: boolean;
   isChallenge?: boolean;
   hasMysteryEncounters?: boolean;
+  minMysteryEncounterWave?: number;
+  maxMysteryEncounterWave?: number;
 }
 
 export class GameMode implements GameModeConfig {
@@ -47,6 +50,8 @@ export class GameMode implements GameModeConfig {
   public challenges: Challenge[];
   public battleConfig: FixedBattleConfigs;
   public hasMysteryEncounters: boolean;
+  public minMysteryEncounterWave: number;
+  public maxMysteryEncounterWave: number;
 
   constructor(modeId: GameModes, config: GameModeConfig, battleConfig?: FixedBattleConfigs) {
     this.modeId = modeId;
@@ -56,6 +61,8 @@ export class GameMode implements GameModeConfig {
       this.challenges = allChallenges.map(c => copyChallenge(c));
     }
     this.battleConfig = battleConfig || {};
+    this.minMysteryEncounterWave = this.minMysteryEncounterWave ?? 0;
+    this.maxMysteryEncounterWave = this.maxMysteryEncounterWave ?? MAX_SAFE_INTEGER;
   }
 
   /**
@@ -338,7 +345,7 @@ export class GameMode implements GameModeConfig {
 export function getGameMode(gameMode: GameModes): GameMode {
   switch (gameMode) {
   case GameModes.CLASSIC:
-    return new GameMode(GameModes.CLASSIC, { isClassic: true, hasTrainers: true, hasMysteryEncounters: true }, classicFixedBattles);
+    return new GameMode(GameModes.CLASSIC, { isClassic: true, hasTrainers: true, hasMysteryEncounters: true, maxMysteryEncounterWave: 180, minMysteryEncounterWave: 10 }, classicFixedBattles);
   case GameModes.ENDLESS:
     return new GameMode(GameModes.ENDLESS, { isEndless: true, hasShortBiomes: true, hasRandomBosses: true });
   case GameModes.SPLICED_ENDLESS:
