@@ -666,9 +666,9 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
     case PartyMemberStrength.WEAK:
       return 20;
     case PartyMemberStrength.AVERAGE:
-      return 10;
+      return 8;
     case PartyMemberStrength.STRONG:
-      return 5;
+      return 4;
     default:
       return 0;
     }
@@ -734,11 +734,6 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
 
           evolutionChance = Math.min(0.65 * easeInFunc(Math.min(Math.max(level - evolutionLevel, 0), preferredMinLevel) / preferredMinLevel) + 0.35 * easeOutFunc(Math.min(Math.max(level - evolutionLevel, 0), preferredMinLevel * 2.5) / (preferredMinLevel * 2.5)), 1);
         }
-      }
-      /* (Most) Trainers shouldn't be using unevolved Pokemon by the third gym leader / wave 80. Exceptions to this include Breeders, whose large teams are balanced by the use of weaker pokemon */
-      if (currentWave >= 80 && forTrainer && strength > PartyMemberStrength.WEAKER) {
-        evolutionChance = 1;
-        noEvolutionChance = 0;
       }
 
       if (evolutionChance > 0) {
