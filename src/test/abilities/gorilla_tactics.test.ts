@@ -30,7 +30,7 @@ describe("Abilities - Gorilla Tactics", () => {
       .enemyMoveset([Moves.SPLASH, Moves.DISABLE])
       .enemySpecies(Species.MAGIKARP)
       .enemyLevel(30)
-      .moveset([Moves.SPLASH, Moves.TACKLE])
+      .moveset([Moves.SPLASH, Moves.TACKLE, Moves.GROWL])
       .ability(Abilities.GORILLA_TACTICS);
   });
 
@@ -57,22 +57,21 @@ describe("Abilities - Gorilla Tactics", () => {
     const darmanitan = game.scene.getPlayerPokemon()!;
     const enemy = game.scene.getEnemyPokemon()!;
 
-    game.move.select(Moves.SPLASH);
+    // First turn, lock move to Growl
+    game.move.select(Moves.GROWL);
+    await game.forceEnemyMove(Moves.SPLASH);
 
-    await game.phaseInterceptor.to("TurnEndPhase");
-
-    // Turn where Tackle is interrupted by Disable
+    // Second turn, Growl is interrupted by Disable
     await game.toNextTurn();
 
-    game.move.select(Moves.SPLASH);
+    game.move.select(Moves.GROWL);
     await game.forceEnemyMove(Moves.DISABLE);
-
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
 
     await game.phaseInterceptor.to("TurnEndPhase");
-    expect(enemy.hp).toBe(enemy.getMaxHp());
+    expect(enemy.getStatStage(Stat.ATK)).toBe(-1); // Only the effect of the first Growl should be applied
 
-    // Turn where Struggle is used
+    // Third turn, Struggle is used
     await game.toNextTurn();
 
     game.move.select(Moves.TACKLE);
