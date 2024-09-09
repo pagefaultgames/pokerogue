@@ -1,6 +1,6 @@
 {
   "hitWithRecoil": "{{pokemonName}} est blessé par le contrecoup !",
-  "cutHpPowerUpMove": "{{pokemonName}} sacrifie des PV\net augmente la puissance ses capacités !",
+  "cutHpPowerUpMove": "{{pokemonName}} sacrifie des PV\net augmente la puissance de ses capacités !",
   "absorbedElectricity": "{{pokemonName}} absorbe de l’électricité !",
   "switchedStatChanges": "{{pokemonName}} permute\nles changements de stats avec ceux de sa cible !",
   "switchedTwoStatChanges": "{{pokemonName}} permute les changements de {{firstStat}} et de {{secondStat}} avec ceux de sa cible !",
