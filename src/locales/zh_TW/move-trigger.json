@@ -66,5 +66,6 @@
   "revivalBlessing": "{{pokemonName}}復活了！",
   "swapArenaTags": "{{pokemonName}}\n交換了雙方的場地效果！",
   "exposedMove": "{{pokemonName}}識破了\n{{targetPokemonName}}的原形！",
-  "safeguard": "{{targetName}}\n正受到神秘之幕的保護！"
+  "safeguard": "{{targetName}}\n正受到神秘之幕的保護！",
+  "afterYou": "{{pokemonName}} took the kind offer!"
 }
