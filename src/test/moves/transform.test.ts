@@ -6,7 +6,6 @@ import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { Moves } from "#enums/moves";
 import { Stat, BATTLE_STATS, EFFECTIVE_STATS } from "#enums/stat";
 import { Abilities } from "#enums/abilities";
-import { SPLASH_ONLY } from "../utils/testUtils";
 
 // TODO: Add more tests once Transform is fully implemented
 describe("Moves - Transform", () => {
@@ -31,7 +30,7 @@ describe("Moves - Transform", () => {
       .enemyLevel(200)
       .enemyAbility(Abilities.BEAST_BOOST)
       .enemyPassiveAbility(Abilities.BALL_FETCH)
-      .enemyMoveset(SPLASH_ONLY)
+      .enemyMoveset(Moves.SPLASH)
       .ability(Abilities.INTIMIDATE)
       .moveset([ Moves.TRANSFORM ]);
   });
@@ -77,7 +76,7 @@ describe("Moves - Transform", () => {
   }, 20000);
 
   it("should copy in-battle overridden stats", async () => {
-    game.override.enemyMoveset(new Array(4).fill(Moves.POWER_SPLIT));
+    game.override.enemyMoveset([Moves.POWER_SPLIT]);
 
     await game.startBattle([
       Species.DITTO
