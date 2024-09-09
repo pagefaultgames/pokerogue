@@ -70,5 +70,5 @@
   "stockpilingOnAdd": "¡{{pokemonNameWithAffix}} ha reservado energía por {{stockpiledCount}}ª vez!",
   "disabledOnAdd": "¡Se ha anulado el movimiento {{moveName}}\nde {{pokemonNameWithAffix}}!",
   "disabledLapse": "¡El movimiento {{moveName}} de {{pokemonNameWithAffix}} \n ya no está anulado!",
-  "tarShotOnAdd": "{{pokemonNameWithAffix}} became weaker to fire!"
+  "tarShotOnAdd": "¡{{pokemonNameWithAffix}} se ha vuelto débil ante el fuego!"
 }
