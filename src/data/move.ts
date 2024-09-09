@@ -757,7 +757,10 @@ export default class Move implements Localizable {
 
     const fieldAuras = new Set(
       source.scene.getField(true)
-        .map((p) => p.getAbilityAttrs(FieldMoveTypePowerBoostAbAttr) as FieldMoveTypePowerBoostAbAttr[])
+        .map((p) => p.getAbilityAttrs(FieldMoveTypePowerBoostAbAttr).filter(attr => {
+          const condition = attr.getCondition();
+          return (!condition || condition(p));
+        }) as FieldMoveTypePowerBoostAbAttr[])
         .flat(),
     );
     for (const aura of fieldAuras) {
@@ -3469,7 +3472,7 @@ export class SpitUpPowerAttr extends VariablePowerAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     const stockpilingTag = user.getTag(StockpilingTag);
 
-    if (stockpilingTag !== null && stockpilingTag.stockpiledCount > 0) {
+    if (stockpilingTag && stockpilingTag.stockpiledCount > 0) {
       const power = args[0] as Utils.IntegerHolder;
       power.value = this.multiplier * stockpilingTag.stockpiledCount;
       return true;
@@ -3487,7 +3490,7 @@ export class SwallowHealAttr extends HealAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     const stockpilingTag = user.getTag(StockpilingTag);
 
-    if (stockpilingTag !== null && stockpilingTag?.stockpiledCount > 0) {
+    if (stockpilingTag && stockpilingTag.stockpiledCount > 0) {
       const stockpiled = stockpilingTag.stockpiledCount;
       let healRatio: number;
 
@@ -4400,7 +4403,7 @@ export class AddBattlerTagAttr extends MoveEffectAttr {
 
     const moveChance = this.getMoveChance(user, target, move, this.selfTarget, true);
     if (moveChance < 0 || moveChance === 100 || user.randSeedInt(100) < moveChance) {
-      return (this.selfTarget ? user : target).addTag(this.tagType,  user.randSeedInt(this.turnCountMax - this.turnCountMin, this.turnCountMin), move.id, user.id);
+      return (this.selfTarget ? user : target).addTag(this.tagType,  user.randSeedIntRange(this.turnCountMin, this.turnCountMax), move.id, user.id);
     }
 
     return false;
