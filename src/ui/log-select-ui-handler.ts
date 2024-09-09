@@ -20,7 +20,7 @@ import { allSpecies, getPokemonSpecies, getPokemonSpeciesForm } from "#app/data/
 const sessionSlotCount = 5;
 const gap = 20;
 
-export type LogSelectCallback = (key: string) => void;
+export type LogSelectCallback = (key?: string) => void;
 
 export default class LogSelectUiHandler extends MessageUiHandler {
 
@@ -30,12 +30,12 @@ export default class LogSelectUiHandler extends MessageUiHandler {
   private saveSlotSelectMessageBoxContainer: Phaser.GameObjects.Container;
   private sessionSlots: SessionSlot[];
 
-  private selectCallback: LogSelectCallback;
+  private selectCallback?: LogSelectCallback;
   private quitCallback: LogSelectCallback;
 
   private scrollCursor: integer = 0;
 
-  private cursorObj: Phaser.GameObjects.NineSlice;
+  private cursorObj?: Phaser.GameObjects.NineSlice;
 
   private sessionSlotsContainerInitialY: number;
 
@@ -107,20 +107,20 @@ export default class LogSelectUiHandler extends MessageUiHandler {
     let error = false;
 
     if (button === Button.ACTION) {
-      const originalCallback = this.selectCallback;
+      const originalCallback = this.selectCallback!;
       const cursor = this.cursor + this.scrollCursor;
       var k = this.sessionSlots[cursor].key
       if (k != undefined) {
-        var file = JSON.parse(localStorage.getItem(k)) as LoggerTools.DRPD;
+        var file = JSON.parse(localStorage.getItem(k)!) as LoggerTools.DRPD;
         console.log(k, file)
         LoggerTools.generateEditHandlerForLog(this.scene, this.sessionSlots[cursor].logIndex, () => {
-          this.selectCallback = null;
+          this.selectCallback = undefined;
           originalCallback(k)
         })()
         success = true;
       }
     } else if (button === Button.CANCEL) {
-      this.quitCallback(undefined);
+      this.quitCallback!(undefined);
     } else {
       switch (button) {
       case Button.UP:
@@ -207,7 +207,7 @@ export default class LogSelectUiHandler extends MessageUiHandler {
     const changed = super.setCursor(cursor);
 
     if (!this.cursorObj) {
-      this.cursorObj = this.scene.add.nineslice(0, 0, "select_cursor_highlight_thick", null, 296, 44, 6, 6, 6, 6);
+      this.cursorObj = this.scene.add.nineslice(0, 0, "select_cursor_highlight_thick", undefined, 296, 44, 6, 6, 6, 6);
       this.cursorObj.setOrigin(0, 0);
       this.sessionSlotsContainer.add(this.cursorObj);
     }
@@ -237,7 +237,7 @@ export default class LogSelectUiHandler extends MessageUiHandler {
     super.clear();
     this.saveSlotSelectContainer.setVisible(false);
     this.eraseCursor();
-    this.selectCallback = null;
+    this.selectCallback = undefined;
     this.clearSessionSlots();
   }
 
@@ -245,7 +245,7 @@ export default class LogSelectUiHandler extends MessageUiHandler {
     if (this.cursorObj) {
       this.cursorObj.destroy();
     }
-    this.cursorObj = null;
+    this.cursorObj = undefined;
   }
 
   clearSessionSlots() {
@@ -263,11 +263,11 @@ class SessionSlot extends Phaser.GameObjects.Container {
   private loadingLabel: Phaser.GameObjects.Text;
   public logIndex: integer;
 
-  constructor(scene: BattleScene, slotId: integer = undefined, ypos: integer, autoSlot?: integer) {
+  constructor(scene: BattleScene, slotId: integer | undefined = undefined, ypos: integer, autoSlot?: integer) {
     super(scene, 0, ypos * 56 + (ypos > 4 ? gap : 0));
 
-    this.slotId = slotId;
-    this.autoSlot = autoSlot
+    this.slotId = slotId!;
+    this.autoSlot = autoSlot!
 
     this.setup();
   }
@@ -284,7 +284,7 @@ class SessionSlot extends Phaser.GameObjects.Container {
   async setupWithData(data: LoggerTools.DRPD) {
     this.remove(this.loadingLabel, true);
     var lbl = `???`
-    lbl = data.title
+    lbl = data.title!
     if (this.slotId != undefined) {
       lbl = `[${this.slotId + 1}] ${lbl}`
     }
@@ -298,10 +298,13 @@ class SessionSlot extends Phaser.GameObjects.Container {
     const playTimeLabel = addTextObject(this.scene, 8, 33, data.version + " / Path: " + (data.label || ""), TextStyle.WINDOW);
     this.add(playTimeLabel);
 
-    if (data.starters[0] == null) {
+    if (data.starters && data.starters![0] == null) {
       const timestampLabel = addTextObject(this.scene, 144, 10, "No Starter data", TextStyle.WINDOW);
       this.add(timestampLabel);
     }
+    const fileSizeLabel = addTextObject(this.scene, 255, 33, LoggerTools.getSize(JSON.stringify(data)), TextStyle.WINDOW);
+    fileSizeLabel.setAlign("right")
+    this.add(fileSizeLabel);
 
     const pokemonIconsContainer = this.scene.add.container(144, 4);
     if (false || data.starters)
@@ -329,7 +332,7 @@ class SessionSlot extends Phaser.GameObjects.Container {
       }
 
       const text = addTextObject(this.scene, 32, 20, ``, TextStyle.PARTY, { fontSize: "54px", color: "#f8f8f8" });
-      text.setShadow(0, 0, null);
+      text.setShadow(0, 0, undefined);
       text.setStroke("#424242", 14);
       text.setOrigin(1, 0);
 
@@ -361,7 +364,7 @@ class SessionSlot extends Phaser.GameObjects.Container {
       if (slot) {
         this.slotId = slot
       }
-      this.setupWithData(JSON.parse(localStorage.getItem(l)))
+      this.setupWithData(JSON.parse(localStorage.getItem(l)!))
       resolve(true);
     });
     return new Promise<boolean>(resolve => {
@@ -373,7 +376,7 @@ class SessionSlot extends Phaser.GameObjects.Container {
           return;
         }
         this.hasData = true;
-        await this.setupWithData(undefined);
+        //await this.setupWithData(undefined);
         resolve(true);
       });
     });
