@@ -5,7 +5,6 @@ import { Species } from "#app/enums/species";
 import { Stat } from "#app/enums/stat";
 import { Abilities } from "#enums/abilities";
 import GameManager from "#test/utils/gameManager";
-import { SPLASH_ONLY } from "#test/utils/testUtils";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -29,7 +28,7 @@ describe("Moves - Tar Shot", () => {
     game.override
       .battleType("single")
       .enemyAbility(Abilities.BALL_FETCH)
-      .enemyMoveset(SPLASH_ONLY)
+      .enemyMoveset(Moves.SPLASH)
       .enemySpecies(Species.TANGELA)
       .enemyLevel(1000)
       .moveset([Moves.TAR_SHOT, Moves.FIRE_PUNCH])
