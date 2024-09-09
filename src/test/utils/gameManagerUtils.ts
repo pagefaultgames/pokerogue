@@ -1,12 +1,14 @@
-// Function to convert Blob to string
-import {getDailyRunStarters} from "#app/data/daily-run";
-import {Gender} from "#app/data/gender";
-import {Species} from "#enums/species";
-import {Starter} from "#app/ui/starter-select-ui-handler";
-import {GameModes, getGameMode} from "#app/game-mode";
-import {getPokemonSpecies, getPokemonSpeciesForm} from "#app/data/pokemon-species";
-import {PlayerPokemon} from "#app/field/pokemon";
+import BattleScene from "#app/battle-scene";
+import { getDailyRunStarters } from "#app/data/daily-run";
+import { Gender } from "#app/data/gender";
+import { getPokemonSpecies, getPokemonSpeciesForm } from "#app/data/pokemon-species";
+import { Moves } from "#app/enums/moves";
+import { PlayerPokemon } from "#app/field/pokemon";
+import { GameModes, getGameMode } from "#app/game-mode";
+import { Starter } from "#app/ui/starter-select-ui-handler";
+import { Species } from "#enums/species";
 
+/** Function to convert Blob to string */
 export function blobToString(blob) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -79,9 +81,11 @@ export function waitUntil(truth) {
   });
 }
 
-export function getMovePosition(scene, pokemonIndex, moveIndex) {
+/** Get the index of `move` from the moveset of the pokemon on the player's field at location `pokemonIndex` */
+export function getMovePosition(scene: BattleScene, pokemonIndex: 0 | 1, move: Moves) {
   const playerPokemon = scene.getPlayerField()[pokemonIndex];
   const moveSet = playerPokemon.getMoveset();
-  const index = moveSet.findIndex((move) => move.moveId === moveIndex);
+  const index = moveSet.findIndex((m) => m?.moveId === move);
+  console.log(`Move position for ${Moves[move]} (=${move}):`, index);
   return index;
 }

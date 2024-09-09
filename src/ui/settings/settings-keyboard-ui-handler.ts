@@ -9,7 +9,7 @@ import {
   settingKeyboardOptions
 } from "#app/system/settings/settings-keyboard";
 import {reverseValueToKeySetting, truncateString} from "#app/utils";
-import AbstractControlSettingsUiHandler from "#app/ui/settings/abstract-control-settings-ui-handler.js";
+import AbstractControlSettingsUiHandler from "#app/ui/settings/abstract-control-settings-ui-handler";
 import {InterfaceConfig} from "#app/inputs-controller";
 import {addTextObject, TextStyle} from "#app/ui/text";
 import {deleteBind} from "#app/configs/inputs/configHandler";
@@ -29,7 +29,7 @@ export default class SettingsKeyboardUiHandler extends AbstractControlSettingsUi
      * @param scene - The BattleScene instance.
      * @param mode - The UI mode, optional.
      */
-  constructor(scene: BattleScene, mode?: Mode) {
+  constructor(scene: BattleScene, mode: Mode | null = null) {
     super(scene, mode);
     this.titleSelected = "Keyboard";
     this.setting = SettingKeyboard;
@@ -42,10 +42,10 @@ export default class SettingsKeyboardUiHandler extends AbstractControlSettingsUi
     this.settingBlacklisted = settingKeyboardBlackList;
     this.device = Device.KEYBOARD;
 
-    const deleteEvent = scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DELETE);
-    const restoreDefaultEvent = scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.HOME);
-    deleteEvent.on("up", this.onDeleteDown, this);
-    restoreDefaultEvent.on("up", this.onHomeDown, this);
+    const deleteEvent = scene.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.DELETE);
+    const restoreDefaultEvent = scene.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.HOME);
+    deleteEvent && deleteEvent.on("up", this.onDeleteDown, this);
+    restoreDefaultEvent && restoreDefaultEvent.on("up", this.onHomeDown, this);
   }
 
   setSetting = setSettingKeyboard;

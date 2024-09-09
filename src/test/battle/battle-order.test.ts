@@ -1,21 +1,12 @@
-import {afterEach, beforeAll, beforeEach, describe, expect, it, vi} from "vitest";
-import Phaser from "phaser";
-import GameManager from "#app/test/utils/gameManager";
-import * as overrides from "#app/overrides";
-import {
-  CommandPhase, EnemyCommandPhase, SelectTargetPhase,
-  TurnStartPhase
-} from "#app/phases";
-import {Mode} from "#app/ui/ui";
-import {getMovePosition} from "#app/test/utils/gameManagerUtils";
-import {Command} from "#app/ui/command-ui-handler";
-import {Stat} from "#app/data/pokemon-stat";
-import TargetSelectUiHandler from "#app/ui/target-select-ui-handler";
+import { EnemyCommandPhase } from "#app/phases/enemy-command-phase";
+import { SelectTargetPhase } from "#app/phases/select-target-phase";
+import { TurnStartPhase } from "#app/phases/turn-start-phase";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
-import {Button} from "#enums/buttons";
-
+import GameManager from "#test/utils/gameManager";
+import Phaser from "phaser";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Battle order", () => {
   let phaserGame: Phaser.Game;
@@ -33,180 +24,134 @@ describe("Battle order", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    vi.spyOn(overrides, "SINGLE_BATTLE_OVERRIDE", "get").mockReturnValue(true);
-    vi.spyOn(overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.MEWTWO);
-    vi.spyOn(overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.INSOMNIA);
-    vi.spyOn(overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.INSOMNIA);
-    vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.TACKLE]);
+    game.override.battleType("single");
+    game.override.enemySpecies(Species.MEWTWO);
+    game.override.enemyAbility(Abilities.INSOMNIA);
+    game.override.ability(Abilities.INSOMNIA);
+    game.override.moveset([Moves.TACKLE]);
   });
 
-  it("opponent faster than player 50 vs 150", async() => {
+  it("opponent faster than player 50 vs 150", async () => {
     await game.startBattle([
       Species.BULBASAUR,
     ]);
-    game.scene.getParty()[0].stats[Stat.SPD] = 50;
-    game.scene.currentBattle.enemyParty[0].stats[Stat.SPD] = 150;
 
-    game.onNextPrompt("CommandPhase", Mode.COMMAND, () => {
-      game.scene.ui.setMode(Mode.FIGHT, (game.scene.getCurrentPhase() as CommandPhase).getFieldIndex());
-    });
-    game.onNextPrompt("CommandPhase", Mode.FIGHT, () => {
-      const movePosition = getMovePosition(game.scene, 0, Moves.TACKLE);
-      (game.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, movePosition, false);
-    });
+    const playerPokemon = game.scene.getPlayerPokemon()!;
+    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    vi.spyOn(playerPokemon, "stats", "get").mockReturnValue([20, 20, 20, 20, 20, 50]); // set playerPokemon's speed to 50
+    vi.spyOn(enemyPokemon, "stats", "get").mockReturnValue([20, 20, 20, 20, 20, 150]); // set enemyPokemon's speed to 150
+
+    game.move.select(Moves.TACKLE);
     await game.phaseInterceptor.run(EnemyCommandPhase);
+
+    const playerPokemonIndex = playerPokemon.getBattlerIndex();
+    const enemyPokemonIndex = enemyPokemon.getBattlerIndex();
     const phase = game.scene.getCurrentPhase() as TurnStartPhase;
-    const order = phase.getOrder();
-    expect(order[0]).toBe(2);
-    expect(order[1]).toBe(0);
+    const order = phase.getCommandOrder();
+    expect(order[0]).toBe(enemyPokemonIndex);
+    expect(order[1]).toBe(playerPokemonIndex);
   }, 20000);
 
-  it("Player faster than opponent 150 vs 50", async() => {
+  it("Player faster than opponent 150 vs 50", async () => {
     await game.startBattle([
       Species.BULBASAUR,
     ]);
-    game.scene.getParty()[0].stats[Stat.SPD] = 150;
-    game.scene.currentBattle.enemyParty[0].stats[Stat.SPD] = 50;
 
-    game.onNextPrompt("CommandPhase", Mode.COMMAND, () => {
-      game.scene.ui.setMode(Mode.FIGHT, (game.scene.getCurrentPhase() as CommandPhase).getFieldIndex());
-    });
-    game.onNextPrompt("CommandPhase", Mode.FIGHT, () => {
-      const movePosition = getMovePosition(game.scene, 0, Moves.TACKLE);
-      (game.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, movePosition, false);
-    });
+    const playerPokemon = game.scene.getPlayerPokemon()!;
+    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    vi.spyOn(playerPokemon, "stats", "get").mockReturnValue([20, 20, 20, 20, 20, 150]); // set playerPokemon's speed to 150
+    vi.spyOn(enemyPokemon, "stats", "get").mockReturnValue([20, 20, 20, 20, 20, 50]); // set enemyPokemon's speed to 50
+
+    game.move.select(Moves.TACKLE);
     await game.phaseInterceptor.run(EnemyCommandPhase);
+
+    const playerPokemonIndex = playerPokemon.getBattlerIndex();
+    const enemyPokemonIndex = enemyPokemon.getBattlerIndex();
     const phase = game.scene.getCurrentPhase() as TurnStartPhase;
-    const order = phase.getOrder();
-    expect(order[0]).toBe(0);
-    expect(order[1]).toBe(2);
+    const order = phase.getCommandOrder();
+    expect(order[0]).toBe(playerPokemonIndex);
+    expect(order[1]).toBe(enemyPokemonIndex);
   }, 20000);
 
-  it("double - both opponents faster than player 50/50 vs 150/150", async() => {
-    vi.spyOn(overrides, "SINGLE_BATTLE_OVERRIDE", "get").mockReturnValue(false);
-    vi.spyOn(overrides, "DOUBLE_BATTLE_OVERRIDE", "get").mockReturnValue(true);
+  it("double - both opponents faster than player 50/50 vs 150/150", async () => {
+    game.override.battleType("double");
     await game.startBattle([
       Species.BULBASAUR,
       Species.BLASTOISE,
     ]);
-    game.scene.getParty()[0].stats[Stat.SPD] = 50;
-    game.scene.getParty()[1].stats[Stat.SPD] = 50;
-    game.scene.currentBattle.enemyParty[0].stats[Stat.SPD] = 150;
-    game.scene.currentBattle.enemyParty[1].stats[Stat.SPD] = 150;
 
-    game.onNextPrompt("CommandPhase", Mode.COMMAND, () => {
-      game.scene.ui.setMode(Mode.FIGHT, (game.scene.getCurrentPhase() as CommandPhase).getFieldIndex());
-    });
-    game.onNextPrompt("CommandPhase", Mode.FIGHT, () => {
-      const movePosition = getMovePosition(game.scene, 0, Moves.TACKLE);
-      (game.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, movePosition, false);
-    });
-    game.onNextPrompt("SelectTargetPhase", Mode.TARGET_SELECT, () => {
-      const handler = game.scene.ui.getHandler() as TargetSelectUiHandler;
-      handler.processInput(Button.ACTION);
-    });
-    game.onNextPrompt("CommandPhase", Mode.COMMAND, () => {
-      game.scene.ui.setMode(Mode.FIGHT, (game.scene.getCurrentPhase() as CommandPhase).getFieldIndex());
-    });
-    game.onNextPrompt("CommandPhase", Mode.FIGHT, () => {
-      const movePosition = getMovePosition(game.scene, 0, Moves.TACKLE);
-      (game.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, movePosition, false);
-    });
-    game.onNextPrompt("SelectTargetPhase", Mode.TARGET_SELECT, () => {
-      const handler = game.scene.ui.getHandler() as TargetSelectUiHandler;
-      handler.processInput(Button.ACTION);
-    });
+    const playerPokemon = game.scene.getPlayerField();
+    const enemyPokemon = game.scene.getEnemyField();
+
+    playerPokemon.forEach(p => vi.spyOn(p, "stats", "get").mockReturnValue([20, 20, 20, 20, 20, 50])); // set both playerPokemons' speed to 50
+    enemyPokemon.forEach(p => vi.spyOn(p, "stats", "get").mockReturnValue([20, 20, 20, 20, 20, 150])); // set both enemyPokemons' speed to 150
+    const playerIndices = playerPokemon.map(p => p?.getBattlerIndex());
+    const enemyIndices = enemyPokemon.map(p => p?.getBattlerIndex());
+
+    game.move.select(Moves.TACKLE);
+    game.move.select(Moves.TACKLE, 1);
     await game.phaseInterceptor.runFrom(SelectTargetPhase).to(TurnStartPhase, false);
+
     const phase = game.scene.getCurrentPhase() as TurnStartPhase;
-    const order = phase.getOrder();
-    expect(order.indexOf(0)).toBeGreaterThan(order.indexOf(2));
-    expect(order.indexOf(0)).toBeGreaterThan(order.indexOf(3));
-    expect(order.indexOf(1)).toBeGreaterThan(order.indexOf(2));
-    expect(order.indexOf(1)).toBeGreaterThan(order.indexOf(3));
+    const order = phase.getCommandOrder();
+    expect(order.slice(0, 2).includes(enemyIndices[0])).toBe(true);
+    expect(order.slice(0, 2).includes(enemyIndices[1])).toBe(true);
+    expect(order.slice(2, 4).includes(playerIndices[0])).toBe(true);
+    expect(order.slice(2, 4).includes(playerIndices[1])).toBe(true);
   }, 20000);
 
-  it("double - speed tie except 1 - 100/100 vs 100/150", async() => {
-    vi.spyOn(overrides, "SINGLE_BATTLE_OVERRIDE", "get").mockReturnValue(false);
-    vi.spyOn(overrides, "DOUBLE_BATTLE_OVERRIDE", "get").mockReturnValue(true);
+  it("double - speed tie except 1 - 100/100 vs 100/150", async () => {
+    game.override.battleType("double");
     await game.startBattle([
       Species.BULBASAUR,
       Species.BLASTOISE,
     ]);
-    game.scene.getParty()[0].stats[Stat.SPD] = 100;
-    game.scene.getParty()[1].stats[Stat.SPD] = 100;
-    game.scene.currentBattle.enemyParty[0].stats[Stat.SPD] = 100;
-    game.scene.currentBattle.enemyParty[1].stats[Stat.SPD] = 150;
 
-    game.onNextPrompt("CommandPhase", Mode.COMMAND, () => {
-      game.scene.ui.setMode(Mode.FIGHT, (game.scene.getCurrentPhase() as CommandPhase).getFieldIndex());
-    });
-    game.onNextPrompt("CommandPhase", Mode.FIGHT, () => {
-      const movePosition = getMovePosition(game.scene, 0, Moves.TACKLE);
-      (game.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, movePosition, false);
-    });
-    game.onNextPrompt("SelectTargetPhase", Mode.TARGET_SELECT, () => {
-      const handler = game.scene.ui.getHandler() as TargetSelectUiHandler;
-      handler.processInput(Button.ACTION);
-    });
-    game.onNextPrompt("CommandPhase", Mode.COMMAND, () => {
-      game.scene.ui.setMode(Mode.FIGHT, (game.scene.getCurrentPhase() as CommandPhase).getFieldIndex());
-    });
-    game.onNextPrompt("CommandPhase", Mode.FIGHT, () => {
-      const movePosition = getMovePosition(game.scene, 0, Moves.TACKLE);
-      (game.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, movePosition, false);
-    });
-    game.onNextPrompt("SelectTargetPhase", Mode.TARGET_SELECT, () => {
-      const handler = game.scene.ui.getHandler() as TargetSelectUiHandler;
-      handler.processInput(Button.ACTION);
-    });
+    const playerPokemon = game.scene.getPlayerField();
+    const enemyPokemon = game.scene.getEnemyField();
+    playerPokemon.forEach(p => vi.spyOn(p, "stats", "get").mockReturnValue([20, 20, 20, 20, 20, 100])); //set both playerPokemons' speed to 100
+    vi.spyOn(enemyPokemon[0], "stats", "get").mockReturnValue([20, 20, 20, 20, 20, 100]); // set enemyPokemon's speed to 100
+    vi.spyOn(enemyPokemon[1], "stats", "get").mockReturnValue([20, 20, 20, 20, 20, 150]); // set enemyPokemon's speed to 150
+    const playerIndices = playerPokemon.map(p => p?.getBattlerIndex());
+    const enemyIndices = enemyPokemon.map(p => p?.getBattlerIndex());
+
+    game.move.select(Moves.TACKLE);
+    game.move.select(Moves.TACKLE, 1);
     await game.phaseInterceptor.runFrom(SelectTargetPhase).to(TurnStartPhase, false);
+
     const phase = game.scene.getCurrentPhase() as TurnStartPhase;
-    const order = phase.getOrder();
-    expect(order.indexOf(3)).toBeLessThan(order.indexOf(0));
-    expect(order.indexOf(3)).toBeLessThan(order.indexOf(1));
-    expect(order.indexOf(3)).toBeLessThan(order.indexOf(2));
+    const order = phase.getCommandOrder();
+    expect(order[0]).toBe(enemyIndices[1]);
+    expect(order.slice(1, 4).includes(enemyIndices[0])).toBe(true);
+    expect(order.slice(1, 4).includes(playerIndices[0])).toBe(true);
+    expect(order.slice(1, 4).includes(playerIndices[1])).toBe(true);
   }, 20000);
 
-  it("double - speed tie 100/150 vs 100/150", async() => {
-    vi.spyOn(overrides, "SINGLE_BATTLE_OVERRIDE", "get").mockReturnValue(false);
-    vi.spyOn(overrides, "DOUBLE_BATTLE_OVERRIDE", "get").mockReturnValue(true);
+  it("double - speed tie 100/150 vs 100/150", async () => {
+    game.override.battleType("double");
     await game.startBattle([
       Species.BULBASAUR,
       Species.BLASTOISE,
     ]);
-    game.scene.getParty()[0].stats[Stat.SPD] = 100;
-    game.scene.getParty()[1].stats[Stat.SPD] = 150;
-    game.scene.currentBattle.enemyParty[0].stats[Stat.SPD] = 100;
-    game.scene.currentBattle.enemyParty[1].stats[Stat.SPD] = 150;
 
-    game.onNextPrompt("CommandPhase", Mode.COMMAND, () => {
-      game.scene.ui.setMode(Mode.FIGHT, (game.scene.getCurrentPhase() as CommandPhase).getFieldIndex());
-    });
-    game.onNextPrompt("CommandPhase", Mode.FIGHT, () => {
-      const movePosition = getMovePosition(game.scene, 0, Moves.TACKLE);
-      (game.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, movePosition, false);
-    });
-    game.onNextPrompt("SelectTargetPhase", Mode.TARGET_SELECT, () => {
-      const handler = game.scene.ui.getHandler() as TargetSelectUiHandler;
-      handler.processInput(Button.ACTION);
-    });
-    game.onNextPrompt("CommandPhase", Mode.COMMAND, () => {
-      game.scene.ui.setMode(Mode.FIGHT, (game.scene.getCurrentPhase() as CommandPhase).getFieldIndex());
-    });
-    game.onNextPrompt("CommandPhase", Mode.FIGHT, () => {
-      const movePosition = getMovePosition(game.scene, 0, Moves.TACKLE);
-      (game.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, movePosition, false);
-    });
-    game.onNextPrompt("SelectTargetPhase", Mode.TARGET_SELECT, () => {
-      const handler = game.scene.ui.getHandler() as TargetSelectUiHandler;
-      handler.processInput(Button.ACTION);
-    });
+    const playerPokemon = game.scene.getPlayerField();
+    const enemyPokemon = game.scene.getEnemyField();
+    vi.spyOn(playerPokemon[0], "stats", "get").mockReturnValue([20, 20, 20, 20, 20, 100]); // set one playerPokemon's speed to 100
+    vi.spyOn(playerPokemon[1], "stats", "get").mockReturnValue([20, 20, 20, 20, 20, 150]); // set other playerPokemon's speed to 150
+    vi.spyOn(enemyPokemon[0], "stats", "get").mockReturnValue([20, 20, 20, 20, 20, 100]); // set one enemyPokemon's speed to 100
+    vi.spyOn(enemyPokemon[1], "stats", "get").mockReturnValue([20, 20, 20, 20, 20, 150]); // set other enemyPokemon's speed to 150
+    const playerIndices = playerPokemon.map(p => p?.getBattlerIndex());
+    const enemyIndices = enemyPokemon.map(p => p?.getBattlerIndex());
+
+    game.move.select(Moves.TACKLE);
+    game.move.select(Moves.TACKLE, 1);
     await game.phaseInterceptor.runFrom(SelectTargetPhase).to(TurnStartPhase, false);
+
     const phase = game.scene.getCurrentPhase() as TurnStartPhase;
-    const order = phase.getOrder();
-    expect(order.indexOf(1)).toBeLessThan(order.indexOf(0));
-    expect(order.indexOf(1)).toBeLessThan(order.indexOf(2));
-    expect(order.indexOf(3)).toBeLessThan(order.indexOf(0));
-    expect(order.indexOf(3)).toBeLessThan(order.indexOf(2));
+    const order = phase.getCommandOrder();
+    expect(order.slice(0, 2).includes(playerIndices[1])).toBe(true);
+    expect(order.slice(0, 2).includes(enemyIndices[1])).toBe(true);
+    expect(order.slice(2, 4).includes(playerIndices[0])).toBe(true);
+    expect(order.slice(2, 4).includes(enemyIndices[0])).toBe(true);
   }, 20000);
 });

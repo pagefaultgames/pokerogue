@@ -1,5 +1,5 @@
-import i18next from "i18next";
 import { MoneyFormat } from "#enums/money-format";
+import i18next from "i18next";
 
 export const MissingTextureKey = "__MISSING";
 
@@ -82,6 +82,12 @@ export function randInt(range: integer, min: integer = 0): integer {
   return Math.floor(Math.random() * range) + min;
 }
 
+/**
+ * Generates a random number using the global seed, or the current battle's seed if called via `Battle.randSeedInt`
+ * @param range How large of a range of random numbers to choose from. If {@linkcode range} <= 1, returns {@linkcode min}
+ * @param min The minimum integer to pick, default `0`
+ * @returns A random integer between {@linkcode min} and ({@linkcode min} + {@linkcode range} - 1)
+ */
 export function randSeedInt(range: integer, min: integer = 0): integer {
   if (range <= 1) {
     return min;
@@ -116,7 +122,7 @@ export function randSeedWeightedItem<T>(items: T[]): T {
     : Phaser.Math.RND.weightedPick(items);
 }
 
-export function randSeedEasedWeightedItem<T>(items: T[], easingFunction: string = "Sine.easeIn"): T {
+export function randSeedEasedWeightedItem<T>(items: T[], easingFunction: string = "Sine.easeIn"): T | null {
   if (!items.length) {
     return null;
   }
@@ -165,40 +171,20 @@ export function getPlayTimeString(totalSeconds: integer): string {
   return `${days.padStart(2, "0")}:${hours.padStart(2, "0")}:${minutes.padStart(2, "0")}:${seconds.padStart(2, "0")}`;
 }
 
-export function binToDec(input: string): integer {
-  const place: integer[] = [];
-  const binary: string[] = [];
-
-  let decimalNum = 0;
-
-  for (let i = 0; i < input.length; i++) {
-    binary.push(input[i]);
-    place.push(Math.pow(2, i));
-    decimalNum += place[i] * parseInt(binary[i]);
-  }
-
-  return decimalNum;
-}
-
-export function decToBin(input: integer): string {
-  let bin = "";
-  let intNum = input;
-  while (intNum > 0) {
-    bin = intNum % 2 ? `1${bin}` : `0${bin}`;
-    intNum = Math.floor(intNum * 0.5);
-  }
-
-  return bin;
-}
-
-export function getIvsFromId(id: integer): integer[] {
+/**
+ * Generates IVs from a given {@linkcode id} by extracting 5 bits at a time
+ * starting from the least significant bit up to the 30th most significant bit.
+ * @param id 32-bit number
+ * @returns An array of six numbers corresponding to 5-bit chunks from {@linkcode id}
+ */
+export function getIvsFromId(id: number): number[] {
   return [
-    binToDec(decToBin(id).substring(0, 5)),
-    binToDec(decToBin(id).substring(5, 10)),
-    binToDec(decToBin(id).substring(10, 15)),
-    binToDec(decToBin(id).substring(15, 20)),
-    binToDec(decToBin(id).substring(20, 25)),
-    binToDec(decToBin(id).substring(25, 30))
+    (id & 0x3E000000) >>> 25,
+    (id & 0x01F00000) >>> 20,
+    (id & 0x000F8000) >>> 15,
+    (id & 0x00007C00) >>> 10,
+    (id & 0x000003E0) >>> 5,
+    (id & 0x0000001F)
   ];
 }
 
@@ -266,16 +252,16 @@ export function formatStat(stat: integer, forHp: boolean = false): string {
   return formatLargeNumber(stat, forHp ? 100000 : 1000000);
 }
 
-export function getEnumKeys(enumType): string[] {
-  return Object.values(enumType).filter(v => isNaN(parseInt(v.toString()))).map(v => v.toString());
+export function getEnumKeys(enumType: any): string[] {
+  return Object.values(enumType).filter(v => isNaN(parseInt(v!.toString()))).map(v => v!.toString());
 }
 
-export function getEnumValues(enumType): integer[] {
-  return Object.values(enumType).filter(v => !isNaN(parseInt(v.toString()))).map(v => parseInt(v.toString()));
+export function getEnumValues(enumType: any): integer[] {
+  return Object.values(enumType).filter(v => !isNaN(parseInt(v!.toString()))).map(v => parseInt(v!.toString()));
 }
 
-export function executeIf<T>(condition: boolean, promiseFunc: () => Promise<T>): Promise<T> {
-  return condition ? promiseFunc() : new Promise<T>(resolve => resolve(null));
+export function executeIf<T>(condition: boolean, promiseFunc: () => Promise<T>): Promise<T | null> {
+  return condition ? promiseFunc() : new Promise<T | null>(resolve => resolve(null));
 }
 
 export const sessionIdKey = "pokerogue_sessionId";
@@ -292,13 +278,29 @@ export const apiUrl = localServerUrl ?? "https://api.pokerogue.net";
 // used to disable api calls when isLocal is true and a server is not found
 export let isLocalServerConnected = true;
 
+export const isBeta = import.meta.env.MODE === "beta"; // this checks to see if the env mode is development. Technically this gives the same value for beta AND for dev envs
+
 export function setCookie(cName: string, cValue: string): void {
   const expiration = new Date();
   expiration.setTime(new Date().getTime() + 3600000 * 24 * 30 * 3/*7*/);
-  document.cookie = `${cName}=${cValue};Secure;SameSite=Strict;Path=/;Expires=${expiration.toUTCString()}`;
+  document.cookie = `${cName}=${cValue};Secure;SameSite=Strict;Domain=${window.location.hostname};Path=/;Expires=${expiration.toUTCString()}`;
+}
+
+export function removeCookie(cName: string): void {
+  if (isBeta) {
+    document.cookie = `${cName}=;Secure;SameSite=Strict;Domain=pokerogue.net;Path=/;Max-Age=-1`; // we need to remove the cookie from the main domain as well
+  }
+
+  document.cookie = `${cName}=;Secure;SameSite=Strict;Domain=${window.location.hostname};Path=/;Max-Age=-1`;
+  document.cookie = `${cName}=;Secure;SameSite=Strict;Path=/;Max-Age=-1`; // legacy cookie without domain, for older cookies to prevent a login loop
 }
 
 export function getCookie(cName: string): string {
+  // check if there are multiple cookies with the same name and delete them
+  if (document.cookie.split(";").filter(c => c.includes(cName)).length > 1) {
+    removeCookie(cName);
+    return "";
+  }
   const name = `${cName}=`;
   const ca = document.cookie.split(";");
   for (let i = 0; i < ca.length; i++) {
@@ -409,6 +411,13 @@ export function formatText(unformattedText: string): string {
   return text.join(" ");
 }
 
+export function toCamelCaseString(unformattedText: string): string {
+  if (!unformattedText) {
+    return "";
+  }
+  return unformattedText.split(/[_ ]/).filter(f => f).map((f, i) => i ? `${f[0].toUpperCase()}${f.slice(1).toLowerCase()}` : f.toLowerCase()).join("");
+}
+
 export function rgbToHsv(r: integer, g: integer, b: integer) {
   const v = Math.max(r, g, b);
   const c = v - Math.min(r, g, b);
@@ -433,7 +442,7 @@ export function deltaRgb(rgb1: integer[], rgb2: integer[]): integer {
 }
 
 export function rgbHexToRgba(hex: string) {
-  const color = hex.match(/^([\da-f]{2})([\da-f]{2})([\da-f]{2})$/i);
+  const color = hex.match(/^([\da-f]{2})([\da-f]{2})([\da-f]{2})$/i)!; // TODO: is this bang correct?
   return {
     r: parseInt(color[1], 16),
     g: parseInt(color[2], 16),
@@ -444,6 +453,26 @@ export function rgbHexToRgba(hex: string) {
 
 export function rgbaToInt(rgba: integer[]): integer {
   return (rgba[0] << 24) + (rgba[1] << 16) + (rgba[2] << 8) + rgba[3];
+}
+
+/**
+ * Provided valid HSV values, calculates and stitches together a string of that
+ * HSV color's corresponding hex code.
+ *
+ * Sourced from {@link https://stackoverflow.com/a/44134328}.
+ * @param h Hue in degrees, must be in a range of [0, 360]
+ * @param s Saturation percentage, must be in a range of [0, 1]
+ * @param l Ligthness percentage, must be in a range of [0, 1]
+ * @returns a string of the corresponding color hex code with a "#" prefix
+ */
+export function hslToHex(h: number, s: number, l: number): string {
+  const a = s * Math.min(l, 1 - l);
+  const f = (n: number) => {
+    const k = (n + h / 30) % 12;
+    const rgb = l - a * Math.max(-1, Math.min(k - 3, 9 - k, 1));
+    return Math.round(rgb * 255).toString(16).padStart(2, "0");
+  };
+  return `#${f(0)}${f(8)}${f(4)}`;
 }
 
 /*This function returns true if the current lang is available for some functions
@@ -467,6 +496,7 @@ export function verifyLang(lang?: string): boolean {
   case "zh-TW":
   case "pt-BR":
   case "ko":
+  case "ja":
     return true;
   default:
     return false;
@@ -527,4 +557,55 @@ export function reverseValueToKeySetting(input) {
   return capitalizedWords.join("_");
 }
 
+/**
+ * Capitalize a string.
+ *
+ * @param str - The string to be capitalized.
+ * @param sep - The separator between the words of the string.
+ * @param lowerFirstChar - Whether the first character of the string should be lowercase or not.
+ * @param returnWithSpaces - Whether the returned string should have spaces between the words or not.
+ * @returns The capitalized string.
+ */
+export function capitalizeString(str: string, sep: string, lowerFirstChar: boolean = true, returnWithSpaces: boolean = false) {
+  if (str) {
+    const splitedStr = str.toLowerCase().split(sep);
 
+    for (let i = +lowerFirstChar; i < splitedStr?.length; i++) {
+      splitedStr[i] = splitedStr[i].charAt(0).toUpperCase() + splitedStr[i].substring(1);
+    }
+
+    return returnWithSpaces ? splitedStr.join(" ") : splitedStr.join("");
+  }
+  return null;
+}
+
+/**
+ * Returns if an object is null or undefined
+ * @param object
+ */
+export function isNullOrUndefined(object: any): boolean {
+  return null === object || undefined === object;
+}
+
+/**
+ * This function is used in the context of a Pokémon battle game to calculate the actual integer damage value from a float result.
+ * Many damage calculation formulas involve various parameters and result in float values.
+ * The actual damage applied to a Pokémon's HP must be an integer.
+ * This function helps in ensuring that by flooring the float value and enforcing a minimum damage value.
+ *
+ * @param value - The float value to convert.
+ * @param minValue - The minimum integer value to return. Defaults to 1.
+ * @returns The converted value as an integer.
+ */
+export function toDmgValue(value: number, minValue: number = 1) {
+  return Math.max(Math.floor(value), minValue);
+}
+
+/**
+ * Helper method to localize a sprite key (e.g. for types)
+ * @param baseKey the base key of the sprite (e.g. `type`)
+ * @returns the localized sprite key
+ */
+export function getLocalizedSpriteKey(baseKey: string) {
+  return `${baseKey}${verifyLang(i18next.resolvedLanguage) ? `_${i18next.resolvedLanguage}` : ""}`;
+}

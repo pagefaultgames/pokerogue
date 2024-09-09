@@ -1,12 +1,12 @@
 const MockConsoleLog = (_logDisabled= false, _phaseText=false) => {
-  let logs = [];
+  let logs: any[] = [];
   const logDisabled: boolean = _logDisabled;
   const phaseText: boolean = _phaseText;
   const originalLog = console.log;
   const originalError = console.error;
   const originalDebug = console.debug;
   const originalWarn = console.warn;
-  const notified = [];
+  const notified: any[] = [];
 
   const blacklist = ["Phaser", "variant icon does not exist", "Texture \"%s\" not found"];
   const whitelist = ["Phase"];

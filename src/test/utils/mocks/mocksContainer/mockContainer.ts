@@ -1,6 +1,8 @@
-import MockTextureManager from "#app/test/utils/mocks/mockTextureManager";
+import MockTextureManager from "#test/utils/mocks/mockTextureManager";
+import { vi } from "vitest";
+import { MockGameObject } from "../mockGameObject";
 
-export default class MockContainer {
+export default class MockContainer implements MockGameObject {
   protected x;
   protected y;
   protected scene;
@@ -11,7 +13,8 @@ export default class MockContainer {
   private style;
   public frame;
   protected textureManager;
-  public list = [];
+  public list: MockGameObject[] = [];
+  private name?: string;
 
   constructor(textureManager: MockTextureManager, x, y) {
     this.x = x;
@@ -158,9 +161,10 @@ export default class MockContainer {
     // Moves this Game Object to be below the given Game Object in the display list.
   }
 
-  setName(name) {
+  setName = vi.fn((name: string) => {
+    this.name = name;
     // return this.phaserSprite.setName(name);
-  }
+  });
 
   bringToTop(obj) {
     // Brings this Game Object to the top of its parents display list.
@@ -204,4 +208,5 @@ export default class MockContainer {
     return this.list;
   }
 
+  disableInteractive = vi.fn();
 }

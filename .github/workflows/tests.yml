@@ -6,13 +6,17 @@ on:
   push:
     branches:
       - main  # Trigger on push events to the main branch
+      - beta # Trigger on push events to the beta branch
   pull_request:
     branches:
       - main  # Trigger on pull request events targeting the main branch
+      - beta # Trigger on pull request events targeting the beta branch
+  merge_group:
+    types: [checks_requested]
 
 jobs:
-  run-tests:  # Define a job named "run-tests"
-    name: Run tests  # Human-readable name for the job
+  run-misc-tests:  # Define a job named "run-tests"
+    name: Run misc tests  # Human-readable name for the job
     runs-on: ubuntu-latest  # Specify the latest Ubuntu runner for the job
 
     steps:
@@ -27,5 +31,75 @@ jobs:
       - name: Install Node.js dependencies  # Step to install Node.js dependencies
         run: npm ci  # Use 'npm ci' to install dependencies
 
-      - name: tests  # Step to run tests
-        run: npm run test:silent
+      - name: pre-test # pre-test to check overrides
+        run: npx vitest run --project pre 
+      - name: test misc
+        run: npx vitest --project misc
+
+  run-abilities-tests:
+    name: Run abilities tests
+    runs-on: ubuntu-latest 
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Install Node.js dependencies
+        run: npm ci
+      - name: pre-test
+        run: npx vitest run --project pre 
+      - name: test abilities
+        run: npx vitest --project abilities
+
+  run-items-tests:
+    name: Run items tests
+    runs-on: ubuntu-latest 
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Install Node.js dependencies
+        run: npm ci
+      - name: pre-test
+        run: npx vitest run --project pre 
+      - name: test items
+        run: npx vitest --project items
+
+  run-moves-tests:
+    name: Run moves tests
+    runs-on: ubuntu-latest 
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Install Node.js dependencies
+        run: npm ci
+      - name: pre-test
+        run: npx vitest run --project pre 
+      - name: test moves
+        run: npx vitest --project moves
+
+  run-battle-tests:
+    name: Run battle tests
+    runs-on: ubuntu-latest 
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Install Node.js dependencies
+        run: npm ci
+      - name: pre-test
+        run: npx vitest run --project pre 
+      - name: test battle
+        run: npx vitest --project battle

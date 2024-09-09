@@ -1,15 +1,12 @@
-import {afterEach, beforeAll, beforeEach, describe, expect, test, vi} from "vitest";
-import Phaser from "phaser";
-import GameManager from "#app/test/utils/gameManager";
-import * as overrides from "#app/overrides";
-import {
-  MoveEndPhase,
-} from "#app/phases";
-import {getMovePosition} from "#app/test/utils/gameManagerUtils";
+import { BattlerIndex } from "#app/battle";
+import { Status, StatusEffect } from "#app/data/status-effect";
+import { EnemyPokemon, PlayerPokemon } from "#app/field/pokemon";
+import { MoveEndPhase } from "#app/phases/move-end-phase";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
-import { EnemyPokemon, PlayerPokemon } from "#app/field/pokemon.js";
-import { Status, StatusEffect } from "#app/data/status-effect.js";
+import GameManager from "#test/utils/gameManager";
+import Phaser from "phaser";
+import { afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest";
 
 const TIMEOUT = 20 * 1000;
 
@@ -29,15 +26,15 @@ describe("Moves - Purify", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    vi.spyOn(overrides, "SINGLE_BATTLE_OVERRIDE", "get").mockReturnValue(true);
+    game.override.battleType("single");
 
-    vi.spyOn(overrides, "STARTER_SPECIES_OVERRIDE", "get").mockReturnValue(Species.PYUKUMUKU);
-    vi.spyOn(overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(10);
-    vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.PURIFY, Moves.SIZZLY_SLIDE]);
+    game.override.starterSpecies(Species.PYUKUMUKU);
+    game.override.startingLevel(10);
+    game.override.moveset([Moves.PURIFY, Moves.SIZZLY_SLIDE]);
 
-    vi.spyOn(overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.MAGIKARP);
-    vi.spyOn(overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(10);
-    vi.spyOn(overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH, Moves.NONE, Moves.NONE, Moves.NONE]);
+    game.override.enemySpecies(Species.MAGIKARP);
+    game.override.enemyLevel(10);
+    game.override.enemyMoveset([Moves.SPLASH, Moves.NONE, Moves.NONE, Moves.NONE]);
   });
 
   test(
@@ -45,17 +42,18 @@ describe("Moves - Purify", () => {
     async () => {
       await game.startBattle();
 
-      const enemyPokemon: EnemyPokemon = game.scene.getEnemyPokemon();
-      const playerPokemon: PlayerPokemon = game.scene.getPlayerPokemon();
+      const enemyPokemon: EnemyPokemon = game.scene.getEnemyPokemon()!;
+      const playerPokemon: PlayerPokemon = game.scene.getPlayerPokemon()!;
 
       playerPokemon.hp = playerPokemon.getMaxHp() - 1;
       enemyPokemon.status = new Status(StatusEffect.BURN);
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.PURIFY));
+      game.move.select(Moves.PURIFY);
+      await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
       await game.phaseInterceptor.to(MoveEndPhase);
 
-      expect(enemyPokemon.status).toBe(undefined);
-      expect(playerPokemon.hp).toBe(playerPokemon.getMaxHp());
+      expect(enemyPokemon.status).toBeNull();
+      expect(playerPokemon.isFullHp()).toBe(true);
     },
     TIMEOUT
   );
@@ -65,12 +63,13 @@ describe("Moves - Purify", () => {
     async () => {
       await game.startBattle();
 
-      const playerPokemon: PlayerPokemon = game.scene.getPlayerPokemon();
+      const playerPokemon: PlayerPokemon = game.scene.getPlayerPokemon()!;
 
       playerPokemon.hp = playerPokemon.getMaxHp() - 1;
       const playerInitialHp = playerPokemon.hp;
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.PURIFY));
+      game.move.select(Moves.PURIFY);
+      await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
       await game.phaseInterceptor.to(MoveEndPhase);
 
       expect(playerPokemon.hp).toBe(playerInitialHp);

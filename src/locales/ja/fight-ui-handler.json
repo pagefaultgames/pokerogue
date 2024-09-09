@@ -1,0 +1,7 @@
+{
+  "pp": "PP",
+  "power": "威力",
+  "accuracy": "命中",
+  "abilityFlyInText": " {{pokemonName}}の\n{{passive}}：{{abilityName}}",
+  "passive": "パッシブ "
+}

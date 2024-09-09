@@ -1,6 +1,6 @@
 import { Type } from "./type";
 import * as Utils from "../utils";
-import {pokemonEvolutions, SpeciesFormEvolution} from "./pokemon-evolutions";
+import { pokemonEvolutions, SpeciesFormEvolution } from "./pokemon-evolutions";
 import i18next from "i18next";
 import { Biome } from "#enums/biome";
 import { Species } from "#enums/species";
@@ -17,8 +17,6 @@ export function getBiomeName(biome: Biome | -1) {
     return i18next.t("biome:GRASS");
   case Biome.RUINS:
     return i18next.t("biome:RUINS");
-  case Biome.ABYSS:
-    return i18next.t("biome:ABYSS");
   case Biome.END:
     return i18next.t("biome:END");
   default:
@@ -39,34 +37,34 @@ export const biomeLinks: BiomeLinks = {
   [Biome.PLAINS]: [ Biome.GRASS, Biome.METROPOLIS, Biome.LAKE ],
   [Biome.GRASS]: Biome.TALL_GRASS,
   [Biome.TALL_GRASS]: [ Biome.FOREST, Biome.CAVE ],
-  [Biome.SLUM]: Biome.CONSTRUCTION_SITE,
+  [Biome.SLUM]: [ Biome.CONSTRUCTION_SITE, [ Biome.SWAMP, 2 ] ],
   [Biome.FOREST]: [ Biome.JUNGLE, Biome.MEADOW ],
   [Biome.SEA]: [ Biome.SEABED, Biome.ICE_CAVE ],
   [Biome.SWAMP]: [ Biome.GRAVEYARD, Biome.TALL_GRASS ],
-  [Biome.BEACH]: [ Biome.SEA, [ Biome.ISLAND, 4 ] ],
+  [Biome.BEACH]: [ Biome.SEA, [ Biome.ISLAND, 2 ] ],
   [Biome.LAKE]: [ Biome.BEACH, Biome.SWAMP, Biome.CONSTRUCTION_SITE ],
-  [Biome.SEABED]: [ Biome.CAVE, [ Biome.VOLCANO, 4 ] ],
-  [Biome.MOUNTAIN]: [ Biome.VOLCANO, [ Biome.WASTELAND, 3 ] ],
+  [Biome.SEABED]: [ Biome.CAVE, [ Biome.VOLCANO, 3 ] ],
+  [Biome.MOUNTAIN]: [ Biome.VOLCANO, [ Biome.WASTELAND, 2 ], [ Biome.SPACE, 3 ] ],
   [Biome.BADLANDS]: [ Biome.DESERT, Biome.MOUNTAIN ],
-  [Biome.CAVE]: [ Biome.BADLANDS, Biome.LAKE ],
-  [Biome.DESERT]: Biome.RUINS,
+  [Biome.CAVE]: [ Biome.BADLANDS, Biome.LAKE, [ Biome.LABORATORY, 2 ] ],
+  [Biome.DESERT]: [ Biome.RUINS, [ Biome.CONSTRUCTION_SITE, 2 ] ],
   [Biome.ICE_CAVE]: Biome.SNOWY_FOREST,
-  [Biome.MEADOW]: [ Biome.PLAINS, [ Biome.FAIRY_CAVE, 2 ] ],
+  [Biome.MEADOW]: [ Biome.PLAINS, Biome.FAIRY_CAVE ],
   [Biome.POWER_PLANT]: Biome.FACTORY,
-  [Biome.VOLCANO]: [ Biome.BEACH, [ Biome.ICE_CAVE, 4 ] ],
+  [Biome.VOLCANO]: [ Biome.BEACH, [ Biome.ICE_CAVE, 3 ] ],
   [Biome.GRAVEYARD]: Biome.ABYSS,
-  [Biome.DOJO]: [ Biome.PLAINS, [ Biome.TEMPLE, 3 ] ],
-  [Biome.FACTORY]: [ Biome.PLAINS, [ Biome.LABORATORY, 4 ] ],
-  [Biome.RUINS]: [ Biome.FOREST ],
+  [Biome.DOJO]: [ Biome.PLAINS, [ Biome.JUNGLE, 2], [ Biome.TEMPLE, 2 ] ],
+  [Biome.FACTORY]: [ Biome.PLAINS, [ Biome.LABORATORY, 2 ] ],
+  [Biome.RUINS]: [ Biome.MOUNTAIN, [ Biome.FOREST, 2 ] ],
   [Biome.WASTELAND]: Biome.BADLANDS,
-  [Biome.ABYSS]: [ Biome.CAVE, [ Biome.SPACE, 3 ], [ Biome.WASTELAND, 3 ] ],
+  [Biome.ABYSS]: [ Biome.CAVE, [ Biome.SPACE, 2 ], [ Biome.WASTELAND, 2 ] ],
   [Biome.SPACE]: Biome.RUINS,
-  [Biome.CONSTRUCTION_SITE]: [ Biome.DOJO, Biome.POWER_PLANT ],
+  [Biome.CONSTRUCTION_SITE]: [ Biome.POWER_PLANT, [ Biome.DOJO, 2 ] ],
   [Biome.JUNGLE]: [ Biome.TEMPLE ],
-  [Biome.FAIRY_CAVE]: [ Biome.ICE_CAVE, [ Biome.SPACE, 3 ] ],
-  [Biome.TEMPLE]: [ Biome.SWAMP, [ Biome.RUINS, 3 ] ],
+  [Biome.FAIRY_CAVE]: [ Biome.ICE_CAVE, [ Biome.SPACE, 2 ] ],
+  [Biome.TEMPLE]: [ Biome.DESERT, [ Biome.SWAMP, 2 ], [ Biome.RUINS, 2 ] ],
   [Biome.METROPOLIS]: Biome.SLUM,
-  [Biome.SNOWY_FOREST]: [ Biome.FOREST, Biome.LAKE, Biome.MOUNTAIN ],
+  [Biome.SNOWY_FOREST]: [ Biome.FOREST, [ Biome.MOUNTAIN, 2 ], [ Biome.LAKE, 2 ] ],
   [Biome.ISLAND]: Biome.SEA,
   [Biome.LABORATORY]: Biome.CONSTRUCTION_SITE
 };
@@ -7665,6 +7663,12 @@ export function initBiomes() {
   biomeDepths[Biome.TOWN] = [ 0, 1 ];
 
   const traverseBiome = (biome: Biome, depth: integer) => {
+    if (biome === Biome.END) {
+      const biomeList = Object.keys(Biome).filter(key => !isNaN(Number(key)));
+      biomeList.pop(); // Removes Biome.END from the list
+      const randIndex = Utils.randInt(biomeList.length, 1); // Will never be Biome.TOWN
+      biome = Biome[biomeList[randIndex]];
+    }
     const linkedBiomes: (Biome | [ Biome, integer ])[] = Array.isArray(biomeLinks[biome])
       ? biomeLinks[biome] as (Biome | [ Biome, integer ])[]
       : [ biomeLinks[biome] as Biome ];
@@ -7707,7 +7711,7 @@ export function initBiomes() {
       ? pokemonEvolutions[speciesId]
       : [];
 
-    if (!biomeEntries.filter(b => b[0] !== Biome.END).length && !speciesEvolutions.filter(es => !!((pokemonBiomes.find(p => p[0] === es.speciesId))[3] as any[]).filter(b => b[0] !== Biome.END).length).length) {
+    if (!biomeEntries.filter(b => b[0] !== Biome.END).length && !speciesEvolutions.filter(es => !!((pokemonBiomes.find(p => p[0] === es.speciesId)!)[3] as any[]).filter(b => b[0] !== Biome.END).length).length) { // TODO: is the bang on the `find()` correct?
       uncatchableSpecies.push(speciesId);
     }
 

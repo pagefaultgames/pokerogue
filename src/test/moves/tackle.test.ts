@@ -1,17 +1,11 @@
-import {afterEach, beforeAll, beforeEach, describe, expect, it, vi} from "vitest";
-import Phaser from "phaser";
-import GameManager from "#app/test/utils/gameManager";
-import * as overrides from "#app/overrides";
-import {
-  CommandPhase,
-  EnemyCommandPhase, TurnEndPhase,
-} from "#app/phases";
-import {Mode} from "#app/ui/ui";
-import {getMovePosition} from "#app/test/utils/gameManagerUtils";
-import {Command} from "#app/ui/command-ui-handler";
-import {Stat} from "#app/data/pokemon-stat";
+import { Stat } from "#enums/stat";
+import { EnemyCommandPhase } from "#app/phases/enemy-command-phase";
+import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
+import GameManager from "#test/utils/gameManager";
+import Phaser from "phaser";
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 
 describe("Moves - Tackle", () => {
@@ -31,35 +25,29 @@ describe("Moves - Tackle", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     const moveToUse = Moves.TACKLE;
-    vi.spyOn(overrides, "SINGLE_BATTLE_OVERRIDE", "get").mockReturnValue(true);
-    vi.spyOn(overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.MAGIKARP);
-    vi.spyOn(overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(1);
-    vi.spyOn(overrides, "STARTING_WAVE_OVERRIDE", "get").mockReturnValue(97);
-    vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([moveToUse]);
-    vi.spyOn(overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.GROWTH,Moves.GROWTH,Moves.GROWTH,Moves.GROWTH]);
-    vi.spyOn(overrides, "NEVER_CRIT_OVERRIDE", "get").mockReturnValue(true);
+    game.override.battleType("single");
+    game.override.enemySpecies(Species.MAGIKARP);
+    game.override.startingLevel(1);
+    game.override.startingWave(97);
+    game.override.moveset([moveToUse]);
+    game.override.enemyMoveset([Moves.GROWTH, Moves.GROWTH, Moves.GROWTH, Moves.GROWTH]);
+    game.override.disableCrits();
   });
 
-  it("TACKLE against ghost", async() => {
+  it("TACKLE against ghost", async () => {
     const moveToUse = Moves.TACKLE;
-    vi.spyOn(overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.GENGAR);
+    game.override.enemySpecies(Species.GENGAR);
     await game.startBattle([
       Species.MIGHTYENA,
     ]);
     const hpOpponent = game.scene.currentBattle.enemyParty[0].hp;
-    game.onNextPrompt("CommandPhase", Mode.COMMAND, () => {
-      game.scene.ui.setMode(Mode.FIGHT, (game.scene.getCurrentPhase() as CommandPhase).getFieldIndex());
-    });
-    game.onNextPrompt("CommandPhase", Mode.FIGHT, () => {
-      const movePosition = getMovePosition(game.scene, 0, moveToUse);
-      (game.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, movePosition, false);
-    });
+    game.move.select(moveToUse);
     await game.phaseInterceptor.runFrom(EnemyCommandPhase).to(TurnEndPhase);
     const hpLost = hpOpponent - game.scene.currentBattle.enemyParty[0].hp;
     expect(hpLost).toBe(0);
   }, 20000);
 
-  it("TACKLE against not resistant", async() => {
+  it("TACKLE against not resistant", async () => {
     const moveToUse = Moves.TACKLE;
     await game.startBattle([
       Species.MIGHTYENA,
@@ -70,16 +58,10 @@ describe("Moves - Tackle", () => {
 
     const hpOpponent = game.scene.currentBattle.enemyParty[0].hp;
 
-    game.onNextPrompt("CommandPhase", Mode.COMMAND, () => {
-      game.scene.ui.setMode(Mode.FIGHT, (game.scene.getCurrentPhase() as CommandPhase).getFieldIndex());
-    });
-    game.onNextPrompt("CommandPhase", Mode.FIGHT, () => {
-      const movePosition = getMovePosition(game.scene, 0, moveToUse);
-      (game.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, movePosition, false);
-    });
+    game.move.select(moveToUse);
     await game.phaseInterceptor.runFrom(EnemyCommandPhase).to(TurnEndPhase);
     const hpLost = hpOpponent - game.scene.currentBattle.enemyParty[0].hp;
     expect(hpLost).toBeGreaterThan(0);
-    expect(hpLost).toBe(4);
+    expect(hpLost).toBeLessThan(4);
   }, 20000);
 });

@@ -1,6 +1,6 @@
 import BattleScene from "../battle-scene";
 import { Mode } from "./ui";
-import { TextStyle, addTextObject, getEggTierTextTint } from "./text";
+import { TextStyle, addTextObject, getEggTierTextTint, getTextStyleOptions } from "./text";
 import MessageUiHandler from "./message-ui-handler";
 import * as Utils from "../utils";
 import { Egg, getLegendaryGachaSpeciesForTimestamp, IEggOptions } from "../data/egg";
@@ -9,7 +9,7 @@ import { getPokemonSpecies } from "../data/pokemon-species";
 import { addWindow } from "./ui-theme";
 import { Tutorial, handleTutorial } from "../tutorial";
 import {Button} from "#enums/buttons";
-import * as Overrides from "../overrides";
+import Overrides from "#app/overrides";
 import { GachaType } from "#app/enums/gacha-types";
 import i18next from "i18next";
 import { EggTier } from "#enums/egg-type";
@@ -36,6 +36,8 @@ export default class EggGachaUiHandler extends MessageUiHandler {
   private transitionCancelled: boolean;
   private defaultText: string;
 
+  private scale: number = 0.1666666667;
+
   constructor(scene: BattleScene) {
     super(scene, Mode.EGG_GACHA);
 
@@ -50,6 +52,7 @@ export default class EggGachaUiHandler extends MessageUiHandler {
 
   setup() {
     this.gachaCursor = 0;
+    this.scale = getTextStyleOptions(TextStyle.WINDOW, this.scene.uiTheme).scale;
 
     const ui = this.getUi();
 
@@ -57,7 +60,7 @@ export default class EggGachaUiHandler extends MessageUiHandler {
     this.eggGachaContainer.setVisible(false);
     ui.add(this.eggGachaContainer);
 
-    const bg = this.scene.add.nineslice(0, 0, "default_bg", null, 320, 180, 0, 0, 16, 0);
+    const bg = this.scene.add.nineslice(0, 0, "default_bg", undefined, 320, 180, 0, 0, 16, 0);
     bg.setOrigin(0, 0);
 
     this.eggGachaContainer.add(bg);
@@ -96,25 +99,71 @@ export default class EggGachaUiHandler extends MessageUiHandler {
 
       const gachaInfoContainer = this.scene.add.container(160, 46);
 
-      const gachaUpLabel = addTextObject(this.scene, 4, 0, "UP!", TextStyle.WINDOW_ALT);
+      const currentLanguage = i18next.resolvedLanguage!; // TODO: is this bang correct?
+      let gachaTextStyle = TextStyle.WINDOW_ALT;
+      let gachaX = 4;
+      let gachaY = 0;
+      let pokemonIconX = -20;
+      let pokemonIconY = 6;
+
+      if (["de", "es", "fr", "ko", "pt-BR"].includes(currentLanguage)) {
+        gachaTextStyle = TextStyle.SMALLER_WINDOW_ALT;
+        gachaX = 2;
+        gachaY = 2;
+      }
+
+      let legendaryLabelX = gachaX;
+      let legendaryLabelY = gachaY;
+      if (["de", "es"].includes(currentLanguage)) {
+        pokemonIconX = -25;
+        pokemonIconY = 10;
+        legendaryLabelX = -6;
+        legendaryLabelY = 0;
+      }
+
+      const gachaUpLabel = addTextObject(this.scene, gachaX, gachaY, i18next.t("egg:legendaryUPGacha"), gachaTextStyle);
       gachaUpLabel.setOrigin(0, 0);
       gachaInfoContainer.add(gachaUpLabel);
 
       switch (gachaType as GachaType) {
       case GachaType.LEGENDARY:
-        const pokemonIcon = this.scene.add.sprite(-20, 6, "pokemon_icons_0");
+        if (["de", "es"].includes(currentLanguage)) {
+          gachaUpLabel.setAlign("center");
+          gachaUpLabel.setY(0);
+        }
+        if (["pt-BR"].includes(currentLanguage)) {
+          gachaUpLabel.setX(legendaryLabelX - 2);
+        } else {
+          gachaUpLabel.setX(legendaryLabelX);
+        }
+        gachaUpLabel.setY(legendaryLabelY);
+
+        const pokemonIcon = this.scene.add.sprite(pokemonIconX, pokemonIconY, "pokemon_icons_0");
+        if (["pt-BR"].includes(currentLanguage)) {
+          pokemonIcon.setX(pokemonIconX - 2);
+        }
         pokemonIcon.setScale(0.5);
         pokemonIcon.setOrigin(0, 0.5);
 
         gachaInfoContainer.add(pokemonIcon);
         break;
       case GachaType.MOVE:
-        gachaUpLabel.setText("Move UP!");
+        if (["de", "es", "fr", "pt-BR"].includes(currentLanguage)) {
+          gachaUpLabel.setAlign("center");
+          gachaUpLabel.setY(0);
+        }
+
+        gachaUpLabel.setText(i18next.t("egg:moveUPGacha"));
         gachaUpLabel.setX(0);
         gachaUpLabel.setOrigin(0.5, 0);
         break;
       case GachaType.SHINY:
-        gachaUpLabel.setText("Shiny UP!");
+        if (["de", "fr", "ko"].includes(currentLanguage)) {
+          gachaUpLabel.setAlign("center");
+          gachaUpLabel.setY(0);
+        }
+
+        gachaUpLabel.setText(i18next.t("egg:shinyUPGacha"));
         gachaUpLabel.setX(0);
         gachaUpLabel.setOrigin(0.5, 0);
         break;
@@ -154,7 +203,7 @@ export default class EggGachaUiHandler extends MessageUiHandler {
     this.eggGachaContainer.add(this.eggGachaOptionsContainer);
 
 
-    this.eggGachaOptionSelectBg = addWindow(this.scene, 0, 0, 96, 112);
+    this.eggGachaOptionSelectBg = addWindow(this.scene, 0, 0, 96, 16 + 576 * this.scale);
     this.eggGachaOptionSelectBg.setOrigin(1, 1);
     this.eggGachaOptionsContainer.add(this.eggGachaOptionSelectBg);
 
@@ -168,11 +217,11 @@ export default class EggGachaUiHandler extends MessageUiHandler {
       { multiplier: multiplierOne, description: `25 ${i18next.t("egg:pulls")}`, icon: getVoucherTypeIcon(VoucherType.GOLDEN) }
     ];
 
-    const { resolvedLanguage } = i18next;
+    const resolvedLanguage = i18next.resolvedLanguage!; // TODO: is this bang correct?
     const pullOptionsText = pullOptions.map(option =>{
       const desc = option.description.split(" ");
       if (desc[0].length < 2) {
-        desc[0] += ["zh", "ko"].includes(resolvedLanguage.substring(0,2)) ? " " : "  ";
+        desc[0] += ["zh", "ko"].includes(resolvedLanguage.substring(0, 2)) ? " " : "  ";
       }
       if (option.multiplier === multiplierOne) {
         desc[0] = " " + desc[0];
@@ -197,8 +246,8 @@ export default class EggGachaUiHandler extends MessageUiHandler {
 
     pullOptions.forEach((option, i) => {
       const icon = this.scene.add.sprite(0, 0, "items", option.icon);
-      icon.setScale(0.5);
-      icon.setPositionRelative(this.eggGachaOptionSelectBg, 20, 17 + i * 16);
+      icon.setScale(3 * this.scale);
+      icon.setPositionRelative(this.eggGachaOptionSelectBg, 20, 9 + (48 + i * 96) * this.scale);
       this.eggGachaOptionsContainer.add(icon);
     });
 
@@ -286,7 +335,7 @@ export default class EggGachaUiHandler extends MessageUiHandler {
     return Utils.fixedInt(delay);
   }
 
-  pull(pullCount?: integer, count?: integer, eggs?: Egg[]): void {
+  pull(pullCount: integer = 0, count: integer = 0, eggs?: Egg[]): void {
     if (Overrides.EGG_GACHA_PULL_COUNT_OVERRIDE && !count) {
       pullCount = Overrides.EGG_GACHA_PULL_COUNT_OVERRIDE;
     }
@@ -296,21 +345,21 @@ export default class EggGachaUiHandler extends MessageUiHandler {
 
     const doPull = () => {
       if (this.transitionCancelled) {
-        return this.showSummary(eggs);
+        return this.showSummary(eggs!);
       }
 
-      const egg = this.scene.add.sprite(127, 75, "egg", `egg_${eggs[count].getKey()}`);
+      const egg = this.scene.add.sprite(127, 75, "egg", `egg_${eggs![count].getKey()}`);
       egg.setScale(0.5);
 
       this.gachaContainers[this.gachaCursor].add(egg);
       this.gachaContainers[this.gachaCursor].moveTo(egg, 2);
 
       const doPullAnim = () => {
-        this.scene.playSound("gacha_running", { loop: true });
+        this.scene.playSound("se/gacha_running", { loop: true });
         this.scene.time.delayedCall(this.getDelayValue(count ? 500 : 1250), () => {
-          this.scene.playSound("gacha_dispense");
+          this.scene.playSound("se/gacha_dispense");
           this.scene.time.delayedCall(this.getDelayValue(750), () => {
-            this.scene.sound.stopByKey("gacha_running");
+            this.scene.sound.stopByKey("se/gacha_running");
             this.scene.tweens.add({
               targets: egg,
               duration: this.getDelayValue(350),
@@ -318,7 +367,7 @@ export default class EggGachaUiHandler extends MessageUiHandler {
               ease: "Bounce.easeOut",
               onComplete: () => {
                 this.scene.time.delayedCall(this.getDelayValue(125), () => {
-                  this.scene.playSound("pb_catch");
+                  this.scene.playSound("se/pb_catch");
                   this.gachaHatches[this.gachaCursor].play("open");
                   this.scene.tweens.add({
                     targets: egg,
@@ -342,7 +391,7 @@ export default class EggGachaUiHandler extends MessageUiHandler {
                           if (++count < pullCount) {
                             this.pull(pullCount, count, eggs);
                           } else {
-                            this.showSummary(eggs);
+                            this.showSummary(eggs!);
                           }
                         }
                       });
@@ -356,7 +405,7 @@ export default class EggGachaUiHandler extends MessageUiHandler {
       };
 
       if (!count) {
-        this.scene.playSound("gacha_dial");
+        this.scene.playSound("se/gacha_dial");
         this.scene.tweens.add({
           targets: this.gachaKnobs[this.gachaCursor],
           duration: this.getDelayValue(350),
@@ -535,7 +584,7 @@ export default class EggGachaUiHandler extends MessageUiHandler {
   }
 
   showError(text: string): void {
-    this.showText(text, null, () => this.showText(this.defaultText), Utils.fixedInt(1500));
+    this.showText(text, undefined, () => this.showText(this.defaultText), Utils.fixedInt(1500));
   }
 
   setTransitioning(transitioning: boolean): void {
@@ -689,7 +738,8 @@ export default class EggGachaUiHandler extends MessageUiHandler {
       this.eggGachaOptionsContainer.add(this.cursorObj);
     }
 
-    this.cursorObj.setPositionRelative(this.eggGachaOptionSelectBg, 10, 17 + this.cursor * 16);
+    this.cursorObj.setScale(this.scale * 6);
+    this.cursorObj.setPositionRelative(this.eggGachaOptionSelectBg, 10, 9 + (48 + this.cursor * 96) * this.scale);
 
     return ret;
   }
