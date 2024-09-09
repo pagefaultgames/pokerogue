@@ -47,6 +47,5 @@
   "tailwindOnRemovePlayer": "味方の　追い風が　止んだ！",
   "tailwindOnRemoveEnemy": "相手の　追い風が　止んだ！",
   "happyHourOnAdd": "みんなが　ハッピーな気分に\n包まれた！",
-  "happyHourOnRemove": "みんなの　気分が　元に戻った",
-  "tarShotOnAdd": "{{pokemonNameWithAffix}} became weaker to fire!"
+  "happyHourOnRemove": "みんなの　気分が　元に戻った"
 }
