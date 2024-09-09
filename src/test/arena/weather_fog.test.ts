@@ -31,7 +31,7 @@ describe("Weather - Fog", () => {
     game.override.ability(Abilities.BALL_FETCH);
     game.override.enemyAbility(Abilities.BALL_FETCH);
     game.override.enemySpecies(Species.MAGIKARP);
-    game.override.enemyMoveset(new Array(4).fill(Moves.SPLASH));
+    game.override.enemyMoveset([Moves.SPLASH]);
   });
 
   it("move accuracy is multiplied by 90%", async () => {

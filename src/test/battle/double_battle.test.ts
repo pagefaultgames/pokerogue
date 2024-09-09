@@ -4,7 +4,6 @@ import { TurnInitPhase } from "#app/phases/turn-init-phase";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/utils/gameManager";
-import { SPLASH_ONLY } from "#test/utils/testUtils";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
@@ -29,7 +28,7 @@ describe("Double Battles", () => {
   // double-battle player's pokemon both fainted in same round, then revive one, and next double battle summons two player's pokemon successfully.
   // (There were bugs that either only summon one when can summon two, player stuck in switchPhase etc)
   it("3v2 edge case: player summons 2 pokemon on the next battle after being fainted and revived", async () => {
-    game.override.battleType("double").enemyMoveset(SPLASH_ONLY).moveset(SPLASH_ONLY);
+    game.override.battleType("double").enemyMoveset(Moves.SPLASH).moveset(Moves.SPLASH);
     await game.startBattle([
       Species.BULBASAUR,
       Species.CHARIZARD,
