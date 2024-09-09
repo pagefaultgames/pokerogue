@@ -8,7 +8,7 @@ import { PlayerPokemon } from "#app/field/pokemon";
 import i18next from "i18next";
 import { EggTier } from "#enums/egg-type";
 import { Species } from "#enums/species";
-import { EggSourceType } from "#app/enums/egg-source-types";
+import { EggSourceType } from "#app/enums/egg-source-types.js";
 
 export const EGG_SEED = 1073741824;
 

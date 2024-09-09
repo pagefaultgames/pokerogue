@@ -1,8 +1,8 @@
-import BattleScene from "#app/battle-scene";
-import { getPokemonNameWithAffix } from "#app/messages";
-import { ExpBoosterModifier } from "#app/modifier/modifier";
+import BattleScene from "#app/battle-scene.js";
+import { getPokemonNameWithAffix } from "#app/messages.js";
+import { ExpBoosterModifier } from "#app/modifier/modifier.js";
 import i18next from "i18next";
-import * as Utils from "#app/utils";
+import * as Utils from "#app/utils.js";
 import { PlayerPartyMemberPokemonPhase } from "./player-party-member-pokemon-phase";
 import { LevelUpPhase } from "./level-up-phase";
 

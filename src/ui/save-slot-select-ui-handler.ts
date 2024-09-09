@@ -2,7 +2,7 @@ import i18next from "i18next";
 import BattleScene from "../battle-scene";
 import { Button } from "#enums/buttons";
 import { GameMode } from "../game-mode";
-import * as Modifier from "../modifier/modifier";
+import { PokemonHeldItemModifier } from "../modifier/modifier";
 import { SessionSaveData } from "../system/game-data";
 import PokemonData from "../system/pokemon-data";
 import * as Utils from "../utils";
@@ -306,12 +306,14 @@ class SessionSlot extends Phaser.GameObjects.Container {
 
     this.add(pokemonIconsContainer);
 
+    const modifiersModule = await import("../modifier/modifier");
+
     const modifierIconsContainer = this.scene.add.container(148, 30);
     modifierIconsContainer.setScale(0.5);
     let visibleModifierIndex = 0;
     for (const m of data.modifiers) {
-      const modifier = m.toModifier(this.scene, Modifier[m.className]);
-      if (modifier instanceof Modifier.PokemonHeldItemModifier) {
+      const modifier = m.toModifier(this.scene, modifiersModule[m.className]);
+      if (modifier instanceof PokemonHeldItemModifier) {
         continue;
       }
       const icon = modifier?.getIcon(this.scene, false);

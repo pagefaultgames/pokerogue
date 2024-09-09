@@ -1,5 +1,5 @@
-import TouchControl from "#app/touch-controls";
-import UI from "#app/ui/ui";
+import TouchControl from "#app/touch-controls.js";
+import UI from "#app/ui/ui.js";
 import { Scene } from "phaser";
 
 export const TOUCH_CONTROL_POSITIONS_LANDSCAPE = "touchControlPositionsLandscape";

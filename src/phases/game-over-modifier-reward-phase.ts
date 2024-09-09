@@ -1,6 +1,6 @@
-import BattleScene from "#app/battle-scene";
-import { ModifierTypeFunc } from "#app/modifier/modifier-type";
-import { Mode } from "#app/ui/ui";
+import BattleScene from "#app/battle-scene.js";
+import { ModifierTypeFunc } from "#app/modifier/modifier-type.js";
+import { Mode } from "#app/ui/ui.js";
 import i18next from "i18next";
 import { ModifierRewardPhase } from "./modifier-reward-phase";
 

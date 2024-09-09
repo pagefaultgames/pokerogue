@@ -2,7 +2,7 @@ import { Arena } from "../field/arena";
 import { ArenaTag } from "../data/arena-tag";
 import { Biome } from "#enums/biome";
 import { Weather } from "../data/weather";
-import { Terrain } from "#app/data/terrain";
+import { Terrain } from "#app/data/terrain.js";
 
 export default class ArenaData {
   public biome: Biome;

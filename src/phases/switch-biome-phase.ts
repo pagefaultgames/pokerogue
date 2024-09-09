@@ -1,6 +1,6 @@
-import BattleScene from "#app/battle-scene";
-import { Biome } from "#app/enums/biome";
-import { getBiomeKey } from "#app/field/arena";
+import BattleScene from "#app/battle-scene.js";
+import { Biome } from "#app/enums/biome.js";
+import { getBiomeKey } from "#app/field/arena.js";
 import { BattlePhase } from "./battle-phase";
 
 export class SwitchBiomePhase extends BattlePhase {

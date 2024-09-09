@@ -1,6 +1,6 @@
-import BattleScene from "#app/battle-scene";
-import { trainerConfigs } from "#app/data/trainer-config";
-import { TrainerType } from "#app/enums/trainer-type";
+import BattleScene from "#app/battle-scene.js";
+import { trainerConfigs } from "#app/data/trainer-config.js";
+import { TrainerType } from "#app/enums/trainer-type.js";
 import { BattlePhase } from "./battle-phase";
 import { TestMessagePhase } from "./test-message-phase";
 

@@ -1,8 +1,8 @@
-import BattleScene from "#app/battle-scene";
-import { BattlerIndex, BattleType } from "#app/battle";
-import { modifierTypes } from "#app/modifier/modifier-type";
-import { ExpShareModifier, ExpBalanceModifier, MultipleParticipantExpBonusModifier, PokemonExpBoosterModifier } from "#app/modifier/modifier";
-import * as Utils from "#app/utils";
+import BattleScene from "#app/battle-scene.js";
+import { BattlerIndex, BattleType } from "#app/battle.js";
+import { modifierTypes } from "#app/modifier/modifier-type.js";
+import { ExpShareModifier, ExpBalanceModifier, MultipleParticipantExpBonusModifier, PokemonExpBoosterModifier } from "#app/modifier/modifier.js";
+import * as Utils from "#app/utils.js";
 import Overrides from "#app/overrides";
 import { BattleEndPhase } from "./battle-end-phase";
 import { NewBattlePhase } from "./new-battle-phase";

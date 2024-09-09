@@ -1,5 +1,5 @@
-import BattleScene from "#app/battle-scene";
-import { SceneBase } from "#app/scene-base";
+import BattleScene from "#app/battle-scene.js";
+import { SceneBase } from "#app/scene-base.js";
 import { addTextObject, TextStyle } from "./text";
 import { addWindow, WindowVariant } from "./ui-theme";
 import i18next from "i18next";

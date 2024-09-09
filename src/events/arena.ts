@@ -1,7 +1,7 @@
-import { ArenaTagSide } from "#app/data/arena-tag";
+import { ArenaTagSide } from "#app/data/arena-tag.js";
 import { ArenaTagType } from "#enums/arena-tag-type";
-import { TerrainType } from "#app/data/terrain";
-import { WeatherType } from "#app/data/weather";
+import { TerrainType } from "#app/data/terrain.js";
+import { WeatherType } from "#app/data/weather.js";
 
 /** Alias for all {@linkcode ArenaEvent} type strings */
 export enum ArenaEventType {

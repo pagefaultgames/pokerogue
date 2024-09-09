@@ -1,4 +1,4 @@
-import { Moves } from "#app/enums/moves";
+import { Moves } from "#app/enums/moves.js";
 import i18next, { type ParseKeys } from "i18next";
 import { vi } from "vitest";
 

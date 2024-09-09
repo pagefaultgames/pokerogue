@@ -1,7 +1,7 @@
 import { FormModalUiHandler } from "./form-modal-ui-handler";
 import { ModalConfig } from "./modal-ui-handler";
 import i18next from "i18next";
-import { PlayerPokemon } from "#app/field/pokemon";
+import { PlayerPokemon } from "#app/field/pokemon.js";
 
 export default class RenameFormUiHandler extends FormModalUiHandler {
   getModalTitle(config?: ModalConfig): string {

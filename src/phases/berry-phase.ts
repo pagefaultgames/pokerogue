@@ -1,10 +1,10 @@
-import { applyAbAttrs, PreventBerryUseAbAttr, HealFromBerryUseAbAttr } from "#app/data/ability";
-import { CommonAnim } from "#app/data/battle-anims";
-import { BerryUsedEvent } from "#app/events/battle-scene";
-import { getPokemonNameWithAffix } from "#app/messages";
-import { BerryModifier } from "#app/modifier/modifier";
+import { applyAbAttrs, PreventBerryUseAbAttr, HealFromBerryUseAbAttr } from "#app/data/ability.js";
+import { CommonAnim } from "#app/data/battle-anims.js";
+import { BerryUsedEvent } from "#app/events/battle-scene.js";
+import { getPokemonNameWithAffix } from "#app/messages.js";
+import { BerryModifier } from "#app/modifier/modifier.js";
 import i18next from "i18next";
-import * as Utils from "#app/utils";
+import * as Utils from "#app/utils.js";
 import { FieldPhase } from "./field-phase";
 import { CommonAnimPhase } from "./common-anim-phase";
 

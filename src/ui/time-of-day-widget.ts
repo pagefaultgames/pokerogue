@@ -1,5 +1,5 @@
 import * as Utils from "../utils";
-import BattleScene from "#app/battle-scene";
+import BattleScene from "#app/battle-scene.js";
 import { BattleSceneEventType } from "../events/battle-scene";
 import { EaseType } from "#enums/ease-type";
 import { TimeOfDay } from "#enums/time-of-day";
