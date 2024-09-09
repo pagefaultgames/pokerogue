@@ -1,8 +1,8 @@
-import BattleScene from "#app/battle-scene.js";
-import { initMoveAnim, loadMoveAnimAssets, MoveAnim } from "#app/data/battle-anims.js";
-import { allMoves, SelfStatusMove } from "#app/data/move.js";
-import { Moves } from "#app/enums/moves.js";
-import * as Utils from "#app/utils.js";
+import BattleScene from "#app/battle-scene";
+import { initMoveAnim, loadMoveAnimAssets, MoveAnim } from "#app/data/battle-anims";
+import { allMoves, SelfStatusMove } from "#app/data/move";
+import { Moves } from "#app/enums/moves";
+import * as Utils from "#app/utils";
 import { BattlePhase } from "./battle-phase";
 
 export class MoveAnimTestPhase extends BattlePhase {

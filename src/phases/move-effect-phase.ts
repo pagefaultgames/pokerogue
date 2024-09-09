@@ -1,18 +1,18 @@
-import BattleScene from "#app/battle-scene.js";
-import { BattlerIndex } from "#app/battle.js";
-import { applyPreAttackAbAttrs, AddSecondStrikeAbAttr, IgnoreMoveEffectsAbAttr, applyPostDefendAbAttrs, PostDefendAbAttr, applyPostAttackAbAttrs, PostAttackAbAttr, MaxMultiHitAbAttr, AlwaysHitAbAttr } from "#app/data/ability.js";
-import { ArenaTagSide, ConditionalProtectTag } from "#app/data/arena-tag.js";
-import { MoveAnim } from "#app/data/battle-anims.js";
-import { BattlerTagLapseType, ProtectedTag, SemiInvulnerableTag, SubstituteTag } from "#app/data/battler-tags.js";
-import { MoveTarget, applyMoveAttrs, OverrideMoveEffectAttr, MultiHitAttr, AttackMove, FixedDamageAttr, VariableTargetAttr, MissEffectAttr, MoveFlags, applyFilteredMoveAttrs, MoveAttr, MoveEffectAttr, MoveEffectTrigger, ChargeAttr, MoveCategory, NoEffectAttr, HitsTagAttr } from "#app/data/move.js";
-import { SpeciesFormChangePostMoveTrigger } from "#app/data/pokemon-forms.js";
-import { BattlerTagType } from "#app/enums/battler-tag-type.js";
-import { Moves } from "#app/enums/moves.js";
-import Pokemon, { PokemonMove, MoveResult, HitResult } from "#app/field/pokemon.js";
-import { getPokemonNameWithAffix } from "#app/messages.js";
-import { PokemonMultiHitModifier, FlinchChanceModifier, EnemyAttackStatusEffectChanceModifier, ContactHeldItemTransferChanceModifier, HitHealModifier } from "#app/modifier/modifier.js";
+import BattleScene from "#app/battle-scene";
+import { BattlerIndex } from "#app/battle";
+import { applyPreAttackAbAttrs, AddSecondStrikeAbAttr, IgnoreMoveEffectsAbAttr, applyPostDefendAbAttrs, PostDefendAbAttr, applyPostAttackAbAttrs, PostAttackAbAttr, MaxMultiHitAbAttr, AlwaysHitAbAttr } from "#app/data/ability";
+import { ArenaTagSide, ConditionalProtectTag } from "#app/data/arena-tag";
+import { MoveAnim } from "#app/data/battle-anims";
+import { BattlerTagLapseType, ProtectedTag, SemiInvulnerableTag, SubstituteTag } from "#app/data/battler-tags";
+import { MoveTarget, applyMoveAttrs, OverrideMoveEffectAttr, MultiHitAttr, AttackMove, FixedDamageAttr, VariableTargetAttr, MissEffectAttr, MoveFlags, applyFilteredMoveAttrs, MoveAttr, MoveEffectAttr, MoveEffectTrigger, ChargeAttr, MoveCategory, NoEffectAttr, HitsTagAttr } from "#app/data/move";
+import { SpeciesFormChangePostMoveTrigger } from "#app/data/pokemon-forms";
+import { BattlerTagType } from "#app/enums/battler-tag-type";
+import { Moves } from "#app/enums/moves";
+import Pokemon, { PokemonMove, MoveResult, HitResult } from "#app/field/pokemon";
+import { getPokemonNameWithAffix } from "#app/messages";
+import { PokemonMultiHitModifier, FlinchChanceModifier, EnemyAttackStatusEffectChanceModifier, ContactHeldItemTransferChanceModifier, HitHealModifier } from "#app/modifier/modifier";
 import i18next from "i18next";
-import * as Utils from "#app/utils.js";
+import * as Utils from "#app/utils";
 import { PokemonPhase } from "./pokemon-phase";
 
 export class MoveEffectPhase extends PokemonPhase {

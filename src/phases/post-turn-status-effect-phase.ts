@@ -1,12 +1,12 @@
-import BattleScene from "#app/battle-scene.js";
-import { BattlerIndex } from "#app/battle.js";
-import { applyAbAttrs, BlockNonDirectDamageAbAttr, BlockStatusDamageAbAttr, ReduceBurnDamageAbAttr } from "#app/data/ability.js";
-import { CommonBattleAnim, CommonAnim } from "#app/data/battle-anims.js";
-import { getStatusEffectActivationText } from "#app/data/status-effect.js";
-import { BattleSpec } from "#app/enums/battle-spec.js";
-import { StatusEffect } from "#app/enums/status-effect.js";
-import { getPokemonNameWithAffix } from "#app/messages.js";
-import * as Utils from "#app/utils.js";
+import BattleScene from "#app/battle-scene";
+import { BattlerIndex } from "#app/battle";
+import { applyAbAttrs, BlockNonDirectDamageAbAttr, BlockStatusDamageAbAttr, ReduceBurnDamageAbAttr } from "#app/data/ability";
+import { CommonBattleAnim, CommonAnim } from "#app/data/battle-anims";
+import { getStatusEffectActivationText } from "#app/data/status-effect";
+import { BattleSpec } from "#app/enums/battle-spec";
+import { StatusEffect } from "#app/enums/status-effect";
+import { getPokemonNameWithAffix } from "#app/messages";
+import * as Utils from "#app/utils";
 import { PokemonPhase } from "./pokemon-phase";
 
 export class PostTurnStatusEffectPhase extends PokemonPhase {

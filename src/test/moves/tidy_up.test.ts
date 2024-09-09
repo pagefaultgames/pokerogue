@@ -6,7 +6,6 @@ import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/utils/gameManager";
-import { SPLASH_ONLY } from "#test/utils/testUtils";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { SubstituteTag } from "#app/data/battler-tags";
@@ -31,7 +30,7 @@ describe("Moves - Tidy Up", () => {
     game.override.battleType("single");
     game.override.enemySpecies(Species.MAGIKARP);
     game.override.enemyAbility(Abilities.BALL_FETCH);
-    game.override.enemyMoveset(SPLASH_ONLY);
+    game.override.enemyMoveset(Moves.SPLASH);
     game.override.starterSpecies(Species.FEEBAS);
     game.override.ability(Abilities.BALL_FETCH);
     game.override.moveset([Moves.TIDY_UP]);

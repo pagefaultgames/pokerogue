@@ -68,6 +68,8 @@
   "cursedOnAdd": "{{pokemonNameWithAffix}}[[는]] 자신의 체력을 깎아서\n{{pokemonName}}에게 저주를 걸었다!",
   "cursedLapse": "{{pokemonNameWithAffix}}[[는]]\n저주받고 있다!",
   "stockpilingOnAdd": "{{pokemonNameWithAffix}}[[는]]\n{{stockpiledCount}}개 비축했다!",
+  "disabledOnAdd": "{{pokemonNameWithAffix}}의 {{moveName}}[[는]]\n사용할 수 없다!",
+  "disabledLapse": "{{pokemonNameWithAffix}}의 {{moveName}}[[는]]\n이제 사용할 수 있다.",
   "substituteOnAdd": "{{pokemonNameWithAffix}}의\n대타가 나타났다!",
   "substituteOnHit": "{{pokemonNameWithAffix}}[[를]] 대신하여\n대타가 공격을 받았다!",
   "substituteOnRemove": "{{pokemonNameWithAffix}}의\n대타는 사라져 버렸다..."

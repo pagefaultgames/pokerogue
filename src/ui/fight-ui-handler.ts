@@ -5,11 +5,11 @@ import { Command } from "./command-ui-handler";
 import { Mode } from "./ui";
 import UiHandler from "./ui-handler";
 import * as Utils from "../utils";
-import { MoveCategory } from "#app/data/move.js";
+import { MoveCategory } from "#app/data/move";
 import i18next from "i18next";
 import {Button} from "#enums/buttons";
-import Pokemon, { PokemonMove } from "#app/field/pokemon.js";
-import { CommandPhase } from "#app/phases/command-phase.js";
+import Pokemon, { PokemonMove } from "#app/field/pokemon";
+import { CommandPhase } from "#app/phases/command-phase";
 
 export default class FightUiHandler extends UiHandler {
   public static readonly MOVES_CONTAINER_NAME = "moves";

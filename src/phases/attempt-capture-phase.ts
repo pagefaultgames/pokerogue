@@ -232,8 +232,8 @@ export class AttemptCapturePhase extends PokemonPhase {
         this.scene.clearEnemyHeldItemModifiers();
         this.scene.field.remove(pokemon, true);
       };
-      const addToParty = () => {
-        const newPokemon = pokemon.addToParty(this.pokeballType);
+      const addToParty = (slotIndex?: number) => {
+        const newPokemon = pokemon.addToParty(this.pokeballType, slotIndex);
         const modifiers = this.scene.findModifiers(m => m instanceof PokemonHeldItemModifier, false);
         if (this.scene.getParty().filter(p => p.isShiny()).length === 6) {
           this.scene.validateAchv(achvs.SHINY_PARTY);
@@ -264,7 +264,7 @@ export class AttemptCapturePhase extends PokemonPhase {
                 this.scene.ui.setMode(Mode.PARTY, PartyUiMode.RELEASE, this.fieldIndex, (slotIndex: integer, _option: PartyOption) => {
                   this.scene.ui.setMode(Mode.MESSAGE).then(() => {
                     if (slotIndex < 6) {
-                      addToParty();
+                      addToParty(slotIndex);
                     } else {
                       promptRelease();
                     }
