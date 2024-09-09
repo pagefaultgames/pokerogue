@@ -5,7 +5,6 @@ import { WeatherType } from "#app/enums/weather-type";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/utils/gameManager";
-import { SPLASH_ONLY } from "#test/utils/testUtils";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
@@ -44,7 +43,7 @@ describe("Abilities - Flower Gift", () => {
     game.override
       .moveset([Moves.SPLASH, Moves.RAIN_DANCE, Moves.SUNNY_DAY, Moves.SKILL_SWAP])
       .enemySpecies(Species.MAGIKARP)
-      .enemyMoveset(SPLASH_ONLY)
+      .enemyMoveset(Moves.SPLASH)
       .enemyAbility(Abilities.BALL_FETCH);
   });
 
@@ -92,7 +91,7 @@ describe("Abilities - Flower Gift", () => {
   });
 
   it("reverts to Overcast Form when the Pokémon loses Flower Gift, changes form under Harsh Sunlight/Sunny when it regains it", async () => {
-    game.override.enemyMoveset(Array(4).fill(Moves.SKILL_SWAP)).weather(WeatherType.HARSH_SUN);
+    game.override.enemyMoveset([Moves.SKILL_SWAP]).weather(WeatherType.HARSH_SUN);
 
     await game.classicMode.startBattle([Species.CHERRIM]);
 
@@ -111,7 +110,7 @@ describe("Abilities - Flower Gift", () => {
   });
 
   it("reverts to Overcast Form when the Flower Gift is suppressed, changes form under Harsh Sunlight/Sunny when it regains it", async () => {
-    game.override.enemyMoveset(Array(4).fill(Moves.GASTRO_ACID)).weather(WeatherType.HARSH_SUN);
+    game.override.enemyMoveset([Moves.GASTRO_ACID]).weather(WeatherType.HARSH_SUN);
 
     await game.classicMode.startBattle([Species.CHERRIM, Species.MAGIKARP]);
 

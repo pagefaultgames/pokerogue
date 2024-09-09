@@ -5,7 +5,6 @@ import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import { SPLASH_ONLY } from "../utils/testUtils";
 import { BattlerIndex } from "#app/battle";
 import { EnemyCommandPhase } from "#app/phases/enemy-command-phase";
 import { VictoryPhase } from "#app/phases/victory-phase";
@@ -34,7 +33,7 @@ describe("Abilities - Moxie", () => {
     game.override.ability(Abilities.MOXIE);
     game.override.startingLevel(2000);
     game.override.moveset([ moveToUse ]);
-    game.override.enemyMoveset(SPLASH_ONLY);
+    game.override.enemyMoveset(Moves.SPLASH);
   });
 
   it("should raise ATK stat stage by 1 when winning a battle", async() => {

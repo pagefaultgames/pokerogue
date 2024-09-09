@@ -33,9 +33,14 @@ import { UncommonBreedEncounter } from "#app/data/mystery-encounters/encounters/
 import { GlobalTradeSystemEncounter } from "#app/data/mystery-encounters/encounters/global-trade-system-encounter";
 
 /**
- * Spawn chance: (BASE_MYSTERY_ENCOUNTER_SPAWN_WEIGHT + WIGHT_INCREMENT_ON_SPAWN_MISS * <number of missed spawns>) / 256
+ * Spawn chance: (BASE_MYSTERY_ENCOUNTER_SPAWN_WEIGHT + WIGHT_INCREMENT_ON_SPAWN_MISS * <number of missed spawns>) / MYSTERY_ENCOUNTER_SPAWN_MAX_WEIGHT
  */
 export const BASE_MYSTERY_ENCOUNTER_SPAWN_WEIGHT = 3;
+/**
+ * The divisor for determining ME spawns, defines the "maximum" weight required for a spawn
+ * If spawn_weight === MYSTERY_ENCOUNTER_SPAWN_MAX_WEIGHT, 100% chance to spawn a ME
+ */
+export const MYSTERY_ENCOUNTER_SPAWN_MAX_WEIGHT = 256;
 /**
  * When an ME spawn roll fails, WEIGHT_INCREMENT_ON_SPAWN_MISS is added to future rolls for ME spawn checks.
  * These values are cleared whenever the next ME spawns, and spawn weight returns to BASE_MYSTERY_ENCOUNTER_SPAWN_WEIGHT
