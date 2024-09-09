@@ -58,6 +58,7 @@ import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
 import { SwitchSummonPhase } from "#app/phases/switch-summon-phase";
 import { ToggleDoublePositionPhase } from "#app/phases/toggle-double-position-phase";
 import { Challenges } from "#enums/challenges";
+import { PLAYER_PARTY_MAX_SIZE } from "#app/constants";
 
 export enum FieldPosition {
   CENTER,
@@ -1049,6 +1050,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       const teraType = this.getTeraType();
       if (teraType !== Type.UNKNOWN) {
         types.push(teraType);
+        if (forDefend) {
+          return types;
+        }
       }
     }
 
@@ -1320,9 +1324,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     }
 
     const trappedByAbility = new Utils.BooleanHolder(false);
+    const opposingField = this.isPlayer() ? this.scene.getEnemyField() : this.scene.getPlayerField();
 
-    this.scene.getEnemyField()!.forEach(enemyPokemon =>
-      applyCheckTrappedAbAttrs(CheckTrappedAbAttr, enemyPokemon, trappedByAbility, this, trappedAbMessages, simulated)
+    opposingField.forEach(opponent =>
+      applyCheckTrappedAbAttrs(CheckTrappedAbAttr, opponent, trappedByAbility, this, trappedAbMessages, simulated)
     );
 
     return (trappedByAbility.value || !!this.getTag(TrappedTag));
@@ -1368,7 +1373,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       : 1);
 
     applyMoveAttrs(VariableMoveTypeMultiplierAttr, source, this, move, typeMultiplier);
-    if (this.getTypes().find(t => move.isTypeImmune(source, this, t))) {
+    if (this.getTypes(true, true).find(t => move.isTypeImmune(source, this, t))) {
       typeMultiplier.value = 0;
     }
 
@@ -4462,17 +4467,29 @@ export class EnemyPokemon extends Pokemon {
     return BattlerIndex.ENEMY + this.getFieldIndex();
   }
 
-  addToParty(pokeballType: PokeballType) {
+  /**
+   * Add a new pokemon to the player's party (at `slotIndex` if set).
+   * @param pokeballType the type of pokeball the pokemon was caught with
+   * @param slotIndex an optional index to place the pokemon in the party
+   * @returns the pokemon that was added or null if the pokemon could not be added
+   */
+  addToParty(pokeballType: PokeballType, slotIndex: number = -1) {
     const party = this.scene.getParty();
     let ret: PlayerPokemon | null = null;
 
-    if (party.length < 6) {
+    if (party.length < PLAYER_PARTY_MAX_SIZE) {
       this.pokeball = pokeballType;
       this.metLevel = this.level;
       this.metBiome = this.scene.arena.biomeType;
       this.metSpecies = this.species.speciesId;
       const newPokemon = this.scene.addPlayerPokemon(this.species, this.level, this.abilityIndex, this.formIndex, this.gender, this.shiny, this.variant, this.ivs, this.nature, this);
-      party.push(newPokemon);
+
+      if (Utils.isBetween(slotIndex, 0, PLAYER_PARTY_MAX_SIZE - 1)) {
+        party.splice(slotIndex, 0, newPokemon);
+      } else {
+        party.push(newPokemon);
+      }
+
       ret = newPokemon;
       this.scene.triggerPokemonFormChange(newPokemon, SpeciesFormChangeActiveTrigger, true);
     }
