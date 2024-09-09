@@ -161,6 +161,72 @@ describe("Moves - Parting Shot", () => {
   );
 
   test(
+    "Parting shot shouldn't allow switch out against white smoke ability",
+    async () => {
+      game.override
+        .enemySpecies(Species.TORKOAL)
+        .enemyAbility(Abilities.WHITE_SMOKE);
+      await game.startBattle([Species.SNORLAX, Species.MEOWTH]);
+
+      const enemyPokemon = game.scene.getEnemyPokemon()!;
+      expect(enemyPokemon).toBeDefined();
+
+      game.move.select(Moves.PARTING_SHOT);
+
+      await game.phaseInterceptor.to(BerryPhase, false);
+      expect(enemyPokemon.getStatStage(Stat.ATK)).toBe(0);
+      expect(enemyPokemon.getStatStage(Stat.SPATK)).toBe(0);
+      expect(game.scene.getPlayerField()[0].species.speciesId).toBe(Species.SNORLAX);
+    }, TIMEOUT
+  );
+
+  test(
+    "Parting shot should not switch out if target is +6/+6 buffed and has contrary ability",
+    async () => {
+      game.override
+        .enemySpecies(Species.SHUCKLE)
+        .enemyAbility(Abilities.CONTRARY)
+        .enemyMoveset(Array(4).fill(Moves.SPLASH));
+
+      game.override.moveset([Moves.PARTING_SHOT, Moves.MEMENTO, Moves.SPLASH]);
+      await game.startBattle([Species.MEOWTH, Species.MEOWTH, Species.MEOWTH, Species.MURKROW, Species.ABRA]);
+
+      // use Memento 3 times to buff enemy
+      game.move.select(Moves.MEMENTO);
+      await game.phaseInterceptor.to(FaintPhase);
+      expect(game.scene.getParty()[0].isFainted()).toBe(true);
+      game.doSelectPartyPokemon(1);
+
+      await game.phaseInterceptor.to(TurnInitPhase, false);
+      game.move.select(Moves.MEMENTO);
+      await game.phaseInterceptor.to(FaintPhase);
+      expect(game.scene.getParty()[0].isFainted()).toBe(true);
+      game.doSelectPartyPokemon(2);
+
+      await game.phaseInterceptor.to(TurnInitPhase, false);
+      game.move.select(Moves.MEMENTO);
+      await game.phaseInterceptor.to(FaintPhase);
+      expect(game.scene.getParty()[0].isFainted()).toBe(true);
+      game.doSelectPartyPokemon(3);
+
+      // set up done - enemy should be at +6/+6
+      await game.phaseInterceptor.to(TurnInitPhase, false);
+      const enemyPokemon = game.scene.getEnemyPokemon()!;
+      expect(enemyPokemon).toBeDefined();
+
+      expect(enemyPokemon.getStatStage(Stat.ATK)).toBe(6);
+      expect(enemyPokemon.getStatStage(Stat.SPATK)).toBe(6);
+
+      // now parting shot should fail
+      game.move.select(Moves.PARTING_SHOT);
+
+      await game.phaseInterceptor.to(BerryPhase, false);
+      expect(enemyPokemon.getStatStage(Stat.ATK)).toBe(6);
+      expect(enemyPokemon.getStatStage(Stat.SPATK)).toBe(6);
+      expect(game.scene.getPlayerField()[0].species.speciesId).toBe(Species.MURKROW);
+    }, TIMEOUT
+  );
+  test(
     "Parting shot should de-buff and not fail if no party available to switch - party size 1",
     async () => {
       game.override
@@ -182,6 +248,8 @@ describe("Moves - Parting Shot", () => {
   test(
     "Parting shot shouldn't fail if no party available to switch - party fainted",
     async () => {
+      game.override
+        .enemySpecies(Species.MAGIKARP);
       await game.startBattle([Species.MURKROW, Species.MEOWTH]);
       game.move.select(Moves.SPLASH);
 
