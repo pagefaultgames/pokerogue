@@ -1,6 +1,5 @@
 import { allMoves } from "#app/data/move";
-import { StatusEffect } from "#app/enums/status-effect.js";
-import { TurnEndPhase } from "#app/phases/turn-end-phase.js";
+import { StatusEffect } from "#app/enums/status-effect";
 import { TurnStartPhase } from "#app/phases/turn-start-phase";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
@@ -35,7 +34,7 @@ describe("Weather - Strong Winds", () => {
   it("electric type move is not very effective on Rayquaza", async () => {
     game.override.enemySpecies(Species.RAYQUAZA);
 
-    await game.startBattle([Species.PIKACHU]);
+    await game.classicMode.startBattle([Species.PIKACHU]);
     const pikachu = game.scene.getPlayerPokemon()!;
     const enemy = game.scene.getEnemyPokemon()!;
 
@@ -46,7 +45,7 @@ describe("Weather - Strong Winds", () => {
   });
 
   it("electric type move is neutral for flying type pokemon", async () => {
-    await game.startBattle([Species.PIKACHU]);
+    await game.classicMode.startBattle([Species.PIKACHU]);
     const pikachu = game.scene.getPlayerPokemon()!;
     const enemy = game.scene.getEnemyPokemon()!;
 
@@ -57,7 +56,7 @@ describe("Weather - Strong Winds", () => {
   });
 
   it("ice type move is neutral for flying type pokemon", async () => {
-    await game.startBattle([Species.PIKACHU]);
+    await game.classicMode.startBattle([Species.PIKACHU]);
     const pikachu = game.scene.getPlayerPokemon()!;
     const enemy = game.scene.getEnemyPokemon()!;
 
@@ -68,7 +67,7 @@ describe("Weather - Strong Winds", () => {
   });
 
   it("rock type move is neutral for flying type pokemon", async () => {
-    await game.startBattle([Species.PIKACHU]);
+    await game.classicMode.startBattle([Species.PIKACHU]);
     const pikachu = game.scene.getPlayerPokemon()!;
     const enemy = game.scene.getEnemyPokemon()!;
 
@@ -77,20 +76,17 @@ describe("Weather - Strong Winds", () => {
     await game.phaseInterceptor.to(TurnStartPhase);
     expect(enemy.getAttackTypeEffectiveness(allMoves[Moves.ROCK_SLIDE].type, pikachu)).toBe(1);
   });
-  it("weather goes away when last trainer pokemon dies to indirect damage", async () => {
 
+  it("weather goes away when last trainer pokemon dies to indirect damage", async () => {
     game.override.enemyStatusEffect(StatusEffect.POISON);
 
-    await game.startBattle([Species.MAGIKARP]);
+    await game.classicMode.startBattle([Species.MAGIKARP]);
 
     const enemy = game.scene.getEnemyPokemon()!;
-
-
-    enemy["hp"] = 0.0001;
-
+    enemy.hp = 1;
 
     game.move.select(Moves.SPLASH);
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(game.scene.arena.weather?.weatherType).toBeUndefined();
   });
