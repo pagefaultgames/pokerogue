@@ -69,5 +69,6 @@
   "cursedLapse": "{{pokemonNameWithAffix}}[[는]]\n저주받고 있다!",
   "stockpilingOnAdd": "{{pokemonNameWithAffix}}[[는]]\n{{stockpiledCount}}개 비축했다!",
   "disabledOnAdd": "{{pokemonNameWithAffix}}의 {{moveName}}[[는]]\n사용할 수 없다!",
-  "disabledLapse": "{{pokemonNameWithAffix}}의 {{moveName}}[[는]]\n이제 사용할 수 있다."
+  "disabledLapse": "{{pokemonNameWithAffix}}의 {{moveName}}[[는]]\n이제 사용할 수 있다.",
+  "tarShotOnAdd": "{{pokemonNameWithAffix}} became weaker to fire!"
 }
