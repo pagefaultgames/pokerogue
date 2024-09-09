@@ -5,7 +5,6 @@ import { Species } from "#enums/species";
 import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import { SPLASH_ONLY } from "#test/utils/testUtils";
 import { MoveEndPhase } from "#app/phases/move-end-phase";
 import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
 
@@ -31,7 +30,7 @@ describe("Moves - Make It Rain", () => {
     game.override.moveset([Moves.MAKE_IT_RAIN, Moves.SPLASH]);
     game.override.enemySpecies(Species.SNORLAX);
     game.override.enemyAbility(Abilities.INSOMNIA);
-    game.override.enemyMoveset(SPLASH_ONLY);
+    game.override.enemyMoveset(Moves.SPLASH);
     game.override.startingLevel(100);
     game.override.enemyLevel(100);
   });

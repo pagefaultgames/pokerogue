@@ -11,7 +11,6 @@ import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import { SPLASH_ONLY } from "../utils/testUtils";
 import { Stat } from "#enums/stat";
 
 describe("Abilities - Gulp Missile", () => {
@@ -49,7 +48,7 @@ describe("Abilities - Gulp Missile", () => {
       .moveset([Moves.SURF, Moves.DIVE, Moves.SPLASH])
       .enemySpecies(Species.SNORLAX)
       .enemyAbility(Abilities.BALL_FETCH)
-      .enemyMoveset(SPLASH_ONLY)
+      .enemyMoveset(Moves.SPLASH)
       .enemyLevel(5);
   });
 

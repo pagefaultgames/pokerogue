@@ -4,7 +4,6 @@ import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/utils/gameManager";
-import { SPLASH_ONLY } from "#test/utils/testUtils";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Moves - Disable", () => {
@@ -28,7 +27,7 @@ describe("Moves - Disable", () => {
       .ability(Abilities.BALL_FETCH)
       .enemyAbility(Abilities.BALL_FETCH)
       .moveset([Moves.DISABLE, Moves.SPLASH])
-      .enemyMoveset(SPLASH_ONLY)
+      .enemyMoveset(Moves.SPLASH)
       .starterSpecies(Species.PIKACHU)
       .enemySpecies(Species.SHUCKLE);
   });

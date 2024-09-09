@@ -7,7 +7,6 @@ import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import GameManager from "#test/utils/gameManager";
-import { SPLASH_ONLY } from "#test/utils/testUtils";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
@@ -38,7 +37,7 @@ describe("Abilities - Flash Fire", () => {
 
 
   it("immune to Fire-type moves", async () => {
-    game.override.enemyMoveset([Moves.EMBER]).moveset(SPLASH_ONLY);
+    game.override.enemyMoveset([Moves.EMBER]).moveset(Moves.SPLASH);
     await game.startBattle([Species.BLISSEY]);
 
     const blissey = game.scene.getPlayerPokemon()!;
@@ -60,7 +59,7 @@ describe("Abilities - Flash Fire", () => {
   }, 20000);
 
   it("activated by Will-O-Wisp", async () => {
-    game.override.enemyMoveset([Moves.WILL_O_WISP]).moveset(SPLASH_ONLY);
+    game.override.enemyMoveset([Moves.WILL_O_WISP]).moveset(Moves.SPLASH);
     await game.startBattle([Species.BLISSEY]);
 
     const blissey = game.scene.getPlayerPokemon()!;
@@ -75,7 +74,7 @@ describe("Abilities - Flash Fire", () => {
   }, 20000);
 
   it("activated after being frozen", async () => {
-    game.override.enemyMoveset([Moves.EMBER]).moveset(SPLASH_ONLY);
+    game.override.enemyMoveset([Moves.EMBER]).moveset(Moves.SPLASH);
     game.override.statusEffect(StatusEffect.FREEZE);
     await game.startBattle([Species.BLISSEY]);
 

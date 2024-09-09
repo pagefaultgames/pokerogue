@@ -6,7 +6,6 @@ import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { Moves } from "#enums/moves";
 import { Stat } from "#enums/stat";
 import { Abilities } from "#enums/abilities";
-import { SPLASH_ONLY } from "../utils/testUtils";
 
 describe("Moves - Guard Split", () => {
   let phaserGame: Phaser.Game;
@@ -34,7 +33,7 @@ describe("Moves - Guard Split", () => {
   });
 
   it("should average the user's DEF and SPDEF stats with those of the target", async () => {
-    game.override.enemyMoveset(SPLASH_ONLY);
+    game.override.enemyMoveset(Moves.SPLASH);
     await game.startBattle([
       Species.INDEEDEE
     ]);

@@ -4,7 +4,6 @@ import { MoveEffectPhase } from "#app/phases/move-effect-phase";
 import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import { SPLASH_ONLY } from "../utils/testUtils";
 
 describe("Moves - Foresight", () => {
   let phaserGame: Phaser.Game;
@@ -25,7 +24,7 @@ describe("Moves - Foresight", () => {
     game.override
       .disableCrits()
       .enemySpecies(Species.GASTLY)
-      .enemyMoveset(SPLASH_ONLY)
+      .enemyMoveset(Moves.SPLASH)
       .enemyLevel(5)
       .starterSpecies(Species.MAGIKARP)
       .moveset([Moves.FORESIGHT, Moves.QUICK_ATTACK, Moves.MACH_PUNCH]);

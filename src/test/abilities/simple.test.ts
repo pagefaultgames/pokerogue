@@ -4,7 +4,6 @@ import { Abilities } from "#enums/abilities";
 import { Species } from "#enums/species";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import { SPLASH_ONLY } from "../utils/testUtils";
 
 describe("Abilities - Simple", () => {
   let phaserGame: Phaser.Game;
@@ -27,7 +26,7 @@ describe("Abilities - Simple", () => {
       .enemySpecies(Species.BULBASAUR)
       .enemyAbility(Abilities.SIMPLE)
       .ability(Abilities.INTIMIDATE)
-      .enemyMoveset(SPLASH_ONLY);
+      .enemyMoveset(Moves.SPLASH);
   });
 
   it("should double stat changes when applied", async() => {

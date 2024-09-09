@@ -7,7 +7,6 @@ import { getMovePosition } from "#test/utils/gameManagerUtils";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
-import { SPLASH_ONLY } from "#test/utils/testUtils";
 
 describe("Abilities - Intimidate", () => {
   let phaserGame: Phaser.Game;
@@ -31,7 +30,7 @@ describe("Abilities - Intimidate", () => {
       .enemyPassiveAbility(Abilities.HYDRATION)
       .ability(Abilities.INTIMIDATE)
       .startingWave(3)
-      .enemyMoveset(SPLASH_ONLY);
+      .enemyMoveset(Moves.SPLASH);
   });
 
   it("should lower ATK stat stage by 1 of enemy Pokemon on entry and player switch", async () => {

@@ -7,7 +7,6 @@ import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/utils/gameManager";
-import { SPLASH_ONLY } from "#test/utils/testUtils";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
@@ -34,7 +33,7 @@ describe("Abilities - Parental Bond", () => {
     game.override.ability(Abilities.PARENTAL_BOND);
     game.override.enemySpecies(Species.SNORLAX);
     game.override.enemyAbility(Abilities.FUR_COAT);
-    game.override.enemyMoveset(SPLASH_ONLY);
+    game.override.enemyMoveset(Moves.SPLASH);
     game.override.startingLevel(100);
     game.override.enemyLevel(100);
   });

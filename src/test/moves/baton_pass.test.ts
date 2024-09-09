@@ -5,7 +5,6 @@ import { BattlerTagType } from "#enums/battler-tag-type";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import { Stat } from "#enums/stat";
-import { SPLASH_ONLY } from "#test/utils/testUtils";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
@@ -31,7 +30,7 @@ describe("Moves - Baton Pass", () => {
       .enemyAbility(Abilities.BALL_FETCH)
       .moveset([Moves.BATON_PASS, Moves.NASTY_PLOT, Moves.SPLASH])
       .ability(Abilities.BALL_FETCH)
-      .enemyMoveset(SPLASH_ONLY)
+      .enemyMoveset(Moves.SPLASH)
       .disableCrits();
   });
 

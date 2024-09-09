@@ -6,7 +6,6 @@ import { StatusEffect } from "#app/data/status-effect";
 import { Stat } from "#enums/stat";
 import GameManager from "#test/utils/gameManager";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import { SPLASH_ONLY } from "../utils/testUtils";
 
 const TIMEOUT = 20 * 1000;
 
@@ -31,7 +30,7 @@ describe("Abilities - Disguise", () => {
     game.override
       .battleType("single")
       .enemySpecies(Species.MIMIKYU)
-      .enemyMoveset(SPLASH_ONLY)
+      .enemyMoveset(Moves.SPLASH)
       .starterSpecies(Species.REGIELEKI)
       .moveset([Moves.SHADOW_SNEAK, Moves.VACUUM_WAVE, Moves.TOXIC_THREAD, Moves.SPLASH]);
   }, TIMEOUT);

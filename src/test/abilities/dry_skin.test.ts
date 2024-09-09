@@ -2,7 +2,6 @@ import { Species } from "#app/enums/species";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import GameManager from "#test/utils/gameManager";
-import { SPLASH_ONLY } from "#test/utils/testUtils";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
@@ -26,7 +25,7 @@ describe("Abilities - Dry Skin", () => {
       .battleType("single")
       .disableCrits()
       .enemyAbility(Abilities.DRY_SKIN)
-      .enemyMoveset(SPLASH_ONLY)
+      .enemyMoveset(Moves.SPLASH)
       .enemySpecies(Species.CHARMANDER)
       .ability(Abilities.BALL_FETCH)
       .moveset([Moves.SUNNY_DAY, Moves.RAIN_DANCE, Moves.SPLASH, Moves.WATER_GUN])

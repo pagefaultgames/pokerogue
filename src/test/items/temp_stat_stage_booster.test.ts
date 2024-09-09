@@ -5,7 +5,6 @@ import Phase from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { Moves } from "#app/enums/moves";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
-import { SPLASH_ONLY } from "../utils/testUtils";
 import { Abilities } from "#app/enums/abilities";
 import { TempStatStageBoosterModifier } from "#app/modifier/modifier";
 import { Mode } from "#app/ui/ui";
@@ -39,7 +38,7 @@ describe("Items - Temporary Stat Stage Boosters", () => {
     game.override
       .battleType("single")
       .enemySpecies(Species.SHUCKLE)
-      .enemyMoveset(SPLASH_ONLY)
+      .enemyMoveset(Moves.SPLASH)
       .enemyAbility(Abilities.BALL_FETCH)
       .moveset([ Moves.TACKLE, Moves.SPLASH, Moves.HONE_CLAWS, Moves.BELLY_DRUM ])
       .startingModifier([{ name: "TEMP_STAT_STAGE_BOOSTER", type: Stat.ATK }]);

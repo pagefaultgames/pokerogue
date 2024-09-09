@@ -9,7 +9,6 @@ import { BerryPhase } from "#app/phases/berry-phase";
 import { FaintPhase } from "#app/phases/faint-phase";
 import { MessagePhase } from "#app/phases/message-phase";
 import { TurnInitPhase } from "#app/phases/turn-init-phase";
-import { SPLASH_ONLY } from "../utils/testUtils";
 
 const TIMEOUT = 20 * 1000;
 
@@ -31,7 +30,7 @@ describe("Moves - Parting Shot", () => {
     game = new GameManager(phaserGame);
     game.override.battleType("single");
     game.override.moveset([Moves.PARTING_SHOT, Moves.SPLASH]);
-    game.override.enemyMoveset(SPLASH_ONLY);
+    game.override.enemyMoveset(Moves.SPLASH);
     game.override.startingLevel(5);
     game.override.enemyLevel(5);
 

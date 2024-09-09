@@ -4,7 +4,6 @@ import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/utils/gameManager";
-import { SPLASH_ONLY } from "#test/utils/testUtils";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -28,7 +27,7 @@ describe("Abilities - Aura Break", () => {
     game = new GameManager(phaserGame);
     game.override.battleType("single");
     game.override.moveset([Moves.MOONBLAST, Moves.DARK_PULSE, Moves.MOONBLAST, Moves.DARK_PULSE]);
-    game.override.enemyMoveset(SPLASH_ONLY);
+    game.override.enemyMoveset(Moves.SPLASH);
     game.override.enemyAbility(Abilities.AURA_BREAK);
     game.override.enemySpecies(Species.SHUCKLE);
   });
