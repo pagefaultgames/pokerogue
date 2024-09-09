@@ -1761,7 +1761,7 @@ export class PostSetStatusAbAttr extends AbAttr {
    * @param args Set of unique arguments needed by this attribute.
    * @returns `true` if application of the ability succeeds.
    */
-  applyPostSetStatus(pokemon: Pokemon, sourcePokemon: Pokemon | null = null, passive: boolean, effect: StatusEffect, args: any[]) : boolean | Promise<boolean> {
+  applyPostSetStatus(pokemon: Pokemon, sourcePokemon: Pokemon | null = null, passive: boolean, effect: StatusEffect, simulated: boolean, args: any[]) : boolean | Promise<boolean> {
     return false;
   }
 }
@@ -1782,7 +1782,7 @@ export class SynchronizeStatusAbAttr extends PostSetStatusAbAttr {
    * @param args Set of unique arguments needed by this attribute.
    * @returns `true` if application of the ability succeeds.
    */
-  override applyPostSetStatus(pokemon: Pokemon, sourcePokemon: Pokemon | null = null, passive: boolean, effect: StatusEffect, args: any[]): boolean {
+  override applyPostSetStatus(pokemon: Pokemon, sourcePokemon: Pokemon | null = null, passive: boolean, effect: StatusEffect, simulated:boolean, args: any[]): boolean {
     /** Synchronizable statuses */
     const syncStatuses = new Set<StatusEffect>([
       StatusEffect.BURN,
@@ -1792,7 +1792,9 @@ export class SynchronizeStatusAbAttr extends PostSetStatusAbAttr {
     ]);
 
     if (sourcePokemon && syncStatuses.has(effect)) {
-      sourcePokemon.trySetStatus(effect, true, pokemon);
+      if (!simulated) {
+        sourcePokemon.trySetStatus(effect, true, pokemon);
+      }
       return true;
     }
 
@@ -4663,8 +4665,8 @@ export function applyStatMultiplierAbAttrs(attrType: Constructor<StatMultiplierA
   return applyAbAttrsInternal<StatMultiplierAbAttr>(attrType, pokemon, (attr, passive) => attr.applyStatStage(pokemon, passive, simulated, stat, statValue, args), args);
 }
 export function applyPostSetStatusAbAttrs(attrType: Constructor<PostSetStatusAbAttr>,
-  pokemon: Pokemon, effect: StatusEffect, sourcePokemon?: Pokemon | null, ...args: any[]): Promise<void> {
-  return applyAbAttrsInternal<PostSetStatusAbAttr>(attrType, pokemon, (attr, passive) => attr.applyPostSetStatus(pokemon, sourcePokemon, passive, effect, args), args);
+  pokemon: Pokemon, effect: StatusEffect, sourcePokemon?: Pokemon | null, simulated: boolean = false, ...args: any[]): Promise<void> {
+  return applyAbAttrsInternal<PostSetStatusAbAttr>(attrType, pokemon, (attr, passive) => attr.applyPostSetStatus(pokemon, sourcePokemon, passive, effect, simulated, args), args);
 }
 
 /**
