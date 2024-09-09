@@ -2920,8 +2920,8 @@ export default class BattleScene extends SceneBase {
     this.shiftPhase();
   }
 
-  applyPartyExp(expValue: number): void {
-    const participantIds = this.currentBattle.playerParticipantIds;
+  applyPartyExp(expValue: number, pokemonDefeated: boolean, useWaveIndexMultiplier?: boolean, pokemonParticipantIds?: Set<number>): void {
+    const participantIds = pokemonParticipantIds ?? this.currentBattle.playerParticipantIds;
     const party = this.getParty();
     const expShareModifier = this.findModifier(m => m instanceof ExpShareModifier) as ExpShareModifier;
     const expBalanceModifier = this.findModifier(m => m instanceof ExpBalanceModifier) as ExpBalanceModifier;
@@ -2929,8 +2929,12 @@ export default class BattleScene extends SceneBase {
     const nonFaintedPartyMembers = party.filter(p => p.hp);
     const expPartyMembers = nonFaintedPartyMembers.filter(p => p.level < this.getMaxExpLevel());
     const partyMemberExp: number[] = [];
+    // EXP value calculation is based off Pokemon.getExpValue
+    if (useWaveIndexMultiplier) {
+      expValue = Math.floor(expValue * this.currentBattle.waveIndex / 5 + 1);
+    }
 
-    if (participantIds.size) {
+    if (participantIds.size > 0) {
       if (this.currentBattle.battleType === BattleType.TRAINER || this.currentBattle.mysteryEncounter?.encounterMode === MysteryEncounterMode.TRAINER_BATTLE) {
         expValue = Math.floor(expValue * 1.5);
       } else if (this.currentBattle.battleType === BattleType.MYSTERY_ENCOUNTER && this.currentBattle.mysteryEncounter) {
@@ -2939,7 +2943,7 @@ export default class BattleScene extends SceneBase {
       for (const partyMember of nonFaintedPartyMembers) {
         const pId = partyMember.id;
         const participated = participantIds.has(pId);
-        if (participated) {
+        if (participated && pokemonDefeated) {
           partyMember.addFriendship(2);
           const machoBraceModifier = partyMember.getHeldItems().find(m => m instanceof PokemonIncrementingStatModifier);
           if (machoBraceModifier && machoBraceModifier.stackCount < machoBraceModifier.getMaxStackCount(this)) {

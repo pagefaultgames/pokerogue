@@ -10,6 +10,7 @@ import MysteryEncounter, { MysteryEncounterBuilder } from "../mystery-encounter"
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { Stat } from "#enums/stat";
+import i18next from "i18next";
 
 /** i18n namespace for the encounter */
 const namespace = "mysteryEncounter:fieldTrip";
@@ -60,11 +61,6 @@ export const FieldTripEncounter: MysteryEncounter =
           buttonLabel: `${namespace}.option.1.label`,
           buttonTooltip: `${namespace}.option.1.tooltip`,
           secondOptionPrompt: `${namespace}.second_option_prompt`,
-          selected: [
-            {
-              text: `${namespace}.option.selected`,
-            },
-          ],
         })
         .withPreOptionPhase(async (scene: BattleScene): Promise<boolean> => {
           const encounter = scene.currentBattle.mysteryEncounter!;
@@ -75,44 +71,8 @@ export const FieldTripEncounter: MysteryEncounter =
                 label: move.getName(),
                 handler: () => {
                   // Pokemon and move selected
-                  const correctMove = move.getMove().category === MoveCategory.PHYSICAL;
-                  encounter.setDialogueToken("moveCategory", "Physical");
-                  if (!correctMove) {
-                    encounter.options[0].dialogue!.selected = [
-                      {
-                        text: `${namespace}.option.incorrect`,
-                        speaker: `${namespace}.speaker`,
-                      },
-                      {
-                        text: `${namespace}.option.lesson_learned`,
-                      },
-                    ];
-                    encounter.dialogue.outro = [
-                      {
-                        text: `${namespace}.outro_bad`,
-                        speaker: `${namespace}.speaker`,
-                      },
-                    ];
-                    setEncounterExp(scene, scene.getParty().map((p) => p.id), 50);
-                  } else {
-                    encounter.setDialogueToken("pokeName", pokemon.getNameToRender());
-                    encounter.setDialogueToken("move", move.getName());
-                    encounter.options[0].dialogue!.selected = [
-                      {
-                        text: `${namespace}.option.selected`,
-                      },
-                    ];
-                    encounter.dialogue.outro = [
-                      {
-                        text: `${namespace}.outro_good`,
-                        speaker: `${namespace}.speaker`,
-                      },
-                    ];
-                    setEncounterExp(scene, [pokemon.id], 100);
-                  }
-                  encounter.misc = {
-                    correctMove: correctMove,
-                  };
+                  encounter.setDialogueToken("moveCategory", i18next.t(`${namespace}.physical`));
+                  pokemonAndMoveChosen(scene, pokemon, move, MoveCategory.PHYSICAL);
                   return true;
                 },
               };
@@ -146,11 +106,6 @@ export const FieldTripEncounter: MysteryEncounter =
           buttonLabel: `${namespace}.option.2.label`,
           buttonTooltip: `${namespace}.option.2.tooltip`,
           secondOptionPrompt: `${namespace}.second_option_prompt`,
-          selected: [
-            {
-              text: `${namespace}.option.selected`,
-            },
-          ],
         })
         .withPreOptionPhase(async (scene: BattleScene): Promise<boolean> => {
           const encounter = scene.currentBattle.mysteryEncounter!;
@@ -161,50 +116,8 @@ export const FieldTripEncounter: MysteryEncounter =
                 label: move.getName(),
                 handler: () => {
                   // Pokemon and move selected
-                  const correctMove = move.getMove().category === MoveCategory.SPECIAL;
-                  encounter.setDialogueToken("moveCategory", "Special");
-                  if (!correctMove) {
-                    encounter.options[1].dialogue!.selected = [
-                      {
-                        text: `${namespace}.option.incorrect`,
-                        speaker: `${namespace}.speaker`,
-                      },
-                      {
-                        text: `${namespace}.option.lesson_learned`,
-                      },
-                    ];
-                    encounter.dialogue.outro = [
-                      {
-                        text: `${namespace}.outro_bad`,
-                        speaker: `${namespace}.speaker`,
-                      },
-                    ];
-                    encounter.dialogue.outro = [
-                      {
-                        text: `${namespace}.outro_bad`,
-                        speaker: `${namespace}.speaker`,
-                      },
-                    ];
-                    setEncounterExp(scene, scene.getParty().map((p) => p.id), 50);
-                  } else {
-                    encounter.setDialogueToken("pokeName", pokemon.getNameToRender());
-                    encounter.setDialogueToken("move", move.getName());
-                    encounter.options[1].dialogue!.selected = [
-                      {
-                        text: `${namespace}.option.selected`,
-                      },
-                    ];
-                    encounter.dialogue.outro = [
-                      {
-                        text: `${namespace}.outro_good`,
-                        speaker: `${namespace}.speaker`,
-                      },
-                    ];
-                    setEncounterExp(scene, [pokemon.id], 100);
-                  }
-                  encounter.misc = {
-                    correctMove: correctMove,
-                  };
+                  encounter.setDialogueToken("moveCategory", i18next.t(`${namespace}.special`));
+                  pokemonAndMoveChosen(scene, pokemon, move, MoveCategory.SPECIAL);
                   return true;
                 },
               };
@@ -238,11 +151,6 @@ export const FieldTripEncounter: MysteryEncounter =
           buttonLabel: `${namespace}.option.3.label`,
           buttonTooltip: `${namespace}.option.3.tooltip`,
           secondOptionPrompt: `${namespace}.second_option_prompt`,
-          selected: [
-            {
-              text: `${namespace}.option.selected`,
-            },
-          ],
         })
         .withPreOptionPhase(async (scene: BattleScene): Promise<boolean> => {
           const encounter = scene.currentBattle.mysteryEncounter!;
@@ -253,44 +161,8 @@ export const FieldTripEncounter: MysteryEncounter =
                 label: move.getName(),
                 handler: () => {
                   // Pokemon and move selected
-                  const correctMove = move.getMove().category === MoveCategory.STATUS;
-                  encounter.setDialogueToken("moveCategory", "Status");
-                  if (!correctMove) {
-                    encounter.options[2].dialogue!.selected = [
-                      {
-                        text: `${namespace}.option.incorrect`,
-                        speaker: `${namespace}.speaker`,
-                      },
-                      {
-                        text: `${namespace}.option.lesson_learned`,
-                      },
-                    ];
-                    encounter.dialogue.outro = [
-                      {
-                        text: `${namespace}.outro_bad`,
-                        speaker: `${namespace}.speaker`,
-                      },
-                    ];
-                    setEncounterExp(scene, scene.getParty().map((p) => p.id), 50);
-                  } else {
-                    encounter.setDialogueToken("pokeName", pokemon.getNameToRender());
-                    encounter.setDialogueToken("move", move.getName());
-                    encounter.options[2].dialogue!.selected = [
-                      {
-                        text: `${namespace}.option.selected`,
-                      },
-                    ];
-                    encounter.dialogue.outro = [
-                      {
-                        text: `${namespace}.outro_good`,
-                        speaker: `${namespace}.speaker`,
-                      },
-                    ];
-                    setEncounterExp(scene, [pokemon.id], 100);
-                  }
-                  encounter.misc = {
-                    correctMove: correctMove,
-                  };
+                  encounter.setDialogueToken("moveCategory", i18next.t(`${namespace}.status`));
+                  pokemonAndMoveChosen(scene, pokemon, move, MoveCategory.STATUS);
                   return true;
                 },
               };
@@ -318,3 +190,42 @@ export const FieldTripEncounter: MysteryEncounter =
         .build()
     )
     .build();
+
+function pokemonAndMoveChosen(scene: BattleScene, pokemon: PlayerPokemon, move: PokemonMove, correctMoveCategory: MoveCategory) {
+  const encounter = scene.currentBattle.mysteryEncounter!;
+  const correctMove = move.getMove().category === correctMoveCategory;
+  if (!correctMove) {
+    encounter.selectedOption!.dialogue!.selected = [
+      {
+        text: `${namespace}.option.selected`,
+      },
+      {
+        text: `${namespace}.incorrect`,
+        speaker: `${namespace}.speaker`,
+      },
+      {
+        text: `${namespace}.incorrect_exp`,
+      },
+    ];
+    setEncounterExp(scene, scene.getParty().map((p) => p.id), 50);
+  } else {
+    encounter.setDialogueToken("pokeName", pokemon.getNameToRender());
+    encounter.setDialogueToken("move", move.getName());
+    encounter.selectedOption!.dialogue!.selected = [
+      {
+        text: `${namespace}.option.selected`,
+      },
+      {
+        text: `${namespace}.correct`,
+        speaker: `${namespace}.speaker`,
+      },
+      {
+        text: `${namespace}.correct_exp`,
+      },
+    ];
+    setEncounterExp(scene, [pokemon.id], 100);
+  }
+  encounter.misc = {
+    correctMove: correctMove,
+  };
+}

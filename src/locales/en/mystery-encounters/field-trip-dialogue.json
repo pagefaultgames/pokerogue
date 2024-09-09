@@ -18,11 +18,14 @@
       "label": "A Status Move",
       "tooltip": "(+) Status Item Rewards"
     },
-    "selected": "{{pokeName}} shows off an awesome display of {{move}}!",
-    "incorrect": "...$That isn't a {{moveCategory}} move!$I'm sorry, but I can't give you anything.",
-    "lesson_learned": "Looks like you learned a valuable lesson?$Your Pokémon also gained some knowledge."
+    "selected": "{{pokeName}} shows off an awesome display of {{move}}!"
   },
   "second_option_prompt": "Choose a move for your Pokémon to use.",
-  "outro_good": "Thank you so much for your kindness!\nI hope the items I had were helpful!",
-  "outro_bad": "Come along children, we'll\nfind a better demonstration elsewhere."
+  "incorrect": "...$That isn't a {{moveCategory}} move!\nI'm sorry, but I can't give you anything.$Come along children, we'll\nfind a better demonstration elsewhere.",
+  "incorrect_exp": "Looks like you learned a valuable lesson?$Your Pokémon also gained some experience.",
+  "correct": "Thank you so much for your kindness!\nI hope these items might be of use to you!",
+  "correct_exp": "{{pokeName}} also gained some valuable experience!",
+  "status": "Status",
+  "physical": "Physical",
+  "special": "Special"
 }

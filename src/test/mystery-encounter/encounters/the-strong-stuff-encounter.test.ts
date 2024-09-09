@@ -208,8 +208,9 @@ describe("The Strong Stuff - Mystery Encounter", () => {
       expect(enemyField[0].species.speciesId).toBe(Species.SHUCKLE);
       expect(enemyField[0].summonData.statStages).toEqual([0, 2, 0, 2, 0, 0, 0]);
       const shuckleItems = enemyField[0].getHeldItems();
-      expect(shuckleItems.length).toBe(4);
+      expect(shuckleItems.length).toBe(5);
       expect(shuckleItems.find(m => m instanceof BerryModifier && m.berryType === BerryType.SITRUS)?.stackCount).toBe(1);
+      expect(shuckleItems.find(m => m instanceof BerryModifier && m.berryType === BerryType.ENIGMA)?.stackCount).toBe(1);
       expect(shuckleItems.find(m => m instanceof BerryModifier && m.berryType === BerryType.GANLON)?.stackCount).toBe(1);
       expect(shuckleItems.find(m => m instanceof BerryModifier && m.berryType === BerryType.APICOT)?.stackCount).toBe(1);
       expect(shuckleItems.find(m => m instanceof BerryModifier && m.berryType === BerryType.LUM)?.stackCount).toBe(2);

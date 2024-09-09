@@ -84,6 +84,9 @@ export const TheStrongStuffEncounter: MysteryEncounter =
                 modifier: generateModifierType(scene, modifierTypes.BERRY, [BerryType.SITRUS]) as PokemonHeldItemModifierType
               },
               {
+                modifier: generateModifierType(scene, modifierTypes.BERRY, [BerryType.ENIGMA]) as PokemonHeldItemModifierType
+              },
+              {
                 modifier: generateModifierType(scene, modifierTypes.BERRY, [BerryType.APICOT]) as PokemonHeldItemModifierType
               },
               {

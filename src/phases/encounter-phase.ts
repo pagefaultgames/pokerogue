@@ -87,7 +87,11 @@ export class EncounterPhase extends BattlePhase {
 
     let totalBst = 0;
 
-    battle.enemyLevels?.forEach((level, e) => {
+    battle.enemyLevels?.every((level, e) => {
+      if (battle.battleType === BattleType.MYSTERY_ENCOUNTER) {
+        // Skip enemy loading for MEs, those are loaded elsewhere
+        return false;
+      }
       if (!this.loaded) {
         if (battle.battleType === BattleType.TRAINER) {
           battle.enemyParty[e] = battle.trainer?.genPartyMember(e)!; // TODO:: is the bang correct here?
@@ -138,6 +142,7 @@ export class EncounterPhase extends BattlePhase {
       loadEnemyAssets.push(enemyPokemon.loadAssets());
 
       console.log(getPokemonNameWithAffix(enemyPokemon), enemyPokemon.species.speciesId, enemyPokemon.stats);
+      return true;
     });
 
     if (this.scene.getParty().filter(p => p.isShiny()).length === 6) {
@@ -151,7 +156,12 @@ export class EncounterPhase extends BattlePhase {
         const newEncounter = this.scene.getMysteryEncounter(mysteryEncounter);
         battle.mysteryEncounter = newEncounter;
       }
-      loadEnemyAssets.push(battle.mysteryEncounter.introVisuals!.loadAssets().then(() => battle.mysteryEncounter!.introVisuals!.initSprite()));
+      if (battle.mysteryEncounter.introVisuals) {
+        loadEnemyAssets.push(battle.mysteryEncounter.introVisuals.loadAssets().then(() => battle.mysteryEncounter!.introVisuals!.initSprite()));
+      }
+      if (battle.mysteryEncounter.loadAssets.length > 0) {
+        loadEnemyAssets.push(...battle.mysteryEncounter.loadAssets);
+      }
       // Load Mystery Encounter Exclamation bubble and sfx
       loadEnemyAssets.push(new Promise<void>(resolve => {
         this.scene.loadSe("GEN8- Exclaim", "battle_anims", "GEN8- Exclaim.wav");
@@ -176,7 +186,10 @@ export class EncounterPhase extends BattlePhase {
     }
 
     Promise.all(loadEnemyAssets).then(() => {
-      battle.enemyParty.forEach((enemyPokemon, e) => {
+      battle.enemyParty.every((enemyPokemon, e) => {
+        if (battle.battleType === BattleType.MYSTERY_ENCOUNTER) {
+          return false;
+        }
         if (e < (battle.double ? 2 : 1)) {
           if (battle.battleType === BattleType.WILD) {
             this.scene.field.add(enemyPokemon);
@@ -189,16 +202,15 @@ export class EncounterPhase extends BattlePhase {
           } else if (battle.battleType === BattleType.TRAINER) {
             enemyPokemon.setVisible(false);
             this.scene.currentBattle.trainer?.tint(0, 0.5);
-          } else if (battle.battleType === BattleType.MYSTERY_ENCOUNTER) {
-            // TODO: this may not be necessary, but leaving as placeholder
           }
           if (battle.double) {
             enemyPokemon.setFieldPosition(e ? FieldPosition.RIGHT : FieldPosition.LEFT);
           }
         }
+        return true;
       });
 
-      if (!this.loaded) {
+      if (!this.loaded && battle.battleType !== BattleType.MYSTERY_ENCOUNTER) {
         regenerateModifierPoolThresholds(this.scene.getEnemyField(), battle.battleType === BattleType.TRAINER ? ModifierPoolType.TRAINER : ModifierPoolType.WILD);
         this.scene.generateEnemyModifiers();
       }

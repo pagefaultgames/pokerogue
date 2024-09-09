@@ -16,7 +16,7 @@ export class VictoryPhase extends PokemonPhase {
   /** If true, indicates that the phase is intended for EXP purposes only, and not to continue a battle to next phase */
   isExpOnly: boolean;
 
-  constructor(scene: BattleScene, battlerIndex: BattlerIndex, isExpOnly: boolean = false) {
+  constructor(scene: BattleScene, battlerIndex: BattlerIndex | integer, isExpOnly: boolean = false) {
     super(scene, battlerIndex);
 
     this.isExpOnly = isExpOnly;
@@ -28,7 +28,7 @@ export class VictoryPhase extends PokemonPhase {
     this.scene.gameData.gameStats.pokemonDefeated++;
 
     const expValue = this.getPokemon().getExpValue();
-    this.scene.applyPartyExp(expValue);
+    this.scene.applyPartyExp(expValue, true);
 
     if (this.scene.currentBattle.battleType === BattleType.MYSTERY_ENCOUNTER) {
       handleMysteryEncounterVictory(this.scene, false, this.isExpOnly);
