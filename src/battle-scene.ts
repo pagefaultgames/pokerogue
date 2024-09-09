@@ -2926,6 +2926,13 @@ export default class BattleScene extends SceneBase {
     this.shiftPhase();
   }
 
+  /**
+   * Updates Exp and level values for Player's party, adding new level up phases as required
+   * @param expValue - raw value of exp to split among participants, OR the base multiplier to use with waveIndex
+   * @param pokemonDefeated - If true, will increment Macho Brace stacks and give the party Pokemon friendship increases
+   * @param useWaveIndexMultiplier - Default false. If true, will multiply expValue by a scaling waveIndex multiplier. Not needed if expValue is already scaled by level/wave
+   * @param pokemonParticipantIds - Participants. If none are defined, no exp will be given. To spread evenly among the party, should pass all ids of party members.
+   */
   applyPartyExp(expValue: number, pokemonDefeated: boolean, useWaveIndexMultiplier?: boolean, pokemonParticipantIds?: Set<number>): void {
     const participantIds = pokemonParticipantIds ?? this.currentBattle.playerParticipantIds;
     const party = this.getParty();
