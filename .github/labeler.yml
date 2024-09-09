@@ -1,0 +1,4 @@
+# Add 'AnyChange' label to any changes within the entire repository
+Localization:
+- changed-files:
+  - any-glob-to-any-file: 'src/locales/**/*'
