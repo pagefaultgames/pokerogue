@@ -1632,14 +1632,91 @@ export class CursedTag extends BattlerTag {
   }
 }
 
+export class BurnedUpTag extends BattlerTag {
+  constructor(tagType: BattlerTagType, lapseType: BattlerTagLapseType, sourceMove: Moves) {
+    super(tagType, lapseType, 1, sourceMove);
+  }
+}
+
 /**
  * Battler tag for effects that ground the source, allowing Ground-type moves to hit them. Encompasses two tag types:
  * @item `IGNORE_FLYING`: Persistent grounding effects (i.e. from Smack Down and Thousand Waves)
- * @item `ROOSTED`: One-turn grounding effects (i.e. from Roost)
  */
 export class GroundedTag extends BattlerTag {
   constructor(tagType: BattlerTagType, lapseType: BattlerTagLapseType, sourceMove: Moves) {
     super(tagType, lapseType, 1, sourceMove);
+  }
+}
+
+/**
+ * @item `ROOSTED`: Roost removes flying from the friendly pokemon until end of turn. If this is the only thing keeping it ungrounded, it becomes
+ * grounded until end of turn.
+ *
+ * If a pokemon was pure flying, it becomes normal type until end of turn. (even if it was affected by forests curse/trick or treat).
+ * If a pokemon used burn up (losing its fire type), then uses roost, it becomes TYPELESS (stored as UNKNOWN) until end of turn.
+ */
+
+export class RoostedTag extends BattlerTag {
+  private isOriginallyOnlyFlying : boolean = false;
+  private isOriginallyFlying: boolean = false;
+
+  constructor(tagType: BattlerTagType, lapseType: BattlerTagLapseType, sourceMove: Moves) {
+    super(tagType, lapseType, 1, sourceMove);
+  }
+
+  onRemove(pokemon: Pokemon): void {
+
+    let userTypes = pokemon.getTypes(true);
+    let forestsCurseApplied: boolean = false;
+    let trickOrTreatApplied: boolean = false;
+    const isOriginallyGrass = pokemon.getSpeciesForm().type1 === Type.GRASS || pokemon.getSpeciesForm().type2 === Type.GRASS;
+    const isOriginallyGhost = pokemon.getSpeciesForm().type1 === Type.GHOST  || pokemon.getSpeciesForm().type2 === Type.GHOST;
+
+    if (!!userTypes.find(type => type === Type.GHOST) && !isOriginallyGhost) {
+      trickOrTreatApplied = true;
+    }
+
+    if (!!userTypes.find(type => type === Type.GRASS) && !isOriginallyGrass) {
+      forestsCurseApplied = true;
+    }
+
+    if (this.isOriginallyFlying) {
+      if (this.isOriginallyOnlyFlying) {
+        if (forestsCurseApplied || trickOrTreatApplied) {
+          userTypes = userTypes.filter(type => type !== Type.NORMAL);
+          userTypes.push(Type.FLYING);
+        } else {
+          userTypes = [Type.FLYING];
+        }
+      } else {
+        userTypes.push(Type.FLYING);
+      }
+      pokemon.summonData.types = userTypes;
+      pokemon.updateInfo();
+    }
+  }
+
+  onAdd(pokemon: Pokemon): void {
+    const userTypes = pokemon.getTypes(true);
+    const isOriginallyDualType = !!pokemon.getSpeciesForm().type1 && !!pokemon.getSpeciesForm().type2;
+    const isCurrentlyDualType = userTypes.length > 1;
+    this.isOriginallyFlying = pokemon.getSpeciesForm().type1 === Type.FLYING || pokemon.getSpeciesForm().type2 === Type.FLYING;
+    this.isOriginallyOnlyFlying = pokemon.getSpeciesForm().type1 === Type.FLYING && pokemon.getSpeciesForm().type2 === null;
+
+    if (this.isOriginallyFlying) {
+      let modifiedTypes: Type[];
+      if (this.isOriginallyOnlyFlying && !isCurrentlyDualType) {
+        modifiedTypes = [Type.NORMAL];
+      } else {
+        if (!!pokemon.getTag(BurnedUpTag) && isOriginallyDualType && !isCurrentlyDualType) {
+          modifiedTypes = [Type.UNKNOWN];
+        } else {
+          modifiedTypes = userTypes.filter(type => type !== Type.FLYING);
+        }
+      }
+      pokemon.summonData.types = modifiedTypes;
+      pokemon.updateInfo();
+    }
   }
 }
 
@@ -1974,7 +2051,9 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: number, source
   case BattlerTagType.IGNORE_FLYING:
     return new GroundedTag(tagType, BattlerTagLapseType.CUSTOM, sourceMove);
   case BattlerTagType.ROOSTED:
-    return new GroundedTag(tagType, BattlerTagLapseType.TURN_END, sourceMove);
+    return new RoostedTag(tagType, BattlerTagLapseType.TURN_END, sourceMove);
+  case BattlerTagType.BURNED_UP:
+    return new BurnedUpTag(tagType, BattlerTagLapseType.CUSTOM, sourceMove);
   case BattlerTagType.SALT_CURED:
     return new SaltCuredTag(sourceId);
   case BattlerTagType.CURSED:
