@@ -4,7 +4,6 @@ import { Species } from "#enums/species";
 import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import { SPLASH_ONLY } from "../utils/testUtils";
 import { BattlerIndex } from "#app/battle";
 
 describe("Weather - Hail", () => {
@@ -26,8 +25,8 @@ describe("Weather - Hail", () => {
     game.override
       .weather(WeatherType.HAIL)
       .battleType("single")
-      .moveset(SPLASH_ONLY)
-      .enemyMoveset(SPLASH_ONLY)
+      .moveset(Moves.SPLASH)
+      .enemyMoveset(Moves.SPLASH)
       .enemySpecies(Species.MAGIKARP);
   });
 

@@ -1015,10 +1015,16 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       : this.moveset;
 
     // Overrides moveset based on arrays specified in overrides.ts
-    const overrideArray: Array<Moves> = this.isPlayer() ? Overrides.MOVESET_OVERRIDE : Overrides.OPP_MOVESET_OVERRIDE;
+    let overrideArray: Moves | Array<Moves> = this.isPlayer() ? Overrides.MOVESET_OVERRIDE : Overrides.OPP_MOVESET_OVERRIDE;
+    if (!Array.isArray(overrideArray)) {
+      overrideArray = [overrideArray];
+    }
     if (overrideArray.length > 0) {
+      if (!this.isPlayer()) {
+        this.moveset = [];
+      }
       overrideArray.forEach((move: Moves, index: number) => {
-        const ppUsed = this.moveset[index]?.ppUsed || 0;
+        const ppUsed = this.moveset[index]?.ppUsed ?? 0;
         this.moveset[index] = new PokemonMove(move, Math.min(ppUsed, allMoves[move].pp));
       });
     }

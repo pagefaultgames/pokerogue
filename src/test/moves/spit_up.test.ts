@@ -9,7 +9,6 @@ import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import { SPLASH_ONLY } from "#test/utils/testUtils";
 import { MovePhase } from "#app/phases/move-phase";
 import { TurnInitPhase } from "#app/phases/turn-init-phase";
 
@@ -33,7 +32,7 @@ describe("Moves - Spit Up", () => {
     game.override.battleType("single");
 
     game.override.enemySpecies(Species.RATTATA);
-    game.override.enemyMoveset(SPLASH_ONLY);
+    game.override.enemyMoveset(Moves.SPLASH);
     game.override.enemyAbility(Abilities.NONE);
     game.override.enemyLevel(2000);
 
