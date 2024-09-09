@@ -1427,26 +1427,22 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     }
 
     let multiplier = types.map(defType => {
-      const multiplier = new Utils.NumberHolder(getTypeDamageMultiplier(moveType, defType));
-      applyChallenges(this.scene.gameMode, ChallengeType.TYPE_EFFECTIVENESS, multiplier);
       if (source) {
         const ignoreImmunity = new Utils.BooleanHolder(false);
         if (source.isActive(true) && source.hasAbilityWithAttr(IgnoreTypeImmunityAbAttr)) {
           applyAbAttrs(IgnoreTypeImmunityAbAttr, source, ignoreImmunity, simulated, moveType, defType);
         }
         if (ignoreImmunity.value) {
-          if (multiplier.value === 0) {
-            return 1;
-          }
+          return 1;
         }
 
         const exposedTags = this.findTags(tag => tag instanceof ExposedTag) as ExposedTag[];
         if (exposedTags.some(t => t.ignoreImmunity(defType, moveType))) {
-          if (multiplier.value === 0) {
-            return 1;
-          }
+          return 1;
         }
       }
+      const multiplier = new Utils.NumberHolder(getTypeDamageMultiplier(moveType, defType));
+      applyChallenges(this.scene.gameMode, ChallengeType.TYPE_EFFECTIVENESS, multiplier);
       return multiplier.value;
     }).reduce((acc, cur) => acc * cur, 1) as TypeDamageMultiplier;
 
