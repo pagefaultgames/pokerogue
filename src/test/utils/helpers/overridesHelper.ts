@@ -133,8 +133,11 @@ export class OverridesHelper extends GameManagerHelper {
    * @param moveset the {@linkcode Moves | moves}set to set
    * @returns this
    */
-  moveset(moveset: Moves[]): this {
+  moveset(moveset: Moves | Moves[]): this {
     vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue(moveset);
+    if (!Array.isArray(moveset)) {
+      moveset = [moveset];
+    }
     const movesetStr = moveset.map((moveId) => Moves[moveId]).join(", ");
     this.log(`Player Pokemon moveset set to ${movesetStr} (=[${moveset.join(", ")}])!`);
     return this;
@@ -252,8 +255,11 @@ export class OverridesHelper extends GameManagerHelper {
    * @param moveset the {@linkcode Moves | moves}set to set
    * @returns this
    */
-  enemyMoveset(moveset: Moves[]): this {
+  enemyMoveset(moveset: Moves | Moves[]): this {
     vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue(moveset);
+    if (!Array.isArray(moveset)) {
+      moveset = [moveset];
+    }
     const movesetStr = moveset.map((moveId) => Moves[moveId]).join(", ");
     this.log(`Enemy Pokemon moveset set to ${movesetStr} (=[${moveset.join(", ")}])!`);
     return this;
