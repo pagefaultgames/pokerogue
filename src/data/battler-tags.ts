@@ -354,8 +354,8 @@ export class RageTag extends BattlerTag {
    * Checks to maintain a Pokémon should maintain their rage, and provides an attack boost when hit.
    * @param pokemon {@linkcode Pokemon} The owner of this tag
    * @param lapseType {@linkcode BattlerTagLapseType} the type of functionality invoked in battle
-   * @returns `true` if invoked with the MOVE_EFFECT lapse type and {@linkcode pokemon} most recently used Rage,
-   * or if invoked with the CUSTOM lapse type. false otherwise.
+   * @returns `true` if invoked with the `MOVE_EFFECT` lapse type and {@linkcode pokemon} most recently used Rage,
+   * or if invoked with the `CUSTOM` lapse type; `false` otherwise.
    */
   lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
     if (lapseType === BattlerTagLapseType.MOVE_EFFECT) {
