@@ -27,7 +27,7 @@ describe("Moves - Power Swap", () => {
     game.override
       .battleType("single")
       .enemyAbility(Abilities.BALL_FETCH)
-      .enemyMoveset(new Array(4).fill(Moves.SHELL_SMASH))
+      .enemyMoveset([Moves.SHELL_SMASH])
       .enemySpecies(Species.MEW)
       .enemyLevel(200)
       .moveset([ Moves.POWER_SWAP ])

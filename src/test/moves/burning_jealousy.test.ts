@@ -7,7 +7,6 @@ import { Species } from "#enums/species";
 import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import { SPLASH_ONLY } from "../utils/testUtils";
 
 const TIMEOUT = 20 * 1000;
 
@@ -32,7 +31,7 @@ describe("Moves - Burning Jealousy", () => {
       .disableCrits()
       .enemySpecies(Species.MAGIKARP)
       .enemyAbility(Abilities.ICE_SCALES)
-      .enemyMoveset(Array(4).fill(Moves.HOWL))
+      .enemyMoveset([Moves.HOWL])
       .startingLevel(10)
       .enemyLevel(10)
       .starterSpecies(Species.FEEBAS)
@@ -73,7 +72,7 @@ describe("Moves - Burning Jealousy", () => {
     game.override
       .enemySpecies(Species.DITTO)
       .enemyAbility(Abilities.IMPOSTER)
-      .enemyMoveset(SPLASH_ONLY);
+      .enemyMoveset(Moves.SPLASH);
     await game.classicMode.startBattle();
 
     const enemy = game.scene.getEnemyPokemon()!;
@@ -91,7 +90,7 @@ describe("Moves - Burning Jealousy", () => {
   it("should be boosted by Sheer Force even if opponent didn't raise stat stages", async () => {
     game.override
       .ability(Abilities.SHEER_FORCE)
-      .enemyMoveset(SPLASH_ONLY);
+      .enemyMoveset(Moves.SPLASH);
     vi.spyOn(allMoves[Moves.BURNING_JEALOUSY], "calculateBattlePower");
     await game.classicMode.startBattle();
 
