@@ -1049,6 +1049,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       const teraType = this.getTeraType();
       if (teraType !== Type.UNKNOWN) {
         types.push(teraType);
+        if (forDefend) {
+          return types;
+        }
       }
     }
 
@@ -1368,7 +1371,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       : 1);
 
     applyMoveAttrs(VariableMoveTypeMultiplierAttr, source, this, move, typeMultiplier);
-    if (this.getTypes().find(t => move.isTypeImmune(source, this, t))) {
+    if (this.getTypes(true, true).find(t => move.isTypeImmune(source, this, t))) {
       typeMultiplier.value = 0;
     }
 
