@@ -4,7 +4,6 @@ import { Species } from "#app/enums/species";
 import { Stat } from "#app/enums/stat";
 import { Abilities } from "#enums/abilities";
 import GameManager from "#test/utils/gameManager";
-import { SPLASH_ONLY } from "#test/utils/testUtils";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
@@ -28,7 +27,7 @@ describe("Abilities - Gorilla Tactics", () => {
     game.override
       .battleType("single")
       .enemyAbility(Abilities.BALL_FETCH)
-      .enemyMoveset(SPLASH_ONLY)
+      .enemyMoveset(Moves.SPLASH)
       .enemySpecies(Species.MAGIKARP)
       .enemyLevel(30)
       .moveset([Moves.SPLASH, Moves.TACKLE])

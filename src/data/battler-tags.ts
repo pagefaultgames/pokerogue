@@ -215,7 +215,6 @@ export class DisabledTag extends MoveRestrictionBattlerTag {
 
   constructor(sourceId: number) {
     super(BattlerTagType.DISABLED, [ BattlerTagLapseType.PRE_MOVE, BattlerTagLapseType.TURN_END ], 4, Moves.DISABLE, sourceId);
-    super(BattlerTagType.DISABLED, [ BattlerTagLapseType.PRE_MOVE, BattlerTagLapseType.TURN_END ], 4, Moves.DISABLE, sourceId);
   }
 
   /** @override */
