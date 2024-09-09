@@ -1,5 +1,5 @@
 import BattleScene from "#app/battle-scene";
-import { BattleType, BattlerIndex } from "#app/battle";
+import { BattlerIndex, BattleType } from "#app/battle";
 import { applyAbAttrs, SyncEncounterNatureAbAttr } from "#app/data/ability";
 import { getCharVariantFromDialogue } from "#app/data/dialogue";
 import { TrainerSlot } from "#app/data/trainer-config";
@@ -10,7 +10,7 @@ import { Species } from "#app/enums/species";
 import { EncounterPhaseEvent } from "#app/events/battle-scene";
 import Pokemon, { FieldPosition } from "#app/field/pokemon";
 import { getPokemonNameWithAffix } from "#app/messages";
-import { regenerateModifierPoolThresholds, ModifierPoolType } from "#app/modifier/modifier-type";
+import { ModifierPoolType, regenerateModifierPoolThresholds } from "#app/modifier/modifier-type";
 import { BoostBugSpawnModifier, IvScannerModifier, TurnHeldItemTransferModifier } from "#app/modifier/modifier";
 import { achvs } from "#app/system/achv";
 import { handleTutorial, Tutorial } from "#app/tutorial";
@@ -18,6 +18,7 @@ import { Mode } from "#app/ui/ui";
 import i18next from "i18next";
 import { BattlePhase } from "./battle-phase";
 import * as Utils from "#app/utils";
+import { randSeedInt } from "#app/utils";
 import { CheckSwitchPhase } from "./check-switch-phase";
 import { GameOverPhase } from "./game-over-phase";
 import { PostSummonPhase } from "./post-summon-phase";
@@ -32,7 +33,6 @@ import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
 import { doTrainerExclamation } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import { getEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
 import { MysteryEncounterPhase } from "#app/phases/mystery-encounter-phases";
-import { randSeedInt } from "#app/utils";
 import { getGoldenBugNetSpecies } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
 
 export class EncounterPhase extends BattlePhase {
@@ -153,8 +153,7 @@ export class EncounterPhase extends BattlePhase {
       loadEnemyAssets.push(battle.trainer?.loadAssets().then(() => battle.trainer?.initSprite())!); // TODO: is this bang correct?
     } else if (battle.battleType === BattleType.MYSTERY_ENCOUNTER) {
       if (!battle.mysteryEncounter) {
-        const newEncounter = this.scene.getMysteryEncounter(mysteryEncounter);
-        battle.mysteryEncounter = newEncounter;
+        battle.mysteryEncounter = this.scene.getMysteryEncounter(mysteryEncounter?.encounterType);
       }
       if (battle.mysteryEncounter.introVisuals) {
         loadEnemyAssets.push(battle.mysteryEncounter.introVisuals.loadAssets().then(() => battle.mysteryEncounter!.introVisuals!.initSprite()));

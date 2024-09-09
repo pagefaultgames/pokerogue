@@ -77,6 +77,7 @@ export const TrashToTreasureEncounter: MysteryEncounter =
 
       scene.loadSe("PRSFX- Dig2", "battle_anims", "PRSFX- Dig2.wav");
       scene.loadSe("PRSFX- Venom Drench", "battle_anims", "PRSFX- Venom Drench.wav");
+
       return true;
     })
     .withOption(

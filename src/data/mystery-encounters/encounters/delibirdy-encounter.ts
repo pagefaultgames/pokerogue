@@ -15,6 +15,7 @@ import { OptionSelectItem } from "#app/ui/abstact-option-select-ui-handler";
 import { applyModifierTypeToPlayerPokemon } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
 import i18next from "#app/plugins/i18n";
 import { ModifierRewardPhase } from "#app/phases/modifier-reward-phase";
+import { getPokemonSpecies } from "#app/data/pokemon-species";
 
 /** the i18n namespace for this encounter */
 const namespace = "mysteryEncounter:delibirdy";
@@ -88,6 +89,11 @@ export const DelibirdyEncounter: MysteryEncounter =
         text: `${namespace}.outro`,
       }
     ])
+    .withOnInit((scene: BattleScene) => {
+      const encounter = scene.currentBattle.mysteryEncounter!;
+      encounter.setDialogueToken("delibirdName", getPokemonSpecies(Species.DELIBIRD).getName());
+      return true;
+    })
     .withOption(
       MysteryEncounterOptionBuilder
         .newOptionWithMode(MysteryEncounterOptionMode.DISABLED_OR_DEFAULT)

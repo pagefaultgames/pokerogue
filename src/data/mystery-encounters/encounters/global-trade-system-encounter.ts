@@ -215,7 +215,8 @@ export const GlobalTradeSystemEncounter: MysteryEncounter =
           const encounter = scene.currentBattle.mysteryEncounter!;
           const onPokemonSelected = (pokemon: PlayerPokemon) => {
             // Randomly generate a Wonder Trade pokemon
-            const randomTradeOption = generateTradeOption(scene.getParty().map(p => p.species));
+            // const randomTradeOption = generateTradeOption(scene.getParty().map(p => p.species));
+            const randomTradeOption = getPokemonSpecies(Species.BURMY);
             const tradePokemon = new EnemyPokemon(scene, randomTradeOption, pokemon.level, TrainerSlot.NONE, false);
             // Extra shiny roll at 1/128 odds (boosted by events and charms)
             if (!tradePokemon.shiny) {
@@ -265,7 +266,7 @@ export const GlobalTradeSystemEncounter: MysteryEncounter =
           receivedPokemonData.passive = tradedPokemon.passive;
           receivedPokemonData.pokeball = randSeedInt(5);
           const dataSource = new PokemonData(receivedPokemonData);
-          const newPlayerPokemon = scene.addPlayerPokemon(receivedPokemonData.species, receivedPokemonData.level, undefined, undefined, undefined, undefined, undefined, undefined, undefined, dataSource);
+          const newPlayerPokemon = scene.addPlayerPokemon(receivedPokemonData.species, receivedPokemonData.level, dataSource.abilityIndex, dataSource.formIndex, dataSource.gender, dataSource.shiny, dataSource.variant, dataSource.ivs, dataSource.nature, dataSource);
           scene.getParty().push(newPlayerPokemon);
           await newPlayerPokemon.loadAssets();
 

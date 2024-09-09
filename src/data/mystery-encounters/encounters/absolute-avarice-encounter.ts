@@ -225,6 +225,7 @@ export const AbsoluteAvariceEncounter: MysteryEncounter =
       };
 
       encounter.enemyPartyConfigs = [config];
+      encounter.setDialogueToken("greedentName", getPokemonSpecies(Species.GREEDENT).getName());
 
       return true;
     })
@@ -251,6 +252,9 @@ export const AbsoluteAvariceEncounter: MysteryEncounter =
             party.forEach(p => {
               if (revSeed) {
                 const seedModifier = revSeed.newModifier(p);
+                if (seedModifier) {
+                  encounter.setDialogueToken("foodReward", seedModifier.type.name);
+                }
                 scene.addModifier(seedModifier, false, false, false, true);
               }
             });

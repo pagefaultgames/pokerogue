@@ -1,5 +1,5 @@
 import { queueEncounterMessage, showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
-import { EnemyPartyConfig, initBattleWithEnemyConfig, leaveEncounterWithoutBattle, loadCustomMovesForEncounter, setEncounterRewards, transitionMysteryEncounterIntroVisuals } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
+import { EnemyPartyConfig, initBattleWithEnemyConfig, leaveEncounterWithoutBattle, setEncounterRewards, transitionMysteryEncounterIntroVisuals } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import { getHighestLevelPlayerPokemon, koPlayerPokemon } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
 import { ModifierTier } from "#app/modifier/modifier-tier";
 import { randSeedInt } from "#app/utils.js";
@@ -60,7 +60,7 @@ export const MysteriousChestEncounter: MysteryEncounter =
 
       // Calculate boss mon
       const config: EnemyPartyConfig = {
-        levelAdditiveMultiplier: 1,
+        levelAdditiveMultiplier: 0.5,
         disableSwitch: true,
         pokemonConfigs: [
           {
@@ -74,7 +74,7 @@ export const MysteriousChestEncounter: MysteryEncounter =
 
       encounter.enemyPartyConfigs = [config];
 
-      loadCustomMovesForEncounter(scene, [Moves.CONFUSE_RAY, Moves.ASTONISH]);
+      encounter.setDialogueToken("gimmighoulName", getPokemonSpecies(Species.GIMMIGHOUL).getName());
 
       return true;
     })

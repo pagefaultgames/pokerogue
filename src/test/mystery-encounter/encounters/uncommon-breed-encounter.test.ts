@@ -164,9 +164,9 @@ describe("Uncommon Breed - Mystery Encounter", () => {
     });
 
     it("should NOT be selectable if the player doesn't have enough berries", async () => {
+      game.override.startingHeldItems([]);
       await game.runToMysteryEncounter(MysteryEncounterType.UNCOMMON_BREED, defaultParty);
       await game.phaseInterceptor.to(MysteryEncounterPhase, false);
-      game.scene.modifiers = [];
 
       const encounterPhase = scene.getCurrentPhase();
       expect(encounterPhase?.constructor.name).toBe(MysteryEncounterPhase.name);

@@ -27,9 +27,12 @@ export class MysteryEncounterSaveData {
   encounterSpawnChance: number = BASE_MYSTERY_ENCOUNTER_SPAWN_WEIGHT;
   queuedEncounters: QueuedEncounter[] = [];
 
-  constructor(data: MysteryEncounterSaveData | null) {
+  constructor(data?: MysteryEncounterSaveData) {
     if (!isNullOrUndefined(data)) {
       Object.assign(this, data);
     }
+
+    this.encounteredEvents = this.encounteredEvents ?? [];
+    this.queuedEncounters = this.queuedEncounters ?? [];
   }
 }

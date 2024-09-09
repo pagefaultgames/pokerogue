@@ -23,8 +23,8 @@
     },
     "3": {
       "label": "Gift a Bug Item",
-      "tooltip": "(-) Give the trainer a Quick Claw, Grip Claw, or Silver Powder\n(+) Receive a Gift Item",
-      "disabled_tooltip": "You need to have a Quick Claw, Grip Claw, or Silver Powder to select this.",
+      "tooltip": "(-) Give the trainer a {{requiredBugItems}}\n(+) Receive a Gift Item",
+      "disabled_tooltip": "You need to have a {{requiredBugItems}} to select this.",
       "select_prompt": "Select an item to give.",
       "invalid_selection": "Pokémon doesn't have that kind of item.",
       "selected": "You hand the trainer a {{selectedItem}}.",

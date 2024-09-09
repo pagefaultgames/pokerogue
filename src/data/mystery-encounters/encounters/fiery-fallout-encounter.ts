@@ -100,6 +100,8 @@ export const FieryFalloutEncounter: MysteryEncounter =
 
       scene.arena.trySetWeather(WeatherType.SUNNY, true);
 
+      encounter.setDialogueToken("volcaronaName", getPokemonSpecies(Species.VOLCARONA).getName());
+
       return true;
     })
     .withOnVisualsStart((scene: BattleScene) => {

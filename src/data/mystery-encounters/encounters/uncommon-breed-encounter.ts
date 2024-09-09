@@ -174,16 +174,17 @@ export const UncommonBreedEncounter: MysteryEncounter =
 
           // Remove 4 random berries from player's party
           // Get all player berry items, remove from party, and store reference
-          let berryItems: BerryModifier[] = scene.findModifiers(m => m instanceof BerryModifier) as BerryModifier[];
+          const berryItems: BerryModifier[]= scene.findModifiers(m => m instanceof BerryModifier) as BerryModifier[];
           for (let i = 0; i < 4; i++) {
-            berryItems = scene.findModifiers(m => m instanceof BerryModifier) as BerryModifier[];
-            const randBerry = berryItems[randSeedInt(berryItems.length)];
+            const index = randSeedInt(berryItems.length);
+            const randBerry = berryItems[index];
             randBerry.stackCount--;
             if (randBerry.stackCount === 0) {
               scene.removeModifier(randBerry);
+              berryItems.splice(index, 1);
             }
-            scene.updateModifiers(true, true);
           }
+          scene.updateModifiers(true, true);
 
           // Pokemon joins the team, with 2 egg moves
           const encounter = scene.currentBattle.mysteryEncounter!;

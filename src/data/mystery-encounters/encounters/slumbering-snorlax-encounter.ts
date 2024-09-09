@@ -68,6 +68,8 @@ export const SlumberingSnorlaxEncounter: MysteryEncounter =
       // Load animations/sfx for Snorlax fight start moves
       loadCustomMovesForEncounter(scene, [Moves.SNORE]);
 
+      encounter.setDialogueToken("snorlaxName", getPokemonSpecies(Species.SNORLAX).getName());
+
       return true;
     })
     .withTitle(`${namespace}.title`)

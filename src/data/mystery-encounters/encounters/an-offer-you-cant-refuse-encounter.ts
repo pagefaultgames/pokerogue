@@ -83,6 +83,8 @@ export const AnOfferYouCantRefuseEncounter: MysteryEncounter =
         }
       }
 
+      encounter.setDialogueToken("liepardName", getPokemonSpecies(Species.LIEPARD).getName());
+
       return true;
     })
     .withOption(

@@ -165,7 +165,7 @@ describe("Global Trade System - Mystery Encounter", () => {
       });
     });
 
-    it("Should trade a Pokemon from the player's party for the a random wonder trade Pokemon", async () => {
+    it("Should trade a Pokemon from the player's party for a random wonder trade Pokemon", async () => {
       await game.runToMysteryEncounter(MysteryEncounterType.GLOBAL_TRADE_SYSTEM, defaultParty);
 
       const speciesBefore = scene.getParty()[2].species.speciesId;
