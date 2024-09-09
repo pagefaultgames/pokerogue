@@ -50,7 +50,7 @@
   "noPokeballMulti": "相手の　ポケモンが　一つしか\nいない　前に　ボールが　使えない!",
   "noPokeballStrong": "相手の　ポケモンが　強すぎて　捕まえられない！\nまずは　弱めよう！",
   "noEscapeForce": "見えない　力の　せいで\n逃げることが できない！",
-  "noEscapeTrainer": "ダメだ！　勝負の最中に\n相手に　背中を　見せられない！",											 
+  "noEscapeTrainer": "ダメだ！　勝負の最中に\n相手に　背中を　見せられない！",
   "noEscapePokemon": "{{pokemonName}}の　{{moveName}}で\n{{escapeVerb}}!",
   "runAwaySuccess": " うまく　逃げ切れた！",
   "runAwayCannotEscape": "逃げることが　できない！",
