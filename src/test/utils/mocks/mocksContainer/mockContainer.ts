@@ -52,9 +52,8 @@ export default class MockContainer implements MockGameObject {
     /// Sets the position of this Game Object to be a relative position from the source Game Object.
   }
 
-  setInteractive(hitArea?, callback?, dropZone?) {
-    /// Sets the InteractiveObject to be a drop zone for a drag and drop operation.
-  }
+  setInteractive = vi.fn();
+
   setOrigin(x, y) {
     this.x = x;
     this.y = y;
@@ -208,4 +207,5 @@ export default class MockContainer implements MockGameObject {
     return this.list;
   }
 
+  disableInteractive = vi.fn();
 }

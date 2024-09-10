@@ -67,5 +67,6 @@
   "swapArenaTags": "{{pokemonName}} hat die Effekte, die auf den beiden Seiten des Kampffeldes wirken, miteinander getauscht!",
   "chillyReception": "{{pokemonName}} erzählt einen schlechten Witz, der nicht besonders gut ankommt...",
   "exposedMove": "{{pokemonName}} erkennt {{targetPokemonName}}!",
-  "safeguard": "{{targetName}} wird durch Bodyguard geschützt!"
+  "safeguard": "{{targetName}} wird durch Bodyguard geschützt!",
+  "afterYou": "{{targetName}} lässt sich auf Galanterie ein!"
 }
