@@ -43,3 +43,4 @@ jobs:
     uses: ./run-test-template.yml # run job defined in run-test-template.yml
     with:
       project: ${{ matrix.project }}
+      node-version: ${{ env.NODE_VERSION }}
