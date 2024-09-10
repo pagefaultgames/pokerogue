@@ -1,10 +1,10 @@
-import { defineProject, UserWorkspaceConfig } from "vitest/config";
+import { defineProject } from "vitest/config";
 import { defaultConfig } from "./vite.config";
 
 export default defineProject(({ mode }) => ({
   ...defaultConfig,
   test: {
-    setupFiles: ["./src/test/fontFace.setup.ts', './src/test/vitest.setup.ts"],
+    setupFiles: ["./src/test/fontFace.setup.ts", "./src/test/vitest.setup.ts"],
     server: {
       deps: {
         inline: ["vitest-canvas-mock"],
