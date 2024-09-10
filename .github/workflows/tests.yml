@@ -21,13 +21,17 @@ jobs:
     steps:
       - name: Check out Git repository
         uses: actions/checkout@v4
+        with:
+          path: tests-action
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
       - name: Install Node.js dependencies
+        working-directory: tests-action
         run: npm ci
       - name: Run Pre-test
+        working-directory: tests-action
         run: npx vitest run --project pre ${{ runner.debug == '1' && '' || '--silent' }}
 
   run-tests:
@@ -37,7 +41,6 @@ jobs:
     strategy:
       matrix:
         project: [misc, abilities, items, moves, battle]
-    steps:
-      - uses: ./.github/workflows/run-test-template.yml
-        with:
-          project: ${{ matrix.project }}
+      uses: ./.github/workflows/run-test-template.yml
+      with:
+        project: ${{ matrix.project }}
