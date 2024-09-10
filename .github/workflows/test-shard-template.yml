@@ -15,7 +15,7 @@ on:
 
 jobs:
   test:
-    name: Test ${{ inputs.shard }}/${{ inputs.totalShards }} in project "${{ inputs.project }}"
+    name: Shard ${{ inputs.shard }} of ${{ inputs.totalShards }}
     runs-on: ubuntu-latest
     steps:
       - name: Check out Git repository
