@@ -1,5 +1,8 @@
 name: Tests
 
+env:
+  NODE_VERSION: 20
+
 on:
   # Trigger the workflow on push or pull request,
   # but only for the main branch
@@ -15,37 +18,41 @@ on:
     types: [checks_requested]
 
 jobs:
-  run-misc-tests:  # Define a job named "run-tests"
-    name: Run misc tests  # Human-readable name for the job
-    runs-on: ubuntu-latest  # Specify the latest Ubuntu runner for the job
-
+  checkout:
+    name: Checkout Repository
+    runs-on: ubuntu-latest
+    outputs:
+      repo-path: ${{ steps.checkout.outputs.repo-path }}
     steps:
-      - name: Check out Git repository  # Step to check out the repository
-        uses: actions/checkout@v4  # Use the checkout action version 4
+      - name: Check out Git repository
+        id: checkout
+        uses: actions/checkout@v4
 
-      - name: Set up Node.js  # Step to set up Node.js environment
-        uses: actions/setup-node@v4  # Use the setup-node action version 4
+  run-misc-tests: 
+    name: Run misc tests
+    runs-on: ubuntu-latest
+    needs: checkout
+    steps:
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
         with:
-          node-version: 20  # Specify Node.js version 20
-
-      - name: Install Node.js dependencies  # Step to install Node.js dependencies
-        run: npm ci  # Use 'npm ci' to install dependencies
-
-      - name: pre-test # pre-test to check overrides
+          node-version: ${{ env.NODE_VERSION }}
+      - name: Install Node.js dependencies
+        run: npm ci
+      - name: pre-test
         run: npx vitest run --project pre ${{ runner.debug == '1' && '' || '--silent' }}
       - name: test misc
         run: npx vitest --project misc ${{ runner.debug == '1' && '' || '--silent' }}
 
   run-abilities-tests:
     name: Run abilities tests
-    runs-on: ubuntu-latest 
+    runs-on: ubuntu-latest
+    needs: checkout 
     steps:
-      - name: Check out Git repository
-        uses: actions/checkout@v4
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: ${{ env.NODE_VERSION }}
       - name: Install Node.js dependencies
         run: npm ci
       - name: pre-test
@@ -55,14 +62,13 @@ jobs:
 
   run-items-tests:
     name: Run items tests
-    runs-on: ubuntu-latest 
+    runs-on: ubuntu-latest
+    needs: checkout 
     steps:
-      - name: Check out Git repository
-        uses: actions/checkout@v4
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: ${{ env.NODE_VERSION }}
       - name: Install Node.js dependencies
         run: npm ci
       - name: pre-test
@@ -72,14 +78,13 @@ jobs:
 
   run-moves-tests:
     name: Run moves tests
-    runs-on: ubuntu-latest 
+    runs-on: ubuntu-latest
+    needs: checkout 
     steps:
-      - name: Check out Git repository
-        uses: actions/checkout@v4
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: ${{ env.NODE_VERSION }}
       - name: Install Node.js dependencies
         run: npm ci
       - name: pre-test
@@ -89,14 +94,13 @@ jobs:
 
   run-battle-tests:
     name: Run battle tests
-    runs-on: ubuntu-latest 
+    runs-on: ubuntu-latest
+    needs: checkout 
     steps:
-      - name: Check out Git repository
-        uses: actions/checkout@v4
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: ${{ env.NODE_VERSION }}
       - name: Install Node.js dependencies
         run: npm ci
       - name: pre-test
