@@ -887,7 +887,7 @@ export abstract class BattleAnim {
                 const setSpritePriority = (priority: integer) => {
                   switch (priority) {
                   case 0:
-                    scene.field.moveBelow(moveSprite as Phaser.GameObjects.GameObject, scene.getNonSwitchedEnemyPokemon() || scene.getNonSwitchedPlayerPokemon()!); // this bang is correct to ensure a GameObject is passed in as a second arg (as opposed to undefined)
+                    scene.field.moveBelow(moveSprite as Phaser.GameObjects.GameObject, scene.getNonSwitchedEnemyPokemon() || scene.getNonSwitchedPlayerPokemon()!); // This bang assumes that if (the EnemyPokemon is undefined, then the PlayerPokemon function must return an object), correct assumption?
                     break;
                   case 1:
                     scene.field.moveTo(moveSprite, scene.field.getAll().length - 1);

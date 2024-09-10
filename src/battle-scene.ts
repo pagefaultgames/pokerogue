@@ -750,7 +750,7 @@ export default class BattleScene extends SceneBase {
   }
 
   /**
-   * Finds the first {@linkcode Pokemon.isActive()} pokemon from the player that isn't also currently switching out
+   * Finds the first {@linkcode Pokemon.isActive() | active PlayerPokemon} that isn't also currently switching out
    * @returns Either the first {@linkcode PlayerPokemon} satisfying, or undefined if no player pokemon on the field satisfy
    */
   getNonSwitchedPlayerPokemon(): PlayerPokemon | undefined {
@@ -775,7 +775,7 @@ export default class BattleScene extends SceneBase {
   }
 
   /**
-   * Finds the first {@linkcode Pokemon.isActive()} pokemon from the enemy that isn't also currently switching out
+   * Finds the first {@linkcode Pokemon.isActive() | active EnemyPokemon} pokemon from the enemy that isn't also currently switching out
    * @returns Either the first {@linkcode EnemyPokemon} satisfying, or undefined if no player pokemon on the field satisfy
    */
   getNonSwitchedEnemyPokemon(): EnemyPokemon | undefined {

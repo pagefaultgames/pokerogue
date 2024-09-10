@@ -1977,7 +1977,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * sets if the pokemon is switching out (if it's a enemy wild implies it's going to flee)
    * @param status - boolean
    */
-  setSwitchOut(status: boolean): void {
+  setSwitchOutStatus(status: boolean): void {
     this.switchOutStatus = status;
   }
 
@@ -3095,7 +3095,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       this.updateFusionPalette();
     }
     this.summonData = new PokemonSummonData();
-    this.setSwitchOut(false);
+    this.setSwitchOutStatus(false);
     if (!this.battleData) {
       this.resetBattleData();
     }
@@ -3477,7 +3477,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     }
     this.setVisible(false);
     this.scene.field.remove(this);
-    this.setSwitchOut(true);
+    this.setSwitchOutStatus(true);
     this.scene.triggerPokemonFormChange(this, SpeciesFormChangeActiveTrigger, true);
   }
 
