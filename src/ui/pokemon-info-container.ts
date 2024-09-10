@@ -12,7 +12,7 @@ import ConfirmUiHandler from "./confirm-ui-handler";
 import { StatsContainer } from "./stats-container";
 import { TextStyle, addBBCodeTextObject, addTextObject, getTextColor } from "./text";
 import { addWindow } from "./ui-theme";
-import {Species} from "#enums/species";
+import { Species } from "#enums/species";
 
 interface LanguageSetting {
   infoContainerTextSize: string;
