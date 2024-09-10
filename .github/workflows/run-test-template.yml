@@ -23,4 +23,4 @@ jobs:
       - name: Install Node.js dependencies
         run: npm ci
       - name: Run tests
-        run: npx vitest --project ${{ inputs.project }} ${{ !runner.debug && '--silent' || '' }}
+        run: npx vitest --project main ${{ inputs.project }} ${{ !runner.debug && '--silent' || '' }}
