@@ -32,7 +32,7 @@ jobs:
         run: npm ci
       - name: Run Pre-test
         working-directory: tests-action
-        run: npx vitest run --project pre ${{ !runner.debug && '--silent' }}
+        run: npx vitest run --project pre ${{ !runner.debug && '--silent' || '' }}
 
   run-tests:
     name: Run Tests
