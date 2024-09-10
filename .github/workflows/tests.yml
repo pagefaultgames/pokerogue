@@ -28,8 +28,8 @@ jobs:
         id: checkout
         uses: actions/checkout@v4
 
-  run-misc-tests: 
-    name: Run misc tests
+  pre-test:
+    name: Checkout Repository
     runs-on: ubuntu-latest
     needs: checkout
     steps:
@@ -41,13 +41,25 @@ jobs:
         run: npm ci
       - name: pre-test
         run: npx vitest run --project pre ${{ runner.debug == '1' && '' || '--silent' }}
+
+  run-misc-tests: 
+    name: Run misc tests
+    runs-on: ubuntu-latest
+    needs: pre-test
+    steps:
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - name: Install Node.js dependencies
+        run: npm ci
       - name: test misc
         run: npx vitest --project misc ${{ runner.debug == '1' && '' || '--silent' }}
 
   run-abilities-tests:
     name: Run abilities tests
     runs-on: ubuntu-latest
-    needs: checkout 
+    needs: pre-test 
     steps:
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -55,15 +67,13 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
       - name: Install Node.js dependencies
         run: npm ci
-      - name: pre-test
-        run: npx vitest run --project pre ${{ runner.debug == '1' && '' || '--silent' }}
       - name: test abilities
         run: npx vitest --project abilities ${{ runner.debug == '1' && '' || '--silent' }}
 
   run-items-tests:
     name: Run items tests
     runs-on: ubuntu-latest
-    needs: checkout 
+    needs: pre-test 
     steps:
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -71,15 +81,13 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
       - name: Install Node.js dependencies
         run: npm ci
-      - name: pre-test
-        run: npx vitest run --project pre ${{ runner.debug == '1' && '' || '--silent' }}
       - name: test items
         run: npx vitest --project items ${{ runner.debug == '1' && '' || '--silent' }}
 
   run-moves-tests:
     name: Run moves tests
     runs-on: ubuntu-latest
-    needs: checkout 
+    needs: pre-test 
     steps:
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -87,15 +95,13 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
       - name: Install Node.js dependencies
         run: npm ci
-      - name: pre-test
-        run: npx vitest run --project pre ${{ runner.debug == '1' && '' || '--silent' }}
       - name: test moves
         run: npx vitest --project moves ${{ runner.debug == '1' && '' || '--silent' }}
 
   run-battle-tests:
     name: Run battle tests
     runs-on: ubuntu-latest
-    needs: checkout 
+    needs: pre-test 
     steps:
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -103,7 +109,5 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
       - name: Install Node.js dependencies
         run: npm ci
-      - name: pre-test
-        run: npx vitest run --project pre ${{ runner.debug == '1' && '' || '--silent' }}
       - name: test battle
         run: npx vitest --project battle ${{ runner.debug == '1' && '' || '--silent' }}
