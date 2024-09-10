@@ -21,11 +21,8 @@ jobs:
   setup:
     name: Checkout Repository and Install Dependencies
     runs-on: ubuntu-latest
-    outputs:
-      package-lock: ${{ steps.checkout.outputs.package-lock }}
     steps:
       - name: Checkout Git repository
-        id: checkout
         uses: actions/checkout@v4
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -43,31 +40,49 @@ jobs:
             ${{ runner.os }}-node-
       - name: Install Node.js dependencies
         run: npm ci
+      - name: Upload Node modules
+        uses: actions/upload-artifact@v3
+        with:
+          name: node_modules
+          path: |
+            ~/.npm
+            **/node_modules
+      - name: Upload repository
+        uses: actions/upload-artifact@v3
+        with:
+          name: repository
+          path: .
 
   pre-test:
-    name: Checkout Repository
+    name: Run Pre-test
     runs-on: ubuntu-latest
     needs: setup
     steps:
-      - name: Download Checkout Artifacts
+      - name: Download Repository
         uses: actions/download-artifact@v3
         with:
           name: repository
-      - name: pre-test
+      - name: Download Node modules
+        uses: actions/download-artifact@v3
+        with:
+          name: node_modules
+      - name: Run Pre-test
         run: npx vitest run --project pre ${{ runner.debug == '1' && '' || '--silent' }}
 
-  run-misc-tests: 
-    name: Run misc tests
+  run-misc-tests:
+    name: Run Misc Tests
     runs-on: ubuntu-latest
     needs: pre-test
     steps:
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
+      - name: Download Repository
+        uses: actions/download-artifact@v3
         with:
-          node-version: ${{ env.NODE_VERSION }}
-      - name: Install Node.js dependencies
-        run: npm ci
-      - name: test misc
+          name: repository
+      - name: Download Node modules
+        uses: actions/download-artifact@v3
+        with:
+          name: node_modules
+      - name: Run Misc Tests
         run: npx vitest --project misc ${{ runner.debug == '1' && '' || '--silent' }}
 
   run-abilities-tests:
