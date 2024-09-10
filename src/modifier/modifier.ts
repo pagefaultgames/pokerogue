@@ -15,7 +15,7 @@ import { BerryType } from "#enums/berry-type";
 import { StatusEffect, getStatusEffectHealText } from "../data/status-effect";
 import { achvs } from "../system/achv";
 import { VoucherType } from "../system/voucher";
-import { FormChangeItem, SpeciesFormChangeItemTrigger } from "../data/pokemon-forms";
+import { FormChangeItem, SpeciesFormChangeItemTrigger, SpeciesFormChangeLapseTeraTrigger, SpeciesFormChangeTeraTrigger } from "../data/pokemon-forms";
 import { Nature } from "#app/data/nature";
 import Overrides from "#app/overrides";
 import { ModifierType, modifierTypes } from "./modifier-type";
@@ -757,6 +757,7 @@ export class TerastallizeModifier extends LapsingPokemonHeldItemModifier {
   apply(args: any[]): boolean {
     const pokemon = args[0] as Pokemon;
     if (pokemon.isPlayer()) {
+      pokemon.scene.triggerPokemonFormChange(pokemon, SpeciesFormChangeTeraTrigger);
       pokemon.scene.validateAchv(achvs.TERASTALLIZE);
       if (this.teraType === Type.STELLAR) {
         pokemon.scene.validateAchv(achvs.STELLAR_TERASTALLIZE);
@@ -770,6 +771,7 @@ export class TerastallizeModifier extends LapsingPokemonHeldItemModifier {
     const ret = super.lapse(args);
     if (!ret) {
       const pokemon = args[0] as Pokemon;
+      pokemon.scene.triggerPokemonFormChange(pokemon, SpeciesFormChangeLapseTeraTrigger);
       pokemon.updateSpritePipelineData();
     }
     return ret;
