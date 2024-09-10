@@ -2,7 +2,7 @@ import { defineProject, UserWorkspaceConfig } from 'vitest/config';
 import { defaultConfig } from './vite.config';
 
 export const defaultProjectTestConfig: UserWorkspaceConfig["test"] = {
-	setupFiles: ['./src/test/vitest.setup.ts'],
+	setupFiles: ['./src/test/fontFace.setup.ts', './src/test/vitest.setup.ts'],
 	server: {
 		deps: {
 			inline: ['vitest-canvas-mock'],
