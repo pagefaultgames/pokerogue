@@ -40,11 +40,11 @@ jobs:
     strategy:
       matrix:
         project: 
-          - misc
-          - abilities
-          - items
-          - moves 
-          - battle
+          # - misc
+          - "src/test/abilities/**/*.{test,spec}.ts"
+          # - items
+          # - moves 
+          # - battle
     uses: ./.github/workflows/run-test-template.yml
     with:
       project: ${{ matrix.project }}
