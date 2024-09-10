@@ -20,4 +20,4 @@ jobs:
       - name: Install Node.js dependencies
         run: npm ci
       - name: Run ${{ inputs.project }} tests
-        run: npx vitest --project ${{ inputs.project }} ${{ runner.debug == '1' && '' || '--silent' }}
+        run: npx vitest --project ${{ inputs.project }} ${{ runner.debug == 1 && '' || '--silent' }}
