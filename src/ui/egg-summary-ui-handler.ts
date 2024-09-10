@@ -29,8 +29,10 @@ export default class EggSummaryUiHandler extends MessageUiHandler {
   private summaryContainer: Phaser.GameObjects.Container;
   /** container for the mini pokemon sprites */
   private pokemonIconSpritesContainer: Phaser.GameObjects.Container;
-  /** container for the icons displayed alongside the mini icons (e.g. shiny, HA capsule) */
+  /** container for the icons displayed on top of the mini pokemon sprites (e.g. shiny, HA capsule) */
   private pokemonIconsContainer: Phaser.GameObjects.Container;
+  /** container for the elements displayed behind the mini pokemon sprites (e.g. egg rarity bg) */
+  private pokemonBackgroundContainer: Phaser.GameObjects.Container;
   /** hatch info container that displays the current pokemon / hatch (main element on left hand side) */
   private infoContainer: PokemonHatchInfoContainer;
   /** handles jumping animations for the pokemon sprite icons */
@@ -71,14 +73,16 @@ export default class EggSummaryUiHandler extends MessageUiHandler {
     this.eggHatchBg.setOrigin(0, 0);
     this.eggHatchContainer.add(this.eggHatchBg);
 
-    this.pokemonIconsContainer = this.scene.add.container(iconContainerX, iconContainerY);
-    this.pokemonIconSpritesContainer = this.scene.add.container(iconContainerX, iconContainerY);
-    this.summaryContainer.add(this.pokemonIconsContainer);
-    this.summaryContainer.add(this.pokemonIconSpritesContainer);
-
     this.cursorObj = this.scene.add.image(0, 0, "select_cursor");
     this.cursorObj.setOrigin(0, 0);
     this.summaryContainer.add(this.cursorObj);
+
+    this.pokemonIconSpritesContainer = this.scene.add.container(iconContainerX, iconContainerY);
+    this.pokemonIconsContainer = this.scene.add.container(iconContainerX, iconContainerY);
+    this.pokemonBackgroundContainer = this.scene.add.container(iconContainerX, iconContainerY);
+    this.summaryContainer.add(this.pokemonBackgroundContainer);
+    this.summaryContainer.add(this.pokemonIconSpritesContainer);
+    this.summaryContainer.add(this.pokemonIconsContainer);
 
     this.infoContainer = new PokemonHatchInfoContainer(this.scene, this.summaryContainer);
     this.infoContainer.setup();
@@ -95,6 +99,7 @@ export default class EggSummaryUiHandler extends MessageUiHandler {
     this.summaryContainer.setVisible(false);
     this.pokemonIconSpritesContainer.removeAll(true);
     this.pokemonIconsContainer.removeAll(true);
+    this.pokemonBackgroundContainer.removeAll(true);
     this.eggHatchBg.setVisible(false);
     this.getUi().hideTooltip();
     // Note: Questions on garbage collection go to @frutescens
@@ -164,25 +169,25 @@ export default class EggSummaryUiHandler extends MessageUiHandler {
       const offset = 2;
       const rightSideX = 12;
 
-      const bg = this.scene.add.image(x+2, y+5, "passive_bg");
-      bg.setOrigin(0, 0);
-      bg.setScale(0.75);
-      bg.setVisible(true);
-      this.pokemonIconsContainer.add(bg);
+      const rarityBg = this.scene.add.image(x + 2, y + 5, "passive_bg");
+      rarityBg.setOrigin(0, 0);
+      rarityBg.setScale(0.75);
+      rarityBg.setVisible(true);
+      this.pokemonBackgroundContainer.add(rarityBg);
 
       // set tint for passive bg
       switch (getEggTierForSpecies(displayPokemon.species)) {
       case EggTier.COMMON:
-        bg.setVisible(false);
+        rarityBg.setVisible(false);
         break;
       case EggTier.GREAT:
-        bg.setTint(0xabafff);
+        rarityBg.setTint(0xabafff);
         break;
       case EggTier.ULTRA:
-        bg.setTint(0xffffaa);
+        rarityBg.setTint(0xffffaa);
         break;
       case EggTier.MASTER:
-        bg.setTint(0xdfffaf);
+        rarityBg.setTint(0xdfffaf);
         break;
       }
       const species = displayPokemon.species;
@@ -192,35 +197,31 @@ export default class EggSummaryUiHandler extends MessageUiHandler {
       const isShiny = displayPokemon.shiny;
 
       // set pokemon icon (and replace with base sprite if there is a mismatch)
-      const icon = this.scene.add.sprite(x - offset, y + offset, species.getIconAtlasKey(formIndex, isShiny, variant));
-      icon.setScale(0.5);
-      icon.setOrigin(0, 0);
-      icon.setFrame(species.getIconId(female, formIndex, isShiny, variant));
+      const pokemonIcon = this.scene.add.sprite(x - offset, y + offset, species.getIconAtlasKey(formIndex, isShiny, variant));
+      pokemonIcon.setScale(0.5);
+      pokemonIcon.setOrigin(0, 0);
+      pokemonIcon.setFrame(species.getIconId(female, formIndex, isShiny, variant));
 
-      if (icon.frame.name !== species.getIconId(female, formIndex, isShiny, variant)) {
+      if (pokemonIcon.frame.name !== species.getIconId(female, formIndex, isShiny, variant)) {
         console.log(`${species.name}'s variant icon does not exist. Replacing with default.`);
-        icon.setTexture(species.getIconAtlasKey(formIndex, false, variant));
-        icon.setFrame(species.getIconId(female, formIndex, false, variant));
+        pokemonIcon.setTexture(species.getIconAtlasKey(formIndex, false, variant));
+        pokemonIcon.setFrame(species.getIconId(female, formIndex, false, variant));
       }
-      this.pokemonIconSpritesContainer.add(icon);
-      this.iconAnimHandler.addOrUpdate(icon, PokemonIconAnimMode.NONE);
+      this.pokemonIconSpritesContainer.add(pokemonIcon);
 
-      const shiny = this.scene.add.image(x + rightSideX, y + offset * 2, "shiny_star_small");
-      shiny.setScale(0.5);
-      shiny.setVisible(displayPokemon.shiny);
-      shiny.setTint(getVariantTint(displayPokemon.variant));
-      this.pokemonIconsContainer.add(shiny);
+      const shinyIcon = this.scene.add.image(x + rightSideX, y + offset, "shiny_star_small");
+      shinyIcon.setOrigin(0, 0);
+      shinyIcon.setScale(0.5);
+      shinyIcon.setVisible(displayPokemon.shiny);
+      shinyIcon.setTint(getVariantTint(displayPokemon.variant));
+      this.pokemonIconsContainer.add(shinyIcon);
 
-      const ha = this.scene.add.image(x + rightSideX, y + 7, "ha_capsule");
-      ha.setScale(0.5);
-      ha.setVisible((displayPokemon.hasAbility(displayPokemon.species.abilityHidden)));
-      this.pokemonIconsContainer.add(ha);
+      const haIcon = this.scene.add.image(x + rightSideX, y + offset * 4, "ha_capsule");
+      haIcon.setOrigin(0, 0);
+      haIcon.setScale(0.5);
+      haIcon.setVisible(displayPokemon.abilityIndex === 2);
+      this.pokemonIconsContainer.add(haIcon);
 
-      const pb = this.scene.add.image(x + rightSideX, y + offset * 7, "icon_owned");
-      pb.setOrigin(0, 0);
-      pb.setScale(0.5);
-
-      // add animation for new unlocks (new catch or new shiny or new form)
       const dexEntry = value.dexEntryBeforeUpdate;
       const caughtAttr = dexEntry.caughtAttr;
       const newShiny = BigInt(1 << (displayPokemon.shiny ? 1 : 0));
@@ -228,17 +229,24 @@ export default class EggSummaryUiHandler extends MessageUiHandler {
       const newShinyOrVariant = ((newShiny & caughtAttr) === BigInt(0)) || ((newVariant & caughtAttr) === BigInt(0));
       const newForm = (BigInt(1 << displayPokemon.formIndex) * DexAttr.DEFAULT_FORM & caughtAttr) === BigInt(0);
 
-      pb.setVisible(!caughtAttr || newForm);
-      if (!caughtAttr || newShinyOrVariant || newForm) {
-        this.iconAnimHandler.addOrUpdate(icon, PokemonIconAnimMode.PASSIVE);
-      }
-      this.pokemonIconsContainer.add(pb);
+      const pokeballIcon = this.scene.add.image(x + rightSideX, y + offset * 7, "icon_owned");
+      pokeballIcon.setOrigin(0, 0);
+      pokeballIcon.setScale(0.5);
+      pokeballIcon.setVisible(!caughtAttr || newForm);
+      this.pokemonIconsContainer.add(pokeballIcon);
 
-      const em = this.scene.add.image(x, y + offset, "icon_egg_move");
-      em.setOrigin(0, 0);
-      em.setScale(0.5);
-      em.setVisible(value.eggMoveUnlocked);
-      this.pokemonIconsContainer.add(em);
+      const eggMoveIcon = this.scene.add.image(x, y + offset, "icon_egg_move");
+      eggMoveIcon.setOrigin(0, 0);
+      eggMoveIcon.setScale(0.5);
+      eggMoveIcon.setVisible(value.eggMoveUnlocked);
+      this.pokemonIconsContainer.add(eggMoveIcon);
+
+      // add animation to the Pokemon sprite for new unlocks (new catch, new shiny or new form)
+      if (!caughtAttr || newShinyOrVariant || newForm) {
+        this.iconAnimHandler.addOrUpdate(pokemonIcon, PokemonIconAnimMode.PASSIVE);
+      } else {
+        this.iconAnimHandler.addOrUpdate(pokemonIcon, PokemonIconAnimMode.NONE);
+      }
     });
 
     this.setCursor(0);
