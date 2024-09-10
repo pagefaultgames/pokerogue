@@ -876,10 +876,12 @@ export default class RunInfoUiHandler extends UiHandler {
       }
       break;
     case Button.CYCLE_ABILITY:
-      if (this.partyVisibility) {
-        this.showParty(false);
-      } else {
-        this.showParty(true);
+      if (this.runInfo.modifiers.length !== 0) {
+        if (this.partyVisibility) {
+          this.showParty(false);
+        } else {
+          this.showParty(true);
+        }
       }
       break;
     }
