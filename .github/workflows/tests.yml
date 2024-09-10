@@ -1,5 +1,8 @@
 name: Tests
 
+env:
+  VITEST_OPTIONS: ${{ !runner.debug && '--silent' }}
+
 on:
   # Trigger the workflow on push or pull request,
   # but only for the main branch
@@ -32,7 +35,7 @@ jobs:
         run: npm ci
       - name: Run Pre-test
         working-directory: tests-action
-        run: npx vitest run --project pre ${{ runner.debug == 1 && '' || '--silent' }}
+        run: npx vitest run --project pre $VITEST_OPTIONS
 
   run-tests:
     name: Run Tests
@@ -43,3 +46,4 @@ jobs:
     uses: ./.github/workflows/run-test-template.yml
     with:
       project: ${{ matrix.project }}
+      options: $VITEST_OPTIONS
