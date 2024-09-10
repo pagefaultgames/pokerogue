@@ -36,10 +36,9 @@ jobs:
 
   run-tests:
     name: Run Tests
-    needs: pre-test
     strategy:
       matrix:
         project: [misc, abilities, items, moves, battle]
-      uses: ./.github/workflows/run-test-template.yml
-      with:
-        project: ${{ matrix.project }}
+    uses: ./.github/workflows/run-test-template.yml
+    with:
+      project: ${{ matrix.project }}
