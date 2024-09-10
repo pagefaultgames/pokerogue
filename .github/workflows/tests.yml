@@ -15,8 +15,8 @@ on:
     types: [checks_requested]
 
 jobs:
-  setup:
-    name: Checkout & node install
+  pre-test:
+    name: Run Pre-test
     runs-on: ubuntu-latest
     steps:
       - name: Check out Git repository
@@ -27,27 +27,19 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          path: tests-action
       - name: Install Node.js dependencies
         working-directory: tests-action
         run: npm ci
-
-  pre-test:
-    name: Run Pre-test
-    runs-on: ubuntu-latest
-    needs: setup
-    steps:
       - name: Run Pre-test
         working-directory: tests-action
         run: npx vitest run --project pre ${{ runner.debug == '1' && '' || '--silent' }}
 
-  # run-tests:
-  #   name: Run Tests
-  #   runs-on: ubuntu-latest
-  #   needs: pre-test
-  #   strategy:
-  #     matrix:
-  #       project: [misc, abilities, items, moves, battle]
-  #     uses: ./.github/workflows/run-test-template.yml
-  #     with:
-  #       project: ${{ matrix.project }}
+  run-tests:
+    name: Run Tests
+    needs: pre-test
+    strategy:
+      matrix:
+        project: [misc, abilities, items, moves, battle]
+      uses: ./.github/workflows/run-test-template.yml
+      with:
+        project: ${{ matrix.project }}
