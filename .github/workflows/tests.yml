@@ -40,8 +40,6 @@ jobs:
     strategy:
       matrix:
         project: [misc, abilities, items, moves, battle]
-        test_name: [Misc Tests, Abilities Tests, Items Tests, Moves Tests, Battle Tests]
-    uses: ./.github/workflows/run-test-template.yml # run job defined in run-test-template.yml
+    uses: ./run-test-template.yml # run job defined in run-test-template.yml
     with:
       project: ${{ matrix.project }}
-      test_name: ${{ matrix.test_name }}

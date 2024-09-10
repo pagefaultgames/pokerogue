@@ -6,9 +6,6 @@ on:
       project:
         required: true
         type: string
-      test_name:
-        required: true
-        type: string
 
 jobs:
   test:
@@ -22,5 +19,5 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
       - name: Install Node.js dependencies
         run: npm ci
-      - name: Run tests
+      - name: Run ${{ inputs.project }} tests
         run: npx vitest --project ${{ inputs.project }} ${{ runner.debug == '1' && '' || '--silent' }}
