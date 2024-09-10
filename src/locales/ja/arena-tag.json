@@ -47,5 +47,11 @@
   "tailwindOnRemovePlayer": "味方の　追い風が　止んだ！",
   "tailwindOnRemoveEnemy": "相手の　追い風が　止んだ！",
   "happyHourOnAdd": "みんなが　ハッピーな気分に\n包まれた！",
-  "happyHourOnRemove": "みんなの　気分が　元に戻った"
+  "happyHourOnRemove": "みんなの　気分が　元に戻った",
+  "safeguardOnAdd": "場の全体は　神秘のベールに　包まれた！",
+  "safeguardOnAddPlayer": "味方は　神秘のベールに　包まれた！",
+  "safeguardOnAddEnemy": "相手は　神秘のベールに　包まれた！",
+  "safeguardOnRemove": "場の全体を　包んでいた\n神秘のベールが　なくなった！",
+  "safeguardOnRemovePlayer": "味方を　包んでいた\n神秘のベールが　なくなった！",
+  "safeguardOnRemoveEnemy": "相手を　包んでいた\n神秘のベールが　なくなった！"
 }
