@@ -19,6 +19,17 @@ body:
       value: |
         ---
   - type: textarea
+    id: repro
+    attributes:
+      label: Reproduction
+      description: Describe the stepps to reproduce this bug. If applicable attach user/session data at the bottom
+    validations:
+      required: true
+  - type: markdown
+    attributes:
+      value: |
+        ---
+  - type: textarea
     id: expected-behavior
     attributes:
       label: Expected behavior
