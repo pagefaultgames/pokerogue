@@ -31,7 +31,7 @@ export function applySessionDataPatches(data: SessionSaveData) {
 
           // From [ stat, battlesLeft ] to [ stat, maxBattles, battleCount ]
           m.args = [ newStat, 5, m.args[1] ];
-        } else if (m.className === "DoubleBattleChanceBoosterModifier") {
+        } else if (m.className === "DoubleBattleChanceBoosterModifier" && m.args.length === 1) {
           let maxBattles: number;
           switch (m.typeId) {
           case "MAX_LURE":
@@ -53,6 +53,8 @@ export function applySessionDataPatches(data: SessionSaveData) {
       data.enemyModifiers.forEach((m) => {
         if (m.className === "PokemonBaseStatModifier") {
           m.className = "BaseStatModifier";
+        } else if (m.className === "PokemonResetNegativeStatStageModifier") {
+          m.className = "ResetNegativeStatStageModifier";
         }
       });
     }
