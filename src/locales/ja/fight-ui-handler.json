@@ -4,5 +4,5 @@
   "accuracy": "命中",
   "abilityFlyInText": " {{pokemonName}}の\n{{passive}}{{abilityName}}",
   "passive": "パッシブ ",
-  "teraHover": "{{type}} Terastallized"
+  "teraHover": "{{type}}テラスタル"
 }
