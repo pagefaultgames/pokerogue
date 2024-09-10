@@ -102,7 +102,7 @@ export function applySystemDataPatches(data: SystemSaveData) {
       // --- PATCHES ---
 
       // Fix Starter Data
-      if (data.gameVersion) {
+      if (data.starterData) {
         for (const starterId of defaultStarterSpecies) {
           data.starterData[starterId].abilityAttr |= AbilityAttr.ABILITY_1;
           data.dexData[starterId].caughtAttr |= DexAttr.FEMALE;

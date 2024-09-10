@@ -44,6 +44,9 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
     if (emptyMoveIndex > -1) {
       pokemon.setMove(emptyMoveIndex, this.moveId);
       if (this.fromTM) {
+        if (!pokemon.usedTMs) {
+          pokemon.usedTMs = [];
+        }
         pokemon.usedTMs.push(this.moveId);
       }
       initMoveAnim(this.scene, this.moveId).then(() => {
@@ -91,6 +94,9 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
                         this.scene.ui.showText(i18next.t("battle:learnMoveForgetSuccess", { pokemonName: getPokemonNameWithAffix(pokemon), moveName: pokemon.moveset[moveIndex]!.getName() }), null, () => { // TODO: is the bang correct?
                           this.scene.ui.showText(i18next.t("battle:learnMoveAnd"), null, () => {
                             if (this.fromTM) {
+                              if (!pokemon.usedTMs) {
+                                pokemon.usedTMs = [];
+                              }
                               pokemon.usedTMs.push(this.moveId);
                             }
                             pokemon.setMove(moveIndex, Moves.NONE);
