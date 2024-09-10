@@ -64,8 +64,8 @@
   "copyType": "{{pokemonName}}は　{{targetPokemonName}}と\n同じタイプに　なった！",
   "suppressAbilities": "{{pokemonName}}の　特性が　効かなくなった！",
   "revivalBlessing": "{{pokemonName}}は\n復活して　戦えるようになった！",
-  "trickOnSwap": "{{pokemonNameWithAffix}} switched items with its target!",
-  "trickFoeNewItem": "{{pokemonNameWithAffix}} obtained one {{itemName}}.",
+  "trickOnSwap": "{{pokemonNameWithAffix}} は　お互いの　道具を　入れ替えた！",
+  "trickFoeNewItem": "{{pokemonNameWithAffix}}は　{{itemName}}を　1つ　手に入れた！",
   "swapArenaTags": "{{pokemonName}}は\nお互いの　場の　効果を　入れ替えた！",
   "exposedMove": "{{pokemonName}}は {{targetPokemonName}}の\n正体を　見破った！"
 }
