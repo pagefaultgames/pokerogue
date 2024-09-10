@@ -1,7 +1,7 @@
 name: Tests
 
 env:
-  SILENT: ${{ runner.debug == '1' && '' || ':silent' }}
+  SILENT: ${{ runner.debug == '1' && '' || '--silent' }}
 
 on:
   # Trigger the workflow on push or pull request,
@@ -35,9 +35,9 @@ jobs:
         run: npm ci  # Use 'npm ci' to install dependencies
 
       - name: pre-test # pre-test to check overrides
-        run: npx vitest run --project pre$SILENT
+        run: npx vitest run --project pre $SILENT
       - name: test misc
-        run: npx vitest --project misc$SILENT
+        run: npx vitest --project misc $SILENT
 
   run-abilities-tests:
     name: Run abilities tests
@@ -52,9 +52,9 @@ jobs:
       - name: Install Node.js dependencies
         run: npm ci
       - name: pre-test
-        run: npx vitest run --project pre$SILENT
+        run: npx vitest run --project pre $SILENT
       - name: test abilities
-        run: npx vitest --project abilities$SILENT
+        run: npx vitest --project abilities $SILENT
 
   run-items-tests:
     name: Run items tests
@@ -69,9 +69,9 @@ jobs:
       - name: Install Node.js dependencies
         run: npm ci
       - name: pre-test
-        run: npx vitest run --project pre$SILENT
+        run: npx vitest run --project pre $SILENT
       - name: test items
-        run: npx vitest --project items$SILENT
+        run: npx vitest --project items $SILENT
 
   run-moves-tests:
     name: Run moves tests
@@ -86,9 +86,9 @@ jobs:
       - name: Install Node.js dependencies
         run: npm ci
       - name: pre-test
-        run: npx vitest run --project pre$SILENT
+        run: npx vitest run --project pre $SILENT
       - name: test moves
-        run: npx vitest --project moves$SILENT
+        run: npx vitest --project moves $SILENT
 
   run-battle-tests:
     name: Run battle tests
@@ -103,6 +103,6 @@ jobs:
       - name: Install Node.js dependencies
         run: npm ci
       - name: pre-test
-        run: npx vitest run --project pre$SILENT
+        run: npx vitest run --project pre $SILENT
       - name: test battle
-        run: npx vitest --project battle$SILENT
+        run: npx vitest --project battle $SILENT
