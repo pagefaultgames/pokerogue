@@ -365,7 +365,7 @@ export class SpeciesDefaultFormMatchTrigger extends SpeciesFormChangeTrigger {
  */
 export class SpeciesFormChangeTeraTrigger extends SpeciesFormChangeTrigger {
   /** The Tera type that triggers the form change */
-  public teraType: Type;
+  private teraType: Type;
 
   constructor(teraType: Type) {
     super();
