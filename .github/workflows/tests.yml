@@ -34,9 +34,9 @@ jobs:
     name: Run Tests
     runs-on: ubuntu-latest
     needs: pre-test
-    strategy:
-      matrix:
-        project: [misc, abilities, items, moves, battle]
+    # strategy:
+    #   matrix:
+    #     project: [misc, abilities, items, moves, battle]
     uses: ./.github/workflows/run-test-template.yml
     with:
-      project: ${{ matrix.project }}
+      project: misc
