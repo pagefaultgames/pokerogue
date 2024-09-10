@@ -22,7 +22,7 @@ body:
     id: repro
     attributes:
       label: Reproduction
-      description: Describe the stepps to reproduce this bug. If applicable attach user/session data at the bottom
+      description: Describe the steps to reproduce this bug. If applicable attach user/session data at the bottom
     validations:
       required: true
   - type: markdown
