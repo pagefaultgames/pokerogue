@@ -6,7 +6,7 @@ import * as Utils from "../utils";
 import { ChargeAttr, MoveFlags, allMoves } from "./move";
 import { Type } from "./type";
 import { BlockNonDirectDamageAbAttr, FlinchEffectAbAttr, ReverseDrainAbAttr, applyAbAttrs } from "./ability";
-import { TerrainType } from "./terrain";
+import { getTerrainName, TerrainType } from "./terrain";
 import { WeatherType } from "./weather";
 import { allAbilities } from "./ability";
 import { SpeciesFormChangeManualTrigger } from "./pokemon-forms";
@@ -1079,7 +1079,11 @@ export class DrowsyTag extends BattlerTag {
   }
 
   canAdd(pokemon: Pokemon): boolean {
-    return pokemon.scene.arena.terrain?.terrainType !== TerrainType.ELECTRIC || !pokemon.isGrounded();
+    const isElectricTerrainProtected = (pokemon.scene.arena.terrain?.terrainType === TerrainType.ELECTRIC && pokemon.isGrounded());
+    if (isElectricTerrainProtected) {
+      pokemon.scene.queueMessage(i18next.t("terrain:defaultBlockMessage", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), terrainName: getTerrainName(TerrainType.ELECTRIC) }));
+    }
+    return !isElectricTerrainProtected;
   }
 
   onAdd(pokemon: Pokemon): void {
