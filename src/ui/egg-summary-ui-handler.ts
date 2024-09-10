@@ -97,7 +97,6 @@ export default class EggSummaryUiHandler extends MessageUiHandler {
     this.pokemonIconsContainer.removeAll(true);
     this.eggHatchBg.setVisible(false);
     this.getUi().hideTooltip();
-    console.time("clearing keys");
 
     // Note: Questions on garbage collection go to @frutescens
     const activeKeys = this.scene.getActiveKeys();
@@ -119,10 +118,6 @@ export default class EggSummaryUiHandler extends MessageUiHandler {
     this.eggHatchData.length = 0;
     // Removes Pokemon icons in EggSummaryUiHandler
     this.iconAnimHandler.removeAll();
-    console.timeEnd("clearing keys");
-
-    console.log("Egg Summary Handler cleared");
-    console.log("Egg Summary Handler cleared cursor ", this.cursor);
   }
 
   /**
