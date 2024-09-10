@@ -527,7 +527,7 @@ export default class RunInfoUiHandler extends UiHandler {
       const pokeInfoTextContainer = this.scene.add.container(-85, 3.5);
       const textContainerFontSize = "34px";
       // This checks if the Pokemon's nature has been overwritten during the run and displays the change accurately
-      const pNature = (pokemon.natureOverride === -1) ? pokemon.nature : pokemon.natureOverride;
+      const pNature = pokemon.getNature();
       const pNatureName = getNatureName(pNature);
       const pName = pokemon.getNameToRender();
       //With the exception of Korean/Traditional Chinese/Simplified Chinese, the code shortens the terms for ability and passive to their first letter.
