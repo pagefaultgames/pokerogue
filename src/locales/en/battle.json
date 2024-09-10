@@ -44,6 +44,7 @@
   "moveNotImplemented": "{{moveName}} is not yet implemented and cannot be selected.",
   "moveNoPP": "There's no PP left for\nthis move!",
   "moveDisabled": "{{moveName}} is disabled!",
+  "canOnlyUseMove": "{{pokemonName}} can only use {{moveName}}!",
   "moveCannotBeSelected": "{{moveName}} cannot be selected!",
   "disableInterruptedMove": "{{pokemonNameWithAffix}}'s {{moveName}}\nis disabled!",
   "throatChopInterruptedMove": "The effects of Throat Chop prevent\n{{pokemonName}} from using certain moves!",

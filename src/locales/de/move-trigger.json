@@ -67,5 +67,7 @@
   "swapArenaTags": "{{pokemonName}} hat die Effekte, die auf den beiden Seiten des Kampffeldes wirken, miteinander getauscht!",
   "trickOnSwap": "{{pokemonNameWithAffix}} tauscht Items mit dem Ziel!",
   "trickFoeNewItem": "{{pokemonNameWithAffix}} erhält {{itemName}}.",
-  "safeguard": "{{targetName}} wird durch Bodyguard geschützt!"
+  "exposedMove": "{{pokemonName}} erkennt {{targetPokemonName}}!",
+  "safeguard": "{{targetName}} wird durch Bodyguard geschützt!",
+  "afterYou": "{{targetName}} lässt sich auf Galanterie ein!"
 }
