@@ -1,0 +1,26 @@
+name: Test Template
+
+on:
+  workflow_call:
+    inputs:
+      project:
+        required: true
+        type: string
+      test_name:
+        required: true
+        type: string
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - name: Install Node.js dependencies
+        run: npm ci
+      - name: Run tests
+        run: npx vitest --project ${{ inputs.project }} ${{ runner.debug == '1' && '' || '--silent' }}
