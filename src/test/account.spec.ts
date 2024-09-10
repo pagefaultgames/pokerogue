@@ -1,4 +1,4 @@
-import * as battleScene from "#app/battle-scene.js";
+import * as battleScene from "#app/battle-scene";
 import { describe, expect, it, vi } from "vitest";
 import { initLoggedInUser, loggedInUser, updateUserInfo } from "../account";
 import * as utils from "../utils";
