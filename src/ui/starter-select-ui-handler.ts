@@ -28,15 +28,15 @@ import { Mode } from "./ui";
 import { addWindow } from "./ui-theme";
 import { Egg } from "#app/data/egg";
 import Overrides from "#app/overrides";
-import {SettingKeyboard} from "#app/system/settings/settings-keyboard";
-import {Passive as PassiveAttr} from "#enums/passive";
+import { SettingKeyboard } from "#app/system/settings/settings-keyboard";
+import { Passive as PassiveAttr } from "#enums/passive";
 import * as Challenge from "../data/challenge";
 import MoveInfoOverlay from "./move-info-overlay";
 import { getEggTierForSpecies } from "#app/data/egg";
 import { Device } from "#enums/devices";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
-import {Button} from "#enums/buttons";
+import { Button } from "#enums/buttons";
 import { EggSourceType } from "#app/enums/egg-source-types";
 import AwaitableUiHandler from "./awaitable-ui-handler";
 import { DropDown, DropDownLabel, DropDownOption, DropDownState, DropDownType, SortCriteria } from "./dropdown";
@@ -2895,7 +2895,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         }
 
         const speciesForm = getPokemonSpeciesForm(species.speciesId, props.formIndex);
-        this.setTypeIcons(speciesForm.type1, speciesForm!.type2!); // TODO: are those bangs correct?
+        this.setTypeIcons(speciesForm.type1, speciesForm.type2);
 
         this.pokemonSprite.clearTint();
         if (this.pokerusSpecies.includes(species)) {
@@ -3232,13 +3232,12 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           this.pokemonFormText.setText(formText ? i18next.t(`pokemonForm:${speciesName}${formText}`) : "");
         }
 
-        this.setTypeIcons(speciesForm.type1, speciesForm.type2!); // TODO: is this bang correct?
+        this.setTypeIcons(speciesForm.type1, speciesForm.type2);
       } else {
         this.pokemonAbilityText.setText("");
         this.pokemonPassiveText.setText("");
         this.pokemonNatureText.setText("");
-        // @ts-ignore
-        this.setTypeIcons(null, null); // TODO: resolve ts-ignore.. huh!?
+        this.setTypeIcons(null, null);
       }
     } else {
       this.shinyOverlay.setVisible(false);
@@ -3248,8 +3247,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       this.pokemonAbilityText.setText("");
       this.pokemonPassiveText.setText("");
       this.pokemonNatureText.setText("");
-      // @ts-ignore
-      this.setTypeIcons(null, null); // TODO: resolve ts-ignore.. huh!?
+      this.setTypeIcons(null, null);
     }
 
     if (!this.starterMoveset) {
@@ -3282,7 +3280,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.updateInstructions();
   }
 
-  setTypeIcons(type1: Type, type2: Type): void {
+  setTypeIcons(type1: Type | null, type2: Type | null): void {
     if (type1 !== null) {
       this.type1Icon.setVisible(true);
       this.type1Icon.setFrame(Type[type1].toLowerCase());
