@@ -1,8 +1,5 @@
 name: Tests
 
-env:
-  NODE_VERSION: 20
-
 on:
   # Trigger the workflow on push or pull request,
   # but only for the main branch
@@ -27,7 +24,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: ${{ env.NODE_VERSION }}
+          node-version: 20
       - name: Install Node.js dependencies
         run: npm ci
       - name: Run Pre-test
@@ -43,4 +40,3 @@ jobs:
     uses: ./.github/workflows/run-test-template.yml
     with:
       project: ${{ matrix.project }}
-      node-version: ${{ env.NODE_VERSION }}

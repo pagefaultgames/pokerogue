@@ -6,9 +6,6 @@ on:
       project:
         required: true
         type: string
-      node-version:
-        required: true
-        type: string
 
 jobs:
   test:
@@ -19,7 +16,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: ${{ inputs.node-version }}
+          node-version: 20
       - name: Install Node.js dependencies
         run: npm ci
       - name: Run ${{ inputs.project }} tests
