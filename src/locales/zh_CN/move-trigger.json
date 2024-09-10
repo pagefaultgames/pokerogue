@@ -67,5 +67,5 @@
   "swapArenaTags": "{{pokemonName}}\n交换了双方的场地效果！",
   "exposedMove": "{{pokemonName}}识破了\n{{targetPokemonName}}的原型！",
   "safeguard": "{{targetName}}\n正受到神秘之幕的保护！",
-  "afterYou": "{{pokemonName}} took the kind offer!"
+  "afterYou": "{{pokemonName}}\n接受了对手的好意！"
 }
