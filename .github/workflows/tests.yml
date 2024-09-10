@@ -39,7 +39,12 @@ jobs:
     needs: [pre-test]
     strategy:
       matrix:
-        project: [misc, abilities, items, moves, battle]
+        project: 
+          - misc
+          - abilities
+          - items
+          - moves 
+          - battle
     uses: ./.github/workflows/run-test-template.yml
     with:
       project: ${{ matrix.project }}
