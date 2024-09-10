@@ -1724,7 +1724,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
                       }
                     });
                     ui.setMode(Mode.STARTER_SELECT);
-                    this.setSpeciesDetails(this.lastSpecies, undefined, undefined, undefined, undefined, undefined, undefined);
+                    this.setSpeciesDetails(this.lastSpecies);
+                    this.scene.playSound("se/buy");
 
                     // if starterContainer exists, update the passive background
                     if (starterContainer) {
