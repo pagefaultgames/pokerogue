@@ -2765,8 +2765,8 @@ export default class BattleScene extends SceneBase {
     playerParty.forEach(p => {
       keys.push(p.getSpriteKey(true));
       keys.push(p.getBattleSpriteKey(true, true));
-      keys.push("cry/" + p.species.getCryKey(p.species.formIndex));
-      if (p.fusionSpecies && p.getSpeciesForm() !== p.getFusionSpeciesForm()) {
+      keys.push("cry/" + p.species.getCryKey(p.formIndex));
+      if (p.fusionSpecies) {
         keys.push("cry/"+p.fusionSpecies.getCryKey(p.fusionFormIndex));
       }
     });
@@ -2774,8 +2774,8 @@ export default class BattleScene extends SceneBase {
     const enemyParty = this.getEnemyParty();
     enemyParty.forEach(p => {
       keys.push(p.getSpriteKey(true));
-      keys.push("cry/" + p.species.getCryKey(p.species.formIndex));
-      if (p.fusionSpecies && p.getSpeciesForm() !== p.getFusionSpeciesForm()) {
+      keys.push("cry/" + p.species.getCryKey(p.formIndex));
+      if (p.fusionSpecies) {
         keys.push("cry/"+p.fusionSpecies.getCryKey(p.fusionFormIndex));
       }
     });

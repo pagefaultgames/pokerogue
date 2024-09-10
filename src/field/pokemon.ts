@@ -3524,7 +3524,6 @@ export default interface Pokemon {
 
 export class PlayerPokemon extends Pokemon {
   public compatibleTms: Moves[];
-  public usedTms: Moves[];
 
   constructor(scene: BattleScene, species: PokemonSpecies, level: integer, abilityIndex?: integer, formIndex?: integer, gender?: Gender, shiny?: boolean, variant?: Variant, ivs?: integer[], nature?: Nature, dataSource?: Pokemon | PokemonData) {
     super(scene, 106, 148, species, level, abilityIndex, formIndex, gender, shiny, variant, ivs, nature, dataSource);
@@ -3548,7 +3547,6 @@ export class PlayerPokemon extends Pokemon {
       }
     }
     this.generateCompatibleTms();
-    this.usedTms = [];
   }
 
   initBattleInfo(): void {
