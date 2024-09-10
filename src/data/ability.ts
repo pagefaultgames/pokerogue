@@ -2834,6 +2834,14 @@ export class BonusItemChanceAbAttr extends PreEncounterAbAttr {
     return true;
   }
 
+  /**
+   * @override
+   * @param pokemon n/a
+   * @param passive n/a
+   * @param simulated n/a
+   * @param args `[0]` The chance for an enemy to generate held items
+   * @returns `true`
+   */
   override applyPreEncounter(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
     (args[0] as Utils.NumberHolder).value *= this.chanceMultiplier;
     return true;
