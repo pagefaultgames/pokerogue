@@ -18,27 +18,37 @@ on:
     types: [checks_requested]
 
 jobs:
-  checkout:
-    name: Checkout Repository
+  setup:
+    name: Checkout Repository and Install Dependencies
     runs-on: ubuntu-latest
     outputs:
-      repo-path: ${{ steps.checkout.outputs.repo-path }}
+      package-lock: ${{ steps.checkout.outputs.package-lock }}
     steps:
-      - name: Check out Git repository
+      - name: Checkout Git repository
         id: checkout
         uses: actions/checkout@v4
+      - name: Cache Node modules
+        id: cache
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.npm
+            **/node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+      - name: Install Node.js dependencies
+        run: npm ci
 
   pre-test:
     name: Checkout Repository
     runs-on: ubuntu-latest
-    needs: checkout
+    needs: setup
     steps:
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
+      - name: Download Checkout Artifacts
+        uses: actions/download-artifact@v3
         with:
-          node-version: ${{ env.NODE_VERSION }}
-      - name: Install Node.js dependencies
-        run: npm ci
+          name: repository
       - name: pre-test
         run: npx vitest run --project pre ${{ runner.debug == '1' && '' || '--silent' }}
 
