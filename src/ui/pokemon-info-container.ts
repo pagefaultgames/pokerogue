@@ -251,7 +251,7 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
         const pokemonForm = (pokemon.species?.forms?.[pokemon.formIndex!]?.formKey) || "";
         let formName = "";
         if (pokemonForm !== "") {
-          const formText = Utils.capitalizeString(pokemonForm, "-", false, false); // TODO: is the bang correct?
+          const formText = Utils.capitalizeString(pokemonForm, "-", false, false);
 
           const speciesName = Utils.capitalizeString(Species[pokemon.species.getRootSpeciesId()], "_", true, false);
           if (pokemon.species.speciesId === Species.ARCEUS) {
