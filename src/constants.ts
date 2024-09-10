@@ -1,1 +1,2 @@
 export const PLAYER_PARTY_MAX_SIZE = 6;
+export const BOSS_BONUS_ENEMY_ITEM_CHANCE_MULTIPLIER = 2.5;

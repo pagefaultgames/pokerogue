@@ -15,7 +15,7 @@ import { TextStyle, addTextObject, getTextColor } from "./ui/text";
 import { allMoves } from "./data/move";
 import { ModifierPoolType, getDefaultModifierTypeForTier, getEnemyModifierTypesForWave, getLuckString, getLuckTextTint, getModifierPoolForType, getModifierType, getPartyLuckValue, modifierTypes } from "./modifier/modifier-type";
 import AbilityBar from "./ui/ability-bar";
-import { BlockItemTheftAbAttr, BonusItemChanceAbAttr, DoubleBattleChanceAbAttr, ChangeMovePriorityAbAttr, PostBattleInitAbAttr, applyAbAttrs, applyPostBattleInitAbAttrs } from "./data/ability";
+import { BlockItemTheftAbAttr, BonusItemChanceAbAttr, DoubleBattleChanceAbAttr, ChangeMovePriorityAbAttr, PostBattleInitAbAttr, applyAbAttrs, applyPostBattleInitAbAttrs, applyPreEncounterAbAttrs } from "./data/ability";
 import { allAbilities } from "./data/ability";
 import Battle, { BattleType, FixedBattleConfig } from "./battle";
 import { GameMode, GameModes, getGameMode } from "./game-mode";
@@ -84,6 +84,7 @@ import { TitlePhase } from "./phases/title-phase";
 import { ToggleDoublePositionPhase } from "./phases/toggle-double-position-phase";
 import { TurnInitPhase } from "./phases/turn-init-phase";
 import { ShopCursorTarget } from "./enums/shop-cursor-target";
+import { BOSS_BONUS_ENEMY_ITEM_CHANCE_MULTIPLIER } from "#app/constants";
 
 export const bypassLogin = import.meta.env.VITE_BYPASS_LOGIN === "1";
 
@@ -2478,17 +2479,20 @@ export default class BattleScene extends SceneBase {
 
   generateEnemyModifiers(): Promise<void> {
     return new Promise(resolve => {
-      if (this.currentBattle.battleSpec === BattleSpec.FINAL_BOSS) {
+      if (this.currentBattle.battleSpec === BattleSpec.FINAL_BOSS) { // Classic mode final boss
         return resolve();
       }
+
       const difficultyWaveIndex = this.gameMode.getWaveForDifficulty(this.currentBattle.waveIndex);
       const isFinalBoss = this.gameMode.isWaveFinal(this.currentBattle.waveIndex);
-      let chances = Math.ceil(difficultyWaveIndex / 10);
-      if (this.getPlayerPokemon()?.hasAbilityWithAttr(BonusItemChanceAbAttr)) {
-        chances += Math.floor(chances * 1.2);
-      }
+
+      const chances = new Utils.NumberHolder(Math.ceil(difficultyWaveIndex / 10));
+
+      applyPreEncounterAbAttrs(BonusItemChanceAbAttr, this.getPlayerPokemon()!, false, chances);
+      chances.value = Math.ceil(chances.value);
+
       if (isFinalBoss) {
-        chances = Math.ceil(chances * 2.5);
+        chances.value = Math.ceil(chances.value * BOSS_BONUS_ENEMY_ITEM_CHANCE_MULTIPLIER);
       }
 
       const party = this.getEnemyParty();
@@ -2510,17 +2514,19 @@ export default class BattleScene extends SceneBase {
           upgradeChance /= 8;
         }
         const modifierChance = this.gameMode.getEnemyModifierChance(isBoss);
-        let pokemonModifierChance = modifierChance;
-        if (this.currentBattle.battleType === BattleType.TRAINER && this.currentBattle.trainer)
-          pokemonModifierChance = Math.ceil(pokemonModifierChance * this.currentBattle.trainer.getPartyMemberModifierChanceMultiplier(i)); // eslint-disable-line
+        // TODO: Is this supposed to be used?
+        /* let pokemonModifierChance = modifierChance;
+        if (this.currentBattle.battleType === BattleType.TRAINER && this.currentBattle.trainer) {
+          pokemonModifierChance = Math.ceil(pokemonModifierChance * this.currentBattle.trainer.getPartyMemberModifierChanceMultiplier(i));
+        } */
         let count = 0;
-        for (let c = 0; c < chances; c++) {
+        for (let c = 0; c < chances.value; c++) {
           if (!Utils.randSeedInt(modifierChance)) {
             count++;
           }
         }
         if (isBoss) {
-          count = Math.max(count, Math.floor(chances / 2));
+          count = Math.max(count, Math.floor(chances.value / 2));
         }
         getEnemyModifierTypesForWave(difficultyWaveIndex, count, [ enemyPokemon ], this.currentBattle.battleType === BattleType.TRAINER ? ModifierPoolType.TRAINER : ModifierPoolType.WILD, upgradeChance)
           .map(mt => mt.newModifier(enemyPokemon).add(this.enemyModifiers, false, this));

@@ -2815,16 +2815,27 @@ export class BonusCritAbAttr extends AbAttr {
   }
 }
 
+export class PreEncounterAbAttr extends AbAttr {
+  applyPreEncounter(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
+    return false;
+  }
+}
+
 /**
- * If an ability has this tag, it will increase the chance of items by 20%.
- * This is used in battle-scene.ts in generateEnemyModifiers.
+ * If an ability has this tag, it will increase the chance of enemy pokemon having items by {@linkcode chanceMultiplier} (default 1.2x).
+ * This is used in `battle-scene.ts` in `generateEnemyModifiers`.
  */
-export class BonusItemChanceAbAttr extends AbAttr {
-  constructor() {
+export class BonusItemChanceAbAttr extends PreEncounterAbAttr {
+  constructor(protected chanceMultiplier: number = 1.2) {
     super(false);
   }
 
-  apply(pokemon: Pokemon, passive: boolean, simulated: boolean, cancelled: Utils.BooleanHolder | null, args: any[]): boolean | Promise<boolean> {
+  override apply(pokemon: Pokemon, passive: boolean, simulated: boolean, cancelled: Utils.BooleanHolder | null, args: any[]): boolean | Promise<boolean> {
+    return true;
+  }
+
+  override applyPreEncounter(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
+    (args[0] as Utils.NumberHolder).value *= this.chanceMultiplier;
     return true;
   }
 }
@@ -4762,6 +4773,11 @@ export function applyPostBattleAbAttrs(attrType: Constructor<PostBattleAbAttr>,
 export function applyPostFaintAbAttrs(attrType: Constructor<PostFaintAbAttr>,
   pokemon: Pokemon, attacker?: Pokemon, move?: Move, hitResult?: HitResult, simulated: boolean = false, ...args: any[]): Promise<void> {
   return applyAbAttrsInternal<PostFaintAbAttr>(attrType, pokemon, (attr, passive) => attr.applyPostFaint(pokemon, passive, simulated, attacker, move, hitResult, args), args, false, simulated);
+}
+
+export function applyPreEncounterAbAttrs(attrType: Constructor<PreEncounterAbAttr>,
+  pokemon: Pokemon, simulated: boolean = false, ...args: any[]): Promise<void> {
+  return applyAbAttrsInternal<PreEncounterAbAttr>(attrType, pokemon, (attr, passive) => attr.applyPreEncounter(pokemon, passive, simulated, args), args, false, simulated);
 }
 
 function queueShowAbility(pokemon: Pokemon, passive: boolean): void {
