@@ -7060,6 +7060,7 @@ export function initMoves() {
     new StatusMove(Moves.CHARM, Type.FAIRY, 100, 20, -1, 0, 2)
       .attr(StatStageChangeAttr, [ Stat.ATK ], -2),
     new AttackMove(Moves.ROLLOUT, Type.ROCK, MoveCategory.PHYSICAL, 30, 90, 20, -1, 0, 2)
+      .partial()
       .attr(ConsecutiveUseDoublePowerAttr, 5, true, true, Moves.DEFENSE_CURL),
     new AttackMove(Moves.FALSE_SWIPE, Type.NORMAL, MoveCategory.PHYSICAL, 40, 100, 40, -1, 0, 2)
       .attr(SurviveDamageAttr),
@@ -7342,6 +7343,7 @@ export function initMoves() {
       .attr(AddArenaTagAttr, ArenaTagType.MUD_SPORT, 5)
       .target(MoveTarget.BOTH_SIDES),
     new AttackMove(Moves.ICE_BALL, Type.ICE, MoveCategory.PHYSICAL, 30, 90, 20, -1, 0, 3)
+      .partial()
       .attr(ConsecutiveUseDoublePowerAttr, 5, true, true, Moves.DEFENSE_CURL)
       .ballBombMove(),
     new AttackMove(Moves.NEEDLE_ARM, Type.GRASS, MoveCategory.PHYSICAL, 60, 100, 15, 30, 0, 3)
