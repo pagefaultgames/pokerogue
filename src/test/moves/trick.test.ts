@@ -5,12 +5,12 @@ import { Species } from "#enums/species";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { PokemonHeldItemModifier } from "#app/modifier/modifier.js";
-import { SPLASH_ONLY } from "#test/utils/testUtils";
 import { deepCopy } from "#app/utils";
 import { Abilities } from "#app/enums/abilities.js";
 
 const TIMEOUT = 20000;
 const TRICK_ONLY = [Moves.TRICK, Moves.TRICK, Moves.TRICK, Moves.TRICK];
+const SPLASH_ONLY = [Moves.SPLASH, Moves.SPLASH, Moves.SPLASH, Moves.SPLASH];
 
 /**
  * Gets the PokemonHeldItemModifier for a given item ID, if the Pokemon has that item
