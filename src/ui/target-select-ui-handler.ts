@@ -8,7 +8,7 @@ import {Button} from "#enums/buttons";
 import { Moves } from "#enums/moves";
 import Pokemon from "#app/field/pokemon";
 import { ModifierBar } from "#app/modifier/modifier";
-import { SubstituteTag } from "#app/data/battler-tags.js";
+import { SubstituteTag } from "#app/data/battler-tags";
 
 export type TargetSelectCallback = (targets: BattlerIndex[]) => void;
 

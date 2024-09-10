@@ -110,7 +110,7 @@ export enum MoveFlags {
   /**
    * Indicates a move is able to be redirected to allies in a double battle if the attacker faints
    */
-  REDIRECT_COUNTER  = 1 << 19,
+  REDIRECT_COUNTER = 1 << 19,
 }
 
 type MoveConditionFunc = (user: Pokemon, target: Pokemon, move: Move) => boolean;

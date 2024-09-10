@@ -11,7 +11,7 @@ import { Command } from "#app/ui/command-ui-handler";
 import i18next from "i18next";
 import { PostSummonPhase } from "./post-summon-phase";
 import { SummonPhase } from "./summon-phase";
-import { SubstituteTag } from "#app/data/battler-tags.js";
+import { SubstituteTag } from "#app/data/battler-tags";
 
 export class SwitchSummonPhase extends SummonPhase {
   private slotIndex: integer;
@@ -67,7 +67,7 @@ export class SwitchSummonPhase extends SummonPhase {
     if (!this.batonPass) {
       (this.player ? this.scene.getEnemyField() : this.scene.getPlayerField()).forEach(enemyPokemon => enemyPokemon.removeTagsBySourceId(pokemon.id));
       const substitute = pokemon.getTag(SubstituteTag);
-      if (!!substitute) {
+      if (substitute) {
         this.scene.tweens.add({
           targets: substitute.sprite,
           duration: 250,
@@ -132,7 +132,7 @@ export class SwitchSummonPhase extends SummonPhase {
          */
         if (this.batonPass) {
           const substitute = this.lastPokemon.getTag(SubstituteTag);
-          if (!!substitute) {
+          if (substitute) {
             switchedInPokemon.x += this.lastPokemon.getSubstituteOffset()[0];
             switchedInPokemon.y += this.lastPokemon.getSubstituteOffset()[1];
             switchedInPokemon.setAlpha(0.5);

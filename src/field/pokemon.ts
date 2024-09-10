@@ -675,7 +675,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    */
   isOffsetBySubstitute(): boolean {
     const substitute = this.getTag(SubstituteTag);
-    if (!!substitute) {
+    if (substitute) {
       if (substitute.sprite === undefined) {
         return false;
       }
@@ -694,7 +694,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   /** If this Pokemon has a Substitute on the field, removes its sprite from the field. */
   destroySubstitute(): void {
     const substitute = this.getTag(SubstituteTag);
-    if (!!substitute && !!substitute.sprite) {
+    if (substitute && substitute.sprite) {
       substitute.sprite.destroy();
     }
   }
@@ -3201,7 +3201,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         }
       }
       // If this Pokemon has a Substitute when loading in, play an animation to add its sprite
-      if (!!this.getTag(SubstituteTag)) {
+      if (this.getTag(SubstituteTag)) {
         this.scene.triggerPokemonBattleAnim(this, PokemonAnimType.SUBSTITUTE_ADD);
         this.getTag(SubstituteTag)!.sourceInFocus = false;
       }
