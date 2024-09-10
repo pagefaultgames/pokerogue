@@ -2195,8 +2195,14 @@ export default class BattleScene extends SceneBase {
     return true;
   }
 
-  findPhase(phaseFilter: (phase: Phase) => boolean): Phase | undefined {
-    return this.phaseQueue.find(phaseFilter);
+  /**
+   * Find a specific {@linkcode Phase} in the phase queue.
+   *
+   * @param phaseFilter filter function to use to find the wanted phase
+   * @returns the found phase or undefined if none found
+   */
+  findPhase<P extends Phase = Phase>(phaseFilter: (phase: P) => boolean): P | undefined {
+    return this.phaseQueue.find(phaseFilter) as P;
   }
 
   tryReplacePhase(phaseFilter: (phase: Phase) => boolean, phase: Phase): boolean {

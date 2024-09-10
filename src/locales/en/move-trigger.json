@@ -69,5 +69,6 @@
   "exposedMove": "{{pokemonName}} identified\n{{targetPokemonName}}!",
   "safeguard": "{{targetName}} is protected by Safeguard!",
   "substituteOnOverlap": "{{pokemonName}} already\nhas a substitute!",
-  "substituteNotEnoughHp": "But it does not have enough HP\nleft to make a substitute!"
+  "substituteNotEnoughHp": "But it does not have enough HP\nleft to make a substitute!",
+  "afterYou": "{{pokemonName}} took the kind offer!"
 }

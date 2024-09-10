@@ -6425,11 +6425,41 @@ export class VariableTargetAttr extends MoveAttr {
   }
 }
 
+/**
+ * Attribute for {@linkcode Moves.AFTER_YOU}
+ *
+ * [After You - Move | Bulbapedia](https://bulbapedia.bulbagarden.net/wiki/After_You_(move))
+ */
+export class AfterYouAttr extends MoveEffectAttr {
+  /**
+   * Allows the target of this move to act right after the user.
+   *
+   * @param user {@linkcode Pokemon} that is using the move.
+   * @param target {@linkcode Pokemon} that will move right after this move is used.
+   * @param move {@linkcode Move} {@linkcode Moves.AFTER_YOU}
+   * @param _args N/A
+   * @returns true
+   */
+  override apply(user: Pokemon, target: Pokemon, _move: Move, _args: any[]): boolean {
+    user.scene.queueMessage(i18next.t("moveTriggers:afterYou", {targetName: getPokemonNameWithAffix(target)}));
+
+    //Will find next acting phase of the targeted pokémon, delete it and queue it next on successful delete.
+    const nextAttackPhase = target.scene.findPhase<MovePhase>((phase) => phase.pokemon === target);
+    if (nextAttackPhase && target.scene.tryRemovePhase((phase: MovePhase) => phase.pokemon === target)) {
+      target.scene.prependToPhase(new MovePhase(target.scene, target, [...nextAttackPhase.targets], nextAttackPhase.move), MovePhase);
+    }
+
+    return true;
+  }
+}
+
 const failOnGravityCondition: MoveConditionFunc = (user, target, move) => !user.scene.arena.getTag(ArenaTagType.GRAVITY);
 
 const failOnBossCondition: MoveConditionFunc = (user, target, move) => !target.isBossImmune();
 
 const failOnMaxCondition: MoveConditionFunc = (user, target, move) => !target.isMax();
+
+const failIfSingleBattle: MoveConditionFunc = (user, target, move) => user.scene.currentBattle.double;
 
 const failIfDampCondition: MoveConditionFunc = (user, target, move) => {
   const cancelled = new Utils.BooleanHolder(false);
@@ -8102,7 +8132,10 @@ export function initMoves() {
     new StatusMove(Moves.AFTER_YOU, Type.NORMAL, -1, 15, -1, 0, 5)
       .ignoresProtect()
       .ignoresSubstitute()
-      .unimplemented(),
+      .target(MoveTarget.NEAR_OTHER)
+      .condition(failIfSingleBattle)
+      .condition((user, target, move) => !target.turnData.acted)
+      .attr(AfterYouAttr),
     new AttackMove(Moves.ROUND, Type.NORMAL, MoveCategory.SPECIAL, 60, 100, 15, -1, 0, 5)
       .soundBased()
       .partial(),
