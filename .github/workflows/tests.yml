@@ -40,4 +40,4 @@ jobs:
     steps:
       - uses: ./.github/workflows/run-test-template.yml
         with:
-          project: misc
+          project: ${{ matrix.project }}
