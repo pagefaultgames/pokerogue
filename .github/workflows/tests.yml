@@ -1,7 +1,7 @@
 name: Tests
 
 env:
-  VITEST_OPTIONS: ${{ !runner.debug && '--silent' }}
+  VITEST_OPTIONS: ${{ runner.debug && '' || '--silent' }}
 
 on:
   # Trigger the workflow on push or pull request,
