@@ -36,6 +36,7 @@ jobs:
 
   run-tests:
     name: Run Tests
+    needs: [pre-test]
     strategy:
       matrix:
         project: [misc, abilities, items, moves, battle]
