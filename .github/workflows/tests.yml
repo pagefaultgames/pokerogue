@@ -40,7 +40,7 @@ jobs:
     strategy:
       matrix:
         project: [misc, abilities, items, moves, battle]
-    uses: /.github/workflows/run-test-template.yml
+    uses: ./.github/workflows/run-test-template.yml
     with:
       project: ${{ matrix.project }}
       node-version: ${{ env.NODE_VERSION }}

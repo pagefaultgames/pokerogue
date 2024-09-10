@@ -8,7 +8,7 @@ on:
         type: string
       node-version:
         required: true
-        type: number
+        type: string
 
 jobs:
   test:
