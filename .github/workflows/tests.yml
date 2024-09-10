@@ -43,4 +43,3 @@ jobs:
     uses: ./.github/workflows/run-test-template.yml
     with:
       project: ${{ matrix.project }}
-      options: ${{ !runner.debug && '--silent' }}
