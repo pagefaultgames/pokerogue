@@ -6,24 +6,24 @@
 	"decline": "Hé ! Ton équipe\nn’a pas l’air au meilleur de sa forme.$Attends, laisse-moi t’aider."
   },
   "cheryl": {
-    "intro_dialogue": "Hello, my name's Sara.$I have a particularly interesting request,\nfor a strong trainer such as yourself.$I'm carrying two rare Pokémon Eggs with me,\nbut I'd like someone else to care for one.$If you can prove your strength as a trainer to me,\nI'll give you the rarer Egg!",
-    "accept": "I hope you're ready!",
-    "decline": "I understand, it looks like your team\nisn't in the best condition at the moment.$Here, let me help with that."
+    "intro_dialogue": "Bonjour, mon nom est Sara.$J’ai une requête un peu particulière à proposer,\nà quelqu’un de plutôt fort comme toi.$Je porte avec moi deux Œufs de Pokémon,\nmais j’aimerais que quelqu’un prenne soin d’un.$Si tu parviens à me démontrer toute ta force,\nje te donne l’Œuf le plus rare !",
+    "accept": "On y va ?",
+    "decline": "Je peux comprendre. Il semblerait que\nton équipe ne soit pas très en forme là.$Laisse-moi m'en occuper."
   },
   "marley": {
-    "intro_dialogue": "…@d{64} I'm Viviane.$I have an offer for you...$I'm carrying two Pokémon Eggs with me,\nbut I'd like someone else to care for one.$If you're stronger than me,\nI'll give you the rarer Egg.",
-    "accept": "… I see.",
-    "decline": "… I see.$Your Pokémon look hurt…\nLet me help."
+    "intro_dialogue": "Je…@d{64} je m’appelle Viviane.$Je peux te demander un truc ?…$J'ai deux Œufs de Pokémon sur moi,\net j’aimerais que quelqu’un prenne soin d’un.$Si t’arrives à me battre,\nje te donne le plus rare…",
+    "accept": "… D’accord.",
+    "decline": "… D’accord.$Tes Pokémon on l’air blessés…\nLaisse-moi les aider."
   },
   "mira": {
-    "intro_dialogue": "Hi! I'm Maïté!$Maïté has a request\nfor a strong trainer like you!$Maïté has two rare Pokémon Eggs,\nbut Maïté wants someone else to take one!$If you show Maïté that you're strong,\nMaïté will give you the rarer Egg!",
-    "accept": "You'll battle Maïté?\nYay!",
-    "decline": "Aww, no battle?\nThat's okay!$Here, Maïté will heal your team!"
+    "intro_dialogue": "Salut ! Moi, c’est Maïté!$J’ai quelque chose\nà demander à quelqu'un de fortiche comme toi !$J'ai deux Œufs de Pokémon sur moi,\net j’aimerais que quelqu’un prenne soin d’un d’eux !$Si t’acceptes de me prouver ta force,\nje te donnerai le plus rare !",
+    "accept": "Un combat, pour de vrai ?\nOuiiiii !",
+    "decline": "Oh, pas de combat ?\nPas grave !$Je vais quand même soigner ton équipe !"
   },
   "riley": {
-    "intro_dialogue": "I'm Armand.$I have an odd proposal\nfor a strong trainer such as yourself.$I'm carrying two rare Pokémon Eggs with me,\nbut I'd like to give one to another trainer.$If you can prove your strength to me,\nI'll give you the rarer Egg!",
-    "accept": "That look you have...\nLet's do this.",
-    "decline": "I understand, your team looks beat up.$Here, let me help with that."
+    "intro_dialogue": "Enchanté, je m’appelle Armand.$J'ai une proposition un peu étange\npour une personne de ton calibre.$Je poste deux Œufs de Pokémon avec moi\nmais j’aimerais en donner un à quelqu’un d’autre.$Si tu prouves en être digne,\nje te donnerai le plus rare !",
+    "accept": "Ce regard…\nBattons-nous.",
+    "decline": "Je comprends, ton équpie m’a l’air lessivée.$Laisse-moi t’aider."
   },
   "title": "Épreuve de valeur",
   "description": "Cette personne semble déterminée à vous donner un Œuf, qu’importe votre décision. Cependant, si vous parvenez à la battre, vous recevrez l’Œuf le plus rare.",
