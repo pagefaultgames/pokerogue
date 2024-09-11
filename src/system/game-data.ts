@@ -1,7 +1,7 @@
 import i18next from "i18next";
 import BattleScene, { PokeballCounts, bypassLogin } from "../battle-scene";
 import Pokemon, { EnemyPokemon, PlayerPokemon } from "../field/pokemon";
-import { pokemonEvolutions, pokemonPrevolutions } from "../data/pokemon-evolutions";
+import { pokemonPrevolutions } from "../data/pokemon-evolutions";
 import PokemonSpecies, { allSpecies, getPokemonSpecies, noStarterFormKeys, speciesStarters } from "../data/pokemon-species";
 import * as Utils from "../utils";
 import Overrides from "#app/overrides";
@@ -27,26 +27,27 @@ import { Tutorial } from "../tutorial";
 import { speciesEggMoves } from "../data/egg-moves";
 import { allMoves } from "../data/move";
 import { TrainerVariant } from "../field/trainer";
-import { Variant, variantData } from "#app/data/variant";
-import {setSettingGamepad, SettingGamepad, settingGamepadDefaults} from "./settings/settings-gamepad";
-import {setSettingKeyboard, SettingKeyboard} from "#app/system/settings/settings-keyboard";
-import { TerrainChangedEvent, WeatherChangedEvent } from "#app/events/arena.js";
-import { EnemyAttackStatusEffectChanceModifier } from "../modifier/modifier";
-import { StatusEffect } from "#app/data/status-effect.js";
+import { Variant } from "#app/data/variant";
+import { setSettingGamepad, SettingGamepad, settingGamepadDefaults } from "./settings/settings-gamepad";
+import { setSettingKeyboard, SettingKeyboard } from "#app/system/settings/settings-keyboard";
+import { TerrainChangedEvent, WeatherChangedEvent } from "#app/events/arena";
+import * as Modifier from "../modifier/modifier";
+import { StatusEffect } from "#app/data/status-effect";
 import ChallengeData from "./challenge-data";
 import { Device } from "#enums/devices";
 import { GameDataType } from "#enums/game-data-type";
 import { Moves } from "#enums/moves";
 import { PlayerGender } from "#enums/player-gender";
 import { Species } from "#enums/species";
-import { applyChallenges, ChallengeType } from "#app/data/challenge.js";
-import { WeatherType } from "#app/enums/weather-type.js";
-import { TerrainType } from "#app/data/terrain.js";
-import { OutdatedPhase } from "#app/phases/outdated-phase.js";
-import { ReloadSessionPhase } from "#app/phases/reload-session-phase.js";
+import { applyChallenges, ChallengeType } from "#app/data/challenge";
+import { WeatherType } from "#app/enums/weather-type";
+import { TerrainType } from "#app/data/terrain";
+import { OutdatedPhase } from "#app/phases/outdated-phase";
+import { ReloadSessionPhase } from "#app/phases/reload-session-phase";
 import { RUN_HISTORY_LIMIT } from "#app/ui/run-history-ui-handler";
 import { TagAddedEvent } from "#app/events/arena";
 import { ArenaTrapTag } from "#app/data/arena-tag";
+import { applySessionDataPatches, applySettingsDataPatches, applySystemDataPatches } from "./version-converter";
 
 export const defaultStarterSpecies: Species[] = [
   Species.BULBASAUR, Species.CHARMANDER, Species.SQUIRTLE,
@@ -95,7 +96,7 @@ export function decrypt(data: string, bypassLogin: boolean): string {
     : (data: string) => AES.decrypt(data, saveKey).toString(enc.Utf8))(data);
 }
 
-interface SystemSaveData {
+export interface SystemSaveData {
   trainerId: integer;
   secretId: integer;
   gender: PlayerGender;
@@ -458,16 +459,13 @@ export class GameData {
 
         localStorage.setItem(`data_${loggedInUser?.username}`, encrypt(systemDataStr, bypassLogin));
 
-        /*const versions = [ this.scene.game.config.gameVersion, data.gameVersion || '0.0.0' ];
-
-        if (versions[0] !== versions[1]) {
-          const [ versionNumbers, oldVersionNumbers ] = versions.map(ver => ver.split('.').map(v => parseInt(v)));
-        }*/
         const lsItemKey = `runHistoryData_${loggedInUser?.username}`;
         const lsItem = localStorage.getItem(lsItemKey);
         if (!lsItem) {
           localStorage.setItem(lsItemKey, "");
         }
+
+        applySystemDataPatches(systemData);
 
         this.trainerId = systemData.trainerId;
         this.secretId = systemData.secretId;
@@ -476,9 +474,7 @@ export class GameData {
 
         this.saveSetting(SettingKeys.Player_Gender, systemData.gender === PlayerGender.FEMALE ? 1 : 0);
 
-        const initStarterData = !systemData.starterData;
-
-        if (initStarterData) {
+        if (!systemData.starterData) {
           this.initStarterData();
 
           if (systemData["starterMoveData"]) {
@@ -496,25 +492,20 @@ export class GameData {
           }
 
           this.migrateStarterAbilities(systemData, this.starterData);
-        } else {
-          if ([ "1.0.0", "1.0.1" ].includes(systemData.gameVersion)) {
-            this.migrateStarterAbilities(systemData);
-          }
-          //this.fixVariantData(systemData);
-          this.fixStarterData(systemData);
-          // Migrate ability starter data if empty for caught species
-          Object.keys(systemData.starterData).forEach(sd => {
-            if (systemData.dexData[sd].caughtAttr && !systemData.starterData[sd].abilityAttr) {
-              systemData.starterData[sd].abilityAttr = 1;
+
+          const starterIds = Object.keys(this.starterData).map(s => parseInt(s) as Species);
+          for (const s of starterIds) {
+            this.starterData[s].candyCount += this.dexData[s].caughtCount;
+            this.starterData[s].candyCount += this.dexData[s].hatchedCount * 2;
+            if (this.dexData[s].caughtAttr & DexAttr.SHINY) {
+              this.starterData[s].candyCount += 4;
             }
-          });
+          }
+        } else {
           this.starterData = systemData.starterData;
         }
 
         if (systemData.gameStats) {
-          if (systemData.gameStats.legendaryPokemonCaught !== undefined && systemData.gameStats.subLegendaryPokemonCaught === undefined) {
-            this.fixLegendaryStats(systemData);
-          }
           this.gameStats = systemData.gameStats;
         }
 
@@ -559,17 +550,6 @@ export class GameData {
         this.dexData = Object.assign(this.dexData, systemData.dexData);
         this.consolidateDexData(this.dexData);
         this.defaultDexData = null;
-
-        if (initStarterData) {
-          const starterIds = Object.keys(this.starterData).map(s => parseInt(s) as Species);
-          for (const s of starterIds) {
-            this.starterData[s].candyCount += this.dexData[s].caughtCount;
-            this.starterData[s].candyCount += this.dexData[s].hatchedCount * 2;
-            if (this.dexData[s].caughtAttr & DexAttr.SHINY) {
-              this.starterData[s].candyCount += 4;
-            }
-          }
-        }
 
         resolve(true);
       } catch (err) {
@@ -749,6 +729,7 @@ export class GameData {
     setSetting(this.scene, setting, valueIndex);
 
     settings[setting] = valueIndex;
+    settings["gameVersion"] = this.scene.game.config.gameVersion;
 
     localStorage.setItem("settings", JSON.stringify(settings));
 
@@ -858,6 +839,8 @@ export class GameData {
     }
 
     const settings = JSON.parse(localStorage.getItem("settings")!); // TODO: is this bang correct?
+
+    applySettingsDataPatches(settings);
 
     for (const setting of Object.keys(settings)) {
       setSetting(this.scene, setting, settings[setting]);
@@ -1094,11 +1077,8 @@ export class GameData {
             }
           }
 
-
-          const modifiersModule = await import("../modifier/modifier");
-
           for (const modifierData of sessionData.modifiers) {
-            const modifier = modifierData.toModifier(scene, modifiersModule[modifierData.className]);
+            const modifier = modifierData.toModifier(scene, Modifier[modifierData.className]);
             if (modifier) {
               scene.addModifier(modifier, true);
             }
@@ -1107,7 +1087,7 @@ export class GameData {
           scene.updateModifiers(true);
 
           for (const enemyModifierData of sessionData.enemyModifiers) {
-            const modifier = enemyModifierData.toModifier(scene, modifiersModule[enemyModifierData.className]);
+            const modifier = enemyModifierData.toModifier(scene, Modifier[enemyModifierData.className]);
             if (modifier) {
               scene.addEnemyModifier(modifier, true);
             }
@@ -1231,7 +1211,7 @@ export class GameData {
   }
 
   parseSessionData(dataStr: string): SessionSaveData {
-    return JSON.parse(dataStr, (k: string, v: any) => {
+    const sessionData = JSON.parse(dataStr, (k: string, v: any) => {
       /*const versions = [ scene.game.config.gameVersion, sessionData.gameVersion || '0.0.0' ];
 
       if (versions[0] !== versions[1]) {
@@ -1263,7 +1243,7 @@ export class GameData {
           if (md?.className === "ExpBalanceModifier") { // Temporarily limit EXP Balance until it gets reworked
             md.stackCount = Math.min(md.stackCount, 4);
           }
-          if (md instanceof EnemyAttackStatusEffectChanceModifier && md.effect === StatusEffect.FREEZE || md.effect === StatusEffect.SLEEP) {
+          if (md instanceof Modifier.EnemyAttackStatusEffectChanceModifier && md.effect === StatusEffect.FREEZE || md.effect === StatusEffect.SLEEP) {
             continue;
           }
           ret.push(new PersistentModifierData(md, player));
@@ -1288,6 +1268,10 @@ export class GameData {
 
       return v;
     }) as SessionSaveData;
+
+    applySessionDataPatches(sessionData);
+
+    return sessionData;
   }
 
   saveAll(scene: BattleScene, skipVerification: boolean = false, sync: boolean = false, useCachedSession: boolean = false, useCachedSystem: boolean = false): Promise<boolean> {
@@ -1889,76 +1873,5 @@ export class GameData {
         }
       }
     }
-  }
-
-  fixVariantData(systemData: SystemSaveData): void {
-    const starterIds = Object.keys(this.starterData).map(s => parseInt(s) as Species);
-    const starterData = systemData.starterData;
-    const dexData = systemData.dexData;
-    if (starterIds.find(id => (dexData[id].caughtAttr & DexAttr.VARIANT_2 || dexData[id].caughtAttr & DexAttr.VARIANT_3) && !variantData[id])) {
-      for (const s of starterIds) {
-        const species = getPokemonSpecies(s);
-        if (variantData[s]) {
-          const tempCaughtAttr = dexData[s].caughtAttr;
-          let seenVariant2 = false;
-          let seenVariant3 = false;
-          const checkEvoSpecies = (es: Species) => {
-            seenVariant2 ||= !!(dexData[es].seenAttr & DexAttr.VARIANT_2);
-            seenVariant3 ||= !!(dexData[es].seenAttr & DexAttr.VARIANT_3);
-            if (pokemonEvolutions.hasOwnProperty(es)) {
-              for (const pe of pokemonEvolutions[es]) {
-                checkEvoSpecies(pe.speciesId);
-              }
-            }
-          };
-          checkEvoSpecies(s);
-          if (dexData[s].caughtAttr & DexAttr.VARIANT_2 && !seenVariant2) {
-            dexData[s].caughtAttr ^= DexAttr.VARIANT_2;
-          }
-          if (dexData[s].caughtAttr & DexAttr.VARIANT_3 && !seenVariant3) {
-            dexData[s].caughtAttr ^= DexAttr.VARIANT_3;
-          }
-          starterData[s].abilityAttr = (tempCaughtAttr & DexAttr.DEFAULT_VARIANT ? AbilityAttr.ABILITY_1 : 0)
-            | (tempCaughtAttr & DexAttr.VARIANT_2 && species.ability2 ? AbilityAttr.ABILITY_2 : 0)
-            | (tempCaughtAttr & DexAttr.VARIANT_3 && species.abilityHidden ? AbilityAttr.ABILITY_HIDDEN : 0);
-        } else {
-          const tempCaughtAttr = dexData[s].caughtAttr;
-          if (dexData[s].caughtAttr & DexAttr.VARIANT_2) {
-            dexData[s].caughtAttr ^= DexAttr.VARIANT_2;
-          }
-          if (dexData[s].caughtAttr & DexAttr.VARIANT_3) {
-            dexData[s].caughtAttr ^= DexAttr.VARIANT_3;
-          }
-          starterData[s].abilityAttr = (tempCaughtAttr & DexAttr.DEFAULT_VARIANT ? AbilityAttr.ABILITY_1 : 0)
-            | (tempCaughtAttr & DexAttr.VARIANT_2 && species.ability2 ? AbilityAttr.ABILITY_2 : 0)
-            | (tempCaughtAttr & DexAttr.VARIANT_3 && species.abilityHidden ? AbilityAttr.ABILITY_HIDDEN : 0);
-        }
-      }
-    }
-  }
-
-  fixStarterData(systemData: SystemSaveData): void {
-    for (const starterId of defaultStarterSpecies) {
-      systemData.starterData[starterId].abilityAttr |= AbilityAttr.ABILITY_1;
-      systemData.dexData[starterId].caughtAttr |= DexAttr.FEMALE;
-    }
-  }
-
-  fixLegendaryStats(systemData: SystemSaveData): void {
-    systemData.gameStats.subLegendaryPokemonSeen = 0;
-    systemData.gameStats.subLegendaryPokemonCaught = 0;
-    systemData.gameStats.subLegendaryPokemonHatched = 0;
-    allSpecies.filter(s => s.subLegendary).forEach(s => {
-      const dexEntry = systemData.dexData[s.speciesId];
-      systemData.gameStats.subLegendaryPokemonSeen += dexEntry.seenCount;
-      systemData.gameStats.legendaryPokemonSeen = Math.max(systemData.gameStats.legendaryPokemonSeen - dexEntry.seenCount, 0);
-      systemData.gameStats.subLegendaryPokemonCaught += dexEntry.caughtCount;
-      systemData.gameStats.legendaryPokemonCaught = Math.max(systemData.gameStats.legendaryPokemonCaught - dexEntry.caughtCount, 0);
-      systemData.gameStats.subLegendaryPokemonHatched += dexEntry.hatchedCount;
-      systemData.gameStats.legendaryPokemonHatched = Math.max(systemData.gameStats.legendaryPokemonHatched - dexEntry.hatchedCount, 0);
-    });
-    systemData.gameStats.subLegendaryPokemonSeen = Math.max(systemData.gameStats.subLegendaryPokemonSeen, systemData.gameStats.subLegendaryPokemonCaught);
-    systemData.gameStats.legendaryPokemonSeen = Math.max(systemData.gameStats.legendaryPokemonSeen, systemData.gameStats.legendaryPokemonCaught);
-    systemData.gameStats.mythicalPokemonSeen = Math.max(systemData.gameStats.mythicalPokemonSeen, systemData.gameStats.mythicalPokemonCaught);
   }
 }

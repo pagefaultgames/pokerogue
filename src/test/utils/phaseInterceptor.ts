@@ -1,5 +1,6 @@
 import { Phase } from "#app/phase";
 import ErrorInterceptor from "#app/test/utils/errorInterceptor";
+import { AttemptRunPhase } from "#app/phases/attempt-run-phase";
 import { BattleEndPhase } from "#app/phases/battle-end-phase";
 import { BerryPhase } from "#app/phases/berry-phase";
 import { CheckSwitchPhase } from "#app/phases/check-switch-phase";
@@ -11,6 +12,7 @@ import { EndEvolutionPhase } from "#app/phases/end-evolution-phase";
 import { EnemyCommandPhase } from "#app/phases/enemy-command-phase";
 import { EvolutionPhase } from "#app/phases/evolution-phase";
 import { FaintPhase } from "#app/phases/faint-phase";
+import { LearnMovePhase } from "#app/phases/learn-move-phase";
 import { LevelCapPhase } from "#app/phases/level-cap-phase";
 import { LoginPhase } from "#app/phases/login-phase";
 import { MessagePhase } from "#app/phases/message-phase";
@@ -88,6 +90,7 @@ export default class PhaseInterceptor {
     [NextEncounterPhase, this.startPhase],
     [NewBattlePhase, this.startPhase],
     [VictoryPhase, this.startPhase],
+    [LearnMovePhase, this.startPhase],
     [MoveEndPhase, this.startPhase],
     [StatStageChangePhase, this.startPhase],
     [ShinySparklePhase, this.startPhase],
@@ -100,6 +103,7 @@ export default class PhaseInterceptor {
     [EvolutionPhase, this.startPhase],
     [EndEvolutionPhase, this.startPhase],
     [LevelCapPhase, this.startPhase],
+    [AttemptRunPhase, this.startPhase],
   ];
 
   private endBySetMode = [

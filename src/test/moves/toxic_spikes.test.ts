@@ -8,7 +8,6 @@ import { Species } from "#enums/species";
 import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import { SPLASH_ONLY } from "../utils/testUtils";
 
 const TIMEOUT = 20 * 1000;
 
@@ -34,7 +33,7 @@ describe("Moves - Toxic Spikes", () => {
       .enemySpecies(Species.RATTATA)
       .enemyAbility(Abilities.BALL_FETCH)
       .ability(Abilities.BALL_FETCH)
-      .enemyMoveset(SPLASH_ONLY)
+      .enemyMoveset(Moves.SPLASH)
       .moveset([Moves.TOXIC_SPIKES, Moves.SPLASH, Moves.ROAR]);
   });
 

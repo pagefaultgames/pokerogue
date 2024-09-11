@@ -3,7 +3,6 @@ import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/utils/gameManager";
-import { SPLASH_ONLY } from "#test/utils/testUtils";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -29,8 +28,8 @@ describe("Abilities - Moody", () => {
       .enemySpecies(Species.RATTATA)
       .enemyAbility(Abilities.BALL_FETCH)
       .ability(Abilities.MOODY)
-      .enemyMoveset(SPLASH_ONLY)
-      .moveset(SPLASH_ONLY);
+      .enemyMoveset(Moves.SPLASH)
+      .moveset(Moves.SPLASH);
   });
 
   it("should increase one stat stage by 2 and decrease a different stat stage by 1",

@@ -1,10 +1,10 @@
-import BattleScene from "#app/battle-scene.js";
-import { BattlerIndex } from "#app/battle.js";
-import { CommonBattleAnim, CommonAnim } from "#app/data/battle-anims.js";
-import { getStatusEffectObtainText, getStatusEffectOverlapText } from "#app/data/status-effect.js";
-import { StatusEffect } from "#app/enums/status-effect.js";
-import Pokemon from "#app/field/pokemon.js";
-import { getPokemonNameWithAffix } from "#app/messages.js";
+import BattleScene from "#app/battle-scene";
+import { BattlerIndex } from "#app/battle";
+import { CommonBattleAnim, CommonAnim } from "#app/data/battle-anims";
+import { getStatusEffectObtainText, getStatusEffectOverlapText } from "#app/data/status-effect";
+import { StatusEffect } from "#app/enums/status-effect";
+import Pokemon from "#app/field/pokemon";
+import { getPokemonNameWithAffix } from "#app/messages";
 import { PokemonPhase } from "./pokemon-phase";
 
 export class ObtainStatusEffectPhase extends PokemonPhase {
