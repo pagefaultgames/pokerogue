@@ -86,7 +86,7 @@ export function randInt(range: integer, min: integer = 0, reason?: string): inte
   }
   let V = Math.floor(Math.random() * range) + min;
   if (reason != "%HIDE") {
-    console.log("[unseeded] " + (reason ? reason : "randInt"), V)
+    //console.log("[unseeded] " + (reason ? reason : "randInt"), V)
   }
   return V;
 }
@@ -141,7 +141,7 @@ export function randSeedItem<T>(items: T[], reason?: string): T {
 export function randSeedWeightedItem<T>(items: T[], reason?: string): T {
   function rpick() {
     let V = Phaser.Math.RND.weightedPick(items);
-    //console.log(reason ? reason : "randSeedWeightedItem")
+    console.log(reason ? reason : "randSeedWeightedItem")
     return V;
   }
   return items.length === 1

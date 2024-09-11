@@ -1233,8 +1233,8 @@ class TmModifierTypeGenerator extends ModifierTypeGenerator {
         return null;
       }
       //console.log(tierUniqueCompatibleTms.map((v, i) => i == randTmIndex ? `> ${Utils.getEnumKeys(Moves)[v].toUpperCase() + Utils.getEnumKeys(Moves)[v].substring(1).toLowerCase()} <` : `${Utils.getEnumKeys(Moves)[v].toUpperCase() + Utils.getEnumKeys(Moves)[v].substring(1).toLowerCase()}`))
-      return new TmModifierType(tierUniqueCompatibleTms[randTmIndex], tier);
       const randTmIndex = Utils.randSeedInt(tierUniqueCompatibleTms.length, undefined, "Choosing a TM to give");
+      return new TmModifierType(tierUniqueCompatibleTms[randTmIndex], tier);
     });
   }
 }

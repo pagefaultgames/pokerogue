@@ -4308,11 +4308,10 @@ export class EnemyPokemon extends Pokemon {
         }
       }
       switch (this.aiType) {
-      case AiType.RANDOM:
+      case AiType.RANDOM: // No enemy should spawn with this AI type in-game
         var i = this.scene.randBattleSeedInt(movePool.length, undefined, "Move selection roll (RANDOM)")
         const moveId = movePool[i]!.moveId;
         this.flyout.setText(i)
-      case AiType.RANDOM: // No enemy should spawn with this AI type in-game
         return { move: moveId, targets: this.getNextTargets(moveId) };
       case AiType.SMART_RANDOM:
       case AiType.SMART:
