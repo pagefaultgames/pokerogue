@@ -68,6 +68,20 @@
     "BaseStatBoosterModifierType": {
       "description": "Aumenta o atributo base de {{stat}} em 10%. Quanto maior os IVs, maior o limite de aumento."
     },
+    "PokemonBaseStatTotalModifierType": {
+      "name": "Shuckle Juice",
+      "description": "{{increaseDecrease}} all of the holder's base stats by {{statValue}}. You were {{blessCurse}} by the Shuckle.",
+      "extra": {
+        "increase": "Increases",
+        "decrease": "Decreases",
+        "blessed": "blessed",
+        "cursed": "cursed"
+      }
+    },
+    "PokemonBaseStatFlatModifierType": {
+      "name": "Old Gateau",
+      "description": "Increases the holder's {{stats}} base stats by {{statValue}}. Found after a strange dream."
+    },
     "AllPokemonFullHpRestoreModifierType": {
       "description": "Restaura totalmente os PS de todos os Pokémon."
     },
@@ -401,7 +415,13 @@
     "ENEMY_FUSED_CHANCE": {
       "name": "Token de Fusão",
       "description": "Adiciona uma chance de 1% de que um Pokémon selvagem seja uma fusão."
-    }
+    },
+
+    "MYSTERY_ENCOUNTER_SHUCKLE_JUICE": { "name": "Shuckle Juice" },
+    "MYSTERY_ENCOUNTER_BLACK_SLUDGE": { "name": "Black Sludge", "description": "The stench is so powerful that shops will only sell you items at a steep cost increase." },
+    "MYSTERY_ENCOUNTER_MACHO_BRACE": { "name": "Macho Brace", "description": "Defeating a Pokémon grants the holder a Macho Brace stack. Each stack slightly boosts stats, with an extra bonus at max stacks." },
+    "MYSTERY_ENCOUNTER_OLD_GATEAU": { "name": "Old Gateau", "description": "Increases the holder's {{stats}} stats by {{statValue}}." },
+    "MYSTERY_ENCOUNTER_GOLDEN_BUG_NET": { "name": "Golden Bug Net", "description": "Imbues the owner with luck to find Bug Type Pokémon more often. Has a strange heft to it." }
   },
   "SpeciesBoosterItem": {
     "LIGHT_BALL": {
