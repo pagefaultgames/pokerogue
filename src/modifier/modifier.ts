@@ -367,6 +367,10 @@ export abstract class LapsingPersistentModifier extends PersistentModifier {
     return container;
   }
 
+  getIconStackText(_scene: BattleScene, _virtual?: boolean): Phaser.GameObjects.BitmapText | null {
+    return null;
+  }
+
   getBattleCount(): number {
     return this.battleCount;
   }
@@ -384,7 +388,8 @@ export abstract class LapsingPersistentModifier extends PersistentModifier {
   }
 
   getMaxStackCount(_scene: BattleScene, _forThreshold?: boolean): number {
-    return 1;
+    // Must be an abitrary number greater than 1
+    return 2;
   }
 }
 
@@ -787,7 +792,7 @@ export class TerastallizeModifier extends LapsingPokemonHeldItemModifier {
 /**
  * Modifier used for held items, specifically vitamins like Carbos, Hp Up, etc., that
  * increase the value of a given {@linkcode PermanentStat}.
- * @extends LapsingPersistentModifier
+ * @extends PokemonHeldItemModifier
  * @see {@linkcode apply}
  */
 export class BaseStatModifier extends PokemonHeldItemModifier {

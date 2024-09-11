@@ -1689,8 +1689,7 @@ export const trainerTypeDialogue: TrainerTypeDialogue = {
       "dialogue:roark.victory.1",
       "dialogue:roark.victory.2",
       "dialogue:roark.victory.3",
-      "dialogue:roark.victory.4",
-      "dialogue:roark.victory.5"
+      "dialogue:roark.victory.4"
     ],
     defeat: [
       "dialogue:roark.defeat.1",

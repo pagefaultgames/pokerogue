@@ -229,7 +229,7 @@ export class Egg {
 
       let pokemonSpecies = getPokemonSpecies(this._species);
       // Special condition to have Phione eggs also have a chance of generating Manaphy
-      if (this._species === Species.PHIONE) {
+      if (this._species === Species.PHIONE && this._sourceType === EggSourceType.SAME_SPECIES_EGG) {
         pokemonSpecies = getPokemonSpecies(Utils.randSeedInt(MANAPHY_EGG_MANAPHY_RATE) ? Species.PHIONE : Species.MANAPHY);
       }
 
@@ -335,7 +335,8 @@ export class Egg {
       break;
     }
 
-    return Utils.randSeedInt(baseChance * Math.pow(2, 3 - this.tier)) ? Utils.randSeedInt(3) : 3;
+    const tierMultiplier = this.isManaphyEgg() ? 2 : Math.pow(2, 3 - this.tier);
+    return Utils.randSeedInt(baseChance * tierMultiplier) ? Utils.randSeedInt(3) : 3;
   }
 
   private getEggTierDefaultHatchWaves(eggTier?: EggTier): number {
@@ -370,7 +371,12 @@ export class Egg {
      * the species that was the legendary focus at the time
      */
     if (this.isManaphyEgg()) {
-      const rand = Utils.randSeedInt(MANAPHY_EGG_MANAPHY_RATE);
+      /**
+       * Adding a technicality to make unit tests easier: By making this check pass
+       * when Utils.randSeedInt(8) = 1, and by making the generatePlayerPokemon() species
+       * check pass when Utils.randSeedInt(8) = 0, we can tell them apart during tests.
+       */
+      const rand = (Utils.randSeedInt(MANAPHY_EGG_MANAPHY_RATE) !== 1);
       return rand ? Species.PHIONE : Species.MANAPHY;
     } else if (this.tier === EggTier.MASTER
       && this._sourceType === EggSourceType.GACHA_LEGENDARY) {
