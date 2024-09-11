@@ -4,5 +4,5 @@
   "accuracy": "命中率",
   "abilityFlyInText": " {{pokemonName}} 的\n{{passive}}{{abilityName}}",
   "passive": "被動能力 ",
-  "teraHover": "{{type}} Terastallized"
+  "teraHover": "{{type}} 太晶化"
 }
