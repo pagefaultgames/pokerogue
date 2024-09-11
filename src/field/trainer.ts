@@ -236,7 +236,7 @@ export default class Trainer extends Phaser.GameObjects.Container {
       title = i18next.t(`trainerClasses:${name.toLowerCase().replace(/\s/g, "_")}`);
       console.log("Localized grunt name: " + title);
       // Since grunts are not named we can just return the title
-      return title;
+      //return title;
     }
 
     // If the trainer has a name (not null or undefined).
