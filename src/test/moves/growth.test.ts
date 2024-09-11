@@ -5,7 +5,6 @@ import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import { SPLASH_ONLY } from "../utils/testUtils";
 import { EnemyCommandPhase } from "#app/phases/enemy-command-phase";
 import { TurnInitPhase } from "#app/phases/turn-init-phase";
 
@@ -29,7 +28,7 @@ describe("Moves - Growth", () => {
     game.override.enemyAbility(Abilities.MOXIE);
     game.override.ability(Abilities.INSOMNIA);
     game.override.moveset([ Moves.GROWTH ]);
-    game.override.enemyMoveset(SPLASH_ONLY);
+    game.override.enemyMoveset(Moves.SPLASH);
   });
 
   it("should raise SPATK stat stage by 1", async() => {

@@ -5,7 +5,6 @@ import { BattlerTagType } from "#enums/battler-tag-type";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import { Stat } from "#enums/stat";
-import { SPLASH_ONLY } from "#test/utils/testUtils";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
@@ -31,7 +30,7 @@ describe("Moves - Baton Pass", () => {
       .enemyAbility(Abilities.BALL_FETCH)
       .moveset([Moves.BATON_PASS, Moves.NASTY_PLOT, Moves.SPLASH])
       .ability(Abilities.BALL_FETCH)
-      .enemyMoveset(SPLASH_ONLY)
+      .enemyMoveset(Moves.SPLASH)
       .disableCrits();
   });
 
@@ -71,7 +70,10 @@ describe("Moves - Baton Pass", () => {
 
     // round 2 - baton pass
     game.scene.getEnemyPokemon()!.hp = 100;
-    game.override.enemyMoveset(new Array(4).fill(Moves.BATON_PASS));
+    game.override.enemyMoveset([Moves.BATON_PASS]);
+    // Force moveset to update mid-battle
+    // TODO: replace with enemy ai control function when it's added
+    game.scene.getEnemyParty()[0].getMoveset();
     game.move.select(Moves.SPLASH);
     await game.phaseInterceptor.to("PostSummonPhase", false);
 
@@ -90,7 +92,7 @@ describe("Moves - Baton Pass", () => {
   }, 20000);
 
   it("doesn't transfer effects that aren't transferrable", async() => {
-    game.override.enemyMoveset(Array(4).fill(Moves.SALT_CURE));
+    game.override.enemyMoveset([Moves.SALT_CURE]);
     await game.classicMode.startBattle([Species.PIKACHU, Species.FEEBAS]);
 
     const [player1, player2] = game.scene.getParty();

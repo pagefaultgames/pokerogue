@@ -4,7 +4,6 @@ import { ArenaTagType } from "#enums/arena-tag-type";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/utils/gameManager";
-import { SPLASH_ONLY } from "#test/utils/testUtils";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
@@ -28,7 +27,7 @@ describe("Battle Mechanics - Damage Calculation", () => {
       .battleType("single")
       .enemySpecies(Species.SNORLAX)
       .enemyAbility(Abilities.BALL_FETCH)
-      .enemyMoveset(SPLASH_ONLY)
+      .enemyMoveset(Moves.SPLASH)
       .startingLevel(100)
       .enemyLevel(100)
       .disableCrits()
