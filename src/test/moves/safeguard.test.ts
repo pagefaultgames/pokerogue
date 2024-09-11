@@ -120,7 +120,6 @@ describe("Moves - Safeguard", () => {
     const enemyPokemon = game.scene.getEnemyPokemon()!;
 
     game.move.select(Moves.SPLASH);
-    enemyPokemon.damageAndUpdate(1);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toNextTurn();
     enemyPokemon.damageAndUpdate(1);
