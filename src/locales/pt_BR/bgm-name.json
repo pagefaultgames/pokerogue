@@ -146,5 +146,10 @@
   "encounter_youngster": "BW Encontro com Treinador (Jovem)",
   "heal": "BW Centro Pokémon",
   "menu": "PMD EoS Bem-vindo ao Mundo dos Pokémon!",
-  "title": "PMD EoS Menu Principal"
+  "title": "PMD EoS Menu Principal",
+
+  "mystery_encounter_weird_dream": "PMD EoS Temporal Spire",
+  "mystery_encounter_fun_and_games": "PMD EoS Guildmaster Wigglytuff",
+  "mystery_encounter_gen_5_gts": "BW GTS",
+  "mystery_encounter_gen_6_gts": "XY GTS"
 }
