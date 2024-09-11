@@ -119,6 +119,7 @@
   "town": "空之探險隊「隨機迷宮3」",
   "volcano": "空之探險隊「熱水洞窟」",
   "wasteland": "空之探險隊「夢幻高原」",
+  
   "encounter_ace_trainer": "黑白 「視線！精英訓練師」",
   "encounter_backpacker": "黑白 「視線！背包客」",
   "encounter_clerk": "黑白 「視線！上班族」",
@@ -133,7 +134,8 @@
   "encounter_scientist": "黑白 「視線！科學家」",
   "encounter_twins": "黑白 「視線！雙胞胎」",
   "encounter_youngster": "黑白 「視線！短褲小子」",
+  
   "heal": "黑白「寶可夢回複」",
   "menu": "空之探險隊「歡迎來到寶可夢的世界」",
-  "title": "空之探險隊「主題曲」",
+  "title": "空之探險隊「主題曲」"
 }
