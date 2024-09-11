@@ -2209,7 +2209,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     const typeMultiplier = this.getMoveEffectiveness(source, move, ignoreAbility, simulated, cancelled);
 
     const isPhysical = moveCategory === MoveCategory.PHYSICAL;
-    const sourceTeraType = source.getTeraType();
 
     /** Combined damage multiplier from field effects such as weather, terrain, etc. */
     const arenaAttackTypeMultiplier = new Utils.NumberHolder(this.scene.arena.getAttackTypeMultiplier(moveType, source.isGrounded()));
@@ -2305,6 +2304,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     const randomMultiplier = simulated ? 1 : ((this.randSeedIntRange(85, 100)) / 100);
 
     const sourceTypes = source.getTypes();
+    const sourceTeraType = source.getTeraType();
     const matchesSourceType = sourceTypes.includes(moveType);
     /** A damage multiplier for when the attack is of the attacker's type and/or Tera type. */
     const stabMultiplier = new Utils.NumberHolder(1);
