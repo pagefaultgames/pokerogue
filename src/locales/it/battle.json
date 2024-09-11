@@ -14,6 +14,10 @@
   "moneyWon": "Hai vinto {{moneyAmount}}₽",
   "moneyPickedUp": "Hai raccolto ₽{{moneyAmount}}!",
   "pokemonCaught": "Preso! {{pokemonName}} è stato catturato!",
+  "pokemonObtained": "You got {{pokemonName}}!",
+  "pokemonBrokeFree": "Oh no!\nThe Pokémon broke free!",
+  "pokemonFled": "The wild {{pokemonName}} fled!",
+  "playerFled": "You fled from the {{pokemonName}}!",
   "addedAsAStarter": "{{pokemonName}} è stato\naggiunto agli starter!",
   "partyFull": "La tua squadra è al completo.\nVuoi liberare un Pokémon per far spazio a {{pokemonName}}?",
   "pokemon": "Pokémon",
@@ -49,6 +53,7 @@
   "noPokeballTrainer": "Non puoi catturare\nPokémon di altri allenatori!",
   "noPokeballMulti": "Puoi lanciare una Poké Ball\nsolo quando rimane un singolo Pokémon!",
   "noPokeballStrong": "Il Pokémon avversario è troppo forte per essere catturato!\nDevi prima indebolirlo.",
+  "noPokeballMysteryEncounter": "You aren't able to\ncatch this Pokémon!",
   "noEscapeForce": "Una forza misteriosa\nimpedisce la fuga.",
   "noEscapeTrainer": "Non puoi sottrarti\nalla lotta con un'allenatore!",
   "noEscapePokemon": "{{moveName}} di {{pokemonName}}\npreviene la {{escapeVerb}}!",
@@ -95,5 +100,6 @@
   "unlockedSomething": "{{unlockedThing}}\nè stato/a sbloccato/a.",
   "congratulations": "Congratulazioni!",
   "beatModeFirstTime": "{{speciesName}} ha completato la modalità {{gameMode}} per la prima volta!\nHai ricevuto {{newModifier}}!",
-  "ppReduced": "I PP della mossa {{moveName}} di\n{{targetName}} sono stati ridotti di {{reduction}}!"
+  "ppReduced": "I PP della mossa {{moveName}} di\n{{targetName}} sono stati ridotti di {{reduction}}!",
+  "mysteryEncounterAppeared": "What's this?"
 }
