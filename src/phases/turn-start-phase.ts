@@ -17,8 +17,9 @@ import { PostTurnStatusEffectPhase } from "./post-turn-status-effect-phase";
 import { SwitchSummonPhase } from "./switch-summon-phase";
 import { TurnEndPhase } from "./turn-end-phase";
 import { WeatherEffectPhase } from "./weather-effect-phase";
-import { BattlerIndex } from "#app/battle";
+import { BattlerIndex, TurnCommand } from "#app/battle";
 import { TrickRoomTag } from "#app/data/arena-tag";
+import * as LoggerTools from "../logger";
 
 export class TurnStartPhase extends FieldPhase {
   constructor(scene: BattleScene) {
@@ -55,6 +56,7 @@ export class TurnStartPhase extends FieldPhase {
       }
     }
   }
+
   /**
    * This orders the active Pokemon on the field by speed into an BattlerIndex array and returns that array.
    * It also checks for Trick Room and reverses the array if it is present.
@@ -163,61 +165,7 @@ export class TurnStartPhase extends FieldPhase {
 
       return aIndex < bIndex ? -1 : aIndex > bIndex ? 1 : 0;
     });
-      case Command.FIGHT:
-        if (pokemon.isPlayer()) {
-          if (turnCommand.cursor === -1) {
-            this.scene.pushPhase(new MovePhase(this.scene, pokemon, turnCommand.targets || turnCommand.move!.targets, move));//TODO: is the bang correct here?
-            this.logTargets(pokemon, move, turnCommand)
-          } else {
-            const playerPhase = new MovePhase(this.scene, pokemon, turnCommand.targets || turnCommand.move!.targets, move, false, queuedMove.ignorePP);//TODO: is the bang correct here?
-            this.logTargets(pokemon, move, turnCommand)
-            this.scene.pushPhase(playerPhase);
-        break;
-      case Command.POKEMON:
-        if (pokemon.isPlayer()) {
-          //  " " + LoggerTools.playerPokeName(this.scene, pokemon) + 
-          LoggerTools.Actions[pokemon.getBattlerIndex()] = ((turnCommand.args![0] as boolean) ? "Baton" : "Switch") + " to " + LoggerTools.playerPokeName(this.scene, turnCommand.cursor!)
-        break;
-      case Command.RUN:
-        let runningPokemon = pokemon;
-        if (this.scene.currentBattle.double) {
-          const playerActivePokemon = field.filter(pokemon => {
-            if (!!pokemon) {
-              return pokemon.isPlayer() && pokemon.isActive();
-            } else {
-              return;
-            }
-          });
-          // if only one pokemon is alive, use that one
-          if (playerActivePokemon.length > 1) {
-            // find which active pokemon has faster speed
-            const fasterPokemon = playerActivePokemon[0].getStat(Stat.SPD) > playerActivePokemon[1].getStat(Stat.SPD) ? playerActivePokemon[0] : playerActivePokemon[1];
-            // check if either active pokemon has the ability "Run Away"
-            const hasRunAway = playerActivePokemon.find(p => p.hasAbility(Abilities.RUN_AWAY));
-            runningPokemon = hasRunAway !== undefined ? hasRunAway : fasterPokemon;
-          }
-        }
-        this.scene.unshiftPhase(new AttemptRunPhase(this.scene, runningPokemon.getFieldIndex()));
-        break;
-      }
-    }
-
-
-    this.scene.pushPhase(new WeatherEffectPhase(this.scene));
-
-    for (const o of order) {
-      if (field[o].status && field[o].status.isPostTurn()) {
-        this.scene.pushPhase(new PostTurnStatusEffectPhase(this.scene, o));
-      }
-    }
-
-
-    /**
-       * this.end() will call shiftPhase(), which dumps everything from PrependQueue (aka everything that is unshifted()) to the front
-       * of the queue and dequeues to start the next phase
-       * this is important since stuff like SwitchSummon, AttemptRun, AttemptCapture Phases break the "flow" and should take precedence
-       */
-    this.end();
+    return moveOrder;
   }
 
   start() {
@@ -251,58 +199,10 @@ export class TurnStartPhase extends FieldPhase {
         if (pokemon.isPlayer()) {
           if (turnCommand.cursor === -1) {
             this.scene.pushPhase(new MovePhase(this.scene, pokemon, turnCommand.targets || turnCommand.move!.targets, move));//TODO: is the bang correct here?
-            if (pokemon.isPlayer()) {
-              console.log(turnCommand.targets, turnCommand.move!.targets)
-              LoggerTools.Actions[pokemon.getBattlerIndex()] = mv.getName()
-              if (this.scene.currentBattle.double) {
-                var targIDs = ["Self", "Self", "Ally", "L", "R"]
-                if (pokemon.getBattlerIndex() == 1) targIDs = ["Self", "Ally", "Self", "L", "R"]
-                LoggerTools.Actions[pokemon.getBattlerIndex()] += " → " + targets.map(v => targIDs[v+1])
-              } else {
-                var targIDs = ["Self", "", "", "", ""]
-                var myField = this.scene.getField()
-                if (myField[0])
-                  targIDs[1] = myField[0].name
-                if (myField[1])
-                  targIDs[2] = myField[1].name
-                var eField = this.scene.getEnemyField()
-                if (eField[0])
-                  targIDs[3] = eField[0].name
-                if (eField[1])
-                  targIDs[4] = eField[1].name
-                //LoggerTools.Actions[pokemon.getBattlerIndex()] += " → " + targets.map(v => targIDs[v+1])
-              }
-              console.log(mv.getName(), targets)
-            }
+            this.logTargets(pokemon, move, turnCommand)
           } else {
             const playerPhase = new MovePhase(this.scene, pokemon, turnCommand.targets || turnCommand.move!.targets, move, false, queuedMove.ignorePP);//TODO: is the bang correct here?
-            if (pokemon.isPlayer()) {
-              console.log(turnCommand.targets, turnCommand.move!.targets)
-              if (turnCommand.args && turnCommand.args[1] && turnCommand.args[1].isContinuing != undefined) {
-                console.log(mv.getName(), targets)
-              } else {
-                LoggerTools.Actions[pokemon.getBattlerIndex()] = mv.getName()
-                if (this.scene.currentBattle.double) {
-                  var targIDs = ["Self", "Self", "Ally", "L", "R"]
-                  if (pokemon.getBattlerIndex() == 1) targIDs = ["Self", "Ally", "Self", "L", "R"]
-                  LoggerTools.Actions[pokemon.getBattlerIndex()] += " → " + targets.map(v => targIDs[v+1])
-                } else {
-                  var targIDs = ["Self", "", "", "", ""]
-                  var myField = this.scene.getField()
-                  if (myField[0])
-                    targIDs[1] = myField[0].name
-                  if (myField[1])
-                    targIDs[2] = myField[1].name
-                  var eField = this.scene.getEnemyField()
-                  if (eField[0])
-                    targIDs[3] = eField[0].name
-                  if (eField[1])
-                    targIDs[4] = eField[1].name
-                  //LoggerTools.Actions[pokemon.getBattlerIndex()] += " → " + targets.map(v => targIDs[v+1])
-                }
-                console.log(mv.getName(), targets)
-              }
-            }
+            //this.logTargets(pokemon, move, turnCommand)
             this.scene.pushPhase(playerPhase);
           }
         } else {
@@ -315,11 +215,11 @@ export class TurnStartPhase extends FieldPhase {
         this.scene.unshiftPhase(new AttemptCapturePhase(this.scene, turnCommand.targets![0] % 2, turnCommand.cursor!));//TODO: is the bang correct here?
         break;
       case Command.POKEMON:
+        this.scene.unshiftPhase(new SwitchSummonPhase(this.scene, pokemon.getFieldIndex(), turnCommand.cursor!, true, turnCommand.args![0] as boolean, pokemon.isPlayer()));//TODO: is the bang correct here?
         if (pokemon.isPlayer()) {
           //  " " + LoggerTools.playerPokeName(this.scene, pokemon) + 
           LoggerTools.Actions[pokemon.getBattlerIndex()] = ((turnCommand.args![0] as boolean) ? "Baton" : "Switch") + " to " + LoggerTools.playerPokeName(this.scene, turnCommand.cursor!)
         }
-        this.scene.unshiftPhase(new SwitchSummonPhase(this.scene, pokemon.getFieldIndex(), turnCommand.cursor!, true, turnCommand.args![0] as boolean, pokemon.isPlayer()));//TODO: is the bang correct here?
         break;
       case Command.RUN:
         let runningPokemon = pokemon;
