@@ -85,7 +85,7 @@ export default class TitleUiHandler extends OptionSelectUiHandler {
     const ret = super.show(args);
 
     if (ret) {
-      this.splashMessage = Utils.randItem(getSplashMessages());
+      this.splashMessage = Utils.randItem(getSplashMessages(), "Splash Message selection");
       this.splashMessageText.setText(this.splashMessage.replace("{COUNT}", "?"));
 
       const ui = this.getUi();

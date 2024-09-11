@@ -309,7 +309,7 @@ export class EncounterPhase extends BattlePhase {
         doSummon();
       } else {
         let message: string;
-        this.scene.executeWithSeedOffset(() => message = Utils.randSeedItem(encounterMessages), this.scene.currentBattle.waveIndex);
+        this.scene.executeWithSeedOffset(() => message = Utils.randSeedItem(encounterMessages, "Encounter message"), this.scene.currentBattle.waveIndex);
         message = message!; // tell TS compiler it's defined now
         const showDialogueAndSummon = () => {
           this.scene.ui.showDialogue(message, trainer?.getName(TrainerSlot.NONE, true), null, () => {

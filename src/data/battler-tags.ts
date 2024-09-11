@@ -483,7 +483,7 @@ export class ConfusedTag extends BattlerTag {
       pokemon.scene.unshiftPhase(new CommonAnimPhase(pokemon.scene, pokemon.getBattlerIndex(), undefined, CommonAnim.CONFUSION));
 
       // 1/3 chance of hitting self with a 40 base power move
-      if (pokemon.randSeedInt(3, undefined, "Self-hit confusion roll") === 0) {
+      if (pokemon.randSeedInt(3, undefined, "Confusion chance") === 0) {
         const atk = pokemon.getEffectiveStat(Stat.ATK);
         const def = pokemon.getEffectiveStat(Stat.DEF);
         const damage = Utils.toDmgValue(((((2 * pokemon.level / 5 + 2) * 40 * atk / def) / 50) + 2) * (pokemon.randSeedIntRange(85, 100, "Damage roll for Confusion") / 100));

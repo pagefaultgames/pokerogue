@@ -761,7 +761,7 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
       return this.speciesId;
     }
 
-    const randValue = evolutionPool.size === 1 ? 0 : Utils.randSeedInt(totalWeight);
+    const randValue = evolutionPool.size === 1 ? 0 : Utils.randSeedInt(totalWeight, undefined, "Random levelled species");
 
     for (const weight of evolutionPool.keys()) {
       if (randValue < weight) {
@@ -3340,7 +3340,7 @@ export function getPokerusStarters(scene: BattleScene): PokemonSpecies[] {
   date.setUTCHours(0, 0, 0, 0);
   scene.executeWithSeedOffset(() => {
     while (pokerusStarters.length < starterCount) {
-      const randomSpeciesId = parseInt(Utils.randSeedItem(Object.keys(speciesStarters)), 10);
+      const randomSpeciesId = parseInt(Utils.randSeedItem(Object.keys(speciesStarters), "Get Pokerus starters"), 10);
       const species = getPokemonSpecies(randomSpeciesId);
       if (!pokerusStarters.includes(species)) {
         pokerusStarters.push(species);

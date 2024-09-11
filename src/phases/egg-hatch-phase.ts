@@ -391,7 +391,7 @@ export class EggHatchPhase extends Phase {
       repeat: intensity,
       duration: Utils.getFrameMs(1),
       onRepeat: () => {
-        this.doSprayParticle(Utils.randInt(8), offsetY || 0);
+        this.doSprayParticle(Utils.randInt(8, undefined, "%HIDE"), offsetY || 0);
       }
     });
   }
@@ -410,8 +410,8 @@ export class EggHatchPhase extends Phase {
 
     let f = 0;
     let yOffset = 0;
-    const speed = 3 - Utils.randInt(8);
-    const amp = 24 + Utils.randInt(32);
+    const speed = 3 - Utils.randInt(8, undefined, "%HIDE");
+    const amp = 24 + Utils.randInt(32, undefined, "%HIDE");
 
     const particleTimer = this.scene.tweens.addCounter({
       repeat: -1,

@@ -7666,7 +7666,7 @@ export function initBiomes() {
     if (biome === Biome.END) {
       const biomeList = Object.keys(Biome).filter(key => !isNaN(Number(key)));
       biomeList.pop(); // Removes Biome.END from the list
-      const randIndex = Utils.randInt(biomeList.length, 1); // Will never be Biome.TOWN
+      const randIndex = Utils.randInt(biomeList.length, 1, "Traversing biomes"); // Will never be Biome.TOWN
       biome = Biome[biomeList[randIndex]];
     }
     const linkedBiomes: (Biome | [ Biome, integer ])[] = Array.isArray(biomeLinks[biome])

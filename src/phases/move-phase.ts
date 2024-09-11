@@ -251,7 +251,7 @@ export class MovePhase extends BattlePhase {
 
       switch (this.pokemon.status.effect) {
       case StatusEffect.PARALYSIS:
-        if (!this.pokemon.randSeedInt(4, undefined, "Paralysis chance")) {
+        if (!this.pokemon.randSeedInt(4, undefined, "Chance to be immobilized by Paralysis")) {
           activated = true;
           this.cancelled = true;
         }

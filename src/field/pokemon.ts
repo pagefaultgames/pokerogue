@@ -156,8 +156,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       this.abilityIndex = abilityIndex; // Use the provided ability index if it is defined
     } else {
       // If abilityIndex is not provided, determine it based on species and hidden ability
-      const hasHiddenAbility = !Utils.randSeedInt(hiddenAbilityChance.value);
-      const randAbilityIndex = Utils.randSeedInt(2);
+      const hasHiddenAbility = !Utils.randSeedInt(hiddenAbilityChance.value, undefined, "Hidden Ability chance");
+      const randAbilityIndex = Utils.randSeedInt(2, undefined, "Selecting ability index");
       if (species.abilityHidden && hasHiddenAbility) {
         // If the species has a hidden ability and the hidden ability is present
         this.abilityIndex = 2;
@@ -210,7 +210,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       this.fusionLuck = dataSource.fusionLuck;
       this.usedTMs = dataSource.usedTMs ?? [];
     } else {
-      this.id = Utils.randSeedInt(4294967296);
+      this.id = Utils.randSeedInt(4294967296, undefined, "Generating a Pokemon ID to create Pokemon's IVs");
       this.ivs = ivs || Utils.getIvsFromId(this.id);
 
       if (this.gender === undefined) {
@@ -923,7 +923,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     if (naturePool === undefined) {
       naturePool = Utils.getEnumValues(Nature);
     }
-    const nature = naturePool[Utils.randSeedInt(naturePool.length)];
+    const nature = naturePool[Utils.randSeedInt(naturePool.length, undefined, "Random nature")];
     this.setNature(nature);
   }
 
@@ -1451,26 +1451,22 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     }
 
     let multiplier = types.map(defType => {
-      const multiplier = new Utils.NumberHolder(getTypeDamageMultiplier(moveType, defType));
-      applyChallenges(this.scene.gameMode, ChallengeType.TYPE_EFFECTIVENESS, multiplier);
       if (source) {
         const ignoreImmunity = new Utils.BooleanHolder(false);
         if (source.isActive(true) && source.hasAbilityWithAttr(IgnoreTypeImmunityAbAttr)) {
           applyAbAttrs(IgnoreTypeImmunityAbAttr, source, ignoreImmunity, simulated, moveType, defType);
         }
         if (ignoreImmunity.value) {
-          if (multiplier.value === 0) {
-            return 1;
-          }
+          return 1;
         }
 
         const exposedTags = this.findTags(tag => tag instanceof ExposedTag) as ExposedTag[];
         if (exposedTags.some(t => t.ignoreImmunity(defType, moveType))) {
-          if (multiplier.value === 0) {
-            return 1;
-          }
+          return 1;
         }
       }
+      const multiplier = new Utils.NumberHolder(getTypeDamageMultiplier(moveType, defType));
+      applyChallenges(this.scene.gameMode, ChallengeType.TYPE_EFFECTIVENESS, multiplier);
       return multiplier.value;
     }).reduce((acc, cur) => acc * cur, 1) as TypeDamageMultiplier;
 
@@ -1717,7 +1713,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     if (!this.shiny || (!variantData.hasOwnProperty(variantDataIndex) && !variantData.hasOwnProperty(this.species.speciesId))) {
       return 0;
     }
-    const rand = Utils.randSeedInt(10);
+    const rand = Utils.randSeedInt(10, undefined, "Random variant selection");
     if (rand >= 4) {
       return 0;             // 6/10
     } else if (rand >= 1) {
@@ -1733,8 +1729,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       this.scene.applyModifiers(HiddenAbilityRateBoosterModifier, true, hiddenAbilityChance);
     }
 
-    const hasHiddenAbility = !Utils.randSeedInt(hiddenAbilityChance.value);
-    const randAbilityIndex = Utils.randSeedInt(2);
+    const hasHiddenAbility = !Utils.randSeedInt(hiddenAbilityChance.value, undefined, "Whether the Pokemon has its HA or not");
+    const randAbilityIndex = Utils.randSeedInt(2, undefined, "Ability slot (if no HA)");
 
     const filter = !forStarter ? this.species.getCompatibleFusionSpeciesFilter()
       : species => {
@@ -1907,7 +1903,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
       if (stabMovePool.length) {
         const totalWeight = stabMovePool.reduce((v, m) => v + m[1], 0);
-        let rand = Utils.randSeedInt(totalWeight);
+        let rand = Utils.randSeedInt(totalWeight, undefined, "Selecting a STAB move to include");
         let index = 0;
         while (rand > stabMovePool[index][1]) {
           rand -= stabMovePool[index++][1];
@@ -1918,7 +1914,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       const attackMovePool = baseWeights.filter(m => allMoves[m[0]].category !== MoveCategory.STATUS);
       if (attackMovePool.length) {
         const totalWeight = attackMovePool.reduce((v, m) => v + m[1], 0);
-        let rand = Utils.randSeedInt(totalWeight);
+        let rand = Utils.randSeedInt(totalWeight, undefined, "Selecting a damage dealing move to include");
         let index = 0;
         while (rand > attackMovePool[index][1]) {
           rand -= attackMovePool[index++][1];
@@ -1937,7 +1933,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         movePool = baseWeights.filter(m => !this.moveset.some(mo => m[0] === mo?.moveId));
       }
       const totalWeight = movePool.reduce((v, m) => v + m[1], 0);
-      let rand = Utils.randSeedInt(totalWeight);
+      let rand = Utils.randSeedInt(totalWeight, undefined, "Selecting moves");
       let index = 0;
       while (rand > movePool[index][1]) {
         rand -= movePool[index++][1];
@@ -3646,7 +3642,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * @param min The minimum integer to pick, default `0`
    * @returns A random integer between {@linkcode min} and ({@linkcode min} + {@linkcode range} - 1)
    */
-  randSeedInt(range: integer, min: integer = 0, reason: string = "Pokémon randSeedInt"): integer {
+  randSeedInt(range: integer, min: integer = 0, reason?: string): integer {
     return this.scene.currentBattle
       ? this.scene.randBattleSeedInt(range, min, reason)
       : Utils.randSeedInt(range, min, reason);
@@ -3658,7 +3654,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * @param max The maximum integer to generate
    * @returns a random integer between {@linkcode min} and {@linkcode max} inclusive
    */
-  randSeedIntRange(min: integer, max: integer, reason: string = "Pokémon randSeedInt"): integer {
+  randSeedIntRange(min: integer, max: integer, reason?: string): integer {
     return this.randSeedInt((max - min) + 1, min, reason);
   }
 
@@ -4269,6 +4265,7 @@ export class EnemyPokemon extends Pokemon {
    * @returns this Pokemon's next move in the format {move, moveTargets}
    */
   getNextMove(): QueuedMove {
+    console.log("Starting getNextMove() for " + this.name)
     // If this Pokemon has a move already queued, return it.
     const queuedMove = this.getMoveQueue().length
       ? this.getMoveset().find(m => m?.moveId === this.getMoveQueue()[0].move)
@@ -4281,9 +4278,11 @@ export class EnemyPokemon extends Pokemon {
             this.flyout.setText(i)
           }
         }
+        console.log("  Move was already selected")
         return { move: queuedMove.moveId, targets: this.getMoveQueue()[0].targets, ignorePP: this.getMoveQueue()[0].ignorePP };
       } else {
         this.getMoveQueue().shift();
+        console.log("  Selected move cannot be used")
         return this.getNextMove();
       }
     }
@@ -4295,7 +4294,8 @@ export class EnemyPokemon extends Pokemon {
       // If there's only 1 move in the move pool, use it.
       if (movePool.length === 1) {
         this.flyout.setText(this.getMoveset().indexOf(movePool[0]))
-        return { move: movePool[0]!.moveId, targets: this.getNextTargets(movePool[0]!.moveId) };
+        console.log("  Only one move to select")
+        return { move: movePool[0]!.moveId, targets: this.getNextTargets(movePool[0]!.moveId) }; // TODO: are the bangs correct?
       }
       // If a move is forced because of Encore, use it.
       const encoreTag = this.getTag(EncoreTag) as EncoreTag;
@@ -4303,6 +4303,7 @@ export class EnemyPokemon extends Pokemon {
         const encoreMove = movePool.find(m => m?.moveId === encoreTag.moveId);
         if (encoreMove) {
           this.flyout.setText(this.getMoveset().indexOf(encoreMove))
+          console.log("  Locked into Encore")
           return { move: encoreMove.moveId, targets: this.getNextTargets(encoreMove.moveId) };
         }
       }
@@ -4311,6 +4312,7 @@ export class EnemyPokemon extends Pokemon {
         var i = this.scene.randBattleSeedInt(movePool.length, undefined, "Move selection roll (RANDOM)")
         const moveId = movePool[i]!.moveId;
         this.flyout.setText(i)
+      case AiType.RANDOM: // No enemy should spawn with this AI type in-game
         return { move: moveId, targets: this.getNextTargets(moveId) };
       case AiType.SMART_RANDOM:
       case AiType.SMART:
@@ -4392,22 +4394,25 @@ export class EnemyPokemon extends Pokemon {
         });
         let r = 0;
         if (this.aiType === AiType.SMART_RANDOM) {
-          while (r < sortedMovePool.length - 1 && this.scene.randBattleSeedInt(8, undefined, "Move selection roll (SMART_RANDOM)") >= 5) {
+          // Has a 5/8 chance to select the best move, and a 3/8 chance to advance to the next best move (and repeat this roll)
+          while (r < sortedMovePool.length - 1 && this.scene.randBattleSeedInt(8, undefined, "Smart-Random AI Move Selection") >= 5) {
             r++;
           }
         } else if (this.aiType === AiType.SMART) {
           // The chance to advance to the next best move increases when the compared moves' scores are closer to each other.
           while (r < sortedMovePool.length - 1 && (moveScores[movePool.indexOf(sortedMovePool[r + 1])] / moveScores[movePool.indexOf(sortedMovePool[r])]) >= 0
-              && this.scene.randBattleSeedInt(100, undefined, "Move selection roll (SMART)") < Math.round((moveScores[movePool.indexOf(sortedMovePool[r + 1])] / moveScores[movePool.indexOf(sortedMovePool[r])]) * 50)) {
+              && this.scene.randBattleSeedInt(100, undefined, "Smart AI Move Selection") < Math.round((moveScores[movePool.indexOf(sortedMovePool[r + 1])] / moveScores[movePool.indexOf(sortedMovePool[r])]) * 50)) {
             r++;
           }
         }
         console.log(movePool.map(m => m!.getName()), moveScores, r, sortedMovePool.map(m => m!.getName()));
         this.flyout.setText(movePool.indexOf(sortedMovePool[r]))
+        console.log("  Selected " + sortedMovePool[r]!.getName())
         return { move: sortedMovePool[r]!.moveId, targets: moveTargets[sortedMovePool[r]!.moveId] };
       }
     }
     this.flyout.setText()
+    console.log("  Selected Struggle")
     return { move: Moves.STRUGGLE, targets: this.getNextTargets(Moves.STRUGGLE) };
   }
 
@@ -4417,10 +4422,12 @@ export class EnemyPokemon extends Pokemon {
    * @returns The indexes of the Pokemon the given move would target
    */
   getNextTargets(moveId: Moves): BattlerIndex[] {
+    console.log("Starting getNextTargets() for " + this.name + " with move " + Utils.getEnumKeys(Moves)[moveId])
     const moveTargets = getMoveTargets(this, moveId);
     const targets = this.scene.getField(true).filter(p => moveTargets.targets.indexOf(p.getBattlerIndex()) > -1);
     // If the move is multi-target, return all targets' indexes
     if (moveTargets.multiple) {
+      console.log("  Multi-target move")
       return targets.map(p => p.getBattlerIndex());
     }
 
@@ -4444,9 +4451,10 @@ export class EnemyPokemon extends Pokemon {
       // Set target to BattlerIndex.ATTACKER when using a counter move
       // This is the same as when the player does so
       if (move.hasAttr(CounterDamageAttr)) {
+        console.log("  Counter move")
         return [BattlerIndex.ATTACKER];
       }
-
+      console.log("  No targets available")
       return [];
     }
 
@@ -4480,7 +4488,7 @@ export class EnemyPokemon extends Pokemon {
      * then select the first target whose cumulative weight (with all previous targets' weights)
      * is greater than that random number.
      */
-    const randValue = this.scene.randBattleSeedInt(totalWeight, undefined, "Random target selection");
+    const randValue = this.scene.randBattleSeedInt(totalWeight, undefined, "Random move target");
     let targetIndex: integer = 0;
 
     thresholds.every((t, i) => {
@@ -4491,6 +4499,8 @@ export class EnemyPokemon extends Pokemon {
       targetIndex = i;
       return false;
     });
+    console.log("Target selection thresholds", thresholds)
+    console.log("  Randomly selected position " + sortedBenefitScores[targetIndex][0] + " as target")
 
     return [ sortedBenefitScores[targetIndex][0] ];
   }
@@ -4600,7 +4610,7 @@ export class EnemyPokemon extends Pokemon {
       }
 
       // Pick a random stat from the leftover stats to increase its stages
-      const randInt = Utils.randSeedInt(totalWeight);
+      const randInt = Utils.randSeedInt(totalWeight, undefined, "Random stat to raise from breaking a segment");
       for (const i in statThresholds) {
         if (randInt < statThresholds[i]) {
           boostedStat = leftoverStats[i];

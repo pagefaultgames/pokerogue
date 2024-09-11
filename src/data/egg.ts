@@ -151,7 +151,7 @@ export class Egg {
         this.checkForPityTierOverrides(eggOptions.scene!); // TODO: is this bang correct?
       }
 
-      this._id = eggOptions?.id ?? Utils.randInt(EGG_SEED, EGG_SEED * this._tier);
+      this._id = eggOptions?.id ?? Utils.randInt(EGG_SEED, EGG_SEED * this._tier, "eg");
 
       this._sourceType = eggOptions?.sourceType ?? undefined;
       this._hatchWaves = eggOptions?.hatchWaves ?? this.getEggTierDefaultHatchWaves();
@@ -223,14 +223,14 @@ export class Egg {
       let pokemonSpecies = getPokemonSpecies(this._species);
       // Special condition to have Phione eggs also have a chance of generating Manaphy
       if (this._species === Species.PHIONE) {
-        pokemonSpecies = getPokemonSpecies(Utils.randSeedInt(MANAPHY_EGG_MANAPHY_RATE) ? Species.PHIONE : Species.MANAPHY);
+        pokemonSpecies = getPokemonSpecies(Utils.randSeedInt(MANAPHY_EGG_MANAPHY_RATE, undefined, "Chance of Manaphy Egg not scamming you") ? Species.PHIONE : Species.MANAPHY);
       }
 
       // Sets the hidden ability if a hidden ability exists and
       // the override is set or the egg hits the chance
       let abilityIndex: number | undefined = undefined;
-      const sameSpeciesEggHACheck = (this._sourceType === EggSourceType.SAME_SPECIES_EGG && !Utils.randSeedInt(SAME_SPECIES_EGG_HA_RATE));
-      const gachaEggHACheck = (!(this._sourceType === EggSourceType.SAME_SPECIES_EGG) && !Utils.randSeedInt(GACHA_EGG_HA_RATE));
+      const sameSpeciesEggHACheck = (this._sourceType === EggSourceType.SAME_SPECIES_EGG && !Utils.randSeedInt(SAME_SPECIES_EGG_HA_RATE, undefined, "Hidden Ability chance (Candy egg)"));
+      const gachaEggHACheck = (!(this._sourceType === EggSourceType.SAME_SPECIES_EGG) && !Utils.randSeedInt(GACHA_EGG_HA_RATE, undefined, "Hidden Ability chance (Gacha)"));
       if (pokemonSpecies.abilityHidden && (this._overrideHiddenAbility || sameSpeciesEggHACheck || gachaEggHACheck)) {
         abilityIndex = 2;
       }
@@ -240,7 +240,7 @@ export class Egg {
       ret.shiny = this._isShiny;
       ret.variant = this._variantTier;
 
-      const secondaryIvs = Utils.getIvsFromId(Utils.randSeedInt(4294967295));
+      const secondaryIvs = Utils.getIvsFromId(Utils.randSeedInt(4294967295, undefined, "Egg IVs"));
 
       for (let s = 0; s < ret.ivs.length; s++) {
         ret.ivs[s] = Math.max(ret.ivs[s], secondaryIvs[s]);

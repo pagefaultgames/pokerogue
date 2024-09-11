@@ -31,7 +31,7 @@ export default class PokemonSpriteSparkleHandler {
       const parent = (pokemon || s).parentContainer;
       const texture = s.texture;
       const [ width, height ] = [ texture.source[0].width, texture.source[0].height ];
-      const [ pixelX, pixelY ] = [ Utils.randInt(width), Utils.randInt(height) ];
+      const [ pixelX, pixelY ] = [ Utils.randInt(width, undefined, "Pixel X"), Utils.randInt(height, undefined, "Pixel Y") ];
       const ratioX = s.width / width;
       const ratioY = s.height / height;
       const pixel = texture.manager.getPixel(pixelX, pixelY, texture.key, "__BASE");

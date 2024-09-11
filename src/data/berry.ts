@@ -114,7 +114,7 @@ export function getBerryEffectFunc(berryType: BerryType): BerryEffectFunc {
       if (pokemon.battleData) {
         pokemon.battleData.berriesEaten.push(berryType);
       }
-      const randStat = Utils.randSeedInt(Stat.SPD, Stat.ATK);
+      const randStat = Utils.randSeedInt(Stat.SPD, Stat.ATK, "Randomly selecting a stat to raise");
       const stages = new Utils.NumberHolder(2);
       applyAbAttrs(DoubleBerryEffectAbAttr, pokemon, null, false, stages);
       pokemon.scene.unshiftPhase(new StatStageChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [ randStat ], stages.value));

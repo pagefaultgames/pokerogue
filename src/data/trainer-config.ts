@@ -994,7 +994,7 @@ function getGymLeaderPartyTemplate(scene: BattleScene) {
 
 function getRandomPartyMemberFunc(speciesPool: Species[], trainerSlot: TrainerSlot = TrainerSlot.TRAINER, ignoreEvolution: boolean = false, postProcess?: (enemyPokemon: EnemyPokemon) => void): PartyMemberFunc {
   return (scene: BattleScene, level: integer, strength: PartyMemberStrength) => {
-    let species = Utils.randSeedItem(speciesPool);
+    let species = Utils.randSeedItem(speciesPool, "Get random party member");
     if (!ignoreEvolution) {
       species = getPokemonSpecies(species).getTrainerSpeciesForLevel(level, true, strength, scene.currentBattle.waveIndex);
     }
@@ -1015,9 +1015,9 @@ function getRandomTeraModifiers(party: EnemyPokemon[], count: integer, types?: T
   const ret: PersistentModifier[] = [];
   const partyMemberIndexes = new Array(party.length).fill(null).map((_, i) => i);
   for (let t = 0; t < Math.min(count, party.length); t++) {
-    const randomIndex = Utils.randSeedItem(partyMemberIndexes);
+    const randomIndex = Utils.randSeedItem(partyMemberIndexes, "Get random tera modifiers");
     partyMemberIndexes.splice(partyMemberIndexes.indexOf(randomIndex), 1);
-    ret.push(modifierTypes.TERA_SHARD().generateType([], [Utils.randSeedItem(types ? types : party[randomIndex].getTypes())])!.withIdFromFunc(modifierTypes.TERA_SHARD).newModifier(party[randomIndex]) as PersistentModifier); // TODO: is the bang correct?
+    ret.push(modifierTypes.TERA_SHARD().generateType([], [Utils.randSeedItem(types ? types : party[randomIndex].getTypes(), "Selecting Tera Type")])!.withIdFromFunc(modifierTypes.TERA_SHARD).newModifier(party[randomIndex]) as PersistentModifier); // TODO: is the bang correct?
   }
   return ret;
 }
@@ -1868,7 +1868,7 @@ export const trainerConfigs: TrainerConfigs = {
       p.setBoss(true, 2);
       p.generateAndPopulateMoveset();
       p.pokeball = PokeballType.MASTER_BALL;
-      p.formIndex = Utils.randSeedInt(5);
+      p.formIndex = Utils.randSeedInt(5, undefined, "Random form for Genesect");
     }))
     .setPartyMemberFunc(1, getRandomPartyMemberFunc([ Species.BASCULEGION, Species.JELLICENT ], TrainerSlot.TRAINER, true, p => {
       p.generateAndPopulateMoveset();
