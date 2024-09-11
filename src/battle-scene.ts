@@ -301,8 +301,6 @@ export default class BattleScene extends SceneBase {
 
   public eventManager: TimedEventManager;
 
-  public biomeChangeMode: boolean = false;
-
   /**
    * Allows subscribers to listen for events
    *
@@ -1007,7 +1005,6 @@ export default class BattleScene extends SceneBase {
   setSeed(seed: string): void {
     this.seed = seed;
     this.rngCounter = 0;
-    //this.setScoreText("RNG: 0")
     this.waveCycleOffset = this.getGeneratedWaveCycleOffset();
     this.offsetGym = this.gameMode.isClassic && this.getGeneratedOffsetGym();
   }
@@ -1556,7 +1553,6 @@ export default class BattleScene extends SceneBase {
     this.rngCounter = 0;
     this.battleRNGState = Phaser.Math.RND.state()
     this.battleBaseRNGState = Phaser.Math.RND.state()
-    //this.setScoreText("RNG: 0")
   }
 
   executeWithSeedOffset(func: Function, offset: integer, seedOverride?: string): void {
@@ -1573,7 +1569,6 @@ export default class BattleScene extends SceneBase {
     this.rngSeedOverride = seedOverride || "";
     func();
     Phaser.Math.RND.state(state);
-    //this.setScoreText("RNG: " + tempRngCounter + " (Last sim: " + this.rngCounter + ")")
     this.rngCounter = tempRngCounter;
     this.rngOffset = tempRngOffset;
     this.rngSeedOverride = tempRngSeedOverride;
