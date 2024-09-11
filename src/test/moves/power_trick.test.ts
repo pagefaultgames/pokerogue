@@ -7,7 +7,6 @@ import { Stat } from "#enums/stat";
 import { Species } from "#enums/species";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { Abilities } from "#enums/abilities";
-import { SPLASH_ONLY } from "../utils/testUtils";
 
 describe("Moves - Power Trick", () => {
   let phaserGame: Phaser.Game;
@@ -28,8 +27,9 @@ describe("Moves - Power Trick", () => {
     game.override
       .battleType("single")
       .enemyAbility(Abilities.NONE)
-      .enemyMoveset(SPLASH_ONLY)
+      .enemyMoveset(Moves.SPLASH)
       .enemySpecies(Species.MEW)
+      .enemyLevel(200)
       .moveset([ Moves.POWER_TRICK ])
       .ability(Abilities.NONE);
   });
