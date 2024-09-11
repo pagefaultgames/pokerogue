@@ -21,11 +21,11 @@
   },
   "PETAYA": {
     "name": "Baie Pitaye",
-    "effect": "Augmente l’Atq. Spé. du porteur si ses PV sont inférieurs à 25%."
+    "effect": "Augmente l’Atq. Spé. du porteur si ses PV sont inférieurs à 25%."
   },
   "APICOT": {
     "name": "Baie Abriko",
-    "effect": "Augmente la Déf. Spé. du porteur si ses PV sont inférieurs à 25%."
+    "effect": "Augmente la Déf. Spé. du porteur si ses PV sont inférieurs à 25%."
   },
   "SALAC": {
     "name": "Baie Sailak",
