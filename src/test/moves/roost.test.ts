@@ -30,7 +30,7 @@ describe("Moves - Roost", () => {
     game.override.enemySpecies(Species.RELICANTH);
     game.override.startingLevel(100);
     game.override.enemyLevel(60);
-    game.override.enemyMoveset([Moves.EARTHQUAKE, Moves.EARTHQUAKE, Moves.EARTHQUAKE, Moves.EARTHQUAKE]);
+    game.override.enemyMoveset(Moves.EARTHQUAKE);
     game.override.moveset([Moves.ROOST, Moves.BURN_UP]);
     game.override.starterForms({ [Species.ROTOM]: 4 });
   });
@@ -55,14 +55,13 @@ describe("Moves - Roost", () => {
     "Non flying type uses roost -> no type change, took damage",
     async () => {
       await game.classicMode.startBattle([Species.DUNSPARCE]);
-      game.move.select(Moves.ROOST);
       const playerPokemon = game.scene.getPlayerPokemon()!;
       const playerPokemonStartingHP = playerPokemon.hp;
-      let playerPokemonTypes = playerPokemon.getTypes();
+      game.move.select(Moves.ROOST);
       await game.phaseInterceptor.to(MoveEffectPhase);
 
       // Should only be normal type, and NOT flying type
-      playerPokemonTypes = playerPokemon.getTypes();
+      let playerPokemonTypes = playerPokemon.getTypes();
       expect(playerPokemonTypes[0] === Type.NORMAL).toBeTruthy();
       expect(playerPokemonTypes.length === 1).toBeTruthy();
       expect(playerPokemon.isGrounded()).toBeTruthy();
@@ -82,9 +81,9 @@ describe("Moves - Roost", () => {
     "Pure flying type -> becomes normal after roost and takes damage from ground moves -> regains flying",
     async () => {
       await game.classicMode.startBattle([Species.TORNADUS]);
-      game.move.select(Moves.ROOST);
       const playerPokemon = game.scene.getPlayerPokemon()!;
       const playerPokemonStartingHP = playerPokemon.hp;
+      game.move.select(Moves.ROOST);
       await game.phaseInterceptor.to(MoveEffectPhase);
 
       // Should only be normal type, and NOT flying type
@@ -109,10 +108,9 @@ describe("Moves - Roost", () => {
     "Dual X/flying type -> becomes type X after roost and takes damage from ground moves -> regains flying",
     async () => {
       await game.classicMode.startBattle([Species.HAWLUCHA]);
-      game.move.select(Moves.ROOST);
-
       const playerPokemon = game.scene.getPlayerPokemon()!;
       const playerPokemonStartingHP = playerPokemon.hp;
+      game.move.select(Moves.ROOST);
       await game.phaseInterceptor.to(MoveEffectPhase);
 
       // Should only be pure fighting type and grounded
@@ -137,10 +135,9 @@ describe("Moves - Roost", () => {
     "Pokemon with levitate after using roost should lose flying type but still be unaffected by ground moves",
     async () => {
       await game.classicMode.startBattle([Species.ROTOM]);
-      game.move.select(Moves.ROOST);
-
       const playerPokemon = game.scene.getPlayerPokemon()!;
       const playerPokemonStartingHP = playerPokemon.hp;
+      game.move.select(Moves.ROOST);
       await game.phaseInterceptor.to(MoveEffectPhase);
 
       // Should only be pure fighting type and grounded
@@ -165,10 +162,9 @@ describe("Moves - Roost", () => {
     "A fire/flying type that uses burn up, then roost should be typeless until end of turn",
     async () => {
       await game.classicMode.startBattle([Species.MOLTRES]);
-      game.move.select(Moves.BURN_UP);
-
       const playerPokemon = game.scene.getPlayerPokemon()!;
       const playerPokemonStartingHP = playerPokemon.hp;
+      game.move.select(Moves.BURN_UP);
       await game.phaseInterceptor.to(MoveEffectPhase);
 
       // Should only be pure flying type after burn up
@@ -177,7 +173,6 @@ describe("Moves - Roost", () => {
       expect(playerPokemonTypes.length === 1).toBeTruthy();
 
       await game.phaseInterceptor.to(TurnEndPhase);
-
       game.move.select(Moves.ROOST);
       await game.phaseInterceptor.to(MoveEffectPhase);
 
@@ -205,9 +200,8 @@ describe("Moves - Roost", () => {
     async () => {
       game.override.enemyMoveset([Moves.TRICK_OR_TREAT, Moves.TRICK_OR_TREAT, Moves.TRICK_OR_TREAT, Moves.TRICK_OR_TREAT]);
       await game.classicMode.startBattle([Species.MOLTRES]);
-
-      game.move.select(Moves.ROOST);
       const playerPokemon = game.scene.getPlayerPokemon()!;
+      game.move.select(Moves.ROOST);
       await game.phaseInterceptor.to(MoveEffectPhase);
 
       let playerPokemonTypes = playerPokemon.getTypes();

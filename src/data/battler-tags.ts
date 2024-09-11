@@ -1872,8 +1872,8 @@ export class CursedTag extends BattlerTag {
 }
 
 export class BurnedUpTag extends BattlerTag {
-  constructor(tagType: BattlerTagType, lapseType: BattlerTagLapseType, sourceMove: Moves) {
-    super(tagType, lapseType, 1, sourceMove);
+  constructor() {
+    super(BattlerTagType.BURNED_UP, BattlerTagLapseType.CUSTOM, 1, Moves.BURN_UP);
   }
 }
 
@@ -1890,64 +1890,61 @@ export class GroundedTag extends BattlerTag {
 /**
  * @item `ROOSTED`: Tag for temporary grounding if only source of ungrounding is flying and pokemon uses Roost.
  * Roost removes flying type from a pokemon for a single turn.
+ *
+ * Need to add check for terrastalized pokemon
  */
 
 export class RoostedTag extends BattlerTag {
-  private isOriginallyOnlyFlying : boolean = false;
-  private isOriginallyFlying: boolean = false;
+  private isBaseFlying : boolean;
+  private isBasePureFlying : boolean;
 
-  constructor(tagType: BattlerTagType, lapseType: BattlerTagLapseType, sourceMove: Moves) {
-    super(tagType, lapseType, 1, sourceMove);
+  constructor() {
+    super(BattlerTagType.ROOSTED, BattlerTagLapseType.TURN_END, 1, Moves.ROOST);
   }
 
   onRemove(pokemon: Pokemon): void {
+    const currentTypes = pokemon.getTypes();
+    const baseTypes = pokemon.getTypes(false, false, true);
 
-    let userTypes = pokemon.getTypes(true);
-    let forestsCurseApplied: boolean = false;
-    let trickOrTreatApplied: boolean = false;
-    const isOriginallyGrass = pokemon.getSpeciesForm().type1 === Type.GRASS || pokemon.getSpeciesForm().type2 === Type.GRASS;
-    const isOriginallyGhost = pokemon.getSpeciesForm().type1 === Type.GHOST  || pokemon.getSpeciesForm().type2 === Type.GHOST;
+    const forestsCurseApplied: boolean = currentTypes.includes(Type.GRASS) && !baseTypes.includes(Type.GRASS);
+    const trickOrTreatApplied: boolean = currentTypes.includes(Type.GHOST) && !baseTypes.includes(Type.GHOST);
 
-    if (!!userTypes.find(type => type === Type.GHOST) && !isOriginallyGhost) {
-      trickOrTreatApplied = true;
-    }
-
-    if (!!userTypes.find(type => type === Type.GRASS) && !isOriginallyGrass) {
-      forestsCurseApplied = true;
-    }
-
-    if (this.isOriginallyFlying) {
-      if (this.isOriginallyOnlyFlying) {
+    if (this.isBaseFlying) {
+      let modifiedTypes: Type[] = [];
+      if (this.isBasePureFlying) {
         if (forestsCurseApplied || trickOrTreatApplied) {
-          userTypes = userTypes.filter(type => type !== Type.NORMAL);
-          userTypes.push(Type.FLYING);
+          modifiedTypes = currentTypes.filter(type => type !== Type.NORMAL);
+          modifiedTypes.push(Type.FLYING);
         } else {
-          userTypes = [Type.FLYING];
+          modifiedTypes = [Type.FLYING];
         }
       } else {
-        userTypes.push(Type.FLYING);
+        modifiedTypes = [...currentTypes];
+        modifiedTypes.push(Type.FLYING);
       }
-      pokemon.summonData.types = userTypes;
+      pokemon.summonData.types = modifiedTypes;
       pokemon.updateInfo();
     }
   }
 
   onAdd(pokemon: Pokemon): void {
-    const userTypes = pokemon.getTypes(true);
-    const isOriginallyDualType = !!pokemon.getSpeciesForm().type1 && !!pokemon.getSpeciesForm().type2;
-    const isCurrentlyDualType = userTypes.length > 1;
-    this.isOriginallyFlying = pokemon.getSpeciesForm().type1 === Type.FLYING || pokemon.getSpeciesForm().type2 === Type.FLYING;
-    this.isOriginallyOnlyFlying = pokemon.getSpeciesForm().type1 === Type.FLYING && pokemon.getSpeciesForm().type2 === null;
+    const currentTypes = pokemon.getTypes();
+    const baseTypes = pokemon.getTypes(false, false, true);
 
-    if (this.isOriginallyFlying) {
+    const isOriginallyDualType = baseTypes.length === 2;
+    const isCurrentlyDualType = currentTypes.length === 2;
+    this.isBaseFlying = baseTypes.includes(Type.FLYING);
+    this.isBasePureFlying = baseTypes[0] === Type.FLYING && baseTypes.length === 1;
+
+    if (this.isBaseFlying) {
       let modifiedTypes: Type[];
-      if (this.isOriginallyOnlyFlying && !isCurrentlyDualType) {
+      if (this.isBasePureFlying && !isCurrentlyDualType) {
         modifiedTypes = [Type.NORMAL];
       } else {
         if (!!pokemon.getTag(BurnedUpTag) && isOriginallyDualType && !isCurrentlyDualType) {
           modifiedTypes = [Type.UNKNOWN];
         } else {
-          modifiedTypes = userTypes.filter(type => type !== Type.FLYING);
+          modifiedTypes = currentTypes.filter(type => type !== Type.FLYING);
         }
       }
       pokemon.summonData.types = modifiedTypes;
