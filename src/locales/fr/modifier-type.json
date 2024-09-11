@@ -261,7 +261,13 @@
     "ENEMY_ATTACK_BURN_CHANCE": { "name": "Jeton Brulure" },
     "ENEMY_STATUS_EFFECT_HEAL_CHANCE": { "name": "Jeton Total Soin", "description": "Ajoute 2,5% de chances à chaque tour de se soigner d’un problème de statut." },
     "ENEMY_ENDURE_CHANCE": { "name": "Jeton Ténacité" },
-    "ENEMY_FUSED_CHANCE": { "name": "Jeton Fusion", "description": "Ajoute 1% de chances qu’un Pokémon sauvage soit une fusion." }
+    "ENEMY_FUSED_CHANCE": { "name": "Jeton Fusion", "description": "Ajoute 1% de chances qu’un Pokémon sauvage soit une fusion." },
+
+    "MYSTERY_ENCOUNTER_SHUCKLE_JUICE": { "name": "Shuckle Juice" },
+    "MYSTERY_ENCOUNTER_BLACK_SLUDGE": { "name": "Black Sludge", "description": "The stench is so powerful that shops will only sell you items at a steep cost increase." },
+    "MYSTERY_ENCOUNTER_MACHO_BRACE": { "name": "Macho Brace", "description": "Defeating a Pokémon grants the holder a Macho Brace stack. Each stack slightly boosts stats, with an extra bonus at max stacks." },
+    "MYSTERY_ENCOUNTER_OLD_GATEAU": { "name": "Old Gateau", "description": "Increases the holder's {{stats}} stats by {{statValue}}." },
+    "MYSTERY_ENCOUNTER_GOLDEN_BUG_NET": { "name": "Golden Bug Net", "description": "Imbues the owner with luck to find Bug Type Pokémon more often. Has a strange heft to it." }
   },
   "SpeciesBoosterItem": {
     "LIGHT_BALL": { "name": "Balle Lumière", "description": "À faire tenir à Pikachu. Un orbe énigmatique qui double son Attaque et son Atq. Spé. ." },
