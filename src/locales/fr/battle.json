@@ -14,10 +14,10 @@
   "moneyWon": "Vous remportez\n{{moneyAmount}} ₽ !",
   "moneyPickedUp": "Vous obtenez {{moneyAmount}} ₽ !",
   "pokemonCaught": "Vous avez attrapé\n{{pokemonName}} !",
-  "pokemonObtained": "You got {{pokemonName}}!",
-  "pokemonBrokeFree": "Oh no!\nThe Pokémon broke free!",
-  "pokemonFled": "The wild {{pokemonName}} fled!",
-  "playerFled": "You fled from the {{pokemonName}}!",
+  "pokemonObtained": "Vous recevez un {{pokemonName}} !",
+  "pokemonBrokeFree": "Oh, non !\nLe Pokémon s’est libéré !",
+  "pokemonFled": "{{pokemonName}} sauvage prend la fuite !",
+  "playerFled": "Vous fuyez de {{pokemonName}} !",
   "addedAsAStarter": "{{pokemonName}} est ajouté\ncomme starter !",
   "partyFull": "Votre équipe est pleine.\nRelâcher un Pokémon pour {{pokemonName}} ?",
   "pokemon": "de Pokémon",
@@ -53,7 +53,7 @@
   "noPokeballTrainer": "Le Dresseur détourne la Ball\nVoler, c’est mal !",
   "noPokeballMulti": "Impossible ! On ne peut pas viser\nquand il y a deux Pokémon !",
   "noPokeballStrong": "Le Pokémon est trop fort pour être capturé !\nVous devez d’abord l’affaiblir !",
-  "noPokeballMysteryEncounter": "You aren't able to\ncatch this Pokémon!",
+  "noPokeballMysteryEncounter": "Vous ne pouvez pas\nattraper ce Pokémon !",
   "noEscapeForce": "Une force mystérieuse\nempêche la fuite.",
   "noEscapeTrainer": "On ne s’enfuit pas d’un\ncombat de Dresseurs !",
   "noEscapePokemon": "{{moveName}} de {{pokemonName}}\nempêche {{escapeVerb}} !",
@@ -102,5 +102,5 @@
   "congratulations": "Félicitations !",
   "beatModeFirstTime": "{{speciesName}} a battu le mode {{gameMode}} pour la première fois !\nVous avez reçu {{newModifier}} !",
   "eggSkipPrompt": "Aller directement au résumé des Œufs éclos ?",
-  "mysteryEncounterAppeared": "What's this?"
+  "mysteryEncounterAppeared": "Hein ?\nC’est quoi ça ?"
 }
