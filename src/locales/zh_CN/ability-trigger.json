@@ -1,5 +1,5 @@
 {
-  "blockRecoilDamage": "{{pokemonName}}的{{abilityName}}\n抵消了反作用力！",//oye
+  "blockRecoilDamage": "{{pokemonName}}的{{abilityName}}\n抵消了反作用力！",
   "badDreams": "{{pokemonName}}被折磨着！",
   "costar": "{{pokemonName}}复制了{{allyName}}的能力变化！",
   "iceFaceAvoidedDamage": "{{pokemonNameWithAffix}}因为{{abilityName}}\n避免了伤害！",
