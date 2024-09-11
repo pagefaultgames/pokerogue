@@ -1,0 +1,30 @@
+{
+  "intro_dialogue": "Step right up, folks! Try your luck\non the brand new {{wobbuffetName}} Whack-o-matic!",
+  "speaker": "Showman",
+  "title": "Fun And Games!",
+  "description": "You've encountered a traveling show with a prize game! You will have @[TOOLTIP_TITLE]{3 turns} to bring the {{wobbuffetName}} as close to @[TOOLTIP_TITLE]{1 HP} as possible @[TOOLTIP_TITLE]{without KOing it} so it can wind up a huge Counter on the bell-ringing machine.\nBut be careful! If you KO the {{wobbuffetName}}, you'll have to pay for the cost of reviving it!",
+  "query": "Would you like to play?",
+  "option": {
+    "1": {
+      "label": "Play the Game",
+      "tooltip": "(-) Pay {{option1Money, money}}\n(+) Play {{wobbuffetName}} Whack-o-matic",
+      "selected": "Time to test your luck!"
+    },
+    "2": {
+      "label": "Leave",
+      "tooltip": "(-) No Rewards",
+      "selected": "You hurry along your way,\nwith a slight feeling of regret."
+    }
+  },
+  "ko": "Oh no! The {{wobbuffetName}} fainted!$You lose the game and\nhave to pay for the revive cost...",
+  "charging_continue": "The Wubboffet keeps charging its counter-swing!",
+  "turn_remaining_3": "Three turns remaining!",
+  "turn_remaining_2": "Two turns remaining!",
+  "turn_remaining_1": "One turn remaining!",
+  "end_game": "Time's up!$The {{wobbuffetName}} winds up to counter-swing and@d{16}.@d{16}.@d{16}.",
+  "best_result": "The {{wobbuffetName}} smacks the button so hard\nthe bell breaks off the top!$You win the grand prize!",
+  "great_result": "The {{wobbuffetName}} smacks the button, nearly hitting the bell!$So close!\nYou earn the second tier prize!",
+  "good_result": "The {{wobbuffetName}} hits the button hard enough to go midway up the scale!$You earn the third tier prize!",
+  "bad_result": "The {{wobbuffetName}} barely taps the button and nothing happens...$Oh no!\nYou don't win anything!",
+  "outro": "That was a fun little game!"
+}
