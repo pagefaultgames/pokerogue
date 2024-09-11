@@ -66,10 +66,10 @@
       "description": "手持ちポケモンの　全員のレベルを　{{levels}}　上げる"
     },
     "BaseStatBoosterModifierType": {
-      "description": "ポケモンの　基本の{{stat}}を　10%　あげる。\n固体値が　高けば高いほど　持てる限界が　上がる
+      "description": "ポケモンの　基本の{{stat}}を　10%　あげる。\n固体値が　高けば高いほど　持てる限界が　上がる"
     },
     "AllPokemonFullHpRestoreModifierType": {
-      "description": "手持ちポケモン 全員の HPを すべて 回復する"
+      "description": "手持ちポケモン　全員の　HPを　すべて　回復する"
     },
     "AllPokemonFullReviveModifierType": {
       "description": "ひんしに　なってしまった　ポケモン　全員の　HPを　すべて　回復する"
@@ -78,12 +78,12 @@
       "description": "{{moneyMultiplier}}額の　円を　与える（{{moneyAmount}}円）",
       "extra": {
         "small": "小",
-        "moderate": "普通の　金",
+        "moderate": "ある金",
         "large": "多"
       }
     },
     "ExpBoosterModifierType": {
-      "description": "もらえるけいけんちを {{boostPercent}}パーセントふやす"
+      "description": "もらえる　経験値を　{{boostPercent}}%　増やす"
     },
     "PokemonExpBoosterModifierType": {
       "description": "もっているポケモンのけいけんちを {{boostPercent}}パーセントふやす"
