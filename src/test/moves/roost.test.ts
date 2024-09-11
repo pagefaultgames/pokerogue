@@ -4,7 +4,6 @@ import { Moves } from "#app/enums/moves";
 import { Species } from "#app/enums/species";
 import { MoveEffectPhase } from "#app/phases/move-effect-phase";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
-
 import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest";
@@ -51,37 +50,6 @@ describe("Moves - Roost", () => {
    *
    * Also making the user pokemon go first so we can check if the pokemon took damage post roost
    */
-  // test(
-  //   "Pokemon that use roost and levitate should still be ungrounded, but should still lose flying until end of turn",
-  //   async () => {
-
-  //     await game.classicMode.startBattle([Species.ROTOM]);
-  //     const playerPokemon = game.scene.getPlayerPokemon()!;
-  //     //expect(playerPokemon.getTypes().filter(type => type == Type.FLYING)).toHaveLength(1);
-  //     game.move.select(Moves.ROOST);
-
-  //     const playerPokemonStartingHP = playerPokemon.hp;
-  //     await game.phaseInterceptor.to(MoveEffectPhase);
-
-  //     // Should only be pure Electric type and ungrounded due to levitate
-  //     let playerPokemonTypes = playerPokemon.summonData.types;
-  //     expect(playerPokemonTypes.filter(type => type == Type.FLYING)).toHaveLength(0);
-  //     expect(playerPokemon.getTypes().filter(type => type == Type.ELECTRIC)).toHaveLength(1);
-  //     //expect(playerPokemon.getTag(BattlerTagType.ROOSTED)).toBeDefined();
-  //     expect(playerPokemonTypes[0] === Type.ELECTRIC).toBeTruthy();
-  //     expect(playerPokemonTypes.length === 1).toBeTruthy();
-  //     expect(playerPokemon.isGrounded()).toBeFalsy();
-
-  //     // Should be electric flying, not roosted, and not grounded
-  //     await game.phaseInterceptor.to(TurnEndPhase);
-  //     playerPokemonTypes = playerPokemon.summonData.types;
-  //     expect(playerPokemon.hp).toBe(playerPokemonStartingHP);
-  //     expect(playerPokemonTypes[0] === Type.ELECTRIC).toBeTruthy();
-  //     expect(playerPokemonTypes[1] === Type.FLYING).toBeTruthy();
-  //     expect(playerPokemon.getTag(BattlerTagType.ROOSTED)).toBeUndefined();
-  //     expect(playerPokemon.isGrounded()).toBeFalsy();
-  //   } ,TIMEOUT
-  // );
 
   test(
     "Non flying type uses roost -> no type change, took damage",
