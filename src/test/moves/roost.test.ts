@@ -1,4 +1,4 @@
-import { Type } from "#app/data/type.js";
+import { Type } from "#app/data/type";
 import { BattlerTagType } from "#app/enums/battler-tag-type";
 import { Moves } from "#app/enums/moves";
 import { Species } from "#app/enums/species";
