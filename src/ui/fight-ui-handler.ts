@@ -122,7 +122,8 @@ export default class FightUiHandler extends UiHandler {
         }
       } else {
         // Cannot back out of fight menu if skipToFightInput is enabled
-        if (this.scene.currentBattle.battleType !== BattleType.MYSTERY_ENCOUNTER || !this.scene.currentBattle.mysteryEncounter?.skipToFightInput) {
+        const { battleType, mysteryEncounter } = this.scene.currentBattle;
+        if (battleType !== BattleType.MYSTERY_ENCOUNTER || !mysteryEncounter?.skipToFightInput) {
           ui.setMode(Mode.COMMAND, this.fieldIndex);
           success = true;
         }

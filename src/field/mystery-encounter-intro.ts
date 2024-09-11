@@ -175,6 +175,9 @@ export default class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Con
     });
   }
 
+  /**
+   * Loads the assets that were defined on construction (async)
+   */
   loadAssets(): Promise<void> {
     return new Promise(resolve => {
       if (!this.spriteConfigs) {
@@ -226,6 +229,9 @@ export default class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Con
     });
   }
 
+  /**
+   * Sets the initial frames and tint of sprites after load
+   */
   initSprite(): void {
     if (!this.spriteConfigs) {
       return;
@@ -282,6 +288,9 @@ export default class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Con
     return true;
   }
 
+  /**
+   * For sprites with animation and that do not have animation disabled, will begin frame animation
+   */
   playAnim(): void {
     if (!this.spriteConfigs) {
       return;
@@ -318,6 +327,9 @@ export default class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Con
     return ret;
   }
 
+  /**
+   * Gets all non-tint sprites (these are the "real" unmodified sprites)
+   */
   getSprites(): Phaser.GameObjects.Sprite[] {
     if (!this.spriteConfigs) {
       return [];
@@ -330,6 +342,9 @@ export default class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Con
     return ret;
   }
 
+  /**
+   * Gets all tint sprites (duplicate sprites that have different alpha and fill values)
+   */
   getTintSprites(): Phaser.GameObjects.Sprite[] {
     if (!this.spriteConfigs) {
       return [];
@@ -343,7 +358,15 @@ export default class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Con
     return ret;
   }
 
-  tint(sprite, color: number, alpha?: number, duration?: integer, ease?: string): void {
+  /**
+   * Tints a single sprite
+   * @param sprite
+   * @param color
+   * @param alpha
+   * @param duration
+   * @param ease
+   */
+  private tint(sprite, color: number, alpha?: number, duration?: integer, ease?: string): void {
     // const tintSprites = this.getTintSprites();
     sprite.setTintFill(color);
     sprite.setVisible(true);
@@ -362,6 +385,13 @@ export default class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Con
     }
   }
 
+  /**
+   * Tints all sprites
+   * @param color
+   * @param alpha
+   * @param duration
+   * @param ease
+   */
   tintAll(color: number, alpha?: number, duration?: integer, ease?: string): void {
     const tintSprites = this.getTintSprites();
     tintSprites.map(tintSprite => {
@@ -369,7 +399,13 @@ export default class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Con
     });
   }
 
-  untint(sprite, duration: integer, ease?: string): void {
+  /**
+   * Untints a single sprite over a duration
+   * @param sprite
+   * @param duration
+   * @param ease
+   */
+  private untint(sprite, duration: integer, ease?: string): void {
     if (duration) {
       this.scene.tweens.add({
         targets: sprite,
@@ -387,6 +423,12 @@ export default class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Con
     }
   }
 
+  /**
+   * Untints all sprites
+   * @param sprite
+   * @param duration
+   * @param ease
+   */
   untintAll(duration: integer, ease?: string): void {
     const tintSprites = this.getTintSprites();
     tintSprites.map(tintSprite => {
@@ -406,6 +448,9 @@ export default class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Con
   }
 }
 
+/**
+ * Interface is required so as not to override {@link Phaser.GameObjects.Container.scene}
+ */
 export default interface MysteryEncounterIntroVisuals {
   scene: BattleScene
 }

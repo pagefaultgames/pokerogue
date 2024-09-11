@@ -531,7 +531,6 @@ export default class PartyUiHandler extends MessageUiHandler {
           return this.processInput(Button.CANCEL);
         } else if (option === PartyOption.SELECT) {
           ui.playSelect();
-          // ui.setModeWithoutClear(Mode.SUMMARY, pokemon).then(() =>  this.clearOptions());
           return true;
         }
       } else if (button === Button.CANCEL) {

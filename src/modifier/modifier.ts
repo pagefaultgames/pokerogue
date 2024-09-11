@@ -833,6 +833,9 @@ export class BaseStatModifier extends PokemonHeldItemModifier {
   }
 }
 
+/**
+ * Currently used by Shuckle Juice item
+ */
 export class PokemonBaseStatTotalModifier extends PokemonHeldItemModifier {
   private statModifier: integer;
   readonly isTransferrable: boolean = false;
@@ -842,23 +845,23 @@ export class PokemonBaseStatTotalModifier extends PokemonHeldItemModifier {
     this.statModifier = statModifier;
   }
 
-  matchType(modifier: Modifier): boolean {
+  override matchType(modifier: Modifier): boolean {
     return modifier instanceof PokemonBaseStatTotalModifier;
   }
 
-  clone(): PersistentModifier {
+  override clone(): PersistentModifier {
     return new PokemonBaseStatTotalModifier(this.type as ModifierTypes.PokemonBaseStatTotalModifierType, this.pokemonId, this.statModifier, this.stackCount);
   }
 
-  getArgs(): any[] {
+  override getArgs(): any[] {
     return super.getArgs().concat(this.statModifier);
   }
 
-  shouldApply(args: any[]): boolean {
+  override shouldApply(args: any[]): boolean {
     return super.shouldApply(args) && args.length === 2 && args[1] instanceof Array;
   }
 
-  apply(args: any[]): boolean {
+  override apply(args: any[]): boolean {
     // Modifies the passed in baseStats[] array
     args[1].forEach((v, i) => {
       // HP is affected by half as much as other stats
@@ -869,15 +872,18 @@ export class PokemonBaseStatTotalModifier extends PokemonHeldItemModifier {
     return true;
   }
 
-  getScoreMultiplier(): number {
+  override getScoreMultiplier(): number {
     return 1.2;
   }
 
-  getMaxHeldItemCount(pokemon: Pokemon): integer {
+  override getMaxHeldItemCount(pokemon: Pokemon): integer {
     return 2;
   }
 }
 
+/**
+ * Currently used by Old Gateau item
+ */
 export class PokemonBaseStatFlatModifier extends PokemonHeldItemModifier {
   private statModifier: integer;
   private stats: Stat[];
@@ -890,23 +896,23 @@ export class PokemonBaseStatFlatModifier extends PokemonHeldItemModifier {
     this.stats = stats;
   }
 
-  matchType(modifier: Modifier): boolean {
+  override matchType(modifier: Modifier): boolean {
     return modifier instanceof PokemonBaseStatFlatModifier;
   }
 
-  clone(): PersistentModifier {
+  override clone(): PersistentModifier {
     return new PokemonBaseStatFlatModifier(this.type, this.pokemonId, this.statModifier, this.stats, this.stackCount);
   }
 
-  getArgs(): any[] {
+  override getArgs(): any[] {
     return super.getArgs().concat(this.statModifier, this.stats);
   }
 
-  shouldApply(args: any[]): boolean {
+  override shouldApply(args: any[]): boolean {
     return super.shouldApply(args) && args.length === 2 && args[1] instanceof Array;
   }
 
-  apply(args: any[]): boolean {
+  override apply(args: any[]): boolean {
     // Modifies the passed in baseStats[] array by a flat value, only if the stat is specified in this.stats
     args[1].forEach((v, i) => {
       if (this.stats.includes(i)) {
@@ -918,15 +924,18 @@ export class PokemonBaseStatFlatModifier extends PokemonHeldItemModifier {
     return true;
   }
 
-  getScoreMultiplier(): number {
+  override getScoreMultiplier(): number {
     return 1.1;
   }
 
-  getMaxHeldItemCount(pokemon: Pokemon): integer {
+  override getMaxHeldItemCount(pokemon: Pokemon): integer {
     return 1;
   }
 }
 
+/**
+ * Currently used by Macho Brace item
+ */
 export class PokemonIncrementingStatModifier extends PokemonHeldItemModifier {
   readonly isTransferrable: boolean = false;
 
@@ -2500,6 +2509,9 @@ export class LockModifierTiersModifier extends PersistentModifier {
   }
 }
 
+/**
+ * Black Sludge item
+ */
 export class HealShopCostModifier extends PersistentModifier {
   constructor(type: ModifierType, stackCount?: integer) {
     super(type, stackCount);

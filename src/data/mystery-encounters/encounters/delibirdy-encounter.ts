@@ -122,7 +122,7 @@ export const DelibirdyEncounter: MysteryEncounter =
             const shellBell = generateModifierType(scene, modifierTypes.SHELL_BELL) as PokemonHeldItemModifierType;
             await applyModifierTypeToPlayerPokemon(scene, scene.getParty()[0], shellBell);
             scene.playSound("item_fanfare");
-            await showEncounterText(scene, i18next.t("battle:rewardGain", { modifierName: shellBell.name }), undefined, true);
+            await showEncounterText(scene, i18next.t("battle:rewardGain", { modifierName: shellBell.name }), null, undefined, true);
           } else {
             scene.unshiftPhase(new ModifierRewardPhase(scene, modifierTypes.ABILITY_CHARM));
           }
@@ -197,7 +197,7 @@ export const DelibirdyEncounter: MysteryEncounter =
               const shellBell = generateModifierType(scene, modifierTypes.SHELL_BELL) as PokemonHeldItemModifierType;
               await applyModifierTypeToPlayerPokemon(scene, scene.getParty()[0], shellBell);
               scene.playSound("item_fanfare");
-              await showEncounterText(scene, i18next.t("battle:rewardGain", { modifierName: shellBell.name }), undefined, true);
+              await showEncounterText(scene, i18next.t("battle:rewardGain", { modifierName: shellBell.name }), null, undefined, true);
             } else {
               scene.unshiftPhase(new ModifierRewardPhase(scene, modifierTypes.CANDY_JAR));
             }
@@ -210,7 +210,7 @@ export const DelibirdyEncounter: MysteryEncounter =
               const shellBell = generateModifierType(scene, modifierTypes.SHELL_BELL) as PokemonHeldItemModifierType;
               await applyModifierTypeToPlayerPokemon(scene, scene.getParty()[0], shellBell);
               scene.playSound("item_fanfare");
-              await showEncounterText(scene, i18next.t("battle:rewardGain", { modifierName: shellBell.name }), undefined, true);
+              await showEncounterText(scene, i18next.t("battle:rewardGain", { modifierName: shellBell.name }), null, undefined, true);
             } else {
               scene.unshiftPhase(new ModifierRewardPhase(scene, modifierTypes.HEALING_CHARM));
             }
@@ -290,7 +290,7 @@ export const DelibirdyEncounter: MysteryEncounter =
             const shellBell = generateModifierType(scene, modifierTypes.SHELL_BELL) as PokemonHeldItemModifierType;
             await applyModifierTypeToPlayerPokemon(scene, scene.getParty()[0], shellBell);
             scene.playSound("item_fanfare");
-            await showEncounterText(scene, i18next.t("battle:rewardGain", { modifierName: shellBell.name }), undefined, true);
+            await showEncounterText(scene, i18next.t("battle:rewardGain", { modifierName: shellBell.name }), null, undefined, true);
           } else {
             scene.unshiftPhase(new ModifierRewardPhase(scene, modifierTypes.BERRY_POUCH));
           }

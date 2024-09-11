@@ -281,11 +281,17 @@ export default class MysteryEncounter implements IMysteryEncounter {
     return sceneReq && secReqs && priReqs;
   }
 
+  /**
+   * Checks if a specific player pokemon meets all given primary EncounterPokemonRequirements
+   * Used automatically as part of {@linkcode meetsRequirements}, but can also be used to manually check certain Pokemon where needed
+   * @param scene
+   * @param pokemon
+   */
   pokemonMeetsPrimaryRequirements(scene: BattleScene, pokemon: Pokemon) {
     return !this.primaryPokemonRequirements.some(req => !req.queryParty(scene.getParty()).map(p => p.id).includes(pokemon.id));
   }
 
-  meetsPrimaryRequirementAndPrimaryPokemonSelected(scene: BattleScene): boolean {
+  private meetsPrimaryRequirementAndPrimaryPokemonSelected(scene: BattleScene): boolean {
     if (!this.primaryPokemonRequirements || this.primaryPokemonRequirements.length === 0) {
       const activeMon = scene.getParty().filter(p => p.isActive(true));
       if (activeMon.length > 0) {
@@ -342,7 +348,7 @@ export default class MysteryEncounter implements IMysteryEncounter {
     }
   }
 
-  meetsSecondaryRequirementAndSecondaryPokemonSelected(scene: BattleScene): boolean {
+  private meetsSecondaryRequirementAndSecondaryPokemonSelected(scene: BattleScene): boolean {
     if (!this.secondaryPokemonRequirements || this.secondaryPokemonRequirements.length === 0) {
       this.secondaryPokemon = [];
       return true;
@@ -446,6 +452,14 @@ export default class MysteryEncounter implements IMysteryEncounter {
     }
   }
 
+  /**
+   * Used to cache a dialogue token for the encounter.
+   * Tokens will be auto-injected via the `{{key}}` pattern with `value`,
+   * when using the {@link showEncounterText} and {@link showEncounterDialogue} helper functions.
+   *
+   * @param key
+   * @param value
+   */
   setDialogueToken(key: string, value: string): void {
     this.dialogueTokens[key] = value;
   }

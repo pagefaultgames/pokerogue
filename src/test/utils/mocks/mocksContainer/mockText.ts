@@ -11,7 +11,7 @@ export default class MockText implements MockGameObject {
   public list: MockGameObject[] = [];
   public style;
   public text = "";
-  name: string;
+  public name: string;
   public color?: string;
 
   constructor(textureManager, x, y, content, styleOptions) {
@@ -80,19 +80,19 @@ export default class MockText implements MockGameObject {
     return result;
   }
 
-  showText(text, delay, callback, callbackDelay, prompt, promptDelay) {
+  showText = vi.fn((text: string, delay?: integer | null, callback?: Function | null, callbackDelay?: integer | null, prompt?: boolean | null, promptDelay?: integer | null) => {
     this.scene.messageWrapper.showText(text, delay, callback, callbackDelay, prompt, promptDelay);
     if (callback) {
       callback();
     }
-  }
+  });
 
-  showDialogue(text, name, delay, callback, callbackDelay, promptDelay) {
-    this.scene.messageWrapper.showDialogue(text, name, delay, callback, callbackDelay, promptDelay);
+  showDialogue = vi.fn((keyOrText: string, name: string | undefined, delay: integer | null = 0, callback: Function, callbackDelay?: integer, promptDelay?: integer) => {
+    this.scene.messageWrapper.showDialogue(keyOrText, name, delay, callback, callbackDelay, promptDelay);
     if (callback) {
       callback();
     }
-  }
+  });
 
   setScale(scale) {
     // return this.phaserText.setScale(scale);
@@ -257,13 +257,9 @@ export default class MockText implements MockGameObject {
     };
   }
 
-  disableInteractive() {
-    // Disables interaction with this Game Object.
-  }
+  disableInteractive = vi.fn();
 
-  clearTint() {
-    // Clears tint on this Game Object.
-  }
+  clearTint = vi.fn();
 
   add(obj) {
     // Adds a child to this Game Object.

@@ -166,7 +166,7 @@ export interface GeneratedPersistentModifierType {
   getPregenArgs(): any[];
 }
 
-export class AddPokeballModifierType extends ModifierType {
+class AddPokeballModifierType extends ModifierType {
   private pokeballType: PokeballType;
   private count: integer;
 
@@ -647,6 +647,9 @@ export class BaseStatBoosterModifierType extends PokemonHeldItemModifierType imp
   }
 }
 
+/**
+ * Shuckle Juice item
+ */
 export class PokemonBaseStatTotalModifierType extends PokemonHeldItemModifierType implements GeneratedPersistentModifierType {
   private readonly statModifier: integer;
 
@@ -655,7 +658,7 @@ export class PokemonBaseStatTotalModifierType extends PokemonHeldItemModifierTyp
     this.statModifier = statModifier;
   }
 
-  getDescription(scene: BattleScene): string {
+  override getDescription(scene: BattleScene): string {
     return i18next.t("modifierType:ModifierType.PokemonBaseStatTotalModifierType.description", {
       increaseDecrease: i18next.t(this.statModifier >= 0 ? "modifierType:ModifierType.PokemonBaseStatTotalModifierType.extra.increase" : "modifierType:ModifierType.PokemonBaseStatTotalModifierType.extra.decrease"),
       blessCurse: i18next.t(this.statModifier >= 0 ? "modifierType:ModifierType.PokemonBaseStatTotalModifierType.extra.blessed" : "modifierType:ModifierType.PokemonBaseStatTotalModifierType.extra.cursed"),
@@ -663,11 +666,14 @@ export class PokemonBaseStatTotalModifierType extends PokemonHeldItemModifierTyp
     });
   }
 
-  getPregenArgs(): any[] {
+  public getPregenArgs(): any[] {
     return [ this.statModifier ];
   }
 }
 
+/**
+ * Old Gateau item
+ */
 export class PokemonBaseStatFlatModifierType extends PokemonHeldItemModifierType implements GeneratedPersistentModifierType {
   private readonly statModifier: integer;
   private readonly stats: Stat[];
@@ -678,14 +684,14 @@ export class PokemonBaseStatFlatModifierType extends PokemonHeldItemModifierType
     this.stats = stats;
   }
 
-  getDescription(scene: BattleScene): string {
+  override getDescription(scene: BattleScene): string {
     return i18next.t("modifierType:ModifierType.PokemonBaseStatFlatModifierType.description", {
       stats: this.stats.map(stat => i18next.t(getStatKey(stat))).join("/"),
       statValue: this.statModifier,
     });
   }
 
-  getPregenArgs(): any[] {
+  public getPregenArgs(): any[] {
     return [ this.statModifier, this.stats ];
   }
 }
@@ -2118,6 +2124,14 @@ export function getPlayerModifierTypeOptions(count: integer, party: PlayerPokemo
   return options;
 }
 
+/**
+ * Will generate a ModifierType from the ModifierPoolType.PLAYER pool, attempting to retry duplicated items up to retryCount
+ * @param existingOptions - currently generated options
+ * @param retryCount - how many times to retry before allowing a dupe item
+ * @param party - current player party, used to calculate items in the pool
+ * @param tier - If specified will generate item of tier
+ * @param allowLuckUpgrades - allow items to upgrade tiers (the little animation that plays and is affected by luck)
+ */
 function getModifierTypeOptionWithRetry(existingOptions: ModifierTypeOption[], retryCount: integer, party: PlayerPokemon[], tier?: ModifierTier, allowLuckUpgrades?: boolean): ModifierTypeOption {
   allowLuckUpgrades = allowLuckUpgrades ?? true;
   let candidate = getNewModifierTypeOption(party, ModifierPoolType.PLAYER, tier, undefined, 0, allowLuckUpgrades);
@@ -2253,6 +2267,15 @@ export function getDailyRunStarterModifiers(party: PlayerPokemon[]): Modifiers.P
   return ret;
 }
 
+/**
+ * Generates a ModifierType from the specified pool
+ * @param party - party of the trainer using the item
+ * @param poolType - PLAYER/WILD/TRAINER
+ * @param tier - If specified, will override the initial tier of an item (can still upgrade with luck)
+ * @param upgradeCount - If defined, means that this is a new ModifierType being generated to override another via luck upgrade. Used for recursive logic
+ * @param retryCount - Max allowed tries before the next tier down is checked for a valid ModifierType
+ * @param allowLuckUpgrades - Default true. If false, will not allow ModifierType to randomly upgrade to next tier
+ */
 function getNewModifierTypeOption(party: Pokemon[], poolType: ModifierPoolType, tier?: ModifierTier, upgradeCount?: integer, retryCount: integer = 0, allowLuckUpgrades: boolean = true): ModifierTypeOption | null {
   const player = !poolType;
   const pool = getModifierPoolForType(poolType);

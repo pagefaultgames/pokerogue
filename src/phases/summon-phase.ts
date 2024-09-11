@@ -232,7 +232,7 @@ export class SummonPhase extends PartyMemberPokemonPhase {
 
     pokemon.resetTurnData();
 
-    if (!this.loaded || this.scene.currentBattle.battleType === BattleType.TRAINER || this.scene.currentBattle.battleType === BattleType.MYSTERY_ENCOUNTER || (this.scene.currentBattle.waveIndex % 10) === 1) {
+    if (!this.loaded || [BattleType.TRAINER, BattleType.MYSTERY_ENCOUNTER].includes(this.scene.currentBattle.battleType) || (this.scene.currentBattle.waveIndex % 10) === 1) {
       this.scene.triggerPokemonFormChange(pokemon, SpeciesFormChangeActiveTrigger, true);
       this.queuePostSummon();
     }

@@ -994,6 +994,9 @@ export class TrainerConfig {
     });
   }
 
+  /**
+   * Creates a copy of a trainer config so that it can be modified without affecting the {@link trainerConfigs} source map
+   */
   copy(): TrainerConfig {
     let copy = new TrainerConfig(this.trainerType);
     copy = this.trainerTypeDouble ? copy.setDoubleTrainerType(this.trainerTypeDouble) : copy;

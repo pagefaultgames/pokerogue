@@ -12,7 +12,7 @@ export default class MockTexture implements MockGameObject {
   public source;
   public frames: object;
   public firstFrame: string;
-  name: string;
+  public name: string;
 
   constructor(manager, key: string, source) {
     this.manager = manager;

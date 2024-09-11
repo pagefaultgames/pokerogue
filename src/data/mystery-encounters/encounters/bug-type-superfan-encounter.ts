@@ -582,7 +582,7 @@ function getTrainerConfigForWave(waveIndex: number) {
 }
 
 function getRandomPartyMemberFunc(speciesPool: Species[], trainerSlot: TrainerSlot = TrainerSlot.TRAINER, ignoreEvolution: boolean = false, postProcess?: (enemyPokemon: EnemyPokemon) => void) {
-  return (scene: BattleScene, level: integer, strength: PartyMemberStrength) => {
+  return (scene: BattleScene, level: number, strength: PartyMemberStrength) => {
     let species = Utils.randSeedItem(speciesPool);
     if (!ignoreEvolution) {
       species = getPokemonSpecies(species).getTrainerSpeciesForLevel(level, true, strength);

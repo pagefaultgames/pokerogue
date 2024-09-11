@@ -7,7 +7,6 @@ import MysteryEncounterOption, { OptionPhaseCallback } from "../data/mystery-enc
 import { getCharVariantFromDialogue } from "../data/dialogue";
 import { TrainerSlot } from "../data/trainer-config";
 import { BattleSpec } from "#enums/battle-spec";
-import { Tutorial, handleTutorial } from "../tutorial";
 import { IvScannerModifier } from "../modifier/modifier";
 import * as Utils from "../utils";
 import { isNullOrUndefined } from "../utils";
@@ -50,6 +49,9 @@ export class MysteryEncounterPhase extends Phase {
     this.optionSelectSettings = optionSelectSettings;
   }
 
+  /**
+   * Updates seed offset, sets seen encounter session data, sets UI mode
+   */
   start() {
     super.start();
 
@@ -70,6 +72,11 @@ export class MysteryEncounterPhase extends Phase {
     this.scene.ui.setMode(Mode.MYSTERY_ENCOUNTER, this.optionSelectSettings);
   }
 
+  /**
+   * Triggers after a player selects an option for the encounter
+   * @param option
+   * @param index
+   */
   handleOptionSelect(option: MysteryEncounterOption, index: number): boolean {
     // Set option selected flag
     this.scene.currentBattle.mysteryEncounter!.selectedOption = option;
@@ -106,6 +113,9 @@ export class MysteryEncounterPhase extends Phase {
     return true;
   }
 
+  /**
+   * Queues MysteryEncounterOptionSelectedPhase, displays option.selected dialogue and ends phase
+   */
   continueEncounter() {
     const endDialogueAndContinueEncounter = () => {
       this.scene.pushPhase(new MysteryEncounterOptionSelectedPhase(this.scene));
@@ -141,10 +151,9 @@ export class MysteryEncounterPhase extends Phase {
     }
   }
 
-  cancel() {
-    this.end();
-  }
-
+  /**
+   * Ends phase
+   */
   end() {
     this.scene.ui.setMode(Mode.MESSAGE).then(() => super.end());
   }
@@ -196,6 +205,9 @@ export class MysteryEncounterBattleStartCleanupPhase extends Phase {
     super(scene);
   }
 
+  /**
+   * Cleans up TURN_END tags, any PostTurnEffectPhases, checks for Pokemon switches, then continues
+   */
   start() {
     super.start();
 
@@ -231,7 +243,7 @@ export class MysteryEncounterBattleStartCleanupPhase extends Phase {
       this.scene.unshiftPhase(new ToggleDoublePositionPhase(this.scene, true));
     }
 
-    super.end();
+    this.end();
   }
 }
 
@@ -250,13 +262,21 @@ export class MysteryEncounterBattlePhase extends Phase {
     this.disableSwitch = disableSwitch;
   }
 
+  /**
+   * Sets up a ME battle
+   */
   start() {
     super.start();
 
     this.doMysteryEncounterBattle(this.scene);
   }
 
-  getBattleMessage(scene: BattleScene): string {
+  /**
+   * Gets intro battle message for new battle
+   * @param scene
+   * @private
+   */
+  private getBattleMessage(scene: BattleScene): string {
     const enemyField = scene.getEnemyField();
     const encounterMode = scene.currentBattle.mysteryEncounter!.encounterMode;
 
@@ -278,7 +298,12 @@ export class MysteryEncounterBattlePhase extends Phase {
       : i18next.t("battle:multiWildAppeared", { pokemonName1: enemyField[0].name, pokemonName2: enemyField[1].name });
   }
 
-  doMysteryEncounterBattle(scene: BattleScene) {
+  /**
+   * Queues SummonPhases for the new battle, and handles trainer animations/dialogue if Trainer battle
+   * @param scene
+   * @private
+   */
+  private doMysteryEncounterBattle(scene: BattleScene) {
     const encounterMode = scene.currentBattle.mysteryEncounter!.encounterMode;
     if (encounterMode === MysteryEncounterMode.WILD_BATTLE || encounterMode === MysteryEncounterMode.BOSS_BATTLE) {
       // Summons the wild/boss Pokemon
@@ -342,7 +367,12 @@ export class MysteryEncounterBattlePhase extends Phase {
     }
   }
 
-  endBattleSetup(scene: BattleScene) {
+  /**
+   * Initiate SummonPhases, scanner phases, PostSummon phases, etc.
+   * @param scene
+   * @private
+   */
+  private endBattleSetup(scene: BattleScene) {
     const enemyField = scene.getEnemyField();
     const encounterMode = scene.currentBattle.mysteryEncounter!.encounterMode;
 
@@ -385,11 +415,14 @@ export class MysteryEncounterBattlePhase extends Phase {
       }
     }
 
-    // TODO: remove?
-    handleTutorial(this.scene, Tutorial.Access_Menu).then(() => super.end());
+    this.end();
   }
 
-  showEnemyTrainer(): void {
+  /**
+   * Ease in enemy trainer
+   * @private
+   */
+  private showEnemyTrainer(): void {
     // Show enemy trainer
     const trainer = this.scene.currentBattle.trainer;
     if (!trainer) {
@@ -413,7 +446,7 @@ export class MysteryEncounterBattlePhase extends Phase {
     });
   }
 
-  hideEnemyTrainer(): void {
+  private hideEnemyTrainer(): void {
     this.scene.tweens.add({
       targets: this.scene.currentBattle.trainer,
       x: "+=16",
@@ -444,6 +477,9 @@ export class MysteryEncounterRewardsPhase extends Phase {
     this.addHealPhase = addHealPhase;
   }
 
+  /**
+   * Runs {@link MysteryEncounter.doContinueEncounter} and ends phase, OR {@link MysteryEncounter.onRewards} then continues encounter
+   */
   start() {
     super.start();
     const encounter = this.scene.currentBattle.mysteryEncounter!;
@@ -466,6 +502,9 @@ export class MysteryEncounterRewardsPhase extends Phase {
     }
   }
 
+  /**
+   * Queues encounter EXP and rewards phases, PostMysteryEncounterPhase, and ends phase
+   */
   doEncounterRewardsAndContinue() {
     const encounter = this.scene.currentBattle.mysteryEncounter!;
 
@@ -501,6 +540,9 @@ export class PostMysteryEncounterPhase extends Phase {
     this.onPostOptionSelect = this.scene.currentBattle.mysteryEncounter?.selectedOption?.onPostOptionPhase;
   }
 
+  /**
+   * Runs {@link MysteryEncounter.onPostOptionSelect} then continues encounter
+   */
   start() {
     super.start();
 
@@ -518,6 +560,9 @@ export class PostMysteryEncounterPhase extends Phase {
     }
   }
 
+  /**
+   * Queues NewBattlePhase, plays outro dialogue and ends phase
+   */
   continueEncounter() {
     const endPhase = () => {
       this.scene.pushPhase(new NewBattlePhase(this.scene));

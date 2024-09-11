@@ -13,7 +13,7 @@ import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import BattleScene from "#app/battle-scene";
 import MysteryEncounter, { MysteryEncounterBuilder } from "../mystery-encounter";
 import { MysteryEncounterOptionBuilder } from "../mystery-encounter-option";
-import { getEncounterText, queueEncounterMessage } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
+import { getEncounterText, queueEncounterMessage, showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import HeldModifierConfig from "#app/interfaces/held-modifier-config";
@@ -286,27 +286,33 @@ export const TrainingSessionEncounter: MysteryEncounter =
               ? pokemon.getFusionSpeciesForm()
               : pokemon.getSpeciesForm();
             const abilityCount = speciesForm.getAbilityCount();
-            const abilities = new Array(abilityCount)
+            const abilities: Ability[] = new Array(abilityCount)
               .fill(null)
               .map((val, i) => allAbilities[speciesForm.getAbility(i)]);
-            return abilities.map((ability: Ability, index) => {
-              const option: OptionSelectItem = {
-                label: ability.name,
-                handler: () => {
-                  // Pokemon and ability selected
-                  encounter.setDialogueToken("ability", ability.name);
-                  encounter.misc = {
-                    playerPokemon: pokemon,
-                    abilityIndex: index,
-                  };
-                  return true;
-                },
-                onHover: () => {
-                  scene.ui.showText(ability.description);
-                },
-              };
-              return option;
+
+            const optionSelectItems: OptionSelectItem[] = [];
+            abilities.forEach((ability: Ability, index) => {
+              if (!optionSelectItems.some(o => o.label === ability.name)) {
+                const option: OptionSelectItem = {
+                  label: ability.name,
+                  handler: () => {
+                    // Pokemon and ability selected
+                    encounter.setDialogueToken("ability", ability.name);
+                    encounter.misc = {
+                      playerPokemon: pokemon,
+                      abilityIndex: index,
+                    };
+                    return true;
+                  },
+                  onHover: () => {
+                    showEncounterText(scene, ability.description, 0);
+                  },
+                };
+                optionSelectItems.push(option);
+              }
             });
+
+            return optionSelectItems;
           };
 
           // Only Pokemon that are not KOed/legal can be trained

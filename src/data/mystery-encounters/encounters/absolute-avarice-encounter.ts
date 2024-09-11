@@ -486,7 +486,7 @@ function doBerrySpritePile(scene: BattleScene, isEat: boolean = false) {
   });
 }
 
-function doBerryBounce(scene: BattleScene, berrySprites: Phaser.GameObjects.Sprite[], yd: number, baseBounceDuration: integer) {
+function doBerryBounce(scene: BattleScene, berrySprites: Phaser.GameObjects.Sprite[], yd: number, baseBounceDuration: number) {
   let bouncePower = 1;
   let bounceYOffset = yd;
 
