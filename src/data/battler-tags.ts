@@ -1871,6 +1871,12 @@ export class CursedTag extends BattlerTag {
   }
 }
 
+export class DoubleShockedTag extends BattlerTag {
+  constructor() {
+    super(BattlerTagType.DOUBLE_SHOCKED, BattlerTagLapseType.CUSTOM, 1, Moves.DOUBLE_SHOCK);
+  }
+}
+
 export class BurnedUpTag extends BattlerTag {
   constructor() {
     super(BattlerTagType.BURNED_UP, BattlerTagLapseType.CUSTOM, 1, Moves.BURN_UP);
@@ -1941,7 +1947,7 @@ export class RoostedTag extends BattlerTag {
       if (this.isBasePureFlying && !isCurrentlyDualType) {
         modifiedTypes = [Type.NORMAL];
       } else {
-        if (!!pokemon.getTag(BurnedUpTag) && isOriginallyDualType && !isCurrentlyDualType) {
+        if ((!!pokemon.getTag(BurnedUpTag) || !!pokemon.getTag(DoubleShockedTag)) && isOriginallyDualType && !isCurrentlyDualType) {
           modifiedTypes = [Type.UNKNOWN];
         } else {
           modifiedTypes = currentTypes.filter(type => type !== Type.FLYING);
@@ -2315,9 +2321,11 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: number, source
   case BattlerTagType.IGNORE_FLYING:
     return new GroundedTag(tagType, BattlerTagLapseType.CUSTOM, sourceMove);
   case BattlerTagType.ROOSTED:
-    return new RoostedTag(tagType, BattlerTagLapseType.TURN_END, sourceMove);
+    return new RoostedTag();
   case BattlerTagType.BURNED_UP:
-    return new BurnedUpTag(tagType, BattlerTagLapseType.CUSTOM, sourceMove);
+    return new BurnedUpTag();
+  case BattlerTagType.DOUBLE_SHOCKED:
+    return new DoubleShockedTag();
   case BattlerTagType.SALT_CURED:
     return new SaltCuredTag(sourceId);
   case BattlerTagType.CURSED:

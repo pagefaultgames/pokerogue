@@ -31,7 +31,7 @@ describe("Moves - Roost", () => {
     game.override.startingLevel(100);
     game.override.enemyLevel(60);
     game.override.enemyMoveset(Moves.EARTHQUAKE);
-    game.override.moveset([Moves.ROOST, Moves.BURN_UP]);
+    game.override.moveset([Moves.ROOST, Moves.BURN_UP, Moves.DOUBLE_SHOCK]);
     game.override.starterForms({ [Species.ROTOM]: 4 });
   });
 
@@ -165,6 +165,44 @@ describe("Moves - Roost", () => {
       const playerPokemon = game.scene.getPlayerPokemon()!;
       const playerPokemonStartingHP = playerPokemon.hp;
       game.move.select(Moves.BURN_UP);
+      await game.phaseInterceptor.to(MoveEffectPhase);
+
+      // Should only be pure flying type after burn up
+      let playerPokemonTypes = playerPokemon.getTypes();
+      expect(playerPokemonTypes[0] === Type.FLYING).toBeTruthy();
+      expect(playerPokemonTypes.length === 1).toBeTruthy();
+
+      await game.phaseInterceptor.to(TurnEndPhase);
+      game.move.select(Moves.ROOST);
+      await game.phaseInterceptor.to(MoveEffectPhase);
+
+      // Should only be typeless type after roost and is grounded
+      playerPokemonTypes = playerPokemon.getTypes();
+      expect(playerPokemon.getTag(BattlerTagType.ROOSTED)).toBeDefined();
+      expect(playerPokemonTypes[0] === Type.UNKNOWN).toBeTruthy();
+      expect(playerPokemonTypes.length === 1).toBeTruthy();
+      expect(playerPokemon.isGrounded()).toBeTruthy();
+
+      await game.phaseInterceptor.to(TurnEndPhase);
+
+      // Should go back to being pure flying and have taken damage from earthquake, and is ungrounded again
+      playerPokemonTypes = playerPokemon.getTypes();
+      expect(playerPokemon.hp).toBeLessThan(playerPokemonStartingHP);
+      expect(playerPokemonTypes[0] === Type.FLYING).toBeTruthy();
+      expect(playerPokemonTypes.length === 1).toBeTruthy();
+      expect(playerPokemon.isGrounded()).toBeFalsy();
+
+    }, TIMEOUT
+  );
+
+  test(
+    "An electric/flying type that uses double shock, then roost should be typeless until end of turn",
+    async () => {
+      game.override.enemySpecies(Species.ZEKROM);
+      await game.classicMode.startBattle([Species.ZAPDOS]);
+      const playerPokemon = game.scene.getPlayerPokemon()!;
+      const playerPokemonStartingHP = playerPokemon.hp;
+      game.move.select(Moves.DOUBLE_SHOCK);
       await game.phaseInterceptor.to(MoveEffectPhase);
 
       // Should only be pure flying type after burn up
