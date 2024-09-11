@@ -1,9 +1,9 @@
 {
   "hitWithRecoil": "{{pokemonName}} est blessé par le contrecoup !",
-  "cutHpPowerUpMove": "{{pokemonName}} sacrifie des PV\net augmente la puissance ses capacités !",
+  "cutHpPowerUpMove": "{{pokemonName}} sacrifie des PV\net augmente la puissance de ses capacités !",
   "absorbedElectricity": "{{pokemonName}} absorbe de l’électricité !",
   "switchedStatChanges": "{{pokemonName}} permute\nles changements de stats avec ceux de sa cible !",
-  "switchedTwoStatChanges": "{{pokemonName}} permute les changements de {{firstStat} et de {{secondStat}} avec ceux de sa cible !",
+  "switchedTwoStatChanges": "{{pokemonName}} permute les changements de {{firstStat}} et de {{secondStat}} avec ceux de sa cible !",
   "switchedStat": "{{pokemonName}} et sa cible échangent leur {{stat}} !",
   "sharedGuard": "{{pokemonName}} additionne sa garde à celle de sa cible et redistribue le tout équitablement !",
   "sharedPower": "{{pokemonName}} additionne sa force à celle de sa cible et redistribue le tout équitablement !",
@@ -66,5 +66,6 @@
   "revivalBlessing": "{{pokemonName}} a repris connaissance\net est prêt à se battre de nouveau !",
   "swapArenaTags": "Les effets affectant chaque côté du terrain\nont été échangés par {{pokemonName}} !",
   "exposedMove": "{{targetPokemonName}} est identifié\npar {{pokemonName}} !",
-  "safeguard": "{{targetName}} est protégé\npar la capacité Rune Protect !"
+  "safeguard": "{{targetName}} est protégé\npar la capacité Rune Protect !",
+  "afterYou": "{{pokemonName}} accepte\navec joie !"
 }
