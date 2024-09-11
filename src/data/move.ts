@@ -4747,7 +4747,7 @@ export class AddArenaTagAttr extends MoveEffectAttr {
       return false;
     }
 
-    if (move.chance < 0 || move.chance === 100 || user.randSeedInt(100) < move.chance) {
+    if ((move.chance < 0 || move.chance === 100 || user.randSeedInt(100) < move.chance) && user.getLastXMoves(1)[0].result === MoveResult.SUCCESS) {
       user.scene.arena.addTag(this.tagType, this.turnCount, move.id, user.id, (this.selfSideTarget ? user : target).isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY);
       return true;
     }
@@ -7417,6 +7417,7 @@ export function initMoves() {
       .attr(HighCritAttr)
       .attr(StatusEffectAttr, StatusEffect.BURN),
     new StatusMove(Moves.MUD_SPORT, Type.GROUND, -1, 15, -1, 0, 3)
+      .ignoresProtect()
       .attr(AddArenaTagAttr, ArenaTagType.MUD_SPORT, 5)
       .target(MoveTarget.BOTH_SIDES),
     new AttackMove(Moves.ICE_BALL, Type.ICE, MoveCategory.PHYSICAL, 30, 90, 20, -1, 0, 3)
@@ -7541,6 +7542,7 @@ export function initMoves() {
       .recklessMove(),
     new AttackMove(Moves.MAGICAL_LEAF, Type.GRASS, MoveCategory.SPECIAL, 60, -1, 20, -1, 0, 3),
     new StatusMove(Moves.WATER_SPORT, Type.WATER, -1, 15, -1, 0, 3)
+      .ignoresProtect()
       .attr(AddArenaTagAttr, ArenaTagType.WATER_SPORT, 5)
       .target(MoveTarget.BOTH_SIDES),
     new SelfStatusMove(Moves.CALM_MIND, Type.PSYCHIC, -1, 20, -1, 0, 3)
@@ -7569,6 +7571,7 @@ export function initMoves() {
       .attr(AddBattlerTagAttr, BattlerTagType.ROOSTED, true, false)
       .triageMove(),
     new StatusMove(Moves.GRAVITY, Type.PSYCHIC, -1, 5, -1, 0, 4)
+      .ignoresProtect()
       .attr(AddArenaTagAttr, ArenaTagType.GRAVITY, 5)
       .target(MoveTarget.BOTH_SIDES),
     new StatusMove(Moves.MIRACLE_EYE, Type.PSYCHIC, -1, 40, -1, 0, 4)
