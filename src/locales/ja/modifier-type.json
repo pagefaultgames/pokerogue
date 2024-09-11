@@ -2,84 +2,84 @@
   "ModifierType": {
     "AddPokeballModifierType": {
       "name": "{{modifierCount}}x {{pokeballName}}",
-      "description": "{{pokeballName}} x{{modifierCount}}こ てにいれる (インベントリ: {{pokeballAmount}}) \nほそくりつ: {{catchRate}}"
+      "description": "{{pokeballName}}を　{{modifierCount}}個　手に入れる　(所有: {{pokeballAmount}})\n捕捉率：{{catchRate}}"
     },
     "AddVoucherModifierType": {
       "name": "{{modifierCount}}x {{voucherTypeName}}",
-      "description": "{{voucherTypeName}} x{{modifierCount}}こ てにいれる"
+      "description": "{{voucherTypeName}}を {{modifierCount}}個 手に入れる"
     },
     "PokemonHeldItemModifierType": {
       "extra": {
-        "inoperable": "{{pokemonName}} はこのアイテムを\nもつことができません！",
-        "tooMany": "{{pokemonName}} はこのアイテムを\nもちすぎています！"
+        "inoperable": "{{pokemonName}}は　このアイテムを\n持つ　ことが　できません！",
+        "tooMany": "{{pokemonName}}は　このアイテムを\n持ちすぎています！"
       }
     },
     "PokemonHpRestoreModifierType": {
-      "description": "ポケモンの HPを {{restorePoints}} または {{restorePercent}}%のどちらか たかいほうを かいふくする",
+      "description": "ポケモン　一匹の　{{restorePoints}}HP、または　{{restorePercent}}%　のどちらかは　高いほうを　回復する",
       "extra": {
-        "fully": "ポケモンのHPをすべてかいふくする",
-        "fullyWithStatus": "ポケモンの HPと じょうたいいじょうを かいふくする"
+        "fully": "ポケモン 1匹の HPを すべて 回復する",
+        "fullyWithStatus": "ポケモン　1匹の　HPと　状態異常を　すべて　回復する"
       }
     },
     "PokemonReviveModifierType": {
-      "description": "ひんしになってしまったポケモンの HP {{restorePercent}}%を かいふくする"
+      "description": "ひんしに　なった　ポケモン　1匹を　元気にした上で\nHPを　{{restorePercent}}%　回復する"
     },
     "PokemonStatusHealModifierType": {
-      "description": "すべてのじょうたいいじょうを なおす"
+      "description": "ポケモン　1匹の　状態の　異常を　すべて　回復する"
     },
     "PokemonPpRestoreModifierType": {
-      "description": "ポケモンが おぼえている わざの PPを {{restorePoints}}ずつ かいふくする",
+      "description": "ポケモンが　覚えている　技のうち　1つの　PPを　10だけ　回復する",
       "extra": {
-        "fully": "ポケモンが おぼえている わざの PPを すべて かいふくする"
+        "fully": "ポケモンが　覚えている　技のうち　1つの　PPを　すべて　回復する"
       }
     },
     "PokemonAllMovePpRestoreModifierType": {
-      "description": "ポケモンが おぼえている 4つの わざの PPを {{restorePoints}}ずつ かいふくする",
+      "description": "ポケモンが　覚えている　4つの　技の　PPを　{{restorePoints}}ずつ　回復する",
       "extra": {
-        "fully": "ポケモンが おぼえている 4つの わざの PPを すべて かいふくする"
+        "fully": "ポケモンが　覚えている　4つの　技の　PPを　すべて　回復する"
       }
     },
     "PokemonPpUpModifierType": {
-      "description": "ポケモンのわざのさいだいPPを さいだいPP 5ごとに {{upPoints}} ポイントずつ ふやします（さいだい3）"
+      "description": "ポケモンが　覚えている　技のうち　1つの　PPの　最大値を　5ごとに　{{upPoints}}ポイントずつ　上げる（最大3）"
     },
     "PokemonNatureChangeModifierType": {
-      "name": "{{natureName}} Mint",
-      "description": "ポケモンのせいかくを {{natureName}}にかえて スターターのせいかくをえいきゅうにかいじょする"
+      "name": "{{natureName}}ミント",
+      "description": "ポケモン　1匹の　性格を　「{{natureName}}」に　変える。\nその上、スターター画面でも　{{natureName}}が　選べるように　なる。"
     },
     "DoubleBattleChanceBoosterModifierType": {
       "description": "バトル{{battleCount}}回の間 　ダブルバトルになる　　確率を　4倍に　する"
     },
     "TempStatStageBoosterModifierType": {
-      "description": "全員の　手持ちポケモンの　{{stat}}を　最大５回の　バトルの間に　{{amount}}あげる.",
+      "description": "全員の　手持ちポケモンの　{{stat}}を　最大５回の　バトルの間に　{{amount}}　上げる",
       "extra": {
-        "stage": "１段階",
-        "percentage": "３０％"
+        "stage": "1段階",
+        "percentage": "30%"
       }
     },
     "AttackTypeBoosterModifierType": {
-      "description": "ポケモンの {{moveType}}タイプのわざのいりょくを20パーセントあげる"
+      "description": "ポケモンの　{{moveType}}タイプの　技の　威力を　20%　上げる"
     },
     "PokemonLevelIncrementModifierType": {
-      "description": "ポケモンのレベルを1あげる"
+      "description": "ポケモンの　レベルを　{{levels}}　上げる"
     },
     "AllPokemonLevelIncrementModifierType": {
-      "description": "すべてのパーティメンバーのレベルを1あげる"
+      "description": "手持ちポケモンの　全員のレベルを　{{levels}}　上げる"
     },
     "BaseStatBoosterModifierType": {
-      "description": "ポケモンの{{stat}}のきほんステータスを10パーセントあげる。こたいちがたかいほどスタックのげんかいもたかくなる。"
+      "description": "ポケモンの　基本の{{stat}}を　10%　あげる。\n固体値が　高けば高いほど　持てる限界が　上がる
     },
     "AllPokemonFullHpRestoreModifierType": {
-      "description": "すべてのポケモンのHPを100パーセントかいふくする"
+      "description": "手持ちポケモン 全員の HPを すべて 回復する"
     },
     "AllPokemonFullReviveModifierType": {
-      "description": "ひんしになったすべてのポケモンをふっかつさせ HPをぜんかいふくする"
+      "description": "ひんしに　なってしまった　ポケモン　全員の　HPを　すべて　回復する"
     },
     "MoneyRewardModifierType": {
-      "description": "{{moneyMultiplier}}ぶんのきんがくをあたえる (₽{{moneyAmount}})",
+      "description": "{{moneyMultiplier}}額の　円を　与える（{{moneyAmount}}円）",
       "extra": {
-        "small": "すくない",
-        "moderate": "ふつう",
-        "large": "おおい"
+        "small": "小",
+        "moderate": "普通の　金",
+        "large": "多"
       }
     },
     "ExpBoosterModifierType": {
