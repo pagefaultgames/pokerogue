@@ -1,7 +1,7 @@
 {
   "intro": "Quelqu’un à l’air très balèze s’apporche de vous…",
   "buck": {
-    "intro_dialogue": "Oh, salut toi , je suis Cornil !$J’ai une bonne affaire à proposer\npour quelqu’un d’aussi costaud que toi !$J’ai deux Œufs de Pokémon sur moi,\net j’aimerais que quelqu’un prenne soin d’un.$Si t’arrives à me prouver que t’en est digne,\nje te donne l’Œuf le plus rare !",
+    "intro_dialogue": "Oh, salut toi, je suis Cornil !$J’ai une bonne affaire à proposer\npour quelqu’un d’aussi costaud que toi !$J’ai deux Œufs de Pokémon sur moi,\net j’aimerais que quelqu’un prenne soin d’un.$Si t’arrives à me prouver que t’en est digne,\nje te donne l’Œuf le plus rare !",
     "accept": "Hé, hé hé ! Tu mets le feu !",
 	"decline": "Hé ! Ton équipe\nn’a pas l’air au meilleur de sa forme.$Attends, laisse-moi t’aider."
   },
