@@ -5,7 +5,7 @@ import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Battle Mechanics - Damage Calculation", () => {
   let phaserGame: Phaser.Game;
@@ -32,6 +32,20 @@ describe("Battle Mechanics - Damage Calculation", () => {
       .enemyLevel(100)
       .disableCrits()
       .moveset([Moves.TACKLE, Moves.DRAGON_RAGE, Moves.FISSURE, Moves.JUMP_KICK]);
+  });
+
+  it("Tackle deals expected base damage", async () => {
+    await game.classicMode.startBattle([Species.CHARIZARD]);
+
+    const playerPokemon = game.scene.getPlayerPokemon()!;
+    vi.spyOn(playerPokemon, "getEffectiveStat").mockReturnValue(80);
+
+    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    vi.spyOn(enemyPokemon, "getEffectiveStat").mockReturnValue(90);
+
+    // expected base damage = [(2*level/5 + 2) * power * playerATK / enemyDEF / 50] + 2
+    //                      = 31.8666...
+    expect(enemyPokemon.getAttackDamage(playerPokemon, allMoves[Moves.TACKLE]).damage).toBeCloseTo(31);
   });
 
   it("Attacks deal 1 damage at minimum", async () => {
