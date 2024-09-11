@@ -1,6 +1,6 @@
 {
-  "paid_money": "You paid ₽{{amount, number}}.",
-  "receive_money": "You received ₽{{amount, number}}!",
+  "paid_money": "₽{{amount, number}}[[를]] 를 지불했다.",
+  "receive_money": "₽{{amount, number}}[[를]] 받았다!",
   "affects_pokedex": "Affects Pokédex Data",
   "cancel_option": "Return to encounter option select."
 }
