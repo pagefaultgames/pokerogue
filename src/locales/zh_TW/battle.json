@@ -9,6 +9,13 @@
   "trainerComeBack": "{{trainerName}}收回了{{pokemonName}}！",
   "playerGo": "去吧！{{pokemonName}}！",
   "trainerGo": "{{trainerName}}派出了\n{{pokemonName}}！",
+  "trainerSendOut": "{{trainerName}}派出了\n{{pokemonName}}！",
+  "singleWildAppeared": "一只野生的{{pokemonName}}出現了！",
+  "multiWildAppeared": "野生的{{pokemonName1}}\n和{{pokemonName2}}出現了！",
+  "playerComeBack": "回來吧，{{pokemonName}}！",
+  "trainerComeBack": "{{trainerName}}收回了{{pokemonName}}！",
+  "playerGo": "去吧！{{pokemonName}}！",
+  "trainerGo": "{{trainerName}}派出了\n{{pokemonName}}！",
   "switchQuestion": "要更換\n{{pokemonName}}嗎？",
   "trainerDefeated": "你擊敗了\n{{trainerName}}！",
   "moneyWon": "你贏得了\n₽{{moneyAmount}}！",
@@ -62,39 +69,30 @@
   "skipItemQuestion": "你確定要跳過拾取道具嗎？",
   "itemStackFull": "{{fullItemName}}持有數達到上限，\n你獲得了{{itemName}}作爲替代。",
   "eggHatching": "咦？",
-  
+  "stealEatBerry": "{{pokemonName}}奪取並吃掉了\n{{targetName}}的{{berryName}}！",
+  "ppHealBerry": "{{pokemonNameWithAffix}}用{{berryName}}\n回複了{{moveName}}的PP！",
+  "hpHealBerry": "{{pokemonNameWithAffix}}用{{berryName}}\n回複了體力！",
   "ivScannerUseQuestion": "對{{pokemonName}}使用個體值掃描儀？",
   "wildPokemonWithAffix": "野生的{{pokemonName}}",
   "foePokemonWithAffix": "對手的{{pokemonName}}",
   "useMove": "{{pokemonNameWithAffix}}使用了\n{{moveName}}！",
   "drainMessage": "{{pokemonName}}\n吸取了體力！",
   "regainHealth": "{{pokemonName}}\n回複了體力！",
-  "stealEatBerry": "{{pokemonName}}奪取並吃掉了\n{{targetName}}的{{berryName}}！",
-  "ppHealBerry": "{{pokemonNameWithAffix}}用{{berryName}}\n回複了{{moveName}}的PP！",
-  "hpHealBerry": "{{pokemonNameWithAffix}}用{{berryName}}\n回複了體力！",
   "fainted": "{{pokemonNameWithAffix}}\n倒下了！",
   "statsAnd": "和",
   "stats": "能力",
-
   "statRose_other": "{{pokemonNameWithAffix}}的{{stats}}提高了！",
-  
   "statSharplyRose_other": "{{pokemonNameWithAffix}}的{{stats}}大幅提高了！",
-  
   "statRoseDrastically_other": "{{pokemonNameWithAffix}}的{{stats}}極大幅提高了！",
-
   "statWontGoAnyHigher_other": "{{pokemonNameWithAffix}}的{{stats}}已經無法再提高了！",
-
   "statFell_other": "{{pokemonNameWithAffix}}的{{stats}}降低了！",
-  
   "statHarshlyFell_other": "{{pokemonNameWithAffix}}的{{stats}}大幅降低了！",
-  
   "statSeverelyFell_other": "{{pokemonNameWithAffix}}的{{stats}}極大幅降低了！",
-  
   "statWontGoAnyLower_other": "{{pokemonNameWithAffix}}的{{stats}}已經無法再降低了！",
   "transformedIntoType": "{{pokemonName}}變成了\n{{type}}屬性！",
+  "ppReduced": "降低了{{targetName}}的\n{{moveName}}的PP{{reduction}}點！",
   "retryBattle": "你要從對戰開始時重試麽？",
   "unlockedSomething": "{{unlockedThing}}\n已解鎖。",
   "congratulations": "恭喜！",
   "beatModeFirstTime": "{{speciesName}}首次擊敗了{{gameMode}}！\n你獲得了{{newModifier}}！",
-  "ppReduced": "降低了{{targetName}}的\n{{moveName}}的PP{{reduction}}點！"
 }
