@@ -1,14 +1,15 @@
 import BBCodeText from "phaser3-rex-plugins/plugins/gameobjects/tagtext/bbcodetext/BBCodeText";
 import BattleScene from "../battle-scene";
-import { Stat, getStatName } from "../data/pokemon-stat";
 import { TextStyle, addBBCodeTextObject, addTextObject, getTextColor } from "./text";
+import { PERMANENT_STATS, getStatKey } from "#app/enums/stat";
+import i18next from "i18next";
 
 const ivChartSize = 24;
 const ivChartStatCoordMultipliers = [[0, -1], [0.825, -0.5], [0.825, 0.5], [-0.825, -0.5], [-0.825, 0.5], [0, 1]];
 const speedLabelOffset = -3;
 const sideLabelOffset = 1;
 const ivLabelOffset = [0, sideLabelOffset, -sideLabelOffset, sideLabelOffset, -sideLabelOffset, speedLabelOffset];
-const ivChartStatIndexes = [0,1,2,5,4,3]; // swap special attack and speed
+const ivChartStatIndexes = [0, 1, 2, 5, 4, 3]; // swap special attack and speed
 const defaultIvChartData = new Array(12).fill(null).map(() => 0);
 
 export class StatsContainer extends Phaser.GameObjects.Container {
@@ -26,7 +27,7 @@ export class StatsContainer extends Phaser.GameObjects.Container {
   }
 
   setup() {
-    this.setName("container-stats");
+    this.setName("stats");
     const ivChartBgData = new Array(6).fill(null).map((_, i: integer) => [ ivChartSize * ivChartStatCoordMultipliers[ivChartStatIndexes[i]][0], ivChartSize * ivChartStatCoordMultipliers[ivChartStatIndexes[i]][1] ] ).flat();
 
     const ivChartBg = this.scene.add.polygon(48, 44, ivChartBgData, 0xd8e0f0, 0.625);
@@ -53,16 +54,16 @@ export class StatsContainer extends Phaser.GameObjects.Container {
 
     this.ivStatValueTexts = [];
 
-    new Array(6).fill(null).map((_, i: integer) => {
-      const statLabel = addTextObject(this.scene, ivChartBg.x + (ivChartSize) * ivChartStatCoordMultipliers[i][0] * 1.325, ivChartBg.y + (ivChartSize) * ivChartStatCoordMultipliers[i][1] * 1.325 - 4 + ivLabelOffset[i], getStatName(i as Stat), TextStyle.TOOLTIP_CONTENT);
+    for (const s of PERMANENT_STATS) {
+      const statLabel = addTextObject(this.scene, ivChartBg.x + (ivChartSize) * ivChartStatCoordMultipliers[s][0] * 1.325, ivChartBg.y + (ivChartSize) * ivChartStatCoordMultipliers[s][1] * 1.325 - 4 + ivLabelOffset[s], i18next.t(getStatKey(s)), TextStyle.TOOLTIP_CONTENT);
       statLabel.setOrigin(0.5);
 
-      this.ivStatValueTexts[i] = addBBCodeTextObject(this.scene, statLabel.x, statLabel.y + 8, "0", TextStyle.TOOLTIP_CONTENT);
-      this.ivStatValueTexts[i].setOrigin(0.5);
+      this.ivStatValueTexts[s] = addBBCodeTextObject(this.scene, statLabel.x, statLabel.y + 8, "0", TextStyle.TOOLTIP_CONTENT);
+      this.ivStatValueTexts[s].setOrigin(0.5);
 
       this.add(statLabel);
-      this.add(this.ivStatValueTexts[i]);
-    });
+      this.add(this.ivStatValueTexts[s]);
+    }
   }
 
   updateIvs(ivs: integer[], originalIvs?: integer[]): void {

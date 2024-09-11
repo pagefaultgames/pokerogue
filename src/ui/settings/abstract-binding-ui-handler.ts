@@ -5,6 +5,9 @@ import {addWindow} from "../ui-theme";
 import {addTextObject, TextStyle} from "../text";
 import {Button} from "#enums/buttons";
 import {NavigationManager} from "#app/ui/settings/navigationMenu";
+import i18next from "i18next";
+
+type CancelFn = (succes?: boolean) => boolean;
 
 /**
  * Abstract class for handling UI elements related to button bindings.
@@ -34,7 +37,7 @@ export default abstract class AbstractBindingUiHandler extends UiHandler {
   protected targetButtonIcon: Phaser.GameObjects.Sprite;
 
   // Function to call on cancel or completion of binding.
-  protected cancelFn: (boolean?) => boolean;
+  protected cancelFn: CancelFn | null;
   abstract swapAction(): boolean;
 
   protected timeLeftAutoClose: number = 5;
@@ -49,7 +52,7 @@ export default abstract class AbstractBindingUiHandler extends UiHandler {
      * @param scene - The BattleScene instance.
      * @param mode - The UI mode.
      */
-  constructor(scene: BattleScene, mode?: Mode) {
+  constructor(scene: BattleScene, mode: Mode | null = null) {
     super(scene, mode);
   }
 
@@ -78,7 +81,7 @@ export default abstract class AbstractBindingUiHandler extends UiHandler {
     this.actionsContainer.add(this.actionBg);
 
     // Text prompts and instructions for the user.
-    this.unlockText = addTextObject(this.scene, 0, 0, "Press a button...", TextStyle.WINDOW);
+    this.unlockText = addTextObject(this.scene, 0, 0, i18next.t("settings:pressButton"), TextStyle.WINDOW);
     this.unlockText.setOrigin(0, 0);
     this.unlockText.setPositionRelative(this.titleBg, 36, 4);
     this.optionSelectContainer.add(this.unlockText);
@@ -92,7 +95,7 @@ export default abstract class AbstractBindingUiHandler extends UiHandler {
     this.optionSelectBg.setOrigin(0.5);
     this.optionSelectContainer.add(this.optionSelectBg);
 
-    this.cancelLabel = addTextObject(this.scene, 0, 0, "Cancel", TextStyle.SETTINGS_LABEL);
+    this.cancelLabel = addTextObject(this.scene, 0, 0, i18next.t("settings:back"), TextStyle.SETTINGS_LABEL);
     this.cancelLabel.setOrigin(0, 0.5);
     this.cancelLabel.setPositionRelative(this.actionBg, 10, this.actionBg.height / 2);
     this.actionsContainer.add(this.cancelLabel);
@@ -106,7 +109,7 @@ export default abstract class AbstractBindingUiHandler extends UiHandler {
       if (this.timeLeftAutoClose >= 0) {
         this.manageAutoCloseTimer();
       } else {
-        this.cancelFn();
+        this.cancelFn && this.cancelFn();
       }
     }, 1000);
   }
@@ -162,7 +165,7 @@ export default abstract class AbstractBindingUiHandler extends UiHandler {
      */
   processInput(button: Button): boolean {
     if (this.buttonPressed === null) {
-      return;
+      return false; // TODO: is false correct as default? (previously was `undefined`)
     }
     const ui = this.getUi();
     let success = false;
@@ -176,11 +179,11 @@ export default abstract class AbstractBindingUiHandler extends UiHandler {
     case Button.ACTION:
       // Process actions based on current cursor position.
       if (this.cursor === 0) {
-        this.cancelFn();
+        this.cancelFn && this.cancelFn();
       } else {
         success = this.swapAction();
         NavigationManager.getInstance().updateIcons();
-        this.cancelFn(success);
+        this.cancelFn && this.cancelFn(success);
       }
       break;
     }
@@ -241,7 +244,7 @@ export default abstract class AbstractBindingUiHandler extends UiHandler {
      * @param assignedButtonIcon - The icon of the button that is assigned.
      * @param type - The type of button press.
      */
-  onInputDown(buttonIcon: string, assignedButtonIcon: string, type: string): void {
+  onInputDown(buttonIcon: string, assignedButtonIcon: string | null, type: string): void {
     clearTimeout(this.countdownTimer);
     this.timerText.setText("");
     this.newButtonIcon.setTexture(type);

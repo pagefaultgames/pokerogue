@@ -8,7 +8,8 @@ import * as Utils from "../utils";
 import { DexAttr, GameData } from "../system/game-data";
 import { speciesStarters } from "../data/pokemon-species";
 import {Button} from "#enums/buttons";
-import i18next from "../plugins/i18n";
+import i18next from "i18next";
+import { UiTheme } from "#app/enums/ui-theme";
 
 interface DisplayStat {
   label_key?: string;
@@ -218,7 +219,10 @@ export default class GameStatsUiHandler extends UiHandler {
   private statLabels: Phaser.GameObjects.Text[];
   private statValues: Phaser.GameObjects.Text[];
 
-  constructor(scene: BattleScene, mode?: Mode) {
+  private arrowUp: Phaser.GameObjects.Sprite;
+  private arrowDown: Phaser.GameObjects.Sprite;
+
+  constructor(scene: BattleScene, mode: Mode | null = null) {
     super(scene, mode);
 
     this.statLabels = [];
@@ -241,11 +245,9 @@ export default class GameStatsUiHandler extends UiHandler {
 
     const statsBgWidth = ((this.scene.game.canvas.width / 6) - 2) / 2;
     const [ statsBgLeft, statsBgRight ] = new Array(2).fill(null).map((_, i) => {
-      let width = statsBgWidth;
-      if (!i) {
-        width += 5;
-      }
-      const statsBg = addWindow(this.scene, statsBgWidth * i, headerBg.height, width, (this.scene.game.canvas.height / 6) - headerBg.height - 2, false, !!i, 2);
+      const width = statsBgWidth + 2;
+      const height = Math.floor((this.scene.game.canvas.height / 6) - headerBg.height - 2);
+      const statsBg = addWindow(this.scene, (statsBgWidth - 2) * i, headerBg.height, width, height, false, false, i>0?-3:0, 1);
       statsBg.setOrigin(0, 0);
       return statsBg;
     });
@@ -272,6 +274,14 @@ export default class GameStatsUiHandler extends UiHandler {
     this.gameStatsContainer.add(statsBgRight);
     this.gameStatsContainer.add(this.statsContainer);
 
+    // arrows to show that we can scroll through the stats
+    const isLegacyTheme = this.scene.uiTheme === UiTheme.LEGACY;
+    this.arrowDown = this.scene.add.sprite(statsBgWidth, this.scene.game.canvas.height / 6 - (isLegacyTheme? 9 : 5), "prompt");
+    this.gameStatsContainer.add(this.arrowDown);
+    this.arrowUp = this.scene.add.sprite(statsBgWidth, headerBg.height + (isLegacyTheme? 7 : 3), "prompt");
+    this.arrowUp.flipY = true;
+    this.gameStatsContainer.add(this.arrowUp);
+
     ui.add(this.gameStatsContainer);
 
     this.setCursor(0);
@@ -286,6 +296,15 @@ export default class GameStatsUiHandler extends UiHandler {
 
     this.updateStats();
 
+    this.arrowUp.play("prompt");
+    this.arrowDown.play("prompt");
+    if (this.scene.uiTheme === UiTheme.LEGACY) {
+      this.arrowUp.setTint(0x484848);
+      this.arrowDown.setTint(0x484848);
+    }
+
+    this.updateArrows();
+
     this.gameStatsContainer.setVisible(true);
 
     this.getUi().moveTo(this.gameStatsContainer, this.getUi().length - 1);
@@ -299,7 +318,7 @@ export default class GameStatsUiHandler extends UiHandler {
     const statKeys = Object.keys(displayStats).slice(this.cursor * 2, this.cursor * 2 + 18);
     statKeys.forEach((key, s) => {
       const stat = displayStats[key] as DisplayStat;
-      const value = stat.sourceFunc(this.scene.gameData);
+      const value = stat.sourceFunc!(this.scene.gameData); // TODO: is this bang correct?
       this.statLabels[s].setText(!stat.hidden || isNaN(parseInt(value)) || parseInt(value) ? i18next.t(`gameStatsUiHandler:${stat.label_key}`) : "???");
       this.statValues[s].setText(value);
     });
@@ -309,6 +328,17 @@ export default class GameStatsUiHandler extends UiHandler {
         this.statValues[s].setText("");
       }
     }
+  }
+
+  /**
+   * Show arrows at the top / bottom of the page if it's possible to scroll in that direction
+   */
+  updateArrows(): void {
+    const showUpArrow = this.cursor > 0;
+    this.arrowUp.setVisible(showUpArrow);
+
+    const showDownArrow = this.cursor < Math.ceil((Object.keys(displayStats).length - 18) / 2);
+    this.arrowDown.setVisible(showDownArrow);
   }
 
   processInput(button: Button): boolean {
@@ -346,6 +376,7 @@ export default class GameStatsUiHandler extends UiHandler {
 
     if (ret) {
       this.updateStats();
+      this.updateArrows();
     }
 
     return ret;

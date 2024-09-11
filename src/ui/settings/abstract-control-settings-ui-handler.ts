@@ -8,6 +8,7 @@ import {getIconWithSettingName} from "#app/configs/inputs/configHandler";
 import NavigationMenu, {NavigationManager} from "#app/ui/settings/navigationMenu";
 import { Device } from "#enums/devices";
 import { Button } from "#enums/buttons";
+import i18next from "i18next";
 
 export interface InputsIcons {
     [key: string]: Phaser.GameObjects.Sprite;
@@ -32,7 +33,7 @@ export default abstract class AbstractControlSettingsUiHandler extends UiHandler
 
   protected scrollCursor: integer;
   protected optionCursors: integer[];
-  protected cursorObj: Phaser.GameObjects.NineSlice;
+  protected cursorObj: Phaser.GameObjects.NineSlice | null;
 
   protected optionsBg: Phaser.GameObjects.NineSlice;
   protected actionsBg: Phaser.GameObjects.NineSlice;
@@ -72,15 +73,21 @@ export default abstract class AbstractControlSettingsUiHandler extends UiHandler
    * @param scene - The BattleScene instance.
    * @param mode - The UI mode.
    */
-  constructor(scene: BattleScene, mode?: Mode) {
+  constructor(scene: BattleScene, mode: Mode | null = null) {
     super(scene, mode);
     this.rowsToDisplay = 8;
   }
 
   getLocalStorageSetting(): object {
     // Retrieve the settings from local storage or use an empty object if none exist.
-    const settings: object = localStorage.hasOwnProperty(this.localStoragePropertyName) ? JSON.parse(localStorage.getItem(this.localStoragePropertyName)) : {};
+    const settings: object = localStorage.hasOwnProperty(this.localStoragePropertyName) ? JSON.parse(localStorage.getItem(this.localStoragePropertyName)!) : {}; // TODO: is this bang correct?
     return settings;
+  }
+
+  private camelize(string: string): string {
+    return string.replace(/(?:^\w|[A-Z]|\b\w)/g, function(word, index) {
+      return index === 0 ? word.toLowerCase() : word.toUpperCase();
+    }).replace(/\s+/g, "");
   }
 
   /**
@@ -91,6 +98,7 @@ export default abstract class AbstractControlSettingsUiHandler extends UiHandler
     this.navigationIcons = {};
 
     this.settingsContainer = this.scene.add.container(1, -(this.scene.game.canvas.height / 6) + 1);
+    this.settingsContainer.setName(`settings-${this.titleSelected}`);
 
     this.settingsContainer.setInteractive(new Phaser.Geom.Rectangle(0, 0, this.scene.game.canvas.width / 6, this.scene.game.canvas.height / 6), Phaser.Geom.Rectangle.Contains);
 
@@ -108,7 +116,7 @@ export default abstract class AbstractControlSettingsUiHandler extends UiHandler
     iconAction.setPositionRelative(this.actionsBg, this.navigationContainer.width - 32, 4);
     this.navigationIcons["BUTTON_ACTION"] = iconAction;
 
-    const actionText = addTextObject(this.scene, 0, 0, "Action", TextStyle.SETTINGS_LABEL);
+    const actionText = addTextObject(this.scene, 0, 0, i18next.t("settings:action"), TextStyle.SETTINGS_LABEL);
     actionText.setOrigin(0, 0.15);
     actionText.setPositionRelative(iconAction, -actionText.width/6-2, 0);
 
@@ -117,7 +125,7 @@ export default abstract class AbstractControlSettingsUiHandler extends UiHandler
     iconCancel.setPositionRelative(this.actionsBg, this.navigationContainer.width - 100, 4);
     this.navigationIcons["BUTTON_CANCEL"] = iconCancel;
 
-    const cancelText = addTextObject(this.scene, 0, 0, "Cancel", TextStyle.SETTINGS_LABEL);
+    const cancelText = addTextObject(this.scene, 0, 0, i18next.t("settings:back"), TextStyle.SETTINGS_LABEL);
     cancelText.setOrigin(0, 0.15);
     cancelText.setPositionRelative(iconCancel, -cancelText.width/6-2, 0);
 
@@ -126,7 +134,7 @@ export default abstract class AbstractControlSettingsUiHandler extends UiHandler
     iconReset.setPositionRelative(this.actionsBg, this.navigationContainer.width - 180, 4);
     this.navigationIcons["BUTTON_HOME"] = iconReset;
 
-    const resetText = addTextObject(this.scene, 0, 0, "Reset all", TextStyle.SETTINGS_LABEL);
+    const resetText = addTextObject(this.scene, 0, 0, i18next.t("settings:reset"), TextStyle.SETTINGS_LABEL);
     resetText.setOrigin(0, 0.15);
     resetText.setPositionRelative(iconReset, -resetText.width/6-2, 0);
 
@@ -178,7 +186,14 @@ export default abstract class AbstractControlSettingsUiHandler extends UiHandler
         // Create and add a text object for the setting name to the scene.
         const isLock = this.settingBlacklisted.includes(this.setting[setting]);
         const labelStyle = isLock ? TextStyle.SETTINGS_LOCKED : TextStyle.SETTINGS_LABEL;
-        settingLabels[s] = addTextObject(this.scene, 8, 28 + s * 16, settingName, labelStyle);
+        let labelText: string;
+        const i18nKey = this.camelize(settingName.replace("Alt ", ""));
+        if (settingName.toLowerCase().includes("alt")) {
+          labelText = `${i18next.t(`settings:${i18nKey}`)}${i18next.t("settings:alt")}`;
+        } else {
+          labelText = i18next.t(`settings:${i18nKey}`);
+        }
+        settingLabels[s] = addTextObject(this.scene, 8, 28 + s * 16, labelText, labelStyle);
         settingLabels[s].setOrigin(0, 0);
         optionsContainer.add(settingLabels[s]);
 
@@ -427,7 +442,7 @@ export default abstract class AbstractControlSettingsUiHandler extends UiHandler
       switch (button) {
       case Button.ACTION:
         if (!this.optionCursors || !this.optionValueLabels) {
-          return;
+          return false; // TODO: is false correct as default? (previously was `undefined`)
         }
         if (this.settingBlacklisted.includes(setting) || !setting.includes("BUTTON_")) {
           success = false;
@@ -475,7 +490,7 @@ export default abstract class AbstractControlSettingsUiHandler extends UiHandler
         break;
       case Button.LEFT: // Move selection left within the current option set.
         if (!this.optionCursors || !this.optionValueLabels) {
-          return;
+          return false; // TODO: is false correct as default? (previously was `undefined`)
         }
         if (this.settingBlacklisted.includes(setting) || setting.includes("BUTTON_")) {
           success = false;
@@ -485,7 +500,7 @@ export default abstract class AbstractControlSettingsUiHandler extends UiHandler
         break;
       case Button.RIGHT: // Move selection right within the current option set.
         if (!this.optionCursors || !this.optionValueLabels) {
-          return;
+          return false; // TODO: is false correct as default? (previously was `undefined`)
         }
         if (this.settingBlacklisted.includes(setting) || setting.includes("BUTTON_")) {
           success = false;
@@ -511,7 +526,7 @@ export default abstract class AbstractControlSettingsUiHandler extends UiHandler
   resetScroll() {
     this.cursorObj?.destroy();
     this.cursorObj = null;
-    this.cursor = null;
+    this.cursor = 0;
     this.setCursor(0);
     this.setScrollCursor(0);
     this.updateSettingsScroll();
@@ -532,7 +547,7 @@ export default abstract class AbstractControlSettingsUiHandler extends UiHandler
 
     // Check if the cursor object exists, if not, create it.
     if (!this.cursorObj) {
-      this.cursorObj = this.scene.add.nineslice(0, 0, "summary_moves_cursor", null, (this.scene.game.canvas.width / 6) - 10, 16, 1, 1, 1, 1);
+      this.cursorObj = this.scene.add.nineslice(0, 0, "summary_moves_cursor", undefined, (this.scene.game.canvas.width / 6) - 10, 16, 1, 1, 1, 1);
       this.cursorObj.setOrigin(0, 0); // Set the origin to the top-left corner.
       this.optionsContainer.add(this.cursorObj); // Add the cursor to the options container.
     }

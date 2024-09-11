@@ -1,0 +1,8 @@
+{
+  "pp": "PP",
+  "power": "위력",
+  "accuracy": "명중률",
+  "abilityFlyInText": " {{pokemonName}}의\n{{passive}}{{abilityName}}",
+  "passive": "패시브 ",
+  "teraHover": "{{type}} 테라스탈"
+}

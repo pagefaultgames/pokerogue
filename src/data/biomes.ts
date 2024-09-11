@@ -1,12 +1,12 @@
 import { Type } from "./type";
 import * as Utils from "../utils";
-import beautify from "json-beautify";
-import {pokemonEvolutions, SpeciesFormEvolution} from "./pokemon-evolutions";
+import { pokemonEvolutions, SpeciesFormEvolution } from "./pokemon-evolutions";
 import i18next from "i18next";
 import { Biome } from "#enums/biome";
 import { Species } from "#enums/species";
 import { TimeOfDay } from "#enums/time-of-day";
 import { TrainerType } from "#enums/trainer-type";
+// import beautify from "json-beautify";
 
 export function getBiomeName(biome: Biome | -1) {
   if (biome === -1) {
@@ -17,8 +17,6 @@ export function getBiomeName(biome: Biome | -1) {
     return i18next.t("biome:GRASS");
   case Biome.RUINS:
     return i18next.t("biome:RUINS");
-  case Biome.ABYSS:
-    return i18next.t("biome:ABYSS");
   case Biome.END:
     return i18next.t("biome:END");
   default:
@@ -39,34 +37,34 @@ export const biomeLinks: BiomeLinks = {
   [Biome.PLAINS]: [ Biome.GRASS, Biome.METROPOLIS, Biome.LAKE ],
   [Biome.GRASS]: Biome.TALL_GRASS,
   [Biome.TALL_GRASS]: [ Biome.FOREST, Biome.CAVE ],
-  [Biome.SLUM]: Biome.CONSTRUCTION_SITE,
+  [Biome.SLUM]: [ Biome.CONSTRUCTION_SITE, [ Biome.SWAMP, 2 ] ],
   [Biome.FOREST]: [ Biome.JUNGLE, Biome.MEADOW ],
   [Biome.SEA]: [ Biome.SEABED, Biome.ICE_CAVE ],
   [Biome.SWAMP]: [ Biome.GRAVEYARD, Biome.TALL_GRASS ],
-  [Biome.BEACH]: [ Biome.SEA, [ Biome.ISLAND, 4 ] ],
+  [Biome.BEACH]: [ Biome.SEA, [ Biome.ISLAND, 2 ] ],
   [Biome.LAKE]: [ Biome.BEACH, Biome.SWAMP, Biome.CONSTRUCTION_SITE ],
-  [Biome.SEABED]: [ Biome.CAVE, [ Biome.VOLCANO, 4 ] ],
-  [Biome.MOUNTAIN]: [ Biome.VOLCANO, [ Biome.WASTELAND, 3 ] ],
+  [Biome.SEABED]: [ Biome.CAVE, [ Biome.VOLCANO, 3 ] ],
+  [Biome.MOUNTAIN]: [ Biome.VOLCANO, [ Biome.WASTELAND, 2 ], [ Biome.SPACE, 3 ] ],
   [Biome.BADLANDS]: [ Biome.DESERT, Biome.MOUNTAIN ],
-  [Biome.CAVE]: [ Biome.BADLANDS, Biome.LAKE ],
-  [Biome.DESERT]: Biome.RUINS,
+  [Biome.CAVE]: [ Biome.BADLANDS, Biome.LAKE, [ Biome.LABORATORY, 2 ] ],
+  [Biome.DESERT]: [ Biome.RUINS, [ Biome.CONSTRUCTION_SITE, 2 ] ],
   [Biome.ICE_CAVE]: Biome.SNOWY_FOREST,
-  [Biome.MEADOW]: [ Biome.PLAINS, [ Biome.FAIRY_CAVE, 2 ] ],
+  [Biome.MEADOW]: [ Biome.PLAINS, Biome.FAIRY_CAVE ],
   [Biome.POWER_PLANT]: Biome.FACTORY,
-  [Biome.VOLCANO]: [ Biome.BEACH, [ Biome.ICE_CAVE, 4 ] ],
+  [Biome.VOLCANO]: [ Biome.BEACH, [ Biome.ICE_CAVE, 3 ] ],
   [Biome.GRAVEYARD]: Biome.ABYSS,
-  [Biome.DOJO]: [ Biome.PLAINS, [ Biome.TEMPLE, 3 ] ],
-  [Biome.FACTORY]: [ Biome.PLAINS, [ Biome.LABORATORY, 4 ] ],
-  [Biome.RUINS]: [ Biome.FOREST ],
+  [Biome.DOJO]: [ Biome.PLAINS, [ Biome.JUNGLE, 2], [ Biome.TEMPLE, 2 ] ],
+  [Biome.FACTORY]: [ Biome.PLAINS, [ Biome.LABORATORY, 2 ] ],
+  [Biome.RUINS]: [ Biome.MOUNTAIN, [ Biome.FOREST, 2 ] ],
   [Biome.WASTELAND]: Biome.BADLANDS,
-  [Biome.ABYSS]: [ Biome.CAVE, [ Biome.SPACE, 3 ], [ Biome.WASTELAND, 3 ] ],
+  [Biome.ABYSS]: [ Biome.CAVE, [ Biome.SPACE, 2 ], [ Biome.WASTELAND, 2 ] ],
   [Biome.SPACE]: Biome.RUINS,
-  [Biome.CONSTRUCTION_SITE]: [ Biome.DOJO, Biome.POWER_PLANT ],
+  [Biome.CONSTRUCTION_SITE]: [ Biome.POWER_PLANT, [ Biome.DOJO, 2 ] ],
   [Biome.JUNGLE]: [ Biome.TEMPLE ],
-  [Biome.FAIRY_CAVE]: [ Biome.ICE_CAVE, [ Biome.SPACE, 3 ] ],
-  [Biome.TEMPLE]: [ Biome.SWAMP, [ Biome.RUINS, 3 ] ],
+  [Biome.FAIRY_CAVE]: [ Biome.ICE_CAVE, [ Biome.SPACE, 2 ] ],
+  [Biome.TEMPLE]: [ Biome.DESERT, [ Biome.SWAMP, 2 ], [ Biome.RUINS, 2 ] ],
   [Biome.METROPOLIS]: Biome.SLUM,
-  [Biome.SNOWY_FOREST]: [ Biome.FOREST, Biome.LAKE, Biome.MOUNTAIN ],
+  [Biome.SNOWY_FOREST]: [ Biome.FOREST, [ Biome.MOUNTAIN, 2 ], [ Biome.LAKE, 2 ] ],
   [Biome.ISLAND]: Biome.SEA,
   [Biome.LABORATORY]: Biome.CONSTRUCTION_SITE
 };
@@ -2934,7 +2932,7 @@ export function initBiomes() {
     [ Species.AZUMARILL, Type.WATER, Type.FAIRY, [
       [ Biome.LAKE, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
       [ Biome.LAKE, BiomePoolTier.BOSS, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
-      [ Biome.FAIRY_CAVE, BiomePoolTier.COMMON ],
+      [ Biome.FAIRY_CAVE, BiomePoolTier.COMMON ]
     ]
     ],
     [ Species.SUDOWOODO, Type.ROCK, -1, [
@@ -3630,7 +3628,7 @@ export function initBiomes() {
     [ Species.FLYGON, Type.GROUND, Type.DRAGON, [
       [ Biome.DESERT, BiomePoolTier.RARE, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
       [ Biome.WASTELAND, BiomePoolTier.COMMON ],
-      [ Biome.WASTELAND, BiomePoolTier.BOSS ],
+      [ Biome.WASTELAND, BiomePoolTier.BOSS ]
     ]
     ],
     [ Species.CACNEA, Type.GRASS, -1, [
@@ -3694,14 +3692,14 @@ export function initBiomes() {
     [ Species.BALTOY, Type.GROUND, Type.PSYCHIC, [
       [ Biome.RUINS, BiomePoolTier.COMMON ],
       [ Biome.SPACE, BiomePoolTier.UNCOMMON ],
-      [ Biome.TEMPLE, BiomePoolTier.UNCOMMON ],
+      [ Biome.TEMPLE, BiomePoolTier.UNCOMMON ]
     ]
     ],
     [ Species.CLAYDOL, Type.GROUND, Type.PSYCHIC, [
       [ Biome.RUINS, BiomePoolTier.COMMON ],
       [ Biome.RUINS, BiomePoolTier.BOSS ],
       [ Biome.SPACE, BiomePoolTier.UNCOMMON ],
-      [ Biome.TEMPLE, BiomePoolTier.UNCOMMON ],
+      [ Biome.TEMPLE, BiomePoolTier.UNCOMMON ]
     ]
     ],
     [ Species.LILEEP, Type.ROCK, Type.GRASS, [
@@ -4199,14 +4197,14 @@ export function initBiomes() {
     [ Species.SKORUPI, Type.POISON, Type.BUG, [
       [ Biome.SWAMP, BiomePoolTier.UNCOMMON ],
       [ Biome.DESERT, BiomePoolTier.COMMON ],
-      [ Biome.TEMPLE, BiomePoolTier.UNCOMMON ],
+      [ Biome.TEMPLE, BiomePoolTier.UNCOMMON ]
     ]
     ],
     [ Species.DRAPION, Type.POISON, Type.DARK, [
       [ Biome.SWAMP, BiomePoolTier.UNCOMMON ],
       [ Biome.DESERT, BiomePoolTier.COMMON ],
       [ Biome.DESERT, BiomePoolTier.BOSS ],
-      [ Biome.TEMPLE, BiomePoolTier.UNCOMMON ],
+      [ Biome.TEMPLE, BiomePoolTier.UNCOMMON ]
     ]
     ],
     [ Species.CROAGUNK, Type.POISON, Type.FIGHTING, [
@@ -4793,7 +4791,7 @@ export function initBiomes() {
     ]
     ],
     [ Species.CINCCINO, Type.NORMAL, -1, [
-      [ Biome.MEADOW, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
+      [ Biome.MEADOW, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
     ]
     ],
     [ Species.GOTHITA, Type.PSYCHIC, -1, [
@@ -4898,7 +4896,7 @@ export function initBiomes() {
     ]
     ],
     [ Species.JOLTIK, Type.BUG, Type.ELECTRIC, [
-      [ Biome.JUNGLE, BiomePoolTier.UNCOMMON ],
+      [ Biome.JUNGLE, BiomePoolTier.UNCOMMON ]
     ]
     ],
     [ Species.GALVANTULA, Type.BUG, Type.ELECTRIC, [
@@ -7665,6 +7663,12 @@ export function initBiomes() {
   biomeDepths[Biome.TOWN] = [ 0, 1 ];
 
   const traverseBiome = (biome: Biome, depth: integer) => {
+    if (biome === Biome.END) {
+      const biomeList = Object.keys(Biome).filter(key => !isNaN(Number(key)));
+      biomeList.pop(); // Removes Biome.END from the list
+      const randIndex = Utils.randInt(biomeList.length, 1); // Will never be Biome.TOWN
+      biome = Biome[biomeList[randIndex]];
+    }
     const linkedBiomes: (Biome | [ Biome, integer ])[] = Array.isArray(biomeLinks[biome])
       ? biomeLinks[biome] as (Biome | [ Biome, integer ])[]
       : [ biomeLinks[biome] as Biome ];
@@ -7707,7 +7711,7 @@ export function initBiomes() {
       ? pokemonEvolutions[speciesId]
       : [];
 
-    if (!biomeEntries.filter(b => b[0] !== Biome.END).length && !speciesEvolutions.filter(es => !!((pokemonBiomes.find(p => p[0] === es.speciesId))[3] as any[]).filter(b => b[0] !== Biome.END).length).length) {
+    if (!biomeEntries.filter(b => b[0] !== Biome.END).length && !speciesEvolutions.filter(es => !!((pokemonBiomes.find(p => p[0] === es.speciesId)!)[3] as any[]).filter(b => b[0] !== Biome.END).length).length) { // TODO: is the bang on the `find()` correct?
       uncatchableSpecies.push(speciesId);
     }
 
@@ -7808,57 +7812,56 @@ export function initBiomes() {
 
 
   // used in a commented code
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  function outputPools() {
-    const pokemonOutput = {};
-    const trainerOutput = {};
+  // function outputPools() {
+  //   const pokemonOutput = {};
+  //   const trainerOutput = {};
 
-    for (const b of Object.keys(biomePokemonPools)) {
-      const biome = Biome[b];
-      pokemonOutput[biome] = {};
-      trainerOutput[biome] = {};
+  //   for (const b of Object.keys(biomePokemonPools)) {
+  //     const biome = Biome[b];
+  //     pokemonOutput[biome] = {};
+  //     trainerOutput[biome] = {};
 
-      for (const t of Object.keys(biomePokemonPools[b])) {
-        const tier = BiomePoolTier[t];
+  //     for (const t of Object.keys(biomePokemonPools[b])) {
+  //       const tier = BiomePoolTier[t];
 
-        pokemonOutput[biome][tier] = {};
+  //       pokemonOutput[biome][tier] = {};
 
-        for (const tod of Object.keys(biomePokemonPools[b][t])) {
-          const timeOfDay = TimeOfDay[tod];
+  //       for (const tod of Object.keys(biomePokemonPools[b][t])) {
+  //         const timeOfDay = TimeOfDay[tod];
 
-          pokemonOutput[biome][tier][timeOfDay] = [];
+  //         pokemonOutput[biome][tier][timeOfDay] = [];
 
-          for (const f of biomePokemonPools[b][t][tod]) {
-            if (typeof f === "number") {
-              pokemonOutput[biome][tier][timeOfDay].push(Species[f]);
-            } else {
-              const tree = {};
+  //         for (const f of biomePokemonPools[b][t][tod]) {
+  //           if (typeof f === "number") {
+  //             pokemonOutput[biome][tier][timeOfDay].push(Species[f]);
+  //           } else {
+  //             const tree = {};
 
-              for (const l of Object.keys(f)) {
-                tree[l] = f[l].map(s => Species[s]);
-              }
+  //             for (const l of Object.keys(f)) {
+  //               tree[l] = f[l].map(s => Species[s]);
+  //             }
 
-              pokemonOutput[biome][tier][timeOfDay].push(tree);
-            }
-          }
+  //             pokemonOutput[biome][tier][timeOfDay].push(tree);
+  //           }
+  //         }
 
-        }
-      }
+  //       }
+  //     }
 
-      for (const t of Object.keys(biomeTrainerPools[b])) {
-        const tier = BiomePoolTier[t];
+  //     for (const t of Object.keys(biomeTrainerPools[b])) {
+  //       const tier = BiomePoolTier[t];
 
-        trainerOutput[biome][tier] = [];
+  //       trainerOutput[biome][tier] = [];
 
-        for (const f of biomeTrainerPools[b][t]) {
-          trainerOutput[biome][tier].push(TrainerType[f]);
-        }
-      }
-    }
+  //       for (const f of biomeTrainerPools[b][t]) {
+  //         trainerOutput[biome][tier].push(TrainerType[f]);
+  //       }
+  //     }
+  //   }
 
-    console.log(beautify(pokemonOutput, null, 2, 180).replace(/(        |        (?:\{ "\d+": \[ )?|    "(?:.*?)": \[ |(?:,|\[) (?:"\w+": \[ |(?:\{ )?"\d+": \[ )?)"(\w+)"(?= |,|\n)/g, "$1Species.$2").replace(/"(\d+)": /g, "$1: ").replace(/((?:      )|(?:(?!\n)    "(?:.*?)": \{) |\[(?: .*? )?\], )"(\w+)"/g, "$1[TimeOfDay.$2]").replace(/(    )"(.*?)"/g, "$1[BiomePoolTier.$2]").replace(/(  )"(.*?)"/g, "$1[Biome.$2]"));
-    console.log(beautify(trainerOutput, null, 2, 120).replace(/(      |      (?:\{ "\d+": \[ )?|    "(?:.*?)": \[ |, (?:(?:\{ )?"\d+": \[ )?)"(.*?)"/g, "$1TrainerType.$2").replace(/"(\d+)": /g, "$1: ").replace(/(    )"(.*?)"/g, "$1[BiomePoolTier.$2]").replace(/(  )"(.*?)"/g, "$1[Biome.$2]"));
-  }
+  //   console.log(beautify(pokemonOutput, null, 2, 180).replace(/(        |        (?:\{ "\d+": \[ )?|    "(?:.*?)": \[ |(?:,|\[) (?:"\w+": \[ |(?:\{ )?"\d+": \[ )?)"(\w+)"(?= |,|\n)/g, "$1Species.$2").replace(/"(\d+)": /g, "$1: ").replace(/((?:      )|(?:(?!\n)    "(?:.*?)": \{) |\[(?: .*? )?\], )"(\w+)"/g, "$1[TimeOfDay.$2]").replace(/(    )"(.*?)"/g, "$1[BiomePoolTier.$2]").replace(/(  )"(.*?)"/g, "$1[Biome.$2]"));
+  //   console.log(beautify(trainerOutput, null, 2, 120).replace(/(      |      (?:\{ "\d+": \[ )?|    "(?:.*?)": \[ |, (?:(?:\{ )?"\d+": \[ )?)"(.*?)"/g, "$1TrainerType.$2").replace(/"(\d+)": /g, "$1: ").replace(/(    )"(.*?)"/g, "$1[BiomePoolTier.$2]").replace(/(  )"(.*?)"/g, "$1[Biome.$2]"));
+  // }
 
   /*for (let pokemon of allSpecies) {
     if (pokemon.speciesId >= Species.XERNEAS)
