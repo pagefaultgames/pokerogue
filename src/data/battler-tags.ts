@@ -735,12 +735,6 @@ export class FrenzyTag extends BattlerTag {
   }
 }
 
-export class ChargingTag extends BattlerTag {
-  constructor(sourceMove: Moves, sourceId: number) {
-    super(BattlerTagType.CHARGING, BattlerTagLapseType.CUSTOM, 1, sourceMove, sourceId);
-  }
-}
-
 export class EncoreTag extends BattlerTag {
   public moveId: Moves;
 

@@ -2,7 +2,7 @@
   "ModifierType": {
     "AddPokeballModifierType": {
       "name": "{{pokeballName}} x{{modifierCount}}",
-      "description": "Recevez {{modifierCount}} {{pokeballName}}·s. (Inventaire : {{pokeballAmount}})\nTaux de capture : {{catchRate}}"
+      "description": "Recevez {{modifierCount}} {{pokeballName}}·s. (Inventaire : {{pokeballAmount}})\nTaux de capture : {{catchRate}}"
     },
     "AddVoucherModifierType": {
       "name": "{{voucherTypeName}} x{{modifierCount}}",
@@ -10,8 +10,8 @@
     },
     "PokemonHeldItemModifierType": {
       "extra": {
-        "inoperable": "{{pokemonName}} ne peut pas\nporter cet objet !",
-        "tooMany": "{{pokemonName}} porte trop\nd’exemplaires de cet objet !"
+        "inoperable": "{{pokemonName}} ne peut pas\nporter cet objet !",
+        "tooMany": "{{pokemonName}} porte trop\nd’exemplaires de cet objet !"
       }
     },
     "PokemonHpRestoreModifierType": {
@@ -47,14 +47,10 @@
       "description": "Donne la nature {{natureName}} à un Pokémon et la débloque pour le starter lui étant lié."
     },
     "DoubleBattleChanceBoosterModifierType": {
-      "description": "Quadruple les chances de tomber sur un combat double pendant {{battleCount}} combats."
+      "description": "Double les chances de tomber sur un combat double pendant {{battleCount}} combats."
     },
     "TempStatStageBoosterModifierType": {
-      "description": "Augmente {{amount}} {{stat}} de toute l’équipe pendant 5 combats.",
-      "extra": {
-        "stage": "d’un cran",
-        "percentage": "de 30%"
-      }
+      "description": "Augmente d’un cran {{stat}} pour toute l’équipe pendant 5 combats."
     },
     "AttackTypeBoosterModifierType": {
       "description": "Augmente de 20% la puissance des capacités de type {{moveType}} d’un Pokémon."
@@ -89,7 +85,7 @@
       "description": "Augmente de {{boostPercent}}% le gain de Points d’Exp du porteur."
     },
     "PokemonFriendshipBoosterModifierType": {
-      "description": "Augmente le gain de bonheur de 50% par victoire."
+      "description": "Augmente le gain d’amitié de 50% par victoire."
     },
     "PokemonMoveAccuracyBoosterModifierType": {
       "description": "Augmente de {{accuracyAmount}} la précision des capacités (maximum 100)."
@@ -106,17 +102,17 @@
       "description": "Apprend la capacité {{moveName}} à un Pokémon.\n(Maintenez C ou Maj pour plus d’infos)"
     },
     "EvolutionItemModifierType": {
-      "description": "Permet à certains Pokémon d’évoluer à son contact."
+      "description": "Permet à certains Pokémon d’évoluer."
     },
     "FormChangeItemModifierType": {
-      "description": "Permet à certains Pokémon de changer de forme à son contact."
+      "description": "Permet à certains Pokémon de changer de forme."
     },
     "FusePokemonModifierType": {
       "description": "Fusionne deux Pokémon (transfère le talent, sépare les stats de base et les types, partage les capacités)."
     },
     "TerastallizeModifierType": {
       "name": "Téra-Éclat {{teraType}}",
-      "description": "Téracristallise son porteur en type {{teraType}} pendant 10 combats."
+      "description": "{{teraType}} Téracristallise son porteur pendant 10 combats."
     },
     "ContactHeldItemTransferChanceModifierType": {
       "description": "{{chancePercent}}% de chances de voler un objet de l’adversaire en l’attaquant."
@@ -251,7 +247,7 @@
   },
   "SpeciesBoosterItem": {
     "LIGHT_BALL": { "name": "Balle Lumière", "description": "À faire tenir à Pikachu. Un orbe énigmatique qui double son Attaque et son Atq. Spé. ." },
-    "THICK_CLUB": { "name": "Masse Os", "description": "À faire tenir à Osselait ou à Ossatueur, formes d’Alola incluses. Un os dur qui double leur Attaque." },
+    "THICK_CLUB": { "name": "Masse Os", "description": "À faire tenir à Osselait ou Ossatueur. Un os dur qui double leur Attaque." },
     "METAL_POWDER": { "name": "Poudre Métal", "description": "À faire tenir à Métamorph. Cette poudre étrange, très fine mais résistante, double sa Défense." },
     "QUICK_POWDER": { "name": "Poudre Vite", "description": "À faire tenir à Métamorph. Cette poudre étrange, très fine mais résistante, double sa Vitesse." }
   },

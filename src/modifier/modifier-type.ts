@@ -2705,7 +2705,7 @@ export function getEnemyBuffModifierForWave(tier: ModifierTier, enemyModifiers: 
 }
 
 export function getEnemyModifierTypesForWave(waveIndex: integer, count: integer, party: EnemyPokemon[], poolType: ModifierPoolType.WILD | ModifierPoolType.TRAINER, upgradeChance: integer = 0, scene?: BattleScene): PokemonHeldItemModifierType[] {
-  const ret = new Array(count).fill(0).map(() => getNewModifierTypeOption(party, poolType, undefined, upgradeChance && !Utils.randSeedInt(upgradeChance) ? 1 : 0, undefined, scene)?.type as PokemonHeldItemModifierType);
+  const ret = new Array(count).fill(0).map(() => getNewModifierTypeOption(party, poolType, undefined, upgradeChance && !Utils.randSeedInt(upgradeChance, undefined, "Chance to upgrade an opponent's item") ? 1 : 0)?.type as PokemonHeldItemModifierType, scene);
   if (!(waveIndex % 1000)) {
     ret.push(getModifierType(modifierTypes.MINI_BLACK_HOLE) as PokemonHeldItemModifierType);
   }
@@ -2889,7 +2889,17 @@ function getNewModifierTypeOption(party: Pokemon[], poolType: ModifierPoolType, 
     tier--;
   }
 
-  let index = getItemIndex(thresholds, tier);
+  const tierThresholds = Object.keys(thresholds[tier]);
+  const totalWeight = parseInt(tierThresholds[tierThresholds.length - 1]);
+  const value = Utils.randSeedInt(totalWeight, undefined, "Choosing item to give");
+  let index: integer | undefined;
+  for (const t of tierThresholds) {
+    const threshold = parseInt(t);
+    if (value < threshold) {
+      index = thresholds[tier][threshold];
+      break;
+    }
+  }
 
   if (index === undefined) {
     return null;

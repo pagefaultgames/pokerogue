@@ -51,7 +51,5 @@
   "renamePokemon": "Rinomina un Pokémon",
   "rename": "Rinomina",
   "nickname": "Nickname",
-  "errorServerDown": "Poffarbacco! C'è stato un errore nella comunicazione col server.\n\nPuoi lasciare questa finestra aperta,\nil gioco si riconnetterà automaticamente.",
-  "noSaves": "Non ci sono file di salvataggio registrati!",
-  "tooManySaves": "Ci sono troppi file di salvataggio registrati!"
+  "errorServerDown": "Poffarbacco! C'è stato un errore nella comunicazione col server.\n\nPuoi lasciare questa finestra aperta,\nil gioco si riconnetterà automaticamente."
 }

@@ -1508,7 +1508,7 @@ export default class BattleScene extends SceneBase {
     const infectedIndexes: integer[] = [];
     const spread = (index: number, spreadTo: number) => {
       const partyMember = party[index + spreadTo];
-      if (!partyMember.pokerus && !Utils.randSeedInt(10)) {
+      if (!partyMember.pokerus && !Utils.randSeedInt(10, undefined, "Pokerus spread chance")) {
         partyMember.pokerus = true;
         infectedIndexes.push(index + spreadTo);
       }

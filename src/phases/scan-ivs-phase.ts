@@ -52,7 +52,6 @@ export class ScanIvsPhase extends PokemonPhase {
     if (!this.scene.hideIvs) {
       this.scene.ui.showText(i18next.t("battle:ivScannerUseQuestion", { pokemonName: getPokemonNameWithAffix(pokemon) }), null, () => {
         this.scene.ui.setMode(Mode.CONFIRM, () => {
-          LoggerTools.logActions(this.scene, this.scene.currentBattle.waveIndex, "IV Scanner → " + LoggerTools.enemyPokeName(this.scene, pokemon))
           this.scene.ui.setMode(Mode.MESSAGE);
           this.scene.ui.clearText();
           new CommonBattleAnim(CommonAnim.LOCK_ON, pokemon, pokemon).play(this.scene, () => {

@@ -326,7 +326,7 @@ export class Egg {
       break;
     }
 
-    return Utils.randSeedInt(baseChance * Math.pow(2, 3 - this.tier)) ? Utils.randSeedInt(3) : 3;
+    return Utils.randSeedInt(baseChance * Math.pow(2, 3 - this.tier), undefined, "Choosing whether to give Rare Egg Move or not") ? Utils.randSeedInt(3, undefined, "Common Egg Move selection") : 3;
   }
 
   private getEggTierDefaultHatchWaves(eggTier?: EggTier): number {
@@ -347,7 +347,7 @@ export class Egg {
 
   private rollEggTier(): EggTier {
     const tierValueOffset = this._sourceType === EggSourceType.GACHA_LEGENDARY ? 1 : 0;
-    const tierValue = Utils.randInt(256);
+    const tierValue = Utils.randInt(256, undefined, "Choosing egg tier");
     return tierValue >= 52 + tierValueOffset ? EggTier.COMMON : tierValue >= 8 + tierValueOffset ? EggTier.GREAT : tierValue >= 1 + tierValueOffset ? EggTier.ULTRA : EggTier.MASTER;
   }
 
@@ -361,11 +361,11 @@ export class Egg {
      * the species that was the legendary focus at the time
      */
     if (this.isManaphyEgg()) {
-      const rand = Utils.randSeedInt(MANAPHY_EGG_MANAPHY_RATE);
+      const rand = Utils.randSeedInt(MANAPHY_EGG_MANAPHY_RATE, undefined, "Manaphy Egg chance");
       return rand ? Species.PHIONE : Species.MANAPHY;
     } else if (this.tier === EggTier.MASTER
       && this._sourceType === EggSourceType.GACHA_LEGENDARY) {
-      if (!Utils.randSeedInt(2)) {
+      if (!Utils.randSeedInt(2, undefined, "Chance to replace Legendary Egg with gacha target")) {
         return getLegendaryGachaSpeciesForTimestamp(scene, this.timestamp);
       }
     }
@@ -437,7 +437,7 @@ export class Egg {
 
     let species: Species;
 
-    const rand = Utils.randSeedInt(totalWeight);
+    const rand = Utils.randSeedInt(totalWeight, undefined, "Random egg species");
     for (let s = 0; s < speciesWeights.length; s++) {
       if (rand < speciesWeights[s]) {
         species = speciesPool[s];
@@ -472,7 +472,7 @@ export class Egg {
       break;
     }
 
-    return !Utils.randSeedInt(shinyChance);
+    return !Utils.randSeedInt(shinyChance, undefined, "Shiny chance");
   }
 
   // Uses the same logic as pokemon.generateVariant(). I would like to only have this logic in one
@@ -482,7 +482,7 @@ export class Egg {
       return VariantTier.COMMON;
     }
 
-    const rand = Utils.randSeedInt(10);
+    const rand = Utils.randSeedInt(10, undefined, "Shiny variant selection");
     if (rand >= 4) {
       return VariantTier.COMMON; // 6/10
     } else if (rand >= 1) {

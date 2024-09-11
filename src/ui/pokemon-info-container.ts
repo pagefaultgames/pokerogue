@@ -298,11 +298,6 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
         this.pokemonNatureLabelText.setColor(getTextColor(TextStyle.WINDOW, false, this.scene.uiTheme));
         this.pokemonNatureLabelText.setShadowColor(getTextColor(TextStyle.WINDOW, true, this.scene.uiTheme));
       }
-      
-      this.pokemonAbilityText.setVisible(true)
-      this.pokemonAbilityLabelText.setVisible(true)
-      this.pokemonNatureText.setVisible(true)
-      this.pokemonNatureLabelText.setVisible(true)
 
       const isFusion = pokemon.isFusion();
       const doubleShiny = isFusion && pokemon.shiny && pokemon.fusionShiny;

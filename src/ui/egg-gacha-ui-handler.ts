@@ -571,6 +571,7 @@ export default class EggGachaUiHandler extends MessageUiHandler {
         this.updateGachaIcon(infoContainer, 2)
         this.updateGachaIcon(infoContainer, 3)
       }
+      break;
     }
   }
 

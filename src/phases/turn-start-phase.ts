@@ -17,8 +17,8 @@ import { PostTurnStatusEffectPhase } from "./post-turn-status-effect-phase";
 import { SwitchSummonPhase } from "./switch-summon-phase";
 import { TurnEndPhase } from "./turn-end-phase";
 import { WeatherEffectPhase } from "./weather-effect-phase";
-import * as LoggerTools from "../logger";
-import { TurnCommand } from "#app/battle.js";
+import { BattlerIndex } from "#app/battle";
+import { TrickRoomTag } from "#app/data/arena-tag";
 
 export class TurnStartPhase extends FieldPhase {
   constructor(scene: BattleScene) {
@@ -55,13 +55,51 @@ export class TurnStartPhase extends FieldPhase {
       }
     }
   }
+  /**
+   * This orders the active Pokemon on the field by speed into an BattlerIndex array and returns that array.
+   * It also checks for Trick Room and reverses the array if it is present.
+   * @returns {@linkcode BattlerIndex[]} the battle indices of all pokemon on the field ordered by speed
+   */
+  getSpeedOrder(): BattlerIndex[] {
+    const playerField = this.scene.getPlayerField().filter(p => p.isActive()) as Pokemon[];
+    const enemyField = this.scene.getEnemyField().filter(p => p.isActive()) as Pokemon[];
 
-  start() {
-    super.start();
+    // We shuffle the list before sorting so speed ties produce random results
+    let orderedTargets: Pokemon[] = playerField.concat(enemyField);
+    // We seed it with the current turn to prevent an inconsistency where it
+    // was varying based on how long since you last reloaded
+    this.scene.executeWithSeedOffset(() => {
+      orderedTargets = Utils.randSeedShuffle(orderedTargets);
+    }, this.scene.currentBattle.turn, this.scene.waveSeed);
 
-    const field = this.scene.getField();
-    const order = this.getOrder();
+    orderedTargets.sort((a: Pokemon, b: Pokemon) => {
+      const aSpeed = a?.getEffectiveStat(Stat.SPD) || 0;
+      const bSpeed = b?.getEffectiveStat(Stat.SPD) || 0;
 
+      return bSpeed - aSpeed;
+    });
+
+    // Next, a check for Trick Room is applied. If Trick Room is present, the order is reversed.
+    const speedReversed = new Utils.BooleanHolder(false);
+    this.scene.arena.applyTags(TrickRoomTag, speedReversed);
+
+    if (speedReversed.value) {
+      orderedTargets = orderedTargets.reverse();
+    }
+
+    return orderedTargets.map(t => t.getFieldIndex() + (!t.isPlayer() ? BattlerIndex.ENEMY : BattlerIndex.PLAYER));
+  }
+
+  /**
+   * This takes the result of getSpeedOrder and applies priority / bypass speed attributes to it.
+   * This also considers the priority levels of various commands and changes the result of getSpeedOrder based on such.
+   * @returns {@linkcode BattlerIndex[]} the final sequence of commands for this turn
+   */
+  getCommandOrder(): BattlerIndex[] {
+    let moveOrder = this.getSpeedOrder();
+    // The creation of the battlerBypassSpeed object contains checks for the ability Quick Draw and the held item Quick Claw
+    // The ability Mycelium Might disables Quick Claw's activation when using a status move
+    // This occurs before the main loop because of battles with more than two Pokemon
     const battlerBypassSpeed = {};
 
     this.scene.getField(true).filter(p => p.summonData).map(p => {
@@ -75,8 +113,9 @@ export class TurnStartPhase extends FieldPhase {
       battlerBypassSpeed[p.getBattlerIndex()] = bypassSpeed;
     });
 
-    const moveOrder = order.slice(0);
-
+    // The function begins sorting orderedTargets based on command priority, move priority, and possible speed bypasses.
+    // Non-FIGHT commands (SWITCH, BALL, RUN) have a higher command priority and will always occur before any FIGHT commands.
+    moveOrder = moveOrder.slice(0);
     moveOrder.sort((a, b) => {
       const aCommand = this.scene.currentBattle.turnCommands[a];
       const bCommand = this.scene.currentBattle.turnCommands[b];
@@ -88,60 +127,43 @@ export class TurnStartPhase extends FieldPhase {
           return -1;
         }
       } else if (aCommand?.command === Command.FIGHT) {
-        const aMove = allMoves[aCommand.move!.move];//TODO: is the bang correct here?
-        const bMove = allMoves[bCommand!.move!.move];//TODO: is the bang correct here?
+        const aMove = allMoves[aCommand.move!.move];
+        const bMove = allMoves[bCommand!.move!.move];
 
+        // The game now considers priority and applies the relevant move and ability attributes
         const aPriority = new Utils.IntegerHolder(aMove.priority);
         const bPriority = new Utils.IntegerHolder(bMove.priority);
 
-        applyMoveAttrs(IncrementMovePriorityAttr, this.scene.getField().find(p => p?.isActive() && p.getBattlerIndex() === a)!, null, aMove, aPriority); //TODO: is the bang correct here?
-        applyMoveAttrs(IncrementMovePriorityAttr, this.scene.getField().find(p => p?.isActive() && p.getBattlerIndex() === b)!, null, bMove, bPriority); //TODO: is the bang correct here?
+        applyMoveAttrs(IncrementMovePriorityAttr, this.scene.getField().find(p => p?.isActive() && p.getBattlerIndex() === a)!, null, aMove, aPriority);
+        applyMoveAttrs(IncrementMovePriorityAttr, this.scene.getField().find(p => p?.isActive() && p.getBattlerIndex() === b)!, null, bMove, bPriority);
 
-        applyAbAttrs(ChangeMovePriorityAbAttr, this.scene.getField().find(p => p?.isActive() && p.getBattlerIndex() === a)!, null, false, aMove, aPriority); //TODO: is the bang correct here?
-        applyAbAttrs(ChangeMovePriorityAbAttr, this.scene.getField().find(p => p?.isActive() && p.getBattlerIndex() === b)!, null, false, bMove, bPriority); //TODO: is the bang correct here?
+        applyAbAttrs(ChangeMovePriorityAbAttr, this.scene.getField().find(p => p?.isActive() && p.getBattlerIndex() === a)!, null, false, aMove, aPriority);
+        applyAbAttrs(ChangeMovePriorityAbAttr, this.scene.getField().find(p => p?.isActive() && p.getBattlerIndex() === b)!, null, false, bMove, bPriority);
 
+        // The game now checks for differences in priority levels.
+        // If the moves share the same original priority bracket, it can check for differences in battlerBypassSpeed and return the result.
+        // This conditional is used to ensure that Quick Claw can still activate with abilities like Stall and Mycelium Might (attack moves only)
+        // Otherwise, the game returns the user of the move with the highest priority.
+        const isSameBracket = Math.ceil(aPriority.value) - Math.ceil(bPriority.value) === 0;
         if (aPriority.value !== bPriority.value) {
-          const bracketDifference = Math.ceil(aPriority.value) - Math.ceil(bPriority.value);
-          const hasSpeedDifference = battlerBypassSpeed[a].value !== battlerBypassSpeed[b].value;
-          if (bracketDifference === 0 && hasSpeedDifference) {
+          if (isSameBracket && battlerBypassSpeed[a].value !== battlerBypassSpeed[b].value) {
             return battlerBypassSpeed[a].value ? -1 : 1;
           }
           return aPriority.value < bPriority.value ? 1 : -1;
         }
       }
 
+      // If there is no difference between the move's calculated priorities, the game checks for differences in battlerBypassSpeed and returns the result.
       if (battlerBypassSpeed[a].value !== battlerBypassSpeed[b].value) {
         return battlerBypassSpeed[a].value ? -1 : 1;
       }
 
-      const aIndex = order.indexOf(a);
-      const bIndex = order.indexOf(b);
+      const aIndex = moveOrder.indexOf(a);
+      const bIndex = moveOrder.indexOf(b);
 
       return aIndex < bIndex ? -1 : aIndex > bIndex ? 1 : 0;
     });
-
-    let orderIndex = 0;
-
-    for (const o of moveOrder) {
-
-      const pokemon = field[o];
-      const turnCommand = this.scene.currentBattle.turnCommands[o];
-
-      if (turnCommand?.skip) {
-        continue;
-      }
-
-      switch (turnCommand?.command) {
       case Command.FIGHT:
-        const queuedMove = turnCommand.move;
-        pokemon.turnData.order = orderIndex++;
-        if (!queuedMove) {
-          continue;
-        }
-        const move = pokemon.getMoveset().find(m => m?.moveId === queuedMove.move) || new PokemonMove(queuedMove.move);
-        if (move.getMove().hasAttr(MoveHeaderAttr)) {
-          this.scene.unshiftPhase(new MoveHeaderPhase(this.scene, pokemon, move));
-        }
         if (pokemon.isPlayer()) {
           if (turnCommand.cursor === -1) {
             this.scene.pushPhase(new MovePhase(this.scene, pokemon, turnCommand.targets || turnCommand.move!.targets, move));//TODO: is the bang correct here?
@@ -150,20 +172,11 @@ export class TurnStartPhase extends FieldPhase {
             const playerPhase = new MovePhase(this.scene, pokemon, turnCommand.targets || turnCommand.move!.targets, move, false, queuedMove.ignorePP);//TODO: is the bang correct here?
             this.logTargets(pokemon, move, turnCommand)
             this.scene.pushPhase(playerPhase);
-          }
-        } else {
-          this.scene.pushPhase(new MovePhase(this.scene, pokemon, turnCommand.targets || turnCommand.move!.targets, move, false, queuedMove.ignorePP));//TODO: is the bang correct here?
-        }
-        break;
-      case Command.BALL:
-        this.scene.unshiftPhase(new AttemptCapturePhase(this.scene, turnCommand.targets![0] % 2, turnCommand.cursor!));//TODO: is the bang correct here?
         break;
       case Command.POKEMON:
-        this.scene.unshiftPhase(new SwitchSummonPhase(this.scene, pokemon.getFieldIndex(), turnCommand.cursor!, true, turnCommand.args![0] as boolean, pokemon.isPlayer()));//TODO: is the bang correct here?
         if (pokemon.isPlayer()) {
           //  " " + LoggerTools.playerPokeName(this.scene, pokemon) + 
           LoggerTools.Actions[pokemon.getBattlerIndex()] = ((turnCommand.args![0] as boolean) ? "Baton" : "Switch") + " to " + LoggerTools.playerPokeName(this.scene, turnCommand.cursor!)
-        }
         break;
       case Command.RUN:
         let runningPokemon = pokemon;
@@ -198,17 +211,6 @@ export class TurnStartPhase extends FieldPhase {
       }
     }
 
-    this.scene.pushPhase(new BerryPhase(this.scene));
-    this.scene.pushPhase(new TurnEndPhase(this.scene));
-
-    this.scene.arenaFlyout.updateFieldText();
-    
-    if (LoggerTools.Actions.length > 1 && !this.scene.currentBattle.double) {
-      LoggerTools.Actions.pop() // If this is a single battle, but we somehow have two actions, delete the second
-    }
-    if (LoggerTools.Actions.length > 1 && (LoggerTools.Actions[0] == "" || LoggerTools.Actions[0] == undefined || LoggerTools.Actions[0] == null))
-      LoggerTools.Actions.shift() // If the left slot isn't doing anything, delete its entry
-    LoggerTools.logActions(this.scene, this.scene.currentBattle.waveIndex, LoggerTools.Actions.join(" & "))
 
     /**
        * this.end() will call shiftPhase(), which dumps everything from PrependQueue (aka everything that is unshifted()) to the front
@@ -218,12 +220,11 @@ export class TurnStartPhase extends FieldPhase {
     this.end();
   }
 
-  /*
   start() {
     super.start();
 
     const field = this.scene.getField();
-    const order = this.getOrder();
+    const moveOrder = this.getCommandOrder();
 
     let orderIndex = 0;
 
@@ -249,10 +250,7 @@ export class TurnStartPhase extends FieldPhase {
         }
         if (pokemon.isPlayer()) {
           if (turnCommand.cursor === -1) {
-            //console.log("turncommand cursor was -1 -- running TOP block")
             this.scene.pushPhase(new MovePhase(this.scene, pokemon, turnCommand.targets || turnCommand.move!.targets, move));//TODO: is the bang correct here?
-            var targets = turnCommand.targets || turnCommand.move!.targets
-            var mv = move
             if (pokemon.isPlayer()) {
               console.log(turnCommand.targets, turnCommand.move!.targets)
               LoggerTools.Actions[pokemon.getBattlerIndex()] = mv.getName()
@@ -277,10 +275,7 @@ export class TurnStartPhase extends FieldPhase {
               console.log(mv.getName(), targets)
             }
           } else {
-            //console.log("turncommand = ", turnCommand, " -- running BOTTOM block")
             const playerPhase = new MovePhase(this.scene, pokemon, turnCommand.targets || turnCommand.move!.targets, move, false, queuedMove.ignorePP);//TODO: is the bang correct here?
-            var targets = turnCommand.targets || turnCommand.move!.targets
-            var mv = move
             if (pokemon.isPlayer()) {
               console.log(turnCommand.targets, turnCommand.move!.targets)
               if (turnCommand.args && turnCommand.args[1] && turnCommand.args[1].isContinuing != undefined) {
@@ -336,7 +331,7 @@ export class TurnStartPhase extends FieldPhase {
               return;
             }
           });
-            // if only one pokemon is alive, use that one
+          // if only one pokemon is alive, use that one
           if (playerActivePokemon.length > 1) {
             // find which active pokemon has faster speed
             const fasterPokemon = playerActivePokemon[0].getStat(Stat.SPD) > playerActivePokemon[1].getStat(Stat.SPD) ? playerActivePokemon[0] : playerActivePokemon[1];
@@ -371,12 +366,10 @@ export class TurnStartPhase extends FieldPhase {
     LoggerTools.logActions(this.scene, this.scene.currentBattle.waveIndex, LoggerTools.Actions.join(" & "))
 
     /**
-     * this.end() will call shiftPhase(), which dumps everything from PrependQueue (aka everything that is unshifted()) to the front
-     * of the queue and dequeues to start the next phase
-     * this is important since stuff like SwitchSummon, AttemptRun, AttemptCapture Phases break the "flow" and should take precedence
-     */
-  /*
+       * this.end() will call shiftPhase(), which dumps everything from PrependQueue (aka everything that is unshifted()) to the front
+       * of the queue and dequeues to start the next phase
+       * this is important since stuff like SwitchSummon, AttemptRun, AttemptCapture Phases break the "flow" and should take precedence
+       */
     this.end();
   }
-  */
 }

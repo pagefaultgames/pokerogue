@@ -47,14 +47,10 @@
       "description": "Ändert das Wesen zu {{natureName}}. Schaltet dieses Wesen permanent für diesen Starter frei."
     },
     "DoubleBattleChanceBoosterModifierType": {
-      "description": "Vervierfacht die Chance, dass ein Kampf ein Doppelkampf wird, für bis zu {{battleCount}} Kämpfe."
+      "description": "Verdoppelt die Wahrscheinlichkeit, dass die nächsten {{battleCount}} Begegnungen mit wilden Pokémon ein Doppelkampf sind."
     },
     "TempStatStageBoosterModifierType": {
-      "description": "Erhöht {{stat}} aller Teammitglieder um {{amount}} für bis zu 5 Kämpfe.",
-      "extra": {
-        "stage": "eine Stufe",
-        "percentage": "30%"
-      }
+      "description": "Erhöht die {{stat}} aller Teammitglieder für 5 Kämpfe um eine Stufe."
     },
     "AttackTypeBoosterModifierType": {
       "description": "Erhöht die Stärke aller {{moveType}}-Attacken eines Pokémon um 20%."

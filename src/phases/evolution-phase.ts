@@ -387,7 +387,7 @@ export class EvolutionPhase extends Phase {
             this.doSprayParticle(i);
           }
         } else if (f < 50) {
-          this.doSprayParticle(Utils.randInt(8));
+          this.doSprayParticle(Utils.randInt(8, undefined, "%HIDE"));
         }
         f++;
       }
@@ -503,8 +503,8 @@ export class EvolutionPhase extends Phase {
 
     let f = 0;
     let yOffset = 0;
-    const speed = 3 - Utils.randInt(8);
-    const amp = 48 + Utils.randInt(64);
+    const speed = 3 - Utils.randInt(8, undefined, "%HIDE");
+    const amp = 48 + Utils.randInt(64, undefined, "%HIDE");
 
     const particleTimer = this.scene.tweens.addCounter({
       repeat: -1,

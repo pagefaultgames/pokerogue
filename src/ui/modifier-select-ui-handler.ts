@@ -41,11 +41,6 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
   public options: ModifierOption[];
   public shopOptionsRows: ModifierOption[][];
 
-  private rerollUpContainer: Phaser.GameObjects.Container;
-  private rerollDownContainer: Phaser.GameObjects.Container;
-  private rerollUpLabel: Phaser.GameObjects.Text;
-  private rerollDownLabel: Phaser.GameObjects.Text;
-
   private cursorObj: Phaser.GameObjects.Image | null;
 
   constructor(scene: BattleScene) {
@@ -106,32 +101,6 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
     this.rerollCostText.setOrigin(0, 0);
     this.rerollCostText.setPositionRelative(rerollButtonText, rerollButtonText.displayWidth + 5, 1);
     this.rerollButtonContainer.add(this.rerollCostText);
-
-    
-
-    this.rerollUpContainer = this.scene.add.container(100, -78);
-    this.rerollUpContainer.setName("reroll-brn");
-    this.rerollUpContainer.setVisible(false);
-    ui.add(this.rerollUpContainer);
-
-    this.rerollUpLabel = addTextObject(this.scene, -4, -2, "+1 Reroll", TextStyle.PARTY);
-    this.rerollUpLabel.setName("text-reroll-btn");
-    this.rerollUpLabel.setOrigin(0, 0);
-    this.rerollUpContainer.add(this.rerollUpLabel);
-
-
-
-    this.rerollDownContainer = this.scene.add.container(100, -64);
-    this.rerollDownContainer.setName("reroll-brn");
-    this.rerollDownContainer.setVisible(false);
-    ui.add(this.rerollDownContainer);
-
-    this.rerollDownLabel = addTextObject(this.scene, -4, -2, "-1 Reroll", TextStyle.PARTY);
-    this.rerollDownLabel.setName("text-reroll-btn");
-    this.rerollDownLabel.setOrigin(0, 0);
-    this.rerollDownContainer.add(this.rerollDownLabel);
-
-    
 
     this.lockRarityButtonContainer = this.scene.add.container(16, -64);
     this.lockRarityButtonContainer.setVisible(false);
@@ -195,11 +164,6 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
 
     this.lockRarityButtonContainer.setVisible(false);
     this.lockRarityButtonContainer.setAlpha(0);
-
-    this.rerollUpContainer.setVisible(false)
-    this.rerollUpContainer.setAlpha(0)
-    this.rerollDownContainer.setVisible(false)
-    this.rerollDownContainer.setAlpha(0)
 
     this.rerollButtonContainer.setPositionRelative(this.lockRarityButtonContainer, 0, canLockRarities ? -12 : 0);
 
@@ -287,15 +251,9 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
       this.rerollButtonContainer.setAlpha(0);
       this.checkButtonContainer.setAlpha(0);
       this.lockRarityButtonContainer.setAlpha(0);
-      this.rerollUpContainer.setAlpha(0)
-      this.rerollDownContainer.setAlpha(0)
       this.rerollButtonContainer.setVisible(true);
       this.checkButtonContainer.setVisible(true);
       this.lockRarityButtonContainer.setVisible(canLockRarities);
-      this.rerollUpContainer.setVisible(false)
-      this.rerollDownContainer.setVisible(false)
-
-      // , this.rerollUpContainer, this.rerollDownContainer
 
       this.scene.tweens.add({
         targets: [ this.rerollButtonContainer, this.lockRarityButtonContainer, this.checkButtonContainer ],

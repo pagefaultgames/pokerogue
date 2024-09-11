@@ -133,7 +133,7 @@ export class UiInputs {
   buttonStats(pressed: boolean = true): void {
     // allow access to Button.STATS as a toggle for other elements
     for (const t of this.scene.getInfoToggles(true)) {
-      t.toggleInfo(pressed,);
+      t.toggleInfo(pressed);
     }
     // handle normal pokemon battle ui
     for (const p of this.scene.getField().filter(p => p?.isActive(true))) {

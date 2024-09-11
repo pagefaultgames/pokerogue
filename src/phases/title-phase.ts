@@ -37,22 +37,6 @@ export class TitlePhase extends Phase {
     this.loaded = false;
   }
 
-  setBiomeByType(biome: Biome, override?: boolean): void {
-    if (!this.scene.menuChangesBiome && !override)
-      return;
-    this.scene.arenaBg.setTexture(`${getBiomeKey(biome)}_bg`);
-  }
-  setBiomeByName(biome: string, override?: boolean): void {
-    if (!this.scene.menuChangesBiome && !override)
-      return;
-    this.scene.arenaBg.setTexture(`${getBiomeKey(Utils.getEnumValues(Biome)[Utils.getEnumKeys(Biome).indexOf(biome)])}_bg`);
-  }
-  setBiomeByFile(sessionData: SessionSaveData, override?: boolean): void {
-    if (!this.scene.menuChangesBiome && !override)
-      return;
-    this.scene.arenaBg.setTexture(`${getBiomeKey(sessionData.arena.biome)}_bg`);
-  }
-
   confirmSlot = (message: string, slotFilter: (i: integer) => boolean, callback: (i: integer) => void) => {
     const p = this;
     this.scene.ui.revertMode();
@@ -85,20 +69,18 @@ export class TitlePhase extends Phase {
 
   start(): void {
     super.start();
-    //console.log(LoggerTools.importDocument(JSON.stringify(LoggerTools.newDocument())))
 
     this.scene.ui.clearText();
     this.scene.ui.fadeIn(250);
 
     this.scene.playBgm("title", true);
 
-    this.scene.biomeChangeMode = false
-
     this.scene.gameData.getSession(loggedInUser?.lastSessionSlot ?? -1).then(sessionData => {
       if (sessionData) {
         this.lastSessionData = sessionData;
-        this.setBiomeByFile(sessionData, true)
-        this.setBiomeByType(Biome.END)
+        const biomeKey = getBiomeKey(sessionData.arena.biome);
+        const bgTexture = `${biomeKey}_bg`;
+        this.scene.arenaBg.setTexture(bgTexture);
       }
       this.showOptions();
     }).catch(err => {
@@ -268,7 +250,6 @@ export class TitlePhase extends Phase {
   }
 
   showOptions(): void {
-    this.scene.biomeChangeMode = true
     const options: OptionSelectItem[] = [];
     if (false)
     if (loggedInUser && loggedInUser!.lastSessionSlot > -1) {
@@ -344,8 +325,6 @@ export class TitlePhase extends Phase {
     options.push({
       label: i18next.t("menu:newGame"),
       handler: () => {
-        this.scene.biomeChangeMode = false
-        this.setBiomeByType(Biome.TOWN)
         const setModeAndEnd = (gameMode: GameModes) => {
           this.gameMode = gameMode;
           this.scene.ui.setMode(Mode.MESSAGE);
@@ -437,7 +416,6 @@ export class TitlePhase extends Phase {
     }, {
       label: "Manage Logs",
       handler: () => {
-        this.scene.biomeChangeMode = false
         //return this.logRenameMenu()
         this.scene.ui.setOverlayMode(Mode.LOG_HANDLER,
           (k: string) => {
@@ -475,7 +453,6 @@ export class TitlePhase extends Phase {
       options.push({
         label: i18next.t("menu:dailyRun"),
         handler: () => {
-          this.scene.biomeChangeMode = false
           this.setupDaily();
           return true;
         },
@@ -485,7 +462,6 @@ export class TitlePhase extends Phase {
     options.push({
       label: i18next.t("menu:settings"),
       handler: () => {
-        this.scene.biomeChangeMode = false
         this.scene.ui.setOverlayMode(Mode.SETTINGS);
         return true;
       },
@@ -634,7 +610,6 @@ export class TitlePhase extends Phase {
     confirmSlot("Select a slot to replace.", () => true, slotId => this.scene.gameData.importData(GameDataType.SESSION, slotId));
   }
   end(): void {
-    this.scene.biomeChangeMode = false
     if (!this.loaded && !this.scene.gameMode.isDaily) {
       this.scene.arena.preloadBgm();
       this.scene.gameMode = getGameMode(this.gameMode);
