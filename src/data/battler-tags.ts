@@ -1639,7 +1639,7 @@ export class BurnedUpTag extends BattlerTag {
 }
 
 /**
- * Battler tag for effects that ground the source, allowing Ground-type moves to hit them. Encompasses two tag types:
+ * Battler tag for effects that ground the source, allowing Ground-type moves to hit them.
  * @item `IGNORE_FLYING`: Persistent grounding effects (i.e. from Smack Down and Thousand Waves)
  */
 export class GroundedTag extends BattlerTag {
@@ -1649,11 +1649,8 @@ export class GroundedTag extends BattlerTag {
 }
 
 /**
- * @item `ROOSTED`: Roost removes flying from the friendly pokemon until end of turn. If this is the only thing keeping it ungrounded, it becomes
- * grounded until end of turn.
- *
- * If a pokemon was pure flying, it becomes normal type until end of turn. (even if it was affected by forests curse/trick or treat).
- * If a pokemon used burn up (losing its fire type), then uses roost, it becomes TYPELESS (stored as UNKNOWN) until end of turn.
+ * @item `ROOSTED`: Tag for temporary grounding if only source of ungrounding is flying and pokemon uses Roost.
+ * Roost removes flying type from a pokemon for a single turn.
  */
 
 export class RoostedTag extends BattlerTag {
