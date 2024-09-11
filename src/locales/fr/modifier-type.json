@@ -216,7 +216,7 @@
     "GOLDEN_PUNCH": { "name": "Poing Doré", "description": "La moitié des dégâts infligés sont convertis en argent." },
     "COIN_CASE": { "name": "Boite Jetons", "description": "Tous les 10 combats, recevez 10% de votre argent en intérêts." },
 
-    "LOCK_CAPSULE": { "name": "Poké Écrin", "description": "Permet de conserver la rareté des objets si vous relancez les objets proposés." },
+    "LOCK_CAPSULE": { "name": "Poké Écrin", "description": "Permet de choisir de bloquer le niveau de rareté lors d’une relance des objets gratuits proposés." },
 
     "GRIP_CLAW": { "name": "Accro Griffe" },
     "WIDE_LENS": { "name": "Loupe" },
