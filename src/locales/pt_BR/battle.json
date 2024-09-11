@@ -14,6 +14,10 @@
   "moneyWon": "Você ganhou\n₽{{moneyAmount}} por vencer!",
   "moneyPickedUp": "Você pegou ₽{{moneyAmount}} do chão!",
   "pokemonCaught": "{{pokemonName}} foi capturado!",
+  "pokemonObtained": "You got {{pokemonName}}!",
+  "pokemonBrokeFree": "Oh no!\nThe Pokémon broke free!",
+  "pokemonFled": "The wild {{pokemonName}} fled!",
+  "playerFled": "You fled from the {{pokemonName}}!",
   "addedAsAStarter": "{{pokemonName}} foi adicionado\naos seus iniciais!",
   "partyFull": "Sua equipe está cheia.\nSolte um Pokémon para ter espaço para {{pokemonName}}?",
   "pokemon": "Pokémon",
@@ -49,6 +53,7 @@
   "noPokeballTrainer": "Não se pode capturar\nPokémon dos outros!",
   "noPokeballMulti": "Não se pode lançar Poké Bolas\nquando há mais de um Pokémon!",
   "noPokeballStrong": "Este Pokémon é forte demais para ser capturado!\nÉ preciso enfraquecê-lo primeiro!",
+  "noPokeballMysteryEncounter": "You aren't able to\ncatch this Pokémon!",
   "noEscapeForce": "Uma força misteriosa\nte impede de fugir.",
   "noEscapeTrainer": "Não se pode fugir de\nbatalhas contra treinadores!",
   "noEscapePokemon": "O movimento {{moveName}} de {{pokemonName}} te impede de fugir!",
@@ -96,5 +101,6 @@
   "retryBattle": "Você gostaria de tentar novamente desde o início da batalha?",
   "unlockedSomething": "{{unlockedThing}}\nfoi desbloqueado.",
   "congratulations": "Parabéns!",
-  "beatModeFirstTime": "{{speciesName}} venceu o Modo {{gameMode}} pela primeira vez!\nVocê recebeu {{newModifier}}!"
+  "beatModeFirstTime": "{{speciesName}} venceu o Modo {{gameMode}} pela primeira vez!\nVocê recebeu {{newModifier}}!",
+  "mysteryEncounterAppeared": "What's this?"
 }
