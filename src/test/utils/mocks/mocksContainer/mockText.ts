@@ -1,5 +1,4 @@
 import UI from "#app/ui/ui";
-import { vi } from "vitest";
 import { MockGameObject } from "../mockGameObject";
 
 export default class MockText implements MockGameObject {
@@ -201,11 +200,11 @@ export default class MockText implements MockGameObject {
     };
   }
 
-  setColor = vi.fn((color: string) => {
+  setColor = (color: string) => {
     this.color = color;
-  });
+  };
 
-  setInteractive = vi.fn();
+  setInteractive = () => null;
 
   setShadowColor(color) {
     // Sets the shadow color.
@@ -231,9 +230,9 @@ export default class MockText implements MockGameObject {
     // return this.phaserText.setAlpha(alpha);
   }
 
-  setName = vi.fn((name: string) => {
+  setName = (name: string) => {
     this.name = name;
-  });
+  };
 
   setAlign(align) {
     // return this.phaserText.setAlign(align);
