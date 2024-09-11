@@ -68,6 +68,20 @@
     "BaseStatBoosterModifierType": {
       "description": "Augmente de 10% {{stat}} de base de son porteur. Plus les IV sont hauts, plus il peut en porter."
     },
+    "PokemonBaseStatTotalModifierType": {
+      "name": "Shuckle Juice",
+      "description": "{{increaseDecrease}} all of the holder's base stats by {{statValue}}. You were {{blessCurse}} by the Shuckle.",
+      "extra": {
+        "increase": "Increases",
+        "decrease": "Decreases",
+        "blessed": "blessed",
+        "cursed": "cursed"
+      }
+    },
+    "PokemonBaseStatFlatModifierType": {
+      "name": "Old Gateau",
+      "description": "Increases the holder's {{stats}} base stats by {{statValue}}. Found after a strange dream."
+    },
     "AllPokemonFullHpRestoreModifierType": {
       "description": "Restaure tous les PV de toute l’équipe."
     },
