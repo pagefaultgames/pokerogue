@@ -79,19 +79,19 @@ export default class MockText implements MockGameObject {
     return result;
   }
 
-  showText = vi.fn((text: string, delay?: integer | null, callback?: Function | null, callbackDelay?: integer | null, prompt?: boolean | null, promptDelay?: integer | null) => {
+  showText(text: string, delay?: integer | null, callback?: Function | null, callbackDelay?: integer | null, prompt?: boolean | null, promptDelay?: integer | null) {
     this.scene.messageWrapper.showText(text, delay, callback, callbackDelay, prompt, promptDelay);
     if (callback) {
       callback();
     }
-  });
+  }
 
-  showDialogue = vi.fn((keyOrText: string, name: string | undefined, delay: integer | null = 0, callback: Function, callbackDelay?: integer, promptDelay?: integer) => {
+  showDialogue(keyOrText: string, name: string | undefined, delay: integer | null = 0, callback: Function, callbackDelay?: integer, promptDelay?: integer) {
     this.scene.messageWrapper.showDialogue(keyOrText, name, delay, callback, callbackDelay, promptDelay);
     if (callback) {
       callback();
     }
-  });
+  }
 
   setScale(scale) {
     // return this.phaserText.setScale(scale);
@@ -200,9 +200,9 @@ export default class MockText implements MockGameObject {
     };
   }
 
-  setColor = (color: string) => {
+  setColor(color: string) {
     this.color = color;
-  };
+  }
 
   setInteractive = () => null;
 
@@ -230,9 +230,9 @@ export default class MockText implements MockGameObject {
     // return this.phaserText.setAlpha(alpha);
   }
 
-  setName = (name: string) => {
+  setName(name: string) {
     this.name = name;
-  };
+  }
 
   setAlign(align) {
     // return this.phaserText.setAlign(align);
@@ -256,9 +256,13 @@ export default class MockText implements MockGameObject {
     };
   }
 
-  disableInteractive = vi.fn();
+  disableInteractive() {
+    // Disables interaction with this Game Object.
+  }
 
-  clearTint = vi.fn();
+  clearTint() {
+    // Clears tint on this Game Object.
+  }
 
   add(obj) {
     // Adds a child to this Game Object.

@@ -227,7 +227,7 @@ export default class GameWrapper {
     };
     this.scene.make = new MockGameObjectCreator(mockTextureManager);
     this.scene.time = new MockClock(this.scene);
-    this.scene.remove = vi.fn();
+    this.scene.remove = vi.fn(); // TODO: this should be stubbed differently
   }
 }
 

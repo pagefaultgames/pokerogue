@@ -21,6 +21,9 @@ import { getPokemonSpecies } from "#app/data/pokemon-species";
 import { BerryType } from "#enums/berry-type";
 import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
 import { Stat } from "#enums/stat";
+import { BerryModifier } from "#app/modifier/modifier";
+import { generateModifierType } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
+import { modifierTypes } from "#app/modifier/modifier-type";
 
 const namespace = "mysteryEncounter:uncommonBreed";
 const defaultParty = [Species.LAPRAS, Species.GENGAR, Species.ABRA];
@@ -164,8 +167,11 @@ describe("Uncommon Breed - Mystery Encounter", () => {
     });
 
     it("should NOT be selectable if the player doesn't have enough berries", async () => {
-      game.override.startingHeldItems([]);
       await game.runToMysteryEncounter(MysteryEncounterType.UNCOMMON_BREED, defaultParty);
+      // Clear out any pesky mods that slipped through test spin-up
+      scene.modifiers.forEach(mod => {
+        scene.removeModifier(mod);
+      });
       await game.phaseInterceptor.to(MysteryEncounterPhase, false);
 
       const encounterPhase = scene.getCurrentPhase();
@@ -184,10 +190,20 @@ describe("Uncommon Breed - Mystery Encounter", () => {
     });
 
     it("Should skip fight when player meets requirements", async () => {
-      game.override.startingHeldItems([{name: "BERRY", count: 2, type: BerryType.SITRUS}, {name: "BERRY", count: 3, type: BerryType.GANLON}]);
       const leaveEncounterWithoutBattleSpy = vi.spyOn(EncounterPhaseUtils, "leaveEncounterWithoutBattle");
 
       await game.runToMysteryEncounter(MysteryEncounterType.UNCOMMON_BREED, defaultParty);
+
+      // Berries on party lead
+      const sitrus = generateModifierType(scene, modifierTypes.BERRY, [BerryType.SITRUS])!;
+      const sitrusMod = sitrus.newModifier(scene.getParty()[0]) as BerryModifier;
+      sitrusMod.stackCount = 2;
+      await scene.addModifier(sitrusMod, true, false, false, true);
+      const ganlon = generateModifierType(scene, modifierTypes.BERRY, [BerryType.GANLON])!;
+      const ganlonMod = ganlon.newModifier(scene.getParty()[0]) as BerryModifier;
+      ganlonMod.stackCount = 3;
+      await scene.addModifier(ganlonMod, true, false, false, true);
+      await scene.updateModifiers(true);
 
       await runMysteryEncounterToEnd(game, 2);
 

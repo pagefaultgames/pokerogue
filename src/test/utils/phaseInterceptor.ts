@@ -126,7 +126,6 @@ export default class PhaseInterceptor {
     [MysteryEncounterBattlePhase, this.startPhase],
     [MysteryEncounterRewardsPhase, this.startPhase],
     [PostMysteryEncounterPhase, this.startPhase],
-    [LearnMovePhase, this.startPhase],
     [ModifierRewardPhase, this.startPhase],
     [PartyExpPhase, this.startPhase]
   ];
