@@ -15,9 +15,11 @@ export interface MoveInfoOverlaySettings {
     //location and width of the component; unaffected by scaling
     x?: number;
     y?: number;
-    width?: number; // default is always half the screen, regardless of scale
-    hideEffectBox?: boolean; // whether or not the small secondary box should be shown
-    hideBg?: boolean; // whether to hide the window background
+    /** Default is always half the screen, regardless of scale */
+    width?: number;
+    /** Determines whether to display the small secondary box */
+    hideEffectBox?: boolean;
+    hideBg?: boolean;
 }
 
 const EFF_HEIGHT = 48;
