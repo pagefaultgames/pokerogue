@@ -52,6 +52,7 @@ import RunInfoUiHandler from "./run-info-ui-handler";
 import EggSummaryUiHandler from "./egg-summary-ui-handler";
 import TestDialogueUiHandler from "#app/ui/test-dialogue-ui-handler";
 import AutoCompleteUiHandler from "./autocomplete-ui-handler";
+import { Device } from "#enums/devices";
 
 export enum Mode {
   MESSAGE,
@@ -577,5 +578,21 @@ export default class UI extends Phaser.GameObjects.Container {
 
   public getModeChain(): Mode[] {
     return this.modeChain;
+  }
+
+  /**
+   * getGamepadType - returns the type of gamepad being used
+   * inputMethod could be "keyboard" or "touch" or "gamepad"
+   * if inputMethod is "keyboard" or "touch", then the inputMethod is returned
+   * if inputMethod is "gamepad", then the gamepad type is returned it could be "xbox" or "dualshock"
+   * @returns gamepad type
+   */
+  public getGamepadType(): string {
+    const scene = this.scene as BattleScene;
+    if (scene.inputMethod === "gamepad") {
+      return scene.inputController.getConfig(scene.inputController.selectedDevice[Device.GAMEPAD]).padType;
+    } else {
+      return scene.inputMethod;
+    }
   }
 }
