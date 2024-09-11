@@ -3,7 +3,6 @@ import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import { WeatherType } from "#enums/weather-type";
 import GameManager from "#test/utils/gameManager";
-import { SPLASH_ONLY } from "#test/utils/testUtils";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
@@ -27,7 +26,7 @@ describe("Moves - Chilly Reception", () => {
     game = new GameManager(phaserGame);
     game.override.battleType("single")
       .moveset([Moves.CHILLY_RECEPTION, Moves.SNOWSCAPE])
-      .enemyMoveset(SPLASH_ONLY)
+      .enemyMoveset(Array(4).fill(Moves.SPLASH))
       .enemyAbility(Abilities.NONE)
       .ability(Abilities.NONE);
 
