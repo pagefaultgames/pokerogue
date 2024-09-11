@@ -15,6 +15,7 @@
   "UNPAUSE_EVOLUTION": "Réactiver Évolution",
   "REVIVE": "Ranimer",
   "RENAME": "Renommer",
+  "SELECT": "Sélectionner",
   "choosePokemon": "Sélectionnez un Pokémon.",
   "doWhatWithThisPokemon": "Que faire avec ce Pokémon ?",
   "noEnergy": "{{pokemonName}} n’a plus l’énergie\nde se battre !",
