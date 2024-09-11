@@ -15,6 +15,7 @@
   "UNPAUSE_EVOLUTION": "진화 재개",
   "REVIVE": "되살린다",
   "RENAME": "닉네임 바꾸기",
+  "SELECT": "Select",
   "choosePokemon": "포켓몬을 선택하세요.",
   "doWhatWithThisPokemon": "포켓몬을 어떻게 하겠습니까?",
   "noEnergy": "{{pokemonName}}[[는]] 싸울 수 있는\n기력이 남아 있지 않습니다!",
