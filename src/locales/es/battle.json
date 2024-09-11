@@ -12,6 +12,10 @@
   "trainerDefeated": "¡Has derrotado a\n{{trainerName}}!",
   "moneyWon": "¡Has ganado\n₽{{moneyAmount}} por vencer!",
   "pokemonCaught": "¡{{pokemonName}} atrapado!",
+  "pokemonObtained": "You got {{pokemonName}}!",
+  "pokemonBrokeFree": "Oh no!\nThe Pokémon broke free!",
+  "pokemonFled": "The wild {{pokemonName}} fled!",
+  "playerFled": "You fled from the {{pokemonName}}!",
   "addedAsAStarter": "{{pokemonName}} ha sido añadido\na tus iniciales!",
   "partyFull": "Tu equipo esta completo.\n¿Quieres liberar un Pokémon para meter a {{pokemonName}}?",
   "pokemon": "Pokémon",
@@ -47,6 +51,7 @@
   "noPokeballTrainer": "¡No puedes atrapar a los\nPokémon de los demás!",
   "noPokeballMulti": "¡No se pueden lanzar Poké Balls\ncuando hay más de un Pokémon!",
   "noPokeballStrong": "¡Este Pokémon es demasiado fuerte para ser capturado!\nNecesitas bajarle los PS primero!",
+  "noPokeballMysteryEncounter": "You aren't able to\ncatch this Pokémon!",
   "noEscapeForce": "Una fuerza misteriosa\nte impide huir.",
   "noEscapeTrainer": "¡No puedes huir de los\ncombates contra Entrenadores!",
   "noEscapePokemon": "¡El movimiento {{moveName}} de {{pokemonName}} impide la huida!",
@@ -85,5 +90,6 @@
   "statSeverelyFell_one": "¡El {{stats}} de {{pokemonNameWithAffix}} ha bajado muchísimo!",
   "statSeverelyFell_other": "¡{{stats}} de\n{{pokemonNameWithAffix}} han bajado muchísimo!",
   "statWontGoAnyLower_one": "¡El {{stats}} de {{pokemonNameWithAffix}} no puede bajar más!",
-  "statWontGoAnyLower_other": "¡{{stats}} de\n{{pokemonNameWithAffix}} no pueden bajar más!"
+  "statWontGoAnyLower_other": "¡{{stats}} de\n{{pokemonNameWithAffix}} no pueden bajar más!",
+  "mysteryEncounterAppeared": "What's this?"
 }
