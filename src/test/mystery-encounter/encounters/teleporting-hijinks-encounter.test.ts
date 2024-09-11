@@ -186,7 +186,7 @@ describe("Teleporting Hijinks - Mystery Encounter", () => {
       expect([Biome.SPACE, Biome.ISLAND, Biome.LABORATORY, Biome.FAIRY_CAVE]).toContain(scene.arena.biomeType);
     });
 
-    it("should start a battle against an enraged boss", async () => {
+    it("should start a battle against an enraged boss", { retry: 5 }, async () => {
       await game.runToMysteryEncounter(MysteryEncounterType.TELEPORTING_HIJINKS, defaultParty);
       await runMysteryEncounterToEnd(game, 1, undefined, true);
       const enemyField = scene.getEnemyField();

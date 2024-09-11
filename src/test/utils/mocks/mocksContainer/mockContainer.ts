@@ -1,5 +1,4 @@
 import MockTextureManager from "#test/utils/mocks/mockTextureManager";
-import { vi } from "vitest";
 import { MockGameObject } from "../mockGameObject";
 
 export default class MockContainer implements MockGameObject {
@@ -36,7 +35,9 @@ export default class MockContainer implements MockGameObject {
     // same as remove or destroy
   }
 
-  removeBetween = vi.fn((startIndex, endIndex, destroyChild) => {});
+  removeBetween(startIndex, endIndex, destroyChild) {
+    // Removes multiple children across an index range
+  }
 
   addedToScene() {
     // This callback is invoked when this Game Object is added to a Scene.
@@ -54,7 +55,7 @@ export default class MockContainer implements MockGameObject {
     /// Sets the position of this Game Object to be a relative position from the source Game Object.
   }
 
-  setInteractive = vi.fn();
+  setInteractive = () => null;
 
   setOrigin(x, y) {
     this.x = x;
@@ -154,7 +155,9 @@ export default class MockContainer implements MockGameObject {
     // Sends this Game Object to the back of its parent's display list.
   }
 
-  moveTo = vi.fn((obj) => {});
+  moveTo(obj) {
+    // Moves this Game Object to the given index in the list.
+  }
 
   moveAbove(obj) {
     // Moves this Game Object to be above the given Game Object in the display list.
@@ -164,10 +167,9 @@ export default class MockContainer implements MockGameObject {
     // Moves this Game Object to be below the given Game Object in the display list.
   }
 
-  setName = vi.fn((name: string) => {
+  setName(name: string) {
     this.name = name;
-    // return this.phaserSprite.setName(name);
-  });
+  }
 
   bringToTop(obj) {
     // Brings this Game Object to the top of its parents display list.
@@ -211,9 +213,9 @@ export default class MockContainer implements MockGameObject {
     return this.list;
   }
 
-  getByName = vi.fn((key: string) => {
+  getByName(key: string) {
     return this.list.find(v => v.name === key) ?? new MockContainer(this.textureManager, 0, 0);
-  });
+  }
 
-  disableInteractive = vi.fn();
+  disableInteractive = () => null;
 }

@@ -41,7 +41,7 @@ window.URL.createObjectURL = (blob: Blob) => {
   });
   return null;
 };
-navigator.getGamepads = vi.fn().mockReturnValue([]);
+navigator.getGamepads = () => [];
 global.fetch = vi.fn(MockFetch);
 Utils.setCookie(Utils.sessionIdKey, 'fake_token');
 
@@ -227,7 +227,7 @@ export default class GameWrapper {
     };
     this.scene.make = new MockGameObjectCreator(mockTextureManager);
     this.scene.time = new MockClock(this.scene);
-    this.scene.remove = vi.fn();
+    this.scene.remove = vi.fn(); // TODO: this should be stubbed differently
   }
 }
 

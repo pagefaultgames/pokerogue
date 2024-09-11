@@ -173,6 +173,7 @@ describe("Dancing Lessons - Mystery Encounter", () => {
       const phaseSpy = vi.spyOn(scene, "unshiftPhase");
 
       await game.runToMysteryEncounter(MysteryEncounterType.DANCING_LESSONS, defaultParty);
+      scene.getParty()[0].moveset = [];
       await runMysteryEncounterToEnd(game, 2, { pokemonNo: 1 });
 
       const movePhases = phaseSpy.mock.calls.filter(p => p[0] instanceof LearnMovePhase).map(p => p[0]);
@@ -184,6 +185,7 @@ describe("Dancing Lessons - Mystery Encounter", () => {
       const leaveEncounterWithoutBattleSpy = vi.spyOn(EncounterPhaseUtils, "leaveEncounterWithoutBattle");
 
       await game.runToMysteryEncounter(MysteryEncounterType.DANCING_LESSONS, defaultParty);
+      scene.getParty()[0].moveset = [];
       await runMysteryEncounterToEnd(game, 2, { pokemonNo: 1 });
 
       expect(leaveEncounterWithoutBattleSpy).toBeCalled();

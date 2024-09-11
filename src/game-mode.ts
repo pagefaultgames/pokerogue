@@ -61,7 +61,7 @@ export class GameMode implements GameModeConfig {
     }
     this.battleConfig = battleConfig || {};
     this.minMysteryEncounterWave = this.minMysteryEncounterWave ?? 0;
-    this.maxMysteryEncounterWave = this.maxMysteryEncounterWave ?? Number.MAX_SAFE_INTEGER;
+    this.maxMysteryEncounterWave = this.maxMysteryEncounterWave ?? 100000;
   }
 
   /**

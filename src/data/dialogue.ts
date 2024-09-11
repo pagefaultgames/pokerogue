@@ -1100,10 +1100,12 @@ export const trainerTypeDialogue: TrainerTypeDialogue = {
         "dialogue:stat_trainer_buck.encounter.2"
       ],
       victory: [
-        "dialogue:stat_trainer_buck.victory.1"
+        "dialogue:stat_trainer_buck.victory.1",
+        "dialogue:stat_trainer_buck.victory.2"
       ],
       defeat: [
-        "dialogue:stat_trainer_buck.defeat.1"
+        "dialogue:stat_trainer_buck.defeat.1",
+        "dialogue:stat_trainer_buck.defeat.2"
       ]
     }
   ],
@@ -1114,10 +1116,12 @@ export const trainerTypeDialogue: TrainerTypeDialogue = {
         "dialogue:stat_trainer_cheryl.encounter.2"
       ],
       victory: [
-        "dialogue:stat_trainer_cheryl.victory.1"
+        "dialogue:stat_trainer_cheryl.victory.1",
+        "dialogue:stat_trainer_cheryl.victory.2"
       ],
       defeat: [
-        "dialogue:stat_trainer_cheryl.defeat.1"
+        "dialogue:stat_trainer_cheryl.defeat.1",
+        "dialogue:stat_trainer_cheryl.defeat.2"
       ]
     }
   ],
@@ -1128,10 +1132,12 @@ export const trainerTypeDialogue: TrainerTypeDialogue = {
         "dialogue:stat_trainer_marley.encounter.2"
       ],
       victory: [
-        "dialogue:stat_trainer_marley.victory.1"
+        "dialogue:stat_trainer_marley.victory.1",
+        "dialogue:stat_trainer_marley.victory.2"
       ],
       defeat: [
-        "dialogue:stat_trainer_marley.defeat.1"
+        "dialogue:stat_trainer_marley.defeat.1",
+        "dialogue:stat_trainer_marley.defeat.2"
       ]
     }
   ],
@@ -1142,10 +1148,12 @@ export const trainerTypeDialogue: TrainerTypeDialogue = {
         "dialogue:stat_trainer_mira.encounter.2"
       ],
       victory: [
-        "dialogue:stat_trainer_mira.victory.1"
+        "dialogue:stat_trainer_mira.victory.1",
+        "dialogue:stat_trainer_mira.victory.2"
       ],
       defeat: [
-        "dialogue:stat_trainer_mira.defeat.1"
+        "dialogue:stat_trainer_mira.defeat.1",
+        "dialogue:stat_trainer_mira.defeat.2"
       ]
     }
   ],
@@ -1156,10 +1164,12 @@ export const trainerTypeDialogue: TrainerTypeDialogue = {
         "dialogue:stat_trainer_riley.encounter.2"
       ],
       victory: [
-        "dialogue:stat_trainer_riley.victory.1"
+        "dialogue:stat_trainer_riley.victory.1",
+        "dialogue:stat_trainer_riley.victory.2"
       ],
       defeat: [
-        "dialogue:stat_trainer_riley.defeat.1"
+        "dialogue:stat_trainer_riley.defeat.1",
+        "dialogue:stat_trainer_riley.defeat.2"
       ]
     }
   ],
