@@ -96,5 +96,6 @@
   "unlockedSomething": "{{unlockedThing}}\nを　アンロックした！",
   "congratulations": "おめでとうございます！！",
   "beatModeFirstTime": "初めて　{{speciesName}}が　{{gameMode}}モードを　クリアした!\n{{newModifier}}を　手に入れた!",
-  "ppReduced": "{{targetName}}の　{{moveName}}を　{{reduction}}削った!"
+  "ppReduced": "{{targetName}}の　{{moveName}}を　{{reduction}}削った!",
+  "mysteryEncounterAppeared": "What's this?"
 }
