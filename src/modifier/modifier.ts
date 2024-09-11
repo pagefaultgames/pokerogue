@@ -924,6 +924,14 @@ export class EvolutionStatBoosterModifier extends StatBoosterModifier {
     return modifier instanceof EvolutionStatBoosterModifier;
   }
 
+  /**
+   * Checks if the stat boosts can apply and if the holder is not currently
+   * Gigantamax'd.
+   * @param args [0] {@linkcode Pokemon} that holds the held item
+   *             [1] {@linkcode Stat} N/A
+   *             [2] {@linkcode Utils.NumberHolder} N/A
+   * @returns true if the stat boosts can be applied, false otherwise
+   */
   shouldApply(args: any[]): boolean {
     return super.shouldApply(args) && ((args[0] as Pokemon).getFormKey() !== SpeciesFormKey.GIGANTAMAX);
   }
