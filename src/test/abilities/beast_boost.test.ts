@@ -4,7 +4,6 @@ import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import { Stat } from "#enums/stat";
 import GameManager from "#test/utils/gameManager";
-import { SPLASH_ONLY } from "#test/utils/testUtils";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -31,7 +30,7 @@ describe("Abilities - Beast Boost", () => {
       .ability(Abilities.BEAST_BOOST)
       .startingLevel(2000)
       .moveset([ Moves.FLAMETHROWER ])
-      .enemyMoveset(SPLASH_ONLY);
+      .enemyMoveset(Moves.SPLASH);
   });
 
   it("should prefer highest stat to boost its corresponding stat stage by 1 when winning a battle", async() => {
@@ -51,7 +50,7 @@ describe("Abilities - Beast Boost", () => {
   }, 20000);
 
   it("should use in-battle overriden stats when determining the stat stage to raise by 1", async() => {
-    game.override.enemyMoveset(new Array(4).fill(Moves.GUARD_SPLIT));
+    game.override.enemyMoveset([Moves.GUARD_SPLIT]);
 
     await game.classicMode.startBattle([Species.SLOWBRO]);
 

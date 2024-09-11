@@ -30,7 +30,7 @@ describe("Moves - Lash Out", () => {
       .disableCrits()
       .enemySpecies(Species.MAGIKARP)
       .enemyAbility(Abilities.FUR_COAT)
-      .enemyMoveset(Array(4).fill(Moves.GROWL))
+      .enemyMoveset([Moves.GROWL])
       .startingLevel(10)
       .enemyLevel(10)
       .starterSpecies(Species.FEEBAS)

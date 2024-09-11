@@ -10,7 +10,6 @@ import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/utils/gameManager";
-import { SPLASH_ONLY } from "#test/utils/testUtils";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -67,7 +66,7 @@ describe("Abilities - Forecast", () => {
     game.override
       .moveset([Moves.SPLASH, Moves.RAIN_DANCE, Moves.SUNNY_DAY, Moves.TACKLE])
       .enemySpecies(Species.MAGIKARP)
-      .enemyMoveset(SPLASH_ONLY)
+      .enemyMoveset(Moves.SPLASH)
       .enemyAbility(Abilities.BALL_FETCH);
   });
 
@@ -229,7 +228,7 @@ describe("Abilities - Forecast", () => {
   });
 
   it("reverts to Normal Form when Forecast is suppressed, changes form to match the weather when it regains it", async () => {
-    game.override.enemyMoveset(Array(4).fill(Moves.GASTRO_ACID)).weather(WeatherType.RAIN);
+    game.override.enemyMoveset([Moves.GASTRO_ACID]).weather(WeatherType.RAIN);
     await game.startBattle([Species.CASTFORM, Species.PIKACHU]);
     const castform = game.scene.getPlayerPokemon()!;
 
@@ -260,7 +259,7 @@ describe("Abilities - Forecast", () => {
   });
 
   it("does not change Castform's form until after Stealth Rock deals damage", async () => {
-    game.override.weather(WeatherType.RAIN).enemyMoveset(Array(4).fill(Moves.STEALTH_ROCK));
+    game.override.weather(WeatherType.RAIN).enemyMoveset([Moves.STEALTH_ROCK]);
     await game.startBattle([Species.PIKACHU, Species.CASTFORM]);
 
     // First turn - set up stealth rock

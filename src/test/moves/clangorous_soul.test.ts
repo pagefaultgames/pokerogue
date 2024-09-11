@@ -5,7 +5,6 @@ import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import { Stat } from "#enums/stat";
-import { SPLASH_ONLY } from "#test/utils/testUtils";
 
 const TIMEOUT = 20 * 1000;
 /** HP Cost of Move */
@@ -34,7 +33,7 @@ describe("Moves - Clangorous Soul", () => {
     game.override.startingLevel(100);
     game.override.enemyLevel(100);
     game.override.moveset([Moves.CLANGOROUS_SOUL]);
-    game.override.enemyMoveset(SPLASH_ONLY);
+    game.override.enemyMoveset(Moves.SPLASH);
   });
 
   //Bulbapedia Reference: https://bulbapedia.bulbagarden.net/wiki/Clangorous_Soul_(move)
