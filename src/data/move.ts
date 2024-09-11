@@ -6012,51 +6012,6 @@ export class SwapStatAttr extends MoveEffectAttr {
   }
 }
 
-
-/**
- * Attribute used for status moves, namely Power Trick,
- * that swaps user's own stat.
- * @extends MoveEffectAttr
- * @see {@linkcode apply}
- */
-export class SelfSwapStatAttr extends MoveEffectAttr {
-  /** Swaps the values of two specified stats */
-  private firstStat: EffectiveStat;
-  private secondStat: EffectiveStat;
-
-  constructor(firstStat: EffectiveStat, secondStat: EffectiveStat) {
-    super();
-
-    this.firstStat = firstStat;
-    this.secondStat = secondStat;
-  }
-
-  /**
-   * Swap user's {@linkcode firstStat} value with {@linkcode secondStat} value.
-   * @param user the {@linkcode Pokemon} that used the move
-   * @param target N/A
-   * @param move N/A
-   * @param args N/A
-   * @returns true if attribute application succeeds
-   */
-  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    if (super.apply(user, target, move, args)) {
-      const temp = user.getStat(this.firstStat, false);
-      user.setStat(this.firstStat, target.getStat(this.secondStat, false), false);
-      user.setStat(this.secondStat, temp, false);
-
-      user.scene.queueMessage(i18next.t("moveTriggers:selfSwitchedStat", {
-        pokemonName: getPokemonNameWithAffix(user),
-        firstStat:i18next.t(getStatKey(this.firstStat)),
-        secondStat:i18next.t(getStatKey(this.secondStat)),
-      }));
-
-      return true;
-    }
-    return false;
-  }
-}
-
 /**
  * Attribute used to switch the user's own stats.
  * Used by Power Shift.
@@ -7687,7 +7642,7 @@ export function initMoves() {
       .attr(OpponentHighHpPowerAttr, 120)
       .makesContact(),
     new SelfStatusMove(Moves.POWER_TRICK, Type.PSYCHIC, -1, 10, -1, 0, 4)
-      .attr(SelfSwapStatAttr, Stat.ATK, Stat.DEF),
+      .attr(AddBattlerTagAttr, BattlerTagType.POWER_TRICK, true),
     new StatusMove(Moves.GASTRO_ACID, Type.POISON, 100, 10, -1, 0, 4)
       .attr(SuppressAbilitiesAttr),
     new StatusMove(Moves.LUCKY_CHANT, Type.NORMAL, -1, 30, -1, 0, 4)

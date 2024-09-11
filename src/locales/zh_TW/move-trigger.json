@@ -5,7 +5,6 @@
   "switchedStatChanges": "{{pokemonName}}和對手互換了\n自身的能力變化！",
   "switchedTwoStatChanges": "{{pokemonName}} 和對手互換了自身的{{firstStat}}和{{secondStat}}的能力變化！",
   "switchedStat": "{{pokemonName}} 互換了各自的{{stat}}！",
-  "selfSwitchedStat": "{{pokemonName}} 互换{{firstStat}}击和{{secondStat}}",
   "sharedGuard": "{{pokemonName}} 平分了各自的防守！",
   "sharedPower": "{{pokemonName}} 平分了各自的力量！",
   "goingAllOutForAttack": "{{pokemonName}}拿出全力了！",

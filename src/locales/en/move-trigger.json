@@ -5,7 +5,6 @@
   "switchedStatChanges": "{{pokemonName}} switched stat changes with the target!",
   "switchedTwoStatChanges": "{{pokemonName}} switched all changes to its {{firstStat}}\nand {{secondStat}} with its target!",
   "switchedStat": "{{pokemonName}} switched {{stat}} with its target!",
-  "selfSwitchedStat": "{{pokemonName}} switched its {{firstStat}} and {{secondStat}}!",
   "sharedGuard": "{{pokemonName}} shared its guard with the target!",
   "sharedPower": "{{pokemonName}} shared its power with the target!",
   "shiftedStats": "{{pokemonName}} switched its {{statToSwitch}} and {{statToSwitchWith}}!",

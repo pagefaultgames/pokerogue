@@ -69,5 +69,6 @@
   "cursedLapse": "{{pokemonNameWithAffix}} foi ferido pelo Curse!",
   "stockpilingOnAdd": "{{pokemonNameWithAffix}} estocou {{stockpiledCount}}!",
   "disabledOnAdd": "{{moveName}} de {{pokemonNameWithAffix}}\nfoi desabilitado!",
-  "disabledLapse": "{{moveName}} de {{pokemonNameWithAffix}}\nnão está mais desabilitado."
+  "disabledLapse": "{{moveName}} de {{pokemonNameWithAffix}}\nnão está mais desabilitado.",
+  "powerTrickActive": "{{pokemonNameWithAffix}} trocou seu atributo de Ataque pela sua Defesa!"
 }
