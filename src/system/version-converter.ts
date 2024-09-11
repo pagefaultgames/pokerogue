@@ -76,7 +76,7 @@ export function applySystemDataPatches(data: SystemSaveData) {
       if (data.starterData) {
         // Migrate ability starter data if empty for caught species
         Object.keys(data.starterData).forEach(sd => {
-          if (data.dexData[sd].caughtAttr && !data.starterData[sd].abilityAttr) {
+          if (data.dexData[sd]?.caughtAttr && (data.starterData[sd] && !data.starterData[sd].abilityAttr)) {
             data.starterData[sd].abilityAttr = 1;
           }
         });
@@ -104,9 +104,11 @@ export function applySystemDataPatches(data: SystemSaveData) {
       // --- PATCHES ---
 
       // Fix Starter Data
-      if (data.starterData) {
-        for (const starterId of defaultStarterSpecies) {
+      for (const starterId of defaultStarterSpecies) {
+        if (data.starterData[starterId]?.abilityAttr) {
           data.starterData[starterId].abilityAttr |= AbilityAttr.ABILITY_1;
+        }
+        if (data.dexData[starterId]?.caughtAttr) {
           data.dexData[starterId].caughtAttr |= DexAttr.FEMALE;
         }
       }
