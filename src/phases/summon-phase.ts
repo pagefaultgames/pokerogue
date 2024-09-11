@@ -93,6 +93,9 @@ export class SummonPhase extends PartyMemberPokemonPhase {
     }
   }
 
+  /**
+   * Enemy trainer or player trainer will do animations to throw Pokeball and summon a Pokemon to the field.
+   */
   summon(): void {
     const pokemon = this.getPokemon();
 
@@ -171,6 +174,11 @@ export class SummonPhase extends PartyMemberPokemonPhase {
     });
   }
 
+  /**
+   * Handles tweening and battle setup for a wild Pokemon that appears outside of the normal screen transition.
+   * Wild Pokemon will ease and fade in onto the field, then perform standard summon behavior.
+   * Currently only used by Mystery Encounters, as all other battle types pre-summon wild pokemon before screen transitions.
+   */
   summonWild(): void {
     const pokemon = this.getPokemon();
 
