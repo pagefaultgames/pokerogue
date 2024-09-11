@@ -1,12 +1,12 @@
-import { StatusEffect } from "#app/data/status-effect.js";
+import { StatusEffect } from "#app/data/status-effect";
 import { Weather, WeatherType } from "#app/data/weather";
-import { Abilities } from "#app/enums/abilities.js";
+import { Abilities } from "#app/enums/abilities";
 import { Biome } from "#app/enums/biome";
-import { Moves } from "#app/enums/moves.js";
-import { Species } from "#app/enums/species.js";
+import { Moves } from "#app/enums/moves";
+import { Species } from "#app/enums/species";
 import * as GameMode from "#app/game-mode";
 import { GameModes, getGameMode } from "#app/game-mode";
-import { ModifierOverride } from "#app/modifier/modifier-type.js";
+import { ModifierOverride } from "#app/modifier/modifier-type";
 import Overrides from "#app/overrides";
 import { vi } from "vitest";
 import { GameManagerHelper } from "./gameManagerHelper";
@@ -45,6 +45,17 @@ export class OverridesHelper extends GameManagerHelper {
   startingLevel(level: Species | number): this {
     vi.spyOn(Overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(level);
     this.log(`Player Pokemon starting level set to ${level}!`);
+    return this;
+  }
+
+  /**
+   * Override the XP Multiplier
+   * @param value the XP multiplier to set
+   * @returns `this`
+   */
+  xpMultiplier(value: number): this {
+    vi.spyOn(Overrides, "XP_MULTIPLIER_OVERRIDE", "get").mockReturnValue(value);
+    this.log(`XP Multiplier set to ${value}!`);
     return this;
   }
 
@@ -122,8 +133,11 @@ export class OverridesHelper extends GameManagerHelper {
    * @param moveset the {@linkcode Moves | moves}set to set
    * @returns this
    */
-  moveset(moveset: Moves[]): this {
+  moveset(moveset: Moves | Moves[]): this {
     vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue(moveset);
+    if (!Array.isArray(moveset)) {
+      moveset = [moveset];
+    }
     const movesetStr = moveset.map((moveId) => Moves[moveId]).join(", ");
     this.log(`Player Pokemon moveset set to ${movesetStr} (=[${moveset.join(", ")}])!`);
     return this;
@@ -241,8 +255,11 @@ export class OverridesHelper extends GameManagerHelper {
    * @param moveset the {@linkcode Moves | moves}set to set
    * @returns this
    */
-  enemyMoveset(moveset: Moves[]): this {
+  enemyMoveset(moveset: Moves | Moves[]): this {
     vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue(moveset);
+    if (!Array.isArray(moveset)) {
+      moveset = [moveset];
+    }
     const movesetStr = moveset.map((moveId) => Moves[moveId]).join(", ");
     this.log(`Enemy Pokemon moveset set to ${movesetStr} (=[${moveset.join(", ")}])!`);
     return this;
@@ -278,6 +295,17 @@ export class OverridesHelper extends GameManagerHelper {
   enemyHeldItems(items: ModifierOverride[]) {
     vi.spyOn(Overrides, "OPP_HELD_ITEMS_OVERRIDE", "get").mockReturnValue(items);
     this.log("Enemy Pokemon held items set to:", items);
+    return this;
+  }
+
+  /**
+   * Override the items rolled at the end of a battle
+   * @param items the items to be rolled
+   * @returns this
+   */
+  itemRewards(items: ModifierOverride[]) {
+    vi.spyOn(Overrides, "ITEM_REWARD_OVERRIDE", "get").mockReturnValue(items);
+    this.log("Item rewards set to:", items);
     return this;
   }
 

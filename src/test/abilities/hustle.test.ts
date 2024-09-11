@@ -4,7 +4,6 @@ import { Stat } from "#app/enums/stat";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/utils/gameManager";
-import { SPLASH_ONLY } from "#test/utils/testUtils";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -26,10 +25,10 @@ describe("Abilities - Hustle", () => {
     game = new GameManager(phaserGame);
     game.override
       .ability(Abilities.HUSTLE)
-      .moveset([Moves.TACKLE, Moves.GIGA_DRAIN, Moves.FISSURE])
+      .moveset([ Moves.TACKLE, Moves.GIGA_DRAIN, Moves.FISSURE ])
       .disableCrits()
       .battleType("single")
-      .enemyMoveset(SPLASH_ONLY)
+      .enemyMoveset(Moves.SPLASH)
       .enemySpecies(Species.SHUCKLE)
       .enemyAbility(Abilities.BALL_FETCH);
   });
@@ -39,13 +38,13 @@ describe("Abilities - Hustle", () => {
     const pikachu = game.scene.getPlayerPokemon()!;
     const atk = pikachu.stats[Stat.ATK];
 
-    vi.spyOn(pikachu, "getBattleStat");
+    vi.spyOn(pikachu, "getEffectiveStat");
 
     game.move.select(Moves.TACKLE);
     await game.move.forceHit();
     await game.phaseInterceptor.to("DamagePhase");
 
-    expect(pikachu.getBattleStat).toHaveReturnedWith(Math.floor(atk * 1.5));
+    expect(pikachu.getEffectiveStat).toHaveReturnedWith(Math.floor(atk * 1.5));
   });
 
   it("lowers the accuracy of the user's physical moves by 20%", async () => {
@@ -65,13 +64,13 @@ describe("Abilities - Hustle", () => {
     const pikachu = game.scene.getPlayerPokemon()!;
     const spatk = pikachu.stats[Stat.SPATK];
 
-    vi.spyOn(pikachu, "getBattleStat");
+    vi.spyOn(pikachu, "getEffectiveStat");
     vi.spyOn(pikachu, "getAccuracyMultiplier");
 
     game.move.select(Moves.GIGA_DRAIN);
     await game.phaseInterceptor.to("DamagePhase");
 
-    expect(pikachu.getBattleStat).toHaveReturnedWith(spatk);
+    expect(pikachu.getEffectiveStat).toHaveReturnedWith(spatk);
     expect(pikachu.getAccuracyMultiplier).toHaveReturnedWith(1);
   });
 

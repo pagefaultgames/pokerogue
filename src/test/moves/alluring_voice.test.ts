@@ -31,7 +31,7 @@ describe("Moves - Alluring Voice", () => {
       .disableCrits()
       .enemySpecies(Species.MAGIKARP)
       .enemyAbility(Abilities.ICE_SCALES)
-      .enemyMoveset(Array(4).fill(Moves.HOWL))
+      .enemyMoveset([Moves.HOWL])
       .startingLevel(10)
       .enemyLevel(10)
       .starterSpecies(Species.FEEBAS)
@@ -40,7 +40,7 @@ describe("Moves - Alluring Voice", () => {
 
   });
 
-  it("should confuse the opponent if their stats were raised", async () => {
+  it("should confuse the opponent if their stat stages were raised", async () => {
     await game.classicMode.startBattle();
 
     const enemy = game.scene.getEnemyPokemon()!;

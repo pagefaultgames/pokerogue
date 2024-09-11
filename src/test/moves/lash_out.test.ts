@@ -30,7 +30,7 @@ describe("Moves - Lash Out", () => {
       .disableCrits()
       .enemySpecies(Species.MAGIKARP)
       .enemyAbility(Abilities.FUR_COAT)
-      .enemyMoveset(Array(4).fill(Moves.GROWL))
+      .enemyMoveset([Moves.GROWL])
       .startingLevel(10)
       .enemyLevel(10)
       .starterSpecies(Species.FEEBAS)
@@ -39,7 +39,7 @@ describe("Moves - Lash Out", () => {
 
   });
 
-  it("should deal double damage if the user's stats were lowered this turn", async () => {
+  it("should deal double damage if the user's stat stages were lowered this turn", async () => {
     vi.spyOn(allMoves[Moves.LASH_OUT], "calculateBattlePower");
     await game.classicMode.startBattle();
 

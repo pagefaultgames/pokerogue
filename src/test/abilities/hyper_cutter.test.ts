@@ -1,9 +1,8 @@
-import { BattleStat } from "#app/data/battle-stat";
+import { Stat } from "#enums/stat";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/utils/gameManager";
-import { SPLASH_ONLY } from "#test/utils/testUtils";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
@@ -29,7 +28,7 @@ describe("Abilities - Hyper Cutter", () => {
       .ability(Abilities.BALL_FETCH)
       .enemySpecies(Species.SHUCKLE)
       .enemyAbility(Abilities.HYPER_CUTTER)
-      .enemyMoveset(SPLASH_ONLY);
+      .enemyMoveset(Moves.SPLASH);
   });
 
   // Reference Link: https://bulbapedia.bulbagarden.net/wiki/Hyper_Cutter_(Ability)
@@ -51,7 +50,7 @@ describe("Abilities - Hyper Cutter", () => {
     game.move.select(Moves.STRING_SHOT);
     await game.toNextTurn();
 
-    expect(enemy.summonData.battleStats[BattleStat.ATK]).toEqual(0);
-    [BattleStat.ACC, BattleStat.DEF, BattleStat.EVA, BattleStat.SPATK, BattleStat.SPDEF, BattleStat.SPD].forEach((stat: number) => expect(enemy.summonData.battleStats[stat]).toBeLessThan(0));
+    expect(enemy.getStatStage(Stat.ATK)).toEqual(0);
+    [Stat.ACC, Stat.DEF, Stat.EVA, Stat.SPATK, Stat.SPDEF, Stat.SPD].forEach((stat: number) => expect(enemy.getStatStage(stat)).toBeLessThan(0));
   });
 });

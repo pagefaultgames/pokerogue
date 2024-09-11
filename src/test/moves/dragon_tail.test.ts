@@ -9,7 +9,6 @@ import { Species } from "#enums/species";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 import GameManager from "../utils/gameManager";
-import { SPLASH_ONLY } from "../utils/testUtils";
 
 const TIMEOUT = 20 * 1000;
 
@@ -32,7 +31,7 @@ describe("Moves - Dragon Tail", () => {
     game.override.battleType("single")
       .moveset([Moves.DRAGON_TAIL, Moves.SPLASH])
       .enemySpecies(Species.WAILORD)
-      .enemyMoveset(SPLASH_ONLY)
+      .enemyMoveset(Moves.SPLASH)
       .startingLevel(5)
       .enemyLevel(5);
 
@@ -82,7 +81,7 @@ describe("Moves - Dragon Tail", () => {
   test(
     "Double battles should proceed without crashing",
     async () => {
-      game.override.battleType("double").enemyMoveset(SPLASH_ONLY);
+      game.override.battleType("double").enemyMoveset(Moves.SPLASH);
       game.override.moveset([Moves.DRAGON_TAIL, Moves.SPLASH, Moves.FLAMETHROWER])
         .enemyAbility(Abilities.ROUGH_SKIN);
       await game.startBattle([Species.DRATINI, Species.DRATINI, Species.WAILORD, Species.WAILORD]);
@@ -116,7 +115,7 @@ describe("Moves - Dragon Tail", () => {
   test(
     "Flee move redirection works",
     async () => {
-      game.override.battleType("double").enemyMoveset(SPLASH_ONLY);
+      game.override.battleType("double").enemyMoveset(Moves.SPLASH);
       game.override.moveset([Moves.DRAGON_TAIL, Moves.SPLASH, Moves.FLAMETHROWER]);
       game.override.enemyAbility(Abilities.ROUGH_SKIN);
       await game.startBattle([Species.DRATINI, Species.DRATINI, Species.WAILORD, Species.WAILORD]);
