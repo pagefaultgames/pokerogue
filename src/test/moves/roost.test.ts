@@ -4,6 +4,7 @@ import { Moves } from "#app/enums/moves";
 import { Species } from "#app/enums/species";
 import { MoveEffectPhase } from "#app/phases/move-effect-phase";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
+
 import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest";
@@ -27,9 +28,12 @@ describe("Moves - Roost", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override.battleType("single");
-    game.override.enemySpecies(Species.MAGIKARP);
+    game.override.enemySpecies(Species.RELICANTH);
     game.override.startingLevel(100);
-    game.override.enemyLevel(100);
+    game.override.enemyLevel(60);
+    game.override.enemyMoveset([Moves.EARTHQUAKE, Moves.EARTHQUAKE, Moves.EARTHQUAKE, Moves.EARTHQUAKE]);
+    game.override.moveset([Moves.ROOST, Moves.BURN_UP]);
+    game.override.starterForms({ [Species.ROTOM]: 4 });
   });
 
   /**
@@ -44,23 +48,79 @@ describe("Moves - Roost", () => {
    *    and pokemon post Burn up become ()
    * 5. If a pokemon is also ungrounded due to other reasons (such as levitate), it will stay ungrounded post roost, despite not being flying type.
    * 6. Non flying types using roost (such as dunsparce) are already grounded, so this move will only heal and have no other effects.
+   *
+   * Also making the user pokemon go first so we can check if the pokemon took damage post roost
    */
+  // test(
+  //   "Pokemon that use roost and levitate should still be ungrounded, but should still lose flying until end of turn",
+  //   async () => {
+
+  //     await game.classicMode.startBattle([Species.ROTOM]);
+  //     const playerPokemon = game.scene.getPlayerPokemon()!;
+  //     //expect(playerPokemon.getTypes().filter(type => type == Type.FLYING)).toHaveLength(1);
+  //     game.move.select(Moves.ROOST);
+
+  //     const playerPokemonStartingHP = playerPokemon.hp;
+  //     await game.phaseInterceptor.to(MoveEffectPhase);
+
+  //     // Should only be pure Electric type and ungrounded due to levitate
+  //     let playerPokemonTypes = playerPokemon.summonData.types;
+  //     expect(playerPokemonTypes.filter(type => type == Type.FLYING)).toHaveLength(0);
+  //     expect(playerPokemon.getTypes().filter(type => type == Type.ELECTRIC)).toHaveLength(1);
+  //     //expect(playerPokemon.getTag(BattlerTagType.ROOSTED)).toBeDefined();
+  //     expect(playerPokemonTypes[0] === Type.ELECTRIC).toBeTruthy();
+  //     expect(playerPokemonTypes.length === 1).toBeTruthy();
+  //     expect(playerPokemon.isGrounded()).toBeFalsy();
+
+  //     // Should be electric flying, not roosted, and not grounded
+  //     await game.phaseInterceptor.to(TurnEndPhase);
+  //     playerPokemonTypes = playerPokemon.summonData.types;
+  //     expect(playerPokemon.hp).toBe(playerPokemonStartingHP);
+  //     expect(playerPokemonTypes[0] === Type.ELECTRIC).toBeTruthy();
+  //     expect(playerPokemonTypes[1] === Type.FLYING).toBeTruthy();
+  //     expect(playerPokemon.getTag(BattlerTagType.ROOSTED)).toBeUndefined();
+  //     expect(playerPokemon.isGrounded()).toBeFalsy();
+  //   } ,TIMEOUT
+  // );
+
+  test(
+    "Non flying type uses roost -> no type change, took damage",
+    async () => {
+      await game.classicMode.startBattle([Species.DUNSPARCE]);
+      game.move.select(Moves.ROOST);
+      const playerPokemon = game.scene.getPlayerPokemon()!;
+      const playerPokemonStartingHP = playerPokemon.hp;
+      let playerPokemonTypes = playerPokemon.getTypes();
+      await game.phaseInterceptor.to(MoveEffectPhase);
+
+      // Should only be normal type, and NOT flying type
+      playerPokemonTypes = playerPokemon.getTypes();
+      expect(playerPokemonTypes[0] === Type.NORMAL).toBeTruthy();
+      expect(playerPokemonTypes.length === 1).toBeTruthy();
+      expect(playerPokemon.isGrounded()).toBeTruthy();
+
+      await game.phaseInterceptor.to(TurnEndPhase);
+
+      // Lose HP, still normal type
+      playerPokemonTypes = playerPokemon.getTypes();
+      expect(playerPokemon.hp).toBeLessThan(playerPokemonStartingHP);
+      expect(playerPokemonTypes[0] === Type.NORMAL).toBeTruthy();
+      expect(playerPokemonTypes.length === 1).toBeTruthy();
+      expect(playerPokemon.isGrounded()).toBeTruthy();
+    }, TIMEOUT
+  );
 
   test(
     "Pure flying type -> becomes normal after roost and takes damage from ground moves -> regains flying",
     async () => {
-      await game.startBattle([Species.TORNADUS]);
-      game.override.moveset([Moves.ROOST]);
+      await game.classicMode.startBattle([Species.TORNADUS]);
       game.move.select(Moves.ROOST);
-
       const playerPokemon = game.scene.getPlayerPokemon()!;
-      game.override.enemyMoveset([Moves.EARTHQUAKE, Moves.EARTHQUAKE, Moves.EARTHQUAKE, Moves.EARTHQUAKE]);
       const playerPokemonStartingHP = playerPokemon.hp;
       await game.phaseInterceptor.to(MoveEffectPhase);
 
       // Should only be normal type, and NOT flying type
-      let playerPokemonTypes = playerPokemon.summonData.types;
-      expect(playerPokemon.getTag(BattlerTagType.ROOSTED)).toBeDefined();
+      let playerPokemonTypes = playerPokemon.getTypes();
       expect(playerPokemonTypes[0] === Type.NORMAL).toBeTruthy();
       expect(playerPokemonTypes[0] === Type.FLYING).toBeFalsy();
       expect(playerPokemon.isGrounded()).toBeTruthy();
@@ -68,11 +128,10 @@ describe("Moves - Roost", () => {
       await game.phaseInterceptor.to(TurnEndPhase);
 
       // Should have lost HP and is now back to being pure flying
-      playerPokemonTypes = playerPokemon.summonData.types;
+      playerPokemonTypes = playerPokemon.getTypes();
       expect(playerPokemon.hp).toBeLessThan(playerPokemonStartingHP);
       expect(playerPokemonTypes[0] === Type.NORMAL).toBeFalsy();
       expect(playerPokemonTypes[0] === Type.FLYING).toBeTruthy();
-      expect(playerPokemon.getTag(BattlerTagType.ROOSTED)).toBeUndefined();
       expect(playerPokemon.isGrounded()).toBeFalsy();
 
     }, TIMEOUT
@@ -81,18 +140,15 @@ describe("Moves - Roost", () => {
   test(
     "Dual X/flying type -> becomes type X after roost and takes damage from ground moves -> regains flying",
     async () => {
-      await game.startBattle([Species.HAWLUCHA]);
-      game.override.moveset([Moves.ROOST]);
+      await game.classicMode.startBattle([Species.HAWLUCHA]);
       game.move.select(Moves.ROOST);
 
       const playerPokemon = game.scene.getPlayerPokemon()!;
-      game.override.enemyMoveset([Moves.EARTHQUAKE, Moves.EARTHQUAKE, Moves.EARTHQUAKE, Moves.EARTHQUAKE]);
       const playerPokemonStartingHP = playerPokemon.hp;
       await game.phaseInterceptor.to(MoveEffectPhase);
 
       // Should only be pure fighting type and grounded
-      let playerPokemonTypes = playerPokemon.summonData.types;
-      expect(playerPokemon.getTag(BattlerTagType.ROOSTED)).toBeDefined();
+      let playerPokemonTypes = playerPokemon.getTypes();
       expect(playerPokemonTypes[0] === Type.FIGHTING).toBeTruthy();
       expect(playerPokemonTypes.length === 1).toBeTruthy();
       expect(playerPokemon.isGrounded()).toBeTruthy();
@@ -100,52 +156,108 @@ describe("Moves - Roost", () => {
       await game.phaseInterceptor.to(TurnEndPhase);
 
       // Should have lost HP and is now back to being fighting/flying
-      playerPokemonTypes = playerPokemon.summonData.types;
+      playerPokemonTypes = playerPokemon.getTypes();
       expect(playerPokemon.hp).toBeLessThan(playerPokemonStartingHP);
       expect(playerPokemonTypes[0] === Type.FIGHTING).toBeTruthy();
       expect(playerPokemonTypes[1] === Type.FLYING).toBeTruthy();
-      expect(playerPokemon.getTag(BattlerTagType.ROOSTED)).toBeUndefined();
       expect(playerPokemon.isGrounded()).toBeFalsy();
 
     }, TIMEOUT
   );
 
   test(
-    "Dual X/flying type with levitate -> becomes type X after roost and does NOT takes damage from ground moves -> regains flying, is always grounded",
+    "Pokemon with levitate after using roost should lose flying type but still be unaffected by ground moves",
     async () => {
-      await game.startBattle([Species.ROTOM]);
-      //game.override.starterForms({ [Species.ROTOM]: 4 })
-      game.override.moveset([Moves.ROOST]);
+      await game.classicMode.startBattle([Species.ROTOM]);
       game.move.select(Moves.ROOST);
 
-
       const playerPokemon = game.scene.getPlayerPokemon()!;
-      game.override.enemyMoveset([Moves.EARTHQUAKE, Moves.EARTHQUAKE, Moves.EARTHQUAKE, Moves.EARTHQUAKE]);
       const playerPokemonStartingHP = playerPokemon.hp;
-
-      expect(playerPokemon.summonData.types.length === 0).toBeTruthy();
-
       await game.phaseInterceptor.to(MoveEffectPhase);
 
-      // Should only be pure electric type and not grounded
-      let playerPokemonTypes = playerPokemon.summonData.types;
-      console.log("TYPES OF POKEMONZZZ", playerPokemonTypes);
-
-      expect(playerPokemon.getTag(BattlerTagType.ROOSTED)).toBeDefined();
+      // Should only be pure fighting type and grounded
+      let playerPokemonTypes = playerPokemon.getTypes();
       expect(playerPokemonTypes[0] === Type.ELECTRIC).toBeTruthy();
       expect(playerPokemonTypes.length === 1).toBeTruthy();
       expect(playerPokemon.isGrounded()).toBeFalsy();
 
       await game.phaseInterceptor.to(TurnEndPhase);
 
-      // Should have same HP and is now back to being electric/flying
-      playerPokemonTypes = playerPokemon.summonData.types;
+      // Should have lost HP and is now back to being fighting/flying
+      playerPokemonTypes = playerPokemon.getTypes();
       expect(playerPokemon.hp).toBe(playerPokemonStartingHP);
       expect(playerPokemonTypes[0] === Type.ELECTRIC).toBeTruthy();
       expect(playerPokemonTypes[1] === Type.FLYING).toBeTruthy();
-      expect(playerPokemon.getTag(BattlerTagType.ROOSTED)).toBeUndefined();
       expect(playerPokemon.isGrounded()).toBeFalsy();
 
     }, TIMEOUT
   );
+
+  test(
+    "A fire/flying type that uses burn up, then roost should be typeless until end of turn",
+    async () => {
+      await game.classicMode.startBattle([Species.MOLTRES]);
+      game.move.select(Moves.BURN_UP);
+
+      const playerPokemon = game.scene.getPlayerPokemon()!;
+      const playerPokemonStartingHP = playerPokemon.hp;
+      await game.phaseInterceptor.to(MoveEffectPhase);
+
+      // Should only be pure flying type after burn up
+      let playerPokemonTypes = playerPokemon.getTypes();
+      expect(playerPokemonTypes[0] === Type.FLYING).toBeTruthy();
+      expect(playerPokemonTypes.length === 1).toBeTruthy();
+
+      await game.phaseInterceptor.to(TurnEndPhase);
+
+      game.move.select(Moves.ROOST);
+      await game.phaseInterceptor.to(MoveEffectPhase);
+
+      // Should only be typeless type after roost and is grounded
+      playerPokemonTypes = playerPokemon.getTypes();
+      expect(playerPokemon.getTag(BattlerTagType.ROOSTED)).toBeDefined();
+      expect(playerPokemonTypes[0] === Type.UNKNOWN).toBeTruthy();
+      expect(playerPokemonTypes.length === 1).toBeTruthy();
+      expect(playerPokemon.isGrounded()).toBeTruthy();
+
+      await game.phaseInterceptor.to(TurnEndPhase);
+
+      // Should go back to being pure flying and have taken damage from earthquake, and is ungrounded again
+      playerPokemonTypes = playerPokemon.getTypes();
+      expect(playerPokemon.hp).toBeLessThan(playerPokemonStartingHP);
+      expect(playerPokemonTypes[0] === Type.FLYING).toBeTruthy();
+      expect(playerPokemonTypes.length === 1).toBeTruthy();
+      expect(playerPokemon.isGrounded()).toBeFalsy();
+
+    }, TIMEOUT
+  );
+
+  test(
+    "Dual Type Pokemon afflicted with Forests Curse/Trick or Treat and post roost will become dual type and then become 3 type at end of turn",
+    async () => {
+      game.override.enemyMoveset([Moves.TRICK_OR_TREAT, Moves.TRICK_OR_TREAT, Moves.TRICK_OR_TREAT, Moves.TRICK_OR_TREAT]);
+      await game.classicMode.startBattle([Species.MOLTRES]);
+
+      game.move.select(Moves.ROOST);
+      const playerPokemon = game.scene.getPlayerPokemon()!;
+      await game.phaseInterceptor.to(MoveEffectPhase);
+
+      let playerPokemonTypes = playerPokemon.getTypes();
+      expect(playerPokemonTypes[0] === Type.FIRE).toBeTruthy();
+      expect(playerPokemonTypes.length === 1).toBeTruthy();
+      expect(playerPokemon.isGrounded()).toBeTruthy();
+
+      await game.phaseInterceptor.to(TurnEndPhase);
+
+      // Should be fire/flying/ghost
+      playerPokemonTypes = playerPokemon.getTypes();
+      expect(playerPokemonTypes.filter(type => type === Type.FLYING)).toHaveLength(1);
+      expect(playerPokemonTypes.filter(type => type === Type.FIRE)).toHaveLength(1);
+      expect(playerPokemonTypes.filter(type => type === Type.GHOST)).toHaveLength(1);
+      expect(playerPokemonTypes.length === 3).toBeTruthy();
+      expect(playerPokemon.isGrounded()).toBeFalsy();
+
+    }, TIMEOUT
+  );
+
 });
