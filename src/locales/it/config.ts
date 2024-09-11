@@ -187,4 +187,3 @@ export const itConfig = {
   },
   mysteryEncounterMessages
 };
-};
