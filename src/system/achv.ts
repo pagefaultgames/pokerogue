@@ -7,7 +7,7 @@ import * as Utils from "../utils";
 import { PlayerGender } from "#enums/player-gender";
 import { Challenge, FreshStartChallenge, SingleGenerationChallenge, SingleTypeChallenge, InverseBattleChallenge } from "#app/data/challenge";
 import { ConditionFn } from "#app/@types/common";
-import { Stat, getShortenedStatKey  } from "#app/enums/stat";
+import { Stat, getShortenedStatKey } from "#app/enums/stat";
 import { Challenges } from "#app/enums/challenges";
 
 export enum AchvTier {
@@ -197,7 +197,7 @@ export function getAchievementDescription(localizationKey: string): string {
   case "100_RIBBONS":
     return i18next.t("achv:RibbonAchv.description", {context: genderStr, "ribbonAmount": achvs._100_RIBBONS.ribbonAmount.toLocaleString("en-US")});
   case "TRANSFER_MAX_STAT_STAGE":
-    return i18next.t("achv:TRANSFER_MAX_BATTLE_STAT.description", { context: genderStr });
+    return i18next.t("achv:TRANSFER_MAX_STAT_STAGE.description", { context: genderStr });
   case "MAX_FRIENDSHIP":
     return i18next.t("achv:MAX_FRIENDSHIP.description", { context: genderStr });
   case "MEGA_EVOLVE":
