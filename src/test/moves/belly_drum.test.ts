@@ -6,7 +6,6 @@ import { Stat } from "#enums/stat";
 import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest";
-import { SPLASH_ONLY } from "../utils/testUtils";
 import { Abilities } from "#app/enums/abilities";
 
 const TIMEOUT = 20 * 1000;
@@ -37,7 +36,7 @@ describe("Moves - BELLY DRUM", () => {
       .startingLevel(100)
       .enemyLevel(100)
       .moveset([Moves.BELLY_DRUM])
-      .enemyMoveset(SPLASH_ONLY)
+      .enemyMoveset(Moves.SPLASH)
       .enemyAbility(Abilities.BALL_FETCH);
   });
 

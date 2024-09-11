@@ -32,7 +32,7 @@ describe("Abilities - Quick Draw", () => {
     game.override.enemyLevel(100);
     game.override.enemySpecies(Species.MAGIKARP);
     game.override.enemyAbility(Abilities.BALL_FETCH);
-    game.override.enemyMoveset(Array(4).fill(Moves.TACKLE));
+    game.override.enemyMoveset([Moves.TACKLE]);
 
     vi.spyOn(allAbilities[Abilities.QUICK_DRAW].getAttrs(BypassSpeedChanceAbAttr)[0], "chance", "get").mockReturnValue(100);
   });
@@ -76,7 +76,7 @@ describe("Abilities - Quick Draw", () => {
   );
 
   test("does not increase priority", async () => {
-    game.override.enemyMoveset(Array(4).fill(Moves.EXTREME_SPEED));
+    game.override.enemyMoveset([Moves.EXTREME_SPEED]);
 
     await game.startBattle();
 
