@@ -151,6 +151,7 @@ export class SwitchSummonPhase extends SummonPhase {
     // Or compensate for force switch move if switched out pokemon is not fainted
     if (currentCommand === Command.POKEMON || lastPokemonIsForceSwitchedAndNotFainted) {
       pokemon.battleSummonData.turnCount--;
+      pokemon.battleSummonData.waveTurnCount--;
     }
 
     if (this.batonPass && pokemon) {
