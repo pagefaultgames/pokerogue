@@ -94,5 +94,5 @@
   "retryBattle": "你要從對戰開始時重試麽？",
   "unlockedSomething": "{{unlockedThing}}\n已解鎖。",
   "congratulations": "恭喜！",
-  "beatModeFirstTime": "{{speciesName}}首次擊敗了{{gameMode}}！\n你獲得了{{newModifier}}！",
+  "beatModeFirstTime": "{{speciesName}}首次擊敗了{{gameMode}}！\n你獲得了{{newModifier}}！"
 }
