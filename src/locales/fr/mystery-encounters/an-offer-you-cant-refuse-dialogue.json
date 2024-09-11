@@ -13,9 +13,9 @@
     },
     "2": {
       "label": "Le racketter",
-      "tooltip": "(+) {{option2PrimaryName}} utilise {{moveOrAbility}}\n(+) Gain de {{price, money}}"
+      "tooltip": "(+) {{option2PrimaryName}} utilise {{moveOrAbility}}\n(+) Gain de {{price, money}}",
       "tooltip_disabled": "Votre Pokémon doit connaitre certaines capacités ou talents pour choisir cette option",
-      "selected": "Oh les aïeux-haann ! {{liepardName}}, on se fait voler !$Attends que je t'envoie mes avocats !"
+      "selected": "Oh les aïeux-haann ! {{liepardName}}, on se fait voler !$Attends que je t’envoie mes avocats !"
     },
     "3": {
       "label": "Partir",
