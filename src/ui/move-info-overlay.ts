@@ -16,11 +16,13 @@ export interface MoveInfoOverlaySettings {
     x?: number;
     y?: number;
     width?: number; // default is always half the screen, regardless of scale
+    hideEffectBox?: boolean; // whether or not the small secondary box should be shown
+    hideBg?: boolean; // whether to hide the window background
 }
 
-const EFF_HEIGHT = 46;
+const EFF_HEIGHT = 48;
 const EFF_WIDTH = 82;
-const DESC_HEIGHT = 46;
+const DESC_HEIGHT = 48;
 const BORDER = 8;
 const GLOBAL_SCALE = 6;
 
@@ -38,6 +40,7 @@ export default class MoveInfoOverlay extends Phaser.GameObjects.Container implem
   private acc: Phaser.GameObjects.Text;
   private typ: Phaser.GameObjects.Sprite;
   private cat: Phaser.GameObjects.Sprite;
+  private descBg: Phaser.GameObjects.NineSlice;
 
   private options : MoveInfoOverlaySettings;
 
@@ -52,9 +55,9 @@ export default class MoveInfoOverlay extends Phaser.GameObjects.Container implem
 
     // prepare the description box
     const width = (options?.width || MoveInfoOverlay.getWidth(scale, scene)) / scale; // divide by scale as we always want this to be half a window wide
-    const descBg = addWindow(scene,  (options?.onSide && !options?.right ? EFF_WIDTH : 0), options?.top ? EFF_HEIGHT : 0, width - (options?.onSide ? EFF_WIDTH : 0), DESC_HEIGHT);
-    descBg.setOrigin(0, 0);
-    this.add(descBg);
+    this.descBg = addWindow(scene,  (options?.onSide && !options?.right ? EFF_WIDTH : 0), options?.top ? EFF_HEIGHT : 0, width - (options?.onSide ? EFF_WIDTH : 0), DESC_HEIGHT);
+    this.descBg.setOrigin(0, 0);
+    this.add(this.descBg);
 
     // set up the description; wordWrap uses true pixels, unaffected by any scaling, while other values are affected
     this.desc = addTextObject(scene, (options?.onSide && !options?.right ? EFF_WIDTH : 0) + BORDER, (options?.top ? EFF_HEIGHT : 0) + BORDER - 2, "", TextStyle.BATTLE_INFO, { wordWrap: { width: (width - (BORDER - 2) * 2 - (options?.onSide ? EFF_WIDTH : 0)) * GLOBAL_SCALE } });
@@ -125,6 +128,14 @@ export default class MoveInfoOverlay extends Phaser.GameObjects.Container implem
     this.acc.setOrigin(1, 0.5);
     this.val.add(this.acc);
 
+    if (options?.hideEffectBox) {
+      this.val.setVisible(false);
+    }
+
+    if (options?.hideBg) {
+      this.descBg.setVisible(false);
+    }
+
     // hide this component for now
     this.setVisible(false);
   }
@@ -176,8 +187,19 @@ export default class MoveInfoOverlay extends Phaser.GameObjects.Container implem
     this.active = false;
   }
 
-  toggleInfo(force?: boolean): void {
-    this.setVisible(force ?? !this.visible);
+  toggleInfo(visible: boolean): void {
+    if (visible) {
+      this.setVisible(true);
+    }
+    this.scene.tweens.add({
+      targets: this.desc,
+      duration: Utils.fixedInt(125),
+      ease: "Sine.easeInOut",
+      alpha: visible ? 1 : 0
+    });
+    if (!visible) {
+      this.setVisible(false);
+    }
   }
 
   isActive(): boolean {
