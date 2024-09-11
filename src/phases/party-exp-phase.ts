@@ -1,4 +1,4 @@
-import BattleScene from "#app/battle-scene.js";
+import BattleScene from "#app/battle-scene";
 import { Phase } from "#app/phase";
 
 export class PartyExpPhase extends Phase {

@@ -156,7 +156,7 @@ export const TheStrongStuffEncounter: MysteryEncounter =
 
         encounter.setDialogueToken("reductionValue", HIGH_BST_REDUCTION_VALUE.toString());
         encounter.setDialogueToken("increaseValue", BST_INCREASE_VALUE.toString());
-        await showEncounterText(scene, `${namespace}.option.1.selected_2`, undefined, true);
+        await showEncounterText(scene, `${namespace}.option.1.selected_2`, null, undefined, true);
 
         setEncounterRewards(scene, { fillRemaining: true });
         leaveEncounterWithoutBattle(scene, true);

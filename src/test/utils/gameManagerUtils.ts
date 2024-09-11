@@ -96,7 +96,7 @@ export function getMovePosition(scene: BattleScene, pokemonIndex: 0 | 1, move: M
  * @param scene
  * @param species
  */
-export function initSceneWithoutEncounterPhase(scene, species?: Species[]) {
+export function initSceneWithoutEncounterPhase(scene: BattleScene, species?: Species[]) {
   const starters = generateStarter(scene, species);
   starters.forEach((starter) => {
     const starterProps = scene.gameData.getSpeciesDexAttrProps(starter.species, starter.dexAttr);
@@ -104,7 +104,7 @@ export function initSceneWithoutEncounterPhase(scene, species?: Species[]) {
     const starterGender = Gender.MALE;
     const starterIvs = scene.gameData.dexData[starter.species.speciesId].ivs.slice(0);
     const starterPokemon = scene.addPlayerPokemon(starter.species, scene.gameMode.getStartingLevel(), starter.abilityIndex, starterFormIndex, starterGender, starterProps.shiny, starterProps.variant, starterIvs, starter.nature);
-    starterPokemon.tryPopulateMoveset(starter.moveset);
+    starter.moveset && starterPokemon.tryPopulateMoveset(starter.moveset);
     scene.getParty().push(starterPokemon);
   });
 

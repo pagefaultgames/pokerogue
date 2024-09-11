@@ -22,7 +22,17 @@ export interface EncounterRequirement {
 }
 
 export abstract class EncounterSceneRequirement implements EncounterRequirement {
+  /**
+   * Returns whether the EncounterSceneRequirement's... requirements, are met by the given scene
+   * @param partyPokemon
+   */
   abstract meetsRequirement(scene: BattleScene): boolean;
+  /**
+   * Returns a dialogue token key/value pair for a given Requirement.
+   * Should be overridden by child Requirement classes.
+   * @param scene
+   * @param pokemon
+   */
   abstract getDialogueToken(scene: BattleScene, pokemon?: PlayerPokemon): [string, string];
 }
 
@@ -34,7 +44,7 @@ export class CombinationSceneRequirement extends EncounterSceneRequirement {
     this.orRequirements = orRequirements;
   }
 
-  meetsRequirement(scene: BattleScene): boolean {
+  override meetsRequirement(scene: BattleScene): boolean {
     for (const req of this.orRequirements) {
       if (req.meetsRequirement(scene)) {
         return true;
@@ -58,6 +68,10 @@ export abstract class EncounterPokemonRequirement implements EncounterRequiremen
   public minNumberOfPokemon: number;
   public invertQuery: boolean;
 
+  /**
+   * Returns whether the EncounterPokemonRequirement's... requirements, are met by the given scene
+   * @param partyPokemon
+   */
   abstract meetsRequirement(scene: BattleScene): boolean;
 
   /**
@@ -66,6 +80,12 @@ export abstract class EncounterPokemonRequirement implements EncounterRequiremen
    */
   abstract queryParty(partyPokemon: PlayerPokemon[]): PlayerPokemon[];
 
+  /**
+   * Returns a dialogue token key/value pair for a given Requirement.
+   * Should be overridden by child Requirement classes.
+   * @param scene
+   * @param pokemon
+   */
   abstract getDialogueToken(scene: BattleScene, pokemon?: PlayerPokemon): [string, string];
 }
 

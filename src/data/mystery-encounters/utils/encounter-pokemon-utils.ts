@@ -20,12 +20,24 @@ import { Gender } from "#app/data/gender";
 import { PermanentStat } from "#enums/stat";
 import { VictoryPhase } from "#app/phases/victory-phase";
 
-export function getSpriteKeysFromSpecies(species: Species, female?: boolean, formIndex?: integer, shiny?: boolean, variant?: integer): { spriteKey: string, fileRoot: string } {
+/**
+ * Gets the sprite key and file root for a given PokemonSpecies (accounts for gender, shiny, variants, forms, and experimental)
+ * @param species
+ * @param female
+ * @param formIndex
+ * @param shiny
+ * @param variant
+ */
+export function getSpriteKeysFromSpecies(species: Species, female?: boolean, formIndex?: number, shiny?: boolean, variant?: number): { spriteKey: string, fileRoot: string } {
   const spriteKey = getPokemonSpecies(species).getSpriteKey(female ?? false, formIndex ?? 0, shiny ?? false, variant ?? 0);
   const fileRoot = getPokemonSpecies(species).getSpriteAtlasPath(female ?? false, formIndex ?? 0, shiny ?? false, variant ?? 0);
   return { spriteKey, fileRoot };
 }
 
+/**
+ * Gets the sprite key and file root for a given Pokemon (accounts for gender, shiny, variants, forms, and experimental)
+ * @param pokemon
+ */
 export function getSpriteKeysFromPokemon(pokemon: Pokemon): { spriteKey: string, fileRoot: string } {
   const spriteKey = pokemon.getSpeciesForm().getSpriteKey(pokemon.getGender() === Gender.FEMALE, pokemon.formIndex, pokemon.shiny, pokemon.variant);
   const fileRoot = pokemon.getSpeciesForm().getSpriteAtlasPath(pokemon.getGender() === Gender.FEMALE, pokemon.formIndex, pokemon.shiny, pokemon.variant);
@@ -442,6 +454,14 @@ export function trainerThrowPokeball(scene: BattleScene, pokemon: EnemyPokemon, 
   });
 }
 
+/**
+ * Animates pokeball opening and messages when an attempted catch fails
+ * @param scene
+ * @param pokemon
+ * @param originalY
+ * @param pokeball
+ * @param pokeballType
+ */
 function failCatch(scene: BattleScene, pokemon: EnemyPokemon, originalY: number, pokeball: Phaser.GameObjects.Sprite, pokeballType: PokeballType) {
   return new Promise<void>(resolve => {
     scene.playSound("se/pb_rel");
@@ -541,7 +561,7 @@ export async function catchPokemon(scene: BattleScene, pokemon: EnemyPokemon, po
             scene.ui.showText(i18next.t("battle:partyFull", { pokemonName: pokemon.getNameToRender() }), null, () => {
               scene.pokemonInfoContainer.makeRoomForConfirmUi();
               scene.ui.setMode(Mode.CONFIRM, () => {
-                scene.ui.setMode(Mode.PARTY, PartyUiMode.RELEASE, 0, (slotIndex: integer, _option: PartyOption) => {
+                scene.ui.setMode(Mode.PARTY, PartyUiMode.RELEASE, 0, (slotIndex: number, _option: PartyOption) => {
                   scene.ui.setMode(Mode.MESSAGE).then(() => {
                     if (slotIndex < 6) {
                       addToParty();
@@ -573,6 +593,11 @@ export async function catchPokemon(scene: BattleScene, pokemon: EnemyPokemon, po
   });
 }
 
+/**
+ * Animates pokeball disappearing then destroys the object
+ * @param scene
+ * @param pokeball
+ */
 function removePb(scene: BattleScene, pokeball: Phaser.GameObjects.Sprite) {
   if (pokeball) {
     scene.tweens.add({
@@ -588,6 +613,11 @@ function removePb(scene: BattleScene, pokeball: Phaser.GameObjects.Sprite) {
   }
 }
 
+/**
+ * Animates a wild pokemon "fleeing", including sfx and messaging
+ * @param scene
+ * @param pokemon
+ */
 export async function doPokemonFlee(scene: BattleScene, pokemon: EnemyPokemon): Promise<void> {
   await new Promise<void>(resolve => {
     scene.playSound("se/flee");
@@ -603,7 +633,7 @@ export async function doPokemonFlee(scene: BattleScene, pokemon: EnemyPokemon): 
       onComplete: () => {
         pokemon.setVisible(false);
         scene.field.remove(pokemon, true);
-        showEncounterText(scene, i18next.t("battle:pokemonFled", { pokemonName: pokemon.getNameToRender() }), 600, false)
+        showEncounterText(scene, i18next.t("battle:pokemonFled", { pokemonName: pokemon.getNameToRender() }), null, 600, false)
           .then(() => {
             resolve();
           });
@@ -612,6 +642,11 @@ export async function doPokemonFlee(scene: BattleScene, pokemon: EnemyPokemon): 
   });
 }
 
+/**
+ * Handles the player fleeing from a wild pokemon, including sfx and messaging
+ * @param scene
+ * @param pokemon
+ */
 export function doPlayerFlee(scene: BattleScene, pokemon: EnemyPokemon): Promise<void> {
   return new Promise<void>(resolve => {
     // Ease pokemon out
@@ -626,7 +661,7 @@ export function doPlayerFlee(scene: BattleScene, pokemon: EnemyPokemon): Promise
       onComplete: () => {
         pokemon.setVisible(false);
         scene.field.remove(pokemon, true);
-        showEncounterText(scene, i18next.t("battle:playerFled", { pokemonName: pokemon.getNameToRender() }), 600, false)
+        showEncounterText(scene, i18next.t("battle:playerFled", { pokemonName: pokemon.getNameToRender() }), null, 600, false)
           .then(() => {
             resolve();
           });
@@ -635,7 +670,9 @@ export function doPlayerFlee(scene: BattleScene, pokemon: EnemyPokemon): Promise
   });
 }
 
-// Bug Species and their corresponding weights
+/**
+ * Bug Species and their corresponding weights
+ */
 const GOLDEN_BUG_NET_SPECIES_POOL: [Species, number][] = [
   [Species.SCYTHER, 40],
   [Species.SCIZOR, 40],
@@ -666,7 +703,10 @@ const GOLDEN_BUG_NET_SPECIES_POOL: [Species, number][] = [
   [Species.PHEROMOSA, 1],
 ];
 
-export function getGoldenBugNetSpecies(scene: BattleScene, waveIndex: integer, level: integer): PokemonSpecies {
+/**
+ * Will randomly return one of the species from GOLDEN_BUG_NET_SPECIES_POOL, based on their weights
+ */
+export function getGoldenBugNetSpecies(): PokemonSpecies {
   const totalWeight = GOLDEN_BUG_NET_SPECIES_POOL.reduce((a, b) => a + b[1], 0);
   const roll = randSeedInt(totalWeight);
 

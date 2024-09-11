@@ -587,6 +587,10 @@ export function isNullOrUndefined(object: any): boolean {
   return null === object || undefined === object;
 }
 
+/**
+ * Capitalizes the first letter of a string
+ * @param str
+ */
 export function capitalizeFirstLetter(str: string) {
   return str.charAt(0).toUpperCase() + str.slice(1);
 }

@@ -157,7 +157,7 @@ export const GlobalTradeSystemEncounter: MysteryEncounter =
                   const formName = tradePokemon.species.forms?.[pokemon.formIndex]?.formName;
                   const line1 = i18next.t("pokemonInfoContainer:ability") + " " + tradePokemon.getAbility().name + (tradePokemon.getGender() !== Gender.GENDERLESS ? "     |     " + i18next.t("pokemonInfoContainer:gender") + " " + getGenderSymbol(tradePokemon.getGender()) : "");
                   const line2 = i18next.t("pokemonInfoContainer:nature") + " " + getNatureName(tradePokemon.getNature()) + (formName ? "     |     " + i18next.t("pokemonInfoContainer:form") + " " + formName : "");
-                  scene.ui.showText(`${line1}\n${line2}`, 0);
+                  showEncounterText(scene, `${line1}\n${line2}`, 0);
                 },
               };
               return option;
@@ -195,7 +195,7 @@ export const GlobalTradeSystemEncounter: MysteryEncounter =
           // Show the trade animation
           await showTradeBackground(scene);
           await doPokemonTradeSequence(scene, tradedPokemon, newPlayerPokemon);
-          await showEncounterText(scene, `${namespace}.trade_received`, 0, true, 4000);
+          await showEncounterText(scene, `${namespace}.trade_received`, null, 0, true, 4000);
           scene.playBgm("mystery_encounter_gts");
           await hideTradeBackground(scene);
           tradedPokemon.destroy();
@@ -278,7 +278,7 @@ export const GlobalTradeSystemEncounter: MysteryEncounter =
           // Show the trade animation
           await showTradeBackground(scene);
           await doPokemonTradeSequence(scene, tradedPokemon, newPlayerPokemon);
-          await showEncounterText(scene, `${namespace}.trade_received`, 0, true, 4000);
+          await showEncounterText(scene, `${namespace}.trade_received`, null, 0, true, 4000);
           scene.playBgm("mystery_encounter_gts");
           await hideTradeBackground(scene);
           tradedPokemon.destroy();

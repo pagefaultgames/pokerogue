@@ -1,6 +1,6 @@
-import { getPokemonSpecies } from "#app/data/pokemon-species.js";
+import { getPokemonSpecies } from "#app/data/pokemon-species";
 import { Moves } from "#app/enums/moves";
-import { Species } from "#app/enums/species.js";
+import { Species } from "#app/enums/species";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import BattleScene from "#app/battle-scene";
 import MysteryEncounter, { MysteryEncounterBuilder } from "../mystery-encounter";

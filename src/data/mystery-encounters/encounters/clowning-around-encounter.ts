@@ -382,7 +382,7 @@ async function handleSwapAbility(scene: BattleScene) {
 }
 
 function displayYesNoOptions(scene: BattleScene, resolve) {
-  showEncounterText(scene, `${namespace}.option.1.ability_prompt`, 500, false);
+  showEncounterText(scene, `${namespace}.option.1.ability_prompt`, null, 500, false);
   const fullOptions = [
     {
       label: i18next.t("menu:yes"),
@@ -429,7 +429,7 @@ function onYesAbilitySwap(scene: BattleScene, resolve) {
   selectPokemonForOption(scene, onPokemonSelected, onPokemonNotSelected);
 }
 
-function generateItemsOfTier(scene: BattleScene, pokemon: PlayerPokemon, numItems: integer, tier: ModifierTier | "Berries") {
+function generateItemsOfTier(scene: BattleScene, pokemon: PlayerPokemon, numItems: number, tier: ModifierTier | "Berries") {
   // These pools have to be defined at runtime so that modifierTypes exist
   // Pools have instances of the modifier type equal to the max stacks that modifier can be applied to any one pokemon
   // This is to prevent "over-generating" a random item of a certain type during item swaps

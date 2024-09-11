@@ -77,7 +77,7 @@ export interface EnemyPokemonConfig {
   passive?: boolean;
   moveSet?: Moves[];
   nature?: Nature;
-  ivs?: [integer, integer, integer, integer, integer, integer];
+  ivs?: [number, number, number, number, number, number];
   shiny?: boolean;
   /** Can set just the status, or pass a timer on the status turns */
   status?: StatusEffect | [StatusEffect, number];
@@ -422,7 +422,7 @@ export function selectPokemonForOption(scene: BattleScene, onPokemonSelected: (p
     const modeToSetOnExit = scene.ui.getMode();
 
     // Open party screen to choose pokemon
-    scene.ui.setMode(Mode.PARTY, PartyUiMode.SELECT, -1, (slotIndex: integer, option: PartyOption) => {
+    scene.ui.setMode(Mode.PARTY, PartyUiMode.SELECT, -1, (slotIndex: number, option: PartyOption) => {
       if (slotIndex < scene.getParty().length) {
         scene.ui.setMode(modeToSetOnExit).then(() => {
           const pokemon = scene.getParty()[slotIndex];
@@ -456,7 +456,7 @@ export function selectPokemonForOption(scene: BattleScene, onPokemonSelected: (p
                   return true;
                 },
                 onHover: () => {
-                  scene.ui.showText(i18next.t("mysteryEncounterMessages:cancel_option"));
+                  showEncounterText(scene, i18next.t("mysteryEncounterMessages:cancel_option"), 0);
                 }
               });
 
@@ -534,7 +534,7 @@ export function selectOptionThenPokemon(scene: BattleScene, options: OptionSelec
 
     const selectPokemonAfterOption = (selectedOptionIndex: number) => {
       // Open party screen to choose a Pokemon
-      scene.ui.setMode(Mode.PARTY, PartyUiMode.SELECT, -1, (slotIndex: integer, option: PartyOption) => {
+      scene.ui.setMode(Mode.PARTY, PartyUiMode.SELECT, -1, (slotIndex: number, option: PartyOption) => {
         if (slotIndex < scene.getParty().length) {
           // Pokemon and option selected
           scene.ui.setMode(modeToSetOnExit).then(() => {
@@ -852,7 +852,7 @@ export function calculateMEAggregateStats(scene: BattleScene, baseSpawnWeight: n
         if (Array.isArray(biomeLinks[currentBiome])) {
           let biomes: Biome[];
           scene.executeWithSeedOffset(() => {
-            biomes = (biomeLinks[currentBiome] as (Biome | [Biome, integer])[])
+            biomes = (biomeLinks[currentBiome] as (Biome | [Biome, number])[])
               .filter(b => {
                 return !Array.isArray(b) || !Utils.randSeedInt(b[1]);
               })

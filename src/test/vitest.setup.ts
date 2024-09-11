@@ -1,4 +1,3 @@
-import "#test/fontFace.setup";
 import "vitest-canvas-mock";
 
 import { initLoggedInUser } from "#app/account";
@@ -13,8 +12,7 @@ import { initAchievements } from "#app/system/achv";
 import { initVouchers } from "#app/system/voucher";
 import { initStatsKeys } from "#app/ui/game-stats-ui-handler";
 import { initMysteryEncounters } from "#app/data/mystery-encounters/mystery-encounters";
-import { beforeAll, beforeEach, vi } from "vitest";
-import Overrides from "#app/overrides";
+import { beforeAll, vi } from "vitest";
 
 /** Mock the override import to always return default values, ignoring any custom overrides. */
 vi.mock("#app/overrides", async (importOriginal) => {
@@ -48,9 +46,4 @@ beforeAll(() => {
       add: () => {},
     }
   });
-});
-
-// Disables Mystery Encounters on all tests (can be overridden at test level)
-beforeEach( () => {
-  vi.spyOn(Overrides, "MYSTERY_ENCOUNTER_RATE_OVERRIDE", "get").mockReturnValue(0);
 });

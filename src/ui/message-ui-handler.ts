@@ -29,6 +29,8 @@ export default abstract class MessageUiHandler extends AwaitableUiHandler {
     if (delay === null || delay === undefined) {
       delay = 20;
     }
+
+    // Pattern matching regex that checks for @c{}, @f{}, @s{}, and @f{} patterns within message text and parses them to their respective behaviors.
     const charVarMap = new Map<integer, string>();
     const delayMap = new Map<integer, integer>();
     const soundMap = new Map<integer, string>();

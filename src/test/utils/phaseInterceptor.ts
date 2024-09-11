@@ -50,16 +50,15 @@ import {
   MysteryEncounterRewardsPhase,
   PostMysteryEncounterPhase
 } from "#app/phases/mystery-encounter-phases";
-import { LearnMovePhase } from "#app/phases/learn-move-phase";
 import { ModifierRewardPhase } from "#app/phases/modifier-reward-phase";
 import { PartyExpPhase } from "#app/phases/party-exp-phase";
 
 export interface PromptHandler {
-  phaseTarget?;
-  mode?;
-  callback?;
-  expireFn?;
-  awaitingActionInput?;
+  phaseTarget?: string;
+  mode?: Mode;
+  callback?: () => void;
+  expireFn?: () => void;
+  awaitingActionInput?: boolean;
 }
 
 export default class PhaseInterceptor {
@@ -369,7 +368,10 @@ export default class PhaseInterceptor {
         if (expireFn) {
           this.prompts.shift();
         } else if (currentMode === actionForNextPrompt.mode && currentPhase === actionForNextPrompt.phaseTarget && currentHandler.active && (!actionForNextPrompt.awaitingActionInput || (actionForNextPrompt.awaitingActionInput && currentHandler.awaitingActionInput))) {
-          this.prompts.shift()?.callback();
+          const prompt = this.prompts.shift();
+          if (prompt?.callback) {
+            prompt.callback();
+          }
         }
       }
     });

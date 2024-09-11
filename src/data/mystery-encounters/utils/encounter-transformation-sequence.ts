@@ -103,7 +103,7 @@ export function doPokemonTransformationSequence(scene: BattleScene, previousPoke
               scene.time.delayedCall(1000, () => {
                 pokemonEvoTintSprite.setScale(0.25);
                 pokemonEvoTintSprite.setVisible(true);
-                doCycle(scene, 2, 6, pokemonTintSprite, pokemonEvoTintSprite).then(success => {
+                doCycle(scene, 2, 6, pokemonTintSprite, pokemonEvoTintSprite).then(() => {
                   pokemonEvoSprite.setVisible(true);
                   doCircleInward(scene, transformationBaseBg, transformationContainer, xOffset, yOffset);
 
@@ -143,7 +143,15 @@ export function doPokemonTransformationSequence(scene: BattleScene, previousPoke
   });
 }
 
-function doSpiralUpward(scene: BattleScene, transformationBaseBg, transformationContainer, xOffset: number, yOffset: number) {
+/**
+ * Animates particles that "spiral" upwards at start of transform animation
+ * @param scene
+ * @param transformationBaseBg
+ * @param transformationContainer
+ * @param xOffset
+ * @param yOffset
+ */
+function doSpiralUpward(scene: BattleScene, transformationBaseBg: Phaser.GameObjects.Image, transformationContainer: Phaser.GameObjects.Container, xOffset: number, yOffset: number) {
   let f = 0;
 
   scene.tweens.addCounter({
@@ -162,7 +170,15 @@ function doSpiralUpward(scene: BattleScene, transformationBaseBg, transformation
   });
 }
 
-function doArcDownward(scene: BattleScene, transformationBaseBg, transformationContainer, xOffset: number, yOffset: number) {
+/**
+ * Animates particles that arc downwards after the upwards spiral
+ * @param scene
+ * @param transformationBaseBg
+ * @param transformationContainer
+ * @param xOffset
+ * @param yOffset
+ */
+function doArcDownward(scene: BattleScene, transformationBaseBg: Phaser.GameObjects.Image, transformationContainer: Phaser.GameObjects.Container, xOffset: number, yOffset: number) {
   let f = 0;
 
   scene.tweens.addCounter({
@@ -181,7 +197,15 @@ function doArcDownward(scene: BattleScene, transformationBaseBg, transformationC
   });
 }
 
-function doCycle(scene: BattleScene, l: number, lastCycle: integer, pokemonTintSprite, pokemonEvoTintSprite): Promise<boolean> {
+/**
+ * Animates the transformation between the old pokemon form and new pokemon form
+ * @param scene
+ * @param l
+ * @param lastCycle
+ * @param pokemonTintSprite
+ * @param pokemonEvoTintSprite
+ */
+function doCycle(scene: BattleScene, l: number, lastCycle: number, pokemonTintSprite: Phaser.GameObjects.Sprite, pokemonEvoTintSprite: Phaser.GameObjects.Sprite): Promise<boolean> {
   return new Promise(resolve => {
     const isLastCycle = l === lastCycle;
     scene.tweens.add({
@@ -209,7 +233,15 @@ function doCycle(scene: BattleScene, l: number, lastCycle: integer, pokemonTintS
   });
 }
 
-function doCircleInward(scene: BattleScene, transformationBaseBg, transformationContainer, xOffset: number, yOffset: number) {
+/**
+ * Animates particles in a circle pattern
+ * @param scene
+ * @param transformationBaseBg
+ * @param transformationContainer
+ * @param xOffset
+ * @param yOffset
+ */
+function doCircleInward(scene: BattleScene, transformationBaseBg: Phaser.GameObjects.Image, transformationContainer: Phaser.GameObjects.Container, xOffset: number, yOffset: number) {
   let f = 0;
 
   scene.tweens.addCounter({
@@ -230,7 +262,16 @@ function doCircleInward(scene: BattleScene, transformationBaseBg, transformation
   });
 }
 
-function doSpiralUpwardParticle(scene: BattleScene, trigIndex: integer, transformationBaseBg, transformationContainer, xOffset: number, yOffset: number) {
+/**
+ * Helper function for {@link doSpiralUpward}, handles a single particle
+ * @param scene
+ * @param trigIndex
+ * @param transformationBaseBg
+ * @param transformationContainer
+ * @param xOffset
+ * @param yOffset
+ */
+function doSpiralUpwardParticle(scene: BattleScene, trigIndex: number, transformationBaseBg: Phaser.GameObjects.Image, transformationContainer: Phaser.GameObjects.Container, xOffset: number, yOffset: number) {
   const initialX = transformationBaseBg.displayWidth / 2 + xOffset;
   const particle = scene.add.image(initialX, 0, "evo_sparkle");
   transformationContainer.add(particle);
@@ -266,7 +307,16 @@ function doSpiralUpwardParticle(scene: BattleScene, trigIndex: integer, transfor
   updateParticle();
 }
 
-function doArcDownParticle(scene: BattleScene, trigIndex: integer, transformationBaseBg, transformationContainer, xOffset: number, yOffset: number) {
+/**
+ * Helper function for {@link doArcDownward}, handles a single particle
+ * @param scene
+ * @param trigIndex
+ * @param transformationBaseBg
+ * @param transformationContainer
+ * @param xOffset
+ * @param yOffset
+ */
+function doArcDownParticle(scene: BattleScene, trigIndex: number, transformationBaseBg: Phaser.GameObjects.Image, transformationContainer: Phaser.GameObjects.Container, xOffset: number, yOffset: number) {
   const initialX = transformationBaseBg.displayWidth / 2 + xOffset;
   const particle = scene.add.image(initialX, 0, "evo_sparkle");
   particle.setScale(0.5);
@@ -299,7 +349,17 @@ function doArcDownParticle(scene: BattleScene, trigIndex: integer, transformatio
   updateParticle();
 }
 
-function doCircleInwardParticle(scene: BattleScene, trigIndex: integer, speed: integer, transformationBaseBg, transformationContainer, xOffset: number, yOffset: number) {
+/**
+ * Helper function for @{link doCircleInward}, handles a single particle
+ * @param scene
+ * @param trigIndex
+ * @param speed
+ * @param transformationBaseBg
+ * @param transformationContainer
+ * @param xOffset
+ * @param yOffset
+ */
+function doCircleInwardParticle(scene: BattleScene, trigIndex: number, speed: number, transformationBaseBg: Phaser.GameObjects.Image, transformationContainer: Phaser.GameObjects.Container, xOffset: number, yOffset: number) {
   const initialX = transformationBaseBg.displayWidth / 2 + xOffset;
   const initialY = transformationBaseBg.displayHeight / 2 + yOffset;
   const particle = scene.add.image(initialX, initialY, "evo_sparkle");

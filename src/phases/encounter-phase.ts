@@ -99,7 +99,7 @@ export class EncounterPhase extends BattlePhase {
           let enemySpecies = this.scene.randomSpecies(battle.waveIndex, level, true);
           // If player has golden bug net, rolls 10% chance to replace with species from the golden bug net bug pool
           if (!!this.scene.findModifier(m => m instanceof BoostBugSpawnModifier) && randSeedInt(10) === 0) {
-            enemySpecies = getGoldenBugNetSpecies(this.scene, battle.waveIndex, level);
+            enemySpecies = getGoldenBugNetSpecies();
           }
           battle.enemyParty[e] = this.scene.addEnemyPokemon(enemySpecies, level, TrainerSlot.NONE, !!this.scene.getEncounterBossSegments(battle.waveIndex, level, enemySpecies));
           if (this.scene.currentBattle.battleSpec === BattleSpec.FINAL_BOSS) {
@@ -433,7 +433,7 @@ export class EncounterPhase extends BattlePhase {
       }
     });
 
-    if (this.scene.currentBattle.battleType !== BattleType.TRAINER && this.scene.currentBattle.battleType !== BattleType.MYSTERY_ENCOUNTER) {
+    if (![BattleType.TRAINER, BattleType.MYSTERY_ENCOUNTER].includes(this.scene.currentBattle.battleType)) {
       enemyField.map(p => this.scene.pushConditionalPhase(new PostSummonPhase(this.scene, p.getBattlerIndex()), () => {
         // if there is not a player party, we can't continue
         if (!this.scene.getParty()?.length) {

@@ -166,7 +166,7 @@ export interface GeneratedPersistentModifierType {
   getPregenArgs(): any[];
 }
 
-export class AddPokeballModifierType extends ModifierType {
+class AddPokeballModifierType extends ModifierType {
   private pokeballType: PokeballType;
   private count: integer;
 
@@ -647,6 +647,9 @@ export class BaseStatBoosterModifierType extends PokemonHeldItemModifierType imp
   }
 }
 
+/**
+ * Shuckle Juice item
+ */
 export class PokemonBaseStatTotalModifierType extends PokemonHeldItemModifierType implements GeneratedPersistentModifierType {
   private readonly statModifier: integer;
 
@@ -655,7 +658,7 @@ export class PokemonBaseStatTotalModifierType extends PokemonHeldItemModifierTyp
     this.statModifier = statModifier;
   }
 
-  getDescription(scene: BattleScene): string {
+  override getDescription(scene: BattleScene): string {
     return i18next.t("modifierType:ModifierType.PokemonBaseStatTotalModifierType.description", {
       increaseDecrease: i18next.t(this.statModifier >= 0 ? "modifierType:ModifierType.PokemonBaseStatTotalModifierType.extra.increase" : "modifierType:ModifierType.PokemonBaseStatTotalModifierType.extra.decrease"),
       blessCurse: i18next.t(this.statModifier >= 0 ? "modifierType:ModifierType.PokemonBaseStatTotalModifierType.extra.blessed" : "modifierType:ModifierType.PokemonBaseStatTotalModifierType.extra.cursed"),
@@ -663,11 +666,14 @@ export class PokemonBaseStatTotalModifierType extends PokemonHeldItemModifierTyp
     });
   }
 
-  getPregenArgs(): any[] {
+  public getPregenArgs(): any[] {
     return [ this.statModifier ];
   }
 }
 
+/**
+ * Old Gateau item
+ */
 export class PokemonBaseStatFlatModifierType extends PokemonHeldItemModifierType implements GeneratedPersistentModifierType {
   private readonly statModifier: integer;
   private readonly stats: Stat[];
@@ -678,14 +684,14 @@ export class PokemonBaseStatFlatModifierType extends PokemonHeldItemModifierType
     this.stats = stats;
   }
 
-  getDescription(scene: BattleScene): string {
+  override getDescription(scene: BattleScene): string {
     return i18next.t("modifierType:ModifierType.PokemonBaseStatFlatModifierType.description", {
       stats: this.stats.map(stat => i18next.t(getStatKey(stat))).join("/"),
       statValue: this.statModifier,
     });
   }
 
-  getPregenArgs(): any[] {
+  public getPregenArgs(): any[] {
     return [ this.statModifier, this.stats ];
   }
 }
@@ -1607,6 +1613,7 @@ const modifierPool: ModifierPool = {
     new WeightedModifierType(modifierTypes.TEMP_STAT_STAGE_BOOSTER, 4),
     new WeightedModifierType(modifierTypes.BERRY, 2),
     new WeightedModifierType(modifierTypes.TM_COMMON, 2),
+    new WeightedModifierType(modifierTypes.VOUCHER, (party: Pokemon[], rerollCount: integer) => !party[0].scene.gameMode.isDaily ? Math.max(1 - rerollCount, 0) : 0, 1),
   ].map(m => {
     m.setTier(ModifierTier.COMMON); return m;
   }),
@@ -1677,7 +1684,7 @@ const modifierPool: ModifierPool = {
     new WeightedModifierType(modifierTypes.BASE_STAT_BOOSTER, 3),
     new WeightedModifierType(modifierTypes.TERA_SHARD, 1),
     new WeightedModifierType(modifierTypes.DNA_SPLICERS, (party: Pokemon[]) => party[0].scene.gameMode.isSplicedOnly && party.filter(p => !p.fusionSpecies).length > 1 ? 4 : 0),
-    new WeightedModifierType(modifierTypes.VOUCHER, (party: Pokemon[], rerollCount: integer) => !party[0].scene.gameMode.isDaily ? Math.max(1 - rerollCount, 0) : 0, 1),
+    new WeightedModifierType(modifierTypes.VOUCHER, (party: Pokemon[], rerollCount: integer) => !party[0].scene.gameMode.isDaily ? Math.max(3 - rerollCount * 3, 0) : 0, 3),
   ].map(m => {
     m.setTier(ModifierTier.GREAT); return m;
   }),
@@ -1758,7 +1765,7 @@ const modifierPool: ModifierPool = {
     new WeightedModifierType(modifierTypes.RARE_FORM_CHANGE_ITEM, (party: Pokemon[]) => Math.min(Math.ceil(party[0].scene.currentBattle.waveIndex / 50), 4) * 6, 24),
     new WeightedModifierType(modifierTypes.MEGA_BRACELET, (party: Pokemon[]) => Math.min(Math.ceil(party[0].scene.currentBattle.waveIndex / 50), 4) * 9, 36),
     new WeightedModifierType(modifierTypes.DYNAMAX_BAND, (party: Pokemon[]) => Math.min(Math.ceil(party[0].scene.currentBattle.waveIndex / 50), 4) * 9, 36),
-    new WeightedModifierType(modifierTypes.VOUCHER_PLUS, (party: Pokemon[], rerollCount: integer) => !party[0].scene.gameMode.isDaily ? Math.max(3 - rerollCount * 1, 0) : 0, 3),
+    new WeightedModifierType(modifierTypes.VOUCHER_PLUS, (party: Pokemon[], rerollCount: integer) => !party[0].scene.gameMode.isDaily ? Math.max(9 - rerollCount * 3, 0) : 0, 9),
   ].map(m => {
     m.setTier(ModifierTier.ROGUE); return m;
   }),
@@ -1767,7 +1774,7 @@ const modifierPool: ModifierPool = {
     new WeightedModifierType(modifierTypes.SHINY_CHARM, 14),
     new WeightedModifierType(modifierTypes.HEALING_CHARM, 18),
     new WeightedModifierType(modifierTypes.MULTI_LENS, 18),
-    new WeightedModifierType(modifierTypes.VOUCHER_PREMIUM, (party: Pokemon[], rerollCount: integer) => !party[0].scene.gameMode.isDaily && !party[0].scene.gameMode.isEndless && !party[0].scene.gameMode.isSplicedOnly ? Math.max(5 - rerollCount * 2, 0) : 0, 5),
+    new WeightedModifierType(modifierTypes.VOUCHER_PREMIUM, (party: Pokemon[], rerollCount: integer) => !party[0].scene.gameMode.isDaily && !party[0].scene.gameMode.isEndless && !party[0].scene.gameMode.isSplicedOnly ? Math.max(15 - rerollCount * 5, 0) : 0, 15),
     new WeightedModifierType(modifierTypes.DNA_SPLICERS, (party: Pokemon[]) => !party[0].scene.gameMode.isSplicedOnly && party.filter(p => !p.fusionSpecies).length > 1 ? 24 : 0, 24),
     new WeightedModifierType(modifierTypes.MINI_BLACK_HOLE, (party: Pokemon[]) => (!party[0].scene.gameMode.isFreshStartChallenge() && party[0].scene.gameData.unlocks[Unlockables.MINI_BLACK_HOLE]) ? 1 : 0, 1),
   ].map(m => {
@@ -2118,6 +2125,14 @@ export function getPlayerModifierTypeOptions(count: integer, party: PlayerPokemo
   return options;
 }
 
+/**
+ * Will generate a ModifierType from the ModifierPoolType.PLAYER pool, attempting to retry duplicated items up to retryCount
+ * @param existingOptions - currently generated options
+ * @param retryCount - how many times to retry before allowing a dupe item
+ * @param party - current player party, used to calculate items in the pool
+ * @param tier - If specified will generate item of tier
+ * @param allowLuckUpgrades - allow items to upgrade tiers (the little animation that plays and is affected by luck)
+ */
 function getModifierTypeOptionWithRetry(existingOptions: ModifierTypeOption[], retryCount: integer, party: PlayerPokemon[], tier?: ModifierTier, allowLuckUpgrades?: boolean): ModifierTypeOption {
   allowLuckUpgrades = allowLuckUpgrades ?? true;
   let candidate = getNewModifierTypeOption(party, ModifierPoolType.PLAYER, tier, undefined, 0, allowLuckUpgrades);
@@ -2253,6 +2268,15 @@ export function getDailyRunStarterModifiers(party: PlayerPokemon[]): Modifiers.P
   return ret;
 }
 
+/**
+ * Generates a ModifierType from the specified pool
+ * @param party - party of the trainer using the item
+ * @param poolType - PLAYER/WILD/TRAINER
+ * @param tier - If specified, will override the initial tier of an item (can still upgrade with luck)
+ * @param upgradeCount - If defined, means that this is a new ModifierType being generated to override another via luck upgrade. Used for recursive logic
+ * @param retryCount - Max allowed tries before the next tier down is checked for a valid ModifierType
+ * @param allowLuckUpgrades - Default true. If false, will not allow ModifierType to randomly upgrade to next tier
+ */
 function getNewModifierTypeOption(party: Pokemon[], poolType: ModifierPoolType, tier?: ModifierTier, upgradeCount?: integer, retryCount: integer = 0, allowLuckUpgrades: boolean = true): ModifierTypeOption | null {
   const player = !poolType;
   const pool = getModifierPoolForType(poolType);

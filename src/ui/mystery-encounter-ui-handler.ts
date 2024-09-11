@@ -22,7 +22,8 @@ export default class MysteryEncounterUiHandler extends UiHandler {
   private cursorObj?: Phaser.GameObjects.Image;
 
   private optionsContainer: Phaser.GameObjects.Container;
-  private optionScrollTweens: (Phaser.Tweens.Tween | null)[] = [null, null, null, null];
+  // Length = max number of allowable options (4)
+  private optionScrollTweens: (Phaser.Tweens.Tween | null)[] = new Array(4).fill(null);
 
   private tooltipWindow: Phaser.GameObjects.NineSlice;
   private tooltipContainer: Phaser.GameObjects.Container;
@@ -49,7 +50,7 @@ export default class MysteryEncounterUiHandler extends UiHandler {
     super(scene, Mode.MYSTERY_ENCOUNTER);
   }
 
-  setup() {
+  override setup() {
     const ui = this.getUi();
 
     this.cursorContainer = this.scene.add.container(18, -38.7);
@@ -89,7 +90,7 @@ export default class MysteryEncounterUiHandler extends UiHandler {
     this.dexProgressContainer.setInteractive(new Phaser.Geom.Rectangle(0, 0, 24, 28), Phaser.Geom.Rectangle.Contains);
   }
 
-  show(args: any[]): boolean {
+  override show(args: any[]): boolean {
     super.show(args);
 
     this.overrideSettings = args[0] as OptionSelectSettings ?? {};
@@ -119,7 +120,7 @@ export default class MysteryEncounterUiHandler extends UiHandler {
     return true;
   }
 
-  processInput(button: Button): boolean {
+  override processInput(button: Button): boolean {
     const ui = this.getUi();
 
     let success = false;
@@ -179,7 +180,7 @@ export default class MysteryEncounterUiHandler extends UiHandler {
     return success;
   }
 
-  handleTwoOptionMoveInput(button: Button): boolean {
+  private handleTwoOptionMoveInput(button: Button): boolean {
     let success = false;
     const cursor = this.getCursor();
     switch (button) {
@@ -208,7 +209,7 @@ export default class MysteryEncounterUiHandler extends UiHandler {
     return success;
   }
 
-  handleThreeOptionMoveInput(button: Button): boolean {
+  private handleThreeOptionMoveInput(button: Button): boolean {
     let success = false;
     const cursor = this.getCursor();
     switch (button) {
@@ -245,7 +246,7 @@ export default class MysteryEncounterUiHandler extends UiHandler {
     return success;
   }
 
-  handleFourOptionMoveInput(button: Button): boolean {
+  private handleFourOptionMoveInput(button: Button): boolean {
     let success = false;
     const cursor = this.getCursor();
     switch (button) {
@@ -282,6 +283,10 @@ export default class MysteryEncounterUiHandler extends UiHandler {
     return success;
   }
 
+  /**
+   * When ME UI first displays, the option buttons will be disabled temporarily to prevent player accidentally clicking through hastily
+   * This method is automatically called after a short delay but can also be called manually
+   */
   unblockInput() {
     if (this.blockInput) {
       this.blockInput = false;
@@ -295,11 +300,11 @@ export default class MysteryEncounterUiHandler extends UiHandler {
     }
   }
 
-  getCursor(): integer {
+  override getCursor(): integer {
     return this.cursor ? this.cursor : 0;
   }
 
-  setCursor(cursor: integer): boolean {
+  override setCursor(cursor: integer): boolean {
     const prevCursor = this.getCursor();
     const changed = prevCursor !== cursor;
     if (changed) {
@@ -480,7 +485,11 @@ export default class MysteryEncounterUiHandler extends UiHandler {
     }
   }
 
-  displayOptionTooltip() {
+  /**
+   * Updates and displays the tooltip for a given option
+   * The tooltip will auto wrap and scroll if it is too long
+   */
+  private displayOptionTooltip() {
     const cursor = this.getCursor();
     // Clear tooltip box
     if (this.tooltipContainer.length > 1) {
@@ -553,7 +562,7 @@ export default class MysteryEncounterUiHandler extends UiHandler {
     }
   }
 
-  clear(): void {
+  override clear(): void {
     super.clear();
     this.overrideSettings = undefined;
     this.optionsContainer.setVisible(false);
@@ -567,7 +576,7 @@ export default class MysteryEncounterUiHandler extends UiHandler {
     this.eraseCursor();
   }
 
-  eraseCursor(): void {
+  private eraseCursor(): void {
     if (this.cursorObj) {
       this.cursorObj.destroy();
     }
@@ -575,10 +584,10 @@ export default class MysteryEncounterUiHandler extends UiHandler {
   }
 
   /**
-   *
+   * Will show or hide the Dex progress icon for an option that has dex progress
    * @param show - if true does show, if false does hide
    */
-  showHideDexProgress(show: boolean) {
+  private showHideDexProgress(show: boolean) {
     if (show && !this.showDexProgress) {
       this.showDexProgress = true;
       this.scene.tweens.killTweensOf(this.dexProgressContainer);

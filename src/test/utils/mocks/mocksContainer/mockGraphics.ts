@@ -3,7 +3,7 @@ import { MockGameObject } from "../mockGameObject";
 export default class MockGraphics implements MockGameObject {
   private scene;
   public list: MockGameObject[] = [];
-  name: string;
+  public name: string;
   constructor(textureManager, config) {
     this.scene = textureManager.scene;
   }

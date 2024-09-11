@@ -8,7 +8,7 @@ import * as GameMode from "#app/game-mode";
 import { GameModes, getGameMode } from "#app/game-mode";
 import { ModifierOverride } from "#app/modifier/modifier-type";
 import Overrides from "#app/overrides";
-import { MockInstance, vi } from "vitest";
+import { vi } from "vitest";
 import { GameManagerHelper } from "./gameManagerHelper";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
@@ -333,9 +333,9 @@ export class OverridesHelper extends GameManagerHelper {
   mysteryEncounterChance(percentage: number) {
     const maxRate: number = 256; // 100%
     const rate = maxRate * (percentage / 100);
-    const spy = vi.spyOn(Overrides, "MYSTERY_ENCOUNTER_RATE_OVERRIDE", "get").mockReturnValue(rate);
+    vi.spyOn(Overrides, "MYSTERY_ENCOUNTER_RATE_OVERRIDE", "get").mockReturnValue(rate);
     this.log(`Mystery encounter chance set to ${percentage}% (=${rate})!`);
-    return spy;
+    return this;
   }
 
   /**
@@ -343,10 +343,10 @@ export class OverridesHelper extends GameManagerHelper {
    * @returns spy instance
    * @param tier
    */
-  mysteryEncounterTier(tier: MysteryEncounterTier): MockInstance {
-    const spy = vi.spyOn(Overrides, "MYSTERY_ENCOUNTER_TIER_OVERRIDE", "get").mockReturnValue(tier);
+  mysteryEncounterTier(tier: MysteryEncounterTier) {
+    vi.spyOn(Overrides, "MYSTERY_ENCOUNTER_TIER_OVERRIDE", "get").mockReturnValue(tier);
     this.log(`Mystery encounter tier set to ${tier}!`);
-    return spy;
+    return this;
   }
 
   /**
@@ -355,9 +355,9 @@ export class OverridesHelper extends GameManagerHelper {
    * @returns spy instance
    */
   mysteryEncounter(encounterType: MysteryEncounterType) {
-    const spy = vi.spyOn(Overrides, "MYSTERY_ENCOUNTER_OVERRIDE", "get").mockReturnValue(encounterType);
+    vi.spyOn(Overrides, "MYSTERY_ENCOUNTER_OVERRIDE", "get").mockReturnValue(encounterType);
     this.log(`Mystery encounter override set to ${encounterType}!`);
-    return spy;
+    return this;
   }
 
   private log(...params: any[]) {

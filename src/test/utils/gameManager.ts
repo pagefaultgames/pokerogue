@@ -94,6 +94,9 @@ export default class GameManager {
     this.challengeMode = new ChallengeModeHelper(this);
     this.settings = new SettingsHelper(this);
     this.reload = new ReloadHelper(this);
+
+    // Disables Mystery Encounters on all tests (can be overridden at test level)
+    this.override.mysteryEncounterChance(0);
   }
 
   /**

@@ -9,7 +9,6 @@ import * as Utils from "./utils";
 import { Biome } from "#enums/biome";
 import { Species } from "#enums/species";
 import { Challenges } from "./enums/challenges";
-import MAX_SAFE_INTEGER = Phaser.Math.MAX_SAFE_INTEGER;
 
 export enum GameModes {
   CLASSIC,
@@ -62,7 +61,7 @@ export class GameMode implements GameModeConfig {
     }
     this.battleConfig = battleConfig || {};
     this.minMysteryEncounterWave = this.minMysteryEncounterWave ?? 0;
-    this.maxMysteryEncounterWave = this.maxMysteryEncounterWave ?? MAX_SAFE_INTEGER;
+    this.maxMysteryEncounterWave = this.maxMysteryEncounterWave ?? Number.MAX_SAFE_INTEGER;
   }
 
   /**
