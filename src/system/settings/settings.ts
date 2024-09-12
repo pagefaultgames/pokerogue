@@ -291,15 +291,15 @@ export const Setting: Array<Setting> = [
         label: i18next.t("settings:never")
       },
       {
-        value: "Always",
-        label: i18next.t("settings:always")
-      },
-      {
         value: "Ask",
         label: i18next.t("settings:ask")
+      },
+      {
+        value: "Always",
+        label: i18next.t("settings:always")
       }
     ],
-    default: 2,
+    default: 1,
     type: SettingType.GENERAL
   },
   {
