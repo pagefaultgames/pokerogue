@@ -10,6 +10,8 @@ export default class MockText implements MockGameObject {
   public list: MockGameObject[] = [];
   public style;
   public text = "";
+  private name?: string;
+  public color?: string;
 
   constructor(textureManager, x, y, content, styleOptions) {
     this.scene = textureManager.scene;
@@ -190,10 +192,11 @@ export default class MockText implements MockGameObject {
     };
   }
 
-  setColor(color) {
-    // Sets the tint of this Game Object.
-    // return this.phaserText.setColor(color);
-  }
+  setColor = (color: string) => {
+    this.color = color;
+  };
+
+  setInteractive = () => null;
 
   setShadowColor(color) {
     // Sets the shadow color.
@@ -219,9 +222,9 @@ export default class MockText implements MockGameObject {
     // return this.phaserText.setAlpha(alpha);
   }
 
-  setName(name) {
-    // return this.phaserText.setName(name);
-  }
+  setName = (name: string) => {
+    this.name = name;
+  };
 
   setAlign(align) {
     // return this.phaserText.setAlign(align);

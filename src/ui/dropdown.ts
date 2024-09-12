@@ -1,5 +1,5 @@
-import BattleScene from "#app/battle-scene.js";
-import { SceneBase } from "#app/scene-base.js";
+import BattleScene from "#app/battle-scene";
+import { SceneBase } from "#app/scene-base";
 import { addTextObject, TextStyle } from "./text";
 import { addWindow, WindowVariant } from "./ui-theme";
 import i18next from "i18next";
@@ -21,6 +21,14 @@ export enum DropDownType {
 export enum SortDirection {
   ASC = -1,
   DESC = 1
+}
+
+export enum SortCriteria {
+  NUMBER = 0,
+  COST = 1,
+  CANDY = 2,
+  IV = 3,
+  NAME = 4
 }
 
 export class DropDownLabel {
@@ -472,7 +480,7 @@ export class DropDown extends Phaser.GameObjects.Container {
   private getSettings(): any[] {
     const settings : any[] = [];
     for (let i = 0; i < this.options.length; i++) {
-      settings.push({ val: this.options[i].val, state: this.options[i].state , cursor: (this.cursor === i), dir: this.options[i].dir });
+      settings.push({ val: this.options[i].val, state: this.options[i].state, cursor: (this.cursor === i), dir: this.options[i].dir });
     }
     return settings;
   }

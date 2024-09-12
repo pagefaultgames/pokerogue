@@ -58,6 +58,7 @@ export default class MoveInfoOverlay extends Phaser.GameObjects.Container implem
 
     // set up the description; wordWrap uses true pixels, unaffected by any scaling, while other values are affected
     this.desc = addTextObject(scene, (options?.onSide && !options?.right ? EFF_WIDTH : 0) + BORDER, (options?.top ? EFF_HEIGHT : 0) + BORDER - 2, "", TextStyle.BATTLE_INFO, { wordWrap: { width: (width - (BORDER - 2) * 2 - (options?.onSide ? EFF_WIDTH : 0)) * GLOBAL_SCALE } });
+    this.desc.setLineSpacing(i18next.resolvedLanguage === "ja" ? 25 : 5);
 
     // limit the text rendering, required for scrolling later on
     const maskPointOrigin = {
@@ -90,7 +91,7 @@ export default class MoveInfoOverlay extends Phaser.GameObjects.Container implem
     valuesBg.setOrigin(0, 0);
     this.val.add(valuesBg);
 
-    this.typ = this.scene.add.sprite(25, EFF_HEIGHT - 35,`types${Utils.verifyLang(i18next.language) ? `_${i18next.language}` : ""}` , "unknown");
+    this.typ = this.scene.add.sprite(25, EFF_HEIGHT - 35, `types${Utils.verifyLang(i18next.language) ? `_${i18next.language}` : ""}`, "unknown");
     this.typ.setScale(0.8);
     this.val.add(this.typ);
 

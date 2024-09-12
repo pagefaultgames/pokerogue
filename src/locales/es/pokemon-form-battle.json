@@ -1,0 +1,14 @@
+{
+  "mega": "Mega {{pokemonName}}",
+  "mega-x": "Mega {{pokemonName}} X",
+  "mega-y": "Mega {{pokemonName}} Y",
+  "primal": "{{pokemonName}} Primigenio",
+  "gigantamax": "G-Max {{pokemonName}}",
+  "eternamax": "E-Max {{pokemonName}}",
+  "megaChange": "¡{{preName}} ha mega-evolucionado a {{pokemonName}}!",
+  "gigantamaxChange": "¡{{preName}} ha gigamaxizado a {{pokemonName}}!",
+  "eternamaxChange": "¡{{preName}} ha eternamaxizado a {{pokemonName}}!",
+  "revertChange": "¡{{pokemonName}} ha revertido a su forma original!",
+  "formChange": "¡{{preName}} ha cambiado de forma!",
+  "disguiseChange": "¡El disfraz ha actuado como señuelo!"
+}

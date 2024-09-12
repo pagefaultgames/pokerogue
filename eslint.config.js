@@ -1,7 +1,7 @@
 import tseslint from '@typescript-eslint/eslint-plugin';
 import stylisticTs from '@stylistic/eslint-plugin-ts'
 import parser from '@typescript-eslint/parser';
-// import imports from 'eslint-plugin-import'; // Disabled due to not being compatible with eslint v9
+import importX from 'eslint-plugin-import-x';
 
 export default [ 
     {
@@ -11,7 +11,7 @@ export default [
             parser: parser
         },
         plugins: {
-            // imports: imports.configs.recommended // Disabled due to not being compatible with eslint v9
+            "import-x": importX,
             '@stylistic/ts': stylisticTs,
             '@typescript-eslint': tseslint
         },
@@ -38,7 +38,9 @@ export default [
                 "ignoreComments": false // Enforces the rule on lines containing comments
             }],
             "space-before-blocks": ["error", "always"], // Enforces a space before blocks
-            "keyword-spacing": ["error", { "before": true, "after": true }] // Enforces spacing before and after keywords
+            "keyword-spacing": ["error", { "before": true, "after": true }], // Enforces spacing before and after keywords
+            "comma-spacing": ["error", { "before": false, "after": true }], // Enforces spacing after comma
+            "import-x/extensions": ["error", "never", { "json": "always" }], // Enforces no extension for imports unless json
         }
     }
 ]

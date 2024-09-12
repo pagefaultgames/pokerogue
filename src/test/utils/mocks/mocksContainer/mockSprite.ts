@@ -1,7 +1,7 @@
+import Phaser from "phaser";
 import { MockGameObject } from "../mockGameObject";
 import Sprite = Phaser.GameObjects.Sprite;
 import Frame = Phaser.Textures.Frame;
-import Phaser from "phaser";
 
 
 export default class MockSprite implements MockGameObject {
@@ -101,9 +101,7 @@ export default class MockSprite implements MockGameObject {
     return this.phaserSprite.stop();
   }
 
-  setInteractive(hitArea, hitAreaCallback, dropZone) {
-    return null;
-  }
+  setInteractive = () => null;
 
   on(event, callback, source) {
     return this.phaserSprite.on(event, callback, source);

@@ -1,13 +1,12 @@
-import { Species } from "#app/enums/species.js";
-import { TurnEndPhase } from "#app/phases";
-import GameManager from "#test/utils/gameManager";
-import { getMovePosition } from "#test/utils/gameManagerUtils";
+import { Species } from "#app/enums/species";
+import { StatusEffect } from "#app/enums/status-effect";
+import { TurnEndPhase } from "#app/phases/turn-end-phase";
+import { toDmgValue } from "#app/utils";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
+import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import { SPLASH_ONLY } from "#test/utils/testUtils";
-import { StatusEffect } from "#app/enums/status-effect.js";
 
 describe("Abilities - Heatproof", () => {
   let phaserGame: Phaser.Game;
@@ -30,7 +29,7 @@ describe("Abilities - Heatproof", () => {
       .disableCrits()
       .enemySpecies(Species.CHARMANDER)
       .enemyAbility(Abilities.HEATPROOF)
-      .enemyMoveset(SPLASH_ONLY)
+      .enemyMoveset(Moves.SPLASH)
       .enemyLevel(100)
       .starterSpecies(Species.CHANDELURE)
       .ability(Abilities.BALL_FETCH)
@@ -45,14 +44,14 @@ describe("Abilities - Heatproof", () => {
     const initialHP = 1000;
     enemy.hp = initialHP;
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.FLAMETHROWER));
+    game.move.select(Moves.FLAMETHROWER);
     await game.phaseInterceptor.to(TurnEndPhase);
     const heatproofDamage = initialHP - enemy.hp;
 
     enemy.hp = initialHP;
     game.override.enemyAbility(Abilities.BALL_FETCH);
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.FLAMETHROWER));
+    game.move.select(Moves.FLAMETHROWER);
     await game.phaseInterceptor.to(TurnEndPhase);
     const regularDamage = initialHP - enemy.hp;
 
@@ -68,10 +67,10 @@ describe("Abilities - Heatproof", () => {
 
     const enemy = game.scene.getEnemyPokemon()!;
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
+    game.move.select(Moves.SPLASH);
     await game.toNextTurn();
 
     // Normal burn damage is /16
-    expect(enemy.hp).toBe(enemy.getMaxHp() - Math.floor(enemy.getMaxHp() / 32));
+    expect(enemy.hp).toBe(enemy.getMaxHp() - toDmgValue(enemy.getMaxHp() / 32));
   });
 });

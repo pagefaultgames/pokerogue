@@ -1,0 +1,7 @@
+{
+  "fight": "Luchar",
+  "ball": "Balls",
+  "pokemon": "Pokémon",
+  "run": "Huir",
+  "actionMessage": "¿Qué debería\nhacer {{pokemonName}}?"
+}

@@ -95,7 +95,7 @@ export function doPokeballBounceAnim(scene: BattleScene, pokeball: Phaser.GameOb
       duration: bouncePower * baseBounceDuration,
       ease: "Cubic.easeIn",
       onComplete: () => {
-        scene.playSound("pb_bounce_1", { volume: bouncePower });
+        scene.playSound("se/pb_bounce_1", { volume: bouncePower });
 
         bouncePower = bouncePower > 0.01 ? bouncePower * 0.5 : 0;
 
