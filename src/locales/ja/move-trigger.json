@@ -66,6 +66,5 @@
   "revivalBlessing": "{{pokemonName}}は\n復活して　戦えるようになった！",
   "swapArenaTags": "{{pokemonName}}は\nお互いの　場の　効果を　入れ替えた！",
   "exposedMove": "{{pokemonName}}は {{targetPokemonName}}の\n正体を　見破った！",
-  "safeguard": "{{targetName}}は　神秘のベールに　守られている！",
   "afterYou": "{{pokemonName}}は　お言葉に　甘えることにした！"
 }
