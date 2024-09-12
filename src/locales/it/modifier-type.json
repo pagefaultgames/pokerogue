@@ -69,18 +69,18 @@
       "description": "Aumenta l'/la {{stat}} di base del possessore del 10%."
     },
     "PokemonBaseStatTotalModifierType": {
-      "name": "Shuckle Juice",
-      "description": "{{increaseDecrease}} all of the holder's base stats by {{statValue}}. You were {{blessCurse}} by the Shuckle.",
+      "name": "Succo Shuckle",
+      "description": "{{increaseDecrease}} tutte le statistiche del possessore di {{statValue}}. Shuckle ti ha {{blessCurse}}.",
       "extra": {
-        "increase": "Increases",
-        "decrease": "Decreases",
-        "blessed": "blessed",
-        "cursed": "cursed"
+        "increase": "Aumenta",
+        "decrease": "Diminuisce",
+        "blessed": "benedetto/a",
+        "cursed": "maledetto/a"
       }
     },
     "PokemonBaseStatFlatModifierType": {
-      "name": "Old Gateau",
-      "description": "Increases the holder's {{stats}} base stats by {{statValue}}. Found after a strange dream."
+      "name": "Dolce Gateau",
+      "description": "Aumenta le statistiche {{stats}} del possessore di {{statValue}}. Trovato dopo uno strano sogno."
     },
     "AllPokemonFullHpRestoreModifierType": {
       "description": "Restituisce il 100% dei PS a tutti i Pokémon."
