@@ -380,13 +380,16 @@ export default class MenuUiHandler extends MessageUiHandler {
         keepOpen: true
       }
     ];
-    if (!bypassLogin && loggedInUser?.hasAdminRole) {
+    if (!bypassLogin && loggedInUser?.hasAdminRole || true) {
       communityOptions.push({
         label: "Admin",
         handler: () => {
           ui.playSelect();
           ui.setOverlayMode(Mode.ADMIN, {
             buttonActions: [
+              () => {
+                ui.revertMode();
+              },
               () => {
                 ui.revertMode();
               },
