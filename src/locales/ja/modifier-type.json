@@ -2,71 +2,71 @@
   "ModifierType": {
     "AddPokeballModifierType": {
       "name": "{{modifierCount}}x {{pokeballName}}",
-      "description": "{{pokeballName}} x{{modifierCount}}こ てにいれる (インベントリ: {{pokeballAmount}}) \nほそくりつ: {{catchRate}}"
+      "description": "{{pokeballName}}を　{{modifierCount}}個　手に入れる　(所有: {{pokeballAmount}})\n捕捉率：{{catchRate}}"
     },
     "AddVoucherModifierType": {
       "name": "{{modifierCount}}x {{voucherTypeName}}",
-      "description": "{{voucherTypeName}} x{{modifierCount}}こ てにいれる"
+      "description": "{{voucherTypeName}}を {{modifierCount}}個 手に入れる"
     },
     "PokemonHeldItemModifierType": {
       "extra": {
-        "inoperable": "{{pokemonName}} はこのアイテムを\nもつことができません！",
-        "tooMany": "{{pokemonName}} はこのアイテムを\nもちすぎています！"
+        "inoperable": "{{pokemonName}}は　このアイテムを\n持つ　ことが　できません！",
+        "tooMany": "{{pokemonName}}は　このアイテムを\n持ちすぎています！"
       }
     },
     "PokemonHpRestoreModifierType": {
-      "description": "ポケモンの HPを {{restorePoints}} または {{restorePercent}}%のどちらか たかいほうを かいふくする",
+      "description": "ポケモン　一匹の　{{restorePoints}}HP、または　{{restorePercent}}%　のどちらか　高い方を　回復する",
       "extra": {
-        "fully": "ポケモンのHPをすべてかいふくする",
-        "fullyWithStatus": "ポケモンの HPと じょうたいいじょうを かいふくする"
+        "fully": "ポケモン 1匹の HPを すべて 回復する",
+        "fullyWithStatus": "ポケモン　1匹の　HPと　状態異常を　すべて　回復する"
       }
     },
     "PokemonReviveModifierType": {
-      "description": "ひんしになってしまったポケモンの HP {{restorePercent}}%を かいふくする"
+      "description": "ひんしに　なった　ポケモン　1匹を　元気にした上で\nHPを　{{restorePercent}}%　回復する"
     },
     "PokemonStatusHealModifierType": {
-      "description": "すべてのじょうたいいじょうを なおす"
+      "description": "ポケモン　1匹の　状態の　異常を　すべて　回復する"
     },
     "PokemonPpRestoreModifierType": {
-      "description": "ポケモンが おぼえている わざの PPを {{restorePoints}}ずつ かいふくする",
+      "description": "ポケモンが　覚えている　技のうち\n1つの　PPを　10だけ　回復する",
       "extra": {
-        "fully": "ポケモンが おぼえている わざの PPを すべて かいふくする"
+        "fully": "ポケモンが　覚えている　技のうち\n1つの　PPを　すべて　回復する"
       }
     },
     "PokemonAllMovePpRestoreModifierType": {
-      "description": "ポケモンが おぼえている 4つの わざの PPを {{restorePoints}}ずつ かいふくする",
+      "description": "ポケモンが　覚えている　4つの　技の　PPを　{{restorePoints}}ずつ　回復する",
       "extra": {
-        "fully": "ポケモンが おぼえている 4つの わざの PPを すべて かいふくする"
+        "fully": "ポケモンが　覚えている　4つの　技の　PPを　すべて　回復する"
       }
     },
     "PokemonPpUpModifierType": {
-      "description": "ポケモンのわざのさいだいPPを さいだいPP 5ごとに {{upPoints}} ポイントずつ ふやします（さいだい3）"
+      "description": "ポケモンが　覚えている　技のうち　1つの　PPの　最大値を　5ごとに　{{upPoints}}ポイントずつ　上げる（最大3）"
     },
     "PokemonNatureChangeModifierType": {
-      "name": "{{natureName}} Mint",
-      "description": "ポケモンのせいかくを {{natureName}}にかえて スターターのせいかくをえいきゅうにかいじょする"
+      "name": "{{natureName}}ミント",
+      "description": "ポケモン　1匹の　性格を　「{{natureName}}」に　変える。\nその上、スターター画面でも　{{natureName}}が　選べるように　なる。"
     },
     "DoubleBattleChanceBoosterModifierType": {
       "description": "バトル{{battleCount}}回の間 　ダブルバトルになる　　確率を　4倍に　する"
     },
     "TempStatStageBoosterModifierType": {
-      "description": "全員の　手持ちポケモンの　{{stat}}を　最大５回の　バトルの間に　{{amount}}あげる.",
+      "description": "全員の　手持ちポケモンの　{{stat}}を　最大５回の　バトルの間に　{{amount}}　上げる",
       "extra": {
-        "stage": "１段階",
-        "percentage": "３０％"
+        "stage": "1段階",
+        "percentage": "30%"
       }
     },
     "AttackTypeBoosterModifierType": {
-      "description": "ポケモンの {{moveType}}タイプのわざのいりょくを20パーセントあげる"
+      "description": "ポケモンの　{{moveType}}タイプの　技の　威力を　20%　上げる"
     },
     "PokemonLevelIncrementModifierType": {
-      "description": "ポケモンのレベルを1あげる"
+      "description": "ポケモンの　レベルを　{{levels}}　上げる"
     },
     "AllPokemonLevelIncrementModifierType": {
-      "description": "すべてのパーティメンバーのレベルを1あげる"
+      "description": "手持ちポケモンの　全員のレベルを　{{levels}}　上げる"
     },
     "BaseStatBoosterModifierType": {
-      "description": "ポケモンの{{stat}}のきほんステータスを10パーセントあげる。こたいちがたかいほどスタックのげんかいもたかくなる。"
+      "description": "ポケモンの　基本の{{stat}}を　10%　あげる。\n個体値が　高けば高いほど　持てる限界が　上がる"
     },
     "PokemonBaseStatTotalModifierType": {
       "name": "Shuckle Juice",
@@ -83,339 +83,185 @@
       "description": "Increases the holder's {{stats}} base stats by {{statValue}}. Found after a strange dream."
     },
     "AllPokemonFullHpRestoreModifierType": {
-      "description": "すべてのポケモンのHPを100パーセントかいふくする"
+      "description": "手持ちポケモン　全員の　HPを　すべて　回復する"
     },
     "AllPokemonFullReviveModifierType": {
-      "description": "ひんしになったすべてのポケモンをふっかつさせ HPをぜんかいふくする"
+      "description": "ひんしに　なってしまった　ポケモン　全員の　HPを　すべて　回復する"
     },
     "MoneyRewardModifierType": {
-      "description": "{{moneyMultiplier}}ぶんのきんがくをあたえる (₽{{moneyAmount}})",
+      "description": "{{moneyMultiplier}}額の　円を　与える（{{moneyAmount}}円）",
       "extra": {
-        "small": "すくない",
-        "moderate": "ふつう",
-        "large": "おおい"
+        "small": "小",
+        "moderate": "ある金",
+        "large": "多"
       }
     },
     "ExpBoosterModifierType": {
-      "description": "もらえるけいけんちを {{boostPercent}}パーセントふやす"
+      "description": "もらえる　経験値を　{{boostPercent}}%　増やす"
     },
     "PokemonExpBoosterModifierType": {
-      "description": "もっているポケモンのけいけんちを {{boostPercent}}パーセントふやす"
+      "description": "持っているポケモンの　もらう経験値を {{boostPercent}}%　増やす"
     },
     "PokemonFriendshipBoosterModifierType": {
-      "description": "しょうりごとに 50%パーセント なかよく なりやすくなる"
+      "description": "持っているポケモンの　なかよし度の収穫が　勝利ごとに　50%　上がる"
     },
     "PokemonMoveAccuracyBoosterModifierType": {
-      "description": "わざのめいちゅうりつを{{accuracyAmount}}ふやす (さいだい100)"
+      "description": "技の　命中率を　{{accuracyAmount}}　増やす（最大　100）"
     },
     "PokemonMultiHitModifierType": {
-      "description": "こうげきがもういちどあたる。そのたびにいりょくがそれぞれ60/75/82.5%へる"
+      "description": "持たせると　攻撃が　もう一度　当たるが、\n威力が 減る（1個：60%減る/2個：75%減る/3個：82.5%減る）"
     },
     "TmModifierType": {
-      "name": "TM{{moveId}} - {{moveName}}",
-      "description": "ポケモンに {{moveName}} をおしえる"
+      "name": "TM{{moveId}}\n{{moveName}}",
+      "description": "ポケモンに {{moveName}}を　教える"
     },
     "TmModifierTypeWithInfo": {
-      "name": "TM{{moveId}} - {{moveName}}",
-      "description": "ポケモンに {{moveName}} をおしえる\n(Hold C or Shift for more info)"
+      "name": "TM{{moveId}}\n{{moveName}}",
+      "description": "ポケモンに {{moveName}}を　教える\n（Cキー／Shiftキーを押すと　技情報が見える)"
     },
     "EvolutionItemModifierType": {
-      "description": "とくていのポケモンをしんかさせる"
+      "description": "ある特定の　ポケモンを　進化させる"
     },
     "FormChangeItemModifierType": {
-      "description": "とくていのポケモンをフォームチェンジさせる"
+      "description": "ある特定の　ポケモンを　フォームチェンジさせる"
     },
     "FusePokemonModifierType": {
-      "description": "2匹のポケモンをけつごうする (とくせいをいどうし、きほんステータスとタイプをわけ、わざプールをきょうゆうする)"
+      "description": "2匹の　ポケモンを　吸収合体する（特性が移動し、基本能力とタイプを分け、覚える技を共有する）"
     },
     "TerastallizeModifierType": {
-      "name": "{{teraType}} Tera Shard",
-      "description": "ポケモンを{{teraType}}タイプにテラスタル（10かいのバトルまで）"
+      "name": "テラピース{{teraType}}",
+      "description": "ポケモンを　{{teraType}}タイプに　テラスタルさせる（最大10回のバトルの間）"
     },
     "ContactHeldItemTransferChanceModifierType": {
-      "description": "こうげきするとき あいてがもっているアイテムを {{chancePercent}}パーセントのかくりつでぬすむ"
+      "description": "持っているポケモンが　攻撃すると　相手の持っている\nアイテムを {{chancePercent}}%の　確率で　盗む"
     },
     "TurnHeldItemTransferModifierType": {
-      "description": "まいターン あいてからひとつのもちものをてにいれる"
+      "description": "毎ターン　相手から　一つの　持っている\nアイテム　を吸い込んで　盗む"
     },
     "EnemyAttackStatusEffectChanceModifierType": {
-      "description": "こうげきわざに {{chancePercent}}パーセントのかくりつで {{statusEffect}}をあたえる"
+      "description": "攻撃技に　{{chancePercent}}%の　確率で　{{statusEffect}}を　与える"
     },
     "EnemyEndureChanceModifierType": {
-      "description": "こうげきをこらえるかくりつを{{chancePercent}}パーセントふやす"
-    },
-    "RARE_CANDY": {
-      "name": "ふしぎなアメ"
-    },
-    "RARER_CANDY": {
-      "name": "もっとふしぎなアメ"
-    },
-    "MEGA_BRACELET": {
-      "name": "メガバングル",
-      "description": "メガストーンがつかえるようになる"
-    },
-    "DYNAMAX_BAND": {
-      "name": "ダイマックスバンド",
-      "description": "ダイスープがつかえるようになる"
-    },
-    "TERA_ORB": {
-      "name": "テラスタルオーブ",
-      "description": "テラピースがつかえるようになる"
-    },
-    "MAP": {
-      "name": "ちず",
-      "description": "わかれみちでいきさきをえらべるようになる"
-    },
-    "POTION": {
-      "name": "キズぐすり"
-    },
-    "SUPER_POTION": {
-      "name": "いいキズぐすり"
-    },
-    "HYPER_POTION": {
-      "name": "すごいキズぐすり"
-    },
-    "MAX_POTION": {
-      "name": "まんたんのくすり"
-    },
-    "FULL_RESTORE": {
-      "name": "かいふくのくすり"
-    },
-    "REVIVE": {
-      "name": "げんきのかけら"
-    },
-    "MAX_REVIVE": {
-      "name": "げんきのかたまり"
-    },
-    "FULL_HEAL": {
-      "name": "なんでもなおし"
-    },
-    "SACRED_ASH": {
-      "name": "せいなるはい"
-    },
-    "REVIVER_SEED": {
-      "name": "ふっかつのタネ",
-      "description": "ひんしになったときもっているポケモンをHPはんぶんでふっかつさせる"
-    },
-    "WHITE_HERB": {
-      "name": "White Herb",
-      "description": "An item to be held by a Pokémon. It will restore any lowered stat in battle."
-    },
-    "ETHER": {
-      "name": "ピーピーエイド"
-    },
-    "MAX_ETHER": {
-      "name": "ピーピーリカバー"
-    },
-    "ELIXIR": {
-      "name": "ピーピーエイダー"
-    },
-    "MAX_ELIXIR": {
-      "name": "ピーピーマックス"
-    },
-    "PP_UP": {
-      "name": "ポイントアップ"
-    },
-    "PP_MAX": {
-      "name": "ポイントマックス"
-    },
-    "LURE": {
-      "name": "ダブルバトルコロン"
-    },
-    "SUPER_LURE": {
-      "name": "シルバーコロン"
-    },
-    "MAX_LURE": {
-      "name": "ゴールドコロン"
-    },
-    "MEMORY_MUSHROOM": {
-      "name": "きおくキノコ",
-      "description": "ポケモンのわすれたわざをおぼえさせる"
-    },
-    "EXP_SHARE": {
-      "name": "がくしゅうそうち",
-      "description": "バトルにさんかしていないポケモンが けいけんちの20パーセントをもらう"
-    },
-    "EXP_BALANCE": {
-      "name": "バランスそうち",
-      "description": "レベルがひくいパーティメンバーがもらうけいけんちがふえる"
-    },
-    "OVAL_CHARM": {
-      "name": "まるいおまもり",
-      "description": "バトルにふくすうのポケモンがさんかするとけいけんちが10パーセントふえる"
-    },
-    "EXP_CHARM": {
-      "name": "けいけんちおまもり"
-    },
-    "SUPER_EXP_CHARM": {
-      "name": "いいけいけんちおまもり"
-    },
-    "GOLDEN_EXP_CHARM": {
-      "name": "ゴールドけいけんちおまもり"
-    },
-    "LUCKY_EGG": {
-      "name": "しあわせタマゴ"
-    },
-    "GOLDEN_EGG": {
-      "name": "おうごんタマゴ"
-    },
-    "SOOTHE_BELL": {
-      "name": "やすらぎのすず"
-    },
-    "SCOPE_LENS": {
-      "name": "ピントレンズ",
-      "description": "弱点が 見える レンズ。持たせた ポケモンの技が 急所に 当たりやすくなる。"
-    },
-    "DIRE_HIT": { 
-      "name": "クリティカット", 
-      "extra": { 
-        "raises": "きゅうしょりつ"
-      } 
-    },
-    "LEEK": {
-      "name": "ながねぎ",
-      "description": "とても長くて 硬いクキ。カモネギに 持たせると 技が 急所に 当たりやすくなる。"
-    },
-    "EVIOLITE": {
-      "name": "しんかのきせき",
-      "description": "進化の不思議な かたまり。持たせると 進化前ポケモンの 防御と 特防が あがる。"
-    },
-    "SOUL_DEW": {
-      "name": "こころのしずく",
-      "description": "ポケモンのせいかくがステータスにあたえるえいきょうを10%ふやす（合算）"
-    },
-    "NUGGET": {
-      "name": "きんのたま"
-    },
-    "BIG_NUGGET": {
-      "name": "でかいきんのたま"
-    },
-    "RELIC_GOLD": {
-      "name": "こだいのきんか"
-    },
-    "AMULET_COIN": {
-      "name": "おまもりこばん",
-      "description": "もらえる おかねが 20パーセント ふえる"
-    },
-    "GOLDEN_PUNCH": {
-      "name": "ゴールドパンチ",
-      "description": "あたえたちょくせつダメージの50パーセントをおかねとしてもらえる"
-    },
-    "COIN_CASE": {
-      "name": "コインケース",
-      "description": "10かいのバトルごとにもちきんの10パーセントをりしとしてうけとる"
-    },
-    "LOCK_CAPSULE": {
-      "name": "ロックカプセル",
-      "description": "リロールするときにアイテムのレアリティをロックできる"
-    },
-    "GRIP_CLAW": {
-      "name": "ねばりのかぎづめ"
-    },
-    "WIDE_LENS": {
-      "name": "こうかくレンズ"
-    },
-    "MULTI_LENS": {
-      "name": "マルチレンズ"
-    },
-    "HEALING_CHARM": {
-      "name": "ヒーリングチャーム",
-      "description": "HPをかいふくするわざとアイテムのこうかを10パーセントあげる (ふっかつはのぞく)"
-    },
-    "CANDY_JAR": {
-      "name": "アメボトル",
-      "description": "ふしぎなアメのアイテムでふえるレベルが1ふえる"
-    },
-    "BERRY_POUCH": {
-      "name": "きのみぶくろ",
-      "description": "つかったきのみがつかわれないかくりつを30パーセントふやす"
-    },
-    "FOCUS_BAND": {
-      "name": "きあいのハチマキ",
-      "description": "ひんしになるダメージをうけてもHP1でたえるかくりつを10パーセントふやす"
-    },
-    "QUICK_CLAW": {
-      "name": "せんせいのツメ",
-      "description": "すばやさにかかわらず さきにこうどうするかくりつを10パーセントふやす (ゆうせんどのあと)"
-    },
-    "KINGS_ROCK": {
-      "name": "おうじゃのしるし",
-      "description": "こうげきわざがあいてをひるませるかくりつを10パーセントふやす"
-    },
-    "LEFTOVERS": {
-      "name": "たべのこし",
-      "description": "ポケモンのさいだいHPの1/16をまいターンかいふくする"
-    },
-    "SHELL_BELL": {
-      "name": "かいがらのすず",
-      "description": "ポケモンがあたえたダメージの1/8をかいふくする"
-    },
-    "TOXIC_ORB": {
-      "name": "どくどくだま",
-      "description": "ターンの終わりに すでに じょうたいじょうしょうが なければ もうどくの じょうたいに なる"
-    },
-    "FLAME_ORB": {
-      "name": "かえんだま",
-      "description": "ターンの終わりに すでに じょうたいじょうしょうが なければ やけどの じょうたいに なる"
-    },
-    "BATON": {
-      "name": "バトン",
-      "description": "ポケモンをこうたいするときにこうかをひきつぎ わなをかいひすることもできる"
-    },
-    "SHINY_CHARM": {
-      "name": "ひかるおまもり",
-      "description": "やせいのポケモンがいろちがいポケモンであるかくりつをおおきくふやす"
-    },
-    "ABILITY_CHARM": {
-      "name": "とくせいおまもり",
-      "description": "やせいのポケモンがかくれとくせいをもつかくりつをおおきくふやす"
-    },
-    "IV_SCANNER": {
-      "name": "こたいちスキャナー",
-      "description": "やせいのポケモンのこたいちをスキャンできる。スタックごとに2つのこたいちがあきらかになる。もっともたかいこたいちがさいしょにひょうじされる"
-    },
-    "DNA_SPLICERS": {
-      "name": "いでんしのくさび"
-    },
-    "MINI_BLACK_HOLE": {
-      "name": "ミニブラックホール"
-    },
-    "GOLDEN_POKEBALL": {
-      "name": "ゴールドモンスターボール",
-      "description": "バトルごとに1つのアイテムオプションをふやす"
-    },
-    "ENEMY_DAMAGE_BOOSTER": {
-      "name": "ダメージトークン",
-      "description": "ダメージを5%ふやす"
-    },
-    "ENEMY_DAMAGE_REDUCTION": {
-      "name": "プロテクショントークン",
-      "description": "うけるダメージを2.5%へらす"
-    },
-    "ENEMY_HEAL": {
-      "name": "かいふくトークン",
-      "description": "まいターンさいだいHPの2%をかいふくする"
-    },
-    "ENEMY_ATTACK_POISON_CHANCE": {
-      "name": "どくトークン"
-    },
-    "ENEMY_ATTACK_PARALYZE_CHANCE": {
-      "name": "まひトークン"
-    },
-    "ENEMY_ATTACK_BURN_CHANCE": {
-      "name": "やけどトークン"
-    },
-    "ENEMY_STATUS_EFFECT_HEAL_CHANCE": {
-      "name": "なおしトークン",
-      "description": "まいターン2.5%のかくりつでじょうたいじょうしょうをかいふくする"
-    },
-    "ENEMY_ENDURE_CHANCE": {
-      "name": "こらえるトークン"
-    },
-    "ENEMY_FUSED_CHANCE": {
-      "name": "フュージョントークン",
-      "description": "やせいのポケモンがフュージョンするかくりつを1%ふやす"
-    },
+      "description": "ひんしに　なりそうな　技を　受けても\n{{chancePercent}}%の　確率で　HPを　1だけ　残して　耐える"
+    },
+	
+    "RARE_CANDY": { "name": "ふしぎなアメ" },								 																																					  
+    "RARER_CANDY": { "name": "ふかしぎなアメ" },							   
+
+    "MEGA_BRACELET": { "name": "メガバングル", "description": "メガストーンが　見つけられる　ように　なる" },
+    "DYNAMAX_BAND": { "name": "ダイマックスバンド", "description": "ダイキノコが　見つけられる　ように　なる" },
+    "TERA_ORB": { "name": "テラスタルオーブ", "description": "テラピースが　見つけられる　ように　なる" },
+
+    "MAP": { "name": "ちず", "description": "分かれ道で　行き先が　選べる　よう　になる" },
+										   
+    "POTION": { "name": "キズぐすり" },
+    "SUPER_POTION": { "name": "いいキズぐすり" },
+    "HYPER_POTION": { "name": "すごいキズぐすり" },																			
+    "MAX_POTION": { "name": "まんたんのくすり" },																																			 
+    "FULL_RESTORE": { "name": "かいふくのくすり" },
+
+    "REVIVE": { "name": "げんきのかけら" },
+    "MAX_REVIVE": { "name": "げんきのかたまり" },
+																																			
+    "FULL_HEAL": { "name": "なんでもなおし" },
+
+    "SACRED_ASH": { "name": "せいなるはい" },
+
+    "REVIVER_SEED": { "name": "ふっかつのタネ", "description": "持たせると 直接攻撃から　ひんしに　なれば\n復活して　HPを　50%　回復する" },
+										   
+    "WHITE_HERB":{ "name": "しろいハーブ", "description": "持たせた ポケモンの能力が さがったとき 1度だけ 元の状態に 戻す" },
+ 
+    "ETHER": { "name": "ピーピーエイド" },
+    "MAX_ETHER": { "name": "ピーピーリカバー" },
+
+    "ELIXIR": { "name": "ピーピーエイダー" },
+    "MAX_ELIXIR": { "name": "ピーピーマックス" },
+								 
+    "PP_UP": { "name": "ポイントアップ" },
+    "PP_MAX": { "name": "ポイントマックス" },
+
+    "LURE": { "name": "むしよせコロン" },
+    "SUPER_LURE": { "name": "シルバーコロン" },
+    "MAX_LURE": { "name": "ゴールドコロン" },
+ 
+    "MEMORY_MUSHROOM": { "name": "きおくのキノコ", "description": "1匹の　ポケモンの　忘れた技を　1つ　覚えさせる" },
+
+    "EXP_SHARE": { "name": "がくしゅうそうち", "description": "バトルに　参加していない　ポケモンが　参加したポケモンの　経験値を　20%　もらう" },
+    "EXP_BALANCE": { "name": "バランスそうち", "description": "レベルが低い　手持ちポケモンの　もらう　経験値が　増える" },
+			   
+    "OVAL_CHARM": { "name": "まるいおまもり", "description": "バトルに　複数の　ポケモンが　参加すると、\n経験値が　参加したポケモンずつ　10%　増える" },
+
+    "EXP_CHARM": { "name": "けいけんおまもり" },
+    "SUPER_EXP_CHARM": { "name": "いいけいけんおまもり" },
+    "GOLDEN_EXP_CHARM": { "name": "ゴールドけいけんちおまもり" },
+
+    "LUCKY_EGG": { "name": "しあわせタマゴ" },
+    "GOLDEN_EGG": { "name": "ゴールドタマゴ" },
+ 
+    "SOOTHE_BELL": { "name": "やすらぎのすず" },
+
+    "SCOPE_LENS": { "name": "ピントレンズ", "description": "弱点が　見える　レンズ。\n持たせた　ポケモンの技が　急所に　当たりやすくなる"},
+    "DIRE_HIT": { "name": "クリティカット", "extra": { "raises": "急所率" } },
+    "LEEK": { "name": "ながねぎ", "description": "とても長くて　硬いクキ。\nカモネギに　持たせると　技が　急所に　当たりやすくなる"},
+
+    "EVIOLITE": { "name": "しんかのきせき", "description": "進化の不思議な かたまり。\n持たせると 進化前ポケモンの 防御と 特防が あがる" },
+																																									 
+    "SOUL_DEW": { "name": "こころのしずく", "description": "持たせると　ポケモンの　性格が　能力に与える　影響は　10%　増える（合算）" }, 
+
+    "NUGGET": { "name": "きんのたま" },
+    "BIG_NUGGET": { "name": "でかいきんのたま" },
+    "RELIC_GOLD": { "name": "こだいのきんか" },
+
+    "AMULET_COIN": { "name": "おまもりこばん", "description": "もらえる　お金が　20%　増える" },
+    "GOLDEN_PUNCH": { "name": "ゴールドパンチ", "description": "持たせると　与える　直接なダメージの　50%が　お金として　もらえる" },
+    "COIN_CASE": { "name": "コインケース", "description": "10回の　バトルごとに　持ち金の　10%を　利子として　受け取れる" },
+
+    "LOCK_CAPSULE": { "name": "ロックカプセル", "description": "ご褒美の　選択肢変更するとき　アイテムの　レア度を固定できる　ように　なる" },
+
+    "GRIP_CLAW": { "name": "ねばりのかぎづめ" },
+    "WIDE_LENS": { "name": "こうかくレンズ" },
+
+    "MULTI_LENS": { "name": "マルチレンズ" },
+
+    "HEALING_CHARM": { "name": "かいふくおまもり", "description": "回復する　技や　アイテムの　効果を　10%　あげる（復活アイテムは除く）" },
+    "CANDY_JAR": { "name": "アメボトル", "description": "ふしぎなアメや　ふかしぎなアメで あげるレベルを　1　増える" },
+ 
+    "BERRY_POUCH": { "name": "きのみぶくろ", "description": "使ったきのみは　無くならない　30%の可能性を　加える" },
+
+    "FOCUS_BAND": { "name": "きあいのハチマキ", "description": "持たせると　ひんしに なりそうな 技を 受けても\n10%の可能性で　HPを 1だけ 残して 耐える" },
+																										  
+    "QUICK_CLAW": { "name": "せんせいのツメ", "description": "持たせると　10%の可能性で　相手より　先に　行動できる　（優先技のあと）" },
+																															
+    "KINGS_ROCK": { "name": "おうじゃのしるし", "description": "持たせると　攻撃して　ダメージを　与えたときに\n10%の可能性で　相手を　ひるませる" },
+
+    "LEFTOVERS": { "name": "たべのこし", "description": "持たせると　毎ターン　最大HPの　1/16を　回復する" },
+    "SHELL_BELL": { "name": "かいがらのすず", "description": "持たせると　ポケモンが　相手に　与えたダメージの　1/8をHPとして　回復する." },
+
+    "TOXIC_ORB": { "name": "どくどくだま", "description": "触ると　毒をだす　不思議な玉。\n持たせると　戦闘中に　猛毒の状態に　なる" },
+    "FLAME_ORB": { "name": "かえんだま", "description": "触ると　熱をだす　不思議な玉。\n持たせると　戦闘中に　やけどの状態に　なる。" },
+
+    "BATON": { "name": "バトン", "description": "持たせると　入れ替えるとき　控えのポケモンが\n能力変化を　受けつげる　（逃げられなくする　技や　特性も　回避する）" },
+
+    "SHINY_CHARM": { "name": "ひかるおまもり", "description": "色違いの　ポケモンと　大きく　出会いやすくなる" },
+    "ABILITY_CHARM": { "name": "とくせいおまもり", "description": "隠れ特性がある　ポケモンと　大きく　出会いやすくなる" },
+									  
+    "IV_SCANNER": { "name": "こたいちスキャナー", "description": "野生ポケモンの　個体値を　検査できる。　一つのスキャナーあたり\n個体値が　2つ　見える。　最高の　個体値が　最初に　見える。" },
+
+    "DNA_SPLICERS": { "name": "いでんしのくさび" },
+
+    "MINI_BLACK_HOLE": { "name": "ミニブラックホール" },
+																																				  
+    "GOLDEN_POKEBALL": { "name": "ゴールドモンスターボール", "description": "バトル後に　もう　一つの　ご褒美の　選択肢を　加える" },
+
+    "ENEMY_DAMAGE_BOOSTER": { "name": "ダメージトークン", "description": "ダメージを　5%　あげる" },
+    "ENEMY_DAMAGE_REDUCTION": { "name": "ぼうごトークン", "description": "受けたダメージを　2.5%　さげる" },
+    "ENEMY_HEAL": { "name": "かいふくトークン", "description": "毎ターン　最大HPの　2%を　回復する" },
+    "ENEMY_ATTACK_POISON_CHANCE": { "name": "どくトークン" },				 
+    "ENEMY_ATTACK_PARALYZE_CHANCE": { "name": "まひトークン" },						   							   
+    "ENEMY_ATTACK_BURN_CHANCE": { "name": "やけどトークン" },
+    "ENEMY_STATUS_EFFECT_HEAL_CHANCE": { "name": "なんでもなおしトークン", "description": "毎ターン　状態異常を　治せる　2.5%の可能性を　加える" }, 
+    "ENEMY_ENDURE_CHANCE": { "name": "こらえるトークン" },
+    "ENEMY_FUSED_CHANCE": { "name": "がったいトークン", "description": "野生ポケモンは　吸収合体している　1%の可能性を　加える" },
 
     "MYSTERY_ENCOUNTER_SHUCKLE_JUICE": { "name": "Shuckle Juice" },
     "MYSTERY_ENCOUNTER_BLACK_SLUDGE": { "name": "Black Sludge", "description": "The stench is so powerful that shops will only sell you items at a steep cost increase." },
@@ -424,22 +270,10 @@
     "MYSTERY_ENCOUNTER_GOLDEN_BUG_NET": { "name": "Golden Bug Net", "description": "Imbues the owner with luck to find Bug Type Pokémon more often. Has a strange heft to it." }
   },
   "SpeciesBoosterItem": {
-    "LIGHT_BALL": {
-      "name": "でんきだま",
-      "description": "ピカチュウに 持たせると 攻撃と 特攻が あがる 不思議な玉。"
-    },
-    "THICK_CLUB": {
-      "name": "ふといホネ",
-      "description": "なにかの 硬いホネ。カラカラ または ガラガラに 持たせると 攻撃が あがる。"
-    },
-    "METAL_POWDER": {
-      "name": "メタルパウダー",
-      "description": "メタモンに 持たせると 防御が あがる 不思議な粉。とても こまかくて 硬い。"
-    },
-    "QUICK_POWDER": {
-      "name": "スピードパウダー",
-      "description": "メタモンに 持たせると 素早さが あがる 不思議 粉。とても こまかくて 硬い。"
-    }
+    "LIGHT_BALL": { "name": "でんきだま", "description": "ピカチュウに　持たせると　攻撃と　特攻が　あがる　不思議な玉" },
+    "THICK_CLUB": { "name": "ふといホネ", "description": "なにかの　硬いホネ。　カラカラ　または　ガラガラに　持たせると　攻撃が　あがる" },
+    "METAL_POWDER": { "name": "メタルパウダー", "description": "メタモンに　持たせると　防御が　あがる　不思議な粉。　とても　こまかくて　硬い" },
+    "QUICK_POWDER": { "name": "スピードパウダー", "description": "メタモンに　持たせると　素早さが　あがる　不思議な粉。　とても　こまかくて　硬い" }
   },
   "TempStatStageBoosterItem": {
     "x_attack": "プラスパワー",
@@ -478,7 +312,8 @@
     "carbos": "インドメタシン"
   },
   "EvolutionItem": {
-    "NONE": "None",
+    "NONE": "なし",
+	
     "LINKING_CORD": "つながりのヒモ",
     "SUN_STONE": "たいようのいし",
     "MOON_STONE": "つきのいし",
@@ -495,6 +330,7 @@
     "TART_APPLE": "すっぱいりんご",
     "STRAWBERRY_SWEET": "いちごアメざいく",
     "UNREMARKABLE_TEACUP": "ボンサクのちゃわん",
+
     "CHIPPED_POT": "かけたポット",
     "BLACK_AUGURITE": "くろのきせき",
     "GALARICA_CUFF": "ガラナツブレス",
@@ -509,7 +345,8 @@
     "SYRUPY_APPLE": "みついりりんご"
   },
   "FormChangeItem": {
-    "NONE": "None",
+    "NONE": "なし",
+	
     "ABOMASITE": "ユキノオナイト",
     "ABSOLITE": "アブソルナイト",
     "AERODACTYLITE": "プテラナイト",
@@ -558,6 +395,7 @@
     "SWAMPERTITE": "ラグラージナイト",
     "TYRANITARITE": "バンギラスナイト",
     "VENUSAURITE": "フシギバナイト",
+	
     "BLUE_ORB": "あいいろのたま",
     "RED_ORB": "べにいろのたま",
     "SHARP_METEORITE": "シャープなうんせき",
@@ -585,6 +423,44 @@
     "BURN_DRIVE": "ブレイズカセット",
     "CHILL_DRIVE": "フリーズカセット",
     "DOUSE_DRIVE": "アクアカセット",
-    "ULTRANECROZIUM_Z": "ウルトラネクロZ"
+    "ULTRANECROZIUM_Z": "ウルトラネクロZ",
+
+    "FIST_PLATE": "こぶしのプレート",
+    "SKY_PLATE": "あおぞらプレート",
+    "TOXIC_PLATE": "もうどくプレート",
+    "EARTH_PLATE": "だいちのプレート",
+    "STONE_PLATE": "がんせきプレート",
+    "INSECT_PLATE": "たまむしプレート",
+    "SPOOKY_PLATE": "もののけプレート",
+    "IRON_PLATE": "こうてつプレート",
+    "FLAME_PLATE": "ひのたまプレート",
+    "SPLASH_PLATE": "しずくプレート",
+    "MEADOW_PLATE": "みどりのプレート",
+    "ZAP_PLATE": "いかずちプレート",
+    "MIND_PLATE": "ふしぎのプレート",
+    "ICICLE_PLATE": "つららのプレート",
+    "DRACO_PLATE": "りゅうのプレート",
+    "DREAD_PLATE": "こわもてプレート",
+    "PIXIE_PLATE": "せいれいプレート",
+    "BLANK_PLATE": "まっさらプレート",
+    "LEGEND_PLATE": "レジェンドプレート",
+    "FIGHTING_MEMORY": "ファイトメモリ",
+    "FLYING_MEMORY": "フライングメモリ",
+    "POISON_MEMORY": "ポイズンメモリ",
+    "GROUND_MEMORY": "グラウンドメモリ",
+    "ROCK_MEMORY": "ロックメモリ",
+    "BUG_MEMORY": "バグメモリ",
+    "GHOST_MEMORY": "ゴーストメモリ",
+    "STEEL_MEMORY": "スチールメモリ",
+    "FIRE_MEMORY": "ファイヤーメモリ",
+    "WATER_MEMORY": "ウオーターメモリ",
+    "GRASS_MEMORY": "グラスメモリ",
+    "ELECTRIC_MEMORY": "エレクトロメモリ",
+    "PSYCHIC_MEMORY": "サイキックメモリ",
+    "ICE_MEMORY": "アイスメモリ",
+    "DRAGON_MEMORY": "ドラゴンメモリ",
+    "DARK_MEMORY": "ダークメモリ",
+    "FAIRY_MEMORY": "フェアリーメモリ",
+    "NORMAL_MEMORY": "ノーマルメモリ"
   }
 }
