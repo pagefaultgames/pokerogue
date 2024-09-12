@@ -4,7 +4,6 @@ import { Stat } from "#app/enums/stat";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/utils/gameManager";
-import { SPLASH_ONLY } from "#test/utils/testUtils";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -29,7 +28,7 @@ describe("Abilities - Hustle", () => {
       .moveset([ Moves.TACKLE, Moves.GIGA_DRAIN, Moves.FISSURE ])
       .disableCrits()
       .battleType("single")
-      .enemyMoveset(SPLASH_ONLY)
+      .enemyMoveset(Moves.SPLASH)
       .enemySpecies(Species.SHUCKLE)
       .enemyAbility(Abilities.BALL_FETCH);
   });

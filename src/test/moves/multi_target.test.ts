@@ -4,7 +4,6 @@ import { Species } from "#app/enums/species";
 import * as Utils from "#app/utils";
 import { Moves } from "#enums/moves";
 import GameManager from "#test/utils/gameManager";
-import { SPLASH_ONLY } from "#test/utils/testUtils";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
@@ -32,7 +31,7 @@ describe("Multi-target damage reduction", () => {
       .enemyLevel(100)
       .startingLevel(100)
       .enemySpecies(Species.POLIWAG)
-      .enemyMoveset(SPLASH_ONLY)
+      .enemyMoveset(Moves.SPLASH)
       .enemyAbility(Abilities.BALL_FETCH)
       .moveset([Moves.TACKLE, Moves.DAZZLING_GLEAM, Moves.EARTHQUAKE, Moves.SPLASH])
       .ability(Abilities.BALL_FETCH);
