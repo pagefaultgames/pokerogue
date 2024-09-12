@@ -70,6 +70,7 @@
   "stockpilingOnAdd": "{{pokemonNameWithAffix}} estocou {{stockpiledCount}}!",
   "disabledOnAdd": "{{moveName}} de {{pokemonNameWithAffix}}\nfoi desabilitado!",
   "disabledLapse": "{{moveName}} de {{pokemonNameWithAffix}}\nnão está mais desabilitado.",
+  "tarShotOnAdd": "{{pokemonNameWithAffix}} tornou-se mais fraco ao fogo!",
   "substituteOnAdd": "{{pokemonNameWithAffix}} colocou um substituto!",
   "substituteOnHit": "O substituto tomou o dano pelo {{pokemonNameWithAffix}}!",
   "substituteOnRemove": "O substituto de {{pokemonNameWithAffix}} desbotou!"
