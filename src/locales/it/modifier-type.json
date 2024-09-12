@@ -417,11 +417,11 @@
       "description": "Aggiunge l'1% di possibilità che un Pokémon selvatico sia una fusione."
     },
 
-    "MYSTERY_ENCOUNTER_SHUCKLE_JUICE": { "name": "Shuckle Juice" },
-    "MYSTERY_ENCOUNTER_BLACK_SLUDGE": { "name": "Black Sludge", "description": "The stench is so powerful that shops will only sell you items at a steep cost increase." },
-    "MYSTERY_ENCOUNTER_MACHO_BRACE": { "name": "Macho Brace", "description": "Defeating a Pokémon grants the holder a Macho Brace stack. Each stack slightly boosts stats, with an extra bonus at max stacks." },
-    "MYSTERY_ENCOUNTER_OLD_GATEAU": { "name": "Old Gateau", "description": "Increases the holder's {{stats}} stats by {{statValue}}." },
-    "MYSTERY_ENCOUNTER_GOLDEN_BUG_NET": { "name": "Golden Bug Net", "description": "Imbues the owner with luck to find Bug Type Pokémon more often. Has a strange heft to it." }
+    "MYSTERY_ENCOUNTER_SHUCKLE_JUICE": { "name": "Succo Shuckle" },
+    "MYSTERY_ENCOUNTER_BLACK_SLUDGE": { "name": "Fangopece", "description": "L'odore è talmente sgradevole che i prezzi dei negozi aumentano drasticamente." },
+    "MYSTERY_ENCOUNTER_MACHO_BRACE": { "name": "Crescicappa", "description": "Sconfiggere un Pokémon aumenta di 1 il punteggio Crescicappa. Maggiore il punteggio, maggiore l'aumento alle statistiche, con un ulteriore bonus al massimo." },
+    "MYSTERY_ENCOUNTER_OLD_GATEAU": { "name": "Dolce Gateau", "description": "Aumenta le statistiche {{stats}} del possessore di {{statValue}}." },
+    "MYSTERY_ENCOUNTER_GOLDEN_BUG_NET": { "name": "Retino Dorato", "description": "Infonde fortuna nel possessore affinché trovi più Pokémon coleottero. Ha uno strano peso." }
   },
   "SpeciesBoosterItem": {
     "LIGHT_BALL": {
