@@ -1873,7 +1873,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setPartyMemberFunc(1, getRandomPartyMemberFunc([ Species.BASCULEGION, Species.JELLICENT ], TrainerSlot.TRAINER, true, p => {
       p.generateAndPopulateMoveset();
       p.gender = Gender.MALE;
-      p.formIndex = 1;
+      p.formIndex = 0;
     }))
     .setPartyMemberFunc(2, getRandomPartyMemberFunc([ Species.KINGAMBIT ]))
     .setPartyMemberFunc(3, getRandomPartyMemberFunc([ Species.VOLCARONA, Species.SLITHER_WING ]))
