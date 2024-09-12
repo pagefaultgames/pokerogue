@@ -1,26 +1,26 @@
 {
-  "intro": "You encounter a blistering storm of smoke and ash!",
+  "intro": "Un vent incandescent de fumées et de cendres arrive sur vous !",
   "title": "Fiery Fallout",
-  "description": "The whirling ash and embers have cut visibility to nearly zero. It seems like there might be some... source that is causing these conditions. But what could be behind a phenomenon of this magnitude?",
-  "query": "What will you do?",
+  "description": "La visiblité est quasi nulle à cause des cendres et les braises tourbillonnantes. Il doit forcément y avoir une quelconque… source responsable de ces conditions. Mais que pourrait causer un phénomène d’une telle amplitude ?",
+  "query": "Que voulez-vous faire ?",
   "option": {
     "1": {
-      "label": "Find the Source",
-      "tooltip": "(?) Discover the source\n(-) Hard Battle",
-      "selected": "You push through the storm, and find two {{volcaronaName}}s in the middle of a mating dance!$They don't take kindly to the interruption and attack!"
+      "label": "Chercher la source",
+      "tooltip": "(?) Trouver la source\n(-) Combat difficile",
+      "selected": "Vous pénétrez tant bien que mal dans la tempête et trouvez deux {{volcaronaName}} en pleine parade nuptiale !$Ils n’apprécient guère d’avoir été interrompus et vous attaquent !"
     },
     "2": {
-      "label": "Hunker Down",
-      "tooltip": "(-) Suffer the effects of the weather",
-      "selected": "The weather effects cause significant\nharm as you struggle to find shelter!$Your party takes 20% Max HP damage!",
-      "target_burned": "Your {{burnedPokemon}} also became burned!"
+      "label": "S’accroupir",
+      "tooltip": "(-) Subir la météo",
+      "selected": "Les effets météorologiques causent d’importantes blessures alors que vous cherchez un abri !$Votre équipe perd 20% de ses PV totaux !",
+      "target_burned": "Votre {{burnedPokemon}} est également brulé !"
     },
     "3": {
-      "label": "Your Fire Types Help",
-      "tooltip": "(+) End the conditions\n(+) Gain a Charcoal",
-      "disabled_tooltip": "You need at least 2 Fire Type Pokémon to choose this",
-      "selected": "Your {{option3PrimaryName}} and {{option3SecondaryName}} guide you to where two {{volcaronaName}}s are in the middle of a mating dance!$Thankfully, your Pokémon are able to calm them,\nand they depart without issue."
+      "label": "Un type Feu à l’aide",
+      "tooltip": "(+) Met fin à la météo\n(+) Gain d’un Charbon",
+      "disabled_tooltip": "Vous avez besoin d’au moins 2 Pokémon Feu pour choisir cette option",
+      "selected": "Vos {{option3PrimaryName}} et {{option3SecondaryName}} vous guident et découvez deux {{volcaronaName}} en pleine parade nuptiale !$Heureusement, vos Pokémon parviennent à les calmer, et passent leur chemin sans causer de problèmes."
     }
   },
-  "found_charcoal": "After the weather clears,\nyour {{leadPokemon}} spots something on the ground.$@s{item_fanfare}{{leadPokemon}} gained a Charcoal!"
+  "found_charcoal": "Alors que la météo se calme, votre {{leadPokemon}} repère quelque chose au sol.$@s{item_fanfare}{{leadPokemon}} obtient\nun Charobn !"
 }
