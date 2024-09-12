@@ -292,7 +292,7 @@
     "carbos": "インドメタシン"
   },
   "EvolutionItem": {
-    "NONE": "None",
+    "NONE": "なし",
 	
     "LINKING_CORD": "つながりのヒモ",
     "SUN_STONE": "たいようのいし",
@@ -325,7 +325,7 @@
     "SYRUPY_APPLE": "みついりりんご"
   },
   "FormChangeItem": {
-    "NONE": "None",
+    "NONE": "なし",
 	
     "ABOMASITE": "ユキノオナイト",
     "ABSOLITE": "アブソルナイト",
@@ -403,10 +403,10 @@
     "BURN_DRIVE": "ブレイズカセット",
     "CHILL_DRIVE": "フリーズカセット",
     "DOUSE_DRIVE": "アクアカセット",
-    "ULTRANECROZIUM_Z": "ウルトラネクロZ"
-	
-	"FIST_PLATE": "こぶしのプレート",
-    "SKY_PLATE": "あおぞらプレート	",
+    "ULTRANECROZIUM_Z": "ウルトラネクロZ",
+
+    "FIST_PLATE": "こぶしのプレート",
+    "SKY_PLATE": "あおぞらプレート",
     "TOXIC_PLATE": "もうどくプレート",
     "EARTH_PLATE": "だいちのプレート",
     "STONE_PLATE": "がんせきプレート",
