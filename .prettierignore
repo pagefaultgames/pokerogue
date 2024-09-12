@@ -1,0 +1,13 @@
+# Ignore artifacts:
+build
+coverage
+dist
+package-lock.json
+.vs-code
+public
+
+# i18n
+src/locales/**/*.json
+
+# ui
+src/ui/settings/shiny_icons.json

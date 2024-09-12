@@ -2,6 +2,7 @@ import tseslint from '@typescript-eslint/eslint-plugin';
 import stylisticTs from '@stylistic/eslint-plugin-ts'
 import parser from '@typescript-eslint/parser';
 import importX from 'eslint-plugin-import-x';
+import prettierConfig from "eslint-config-prettier";
 
 export default [ 
     {
@@ -42,5 +43,6 @@ export default [
             "comma-spacing": ["error", { "before": false, "after": true }], // Enforces spacing after comma
             "import-x/extensions": ["error", "never", { "json": "always" }], // Enforces no extension for imports unless json
         }
-    }
+    },
+    prettierConfig
 ]

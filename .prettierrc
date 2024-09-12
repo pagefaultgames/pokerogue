@@ -1,0 +1,4 @@
+{
+  "printWidth": 120,
+  "filepath": "src/**/*.{ts,tsx,js,jsx}"
+}
