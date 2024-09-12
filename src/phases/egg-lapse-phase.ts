@@ -17,7 +17,7 @@ import { EggHatchData } from "#app/data/egg-hatch-data";
 export class EggLapsePhase extends Phase {
 
   private eggHatchData: EggHatchData[] = [];
-  private readonly maxEggsNotToSkip: number = 1;
+  private readonly minEggsToSkip: number = 2;
   constructor(scene: BattleScene) {
     super(scene);
   }
@@ -31,7 +31,7 @@ export class EggLapsePhase extends Phase {
     this.eggHatchData= [];
 
     if (eggsToHatchCount > 0) {
-      if (eggsToHatchCount > this.maxEggsNotToSkip && this.scene.eggSkipPreference === 1) {
+      if (eggsToHatchCount >= this.minEggsToSkip && this.scene.eggSkipPreference === 1) {
         this.scene.ui.showText(i18next.t("battle:eggHatching"), 0, () => {
           // show prompt for skip
           this.scene.ui.showText(i18next.t("battle:eggSkipPrompt"), 0);
@@ -44,7 +44,7 @@ export class EggLapsePhase extends Phase {
           }
           );
         }, 100, true);
-      } else if (eggsToHatchCount > this.maxEggsNotToSkip && this.scene.eggSkipPreference === 2) {
+      } else if (eggsToHatchCount >= this.minEggsToSkip && this.scene.eggSkipPreference === 2) {
         this.scene.queueMessage(i18next.t("battle:eggHatching"));
         this.hatchEggsSkipped(eggsToHatch);
         this.showSummary();
