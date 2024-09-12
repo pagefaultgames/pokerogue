@@ -51,7 +51,7 @@
   "noPokeballTrainer": "¡No puedes atrapar a los\nPokémon de los demás!",
   "noPokeballMulti": "¡No se pueden lanzar Poké Balls\ncuando hay más de un Pokémon!",
   "noPokeballStrong": "¡Este Pokémon es demasiado fuerte para ser capturado!\nNecesitas bajarle los PS primero!",
-  "noPokeballMysteryEncounter": "You aren't able to\ncatch this Pokémon!",
+  "noPokeballMysteryEncounter": "¡No puedes capturar este Pokémon!",
   "noEscapeForce": "Una fuerza misteriosa\nte impide huir.",
   "noEscapeTrainer": "¡No puedes huir de los\ncombates contra Entrenadores!",
   "noEscapePokemon": "¡El movimiento {{moveName}} de {{pokemonName}} impide la huida!",
