@@ -91,5 +91,5 @@
   "statSeverelyFell_other": "¡{{stats}} de\n{{pokemonNameWithAffix}} han bajado muchísimo!",
   "statWontGoAnyLower_one": "¡El {{stats}} de {{pokemonNameWithAffix}} no puede bajar más!",
   "statWontGoAnyLower_other": "¡{{stats}} de\n{{pokemonNameWithAffix}} no pueden bajar más!",
-  "mysteryEncounterAppeared": "What's this?"
+  "mysteryEncounterAppeared": "¿Que es esto?"
 }
