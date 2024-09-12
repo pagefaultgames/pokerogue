@@ -764,12 +764,16 @@
       "1": "It looks like this is the end of the line for you!",
       "2": "You are a trainer aren't you? I'm afraid that doesn't give you the right to interfere in our work.",
       "2_female": "You are a trainer aren't you? I'm afraid that doesn't give you the right to interfere in our work.",
-      "3": "I'm from Macro Cosmos Insurance! Do you have a life insurance policy?"
+      "3": "I'm from Macro Cosmos Insurance! Do you have a life insurance policy?",
+      "4": "I found you! In that case, time for a Pokémon battle!",
+      "5": "An earful from Ms. Oleana is way worse than anything you can do!"
     },
     "victory": {
       "1": "I have little choice but to respectfully retreat.",
       "2": "Having to give up my pocket money... Losing means I'm back in the red...",
-      "3": "Nobody can beat Macro Cosmos when it comes to our dedication to our work!"
+      "3": "Nobody can beat Macro Cosmos when it comes to our dedication to our work!",
+      "4": "I even switched up my Pokémon...",
+      "5": "Battles didn't work... Only thing to do now is run!"
     }
   },
   "oleana": {
