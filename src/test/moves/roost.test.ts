@@ -38,7 +38,6 @@ describe("Moves - Roost", () => {
   /**
    * Roost's behavior should be defined as:
    * The pokemon loses its flying type for a turn. If the pokemon was ungroundd solely due to being a flying type, it will be grounded until end of turn.
-   *
    * 1. Pure Flying type pokemon -> become normal type until end of turn
    * 2. Dual Flying/X type pokemon -> become type X until end of turn
    * 3. Pokemon that use burn up into roost (ex. Moltres) -> become flying due to burn up, then typeless until end of turn after using roost
@@ -47,8 +46,6 @@ describe("Moves - Roost", () => {
    *    and pokemon post Burn up become ()
    * 5. If a pokemon is also ungrounded due to other reasons (such as levitate), it will stay ungrounded post roost, despite not being flying type.
    * 6. Non flying types using roost (such as dunsparce) are already grounded, so this move will only heal and have no other effects.
-   *
-   * Also making the user pokemon go first so we can check if the pokemon took damage post roost
    */
 
   test(

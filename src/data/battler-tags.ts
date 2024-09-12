@@ -1870,22 +1870,18 @@ export class CursedTag extends BattlerTag {
     return ret;
   }
 }
-
-export class DoubleShockedTag extends BattlerTag {
-  constructor() {
-    super(BattlerTagType.DOUBLE_SHOCKED, BattlerTagLapseType.CUSTOM, 1, Moves.DOUBLE_SHOCK);
-  }
-}
-
-export class BurnedUpTag extends BattlerTag {
-  constructor() {
-    super(BattlerTagType.BURNED_UP, BattlerTagLapseType.CUSTOM, 1, Moves.BURN_UP);
+/**
+ * Battler tag for attacks that remove a type post use.
+ */
+export class RemovedTypeTag extends BattlerTag {
+  constructor(tagType: BattlerTagType, lapseType: BattlerTagLapseType, sourceMove: Moves) {
+    super(tagType, lapseType, 1, sourceMove);
   }
 }
 
 /**
  * Battler tag for effects that ground the source, allowing Ground-type moves to hit them.
- * @item `IGNORE_FLYING`: Persistent grounding effects (i.e. from Smack Down and Thousand Waves)
+ * @description `IGNORE_FLYING`: Persistent grounding effects (i.e. from Smack Down and Thousand Waves)
  */
 export class GroundedTag extends BattlerTag {
   constructor(tagType: BattlerTagType, lapseType: BattlerTagLapseType, sourceMove: Moves) {
@@ -1894,10 +1890,8 @@ export class GroundedTag extends BattlerTag {
 }
 
 /**
- * @item `ROOSTED`: Tag for temporary grounding if only source of ungrounding is flying and pokemon uses Roost.
+ * @description `ROOSTED`: Tag for temporary grounding if only source of ungrounding is flying and pokemon uses Roost.
  * Roost removes flying type from a pokemon for a single turn.
- *
- * Need to add check for terrastalized pokemon
  */
 
 export class RoostedTag extends BattlerTag {
@@ -1947,7 +1941,7 @@ export class RoostedTag extends BattlerTag {
       if (this.isBasePureFlying && !isCurrentlyDualType) {
         modifiedTypes = [Type.NORMAL];
       } else {
-        if ((!!pokemon.getTag(BurnedUpTag) || !!pokemon.getTag(DoubleShockedTag)) && isOriginallyDualType && !isCurrentlyDualType) {
+        if (!!pokemon.getTag(RemovedTypeTag) && isOriginallyDualType && !isCurrentlyDualType) {
           modifiedTypes = [Type.UNKNOWN];
         } else {
           modifiedTypes = currentTypes.filter(type => type !== Type.FLYING);
@@ -2323,9 +2317,9 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: number, source
   case BattlerTagType.ROOSTED:
     return new RoostedTag();
   case BattlerTagType.BURNED_UP:
-    return new BurnedUpTag();
+    return new RemovedTypeTag(tagType, BattlerTagLapseType.CUSTOM, sourceMove);
   case BattlerTagType.DOUBLE_SHOCKED:
-    return new DoubleShockedTag();
+    return new RemovedTypeTag(tagType, BattlerTagLapseType.CUSTOM, sourceMove);
   case BattlerTagType.SALT_CURED:
     return new SaltCuredTag(sourceId);
   case BattlerTagType.CURSED:
