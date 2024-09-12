@@ -6,7 +6,6 @@ import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { Moves } from "#enums/moves";
 import { Stat, BATTLE_STATS, EFFECTIVE_STATS } from "#enums/stat";
 import { Abilities } from "#enums/abilities";
-import { SPLASH_ONLY } from "../utils/testUtils";
 
 // TODO: Add more tests once Imposter is fully implemented
 describe("Abilities - Imposter", () => {
@@ -31,9 +30,9 @@ describe("Abilities - Imposter", () => {
       .enemyLevel(200)
       .enemyAbility(Abilities.BEAST_BOOST)
       .enemyPassiveAbility(Abilities.BALL_FETCH)
-      .enemyMoveset(SPLASH_ONLY)
+      .enemyMoveset(Moves.SPLASH)
       .ability(Abilities.IMPOSTER)
-      .moveset(SPLASH_ONLY);
+      .moveset(Moves.SPLASH);
   });
 
   it("should copy species, ability, gender, all stats except HP, all stat stages, moveset, and types of target", async () => {
@@ -77,7 +76,7 @@ describe("Abilities - Imposter", () => {
   }, 20000);
 
   it("should copy in-battle overridden stats", async () => {
-    game.override.enemyMoveset(new Array(4).fill(Moves.POWER_SPLIT));
+    game.override.enemyMoveset([Moves.POWER_SPLIT]);
 
     await game.startBattle([
       Species.DITTO

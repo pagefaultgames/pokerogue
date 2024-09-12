@@ -47,10 +47,14 @@
       "description": "将一只宝可梦的性格改为{{natureName}}并为\n该宝可梦永久解锁该性格。"
     },
     "DoubleBattleChanceBoosterModifierType": {
-      "description": "接下来的{{battleCount}}场战斗是双打的概率翻倍。"
+      "description": "遭遇双打概率提升四倍，持续{{battleCount}}场战斗。"
     },
     "TempStatStageBoosterModifierType": {
-      "description": "为所有成员宝可梦提升一级{{stat}}，持续5场战斗。"
+      "description": "提升全队的{{stat}}{{amount}}级，持续5场战斗。",
+      "extra": {
+        "stage": "1阶",
+        "percentage": "30%"
+      }
     },
     "AttackTypeBoosterModifierType": {
       "description": "一只宝可梦的{{moveType}}系招式威力提升20%。"
@@ -91,7 +95,7 @@
       "description": "招式命中率增加{{accuracyAmount}}(最大100)。"
     },
     "PokemonMultiHitModifierType": {
-      "description": "攻击以40/25/12.5%的伤害造成2/3/4次伤害"
+      "description": "攻击以60/75/82.5%的伤害造成2/3/4次伤害。"
     },
     "TmModifierType": {
       "name": "招式学习器\n{{moveId}} - {{moveName}}",
@@ -310,19 +314,19 @@
     },
     "BERRY_POUCH": {
       "name": "树果袋",
-      "description": "使用树果时有30%的几率不会消耗树果。"
+      "description": "使用树果时增加30%的几率不会消耗树果。"
     },
     "FOCUS_BAND": {
       "name": "气势头带",
-      "description": "携带该道具的宝可梦有10%几率在受到攻击\n而将陷入濒死状态时，保留1点HP不陷入濒死状态。"
+      "description": "携带该道具的宝可梦增加10%几率在受到攻击\n而将陷入濒死状态时，保留1点HP不陷入濒死状态。"
     },
     "QUICK_CLAW": {
       "name": "先制之爪",
-      "description": "有10%的几率无视速度优先使出招式\n(先制技能优先)。"
+      "description": "增加10%的几率无视速度优先使出招式\n(先制技能优先)。"
     },
     "KINGS_ROCK": {
       "name": "王者之证",
-      "description": "使用任意原本不会造成畏缩状态的攻击，\n有10%几率使目标陷入畏缩状态。"
+      "description": "使用任意原本不会造成畏缩状态的攻击，\n增加10%几率使目标陷入畏缩状态。"
     },
     "LEFTOVERS": {
       "name": "吃剩的东西",

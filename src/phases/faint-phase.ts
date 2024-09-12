@@ -17,6 +17,7 @@ import { ToggleDoublePositionPhase } from "./toggle-double-position-phase";
 import { GameOverPhase } from "./game-over-phase";
 import { SwitchPhase } from "./switch-phase";
 import { VictoryPhase } from "./victory-phase";
+import { SpeciesFormChangeActiveTrigger } from "#app/data/pokemon-forms";
 
 export class FaintPhase extends PokemonPhase {
   private preventEndure: boolean;
@@ -54,15 +55,20 @@ export class FaintPhase extends PokemonPhase {
     // Track total times pokemon have been KO'd for supreme overlord/last respects
     if (pokemon.isPlayer()) {
       this.scene.currentBattle.playerFaints += 1;
+      this.scene.currentBattle.playerFaintsHistory.push({ pokemon: pokemon, turn: this.scene.currentBattle.turn });
     } else {
       this.scene.currentBattle.enemyFaints += 1;
+      this.scene.currentBattle.enemyFaintsHistory.push({ pokemon: pokemon, turn: this.scene.currentBattle.turn });
     }
 
     this.scene.queueMessage(i18next.t("battle:fainted", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }), null, true);
+    this.scene.triggerPokemonFormChange(pokemon, SpeciesFormChangeActiveTrigger, true);
 
     if (pokemon.turnData?.attacksReceived?.length) {
       const lastAttack = pokemon.turnData.attacksReceived[0];
       applyPostFaintAbAttrs(PostFaintAbAttr, pokemon, this.scene.getPokemonById(lastAttack.sourceId)!, new PokemonMove(lastAttack.move).getMove(), lastAttack.result); // TODO: is this bang correct?
+    } else { //If killed by indirect damage, apply post-faint abilities without providing a last move
+      applyPostFaintAbAttrs(PostFaintAbAttr, pokemon);
     }
 
     const alivePlayField = this.scene.getField(true);
