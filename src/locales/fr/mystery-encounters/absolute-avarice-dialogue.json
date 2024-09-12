@@ -5,7 +5,7 @@
   "query": "Que voulez-vous faire ?",
   "option": {
     "1": {
-      "label": "Battle It",
+      "label": "Le combattre",
       "tooltip": "(-) Combat difficile\n(+) Récompenses de sa planque à Baies",
       "selected": "Le {{greedentName}} gonfle ses joues\net se prépare au combat !",
       "boss_enraged": "L’insatiable amour de {{greedentName}} pour la nourriture le rend furieux !",
