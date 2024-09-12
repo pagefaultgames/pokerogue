@@ -1,6 +1,6 @@
 {
-  "paid_money": "You paid ₽{{amount, number}}.",
-  "receive_money": "You received ₽{{amount, number}}!",
-  "affects_pokedex": "Affects Pokédex Data",
-  "cancel_option": "Return to encounter option select."
+  "paid_money": "Pagaste {{amount, number}}₽.",
+  "receive_money": "¡Recibiste {{amount, number}}₽!",
+  "affects_pokedex": "Afecta los datos de la Pokédex",
+  "cancel_option": "Volver a la selección de opciones"
 }
