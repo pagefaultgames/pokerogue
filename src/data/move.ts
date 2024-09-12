@@ -2898,7 +2898,7 @@ export class ResetStatsAttr extends MoveEffectAttr {
     } else { // Affects only the single target when Clear Smog is used
       if (!move.hitsSubstitute(user, target)) {
         promises.push(this.resetStats(target));
-        target.scene.queueMessage(i18next.t("moveTriggers:resetStats", {pokemonName: getPokemonNameWithAffix(target)}));  
+        target.scene.queueMessage(i18next.t("moveTriggers:resetStats", {pokemonName: getPokemonNameWithAffix(target)}));
       }
     }
 
