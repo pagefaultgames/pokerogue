@@ -60,7 +60,7 @@ export abstract class FormModalUiHandler extends ModalUiHandler {
       const inputBg = addWindow(this.scene, 0, 0, 80, 16, false, false, 0, 0, WindowVariant.XTHIN);
 
       const isPassword = field.includes(i18next.t("menu:password")) || field.includes(i18next.t("menu:confirmPassword"));
-      const input = addTextInputObject(this.scene, 4, -2, 440, 116, TextStyle.TOOLTIP_CONTENT, { type: isPassword ? "password" : "text", maxLength: isPassword ? 64 : 18 });
+      const input = addTextInputObject(this.scene, 4, -2, 440, 116, TextStyle.TOOLTIP_CONTENT, { type: isPassword ? "password" : "text", maxLength: isPassword ? 64 : 20 });
       input.setOrigin(0, 0);
 
       inputContainer.add(inputBg);
