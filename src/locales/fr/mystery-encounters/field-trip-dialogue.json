@@ -1,6 +1,6 @@
 {
   "intro": "C’est une enseignante avec ses élèves !",
-  "speaker": "Enseignante ",
+  "speaker": "Enseignante",
   "intro_dialogue": "Hé, bonjour ! Aurais-tu une minute à accorder à mes élèves ?$Je leur apprends ce que sont les capacités et\nj’adorerais que tu leur fasse une démosntration.$Tu serais d’accord pour nous montrer ça avec un de tes Pokémon ?",
   "title": "En situation réelle",
   "description": "Une enseignante vous demande de faire la démonstration d’une capacité d’un de vos Pokémon. En fonction de la capacité, elle pourrait vous donner quelque chose d’utile.",
