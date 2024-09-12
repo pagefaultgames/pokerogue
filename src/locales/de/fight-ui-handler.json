@@ -3,5 +3,6 @@
   "power": "Stärke",
   "accuracy": "Genauigkeit",
   "abilityFlyInText": "{{passive}}{{abilityName}} von {{pokemonName}} wirkt!",
-  "passive": "Passive Fähigkeit "
+  "passive": "Passive Fähigkeit ",
+  "teraHover": "Tera-Typ {{type}}"
 }

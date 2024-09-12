@@ -1,7 +1,8 @@
 import BBCodeText from "phaser3-rex-plugins/plugins/gameobjects/tagtext/bbcodetext/BBCodeText";
 import BattleScene from "../battle-scene";
-import { Stat, getStatName } from "../data/pokemon-stat";
 import { TextStyle, addBBCodeTextObject, addTextObject, getTextColor } from "./text";
+import { PERMANENT_STATS, getStatKey } from "#app/enums/stat";
+import i18next from "i18next";
 
 
 const ivChartSize = 24;
@@ -55,16 +56,17 @@ export class StatsContainer extends Phaser.GameObjects.Container {
 
     this.ivStatValueTexts = [];
 
-    new Array(6).fill(null).map((_, i: integer) => {
-      const statLabel = addTextObject(this.scene, ivChartBg.x + (ivChartSize) * ivChartStatCoordMultipliers[i][0] * 1.325 + (this.showDiff ? 0 : ivLabelOffset[i]), ivChartBg.y + (ivChartSize) * ivChartStatCoordMultipliers[i][1] * 1.325 - 4 + (this.showDiff ? 0 : ivChartLabelyOffset[i]), getStatName(i as Stat), TextStyle.TOOLTIP_CONTENT);
+    for (const s of PERMANENT_STATS) {
+      const statLabel = addTextObject(this.scene, ivChartBg.x + (ivChartSize) * ivChartStatCoordMultipliers[s][0] * 1.325 + (this.showDiff ? 0 : ivLabelOffset[s]), ivChartBg.y + (ivChartSize) * ivChartStatCoordMultipliers[s][1] * 1.325 - 4 + (this.showDiff ? 0 : ivChartLabelyOffset[s]), i18next.t(getStatKey(s)), TextStyle.TOOLTIP_CONTENT);
       statLabel.setOrigin(0.5);
 
-      this.ivStatValueTexts[i] = addBBCodeTextObject(this.scene, statLabel.x - (this.showDiff ? 0 : ivLabelOffset[i]), statLabel.y + 8, "0", TextStyle.TOOLTIP_CONTENT);
-      this.ivStatValueTexts[i].setOrigin(0.5);
+      this.ivStatValueTexts[s] = addBBCodeTextObject(this.scene, statLabel.x - (this.showDiff ? 0 : ivLabelOffset[s]), statLabel.y + 8, "0", TextStyle.TOOLTIP_CONTENT);
+      this.ivStatValueTexts[s].setOrigin(0.5);
+
 
       this.add(statLabel);
-      this.add(this.ivStatValueTexts[i]);
-    });
+      this.add(this.ivStatValueTexts[s]);
+    }
   }
 
   updateIvs(ivs: integer[], originalIvs?: integer[]): void {

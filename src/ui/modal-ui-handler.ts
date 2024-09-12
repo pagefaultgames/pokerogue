@@ -57,32 +57,57 @@ export abstract class ModalUiHandler extends UiHandler {
 
     const buttonLabels = this.getButtonLabels();
 
-    const buttonTopMargin = this.getButtonTopMargin();
-
     for (const label of buttonLabels) {
-      const buttonLabel = addTextObject(this.scene, 0, 8, label, TextStyle.TOOLTIP_CONTENT);
-      buttonLabel.setOrigin(0.5, 0.5);
-
-      const buttonBg = addWindow(this.scene, 0, 0, buttonLabel.getBounds().width + 8, 16, false, false, 0, 0, WindowVariant.THIN);
-      buttonBg.setOrigin(0.5, 0);
-      buttonBg.setInteractive(new Phaser.Geom.Rectangle(0, 0, buttonBg.width, buttonBg.height), Phaser.Geom.Rectangle.Contains);
-
-      const buttonContainer = this.scene.add.container(0, buttonTopMargin);
-
-      this.buttonBgs.push(buttonBg);
-      this.buttonContainers.push(buttonContainer);
-
-      buttonContainer.add(buttonBg);
-      buttonContainer.add(buttonLabel);
-      this.modalContainer.add(buttonContainer);
+      this.addButton(label);
     }
 
     this.modalContainer.setVisible(false);
   }
 
+  private addButton(label: string) {
+    const buttonTopMargin = this.getButtonTopMargin();
+    const buttonLabel = addTextObject(this.scene, 0, 8, label, TextStyle.TOOLTIP_CONTENT);
+    buttonLabel.setOrigin(0.5, 0.5);
+
+    const buttonBg = addWindow(this.scene, 0, 0, buttonLabel.getBounds().width + 8, 16, false, false, 0, 0, WindowVariant.THIN);
+    buttonBg.setOrigin(0.5, 0);
+    buttonBg.setInteractive(new Phaser.Geom.Rectangle(0, 0, buttonBg.width, buttonBg.height), Phaser.Geom.Rectangle.Contains);
+
+    const buttonContainer = this.scene.add.container(0, buttonTopMargin);
+
+    this.buttonBgs.push(buttonBg);
+    this.buttonContainers.push(buttonContainer);
+
+    buttonContainer.add(buttonBg);
+    buttonContainer.add(buttonLabel);
+
+    this.addInteractionHoverEffect(buttonBg);
+
+    this.modalContainer.add(buttonContainer);
+  }
+
   show(args: any[]): boolean {
     if (args.length >= 1 && "buttonActions" in args[0]) {
       super.show(args);
+      if (args[0].hasOwnProperty("fadeOut") && typeof args[0].fadeOut === "function") {
+        const [ marginTop, marginRight, marginBottom, marginLeft ] = this.getMargin();
+
+        const overlay = this.scene.add.rectangle(( this.getWidth() + marginLeft + marginRight) / 2, (this.getHeight() + marginTop + marginBottom) / 2, this.scene.game.canvas.width / 6, this.scene.game.canvas.height /6, 0);
+        overlay.setOrigin(0.5, 0.5);
+        overlay.setName("rect-ui-overlay-modal");
+        overlay.setAlpha(0);
+
+        this.modalContainer.add(overlay);
+        this.modalContainer.moveTo(overlay, 0);
+
+        this.scene.tweens.add({
+          targets: overlay,
+          alpha: 1,
+          duration: 250,
+          ease: "Sine.easeOut",
+          onComplete: args[0].fadeOut
+        });
+      }
 
       const config = args[0] as ModalConfig;
 
@@ -134,5 +159,21 @@ export abstract class ModalUiHandler extends UiHandler {
     this.modalContainer.setVisible(false);
 
     this.buttonBgs.map(bg => bg.off("pointerdown"));
+  }
+
+  /**
+   * Adds a hover effect to a game object which changes the cursor to a `pointer` and tints it slighly
+   * @param gameObject the game object to add hover events/effects to
+   */
+  protected addInteractionHoverEffect(gameObject: Phaser.GameObjects.Image | Phaser.GameObjects.NineSlice | Phaser.GameObjects.Sprite) {
+    gameObject.on("pointerover", () => {
+      this.setMouseCursorStyle("pointer");
+      gameObject.setTint(0xbbbbbb);
+    });
+
+    gameObject.on("pointerout", () => {
+      this.setMouseCursorStyle("default");
+      gameObject.clearTint();
+    });
   }
 }

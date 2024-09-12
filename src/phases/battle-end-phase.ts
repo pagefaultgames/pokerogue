@@ -1,5 +1,5 @@
-import { applyPostBattleAbAttrs, PostBattleAbAttr } from "#app/data/ability.js";
-import { LapsingPersistentModifier, LapsingPokemonHeldItemModifier } from "#app/modifier/modifier.js";
+import { applyPostBattleAbAttrs, PostBattleAbAttr } from "#app/data/ability";
+import { LapsingPersistentModifier, LapsingPokemonHeldItemModifier } from "#app/modifier/modifier";
 import { BattlePhase } from "./battle-phase";
 import { GameOverPhase } from "./game-over-phase";
 
@@ -21,12 +21,6 @@ export class BattleEndPhase extends BattlePhase {
     if (this.scene.gameMode.isEndless && this.scene.currentBattle.waveIndex >= 5850) {
       this.scene.clearPhaseQueue();
       this.scene.unshiftPhase(new GameOverPhase(this.scene, true));
-    }
-
-    for (const pokemon of this.scene.getField()) {
-      if (pokemon) {
-        pokemon.resetBattleSummonData();
-      }
     }
 
     for (const pokemon of this.scene.getParty().filter(p => p.isAllowedInBattle())) {

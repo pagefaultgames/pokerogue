@@ -7,7 +7,6 @@ import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/utils/gameManager";
-import { SPLASH_ONLY } from "#test/utils/testUtils";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
@@ -35,7 +34,7 @@ describe("Moves - Focus Punch", () => {
       .moveset([Moves.FOCUS_PUNCH])
       .enemySpecies(Species.GROUDON)
       .enemyAbility(Abilities.INSOMNIA)
-      .enemyMoveset(SPLASH_ONLY)
+      .enemyMoveset(Moves.SPLASH)
       .startingLevel(100)
       .enemyLevel(100);
   });
@@ -68,7 +67,7 @@ describe("Moves - Focus Punch", () => {
   it(
     "should fail if the user is hit",
     async () => {
-      game.override.enemyMoveset(Array(4).fill(Moves.TACKLE));
+      game.override.enemyMoveset([Moves.TACKLE]);
 
       await game.startBattle([Species.CHARIZARD]);
 
@@ -95,7 +94,7 @@ describe("Moves - Focus Punch", () => {
   it(
     "should be cancelled if the user falls asleep mid-turn",
     async () => {
-      game.override.enemyMoveset(Array(4).fill(Moves.SPORE));
+      game.override.enemyMoveset([Moves.SPORE]);
 
       await game.startBattle([Species.CHARIZARD]);
 
@@ -123,7 +122,7 @@ describe("Moves - Focus Punch", () => {
 
       await game.startBattle([Species.CHARIZARD]);
 
-      game.forceOpponentToSwitch();
+      game.forceEnemyToSwitch();
       game.move.select(Moves.FOCUS_PUNCH);
 
       await game.phaseInterceptor.to(TurnStartPhase);

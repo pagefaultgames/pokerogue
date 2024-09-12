@@ -39,9 +39,9 @@
     "name": "Scratch",
     "effect": "Garras duras, pontiagudas e afiadas rasgam o alvo para causar dano."
   },
-  "viceGrip": {
-    "name": "Vice Grip",
-    "effect": "O alvo é agarrado pelos lados e espremido."
+  "viseGrip": {
+    "name": "Vise Grip",
+    "effect": "O alvo é agarrado e espremido de ambos os lados para causar dano."
   },
   "guillotine": {
     "name": "Guillotine",

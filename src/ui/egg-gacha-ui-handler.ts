@@ -359,7 +359,7 @@ export default class EggGachaUiHandler extends MessageUiHandler {
         this.scene.time.delayedCall(this.getDelayValue(count ? 500 : 1250), () => {
           this.scene.playSound("se/gacha_dispense");
           this.scene.time.delayedCall(this.getDelayValue(750), () => {
-            this.scene.sound.stopByKey("gacha_running");
+            this.scene.sound.stopByKey("se/gacha_running");
             this.scene.tweens.add({
               targets: egg,
               duration: this.getDelayValue(350),
