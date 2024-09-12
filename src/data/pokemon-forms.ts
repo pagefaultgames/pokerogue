@@ -1,8 +1,9 @@
-import { PokemonFormChangeItemModifier } from "../modifier/modifier";
+import { PokemonFormChangeItemModifier, TerastallizeModifier } from "../modifier/modifier";
 import Pokemon from "../field/pokemon";
 import { SpeciesFormKey } from "./pokemon-species";
 import { StatusEffect } from "./status-effect";
 import { MoveCategory, allMoves } from "./move";
+import { Type } from "./type";
 import { Constructor } from "#app/utils";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
@@ -358,6 +359,41 @@ export class SpeciesDefaultFormMatchTrigger extends SpeciesFormChangeTrigger {
 }
 
 /**
+ * Class used for triggering form changes based on the user's Tera type.
+ * Used by Ogerpon and Terapagos.
+ * @extends SpeciesFormChangeTrigger
+ */
+export class SpeciesFormChangeTeraTrigger extends SpeciesFormChangeTrigger {
+  /** The Tera type that triggers the form change */
+  private teraType: Type;
+
+  constructor(teraType: Type) {
+    super();
+    this.teraType = teraType;
+  }
+
+  /**
+   * Checks if the associated Pokémon has the required Tera Shard that matches with the associated Tera type.
+   * @param {Pokemon} pokemon the Pokémon that is trying to do the form change
+   * @returns `true` if the Pokémon can change forms, `false` otherwise
+   */
+  canChange(pokemon: Pokemon): boolean {
+    return !!pokemon.scene.findModifier(m => m instanceof TerastallizeModifier && m.pokemonId === pokemon.id && m.teraType === this.teraType);
+  }
+}
+
+/**
+ * Class used for triggering form changes based on the user's lapsed Tera type.
+ * Used by Ogerpon and Terapagos.
+ * @extends SpeciesFormChangeTrigger
+ */
+export class SpeciesFormChangeLapseTeraTrigger extends SpeciesFormChangeTrigger {
+  canChange(pokemon: Pokemon): boolean {
+    return !!pokemon.scene.findModifier(m => m instanceof TerastallizeModifier && m.pokemonId === pokemon.id);
+  }
+}
+
+/**
  * Class used for triggering form changes based on weather.
  * Used by Castform and Cherrim.
  * @extends SpeciesFormChangeTrigger
@@ -592,6 +628,23 @@ export const pokemonFormChanges: PokemonFormChanges = {
   [Species.ALTARIA]: [
     new SpeciesFormChange(Species.ALTARIA, "", SpeciesFormKey.MEGA, new SpeciesFormChangeItemTrigger(FormChangeItem.ALTARIANITE))
   ],
+  [Species.CASTFORM]: [
+    new SpeciesFormChange(Species.CASTFORM, "", "sunny", new SpeciesFormChangeWeatherTrigger(Abilities.FORECAST, [WeatherType.SUNNY, WeatherType.HARSH_SUN]), true),
+    new SpeciesFormChange(Species.CASTFORM, "rainy", "sunny", new SpeciesFormChangeWeatherTrigger(Abilities.FORECAST, [WeatherType.SUNNY, WeatherType.HARSH_SUN]), true),
+    new SpeciesFormChange(Species.CASTFORM, "snowy", "sunny", new SpeciesFormChangeWeatherTrigger(Abilities.FORECAST, [WeatherType.SUNNY, WeatherType.HARSH_SUN]), true),
+    new SpeciesFormChange(Species.CASTFORM, "", "rainy", new SpeciesFormChangeWeatherTrigger(Abilities.FORECAST, [WeatherType.RAIN, WeatherType.HEAVY_RAIN]), true),
+    new SpeciesFormChange(Species.CASTFORM, "sunny", "rainy", new SpeciesFormChangeWeatherTrigger(Abilities.FORECAST, [WeatherType.RAIN, WeatherType.HEAVY_RAIN]), true),
+    new SpeciesFormChange(Species.CASTFORM, "snowy", "rainy", new SpeciesFormChangeWeatherTrigger(Abilities.FORECAST, [WeatherType.RAIN, WeatherType.HEAVY_RAIN]), true),
+    new SpeciesFormChange(Species.CASTFORM, "", "snowy", new SpeciesFormChangeWeatherTrigger(Abilities.FORECAST, [WeatherType.HAIL, WeatherType.SNOW]), true),
+    new SpeciesFormChange(Species.CASTFORM, "sunny", "snowy", new SpeciesFormChangeWeatherTrigger(Abilities.FORECAST, [WeatherType.HAIL, WeatherType.SNOW]), true),
+    new SpeciesFormChange(Species.CASTFORM, "rainy", "snowy", new SpeciesFormChangeWeatherTrigger(Abilities.FORECAST, [WeatherType.HAIL, WeatherType.SNOW]), true),
+    new SpeciesFormChange(Species.CASTFORM, "sunny", "", new SpeciesFormChangeRevertWeatherFormTrigger(Abilities.FORECAST, [WeatherType.NONE, WeatherType.SANDSTORM, WeatherType.STRONG_WINDS, WeatherType.FOG]), true),
+    new SpeciesFormChange(Species.CASTFORM, "rainy", "", new SpeciesFormChangeRevertWeatherFormTrigger(Abilities.FORECAST, [WeatherType.NONE, WeatherType.SANDSTORM, WeatherType.STRONG_WINDS, WeatherType.FOG]), true),
+    new SpeciesFormChange(Species.CASTFORM, "snowy", "", new SpeciesFormChangeRevertWeatherFormTrigger(Abilities.FORECAST, [WeatherType.NONE, WeatherType.SANDSTORM, WeatherType.STRONG_WINDS, WeatherType.FOG]), true),
+    new SpeciesFormChange(Species.CASTFORM, "sunny", "", new SpeciesFormChangeActiveTrigger(), true),
+    new SpeciesFormChange(Species.CASTFORM, "rainy", "", new SpeciesFormChangeActiveTrigger(), true),
+    new SpeciesFormChange(Species.CASTFORM, "snowy", "", new SpeciesFormChangeActiveTrigger(), true)
+  ],
   [Species.BANETTE]: [
     new SpeciesFormChange(Species.BANETTE, "", SpeciesFormKey.MEGA, new SpeciesFormChangeItemTrigger(FormChangeItem.BANETTITE))
   ],
@@ -626,6 +679,11 @@ export const pokemonFormChanges: PokemonFormChanges = {
     new SpeciesFormChange(Species.DEOXYS, "normal", "attack", new SpeciesFormChangeItemTrigger(FormChangeItem.SHARP_METEORITE)),
     new SpeciesFormChange(Species.DEOXYS, "normal", "defense", new SpeciesFormChangeItemTrigger(FormChangeItem.HARD_METEORITE)),
     new SpeciesFormChange(Species.DEOXYS, "normal", "speed", new SpeciesFormChangeItemTrigger(FormChangeItem.SMOOTH_METEORITE))
+  ],
+  [Species.CHERRIM]: [
+    new SpeciesFormChange(Species.CHERRIM, "overcast", "sunshine", new SpeciesFormChangeWeatherTrigger(Abilities.FLOWER_GIFT, [ WeatherType.SUNNY, WeatherType.HARSH_SUN ]), true),
+    new SpeciesFormChange(Species.CHERRIM, "sunshine", "overcast", new SpeciesFormChangeRevertWeatherFormTrigger(Abilities.FLOWER_GIFT, [ WeatherType.NONE, WeatherType.SANDSTORM, WeatherType.STRONG_WINDS, WeatherType.FOG, WeatherType.HAIL, WeatherType.HEAVY_RAIN, WeatherType.SNOW, WeatherType.RAIN ]), true),
+    new SpeciesFormChange(Species.CHERRIM, "sunshine", "overcast", new SpeciesFormChangeActiveTrigger(), true)
   ],
   [Species.LOPUNNY]: [
     new SpeciesFormChange(Species.LOPUNNY, "", SpeciesFormKey.MEGA, new SpeciesFormChangeItemTrigger(FormChangeItem.LOPUNNITE))
@@ -822,6 +880,14 @@ export const pokemonFormChanges: PokemonFormChanges = {
   [Species.SANDACONDA]: [
     new SpeciesFormChange(Species.SANDACONDA, "", SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS))
   ],
+  [Species.CRAMORANT]: [
+    new SpeciesFormChange(Species.CRAMORANT, "", "gulping", new SpeciesFormChangeManualTrigger, true, new SpeciesFormChangeCondition(p => p.getHpRatio() >= .5)),
+    new SpeciesFormChange(Species.CRAMORANT, "", "gorging", new SpeciesFormChangeManualTrigger, true, new SpeciesFormChangeCondition(p => p.getHpRatio() < .5)),
+    new SpeciesFormChange(Species.CRAMORANT, "gulping", "", new SpeciesFormChangeManualTrigger, true),
+    new SpeciesFormChange(Species.CRAMORANT, "gorging", "", new SpeciesFormChangeManualTrigger, true),
+    new SpeciesFormChange(Species.CRAMORANT, "gulping", "", new SpeciesFormChangeActiveTrigger(false), true),
+    new SpeciesFormChange(Species.CRAMORANT, "gorging", "", new SpeciesFormChangeActiveTrigger(false), true)
+  ],
   [Species.TOXTRICITY]: [
     new SpeciesFormChange(Species.TOXTRICITY, "amped", SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS)),
     new SpeciesFormChange(Species.TOXTRICITY, "lowkey", SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS)),
@@ -847,6 +913,10 @@ export const pokemonFormChanges: PokemonFormChanges = {
     new SpeciesFormChange(Species.ALCREMIE, "ruby-swirl", SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS)),
     new SpeciesFormChange(Species.ALCREMIE, "caramel-swirl", SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS)),
     new SpeciesFormChange(Species.ALCREMIE, "rainbow-swirl", SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS))
+  ],
+  [Species.EISCUE]: [
+    new SpeciesFormChange(Species.EISCUE, "", "no-ice", new SpeciesFormChangeManualTrigger(), true),
+    new SpeciesFormChange(Species.EISCUE, "no-ice", "", new SpeciesFormChangeManualTrigger(), true)
   ],
   [Species.MORPEKO]: [
     new SpeciesFormChange(Species.MORPEKO, "full-belly", "hangry", new SpeciesFormChangeManualTrigger(), true),
@@ -883,57 +953,23 @@ export const pokemonFormChanges: PokemonFormChanges = {
     new SpeciesFormChange(Species.OGERPON, "teal-mask", "wellspring-mask", new SpeciesFormChangeItemTrigger(FormChangeItem.WELLSPRING_MASK)),
     new SpeciesFormChange(Species.OGERPON, "teal-mask", "hearthflame-mask", new SpeciesFormChangeItemTrigger(FormChangeItem.HEARTHFLAME_MASK)),
     new SpeciesFormChange(Species.OGERPON, "teal-mask", "cornerstone-mask", new SpeciesFormChangeItemTrigger(FormChangeItem.CORNERSTONE_MASK)),
-    new SpeciesFormChange(Species.OGERPON, "teal-mask", "teal-mask-tera", new SpeciesFormChangeManualTrigger(), true), //When holding a Grass Tera Shard
-    new SpeciesFormChange(Species.OGERPON, "teal-mask-tera", "teal-mask", new SpeciesFormChangeManualTrigger(), true), //When no longer holding a Grass Tera Shard
-    new SpeciesFormChange(Species.OGERPON, "wellspring-mask", "wellspring-mask-tera", new SpeciesFormChangeManualTrigger(), true), //When holding a Water Tera Shard
-    new SpeciesFormChange(Species.OGERPON, "wellspring-mask-tera", "wellspring-mask", new SpeciesFormChangeManualTrigger(), true), //When no longer holding a Water Tera Shard
-    new SpeciesFormChange(Species.OGERPON, "hearthflame-mask", "hearthflame-mask-tera", new SpeciesFormChangeManualTrigger(), true), //When holding a Fire Tera Shard
-    new SpeciesFormChange(Species.OGERPON, "hearthflame-mask-tera", "hearthflame-mask", new SpeciesFormChangeManualTrigger(), true), //When no longer holding a Fire Tera Shard
-    new SpeciesFormChange(Species.OGERPON, "cornerstone-mask", "cornerstone-mask-tera", new SpeciesFormChangeManualTrigger(), true), //When holding a Rock Tera Shard
-    new SpeciesFormChange(Species.OGERPON, "cornerstone-mask-tera", "cornerstone-mask", new SpeciesFormChangeManualTrigger(), true) //When no longer holding a Rock Tera Shard
+    new SpeciesFormChange(Species.OGERPON, "teal-mask", "teal-mask-tera", new SpeciesFormChangeTeraTrigger(Type.GRASS)),
+    new SpeciesFormChange(Species.OGERPON, "teal-mask-tera", "teal-mask", new SpeciesFormChangeLapseTeraTrigger(), true, new SpeciesFormChangeCondition(p => p.getTeraType() !== Type.GRASS)),
+    new SpeciesFormChange(Species.OGERPON, "wellspring-mask", "wellspring-mask-tera", new SpeciesFormChangeTeraTrigger(Type.WATER)),
+    new SpeciesFormChange(Species.OGERPON, "wellspring-mask-tera", "wellspring-mask", new SpeciesFormChangeLapseTeraTrigger(), true, new SpeciesFormChangeCondition(p => p.getTeraType() !== Type.WATER)),
+    new SpeciesFormChange(Species.OGERPON, "hearthflame-mask", "hearthflame-mask-tera", new SpeciesFormChangeTeraTrigger(Type.FIRE)),
+    new SpeciesFormChange(Species.OGERPON, "hearthflame-mask-tera", "hearthflame-mask", new SpeciesFormChangeLapseTeraTrigger(), true, new SpeciesFormChangeCondition(p => p.getTeraType() !== Type.FIRE)),
+    new SpeciesFormChange(Species.OGERPON, "cornerstone-mask", "cornerstone-mask-tera", new SpeciesFormChangeTeraTrigger(Type.ROCK)),
+    new SpeciesFormChange(Species.OGERPON, "cornerstone-mask-tera", "cornerstone-mask", new SpeciesFormChangeLapseTeraTrigger(), true, new SpeciesFormChangeCondition(p => p.getTeraType() !== Type.ROCK))
   ],
   [Species.TERAPAGOS]: [
     new SpeciesFormChange(Species.TERAPAGOS, "", "terastal", new SpeciesFormChangeManualTrigger(), true),
-    new SpeciesFormChange(Species.TERAPAGOS, "terastal", "stellar", new SpeciesFormChangeManualTrigger(), true), //When holding a Stellar Tera Shard
-    new SpeciesFormChange(Species.TERAPAGOS, "stellar", "terastal", new SpeciesFormChangeManualTrigger(), true) //When no longer holding a Stellar Tera Shard
+    new SpeciesFormChange(Species.TERAPAGOS, "terastal", "stellar", new SpeciesFormChangeTeraTrigger(Type.STELLAR)),
+    new SpeciesFormChange(Species.TERAPAGOS, "stellar", "terastal", new SpeciesFormChangeLapseTeraTrigger(), true, new SpeciesFormChangeCondition(p => p.getTeraType() !== Type.STELLAR))
   ],
   [Species.GALAR_DARMANITAN]: [
     new SpeciesFormChange(Species.GALAR_DARMANITAN, "", "zen", new SpeciesFormChangeManualTrigger(), true),
     new SpeciesFormChange(Species.GALAR_DARMANITAN, "zen", "", new SpeciesFormChangeManualTrigger(), true)
-  ],
-  [Species.EISCUE]: [
-    new SpeciesFormChange(Species.EISCUE, "", "no-ice", new SpeciesFormChangeManualTrigger(), true),
-    new SpeciesFormChange(Species.EISCUE, "no-ice", "", new SpeciesFormChangeManualTrigger(), true),
-  ],
-  [Species.CRAMORANT]: [
-    new SpeciesFormChange(Species.CRAMORANT, "", "gulping", new SpeciesFormChangeManualTrigger, true, new SpeciesFormChangeCondition(p => p.getHpRatio() >= .5)),
-    new SpeciesFormChange(Species.CRAMORANT, "", "gorging", new SpeciesFormChangeManualTrigger, true, new SpeciesFormChangeCondition(p => p.getHpRatio() < .5)),
-    new SpeciesFormChange(Species.CRAMORANT, "gulping", "", new SpeciesFormChangeManualTrigger, true),
-    new SpeciesFormChange(Species.CRAMORANT, "gorging", "", new SpeciesFormChangeManualTrigger, true),
-    new SpeciesFormChange(Species.CRAMORANT, "gulping", "", new SpeciesFormChangeActiveTrigger(false), true),
-    new SpeciesFormChange(Species.CRAMORANT, "gorging", "", new SpeciesFormChangeActiveTrigger(false), true),
-  ],
-  [Species.CASTFORM]: [
-    new SpeciesFormChange(Species.CASTFORM, "", "sunny", new SpeciesFormChangeWeatherTrigger(Abilities.FORECAST, [WeatherType.SUNNY, WeatherType.HARSH_SUN]), true),
-    new SpeciesFormChange(Species.CASTFORM, "rainy", "sunny", new SpeciesFormChangeWeatherTrigger(Abilities.FORECAST, [WeatherType.SUNNY, WeatherType.HARSH_SUN]), true),
-    new SpeciesFormChange(Species.CASTFORM, "snowy", "sunny", new SpeciesFormChangeWeatherTrigger(Abilities.FORECAST, [WeatherType.SUNNY, WeatherType.HARSH_SUN]), true),
-    new SpeciesFormChange(Species.CASTFORM, "", "rainy", new SpeciesFormChangeWeatherTrigger(Abilities.FORECAST, [WeatherType.RAIN, WeatherType.HEAVY_RAIN]), true),
-    new SpeciesFormChange(Species.CASTFORM, "sunny", "rainy", new SpeciesFormChangeWeatherTrigger(Abilities.FORECAST, [WeatherType.RAIN, WeatherType.HEAVY_RAIN]), true),
-    new SpeciesFormChange(Species.CASTFORM, "snowy", "rainy", new SpeciesFormChangeWeatherTrigger(Abilities.FORECAST, [WeatherType.RAIN, WeatherType.HEAVY_RAIN]), true),
-    new SpeciesFormChange(Species.CASTFORM, "", "snowy", new SpeciesFormChangeWeatherTrigger(Abilities.FORECAST, [WeatherType.HAIL, WeatherType.SNOW]), true),
-    new SpeciesFormChange(Species.CASTFORM, "sunny", "snowy", new SpeciesFormChangeWeatherTrigger(Abilities.FORECAST, [WeatherType.HAIL, WeatherType.SNOW]), true),
-    new SpeciesFormChange(Species.CASTFORM, "rainy", "snowy", new SpeciesFormChangeWeatherTrigger(Abilities.FORECAST, [WeatherType.HAIL, WeatherType.SNOW]), true),
-    new SpeciesFormChange(Species.CASTFORM, "sunny", "", new SpeciesFormChangeRevertWeatherFormTrigger(Abilities.FORECAST, [WeatherType.NONE, WeatherType.SANDSTORM, WeatherType.STRONG_WINDS, WeatherType.FOG]), true),
-    new SpeciesFormChange(Species.CASTFORM, "rainy", "", new SpeciesFormChangeRevertWeatherFormTrigger(Abilities.FORECAST, [WeatherType.NONE, WeatherType.SANDSTORM, WeatherType.STRONG_WINDS, WeatherType.FOG]), true),
-    new SpeciesFormChange(Species.CASTFORM, "snowy", "", new SpeciesFormChangeRevertWeatherFormTrigger(Abilities.FORECAST, [WeatherType.NONE, WeatherType.SANDSTORM, WeatherType.STRONG_WINDS, WeatherType.FOG]), true),
-    new SpeciesFormChange(Species.CASTFORM, "sunny", "", new SpeciesFormChangeActiveTrigger(), true),
-    new SpeciesFormChange(Species.CASTFORM, "rainy", "", new SpeciesFormChangeActiveTrigger(), true),
-    new SpeciesFormChange(Species.CASTFORM, "snowy", "", new SpeciesFormChangeActiveTrigger(), true),
-  ],
-  [Species.CHERRIM]: [
-    new SpeciesFormChange(Species.CHERRIM, "overcast", "sunshine", new SpeciesFormChangeWeatherTrigger(Abilities.FLOWER_GIFT, [ WeatherType.SUNNY, WeatherType.HARSH_SUN ]), true),
-    new SpeciesFormChange(Species.CHERRIM, "sunshine", "overcast", new SpeciesFormChangeRevertWeatherFormTrigger(Abilities.FLOWER_GIFT, [ WeatherType.NONE, WeatherType.SANDSTORM, WeatherType.STRONG_WINDS, WeatherType.FOG, WeatherType.HAIL, WeatherType.HEAVY_RAIN, WeatherType.SNOW, WeatherType.RAIN ]), true),
-    new SpeciesFormChange(Species.CHERRIM, "sunshine", "overcast", new SpeciesFormChangeActiveTrigger(), true),
   ],
 };
 
