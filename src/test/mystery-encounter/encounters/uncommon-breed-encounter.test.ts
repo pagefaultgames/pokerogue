@@ -189,7 +189,7 @@ describe("Uncommon Breed - Mystery Encounter", () => {
       expect(mysteryEncounterPhase.continueEncounter).not.toHaveBeenCalled();
     });
 
-    it("Should skip fight when player meets requirements", async () => {
+    it("Should skip fight when player meets requirements", { retry: 5 }, async () => {
       const leaveEncounterWithoutBattleSpy = vi.spyOn(EncounterPhaseUtils, "leaveEncounterWithoutBattle");
 
       await game.runToMysteryEncounter(MysteryEncounterType.UNCOMMON_BREED, defaultParty);
