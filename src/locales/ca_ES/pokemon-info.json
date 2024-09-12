@@ -1,5 +1,5 @@
 {
-  Stat: {
+  "Stat": {
     "HP": "PS",
     "HPshortened": "PS",
     "ATK": "Atac",
@@ -15,7 +15,7 @@
     "ACC": "Precisió",
     "EVA": "Evació"
   },
-  Type: {
+  "Type": {
     "UNKNOWN": "???",
     "NORMAL": "Normal",
     "FIGHTING": "Lluita",
