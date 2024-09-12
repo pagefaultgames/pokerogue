@@ -126,6 +126,7 @@ export const SettingKeys = {
   EXP_Gains_Speed: "EXP_GAINS_SPEED",
   EXP_Party_Display: "EXP_PARTY_DISPLAY",
   Skip_Seen_Dialogues: "SKIP_SEEN_DIALOGUES",
+  Egg_Skip: "EGG_SKIP",
   Battle_Style: "BATTLE_STYLE",
   Enable_Retries: "ENABLE_RETRIES",
   Hide_IVs: "HIDE_IVS",
@@ -279,6 +280,26 @@ export const Setting: Array<Setting> = [
     label: i18next.t("settings:skipSeenDialogues"),
     options: OFF_ON,
     default: 0,
+    type: SettingType.GENERAL
+  },
+  {
+    key: SettingKeys.Egg_Skip,
+    label: i18next.t("settings:eggSkip"),
+    options: [
+      {
+        value: "Never",
+        label: i18next.t("settings:never")
+      },
+      {
+        value: "Always",
+        label: i18next.t("settings:always")
+      },
+      {
+        value: "Ask",
+        label: i18next.t("settings:ask")
+      }
+    ],
+    default: 2,
     type: SettingType.GENERAL
   },
   {
@@ -726,6 +747,9 @@ export function setSetting(scene: BattleScene, setting: string, value: integer):
     break;
   case SettingKeys.Skip_Seen_Dialogues:
     scene.skipSeenDialogues = Setting[index].options[value].value === "On";
+    break;
+  case SettingKeys.Egg_Skip:
+    scene.eggSkip = value;
     break;
   case SettingKeys.Battle_Style:
     scene.battleStyle = value;

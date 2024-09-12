@@ -161,6 +161,13 @@ export default class BattleScene extends SceneBase {
   public moveAnimations: boolean = true;
   public expGainsSpeed: integer = 0;
   public skipSeenDialogues: boolean = false;
+  /**
+   * Determines if the egg hatching animation should be skipped
+   * - 0 = Never
+   * - 1 = Always
+   * - 2 = Ask
+   */
+  public eggSkip: number = 0;
 
   /**
      * Defines the experience gain display mode.

@@ -24,7 +24,6 @@ export class EggLapsePhase extends Phase {
 
   start() {
     super.start();
-
     const eggsToHatch: Egg[] = this.scene.gameData.eggs.filter((egg: Egg) => {
       return Overrides.EGG_IMMEDIATE_HATCH_OVERRIDE ? true : --egg.hatchWaves < 1;
     });
@@ -32,8 +31,7 @@ export class EggLapsePhase extends Phase {
     this.eggHatchData= [];
 
     if (eggsToHatchCount > 0) {
-
-      if (eggsToHatchCount >= this.minEggsToPromptSkip) {
+      if (eggsToHatchCount >= this.minEggsToPromptSkip && this.scene.eggSkip === 2) {
         this.scene.ui.showText(i18next.t("battle:eggHatching"), 0, () => {
           // show prompt for skip
           this.scene.ui.showText(i18next.t("battle:eggSkipPrompt"), 0);
@@ -46,6 +44,10 @@ export class EggLapsePhase extends Phase {
           }
           );
         }, 100, true);
+      } else if (eggsToHatchCount >= this.minEggsToPromptSkip && this.scene.eggSkip === 1) {
+        this.scene.queueMessage(i18next.t("battle:eggHatching"));
+        this.hatchEggsSkipped(eggsToHatch);
+        this.showSummary();
       } else {
         // regular hatches, no summary
         this.scene.queueMessage(i18next.t("battle:eggHatching"));
