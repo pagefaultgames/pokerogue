@@ -101,5 +101,5 @@
   "congratulations": "Congratulazioni!",
   "beatModeFirstTime": "{{speciesName}} ha completato la modalità {{gameMode}} per la prima volta!\nHai ricevuto {{newModifier}}!",
   "ppReduced": "I PP della mossa {{moveName}} di\n{{targetName}} sono stati ridotti di {{reduction}}!",
-  "mysteryEncounterAppeared": "What's this?"
+  "mysteryEncounterAppeared": "Che succede?"
 }
