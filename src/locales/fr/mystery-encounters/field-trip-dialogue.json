@@ -1,31 +1,31 @@
 {
-  "intro": "It's a teacher and some school children!",
-  "speaker": "Teacher",
-  "intro_dialogue": "Hello, there! Would you be able to\nspare a minute for my students?$I'm teaching them about Pokémon moves\nand would love to show them a demonstration.$Would you mind showing us one of\nthe moves your Pokémon can use?",
-  "title": "Field Trip",
-  "description": "A teacher is requesting a move demonstration from a Pokémon. Depending on the move you choose, she might have something useful for you in exchange.",
-  "query": "Which move category will you show off?",
+  "intro": "C’est une enseignante avec ses élèves !",
+  "speaker": "Enseignante ",
+  "intro_dialogue": "Hé, bonjour ! Aurais-tu une minute à accorder à mes élèves ?$Je leur apprends ce que sont les capacités et\nj’adorerais que tu leur fasse une démosntration.$Tu serais d’accord pour nous montrer ça avec un de tes Pokémon ?",
+  "title": "En situation réelle",
+  "description": "Une enseignante vous demande de faire la démonstration d’une capacité d’un de vos Pokémon. En fonction de la capacité, elle pourrait vous donner quelque chose d’utile.",
+  "query": "Utiliser une capacité de quelle catégorie ?",
   "option": {
     "1": {
-      "label": "A Physical Move",
-      "tooltip": "(+) Physical Item Rewards"
+      "label": "Physique",
+      "tooltip": "(+) Récompense d’objets Physiques"
     },
     "2": {
-      "label": "A Special Move",
-      "tooltip": "(+) Special Item Rewards"
+      "label": "Spéciale",
+      "tooltip": "(+) Récompense d’objets Spéciaux"
     },
     "3": {
-      "label": "A Status Move",
-      "tooltip": "(+) Status Item Rewards"
+      "label": "De Statut",
+      "tooltip": "(+) Récompense d’objets de Statut"
     },
-    "selected": "{{pokeName}} shows off an awesome display of {{move}}!"
+    "selected": "{{pokeName}} fait une incroyable démonstration de sa capacité {{move}} !"
   },
-  "second_option_prompt": "Choose a move for your Pokémon to use.",
-  "incorrect": "...$That isn't a {{moveCategory}} move!\nI'm sorry, but I can't give you anything.$Come along children, we'll\nfind a better demonstration elsewhere.",
-  "incorrect_exp": "Looks like you learned a valuable lesson?$Your Pokémon also gained some experience.",
-  "correct": "Thank you so much for your kindness!\nI hope these items might be of use to you!",
-  "correct_exp": "{{pokeName}} also gained some valuable experience!",
-  "status": "Status",
-  "physical": "Physical",
-  "special": "Special"
+  "second_option_prompt": "Choisissez une capacité à utilsier.",
+  "incorrect": "…$Ce n’est pas une capacité {{moveCategory}} !\nJe suis désolée, mais je ne peux rien te donner.$Venez les enfants, on va chercher mieux ailleurs.",
+  "incorrect_exp": "Il semble que vous avez appris une précieuse leçon ?$Votre Pokémon a gagné un peu d’expérience.",
+  "correct": "Merci beaucoup de nous avoir accordé de ton temps !\nJ’espère que ces quelques objets de seront utiles !",
+  "correct_exp": "{{pokeName}} a aussi gagné un beaucoup d’expérience !",
+  "status": "de Statut",
+  "physical": "Physique",
+  "special": "Spéciale"
 }
