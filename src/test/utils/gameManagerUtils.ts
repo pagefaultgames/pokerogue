@@ -25,9 +25,8 @@ export function blobToString(blob) {
   });
 }
 
-
 export function holdOn(ms: number) {
-  return new Promise(resolve => setTimeout(resolve, ms));
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 export function generateStarter(scene, species?: Species[]) {
@@ -37,10 +36,19 @@ export function generateStarter(scene, species?: Species[]) {
   for (const starter of starters) {
     const starterProps = scene.gameData.getSpeciesDexAttrProps(starter.species, starter.dexAttr);
     const starterFormIndex = Math.min(starterProps.formIndex, Math.max(starter.species.forms.length - 1, 0));
-    const starterGender = starter.species.malePercent !== null
-      ? !starterProps.female ? Gender.MALE : Gender.FEMALE
-      : Gender.GENDERLESS;
-    const starterPokemon = scene.addPlayerPokemon(starter.species, startingLevel, starter.abilityIndex, starterFormIndex, starterGender, starterProps.shiny, starterProps.variant, undefined, starter.nature);
+    const starterGender =
+      starter.species.malePercent !== null ? (!starterProps.female ? Gender.MALE : Gender.FEMALE) : Gender.GENDERLESS;
+    const starterPokemon = scene.addPlayerPokemon(
+      starter.species,
+      startingLevel,
+      starter.abilityIndex,
+      starterFormIndex,
+      starterGender,
+      starterProps.shiny,
+      starterProps.variant,
+      undefined,
+      starter.nature,
+    );
     starter.moveset = starterPokemon.moveset;
   }
   return starters;
@@ -56,14 +64,26 @@ function getTestRunStarters(scene, seed, species) {
   for (const specie of species) {
     const starterSpeciesForm = getPokemonSpeciesForm(specie, 0);
     const starterSpecies = getPokemonSpecies(starterSpeciesForm.speciesId);
-    const pokemon = new PlayerPokemon(scene, starterSpecies, startingLevel, undefined, 0, undefined, undefined, undefined, undefined, undefined, undefined);
+    const pokemon = new PlayerPokemon(
+      scene,
+      starterSpecies,
+      startingLevel,
+      undefined,
+      0,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+    );
     const starter: Starter = {
       species: starterSpecies,
       dexAttr: pokemon.getDexAttr(),
       abilityIndex: pokemon.abilityIndex,
       passive: false,
       nature: pokemon.getNature(),
-      pokerus: pokemon.pokerus
+      pokerus: pokemon.pokerus,
     };
     starters.push(starter);
   }
@@ -71,7 +91,7 @@ function getTestRunStarters(scene, seed, species) {
 }
 
 export function waitUntil(truth) {
-  return new Promise(resolve => {
+  return new Promise((resolve) => {
     const interval = setInterval(() => {
       if (truth()) {
         clearInterval(interval);

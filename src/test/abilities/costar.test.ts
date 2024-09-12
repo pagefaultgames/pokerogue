@@ -32,7 +32,6 @@ describe("Abilities - COSTAR", () => {
     game.override.enemyMoveset(Moves.SPLASH);
   });
 
-
   test(
     "ability copies positive stat stages",
     async () => {

@@ -30,10 +30,8 @@ describe("Abilities - Contrary", () => {
       .enemyMoveset(Moves.SPLASH);
   });
 
-  it("should invert stat changes when applied", async() => {
-    await game.startBattle([
-      Species.SLOWBRO
-    ]);
+  it("should invert stat changes when applied", async () => {
+    await game.startBattle([Species.SLOWBRO]);
 
     const enemyPokemon = game.scene.getEnemyPokemon()!;
 

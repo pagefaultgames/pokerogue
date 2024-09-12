@@ -23,13 +23,19 @@ export class BerryPhase extends FieldPhase {
         pokemon.getOpponents().map((opp) => applyAbAttrs(PreventBerryUseAbAttr, opp, cancelled));
 
         if (cancelled.value) {
-          pokemon.scene.queueMessage(i18next.t("abilityTriggers:preventBerryUse", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }));
+          pokemon.scene.queueMessage(
+            i18next.t("abilityTriggers:preventBerryUse", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }),
+          );
         } else {
           this.scene.unshiftPhase(
-            new CommonAnimPhase(this.scene, pokemon.getBattlerIndex(), pokemon.getBattlerIndex(), CommonAnim.USE_ITEM)
+            new CommonAnimPhase(this.scene, pokemon.getBattlerIndex(), pokemon.getBattlerIndex(), CommonAnim.USE_ITEM),
           );
 
-          for (const berryModifier of this.scene.applyModifiers(BerryModifier, pokemon.isPlayer(), pokemon) as BerryModifier[]) {
+          for (const berryModifier of this.scene.applyModifiers(
+            BerryModifier,
+            pokemon.isPlayer(),
+            pokemon,
+          ) as BerryModifier[]) {
             if (berryModifier.consumed) {
               if (!--berryModifier.stackCount) {
                 this.scene.removeModifier(berryModifier);

@@ -32,7 +32,7 @@ describe("Moves - Gigaton Hammer", () => {
       .disableCrits();
   });
 
-  it("can't be used two turns in a row", async() => {
+  it("can't be used two turns in a row", async () => {
     await game.classicMode.startBattle();
 
     const enemy1 = game.scene.getEnemyPokemon()!;
@@ -54,7 +54,7 @@ describe("Moves - Gigaton Hammer", () => {
     expect(enemy2.hp).toBe(enemy2.getMaxHp());
   }, 20000);
 
-  it("can be used again if recalled and sent back out", async() => {
+  it("can be used again if recalled and sent back out", async () => {
     game.override.startingWave(4);
     await game.classicMode.startBattle();
 

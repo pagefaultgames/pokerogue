@@ -2,11 +2,9 @@ import BattleScene from "../battle-scene";
 import AbstractOptionSelectUiHandler, { OptionSelectConfig } from "./abstact-option-select-ui-handler";
 import { Mode } from "./ui";
 import i18next from "i18next";
-import {Button} from "#enums/buttons";
-
+import { Button } from "#enums/buttons";
 
 export default class ConfirmUiHandler extends AbstractOptionSelectUiHandler {
-
   public static readonly windowWidth: integer = 48;
 
   private switchCheck: boolean;
@@ -21,7 +19,13 @@ export default class ConfirmUiHandler extends AbstractOptionSelectUiHandler {
   }
 
   show(args: any[]): boolean {
-    if (args.length === 4 && args[0] instanceof Function && args[1] instanceof Function && args[2] instanceof Function && args[3] === "fullParty") {
+    if (
+      args.length === 4 &&
+      args[0] instanceof Function &&
+      args[1] instanceof Function &&
+      args[2] instanceof Function &&
+      args[3] === "fullParty"
+    ) {
       const config: OptionSelectConfig = {
         options: [
           {
@@ -30,31 +34,33 @@ export default class ConfirmUiHandler extends AbstractOptionSelectUiHandler {
               args[0]();
               return true;
             },
-          }, {
+          },
+          {
             label: i18next.t("menu:yes"),
             handler: () => {
               args[1]();
               return true;
-            }
-          }, {
+            },
+          },
+          {
             label: i18next.t("menu:no"),
             handler: () => {
               args[2]();
               return true;
-            }
-          }
+            },
+          },
         ],
-        delay: args.length >= 8 && args[7] !== null ? args[7] as integer : 0
+        delay: args.length >= 8 && args[7] !== null ? (args[7] as integer) : 0,
       };
 
-      super.show([ config ]);
+      super.show([config]);
 
-      this.switchCheck = args.length >= 5 && args[4] !== null && args[4] as boolean;
+      this.switchCheck = args.length >= 5 && args[4] !== null && (args[4] as boolean);
 
-      const xOffset = (args.length >= 6 && args[5] !== null ? args[5] as number : 0);
-      const yOffset = (args.length >= 7 && args[6] !== null ? args[6] as number : 0);
+      const xOffset = args.length >= 6 && args[5] !== null ? (args[5] as number) : 0;
+      const yOffset = args.length >= 7 && args[6] !== null ? (args[6] as number) : 0;
 
-      this.optionSelectContainer.setPosition((this.scene.game.canvas.width / 6) - 1 + xOffset, -48 + yOffset);
+      this.optionSelectContainer.setPosition(this.scene.game.canvas.width / 6 - 1 + xOffset, -48 + yOffset);
 
       this.setCursor(this.switchCheck ? this.switchCheckCursor : 0);
       return true;
@@ -66,27 +72,27 @@ export default class ConfirmUiHandler extends AbstractOptionSelectUiHandler {
             handler: () => {
               args[0]();
               return true;
-            }
+            },
           },
           {
             label: i18next.t("menu:no"),
             handler: () => {
               args[1]();
               return true;
-            }
-          }
+            },
+          },
         ],
-        delay: args.length >= 6 && args[5] !== null ? args[5] as integer : 0
+        delay: args.length >= 6 && args[5] !== null ? (args[5] as integer) : 0,
       };
 
-      super.show([ config ]);
+      super.show([config]);
 
-      this.switchCheck = args.length >= 3 && args[2] !== null && args[2] as boolean;
+      this.switchCheck = args.length >= 3 && args[2] !== null && (args[2] as boolean);
 
-      const xOffset = (args.length >= 4 && args[3] !== null ? args[3] as number : 0);
-      const yOffset = (args.length >= 5 && args[4] !== null ? args[4] as number : 0);
+      const xOffset = args.length >= 4 && args[3] !== null ? (args[3] as number) : 0;
+      const yOffset = args.length >= 5 && args[4] !== null ? (args[4] as number) : 0;
 
-      this.optionSelectContainer.setPosition((this.scene.game.canvas.width / 6) - 1 + xOffset, -48 + yOffset);
+      this.optionSelectContainer.setPosition(this.scene.game.canvas.width / 6 - 1 + xOffset, -48 + yOffset);
 
       this.setCursor(this.switchCheck ? this.switchCheckCursor : 0);
 

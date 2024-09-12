@@ -109,5 +109,5 @@ export const esConfig = {
   partyUiHandler,
   modifierSelectUiHandler,
   moveTriggers,
-  runHistory
+  runHistory,
 };

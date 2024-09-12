@@ -6,7 +6,6 @@ import { FormModalUiHandler } from "./form-modal-ui-handler";
 import { Button } from "#app/enums/buttons";
 
 export default class AdminUiHandler extends FormModalUiHandler {
-
   constructor(scene: BattleScene, mode: Mode | null = null) {
     super(scene, mode);
   }
@@ -51,7 +50,7 @@ export default class AdminUiHandler extends FormModalUiHandler {
       this.submitAction = (_) => {
         this.submitAction = originalSubmitAction;
         this.scene.ui.setMode(Mode.LOADING, { buttonActions: [] });
-        const onFail = error => {
+        const onFail = (error) => {
           this.scene.ui.setMode(Mode.ADMIN, Object.assign(config, { errorMessage: error?.trim() }));
           this.scene.ui.playError();
         };
@@ -61,8 +60,13 @@ export default class AdminUiHandler extends FormModalUiHandler {
         if (!this.inputs[1].text) {
           return onFail("Discord Id is required");
         }
-        Utils.apiPost("admin/account/discord-link", `username=${encodeURIComponent(this.inputs[0].text)}&discordId=${encodeURIComponent(this.inputs[1].text)}`, "application/x-www-form-urlencoded", true)
-          .then(response => {
+        Utils.apiPost(
+          "admin/account/discord-link",
+          `username=${encodeURIComponent(this.inputs[0].text)}&discordId=${encodeURIComponent(this.inputs[1].text)}`,
+          "application/x-www-form-urlencoded",
+          true,
+        )
+          .then((response) => {
             if (!response.ok) {
               console.error(response);
             }
@@ -79,7 +83,6 @@ export default class AdminUiHandler extends FormModalUiHandler {
       return true;
     }
     return false;
-
   }
 
   clear(): void {

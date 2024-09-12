@@ -24,9 +24,7 @@ describe("Weather - Fog", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override
-      .weather(WeatherType.FOG)
-      .battleType("single");
+    game.override.weather(WeatherType.FOG).battleType("single");
     game.override.moveset([Moves.TACKLE]);
     game.override.ability(Abilities.BALL_FETCH);
     game.override.enemyAbility(Abilities.BALL_FETCH);

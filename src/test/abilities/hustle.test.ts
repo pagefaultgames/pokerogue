@@ -25,7 +25,7 @@ describe("Abilities - Hustle", () => {
     game = new GameManager(phaserGame);
     game.override
       .ability(Abilities.HUSTLE)
-      .moveset([ Moves.TACKLE, Moves.GIGA_DRAIN, Moves.FISSURE ])
+      .moveset([Moves.TACKLE, Moves.GIGA_DRAIN, Moves.FISSURE])
       .disableCrits()
       .battleType("single")
       .enemyMoveset(Moves.SPLASH)

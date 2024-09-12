@@ -48,7 +48,9 @@ export default class EggCounterContainer extends Phaser.GameObjects.Container {
     const eggSprite = this.battleScene.add.sprite(19, 18, "egg", "egg_0");
     eggSprite.setScale(0.32);
 
-    this.eggCountText = addTextObject(this.battleScene, 28, 13, `${this.eggCount}`, TextStyle.MESSAGE, { fontSize: "66px" });
+    this.eggCountText = addTextObject(this.battleScene, 28, 13, `${this.eggCount}`, TextStyle.MESSAGE, {
+      fontSize: "66px",
+    });
     this.eggCountText.setName("text-egg-count");
 
     this.add(eggSprite);

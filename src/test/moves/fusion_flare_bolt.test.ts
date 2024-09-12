@@ -45,10 +45,7 @@ describe("Moves - Fusion Flare and Fusion Bolt", () => {
   });
 
   it("FUSION_FLARE should double power of subsequent FUSION_BOLT", async () => {
-    await game.startBattle([
-      Species.ZEKROM,
-      Species.ZEKROM
-    ]);
+    await game.startBattle([Species.ZEKROM, Species.ZEKROM]);
 
     game.move.select(fusionFlare.id, 0, BattlerIndex.ENEMY);
     game.move.select(fusionBolt.id, 1, BattlerIndex.ENEMY);
@@ -68,10 +65,7 @@ describe("Moves - Fusion Flare and Fusion Bolt", () => {
   }, 20000);
 
   it("FUSION_BOLT should double power of subsequent FUSION_FLARE", async () => {
-    await game.startBattle([
-      Species.ZEKROM,
-      Species.ZEKROM
-    ]);
+    await game.startBattle([Species.ZEKROM, Species.ZEKROM]);
 
     game.move.select(fusionBolt.id, 0, BattlerIndex.ENEMY);
     game.move.select(fusionFlare.id, 1, BattlerIndex.ENEMY);
@@ -91,10 +85,7 @@ describe("Moves - Fusion Flare and Fusion Bolt", () => {
   }, 20000);
 
   it("FUSION_FLARE should double power of subsequent FUSION_BOLT if a move failed in between", async () => {
-    await game.startBattle([
-      Species.ZEKROM,
-      Species.ZEKROM
-    ]);
+    await game.startBattle([Species.ZEKROM, Species.ZEKROM]);
 
     game.move.select(fusionFlare.id, 0, BattlerIndex.PLAYER);
     game.move.select(fusionBolt.id, 1, BattlerIndex.PLAYER);
@@ -120,10 +111,7 @@ describe("Moves - Fusion Flare and Fusion Bolt", () => {
 
   it("FUSION_FLARE should not double power of subsequent FUSION_BOLT if a move succeeded in between", async () => {
     game.override.enemyMoveset([Moves.SPLASH, Moves.SPLASH, Moves.SPLASH, Moves.SPLASH]);
-    await game.startBattle([
-      Species.ZEKROM,
-      Species.ZEKROM
-    ]);
+    await game.startBattle([Species.ZEKROM, Species.ZEKROM]);
 
     game.move.select(fusionFlare.id, 0, BattlerIndex.ENEMY);
     game.move.select(fusionBolt.id, 1, BattlerIndex.ENEMY);
@@ -147,10 +135,7 @@ describe("Moves - Fusion Flare and Fusion Bolt", () => {
   }, 20000);
 
   it("FUSION_FLARE should double power of subsequent FUSION_BOLT if moves are aimed at allies", async () => {
-    await game.startBattle([
-      Species.ZEKROM,
-      Species.RESHIRAM
-    ]);
+    await game.startBattle([Species.ZEKROM, Species.RESHIRAM]);
 
     game.move.select(fusionBolt.id, 0, BattlerIndex.PLAYER_2);
     game.move.select(fusionFlare.id, 1, BattlerIndex.PLAYER);
@@ -171,10 +156,7 @@ describe("Moves - Fusion Flare and Fusion Bolt", () => {
 
   it("FUSION_FLARE and FUSION_BOLT alternating throughout turn should double power of subsequent moves", async () => {
     game.override.enemyMoveset([fusionFlare.id, fusionFlare.id, fusionFlare.id, fusionFlare.id]);
-    await game.startBattle([
-      Species.ZEKROM,
-      Species.ZEKROM
-    ]);
+    await game.startBattle([Species.ZEKROM, Species.ZEKROM]);
 
     const party = game.scene.getParty();
     const enemyParty = game.scene.getEnemyParty();
@@ -185,19 +167,17 @@ describe("Moves - Fusion Flare and Fusion Bolt", () => {
 
     // Mock stats by replacing entries in copy with desired values for specific stats
     const stats = {
-      enemy: [
-        [...enemyParty[0].stats],
-        [...enemyParty[1].stats],
-      ],
-      player: [
-        [...party[0].stats],
-        [...party[1].stats],
-      ]
+      enemy: [[...enemyParty[0].stats], [...enemyParty[1].stats]],
+      player: [[...party[0].stats], [...party[1].stats]],
     };
 
     // Ensure survival by reducing enemy Sp. Atk and boosting party Sp. Def
-    vi.spyOn(enemyParty[0], "stats", "get").mockReturnValue(stats.enemy[0].map((val, i) => (i === Stat.SPATK ? 1 : val)));
-    vi.spyOn(enemyParty[1], "stats", "get").mockReturnValue(stats.enemy[1].map((val, i) => (i === Stat.SPATK ? 1 : val)));
+    vi.spyOn(enemyParty[0], "stats", "get").mockReturnValue(
+      stats.enemy[0].map((val, i) => (i === Stat.SPATK ? 1 : val)),
+    );
+    vi.spyOn(enemyParty[1], "stats", "get").mockReturnValue(
+      stats.enemy[1].map((val, i) => (i === Stat.SPATK ? 1 : val)),
+    );
     vi.spyOn(party[1], "stats", "get").mockReturnValue(stats.player[0].map((val, i) => (i === Stat.SPDEF ? 250 : val)));
     vi.spyOn(party[1], "stats", "get").mockReturnValue(stats.player[1].map((val, i) => (i === Stat.SPDEF ? 250 : val)));
 
@@ -230,10 +210,7 @@ describe("Moves - Fusion Flare and Fusion Bolt", () => {
 
   it("FUSION_FLARE and FUSION_BOLT alternating throughout turn should double power of subsequent moves if moves are aimed at allies", async () => {
     game.override.enemyMoveset([fusionFlare.id, fusionFlare.id, fusionFlare.id, fusionFlare.id]);
-    await game.startBattle([
-      Species.ZEKROM,
-      Species.ZEKROM
-    ]);
+    await game.startBattle([Species.ZEKROM, Species.ZEKROM]);
 
     const party = game.scene.getParty();
     const enemyParty = game.scene.getEnemyParty();
@@ -244,19 +221,17 @@ describe("Moves - Fusion Flare and Fusion Bolt", () => {
 
     // Mock stats by replacing entries in copy with desired values for specific stats
     const stats = {
-      enemy: [
-        [...enemyParty[0].stats],
-        [...enemyParty[1].stats],
-      ],
-      player: [
-        [...party[0].stats],
-        [...party[1].stats],
-      ]
+      enemy: [[...enemyParty[0].stats], [...enemyParty[1].stats]],
+      player: [[...party[0].stats], [...party[1].stats]],
     };
 
     // Ensure survival by reducing enemy Sp. Atk and boosting party Sp. Def
-    vi.spyOn(enemyParty[0], "stats", "get").mockReturnValue(stats.enemy[0].map((val, i) => (i === Stat.SPATK ? 1 : val)));
-    vi.spyOn(enemyParty[1], "stats", "get").mockReturnValue(stats.enemy[1].map((val, i) => (i === Stat.SPATK ? 1 : val)));
+    vi.spyOn(enemyParty[0], "stats", "get").mockReturnValue(
+      stats.enemy[0].map((val, i) => (i === Stat.SPATK ? 1 : val)),
+    );
+    vi.spyOn(enemyParty[1], "stats", "get").mockReturnValue(
+      stats.enemy[1].map((val, i) => (i === Stat.SPATK ? 1 : val)),
+    );
     vi.spyOn(party[1], "stats", "get").mockReturnValue(stats.player[0].map((val, i) => (i === Stat.SPDEF ? 250 : val)));
     vi.spyOn(party[1], "stats", "get").mockReturnValue(stats.player[1].map((val, i) => (i === Stat.SPDEF ? 250 : val)));
 

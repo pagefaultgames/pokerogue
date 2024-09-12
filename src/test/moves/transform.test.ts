@@ -32,13 +32,11 @@ describe("Moves - Transform", () => {
       .enemyPassiveAbility(Abilities.BALL_FETCH)
       .enemyMoveset(Moves.SPLASH)
       .ability(Abilities.INTIMIDATE)
-      .moveset([ Moves.TRANSFORM ]);
+      .moveset([Moves.TRANSFORM]);
   });
 
   it("should copy species, ability, gender, all stats except HP, all stat stages, moveset, and types of target", async () => {
-    await game.startBattle([
-      Species.DITTO
-    ]);
+    await game.startBattle([Species.DITTO]);
 
     game.move.select(Moves.TRANSFORM);
     await game.phaseInterceptor.to(TurnEndPhase);
@@ -78,9 +76,7 @@ describe("Moves - Transform", () => {
   it("should copy in-battle overridden stats", async () => {
     game.override.enemyMoveset([Moves.POWER_SPLIT]);
 
-    await game.startBattle([
-      Species.DITTO
-    ]);
+    await game.startBattle([Species.DITTO]);
 
     const player = game.scene.getPlayerPokemon()!;
     const enemy = game.scene.getEnemyPokemon()!;

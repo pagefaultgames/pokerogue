@@ -14,7 +14,14 @@ export class ObtainStatusEffectPhase extends PokemonPhase {
   private sourceText: string | null;
   private sourcePokemon: Pokemon | null;
 
-  constructor(scene: BattleScene, battlerIndex: BattlerIndex, statusEffect?: StatusEffect, cureTurn?: integer | null, sourceText?: string, sourcePokemon?: Pokemon) {
+  constructor(
+    scene: BattleScene,
+    battlerIndex: BattlerIndex,
+    statusEffect?: StatusEffect,
+    cureTurn?: integer | null,
+    sourceText?: string,
+    sourcePokemon?: Pokemon,
+  ) {
     super(scene, battlerIndex);
 
     this.statusEffect = statusEffect;
@@ -28,11 +35,17 @@ export class ObtainStatusEffectPhase extends PokemonPhase {
     if (!pokemon?.status) {
       if (pokemon?.trySetStatus(this.statusEffect, false, this.sourcePokemon)) {
         if (this.cureTurn) {
-            pokemon.status!.cureTurn = this.cureTurn; // TODO: is this bang correct?
+          pokemon.status!.cureTurn = this.cureTurn; // TODO: is this bang correct?
         }
         pokemon.updateInfo(true);
         new CommonBattleAnim(CommonAnim.POISON + (this.statusEffect! - 1), pokemon).play(this.scene, () => {
-          this.scene.queueMessage(getStatusEffectObtainText(this.statusEffect, getPokemonNameWithAffix(pokemon), this.sourceText ?? undefined));
+          this.scene.queueMessage(
+            getStatusEffectObtainText(
+              this.statusEffect,
+              getPokemonNameWithAffix(pokemon),
+              this.sourceText ?? undefined,
+            ),
+          );
           if (pokemon.status?.isPostTurn()) {
             this.scene.pushPhase(new PostTurnStatusEffectPhase(this.scene, this.battlerIndex));
           }

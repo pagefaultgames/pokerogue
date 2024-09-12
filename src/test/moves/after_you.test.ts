@@ -36,30 +36,38 @@ describe("Moves - After You", () => {
       .moveset([Moves.AFTER_YOU, Moves.SPLASH]);
   });
 
-  it("makes the target move immediately after the user", async () => {
-    await game.classicMode.startBattle([Species.REGIELEKI, Species.SHUCKLE]);
+  it(
+    "makes the target move immediately after the user",
+    async () => {
+      await game.classicMode.startBattle([Species.REGIELEKI, Species.SHUCKLE]);
 
-    game.move.select(Moves.AFTER_YOU, 0, BattlerIndex.PLAYER_2);
-    game.move.select(Moves.SPLASH, 1);
+      game.move.select(Moves.AFTER_YOU, 0, BattlerIndex.PLAYER_2);
+      game.move.select(Moves.SPLASH, 1);
 
-    await game.phaseInterceptor.to("MoveEffectPhase");
-    await game.phaseInterceptor.to(MovePhase, false);
-    const phase = game.scene.getCurrentPhase() as MovePhase;
-    expect(phase.pokemon).toBe(game.scene.getPlayerField()[1]);
-    await game.phaseInterceptor.to("MoveEndPhase");
-  }, TIMEOUT);
+      await game.phaseInterceptor.to("MoveEffectPhase");
+      await game.phaseInterceptor.to(MovePhase, false);
+      const phase = game.scene.getCurrentPhase() as MovePhase;
+      expect(phase.pokemon).toBe(game.scene.getPlayerField()[1]);
+      await game.phaseInterceptor.to("MoveEndPhase");
+    },
+    TIMEOUT,
+  );
 
-  it("fails if target already moved", async () => {
-    game.override.enemySpecies(Species.SHUCKLE);
-    await game.classicMode.startBattle([Species.REGIELEKI, Species.PIKACHU]);
+  it(
+    "fails if target already moved",
+    async () => {
+      game.override.enemySpecies(Species.SHUCKLE);
+      await game.classicMode.startBattle([Species.REGIELEKI, Species.PIKACHU]);
 
-    game.move.select(Moves.SPLASH);
-    game.move.select(Moves.AFTER_YOU, 1, BattlerIndex.PLAYER);
+      game.move.select(Moves.SPLASH);
+      game.move.select(Moves.AFTER_YOU, 1, BattlerIndex.PLAYER);
 
-    await game.phaseInterceptor.to("MoveEndPhase");
-    await game.phaseInterceptor.to("MoveEndPhase");
-    await game.phaseInterceptor.to(MovePhase);
+      await game.phaseInterceptor.to("MoveEndPhase");
+      await game.phaseInterceptor.to("MoveEndPhase");
+      await game.phaseInterceptor.to(MovePhase);
 
-    expect(game.scene.getPlayerField()[1].getLastXMoves(1)[0].result).toBe(MoveResult.FAIL);
-  }, TIMEOUT);
+      expect(game.scene.getPlayerField()[1].getLastXMoves(1)[0].result).toBe(MoveResult.FAIL);
+    },
+    TIMEOUT,
+  );
 });

@@ -1,5 +1,15 @@
 import { TurnHeldItemTransferModifier } from "#app/modifier/modifier";
-import { Achv, AchvTier, DamageAchv, HealAchv, LevelAchv, ModifierAchv, MoneyAchv, RibbonAchv, achvs } from "#app/system/achv";
+import {
+  Achv,
+  AchvTier,
+  DamageAchv,
+  HealAchv,
+  LevelAchv,
+  ModifierAchv,
+  MoneyAchv,
+  RibbonAchv,
+  achvs,
+} from "#app/system/achv";
 import { IntegerHolder, NumberHolder } from "#app/utils";
 import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
@@ -7,12 +17,11 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vite
 import BattleScene from "../../battle-scene";
 
 describe("check some Achievement related stuff", () => {
-  it ("should check Achievement creation", () => {
+  it("should check Achievement creation", () => {
     const ach = new MoneyAchv("", "Achievement", 1000, null!, 100);
     expect(ach.name).toBe("Achievement");
   });
 });
-
 
 describe("Achv", () => {
   let achv: Achv;
@@ -188,13 +197,27 @@ describe("LevelAchv", () => {
 
 describe("ModifierAchv", () => {
   it("should create an instance of ModifierAchv", () => {
-    const modifierAchv = new ModifierAchv("", "Test Modifier Achievement", "Test Description", "modifier_icon", 10, () => true);
+    const modifierAchv = new ModifierAchv(
+      "",
+      "Test Modifier Achievement",
+      "Test Description",
+      "modifier_icon",
+      10,
+      () => true,
+    );
     expect(modifierAchv).toBeInstanceOf(ModifierAchv);
     expect(modifierAchv instanceof Achv).toBe(true);
   });
 
   it("should validate the achievement based on the modifier function", () => {
-    const modifierAchv = new ModifierAchv("", "Test Modifier Achievement", "Test Description", "modifier_icon", 10, () => true);
+    const modifierAchv = new ModifierAchv(
+      "",
+      "Test Modifier Achievement",
+      "Test Description",
+      "modifier_icon",
+      10,
+      () => true,
+    );
     const scene = new BattleScene();
     const modifier = new TurnHeldItemTransferModifier(null!, 3, 1);
 
@@ -247,7 +270,6 @@ describe("achvs", () => {
   });
 
   it("should initialize the achievements with IDs and parent IDs", () => {
-
     expect(achvs._10K_MONEY.id).toBe("_10K_MONEY");
     expect(achvs._10K_MONEY.hasParent).toBe(undefined);
     expect(achvs._100K_MONEY.id).toBe("_100K_MONEY");

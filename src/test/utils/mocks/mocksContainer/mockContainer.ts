@@ -25,11 +25,9 @@ export default class MockContainer implements MockGameObject {
     this.visible = visible;
   }
 
-  once(event, callback, source) {
-  }
+  once(event, callback, source) {}
 
-  off(event, callback, source) {
-  }
+  off(event, callback, source) {}
 
   removeFromDisplayList() {
     // same as remove or destroy
@@ -167,8 +165,7 @@ export default class MockContainer implements MockGameObject {
     // Brings this Game Object to the top of its parents display list.
   }
 
-  on(event, callback, source) {
-  }
+  on(event, callback, source) {}
 
   add(obj) {
     // Adds a child to this Game Object.

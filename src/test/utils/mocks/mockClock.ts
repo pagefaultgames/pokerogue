@@ -1,6 +1,5 @@
 import Clock = Phaser.Time.Clock;
 
-
 export class MockClock extends Clock {
   public overrideDelay: number | undefined;
   constructor(scene) {
@@ -18,7 +17,7 @@ export class MockClock extends Clock {
   }
 
   addEvent(config: Phaser.Time.TimerEvent | Phaser.Types.Time.TimerEventConfig): Phaser.Time.TimerEvent {
-    const cfg = { ...config, delay: this.overrideDelay || config.delay};
+    const cfg = { ...config, delay: this.overrideDelay || config.delay };
     return super.addEvent(cfg);
   }
 }

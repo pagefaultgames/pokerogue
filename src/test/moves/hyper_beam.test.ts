@@ -17,7 +17,7 @@ describe("Moves - Hyper Beam", () => {
 
   beforeAll(() => {
     phaserGame = new Phaser.Game({
-      type: Phaser.HEADLESS
+      type: Phaser.HEADLESS,
     });
   });
 
@@ -67,6 +67,7 @@ describe("Moves - Hyper Beam", () => {
       await game.phaseInterceptor.to(BerryPhase, false);
 
       expect(enemyPokemon.hp).toBeLessThan(enemyPostAttackHp);
-    }, TIMEOUT
+    },
+    TIMEOUT,
   );
 });

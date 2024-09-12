@@ -67,7 +67,7 @@ describe("Abilities - ZEN MODE", () => {
       expect(game.scene.getParty()[0].hp).toBeLessThan(100);
       expect(game.scene.getParty()[0].formIndex).toBe(0);
     },
-    TIMEOUT
+    TIMEOUT,
   );
 
   test(
@@ -87,7 +87,7 @@ describe("Abilities - ZEN MODE", () => {
       expect(game.scene.getParty()[0].hp).not.toBe(100);
       expect(game.scene.getParty()[0].formIndex).not.toBe(0);
     },
-    TIMEOUT
+    TIMEOUT,
   );
 
   test(
@@ -125,7 +125,7 @@ describe("Abilities - ZEN MODE", () => {
       await game.phaseInterceptor.to(PostSummonPhase);
       expect(game.scene.getParty()[1].formIndex).toBe(1);
     },
-    TIMEOUT
+    TIMEOUT,
   );
 
   test(
@@ -156,6 +156,6 @@ describe("Abilities - ZEN MODE", () => {
 
       expect(darmanitan.formIndex).toBe(baseForm);
     },
-    TIMEOUT
+    TIMEOUT,
   );
 });

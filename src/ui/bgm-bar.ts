@@ -1,5 +1,5 @@
 import BattleScene from "../battle-scene";
-import {addTextObject, TextStyle} from "./text";
+import { addTextObject, TextStyle } from "./text";
 import i18next from "i18next";
 import * as Utils from "#app/utils";
 
@@ -24,7 +24,18 @@ export default class BgmBar extends Phaser.GameObjects.Container {
     this.defaultWidth = 230;
     this.defaultHeight = 100;
 
-    this.bg = this.scene.add.nineslice(-5, -5, "bgm_bar", undefined, this.defaultWidth, this.defaultHeight, 0, 0, 10, 10);
+    this.bg = this.scene.add.nineslice(
+      -5,
+      -5,
+      "bgm_bar",
+      undefined,
+      this.defaultWidth,
+      this.defaultHeight,
+      0,
+      0,
+      10,
+      10,
+    );
     this.bg.setOrigin(0, 0);
 
     this.add(this.bg);
@@ -40,8 +51,8 @@ export default class BgmBar extends Phaser.GameObjects.Container {
   }
 
   /*
-    * Set the BGM Name to the BGM bar.
-    * @param {string} bgmName The name of the BGM to set.
+   * Set the BGM Name to the BGM bar.
+   * @param {string} bgmName The name of the BGM to set.
    */
   setBgmToBgmBar(bgmName: string): void {
     this.musicText.setText(`${i18next.t("bgmName:music")}${this.getRealBgmName(bgmName)}`);
@@ -83,11 +94,11 @@ export default class BgmBar extends Phaser.GameObjects.Container {
       ease: "Sine.easeInOut",
       onComplete: () => {
         this.setVisible(true);
-      }
+      },
     });
   }
 
   getRealBgmName(bgmName: string): string {
-    return i18next.t([`bgmName:${bgmName}`, "bgmName:missing_entries"], {name: Utils.formatText(bgmName)});
+    return i18next.t([`bgmName:${bgmName}`, "bgmName:missing_entries"], { name: Utils.formatText(bgmName) });
   }
 }

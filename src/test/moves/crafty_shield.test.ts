@@ -55,8 +55,9 @@ describe("Moves - Crafty Shield", () => {
 
       await game.phaseInterceptor.to(BerryPhase, false);
 
-      leadPokemon.forEach(p => expect(p.getStatStage(Stat.ATK)).toBe(0));
-    }, TIMEOUT
+      leadPokemon.forEach((p) => expect(p.getStatStage(Stat.ATK)).toBe(0));
+    },
+    TIMEOUT,
   );
 
   test(
@@ -76,8 +77,9 @@ describe("Moves - Crafty Shield", () => {
 
       await game.phaseInterceptor.to(BerryPhase, false);
 
-      expect(leadPokemon.some(p => p.hp < p.getMaxHp())).toBeTruthy();
-    }, TIMEOUT
+      expect(leadPokemon.some((p) => p.hp < p.getMaxHp())).toBeTruthy();
+    },
+    TIMEOUT,
   );
 
   test(
@@ -98,27 +100,25 @@ describe("Moves - Crafty Shield", () => {
 
       await game.phaseInterceptor.to(BerryPhase, false);
 
-      leadPokemon.forEach(p => expect(p.getTag(BattlerTagType.CURSED)).toBeUndefined());
-    }, TIMEOUT
+      leadPokemon.forEach((p) => expect(p.getTag(BattlerTagType.CURSED)).toBeUndefined());
+    },
+    TIMEOUT,
   );
 
-  test(
-    "should not block allies' self-targeted moves",
-    async () => {
-      await game.startBattle([Species.CHARIZARD, Species.BLASTOISE]);
+  test("should not block allies' self-targeted moves", async () => {
+    await game.startBattle([Species.CHARIZARD, Species.BLASTOISE]);
 
-      const leadPokemon = game.scene.getPlayerField();
+    const leadPokemon = game.scene.getPlayerField();
 
-      game.move.select(Moves.CRAFTY_SHIELD);
+    game.move.select(Moves.CRAFTY_SHIELD);
 
-      await game.phaseInterceptor.to(CommandPhase);
+    await game.phaseInterceptor.to(CommandPhase);
 
-      game.move.select(Moves.SWORDS_DANCE, 1);
+    game.move.select(Moves.SWORDS_DANCE, 1);
 
-      await game.phaseInterceptor.to(BerryPhase, false);
+    await game.phaseInterceptor.to(BerryPhase, false);
 
-      expect(leadPokemon[0].getStatStage(Stat.ATK)).toBe(0);
-      expect(leadPokemon[1].getStatStage(Stat.ATK)).toBe(2);
-    }
-  );
+    expect(leadPokemon[0].getStatStage(Stat.ATK)).toBe(0);
+    expect(leadPokemon[1].getStatStage(Stat.ATK)).toBe(2);
+  });
 });

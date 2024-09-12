@@ -1,10 +1,13 @@
 # ESLint
+
 ## Key Features
 
 1. **Automation**:
+
    - A pre-commit hook has been added to automatically run ESLint on the added or modified files, ensuring code quality before commits.
 
 2. **Manual Usage**:
+
    - If you prefer not to use the pre-commit hook, you can manually run ESLint to automatically fix issues using the command:
      ```sh
      npx eslint --fix . or npm run eslint
@@ -17,10 +20,11 @@
 ## Summary of ESLint Rules
 
 1. **General Rules**:
+
    - **Equality**: Use `===` and `!==` instead of `==` and `!=` (`eqeqeq`).
    - **Indentation**: Enforce 2-space indentation (`indent`).
    - **Quotes**: Use doublequotes for strings (`quotes`).
-   - **Variable Declarations**: 
+   - **Variable Declarations**:
      - Disallow `var`; use `let` or `const` (`no-var`).
      - Prefer `const` for variables that are never reassigned (`prefer-const`).
    - **Unused Variables**: Allow unused function parameters but enforce error for other unused variables (`@typescript-eslint/no-unused-vars`).

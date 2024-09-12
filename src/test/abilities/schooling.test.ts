@@ -60,6 +60,6 @@ describe("Abilities - SCHOOLING", () => {
 
       expect(wishiwashi.formIndex).toBe(soloForm);
     },
-    TIMEOUT
+    TIMEOUT,
   );
 });

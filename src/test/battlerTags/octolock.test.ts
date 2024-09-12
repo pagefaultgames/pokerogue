@@ -18,10 +18,10 @@ describe("BattlerTag - OctolockTag", () => {
 
       const subject = new OctolockTag(1);
 
-      vi.spyOn(mockPokemon.scene, "unshiftPhase").mockImplementation(phase => {
+      vi.spyOn(mockPokemon.scene, "unshiftPhase").mockImplementation((phase) => {
         expect(phase).toBeInstanceOf(StatStageChangePhase);
         expect((phase as StatStageChangePhase)["stages"]).toEqual(-1);
-        expect((phase as StatStageChangePhase)["stats"]).toEqual([ Stat.DEF, Stat.SPDEF ]);
+        expect((phase as StatStageChangePhase)["stats"]).toEqual([Stat.DEF, Stat.SPDEF]);
       });
 
       subject.lapse(mockPokemon, BattlerTagLapseType.TURN_END);
@@ -30,11 +30,11 @@ describe("BattlerTag - OctolockTag", () => {
     });
   });
 
-  it ("traps its target (extends TrappedTag)", { timeout: 2000 }, async () => {
+  it("traps its target (extends TrappedTag)", { timeout: 2000 }, async () => {
     expect(new OctolockTag(1)).toBeInstanceOf(TrappedTag);
   });
 
-  it("can be added to pokemon who are not octolocked", { timeout: 2000 }, async => {
+  it("can be added to pokemon who are not octolocked", { timeout: 2000 }, (async) => {
     const mockPokemon = {
       getTag: vi.fn().mockReturnValue(undefined) as Pokemon["getTag"],
     } as Pokemon;
@@ -47,7 +47,7 @@ describe("BattlerTag - OctolockTag", () => {
     expect(mockPokemon.getTag).toHaveBeenCalledWith(BattlerTagType.OCTOLOCK);
   });
 
-  it("cannot be added to pokemon who are octolocked", { timeout: 2000 }, async => {
+  it("cannot be added to pokemon who are octolocked", { timeout: 2000 }, (async) => {
     const mockPokemon = {
       getTag: vi.fn().mockReturnValue(new BattlerTag(null!, null!, null!, null!)) as Pokemon["getTag"],
     } as Pokemon;

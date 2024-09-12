@@ -13,7 +13,10 @@ export class BattleEndPhase extends BattlePhase {
     if (this.scene.currentBattle.trainer) {
       this.scene.gameData.gameStats.trainersDefeated++;
     }
-    if (this.scene.gameMode.isEndless && this.scene.currentBattle.waveIndex + 1 > this.scene.gameData.gameStats.highestEndlessWave) {
+    if (
+      this.scene.gameMode.isEndless &&
+      this.scene.currentBattle.waveIndex + 1 > this.scene.gameData.gameStats.highestEndlessWave
+    ) {
       this.scene.gameData.gameStats.highestEndlessWave = this.scene.currentBattle.waveIndex + 1;
     }
 
@@ -23,7 +26,7 @@ export class BattleEndPhase extends BattlePhase {
       this.scene.unshiftPhase(new GameOverPhase(this.scene, true));
     }
 
-    for (const pokemon of this.scene.getParty().filter(p => p.isAllowedInBattle())) {
+    for (const pokemon of this.scene.getParty().filter((p) => p.isAllowedInBattle())) {
       applyPostBattleAbAttrs(PostBattleAbAttr, pokemon);
     }
 
@@ -33,7 +36,9 @@ export class BattleEndPhase extends BattlePhase {
 
     this.scene.clearEnemyHeldItemModifiers();
 
-    const lapsingModifiers = this.scene.findModifiers(m => m instanceof LapsingPersistentModifier || m instanceof LapsingPokemonHeldItemModifier) as (LapsingPersistentModifier | LapsingPokemonHeldItemModifier)[];
+    const lapsingModifiers = this.scene.findModifiers(
+      (m) => m instanceof LapsingPersistentModifier || m instanceof LapsingPokemonHeldItemModifier,
+    ) as (LapsingPersistentModifier | LapsingPokemonHeldItemModifier)[];
     for (const m of lapsingModifiers) {
       const args: any[] = [];
       if (m instanceof LapsingPokemonHeldItemModifier) {

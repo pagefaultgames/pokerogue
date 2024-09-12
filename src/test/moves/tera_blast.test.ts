@@ -44,9 +44,7 @@ describe("Moves - Tera Blast", () => {
   });
 
   it("changes type to match user's tera type", async () => {
-    game.override
-      .enemySpecies(Species.FURRET)
-      .startingHeldItems([{ name: "TERA_SHARD", type: Type.FIGHTING }]);
+    game.override.enemySpecies(Species.FURRET).startingHeldItems([{ name: "TERA_SHARD", type: Type.FIGHTING }]);
     await game.startBattle();
     const enemyPokemon = game.scene.getEnemyPokemon()!;
     vi.spyOn(enemyPokemon, "apply");

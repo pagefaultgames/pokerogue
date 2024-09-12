@@ -1,4 +1,4 @@
-const MockConsoleLog = (_logDisabled= false, _phaseText=false) => {
+const MockConsoleLog = (_logDisabled = false, _phaseText = false) => {
   let logs: any[] = [];
   const logDisabled: boolean = _logDisabled;
   const phaseText: boolean = _phaseText;
@@ -8,14 +8,14 @@ const MockConsoleLog = (_logDisabled= false, _phaseText=false) => {
   const originalWarn = console.warn;
   const notified: any[] = [];
 
-  const blacklist = ["Phaser", "variant icon does not exist", "Texture \"%s\" not found"];
+  const blacklist = ["Phaser", "variant icon does not exist", 'Texture "%s" not found'];
   const whitelist = ["Phase"];
 
-  return ({
+  return {
     log(...args) {
       const argsStr = this.getStr(args);
       logs.push(argsStr);
-      if (logDisabled && (!phaseText)) {
+      if (logDisabled && !phaseText) {
         return;
       }
       if ((phaseText && !whitelist.some((b) => argsStr.includes(b))) || blacklist.some((b) => argsStr.includes(b))) {
@@ -31,7 +31,7 @@ const MockConsoleLog = (_logDisabled= false, _phaseText=false) => {
     debug(...args) {
       const argsStr = this.getStr(args);
       logs.push(argsStr);
-      if (logDisabled && (!phaseText)) {
+      if (logDisabled && !phaseText) {
         return;
       }
       if (!whitelist.some((b) => argsStr.includes(b)) || blacklist.some((b) => argsStr.includes(b))) {
@@ -42,7 +42,7 @@ const MockConsoleLog = (_logDisabled= false, _phaseText=false) => {
     warn(...args) {
       const argsStr = this.getStr(args);
       logs.push(args);
-      if (logDisabled && (!phaseText)) {
+      if (logDisabled && !phaseText) {
         return;
       }
       if (!whitelist.some((b) => argsStr.includes(b)) || blacklist.some((b) => argsStr.includes(b))) {
@@ -61,22 +61,22 @@ const MockConsoleLog = (_logDisabled= false, _phaseText=false) => {
       logs = [];
     },
     getStr(...args) {
-      return args.map(arg => {
-        if (typeof arg === "object" && arg !== null) {
-          // Handle objects including arrays
-          return JSON.stringify(arg, (key, value) =>
-            typeof value === "bigint" ? value.toString() : value
-          );
-        } else if (typeof arg === "bigint") {
-          // Handle BigInt values
-          return arg.toString();
-        } else {
-          // Handle all other types
-          return arg.toString();
-        }
-      }).join(";");
+      return args
+        .map((arg) => {
+          if (typeof arg === "object" && arg !== null) {
+            // Handle objects including arrays
+            return JSON.stringify(arg, (key, value) => (typeof value === "bigint" ? value.toString() : value));
+          } else if (typeof arg === "bigint") {
+            // Handle BigInt values
+            return arg.toString();
+          } else {
+            // Handle all other types
+            return arg.toString();
+          }
+        })
+        .join(";");
     },
-  });
+  };
 };
 
 export default MockConsoleLog;

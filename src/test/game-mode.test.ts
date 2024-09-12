@@ -25,9 +25,7 @@ describe("game-mode", () => {
     it("does NOT spawn trainers within 3 waves of fixed battle", () => {
       const { arena } = game.scene;
       /** set wave 16 to be a fixed trainer fight meaning wave 13-19 don't allow trainer spawns */
-      vi.spyOn(classicGameMode, "isFixedBattle").mockImplementation(
-        (n: number) => (n === 16 ? true : false)
-      );
+      vi.spyOn(classicGameMode, "isFixedBattle").mockImplementation((n: number) => (n === 16 ? true : false));
       vi.spyOn(arena, "getTrainerChance").mockReturnValue(1);
       vi.spyOn(Utils, "randSeedInt").mockReturnValue(0);
       expect(classicGameMode.isWaveTrainer(11, arena)).toBeFalsy();

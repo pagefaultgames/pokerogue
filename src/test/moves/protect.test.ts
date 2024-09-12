@@ -53,7 +53,8 @@ describe("Moves - Protect", () => {
       await game.phaseInterceptor.to("BerryPhase", false);
 
       expect(leadPokemon.hp).toBe(leadPokemon.getMaxHp());
-    }, TIMEOUT
+    },
+    TIMEOUT,
   );
 
   test(
@@ -72,7 +73,8 @@ describe("Moves - Protect", () => {
 
       expect(leadPokemon.hp).toBe(leadPokemon.getMaxHp());
       expect(game.scene.arena.getTagOnSide(ArenaTrapTag, ArenaTagSide.ENEMY)).toBeUndefined();
-    }, TIMEOUT
+    },
+    TIMEOUT,
   );
 
   test(
@@ -89,7 +91,8 @@ describe("Moves - Protect", () => {
       await game.phaseInterceptor.to("BerryPhase", false);
 
       expect(leadPokemon.getStatStage(Stat.ATK)).toBe(0);
-    }, TIMEOUT
+    },
+    TIMEOUT,
   );
 
   test(
@@ -108,7 +111,8 @@ describe("Moves - Protect", () => {
 
       expect(leadPokemon.hp).toBe(leadPokemon.getMaxHp());
       expect(enemyPokemon.turnData.hitCount).toBe(1);
-    }, TIMEOUT
+    },
+    TIMEOUT,
   );
 
   test(
@@ -129,6 +133,7 @@ describe("Moves - Protect", () => {
 
       expect(enemyPokemon.getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);
       expect(leadPokemon.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
-    }, TIMEOUT
+    },
+    TIMEOUT,
   );
 });

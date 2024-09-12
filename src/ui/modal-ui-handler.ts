@@ -3,7 +3,7 @@ import { TextStyle, addTextObject } from "./text";
 import { Mode } from "./ui";
 import UiHandler from "./ui-handler";
 import { WindowVariant, addWindow } from "./ui-theme";
-import {Button} from "#enums/buttons";
+import { Button } from "#enums/buttons";
 
 export interface ModalConfig {
   buttonActions: Function[];
@@ -42,7 +42,10 @@ export abstract class ModalUiHandler extends UiHandler {
 
     this.modalContainer = this.scene.add.container(0, 0);
 
-    this.modalContainer.setInteractive(new Phaser.Geom.Rectangle(0, 0, this.scene.game.canvas.width / 6, this.scene.game.canvas.height / 6), Phaser.Geom.Rectangle.Contains);
+    this.modalContainer.setInteractive(
+      new Phaser.Geom.Rectangle(0, 0, this.scene.game.canvas.width / 6, this.scene.game.canvas.height / 6),
+      Phaser.Geom.Rectangle.Contains,
+    );
 
     this.modalBg = addWindow(this.scene, 0, 0, 0, 0);
 
@@ -69,9 +72,23 @@ export abstract class ModalUiHandler extends UiHandler {
     const buttonLabel = addTextObject(this.scene, 0, 8, label, TextStyle.TOOLTIP_CONTENT);
     buttonLabel.setOrigin(0.5, 0.5);
 
-    const buttonBg = addWindow(this.scene, 0, 0, buttonLabel.getBounds().width + 8, 16, false, false, 0, 0, WindowVariant.THIN);
+    const buttonBg = addWindow(
+      this.scene,
+      0,
+      0,
+      buttonLabel.getBounds().width + 8,
+      16,
+      false,
+      false,
+      0,
+      0,
+      WindowVariant.THIN,
+    );
     buttonBg.setOrigin(0.5, 0);
-    buttonBg.setInteractive(new Phaser.Geom.Rectangle(0, 0, buttonBg.width, buttonBg.height), Phaser.Geom.Rectangle.Contains);
+    buttonBg.setInteractive(
+      new Phaser.Geom.Rectangle(0, 0, buttonBg.width, buttonBg.height),
+      Phaser.Geom.Rectangle.Contains,
+    );
 
     const buttonContainer = this.scene.add.container(0, buttonTopMargin);
 
@@ -90,9 +107,15 @@ export abstract class ModalUiHandler extends UiHandler {
     if (args.length >= 1 && "buttonActions" in args[0]) {
       super.show(args);
       if (args[0].hasOwnProperty("fadeOut") && typeof args[0].fadeOut === "function") {
-        const [ marginTop, marginRight, marginBottom, marginLeft ] = this.getMargin();
+        const [marginTop, marginRight, marginBottom, marginLeft] = this.getMargin();
 
-        const overlay = this.scene.add.rectangle(( this.getWidth() + marginLeft + marginRight) / 2, (this.getHeight() + marginTop + marginBottom) / 2, this.scene.game.canvas.width / 6, this.scene.game.canvas.height /6, 0);
+        const overlay = this.scene.add.rectangle(
+          (this.getWidth() + marginLeft + marginRight) / 2,
+          (this.getHeight() + marginTop + marginBottom) / 2,
+          this.scene.game.canvas.width / 6,
+          this.scene.game.canvas.height / 6,
+          0,
+        );
         overlay.setOrigin(0.5, 0.5);
         overlay.setName("rect-ui-overlay-modal");
         overlay.setAlpha(0);
@@ -105,7 +128,7 @@ export abstract class ModalUiHandler extends UiHandler {
           alpha: 1,
           duration: 250,
           ease: "Sine.easeOut",
-          onComplete: args[0].fadeOut
+          onComplete: args[0].fadeOut,
         });
       }
 
@@ -130,10 +153,13 @@ export abstract class ModalUiHandler extends UiHandler {
   }
 
   updateContainer(config?: ModalConfig): void {
-    const [ marginTop, marginRight, marginBottom, marginLeft ] = this.getMargin(config);
+    const [marginTop, marginRight, marginBottom, marginLeft] = this.getMargin(config);
 
-    const [ width, height ] = [ this.getWidth(config), this.getHeight(config) ];
-    this.modalContainer.setPosition((((this.scene.game.canvas.width / 6) - (width + (marginRight - marginLeft))) / 2), (((-this.scene.game.canvas.height / 6) - (height + (marginBottom - marginTop))) / 2));
+    const [width, height] = [this.getWidth(config), this.getHeight(config)];
+    this.modalContainer.setPosition(
+      (this.scene.game.canvas.width / 6 - (width + (marginRight - marginLeft))) / 2,
+      (-this.scene.game.canvas.height / 6 - (height + (marginBottom - marginTop))) / 2,
+    );
 
     this.modalBg.setSize(width, height);
 
@@ -158,14 +184,16 @@ export abstract class ModalUiHandler extends UiHandler {
     super.clear();
     this.modalContainer.setVisible(false);
 
-    this.buttonBgs.map(bg => bg.off("pointerdown"));
+    this.buttonBgs.map((bg) => bg.off("pointerdown"));
   }
 
   /**
    * Adds a hover effect to a game object which changes the cursor to a `pointer` and tints it slighly
    * @param gameObject the game object to add hover events/effects to
    */
-  protected addInteractionHoverEffect(gameObject: Phaser.GameObjects.Image | Phaser.GameObjects.NineSlice | Phaser.GameObjects.Sprite) {
+  protected addInteractionHoverEffect(
+    gameObject: Phaser.GameObjects.Image | Phaser.GameObjects.NineSlice | Phaser.GameObjects.Sprite,
+  ) {
     gameObject.on("pointerover", () => {
       this.setMouseCursorStyle("pointer");
       gameObject.setTint(0xbbbbbb);

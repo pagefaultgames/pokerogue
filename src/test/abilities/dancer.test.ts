@@ -35,30 +35,34 @@ describe("Abilities - Dancer", () => {
 
   // Reference Link: https://bulbapedia.bulbagarden.net/wiki/Dancer_(Ability)
 
-  it("triggers when dance moves are used, doesn't consume extra PP", async () => {
-    await game.classicMode.startBattle([Species.ORICORIO, Species.FEEBAS]);
+  it(
+    "triggers when dance moves are used, doesn't consume extra PP",
+    async () => {
+      await game.classicMode.startBattle([Species.ORICORIO, Species.FEEBAS]);
 
-    const [oricorio] = game.scene.getPlayerField();
+      const [oricorio] = game.scene.getPlayerField();
 
-    game.move.select(Moves.SPLASH);
-    game.move.select(Moves.SWORDS_DANCE, 1);
-    await game.setTurnOrder([BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.PLAYER, BattlerIndex.ENEMY_2]);
-    await game.phaseInterceptor.to("MovePhase");
-    // immediately copies ally move
-    await game.phaseInterceptor.to("MovePhase", false);
-    let currentPhase = game.scene.getCurrentPhase() as MovePhase;
-    expect(currentPhase.pokemon).toBe(oricorio);
-    expect(currentPhase.move.moveId).toBe(Moves.SWORDS_DANCE);
-    await game.phaseInterceptor.to("MoveEndPhase");
-    await game.phaseInterceptor.to("MovePhase");
-    // immediately copies enemy move
-    await game.phaseInterceptor.to("MovePhase", false);
-    currentPhase = game.scene.getCurrentPhase() as MovePhase;
-    expect(currentPhase.pokemon).toBe(oricorio);
-    expect(currentPhase.move.moveId).toBe(Moves.VICTORY_DANCE);
-    await game.phaseInterceptor.to("BerryPhase");
+      game.move.select(Moves.SPLASH);
+      game.move.select(Moves.SWORDS_DANCE, 1);
+      await game.setTurnOrder([BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.PLAYER, BattlerIndex.ENEMY_2]);
+      await game.phaseInterceptor.to("MovePhase");
+      // immediately copies ally move
+      await game.phaseInterceptor.to("MovePhase", false);
+      let currentPhase = game.scene.getCurrentPhase() as MovePhase;
+      expect(currentPhase.pokemon).toBe(oricorio);
+      expect(currentPhase.move.moveId).toBe(Moves.SWORDS_DANCE);
+      await game.phaseInterceptor.to("MoveEndPhase");
+      await game.phaseInterceptor.to("MovePhase");
+      // immediately copies enemy move
+      await game.phaseInterceptor.to("MovePhase", false);
+      currentPhase = game.scene.getCurrentPhase() as MovePhase;
+      expect(currentPhase.pokemon).toBe(oricorio);
+      expect(currentPhase.move.moveId).toBe(Moves.VICTORY_DANCE);
+      await game.phaseInterceptor.to("BerryPhase");
 
-    // doesn't use PP if copied move is also in moveset
-    expect(oricorio.moveset[0]?.ppUsed).toBe(0);
-  }, TIMEOUT);
+      // doesn't use PP if copied move is also in moveset
+      expect(oricorio.moveset[0]?.ppUsed).toBe(0);
+    },
+    TIMEOUT,
+  );
 });

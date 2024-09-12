@@ -1,4 +1,4 @@
 export enum Device {
-    GAMEPAD,
-    KEYBOARD,
+  GAMEPAD,
+  KEYBOARD,
 }

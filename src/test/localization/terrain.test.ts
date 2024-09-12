@@ -183,7 +183,6 @@ describe("terrain", () => {
     });
   });
 
-
   afterEach(() => {
     game.phaseInterceptor.restoreOg();
     vi.resetAllMocks();

@@ -30,14 +30,12 @@ describe("Moves - Guard Swap", () => {
       .enemyMoveset([Moves.SHELL_SMASH])
       .enemySpecies(Species.MEW)
       .enemyLevel(200)
-      .moveset([ Moves.GUARD_SWAP ])
+      .moveset([Moves.GUARD_SWAP])
       .ability(Abilities.NONE);
   });
 
   it("should swap the user's DEF AND SPDEF stat stages with the target's", async () => {
-    await game.startBattle([
-      Species.INDEEDEE
-    ]);
+    await game.startBattle([Species.INDEEDEE]);
 
     // Should start with no stat stages
     const player = game.scene.getPlayerPokemon()!;

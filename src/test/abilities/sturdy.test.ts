@@ -45,7 +45,7 @@ describe("Abilities - Sturdy", () => {
       await game.phaseInterceptor.to(MoveEndPhase);
       expect(game.scene.getEnemyParty()[0].hp).toBe(1);
     },
-    TIMEOUT
+    TIMEOUT,
   );
 
   test(
@@ -62,7 +62,7 @@ describe("Abilities - Sturdy", () => {
       expect(enemyPokemon.hp).toBe(0);
       expect(enemyPokemon.isFainted()).toBe(true);
     },
-    TIMEOUT
+    TIMEOUT,
   );
 
   test(
@@ -75,7 +75,7 @@ describe("Abilities - Sturdy", () => {
       const enemyPokemon: EnemyPokemon = game.scene.getEnemyParty()[0];
       expect(enemyPokemon.isFullHp()).toBe(true);
     },
-    TIMEOUT
+    TIMEOUT,
   );
 
   test(
@@ -91,7 +91,6 @@ describe("Abilities - Sturdy", () => {
       expect(enemyPokemon.hp).toBe(0);
       expect(enemyPokemon.isFainted()).toBe(true);
     },
-    TIMEOUT
+    TIMEOUT,
   );
-
 });

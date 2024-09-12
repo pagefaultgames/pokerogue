@@ -1,7 +1,6 @@
 import MockTextureManager from "#test/utils/mocks/mockTextureManager";
 import { MockGameObject } from "../mockGameObject";
 
-
 /**
  * Stub for Phaser.Textures.Texture object
  * Just mocks the function calls and data required for use in tests
@@ -22,7 +21,7 @@ export default class MockTexture implements MockGameObject {
       width: 100,
       height: 100,
       cutX: 0,
-      cutY: 0
+      cutY: 0,
     };
     this.frames = {
       firstFrame: mockFrame,
@@ -30,7 +29,7 @@ export default class MockTexture implements MockGameObject {
       1: mockFrame,
       2: mockFrame,
       3: mockFrame,
-      4: mockFrame
+      4: mockFrame,
     };
     this.firstFrame = "firstFrame";
   }

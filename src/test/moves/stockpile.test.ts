@@ -37,44 +37,52 @@ describe("Moves - Stockpile", () => {
       game.override.ability(Abilities.NONE);
     });
 
-    it("gains a stockpile stack and raises user's DEF and SPDEF stat stages by 1 on each use, fails at max stacks (3)", { timeout: 10000 }, async () => {
-      await game.startBattle([Species.ABOMASNOW]);
+    it(
+      "gains a stockpile stack and raises user's DEF and SPDEF stat stages by 1 on each use, fails at max stacks (3)",
+      { timeout: 10000 },
+      async () => {
+        await game.startBattle([Species.ABOMASNOW]);
 
-      const user = game.scene.getPlayerPokemon()!;
+        const user = game.scene.getPlayerPokemon()!;
 
-      // Unfortunately, Stockpile stacks are not directly queryable (i.e. there is no pokemon.getStockpileStacks()),
-      // we just have to know that they're implemented as a BattlerTag.
+        // Unfortunately, Stockpile stacks are not directly queryable (i.e. there is no pokemon.getStockpileStacks()),
+        // we just have to know that they're implemented as a BattlerTag.
 
-      expect(user.getTag(StockpilingTag)).toBeUndefined();
-      expect(user.getStatStage(Stat.DEF)).toBe(0);
-      expect(user.getStatStage(Stat.SPDEF)).toBe(0);
+        expect(user.getTag(StockpilingTag)).toBeUndefined();
+        expect(user.getStatStage(Stat.DEF)).toBe(0);
+        expect(user.getStatStage(Stat.SPDEF)).toBe(0);
 
-      // use Stockpile four times
-      for (let i = 0; i < 4; i++) {
-        if (i !== 0) {
-          await game.phaseInterceptor.to(CommandPhase);
+        // use Stockpile four times
+        for (let i = 0; i < 4; i++) {
+          if (i !== 0) {
+            await game.phaseInterceptor.to(CommandPhase);
+          }
+
+          game.move.select(Moves.STOCKPILE);
+          await game.phaseInterceptor.to(TurnInitPhase);
+
+          const stockpilingTag = user.getTag(StockpilingTag)!;
+
+          if (i < 3) {
+            // first three uses should behave normally
+            expect(user.getStatStage(Stat.DEF)).toBe(i + 1);
+            expect(user.getStatStage(Stat.SPDEF)).toBe(i + 1);
+            expect(stockpilingTag).toBeDefined();
+            expect(stockpilingTag.stockpiledCount).toBe(i + 1);
+          } else {
+            // fourth should have failed
+            expect(user.getStatStage(Stat.DEF)).toBe(3);
+            expect(user.getStatStage(Stat.SPDEF)).toBe(3);
+            expect(stockpilingTag).toBeDefined();
+            expect(stockpilingTag.stockpiledCount).toBe(3);
+            expect(user.getMoveHistory().at(-1)).toMatchObject<TurnMove>({
+              result: MoveResult.FAIL,
+              move: Moves.STOCKPILE,
+            });
+          }
         }
-
-        game.move.select(Moves.STOCKPILE);
-        await game.phaseInterceptor.to(TurnInitPhase);
-
-        const stockpilingTag = user.getTag(StockpilingTag)!;
-
-        if (i < 3) { // first three uses should behave normally
-          expect(user.getStatStage(Stat.DEF)).toBe(i + 1);
-          expect(user.getStatStage(Stat.SPDEF)).toBe(i + 1);
-          expect(stockpilingTag).toBeDefined();
-          expect(stockpilingTag.stockpiledCount).toBe(i + 1);
-
-        } else { // fourth should have failed
-          expect(user.getStatStage(Stat.DEF)).toBe(3);
-          expect(user.getStatStage(Stat.SPDEF)).toBe(3);
-          expect(stockpilingTag).toBeDefined();
-          expect(stockpilingTag.stockpiledCount).toBe(3);
-          expect(user.getMoveHistory().at(-1)).toMatchObject<TurnMove>({ result: MoveResult.FAIL, move: Moves.STOCKPILE });
-        }
-      }
-    });
+      },
+    );
 
     it("gains a stockpile stack even if user's DEF and SPDEF stat stages are at +6", { timeout: 10000 }, async () => {
       await game.startBattle([Species.ABOMASNOW]);

@@ -1,7 +1,12 @@
 import BattleScene from "#app/battle-scene";
 import { BattlerIndex, BattleType } from "#app/battle";
 import { modifierTypes } from "#app/modifier/modifier-type";
-import { ExpShareModifier, ExpBalanceModifier, MultipleParticipantExpBonusModifier, PokemonExpBoosterModifier } from "#app/modifier/modifier";
+import {
+  ExpShareModifier,
+  ExpBalanceModifier,
+  MultipleParticipantExpBonusModifier,
+  PokemonExpBoosterModifier,
+} from "#app/modifier/modifier";
 import * as Utils from "#app/utils";
 import Overrides from "#app/overrides";
 import { BattleEndPhase } from "./battle-end-phase";
@@ -28,11 +33,13 @@ export class VictoryPhase extends PokemonPhase {
 
     const participantIds = this.scene.currentBattle.playerParticipantIds;
     const party = this.scene.getParty();
-    const expShareModifier = this.scene.findModifier(m => m instanceof ExpShareModifier) as ExpShareModifier;
-    const expBalanceModifier = this.scene.findModifier(m => m instanceof ExpBalanceModifier) as ExpBalanceModifier;
-    const multipleParticipantExpBonusModifier = this.scene.findModifier(m => m instanceof MultipleParticipantExpBonusModifier) as MultipleParticipantExpBonusModifier;
-    const nonFaintedPartyMembers = party.filter(p => p.hp);
-    const expPartyMembers = nonFaintedPartyMembers.filter(p => p.level < this.scene.getMaxExpLevel());
+    const expShareModifier = this.scene.findModifier((m) => m instanceof ExpShareModifier) as ExpShareModifier;
+    const expBalanceModifier = this.scene.findModifier((m) => m instanceof ExpBalanceModifier) as ExpBalanceModifier;
+    const multipleParticipantExpBonusModifier = this.scene.findModifier(
+      (m) => m instanceof MultipleParticipantExpBonusModifier,
+    ) as MultipleParticipantExpBonusModifier;
+    const nonFaintedPartyMembers = party.filter((p) => p.hp);
+    const expPartyMembers = nonFaintedPartyMembers.filter((p) => p.level < this.scene.getMaxExpLevel());
     const partyMemberExp: number[] = [];
 
     if (participantIds.size) {
@@ -55,7 +62,7 @@ export class VictoryPhase extends PokemonPhase {
         }
         let expMultiplier = 0;
         if (participated) {
-          expMultiplier += (1 / participantIds.size);
+          expMultiplier += 1 / participantIds.size;
           if (participantIds.size > 1 && multipleParticipantExpBonusModifier) {
             expMultiplier += multipleParticipantExpBonusModifier.getStackCount() * 0.2;
           }
@@ -93,7 +100,11 @@ export class VictoryPhase extends PokemonPhase {
         const splitExp = Math.floor(totalExp / recipientExpPartyMemberIndexes.length);
 
         expPartyMembers.forEach((_partyMember, pm) => {
-          partyMemberExp[pm] = Phaser.Math.Linear(partyMemberExp[pm], recipientExpPartyMemberIndexes.indexOf(pm) > -1 ? splitExp : 0, 0.2 * expBalanceModifier.getStackCount());
+          partyMemberExp[pm] = Phaser.Math.Linear(
+            partyMemberExp[pm],
+            recipientExpPartyMemberIndexes.indexOf(pm) > -1 ? splitExp : 0,
+            0.2 * expBalanceModifier.getStackCount(),
+          );
         });
       }
 
@@ -102,12 +113,20 @@ export class VictoryPhase extends PokemonPhase {
 
         if (exp) {
           const partyMemberIndex = party.indexOf(expPartyMembers[pm]);
-          this.scene.unshiftPhase(expPartyMembers[pm].isOnField() ? new ExpPhase(this.scene, partyMemberIndex, exp) : new ShowPartyExpBarPhase(this.scene, partyMemberIndex, exp));
+          this.scene.unshiftPhase(
+            expPartyMembers[pm].isOnField()
+              ? new ExpPhase(this.scene, partyMemberIndex, exp)
+              : new ShowPartyExpBarPhase(this.scene, partyMemberIndex, exp),
+          );
         }
       }
     }
 
-    if (!this.scene.getEnemyParty().find(p => this.scene.currentBattle.battleType ? !p?.isFainted(true) : p.isOnField())) {
+    if (
+      !this.scene
+        .getEnemyParty()
+        .find((p) => (this.scene.currentBattle.battleType ? !p?.isFainted(true) : p.isOnField()))
+    ) {
       this.scene.pushPhase(new BattleEndPhase(this.scene));
       if (this.scene.currentBattle.battleType === BattleType.TRAINER) {
         this.scene.pushPhase(new TrainerVictoryPhase(this.scene));
@@ -118,7 +137,10 @@ export class VictoryPhase extends PokemonPhase {
           this.scene.pushPhase(new SelectModifierPhase(this.scene));
         } else if (this.scene.gameMode.isDaily) {
           this.scene.pushPhase(new ModifierRewardPhase(this.scene, modifierTypes.EXP_CHARM));
-          if (this.scene.currentBattle.waveIndex > 10 && !this.scene.gameMode.isWaveFinal(this.scene.currentBattle.waveIndex)) {
+          if (
+            this.scene.currentBattle.waveIndex > 10 &&
+            !this.scene.gameMode.isWaveFinal(this.scene.currentBattle.waveIndex)
+          ) {
             this.scene.pushPhase(new ModifierRewardPhase(this.scene, modifierTypes.GOLDEN_POKEBALL));
           }
         } else {
@@ -126,14 +148,31 @@ export class VictoryPhase extends PokemonPhase {
           if (this.scene.gameMode.isEndless && this.scene.currentBattle.waveIndex === 10) {
             this.scene.pushPhase(new ModifierRewardPhase(this.scene, modifierTypes.EXP_SHARE));
           }
-          if (this.scene.currentBattle.waveIndex <= 750 && (this.scene.currentBattle.waveIndex <= 500 || (this.scene.currentBattle.waveIndex % 30) === superExpWave)) {
-            this.scene.pushPhase(new ModifierRewardPhase(this.scene, (this.scene.currentBattle.waveIndex % 30) !== superExpWave || this.scene.currentBattle.waveIndex > 250 ? modifierTypes.EXP_CHARM : modifierTypes.SUPER_EXP_CHARM));
+          if (
+            this.scene.currentBattle.waveIndex <= 750 &&
+            (this.scene.currentBattle.waveIndex <= 500 || this.scene.currentBattle.waveIndex % 30 === superExpWave)
+          ) {
+            this.scene.pushPhase(
+              new ModifierRewardPhase(
+                this.scene,
+                this.scene.currentBattle.waveIndex % 30 !== superExpWave || this.scene.currentBattle.waveIndex > 250
+                  ? modifierTypes.EXP_CHARM
+                  : modifierTypes.SUPER_EXP_CHARM,
+              ),
+            );
           }
           if (this.scene.currentBattle.waveIndex <= 150 && !(this.scene.currentBattle.waveIndex % 50)) {
             this.scene.pushPhase(new ModifierRewardPhase(this.scene, modifierTypes.GOLDEN_POKEBALL));
           }
           if (this.scene.gameMode.isEndless && !(this.scene.currentBattle.waveIndex % 50)) {
-            this.scene.pushPhase(new ModifierRewardPhase(this.scene, !(this.scene.currentBattle.waveIndex % 250) ? modifierTypes.VOUCHER_PREMIUM : modifierTypes.VOUCHER_PLUS));
+            this.scene.pushPhase(
+              new ModifierRewardPhase(
+                this.scene,
+                !(this.scene.currentBattle.waveIndex % 250)
+                  ? modifierTypes.VOUCHER_PREMIUM
+                  : modifierTypes.VOUCHER_PLUS,
+              ),
+            );
             this.scene.pushPhase(new AddEnemyBuffModifierPhase(this.scene));
           }
         }

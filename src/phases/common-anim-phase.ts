@@ -7,7 +7,12 @@ export class CommonAnimPhase extends PokemonPhase {
   private anim: CommonAnim | null;
   private targetIndex: integer | undefined;
 
-  constructor(scene: BattleScene, battlerIndex?: BattlerIndex, targetIndex?: BattlerIndex | undefined, anim?: CommonAnim) {
+  constructor(
+    scene: BattleScene,
+    battlerIndex?: BattlerIndex,
+    targetIndex?: BattlerIndex | undefined,
+    anim?: CommonAnim,
+  ) {
     super(scene, battlerIndex);
 
     this.anim = anim!; // TODO: is this bang correct?
@@ -19,7 +24,13 @@ export class CommonAnimPhase extends PokemonPhase {
   }
 
   start() {
-    new CommonBattleAnim(this.anim, this.getPokemon(), this.targetIndex !== undefined ? (this.player ? this.scene.getEnemyField() : this.scene.getPlayerField())[this.targetIndex] : this.getPokemon()).play(this.scene, () => {
+    new CommonBattleAnim(
+      this.anim,
+      this.getPokemon(),
+      this.targetIndex !== undefined
+        ? (this.player ? this.scene.getEnemyField() : this.scene.getPlayerField())[this.targetIndex]
+        : this.getPokemon(),
+    ).play(this.scene, () => {
       this.end();
     });
   }

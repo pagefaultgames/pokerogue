@@ -17,7 +17,6 @@ import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
-
 describe("UI - Starter select", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
@@ -36,7 +35,7 @@ describe("UI - Starter select", () => {
     game = new GameManager(phaserGame);
   });
 
-  it("Bulbasaur - shiny - variant 2 male", async() => {
+  it("Bulbasaur - shiny - variant 2 male", async () => {
     await game.importData("src/test/utils/saves/everything.prsv");
     const caughtCount = Object.keys(game.scene.gameData.dexData).filter((key) => {
       const species = game.scene.gameData.dexData[key];
@@ -66,11 +65,11 @@ describe("UI - Starter select", () => {
         resolve();
       });
     });
-    expect(options.some(option => option.label === "Add to Party")).toBe(true);
-    expect(options.some(option => option.label === "Toggle IVs")).toBe(true);
-    expect(options.some(option => option.label === "Manage Moves")).toBe(true);
-    expect(options.some(option => option.label === "Use Candies")).toBe(true);
-    expect(options.some(option => option.label === "Cancel")).toBe(true);
+    expect(options.some((option) => option.label === "Add to Party")).toBe(true);
+    expect(options.some((option) => option.label === "Toggle IVs")).toBe(true);
+    expect(options.some((option) => option.label === "Manage Moves")).toBe(true);
+    expect(options.some((option) => option.label === "Use Candies")).toBe(true);
+    expect(options.some((option) => option.label === "Cancel")).toBe(true);
     optionSelectUiHandler?.processInput(Button.ACTION);
 
     await new Promise<void>((resolve) => {
@@ -96,7 +95,7 @@ describe("UI - Starter select", () => {
     expect(game.scene.getParty()[0].gender).toBe(Gender.MALE);
   }, 20000);
 
-  it("Bulbasaur - shiny - variant 2 female hardy overgrow", async() => {
+  it("Bulbasaur - shiny - variant 2 female hardy overgrow", async () => {
     await game.importData("src/test/utils/saves/everything.prsv");
     const caughtCount = Object.keys(game.scene.gameData.dexData).filter((key) => {
       const species = game.scene.gameData.dexData[key];
@@ -127,11 +126,11 @@ describe("UI - Starter select", () => {
         resolve();
       });
     });
-    expect(options.some(option => option.label === "Add to Party")).toBe(true);
-    expect(options.some(option => option.label === "Toggle IVs")).toBe(true);
-    expect(options.some(option => option.label === "Manage Moves")).toBe(true);
-    expect(options.some(option => option.label === "Use Candies")).toBe(true);
-    expect(options.some(option => option.label === "Cancel")).toBe(true);
+    expect(options.some((option) => option.label === "Add to Party")).toBe(true);
+    expect(options.some((option) => option.label === "Toggle IVs")).toBe(true);
+    expect(options.some((option) => option.label === "Manage Moves")).toBe(true);
+    expect(options.some((option) => option.label === "Use Candies")).toBe(true);
+    expect(options.some((option) => option.label === "Cancel")).toBe(true);
     optionSelectUiHandler?.processInput(Button.ACTION);
 
     await new Promise<void>((resolve) => {
@@ -158,7 +157,7 @@ describe("UI - Starter select", () => {
     expect(game.scene.getParty()[0].getAbility().id).toBe(Abilities.OVERGROW);
   }, 20000);
 
-  it("Bulbasaur - shiny - variant 2 female lonely chlorophyl", async() => {
+  it("Bulbasaur - shiny - variant 2 female lonely chlorophyl", async () => {
     await game.importData("src/test/utils/saves/everything.prsv");
     const caughtCount = Object.keys(game.scene.gameData.dexData).filter((key) => {
       const species = game.scene.gameData.dexData[key];
@@ -191,11 +190,11 @@ describe("UI - Starter select", () => {
         resolve();
       });
     });
-    expect(options.some(option => option.label === "Add to Party")).toBe(true);
-    expect(options.some(option => option.label === "Toggle IVs")).toBe(true);
-    expect(options.some(option => option.label === "Manage Moves")).toBe(true);
-    expect(options.some(option => option.label === "Use Candies")).toBe(true);
-    expect(options.some(option => option.label === "Cancel")).toBe(true);
+    expect(options.some((option) => option.label === "Add to Party")).toBe(true);
+    expect(options.some((option) => option.label === "Toggle IVs")).toBe(true);
+    expect(options.some((option) => option.label === "Manage Moves")).toBe(true);
+    expect(options.some((option) => option.label === "Use Candies")).toBe(true);
+    expect(options.some((option) => option.label === "Cancel")).toBe(true);
     optionSelectUiHandler?.processInput(Button.ACTION);
 
     await new Promise<void>((resolve) => {
@@ -223,7 +222,7 @@ describe("UI - Starter select", () => {
     expect(game.scene.getParty()[0].getAbility().id).toBe(Abilities.CHLOROPHYLL);
   }, 20000);
 
-  it("Bulbasaur - shiny - variant 2 female", async() => {
+  it("Bulbasaur - shiny - variant 2 female", async () => {
     await game.importData("src/test/utils/saves/everything.prsv");
     const caughtCount = Object.keys(game.scene.gameData.dexData).filter((key) => {
       const species = game.scene.gameData.dexData[key];
@@ -254,11 +253,11 @@ describe("UI - Starter select", () => {
         resolve();
       });
     });
-    expect(options.some(option => option.label === "Add to Party")).toBe(true);
-    expect(options.some(option => option.label === "Toggle IVs")).toBe(true);
-    expect(options.some(option => option.label === "Manage Moves")).toBe(true);
-    expect(options.some(option => option.label === "Use Candies")).toBe(true);
-    expect(options.some(option => option.label === "Cancel")).toBe(true);
+    expect(options.some((option) => option.label === "Add to Party")).toBe(true);
+    expect(options.some((option) => option.label === "Toggle IVs")).toBe(true);
+    expect(options.some((option) => option.label === "Manage Moves")).toBe(true);
+    expect(options.some((option) => option.label === "Use Candies")).toBe(true);
+    expect(options.some((option) => option.label === "Cancel")).toBe(true);
     optionSelectUiHandler?.processInput(Button.ACTION);
 
     await new Promise<void>((resolve) => {
@@ -284,7 +283,7 @@ describe("UI - Starter select", () => {
     expect(game.scene.getParty()[0].gender).toBe(Gender.FEMALE);
   }, 20000);
 
-  it("Bulbasaur - not shiny", async() => {
+  it("Bulbasaur - not shiny", async () => {
     await game.importData("src/test/utils/saves/everything.prsv");
     const caughtCount = Object.keys(game.scene.gameData.dexData).filter((key) => {
       const species = game.scene.gameData.dexData[key];
@@ -315,11 +314,11 @@ describe("UI - Starter select", () => {
         resolve();
       });
     });
-    expect(options.some(option => option.label === "Add to Party")).toBe(true);
-    expect(options.some(option => option.label === "Toggle IVs")).toBe(true);
-    expect(options.some(option => option.label === "Manage Moves")).toBe(true);
-    expect(options.some(option => option.label === "Use Candies")).toBe(true);
-    expect(options.some(option => option.label === "Cancel")).toBe(true);
+    expect(options.some((option) => option.label === "Add to Party")).toBe(true);
+    expect(options.some((option) => option.label === "Toggle IVs")).toBe(true);
+    expect(options.some((option) => option.label === "Manage Moves")).toBe(true);
+    expect(options.some((option) => option.label === "Use Candies")).toBe(true);
+    expect(options.some((option) => option.label === "Cancel")).toBe(true);
     optionSelectUiHandler?.processInput(Button.ACTION);
 
     await new Promise<void>((resolve) => {
@@ -344,7 +343,7 @@ describe("UI - Starter select", () => {
     expect(game.scene.getParty()[0].variant).toBe(0);
   }, 20000);
 
-  it("Bulbasaur - shiny - variant 1", async() => {
+  it("Bulbasaur - shiny - variant 1", async () => {
     await game.importData("src/test/utils/saves/everything.prsv");
     const caughtCount = Object.keys(game.scene.gameData.dexData).filter((key) => {
       const species = game.scene.gameData.dexData[key];
@@ -376,11 +375,11 @@ describe("UI - Starter select", () => {
         resolve();
       });
     });
-    expect(options.some(option => option.label === "Add to Party")).toBe(true);
-    expect(options.some(option => option.label === "Toggle IVs")).toBe(true);
-    expect(options.some(option => option.label === "Manage Moves")).toBe(true);
-    expect(options.some(option => option.label === "Use Candies")).toBe(true);
-    expect(options.some(option => option.label === "Cancel")).toBe(true);
+    expect(options.some((option) => option.label === "Add to Party")).toBe(true);
+    expect(options.some((option) => option.label === "Toggle IVs")).toBe(true);
+    expect(options.some((option) => option.label === "Manage Moves")).toBe(true);
+    expect(options.some((option) => option.label === "Use Candies")).toBe(true);
+    expect(options.some((option) => option.label === "Cancel")).toBe(true);
     optionSelectUiHandler?.processInput(Button.ACTION);
 
     await new Promise<void>((resolve) => {
@@ -405,7 +404,7 @@ describe("UI - Starter select", () => {
     expect(game.scene.getParty()[0].variant).toBe(1);
   }, 20000);
 
-  it("Bulbasaur - shiny - variant 0", async() => {
+  it("Bulbasaur - shiny - variant 0", async () => {
     await game.importData("src/test/utils/saves/everything.prsv");
     const caughtCount = Object.keys(game.scene.gameData.dexData).filter((key) => {
       const species = game.scene.gameData.dexData[key];
@@ -436,11 +435,11 @@ describe("UI - Starter select", () => {
         resolve();
       });
     });
-    expect(options.some(option => option.label === "Add to Party")).toBe(true);
-    expect(options.some(option => option.label === "Toggle IVs")).toBe(true);
-    expect(options.some(option => option.label === "Manage Moves")).toBe(true);
-    expect(options.some(option => option.label === "Use Candies")).toBe(true);
-    expect(options.some(option => option.label === "Cancel")).toBe(true);
+    expect(options.some((option) => option.label === "Add to Party")).toBe(true);
+    expect(options.some((option) => option.label === "Toggle IVs")).toBe(true);
+    expect(options.some((option) => option.label === "Manage Moves")).toBe(true);
+    expect(options.some((option) => option.label === "Use Candies")).toBe(true);
+    expect(options.some((option) => option.label === "Cancel")).toBe(true);
     optionSelectUiHandler?.processInput(Button.ACTION);
 
     await new Promise<void>((resolve) => {
@@ -465,7 +464,7 @@ describe("UI - Starter select", () => {
     expect(game.scene.getParty()[0].variant).toBe(0);
   }, 20000);
 
-  it("Check if first pokemon in party is caterpie from gen 1 and 1rd row, 3rd column", async() => {
+  it("Check if first pokemon in party is caterpie from gen 1 and 1rd row, 3rd column", async () => {
     await game.importData("src/test/utils/saves/everything.prsv");
     const caughtCount = Object.keys(game.scene.gameData.dexData).filter((key) => {
       const species = game.scene.gameData.dexData[key];
@@ -496,11 +495,11 @@ describe("UI - Starter select", () => {
         resolve();
       });
     });
-    expect(options.some(option => option.label === "Add to Party")).toBe(true);
-    expect(options.some(option => option.label === "Toggle IVs")).toBe(true);
-    expect(options.some(option => option.label === "Manage Moves")).toBe(true);
-    expect(options.some(option => option.label === "Use Candies")).toBe(true);
-    expect(options.some(option => option.label === "Cancel")).toBe(true);
+    expect(options.some((option) => option.label === "Add to Party")).toBe(true);
+    expect(options.some((option) => option.label === "Toggle IVs")).toBe(true);
+    expect(options.some((option) => option.label === "Manage Moves")).toBe(true);
+    expect(options.some((option) => option.label === "Use Candies")).toBe(true);
+    expect(options.some((option) => option.label === "Cancel")).toBe(true);
     optionSelectUiHandler?.processInput(Button.ACTION);
 
     let starterSelectUiHandler: StarterSelectUiHandler;
@@ -529,7 +528,7 @@ describe("UI - Starter select", () => {
     expect(game.scene.getParty()[0].species.speciesId).toBe(Species.CATERPIE);
   }, 20000);
 
-  it("Check if first pokemon in party is nidoran_m from gen 1 and 2nd row, 4th column (cursor (9+4)-1)", async() => {
+  it("Check if first pokemon in party is nidoran_m from gen 1 and 2nd row, 4th column (cursor (9+4)-1)", async () => {
     await game.importData("src/test/utils/saves/everything.prsv");
     const caughtCount = Object.keys(game.scene.gameData.dexData).filter((key) => {
       const species = game.scene.gameData.dexData[key];
@@ -561,11 +560,11 @@ describe("UI - Starter select", () => {
         resolve();
       });
     });
-    expect(options.some(option => option.label === "Add to Party")).toBe(true);
-    expect(options.some(option => option.label === "Toggle IVs")).toBe(true);
-    expect(options.some(option => option.label === "Manage Moves")).toBe(true);
-    expect(options.some(option => option.label === "Use Candies")).toBe(true);
-    expect(options.some(option => option.label === "Cancel")).toBe(true);
+    expect(options.some((option) => option.label === "Add to Party")).toBe(true);
+    expect(options.some((option) => option.label === "Toggle IVs")).toBe(true);
+    expect(options.some((option) => option.label === "Manage Moves")).toBe(true);
+    expect(options.some((option) => option.label === "Use Candies")).toBe(true);
+    expect(options.some((option) => option.label === "Cancel")).toBe(true);
     optionSelectUiHandler?.processInput(Button.ACTION);
 
     let starterSelectUiHandler: StarterSelectUiHandler | undefined;

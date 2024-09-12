@@ -1,9 +1,28 @@
 import BattleScene from "#app/battle-scene";
 import { BattlerIndex } from "#app/battle";
-import { applyAbAttrs, applyPostMoveUsedAbAttrs, applyPreAttackAbAttrs, BlockRedirectAbAttr, IncreasePpAbAttr, PokemonTypeChangeAbAttr, PostMoveUsedAbAttr, RedirectMoveAbAttr } from "#app/data/ability";
+import {
+  applyAbAttrs,
+  applyPostMoveUsedAbAttrs,
+  applyPreAttackAbAttrs,
+  BlockRedirectAbAttr,
+  IncreasePpAbAttr,
+  PokemonTypeChangeAbAttr,
+  PostMoveUsedAbAttr,
+  RedirectMoveAbAttr,
+} from "#app/data/ability";
 import { CommonAnim } from "#app/data/battle-anims";
 import { BattlerTagLapseType, CenterOfAttentionTag } from "#app/data/battler-tags";
-import { allMoves, applyMoveAttrs, BypassRedirectAttr, BypassSleepAttr, ChargeAttr, CopyMoveAttr, HealStatusEffectAttr, MoveFlags, PreMoveMessageAttr } from "#app/data/move";
+import {
+  allMoves,
+  applyMoveAttrs,
+  BypassRedirectAttr,
+  BypassSleepAttr,
+  ChargeAttr,
+  CopyMoveAttr,
+  HealStatusEffectAttr,
+  MoveFlags,
+  PreMoveMessageAttr,
+} from "#app/data/move";
 import { SpeciesFormChangePreMoveTrigger } from "#app/data/pokemon-forms";
 import { getStatusEffectActivationText, getStatusEffectHealText } from "#app/data/status-effect";
 import { Type } from "#app/data/type";
@@ -32,7 +51,14 @@ export class MovePhase extends BattlePhase {
   protected failed: boolean;
   protected cancelled: boolean;
 
-  constructor(scene: BattleScene, pokemon: Pokemon, targets: BattlerIndex[], move: PokemonMove, followUp?: boolean, ignorePp?: boolean) {
+  constructor(
+    scene: BattleScene,
+    pokemon: Pokemon,
+    targets: BattlerIndex[],
+    move: PokemonMove,
+    followUp?: boolean,
+    ignorePp?: boolean,
+  ) {
     super(scene);
 
     this.pokemon = pokemon;
@@ -45,7 +71,11 @@ export class MovePhase extends BattlePhase {
   }
 
   canMove(ignoreDisableTags?: boolean): boolean {
-    return this.pokemon.isActive(true) && this.move.isUsable(this.pokemon, this.ignorePp, ignoreDisableTags) && !!this.targets.length;
+    return (
+      this.pokemon.isActive(true) &&
+      this.move.isUsable(this.pokemon, this.ignorePp, ignoreDisableTags) &&
+      !!this.targets.length
+    );
   }
 
   /**Signifies the current move should fail but still use PP */
@@ -64,7 +94,8 @@ export class MovePhase extends BattlePhase {
     console.log(Moves[this.move.moveId]);
 
     if (!this.canMove(true)) {
-      if (this.pokemon.isActive(true) && this.move.ppUsed >= this.move.getMovePp()) { // if the move PP was reduced from Spite or otherwise, the move fails
+      if (this.pokemon.isActive(true) && this.move.ppUsed >= this.move.getMovePp()) {
+        // if the move PP was reduced from Spite or otherwise, the move fails
         this.fail();
         this.showMoveText();
         this.showFailedText();
@@ -82,23 +113,37 @@ export class MovePhase extends BattlePhase {
     }
 
     // Move redirection abilities (ie. Storm Drain) only support single target moves
-    const moveTarget = this.targets.length === 1
-      ? new Utils.IntegerHolder(this.targets[0])
-      : null;
+    const moveTarget = this.targets.length === 1 ? new Utils.IntegerHolder(this.targets[0]) : null;
     if (moveTarget) {
       const oldTarget = moveTarget.value;
-      this.scene.getField(true).filter(p => p !== this.pokemon).forEach(p => applyAbAttrs(RedirectMoveAbAttr, p, null, false, this.move.moveId, moveTarget));
-      this.pokemon.getOpponents().forEach(p => {
+      this.scene
+        .getField(true)
+        .filter((p) => p !== this.pokemon)
+        .forEach((p) => applyAbAttrs(RedirectMoveAbAttr, p, null, false, this.move.moveId, moveTarget));
+      this.pokemon.getOpponents().forEach((p) => {
         const redirectTag = p.getTag(CenterOfAttentionTag) as CenterOfAttentionTag;
-        if (redirectTag && (!redirectTag.powder || (!this.pokemon.isOfType(Type.GRASS) && !this.pokemon.hasAbility(Abilities.OVERCOAT)))) {
+        if (
+          redirectTag &&
+          (!redirectTag.powder || (!this.pokemon.isOfType(Type.GRASS) && !this.pokemon.hasAbility(Abilities.OVERCOAT)))
+        ) {
           moveTarget.value = p.getBattlerIndex();
         }
       });
       //Check if this move is immune to being redirected, and restore its target to the intended target if it is.
-      if ((this.pokemon.hasAbilityWithAttr(BlockRedirectAbAttr) || this.move.getMove().hasAttr(BypassRedirectAttr))) {
+      if (this.pokemon.hasAbilityWithAttr(BlockRedirectAbAttr) || this.move.getMove().hasAttr(BypassRedirectAttr)) {
         //If an ability prevented this move from being redirected, display its ability pop up.
-        if ((this.pokemon.hasAbilityWithAttr(BlockRedirectAbAttr) && !this.move.getMove().hasAttr(BypassRedirectAttr)) && oldTarget !== moveTarget.value) {
-          this.scene.unshiftPhase(new ShowAbilityPhase(this.scene, this.pokemon.getBattlerIndex(), this.pokemon.getPassiveAbility().hasAttr(BlockRedirectAbAttr)));
+        if (
+          this.pokemon.hasAbilityWithAttr(BlockRedirectAbAttr) &&
+          !this.move.getMove().hasAttr(BypassRedirectAttr) &&
+          oldTarget !== moveTarget.value
+        ) {
+          this.scene.unshiftPhase(
+            new ShowAbilityPhase(
+              this.scene,
+              this.pokemon.getBattlerIndex(),
+              this.pokemon.getPassiveAbility().hasAttr(BlockRedirectAbAttr),
+            ),
+          );
         }
         moveTarget.value = oldTarget;
       }
@@ -117,7 +162,7 @@ export class MovePhase extends BattlePhase {
           if (this.scene.getField()[this.targets[0]].hp === 0) {
             const opposingField = this.pokemon.isPlayer() ? this.scene.getEnemyField() : this.scene.getPlayerField();
             //@ts-ignore
-            this.targets[0] = opposingField.find(p => p.hp > 0)?.getBattlerIndex(); //TODO: fix ts-ignore
+            this.targets[0] = opposingField.find((p) => p.hp > 0)?.getBattlerIndex(); //TODO: fix ts-ignore
           }
         }
       }
@@ -128,7 +173,7 @@ export class MovePhase extends BattlePhase {
       }
     }
 
-    const targets = this.scene.getField(true).filter(p => {
+    const targets = this.scene.getField(true).filter((p) => {
       if (this.targets.indexOf(p.getBattlerIndex()) > -1) {
         return true;
       }
@@ -142,12 +187,14 @@ export class MovePhase extends BattlePhase {
 
       let ppUsed = 1;
       // Filter all opponents to include only those this move is targeting
-      const targetedOpponents = this.pokemon.getOpponents().filter(o => this.targets.includes(o.getBattlerIndex()));
+      const targetedOpponents = this.pokemon.getOpponents().filter((o) => this.targets.includes(o.getBattlerIndex()));
       for (const opponent of targetedOpponents) {
-        if (this.move.ppUsed + ppUsed >= this.move.getMovePp()) { // If we're already at max PP usage, stop checking
+        if (this.move.ppUsed + ppUsed >= this.move.getMovePp()) {
+          // If we're already at max PP usage, stop checking
           break;
         }
-        if (opponent.hasAbilityWithAttr(IncreasePpAbAttr)) { // Accounting for abilities like Pressure
+        if (opponent.hasAbilityWithAttr(IncreasePpAbAttr)) {
+          // Accounting for abilities like Pressure
           ppUsed++;
         }
       }
@@ -160,7 +207,9 @@ export class MovePhase extends BattlePhase {
       if (this.cancelled || this.failed) {
         if (this.failed) {
           this.move.usePp(ppUsed); // Only use PP if the move failed
-          this.scene.eventTarget.dispatchEvent(new MoveUsedEvent(this.pokemon?.id, this.move.getMove(), this.move.ppUsed));
+          this.scene.eventTarget.dispatchEvent(
+            new MoveUsedEvent(this.pokemon?.id, this.move.getMove(), this.move.ppUsed),
+          );
         }
 
         // Record a failed move so Abilities like Truant don't trigger next turn and soft-lock
@@ -191,9 +240,12 @@ export class MovePhase extends BattlePhase {
         return this.end();
       }
 
-      if ((!moveQueue.length || !moveQueue.shift()?.ignorePP) && !this.ignorePp) { // using .shift here clears out two turn moves once they've been used
+      if ((!moveQueue.length || !moveQueue.shift()?.ignorePP) && !this.ignorePp) {
+        // using .shift here clears out two turn moves once they've been used
         this.move.usePp(ppUsed);
-        this.scene.eventTarget.dispatchEvent(new MoveUsedEvent(this.pokemon?.id, this.move.getMove(), this.move.ppUsed));
+        this.scene.eventTarget.dispatchEvent(
+          new MoveUsedEvent(this.pokemon?.id, this.move.getMove(), this.move.ppUsed),
+        );
       }
 
       if (!allMoves[this.move.moveId].hasAttr(CopyMoveAttr)) {
@@ -214,18 +266,26 @@ export class MovePhase extends BattlePhase {
       }
 
       /**
-         * Trigger pokemon type change before playing the move animation
-         * Will still change the user's type when using Roar, Whirlwind, Trick-or-Treat, and Forest's Curse,
-         * regardless of whether the move successfully executes or not.
-         */
-      if (success || [Moves.ROAR, Moves.WHIRLWIND, Moves.TRICK_OR_TREAT, Moves.FORESTS_CURSE].includes(this.move.moveId)) {
+       * Trigger pokemon type change before playing the move animation
+       * Will still change the user's type when using Roar, Whirlwind, Trick-or-Treat, and Forest's Curse,
+       * regardless of whether the move successfully executes or not.
+       */
+      if (
+        success ||
+        [Moves.ROAR, Moves.WHIRLWIND, Moves.TRICK_OR_TREAT, Moves.FORESTS_CURSE].includes(this.move.moveId)
+      ) {
         applyPreAttackAbAttrs(PokemonTypeChangeAbAttr, this.pokemon, null, this.move.getMove());
       }
 
       if (success) {
         this.scene.unshiftPhase(this.getEffectPhase());
       } else {
-        this.pokemon.pushMoveHistory({ move: this.move.moveId, targets: this.targets, result: MoveResult.FAIL, virtual: this.move.virtual });
+        this.pokemon.pushMoveHistory({
+          move: this.move.moveId,
+          targets: this.targets,
+          result: MoveResult.FAIL,
+          virtual: this.move.virtual,
+        });
         if (!cancelled.value) {
           this.showFailedText(failedText);
         }
@@ -233,10 +293,10 @@ export class MovePhase extends BattlePhase {
       // Checks if Dancer ability is triggered
       if (this.move.getMove().hasFlag(MoveFlags.DANCE_MOVE) && !this.followUp) {
         // Pokemon with Dancer can be on either side of the battle so we check in both cases
-        this.scene.getPlayerField().forEach(pokemon => {
+        this.scene.getPlayerField().forEach((pokemon) => {
           applyPostMoveUsedAbAttrs(PostMoveUsedAbAttr, pokemon, this.move, this.pokemon, this.targets);
         });
-        this.scene.getEnemyField().forEach(pokemon => {
+        this.scene.getEnemyField().forEach((pokemon) => {
           applyPostMoveUsedAbAttrs(PostMoveUsedAbAttr, pokemon, this.move, this.pokemon, this.targets);
         });
       }
@@ -249,32 +309,49 @@ export class MovePhase extends BattlePhase {
       let healed = false;
 
       switch (this.pokemon.status.effect) {
-      case StatusEffect.PARALYSIS:
-        if (!this.pokemon.randSeedInt(4)) {
-          activated = true;
-          this.cancelled = true;
-        }
-        break;
-      case StatusEffect.SLEEP:
-        applyMoveAttrs(BypassSleepAttr, this.pokemon, null, this.move.getMove());
-        healed = this.pokemon.status.turnCount === this.pokemon.status.cureTurn;
-        activated = !healed && !this.pokemon.getTag(BattlerTagType.BYPASS_SLEEP);
-        this.cancelled = activated;
-        break;
-      case StatusEffect.FREEZE:
-        healed = !!this.move.getMove().findAttr(attr => attr instanceof HealStatusEffectAttr && attr.selfTarget && attr.isOfEffect(StatusEffect.FREEZE)) || !this.pokemon.randSeedInt(5);
-        activated = !healed;
-        this.cancelled = activated;
-        break;
+        case StatusEffect.PARALYSIS:
+          if (!this.pokemon.randSeedInt(4)) {
+            activated = true;
+            this.cancelled = true;
+          }
+          break;
+        case StatusEffect.SLEEP:
+          applyMoveAttrs(BypassSleepAttr, this.pokemon, null, this.move.getMove());
+          healed = this.pokemon.status.turnCount === this.pokemon.status.cureTurn;
+          activated = !healed && !this.pokemon.getTag(BattlerTagType.BYPASS_SLEEP);
+          this.cancelled = activated;
+          break;
+        case StatusEffect.FREEZE:
+          healed =
+            !!this.move
+              .getMove()
+              .findAttr(
+                (attr) =>
+                  attr instanceof HealStatusEffectAttr && attr.selfTarget && attr.isOfEffect(StatusEffect.FREEZE),
+              ) || !this.pokemon.randSeedInt(5);
+          activated = !healed;
+          this.cancelled = activated;
+          break;
       }
 
       if (activated) {
-        this.scene.queueMessage(getStatusEffectActivationText(this.pokemon.status.effect, getPokemonNameWithAffix(this.pokemon)));
-        this.scene.unshiftPhase(new CommonAnimPhase(this.scene, this.pokemon.getBattlerIndex(), undefined, CommonAnim.POISON + (this.pokemon.status.effect - 1)));
+        this.scene.queueMessage(
+          getStatusEffectActivationText(this.pokemon.status.effect, getPokemonNameWithAffix(this.pokemon)),
+        );
+        this.scene.unshiftPhase(
+          new CommonAnimPhase(
+            this.scene,
+            this.pokemon.getBattlerIndex(),
+            undefined,
+            CommonAnim.POISON + (this.pokemon.status.effect - 1),
+          ),
+        );
         doMove();
       } else {
         if (healed) {
-          this.scene.queueMessage(getStatusEffectHealText(this.pokemon.status.effect, getPokemonNameWithAffix(this.pokemon)));
+          this.scene.queueMessage(
+            getStatusEffectHealText(this.pokemon.status.effect, getPokemonNameWithAffix(this.pokemon)),
+          );
           this.pokemon.resetStatus();
           this.pokemon.updateInfo();
         }
@@ -293,10 +370,13 @@ export class MovePhase extends BattlePhase {
     if (this.move.getMove().hasAttr(ChargeAttr)) {
       const lastMove = this.pokemon.getLastXMoves() as TurnMove[];
       if (!lastMove.length || lastMove[0].move !== this.move.getMove().id || lastMove[0].result !== MoveResult.OTHER) {
-        this.scene.queueMessage(i18next.t("battle:useMove", {
-          pokemonNameWithAffix: getPokemonNameWithAffix(this.pokemon),
-          moveName: this.move.getName()
-        }), 500);
+        this.scene.queueMessage(
+          i18next.t("battle:useMove", {
+            pokemonNameWithAffix: getPokemonNameWithAffix(this.pokemon),
+            moveName: this.move.getName(),
+          }),
+          500,
+        );
         return;
       }
     }
@@ -305,11 +385,19 @@ export class MovePhase extends BattlePhase {
       return;
     }
 
-    this.scene.queueMessage(i18next.t("battle:useMove", {
-      pokemonNameWithAffix: getPokemonNameWithAffix(this.pokemon),
-      moveName: this.move.getName()
-    }), 500);
-    applyMoveAttrs(PreMoveMessageAttr, this.pokemon, this.pokemon.getOpponents().find(() => true)!, this.move.getMove()); //TODO: is the bang correct here?
+    this.scene.queueMessage(
+      i18next.t("battle:useMove", {
+        pokemonNameWithAffix: getPokemonNameWithAffix(this.pokemon),
+        moveName: this.move.getName(),
+      }),
+      500,
+    );
+    applyMoveAttrs(
+      PreMoveMessageAttr,
+      this.pokemon,
+      this.pokemon.getOpponents().find(() => true)!,
+      this.move.getMove(),
+    ); //TODO: is the bang correct here?
   }
 
   showFailedText(failedText: string | null = null): void {

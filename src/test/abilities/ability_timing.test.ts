@@ -9,7 +9,6 @@ import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
-
 describe("Ability Timing", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
@@ -40,10 +39,15 @@ describe("Ability Timing", () => {
     game.settings.battleStyle = BattleStyle.SWITCH;
     await game.classicMode.runToSummon([Species.EEVEE, Species.FEEBAS]);
 
-    game.onNextPrompt("CheckSwitchPhase", Mode.CONFIRM, () => {
-      game.setMode(Mode.MESSAGE);
-      game.endPhase();
-    }, () => game.isCurrentPhase(CommandPhase) || game.isCurrentPhase(TurnInitPhase));
+    game.onNextPrompt(
+      "CheckSwitchPhase",
+      Mode.CONFIRM,
+      () => {
+        game.setMode(Mode.MESSAGE);
+        game.endPhase();
+      },
+      () => game.isCurrentPhase(CommandPhase) || game.isCurrentPhase(TurnInitPhase),
+    );
 
     await game.phaseInterceptor.to("MessagePhase");
     const message = game.textInterceptor.getLatestMessage();

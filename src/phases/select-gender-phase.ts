@@ -23,7 +23,7 @@ export class SelectGenderPhase extends Phase {
               this.scene.gameData.saveSetting(SettingKeys.Player_Gender, 0);
               this.scene.gameData.saveSystem().then(() => this.end());
               return true;
-            }
+            },
           },
           {
             label: i18next.t("settings:girl"),
@@ -32,9 +32,9 @@ export class SelectGenderPhase extends Phase {
               this.scene.gameData.saveSetting(SettingKeys.Player_Gender, 1);
               this.scene.gameData.saveSystem().then(() => this.end());
               return true;
-            }
-          }
-        ]
+            },
+          },
+        ],
       });
     });
   }

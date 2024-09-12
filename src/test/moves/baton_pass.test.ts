@@ -34,7 +34,7 @@ describe("Moves - Baton Pass", () => {
       .disableCrits();
   });
 
-  it("transfers all stat stages when player uses it", async() => {
+  it("transfers all stat stages when player uses it", async () => {
     // arrange
     await game.classicMode.startBattle([Species.RAICHU, Species.SHUCKLE]);
 
@@ -59,9 +59,7 @@ describe("Moves - Baton Pass", () => {
 
   it("passes stat stage buffs when AI uses it", async () => {
     // arrange
-    game.override
-      .startingWave(5)
-      .enemyMoveset(new Array(4).fill([Moves.NASTY_PLOT]));
+    game.override.startingWave(5).enemyMoveset(new Array(4).fill([Moves.NASTY_PLOT]));
     await game.classicMode.startBattle([Species.RAICHU, Species.SHUCKLE]);
 
     // round 1 - ai buffs
@@ -87,11 +85,11 @@ describe("Moves - Baton Pass", () => {
       "MoveEffectPhase",
       "SwitchSummonPhase",
       "SummonPhase",
-      "PostSummonPhase"
+      "PostSummonPhase",
     ]);
   }, 20000);
 
-  it("doesn't transfer effects that aren't transferrable", async() => {
+  it("doesn't transfer effects that aren't transferrable", async () => {
     game.override.enemyMoveset([Moves.SALT_CURE]);
     await game.classicMode.startBattle([Species.PIKACHU, Species.FEEBAS]);
 

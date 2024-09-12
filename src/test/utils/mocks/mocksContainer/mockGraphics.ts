@@ -23,20 +23,15 @@ export default class MockGraphics implements MockGameObject {
     // Creates a geometry mask.
   }
 
-  setOrigin(x, y) {
-  }
+  setOrigin(x, y) {}
 
-  setAlpha(alpha) {
-  }
+  setAlpha(alpha) {}
 
-  setVisible(visible) {
-  }
+  setVisible(visible) {}
 
-  setName(name) {
-  }
+  setName(name) {}
 
-  once(event, callback, source) {
-  }
+  once(event, callback, source) {}
 
   removeFromDisplayList() {
     // same as remove or destroy
@@ -58,8 +53,7 @@ export default class MockGraphics implements MockGameObject {
     // Sets the scale of this Game Object.
   }
 
-  off(event, callback, source) {
-  }
+  off(event, callback, source) {}
 
   add(obj) {
     // Adds a child to this Game Object.

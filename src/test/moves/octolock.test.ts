@@ -27,17 +27,18 @@ describe("Moves - Octolock", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
 
-    game.override.battleType("single")
+    game.override
+      .battleType("single")
       .enemySpecies(Species.RATTATA)
       .enemyMoveset(Moves.SPLASH)
       .enemyAbility(Abilities.BALL_FETCH)
       .startingLevel(2000)
-      .moveset([ Moves.OCTOLOCK, Moves.SPLASH ])
+      .moveset([Moves.OCTOLOCK, Moves.SPLASH])
       .ability(Abilities.BALL_FETCH);
   });
 
   it("lowers DEF and SPDEF stat stages of the target Pokemon by 1 each turn", { timeout: 10000 }, async () => {
-    await game.classicMode.startBattle([ Species.GRAPPLOCT ]);
+    await game.classicMode.startBattle([Species.GRAPPLOCT]);
 
     const enemyPokemon = game.scene.getEnemyPokemon()!;
 
@@ -59,7 +60,7 @@ describe("Moves - Octolock", () => {
 
   it("if target pokemon has BIG_PECKS, should only lower SPDEF stat stage by 1", { timeout: 10000 }, async () => {
     game.override.enemyAbility(Abilities.BIG_PECKS);
-    await game.classicMode.startBattle([ Species.GRAPPLOCT ]);
+    await game.classicMode.startBattle([Species.GRAPPLOCT]);
 
     const enemyPokemon = game.scene.getEnemyPokemon()!;
 
@@ -73,7 +74,7 @@ describe("Moves - Octolock", () => {
 
   it("if target pokemon has WHITE_SMOKE, should not reduce any stat stages", { timeout: 10000 }, async () => {
     game.override.enemyAbility(Abilities.WHITE_SMOKE);
-    await game.classicMode.startBattle([ Species.GRAPPLOCT ]);
+    await game.classicMode.startBattle([Species.GRAPPLOCT]);
 
     const enemyPokemon = game.scene.getEnemyPokemon()!;
 
@@ -87,7 +88,7 @@ describe("Moves - Octolock", () => {
 
   it("if target pokemon has CLEAR_BODY, should not reduce any stat stages", { timeout: 10000 }, async () => {
     game.override.enemyAbility(Abilities.CLEAR_BODY);
-    await game.classicMode.startBattle([ Species.GRAPPLOCT ]);
+    await game.classicMode.startBattle([Species.GRAPPLOCT]);
 
     const enemyPokemon = game.scene.getEnemyPokemon()!;
 
@@ -100,17 +101,17 @@ describe("Moves - Octolock", () => {
   });
 
   it("traps the target pokemon", { timeout: 10000 }, async () => {
-    await game.classicMode.startBattle([ Species.GRAPPLOCT ]);
+    await game.classicMode.startBattle([Species.GRAPPLOCT]);
 
     const enemyPokemon = game.scene.getEnemyPokemon()!;
 
     // before Octolock - enemy should not be trapped
-    expect(enemyPokemon.findTag(t => t instanceof TrappedTag)).toBeUndefined();
+    expect(enemyPokemon.findTag((t) => t instanceof TrappedTag)).toBeUndefined();
 
     game.move.select(Moves.OCTOLOCK);
 
     // after Octolock - enemy should be trapped
     await game.phaseInterceptor.to(MoveEndPhase);
-    expect(enemyPokemon.findTag(t => t instanceof TrappedTag)).toBeDefined();
+    expect(enemyPokemon.findTag((t) => t instanceof TrappedTag)).toBeDefined();
   });
 });

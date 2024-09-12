@@ -19,11 +19,17 @@ export class ModifierRewardPhase extends BattlePhase {
   }
 
   doReward(): Promise<void> {
-    return new Promise<void>(resolve => {
+    return new Promise<void>((resolve) => {
       const newModifier = this.modifierType.newModifier();
       this.scene.addModifier(newModifier).then(() => {
         this.scene.playSound("item_fanfare");
-        this.scene.ui.showText(i18next.t("battle:rewardGain", { modifierName: newModifier?.type.name }), null, () => resolve(), null, true);
+        this.scene.ui.showText(
+          i18next.t("battle:rewardGain", { modifierName: newModifier?.type.name }),
+          null,
+          () => resolve(),
+          null,
+          true,
+        );
       });
     });
   }

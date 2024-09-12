@@ -11,7 +11,7 @@ html {
 
 body {
   margin: 0;
-  display:flex;
+  display: flex;
   flex-direction: column;
   align-items: center;
   background: #484050;
@@ -32,7 +32,8 @@ body {
   transform-origin: top !important;
 }
 
-#layout:fullscreen #dpad, #layout:fullscreen {
+#layout:fullscreen #dpad,
+#layout:fullscreen {
   bottom: 6rem;
 }
 
@@ -50,7 +51,6 @@ input {
   display: none !important;
 }
 
-
 input:-internal-autofill-selected {
   -webkit-background-clip: text;
   background-clip: text;
@@ -66,17 +66,21 @@ input:-internal-autofill-selected {
   --controls-padding: 1rem;
 
   --controls-size-with-padding: calc(var(--controls-size) + var(--controls-padding));
-  --controls-size-with-wide-padding: calc(var(--controls-size) *1.2 + var(--controls-padding));
+  --controls-size-with-wide-padding: calc(var(--controls-size) * 1.2 + var(--controls-padding));
   --control-group-extra-size: calc(var(--controls-size) * 0.8);
   --control-group-extra-wide-size: calc(var(--controls-size) * 1.2);
 
-  --control-group-extra-2-offset: calc(var(--controls-size-with-padding) + (var(--controls-size) - var(--control-group-extra-size)) / 2);
-  --control-group-extra-1-offset: calc(var(--controls-padding) + (var(--controls-size) - var(--control-group-extra-size)) / 2);
+  --control-group-extra-2-offset: calc(
+    var(--controls-size-with-padding) + (var(--controls-size) - var(--control-group-extra-size)) / 2
+  );
+  --control-group-extra-1-offset: calc(
+    var(--controls-padding) + (var(--controls-size) - var(--control-group-extra-size)) / 2
+  );
 
   --small-control-size: calc(var(--controls-size) / 3);
   --rect-control-size: calc(var(--controls-size) * 0.74);
 
-  font-family: 'emerald';
+  font-family: "emerald";
   font-size: var(--controls-size);
   text-shadow: var(--color-dark) var(--text-shadow-size) var(--text-shadow-size);
   color: var(--color-light);
@@ -120,32 +124,38 @@ input:-internal-autofill-selected {
 /* Hide buttons on specific UIs */
 
 /* Show #apadPreviousTab and #apadNextTab only in settings, except in touch configuration panel */
-#touchControls:not([data-ui-mode^='SETTINGS']) #apadPreviousTab,
-#touchControls:not([data-ui-mode^='SETTINGS']) #apadNextTab,
+#touchControls:not([data-ui-mode^="SETTINGS"]) #apadPreviousTab,
+#touchControls:not([data-ui-mode^="SETTINGS"]) #apadNextTab,
 #touchControls:is(.config-mode) #apadPreviousTab,
 #touchControls:is(.config-mode) #apadNextTab {
   display: none;
 }
 
 /* Show #apadInfo only in battle */
-#touchControls:not([data-ui-mode='COMMAND']):not([data-ui-mode='FIGHT']):not([data-ui-mode='BALL']):not([data-ui-mode='TARGET_SELECT']) #apadInfo {
+#touchControls:not([data-ui-mode="COMMAND"]):not([data-ui-mode="FIGHT"]):not([data-ui-mode="BALL"]):not(
+    [data-ui-mode="TARGET_SELECT"]
+  )
+  #apadInfo {
   display: none;
 }
 
 /* Show #apadStats only in battle and shop */
-#touchControls:not([data-ui-mode='COMMAND']):not([data-ui-mode='FIGHT']):not([data-ui-mode='BALL']):not([data-ui-mode='TARGET_SELECT']):not([data-ui-mode='MODIFIER_SELECT']) #apadStats {
+#touchControls:not([data-ui-mode="COMMAND"]):not([data-ui-mode="FIGHT"]):not([data-ui-mode="BALL"]):not(
+    [data-ui-mode="TARGET_SELECT"]
+  ):not([data-ui-mode="MODIFIER_SELECT"])
+  #apadStats {
   display: none;
 }
 
 /* Show cycle buttons only on STARTER_SELECT and on touch configuration panel */
-#touchControls:not(.config-mode):not([data-ui-mode='STARTER_SELECT']) #apadOpenFilters,
-#touchControls:not(.config-mode):not([data-ui-mode='STARTER_SELECT'], [data-ui-mode='RUN_INFO']) #apadCycleForm,
-#touchControls:not(.config-mode):not([data-ui-mode='STARTER_SELECT'], [data-ui-mode='RUN_INFO']) #apadCycleShiny,
-#touchControls:not(.config-mode):not([data-ui-mode='STARTER_SELECT']) #apadCycleNature,
-#touchControls:not(.config-mode):not([data-ui-mode='STARTER_SELECT'], [data-ui-mode='RUN_INFO']) #apadCycleAbility,
-#touchControls:not(.config-mode):not([data-ui-mode='STARTER_SELECT']) #apadCycleGender,
-#touchControls:not(.config-mode):not([data-ui-mode='STARTER_SELECT']) #apadCycleVariant {
- display: none;
+#touchControls:not(.config-mode):not([data-ui-mode="STARTER_SELECT"]) #apadOpenFilters,
+#touchControls:not(.config-mode):not([data-ui-mode="STARTER_SELECT"], [data-ui-mode="RUN_INFO"]) #apadCycleForm,
+#touchControls:not(.config-mode):not([data-ui-mode="STARTER_SELECT"], [data-ui-mode="RUN_INFO"]) #apadCycleShiny,
+#touchControls:not(.config-mode):not([data-ui-mode="STARTER_SELECT"]) #apadCycleNature,
+#touchControls:not(.config-mode):not([data-ui-mode="STARTER_SELECT"], [data-ui-mode="RUN_INFO"]) #apadCycleAbility,
+#touchControls:not(.config-mode):not([data-ui-mode="STARTER_SELECT"]) #apadCycleGender,
+#touchControls:not(.config-mode):not([data-ui-mode="STARTER_SELECT"]) #apadCycleVariant {
+  display: none;
 }
 
 /* Configuration toolbar */
@@ -195,7 +205,7 @@ input:-internal-autofill-selected {
 }
 
 #configToolbar .button:active {
-  opacity: var(--touch-control-opacity)
+  opacity: var(--touch-control-opacity);
 }
 
 #configToolbar .orientation-label {
@@ -294,7 +304,8 @@ input:-internal-autofill-selected {
 
 /* Layout */
 
-#layout:fullscreen #dpad, #layout:fullscreen #apad {
+#layout:fullscreen #dpad,
+#layout:fullscreen #apad {
   bottom: 6rem;
 }
 
@@ -327,55 +338,55 @@ a {
 
 /* Firefox old*/
 @-moz-keyframes blink {
-    0% {
-        opacity:1;
-    }
-    50% {
-        opacity:0;
-    }
-    100% {
-        opacity:1;
-    }
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
 }
 
 @-webkit-keyframes blink {
-    0% {
-        opacity:1;
-    }
-    50% {
-        opacity:0;
-    }
-    100% {
-        opacity:1;
-    }
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
 }
 /* IE */
 @-ms-keyframes blink {
-    0% {
-        opacity:1;
-    }
-    50% {
-        opacity:0;
-    }
-    100% {
-        opacity:1;
-    }
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
 }
 /* Opera and prob css3 final iteration */
 @keyframes blink {
-    0% {
-        opacity:1;
-    }
-    50% {
-        opacity:0;
-    }
-    100% {
-        opacity:1;
-    }
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
 }
 .blink-image {
-    -moz-animation: blink normal 4s infinite ease-in-out; /* Firefox */
-    -webkit-animation: blink normal 4s infinite ease-in-out; /* Webkit */
-    -ms-animation: blink normal 4s infinite ease-in-out; /* IE */
-    animation: blink normal 4s infinite ease-in-out; /* Opera and prob css3 final iteration */
+  -moz-animation: blink normal 4s infinite ease-in-out; /* Firefox */
+  -webkit-animation: blink normal 4s infinite ease-in-out; /* Webkit */
+  -ms-animation: blink normal 4s infinite ease-in-out; /* IE */
+  animation: blink normal 4s infinite ease-in-out; /* Opera and prob css3 final iteration */
 }

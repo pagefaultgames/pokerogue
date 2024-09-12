@@ -4,7 +4,7 @@ import i18next from "i18next";
 
 export enum EventType {
   SHINY,
-  GENERIC
+  GENERIC,
 }
 
 interface EventBanner {
@@ -33,18 +33,15 @@ const timedEvents: TimedEvent[] = [
     xPosition: 19,
     yPosition: 120,
     scale: 0.21,
-    availableLangs: ["en", "de", "it", "fr", "ja", "ko", "es", "pt-BR", "zh-CN"]
-  }
+    availableLangs: ["en", "de", "it", "fr", "ja", "ko", "es", "pt-BR", "zh-CN"],
+  },
 ];
 
 export class TimedEventManager {
   constructor() {}
 
   isActive(event: TimedEvent) {
-    return (
-      event.startDate < new Date() &&
-        new Date() < event.endDate
-    );
+    return event.startDate < new Date() && new Date() < event.endDate;
   }
 
   activeEvent(): TimedEvent | undefined {
@@ -94,13 +91,18 @@ export class TimedEventDisplay extends Phaser.GameObjects.Container {
       let key = this.event.bannerKey;
       if (lang && this.event.availableLangs && this.event.availableLangs.length > 0) {
         if (this.event.availableLangs.includes(lang)) {
-          key += "_"+lang;
+          key += "_" + lang;
         } else {
           key += "_en";
         }
       }
       console.log(this.event.bannerKey);
-      this.banner = new Phaser.GameObjects.Image(this.scene, this.event.xPosition ?? 29, this.event.yPosition ?? 64, key);
+      this.banner = new Phaser.GameObjects.Image(
+        this.scene,
+        this.event.xPosition ?? 29,
+        this.event.yPosition ?? 64,
+        key,
+      );
       this.banner.setName("img-event-banner");
       this.banner.setOrigin(0.08, -0.35);
       this.banner.setScale(this.event.scale ?? 0.18);
@@ -110,7 +112,7 @@ export class TimedEventDisplay extends Phaser.GameObjects.Container {
           this.banner.x + 8,
           this.banner.y + 100,
           this.timeToGo(this.event.endDate),
-          TextStyle.WINDOW
+          TextStyle.WINDOW,
         );
         this.eventTimerText.setName("text-event-timer");
         this.eventTimerText.setScale(0.15);
@@ -138,10 +140,9 @@ export class TimedEventDisplay extends Phaser.GameObjects.Container {
   }
 
   private timeToGo(date: Date) {
-
     // Utility to add leading zero
     function z(n) {
-      return (n < 10? "0" : "") + n;
+      return (n < 10 ? "0" : "") + n;
     }
     const now = new Date();
     let diff = Math.abs(date.getTime() - now.getTime());
@@ -150,13 +151,13 @@ export class TimedEventDisplay extends Phaser.GameObjects.Container {
     diff = Math.abs(diff);
 
     // Get time components
-    const days = diff/8.64e7 | 0;
-    const hours = diff%8.64e7 / 3.6e6 | 0;
-    const mins  = diff%3.6e6 / 6e4 | 0;
-    const secs  = Math.round(diff%6e4 / 1e3);
+    const days = (diff / 8.64e7) | 0;
+    const hours = ((diff % 8.64e7) / 3.6e6) | 0;
+    const mins = ((diff % 3.6e6) / 6e4) | 0;
+    const secs = Math.round((diff % 6e4) / 1e3);
 
     // Return formatted string
-    return "Event Ends in : " + z(days) + "d " + z(hours) + "h " + z(mins) + "m " + z(secs)+ "s";
+    return "Event Ends in : " + z(days) + "d " + z(hours) + "h " + z(mins) + "m " + z(secs) + "s";
   }
 
   updateCountdown() {

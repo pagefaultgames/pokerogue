@@ -7,5 +7,5 @@ export enum GameDataType {
   SETTINGS,
   TUTORIALS,
   SEEN_DIALOGUES,
-  RUN_HISTORY
+  RUN_HISTORY,
 }

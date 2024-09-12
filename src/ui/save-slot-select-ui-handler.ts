@@ -15,13 +15,12 @@ const sessionSlotCount = 5;
 
 export enum SaveSlotUiMode {
   LOAD,
-  SAVE
+  SAVE,
 }
 
 export type SaveSlotSelectCallback = (cursor: integer) => void;
 
 export default class SaveSlotSelectUiHandler extends MessageUiHandler {
-
   private saveSlotSelectContainer: Phaser.GameObjects.Container;
   private sessionSlotsContainer: Phaser.GameObjects.Container;
   private saveSlotSelectMessageBox: Phaser.GameObjects.NineSlice;
@@ -48,7 +47,13 @@ export default class SaveSlotSelectUiHandler extends MessageUiHandler {
     this.saveSlotSelectContainer.setVisible(false);
     ui.add(this.saveSlotSelectContainer);
 
-    const loadSessionBg = this.scene.add.rectangle(0, 0, this.scene.game.canvas.width / 6, -this.scene.game.canvas.height / 6, 0x006860);
+    const loadSessionBg = this.scene.add.rectangle(
+      0,
+      0,
+      this.scene.game.canvas.width / 6,
+      -this.scene.game.canvas.height / 6,
+      0x006860,
+    );
     loadSessionBg.setOrigin(0, 0);
     this.saveSlotSelectContainer.add(loadSessionBg);
 
@@ -73,7 +78,7 @@ export default class SaveSlotSelectUiHandler extends MessageUiHandler {
   }
 
   show(args: any[]): boolean {
-    if ((args.length < 2 || !(args[1] instanceof Function))) {
+    if (args.length < 2 || !(args[1] instanceof Function)) {
       return false;
     }
 
@@ -104,40 +109,48 @@ export default class SaveSlotSelectUiHandler extends MessageUiHandler {
           error = true;
         } else {
           switch (this.uiMode) {
-          case SaveSlotUiMode.LOAD:
-            this.saveSlotSelectCallback = null;
-            originalCallback && originalCallback(cursor);
-            break;
-          case SaveSlotUiMode.SAVE:
-            const saveAndCallback = () => {
-              const originalCallback = this.saveSlotSelectCallback;
+            case SaveSlotUiMode.LOAD:
               this.saveSlotSelectCallback = null;
-              ui.revertMode();
-              ui.showText("", 0);
-              ui.setMode(Mode.MESSAGE);
               originalCallback && originalCallback(cursor);
-            };
-            if (this.sessionSlots[cursor].hasData) {
-              ui.showText(i18next.t("saveSlotSelectUiHandler:overwriteData"), null, () => {
-                ui.setOverlayMode(Mode.CONFIRM, () => {
-                  this.scene.gameData.deleteSession(cursor).then(response => {
-                    if (response === false) {
-                      this.scene.reset(true);
-                    } else {
-                      saveAndCallback();
-                    }
-                  });
-                }, () => {
-                  ui.revertMode();
-                  ui.showText("", 0);
-                }, false, 0, 19, 2000);
-              });
-            } else if (this.sessionSlots[cursor].hasData === false) {
-              saveAndCallback();
-            } else {
-              return false;
-            }
-            break;
+              break;
+            case SaveSlotUiMode.SAVE:
+              const saveAndCallback = () => {
+                const originalCallback = this.saveSlotSelectCallback;
+                this.saveSlotSelectCallback = null;
+                ui.revertMode();
+                ui.showText("", 0);
+                ui.setMode(Mode.MESSAGE);
+                originalCallback && originalCallback(cursor);
+              };
+              if (this.sessionSlots[cursor].hasData) {
+                ui.showText(i18next.t("saveSlotSelectUiHandler:overwriteData"), null, () => {
+                  ui.setOverlayMode(
+                    Mode.CONFIRM,
+                    () => {
+                      this.scene.gameData.deleteSession(cursor).then((response) => {
+                        if (response === false) {
+                          this.scene.reset(true);
+                        } else {
+                          saveAndCallback();
+                        }
+                      });
+                    },
+                    () => {
+                      ui.revertMode();
+                      ui.showText("", 0);
+                    },
+                    false,
+                    0,
+                    19,
+                    2000,
+                  );
+                });
+              } else if (this.sessionSlots[cursor].hasData === false) {
+                saveAndCallback();
+              } else {
+                return false;
+              }
+              break;
           }
           success = true;
         }
@@ -148,20 +161,20 @@ export default class SaveSlotSelectUiHandler extends MessageUiHandler {
       }
     } else {
       switch (button) {
-      case Button.UP:
-        if (this.cursor) {
-          success = this.setCursor(this.cursor - 1);
-        } else if (this.scrollCursor) {
-          success = this.setScrollCursor(this.scrollCursor - 1);
-        }
-        break;
-      case Button.DOWN:
-        if (this.cursor < 2) {
-          success = this.setCursor(this.cursor + 1);
-        } else if (this.scrollCursor < sessionSlotCount - 3) {
-          success = this.setScrollCursor(this.scrollCursor + 1);
-        }
-        break;
+        case Button.UP:
+          if (this.cursor) {
+            success = this.setCursor(this.cursor - 1);
+          } else if (this.scrollCursor) {
+            success = this.setScrollCursor(this.scrollCursor - 1);
+          }
+          break;
+        case Button.DOWN:
+          if (this.cursor < 2) {
+            success = this.setCursor(this.cursor + 1);
+          } else if (this.scrollCursor < sessionSlotCount - 3) {
+            success = this.setScrollCursor(this.scrollCursor + 1);
+          }
+          break;
       }
     }
 
@@ -184,7 +197,14 @@ export default class SaveSlotSelectUiHandler extends MessageUiHandler {
     }
   }
 
-  showText(text: string, delay?: integer, callback?: Function, callbackDelay?: integer, prompt?: boolean, promptDelay?: integer) {
+  showText(
+    text: string,
+    delay?: integer,
+    callback?: Function,
+    callbackDelay?: integer,
+    prompt?: boolean,
+    promptDelay?: integer,
+  ) {
     super.showText(text, delay, callback, callbackDelay, prompt, promptDelay);
 
     if (text?.indexOf("\n") === -1) {
@@ -221,7 +241,7 @@ export default class SaveSlotSelectUiHandler extends MessageUiHandler {
         targets: this.sessionSlotsContainer,
         y: this.sessionSlotsContainerInitialY - 56 * scrollCursor,
         duration: Utils.fixedInt(325),
-        ease: "Sine.easeInOut"
+        ease: "Sine.easeInOut",
       });
     }
 
@@ -266,7 +286,13 @@ class SessionSlot extends Phaser.GameObjects.Container {
     const slotWindow = addWindow(this.scene, 0, 0, 304, 52);
     this.add(slotWindow);
 
-    this.loadingLabel = addTextObject(this.scene, 152, 26, i18next.t("saveSlotSelectUiHandler:loading"), TextStyle.WINDOW);
+    this.loadingLabel = addTextObject(
+      this.scene,
+      152,
+      26,
+      i18next.t("saveSlotSelectUiHandler:loading"),
+      TextStyle.WINDOW,
+    );
     this.loadingLabel.setOrigin(0.5, 0.5);
     this.add(this.loadingLabel);
   }
@@ -274,10 +300,22 @@ class SessionSlot extends Phaser.GameObjects.Container {
   async setupWithData(data: SessionSaveData) {
     this.remove(this.loadingLabel, true);
 
-    const gameModeLabel = addTextObject(this.scene, 8, 5, `${GameMode.getModeName(data.gameMode) || i18next.t("gameMode:unkown")} - ${i18next.t("saveSlotSelectUiHandler:wave")} ${data.waveIndex}`, TextStyle.WINDOW);
+    const gameModeLabel = addTextObject(
+      this.scene,
+      8,
+      5,
+      `${GameMode.getModeName(data.gameMode) || i18next.t("gameMode:unkown")} - ${i18next.t("saveSlotSelectUiHandler:wave")} ${data.waveIndex}`,
+      TextStyle.WINDOW,
+    );
     this.add(gameModeLabel);
 
-    const timestampLabel = addTextObject(this.scene, 8, 19, new Date(data.timestamp).toLocaleString(), TextStyle.WINDOW);
+    const timestampLabel = addTextObject(
+      this.scene,
+      8,
+      19,
+      new Date(data.timestamp).toLocaleString(),
+      TextStyle.WINDOW,
+    );
     this.add(timestampLabel);
 
     const playTimeLabel = addTextObject(this.scene, 8, 33, Utils.getPlayTimeString(data.playTime), TextStyle.WINDOW);
@@ -291,7 +329,14 @@ class SessionSlot extends Phaser.GameObjects.Container {
       const pokemon = p.toPokemon(this.scene);
       const icon = this.scene.addPokemonIcon(pokemon, 0, 0, 0, 0);
 
-      const text = addTextObject(this.scene, 32, 20, `${i18next.t("saveSlotSelectUiHandler:lv")}${Utils.formatLargeNumber(pokemon.level, 1000)}`, TextStyle.PARTY, { fontSize: "54px", color: "#f8f8f8" });
+      const text = addTextObject(
+        this.scene,
+        32,
+        20,
+        `${i18next.t("saveSlotSelectUiHandler:lv")}${Utils.formatLargeNumber(pokemon.level, 1000)}`,
+        TextStyle.PARTY,
+        { fontSize: "54px", color: "#f8f8f8" },
+      );
       text.setShadow(0, 0, undefined);
       text.setStroke("#424242", 14);
       text.setOrigin(1, 0);
@@ -328,8 +373,8 @@ class SessionSlot extends Phaser.GameObjects.Container {
   }
 
   load(): Promise<boolean> {
-    return new Promise<boolean>(resolve => {
-      this.scene.gameData.getSession(this.slotId).then(async sessionData => {
+    return new Promise<boolean>((resolve) => {
+      this.scene.gameData.getSession(this.slotId).then(async (sessionData) => {
         if (!sessionData) {
           this.hasData = false;
           this.loadingLabel.setText(i18next.t("saveSlotSelectUiHandler:empty"));

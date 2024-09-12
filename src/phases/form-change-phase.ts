@@ -35,15 +35,14 @@ export class FormChangePhase extends EvolutionPhase {
   doEvolution(): void {
     const preName = getPokemonNameWithAffix(this.pokemon);
 
-    this.pokemon.getPossibleForm(this.formChange).then(transformedPokemon => {
-
-      [ this.pokemonEvoSprite, this.pokemonEvoTintSprite ].map(sprite => {
+    this.pokemon.getPossibleForm(this.formChange).then((transformedPokemon) => {
+      [this.pokemonEvoSprite, this.pokemonEvoTintSprite].map((sprite) => {
         sprite.play(transformedPokemon.getSpriteKey(true));
         sprite.setPipelineData("ignoreTimeTint", true);
         sprite.setPipelineData("spriteKey", transformedPokemon.getSpriteKey());
         sprite.setPipelineData("shiny", transformedPokemon.shiny);
         sprite.setPipelineData("variant", transformedPokemon.variant);
-        [ "spriteColors", "fusionSpriteColors" ].map(k => {
+        ["spriteColors", "fusionSpriteColors"].map((k) => {
           if (transformedPokemon.summonData?.speciesForm) {
             k += "Base";
           }
@@ -63,7 +62,7 @@ export class FormChangePhase extends EvolutionPhase {
               this.scene.tweens.add({
                 targets: this.evolutionBgOverlay,
                 alpha: 0,
-                duration: 250
+                duration: 250,
               });
               this.evolutionBg.setVisible(true);
               this.evolutionBg.play();
@@ -74,7 +73,7 @@ export class FormChangePhase extends EvolutionPhase {
               from: 0,
               to: 1,
               duration: 2000,
-              onUpdate: t => {
+              onUpdate: (t) => {
                 this.pokemonTintSprite.setAlpha(t.getValue());
               },
               onComplete: () => {
@@ -85,7 +84,7 @@ export class FormChangePhase extends EvolutionPhase {
                   this.scene.time.delayedCall(1000, () => {
                     this.pokemonEvoTintSprite.setScale(0.25);
                     this.pokemonEvoTintSprite.setVisible(true);
-                    this.doCycle(1, 1).then(_success => {
+                    this.doCycle(1, 1).then((_success) => {
                       this.scene.playSound("se/sparkle");
                       this.pokemonEvoSprite.setVisible(true);
                       this.doCircleInward();
@@ -106,7 +105,7 @@ export class FormChangePhase extends EvolutionPhase {
                               this.evolutionBgOverlay.setAlpha(1);
                               this.evolutionBg.setVisible(false);
                               this.scene.tweens.add({
-                                targets: [ this.evolutionOverlay, this.pokemonEvoTintSprite ],
+                                targets: [this.evolutionOverlay, this.pokemonEvoTintSprite],
                                 alpha: 0,
                                 duration: 2000,
                                 delay: 150,
@@ -124,33 +123,47 @@ export class FormChangePhase extends EvolutionPhase {
                                           if (this.formChange.formKey.indexOf(SpeciesFormKey.MEGA) > -1) {
                                             this.scene.validateAchv(achvs.MEGA_EVOLVE);
                                             playEvolutionFanfare = true;
-                                          } else if (this.formChange.formKey.indexOf(SpeciesFormKey.GIGANTAMAX) > -1 || this.formChange.formKey.indexOf(SpeciesFormKey.ETERNAMAX) > -1) {
+                                          } else if (
+                                            this.formChange.formKey.indexOf(SpeciesFormKey.GIGANTAMAX) > -1 ||
+                                            this.formChange.formKey.indexOf(SpeciesFormKey.ETERNAMAX) > -1
+                                          ) {
                                             this.scene.validateAchv(achvs.GIGANTAMAX);
                                             playEvolutionFanfare = true;
                                           }
 
                                           const delay = playEvolutionFanfare ? 4000 : 1750;
-                                          this.scene.playSoundWithoutBgm(playEvolutionFanfare ? "evolution_fanfare" : "minor_fanfare");
+                                          this.scene.playSoundWithoutBgm(
+                                            playEvolutionFanfare ? "evolution_fanfare" : "minor_fanfare",
+                                          );
 
                                           transformedPokemon.destroy();
-                                          this.scene.ui.showText(getSpeciesFormChangeMessage(this.pokemon, this.formChange, preName), null, () => this.end(), null, true, Utils.fixedInt(delay));
-                                          this.scene.time.delayedCall(Utils.fixedInt(delay + 250), () => this.scene.playBgm());
+                                          this.scene.ui.showText(
+                                            getSpeciesFormChangeMessage(this.pokemon, this.formChange, preName),
+                                            null,
+                                            () => this.end(),
+                                            null,
+                                            true,
+                                            Utils.fixedInt(delay),
+                                          );
+                                          this.scene.time.delayedCall(Utils.fixedInt(delay + 250), () =>
+                                            this.scene.playBgm(),
+                                          );
                                         });
                                       });
-                                    }
+                                    },
                                   });
-                                }
+                                },
                               });
-                            }
+                            },
                           });
                         });
                       });
                     });
                   });
                 });
-              }
+              },
             });
-          }
+          },
         });
       });
     });

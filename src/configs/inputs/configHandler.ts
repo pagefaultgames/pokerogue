@@ -1,4 +1,4 @@
-import {Device} from "#enums/devices";
+import { Device } from "#enums/devices";
 
 /**
  * Retrieves the key associated with the specified keycode from the mapping.
@@ -8,7 +8,7 @@ import {Device} from "#enums/devices";
  * @returns The key associated with the specified keycode.
  */
 export function getKeyWithKeycode(config, keycode) {
-  return Object.keys(config.deviceMapping).find(key => config.deviceMapping[key] === keycode);
+  return Object.keys(config.deviceMapping).find((key) => config.deviceMapping[key] === keycode);
 }
 
 /**
@@ -55,7 +55,7 @@ export function getButtonWithKeycode(config, keycode) {
  * @returns The key associated with the specified setting name.
  */
 export function getKeyWithSettingName(config, settingName) {
-  return Object.keys(config.custom).find(key => config.custom[key] === settingName);
+  return Object.keys(config.custom).find((key) => config.custom[key] === settingName);
 }
 
 /**
@@ -115,7 +115,10 @@ export function getIconForLatestInput(configs, source, devices, settingName) {
 
 export function assign(config, settingNameTarget, keycode): boolean {
   // first, we need to check if this keycode is already used on another settingName
-  if (!canIAssignThisKey(config, getKeyWithKeycode(config, keycode)) || !canIOverrideThisSetting(config, settingNameTarget)) {
+  if (
+    !canIAssignThisKey(config, getKeyWithKeycode(config, keycode)) ||
+    !canIOverrideThisSetting(config, settingNameTarget)
+  ) {
     return false;
   }
   const previousSettingName = getSettingNameWithKeycode(config, keycode);

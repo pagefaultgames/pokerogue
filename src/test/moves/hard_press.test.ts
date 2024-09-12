@@ -45,7 +45,7 @@ describe("Moves - Hard Press", () => {
 
   it("should return 50 power if target HP ratio is at 50%", async () => {
     await game.startBattle([Species.PIKACHU]);
-    const targetHpRatio = .5;
+    const targetHpRatio = 0.5;
     const enemy = game.scene.getEnemyPokemon()!;
 
     vi.spyOn(enemy, "getHpRatio").mockReturnValue(targetHpRatio);
@@ -58,7 +58,7 @@ describe("Moves - Hard Press", () => {
 
   it("should return 1 power if target HP ratio is at 1%", async () => {
     await game.startBattle([Species.PIKACHU]);
-    const targetHpRatio = .01;
+    const targetHpRatio = 0.01;
     const enemy = game.scene.getEnemyPokemon()!;
 
     vi.spyOn(enemy, "getHpRatio").mockReturnValue(targetHpRatio);
@@ -71,7 +71,7 @@ describe("Moves - Hard Press", () => {
 
   it("should return 1 power if target HP ratio is less than 1%", async () => {
     await game.startBattle([Species.PIKACHU]);
-    const targetHpRatio = .005;
+    const targetHpRatio = 0.005;
     const enemy = game.scene.getEnemyPokemon()!;
 
     vi.spyOn(enemy, "getHpRatio").mockReturnValue(targetHpRatio);

@@ -29,7 +29,6 @@ export default class ErrorInterceptor {
   }
 }
 
-
 process.on("uncaughtException", (error) => {
   console.log(error);
   const toStop = ErrorInterceptor.getInstance().running;

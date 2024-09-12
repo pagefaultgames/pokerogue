@@ -42,7 +42,7 @@ export class SwitchBiomePhase extends BattlePhase {
           duration: 1000,
           delay: 1000,
           ease: "Sine.easeInOut",
-          alpha: (target: any) => target === this.scene.arenaPlayer ? 0 : 1,
+          alpha: (target: any) => (target === this.scene.arenaPlayer ? 0 : 1),
           onComplete: () => {
             this.scene.arenaBg.setTexture(bgTexture);
             this.scene.arenaPlayer.setBiome(this.nextBiome);
@@ -57,9 +57,9 @@ export class SwitchBiomePhase extends BattlePhase {
             }
 
             this.end();
-          }
+          },
         });
-      }
+      },
     });
   }
 }

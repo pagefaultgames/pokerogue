@@ -55,8 +55,9 @@ describe("Moves - Mat Block", () => {
 
       await game.phaseInterceptor.to(BerryPhase, false);
 
-      leadPokemon.forEach(p => expect(p.hp).toBe(p.getMaxHp()));
-    }, TIMEOUT
+      leadPokemon.forEach((p) => expect(p.hp).toBe(p.getMaxHp()));
+    },
+    TIMEOUT,
   );
 
   test(
@@ -76,8 +77,9 @@ describe("Moves - Mat Block", () => {
 
       await game.phaseInterceptor.to(BerryPhase, false);
 
-      leadPokemon.forEach(p => expect(p.getStatStage(Stat.ATK)).toBe(-2));
-    }, TIMEOUT
+      leadPokemon.forEach((p) => expect(p.getStatStage(Stat.ATK)).toBe(-2));
+    },
+    TIMEOUT,
   );
 
   test(
@@ -93,7 +95,7 @@ describe("Moves - Mat Block", () => {
 
       await game.phaseInterceptor.to(TurnEndPhase);
 
-      const leadStartingHp = leadPokemon.map(p => p.hp);
+      const leadStartingHp = leadPokemon.map((p) => p.hp);
 
       await game.phaseInterceptor.to(CommandPhase, false);
       game.move.select(Moves.MAT_BLOCK);
@@ -103,6 +105,7 @@ describe("Moves - Mat Block", () => {
       await game.phaseInterceptor.to(BerryPhase, false);
 
       expect(leadPokemon.some((p, i) => p.hp < leadStartingHp[i])).toBeTruthy();
-    }, TIMEOUT
+    },
+    TIMEOUT,
   );
 });

@@ -32,9 +32,7 @@ describe("Battle order", () => {
   });
 
   it("opponent faster than player 50 vs 150", async () => {
-    await game.startBattle([
-      Species.BULBASAUR,
-    ]);
+    await game.startBattle([Species.BULBASAUR]);
 
     const playerPokemon = game.scene.getPlayerPokemon()!;
     const enemyPokemon = game.scene.getEnemyPokemon()!;
@@ -53,9 +51,7 @@ describe("Battle order", () => {
   }, 20000);
 
   it("Player faster than opponent 150 vs 50", async () => {
-    await game.startBattle([
-      Species.BULBASAUR,
-    ]);
+    await game.startBattle([Species.BULBASAUR]);
 
     const playerPokemon = game.scene.getPlayerPokemon()!;
     const enemyPokemon = game.scene.getEnemyPokemon()!;
@@ -75,18 +71,15 @@ describe("Battle order", () => {
 
   it("double - both opponents faster than player 50/50 vs 150/150", async () => {
     game.override.battleType("double");
-    await game.startBattle([
-      Species.BULBASAUR,
-      Species.BLASTOISE,
-    ]);
+    await game.startBattle([Species.BULBASAUR, Species.BLASTOISE]);
 
     const playerPokemon = game.scene.getPlayerField();
     const enemyPokemon = game.scene.getEnemyField();
 
-    playerPokemon.forEach(p => vi.spyOn(p, "stats", "get").mockReturnValue([20, 20, 20, 20, 20, 50])); // set both playerPokemons' speed to 50
-    enemyPokemon.forEach(p => vi.spyOn(p, "stats", "get").mockReturnValue([20, 20, 20, 20, 20, 150])); // set both enemyPokemons' speed to 150
-    const playerIndices = playerPokemon.map(p => p?.getBattlerIndex());
-    const enemyIndices = enemyPokemon.map(p => p?.getBattlerIndex());
+    playerPokemon.forEach((p) => vi.spyOn(p, "stats", "get").mockReturnValue([20, 20, 20, 20, 20, 50])); // set both playerPokemons' speed to 50
+    enemyPokemon.forEach((p) => vi.spyOn(p, "stats", "get").mockReturnValue([20, 20, 20, 20, 20, 150])); // set both enemyPokemons' speed to 150
+    const playerIndices = playerPokemon.map((p) => p?.getBattlerIndex());
+    const enemyIndices = enemyPokemon.map((p) => p?.getBattlerIndex());
 
     game.move.select(Moves.TACKLE);
     game.move.select(Moves.TACKLE, 1);
@@ -102,18 +95,15 @@ describe("Battle order", () => {
 
   it("double - speed tie except 1 - 100/100 vs 100/150", async () => {
     game.override.battleType("double");
-    await game.startBattle([
-      Species.BULBASAUR,
-      Species.BLASTOISE,
-    ]);
+    await game.startBattle([Species.BULBASAUR, Species.BLASTOISE]);
 
     const playerPokemon = game.scene.getPlayerField();
     const enemyPokemon = game.scene.getEnemyField();
-    playerPokemon.forEach(p => vi.spyOn(p, "stats", "get").mockReturnValue([20, 20, 20, 20, 20, 100])); //set both playerPokemons' speed to 100
+    playerPokemon.forEach((p) => vi.spyOn(p, "stats", "get").mockReturnValue([20, 20, 20, 20, 20, 100])); //set both playerPokemons' speed to 100
     vi.spyOn(enemyPokemon[0], "stats", "get").mockReturnValue([20, 20, 20, 20, 20, 100]); // set enemyPokemon's speed to 100
     vi.spyOn(enemyPokemon[1], "stats", "get").mockReturnValue([20, 20, 20, 20, 20, 150]); // set enemyPokemon's speed to 150
-    const playerIndices = playerPokemon.map(p => p?.getBattlerIndex());
-    const enemyIndices = enemyPokemon.map(p => p?.getBattlerIndex());
+    const playerIndices = playerPokemon.map((p) => p?.getBattlerIndex());
+    const enemyIndices = enemyPokemon.map((p) => p?.getBattlerIndex());
 
     game.move.select(Moves.TACKLE);
     game.move.select(Moves.TACKLE, 1);
@@ -129,10 +119,7 @@ describe("Battle order", () => {
 
   it("double - speed tie 100/150 vs 100/150", async () => {
     game.override.battleType("double");
-    await game.startBattle([
-      Species.BULBASAUR,
-      Species.BLASTOISE,
-    ]);
+    await game.startBattle([Species.BULBASAUR, Species.BLASTOISE]);
 
     const playerPokemon = game.scene.getPlayerField();
     const enemyPokemon = game.scene.getEnemyField();
@@ -140,8 +127,8 @@ describe("Battle order", () => {
     vi.spyOn(playerPokemon[1], "stats", "get").mockReturnValue([20, 20, 20, 20, 20, 150]); // set other playerPokemon's speed to 150
     vi.spyOn(enemyPokemon[0], "stats", "get").mockReturnValue([20, 20, 20, 20, 20, 100]); // set one enemyPokemon's speed to 100
     vi.spyOn(enemyPokemon[1], "stats", "get").mockReturnValue([20, 20, 20, 20, 20, 150]); // set other enemyPokemon's speed to 150
-    const playerIndices = playerPokemon.map(p => p?.getBattlerIndex());
-    const enemyIndices = enemyPokemon.map(p => p?.getBattlerIndex());
+    const playerIndices = playerPokemon.map((p) => p?.getBattlerIndex());
+    const enemyIndices = enemyPokemon.map((p) => p?.getBattlerIndex());
 
     game.move.select(Moves.TACKLE);
     game.move.select(Moves.TACKLE, 1);

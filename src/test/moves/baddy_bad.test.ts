@@ -31,13 +31,17 @@ describe("Moves - Baddy Bad", () => {
       .ability(Abilities.BALL_FETCH);
   });
 
-  it("should not activate Reflect if the move fails due to Protect", async () => {
-    game.override.enemyMoveset(Moves.PROTECT);
-    await game.classicMode.startBattle([Species.FEEBAS]);
+  it(
+    "should not activate Reflect if the move fails due to Protect",
+    async () => {
+      game.override.enemyMoveset(Moves.PROTECT);
+      await game.classicMode.startBattle([Species.FEEBAS]);
 
-    game.move.select(Moves.BADDY_BAD);
-    await game.phaseInterceptor.to("BerryPhase");
+      game.move.select(Moves.BADDY_BAD);
+      await game.phaseInterceptor.to("BerryPhase");
 
-    expect(game.scene.arena.tags.length).toBe(0);
-  }, TIMEOUT);
+      expect(game.scene.arena.tags.length).toBe(0);
+    },
+    TIMEOUT,
+  );
 });

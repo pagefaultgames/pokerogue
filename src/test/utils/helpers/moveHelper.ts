@@ -40,11 +40,11 @@ export class MoveHelper extends GameManagerHelper {
   }
 
   /**
-     * Select the move to be used by the given Pokemon(-index). Triggers during the next {@linkcode CommandPhase}
-     * @param move the move to use
-     * @param pkmIndex the pokemon index. Relevant for double-battles only (defaults to 0)
-     * @param targetIndex The {@linkcode BattlerIndex} of the Pokemon to target for single-target moves, or `null` if a manual call to `selectTarget()` is required
-     */
+   * Select the move to be used by the given Pokemon(-index). Triggers during the next {@linkcode CommandPhase}
+   * @param move the move to use
+   * @param pkmIndex the pokemon index. Relevant for double-battles only (defaults to 0)
+   * @param targetIndex The {@linkcode BattlerIndex} of the Pokemon to target for single-target moves, or `null` if a manual call to `selectTarget()` is required
+   */
   select(move: Moves, pkmIndex: 0 | 1 = 0, targetIndex?: BattlerIndex | null) {
     const movePosition = getMovePosition(this.game.scene, pkmIndex, move);
 

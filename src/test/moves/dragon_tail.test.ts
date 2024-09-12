@@ -28,7 +28,8 @@ describe("Moves - Dragon Tail", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.battleType("single")
+    game.override
+      .battleType("single")
       .moveset([Moves.DRAGON_TAIL, Moves.SPLASH])
       .enemySpecies(Species.WAILORD)
       .enemyMoveset(Moves.SPLASH)
@@ -55,7 +56,8 @@ describe("Moves - Dragon Tail", () => {
 
       // simply want to test that the game makes it this far without crashing
       await game.phaseInterceptor.to(BattleEndPhase);
-    }, TIMEOUT
+    },
+    TIMEOUT,
   );
 
   test(
@@ -75,15 +77,15 @@ describe("Moves - Dragon Tail", () => {
       const hasFled = enemyPokemon.wildFlee;
       expect(!isVisible && hasFled).toBe(true);
       expect(leadPokemon.hp).toBeLessThan(leadPokemon.getMaxHp());
-    }, TIMEOUT
+    },
+    TIMEOUT,
   );
 
   test(
     "Double battles should proceed without crashing",
     async () => {
       game.override.battleType("double").enemyMoveset(Moves.SPLASH);
-      game.override.moveset([Moves.DRAGON_TAIL, Moves.SPLASH, Moves.FLAMETHROWER])
-        .enemyAbility(Abilities.ROUGH_SKIN);
+      game.override.moveset([Moves.DRAGON_TAIL, Moves.SPLASH, Moves.FLAMETHROWER]).enemyAbility(Abilities.ROUGH_SKIN);
       await game.startBattle([Species.DRATINI, Species.DRATINI, Species.WAILORD, Species.WAILORD]);
 
       const leadPokemon = game.scene.getParty()[0]!;
@@ -109,7 +111,8 @@ describe("Moves - Dragon Tail", () => {
 
       await game.phaseInterceptor.to(BerryPhase);
       expect(enemySecPokemon.hp).toBeLessThan(enemySecPokemon.getMaxHp());
-    }, TIMEOUT
+    },
+    TIMEOUT,
   );
 
   test(
@@ -141,6 +144,7 @@ describe("Moves - Dragon Tail", () => {
       expect(secPokemon.hp).toBeLessThan(secPokemon.getMaxHp());
       expect(enemyLeadPokemon.hp).toBeLessThan(enemyLeadPokemon.getMaxHp());
       expect(enemySecPokemon.hp).toBeLessThan(enemySecPokemon.getMaxHp());
-    }, TIMEOUT
+    },
+    TIMEOUT,
   );
 });

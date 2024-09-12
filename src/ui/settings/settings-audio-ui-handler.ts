@@ -1,6 +1,6 @@
 import BattleScene from "../../battle-scene";
 import { Mode } from "../ui";
-"#app/inputs-controller";
+("#app/inputs-controller");
 import AbstractSettingsUiHandler from "./abstract-settings-ui-handler";
 import { SettingType } from "#app/system/settings/settings";
 

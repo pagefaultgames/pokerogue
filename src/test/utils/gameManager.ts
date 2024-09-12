@@ -125,7 +125,13 @@ export default class GameManager {
    * @param callback - The callback to execute.
    * @param expireFn - Optional function to determine if the prompt has expired.
    */
-  onNextPrompt(phaseTarget: string, mode: Mode, callback: () => void, expireFn?: () => void, awaitingActionInput: boolean = false) {
+  onNextPrompt(
+    phaseTarget: string,
+    mode: Mode,
+    callback: () => void,
+    expireFn?: () => void,
+    awaitingActionInput: boolean = false,
+  ) {
     this.phaseInterceptor.addToNextPrompt(phaseTarget, mode, callback, expireFn, awaitingActionInput);
   }
 
@@ -190,15 +196,25 @@ export default class GameManager {
     await this.classicMode.runToSummon(species);
 
     if (this.scene.battleStyle === BattleStyle.SWITCH) {
-      this.onNextPrompt("CheckSwitchPhase", Mode.CONFIRM, () => {
-        this.setMode(Mode.MESSAGE);
-        this.endPhase();
-      }, () => this.isCurrentPhase(CommandPhase) || this.isCurrentPhase(TurnInitPhase));
+      this.onNextPrompt(
+        "CheckSwitchPhase",
+        Mode.CONFIRM,
+        () => {
+          this.setMode(Mode.MESSAGE);
+          this.endPhase();
+        },
+        () => this.isCurrentPhase(CommandPhase) || this.isCurrentPhase(TurnInitPhase),
+      );
 
-      this.onNextPrompt("CheckSwitchPhase", Mode.CONFIRM, () => {
-        this.setMode(Mode.MESSAGE);
-        this.endPhase();
-      }, () => this.isCurrentPhase(CommandPhase) || this.isCurrentPhase(TurnInitPhase));
+      this.onNextPrompt(
+        "CheckSwitchPhase",
+        Mode.CONFIRM,
+        () => {
+          this.setMode(Mode.MESSAGE);
+          this.endPhase();
+        },
+        () => this.isCurrentPhase(CommandPhase) || this.isCurrentPhase(TurnInitPhase),
+      );
     }
 
     await this.phaseInterceptor.to(CommandPhase);
@@ -212,17 +228,29 @@ export default class GameManager {
    * @param movePosition The index of the move in the pokemon's moveset array
    */
   selectTarget(movePosition: integer, targetIndex?: BattlerIndex) {
-    this.onNextPrompt("SelectTargetPhase", Mode.TARGET_SELECT, () => {
-      const handler = this.scene.ui.getHandler() as TargetSelectUiHandler;
-      const move = (this.scene.getCurrentPhase() as SelectTargetPhase).getPokemon().getMoveset()[movePosition]!.getMove(); // TODO: is the bang correct?
-      if (!move.isMultiTarget()) {
-        handler.setCursor(targetIndex !== undefined ? targetIndex : BattlerIndex.ENEMY);
-      }
-      if (move.isMultiTarget() && targetIndex !== undefined) {
-        throw new Error(`targetIndex was passed to selectMove() but move ("${move.name}") is not targetted`);
-      }
-      handler.processInput(Button.ACTION);
-    }, () => this.isCurrentPhase(CommandPhase) || this.isCurrentPhase(MovePhase) || this.isCurrentPhase(TurnStartPhase) || this.isCurrentPhase(TurnEndPhase));
+    this.onNextPrompt(
+      "SelectTargetPhase",
+      Mode.TARGET_SELECT,
+      () => {
+        const handler = this.scene.ui.getHandler() as TargetSelectUiHandler;
+        const move = (this.scene.getCurrentPhase() as SelectTargetPhase)
+          .getPokemon()
+          .getMoveset()
+          [movePosition]!.getMove(); // TODO: is the bang correct?
+        if (!move.isMultiTarget()) {
+          handler.setCursor(targetIndex !== undefined ? targetIndex : BattlerIndex.ENEMY);
+        }
+        if (move.isMultiTarget() && targetIndex !== undefined) {
+          throw new Error(`targetIndex was passed to selectMove() but move ("${move.name}") is not targetted`);
+        }
+        handler.processInput(Button.ACTION);
+      },
+      () =>
+        this.isCurrentPhase(CommandPhase) ||
+        this.isCurrentPhase(MovePhase) ||
+        this.isCurrentPhase(TurnStartPhase) ||
+        this.isCurrentPhase(TurnEndPhase),
+    );
   }
 
   /** Faint all opponents currently on the field */
@@ -235,15 +263,32 @@ export default class GameManager {
 
   /** Emulate selecting a modifier (item) */
   doSelectModifier() {
-    this.onNextPrompt("SelectModifierPhase", Mode.MODIFIER_SELECT, () => {
-      const handler = this.scene.ui.getHandler() as ModifierSelectUiHandler;
-      handler.processInput(Button.CANCEL);
-    }, () => this.isCurrentPhase(CommandPhase) || this.isCurrentPhase(NewBattlePhase) || this.isCurrentPhase(CheckSwitchPhase), true);
+    this.onNextPrompt(
+      "SelectModifierPhase",
+      Mode.MODIFIER_SELECT,
+      () => {
+        const handler = this.scene.ui.getHandler() as ModifierSelectUiHandler;
+        handler.processInput(Button.CANCEL);
+      },
+      () =>
+        this.isCurrentPhase(CommandPhase) ||
+        this.isCurrentPhase(NewBattlePhase) ||
+        this.isCurrentPhase(CheckSwitchPhase),
+      true,
+    );
 
-    this.onNextPrompt("SelectModifierPhase", Mode.CONFIRM, () => {
-      const handler = this.scene.ui.getHandler() as ModifierSelectUiHandler;
-      handler.processInput(Button.ACTION);
-    }, () => this.isCurrentPhase(CommandPhase) || this.isCurrentPhase(NewBattlePhase) || this.isCurrentPhase(CheckSwitchPhase));
+    this.onNextPrompt(
+      "SelectModifierPhase",
+      Mode.CONFIRM,
+      () => {
+        const handler = this.scene.ui.getHandler() as ModifierSelectUiHandler;
+        handler.processInput(Button.ACTION);
+      },
+      () =>
+        this.isCurrentPhase(CommandPhase) ||
+        this.isCurrentPhase(NewBattlePhase) ||
+        this.isCurrentPhase(CheckSwitchPhase),
+    );
   }
 
   /**
@@ -260,9 +305,10 @@ export default class GameManager {
 
     vi.spyOn(enemy, "getNextMove").mockReturnValueOnce({
       move: moveId,
-      targets: (target && !legalTargets.multiple && legalTargets.targets.includes(target))
-        ? [target]
-        : enemy.getNextTargets(moveId)
+      targets:
+        target && !legalTargets.multiple && legalTargets.targets.includes(target)
+          ? [target]
+          : enemy.getNextTargets(moveId),
     });
 
     /**
@@ -277,7 +323,10 @@ export default class GameManager {
     const originalMatchupScore = Trainer.prototype.getPartyMemberMatchupScores;
     Trainer.prototype.getPartyMemberMatchupScores = () => {
       Trainer.prototype.getPartyMemberMatchupScores = originalMatchupScore;
-      return [[1, 100], [1, 100]];
+      return [
+        [1, 100],
+        [1, 100],
+      ];
     };
   }
 
@@ -290,10 +339,15 @@ export default class GameManager {
   async toNextWave() {
     this.doSelectModifier();
 
-    this.onNextPrompt("CheckSwitchPhase", Mode.CONFIRM, () => {
-      this.setMode(Mode.MESSAGE);
-      this.endPhase();
-    }, () => this.isCurrentPhase(TurnInitPhase));
+    this.onNextPrompt(
+      "CheckSwitchPhase",
+      Mode.CONFIRM,
+      () => {
+        this.setMode(Mode.MESSAGE);
+        this.endPhase();
+      },
+      () => this.isCurrentPhase(TurnInitPhase),
+    );
 
     await this.toNextTurn();
   }
@@ -303,7 +357,7 @@ export default class GameManager {
    * @returns True if the player has won, otherwise false.
    */
   isVictory() {
-    return this.scene.currentBattle.enemyParty.every(pokemon => pokemon.isFainted());
+    return this.scene.currentBattle.enemyParty.every((pokemon) => pokemon.isFainted());
   }
 
   /**

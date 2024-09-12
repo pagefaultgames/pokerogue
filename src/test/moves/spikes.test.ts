@@ -5,7 +5,6 @@ import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
-
 describe("Moves - Spikes", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
@@ -78,5 +77,4 @@ describe("Moves - Spikes", () => {
     const enemy = game.scene.getEnemyParty()[0];
     expect(enemy.hp).toBeLessThan(enemy.getMaxHp());
   }, 20000);
-
 });

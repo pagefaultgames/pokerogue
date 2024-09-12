@@ -60,6 +60,6 @@ describe("Abilities - POWER CONSTRUCT", () => {
 
       expect(zygarde!.formIndex).toBe(baseForm);
     },
-    TIMEOUT
+    TIMEOUT,
   );
 });

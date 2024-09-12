@@ -5,7 +5,7 @@ import { Command } from "./command-ui-handler";
 import { Mode } from "./ui";
 import UiHandler from "./ui-handler";
 import { addWindow } from "./ui-theme";
-import {Button} from "#enums/buttons";
+import { Button } from "#enums/buttons";
 import { CommandPhase } from "#app/phases/command-phase";
 
 export default class BallUiHandler extends UiHandler {
@@ -32,9 +32,15 @@ export default class BallUiHandler extends UiHandler {
       optionsTextContent += `${getPokeballName(pb)}\n`;
     }
     optionsTextContent += "Cancel";
-    const optionsText = addTextObject(this.scene, 0, 0, optionsTextContent, TextStyle.WINDOW, { align: "right", maxLines: 6 });
+    const optionsText = addTextObject(this.scene, 0, 0, optionsTextContent, TextStyle.WINDOW, {
+      align: "right",
+      maxLines: 6,
+    });
     const optionsTextWidth = optionsText.displayWidth;
-    this.pokeballSelectContainer = this.scene.add.container((this.scene.game.canvas.width / 6) - 51 - Math.max(64, optionsTextWidth), -49);
+    this.pokeballSelectContainer = this.scene.add.container(
+      this.scene.game.canvas.width / 6 - 51 - Math.max(64, optionsTextWidth),
+      -49,
+    );
     this.pokeballSelectContainer.setVisible(false);
     ui.add(this.pokeballSelectContainer);
 
@@ -90,12 +96,12 @@ export default class BallUiHandler extends UiHandler {
       }
     } else {
       switch (button) {
-      case Button.UP:
-        success = this.setCursor(this.cursor ? this.cursor - 1 : pokeballTypeCount);
-        break;
-      case Button.DOWN:
-        success = this.setCursor(this.cursor < pokeballTypeCount ? this.cursor + 1 : 0);
-        break;
+        case Button.UP:
+          success = this.setCursor(this.cursor ? this.cursor - 1 : pokeballTypeCount);
+          break;
+        case Button.DOWN:
+          success = this.setCursor(this.cursor < pokeballTypeCount ? this.cursor + 1 : 0);
+          break;
       }
     }
 
@@ -107,7 +113,11 @@ export default class BallUiHandler extends UiHandler {
   }
 
   updateCounts() {
-    this.countsText.setText(Object.values(this.scene.pokeballCounts).map(c => `x${c}`).join("\n"));
+    this.countsText.setText(
+      Object.values(this.scene.pokeballCounts)
+        .map((c) => `x${c}`)
+        .join("\n"),
+    );
   }
 
   setCursor(cursor: integer): boolean {

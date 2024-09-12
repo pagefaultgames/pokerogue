@@ -18,7 +18,7 @@ export class ShowTrainerPhase extends BattlePhase {
       targets: this.scene.trainer,
       x: 106,
       duration: 1000,
-      onComplete: () => this.end()
+      onComplete: () => this.end(),
     });
   }
 }

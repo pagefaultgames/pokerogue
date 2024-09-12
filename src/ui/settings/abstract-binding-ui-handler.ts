@@ -1,10 +1,10 @@
 import UiHandler from "../ui-handler";
 import BattleScene from "../../battle-scene";
-import {Mode} from "../ui";
-import {addWindow} from "../ui-theme";
-import {addTextObject, TextStyle} from "../text";
-import {Button} from "#enums/buttons";
-import {NavigationManager} from "#app/ui/settings/navigationMenu";
+import { Mode } from "../ui";
+import { addWindow } from "../ui-theme";
+import { addTextObject, TextStyle } from "../text";
+import { Button } from "#enums/buttons";
+import { NavigationManager } from "#app/ui/settings/navigationMenu";
 import i18next from "i18next";
 
 type CancelFn = (succes?: boolean) => boolean;
@@ -47,18 +47,18 @@ export default abstract class AbstractBindingUiHandler extends UiHandler {
   protected target;
 
   /**
-     * Constructor for the AbstractBindingUiHandler.
-     *
-     * @param scene - The BattleScene instance.
-     * @param mode - The UI mode.
-     */
+   * Constructor for the AbstractBindingUiHandler.
+   *
+   * @param scene - The BattleScene instance.
+   * @param mode - The UI mode.
+   */
   constructor(scene: BattleScene, mode: Mode | null = null) {
     super(scene, mode);
   }
 
   /**
-     * Setup UI elements.
-     */
+   * Setup UI elements.
+   */
   setup() {
     const ui = this.getUi();
     this.optionSelectContainer = this.scene.add.container(0, 0);
@@ -72,11 +72,23 @@ export default abstract class AbstractBindingUiHandler extends UiHandler {
     ui.add(this.actionsContainer);
 
     // Setup backgrounds and text objects for UI.
-    this.titleBg = addWindow(this.scene, (this.scene.game.canvas.width / 6) - this.getWindowWidth(), -(this.scene.game.canvas.height / 6) + 28 + 21, this.getWindowWidth(), 24);
+    this.titleBg = addWindow(
+      this.scene,
+      this.scene.game.canvas.width / 6 - this.getWindowWidth(),
+      -(this.scene.game.canvas.height / 6) + 28 + 21,
+      this.getWindowWidth(),
+      24,
+    );
     this.titleBg.setOrigin(0.5);
     this.optionSelectContainer.add(this.titleBg);
 
-    this.actionBg = addWindow(this.scene, (this.scene.game.canvas.width / 6) - this.getWindowWidth(), -(this.scene.game.canvas.height / 6) + this.getWindowHeight() + 28 + 21 + 21, this.getWindowWidth(), 24);
+    this.actionBg = addWindow(
+      this.scene,
+      this.scene.game.canvas.width / 6 - this.getWindowWidth(),
+      -(this.scene.game.canvas.height / 6) + this.getWindowHeight() + 28 + 21 + 21,
+      this.getWindowWidth(),
+      24,
+    );
     this.actionBg.setOrigin(0.5);
     this.actionsContainer.add(this.actionBg);
 
@@ -88,10 +100,16 @@ export default abstract class AbstractBindingUiHandler extends UiHandler {
 
     this.timerText = addTextObject(this.scene, 0, 0, "(5)", TextStyle.WINDOW);
     this.timerText.setOrigin(0, 0);
-    this.timerText.setPositionRelative(this.unlockText, (this.unlockText.width/6) + 5, 0);
+    this.timerText.setPositionRelative(this.unlockText, this.unlockText.width / 6 + 5, 0);
     this.optionSelectContainer.add(this.timerText);
 
-    this.optionSelectBg = addWindow(this.scene, (this.scene.game.canvas.width / 6) - this.getWindowWidth(), -(this.scene.game.canvas.height / 6) + this.getWindowHeight() + 28, this.getWindowWidth(), this.getWindowHeight());
+    this.optionSelectBg = addWindow(
+      this.scene,
+      this.scene.game.canvas.width / 6 - this.getWindowWidth(),
+      -(this.scene.game.canvas.height / 6) + this.getWindowHeight() + 28,
+      this.getWindowWidth(),
+      this.getWindowHeight(),
+    );
     this.optionSelectBg.setOrigin(0.5);
     this.optionSelectContainer.add(this.optionSelectBg);
 
@@ -115,11 +133,11 @@ export default abstract class AbstractBindingUiHandler extends UiHandler {
   }
 
   /**
-     * Show the UI with the provided arguments.
-     *
-     * @param args - Arguments to be passed to the show method.
-     * @returns `true` if successful.
-     */
+   * Show the UI with the provided arguments.
+   *
+   * @param args - Arguments to be passed to the show method.
+   * @returns `true` if successful.
+   */
   show(args: any[]): boolean {
     super.show(args);
     this.buttonPressed = null;
@@ -140,29 +158,29 @@ export default abstract class AbstractBindingUiHandler extends UiHandler {
   }
 
   /**
-     * Get the width of the window.
-     *
-     * @returns The window width.
-     */
+   * Get the width of the window.
+   *
+   * @returns The window width.
+   */
   getWindowWidth(): number {
     return 160;
   }
 
   /**
-     * Get the height of the window.
-     *
-     * @returns The window height.
-     */
+   * Get the height of the window.
+   *
+   * @returns The window height.
+   */
   getWindowHeight(): number {
     return 64;
   }
 
   /**
-     * Process the input for the given button.
-     *
-     * @param button - The button to process.
-     * @returns `true` if the input was processed successfully.
-     */
+   * Process the input for the given button.
+   *
+   * @param button - The button to process.
+   * @returns `true` if the input was processed successfully.
+   */
   processInput(button: Button): boolean {
     if (this.buttonPressed === null) {
       return false; // TODO: is false correct as default? (previously was `undefined`)
@@ -170,22 +188,22 @@ export default abstract class AbstractBindingUiHandler extends UiHandler {
     const ui = this.getUi();
     let success = false;
     switch (button) {
-    case Button.LEFT:
-    case Button.RIGHT:
-      // Toggle between action and cancel options.
-      const cursor = this.cursor ? 0 : 1;
-      success = this.setCursor(cursor);
-      break;
-    case Button.ACTION:
-      // Process actions based on current cursor position.
-      if (this.cursor === 0) {
-        this.cancelFn && this.cancelFn();
-      } else {
-        success = this.swapAction();
-        NavigationManager.getInstance().updateIcons();
-        this.cancelFn && this.cancelFn(success);
-      }
-      break;
+      case Button.LEFT:
+      case Button.RIGHT:
+        // Toggle between action and cancel options.
+        const cursor = this.cursor ? 0 : 1;
+        success = this.setCursor(cursor);
+        break;
+      case Button.ACTION:
+        // Process actions based on current cursor position.
+        if (this.cursor === 0) {
+          this.cancelFn && this.cancelFn();
+        } else {
+          success = this.swapAction();
+          NavigationManager.getInstance().updateIcons();
+          this.cancelFn && this.cancelFn(success);
+        }
+        break;
     }
 
     // Plays a select sound effect if an action was successfully processed.
@@ -199,11 +217,11 @@ export default abstract class AbstractBindingUiHandler extends UiHandler {
   }
 
   /**
-     * Set the cursor to the specified position.
-     *
-     * @param cursor - The cursor position to set.
-     * @returns `true` if the cursor was set successfully.
-     */
+   * Set the cursor to the specified position.
+   *
+   * @param cursor - The cursor position to set.
+   * @returns `true` if the cursor was set successfully.
+   */
   setCursor(cursor: integer): boolean {
     this.cursor = cursor;
     if (cursor === 1) {
@@ -221,8 +239,8 @@ export default abstract class AbstractBindingUiHandler extends UiHandler {
   }
 
   /**
-     * Clear the UI elements and state.
-     */
+   * Clear the UI elements and state.
+   */
   clear() {
     super.clear();
     clearTimeout(this.countdownTimer);
@@ -238,12 +256,12 @@ export default abstract class AbstractBindingUiHandler extends UiHandler {
   }
 
   /**
-     * Handle input down events.
-     *
-     * @param buttonIcon - The icon of the button that was pressed.
-     * @param assignedButtonIcon - The icon of the button that is assigned.
-     * @param type - The type of button press.
-     */
+   * Handle input down events.
+   *
+   * @param buttonIcon - The icon of the button that was pressed.
+   * @param assignedButtonIcon - The icon of the button that is assigned.
+   * @param type - The type of button press.
+   */
   onInputDown(buttonIcon: string, assignedButtonIcon: string | null, type: string): void {
     clearTimeout(this.countdownTimer);
     this.timerText.setText("");

@@ -34,24 +34,31 @@ export default class UnavailableModalUiHandler extends ModalUiHandler {
   }
 
   getMargin(): [number, number, number, number] {
-    return [ 0, 0, 48, 0 ];
+    return [0, 0, 48, 0];
   }
 
   getButtonLabels(): string[] {
-    return [ ];
+    return [];
   }
 
   setup(): void {
     super.setup();
 
-    const label = addTextObject(this.scene, this.getWidth() / 2, this.getHeight() / 2, i18next.t("menu:errorServerDown"), TextStyle.WINDOW, { fontSize: "48px", align: "center" });
+    const label = addTextObject(
+      this.scene,
+      this.getWidth() / 2,
+      this.getHeight() / 2,
+      i18next.t("menu:errorServerDown"),
+      TextStyle.WINDOW,
+      { fontSize: "48px", align: "center" },
+    );
     label.setOrigin(0.5, 0.5);
 
     this.modalContainer.add(label);
   }
 
   tryReconnect(): void {
-    updateUserInfo().then(response => {
+    updateUserInfo().then((response) => {
       if (response[0] || [200, 400].includes(response[1])) {
         this.reconnectTimer = null;
         this.reconnectDuration = this.minTime;
@@ -62,11 +69,11 @@ export default class UnavailableModalUiHandler extends ModalUiHandler {
         this.scene.reset(true, true);
       } else {
         this.reconnectDuration = Math.min(this.reconnectDuration * 2, this.maxTime); // Set a max delay so it isn't infinite
-        this.reconnectTimer =
-          setTimeout(
-            () => this.tryReconnect(),
-            // Adds a random factor to avoid pendulum effect during long total breakdown
-            this.reconnectDuration + (Math.random() * this.randVarianceTime));
+        this.reconnectTimer = setTimeout(
+          () => this.tryReconnect(),
+          // Adds a random factor to avoid pendulum effect during long total breakdown
+          this.reconnectDuration + Math.random() * this.randVarianceTime,
+        );
       }
     });
   }
@@ -74,14 +81,14 @@ export default class UnavailableModalUiHandler extends ModalUiHandler {
   show(args: any[]): boolean {
     if (args.length >= 1 && args[0] instanceof Function) {
       const config: ModalConfig = {
-        buttonActions: []
+        buttonActions: [],
       };
 
       this.reconnectCallback = args[0];
       this.reconnectDuration = this.minTime;
       this.reconnectTimer = setTimeout(() => this.tryReconnect(), this.reconnectDuration);
 
-      return super.show([ config ]);
+      return super.show([config]);
     }
 
     return false;

@@ -19,10 +19,17 @@ export class UnlockPhase extends Phase {
       // Sound loaded into game as is
       this.scene.playSound("level_up_fanfare");
       this.scene.ui.setMode(Mode.MESSAGE);
-      this.scene.ui.showText(i18next.t("battle:unlockedSomething", { unlockedThing: getUnlockableName(this.unlockable) }), null, () => {
-        this.scene.time.delayedCall(1500, () => this.scene.arenaBg.setVisible(true));
-        this.end();
-      }, null, true, 1500);
+      this.scene.ui.showText(
+        i18next.t("battle:unlockedSomething", { unlockedThing: getUnlockableName(this.unlockable) }),
+        null,
+        () => {
+          this.scene.time.delayedCall(1500, () => this.scene.arenaBg.setVisible(true));
+          this.end();
+        },
+        null,
+        true,
+        1500,
+      );
     });
   }
 }

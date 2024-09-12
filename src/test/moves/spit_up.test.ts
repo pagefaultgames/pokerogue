@@ -147,7 +147,10 @@ describe("Moves - Spit Up", () => {
 
       await game.phaseInterceptor.to(TurnInitPhase);
 
-      expect(pokemon.getMoveHistory().at(-1)).toMatchObject<TurnMove>({ move: Moves.SPIT_UP, result: MoveResult.SUCCESS });
+      expect(pokemon.getMoveHistory().at(-1)).toMatchObject<TurnMove>({
+        move: Moves.SPIT_UP,
+        result: MoveResult.SUCCESS,
+      });
 
       expect(spitUp.calculateBattlePower).toHaveBeenCalledOnce();
 
@@ -175,7 +178,10 @@ describe("Moves - Spit Up", () => {
       game.move.select(Moves.SPIT_UP);
       await game.phaseInterceptor.to(TurnInitPhase);
 
-      expect(pokemon.getMoveHistory().at(-1)).toMatchObject<TurnMove>({ move: Moves.SPIT_UP, result: MoveResult.SUCCESS });
+      expect(pokemon.getMoveHistory().at(-1)).toMatchObject<TurnMove>({
+        move: Moves.SPIT_UP,
+        result: MoveResult.SUCCESS,
+      });
 
       expect(spitUp.calculateBattlePower).toHaveBeenCalledOnce();
 

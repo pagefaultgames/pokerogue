@@ -59,8 +59,9 @@ describe("Moves - Shell Trap", () => {
       expect((movePhase as MovePhase).pokemon).toBe(playerPokemon[1]);
 
       await game.phaseInterceptor.to(MoveEndPhase);
-      enemyPokemon.forEach(p => expect(p.hp).toBeLessThan(p.getMaxHp()));
-    }, TIMEOUT
+      enemyPokemon.forEach((p) => expect(p.hp).toBeLessThan(p.getMaxHp()));
+    },
+    TIMEOUT,
   );
 
   it(
@@ -85,8 +86,9 @@ describe("Moves - Shell Trap", () => {
       expect((movePhase as MovePhase).pokemon).not.toBe(playerPokemon[1]);
 
       await game.phaseInterceptor.to(BerryPhase, false);
-      enemyPokemon.forEach(p => expect(p.hp).toBe(p.getMaxHp()));
-    }, TIMEOUT
+      enemyPokemon.forEach((p) => expect(p.hp).toBe(p.getMaxHp()));
+    },
+    TIMEOUT,
   );
 
   it(
@@ -111,8 +113,9 @@ describe("Moves - Shell Trap", () => {
       expect((movePhase as MovePhase).pokemon).not.toBe(playerPokemon[1]);
 
       await game.phaseInterceptor.to(BerryPhase, false);
-      enemyPokemon.forEach(p => expect(p.hp).toBe(p.getMaxHp()));
-    }, TIMEOUT
+      enemyPokemon.forEach((p) => expect(p.hp).toBe(p.getMaxHp()));
+    },
+    TIMEOUT,
   );
 
   it(
@@ -134,11 +137,12 @@ describe("Moves - Shell Trap", () => {
       expect(movePhase instanceof MovePhase).toBeTruthy();
       expect((movePhase as MovePhase).pokemon).not.toBe(playerPokemon[1]);
 
-      const enemyStartingHp = enemyPokemon.map(p => p.hp);
+      const enemyStartingHp = enemyPokemon.map((p) => p.hp);
 
       await game.phaseInterceptor.to(BerryPhase, false);
       enemyPokemon.forEach((p, i) => expect(p.hp).toBe(enemyStartingHp[i]));
-    }, TIMEOUT
+    },
+    TIMEOUT,
   );
 
   it(
@@ -158,6 +162,7 @@ describe("Moves - Shell Trap", () => {
 
       expect(playerPokemon.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
       expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp());
-    }, TIMEOUT
+    },
+    TIMEOUT,
   );
 });

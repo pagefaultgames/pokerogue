@@ -70,115 +70,126 @@ describe("Abilities - Forecast", () => {
       .enemyAbility(Abilities.BALL_FETCH);
   });
 
-  it("changes form based on weather", async () => {
-    game.override
-      .moveset([Moves.RAIN_DANCE, Moves.SUNNY_DAY, Moves.SNOWSCAPE, Moves.SPLASH])
-      .battleType("double")
-      .starterForms({
-        [Species.KYOGRE]: 1,
-        [Species.GROUDON]: 1,
-        [Species.RAYQUAZA]: 1
-      });
-    await game.startBattle([Species.CASTFORM, Species.FEEBAS, Species.KYOGRE, Species.GROUDON, Species.RAYQUAZA, Species.ALTARIA]);
+  it(
+    "changes form based on weather",
+    async () => {
+      game.override
+        .moveset([Moves.RAIN_DANCE, Moves.SUNNY_DAY, Moves.SNOWSCAPE, Moves.SPLASH])
+        .battleType("double")
+        .starterForms({
+          [Species.KYOGRE]: 1,
+          [Species.GROUDON]: 1,
+          [Species.RAYQUAZA]: 1,
+        });
+      await game.startBattle([
+        Species.CASTFORM,
+        Species.FEEBAS,
+        Species.KYOGRE,
+        Species.GROUDON,
+        Species.RAYQUAZA,
+        Species.ALTARIA,
+      ]);
 
-    vi.spyOn(game.scene.getParty()[5], "getAbility").mockReturnValue(allAbilities[Abilities.CLOUD_NINE]);
+      vi.spyOn(game.scene.getParty()[5], "getAbility").mockReturnValue(allAbilities[Abilities.CLOUD_NINE]);
 
-    const castform = game.scene.getPlayerField()[0];
-    expect(castform.formIndex).toBe(NORMAL_FORM);
+      const castform = game.scene.getPlayerField()[0];
+      expect(castform.formIndex).toBe(NORMAL_FORM);
 
-    game.move.select(Moves.RAIN_DANCE);
-    game.move.select(Moves.SPLASH, 1);
-    await game.phaseInterceptor.to("MovePhase");
-    await game.toNextTurn();
+      game.move.select(Moves.RAIN_DANCE);
+      game.move.select(Moves.SPLASH, 1);
+      await game.phaseInterceptor.to("MovePhase");
+      await game.toNextTurn();
 
-    expect(castform.formIndex).toBe(RAINY_FORM);
+      expect(castform.formIndex).toBe(RAINY_FORM);
 
-    game.move.select(Moves.SUNNY_DAY);
-    game.move.select(Moves.SPLASH, 1);
-    await game.phaseInterceptor.to("MovePhase");
-    await game.toNextTurn();
+      game.move.select(Moves.SUNNY_DAY);
+      game.move.select(Moves.SPLASH, 1);
+      await game.phaseInterceptor.to("MovePhase");
+      await game.toNextTurn();
 
-    expect(castform.formIndex).toBe(SUNNY_FORM);
+      expect(castform.formIndex).toBe(SUNNY_FORM);
 
-    game.move.select(Moves.SNOWSCAPE);
-    game.move.select(Moves.SPLASH, 1);
-    await game.phaseInterceptor.to("MovePhase");
-    await game.toNextTurn();
+      game.move.select(Moves.SNOWSCAPE);
+      game.move.select(Moves.SPLASH, 1);
+      await game.phaseInterceptor.to("MovePhase");
+      await game.toNextTurn();
 
-    expect(castform.formIndex).toBe(SNOWY_FORM);
+      expect(castform.formIndex).toBe(SNOWY_FORM);
 
-    game.override.moveset([Moves.HAIL, Moves.SANDSTORM, Moves.SNOWSCAPE, Moves.SPLASH]);
+      game.override.moveset([Moves.HAIL, Moves.SANDSTORM, Moves.SNOWSCAPE, Moves.SPLASH]);
 
-    game.move.select(Moves.SANDSTORM);
-    game.move.select(Moves.SPLASH, 1);
-    await game.phaseInterceptor.to("MovePhase");
-    await game.toNextTurn();
+      game.move.select(Moves.SANDSTORM);
+      game.move.select(Moves.SPLASH, 1);
+      await game.phaseInterceptor.to("MovePhase");
+      await game.toNextTurn();
 
-    expect(castform.formIndex).toBe(NORMAL_FORM);
+      expect(castform.formIndex).toBe(NORMAL_FORM);
 
-    game.move.select(Moves.HAIL);
-    game.move.select(Moves.SPLASH, 1);
-    await game.phaseInterceptor.to("MovePhase");
-    await game.toNextTurn();
+      game.move.select(Moves.HAIL);
+      game.move.select(Moves.SPLASH, 1);
+      await game.phaseInterceptor.to("MovePhase");
+      await game.toNextTurn();
 
-    expect(castform.formIndex).toBe(SNOWY_FORM);
+      expect(castform.formIndex).toBe(SNOWY_FORM);
 
-    game.move.select(Moves.SPLASH);
-    game.doSwitchPokemon(2); // Feebas now 2, Kyogre 1
-    await game.phaseInterceptor.to("MovePhase");
-    await game.toNextTurn();
+      game.move.select(Moves.SPLASH);
+      game.doSwitchPokemon(2); // Feebas now 2, Kyogre 1
+      await game.phaseInterceptor.to("MovePhase");
+      await game.toNextTurn();
 
-    expect(castform.formIndex).toBe(RAINY_FORM);
+      expect(castform.formIndex).toBe(RAINY_FORM);
 
-    game.move.select(Moves.SPLASH);
-    game.doSwitchPokemon(3); // Kyogre now 3, Groudon 1
-    await game.phaseInterceptor.to("MovePhase");
-    await game.toNextTurn();
+      game.move.select(Moves.SPLASH);
+      game.doSwitchPokemon(3); // Kyogre now 3, Groudon 1
+      await game.phaseInterceptor.to("MovePhase");
+      await game.toNextTurn();
 
-    expect(castform.formIndex).toBe(SUNNY_FORM);
+      expect(castform.formIndex).toBe(SUNNY_FORM);
 
-    game.move.select(Moves.SPLASH);
-    game.doSwitchPokemon(4); // Groudon now 4, Rayquaza 1
-    await game.phaseInterceptor.to("MovePhase");
-    await game.toNextTurn();
+      game.move.select(Moves.SPLASH);
+      game.doSwitchPokemon(4); // Groudon now 4, Rayquaza 1
+      await game.phaseInterceptor.to("MovePhase");
+      await game.toNextTurn();
 
-    expect(castform.formIndex).toBe(NORMAL_FORM);
+      expect(castform.formIndex).toBe(NORMAL_FORM);
 
-    game.move.select(Moves.SPLASH);
-    game.doSwitchPokemon(2); // Rayquaza now 2, Feebas 1
-    await game.phaseInterceptor.to("MovePhase");
-    await game.toNextTurn();
+      game.move.select(Moves.SPLASH);
+      game.doSwitchPokemon(2); // Rayquaza now 2, Feebas 1
+      await game.phaseInterceptor.to("MovePhase");
+      await game.toNextTurn();
 
-    expect(castform.formIndex).toBe(NORMAL_FORM);
+      expect(castform.formIndex).toBe(NORMAL_FORM);
 
-    game.move.select(Moves.SNOWSCAPE);
-    game.move.select(Moves.SPLASH, 1);
-    await game.phaseInterceptor.to("MovePhase");
-    await game.toNextTurn();
+      game.move.select(Moves.SNOWSCAPE);
+      game.move.select(Moves.SPLASH, 1);
+      await game.phaseInterceptor.to("MovePhase");
+      await game.toNextTurn();
 
-    expect(castform.formIndex).toBe(SNOWY_FORM);
+      expect(castform.formIndex).toBe(SNOWY_FORM);
 
-    game.move.select(Moves.SPLASH);
-    game.doSwitchPokemon(5); // Feebas now 5, Altaria 1
-    await game.phaseInterceptor.to("MovePhase");
-    await game.toNextTurn();
+      game.move.select(Moves.SPLASH);
+      game.doSwitchPokemon(5); // Feebas now 5, Altaria 1
+      await game.phaseInterceptor.to("MovePhase");
+      await game.toNextTurn();
 
-    expect(castform.formIndex).toBe(NORMAL_FORM);
+      expect(castform.formIndex).toBe(NORMAL_FORM);
 
-    game.move.select(Moves.SPLASH);
-    game.doSwitchPokemon(5); // Altaria now 5, Feebas 1
-    await game.phaseInterceptor.to("MovePhase");
-    await game.toNextTurn();
+      game.move.select(Moves.SPLASH);
+      game.doSwitchPokemon(5); // Altaria now 5, Feebas 1
+      await game.phaseInterceptor.to("MovePhase");
+      await game.toNextTurn();
 
-    expect(castform.formIndex).toBe(SNOWY_FORM);
+      expect(castform.formIndex).toBe(SNOWY_FORM);
 
-    game.scene.arena.trySetWeather(WeatherType.FOG, false);
-    game.move.select(Moves.SPLASH);
-    game.move.select(Moves.SPLASH, 1);
-    await game.phaseInterceptor.to("TurnStartPhase");
+      game.scene.arena.trySetWeather(WeatherType.FOG, false);
+      game.move.select(Moves.SPLASH);
+      game.move.select(Moves.SPLASH, 1);
+      await game.phaseInterceptor.to("TurnStartPhase");
 
-    expect(castform.formIndex).toBe(NORMAL_FORM);
-  }, 30 * 1000);
+      expect(castform.formIndex).toBe(NORMAL_FORM);
+    },
+    30 * 1000,
+  );
 
   it("reverts to Normal Form during Clear weather", async () => {
     await testWeatherFormChange(game, WeatherType.NONE, NORMAL_FORM, SUNNY_FORM);
@@ -200,7 +211,10 @@ describe("Abilities - Forecast", () => {
   });
 
   it("reverts to Normal Form when Castform loses Forecast, changes form to match the weather when it regains it", async () => {
-    game.override.moveset([Moves.SKILL_SWAP, Moves.WORRY_SEED, Moves.SPLASH]).weather(WeatherType.RAIN).battleType("double");
+    game.override
+      .moveset([Moves.SKILL_SWAP, Moves.WORRY_SEED, Moves.SPLASH])
+      .weather(WeatherType.RAIN)
+      .battleType("double");
     await game.startBattle([Species.CASTFORM, Species.FEEBAS]);
 
     const castform = game.scene.getPlayerField()[0];

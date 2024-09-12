@@ -16,7 +16,6 @@ import { copyChallenge } from "data/challenge";
  * Helper to handle Challenge mode specifics
  */
 export class ChallengeModeHelper extends GameManagerHelper {
-
   challenges: Challenge[] = [];
 
   /**
@@ -61,15 +60,25 @@ export class ChallengeModeHelper extends GameManagerHelper {
     await this.runToSummon(species);
 
     if (this.game.scene.battleStyle === BattleStyle.SWITCH) {
-      this.game.onNextPrompt("CheckSwitchPhase", Mode.CONFIRM, () => {
-        this.game.setMode(Mode.MESSAGE);
-        this.game.endPhase();
-      }, () => this.game.isCurrentPhase(CommandPhase) || this.game.isCurrentPhase(TurnInitPhase));
+      this.game.onNextPrompt(
+        "CheckSwitchPhase",
+        Mode.CONFIRM,
+        () => {
+          this.game.setMode(Mode.MESSAGE);
+          this.game.endPhase();
+        },
+        () => this.game.isCurrentPhase(CommandPhase) || this.game.isCurrentPhase(TurnInitPhase),
+      );
 
-      this.game.onNextPrompt("CheckSwitchPhase", Mode.CONFIRM, () => {
-        this.game.setMode(Mode.MESSAGE);
-        this.game.endPhase();
-      }, () => this.game.isCurrentPhase(CommandPhase) || this.game.isCurrentPhase(TurnInitPhase));
+      this.game.onNextPrompt(
+        "CheckSwitchPhase",
+        Mode.CONFIRM,
+        () => {
+          this.game.setMode(Mode.MESSAGE);
+          this.game.endPhase();
+        },
+        () => this.game.isCurrentPhase(CommandPhase) || this.game.isCurrentPhase(TurnInitPhase),
+      );
     }
 
     await this.game.phaseInterceptor.to(CommandPhase);

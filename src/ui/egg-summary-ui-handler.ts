@@ -3,7 +3,7 @@ import { Mode } from "./ui";
 import PokemonIconAnimHandler, { PokemonIconAnimMode } from "./pokemon-icon-anim-handler";
 import MessageUiHandler from "./message-ui-handler";
 import { getEggTierForSpecies } from "../data/egg";
-import {Button} from "#enums/buttons";
+import { Button } from "#enums/buttons";
 import { Gender } from "#app/data/gender";
 import { getVariantTint } from "#app/data/variant";
 import { EggTier } from "#app/enums/egg-type";
@@ -41,7 +41,6 @@ export default class EggSummaryUiHandler extends MessageUiHandler {
   private cursorObj: Phaser.GameObjects.Image;
   private eggHatchData: EggHatchData[];
 
-
   /**
    * Allows subscribers to listen for events
    *
@@ -53,7 +52,6 @@ export default class EggSummaryUiHandler extends MessageUiHandler {
   constructor(scene: BattleScene) {
     super(scene, Mode.EGG_HATCH_SUMMARY);
   }
-
 
   setup() {
     const ui = this.getUi();
@@ -107,14 +105,14 @@ export default class EggSummaryUiHandler extends MessageUiHandler {
     const activeKeys = this.scene.getActiveKeys();
     // Removing unnecessary sprites from animation manager
     const animKeys = Object.keys(this.scene.anims["anims"]["entries"]);
-    animKeys.forEach(key => {
+    animKeys.forEach((key) => {
       if (key.startsWith("pkmn__") && !activeKeys.includes(key)) {
         this.scene.anims.remove(key);
       }
     });
     // Removing unnecessary cries from audio cache
     const audioKeys = Object.keys(this.scene.cache.audio.entries.entries);
-    audioKeys.forEach(key => {
+    audioKeys.forEach((key) => {
       if (key.startsWith("cry/") && !activeKeys.includes(key)) {
         delete this.scene.cache.audio.entries.entries[key];
       }
@@ -149,9 +147,7 @@ export default class EggSummaryUiHandler extends MessageUiHandler {
             return 0;
           }
         }
-      }
-
-      );
+      });
     }
 
     this.getUi().bringToTop(this.summaryContainer);
@@ -161,7 +157,7 @@ export default class EggSummaryUiHandler extends MessageUiHandler {
     this.eggHatchBg.setVisible(true);
     this.infoContainer.hideDisplayPokemon();
 
-    this.eggHatchData.forEach( (value: EggHatchData, i: number) => {
+    this.eggHatchData.forEach((value: EggHatchData, i: number) => {
       const x = (i % numCols) * iconSize;
       const y = Math.floor(i / numCols) * iconSize;
 
@@ -177,18 +173,18 @@ export default class EggSummaryUiHandler extends MessageUiHandler {
 
       // set tint for passive bg
       switch (getEggTierForSpecies(displayPokemon.species)) {
-      case EggTier.COMMON:
-        rarityBg.setVisible(false);
-        break;
-      case EggTier.GREAT:
-        rarityBg.setTint(0xabafff);
-        break;
-      case EggTier.ULTRA:
-        rarityBg.setTint(0xffffaa);
-        break;
-      case EggTier.MASTER:
-        rarityBg.setTint(0xdfffaf);
-        break;
+        case EggTier.COMMON:
+          rarityBg.setVisible(false);
+          break;
+        case EggTier.GREAT:
+          rarityBg.setTint(0xabafff);
+          break;
+        case EggTier.ULTRA:
+          rarityBg.setTint(0xffffaa);
+          break;
+        case EggTier.MASTER:
+          rarityBg.setTint(0xdfffaf);
+          break;
       }
       const species = displayPokemon.species;
       const female = displayPokemon.gender === Gender.FEMALE;
@@ -197,7 +193,11 @@ export default class EggSummaryUiHandler extends MessageUiHandler {
       const isShiny = displayPokemon.shiny;
 
       // set pokemon icon (and replace with base sprite if there is a mismatch)
-      const pokemonIcon = this.scene.add.sprite(x - offset, y + offset, species.getIconAtlasKey(formIndex, isShiny, variant));
+      const pokemonIcon = this.scene.add.sprite(
+        x - offset,
+        y + offset,
+        species.getIconAtlasKey(formIndex, isShiny, variant),
+      );
       pokemonIcon.setScale(0.5);
       pokemonIcon.setOrigin(0, 0);
       pokemonIcon.setFrame(species.getIconId(female, formIndex, isShiny, variant));
@@ -226,8 +226,8 @@ export default class EggSummaryUiHandler extends MessageUiHandler {
       const caughtAttr = dexEntry.caughtAttr;
       const newShiny = BigInt(1 << (displayPokemon.shiny ? 1 : 0));
       const newVariant = BigInt(1 << (displayPokemon.variant + 4));
-      const newShinyOrVariant = ((newShiny & caughtAttr) === BigInt(0)) || ((newVariant & caughtAttr) === BigInt(0));
-      const newForm = (BigInt(1 << displayPokemon.formIndex) * DexAttr.DEFAULT_FORM & caughtAttr) === BigInt(0);
+      const newShinyOrVariant = (newShiny & caughtAttr) === BigInt(0) || (newVariant & caughtAttr) === BigInt(0);
+      const newForm = ((BigInt(1 << displayPokemon.formIndex) * DexAttr.DEFAULT_FORM) & caughtAttr) === BigInt(0);
 
       const pokeballIcon = this.scene.add.image(x + rightSideX, y + offset * 7, "icon_owned");
       pokeballIcon.setOrigin(0, 0);
@@ -270,26 +270,26 @@ export default class EggSummaryUiHandler extends MessageUiHandler {
       const rows = Math.ceil(count / numCols);
       const row = Math.floor(this.cursor / numCols);
       switch (button) {
-      case Button.UP:
-        if (row) {
-          success = this.setCursor(this.cursor - numCols);
-        }
-        break;
-      case Button.DOWN:
-        if (row < rows - 2 || (row < rows - 1 && this.cursor % numCols <= (count - 1) % numCols)) {
-          success = this.setCursor(this.cursor + numCols);
-        }
-        break;
-      case Button.LEFT:
-        if (this.cursor % numCols) {
-          success = this.setCursor(this.cursor - 1);
-        }
-        break;
-      case Button.RIGHT:
-        if (this.cursor % numCols < (row < rows - 1 ? 10 : (count - 1) % numCols)) {
-          success = this.setCursor(this.cursor + 1);
-        }
-        break;
+        case Button.UP:
+          if (row) {
+            success = this.setCursor(this.cursor - numCols);
+          }
+          break;
+        case Button.DOWN:
+          if (row < rows - 2 || (row < rows - 1 && this.cursor % numCols <= (count - 1) % numCols)) {
+            success = this.setCursor(this.cursor + numCols);
+          }
+          break;
+        case Button.LEFT:
+          if (this.cursor % numCols) {
+            success = this.setCursor(this.cursor - 1);
+          }
+          break;
+        case Button.RIGHT:
+          if (this.cursor % numCols < (row < rows - 1 ? 10 : (count - 1) % numCols)) {
+            success = this.setCursor(this.cursor + 1);
+          }
+          break;
       }
     }
 
@@ -310,18 +310,25 @@ export default class EggSummaryUiHandler extends MessageUiHandler {
     changed = super.setCursor(cursor);
 
     if (changed) {
-      this.cursorObj.setPosition(iconContainerX - 1 + iconSize * (cursor % numCols), iconContainerY + 1 + iconSize * Math.floor(cursor / numCols));
+      this.cursorObj.setPosition(
+        iconContainerX - 1 + iconSize * (cursor % numCols),
+        iconContainerY + 1 + iconSize * Math.floor(cursor / numCols),
+      );
 
       if (lastCursor > -1) {
-        this.iconAnimHandler.addOrUpdate(this.pokemonIconSpritesContainer.getAt(lastCursor) as Phaser.GameObjects.Sprite, PokemonIconAnimMode.NONE);
+        this.iconAnimHandler.addOrUpdate(
+          this.pokemonIconSpritesContainer.getAt(lastCursor) as Phaser.GameObjects.Sprite,
+          PokemonIconAnimMode.NONE,
+        );
       }
-      this.iconAnimHandler.addOrUpdate(this.pokemonIconSpritesContainer.getAt(cursor) as Phaser.GameObjects.Sprite, PokemonIconAnimMode.ACTIVE);
+      this.iconAnimHandler.addOrUpdate(
+        this.pokemonIconSpritesContainer.getAt(cursor) as Phaser.GameObjects.Sprite,
+        PokemonIconAnimMode.ACTIVE,
+      );
 
       this.infoContainer.showHatchInfo(this.eggHatchData[cursor]);
-
     }
 
     return changed;
   }
-
 }

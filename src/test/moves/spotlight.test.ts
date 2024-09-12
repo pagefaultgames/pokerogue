@@ -50,7 +50,8 @@ describe("Moves - Spotlight", () => {
 
       expect(enemyPokemon[0].hp).toBeLessThan(enemyPokemon[0].getMaxHp());
       expect(enemyPokemon[1].hp).toBe(enemyPokemon[1].getMaxHp());
-    }, TIMEOUT
+    },
+    TIMEOUT,
   );
 
   test(
@@ -70,6 +71,7 @@ describe("Moves - Spotlight", () => {
 
       expect(enemyPokemon[0].hp).toBeLessThan(enemyPokemon[0].getMaxHp());
       expect(enemyPokemon[1].hp).toBe(enemyPokemon[1].getMaxHp());
-    }, TIMEOUT
+    },
+    TIMEOUT,
   );
 });

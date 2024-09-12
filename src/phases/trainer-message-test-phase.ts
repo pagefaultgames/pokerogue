@@ -20,16 +20,22 @@ export class TrainerMessageTestPhase extends BattlePhase {
 
     for (const t of Object.keys(trainerConfigs)) {
       const type = parseInt(t);
-      if (this.trainerTypes.length && !this.trainerTypes.find(tt => tt === type as TrainerType)) {
+      if (this.trainerTypes.length && !this.trainerTypes.find((tt) => tt === (type as TrainerType))) {
         continue;
       }
       const config = trainerConfigs[type];
-      [config.encounterMessages, config.femaleEncounterMessages, config.victoryMessages, config.femaleVictoryMessages, config.defeatMessages, config.femaleDefeatMessages]
-        .map(messages => {
-          if (messages?.length) {
-            testMessages.push(...messages);
-          }
-        });
+      [
+        config.encounterMessages,
+        config.femaleEncounterMessages,
+        config.victoryMessages,
+        config.femaleVictoryMessages,
+        config.defeatMessages,
+        config.femaleDefeatMessages,
+      ].map((messages) => {
+        if (messages?.length) {
+          testMessages.push(...messages);
+        }
+      });
     }
 
     for (const message of testMessages) {

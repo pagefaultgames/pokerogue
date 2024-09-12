@@ -6,7 +6,7 @@ import GameManager from "./utils/gameManager";
 
 const EndlessBossWave = {
   Minor: 250,
-  Major: 1000
+  Major: 1000,
 };
 
 describe("Endless Boss", () => {
@@ -21,9 +21,7 @@ describe("Endless Boss", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override
-      .startingBiome(Biome.END)
-      .disableCrits();
+    game.override.startingBiome(Biome.END).disableCrits();
   });
 
   afterEach(() => {

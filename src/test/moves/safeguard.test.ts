@@ -37,119 +37,155 @@ describe("Moves - Safeguard", () => {
       .ability(Abilities.BALL_FETCH);
   });
 
-  it("protects from damaging moves with additional effects", async () => {
-    await game.classicMode.startBattle();
-    const enemy = game.scene.getEnemyPokemon()!;
+  it(
+    "protects from damaging moves with additional effects",
+    async () => {
+      await game.classicMode.startBattle();
+      const enemy = game.scene.getEnemyPokemon()!;
 
-    game.move.select(Moves.NUZZLE);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
-    await game.toNextTurn();
+      game.move.select(Moves.NUZZLE);
+      await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+      await game.toNextTurn();
 
-    expect(enemy.status).toBeUndefined();
-  }, TIMEOUT);
+      expect(enemy.status).toBeUndefined();
+    },
+    TIMEOUT,
+  );
 
-  it("protects from status moves", async () => {
-    await game.classicMode.startBattle();
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+  it(
+    "protects from status moves",
+    async () => {
+      await game.classicMode.startBattle();
+      const enemyPokemon = game.scene.getEnemyPokemon()!;
 
-    game.move.select(Moves.SPORE);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
-    await game.toNextTurn();
+      game.move.select(Moves.SPORE);
+      await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+      await game.toNextTurn();
 
-    expect(enemyPokemon.status).toBeUndefined();
-  }, TIMEOUT);
+      expect(enemyPokemon.status).toBeUndefined();
+    },
+    TIMEOUT,
+  );
 
-  it("protects from confusion", async () => {
-    game.override.moveset([Moves.CONFUSE_RAY]);
-    await game.classicMode.startBattle();
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+  it(
+    "protects from confusion",
+    async () => {
+      game.override.moveset([Moves.CONFUSE_RAY]);
+      await game.classicMode.startBattle();
+      const enemyPokemon = game.scene.getEnemyPokemon()!;
 
-    game.move.select(Moves.CONFUSE_RAY);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
-    await game.toNextTurn();
+      game.move.select(Moves.CONFUSE_RAY);
+      await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+      await game.toNextTurn();
 
-    expect(enemyPokemon.summonData.tags).toEqual([]);
-  }, TIMEOUT);
+      expect(enemyPokemon.summonData.tags).toEqual([]);
+    },
+    TIMEOUT,
+  );
 
-  it("protects ally from status", async () => {
-    game.override.battleType("double");
+  it(
+    "protects ally from status",
+    async () => {
+      game.override.battleType("double");
 
-    await game.classicMode.startBattle();
+      await game.classicMode.startBattle();
 
-    game.move.select(Moves.SPORE, 0, BattlerIndex.ENEMY_2);
-    game.move.select(Moves.NUZZLE, 1, BattlerIndex.ENEMY_2);
+      game.move.select(Moves.SPORE, 0, BattlerIndex.ENEMY_2);
+      game.move.select(Moves.NUZZLE, 1, BattlerIndex.ENEMY_2);
 
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY_2]);
+      await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY_2]);
 
-    await game.phaseInterceptor.to("BerryPhase");
+      await game.phaseInterceptor.to("BerryPhase");
 
-    const enemyPokemon = game.scene.getEnemyField();
+      const enemyPokemon = game.scene.getEnemyField();
 
-    expect(enemyPokemon[0].status).toBeUndefined();
-    expect(enemyPokemon[1].status).toBeUndefined();
-  }, TIMEOUT);
+      expect(enemyPokemon[0].status).toBeUndefined();
+      expect(enemyPokemon[1].status).toBeUndefined();
+    },
+    TIMEOUT,
+  );
 
-  it("protects from Yawn", async () => {
-    await game.classicMode.startBattle();
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+  it(
+    "protects from Yawn",
+    async () => {
+      await game.classicMode.startBattle();
+      const enemyPokemon = game.scene.getEnemyPokemon()!;
 
-    game.move.select(Moves.YAWN);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
-    await game.toNextTurn();
+      game.move.select(Moves.YAWN);
+      await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+      await game.toNextTurn();
 
-    expect(enemyPokemon.summonData.tags).toEqual([]);
-  }, TIMEOUT);
+      expect(enemyPokemon.summonData.tags).toEqual([]);
+    },
+    TIMEOUT,
+  );
 
-  it("doesn't protect from already existing Yawn", async () => {
-    await game.classicMode.startBattle();
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+  it(
+    "doesn't protect from already existing Yawn",
+    async () => {
+      await game.classicMode.startBattle();
+      const enemyPokemon = game.scene.getEnemyPokemon()!;
 
-    game.move.select(Moves.YAWN);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
-    await game.toNextTurn();
+      game.move.select(Moves.YAWN);
+      await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+      await game.toNextTurn();
 
-    game.move.select(Moves.SPLASH);
-    await game.toNextTurn();
+      game.move.select(Moves.SPLASH);
+      await game.toNextTurn();
 
-    expect(enemyPokemon.status?.effect).toEqual(StatusEffect.SLEEP);
-  }, TIMEOUT);
+      expect(enemyPokemon.status?.effect).toEqual(StatusEffect.SLEEP);
+    },
+    TIMEOUT,
+  );
 
-  it("doesn't protect from self-inflicted via Rest or Flame Orb", async () => {
-    game.override.enemyHeldItems([{name: "FLAME_ORB"}]);
-    await game.classicMode.startBattle();
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+  it(
+    "doesn't protect from self-inflicted via Rest or Flame Orb",
+    async () => {
+      game.override.enemyHeldItems([{ name: "FLAME_ORB" }]);
+      await game.classicMode.startBattle();
+      const enemyPokemon = game.scene.getEnemyPokemon()!;
 
-    game.move.select(Moves.SPLASH);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
-    await game.toNextTurn();
-    enemyPokemon.damageAndUpdate(1);
+      game.move.select(Moves.SPLASH);
+      await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+      await game.toNextTurn();
+      enemyPokemon.damageAndUpdate(1);
 
-    expect(enemyPokemon.status?.effect).toEqual(StatusEffect.BURN);
+      expect(enemyPokemon.status?.effect).toEqual(StatusEffect.BURN);
 
-    game.override.enemyMoveset([Moves.REST]);
-    // Force the moveset to update mid-battle
-    // TODO: Remove after enemy AI rework is in
-    enemyPokemon.getMoveset();
-    game.move.select(Moves.SPLASH);
-    enemyPokemon.damageAndUpdate(1);
-    await game.toNextTurn();
+      game.override.enemyMoveset([Moves.REST]);
+      // Force the moveset to update mid-battle
+      // TODO: Remove after enemy AI rework is in
+      enemyPokemon.getMoveset();
+      game.move.select(Moves.SPLASH);
+      enemyPokemon.damageAndUpdate(1);
+      await game.toNextTurn();
 
-    expect(enemyPokemon.status?.effect).toEqual(StatusEffect.SLEEP);
-  }, TIMEOUT);
+      expect(enemyPokemon.status?.effect).toEqual(StatusEffect.SLEEP);
+    },
+    TIMEOUT,
+  );
 
-  it("protects from ability-inflicted status", async () => {
-    game.override.ability(Abilities.STATIC);
-    vi.spyOn(allAbilities[Abilities.STATIC].getAttrs(PostDefendContactApplyStatusEffectAbAttr)[0], "chance", "get").mockReturnValue(100);
-    await game.classicMode.startBattle();
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+  it(
+    "protects from ability-inflicted status",
+    async () => {
+      game.override.ability(Abilities.STATIC);
+      vi.spyOn(
+        allAbilities[Abilities.STATIC].getAttrs(PostDefendContactApplyStatusEffectAbAttr)[0],
+        "chance",
+        "get",
+      ).mockReturnValue(100);
+      await game.classicMode.startBattle();
+      const enemyPokemon = game.scene.getEnemyPokemon()!;
 
-    game.move.select(Moves.SPLASH);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
-    await game.toNextTurn();
-    game.override.enemyMoveset([Moves.TACKLE]);
-    game.move.select(Moves.SPLASH);
-    await game.toNextTurn();
+      game.move.select(Moves.SPLASH);
+      await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+      await game.toNextTurn();
+      game.override.enemyMoveset([Moves.TACKLE]);
+      game.move.select(Moves.SPLASH);
+      await game.toNextTurn();
 
-    expect(enemyPokemon.status).toBeUndefined();
-  }, TIMEOUT);
+      expect(enemyPokemon.status).toBeUndefined();
+    },
+    TIMEOUT,
+  );
 });

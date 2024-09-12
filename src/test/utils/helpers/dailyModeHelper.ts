@@ -13,7 +13,6 @@ import { GameManagerHelper } from "./gameManagerHelper";
  * Helper to handle daily mode specifics
  */
 export class DailyModeHelper extends GameManagerHelper {
-
   /**
    * Runs the daily game to the summon phase.
    * @returns A promise that resolves when the summon phase is reached.
@@ -46,15 +45,25 @@ export class DailyModeHelper extends GameManagerHelper {
     await this.runToSummon();
 
     if (this.game.scene.battleStyle === BattleStyle.SWITCH) {
-      this.game.onNextPrompt("CheckSwitchPhase", Mode.CONFIRM, () => {
-        this.game.setMode(Mode.MESSAGE);
-        this.game.endPhase();
-      }, () => this.game.isCurrentPhase(CommandPhase) || this.game.isCurrentPhase(TurnInitPhase));
+      this.game.onNextPrompt(
+        "CheckSwitchPhase",
+        Mode.CONFIRM,
+        () => {
+          this.game.setMode(Mode.MESSAGE);
+          this.game.endPhase();
+        },
+        () => this.game.isCurrentPhase(CommandPhase) || this.game.isCurrentPhase(TurnInitPhase),
+      );
 
-      this.game.onNextPrompt("CheckSwitchPhase", Mode.CONFIRM, () => {
-        this.game.setMode(Mode.MESSAGE);
-        this.game.endPhase();
-      }, () => this.game.isCurrentPhase(CommandPhase) || this.game.isCurrentPhase(TurnInitPhase));
+      this.game.onNextPrompt(
+        "CheckSwitchPhase",
+        Mode.CONFIRM,
+        () => {
+          this.game.setMode(Mode.MESSAGE);
+          this.game.endPhase();
+        },
+        () => this.game.isCurrentPhase(CommandPhase) || this.game.isCurrentPhase(TurnInitPhase),
+      );
     }
 
     await this.game.phaseInterceptor.to(CommandPhase);

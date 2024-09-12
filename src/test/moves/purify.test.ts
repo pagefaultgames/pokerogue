@@ -55,7 +55,7 @@ describe("Moves - Purify", () => {
       expect(enemyPokemon.status).toBeNull();
       expect(playerPokemon.isFullHp()).toBe(true);
     },
-    TIMEOUT
+    TIMEOUT,
   );
 
   test(
@@ -74,7 +74,6 @@ describe("Moves - Purify", () => {
 
       expect(playerPokemon.hp).toBe(playerInitialHp);
     },
-    TIMEOUT
+    TIMEOUT,
   );
-
 });

@@ -20,7 +20,7 @@ vi.mock("#app/overrides", async (importOriginal) => {
 
   return {
     default: defaultOverrides,
-    defaultOverrides
+    defaultOverrides,
   } satisfies typeof import("#app/overrides");
 });
 
@@ -43,6 +43,6 @@ beforeAll(() => {
     writable: true,
     value: {
       add: () => {},
-    }
+    },
   });
 });

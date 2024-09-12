@@ -56,23 +56,23 @@ describe("Moves - Flower Shield", () => {
     await game.startBattle([Species.CHERRIM, Species.MAGIKARP]);
     const field = game.scene.getField(true);
 
-    const grassPokemons = field.filter(p => p.getTypes().includes(Type.GRASS));
-    const nonGrassPokemons = field.filter(pokemon => !grassPokemons.includes(pokemon));
+    const grassPokemons = field.filter((p) => p.getTypes().includes(Type.GRASS));
+    const nonGrassPokemons = field.filter((pokemon) => !grassPokemons.includes(pokemon));
 
-    grassPokemons.forEach(p => expect(p.getStatStage(Stat.DEF)).toBe(0));
-    nonGrassPokemons.forEach(p => expect(p.getStatStage(Stat.DEF)).toBe(0));
+    grassPokemons.forEach((p) => expect(p.getStatStage(Stat.DEF)).toBe(0));
+    nonGrassPokemons.forEach((p) => expect(p.getStatStage(Stat.DEF)).toBe(0));
 
     game.move.select(Moves.FLOWER_SHIELD);
     game.move.select(Moves.SPLASH, 1);
     await game.phaseInterceptor.to(TurnEndPhase);
 
-    grassPokemons.forEach(p => expect(p.getStatStage(Stat.DEF)).toBe(1));
-    nonGrassPokemons.forEach(p => expect(p.getStatStage(Stat.DEF)).toBe(0));
+    grassPokemons.forEach((p) => expect(p.getStatStage(Stat.DEF)).toBe(1));
+    nonGrassPokemons.forEach((p) => expect(p.getStatStage(Stat.DEF)).toBe(0));
   });
 
   /**
    * See semi-vulnerable state tags. {@linkcode SemiInvulnerableTag}
-  */
+   */
   it("does not raise DEF stat stage for a Pokemon in semi-vulnerable state", async () => {
     game.override.enemySpecies(Species.PARAS);
     game.override.enemyMoveset([Moves.DIG, Moves.DIG, Moves.DIG, Moves.DIG]);

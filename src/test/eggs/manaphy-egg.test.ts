@@ -60,8 +60,8 @@ describe("Manaphy Eggs", () => {
     }
 
     expect(manaphyCount + phioneCount).toBe(EGG_HATCH_COUNT);
-    expect(manaphyCount).toBe(1/8 * EGG_HATCH_COUNT);
-    expect(rareEggMoveCount).toBe(1/12 * EGG_HATCH_COUNT);
+    expect(manaphyCount).toBe((1 / 8) * EGG_HATCH_COUNT);
+    expect(rareEggMoveCount).toBe((1 / 12) * EGG_HATCH_COUNT);
   });
 
   it("should have correct Manaphy rates and Rare Egg Move rates, from Phione species eggs", () => {
@@ -86,8 +86,8 @@ describe("Manaphy Eggs", () => {
     }
 
     expect(manaphyCount + phioneCount).toBe(EGG_HATCH_COUNT);
-    expect(manaphyCount).toBe(1/8 * EGG_HATCH_COUNT);
-    expect(rareEggMoveCount).toBe(1/6 * EGG_HATCH_COUNT);
+    expect(manaphyCount).toBe((1 / 8) * EGG_HATCH_COUNT);
+    expect(rareEggMoveCount).toBe((1 / 6) * EGG_HATCH_COUNT);
   });
 
   it("should have correct Manaphy rates and Rare Egg Move rates, from Manaphy species eggs", () => {
@@ -113,6 +113,6 @@ describe("Manaphy Eggs", () => {
 
     expect(phioneCount).toBe(0);
     expect(manaphyCount).toBe(EGG_HATCH_COUNT);
-    expect(rareEggMoveCount).toBe(1/6 * EGG_HATCH_COUNT);
+    expect(rareEggMoveCount).toBe((1 / 6) * EGG_HATCH_COUNT);
   });
 });

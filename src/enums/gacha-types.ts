@@ -1,5 +1,5 @@
 export enum GachaType {
-    MOVE,
-    LEGENDARY,
-    SHINY
+  MOVE,
+  LEGENDARY,
+  SHINY,
 }

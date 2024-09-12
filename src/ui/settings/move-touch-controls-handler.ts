@@ -5,28 +5,25 @@ import { Scene } from "phaser";
 export const TOUCH_CONTROL_POSITIONS_LANDSCAPE = "touchControlPositionsLandscape";
 export const TOUCH_CONTROL_POSITIONS_PORTRAIT = "touchControlPositionsPortrait";
 
-
-
-type ControlPosition = { id: string, x: number, y: number };
+type ControlPosition = { id: string; x: number; y: number };
 
 type ConfigurationEventListeners = {
-  "touchstart": EventListener[]
-  "touchmove": EventListener[]
-  "touchend": EventListener[]
+  touchstart: EventListener[];
+  touchmove: EventListener[];
+  touchend: EventListener[];
 };
 
 type ToolbarRefs = {
-  toolbar: HTMLDivElement,
-  saveButton: HTMLDivElement
-  resetButton: HTMLDivElement
-  cancelButton: HTMLDivElement
+  toolbar: HTMLDivElement;
+  saveButton: HTMLDivElement;
+  resetButton: HTMLDivElement;
+  cancelButton: HTMLDivElement;
 };
 
 /**
  * Handles the dragging of touch controls around the screen.
  */
 export default class MoveTouchControlsHandler {
-
   /** The element that is currently being dragged */
   private draggingElement: HTMLElement | null = null;
 
@@ -41,9 +38,9 @@ export default class MoveTouchControlsHandler {
    * These are used to remove the event listeners when the configuration mode is disabled.
    */
   private configurationEventListeners: ConfigurationEventListeners = {
-    "touchstart": [],
-    "touchmove": [],
-    "touchend": []
+    touchstart: [],
+    touchmove: [],
+    touchend: [],
   };
 
   private overlay: Phaser.GameObjects.Container;
@@ -72,7 +69,7 @@ export default class MoveTouchControlsHandler {
     if (this.inConfigurationMode) {
       const orientation = document.querySelector("#touchControls #orientation");
       if (orientation) {
-        orientation.textContent = this.isLandscapeMode? "Landscape" : "Portrait";
+        orientation.textContent = this.isLandscapeMode ? "Landscape" : "Portrait";
       }
     }
     const positions = this.getSavedPositionsOfCurrentOrientation() ?? [];
@@ -147,7 +144,7 @@ export default class MoveTouchControlsHandler {
       toolbar,
       saveButton: toolbar.querySelector("#saveButton")!,
       resetButton: toolbar.querySelector("#resetButton")!,
-      cancelButton: toolbar.querySelector("#cancelButton")!
+      cancelButton: toolbar.querySelector("#cancelButton")!,
     };
   }
 
@@ -179,7 +176,9 @@ export default class MoveTouchControlsHandler {
     }
     const rect = this.draggingElement.getBoundingClientRect();
     // Map the touch position to the center of the dragged element.
-    const xOffset = this.isLeft(this.draggingElement) ? touch.clientX - rect.width / 2 : window.innerWidth - touch.clientX - rect.width / 2;
+    const xOffset = this.isLeft(this.draggingElement)
+      ? touch.clientX - rect.width / 2
+      : window.innerWidth - touch.clientX - rect.width / 2;
     const yOffset = window.innerHeight - touch.clientY - rect.height / 2;
     this.setPosition(this.draggingElement, xOffset, yOffset);
   };
@@ -298,21 +297,21 @@ export default class MoveTouchControlsHandler {
    */
   private createConfigurationEventListeners(controlGroups: HTMLDivElement[]): ConfigurationEventListeners {
     return {
-      "touchstart": controlGroups.map((element: HTMLDivElement) => {
+      touchstart: controlGroups.map((element: HTMLDivElement) => {
         const startDrag = () => this.startDrag(element);
         element.addEventListener("touchstart", startDrag, { passive: true });
         return startDrag;
       }),
-      "touchmove": controlGroups.map(() => {
+      touchmove: controlGroups.map(() => {
         const drag = (event) => this.drag(event.touches[0]);
         window.addEventListener("touchmove", drag, { passive: true });
         return drag;
       }),
-      "touchend": controlGroups.map(() => {
+      touchend: controlGroups.map(() => {
         const stopDrag = () => this.stopDrag();
         window.addEventListener("touchend", stopDrag, { passive: true });
         return stopDrag;
-      })
+      }),
     };
   }
 
@@ -324,7 +323,15 @@ export default class MoveTouchControlsHandler {
    */
   private createOverlay(ui: UI, scene: Scene) {
     const container = new Phaser.GameObjects.Container(scene, 0, 0);
-    const overlay = new Phaser.GameObjects.Rectangle(scene, 0, 0, scene.game.canvas.width, scene.game.canvas.height, 0x000000, 0.5);
+    const overlay = new Phaser.GameObjects.Rectangle(
+      scene,
+      0,
+      0,
+      scene.game.canvas.width,
+      scene.game.canvas.height,
+      0x000000,
+      0.5,
+    );
     overlay.setInteractive();
     container.add(overlay);
     ui.add(container);
@@ -335,10 +342,10 @@ export default class MoveTouchControlsHandler {
   }
 
   /**
-  * Allows the user to configure the touch controls by dragging buttons around the screen.
-  * @param ui The UI of the game.
-  * @param scene The scene of the game.
-  */
+   * Allows the user to configure the touch controls by dragging buttons around the screen.
+   * @param ui The UI of the game.
+   * @param scene The scene of the game.
+   */
   public enableConfigurationMode(ui: UI, scene: Scene) {
     if (this.inConfigurationMode) {
       return;
@@ -363,7 +370,9 @@ export default class MoveTouchControlsHandler {
 
     // Remove event listeners
     const { touchstart, touchmove, touchend } = this.configurationEventListeners;
-    this.getControlGroupElements().forEach((element, index) => element.removeEventListener("touchstart", touchstart[index]));
+    this.getControlGroupElements().forEach((element, index) =>
+      element.removeEventListener("touchstart", touchstart[index]),
+    );
     touchmove.forEach((listener) => window.removeEventListener("touchmove", listener));
     touchend.forEach((listener) => window.removeEventListener("touchend", listener));
 
@@ -376,5 +385,4 @@ export default class MoveTouchControlsHandler {
     document.querySelector("#touchControls")?.classList.remove("config-mode");
     this.touchControls.enable();
   }
-
 }

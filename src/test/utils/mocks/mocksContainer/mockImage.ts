@@ -1,6 +1,5 @@
 import MockContainer from "#test/utils/mocks/mocksContainer/mockContainer";
 
-
 export default class MockImage extends MockContainer {
   private texture;
 

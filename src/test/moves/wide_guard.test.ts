@@ -54,8 +54,9 @@ describe("Moves - Wide Guard", () => {
 
       await game.phaseInterceptor.to(BerryPhase, false);
 
-      leadPokemon.forEach(p => expect(p.hp).toBe(p.getMaxHp()));
-    }, TIMEOUT
+      leadPokemon.forEach((p) => expect(p.hp).toBe(p.getMaxHp()));
+    },
+    TIMEOUT,
   );
 
   test(
@@ -75,8 +76,9 @@ describe("Moves - Wide Guard", () => {
 
       await game.phaseInterceptor.to(BerryPhase, false);
 
-      leadPokemon.forEach(p => expect(p.getStatStage(Stat.ATK)).toBe(0));
-    }, TIMEOUT
+      leadPokemon.forEach((p) => expect(p.getStatStage(Stat.ATK)).toBe(0));
+    },
+    TIMEOUT,
   );
 
   test(
@@ -96,8 +98,9 @@ describe("Moves - Wide Guard", () => {
 
       await game.phaseInterceptor.to(BerryPhase, false);
 
-      expect(leadPokemon.some(p => p.hp < p.getMaxHp())).toBeTruthy();
-    }, TIMEOUT
+      expect(leadPokemon.some((p) => p.hp < p.getMaxHp())).toBeTruthy();
+    },
+    TIMEOUT,
   );
 
   test(
@@ -119,7 +122,8 @@ describe("Moves - Wide Guard", () => {
       await game.phaseInterceptor.to(BerryPhase, false);
 
       expect(leadPokemon[0].hp).toBe(leadPokemon[0].getMaxHp());
-      enemyPokemon.forEach(p => expect(p.hp).toBeLessThan(p.getMaxHp()));
-    }, TIMEOUT
+      enemyPokemon.forEach((p) => expect(p.hp).toBeLessThan(p.getMaxHp()));
+    },
+    TIMEOUT,
   );
 });

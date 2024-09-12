@@ -51,8 +51,9 @@ describe("Moves - Quick Guard", () => {
 
       await game.phaseInterceptor.to("BerryPhase", false);
 
-      playerPokemon.forEach(p => expect(p.hp).toBe(p.getMaxHp()));
-    }, TIMEOUT
+      playerPokemon.forEach((p) => expect(p.hp).toBe(p.getMaxHp()));
+    },
+    TIMEOUT,
   );
 
   test(
@@ -70,29 +71,27 @@ describe("Moves - Quick Guard", () => {
 
       await game.phaseInterceptor.to("BerryPhase", false);
 
-      playerPokemon.forEach(p => expect(p.getStatStage(Stat.ATK)).toBe(0));
-    }, TIMEOUT
+      playerPokemon.forEach((p) => expect(p.getStatStage(Stat.ATK)).toBe(0));
+    },
+    TIMEOUT,
   );
 
-  test(
-    "should stop subsequent hits of a multi-hit priority move",
-    async () => {
-      game.override.enemyMoveset([Moves.WATER_SHURIKEN]);
+  test("should stop subsequent hits of a multi-hit priority move", async () => {
+    game.override.enemyMoveset([Moves.WATER_SHURIKEN]);
 
-      await game.classicMode.startBattle([Species.CHARIZARD, Species.BLASTOISE]);
+    await game.classicMode.startBattle([Species.CHARIZARD, Species.BLASTOISE]);
 
-      const playerPokemon = game.scene.getPlayerField();
-      const enemyPokemon = game.scene.getEnemyField();
+    const playerPokemon = game.scene.getPlayerField();
+    const enemyPokemon = game.scene.getEnemyField();
 
-      game.move.select(Moves.QUICK_GUARD);
-      game.move.select(Moves.FOLLOW_ME, 1);
+    game.move.select(Moves.QUICK_GUARD);
+    game.move.select(Moves.FOLLOW_ME, 1);
 
-      await game.phaseInterceptor.to("BerryPhase", false);
+    await game.phaseInterceptor.to("BerryPhase", false);
 
-      playerPokemon.forEach(p => expect(p.hp).toBe(p.getMaxHp()));
-      enemyPokemon.forEach(p => expect(p.turnData.hitCount).toBe(1));
-    }
-  );
+    playerPokemon.forEach((p) => expect(p.hp).toBe(p.getMaxHp()));
+    enemyPokemon.forEach((p) => expect(p.turnData.hitCount).toBe(1));
+  });
 
   test(
     "should fail if the user is the last to move in the turn",
@@ -113,6 +112,7 @@ describe("Moves - Quick Guard", () => {
 
       expect(enemyPokemon.getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);
       expect(playerPokemon.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
-    }, TIMEOUT
+    },
+    TIMEOUT,
   );
 });

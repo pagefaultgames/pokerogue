@@ -4,7 +4,7 @@ import { Mode } from "./ui";
 import UiHandler from "./ui-handler";
 import * as Utils from "../utils";
 import { getMoveTargets } from "../data/move";
-import {Button} from "#enums/buttons";
+import { Button } from "#enums/buttons";
 import { Moves } from "#enums/moves";
 import Pokemon from "#app/field/pokemon";
 import { ModifierBar } from "#app/modifier/modifier";
@@ -29,7 +29,7 @@ export default class TargetSelectUiHandler extends UiHandler {
     this.cursor = -1;
   }
 
-  setup(): void { }
+  setup(): void {}
 
   show(args: any[]): boolean {
     if (args.length < 3) {
@@ -70,26 +70,26 @@ export default class TargetSelectUiHandler extends UiHandler {
       success = false;
     } else {
       switch (button) {
-      case Button.UP:
-        if (this.cursor < BattlerIndex.ENEMY && this.targets.findIndex(t => t >= BattlerIndex.ENEMY) > -1) {
-          success = this.setCursor(this.targets.find(t => t >= BattlerIndex.ENEMY)!); // TODO: is the bang correct here?
-        }
-        break;
-      case Button.DOWN:
-        if (this.cursor >= BattlerIndex.ENEMY && this.targets.findIndex(t => t < BattlerIndex.ENEMY) > -1) {
-          success = this.setCursor(this.targets.find(t => t < BattlerIndex.ENEMY)!); // TODO: is the bang correct here?
-        }
-        break;
-      case Button.LEFT:
-        if (this.cursor % 2 && this.targets.findIndex(t => t === this.cursor - 1) > -1) {
-          success = this.setCursor(this.cursor - 1);
-        }
-        break;
-      case Button.RIGHT:
-        if (!(this.cursor % 2) && this.targets.findIndex(t => t === this.cursor + 1) > -1) {
-          success = this.setCursor(this.cursor + 1);
-        }
-        break;
+        case Button.UP:
+          if (this.cursor < BattlerIndex.ENEMY && this.targets.findIndex((t) => t >= BattlerIndex.ENEMY) > -1) {
+            success = this.setCursor(this.targets.find((t) => t >= BattlerIndex.ENEMY)!); // TODO: is the bang correct here?
+          }
+          break;
+        case Button.DOWN:
+          if (this.cursor >= BattlerIndex.ENEMY && this.targets.findIndex((t) => t < BattlerIndex.ENEMY) > -1) {
+            success = this.setCursor(this.targets.find((t) => t < BattlerIndex.ENEMY)!); // TODO: is the bang correct here?
+          }
+          break;
+        case Button.LEFT:
+          if (this.cursor % 2 && this.targets.findIndex((t) => t === this.cursor - 1) > -1) {
+            success = this.setCursor(this.cursor - 1);
+          }
+          break;
+        case Button.RIGHT:
+          if (!(this.cursor % 2) && this.targets.findIndex((t) => t === this.cursor + 1) > -1) {
+            success = this.setCursor(this.cursor + 1);
+          }
+          break;
       }
     }
 
@@ -102,9 +102,9 @@ export default class TargetSelectUiHandler extends UiHandler {
 
   setCursor(cursor: integer): boolean {
     const singleTarget = this.scene.getField()[cursor];
-    const multipleTargets = this.targets.map(index => this.scene.getField()[index]);
+    const multipleTargets = this.targets.map((index) => this.scene.getField()[index]);
 
-    this.targetsHighlighted = this.isMultipleTargets ? multipleTargets : [ singleTarget ];
+    this.targetsHighlighted = this.isMultipleTargets ? multipleTargets : [singleTarget];
 
     const ret = super.setCursor(cursor);
 
@@ -124,32 +124,34 @@ export default class TargetSelectUiHandler extends UiHandler {
       duration: Utils.fixedInt(450),
       ease: "Sine.easeInOut",
       yoyo: true,
-      onUpdate: t => {
+      onUpdate: (t) => {
         for (const target of this.targetsHighlighted) {
           target.setAlpha(t.getValue());
           this.highlightItems(target.id, t.getValue());
         }
-      }
+      },
     });
 
     if (this.targetBattleInfoMoveTween.length >= 1) {
-      this.targetBattleInfoMoveTween.filter(t => t !== undefined).forEach(tween => tween.stop());
+      this.targetBattleInfoMoveTween.filter((t) => t !== undefined).forEach((tween) => tween.stop());
       for (const pokemon of multipleTargets) {
         pokemon.getBattleInfo().resetY();
       }
     }
 
-    const targetsBattleInfo = this.targetsHighlighted.map(target => target.getBattleInfo());
+    const targetsBattleInfo = this.targetsHighlighted.map((target) => target.getBattleInfo());
 
-    targetsBattleInfo.map(info => {
-      this.targetBattleInfoMoveTween.push(this.scene.tweens.add({
-        targets: [ info ],
-        y: { start: info.getBaseY(), to: info.getBaseY() + 1 },
-        loop: -1,
-        duration: Utils.fixedInt(250),
-        ease: "Linear",
-        yoyo: true
-      }));
+    targetsBattleInfo.map((info) => {
+      this.targetBattleInfoMoveTween.push(
+        this.scene.tweens.add({
+          targets: [info],
+          y: { start: info.getBaseY(), to: info.getBaseY() + 1 },
+          loop: -1,
+          duration: Utils.fixedInt(250),
+          ease: "Linear",
+          yoyo: true,
+        }),
+      );
     });
 
     return ret;
@@ -167,7 +169,7 @@ export default class TargetSelectUiHandler extends UiHandler {
     }
 
     if (this.targetBattleInfoMoveTween.length >= 1) {
-      this.targetBattleInfoMoveTween.filter(t => t !== undefined).forEach(tween => tween.stop());
+      this.targetBattleInfoMoveTween.filter((t) => t !== undefined).forEach((tween) => tween.stop());
       this.targetBattleInfoMoveTween = [];
     }
     for (const pokemon of this.targetsHighlighted) {
@@ -175,7 +177,7 @@ export default class TargetSelectUiHandler extends UiHandler {
     }
   }
 
-  private highlightItems(targetId: number, val: number) : void {
+  private highlightItems(targetId: number, val: number): void {
     const targetItems = this.enemyModifiers.getAll("name", targetId.toString());
     for (const item of targetItems as Phaser.GameObjects.Container[]) {
       item.setAlpha(val);

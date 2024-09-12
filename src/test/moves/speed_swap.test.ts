@@ -29,14 +29,12 @@ describe("Moves - Speed Swap", () => {
       .enemyMoveset(Moves.SPLASH)
       .enemySpecies(Species.MEW)
       .enemyLevel(200)
-      .moveset([ Moves.SPEED_SWAP ])
+      .moveset([Moves.SPEED_SWAP])
       .ability(Abilities.NONE);
   });
 
   it("should swap the user's SPD and the target's SPD stats", async () => {
-    await game.startBattle([
-      Species.INDEEDEE
-    ]);
+    await game.startBattle([Species.INDEEDEE]);
 
     const player = game.scene.getPlayerPokemon()!;
     const enemy = game.scene.getEnemyPokemon()!;

@@ -12,7 +12,7 @@ describe("Moves - Disable", () => {
 
   beforeAll(() => {
     phaserGame = new Phaser.Game({
-      type: Phaser.HEADLESS
+      type: Phaser.HEADLESS,
     });
   });
 
@@ -45,7 +45,7 @@ describe("Moves - Disable", () => {
     expect(enemyMon.isMoveRestricted(Moves.SPLASH)).toBe(true);
   });
 
-  it("fails if enemy has no move history", async() => {
+  it("fails if enemy has no move history", async () => {
     await game.classicMode.startBattle();
 
     const playerMon = game.scene.getPlayerPokemon()!;
@@ -59,7 +59,7 @@ describe("Moves - Disable", () => {
     expect(enemyMon.isMoveRestricted(Moves.SPLASH)).toBe(false);
   }, 20000);
 
-  it("causes STRUGGLE if all usable moves are disabled", async() => {
+  it("causes STRUGGLE if all usable moves are disabled", async () => {
     await game.classicMode.startBattle();
 
     const enemyMon = game.scene.getEnemyPokemon()!;
@@ -77,7 +77,7 @@ describe("Moves - Disable", () => {
     expect(enemyHistory[1].move).toBe(Moves.STRUGGLE);
   }, 20000);
 
-  it("cannot disable STRUGGLE", async() => {
+  it("cannot disable STRUGGLE", async () => {
     game.override.enemyMoveset([Moves.STRUGGLE]);
     await game.classicMode.startBattle();
 
@@ -93,7 +93,7 @@ describe("Moves - Disable", () => {
     expect(enemyMon.isMoveRestricted(Moves.STRUGGLE)).toBe(false);
   }, 20000);
 
-  it("interrupts target's move when target moves after", async() => {
+  it("interrupts target's move when target moves after", async () => {
     await game.classicMode.startBattle();
 
     const enemyMon = game.scene.getEnemyPokemon()!;
@@ -112,7 +112,7 @@ describe("Moves - Disable", () => {
     expect(enemyHistory[1].result).toBe(MoveResult.FAIL);
   }, 20000);
 
-  it("disables NATURE POWER, not the move invoked by it", async() => {
+  it("disables NATURE POWER, not the move invoked by it", async () => {
     game.override.enemyMoveset([Moves.NATURE_POWER]);
     await game.classicMode.startBattle();
 

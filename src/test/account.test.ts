@@ -35,8 +35,8 @@ describe("account", () => {
           }),
           {
             status: 200,
-          }
-        )
+          },
+        ),
       );
 
       const [success, status] = await updateUserInfo();
@@ -49,9 +49,7 @@ describe("account", () => {
 
     it("should handle resolved API errors", async () => {
       vi.spyOn(battleScene, "bypassLogin", "get").mockReturnValue(false);
-      vi.spyOn(utils, "apiFetch").mockResolvedValue(
-        new Response(null, { status: 401 })
-      );
+      vi.spyOn(utils, "apiFetch").mockResolvedValue(new Response(null, { status: 401 }));
 
       const [success, status] = await updateUserInfo();
 

@@ -10,7 +10,13 @@ export class DamagePhase extends PokemonPhase {
   private damageResult: DamageResult;
   private critical: boolean;
 
-  constructor(scene: BattleScene, battlerIndex: BattlerIndex, amount: integer, damageResult?: DamageResult, critical: boolean = false) {
+  constructor(
+    scene: BattleScene,
+    battlerIndex: BattlerIndex,
+    amount: integer,
+    damageResult?: DamageResult,
+    critical: boolean = false,
+  ) {
     super(scene, battlerIndex);
 
     this.amount = amount;
@@ -41,16 +47,16 @@ export class DamagePhase extends PokemonPhase {
 
   applyDamage() {
     switch (this.damageResult) {
-    case HitResult.EFFECTIVE:
-      this.scene.playSound("se/hit");
-      break;
-    case HitResult.SUPER_EFFECTIVE:
-    case HitResult.ONE_HIT_KO:
-      this.scene.playSound("se/hit_strong");
-      break;
-    case HitResult.NOT_VERY_EFFECTIVE:
-      this.scene.playSound("se/hit_weak");
-      break;
+      case HitResult.EFFECTIVE:
+        this.scene.playSound("se/hit");
+        break;
+      case HitResult.SUPER_EFFECTIVE:
+      case HitResult.ONE_HIT_KO:
+        this.scene.playSound("se/hit_strong");
+        break;
+      case HitResult.NOT_VERY_EFFECTIVE:
+        this.scene.playSound("se/hit_weak");
+        break;
     }
 
     if (this.amount) {
@@ -63,14 +69,20 @@ export class DamagePhase extends PokemonPhase {
         repeat: 5,
         startAt: 200,
         callback: () => {
-          this.getPokemon().getSprite().setVisible(flashTimer.repeatCount % 2 === 0);
+          this.getPokemon()
+            .getSprite()
+            .setVisible(flashTimer.repeatCount % 2 === 0);
           if (!flashTimer.repeatCount) {
-            this.getPokemon().updateInfo().then(() => this.end());
+            this.getPokemon()
+              .updateInfo()
+              .then(() => this.end());
           }
-        }
+        },
       });
     } else {
-      this.getPokemon().updateInfo().then(() => this.end());
+      this.getPokemon()
+        .updateInfo()
+        .then(() => this.end());
     }
   }
 

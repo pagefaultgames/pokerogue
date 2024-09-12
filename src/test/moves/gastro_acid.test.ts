@@ -34,49 +34,57 @@ describe("Moves - Gastro Acid", () => {
     game.override.enemyAbility(Abilities.WATER_ABSORB);
   });
 
-  it("suppresses effect of ability", async () => {
-    /*
-     * Expected flow (enemies have WATER ABSORD, can only use SPLASH)
-     * - player mon 1 uses GASTRO ACID, player mon 2 uses SPLASH
-     * - both player mons use WATER GUN on their respective enemy mon
-     * - player mon 1 should have dealt damage, player mon 2 should have not
-     */
+  it(
+    "suppresses effect of ability",
+    async () => {
+      /*
+       * Expected flow (enemies have WATER ABSORD, can only use SPLASH)
+       * - player mon 1 uses GASTRO ACID, player mon 2 uses SPLASH
+       * - both player mons use WATER GUN on their respective enemy mon
+       * - player mon 1 should have dealt damage, player mon 2 should have not
+       */
 
-    await game.startBattle();
+      await game.startBattle();
 
-    game.move.select(Moves.GASTRO_ACID, 0, BattlerIndex.ENEMY);
-    game.move.select(Moves.SPLASH, 1);
+      game.move.select(Moves.GASTRO_ACID, 0, BattlerIndex.ENEMY);
+      game.move.select(Moves.SPLASH, 1);
 
-    await game.phaseInterceptor.to("TurnInitPhase");
+      await game.phaseInterceptor.to("TurnInitPhase");
 
-    const enemyField = game.scene.getEnemyField();
-    expect(enemyField[0].summonData.abilitySuppressed).toBe(true);
-    expect(enemyField[1].summonData.abilitySuppressed).toBe(false);
+      const enemyField = game.scene.getEnemyField();
+      expect(enemyField[0].summonData.abilitySuppressed).toBe(true);
+      expect(enemyField[1].summonData.abilitySuppressed).toBe(false);
 
-    game.move.select(Moves.WATER_GUN, 0, BattlerIndex.ENEMY);
-    game.move.select(Moves.WATER_GUN, 1, BattlerIndex.ENEMY_2);
+      game.move.select(Moves.WATER_GUN, 0, BattlerIndex.ENEMY);
+      game.move.select(Moves.WATER_GUN, 1, BattlerIndex.ENEMY_2);
 
-    await game.phaseInterceptor.to("TurnEndPhase");
+      await game.phaseInterceptor.to("TurnEndPhase");
 
-    expect(enemyField[0].hp).toBeLessThan(enemyField[0].getMaxHp());
-    expect(enemyField[1].isFullHp()).toBe(true);
-  }, TIMEOUT);
+      expect(enemyField[0].hp).toBeLessThan(enemyField[0].getMaxHp());
+      expect(enemyField[1].isFullHp()).toBe(true);
+    },
+    TIMEOUT,
+  );
 
-  it("fails if used on an enemy with an already-suppressed ability", async () => {
-    game.override.battleType(null);
+  it(
+    "fails if used on an enemy with an already-suppressed ability",
+    async () => {
+      game.override.battleType(null);
 
-    await game.startBattle();
+      await game.startBattle();
 
-    game.move.select(Moves.CORE_ENFORCER);
-    // Force player to be slower to enable Core Enforcer to proc its suppression effect
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+      game.move.select(Moves.CORE_ENFORCER);
+      // Force player to be slower to enable Core Enforcer to proc its suppression effect
+      await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
 
-    await game.phaseInterceptor.to("TurnInitPhase");
+      await game.phaseInterceptor.to("TurnInitPhase");
 
-    game.move.select(Moves.GASTRO_ACID);
+      game.move.select(Moves.GASTRO_ACID);
 
-    await game.phaseInterceptor.to("TurnInitPhase");
+      await game.phaseInterceptor.to("TurnInitPhase");
 
-    expect(game.scene.getPlayerPokemon()!.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
-  }, TIMEOUT);
+      expect(game.scene.getPlayerPokemon()!.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
+    },
+    TIMEOUT,
+  );
 });

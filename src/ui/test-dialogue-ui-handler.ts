@@ -7,7 +7,6 @@ import { isNullOrUndefined } from "#app/utils";
 import { Mode } from "./ui";
 
 export default class TestDialogueUiHandler extends FormModalUiHandler {
-
   keys: string[];
 
   constructor(scene, mode) {
@@ -18,23 +17,31 @@ export default class TestDialogueUiHandler extends FormModalUiHandler {
     super.setup();
 
     const flattenKeys = (object, topKey?: string, midleKey?: string[]): Array<any> => {
-      return Object.keys(object).map((t, i) => {
-        const value = Object.values(object)[i];
+      return Object.keys(object)
+        .map((t, i) => {
+          const value = Object.values(object)[i];
 
-        if (typeof value === "object" && !isNullOrUndefined(value)) { // we check for not null or undefined here because if the language json file has a null key, the typeof will still be an object, but that object will be null, causing issues
-          // If the value is an object, execute the same process
-          // si el valor es un objeto ejecuta el mismo proceso
+          if (typeof value === "object" && !isNullOrUndefined(value)) {
+            // we check for not null or undefined here because if the language json file has a null key, the typeof will still be an object, but that object will be null, causing issues
+            // If the value is an object, execute the same process
+            // si el valor es un objeto ejecuta el mismo proceso
 
-          return flattenKeys(value, topKey ?? t, topKey ? midleKey ? [...midleKey, t] : [t] : undefined).filter((t) => t.length > 0);
-        } else if (typeof value === "string" || isNullOrUndefined(value)) { // we check for null or undefined here as per above - the typeof is still an object but the value is null so we need to exit out of this and pass the null key
+            return flattenKeys(value, topKey ?? t, topKey ? (midleKey ? [...midleKey, t] : [t]) : undefined).filter(
+              (t) => t.length > 0,
+            );
+          } else if (typeof value === "string" || isNullOrUndefined(value)) {
+            // we check for null or undefined here as per above - the typeof is still an object but the value is null so we need to exit out of this and pass the null key
 
-          // Return in the format expected by i18next
-          return midleKey ? `${topKey}:${midleKey.map((m) => m).join(".")}.${t}` : `${topKey}:${t}`;
-        }
-      }).filter((t) => t);
+            // Return in the format expected by i18next
+            return midleKey ? `${topKey}:${midleKey.map((m) => m).join(".")}.${t}` : `${topKey}:${t}`;
+          }
+        })
+        .filter((t) => t);
     };
 
-    const keysInArrays = flattenKeys(i18next.getDataByLanguage(String(i18next.resolvedLanguage))).filter((t) => t.length > 0); // Array of arrays
+    const keysInArrays = flattenKeys(i18next.getDataByLanguage(String(i18next.resolvedLanguage))).filter(
+      (t) => t.length > 0,
+    ); // Array of arrays
     const keys = keysInArrays.flat(Infinity).map(String); // One array of string
     this.keys = keys;
   }
@@ -44,7 +51,7 @@ export default class TestDialogueUiHandler extends FormModalUiHandler {
   }
 
   getFields(config?: ModalConfig): string[] {
-    return [ "Dialogue" ];
+    return ["Dialogue"];
   }
 
   getWidth(config?: ModalConfig): number {
@@ -52,11 +59,11 @@ export default class TestDialogueUiHandler extends FormModalUiHandler {
   }
 
   getMargin(config?: ModalConfig): [number, number, number, number] {
-    return [ 0, 0, 48, 0 ];
+    return [0, 0, 48, 0];
   }
 
   getButtonLabels(config?: ModalConfig): string[] {
-    return [ "Check", "Cancel" ];
+    return ["Check", "Cancel"];
   }
 
   getReadableErrorMessage(error: string): string {
@@ -74,7 +81,10 @@ export default class TestDialogueUiHandler extends FormModalUiHandler {
     input.setMaxLength(255);
 
     input.on("keydown", (inputObject, evt: KeyboardEvent) => {
-      if (["escape", "space"].some((v) => v === evt.key.toLowerCase() || v === evt.code.toLowerCase()) && ui.getMode() === Mode.AUTO_COMPLETE) {
+      if (
+        ["escape", "space"].some((v) => v === evt.key.toLowerCase() || v === evt.code.toLowerCase()) &&
+        ui.getMode() === Mode.AUTO_COMPLETE
+      ) {
         // Delete autocomplete list and recovery focus.
         inputObject.on("blur", () => inputObject.node.focus(), { once: true });
         ui.revertMode();
@@ -89,7 +99,9 @@ export default class TestDialogueUiHandler extends FormModalUiHandler {
 
       let options: OptionSelectItem[] = [];
       const splitArr = inputObject.text.split(" ");
-      const filteredKeys = this.keys.filter((command) => command.toLowerCase().includes(splitArr[splitArr.length - 1].toLowerCase()));
+      const filteredKeys = this.keys.filter((command) =>
+        command.toLowerCase().includes(splitArr[splitArr.length - 1].toLowerCase()),
+      );
       if (inputObject.text !== "" && filteredKeys.length > 0) {
         // if performance is required, you could reduce the number of total results by changing the slice below to not have all ~8000 inputs going
         options = filteredKeys.slice(0).map((value) => {
@@ -105,7 +117,7 @@ export default class TestDialogueUiHandler extends FormModalUiHandler {
               }
               ui.revertMode();
               return true;
-            }
+            },
           };
         });
       }
@@ -114,13 +126,11 @@ export default class TestDialogueUiHandler extends FormModalUiHandler {
         const modalOpts = {
           options: options,
           maxOptions: 5,
-          modalContainer: this.modalContainer
+          modalContainer: this.modalContainer,
         };
         ui.setOverlayMode(Mode.AUTO_COMPLETE, modalOpts);
       }
-
     });
-
 
     if (super.show(args)) {
       const config = args[0] as ModalConfig;

@@ -34,68 +34,88 @@ describe("Moves - Thunder Wave", () => {
 
   // References: https://bulbapedia.bulbagarden.net/wiki/Thunder_Wave_(move)
 
-  it("paralyzes non-statused Pokemon that are not Ground types", async () => {
-    game.override.enemySpecies(Species.MAGIKARP);
-    await game.startBattle();
+  it(
+    "paralyzes non-statused Pokemon that are not Ground types",
+    async () => {
+      game.override.enemySpecies(Species.MAGIKARP);
+      await game.startBattle();
 
-    const enemyPokemon: EnemyPokemon = game.scene.getEnemyPokemon()!;
+      const enemyPokemon: EnemyPokemon = game.scene.getEnemyPokemon()!;
 
-    game.move.select(Moves.THUNDER_WAVE);
-    await game.move.forceHit();
-    await game.phaseInterceptor.to("BerryPhase", false);
+      game.move.select(Moves.THUNDER_WAVE);
+      await game.move.forceHit();
+      await game.phaseInterceptor.to("BerryPhase", false);
 
-    expect(enemyPokemon.status?.effect).toBe(StatusEffect.PARALYSIS);
-  }, TIMEOUT);
+      expect(enemyPokemon.status?.effect).toBe(StatusEffect.PARALYSIS);
+    },
+    TIMEOUT,
+  );
 
-  it("does not paralyze if the Pokemon is a Ground-type", async () => {
-    game.override.enemySpecies(Species.DIGLETT);
-    await game.startBattle();
+  it(
+    "does not paralyze if the Pokemon is a Ground-type",
+    async () => {
+      game.override.enemySpecies(Species.DIGLETT);
+      await game.startBattle();
 
-    const enemyPokemon: EnemyPokemon = game.scene.getEnemyPokemon()!;
+      const enemyPokemon: EnemyPokemon = game.scene.getEnemyPokemon()!;
 
-    game.move.select(Moves.THUNDER_WAVE);
-    await game.move.forceHit();
-    await game.phaseInterceptor.to("BerryPhase", false);
+      game.move.select(Moves.THUNDER_WAVE);
+      await game.move.forceHit();
+      await game.phaseInterceptor.to("BerryPhase", false);
 
-    expect(enemyPokemon.status).toBeUndefined();
-  }, TIMEOUT);
+      expect(enemyPokemon.status).toBeUndefined();
+    },
+    TIMEOUT,
+  );
 
-  it("does not paralyze if the Pokemon already has a status effect", async () => {
-    game.override.enemySpecies(Species.MAGIKARP).enemyStatusEffect(StatusEffect.BURN);
-    await game.startBattle();
+  it(
+    "does not paralyze if the Pokemon already has a status effect",
+    async () => {
+      game.override.enemySpecies(Species.MAGIKARP).enemyStatusEffect(StatusEffect.BURN);
+      await game.startBattle();
 
-    const enemyPokemon: EnemyPokemon = game.scene.getEnemyPokemon()!;
+      const enemyPokemon: EnemyPokemon = game.scene.getEnemyPokemon()!;
 
-    game.move.select(Moves.THUNDER_WAVE);
-    await game.move.forceHit();
-    await game.phaseInterceptor.to("BerryPhase", false);
+      game.move.select(Moves.THUNDER_WAVE);
+      await game.move.forceHit();
+      await game.phaseInterceptor.to("BerryPhase", false);
 
-    expect(enemyPokemon.status?.effect).not.toBe(StatusEffect.PARALYSIS);
-  }, TIMEOUT);
+      expect(enemyPokemon.status?.effect).not.toBe(StatusEffect.PARALYSIS);
+    },
+    TIMEOUT,
+  );
 
-  it("affects Ground types if the user has Normalize", async () => {
-    game.override.ability(Abilities.NORMALIZE).enemySpecies(Species.DIGLETT);
-    await game.startBattle();
+  it(
+    "affects Ground types if the user has Normalize",
+    async () => {
+      game.override.ability(Abilities.NORMALIZE).enemySpecies(Species.DIGLETT);
+      await game.startBattle();
 
-    const enemyPokemon: EnemyPokemon = game.scene.getEnemyPokemon()!;
+      const enemyPokemon: EnemyPokemon = game.scene.getEnemyPokemon()!;
 
-    game.move.select(Moves.THUNDER_WAVE);
-    await game.move.forceHit();
-    await game.phaseInterceptor.to("BerryPhase", false);
+      game.move.select(Moves.THUNDER_WAVE);
+      await game.move.forceHit();
+      await game.phaseInterceptor.to("BerryPhase", false);
 
-    expect(enemyPokemon.status?.effect).toBe(StatusEffect.PARALYSIS);
-  }, TIMEOUT);
+      expect(enemyPokemon.status?.effect).toBe(StatusEffect.PARALYSIS);
+    },
+    TIMEOUT,
+  );
 
-  it("does not affect Ghost types if the user has Normalize", async () => {
-    game.override.ability(Abilities.NORMALIZE).enemySpecies(Species.HAUNTER);
-    await game.startBattle();
+  it(
+    "does not affect Ghost types if the user has Normalize",
+    async () => {
+      game.override.ability(Abilities.NORMALIZE).enemySpecies(Species.HAUNTER);
+      await game.startBattle();
 
-    const enemyPokemon: EnemyPokemon = game.scene.getEnemyPokemon()!;
+      const enemyPokemon: EnemyPokemon = game.scene.getEnemyPokemon()!;
 
-    game.move.select(Moves.THUNDER_WAVE);
-    await game.move.forceHit();
-    await game.phaseInterceptor.to("BerryPhase", false);
+      game.move.select(Moves.THUNDER_WAVE);
+      await game.move.forceHit();
+      await game.phaseInterceptor.to("BerryPhase", false);
 
-    expect(enemyPokemon.status).toBeUndefined();
-  }, TIMEOUT);
+      expect(enemyPokemon.status).toBeUndefined();
+    },
+    TIMEOUT,
+  );
 });

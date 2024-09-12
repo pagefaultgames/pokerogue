@@ -54,7 +54,8 @@ describe("Abilities - Tera Shell", () => {
 
       await game.phaseInterceptor.to("MoveEndPhase");
       expect(playerPokemon.getMoveEffectiveness).toHaveLastReturnedWith(2);
-    }, TIMEOUT
+    },
+    TIMEOUT,
   );
 
   it(
@@ -71,7 +72,8 @@ describe("Abilities - Tera Shell", () => {
 
       await game.phaseInterceptor.to("MoveEndPhase");
       expect(playerPokemon.getMoveEffectiveness).toHaveLastReturnedWith(0);
-    }, TIMEOUT
+    },
+    TIMEOUT,
   );
 
   it(
@@ -88,7 +90,8 @@ describe("Abilities - Tera Shell", () => {
 
       await game.phaseInterceptor.to("MoveEndPhase");
       expect(playerPokemon.getMoveEffectiveness).toHaveLastReturnedWith(0.25);
-    }, TIMEOUT
+    },
+    TIMEOUT,
   );
 
   it(
@@ -106,6 +109,7 @@ describe("Abilities - Tera Shell", () => {
       await game.phaseInterceptor.to("BerryPhase", false);
       expect(playerPokemon.apply).toHaveLastReturnedWith(HitResult.EFFECTIVE);
       expect(playerPokemon.hp).toBe(playerPokemon.getMaxHp() - 40);
-    }, TIMEOUT
+    },
+    TIMEOUT,
   );
 });

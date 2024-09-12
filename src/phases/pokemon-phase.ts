@@ -12,7 +12,10 @@ export abstract class PokemonPhase extends FieldPhase {
     super(scene);
 
     if (battlerIndex === undefined) {
-      battlerIndex = scene.getField().find(p => p?.isActive())!.getBattlerIndex(); // TODO: is the bang correct here?
+      battlerIndex = scene
+        .getField()
+        .find((p) => p?.isActive())!
+        .getBattlerIndex(); // TODO: is the bang correct here?
     }
 
     this.battlerIndex = battlerIndex;

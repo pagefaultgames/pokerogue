@@ -67,6 +67,7 @@ describe("Moves - Astonish", () => {
       await game.phaseInterceptor.to(BerryPhase, false);
 
       expect(leadPokemon.hp).toBeLessThan(leadPokemon.getMaxHp());
-    }, TIMEOUT
+    },
+    TIMEOUT,
   );
 });

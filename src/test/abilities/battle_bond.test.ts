@@ -60,6 +60,6 @@ describe("Abilities - BATTLE BOND", () => {
 
       expect(greninja!.formIndex).toBe(baseForm);
     },
-    TIMEOUT
+    TIMEOUT,
   );
 });

@@ -58,7 +58,7 @@ describe("Abilities - Wonder Skin", () => {
 
   const bypassAbilities = [Abilities.MOLD_BREAKER, Abilities.TERAVOLT, Abilities.TURBOBLAZE];
 
-  bypassAbilities.forEach(ability => {
+  bypassAbilities.forEach((ability) => {
     it(`does not affect pokemon with ${allAbilities[ability].name}`, async () => {
       const moveToCheck = allMoves[Moves.CHARM];
 

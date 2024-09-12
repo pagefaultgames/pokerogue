@@ -1,13 +1,11 @@
 import BattleScene from "../../battle-scene";
 import AbstractBindingUiHandler from "./abstract-binding-ui-handler";
-import {Mode} from "../ui";
-import {Device} from "#enums/devices";
-import {getIconWithSettingName, getKeyWithKeycode} from "#app/configs/inputs/configHandler";
-import {addTextObject, TextStyle} from "#app/ui/text";
-
+import { Mode } from "../ui";
+import { Device } from "#enums/devices";
+import { getIconWithSettingName, getKeyWithKeycode } from "#app/configs/inputs/configHandler";
+import { addTextObject, TextStyle } from "#app/ui/text";
 
 export default class GamepadBindingUiHandler extends AbstractBindingUiHandler {
-
   constructor(scene: BattleScene, mode: Mode | null = null) {
     super(scene, mode);
     this.scene.input.gamepad?.on("down", this.gamepadButtonDown, this);
@@ -23,7 +21,11 @@ export default class GamepadBindingUiHandler extends AbstractBindingUiHandler {
 
     this.swapText = addTextObject(this.scene, 0, 0, "will swap with", TextStyle.WINDOW);
     this.swapText.setOrigin(0.5);
-    this.swapText.setPositionRelative(this.optionSelectBg, this.optionSelectBg.width / 2 - 2, this.optionSelectBg.height / 2 - 2);
+    this.swapText.setPositionRelative(
+      this.optionSelectBg,
+      this.optionSelectBg.width / 2 - 2,
+      this.optionSelectBg.height / 2 - 2,
+    );
     this.swapText.setVisible(false);
 
     this.targetButtonIcon = this.scene.add.sprite(0, 0, "xbox");
@@ -48,7 +50,12 @@ export default class GamepadBindingUiHandler extends AbstractBindingUiHandler {
   gamepadButtonDown(pad: Phaser.Input.Gamepad.Gamepad, button: Phaser.Input.Gamepad.Button, value: number): void {
     const blacklist = [12, 13, 14, 15]; // d-pad buttons are blacklisted.
     // Check conditions before processing the button press.
-    if (!this.listening || pad.id.toLowerCase() !== this.getSelectedDevice() || blacklist.includes(button.index) || this.buttonPressed !== null) {
+    if (
+      !this.listening ||
+      pad.id.toLowerCase() !== this.getSelectedDevice() ||
+      blacklist.includes(button.index) ||
+      this.buttonPressed !== null
+    ) {
       return;
     }
     const activeConfig = this.scene.inputController.getActiveConfig(Device.GAMEPAD);
@@ -73,8 +80,8 @@ export default class GamepadBindingUiHandler extends AbstractBindingUiHandler {
   }
 
   /**
-     * Clear the UI elements and state.
-     */
+   * Clear the UI elements and state.
+   */
   clear() {
     super.clear();
     this.targetButtonIcon.setVisible(false);

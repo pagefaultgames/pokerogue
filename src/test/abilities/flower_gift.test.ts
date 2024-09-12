@@ -52,7 +52,7 @@ describe("Abilities - Flower Gift", () => {
     game.override.battleType("double");
     await game.classicMode.startBattle([Species.CHERRIM, Species.MAGIKARP]);
 
-    const [ cherrim ] = game.scene.getPlayerField();
+    const [cherrim] = game.scene.getPlayerField();
     const cherrimAtkStat = cherrim.getEffectiveStat(Stat.ATK);
     const cherrimSpDefStat = cherrim.getEffectiveStat(Stat.SPDEF);
 

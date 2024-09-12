@@ -29,7 +29,7 @@ describe("Moves - Fake Out", () => {
       .disableCrits();
   });
 
-  it("can only be used on the first turn a pokemon is sent out", async() => {
+  it("can only be used on the first turn a pokemon is sent out", async () => {
     await game.classicMode.startBattle();
 
     const enemy = game.scene.getEnemyPokemon()!;
@@ -57,7 +57,7 @@ describe("Moves - Fake Out", () => {
     expect(newEnemy.hp).toBe(newEnemy.getMaxHp());
   }, 20000);
 
-  it("can be used again if recalled and sent back out", async() => {
+  it("can be used again if recalled and sent back out", async () => {
     game.override.startingWave(4);
     await game.classicMode.startBattle();
 

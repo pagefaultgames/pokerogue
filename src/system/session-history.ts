@@ -5,13 +5,13 @@ import PersistentModifierData from "./modifier-data";
 export enum SessionHistoryResult {
   ACTIVE,
   WIN,
-  LOSS
+  LOSS,
 }
 
 export interface SessionHistory {
   seed: string;
   playTime: integer;
-  result: SessionHistoryResult,
+  result: SessionHistoryResult;
   gameMode: GameModes;
   party: PokemonData[];
   modifiers: PersistentModifierData[];

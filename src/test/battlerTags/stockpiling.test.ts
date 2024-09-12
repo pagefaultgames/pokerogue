@@ -22,10 +22,10 @@ describe("BattlerTag - StockpilingTag", () => {
 
       const subject = new StockpilingTag(1);
 
-      vi.spyOn(mockPokemon.scene, "unshiftPhase").mockImplementation(phase => {
+      vi.spyOn(mockPokemon.scene, "unshiftPhase").mockImplementation((phase) => {
         expect(phase).toBeInstanceOf(StatStageChangePhase);
         expect((phase as StatStageChangePhase)["stages"]).toEqual(1);
-        expect((phase as StatStageChangePhase)["stats"]).toEqual(expect.arrayContaining([ Stat.DEF, Stat.SPDEF ]));
+        expect((phase as StatStageChangePhase)["stats"]).toEqual(expect.arrayContaining([Stat.DEF, Stat.SPDEF]));
 
         (phase as StatStageChangePhase)["onChange"]!(mockPokemon, [Stat.DEF, Stat.SPDEF], [1, 1]);
       });
@@ -35,32 +35,36 @@ describe("BattlerTag - StockpilingTag", () => {
       expect(mockPokemon.scene.unshiftPhase).toBeCalledTimes(1);
     });
 
-    it("unshifts a StatStageChangePhase with expected stat changes on add (one stat maxed)", { timeout: 10000 }, async () => {
-      const mockPokemon = {
-        scene: new BattleScene(),
-        summonData: new PokemonSummonData(),
-        getBattlerIndex: () => 0,
-      } as Pokemon;
+    it(
+      "unshifts a StatStageChangePhase with expected stat changes on add (one stat maxed)",
+      { timeout: 10000 },
+      async () => {
+        const mockPokemon = {
+          scene: new BattleScene(),
+          summonData: new PokemonSummonData(),
+          getBattlerIndex: () => 0,
+        } as Pokemon;
 
-      vi.spyOn(mockPokemon.scene, "queueMessage").mockImplementation(() => {});
+        vi.spyOn(mockPokemon.scene, "queueMessage").mockImplementation(() => {});
 
-      mockPokemon.summonData.statStages[Stat.DEF - 1] = 6;
-      mockPokemon.summonData.statStages[Stat.SPD - 1] = 5;
+        mockPokemon.summonData.statStages[Stat.DEF - 1] = 6;
+        mockPokemon.summonData.statStages[Stat.SPD - 1] = 5;
 
-      const subject = new StockpilingTag(1);
+        const subject = new StockpilingTag(1);
 
-      vi.spyOn(mockPokemon.scene, "unshiftPhase").mockImplementation(phase => {
-        expect(phase).toBeInstanceOf(StatStageChangePhase);
-        expect((phase as StatStageChangePhase)["stages"]).toEqual(1);
-        expect((phase as StatStageChangePhase)["stats"]).toEqual(expect.arrayContaining([Stat.DEF, Stat.SPDEF]));
+        vi.spyOn(mockPokemon.scene, "unshiftPhase").mockImplementation((phase) => {
+          expect(phase).toBeInstanceOf(StatStageChangePhase);
+          expect((phase as StatStageChangePhase)["stages"]).toEqual(1);
+          expect((phase as StatStageChangePhase)["stats"]).toEqual(expect.arrayContaining([Stat.DEF, Stat.SPDEF]));
 
-        (phase as StatStageChangePhase)["onChange"]!(mockPokemon, [ Stat.DEF, Stat.SPDEF ], [1, 1]);
-      });
+          (phase as StatStageChangePhase)["onChange"]!(mockPokemon, [Stat.DEF, Stat.SPDEF], [1, 1]);
+        });
 
-      subject.onAdd(mockPokemon);
+        subject.onAdd(mockPokemon);
 
-      expect(mockPokemon.scene.unshiftPhase).toBeCalledTimes(1);
-    });
+        expect(mockPokemon.scene.unshiftPhase).toBeCalledTimes(1);
+      },
+    );
   });
 
   describe("onOverlap", () => {
@@ -74,12 +78,12 @@ describe("BattlerTag - StockpilingTag", () => {
 
       const subject = new StockpilingTag(1);
 
-      vi.spyOn(mockPokemon.scene, "unshiftPhase").mockImplementation(phase => {
+      vi.spyOn(mockPokemon.scene, "unshiftPhase").mockImplementation((phase) => {
         expect(phase).toBeInstanceOf(StatStageChangePhase);
         expect((phase as StatStageChangePhase)["stages"]).toEqual(1);
-        expect((phase as StatStageChangePhase)["stats"]).toEqual(expect.arrayContaining([ Stat.DEF, Stat.SPDEF ]));
+        expect((phase as StatStageChangePhase)["stats"]).toEqual(expect.arrayContaining([Stat.DEF, Stat.SPDEF]));
 
-        (phase as StatStageChangePhase)["onChange"]!(mockPokemon, [ Stat.DEF, Stat.SPDEF ], [1, 1]);
+        (phase as StatStageChangePhase)["onChange"]!(mockPokemon, [Stat.DEF, Stat.SPDEF], [1, 1]);
       });
 
       subject.onOverlap(mockPokemon);
@@ -103,34 +107,34 @@ describe("BattlerTag - StockpilingTag", () => {
 
       const subject = new StockpilingTag(1);
 
-      vi.spyOn(mockPokemon.scene, "unshiftPhase").mockImplementationOnce(phase => {
+      vi.spyOn(mockPokemon.scene, "unshiftPhase").mockImplementationOnce((phase) => {
         expect(phase).toBeInstanceOf(StatStageChangePhase);
         expect((phase as StatStageChangePhase)["stages"]).toEqual(1);
-        expect((phase as StatStageChangePhase)["stats"]).toEqual(expect.arrayContaining([ Stat.DEF, Stat.SPDEF ]));
+        expect((phase as StatStageChangePhase)["stats"]).toEqual(expect.arrayContaining([Stat.DEF, Stat.SPDEF]));
 
         // def doesn't change
-        (phase as StatStageChangePhase)["onChange"]!(mockPokemon, [ Stat.SPDEF ], [1]);
+        (phase as StatStageChangePhase)["onChange"]!(mockPokemon, [Stat.SPDEF], [1]);
       });
 
       subject.onAdd(mockPokemon);
       expect(subject.stockpiledCount).toBe(1);
 
-      vi.spyOn(mockPokemon.scene, "unshiftPhase").mockImplementationOnce(phase => {
+      vi.spyOn(mockPokemon.scene, "unshiftPhase").mockImplementationOnce((phase) => {
         expect(phase).toBeInstanceOf(StatStageChangePhase);
         expect((phase as StatStageChangePhase)["stages"]).toEqual(1);
-        expect((phase as StatStageChangePhase)["stats"]).toEqual(expect.arrayContaining([ Stat.DEF, Stat.SPDEF ]));
+        expect((phase as StatStageChangePhase)["stats"]).toEqual(expect.arrayContaining([Stat.DEF, Stat.SPDEF]));
 
         // def doesn't change
-        (phase as StatStageChangePhase)["onChange"]!(mockPokemon, [ Stat.SPDEF ], [1]);
+        (phase as StatStageChangePhase)["onChange"]!(mockPokemon, [Stat.SPDEF], [1]);
       });
 
       subject.onOverlap(mockPokemon);
       expect(subject.stockpiledCount).toBe(2);
 
-      vi.spyOn(mockPokemon.scene, "unshiftPhase").mockImplementationOnce(phase => {
+      vi.spyOn(mockPokemon.scene, "unshiftPhase").mockImplementationOnce((phase) => {
         expect(phase).toBeInstanceOf(StatStageChangePhase);
         expect((phase as StatStageChangePhase)["stages"]).toEqual(1);
-        expect((phase as StatStageChangePhase)["stats"]).toEqual(expect.arrayContaining([ Stat.DEF, Stat.SPDEF ]));
+        expect((phase as StatStageChangePhase)["stats"]).toEqual(expect.arrayContaining([Stat.DEF, Stat.SPDEF]));
 
         // neither stat changes, stack count should still increase
       });
@@ -138,17 +142,17 @@ describe("BattlerTag - StockpilingTag", () => {
       subject.onOverlap(mockPokemon);
       expect(subject.stockpiledCount).toBe(3);
 
-      vi.spyOn(mockPokemon.scene, "unshiftPhase").mockImplementationOnce(_phase => {
+      vi.spyOn(mockPokemon.scene, "unshiftPhase").mockImplementationOnce((_phase) => {
         throw new Error("Should not be called a fourth time");
       });
 
       // fourth stack should not be applied
       subject.onOverlap(mockPokemon);
       expect(subject.stockpiledCount).toBe(3);
-      expect(subject.statChangeCounts).toMatchObject({ [ Stat.DEF ]: 0, [Stat.SPDEF]: 2 });
+      expect(subject.statChangeCounts).toMatchObject({ [Stat.DEF]: 0, [Stat.SPDEF]: 2 });
 
       // removing tag should reverse stat changes
-      vi.spyOn(mockPokemon.scene, "unshiftPhase").mockImplementationOnce(phase => {
+      vi.spyOn(mockPokemon.scene, "unshiftPhase").mockImplementationOnce((phase) => {
         expect(phase).toBeInstanceOf(StatStageChangePhase);
         expect((phase as StatStageChangePhase)["stages"]).toEqual(-2);
         expect((phase as StatStageChangePhase)["stats"]).toEqual(expect.arrayContaining([Stat.SPDEF]));

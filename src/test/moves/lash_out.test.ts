@@ -36,17 +36,20 @@ describe("Moves - Lash Out", () => {
       .starterSpecies(Species.FEEBAS)
       .ability(Abilities.BALL_FETCH)
       .moveset([Moves.LASH_OUT]);
-
   });
 
-  it("should deal double damage if the user's stat stages were lowered this turn", async () => {
-    vi.spyOn(allMoves[Moves.LASH_OUT], "calculateBattlePower");
-    await game.classicMode.startBattle();
+  it(
+    "should deal double damage if the user's stat stages were lowered this turn",
+    async () => {
+      vi.spyOn(allMoves[Moves.LASH_OUT], "calculateBattlePower");
+      await game.classicMode.startBattle();
 
-    game.move.select(Moves.LASH_OUT);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
-    await game.phaseInterceptor.to("BerryPhase");
+      game.move.select(Moves.LASH_OUT);
+      await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+      await game.phaseInterceptor.to("BerryPhase");
 
-    expect(allMoves[Moves.LASH_OUT].calculateBattlePower).toHaveReturnedWith(150);
-  }, TIMEOUT);
+      expect(allMoves[Moves.LASH_OUT].calculateBattlePower).toHaveReturnedWith(150);
+    },
+    TIMEOUT,
+  );
 });

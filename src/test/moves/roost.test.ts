@@ -71,7 +71,8 @@ describe("Moves - Roost", () => {
       expect(playerPokemonTypes[0] === Type.NORMAL).toBeTruthy();
       expect(playerPokemonTypes.length === 1).toBeTruthy();
       expect(playerPokemon.isGrounded()).toBeTruthy();
-    }, TIMEOUT
+    },
+    TIMEOUT,
   );
 
   test(
@@ -97,8 +98,8 @@ describe("Moves - Roost", () => {
       expect(playerPokemonTypes[0] === Type.NORMAL).toBeFalsy();
       expect(playerPokemonTypes[0] === Type.FLYING).toBeTruthy();
       expect(playerPokemon.isGrounded()).toBeFalsy();
-
-    }, TIMEOUT
+    },
+    TIMEOUT,
   );
 
   test(
@@ -124,8 +125,8 @@ describe("Moves - Roost", () => {
       expect(playerPokemonTypes[0] === Type.FIGHTING).toBeTruthy();
       expect(playerPokemonTypes[1] === Type.FLYING).toBeTruthy();
       expect(playerPokemon.isGrounded()).toBeFalsy();
-
-    }, TIMEOUT
+    },
+    TIMEOUT,
   );
 
   test(
@@ -151,8 +152,8 @@ describe("Moves - Roost", () => {
       expect(playerPokemonTypes[0] === Type.ELECTRIC).toBeTruthy();
       expect(playerPokemonTypes[1] === Type.FLYING).toBeTruthy();
       expect(playerPokemon.isGrounded()).toBeFalsy();
-
-    }, TIMEOUT
+    },
+    TIMEOUT,
   );
 
   test(
@@ -188,8 +189,8 @@ describe("Moves - Roost", () => {
       expect(playerPokemonTypes[0] === Type.FLYING).toBeTruthy();
       expect(playerPokemonTypes.length === 1).toBeTruthy();
       expect(playerPokemon.isGrounded()).toBeFalsy();
-
-    }, TIMEOUT
+    },
+    TIMEOUT,
   );
 
   test(
@@ -226,14 +227,19 @@ describe("Moves - Roost", () => {
       expect(playerPokemonTypes[0] === Type.FLYING).toBeTruthy();
       expect(playerPokemonTypes.length === 1).toBeTruthy();
       expect(playerPokemon.isGrounded()).toBeFalsy();
-
-    }, TIMEOUT
+    },
+    TIMEOUT,
   );
 
   test(
     "Dual Type Pokemon afflicted with Forests Curse/Trick or Treat and post roost will become dual type and then become 3 type at end of turn",
     async () => {
-      game.override.enemyMoveset([Moves.TRICK_OR_TREAT, Moves.TRICK_OR_TREAT, Moves.TRICK_OR_TREAT, Moves.TRICK_OR_TREAT]);
+      game.override.enemyMoveset([
+        Moves.TRICK_OR_TREAT,
+        Moves.TRICK_OR_TREAT,
+        Moves.TRICK_OR_TREAT,
+        Moves.TRICK_OR_TREAT,
+      ]);
       await game.classicMode.startBattle([Species.MOLTRES]);
       const playerPokemon = game.scene.getPlayerPokemon()!;
       game.move.select(Moves.ROOST);
@@ -248,13 +254,12 @@ describe("Moves - Roost", () => {
 
       // Should be fire/flying/ghost
       playerPokemonTypes = playerPokemon.getTypes();
-      expect(playerPokemonTypes.filter(type => type === Type.FLYING)).toHaveLength(1);
-      expect(playerPokemonTypes.filter(type => type === Type.FIRE)).toHaveLength(1);
-      expect(playerPokemonTypes.filter(type => type === Type.GHOST)).toHaveLength(1);
+      expect(playerPokemonTypes.filter((type) => type === Type.FLYING)).toHaveLength(1);
+      expect(playerPokemonTypes.filter((type) => type === Type.FIRE)).toHaveLength(1);
+      expect(playerPokemonTypes.filter((type) => type === Type.GHOST)).toHaveLength(1);
       expect(playerPokemonTypes.length === 3).toBeTruthy();
       expect(playerPokemon.isGrounded()).toBeFalsy();
-
-    }, TIMEOUT
+    },
+    TIMEOUT,
   );
-
 });

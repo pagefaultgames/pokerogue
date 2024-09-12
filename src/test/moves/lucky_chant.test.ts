@@ -15,7 +15,7 @@ describe("Moves - Lucky Chant", () => {
 
   beforeAll(() => {
     phaserGame = new Phaser.Game({
-      type: Phaser.HEADLESS
+      type: Phaser.HEADLESS,
     });
   });
 
@@ -55,7 +55,8 @@ describe("Moves - Lucky Chant", () => {
 
       const secondTurnDamage = playerPokemon.getMaxHp() - playerPokemon.hp - firstTurnDamage;
       expect(secondTurnDamage).toBeLessThan(firstTurnDamage);
-    }, TIMEOUT
+    },
+    TIMEOUT,
   );
 
   it(
@@ -81,7 +82,8 @@ describe("Moves - Lucky Chant", () => {
 
       const secondTurnDamage = playerPokemon[0].getMaxHp() - playerPokemon[0].hp - firstTurnDamage;
       expect(secondTurnDamage).toBeLessThan(firstTurnDamage);
-    }, TIMEOUT
+    },
+    TIMEOUT,
   );
 
   it(
@@ -108,6 +110,7 @@ describe("Moves - Lucky Chant", () => {
 
       const secondTurnDamage = playerPokemon.getMaxHp() - playerPokemon.hp - firstTurnDamage;
       expect(secondTurnDamage).toBeLessThan(firstTurnDamage);
-    }, TIMEOUT
+    },
+    TIMEOUT,
   );
 });

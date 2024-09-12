@@ -35,13 +35,13 @@ describe("Abilities - Unseen Fist", () => {
   test(
     "ability causes a contact move to ignore Protect",
     () => testUnseenFistHitResult(game, Moves.QUICK_ATTACK, Moves.PROTECT, true),
-    TIMEOUT
+    TIMEOUT,
   );
 
   test(
     "ability does not cause a non-contact move to ignore Protect",
     () => testUnseenFistHitResult(game, Moves.ABSORB, Moves.PROTECT, false),
-    TIMEOUT
+    TIMEOUT,
   );
 
   test(
@@ -49,23 +49,29 @@ describe("Abilities - Unseen Fist", () => {
     () => {
       game.override.passiveAbility(Abilities.LONG_REACH);
       testUnseenFistHitResult(game, Moves.QUICK_ATTACK, Moves.PROTECT, false);
-    }, TIMEOUT
+    },
+    TIMEOUT,
   );
 
   test(
     "ability causes a contact move to ignore Wide Guard",
     () => testUnseenFistHitResult(game, Moves.BREAKING_SWIPE, Moves.WIDE_GUARD, true),
-    TIMEOUT
+    TIMEOUT,
   );
 
   test(
     "ability does not cause a non-contact move to ignore Wide Guard",
     () => testUnseenFistHitResult(game, Moves.BULLDOZE, Moves.WIDE_GUARD, false),
-    TIMEOUT
+    TIMEOUT,
   );
 });
 
-async function testUnseenFistHitResult(game: GameManager, attackMove: Moves, protectMove: Moves, shouldSucceed: boolean = true): Promise<void> {
+async function testUnseenFistHitResult(
+  game: GameManager,
+  attackMove: Moves,
+  protectMove: Moves,
+  shouldSucceed: boolean = true,
+): Promise<void> {
   game.override.moveset([attackMove]);
   game.override.enemyMoveset([protectMove, protectMove, protectMove, protectMove]);
 

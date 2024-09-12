@@ -31,7 +31,7 @@ export class CommandPhase extends FieldPhase {
     if (this.fieldIndex) {
       // If we somehow are attempting to check the right pokemon but there's only one pokemon out
       // Switch back to the center pokemon. This can happen rarely in double battles with mid turn switching
-      if (this.scene.getPlayerField().filter(p => p.isActive()).length === 1) {
+      if (this.scene.getPlayerField().filter((p) => p.isActive()).length === 1) {
         this.fieldIndex = FieldPosition.CENTER;
       } else {
         const allyCommand = this.scene.currentBattle.turnCommands[this.fieldIndex - 1];
@@ -49,9 +49,18 @@ export class CommandPhase extends FieldPhase {
 
     const moveQueue = playerPokemon.getMoveQueue();
 
-    while (moveQueue.length && moveQueue[0]
-        && moveQueue[0].move && (!playerPokemon.getMoveset().find(m => m?.moveId === moveQueue[0].move)
-          || !playerPokemon.getMoveset()[playerPokemon.getMoveset().findIndex(m => m?.moveId === moveQueue[0].move)]!.isUsable(playerPokemon, moveQueue[0].ignorePP))) { // TODO: is the bang correct?
+    while (
+      moveQueue.length &&
+      moveQueue[0] &&
+      moveQueue[0].move &&
+      (!playerPokemon.getMoveset().find((m) => m?.moveId === moveQueue[0].move) ||
+        !playerPokemon
+          .getMoveset()
+          [
+            playerPokemon.getMoveset().findIndex((m) => m?.moveId === moveQueue[0].move)
+          ]!.isUsable(playerPokemon, moveQueue[0].ignorePP))
+    ) {
+      // TODO: is the bang correct?
       moveQueue.shift();
     }
 
@@ -60,9 +69,13 @@ export class CommandPhase extends FieldPhase {
       if (!queuedMove.move) {
         this.handleCommand(Command.FIGHT, -1, false);
       } else {
-        const moveIndex = playerPokemon.getMoveset().findIndex(m => m?.moveId === queuedMove.move);
-        if (moveIndex > -1 && playerPokemon.getMoveset()[moveIndex]!.isUsable(playerPokemon, queuedMove.ignorePP)) { // TODO: is the bang correct?
-          this.handleCommand(Command.FIGHT, moveIndex, queuedMove.ignorePP, { targets: queuedMove.targets, multiple: queuedMove.targets.length > 1 });
+        const moveIndex = playerPokemon.getMoveset().findIndex((m) => m?.moveId === queuedMove.move);
+        if (moveIndex > -1 && playerPokemon.getMoveset()[moveIndex]!.isUsable(playerPokemon, queuedMove.ignorePP)) {
+          // TODO: is the bang correct?
+          this.handleCommand(Command.FIGHT, moveIndex, queuedMove.ignorePP, {
+            targets: queuedMove.targets,
+            multiple: queuedMove.targets.length > 1,
+          });
         } else {
           this.scene.ui.setMode(Mode.COMMAND, this.fieldIndex);
         }
@@ -77,164 +90,247 @@ export class CommandPhase extends FieldPhase {
     let success: boolean;
 
     switch (command) {
-    case Command.FIGHT:
-      let useStruggle = false;
-      if (cursor === -1 ||
-            playerPokemon.trySelectMove(cursor, args[0] as boolean) ||
-            (useStruggle = cursor > -1 && !playerPokemon.getMoveset().filter(m => m?.isUsable(playerPokemon)).length)) {
-        const moveId = !useStruggle ? cursor > -1 ? playerPokemon.getMoveset()[cursor]!.moveId : Moves.NONE : Moves.STRUGGLE; // TODO: is the bang correct?
-        const turnCommand: TurnCommand = { command: Command.FIGHT, cursor: cursor, move: { move: moveId, targets: [], ignorePP: args[0] }, args: args };
-        const moveTargets: MoveTargetSet = args.length < 3 ? getMoveTargets(playerPokemon, moveId) : args[2];
-        if (!moveId) {
-          turnCommand.targets = [this.fieldIndex];
-        }
-        console.log(moveTargets, getPokemonNameWithAffix(playerPokemon));
-        if (moveTargets.targets.length > 1 && moveTargets.multiple) {
-          this.scene.unshiftPhase(new SelectTargetPhase(this.scene, this.fieldIndex));
-        }
-        if (moveTargets.targets.length <= 1 || moveTargets.multiple) {
+      case Command.FIGHT:
+        let useStruggle = false;
+        if (
+          cursor === -1 ||
+          playerPokemon.trySelectMove(cursor, args[0] as boolean) ||
+          (useStruggle = cursor > -1 && !playerPokemon.getMoveset().filter((m) => m?.isUsable(playerPokemon)).length)
+        ) {
+          const moveId = !useStruggle
+            ? cursor > -1
+              ? playerPokemon.getMoveset()[cursor]!.moveId
+              : Moves.NONE
+            : Moves.STRUGGLE; // TODO: is the bang correct?
+          const turnCommand: TurnCommand = {
+            command: Command.FIGHT,
+            cursor: cursor,
+            move: { move: moveId, targets: [], ignorePP: args[0] },
+            args: args,
+          };
+          const moveTargets: MoveTargetSet = args.length < 3 ? getMoveTargets(playerPokemon, moveId) : args[2];
+          if (!moveId) {
+            turnCommand.targets = [this.fieldIndex];
+          }
+          console.log(moveTargets, getPokemonNameWithAffix(playerPokemon));
+          if (moveTargets.targets.length > 1 && moveTargets.multiple) {
+            this.scene.unshiftPhase(new SelectTargetPhase(this.scene, this.fieldIndex));
+          }
+          if (moveTargets.targets.length <= 1 || moveTargets.multiple) {
             turnCommand.move!.targets = moveTargets.targets; //TODO: is the bang correct here?
-        } else if (playerPokemon.getTag(BattlerTagType.CHARGING) && playerPokemon.getMoveQueue().length >= 1) {
+          } else if (playerPokemon.getTag(BattlerTagType.CHARGING) && playerPokemon.getMoveQueue().length >= 1) {
             turnCommand.move!.targets = playerPokemon.getMoveQueue()[0].targets; //TODO: is the bang correct here?
-        } else {
-          this.scene.unshiftPhase(new SelectTargetPhase(this.scene, this.fieldIndex));
-        }
-        this.scene.currentBattle.turnCommands[this.fieldIndex] = turnCommand;
-        success = true;
-      } else if (cursor < playerPokemon.getMoveset().length) {
-        const move = playerPokemon.getMoveset()[cursor]!; //TODO: is this bang correct?
-        this.scene.ui.setMode(Mode.MESSAGE);
+          } else {
+            this.scene.unshiftPhase(new SelectTargetPhase(this.scene, this.fieldIndex));
+          }
+          this.scene.currentBattle.turnCommands[this.fieldIndex] = turnCommand;
+          success = true;
+        } else if (cursor < playerPokemon.getMoveset().length) {
+          const move = playerPokemon.getMoveset()[cursor]!; //TODO: is this bang correct?
+          this.scene.ui.setMode(Mode.MESSAGE);
 
-        // Decides between a Disabled, Not Implemented, or No PP translation message
-        const errorMessage =
-          playerPokemon.isMoveRestricted(move.moveId)
+          // Decides between a Disabled, Not Implemented, or No PP translation message
+          const errorMessage = playerPokemon.isMoveRestricted(move.moveId)
             ? playerPokemon.getRestrictingTag(move.moveId)!.selectionDeniedText(playerPokemon, move.moveId)
-            : move.getName().endsWith(" (N)") ? "battle:moveNotImplemented" : "battle:moveNoPP";
-        const moveName = move.getName().replace(" (N)", ""); // Trims off the indicator
+            : move.getName().endsWith(" (N)")
+              ? "battle:moveNotImplemented"
+              : "battle:moveNoPP";
+          const moveName = move.getName().replace(" (N)", ""); // Trims off the indicator
 
-        this.scene.ui.showText(i18next.t(errorMessage, { moveName: moveName }), null, () => {
-          this.scene.ui.clearText();
-          this.scene.ui.setMode(Mode.FIGHT, this.fieldIndex);
-        }, null, true);
-      }
-      break;
-    case Command.BALL:
-      const notInDex = (this.scene.getEnemyField().filter(p => p.isActive(true)).some(p => !p.scene.gameData.dexData[p.species.speciesId].caughtAttr) && this.scene.gameData.getStarterCount(d => !!d.caughtAttr) < Object.keys(speciesStarters).length - 1);
-      if (this.scene.arena.biomeType === Biome.END && (!this.scene.gameMode.isClassic || this.scene.gameMode.isFreshStartChallenge() || notInDex )) {
-        this.scene.ui.setMode(Mode.COMMAND, this.fieldIndex);
-        this.scene.ui.setMode(Mode.MESSAGE);
-        this.scene.ui.showText(i18next.t("battle:noPokeballForce"), null, () => {
-          this.scene.ui.showText("", 0);
-          this.scene.ui.setMode(Mode.COMMAND, this.fieldIndex);
-        }, null, true);
-      } else if (this.scene.currentBattle.battleType === BattleType.TRAINER) {
-        this.scene.ui.setMode(Mode.COMMAND, this.fieldIndex);
-        this.scene.ui.setMode(Mode.MESSAGE);
-        this.scene.ui.showText(i18next.t("battle:noPokeballTrainer"), null, () => {
-          this.scene.ui.showText("", 0);
-          this.scene.ui.setMode(Mode.COMMAND, this.fieldIndex);
-        }, null, true);
-      } else {
-        const targets = this.scene.getEnemyField().filter(p => p.isActive(true)).map(p => p.getBattlerIndex());
-        if (targets.length > 1) {
+          this.scene.ui.showText(
+            i18next.t(errorMessage, { moveName: moveName }),
+            null,
+            () => {
+              this.scene.ui.clearText();
+              this.scene.ui.setMode(Mode.FIGHT, this.fieldIndex);
+            },
+            null,
+            true,
+          );
+        }
+        break;
+      case Command.BALL:
+        const notInDex =
+          this.scene
+            .getEnemyField()
+            .filter((p) => p.isActive(true))
+            .some((p) => !p.scene.gameData.dexData[p.species.speciesId].caughtAttr) &&
+          this.scene.gameData.getStarterCount((d) => !!d.caughtAttr) < Object.keys(speciesStarters).length - 1;
+        if (
+          this.scene.arena.biomeType === Biome.END &&
+          (!this.scene.gameMode.isClassic || this.scene.gameMode.isFreshStartChallenge() || notInDex)
+        ) {
           this.scene.ui.setMode(Mode.COMMAND, this.fieldIndex);
           this.scene.ui.setMode(Mode.MESSAGE);
-          this.scene.ui.showText(i18next.t("battle:noPokeballMulti"), null, () => {
-            this.scene.ui.showText("", 0);
-            this.scene.ui.setMode(Mode.COMMAND, this.fieldIndex);
-          }, null, true);
-        } else if (cursor < 5) {
-          const targetPokemon = this.scene.getEnemyField().find(p => p.isActive(true));
-          if (targetPokemon?.isBoss() && targetPokemon?.bossSegmentIndex >= 1 && !targetPokemon?.hasAbility(Abilities.WONDER_GUARD, false, true) && cursor < PokeballType.MASTER_BALL) {
-            this.scene.ui.setMode(Mode.COMMAND, this.fieldIndex);
-            this.scene.ui.setMode(Mode.MESSAGE);
-            this.scene.ui.showText(i18next.t("battle:noPokeballStrong"), null, () => {
+          this.scene.ui.showText(
+            i18next.t("battle:noPokeballForce"),
+            null,
+            () => {
               this.scene.ui.showText("", 0);
               this.scene.ui.setMode(Mode.COMMAND, this.fieldIndex);
-            }, null, true);
-          } else {
-            this.scene.currentBattle.turnCommands[this.fieldIndex] = { command: Command.BALL, cursor: cursor };
+            },
+            null,
+            true,
+          );
+        } else if (this.scene.currentBattle.battleType === BattleType.TRAINER) {
+          this.scene.ui.setMode(Mode.COMMAND, this.fieldIndex);
+          this.scene.ui.setMode(Mode.MESSAGE);
+          this.scene.ui.showText(
+            i18next.t("battle:noPokeballTrainer"),
+            null,
+            () => {
+              this.scene.ui.showText("", 0);
+              this.scene.ui.setMode(Mode.COMMAND, this.fieldIndex);
+            },
+            null,
+            true,
+          );
+        } else {
+          const targets = this.scene
+            .getEnemyField()
+            .filter((p) => p.isActive(true))
+            .map((p) => p.getBattlerIndex());
+          if (targets.length > 1) {
+            this.scene.ui.setMode(Mode.COMMAND, this.fieldIndex);
+            this.scene.ui.setMode(Mode.MESSAGE);
+            this.scene.ui.showText(
+              i18next.t("battle:noPokeballMulti"),
+              null,
+              () => {
+                this.scene.ui.showText("", 0);
+                this.scene.ui.setMode(Mode.COMMAND, this.fieldIndex);
+              },
+              null,
+              true,
+            );
+          } else if (cursor < 5) {
+            const targetPokemon = this.scene.getEnemyField().find((p) => p.isActive(true));
+            if (
+              targetPokemon?.isBoss() &&
+              targetPokemon?.bossSegmentIndex >= 1 &&
+              !targetPokemon?.hasAbility(Abilities.WONDER_GUARD, false, true) &&
+              cursor < PokeballType.MASTER_BALL
+            ) {
+              this.scene.ui.setMode(Mode.COMMAND, this.fieldIndex);
+              this.scene.ui.setMode(Mode.MESSAGE);
+              this.scene.ui.showText(
+                i18next.t("battle:noPokeballStrong"),
+                null,
+                () => {
+                  this.scene.ui.showText("", 0);
+                  this.scene.ui.setMode(Mode.COMMAND, this.fieldIndex);
+                },
+                null,
+                true,
+              );
+            } else {
+              this.scene.currentBattle.turnCommands[this.fieldIndex] = { command: Command.BALL, cursor: cursor };
               this.scene.currentBattle.turnCommands[this.fieldIndex]!.targets = targets;
               if (this.fieldIndex) {
                 this.scene.currentBattle.turnCommands[this.fieldIndex - 1]!.skip = true;
               }
               success = true;
+            }
           }
         }
-      }
-      break;
-    case Command.POKEMON:
-    case Command.RUN:
-      const isSwitch = command === Command.POKEMON;
-      if (!isSwitch && this.scene.arena.biomeType === Biome.END) {
-        this.scene.ui.setMode(Mode.COMMAND, this.fieldIndex);
-        this.scene.ui.setMode(Mode.MESSAGE);
-        this.scene.ui.showText(i18next.t("battle:noEscapeForce"), null, () => {
-          this.scene.ui.showText("", 0);
+        break;
+      case Command.POKEMON:
+      case Command.RUN:
+        const isSwitch = command === Command.POKEMON;
+        if (!isSwitch && this.scene.arena.biomeType === Biome.END) {
           this.scene.ui.setMode(Mode.COMMAND, this.fieldIndex);
-        }, null, true);
-      } else if (!isSwitch && this.scene.currentBattle.battleType === BattleType.TRAINER) {
-        this.scene.ui.setMode(Mode.COMMAND, this.fieldIndex);
-        this.scene.ui.setMode(Mode.MESSAGE);
-        this.scene.ui.showText(i18next.t("battle:noEscapeTrainer"), null, () => {
-          this.scene.ui.showText("", 0);
-          this.scene.ui.setMode(Mode.COMMAND, this.fieldIndex);
-        }, null, true);
-      } else {
-        const batonPass = isSwitch && args[0] as boolean;
-        const trappedAbMessages: string[] = [];
-        if (batonPass || !playerPokemon.isTrapped(trappedAbMessages)) {
-          this.scene.currentBattle.turnCommands[this.fieldIndex] = isSwitch
-            ? { command: Command.POKEMON, cursor: cursor, args: args }
-            : { command: Command.RUN };
-          success = true;
-          if (!isSwitch && this.fieldIndex) {
-              this.scene.currentBattle.turnCommands[this.fieldIndex - 1]!.skip = true;
-          }
-        } else if (trappedAbMessages.length > 0) {
-          if (!isSwitch) {
-            this.scene.ui.setMode(Mode.MESSAGE);
-          }
-          this.scene.ui.showText(trappedAbMessages[0], null, () => {
-            this.scene.ui.showText("", 0);
-            if (!isSwitch) {
-              this.scene.ui.setMode(Mode.COMMAND, this.fieldIndex);
-            }
-          }, null, true);
-        } else {
-          const trapTag = playerPokemon.getTag(TrappedTag);
-
-          // trapTag should be defined at this point, but just in case...
-          if (!trapTag) {
-            this.scene.currentBattle.turnCommands[this.fieldIndex] = isSwitch
-              ? { command: Command.POKEMON, cursor: cursor, args: args }
-              : { command: Command.RUN };
-            break;
-          }
-
-          if (!isSwitch) {
-            this.scene.ui.setMode(Mode.COMMAND, this.fieldIndex);
-            this.scene.ui.setMode(Mode.MESSAGE);
-          }
+          this.scene.ui.setMode(Mode.MESSAGE);
           this.scene.ui.showText(
-            i18next.t("battle:noEscapePokemon", {
-              pokemonName:  trapTag.sourceId && this.scene.getPokemonById(trapTag.sourceId) ? getPokemonNameWithAffix(this.scene.getPokemonById(trapTag.sourceId)!) : "",
-              moveName: trapTag.getMoveName(),
-              escapeVerb: isSwitch ? i18next.t("battle:escapeVerbSwitch") : i18next.t("battle:escapeVerbFlee")
-            }),
+            i18next.t("battle:noEscapeForce"),
             null,
             () => {
               this.scene.ui.showText("", 0);
-              if (!isSwitch) {
-                this.scene.ui.setMode(Mode.COMMAND, this.fieldIndex);
-              }
-            }, null, true);
+              this.scene.ui.setMode(Mode.COMMAND, this.fieldIndex);
+            },
+            null,
+            true,
+          );
+        } else if (!isSwitch && this.scene.currentBattle.battleType === BattleType.TRAINER) {
+          this.scene.ui.setMode(Mode.COMMAND, this.fieldIndex);
+          this.scene.ui.setMode(Mode.MESSAGE);
+          this.scene.ui.showText(
+            i18next.t("battle:noEscapeTrainer"),
+            null,
+            () => {
+              this.scene.ui.showText("", 0);
+              this.scene.ui.setMode(Mode.COMMAND, this.fieldIndex);
+            },
+            null,
+            true,
+          );
+        } else {
+          const batonPass = isSwitch && (args[0] as boolean);
+          const trappedAbMessages: string[] = [];
+          if (batonPass || !playerPokemon.isTrapped(trappedAbMessages)) {
+            this.scene.currentBattle.turnCommands[this.fieldIndex] = isSwitch
+              ? { command: Command.POKEMON, cursor: cursor, args: args }
+              : { command: Command.RUN };
+            success = true;
+            if (!isSwitch && this.fieldIndex) {
+              this.scene.currentBattle.turnCommands[this.fieldIndex - 1]!.skip = true;
+            }
+          } else if (trappedAbMessages.length > 0) {
+            if (!isSwitch) {
+              this.scene.ui.setMode(Mode.MESSAGE);
+            }
+            this.scene.ui.showText(
+              trappedAbMessages[0],
+              null,
+              () => {
+                this.scene.ui.showText("", 0);
+                if (!isSwitch) {
+                  this.scene.ui.setMode(Mode.COMMAND, this.fieldIndex);
+                }
+              },
+              null,
+              true,
+            );
+          } else {
+            const trapTag = playerPokemon.getTag(TrappedTag);
+
+            // trapTag should be defined at this point, but just in case...
+            if (!trapTag) {
+              this.scene.currentBattle.turnCommands[this.fieldIndex] = isSwitch
+                ? { command: Command.POKEMON, cursor: cursor, args: args }
+                : { command: Command.RUN };
+              break;
+            }
+
+            if (!isSwitch) {
+              this.scene.ui.setMode(Mode.COMMAND, this.fieldIndex);
+              this.scene.ui.setMode(Mode.MESSAGE);
+            }
+            this.scene.ui.showText(
+              i18next.t("battle:noEscapePokemon", {
+                pokemonName:
+                  trapTag.sourceId && this.scene.getPokemonById(trapTag.sourceId)
+                    ? getPokemonNameWithAffix(this.scene.getPokemonById(trapTag.sourceId)!)
+                    : "",
+                moveName: trapTag.getMoveName(),
+                escapeVerb: isSwitch ? i18next.t("battle:escapeVerbSwitch") : i18next.t("battle:escapeVerbFlee"),
+              }),
+              null,
+              () => {
+                this.scene.ui.showText("", 0);
+                if (!isSwitch) {
+                  this.scene.ui.setMode(Mode.COMMAND, this.fieldIndex);
+                }
+              },
+              null,
+              true,
+            );
+          }
         }
-      }
-      break;
+        break;
     }
 
-    if (success!) { // TODO: is the bang correct?
+    if (success!) {
+      // TODO: is the bang correct?
       this.end();
     }
 
@@ -258,9 +354,10 @@ export class CommandPhase extends FieldPhase {
       return false;
     }
 
-    const moveIndex = pokemon.getMoveset().findIndex(m => m?.moveId === encoreTag.moveId);
+    const moveIndex = pokemon.getMoveset().findIndex((m) => m?.moveId === encoreTag.moveId);
 
-    if (moveIndex === -1 || !pokemon.getMoveset()[moveIndex]!.isUsable(pokemon)) { // TODO: is this bang correct?
+    if (moveIndex === -1 || !pokemon.getMoveset()[moveIndex]!.isUsable(pokemon)) {
+      // TODO: is this bang correct?
       return false;
     }
 

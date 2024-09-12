@@ -12,7 +12,6 @@ import Phaser from "phaser";
 import BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
-
 describe("UI - Transfer Items", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
@@ -65,9 +64,17 @@ describe("UI - Transfer Items", () => {
       const handler = game.scene.ui.getHandler() as PartyUiHandler;
       handler.processInput(Button.ACTION);
 
-      expect(handler.optionsContainer.list.some((option) => (option as BBCodeText).text?.includes("Sitrus Berry"))).toBe(true);
-      expect(handler.optionsContainer.list.some((option) => (option as BBCodeText).text?.includes("Apicot Berry (2)"))).toBe(true);
-      expect(handler.optionsContainer.list.some((option) => RegExp(/Lum Berry\[color.*(2)/).exec((option as BBCodeText).text))).toBe(true);
+      expect(
+        handler.optionsContainer.list.some((option) => (option as BBCodeText).text?.includes("Sitrus Berry")),
+      ).toBe(true);
+      expect(
+        handler.optionsContainer.list.some((option) => (option as BBCodeText).text?.includes("Apicot Berry (2)")),
+      ).toBe(true);
+      expect(
+        handler.optionsContainer.list.some((option) =>
+          RegExp(/Lum Berry\[color.*(2)/).exec((option as BBCodeText).text),
+        ),
+      ).toBe(true);
 
       game.phaseInterceptor.unlock();
     });
@@ -86,7 +93,9 @@ describe("UI - Transfer Items", () => {
       handler.setCursor(1); // move to other Pokemon
       handler.processInput(Button.ACTION); // select Pokemon
 
-      expect(handler.optionsContainer.list.some((option) => (option as BBCodeText).text?.includes("Transfer"))).toBe(true);
+      expect(handler.optionsContainer.list.some((option) => (option as BBCodeText).text?.includes("Transfer"))).toBe(
+        true,
+      );
 
       game.phaseInterceptor.unlock();
     });

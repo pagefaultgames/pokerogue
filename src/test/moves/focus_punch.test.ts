@@ -61,7 +61,8 @@ describe("Moves - Focus Punch", () => {
       expect(enemyPokemon.hp).toBeLessThan(enemyStartingHp);
       expect(leadPokemon.getMoveHistory().length).toBe(1);
       expect(leadPokemon.turnData.damageDealt).toBe(enemyStartingHp - enemyPokemon.hp);
-    }, TIMEOUT
+    },
+    TIMEOUT,
   );
 
   it(
@@ -88,7 +89,8 @@ describe("Moves - Focus Punch", () => {
       expect(enemyPokemon.hp).toBe(enemyStartingHp);
       expect(leadPokemon.getMoveHistory().length).toBe(1);
       expect(leadPokemon.turnData.damageDealt).toBe(0);
-    }, TIMEOUT
+    },
+    TIMEOUT,
   );
 
   it(
@@ -111,7 +113,8 @@ describe("Moves - Focus Punch", () => {
 
       expect(leadPokemon.getMoveHistory().length).toBe(1);
       expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp());
-    }, TIMEOUT
+    },
+    TIMEOUT,
   );
 
   it(
@@ -128,7 +131,8 @@ describe("Moves - Focus Punch", () => {
       await game.phaseInterceptor.to(TurnStartPhase);
 
       expect(game.scene.getCurrentPhase() instanceof SwitchSummonPhase).toBeTruthy();
-      expect(game.scene.phaseQueue.find(phase => phase instanceof MoveHeaderPhase)).toBeDefined();
-    }, TIMEOUT
+      expect(game.scene.phaseQueue.find((phase) => phase instanceof MoveHeaderPhase)).toBeDefined();
+    },
+    TIMEOUT,
   );
 });

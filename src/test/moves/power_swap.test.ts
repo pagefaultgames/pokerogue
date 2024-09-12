@@ -30,14 +30,12 @@ describe("Moves - Power Swap", () => {
       .enemyMoveset([Moves.SHELL_SMASH])
       .enemySpecies(Species.MEW)
       .enemyLevel(200)
-      .moveset([ Moves.POWER_SWAP ])
+      .moveset([Moves.POWER_SWAP])
       .ability(Abilities.NONE);
   });
 
   it("should swap the user's ATK AND SPATK stat stages with the target's", async () => {
-    await game.startBattle([
-      Species.INDEEDEE
-    ]);
+    await game.startBattle([Species.INDEEDEE]);
 
     // Should start with no stat stages
     const player = game.scene.getPlayerPokemon()!;

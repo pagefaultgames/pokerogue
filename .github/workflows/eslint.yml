@@ -5,31 +5,31 @@ on:
   # but only for the main branch
   push:
     branches:
-      - main  # Trigger on push events to the main branch
+      - main # Trigger on push events to the main branch
       - beta # Trigger on push events to the beta branch
   pull_request:
     branches:
-      - main  # Trigger on pull request events targeting the main branch
+      - main # Trigger on pull request events targeting the main branch
       - beta # Trigger on pull request events targeting the beta branch
   merge_group:
     types: [checks_requested]
 
 jobs:
-  run-linters:  # Define a job named "run-linters"
-    name: Run linters  # Human-readable name for the job
-    runs-on: ubuntu-latest  # Specify the latest Ubuntu runner for the job
+  run-linters: # Define a job named "run-linters"
+    name: Run linters # Human-readable name for the job
+    runs-on: ubuntu-latest # Specify the latest Ubuntu runner for the job
 
     steps:
-      - name: Check out Git repository  # Step to check out the repository
-        uses: actions/checkout@v2  # Use the checkout action version 2
+      - name: Check out Git repository # Step to check out the repository
+        uses: actions/checkout@v2 # Use the checkout action version 2
 
-      - name: Set up Node.js  # Step to set up Node.js environment
-        uses: actions/setup-node@v1  # Use the setup-node action version 1
+      - name: Set up Node.js # Step to set up Node.js environment
+        uses: actions/setup-node@v1 # Use the setup-node action version 1
         with:
-          node-version: 20  # Specify Node.js version 20
+          node-version: 20 # Specify Node.js version 20
 
-      - name: Install Node.js dependencies  # Step to install Node.js dependencies
-        run: npm ci  # Use 'npm ci' to install dependencies
+      - name: Install Node.js dependencies # Step to install Node.js dependencies
+        run: npm ci # Use 'npm ci' to install dependencies
 
-      - name: eslint  # Step to run linters
+      - name: eslint # Step to run linters
         run: npm run eslint-ci

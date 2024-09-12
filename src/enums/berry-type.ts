@@ -1,4 +1,3 @@
-
 export enum BerryType {
   SITRUS,
   LUM,
@@ -10,5 +9,5 @@ export enum BerryType {
   SALAC,
   LANSAT,
   STARF,
-  LEPPA
+  LEPPA,
 }

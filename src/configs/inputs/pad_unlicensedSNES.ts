@@ -1,5 +1,5 @@
-import {SettingGamepad} from "../../system/settings/settings-gamepad";
-import {Button} from "#enums/buttons";
+import { SettingGamepad } from "../../system/settings/settings-gamepad";
+import { Button } from "#enums/buttons";
 
 /**
  * 081f-e401 - UnlicensedSNES
@@ -7,7 +7,7 @@ import {Button} from "#enums/buttons";
 const pad_unlicensedSNES = {
   padID: "081f-e401",
   padType: "xbox",
-  deviceMapping : {
+  deviceMapping: {
     RC_S: 2,
     RC_E: 1,
     RC_W: 3,
@@ -19,7 +19,7 @@ const pad_unlicensedSNES = {
     LC_N: 12,
     LC_S: 13,
     LC_W: 14,
-    LC_E: 15
+    LC_E: 15,
   },
   icons: {
     RC_S: "XB_Letter_A_OL.png",
@@ -46,12 +46,12 @@ const pad_unlicensedSNES = {
     [SettingGamepad.Button_Cycle_Variant]: Button.V,
     [SettingGamepad.Button_Menu]: Button.MENU,
     [SettingGamepad.Button_Stats]: Button.STATS,
-    [SettingGamepad.Button_Cycle_Form]:  Button.CYCLE_FORM,
+    [SettingGamepad.Button_Cycle_Form]: Button.CYCLE_FORM,
     [SettingGamepad.Button_Cycle_Shiny]: Button.CYCLE_SHINY,
     [SettingGamepad.Button_Cycle_Gender]: Button.CYCLE_GENDER,
     [SettingGamepad.Button_Cycle_Ability]: Button.CYCLE_ABILITY,
     [SettingGamepad.Button_Speed_Up]: Button.SPEED_UP,
-    [SettingGamepad.Button_Slow_Down]: Button.SLOW_DOWN
+    [SettingGamepad.Button_Slow_Down]: Button.SLOW_DOWN,
   },
   default: {
     LC_N: SettingGamepad.Button_Up,
@@ -69,7 +69,7 @@ const pad_unlicensedSNES = {
     LT: -1,
     RT: -1,
     LS: -1,
-    RS: -1
+    RS: -1,
   },
 };
 

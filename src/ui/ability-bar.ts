@@ -37,14 +37,15 @@ export default class AbilityBar extends Phaser.GameObjects.Container {
   }
 
   showAbility(pokemon: Pokemon, passive: boolean = false): void {
-    this.abilityBarText.setText(`${i18next.t("fightUiHandler:abilityFlyInText", { pokemonName: getPokemonNameWithAffix(pokemon), passive: passive ? i18next.t("fightUiHandler:passive") : "", abilityName: !passive ?  pokemon.getAbility().name : pokemon.getPassiveAbility().name })}`);
+    this.abilityBarText.setText(
+      `${i18next.t("fightUiHandler:abilityFlyInText", { pokemonName: getPokemonNameWithAffix(pokemon), passive: passive ? i18next.t("fightUiHandler:passive") : "", abilityName: !passive ? pokemon.getAbility().name : pokemon.getPassiveAbility().name })}`,
+    );
 
     if (this.shown) {
       return;
     }
 
     (this.scene as BattleScene).fieldUI.bringToTop(this);
-
 
     this.y = baseY + ((this.scene as BattleScene).currentBattle.double ? 14 : 0);
     this.tween = this.scene.tweens.add({
@@ -55,7 +56,7 @@ export default class AbilityBar extends Phaser.GameObjects.Container {
       onComplete: () => {
         this.tween = null;
         this.resetAutoHideTimer();
-      }
+      },
     });
 
     this.setVisible(true);
@@ -83,7 +84,7 @@ export default class AbilityBar extends Phaser.GameObjects.Container {
       onComplete: () => {
         this.tween = null;
         this.setVisible(false);
-      }
+      },
     });
 
     this.shown = false;

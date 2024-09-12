@@ -10,7 +10,7 @@ describe("Abilities - Aura Break", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
 
-  const auraBreakMultiplier = 9 / 16 * 4 / 3;
+  const auraBreakMultiplier = ((9 / 16) * 4) / 3;
 
   beforeAll(() => {
     phaserGame = new Phaser.Game({

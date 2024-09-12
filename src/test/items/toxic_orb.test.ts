@@ -10,7 +10,6 @@ import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
-
 describe("Items - Toxic orb", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
@@ -36,19 +35,18 @@ describe("Items - Toxic orb", () => {
     game.override.startingLevel(2000);
     game.override.moveset([moveToUse]);
     game.override.enemyMoveset([oppMoveToUse, oppMoveToUse, oppMoveToUse, oppMoveToUse]);
-    game.override.startingHeldItems([{
-      name: "TOXIC_ORB",
-    }]);
+    game.override.startingHeldItems([
+      {
+        name: "TOXIC_ORB",
+      },
+    ]);
   });
 
   it("TOXIC ORB", async () => {
     initI18n();
     i18next.changeLanguage("en");
     const moveToUse = Moves.GROWTH;
-    await game.startBattle([
-      Species.MIGHTYENA,
-      Species.MIGHTYENA,
-    ]);
+    await game.startBattle([Species.MIGHTYENA, Species.MIGHTYENA]);
     expect(game.scene.modifiers[0].type.id).toBe("TOXIC_ORB");
 
     game.move.select(moveToUse);

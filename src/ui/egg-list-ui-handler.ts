@@ -5,7 +5,7 @@ import { TextStyle, addTextObject } from "./text";
 import MessageUiHandler from "./message-ui-handler";
 import { Egg } from "../data/egg";
 import { addWindow } from "./ui-theme";
-import {Button} from "#enums/buttons";
+import { Button } from "#enums/buttons";
 import i18next from "i18next";
 
 export default class EggListUiHandler extends MessageUiHandler {
@@ -33,7 +33,13 @@ export default class EggListUiHandler extends MessageUiHandler {
     this.eggListContainer.setVisible(false);
     ui.add(this.eggListContainer);
 
-    const bgColor = this.scene.add.rectangle(0, 0, this.scene.game.canvas.width / 6, this.scene.game.canvas.height / 6, 0x006860);
+    const bgColor = this.scene.add.rectangle(
+      0,
+      0,
+      this.scene.game.canvas.width / 6,
+      this.scene.game.canvas.height / 6,
+      0x006860,
+    );
     bgColor.setOrigin(0, 0);
     this.eggListContainer.add(bgColor);
 
@@ -129,26 +135,26 @@ export default class EggListUiHandler extends MessageUiHandler {
       const rows = Math.ceil(eggCount / 11);
       const row = Math.floor(this.cursor / 11);
       switch (button) {
-      case Button.UP:
-        if (row) {
-          success = this.setCursor(this.cursor - 11);
-        }
-        break;
-      case Button.DOWN:
-        if (row < rows - 2 || (row < rows - 1 && this.cursor % 11 <= (eggCount - 1) % 11)) {
-          success = this.setCursor(this.cursor + 11);
-        }
-        break;
-      case Button.LEFT:
-        if (this.cursor % 11) {
-          success = this.setCursor(this.cursor - 1);
-        }
-        break;
-      case Button.RIGHT:
-        if (this.cursor % 11 < (row < rows - 1 ? 10 : (eggCount - 1) % 11)) {
-          success = this.setCursor(this.cursor + 1);
-        }
-        break;
+        case Button.UP:
+          if (row) {
+            success = this.setCursor(this.cursor - 11);
+          }
+          break;
+        case Button.DOWN:
+          if (row < rows - 2 || (row < rows - 1 && this.cursor % 11 <= (eggCount - 1) % 11)) {
+            success = this.setCursor(this.cursor + 11);
+          }
+          break;
+        case Button.LEFT:
+          if (this.cursor % 11) {
+            success = this.setCursor(this.cursor - 1);
+          }
+          break;
+        case Button.RIGHT:
+          if (this.cursor % 11 < (row < rows - 1 ? 10 : (eggCount - 1) % 11)) {
+            success = this.setCursor(this.cursor + 1);
+          }
+          break;
       }
     }
 
@@ -169,8 +175,8 @@ export default class EggListUiHandler extends MessageUiHandler {
         weekday: "short",
         year: "numeric",
         month: "2-digit",
-        day: "numeric"
-      })
+        day: "numeric",
+      }),
     );
     this.eggHatchWavesText.setText(egg.getEggHatchWavesMessage());
     this.eggGachaInfoText.setText(egg.getEggTypeDescriptor(this.scene));
@@ -187,9 +193,15 @@ export default class EggListUiHandler extends MessageUiHandler {
       this.cursorObj.setPosition(114 + 18 * (cursor % 11), 10 + 18 * Math.floor(cursor / 11));
 
       if (lastCursor > -1) {
-        this.iconAnimHandler.addOrUpdate(this.eggListIconContainer.getAt(lastCursor) as Phaser.GameObjects.Sprite, PokemonIconAnimMode.NONE);
+        this.iconAnimHandler.addOrUpdate(
+          this.eggListIconContainer.getAt(lastCursor) as Phaser.GameObjects.Sprite,
+          PokemonIconAnimMode.NONE,
+        );
       }
-      this.iconAnimHandler.addOrUpdate(this.eggListIconContainer.getAt(cursor) as Phaser.GameObjects.Sprite, PokemonIconAnimMode.ACTIVE);
+      this.iconAnimHandler.addOrUpdate(
+        this.eggListIconContainer.getAt(cursor) as Phaser.GameObjects.Sprite,
+        PokemonIconAnimMode.ACTIVE,
+      );
 
       this.setEggDetails(this.scene.gameData.eggs[cursor]);
     }

@@ -155,7 +155,10 @@ describe("Moves - Swallow", () => {
 
       await game.phaseInterceptor.to(TurnInitPhase);
 
-      expect(pokemon.getMoveHistory().at(-1)).toMatchObject<TurnMove>({ move: Moves.SWALLOW, result: MoveResult.SUCCESS });
+      expect(pokemon.getMoveHistory().at(-1)).toMatchObject<TurnMove>({
+        move: Moves.SWALLOW,
+        result: MoveResult.SUCCESS,
+      });
 
       expect(pokemon.getStatStage(Stat.DEF)).toBe(0);
       expect(pokemon.getStatStage(Stat.SPDEF)).toBe(0);
@@ -182,7 +185,10 @@ describe("Moves - Swallow", () => {
 
       await game.phaseInterceptor.to(TurnInitPhase);
 
-      expect(pokemon.getMoveHistory().at(-1)).toMatchObject<TurnMove>({ move: Moves.SWALLOW, result: MoveResult.SUCCESS });
+      expect(pokemon.getMoveHistory().at(-1)).toMatchObject<TurnMove>({
+        move: Moves.SWALLOW,
+        result: MoveResult.SUCCESS,
+      });
 
       expect(pokemon.getStatStage(Stat.DEF)).toBe(1);
       expect(pokemon.getStatStage(Stat.SPDEF)).toBe(-2);

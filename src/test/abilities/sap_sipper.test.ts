@@ -31,11 +31,11 @@ describe("Abilities - Sap Sipper", () => {
     game.override.disableCrits();
   });
 
-  it("raises ATK stat stage by 1 and block effects when activated against a grass attack", async() => {
+  it("raises ATK stat stage by 1 and block effects when activated against a grass attack", async () => {
     const moveToUse = Moves.LEAFAGE;
     const enemyAbility = Abilities.SAP_SIPPER;
 
-    game.override.moveset([ moveToUse ]);
+    game.override.moveset([moveToUse]);
     game.override.enemyMoveset(Moves.SPLASH);
     game.override.enemySpecies(Species.DUSKULL);
     game.override.enemyAbility(enemyAbility);
@@ -53,11 +53,11 @@ describe("Abilities - Sap Sipper", () => {
     expect(enemyPokemon.getStatStage(Stat.ATK)).toBe(1);
   });
 
-  it("raises ATK stat stage by 1 and block effects when activated against a grass status move", async() => {
+  it("raises ATK stat stage by 1 and block effects when activated against a grass status move", async () => {
     const moveToUse = Moves.SPORE;
     const enemyAbility = Abilities.SAP_SIPPER;
 
-    game.override.moveset([ moveToUse ]);
+    game.override.moveset([moveToUse]);
     game.override.enemyMoveset(Moves.SPLASH);
     game.override.enemySpecies(Species.RATTATA);
     game.override.enemyAbility(enemyAbility);
@@ -78,7 +78,7 @@ describe("Abilities - Sap Sipper", () => {
     const moveToUse = Moves.GRASSY_TERRAIN;
     const enemyAbility = Abilities.SAP_SIPPER;
 
-    game.override.moveset([ moveToUse ]);
+    game.override.moveset([moveToUse]);
     game.override.enemyMoveset(Moves.SPLASH);
     game.override.enemySpecies(Species.RATTATA);
     game.override.enemyAbility(enemyAbility);
@@ -98,7 +98,7 @@ describe("Abilities - Sap Sipper", () => {
     const moveToUse = Moves.BULLET_SEED;
     const enemyAbility = Abilities.SAP_SIPPER;
 
-    game.override.moveset([ moveToUse ]);
+    game.override.moveset([moveToUse]);
     game.override.enemyMoveset(Moves.SPLASH);
     game.override.enemySpecies(Species.RATTATA);
     game.override.enemyAbility(enemyAbility);
@@ -120,7 +120,7 @@ describe("Abilities - Sap Sipper", () => {
     const moveToUse = Moves.SPIKY_SHIELD;
     const ability = Abilities.SAP_SIPPER;
 
-    game.override.moveset([ moveToUse ]);
+    game.override.moveset([moveToUse]);
     game.override.ability(ability);
     game.override.enemyMoveset(Moves.SPLASH);
     game.override.enemySpecies(Species.RATTATA);

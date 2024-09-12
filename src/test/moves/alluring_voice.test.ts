@@ -37,18 +37,21 @@ describe("Moves - Alluring Voice", () => {
       .starterSpecies(Species.FEEBAS)
       .ability(Abilities.BALL_FETCH)
       .moveset([Moves.ALLURING_VOICE]);
-
   });
 
-  it("should confuse the opponent if their stat stages were raised", async () => {
-    await game.classicMode.startBattle();
+  it(
+    "should confuse the opponent if their stat stages were raised",
+    async () => {
+      await game.classicMode.startBattle();
 
-    const enemy = game.scene.getEnemyPokemon()!;
+      const enemy = game.scene.getEnemyPokemon()!;
 
-    game.move.select(Moves.ALLURING_VOICE);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
-    await game.phaseInterceptor.to(BerryPhase);
+      game.move.select(Moves.ALLURING_VOICE);
+      await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+      await game.phaseInterceptor.to(BerryPhase);
 
-    expect(enemy.getTag(BattlerTagType.CONFUSED)?.tagType).toBe("CONFUSED");
-  }, TIMEOUT);
+      expect(enemy.getTag(BattlerTagType.CONFUSED)?.tagType).toBe("CONFUSED");
+    },
+    TIMEOUT,
+  );
 });

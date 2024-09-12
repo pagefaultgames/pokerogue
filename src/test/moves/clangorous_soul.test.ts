@@ -38,8 +38,9 @@ describe("Moves - Clangorous Soul", () => {
 
   //Bulbapedia Reference: https://bulbapedia.bulbagarden.net/wiki/Clangorous_Soul_(move)
 
-  it("raises the user's ATK, DEF, SPATK, SPDEF, and SPD stat stages by 1 each at the cost of 1/3 of its maximum HP",
-  	async() => {
+  it(
+    "raises the user's ATK, DEF, SPATK, SPDEF, and SPD stat stages by 1 each at the cost of 1/3 of its maximum HP",
+    async () => {
       await game.startBattle([Species.MAGIKARP]);
 
       const leadPokemon = game.scene.getPlayerPokemon()!;
@@ -54,11 +55,13 @@ describe("Moves - Clangorous Soul", () => {
       expect(leadPokemon.getStatStage(Stat.SPATK)).toBe(1);
       expect(leadPokemon.getStatStage(Stat.SPDEF)).toBe(1);
       expect(leadPokemon.getStatStage(Stat.SPD)).toBe(1);
-    }, TIMEOUT
+    },
+    TIMEOUT,
   );
 
-  it("will still take effect if one or more of the involved stat stages are not at max",
-    async() => {
+  it(
+    "will still take effect if one or more of the involved stat stages are not at max",
+    async () => {
       await game.startBattle([Species.MAGIKARP]);
 
       const leadPokemon = game.scene.getPlayerPokemon()!;
@@ -79,11 +82,13 @@ describe("Moves - Clangorous Soul", () => {
       expect(leadPokemon.getStatStage(Stat.SPATK)).toBe(6);
       expect(leadPokemon.getStatStage(Stat.SPDEF)).toBe(5);
       expect(leadPokemon.getStatStage(Stat.SPD)).toBe(1);
-    }, TIMEOUT
+    },
+    TIMEOUT,
   );
 
-  it("fails if all stat stages involved are at max",
-    async() => {
+  it(
+    "fails if all stat stages involved are at max",
+    async () => {
       await game.startBattle([Species.MAGIKARP]);
 
       const leadPokemon = game.scene.getPlayerPokemon()!;
@@ -103,11 +108,13 @@ describe("Moves - Clangorous Soul", () => {
       expect(leadPokemon.getStatStage(Stat.SPATK)).toBe(6);
       expect(leadPokemon.getStatStage(Stat.SPDEF)).toBe(6);
       expect(leadPokemon.getStatStage(Stat.SPD)).toBe(6);
-    }, TIMEOUT
+    },
+    TIMEOUT,
   );
 
-  it("fails if the user's health is less than 1/3",
-    async() => {
+  it(
+    "fails if the user's health is less than 1/3",
+    async () => {
       await game.startBattle([Species.MAGIKARP]);
 
       const leadPokemon = game.scene.getPlayerPokemon()!;
@@ -123,6 +130,7 @@ describe("Moves - Clangorous Soul", () => {
       expect(leadPokemon.getStatStage(Stat.SPATK)).toBe(0);
       expect(leadPokemon.getStatStage(Stat.SPDEF)).toBe(0);
       expect(leadPokemon.getStatStage(Stat.SPD)).toBe(0);
-    }, TIMEOUT
+    },
+    TIMEOUT,
   );
 });

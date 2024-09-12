@@ -37,12 +37,12 @@ export class AttemptRunPhase extends PokemonPhase {
         alpha: 0,
         duration: 250,
         ease: "Sine.easeIn",
-        onComplete: () => enemyField.forEach(enemyPokemon => enemyPokemon.destroy())
+        onComplete: () => enemyField.forEach((enemyPokemon) => enemyPokemon.destroy()),
       });
 
       this.scene.clearEnemyHeldItemModifiers();
 
-      enemyField.forEach(enemyPokemon => {
+      enemyField.forEach((enemyPokemon) => {
         enemyPokemon.hideInfo().then(() => enemyPokemon.destroy());
         enemyPokemon.hp = 0;
         enemyPokemon.trySetStatus(StatusEffect.FAINT);
@@ -59,9 +59,15 @@ export class AttemptRunPhase extends PokemonPhase {
 
   attemptRunAway(playerField: PlayerPokemon[], enemyField: EnemyPokemon[], escapeChance: Utils.NumberHolder) {
     /** Sum of the speed of all enemy pokemon on the field */
-    const enemySpeed = enemyField.reduce((total: number, enemyPokemon: Pokemon) => total + enemyPokemon.getStat(Stat.SPD), 0);
+    const enemySpeed = enemyField.reduce(
+      (total: number, enemyPokemon: Pokemon) => total + enemyPokemon.getStat(Stat.SPD),
+      0,
+    );
     /** Sum of the speed of all player pokemon on the field */
-    const playerSpeed = playerField.reduce((total: number, playerPokemon: Pokemon) => total + playerPokemon.getStat(Stat.SPD), 0);
+    const playerSpeed = playerField.reduce(
+      (total: number, playerPokemon: Pokemon) => total + playerPokemon.getStat(Stat.SPD),
+      0,
+    );
 
     /*  The way the escape chance works is by looking at the difference between your speed and the enemy field's average speed as a ratio. The higher this ratio, the higher your chance of success.
      *  However, there is a cap for the ratio of your speed vs enemy speed which beyond that point, you won't gain any advantage. It also looks at how many times you've tried to escape.
@@ -98,6 +104,10 @@ export class AttemptRunPhase extends PokemonPhase {
     const escapeSlope = (maxChance - minChance) / speedCap;
 
     // This will calculate the escape chance given all of the above and clamp it to the range of [`minChance`, `maxChance`]
-    escapeChance.value = Phaser.Math.Clamp(Math.round((escapeSlope * speedRatio) + minChance + (escapeBonus * this.scene.currentBattle.escapeAttempts++)), minChance, maxChance);
+    escapeChance.value = Phaser.Math.Clamp(
+      Math.round(escapeSlope * speedRatio + minChance + escapeBonus * this.scene.currentBattle.escapeAttempts++),
+      minChance,
+      maxChance,
+    );
   }
 }

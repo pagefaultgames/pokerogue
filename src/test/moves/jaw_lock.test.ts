@@ -61,7 +61,8 @@ describe("Moves - Jaw Lock", () => {
 
       expect(leadPokemon.getTag(BattlerTagType.TRAPPED)).toBeDefined();
       expect(enemyPokemon.getTag(BattlerTagType.TRAPPED)).toBeDefined();
-    }, TIMEOUT
+    },
+    TIMEOUT,
   );
 
   it(
@@ -90,7 +91,8 @@ describe("Moves - Jaw Lock", () => {
 
       expect(leadPokemon.getTag(BattlerTagType.TRAPPED)).toBeUndefined();
       expect(enemyPokemon.getTag(BattlerTagType.TRAPPED)).toBeUndefined();
-    }, TIMEOUT
+    },
+    TIMEOUT,
   );
 
   it(
@@ -114,7 +116,8 @@ describe("Moves - Jaw Lock", () => {
       await game.doKillOpponents();
 
       expect(leadPokemon.getTag(BattlerTagType.TRAPPED)).toBeUndefined();
-    }, TIMEOUT
+    },
+    TIMEOUT,
   );
 
   it(
@@ -146,7 +149,8 @@ describe("Moves - Jaw Lock", () => {
       expect(enemyPokemon[1].getTag(BattlerTagType.TRAPPED)).toBeUndefined();
       expect(playerPokemon[0].getTag(BattlerTagType.TRAPPED)).toBeDefined();
       expect(playerPokemon[0].getTag(BattlerTagType.TRAPPED)?.sourceId).toBe(enemyPokemon[0].id);
-    }, TIMEOUT
+    },
+    TIMEOUT,
   );
 
   it(
@@ -165,6 +169,7 @@ describe("Moves - Jaw Lock", () => {
 
       expect(playerPokemon.getTag(BattlerTagType.TRAPPED)).toBeUndefined();
       expect(enemyPokemon.getTag(BattlerTagType.TRAPPED)).toBeUndefined();
-    }, TIMEOUT
+    },
+    TIMEOUT,
   );
 });

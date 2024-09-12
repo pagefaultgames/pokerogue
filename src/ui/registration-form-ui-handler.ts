@@ -5,18 +5,17 @@ import { Mode } from "./ui";
 import { TextStyle, addTextObject } from "./text";
 import i18next from "i18next";
 
-
 interface LanguageSetting {
-  inputFieldFontSize?: string,
-  warningMessageFontSize?: string,
-  errorMessageFontSize?: string,
+  inputFieldFontSize?: string;
+  warningMessageFontSize?: string;
+  errorMessageFontSize?: string;
 }
 
 const languageSettings: { [key: string]: LanguageSetting } = {
-  "es":{
+  es: {
     inputFieldFontSize: "50px",
     errorMessageFontSize: "40px",
-  }
+  },
 };
 
 export default class RegistrationFormUiHandler extends FormModalUiHandler {
@@ -25,7 +24,7 @@ export default class RegistrationFormUiHandler extends FormModalUiHandler {
   }
 
   getFields(config?: ModalConfig): string[] {
-    return [ i18next.t("menu:username"), i18next.t("menu:password"), i18next.t("menu:confirmPassword") ];
+    return [i18next.t("menu:username"), i18next.t("menu:password"), i18next.t("menu:confirmPassword")];
   }
 
   getWidth(config?: ModalConfig): number {
@@ -33,7 +32,7 @@ export default class RegistrationFormUiHandler extends FormModalUiHandler {
   }
 
   getMargin(config?: ModalConfig): [number, number, number, number] {
-    return [ 0, 0, 48, 0 ];
+    return [0, 0, 48, 0];
   }
 
   getButtonTopMargin(): number {
@@ -41,7 +40,7 @@ export default class RegistrationFormUiHandler extends FormModalUiHandler {
   }
 
   getButtonLabels(config?: ModalConfig): string[] {
-    return [ i18next.t("menu:register"), i18next.t("menu:backToLogin") ];
+    return [i18next.t("menu:register"), i18next.t("menu:backToLogin")];
   }
 
   getReadableErrorMessage(error: string): string {
@@ -50,12 +49,12 @@ export default class RegistrationFormUiHandler extends FormModalUiHandler {
       error = error.slice(0, colonIndex);
     }
     switch (error) {
-    case "invalid username":
-      return i18next.t("menu:invalidRegisterUsername");
-    case "invalid password":
-      return i18next.t("menu:invalidRegisterPassword");
-    case "failed to add account record":
-      return i18next.t("menu:usernameAlreadyUsed");
+      case "invalid username":
+        return i18next.t("menu:invalidRegisterUsername");
+      case "invalid password":
+        return i18next.t("menu:invalidRegisterPassword");
+      case "failed to add account record":
+        return i18next.t("menu:usernameAlreadyUsed");
     }
 
     return super.getReadableErrorMessage(error);
@@ -74,7 +73,14 @@ export default class RegistrationFormUiHandler extends FormModalUiHandler {
     });
 
     const warningMessageFontSize = languageSettings[i18next.resolvedLanguage!]?.warningMessageFontSize ?? "42px";
-    const label = addTextObject(this.scene, 10, 87, i18next.t("menu:registrationAgeWarning"), TextStyle.TOOLTIP_CONTENT, { fontSize: warningMessageFontSize});
+    const label = addTextObject(
+      this.scene,
+      10,
+      87,
+      i18next.t("menu:registrationAgeWarning"),
+      TextStyle.TOOLTIP_CONTENT,
+      { fontSize: warningMessageFontSize },
+    );
 
     this.modalContainer.add(label);
   }
@@ -89,7 +95,7 @@ export default class RegistrationFormUiHandler extends FormModalUiHandler {
         this.submitAction = originalRegistrationAction;
         this.sanitizeInputs();
         this.scene.ui.setMode(Mode.LOADING, { buttonActions: [] });
-        const onFail = error => {
+        const onFail = (error) => {
           this.scene.ui.setMode(Mode.REGISTRATION_FORM, Object.assign(config, { errorMessage: error?.trim() }));
           this.scene.ui.playError();
           const errorMessageFontSize = languageSettings[i18next.resolvedLanguage!]?.errorMessageFontSize;
@@ -106,18 +112,26 @@ export default class RegistrationFormUiHandler extends FormModalUiHandler {
         if (this.inputs[1].text !== this.inputs[2].text) {
           return onFail(i18next.t("menu:passwordNotMatchingConfirmPassword"));
         }
-        Utils.apiPost("account/register", `username=${encodeURIComponent(this.inputs[0].text)}&password=${encodeURIComponent(this.inputs[1].text)}`, "application/x-www-form-urlencoded")
-          .then(response => response.text())
-          .then(response => {
+        Utils.apiPost(
+          "account/register",
+          `username=${encodeURIComponent(this.inputs[0].text)}&password=${encodeURIComponent(this.inputs[1].text)}`,
+          "application/x-www-form-urlencoded",
+        )
+          .then((response) => response.text())
+          .then((response) => {
             if (!response) {
-              Utils.apiPost("account/login", `username=${encodeURIComponent(this.inputs[0].text)}&password=${encodeURIComponent(this.inputs[1].text)}`, "application/x-www-form-urlencoded")
-                .then(response => {
+              Utils.apiPost(
+                "account/login",
+                `username=${encodeURIComponent(this.inputs[0].text)}&password=${encodeURIComponent(this.inputs[1].text)}`,
+                "application/x-www-form-urlencoded",
+              )
+                .then((response) => {
                   if (!response.ok) {
                     return response.text();
                   }
                   return response.json();
                 })
-                .then(response => {
+                .then((response) => {
                   if (response.hasOwnProperty("token")) {
                     Utils.setCookie(Utils.sessionIdKey, response.token);
                     originalRegistrationAction && originalRegistrationAction();

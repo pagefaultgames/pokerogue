@@ -32,16 +32,13 @@ describe("Abilities - Moxie", () => {
     game.override.enemyAbility(Abilities.MOXIE);
     game.override.ability(Abilities.MOXIE);
     game.override.startingLevel(2000);
-    game.override.moveset([ moveToUse ]);
+    game.override.moveset([moveToUse]);
     game.override.enemyMoveset(Moves.SPLASH);
   });
 
-  it("should raise ATK stat stage by 1 when winning a battle", async() => {
+  it("should raise ATK stat stage by 1 when winning a battle", async () => {
     const moveToUse = Moves.AERIAL_ACE;
-    await game.startBattle([
-      Species.MIGHTYENA,
-      Species.MIGHTYENA,
-    ]);
+    await game.startBattle([Species.MIGHTYENA, Species.MIGHTYENA]);
 
     const playerPokemon = game.scene.getPlayerPokemon()!;
 
@@ -54,25 +51,26 @@ describe("Abilities - Moxie", () => {
   }, 20000);
 
   // TODO: Activate this test when MOXIE is corrected to work on faint and not on battle victory
-  it.todo("should raise ATK stat stage by 1 when defeating an ally Pokemon", async() => {
-    game.override.battleType("double");
-    const moveToUse = Moves.AERIAL_ACE;
-    await game.startBattle([
-      Species.MIGHTYENA,
-      Species.MIGHTYENA,
-    ]);
+  it.todo(
+    "should raise ATK stat stage by 1 when defeating an ally Pokemon",
+    async () => {
+      game.override.battleType("double");
+      const moveToUse = Moves.AERIAL_ACE;
+      await game.startBattle([Species.MIGHTYENA, Species.MIGHTYENA]);
 
-    const [ firstPokemon, secondPokemon ] = game.scene.getPlayerField();
+      const [firstPokemon, secondPokemon] = game.scene.getPlayerField();
 
-    expect(firstPokemon.getStatStage(Stat.ATK)).toBe(0);
+      expect(firstPokemon.getStatStage(Stat.ATK)).toBe(0);
 
-    secondPokemon.hp = 1;
+      secondPokemon.hp = 1;
 
-    game.move.select(moveToUse);
-    game.selectTarget(BattlerIndex.PLAYER_2);
+      game.move.select(moveToUse);
+      game.selectTarget(BattlerIndex.PLAYER_2);
 
-    await game.phaseInterceptor.to(TurnEndPhase);
+      await game.phaseInterceptor.to(TurnEndPhase);
 
-    expect(firstPokemon.getStatStage(Stat.ATK)).toBe(1);
-  }, 20000);
+      expect(firstPokemon.getStatStage(Stat.ATK)).toBe(1);
+    },
+    20000,
+  );
 });

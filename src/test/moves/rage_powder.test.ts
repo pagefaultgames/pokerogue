@@ -50,7 +50,8 @@ describe("Moves - Rage Powder", () => {
       // If redirection was bypassed, both enemies should be damaged
       expect(enemyPokemon[0].hp).toBeLessThan(enemyPokemon[0].getMaxHp());
       expect(enemyPokemon[1].hp).toBeLessThan(enemyPokemon[0].getMaxHp());
-    }, TIMEOUT
+    },
+    TIMEOUT,
   );
 
   test(
@@ -63,7 +64,7 @@ describe("Moves - Rage Powder", () => {
 
       const enemyPokemon = game.scene.getEnemyField();
 
-      const enemyStartingHp = enemyPokemon.map(p => p.hp);
+      const enemyStartingHp = enemyPokemon.map((p) => p.hp);
 
       game.move.select(Moves.QUICK_ATTACK, 0, BattlerIndex.ENEMY);
       game.move.select(Moves.QUICK_ATTACK, 1, BattlerIndex.ENEMY_2);
@@ -76,6 +77,7 @@ describe("Moves - Rage Powder", () => {
       // If redirection was bypassed, both enemies should be damaged
       expect(enemyPokemon[0].hp).toBeLessThan(enemyStartingHp[0]);
       expect(enemyPokemon[1].hp).toBeLessThan(enemyStartingHp[1]);
-    }, TIMEOUT
+    },
+    TIMEOUT,
   );
 });

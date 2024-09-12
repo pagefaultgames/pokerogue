@@ -106,9 +106,7 @@ export default class PhaseInterceptor {
     [AttemptRunPhase, this.startPhase],
   ];
 
-  private endBySetMode = [
-    TitlePhase, SelectGenderPhase, CommandPhase
-  ];
+  private endBySetMode = [TitlePhase, SelectGenderPhase, CommandPhase];
 
   /**
    * Constructor to initialize the scene and properties, and to start the phase handling.
@@ -162,7 +160,7 @@ export default class PhaseInterceptor {
         this.phaseFrom = null;
       }
       const targetName = typeof phaseTo === "string" ? phaseTo : phaseTo.name;
-      this.intervalRun = setInterval(async() => {
+      this.intervalRun = setInterval(async () => {
         const currentPhase = this.onHold?.length && this.onHold[0];
         if (currentPhase && currentPhase.name === targetName) {
           clearInterval(this.intervalRun);
@@ -254,7 +252,7 @@ export default class PhaseInterceptor {
    *
    * @param shouldRun Whether or not the current scene should also be run.
    */
-  shift(shouldRun: boolean = false) : void {
+  shift(shouldRun: boolean = false): void {
     this.onHold.shift();
     if (shouldRun) {
       this.scene.shiftPhase();
@@ -290,7 +288,7 @@ export default class PhaseInterceptor {
       name: phase.name,
       call: () => {
         this.phases[phase.name].start.apply(instance);
-      }
+      },
     });
   }
 
@@ -342,7 +340,13 @@ export default class PhaseInterceptor {
         const currentHandler = this.scene.ui.getHandler();
         if (expireFn) {
           this.prompts.shift();
-        } else if (currentMode === actionForNextPrompt.mode && currentPhase === actionForNextPrompt.phaseTarget && currentHandler.active && (!actionForNextPrompt.awaitingActionInput || (actionForNextPrompt.awaitingActionInput && currentHandler.awaitingActionInput))) {
+        } else if (
+          currentMode === actionForNextPrompt.mode &&
+          currentPhase === actionForNextPrompt.phaseTarget &&
+          currentHandler.active &&
+          (!actionForNextPrompt.awaitingActionInput ||
+            (actionForNextPrompt.awaitingActionInput && currentHandler.awaitingActionInput))
+        ) {
           this.prompts.shift().callback();
         }
       }
@@ -356,13 +360,19 @@ export default class PhaseInterceptor {
    * @param callback - The callback function to execute.
    * @param expireFn - The function to determine if the prompt has expired.
    */
-  addToNextPrompt(phaseTarget: string, mode: Mode, callback: () => void, expireFn?: () => void, awaitingActionInput: boolean = false) {
+  addToNextPrompt(
+    phaseTarget: string,
+    mode: Mode,
+    callback: () => void,
+    expireFn?: () => void,
+    awaitingActionInput: boolean = false,
+  ) {
     this.prompts.push({
       phaseTarget,
       mode,
       callback,
       expireFn,
-      awaitingActionInput
+      awaitingActionInput,
     });
   }
 

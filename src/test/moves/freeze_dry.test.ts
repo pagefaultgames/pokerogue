@@ -33,74 +33,94 @@ describe("Moves - Freeze-Dry", () => {
       .moveset([Moves.FREEZE_DRY]);
   });
 
-  it("should deal 2x damage to pure water types", async () => {
-    await game.classicMode.startBattle();
+  it(
+    "should deal 2x damage to pure water types",
+    async () => {
+      await game.classicMode.startBattle();
 
-    const enemy = game.scene.getEnemyPokemon()!;
-    vi.spyOn(enemy, "getMoveEffectiveness");
+      const enemy = game.scene.getEnemyPokemon()!;
+      vi.spyOn(enemy, "getMoveEffectiveness");
 
-    game.move.select(Moves.FREEZE_DRY);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
-    await game.phaseInterceptor.to("MoveEffectPhase");
+      game.move.select(Moves.FREEZE_DRY);
+      await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+      await game.phaseInterceptor.to("MoveEffectPhase");
 
-    expect(enemy.getMoveEffectiveness).toHaveReturnedWith(2);
-  }, TIMEOUT);
+      expect(enemy.getMoveEffectiveness).toHaveReturnedWith(2);
+    },
+    TIMEOUT,
+  );
 
-  it("should deal 4x damage to water/flying types", async () => {
-    game.override.enemySpecies(Species.WINGULL);
-    await game.classicMode.startBattle();
+  it(
+    "should deal 4x damage to water/flying types",
+    async () => {
+      game.override.enemySpecies(Species.WINGULL);
+      await game.classicMode.startBattle();
 
-    const enemy = game.scene.getEnemyPokemon()!;
-    vi.spyOn(enemy, "getMoveEffectiveness");
+      const enemy = game.scene.getEnemyPokemon()!;
+      vi.spyOn(enemy, "getMoveEffectiveness");
 
-    game.move.select(Moves.FREEZE_DRY);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
-    await game.phaseInterceptor.to("MoveEffectPhase");
+      game.move.select(Moves.FREEZE_DRY);
+      await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+      await game.phaseInterceptor.to("MoveEffectPhase");
 
-    expect(enemy.getMoveEffectiveness).toHaveReturnedWith(4);
-  }, TIMEOUT);
+      expect(enemy.getMoveEffectiveness).toHaveReturnedWith(4);
+    },
+    TIMEOUT,
+  );
 
-  it("should deal 1x damage to water/fire types", async () => {
-    game.override.enemySpecies(Species.VOLCANION);
-    await game.classicMode.startBattle();
+  it(
+    "should deal 1x damage to water/fire types",
+    async () => {
+      game.override.enemySpecies(Species.VOLCANION);
+      await game.classicMode.startBattle();
 
-    const enemy = game.scene.getEnemyPokemon()!;
-    vi.spyOn(enemy, "getMoveEffectiveness");
+      const enemy = game.scene.getEnemyPokemon()!;
+      vi.spyOn(enemy, "getMoveEffectiveness");
 
-    game.move.select(Moves.FREEZE_DRY);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
-    await game.phaseInterceptor.to("MoveEffectPhase");
+      game.move.select(Moves.FREEZE_DRY);
+      await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+      await game.phaseInterceptor.to("MoveEffectPhase");
 
-    expect(enemy.getMoveEffectiveness).toHaveReturnedWith(1);
-  }, TIMEOUT);
+      expect(enemy.getMoveEffectiveness).toHaveReturnedWith(1);
+    },
+    TIMEOUT,
+  );
 
   // enable if this is ever fixed (lol)
-  it.todo("should deal 2x damage to water types under Normalize", async () => {
-    game.override.ability(Abilities.NORMALIZE);
-    await game.classicMode.startBattle();
+  it.todo(
+    "should deal 2x damage to water types under Normalize",
+    async () => {
+      game.override.ability(Abilities.NORMALIZE);
+      await game.classicMode.startBattle();
 
-    const enemy = game.scene.getEnemyPokemon()!;
-    vi.spyOn(enemy, "getMoveEffectiveness");
+      const enemy = game.scene.getEnemyPokemon()!;
+      vi.spyOn(enemy, "getMoveEffectiveness");
 
-    game.move.select(Moves.FREEZE_DRY);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
-    await game.phaseInterceptor.to("MoveEffectPhase");
+      game.move.select(Moves.FREEZE_DRY);
+      await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+      await game.phaseInterceptor.to("MoveEffectPhase");
 
-    expect(enemy.getMoveEffectiveness).toHaveReturnedWith(2);
-  }, TIMEOUT);
+      expect(enemy.getMoveEffectiveness).toHaveReturnedWith(2);
+    },
+    TIMEOUT,
+  );
 
   // enable once Electrify is implemented (and the interaction is fixed, as above)
-  it.todo("should deal 2x damage to water types under Electrify", async () => {
-    game.override.enemyMoveset([Moves.ELECTRIFY]);
-    await game.classicMode.startBattle();
+  it.todo(
+    "should deal 2x damage to water types under Electrify",
+    async () => {
+      game.override.enemyMoveset([Moves.ELECTRIFY]);
+      await game.classicMode.startBattle();
 
-    const enemy = game.scene.getEnemyPokemon()!;
-    vi.spyOn(enemy, "getMoveEffectiveness");
+      const enemy = game.scene.getEnemyPokemon()!;
+      vi.spyOn(enemy, "getMoveEffectiveness");
 
-    game.move.select(Moves.FREEZE_DRY);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
-    await game.phaseInterceptor.to("BerryPhase");
+      game.move.select(Moves.FREEZE_DRY);
+      await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+      await game.phaseInterceptor.to("BerryPhase");
 
-    expect(enemy.getMoveEffectiveness).toHaveReturnedWith(2);
-  }, TIMEOUT);
+      expect(enemy.getMoveEffectiveness).toHaveReturnedWith(2);
+    },
+    TIMEOUT,
+  );
 });

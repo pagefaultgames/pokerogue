@@ -35,7 +35,6 @@ describe("Abilities - Flash Fire", () => {
       .disableCrits();
   });
 
-
   it("immune to Fire-type moves", async () => {
     game.override.enemyMoveset([Moves.EMBER]).moveset(Moves.SPLASH);
     await game.startBattle([Species.BLISSEY]);

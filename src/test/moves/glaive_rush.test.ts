@@ -35,131 +35,146 @@ describe("Moves - Glaive Rush", () => {
       .moveset([Moves.SHADOW_SNEAK, Moves.AVALANCHE, Moves.SPLASH, Moves.GLAIVE_RUSH]);
   });
 
-  it("takes double damage from attacks", async () => {
-    await game.classicMode.startBattle();
+  it(
+    "takes double damage from attacks",
+    async () => {
+      await game.classicMode.startBattle();
 
-    const enemy = game.scene.getEnemyPokemon()!;
-    enemy.hp = 1000;
+      const enemy = game.scene.getEnemyPokemon()!;
+      enemy.hp = 1000;
 
-    game.move.select(Moves.SHADOW_SNEAK);
-    await game.phaseInterceptor.to("DamagePhase");
-    const damageDealt = 1000 - enemy.hp;
-    await game.phaseInterceptor.to("TurnEndPhase");
-    game.move.select(Moves.SHADOW_SNEAK);
-    await game.phaseInterceptor.to("DamagePhase");
-    expect(enemy.hp).toBeLessThanOrEqual(1001 - (damageDealt * 3));
+      game.move.select(Moves.SHADOW_SNEAK);
+      await game.phaseInterceptor.to("DamagePhase");
+      const damageDealt = 1000 - enemy.hp;
+      await game.phaseInterceptor.to("TurnEndPhase");
+      game.move.select(Moves.SHADOW_SNEAK);
+      await game.phaseInterceptor.to("DamagePhase");
+      expect(enemy.hp).toBeLessThanOrEqual(1001 - damageDealt * 3);
+    },
+    TIMEOUT,
+  );
 
-  }, TIMEOUT);
+  it(
+    "always gets hit by attacks",
+    async () => {
+      await game.classicMode.startBattle();
 
-  it("always gets hit by attacks", async () => {
-    await game.classicMode.startBattle();
+      const enemy = game.scene.getEnemyPokemon()!;
+      enemy.hp = 1000;
 
-    const enemy = game.scene.getEnemyPokemon()!;
-    enemy.hp = 1000;
+      allMoves[Moves.AVALANCHE].accuracy = 0;
+      game.move.select(Moves.AVALANCHE);
+      await game.phaseInterceptor.to("TurnEndPhase");
+      expect(enemy.hp).toBeLessThan(1000);
+    },
+    TIMEOUT,
+  );
 
-    allMoves[Moves.AVALANCHE].accuracy = 0;
-    game.move.select(Moves.AVALANCHE);
-    await game.phaseInterceptor.to("TurnEndPhase");
-    expect(enemy.hp).toBeLessThan(1000);
+  it(
+    "interacts properly with multi-lens",
+    async () => {
+      game.override.startingHeldItems([{ name: "MULTI_LENS", count: 2 }]).enemyMoveset([Moves.AVALANCHE]);
+      await game.classicMode.startBattle();
 
-  }, TIMEOUT);
+      const player = game.scene.getPlayerPokemon()!;
+      const enemy = game.scene.getEnemyPokemon()!;
 
-  it("interacts properly with multi-lens", async () => {
-    game.override
-      .startingHeldItems([{ name: "MULTI_LENS", count: 2 }])
-      .enemyMoveset([Moves.AVALANCHE]);
-    await game.classicMode.startBattle();
+      enemy.hp = 1000;
+      player.hp = 1000;
 
-    const player = game.scene.getPlayerPokemon()!;
-    const enemy = game.scene.getEnemyPokemon()!;
+      allMoves[Moves.AVALANCHE].accuracy = 0;
+      game.move.select(Moves.GLAIVE_RUSH);
+      await game.phaseInterceptor.to("TurnEndPhase");
+      expect(player.hp).toBeLessThan(1000);
+      player.hp = 1000;
+      game.move.select(Moves.SPLASH);
+      await game.phaseInterceptor.to("TurnEndPhase");
+      expect(player.hp).toBe(1000);
+    },
+    TIMEOUT,
+  );
 
-    enemy.hp = 1000;
-    player.hp = 1000;
+  it(
+    "secondary effects only last until next move",
+    async () => {
+      game.override.enemyMoveset([Moves.SHADOW_SNEAK]);
+      await game.classicMode.startBattle();
 
-    allMoves[Moves.AVALANCHE].accuracy = 0;
-    game.move.select(Moves.GLAIVE_RUSH);
-    await game.phaseInterceptor.to("TurnEndPhase");
-    expect(player.hp).toBeLessThan(1000);
-    player.hp = 1000;
-    game.move.select(Moves.SPLASH);
-    await game.phaseInterceptor.to("TurnEndPhase");
-    expect(player.hp).toBe(1000);
+      const player = game.scene.getPlayerPokemon()!;
+      const enemy = game.scene.getEnemyPokemon()!;
 
-  }, TIMEOUT);
+      enemy.hp = 1000;
+      player.hp = 1000;
+      allMoves[Moves.SHADOW_SNEAK].accuracy = 0;
 
-  it("secondary effects only last until next move", async () => {
-    game.override.enemyMoveset([Moves.SHADOW_SNEAK]);
-    await game.classicMode.startBattle();
+      game.move.select(Moves.GLAIVE_RUSH);
+      await game.phaseInterceptor.to("TurnEndPhase");
+      expect(player.hp).toBe(1000);
 
-    const player = game.scene.getPlayerPokemon()!;
-    const enemy = game.scene.getEnemyPokemon()!;
+      game.move.select(Moves.SPLASH);
+      await game.phaseInterceptor.to("TurnEndPhase");
+      const damagedHp = player.hp;
+      expect(player.hp).toBeLessThan(1000);
 
-    enemy.hp = 1000;
-    player.hp = 1000;
-    allMoves[Moves.SHADOW_SNEAK].accuracy = 0;
+      game.move.select(Moves.SPLASH);
+      await game.phaseInterceptor.to("TurnEndPhase");
+      expect(player.hp).toBe(damagedHp);
+    },
+    TIMEOUT,
+  );
 
-    game.move.select(Moves.GLAIVE_RUSH);
-    await game.phaseInterceptor.to("TurnEndPhase");
-    expect(player.hp).toBe(1000);
+  it(
+    "secondary effects are removed upon switching",
+    async () => {
+      game.override.enemyMoveset([Moves.SHADOW_SNEAK]).starterSpecies(0);
+      await game.classicMode.startBattle([Species.KLINK, Species.FEEBAS]);
 
-    game.move.select(Moves.SPLASH);
-    await game.phaseInterceptor.to("TurnEndPhase");
-    const damagedHp = player.hp;
-    expect(player.hp).toBeLessThan(1000);
+      const player = game.scene.getPlayerPokemon()!;
+      const enemy = game.scene.getEnemyPokemon()!;
 
-    game.move.select(Moves.SPLASH);
-    await game.phaseInterceptor.to("TurnEndPhase");
-    expect(player.hp).toBe(damagedHp);
+      enemy.hp = 1000;
+      allMoves[Moves.SHADOW_SNEAK].accuracy = 0;
 
-  }, TIMEOUT);
+      game.move.select(Moves.GLAIVE_RUSH);
+      await game.phaseInterceptor.to("TurnEndPhase");
+      expect(player.hp).toBe(player.getMaxHp());
 
-  it("secondary effects are removed upon switching", async () => {
-    game.override
-      .enemyMoveset([Moves.SHADOW_SNEAK])
-      .starterSpecies(0);
-    await game.classicMode.startBattle([Species.KLINK, Species.FEEBAS]);
+      game.doSwitchPokemon(1);
+      await game.phaseInterceptor.to("TurnEndPhase");
+      game.doSwitchPokemon(1);
+      await game.phaseInterceptor.to("TurnEndPhase");
+      expect(player.hp).toBe(player.getMaxHp());
+    },
+    TIMEOUT,
+  );
 
-    const player = game.scene.getPlayerPokemon()!;
-    const enemy = game.scene.getEnemyPokemon()!;
+  it(
+    "secondary effects don't activate if move fails",
+    async () => {
+      game.override.moveset([Moves.SHADOW_SNEAK, Moves.PROTECT, Moves.SPLASH, Moves.GLAIVE_RUSH]);
+      await game.classicMode.startBattle();
 
-    enemy.hp = 1000;
-    allMoves[Moves.SHADOW_SNEAK].accuracy = 0;
+      const player = game.scene.getPlayerPokemon()!;
+      const enemy = game.scene.getEnemyPokemon()!;
 
-    game.move.select(Moves.GLAIVE_RUSH);
-    await game.phaseInterceptor.to("TurnEndPhase");
-    expect(player.hp).toBe(player.getMaxHp());
+      enemy.hp = 1000;
+      player.hp = 1000;
 
-    game.doSwitchPokemon(1);
-    await game.phaseInterceptor.to("TurnEndPhase");
-    game.doSwitchPokemon(1);
-    await game.phaseInterceptor.to("TurnEndPhase");
-    expect(player.hp).toBe(player.getMaxHp());
+      game.move.select(Moves.PROTECT);
+      await game.phaseInterceptor.to("TurnEndPhase");
 
-  }, TIMEOUT);
+      game.move.select(Moves.SHADOW_SNEAK);
+      await game.phaseInterceptor.to("TurnEndPhase");
+      game.override.enemyMoveset([Moves.SPLASH]);
+      const damagedHP1 = 1000 - enemy.hp;
+      enemy.hp = 1000;
 
-  it("secondary effects don't activate if move fails", async () => {
-    game.override.moveset([Moves.SHADOW_SNEAK, Moves.PROTECT, Moves.SPLASH, Moves.GLAIVE_RUSH]);
-    await game.classicMode.startBattle();
+      game.move.select(Moves.SHADOW_SNEAK);
+      await game.phaseInterceptor.to("TurnEndPhase");
+      const damagedHP2 = 1000 - enemy.hp;
 
-    const player = game.scene.getPlayerPokemon()!;
-    const enemy = game.scene.getEnemyPokemon()!;
-
-    enemy.hp = 1000;
-    player.hp = 1000;
-
-    game.move.select(Moves.PROTECT);
-    await game.phaseInterceptor.to("TurnEndPhase");
-
-    game.move.select(Moves.SHADOW_SNEAK);
-    await game.phaseInterceptor.to("TurnEndPhase");
-    game.override.enemyMoveset([Moves.SPLASH]);
-    const damagedHP1 = 1000 - enemy.hp;
-    enemy.hp = 1000;
-
-    game.move.select(Moves.SHADOW_SNEAK);
-    await game.phaseInterceptor.to("TurnEndPhase");
-    const damagedHP2 = 1000 - enemy.hp;
-
-    expect(damagedHP2).toBeGreaterThanOrEqual((damagedHP1 * 2) - 1);
-  }, TIMEOUT);
+      expect(damagedHP2).toBeGreaterThanOrEqual(damagedHP1 * 2 - 1);
+    },
+    TIMEOUT,
+  );
 });

@@ -54,7 +54,8 @@ describe("Moves - Beak Blast", () => {
 
       await game.phaseInterceptor.to(BerryPhase, false);
       expect(enemyPokemon.status?.effect).toBe(StatusEffect.BURN);
-    }, TIMEOUT
+    },
+    TIMEOUT,
   );
 
   it(
@@ -74,7 +75,8 @@ describe("Moves - Beak Blast", () => {
 
       await game.phaseInterceptor.to(BerryPhase, false);
       expect(enemyPokemon.status?.effect).toBe(StatusEffect.BURN);
-    }, TIMEOUT
+    },
+    TIMEOUT,
   );
 
   it(
@@ -94,7 +96,8 @@ describe("Moves - Beak Blast", () => {
 
       await game.phaseInterceptor.to(BerryPhase, false);
       expect(enemyPokemon.status?.effect).not.toBe(StatusEffect.BURN);
-    }, TIMEOUT
+    },
+    TIMEOUT,
   );
 
   it(
@@ -110,7 +113,8 @@ describe("Moves - Beak Blast", () => {
 
       await game.phaseInterceptor.to(BerryPhase, false);
       expect(leadPokemon.turnData.hitCount).toBe(2);
-    }, TIMEOUT
+    },
+    TIMEOUT,
   );
 
   it(
@@ -131,6 +135,7 @@ describe("Moves - Beak Blast", () => {
       await game.phaseInterceptor.to(TurnEndPhase);
       expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp());
       expect(leadPokemon.getTag(BattlerTagType.BEAK_BLAST_CHARGING)).toBeUndefined();
-    }, TIMEOUT
+    },
+    TIMEOUT,
   );
 });

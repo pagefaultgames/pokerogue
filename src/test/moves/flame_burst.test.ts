@@ -20,7 +20,7 @@ describe("Moves - Flame Burst", () => {
    * @returns Effect damage of Flame Burst
    */
   const getEffectDamage = (pokemon: Pokemon): number => {
-    return Math.max(1, Math.floor(pokemon.getMaxHp() * 1 / 16));
+    return Math.max(1, Math.floor((pokemon.getMaxHp() * 1) / 16));
   };
 
   beforeAll(() => {
@@ -99,7 +99,11 @@ describe("Moves - Flame Burst", () => {
     expect(rightEnemy.hp).toBe(rightEnemy.getMaxHp());
   });
 
-  it("is not affected by protection moves and Endure", async () => {
-    // TODO: update this test when it's possible to select move for each enemy
-  }, { skip: true });
+  it(
+    "is not affected by protection moves and Endure",
+    async () => {
+      // TODO: update this test when it's possible to select move for each enemy
+    },
+    { skip: true },
+  );
 });

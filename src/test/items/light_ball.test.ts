@@ -28,45 +28,61 @@ describe("Items - Light Ball", () => {
     game.override.battleType("single");
   });
 
-  it("LIGHT_BALL activates in battle correctly", async() => {
+  it("LIGHT_BALL activates in battle correctly", async () => {
     game.override.startingHeldItems([{ name: "SPECIES_STAT_BOOSTER", type: "LIGHT_BALL" }]);
     const consoleSpy = vi.spyOn(console, "log");
-    await game.startBattle([
-      Species.PIKACHU
-    ]);
+    await game.startBattle([Species.PIKACHU]);
 
     const partyMember = game.scene.getParty()[0];
 
     // Checking console log to make sure Light Ball is applied when getEffectiveStat (with the appropriate stat) is called
     partyMember.getEffectiveStat(Stat.DEF);
-    expect(consoleSpy).not.toHaveBeenLastCalledWith("Applied", i18next.t("modifierType:SpeciesBoosterItem.LIGHT_BALL.name"), "");
+    expect(consoleSpy).not.toHaveBeenLastCalledWith(
+      "Applied",
+      i18next.t("modifierType:SpeciesBoosterItem.LIGHT_BALL.name"),
+      "",
+    );
 
     // Printing dummy console messages along the way so subsequent checks don't pass because of the first
     console.log("");
 
     partyMember.getEffectiveStat(Stat.SPDEF);
-    expect(consoleSpy).not.toHaveBeenLastCalledWith("Applied", i18next.t("modifierType:SpeciesBoosterItem.LIGHT_BALL.name"), "");
+    expect(consoleSpy).not.toHaveBeenLastCalledWith(
+      "Applied",
+      i18next.t("modifierType:SpeciesBoosterItem.LIGHT_BALL.name"),
+      "",
+    );
 
     console.log("");
 
     partyMember.getEffectiveStat(Stat.ATK);
-    expect(consoleSpy).toHaveBeenLastCalledWith("Applied", i18next.t("modifierType:SpeciesBoosterItem.LIGHT_BALL.name"), "");
+    expect(consoleSpy).toHaveBeenLastCalledWith(
+      "Applied",
+      i18next.t("modifierType:SpeciesBoosterItem.LIGHT_BALL.name"),
+      "",
+    );
 
     console.log("");
 
     partyMember.getEffectiveStat(Stat.SPATK);
-    expect(consoleSpy).toHaveBeenLastCalledWith("Applied", i18next.t("modifierType:SpeciesBoosterItem.LIGHT_BALL.name"), "");
+    expect(consoleSpy).toHaveBeenLastCalledWith(
+      "Applied",
+      i18next.t("modifierType:SpeciesBoosterItem.LIGHT_BALL.name"),
+      "",
+    );
 
     console.log("");
 
     partyMember.getEffectiveStat(Stat.SPD);
-    expect(consoleSpy).not.toHaveBeenLastCalledWith("Applied", i18next.t("modifierType:SpeciesBoosterItem.LIGHT_BALL.name"), "");
+    expect(consoleSpy).not.toHaveBeenLastCalledWith(
+      "Applied",
+      i18next.t("modifierType:SpeciesBoosterItem.LIGHT_BALL.name"),
+      "",
+    );
   });
 
-  it("LIGHT_BALL held by PIKACHU", async() => {
-    await game.startBattle([
-      Species.PIKACHU
-    ]);
+  it("LIGHT_BALL held by PIKACHU", async () => {
+    await game.startBattle([Species.PIKACHU]);
 
     const partyMember = game.scene.getParty()[0];
 
@@ -83,7 +99,10 @@ describe("Items - Light Ball", () => {
     expect(spAtkValue.value / spAtkStat).toBe(1);
 
     // Giving Eviolite to party member and testing if it applies
-    partyMember.scene.addModifier(modifierTypes.SPECIES_STAT_BOOSTER().generateType([], ["LIGHT_BALL"])!.newModifier(partyMember), true);
+    partyMember.scene.addModifier(
+      modifierTypes.SPECIES_STAT_BOOSTER().generateType([], ["LIGHT_BALL"])!.newModifier(partyMember),
+      true,
+    );
     partyMember.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.ATK, atkValue);
     partyMember.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.SPATK, spAtkValue);
 
@@ -91,11 +110,8 @@ describe("Items - Light Ball", () => {
     expect(spAtkValue.value / spAtkStat).toBe(2);
   }, 20000);
 
-  it("LIGHT_BALL held by fused PIKACHU (base)", async() => {
-    await game.startBattle([
-      Species.PIKACHU,
-      Species.MAROWAK
-    ]);
+  it("LIGHT_BALL held by fused PIKACHU (base)", async () => {
+    await game.startBattle([Species.PIKACHU, Species.MAROWAK]);
 
     const partyMember = game.scene.getParty()[0];
     const ally = game.scene.getParty()[1];
@@ -122,7 +138,10 @@ describe("Items - Light Ball", () => {
     expect(spAtkValue.value / spAtkStat).toBe(1);
 
     // Giving Eviolite to party member and testing if it applies
-    partyMember.scene.addModifier(modifierTypes.SPECIES_STAT_BOOSTER().generateType([], ["LIGHT_BALL"])!.newModifier(partyMember), true);
+    partyMember.scene.addModifier(
+      modifierTypes.SPECIES_STAT_BOOSTER().generateType([], ["LIGHT_BALL"])!.newModifier(partyMember),
+      true,
+    );
     partyMember.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.ATK, atkValue);
     partyMember.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.SPATK, spAtkValue);
 
@@ -130,11 +149,8 @@ describe("Items - Light Ball", () => {
     expect(spAtkValue.value / spAtkStat).toBe(2);
   }, 20000);
 
-  it("LIGHT_BALL held by fused PIKACHU (part)", async() => {
-    await game.startBattle([
-      Species.MAROWAK,
-      Species.PIKACHU
-    ]);
+  it("LIGHT_BALL held by fused PIKACHU (part)", async () => {
+    await game.startBattle([Species.MAROWAK, Species.PIKACHU]);
 
     const partyMember = game.scene.getParty()[0];
     const ally = game.scene.getParty()[1];
@@ -161,7 +177,10 @@ describe("Items - Light Ball", () => {
     expect(spAtkValue.value / spAtkStat).toBe(1);
 
     // Giving Eviolite to party member and testing if it applies
-    partyMember.scene.addModifier(modifierTypes.SPECIES_STAT_BOOSTER().generateType([], ["LIGHT_BALL"])!.newModifier(partyMember), true);
+    partyMember.scene.addModifier(
+      modifierTypes.SPECIES_STAT_BOOSTER().generateType([], ["LIGHT_BALL"])!.newModifier(partyMember),
+      true,
+    );
     partyMember.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.ATK, atkValue);
     partyMember.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.SPATK, spAtkValue);
 
@@ -169,10 +188,8 @@ describe("Items - Light Ball", () => {
     expect(spAtkValue.value / spAtkStat).toBe(2);
   }, 20000);
 
-  it("LIGHT_BALL not held by PIKACHU", async() => {
-    await game.startBattle([
-      Species.MAROWAK
-    ]);
+  it("LIGHT_BALL not held by PIKACHU", async () => {
+    await game.startBattle([Species.MAROWAK]);
 
     const partyMember = game.scene.getParty()[0];
 
@@ -189,7 +206,10 @@ describe("Items - Light Ball", () => {
     expect(spAtkValue.value / spAtkStat).toBe(1);
 
     // Giving Eviolite to party member and testing if it applies
-    partyMember.scene.addModifier(modifierTypes.SPECIES_STAT_BOOSTER().generateType([], ["LIGHT_BALL"])!.newModifier(partyMember), true);
+    partyMember.scene.addModifier(
+      modifierTypes.SPECIES_STAT_BOOSTER().generateType([], ["LIGHT_BALL"])!.newModifier(partyMember),
+      true,
+    );
     partyMember.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.ATK, atkValue);
     partyMember.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.SPATK, spAtkValue);
 

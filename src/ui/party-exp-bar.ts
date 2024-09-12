@@ -12,7 +12,7 @@ export default class PartyExpBar extends Phaser.GameObjects.Container {
   public shown: boolean;
 
   constructor(scene: BattleScene) {
-    super(scene, (scene.game.canvas.width / 6), -((scene.game.canvas.height) / 6) + 15);
+    super(scene, scene.game.canvas.width / 6, -(scene.game.canvas.height / 6) + 15);
   }
 
   setup(): void {
@@ -30,7 +30,7 @@ export default class PartyExpBar extends Phaser.GameObjects.Container {
   }
 
   showPokemonExp(pokemon: Pokemon, expValue: integer, showOnlyLevelUp: boolean, newLevel: number): Promise<void> {
-    return new Promise<void>(resolve => {
+    return new Promise<void>((resolve) => {
       if (this.shown) {
         return resolve();
       }
@@ -42,9 +42,11 @@ export default class PartyExpBar extends Phaser.GameObjects.Container {
 
       // if we want to only display the level in the small frame
       if (showOnlyLevelUp) {
-        if (newLevel > 200) { // if the level is greater than 200, we only display Lv. UP
+        if (newLevel > 200) {
+          // if the level is greater than 200, we only display Lv. UP
           this.expText.setText("Lv. UP");
-        } else { // otherwise we display Lv. Up and the new level
+        } else {
+          // otherwise we display Lv. Up and the new level
           this.expText.setText(`Lv. UP: ${newLevel.toString()}`);
         }
       } else {
@@ -62,13 +64,13 @@ export default class PartyExpBar extends Phaser.GameObjects.Container {
 
       this.tween = this.scene.tweens.add({
         targets: this,
-        x: (this.scene.game.canvas.width / 6) - (this.bg.width - 5),
+        x: this.scene.game.canvas.width / 6 - (this.bg.width - 5),
         duration: 500 / Math.pow(2, pokemon.scene.expGainsSpeed),
         ease: "Sine.easeOut",
         onComplete: () => {
           this.tween = null;
           resolve();
-        }
+        },
       });
 
       this.setVisible(true);
@@ -77,7 +79,7 @@ export default class PartyExpBar extends Phaser.GameObjects.Container {
   }
 
   hide(): Promise<void> {
-    return new Promise<void>(resolve => {
+    return new Promise<void>((resolve) => {
       if (!this.shown) {
         return resolve();
       }
@@ -88,7 +90,7 @@ export default class PartyExpBar extends Phaser.GameObjects.Container {
 
       this.tween = this.scene.tweens.add({
         targets: this,
-        x: (this.scene.game.canvas.width / 6),
+        x: this.scene.game.canvas.width / 6,
         duration: 500,
         ease: "Sine.easeIn",
         onComplete: () => {
@@ -97,7 +99,7 @@ export default class PartyExpBar extends Phaser.GameObjects.Container {
           this.setVisible(false);
           this.pokemonIcon?.destroy();
           resolve();
-        }
+        },
       });
     });
   }

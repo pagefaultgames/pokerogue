@@ -20,7 +20,17 @@ export class PokemonHealPhase extends CommonAnimPhase {
   private healStatus: boolean;
   private preventFullHeal: boolean;
 
-  constructor(scene: BattleScene, battlerIndex: BattlerIndex, hpHealed: integer, message: string | null, showFullHpMessage: boolean, skipAnim: boolean = false, revive: boolean = false, healStatus: boolean = false, preventFullHeal: boolean = false) {
+  constructor(
+    scene: BattleScene,
+    battlerIndex: BattlerIndex,
+    hpHealed: integer,
+    message: string | null,
+    showFullHpMessage: boolean,
+    skipAnim: boolean = false,
+    revive: boolean = false,
+    healStatus: boolean = false,
+    preventFullHeal: boolean = false,
+  ) {
     super(scene, battlerIndex, undefined, CommonAnim.HEALTH_UP);
 
     this.hpHealed = hpHealed;
@@ -49,7 +59,7 @@ export class PokemonHealPhase extends CommonAnimPhase {
     }
 
     const hasMessage = !!this.message;
-    const healOrDamage = (!pokemon.isFullHp() || this.hpHealed < 0);
+    const healOrDamage = !pokemon.isFullHp() || this.hpHealed < 0;
     let lastStatusEffect = StatusEffect.NONE;
 
     if (healOrDamage) {
@@ -64,7 +74,7 @@ export class PokemonHealPhase extends CommonAnimPhase {
       }
       // Prevent healing to full if specified (in case of healing tokens so Sturdy doesn't cause a softlock)
       if (this.preventFullHeal && pokemon.hp + healAmount.value >= pokemon.getMaxHp()) {
-        healAmount.value = (pokemon.getMaxHp() - pokemon.hp) - 1;
+        healAmount.value = pokemon.getMaxHp() - pokemon.hp - 1;
       }
       healAmount.value = pokemon.heal(healAmount.value);
       if (healAmount.value) {

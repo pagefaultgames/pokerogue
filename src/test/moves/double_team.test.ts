@@ -46,6 +46,6 @@ describe("Moves - Double Team", () => {
     await game.toNextTurn();
 
     expect(ally.getStatStage(Stat.EVA)).toBe(1);
-    expect(enemy.getAccuracyMultiplier).toHaveReturnedWith(.75);
+    expect(enemy.getAccuracyMultiplier).toHaveReturnedWith(0.75);
   });
 });

@@ -22,9 +22,7 @@ describe("Error Handling", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override
-      .battleType("single")
-      .startingWave(3);
+    game.override.battleType("single").startingWave(3);
     game.override.starterSpecies(Species.MEWTWO);
     game.override.enemySpecies(Species.RATTATA);
     game.override.enemyAbility(Abilities.HYDRATION);
@@ -42,4 +40,3 @@ describe("Error Handling", () => {
     expect(game.scene.currentBattle.turn).toBeGreaterThan(turn);
   }, 20000);
 });
-

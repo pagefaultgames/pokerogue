@@ -1,5 +1,5 @@
-import {Button} from "#enums/buttons";
-import {SettingKeyboard} from "#app/system/settings/settings-keyboard";
+import { Button } from "#enums/buttons";
+import { SettingKeyboard } from "#app/system/settings/settings-keyboard";
 
 const cfg_keyboard_qwerty = {
   padID: "default",
@@ -77,7 +77,7 @@ const cfg_keyboard_qwerty = {
     KEY_RIGHT_BRACKET: Phaser.Input.Keyboard.KeyCodes.CLOSED_BRACKET,
     KEY_SEMICOLON: Phaser.Input.Keyboard.KeyCodes.SEMICOLON,
     KEY_BACKSPACE: Phaser.Input.Keyboard.KeyCodes.BACKSPACE,
-    KEY_ALT: Phaser.Input.Keyboard.KeyCodes.ALT
+    KEY_ALT: Phaser.Input.Keyboard.KeyCodes.ALT,
   },
   icons: {
     KEY_A: "A.png",
@@ -131,7 +131,6 @@ const cfg_keyboard_qwerty = {
     KEY_F11: "F11.png",
     KEY_F12: "F12.png",
 
-
     KEY_PAGE_DOWN: "PAGE_DOWN.png",
     KEY_PAGE_UP: "PAGE_UP.png",
 
@@ -163,7 +162,7 @@ const cfg_keyboard_qwerty = {
     KEY_SEMICOLON: "SEMICOLON.png",
 
     KEY_BACKSPACE: "BACK.png",
-    KEY_ALT: "ALT.png"
+    KEY_ALT: "ALT.png",
   },
   settings: {
     [SettingKeyboard.Button_Up]: Button.UP,
@@ -274,7 +273,7 @@ const cfg_keyboard_qwerty = {
     KEY_LEFT_BRACKET: -1,
     KEY_RIGHT_BRACKET: -1,
     KEY_SEMICOLON: -1,
-    KEY_ALT: -1
+    KEY_ALT: -1,
   },
   blacklist: [
     "KEY_ENTER",
@@ -287,7 +286,7 @@ const cfg_keyboard_qwerty = {
     "KEY_ARROW_RIGHT",
     "KEY_DEL",
     "KEY_HOME",
-  ]
+  ],
 };
 
 export default cfg_keyboard_qwerty;

@@ -45,7 +45,9 @@ export class InGameManip {
       icon = "KEY_" + icon;
     }
     this.icon = this.config.icons[icon];
-    expect(getIconForLatestInput(this.configs, this.latestSource, this.selectedDevice, this.settingName)).toEqual(this.icon);
+    expect(getIconForLatestInput(this.configs, this.latestSource, this.selectedDevice, this.settingName)).toEqual(
+      this.icon,
+    );
     return this;
   }
 
@@ -59,7 +61,7 @@ export class InGameManip {
     const lowerCasedInput = input.toLowerCase();
 
     // Replace underscores with spaces, capitalize the first letter of each word, and join them back with underscores
-    const words = lowerCasedInput.split("_").map(word => word.charAt(0).toUpperCase() + word.slice(1));
+    const words = lowerCasedInput.split("_").map((word) => word.charAt(0).toUpperCase() + word.slice(1));
     const result = words.join("_");
 
     return result;

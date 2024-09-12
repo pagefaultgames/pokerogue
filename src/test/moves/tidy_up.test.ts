@@ -9,7 +9,6 @@ import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
-
 describe("Moves - Tidy Up", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
@@ -46,7 +45,6 @@ describe("Moves - Tidy Up", () => {
     game.move.select(Moves.TIDY_UP);
     await game.phaseInterceptor.to(MoveEndPhase);
     expect(game.scene.arena.getTag(ArenaTagType.SPIKES)).toBeUndefined();
-
   }, 20000);
 
   it("stealth rocks are cleared", async () => {

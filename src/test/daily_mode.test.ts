@@ -24,7 +24,7 @@ describe("Daily Mode", () => {
 
     const party = game.scene.getParty();
     expect(party).toHaveLength(3);
-    party.forEach(pkm => {
+    party.forEach((pkm) => {
       expect(pkm.level).toBe(20);
       expect(pkm.moveset.length).toBeGreaterThan(0);
     });

@@ -11,12 +11,12 @@ export enum DropDownColumn {
   CAUGHT,
   UNLOCKS,
   MISC,
-  SORT
+  SORT,
 }
 
 export class FilterBar extends Phaser.GameObjects.Container {
   private window: Phaser.GameObjects.NineSlice;
-  private labels:  Phaser.GameObjects.Text[] = [];
+  private labels: Phaser.GameObjects.Text[] = [];
   private dropDowns: DropDown[] = [];
   private columns: DropDownColumn[] = [];
   public cursorObj: Phaser.GameObjects.Image;
@@ -75,7 +75,7 @@ export class FilterBar extends Phaser.GameObjects.Container {
    * @param col the DropDownColumn used to register the filter to retrieve
    * @returns the associated DropDown if it exists, undefined otherwise
    */
-  getFilter(col: DropDownColumn) : DropDown {
+  getFilter(col: DropDownColumn): DropDown {
     return this.dropDowns[this.columns.indexOf(col)];
   }
 
@@ -100,15 +100,15 @@ export class FilterBar extends Phaser.GameObjects.Container {
     const cursorOffset = 8;
 
     let totalWidth = paddingX * 2 + cursorOffset;
-    this.labels.forEach(label => {
+    this.labels.forEach((label) => {
       totalWidth += label.displayWidth + cursorOffset;
     });
     const spacing = (this.width - totalWidth) / (this.labels.length - 1);
-    for (let i=0; i<this.labels.length; i++) {
+    for (let i = 0; i < this.labels.length; i++) {
       if (i === 0) {
         this.labels[i].x = paddingX + cursorOffset;
       } else {
-        const lastRight = this.labels[i-1].x + this.labels[i-1].displayWidth;
+        const lastRight = this.labels[i - 1].x + this.labels[i - 1].displayWidth;
         this.labels[i].x = lastRight + spacing + cursorOffset;
       }
 
@@ -121,10 +121,10 @@ export class FilterBar extends Phaser.GameObjects.Container {
    * Move the leftmost dropdown to the left of the FilterBar instead of below it
    */
   offsetHybridFilters(): void {
-    for (let i=0; i<this.dropDowns.length; i++) {
+    for (let i = 0; i < this.dropDowns.length; i++) {
       if (this.dropDowns[i].dropDownType === DropDownType.HYBRID) {
         this.dropDowns[i].autoSize();
-        this.dropDowns[i].x = - this.dropDowns[i].getWidth();
+        this.dropDowns[i].x = -this.dropDowns[i].getWidth();
         this.dropDowns[i].y = 0;
       }
     }
@@ -151,14 +151,15 @@ export class FilterBar extends Phaser.GameObjects.Container {
   }
 
   hideDropDowns(): void {
-    this.dropDowns.forEach(dropDown => {
+    this.dropDowns.forEach((dropDown) => {
       dropDown.setVisible(false);
     });
     this.openDropDown = false;
   }
 
   incDropDownCursor(): boolean {
-    if (this.dropDowns[this.lastCursor].cursor === this.dropDowns[this.lastCursor].options.length - 1) {// if at the bottom of the list, wrap around
+    if (this.dropDowns[this.lastCursor].cursor === this.dropDowns[this.lastCursor].options.length - 1) {
+      // if at the bottom of the list, wrap around
       return this.dropDowns[this.lastCursor].setCursor(0);
     } else {
       return this.dropDowns[this.lastCursor].setCursor(this.dropDowns[this.lastCursor].cursor + 1);
@@ -166,7 +167,8 @@ export class FilterBar extends Phaser.GameObjects.Container {
   }
 
   decDropDownCursor(): boolean {
-    if (this.dropDowns[this.lastCursor].cursor === 0) {// if at the top of the list, wrap around
+    if (this.dropDowns[this.lastCursor].cursor === 0) {
+      // if at the top of the list, wrap around
       return this.dropDowns[this.lastCursor].setCursor(this.dropDowns[this.lastCursor].options.length - 1);
     } else {
       return this.dropDowns[this.lastCursor].setCursor(this.dropDowns[this.lastCursor].cursor - 1);
@@ -193,11 +195,10 @@ export class FilterBar extends Phaser.GameObjects.Container {
    * @returns the index of the closest filter
    */
   getNearestFilter(container: StarterContainer): number {
-
     const midx = container.x + container.icon.displayWidth / 2;
     let nearest = 0;
     let nearestDist = 1000;
-    for (let i=0; i < this.labels.length; i++) {
+    for (let i = 0; i < this.labels.length; i++) {
       const dist = Math.abs(midx - (this.labels[i].x + this.labels[i].displayWidth / 3));
       if (dist < nearestDist) {
         nearest = i;
@@ -207,5 +208,4 @@ export class FilterBar extends Phaser.GameObjects.Container {
 
     return nearest;
   }
-
 }

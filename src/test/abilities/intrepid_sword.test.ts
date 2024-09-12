@@ -6,7 +6,6 @@ import { Species } from "#enums/species";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
-
 describe("Abilities - Intrepid Sword", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
@@ -29,10 +28,8 @@ describe("Abilities - Intrepid Sword", () => {
     game.override.ability(Abilities.INTREPID_SWORD);
   });
 
-  it("should raise ATK stat stage by 1 on entry", async() => {
-    await game.classicMode.runToSummon([
-      Species.ZACIAN,
-    ]);
+  it("should raise ATK stat stage by 1 on entry", async () => {
+    await game.classicMode.runToSummon([Species.ZACIAN]);
 
     const playerPokemon = game.scene.getPlayerPokemon()!;
     const enemyPokemon = game.scene.getEnemyPokemon()!;

@@ -1,4 +1,3 @@
-
 export enum Biome {
   TOWN,
   PLAINS,
@@ -34,5 +33,5 @@ export enum Biome {
   SNOWY_FOREST,
   ISLAND = 40,
   LABORATORY,
-  END = 50
+  END = 50,
 }

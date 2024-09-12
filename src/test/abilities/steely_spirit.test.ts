@@ -54,17 +54,19 @@ describe("Abilities - Steely Spirit", () => {
     await game.classicMode.startBattle([Species.PIKACHU, Species.PIKACHU]);
     const enemyToCheck = game.scene.getEnemyPokemon()!;
 
-    game.scene.getPlayerField().forEach(p => {
+    game.scene.getPlayerField().forEach((p) => {
       vi.spyOn(p, "getAbility").mockReturnValue(allAbilities[Abilities.STEELY_SPIRIT]);
     });
 
-    expect(game.scene.getPlayerField().every(p => p.hasAbility(Abilities.STEELY_SPIRIT))).toBe(true);
+    expect(game.scene.getPlayerField().every((p) => p.hasAbility(Abilities.STEELY_SPIRIT))).toBe(true);
 
     game.move.select(moveToCheck, 0, enemyToCheck.getBattlerIndex());
     game.move.select(moveToCheck, 1, enemyToCheck.getBattlerIndex());
     await game.phaseInterceptor.to("MoveEffectPhase");
 
-    expect(allMoves[moveToCheck].calculateBattlePower).toHaveReturnedWith(ironHeadPower * Math.pow(steelySpiritMultiplier, 2));
+    expect(allMoves[moveToCheck].calculateBattlePower).toHaveReturnedWith(
+      ironHeadPower * Math.pow(steelySpiritMultiplier, 2),
+    );
   });
 
   it("does not take effect when suppressed", async () => {
@@ -88,9 +90,7 @@ describe("Abilities - Steely Spirit", () => {
   });
 
   it("affects variable-type moves if their resolved type is Steel", async () => {
-    game.override
-      .ability(Abilities.STEELY_SPIRIT)
-      .moveset([Moves.REVELATION_DANCE]);
+    game.override.ability(Abilities.STEELY_SPIRIT).moveset([Moves.REVELATION_DANCE]);
 
     const revelationDance = allMoves[Moves.REVELATION_DANCE];
     vi.spyOn(revelationDance, "calculateBattlePower");

@@ -31,7 +31,6 @@ Object.defineProperty(window, "console", {
   value: mockConsoleLog(false),
 });
 
-
 InputText.prototype.setElement = () => null;
 InputText.prototype.resize = () => null;
 Phaser.GameObjects.Image = MockImage;
@@ -43,13 +42,11 @@ window.URL.createObjectURL = (blob: Blob) => {
 };
 navigator.getGamepads = () => [];
 global.fetch = vi.fn(MockFetch);
-Utils.setCookie(Utils.sessionIdKey, 'fake_token');
-
+Utils.setCookie(Utils.sessionIdKey, "fake_token");
 
 window.matchMedia = () => ({
   matches: false,
 });
-
 
 /**
  * Sets this object's position relative to another object with a given offset
@@ -70,13 +67,12 @@ Phaser.GameObjects.NineSlice.prototype.setPositionRelative = setPositionRelative
 Phaser.GameObjects.Text.prototype.setPositionRelative = setPositionRelative;
 Phaser.GameObjects.Rectangle.prototype.setPositionRelative = setPositionRelative;
 
-
 export default class GameWrapper {
   public game: Phaser.Game;
   public scene: BattleScene;
 
   constructor(phaserGame: Phaser.Game, bypassLogin: boolean) {
-    Phaser.Math.RND.sow([ 'test' ]);
+    Phaser.Math.RND.sow(["test"]);
     vi.spyOn(Utils, "apiFetch", "get").mockReturnValue(fetch);
     if (bypassLogin) {
       vi.spyOn(battleScene, "bypassLogin", "get").mockReturnValue(true);
@@ -121,7 +117,7 @@ export default class GameWrapper {
       pause: () => null,
       setRate: () => null,
       add: () => this.scene.sound,
-      get: () => ({...this.scene.sound, totalDuration: 0}),
+      get: () => ({ ...this.scene.sound, totalDuration: 0 }),
       getAllPlaying: () => [],
       manager: {
         game: this.game,
@@ -147,8 +143,8 @@ export default class GameWrapper {
           data.onComplete();
         }
       },
-      getTweensOf: () => ([]),
-      killTweensOf: () => ([]),
+      getTweensOf: () => [],
+      killTweensOf: () => [],
       chain: () => null,
       addCounter: (data) => {
         if (data.onComplete) {
@@ -177,14 +173,15 @@ export default class GameWrapper {
       game: this.game,
       textures: {
         addCanvas: () => ({
-          get: () => ({ // this.frame in Text.js
+          get: () => ({
+            // this.frame in Text.js
             source: {},
             setSize: () => null,
             glTexture: () => ({
               spectorMetadata: {},
             }),
           }),
-        })
+        }),
       },
       cache: this.scene.load.cacheManager,
       scale: this.game.scale,
@@ -195,15 +192,15 @@ export default class GameWrapper {
       events: new EventEmitter(),
       settings: {
         loader: {
-          key: 'battle',
-        }
+          key: "battle",
+        },
       },
       input: this.game.input,
     };
     const mockTextureManager = new MockTextureManager(this.scene);
     this.scene.add = mockTextureManager.add;
     this.scene.textures = mockTextureManager;
-    this.scene.sys.displayList =  this.scene.add.displayList;
+    this.scene.sys.displayList = this.scene.add.displayList;
     this.scene.sys.updateList = new UpdateList(this.scene);
     this.scene.systems = this.scene.sys;
     this.scene.input = this.game.input;
@@ -213,11 +210,11 @@ export default class GameWrapper {
     this.scene.cachedFetch = (url, init) => {
       return new Promise((resolve) => {
         // need to remove that if later we want to test battle-anims
-        const newUrl = url.includes('./battle-anims/') ? prependPath('./battle-anims/tackle.json') : prependPath(url);
+        const newUrl = url.includes("./battle-anims/") ? prependPath("./battle-anims/tackle.json") : prependPath(url);
         let raw;
         try {
-          raw = fs.readFileSync(newUrl, {encoding: "utf8", flag: "r"});
-        } catch(e) {
+          raw = fs.readFileSync(newUrl, { encoding: "utf8", flag: "r" });
+        } catch (e) {
           return resolve(createFetchBadResponse({}));
         }
         const data = JSON.parse(raw);

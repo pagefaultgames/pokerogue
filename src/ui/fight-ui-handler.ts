@@ -7,7 +7,7 @@ import UiHandler from "./ui-handler";
 import * as Utils from "../utils";
 import { MoveCategory } from "#app/data/move";
 import i18next from "i18next";
-import {Button} from "#enums/buttons";
+import { Button } from "#enums/buttons";
 import Pokemon, { PokemonMove } from "#app/field/pokemon";
 import { CommandPhase } from "#app/phases/command-phase";
 
@@ -44,7 +44,12 @@ export default class FightUiHandler extends UiHandler {
     this.moveInfoContainer.setName("move-info");
     ui.add(this.moveInfoContainer);
 
-    this.typeIcon = this.scene.add.sprite(this.scene.scaledCanvas.width - 57, -36, Utils.getLocalizedSpriteKey("types"), "unknown");
+    this.typeIcon = this.scene.add.sprite(
+      this.scene.scaledCanvas.width - 57,
+      -36,
+      Utils.getLocalizedSpriteKey("types"),
+      "unknown",
+    );
     this.typeIcon.setVisible(false);
     this.moveInfoContainer.add(this.typeIcon);
 
@@ -52,35 +57,71 @@ export default class FightUiHandler extends UiHandler {
     this.moveCategoryIcon.setVisible(false);
     this.moveInfoContainer.add(this.moveCategoryIcon);
 
-    this.ppLabel = addTextObject(this.scene, this.scene.scaledCanvas.width - 70, -26, "PP", TextStyle.MOVE_INFO_CONTENT);
+    this.ppLabel = addTextObject(
+      this.scene,
+      this.scene.scaledCanvas.width - 70,
+      -26,
+      "PP",
+      TextStyle.MOVE_INFO_CONTENT,
+    );
     this.ppLabel.setOrigin(0.0, 0.5);
     this.ppLabel.setVisible(false);
     this.ppLabel.setText(i18next.t("fightUiHandler:pp"));
     this.moveInfoContainer.add(this.ppLabel);
 
-    this.ppText = addTextObject(this.scene, this.scene.scaledCanvas.width - 12, -26, "--/--", TextStyle.MOVE_INFO_CONTENT);
+    this.ppText = addTextObject(
+      this.scene,
+      this.scene.scaledCanvas.width - 12,
+      -26,
+      "--/--",
+      TextStyle.MOVE_INFO_CONTENT,
+    );
     this.ppText.setOrigin(1, 0.5);
     this.ppText.setVisible(false);
     this.moveInfoContainer.add(this.ppText);
 
-    this.powerLabel = addTextObject(this.scene, this.scene.scaledCanvas.width - 70, -18, "POWER", TextStyle.MOVE_INFO_CONTENT);
+    this.powerLabel = addTextObject(
+      this.scene,
+      this.scene.scaledCanvas.width - 70,
+      -18,
+      "POWER",
+      TextStyle.MOVE_INFO_CONTENT,
+    );
     this.powerLabel.setOrigin(0.0, 0.5);
     this.powerLabel.setVisible(false);
     this.powerLabel.setText(i18next.t("fightUiHandler:power"));
     this.moveInfoContainer.add(this.powerLabel);
 
-    this.powerText = addTextObject(this.scene, this.scene.scaledCanvas.width - 12, -18, "---", TextStyle.MOVE_INFO_CONTENT);
+    this.powerText = addTextObject(
+      this.scene,
+      this.scene.scaledCanvas.width - 12,
+      -18,
+      "---",
+      TextStyle.MOVE_INFO_CONTENT,
+    );
     this.powerText.setOrigin(1, 0.5);
     this.powerText.setVisible(false);
     this.moveInfoContainer.add(this.powerText);
 
-    this.accuracyLabel = addTextObject(this.scene, this.scene.scaledCanvas.width - 70, -10, "ACC", TextStyle.MOVE_INFO_CONTENT);
+    this.accuracyLabel = addTextObject(
+      this.scene,
+      this.scene.scaledCanvas.width - 70,
+      -10,
+      "ACC",
+      TextStyle.MOVE_INFO_CONTENT,
+    );
     this.accuracyLabel.setOrigin(0.0, 0.5);
     this.accuracyLabel.setVisible(false);
     this.accuracyLabel.setText(i18next.t("fightUiHandler:accuracy"));
     this.moveInfoContainer.add(this.accuracyLabel);
 
-    this.accuracyText = addTextObject(this.scene, this.scene.scaledCanvas.width - 12, -10, "---", TextStyle.MOVE_INFO_CONTENT);
+    this.accuracyText = addTextObject(
+      this.scene,
+      this.scene.scaledCanvas.width - 12,
+      -10,
+      "---",
+      TextStyle.MOVE_INFO_CONTENT,
+    );
     this.accuracyText.setOrigin(1, 0.5);
     this.accuracyText.setVisible(false);
     this.moveInfoContainer.add(this.accuracyText);
@@ -89,7 +130,7 @@ export default class FightUiHandler extends UiHandler {
   show(args: any[]): boolean {
     super.show(args);
 
-    this.fieldIndex = args.length ? args[0] as integer : 0;
+    this.fieldIndex = args.length ? (args[0] as integer) : 0;
 
     const messageHandler = this.getUi().getMessageHandler();
     messageHandler.bg.setVisible(false);
@@ -125,26 +166,26 @@ export default class FightUiHandler extends UiHandler {
       }
     } else {
       switch (button) {
-      case Button.UP:
-        if (cursor >= 2) {
-          success = this.setCursor(cursor - 2);
-        }
-        break;
-      case Button.DOWN:
-        if (cursor < 2) {
-          success = this.setCursor(cursor + 2);
-        }
-        break;
-      case Button.LEFT:
-        if (cursor % 2 === 1) {
-          success = this.setCursor(cursor - 1);
-        }
-        break;
-      case Button.RIGHT:
-        if (cursor % 2 === 0) {
-          success = this.setCursor(cursor + 1);
-        }
-        break;
+        case Button.UP:
+          if (cursor >= 2) {
+            success = this.setCursor(cursor - 2);
+          }
+          break;
+        case Button.DOWN:
+          if (cursor < 2) {
+            success = this.setCursor(cursor + 2);
+          }
+          break;
+        case Button.LEFT:
+          if (cursor % 2 === 1) {
+            success = this.setCursor(cursor - 1);
+          }
+          break;
+        case Button.RIGHT:
+          if (cursor % 2 === 0) {
+            success = this.setCursor(cursor + 1);
+          }
+          break;
       }
     }
 
@@ -240,7 +281,11 @@ export default class FightUiHandler extends UiHandler {
    * Returns undefined if it's a status move
    */
   private getEffectivenessText(pokemon: Pokemon, opponent: Pokemon, pokemonMove: PokemonMove): string | undefined {
-    const effectiveness = opponent.getMoveEffectiveness(pokemon, pokemonMove.getMove(), !opponent.battleData?.abilityRevealed);
+    const effectiveness = opponent.getMoveEffectiveness(
+      pokemon,
+      pokemonMove.getMove(),
+      !opponent.battleData?.abilityRevealed,
+    );
     if (effectiveness === undefined) {
       return undefined;
     }
@@ -253,7 +298,13 @@ export default class FightUiHandler extends UiHandler {
     const moveset = pokemon.getMoveset();
 
     for (let moveIndex = 0; moveIndex < 4; moveIndex++) {
-      const moveText = addTextObject(this.scene, moveIndex % 2 === 0 ? 0 : 100, moveIndex < 2 ? 0 : 16, "-", TextStyle.WINDOW);
+      const moveText = addTextObject(
+        this.scene,
+        moveIndex % 2 === 0 ? 0 : 100,
+        moveIndex < 2 ? 0 : 16,
+        "-",
+        TextStyle.WINDOW,
+      );
       moveText.setName("text-empty-move");
 
       if (moveIndex < moveset.length) {
@@ -283,7 +334,9 @@ export default class FightUiHandler extends UiHandler {
     }
 
     const moveColors = opponents
-      .map((opponent) => opponent.getMoveEffectiveness(pokemon, pokemonMove.getMove(), !opponent.battleData.abilityRevealed))
+      .map((opponent) =>
+        opponent.getMoveEffectiveness(pokemon, pokemonMove.getMove(), !opponent.battleData.abilityRevealed),
+      )
       .sort((a, b) => b - a)
       .map((effectiveness) => getTypeDamageMultiplierColor(effectiveness ?? 0, "offense"));
 

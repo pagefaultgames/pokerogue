@@ -26,16 +26,15 @@ export default class PokemonHatchInfoContainer extends PokemonInfoContainer {
   private pokemonEggMoveContainers: Phaser.GameObjects.Container[];
   private pokemonEggMoveBgs: Phaser.GameObjects.NineSlice[];
   private pokemonEggMoveLabels: Phaser.GameObjects.Text[];
-  private pokemonHatchedIcon : Phaser.GameObjects.Sprite;
+  private pokemonHatchedIcon: Phaser.GameObjects.Sprite;
   private pokemonListContainer: Phaser.GameObjects.Container;
   private pokemonCandyIcon: Phaser.GameObjects.Sprite;
   private pokemonCandyOverlayIcon: Phaser.GameObjects.Sprite;
   private pokemonCandyCountText: Phaser.GameObjects.Text;
 
-  constructor(scene: BattleScene, listContainer : Phaser.GameObjects.Container, x: number = 115, y: number = 9,) {
+  constructor(scene: BattleScene, listContainer: Phaser.GameObjects.Container, x: number = 115, y: number = 9) {
     super(scene, x, y);
     this.pokemonListContainer = listContainer;
-
   }
   setup(): void {
     super.setup();
@@ -43,15 +42,18 @@ export default class PokemonHatchInfoContainer extends PokemonInfoContainer {
 
     this.currentPokemonSprite = this.scene.add.sprite(54, 80, "pkmn__sub");
     this.currentPokemonSprite.setScale(0.8);
-    this.currentPokemonSprite.setPipeline(this.scene.spritePipeline, { tone: [ 0.0, 0.0, 0.0, 0.0 ], ignoreTimeTint: true });
+    this.currentPokemonSprite.setPipeline(this.scene.spritePipeline, {
+      tone: [0.0, 0.0, 0.0, 0.0],
+      ignoreTimeTint: true,
+    });
     this.pokemonListContainer.add(this.currentPokemonSprite);
 
     // setup name and number
-    this.pokemonNumberText = addTextObject(this.scene, 80, 107.5, "0000", TextStyle.SUMMARY, {fontSize: 74});
+    this.pokemonNumberText = addTextObject(this.scene, 80, 107.5, "0000", TextStyle.SUMMARY, { fontSize: 74 });
     this.pokemonNumberText.setOrigin(0, 0);
     this.pokemonListContainer.add(this.pokemonNumberText);
 
-    this.pokemonNameText = addTextObject(this.scene, 7, 107.5, "", TextStyle.SUMMARY, {fontSize: 74});
+    this.pokemonNameText = addTextObject(this.scene, 7, 107.5, "", TextStyle.SUMMARY, { fontSize: 74 });
     this.pokemonNameText.setOrigin(0, 0);
     this.pokemonListContainer.add(this.pokemonNameText);
 
@@ -89,7 +91,7 @@ export default class PokemonHatchInfoContainer extends PokemonInfoContainer {
       const eggMoveBg = this.scene.add.nineslice(70, 0, "type_bgs", "unknown", 92, 14, 2, 2, 2, 2);
       eggMoveBg.setOrigin(1, 0);
 
-      const eggMoveLabel = addTextObject(this.scene, 70 -eggMoveBg.width / 2, 0, "???", TextStyle.PARTY);
+      const eggMoveLabel = addTextObject(this.scene, 70 - eggMoveBg.width / 2, 0, "???", TextStyle.PARTY);
       eggMoveLabel.setOrigin(0.5, 0);
 
       this.pokemonEggMoveBgs.push(eggMoveBg);
@@ -105,7 +107,6 @@ export default class PokemonHatchInfoContainer extends PokemonInfoContainer {
     }
 
     super.add(this.pokemonEggMoveContainers);
-
   }
 
   /**
@@ -127,7 +128,6 @@ export default class PokemonHatchInfoContainer extends PokemonInfoContainer {
     const variant = pokemon.variant;
     this.currentPokemonSprite.setVisible(false);
     species.loadAssets(this.scene, female, formIndex, shiny, variant, true).then(() => {
-
       getPokemonSpeciesForm(species.speciesId, pokemon.formIndex).cry(this.scene);
       this.currentPokemonSprite.play(species.getSpriteKey(female, formIndex, shiny, variant));
       this.currentPokemonSprite.setPipelineData("shiny", shiny);
@@ -183,7 +183,5 @@ export default class PokemonHatchInfoContainer extends PokemonInfoContainer {
     } else {
       this.pokemonHatchedIcon.setFrame(getEggTierForSpecies(species));
     }
-
   }
-
 }

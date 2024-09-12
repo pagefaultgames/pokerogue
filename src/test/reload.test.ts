@@ -76,8 +76,7 @@ describe("Reload", () => {
   }, 20000);
 
   it("should not have RNG inconsistencies at a Daily run double battle", async () => {
-    game.override
-      .battleType("double");
+    game.override.battleType("double");
     await game.dailyMode.startBattle();
 
     const preReloadRngState = Phaser.Math.RND.state();
@@ -90,9 +89,7 @@ describe("Reload", () => {
   }, 20000);
 
   it("should not have RNG inconsistencies at a Daily run Gym Leader fight", async () => {
-    game.override
-      .battleType("single")
-      .startingWave(40);
+    game.override.battleType("single").startingWave(40);
     await game.dailyMode.startBattle();
 
     const preReloadRngState = Phaser.Math.RND.state();
@@ -105,9 +102,7 @@ describe("Reload", () => {
   }, 20000);
 
   it("should not have RNG inconsistencies at a Daily run regular trainer fight", async () => {
-    game.override
-      .battleType("single")
-      .startingWave(45);
+    game.override.battleType("single").startingWave(45);
     await game.dailyMode.startBattle();
 
     const preReloadRngState = Phaser.Math.RND.state();
@@ -120,9 +115,7 @@ describe("Reload", () => {
   }, 20000);
 
   it("should not have RNG inconsistencies at a Daily run wave 50 Boss fight", async () => {
-    game.override
-      .battleType("single")
-      .startingWave(50);
+    game.override.battleType("single").startingWave(50);
     await game.runToFinalBossEncounter([Species.BULBASAUR], GameModes.DAILY);
 
     const preReloadRngState = Phaser.Math.RND.state();

@@ -62,7 +62,8 @@ describe("Abilities - Parental Bond", () => {
 
       expect(leadPokemon.turnData.hitCount).toBe(2);
       expect(secondStrikeDamage).toBe(toDmgValue(0.25 * firstStrikeDamage));
-    }, TIMEOUT
+    },
+    TIMEOUT,
   );
 
   it(
@@ -81,7 +82,8 @@ describe("Abilities - Parental Bond", () => {
 
       expect(leadPokemon.turnData.hitCount).toBe(2);
       expect(leadPokemon.getStatStage(Stat.ATK)).toBe(2);
-    }, TIMEOUT
+    },
+    TIMEOUT,
   );
 
   it(
@@ -98,7 +100,8 @@ describe("Abilities - Parental Bond", () => {
       await game.phaseInterceptor.to("BerryPhase", false);
 
       expect(enemyPokemon.getStatStage(Stat.ATK)).toBe(-1);
-    }, TIMEOUT
+    },
+    TIMEOUT,
   );
 
   it(
@@ -116,7 +119,8 @@ describe("Abilities - Parental Bond", () => {
       await game.phaseInterceptor.to("BerryPhase", false);
 
       expect(leadPokemon.turnData.hitCount).toBe(2);
-    }, TIMEOUT
+    },
+    TIMEOUT,
   );
 
   it(
@@ -133,7 +137,8 @@ describe("Abilities - Parental Bond", () => {
       await game.phaseInterceptor.to("DamagePhase", false);
 
       expect(leadPokemon.turnData.hitCount).toBe(1);
-    }, TIMEOUT
+    },
+    TIMEOUT,
   );
 
   it(
@@ -151,7 +156,8 @@ describe("Abilities - Parental Bond", () => {
       await game.phaseInterceptor.to("DamagePhase", false);
 
       expect(leadPokemon.turnData.hitCount).toBe(1);
-    }, TIMEOUT
+    },
+    TIMEOUT,
   );
 
   it(
@@ -167,7 +173,8 @@ describe("Abilities - Parental Bond", () => {
       await game.phaseInterceptor.to("BerryPhase", false);
 
       expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp() - 80);
-    }, TIMEOUT
+    },
+    TIMEOUT,
   );
 
   it(
@@ -189,7 +196,8 @@ describe("Abilities - Parental Bond", () => {
       await game.phaseInterceptor.to("BerryPhase", false);
 
       expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp() - 4 * playerDamage);
-    }, TIMEOUT
+    },
+    TIMEOUT,
   );
 
   it(
@@ -208,8 +216,9 @@ describe("Abilities - Parental Bond", () => {
 
       await game.phaseInterceptor.to("BerryPhase", false);
 
-      playerPokemon.forEach(p => expect(p.turnData.hitCount).toBe(1));
-    }, TIMEOUT
+      playerPokemon.forEach((p) => expect(p.turnData.hitCount).toBe(1));
+    },
+    TIMEOUT,
   );
 
   it(
@@ -225,7 +234,8 @@ describe("Abilities - Parental Bond", () => {
       await game.phaseInterceptor.to("DamagePhase", false);
 
       expect(leadPokemon.turnData.hitCount).toBe(2);
-    }, TIMEOUT
+    },
+    TIMEOUT,
   );
 
   it(
@@ -247,7 +257,8 @@ describe("Abilities - Parental Bond", () => {
       await game.phaseInterceptor.to("BerryPhase", false);
 
       expect(leadPokemon.hp).toBe(Math.ceil(leadPokemon.getMaxHp() / 2));
-    }, TIMEOUT
+    },
+    TIMEOUT,
   );
 
   it(
@@ -271,7 +282,8 @@ describe("Abilities - Parental Bond", () => {
       await game.phaseInterceptor.to("BerryPhase", false);
 
       expect(leadPokemon.isOfType(Type.FIRE)).toBe(false);
-    }, TIMEOUT
+    },
+    TIMEOUT,
   );
 
   it(
@@ -289,7 +301,8 @@ describe("Abilities - Parental Bond", () => {
       await game.phaseInterceptor.to("DamagePhase");
 
       expect(leadPokemon.turnData.hitCount).toBe(4);
-    }, TIMEOUT
+    },
+    TIMEOUT,
   );
 
   it(
@@ -313,7 +326,8 @@ describe("Abilities - Parental Bond", () => {
       await game.phaseInterceptor.to("MoveEndPhase", false);
 
       expect(enemyPokemon.hp).toBe(Math.ceil(enemyPokemon.getMaxHp() * 0.25));
-    }, TIMEOUT
+    },
+    TIMEOUT,
   );
 
   it(
@@ -339,7 +353,8 @@ describe("Abilities - Parental Bond", () => {
       await game.phaseInterceptor.to("MoveEndPhase", false);
 
       expect(enemyPokemon.hp).toBe(enemyStartingHp - 200);
-    }, TIMEOUT
+    },
+    TIMEOUT,
   );
 
   it(
@@ -362,7 +377,8 @@ describe("Abilities - Parental Bond", () => {
       await game.phaseInterceptor.to("TurnEndPhase");
 
       expect(leadPokemon.getTag(BattlerTagType.RECHARGING)).toBeDefined();
-    }, TIMEOUT
+    },
+    TIMEOUT,
   );
 
   it(
@@ -389,7 +405,8 @@ describe("Abilities - Parental Bond", () => {
       await game.phaseInterceptor.to("TurnEndPhase");
 
       expect(enemyPokemon.getTag(BattlerTagType.TRAPPED)).toBeDefined();
-    }, TIMEOUT
+    },
+    TIMEOUT,
   );
 
   it(
@@ -413,7 +430,8 @@ describe("Abilities - Parental Bond", () => {
       await game.phaseInterceptor.to("TurnEndPhase");
 
       expect(enemyPokemon.getTag(BattlerTagType.IGNORE_FLYING)).toBeDefined();
-    }, TIMEOUT
+    },
+    TIMEOUT,
   );
 
   it(
@@ -433,7 +451,8 @@ describe("Abilities - Parental Bond", () => {
 
       // This will cause this test to time out if the switch was forced on the first hit.
       await game.phaseInterceptor.to("MoveEffectPhase", false);
-    }, TIMEOUT
+    },
+    TIMEOUT,
   );
 
   it(
@@ -457,7 +476,8 @@ describe("Abilities - Parental Bond", () => {
       await game.phaseInterceptor.to("BerryPhase", false);
 
       expect(enemyPokemon.status?.effect).toBeUndefined();
-    }, TIMEOUT
+    },
+    TIMEOUT,
   );
 
   it(
@@ -475,7 +495,8 @@ describe("Abilities - Parental Bond", () => {
       await game.phaseInterceptor.to("BerryPhase", false);
 
       expect(leadPokemon.getStatStage(Stat.ATK)).toBe(-1);
-    }, TIMEOUT
+    },
+    TIMEOUT,
   );
 
   it(
@@ -493,7 +514,8 @@ describe("Abilities - Parental Bond", () => {
       await game.phaseInterceptor.to("BerryPhase", false);
 
       expect(enemyPokemon.getStatStage(Stat.SPATK)).toBe(1);
-    }, TIMEOUT
+    },
+    TIMEOUT,
   );
 
   it(
@@ -508,7 +530,7 @@ describe("Abilities - Parental Bond", () => {
 
       const enemyPokemon = game.scene.getEnemyField();
 
-      const enemyStartingHp = enemyPokemon.map(p => p.hp);
+      const enemyStartingHp = enemyPokemon.map((p) => p.hp);
 
       game.move.select(Moves.EARTHQUAKE);
       game.move.select(Moves.SPLASH, 1);
@@ -519,6 +541,7 @@ describe("Abilities - Parental Bond", () => {
       await game.phaseInterceptor.to("BerryPhase", false);
 
       enemyPokemon.forEach((p, i) => expect(enemyStartingHp[i] - p.hp).toBe(2 * enemyFirstHitDamage[i]));
-    }, TIMEOUT
+    },
+    TIMEOUT,
   );
 });

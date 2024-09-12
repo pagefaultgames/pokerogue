@@ -3,7 +3,7 @@ import { TextStyle, addTextObject } from "./text";
 import { Mode } from "./ui";
 import UiHandler from "./ui-handler";
 import { addWindow } from "./ui-theme";
-import {Button} from "#enums/buttons";
+import { Button } from "#enums/buttons";
 import i18next from "i18next";
 import { Challenge } from "#app/data/challenge";
 import * as Utils from "../utils";
@@ -28,7 +28,7 @@ export default class GameChallengesUiHandler extends UiHandler {
 
   private descriptionText: BBCodeText;
 
-  private challengeLabels: Array<{ label: Phaser.GameObjects.Text, value: Phaser.GameObjects.Text }>;
+  private challengeLabels: Array<{ label: Phaser.GameObjects.Text; value: Phaser.GameObjects.Text }>;
   private monoTypeValue: Phaser.GameObjects.Sprite;
 
   private cursorObj: Phaser.GameObjects.NineSlice | null;
@@ -50,15 +50,25 @@ export default class GameChallengesUiHandler extends UiHandler {
     this.challengesContainer = this.scene.add.container(1, -(this.scene.game.canvas.height / 6) + 1);
     this.challengesContainer.setName("challenges");
 
-    this.challengesContainer.setInteractive(new Phaser.Geom.Rectangle(0, 0, this.scene.game.canvas.width / 6, this.scene.game.canvas.height / 6), Phaser.Geom.Rectangle.Contains);
+    this.challengesContainer.setInteractive(
+      new Phaser.Geom.Rectangle(0, 0, this.scene.game.canvas.width / 6, this.scene.game.canvas.height / 6),
+      Phaser.Geom.Rectangle.Contains,
+    );
 
-    const bgOverlay = this.scene.add.rectangle(-1, -1, this.scene.scaledCanvas.width, this.scene.scaledCanvas.height, 0x424242, 0.8);
+    const bgOverlay = this.scene.add.rectangle(
+      -1,
+      -1,
+      this.scene.scaledCanvas.width,
+      this.scene.scaledCanvas.height,
+      0x424242,
+      0.8,
+    );
     bgOverlay.setName("rect-challenge-overlay");
     bgOverlay.setOrigin(0, 0);
     this.challengesContainer.add(bgOverlay);
 
     // TODO: Change this back to /9 when adding in difficulty
-    const headerBg = addWindow(this.scene, 0, 0, (this.scene.game.canvas.width / 6), 24);
+    const headerBg = addWindow(this.scene, 0, 0, this.scene.game.canvas.width / 6, 24);
     headerBg.setName("window-header-bg");
     headerBg.setOrigin(0, 0);
 
@@ -80,11 +90,23 @@ export default class GameChallengesUiHandler extends UiHandler {
     // difficultyName.setPositionRelative(difficultyBg, difficultyBg.width - difficultyName.displayWidth - 8, 4);
 
     this.optionsWidth = this.scene.scaledCanvas.width * 0.6;
-    this.optionsBg = addWindow(this.scene, 0, headerBg.height, this.optionsWidth, this.scene.scaledCanvas.height - headerBg.height - 2);
+    this.optionsBg = addWindow(
+      this.scene,
+      0,
+      headerBg.height,
+      this.optionsWidth,
+      this.scene.scaledCanvas.height - headerBg.height - 2,
+    );
     this.optionsBg.setName("window-options-bg");
     this.optionsBg.setOrigin(0, 0);
 
-    const descriptionBg = addWindow(this.scene, 0, headerBg.height, this.scene.scaledCanvas.width - this.optionsWidth, this.scene.scaledCanvas.height - headerBg.height - 26);
+    const descriptionBg = addWindow(
+      this.scene,
+      0,
+      headerBg.height,
+      this.scene.scaledCanvas.width - this.optionsWidth,
+      this.scene.scaledCanvas.height - headerBg.height - 26,
+    );
     descriptionBg.setName("window-desc-bg");
     descriptionBg.setOrigin(0, 0);
     descriptionBg.setPositionRelative(this.optionsBg, this.optionsBg.width, 0);
@@ -94,16 +116,16 @@ export default class GameChallengesUiHandler extends UiHandler {
       fontSize: 84,
       color: Color.ORANGE,
       padding: {
-        bottom: 6
+        bottom: 6,
       },
       wrap: {
         mode: "word",
         width: (descriptionBg.width - 12) * 6,
-      }
+      },
     });
     this.descriptionText.setName("text-desc");
     this.scene.add.existing(this.descriptionText);
-    this.descriptionText.setScale(1/6);
+    this.descriptionText.setScale(1 / 6);
     this.descriptionText.setShadow(4, 5, ShadowColor.ORANGE);
     this.descriptionText.setOrigin(0, 0);
 
@@ -117,7 +139,18 @@ export default class GameChallengesUiHandler extends UiHandler {
     this.startText.setOrigin(0, 0);
     this.startText.setPositionRelative(this.startBg, (this.startBg.width - this.startText.displayWidth) / 2, 4);
 
-    this.startCursor = this.scene.add.nineslice(0, 0, "summary_moves_cursor", undefined, descriptionBg.width - 8, 16, 1, 1, 1, 1);
+    this.startCursor = this.scene.add.nineslice(
+      0,
+      0,
+      "summary_moves_cursor",
+      undefined,
+      descriptionBg.width - 8,
+      16,
+      1,
+      1,
+      1,
+      1,
+    );
     this.startCursor.setName("9s-start-cursor");
     this.startCursor.setOrigin(0, 0);
     this.startCursor.setPositionRelative(this.startBg, 4, 3);
@@ -142,7 +175,7 @@ export default class GameChallengesUiHandler extends UiHandler {
 
       this.challengeLabels[i] = {
         label: label,
-        value: value
+        value: value,
       };
     }
 
@@ -220,14 +253,12 @@ export default class GameChallengesUiHandler extends UiHandler {
     }
 
     // This checks if a challenge has been selected by the user and updates the text/its opacity accordingly.
-    this.hasSelectedChallenge = this.scene.gameMode.challenges.some(c => c.value !== 0);
+    this.hasSelectedChallenge = this.scene.gameMode.challenges.some((c) => c.value !== 0);
     if (this.hasSelectedChallenge) {
-
       this.startText.setText(i18next.t("common:start"));
       this.startText.setAlpha(1);
       this.startText.setPositionRelative(this.startBg, (this.startBg.width - this.startText.displayWidth) / 2, 4);
     } else {
-
       this.startText.setText(i18next.t("challenges:noneSelected"));
       this.startText.setAlpha(0.5);
       this.startText.setPositionRelative(this.startBg, (this.startBg.width - this.startText.displayWidth) / 2, 4);
@@ -246,7 +277,7 @@ export default class GameChallengesUiHandler extends UiHandler {
     this.startCursor.setVisible(false);
     this.challengesContainer.setVisible(true);
     // Should always be false at the start
-    this.hasSelectedChallenge = this.scene.gameMode.challenges.some(c => c.value !== 0);
+    this.hasSelectedChallenge = this.scene.gameMode.challenges.some((c) => c.value !== 0);
     this.setCursor(0);
 
     this.initLabels();
@@ -302,66 +333,71 @@ export default class GameChallengesUiHandler extends UiHandler {
     } else {
       if (this.cursorObj?.visible && !this.startCursor.visible) {
         switch (button) {
-        case Button.UP:
-          if (this.cursor === 0) {
-            if (this.scrollCursor === 0) {
-              // When at the top of the menu and pressing UP, move to the bottommost item.
-              if (this.scene.gameMode.challenges.length > rowsToDisplay) { // If there are more than 9 challenges, scroll to the bottom
-                // First, set the cursor to the last visible element, preparing for the scroll to the end.
-                const successA = this.setCursor(rowsToDisplay - 1);
-                // Then, adjust the scroll to display the bottommost elements of the menu.
-                const successB = this.setScrollCursor(this.scene.gameMode.challenges.length - rowsToDisplay);
-                success = successA && successB; // success is just there to play the little validation sound effect
-              } else { // If there are 9 or less challenges, just move to the bottom one
-                success = this.setCursor(this.scene.gameMode.challenges.length - 1);
+          case Button.UP:
+            if (this.cursor === 0) {
+              if (this.scrollCursor === 0) {
+                // When at the top of the menu and pressing UP, move to the bottommost item.
+                if (this.scene.gameMode.challenges.length > rowsToDisplay) {
+                  // If there are more than 9 challenges, scroll to the bottom
+                  // First, set the cursor to the last visible element, preparing for the scroll to the end.
+                  const successA = this.setCursor(rowsToDisplay - 1);
+                  // Then, adjust the scroll to display the bottommost elements of the menu.
+                  const successB = this.setScrollCursor(this.scene.gameMode.challenges.length - rowsToDisplay);
+                  success = successA && successB; // success is just there to play the little validation sound effect
+                } else {
+                  // If there are 9 or less challenges, just move to the bottom one
+                  success = this.setCursor(this.scene.gameMode.challenges.length - 1);
+                }
+              } else {
+                success = this.setScrollCursor(this.scrollCursor - 1);
               }
             } else {
-              success = this.setScrollCursor(this.scrollCursor - 1);
+              success = this.setCursor(this.cursor - 1);
             }
-          } else {
-            success = this.setCursor(this.cursor - 1);
-          }
-          if (success) {
-            this.updateText();
-          }
-          break;
-        case Button.DOWN:
-          if (this.cursor === rowsToDisplay - 1) {
-            if (this.scrollCursor < this.scene.gameMode.challenges.length - rowsToDisplay) {
-              // When at the bottom and pressing DOWN, scroll if possible.
-              success = this.setScrollCursor(this.scrollCursor + 1);
+            if (success) {
+              this.updateText();
+            }
+            break;
+          case Button.DOWN:
+            if (this.cursor === rowsToDisplay - 1) {
+              if (this.scrollCursor < this.scene.gameMode.challenges.length - rowsToDisplay) {
+                // When at the bottom and pressing DOWN, scroll if possible.
+                success = this.setScrollCursor(this.scrollCursor + 1);
+              } else {
+                // When at the bottom of a scrolling menu and pressing DOWN, move to the topmost item.
+                // First, set the cursor to the first visible element, preparing for the scroll to the top.
+                const successA = this.setCursor(0);
+                // Then, adjust the scroll to display the topmost elements of the menu.
+                const successB = this.setScrollCursor(0);
+                success = successA && successB; // success is just there to play the little validation sound effect
+              }
+            } else if (
+              this.scene.gameMode.challenges.length < rowsToDisplay &&
+              this.cursor === this.scene.gameMode.challenges.length - 1
+            ) {
+              // When at the bottom of a non-scrolling menu and pressing DOWN, move to the topmost item.
+              success = this.setCursor(0);
             } else {
-              // When at the bottom of a scrolling menu and pressing DOWN, move to the topmost item.
-              // First, set the cursor to the first visible element, preparing for the scroll to the top.
-              const successA = this.setCursor(0);
-              // Then, adjust the scroll to display the topmost elements of the menu.
-              const successB = this.setScrollCursor(0);
-              success = successA && successB; // success is just there to play the little validation sound effect
+              success = this.setCursor(this.cursor + 1);
             }
-          } else if (this.scene.gameMode.challenges.length < rowsToDisplay && this.cursor === this.scene.gameMode.challenges.length - 1) {
-            // When at the bottom of a non-scrolling menu and pressing DOWN, move to the topmost item.
-            success = this.setCursor(0);
-          } else {
-            success = this.setCursor(this.cursor + 1);
-          }
-          if (success) {
-            this.updateText();
-          }
-          break;
-        case Button.LEFT:
-          // Moves the option cursor left, if possible.
-          success = this.getActiveChallenge().decreaseValue();
-          if (success) {
-            this.updateText();
-          }
-          break;
-        case Button.RIGHT:
-          // Moves the option cursor right, if possible.
-          success = this.getActiveChallenge().increaseValue();
-          if (success) {
-            this.updateText();
-          }
-          break;
+            if (success) {
+              this.updateText();
+            }
+            break;
+          case Button.LEFT:
+            // Moves the option cursor left, if possible.
+            success = this.getActiveChallenge().decreaseValue();
+            if (success) {
+              this.updateText();
+            }
+            break;
+          case Button.RIGHT:
+            // Moves the option cursor right, if possible.
+            success = this.getActiveChallenge().increaseValue();
+            if (success) {
+              this.updateText();
+            }
+            break;
         }
       }
     }
@@ -377,7 +413,18 @@ export default class GameChallengesUiHandler extends UiHandler {
     let ret = super.setCursor(cursor);
 
     if (!this.cursorObj) {
-      this.cursorObj = this.scene.add.nineslice(0, 0, "summary_moves_cursor", undefined, this.optionsWidth - 8, 16, 1, 1, 1, 1);
+      this.cursorObj = this.scene.add.nineslice(
+        0,
+        0,
+        "summary_moves_cursor",
+        undefined,
+        this.optionsWidth - 8,
+        16,
+        1,
+        1,
+        1,
+        1,
+      );
       this.cursorObj.setOrigin(0, 0);
       this.valuesContainer.add(this.cursorObj);
     }

@@ -109,5 +109,5 @@ export const enConfig = {
   partyUiHandler,
   modifierSelectUiHandler,
   moveTriggers,
-  runHistory
+  runHistory,
 };

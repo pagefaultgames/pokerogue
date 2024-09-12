@@ -8,7 +8,6 @@ import InputTextPlugin from "phaser3-rex-plugins/plugins/inputtext-plugin";
 import TransitionImagePackPlugin from "phaser3-rex-plugins/templates/transitionimagepack/transitionimagepack-plugin";
 import { LoadingScene } from "./loading-scene";
 
-
 // Catch global errors and display them in an alert so users can report the issue.
 window.onerror = function (message, source, lineno, colno, error) {
   console.error(error);
@@ -31,44 +30,50 @@ const config: Phaser.Types.Core.GameConfig = {
   scale: {
     width: 1920,
     height: 1080,
-    mode: Phaser.Scale.FIT
+    mode: Phaser.Scale.FIT,
   },
   plugins: {
-    global: [{
-      key: "rexInputTextPlugin",
-      plugin: InputTextPlugin,
-      start: true
-    }, {
-      key: "rexBBCodeTextPlugin",
-      plugin: BBCodeTextPlugin,
-      start: true
-    }, {
-      key: "rexTransitionImagePackPlugin",
-      plugin: TransitionImagePackPlugin,
-      start: true
-    }],
-    scene: [{
-      key: "rexUI",
-      plugin: UIPlugin,
-      mapping: "rexUI"
-    }]
+    global: [
+      {
+        key: "rexInputTextPlugin",
+        plugin: InputTextPlugin,
+        start: true,
+      },
+      {
+        key: "rexBBCodeTextPlugin",
+        plugin: BBCodeTextPlugin,
+        start: true,
+      },
+      {
+        key: "rexTransitionImagePackPlugin",
+        plugin: TransitionImagePackPlugin,
+        start: true,
+      },
+    ],
+    scene: [
+      {
+        key: "rexUI",
+        plugin: UIPlugin,
+        mapping: "rexUI",
+      },
+    ],
   },
   input: {
     mouse: {
-      target: "app"
+      target: "app",
     },
     touch: {
-      target: "app"
+      target: "app",
     },
-    gamepad: true
+    gamepad: true,
   },
   dom: {
-    createContainer: true
+    createContainer: true,
   },
   pixelArt: true,
-  pipeline: [ InvertPostFX ] as unknown as Phaser.Types.Core.PipelineConfig,
-  scene: [ LoadingScene, BattleScene ],
-  version: version
+  pipeline: [InvertPostFX] as unknown as Phaser.Types.Core.PipelineConfig,
+  scene: [LoadingScene, BattleScene],
+  version: version,
 };
 
 /**
@@ -97,11 +102,12 @@ const startGame = () => {
 };
 
 fetch("/manifest.json")
-  .then(res => res.json())
-  .then(jsonResponse => {
+  .then((res) => res.json())
+  .then((jsonResponse) => {
     startGame();
     game["manifest"] = jsonResponse.manifest;
-  }).catch(() => {
+  })
+  .catch(() => {
     // Manifest not found (likely local build)
     startGame();
   });

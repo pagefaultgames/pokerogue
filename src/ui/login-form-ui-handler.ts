@@ -17,9 +17,9 @@ interface BuildInteractableImageOpts {
 
 export default class LoginFormUiHandler extends FormModalUiHandler {
   private readonly ERR_USERNAME: string = "invalid username";
-  private readonly ERR_PASSWORD: string =  "invalid password";
-  private readonly ERR_ACCOUNT_EXIST: string =  "account doesn't exist";
-  private readonly ERR_PASSWORD_MATCH: string =  "password doesn't match";
+  private readonly ERR_PASSWORD: string = "invalid password";
+  private readonly ERR_ACCOUNT_EXIST: string = "account doesn't exist";
+  private readonly ERR_PASSWORD_MATCH: string = "password doesn't match";
   private readonly ERR_NO_SAVES: string = "No save files found";
   private readonly ERR_TOO_MANY_SAVES: string = "Too many save files found";
 
@@ -42,7 +42,7 @@ export default class LoginFormUiHandler extends FormModalUiHandler {
 
     this.usernameInfoImage = this.buildInteractableImage("settings_icon", "username-info-icon", {
       x: 20,
-      scale: 0.5
+      scale: 0.5,
     });
 
     this.infoContainer.add(this.usernameInfoImage);
@@ -53,7 +53,10 @@ export default class LoginFormUiHandler extends FormModalUiHandler {
 
   private buildExternalPartyContainer() {
     this.externalPartyContainer = this.scene.add.container(0, 0);
-    this.externalPartyContainer.setInteractive(new Phaser.Geom.Rectangle(0, 0, this.scene.game.canvas.width / 12, this.scene.game.canvas.height / 12), Phaser.Geom.Rectangle.Contains);
+    this.externalPartyContainer.setInteractive(
+      new Phaser.Geom.Rectangle(0, 0, this.scene.game.canvas.width / 12, this.scene.game.canvas.height / 12),
+      Phaser.Geom.Rectangle.Contains,
+    );
     this.externalPartyTitle = addTextObject(this.scene, 0, 4, "", TextStyle.SETTINGS_LABEL);
     this.externalPartyTitle.setOrigin(0.5, 0);
     this.externalPartyBg = addWindow(this.scene, 0, 0, 0, 0);
@@ -76,7 +79,7 @@ export default class LoginFormUiHandler extends FormModalUiHandler {
   }
 
   override getFields(_config?: ModalConfig): string[] {
-    return [ i18next.t("menu:username"), i18next.t("menu:password") ];
+    return [i18next.t("menu:username"), i18next.t("menu:password")];
   }
 
   override getWidth(_config?: ModalConfig): number {
@@ -84,11 +87,11 @@ export default class LoginFormUiHandler extends FormModalUiHandler {
   }
 
   override getMargin(_config?: ModalConfig): [number, number, number, number] {
-    return [ 0, 0, 48, 0 ];
+    return [0, 0, 48, 0];
   }
 
   override getButtonLabels(_config?: ModalConfig): string[] {
-    return [ i18next.t("menu:login"), i18next.t("menu:register")];
+    return [i18next.t("menu:login"), i18next.t("menu:register")];
   }
 
   override getReadableErrorMessage(error: string): string {
@@ -97,18 +100,18 @@ export default class LoginFormUiHandler extends FormModalUiHandler {
       error = error.slice(0, colonIndex);
     }
     switch (error) {
-    case this.ERR_USERNAME:
-      return i18next.t("menu:invalidLoginUsername");
-    case this.ERR_PASSWORD:
-      return i18next.t("menu:invalidLoginPassword");
-    case this.ERR_ACCOUNT_EXIST:
-      return i18next.t("menu:accountNonExistent");
-    case this.ERR_PASSWORD_MATCH:
-      return i18next.t("menu:unmatchingPassword");
-    case this.ERR_NO_SAVES:
-      return i18next.t("menu:noSaves");
-    case this.ERR_TOO_MANY_SAVES:
-      return i18next.t("menu:tooManySaves");
+      case this.ERR_USERNAME:
+        return i18next.t("menu:invalidLoginUsername");
+      case this.ERR_PASSWORD:
+        return i18next.t("menu:invalidLoginPassword");
+      case this.ERR_ACCOUNT_EXIST:
+        return i18next.t("menu:accountNonExistent");
+      case this.ERR_PASSWORD_MATCH:
+        return i18next.t("menu:unmatchingPassword");
+      case this.ERR_NO_SAVES:
+        return i18next.t("menu:noSaves");
+      case this.ERR_TOO_MANY_SAVES:
+        return i18next.t("menu:tooManySaves");
     }
 
     return super.getReadableErrorMessage(error);
@@ -116,7 +119,6 @@ export default class LoginFormUiHandler extends FormModalUiHandler {
 
   override show(args: any[]): boolean {
     if (super.show(args)) {
-
       const config = args[0] as ModalConfig;
       this.processExternalProvider(config);
       const originalLoginAction = this.submitAction;
@@ -125,21 +127,25 @@ export default class LoginFormUiHandler extends FormModalUiHandler {
         this.submitAction = originalLoginAction;
         this.sanitizeInputs();
         this.scene.ui.setMode(Mode.LOADING, { buttonActions: [] });
-        const onFail = error => {
+        const onFail = (error) => {
           this.scene.ui.setMode(Mode.LOGIN_FORM, Object.assign(config, { errorMessage: error?.trim() }));
           this.scene.ui.playError();
         };
         if (!this.inputs[0].text) {
           return onFail(i18next.t("menu:emptyUsername"));
         }
-        Utils.apiPost("account/login", `username=${encodeURIComponent(this.inputs[0].text)}&password=${encodeURIComponent(this.inputs[1].text)}`, "application/x-www-form-urlencoded")
-          .then(response => {
+        Utils.apiPost(
+          "account/login",
+          `username=${encodeURIComponent(this.inputs[0].text)}&password=${encodeURIComponent(this.inputs[1].text)}`,
+          "application/x-www-form-urlencoded",
+        )
+          .then((response) => {
             if (!response.ok) {
               return response.text();
             }
             return response.json();
           })
-          .then(response => {
+          .then((response) => {
             if (response.hasOwnProperty("token")) {
               Utils.setCookie(Utils.sessionIdKey, response.token);
               originalLoginAction && originalLoginAction();
@@ -164,16 +170,16 @@ export default class LoginFormUiHandler extends FormModalUiHandler {
     [this.discordImage, this.googleImage, this.usernameInfoImage].forEach((img) => img.off("pointerdown"));
   }
 
-  private processExternalProvider(config: ModalConfig) : void {
+  private processExternalProvider(config: ModalConfig): void {
     this.externalPartyTitle.setText(i18next.t("menu:orUse") ?? "");
-    this.externalPartyTitle.setX(20+this.externalPartyTitle.text.length);
+    this.externalPartyTitle.setX(20 + this.externalPartyTitle.text.length);
     this.externalPartyTitle.setVisible(true);
     this.externalPartyContainer.setPositionRelative(this.modalContainer, 175, 0);
     this.externalPartyContainer.setVisible(true);
     this.externalPartyBg.setSize(this.externalPartyTitle.text.length + 50, this.modalBg.height);
     this.getUi().moveTo(this.externalPartyContainer, this.getUi().length - 1);
-    this.googleImage.setPosition(this.externalPartyBg.width/3.1, this.externalPartyBg.height-60);
-    this.discordImage.setPosition(this.externalPartyBg.width/3.1, this.externalPartyBg.height-40);
+    this.googleImage.setPosition(this.externalPartyBg.width / 3.1, this.externalPartyBg.height - 60);
+    this.discordImage.setPosition(this.externalPartyBg.width / 3.1, this.externalPartyBg.height - 40);
 
     this.infoContainer.setPosition(5, -76);
     this.infoContainer.setVisible(true);
@@ -194,7 +200,7 @@ export default class LoginFormUiHandler extends FormModalUiHandler {
       window.open(googleUrl, "_self");
     });
 
-    const onFail = error => {
+    const onFail = (error) => {
       this.scene.ui.setMode(Mode.LOADING, { buttonActions: [] });
       this.scene.ui.setModeForceTransition(Mode.LOGIN_FORM, Object.assign(config, { errorMessage: error?.trim() }));
       this.scene.ui.playError();
@@ -203,7 +209,7 @@ export default class LoginFormUiHandler extends FormModalUiHandler {
     this.usernameInfoImage.on("pointerdown", () => {
       const localStorageKeys = Object.keys(localStorage); // this gets the keys for localStorage
       const keyToFind = "data_";
-      const dataKeys = localStorageKeys.filter(ls => ls.indexOf(keyToFind) >= 0);
+      const dataKeys = localStorageKeys.filter((ls) => ls.indexOf(keyToFind) >= 0);
       if (dataKeys.length > 0 && dataKeys.length <= 2) {
         const options: OptionSelectItem[] = [];
         for (let i = 0; i < dataKeys.length; i++) {
@@ -213,14 +219,17 @@ export default class LoginFormUiHandler extends FormModalUiHandler {
               this.scene.ui.revertMode();
               this.infoContainer.disableInteractive();
               return true;
-            }
+            },
           });
         }
         this.scene.ui.setOverlayMode(Mode.OPTION_SELECT, {
           options: options,
-          delay: 1000
+          delay: 1000,
         });
-        this.infoContainer.setInteractive(new Phaser.Geom.Rectangle(0, 0, this.scene.game.canvas.width, this.scene.game.canvas.height), Phaser.Geom.Rectangle.Contains);
+        this.infoContainer.setInteractive(
+          new Phaser.Geom.Rectangle(0, 0, this.scene.game.canvas.width, this.scene.game.canvas.height),
+          Phaser.Geom.Rectangle.Contains,
+        );
       } else {
         if (dataKeys.length > 2) {
           return onFail(this.ERR_TOO_MANY_SAVES);
@@ -236,7 +245,7 @@ export default class LoginFormUiHandler extends FormModalUiHandler {
       duration: Utils.fixedInt(1000),
       ease: "Sine.easeInOut",
       y: "-=24",
-      alpha: 1
+      alpha: 1,
     });
 
     this.infoContainer.setAlpha(0);
@@ -245,17 +254,12 @@ export default class LoginFormUiHandler extends FormModalUiHandler {
       duration: Utils.fixedInt(1000),
       ease: "Sine.easeInOut",
       y: "-=24",
-      alpha: 1
+      alpha: 1,
     });
   }
 
   private buildInteractableImage(texture: string, name: string, opts: BuildInteractableImageOpts = {}) {
-    const {
-      scale = 0.07,
-      x = 0,
-      y = 0,
-      origin = { x: 0, y: 0 }
-    } = opts;
+    const { scale = 0.07, x = 0, y = 0, origin = { x: 0, y: 0 } } = opts;
     const img = this.scene.add.image(x, y, texture);
     img.setName(name);
     img.setOrigin(origin.x, origin.y);

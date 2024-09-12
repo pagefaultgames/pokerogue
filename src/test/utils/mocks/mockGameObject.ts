@@ -1,3 +1,1 @@
-export interface MockGameObject {
-
-}
+export interface MockGameObject {}

@@ -28,7 +28,18 @@ export default class AchvBar extends Phaser.GameObjects.Container {
     this.defaultWidth = 200;
     this.defaultHeight = 40;
 
-    this.bg = this.scene.add.nineslice(0, 0, "achv_bar", undefined, this.defaultWidth, this.defaultHeight, 41, 6, 16, 4);
+    this.bg = this.scene.add.nineslice(
+      0,
+      0,
+      "achv_bar",
+      undefined,
+      this.defaultWidth,
+      this.defaultHeight,
+      41,
+      6,
+      16,
+      4,
+    );
     this.bg.setOrigin(0, 0);
 
     this.add(this.bg);
@@ -80,23 +91,29 @@ export default class AchvBar extends Phaser.GameObjects.Container {
     }
 
     // Take the width of the default interface or the title if longest
-    this.bg.width = Math.max(this.defaultWidth, this.icon.displayWidth + this.titleText.displayWidth + this.scoreText.displayWidth + 16);
+    this.bg.width = Math.max(
+      this.defaultWidth,
+      this.icon.displayWidth + this.titleText.displayWidth + this.scoreText.displayWidth + 16,
+    );
 
     this.scoreText.x = this.bg.width - 2;
     this.descriptionText.width = this.bg.width - this.icon.displayWidth - 16;
     this.descriptionText.setWordWrapWidth(this.descriptionText.width * 6);
 
     // Take the height of the default interface or the description if longest
-    this.bg.height = Math.max(this.defaultHeight, this.titleText.displayHeight + this.descriptionText.displayHeight + 8);
-    this.icon.y = (this.bg.height / 2) - (this.icon.height / 2);
+    this.bg.height = Math.max(
+      this.defaultHeight,
+      this.titleText.displayHeight + this.descriptionText.displayHeight + 8,
+    );
+    this.icon.y = this.bg.height / 2 - this.icon.height / 2;
 
     (this.scene as BattleScene).playSound("se/achv");
 
     this.scene.tweens.add({
       targets: this,
-      x: (this.scene.game.canvas.width / 6) - (this.bg.width / 2),
+      x: this.scene.game.canvas.width / 6 - this.bg.width / 2,
       duration: 500,
-      ease: "Sine.easeOut"
+      ease: "Sine.easeOut",
     });
 
     this.scene.time.delayedCall(10000, () => this.hide(this.playerGender));
@@ -112,7 +129,7 @@ export default class AchvBar extends Phaser.GameObjects.Container {
 
     this.scene.tweens.add({
       targets: this,
-      x: (this.scene.game.canvas.width / 6),
+      x: this.scene.game.canvas.width / 6,
       duration: 500,
       ease: "Sine.easeIn",
       onComplete: () => {
@@ -122,7 +139,7 @@ export default class AchvBar extends Phaser.GameObjects.Container {
           const shifted = this.queue.shift();
           shifted && this.showAchv(shifted);
         }
-      }
+      },
     });
   }
 }

@@ -63,13 +63,22 @@ export class EncounterPhase extends BattlePhase {
           battle.enemyParty[e] = battle.trainer?.genPartyMember(e)!; // TODO:: is the bang correct here?
         } else {
           const enemySpecies = this.scene.randomSpecies(battle.waveIndex, level, true);
-          battle.enemyParty[e] = this.scene.addEnemyPokemon(enemySpecies, level, TrainerSlot.NONE, !!this.scene.getEncounterBossSegments(battle.waveIndex, level, enemySpecies));
+          battle.enemyParty[e] = this.scene.addEnemyPokemon(
+            enemySpecies,
+            level,
+            TrainerSlot.NONE,
+            !!this.scene.getEncounterBossSegments(battle.waveIndex, level, enemySpecies),
+          );
           if (this.scene.currentBattle.battleSpec === BattleSpec.FINAL_BOSS) {
             battle.enemyParty[e].ivs = new Array(6).fill(31);
           }
-          this.scene.getParty().slice(0, !battle.double ? 1 : 2).reverse().forEach(playerPokemon => {
-            applyAbAttrs(SyncEncounterNatureAbAttr, playerPokemon, null, false, battle.enemyParty[e]);
-          });
+          this.scene
+            .getParty()
+            .slice(0, !battle.double ? 1 : 2)
+            .reverse()
+            .forEach((playerPokemon) => {
+              applyAbAttrs(SyncEncounterNatureAbAttr, playerPokemon, null, false, battle.enemyParty[e]);
+            });
         }
       }
       const enemyPokemon = this.scene.getEnemyParty()[e];
@@ -83,7 +92,10 @@ export class EncounterPhase extends BattlePhase {
       }
 
       if (enemyPokemon.species.speciesId === Species.ETERNATUS) {
-        if (this.scene.gameMode.isClassic && (battle.battleSpec === BattleSpec.FINAL_BOSS || this.scene.gameMode.isWaveFinal(battle.waveIndex))) {
+        if (
+          this.scene.gameMode.isClassic &&
+          (battle.battleSpec === BattleSpec.FINAL_BOSS || this.scene.gameMode.isWaveFinal(battle.waveIndex))
+        ) {
           if (battle.battleSpec !== BattleSpec.FINAL_BOSS) {
             enemyPokemon.formIndex = 1;
             enemyPokemon.updateScale();
@@ -92,7 +104,10 @@ export class EncounterPhase extends BattlePhase {
         } else if (!(battle.waveIndex % 1000)) {
           enemyPokemon.formIndex = 1;
           enemyPokemon.updateScale();
-          const bossMBH = this.scene.findModifier(m => m instanceof TurnHeldItemTransferModifier && m.pokemonId === enemyPokemon.id, false) as TurnHeldItemTransferModifier;
+          const bossMBH = this.scene.findModifier(
+            (m) => m instanceof TurnHeldItemTransferModifier && m.pokemonId === enemyPokemon.id,
+            false,
+          ) as TurnHeldItemTransferModifier;
           this.scene.removeModifier(bossMBH!);
           bossMBH?.setTransferrableFalse();
           this.scene.addEnemyModifier(bossMBH!);
@@ -106,7 +121,7 @@ export class EncounterPhase extends BattlePhase {
       console.log(getPokemonNameWithAffix(enemyPokemon), enemyPokemon.species.speciesId, enemyPokemon.stats);
     });
 
-    if (this.scene.getParty().filter(p => p.isShiny()).length === 6) {
+    if (this.scene.getParty().filter((p) => p.isShiny()).length === 6) {
       this.scene.validateAchv(achvs.SHINY_PARTY);
     }
 
@@ -115,11 +130,14 @@ export class EncounterPhase extends BattlePhase {
     } else {
       const overridedBossSegments = Overrides.OPP_HEALTH_SEGMENTS_OVERRIDE > 1;
       // for double battles, reduce the health segments for boss Pokemon unless there is an override
-      if (!overridedBossSegments && battle.enemyParty.filter(p => p.isBoss()).length > 1) {
+      if (!overridedBossSegments && battle.enemyParty.filter((p) => p.isBoss()).length > 1) {
         for (const enemyPokemon of battle.enemyParty) {
           // If the enemy pokemon is a boss and wasn't populated from data source, then update the number of segments
           if (enemyPokemon.isBoss() && !enemyPokemon.isPopulatedFromDataSource) {
-            enemyPokemon.setBoss(true, Math.ceil(enemyPokemon.bossSegments * (enemyPokemon.getSpeciesForm().baseTotal / totalBst)));
+            enemyPokemon.setBoss(
+              true,
+              Math.ceil(enemyPokemon.bossSegments * (enemyPokemon.getSpeciesForm().baseTotal / totalBst)),
+            );
             enemyPokemon.initBattleInfo();
           }
         }
@@ -148,21 +166,27 @@ export class EncounterPhase extends BattlePhase {
       });
 
       if (!this.loaded) {
-        regenerateModifierPoolThresholds(this.scene.getEnemyField(), battle.battleType === BattleType.TRAINER ? ModifierPoolType.TRAINER : ModifierPoolType.WILD);
+        regenerateModifierPoolThresholds(
+          this.scene.getEnemyField(),
+          battle.battleType === BattleType.TRAINER ? ModifierPoolType.TRAINER : ModifierPoolType.WILD,
+        );
         this.scene.generateEnemyModifiers();
       }
 
       this.scene.ui.setMode(Mode.MESSAGE).then(() => {
         if (!this.loaded) {
           //@ts-ignore
-          this.scene.gameData.saveAll(this.scene, true, battle.waveIndex % 10 === 1 || this.scene.lastSavePlayTime >= 300).then(success => { // TODO: get rid of ts-ignore
-            this.scene.disableMenu = false;
-            if (!success) {
-              return this.scene.reset(true);
-            }
-            this.doEncounter();
-            this.scene.resetSeed();
-          });
+          this.scene.gameData
+            .saveAll(this.scene, true, battle.waveIndex % 10 === 1 || this.scene.lastSavePlayTime >= 300)
+            .then((success) => {
+              // TODO: get rid of ts-ignore
+              this.scene.disableMenu = false;
+              if (!success) {
+                return this.scene.reset(true);
+              }
+              this.doEncounter();
+              this.scene.resetSeed();
+            });
         } else {
           this.doEncounter();
           this.scene.resetSeed();
@@ -194,14 +218,21 @@ export class EncounterPhase extends BattlePhase {
 
     const enemyField = this.scene.getEnemyField();
     this.scene.tweens.add({
-      targets: [this.scene.arenaEnemy, this.scene.currentBattle.trainer, enemyField, this.scene.arenaPlayer, this.scene.trainer].flat(),
-      x: (_target, _key, value, fieldIndex: integer) => fieldIndex < 2 + (enemyField.length) ? value + 300 : value - 300,
+      targets: [
+        this.scene.arenaEnemy,
+        this.scene.currentBattle.trainer,
+        enemyField,
+        this.scene.arenaPlayer,
+        this.scene.trainer,
+      ].flat(),
+      x: (_target, _key, value, fieldIndex: integer) =>
+        fieldIndex < 2 + enemyField.length ? value + 300 : value - 300,
       duration: 2000,
       onComplete: () => {
         if (!this.tryOverrideForBattleSpec()) {
           this.doEncounterCommon();
         }
-      }
+      },
     });
   }
 
@@ -209,28 +240,34 @@ export class EncounterPhase extends BattlePhase {
     const enemyField = this.scene.getEnemyField();
 
     if (this.scene.currentBattle.battleSpec === BattleSpec.FINAL_BOSS) {
-      return i18next.t("battle:bossAppeared", { bossName: getPokemonNameWithAffix(enemyField[0])});
+      return i18next.t("battle:bossAppeared", { bossName: getPokemonNameWithAffix(enemyField[0]) });
     }
 
     if (this.scene.currentBattle.battleType === BattleType.TRAINER) {
       if (this.scene.currentBattle.double) {
-        return i18next.t("battle:trainerAppearedDouble", { trainerName: this.scene.currentBattle.trainer?.getName(TrainerSlot.NONE, true) });
-
+        return i18next.t("battle:trainerAppearedDouble", {
+          trainerName: this.scene.currentBattle.trainer?.getName(TrainerSlot.NONE, true),
+        });
       } else {
-        return i18next.t("battle:trainerAppeared", { trainerName: this.scene.currentBattle.trainer?.getName(TrainerSlot.NONE, true) });
+        return i18next.t("battle:trainerAppeared", {
+          trainerName: this.scene.currentBattle.trainer?.getName(TrainerSlot.NONE, true),
+        });
       }
     }
 
     return enemyField.length === 1
       ? i18next.t("battle:singleWildAppeared", { pokemonName: enemyField[0].getNameToRender() })
-      : i18next.t("battle:multiWildAppeared", { pokemonName1: enemyField[0].getNameToRender(), pokemonName2: enemyField[1].getNameToRender() });
+      : i18next.t("battle:multiWildAppeared", {
+          pokemonName1: enemyField[0].getNameToRender(),
+          pokemonName2: enemyField[1].getNameToRender(),
+        });
   }
 
   doEncounterCommon(showEncounterMessage: boolean = true) {
     const enemyField = this.scene.getEnemyField();
 
     if (this.scene.currentBattle.battleType === BattleType.WILD) {
-      enemyField.forEach(enemyPokemon => {
+      enemyField.forEach((enemyPokemon) => {
         enemyPokemon.untint(100, "Sine.easeOut");
         enemyPokemon.cry();
         enemyPokemon.showInfo();
@@ -256,7 +293,7 @@ export class EncounterPhase extends BattlePhase {
         this.scene.pbTrayEnemy.showPbTray(this.scene.getEnemyParty());
         const doTrainerSummon = () => {
           this.hideEnemyTrainer();
-          const availablePartyMembers = this.scene.getEnemyParty().filter(p => !p.isFainted()).length;
+          const availablePartyMembers = this.scene.getEnemyParty().filter((p) => !p.isFainted()).length;
           this.scene.unshiftPhase(new SummonPhase(this.scene, 0, false));
           if (this.scene.currentBattle.double && availablePartyMembers > 1) {
             this.scene.unshiftPhase(new SummonPhase(this.scene, 1, false));
@@ -276,7 +313,10 @@ export class EncounterPhase extends BattlePhase {
         doSummon();
       } else {
         let message: string;
-        this.scene.executeWithSeedOffset(() => message = Utils.randSeedItem(encounterMessages), this.scene.currentBattle.waveIndex);
+        this.scene.executeWithSeedOffset(
+          () => (message = Utils.randSeedItem(encounterMessages)),
+          this.scene.currentBattle.waveIndex,
+        );
         message = message!; // tell TS compiler it's defined now
         const showDialogueAndSummon = () => {
           this.scene.ui.showDialogue(message, trainer?.getName(TrainerSlot.NONE, true), null, () => {
@@ -284,7 +324,13 @@ export class EncounterPhase extends BattlePhase {
           });
         };
         if (this.scene.currentBattle.trainer?.config.hasCharSprite && !this.scene.ui.shouldSkipDialogue(message)) {
-          this.scene.showFieldOverlay(500).then(() => this.scene.charSprite.showCharacter(trainer?.getKey()!, getCharVariantFromDialogue(encounterMessages[0])).then(() => showDialogueAndSummon())); // TODO: is this bang correct?
+          this.scene
+            .showFieldOverlay(500)
+            .then(() =>
+              this.scene.charSprite
+                .showCharacter(trainer?.getKey()!, getCharVariantFromDialogue(encounterMessages[0]))
+                .then(() => showDialogueAndSummon()),
+            ); // TODO: is this bang correct?
         } else {
           showDialogueAndSummon();
         }
@@ -302,29 +348,35 @@ export class EncounterPhase extends BattlePhase {
     });
 
     if (this.scene.currentBattle.battleType !== BattleType.TRAINER) {
-      enemyField.map(p => this.scene.pushConditionalPhase(new PostSummonPhase(this.scene, p.getBattlerIndex()), () => {
-        // if there is not a player party, we can't continue
-        if (!this.scene.getParty()?.length) {
-          return false;
-        }
-        // how many player pokemon are on the field ?
-        const pokemonsOnFieldCount = this.scene.getParty().filter(p => p.isOnField()).length;
-        // if it's a 2vs1, there will never be a 2nd pokemon on our field even
-        const requiredPokemonsOnField = Math.min(this.scene.getParty().filter((p) => !p.isFainted()).length, 2);
-        // if it's a double, there should be 2, otherwise 1
-        if (this.scene.currentBattle.double) {
-          return pokemonsOnFieldCount === requiredPokemonsOnField;
-        }
-        return pokemonsOnFieldCount === 1;
-      }));
-      const ivScannerModifier = this.scene.findModifier(m => m instanceof IvScannerModifier);
+      enemyField.map((p) =>
+        this.scene.pushConditionalPhase(new PostSummonPhase(this.scene, p.getBattlerIndex()), () => {
+          // if there is not a player party, we can't continue
+          if (!this.scene.getParty()?.length) {
+            return false;
+          }
+          // how many player pokemon are on the field ?
+          const pokemonsOnFieldCount = this.scene.getParty().filter((p) => p.isOnField()).length;
+          // if it's a 2vs1, there will never be a 2nd pokemon on our field even
+          const requiredPokemonsOnField = Math.min(this.scene.getParty().filter((p) => !p.isFainted()).length, 2);
+          // if it's a double, there should be 2, otherwise 1
+          if (this.scene.currentBattle.double) {
+            return pokemonsOnFieldCount === requiredPokemonsOnField;
+          }
+          return pokemonsOnFieldCount === 1;
+        }),
+      );
+      const ivScannerModifier = this.scene.findModifier((m) => m instanceof IvScannerModifier);
       if (ivScannerModifier) {
-        enemyField.map(p => this.scene.pushPhase(new ScanIvsPhase(this.scene, p.getBattlerIndex(), Math.min(ivScannerModifier.getStackCount() * 2, 6))));
+        enemyField.map((p) =>
+          this.scene.pushPhase(
+            new ScanIvsPhase(this.scene, p.getBattlerIndex(), Math.min(ivScannerModifier.getStackCount() * 2, 6)),
+          ),
+        );
       }
     }
 
     if (!this.loaded) {
-      const availablePartyMembers = this.scene.getParty().filter(p => p.isAllowedInBattle());
+      const availablePartyMembers = this.scene.getParty().filter((p) => p.isAllowedInBattle());
 
       if (!availablePartyMembers[0].isOnField()) {
         this.scene.pushPhase(new SummonPhase(this.scene, 0));
@@ -344,7 +396,10 @@ export class EncounterPhase extends BattlePhase {
         this.scene.pushPhase(new ToggleDoublePositionPhase(this.scene, false));
       }
 
-      if (this.scene.currentBattle.battleType !== BattleType.TRAINER && (this.scene.currentBattle.waveIndex > 1 || !this.scene.gameMode.isDaily)) {
+      if (
+        this.scene.currentBattle.battleType !== BattleType.TRAINER &&
+        (this.scene.currentBattle.waveIndex > 1 || !this.scene.gameMode.isDaily)
+      ) {
         const minPartySize = this.scene.currentBattle.double ? 2 : 1;
         if (availablePartyMembers.length > minPartySize) {
           this.scene.pushPhase(new CheckSwitchPhase(this.scene, 0, this.scene.currentBattle.double));
@@ -359,31 +414,40 @@ export class EncounterPhase extends BattlePhase {
 
   tryOverrideForBattleSpec(): boolean {
     switch (this.scene.currentBattle.battleSpec) {
-    case BattleSpec.FINAL_BOSS:
-      const enemy = this.scene.getEnemyPokemon();
-      this.scene.ui.showText(this.getEncounterMessage(), null, () => {
-        const localizationKey = "battleSpecDialogue:encounter";
-        if (this.scene.ui.shouldSkipDialogue(localizationKey)) {
-          // Logging mirrors logging found in dialogue-ui-handler
-          console.log(`Dialogue ${localizationKey} skipped`);
-          this.doEncounterCommon(false);
-        } else {
-          const count = 5643853 + this.scene.gameData.gameStats.classicSessionsPlayed;
-          // The line below checks if an English ordinal is necessary or not based on whether an entry for encounterLocalizationKey exists in the language or not.
-          const ordinalUsed = !i18next.exists(localizationKey, {fallbackLng: []}) || i18next.resolvedLanguage === "en" ? i18next.t("battleSpecDialogue:key", { count: count, ordinal: true }) : "";
-          const cycleCount = count.toLocaleString() + ordinalUsed;
-          const genderIndex = this.scene.gameData.gender ?? PlayerGender.UNSET;
-          const genderStr = PlayerGender[genderIndex].toLowerCase();
-          const encounterDialogue = i18next.t(localizationKey, { context: genderStr, cycleCount: cycleCount });
-          if (!this.scene.gameData.getSeenDialogues()[localizationKey]) {
-            this.scene.gameData.saveSeenDialogue(localizationKey);
-          }
-          this.scene.ui.showDialogue(encounterDialogue, enemy?.species.name, null, () => {
-            this.doEncounterCommon(false);
-          });
-        }
-      }, 1500, true);
-      return true;
+      case BattleSpec.FINAL_BOSS:
+        const enemy = this.scene.getEnemyPokemon();
+        this.scene.ui.showText(
+          this.getEncounterMessage(),
+          null,
+          () => {
+            const localizationKey = "battleSpecDialogue:encounter";
+            if (this.scene.ui.shouldSkipDialogue(localizationKey)) {
+              // Logging mirrors logging found in dialogue-ui-handler
+              console.log(`Dialogue ${localizationKey} skipped`);
+              this.doEncounterCommon(false);
+            } else {
+              const count = 5643853 + this.scene.gameData.gameStats.classicSessionsPlayed;
+              // The line below checks if an English ordinal is necessary or not based on whether an entry for encounterLocalizationKey exists in the language or not.
+              const ordinalUsed =
+                !i18next.exists(localizationKey, { fallbackLng: [] }) || i18next.resolvedLanguage === "en"
+                  ? i18next.t("battleSpecDialogue:key", { count: count, ordinal: true })
+                  : "";
+              const cycleCount = count.toLocaleString() + ordinalUsed;
+              const genderIndex = this.scene.gameData.gender ?? PlayerGender.UNSET;
+              const genderStr = PlayerGender[genderIndex].toLowerCase();
+              const encounterDialogue = i18next.t(localizationKey, { context: genderStr, cycleCount: cycleCount });
+              if (!this.scene.gameData.getSeenDialogues()[localizationKey]) {
+                this.scene.gameData.saveSeenDialogue(localizationKey);
+              }
+              this.scene.ui.showDialogue(encounterDialogue, enemy?.species.name, null, () => {
+                this.doEncounterCommon(false);
+              });
+            }
+          },
+          1500,
+          true,
+        );
+        return true;
     }
     return false;
   }

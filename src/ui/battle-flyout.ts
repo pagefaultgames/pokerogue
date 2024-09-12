@@ -12,12 +12,12 @@ import { getPokemonNameWithAffix } from "#app/messages";
 /** Container for info about a {@linkcode Move} */
 interface MoveInfo {
   /** The {@linkcode Move} itself */
-  move: Move,
+  move: Move;
 
   /** The maximum PP of the {@linkcode Move} */
-  maxPp: number,
+  maxPp: number;
   /** The amount of PP used by the {@linkcode Move} */
-  ppUsed: number,
+  ppUsed: number;
 }
 
 /** A Flyout Menu attached to each {@linkcode BattleInfo} object on the field UI */
@@ -71,7 +71,7 @@ export default class BattleFlyout extends Phaser.GameObjects.Container {
     this.player = player;
 
     this.translationX = this.player ? -this.flyoutWidth : this.flyoutWidth;
-    this.anchorX = (this.player ? -130 : -40);
+    this.anchorX = this.player ? -130 : -40;
     this.anchorY = -2.5 + (this.player ? -18.5 : -13);
 
     this.flyoutParent = this.scene.add.container(this.anchorX - this.translationX, this.anchorY);
@@ -91,8 +91,11 @@ export default class BattleFlyout extends Phaser.GameObjects.Container {
     for (let i = 0; i < 4; i++) {
       this.flyoutText[i] = addTextObject(
         this.scene,
-        (this.flyoutWidth / 4) + (this.flyoutWidth / 2) * (i % 2),
-        (this.flyoutHeight / 4) + (this.flyoutHeight / 2) * (i < 2 ? 0 : 1), "???", TextStyle.BATTLE_INFO);
+        this.flyoutWidth / 4 + (this.flyoutWidth / 2) * (i % 2),
+        this.flyoutHeight / 4 + (this.flyoutHeight / 2) * (i < 2 ? 0 : 1),
+        "???",
+        TextStyle.BATTLE_INFO,
+      );
       this.flyoutText[i].setFontSize(45);
       this.flyoutText[i].setLineSpacing(-10);
       this.flyoutText[i].setAlign("center");
@@ -102,9 +105,25 @@ export default class BattleFlyout extends Phaser.GameObjects.Container {
     this.flyoutContainer.add(this.flyoutText);
 
     this.flyoutContainer.add(
-      new Phaser.GameObjects.Rectangle(this.scene, this.flyoutWidth / 2, 0, 1, this.flyoutHeight + (this.battleScene.uiTheme === UiTheme.LEGACY ? 1 : 0), 0x212121).setOrigin(0.5, 0));
+      new Phaser.GameObjects.Rectangle(
+        this.scene,
+        this.flyoutWidth / 2,
+        0,
+        1,
+        this.flyoutHeight + (this.battleScene.uiTheme === UiTheme.LEGACY ? 1 : 0),
+        0x212121,
+      ).setOrigin(0.5, 0),
+    );
     this.flyoutContainer.add(
-      new Phaser.GameObjects.Rectangle(this.scene, 0, this.flyoutHeight / 2, this.flyoutWidth + 6, 1, 0x212121).setOrigin(0, 0.5));
+      new Phaser.GameObjects.Rectangle(
+        this.scene,
+        0,
+        this.flyoutHeight / 2,
+        this.flyoutWidth + 6,
+        1,
+        0x212121,
+      ).setOrigin(0, 0.5),
+    );
   }
 
   /**
@@ -139,17 +158,16 @@ export default class BattleFlyout extends Phaser.GameObjects.Container {
   /** Updates all of the {@linkcode MoveInfo} objects in the moveInfo array */
   private onMoveUsed(event: Event) {
     const moveUsedEvent = event as MoveUsedEvent;
-    if (!moveUsedEvent
-      || moveUsedEvent.pokemonId !== this.pokemon?.id
-      || moveUsedEvent.move.id === Moves.STRUGGLE) { // Ignore Struggle
+    if (!moveUsedEvent || moveUsedEvent.pokemonId !== this.pokemon?.id || moveUsedEvent.move.id === Moves.STRUGGLE) {
+      // Ignore Struggle
       return;
     }
 
-    const foundInfo = this.moveInfo.find(x => x?.move.id === moveUsedEvent.move.id);
+    const foundInfo = this.moveInfo.find((x) => x?.move.id === moveUsedEvent.move.id);
     if (foundInfo) {
       foundInfo.ppUsed = moveUsedEvent.ppUsed;
     } else {
-      this.moveInfo.push({move: moveUsedEvent.move, maxPp: moveUsedEvent.move.pp, ppUsed: moveUsedEvent.ppUsed});
+      this.moveInfo.push({ move: moveUsedEvent.move, maxPp: moveUsedEvent.move.pp, ppUsed: moveUsedEvent.ppUsed });
     }
 
     this.setText();
@@ -157,14 +175,18 @@ export default class BattleFlyout extends Phaser.GameObjects.Container {
 
   private onBerryUsed(event: Event) {
     const berryUsedEvent = event as BerryUsedEvent;
-    if (!berryUsedEvent
-      || berryUsedEvent.berryModifier.pokemonId !== this.pokemon?.id
-      || berryUsedEvent.berryModifier.berryType !== BerryType.LEPPA) { // We only care about Leppa berries
+    if (
+      !berryUsedEvent ||
+      berryUsedEvent.berryModifier.pokemonId !== this.pokemon?.id ||
+      berryUsedEvent.berryModifier.berryType !== BerryType.LEPPA
+    ) {
+      // We only care about Leppa berries
       return;
     }
 
-    const foundInfo = this.moveInfo.find(info => info.ppUsed === info.maxPp);
-    if (!foundInfo) { // This will only happen on a de-sync of PP tracking
+    const foundInfo = this.moveInfo.find((info) => info.ppUsed === info.maxPp);
+    if (!foundInfo) {
+      // This will only happen on a de-sync of PP tracking
       return;
     }
     foundInfo.ppUsed = Math.max(foundInfo.ppUsed - 10, 0);

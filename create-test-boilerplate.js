@@ -1,6 +1,6 @@
-import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
 
 /**
  * This script creates a test boilerplate file for a move or ability.
@@ -26,26 +26,24 @@ if (!type || !fileName) {
 
 // Convert fileName from kebab-case or camelCase to snake_case
 fileName = fileName
-  .replace(/-+/g, '_') // Convert kebab-case (dashes) to underscores
-  .replace(/([a-z])([A-Z])/g, '$1_$2') // Convert camelCase to snake_case
+  .replace(/-+/g, "_") // Convert kebab-case (dashes) to underscores
+  .replace(/([a-z])([A-Z])/g, "$1_$2") // Convert camelCase to snake_case
   .toLowerCase(); // Ensure all lowercase
 
 // Format the description for the test case
-const formattedName = fileName
-  .replace(/_/g, ' ')
-  .replace(/\b\w/g, char => char.toUpperCase());
+const formattedName = fileName.replace(/_/g, " ").replace(/\b\w/g, (char) => char.toUpperCase());
 
 // Determine the directory based on the type
 let dir;
 let description;
-if (type === 'move') {
-  dir = path.join(__dirname, 'src', 'test', 'moves');
+if (type === "move") {
+  dir = path.join(__dirname, "src", "test", "moves");
   description = `Moves - ${formattedName}`;
-} else if (type === 'ability') {
-  dir = path.join(__dirname, 'src', 'test', 'abilities');
+} else if (type === "ability") {
+  dir = path.join(__dirname, "src", "test", "abilities");
   description = `Abilities - ${formattedName}`;
 } else if (type === "item") {
-  dir = path.join(__dirname, 'src', 'test', 'items');
+  dir = path.join(__dirname, "src", "test", "items");
   description = `Items - ${formattedName}`;
 } else {
   console.error('Invalid type. Please use "move", "ability", or "item".');
@@ -105,6 +103,6 @@ describe("${description}", () => {
 `;
 
 // Write the template content to the file
-fs.writeFileSync(filePath, content, 'utf8');
+fs.writeFileSync(filePath, content, "utf8");
 
 console.log(`File created at: ${filePath}`);

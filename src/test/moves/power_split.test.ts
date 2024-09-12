@@ -28,15 +28,13 @@ describe("Moves - Power Split", () => {
       .enemyAbility(Abilities.NONE)
       .enemySpecies(Species.MEW)
       .enemyLevel(200)
-      .moveset([ Moves.POWER_SPLIT ])
+      .moveset([Moves.POWER_SPLIT])
       .ability(Abilities.NONE);
   });
 
   it("should average the user's ATK and SPATK stats with those of the target", async () => {
     game.override.enemyMoveset(Moves.SPLASH);
-    await game.startBattle([
-      Species.INDEEDEE
-    ]);
+    await game.startBattle([Species.INDEEDEE]);
 
     const player = game.scene.getPlayerPokemon()!;
     const enemy = game.scene.getEnemyPokemon()!;
@@ -56,9 +54,7 @@ describe("Moves - Power Split", () => {
 
   it("should be idempotent", async () => {
     game.override.enemyMoveset([Moves.POWER_SPLIT]);
-    await game.startBattle([
-      Species.INDEEDEE
-    ]);
+    await game.startBattle([Species.INDEEDEE]);
 
     const player = game.scene.getPlayerPokemon()!;
     const enemy = game.scene.getEnemyPokemon()!;

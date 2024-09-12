@@ -55,14 +55,12 @@ describe("Abilities - Heatproof", () => {
     await game.phaseInterceptor.to(TurnEndPhase);
     const regularDamage = initialHP - enemy.hp;
 
-    expect(heatproofDamage).toBeLessThanOrEqual((regularDamage / 2) + 1);
-    expect(heatproofDamage).toBeGreaterThanOrEqual((regularDamage / 2) - 1);
+    expect(heatproofDamage).toBeLessThanOrEqual(regularDamage / 2 + 1);
+    expect(heatproofDamage).toBeGreaterThanOrEqual(regularDamage / 2 - 1);
   });
 
   it("reduces Burn damage by half", async () => {
-    game.override
-      .enemyStatusEffect(StatusEffect.BURN)
-      .enemySpecies(Species.ABRA);
+    game.override.enemyStatusEffect(StatusEffect.BURN).enemySpecies(Species.ABRA);
     await game.startBattle();
 
     const enemy = game.scene.getEnemyPokemon()!;

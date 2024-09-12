@@ -21,10 +21,10 @@ export class SelectTargetPhase extends PokemonPhase {
         this.scene.currentBattle.turnCommands[this.fieldIndex] = null;
         this.scene.unshiftPhase(new CommandPhase(this.scene, this.fieldIndex));
       } else {
-          turnCommand!.targets = targets; //TODO: is the bang correct here?
+        turnCommand!.targets = targets; //TODO: is the bang correct here?
       }
       if (turnCommand?.command === Command.BALL && this.fieldIndex) {
-          this.scene.currentBattle.turnCommands[this.fieldIndex - 1]!.skip = true; //TODO: is the bang correct here?
+        this.scene.currentBattle.turnCommands[this.fieldIndex - 1]!.skip = true; //TODO: is the bang correct here?
       }
       this.end();
     });

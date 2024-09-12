@@ -35,9 +35,7 @@ describe("Abilities - Sand Veil", () => {
     game.override.enemyMoveset([Moves.TWISTER, Moves.TWISTER, Moves.TWISTER, Moves.TWISTER]);
     game.override.startingLevel(100);
     game.override.enemyLevel(100);
-    game.override
-      .weather(WeatherType.SANDSTORM)
-      .battleType("double");
+    game.override.weather(WeatherType.SANDSTORM).battleType("double");
   });
 
   test(
@@ -57,7 +55,7 @@ describe("Abilities - Sand Veil", () => {
             return true;
           }
           return false;
-        }
+        },
       );
 
       expect(leadPokemon[0].hasAbility(Abilities.SAND_VEIL)).toBe(true);
@@ -75,6 +73,7 @@ describe("Abilities - Sand Veil", () => {
 
       expect(leadPokemon[0].isFullHp()).toBe(true);
       expect(leadPokemon[1].hp).toBeLessThan(leadPokemon[1].getMaxHp());
-    }, TIMEOUT
+    },
+    TIMEOUT,
   );
 });

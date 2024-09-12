@@ -28,15 +28,13 @@ describe("Moves - Guard Split", () => {
       .enemyAbility(Abilities.NONE)
       .enemySpecies(Species.MEW)
       .enemyLevel(200)
-      .moveset([ Moves.GUARD_SPLIT ])
+      .moveset([Moves.GUARD_SPLIT])
       .ability(Abilities.NONE);
   });
 
   it("should average the user's DEF and SPDEF stats with those of the target", async () => {
     game.override.enemyMoveset(Moves.SPLASH);
-    await game.startBattle([
-      Species.INDEEDEE
-    ]);
+    await game.startBattle([Species.INDEEDEE]);
 
     const player = game.scene.getPlayerPokemon()!;
     const enemy = game.scene.getEnemyPokemon()!;
@@ -56,9 +54,7 @@ describe("Moves - Guard Split", () => {
 
   it("should be idempotent", async () => {
     game.override.enemyMoveset([Moves.GUARD_SPLIT]);
-    await game.startBattle([
-      Species.INDEEDEE
-    ]);
+    await game.startBattle([Species.INDEEDEE]);
 
     const player = game.scene.getPlayerPokemon()!;
     const enemy = game.scene.getEnemyPokemon()!;

@@ -51,7 +51,8 @@ describe("Moves - Thousand Arrows", () => {
 
       expect(enemyPokemon.getTag(BattlerTagType.IGNORE_FLYING)).toBeDefined();
       expect(enemyPokemon.hp).toBeLessThan(enemyPokemon.getMaxHp());
-    }, TIMEOUT
+    },
+    TIMEOUT,
   );
 
   it(
@@ -74,27 +75,25 @@ describe("Moves - Thousand Arrows", () => {
 
       expect(enemyPokemon.getTag(BattlerTagType.IGNORE_FLYING)).toBeDefined();
       expect(enemyPokemon.hp).toBeLessThan(enemyPokemon.getMaxHp());
-    }, TIMEOUT
+    },
+    TIMEOUT,
   );
 
-  it(
-    "move should hit and ground targets under the effects of Magnet Rise",
-    async () => {
-      game.override.enemySpecies(Species.SNORLAX);
+  it("move should hit and ground targets under the effects of Magnet Rise", async () => {
+    game.override.enemySpecies(Species.SNORLAX);
 
-      await game.startBattle([Species.ILLUMISE]);
+    await game.startBattle([Species.ILLUMISE]);
 
-      const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const enemyPokemon = game.scene.getEnemyPokemon()!;
 
-      enemyPokemon.addTag(BattlerTagType.MAGNET_RISEN, undefined, Moves.MAGNET_RISE);
+    enemyPokemon.addTag(BattlerTagType.MAGNET_RISEN, undefined, Moves.MAGNET_RISE);
 
-      game.move.select(Moves.THOUSAND_ARROWS);
+    game.move.select(Moves.THOUSAND_ARROWS);
 
-      await game.phaseInterceptor.to(BerryPhase, false);
+    await game.phaseInterceptor.to(BerryPhase, false);
 
-      expect(enemyPokemon.getTag(BattlerTagType.MAGNET_RISEN)).toBeUndefined();
-      expect(enemyPokemon.getTag(BattlerTagType.IGNORE_FLYING)).toBeDefined();
-      expect(enemyPokemon.hp).toBeLessThan(enemyPokemon.getMaxHp());
-    }
-  );
+    expect(enemyPokemon.getTag(BattlerTagType.MAGNET_RISEN)).toBeUndefined();
+    expect(enemyPokemon.getTag(BattlerTagType.IGNORE_FLYING)).toBeDefined();
+    expect(enemyPokemon.hp).toBeLessThan(enemyPokemon.getMaxHp());
+  });
 });

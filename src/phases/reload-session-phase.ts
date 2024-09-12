@@ -28,12 +28,14 @@ export class ReloadSessionPhase extends Phase {
 
     this.scene.gameData.clearLocalData();
 
-    (this.systemDataStr ? this.scene.gameData.initSystem(this.systemDataStr) : this.scene.gameData.loadSystem()).then(() => {
-      if (delayElapsed) {
-        this.end();
-      } else {
-        loaded = true;
-      }
-    });
+    (this.systemDataStr ? this.scene.gameData.initSystem(this.systemDataStr) : this.scene.gameData.loadSystem()).then(
+      () => {
+        if (delayElapsed) {
+          this.end();
+        } else {
+          loaded = true;
+        }
+      },
+    );
   }
 }

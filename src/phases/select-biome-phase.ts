@@ -28,9 +28,11 @@ export class SelectBiomePhase extends BattlePhase {
       this.end();
     };
 
-    if ((this.scene.gameMode.isClassic && this.scene.gameMode.isWaveFinal(this.scene.currentBattle.waveIndex + 9))
-        || (this.scene.gameMode.isDaily && this.scene.gameMode.isWaveFinal(this.scene.currentBattle.waveIndex))
-        || (this.scene.gameMode.hasShortBiomes && !(this.scene.currentBattle.waveIndex % 50))) {
+    if (
+      (this.scene.gameMode.isClassic && this.scene.gameMode.isWaveFinal(this.scene.currentBattle.waveIndex + 9)) ||
+      (this.scene.gameMode.isDaily && this.scene.gameMode.isWaveFinal(this.scene.currentBattle.waveIndex)) ||
+      (this.scene.gameMode.hasShortBiomes && !(this.scene.currentBattle.waveIndex % 50))
+    ) {
       setNextBiome(Biome.END);
     } else if (this.scene.gameMode.hasRandomBiomes) {
       setNextBiome(this.generateNextBiome());
@@ -38,32 +40,34 @@ export class SelectBiomePhase extends BattlePhase {
       let biomes: Biome[] = [];
       this.scene.executeWithSeedOffset(() => {
         biomes = (biomeLinks[currentBiome] as (Biome | [Biome, integer])[])
-          .filter(b => !Array.isArray(b) || !Utils.randSeedInt(b[1]))
-          .map(b => !Array.isArray(b) ? b : b[0]);
+          .filter((b) => !Array.isArray(b) || !Utils.randSeedInt(b[1]))
+          .map((b) => (!Array.isArray(b) ? b : b[0]));
       }, this.scene.currentBattle.waveIndex);
-      if (biomes.length > 1 && this.scene.findModifier(m => m instanceof MapModifier)) {
+      if (biomes.length > 1 && this.scene.findModifier((m) => m instanceof MapModifier)) {
         let biomeChoices: Biome[] = [];
         this.scene.executeWithSeedOffset(() => {
-          biomeChoices = (!Array.isArray(biomeLinks[currentBiome])
-            ? [biomeLinks[currentBiome] as Biome]
-            : biomeLinks[currentBiome] as (Biome | [Biome, integer])[])
+          biomeChoices = (
+            !Array.isArray(biomeLinks[currentBiome])
+              ? [biomeLinks[currentBiome] as Biome]
+              : (biomeLinks[currentBiome] as (Biome | [Biome, integer])[])
+          )
             .filter((b, i) => !Array.isArray(b) || !Utils.randSeedInt(b[1]))
-            .map(b => Array.isArray(b) ? b[0] : b);
+            .map((b) => (Array.isArray(b) ? b[0] : b));
         }, this.scene.currentBattle.waveIndex);
-        const biomeSelectItems = biomeChoices.map(b => {
+        const biomeSelectItems = biomeChoices.map((b) => {
           const ret: OptionSelectItem = {
             label: getBiomeName(b),
             handler: () => {
               this.scene.ui.setMode(Mode.MESSAGE);
               setNextBiome(b);
               return true;
-            }
+            },
           };
           return ret;
         });
         this.scene.ui.setMode(Mode.OPTION_SELECT, {
           options: biomeSelectItems,
-          delay: 1000
+          delay: 1000,
         });
       } else {
         setNextBiome(biomes[Utils.randSeedInt(biomes.length)]);

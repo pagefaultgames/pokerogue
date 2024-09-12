@@ -17,9 +17,9 @@ export default class EggData {
   public overrideHiddenAbility: boolean;
 
   constructor(source: Egg | any) {
-    const sourceEgg = source instanceof Egg ? source as Egg : null;
+    const sourceEgg = source instanceof Egg ? (source as Egg) : null;
     this.id = sourceEgg ? sourceEgg.id : source.id;
-    this.tier = sourceEgg ? sourceEgg.tier : (source.tier  ?? Math.floor(this.id / EGG_SEED));
+    this.tier = sourceEgg ? sourceEgg.tier : (source.tier ?? Math.floor(this.id / EGG_SEED));
     // legacy egg
     if (source.species === 0) {
       // check if it has a gachaType (deprecated)
@@ -39,11 +39,26 @@ export default class EggData {
   toEgg(): Egg {
     // Species will be 0 if an old legacy is loaded from DB
     if (!this.species) {
-      return new Egg({ id: this.id, hatchWaves: this.hatchWaves, sourceType: this.sourceType, timestamp: this.timestamp, tier: Math.floor(this.id / EGG_SEED) });
+      return new Egg({
+        id: this.id,
+        hatchWaves: this.hatchWaves,
+        sourceType: this.sourceType,
+        timestamp: this.timestamp,
+        tier: Math.floor(this.id / EGG_SEED),
+      });
     } else {
-      return new Egg({id: this.id, tier: this.tier, sourceType: this.sourceType, hatchWaves: this.hatchWaves,
-        timestamp: this.timestamp, variantTier: this.variantTier, isShiny: this.isShiny, species: this.species,
-        eggMoveIndex: this.eggMoveIndex, overrideHiddenAbility: this.overrideHiddenAbility });
+      return new Egg({
+        id: this.id,
+        tier: this.tier,
+        sourceType: this.sourceType,
+        hatchWaves: this.hatchWaves,
+        timestamp: this.timestamp,
+        variantTier: this.variantTier,
+        isShiny: this.isShiny,
+        species: this.species,
+        eggMoveIndex: this.eggMoveIndex,
+        overrideHiddenAbility: this.overrideHiddenAbility,
+      });
     }
   }
 }

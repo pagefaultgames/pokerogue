@@ -28,5 +28,5 @@ jobs:
           chmod 600 ~/.ssh/*
           ssh-keyscan -H ${{ secrets.BETA_SSH_HOST }} >> ~/.ssh/known_hosts
       - name: Deploy build on server
-        run: | 
+        run: |
           rsync --del --no-times --checksum -vrm dist/* ${{ secrets.BETA_SSH_USER }}@${{ secrets.BETA_SSH_HOST }}:${{ secrets.BETA_DESTINATION_DIR }}

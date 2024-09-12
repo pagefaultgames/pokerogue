@@ -37,7 +37,6 @@ describe("Moves - Ceaseless Edge", () => {
     game.override.moveset([Moves.CEASELESS_EDGE, Moves.SPLASH, Moves.ROAR]);
     game.override.enemyMoveset([Moves.SPLASH, Moves.SPLASH, Moves.SPLASH, Moves.SPLASH]);
     vi.spyOn(allMoves[Moves.CEASELESS_EDGE], "accuracy", "get").mockReturnValue(100);
-
   });
 
   test(
@@ -61,7 +60,8 @@ describe("Moves - Ceaseless Edge", () => {
       expect(tagAfter instanceof ArenaTrapTag).toBeTruthy();
       expect(tagAfter.layers).toBe(1);
       expect(enemyPokemon.hp).toBeLessThan(enemyStartingHp);
-    }, TIMEOUT
+    },
+    TIMEOUT,
   );
 
   test(
@@ -86,7 +86,8 @@ describe("Moves - Ceaseless Edge", () => {
       expect(tagAfter instanceof ArenaTrapTag).toBeTruthy();
       expect(tagAfter.layers).toBe(2);
       expect(enemyPokemon.hp).toBeLessThan(enemyStartingHp);
-    }, TIMEOUT
+    },
+    TIMEOUT,
   );
 
   test(
@@ -114,6 +115,7 @@ describe("Moves - Ceaseless Edge", () => {
       game.move.select(Moves.SPLASH);
       await game.phaseInterceptor.to(TurnEndPhase, false);
       expect(game.scene.currentBattle.enemyParty[0].hp).toBeLessThan(hpBeforeSpikes);
-    }, TIMEOUT
+    },
+    TIMEOUT,
   );
 });

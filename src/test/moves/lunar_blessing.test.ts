@@ -47,7 +47,6 @@ describe("Moves - Lunar Blessing", () => {
     vi.spyOn(leftPlayer, "heal");
     vi.spyOn(rightPlayer, "heal");
 
-
     game.move.select(Moves.LUNAR_BLESSING, 0);
     await game.phaseInterceptor.to(CommandPhase);
     game.move.select(Moves.SPLASH, 1);

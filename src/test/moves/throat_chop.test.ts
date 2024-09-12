@@ -33,25 +33,29 @@ describe("Moves - Throat Chop", () => {
       .enemySpecies(Species.MAGIKARP);
   });
 
-  it("prevents the target from using sound-based moves for two turns", async () => {
-    await game.classicMode.startBattle([Species.MAGIKARP]);
+  it(
+    "prevents the target from using sound-based moves for two turns",
+    async () => {
+      await game.classicMode.startBattle([Species.MAGIKARP]);
 
-    const enemy = game.scene.getEnemyPokemon()!;
+      const enemy = game.scene.getEnemyPokemon()!;
 
-    game.move.select(Moves.GROWL);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+      game.move.select(Moves.GROWL);
+      await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
 
-    // First turn, move is interrupted
-    await game.phaseInterceptor.to("TurnEndPhase");
-    expect(enemy.getStatStage(Stat.ATK)).toBe(0);
+      // First turn, move is interrupted
+      await game.phaseInterceptor.to("TurnEndPhase");
+      expect(enemy.getStatStage(Stat.ATK)).toBe(0);
 
-    // Second turn, struggle if no valid moves
-    await game.toNextTurn();
+      // Second turn, struggle if no valid moves
+      await game.toNextTurn();
 
-    game.move.select(Moves.GROWL);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+      game.move.select(Moves.GROWL);
+      await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
 
-    await game.phaseInterceptor.to("MoveEndPhase");
-    expect(enemy.isFullHp()).toBe(false);
-  }, TIMEOUT);
+      await game.phaseInterceptor.to("MoveEndPhase");
+      expect(enemy.isFullHp()).toBe(false);
+    },
+    TIMEOUT,
+  );
 });

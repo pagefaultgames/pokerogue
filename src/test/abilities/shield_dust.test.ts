@@ -1,5 +1,10 @@
 import { BattlerIndex } from "#app/battle";
-import { applyAbAttrs, applyPreDefendAbAttrs, IgnoreMoveEffectsAbAttr, MoveEffectChanceMultiplierAbAttr } from "#app/data/ability";
+import {
+  applyAbAttrs,
+  applyPreDefendAbAttrs,
+  IgnoreMoveEffectsAbAttr,
+  MoveEffectChanceMultiplierAbAttr,
+} from "#app/data/ability";
 import { Stat } from "#enums/stat";
 import { MoveEffectPhase } from "#app/phases/move-effect-phase";
 import * as Utils from "#app/utils";
@@ -9,7 +14,6 @@ import { Species } from "#enums/species";
 import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-
 
 describe("Abilities - Shield Dust", () => {
   let phaserGame: Phaser.Game;
@@ -38,10 +42,7 @@ describe("Abilities - Shield Dust", () => {
 
   it("Shield Dust", async () => {
     const moveToUse = Moves.AIR_SLASH;
-    await game.startBattle([
-      Species.PIDGEOT
-    ]);
-
+    await game.startBattle([Species.PIDGEOT]);
 
     game.scene.getEnemyParty()[0].stats[Stat.SPDEF] = 10000;
     expect(game.scene.getParty()[0].formIndex).toBe(0);
@@ -57,10 +58,26 @@ describe("Abilities - Shield Dust", () => {
     expect(move.id).toBe(Moves.AIR_SLASH);
 
     const chance = new Utils.IntegerHolder(move.chance);
-    applyAbAttrs(MoveEffectChanceMultiplierAbAttr, phase.getUserPokemon()!, null, false, chance, move, phase.getTarget(), false);
-    applyPreDefendAbAttrs(IgnoreMoveEffectsAbAttr, phase.getTarget()!, phase.getUserPokemon()!, null, null, false, chance);
+    applyAbAttrs(
+      MoveEffectChanceMultiplierAbAttr,
+      phase.getUserPokemon()!,
+      null,
+      false,
+      chance,
+      move,
+      phase.getTarget(),
+      false,
+    );
+    applyPreDefendAbAttrs(
+      IgnoreMoveEffectsAbAttr,
+      phase.getTarget()!,
+      phase.getUserPokemon()!,
+      null,
+      null,
+      false,
+      chance,
+    );
     expect(chance.value).toBe(0);
-
   }, 20000);
 
   //TODO King's Rock Interaction Unit Test

@@ -38,7 +38,7 @@ describe("Weather - Hail", () => {
 
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    game.scene.getField(true).forEach(pokemon => {
+    game.scene.getField(true).forEach((pokemon) => {
       expect(pokemon.hp).toBeLessThan(pokemon.getMaxHp() - Math.floor(pokemon.getMaxHp() / 16));
     });
   });

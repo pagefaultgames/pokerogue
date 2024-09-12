@@ -60,6 +60,6 @@ describe("Abilities - SHIELDS DOWN", () => {
 
       expect(minior.formIndex).toBe(meteorForm);
     },
-    TIMEOUT
+    TIMEOUT,
   );
 });

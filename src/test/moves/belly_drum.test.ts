@@ -42,8 +42,9 @@ describe("Moves - BELLY DRUM", () => {
 
   // Bulbapedia Reference: https://bulbapedia.bulbagarden.net/wiki/Belly_Drum_(move)
 
-  test("raises the user's ATK stat stage to its max, at the cost of 1/2 of its maximum HP",
-    async() => {
+  test(
+    "raises the user's ATK stat stage to its max, at the cost of 1/2 of its maximum HP",
+    async () => {
       await game.startBattle([Species.MAGIKARP]);
 
       const leadPokemon = game.scene.getPlayerPokemon()!;
@@ -54,11 +55,13 @@ describe("Moves - BELLY DRUM", () => {
 
       expect(leadPokemon.hp).toBe(leadPokemon.getMaxHp() - hpLost);
       expect(leadPokemon.getStatStage(Stat.ATK)).toBe(6);
-    }, TIMEOUT
+    },
+    TIMEOUT,
   );
 
-  test("will still take effect if an uninvolved stat stage is at max",
-    async() => {
+  test(
+    "will still take effect if an uninvolved stat stage is at max",
+    async () => {
       await game.startBattle([Species.MAGIKARP]);
 
       const leadPokemon = game.scene.getPlayerPokemon()!;
@@ -74,11 +77,13 @@ describe("Moves - BELLY DRUM", () => {
       expect(leadPokemon.hp).toBe(leadPokemon.getMaxHp() - hpLost);
       expect(leadPokemon.getStatStage(Stat.ATK)).toBe(6);
       expect(leadPokemon.getStatStage(Stat.SPATK)).toBe(6);
-    }, TIMEOUT
+    },
+    TIMEOUT,
   );
 
-  test("fails if the pokemon's ATK stat stage is at its maximum",
-    async() => {
+  test(
+    "fails if the pokemon's ATK stat stage is at its maximum",
+    async () => {
       await game.startBattle([Species.MAGIKARP]);
 
       const leadPokemon = game.scene.getPlayerPokemon()!;
@@ -90,11 +95,13 @@ describe("Moves - BELLY DRUM", () => {
 
       expect(leadPokemon.hp).toBe(leadPokemon.getMaxHp());
       expect(leadPokemon.getStatStage(Stat.ATK)).toBe(6);
-    }, TIMEOUT
+    },
+    TIMEOUT,
   );
 
-  test("fails if the user's health is less than 1/2",
-    async() => {
+  test(
+    "fails if the user's health is less than 1/2",
+    async () => {
       await game.startBattle([Species.MAGIKARP]);
 
       const leadPokemon = game.scene.getPlayerPokemon()!;
@@ -106,6 +113,7 @@ describe("Moves - BELLY DRUM", () => {
 
       expect(leadPokemon.hp).toBe(hpLost - PREDAMAGE);
       expect(leadPokemon.getStatStage(Stat.ATK)).toBe(0);
-    }, TIMEOUT
+    },
+    TIMEOUT,
   );
 });

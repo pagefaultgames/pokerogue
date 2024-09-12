@@ -35,12 +35,15 @@ export class ShowPartyExpBarPhase extends PlayerPartyMemberPokemonPhase {
     if (this.scene.expParty === ExpNotification.SKIP) {
       this.end();
     } else if (this.scene.expParty === ExpNotification.ONLY_LEVEL_UP) {
-      if (newLevel > lastLevel) { // this means if we level up
+      if (newLevel > lastLevel) {
+        // this means if we level up
         // instead of displaying the exp gain in the small frame, we display the new level
         // we use the same method for mode 0 & 1, by giving a parameter saying to display the exp or the level
-        this.scene.partyExpBar.showPokemonExp(pokemon, exp.value, this.scene.expParty === ExpNotification.ONLY_LEVEL_UP, newLevel).then(() => {
-          setTimeout(() => this.end(), 800 / Math.pow(2, this.scene.expGainsSpeed));
-        });
+        this.scene.partyExpBar
+          .showPokemonExp(pokemon, exp.value, this.scene.expParty === ExpNotification.ONLY_LEVEL_UP, newLevel)
+          .then(() => {
+            setTimeout(() => this.end(), 800 / Math.pow(2, this.scene.expGainsSpeed));
+          });
       } else {
         this.end();
       }
@@ -51,6 +54,5 @@ export class ShowPartyExpBarPhase extends PlayerPartyMemberPokemonPhase {
     } else {
       this.end();
     }
-
   }
 }

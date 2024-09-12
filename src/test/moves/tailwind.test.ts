@@ -84,7 +84,6 @@ describe("Moves - Tailwind", () => {
     const allySpd = ally.getStat(Stat.SPD);
     const enemySpd = enemy.getStat(Stat.SPD);
 
-
     expect(ally.getEffectiveStat(Stat.SPD)).equal(allySpd);
     expect(enemy.getEffectiveStat(Stat.SPD)).equal(enemySpd);
     expect(game.scene.arena.getTagOnSide(ArenaTagType.TAILWIND, ArenaTagSide.PLAYER)).toBeUndefined();
