@@ -1,27 +1,27 @@
 {
-  "intro": "An {{oricorioName}} dances sadly alone, without a partner.",
-  "title": "Dancing Lessons",
-  "description": "The {{oricorioName}} doesn't seem aggressive, if anything it seems sad.\n\nMaybe it just wants someone to dance with...",
-  "query": "What will you do?",
+  "intro": "Un {{oricorioName}} dance tristement seul, sans partenaire.",
+  "title": "Lessons de danse",
+  "description": "Ce {{oricorioName}} ne semble pas agressif, mais triste tout au plus.\n\nPeut-être a-t-il juste besoin de quelqu’un avec qui danser…",
+  "query": "Que voulez-vous faire ?",
   "option": {
     "1": {
-      "label": "Battle It",
-      "tooltip": "(-) Tough Battle\n(+) Gain a Baton",
-      "selected": "The {{oricorioName}} is distraught and moves to defend itself!",
-      "boss_enraged": "The {{oricorioName}}'s fear boosted its stats!"
+      "label": "Le combattre",
+      "tooltip": "(-) Combat difficile\n(+) Gain d’un Bâton",
+      "selected": "Le {{oricorioName}} est desemparé et tente de se défendre !",
+      "boss_enraged": "La peur de {{oricorioName}} augumente beaucoup ses stats !"
     },
     "2": {
-      "label": "Learn Its Dance",
-      "tooltip": "(+) Teach a Pokémon Revelation Dance",
-      "selected": "You watch the {{oricorioName}} closely as it performs its dance...$@s{level_up_fanfare}Your {{selectedPokemon}} learned from the {{oricorioName}}!"
+      "label": "Apprendre sa danse",
+      "tooltip": "(+) Apprendre Danse Éveil à un Pokémon",
+      "selected": "Vos scrutez {{oricorioName}} de près pendant sa danse…$@s{level_up_fanfare}Votre {{selectedPokemon}} apprend Danse Éveil de {{oricorioName}} !"
     },
     "3": {
-      "label": "Show It a Dance",
-      "tooltip": "(-) Teach the {{oricorioName}} a Dance Move\n(+) The {{oricorioName}} Will Like You",
-      "disabled_tooltip": "Your Pokémon need to know a Dance move for this.",
-      "select_prompt": "Select a Dance type move to use.",
-      "selected": "The {{oricorioName}} watches in fascination as\n{{selectedPokemon}} shows off {{selectedMove}}!$It loves the display!$@s{level_up_fanfare}The {{oricorioName}} wants to join your party!"
+      "label": "Lui montrer une danse",
+      "tooltip": "(-) Apprendre à {{oricorioName}} une capacité dansante\n(+) Le {{oricorioName}} vous apprécie",
+      "disabled_tooltip": "Votre Pokémon doit connaitre une capacité dansante pour choisir cette option.",
+      "select_prompt": "Sélectionnez une capacité dansante.",
+      "selected": "Le {{oricorioName}} observe avec fascination\n{{selectedPokemon}} exécuter {{selectedMove}} !$Il adore le démonstration !$@s{level_up_fanfare}Le {{oricorioName}} veut se joindre à votre équipe !"
     }
   },
-  "invalid_selection": "This Pokémon doesn't know a Dance move"
+  "invalid_selection": "Il ne connait aucune capacité dansante"
 }
