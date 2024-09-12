@@ -1,5 +1,4 @@
 import BattleScene from "./battle-scene";
-import { EnemyPokemon, PlayerPokemon, QueuedMove } from "./field/pokemon";
 import { Command } from "./ui/command-ui-handler";
 import * as Utils from "./utils";
 import Trainer, { TrainerVariant } from "./field/trainer";
@@ -7,6 +6,7 @@ import { GameMode } from "./game-mode";
 import { MoneyMultiplierModifier, PokemonHeldItemModifier } from "./modifier/modifier";
 import { PokeballType } from "./data/pokeball";
 import { trainerConfigs } from "#app/data/trainer-config";
+import Pokemon, { EnemyPokemon, PlayerPokemon, QueuedMove } from "#app/field/pokemon";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { BattleSpec } from "#enums/battle-spec";
 import { Moves } from "#enums/moves";
@@ -36,6 +36,11 @@ export interface TurnCommand {
     targets?: BattlerIndex[];
     skip?: boolean;
     args?: any[];
+}
+
+export interface FaintLogEntry {
+  pokemon: Pokemon,
+  turn: number
 }
 
 interface TurnCommands {
@@ -69,6 +74,8 @@ export default class Battle {
   public playerFaints: number = 0;
   /** The number of times a Pokemon on the enemy's side has fainted this battle */
   public enemyFaints: number = 0;
+  public playerFaintsHistory: FaintLogEntry[] = [];
+  public enemyFaintsHistory: FaintLogEntry[] = [];
 
   private rngCounter: number = 0;
 

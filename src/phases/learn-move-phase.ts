@@ -137,6 +137,9 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
    */
   async learnMove(index: number, move: Move, pokemon: Pokemon, textMessage?: string) {
     if (this.fromTM) {
+      if (!pokemon.usedTMs) {
+        pokemon.usedTMs = [];
+      }
       pokemon.usedTMs.push(this.moveId);
     }
     pokemon.setMove(index, this.moveId);
