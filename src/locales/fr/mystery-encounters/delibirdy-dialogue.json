@@ -1,29 +1,29 @@
 
 
 {
-  "intro": "A pack of {{delibirdName}} have appeared!",
-  "title": "Delibir-dy",
-  "description": "The {{delibirdName}}s are looking at you expectantly, as if they want something. Perhaps giving them an item or some money would satisfy them?",
-  "query": "What will you give them?",
-  "invalid_selection": "Pokémon doesn't have that kind of item.",
+  "intro": "Une horde de {{delibirdName}} apparait !",
+  "title": "Cas d’oiseaux",
+  "description": "Les {{delibirdName}} vous scrutent avec curiosité, comme s’ils attendaient quelque chose. Peut-être que leur donner un objet ou un peu d’argent pourrait les satisfaire ?",
+  "query": "Que voulez-vous faire ?",
+  "invalid_selection": "Ce Pokémon ne porte pas ce genre d’objet.",
   "option": {
     "1": {
-      "label": "Give Money",
-      "tooltip": "(-) Give the {{delibirdName}}s {{money, money}}\n(+) Receive a Gift Item",
-      "selected": "You toss the money to the {{delibirdName}}s,\nwho chatter amongst themselves excitedly.$They turn back to you and happily give you a present!"
+      "label": "Donner de l’argent",
+      "tooltip": "(-) Donner {{money, money}} aux {{delibirdName}}\n(+) Recevez un objet",
+      "selected": "Vous lancez de l’argent aux {{delibirdName}},\nqui se lancent dans une grande délibération.$Ils reviennent ravis vers vous avec un cadeau !"
     },
     "2": {
-      "label": "Give Food",
-      "tooltip": "(-) Give the {{delibirdName}}s a Berry or Reviver Seed\n(+) Receive a Gift Item",
-      "select_prompt": "Select an item to give.",
-      "selected": "You toss the {{chosenItem}} to the {{delibirdName}}s,\nwho chatter amongst themselves excitedly.$They turn back to you and happily give you a present!"
+      "label": "Donner de la nourriture",
+      "tooltip": "(-) Donner une Baie ou une Résugraine aux {{delibirdName}}\n(+) Recevez un objet",
+      "select_prompt": "Sélectionner un objet à donner.",
+      "selected": "Vous lancez la {{chosenItem}} aux {{delibirdName}},\nqui se lancent dans une grande délibération.$Ils reviennent ravis vers vous avec un cadeau !"
     },
     "3": {
-      "label": "Give an Item",
-      "tooltip": "(-) Give the {{delibirdName}}s a Held Item\n(+) Receive a Gift Item",
-      "select_prompt": "Select an item to give.",
-      "selected": "You toss the {{chosenItem}} to the {{delibirdName}}s,\nwho chatter amongst themselves excitedly.$They turn back to you and happily give you a present!"
+      "label": "Donner un objet",
+      "tooltip": "(-) Donner un objet tenu aux {{delibirdName}}\n(+) Recevez un objet",
+      "select_prompt": "Sélectionner un objet à donner.",
+      "selected": "Vous lancez l’objet {{chosenItem}} aux {{delibirdName}},\nqui se lancent dans une grande délibération.$Ils reviennent ravis vers vous avec un cadeau !"
     }
   },
-  "outro": "The {{delibirdName}} pack happily waddles off into the distance.$What a curious little exchange!"
+  "outro": "La horde de {{delibirdName}} repartent dans la joie.$Un bien curieux échange !"
 }
