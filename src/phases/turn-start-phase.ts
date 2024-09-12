@@ -50,7 +50,7 @@ export class TurnStartPhase extends FieldPhase {
             targIDs[3] = eField[0].name
           if (eField[1])
             targIDs[4] = eField[1].name
-          //LoggerTools.Actions[pokemon.getBattlerIndex()] += " → " + targets.map(v => targIDs[v+1])
+          LoggerTools.Actions[pokemon.getBattlerIndex()] += " → " + targets.map(v => targIDs[v+1])
         }
         console.log(mv.getName(), targets)
       }
@@ -192,6 +192,7 @@ export class TurnStartPhase extends FieldPhase {
         if (!queuedMove) {
           continue;
         }
+        LoggerTools.Actions[pokemon.getBattlerIndex()] = `[[ ${new PokemonMove(queuedMove.move).getName()} unknown target ]]`
         const move = pokemon.getMoveset().find(m => m?.moveId === queuedMove.move) || new PokemonMove(queuedMove.move);
         if (move.getMove().hasAttr(MoveHeaderAttr)) {
           this.scene.unshiftPhase(new MoveHeaderPhase(this.scene, pokemon, move));
@@ -202,13 +203,11 @@ export class TurnStartPhase extends FieldPhase {
             this.logTargets(pokemon, move, turnCommand)
           } else {
             const playerPhase = new MovePhase(this.scene, pokemon, turnCommand.targets || turnCommand.move!.targets, move, false, queuedMove.ignorePP);//TODO: is the bang correct here?
-            //this.logTargets(pokemon, move, turnCommand)
+            this.logTargets(pokemon, move, turnCommand)
             this.scene.pushPhase(playerPhase);
           }
         } else {
           this.scene.pushPhase(new MovePhase(this.scene, pokemon, turnCommand.targets || turnCommand.move!.targets, move, false, queuedMove.ignorePP));//TODO: is the bang correct here?
-          var targets = turnCommand.targets || turnCommand.move!.targets
-          var mv = new PokemonMove(queuedMove.move)
         }
         break;
       case Command.BALL:
@@ -222,6 +221,7 @@ export class TurnStartPhase extends FieldPhase {
         }
         break;
       case Command.RUN:
+        LoggerTools.Actions[pokemon.getBattlerIndex()] = "Run from battle"
         let runningPokemon = pokemon;
         if (this.scene.currentBattle.double) {
           const playerActivePokemon = field.filter(pokemon => {
