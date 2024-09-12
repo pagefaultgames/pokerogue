@@ -5099,7 +5099,7 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
       const switchOutTarget = (this.user ? user : target);
       const player = switchOutTarget instanceof PlayerPokemon;
 
-      if (!this.user && move.category === MoveCategory.STATUS && (target.hasAbilityWithAttr(ForceSwitchOutImmunityAbAttr))) {
+      if (!this.user && move.category === MoveCategory.STATUS && target.hasAbilityWithAttr(ForceSwitchOutImmunityAbAttr)) {
         return false;
       }
 
