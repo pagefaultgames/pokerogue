@@ -50,6 +50,7 @@
   "choosePokemon": "Escolha um Pokémon.",
   "renamePokemon": "Renomear Pokémon",
   "rename": "Renomear",
+  "renameHelpEmoji": "Use \"/\" to access emoji library and enter a number to choose an emoji\n(e.g. \"/1\" for the first emoji)",
   "nickname": "Apelido",
   "errorServerDown": "Opa! Não foi possível conectar-se ao servidor.\n\nVocê pode deixar essa janela aberta,\npois o jogo irá se reconectar automaticamente."
 }

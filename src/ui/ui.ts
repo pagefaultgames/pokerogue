@@ -48,6 +48,7 @@ import BgmBar from "#app/ui/bgm-bar";
 import RenameFormUiHandler from "./rename-form-ui-handler";
 import RunHistoryUiHandler from "./run-history-ui-handler";
 import RunInfoUiHandler from "./run-info-ui-handler";
+import AutoCompleteUiHandler from "./autocomplete-ui-handler";
 
 export enum Mode {
   MESSAGE,
@@ -88,6 +89,7 @@ export enum Mode {
   RENAME_POKEMON,
   RUN_HISTORY,
   RUN_INFO,
+  AUTO_COMPLETE,
 }
 
 const transitionModes = [
@@ -124,7 +126,8 @@ const noTransitionModes = [
   Mode.SESSION_RELOAD,
   Mode.UNAVAILABLE,
   Mode.OUTDATED,
-  Mode.RENAME_POKEMON
+  Mode.RENAME_POKEMON,
+  Mode.AUTO_COMPLETE
 ];
 
 export default class UI extends Phaser.GameObjects.Container {
@@ -188,6 +191,7 @@ export default class UI extends Phaser.GameObjects.Container {
       new RenameFormUiHandler(scene),
       new RunHistoryUiHandler(scene),
       new RunInfoUiHandler(scene),
+      new AutoCompleteUiHandler(scene),
     ];
   }
 

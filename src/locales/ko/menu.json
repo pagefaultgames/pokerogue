@@ -50,6 +50,7 @@
   "choosePokemon": "포켓몬을 선택하세요.",
   "renamePokemon": "포켓몬의 닉네임은?",
   "rename": "닉네임 바꾸기",
+  "renameHelpEmoji": "Use \"/\" to access emoji library and enter a number to choose an emoji\n(e.g. \"/1\" for the first emoji)",
   "nickname": "닉네임",
   "errorServerDown": "서버 연결 중 문제가 발생했습니다.\n\n이 창을 종료하지 않고 두면,\n게임은 자동으로 재접속됩니다."
 }
