@@ -6,26 +6,42 @@ on:
   push:
     branches:
       - main  # Trigger on push events to the main branch
+      - beta # Trigger on push events to the beta branch
   pull_request:
     branches:
       - main  # Trigger on pull request events targeting the main branch
+      - beta # Trigger on pull request events targeting the beta branch
+  merge_group:
+    types: [checks_requested]
 
 jobs:
-  run-tests:  # Define a job named "run-tests"
-    name: Run tests  # Human-readable name for the job
-    runs-on: ubuntu-latest  # Specify the latest Ubuntu runner for the job
-
+  pre-test:
+    name: Run Pre-test
+    runs-on: ubuntu-latest
     steps:
-      - name: Check out Git repository  # Step to check out the repository
-        uses: actions/checkout@v4  # Use the checkout action version 4
-
-      - name: Set up Node.js  # Step to set up Node.js environment
-        uses: actions/setup-node@v4  # Use the setup-node action version 4
+      - name: Check out Git repository
+        uses: actions/checkout@v4
         with:
-          node-version: 20  # Specify Node.js version 20
+          path: tests-action
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Install Node.js dependencies
+        working-directory: tests-action
+        run: npm ci
+      - name: Run Pre-test
+        working-directory: tests-action
+        run: npx vitest run --project pre ${{ !runner.debug && '--silent' || '' }}
 
-      - name: Install Node.js dependencies  # Step to install Node.js dependencies
-        run: npm ci  # Use 'npm ci' to install dependencies
-
-      - name: tests  # Step to run tests
-        run: npm run test:silent
+  run-tests:
+    name: Run Tests 
+    needs: [pre-test]
+    strategy:
+      matrix:
+        shard: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+    uses: ./.github/workflows/test-shard-template.yml
+    with:
+      project: main
+      shard: ${{ matrix.shard }}
+      totalShards: 10

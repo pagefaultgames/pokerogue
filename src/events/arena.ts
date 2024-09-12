@@ -1,7 +1,7 @@
-import { ArenaTagSide } from "#app/data/arena-tag.js";
+import { ArenaTagSide } from "#app/data/arena-tag";
 import { ArenaTagType } from "#enums/arena-tag-type";
-import { TerrainType } from "#app/data/terrain.js";
-import { WeatherType } from "#app/data/weather.js";
+import { TerrainType } from "#app/data/terrain";
+import { WeatherType } from "#app/data/weather";
 
 /** Alias for all {@linkcode ArenaEvent} type strings */
 export enum ArenaEventType {
@@ -71,11 +71,18 @@ export class TagAddedEvent extends ArenaEvent {
   public arenaTagType: ArenaTagType;
   /** The {@linkcode ArenaTagSide} the tag is being placed on */
   public arenaTagSide: ArenaTagSide;
-  constructor(arenaTagType: ArenaTagType, arenaTagSide: ArenaTagSide, duration: number) {
+  /** The current number of layers of the arena trap. */
+  public arenaTagLayers: number;
+  /** The maximum amount of layers of the arena trap. */
+  public arenaTagMaxLayers: number;
+
+  constructor(arenaTagType: ArenaTagType, arenaTagSide: ArenaTagSide, duration: number, arenaTagLayers?: number, arenaTagMaxLayers?: number) {
     super(ArenaEventType.TAG_ADDED, duration);
 
     this.arenaTagType = arenaTagType;
     this.arenaTagSide = arenaTagSide;
+    this.arenaTagLayers = arenaTagLayers!; // TODO: is this bang correct?
+    this.arenaTagMaxLayers = arenaTagMaxLayers!; // TODO: is this bang correct?
   }
 }
 /**

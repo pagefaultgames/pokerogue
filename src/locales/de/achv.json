@@ -1,0 +1,277 @@
+{
+  "Achievements": {
+    "name": "Errungenschaften"
+  },
+  "Locked": {
+    "name": "Gesperrt"
+  },
+  "MoneyAchv": {
+    "description": "Häufe eine Gesamtsumme von {{moneyAmount}} ₽ an."
+  },
+  "10K_MONEY": {
+    "name": "Besserverdiener",
+    "name_female": "Besserverdienerin"
+  },
+  "100K_MONEY": {
+    "name": "Reich"
+  },
+  "1M_MONEY": {
+    "name": "Millionär",
+    "name_female": "Millionärin"
+  },
+  "10M_MONEY": {
+    "name": "Einprozenter"
+  },
+  "DamageAchv": {
+    "description": "Füge mit einem Treffer {{damageAmount}} Schaden zu."
+  },
+  "250_DMG": {
+    "name": "Harte Treffer"
+  },
+  "1000_DMG": {
+    "name": "Härtere Treffer"
+  },
+  "2500_DMG": {
+    "name": "Das ist ne Menge Schaden!"
+  },
+  "10000_DMG": {
+    "name": "One Punch Man",
+    "name_female": "One Punch Woman"
+  },
+  "HealAchv": {
+    "description": "Heile {{healAmount}} {{HP}} auf einmal. Mit einer Attacke, Fähigkeit oder einem gehaltenen Gegenstand."
+  },
+  "250_HEAL": {
+    "name": "Anfänger-Heiler",
+    "name_female": "Anfänger-Heilerin"
+  },
+  "1000_HEAL": {
+    "name": "Gesundheitsprofi"
+  },
+  "2500_HEAL": {
+    "name": "Kleriker",
+    "name_female": "Klerikerin"
+  },
+  "10000_HEAL": {
+    "name": "Wiederherstellungsmeister",
+    "name_female": "Wiederherstellungsmeisterin"
+  },
+  "LevelAchv": {
+    "description": "Erhöhe das Level eines Pokémon auf {{level}}."
+  },
+  "LV_100": {
+    "name": "Warte, es gibt mehr!"
+  },
+  "LV_250": {
+    "name": "Elite"
+  },
+  "LV_1000": {
+    "name": "Geh noch höher hinaus!"
+  },
+  "RibbonAchv": {
+    "description": "Sammle insgesamt {{ribbonAmount}} Bänder."
+  },
+  "10_RIBBONS": {
+    "name": "Champion der Pokémon Liga"
+  },
+  "25_RIBBONS": {
+    "name": "Bänder-Sammler",
+    "name_female": "Bänder-Sammlerin"
+  },
+  "50_RIBBONS": {
+    "name": "Bänder-Experte",
+    "name_female": "Bänder-Expertin"
+  },
+  "75_RIBBONS": {
+    "name": "Bänder-Guru"
+  },
+  "100_RIBBONS": {
+    "name": "Bänder-Meister",
+    "name_female": "Bänder-Meisterin"
+  },
+  "TRANSFER_MAX_STAT_STAGE": {
+    "name": "Teamwork",
+    "description": "Nutze Staffette, während der Anwender mindestens eines Statuswertes maximiert hat."
+  },
+  "MAX_FRIENDSHIP": {
+    "name": "Freundschaftsmaximierung",
+    "description": "Erreiche maximale Freundschaft bei einem Pokémon."
+  },
+  "MEGA_EVOLVE": {
+    "name": "Megaverwandlung",
+    "description": "Megaentwickle ein Pokémon."
+  },
+  "GIGANTAMAX": {
+    "name": "Absolute Einheit",
+    "description": "Gigadynamaximiere ein Pokémon."
+  },
+  "TERASTALLIZE": {
+    "name": "Typen-Bonus Enthusiast",
+    "description": "Terrakristallisiere ein Pokémon."
+  },
+  "STELLAR_TERASTALLIZE": {
+    "name": "Der geheime Typ",
+    "description": "Terrakristallisiere ein Pokémon zum Typen Stellar."
+  },
+  "SPLICE": {
+    "name": "Unendliche Fusion",
+    "description": "Kombiniere zwei Pokémon mit einem DNS-Keil."
+  },
+  "MINI_BLACK_HOLE": {
+    "name": "Ein Loch voller Items",
+    "description": "Erlange ein Mini-Schwarzes Loch."
+  },
+  "CATCH_MYTHICAL": {
+    "name": "Mysteriöses!",
+    "description": "Fange ein mysteriöses Pokémon."
+  },
+  "CATCH_SUB_LEGENDARY": {
+    "name": "Sub-Legendär",
+    "description": "Fange ein sub-legendäres Pokémon."
+  },
+  "CATCH_LEGENDARY": {
+    "name": "Legendär",
+    "description": "Fange ein legendäres Pokémon."
+  },
+  "SEE_SHINY": {
+    "name": "Schillerndes Licht",
+    "description": "Finde ein wildes schillerndes Pokémon."
+  },
+  "SHINY_PARTY": {
+    "name": "Das ist Hingabe",
+    "description": "Habe ein Team aus schillernden Pokémon."
+  },
+  "HATCH_MYTHICAL": {
+    "name": "Mysteriöses Ei",
+    "description": "Lass ein mysteriöses Pokémon aus einem Ei schlüpfen."
+  },
+  "HATCH_SUB_LEGENDARY": {
+    "name": "Sub-Legendäres Ei",
+    "description": "Lass ein sub-legendäres Pokémon aus einem Ei schlüpfen."
+  },
+  "HATCH_LEGENDARY": {
+    "name": "Legendäres Ei",
+    "description": "Lass ein legendäres Pokémon aus einem Ei schlüpfen."
+  },
+  "HATCH_SHINY": {
+    "name": "Schillerndes Ei",
+    "description": "Lass ein schillerndes Pokémon aus einem Ei schlüpfen."
+  },
+  "HIDDEN_ABILITY": {
+    "name": "Geheimes Talent",
+    "description": "Fang ein Pokémon mit versteckter Fähigkeit."
+  },
+  "PERFECT_IVS": {
+    "name": "Zertifikat der Echtheit",
+    "description": "Erhalte ein Pokémon mit perfekten IS-Werten."
+  },
+  "CLASSIC_VICTORY": {
+    "name": "Ungeschlagen",
+    "description": "Beende den klassischen Modus erfolgreich."
+  },
+  "UNEVOLVED_CLASSIC_VICTORY": {
+    "name": "'Bringe dein Kind mit zur Arbeit'-Tag",
+    "description": "Beende den klassischen Modus erfolgreich mit mindestens einem nicht entwickeltem Pokémon in deinem Team"
+  },
+  "MONO_GEN_ONE": {
+    "name": "Der originale Rivale",
+    "description": "Schließe die 'Nur 1. Generation' Herausforderung ab."
+  },
+  "MONO_GEN_TWO": {
+    "name": "Generation 1.5",
+    "description": "Schließe die 'Nur 2. Generation' Herausforderung ab."
+  },
+  "MONO_GEN_THREE": {
+    "name": "Zu viel Wasser?",
+    "description": "Schließe die 'Nur 3. Generation' Herausforderung ab."
+  },
+  "MONO_GEN_FOUR": {
+    "name": "Ist SIE wirklich die Stärkste?",
+    "description": "Schließe die 'Nur 4. Generation' Herausforderung ab."
+  },
+  "MONO_GEN_FIVE": {
+    "name": "Komplett Original",
+    "description": "Schließe die 'Nur 5. Generation' Herausforderung ab."
+  },
+  "MONO_GEN_SIX": {
+    "name": "Fast Königlich",
+    "description": "Schließe die 'Nur 6. Generation' Herausforderung ab."
+  },
+  "MONO_GEN_SEVEN": {
+    "name": "Technisch gesehen",
+    "description": "Schließe die 'Nur 7. Generation' Herausforderung ab."
+  },
+  "MONO_GEN_EIGHT": {
+    "name": "Die Zeit des Champions",
+    "description": "Schließe die 'Nur 8. Generation' Herausforderung ab."
+  },
+  "MONO_GEN_NINE": {
+    "name": "Sie hat es dir leicht gemacht...",
+    "description": "Schließe die 'Nur 9. Generation' Herausforderung ab."
+  },
+  "MonoType": {
+    "description": "Beende die Monotyp-{{type}} Herausforderung."
+  },
+  "MONO_NORMAL": {
+    "name": "Normaler Typ"
+  },
+  "MONO_FIGHTING": {
+    "name": "Ich kenne Kung Fu."
+  },
+  "MONO_FLYING": {
+    "name": "Ich glaube ich kann fliegen."
+  },
+  "MONO_POISON": {
+    "name": "Kantos Liebling"
+  },
+  "MONO_GROUND": {
+    "name": "Auf dem Boden bleiben."
+  },
+  "MONO_ROCK": {
+    "name": "So hart wie Rocko."
+  },
+  "MONO_BUG": {
+    "name": "Steche wie ein Bibor."
+  },
+  "MONO_GHOST": {
+    "name": "Wer wird angerufen?"
+  },
+  "MONO_STEEL": {
+    "name": "Stahlharte Entschlossenheit"
+  },
+  "MONO_FIRE": {
+    "name": "Brennende Leidenschaft"
+  },
+  "MONO_WATER": {
+    "name": "Wenn es regnet, schüttet es!"
+  },
+  "MONO_GRASS": {
+    "name": "Grüner Daumen"
+  },
+  "MONO_ELECTRIC": {
+    "name": "Elektrisierend"
+  },
+  "MONO_PSYCHIC": {
+    "name": "Übernatürliches Talent"
+  },
+  "MONO_ICE": {
+    "name": "Eis Eis Baby"
+  },
+  "MONO_DRAGON": {
+    "name": "Siegfried bist du es?"
+  },
+  "MONO_DARK": {
+    "name": "Es ist nur eine Phase!"
+  },
+  "MONO_FAIRY": {
+    "name": "Ein ewiges Abenteuer!"
+  },
+  "FRESH_START": {
+    "name": "Hussa, noch einmal von vorn!",
+    "description": "Schließe die 'Neuanfang' Herausforderung ab"
+  },
+  "INVERSE_BATTLE": {
+    "name": "Spieglein, Spieglein an der Wand",
+    "description": "Schließe die 'Umkehrkampf' Herausforderung ab"
+  }
+}

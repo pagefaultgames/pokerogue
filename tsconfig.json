@@ -5,7 +5,7 @@
 		"moduleResolution": "bundler",
 		"resolveJsonModule": true,
 		"esModuleInterop": true,
-		"strictNullChecks": false,
+		"strictNullChecks": true,
 		"sourceMap": false,
 		"strict": false,
 		"rootDir": "./src",
@@ -20,14 +20,16 @@
 		"noEmit": true
 	},
 	"typedocOptions": {
-		"entryPoints": ["src/"],
+		"entryPoints": ["./src"],
 		"entryPointStrategy": "expand",
-		"out": "typedoc",
+		"exclude": "**/*+.test.ts",
+		"out": "typedoc"
 	},
 	"exclude": [
 		"node_modules",
 		"dist",
 		"vite.config.ts",
-		"vitest.config.ts"
+		"vitest.config.ts",
+		"vitest.workspace.ts",
 	]
 }

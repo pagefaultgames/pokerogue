@@ -11,6 +11,7 @@ import SettingsKeyboardUiHandler from "#app/ui/settings/settings-keyboard-ui-han
 import BattleScene from "./battle-scene";
 import SettingsDisplayUiHandler from "./ui/settings/settings-display-ui-handler";
 import SettingsAudioUiHandler from "./ui/settings/settings-audio-ui-handler";
+import RunInfoUiHandler from "./ui/run-info-ui-handler";
 
 type ActionKeys = Record<Button, () => void>;
 
@@ -79,7 +80,7 @@ export class UiInputs {
       [Button.ACTION]:          () => this.buttonAb(Button.ACTION),
       [Button.CANCEL]:          () => this.buttonAb(Button.CANCEL),
       [Button.MENU]:            () => this.buttonMenu(),
-      [Button.STATS]:           () => this.buttonStats(true),
+      [Button.STATS]:           () => this.buttonGoToFilter(Button.STATS),
       [Button.CYCLE_SHINY]:     () => this.buttonCycleOption(Button.CYCLE_SHINY),
       [Button.CYCLE_FORM]:      () => this.buttonCycleOption(Button.CYCLE_FORM),
       [Button.CYCLE_GENDER]:    () => this.buttonCycleOption(Button.CYCLE_GENDER),
@@ -139,6 +140,17 @@ export class UiInputs {
       p.toggleStats(pressed);
     }
   }
+
+  buttonGoToFilter(button: Button): void {
+    const whitelist = [StarterSelectUiHandler];
+    const uiHandler = this.scene.ui?.getHandler();
+    if (whitelist.some(handler => uiHandler instanceof handler)) {
+      this.scene.ui.processInput(button);
+    } else {
+      this.buttonStats(true);
+    }
+  }
+
   buttonInfo(pressed: boolean = true): void {
     if (this.scene.showMovesetFlyout ) {
       for (const p of this.scene.getField().filter(p => p?.isActive(true))) {
@@ -170,7 +182,7 @@ export class UiInputs {
       break;
     case Mode.MENU:
       this.scene.ui.revertMode();
-      this.scene.playSound("select");
+      this.scene.playSound("ui/select");
       break;
     default:
       return;
@@ -178,7 +190,7 @@ export class UiInputs {
   }
 
   buttonCycleOption(button: Button): void {
-    const whitelist = [StarterSelectUiHandler, SettingsUiHandler, SettingsDisplayUiHandler, SettingsAudioUiHandler, SettingsGamepadUiHandler, SettingsKeyboardUiHandler];
+    const whitelist = [StarterSelectUiHandler, SettingsUiHandler, RunInfoUiHandler, SettingsDisplayUiHandler, SettingsAudioUiHandler, SettingsGamepadUiHandler, SettingsKeyboardUiHandler];
     const uiHandler = this.scene.ui?.getHandler();
     if (whitelist.some(handler => uiHandler instanceof handler)) {
       this.scene.ui.processInput(button);
@@ -190,12 +202,12 @@ export class UiInputs {
   buttonSpeedChange(up = true): void {
     const settingGameSpeed = settingIndex(SettingKeys.Game_Speed);
     if (up && this.scene.gameSpeed < 5) {
-      this.scene.gameData.saveSetting(SettingKeys.Game_Speed, Setting[settingGameSpeed].options.findIndex((item) => item.value === `${this.scene.gameSpeed}x`) + 1);
+      this.scene.gameData.saveSetting(SettingKeys.Game_Speed, Setting[settingGameSpeed].options.findIndex((item) => item.label === `${this.scene.gameSpeed}x`) + 1);
       if (this.scene.ui?.getMode() === Mode.SETTINGS) {
         (this.scene.ui.getHandler() as SettingsUiHandler).show([]);
       }
     } else if (!up && this.scene.gameSpeed > 1) {
-      this.scene.gameData.saveSetting(SettingKeys.Game_Speed, Math.max(Setting[settingGameSpeed].options.findIndex((item) => item.value === `${this.scene.gameSpeed}x`) - 1, 0));
+      this.scene.gameData.saveSetting(SettingKeys.Game_Speed, Math.max(Setting[settingGameSpeed].options.findIndex((item) => item.label === `${this.scene.gameSpeed}x`) - 1, 0));
       if (this.scene.ui?.getMode() === Mode.SETTINGS) {
         (this.scene.ui.getHandler() as SettingsUiHandler).show([]);
       }
