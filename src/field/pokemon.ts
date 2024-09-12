@@ -3584,6 +3584,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * info container.
    */
   leaveField(clearEffects: boolean = true, hideInfo: boolean = true) {
+    this.resetSprite();
     this.resetTurnData();
     if (clearEffects) {
       this.resetSummonData();
@@ -3592,7 +3593,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     if (hideInfo) {
       this.hideInfo();
     }
-    this.resetSprite();
     this.scene.field.remove(this);
     this.scene.triggerPokemonFormChange(this, SpeciesFormChangeActiveTrigger, true);
   }

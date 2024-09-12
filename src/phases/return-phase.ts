@@ -16,9 +16,9 @@ export class ReturnPhase extends SwitchSummonPhase {
   onEnd(): void {
     const pokemon = this.getPokemon();
 
+    pokemon.resetSprite();
     pokemon.resetTurnData();
     pokemon.resetSummonData();
-    pokemon.resetSprite();
 
     this.scene.updateFieldScale();
 
