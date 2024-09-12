@@ -53,7 +53,7 @@
   "noPokeballTrainer": "Non puoi catturare\nPokémon di altri allenatori!",
   "noPokeballMulti": "Puoi lanciare una Poké Ball\nsolo quando rimane un singolo Pokémon!",
   "noPokeballStrong": "Il Pokémon avversario è troppo forte per essere catturato!\nDevi prima indebolirlo.",
-  "noPokeballMysteryEncounter": "You aren't able to\ncatch this Pokémon!",
+  "noPokeballMysteryEncounter": "Non ti è possibile\ncatturare questo Pokémon!",
   "noEscapeForce": "Una forza misteriosa\nimpedisce la fuga.",
   "noEscapeTrainer": "Non puoi sottrarti\nalla lotta con un'allenatore!",
   "noEscapePokemon": "{{moveName}} di {{pokemonName}}\npreviene la {{escapeVerb}}!",
