@@ -1,47 +1,47 @@
 {
-  "intro": "An extremely strong trainer approaches you...",
+  "intro": "Un entrenador extremadamente fuerte se te acerca...",
   "buck": {
-    "intro_dialogue": "Yo, trainer! My name's Buck.$I have a super awesome proposal\nfor a strong trainer such as yourself!$I'm carrying two rare Pokémon Eggs with me,\nbut I'd like someone else to care for one.$If you can prove your strength as a trainer to me,\nI'll give you the rarer egg!",
-    "accept": "Whoooo, I'm getting fired up!",
-    "decline": "Darn, it looks like your\nteam isn't in peak condition.$Here, let me help with that."
+    "intro_dialogue": "¡Hola, entrenador! Me llamo Bulgur.$Tengo una propuesta súper genial para un entrenador fuerte como tú.$Llevo conmigo dos Huevos Pokémon raros, pero me gustaría que alguien más cuidara uno.$Si puedes demostrarme tu fuerza como entrenador, ¡te daré el huevo más raro",
+    "accept": "¡Guau!¡Este combate promete!",
+    "decline": "Vaya, parece que tu equipo no está en condiciones óptimas.$Aquí, déjame ayudarte con eso."
   },
   "cheryl": {
-    "intro_dialogue": "Hello, my name's Cheryl.$I have a particularly interesting request,\nfor a strong trainer such as yourself.$I'm carrying two rare Pokémon Eggs with me,\nbut I'd like someone else to care for one.$If you can prove your strength as a trainer to me,\nI'll give you the rarer Egg!",
-    "accept": "I hope you're ready!",
-    "decline": "I understand, it looks like your team\nisn't in the best condition at the moment.$Here, let me help with that."
+    "intro_dialogue": "Hola, me llamo Malta.$Tengo una petición particularmente interesante para un entrenador fuerte como tú.$Llevo conmigo dos Huevos Pokémon raros, pero me gustaría que alguien más cuidara uno.$Si puedes demostrarme tu fuerza como entrenador, ¡te daré el Huevo más raro!",
+    "accept": "¡Espero que estés listo!",
+    "decline": "Entiendo, parece que tu equipo no está en las mejores condiciones en este momento.$Aquí, déjame ayudar con eso."
   },
   "marley": {
-    "intro_dialogue": "...@d{64} I'm Marley.$I have an offer for you...$I'm carrying two Pokémon Eggs with me,\nbut I'd like someone else to care for one.$If you're stronger than me,\nI'll give you the rarer Egg.",
-    "accept": "... I see.",
-    "decline": "... I see.$Your Pokémon look hurt...\nLet me help."
+    "intro_dialogue": "...@d{64} Soy Sémola.$Tengo una oferta para ti...$Llevo conmigo dos Huevos Pokémon, pero me gustaría que alguien más cuidara uno.$Si eres más fuerte que yo, te daré el Huevo más raro.",
+    "accept": "... Ya veo.",
+    "decline": "... Ya veo.$Tus Pokémon parecen heridos… Déjame ayudarte."
   },
   "mira": {
-    "intro_dialogue": "Hi! I'm Mira!$Mira has a request\nfor a strong trainer like you!$Mira has two rare Pokémon Eggs,\nbut Mira wants someone else to take one!$If you show Mira that you're strong,\nMira will give you the rarer Egg!",
-    "accept": "You'll battle Mira?\nYay!",
-    "decline": "Aww, no battle?\nThat's okay!$Here, Mira will heal your team!"
+    "intro_dialogue": "¡Hola! Soy Maiza. Maiza tiene una petición para un entrenador fuerte como tú. Maiza tiene dos Huevos Pokémon raros, pero quiere que alguien más se quede con uno. Si le demuestras a Maiza que eres fuerte,¡Maiza te dará el Huevo más raro!",
+    "accept": "¿Vas a luchar contra Maiza?\n¡Genial!",
+    "decline": "Vaya, ¿no hay batalla? ¡Está bien! Aquí, Maiza curará a tu equipo."
   },
   "riley": {
-    "intro_dialogue": "I'm Riley.$I have an odd proposal\nfor a strong trainer such as yourself.$I'm carrying two rare Pokémon Eggs with me,\nbut I'd like to give one to another trainer.$If you can prove your strength to me,\nI'll give you the rarer Egg!",
-    "accept": "That look you have...\nLet's do this.",
-    "decline": "I understand, your team looks beat up.$Here, let me help with that."
+    "intro_dialogue": "Soy Quinoa.$Tengo una propuesta extraña para un entrenador fuerte como tú.$Llevo conmigo dos Huevos Pokémon raros, pero me gustaría darle uno a otro entrenador.$Si puedes demostrarme tu fuerza, te daré el Huevo más raro.",
+    "accept": "Esa mirada que tienes...\nhagamos esto..",
+    "decline": "Entiendo, tu equipo parece agotado.$Aquí, déjame ayudarte con eso."
   },
-  "title": "A Trainer's Test",
-  "description": "It seems this trainer is willing to give you an Egg regardless of your decision. However, if you can manage to defeat this strong trainer, you'll receive a much rarer Egg.",
-  "query": "What will you do?",
+  "title": "Una Prueba de Entrenador",
+  "description": "Parece que este entrenador está dispuesto a darte un Huevo sin importar tu decisión. Sin embargo, si logras derrotar a este entrenador fuerte, recibirás un Huevo mucho más raro.",
+  "query": "¿Qué harás?",
   "option": {
     "1": {
-      "label": "Accept the Challenge",
-      "tooltip": "(-) Tough Battle\n(+) Gain a @[TOOLTIP_TITLE]{Very Rare Egg}"
+      "label": "Aceptar el Desafío",
+      "tooltip": "(-) Batalla Difícil\n(+) Obtén un @[TOOLTIP_TITLE]{Very Rare Egg}"
     },
     "2": {
-      "label": "Refuse the Challenge",
-      "tooltip": "(+) Full Heal Party\n(+) Gain an @[TOOLTIP_TITLE]{Egg}"
+      "label": "Rechazar el Desafío",
+      "tooltip": "(+) Equipo Curado\n(+) Obtén un @[TOOLTIP_TITLE]{Egg}"
     }
   },
   "eggTypes": {
-    "rare": "a Rare Egg",
-    "epic": "an Epic Egg",
-    "legendary": "a Legendary Egg"
+    "rare": "un huevo Raro",
+    "epic": "un huavo Épico",
+    "legendary": "un huevo Legendario "
   },
-  "outro": "{{statTrainerName}} gave you {{eggType}}!"
+  "outro": "{{statTrainerName}} te dio {{eggType}}!"
 }
