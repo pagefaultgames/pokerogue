@@ -167,7 +167,7 @@ export default class BattleScene extends SceneBase {
    * - 1 = Always
    * - 2 = Ask
    */
-  public eggSkip: number = 0;
+  public eggSkipPreference: number = 0;
 
   /**
      * Defines the experience gain display mode.

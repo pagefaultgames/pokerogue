@@ -31,7 +31,7 @@ export class EggLapsePhase extends Phase {
     this.eggHatchData= [];
 
     if (eggsToHatchCount > 0) {
-      if (eggsToHatchCount >= this.minEggsToPromptSkip && this.scene.eggSkip === 2) {
+      if (eggsToHatchCount >= this.minEggsToPromptSkip && this.scene.eggSkipPreference === 2) {
         this.scene.ui.showText(i18next.t("battle:eggHatching"), 0, () => {
           // show prompt for skip
           this.scene.ui.showText(i18next.t("battle:eggSkipPrompt"), 0);
@@ -44,7 +44,7 @@ export class EggLapsePhase extends Phase {
           }
           );
         }, 100, true);
-      } else if (eggsToHatchCount >= this.minEggsToPromptSkip && this.scene.eggSkip === 1) {
+      } else if (eggsToHatchCount >= this.minEggsToPromptSkip && this.scene.eggSkipPreference === 1) {
         this.scene.queueMessage(i18next.t("battle:eggHatching"));
         this.hatchEggsSkipped(eggsToHatch);
         this.showSummary();

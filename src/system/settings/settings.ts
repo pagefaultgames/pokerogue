@@ -749,7 +749,7 @@ export function setSetting(scene: BattleScene, setting: string, value: integer):
     scene.skipSeenDialogues = Setting[index].options[value].value === "On";
     break;
   case SettingKeys.Egg_Skip:
-    scene.eggSkip = value;
+    scene.eggSkipPreference = value;
     break;
   case SettingKeys.Battle_Style:
     scene.battleStyle = value;
