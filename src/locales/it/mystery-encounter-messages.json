@@ -1,6 +1,6 @@
 {
-  "paid_money": "You paid ₽{{amount, number}}.",
-  "receive_money": "You received ₽{{amount, number}}!",
-  "affects_pokedex": "Affects Pokédex Data",
-  "cancel_option": "Return to encounter option select."
+  "paid_money": "Hai pagato {{amount, number}}₽.",
+  "receive_money": "Hai ricevuto {{amount, number}}₽!",
+  "affects_pokedex": "Influisce sul Pokédex",
+  "cancel_option": "Torna alla scelta dell'incontro."
 }
