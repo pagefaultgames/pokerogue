@@ -1900,13 +1900,13 @@ export function getModifierPoolForType(poolType: ModifierPoolType): ModifierPool
 }
 
 const tierWeights = [ 768 / 1024, 195 / 1024, 48 / 1024, 12 / 1024, 1 / 1024 ];
-export let poolHasEviolite: boolean = false;
-export let poolHasBlackHole: boolean = false;
+export const itemPoolChecks: Map<ModifierTypeKeys, boolean> = new Map();
 
 export function regenerateModifierPoolThresholds(party: Pokemon[], poolType: ModifierPoolType, rerollCount: integer = 0) {
   const pool = getModifierPoolForType(poolType);
-  poolHasEviolite = false;
-  poolHasBlackHole = false;
+  itemPoolChecks.forEach((v, k) => {
+    itemPoolChecks.set(k, false);
+  });
 
   const ignoredIndexes = {};
   const modifierTableData = {};
@@ -1943,11 +1943,8 @@ export function regenerateModifierPoolThresholds(party: Pokemon[], poolType: Mod
         ignoredIndexes[t].push(i++);
         return total;
       }
-      if (modifierType.modifierType.id === "EVIOLITE") {
-        poolHasEviolite = true;
-      }
-      if (modifierType.modifierType.id === "MINI_BLACK_HOLE") {
-        poolHasBlackHole = true;
+      if (itemPoolChecks.has(modifierType.modifierType.id as ModifierTypeKeys)) {
+        itemPoolChecks.set(modifierType.modifierType.id as ModifierTypeKeys, true);
       }
       thresholds.set(total, i++);
       return total;

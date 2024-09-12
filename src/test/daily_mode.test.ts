@@ -1,9 +1,9 @@
 import { Abilities } from "#app/enums/abilities";
 import { Moves } from "#app/enums/moves";
 import { MapModifier } from "#app/modifier/modifier";
-import { poolHasBlackHole, poolHasEviolite } from "#app/modifier/modifier-type";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import GameManager from "./utils/gameManager";
+import { itemPoolChecks } from "#app/modifier/modifier-type";
 
 const TIMEOUT = 20 * 1000;
 
@@ -64,18 +64,28 @@ describe("Shop modifications", async () => {
   it("should only allow Mini Black Hole and Eviolite outside of Daily if unlocked", async () => {
     await game.classicMode.startBattle();
 
+    itemPoolChecks.set("EVIOLITE", false);
+    itemPoolChecks.set("MINI_BLACK_HOLE", false);
+
     game.move.select(Moves.SURF);
     await game.phaseInterceptor.to("SelectModifierPhase", false);
-    expect(poolHasEviolite).toBeFalsy();
-    expect(poolHasBlackHole).toBeFalsy();
+    expect(itemPoolChecks.get("EVIOLITE")).toBeFalsy();
+    expect(itemPoolChecks.get("MINI_BLACK_HOLE")).toBeFalsy();
+
+    itemPoolChecks.clear();
   }, TIMEOUT);
 
   it("should allow Eviolite and Mini Black Hole in shop when in Daily Run", async () => {
     await game.dailyMode.startBattle();
 
+    itemPoolChecks.set("EVIOLITE", false);
+    itemPoolChecks.set("MINI_BLACK_HOLE", false);
+
     game.move.select(Moves.SURF);
     await game.phaseInterceptor.to("SelectModifierPhase", false);
-    expect(poolHasEviolite).toBeTruthy();
-    expect(poolHasBlackHole).toBeTruthy();
+    expect(itemPoolChecks.get("EVIOLITE")).toBeTruthy();
+    expect(itemPoolChecks.get("MINI_BLACK_HOLE")).toBeTruthy();
+
+    itemPoolChecks.clear();
   }, TIMEOUT);
 });
