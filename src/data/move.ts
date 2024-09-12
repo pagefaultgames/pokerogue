@@ -5099,7 +5099,7 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
       const switchOutTarget = (this.user ? user : target);
       const player = switchOutTarget instanceof PlayerPokemon;
 
-      if (!this.user && move.category === MoveCategory.STATUS && (target.hasAbilityWithAttr(ForceSwitchOutImmunityAbAttr) || target.isMax())) {
+      if (!this.user && move.category === MoveCategory.STATUS && (target.hasAbilityWithAttr(ForceSwitchOutImmunityAbAttr))) {
         return false;
       }
 
@@ -6309,8 +6309,6 @@ const failOnGravityCondition: MoveConditionFunc = (user, target, move) => !user.
 
 const failOnBossCondition: MoveConditionFunc = (user, target, move) => !target.isBossImmune();
 
-const failOnMaxCondition: MoveConditionFunc = (user, target, move) => !target.isMax();
-
 const failIfSingleBattle: MoveConditionFunc = (user, target, move) => user.scene.currentBattle.double;
 
 const failIfDampCondition: MoveConditionFunc = (user, target, move) => {
@@ -6704,8 +6702,7 @@ export function initMoves() {
       .attr(FixedDamageAttr, 20),
     new StatusMove(Moves.DISABLE, Type.NORMAL, 100, 20, -1, 0, 1)
       .attr(AddBattlerTagAttr, BattlerTagType.DISABLED, false, true)
-      .condition((user, target, move) => target.getMoveHistory().reverse().find(m => m.move !== Moves.NONE && m.move !== Moves.STRUGGLE && !m.virtual) !== undefined)
-      .condition(failOnMaxCondition),
+      .condition((user, target, move) => target.getMoveHistory().reverse().find(m => m.move !== Moves.NONE && m.move !== Moves.STRUGGLE && !m.virtual) !== undefined),
     new AttackMove(Moves.ACID, Type.POISON, MoveCategory.SPECIAL, 40, 100, 30, 10, 0, 1)
       .attr(StatStageChangeAttr, [ Stat.SPDEF ], -1)
       .target(MoveTarget.ALL_NEAR_ENEMIES),
@@ -6743,8 +6740,7 @@ export function initMoves() {
       .attr(RecoilAttr)
       .recklessMove(),
     new AttackMove(Moves.LOW_KICK, Type.FIGHTING, MoveCategory.PHYSICAL, -1, 100, 20, -1, 0, 1)
-      .attr(WeightPowerAttr)
-      .condition(failOnMaxCondition),
+      .attr(WeightPowerAttr),
     new AttackMove(Moves.COUNTER, Type.FIGHTING, MoveCategory.PHYSICAL, -1, 100, 20, -1, -5, 1)
       .attr(CounterDamageAttr, (move: Move) => move.category === MoveCategory.PHYSICAL, 2)
       .target(MoveTarget.ATTACKER),
@@ -7834,8 +7830,7 @@ export function initMoves() {
       .target(MoveTarget.ENEMY_SIDE),
     new AttackMove(Moves.GRASS_KNOT, Type.GRASS, MoveCategory.SPECIAL, -1, 100, 20, -1, 0, 4)
       .attr(WeightPowerAttr)
-      .makesContact()
-      .condition(failOnMaxCondition),
+      .makesContact(),
     new AttackMove(Moves.CHATTER, Type.FLYING, MoveCategory.SPECIAL, 65, 100, 20, 100, 0, 4)
       .attr(ConfuseAttr)
       .soundBased(),
@@ -7937,8 +7932,7 @@ export function initMoves() {
     new AttackMove(Moves.HEAVY_SLAM, Type.STEEL, MoveCategory.PHYSICAL, -1, 100, 10, -1, 0, 5)
       .attr(MinimizeAccuracyAttr)
       .attr(CompareWeightPowerAttr)
-      .attr(HitsTagAttr, BattlerTagType.MINIMIZED, true)
-      .condition(failOnMaxCondition),
+      .attr(HitsTagAttr, BattlerTagType.MINIMIZED, true),
     new AttackMove(Moves.SYNCHRONOISE, Type.PSYCHIC, MoveCategory.SPECIAL, 120, 100, 10, -1, 0, 5)
       .target(MoveTarget.ALL_NEAR_OTHERS)
       .condition(unknownTypeCondition)
@@ -8085,8 +8079,7 @@ export function initMoves() {
     new AttackMove(Moves.HEAT_CRASH, Type.FIRE, MoveCategory.PHYSICAL, -1, 100, 10, -1, 0, 5)
       .attr(MinimizeAccuracyAttr)
       .attr(CompareWeightPowerAttr)
-      .attr(HitsTagAttr, BattlerTagType.MINIMIZED, true)
-      .condition(failOnMaxCondition),
+      .attr(HitsTagAttr, BattlerTagType.MINIMIZED, true),
     new AttackMove(Moves.LEAF_TORNADO, Type.GRASS, MoveCategory.SPECIAL, 65, 90, 10, 50, 0, 5)
       .attr(StatStageChangeAttr, [ Stat.ACC ], -1),
     new AttackMove(Moves.STEAMROLLER, Type.BUG, MoveCategory.PHYSICAL, 65, 100, 20, 30, 0, 5)

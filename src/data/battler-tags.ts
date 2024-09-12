@@ -516,10 +516,6 @@ export class FlinchedTag extends BattlerTag {
     applyAbAttrs(FlinchEffectAbAttr, pokemon, null);
   }
 
-  canAdd(pokemon: Pokemon): boolean {
-    return !pokemon.isMax();
-  }
-
   /**
    * Cancels the Pokemon's next Move on the turn this tag is applied
    * @param pokemon The {@linkcode Pokemon} with this tag
@@ -870,10 +866,6 @@ export class EncoreTag extends BattlerTag {
   }
 
   canAdd(pokemon: Pokemon): boolean {
-    if (pokemon.isMax()) {
-      return false;
-    }
-
     const lastMoves = pokemon.getLastXMoves(1);
     if (!lastMoves.length) {
       return false;
@@ -1052,19 +1044,11 @@ export class MinimizeTag extends BattlerTag {
     super(BattlerTagType.MINIMIZED, BattlerTagLapseType.TURN_END, 1, Moves.MINIMIZE);
   }
 
-  canAdd(pokemon: Pokemon): boolean {
-    return !pokemon.isMax();
-  }
-
   onAdd(pokemon: Pokemon): void {
     super.onAdd(pokemon);
   }
 
   lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
-    //If a pokemon dynamaxes they lose minimized status
-    if (pokemon.isMax()) {
-      return false;
-    }
     return lapseType !== BattlerTagLapseType.CUSTOM || super.lapse(pokemon, lapseType);
   }
 
