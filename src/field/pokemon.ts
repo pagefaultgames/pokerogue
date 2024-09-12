@@ -1222,7 +1222,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       return false;
     }
     const arena = this.scene?.arena;
-    if (arena.ignoreAbilities && arena.ignoreAbilitySource !== this.getBattlerIndex() && ability.isIgnorable) {
+    if (arena.ignoreAbilities && arena.ignoringEffectSource !== this.getBattlerIndex() && ability.isIgnorable) {
       return false;
     }
     if (this.summonData?.abilitySuppressed && !ability.hasAttr(UnsuppressableAbilityAbAttr)) {
