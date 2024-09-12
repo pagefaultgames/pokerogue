@@ -5,8 +5,8 @@ import { Species } from "#enums/species";
 import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import { BattlerTagType } from "#app/enums/battler-tag-type.js";
-import { BerryPhase } from "#app/phases/berry-phase.js";
+import { BattlerTagType } from "#app/enums/battler-tag-type";
+import { BerryPhase } from "#app/phases/berry-phase";
 
 const TIMEOUT = 20 * 1000;
 
