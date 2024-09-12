@@ -63,7 +63,7 @@ import { Moves } from "#enums/moves";
 import { PlayerGender } from "#enums/player-gender";
 import { Species } from "#enums/species";
 import { UiTheme } from "#enums/ui-theme";
-import { TimedEventManager } from "#app/timed-event-manager.js";
+import { TimedEventManager } from "#app/timed-event-manager";
 import i18next from "i18next";
 import { TrainerType } from "#enums/trainer-type";
 import { battleSpecDialogue } from "./data/dialogue";
@@ -126,10 +126,11 @@ export default class BattleScene extends SceneBase {
   public bgmVolume: number = 1;
   public fieldVolume: number = 1;
   public seVolume: number = 1;
+  public uiVolume: number = 1;
   public gameSpeed: integer = 1;
   public damageNumbersMode: integer = 0;
   public reroll: boolean = false;
-  public shopCursorTarget: number = ShopCursorTarget.CHECK_TEAM;
+  public shopCursorTarget: number = ShopCursorTarget.REWARDS;
   public showMovesetFlyout: boolean = true;
   public showArenaFlyout: boolean = true;
   public showTimeOfDayWidget: boolean = true;
@@ -160,6 +161,13 @@ export default class BattleScene extends SceneBase {
   public moveAnimations: boolean = true;
   public expGainsSpeed: integer = 0;
   public skipSeenDialogues: boolean = false;
+  /**
+   * Determines if the egg hatching animation should be skipped
+   * - 0 = Never (never skip animation)
+   * - 1 = Ask (ask to skip animation when hatching 2 or more eggs)
+   * - 2 = Always (automatically skip animation when hatching 2 or more eggs)
+   */
+  public eggSkipPreference: number = 0;
 
   /**
      * Defines the experience gain display mode.
@@ -840,21 +848,21 @@ export default class BattleScene extends SceneBase {
   }
 
   addEnemyPokemon(species: PokemonSpecies, level: integer, trainerSlot: TrainerSlot, boss: boolean = false, dataSource?: PokemonData, postProcess?: (enemyPokemon: EnemyPokemon) => void): EnemyPokemon {
+    if (Overrides.OPP_LEVEL_OVERRIDE > 0) {
+      level = Overrides.OPP_LEVEL_OVERRIDE;
+    }
     if (Overrides.OPP_SPECIES_OVERRIDE) {
       species = getPokemonSpecies(Overrides.OPP_SPECIES_OVERRIDE);
-    }
-    const pokemon = new EnemyPokemon(this, species, level, trainerSlot, boss, dataSource);
-    if (Overrides.OPP_LEVEL_OVERRIDE !== 0) {
-      pokemon.level = Overrides.OPP_LEVEL_OVERRIDE;
+      // The fact that a Pokemon is a boss or not can change based on its Species and level
+      boss = this.getEncounterBossSegments(this.currentBattle.waveIndex, level, species) > 1;
     }
 
-    if (Overrides.OPP_GENDER_OVERRIDE !== null) {
-      pokemon.gender = Overrides.OPP_GENDER_OVERRIDE;
-    }
+    const pokemon = new EnemyPokemon(this, species, level, trainerSlot, boss, dataSource);
+
     overrideModifiers(this, false);
     overrideHeldItems(this, pokemon, false);
     if (boss && !dataSource) {
-      const secondaryIvs = Utils.getIvsFromId(Utils.randSeedInt(4294967295));
+      const secondaryIvs = Utils.getIvsFromId(Utils.randSeedInt(4294967296));
 
       for (let s = 0; s < pokemon.ivs.length; s++) {
         pokemon.ivs[s] = Math.round(Phaser.Math.Linear(Math.min(pokemon.ivs[s], secondaryIvs[s]), Math.max(pokemon.ivs[s], secondaryIvs[s]), 0.75));
@@ -960,6 +968,16 @@ export default class BattleScene extends SceneBase {
     this.offsetGym = this.gameMode.isClassic && this.getGeneratedOffsetGym();
   }
 
+  /**
+   * Generates a random number using the current battle's seed
+   *
+   * This calls {@linkcode Battle.randSeedInt}(`scene`, {@linkcode range}, {@linkcode min}) in `src/battle.ts`
+   * which calls {@linkcode Utils.randSeedInt randSeedInt}({@linkcode range}, {@linkcode min}) in `src/utils.ts`
+   *
+   * @param range How large of a range of random numbers to choose from. If {@linkcode range} <= 1, returns {@linkcode min}
+   * @param min The minimum integer to pick, default `0`
+   * @returns A random integer between {@linkcode min} and ({@linkcode min} + {@linkcode range} - 1)
+   */
   randBattleSeedInt(range: integer, min: integer = 0): integer {
     return this.currentBattle?.randSeedInt(this, range, min);
   }
@@ -973,6 +991,7 @@ export default class BattleScene extends SceneBase {
 
     this.setSeed(Overrides.SEED_OVERRIDE || Utils.randomString(24));
     console.log("Seed:", this.seed);
+    this.resetSeed(); // Properly resets RNG after saving and quitting a session
 
     this.disableMenu = false;
 
@@ -1110,7 +1129,8 @@ export default class BattleScene extends SceneBase {
             doubleTrainer = false;
           }
         }
-        newTrainer = trainerData !== undefined ? trainerData.toTrainer(this) : new Trainer(this, trainerType, doubleTrainer ? TrainerVariant.DOUBLE : Utils.randSeedInt(2) ? TrainerVariant.FEMALE : TrainerVariant.DEFAULT);
+        const variant = doubleTrainer ? TrainerVariant.DOUBLE : (Utils.randSeedInt(2) ? TrainerVariant.FEMALE : TrainerVariant.DEFAULT);
+        newTrainer = trainerData !== undefined ? trainerData.toTrainer(this) : new Trainer(this, trainerType, variant);
         this.field.add(newTrainer);
       }
     }
@@ -1327,6 +1347,13 @@ export default class BattleScene extends SceneBase {
   }
 
   getEncounterBossSegments(waveIndex: integer, level: integer, species?: PokemonSpecies, forceBoss: boolean = false): integer {
+    if (Overrides.OPP_HEALTH_SEGMENTS_OVERRIDE > 1) {
+      return Overrides.OPP_HEALTH_SEGMENTS_OVERRIDE;
+    } else if (Overrides.OPP_HEALTH_SEGMENTS_OVERRIDE === 1) {
+      // The rest of the code expects to be returned 0 and not 1 if the enemy is not a boss
+      return 0;
+    }
+
     if (this.gameMode.isDaily && this.gameMode.isWaveFinal(waveIndex)) {
       return 5;
     }
@@ -1755,6 +1782,7 @@ export default class BattleScene extends SceneBase {
         } else {
           const soundDetails = sound.key.split("/");
           switch (soundDetails[0]) {
+
           case "battle_anims":
           case "cry":
             if (soundDetails[1].startsWith("PRSFX- ")) {
@@ -1790,19 +1818,32 @@ export default class BattleScene extends SceneBase {
     config = config ?? {};
     try {
       const keyDetails = key.split("/");
+      config["volume"] = config["volume"] ?? 1;
       switch (keyDetails[0]) {
+      case "level_up_fanfare":
+      case "item_fanfare":
+      case "minor_fanfare":
+      case "heal":
+      case "evolution":
+      case "evolution_fanfare":
+        // These sounds are loaded in as BGM, but played as sound effects
+        // When these sounds are updated in updateVolume(), they are treated as BGM however because they are placed in the BGM Cache through being called by playSoundWithoutBGM()
+        config["volume"] *= (this.masterVolume * this.bgmVolume);
+        break;
       case "battle_anims":
       case "cry":
-        config["volume"] = this.masterVolume * this.fieldVolume;
+        config["volume"] *= (this.masterVolume * this.fieldVolume);
         //PRSFX sound files are unusually loud
-        if (key.startsWith("PRSFX- ")) {
+        if (keyDetails[1].startsWith("PRSFX- ")) {
           config["volume"] *= 0.5;
         }
         break;
-      case "se":
       case "ui":
-      default:
-        config["volume"] = this.masterVolume * this.seVolume;
+        //As of, right now this applies to the "select", "menu_open", "error" sound effects
+        config["volume"] *= (this.masterVolume * this.uiVolume);
+        break;
+      case "se":
+        config["volume"] *= (this.masterVolume * this.seVolume);
         break;
       }
       this.sound.play(key, config);
@@ -1990,6 +2031,18 @@ export default class BattleScene extends SceneBase {
       return 12.974;
     case "battle_flare_grunt": //XY Team Flare Battle
       return 4.228;
+    case "battle_aether_grunt": // SM Aether Foundation Battle
+      return 16.00;
+    case "battle_skull_grunt": // SM Team Skull Battle
+      return 20.87;
+    case "battle_macro_grunt": // SWSH Trainer Battle
+      return 11.56;
+    case "battle_galactic_admin": //BDSP Team Galactic Admin Battle
+      return 11.997;
+    case "battle_skull_admin": //SM Team Skull Admin Battle
+      return 15.463;
+    case "battle_oleana": //SWSH Oleana Battle
+      return 14.110;
     case "battle_rocket_boss": //USUM Giovanni Battle
       return 9.115;
     case "battle_aqua_magma_boss": //ORAS Archie & Maxie Battle
@@ -2000,6 +2053,12 @@ export default class BattleScene extends SceneBase {
       return 25.624;
     case "battle_flare_boss": //XY Lysandre Battle
       return 8.085;
+    case "battle_aether_boss": //SM Lusamine Battle
+      return 11.33;
+    case "battle_skull_boss": //SM Guzma Battle
+      return 13.13;
+    case "battle_macro_boss": //SWSH Rose Battle
+      return 11.42;
     }
 
     return 0;
@@ -2141,8 +2200,14 @@ export default class BattleScene extends SceneBase {
     return true;
   }
 
-  findPhase(phaseFilter: (phase: Phase) => boolean): Phase | undefined {
-    return this.phaseQueue.find(phaseFilter);
+  /**
+   * Find a specific {@linkcode Phase} in the phase queue.
+   *
+   * @param phaseFilter filter function to use to find the wanted phase
+   * @returns the found phase or undefined if none found
+   */
+  findPhase<P extends Phase = Phase>(phaseFilter: (phase: P) => boolean): P | undefined {
+    return this.phaseQueue.find(phaseFilter) as P;
   }
 
   tryReplacePhase(phaseFilter: (phase: Phase) => boolean, phase: Phase): boolean {
@@ -2579,7 +2644,7 @@ export default class BattleScene extends SceneBase {
         if (mods.length < 1) {
           return mods;
         }
-        const rand = Math.floor(Utils.randSeedInt(mods.length));
+        const rand = Utils.randSeedInt(mods.length);
         return [mods[rand], ...shuffleModifiers(mods.filter((_, i) => i !== rand))];
       };
       modifiers = shuffleModifiers(modifiers);
@@ -2699,6 +2764,35 @@ export default class BattleScene extends SceneBase {
       modeChain: this.ui?.getModeChain() ?? [],
     };
     (window as any).gameInfo = gameInfo;
+  }
+
+  /**
+   * This function retrieves the sprite and audio keys for active Pokemon.
+   * Active Pokemon include both enemy and player Pokemon of the current wave.
+   * Note: Questions on garbage collection go to @frutescens
+   * @returns a string array of active sprite and audio keys that should not be deleted
+   */
+  getActiveKeys(): string[] {
+    const keys: string[] = [];
+    const playerParty = this.getParty();
+    playerParty.forEach(p => {
+      keys.push(p.getSpriteKey(true));
+      keys.push(p.getBattleSpriteKey(true, true));
+      keys.push("cry/" + p.species.getCryKey(p.formIndex));
+      if (p.fusionSpecies) {
+        keys.push("cry/"+p.fusionSpecies.getCryKey(p.fusionFormIndex));
+      }
+    });
+    // enemyParty has to be operated on separately from playerParty because playerPokemon =/= enemyPokemon
+    const enemyParty = this.getEnemyParty();
+    enemyParty.forEach(p => {
+      keys.push(p.getSpriteKey(true));
+      keys.push("cry/" + p.species.getCryKey(p.formIndex));
+      if (p.fusionSpecies) {
+        keys.push("cry/"+p.fusionSpecies.getCryKey(p.fusionFormIndex));
+      }
+    });
+    return keys;
   }
 
   /**

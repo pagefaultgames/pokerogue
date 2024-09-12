@@ -1,5 +1,5 @@
 import { allSpecies } from "#app/data/pokemon-species";
-import { TempBattleStat } from "#app/data/temp-battle-stat";
+import { Stat } from "#enums/stat";
 import { GameModes, getGameMode } from "#app/game-mode";
 import { BattleEndPhase } from "#app/phases/battle-end-phase";
 import { CommandPhase } from "#app/phases/command-phase";
@@ -25,7 +25,6 @@ import { PlayerGender } from "#enums/player-gender";
 import { Species } from "#enums/species";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import { SPLASH_ONLY } from "../utils/testUtils";
 
 describe("Test Battle Phase", () => {
   let phaserGame: Phaser.Game;
@@ -43,6 +42,7 @@ describe("Test Battle Phase", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
+    game.scene.gameData.gender = undefined!; // just for these tests!
   });
 
   it("test phase interceptor with prompt", async () => {
@@ -318,8 +318,8 @@ describe("Test Battle Phase", () => {
       .startingWave(1)
       .startingLevel(100)
       .moveset([moveToUse])
-      .enemyMoveset(SPLASH_ONLY)
-      .startingHeldItems([{ name: "TEMP_STAT_BOOSTER", type: TempBattleStat.ACC }]);
+      .enemyMoveset(Moves.SPLASH)
+      .startingHeldItems([{ name: "TEMP_STAT_STAGE_BOOSTER", type: Stat.ACC }]);
 
     await game.startBattle();
     game.scene.getPlayerPokemon()!.hp = 1;

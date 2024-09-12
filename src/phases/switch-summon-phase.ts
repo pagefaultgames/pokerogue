@@ -1,13 +1,13 @@
-import BattleScene from "#app/battle-scene.js";
-import { applyPreSwitchOutAbAttrs, PreSwitchOutAbAttr } from "#app/data/ability.js";
-import { allMoves, ForceSwitchOutAttr } from "#app/data/move.js";
-import { getPokeballTintColor } from "#app/data/pokeball.js";
-import { SpeciesFormChangeActiveTrigger } from "#app/data/pokemon-forms.js";
-import { TrainerSlot } from "#app/data/trainer-config.js";
-import Pokemon from "#app/field/pokemon.js";
-import { getPokemonNameWithAffix } from "#app/messages.js";
-import { SwitchEffectTransferModifier } from "#app/modifier/modifier.js";
-import { Command } from "#app/ui/command-ui-handler.js";
+import BattleScene from "#app/battle-scene";
+import { applyPreSwitchOutAbAttrs, PreSwitchOutAbAttr } from "#app/data/ability";
+import { allMoves, ForceSwitchOutAttr } from "#app/data/move";
+import { getPokeballTintColor } from "#app/data/pokeball";
+import { SpeciesFormChangeActiveTrigger } from "#app/data/pokemon-forms";
+import { TrainerSlot } from "#app/data/trainer-config";
+import Pokemon from "#app/field/pokemon";
+import { getPokemonNameWithAffix } from "#app/messages";
+import { SwitchEffectTransferModifier } from "#app/modifier/modifier";
+import { Command } from "#app/ui/command-ui-handler";
 import i18next from "i18next";
 import { PostSummonPhase } from "./post-summon-phase";
 import { SummonPhase } from "./summon-phase";
@@ -71,7 +71,7 @@ export class SwitchSummonPhase extends SummonPhase {
       i18next.t("battle:playerComeBack", { pokemonName: getPokemonNameWithAffix(pokemon) }) :
       i18next.t("battle:trainerComeBack", {
         trainerName: this.scene.currentBattle.trainer?.getName(!(this.fieldIndex % 2) ? TrainerSlot.TRAINER : TrainerSlot.TRAINER_PARTNER),
-        pokemonName: getPokemonNameWithAffix(pokemon)
+        pokemonName: pokemon.getNameToRender()
       })
     );
     this.scene.playSound("se/pb_rel");
