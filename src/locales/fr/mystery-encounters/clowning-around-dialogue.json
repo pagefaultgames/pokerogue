@@ -11,21 +11,21 @@
       "tooltip": "(-) Combat étrange\n(?) Affecte les talents des Pokémon",
       "selected": "Vos Pokémon sont prêts pour cette performance pathétique !",
       "apply_ability_dialogue": "Un spectacle sensationnel !\nVotre savoir-faire est en harmonie avec votre compétences !",
-      "apply_ability_message": "Le Clown vous propose d'Échanger définitivement le talent d’un de vos Pokémon contre {{ability}} !",
+      "apply_ability_message": "Le Clown vous propose d’Échanger définitivement le talent d’un de vos Pokémon contre {{ability}} !",
       "ability_prompt": "Voulez-vous définitivement donner le talent {{ability}} à un Pokémon ?",
       "ability_gained": "@s{level_up_fanfare}{{chosenPokemon}} obtient le talent {{ability}} !"
     },
     "2": {
       "label": "Rester de marbre",
       "tooltip": "(-) Agace le Clown\n(?) Affecte les objets de vos Pokémon",
-      "selected": "Ça se défile lâchement d'un duel exceptionnel ?\nTâte ma colère !",
+      "selected": "Ça se défile lâchement d’un duel exceptionnel ?\nTâte ma colère !",
       "selected_2": "Le {{blacephalonName}} du Clown utilise\nTour de Magie !$Tous les objets de {{switchPokemon}}\nsont échangés au hasard !",
       "selected_3": "Sombre imbécile, tombe dans mon piège !"
     },
     "3": {
       "label": "Retouner les insultes",
       "tooltip": "(-) Agace le Clown\n(?) Affecte les types de vos Pokémon",
-      "selected": "Ça se défile lâchement d'un duel exceptionnel ?\nTâte ma colère !",
+      "selected": "Ça se défile lâchement d’un duel exceptionnel ?\nTâte ma colère !",
       "selected_2": "Le {{blacephalonName}} du Clown utilise\nune étrange capacité !$Tous les types de votre équipe\nsont échangés au hasard !",
       "selected_3": "Sombre imbécile, tombe dans mon piège !"
     }
