@@ -8,20 +8,20 @@
   "cheryl": {
     "intro_dialogue": "Bonjour, mon nom est Sara.$J’ai une requête un peu particulière à proposer,\nà quelqu’un de plutôt fort comme toi.$Je porte avec moi deux Œufs de Pokémon,\nmais j’aimerais que quelqu’un prenne soin d’un.$Si tu parviens à me démontrer toute ta force,\nje te donne l’Œuf le plus rare !",
     "accept": "On y va ?",
-    "decline": "Je peux comprendre. Il semblerait que\nton équipe ne soit pas très en forme là.$Laisse-moi m'en occuper."
+    "decline": "Je peux comprendre. Il semblerait que\nton équipe ne soit pas très en forme là.$Laisse-moi m’en occuper."
   },
   "marley": {
-    "intro_dialogue": "Je…@d{64} je m’appelle Viviane.$Je peux te demander un truc ?…$J'ai deux Œufs de Pokémon sur moi,\net j’aimerais que quelqu’un prenne soin d’un.$Si t’arrives à me battre,\nje te donne le plus rare…",
+    "intro_dialogue": "Je…@d{64} je m’appelle Viviane.$Je peux te demander un truc ?…$J’ai deux Œufs de Pokémon sur moi,\net j’aimerais que quelqu’un prenne soin d’un.$Si t’arrives à me battre,\nje te donne le plus rare…",
     "accept": "… D’accord.",
     "decline": "… D’accord.$Tes Pokémon on l’air blessés…\nLaisse-moi les aider."
   },
   "mira": {
-    "intro_dialogue": "Salut ! Moi, c’est Maïté!$J’ai quelque chose\nà demander à quelqu'un de fortiche comme toi !$J'ai deux Œufs de Pokémon sur moi,\net j’aimerais que quelqu’un prenne soin d’un d’eux !$Si t’acceptes de me prouver ta force,\nje te donnerai le plus rare !",
+    "intro_dialogue": "Salut ! Moi, c’est Maïté!$J’ai quelque chose\nà demander à quelqu’un de fortiche comme toi !$J’ai deux Œufs de Pokémon sur moi,\net j’aimerais que quelqu’un prenne soin d’un d’eux !$Si t’acceptes de me prouver ta force,\nje te donnerai le plus rare !",
     "accept": "Un combat, pour de vrai ?\nOuiiiii !",
     "decline": "Oh, pas de combat ?\nPas grave !$Je vais quand même soigner ton équipe !"
   },
   "riley": {
-    "intro_dialogue": "Enchanté, je m’appelle Armand.$J'ai une proposition un peu étange\npour une personne de ton calibre.$Je poste deux Œufs de Pokémon avec moi\nmais j’aimerais en donner un à quelqu’un d’autre.$Si tu prouves en être digne,\nje te donnerai le plus rare !",
+    "intro_dialogue": "Enchanté, je m’appelle Armand.$J’ai une proposition un peu étange\npour une personne de ton calibre.$Je poste deux Œufs de Pokémon avec moi\nmais j’aimerais en donner un à quelqu’un d’autre.$Si tu prouves en être digne,\nje te donnerai le plus rare !",
     "accept": "Ce regard…\nBattons-nous.",
     "decline": "Je comprends, ton équpie m’a l’air lessivée.$Laisse-moi t’aider."
   },
