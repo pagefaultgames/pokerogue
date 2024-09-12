@@ -15,7 +15,7 @@ import { BerryType } from "#enums/berry-type";
 import { StatusEffect, getStatusEffectHealText } from "../data/status-effect";
 import { achvs } from "../system/achv";
 import { VoucherType } from "../system/voucher";
-import { FormChangeItem, SpeciesFormChangeItemTrigger } from "../data/pokemon-forms";
+import { FormChangeItem, SpeciesFormChangeItemTrigger, SpeciesFormChangeLapseTeraTrigger, SpeciesFormChangeTeraTrigger } from "../data/pokemon-forms";
 import { Nature } from "#app/data/nature";
 import Overrides from "#app/overrides";
 import { ModifierType, modifierTypes } from "./modifier-type";
@@ -29,6 +29,7 @@ import { Abilities } from "#app/enums/abilities";
 import { LearnMovePhase } from "#app/phases/learn-move-phase";
 import { LevelUpPhase } from "#app/phases/level-up-phase";
 import { PokemonHealPhase } from "#app/phases/pokemon-heal-phase";
+import { SpeciesFormKey } from "#app/data/pokemon-species";
 
 export type ModifierPredicate = (modifier: Modifier) => boolean;
 
@@ -762,6 +763,7 @@ export class TerastallizeModifier extends LapsingPokemonHeldItemModifier {
   apply(args: any[]): boolean {
     const pokemon = args[0] as Pokemon;
     if (pokemon.isPlayer()) {
+      pokemon.scene.triggerPokemonFormChange(pokemon, SpeciesFormChangeTeraTrigger);
       pokemon.scene.validateAchv(achvs.TERASTALLIZE);
       if (this.teraType === Type.STELLAR) {
         pokemon.scene.validateAchv(achvs.STELLAR_TERASTALLIZE);
@@ -775,6 +777,7 @@ export class TerastallizeModifier extends LapsingPokemonHeldItemModifier {
     const ret = super.lapse(args);
     if (!ret) {
       const pokemon = args[0] as Pokemon;
+      pokemon.scene.triggerPokemonFormChange(pokemon, SpeciesFormChangeLapseTeraTrigger);
       pokemon.updateSpritePipelineData();
     }
     return ret;
@@ -1072,6 +1075,18 @@ export class EvolutionStatBoosterModifier extends StatBoosterModifier {
 
   matchType(modifier: Modifier): boolean {
     return modifier instanceof EvolutionStatBoosterModifier;
+  }
+
+  /**
+   * Checks if the stat boosts can apply and if the holder is not currently
+   * Gigantamax'd.
+   * @param args [0] {@linkcode Pokemon} that holds the held item
+   *             [1] {@linkcode Stat} N/A
+   *             [2] {@linkcode Utils.NumberHolder} N/A
+   * @returns true if the stat boosts can be applied, false otherwise
+   */
+  shouldApply(args: any[]): boolean {
+    return super.shouldApply(args) && ((args[0] as Pokemon).getFormKey() !== SpeciesFormKey.GIGANTAMAX);
   }
 
   /**

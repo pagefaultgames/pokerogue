@@ -1298,6 +1298,13 @@ export class ProtectedTag extends BattlerTag {
   }
 }
 
+/** Base class for `BattlerTag`s that block damaging moves but not status moves */
+export class DamageProtectedTag extends ProtectedTag {}
+
+/**
+ * `BattlerTag` class for moves that block damaging moves damage the enemy if the enemy's move makes contact
+ * Used by {@linkcode Moves.SPIKY_SHIELD}
+ */
 export class ContactDamageProtectedTag extends ProtectedTag {
   private damageRatio: number;
 
@@ -1333,7 +1340,11 @@ export class ContactDamageProtectedTag extends ProtectedTag {
   }
 }
 
-export class ContactStatStageChangeProtectedTag extends ProtectedTag {
+/**
+ * `BattlerTag` class for moves that block damaging moves and lower enemy stats if the enemy's move makes contact
+ * Used by {@linkcode Moves.KINGS_SHIELD}, {@linkcode Moves.OBSTRUCT}, {@linkcode Moves.SILK_TRAP}
+ */
+export class ContactStatStageChangeProtectedTag extends DamageProtectedTag {
   private stat: BattleStat;
   private levels: number;
 
@@ -1389,7 +1400,11 @@ export class ContactPoisonProtectedTag extends ProtectedTag {
   }
 }
 
-export class ContactBurnProtectedTag extends ProtectedTag {
+/**
+ * `BattlerTag` class for moves that block damaging moves and burn the enemy if the enemy's move makes contact
+ * Used by {@linkcode Moves.BURNING_BULWARK}
+ */
+export class ContactBurnProtectedTag extends DamageProtectedTag {
   constructor(sourceMove: Moves) {
     super(sourceMove, BattlerTagType.BURNING_BULWARK);
   }
