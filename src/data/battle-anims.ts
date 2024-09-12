@@ -802,11 +802,20 @@ export abstract class BattleAnim {
         }
         targetSprite.pipelineData["tone"] = [ 0.0, 0.0, 0.0, 0.0 ];
         targetSprite.setAngle(0);
-        if (!this.isHideUser() && userSprite) {
-          userSprite.setVisible(true); // using this.user to fix context loss due to isOppAnim swap (#481)
+
+        /**
+         * This and `targetSpriteToShow` are used to restore context lost
+         * from the `isOppAnim` swap. Using these references instead of `this.user`
+         * and `this.target` prevent the target's Substitute doll from disappearing
+         * after being the target of an animation.
+         */
+        const userSpriteToShow = !isOppAnim ? userSprite : targetSprite;
+        const targetSpriteToShow = !isOppAnim ? targetSprite : userSprite;
+        if (!this.isHideUser() && userSpriteToShow) {
+          userSpriteToShow.setVisible(true);
         }
-        if (!this.isHideTarget() && (targetSprite !== userSprite || !this.isHideUser())) {
-          targetSprite.setVisible(true); // using this.target to fix context loss due to isOppAnim swap (#481)
+        if (!this.isHideTarget() && (targetSpriteToShow !== userSpriteToShow || !this.isHideUser())) {
+          targetSpriteToShow.setVisible(true);
         }
         for (const ms of Object.values(spriteCache).flat()) {
           if (ms) {

@@ -3587,6 +3587,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     this.resetSprite();
     this.resetTurnData();
     if (clearEffects) {
+      this.destroySubstitute();
       this.resetSummonData();
       this.resetBattleData();
     }
