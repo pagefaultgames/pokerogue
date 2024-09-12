@@ -1,11 +1,10 @@
-import { Stat } from "#enums/stat";
-import GameManager from "#test/utils/gameManager";
+import { Moves } from "#app/enums/moves";
 import { Abilities } from "#enums/abilities";
 import { Species } from "#enums/species";
+import { Stat } from "#enums/stat";
+import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import { SPLASH_ONLY } from "../utils/testUtils";
-import { Moves } from "#app/enums/moves";
 
 describe("Abilities - Contrary", () => {
   let phaserGame: Phaser.Game;
@@ -28,7 +27,7 @@ describe("Abilities - Contrary", () => {
       .enemySpecies(Species.BULBASAUR)
       .enemyAbility(Abilities.CONTRARY)
       .ability(Abilities.INTIMIDATE)
-      .enemyMoveset(SPLASH_ONLY);
+      .enemyMoveset(Moves.SPLASH);
   });
 
   it("should invert stat changes when applied", async() => {

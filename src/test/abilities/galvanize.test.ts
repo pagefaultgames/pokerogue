@@ -6,7 +6,6 @@ import { Moves } from "#app/enums/moves";
 import { Species } from "#app/enums/species";
 import { HitResult } from "#app/field/pokemon";
 import GameManager from "#test/utils/gameManager";
-import { SPLASH_ONLY } from "#test/utils/testUtils";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -36,7 +35,7 @@ describe("Abilities - Galvanize", () => {
       .moveset([Moves.TACKLE, Moves.REVELATION_DANCE, Moves.FURY_SWIPES])
       .enemySpecies(Species.DUSCLOPS)
       .enemyAbility(Abilities.BALL_FETCH)
-      .enemyMoveset(SPLASH_ONLY)
+      .enemyMoveset(Moves.SPLASH)
       .enemyLevel(100);
   });
 

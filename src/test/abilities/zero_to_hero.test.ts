@@ -6,7 +6,6 @@ import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/utils/gameManager";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import { SPLASH_ONLY } from "../utils/testUtils";
 
 const TIMEOUT = 20 * 1000;
 
@@ -30,8 +29,8 @@ describe("Abilities - ZERO TO HERO", () => {
     game = new GameManager(phaserGame);
     game.override
       .battleType("single")
-      .moveset(SPLASH_ONLY)
-      .enemyMoveset(SPLASH_ONLY)
+      .moveset(Moves.SPLASH)
+      .enemyMoveset(Moves.SPLASH)
       .enemyAbility(Abilities.BALL_FETCH);
   });
 

@@ -23,7 +23,7 @@
   "tooManyItems": "{{pokemonName}}拥有\n太多这个道具了！",
   "anyEffect": "即便使用也无效果哦。",
   "unpausedEvolutions": "{{pokemonName}}的进化停止了。",
-  "unspliceConfirmation": "真的要把{{fusionName}}\n从{{pokemonName}}身上分离吗? {{fusionName}}会就此消失。",
+  "unspliceConfirmation": "真的要把{{fusionName}}\n从{{pokemonName}}身上分离吗？{{fusionName}}会就此消失。",
   "wasReverted": "{{fusionName}}恢复成了{{pokemonName}}。",
   "releaseConfirmation": "你真要放生{{pokemonName}}吗？",
   "releaseInBattle": "你无法放生正在战斗中的宝可梦！",
