@@ -837,11 +837,15 @@ export const trainerTypeDialogue: TrainerTypeDialogue = {
         "dialogue:macro_grunt.encounter.1",
         "dialogue:macro_grunt.encounter.2",
         "dialogue:macro_grunt.encounter.3",
+        "dialogue:macro_grunt.encounter.4",
+        "dialogue:macro_grunt.encounter.5",
       ],
       victory: [
         "dialogue:macro_grunt.victory.1",
         "dialogue:macro_grunt.victory.2",
         "dialogue:macro_grunt.victory.3",
+        "dialogue:macro_grunt.victory.4",
+        "dialogue:macro_grunt.victory.5",
       ]
     }
   ],
