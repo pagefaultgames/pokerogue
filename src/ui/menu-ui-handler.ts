@@ -380,7 +380,7 @@ export default class MenuUiHandler extends MessageUiHandler {
         keepOpen: true
       }
     ];
-    if (!bypassLogin && loggedInUser?.hasAdminRole || true) {
+    if (!bypassLogin && loggedInUser?.hasAdminRole) {
       communityOptions.push({
         label: "Admin",
         handler: () => {
