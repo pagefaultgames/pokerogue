@@ -158,7 +158,6 @@ export default class GameChallengesUiHandler extends UiHandler {
 
       const value = addTextObject(this.scene, 0, 28 + i * 16, "", TextStyle.SETTINGS_LABEL);
       value.setName(`challenge-value-text-${i}`);
-      //value.setX((rightArrow.x - (leftArrow.x + leftArrow.width)) / 2);
       value.setPositionRelative(label, 100, 0);
       this.valuesContainer.add(value);
 
@@ -302,6 +301,7 @@ export default class GameChallengesUiHandler extends UiHandler {
     super.show(args);
 
     this.startCursor.setVisible(false);
+    this.updateChallengeArrows(false);
     this.challengesContainer.setVisible(true);
     // Should always be false at the start
     this.hasSelectedChallenge = this.scene.gameMode.challenges.some(c => c.value !== 0);
@@ -315,6 +315,21 @@ export default class GameChallengesUiHandler extends UiHandler {
     this.getUi().hideTooltip();
 
     return true;
+  }
+
+  /* This code updates the challenge starter arrows to be tinted/not tinted when the start button is selected to show they can't be changed
+   */
+  updateChallengeArrows(tinted: boolean) {
+    for (let i = 0; i < Math.min(9, this.scene.gameMode.challenges.length); i++) {
+      const challengeLabel = this.challengeLabels[i];
+      if (tinted) {
+        challengeLabel.leftArrow.setTint(0x808080);
+        challengeLabel.rightArrow.setTint(0x808080);
+      } else {
+        challengeLabel.leftArrow.clearTint();
+        challengeLabel.rightArrow.clearTint();
+      }
+    }
   }
 
   /**
@@ -338,6 +353,7 @@ export default class GameChallengesUiHandler extends UiHandler {
         // If the user presses cancel when the start cursor has been activated, the game deactivates the start cursor and allows typical challenge selection behavior
         this.startCursor.setVisible(false);
         this.cursorObj?.setVisible(true);
+        this.updateChallengeArrows(this.startCursor.visible);
       } else {
         this.scene.clearPhaseQueue();
         this.scene.pushPhase(new TitlePhase(this.scene));
@@ -352,6 +368,7 @@ export default class GameChallengesUiHandler extends UiHandler {
         } else {
           this.startCursor.setVisible(true);
           this.cursorObj?.setVisible(false);
+          this.updateChallengeArrows(this.startCursor.visible);
         }
         success = true;
       } else {
