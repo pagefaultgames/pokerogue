@@ -101,7 +101,7 @@ class DefaultOverrides {
   readonly PASSIVE_ABILITY_OVERRIDE: Abilities = Abilities.NONE;
   readonly STATUS_OVERRIDE: StatusEffect = StatusEffect.NONE;
   readonly GENDER_OVERRIDE: Gender | null = null;
-  readonly MOVESET_OVERRIDE: Array<Moves> = [];
+  readonly MOVESET_OVERRIDE: Moves | Array<Moves> = [];
   readonly SHINY_OVERRIDE: boolean = false;
   readonly VARIANT_OVERRIDE: Variant = 0;
 
@@ -114,11 +114,19 @@ class DefaultOverrides {
   readonly OPP_PASSIVE_ABILITY_OVERRIDE: Abilities = Abilities.NONE;
   readonly OPP_STATUS_OVERRIDE: StatusEffect = StatusEffect.NONE;
   readonly OPP_GENDER_OVERRIDE: Gender | null = null;
-  readonly OPP_MOVESET_OVERRIDE: Array<Moves> = [];
+  readonly OPP_MOVESET_OVERRIDE: Moves | Array<Moves> = [];
   readonly OPP_SHINY_OVERRIDE: boolean = false;
   readonly OPP_VARIANT_OVERRIDE: Variant = 0;
   readonly OPP_IVS_OVERRIDE: number | number[] = [];
   readonly OPP_FORM_OVERRIDES: Partial<Record<Species, number>> = {};
+  /**
+   * Override to give the enemy Pokemon a given amount of health segments
+   *
+   * 0 (default): the health segments will be handled normally based on wave, level and species
+   * 1: the Pokemon will have a single health segment and therefore will not be a boss
+   * 2+: the Pokemon will be a boss with the given number of health segments
+   */
+  readonly OPP_HEALTH_SEGMENTS_OVERRIDE: number = 0;
 
   // -------------
   // EGG OVERRIDES

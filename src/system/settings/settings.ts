@@ -8,7 +8,7 @@ import SettingsUiHandler from "#app/ui/settings/settings-ui-handler";
 import { EaseType } from "#enums/ease-type";
 import { MoneyFormat } from "#enums/money-format";
 import { PlayerGender } from "#enums/player-gender";
-import { getIsInitialized, initI18n } from "#app/plugins/i18n.js";
+import { getIsInitialized, initI18n } from "#app/plugins/i18n";
 import { ShopCursorTarget } from "#app/enums/shop-cursor-target";
 
 function getTranslation(key: string): string {
@@ -25,6 +25,7 @@ const VOLUME_OPTIONS: SettingOption[] = new Array(11).fill(null).map((_, i) => i
   value: "Mute",
   label: getTranslation("settings:mute")
 });
+
 const SHOP_OVERLAY_OPACITY_OPTIONS: SettingOption[] = new Array(9).fill(null).map((_, i) => {
   const value = ((i + 1) * 10).toString();
   return {
@@ -32,6 +33,7 @@ const SHOP_OVERLAY_OPACITY_OPTIONS: SettingOption[] = new Array(9).fill(null).ma
     label: value,
   };
 });
+
 const OFF_ON: SettingOption[] = [
   {
     value: "Off",
@@ -52,6 +54,40 @@ const AUTO_DISABLED: SettingOption[] = [
     label: i18next.t("settings:disabled")
   }
 ];
+
+const SHOP_CURSOR_TARGET_OPTIONS: SettingOption[] = [
+  {
+    value: "Rewards",
+    label: i18next.t("settings:rewards")
+  },
+  {
+    value: "Shop",
+    label: i18next.t("settings:shop")
+  },
+  {
+    value: "Reroll",
+    label: i18next.t("settings:reroll")
+  },
+  {
+    value: "Check Team",
+    label: i18next.t("settings:checkTeam")
+  }
+];
+
+const shopCursorTargetIndexMap = SHOP_CURSOR_TARGET_OPTIONS.map(option => {
+  switch (option.value) {
+  case "Rewards":
+    return ShopCursorTarget.REWARDS;
+  case "Shop":
+    return ShopCursorTarget.SHOP;
+  case "Reroll":
+    return ShopCursorTarget.REROLL;
+  case "Check Team":
+    return ShopCursorTarget.CHECK_TEAM;
+  default:
+    throw new Error(`Unknown value: ${option.value}`);
+  }
+});
 
 /**
  * Types for helping separate settings to different menus
@@ -90,6 +126,7 @@ export const SettingKeys = {
   EXP_Gains_Speed: "EXP_GAINS_SPEED",
   EXP_Party_Display: "EXP_PARTY_DISPLAY",
   Skip_Seen_Dialogues: "SKIP_SEEN_DIALOGUES",
+  Egg_Skip: "EGG_SKIP",
   Battle_Style: "BATTLE_STYLE",
   Enable_Retries: "ENABLE_RETRIES",
   Hide_IVs: "HIDE_IVS",
@@ -103,7 +140,7 @@ export const SettingKeys = {
   Damage_Numbers: "DAMAGE_NUMBERS",
   Move_Animations: "MOVE_ANIMATIONS",
   Show_Stats_on_Level_Up: "SHOW_LEVEL_UP_STATS",
-  Reroll_Target: "REROLL_TARGET",
+  Shop_Cursor_Target: "SHOP_CURSOR_TARGET",
   Candy_Upgrade_Notification: "CANDY_UPGRADE_NOTIFICATION",
   Candy_Upgrade_Display: "CANDY_UPGRADE_DISPLAY",
   Move_Info: "MOVE_INFO",
@@ -243,6 +280,26 @@ export const Setting: Array<Setting> = [
     label: i18next.t("settings:skipSeenDialogues"),
     options: OFF_ON,
     default: 0,
+    type: SettingType.GENERAL
+  },
+  {
+    key: SettingKeys.Egg_Skip,
+    label: i18next.t("settings:eggSkip"),
+    options: [
+      {
+        value: "Never",
+        label: i18next.t("settings:never")
+      },
+      {
+        value: "Ask",
+        label: i18next.t("settings:ask")
+      },
+      {
+        value: "Always",
+        label: i18next.t("settings:always")
+      }
+    ],
+    default: 1,
     type: SettingType.GENERAL
   },
   {
@@ -596,27 +653,10 @@ export const Setting: Array<Setting> = [
     isHidden: () => !hasTouchscreen()
   },
   {
-    key: SettingKeys.Reroll_Target,
+    key: SettingKeys.Shop_Cursor_Target,
     label: i18next.t("settings:shopCursorTarget"),
-    options: [
-      {
-        value:"Reroll",
-        label: i18next.t("settings:reroll")
-      },
-      {
-        value:"Items",
-        label: i18next.t("settings:items")
-      },
-      {
-        value:"Shop",
-        label: i18next.t("settings:shop")
-      },
-      {
-        value:"Check Team",
-        label: i18next.t("settings:checkTeam")
-      }
-    ],
-    default: ShopCursorTarget.CHECK_TEAM,
+    options: SHOP_CURSOR_TARGET_OPTIONS,
+    default: 0,
     type: SettingType.DISPLAY
   },
   {
@@ -708,6 +748,9 @@ export function setSetting(scene: BattleScene, setting: string, value: integer):
   case SettingKeys.Skip_Seen_Dialogues:
     scene.skipSeenDialogues = Setting[index].options[value].value === "On";
     break;
+  case SettingKeys.Egg_Skip:
+    scene.eggSkipPreference = value;
+    break;
   case SettingKeys.Battle_Style:
     scene.battleStyle = value;
     break;
@@ -758,8 +801,10 @@ export function setSetting(scene: BattleScene, setting: string, value: integer):
   case SettingKeys.Show_Stats_on_Level_Up:
     scene.showLevelUpStats = Setting[index].options[value].value === "On";
     break;
-  case SettingKeys.Reroll_Target:
-    scene.shopCursorTarget = value;
+  case SettingKeys.Shop_Cursor_Target:
+    const selectedValue = shopCursorTargetIndexMap[value];
+    scene.shopCursorTarget = selectedValue;
+    break;
   case SettingKeys.EXP_Gains_Speed:
     scene.expGainsSpeed = value;
     break;

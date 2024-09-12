@@ -1,6 +1,7 @@
 {
   "title": "Challenge Modifiers",
-  "illegalEvolution": "{{pokemon}} changed into an ineligble pokémon\nfor this challenge!",
+  "illegalEvolution": "{{pokemon}} changed into an ineligible Pokémon\nfor this challenge!",
+  "noneSelected": "None Selected",
   "singleGeneration": {
     "name": "Mono Gen",
     "desc": "You can only use Pokémon from Generation {{gen}}.",

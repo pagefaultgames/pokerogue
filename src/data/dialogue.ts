@@ -1,6 +1,6 @@
 import { BattleSpec } from "#enums/battle-spec";
 import { TrainerType } from "#enums/trainer-type";
-import {trainerConfigs} from "./trainer-config";
+import { trainerConfigs } from "./trainer-config";
 
 export interface TrainerTypeMessages {
     encounter?: string | string[],
@@ -704,6 +704,20 @@ export const trainerTypeDialogue: TrainerTypeDialogue = {
         "dialogue:zinzolin.victory.1",
         "dialogue:zinzolin.victory.2",
         "dialogue:zinzolin.victory.3",
+      ]
+    }
+  ],
+  [TrainerType.ROOD]: [
+    {
+      encounter: [
+        "dialogue:rood.encounter.1",
+        "dialogue:rood.encounter.2",
+        "dialogue:rood.encounter.3",
+      ],
+      victory: [
+        "dialogue:rood.victory.1",
+        "dialogue:rood.victory.2",
+        "dialogue:rood.victory.3",
       ]
     }
   ],
@@ -1555,8 +1569,7 @@ export const trainerTypeDialogue: TrainerTypeDialogue = {
       "dialogue:roark.victory.1",
       "dialogue:roark.victory.2",
       "dialogue:roark.victory.3",
-      "dialogue:roark.victory.4",
-      "dialogue:roark.victory.5"
+      "dialogue:roark.victory.4"
     ],
     defeat: [
       "dialogue:roark.defeat.1",

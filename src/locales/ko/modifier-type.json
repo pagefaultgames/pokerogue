@@ -47,10 +47,14 @@
       "description": "포켓몬의 성격을 {{natureName}}[[로]] 바꾸고 스타팅에도 등록한다."
     },
     "DoubleBattleChanceBoosterModifierType": {
-      "description": "{{battleCount}}번의 배틀 동안 더블 배틀이 등장할 확률이 두 배가 된다."
+      "description": "{{battleCount}}번의 배틀 동안 더블 배틀이 등장할 확률이 4배가 된다."
     },
-    "TempBattleStatBoosterModifierType": {
-      "description": "자신의 모든 포켓몬이 5번의 배틀 동안 {{tempBattleStatName}}[[가]] 한 단계 증가한다."
+    "TempStatStageBoosterModifierType": {
+      "description": "자신의 모든 포켓몬이 5번의 배틀 동안 {{stat}}[[가]] {{amount}}단계 증가한다.",
+      "extra": {
+        "stage": "1 스테이지",
+        "percentage": "30%"
+      }
     },
     "AttackTypeBoosterModifierType": {
       "description": "지니게 하면 {{moveType}}타입 기술의 위력이 20% 상승한다."
@@ -61,8 +65,8 @@
     "AllPokemonLevelIncrementModifierType": {
       "description": "자신의 모든 포켓몬의 레벨이 {{levels}}만큼 상승한다."
     },
-    "PokemonBaseStatBoosterModifierType": {
-      "description": "지니게 하면 {{statName}} 종족값을 10% 올려준다. 개체값이 높을수록 더 많이 누적시킬 수 있다."
+    "BaseStatBoosterModifierType": {
+      "description": "지니게 하면 {{stat}} 종족값을 10% 올려준다. 개체값이 높을수록 더 많이 누적시킬 수 있다."
     },
     "AllPokemonFullHpRestoreModifierType": {
       "description": "자신의 포켓몬의 HP를 모두 회복한다."
@@ -248,6 +252,12 @@
       "name": "초점렌즈",
       "description": "약점이 보이는 렌즈. 지니게 한 포켓몬의 기술이 급소에 맞기 쉬워진다."
     },
+    "DIRE_HIT": { 
+      "name": "크리티컬커터", 
+      "extra": { 
+        "raises": "급소율"
+      }
+    },
     "LEEK": {
       "name": "대파",
       "description": "매우 길고 단단한 줄기. 파오리에게 지니게 하면 기술이 급소에 맞기 쉬워진다."
@@ -411,25 +421,13 @@
       "description": "메타몽에게 지니게 하면 스피드가 올라가는 이상한 가루. 매우 잘고 단단하다."
     }
   },
-  "TempBattleStatBoosterItem": {
+  "TempStatStageBoosterItem": {
     "x_attack": "플러스파워",
     "x_defense": "디펜드업",
     "x_sp_atk": "스페셜업",
     "x_sp_def": "스페셜가드",
     "x_speed": "스피드업",
-    "x_accuracy": "잘-맞히기",
-    "dire_hit": "크리티컬커터"
-  },
-  "TempBattleStatBoosterStatName": {
-    "ATK": "공격",
-    "DEF": "방어",
-    "SPATK": "특수공격",
-    "SPDEF": "특수방어",
-    "SPD": "스피드",
-    "ACC": "명중률",
-    "CRIT": "급소율",
-    "EVA": "회피율",
-    "DEFAULT": "???"
+    "x_accuracy": "잘-맞히기"
   },
   "AttackTypeBoosterItem": {
     "silk_scarf": "실크스카프",
@@ -604,6 +602,6 @@
     "DRAGON_MEMORY": "드래곤메모리",
     "DARK_MEMORY": "다크메모리",
     "FAIRY_MEMORY": "페어리메모리",
-    "BLANK_MEMORY": "빈메모리"
+    "NORMAL_MEMORY": "일반메모리"
   }
 }

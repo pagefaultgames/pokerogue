@@ -1,13 +1,12 @@
 import BattleScene from "../battle-scene";
 import { addBBCodeTextObject, addTextObject, getTextColor, TextStyle } from "./text";
 import { Mode } from "./ui";
-import * as Utils from "../utils";
 import MessageUiHandler from "./message-ui-handler";
-import { getStatName, Stat } from "../data/pokemon-stat";
 import { addWindow } from "./ui-theme";
 import BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
 import {Button} from "#enums/buttons";
 import i18next from "i18next";
+import { Stat, PERMANENT_STATS, getStatKey } from "#app/enums/stat";
 
 export default class BattleMessageUiHandler extends MessageUiHandler {
   private levelUpStatsContainer: Phaser.GameObjects.Container;
@@ -98,11 +97,11 @@ export default class BattleMessageUiHandler extends MessageUiHandler {
     this.levelUpStatsContainer = levelUpStatsContainer;
 
     const levelUpStatsLabelsContent = addTextObject(this.scene, (this.scene.game.canvas.width / 6) - 73, -94, "", TextStyle.WINDOW, { maxLines: 6 });
+    levelUpStatsLabelsContent.setLineSpacing(i18next.resolvedLanguage === "ja" ? 25 : 5);
     let levelUpStatsLabelText = "";
 
-    const stats = Utils.getEnumValues(Stat);
-    for (const s of stats) {
-      levelUpStatsLabelText += `${getStatName(s)}\n`;
+    for (const s of PERMANENT_STATS) {
+      levelUpStatsLabelText += `${i18next.t(getStatKey(s))}\n`;
     }
     levelUpStatsLabelsContent.text = levelUpStatsLabelText;
     levelUpStatsLabelsContent.x -= levelUpStatsLabelsContent.displayWidth;
@@ -114,11 +113,13 @@ export default class BattleMessageUiHandler extends MessageUiHandler {
     levelUpStatsContainer.add(levelUpStatsLabelsContent);
 
     const levelUpStatsIncrContent = addTextObject(this.scene, (this.scene.game.canvas.width / 6) - 50, -94, "+\n+\n+\n+\n+\n+", TextStyle.WINDOW, { maxLines: 6 });
+    levelUpStatsIncrContent.setLineSpacing(i18next.resolvedLanguage === "ja" ? 25 : 5);
     levelUpStatsContainer.add(levelUpStatsIncrContent);
 
     this.levelUpStatsIncrContent = levelUpStatsIncrContent;
 
     const levelUpStatsValuesContent = addBBCodeTextObject(this.scene, (this.scene.game.canvas.width / 6) - 7, -94, "", TextStyle.WINDOW, { maxLines: 6, lineSpacing: 5});
+    levelUpStatsValuesContent.setLineSpacing(i18next.resolvedLanguage === "ja" ? 25 : 5);
     levelUpStatsValuesContent.setOrigin(1, 0);
     levelUpStatsValuesContent.setAlign("right");
     levelUpStatsContainer.add(levelUpStatsValuesContent);
@@ -176,8 +177,7 @@ export default class BattleMessageUiHandler extends MessageUiHandler {
       }
       const newStats = (this.scene as BattleScene).getParty()[partyMemberIndex].stats;
       let levelUpStatsValuesText = "";
-      const stats = Utils.getEnumValues(Stat);
-      for (const s of stats) {
+      for (const s of PERMANENT_STATS) {
         levelUpStatsValuesText += `${showTotals ? newStats[s] : newStats[s] - prevStats[s]}\n`;
       }
       this.levelUpStatsValuesContent.text = levelUpStatsValuesText;
@@ -199,10 +199,9 @@ export default class BattleMessageUiHandler extends MessageUiHandler {
     return new Promise(resolve => {
       this.scene.executeWithSeedOffset(() => {
         let levelUpStatsValuesText = "";
-        const stats = Utils.getEnumValues(Stat);
         const shownStats = this.getTopIvs(ivs, shownIvsCount);
-        for (const s of stats) {
-          levelUpStatsValuesText += `${shownStats.indexOf(s) > -1 ? this.getIvDescriptor(ivs[s], s, pokemonId) : "???"}\n`;
+        for (const s of PERMANENT_STATS) {
+          levelUpStatsValuesText += `${shownStats.includes(s) ? this.getIvDescriptor(ivs[s], s, pokemonId) : "???"}\n`;
         }
         this.levelUpStatsValuesContent.text = levelUpStatsValuesText;
         this.levelUpStatsIncrContent.setVisible(false);
@@ -217,26 +216,16 @@ export default class BattleMessageUiHandler extends MessageUiHandler {
   }
 
   getTopIvs(ivs: integer[], shownIvsCount: integer): Stat[] {
-    const stats = Utils.getEnumValues(Stat);
     let shownStats: Stat[] = [];
     if (shownIvsCount < 6) {
-      const statsPool = stats.slice(0);
+      const statsPool = PERMANENT_STATS.slice();
+      // Sort the stats from highest to lowest iv
+      statsPool.sort((s1, s2) => ivs[s2] - ivs[s1]);
       for (let i = 0; i < shownIvsCount; i++) {
-        let shownStat: Stat | null = null;
-        let highestIv = -1;
-        statsPool.map(s => {
-          if (ivs[s] > highestIv) {
-            shownStat = s as Stat;
-            highestIv = ivs[s];
-          }
-        });
-        if (shownStat !== null && shownStat !== undefined) {
-          shownStats.push(shownStat);
-          statsPool.splice(statsPool.indexOf(shownStat), 1);
-        }
+        shownStats.push(statsPool[i]);
       }
     } else {
-      shownStats = stats;
+      shownStats = PERMANENT_STATS.slice();
     }
     return shownStats;
   }

@@ -1,10 +1,10 @@
-import BattleScene from "#app/battle-scene.js";
-import { getCharVariantFromDialogue } from "#app/data/dialogue.js";
-import { TrainerType } from "#app/enums/trainer-type.js";
-import { modifierTypes } from "#app/modifier/modifier-type.js";
-import { vouchers } from "#app/system/voucher.js";
+import BattleScene from "#app/battle-scene";
+import { getCharVariantFromDialogue } from "#app/data/dialogue";
+import { TrainerType } from "#app/enums/trainer-type";
+import { modifierTypes } from "#app/modifier/modifier-type";
+import { vouchers } from "#app/system/voucher";
 import i18next from "i18next";
-import * as Utils from "#app/utils.js";
+import * as Utils from "#app/utils";
 import { BattlePhase } from "./battle-phase";
 import { ModifierRewardPhase } from "./modifier-reward-phase";
 import { MoneyRewardPhase } from "./money-reward-phase";
@@ -30,7 +30,7 @@ export class TrainerVictoryPhase extends BattlePhase {
     const trainerType = this.scene.currentBattle.trainer?.config.trainerType!; // TODO: is this bang correct?
     if (vouchers.hasOwnProperty(TrainerType[trainerType])) {
       if (!this.scene.validateVoucher(vouchers[TrainerType[trainerType]]) && this.scene.currentBattle.trainer?.config.isBoss) {
-        this.scene.unshiftPhase(new ModifierRewardPhase(this.scene, [modifierTypes.VOUCHER, modifierTypes.VOUCHER, modifierTypes.VOUCHER_PLUS, modifierTypes.VOUCHER_PREMIUM][vouchers[TrainerType[trainerType]].voucherType]));
+        this.scene.unshiftPhase(new ModifierRewardPhase(this.scene, [modifierTypes.VOUCHER_PLUS, modifierTypes.VOUCHER_PLUS, modifierTypes.VOUCHER_PLUS, modifierTypes.VOUCHER_PREMIUM][vouchers[TrainerType[trainerType]].voucherType]));
       }
     }
 

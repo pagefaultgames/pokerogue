@@ -1,16 +1,15 @@
-import { Stat } from "#app/data/pokemon-stat";
-import { EvolutionStatBoosterModifier } from "#app/modifier/modifier";
-import { modifierTypes } from "#app/modifier/modifier-type";
-import i18next from "#app/plugins/i18n";
-import * as Utils from "#app/utils";
+import { Stat } from "#enums/stat";
 import { Species } from "#enums/species";
 import GameManager from "#test/utils/gameManager";
 import Phase from "phaser";
+import * as Utils from "#app/utils";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { StatBoosterModifier } from "#app/modifier/modifier";
 
 describe("Items - Eviolite", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
+  const TIMEOUT = 20 * 1000;
 
   beforeAll(() => {
     phaserGame = new Phase.Game({
@@ -25,108 +24,65 @@ describe("Items - Eviolite", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
 
-    game.override.battleType("single");
+    game.override
+      .battleType("single")
+      .startingHeldItems([{ name: "EVIOLITE" }]);
   });
 
-  it("EVIOLITE activates in battle correctly", async() => {
-    game.override.startingHeldItems([{ name: "EVIOLITE" }]);
-    const consoleSpy = vi.spyOn(console, "log");
-    await game.startBattle([
+  it("should provide 50% boost to DEF and SPDEF for unevolved, unfused pokemon", async() => {
+    await game.classicMode.startBattle([
       Species.PICHU
     ]);
 
-    const partyMember = game.scene.getParty()[0];
+    const partyMember = game.scene.getPlayerPokemon()!;
 
-    // Checking consoe log to make sure Eviolite is applied when getBattleStat (with the appropriate stat) is called
-    partyMember.getBattleStat(Stat.DEF);
-    expect(consoleSpy).toHaveBeenLastCalledWith("Applied", i18next.t("modifierType:ModifierType.EVIOLITE.name"), "");
+    vi.spyOn(partyMember, "getEffectiveStat").mockImplementation((stat, _opponent?, _move?, _isCritical?) => {
+      const statValue = new Utils.NumberHolder(partyMember.getStat(stat, false));
+      game.scene.applyModifiers(StatBoosterModifier, partyMember.isPlayer(), partyMember, stat, statValue);
 
-    // Printing dummy console messages along the way so subsequent checks don't pass because of the first
-    console.log("");
+      // Ignore other calculations for simplicity
 
-    partyMember.getBattleStat(Stat.SPDEF);
-    expect(consoleSpy).toHaveBeenLastCalledWith("Applied", i18next.t("modifierType:ModifierType.EVIOLITE.name"), "");
+      return Math.floor(statValue.value);
+    });
 
-    console.log("");
+    const defStat = partyMember.getStat(Stat.DEF, false);
+    const spDefStat = partyMember.getStat(Stat.SPDEF, false);
 
-    partyMember.getBattleStat(Stat.ATK);
-    expect(consoleSpy).not.toHaveBeenLastCalledWith("Applied", i18next.t("modifierType:ModifierType.EVIOLITE.name"), "");
+    expect(partyMember.getEffectiveStat(Stat.DEF)).toBe(Math.floor(defStat * 1.5));
+    expect(partyMember.getEffectiveStat(Stat.SPDEF)).toBe(Math.floor(spDefStat * 1.5));
+  }, TIMEOUT);
 
-    console.log("");
-
-    partyMember.getBattleStat(Stat.SPATK);
-    expect(consoleSpy).not.toHaveBeenLastCalledWith("Applied", i18next.t("modifierType:ModifierType.EVIOLITE.name"), "");
-
-    console.log("");
-
-    partyMember.getBattleStat(Stat.SPD);
-    expect(consoleSpy).not.toHaveBeenLastCalledWith("Applied", i18next.t("modifierType:ModifierType.EVIOLITE.name"), "");
-  });
-
-  it("EVIOLITE held by unevolved, unfused pokemon", async() => {
-    await game.startBattle([
-      Species.PICHU
-    ]);
-
-    const partyMember = game.scene.getParty()[0];
-
-    const defStat = partyMember.getStat(Stat.DEF);
-    const spDefStat = partyMember.getStat(Stat.SPDEF);
-
-    // Making sure modifier is not applied without holding item
-    const defValue = new Utils.NumberHolder(defStat);
-    partyMember.scene.applyModifiers(EvolutionStatBoosterModifier, true, partyMember, Stat.DEF, defValue);
-    const spDefValue = new Utils.NumberHolder(spDefStat);
-    partyMember.scene.applyModifiers(EvolutionStatBoosterModifier, true, partyMember, Stat.SPDEF, spDefValue);
-
-    expect(defValue.value / defStat).toBe(1);
-    expect(spDefValue.value / spDefStat).toBe(1);
-
-    // Giving Eviolite to party member and testing if it applies
-    partyMember.scene.addModifier(modifierTypes.EVIOLITE().newModifier(partyMember), true);
-    partyMember.scene.applyModifiers(EvolutionStatBoosterModifier, true, partyMember, Stat.DEF, defValue);
-    partyMember.scene.applyModifiers(EvolutionStatBoosterModifier, true, partyMember, Stat.SPDEF, spDefValue);
-
-    expect(defValue.value / defStat).toBe(1.5);
-    expect(spDefValue.value / spDefStat).toBe(1.5);
-  }, 20000);
-
-  it("EVIOLITE held by fully evolved, unfused pokemon", async() => {
-    await game.startBattle([
+  it("should not provide a boost for fully evolved, unfused pokemon", async() => {
+    await game.classicMode.startBattle([
       Species.RAICHU,
     ]);
 
     const partyMember = game.scene.getParty()[0];
 
-    const defStat = partyMember.getStat(Stat.DEF);
-    const spDefStat = partyMember.getStat(Stat.SPDEF);
+    vi.spyOn(partyMember, "getEffectiveStat").mockImplementation((stat, _opponent?, _move?, _isCritical?) => {
+      const statValue = new Utils.NumberHolder(partyMember.getStat(stat, false));
+      game.scene.applyModifiers(StatBoosterModifier, partyMember.isPlayer(), partyMember, stat, statValue);
 
-    // Making sure modifier is not applied without holding item
-    const defValue = new Utils.NumberHolder(defStat);
-    partyMember.scene.applyModifiers(EvolutionStatBoosterModifier, true, partyMember, Stat.DEF, defValue);
-    const spDefValue = new Utils.NumberHolder(spDefStat);
-    partyMember.scene.applyModifiers(EvolutionStatBoosterModifier, true, partyMember, Stat.SPDEF, spDefValue);
+      // Ignore other calculations for simplicity
 
-    expect(defValue.value / defStat).toBe(1);
-    expect(spDefValue.value / spDefStat).toBe(1);
+      return Math.floor(statValue.value);
+    });
 
-    // Giving Eviolite to party member and testing if it applies
-    partyMember.scene.addModifier(modifierTypes.EVIOLITE().newModifier(partyMember), true);
-    partyMember.scene.applyModifiers(EvolutionStatBoosterModifier, true, partyMember, Stat.DEF, defValue);
-    partyMember.scene.applyModifiers(EvolutionStatBoosterModifier, true, partyMember, Stat.SPDEF, spDefValue);
+    const defStat = partyMember.getStat(Stat.DEF, false);
+    const spDefStat = partyMember.getStat(Stat.SPDEF, false);
 
-    expect(defValue.value / defStat).toBe(1);
-    expect(spDefValue.value / spDefStat).toBe(1);
-  }, 20000);
+    expect(partyMember.getEffectiveStat(Stat.DEF)).toBe(defStat);
+    expect(partyMember.getEffectiveStat(Stat.SPDEF)).toBe(spDefStat);
 
-  it("EVIOLITE held by completely unevolved, fused pokemon", async() => {
-    await game.startBattle([
+  }, TIMEOUT);
+
+  it("should provide 50% boost to DEF and SPDEF for completely unevolved, fused pokemon", async() => {
+    await game.classicMode.startBattle([
       Species.PICHU,
       Species.CLEFFA
     ]);
 
-    const partyMember = game.scene.getParty()[0];
-    const ally = game.scene.getParty()[1];
+    const [ partyMember, ally ] = game.scene.getParty();
 
     // Fuse party members (taken from PlayerPokemon.fuse(...) function)
     partyMember.fusionSpecies = ally.species;
@@ -137,35 +93,29 @@ describe("Items - Eviolite", () => {
     partyMember.fusionGender = ally.gender;
     partyMember.fusionLuck = ally.luck;
 
-    const defStat = partyMember.getStat(Stat.DEF);
-    const spDefStat = partyMember.getStat(Stat.SPDEF);
+    vi.spyOn(partyMember, "getEffectiveStat").mockImplementation((stat, _opponent?, _move?, _isCritical?) => {
+      const statValue = new Utils.NumberHolder(partyMember.getStat(stat, false));
+      game.scene.applyModifiers(StatBoosterModifier, partyMember.isPlayer(), partyMember, stat, statValue);
 
-    // Making sure modifier is not applied without holding item
-    const defValue = new Utils.NumberHolder(defStat);
-    partyMember.scene.applyModifiers(EvolutionStatBoosterModifier, true, partyMember, Stat.DEF, defValue);
-    const spDefValue = new Utils.NumberHolder(spDefStat);
-    partyMember.scene.applyModifiers(EvolutionStatBoosterModifier, true, partyMember, Stat.SPDEF, spDefValue);
+      // Ignore other calculations for simplicity
 
-    expect(defValue.value / defStat).toBe(1);
-    expect(spDefValue.value / spDefStat).toBe(1);
+      return Math.floor(statValue.value);
+    });
 
-    // Giving Eviolite to party member and testing if it applies
-    partyMember.scene.addModifier(modifierTypes.EVIOLITE().newModifier(partyMember), true);
-    partyMember.scene.applyModifiers(EvolutionStatBoosterModifier, true, partyMember, Stat.DEF, defValue);
-    partyMember.scene.applyModifiers(EvolutionStatBoosterModifier, true, partyMember, Stat.SPDEF, spDefValue);
+    const defStat = partyMember.getStat(Stat.DEF, false);
+    const spDefStat = partyMember.getStat(Stat.SPDEF, false);
 
-    expect(defValue.value / defStat).toBe(1.5);
-    expect(spDefValue.value / spDefStat).toBe(1.5);
-  }, 20000);
+    expect(partyMember.getEffectiveStat(Stat.DEF)).toBe(Math.floor(defStat * 1.5));
+    expect(partyMember.getEffectiveStat(Stat.SPDEF)).toBe(Math.floor(spDefStat * 1.5));
+  }, TIMEOUT);
 
-  it("EVIOLITE held by partially unevolved (base), fused pokemon", async() => {
-    await game.startBattle([
+  it("should provide 25% boost to DEF and SPDEF for partially unevolved (base), fused pokemon", async() => {
+    await game.classicMode.startBattle([
       Species.PICHU,
       Species.CLEFABLE
     ]);
 
-    const partyMember = game.scene.getParty()[0];
-    const ally = game.scene.getParty()[1];
+    const [ partyMember, ally ] = game.scene.getParty();
 
     // Fuse party members (taken from PlayerPokemon.fuse(...) function)
     partyMember.fusionSpecies = ally.species;
@@ -176,35 +126,29 @@ describe("Items - Eviolite", () => {
     partyMember.fusionGender = ally.gender;
     partyMember.fusionLuck = ally.luck;
 
-    const defStat = partyMember.getStat(Stat.DEF);
-    const spDefStat = partyMember.getStat(Stat.SPDEF);
+    vi.spyOn(partyMember, "getEffectiveStat").mockImplementation((stat, _opponent?, _move?, _isCritical?) => {
+      const statValue = new Utils.NumberHolder(partyMember.getStat(stat, false));
+      game.scene.applyModifiers(StatBoosterModifier, partyMember.isPlayer(), partyMember, stat, statValue);
 
-    // Making sure modifier is not applied without holding item
-    const defValue = new Utils.NumberHolder(defStat);
-    partyMember.scene.applyModifiers(EvolutionStatBoosterModifier, true, partyMember, Stat.DEF, defValue);
-    const spDefValue = new Utils.NumberHolder(spDefStat);
-    partyMember.scene.applyModifiers(EvolutionStatBoosterModifier, true, partyMember, Stat.SPDEF, spDefValue);
+      // Ignore other calculations for simplicity
 
-    expect(defValue.value / defStat).toBe(1);
-    expect(spDefValue.value / spDefStat).toBe(1);
+      return Math.floor(statValue.value);
+    });
 
-    // Giving Eviolite to party member and testing if it applies
-    partyMember.scene.addModifier(modifierTypes.EVIOLITE().newModifier(partyMember), true);
-    partyMember.scene.applyModifiers(EvolutionStatBoosterModifier, true, partyMember, Stat.DEF, defValue);
-    partyMember.scene.applyModifiers(EvolutionStatBoosterModifier, true, partyMember, Stat.SPDEF, spDefValue);
+    const defStat = partyMember.getStat(Stat.DEF, false);
+    const spDefStat = partyMember.getStat(Stat.SPDEF, false);
 
-    expect(defValue.value / defStat).toBe(1.25);
-    expect(spDefValue.value / spDefStat).toBe(1.25);
-  }, 20000);
+    expect(partyMember.getEffectiveStat(Stat.DEF)).toBe(Math.floor(defStat * 1.25));
+    expect(partyMember.getEffectiveStat(Stat.SPDEF)).toBe(Math.floor(spDefStat * 1.25));
+  }, TIMEOUT);
 
-  it("EVIOLITE held by partially unevolved (fusion), fused pokemon", async() => {
-    await game.startBattle([
+  it("should provide 25% boost to DEF and SPDEF for partially unevolved (fusion), fused pokemon", async() => {
+    await game.classicMode.startBattle([
       Species.RAICHU,
       Species.CLEFFA
     ]);
 
-    const partyMember = game.scene.getParty()[0];
-    const ally = game.scene.getParty()[1];
+    const [ partyMember, ally ] = game.scene.getParty();
 
     // Fuse party members (taken from PlayerPokemon.fuse(...) function)
     partyMember.fusionSpecies = ally.species;
@@ -215,35 +159,29 @@ describe("Items - Eviolite", () => {
     partyMember.fusionGender = ally.gender;
     partyMember.fusionLuck = ally.luck;
 
-    const defStat = partyMember.getStat(Stat.DEF);
-    const spDefStat = partyMember.getStat(Stat.SPDEF);
+    vi.spyOn(partyMember, "getEffectiveStat").mockImplementation((stat, _opponent?, _move?, _isCritical?) => {
+      const statValue = new Utils.NumberHolder(partyMember.getStat(stat, false));
+      game.scene.applyModifiers(StatBoosterModifier, partyMember.isPlayer(), partyMember, stat, statValue);
 
-    // Making sure modifier is not applied without holding item
-    const defValue = new Utils.NumberHolder(defStat);
-    partyMember.scene.applyModifiers(EvolutionStatBoosterModifier, true, partyMember, Stat.DEF, defValue);
-    const spDefValue = new Utils.NumberHolder(spDefStat);
-    partyMember.scene.applyModifiers(EvolutionStatBoosterModifier, true, partyMember, Stat.SPDEF, spDefValue);
+      // Ignore other calculations for simplicity
 
-    expect(defValue.value / defStat).toBe(1);
-    expect(spDefValue.value / spDefStat).toBe(1);
+      return Math.floor(statValue.value);
+    });
 
-    // Giving Eviolite to party member and testing if it applies
-    partyMember.scene.addModifier(modifierTypes.EVIOLITE().newModifier(partyMember), true);
-    partyMember.scene.applyModifiers(EvolutionStatBoosterModifier, true, partyMember, Stat.DEF, defValue);
-    partyMember.scene.applyModifiers(EvolutionStatBoosterModifier, true, partyMember, Stat.SPDEF, spDefValue);
+    const defStat = partyMember.getStat(Stat.DEF, false);
+    const spDefStat = partyMember.getStat(Stat.SPDEF, false);
 
-    expect(defValue.value / defStat).toBe(1.25);
-    expect(spDefValue.value / spDefStat).toBe(1.25);
-  }, 20000);
+    expect(partyMember.getEffectiveStat(Stat.DEF)).toBe(Math.floor(defStat * 1.25));
+    expect(partyMember.getEffectiveStat(Stat.SPDEF)).toBe(Math.floor(spDefStat * 1.25));
+  }, TIMEOUT);
 
-  it("EVIOLITE held by completely evolved, fused pokemon", async() => {
-    await game.startBattle([
+  it("should not provide a boost for fully evolved, fused pokemon", async() => {
+    await game.classicMode.startBattle([
       Species.RAICHU,
       Species.CLEFABLE
     ]);
 
-    const partyMember = game.scene.getParty()[0];
-    const ally = game.scene.getParty()[1];
+    const [ partyMember, ally ] = game.scene.getParty();
 
     // Fuse party members (taken from PlayerPokemon.fuse(...) function)
     partyMember.fusionSpecies = ally.species;
@@ -254,24 +192,51 @@ describe("Items - Eviolite", () => {
     partyMember.fusionGender = ally.gender;
     partyMember.fusionLuck = ally.luck;
 
-    const defStat = partyMember.getStat(Stat.DEF);
-    const spDefStat = partyMember.getStat(Stat.SPDEF);
+    vi.spyOn(partyMember, "getEffectiveStat").mockImplementation((stat, _opponent?, _move?, _isCritical?) => {
+      const statValue = new Utils.NumberHolder(partyMember.getStat(stat, false));
+      game.scene.applyModifiers(StatBoosterModifier, partyMember.isPlayer(), partyMember, stat, statValue);
 
-    // Making sure modifier is not applied without holding item
-    const defValue = new Utils.NumberHolder(defStat);
-    partyMember.scene.applyModifiers(EvolutionStatBoosterModifier, true, partyMember, Stat.DEF, defValue);
-    const spDefValue = new Utils.NumberHolder(spDefStat);
-    partyMember.scene.applyModifiers(EvolutionStatBoosterModifier, true, partyMember, Stat.SPDEF, spDefValue);
+      // Ignore other calculations for simplicity
 
-    expect(defValue.value / defStat).toBe(1);
-    expect(spDefValue.value / spDefStat).toBe(1);
+      return Math.floor(statValue.value);
+    });
 
-    // Giving Eviolite to party member and testing if it applies
-    partyMember.scene.addModifier(modifierTypes.EVIOLITE().newModifier(partyMember), true);
-    partyMember.scene.applyModifiers(EvolutionStatBoosterModifier, true, partyMember, Stat.DEF, defValue);
-    partyMember.scene.applyModifiers(EvolutionStatBoosterModifier, true, partyMember, Stat.SPDEF, spDefValue);
+    const defStat = partyMember.getStat(Stat.DEF, false);
+    const spDefStat = partyMember.getStat(Stat.SPDEF, false);
 
-    expect(defValue.value / defStat).toBe(1);
-    expect(spDefValue.value / spDefStat).toBe(1);
-  }, 20000);
+    expect(partyMember.getEffectiveStat(Stat.DEF)).toBe(defStat);
+    expect(partyMember.getEffectiveStat(Stat.SPDEF)).toBe(spDefStat);
+  }, TIMEOUT);
+
+  it("should not provide a boost for Gigantamax Pokémon", async() => {
+    game.override.starterForms({
+      [Species.PIKACHU]: 8,
+      [Species.EEVEE]: 2,
+      [Species.DURALUDON]: 1,
+      [Species.MEOWTH]: 1
+    });
+
+    const gMaxablePokemon = [ Species.PIKACHU, Species.EEVEE, Species.DURALUDON, Species.MEOWTH ];
+
+    await game.classicMode.startBattle([
+      Utils.randItem(gMaxablePokemon)
+    ]);
+
+    const partyMember = game.scene.getPlayerPokemon()!;
+
+    vi.spyOn(partyMember, "getEffectiveStat").mockImplementation((stat, _opponent?, _move?, _isCritical?) => {
+      const statValue = new Utils.NumberHolder(partyMember.getStat(stat, false));
+      game.scene.applyModifiers(StatBoosterModifier, partyMember.isPlayer(), partyMember, stat, statValue);
+
+      // Ignore other calculations for simplicity
+
+      return Math.floor(statValue.value);
+    });
+
+    const defStat = partyMember.getStat(Stat.DEF, false);
+    const spDefStat = partyMember.getStat(Stat.SPDEF, false);
+
+    expect(partyMember.getEffectiveStat(Stat.DEF)).toBe(defStat);
+    expect(partyMember.getEffectiveStat(Stat.SPDEF)).toBe(spDefStat);
+  }, TIMEOUT);
 });

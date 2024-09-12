@@ -4,7 +4,6 @@ import { Moves } from "#app/enums/moves";
 import { Species } from "#app/enums/species";
 import { MoveResult } from "#app/field/pokemon";
 import GameManager from "#test/utils/gameManager";
-import { SPLASH_ONLY } from "#test/utils/testUtils";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 const TIMEOUT = 20 * 1000;
@@ -31,7 +30,7 @@ describe("Moves - Gastro Acid", () => {
     game.override.ability(Abilities.NONE);
     game.override.moveset([Moves.GASTRO_ACID, Moves.WATER_GUN, Moves.SPLASH, Moves.CORE_ENFORCER]);
     game.override.enemySpecies(Species.BIDOOF);
-    game.override.enemyMoveset(SPLASH_ONLY);
+    game.override.enemyMoveset(Moves.SPLASH);
     game.override.enemyAbility(Abilities.WATER_ABSORB);
   });
 

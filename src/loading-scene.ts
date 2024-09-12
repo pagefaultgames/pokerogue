@@ -7,15 +7,15 @@ import { WindowVariant, getWindowVariantSuffix } from "./ui/ui-theme";
 import { isMobile } from "./touch-controls";
 import * as Utils from "./utils";
 import { initI18n } from "./plugins/i18n";
-import {initPokemonPrevolutions} from "#app/data/pokemon-evolutions";
-import {initBiomes} from "#app/data/biomes";
-import {initEggMoves} from "#app/data/egg-moves";
-import {initPokemonForms} from "#app/data/pokemon-forms";
-import {initSpecies} from "#app/data/pokemon-species";
-import {initMoves} from "#app/data/move";
-import {initAbilities} from "#app/data/ability";
-import {initAchievements} from "#app/system/achv";
-import {initTrainerTypeDialogue} from "#app/data/dialogue";
+import { initPokemonPrevolutions } from "#app/data/pokemon-evolutions";
+import { initBiomes } from "#app/data/biomes";
+import { initEggMoves } from "#app/data/egg-moves";
+import { initPokemonForms } from "#app/data/pokemon-forms";
+import { initSpecies } from "#app/data/pokemon-species";
+import { initMoves } from "#app/data/move";
+import { initAbilities } from "#app/data/ability";
+import { initAchievements } from "#app/system/achv";
+import { initTrainerTypeDialogue } from "#app/data/dialogue";
 import { initChallenges } from "./data/challenge";
 import i18next from "i18next";
 import { initStatsKeys } from "./ui/game-stats-ui-handler";
@@ -41,8 +41,6 @@ export class LoadingScene extends SceneBase {
 
     this.loadImage("loading_bg", "arenas");
     this.loadImage("logo", "");
-    // this.loadImage("pride-update", "events");
-    this.loadImage("august-variant-update", "events");
 
     // Load menu images
     this.loadAtlas("bg", "ui");
@@ -80,6 +78,7 @@ export class LoadingScene extends SceneBase {
     this.loadAtlas("overlay_hp_boss", "ui");
     this.loadImage("overlay_exp", "ui");
     this.loadImage("icon_owned", "ui");
+    this.loadImage("icon_egg_move", "ui");
     this.loadImage("ability_bar_left", "ui");
     this.loadImage("bgm_bar", "ui");
     this.loadImage("party_exp_bar", "ui");
@@ -100,6 +99,8 @@ export class LoadingScene extends SceneBase {
     this.loadImage("ha_capsule", "ui", "ha_capsule.png");
     this.loadImage("champion_ribbon", "ui", "champion_ribbon.png");
     this.loadImage("icon_spliced", "ui");
+    this.loadImage("icon_lock", "ui", "icon_lock.png");
+    this.loadImage("icon_stop", "ui", "icon_stop.png");
     this.loadImage("icon_tera", "ui");
     this.loadImage("type_tera", "ui");
     this.loadAtlas("type_bgs", "ui");
@@ -164,6 +165,7 @@ export class LoadingScene extends SceneBase {
     this.loadImage("saving_icon", "ui");
     this.loadImage("discord", "ui");
     this.loadImage("google", "ui");
+    this.loadImage("settings_icon", "ui");
 
     this.loadImage("default_bg", "arenas");
     // Load arena images
@@ -246,7 +248,12 @@ export class LoadingScene extends SceneBase {
     } else {
       this.loadAtlas("types", "");
     }
-
+    const availableLangs = ["en", "de", "it", "fr", "ja", "ko", "es", "pt-BR", "zh-CN"];
+    if (lang && availableLangs.includes(lang)) {
+      this.loadImage("egg-update_"+lang, "events");
+    } else {
+      this.loadImage("egg-update_en", "events");
+    }
 
     this.loadAtlas("statuses", "");
     this.loadAtlas("categories", "");
@@ -267,6 +274,7 @@ export class LoadingScene extends SceneBase {
     this.loadImage("gacha_knob", "egg");
 
     this.loadImage("egg_list_bg", "ui");
+    this.loadImage("egg_summary_bg", "ui");
 
     this.loadImage("end_m", "cg");
     this.loadImage("end_f", "cg");

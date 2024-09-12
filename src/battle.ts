@@ -1,12 +1,12 @@
 import BattleScene from "./battle-scene";
-import { EnemyPokemon, PlayerPokemon, QueuedMove } from "./field/pokemon";
 import { Command } from "./ui/command-ui-handler";
 import * as Utils from "./utils";
 import Trainer, { TrainerVariant } from "./field/trainer";
 import { GameMode } from "./game-mode";
 import { MoneyMultiplierModifier, PokemonHeldItemModifier } from "./modifier/modifier";
 import { PokeballType } from "./data/pokeball";
-import {trainerConfigs} from "#app/data/trainer-config";
+import { trainerConfigs } from "#app/data/trainer-config";
+import Pokemon, { EnemyPokemon, PlayerPokemon, QueuedMove } from "#app/field/pokemon";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { BattleSpec } from "#enums/battle-spec";
 import { Moves } from "#enums/moves";
@@ -31,46 +31,55 @@ export enum BattlerIndex {
 
 export interface TurnCommand {
     command: Command;
-    cursor?: integer;
+    cursor?: number;
     move?: QueuedMove;
     targets?: BattlerIndex[];
     skip?: boolean;
     args?: any[];
 }
 
+export interface FaintLogEntry {
+  pokemon: Pokemon,
+  turn: number
+}
+
 interface TurnCommands {
-    [key: integer]: TurnCommand | null
+    [key: number]: TurnCommand | null
 }
 
 export default class Battle {
   protected gameMode: GameMode;
-  public waveIndex: integer;
+  public waveIndex: number;
   public battleType: BattleType;
   public battleSpec: BattleSpec;
   public trainer: Trainer | null;
-  public enemyLevels: integer[] | undefined;
-  public enemyParty: EnemyPokemon[];
-  public seenEnemyPartyMemberIds: Set<integer>;
+  public enemyLevels: number[] | undefined;
+  public enemyParty: EnemyPokemon[] = [];
+  public seenEnemyPartyMemberIds: Set<number> = new Set<number>();
   public double: boolean;
-  public started: boolean;
-  public enemySwitchCounter: integer;
-  public turn: integer;
+  public started: boolean = false;
+  public enemySwitchCounter: number = 0;
+  public turn: number = 0;
   public turnCommands: TurnCommands;
-  public playerParticipantIds: Set<integer>;
-  public battleScore: integer;
-  public postBattleLoot: PokemonHeldItemModifier[];
-  public escapeAttempts: integer;
+  public playerParticipantIds: Set<number> = new Set<number>();
+  public battleScore: number = 0;
+  public postBattleLoot: PokemonHeldItemModifier[] = [];
+  public escapeAttempts: number = 0;
   public lastMove: Moves;
-  public battleSeed: string;
-  private battleSeedState: string | null;
-  public moneyScattered: number;
-  public lastUsedPokeball: PokeballType | null;
-  public playerFaints: number; // The amount of times pokemon on the players side have fainted
-  public enemyFaints: number; // The amount of times pokemon on the enemies side have fainted
+  public battleSeed: string = Utils.randomString(16, true);
+  private battleSeedState: string | null = null;
+  public moneyScattered: number = 0;
+  public lastUsedPokeball: PokeballType | null = null;
+  /** The number of times a Pokemon on the player's side has fainted this battle */
+  public playerFaints: number = 0;
+  /** The number of times a Pokemon on the enemy's side has fainted this battle */
+  public enemyFaints: number = 0;
+  public playerFaintsHistory: FaintLogEntry[] = [];
+  public enemyFaintsHistory: FaintLogEntry[] = [];
 
-  private rngCounter: integer = 0;
+  private rngCounter: number = 0;
 
-  constructor(gameMode: GameMode, waveIndex: integer, battleType: BattleType, trainer?: Trainer, double?: boolean) {
+  constructor(gameMode: GameMode, waveIndex: number, battleType: BattleType, trainer?: Trainer, double?: boolean) {
     this.gameMode = gameMode;
     this.waveIndex = waveIndex;
     this.battleType = battleType;
@@ -79,22 +88,7 @@ export default class Battle {
     this.enemyLevels = battleType !== BattleType.TRAINER
       ? new Array(double ? 2 : 1).fill(null).map(() => this.getLevelForWave())
       : trainer?.getPartyLevels(this.waveIndex);
-    this.enemyParty = [];
-    this.seenEnemyPartyMemberIds = new Set<integer>();
-    this.double = !!double;
-    this.enemySwitchCounter = 0;
-    this.turn = 0;
-    this.playerParticipantIds = new Set<integer>();
-    this.battleScore = 0;
-    this.postBattleLoot = [];
-    this.escapeAttempts = 0;
-    this.started = false;
-    this.battleSeed = Utils.randomString(16, true);
-    this.battleSeedState = null;
-    this.moneyScattered = 0;
-    this.lastUsedPokeball = null;
-    this.playerFaints = 0;
-    this.enemyFaints = 0;
+    this.double = double ?? false;
   }
 
   private initBattleSpec(): void {
@@ -105,7 +99,7 @@ export default class Battle {
     this.battleSpec = spec;
   }
 
-  private getLevelForWave(): integer {
+  private getLevelForWave(): number {
     const levelWaveIndex = this.gameMode.getWaveForDifficulty(this.waveIndex);
     const baseLevel = 1 + levelWaveIndex / 2 + Math.pow(levelWaveIndex / 25, 2);
     const bossMultiplier = 1.2;
@@ -138,7 +132,7 @@ export default class Battle {
     return rand / value;
   }
 
-  getBattlerCount(): integer {
+  getBattlerCount(): number {
     return this.double ? 2 : 1;
   }
 
@@ -367,7 +361,13 @@ export default class Battle {
     return null;
   }
 
-  randSeedInt(scene: BattleScene, range: integer, min: integer = 0): integer {
+  /**
+   * Generates a random number using the current battle's seed. Calls {@linkcode Utils.randSeedInt}
+   * @param range How large of a range of random numbers to choose from. If {@linkcode range} <= 1, returns {@linkcode min}
+   * @param min The minimum integer to pick, default `0`
+   * @returns A random integer between {@linkcode min} and ({@linkcode min} + {@linkcode range} - 1)
+   */
+  randSeedInt(scene: BattleScene, range: number, min: number = 0): number {
     if (range <= 1) {
       return min;
     }
@@ -392,7 +392,7 @@ export default class Battle {
 }
 
 export class FixedBattle extends Battle {
-  constructor(scene: BattleScene, waveIndex: integer, config: FixedBattleConfig) {
+  constructor(scene: BattleScene, waveIndex: number, config: FixedBattleConfig) {
     super(scene.gameMode, waveIndex, config.battleType, config.battleType === BattleType.TRAINER ? config.getTrainer(scene) : undefined, config.double);
     if (config.getEnemyParty) {
       this.enemyParty = config.getEnemyParty(scene);
@@ -408,7 +408,7 @@ export class FixedBattleConfig {
   public double: boolean;
   public getTrainer: GetTrainerFunc;
   public getEnemyParty: GetEnemyPartyFunc;
-  public seedOffsetWaveIndex: integer;
+  public seedOffsetWaveIndex: number;
 
   setBattleType(battleType: BattleType): FixedBattleConfig {
     this.battleType = battleType;
@@ -430,7 +430,7 @@ export class FixedBattleConfig {
     return this;
   }
 
-  setSeedOffsetWave(seedOffsetWaveIndex: integer): FixedBattleConfig {
+  setSeedOffsetWave(seedOffsetWaveIndex: number): FixedBattleConfig {
     this.seedOffsetWaveIndex = seedOffsetWaveIndex;
     return this;
   }
@@ -476,7 +476,7 @@ function getRandomTrainerFunc(trainerPool: (TrainerType | TrainerType[])[], rand
 }
 
 export interface FixedBattleConfigs {
-    [key: integer]: FixedBattleConfig
+    [key: number]: FixedBattleConfig
 }
 /**
  * Youngster/Lass on 5
