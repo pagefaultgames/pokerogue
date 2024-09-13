@@ -194,6 +194,8 @@ export const FieldTripEncounter: MysteryEncounter =
 function pokemonAndMoveChosen(scene: BattleScene, pokemon: PlayerPokemon, move: PokemonMove, correctMoveCategory: MoveCategory) {
   const encounter = scene.currentBattle.mysteryEncounter!;
   const correctMove = move.getMove().category === correctMoveCategory;
+  encounter.setDialogueToken("pokeName", pokemon.getNameToRender());
+  encounter.setDialogueToken("move", move.getName());
   if (!correctMove) {
     encounter.selectedOption!.dialogue!.selected = [
       {
@@ -209,8 +211,6 @@ function pokemonAndMoveChosen(scene: BattleScene, pokemon: PlayerPokemon, move: 
     ];
     setEncounterExp(scene, scene.getParty().map((p) => p.id), 50);
   } else {
-    encounter.setDialogueToken("pokeName", pokemon.getNameToRender());
-    encounter.setDialogueToken("move", move.getName());
     encounter.selectedOption!.dialogue!.selected = [
       {
         text: `${namespace}.option.selected`,
