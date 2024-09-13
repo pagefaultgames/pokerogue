@@ -1,31 +1,31 @@
 {
-  "intro": "A busy worker flags you down.",
-  "speaker": "Worker",
-  "intro_dialogue": "You look like someone with lots of capable Pokémon!$We can pay you if you're able to help us with some part-time work!",
-  "title": "Part-Timer",
-  "description": "Looks like there are plenty of tasks that need to be done. Depending how well-suited your Pokémon is to a task, they might earn more or less money.",
-  "query": "Which job will you choose?",
-  "invalid_selection": "Pokémon must be healthy enough.",
+  "intro": "Un Ouvrier coulant sous les tâches vous interpelle.",
+  "speaker": "Ouvrier",
+  "intro_dialogue": "T’as l’air d’avoir pas mal de Pokémon compétents avec toi !$Si tu acceptes de nous aider pour quelques tâches, on peut te payer !",
+  "title": "L’intérimaire",
+  "description": "La liste de tâches à effectuer a l’air incroyablement longue. En fonction des compétences de vos Pokémon à une tâche donnée, vous gagnerez plus ou moins d’argent.",
+  "query": "Quel poste vous intéresse le plus ?",
+  "invalid_selection": "Le Pokémon doit être en bonne santé.",
   "option": {
     "1": {
-      "label": "Make Deliveries",
-      "tooltip": "(-) Your Pokémon Uses its Speed\n(+) Earn @[MONEY]{Money}",
-      "selected": "Your {{selectedPokemon}} works a shift delivering orders to customers."
+      "label": "Livreur",
+      "tooltip": "(-) Votre Pokémon utilise sa Vitesse\n(+) Payé @[MONEY]{Money}",
+      "selected": "Votre {{selectedPokemon}} passe tout un shift à livrer des clients."
     },
     "2": {
-      "label": "Warehouse Work",
-      "tooltip": "(-) Your Pokémon Uses its Strength and Endurance\n(+) Earn @[MONEY]{Money}",
-      "selected": "Your {{selectedPokemon}} works a shift moving items around the warehouse."
+      "label": "Manutentionnaire",
+      "tooltip": "(-) Votre Pokémon utilise sa Force et son Endurance\n(+) Payé @[MONEY]{Money}",
+      "selected": "Votre {{selectedPokemon}} passe tout un shift à porter des charges à travers le hangar."
     },
     "3": {
-      "label": "Sales Assistant",
-      "tooltip": "(-) Your {{option3PrimaryName}} uses {{option3PrimaryMove}}\n(+) Earn @[MONEY]{Money}",
-      "disabled_tooltip": "Your Pokémon need to know certain moves for this job",
-      "selected": "Your {{option3PrimaryName}} spends the day using {{option3PrimaryMove}} to attract customers to the business!"
+      "label": "Assistant vendeur",
+      "tooltip": "(-) Votre {{option3PrimaryName}} utilise {{option3PrimaryMove}}\n(+) Payé @[MONEY]{Money}",
+      "disabled_tooltip": "Votre Pokémon doit connaitre certaines capacités pour choisir ce poste",
+      "selected": "Votre {{option3PrimaryName}} passe sa journée à utiliser {{option3PrimaryMove}} pour attirer des clients !"
     }
   },
-  "job_complete_good": "Thanks for the assistance!\nYour {{selectedPokemon}} was incredibly helpful!$Here's your check for the day.",
-  "job_complete_bad": "Your {{selectedPokemon}} helped us out a bit!$Here's your check for the day.",
-  "pokemon_tired": "Your {{selectedPokemon}} is worn out!\nThe PP of all its moves was reduced to 2!",
-  "outro": "Come back and help out again sometime!"
+  "job_complete_good": "Merci pour votre aide !\nVotre {{selectedPokemon}} a été d’une grande aide !$Voici votre paye.",
+  "job_complete_bad": "Votre {{selectedPokemon}} nous a plutot bien aidé !$Voici votre paye.",
+  "pokemon_tired": "Votre {{selectedPokemon}} est épuisé !\nLes PP de toutes ses capacités baissent de 2 !",
+  "outro": "Reviens nous aider à l’occasion !"
 }
