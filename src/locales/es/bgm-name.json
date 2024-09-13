@@ -145,10 +145,10 @@
   "encounter_youngster": "BW - ¡Vs. chico joven!",
   "heal": "BW - Cura Pokémon",
   "menu": "PMD EoS - ¡Bienvenidos al mundo de los Pokémon!",
-  "title": "PMD EoS - Tema del menú principal",
+ "title": "PMD EoS - Tema del menú principal",
 
-  "mystery_encounter_weird_dream": "PMD EoS Temporal Spire",
-  "mystery_encounter_fun_and_games": "PMD EoS Guildmaster Wigglytuff",
-  "mystery_encounter_gen_5_gts": "BW GTS",
+  "mystery_encounter_weird_dream": "PMM EdC Pináculo del Tiempo",
+  "mystery_encounter_fun_and_games": "PMM EdC Gran Bluff",
+  "mystery_encounter_gen_5_gts": "BN GTS",
   "mystery_encounter_gen_6_gts": "XY GTS"
 }
