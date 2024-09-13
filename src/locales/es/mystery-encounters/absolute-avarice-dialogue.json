@@ -1,25 +1,25 @@
 {
-  "intro": "A {{greedentName}} ambushes you\nand steals your party's berries!",
-  "title": "Absolute Avarice",
-  "description": "The {{greedentName}} has caught you totally off guard now all your berries are gone!\n\nThe {{greedentName}} looks like it's about to eat them when it pauses to look at you, interested.",
-  "query": "What will you do?",
+  "intro": "¡Un {{greedentName}} te embosca y roba las bayas de tu equipo!",
+  "title": "Avaricia Absoluta",
+  "description": "¡Un {{greedentName}} te ha tomado completamente por sorpresa y ahora todas tus bayas han desaparecido! El {{greedentName}} parece que está a punto de comérselas cuando se detiene para mirarte, interesado.",
+  "query": "¿Qué harás?",
   "option": {
     "1": {
-      "label": "Battle It",
-      "tooltip": "(-) Tough Battle\n(+) Rewards from its Berry Hoard",
-      "selected": "The {{greedentName}} stuffs its cheeks\nand prepares for battle!",
-      "boss_enraged": "{{greedentName}}'s fierce love for food has it incensed!",
-      "food_stash": "It looks like the {{greedentName}} was guarding an enormous stash of food!$@s{item_fanfare}Each Pokémon in your party gains a {{foodReward}}!"
+      "label": "Combatir",
+      "tooltip": "(-) Batalla Difícil\n(+) Recompensas de su Alijo de Bayas",
+      "selected": "El {{greedentName}} llena sus mejillas y se prepara para la batalla!",
+      "boss_enraged": "¡El feroz amor de {{greedentName}} por la comida lo tiene enfurecido!",
+      "food_stash": "¡Parece que el {{greedentName}} estaba protegiendo un enorme alijo de comida!$@s{item_fanfare}¡Cada Pokémon en tu grupo obtiene una {{foodReward}}!"
     },
     "2": {
-      "label": "Reason with It",
-      "tooltip": "(+) Regain Some Lost Berries",
-      "selected": "Your pleading strikes a chord with the {{greedentName}}.$It doesn't give all your berries back, but still tosses a few in your direction."
+      "label": "Razona con él",
+      "tooltip": "(+) Recupera algunas bayas perdidas",
+      "selected": "Tus súplicas conmueven al {{greedentName}}.$No te devuelve todas tus bayas, pero aún así te lanza algunas en tu dirección."
     },
     "3": {
-      "label": "Let It Have the Food",
-      "tooltip": "(-) Lose All Berries\n(?) The {{greedentName}} Will Like You",
-      "selected": "The {{greedentName}} devours the entire\nstash of berries in a flash!$Patting its stomach,\nit looks at you appreciatively.$Perhaps you could feed it\nmore berries on your adventure...$@s{level_up_fanfare}The {{greedentName}} wants to join your party!"
+      "label": "Déjalo quedarse con la comida",
+      "tooltip": "(-) Perder todas las bayas\n(?) Le gustarás al {{greedentName}}",
+      "selected": "El {{greedentName}} devora todas sus bayas en un instante!$Acariciando su estómago, te mira con aprecio.$Quizás podrías darle más bayas en tu aventura....$@s{level_up_fanfare}El {{greedentName}} quiere unirse a tu equipo!"
     }
   }
 }
