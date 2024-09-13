@@ -203,7 +203,7 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
     }
 
     // Set "Continue" button height based on number of rows in healing items shop
-    const continueButton = this.continueButtonContainer.getAt(0) as Phaser.GameObjects.Text;
+    const continueButton = this.continueButtonContainer.getAt<Phaser.GameObjects.Text>(0);
     continueButton.y = optionsYOffset - 5;
     continueButton.setVisible(this.options.length === 0);
 
