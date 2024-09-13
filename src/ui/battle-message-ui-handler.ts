@@ -1,13 +1,12 @@
 import BattleScene from "../battle-scene";
 import { addBBCodeTextObject, addTextObject, getTextColor, TextStyle } from "./text";
 import { Mode } from "./ui";
-import * as Utils from "../utils";
 import MessageUiHandler from "./message-ui-handler";
-import { getStatName, Stat } from "../data/pokemon-stat";
 import { addWindow } from "./ui-theme";
 import BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
-import {Button} from "../enums/buttons";
-import i18next from "../plugins/i18n";
+import {Button} from "#enums/buttons";
+import i18next from "i18next";
+import { Stat, PERMANENT_STATS, getStatKey } from "#app/enums/stat";
 
 export default class BattleMessageUiHandler extends MessageUiHandler {
   private levelUpStatsContainer: Phaser.GameObjects.Container;
@@ -16,10 +15,12 @@ export default class BattleMessageUiHandler extends MessageUiHandler {
   private nameBox: Phaser.GameObjects.NineSlice;
   private nameText: Phaser.GameObjects.Text;
 
-  public bg: Phaser.GameObjects.Image;
+  public bg: Phaser.GameObjects.Sprite;
   public commandWindow: Phaser.GameObjects.NineSlice;
   public movesWindowContainer: Phaser.GameObjects.Container;
   public nameBoxContainer: Phaser.GameObjects.Container;
+
+  public readonly wordWrapWidth: number = 1780;
 
   constructor(scene: BattleScene) {
     super(scene, Mode.MESSAGE);
@@ -31,33 +32,30 @@ export default class BattleMessageUiHandler extends MessageUiHandler {
     this.textTimer = null;
     this.textCallbackTimer = null;
 
-    const bg = this.scene.add.sprite(0, 0, "bg", this.scene.windowType);
-    bg.setOrigin(0, 1);
-    ui.add(bg);
+    this.bg = this.scene.add.sprite(0, 0, "bg", this.scene.windowType);
+    this.bg.setName("sprite-battle-msg-bg");
+    this.bg.setOrigin(0, 1);
+    ui.add(this.bg);
 
-    this.bg = bg;
-
-    this.commandWindow = addWindow(this.scene, 201, -1, 118, 46);
+    this.commandWindow = addWindow(this.scene, 202, 0, 118, 48);
+    this.commandWindow.setName("window-command");
     this.commandWindow.setOrigin(0, 1);
     this.commandWindow.setVisible(false);
     ui.add(this.commandWindow);
 
-    this.movesWindowContainer = this.scene.add.container(1, -1);
+    this.movesWindowContainer = this.scene.add.container(0, 0);
+    this.movesWindowContainer.setName("moves-bg");
     this.movesWindowContainer.setVisible(false);
 
-    const movesWindow = addWindow(this.scene, 0, 0, 243, 46);
+    const movesWindow = addWindow(this.scene, 0, 0, 243, 48);
+    movesWindow.setName("moves-window");
     movesWindow.setOrigin(0, 1);
-    this.movesWindowContainer.add(movesWindow);
 
-    const moveDetailsWindow = addWindow(this.scene, 238, 0, 80, 46, false, true, 2, 133);
+    const moveDetailsWindow = addWindow(this.scene, 240, 0, 80, 48, false, false, -1, 132);
+    moveDetailsWindow.setName("move-details-window");
     moveDetailsWindow.setOrigin(0, 1);
-    this.movesWindowContainer.add(moveDetailsWindow);
 
-    // TODO: Maybe remove this asset definitively if it's no longer needed?
-    // const commandFightLabels = this.scene.add.image(246, -10, 'command_fight_labels');
-    // commandFightLabels.setOrigin(0, 1);
-    // this.movesWindowContainer.add(commandFightLabels);
-
+    this.movesWindowContainer.add([movesWindow, moveDetailsWindow]);
     ui.add(this.movesWindowContainer);
 
     const messageContainer = this.scene.add.container(12, -39);
@@ -66,7 +64,7 @@ export default class BattleMessageUiHandler extends MessageUiHandler {
     const message = addTextObject(this.scene, 0, 0, "", TextStyle.MESSAGE, {
       maxLines: 2,
       wordWrap: {
-        width: 1780
+        width: this.wordWrapWidth
       }
     });
     messageContainer.add(message);
@@ -99,11 +97,11 @@ export default class BattleMessageUiHandler extends MessageUiHandler {
     this.levelUpStatsContainer = levelUpStatsContainer;
 
     const levelUpStatsLabelsContent = addTextObject(this.scene, (this.scene.game.canvas.width / 6) - 73, -94, "", TextStyle.WINDOW, { maxLines: 6 });
+    levelUpStatsLabelsContent.setLineSpacing(i18next.resolvedLanguage === "ja" ? 25 : 5);
     let levelUpStatsLabelText = "";
 
-    const stats = Utils.getEnumValues(Stat);
-    for (const s of stats) {
-      levelUpStatsLabelText += `${getStatName(s)}\n`;
+    for (const s of PERMANENT_STATS) {
+      levelUpStatsLabelText += `${i18next.t(getStatKey(s))}\n`;
     }
     levelUpStatsLabelsContent.text = levelUpStatsLabelText;
     levelUpStatsLabelsContent.x -= levelUpStatsLabelsContent.displayWidth;
@@ -115,11 +113,13 @@ export default class BattleMessageUiHandler extends MessageUiHandler {
     levelUpStatsContainer.add(levelUpStatsLabelsContent);
 
     const levelUpStatsIncrContent = addTextObject(this.scene, (this.scene.game.canvas.width / 6) - 50, -94, "+\n+\n+\n+\n+\n+", TextStyle.WINDOW, { maxLines: 6 });
+    levelUpStatsIncrContent.setLineSpacing(i18next.resolvedLanguage === "ja" ? 25 : 5);
     levelUpStatsContainer.add(levelUpStatsIncrContent);
 
     this.levelUpStatsIncrContent = levelUpStatsIncrContent;
 
-    const levelUpStatsValuesContent = addBBCodeTextObject(this.scene, (this.scene.game.canvas.width / 6) - 7, -94, "", TextStyle.WINDOW, { maxLines: 6 , lineSpacing: 5});
+    const levelUpStatsValuesContent = addBBCodeTextObject(this.scene, (this.scene.game.canvas.width / 6) - 7, -94, "", TextStyle.WINDOW, { maxLines: 6, lineSpacing: 5});
+    levelUpStatsValuesContent.setLineSpacing(i18next.resolvedLanguage === "ja" ? 25 : 5);
     levelUpStatsValuesContent.setOrigin(1, 0);
     levelUpStatsValuesContent.setAlign("right");
     levelUpStatsContainer.add(levelUpStatsValuesContent);
@@ -132,7 +132,7 @@ export default class BattleMessageUiHandler extends MessageUiHandler {
 
     this.commandWindow.setVisible(false);
     this.movesWindowContainer.setVisible(false);
-    this.message.setWordWrapWidth(1780);
+    this.message.setWordWrapWidth(this.wordWrapWidth);
 
     return true;
   }
@@ -150,19 +150,23 @@ export default class BattleMessageUiHandler extends MessageUiHandler {
         }
       }
     }
+
+    return false;
   }
 
   clear() {
     super.clear();
   }
 
-  showText(text: string, delay?: integer, callback?: Function, callbackDelay?: integer, prompt?: boolean, promptDelay?: integer) {
+  showText(text: string, delay?: integer | null, callback?: Function | null, callbackDelay?: integer | null, prompt?: boolean | null, promptDelay?: integer | null) {
     this.hideNameText();
     super.showText(text, delay, callback, callbackDelay, prompt, promptDelay);
   }
 
-  showDialogue(text: string, name: string, delay?: integer, callback?: Function, callbackDelay?: integer, prompt?: boolean, promptDelay?: integer) {
-    this.showNameText(name);
+  showDialogue(text: string, name?: string, delay?: integer | null, callback?: Function, callbackDelay?: integer, prompt?: boolean, promptDelay?: integer) {
+    if (name) {
+      this.showNameText(name);
+    }
     super.showDialogue(text, name, delay, callback, callbackDelay, prompt, promptDelay);
   }
 
@@ -173,8 +177,7 @@ export default class BattleMessageUiHandler extends MessageUiHandler {
       }
       const newStats = (this.scene as BattleScene).getParty()[partyMemberIndex].stats;
       let levelUpStatsValuesText = "";
-      const stats = Utils.getEnumValues(Stat);
-      for (const s of stats) {
+      for (const s of PERMANENT_STATS) {
         levelUpStatsValuesText += `${showTotals ? newStats[s] : newStats[s] - prevStats[s]}\n`;
       }
       this.levelUpStatsValuesContent.text = levelUpStatsValuesText;
@@ -183,7 +186,7 @@ export default class BattleMessageUiHandler extends MessageUiHandler {
       this.awaitingActionInput = true;
       this.onActionInput = () => {
         if (!showTotals) {
-          return this.promptLevelUpStats(partyMemberIndex, null, true).then(() => resolve());
+          return this.promptLevelUpStats(partyMemberIndex, [], true).then(() => resolve());
         } else {
           this.levelUpStatsContainer.setVisible(false);
           resolve();
@@ -196,27 +199,9 @@ export default class BattleMessageUiHandler extends MessageUiHandler {
     return new Promise(resolve => {
       this.scene.executeWithSeedOffset(() => {
         let levelUpStatsValuesText = "";
-        const stats = Utils.getEnumValues(Stat);
-        let shownStats: Stat[] = [];
-        if (shownIvsCount < 6) {
-          const statsPool = stats.slice(0);
-          for (let i = 0; i < shownIvsCount; i++) {
-            let shownStat: Stat;
-            let highestIv = -1;
-            statsPool.map(s => {
-              if (ivs[s] > highestIv) {
-                shownStat = s as Stat;
-                highestIv = ivs[s];
-              }
-            });
-            shownStats.push(shownStat);
-            statsPool.splice(statsPool.indexOf(shownStat), 1);
-          }
-        } else {
-          shownStats = stats;
-        }
-        for (const s of stats) {
-          levelUpStatsValuesText += `${shownStats.indexOf(s) > -1 ? this.getIvDescriptor(ivs[s], s, pokemonId) : "???"}\n`;
+        const shownStats = this.getTopIvs(ivs, shownIvsCount);
+        for (const s of PERMANENT_STATS) {
+          levelUpStatsValuesText += `${shownStats.includes(s) ? this.getIvDescriptor(ivs[s], s, pokemonId) : "???"}\n`;
         }
         this.levelUpStatsValuesContent.text = levelUpStatsValuesText;
         this.levelUpStatsIncrContent.setVisible(false);
@@ -230,35 +215,59 @@ export default class BattleMessageUiHandler extends MessageUiHandler {
     });
   }
 
+  getTopIvs(ivs: integer[], shownIvsCount: integer): Stat[] {
+    let shownStats: Stat[] = [];
+    if (shownIvsCount < 6) {
+      const statsPool = PERMANENT_STATS.slice();
+      // Sort the stats from highest to lowest iv
+      statsPool.sort((s1, s2) => ivs[s2] - ivs[s1]);
+      for (let i = 0; i < shownIvsCount; i++) {
+        shownStats.push(statsPool[i]);
+      }
+    } else {
+      shownStats = PERMANENT_STATS.slice();
+    }
+    return shownStats;
+  }
+
   getIvDescriptor(value: integer, typeIv: integer, pokemonId: integer): string {
-    const starterSpecies = this.scene.getPokemonById(pokemonId).species.getRootSpeciesId(true);
+    const starterSpecies = this.scene.getPokemonById(pokemonId)!.species.getRootSpeciesId(); // we are using getRootSpeciesId() here because we want to check against the baby form, not the mid form if it exists
     const starterIvs: number[] = this.scene.gameData.dexData[starterSpecies].ivs;
     const uiTheme = (this.scene as BattleScene).uiTheme; // Assuming uiTheme is accessible
 
     // Function to wrap text in color based on comparison
-    const coloredText = (text: string, isBetter: boolean) => {
-      const textStyle: TextStyle = isBetter ? TextStyle.SUMMARY_GREEN : TextStyle.SUMMARY;
+    const coloredText = (text: string, isBetter: boolean, ivValue) => {
+      let textStyle: TextStyle;
+      if (isBetter) {
+        if (ivValue === 31) {
+          textStyle = TextStyle.PERFECT_IV;
+        } else {
+          textStyle = TextStyle.SUMMARY_GREEN;
+        }
+      } else {
+        textStyle = TextStyle.WINDOW;
+      }
       const color = getTextColor(textStyle, false, uiTheme);
       return `[color=${color}][shadow=${getTextColor(textStyle, true, uiTheme)}]${text}[/shadow][/color]`;
     };
 
     if (value > 30) {
-      return coloredText(i18next.t("battleMessageUiHandler:ivBest"), value > starterIvs[typeIv]);
+      return coloredText(i18next.t("battleMessageUiHandler:ivBest"), value > starterIvs[typeIv], value);
     }
     if (value === 30) {
-      return coloredText(i18next.t("battleMessageUiHandler:ivFantastic"), value > starterIvs[typeIv]);
+      return coloredText(i18next.t("battleMessageUiHandler:ivFantastic"), value > starterIvs[typeIv], value);
     }
     if (value > 20) {
-      return coloredText(i18next.t("battleMessageUiHandler:ivVeryGood"), value > starterIvs[typeIv]);
+      return coloredText(i18next.t("battleMessageUiHandler:ivVeryGood"), value > starterIvs[typeIv], value);
     }
     if (value > 10) {
-      return coloredText(i18next.t("battleMessageUiHandler:ivPrettyGood"), value > starterIvs[typeIv]);
+      return coloredText(i18next.t("battleMessageUiHandler:ivPrettyGood"), value > starterIvs[typeIv], value);
     }
     if (value > 0) {
-      return coloredText(i18next.t("battleMessageUiHandler:ivDecent"), value > starterIvs[typeIv]);
+      return coloredText(i18next.t("battleMessageUiHandler:ivDecent"), value > starterIvs[typeIv], value);
     }
 
-    return coloredText(i18next.t("battleMessageUiHandler:ivNoGood"), value > starterIvs[typeIv]);
+    return coloredText(i18next.t("battleMessageUiHandler:ivNoGood"), value > starterIvs[typeIv], value);
   }
 
   showNameText(name: string): void {

@@ -1,4 +1,4 @@
-import {default as BattleScene} from "../battle-scene";
+import { default as BattleScene } from "../battle-scene";
 import UiHandler from "./ui-handler";
 import BattleMessageUiHandler from "./battle-message-ui-handler";
 import CommandUiHandler from "./command-ui-handler";
@@ -23,8 +23,7 @@ import OptionSelectUiHandler from "./settings/option-select-ui-handler";
 import EggHatchSceneHandler from "./egg-hatch-scene-handler";
 import EggListUiHandler from "./egg-list-ui-handler";
 import EggGachaUiHandler from "./egg-gacha-ui-handler";
-import VouchersUiHandler from "./vouchers-ui-handler";
-import {addWindow} from "./ui-theme";
+import { addWindow } from "./ui-theme";
 import LoginFormUiHandler from "./login-form-ui-handler";
 import RegistrationFormUiHandler from "./registration-form-ui-handler";
 import LoadingModalUiHandler from "./loading-modal-ui-handler";
@@ -37,14 +36,23 @@ import SavingIconHandler from "./saving-icon-handler";
 import UnavailableModalUiHandler from "./unavailable-modal-ui-handler";
 import OutdatedModalUiHandler from "./outdated-modal-ui-handler";
 import SessionReloadModalUiHandler from "./session-reload-modal-ui-handler";
-import {Button} from "../enums/buttons";
-import i18next, {ParseKeys} from "i18next";
-import { PlayerGender } from "#app/data/enums/player-gender";
+import { Button } from "#enums/buttons";
+import i18next from "i18next";
 import GamepadBindingUiHandler from "./settings/gamepad-binding-ui-handler";
 import SettingsKeyboardUiHandler from "#app/ui/settings/settings-keyboard-ui-handler";
 import KeyboardBindingUiHandler from "#app/ui/settings/keyboard-binding-ui-handler";
 import SettingsDisplayUiHandler from "./settings/settings-display-ui-handler";
 import SettingsAudioUiHandler from "./settings/settings-audio-ui-handler";
+import { PlayerGender } from "#enums/player-gender";
+import BgmBar from "#app/ui/bgm-bar";
+import RenameFormUiHandler from "./rename-form-ui-handler";
+import AdminUiHandler from "./admin-ui-handler";
+import RunHistoryUiHandler from "./run-history-ui-handler";
+import RunInfoUiHandler from "./run-info-ui-handler";
+import EggSummaryUiHandler from "./egg-summary-ui-handler";
+import TestDialogueUiHandler from "#app/ui/test-dialogue-ui-handler";
+import AutoCompleteUiHandler from "./autocomplete-ui-handler";
+import { Device } from "#enums/devices";
 
 export enum Mode {
   MESSAGE,
@@ -60,6 +68,7 @@ export enum Mode {
   STARTER_SELECT,
   EVOLUTION_SCENE,
   EGG_HATCH_SCENE,
+  EGG_HATCH_SUMMARY,
   CONFIRM,
   OPTION_SELECT,
   MENU,
@@ -73,7 +82,6 @@ export enum Mode {
   KEYBOARD_BINDING,
   ACHIEVEMENTS,
   GAME_STATS,
-  VOUCHERS,
   EGG_LIST,
   EGG_GACHA,
   LOGIN_FORM,
@@ -82,7 +90,13 @@ export enum Mode {
   SESSION_RELOAD,
   UNAVAILABLE,
   OUTDATED,
-  CHALLENGE_SELECT
+  CHALLENGE_SELECT,
+  RENAME_POKEMON,
+  RUN_HISTORY,
+  RUN_INFO,
+  TEST_DIALOGUE,
+  AUTO_COMPLETE,
+  ADMIN,
 }
 
 const transitionModes = [
@@ -94,7 +108,8 @@ const transitionModes = [
   Mode.EGG_HATCH_SCENE,
   Mode.EGG_LIST,
   Mode.EGG_GACHA,
-  Mode.CHALLENGE_SELECT
+  Mode.CHALLENGE_SELECT,
+  Mode.RUN_HISTORY,
 ];
 
 const noTransitionModes = [
@@ -112,13 +127,16 @@ const noTransitionModes = [
   Mode.SETTINGS_KEYBOARD,
   Mode.ACHIEVEMENTS,
   Mode.GAME_STATS,
-  Mode.VOUCHERS,
   Mode.LOGIN_FORM,
   Mode.REGISTRATION_FORM,
   Mode.LOADING,
   Mode.SESSION_RELOAD,
   Mode.UNAVAILABLE,
-  Mode.OUTDATED
+  Mode.OUTDATED,
+  Mode.RENAME_POKEMON,
+  Mode.TEST_DIALOGUE,
+  Mode.AUTO_COMPLETE,
+  Mode.ADMIN,
 ];
 
 export default class UI extends Phaser.GameObjects.Container {
@@ -127,6 +145,7 @@ export default class UI extends Phaser.GameObjects.Container {
   public handlers: UiHandler[];
   private overlay: Phaser.GameObjects.Rectangle;
   public achvBar: AchvBar;
+  public bgmBar: BgmBar;
   public savingIcon: SavingIconHandler;
 
   private tooltipContainer: Phaser.GameObjects.Container;
@@ -155,10 +174,12 @@ export default class UI extends Phaser.GameObjects.Container {
       new StarterSelectUiHandler(scene),
       new EvolutionSceneHandler(scene),
       new EggHatchSceneHandler(scene),
+      new EggSummaryUiHandler(scene),
       new ConfirmUiHandler(scene),
       new OptionSelectUiHandler(scene),
       new MenuUiHandler(scene),
       new OptionSelectUiHandler(scene, Mode.MENU_OPTION_SELECT),
+      // settings
       new SettingsUiHandler(scene),
       new SettingsDisplayUiHandler(scene),
       new SettingsAudioUiHandler(scene),
@@ -168,7 +189,6 @@ export default class UI extends Phaser.GameObjects.Container {
       new KeyboardBindingUiHandler(scene),
       new AchvsUiHandler(scene),
       new GameStatsUiHandler(scene),
-      new VouchersUiHandler(scene),
       new EggListUiHandler(scene),
       new EggGachaUiHandler(scene),
       new LoginFormUiHandler(scene),
@@ -177,16 +197,23 @@ export default class UI extends Phaser.GameObjects.Container {
       new SessionReloadModalUiHandler(scene),
       new UnavailableModalUiHandler(scene),
       new OutdatedModalUiHandler(scene),
-      new GameChallengesUiHandler(scene)
+      new GameChallengesUiHandler(scene),
+      new RenameFormUiHandler(scene),
+      new RunHistoryUiHandler(scene),
+      new RunInfoUiHandler(scene),
+      new TestDialogueUiHandler(scene, Mode.TEST_DIALOGUE),
+      new AutoCompleteUiHandler(scene),
+      new AdminUiHandler(scene),
     ];
   }
 
   setup(): void {
-    this.setName("container-ui");
+    this.setName(`ui-${Mode[this.mode]}`);
     for (const handler of this.handlers) {
       handler.setup();
     }
     this.overlay = this.scene.add.rectangle(0, 0, this.scene.game.canvas.width / 6, this.scene.game.canvas.height / 6, 0);
+    this.overlay.setName("rect-ui-overlay");
     this.overlay.setOrigin(0, 0);
     (this.scene as BattleScene).uiContainer.add(this.overlay);
     this.overlay.setVisible(false);
@@ -205,16 +232,20 @@ export default class UI extends Phaser.GameObjects.Container {
 
   private setupTooltip() {
     this.tooltipContainer = this.scene.add.container(0, 0);
+    this.tooltipContainer.setName("tooltip");
     this.tooltipContainer.setVisible(false);
 
     this.tooltipBg = addWindow(this.scene as BattleScene, 0, 0, 128, 31);
+    this.tooltipBg.setName("window-tooltip-bg");
     this.tooltipBg.setOrigin(0, 0);
 
     this.tooltipTitle = addTextObject(this.scene, 64, 4, "", TextStyle.TOOLTIP_TITLE);
+    this.tooltipTitle.setName("text-tooltip-title");
     this.tooltipTitle.setOrigin(0.5, 0);
 
     this.tooltipContent = addTextObject(this.scene, 6, 16, "", TextStyle.TOOLTIP_CONTENT);
-    this.tooltipContent.setWordWrapWidth(696);
+    this.tooltipContent.setName("text-tooltip-content");
+    this.tooltipContent.setWordWrapWidth(850);
 
     this.tooltipContainer.add(this.tooltipBg);
     this.tooltipContainer.add(this.tooltipTitle);
@@ -223,8 +254,8 @@ export default class UI extends Phaser.GameObjects.Container {
     (this.scene as BattleScene).uiContainer.add(this.tooltipContainer);
   }
 
-  getHandler(): UiHandler {
-    return this.handlers[this.mode];
+  getHandler<H extends UiHandler = UiHandler>(): H {
+    return this.handlers[this.mode] as H;
   }
 
   getMessageHandler(): BattleMessageUiHandler {
@@ -241,7 +272,6 @@ export default class UI extends Phaser.GameObjects.Container {
       battleScene?.processInfoButton(pressed);
       return true;
     }
-
     battleScene?.processInfoButton(false);
     return true;
   }
@@ -260,10 +290,16 @@ export default class UI extends Phaser.GameObjects.Container {
     return handler.processInput(button);
   }
 
-  showText(text: string, delay?: integer, callback?: Function, callbackDelay?: integer, prompt?: boolean, promptDelay?: integer): void {
+  showTextPromise(text: string, callbackDelay: number = 0, prompt: boolean = true, promptDelay?: integer | null): Promise<void> {
+    return new Promise<void>(resolve => {
+      this.showText(text ?? "", null, () => resolve(), callbackDelay, prompt, promptDelay);
+    });
+  }
+
+  showText(text: string, delay?: integer | null, callback?: Function | null, callbackDelay?: integer | null, prompt?: boolean | null, promptDelay?: integer | null): void {
     if (prompt && text.indexOf("$") > -1) {
       const messagePages = text.split(/\$/g).map(m => m.trim());
-      let showMessageAndCallback = () => callback();
+      let showMessageAndCallback = () => callback && callback();
       for (let p = messagePages.length - 1; p >= 0; p--) {
         const originalFunc = showMessageAndCallback;
         showMessageAndCallback = () => this.showText(messagePages[p], null, originalFunc, null, true);
@@ -276,33 +312,33 @@ export default class UI extends Phaser.GameObjects.Container {
       } else {
         this.getMessageHandler().showText(text, delay, callback, callbackDelay, prompt, promptDelay);
       }
+
     }
   }
 
-  showDialogue(text: string, name: string, delay: integer = 0, callback: Function, callbackDelay?: integer, promptDelay?: integer): void {
-    // First get the gender of the player (default male) (also used if UNSET)
-    let playerGenderPrefix = "PGM";
-    if ((this.scene as BattleScene).gameData.gender === PlayerGender.FEMALE) {
-      playerGenderPrefix = "PGF";
-    }
-    // Add the prefix to the text
-    const localizationKey = playerGenderPrefix + text;
-
+  showDialogue(keyOrText: string, name: string | undefined, delay: integer | null = 0, callback: Function, callbackDelay?: integer, promptDelay?: integer): void {
+    const battleScene = this.scene as BattleScene;
     // Get localized dialogue (if available)
     let hasi18n = false;
-    if (i18next.exists(localizationKey as ParseKeys) ) {
-      text = i18next.t(localizationKey as ParseKeys);
+    let text = keyOrText;
+    const genderIndex = battleScene.gameData.gender ?? PlayerGender.UNSET;
+    const genderStr = PlayerGender[genderIndex].toLowerCase();
+
+    if (i18next.exists(keyOrText) ) {
+      const i18nKey = keyOrText;
       hasi18n = true;
 
+      text = i18next.t(i18nKey, { context: genderStr }); // override text with translation
+
       // Skip dialogue if the player has enabled the option and the dialogue has been already seen
-      if ((this.scene as BattleScene).skipSeenDialogues && (this.scene as BattleScene).gameData.getSeenDialogues()[localizationKey] === true) {
-        console.log(`Dialogue ${localizationKey} skipped`);
+      if (this.shouldSkipDialogue(i18nKey)) {
+        console.log(`Dialogue ${i18nKey} skipped`);
         callback();
         return;
       }
     }
     let showMessageAndCallback = () => {
-      hasi18n && (this.scene as BattleScene).gameData.saveSeenDialogue(localizationKey);
+      hasi18n && battleScene.gameData.saveSeenDialogue(keyOrText);
       callback();
     };
     if (text.indexOf("$") > -1) {
@@ -322,35 +358,38 @@ export default class UI extends Phaser.GameObjects.Container {
     }
   }
 
-  shouldSkipDialogue(text): boolean {
-    let playerGenderPrefix = "PGM";
-    if ((this.scene as BattleScene).gameData.gender === PlayerGender.FEMALE) {
-      playerGenderPrefix = "PGF";
-    }
+  shouldSkipDialogue(i18nKey: string): boolean {
+    const battleScene = this.scene as BattleScene;
 
-    const key = playerGenderPrefix + text;
-
-    if (i18next.exists(key as ParseKeys) ) {
-      if ((this.scene as BattleScene).skipSeenDialogues && (this.scene as BattleScene).gameData.getSeenDialogues()[key] === true) {
+    if (i18next.exists(i18nKey) ) {
+      if (battleScene.skipSeenDialogues && battleScene.gameData.getSeenDialogues()[i18nKey] === true) {
         return true;
       }
     }
     return false;
   }
 
+  getTooltip(): { visible: boolean; title: string; content: string } {
+    return { visible: this.tooltipContainer.visible, title: this.tooltipTitle.text, content: this.tooltipContent.text };
+  }
+
   showTooltip(title: string, content: string, overlap?: boolean): void {
     this.tooltipContainer.setVisible(true);
-    this.tooltipTitle.setText(title || "");
-    const wrappedContent = this.tooltipContent.runWordWrap(content);
-    this.tooltipContent.setText(wrappedContent);
-    this.tooltipContent.y = title ? 16 : 4;
-    this.tooltipBg.width = Math.min(Math.max(this.tooltipTitle.displayWidth, this.tooltipContent.displayWidth) + 12, 684);
-    this.tooltipBg.height = (title ? 31 : 19) + 10.5 * (wrappedContent.split("\n").length - 1);
+    this.editTooltip(title, content);
     if (overlap) {
       (this.scene as BattleScene).uiContainer.moveAbove(this.tooltipContainer, this);
     } else {
       (this.scene as BattleScene).uiContainer.moveBelow(this.tooltipContainer, this);
     }
+  }
+
+  editTooltip(title: string, content: string): void {
+    this.tooltipTitle.setText(title || "");
+    const wrappedContent = this.tooltipContent.runWordWrap(content);
+    this.tooltipContent.setText(wrappedContent);
+    this.tooltipContent.y = title ? 16 : 4;
+    this.tooltipBg.width = Math.min(Math.max(this.tooltipTitle.displayWidth, this.tooltipContent.displayWidth) + 12, 838);
+    this.tooltipBg.height = (title ? 31 : 19) + 10.5 * (wrappedContent.split("\n").length - 1);
   }
 
   hideTooltip(): void {
@@ -360,8 +399,12 @@ export default class UI extends Phaser.GameObjects.Container {
 
   update(): void {
     if (this.tooltipContainer.visible) {
-      const reverse = this.scene.game.input.mousePointer.x >= this.scene.game.canvas.width - this.tooltipBg.width * 6 - 12;
-      this.tooltipContainer.setPosition(!reverse ? this.scene.game.input.mousePointer.x / 6 + 2 : this.scene.game.input.mousePointer.x / 6 - this.tooltipBg.width - 2, this.scene.game.input.mousePointer.y / 6 + 2);
+      const xReverse = this.scene.game.input.mousePointer && this.scene.game.input.mousePointer.x >= this.scene.game.canvas.width - this.tooltipBg.width * 6 - 12;
+      const yReverse = this.scene.game.input.mousePointer && this.scene.game.input.mousePointer.y >= this.scene.game.canvas.height - this.tooltipBg.height * 6 - 12;
+      this.tooltipContainer.setPosition(
+        !xReverse ? this.scene.game.input.mousePointer!.x / 6 + 2 : this.scene.game.input.mousePointer!.x / 6 - this.tooltipBg.width - 2,
+        !yReverse ? this.scene.game.input.mousePointer!.y / 6 + 2 : this.scene.game.input.mousePointer!.y / 6 - this.tooltipBg.height - 2,
+      );
     }
   }
 
@@ -384,11 +427,11 @@ export default class UI extends Phaser.GameObjects.Container {
   }
 
   playSelect(): void {
-    (this.scene as BattleScene).playSound("select");
+    (this.scene as BattleScene).playSound("ui/select");
   }
 
   playError(): void {
-    (this.scene as BattleScene).playSound("error");
+    (this.scene as BattleScene).playSound("ui/error");
   }
 
   fadeOut(duration: integer): Promise<void> {
@@ -441,9 +484,10 @@ export default class UI extends Phaser.GameObjects.Container {
           }
           if (chainMode && this.mode && !clear) {
             this.modeChain.push(this.mode);
+            (this.scene as BattleScene).updateGameInfo();
           }
           this.mode = mode;
-          const touchControls = document.getElementById("touchControls");
+          const touchControls = document?.getElementById("touchControls");
           if (touchControls) {
             touchControls.dataset.uiMode = Mode[mode];
           }
@@ -486,6 +530,11 @@ export default class UI extends Phaser.GameObjects.Container {
     return this.setModeInternal(mode, false, false, true, args);
   }
 
+  resetModeChain(): void {
+    this.modeChain = [];
+    (this.scene as BattleScene).updateGameInfo();
+  }
+
   revertMode(): Promise<boolean> {
     return new Promise<boolean>(resolve => {
       if (!this?.modeChain?.length) {
@@ -496,7 +545,8 @@ export default class UI extends Phaser.GameObjects.Container {
 
       const doRevertMode = () => {
         this.getHandler().clear();
-        this.mode = this.modeChain.pop();
+        this.mode = this.modeChain.pop()!; // TODO: is this bang correct?
+        (this.scene as BattleScene).updateGameInfo();
         const touchControls = document.getElementById("touchControls");
         if (touchControls) {
           touchControls.dataset.uiMode = Mode[this.mode];
@@ -524,5 +574,25 @@ export default class UI extends Phaser.GameObjects.Container {
       }
       this.revertMode().then(success => Utils.executeIf(success, this.revertModes).then(() => resolve()));
     });
+  }
+
+  public getModeChain(): Mode[] {
+    return this.modeChain;
+  }
+
+  /**
+   * getGamepadType - returns the type of gamepad being used
+   * inputMethod could be "keyboard" or "touch" or "gamepad"
+   * if inputMethod is "keyboard" or "touch", then the inputMethod is returned
+   * if inputMethod is "gamepad", then the gamepad type is returned it could be "xbox" or "dualshock"
+   * @returns gamepad type
+   */
+  public getGamepadType(): string {
+    const scene = this.scene as BattleScene;
+    if (scene.inputMethod === "gamepad") {
+      return scene.inputController.getConfig(scene.inputController.selectedDevice[Device.GAMEPAD]).padType;
+    } else {
+      return scene.inputMethod;
+    }
   }
 }

@@ -1,4 +1,4 @@
-import {Button} from "#app/enums/buttons";
+import {Button} from "#enums/buttons";
 import {SettingKeyboard} from "#app/system/settings/settings-keyboard";
 
 const cfg_keyboard_qwerty = {

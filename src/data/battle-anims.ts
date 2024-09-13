@@ -1,11 +1,12 @@
 //import { battleAnimRawData } from "./battle-anim-raw-data";
 import BattleScene from "../battle-scene";
-import { AttackMove, ChargeAttr, DelayedAttackAttr, MoveFlags, SelfStatusMove, allMoves } from "./move";
+import { AttackMove, BeakBlastHeaderAttr, ChargeAttr, DelayedAttackAttr, MoveFlags, SelfStatusMove, allMoves } from "./move";
 import Pokemon from "../field/pokemon";
 import * as Utils from "../utils";
 import { BattlerIndex } from "../battle";
 import { Element } from "json-stable-stringify";
-import { Moves } from "./enums/moves";
+import { Moves } from "#enums/moves";
+import { SubstituteTag } from "./battler-tags";
 //import fs from 'vite-plugin-fs/browser';
 
 export enum AnimFrameTarget {
@@ -128,7 +129,7 @@ export class AnimConfig {
       for (const fte of Object.keys(frameTimedEvents)) {
         const timedEvents: AnimTimedEvent[] = [];
         for (const te of frameTimedEvents[fte]) {
-          let timedEvent: AnimTimedEvent;
+          let timedEvent: AnimTimedEvent | undefined;
           switch (te.eventType) {
           case "AnimTimedSoundEvent":
             timedEvent = new AnimTimedSoundEvent(te.frameIndex, te.resourceName, te);
@@ -140,7 +141,8 @@ export class AnimConfig {
             timedEvent = new AnimTimedUpdateBgEvent(te.frameIndex, te.resourceName, te);
             break;
           }
-          timedEvents.push(timedEvent);
+
+          timedEvent && timedEvents.push(timedEvent);
         }
         this.frameTimedEvents.set(parseInt(fte), timedEvents);
       }
@@ -324,13 +326,13 @@ class AnimTimedSoundEvent extends AnimTimedEvent {
     const soundConfig = { rate: (this.pitch * 0.01), volume: (this.volume * 0.01) };
     if (this.resourceName) {
       try {
-        scene.playSound(this.resourceName, soundConfig);
+        scene.playSound(`battle_anims/${this.resourceName}`, soundConfig);
       } catch (err) {
         console.error(err);
       }
-      return Math.ceil((scene.sound.get(this.resourceName).totalDuration * 1000) / 33.33);
+      return Math.ceil((scene.sound.get(`battle_anims/${this.resourceName}`).totalDuration * 1000) / 33.33);
     } else {
-      return Math.ceil((battleAnim.user.cry(soundConfig).totalDuration * 1000) / 33.33);
+      return Math.ceil((battleAnim.user!.cry(soundConfig).totalDuration * 1000) / 33.33); // TODO: is the bang behind user correct?
     }
   }
 
@@ -441,15 +443,15 @@ class AnimTimedAddBgEvent extends AnimTimedBgEvent {
   }
 }
 
-export const moveAnims = new Map<Moves, AnimConfig | [AnimConfig, AnimConfig]>();
-export const chargeAnims = new Map<ChargeAnim, AnimConfig | [AnimConfig, AnimConfig]>();
+export const moveAnims = new Map<Moves, AnimConfig | [AnimConfig, AnimConfig] | null>();
+export const chargeAnims = new Map<ChargeAnim, AnimConfig | [AnimConfig, AnimConfig] | null>();
 export const commonAnims = new Map<CommonAnim, AnimConfig>();
 
 export function initCommonAnims(scene: BattleScene): Promise<void> {
   return new Promise(resolve => {
     const commonAnimNames = Utils.getEnumKeys(CommonAnim);
     const commonAnimIds = Utils.getEnumValues(CommonAnim);
-    const commonAnimFetches = [];
+    const commonAnimFetches: Promise<Map<CommonAnim, AnimConfig>>[] = [];
     for (let ca = 0; ca < commonAnimIds.length; ca++) {
       const commonAnimId = commonAnimIds[ca];
       commonAnimFetches.push(scene.cachedFetch(`./battle-anims/common-${commonAnimNames[ca].toLowerCase().replace(/\_/g, "-")}.json`)
@@ -484,7 +486,8 @@ export function initMoveAnim(scene: BattleScene, move: Moves): Promise<void> {
       const fetchAnimAndResolve = (move: Moves) => {
         scene.cachedFetch(`./battle-anims/${moveName}.json`)
           .then(response => {
-            if (!response.ok) {
+            const contentType = response.headers.get("content-type");
+            if (!response.ok || contentType?.indexOf("application/json") === -1) {
               console.error(`Could not load animation file for move '${moveName}'`, response.status, response.statusText);
               populateMoveAnim(move, moveAnims.get(defaultMoveAnim));
               return resolve();
@@ -498,7 +501,9 @@ export function initMoveAnim(scene: BattleScene, move: Moves): Promise<void> {
             } else {
               populateMoveAnim(move, ba);
             }
-            const chargeAttr = allMoves[move].getAttrs(ChargeAttr)[0] || allMoves[move].getAttrs(DelayedAttackAttr)[0];
+            const chargeAttr = allMoves[move].getAttrs(ChargeAttr)[0]
+                            || allMoves[move].getAttrs(DelayedAttackAttr)[0]
+                            || allMoves[move].getAttrs(BeakBlastHeaderAttr)[0];
             if (chargeAttr) {
               initMoveChargeAnim(scene, chargeAttr.chargeAnim).then(() => resolve());
             } else {
@@ -569,10 +574,12 @@ export function loadMoveAnimAssets(scene: BattleScene, moveIds: Moves[], startLo
   return new Promise(resolve => {
     const moveAnimations = moveIds.map(m => moveAnims.get(m) as AnimConfig).flat();
     for (const moveId of moveIds) {
-      const chargeAttr = allMoves[moveId].getAttrs(ChargeAttr)[0] || allMoves[moveId].getAttrs(DelayedAttackAttr)[0];
+      const chargeAttr = allMoves[moveId].getAttrs(ChargeAttr)[0]
+                      || allMoves[moveId].getAttrs(DelayedAttackAttr)[0]
+                      || allMoves[moveId].getAttrs(BeakBlastHeaderAttr)[0];
       if (chargeAttr) {
         const moveChargeAnims = chargeAnims.get(chargeAttr.chargeAnim);
-        moveAnimations.push(moveChargeAnims instanceof AnimConfig ? moveChargeAnims : moveChargeAnims[0]);
+        moveAnimations.push(moveChargeAnims instanceof AnimConfig ? moveChargeAnims : moveChargeAnims![0]); // TODO: is the bang correct?
         if (Array.isArray(moveChargeAnims)) {
           moveAnimations.push(moveChargeAnims[1]);
         }
@@ -668,21 +675,21 @@ interface SpriteCache {
 }
 
 export abstract class BattleAnim {
-  public user: Pokemon;
-  public target: Pokemon;
+  public user: Pokemon | null;
+  public target: Pokemon | null;
   public sprites: Phaser.GameObjects.Sprite[];
   public bgSprite: Phaser.GameObjects.TileSprite | Phaser.GameObjects.Rectangle;
 
   private srcLine: number[];
   private dstLine: number[];
 
-  constructor(user: Pokemon, target: Pokemon) {
-    this.user = user;
-    this.target = target;
+  constructor(user?: Pokemon, target?: Pokemon) {
+    this.user = user ?? null;
+    this.target = target ?? null;
     this.sprites = [];
   }
 
-    abstract getAnim(): AnimConfig;
+    abstract getAnim(): AnimConfig | null;
 
     abstract isOppAnim(): boolean;
 
@@ -694,7 +701,7 @@ export abstract class BattleAnim {
       return false;
     }
 
-    private getGraphicFrameData(scene: BattleScene, frames: AnimFrame[]): Map<integer, Map<AnimFrameTarget, GraphicFrameData>> {
+    private getGraphicFrameData(scene: BattleScene, frames: AnimFrame[], onSubstitute?: boolean): Map<integer, Map<AnimFrameTarget, GraphicFrameData>> {
       const ret: Map<integer, Map<AnimFrameTarget, GraphicFrameData>> = new Map([
         [AnimFrameTarget.GRAPHIC, new Map<AnimFrameTarget, GraphicFrameData>() ],
         [AnimFrameTarget.USER, new Map<AnimFrameTarget, GraphicFrameData>() ],
@@ -705,12 +712,15 @@ export abstract class BattleAnim {
       const user = !isOppAnim ? this.user : this.target;
       const target = !isOppAnim ? this.target : this.user;
 
-      const userInitialX = user.x;
-      const userInitialY = user.y;
-      const userHalfHeight = user.getSprite().displayHeight / 2;
-      const targetInitialX = target.x;
-      const targetInitialY = target.y;
-      const targetHalfHeight = target.getSprite().displayHeight / 2;
+      const targetSubstitute = (onSubstitute && user !== target) ? target!.getTag(SubstituteTag) : null;
+
+      const userInitialX = user!.x; // TODO: is this bang correct?
+      const userInitialY = user!.y; // TODO: is this bang correct?
+      const userHalfHeight = user!.getSprite().displayHeight! / 2; // TODO: is this bang correct?
+
+      const targetInitialX = targetSubstitute?.sprite?.x ?? target!.x; // TODO: is this bang correct?
+      const targetInitialY = targetSubstitute?.sprite?.y ?? target!.y; // TODO: is this bang correct?
+      const targetHalfHeight = (targetSubstitute?.sprite ?? target!.getSprite()).displayHeight! / 2; // TODO: is this bang correct?
 
       let g = 0;
       let u = 0;
@@ -742,26 +752,28 @@ export abstract class BattleAnim {
         }
         const angle = -frame.angle;
         const key = frame.target === AnimFrameTarget.GRAPHIC ? g++ : frame.target === AnimFrameTarget.USER ? u++ : t++;
-        ret.get(frame.target).set(key, { x: x, y: y, scaleX: scaleX, scaleY: scaleY, angle: angle });
+        ret.get(frame.target)!.set(key, { x: x, y: y, scaleX: scaleX, scaleY: scaleY, angle: angle }); // TODO: is the bang correct?
       }
 
       return ret;
     }
 
-    play(scene: BattleScene, callback?: Function) {
+    play(scene: BattleScene, onSubstitute?: boolean, callback?: Function) {
       const isOppAnim = this.isOppAnim();
-      const user = !isOppAnim ? this.user : this.target;
+      const user = !isOppAnim ? this.user! : this.target!; // TODO: are those bangs correct?
       const target = !isOppAnim ? this.target : this.user;
 
-      if (!target.isOnField()) {
+      if (!target?.isOnField()) {
         if (callback) {
           callback();
         }
         return;
       }
 
+      const targetSubstitute = (!!onSubstitute && user !== target) ? target.getTag(SubstituteTag) : null;
+
       const userSprite = user.getSprite();
-      const targetSprite = target.getSprite();
+      const targetSprite = targetSubstitute?.sprite ?? target.getSprite();
 
       const spriteCache: SpriteCache = {
         [AnimFrameTarget.GRAPHIC]: [],
@@ -776,16 +788,34 @@ export abstract class BattleAnim {
         userSprite.setAlpha(1);
         userSprite.pipelineData["tone"] = [ 0.0, 0.0, 0.0, 0.0 ];
         userSprite.setAngle(0);
-        targetSprite.setPosition(0, 0);
-        targetSprite.setScale(1);
-        targetSprite.setAlpha(1);
+        if (!targetSubstitute) {
+          targetSprite.setPosition(0, 0);
+          targetSprite.setScale(1);
+          targetSprite.setAlpha(1);
+        } else {
+          targetSprite.setPosition(
+            target.x - target.getSubstituteOffset()[0],
+            target.y - target.getSubstituteOffset()[1]
+          );
+          targetSprite.setScale(target.getSpriteScale() * (target.isPlayer() ? 0.5 : 1));
+          targetSprite.setAlpha(1);
+        }
         targetSprite.pipelineData["tone"] = [ 0.0, 0.0, 0.0, 0.0 ];
         targetSprite.setAngle(0);
-        if (!this.isHideUser()) {
-          userSprite.setVisible(true);
+
+        /**
+         * This and `targetSpriteToShow` are used to restore context lost
+         * from the `isOppAnim` swap. Using these references instead of `this.user`
+         * and `this.target` prevent the target's Substitute doll from disappearing
+         * after being the target of an animation.
+         */
+        const userSpriteToShow = !isOppAnim ? userSprite : targetSprite;
+        const targetSpriteToShow = !isOppAnim ? targetSprite : userSprite;
+        if (!this.isHideUser() && userSpriteToShow) {
+          userSpriteToShow.setVisible(true);
         }
-        if (!this.isHideTarget() && (targetSprite !== userSprite || !this.isHideUser())) {
-          targetSprite.setVisible(true);
+        if (!this.isHideTarget() && (targetSpriteToShow !== userSpriteToShow || !this.isHideUser())) {
+          targetSpriteToShow.setVisible(true);
         }
         for (const ms of Object.values(spriteCache).flat()) {
           if (ms) {
@@ -808,26 +838,26 @@ export abstract class BattleAnim {
 
       const userInitialX = user.x;
       const userInitialY = user.y;
-      const targetInitialX = target.x;
-      const targetInitialY = target.y;
+      const targetInitialX = targetSubstitute?.sprite?.x ?? target.x;
+      const targetInitialY = targetSubstitute?.sprite?.y ?? target.y;
 
       this.srcLine = [ userFocusX, userFocusY, targetFocusX, targetFocusY ];
       this.dstLine = [ userInitialX, userInitialY, targetInitialX, targetInitialY ];
 
-      let r = anim.frames.length;
+      let r = anim!.frames.length; // TODO: is this bang correct?
       let f = 0;
 
       scene.tweens.addCounter({
         duration: Utils.getFrameMs(3),
-        repeat: anim.frames.length,
+        repeat: anim!.frames.length, // TODO: is this bang correct?
         onRepeat: () => {
           if (!f) {
             userSprite.setVisible(false);
             targetSprite.setVisible(false);
           }
 
-          const spriteFrames = anim.frames[f];
-          const frameData = this.getGraphicFrameData(scene, anim.frames[f]);
+          const spriteFrames = anim!.frames[f]; // TODO: is the bang correcT?
+          const frameData = this.getGraphicFrameData(scene, anim!.frames[f], onSubstitute); // TODO: is the bang correct?
           let u = 0;
           let t = 0;
           let g = 0;
@@ -840,24 +870,34 @@ export abstract class BattleAnim {
               const sprites = spriteCache[isUser ? AnimFrameTarget.USER : AnimFrameTarget.TARGET];
               const spriteSource = isUser ? userSprite : targetSprite;
               if ((isUser ? u : t) === sprites.length) {
-                const sprite = scene.addPokemonSprite(isUser ? user : target, 0, 0, spriteSource.texture, spriteSource.frame.name, true);
-                [ "spriteColors", "fusionSpriteColors" ].map(k => sprite.pipelineData[k] = (isUser ? user : target).getSprite().pipelineData[k]);
-                sprite.setPipelineData("spriteKey", (isUser ? user : target).getBattleSpriteKey());
-                sprite.setPipelineData("shiny", (isUser ? user : target).shiny);
-                sprite.setPipelineData("variant", (isUser ? user : target).variant);
-                sprite.setPipelineData("ignoreFieldPos", true);
-                spriteSource.on("animationupdate", (_anim, frame) => sprite.setFrame(frame.textureFrame));
-                scene.field.add(sprite);
-                sprites.push(sprite);
+                if (!isUser && !!targetSubstitute) {
+                  const sprite = scene.addPokemonSprite(isUser ? user! : target, 0, 0, spriteSource!.texture, spriteSource!.frame.name, true); // TODO: are those bangs correct?
+                  [ "spriteColors", "fusionSpriteColors" ].map(k => sprite.pipelineData[k] = (isUser ? user! : target).getSprite().pipelineData[k]); // TODO: are those bangs correct?
+                  sprite.setPipelineData("spriteKey", (isUser ? user! : target).getBattleSpriteKey());
+                  sprite.setPipelineData("shiny", (isUser ? user : target).shiny);
+                  sprite.setPipelineData("variant", (isUser ? user : target).variant);
+                  sprite.setPipelineData("ignoreFieldPos", true);
+                  spriteSource.on("animationupdate", (_anim, frame) => sprite.setFrame(frame.textureFrame));
+                  scene.field.add(sprite);
+                  sprites.push(sprite);
+                } else {
+                  const sprite = scene.addFieldSprite(spriteSource.x, spriteSource.y, spriteSource.texture);
+                  spriteSource.on("animationupdate", (_anim, frame) => sprite.setFrame(frame.textureFrame));
+                  scene.field.add(sprite);
+                  sprites.push(sprite);
+                }
               }
 
               const spriteIndex = isUser ? u++ : t++;
               const pokemonSprite = sprites[spriteIndex];
-              const graphicFrameData = frameData.get(frame.target).get(spriteIndex);
-              pokemonSprite.setPosition(graphicFrameData.x, graphicFrameData.y - ((spriteSource.height / 2) * (spriteSource.parentContainer.scale - 1)));
+              const graphicFrameData = frameData.get(frame.target)!.get(spriteIndex)!; // TODO: are the bangs correct?
+              const spriteSourceScale = (isUser || !targetSubstitute)
+                ? spriteSource.parentContainer.scale
+                : target.getSpriteScale() * (target.isPlayer() ? 0.5 : 1);
+              pokemonSprite.setPosition(graphicFrameData.x, graphicFrameData.y - ((spriteSource.height / 2) * (spriteSourceScale - 1)));
 
               pokemonSprite.setAngle(graphicFrameData.angle);
-              pokemonSprite.setScale(graphicFrameData.scaleX * spriteSource.parentContainer.scale,  graphicFrameData.scaleY * spriteSource.parentContainer.scale);
+              pokemonSprite.setScale(graphicFrameData.scaleX * spriteSourceScale,  graphicFrameData.scaleY * spriteSourceScale);
 
               pokemonSprite.setData("locked", frame.locked);
 
@@ -868,7 +908,7 @@ export abstract class BattleAnim {
             } else {
               const sprites = spriteCache[AnimFrameTarget.GRAPHIC];
               if (g === sprites.length) {
-                const newSprite: Phaser.GameObjects.Sprite = scene.addFieldSprite(0, 0, anim.graphic, 1);
+                const newSprite: Phaser.GameObjects.Sprite = scene.addFieldSprite(0, 0, anim!.graphic, 1); // TODO: is the bang correct?
                 sprites.push(newSprite);
                 scene.field.add(newSprite);
                 spritePriorities.push(1);
@@ -881,7 +921,7 @@ export abstract class BattleAnim {
                 const setSpritePriority = (priority: integer) => {
                   switch (priority) {
                   case 0:
-                    scene.field.moveBelow(moveSprite as Phaser.GameObjects.GameObject, scene.getEnemyPokemon() || scene.getPlayerPokemon());
+                    scene.field.moveBelow(moveSprite as Phaser.GameObjects.GameObject, scene.getEnemyPokemon() || scene.getPlayerPokemon()!); // TODO: is this bang correct?
                     break;
                   case 1:
                     scene.field.moveTo(moveSprite, scene.field.getAll().length - 1);
@@ -892,11 +932,11 @@ export abstract class BattleAnim {
                       if (this.bgSprite) {
                         scene.field.moveAbove(moveSprite as Phaser.GameObjects.GameObject, this.bgSprite);
                       } else {
-                        scene.field.moveBelow(moveSprite as Phaser.GameObjects.GameObject, this.user);
+                        scene.field.moveBelow(moveSprite as Phaser.GameObjects.GameObject, this.user!); // TODO: is this bang correct?
                       }
                       break;
                     case AnimFocus.TARGET:
-                      scene.field.moveBelow(moveSprite as Phaser.GameObjects.GameObject, this.target);
+                      scene.field.moveBelow(moveSprite as Phaser.GameObjects.GameObject, this.target!); // TODO: is this bang correct?
                       break;
                     default:
                       setSpritePriority(1);
@@ -906,10 +946,10 @@ export abstract class BattleAnim {
                   case 3:
                     switch (frame.focus) {
                     case AnimFocus.USER:
-                      scene.field.moveAbove(moveSprite as Phaser.GameObjects.GameObject, this.user);
+                      scene.field.moveAbove(moveSprite as Phaser.GameObjects.GameObject, this.user!); // TODO: is this bang correct?
                       break;
                     case AnimFocus.TARGET:
-                      scene.field.moveAbove(moveSprite as Phaser.GameObjects.GameObject, this.target);
+                      scene.field.moveAbove(moveSprite as Phaser.GameObjects.GameObject, this.target!); // TODO: is this bang correct?
                       break;
                     default:
                       setSpritePriority(1);
@@ -925,7 +965,7 @@ export abstract class BattleAnim {
               moveSprite.setFrame(frame.graphicFrame);
               //console.log(AnimFocus[frame.focus]);
 
-              const graphicFrameData = frameData.get(frame.target).get(graphicIndex);
+              const graphicFrameData = frameData.get(frame.target)!.get(graphicIndex)!; // TODO: are those bangs correct?
               moveSprite.setPosition(graphicFrameData.x, graphicFrameData.y);
               moveSprite.setAngle(graphicFrameData.angle);
               moveSprite.setScale(graphicFrameData.scaleX,  graphicFrameData.scaleY);
@@ -935,8 +975,8 @@ export abstract class BattleAnim {
               moveSprite.setBlendMode(frame.blendType === AnimBlendType.NORMAL ? Phaser.BlendModes.NORMAL : frame.blendType === AnimBlendType.ADD ? Phaser.BlendModes.ADD : Phaser.BlendModes.DIFFERENCE);
             }
           }
-          if (anim.frameTimedEvents.has(f)) {
-            for (const event of anim.frameTimedEvents.get(f)) {
+          if (anim?.frameTimedEvents.has(f)) {
+            for (const event of anim.frameTimedEvents.get(f)!) { // TODO: is this bang correct?
               r = Math.max((anim.frames.length - f) + event.execute(scene, this), r);
             }
           }
@@ -980,16 +1020,16 @@ export abstract class BattleAnim {
 }
 
 export class CommonBattleAnim extends BattleAnim {
-  public commonAnim: CommonAnim;
+  public commonAnim: CommonAnim | null;
 
-  constructor(commonAnim: CommonAnim, user: Pokemon, target?: Pokemon) {
+  constructor(commonAnim: CommonAnim | null, user: Pokemon, target?: Pokemon) {
     super(user, target || user);
 
     this.commonAnim = commonAnim;
   }
 
-  getAnim(): AnimConfig {
-    return commonAnims.get(this.commonAnim);
+  getAnim(): AnimConfig | null {
+    return this.commonAnim ? commonAnims.get(this.commonAnim)! : null; // TODO: is this bang correct?
   }
 
   isOppAnim(): boolean {
@@ -1009,11 +1049,11 @@ export class MoveAnim extends BattleAnim {
   getAnim(): AnimConfig {
     return moveAnims.get(this.move) instanceof AnimConfig
       ? moveAnims.get(this.move) as AnimConfig
-      : moveAnims.get(this.move)[this.user.isPlayer() ? 0 : 1] as AnimConfig;
+      : moveAnims.get(this.move)![this.user?.isPlayer() ? 0 : 1] as AnimConfig; // TODO: is this bang correct?
   }
 
   isOppAnim(): boolean {
-    return !this.user.isPlayer() && Array.isArray(moveAnims.get(this.move));
+    return !this.user?.isPlayer() && Array.isArray(moveAnims.get(this.move));
   }
 
   protected isHideUser(): boolean {
@@ -1035,13 +1075,13 @@ export class MoveChargeAnim extends MoveAnim {
   }
 
   isOppAnim(): boolean {
-    return !this.user.isPlayer() && Array.isArray(chargeAnims.get(this.chargeAnim));
+    return !this.user?.isPlayer() && Array.isArray(chargeAnims.get(this.chargeAnim));
   }
 
   getAnim(): AnimConfig {
     return chargeAnims.get(this.chargeAnim) instanceof AnimConfig
       ? chargeAnims.get(this.chargeAnim) as AnimConfig
-      : chargeAnims.get(this.chargeAnim)[this.user.isPlayer() ? 0 : 1] as AnimConfig;
+      : chargeAnims.get(this.chargeAnim)![this.user?.isPlayer() ? 0 : 1] as AnimConfig; // TODO: is this bang correct?
   }
 }
 
@@ -1059,19 +1099,19 @@ export async function populateAnims() {
     moveNameToId[moveName] = move;
   }
 
-  const seNames = [];//(await fs.readdir('./public/audio/se/battle_anims/')).map(se => se.toString());
+  const seNames: string[] = [];//(await fs.readdir('./public/audio/se/battle_anims/')).map(se => se.toString());
 
-  const animsData = [];//battleAnimRawData.split('!ruby/array:PBAnimation').slice(1);
+  const animsData : any[] = [];//battleAnimRawData.split('!ruby/array:PBAnimation').slice(1); // TODO: add a proper type
   for (let a = 0; a < animsData.length; a++) {
     const fields = animsData[a].split("@").slice(1);
 
     const nameField = fields.find(f => f.startsWith("name: "));
 
-    let isOppMove: boolean;
-    let commonAnimId: CommonAnim;
-    let chargeAnimId: ChargeAnim;
+    let isOppMove: boolean | undefined;
+    let commonAnimId: CommonAnim | undefined;
+    let chargeAnimId: ChargeAnim | undefined;
     if (!nameField.startsWith("name: Move:") && !(isOppMove = nameField.startsWith("name: OppMove:"))) {
-      const nameMatch = commonNamePattern.exec(nameField);
+      const nameMatch = commonNamePattern.exec(nameField)!; // TODO: is this bang correct?
       const name = nameMatch[2].toLowerCase();
       if (commonAnimMatchNames.indexOf(name) > -1) {
         commonAnimId = commonAnimIds[commonAnimMatchNames.indexOf(name)];
@@ -1128,14 +1168,14 @@ export async function populateAnims() {
         for (let t = 0; t < timingEntries.length; t++) {
           const timingData = timingEntries[t].replace(/\n/g, " ").replace(/[ ]{2,}/g, " ").replace(/[a-z]+: ! '', /ig, "").replace(/name: (.*?),/, "name: \"$1\",")
             .replace(/flashColor: !ruby\/object:Color { alpha: ([\d\.]+), blue: ([\d\.]+), green: ([\d\.]+), red: ([\d\.]+)}/, "flashRed: $4, flashGreen: $3, flashBlue: $2, flashAlpha: $1");
-          const frameIndex = parseInt(/frame: (\d+)/.exec(timingData)[1]);
-          let resourceName = /name: "(.*?)"/.exec(timingData)[1].replace("''", "");
-          const timingType = parseInt(/timingType: (\d)/.exec(timingData)[1]);
-          let timedEvent: AnimTimedEvent;
+          const frameIndex = parseInt(/frame: (\d+)/.exec(timingData)![1]); // TODO: is the bang correct?
+          let resourceName = /name: "(.*?)"/.exec(timingData)![1].replace("''", ""); // TODO: is the bang correct?
+          const timingType = parseInt(/timingType: (\d)/.exec(timingData)![1]); // TODO: is the bang correct?
+          let timedEvent: AnimTimedEvent | undefined;
           switch (timingType) {
           case 0:
             if (resourceName && resourceName.indexOf(".") === -1) {
-              let ext: string;
+              let ext: string | undefined;
               [ "wav", "mp3", "m4a" ].every(e => {
                 if (seNames.indexOf(`${resourceName}.${e}`) > -1) {
                   ext = e;
@@ -1162,7 +1202,7 @@ export async function populateAnims() {
           }
           const propPattern = /([a-z]+): (.*?)(?:,|\})/ig;
           let propMatch: RegExpExecArray;
-          while ((propMatch = propPattern.exec(timingData))) {
+          while ((propMatch = propPattern.exec(timingData)!)) { // TODO: is this bang correct?
             const prop = propMatch[1];
             let value: any = propMatch[2];
             switch (prop) {
@@ -1194,7 +1234,7 @@ export async function populateAnims() {
           if (!anim.frameTimedEvents.has(frameIndex)) {
             anim.frameTimedEvents.set(frameIndex, []);
           }
-          anim.frameTimedEvents.get(frameIndex).push(timedEvent);
+          anim.frameTimedEvents.get(frameIndex)!.push(timedEvent); // TODO: is this bang correct?
         }
         break;
       case "position":

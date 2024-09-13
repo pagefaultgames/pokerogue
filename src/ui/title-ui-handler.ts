@@ -1,20 +1,20 @@
 import BattleScene from "../battle-scene";
-import { DailyRunScoreboard } from "./daily-run-scoreboard";
 import OptionSelectUiHandler from "./settings/option-select-ui-handler";
 import { Mode } from "./ui";
 import * as Utils from "../utils";
-import { TextStyle, addTextObject } from "./text";
+import { TextStyle, addTextObject, getTextStyleOptions } from "./text";
 import { getBattleCountSplashMessage, getSplashMessages } from "../data/splash-messages";
 import i18next from "i18next";
+import { TimedEventDisplay } from "#app/timed-event-manager";
 
 export default class TitleUiHandler extends OptionSelectUiHandler {
   private titleContainer: Phaser.GameObjects.Container;
-  private dailyRunScoreboard: DailyRunScoreboard;
   private playerCountLabel: Phaser.GameObjects.Text;
   private splashMessage: string;
   private splashMessageText: Phaser.GameObjects.Text;
+  private eventDisplay: TimedEventDisplay;
 
-  private titleStatsTimer: NodeJS.Timeout;
+  private titleStatsTimer: NodeJS.Timeout | null;
 
   constructor(scene: BattleScene, mode: Mode = Mode.TITLE) {
     super(scene, mode);
@@ -26,6 +26,7 @@ export default class TitleUiHandler extends OptionSelectUiHandler {
     const ui = this.getUi();
 
     this.titleContainer = this.scene.add.container(0, -(this.scene.game.canvas.height / 6));
+    this.titleContainer.setName("title");
     this.titleContainer.setAlpha(0);
     ui.add(this.titleContainer);
 
@@ -33,12 +34,20 @@ export default class TitleUiHandler extends OptionSelectUiHandler {
     logo.setOrigin(0.5, 0);
     this.titleContainer.add(logo);
 
-    this.dailyRunScoreboard = new DailyRunScoreboard(this.scene, 1, 44);
-    this.dailyRunScoreboard.setup();
+    if (this.scene.eventManager.isEventActive()) {
+      this.eventDisplay = new TimedEventDisplay(this.scene, 0, 0, this.scene.eventManager.activeEvent());
+      this.eventDisplay.setup();
+      this.titleContainer.add(this.eventDisplay);
+    }
 
-    this.titleContainer.add(this.dailyRunScoreboard);
-
-    this.playerCountLabel = addTextObject(this.scene, (this.scene.game.canvas.width / 6) - 2, (this.scene.game.canvas.height / 6) - 109, `? ${i18next.t("menu:playersOnline")}`, TextStyle.MESSAGE, { fontSize: "54px" });
+    this.playerCountLabel = addTextObject(
+      this.scene,
+      (this.scene.game.canvas.width / 6) - 2,
+      (this.scene.game.canvas.height / 6) - 13 - 576 * getTextStyleOptions(TextStyle.WINDOW, this.scene.uiTheme).scale,
+      `? ${i18next.t("menu:playersOnline")}`,
+      TextStyle.MESSAGE,
+      { fontSize: "54px" }
+    );
     this.playerCountLabel.setOrigin(1, 0);
     this.titleContainer.add(this.playerCountLabel);
 
@@ -81,11 +90,15 @@ export default class TitleUiHandler extends OptionSelectUiHandler {
 
       const ui = this.getUi();
 
-      this.dailyRunScoreboard.update();
+      if (this.scene.eventManager.isEventActive()) {
+        this.eventDisplay.show();
+      }
 
       this.updateTitleStats();
 
-      this.titleStatsTimer = setInterval(() => this.updateTitleStats(), 60000);
+      this.titleStatsTimer = setInterval(() => {
+        this.updateTitleStats();
+      }, 60000);
 
       this.scene.tweens.add({
         targets: [ this.titleContainer, ui.getMessageHandler().bg ],
@@ -103,7 +116,9 @@ export default class TitleUiHandler extends OptionSelectUiHandler {
 
     const ui = this.getUi();
 
-    clearInterval(this.titleStatsTimer);
+    this.eventDisplay?.clear();
+
+    this.titleStatsTimer && clearInterval(this.titleStatsTimer);
     this.titleStatsTimer = null;
 
     this.scene.tweens.add({

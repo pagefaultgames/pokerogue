@@ -377,7 +377,7 @@ export default class SpritePipeline extends FieldSpritePipeline {
     this.set2f("texSize", sprite.texture.source[0].width, sprite.texture.source[0].height);
     this.set1f("yOffset", sprite.height - sprite.frame.height * (isEntityObj ? sprite.parentContainer.scale : sprite.scale));
     this.set4fv("tone", tone);
-    this.bindTexture(this.game.textures.get("tera").source[0].glTexture, 1);
+    this.bindTexture(this.game.textures.get("tera").source[0].glTexture!, 1); // TODO: is this bang correct?
 
     if ((gameObject.scene as BattleScene).fusionPaletteSwaps) {
       const spriteColors = ((ignoreOverride && data["spriteColorsBase"]) || data["spriteColors"] || []) as number[][];
