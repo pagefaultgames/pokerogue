@@ -189,8 +189,8 @@ export default class GameManager {
 
   /**
    * Runs the game to a mystery encounter phase.
-   * @param encounterType - if specified, will expect encounter to have been spawned
-   * @param species - Optional array of species for party.
+   * @param encounterType if specified, will expect encounter to have been spawned
+   * @param species Optional array of species for party.
    * @returns A promise that resolves when the EncounterPhase ends.
    */
   async runToMysteryEncounter(encounterType?: MysteryEncounterType, species?: Species[]) {

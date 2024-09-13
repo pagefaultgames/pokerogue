@@ -24,6 +24,8 @@ import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
 import { Stat } from "#enums/stat";
 import { BerryModifier } from "#app/modifier/modifier";
 import { modifierTypes } from "#app/modifier/modifier-type";
+import * as TextUtils from "#app/ui/text";
+import BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
 
 const namespace = "mysteryEncounter:uncommonBreed";
 const defaultParty = [Species.LAPRAS, Species.GENGAR, Species.ABRA];
@@ -167,7 +169,10 @@ describe("Uncommon Breed - Mystery Encounter", () => {
       });
     });
 
-    it("should NOT be selectable if the player doesn't have enough berries", { retry: 5 }, async () => {
+    it("should NOT be selectable if the player doesn't have enough berries", async () => {
+      // For some reason, BBCodeText has issues with this test
+      vi.spyOn(TextUtils, "addBBCodeTextObject").mockImplementation(() => new BBCodeText(scene, 0, 0, "test"));
+
       await game.runToMysteryEncounter(MysteryEncounterType.UNCOMMON_BREED, defaultParty);
       // Clear out any pesky mods that slipped through test spin-up
       scene.modifiers.forEach(mod => {

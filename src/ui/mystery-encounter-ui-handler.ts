@@ -104,7 +104,7 @@ export default class MysteryEncounterUiHandler extends UiHandler {
     this.dexProgressContainer.setVisible(true);
     this.displayEncounterOptions(slideInDescription);
     const cursor = this.getCursor();
-    if (cursor === (this?.optionsContainer?.length || 0) - 1) {
+    if (cursor === (this.optionsContainer?.length || 0) - 1) {
       // Always resets cursor on view party button if it was last there
       this.setCursor(cursor);
     } else {

@@ -904,10 +904,10 @@ export default class BattleScene extends SceneBase {
   }
 
   /**
-   * Removes a PlayerPokemon from the party, and clears modifiers for that Pokemon's id
+   * Removes a {@linkcode PlayerPokemon} from the party, and clears modifiers for that Pokemon's id
    * Useful for MEs/Challenges that remove Pokemon from the player party temporarily or permanently
    * @param pokemon
-   * @param destroy - Default true. If true, will destroy the Pokemon object after removing
+   * @param destroy Default true. If true, will destroy the {@linkcode PlayerPokemon} after removing
    */
   removePokemonFromPlayerParty(pokemon: PlayerPokemon, destroy: boolean = true) {
     if (!pokemon) {
@@ -2939,10 +2939,10 @@ export default class BattleScene extends SceneBase {
 
   /**
    * Updates Exp and level values for Player's party, adding new level up phases as required
-   * @param expValue - raw value of exp to split among participants, OR the base multiplier to use with waveIndex
-   * @param pokemonDefeated - If true, will increment Macho Brace stacks and give the party Pokemon friendship increases
-   * @param useWaveIndexMultiplier - Default false. If true, will multiply expValue by a scaling waveIndex multiplier. Not needed if expValue is already scaled by level/wave
-   * @param pokemonParticipantIds - Participants. If none are defined, no exp will be given. To spread evenly among the party, should pass all ids of party members.
+   * @param expValue raw value of exp to split among participants, OR the base multiplier to use with waveIndex
+   * @param pokemonDefeated If true, will increment Macho Brace stacks and give the party Pokemon friendship increases
+   * @param useWaveIndexMultiplier Default false. If true, will multiply expValue by a scaling waveIndex multiplier. Not needed if expValue is already scaled by level/wave
+   * @param pokemonParticipantIds Participants. If none are defined, no exp will be given. To spread evenly among the party, should pass all ids of party members.
    */
   applyPartyExp(expValue: number, pokemonDefeated: boolean, useWaveIndexMultiplier?: boolean, pokemonParticipantIds?: Set<number>): void {
     const participantIds = pokemonParticipantIds ?? this.currentBattle.playerParticipantIds;
@@ -3040,7 +3040,7 @@ export default class BattleScene extends SceneBase {
 
   /**
    * Loads or generates a mystery encounter
-   * @param encounterType - used to load session encounter when restarting game, etc.
+   * @param encounterType used to load session encounter when restarting game, etc.
    * @returns
    */
   getMysteryEncounter(encounterType?: MysteryEncounterType): MysteryEncounter {
@@ -3111,10 +3111,11 @@ export default class BattleScene extends SceneBase {
             return false;
           }
           const disabledModes = encounterCandidate.disabledGameModes;
-          if (disabledModes && disabledModes.length > 0 && disabledModes.includes(this.gameMode.modeId)) { // Encounter is enabled for game mode
+          if (disabledModes && disabledModes.length > 0
+            && disabledModes.includes(this.gameMode.modeId)) { // Encounter is enabled for game mode
             return false;
           }
-          if (!encounterCandidate.meetsRequirements!(this)) { // Meets encounter requirements
+          if (!encounterCandidate.meetsRequirements(this)) { // Meets encounter requirements
             return false;
           }
           if (previousEncounter !== null && encounterType === previousEncounter) { // Previous encounter was not this one
@@ -3148,7 +3149,7 @@ export default class BattleScene extends SceneBase {
     encounter = availableEncounters[Utils.randSeedInt(availableEncounters.length)];
     // New encounter object to not dirty flags
     encounter = new MysteryEncounter(encounter);
-    encounter.populateDialogueTokensFromRequirements!(this);
+    encounter.populateDialogueTokensFromRequirements(this);
     return encounter;
   }
 }

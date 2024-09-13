@@ -26,10 +26,10 @@ export interface EncounterStartOfBattleEffect {
 }
 
 /**
- * Used by {@link MysteryEncounterBuilder} class to define required/optional properties on the {@link MysteryEncounter} class when building.
+ * Used by {@linkcode MysteryEncounterBuilder} class to define required/optional properties on the {@linkcode MysteryEncounter} class when building.
  *
- * Should ONLY contain properties that are necessary for {@link MysteryEncounter} construction.
- * Post-construct and flag data properties are defined in the {@link MysteryEncounter} class itself.
+ * Should ONLY contain properties that are necessary for {@linkcode MysteryEncounter} construction.
+ * Post-construct and flag data properties are defined in the {@linkcode MysteryEncounter} class itself.
  */
 export interface IMysteryEncounter {
   encounterType: MysteryEncounterType;
@@ -124,12 +124,12 @@ export default class MysteryEncounter implements IMysteryEncounter {
   maxAllowedEncounters: number;
   /**
    * If true, encounter will not animate the target Pokemon as part of battle animations
-   * Used for encounters where it is not a "real" battle, but still uses battle animations and commands (see {@link FunAndGamesEncounter} for an example)
+   * Used for encounters where it is not a "real" battle, but still uses battle animations and commands (see {@linkcode FunAndGamesEncounter} for an example)
    */
   hasBattleAnimationsWithoutTargets: boolean;
   /**
    * If true, will skip enemy pokemon turns during battle for the encounter
-   * Used for encounters where it is not a "real" battle, but still uses battle animations and commands (see {@link FunAndGamesEncounter} for an example)
+   * Used for encounters where it is not a "real" battle, but still uses battle animations and commands (see {@linkcode FunAndGamesEncounter} for an example)
    */
   skipEnemyBattleTurns: boolean;
   /**
@@ -144,9 +144,9 @@ export default class MysteryEncounter implements IMysteryEncounter {
   onInit?: (scene: BattleScene) => boolean;
   /** Event when battlefield visuals have finished sliding in and the encounter dialogue begins */
   onVisualsStart?: (scene: BattleScene) => boolean;
-  /** Event triggered prior to {@link CommandPhase}, during {@link TurnInitPhase} */
+  /** Event triggered prior to {@linkcode CommandPhase}, during {@linkcode TurnInitPhase} */
   onTurnStart?: (scene: BattleScene) => boolean;
-  /** Event prior to any rewards logic in {@link MysteryEncounterRewardsPhase} */
+  /** Event prior to any rewards logic in {@linkcode MysteryEncounterRewardsPhase} */
   onRewards?: (scene: BattleScene) => Promise<void>;
   /** Will provide the player party EXP before rewards are displayed for that wave */
   doEncounterExp?: (scene: BattleScene) => boolean;
@@ -279,7 +279,7 @@ export default class MysteryEncounter implements IMysteryEncounter {
    * @param scene
    * @returns
    */
-  meetsRequirements(scene: BattleScene) {
+  meetsRequirements(scene: BattleScene): boolean {
     const sceneReq = !this.requirements.some(requirement => !requirement.meetsRequirement(scene));
     const secReqs = this.meetsSecondaryRequirementAndSecondaryPokemonSelected(scene); // secondary is checked first to handle cases of primary overlapping with secondary
     const priReqs = this.meetsPrimaryRequirementAndPrimaryPokemonSelected(scene);
@@ -293,10 +293,17 @@ export default class MysteryEncounter implements IMysteryEncounter {
    * @param scene
    * @param pokemon
    */
-  pokemonMeetsPrimaryRequirements(scene: BattleScene, pokemon: Pokemon) {
+  pokemonMeetsPrimaryRequirements(scene: BattleScene, pokemon: Pokemon): boolean {
     return !this.primaryPokemonRequirements.some(req => !req.queryParty(scene.getParty()).map(p => p.id).includes(pokemon.id));
   }
 
+  /**
+   * Returns true if all PRIMARY {@linkcode EncounterRequirement}s for the option are met,
+   * AND there is a valid Pokemon assigned to {@linkcode primaryPokemon}.
+   * If both {@linkcode primaryPokemonRequirements} and {@linkcode secondaryPokemonRequirements} are defined,
+   * can cause scenarios where there are not enough Pokemon that are sufficient for all requirements.
+   * @param scene
+   */
   private meetsPrimaryRequirementAndPrimaryPokemonSelected(scene: BattleScene): boolean {
     if (!this.primaryPokemonRequirements || this.primaryPokemonRequirements.length === 0) {
       const activeMon = scene.getParty().filter(p => p.isActive(true));
@@ -354,6 +361,13 @@ export default class MysteryEncounter implements IMysteryEncounter {
     }
   }
 
+  /**
+   * Returns true if all SECONDARY {@linkcode EncounterRequirement}s for the option are met,
+   * AND there is a valid Pokemon assigned to {@linkcode secondaryPokemon} (if applicable).
+   * If both {@linkcode primaryPokemonRequirements} and {@linkcode secondaryPokemonRequirements} are defined,
+   * can cause scenarios where there are not enough Pokemon that are sufficient for all requirements.
+   * @param scene
+   */
   private meetsSecondaryRequirementAndSecondaryPokemonSelected(scene: BattleScene): boolean {
     if (!this.secondaryPokemonRequirements || this.secondaryPokemonRequirements.length === 0) {
       this.secondaryPokemon = [];
@@ -377,7 +391,7 @@ export default class MysteryEncounter implements IMysteryEncounter {
    * Initializes encounter intro sprites based on the sprite configs defined in spriteConfigs
    * @param scene
    */
-  initIntroVisuals(scene: BattleScene) {
+  initIntroVisuals(scene: BattleScene): void {
     this.introVisuals = new MysteryEncounterIntroVisuals(scene, this);
   }
 
@@ -386,7 +400,7 @@ export default class MysteryEncounter implements IMysteryEncounter {
    * Will use the first support pokemon in list
    * For multiple support pokemon in the dialogue token, it will have to be overridden.
    */
-  populateDialogueTokensFromRequirements(scene: BattleScene) {
+  populateDialogueTokensFromRequirements(scene: BattleScene): void {
     this.meetsRequirements(scene);
     if (this.requirements?.length > 0) {
       for (const req of this.requirements) {
@@ -461,7 +475,7 @@ export default class MysteryEncounter implements IMysteryEncounter {
   /**
    * Used to cache a dialogue token for the encounter.
    * Tokens will be auto-injected via the `{{key}}` pattern with `value`,
-   * when using the {@link showEncounterText} and {@link showEncounterDialogue} helper functions.
+   * when using the {@linkcode showEncounterText} and {@linkcode showEncounterDialogue} helper functions.
    *
    * @param key
    * @param value
@@ -471,10 +485,10 @@ export default class MysteryEncounter implements IMysteryEncounter {
   }
 
   /**
-   * If an encounter uses {@link MysteryEncounterMode.continuousEncounter},
+   * If an encounter uses {@linkcode MysteryEncounterMode.continuousEncounter},
    * should rely on this value for seed offset instead of wave index.
    *
-   * This offset is incremented for each new {@link MysteryEncounterPhase} that occurs,
+   * This offset is incremented for each new {@linkcode MysteryEncounterPhase} that occurs,
    * so multi-encounter RNG will be consistent on resets and not be affected by number of turns, move RNG, etc.
    */
   getSeedOffset() {
@@ -539,7 +553,7 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
    * Use for complex options.
    * There should be at least 2 options defined and no more than 4.
    *
-   * @param option - MysteryEncounterOption to add, can use MysteryEncounterOptionBuilder to create instance
+   * @param option MysteryEncounterOption to add, can use MysteryEncounterOptionBuilder to create instance
    * @returns
    */
   withOption(option: MysteryEncounterOption): this & Pick<IMysteryEncounter, "options"> {
@@ -558,9 +572,8 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
    * There should be at least 2 options defined and no more than 4.
    * If complex use {@linkcode MysteryEncounterBuilder.withOption}
    *
-   * @param hasDexProgress -
-   * @param dialogue - {@linkcode OptionTextDisplay}
-   * @param callback - {@linkcode OptionPhaseCallback}
+   * @param dialogue {@linkcode OptionTextDisplay}
+   * @param callback {@linkcode OptionPhaseCallback}
    * @returns
    */
   withSimpleOption(dialogue: OptionTextDisplay, callback: OptionPhaseCallback): this & Pick<IMysteryEncounter, "options"> {
@@ -658,7 +671,7 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
 
   /**
    * If true, encounter will not animate the target Pokemon as part of battle animations
-   * Used for encounters where it is not a "real" battle, but still uses battle animations and commands (see {@link FunAndGamesEncounter} for an example)
+   * Used for encounters where it is not a "real" battle, but still uses battle animations and commands (see {@linkcode FunAndGamesEncounter} for an example)
    * Default false
    * @param hasBattleAnimationsWithoutTargets
    */
@@ -668,7 +681,7 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
 
   /**
    * If true, encounter will not animate the target Pokemon as part of battle animations
-   * Used for encounters where it is not a "real" battle, but still uses battle animations and commands (see {@link FunAndGamesEncounter} for an example)
+   * Used for encounters where it is not a "real" battle, but still uses battle animations and commands (see {@linkcode FunAndGamesEncounter} for an example)
    * Default false
    * @param skipEnemyBattleTurns
    */

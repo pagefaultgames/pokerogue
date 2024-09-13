@@ -50,8 +50,8 @@ export function getSpriteKeysFromPokemon(pokemon: Pokemon): { spriteKey: string,
  * Will never remove the player's last non-fainted Pokemon (if they only have 1)
  * Otherwise, picks a Pokemon completely at random and removes from the party
  * @param scene
- * @param isAllowedInBattle - default false. If true, only picks from unfainted mons. If there is only 1 unfainted mon left and doNotReturnLastAbleMon is also true, will return fainted mon
- * @param doNotReturnLastAbleMon - If true, will never return the last unfainted pokemon in the party. Useful when this function is being used to determine what Pokemon to remove from the party (Don't want to remove last unfainted)
+ * @param isAllowedInBattle Default false. If true, only picks from unfainted mons. If there is only 1 unfainted mon left and doNotReturnLastAbleMon is also true, will return fainted mon
+ * @param doNotReturnLastAbleMon Default false. If true, will never return the last unfainted pokemon in the party. Useful when this function is being used to determine what Pokemon to remove from the party (Don't want to remove last unfainted)
  * @returns
  */
 export function getRandomPlayerPokemon(scene: BattleScene, isAllowedInBattle: boolean = false, doNotReturnLastAbleMon: boolean = false): PlayerPokemon {
@@ -78,7 +78,7 @@ export function getRandomPlayerPokemon(scene: BattleScene, isAllowedInBattle: bo
 /**
  * Ties are broken by whatever mon is closer to the front of the party
  * @param scene
- * @param unfainted - default false. If true, only picks from unfainted mons.
+ * @param unfainted Default false. If true, only picks from unfainted mons.
  * @returns
  */
 export function getHighestLevelPlayerPokemon(scene: BattleScene, unfainted: boolean = false): PlayerPokemon {
@@ -99,8 +99,8 @@ export function getHighestLevelPlayerPokemon(scene: BattleScene, unfainted: bool
 /**
  * Ties are broken by whatever mon is closer to the front of the party
  * @param scene
- * @param stat - stat to search for
- * @param unfainted - default false. If true, only picks from unfainted mons.
+ * @param stat Stat to search for
+ * @param unfainted Default false. If true, only picks from unfainted mons.
  * @returns
  */
 export function getHighestStatPlayerPokemon(scene: BattleScene, stat: PermanentStat, unfainted: boolean = false): PlayerPokemon {
@@ -218,7 +218,7 @@ export function koPlayerPokemon(scene: BattleScene, pokemon: PlayerPokemon) {
 /**
  * Handles applying hp changes to a player pokemon.
  * Takes care of not going below `0`, above max-hp, adding `FNT` status correctly and updating the pokemon info.
- * TODO: handle special cases like wonder-guard/ninjask
+ * TODO: should we handle special cases like wonder-guard/shedinja?
  * @param scene the battle scene
  * @param pokemon the player pokemon to apply the hp change to
  * @param value the hp change amount. Positive for heal. Negative for damage
@@ -258,7 +258,7 @@ export function applyDamageToPokemon(scene: BattleScene, pokemon: PlayerPokemon,
  */
 export function applyHealToPokemon(scene: BattleScene, pokemon: PlayerPokemon, heal: number) {
   if (heal <= 0) {
-    console.warn("Damaging pokemong with `applyHealToPokemon` is not recommended! Please use `applyDamageToPokemon` instead.");
+    console.warn("Damaging pokemon with `applyHealToPokemon` is not recommended! Please use `applyDamageToPokemon` instead.");
   }
 
   applyHpChangeToPokemon(scene, pokemon, heal);

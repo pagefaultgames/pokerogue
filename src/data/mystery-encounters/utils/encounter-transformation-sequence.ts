@@ -263,7 +263,7 @@ function doCircleInward(scene: BattleScene, transformationBaseBg: Phaser.GameObj
 }
 
 /**
- * Helper function for {@link doSpiralUpward}, handles a single particle
+ * Helper function for {@linkcode doSpiralUpward}, handles a single particle
  * @param scene
  * @param trigIndex
  * @param transformationBaseBg
@@ -308,7 +308,7 @@ function doSpiralUpwardParticle(scene: BattleScene, trigIndex: number, transform
 }
 
 /**
- * Helper function for {@link doArcDownward}, handles a single particle
+ * Helper function for {@linkcode doArcDownward}, handles a single particle
  * @param scene
  * @param trigIndex
  * @param transformationBaseBg

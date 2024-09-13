@@ -227,7 +227,7 @@ export function getBBCodeFrag(content: string, textStyle: TextStyle, uiTheme: Ui
 }
 
 /**
- * Should only be used with BBCodeText (see addBBCodeTextObject())
+ * Should only be used with BBCodeText (see {@linkcode addBBCodeTextObject()})
  * This does NOT work with UI showText() or showDialogue() methods.
  * Method will do pattern match/replace and apply BBCode color/shadow styling to substrings within the content:
  * @[<TextStyle>]{<text to color>}
@@ -236,8 +236,8 @@ export function getBBCodeFrag(content: string, textStyle: TextStyle, uiTheme: Ui
  * - "blue text" with TextStyle.SUMMARY_BLUE applied
  * - " primaryStyle text " with primaryStyle TextStyle applied
  * - "red text" with TextStyle.SUMMARY_RED applied
- * @param content - string with styling that need to be applied for BBCodeTextObject
- * @param primaryStyle - primary style is required in order to escape BBCode styling properly.
+ * @param content string with styling that need to be applied for BBCodeTextObject
+ * @param primaryStyle Primary style is required in order to escape BBCode styling properly.
  * @param uiTheme
  */
 export function getTextWithColors(content: string, primaryStyle: TextStyle, uiTheme: UiTheme = UiTheme.DEFAULT): string {

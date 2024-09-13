@@ -12,6 +12,7 @@ import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode
 import { getPokemonSpecies } from "#app/data/pokemon-species";
 import { Species } from "#enums/species";
 import { Moves } from "#enums/moves";
+import { GameOverPhase } from "#app/phases/game-over-phase";
 
 /** i18n namespace for encounter */
 const namespace = "mysteryEncounter:mysteriousChest";
@@ -116,8 +117,8 @@ export const MysteriousChestEncounter: MysteryEncounter =
           // Open the chest
           const encounter = scene.currentBattle.mysteryEncounter!;
           const roll = encounter.misc.roll;
-          if (roll > 60) {
-            // Choose between 2 COMMON / 2 GREAT tier items (30%)
+          if (roll > 80) {
+            // Choose between 2 COMMON / 2 GREAT tier items (20%)
             setEncounterRewards(scene, {
               guaranteedModifierTiers: [
                 ModifierTier.COMMON,
@@ -129,8 +130,8 @@ export const MysteriousChestEncounter: MysteryEncounter =
             // Display result message then proceed to rewards
             queueEncounterMessage(scene, `${namespace}.option.1.normal`);
             leaveEncounterWithoutBattle(scene);
-          } else if (roll > 40) {
-            // Choose between 3 ULTRA tier items (20%)
+          } else if (roll > 50) {
+            // Choose between 3 ULTRA tier items (30%)
             setEncounterRewards(scene, {
               guaranteedModifierTiers: [
                 ModifierTier.ULTRA,
@@ -141,35 +142,38 @@ export const MysteriousChestEncounter: MysteryEncounter =
             // Display result message then proceed to rewards
             queueEncounterMessage(scene, `${namespace}.option.1.good`);
             leaveEncounterWithoutBattle(scene);
-          } else if (roll > 36) {
+          } else if (roll > 40) {
             // Choose between 2 ROGUE tier items (10%)
-            setEncounterRewards(scene, {
-              guaranteedModifierTiers: [ModifierTier.ROGUE, ModifierTier.ROGUE],
-            });
+            setEncounterRewards(scene, { guaranteedModifierTiers: [ModifierTier.ROGUE, ModifierTier.ROGUE] });
             // Display result message then proceed to rewards
             queueEncounterMessage(scene, `${namespace}.option.1.great`);
             leaveEncounterWithoutBattle(scene);
           } else if (roll > 35) {
             // Choose 1 MASTER tier item (5%)
-            setEncounterRewards(scene, {
-              guaranteedModifierTiers: [ModifierTier.MASTER],
-            });
+            setEncounterRewards(scene, { guaranteedModifierTiers: [ModifierTier.MASTER] });
             // Display result message then proceed to rewards
             queueEncounterMessage(scene, `${namespace}.option.1.amazing`);
             leaveEncounterWithoutBattle(scene);
           } else {
-            // Your highest level unfainted Pokemon gets OHKO. Progress with no rewards (35%)
+            // Your highest level unfainted Pokemon gets OHKO. Start battle against a Gimmighoul (35%)
             const highestLevelPokemon = getHighestLevelPlayerPokemon(
               scene,
               true
             );
             koPlayerPokemon(scene, highestLevelPokemon);
-
-            encounter.setDialogueToken("pokeName", highestLevelPokemon.getNameToRender());
-            // Show which Pokemon was KOed, then start battle against Gimmighoul
-            await showEncounterText(scene, `${namespace}.option.1.bad`);
-            transitionMysteryEncounterIntroVisuals(scene, true, true, 500);
-            await initBattleWithEnemyConfig(scene, encounter.enemyPartyConfigs[0]);
+            // Handle game over edge case
+            const allowedPokemon = scene.getParty().filter(p => p.isAllowedInBattle());
+            if (allowedPokemon.length === 0) {
+              // If there are no longer any legal pokemon in the party, game over.
+              scene.clearPhaseQueue();
+              scene.unshiftPhase(new GameOverPhase(scene));
+            } else {
+              // Show which Pokemon was KOed, then start battle against Gimmighoul
+              encounter.setDialogueToken("pokeName", highestLevelPokemon.getNameToRender());
+              await showEncounterText(scene, `${namespace}.option.1.bad`);
+              transitionMysteryEncounterIntroVisuals(scene, true, true, 500);
+              await initBattleWithEnemyConfig(scene, encounter.enemyPartyConfigs[0]);
+            }
           }
         })
         .build()
