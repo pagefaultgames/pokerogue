@@ -31,6 +31,10 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
 
   private rowCursor: integer = 0;
   private player: boolean;
+  /**
+   * If reroll cost is negative, it is assumed there are 0 items in the shop.
+   * It will cause reroll button to be disabled, and a "Continue" button to show in the place of shop items
+   */
   private rerollCost: integer;
   private transferButtonWidth: integer;
   private checkButtonWidth: integer;
@@ -265,7 +269,7 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
       this.continueButtonContainer.setAlpha(0);
       this.rerollButtonContainer.setVisible(true);
       this.checkButtonContainer.setVisible(true);
-      this.continueButtonContainer.setVisible(this.rerollCost === 0);
+      this.continueButtonContainer.setVisible(this.rerollCost < 0);
       this.lockRarityButtonContainer.setVisible(canLockRarities);
 
       this.scene.tweens.add({
@@ -276,7 +280,7 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
 
       this.scene.tweens.add({
         targets: [this.rerollButtonContainer],
-        alpha: this.rerollCost === 0 ? 0.5 : 1,
+        alpha: this.rerollCost < 0 ? 0.5 : 1,
         duration: 250
       });
 
@@ -537,6 +541,13 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
   }
 
   updateRerollCostText(): void {
+    const rerollDisabled = this.rerollCost < 0;
+    if (rerollDisabled) {
+      this.rerollCostText.setVisible(false);
+      return;
+    } else {
+      this.rerollCostText.setVisible(true);
+    }
     const canReroll = this.scene.money >= this.rerollCost;
 
     const formattedMoney = Utils.formatMoney(this.scene.moneyFormat, this.rerollCost);
