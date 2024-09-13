@@ -180,6 +180,13 @@ export default class BattleScene extends SceneBase {
   public moveAnimations: boolean = true;
   public expGainsSpeed: integer = 0;
   public skipSeenDialogues: boolean = false;
+  /**
+   * Determines if the egg hatching animation should be skipped
+   * - 0 = Never (never skip animation)
+   * - 1 = Ask (ask to skip animation when hatching 2 or more eggs)
+   * - 2 = Always (automatically skip animation when hatching 2 or more eggs)
+   */
+  public eggSkipPreference: number = 0;
 
   /**
      * Defines the experience gain display mode.
@@ -1170,8 +1177,7 @@ export default class BattleScene extends SceneBase {
 
       // Check for mystery encounter
       // Can only occur in place of a standard (non-boss) wild battle, waves 10-180
-      const highestMysteryEncounterWave = this.gameMode.maxMysteryEncounterWave;
-      const lowestMysteryEncounterWave = this.gameMode.minMysteryEncounterWave;
+      const [lowestMysteryEncounterWave, highestMysteryEncounterWave] = this.gameMode.getMysteryEncounterLegalWaves();
       if (this.gameMode.hasMysteryEncounters && newBattleType === BattleType.WILD && !this.gameMode.isBoss(newWaveIndex) && newWaveIndex < highestMysteryEncounterWave && newWaveIndex > lowestMysteryEncounterWave) {
         const roll = Utils.randSeedInt(MYSTERY_ENCOUNTER_SPAWN_MAX_WEIGHT);
 
@@ -3102,6 +3108,10 @@ export default class BattleScene extends SceneBase {
             return false;
           }
           if (encounterCandidate.encounterTier !== tier) { // Encounter is in tier
+            return false;
+          }
+          const disabledModes = encounterCandidate.disabledGameModes;
+          if (disabledModes && disabledModes.length > 0 && disabledModes.includes(this.gameMode.modeId)) { // Encounter is enabled for game mode
             return false;
           }
           if (!encounterCandidate.meetsRequirements!(this)) { // Meets encounter requirements

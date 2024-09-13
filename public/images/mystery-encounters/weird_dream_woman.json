@@ -1,33 +1,33 @@
 {
 	"textures": [
 		{
-			"image": "girawitch.png",
+			"image": "weird_dream_woman.png",
 			"format": "RGBA8888",
 			"size": {
-				"w": 46,
-				"h": 76
+				"w": 78,
+				"h": 87
 			},
 			"scale": 1,
 			"frames": [
 				{
 					"filename": "0001.png",
 					"rotated": false,
-					"trimmed": false,
+					"trimmed": true,
 					"sourceSize": {
-						"w": 46,
-						"h": 76
+						"w": 80,
+						"h": 87
 					},
 					"spriteSourceSize": {
-						"x": 0,
+						"x": 1,
 						"y": 0,
-						"w": 46,
-						"h": 76
+						"w": 78,
+						"h": 87
 					},
 					"frame": {
 						"x": 0,
 						"y": 0,
-						"w": 46,
-						"h": 76
+						"w": 78,
+						"h": 87
 					}
 				}
 			]
@@ -36,6 +36,6 @@
 	"meta": {
 		"app": "https://www.codeandweb.com/texturepacker",
 		"version": "3.0",
-		"smartupdate": "$TexturePacker:SmartUpdate:e68bbc186f511d505c53b2beec3c3741:7108795fc29d953a1d3729ad93d70936:1661aeeeb2f0e4561c644aff254770b3$"
+		"smartupdate": "$TexturePacker:SmartUpdate:d3cce87ee0e3a880d840bffe9373d5d4:7c776d33b75abad1fe36b14a5e5734af:56468b7a2883e66dadcd2af13ebd8010$"
 	}
 }

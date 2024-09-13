@@ -665,6 +665,24 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
     return this.getSpeciesForLevel(level, allowEvolving, true, strength, currentWave);
   }
 
+  /**
+   * @see {@linkcode getSpeciesForLevel} uses an ease in and ease out sine function:
+   * @see {@link https://easings.net/#easeInSine}
+   * @see {@link https://easings.net/#easeOutSine}
+   * Ease in is similar to an exponential function with slower growth, as in, x is directly related to y, and increase in y is higher for higher x.
+   * Ease out looks more similar to a logarithmic function shifted to the left. It's still a direct relation but it plateaus instead of increasing in growth.
+   *
+   * This function is used to calculate the x given to these functions, which is used for evolution chance.
+   *
+   * First is maxLevelDiff, which is a denominator for evolution chance for mons without wild evolution delay.
+   * This means a lower value of x will lead to a higher evolution chance.
+   *
+   * It's also used for preferredMinLevel, which is used when an evolution delay exists.
+   * The calculation with evolution delay is a weighted average of the easeIn and easeOut functions where preferredMinLevel is the denominator.
+   * This also means a lower value of x will lead to a higher evolution chance.
+   * @param strength {@linkcode PartyMemberStrength} The strength of the party member in question
+   * @returns {@linkcode integer} The level difference from expected evolution level tolerated for a mon to be unevolved. Lower value = higher evolution chance.
+   */
   private getStrengthLevelDiff(strength: PartyMemberStrength): integer {
     switch (Math.min(strength, PartyMemberStrength.STRONGER)) {
     case PartyMemberStrength.WEAKEST:
@@ -674,9 +692,9 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
     case PartyMemberStrength.WEAK:
       return 20;
     case PartyMemberStrength.AVERAGE:
-      return 10;
+      return 8;
     case PartyMemberStrength.STRONG:
-      return 5;
+      return 4;
     default:
       return 0;
     }
@@ -724,7 +742,7 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
           if (strength === PartyMemberStrength.STRONGER) {
             evolutionChance = 1;
           } else {
-            const maxLevelDiff = this.getStrengthLevelDiff(strength);
+            const maxLevelDiff = this.getStrengthLevelDiff(strength); //The maximum distance from the evolution level tolerated for the mon to not evolve
             const minChance: number = 0.875 - 0.125 * strength;
 
             evolutionChance = Math.min(minChance + easeInFunc(Math.min(level - ev.level, maxLevelDiff) / maxLevelDiff) * (1 - minChance), 1);
@@ -742,11 +760,6 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
 
           evolutionChance = Math.min(0.65 * easeInFunc(Math.min(Math.max(level - evolutionLevel, 0), preferredMinLevel) / preferredMinLevel) + 0.35 * easeOutFunc(Math.min(Math.max(level - evolutionLevel, 0), preferredMinLevel * 2.5) / (preferredMinLevel * 2.5)), 1);
         }
-      }
-      /* (Most) Trainers shouldn't be using unevolved Pokemon by the third gym leader / wave 80. Exceptions to this include Breeders, whose large teams are balanced by the use of weaker pokemon */
-      if (currentWave >= 80 && forTrainer && strength > PartyMemberStrength.WEAKER) {
-        evolutionChance = 1;
-        noEvolutionChance = 0;
       }
 
       if (evolutionChance > 0) {

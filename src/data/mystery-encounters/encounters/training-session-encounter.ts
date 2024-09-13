@@ -305,7 +305,7 @@ export const TrainingSessionEncounter: MysteryEncounter =
                     return true;
                   },
                   onHover: () => {
-                    showEncounterText(scene, ability.description, 0);
+                    showEncounterText(scene, ability.description, 0, 0, false);
                   },
                 };
                 optionSelectItems.push(option);

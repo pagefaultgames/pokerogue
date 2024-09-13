@@ -8532,6 +8532,7 @@ export function initMoves() {
         return userTypes.includes(Type.FIRE);
       })
       .attr(HealStatusEffectAttr, true, StatusEffect.FREEZE)
+      .attr(AddBattlerTagAttr, BattlerTagType.BURNED_UP, true, false)
       .attr(RemoveTypeAttr, Type.FIRE, (user) => {
         user.scene.queueMessage(i18next.t("moveTriggers:burnedItselfOut", {pokemonName: getPokemonNameWithAffix(user)}));
       }),
@@ -9315,6 +9316,7 @@ export function initMoves() {
         const userTypes = user.getTypes(true);
         return userTypes.includes(Type.ELECTRIC);
       })
+      .attr(AddBattlerTagAttr, BattlerTagType.DOUBLE_SHOCKED, true, false)
       .attr(RemoveTypeAttr, Type.ELECTRIC, (user) => {
         user.scene.queueMessage(i18next.t("moveTriggers:usedUpAllElectricity", {pokemonName: getPokemonNameWithAffix(user)}));
       }),

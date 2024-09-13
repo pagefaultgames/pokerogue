@@ -1,33 +1,33 @@
 {
 	"textures": [
 		{
-			"image": "gts_placeholder.png",
+			"image": "warehouse_crate.png",
 			"format": "RGBA8888",
 			"size": {
-				"w": 47,
-				"h": 79
+				"w": 71,
+				"h": 52
 			},
 			"scale": 1,
 			"frames": [
 				{
-					"filename": "0000.png",
+					"filename": "0001.png",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
 						"w": 80,
-						"h": 80
+						"h": 56
 					},
 					"spriteSourceSize": {
-						"x": 17,
-						"y": 1,
-						"w": 47,
-						"h": 79
+						"x": 5,
+						"y": 4,
+						"w": 71,
+						"h": 52
 					},
 					"frame": {
 						"x": 0,
 						"y": 0,
-						"w": 47,
-						"h": 79
+						"w": 71,
+						"h": 52
 					}
 				}
 			]
@@ -36,6 +36,6 @@
 	"meta": {
 		"app": "https://www.codeandweb.com/texturepacker",
 		"version": "3.0",
-		"smartupdate": "$TexturePacker:SmartUpdate:4e95cf5cd2b0329629c40dfe871e5ae0:cf1cd6aef867fcde2439177ebb561178:39ec800be807afcf5dd13b9cc59fc386$"
+		"smartupdate": "$TexturePacker:SmartUpdate:c8df5f0b35fb9c2a69b0e4aaa9fa9f91:f1d4643c26f2aed86ad77d354e669aaf:0c073e3c2048ea0779db9429e5e1d8bc$"
 	}
 }

@@ -30,9 +30,11 @@ interface GameModeConfig {
   isSplicedOnly?: boolean;
   isChallenge?: boolean;
   hasMysteryEncounters?: boolean;
-  minMysteryEncounterWave?: number;
-  maxMysteryEncounterWave?: number;
 }
+
+// Describes min and max waves for MEs in specific game modes
+const CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES: [number, number] = [10, 180];
+const CHALLENGE_MODE_MYSTERY_ENCOUNTER_WAVES: [number, number] = [10, 180];
 
 export class GameMode implements GameModeConfig {
   public modeId: GameModes;
@@ -60,8 +62,6 @@ export class GameMode implements GameModeConfig {
       this.challenges = allChallenges.map(c => copyChallenge(c));
     }
     this.battleConfig = battleConfig || {};
-    this.minMysteryEncounterWave = this.minMysteryEncounterWave ?? 0;
-    this.maxMysteryEncounterWave = this.maxMysteryEncounterWave ?? 100000;
   }
 
   /**
@@ -325,6 +325,17 @@ export class GameMode implements GameModeConfig {
     }
   }
 
+  getMysteryEncounterLegalWaves(): [number, number] {
+    switch (this.modeId) {
+    default:
+      return [0, 0];
+    case GameModes.CLASSIC:
+      return CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES;
+    case GameModes.CHALLENGE:
+      return CHALLENGE_MODE_MYSTERY_ENCOUNTER_WAVES;
+    }
+  }
+
   static getModeName(modeId: GameModes): string {
     switch (modeId) {
     case GameModes.CLASSIC:
@@ -344,7 +355,7 @@ export class GameMode implements GameModeConfig {
 export function getGameMode(gameMode: GameModes): GameMode {
   switch (gameMode) {
   case GameModes.CLASSIC:
-    return new GameMode(GameModes.CLASSIC, { isClassic: true, hasTrainers: true, hasMysteryEncounters: true, maxMysteryEncounterWave: 180, minMysteryEncounterWave: 10 }, classicFixedBattles);
+    return new GameMode(GameModes.CLASSIC, { isClassic: true, hasTrainers: true, hasMysteryEncounters: true }, classicFixedBattles);
   case GameModes.ENDLESS:
     return new GameMode(GameModes.ENDLESS, { isEndless: true, hasShortBiomes: true, hasRandomBosses: true });
   case GameModes.SPLICED_ENDLESS:
@@ -352,6 +363,6 @@ export function getGameMode(gameMode: GameModes): GameMode {
   case GameModes.DAILY:
     return new GameMode(GameModes.DAILY, { isDaily: true, hasTrainers: true, hasNoShop: true });
   case GameModes.CHALLENGE:
-    return new GameMode(GameModes.CHALLENGE, { isClassic: true, hasTrainers: true, isChallenge: true }, classicFixedBattles);
+    return new GameMode(GameModes.CHALLENGE, { isClassic: true, hasTrainers: true, isChallenge: true, hasMysteryEncounters: true }, classicFixedBattles);
   }
 }

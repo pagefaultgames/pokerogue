@@ -14,6 +14,7 @@ import { EncounterAnim } from "#app/data/battle-anims";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
+import { GameModes } from "#app/game-mode";
 
 export interface EncounterStartOfBattleEffect {
   sourcePokemon?: Pokemon;
@@ -36,6 +37,7 @@ export interface IMysteryEncounter {
   spriteConfigs: MysteryEncounterSpriteConfig[];
   encounterTier: MysteryEncounterTier;
   encounterAnimations?: EncounterAnim[];
+  disabledGameModes?: GameModes[];
   hideBattleIntroMessage: boolean;
   autoHideIntroVisuals: boolean;
   enterIntroVisualsFromRight: boolean;
@@ -85,6 +87,10 @@ export default class MysteryEncounter implements IMysteryEncounter {
    * Specify here so that assets are loaded on initialization of encounter
    */
   encounterAnimations?: EncounterAnim[];
+  /**
+   * If specified, defines any game modes where the MysteryEncounter should *NOT* spawn
+   */
+  disabledGameModes?: GameModes[];
   /**
    * If true, hides "A Wild X Appeared" etc. messages
    * Default true
@@ -628,6 +634,16 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
   withAnimations(...encounterAnimations: EncounterAnim[]): this & Required<Pick<IMysteryEncounter, "encounterAnimations">> {
     const animations = Array.isArray(encounterAnimations) ? encounterAnimations : [encounterAnimations];
     return Object.assign(this, { encounterAnimations: animations });
+  }
+
+  /**
+   * Defines any game modes where the Mystery Encounter should *NOT* spawn
+   * @returns
+   * @param disabledGameModes
+   */
+  withDisabledGameModes(...disabledGameModes: GameModes[]): this & Required<Pick<IMysteryEncounter, "disabledGameModes">> {
+    const gameModes = Array.isArray(disabledGameModes) ? disabledGameModes : [disabledGameModes];
+    return Object.assign(this, { disabledGameModes: gameModes });
   }
 
   /**

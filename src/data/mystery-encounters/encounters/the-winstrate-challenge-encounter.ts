@@ -1,4 +1,4 @@
-import { EnemyPartyConfig, generateModifierType, initBattleWithEnemyConfig, leaveEncounterWithoutBattle, setEncounterRewards, transitionMysteryEncounterIntroVisuals, } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
+import { EnemyPartyConfig, generateModifierType, generateModifierTypeOption, initBattleWithEnemyConfig, leaveEncounterWithoutBattle, setEncounterRewards, transitionMysteryEncounterIntroVisuals, } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import { modifierTypes, PokemonHeldItemModifierType } from "#app/modifier/modifier-type";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import BattleScene from "#app/battle-scene";
@@ -21,6 +21,7 @@ import { PartyHealPhase } from "#app/phases/party-heal-phase";
 import { ShowTrainerPhase } from "#app/phases/show-trainer-phase";
 import { ReturnPhase } from "#app/phases/return-phase";
 import i18next from "i18next";
+import { ModifierTier } from "#app/modifier/modifier-tier";
 
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounter:theWinstrateChallenge";
@@ -149,9 +150,12 @@ async function spawnNextTrainerOrEndEncounter(scene: BattleScene) {
     await showEncounterText(scene, i18next.t("battle:rewardGain", { modifierName: newModifier?.type.name }));
 
     await showEncounterDialogue(scene, `${namespace}.victory_2`, `${namespace}.speaker`);
-    setEncounterRewards(scene, { guaranteedModifierTypeFuncs: [modifierTypes.MYSTERY_ENCOUNTER_MACHO_BRACE], fillRemaining: false });
+    scene.ui.clearText(); // Clears "Winstrate" title from screen as rewards get animated in
+    const machoBrace = generateModifierTypeOption(scene, modifierTypes.MYSTERY_ENCOUNTER_MACHO_BRACE)!;
+    machoBrace.type.tier = ModifierTier.MASTER;
+    setEncounterRewards(scene, { guaranteedModifierTypeOptions: [machoBrace], fillRemaining: false });
     encounter.doContinueEncounter = undefined;
-    leaveEncounterWithoutBattle(scene, false, MysteryEncounterMode.TRAINER_BATTLE);
+    leaveEncounterWithoutBattle(scene, false, MysteryEncounterMode.NO_BATTLE);
   } else {
     await initBattleWithEnemyConfig(scene, nextConfig);
   }
