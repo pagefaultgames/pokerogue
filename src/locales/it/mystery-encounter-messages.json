@@ -2,5 +2,6 @@
   "paid_money": "Hai pagato {{amount, number}}₽.",
   "receive_money": "Hai ricevuto {{amount, number}}₽!",
   "affects_pokedex": "Influisce sul Pokédex",
-  "cancel_option": "Torna alla scelta dell'incontro."
+  "cancel_option": "Torna alla scelta dell'incontro.",
+  "view_party_button": "View Party"
 }
