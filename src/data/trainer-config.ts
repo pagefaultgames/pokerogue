@@ -2013,7 +2013,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setPartyMemberFunc(5, getRandomPartyMemberFunc([ Species.COPPERAJAH ], TrainerSlot.TRAINER, true, p => {
       p.setBoss(true, 2);
       p.generateAndPopulateMoveset();
-      p.formIndex = 1;
+      p.formIndex = 1; // G-Max Copperajah
       p.generateName();
       p.pokeball = PokeballType.ULTRA_BALL;
     })),
@@ -2037,7 +2037,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setPartyMemberFunc(5, getRandomPartyMemberFunc([ Species.COPPERAJAH ], TrainerSlot.TRAINER, true, p => {
       p.setBoss(true, 2);
       p.generateAndPopulateMoveset();
-      p.formIndex = 1;
+      p.formIndex = 1; // G-Max Copperajah
       p.generateName();
       p.pokeball = PokeballType.ULTRA_BALL;
     })),
