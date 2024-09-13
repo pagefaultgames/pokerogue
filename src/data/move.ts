@@ -8079,7 +8079,7 @@ export function initMoves() {
       .attr(MovePowerMultiplierAttr, (user, target, move) => target.status && (target.status.effect === StatusEffect.POISON || target.status.effect === StatusEffect.TOXIC) ? 2 : 1),
     new SelfStatusMove(Moves.AUTOTOMIZE, Type.STEEL, -1, 15, -1, 0, 5)
       .attr(StatStageChangeAttr, [ Stat.SPD ], 2, true)
-      .partial(),
+      .attr(AddBattlerTagAttr, BattlerTagType.AUTOTOMIZED, true),
     new SelfStatusMove(Moves.RAGE_POWDER, Type.BUG, -1, 20, -1, 2, 5)
       .powderMove()
       .attr(AddBattlerTagAttr, BattlerTagType.CENTER_OF_ATTENTION, true),

@@ -79,4 +79,5 @@ export enum BattlerTagType {
   TAR_SHOT = "TAR_SHOT",
   BURNED_UP = "BURNED_UP",
   DOUBLE_SHOCKED = "DOUBLE_SHOCKED",
+  AUTOTOMIZED = "AUTOTOMIZED",
 }
