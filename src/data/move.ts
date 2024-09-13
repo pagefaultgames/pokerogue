@@ -8177,6 +8177,7 @@ export function initMoves() {
         MovePowerMultiplierAttr,
         (user, target, move) =>  target.status || target.hasAbility(Abilities.COMATOSE)? 2 : 1),
     new AttackMove(Moves.SKY_DROP, Type.FLYING, MoveCategory.PHYSICAL, 60, 100, 10, -1, 0, 5)
+      .partial() // Should immobilize the target, Flying types should take no damage. cf https://bulbapedia.bulbagarden.net/wiki/Sky_Drop_(move) and https://www.smogon.com/dex/sv/moves/sky-drop/
       .attr(ChargeAttr, ChargeAnim.SKY_DROP_CHARGING, i18next.t("moveTriggers:tookTargetIntoSky", {pokemonName: "{USER}", targetName: "{TARGET}"}), BattlerTagType.FLYING) // TODO: Add 2nd turn message
       .condition(failOnGravityCondition)
       .condition((user, target, move) => !target.getTag(BattlerTagType.SUBSTITUTE))
@@ -8717,6 +8718,7 @@ export function initMoves() {
         return userTypes.includes(Type.FIRE);
       })
       .attr(HealStatusEffectAttr, true, StatusEffect.FREEZE)
+      .attr(AddBattlerTagAttr, BattlerTagType.BURNED_UP, true, false)
       .attr(RemoveTypeAttr, Type.FIRE, (user) => {
         user.scene.queueMessage(i18next.t("moveTriggers:burnedItselfOut", {pokemonName: getPokemonNameWithAffix(user)}));
       }),
@@ -9504,6 +9506,7 @@ export function initMoves() {
         const userTypes = user.getTypes(true);
         return userTypes.includes(Type.ELECTRIC);
       })
+      .attr(AddBattlerTagAttr, BattlerTagType.DOUBLE_SHOCKED, true, false)
       .attr(RemoveTypeAttr, Type.ELECTRIC, (user) => {
         user.scene.queueMessage(i18next.t("moveTriggers:usedUpAllElectricity", {pokemonName: getPokemonNameWithAffix(user)}));
       }),
