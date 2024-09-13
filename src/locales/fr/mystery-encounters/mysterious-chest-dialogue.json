@@ -1,23 +1,23 @@
 {
-  "intro": "You found...@d{32} a chest?",
-  "title": "The Mysterious Chest",
-  "description": "A beautifully ornamented chest stands on the ground. There must be something good inside... right?",
-  "query": "Will you open it?",
+  "intro": "Vous tombez sur…@d{32} un coffre ?",
+  "title": "Un étrange coffre",
+  "description": "Un mangifique coffre orné est posé en travers du chemin. Il doit forcément contenir quelque chose… pas vrai ?",
+  "query": "Voulez-vous ouvrir le coffre ?",
   "option": {
     "1": {
-      "label": "Open It",
-      "tooltip": "@[SUMMARY_BLUE]{(35%) Something terrible}\n@[SUMMARY_GREEN]{(40%) Okay Rewards}\n@[SUMMARY_GREEN]{(20%) Good Rewards}\n@[SUMMARY_GREEN]{(4%) Great Rewards}\n@[SUMMARY_GREEN]{(1%) Amazing Rewards}",
-      "selected": "You open the chest to find...",
-      "normal": "Just some normal tools and items.",
-      "good": "Some pretty nice tools and items.",
-      "great": "A couple great tools and items!",
-      "amazing": "Whoa! An amazing item!",
-      "bad": "Oh no!@d{32}\nThe chest was actually a {{gimmighoulName}} in disguise!$Your {{pokeName}} jumps in front of you\nbut is KOed in the process!"
+      "label": "Ouvrir",
+      "tooltip": "@[SUMMARY_BLUE]{(35%) Un truc terrible}\n@[SUMMARY_GREEN]{(40%) Petites récompenses }\n@[SUMMARY_GREEN]{(20%) Bonnes récompenses}\n@[SUMMARY_GREEN]{(4%) Super récompenses}\n@[SUMMARY_GREEN]{(1%) Incroyables récompenses}",
+      "selected": "Vous décidez d’ouvrir le coffre et y trouvez…",
+      "normal": "De simples outils et objets banaux.",
+      "good": "Quelques bons outils et objets.",
+      "great": "Un outil et un objet plutôt sympas !",
+      "amazing": "Wow ! Quel objet incroyable !",
+      "bad": "Oh non !@d{32}\nCe coffre s’avère être possédé par un {{gimmighoulName}} !$Votre {{pokeName}} s’interpose\nmais est mis K.O. !"
     },
     "2": {
-      "label": "Too Risky, Leave",
-      "tooltip": "(-) No Rewards",
-      "selected": "You hurry along your way,\nwith a slight feeling of regret."
+      "label": "Trop risqué, partir",
+      "tooltip": "(-) Aucun récompense",
+      "selected": "Vous tracez votre chemin,\navec un léger sentiment de regret."
     }
   }
 }
