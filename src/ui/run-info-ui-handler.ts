@@ -541,7 +541,9 @@ export default class RunInfoUiHandler extends UiHandler {
       // Contains Name, Level + Nature, Ability, Passive
       const pokeInfoTextContainer = this.scene.add.container(-85, 3.5);
       const textContainerFontSize = "34px";
-      const pNature = getNatureName(pokemon.nature);
+      // This checks if the Pokemon's nature has been overwritten during the run and displays the change accurately
+      const pNature = pokemon.getNature();
+      const pNatureName = getNatureName(pNature);
       const pName = pokemon.getNameToRender();
       //With the exception of Korean/Traditional Chinese/Simplified Chinese, the code shortens the terms for ability and passive to their first letter.
       //These languages are exempted because they are already short enough.
@@ -557,7 +559,7 @@ export default class RunInfoUiHandler extends UiHandler {
       // Japanese is set to a greater line spacing of 35px in addBBCodeTextObject() if lineSpacing < 12.
       const lineSpacing = (i18next.resolvedLanguage === "ja") ? 12 : 3;
       const pokeInfoText = addBBCodeTextObject(this.scene, 0, 0, pName, TextStyle.SUMMARY, {fontSize: textContainerFontSize, lineSpacing: lineSpacing});
-      pokeInfoText.appendText(`${i18next.t("saveSlotSelectUiHandler:lv")}${Utils.formatFancyLargeNumber(pokemon.level, 1)} - ${pNature}`);
+      pokeInfoText.appendText(`${i18next.t("saveSlotSelectUiHandler:lv")}${Utils.formatFancyLargeNumber(pokemon.level, 1)} - ${pNatureName}`);
       pokeInfoText.appendText(pAbilityInfo);
       pokeInfoText.appendText(pPassiveInfo);
       pokeInfoTextContainer.add(pokeInfoText);
@@ -568,7 +570,7 @@ export default class RunInfoUiHandler extends UiHandler {
       const pStats : string[]= [];
       pokemon.stats.forEach((element) => pStats.push(Utils.formatFancyLargeNumber(element, 1)));
       for (let i = 0; i < pStats.length; i++) {
-        const isMult = getNatureStatMultiplier(pokemon.nature, i);
+        const isMult = getNatureStatMultiplier(pNature, i);
         pStats[i] = (isMult < 1) ? pStats[i] + "[color=#40c8f8]↓[/color]" : pStats[i];
         pStats[i] = (isMult > 1) ? pStats[i] + "[color=#f89890]↑[/color]" : pStats[i];
       }
@@ -889,10 +891,12 @@ export default class RunInfoUiHandler extends UiHandler {
       }
       break;
     case Button.CYCLE_ABILITY:
-      if (this.partyVisibility) {
-        this.showParty(false);
-      } else {
-        this.showParty(true);
+      if (this.runInfo.modifiers.length !== 0) {
+        if (this.partyVisibility) {
+          this.showParty(false);
+        } else {
+          this.showParty(true);
+        }
       }
       break;
     }
