@@ -35,7 +35,7 @@ describe("Moves - Power Trick", () => {
       .ability(Abilities.NONE);
   });
 
-  it("swaps user's ATK with it's DEF stat", async () => {
+  it("swaps the user's ATK and DEF stats", async () => {
     await game.classicMode.startBattle([Species.SHUCKLE]);
 
     const player = game.scene.getPlayerPokemon()!;
