@@ -11,6 +11,7 @@ import { Stat } from "#enums/stat";
 import BattleFlyout from "./battle-flyout";
 import { WindowVariant, addWindow } from "./ui-theme";
 import i18next from "i18next";
+import { ExpGainsSpeed } from "#app/enums/exp-gains-speed";
 
 export default class BattleInfo extends Phaser.GameObjects.Container {
   private baseY: number;
@@ -704,8 +705,8 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
       const durationMultiplier = Phaser.Tweens.Builders.GetEaseFunction("Sine.easeIn")(1 - (Math.max(this.lastLevel - 100, 0) / 150));
       let duration = this.visible && !instant ? (((levelExp - this.lastLevelExp) / relLevelExp) * 1650) * durationMultiplier * levelDurationMultiplier : 0;
       const speed = (this.scene as BattleScene).expGainsSpeed;
-      if (speed) {
-        duration = speed >= 3 ? 0 : duration / Math.pow(2, speed);
+      if (speed && speed >= ExpGainsSpeed.DEFAULT) {
+        duration = speed >= ExpGainsSpeed.SKIP ? ExpGainsSpeed.DEFAULT : duration / Math.pow(2, speed);
       }
       if (ratio === 1) {
         this.lastLevelExp = 0;
