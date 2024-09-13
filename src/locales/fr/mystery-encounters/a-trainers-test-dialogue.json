@@ -31,11 +31,11 @@
   "option": {
     "1": {
       "label": "Accepter le défi",
-      "tooltip": "(-) Combat difficile\n(+) Gain d’un @[TOOLTIP_TITLE]{Very Rare Egg}"
+      "tooltip": "(-) Combat difficile\n(+) Gain d’un @[TOOLTIP_TITLE]{Œuf très rare}"
     },
     "2": {
       "label": "Décliner le défi",
-      "tooltip": "(+) Équipe soignée \n(+) Gain d’un @[TOOLTIP_TITLE]{Egg}"
+      "tooltip": "(+) Équipe soignée \n(+) Gain d’un @[TOOLTIP_TITLE]{Œuf}"
     }
   },
   "eggTypes": {
