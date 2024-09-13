@@ -5,7 +5,7 @@
   "query": "Que voulez-vous faire ?",
   "option": {
     "1": {
-      "label": "Combattre le Pokémon",
+      "label": "Affronter le Pokémon",
       "tooltip": "(-) Combat difficile\n(+) Nouvel objet",
       "selected": "Vous approchez\nle Pokémon sans frémir.",
       "stat_boost": "Les forces dormantes du {{enemyPokemon}} augmentent une de ses stats !"
