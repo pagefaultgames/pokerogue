@@ -9,7 +9,7 @@
       "tooltip": "(-) Combat difficile\n(+) Récompenses de sa planque à Baies",
       "selected": "Le {{greedentName}} gonfle ses joues\net se prépare au combat !",
       "boss_enraged": "L’insatiable amour de {{greedentName}} pour la nourriture le rend furieux !",
-      "food_stash": "Il semblerait que {{greedentName}} gardait une pile de nourriture colossale !$@s{item_fanfare}Tous les Pokémon de votre équipe remportent une Résugraine !"
+      "food_stash": "Il semblerait que {{greedentName}} gardait une pile de nourriture colossale !$@s{item_fanfare}Tous les Pokémon de votre équipe remportent une {{foodReward}} !"
     },
     "2": {
       "label": "Négocier",
