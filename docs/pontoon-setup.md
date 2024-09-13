@@ -169,3 +169,7 @@ I still havent figured this part fully out but you have to use the django admin 
 3. Scroll a bit down and you should see a huge `Groups` and `User Permissions` matrix.
     - ![pontoon-groups-permissions-matrix](/docs/img/pontoon-groups-permissions-matrix.png) 
 4. Go Wild!
+
+## Sync Process
+
+See [sync/README.md](https://github.com/mozilla/pontoon/blob/main/pontoon/sync/README.md)
