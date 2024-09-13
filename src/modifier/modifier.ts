@@ -15,13 +15,13 @@ import { BerryType } from "#enums/berry-type";
 import { StatusEffect, getStatusEffectHealText } from "../data/status-effect";
 import { achvs } from "../system/achv";
 import { VoucherType } from "../system/voucher";
-import { FormChangeItem, SpeciesFormChangeItemTrigger } from "../data/pokemon-forms";
+import { FormChangeItem, SpeciesFormChangeItemTrigger, SpeciesFormChangeLapseTeraTrigger, SpeciesFormChangeTeraTrigger } from "../data/pokemon-forms";
 import { Nature } from "#app/data/nature";
 import Overrides from "#app/overrides";
 import { ModifierType, modifierTypes } from "./modifier-type";
 import { Command } from "#app/ui/command-ui-handler";
 import { Species } from "#enums/species";
-import { Stat, type PermanentStat, type TempBattleStat, BATTLE_STATS, TEMP_BATTLE_STATS  } from "#app/enums/stat";
+import { Stat, type PermanentStat, type TempBattleStat, BATTLE_STATS, TEMP_BATTLE_STATS } from "#app/enums/stat";
 import i18next from "i18next";
 
 import { allMoves } from "#app/data/move";
@@ -29,6 +29,7 @@ import { Abilities } from "#app/enums/abilities";
 import { LearnMovePhase } from "#app/phases/learn-move-phase";
 import { LevelUpPhase } from "#app/phases/level-up-phase";
 import { PokemonHealPhase } from "#app/phases/pokemon-heal-phase";
+import { SpeciesFormKey } from "#app/data/pokemon-species";
 
 export type ModifierPredicate = (modifier: Modifier) => boolean;
 
@@ -367,6 +368,10 @@ export abstract class LapsingPersistentModifier extends PersistentModifier {
     return container;
   }
 
+  getIconStackText(_scene: BattleScene, _virtual?: boolean): Phaser.GameObjects.BitmapText | null {
+    return null;
+  }
+
   getBattleCount(): number {
     return this.battleCount;
   }
@@ -384,7 +389,8 @@ export abstract class LapsingPersistentModifier extends PersistentModifier {
   }
 
   getMaxStackCount(_scene: BattleScene, _forThreshold?: boolean): number {
-    return 1;
+    // Must be an abitrary number greater than 1
+    return 2;
   }
 }
 
@@ -757,6 +763,7 @@ export class TerastallizeModifier extends LapsingPokemonHeldItemModifier {
   apply(args: any[]): boolean {
     const pokemon = args[0] as Pokemon;
     if (pokemon.isPlayer()) {
+      pokemon.scene.triggerPokemonFormChange(pokemon, SpeciesFormChangeTeraTrigger);
       pokemon.scene.validateAchv(achvs.TERASTALLIZE);
       if (this.teraType === Type.STELLAR) {
         pokemon.scene.validateAchv(achvs.STELLAR_TERASTALLIZE);
@@ -770,6 +777,7 @@ export class TerastallizeModifier extends LapsingPokemonHeldItemModifier {
     const ret = super.lapse(args);
     if (!ret) {
       const pokemon = args[0] as Pokemon;
+      pokemon.scene.triggerPokemonFormChange(pokemon, SpeciesFormChangeLapseTeraTrigger);
       pokemon.updateSpritePipelineData();
     }
     return ret;
@@ -787,7 +795,7 @@ export class TerastallizeModifier extends LapsingPokemonHeldItemModifier {
 /**
  * Modifier used for held items, specifically vitamins like Carbos, Hp Up, etc., that
  * increase the value of a given {@linkcode PermanentStat}.
- * @extends LapsingPersistentModifier
+ * @extends PokemonHeldItemModifier
  * @see {@linkcode apply}
  */
 export class BaseStatModifier extends PokemonHeldItemModifier {
@@ -916,6 +924,18 @@ export class EvolutionStatBoosterModifier extends StatBoosterModifier {
 
   matchType(modifier: Modifier): boolean {
     return modifier instanceof EvolutionStatBoosterModifier;
+  }
+
+  /**
+   * Checks if the stat boosts can apply and if the holder is not currently
+   * Gigantamax'd.
+   * @param args [0] {@linkcode Pokemon} that holds the held item
+   *             [1] {@linkcode Stat} N/A
+   *             [2] {@linkcode Utils.NumberHolder} N/A
+   * @returns true if the stat boosts can be applied, false otherwise
+   */
+  shouldApply(args: any[]): boolean {
+    return super.shouldApply(args) && ((args[0] as Pokemon).getFormKey() !== SpeciesFormKey.GIGANTAMAX);
   }
 
   /**
@@ -2925,6 +2945,10 @@ export function overrideHeldItems(scene: BattleScene, pokemon: Pokemon, isPlayer
   const heldItemsOverride: ModifierTypes.ModifierOverride[] = isPlayer ? Overrides.STARTING_HELD_ITEMS_OVERRIDE : Overrides.OPP_HELD_ITEMS_OVERRIDE;
   if (!heldItemsOverride || heldItemsOverride.length === 0 || !scene) {
     return;
+  }
+
+  if (!isPlayer) {
+    scene.clearEnemyHeldItemModifiers();
   }
 
   heldItemsOverride.forEach(item => {
