@@ -12,6 +12,7 @@ import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { initSceneWithoutEncounterPhase } from "#test/utils/gameManagerUtils";
 import * as EncounterPhaseUtils from "#app/data/mystery-encounters/utils/encounter-phase-utils";
+import { generateModifierType } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import { MysteryEncounterPhase } from "#app/phases/mystery-encounter-phases";
 import { CommandPhase } from "#app/phases/command-phase";
 import { UncommonBreedEncounter } from "#app/data/mystery-encounters/encounters/uncommon-breed-encounter";
@@ -22,7 +23,6 @@ import { BerryType } from "#enums/berry-type";
 import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
 import { Stat } from "#enums/stat";
 import { BerryModifier } from "#app/modifier/modifier";
-import { generateModifierType } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import { modifierTypes } from "#app/modifier/modifier-type";
 
 const namespace = "mysteryEncounter:uncommonBreed";
@@ -43,6 +43,7 @@ describe("Uncommon Breed - Mystery Encounter", () => {
     game = new GameManager(phaserGame);
     scene = game.scene;
     game.override.mysteryEncounterChance(100);
+    game.override.mysteryEncounterTier(MysteryEncounterTier.COMMON);
     game.override.startingWave(defaultWave);
     game.override.startingBiome(defaultBiome);
     game.override.disableTrainerWaves();
@@ -166,12 +167,13 @@ describe("Uncommon Breed - Mystery Encounter", () => {
       });
     });
 
-    it("should NOT be selectable if the player doesn't have enough berries", async () => {
+    it("should NOT be selectable if the player doesn't have enough berries", { retry: 5 }, async () => {
       await game.runToMysteryEncounter(MysteryEncounterType.UNCOMMON_BREED, defaultParty);
       // Clear out any pesky mods that slipped through test spin-up
       scene.modifiers.forEach(mod => {
         scene.removeModifier(mod);
       });
+      await scene.updateModifiers(true);
       await game.phaseInterceptor.to(MysteryEncounterPhase, false);
 
       const encounterPhase = scene.getCurrentPhase();

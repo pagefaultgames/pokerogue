@@ -29,6 +29,7 @@ import { Moves } from "#enums/moves";
 import { EncounterAnim, EncounterBattleAnim } from "#app/data/battle-anims";
 import { MoveCategory } from "#app/data/move";
 import { MysteryEncounterPokemonData } from "#app/data/mystery-encounters/mystery-encounter-pokemon-data";
+import { GameModes } from "#app/game-mode";
 
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounter:clowningAround";
@@ -59,6 +60,7 @@ const RANDOM_ABILITY_POOL = [
 export const ClowningAroundEncounter: MysteryEncounter =
   MysteryEncounterBuilder.withEncounterType(MysteryEncounterType.CLOWNING_AROUND)
     .withEncounterTier(MysteryEncounterTier.ULTRA)
+    .withDisabledGameModes(GameModes.CHALLENGE)
     .withSceneWaveRangeRequirement(80, 180)
     .withAnimations(EncounterAnim.SMOKESCREEN)
     .withAutoHideIntroVisuals(false)

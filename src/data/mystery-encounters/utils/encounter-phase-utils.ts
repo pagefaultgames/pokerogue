@@ -456,7 +456,7 @@ export function selectPokemonForOption(scene: BattleScene, onPokemonSelected: (p
                   return true;
                 },
                 onHover: () => {
-                  showEncounterText(scene, i18next.t("mysteryEncounterMessages:cancel_option"), 0);
+                  showEncounterText(scene, i18next.t("mysteryEncounterMessages:cancel_option"), 0, 0, false);
                 }
               });
 
@@ -570,7 +570,7 @@ export function selectOptionThenPokemon(scene: BattleScene, options: OptionSelec
         if (onHoverOverCancelOption) {
           onHoverOverCancelOption();
         }
-        scene.ui.showText(i18next.t("mysteryEncounterMessages:cancel_option"));
+        showEncounterText(scene, i18next.t("mysteryEncounterMessages:cancel_option"), 0, 0, false);
       }
     });
 

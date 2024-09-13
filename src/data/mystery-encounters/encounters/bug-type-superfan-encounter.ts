@@ -424,7 +424,7 @@ export const BugTypeSuperfanEncounter: MysteryEncounter =
         scene.updateModifiers(true, true);
 
         const bugNet = generateModifierTypeOption(scene, modifierTypes.MYSTERY_ENCOUNTER_GOLDEN_BUG_NET)!;
-        bugNet.type.tier = ModifierTier.MASTER;
+        bugNet.type.tier = ModifierTier.ROGUE;
 
         setEncounterRewards(scene, { guaranteedModifierTypeOptions: [bugNet], guaranteedModifierTypeFuncs: [modifierTypes.REVIVER_SEED], fillRemaining: false });
         leaveEncounterWithoutBattle(scene, true);

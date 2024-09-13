@@ -19,7 +19,7 @@ import PokemonData from "#app/system/pokemon-data";
 import i18next from "i18next";
 import { Gender, getGenderSymbol } from "#app/data/gender";
 import { getNatureName } from "#app/data/nature";
-import { getPokeballAtlasKey, getPokeballTintColor } from "#app/data/pokeball";
+import { getPokeballAtlasKey, getPokeballTintColor, PokeballType } from "#app/data/pokeball";
 import { getEncounterText, showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
 import { trainerNamePools } from "#app/data/trainer-names";
 
@@ -74,10 +74,13 @@ export const GlobalTradeSystemEncounter: MysteryEncounter =
     .withAutoHideIntroVisuals(false)
     .withIntroSpriteConfigs([
       {
-        spriteKey: "gts_placeholder",
+        spriteKey: "global_trade_system",
         fileRoot: "mystery-encounters",
-        hasShadow: false,
-        disableAnimation: true
+        hasShadow: true,
+        disableAnimation: true,
+        x: 3,
+        y: 5,
+        yShadow: 1
       }
     ])
     .withIntroDialogue([
@@ -92,11 +95,14 @@ export const GlobalTradeSystemEncounter: MysteryEncounter =
       const encounter = scene.currentBattle.mysteryEncounter!;
 
       // Load bgm
+      let bgmKey: string;
       if (scene.musicPreference === 0) {
-        scene.loadBgm("mystery_encounter_gen_5_gts", "mystery_encounter_gen_5_gts.mp3");
+        bgmKey = "mystery_encounter_gen_5_gts";
+        scene.loadBgm(bgmKey, `${bgmKey}.mp3`);
       } else {
         // Mixed option
-        scene.loadBgm("mystery_encounter_gen_6_gts", "mystery_encounter_gen_6_gts.mp3");
+        bgmKey = "mystery_encounter_gen_6_gts";
+        scene.loadBgm(bgmKey, `${bgmKey}.mp3`);
       }
 
       // Load possible trade options
@@ -104,7 +110,8 @@ export const GlobalTradeSystemEncounter: MysteryEncounter =
       // None of the trade options can be the same species
       const tradeOptionsMap: Map<number, EnemyPokemon[]> = getPokemonTradeOptions(scene);
       encounter.misc = {
-        tradeOptionsMap
+        tradeOptionsMap,
+        bgmKey
       };
 
       return true;
@@ -113,11 +120,7 @@ export const GlobalTradeSystemEncounter: MysteryEncounter =
       // Change the bgm
       scene.fadeOutBgm(1500, false);
       scene.time.delayedCall(1500, () => {
-        if (scene.musicPreference === 0) {
-          scene.playBgm("mystery_encounter_gen_5_gts");
-        } else {
-          scene.playBgm("mystery_encounter_gen_6_gts");
-        }
+        scene.playBgm(scene.currentBattle.mysteryEncounter!.misc.bgmKey);
       });
 
       return true;
@@ -147,17 +150,15 @@ export const GlobalTradeSystemEncounter: MysteryEncounter =
                   // Pokemon trade selected
                   encounter.setDialogueToken("tradedPokemon", pokemon.getNameToRender());
                   encounter.setDialogueToken("received", tradePokemon.getNameToRender());
-                  encounter.misc = {
-                    tradedPokemon: pokemon,
-                    receivedPokemon: tradePokemon,
-                  };
+                  encounter.misc.tradedPokemon = pokemon;
+                  encounter.misc.receivedPokemon = tradePokemon;
                   return true;
                 },
                 onHover: () => {
                   const formName = tradePokemon.species.forms?.[pokemon.formIndex]?.formName;
                   const line1 = i18next.t("pokemonInfoContainer:ability") + " " + tradePokemon.getAbility().name + (tradePokemon.getGender() !== Gender.GENDERLESS ? "     |     " + i18next.t("pokemonInfoContainer:gender") + " " + getGenderSymbol(tradePokemon.getGender()) : "");
                   const line2 = i18next.t("pokemonInfoContainer:nature") + " " + getNatureName(tradePokemon.getNature()) + (formName ? "     |     " + i18next.t("pokemonInfoContainer:form") + " " + formName : "");
-                  showEncounterText(scene, `${line1}\n${line2}`, 0);
+                  showEncounterText(scene, `${line1}\n${line2}`, 0, 0, false);
                 },
               };
               return option;
@@ -181,7 +182,8 @@ export const GlobalTradeSystemEncounter: MysteryEncounter =
 
           // Set data properly, then generate the new Pokemon's assets
           receivedPokemonData.passive = tradedPokemon.passive;
-          receivedPokemonData.pokeball = randSeedInt(5);
+          // Pokeball to Ultra ball, randomly
+          receivedPokemonData.pokeball = randInt(4) as PokeballType;
           const dataSource = new PokemonData(receivedPokemonData);
           const newPlayerPokemon = scene.addPlayerPokemon(receivedPokemonData.species, receivedPokemonData.level, dataSource.abilityIndex, dataSource.formIndex, dataSource.gender, dataSource.shiny, dataSource.variant, dataSource.ivs, dataSource.nature, dataSource);
           scene.getParty().push(newPlayerPokemon);
@@ -196,7 +198,7 @@ export const GlobalTradeSystemEncounter: MysteryEncounter =
           await showTradeBackground(scene);
           await doPokemonTradeSequence(scene, tradedPokemon, newPlayerPokemon);
           await showEncounterText(scene, `${namespace}.trade_received`, null, 0, true, 4000);
-          scene.playBgm("mystery_encounter_gts");
+          scene.playBgm(encounter.misc.bgmKey);
           await hideTradeBackground(scene);
           tradedPokemon.destroy();
 
@@ -241,10 +243,8 @@ export const GlobalTradeSystemEncounter: MysteryEncounter =
 
             encounter.setDialogueToken("tradedPokemon", pokemon.getNameToRender());
             encounter.setDialogueToken("received", tradePokemon.getNameToRender());
-            encounter.misc = {
-              tradedPokemon: pokemon,
-              receivedPokemon: tradePokemon,
-            };
+            encounter.misc.tradedPokemon = pokemon;
+            encounter.misc.receivedPokemon = tradePokemon;
           };
 
           return selectPokemonForOption(scene, onPokemonSelected);
@@ -264,7 +264,7 @@ export const GlobalTradeSystemEncounter: MysteryEncounter =
 
           // Set data properly, then generate the new Pokemon's assets
           receivedPokemonData.passive = tradedPokemon.passive;
-          receivedPokemonData.pokeball = randSeedInt(5);
+          receivedPokemonData.pokeball = randInt(4) as PokeballType;
           const dataSource = new PokemonData(receivedPokemonData);
           const newPlayerPokemon = scene.addPlayerPokemon(receivedPokemonData.species, receivedPokemonData.level, dataSource.abilityIndex, dataSource.formIndex, dataSource.gender, dataSource.shiny, dataSource.variant, dataSource.ivs, dataSource.nature, dataSource);
           scene.getParty().push(newPlayerPokemon);
@@ -279,7 +279,7 @@ export const GlobalTradeSystemEncounter: MysteryEncounter =
           await showTradeBackground(scene);
           await doPokemonTradeSequence(scene, tradedPokemon, newPlayerPokemon);
           await showEncounterText(scene, `${namespace}.trade_received`, null, 0, true, 4000);
-          scene.playBgm("mystery_encounter_gts");
+          scene.playBgm(scene.currentBattle.mysteryEncounter!.misc.bgmKey);
           await hideTradeBackground(scene);
           tradedPokemon.destroy();
 
@@ -309,9 +309,7 @@ export const GlobalTradeSystemEncounter: MysteryEncounter =
                 handler: () => {
                   // Pokemon and item selected
                   encounter.setDialogueToken("chosenItem", modifier.type.name);
-                  encounter.misc = {
-                    chosenModifier: modifier,
-                  };
+                  encounter.misc.chosenModifier = modifier;
                   return true;
                 },
               };

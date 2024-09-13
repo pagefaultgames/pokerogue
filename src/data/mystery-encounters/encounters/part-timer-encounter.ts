@@ -26,18 +26,18 @@ export const PartTimerEncounter: MysteryEncounter =
     .withSceneWaveRangeRequirement(10, 180)
     .withIntroSpriteConfigs([
       {
+        spriteKey: "warehouse_crate",
+        fileRoot: "mystery-encounters",
+        hasShadow: false,
+        y: 6,
+        x: 15
+      },
+      {
         spriteKey: "worker_f",
         fileRoot: "trainer",
         hasShadow: true,
-        x: -20
-      },
-      {
-        spriteKey: "training_gear",
-        fileRoot: "mystery-encounters",
-        hasShadow: true,
-        y: 6,
-        x: 20,
-        yShadow: -2
+        x: -18,
+        y: 4
       }
     ])
     .withAutoHideIntroVisuals(false)

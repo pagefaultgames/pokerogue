@@ -53,22 +53,23 @@ export const UncommonBreedEncounter: MysteryEncounter =
       const species = scene.arena.randomSpecies(scene.currentBattle.waveIndex, level, 0, getPartyLuckValue(scene.getParty()), true);
       const pokemon = new EnemyPokemon(scene, species, level, TrainerSlot.NONE, true);
       const speciesRootForm = pokemon.species.getRootSpeciesId();
-      encounter.misc = {
-        pokemon
-      };
 
       // Pokemon will always have one of its egg moves in its moveset
       if (speciesEggMoves.hasOwnProperty(speciesRootForm)) {
         const eggMoves: Moves[] = speciesEggMoves[speciesRootForm];
         const eggMoveIndex = randSeedInt(4);
         const randomEggMove: Moves = eggMoves[eggMoveIndex];
-        encounter.misc.eggMove = randomEggMove;
+        encounter.misc = {
+          eggMove: randomEggMove
+        };
         if (pokemon.moveset.length < 4) {
           pokemon.moveset.push(new PokemonMove(randomEggMove));
         } else {
           pokemon.moveset[0] = new PokemonMove(randomEggMove);
         }
       }
+
+      encounter.misc.pokemon = pokemon;
 
       const config: EnemyPartyConfig = {
         pokemonConfigs: [{
@@ -184,7 +185,7 @@ export const UncommonBreedEncounter: MysteryEncounter =
               berryItems.splice(index, 1);
             }
           }
-          scene.updateModifiers(true, true);
+          await scene.updateModifiers(true, true);
 
           // Pokemon joins the team, with 2 egg moves
           const encounter = scene.currentBattle.mysteryEncounter!;

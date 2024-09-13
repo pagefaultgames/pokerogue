@@ -266,7 +266,7 @@ async function tryGiveBerry(scene: BattleScene, prioritizedPokemon?: PlayerPokem
 
     if (!heldBerriesOfType || heldBerriesOfType.getStackCount() < heldBerriesOfType.getMaxStackCount(scene)) {
       await applyModifierTypeToPlayerPokemon(scene, pokemon, berry);
-      break;
+      return;
     }
   }
 }

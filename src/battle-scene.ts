@@ -1170,8 +1170,7 @@ export default class BattleScene extends SceneBase {
 
       // Check for mystery encounter
       // Can only occur in place of a standard (non-boss) wild battle, waves 10-180
-      const highestMysteryEncounterWave = this.gameMode.maxMysteryEncounterWave;
-      const lowestMysteryEncounterWave = this.gameMode.minMysteryEncounterWave;
+      const [lowestMysteryEncounterWave, highestMysteryEncounterWave] = this.gameMode.getMysteryEncounterLegalWaves();
       if (this.gameMode.hasMysteryEncounters && newBattleType === BattleType.WILD && !this.gameMode.isBoss(newWaveIndex) && newWaveIndex < highestMysteryEncounterWave && newWaveIndex > lowestMysteryEncounterWave) {
         const roll = Utils.randSeedInt(MYSTERY_ENCOUNTER_SPAWN_MAX_WEIGHT);
 
@@ -2923,6 +2922,7 @@ export default class BattleScene extends SceneBase {
           }
         }
 
+        console.log("shiftPhase from initFinalBossPhaseTwo");
         this.shiftPhase();
       });
       return;
@@ -3102,6 +3102,10 @@ export default class BattleScene extends SceneBase {
             return false;
           }
           if (encounterCandidate.encounterTier !== tier) { // Encounter is in tier
+            return false;
+          }
+          const disabledModes = encounterCandidate.disabledGameModes;
+          if (disabledModes && disabledModes.length > 0 && disabledModes.includes(this.gameMode.modeId)) { // Encounter is enabled for game mode
             return false;
           }
           if (!encounterCandidate.meetsRequirements!(this)) { // Meets encounter requirements

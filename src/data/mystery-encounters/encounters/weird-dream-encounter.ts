@@ -20,6 +20,7 @@ import i18next from "#app/plugins/i18n";
 import { doPokemonTransformationSequence, TransformationScreenPosition } from "#app/data/mystery-encounters/utils/encounter-transformation-sequence";
 import { getLevelTotalExp } from "#app/data/exp";
 import { Stat } from "#enums/stat";
+import { GameModes } from "#app/game-mode";
 
 /** i18n namespace for encounter */
 const namespace = "mysteryEncounter:weirdDream";
@@ -94,13 +95,16 @@ const STANDARD_BST_TRANSFORM_BASE_VALUES = [40, 50];
 export const WeirdDreamEncounter: MysteryEncounter =
   MysteryEncounterBuilder.withEncounterType(MysteryEncounterType.WEIRD_DREAM)
     .withEncounterTier(MysteryEncounterTier.ROGUE)
+    .withDisabledGameModes(GameModes.CHALLENGE)
     .withSceneWaveRangeRequirement(10, 180)
     .withIntroSpriteConfigs([
       {
-        spriteKey: "girawitch",
+        spriteKey: "weird_dream_woman",
         fileRoot: "mystery-encounters",
-        hasShadow: false,
-        y: 4
+        hasShadow: true,
+        y: 11,
+        yShadow: 6,
+        x: 4
       },
     ])
     .withIntroDialogue([
