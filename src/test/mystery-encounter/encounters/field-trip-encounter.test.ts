@@ -169,7 +169,7 @@ describe("Field Trip - Mystery Encounter", () => {
       expect(modifierSelectHandler.options[1].modifierTypeOption.type.name).toBe("X Sp. Def");
       expect(modifierSelectHandler.options[2].modifierTypeOption.type.name).toBe("X Speed");
       expect(modifierSelectHandler.options[3].modifierTypeOption.type.name).toBe("Dire Hit");
-      expect(modifierSelectHandler.options[4].modifierTypeOption.type.name).toBe("Dire Hit");
+      expect(modifierSelectHandler.options[4].modifierTypeOption.type.name).toBe("Rarer Candy");
     });
 
     it("should leave encounter without battle", async () => {
