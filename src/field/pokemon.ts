@@ -17,7 +17,7 @@ import { initMoveAnim, loadMoveAnimAssets } from "../data/battle-anims";
 import { Status, StatusEffect, getRandomStatus } from "../data/status-effect";
 import { pokemonEvolutions, pokemonPrevolutions, SpeciesFormEvolution, SpeciesEvolutionCondition, FusionSpeciesFormEvolution } from "../data/pokemon-evolutions";
 import { reverseCompatibleTms, tmSpecies, tmPoolTiers } from "../data/tms";
-import { BattlerTag, BattlerTagLapseType, EncoreTag, GroundedTag, HighestStatBoostTag, TypeImmuneTag, getBattlerTag, SemiInvulnerableTag, TypeBoostTag, MoveRestrictionBattlerTag, ExposedTag, DragonCheerTag, CritBoostTag, TrappedTag, TarShotTag } from "../data/battler-tags";
+import { BattlerTag, BattlerTagLapseType, EncoreTag, GroundedTag, HighestStatBoostTag, SubstituteTag, TypeImmuneTag, getBattlerTag, SemiInvulnerableTag, TypeBoostTag, MoveRestrictionBattlerTag, ExposedTag, DragonCheerTag, CritBoostTag, TrappedTag, TarShotTag } from "../data/battler-tags";
 import { WeatherType } from "../data/weather";
 import { ArenaTagSide, NoCritTag, WeakenMoveScreenTag } from "../data/arena-tag";
 import { Ability, AbAttr, StatMultiplierAbAttr, BlockCritAbAttr, BonusCritAbAttr, BypassBurnDamageReductionAbAttr, FieldPriorityMoveImmunityAbAttr, IgnoreOpponentStatStagesAbAttr, MoveImmunityAbAttr, PreDefendFullHpEndureAbAttr, ReceivedMoveDamageMultiplierAbAttr, ReduceStatusEffectDurationAbAttr, StabBoostAbAttr, StatusEffectImmunityAbAttr, TypeImmunityAbAttr, WeightMultiplierAbAttr, allAbilities, applyAbAttrs, applyStatMultiplierAbAttrs, applyPreApplyBattlerTagAbAttrs, applyPreAttackAbAttrs, applyPreDefendAbAttrs, applyPreSetStatusAbAttrs, UnsuppressableAbilityAbAttr, SuppressFieldAbilitiesAbAttr, NoFusionAbilityAbAttr, MultCritAbAttr, IgnoreTypeImmunityAbAttr, DamageBoostAbAttr, IgnoreTypeStatusEffectImmunityAbAttr, ConditionalCritAbAttr, applyFieldStatMultiplierAbAttrs, FieldMultiplyStatAbAttr, AddSecondStrikeAbAttr, UserFieldStatusEffectImmunityAbAttr, UserFieldBattlerTagImmunityAbAttr, BattlerTagImmunityAbAttr, MoveTypeChangeAbAttr, FullHpResistTypeAbAttr, applyCheckTrappedAbAttrs, CheckTrappedAbAttr } from "../data/ability";
@@ -58,6 +58,7 @@ import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
 import { SwitchSummonPhase } from "#app/phases/switch-summon-phase";
 import { ToggleDoublePositionPhase } from "#app/phases/toggle-double-position-phase";
 import { Challenges } from "#enums/challenges";
+import { PokemonAnimType } from "#app/enums/pokemon-anim-type";
 import { PLAYER_PARTY_MAX_SIZE } from "#app/constants";
 
 export enum FieldPosition {
@@ -566,6 +567,23 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return 1;
   }
 
+  /** Resets the pokemon's field sprite properties, including position, alpha, and scale */
+  resetSprite(): void {
+    // Resetting properties should not be shown on the field
+    this.setVisible(false);
+
+    // Reset field position
+    this.setFieldPosition(FieldPosition.CENTER);
+    if (this.isOffsetBySubstitute()) {
+      this.x -= this.getSubstituteOffset()[0];
+      this.y -= this.getSubstituteOffset()[1];
+    }
+
+    // Reset sprite display properties
+    this.setAlpha(1);
+    this.setScale(this.getSpriteScale());
+  }
+
   getHeldItems(): PokemonHeldItemModifier[] {
     if (!this.scene) {
       return [];
@@ -637,6 +655,47 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       return [ -32, -8 ];
     case FieldPosition.RIGHT:
       return [ 32, 0 ];
+    }
+  }
+
+  /**
+   * Returns the Pokemon's offset from its current field position in the event that
+   * it has a Substitute doll in effect. The offset is returned in `[ x, y ]` format.
+   * @see {@linkcode SubstituteTag}
+   * @see {@linkcode getFieldPositionOffset}
+   */
+  getSubstituteOffset(): [ number, number ] {
+    return this.isPlayer() ? [-30, 10] : [30, -10];
+  }
+
+  /**
+   * Returns whether or not the Pokemon's position on the field is offset because
+   * the Pokemon has a Substitute active.
+   * @see {@linkcode SubstituteTag}
+   */
+  isOffsetBySubstitute(): boolean {
+    const substitute = this.getTag(SubstituteTag);
+    if (substitute) {
+      if (substitute.sprite === undefined) {
+        return false;
+      }
+
+      // During the Pokemon's MoveEffect phase, the offset is removed to put the Pokemon "in focus"
+      const currentPhase = this.scene.getCurrentPhase();
+      if (currentPhase instanceof MoveEffectPhase && currentPhase.getPokemon() === this) {
+        return false;
+      }
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  /** If this Pokemon has a Substitute on the field, removes its sprite from the field. */
+  destroySubstitute(): void {
+    const substitute = this.getTag(SubstituteTag);
+    if (substitute && substitute.sprite) {
+      substitute.sprite.destroy();
     }
   }
 
@@ -1419,6 +1478,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     // Apply Tera Shell's effect to attacks after all immunities are accounted for
     if (!ignoreAbility && move.category !== MoveCategory.STATUS) {
       applyPreDefendAbAttrs(FullHpResistTypeAbAttr, this, source, move, cancelledHolder, simulated, typeMultiplier);
+    }
+
+    if (move.category === MoveCategory.STATUS && move.hitsSubstitute(source, this)) {
+      typeMultiplier.value = 0;
     }
 
     return (!cancelledHolder.value ? typeMultiplier.value : 0) as TypeDamageMultiplier;
@@ -2485,6 +2548,13 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       const isOneHitKo = result === HitResult.ONE_HIT_KO;
 
       if (dmg) {
+        this.lapseTags(BattlerTagLapseType.HIT);
+
+        const substitute = this.getTag(SubstituteTag);
+        const isBlockedBySubstitute = !!substitute && move.hitsSubstitute(source, this);
+        if (isBlockedBySubstitute) {
+          substitute.hp -= dmg;
+        }
         if (!this.isPlayer() && dmg >= this.hp) {
           this.scene.applyModifiers(EnemyEndureChanceModifier, false, this);
         }
@@ -2493,22 +2563,24 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
          * We explicitly require to ignore the faint phase here, as we want to show the messages
          * about the critical hit and the super effective/not very effective messages before the faint phase.
          */
-        const damage = this.damageAndUpdate(dmg, result as DamageResult, isCritical, isOneHitKo, isOneHitKo, true);
+        const damage = this.damageAndUpdate(isBlockedBySubstitute ? 0 : dmg, result as DamageResult, isCritical, isOneHitKo, isOneHitKo, true);
 
-        if (source.isPlayer()) {
-          this.scene.validateAchvs(DamageAchv, damage);
-          if (damage > this.scene.gameData.gameStats.highestDamage) {
-            this.scene.gameData.gameStats.highestDamage = damage;
+        if (damage > 0) {
+          if (source.isPlayer()) {
+            this.scene.validateAchvs(DamageAchv, damage);
+            if (damage > this.scene.gameData.gameStats.highestDamage) {
+              this.scene.gameData.gameStats.highestDamage = damage;
+            }
           }
-        }
-        source.turnData.damageDealt += damage;
-        source.turnData.currDamageDealt = damage;
-        this.turnData.damageTaken += damage;
-        this.battleData.hitCount++;
-        const attackResult = { move: move.id, result: result as DamageResult, damage: damage, critical: isCritical, sourceId: source.id, sourceBattlerIndex: source.getBattlerIndex() };
-        this.turnData.attacksReceived.unshift(attackResult);
-        if (source.isPlayer() && !this.isPlayer()) {
-          this.scene.applyModifiers(DamageMoneyRewardModifier, true, source, damage);
+          source.turnData.damageDealt += damage;
+          source.turnData.currDamageDealt = damage;
+          this.turnData.damageTaken += damage;
+          this.battleData.hitCount++;
+          const attackResult = { move: move.id, result: result as DamageResult, damage: damage, critical: isCritical, sourceId: source.id, sourceBattlerIndex: source.getBattlerIndex() };
+          this.turnData.attacksReceived.unshift(attackResult);
+          if (source.isPlayer() && !this.isPlayer()) {
+            this.scene.applyModifiers(DamageMoneyRewardModifier, true, source, damage);
+          }
         }
       }
 
@@ -2531,6 +2603,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         // set splice index here, so future scene queues happen before FaintedPhase
         this.scene.setPhaseQueueSplice();
         this.scene.unshiftPhase(new FaintPhase(this.scene, this.getBattlerIndex(), isOneHitKo));
+        this.destroySubstitute();
         this.resetSummonData();
       }
 
@@ -2582,6 +2655,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
        */
       this.scene.setPhaseQueueSplice();
       this.scene.unshiftPhase(new FaintPhase(this.scene, this.getBattlerIndex(), preventEndure));
+      this.destroySubstitute();
       this.resetSummonData();
     }
 
@@ -3207,6 +3281,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           this.summonData[k] = this.summonDataPrimer[k];
         }
       }
+      // If this Pokemon has a Substitute when loading in, play an animation to add its sprite
+      if (this.getTag(SubstituteTag)) {
+        this.scene.triggerPokemonBattleAnim(this, PokemonAnimType.SUBSTITUTE_ADD);
+        this.getTag(SubstituteTag)!.sourceInFocus = false;
+      }
       this.summonDataPrimer = null;
     }
     this.updateInfo();
@@ -3586,21 +3665,23 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * info container.
    */
   leaveField(clearEffects: boolean = true, hideInfo: boolean = true) {
+    this.resetSprite();
     this.resetTurnData();
     if (clearEffects) {
+      this.destroySubstitute();
       this.resetSummonData();
       this.resetBattleData();
     }
     if (hideInfo) {
       this.hideInfo();
     }
-    this.setVisible(false);
     this.scene.field.remove(this);
     this.scene.triggerPokemonFormChange(this, SpeciesFormChangeActiveTrigger, true);
   }
 
   destroy(): void {
     this.battleInfo?.destroy();
+    this.destroySubstitute();
     super.destroy();
   }
 
@@ -3984,6 +4065,9 @@ export class PlayerPokemon extends Pokemon {
       this.fusionVariant = pokemon.variant;
       this.fusionGender = pokemon.gender;
       this.fusionLuck = pokemon.luck;
+      if ((pokemon.pauseEvolutions) || (this.pauseEvolutions)) {
+        this.pauseEvolutions = true;
+      }
 
       this.scene.validateAchv(achvs.SPLICE);
       this.scene.gameData.gameStats.pokemonFused++;

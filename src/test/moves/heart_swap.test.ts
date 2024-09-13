@@ -4,11 +4,11 @@ import GameManager from "#app/test/utils/gameManager";
 import { Species } from "#enums/species";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { Moves } from "#enums/moves";
-import { Stat, BATTLE_STATS } from "#enums/stat";
+import { BATTLE_STATS } from "#enums/stat";
 import { Abilities } from "#enums/abilities";
 import { MoveEndPhase } from "#app/phases/move-end-phase";
 
-describe("Moves - Guard Swap", () => {
+describe("Moves - Heart Swap", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
   const TIMEOUT = 20 * 1000;
@@ -31,13 +31,13 @@ describe("Moves - Guard Swap", () => {
       .enemyMoveset(Moves.SPLASH)
       .enemySpecies(Species.INDEEDEE)
       .enemyLevel(200)
-      .moveset([ Moves.GUARD_SWAP ])
+      .moveset([ Moves.HEART_SWAP ])
       .ability(Abilities.NONE);
   });
 
-  it("should swap the user's DEF and SPDEF stat stages with the target's", async () => {
+  it("should swap all of the user's stat stages with the target's", async () => {
     await game.classicMode.startBattle([
-      Species.INDEEDEE
+      Species.MANAPHY
     ]);
 
     const player = game.scene.getPlayerPokemon()!;
@@ -45,7 +45,7 @@ describe("Moves - Guard Swap", () => {
 
     vi.spyOn(enemy.summonData, "statStages", "get").mockReturnValue(new Array(BATTLE_STATS.length).fill(1));
 
-    game.move.select(Moves.GUARD_SWAP);
+    game.move.select(Moves.HEART_SWAP);
 
     await game.phaseInterceptor.to(MoveEndPhase);
 
@@ -57,13 +57,8 @@ describe("Moves - Guard Swap", () => {
     await game.phaseInterceptor.to(TurnEndPhase);
 
     for (const s of BATTLE_STATS) {
-      if (s === Stat.DEF || s === Stat.SPDEF) {
-        expect(player.getStatStage(s)).toBe(1);
-        expect(enemy.getStatStage(s)).toBe(0);
-      } else {
-        expect(player.getStatStage(s)).toBe(0);
-        expect(enemy.getStatStage(s)).toBe(1);
-      }
+      expect(enemy.getStatStage(s)).toBe(0);
+      expect(player.getStatStage(s)).toBe(1);
     }
   }, TIMEOUT);
 });
