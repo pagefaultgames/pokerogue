@@ -49,6 +49,7 @@ import { OverridesHelper } from "./helpers/overridesHelper";
 import { SettingsHelper } from "./helpers/settingsHelper";
 import { ReloadHelper } from "./helpers/reloadHelper";
 import { CheckSwitchPhase } from "#app/phases/check-switch-phase";
+import { ExpGainsSpeed } from "#app/enums/exp-gains-speed";
 
 /**
  * Class to manage the game state and transitions between phases.
@@ -140,7 +141,7 @@ export default class GameManager {
     this.scene.gameSpeed = 5;
     this.scene.moveAnimations = false;
     this.scene.showLevelUpStats = false;
-    this.scene.expGainsSpeed = 3;
+    this.scene.expGainsSpeed = ExpGainsSpeed.SKIP;
     this.scene.expParty = ExpNotification.SKIP;
     this.scene.hpBarSpeed = 3;
     this.scene.enableTutorials = false;

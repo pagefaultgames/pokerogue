@@ -86,6 +86,7 @@ import { TitlePhase } from "./phases/title-phase";
 import { ToggleDoublePositionPhase } from "./phases/toggle-double-position-phase";
 import { TurnInitPhase } from "./phases/turn-init-phase";
 import { ShopCursorTarget } from "./enums/shop-cursor-target";
+import { ExpGainsSpeed } from "./enums/exp-gains-speed";
 
 export const bypassLogin = import.meta.env.VITE_BYPASS_LOGIN === "1";
 
@@ -161,7 +162,7 @@ export default class BattleScene extends SceneBase {
   public experimentalSprites: boolean = false;
   public musicPreference: integer = 0;
   public moveAnimations: boolean = true;
-  public expGainsSpeed: integer = 0;
+  public expGainsSpeed: ExpGainsSpeed = ExpGainsSpeed.DEFAULT;
   public skipSeenDialogues: boolean = false;
   /**
    * Determines if the egg hatching animation should be skipped
