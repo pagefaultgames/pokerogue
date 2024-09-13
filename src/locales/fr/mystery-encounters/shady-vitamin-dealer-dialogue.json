@@ -1,27 +1,27 @@
 {
-  "intro": "A man in a dark coat approaches you.",
-  "speaker": "Shady Salesman",
-  "intro_dialogue": ".@d{16}.@d{16}.@d{16}$I've got the goods if you've got the money.$Make sure your Pokémon can handle it though.",
-  "title": "The Vitamin Dealer",
-  "description": "The man opens his jacket to reveal some Pokémon vitamins. The numbers he quotes seem like a really good deal. Almost too good...\nHe offers two package deals to choose from.",
-  "query": "Which deal will you choose?",
-  "invalid_selection": "Pokémon must be healthy enough.",
+  "intro": "Un homme en manteau noir vous aborde.",
+  "speaker": "Dealer",
+  "intro_dialogue": ".@d{16}.@d{16}.@d{16}$J'ai de la bonne came, mais seulement si t’as les thunes.$Assure-toi quand même que tes Pokémon puissent encaisser.",
+  "title": "Le Dealer de vitamines",
+  "description": "L’homme ouvre son manteau et vous laisse apercevoir des vitamines pour Pokémon. Le tarif qu’il annonce semble être une bonne affaire. Peut-être même un peu trop…\nIl vous laisse le choix entre deux offres.",
+  "query": "Que choisissez-vous ?",
+  "invalid_selection": "Le Pokémon doit être en bonne santé.",
   "option": {
     "1": {
-      "label": "The Cheap Deal",
-      "tooltip": "(-) Pay {{option1Money, money}}\n(-) Side Effects?\n(+) Chosen Pokémon Gains 2 Random Vitamins"
+      "label": "Deal douteux",
+      "tooltip": "(-) Payer {{option1Money, money}}\n(-) Effets secondaires ?\n(+) Un Pokémon choisi gagne 2 vitamines au hasard"
     },
     "2": {
-      "label": "The Pricey Deal",
-      "tooltip": "(-) Pay {{option2Money, money}}\n(+) Chosen Pokémon Gains 2 Random Vitamins"
+      "label": "Deal honnête",
+      "tooltip": "(-) Payer {{option2Money, money}}\n(+) Un Pokémon choisi gagne 2 vitamines au hasard"
     },
     "3": {
-      "label": "Leave",
-      "tooltip": "(-) No Rewards",
-      "selected": "Heh, wouldn't have figured you for a coward."
+      "label": "Partir",
+      "tooltip": "(-) Aucune récompense",
+      "selected": "Eh bien, j’aurais pas cru que tu ferais preuve d’une telle lâcheté."
     },
-    "selected": "The man hands you two bottles and quickly disappears.${{selectedPokemon}} gained {{boost1}} and {{boost2}} boosts!"
+    "selected": "L’homme vous remet deux bouteilles et s’évapore.${{selectedPokemon}} reçoit un gain en {{boost1}} et en {{boost2}} !"
   },
-  "cheap_side_effects": "But the medicine had some side effects!$Your {{selectedPokemon}} takes some damage,\nand its Nature is changed to {{newNature}}!",
-  "no_bad_effects": "Looks like there were no side-effects from the medicine!"
+  "cheap_side_effects": "Ah ! Des effets secondaires se manifestent !$Votre {{selectedPokemon}} prend des dégâts,\net sa nature se change en {{newNature}} !",
+  "no_bad_effects": "Tout semble bien se passer, aucun effet indésirable à signaler !"
 }
