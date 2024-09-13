@@ -451,7 +451,7 @@ function doGreedentEatBerries(scene: BattleScene) {
 /**
  *
  * @param scene
- * @param isEat - default false. Will "create" pile when false, and remove pile when true.
+ * @param isEat Default false. Will "create" pile when false, and remove pile when true.
  */
 function doBerrySpritePile(scene: BattleScene, isEat: boolean = false) {
   const berryAddDelay = 150;

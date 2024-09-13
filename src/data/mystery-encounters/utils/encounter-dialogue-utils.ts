@@ -5,11 +5,11 @@ import { isNullOrUndefined } from "#app/utils";
 import i18next from "i18next";
 
 /**
- * Will inject all relevant dialogue tokens that exist in the {@link BattleScene.currentBattle.mysteryEncounter.dialogueTokens}, into i18n text.
+ * Will inject all relevant dialogue tokens that exist in the {@linkcode BattleScene.currentBattle.mysteryEncounter.dialogueTokens}, into i18n text.
  * Also adds BBCodeText fragments for colored text, if applicable
  * @param scene
  * @param keyOrString
- * @param primaryStyle - can define a text style to be applied to the entire string. Must be defined for BBCodeText styles to be applied correctly
+ * @param primaryStyle Can define a text style to be applied to the entire string. Must be defined for BBCodeText styles to be applied correctly
  * @param uiTheme
  */
 export function getEncounterText(scene: BattleScene, keyOrString?: string, primaryStyle?: TextStyle, uiTheme: UiTheme = UiTheme.DEFAULT): string | null {
@@ -17,7 +17,7 @@ export function getEncounterText(scene: BattleScene, keyOrString?: string, prima
     return null;
   }
 
-  let textString: string | null = getTextWithDialogueTokens(scene, keyOrString);
+  let textString: string | null = getTextWithDialogueTokens(scene, keyOrString!);
 
   // Can only color the text if a Primary Style is defined
   // primaryStyle is applied to all text that does not have its own specified style
@@ -29,22 +29,15 @@ export function getEncounterText(scene: BattleScene, keyOrString?: string, prima
 }
 
 /**
- * Helper function to inject {@link BattleScene.currentBattle.mysteryEncounter.dialogueTokens} into a given content string
+ * Helper function to inject {@linkcode BattleScene.currentBattle.mysteryEncounter.dialogueTokens} into a given content string
  * @param scene
  * @param keyOrString
  */
-function getTextWithDialogueTokens(scene: BattleScene, keyOrString?: string): string | null {
-  if (isNullOrUndefined(keyOrString)) {
-    return null;
-  }
-
+function getTextWithDialogueTokens(scene: BattleScene, keyOrString: string): string | null {
   const tokens = scene.currentBattle?.mysteryEncounter?.dialogueTokens;
-  // @ts-ignore
+
   if (i18next.exists(keyOrString, tokens)) {
-    const stringArray = [`${keyOrString}`] as any;
-    stringArray.raw = [`${keyOrString}`];
-    // @ts-ignore
-    return i18next.t(stringArray, tokens) as string;
+    return i18next.t(keyOrString, tokens) as string;
   }
 
   return keyOrString ?? null;

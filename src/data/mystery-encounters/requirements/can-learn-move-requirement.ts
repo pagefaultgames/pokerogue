@@ -30,20 +30,18 @@ export class CanLearnMoveRequirement extends EncounterPokemonRequirement {
     super();
     this.requiredMoves = Array.isArray(requiredMoves) ? requiredMoves : [requiredMoves];
 
-    const { excludeLevelMoves, excludeTmMoves, excludeEggMoves, includeFainted, minNumberOfPokemon, invertQuery } = options;
-
-    this.excludeLevelMoves = excludeLevelMoves ?? false;
-    this.excludeTmMoves = excludeTmMoves ?? false;
-    this.excludeEggMoves = excludeEggMoves ?? false;
-    this.includeFainted = includeFainted ?? false;
-    this.minNumberOfPokemon = minNumberOfPokemon ?? 1;
-    this.invertQuery = invertQuery ?? false;
+    this.excludeLevelMoves = options.excludeLevelMoves ?? false;
+    this.excludeTmMoves = options.excludeTmMoves ?? false;
+    this.excludeEggMoves = options.excludeEggMoves ?? false;
+    this.includeFainted = options.includeFainted ?? false;
+    this.minNumberOfPokemon = options.minNumberOfPokemon ?? 1;
+    this.invertQuery = options.invertQuery ?? false;
   }
 
   override meetsRequirement(scene: BattleScene): boolean {
     const partyPokemon = scene.getParty().filter((pkm) => (this.includeFainted ? pkm.isAllowed() : pkm.isAllowedInBattle()));
 
-    if (isNullOrUndefined(partyPokemon) || this?.requiredMoves?.length < 0) {
+    if (isNullOrUndefined(partyPokemon) || this.requiredMoves?.length < 0) {
       return false;
     }
 

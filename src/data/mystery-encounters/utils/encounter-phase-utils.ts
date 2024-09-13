@@ -101,8 +101,8 @@ export interface EnemyPartyConfig {
  * Generates an enemy party for a mystery encounter battle
  * This will override and replace any standard encounter generation logic
  * Useful for tailoring specific battles to mystery encounters
- * @param scene - Battle Scene
- * @param partyConfig - Can pass various customizable attributes for the enemy party, see EnemyPartyConfig
+ * @param scene Battle Scene
+ * @param partyConfig Can pass various customizable attributes for the enemy party, see EnemyPartyConfig
  */
 export async function initBattleWithEnemyConfig(scene: BattleScene, partyConfig: EnemyPartyConfig): Promise<void> {
   const loaded: boolean = false;
@@ -352,7 +352,7 @@ export function loadCustomMovesForEncounter(scene: BattleScene, moves: Moves | M
 
 /**
  * Will update player money, and animate change (sound optional)
- * @param scene - Battle Scene
+ * @param scene
  * @param changeValue
  * @param playSound
  * @param showMessage
@@ -375,9 +375,9 @@ export function updatePlayerMoney(scene: BattleScene, changeValue: number, playS
 
 /**
  * Converts modifier bullshit to an actual item
- * @param scene - Battle Scene
+ * @param scene Battle Scene
  * @param modifier
- * @param pregenArgs - can specify BerryType for berries, TM for TMs, AttackBoostType for item, etc.
+ * @param pregenArgs Can specify BerryType for berries, TM for TMs, AttackBoostType for item, etc.
  */
 export function generateModifierType(scene: BattleScene, modifier: () => ModifierType, pregenArgs?: any[]): ModifierType | null {
   const modifierId = Object.keys(modifierTypes).find(k => modifierTypes[k] === modifier);
@@ -805,10 +805,10 @@ export function handleMysteryEncounterBattleStartEffects(scene: BattleScene) {
 }
 
 /**
- * Can queue extra phases or logic during {@link TurnInitPhase}
+ * Can queue extra phases or logic during {@linkcode TurnInitPhase}
  * Should mostly just be used for injecting custom phases into the battle system on turn start
  * @param scene
- * @return boolean - if true, will skip the remainder of the {@link TurnInitPhase}
+ * @return boolean - if true, will skip the remainder of the {@linkcode TurnInitPhase}
  */
 export function handleMysteryEncounterTurnStartEffects(scene: BattleScene): boolean {
   const encounter = scene.currentBattle.mysteryEncounter;

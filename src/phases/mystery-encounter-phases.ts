@@ -227,6 +227,7 @@ export class MysteryEncounterBattleStartCleanupPhase extends Phase {
     const legalPlayerPartyPokemon = legalPlayerPokemon.filter(p => !p.isActive(true));
     if (!legalPlayerPokemon.length) {
       this.scene.unshiftPhase(new GameOverPhase(this.scene));
+      return this.end();
     }
 
     // Check for any KOd player mons and switch

@@ -157,7 +157,7 @@ export class WaveRangeRequirement extends EncounterSceneRequirement {
   /**
    * Used for specifying a unique wave or wave range requirement
    * If minWaveIndex and maxWaveIndex are equivalent, will check for exact wave number
-   * @param waveRange - [min, max]
+   * @param waveRange [min, max]
    */
   constructor(waveRange: [number, number]) {
     super();
@@ -165,9 +165,9 @@ export class WaveRangeRequirement extends EncounterSceneRequirement {
   }
 
   meetsRequirement(scene: BattleScene): boolean {
-    if (!isNullOrUndefined(this?.waveRange) && this.waveRange?.[0] <= this.waveRange?.[1]) {
+    if (!isNullOrUndefined(this.waveRange) && this.waveRange?.[0] <= this.waveRange?.[1]) {
       const waveIndex = scene.currentBattle.waveIndex;
-      if (waveIndex >= 0 && (this?.waveRange?.[0] >= 0 && this.waveRange?.[0] > waveIndex) || (this?.waveRange?.[1] >= 0 && this.waveRange?.[1] < waveIndex)) {
+      if (waveIndex >= 0 && (this.waveRange?.[0] >= 0 && this.waveRange?.[0] > waveIndex) || (this.waveRange?.[1] >= 0 && this.waveRange?.[1] < waveIndex)) {
         return false;
       }
     }
@@ -186,8 +186,8 @@ export class WaveModulusRequirement extends EncounterSceneRequirement {
   /**
    * Used for specifying a modulus requirement on the wave index
    * For example, can be used to require the wave index to end with 1, 2, or 3
-   * @param waveModuli - number[], the allowed modulus results
-   * @param modulusValue - number, the modulus calculation value
+   * @param waveModuli The allowed modulus results
+   * @param modulusValue The modulus calculation value
    *
    * Example:
    * new WaveModulusRequirement([1, 2, 3], 10) will check for 1st/2nd/3rd waves that are immediately after a multiple of 10 wave
@@ -218,7 +218,7 @@ export class TimeOfDayRequirement extends EncounterSceneRequirement {
 
   meetsRequirement(scene: BattleScene): boolean {
     const timeOfDay = scene.arena?.getTimeOfDay();
-    if (!isNullOrUndefined(timeOfDay) && this?.requiredTimeOfDay?.length > 0 && !this.requiredTimeOfDay.includes(timeOfDay)) {
+    if (!isNullOrUndefined(timeOfDay) && this.requiredTimeOfDay?.length > 0 && !this.requiredTimeOfDay.includes(timeOfDay)) {
       return false;
     }
 
@@ -240,7 +240,7 @@ export class WeatherRequirement extends EncounterSceneRequirement {
 
   meetsRequirement(scene: BattleScene): boolean {
     const currentWeather = scene.arena.weather?.weatherType;
-    if (!isNullOrUndefined(currentWeather) && this?.requiredWeather?.length > 0 && !this.requiredWeather.includes(currentWeather!)) {
+    if (!isNullOrUndefined(currentWeather) && this.requiredWeather?.length > 0 && !this.requiredWeather.includes(currentWeather!)) {
       return false;
     }
 
@@ -264,7 +264,7 @@ export class PartySizeRequirement extends EncounterSceneRequirement {
   /**
    * Used for specifying a party size requirement
    * If min and max are equivalent, will check for exact size
-   * @param partySizeRange - [min, max]
+   * @param partySizeRange
    * @param excludeFainted
    */
   constructor(partySizeRange: [number, number], excludeFainted: boolean) {
@@ -274,9 +274,9 @@ export class PartySizeRequirement extends EncounterSceneRequirement {
   }
 
   meetsRequirement(scene: BattleScene): boolean {
-    if (!isNullOrUndefined(this?.partySizeRange) && this.partySizeRange?.[0] <= this.partySizeRange?.[1]) {
+    if (!isNullOrUndefined(this.partySizeRange) && this.partySizeRange?.[0] <= this.partySizeRange?.[1]) {
       const partySize = this.excludeFainted ? scene.getParty().filter(p => p.isAllowedInBattle()).length : scene.getParty().length;
-      if (partySize >= 0 && (this?.partySizeRange?.[0] >= 0 && this.partySizeRange?.[0] > partySize) || (this?.partySizeRange?.[1] >= 0 && this.partySizeRange?.[1] < partySize)) {
+      if (partySize >= 0 && (this.partySizeRange?.[0] >= 0 && this.partySizeRange?.[0] > partySize) || (this.partySizeRange?.[1] >= 0 && this.partySizeRange?.[1] < partySize)) {
         return false;
       }
     }
@@ -301,7 +301,7 @@ export class PersistentModifierRequirement extends EncounterSceneRequirement {
 
   meetsRequirement(scene: BattleScene): boolean {
     const partyPokemon = scene.getParty();
-    if (isNullOrUndefined(partyPokemon) || this?.requiredHeldItemModifiers?.length < 0) {
+    if (isNullOrUndefined(partyPokemon) || this.requiredHeldItemModifiers?.length < 0) {
       return false;
     }
     let modifierCount = 0;
@@ -364,7 +364,7 @@ export class SpeciesRequirement extends EncounterPokemonRequirement {
 
   meetsRequirement(scene: BattleScene): boolean {
     const partyPokemon = scene.getParty();
-    if (isNullOrUndefined(partyPokemon) || this?.requiredSpecies?.length < 0) {
+    if (isNullOrUndefined(partyPokemon) || this.requiredSpecies?.length < 0) {
       return false;
     }
     return this.queryParty(partyPokemon).length >= this.minNumberOfPokemon;
@@ -402,7 +402,7 @@ export class NatureRequirement extends EncounterPokemonRequirement {
 
   meetsRequirement(scene: BattleScene): boolean {
     const partyPokemon = scene.getParty();
-    if (isNullOrUndefined(partyPokemon) || this?.requiredNature?.length < 0) {
+    if (isNullOrUndefined(partyPokemon) || this.requiredNature?.length < 0) {
       return false;
     }
     return this.queryParty(partyPokemon).length >= this.minNumberOfPokemon;
@@ -486,7 +486,7 @@ export class MoveRequirement extends EncounterPokemonRequirement {
 
   meetsRequirement(scene: BattleScene): boolean {
     const partyPokemon = scene.getParty();
-    if (isNullOrUndefined(partyPokemon) || this?.requiredMoves?.length < 0) {
+    if (isNullOrUndefined(partyPokemon) || this.requiredMoves?.length < 0) {
       return false;
     }
     return this.queryParty(partyPokemon).length >= this.minNumberOfPokemon;
@@ -530,7 +530,7 @@ export class CompatibleMoveRequirement extends EncounterPokemonRequirement {
 
   meetsRequirement(scene: BattleScene): boolean {
     const partyPokemon = scene.getParty();
-    if (isNullOrUndefined(partyPokemon) || this?.requiredMoves?.length < 0) {
+    if (isNullOrUndefined(partyPokemon) || this.requiredMoves?.length < 0) {
       return false;
     }
     return this.queryParty(partyPokemon).length >= this.minNumberOfPokemon;
@@ -570,7 +570,7 @@ export class EvolutionTargetSpeciesRequirement extends EncounterPokemonRequireme
 
   meetsRequirement(scene: BattleScene): boolean {
     const partyPokemon = scene.getParty();
-    if (isNullOrUndefined(partyPokemon) || this?.requiredEvolutionTargetSpecies?.length < 0) {
+    if (isNullOrUndefined(partyPokemon) || this.requiredEvolutionTargetSpecies?.length < 0) {
       return false;
     }
     return this.queryParty(partyPokemon).length >= this.minNumberOfPokemon;
@@ -609,7 +609,7 @@ export class AbilityRequirement extends EncounterPokemonRequirement {
 
   meetsRequirement(scene: BattleScene): boolean {
     const partyPokemon = scene.getParty();
-    if (isNullOrUndefined(partyPokemon) || this?.requiredAbilities?.length < 0) {
+    if (isNullOrUndefined(partyPokemon) || this.requiredAbilities?.length < 0) {
       return false;
     }
     return this.queryParty(partyPokemon).length >= this.minNumberOfPokemon;
@@ -646,7 +646,7 @@ export class StatusEffectRequirement extends EncounterPokemonRequirement {
 
   meetsRequirement(scene: BattleScene): boolean {
     const partyPokemon = scene.getParty();
-    if (isNullOrUndefined(partyPokemon) || this?.requiredStatusEffect?.length < 0) {
+    if (isNullOrUndefined(partyPokemon) || this.requiredStatusEffect?.length < 0) {
       return false;
     }
     const x = this.queryParty(partyPokemon).length >= this.minNumberOfPokemon;
@@ -716,7 +716,7 @@ export class CanFormChangeWithItemRequirement extends EncounterPokemonRequiremen
 
   meetsRequirement(scene: BattleScene): boolean {
     const partyPokemon = scene.getParty();
-    if (isNullOrUndefined(partyPokemon) || this?.requiredFormChangeItem?.length < 0) {
+    if (isNullOrUndefined(partyPokemon) || this.requiredFormChangeItem?.length < 0) {
       return false;
     }
     return this.queryParty(partyPokemon).length >= this.minNumberOfPokemon;
@@ -768,7 +768,7 @@ export class CanEvolveWithItemRequirement extends EncounterPokemonRequirement {
 
   meetsRequirement(scene: BattleScene): boolean {
     const partyPokemon = scene.getParty();
-    if (isNullOrUndefined(partyPokemon) || this?.requiredEvolutionItem?.length < 0) {
+    if (isNullOrUndefined(partyPokemon) || this.requiredEvolutionItem?.length < 0) {
       return false;
     }
     return this.queryParty(partyPokemon).length >= this.minNumberOfPokemon;

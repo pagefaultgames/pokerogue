@@ -2212,12 +2212,14 @@ export class TarShotTag extends BattlerTag {
 }
 
 /**
- * Tag that adds extra post-summon effects to a battle for a specific Pokemon
- * Currently used only in MysteryEncounters to provide start of fight stat buffs
+ * Tag that adds extra post-summon effects to a battle for a specific Pokemon.
+ * These post-summon effects are performed through {@linkcode Pokemon.mysteryEncounterBattleEffects},
+ * and can be used to unshift special phases, etc.
+ * Currently used only in MysteryEncounters to provide start of fight stat buffs.
  */
 export class MysteryEncounterPostSummonTag extends BattlerTag {
-  constructor(sourceMove: Moves) {
-    super(BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON, BattlerTagLapseType.CUSTOM, 1, sourceMove);
+  constructor() {
+    super(BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON, BattlerTagLapseType.CUSTOM, 1);
   }
 
   onAdd(pokemon: Pokemon): void {
@@ -2228,13 +2230,11 @@ export class MysteryEncounterPostSummonTag extends BattlerTag {
     const ret = super.lapse(pokemon, lapseType);
 
     if (lapseType === BattlerTagLapseType.CUSTOM) {
-      // Give pokemon +1 stats for battle
       const cancelled = new Utils.BooleanHolder(false);
       applyAbAttrs(ProtectStatAbAttr, pokemon, cancelled);
       if (!cancelled.value) {
-        const mysteryEncounterBattleEffects = pokemon.mysteryEncounterBattleEffects;
-        if (mysteryEncounterBattleEffects) {
-          mysteryEncounterBattleEffects(pokemon);
+        if (pokemon.mysteryEncounterBattleEffects) {
+          pokemon.mysteryEncounterBattleEffects(pokemon);
         }
       }
     }
@@ -2407,7 +2407,7 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: number, source
   case BattlerTagType.GORILLA_TACTICS:
     return new GorillaTacticsTag();
   case BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON:
-    return new MysteryEncounterPostSummonTag(sourceMove);
+    return new MysteryEncounterPostSummonTag();
   case BattlerTagType.NONE:
   default:
     return new BattlerTag(tagType, BattlerTagLapseType.CUSTOM, turnCount, sourceMove, sourceId);

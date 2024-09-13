@@ -535,7 +535,7 @@ export function initMoveAnim(scene: BattleScene, move: Moves): Promise<void> {
 /**
  * Fetches animation configs to be used in a Mystery Encounter
  * @param scene
- * @param encounterAnim - one or more animations to fetch
+ * @param encounterAnim one or more animations to fetch
  */
 export async function initEncounterAnims(scene: BattleScene, encounterAnim: EncounterAnim | EncounterAnim[]): Promise<void> {
   const anims = Array.isArray(encounterAnim) ? encounterAnim : [encounterAnim];
@@ -608,7 +608,7 @@ export function loadCommonAnimAssets(scene: BattleScene, startLoad?: boolean): P
 
 /**
  * Loads encounter animation assets to scene
- * MUST be called after [initEncounterAnims()](./battle-anims.ts) to load all required animations properly
+ * MUST be called after {@linkcode initEncounterAnims()} to load all required animations properly
  * @param scene
  * @param startLoad
  */
@@ -1079,7 +1079,6 @@ export abstract class BattleAnim {
         [AnimFrameTarget.USER]: [],
         [AnimFrameTarget.TARGET]: []
       };
-      const spritePriorities: integer[] = [];
 
       const cleanUpAndComplete = () => {
         for (const ms of Object.values(spriteCache).flat()) {
@@ -1104,8 +1103,8 @@ export abstract class BattleAnim {
       this.srcLine = [ userFocusX, userFocusY, targetFocusX, targetFocusY ];
       this.dstLine = [ 150, 75, targetInitialX, targetInitialY ];
 
-      let r = anim!.frames.length;
-      let f = 0;
+      let totalFrames = anim!.frames.length;
+      let frameCount = 0;
 
       let existingFieldSprites = scene.field.getAll().slice(0);
 
@@ -1114,11 +1113,9 @@ export abstract class BattleAnim {
         repeat: anim!.frames.length,
         onRepeat: () => {
           existingFieldSprites = scene.field.getAll().slice(0);
-          const spriteFrames = anim!.frames[f];
-          const frameData = this.getGraphicFrameDataWithoutTarget(anim!.frames[f], targetInitialX, targetInitialY);
-          const u = 0;
-          const t = 0;
-          let g = 0;
+          const spriteFrames = anim!.frames[frameCount];
+          const frameData = this.getGraphicFrameDataWithoutTarget(anim!.frames[frameCount], targetInitialX, targetInitialY);
+          let graphicFrameCount = 0;
           for (const frame of spriteFrames) {
             if (frame.target !== AnimFrameTarget.GRAPHIC) {
               console.log("Encounter animations do not support targets");
@@ -1126,16 +1123,14 @@ export abstract class BattleAnim {
             }
 
             const sprites = spriteCache[AnimFrameTarget.GRAPHIC];
-            if (g === sprites.length) {
+            if (graphicFrameCount === sprites.length) {
               const newSprite: Phaser.GameObjects.Sprite = scene.addFieldSprite(0, 0, anim!.graphic, 1);
               sprites.push(newSprite);
               scene.field.add(newSprite);
-              spritePriorities.push(1);
             }
 
-            const graphicIndex = g++;
+            const graphicIndex = graphicFrameCount++;
             const moveSprite = sprites[graphicIndex];
-            spritePriorities[graphicIndex] = frame.priority;
             if (!isNullOrUndefined(frame.priority)) {
               const setSpritePriority = (priority: integer) => {
                 if (existingFieldSprites.length > priority) {
@@ -1162,40 +1157,37 @@ export abstract class BattleAnim {
               moveSprite.setBlendMode(frame.blendType === AnimBlendType.NORMAL ? Phaser.BlendModes.NORMAL : frame.blendType === AnimBlendType.ADD ? Phaser.BlendModes.ADD : Phaser.BlendModes.DIFFERENCE);
             }
           }
-          if (anim?.frameTimedEvents.get(f)) {
-            for (const event of anim.frameTimedEvents.get(f)!) {
-              r = Math.max((anim.frames.length - f) + event.execute(scene, this, frameTimedEventPriority), r);
+          if (anim?.frameTimedEvents.get(frameCount)) {
+            for (const event of anim.frameTimedEvents.get(frameCount)!) {
+              totalFrames = Math.max((anim.frames.length - frameCount) + event.execute(scene, this, frameTimedEventPriority), totalFrames);
             }
           }
           const targets = Utils.getEnumValues(AnimFrameTarget);
           for (const i of targets) {
-            const count = i === AnimFrameTarget.GRAPHIC ? g : i === AnimFrameTarget.USER ? u : t;
+            const count = graphicFrameCount;
             if (count < spriteCache[i].length) {
               const spritesToRemove = spriteCache[i].slice(count, spriteCache[i].length);
-              for (const rs of spritesToRemove) {
-                if (!rs.getData("locked") as boolean) {
-                  const spriteCacheIndex = spriteCache[i].indexOf(rs);
+              for (const sprite of spritesToRemove) {
+                if (!sprite.getData("locked") as boolean) {
+                  const spriteCacheIndex = spriteCache[i].indexOf(sprite);
                   spriteCache[i].splice(spriteCacheIndex, 1);
-                  if (i === AnimFrameTarget.GRAPHIC) {
-                    spritePriorities.splice(spriteCacheIndex, 1);
-                  }
-                  rs.destroy();
+                  sprite.destroy();
                 }
               }
             }
           }
-          f++;
-          r--;
+          frameCount++;
+          totalFrames--;
         },
         onComplete: () => {
-          for (const ms of Object.values(spriteCache).flat()) {
-            if (ms && !ms.getData("locked")) {
-              ms.destroy();
+          for (const sprite of Object.values(spriteCache).flat()) {
+            if (sprite && !sprite.getData("locked")) {
+              sprite.destroy();
             }
           }
-          if (r) {
+          if (totalFrames) {
             scene.tweens.addCounter({
-              duration: Utils.getFrameMs(r),
+              duration: Utils.getFrameMs(totalFrames),
               onComplete: () => cleanUpAndComplete()
             });
           } else {
@@ -1277,7 +1269,7 @@ export class EncounterBattleAnim extends BattleAnim {
   public oppAnim: boolean;
 
   constructor(encounterAnim: EncounterAnim, user: Pokemon, target?: Pokemon, oppAnim?: boolean) {
-    super(user, target || user, true);
+    super(user, target ?? user, true);
 
     this.encounterAnim = encounterAnim;
     this.oppAnim = oppAnim ?? false;
