@@ -357,7 +357,7 @@ export default class Trainer extends Phaser.GameObjects.Container {
 
       // If useNewSpeciesPool is true, we need to generate a new species from the new species pool, otherwise we generate a random species
       let species = useNewSpeciesPool
-        ? getPokemonSpecies(newSpeciesPool[Math.floor(Math.random() * newSpeciesPool.length)])
+        ? getPokemonSpecies(newSpeciesPool[Math.floor(Utils.randSeedInt(newSpeciesPool.length))])
         : template.isSameSpecies(index) && index > offset
           ? getPokemonSpecies(battle.enemyParty[offset].species.getTrainerSpeciesForLevel(level, false, template.getStrength(offset), this.scene.currentBattle.waveIndex))
           : this.genNewPartyMemberSpecies(level, strength);

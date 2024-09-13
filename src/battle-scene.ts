@@ -64,6 +64,7 @@ import { PlayerGender } from "#enums/player-gender";
 import { Species } from "#enums/species";
 import { UiTheme } from "#enums/ui-theme";
 import { TimedEventManager } from "#app/timed-event-manager";
+import { PokemonAnimType } from "#enums/pokemon-anim-type";
 import i18next from "i18next";
 import { TrainerType } from "#enums/trainer-type";
 import { battleSpecDialogue } from "./data/dialogue";
@@ -74,6 +75,7 @@ import { MessagePhase } from "./phases/message-phase";
 import { MovePhase } from "./phases/move-phase";
 import { NewBiomeEncounterPhase } from "./phases/new-biome-encounter-phase";
 import { NextEncounterPhase } from "./phases/next-encounter-phase";
+import { PokemonAnimPhase } from "./phases/pokemon-anim-phase";
 import { QuietFormChangePhase } from "./phases/quiet-form-change-phase";
 import { ReturnPhase } from "./phases/return-phase";
 import { SelectBiomePhase } from "./phases/select-biome-phase";
@@ -161,6 +163,13 @@ export default class BattleScene extends SceneBase {
   public moveAnimations: boolean = true;
   public expGainsSpeed: integer = 0;
   public skipSeenDialogues: boolean = false;
+  /**
+   * Determines if the egg hatching animation should be skipped
+   * - 0 = Never (never skip animation)
+   * - 1 = Ask (ask to skip animation when hatching 2 or more eggs)
+   * - 2 = Always (automatically skip animation when hatching 2 or more eggs)
+   */
+  public eggSkipPreference: number = 0;
 
   /**
      * Defines the experience gain display mode.
@@ -2714,6 +2723,16 @@ export default class BattleScene extends SceneBase {
     return false;
   }
 
+  triggerPokemonBattleAnim(pokemon: Pokemon, battleAnimType: PokemonAnimType, fieldAssets?: Phaser.GameObjects.Sprite[], delayed: boolean = false): boolean {
+    const phase: Phase = new PokemonAnimPhase(this, battleAnimType, pokemon, fieldAssets);
+    if (delayed) {
+      this.pushPhase(phase);
+    } else {
+      this.unshiftPhase(phase);
+    }
+    return true;
+  }
+
   validateAchvs(achvType: Constructor<Achv>, ...args: unknown[]): void {
     const filteredAchvs = Object.values(achvs).filter(a => a instanceof achvType);
     for (const achv of filteredAchvs) {
@@ -2769,20 +2788,20 @@ export default class BattleScene extends SceneBase {
     const keys: string[] = [];
     const playerParty = this.getParty();
     playerParty.forEach(p => {
-      keys.push("pkmn__" + p.species.getSpriteId(p.gender === Gender.FEMALE, p.species.formIndex, p.shiny, p.variant));
-      keys.push("pkmn__" + p.species.getSpriteId(p.gender === Gender.FEMALE, p.species.formIndex, p.shiny, p.variant, true));
-      keys.push("cry/" + p.species.getCryKey(p.species.formIndex));
-      if (p.fusionSpecies && p.getSpeciesForm() !== p.getFusionSpeciesForm()) {
-        keys.push("cry/"+p.getFusionSpeciesForm().getCryKey(p.fusionSpecies.formIndex));
+      keys.push(p.getSpriteKey(true));
+      keys.push(p.getBattleSpriteKey(true, true));
+      keys.push("cry/" + p.species.getCryKey(p.formIndex));
+      if (p.fusionSpecies) {
+        keys.push("cry/"+p.fusionSpecies.getCryKey(p.fusionFormIndex));
       }
     });
     // enemyParty has to be operated on separately from playerParty because playerPokemon =/= enemyPokemon
     const enemyParty = this.getEnemyParty();
     enemyParty.forEach(p => {
-      keys.push(p.species.getSpriteKey(p.gender === Gender.FEMALE, p.species.formIndex, p.shiny, p.variant));
-      keys.push("cry/" + p.species.getCryKey(p.species.formIndex));
-      if (p.fusionSpecies && p.getSpeciesForm() !== p.getFusionSpeciesForm()) {
-        keys.push("cry/"+p.getFusionSpeciesForm().getCryKey(p.fusionSpecies.formIndex));
+      keys.push(p.getSpriteKey(true));
+      keys.push("cry/" + p.species.getCryKey(p.formIndex));
+      if (p.fusionSpecies) {
+        keys.push("cry/"+p.fusionSpecies.getCryKey(p.fusionFormIndex));
       }
     });
     return keys;

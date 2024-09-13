@@ -41,7 +41,7 @@ window.URL.createObjectURL = (blob: Blob) => {
   });
   return null;
 };
-navigator.getGamepads = vi.fn().mockReturnValue([]);
+navigator.getGamepads = () => [];
 global.fetch = vi.fn(MockFetch);
 Utils.setCookie(Utils.sessionIdKey, 'fake_token');
 
@@ -87,6 +87,8 @@ export default class GameWrapper {
     });
     Pokemon.prototype.enableMask = () => null;
     Pokemon.prototype.updateFusionPalette = () => null;
+    Pokemon.prototype.cry = () => null;
+    Pokemon.prototype.faintCry = (cb) => { if (cb) cb(); };
   }
 
   setScene(scene: BattleScene) {
