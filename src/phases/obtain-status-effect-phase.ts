@@ -31,7 +31,7 @@ export class ObtainStatusEffectPhase extends PokemonPhase {
             pokemon.status!.cureTurn = this.cureTurn; // TODO: is this bang correct?
         }
         pokemon.updateInfo(true);
-        new CommonBattleAnim(CommonAnim.POISON + (this.statusEffect! - 1), pokemon).play(this.scene, () => {
+        new CommonBattleAnim(CommonAnim.POISON + (this.statusEffect! - 1), pokemon).play(this.scene, false, () => {
           this.scene.queueMessage(getStatusEffectObtainText(this.statusEffect, getPokemonNameWithAffix(pokemon), this.sourceText ?? undefined));
           if (pokemon.status?.isPostTurn()) {
             this.scene.pushPhase(new PostTurnStatusEffectPhase(this.scene, this.battlerIndex));

@@ -15,13 +15,13 @@ import { BerryType } from "#enums/berry-type";
 import { StatusEffect, getStatusEffectHealText } from "../data/status-effect";
 import { achvs } from "../system/achv";
 import { VoucherType } from "../system/voucher";
-import { FormChangeItem, SpeciesFormChangeItemTrigger } from "../data/pokemon-forms";
+import { FormChangeItem, SpeciesFormChangeItemTrigger, SpeciesFormChangeLapseTeraTrigger, SpeciesFormChangeTeraTrigger } from "../data/pokemon-forms";
 import { Nature } from "#app/data/nature";
 import Overrides from "#app/overrides";
 import { ModifierType, modifierTypes } from "./modifier-type";
 import { Command } from "#app/ui/command-ui-handler";
 import { Species } from "#enums/species";
-import { Stat, type PermanentStat, type TempBattleStat, BATTLE_STATS, TEMP_BATTLE_STATS  } from "#app/enums/stat";
+import { Stat, type PermanentStat, type TempBattleStat, BATTLE_STATS, TEMP_BATTLE_STATS } from "#app/enums/stat";
 import i18next from "i18next";
 
 import { allMoves } from "#app/data/move";
@@ -763,6 +763,7 @@ export class TerastallizeModifier extends LapsingPokemonHeldItemModifier {
   apply(args: any[]): boolean {
     const pokemon = args[0] as Pokemon;
     if (pokemon.isPlayer()) {
+      pokemon.scene.triggerPokemonFormChange(pokemon, SpeciesFormChangeTeraTrigger);
       pokemon.scene.validateAchv(achvs.TERASTALLIZE);
       if (this.teraType === Type.STELLAR) {
         pokemon.scene.validateAchv(achvs.STELLAR_TERASTALLIZE);
@@ -776,6 +777,7 @@ export class TerastallizeModifier extends LapsingPokemonHeldItemModifier {
     const ret = super.lapse(args);
     if (!ret) {
       const pokemon = args[0] as Pokemon;
+      pokemon.scene.triggerPokemonFormChange(pokemon, SpeciesFormChangeLapseTeraTrigger);
       pokemon.updateSpritePipelineData();
     }
     return ret;
@@ -2943,6 +2945,10 @@ export function overrideHeldItems(scene: BattleScene, pokemon: Pokemon, isPlayer
   const heldItemsOverride: ModifierTypes.ModifierOverride[] = isPlayer ? Overrides.STARTING_HELD_ITEMS_OVERRIDE : Overrides.OPP_HELD_ITEMS_OVERRIDE;
   if (!heldItemsOverride || heldItemsOverride.length === 0 || !scene) {
     return;
+  }
+
+  if (!isPlayer) {
+    scene.clearEnemyHeldItemModifiers();
   }
 
   heldItemsOverride.forEach(item => {
