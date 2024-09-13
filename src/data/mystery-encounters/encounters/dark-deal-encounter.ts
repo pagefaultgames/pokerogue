@@ -13,6 +13,7 @@ import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { ModifierRewardPhase } from "#app/phases/modifier-reward-phase";
 import { PokemonFormChangeItemModifier, PokemonHeldItemModifier } from "#app/modifier/modifier";
+import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
 
 /** i18n namespace for encounter */
 const namespace = "mysteryEncounter:darkDeal";
@@ -100,7 +101,7 @@ export const DarkDealEncounter: MysteryEncounter =
         text: `${namespace}.intro_dialogue`,
       },
     ])
-    .withSceneWaveRangeRequirement(30, 180) // waves 30 to 180
+    .withSceneWaveRangeRequirement(30, CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES[1])
     .withScenePartySizeRequirement(2, 6) // Must have at least 2 pokemon in party
     .withCatchAllowed(true)
     .withTitle(`${namespace}.title`)

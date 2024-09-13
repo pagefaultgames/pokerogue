@@ -16,6 +16,7 @@ import { applyModifierTypeToPlayerPokemon } from "#app/data/mystery-encounters/u
 import i18next from "#app/plugins/i18n";
 import { ModifierRewardPhase } from "#app/phases/modifier-reward-phase";
 import { getPokemonSpecies } from "#app/data/pokemon-species";
+import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
 
 /** the i18n namespace for this encounter */
 const namespace = "mysteryEncounter:delibirdy";
@@ -40,7 +41,7 @@ const OPTION_3_DISALLOWED_MODIFIERS = [
 export const DelibirdyEncounter: MysteryEncounter =
   MysteryEncounterBuilder.withEncounterType(MysteryEncounterType.DELIBIRDY)
     .withEncounterTier(MysteryEncounterTier.GREAT)
-    .withSceneWaveRangeRequirement(10, 180)
+    .withSceneWaveRangeRequirement(...CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES)
     .withSceneRequirement(new MoneyRequirement(0, 2)) // Must have enough money for it to spawn at the very least
     .withPrimaryPokemonRequirement(new CombinationPokemonRequirement( // Must also have either option 2 or 3 available to spawn
       new HeldItemRequirement(OPTION_2_ALLOWED_MODIFIERS),

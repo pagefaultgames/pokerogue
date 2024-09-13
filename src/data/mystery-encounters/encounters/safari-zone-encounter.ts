@@ -18,6 +18,7 @@ import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { ScanIvsPhase } from "#app/phases/scan-ivs-phase";
 import { SummonPhase } from "#app/phases/summon-phase";
+import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
 
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounter:safariZone";
@@ -34,7 +35,7 @@ const SAFARI_MONEY_MULTIPLIER = 2.75;
 export const SafariZoneEncounter: MysteryEncounter =
   MysteryEncounterBuilder.withEncounterType(MysteryEncounterType.SAFARI_ZONE)
     .withEncounterTier(MysteryEncounterTier.GREAT)
-    .withSceneWaveRangeRequirement(10, 180)
+    .withSceneWaveRangeRequirement(...CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES)
     .withSceneRequirement(new MoneyRequirement(0, SAFARI_MONEY_MULTIPLIER)) // Cost equal to 1 Max Revive
     .withAutoHideIntroVisuals(false)
     .withIntroSpriteConfigs([

@@ -14,6 +14,7 @@ import { showEncounterDialogue } from "#app/data/mystery-encounters/utils/encoun
 import PokemonData from "#app/system/pokemon-data";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
+import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
 
 /** the i18n namespace for this encounter */
 const namespace = "mysteryEncounter:pokemonSalesman";
@@ -28,7 +29,7 @@ const MAX_POKEMON_PRICE_MULTIPLIER = 6;
 export const ThePokemonSalesmanEncounter: MysteryEncounter =
   MysteryEncounterBuilder.withEncounterType(MysteryEncounterType.THE_POKEMON_SALESMAN)
     .withEncounterTier(MysteryEncounterTier.ULTRA)
-    .withSceneWaveRangeRequirement(10, 180)
+    .withSceneWaveRangeRequirement(...CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES)
     .withSceneRequirement(new MoneyRequirement(undefined, MAX_POKEMON_PRICE_MULTIPLIER)) // Some costs may not be as significant, this is the max you'd pay
     .withAutoHideIntroVisuals(false)
     .withIntroSpriteConfigs([

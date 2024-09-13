@@ -18,6 +18,9 @@ export class PartyExpPhase extends Phase {
     this.pokemonParticipantIds = pokemonParticipantIds;
   }
 
+  /**
+   * Gives EXP to the party
+   */
   start() {
     super.start();
 

@@ -57,6 +57,7 @@ export default class PokemonData {
   public bossSegments?: integer;
 
   public summonData: PokemonSummonData;
+  /** Data that can customize a Pokemon in non-standard ways from its Species */
   public mysteryEncounterPokemonData: MysteryEncounterPokemonData;
 
   constructor(source: Pokemon | any, forHistory: boolean = false) {

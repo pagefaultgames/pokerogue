@@ -63,8 +63,8 @@ export interface IEggOptions {
    */
   overrideHiddenAbility?: boolean,
 
-  /** If Egg is of {@link EggSourceType.EVENT}, can customize the message displayed for where the egg was obtained */
-  eventEggTypeDescriptor?: string;
+  /** Can customize the message displayed for where the egg was obtained */
+  eggDescriptor?: string;
 }
 
 export class Egg {
@@ -86,7 +86,7 @@ export class Egg {
 
   private _overrideHiddenAbility: boolean;
 
-  private _eventEggTypeDescriptor?: string;
+  private _eggDescriptor?: string;
 
   ////
   // #endregion
@@ -197,7 +197,7 @@ export class Egg {
       generateEggProperties(eggOptions);
     }
 
-    this._eventEggTypeDescriptor = eggOptions?.eventEggTypeDescriptor;
+    this._eggDescriptor = eggOptions?.eggDescriptor;
   }
 
   ////
@@ -299,15 +299,15 @@ export class Egg {
   public getEggTypeDescriptor(scene: BattleScene): string {
     switch (this.sourceType) {
     case EggSourceType.SAME_SPECIES_EGG:
-      return i18next.t("egg:sameSpeciesEgg", { species: getPokemonSpecies(this._species).getName()});
+      return this._eggDescriptor ?? i18next.t("egg:sameSpeciesEgg", { species: getPokemonSpecies(this._species).getName()});
     case EggSourceType.GACHA_LEGENDARY:
-      return `${i18next.t("egg:gachaTypeLegendary")} (${getPokemonSpecies(getLegendaryGachaSpeciesForTimestamp(scene, this.timestamp)).getName()})`;
+      return this._eggDescriptor ?? `${i18next.t("egg:gachaTypeLegendary")} (${getPokemonSpecies(getLegendaryGachaSpeciesForTimestamp(scene, this.timestamp)).getName()})`;
     case EggSourceType.GACHA_SHINY:
-      return i18next.t("egg:gachaTypeShiny");
+      return this._eggDescriptor ?? i18next.t("egg:gachaTypeShiny");
     case EggSourceType.GACHA_MOVE:
-      return i18next.t("egg:gachaTypeMove");
+      return this._eggDescriptor ?? i18next.t("egg:gachaTypeMove");
     case EggSourceType.EVENT:
-      return this._eventEggTypeDescriptor ?? i18next.t("egg:eventType");
+      return this._eggDescriptor ?? i18next.t("egg:eventType");
     default:
       console.warn("getEggTypeDescriptor case not defined. Returning default empty string");
       return "";

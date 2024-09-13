@@ -17,6 +17,7 @@ import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterPokemonData } from "#app/data/mystery-encounters/mystery-encounter-pokemon-data";
 import { Stat } from "#enums/stat";
 import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
+import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
 
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounter:theStrongStuff";
@@ -33,7 +34,7 @@ const BST_INCREASE_VALUE = 10;
 export const TheStrongStuffEncounter: MysteryEncounter =
   MysteryEncounterBuilder.withEncounterType(MysteryEncounterType.THE_STRONG_STUFF)
     .withEncounterTier(MysteryEncounterTier.GREAT)
-    .withSceneWaveRangeRequirement(10, 180) // waves 10 to 180
+    .withSceneWaveRangeRequirement(...CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES)
     .withScenePartySizeRequirement(3, 6) // Must have at least 3 pokemon in party
     .withHideWildIntroMessage(true)
     .withAutoHideIntroVisuals(false)

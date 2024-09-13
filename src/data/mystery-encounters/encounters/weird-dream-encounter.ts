@@ -20,7 +20,7 @@ import i18next from "#app/plugins/i18n";
 import { doPokemonTransformationSequence, TransformationScreenPosition } from "#app/data/mystery-encounters/utils/encounter-transformation-sequence";
 import { getLevelTotalExp } from "#app/data/exp";
 import { Stat } from "#enums/stat";
-import { GameModes } from "#app/game-mode";
+import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES, GameModes } from "#app/game-mode";
 
 /** i18n namespace for encounter */
 const namespace = "mysteryEncounter:weirdDream";
@@ -82,10 +82,16 @@ const SUPER_LEGENDARY_BST_THRESHOLD = 600;
 const NON_LEGENDARY_BST_THRESHOLD = 570;
 const GAIN_OLD_GATEAU_ITEM_BST_THRESHOLD = 450;
 
-/** Value ranges of the resulting species BST transformations after adding values to original species */
-
-const HIGH_BST_TRANSFORM_BASE_VALUES = [90, 110];
-const STANDARD_BST_TRANSFORM_BASE_VALUES = [40, 50];
+/**
+ * Value ranges of the resulting species BST transformations after adding values to original species
+ * 2 Pokemon in the party use this range
+ */
+const HIGH_BST_TRANSFORM_BASE_VALUES: [number, number] = [90, 110];
+/**
+ * Value ranges of the resulting species BST transformations after adding values to original species
+ * All remaining Pokemon in the party use this range
+ */
+const STANDARD_BST_TRANSFORM_BASE_VALUES: [number, number] = [40, 50];
 
 /**
  * Weird Dream encounter.
@@ -96,7 +102,7 @@ export const WeirdDreamEncounter: MysteryEncounter =
   MysteryEncounterBuilder.withEncounterType(MysteryEncounterType.WEIRD_DREAM)
     .withEncounterTier(MysteryEncounterTier.ROGUE)
     .withDisabledGameModes(GameModes.CHALLENGE)
-    .withSceneWaveRangeRequirement(10, 180)
+    .withSceneWaveRangeRequirement(...CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES)
     .withIntroSpriteConfigs([
       {
         spriteKey: "weird_dream_woman",
@@ -252,7 +258,7 @@ function getTeamTransformations(scene: BattleScene): PokemonTransformation[] {
     scene.removePokemonFromPlayerParty(removed, false);
 
     const bst = removed.calculateBaseStats().reduce((a, b) => a + b, 0);
-    let newBstRange;
+    let newBstRange: [number, number];
     if (i < 2) {
       newBstRange = HIGH_BST_TRANSFORM_BASE_VALUES;
     } else {

@@ -147,7 +147,7 @@ export const ATrainersTestEncounter: MysteryEncounter =
           scene,
           pulled: false,
           sourceType: EggSourceType.EVENT,
-          eventEggTypeDescriptor: encounter.misc.trainerEggDescription,
+          eggDescriptor: encounter.misc.trainerEggDescription,
           tier: EggTier.ULTRA
         };
         encounter.setDialogueToken("eggType", i18next.t(`${namespace}.eggTypes.epic`));
@@ -170,7 +170,7 @@ export const ATrainersTestEncounter: MysteryEncounter =
           scene,
           pulled: false,
           sourceType: EggSourceType.EVENT,
-          eventEggTypeDescriptor: encounter.misc.trainerEggDescription,
+          eggDescriptor: encounter.misc.trainerEggDescription,
           tier: EggTier.GREAT
         };
         encounter.setDialogueToken("eggType", i18next.t(`${namespace}.eggTypes.rare`));

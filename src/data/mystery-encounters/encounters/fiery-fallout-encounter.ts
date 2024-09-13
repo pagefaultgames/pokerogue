@@ -12,7 +12,7 @@ import { Type } from "#app/data/type";
 import { BattlerIndex } from "#app/battle";
 import { PokemonMove } from "#app/field/pokemon";
 import { Moves } from "#enums/moves";
-import { EncounterAnim, EncounterBattleAnim } from "#app/data/battle-anims";
+import { EncounterBattleAnim } from "#app/data/battle-anims";
 import { WeatherType } from "#app/data/weather";
 import { isNullOrUndefined, randSeedInt } from "#app/utils";
 import { StatusEffect } from "#app/data/status-effect";
@@ -20,6 +20,8 @@ import { queueEncounterMessage } from "#app/data/mystery-encounters/utils/encoun
 import { applyDamageToPokemon, applyModifierTypeToPlayerPokemon } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
+import { EncounterAnim } from "#enums/encounter-anims";
+import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
 
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounter:fieryFallout";
@@ -39,7 +41,7 @@ const DAMAGE_PERCENTAGE: number = 20;
 export const FieryFalloutEncounter: MysteryEncounter =
   MysteryEncounterBuilder.withEncounterType(MysteryEncounterType.FIERY_FALLOUT)
     .withEncounterTier(MysteryEncounterTier.COMMON)
-    .withSceneWaveRangeRequirement(40, 180)
+    .withSceneWaveRangeRequirement(40, CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES[1])
     .withCatchAllowed(true)
     .withIntroSpriteConfigs([]) // Set in onInit()
     .withAnimations(EncounterAnim.MAGMA_BG, EncounterAnim.MAGMA_SPOUT)

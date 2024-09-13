@@ -23,6 +23,7 @@ import HeldModifierConfig from "#app/interfaces/held-modifier-config";
 import { BerryType } from "#enums/berry-type";
 import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
 import { Stat } from "#enums/stat";
+import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
 
 /** the i18n namespace for this encounter */
 const namespace = "mysteryEncounter:absoluteAvarice";
@@ -35,7 +36,7 @@ const namespace = "mysteryEncounter:absoluteAvarice";
 export const AbsoluteAvariceEncounter: MysteryEncounter =
   MysteryEncounterBuilder.withEncounterType(MysteryEncounterType.ABSOLUTE_AVARICE)
     .withEncounterTier(MysteryEncounterTier.GREAT)
-    .withSceneWaveRangeRequirement(10, 180)
+    .withSceneWaveRangeRequirement(...CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES)
     .withSceneRequirement(new PersistentModifierRequirement("BerryModifier", 4)) // Must have at least 4 berries to spawn
     .withIntroSpriteConfigs([
       {

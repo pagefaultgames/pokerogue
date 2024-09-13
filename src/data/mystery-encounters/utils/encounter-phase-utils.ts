@@ -88,13 +88,18 @@ export interface EnemyPokemonConfig {
 }
 
 export interface EnemyPartyConfig {
-  levelAdditiveMultiplier?: number; // Formula for enemy: level += waveIndex / 10 * levelAdditive
+  /** Formula for enemy: level += waveIndex / 10 * levelAdditive */
+  levelAdditiveMultiplier?: number;
   doubleBattle?: boolean;
-  trainerType?: TrainerType; // Generates trainer battle solely off trainer type
-  trainerConfig?: TrainerConfig; // More customizable option for configuring trainer battle
+  /** Generates trainer battle solely off trainer type */
+  trainerType?: TrainerType;
+  /** More customizable option for configuring trainer battle */
+  trainerConfig?: TrainerConfig;
   pokemonConfigs?: EnemyPokemonConfig[];
-  female?: boolean; // True for female trainer, false for male
-  disableSwitch?: boolean; // True will prevent player from switching
+  /** True for female trainer, false for male */
+  female?: boolean;
+  /** True will prevent player from switching */
+  disableSwitch?: boolean;
 }
 
 /**

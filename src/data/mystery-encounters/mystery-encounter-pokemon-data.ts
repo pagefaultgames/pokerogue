@@ -2,6 +2,10 @@ import { Abilities } from "#enums/abilities";
 import { Type } from "#app/data/type";
 import { isNullOrUndefined } from "#app/utils";
 
+/**
+ * Data that can customize a Pokemon in non-standard ways from its Species
+ * Currently only used by Mystery Encounters, may need to be renamed if it becomes more widely used
+ */
 export class MysteryEncounterPokemonData {
   public spriteScale: number;
   public ability: Abilities | -1;

@@ -33,8 +33,8 @@ interface GameModeConfig {
 }
 
 // Describes min and max waves for MEs in specific game modes
-const CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES: [number, number] = [10, 180];
-const CHALLENGE_MODE_MYSTERY_ENCOUNTER_WAVES: [number, number] = [10, 180];
+export const CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES: [number, number] = [10, 180];
+export const CHALLENGE_MODE_MYSTERY_ENCOUNTER_WAVES: [number, number] = [10, 180];
 
 export class GameMode implements GameModeConfig {
   public modeId: GameModes;
@@ -325,6 +325,9 @@ export class GameMode implements GameModeConfig {
     }
   }
 
+  /**
+   * Returns the wave range where MEs can spawn for the game mode [min, max]
+   */
   getMysteryEncounterLegalWaves(): [number, number] {
     switch (this.modeId) {
     default:

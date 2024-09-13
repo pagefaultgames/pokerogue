@@ -1,6 +1,9 @@
 import { Moves } from "#enums/moves";
 import { Abilities } from "#enums/abilities";
 
+/**
+ * Moves that "steal" things
+ */
 export const STEALING_MOVES = [
   Moves.PLUCK,
   Moves.COVET,
@@ -10,6 +13,9 @@ export const STEALING_MOVES = [
   Moves.SWITCHEROO
 ];
 
+/**
+ * Moves that "charm" someone
+ */
 export const CHARMING_MOVES = [
   Moves.CHARM,
   Moves.FLATTER,
@@ -39,6 +45,9 @@ export const DANCING_MOVES = [
   Moves.VICTORY_DANCE
 ];
 
+/**
+ * Moves that can distract someone/something
+ */
 export const DISTRACTION_MOVES = [
   Moves.FAKE_OUT,
   Moves.FOLLOW_ME,
@@ -54,6 +63,9 @@ export const DISTRACTION_MOVES = [
   Moves.SHED_TAIL
 ];
 
+/**
+ * Moves that protect in some way
+ */
 export const PROTECTING_MOVES = [
   Moves.PROTECT,
   Moves.WIDE_GUARD,
@@ -70,6 +82,9 @@ export const PROTECTING_MOVES = [
   Moves.DETECT
 ];
 
+/**
+ * Moves that (loosely) can be used to trap/rob someone
+ */
 export const EXTORTION_MOVES = [
   Moves.BIND,
   Moves.CLAMP,
@@ -93,6 +108,9 @@ export const EXTORTION_MOVES = [
   Moves.STRING_SHOT,
 ];
 
+/**
+ * Abilities that (loosely) can be used to trap/rob someone
+ */
 export const EXTORTION_ABILITIES = [
   Abilities.INTIMIDATE,
   Abilities.ARENA_TRAP,

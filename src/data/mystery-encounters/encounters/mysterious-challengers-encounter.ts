@@ -17,6 +17,7 @@ import BattleScene from "#app/battle-scene";
 import * as Utils from "#app/utils";
 import MysteryEncounter, { MysteryEncounterBuilder } from "../mystery-encounter";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
+import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
 
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounter:mysteriousChallengers";
@@ -29,7 +30,7 @@ const namespace = "mysteryEncounter:mysteriousChallengers";
 export const MysteriousChallengersEncounter: MysteryEncounter =
   MysteryEncounterBuilder.withEncounterType(MysteryEncounterType.MYSTERIOUS_CHALLENGERS)
     .withEncounterTier(MysteryEncounterTier.GREAT)
-    .withSceneWaveRangeRequirement(10, 180) // waves 10 to 180
+    .withSceneWaveRangeRequirement(...CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES)
     .withIntroSpriteConfigs([]) // These are set in onInit()
     .withIntroDialogue([
       {

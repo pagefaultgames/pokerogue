@@ -11,6 +11,7 @@ import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { Stat } from "#enums/stat";
 import i18next from "i18next";
+import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
 
 /** i18n namespace for the encounter */
 const namespace = "mysteryEncounter:fieldTrip";
@@ -23,7 +24,7 @@ const namespace = "mysteryEncounter:fieldTrip";
 export const FieldTripEncounter: MysteryEncounter =
   MysteryEncounterBuilder.withEncounterType(MysteryEncounterType.FIELD_TRIP)
     .withEncounterTier(MysteryEncounterTier.COMMON)
-    .withSceneWaveRangeRequirement(10, 180)
+    .withSceneWaveRangeRequirement(...CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES)
     .withIntroSpriteConfigs([
       {
         spriteKey: "preschooler_m",
@@ -90,6 +91,7 @@ export const FieldTripEncounter: MysteryEncounter =
               generateModifierTypeOption(scene, modifierTypes.TEMP_STAT_STAGE_BOOSTER, [Stat.DEF])!,
               generateModifierTypeOption(scene, modifierTypes.TEMP_STAT_STAGE_BOOSTER, [Stat.SPD])!,
               generateModifierTypeOption(scene, modifierTypes.DIRE_HIT)!,
+              generateModifierTypeOption(scene, modifierTypes.RARER_CANDY)!,
             ];
 
             setEncounterRewards(scene, { guaranteedModifierTypeOptions: modifiers, fillRemaining: false });
@@ -135,6 +137,7 @@ export const FieldTripEncounter: MysteryEncounter =
               generateModifierTypeOption(scene, modifierTypes.TEMP_STAT_STAGE_BOOSTER, [Stat.SPDEF])!,
               generateModifierTypeOption(scene, modifierTypes.TEMP_STAT_STAGE_BOOSTER, [Stat.SPD])!,
               generateModifierTypeOption(scene, modifierTypes.DIRE_HIT)!,
+              generateModifierTypeOption(scene, modifierTypes.RARER_CANDY)!,
             ];
 
             setEncounterRewards(scene, { guaranteedModifierTypeOptions: modifiers, fillRemaining: false });
@@ -180,6 +183,7 @@ export const FieldTripEncounter: MysteryEncounter =
               generateModifierTypeOption(scene, modifierTypes.TEMP_STAT_STAGE_BOOSTER, [Stat.SPD])!,
               generateModifierTypeOption(scene, modifierTypes.GREAT_BALL)!,
               generateModifierTypeOption(scene, modifierTypes.IV_SCANNER)!,
+              generateModifierTypeOption(scene, modifierTypes.RARER_CANDY)!,
             ];
 
             setEncounterRewards(scene, { guaranteedModifierTypeOptions: modifiers, fillRemaining: false });

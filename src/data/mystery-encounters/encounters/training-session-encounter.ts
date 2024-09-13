@@ -19,6 +19,7 @@ import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode
 import HeldModifierConfig from "#app/interfaces/held-modifier-config";
 import i18next from "i18next";
 import { getStatKey } from "#enums/stat";
+import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
 
 /** The i18n namespace for the encounter */
 const namespace = "mysteryEncounter:trainingSession";
@@ -31,7 +32,7 @@ const namespace = "mysteryEncounter:trainingSession";
 export const TrainingSessionEncounter: MysteryEncounter =
   MysteryEncounterBuilder.withEncounterType(MysteryEncounterType.TRAINING_SESSION)
     .withEncounterTier(MysteryEncounterTier.ULTRA)
-    .withSceneWaveRangeRequirement(10, 180) // waves 10 to 180
+    .withSceneWaveRangeRequirement(...CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES)
     .withScenePartySizeRequirement(2, 6, true) // Must have at least 2 unfainted pokemon in party
     .withHideWildIntroMessage(true)
     .withIntroSpriteConfigs([

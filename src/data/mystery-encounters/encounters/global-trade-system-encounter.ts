@@ -22,6 +22,7 @@ import { getNatureName } from "#app/data/nature";
 import { getPokeballAtlasKey, getPokeballTintColor, PokeballType } from "#app/data/pokeball";
 import { getEncounterText, showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
 import { trainerNamePools } from "#app/data/trainer-names";
+import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
 
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounter:globalTradeSystem";
@@ -70,7 +71,7 @@ const EXCLUDED_TRADE_SPECIES = [
 export const GlobalTradeSystemEncounter: MysteryEncounter =
   MysteryEncounterBuilder.withEncounterType(MysteryEncounterType.GLOBAL_TRADE_SYSTEM)
     .withEncounterTier(MysteryEncounterTier.COMMON)
-    .withSceneWaveRangeRequirement(10, 180)
+    .withSceneWaveRangeRequirement(...CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES)
     .withAutoHideIntroVisuals(false)
     .withIntroSpriteConfigs([
       {

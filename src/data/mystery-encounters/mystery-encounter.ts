@@ -10,11 +10,11 @@ import MysteryEncounterDialogue, { OptionTextDisplay } from "./mystery-encounter
 import MysteryEncounterOption, { MysteryEncounterOptionBuilder, OptionPhaseCallback } from "./mystery-encounter-option";
 import { EncounterPokemonRequirement, EncounterSceneRequirement, HealthRatioRequirement, PartySizeRequirement, StatusEffectRequirement, WaveRangeRequirement } from "./mystery-encounter-requirements";
 import { BattlerIndex } from "#app/battle";
-import { EncounterAnim } from "#app/data/battle-anims";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { GameModes } from "#app/game-mode";
+import { EncounterAnim } from "#enums/encounter-anims";
 
 export interface EncounterStartOfBattleEffect {
   sourcePokemon?: Pokemon;
@@ -72,15 +72,14 @@ export interface IMysteryEncounter {
  * Unless you know what you're doing, you should use MysteryEncounterBuilder to create an instance for this class
  */
 export default class MysteryEncounter implements IMysteryEncounter {
-  /**
-   * Required params
-   */
+  // #region Required params
+
   encounterType: MysteryEncounterType;
   options: [MysteryEncounterOption, MysteryEncounterOption, ...MysteryEncounterOption[]];
   spriteConfigs: MysteryEncounterSpriteConfig[];
-  /**
-   * Optional params
-   */
+
+  // #region Optional params
+
   encounterTier: MysteryEncounterTier;
   /**
    * Custom battle animations that are configured for encounter effects and visuals
@@ -137,9 +136,8 @@ export default class MysteryEncounter implements IMysteryEncounter {
    */
   skipToFightInput: boolean;
 
-  /**
-   * Event callback functions
-   */
+  // #region Event callback functions
+
   /** Event when Encounter is first loaded, use it for data conditioning */
   onInit?: (scene: BattleScene) => boolean;
   /** Event when battlefield visuals have finished sliding in and the encounter dialogue begins */
@@ -171,9 +169,7 @@ export default class MysteryEncounter implements IMysteryEncounter {
   primaryPokemon?: PlayerPokemon;
   secondaryPokemon?: PlayerPokemon[];
 
-  /**
-   * Post-construct / Auto-populated params
-   */
+  // #region Post-construct / Auto-populated params
 
   /**
    * Dialogue object containing all the dialogue, messages, tooltips, etc. for an encounter
@@ -192,9 +188,7 @@ export default class MysteryEncounter implements IMysteryEncounter {
    */
   introVisuals?: MysteryEncounterIntroVisuals;
 
-  /**
-   * Flags
-   */
+  // #region Flags
 
   /**
    * Can be set for uses programatic dialogue during an encounter (storing the name of one of the party's pokemon, etc.)

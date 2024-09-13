@@ -9,6 +9,7 @@ import { Moves } from "#enums/moves";
 import { SubstituteTag } from "./battler-tags";
 import { isNullOrUndefined } from "../utils";
 import Phaser from "phaser";
+import { EncounterAnim } from "#enums/encounter-anims";
 //import fs from 'vite-plugin-fs/browser';
 
 export enum AnimFrameTarget {
@@ -103,18 +104,6 @@ export enum CommonAnim {
     GRASSY_TERRAIN,
     PSYCHIC_TERRAIN,
     LOCK_ON = 2120
-}
-
-/**
- * Animations used for Mystery Encounters
- * These are custom animations that may or may not work in any other circumstance
- * Use at your own risk
- */
-export enum EncounterAnim {
-  MAGMA_BG,
-  MAGMA_SPOUT,
-  SMOKESCREEN,
-  DANCE
 }
 
 export class AnimConfig {

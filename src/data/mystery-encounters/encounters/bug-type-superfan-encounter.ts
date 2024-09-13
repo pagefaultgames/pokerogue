@@ -49,6 +49,7 @@ import i18next from "i18next";
 import MoveInfoOverlay from "#app/ui/move-info-overlay";
 import { allMoves } from "#app/data/move";
 import { ModifierTier } from "#app/modifier/modifier-tier";
+import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
 
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounter:bugTypeSuperfan";
@@ -191,7 +192,7 @@ export const BugTypeSuperfanEncounter: MysteryEncounter =
       new AttackTypeBoosterHeldItemTypeRequirement(Type.BUG, 1),
       new TypeRequirement(Type.BUG, false, 1)
     ))
-    .withSceneWaveRangeRequirement(10, 180) // waves 10 to 180
+    .withSceneWaveRangeRequirement(...CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES)
     .withIntroSpriteConfigs([]) // These are set in onInit()
     .withAutoHideIntroVisuals(false)
     .withIntroDialogue([

@@ -265,7 +265,9 @@ export default class BattleScene extends SceneBase {
   public money: integer;
   public pokemonInfoContainer: PokemonInfoContainer;
   private party: PlayerPokemon[];
+  /** Session save data that pertains to Mystery Encounters */
   public mysteryEncounterSaveData: MysteryEncounterSaveData = new MysteryEncounterSaveData();
+  /** If the previous wave was a MysteryEncounter, tracks the object with this variable. Mostly used for visual object cleanup */
   public lastMysteryEncounter?: MysteryEncounter;
   /** Combined Biome and Wave count text */
   private biomeWaveText: Phaser.GameObjects.Text;
