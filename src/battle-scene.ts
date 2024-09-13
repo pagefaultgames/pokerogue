@@ -64,6 +64,7 @@ import { PlayerGender } from "#enums/player-gender";
 import { Species } from "#enums/species";
 import { UiTheme } from "#enums/ui-theme";
 import { TimedEventManager } from "#app/timed-event-manager";
+import { PokemonAnimType } from "#enums/pokemon-anim-type";
 import i18next from "i18next";
 import { TrainerType } from "#enums/trainer-type";
 import { battleSpecDialogue } from "./data/dialogue";
@@ -74,6 +75,7 @@ import { MessagePhase } from "./phases/message-phase";
 import { MovePhase } from "./phases/move-phase";
 import { NewBiomeEncounterPhase } from "./phases/new-biome-encounter-phase";
 import { NextEncounterPhase } from "./phases/next-encounter-phase";
+import { PokemonAnimPhase } from "./phases/pokemon-anim-phase";
 import { QuietFormChangePhase } from "./phases/quiet-form-change-phase";
 import { ReturnPhase } from "./phases/return-phase";
 import { SelectBiomePhase } from "./phases/select-biome-phase";
@@ -2719,6 +2721,16 @@ export default class BattleScene extends SceneBase {
     }
 
     return false;
+  }
+
+  triggerPokemonBattleAnim(pokemon: Pokemon, battleAnimType: PokemonAnimType, fieldAssets?: Phaser.GameObjects.Sprite[], delayed: boolean = false): boolean {
+    const phase: Phase = new PokemonAnimPhase(this, battleAnimType, pokemon, fieldAssets);
+    if (delayed) {
+      this.pushPhase(phase);
+    } else {
+      this.unshiftPhase(phase);
+    }
+    return true;
   }
 
   validateAchvs(achvType: Constructor<Achv>, ...args: unknown[]): void {
