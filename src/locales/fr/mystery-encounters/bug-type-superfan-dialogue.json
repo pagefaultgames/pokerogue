@@ -17,7 +17,7 @@
       "disabled_tooltip": "Vous devez avoir au moins un Pokémon Insecte dans votre équipe pour choisir cette option.",
       "selected": "Vous lui montrez tous les types Insecte de votre équipe…",
       "selected_0_to_1": "Oh ? T’en as que {{numBugTypes}}…$Pourquoi je gaspille ma salive à te parler…",
-      "selected_2_3": "Oh, t’as {{numBugTypes}} types Insecte !\nC’est pas si mal.$Tiens, voilà qui devrait t’aider dans ta quête pour en attraper encore plus !",
+      "selected_2_to_3": "Oh, t’as {{numBugTypes}} types Insecte !\nC’est pas si mal.$Tiens, voilà qui devrait t’aider dans ta quête pour en attraper encore plus !",
       "selected_4_to_5": "Quoi ? T’as {{numBugTypes}} types Insecte ?\nSympa !$T’en est pas encore à mon niveau, mais je me reconnais un peu en toi !\n$Prends ça mon poulain, c’est cadeau !",
       "selected_6": "Impressionnant ! {{numBugTypes}} types Insecte !\n$Tu dois vraiment les aimer presque autant que moi !$Tiens, accepte ceci en signe de notre camaraderie !"
     },
