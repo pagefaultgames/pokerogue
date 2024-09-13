@@ -8,5 +8,7 @@
   "lockRaritiesDesc": "選択肢を　変更するときの　レア度を　固定する\n（選択肢変更の価格は変わる）",
   "checkTeamDesc": "手持ちポケモンの　状態を　確認する\nフォルムチェンジアイテムを　有効・無効にする",
   "rerollCost": "{{formattedMoney}}円",
-  "itemCost": "{{formattedMoney}}円"
+  "itemCost": "{{formattedMoney}}円",
+  "continueNextWaveButton": "Continue",
+  "continueNextWaveDescription": "Continue to the next wave"
 }
