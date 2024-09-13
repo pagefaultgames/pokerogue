@@ -270,9 +270,9 @@ export function getTextColor(textStyle: TextStyle, shadow?: boolean, uiTheme: Ui
     return !shadow ? "#f8f8f8" : "#636363";
   case TextStyle.SUMMARY_ALT:
     if (isLegacyTheme) {
-      return !shadow ? "#484848" : "#d0d0c8";
+      return !shadow ? "#f8f8f8" : "#636363";
     }
-    return !shadow ? "#f8f8f8" : "#636363";
+    return !shadow ? "#484848" : "#d0d0c8";
   case TextStyle.SUMMARY_RED:
   case TextStyle.TOOLTIP_TITLE:
     return !shadow ? "#e70808" : "#ffbd73";

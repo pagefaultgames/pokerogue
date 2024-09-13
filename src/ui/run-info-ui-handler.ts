@@ -180,7 +180,7 @@ export default class RunInfoUiHandler extends UiHandler {
   private async parseRunResult() {
     const genderIndex = this.scene.gameData.gender ?? PlayerGender.UNSET;
     const genderStr = PlayerGender[genderIndex];
-    const runResultTextStyle = this.isVictory ? TextStyle.SUMMARY_ALT : TextStyle.SUMMARY_RED;
+    const runResultTextStyle = this.isVictory ? TextStyle.PERFECT_IV : TextStyle.SUMMARY_RED;
     const runResultTitle = this.isVictory ? i18next.t("runHistory:victory") : i18next.t("runHistory:defeated", { context: genderStr });
     const runResultText = addTextObject(this.scene, 6, 5, `${runResultTitle} - ${i18next.t("saveSlotSelectUiHandler:wave")} ${this.runInfo.waveIndex}`, runResultTextStyle, {fontSize : "65px", lineSpacing: 0.1});
 
