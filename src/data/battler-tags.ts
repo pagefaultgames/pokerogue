@@ -1298,6 +1298,13 @@ export class ProtectedTag extends BattlerTag {
   }
 }
 
+/** Base class for `BattlerTag`s that block damaging moves but not status moves */
+export class DamageProtectedTag extends ProtectedTag {}
+
+/**
+ * `BattlerTag` class for moves that block damaging moves damage the enemy if the enemy's move makes contact
+ * Used by {@linkcode Moves.SPIKY_SHIELD}
+ */
 export class ContactDamageProtectedTag extends ProtectedTag {
   private damageRatio: number;
 
@@ -1333,7 +1340,11 @@ export class ContactDamageProtectedTag extends ProtectedTag {
   }
 }
 
-export class ContactStatStageChangeProtectedTag extends ProtectedTag {
+/**
+ * `BattlerTag` class for moves that block damaging moves and lower enemy stats if the enemy's move makes contact
+ * Used by {@linkcode Moves.KINGS_SHIELD}, {@linkcode Moves.OBSTRUCT}, {@linkcode Moves.SILK_TRAP}
+ */
+export class ContactStatStageChangeProtectedTag extends DamageProtectedTag {
   private stat: BattleStat;
   private levels: number;
 
@@ -1389,7 +1400,11 @@ export class ContactPoisonProtectedTag extends ProtectedTag {
   }
 }
 
-export class ContactBurnProtectedTag extends ProtectedTag {
+/**
+ * `BattlerTag` class for moves that block damaging moves and burn the enemy if the enemy's move makes contact
+ * Used by {@linkcode Moves.BURNING_BULWARK}
+ */
+export class ContactBurnProtectedTag extends DamageProtectedTag {
   constructor(sourceMove: Moves) {
     super(sourceMove, BattlerTagType.BURNING_BULWARK);
   }
@@ -1870,15 +1885,86 @@ export class CursedTag extends BattlerTag {
     return ret;
   }
 }
+/**
+ * Battler tag for attacks that remove a type post use.
+ */
+export class RemovedTypeTag extends BattlerTag {
+  constructor(tagType: BattlerTagType, lapseType: BattlerTagLapseType, sourceMove: Moves) {
+    super(tagType, lapseType, 1, sourceMove);
+  }
+}
 
 /**
- * Battler tag for effects that ground the source, allowing Ground-type moves to hit them. Encompasses two tag types:
- * @item `IGNORE_FLYING`: Persistent grounding effects (i.e. from Smack Down and Thousand Waves)
- * @item `ROOSTED`: One-turn grounding effects (i.e. from Roost)
+ * Battler tag for effects that ground the source, allowing Ground-type moves to hit them.
+ * @description `IGNORE_FLYING`: Persistent grounding effects (i.e. from Smack Down and Thousand Waves)
  */
 export class GroundedTag extends BattlerTag {
   constructor(tagType: BattlerTagType, lapseType: BattlerTagLapseType, sourceMove: Moves) {
     super(tagType, lapseType, 1, sourceMove);
+  }
+}
+
+/**
+ * @description `ROOSTED`: Tag for temporary grounding if only source of ungrounding is flying and pokemon uses Roost.
+ * Roost removes flying type from a pokemon for a single turn.
+ */
+
+export class RoostedTag extends BattlerTag {
+  private isBaseFlying : boolean;
+  private isBasePureFlying : boolean;
+
+  constructor() {
+    super(BattlerTagType.ROOSTED, BattlerTagLapseType.TURN_END, 1, Moves.ROOST);
+  }
+
+  onRemove(pokemon: Pokemon): void {
+    const currentTypes = pokemon.getTypes();
+    const baseTypes = pokemon.getTypes(false, false, true);
+
+    const forestsCurseApplied: boolean = currentTypes.includes(Type.GRASS) && !baseTypes.includes(Type.GRASS);
+    const trickOrTreatApplied: boolean = currentTypes.includes(Type.GHOST) && !baseTypes.includes(Type.GHOST);
+
+    if (this.isBaseFlying) {
+      let modifiedTypes: Type[] = [];
+      if (this.isBasePureFlying) {
+        if (forestsCurseApplied || trickOrTreatApplied) {
+          modifiedTypes = currentTypes.filter(type => type !== Type.NORMAL);
+          modifiedTypes.push(Type.FLYING);
+        } else {
+          modifiedTypes = [Type.FLYING];
+        }
+      } else {
+        modifiedTypes = [...currentTypes];
+        modifiedTypes.push(Type.FLYING);
+      }
+      pokemon.summonData.types = modifiedTypes;
+      pokemon.updateInfo();
+    }
+  }
+
+  onAdd(pokemon: Pokemon): void {
+    const currentTypes = pokemon.getTypes();
+    const baseTypes = pokemon.getTypes(false, false, true);
+
+    const isOriginallyDualType = baseTypes.length === 2;
+    const isCurrentlyDualType = currentTypes.length === 2;
+    this.isBaseFlying = baseTypes.includes(Type.FLYING);
+    this.isBasePureFlying = baseTypes[0] === Type.FLYING && baseTypes.length === 1;
+
+    if (this.isBaseFlying) {
+      let modifiedTypes: Type[];
+      if (this.isBasePureFlying && !isCurrentlyDualType) {
+        modifiedTypes = [Type.NORMAL];
+      } else {
+        if (!!pokemon.getTag(RemovedTypeTag) && isOriginallyDualType && !isCurrentlyDualType) {
+          modifiedTypes = [Type.UNKNOWN];
+        } else {
+          modifiedTypes = currentTypes.filter(type => type !== Type.FLYING);
+        }
+      }
+      pokemon.summonData.types = modifiedTypes;
+      pokemon.updateInfo();
+    }
   }
 }
 
@@ -2244,7 +2330,11 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: number, source
   case BattlerTagType.IGNORE_FLYING:
     return new GroundedTag(tagType, BattlerTagLapseType.CUSTOM, sourceMove);
   case BattlerTagType.ROOSTED:
-    return new GroundedTag(tagType, BattlerTagLapseType.TURN_END, sourceMove);
+    return new RoostedTag();
+  case BattlerTagType.BURNED_UP:
+    return new RemovedTypeTag(tagType, BattlerTagLapseType.CUSTOM, sourceMove);
+  case BattlerTagType.DOUBLE_SHOCKED:
+    return new RemovedTypeTag(tagType, BattlerTagLapseType.CUSTOM, sourceMove);
   case BattlerTagType.SALT_CURED:
     return new SaltCuredTag(sourceId);
   case BattlerTagType.CURSED:
