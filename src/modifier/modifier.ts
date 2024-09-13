@@ -934,11 +934,7 @@ export class EvolutionStatBoosterModifier extends StatBoosterModifier {
    * @returns true if the stat boosts can be applied, false otherwise
    */
   shouldApply(args: any[]): boolean {
-    const holder = args[0];
-    if (!(holder instanceof Pokemon)) {
-      return false;
-    }
-    return super.shouldApply(args) && !holder.isMax();
+    return super.shouldApply(args) && !(args[0] as Pokemon).isMax();
   }
 
   /**
