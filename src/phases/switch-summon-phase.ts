@@ -11,6 +11,7 @@ import { Command } from "#app/ui/command-ui-handler";
 import i18next from "i18next";
 import { PostSummonPhase } from "./post-summon-phase";
 import { SummonPhase } from "./summon-phase";
+import { SubstituteTag } from "#app/data/battler-tags";
 
 export class SwitchSummonPhase extends SummonPhase {
   private slotIndex: integer;
@@ -65,6 +66,16 @@ export class SwitchSummonPhase extends SummonPhase {
 
     if (!this.batonPass) {
       (this.player ? this.scene.getEnemyField() : this.scene.getPlayerField()).forEach(enemyPokemon => enemyPokemon.removeTagsBySourceId(pokemon.id));
+      const substitute = pokemon.getTag(SubstituteTag);
+      if (substitute) {
+        this.scene.tweens.add({
+          targets: substitute.sprite,
+          duration: 250,
+          scale: substitute.sprite.scale * 0.5,
+          ease: "Sine.easeIn",
+          onComplete: () => substitute.sprite.destroy()
+        });
+      }
     }
 
     this.scene.ui.showText(this.player ?
@@ -115,8 +126,18 @@ export class SwitchSummonPhase extends SummonPhase {
             pokemonName: this.getPokemon().getNameToRender()
           })
         );
-        // Ensure improperly persisted summon data (such as tags) is cleared upon switching
-        if (!this.batonPass) {
+        /**
+         * If this switch is passing a Substitute, make the switched Pokemon match the returned Pokemon's state as it left.
+         * Otherwise, clear any persisting tags on the returned Pokemon.
+         */
+        if (this.batonPass) {
+          const substitute = this.lastPokemon.getTag(SubstituteTag);
+          if (substitute) {
+            switchedInPokemon.x += this.lastPokemon.getSubstituteOffset()[0];
+            switchedInPokemon.y += this.lastPokemon.getSubstituteOffset()[1];
+            switchedInPokemon.setAlpha(0.5);
+          }
+        } else {
           switchedInPokemon.resetBattleData();
           switchedInPokemon.resetSummonData();
         }

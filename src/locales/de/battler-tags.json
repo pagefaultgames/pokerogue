@@ -70,5 +70,8 @@
   "stockpilingOnAdd": "{{pokemonNameWithAffix}} hortet {{stockpiledCount}}!",
   "disabledOnAdd": " {{moveName}} von {{pokemonNameWithAffix}} wurde blockiert!",
   "disabledLapse": "{{moveName}} von {{pokemonNameWithAffix}} ist nicht länger blockiert!",
-  "tarShotOnAdd": "{{pokemonNameWithAffix}} ist nun schwach gegenüber Feuer-Attacken!"
+  "tarShotOnAdd": "{{pokemonNameWithAffix}} ist nun schwach gegenüber Feuer-Attacken!",
+  "substituteOnAdd": "Ein Delegator von {{pokemonNameWithAffix}} ist erschienen!",
+  "substituteOnHit": "Der Delegator steckt den Schlag für {{pokemonNameWithAffix}} ein!",
+  "substituteOnRemove": "Der Delegator von {{pokemonNameWithAffix}} hört auf zu wirken!"
 }

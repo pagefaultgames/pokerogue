@@ -22,7 +22,7 @@ export class CommonAnimPhase extends PokemonPhase {
 
   start() {
     const target = this.targetIndex !== undefined ? (this.player ? this.scene.getEnemyField() : this.scene.getPlayerField())[this.targetIndex] : this.getPokemon();
-    new CommonBattleAnim(this.anim, this.getPokemon(), target, this.playOnEmptyField).play(this.scene, () => {
+    new CommonBattleAnim(this.anim, this.getPokemon(), target).play(this.scene, false, () => {
       this.end();
     });
   }

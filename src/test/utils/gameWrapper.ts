@@ -87,6 +87,8 @@ export default class GameWrapper {
     });
     Pokemon.prototype.enableMask = () => null;
     Pokemon.prototype.updateFusionPalette = () => null;
+    Pokemon.prototype.cry = () => null;
+    Pokemon.prototype.faintCry = (cb) => { if (cb) cb(); };
   }
 
   setScene(scene: BattleScene) {
