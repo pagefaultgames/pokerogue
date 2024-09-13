@@ -2836,7 +2836,7 @@ export class SwapStatStagesAttr extends MoveEffectAttr {
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any []): boolean {
     if (super.apply(user, target, move, args)) {
-      for (const s of BATTLE_STATS) {
+      for (const s of this.stats) {
         const temp = user.getStatStage(s);
         user.setStatStage(s, target.getStatStage(s));
         target.setStatStage(s, temp);
