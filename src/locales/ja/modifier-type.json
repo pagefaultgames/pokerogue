@@ -263,11 +263,11 @@
     "ENEMY_ENDURE_CHANCE": { "name": "こらえるトークン" },
     "ENEMY_FUSED_CHANCE": { "name": "がったいトークン", "description": "野生ポケモンは　吸収合体している　1%の可能性を　加える" },
 
-    "MYSTERY_ENCOUNTER_SHUCKLE_JUICE": { "name": "Shuckle Juice" },
-    "MYSTERY_ENCOUNTER_BLACK_SLUDGE": { "name": "Black Sludge", "description": "The stench is so powerful that shops will only sell you items at a steep cost increase." },
-    "MYSTERY_ENCOUNTER_MACHO_BRACE": { "name": "Macho Brace", "description": "Defeating a Pokémon grants the holder a Macho Brace stack. Each stack slightly boosts stats, with an extra bonus at max stacks." },
-    "MYSTERY_ENCOUNTER_OLD_GATEAU": { "name": "Old Gateau", "description": "Increases the holder's {{stats}} stats by {{statValue}}." },
-    "MYSTERY_ENCOUNTER_GOLDEN_BUG_NET": { "name": "Golden Bug Net", "description": "Imbues the owner with luck to find Bug Type Pokémon more often. Has a strange heft to it." }
+    "MYSTERY_ENCOUNTER_SHUCKLE_JUICE": { "name": "ツボツボジュース" },
+    "MYSTERY_ENCOUNTER_BLACK_SLUDGE": { "name": "くろいヘドロ", "description": "ムゴい　悪臭を放つから　ショップが　アイテムの　価格を　ぐんと　上げる" },
+    "MYSTERY_ENCOUNTER_MACHO_BRACE": { "name": "きょうせいギプス", "description": "持たせると　相手を倒すとき　もう1つの　ギプスを　もらう。　ギプス当たり　能力が　少し　上がる。　最多で　さらに　上がる" },
+    "MYSTERY_ENCOUNTER_OLD_GATEAU": { "name": "もりのヨウカン", "description": "持たせると　基本能力が　{{statValue}}　上がる" },
+    "MYSTERY_ENCOUNTER_GOLDEN_BUG_NET": { "name": "きんのむしとりあみ", "description": "むしタイプの　ポケモンが　見つけやすく　なる運に　注ぎ込まれた　妙に重い　虫取り網" }
   },
   "SpeciesBoosterItem": {
     "LIGHT_BALL": { "name": "でんきだま", "description": "ピカチュウに　持たせると　攻撃と　特攻が　あがる　不思議な玉" },
