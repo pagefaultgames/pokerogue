@@ -8,5 +8,7 @@
   "lockRaritiesDesc": "Setze die Seltenheit der Items fest. (Beeinflusst die Rollkosten).",
   "checkTeamDesc": "Überprüfe dein Team or nutze Formänderungsitems.",
   "rerollCost": "{{formattedMoney}}₽",
-  "itemCost": "{{formattedMoney}}₽"
+  "itemCost": "{{formattedMoney}}₽",
+  "continueNextWaveButton": "Continue",
+  "continueNextWaveDescription": "Continue to the next wave"
 }
