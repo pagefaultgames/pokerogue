@@ -51,7 +51,7 @@ describe("Moves - Power Trick", () => {
     expect(player.getTag(BattlerTagType.POWER_TRICK)).toBeDefined();
   }, 20000);
 
-  it("reset changes when used consecutively", async () => {
+  it("resets initial ATK and DEF stat swap when used consecutively", async () => {
     await game.classicMode.startBattle([Species.SHUCKLE]);
 
     const player = game.scene.getPlayerPokemon()!;
