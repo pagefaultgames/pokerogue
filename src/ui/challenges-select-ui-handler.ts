@@ -256,7 +256,7 @@ export default class GameChallengesUiHandler extends UiHandler {
       }
 
       // this line of code gets the center point between the left and right arrows from their left side (Arrow.x gives middle point), taking into account the width of the arrows
-      const xLocation = Math.round((challengeLabel.leftArrow.x + challengeLabel.rightArrow.x + challengeLabel.leftArrow.displayWidth) / 2);;
+      const xLocation = Math.round((challengeLabel.leftArrow.x + challengeLabel.rightArrow.x + challengeLabel.leftArrow.displayWidth) / 2);
       if (challenge.id === Challenges.SINGLE_TYPE) {
         this.monoTypeValue.setX(xLocation);
         this.monoTypeValue.setY(challengeLabel.label.y + 8);
