@@ -79,7 +79,7 @@
       }
     },
     "PokemonBaseStatFlatModifierType": {
-      "name": "Tart Vieja",
+      "name": "Tarta Vieja",
       "description": "Aumenta las estadísticas base de {{stats}} del portador en {{statValue}}. Encontrado después de un sueño extraño."
     },
     "AllPokemonFullHpRestoreModifierType": {
