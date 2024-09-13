@@ -7,7 +7,7 @@
   "query": "Que voulez-vous faire ?",
   "option": {
     "1": {
-      "label": "Combattre le Clown",
+      "label": "Affronter le Clown",
       "tooltip": "(-) Combat étrange\n(?) Affecte les talents des Pokémon",
       "selected": "Vos Pokémon sont prêts pour cette performance pathétique !",
       "apply_ability_dialogue": "Un spectacle sensationnel !\nVotre savoir-faire est en harmonie avec votre compétences !",
