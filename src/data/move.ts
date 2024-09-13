@@ -81,6 +81,16 @@ export enum MoveFlags {
   MAKES_CONTACT     = 1 << 0,
   IGNORE_PROTECT    = 1 << 1,
   IGNORE_VIRTUAL    = 1 << 2,
+  /**
+   * Sound-based moves have the following effects:
+   * - Pokemon with the {@linkcode Abilities.SOUNDPROOF Soundproof Ability} are unaffected by other Pokemon's sound-based moves.
+   * - Pokemon affected by {@linkcode Moves.THROAT_CHOP Throat Chop} cannot use sound-based moves for two turns.
+   * - Sound-based moves used by a Pokemon with {@linkcode Abilities.LIQUID_VOICE Liquid Voice} become Water-type moves.
+   * - Sound-based moves used by a Pokemon with {@linkcode Abilities.PUNK_ROCK Punk Rock} are boosted by 30%. Pokemon with Punk Rock also take half damage from sound-based moves.
+   * - All sound-based moves (except Howl) can hit Pokemon behind an active {@linkcode Moves.SUBSTITUTE Substitute}.
+   *
+   * cf https://bulbapedia.bulbagarden.net/wiki/Sound-based_move
+   */
   SOUND_BASED       = 1 << 3,
   HIDE_USER         = 1 << 4,
   HIDE_TARGET       = 1 << 5,
@@ -93,19 +103,20 @@ export enum MoveFlags {
    * @see {@linkcode Move.recklessMove()}
    */
   RECKLESS_MOVE     = 1 << 10,
+  /** Indicates a move should be affected by {@linkcode Abilities.BULLETPROOF} */
   BALLBOMB_MOVE     = 1 << 11,
+  /** Grass types and pokemon with {@linkcode Abilities.OVERCOAT} are immune to powder moves */
   POWDER_MOVE       = 1 << 12,
+  /** Indicates a move should trigger {@linkcode Abilities.DANCER} */
   DANCE_MOVE        = 1 << 13,
+  /** Indicates a move should trigger {@linkcode Abilities.WIND_RIDER} */
   WIND_MOVE         = 1 << 14,
+  /** Indicates a move should trigger {@linkcode Abilities.TRIAGE} */
   TRIAGE_MOVE       = 1 << 15,
   IGNORE_ABILITIES  = 1 << 16,
-  /**
-   * Enables all hits of a multi-hit move to be accuracy checked individually
-   */
+  /** Enables all hits of a multi-hit move to be accuracy checked individually */
   CHECK_ALL_HITS   = 1 << 17,
-  /**
-   * Indicates a move is able to be redirected to allies in a double battle if the attacker faints
-   */
+  /** Indicates a move is able to be redirected to allies in a double battle if the attacker faints */
   REDIRECT_COUNTER = 1 << 18,
 }
 
@@ -118,22 +129,22 @@ export default class Move implements Localizable {
   private _type: Type;
   private _category: MoveCategory;
   public moveTarget: MoveTarget;
-  public power: integer;
-  public accuracy: integer;
-  public pp: integer;
+  public power: number;
+  public accuracy: number;
+  public pp: number;
   public effect: string;
-  public chance: integer;
-  public priority: integer;
-  public generation: integer;
-  public attrs: MoveAttr[];
-  private conditions: MoveCondition[];
-  private flags: integer;
-  private nameAppend: string;
+  /** The chance of a move's secondary effects activating */
+  public chance: number;
+  public priority: number;
+  public generation: number;
+  public attrs: MoveAttr[] = [];
+  private conditions: MoveCondition[] = [];
+  /** The move's {@linkcode MoveFlags} */
+  private flags: number = 0;
+  private nameAppend: string = "";
 
-  constructor(id: Moves, type: Type, category: MoveCategory, defaultMoveTarget: MoveTarget, power: integer, accuracy: integer, pp: integer, chance: integer, priority: integer, generation: integer) {
+  constructor(id: Moves, type: Type, category: MoveCategory, defaultMoveTarget: MoveTarget, power: number, accuracy: number, pp: number, chance: number, priority: number, generation: number) {
     this.id = id;
-
-    this.nameAppend = "";
     this._type = type;
     this._category = category;
     this.moveTarget = defaultMoveTarget;
@@ -144,10 +155,6 @@ export default class Move implements Localizable {
     this.priority = priority;
     this.generation = generation;
 
-    this.attrs = [];
-    this.conditions = [];
-
-    this.flags = 0;
     if (defaultMoveTarget === MoveTarget.USER) {
       this.setFlag(MoveFlags.IGNORE_PROTECT, true);
     }
@@ -377,7 +384,7 @@ export default class Move implements Localizable {
    * @param makesContact The value (boolean) to set the flag to
    * @returns The {@linkcode Move} that called this function
    */
-  makesContact(makesContact: boolean = true): this { // TODO: is true the correct default?
+  makesContact(makesContact: boolean = true): this {
     this.setFlag(MoveFlags.MAKES_CONTACT, makesContact);
     return this;
   }
@@ -388,7 +395,7 @@ export default class Move implements Localizable {
    * example: @see {@linkcode Moves.CURSE}
    * @returns The {@linkcode Move} that called this function
    */
-  ignoresProtect(ignoresProtect: boolean = true): this { // TODO: is `true` the correct default?
+  ignoresProtect(ignoresProtect: boolean = true): this {
     this.setFlag(MoveFlags.IGNORE_PROTECT, ignoresProtect);
     return this;
   }
@@ -399,7 +406,7 @@ export default class Move implements Localizable {
    * example: @see {@linkcode Moves.NATURE_POWER}
    * @returns The {@linkcode Move} that called this function
    */
-  ignoresVirtual(ignoresVirtual: boolean = true): this { // TODO: is `true` the correct default?
+  ignoresVirtual(ignoresVirtual: boolean = true): this {
     this.setFlag(MoveFlags.IGNORE_VIRTUAL, ignoresVirtual);
     return this;
   }
@@ -410,7 +417,7 @@ export default class Move implements Localizable {
    * example: @see {@linkcode Moves.UPROAR}
    * @returns The {@linkcode Move} that called this function
    */
-  soundBased(soundBased: boolean = true): this { // TODO: is `true` the correct default?
+  soundBased(soundBased: boolean = true): this {
     this.setFlag(MoveFlags.SOUND_BASED, soundBased);
     return this;
   }
@@ -421,7 +428,7 @@ export default class Move implements Localizable {
    * example: @see {@linkcode Moves.TELEPORT}
    * @returns The {@linkcode Move} that called this function
    */
-  hidesUser(hidesUser: boolean = true): this { // TODO: is `true` the correct default?
+  hidesUser(hidesUser: boolean = true): this {
     this.setFlag(MoveFlags.HIDE_USER, hidesUser);
     return this;
   }
@@ -432,7 +439,7 @@ export default class Move implements Localizable {
    * example: @see {@linkcode Moves.WHIRLWIND}
    * @returns The {@linkcode Move} that called this function
    */
-  hidesTarget(hidesTarget: boolean = true): this { // TODO: is `true` the correct default?
+  hidesTarget(hidesTarget: boolean = true): this {
     this.setFlag(MoveFlags.HIDE_TARGET, hidesTarget);
     return this;
   }
@@ -443,7 +450,7 @@ export default class Move implements Localizable {
    * example: @see {@linkcode Moves.BITE}
    * @returns The {@linkcode Move} that called this function
    */
-  bitingMove(bitingMove: boolean = true): this { // TODO: is `true` the correct default?
+  bitingMove(bitingMove: boolean = true): this {
     this.setFlag(MoveFlags.BITING_MOVE, bitingMove);
     return this;
   }
@@ -454,7 +461,7 @@ export default class Move implements Localizable {
    * example: @see {@linkcode Moves.WATER_PULSE}
    * @returns The {@linkcode Move} that called this function
    */
-  pulseMove(pulseMove: boolean = true): this { // TODO: is `true` the correct default?
+  pulseMove(pulseMove: boolean = true): this {
     this.setFlag(MoveFlags.PULSE_MOVE, pulseMove);
     return this;
   }
@@ -465,7 +472,7 @@ export default class Move implements Localizable {
    * example: @see {@linkcode Moves.DRAIN_PUNCH}
    * @returns The {@linkcode Move} that called this function
    */
-  punchingMove(punchingMove: boolean = true): this { // TODO: is `true` the correct default?
+  punchingMove(punchingMove: boolean = true): this {
     this.setFlag(MoveFlags.PUNCHING_MOVE, punchingMove);
     return this;
   }
@@ -476,7 +483,7 @@ export default class Move implements Localizable {
    * example: @see {@linkcode Moves.X_SCISSOR}
    * @returns The {@linkcode Move} that called this function
    */
-  slicingMove(slicingMove: boolean = true): this { // TODO: is `true` the correct default?
+  slicingMove(slicingMove: boolean = true): this {
     this.setFlag(MoveFlags.SLICING_MOVE, slicingMove);
     return this;
   }
@@ -487,7 +494,7 @@ export default class Move implements Localizable {
    * @param recklessMove The value to set the flag to
    * @returns The {@linkcode Move} that called this function
    */
-  recklessMove(recklessMove: boolean = true): this { // TODO: is `true` the correct default?
+  recklessMove(recklessMove: boolean = true): this {
     this.setFlag(MoveFlags.RECKLESS_MOVE, recklessMove);
     return this;
   }
@@ -498,7 +505,7 @@ export default class Move implements Localizable {
    * example: @see {@linkcode Moves.ELECTRO_BALL}
    * @returns The {@linkcode Move} that called this function
    */
-  ballBombMove(ballBombMove: boolean = true): this { // TODO: is `true` the correct default?
+  ballBombMove(ballBombMove: boolean = true): this {
     this.setFlag(MoveFlags.BALLBOMB_MOVE, ballBombMove);
     return this;
   }
@@ -509,7 +516,7 @@ export default class Move implements Localizable {
    * example: @see {@linkcode Moves.STUN_SPORE}
    * @returns The {@linkcode Move} that called this function
    */
-  powderMove(powderMove: boolean = true): this { // TODO: is `true` the correct default?
+  powderMove(powderMove: boolean = true): this {
     this.setFlag(MoveFlags.POWDER_MOVE, powderMove);
     return this;
   }
@@ -520,7 +527,7 @@ export default class Move implements Localizable {
    * example: @see {@linkcode Moves.PETAL_DANCE}
    * @returns The {@linkcode Move} that called this function
    */
-  danceMove(danceMove: boolean = true): this { // TODO: is `true` the correct default?
+  danceMove(danceMove: boolean = true): this {
     this.setFlag(MoveFlags.DANCE_MOVE, danceMove);
     return this;
   }
@@ -531,7 +538,7 @@ export default class Move implements Localizable {
    * example: @see {@linkcode Moves.HURRICANE}
    * @returns The {@linkcode Move} that called this function
    */
-  windMove(windMove: boolean = true): this { // TODO: is `true` the correct default?
+  windMove(windMove: boolean = true): this {
     this.setFlag(MoveFlags.WIND_MOVE, windMove);
     return this;
   }
@@ -542,7 +549,7 @@ export default class Move implements Localizable {
    * example: @see {@linkcode Moves.ABSORB}
    * @returns The {@linkcode Move} that called this function
    */
-  triageMove(triageMove: boolean = true): this { // TODO: is `true` the correct default?
+  triageMove(triageMove: boolean = true): this {
     this.setFlag(MoveFlags.TRIAGE_MOVE, triageMove);
     return this;
   }
@@ -553,7 +560,7 @@ export default class Move implements Localizable {
    * example: @see {@linkcode Moves.SUNSTEEL_STRIKE}
    * @returns The {@linkcode Move} that called this function
    */
-  ignoresAbilities(ignoresAbilities: boolean = true): this { // TODO: is `true` the correct default?
+  ignoresAbilities(ignoresAbilities: boolean = true): this {
     this.setFlag(MoveFlags.IGNORE_ABILITIES, ignoresAbilities);
     return this;
   }
@@ -564,7 +571,7 @@ export default class Move implements Localizable {
    * example: @see {@linkcode Moves.TRIPLE_AXEL}
    * @returns The {@linkcode Move} that called this function
    */
-  checkAllHits(checkAllHits: boolean = true): this { // TODO: is `true` the correct default?
+  checkAllHits(checkAllHits: boolean = true): this {
     this.setFlag(MoveFlags.CHECK_ALL_HITS, checkAllHits);
     return this;
   }
@@ -575,7 +582,7 @@ export default class Move implements Localizable {
    * example: @see {@linkcode Moves.METAL_BURST}
    * @returns The {@linkcode Move} that called this function
    */
-  redirectCounter(redirectCounter: boolean = true): this { // TODO: is `true` the correct default?
+  redirectCounter(redirectCounter: boolean = true): this {
     this.setFlag(MoveFlags.REDIRECT_COUNTER, redirectCounter);
     return this;
   }
@@ -2779,28 +2786,26 @@ export class ResetStatsAttr extends MoveEffectAttr {
     super();
     this.targetAllPokemon = targetAllPokemon;
   }
-  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    if (!super.apply(user, target, move, args)) {
-      return false;
-    }
-
+  async apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): Promise<boolean> {
+    const promises: Promise<void>[] = [];
     if (this.targetAllPokemon) { // Target all pokemon on the field when Freezy Frost or Haze are used
       const activePokemon = user.scene.getField(true);
-      activePokemon.forEach(p => this.resetStats(p));
+      activePokemon.forEach(p => promises.push(this.resetStats(p)));
       target.scene.queueMessage(i18next.t("moveTriggers:statEliminated"));
     } else { // Affects only the single target when Clear Smog is used
-      this.resetStats(target);
+      promises.push(this.resetStats(target));
       target.scene.queueMessage(i18next.t("moveTriggers:resetStats", {pokemonName: getPokemonNameWithAffix(target)}));
     }
 
+    await Promise.all(promises);
     return true;
   }
 
-  resetStats(pokemon: Pokemon) {
+  async resetStats(pokemon: Pokemon): Promise<void> {
     for (const s of BATTLE_STATS) {
       pokemon.setStatStage(s, 0);
     }
-    pokemon.updateInfo();
+    return pokemon.updateInfo();
   }
 }
 
@@ -4747,7 +4752,7 @@ export class AddArenaTagAttr extends MoveEffectAttr {
       return false;
     }
 
-    if (move.chance < 0 || move.chance === 100 || user.randSeedInt(100) < move.chance) {
+    if ((move.chance < 0 || move.chance === 100 || user.randSeedInt(100) < move.chance) && user.getLastXMoves(1)[0].result === MoveResult.SUCCESS) {
       user.scene.arena.addTag(this.tagType, this.turnCount, move.id, user.id, (this.selfSideTarget ? user : target).isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY);
       return true;
     }
@@ -7138,6 +7143,7 @@ export function initMoves() {
     new StatusMove(Moves.CHARM, Type.FAIRY, 100, 20, -1, 0, 2)
       .attr(StatStageChangeAttr, [ Stat.ATK ], -2),
     new AttackMove(Moves.ROLLOUT, Type.ROCK, MoveCategory.PHYSICAL, 30, 90, 20, -1, 0, 2)
+      .partial()
       .attr(ConsecutiveUseDoublePowerAttr, 5, true, true, Moves.DEFENSE_CURL),
     new AttackMove(Moves.FALSE_SWIPE, Type.NORMAL, MoveCategory.PHYSICAL, 40, 100, 40, -1, 0, 2)
       .attr(SurviveDamageAttr),
@@ -7417,9 +7423,11 @@ export function initMoves() {
       .attr(HighCritAttr)
       .attr(StatusEffectAttr, StatusEffect.BURN),
     new StatusMove(Moves.MUD_SPORT, Type.GROUND, -1, 15, -1, 0, 3)
+      .ignoresProtect()
       .attr(AddArenaTagAttr, ArenaTagType.MUD_SPORT, 5)
       .target(MoveTarget.BOTH_SIDES),
     new AttackMove(Moves.ICE_BALL, Type.ICE, MoveCategory.PHYSICAL, 30, 90, 20, -1, 0, 3)
+      .partial()
       .attr(ConsecutiveUseDoublePowerAttr, 5, true, true, Moves.DEFENSE_CURL)
       .ballBombMove(),
     new AttackMove(Moves.NEEDLE_ARM, Type.GRASS, MoveCategory.PHYSICAL, 60, 100, 15, 30, 0, 3)
@@ -7541,6 +7549,7 @@ export function initMoves() {
       .recklessMove(),
     new AttackMove(Moves.MAGICAL_LEAF, Type.GRASS, MoveCategory.SPECIAL, 60, -1, 20, -1, 0, 3),
     new StatusMove(Moves.WATER_SPORT, Type.WATER, -1, 15, -1, 0, 3)
+      .ignoresProtect()
       .attr(AddArenaTagAttr, ArenaTagType.WATER_SPORT, 5)
       .target(MoveTarget.BOTH_SIDES),
     new SelfStatusMove(Moves.CALM_MIND, Type.PSYCHIC, -1, 20, -1, 0, 3)
@@ -7569,6 +7578,7 @@ export function initMoves() {
       .attr(AddBattlerTagAttr, BattlerTagType.ROOSTED, true, false)
       .triageMove(),
     new StatusMove(Moves.GRAVITY, Type.PSYCHIC, -1, 5, -1, 0, 4)
+      .ignoresProtect()
       .attr(AddArenaTagAttr, ArenaTagType.GRAVITY, 5)
       .target(MoveTarget.BOTH_SIDES),
     new StatusMove(Moves.MIRACLE_EYE, Type.PSYCHIC, -1, 40, -1, 0, 4)
@@ -7994,6 +8004,7 @@ export function initMoves() {
         MovePowerMultiplierAttr,
         (user, target, move) =>  target.status || target.hasAbility(Abilities.COMATOSE)? 2 : 1),
     new AttackMove(Moves.SKY_DROP, Type.FLYING, MoveCategory.PHYSICAL, 60, 100, 10, -1, 0, 5)
+      .partial() // Should immobilize the target, Flying types should take no damage. cf https://bulbapedia.bulbagarden.net/wiki/Sky_Drop_(move) and https://www.smogon.com/dex/sv/moves/sky-drop/
       .attr(ChargeAttr, ChargeAnim.SKY_DROP_CHARGING, i18next.t("moveTriggers:tookTargetIntoSky", {pokemonName: "{USER}", targetName: "{TARGET}"}), BattlerTagType.FLYING) // TODO: Add 2nd turn message
       .condition(failOnGravityCondition)
       .ignoresVirtual(),
@@ -8012,7 +8023,15 @@ export function initMoves() {
     new StatusMove(Moves.REFLECT_TYPE, Type.NORMAL, -1, 15, -1, 0, 5)
       .attr(CopyTypeAttr),
     new AttackMove(Moves.RETALIATE, Type.NORMAL, MoveCategory.PHYSICAL, 70, 100, 5, -1, 0, 5)
-      .partial(),
+      .attr(MovePowerMultiplierAttr, (user, target, move) => {
+        const turn = user.scene.currentBattle.turn;
+        const lastPlayerFaint = user.scene.currentBattle.playerFaintsHistory[user.scene.currentBattle.playerFaintsHistory.length - 1];
+        const lastEnemyFaint = user.scene.currentBattle.enemyFaintsHistory[user.scene.currentBattle.enemyFaintsHistory.length - 1];
+        return (
+          (lastPlayerFaint !== undefined && turn - lastPlayerFaint.turn === 1 && user.isPlayer()) ||
+          (lastEnemyFaint !== undefined && turn - lastEnemyFaint.turn === 1 && !user.isPlayer())
+        ) ? 2 : 1;
+      }),
     new AttackMove(Moves.FINAL_GAMBIT, Type.FIGHTING, MoveCategory.SPECIAL, -1, 100, 5, -1, 0, 5)
       .attr(UserHpDamageAttr)
       .attr(SacrificialAttrOnHit),
@@ -8514,6 +8533,7 @@ export function initMoves() {
         return userTypes.includes(Type.FIRE);
       })
       .attr(HealStatusEffectAttr, true, StatusEffect.FREEZE)
+      .attr(AddBattlerTagAttr, BattlerTagType.BURNED_UP, true, false)
       .attr(RemoveTypeAttr, Type.FIRE, (user) => {
         user.scene.queueMessage(i18next.t("moveTriggers:burnedItselfOut", {pokemonName: getPokemonNameWithAffix(user)}));
       }),
@@ -9297,6 +9317,7 @@ export function initMoves() {
         const userTypes = user.getTypes(true);
         return userTypes.includes(Type.ELECTRIC);
       })
+      .attr(AddBattlerTagAttr, BattlerTagType.DOUBLE_SHOCKED, true, false)
       .attr(RemoveTypeAttr, Type.ELECTRIC, (user) => {
         user.scene.queueMessage(i18next.t("moveTriggers:usedUpAllElectricity", {pokemonName: getPokemonNameWithAffix(user)}));
       }),
