@@ -1,21 +1,21 @@
 {
-  "intro": "It's a massive {{shuckleName}} and what appears\nto be a large stash of... juice?",
-  "title": "The Strong Stuff",
-  "description": "The {{shuckleName}} that blocks your path looks incredibly strong. Meanwhile, the juice next to it is emanating power of some kind.\n\nThe {{shuckleName}} extends its feelers in your direction. It seems like it wants to do something...",
-  "query": "What will you do?",
+  "intro": "C’est un {{shuckleName}} absolument énorme et ce qui semble être une grosse réserve de… jus ?",
+  "title": "Un breuvage qui arrache",
+  "description": "Le {{shuckleName}} qui bloque la route semble incroyablement puissant. Le jus qui l’accompagne semble lui émaner une forme étrange de puissance.\n\nLe {{shuckleName}} tend un patte dans votre direction. Il semble vouloir quelque chose…",
+  "query": "Que voulez-vous faire ?",
   "option": {
     "1": {
-      "label": "Approach the {{shuckleName}}",
-      "tooltip": "(?) Something awful or amazing might happen",
-      "selected": "You black out.",
-      "selected_2": "@f{150}When you awaken, the {{shuckleName}} is gone\nand juice stash completely drained.${{highBstPokemon1}} and {{highBstPokemon2}}\nfeel a terrible lethargy come over them!$Their base stats were reduced by {{reductionValue}}!$Your remaining Pokémon feel an incredible vigor, though!\nTheir base stats are increased by {{increaseValue}}!"
+      "label": "Approcher le {{shuckleName}}",
+      "tooltip": "(?) Quelque chose de terrible ou d’incroyable peut se produire",
+      "selected": "Vous perdez connaissance.",
+      "selected_2": "@f{150}À votre réveil, le {{shuckleName}} est parti\net la réserve de jus complètement vide.${{highBstPokemon1}} et {{highBstPokemon2}}\nsont vicitmes d’une forte léthargie !$Leurs stats de base sont baissées de {{reductionValue}} !$Mais par contre, vos autres Pokémon sont envahis d’une vigueur jamais vue !$Leurs stats de base sont augumentées de {{increaseValue}} !"
     },
     "2": {
-      "label": "Battle the {{shuckleName}}",
-      "tooltip": "(-) Hard Battle\n(+) Special Rewards",
-      "selected": "Enraged, the {{shuckleName}} drinks some of its juice and attacks!",
-      "stat_boost": "The {{shuckleName}}'s juice boosts its stats!"
+      "label": "Affronter le {{shuckleName}}",
+      "tooltip": "(-) Combat difficile\n(+) Récompense spéciale",
+      "selected": "Le {{shuckleName}} s’énerve, boit un peu de jus et attaque !",
+      "stat_boost": "Le jus de {{shuckleName}} augumente ses stats !"
     }
   },
-  "outro": "What a bizarre turn of events."
+  "outro": "Quelles étrange tournure d’évènements."
 }
