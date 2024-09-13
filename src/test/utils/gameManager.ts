@@ -24,7 +24,6 @@ import { TurnInitPhase } from "#app/phases/turn-init-phase";
 import { TurnStartPhase } from "#app/phases/turn-start-phase";
 import ErrorInterceptor from "#app/test/utils/errorInterceptor";
 import InputsHandler from "#app/test/utils/inputsHandler";
-import { MockClock } from "#app/test/utils/mocks/mockClock";
 import CommandUiHandler from "#app/ui/command-ui-handler";
 import ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
 import PartyUiHandler from "#app/ui/party-ui-handler";
@@ -401,12 +400,10 @@ export default class GameManager {
   }
 
   async killPokemon(pokemon: PlayerPokemon | EnemyPokemon) {
-    (this.scene.time as MockClock).overrideDelay = 0.01;
     return new Promise<void>(async (resolve, reject) => {
       pokemon.hp = 0;
       this.scene.pushPhase(new FaintPhase(this.scene, pokemon.getBattlerIndex(), true));
       await this.phaseInterceptor.to(FaintPhase).catch((e) => reject(e));
-      (this.scene.time as MockClock).overrideDelay = undefined;
       resolve();
     });
   }
