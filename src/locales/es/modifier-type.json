@@ -69,18 +69,18 @@
       "description": "Aumenta la est. {{stat}} base del portador en un 10%.\nCuanto mayores sean tus IVs, mayor será el límite de acumulación."
     },
     "PokemonBaseStatTotalModifierType": {
-      "name": "Shuckle Juice",
-      "description": "{{increaseDecrease}} all of the holder's base stats by {{statValue}}. You were {{blessCurse}} by the Shuckle.",
+      "name": "Jugo de Shuckle",
+      "description": "{{increaseDecrease}} todas las estadísticas base del portador en {{statValue}}. Fuiste {{blessCurse}} por el Shuckle.",
       "extra": {
-        "increase": "Increases",
-        "decrease": "Decreases",
-        "blessed": "blessed",
-        "cursed": "cursed"
+        "increase": "Aumenta",
+        "decrease": "Disminuye",
+        "blessed": "bendecido",
+        "cursed": "maldecido"
       }
     },
     "PokemonBaseStatFlatModifierType": {
-      "name": "Old Gateau",
-      "description": "Increases the holder's {{stats}} base stats by {{statValue}}. Found after a strange dream."
+      "name": "Tart Vieja",
+      "description": "Aumenta las estadísticas base de {{stats}} del portador en {{statValue}}. Encontrado después de un sueño extraño."
     },
     "AllPokemonFullHpRestoreModifierType": {
       "description": "Restaura el 100% de los PS de todos los Pokémon."
