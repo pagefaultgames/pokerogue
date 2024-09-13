@@ -2922,7 +2922,6 @@ export default class BattleScene extends SceneBase {
           }
         }
 
-        console.log("shiftPhase from initFinalBossPhaseTwo");
         this.shiftPhase();
       });
       return;
