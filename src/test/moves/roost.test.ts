@@ -1,4 +1,3 @@
-import { BattlerIndex } from "#app/battle";
 import { Type } from "#app/data/type";
 import { BattlerTagType } from "#app/enums/battler-tag-type";
 import { Moves } from "#app/enums/moves";
@@ -30,9 +29,10 @@ describe("Moves - Roost", () => {
     game.override.battleType("single");
     game.override.enemySpecies(Species.RELICANTH);
     game.override.startingLevel(100);
-    game.override.enemyLevel(100);
+    game.override.enemyLevel(60);
     game.override.enemyMoveset(Moves.EARTHQUAKE);
     game.override.moveset([Moves.ROOST, Moves.BURN_UP, Moves.DOUBLE_SHOCK]);
+    game.override.starterForms({ [Species.ROTOM]: 4 });
   });
 
   /**
@@ -55,7 +55,6 @@ describe("Moves - Roost", () => {
       const playerPokemon = game.scene.getPlayerPokemon()!;
       const playerPokemonStartingHP = playerPokemon.hp;
       game.move.select(Moves.ROOST);
-      await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
       await game.phaseInterceptor.to(MoveEffectPhase);
 
       // Should only be normal type, and NOT flying type
@@ -82,7 +81,6 @@ describe("Moves - Roost", () => {
       const playerPokemon = game.scene.getPlayerPokemon()!;
       const playerPokemonStartingHP = playerPokemon.hp;
       game.move.select(Moves.ROOST);
-      await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
       await game.phaseInterceptor.to(MoveEffectPhase);
 
       // Should only be normal type, and NOT flying type
@@ -110,7 +108,6 @@ describe("Moves - Roost", () => {
       const playerPokemon = game.scene.getPlayerPokemon()!;
       const playerPokemonStartingHP = playerPokemon.hp;
       game.move.select(Moves.ROOST);
-      await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
       await game.phaseInterceptor.to(MoveEffectPhase);
 
       // Should only be pure fighting type and grounded
@@ -134,15 +131,13 @@ describe("Moves - Roost", () => {
   test(
     "Pokemon with levitate after using roost should lose flying type but still be unaffected by ground moves",
     async () => {
-      game.override.starterForms({ [Species.ROTOM]: 4 });
       await game.classicMode.startBattle([Species.ROTOM]);
       const playerPokemon = game.scene.getPlayerPokemon()!;
       const playerPokemonStartingHP = playerPokemon.hp;
       game.move.select(Moves.ROOST);
-      await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
       await game.phaseInterceptor.to(MoveEffectPhase);
 
-      // Should only be pure eletric type and grounded
+      // Should only be pure fighting type and grounded
       let playerPokemonTypes = playerPokemon.getTypes();
       expect(playerPokemonTypes[0] === Type.ELECTRIC).toBeTruthy();
       expect(playerPokemonTypes.length === 1).toBeTruthy();
@@ -150,7 +145,7 @@ describe("Moves - Roost", () => {
 
       await game.phaseInterceptor.to(TurnEndPhase);
 
-      // Should have lost HP and is now back to being electric/flying
+      // Should have lost HP and is now back to being fighting/flying
       playerPokemonTypes = playerPokemon.getTypes();
       expect(playerPokemon.hp).toBe(playerPokemonStartingHP);
       expect(playerPokemonTypes[0] === Type.ELECTRIC).toBeTruthy();
@@ -167,7 +162,6 @@ describe("Moves - Roost", () => {
       const playerPokemon = game.scene.getPlayerPokemon()!;
       const playerPokemonStartingHP = playerPokemon.hp;
       game.move.select(Moves.BURN_UP);
-      await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
       await game.phaseInterceptor.to(MoveEffectPhase);
 
       // Should only be pure flying type after burn up
@@ -177,7 +171,6 @@ describe("Moves - Roost", () => {
 
       await game.phaseInterceptor.to(TurnEndPhase);
       game.move.select(Moves.ROOST);
-      await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
       await game.phaseInterceptor.to(MoveEffectPhase);
 
       // Should only be typeless type after roost and is grounded
@@ -207,7 +200,6 @@ describe("Moves - Roost", () => {
       const playerPokemon = game.scene.getPlayerPokemon()!;
       const playerPokemonStartingHP = playerPokemon.hp;
       game.move.select(Moves.DOUBLE_SHOCK);
-      await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
       await game.phaseInterceptor.to(MoveEffectPhase);
 
       // Should only be pure flying type after burn up
@@ -217,7 +209,6 @@ describe("Moves - Roost", () => {
 
       await game.phaseInterceptor.to(TurnEndPhase);
       game.move.select(Moves.ROOST);
-      await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
       await game.phaseInterceptor.to(MoveEffectPhase);
 
       // Should only be typeless type after roost and is grounded
