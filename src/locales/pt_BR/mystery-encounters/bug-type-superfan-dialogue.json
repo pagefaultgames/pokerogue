@@ -17,7 +17,7 @@
       "disabled_tooltip": "You need at least 1 Bug Type Pokémon on your team to select this.",
       "selected": "You show the trainer all your Bug Type Pokémon...",
       "selected_0_to_1": "Huh? You only have {{numBugTypes}}...$Guess I'm wasting my breath on someone like you...",
-      "selected_2_3": "Hey, you've got {{numBugTypes}} Bug Types!\nNot bad.$Here, this might help you on your journey to catch more!",
+      "selected_2_to_3": "Hey, you've got {{numBugTypes}} Bug Types!\nNot bad.$Here, this might help you on your journey to catch more!",
       "selected_4_to_5": "What? You have {{numBugTypes}} Bug Types?\nNice!$You're not quite at my level, but I can see shades of myself in you!\n$Take this, my young apprentice!",
       "selected_6": "Whoa! {{numBugTypes}} Bug Types!\n$You must love Bug Types almost as much as I do!$Here, take this as a token of our camaraderie!"
     },
