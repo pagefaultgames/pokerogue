@@ -2210,7 +2210,6 @@ export class TarShotTag extends BattlerTag {
     pokemon.scene.queueMessage(i18next.t("battlerTags:tarShotOnAdd", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }));
   }
 }
-
 /**
  * Tag that swaps the user's base ATK stat with its base DEF stat.
  * @extends BattlerTag
@@ -2225,13 +2224,17 @@ export class PowerTrickTag extends BattlerTag {
     pokemon.scene.queueMessage(i18next.t("battlerTags:powerTrickActive", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }));
   }
 
+  onRemove(pokemon: Pokemon): void {
+    this.swapStat(pokemon);
+    pokemon.scene.queueMessage(i18next.t("battlerTags:powerTrickActive", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }));
+  }
+
   /**
-   * Active stat swap again if the tag overlaps. tag will be remain.
+   * Removes the Power Trick tag and reverts any stat changes if the tag is already applied.
    * @param {Pokemon} pokemon The {@linkcode Pokemon} that already has the Power Trick tag.
    */
   onOverlap(pokemon: Pokemon): void {
-    this.swapStat(pokemon);
-    pokemon.scene.queueMessage(i18next.t("battlerTags:powerTrickActive", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }));
+    pokemon.removeTag(this.tagType);
   }
 
   /**

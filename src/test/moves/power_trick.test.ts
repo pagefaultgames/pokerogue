@@ -68,27 +68,28 @@ describe("Moves - Power Trick", () => {
 
     expect(player.getStat(Stat.ATK, false)).toBe(baseATK);
     expect(player.getStat(Stat.DEF, false)).toBe(baseDEF);
-    expect(player.getTag(BattlerTagType.POWER_TRICK)).toBeDefined();
+    expect(player.getTag(BattlerTagType.POWER_TRICK)).toBeUndefined();
   }, 20000);
 
-  it("effect should be passed with the tag when using BATON_PASS", async () => {
+  it("should pass effect when using BATON_PASS", async () => {
     await game.classicMode.startBattle([Species.SHUCKLE, Species.SHUCKLE]);
-    await game.override.moveset([Moves.BATON_PASS]);
+    await game.override.moveset([Moves.POWER_TRICK, Moves.BATON_PASS]);
 
-    const player = game.scene.getPlayerPokemon()!;
-    player.addTag(BattlerTagType.POWER_TRICK);
+    game.move.select(Moves.POWER_TRICK);
+
+    await game.phaseInterceptor.to(TurnEndPhase);
 
     game.move.select(Moves.BATON_PASS);
     game.doSelectPartyPokemon(1);
 
     await game.phaseInterceptor.to(TurnEndPhase);
 
-    const switchedPlayer = game.scene.getPlayerPokemon()!;
-    const baseATK = switchedPlayer.getStat(Stat.ATK);
-    const baseDEF = switchedPlayer.getStat(Stat.DEF);
+    const player = game.scene.getPlayerPokemon()!;
+    const baseATK = player.getStat(Stat.ATK);
+    const baseDEF = player.getStat(Stat.DEF);
 
-    expect(switchedPlayer.getStat(Stat.ATK, false)).toBe(baseDEF);
-    expect(switchedPlayer.getStat(Stat.DEF, false)).toBe(baseATK);
-    expect(switchedPlayer.getTag(BattlerTagType.POWER_TRICK)).toBeDefined();
+    expect(player.getStat(Stat.ATK, false)).toBe(baseDEF);
+    expect(player.getStat(Stat.DEF, false)).toBe(baseATK);
+    expect(player.getTag(BattlerTagType.POWER_TRICK)).toBeDefined();
   }, 20000);
 });
