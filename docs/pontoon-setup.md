@@ -142,6 +142,8 @@ Follow the [Adding a new project to Pontoon](https://mozilla-pontoon.readthedocs
 12. Check on GitHub if the branch has (expected) changes.
 13. Done!
 
+![pontoon-repo-with-pat](/docs/img/pontoon-repo-with-pat.png)
+
 ## Admin UI acess
 
 There is two admin UIs. One for pontoon and one for the server (django). Both have their relevance
