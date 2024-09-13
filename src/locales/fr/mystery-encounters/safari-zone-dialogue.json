@@ -1,46 +1,46 @@
 {
-  "intro": "It's a safari zone!",
-  "title": "The Safari Zone",
-  "description": "There are all kinds of rare and special Pokémon that can be found here!\nIf you choose to enter, you'll have a time limit of 3 wild encounters where you can try to catch these special Pokémon.\n\nBeware, though. These Pokémon may flee before you're able to catch them!",
-  "query": "Would you like to enter?",
+  "intro": "C’est un Parc Safari !",
+  "title": "Le Parc Safari",
+  "description": "Toutes sortes de Pokémon rares et particuliers peuvent y être rencontrés !\nSi vous décidez d’y entrer, vous aurez une limite de 3 Pokémon sauvages à rencontrer que vous pourrez essayer de capturer.\n\nMais attention, ces Pokémon peuvent prendre la fuite avant que vous n’ayez pu les capturer !",
+  "query": "Voulez-vous y entrer ?",
   "option": {
     "1": {
-      "label": "Enter",
-      "tooltip": "(-) Pay {{option1Money, money}}\n@[SUMMARY_GREEN]{(?) Safari Zone}",
-      "selected": "Time to test your luck!"
+      "label": "Entrer",
+      "tooltip": "(-) Payer {{option1Money, money}}\n@[SUMMARY_GREEN]{(?) Parc Safari}",
+      "selected": "Tentez votre chance !"
     },
     "2": {
-      "label": "Leave",
-      "tooltip": "(-) No Rewards",
-      "selected": "You hurry along your way,\nwith a slight feeling of regret."
+      "label": "Partir",
+      "tooltip": "(-) Aucune récompense",
+      "selected": "Vous tracez votre chemin,\navec un léger sentiment de regret."
     }
   },
   "safari": {
     "1": {
-      "label": "Throw a Pokéball",
-      "tooltip": "(+) Throw a Pokéball",
-      "selected": "You throw a Pokéball!"
+      "label": "Lancer une Poké Ball",
+      "tooltip": "(+) Lancer une Poké Ball",
+      "selected": "Vous lancez une Poké Ball !"
     },
     "2": {
-      "label": "Throw Bait",
-      "tooltip": "(+) Increases Capture Rate\n(-) Chance to Increase Flee Rate",
-      "selected": "You throw some bait!"
+      "label": "Lancer un appât",
+      "tooltip": "(+) Augumente le taux de capture\n(-) Augumente le risque de fuite",
+      "selected": "Vous lancez quelques appâts !"
     },
     "3": {
-      "label": "Throw Mud",
-      "tooltip": "(+) Decreases Flee Rate\n(-) Chance to Decrease Capture Rate",
-      "selected": "You throw some mud!"
+      "label": "Lancer de la boue",
+      "tooltip": "(+) Diminue le risque de fuite\n(-) Diminue le taux de capture",
+      "selected": "Vous lancez un pe ude boue !"
     },
     "4": {
-      "label": "Flee",
-      "tooltip": "(?) Flee from this Pokémon"
+      "label": "Fuite",
+      "tooltip": "(?) Fuir ce Pokémon"
     },
-    "watching": "{{pokemonName}} is watching carefully!",
-    "eating": "{{pokemonName}} is eating!",
-    "busy_eating": "{{pokemonName}} is busy eating!",
-    "angry": "{{pokemonName}} is angry!",
-    "beside_itself_angry": "{{pokemonName}} is beside itself with anger!",
-    "remaining_count": "{{remainingCount}} Pokémon remaining!"
+    "watching": "{{pokemonName}} vous observe attentivement.",
+    "eating": "{{pokemonName}} est en train de manger.",
+    "busy_eating": "{{pokemonName}} se concentre sur sa nourriture.",
+    "angry": "{{pokemonName}} se fâche !",
+    "beside_itself_angry": "{{pokemonName}} laisse exploser sa colère !",
+    "remaining_count": "Il rest {{remainingCount}} Pokémon !"
   },
-  "outro": "That was a fun little excursion!"
+  "outro": "Cette excursion était fun !"
 }
