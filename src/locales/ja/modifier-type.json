@@ -69,18 +69,18 @@
       "description": "ポケモンの　基本の{{stat}}を　10%　あげる。\n個体値が　高けば高いほど　持てる限界が　上がる"
     },
     "PokemonBaseStatTotalModifierType": {
-      "name": "Shuckle Juice",
-      "description": "{{increaseDecrease}} all of the holder's base stats by {{statValue}}. You were {{blessCurse}} by the Shuckle.",
+      "name": "ツボツボジュース",
+      "description": "持たせると　基本能力が　{{statValue}}　{{increaseDecrease}}。ツボツボに　{{blessCurse}}。",
       "extra": {
-        "increase": "Increases",
-        "decrease": "Decreases",
-        "blessed": "blessed",
-        "cursed": "cursed"
+        "increase": "上がる",
+        "decrease": "下がる",
+        "blessed": "恵まれた",
+        "cursed": "呪われた"
       }
     },
     "PokemonBaseStatFlatModifierType": {
-      "name": "Old Gateau",
-      "description": "Increases the holder's {{stats}} base stats by {{statValue}}. Found after a strange dream."
+      "name": "もりのヨウカン",
+      "description": "持たせると　基本能力が　{{statValue}}　上がる。　謎の夢で　見つけた　お菓子。"
     },
     "AllPokemonFullHpRestoreModifierType": {
       "description": "手持ちポケモン　全員の　HPを　すべて　回復する"
