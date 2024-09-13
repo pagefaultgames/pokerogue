@@ -2176,12 +2176,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * Calculates the damage of an attack made by another Pokemon against this Pokemon
    * @param source {@linkcode Pokemon} the attacking Pokemon
    * @param move {@linkcode Pokemon} the move used in the attack
-   * @param ignoreAbility `boolean` if `true`, ignores this Pokemon's defensive ability effects
-   * @param isCritical `boolean` if `true`, calculates damage for a critical hit.
-   * @param simulated `boolean` if `true`, suppresses changes to game state during the calculation.
-   * @returns a {@linkcode DamageCalculationResult} object with four fields:
-   * - `move`: {@linkcode Moves} the identifier for the attacking move.
-   * - `cancelled`: `boolean` whether the move was cancelled by another effect.
+   * @param ignoreAbility If `true`, ignores this Pokemon's defensive ability effects
+   * @param isCritical If `true`, calculates damage for a critical hit.
+   * @param simulated If `true`, suppresses changes to game state during the calculation.
+   * @returns a {@linkcode DamageCalculationResult} object with three fields:
+   * - `cancelled`: `true` if the move was cancelled by another effect.
    * - `result`: {@linkcode HitResult} indicates the attack's type effectiveness.
    * - `damage`: `number` the attack's final damage output.
    */
@@ -2340,8 +2339,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     this.scene.arena.applyTagsForSide(WeakenMoveScreenTag, defendingSide, move.category, this.scene.currentBattle.double, screenMultiplier);
 
     /**
-     * For each {@link HitsTagAttr} the move has, doubles the damage of the move if:
-     * The target has a {@link BattlerTagType} that this move interacts with
+     * For each {@linkcode HitsTagAttr} the move has, doubles the damage of the move if:
+     * The target has a {@linkcode BattlerTagType} that this move interacts with
      * AND
      * The move doubles damage when used against that tag
      */
@@ -2420,11 +2419,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-  * Apply the results of a move to this pokemon
-  * @param {Pokemon} source The pokemon using the move
-  * @param {PokemonMove} battlerMove The move being used
-  * @returns {HitResult} The result of the attack
-  */
+   * Applies the results of a move to this pokemon
+   * @param source The {@linkcode Pokemon} using the move
+   * @param move The {@linkcode Move} being used
+   * @returns The {@linkcode HitResult} of the attack
+   */
   apply(source: Pokemon, move: Move): HitResult {
     const defendingSide = this.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY;
     if (move.category === MoveCategory.STATUS) {
