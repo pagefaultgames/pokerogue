@@ -14,6 +14,7 @@ import Overrides from "#app/overrides";
 import i18next from "i18next";
 import { ShopCursorTarget } from "#app/enums/shop-cursor-target";
 import { IntegerHolder } from "./../utils";
+import Phaser from "phaser";
 
 export const SHOP_OPTIONS_ROW_LIMIT = 6;
 
@@ -115,6 +116,11 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
     this.continueButtonContainer.setVisible(false);
     ui.add(this.continueButtonContainer);
 
+    // Create continue button
+    const continueButtonText = addTextObject(this.scene, -24, 5, i18next.t("modifierSelectUiHandler:continueNextWaveButton"), TextStyle.MESSAGE);
+    continueButtonText.setName("text-continue-btn");
+    this.continueButtonContainer.add(continueButtonText);
+
     // prepare move overlay
     const overlayScale = 1;
     this.moveInfoOverlay = new MoveInfoOverlay(this.scene, {
@@ -196,12 +202,10 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
       this.options.push(option);
     }
 
-    // Add continue button
-    if (this.options.length === 0) {
-      const continueButtonText = addTextObject(this.scene, -24, optionsYOffset - 5, i18next.t("modifierSelectUiHandler:continueNextWaveButton"), TextStyle.MESSAGE);
-      continueButtonText.setName("text-continue-btn");
-      this.continueButtonContainer.add(continueButtonText);
-    }
+    // Set "Continue" button height based on number of rows in healing items shop
+    const continueButton = this.continueButtonContainer.getAt(0) as Phaser.GameObjects.Text;
+    continueButton.y = optionsYOffset - 5;
+    continueButton.setVisible(this.options.length === 0);
 
     for (let m = 0; m < shopTypeOptions.length; m++) {
       const row = m < SHOP_OPTIONS_ROW_LIMIT ? 0 : 1;
