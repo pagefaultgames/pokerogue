@@ -1,7 +1,7 @@
 {
   "intro": "Vous errez sans but en pleine mer et n’arrivez nulle part.",
   "title": "Un cap pas clair",
-  "description": "La mer est un peu turbulante dans cette zone, et vous commenez à faiblir.\nÇa sent le roussi. Est-il possible de se sortir de cette situation ?",
+  "description": "La mer n’est pas très clémente dans cette zone et vous commencez à faiblir.\nÇa sent le roussi. Est-il possible de se sortir de cette situation ?",
   "query": "Que voulez-vous faire ?",
   "option": {
     "1": {
@@ -24,5 +24,5 @@
       "selected": "Vous vous laissez porter, sans but, quand soudainement vous remarquez un lieu famillier.$Vous et vos Pokémon êtes compètement rincés de fatigue par cette épreuve."
     }
   },
-  "outro": "Vous retrouver un cap clair."
+  "outro": "Vous retrouvez un cap clair."
 }
