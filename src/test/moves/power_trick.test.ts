@@ -71,7 +71,7 @@ describe("Moves - Power Trick", () => {
     expect(player.getTag(BattlerTagType.POWER_TRICK)).toBeUndefined();
   }, 20000);
 
-  it("passing with baton pass", async () => {
+  it("should pass effect when using BATON_PASS", async () => {
     await game.classicMode.startBattle([Species.SHUCKLE, Species.SHUCKLE]);
     await game.override.moveset([Moves.POWER_TRICK, Moves.BATON_PASS]);
 
