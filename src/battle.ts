@@ -80,6 +80,7 @@ export default class Battle {
   public playerFaintsHistory: FaintLogEntry[] = [];
   public enemyFaintsHistory: FaintLogEntry[] = [];
 
+  /** If the current battle is a Mystery Encounter, this will always be defined */
   public mysteryEncounter?: MysteryEncounter;
 
   private rngCounter: number = 0;

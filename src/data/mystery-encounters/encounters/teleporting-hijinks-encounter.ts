@@ -19,6 +19,7 @@ import { BattlerTagType } from "#enums/battler-tag-type";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
 import { Stat } from "#enums/stat";
+import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
 
 /** the i18n namespace for this encounter */
 const namespace = "mysteryEncounter:teleportingHijinks";
@@ -35,7 +36,7 @@ const MACHINE_INTERFACING_TYPES = [Type.ELECTRIC, Type.STEEL];
 export const TeleportingHijinksEncounter: MysteryEncounter =
   MysteryEncounterBuilder.withEncounterType(MysteryEncounterType.TELEPORTING_HIJINKS)
     .withEncounterTier(MysteryEncounterTier.COMMON)
-    .withSceneWaveRangeRequirement(10, 180)
+    .withSceneWaveRangeRequirement(...CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES)
     .withSceneRequirement(new WaveModulusRequirement([1, 2, 3], 10)) // Must be in first 3 waves after boss wave
     .withSceneRequirement(new MoneyRequirement(undefined, MONEY_COST_MULTIPLIER)) // Must be able to pay teleport cost
     .withAutoHideIntroVisuals(false)

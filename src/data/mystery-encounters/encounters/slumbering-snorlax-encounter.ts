@@ -16,6 +16,7 @@ import { getPokemonSpecies } from "#app/data/pokemon-species";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { PartyHealPhase } from "#app/phases/party-heal-phase";
+import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
 
 /** i18n namespace for the encounter */
 const namespace = "mysteryEncounter:slumberingSnorlax";
@@ -28,7 +29,7 @@ const namespace = "mysteryEncounter:slumberingSnorlax";
 export const SlumberingSnorlaxEncounter: MysteryEncounter =
   MysteryEncounterBuilder.withEncounterType(MysteryEncounterType.SLUMBERING_SNORLAX)
     .withEncounterTier(MysteryEncounterTier.GREAT)
-    .withSceneWaveRangeRequirement(10, 180) // waves 10 to 180
+    .withSceneWaveRangeRequirement(...CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES)
     .withCatchAllowed(true)
     .withHideWildIntroMessage(true)
     .withIntroSpriteConfigs([

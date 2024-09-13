@@ -14,6 +14,7 @@ import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { Nature } from "#enums/nature";
 import { getNatureName } from "#app/data/nature";
+import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
 
 /** the i18n namespace for this encounter */
 const namespace = "mysteryEncounter:shadyVitaminDealer";
@@ -26,7 +27,7 @@ const namespace = "mysteryEncounter:shadyVitaminDealer";
 export const ShadyVitaminDealerEncounter: MysteryEncounter =
   MysteryEncounterBuilder.withEncounterType(MysteryEncounterType.SHADY_VITAMIN_DEALER)
     .withEncounterTier(MysteryEncounterTier.COMMON)
-    .withSceneWaveRangeRequirement(10, 180)
+    .withSceneWaveRangeRequirement(...CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES)
     .withSceneRequirement(new MoneyRequirement(0, 1.5)) // Must have the money for at least the cheap deal
     .withPrimaryPokemonHealthRatioRequirement([0.5, 1]) // At least 1 Pokemon must have above half HP
     .withIntroSpriteConfigs([

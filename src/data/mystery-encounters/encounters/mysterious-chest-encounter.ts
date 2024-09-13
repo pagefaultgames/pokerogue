@@ -13,6 +13,7 @@ import { getPokemonSpecies } from "#app/data/pokemon-species";
 import { Species } from "#enums/species";
 import { Moves } from "#enums/moves";
 import { GameOverPhase } from "#app/phases/game-over-phase";
+import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
 
 /** i18n namespace for encounter */
 const namespace = "mysteryEncounter:mysteriousChest";
@@ -31,7 +32,7 @@ const MASTER_REWARDS_WEIGHT = 65; // 5%
 export const MysteriousChestEncounter: MysteryEncounter =
   MysteryEncounterBuilder.withEncounterType(MysteryEncounterType.MYSTERIOUS_CHEST)
     .withEncounterTier(MysteryEncounterTier.COMMON)
-    .withSceneWaveRangeRequirement(10, 180) // waves 10 to 180
+    .withSceneWaveRangeRequirement(...CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES)
     .withAutoHideIntroVisuals(false)
     .withCatchAllowed(true)
     .withIntroSpriteConfigs([

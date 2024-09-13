@@ -174,6 +174,13 @@ export class MysteryEncounterOptionSelectedPhase extends Phase {
     this.onOptionSelect = this.scene.currentBattle.mysteryEncounter!.selectedOption!.onOptionPhase;
   }
 
+  /**
+   * Will handle (in order):
+   * - Execute onOptionSelect() logic if it exists for the selected option
+   *
+   * It is important to point out that no phases are directly queued by any logic within this phase
+   * Any phase that is meant to follow this one MUST be queued via the onOptionSelect() logic of the selected option
+   */
   start() {
     super.start();
     if (this.scene.currentBattle.mysteryEncounter?.autoHideIntroVisuals) {

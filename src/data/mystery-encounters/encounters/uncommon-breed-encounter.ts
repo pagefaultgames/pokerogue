@@ -23,6 +23,7 @@ import { queueEncounterMessage } from "#app/data/mystery-encounters/utils/encoun
 import { BerryModifier } from "#app/modifier/modifier";
 import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
 import { Stat } from "#enums/stat";
+import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
 
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounter:uncommonBreed";
@@ -35,7 +36,7 @@ const namespace = "mysteryEncounter:uncommonBreed";
 export const UncommonBreedEncounter: MysteryEncounter =
   MysteryEncounterBuilder.withEncounterType(MysteryEncounterType.UNCOMMON_BREED)
     .withEncounterTier(MysteryEncounterTier.COMMON)
-    .withSceneWaveRangeRequirement(10, 180) // waves 10 to 180
+    .withSceneWaveRangeRequirement(...CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES)
     .withCatchAllowed(true)
     .withHideWildIntroMessage(true)
     .withIntroSpriteConfigs([]) // Set in onInit()

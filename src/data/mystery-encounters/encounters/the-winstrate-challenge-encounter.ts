@@ -22,6 +22,7 @@ import { ShowTrainerPhase } from "#app/phases/show-trainer-phase";
 import { ReturnPhase } from "#app/phases/return-phase";
 import i18next from "i18next";
 import { ModifierTier } from "#app/modifier/modifier-tier";
+import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
 
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounter:theWinstrateChallenge";
@@ -34,7 +35,7 @@ const namespace = "mysteryEncounter:theWinstrateChallenge";
 export const TheWinstrateChallengeEncounter: MysteryEncounter =
   MysteryEncounterBuilder.withEncounterType(MysteryEncounterType.THE_WINSTRATE_CHALLENGE)
     .withEncounterTier(MysteryEncounterTier.ROGUE)
-    .withSceneWaveRangeRequirement(100, 180)
+    .withSceneWaveRangeRequirement(100, CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES[1])
     .withIntroSpriteConfigs([
       {
         spriteKey: "vito",

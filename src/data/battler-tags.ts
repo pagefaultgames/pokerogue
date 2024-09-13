@@ -2315,10 +2315,12 @@ export class MysteryEncounterPostSummonTag extends BattlerTag {
     super(BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON, BattlerTagLapseType.CUSTOM, 1);
   }
 
+  /** Event when tag is added */
   onAdd(pokemon: Pokemon): void {
     super.onAdd(pokemon);
   }
 
+  /** Performs post-summon effects through {@linkcode Pokemon.mysteryEncounterBattleEffects} */
   lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
     const ret = super.lapse(pokemon, lapseType);
 
@@ -2335,6 +2337,7 @@ export class MysteryEncounterPostSummonTag extends BattlerTag {
     return ret;
   }
 
+  /** Event when tag is removed */
   onRemove(pokemon: Pokemon): void {
     super.onRemove(pokemon);
   }

@@ -26,10 +26,11 @@ import { BerryModifier } from "#app/modifier/modifier";
 import { BerryType } from "#enums/berry-type";
 import { BattlerIndex } from "#app/battle";
 import { Moves } from "#enums/moves";
-import { EncounterAnim, EncounterBattleAnim } from "#app/data/battle-anims";
+import { EncounterBattleAnim } from "#app/data/battle-anims";
 import { MoveCategory } from "#app/data/move";
 import { MysteryEncounterPokemonData } from "#app/data/mystery-encounters/mystery-encounter-pokemon-data";
-import { GameModes } from "#app/game-mode";
+import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES, GameModes } from "#app/game-mode";
+import { EncounterAnim } from "#enums/encounter-anims";
 
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounter:clowningAround";
@@ -61,7 +62,7 @@ export const ClowningAroundEncounter: MysteryEncounter =
   MysteryEncounterBuilder.withEncounterType(MysteryEncounterType.CLOWNING_AROUND)
     .withEncounterTier(MysteryEncounterTier.ULTRA)
     .withDisabledGameModes(GameModes.CHALLENGE)
-    .withSceneWaveRangeRequirement(80, 180)
+    .withSceneWaveRangeRequirement(80, CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES[1])
     .withAnimations(EncounterAnim.SMOKESCREEN)
     .withAutoHideIntroVisuals(false)
     .withIntroSpriteConfigs([

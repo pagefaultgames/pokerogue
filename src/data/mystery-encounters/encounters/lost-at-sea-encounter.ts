@@ -9,6 +9,7 @@ import { leaveEncounterWithoutBattle, setEncounterExp } from "../utils/encounter
 import { applyDamageToPokemon } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
+import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
 
 const OPTION_1_REQUIRED_MOVE = Moves.SURF;
 const OPTION_2_REQUIRED_MOVE = Moves.FLY;
@@ -28,7 +29,7 @@ const namespace = "mysteryEncounter:lostAtSea";
  */
 export const LostAtSeaEncounter: MysteryEncounter = MysteryEncounterBuilder.withEncounterType(MysteryEncounterType.LOST_AT_SEA)
   .withEncounterTier(MysteryEncounterTier.COMMON)
-  .withSceneWaveRangeRequirement(11, 179)
+  .withSceneWaveRangeRequirement(...CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES)
   .withIntroSpriteConfigs([
     {
       spriteKey: "buoy",

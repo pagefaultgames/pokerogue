@@ -21,6 +21,7 @@ import { SpeciesFormChangeActiveTrigger } from "#app/data/pokemon-forms";
 import { PostSummonPhase } from "#app/phases/post-summon-phase";
 import { modifierTypes } from "#app/modifier/modifier-type";
 import { Nature } from "#enums/nature";
+import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
 
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounter:funAndGames";
@@ -33,7 +34,7 @@ const namespace = "mysteryEncounter:funAndGames";
 export const FunAndGamesEncounter: MysteryEncounter =
   MysteryEncounterBuilder.withEncounterType(MysteryEncounterType.FUN_AND_GAMES)
     .withEncounterTier(MysteryEncounterTier.GREAT)
-    .withSceneWaveRangeRequirement(10, 180)
+    .withSceneWaveRangeRequirement(...CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES)
     .withSceneRequirement(new MoneyRequirement(0, 1.5)) // Cost equal to 1 Max Potion to play
     .withAutoHideIntroVisuals(false)
     // Allows using move without a visible enemy pokemon

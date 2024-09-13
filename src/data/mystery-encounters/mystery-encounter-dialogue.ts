@@ -20,7 +20,8 @@ export class EncounterOptionsDialogue {
   title?: string;
   description?: string;
   query?: string;
-  options?: [...OptionTextDisplay[]]; // Options array with minimum 2 options
+  /** Options array with minimum 2 options */
+  options?: [...OptionTextDisplay[]];
 }
 
 /**

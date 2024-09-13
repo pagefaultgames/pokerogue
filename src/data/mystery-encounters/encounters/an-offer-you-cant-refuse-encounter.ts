@@ -12,6 +12,7 @@ import { getPokemonSpecies } from "#app/data/pokemon-species";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { ModifierRewardPhase } from "#app/phases/modifier-reward-phase";
+import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
 
 /** the i18n namespace for this encounter */
 const namespace = "mysteryEncounter:offerYouCantRefuse";
@@ -24,7 +25,7 @@ const namespace = "mysteryEncounter:offerYouCantRefuse";
 export const AnOfferYouCantRefuseEncounter: MysteryEncounter =
   MysteryEncounterBuilder.withEncounterType(MysteryEncounterType.AN_OFFER_YOU_CANT_REFUSE)
     .withEncounterTier(MysteryEncounterTier.GREAT)
-    .withSceneWaveRangeRequirement(10, 180)
+    .withSceneWaveRangeRequirement(...CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES)
     .withScenePartySizeRequirement(2, 6) // Must have at least 2 pokemon in party
     .withIntroSpriteConfigs([
       {

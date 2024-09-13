@@ -117,11 +117,12 @@ describe("Field Trip - Mystery Encounter", () => {
 
       expect(scene.ui.getMode()).to.equal(Mode.MODIFIER_SELECT);
       const modifierSelectHandler = scene.ui.handlers.find(h => h instanceof ModifierSelectUiHandler) as ModifierSelectUiHandler;
-      expect(modifierSelectHandler.options.length).toEqual(4);
+      expect(modifierSelectHandler.options.length).toEqual(5);
       expect(modifierSelectHandler.options[0].modifierTypeOption.type.name).toBe("X Attack");
       expect(modifierSelectHandler.options[1].modifierTypeOption.type.name).toBe("X Defense");
       expect(modifierSelectHandler.options[2].modifierTypeOption.type.name).toBe("X Speed");
       expect(modifierSelectHandler.options[3].modifierTypeOption.type.name).toBe("Dire Hit");
+      expect(modifierSelectHandler.options[4].modifierTypeOption.type.name).toBe("Rarer Candy");
     });
 
     it("should leave encounter without battle", async () => {
@@ -163,11 +164,12 @@ describe("Field Trip - Mystery Encounter", () => {
 
       expect(scene.ui.getMode()).to.equal(Mode.MODIFIER_SELECT);
       const modifierSelectHandler = scene.ui.handlers.find(h => h instanceof ModifierSelectUiHandler) as ModifierSelectUiHandler;
-      expect(modifierSelectHandler.options.length).toEqual(4);
+      expect(modifierSelectHandler.options.length).toEqual(5);
       expect(modifierSelectHandler.options[0].modifierTypeOption.type.name).toBe("X Sp. Atk");
       expect(modifierSelectHandler.options[1].modifierTypeOption.type.name).toBe("X Sp. Def");
       expect(modifierSelectHandler.options[2].modifierTypeOption.type.name).toBe("X Speed");
       expect(modifierSelectHandler.options[3].modifierTypeOption.type.name).toBe("Dire Hit");
+      expect(modifierSelectHandler.options[4].modifierTypeOption.type.name).toBe("Dire Hit");
     });
 
     it("should leave encounter without battle", async () => {
@@ -209,11 +211,12 @@ describe("Field Trip - Mystery Encounter", () => {
 
       expect(scene.ui.getMode()).to.equal(Mode.MODIFIER_SELECT);
       const modifierSelectHandler = scene.ui.handlers.find(h => h instanceof ModifierSelectUiHandler) as ModifierSelectUiHandler;
-      expect(modifierSelectHandler.options.length).toEqual(4);
+      expect(modifierSelectHandler.options.length).toEqual(5);
       expect(modifierSelectHandler.options[0].modifierTypeOption.type.name).toBe("X Accuracy");
       expect(modifierSelectHandler.options[1].modifierTypeOption.type.name).toBe("X Speed");
       expect(modifierSelectHandler.options[2].modifierTypeOption.type.name).toBe("5x Great Ball");
       expect(modifierSelectHandler.options[3].modifierTypeOption.type.name).toBe("IV Scanner");
+      expect(modifierSelectHandler.options[4].modifierTypeOption.type.name).toBe("Rarer Candy");
     });
 
     it("should leave encounter without battle", async () => {

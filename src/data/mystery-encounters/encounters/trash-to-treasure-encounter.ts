@@ -17,6 +17,7 @@ import { Moves } from "#enums/moves";
 import { BattlerIndex } from "#app/battle";
 import { PokemonMove } from "#app/field/pokemon";
 import { ModifierRewardPhase } from "#app/phases/modifier-reward-phase";
+import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
 
 /** the i18n namespace for this encounter */
 const namespace = "mysteryEncounter:trashToTreasure";
@@ -31,7 +32,7 @@ const SOUND_EFFECT_WAIT_TIME = 700;
 export const TrashToTreasureEncounter: MysteryEncounter =
   MysteryEncounterBuilder.withEncounterType(MysteryEncounterType.TRASH_TO_TREASURE)
     .withEncounterTier(MysteryEncounterTier.ULTRA)
-    .withSceneWaveRangeRequirement(60, 180)
+    .withSceneWaveRangeRequirement(60, CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES[1])
     .withMaxAllowedEncounters(1)
     .withIntroSpriteConfigs([
       {

@@ -11,6 +11,7 @@ import MysteryEncounter, {
   MysteryEncounterBuilder,
 } from "../mystery-encounter";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
+import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
 
 /** i18n namespace for encounter */
 const namespace = "mysteryEncounter:departmentStoreSale";
@@ -23,7 +24,7 @@ const namespace = "mysteryEncounter:departmentStoreSale";
 export const DepartmentStoreSaleEncounter: MysteryEncounter =
   MysteryEncounterBuilder.withEncounterType(MysteryEncounterType.DEPARTMENT_STORE_SALE)
     .withEncounterTier(MysteryEncounterTier.COMMON)
-    .withSceneWaveRangeRequirement(10, 100)
+    .withSceneWaveRangeRequirement(CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES[0], 100)
     .withIntroSpriteConfigs([
       {
         spriteKey: "b2w2_lady",

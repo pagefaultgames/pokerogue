@@ -12,7 +12,7 @@ import { Moves } from "#enums/moves";
 import { TrainerSlot } from "#app/data/trainer-config";
 import PokemonData from "#app/system/pokemon-data";
 import { Biome } from "#enums/biome";
-import { EncounterAnim, EncounterBattleAnim } from "#app/data/battle-anims";
+import { EncounterBattleAnim } from "#app/data/battle-anims";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { getEncounterText, queueEncounterMessage } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
 import { MoveRequirement } from "#app/data/mystery-encounters/mystery-encounter-requirements";
@@ -25,6 +25,8 @@ import { modifierTypes } from "#app/modifier/modifier-type";
 import { LearnMovePhase } from "#app/phases/learn-move-phase";
 import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
 import { Stat } from "#enums/stat";
+import { EncounterAnim } from "#enums/encounter-anims";
+import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
 
 /** the i18n namespace for this encounter */
 const namespace = "mysteryEncounter:dancingLessons";
@@ -81,7 +83,7 @@ const SENSU_STYLE_BIOMES = [
 export const DancingLessonsEncounter: MysteryEncounter =
   MysteryEncounterBuilder.withEncounterType(MysteryEncounterType.DANCING_LESSONS)
     .withEncounterTier(MysteryEncounterTier.GREAT)
-    .withSceneWaveRangeRequirement(10, 180)
+    .withSceneWaveRangeRequirement(...CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES)
     .withIntroSpriteConfigs([]) // Uses a real Pokemon sprite instead of ME Intro Visuals
     .withAnimations(EncounterAnim.DANCE)
     .withHideWildIntroMessage(true)
