@@ -1,4 +1,4 @@
-import { initSubsequentOptionSelect, leaveEncounterWithoutBattle, updatePlayerMoney, } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
+import { initSubsequentOptionSelect, leaveEncounterWithoutBattle, transitionMysteryEncounterIntroVisuals, updatePlayerMoney, } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import BattleScene from "#app/battle-scene";
 import MysteryEncounter, { MysteryEncounterBuilder } from "../mystery-encounter";
@@ -36,6 +36,7 @@ export const SafariZoneEncounter: MysteryEncounter =
     .withEncounterTier(MysteryEncounterTier.GREAT)
     .withSceneWaveRangeRequirement(10, 180)
     .withSceneRequirement(new MoneyRequirement(0, SAFARI_MONEY_MULTIPLIER)) // Cost equal to 1 Max Revive
+    .withAutoHideIntroVisuals(false)
     .withIntroSpriteConfigs([
       {
         spriteKey: "safari_zone",
@@ -79,6 +80,9 @@ export const SafariZoneEncounter: MysteryEncounter =
         scene.loadSe("PRSFX- Taunt2", "battle_anims", "PRSFX- Taunt2.wav");
         scene.loadAtlas("bait", "mystery-encounters");
         scene.loadAtlas("mud", "mystery-encounters");
+        // Clear enemy party
+        scene.currentBattle.enemyParty = [];
+        await transitionMysteryEncounterIntroVisuals(scene);
         await summonSafariPokemon(scene);
         initSubsequentOptionSelect(scene, { overrideOptions: safariZoneGameOptions, hideDescription: true });
         return true;
@@ -250,9 +254,9 @@ async function summonSafariPokemon(scene: BattleScene) {
   let pokemon;
   scene.executeWithSeedOffset(() => {
     enemySpecies = getPokemonSpecies(getRandomSpeciesByStarterTier([0, 5]));
-    enemySpecies = getPokemonSpecies(enemySpecies.getWildSpeciesForLevel(scene.currentBattle.waveIndex, true, false, scene.gameMode));
-    scene.currentBattle.enemyParty = [];
-    pokemon = scene.addEnemyPokemon(enemySpecies, scene.currentBattle.waveIndex, TrainerSlot.NONE, false);
+    const level = scene.currentBattle.getLevelForWave();
+    enemySpecies = getPokemonSpecies(enemySpecies.getWildSpeciesForLevel(level, true, false, scene.gameMode));
+    pokemon = scene.addEnemyPokemon(enemySpecies, level, TrainerSlot.NONE, false);
 
     // Roll shiny twice
     if (!pokemon.shiny) {
@@ -276,7 +280,7 @@ async function summonSafariPokemon(scene: BattleScene) {
 
     pokemon.calculateStats();
 
-    scene.currentBattle.enemyParty[0] = pokemon;
+    scene.currentBattle.enemyParty.unshift(pokemon);
   }, scene.currentBattle.waveIndex * 1000 + encounter.misc.safariPokemonRemaining);
 
   scene.gameData.setPokemonSeen(pokemon, true);
@@ -481,6 +485,16 @@ function tryChangeCatchStage(scene: BattleScene, change: number, chance?: number
 }
 
 async function doEndTurn(scene: BattleScene, cursorIndex: number) {
+  // First cleanup and destroy old Pokemon objects that were left in the enemyParty
+  // They are left in enemyParty temporarily so that VictoryPhase properly handles EXP
+  const party = scene.getEnemyParty();
+  if (party.length > 1) {
+    for (let i = 1; i < party.length; i++) {
+      party[i].destroy();
+    }
+    scene.currentBattle.enemyParty = party.slice(0, 1);
+  }
+
   const encounter = scene.currentBattle.mysteryEncounter!;
   const pokemon = encounter.misc.pokemon;
   const isFlee = isPokemonFlee(pokemon, encounter.misc.fleeStage);

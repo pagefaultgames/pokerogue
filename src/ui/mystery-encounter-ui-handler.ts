@@ -419,7 +419,7 @@ export default class MysteryEncounterUiHandler extends UiHandler {
     }
 
     // View Party Button
-    const viewPartyText = addBBCodeTextObject(this.scene, 256, -24, getBBCodeFrag("View Party", TextStyle.PARTY), TextStyle.PARTY);
+    const viewPartyText = addBBCodeTextObject(this.scene, 256, -24, getBBCodeFrag(i18next.t("mysteryEncounterMessages:view_party_button"), TextStyle.PARTY), TextStyle.PARTY);
     this.optionsContainer.add(viewPartyText);
 
     // Description Window

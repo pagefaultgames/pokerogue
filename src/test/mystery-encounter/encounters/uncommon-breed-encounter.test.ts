@@ -30,8 +30,7 @@ const defaultParty = [Species.LAPRAS, Species.GENGAR, Species.ABRA];
 const defaultBiome = Biome.CAVE;
 const defaultWave = 45;
 
-// TODO: there is some severe test flakiness occurring for this file, needs to be looked at/addressed in separate issue
-describe.skip("Uncommon Breed - Mystery Encounter", () => {
+describe("Uncommon Breed - Mystery Encounter", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
   let scene: BattleScene;
@@ -168,7 +167,8 @@ describe.skip("Uncommon Breed - Mystery Encounter", () => {
       });
     });
 
-    it("should NOT be selectable if the player doesn't have enough berries", async () => {
+    // TODO: there is some severe test flakiness occurring for this file, needs to be looked at/addressed in separate issue
+    it.skip("should NOT be selectable if the player doesn't have enough berries", async () => {
       await game.runToMysteryEncounter(MysteryEncounterType.UNCOMMON_BREED, defaultParty);
       // Clear out any pesky mods that slipped through test spin-up
       scene.modifiers.forEach(mod => {
@@ -192,7 +192,8 @@ describe.skip("Uncommon Breed - Mystery Encounter", () => {
       expect(mysteryEncounterPhase.continueEncounter).not.toHaveBeenCalled();
     });
 
-    it("Should skip fight when player meets requirements", { retry: 5 }, async () => {
+    // TODO: there is some severe test flakiness occurring for this file, needs to be looked at/addressed in separate issue
+    it.skip("Should skip fight when player meets requirements", { retry: 5 }, async () => {
       const leaveEncounterWithoutBattleSpy = vi.spyOn(EncounterPhaseUtils, "leaveEncounterWithoutBattle");
 
       await game.runToMysteryEncounter(MysteryEncounterType.UNCOMMON_BREED, defaultParty);

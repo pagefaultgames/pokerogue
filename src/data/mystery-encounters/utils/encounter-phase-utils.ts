@@ -330,9 +330,7 @@ export async function initBattleWithEnemyConfig(scene: BattleScene, partyConfig:
     const customModifierTypes = partyConfig?.pokemonConfigs
       ?.filter(config => config?.modifierConfigs)
       .map(config => config.modifierConfigs!);
-    if (customModifierTypes) {
-      scene.generateEnemyModifiers(customModifierTypes);
-    }
+    scene.generateEnemyModifiers(customModifierTypes);
   }
 }
 

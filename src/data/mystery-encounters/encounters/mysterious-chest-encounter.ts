@@ -17,6 +17,12 @@ import { GameOverPhase } from "#app/phases/game-over-phase";
 /** i18n namespace for encounter */
 const namespace = "mysteryEncounter:mysteriousChest";
 
+const RAND_LENGTH = 100;
+const COMMON_REWARDS_WEIGHT = 20; // 20%
+const ULTRA_REWARDS_WEIGHT = 50; // 30%
+const ROGUE_REWARDS_WEIGHT = 60; // 10%
+const MASTER_REWARDS_WEIGHT = 65; // 5%
+
 /**
  * Mysterious Chest encounter.
  * @see {@link https://github.com/pagefaultgames/pokerogue/issues/3796 | GitHub Issue #3796}
@@ -97,12 +103,12 @@ export const MysteriousChestEncounter: MysteryEncounter =
           const introVisuals = encounter.introVisuals!;
 
           // Determine roll first
-          const roll = randSeedInt(100);
+          const roll = randSeedInt(RAND_LENGTH);
           encounter.misc = {
             roll
           };
 
-          if (roll <= 35) {
+          if (roll >= MASTER_REWARDS_WEIGHT) {
             // Chest is springing trap, change to red chest sprite
             const blueChestSprites = introVisuals.getSpriteAtIndex(0);
             const redChestSprites = introVisuals.getSpriteAtIndex(1);
@@ -117,7 +123,7 @@ export const MysteriousChestEncounter: MysteryEncounter =
           // Open the chest
           const encounter = scene.currentBattle.mysteryEncounter!;
           const roll = encounter.misc.roll;
-          if (roll > 80) {
+          if (roll < COMMON_REWARDS_WEIGHT) {
             // Choose between 2 COMMON / 2 GREAT tier items (20%)
             setEncounterRewards(scene, {
               guaranteedModifierTiers: [
@@ -130,7 +136,7 @@ export const MysteriousChestEncounter: MysteryEncounter =
             // Display result message then proceed to rewards
             queueEncounterMessage(scene, `${namespace}.option.1.normal`);
             leaveEncounterWithoutBattle(scene);
-          } else if (roll > 50) {
+          } else if (roll < ULTRA_REWARDS_WEIGHT) {
             // Choose between 3 ULTRA tier items (30%)
             setEncounterRewards(scene, {
               guaranteedModifierTiers: [
@@ -142,13 +148,13 @@ export const MysteriousChestEncounter: MysteryEncounter =
             // Display result message then proceed to rewards
             queueEncounterMessage(scene, `${namespace}.option.1.good`);
             leaveEncounterWithoutBattle(scene);
-          } else if (roll > 40) {
+          } else if (roll < ROGUE_REWARDS_WEIGHT) {
             // Choose between 2 ROGUE tier items (10%)
             setEncounterRewards(scene, { guaranteedModifierTiers: [ModifierTier.ROGUE, ModifierTier.ROGUE] });
             // Display result message then proceed to rewards
             queueEncounterMessage(scene, `${namespace}.option.1.great`);
             leaveEncounterWithoutBattle(scene);
-          } else if (roll > 35) {
+          } else if (roll < MASTER_REWARDS_WEIGHT) {
             // Choose 1 MASTER tier item (5%)
             setEncounterRewards(scene, { guaranteedModifierTiers: [ModifierTier.MASTER] });
             // Display result message then proceed to rewards

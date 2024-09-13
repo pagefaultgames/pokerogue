@@ -194,7 +194,7 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
 
     // Add continue button
     if (this.options.length === 0) {
-      const continueButtonText = addTextObject(this.scene, -24, optionsYOffset - 5, "Continue", TextStyle.MESSAGE);
+      const continueButtonText = addTextObject(this.scene, -24, optionsYOffset - 5, i18next.t("modifierSelectUiHandler:continueNextWaveButton"), TextStyle.MESSAGE);
       continueButtonText.setName("text-continue-btn");
       this.continueButtonContainer.add(continueButtonText);
     }
@@ -449,7 +449,7 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
         // Continue button when no shop items
         this.cursorObj.setScale(1.25);
         this.cursorObj.setPosition((this.scene.game.canvas.width / 18) + 23, (-this.scene.game.canvas.height / 12) - (this.shopOptionsRows.length > 1 ? 6 : 22));
-        ui.showText("Continue to the next wave.");
+        ui.showText(i18next.t("modifierSelectUiHandler:continueNextWaveDescription"));
         return ret;
       }
 
