@@ -7,15 +7,15 @@ import { WindowVariant, getWindowVariantSuffix } from "./ui/ui-theme";
 import { isMobile } from "./touch-controls";
 import * as Utils from "./utils";
 import { initI18n } from "./plugins/i18n";
-import {initPokemonPrevolutions} from "#app/data/pokemon-evolutions";
-import {initBiomes} from "#app/data/biomes";
-import {initEggMoves} from "#app/data/egg-moves";
-import {initPokemonForms} from "#app/data/pokemon-forms";
-import {initSpecies} from "#app/data/pokemon-species";
-import {initMoves} from "#app/data/move";
-import {initAbilities} from "#app/data/ability";
-import {initAchievements} from "#app/system/achv";
-import {initTrainerTypeDialogue} from "#app/data/dialogue";
+import { initPokemonPrevolutions } from "#app/data/pokemon-evolutions";
+import { initBiomes } from "#app/data/biomes";
+import { initEggMoves } from "#app/data/egg-moves";
+import { initPokemonForms } from "#app/data/pokemon-forms";
+import { initSpecies } from "#app/data/pokemon-species";
+import { initMoves } from "#app/data/move";
+import { initAbilities } from "#app/data/ability";
+import { initAchievements } from "#app/system/achv";
+import { initTrainerTypeDialogue } from "#app/data/dialogue";
 import { initChallenges } from "./data/challenge";
 import i18next from "i18next";
 import { initStatsKeys } from "./ui/game-stats-ui-handler";
@@ -165,6 +165,7 @@ export class LoadingScene extends SceneBase {
     this.loadImage("saving_icon", "ui");
     this.loadImage("discord", "ui");
     this.loadImage("google", "ui");
+    this.loadImage("settings_icon", "ui");
 
     this.loadImage("default_bg", "arenas");
     // Load arena images
@@ -249,9 +250,9 @@ export class LoadingScene extends SceneBase {
     }
     const availableLangs = ["en", "de", "it", "fr", "ja", "ko", "es", "pt-BR", "zh-CN"];
     if (lang && availableLangs.includes(lang)) {
-      this.loadImage("september-update-"+lang, "events");
+      this.loadImage("egg-update_"+lang, "events");
     } else {
-      this.loadImage("september-update-en", "events");
+      this.loadImage("egg-update_en", "events");
     }
 
     this.loadAtlas("statuses", "");

@@ -30,7 +30,7 @@ describe("Abilities - Dancer", () => {
       .moveset([Moves.SWORDS_DANCE, Moves.SPLASH])
       .enemySpecies(Species.MAGIKARP)
       .enemyAbility(Abilities.DANCER)
-      .enemyMoveset(Array(4).fill(Moves.VICTORY_DANCE));
+      .enemyMoveset([Moves.VICTORY_DANCE]);
   });
 
   // Reference Link: https://bulbapedia.bulbagarden.net/wiki/Dancer_(Ability)

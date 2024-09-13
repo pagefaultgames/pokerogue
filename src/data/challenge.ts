@@ -1,18 +1,18 @@
 import * as Utils from "../utils";
 import i18next from "i18next";
-import { defaultStarterSpecies, DexAttrProps, GameData } from "#app/system/game-data.js";
+import { defaultStarterSpecies, DexAttrProps, GameData } from "#app/system/game-data";
 import PokemonSpecies, { getPokemonSpecies, getPokemonSpeciesForm, speciesStarters } from "./pokemon-species";
-import Pokemon, { PokemonMove } from "#app/field/pokemon.js";
-import { BattleType, FixedBattleConfig } from "#app/battle.js";
-import Trainer, { TrainerVariant } from "#app/field/trainer.js";
-import { GameMode } from "#app/game-mode.js";
+import Pokemon, { PokemonMove } from "#app/field/pokemon";
+import { BattleType, FixedBattleConfig } from "#app/battle";
+import Trainer, { TrainerVariant } from "#app/field/trainer";
+import { GameMode } from "#app/game-mode";
 import { Type } from "./type";
 import { Challenges } from "#enums/challenges";
 import { Species } from "#enums/species";
 import { TrainerType } from "#enums/trainer-type";
 import { Nature } from "./nature";
-import { Moves } from "#app/enums/moves.js";
-import { TypeColor, TypeShadow } from "#app/enums/color.js";
+import { Moves } from "#app/enums/moves";
+import { TypeColor, TypeShadow } from "#app/enums/color";
 import { pokemonEvolutions } from "./pokemon-evolutions";
 import { pokemonFormChanges } from "./pokemon-forms";
 
