@@ -71,5 +71,5 @@
   "disabledOnAdd": "La mossa {{moveName}} di\n{{pokemonNameWithAffix}} è stata bloccata!",
   "disabledLapse": "La mossa {{moveName}} di\n{{pokemonNameWithAffix}} non è più bloccata!",
   "tarShotOnAdd": "{{pokemonNameWithAffix}} è diventato vulnerabile\nal tipo Fuoco!",
-  "powerTrickActive": "{{pokemonNameWithAffix}} switched its Attack and Defense!"
+  "powerTrickActive": "{{pokemonNameWithAffix}} inverte l’Attacco con la Difesa!"
 }
