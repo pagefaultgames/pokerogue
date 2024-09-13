@@ -2210,6 +2210,7 @@ export class TarShotTag extends BattlerTag {
     pokemon.scene.queueMessage(i18next.t("battlerTags:tarShotOnAdd", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }));
   }
 }
+
 /**
  * Tag that swaps the user's base ATK stat with its base DEF stat.
  * @extends BattlerTag

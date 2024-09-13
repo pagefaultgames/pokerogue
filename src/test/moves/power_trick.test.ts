@@ -75,21 +75,20 @@ describe("Moves - Power Trick", () => {
     await game.classicMode.startBattle([Species.SHUCKLE, Species.SHUCKLE]);
     await game.override.moveset([Moves.POWER_TRICK, Moves.BATON_PASS]);
 
-    game.move.select(Moves.POWER_TRICK);
-
-    await game.phaseInterceptor.to(TurnEndPhase);
+    const player = game.scene.getPlayerPokemon()!;
+    player.addTag(BattlerTagType.POWER_TRICK);
 
     game.move.select(Moves.BATON_PASS);
     game.doSelectPartyPokemon(1);
 
     await game.phaseInterceptor.to(TurnEndPhase);
 
-    const player = game.scene.getPlayerPokemon()!;
-    const baseATK = player.getStat(Stat.ATK);
-    const baseDEF = player.getStat(Stat.DEF);
+    const switchedPlayer = game.scene.getPlayerPokemon()!;
+    const baseATK = switchedPlayer.getStat(Stat.ATK);
+    const baseDEF = switchedPlayer.getStat(Stat.DEF);
 
-    expect(player.getStat(Stat.ATK, false)).toBe(baseDEF);
-    expect(player.getStat(Stat.DEF, false)).toBe(baseATK);
-    expect(player.getTag(BattlerTagType.POWER_TRICK)).toBeDefined();
+    expect(switchedPlayer.getStat(Stat.ATK, false)).toBe(baseDEF);
+    expect(switchedPlayer.getStat(Stat.DEF, false)).toBe(baseATK);
+    expect(switchedPlayer.getTag(BattlerTagType.POWER_TRICK)).toBeDefined();
   }, 20000);
 });
