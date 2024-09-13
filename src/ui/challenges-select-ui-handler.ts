@@ -43,7 +43,7 @@ export default class GameChallengesUiHandler extends UiHandler {
   private widestTextBox: number;
 
   private readonly leftArrowGap: number = 90; // distance from the label to the left arrow
-  private readonly arrowSpacing: number = 2; // distance between the arrows and the value area
+  private readonly arrowSpacing: number = 3; // distance between the arrows and the value area
 
   constructor(scene: BattleScene, mode: Mode | null = null) {
     super(scene, mode);
@@ -223,8 +223,8 @@ export default class GameChallengesUiHandler extends UiHandler {
         for (let j = 0; j <= this.scene.gameMode.challenges[i].maxValue; j++) { // this goes through each challenge's value to find out what the max width will be
           if (this.scene.gameMode.challenges[i].id !== Challenges.SINGLE_TYPE) {
             tempText.setText(this.scene.gameMode.challenges[i].getValue(j));
-            if (tempText.width > this.widestTextBox) {
-              this.widestTextBox = tempText.width;
+            if (tempText.displayWidth > this.widestTextBox) {
+              this.widestTextBox = tempText.displayWidth;
             }
           }
         }
@@ -246,19 +246,18 @@ export default class GameChallengesUiHandler extends UiHandler {
       challengeLabel.label.setText(challenge.getName());
       challengeLabel.leftArrow.setPositionRelative(challengeLabel.label, this.leftArrowGap, 4.5);
       challengeLabel.leftArrow.setVisible(challenge.value !== 0);
-      challengeLabel.rightArrow.setPositionRelative(challengeLabel.leftArrow, Math.max(this.monoTypeValue.width, this.widestTextBox / 4) + (2 * this.arrowSpacing), 0);
+      challengeLabel.rightArrow.setPositionRelative(challengeLabel.leftArrow, Math.max(this.monoTypeValue.width, this.widestTextBox) + challengeLabel.leftArrow.displayWidth + 2 * this.arrowSpacing, 0);
       challengeLabel.rightArrow.setVisible(challenge.value !== challenge.maxValue);
 
       // this check looks to make sure that the arrows and value textbox don't take up too much space that they'll clip the right edge of the options background
       if (challengeLabel.rightArrow.x + challengeLabel.rightArrow.width + this.optionsBg.rightWidth + this.arrowSpacing > this.optionsWidth) {
         // if we go out of bounds of the box, set the x position as far right as we can without going past the box, with this.arrowSpacing to allow a small gap between the arrow and border
-        challengeLabel.rightArrow.setX(this.optionsWidth - this.arrowSpacing - this.optionsBg.rightWidth - challengeLabel.rightArrow.width);
+        challengeLabel.rightArrow.setX(this.optionsWidth - this.arrowSpacing - this.optionsBg.rightWidth);
       }
 
-      // this line of code gets the center point between the left and right arrows from their left side (Arrow.x gives left point), taking into account the width of the arrows
-      const xLocation = challengeLabel.rightArrow.x - (challengeLabel.rightArrow.x - (challengeLabel.leftArrow.x + challengeLabel.leftArrow.width)) / 2 - 0.5;
+      // this line of code gets the center point between the left and right arrows from their left side (Arrow.x gives middle point), taking into account the width of the arrows
+      const xLocation = Math.round((challengeLabel.leftArrow.x + challengeLabel.rightArrow.x + challengeLabel.leftArrow.displayWidth) / 2);;
       if (challenge.id === Challenges.SINGLE_TYPE) {
-        this.monoTypeValue.setPositionRelative(challengeLabel.label, 112, 8);
         this.monoTypeValue.setX(xLocation);
         this.monoTypeValue.setY(challengeLabel.label.y + 8);
         this.monoTypeValue.setFrame(challenge.getValue());
