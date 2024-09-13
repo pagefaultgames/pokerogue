@@ -8,5 +8,7 @@
   "lockRaritiesDesc": "Blocca le rarità al reroll (influisce sui costi).",
   "checkTeamDesc": "Controlla la squadra Pokémon.",
   "rerollCost": "{{formattedMoney}}₽",
-  "itemCost": "{{formattedMoney}}₽"
+  "itemCost": "{{formattedMoney}}₽",
+  "continueNextWaveButton": "Continue",
+  "continueNextWaveDescription": "Continue to the next wave"
 }
