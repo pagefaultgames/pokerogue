@@ -17,7 +17,9 @@ export default class MockText implements MockGameObject {
     this.scene = textureManager.scene;
     this.textureManager = textureManager;
     this.style = {};
-    // Phaser.GameObjects.TextStyle.prototype.setStyle = () => null;
+    // DO NOT REMOVE: function needs to be stubbed for tests
+    // @ts-ignore
+    Phaser.GameObjects.TextStyle.prototype.setStyle = () => this;
     // Phaser.GameObjects.Text.prototype.updateText = () => null;
     // Phaser.Textures.TextureManager.prototype.addCanvas = () => {};
     UI.prototype.showText = this.showText;
