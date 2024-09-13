@@ -174,7 +174,7 @@ export const ATrainersTestEncounter: MysteryEncounter =
           tier: EggTier.GREAT
         };
         encounter.setDialogueToken("eggType", i18next.t(`${namespace}.eggTypes.rare`));
-        setEncounterRewards(scene, { fillRemaining: false, rerollMultiplier: 0 }, [eggOptions]);
+        setEncounterRewards(scene, { fillRemaining: false, rerollMultiplier: -1 }, [eggOptions]);
         leaveEncounterWithoutBattle(scene);
       }
     )

@@ -2048,6 +2048,7 @@ export interface CustomModifierSettings {
   guaranteedModifierTypeOptions?: ModifierTypeOption[];
   guaranteedModifierTypeFuncs?: ModifierTypeFunc[];
   fillRemaining?: boolean;
+  /** Set to negative value to disable rerolls completely in shop */
   rerollMultiplier?: number;
   allowLuckUpgrades?: boolean;
 }

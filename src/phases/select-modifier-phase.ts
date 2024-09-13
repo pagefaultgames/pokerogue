@@ -74,7 +74,7 @@ export class SelectModifierPhase extends BattlePhase {
         switch (cursor) {
         case 0:
           const rerollCost = this.getRerollCost(typeOptions, this.scene.lockModifierTiers);
-          if (rerollCost === 0 || this.scene.money < rerollCost) {
+          if (rerollCost < 0 || this.scene.money < rerollCost) {
             this.scene.ui.playError();
             return false;
           } else {
@@ -241,7 +241,17 @@ export class SelectModifierPhase extends BattlePhase {
     } else {
       baseValue = 250;
     }
-    const multiplier = !isNullOrUndefined(this.customModifierSettings?.rerollMultiplier) ? this.customModifierSettings!.rerollMultiplier! : 1;
+
+    let multiplier = 1;
+    if (!isNullOrUndefined(this.customModifierSettings?.rerollMultiplier)) {
+      if (this.customModifierSettings!.rerollMultiplier! < 0) {
+        // Completely overrides reroll cost to -1 and early exits
+        return -1;
+      }
+
+      // Otherwise, continue with custom multiplier
+      multiplier = this.customModifierSettings!.rerollMultiplier!;
+    }
     return Math.min(Math.ceil(this.scene.currentBattle.waveIndex / 10) * baseValue * Math.pow(2, this.rerollCount) * multiplier, Number.MAX_SAFE_INTEGER);
   }
 
