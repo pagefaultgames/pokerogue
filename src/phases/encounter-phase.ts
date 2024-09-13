@@ -366,8 +366,8 @@ export class EncounterPhase extends BattlePhase {
       }
     } else if (this.scene.currentBattle.battleType === BattleType.MYSTERY_ENCOUNTER && this.scene.currentBattle.mysteryEncounter) {
       const encounter = this.scene.currentBattle.mysteryEncounter;
-      const introVisuals = encounter.introVisuals!;
-      introVisuals.playAnim();
+      const introVisuals = encounter.introVisuals;
+      introVisuals?.playAnim();
 
       if (encounter.onVisualsStart) {
         encounter.onVisualsStart(this.scene);
