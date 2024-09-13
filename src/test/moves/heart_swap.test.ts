@@ -7,7 +7,6 @@ import { Moves } from "#enums/moves";
 import { BATTLE_STATS } from "#enums/stat";
 import { Abilities } from "#enums/abilities";
 import { MoveEndPhase } from "#app/phases/move-end-phase";
-import { SPLASH_ONLY } from "../utils/testUtils";
 
 describe("Moves - Heart Swap", () => {
   let phaserGame: Phaser.Game;
@@ -29,7 +28,7 @@ describe("Moves - Heart Swap", () => {
     game.override
       .battleType("single")
       .enemyAbility(Abilities.BALL_FETCH)
-      .enemyMoveset(SPLASH_ONLY)
+      .enemyMoveset(Moves.SPLASH)
       .enemySpecies(Species.INDEEDEE)
       .enemyLevel(200)
       .moveset([ Moves.HEART_SWAP ])
