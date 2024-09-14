@@ -44,7 +44,7 @@ export default class MysteryEncounterOption implements IMysteryEncounterOption {
 
   /**
    * Dialogue object containing all the dialogue, messages, tooltips, etc. for this option
-   * Will be populated on MysteryEncounter initialization
+   * Will be populated on {@linkcode MysteryEncounter} initialization
    */
   dialogue?: OptionTextDisplay;
 
