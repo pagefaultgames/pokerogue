@@ -894,6 +894,9 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.message.setOrigin(0, 0);
     this.starterSelectMessageBoxContainer.add(this.message);
 
+    // arrow icon for the message box
+    this.initPromptSprite(this.starterSelectMessageBoxContainer);
+
     this.statsContainer = new StatsContainer(this.scene, 6, 16);
 
     this.scene.add.existing(this.statsContainer);

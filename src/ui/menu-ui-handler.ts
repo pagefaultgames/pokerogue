@@ -157,6 +157,8 @@ export default class MenuUiHandler extends MessageUiHandler {
     menuMessageText.setOrigin(0, 0);
     this.menuMessageBoxContainer.add(menuMessageText);
 
+    this.initPromptSprite(this.menuMessageBoxContainer);
+
     this.message = menuMessageText;
 
     // By default we use the general purpose message window

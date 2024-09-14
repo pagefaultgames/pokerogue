@@ -303,6 +303,8 @@ export default class EggGachaUiHandler extends MessageUiHandler {
 
     this.eggGachaContainer.add(gachaMessageBoxContainer);
 
+    this.initPromptSprite(gachaMessageBoxContainer);
+
     this.setCursor(0);
   }
 
