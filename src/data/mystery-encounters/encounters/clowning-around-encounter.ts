@@ -108,7 +108,7 @@ export const ClowningAroundEncounter: MysteryEncounter =
       const encounter = scene.currentBattle.mysteryEncounter!;
 
       const clownTrainerType = TrainerType.HARLEQUIN;
-      const clownConfig = trainerConfigs[clownTrainerType].copy();
+      const clownConfig = trainerConfigs[clownTrainerType].clone();
       const clownPartyTemplate = new TrainerPartyCompoundTemplate(
         new TrainerPartyTemplate(1, PartyMemberStrength.STRONG),
         new TrainerPartyTemplate(1, PartyMemberStrength.STRONGER));

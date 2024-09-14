@@ -122,7 +122,7 @@ export class ModifierType {
    * Populates item tier for ModifierType instance
    * Tier is a necessary field for items that appear in player shop (determines the Pokeball visual they use)
    * To find the tier, this function performs a reverse lookup of the item type in modifier pools
-   * @param poolType - Default 'ModifierPoolType.PLAYER'. Which pool to lookup item tier from
+   * @param poolType Default 'ModifierPoolType.PLAYER'. Which pool to lookup item tier from
    */
   withTierFromPool(poolType: ModifierPoolType = ModifierPoolType.PLAYER): ModifierType {
     for (const tier of Object.values(getModifierPoolForType(poolType))) {
@@ -2271,12 +2271,12 @@ export function getDailyRunStarterModifiers(party: PlayerPokemon[]): Modifiers.P
 
 /**
  * Generates a ModifierType from the specified pool
- * @param party - party of the trainer using the item
- * @param poolType - PLAYER/WILD/TRAINER
- * @param tier - If specified, will override the initial tier of an item (can still upgrade with luck)
- * @param upgradeCount - If defined, means that this is a new ModifierType being generated to override another via luck upgrade. Used for recursive logic
- * @param retryCount - Max allowed tries before the next tier down is checked for a valid ModifierType
- * @param allowLuckUpgrades - Default true. If false, will not allow ModifierType to randomly upgrade to next tier
+ * @param party party of the trainer using the item
+ * @param poolType PLAYER/WILD/TRAINER
+ * @param tier If specified, will override the initial tier of an item (can still upgrade with luck)
+ * @param upgradeCount If defined, means that this is a new ModifierType being generated to override another via luck upgrade. Used for recursive logic
+ * @param retryCount Max allowed tries before the next tier down is checked for a valid ModifierType
+ * @param allowLuckUpgrades Default true. If false, will not allow ModifierType to randomly upgrade to next tier
  */
 function getNewModifierTypeOption(party: Pokemon[], poolType: ModifierPoolType, tier?: ModifierTier, upgradeCount?: integer, retryCount: integer = 0, allowLuckUpgrades: boolean = true): ModifierTypeOption | null {
   const player = !poolType;

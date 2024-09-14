@@ -355,9 +355,9 @@ export class TrainerConfig {
 
   /**
      * Sets the configuration for trainers with genders, including the female name and encounter background music (BGM).
-     * @param {string} [nameFemale] - The name of the female trainer. If 'Ivy', a localized name will be assigned.
-     * @param {TrainerType | string} [femaleEncounterBgm] - The encounter BGM for the female trainer, which can be a TrainerType or a string.
-     * @returns {TrainerConfig} - The updated TrainerConfig instance.
+     * @param {string} [nameFemale] The name of the female trainer. If 'Ivy', a localized name will be assigned.
+     * @param {TrainerType | string} [femaleEncounterBgm] The encounter BGM for the female trainer, which can be a TrainerType or a string.
+     * @returns {TrainerConfig} The updated TrainerConfig instance.
      **/
   setHasGenders(nameFemale?: string, femaleEncounterBgm?: TrainerType | string): TrainerConfig {
     // If the female name is 'Ivy' (the rival), assign a localized name.
@@ -392,9 +392,9 @@ export class TrainerConfig {
 
   /**
      * Sets the configuration for trainers with double battles, including the name of the double trainer and the encounter BGM.
-     * @param nameDouble - The name of the double trainer (e.g., "Ace Duo" for Trainer Class Doubles or "red_blue_double" for NAMED trainer doubles).
-     * @param doubleEncounterBgm - The encounter BGM for the double trainer, which can be a TrainerType or a string.
-     * @returns {TrainerConfig} - The updated TrainerConfig instance.
+     * @param nameDouble The name of the double trainer (e.g., "Ace Duo" for Trainer Class Doubles or "red_blue_double" for NAMED trainer doubles).
+     * @param doubleEncounterBgm The encounter BGM for the double trainer, which can be a TrainerType or a string.
+     * @returns {TrainerConfig} The updated TrainerConfig instance.
      */
   setHasDouble(nameDouble: string, doubleEncounterBgm?: TrainerType | string): TrainerConfig {
     this.hasDouble = true;
@@ -407,8 +407,8 @@ export class TrainerConfig {
 
   /**
      * Sets the trainer type for double battles.
-     * @param trainerTypeDouble - The TrainerType of the partner in a double battle.
-     * @returns {TrainerConfig} - The updated TrainerConfig instance.
+     * @param trainerTypeDouble The TrainerType of the partner in a double battle.
+     * @returns {TrainerConfig} The updated TrainerConfig instance.
      */
   setDoubleTrainerType(trainerTypeDouble: TrainerType): TrainerConfig {
     this.trainerTypeDouble = trainerTypeDouble;
@@ -432,8 +432,8 @@ export class TrainerConfig {
 
   /**
      * Sets the title for double trainers
-     * @param titleDouble - the key for the title in the i18n file. (e.g., "champion_double").
-     * @returns {TrainerConfig} - The updated TrainerConfig instance.
+     * @param titleDouble The key for the title in the i18n file. (e.g., "champion_double").
+     * @returns {TrainerConfig} The updated TrainerConfig instance.
      */
   setDoubleTitle(titleDouble: string): TrainerConfig {
     // First check if i18n is initialized
@@ -625,10 +625,10 @@ export class TrainerConfig {
 
   /**
      * Initializes the trainer configuration for an evil team admin.
-     * @param title - The title of the evil team admin.
-     * @param poolName - The evil team the admin belongs to.
-     * @param {Species | Species[]} signatureSpecies - The signature species for the evil team leader.
-     * @returns {TrainerConfig} - The updated TrainerConfig instance.
+     * @param title The title of the evil team admin.
+     * @param poolName The evil team the admin belongs to.
+     * @param {Species | Species[]} signatureSpecies The signature species for the evil team leader.
+     * @returns {TrainerConfig} The updated TrainerConfig instance.
      * **/
   initForEvilTeamAdmin(title: string, poolName: string, signatureSpecies: (Species | Species[])[],): TrainerConfig {
     if (!getIsInitialized()) {
@@ -661,10 +661,10 @@ export class TrainerConfig {
 
   /**
    * Initializes the trainer configuration for a Stat Trainer, as part of the Trainer's Test Mystery Encounter.
-   * @param {Species | Species[]} signatureSpecies - The signature species for the Elite Four member.
-   * @param {Type[]} specialtyTypes - The specialty types for the Stat Trainer.
-   * @param isMale - Whether the Elite Four Member is Male or Female (for localization of the title).
-   * @returns {TrainerConfig} - The updated TrainerConfig instance.
+   * @param {Species | Species[]} signatureSpecies The signature species for the Elite Four member.
+   * @param {Type[]} specialtyTypes The specialty types for the Stat Trainer.
+   * @param isMale Whether the Elite Four Member is Male or Female (for localization of the title).
+   * @returns {TrainerConfig} The updated TrainerConfig instance.
    **/
   initForStatTrainer(signatureSpecies: (Species | Species[])[], isMale: boolean, ...specialtyTypes: Type[]): TrainerConfig {
     if (!getIsInitialized()) {
@@ -698,10 +698,10 @@ export class TrainerConfig {
 
   /**
      * Initializes the trainer configuration for an evil team leader. Temporarily hardcoding evil leader teams though.
-     * @param {Species | Species[]} signatureSpecies - The signature species for the evil team leader.
-     * @param {Type[]} specialtyTypes - The specialty types for the evil team Leader.
-     * @param boolean whether or not this is the rematch fight
-     * @returns {TrainerConfig} - The updated TrainerConfig instance.
+     * @param {Species | Species[]} signatureSpecies The signature species for the evil team leader.
+     * @param {Type[]} specialtyTypes The specialty types for the evil team Leader.
+     * @param boolean Whether or not this is the rematch fight
+     * @returns {TrainerConfig} The updated TrainerConfig instance.
      * **/
   initForEvilTeamLeader(title: string, signatureSpecies: (Species | Species[])[], rematch: boolean = false, ...specialtyTypes: Type[]): TrainerConfig {
     if (!getIsInitialized()) {
@@ -737,10 +737,10 @@ export class TrainerConfig {
 
   /**
      * Initializes the trainer configuration for a Gym Leader.
-     * @param {Species | Species[]} signatureSpecies - The signature species for the Gym Leader.
-     * @param {Type[]} specialtyTypes - The specialty types for the Gym Leader.
-     * @param isMale - Whether the Gym Leader is Male or Not (for localization of the title).
-     * @returns {TrainerConfig} - The updated TrainerConfig instance.
+     * @param {Species | Species[]} signatureSpecies The signature species for the Gym Leader.
+     * @param {Type[]} specialtyTypes The specialty types for the Gym Leader.
+     * @param isMale Whether the Gym Leader is Male or Not (for localization of the title).
+     * @returns {TrainerConfig} The updated TrainerConfig instance.
      * **/
   initForGymLeader(signatureSpecies: (Species | Species[])[], isMale: boolean, ...specialtyTypes: Type[]): TrainerConfig {
     // Check if the internationalization (i18n) system is initialized.
@@ -794,10 +794,10 @@ export class TrainerConfig {
 
   /**
      * Initializes the trainer configuration for an Elite Four member.
-     * @param {Species | Species[]} signatureSpecies - The signature species for the Elite Four member.
-     * @param {Type[]} specialtyTypes - The specialty types for the Elite Four member.
-     * @param isMale - Whether the Elite Four Member is Male or Female (for localization of the title).
-     * @returns {TrainerConfig} - The updated TrainerConfig instance.
+     * @param {Species | Species[]} signatureSpecies The signature species for the Elite Four member.
+     * @param {Type[]} specialtyTypes The specialty types for the Elite Four member.
+     * @param isMale Whether the Elite Four Member is Male or Female (for localization of the title).
+     * @returns {TrainerConfig} The updated TrainerConfig instance.
      **/
   initForEliteFour(signatureSpecies: (Species | Species[])[], isMale: boolean, ...specialtyTypes: Type[]): TrainerConfig {
     // Check if the internationalization (i18n) system is initialized.
@@ -850,9 +850,9 @@ export class TrainerConfig {
 
   /**
      * Initializes the trainer configuration for a Champion.
-     * @param {Species | Species[]} signatureSpecies - The signature species for the Champion.
-     * @param isMale - Whether the Champion is Male or Female (for localization of the title).
-     * @returns {TrainerConfig} - The updated TrainerConfig instance.
+     * @param {Species | Species[]} signatureSpecies The signature species for the Champion.
+     * @param isMale Whether the Champion is Male or Female (for localization of the title).
+     * @returns {TrainerConfig} The updated TrainerConfig instance.
      **/
   initForChampion(signatureSpecies: (Species | Species[])[], isMale: boolean): TrainerConfig {
     // Check if the internationalization (i18n) system is initialized.
@@ -995,63 +995,63 @@ export class TrainerConfig {
   }
 
   /**
-   * Creates a copy of a trainer config so that it can be modified without affecting the {@link trainerConfigs} source map
+   * Creates a shallow copy of a trainer config so that it can be modified without affecting the {@link trainerConfigs} source map
    */
-  copy(): TrainerConfig {
-    let copy = new TrainerConfig(this.trainerType);
-    copy = this.trainerTypeDouble ? copy.setDoubleTrainerType(this.trainerTypeDouble) : copy;
-    copy = this.name ? copy.setName(this.name) : copy;
-    copy = this.hasGenders ? copy.setHasGenders(this.nameFemale, this.femaleEncounterBgm) : copy;
-    copy = this.hasDouble ? copy.setHasDouble(this.nameDouble, this.doubleEncounterBgm) : copy;
-    copy = this.title ? copy.setTitle(this.title) : copy;
-    copy = this.titleDouble ? copy.setDoubleTitle(this.titleDouble) : copy;
-    copy = this.hasCharSprite ? copy.setHasCharSprite() : copy;
-    copy = this.doubleOnly ? copy.setDoubleOnly() : copy;
-    copy = this.moneyMultiplier ? copy.setMoneyMultiplier(this.moneyMultiplier) : copy;
-    copy = this.isBoss ? copy.setBoss() : copy;
-    copy = this.hasStaticParty ? copy.setStaticParty() : copy;
-    copy = this.useSameSeedForAllMembers ? copy.setUseSameSeedForAllMembers() : copy;
-    copy = this.battleBgm ? copy.setBattleBgm(this.battleBgm) : copy;
-    copy = this.encounterBgm ? copy.setEncounterBgm(this.encounterBgm) : copy;
-    copy = this.victoryBgm ? copy.setVictoryBgm(this.victoryBgm) : copy;
-    copy = this.genModifiersFunc ? copy.setGenModifiersFunc(this.genModifiersFunc) : copy;
+  clone(): TrainerConfig {
+    let clone = new TrainerConfig(this.trainerType);
+    clone = this.trainerTypeDouble ? clone.setDoubleTrainerType(this.trainerTypeDouble) : clone;
+    clone = this.name ? clone.setName(this.name) : clone;
+    clone = this.hasGenders ? clone.setHasGenders(this.nameFemale, this.femaleEncounterBgm) : clone;
+    clone = this.hasDouble ? clone.setHasDouble(this.nameDouble, this.doubleEncounterBgm) : clone;
+    clone = this.title ? clone.setTitle(this.title) : clone;
+    clone = this.titleDouble ? clone.setDoubleTitle(this.titleDouble) : clone;
+    clone = this.hasCharSprite ? clone.setHasCharSprite() : clone;
+    clone = this.doubleOnly ? clone.setDoubleOnly() : clone;
+    clone = this.moneyMultiplier ? clone.setMoneyMultiplier(this.moneyMultiplier) : clone;
+    clone = this.isBoss ? clone.setBoss() : clone;
+    clone = this.hasStaticParty ? clone.setStaticParty() : clone;
+    clone = this.useSameSeedForAllMembers ? clone.setUseSameSeedForAllMembers() : clone;
+    clone = this.battleBgm ? clone.setBattleBgm(this.battleBgm) : clone;
+    clone = this.encounterBgm ? clone.setEncounterBgm(this.encounterBgm) : clone;
+    clone = this.victoryBgm ? clone.setVictoryBgm(this.victoryBgm) : clone;
+    clone = this.genModifiersFunc ? clone.setGenModifiersFunc(this.genModifiersFunc) : clone;
 
     if (this.modifierRewardFuncs) {
       // Clones array instead of passing ref
-      copy.modifierRewardFuncs = this.modifierRewardFuncs.slice(0);
+      clone.modifierRewardFuncs = this.modifierRewardFuncs.slice(0);
     }
 
     if (this.partyTemplates) {
-      copy.partyTemplates = this.partyTemplates.slice(0);
+      clone.partyTemplates = this.partyTemplates.slice(0);
     }
 
-    copy = this.partyTemplateFunc ? copy.setPartyTemplateFunc(this.partyTemplateFunc) : copy;
+    clone = this.partyTemplateFunc ? clone.setPartyTemplateFunc(this.partyTemplateFunc) : clone;
 
     if (this.partyMemberFuncs) {
       Object.keys(this.partyMemberFuncs).forEach((index) => {
-        copy = copy.setPartyMemberFunc(parseInt(index, 10), this.partyMemberFuncs[index]);
+        clone = clone.setPartyMemberFunc(parseInt(index, 10), this.partyMemberFuncs[index]);
       });
     }
 
-    copy = this.speciesPools ? copy.setSpeciesPools(this.speciesPools) : copy;
-    copy = this.speciesFilter ? copy.setSpeciesFilter(this.speciesFilter) : copy;
+    clone = this.speciesPools ? clone.setSpeciesPools(this.speciesPools) : clone;
+    clone = this.speciesFilter ? clone.setSpeciesFilter(this.speciesFilter) : clone;
     if (this.specialtyTypes) {
-      copy.specialtyTypes = this.specialtyTypes.slice(0);
+      clone.specialtyTypes = this.specialtyTypes.slice(0);
     }
 
-    copy.encounterMessages = this.encounterMessages?.slice(0);
-    copy.victoryMessages = this.victoryMessages?.slice(0);
-    copy.defeatMessages = this.defeatMessages?.slice(0);
+    clone.encounterMessages = this.encounterMessages?.slice(0);
+    clone.victoryMessages = this.victoryMessages?.slice(0);
+    clone.defeatMessages = this.defeatMessages?.slice(0);
 
-    copy.femaleEncounterMessages = this.femaleEncounterMessages?.slice(0);
-    copy.femaleVictoryMessages = this.femaleVictoryMessages?.slice(0);
-    copy.femaleDefeatMessages = this.femaleDefeatMessages?.slice(0);
+    clone.femaleEncounterMessages = this.femaleEncounterMessages?.slice(0);
+    clone.femaleVictoryMessages = this.femaleVictoryMessages?.slice(0);
+    clone.femaleDefeatMessages = this.femaleDefeatMessages?.slice(0);
 
-    copy.doubleEncounterMessages = this.doubleEncounterMessages?.slice(0);
-    copy.doubleVictoryMessages = this.doubleVictoryMessages?.slice(0);
-    copy.doubleDefeatMessages = this.doubleDefeatMessages?.slice(0);
+    clone.doubleEncounterMessages = this.doubleEncounterMessages?.slice(0);
+    clone.doubleVictoryMessages = this.doubleVictoryMessages?.slice(0);
+    clone.doubleDefeatMessages = this.doubleDefeatMessages?.slice(0);
 
-    return copy;
+    return clone;
   }
 }
 

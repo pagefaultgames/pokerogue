@@ -555,46 +555,6 @@ export class CompatibleMoveRequirement extends EncounterPokemonRequirement {
 
 }
 
-/*
-export class EvolutionTargetSpeciesRequirement extends EncounterPokemonRequirement {
-  requiredEvolutionTargetSpecies: Species[];
-  minNumberOfPokemon:number;
-  invertQuery:boolean;
-
-  constructor(evolutionTargetSpecies: Species | Species[], minNumberOfPokemon: number = 1, invertQuery: boolean = false) {
-    super();
-    this.minNumberOfPokemon = minNumberOfPokemon;
-    this.invertQuery = invertQuery;
-    this.requiredEvolutionTargetSpecies = Array.isArray(evolutionTargetSpecies) ? evolutionTargetSpecies : [evolutionTargetSpecies];
-  }
-
-  override meetsRequirement(scene: BattleScene): boolean {
-    const partyPokemon = scene.getParty();
-    if (isNullOrUndefined(partyPokemon) || this.requiredEvolutionTargetSpecies?.length < 0) {
-      return false;
-    }
-    return this.queryParty(partyPokemon).length >= this.minNumberOfPokemon;
-  }
-
-  override queryParty(partyPokemon: PlayerPokemon[]): PlayerPokemon[] {
-    if (!this.invertQuery) {
-      return partyPokemon.filter((pokemon) => this.requiredEvolutionTargetSpecies.filter((evolutionTargetSpecies) => pokemon.getEvolution()?.speciesId === evolutionTargetSpecies).length > 0);
-    } else {
-      // for an inverted query, we only want to get the pokemon that don't have ANY of the listed evolutionTargetSpeciess
-      return partyPokemon.filter((pokemon) => this.requiredEvolutionTargetSpecies.filter((evolutionTargetSpecies) => pokemon.getEvolution()?.speciesId === evolutionTargetSpecies).length === 0);
-    }
-  }
-
-  getMatchingDialogueToken(str:string, pokemon: PlayerPokemon): [RegExp, string] {
-    const evos = this.requiredEvolutionTargetSpecies.filter((evolutionTargetSpecies) => pokemon.getEvolution().speciesId === evolutionTargetSpecies);
-    if (evos.length > 0) {
-      return ["evolution", Species[evos[0]]];
-    }
-    return ["evolution", ""];
-  }
-
-}*/
-
 export class AbilityRequirement extends EncounterPokemonRequirement {
   requiredAbilities: Abilities[];
   minNumberOfPokemon: number;
@@ -991,7 +951,7 @@ export class HealthRatioRequirement extends EncounterPokemonRequirement {
   }
 
   override meetsRequirement(scene: BattleScene): boolean {
-    // Party Pokemon inside required level range
+    // Party Pokemon's health inside required health range
     if (!isNullOrUndefined(this.requiredHealthRange) && this.requiredHealthRange[0] <= this.requiredHealthRange[1]) {
       const partyPokemon = scene.getParty();
       const pokemonInRange = this.queryParty(partyPokemon);
@@ -1034,7 +994,7 @@ export class WeightRequirement extends EncounterPokemonRequirement {
   }
 
   override meetsRequirement(scene: BattleScene): boolean {
-    // Party Pokemon inside required friendship range
+    // Party Pokemon's weight inside required weight range
     if (!isNullOrUndefined(this.requiredWeightRange) && this.requiredWeightRange[0] <= this.requiredWeightRange[1]) {
       const partyPokemon = scene.getParty();
       const pokemonInRange = this.queryParty(partyPokemon);

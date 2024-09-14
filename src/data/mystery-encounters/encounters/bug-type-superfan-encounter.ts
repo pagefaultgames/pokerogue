@@ -440,7 +440,7 @@ export const BugTypeSuperfanEncounter: MysteryEncounter =
 
 function getTrainerConfigForWave(waveIndex: number) {
   // Bug type superfan trainer config
-  const config = trainerConfigs[TrainerType.BUG_TYPE_SUPERFAN].copy();
+  const config = trainerConfigs[TrainerType.BUG_TYPE_SUPERFAN].clone();
   config.name = i18next.t("trainerNames:bug_type_superfan");
 
   const pool3Copy = POOL_3_POKEMON.slice(0);
