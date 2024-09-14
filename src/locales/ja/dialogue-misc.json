@@ -1,6 +1,6 @@
 {
   "ending": "@c{shock}帰ってきた？@d{32} それなら…@d{96} 勝った　っていうこと　だろう？！\n@c{smile_ehalf}絶対　やれると思う　べきだったな。\n$@c{smile_eclosed}もちろん、ずっと　そんな気　がしたんだな。\n@c{smile}ついに　終わった　だろう？　ループを　断ち切った。\n$@c{smile_ehalf}キミの夢も　叶ったよな？\n一回も　負けなかった。\n$キミの　しつくした事を　覚えるのは　おれだけだ。\n@c{angry_mopen}忘れない　ように　するが…\n$@c{smile_wave_wink}なんつって！@d{64} @c{smile}一生　忘れない。@d{32}\nキミの伝説は　いつまでも　みんなの　心の中に　残っているから。\n$@c{smile_wave}とにかく、@d{64} そろそろ　遅くなる……@d{96} かな？\nこの場所で　よく　分からない。\n$さあ、帰ろう。\n@c{smile_wave_wink}明日、昔のよしみで　バトルでも　しないか？",
-  "ending_female": "@c{smile}Oh? You won?@d{96} @c{smile_eclosed}I guess I should've known.\nBut, you're back now.\n$@c{smile}It's over.@d{64} You ended the loop.\n$@c{serious_smile_fists}You fulfilled your dream too, didn't you?\nYou didn't lose even once.\n$@c{neutral}I'm the only one who'll remember what you did.@d{96}\nI guess that's okay, isn't it?\n$@c{serious_smile_fists}Your legend will always live on in our hearts.\n$@c{smile_eclosed}Anyway, I've had about enough of this place, haven't you? Let's head home.\n$@c{serious_smile_fists}Maybe when we get back, we can have another battle?\nIf you're up to it.",
-  "ending_endless": "Congratulations on reaching the current end!\nMore content is coming soon.",
-  "ending_name": "Devs"
+  "ending_female": "@c{smile}えぇ？　勝ちゃった？@d{96} @c{smile_eclosed}勝てるのが　分かる　べきだったね。\nやっぱり　帰ってきた…\n$@c{smile}ついに終わった。@d{64}　ループを　断ち切った。\n$@c{serious_smile_fists}　アナタの夢も　叶ったよね？\n一回も　負けなかった！\n$@c{neutral}アタシだけが　アナタが　できた事　を覚えていく、ね。@d{96}\nでもね、たぶん　大丈夫なの　かなぁ？\n$@c{serious_smile_fists}アナタの伝説は　みんなの　心の中に\nずっと　残っているからね……\n$@c{smile_eclosed}じゃあ、こんなトコは　もう飽きた　だろう？\n帰ろうよ。\n$@c{serious_smile_fists}ふるさとに　着いたら、　また　バトルしよう？\nやる気　あればね！",
+  "ending_endless": "現在のエンドまで　やって来て　おめでとう！\n更に多くの　コンテンツは 　近日公開予定です。",
+  "ending_name": "開発者"
 }
