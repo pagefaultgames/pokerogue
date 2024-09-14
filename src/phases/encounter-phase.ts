@@ -98,7 +98,7 @@ export class EncounterPhase extends BattlePhase {
         } else {
           let enemySpecies = this.scene.randomSpecies(battle.waveIndex, level, true);
           // If player has golden bug net, rolls 10% chance to replace with species from the golden bug net bug pool
-          if (!!this.scene.findModifier(m => m instanceof BoostBugSpawnModifier) && randSeedInt(10) === 0) {
+          if (this.scene.findModifier(m => m instanceof BoostBugSpawnModifier) && randSeedInt(10) === 0) {
             enemySpecies = getGoldenBugNetSpecies();
           }
           battle.enemyParty[e] = this.scene.addEnemyPokemon(enemySpecies, level, TrainerSlot.NONE, !!this.scene.getEncounterBossSegments(battle.waveIndex, level, enemySpecies));
