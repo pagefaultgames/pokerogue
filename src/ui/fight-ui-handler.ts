@@ -11,6 +11,7 @@ import {Button} from "#enums/buttons";
 import Pokemon, { PokemonMove } from "#app/field/pokemon";
 import { CommandPhase } from "#app/phases/command-phase";
 import MoveInfoOverlay from "./move-info-overlay";
+import { BattleType } from "#app/battle";
 
 export default class FightUiHandler extends UiHandler implements InfoToggle {
   public static readonly MOVES_CONTAINER_NAME = "moves";
@@ -142,8 +143,12 @@ export default class FightUiHandler extends UiHandler implements InfoToggle {
           ui.playError();
         }
       } else {
-        ui.setMode(Mode.COMMAND, this.fieldIndex);
-        success = true;
+        // Cannot back out of fight menu if skipToFightInput is enabled
+        const { battleType, mysteryEncounter } = this.scene.currentBattle;
+        if (battleType !== BattleType.MYSTERY_ENCOUNTER || !mysteryEncounter?.skipToFightInput) {
+          ui.setMode(Mode.COMMAND, this.fieldIndex);
+          success = true;
+        }
       }
     } else {
       switch (button) {
