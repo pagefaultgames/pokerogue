@@ -1,46 +1,46 @@
 {
-  "intro": "Es ist die Safari-Zone!",
-  "title": "Die Safari-Zone",
-  "description": "Es gibt alle Arten von seltenen und besonderen Pokémon, die hier gefunden werden können!\nWenn du dich entscheidest, einzutreten, hast du kannst du in den nächsten 3 Wellen versuchen, besondere Pokémon zu fangen.\nAber sei gewarnt, diese Pokémon können fliehen, bevor du sie fangen kannst!",
-  "query": "Willst du eintreten?",
+  "intro": "It's a safari zone!",
+  "title": "The Safari Zone",
+  "description": "There are all kinds of rare and special Pokémon that can be found here!\nIf you choose to enter, you'll have a time limit of 3 wild encounters where you can try to catch these special Pokémon.\n\nBeware, though. These Pokémon may flee before you're able to catch them!",
+  "query": "Would you like to enter?",
   "option": {
     "1": {
-      "label": "Eintreten",
-      "tooltip": "(-) Zahle {{option1Money, money}}\n@[SUMMARY_GREEN]{(?) Safari Zone}",
-      "selected": "Zeit, dein Glück herauszufordern!"
+      "label": "Enter",
+      "tooltip": "(-) Pay {{option1Money, money}}\n@[SUMMARY_GREEN]{(?) Safari Zone}",
+      "selected": "Time to test your luck!"
     },
     "2": {
-      "label": "Weggehen",
-      "tooltip": "(-) Keine Belohnung",
-      "selected": "Du gehst deines Weges, mit einem leichten Gefühl der Reue."
+      "label": "Leave",
+      "tooltip": "(-) No Rewards",
+      "selected": "You hurry along your way,\nwith a slight feeling of regret."
     }
   },
   "safari": {
     "1": {
-      "label":  "Pokéball werfen",
-      "tooltip": "(+) Werfe einen Pokéball",
-      "selected": "Du wirfst einen Pokéball!"
+      "label": "Throw a Pokéball",
+      "tooltip": "(+) Throw a Pokéball",
+      "selected": "You throw a Pokéball!"
     },
     "2": {
-      "label": "Köder werfen",
-      "tooltip": "(+) Erhöht die Fangrate\n(-) Erhöht die Fluchtchance",
-      "selected": "Du wirfst einen Köder!"
+      "label": "Throw Bait",
+      "tooltip": "(+) Increases Capture Rate\n(-) Chance to Increase Flee Rate",
+      "selected": "You throw some bait!"
     },
     "3": {
-      "label":"Matsch werfen",
-      "tooltip": "(+) Vermindert die Fluchtchance\n(-) Chance, die Fangrate zu verringern",
-      "selected":  "Du wirst ein wenig Matsch!"
+      "label": "Throw Mud",
+      "tooltip": "(+) Decreases Flee Rate\n(-) Chance to Decrease Capture Rate",
+      "selected": "You throw some mud!"
     },
     "4": {
-      "label": "Fliehen",
-      "tooltip": "(?) Fliehe vor diesem Pokémon"
+      "label": "Flee",
+      "tooltip": "(?) Flee from this Pokémon"
     },
-    "watching": "{{pokemonName}} beobachtet alles aufmerksam!",
-    "eating": "{{pokemonName}} frisst!",
-    "busy_eating": "{{pokemonName}} konzentriert sich aufs Futter!",
-    "angry": "{{pokemonName}} ist wütend!",
-    "beside_itself_angry": "{{pokemonName}} ist außer sich vor Wut!",
-    "remaining_count": "{{remainingCount}} Pokémon übrig!"
+    "watching": "{{pokemonName}} is watching carefully!",
+    "eating": "{{pokemonName}} is eating!",
+    "busy_eating": "{{pokemonName}} is busy eating!",
+    "angry": "{{pokemonName}} is angry!",
+    "beside_itself_angry": "{{pokemonName}} is beside itself with anger!",
+    "remaining_count": "{{remainingCount}} Pokémon remaining!"
   },
-  "outro": "Das war ein spannendes Abenteuer in der Safari-Zone!"
+  "outro": "That was a fun little excursion!"
 }

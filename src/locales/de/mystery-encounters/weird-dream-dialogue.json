@@ -1,22 +1,22 @@
 {
-  "intro": "Eine schemenhafte Frau versperrt dir den Weg. Irgendetwas an ihr ist beunruhigend...",
-  "speaker": "Frau",
-  "intro_dialogue": "Ich habe deine Zukünfte gesehen, deine Vergangenheiten...$Siehst du sie auch?",
+  "intro": "A shadowy woman blocks your path.\nSomething about her is unsettling...",
+  "speaker": "Woman",
+  "intro_dialogue": "I have seen your futures, your pasts...$Child, do you see them too?",
   "title": "???",
-  "description": "Die Worte der Frau hallen in deinem Kopf wider. Es war nicht nur eine einzelne Stimme, sondern eine unendliche Vielzahl aus allen Zeiten und Realitäten. Dir wird schwindelig, die Frage bleibt in deinem Kopf hängen...\n@[TOOLTIP_TITLE]{\"Ich habe deine Zukünfte gesehen, deine Vergangenheiten...Siehst du sie auch?\"}",
-  "query": "Was wirst du tun?",
+  "description": "The woman's words echo in your head. It wasn't just a singular voice, but a vast multitude, from all timelines and realities. You begin to feel dizzy, the question lingering on your mind...\n\n@[TOOLTIP_TITLE]{\"I have seen your futures, your pasts... Child, do you see them too?\"}",
+  "query": "What will you do?",
   "option": {
     "1": {
-      "label": "\"Ich sehe sie\"",
-      "tooltip": "@[SUMMARY_GREEN]{(?) Beeinflusst deine Pokémon}",
-      "selected": "Ihre Hand berührt dich und alles wird schwarz.$Dann...@d{64} Du siehst alles. Jede Zeitlinie, all deine verschiedenen Ichs, Vergangenheit und Zukunft.$Alles, was dich ausmacht, alles, was du sein wirst...@d{64}",
-      "cutscene": "Du siehst deine Pokémon,@d{32} wie sie sich aus jeder Realität vereinen, um etwas Neues zu werden...@d{64}",
-      "dream_complete": "Als du erwachst, ist die Frau - war es eine Frau oder ein Geist? - verschwunden...$.@d{32}.@d{32}.@d{32}$Dein Pokémon-Team hat sich verändert... Oder ist es das gleiche Team, das du schon immer hattest?"
+      "label": "\"I See Them\"",
+      "tooltip": "@[SUMMARY_GREEN]{(?) Affects your Pokémon}",
+      "selected": "Her hand reaches out to touch you,\nand everything goes black.$Then...@d{64} You see everything.\nEvery timeline, all your different selves,\n past and future.$Everything that has made you,\neverything you will become...@d{64}",
+      "cutscene": "You see your Pokémon,@d{32} converging from\nevery reality to become something new...@d{64}",
+      "dream_complete": "When you awaken, the woman - was it a woman or a ghost? - is gone...$.@d{32}.@d{32}.@d{32}$Your Pokémon team has changed...\nOr is it the same team you've always had?"
     },
     "2": {
-      "label": "Schnell wegrennen",
-      "tooltip": "(-) Beeinflusst deine Pokémon",
-      "selected": "Du reißt deinen Geist aus einem betäubenden Griff und fliehst hastig.$Als du schließlich anhältst, um dich zu sammeln, überprüfst du die Pokémon in deinem Team.$Aus irgendeinem Grund hat sich das Level aller Pokémon verringert!"
+      "label": "Quickly Leave",
+      "tooltip": "(-) Affects your Pokémon",
+      "selected": "You tear your mind from a numbing grip, and hastily depart.$When you finally stop to collect yourself, you check the Pokémon in your team.$For some reason, all of their levels have decreased!"
     }
   }
 }

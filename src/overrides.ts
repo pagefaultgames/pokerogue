@@ -87,7 +87,7 @@ class DefaultOverrides {
   readonly STARTER_FORM_OVERRIDES: Partial<Record<Species, number>> = {};
 
   /** default 5 or 20 for Daily */
-  readonly STARTING_LEVEL_OVERRIDE: number = 8000;
+  readonly STARTING_LEVEL_OVERRIDE: number = 0;
   /**
    * SPECIES OVERRIDE
    * will only apply to the first starter in your party or each enemy pokemon
@@ -141,7 +141,7 @@ class DefaultOverrides {
   // -------------------------
 
   /** 1 to 256, set to null to ignore */
-  readonly MYSTERY_ENCOUNTER_RATE_OVERRIDE: number | null = 256;
+  readonly MYSTERY_ENCOUNTER_RATE_OVERRIDE: number | null = null;
   readonly MYSTERY_ENCOUNTER_TIER_OVERRIDE: MysteryEncounterTier | null = null;
   readonly MYSTERY_ENCOUNTER_OVERRIDE: MysteryEncounterType | null = null;
 
