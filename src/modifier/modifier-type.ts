@@ -2058,20 +2058,20 @@ export function getModifierTypeFuncById(id: string): ModifierTypeFunc {
 }
 
 /**
- * Generates modifier options for a SelectModifierPhase
- * @param count - Determines the number of items to generate
- * @param party - Party is required for generating proper modifier pools
- * @param modifierTiers - (Optional) If specified, rolls items in the specified tiers. Commonly used for tier-locking with Lock Capsule.
- * @param customModifierSettings - (Optional) If specified, can customize the item shop rewards further.
- *  - `guaranteedModifierTypeOptions?: ModifierTypeOption[]` - If specified, will override the first X items to be specific modifier options (these should be pre-genned).
- *  - `guaranteedModifierTypeFuncs?: ModifierTypeFunc[]` - If specified, will override the next X items to be auto-generated from specific modifier functions (these don't have to be pre-genned).
- *  - `guaranteedModifierTiers?: ModifierTier[]` - If specified, will override the next X items to be the specified tier. These can upgrade with luck.
- *  - `fillRemaining?: boolean` - Default 'false'. If set to true, will fill the remainder of shop items that were not overridden by the 3 options above, up to the 'count' param value.
+ * Generates modifier options for a {@linkcode SelectModifierPhase}
+ * @param count Determines the number of items to generate
+ * @param party Party is required for generating proper modifier pools
+ * @param modifierTiers (Optional) If specified, rolls items in the specified tiers. Commonly used for tier-locking with Lock Capsule.
+ * @param customModifierSettings (Optional) If specified, can customize the item shop rewards further.
+ *  - `guaranteedModifierTypeOptions?: ModifierTypeOption[]` If specified, will override the first X items to be specific modifier options (these should be pre-genned).
+ *  - `guaranteedModifierTypeFuncs?: ModifierTypeFunc[]` If specified, will override the next X items to be auto-generated from specific modifier functions (these don't have to be pre-genned).
+ *  - `guaranteedModifierTiers?: ModifierTier[]` If specified, will override the next X items to be the specified tier. These can upgrade with luck.
+ *  - `fillRemaining?: boolean` Default 'false'. If set to true, will fill the remainder of shop items that were not overridden by the 3 options above, up to the 'count' param value.
  *    - Example: `count = 4`, `customModifierSettings = { guaranteedModifierTiers: [ModifierTier.GREAT], fillRemaining: true }`,
  *    - The first item in the shop will be `GREAT` tier, and the remaining 3 items will be generated normally.
  *    - If `fillRemaining = false` in the same scenario, only 1 `GREAT` tier item will appear in the shop (regardless of `count` value).
- *  - `rerollMultiplier?: number` - If specified, can adjust the amount of money required for a shop reroll. If set to 0, the shop will not allow rerolls at all.
- *  - `allowLuckUpgrades?: boolean` - Default true, if false will prevent set item tiers from upgrading via luck
+ *  - `rerollMultiplier?: number` If specified, can adjust the amount of money required for a shop reroll. If set to a negative value, the shop will not allow rerolls at all.
+ *  - `allowLuckUpgrades?: boolean` Default `true`, if `false` will prevent set item tiers from upgrading via luck
  */
 export function getPlayerModifierTypeOptions(count: integer, party: PlayerPokemon[], modifierTiers?: ModifierTier[], customModifierSettings?: CustomModifierSettings): ModifierTypeOption[] {
   const options: ModifierTypeOption[] = [];
@@ -2127,12 +2127,12 @@ export function getPlayerModifierTypeOptions(count: integer, party: PlayerPokemo
 }
 
 /**
- * Will generate a ModifierType from the ModifierPoolType.PLAYER pool, attempting to retry duplicated items up to retryCount
- * @param existingOptions - currently generated options
- * @param retryCount - how many times to retry before allowing a dupe item
- * @param party - current player party, used to calculate items in the pool
- * @param tier - If specified will generate item of tier
- * @param allowLuckUpgrades - allow items to upgrade tiers (the little animation that plays and is affected by luck)
+ * Will generate a {@linkcode ModifierType} from the {@linkcode ModifierPoolType.PLAYER} pool, attempting to retry duplicated items up to retryCount
+ * @param existingOptions Currently generated options
+ * @param retryCount How many times to retry before allowing a dupe item
+ * @param party Current player party, used to calculate items in the pool
+ * @param tier If specified will generate item of tier
+ * @param allowLuckUpgrades `true` to allow items to upgrade tiers (the little animation that plays and is affected by luck)
  */
 function getModifierTypeOptionWithRetry(existingOptions: ModifierTypeOption[], retryCount: integer, party: PlayerPokemon[], tier?: ModifierTier, allowLuckUpgrades?: boolean): ModifierTypeOption {
   allowLuckUpgrades = allowLuckUpgrades ?? true;
