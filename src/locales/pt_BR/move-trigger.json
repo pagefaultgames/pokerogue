@@ -63,5 +63,6 @@
   "swapArenaTags": "{{pokemonName}} trocou os efeitos de batalha que afetam cada lado do campo!",
   "chillyReception": "{{pokemonName}} está prestes a contar uma piada gelada!",
   "exposedMove": "{{pokemonName}} identificou\n{{targetPokemonName}}!",
-  "safeguard": "{{targetName}} está protegido por Safeguard!"
+  "safeguard": "{{targetName}} está protegido por Safeguard!",
+  "afterYou": "{{pokemonName}} aceitou a gentil oferta!"
 }

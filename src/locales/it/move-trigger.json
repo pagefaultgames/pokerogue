@@ -67,5 +67,6 @@
   "swapArenaTags": "{{pokemonName}} ha invertito gli effetti attivi\nnelle due metà del campo!",
   "exposedMove": "{{pokemonName}} ha identificato\n{{targetPokemonName}}!",
   "chillyReception": "{{pokemonName}} sta per fare una battuta!",
-  "safeguard": "Salvaguardia protegge {{targetName}}!"
+  "safeguard": "Salvaguardia protegge {{targetName}}!",
+  "afterYou": "{{pokemonName}} approfitta della cortesia!"
 }

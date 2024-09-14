@@ -42,12 +42,12 @@
   "incineratedItem": "{{pokemonName}}烧没了\n{{targetName}}的{{itemName}}！",
   "knockedOffItem": "{{pokemonName}}拍落了\n{{targetName}}的{{itemName}}！",
   "tookMoveAttack": "{{pokemonName}}\n受到了{{moveName}}的攻击！",
-  "cutOwnHpAndMaximizedStat": "{{pokemonName}}\n削减了体力并释放了全部{{statName}}!",
+  "cutOwnHpAndMaximizedStat": "{{pokemonName}}\n削减了体力并释放了全部{{statName}}！",
   "copiedStatChanges": "{{pokemonName}}复制了\n{{targetName}}的能力变化！",
   "magnitudeMessage": "震级{{magnitude}}！",
   "tookAimAtTarget": "{{pokemonName}}将目标对准了\n{{targetName}}！",
   "transformedIntoType": "{{pokemonName}} \n变成了{{typeName}}属性！",
-  "copiedMove": "{{pokemonName}}\n复制了{{moveName}}!",
+  "copiedMove": "{{pokemonName}}\n复制了{{moveName}}！",
   "sketchedMove": "{{pokemonName}}\n对{{moveName}}进行了写生！",
   "acquiredAbility": "{{pokemonName}}的特性\n变为{{abilityName}}了！",
   "copiedTargetAbility": "{{pokemonName}}复制了\n{{targetName}}的{{abilityName}}！",
@@ -67,5 +67,6 @@
   "swapArenaTags": "{{pokemonName}}\n交换了双方的场地效果！",
   "chillyReception": "{{pokemonName}}\n说出了冷笑话！",
   "exposedMove": "{{pokemonName}}识破了\n{{targetPokemonName}}的原型！",
-  "safeguard": "{{targetName}}\n正受到神秘之幕的保护！"
+  "safeguard": "{{targetName}}\n正受到神秘之幕的保护！",
+  "afterYou": "{{pokemonName}}\n接受了对手的好意！"
 }
