@@ -9,11 +9,11 @@
   "option": {
     "1": {
       "label": "Offre douteuse",
-      "tooltip": "(-) Payer {{option1Money, money}}\n(-) Effets secondaires ?\n(+) Le Pokémon gagne 2 Accélérateurs au hasard"
+      "tooltip": "(-) Payer {{option1Money, money}}\n(-) Effets secondaires ?\n(+) Le Pokémon choisi gagne 2 Accélérateurs au hasard"
     },
     "2": {
       "label": "Offre honnête",
-      "tooltip": "(-) Payer {{option2Money, money}}\n(+) le Pokémon choisi 2 Accélérateurs au hasard"
+      "tooltip": "(-) Payer {{option2Money, money}}\n(+) Le Pokémon choisi gagne 2 Accélérateurs au hasard"
     },
     "3": {
       "label": "Partir",
