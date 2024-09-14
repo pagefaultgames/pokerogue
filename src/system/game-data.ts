@@ -1561,7 +1561,7 @@ export class GameData {
    * @param incrementCount
    * @param fromEgg
    * @param showMessage
-   * @returns - true if Pokemon catch unlocked a new starter, false if Pokemon catch did not unlock a starter
+   * @returns `true` if Pokemon catch unlocked a new starter, `false` if Pokemon catch did not unlock a starter
    */
   setPokemonCaught(pokemon: Pokemon, incrementCount: boolean = true, fromEgg: boolean = false, showMessage: boolean = true): Promise<boolean> {
     return this.setPokemonSpeciesCaught(pokemon, pokemon.species, incrementCount, fromEgg, showMessage);
@@ -1573,7 +1573,7 @@ export class GameData {
    * @param incrementCount
    * @param fromEgg
    * @param showMessage
-   * @returns - true if Pokemon catch unlocked a new starter, false if Pokemon catch did not unlock a starter
+   * @returns `true` if Pokemon catch unlocked a new starter, `false` if Pokemon catch did not unlock a starter
    */
   setPokemonSpeciesCaught(pokemon: Pokemon, species: PokemonSpecies, incrementCount: boolean = true, fromEgg: boolean = false, showMessage: boolean = true): Promise<boolean> {
     return new Promise<boolean>(resolve => {
@@ -1694,8 +1694,8 @@ export class GameData {
    *
    * @param species
    * @param eggMoveIndex
-   * @param showMessage - Default true. If true, will display message for unlocked egg move
-   * @param prependSpeciesToMessage - Default false. If true, will change message from "X Egg Move Unlocked!" to "Bulbasaur X Egg Move Unlocked!"
+   * @param showMessage Default true. If true, will display message for unlocked egg move
+   * @param prependSpeciesToMessage Default false. If true, will change message from "X Egg Move Unlocked!" to "Bulbasaur X Egg Move Unlocked!"
    */
   setEggMoveUnlocked(species: PokemonSpecies, eggMoveIndex: integer, showMessage: boolean = true, prependSpeciesToMessage: boolean = false): Promise<boolean> {
     return new Promise<boolean>(resolve => {

@@ -30,19 +30,18 @@ import { SeenEncounterData } from "#app/data/mystery-encounters/mystery-encounte
  * - Clearing of phase queues to enter the Mystery Encounter game state
  * - Management of session data related to MEs
  * - Initialization of ME option select menu and UI
- * - Execute onPreOptionPhase() logic if it exists for the selected option
- * - Display any OptionTextDisplay.selected type dialogue that is set in the MysteryEncounterDialogue dialogue tree for selected option
- * - Queuing of the MysteryEncounterOptionSelectedPhase
+ * - Execute {@linkcode MysteryEncounter.onPreOptionPhase} logic if it exists for the selected option
+ * - Display any `OptionTextDisplay.selected` type dialogue that is set in the {@linkcode MysteryEncounterDialogue} dialogue tree for selected option
+ * - Queuing of the {@linkcode MysteryEncounterOptionSelectedPhase}
  */
 export class MysteryEncounterPhase extends Phase {
   private readonly FIRST_DIALOGUE_PROMPT_DELAY = 300;
   optionSelectSettings?: OptionSelectSettings;
 
   /**
-   *
-   * @param scene
-   * @param optionSelectSettings - allows overriding the typical options of an encounter with new ones
    * Mostly useful for having repeated queries during a single encounter, where the queries and options may differ each time
+   * @param scene
+   * @param optionSelectSettings allows overriding the typical options of an encounter with new ones
    */
   constructor(scene: BattleScene, optionSelectSettings?: OptionSelectSettings) {
     super(scene);
@@ -114,7 +113,7 @@ export class MysteryEncounterPhase extends Phase {
   }
 
   /**
-   * Queues MysteryEncounterOptionSelectedPhase, displays option.selected dialogue and ends phase
+   * Queues {@linkcode MysteryEncounterOptionSelectedPhase}, displays option.selected dialogue and ends phase
    */
   continueEncounter() {
     const endDialogueAndContinueEncounter = () => {
@@ -161,7 +160,7 @@ export class MysteryEncounterPhase extends Phase {
 
 /**
  * Will handle (in order):
- * - Execute onOptionSelect() logic if it exists for the selected option
+ * - Execute {@linkcode MysteryEncounter.onOptionSelect} logic if it exists for the selected option
  *
  * It is important to point out that no phases are directly queued by any logic within this phase
  * Any phase that is meant to follow this one MUST be queued via the onOptionSelect() logic of the selected option
@@ -176,10 +175,10 @@ export class MysteryEncounterOptionSelectedPhase extends Phase {
 
   /**
    * Will handle (in order):
-   * - Execute onOptionSelect() logic if it exists for the selected option
+   * - Execute {@linkcode MysteryEncounter.onOptionSelect} logic if it exists for the selected option
    *
-   * It is important to point out that no phases are directly queued by any logic within this phase
-   * Any phase that is meant to follow this one MUST be queued via the onOptionSelect() logic of the selected option
+   * It is important to point out that no phases are directly queued by any logic within this phase.
+   * Any phase that is meant to follow this one MUST be queued via the {@linkcode MysteryEncounter.onOptionSelect} logic of the selected option.
    */
   start() {
     super.start();
@@ -203,9 +202,9 @@ export class MysteryEncounterOptionSelectedPhase extends Phase {
 
 /**
  * Runs at the beginning of an Encounter's battle
- * Will clean up any residual flinches, Endure, etc. that are left over from startOfBattleEffects
- * Will also handle Game Overs, switches, etc. that could happen from handleMysteryEncounterBattleStartEffects
- * See [TurnEndPhase](../phases.ts) for more details
+ * Will clean up any residual flinches, Endure, etc. that are left over from {@linkcode MysteryEncounter.startOfBattleEffects}
+ * Will also handle Game Overs, switches, etc. that could happen from {@linkcode handleMysteryEncounterBattleStartEffects}
+ * See {@linkcode TurnEndPhase} for more details
  */
 export class MysteryEncounterBattleStartCleanupPhase extends Phase {
   constructor(scene: BattleScene) {
@@ -213,7 +212,7 @@ export class MysteryEncounterBattleStartCleanupPhase extends Phase {
   }
 
   /**
-   * Cleans up TURN_END tags, any PostTurnEffectPhases, checks for Pokemon switches, then continues
+   * Cleans up `TURN_END` tags, any {@linkcode PostTurnStatusEffectPhase}s, checks for Pokemon switches, then continues
    */
   start() {
     super.start();
@@ -260,7 +259,7 @@ export class MysteryEncounterBattleStartCleanupPhase extends Phase {
  * - Setting BGM
  * - Showing intro dialogue for an enemy trainer or wild Pokemon
  * - Sliding in the visuals for enemy trainer or wild Pokemon, as well as handling summoning animations
- * - Queue the SummonPhases, PostSummonPhases, etc., required to initialize the phase queue for a battle
+ * - Queue the {@linkcode SummonPhase}s, {@linkcode PostSummonPhase}s, etc., required to initialize the phase queue for a battle
  */
 export class MysteryEncounterBattlePhase extends Phase {
   disableSwitch: boolean;
@@ -307,7 +306,7 @@ export class MysteryEncounterBattlePhase extends Phase {
   }
 
   /**
-   * Queues SummonPhases for the new battle, and handles trainer animations/dialogue if Trainer battle
+   * Queues {@linkcode SummonPhase}s for the new battle, and handles trainer animations/dialogue if it's a Trainer battle
    * @param scene
    * @private
    */
@@ -376,7 +375,7 @@ export class MysteryEncounterBattlePhase extends Phase {
   }
 
   /**
-   * Initiate SummonPhases, scanner phases, PostSummon phases, etc.
+   * Initiate {@linkcode SummonPhase}s, {@linkcode ScanIvsPhase}, {@linkcode PostSummonPhase}s, etc.
    * @param scene
    * @private
    */
@@ -472,10 +471,10 @@ export class MysteryEncounterBattlePhase extends Phase {
  *
  * OR
  *
- * - Any encounter reward logic that is set within MysteryEncounter doEncounterExp
- * - Any encounter reward logic that is set within MysteryEncounter doEncounterRewards
+ * - Any encounter reward logic that is set within {@linkcode MysteryEncounter.doEncounterExp}
+ * - Any encounter reward logic that is set within {@linkcode MysteryEncounter.doEncounterRewards}
  * - Otherwise, can add a no-reward-item shop with only Potions, etc. if addHealPhase is true
- * - Queuing of the PostMysteryEncounterPhase
+ * - Queuing of the {@linkcode PostMysteryEncounterPhase}
  */
 export class MysteryEncounterRewardsPhase extends Phase {
   addHealPhase: boolean;
@@ -486,7 +485,7 @@ export class MysteryEncounterRewardsPhase extends Phase {
   }
 
   /**
-   * Runs {@link MysteryEncounter.doContinueEncounter} and ends phase, OR {@link MysteryEncounter.onRewards} then continues encounter
+   * Runs {@linkcode MysteryEncounter.doContinueEncounter} and ends phase, OR {@linkcode MysteryEncounter.onRewards} then continues encounter
    */
   start() {
     super.start();
@@ -511,7 +510,7 @@ export class MysteryEncounterRewardsPhase extends Phase {
   }
 
   /**
-   * Queues encounter EXP and rewards phases, PostMysteryEncounterPhase, and ends phase
+   * Queues encounter EXP and rewards phases, {@linkcode PostMysteryEncounterPhase}, and ends phase
    */
   doEncounterRewardsAndContinue() {
     const encounter = this.scene.currentBattle.mysteryEncounter!;
@@ -534,7 +533,7 @@ export class MysteryEncounterRewardsPhase extends Phase {
 
 /**
  * Will handle (in order):
- * - onPostOptionSelect logic (based on an option that was selected)
+ * - {@linkcode MysteryEncounter.onPostOptionSelect} logic (based on an option that was selected)
  * - Showing any outro dialogue messages
  * - Cleanup of any leftover intro visuals
  * - Queuing of the next wave
@@ -549,7 +548,7 @@ export class PostMysteryEncounterPhase extends Phase {
   }
 
   /**
-   * Runs {@link MysteryEncounter.onPostOptionSelect} then continues encounter
+   * Runs {@linkcode MysteryEncounter.onPostOptionSelect} then continues encounter
    */
   start() {
     super.start();
@@ -569,7 +568,7 @@ export class PostMysteryEncounterPhase extends Phase {
   }
 
   /**
-   * Queues NewBattlePhase, plays outro dialogue and ends phase
+   * Queues {@linkcode NewBattlePhase}, plays outro dialogue and ends phase
    */
   continueEncounter() {
     const endPhase = () => {
