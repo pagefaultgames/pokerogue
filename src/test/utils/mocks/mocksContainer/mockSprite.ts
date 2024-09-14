@@ -14,6 +14,7 @@ export default class MockSprite implements MockGameObject {
   public scene;
   public anims;
   public list: MockGameObject[] = [];
+  public name: string;
   constructor(textureManager, x, y, texture) {
     this.textureManager = textureManager;
     this.scene = textureManager.scene;

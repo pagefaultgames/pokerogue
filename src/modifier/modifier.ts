@@ -842,6 +842,157 @@ export class BaseStatModifier extends PokemonHeldItemModifier {
 }
 
 /**
+ * Currently used by Shuckle Juice item
+ */
+export class PokemonBaseStatTotalModifier extends PokemonHeldItemModifier {
+  private statModifier: integer;
+  readonly isTransferrable: boolean = false;
+
+  constructor(type: ModifierTypes.PokemonBaseStatTotalModifierType, pokemonId: integer, statModifier: integer, stackCount?: integer) {
+    super(type, pokemonId, stackCount);
+    this.statModifier = statModifier;
+  }
+
+  override matchType(modifier: Modifier): boolean {
+    return modifier instanceof PokemonBaseStatTotalModifier;
+  }
+
+  override clone(): PersistentModifier {
+    return new PokemonBaseStatTotalModifier(this.type as ModifierTypes.PokemonBaseStatTotalModifierType, this.pokemonId, this.statModifier, this.stackCount);
+  }
+
+  override getArgs(): any[] {
+    return super.getArgs().concat(this.statModifier);
+  }
+
+  override shouldApply(args: any[]): boolean {
+    return super.shouldApply(args) && args.length === 2 && args[1] instanceof Array;
+  }
+
+  override apply(args: any[]): boolean {
+    // Modifies the passed in baseStats[] array
+    args[1].forEach((v, i) => {
+      // HP is affected by half as much as other stats
+      const newVal = i === 0 ? Math.floor(v + this.statModifier / 2) : Math.floor(v + this.statModifier);
+      args[1][i] = Math.min(Math.max(newVal, 1), 999999);
+    });
+
+    return true;
+  }
+
+  override getScoreMultiplier(): number {
+    return 1.2;
+  }
+
+  override getMaxHeldItemCount(pokemon: Pokemon): integer {
+    return 2;
+  }
+}
+
+/**
+ * Currently used by Old Gateau item
+ */
+export class PokemonBaseStatFlatModifier extends PokemonHeldItemModifier {
+  private statModifier: integer;
+  private stats: Stat[];
+  readonly isTransferrable: boolean = false;
+
+  constructor (type: ModifierType, pokemonId: integer, statModifier: integer, stats: Stat[], stackCount?: integer) {
+    super(type, pokemonId, stackCount);
+
+    this.statModifier = statModifier;
+    this.stats = stats;
+  }
+
+  override matchType(modifier: Modifier): boolean {
+    return modifier instanceof PokemonBaseStatFlatModifier;
+  }
+
+  override clone(): PersistentModifier {
+    return new PokemonBaseStatFlatModifier(this.type, this.pokemonId, this.statModifier, this.stats, this.stackCount);
+  }
+
+  override getArgs(): any[] {
+    return super.getArgs().concat(this.statModifier, this.stats);
+  }
+
+  override shouldApply(args: any[]): boolean {
+    return super.shouldApply(args) && args.length === 2 && args[1] instanceof Array;
+  }
+
+  override apply(args: any[]): boolean {
+    // Modifies the passed in baseStats[] array by a flat value, only if the stat is specified in this.stats
+    args[1].forEach((v, i) => {
+      if (this.stats.includes(i)) {
+        const newVal = Math.floor(v + this.statModifier);
+        args[1][i] = Math.min(Math.max(newVal, 1), 999999);
+      }
+    });
+
+    return true;
+  }
+
+  override getScoreMultiplier(): number {
+    return 1.1;
+  }
+
+  override getMaxHeldItemCount(pokemon: Pokemon): integer {
+    return 1;
+  }
+}
+
+/**
+ * Currently used by Macho Brace item
+ */
+export class PokemonIncrementingStatModifier extends PokemonHeldItemModifier {
+  readonly isTransferrable: boolean = false;
+
+  constructor (type: ModifierType, pokemonId: integer, stackCount?: integer) {
+    super(type, pokemonId, stackCount);
+  }
+
+  matchType(modifier: Modifier): boolean {
+    return modifier instanceof PokemonIncrementingStatModifier;
+  }
+
+  clone(): PersistentModifier {
+    return new PokemonIncrementingStatModifier(this.type, this.pokemonId);
+  }
+
+  getArgs(): any[] {
+    return super.getArgs();
+  }
+
+  shouldApply(args: any[]): boolean {
+    return super.shouldApply(args) && args.length === 2 && args[1] instanceof Array;
+  }
+
+  apply(args: any[]): boolean {
+    // Modifies the passed in stats[] array by +1 per stack for HP, +2 per stack for other stats
+    // If the Macho Brace is at max stacks (50), adds additional 5% to total HP and 10% to other stats
+    args[1].forEach((v, i) => {
+      const isHp = i === 0;
+      let mult = 1;
+      if (this.stackCount === this.getMaxHeldItemCount()) {
+        mult = isHp ? 1.05 : 1.1;
+      }
+      const newVal = Math.floor((v + this.stackCount * (isHp ? 1 : 2)) * mult);
+      args[1][i] = Math.min(Math.max(newVal, 1), 999999);
+    });
+
+    return true;
+  }
+
+  getScoreMultiplier(): number {
+    return 1.2;
+  }
+
+  getMaxHeldItemCount(pokemon?: Pokemon): integer {
+    return 50;
+  }
+}
+
+/**
  * Modifier used for held items that apply {@linkcode Stat} boost(s)
  * using a multiplier.
  * @extends PokemonHeldItemModifier
@@ -2371,6 +2522,55 @@ export class LockModifierTiersModifier extends PersistentModifier {
 
   clone(): LockModifierTiersModifier {
     return new LockModifierTiersModifier(this.type, this.stackCount);
+  }
+
+  getMaxStackCount(scene: BattleScene): integer {
+    return 1;
+  }
+}
+
+/**
+ * Black Sludge item
+ */
+export class HealShopCostModifier extends PersistentModifier {
+  constructor(type: ModifierType, stackCount?: integer) {
+    super(type, stackCount);
+  }
+
+  match(modifier: Modifier): boolean {
+    return modifier instanceof HealShopCostModifier;
+  }
+
+  clone(): HealShopCostModifier {
+    return new HealShopCostModifier(this.type, this.stackCount);
+  }
+
+  apply(args: any[]): boolean {
+    (args[0] as Utils.IntegerHolder).value *= Math.pow(3, this.getStackCount());
+
+    return true;
+  }
+
+  getMaxStackCount(scene: BattleScene): integer {
+    return 1;
+  }
+}
+
+export class BoostBugSpawnModifier extends PersistentModifier {
+  constructor(type: ModifierType, stackCount?: integer) {
+    super(type, stackCount);
+  }
+
+  match(modifier: Modifier): boolean {
+    return modifier instanceof BoostBugSpawnModifier;
+  }
+
+  clone(): HealShopCostModifier {
+    return new BoostBugSpawnModifier(this.type, this.stackCount);
+  }
+
+  apply(args: any[]): boolean {
+    return true;
   }
 
   getMaxStackCount(scene: BattleScene): integer {
