@@ -1,23 +1,23 @@
 {
-  "intro": "You found...@d{32} a chest?",
-  "title": "The Mysterious Chest",
-  "description": "A beautifully ornamented chest stands on the ground. There must be something good inside... right?",
-  "query": "Will you open it?",
+  "intro": "Du hast...@d{32} eine Truhe gefunden?",
+  "title": "Die mysteriöse Truhe",
+  "description": "Eine wunderschön verzierte Truhe steht auf dem Boden. Da muss doch etwas Gutes drin sein... oder?",
+  "query": "Wirst du sie öffnen?",
   "option": {
     "1": {
-      "label": "Open It",
-      "tooltip": "@[SUMMARY_BLUE]{(35%) Something terrible}\n@[SUMMARY_GREEN]{(40%) Okay Rewards}\n@[SUMMARY_GREEN]{(20%) Good Rewards}\n@[SUMMARY_GREEN]{(4%) Great Rewards}\n@[SUMMARY_GREEN]{(1%) Amazing Rewards}",
-      "selected": "You open the chest to find...",
-      "normal": "Just some normal tools and items.",
-      "good": "Some pretty nice tools and items.",
-      "great": "A couple great tools and items!",
-      "amazing": "Whoa! An amazing item!",
-      "bad": "Oh no!@d{32}\nThe chest was actually a {{gimmighoulName}} in disguise!$Your {{pokeName}} jumps in front of you\nbut is KOed in the process!"
+      "label": "Öffnen",
+      "tooltip": "@[SUMMARY_BLUE]{(35%) Etwas Schreckliches}\n@[SUMMARY_GREEN]{(40%) Standard Belohnung}\n@[SUMMARY_GREEN]{(20%) Gute Belohnung}\n@[SUMMARY_GREEN]{(4%) Großartige Belohnung}\n@[SUMMARY_GREEN]{(1%) Erstaunliche Belohnung}",
+      "selected": "Du öffnest die Truhe und findest...",
+      "normal": "Einfach ein paar normale Werkzeuge und Gegenstände.",
+      "good": "Ein paar ziemlich gute Werkzeuge und Gegenstände.",
+      "great": "Ein paar großartige Werkzeuge und Gegenstände.",
+      "amazing": "Ein erstaunlichen Gegenstand!",
+      "bad": "Oh nein!@d{32}\nDie Truhe war tatsächlich ein {{gimmighoulName}}!$Dein {{pokeName}} springt schützend vor dich aber wird dabei besiegt!"
     },
     "2": {
-      "label": "Too Risky, Leave",
-      "tooltip": "(-) No Rewards",
-      "selected": "You hurry along your way,\nwith a slight feeling of regret."
+      "label": "Zu riskant, weggehen",
+      "tooltip": "(-) Keine Belohnung",
+      "selected": "Du gehst schnell weiter, mit einem leichten Gefühl der Reue."
     }
   }
 }
