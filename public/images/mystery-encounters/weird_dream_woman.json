@@ -1,0 +1,41 @@
+{
+	"textures": [
+		{
+			"image": "weird_dream_woman.png",
+			"format": "RGBA8888",
+			"size": {
+				"w": 78,
+				"h": 87
+			},
+			"scale": 1,
+			"frames": [
+				{
+					"filename": "0001.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 80,
+						"h": 87
+					},
+					"spriteSourceSize": {
+						"x": 1,
+						"y": 0,
+						"w": 78,
+						"h": 87
+					},
+					"frame": {
+						"x": 0,
+						"y": 0,
+						"w": 78,
+						"h": 87
+					}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "https://www.codeandweb.com/texturepacker",
+		"version": "3.0",
+		"smartupdate": "$TexturePacker:SmartUpdate:d3cce87ee0e3a880d840bffe9373d5d4:7c776d33b75abad1fe36b14a5e5734af:56468b7a2883e66dadcd2af13ebd8010$"
+	}
+}

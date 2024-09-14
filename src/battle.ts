@@ -14,28 +14,31 @@ import { PlayerGender } from "#enums/player-gender";
 import { Species } from "#enums/species";
 import { TrainerType } from "#enums/trainer-type";
 import i18next from "#app/plugins/i18n";
+import MysteryEncounter from "./data/mystery-encounters/mystery-encounter";
+import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
 
 export enum BattleType {
-    WILD,
-    TRAINER,
-    CLEAR
+  WILD,
+  TRAINER,
+  CLEAR,
+  MYSTERY_ENCOUNTER
 }
 
 export enum BattlerIndex {
-    ATTACKER = -1,
-    PLAYER,
-    PLAYER_2,
-    ENEMY,
-    ENEMY_2
+  ATTACKER = -1,
+  PLAYER,
+  PLAYER_2,
+  ENEMY,
+  ENEMY_2
 }
 
 export interface TurnCommand {
-    command: Command;
-    cursor?: number;
-    move?: QueuedMove;
-    targets?: BattlerIndex[];
-    skip?: boolean;
-    args?: any[];
+  command: Command;
+  cursor?: number;
+  move?: QueuedMove;
+  targets?: BattlerIndex[];
+  skip?: boolean;
+  args?: any[];
 }
 
 export interface FaintLogEntry {
@@ -44,7 +47,7 @@ export interface FaintLogEntry {
 }
 
 interface TurnCommands {
-    [key: number]: TurnCommand | null
+  [key: number]: TurnCommand | null
 }
 
 export default class Battle {
@@ -77,6 +80,9 @@ export default class Battle {
   public playerFaintsHistory: FaintLogEntry[] = [];
   public enemyFaintsHistory: FaintLogEntry[] = [];
 
+  /** If the current battle is a Mystery Encounter, this will always be defined */
+  public mysteryEncounter?: MysteryEncounter;
+
   private rngCounter: number = 0;
 
   constructor(gameMode: GameMode, waveIndex: number, battleType: BattleType, trainer?: Trainer, double?: boolean) {
@@ -99,7 +105,7 @@ export default class Battle {
     this.battleSpec = spec;
   }
 
-  private getLevelForWave(): number {
+  public getLevelForWave(): number {
     const levelWaveIndex = this.gameMode.getWaveForDifficulty(this.waveIndex);
     const baseLevel = 1 + levelWaveIndex / 2 + Math.pow(levelWaveIndex / 25, 2);
     const bossMultiplier = 1.2;
@@ -197,7 +203,11 @@ export default class Battle {
 
   getBgmOverride(scene: BattleScene): string | null {
     const battlers = this.enemyParty.slice(0, this.getBattlerCount());
-    if (this.battleType === BattleType.TRAINER) {
+    if (this.battleType === BattleType.MYSTERY_ENCOUNTER && this.mysteryEncounter?.encounterMode === MysteryEncounterMode.DEFAULT) {
+      // Music is overridden for MEs during ME onInit()
+      // Should not use any BGM overrides before swapping from DEFAULT mode
+      return null;
+    } else if (this.battleType === BattleType.TRAINER || this.mysteryEncounter?.encounterMode === MysteryEncounterMode.TRAINER_BATTLE) {
       if (!this.started && this.trainer?.config.encounterBgm && this.trainer?.getEncounterMessages()?.length) {
         return `encounter_${this.trainer?.getEncounterBgm()}`;
       }

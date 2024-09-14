@@ -244,15 +244,23 @@ export abstract class PokemonSpeciesForm {
   }
 
   /**
+   * Gets the BST for the species
+   * @returns The species' BST.
+   */
+  getBaseStatTotal(): number {
+    return this.baseStats.reduce((i, n) => n + i);
+  }
+
+  /**
    * Gets the species' base stat amount for the given stat.
    * @param stat  The desired stat.
    * @returns The species' base stat amount.
    */
-  getBaseStat(stat: Stat): integer {
+  getBaseStat(stat: Stat): number {
     return this.baseStats[stat];
   }
 
-  getBaseExp(): integer {
+  getBaseExp(): number {
     let ret = this.baseExp;
     switch (this.getFormSpriteKey()) {
     case SpeciesFormKey.MEGA:
@@ -1893,7 +1901,7 @@ export function initSpecies() {
     ),
     new PokemonSpecies(Species.MELOETTA, 5, false, false, true, "Melody Pokémon", Type.NORMAL, Type.PSYCHIC, 0.6, 6.5, Abilities.SERENE_GRACE, Abilities.NONE, Abilities.NONE, 600, 100, 77, 77, 128, 128, 90, 3, 100, 270, GrowthRate.SLOW, null, false, true,
       new PokemonForm("Aria Forme", "aria", Type.NORMAL, Type.PSYCHIC, 0.6, 6.5, Abilities.SERENE_GRACE, Abilities.NONE, Abilities.NONE, 600, 100, 77, 77, 128, 128, 90, 3, 100, 270, false, null, true),
-      new PokemonForm("Pirouette Forme", "pirouette", Type.NORMAL, Type.FIGHTING, 0.6, 6.5, Abilities.SERENE_GRACE, Abilities.NONE, Abilities.NONE, 600, 100, 128, 90, 77, 77, 128, 3, 100, 270),
+      new PokemonForm("Pirouette Forme", "pirouette", Type.NORMAL, Type.FIGHTING, 0.6, 6.5, Abilities.SERENE_GRACE, Abilities.NONE, Abilities.NONE, 600, 100, 128, 90, 77, 77, 128, 3, 100, 270, false, null, true),
     ),
     new PokemonSpecies(Species.GENESECT, 5, false, false, true, "Paleozoic Pokémon", Type.BUG, Type.STEEL, 1.5, 82.5, Abilities.DOWNLOAD, Abilities.NONE, Abilities.NONE, 600, 71, 120, 95, 120, 95, 99, 3, 0, 300, GrowthRate.SLOW, null, false, true,
       new PokemonForm("Normal", "", Type.BUG, Type.STEEL, 1.5, 82.5, Abilities.DOWNLOAD, Abilities.NONE, Abilities.NONE, 600, 71, 120, 95, 120, 95, 99, 3, 0, 300, false, null, true),
