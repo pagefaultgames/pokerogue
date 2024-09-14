@@ -87,7 +87,7 @@ export default class MysteryEncounter implements IMysteryEncounter {
    */
   encounterAnimations?: EncounterAnim[];
   /**
-   * If specified, defines any game modes where the MysteryEncounter should *NOT* spawn
+   * If specified, defines any game modes where the {@linkcode MysteryEncounter} should *NOT* spawn
    */
   disabledGameModes?: GameModes[];
   /**
@@ -268,7 +268,7 @@ export default class MysteryEncounter implements IMysteryEncounter {
   }
 
   /**
-   * Checks if the current scene state meets the requirements for the MysteryEncounter to spawn
+   * Checks if the current scene state meets the requirements for the {@linkcode MysteryEncounter} to spawn
    * This is used to filter the pool of encounters down to only the ones with all requirements met
    * @param scene
    * @returns
@@ -491,7 +491,7 @@ export default class MysteryEncounter implements IMysteryEncounter {
 
   /**
    * Maintains seed offset for RNG consistency
-   * Increments if the same MysteryEncounter has multiple option select cycles
+   * Increments if the same {@linkcode MysteryEncounter} has multiple option select cycles
    * @param scene
    */
   updateSeedOffset(scene: BattleScene) {
@@ -534,7 +534,7 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
 
   /**
    * @statif Defines the type of encounter which is used as an identifier, should be tied to a unique MysteryEncounterType
-   * NOTE: if new functions are added to MysteryEncounter class
+   * NOTE: if new functions are added to {@linkcode MysteryEncounter} class
    * @param encounterType
    * @returns this
    */

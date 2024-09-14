@@ -594,7 +594,7 @@ export function selectOptionThenPokemon(scene: BattleScene, options: OptionSelec
  * @param scene - Battle Scene
  * @param customShopRewards - adds a shop phase with the specified rewards / reward tiers
  * @param eggRewards
- * @param preRewardsCallback - can execute an arbitrary callback before the new phases if necessary (useful for updating items/party/injecting new phases before MysteryEncounterRewardsPhase)
+ * @param preRewardsCallback - can execute an arbitrary callback before the new phases if necessary (useful for updating items/party/injecting new phases before {@linkcode MysteryEncounterRewardsPhase})
  */
 export function setEncounterRewards(scene: BattleScene, customShopRewards?: CustomModifierSettings, eggRewards?: IEggOptions[], preRewardsCallback?: Function) {
   scene.currentBattle.mysteryEncounter!.doEncounterRewards = (scene: BattleScene) => {
@@ -771,7 +771,7 @@ export function transitionMysteryEncounterIntroVisuals(scene: BattleScene, hide:
 
 /**
  * Will queue moves for any pokemon to use before the first CommandPhase of a battle
- * Mostly useful for allowing MysteryEncounter enemies to "cheat" and use moves before the first turn
+ * Mostly useful for allowing {@linkcode MysteryEncounter} enemies to "cheat" and use moves before the first turn
  * @param scene
  */
 export function handleMysteryEncounterBattleStartEffects(scene: BattleScene) {

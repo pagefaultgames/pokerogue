@@ -363,7 +363,7 @@ describe("The Winstrate Challenge - Mystery Encounter", () => {
 });
 
 /**
- * For any MysteryEncounter that has a battle, can call this to skip battle and proceed to MysteryEncounterRewardsPhase
+ * For any {@linkcode MysteryEncounter} that has a battle, can call this to skip battle and proceed to MysteryEncounterRewardsPhase
  * @param game
  * @param isFinalBattle
  */

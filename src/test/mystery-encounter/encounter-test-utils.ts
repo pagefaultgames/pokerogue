@@ -15,11 +15,11 @@ import { VictoryPhase } from "#app/phases/victory-phase";
 import { MessagePhase } from "#app/phases/message-phase";
 
 /**
- * Runs a MysteryEncounter to either the start of a battle, or to the MysteryEncounterRewardsPhase, depending on the option selected
+ * Runs a {@linkcode MysteryEncounter} to either the start of a battle, or to the {@linkcode MysteryEncounterRewardsPhase}, depending on the option selected
  * @param game
- * @param optionNo - human number, not index
- * @param secondaryOptionSelect -
- * @param isBattle - if selecting option should lead to battle, set to true
+ * @param optionNo Human number, not index
+ * @param secondaryOptionSelect
+ * @param isBattle If selecting option should lead to battle, set to `true`
  */
 export async function runMysteryEncounterToEnd(game: GameManager, optionNo: number, secondaryOptionSelect?: { pokemonNo: number, optionNo?: number }, isBattle: boolean = false) {
   vi.spyOn(EncounterPhaseUtils, "selectPokemonForOption");
@@ -157,7 +157,7 @@ async function handleSecondaryOptionSelect(game: GameManager, pokemonNo: number,
 }
 
 /**
- * For any MysteryEncounter that has a battle, can call this to skip battle and proceed to MysteryEncounterRewardsPhase
+ * For any {@linkcode MysteryEncounter} that has a battle, can call this to skip battle and proceed to {@linkcode MysteryEncounterRewardsPhase}
  * @param game
  * @param runRewardsPhase
  */
