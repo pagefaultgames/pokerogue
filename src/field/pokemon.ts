@@ -592,8 +592,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     // Resetting properties should not be shown on the field
     this.setVisible(false);
 
-    // Reset field position
-    this.setFieldPosition(FieldPosition.CENTER);
+    // Remove the offset from having a Substitute active
     if (this.isOffsetBySubstitute()) {
       this.x -= this.getSubstituteOffset()[0];
       this.y -= this.getSubstituteOffset()[1];
