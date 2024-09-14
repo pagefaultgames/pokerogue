@@ -907,6 +907,10 @@ export class TrainerConfig {
    * @returns {TrainerConfig} The updated TrainerConfig instance.
    */
   setLocalizedName(name: string): TrainerConfig {
+    // Check if the internationalization (i18n) system is initialized.
+    if (!getIsInitialized()) {
+      initI18n();
+    }
     this.name = i18next.t(`trainerNames:${name.toLowerCase()}`);
     return this;
   }
