@@ -935,112 +935,112 @@
   },
   "stat_trainer_buck": {
     "encounter": {
-      "1": "...I'm telling you right now. I'm seriously tough. Act surprised!",
-      "2": "I can feel my Pokémon shivering inside their Pokéballs!"
+      "1": "我现在告诉你！我强的不可思议，做好准备！",
+      "2": "我能感受到宝可梦在球中激动地颤抖！"
     },
     "victory": {
-      "1": "Heeheehee!\nSo hot, you!",
-      "2": "Heeheehee!\nSo hot, you!"
+      "1": "呵哈哈！\n真火热啊，你！",
+      "2": "呵哈哈！\n真火热啊，你！"
     },
     "defeat": {
-      "1": "Whoa! You're all out of gas, I guess.",
-      "2": "Whoa! You're all out of gas, I guess."
+      "1": "哇哦！这下没气儿了吧，我猜。",
+      "2": "哇哦！这下没气儿了吧，我猜。"
     }
   },
   "stat_trainer_cheryl": {
     "encounter": {
-      "1": "My Pokémon have been itching for a battle.",
-      "2": "I should warn you, my Pokémon can be quite rambunctious."
+      "1": "我的宝可梦渴望着战斗。",
+      "2": "我应该警告你，我的神奇宝贝可能有点活泼。"
     },
     "victory": {
-      "1": "Striking the right balance of offense and defense... It's not easy to do.",
-      "2": "Striking the right balance of offense and defense... It's not easy to do."
+      "1": "在进攻和防守之间找到平衡……这并不容易。",
+      "2": "在进攻和防守之间找到平衡……这并不容易。"
     },
     "defeat": {
-      "1": "Do your Pokémon need any healing?",
-      "2": "Do your Pokémon need any healing?"
+      "1": "你的宝可梦需要治疗吗？",
+      "2": "你的宝可梦需要治疗吗？"
     }
   },
   "stat_trainer_marley": {
     "encounter": {
-      "1": "... OK.\nI'll do my best.",
-      "2": "... OK.\nI... won't lose...!"
+      "1": "……好的。\n我会尽力的。",
+      "2": "……好的。\n我不会输的。"
     },
     "victory": {
-      "1": "... Awww.",
-      "2": "... Awww."
+      "1": "……噢",
+      "2": "……噢"
     },
     "defeat": {
-      "1": "... Goodbye.",
-      "2": "... Goodbye."
+      "1": "……再见。",
+      "2": "……再见。"
     }
   },
   "stat_trainer_mira": {
     "encounter": {
-      "1": "You will be shocked by Mira!",
-      "2": "Mira will show you that Mira doesn't get lost anymore!"
+      "1": "你会被麦儿吓到的哦！",
+      "2": "麦儿不会再输了！"
     },
     "victory": {
-      "1": "Mira wonders if she can get very far in this land.",
-      "2": "Mira wonders if she can get very far in this land."
+      "1": "麦儿在想……她的生涯还能不能走远。",
+      "2": "麦儿在想……她的生涯还能不能走远。"
     },
     "defeat": {
-      "1": "Mira knew she would win!",
-      "2": "Mira knew she would win!"
+      "1": "麦儿就知道自己会赢！",
+      "2": "麦儿就知道自己会赢！"
     }
   },
   "stat_trainer_riley": {
     "encounter": {
-      "1": "Battling is our way of greeting!",
-      "2": "We're pulling out all the stops to put your Pokémon down."
+      "1": "战斗是我们打招呼的方式！",
+      "2": "我们会尽一切努力来打败你的宝可梦。"
     },
     "victory": {
-      "1": "At times we battle, and sometimes we team up...$It's great how Trainers can interact.",
-      "2": "At times we battle, and sometimes we team up...$It's great how Trainers can interact."
+      "1": "有时我们会战斗，有时我们会联手...$训练师之间能交流真好。",
+      "2": "有时我们会战斗，有时我们会联手...$训练师之间能交流真好。"
     },
     "defeat": {
-      "1": "You put up quite the display.\nBetter luck next time.",
-      "2": "You put up quite the display.\nBetter luck next time."
+      "1": "你表现的相当出色\n祝你下次好运。",
+      "2": "你表现的相当出色\n祝你下次好运。"
     }
   },
   "winstrates_victor": {
     "encounter": {
-      "1": "That's the spirit! I like you!"
+      "1": "就是这股势头！我看好你！"
     },
     "victory": {
-      "1": "A-ha! You're stronger than I thought!"
+      "1": "啊哈！你比我想象的还要强！"
     }
   },
   "winstrates_victoria": {
     "encounter": {
-      "1": "My goodness! Aren't you young?$You must be quite the trainer to beat my husband, though.$Now I suppose it's my turn to battle!"
+      "1": "天哪！这么年轻？$不过，能打败我的丈夫，你至少称得上是训练师。$现在轮到我上场了！"
     },
     "victory": {
-      "1": "Uwah! Just how strong are you?!"
+      "1": "呃啊！你这得多强啊！"
     }
   },
   "winstrates_vivi": {
     "encounter": {
-      "1": "You're stronger than Mom? Wow!$But I'm strong, too!\nReally! Honestly!"
+      "1": "你比妈妈还厉害？$但是，我也很厉害哦！\n真的！真的哦！"
     },
     "victory": {
-      "1": "Huh? Did I really lose?\nSnivel... Grandmaaa!"
+      "1": "啊？我真的输了吗？\n呜呜呜……奶奶！"
     }
   },
   "winstrates_vicky": {
     "encounter": {
-      "1": "How dare you make my precious\ngranddaughter cry!$I see I need to teach you a lesson.\nPrepare to feel the sting of defeat!"
+      "1": "你怎么敢让我的宝贝孙女哭！$看来我得给你一个教训。\n准备好吃点苦头吧！"
     },
     "victory": {
-      "1": "Whoa! So strong!\nMy granddaughter wasn't lying."
+      "1": "呜啊！这么强！\n我的孙女没在骗人。"
     }
   },
   "winstrates_vito": {
     "encounter": {
-      "1": "I trained together with my whole family,\nevery one of us!$I'm not losing to anyone!"
+      "1": "我和我的每位家人都一起训练！$我不会输给任何人了！"
     },
     "victory": {
-      "1": "I was better than everyone in my family.\nI've never lost before..."
+      "1": "我比家里的每个人都优秀。\n我从来没有输过……"
     }
   },
   "brock": {
