@@ -1,10 +1,10 @@
 {
-  "intro": "You're stopped by a rich looking boy.",
-  "speaker": "Rich Boy",
-  "intro_dialogue": "Good day to you.$I can't help but notice that your\n{{strongestPokemon}} looks positively divine!$I've always wanted to have a pet like that!$I'd pay you handsomely,\nand also give you this old bauble!",
-  "title": "An Offer You Can't Refuse",
-  "description": "You're being offered a @[TOOLTIP_TITLE]{Shiny Charm} and {{price, money}} for your {{strongestPokemon}}!\n\nIt's an extremely good deal, but can you really bear to part with such a strong team member?",
-  "query": "What will you do?",
+  "intro": "一名看上去就很有钱的小男孩拦住了你。",
+  "speaker": "富家子弟",
+  "intro_dialogue": "向你问好。$你的{{strongestPokemon}}看起来举世无双，我挪不开我的眼睛了！\n$我一直也想要一只那样的小跟班！$你的报酬不会少的，\n这个老家伙也可以送给你！",
+  "title": "难以拒绝的买卖",
+  "description": "对方愿意为了你的{{strongestPokemon}}出一个@[TOOLTIP_TITLE]{闪光护符}和{{price, money}}。\n\n这交易非常值得，但是你真的舍得放弃如此强大的伙伴吗？",
+  "query": "你要怎么做？"
   "option": {
     "1": {
       "label": "Accept the Deal",
