@@ -12,6 +12,7 @@ import { TimeOfDay } from "#enums/time-of-day";
 import { getPokemonNameWithAffix } from "#app/messages";
 import i18next from "i18next";
 import { WeatherType } from "./weather";
+import { Challenges } from "#app/enums/challenges";
 
 export enum FormChangeItem {
   NONE,
@@ -342,6 +343,16 @@ export class SpeciesFormChangePreMoveTrigger extends SpeciesFormChangeMoveTrigge
 export class SpeciesFormChangePostMoveTrigger extends SpeciesFormChangeMoveTrigger {
   canChange(pokemon: Pokemon): boolean {
     return pokemon.summonData && !!pokemon.getLastXMoves(1).filter(m => this.movePredicate(m.move)).length === this.used;
+  }
+}
+
+export class MeloettaFormChangePostMoveTrigger extends SpeciesFormChangePostMoveTrigger {
+  override canChange(pokemon: Pokemon): boolean {
+    if (pokemon.scene.gameMode.hasChallenge(Challenges.SINGLE_TYPE)) {
+      return false;
+    } else {
+      return super.canChange(pokemon);
+    }
   }
 }
 
@@ -759,9 +770,8 @@ export const pokemonFormChanges: PokemonFormChanges = {
     new SpeciesFormChange(Species.KELDEO, "resolute", "ordinary", new SpeciesFormChangeMoveLearnedTrigger(Moves.SECRET_SWORD, false))
   ],
   [Species.MELOETTA]: [
-    new SpeciesFormChange(Species.MELOETTA, "aria", "pirouette", new SpeciesFormChangePostMoveTrigger(Moves.RELIC_SONG), true),
-    new SpeciesFormChange(Species.MELOETTA, "pirouette", "aria", new SpeciesFormChangePostMoveTrigger(Moves.RELIC_SONG), true),
-    new SpeciesFormChange(Species.MELOETTA, "pirouette", "aria", new SpeciesFormChangeActiveTrigger(false), true)
+    new SpeciesFormChange(Species.MELOETTA, "aria", "pirouette", new MeloettaFormChangePostMoveTrigger(Moves.RELIC_SONG), true),
+    new SpeciesFormChange(Species.MELOETTA, "pirouette", "aria", new MeloettaFormChangePostMoveTrigger(Moves.RELIC_SONG), true)
   ],
   [Species.GENESECT]: [
     new SpeciesFormChange(Species.GENESECT, "", "shock", new SpeciesFormChangeItemTrigger(FormChangeItem.SHOCK_DRIVE)),

@@ -10,17 +10,18 @@ export default class MockText implements MockGameObject {
   public list: MockGameObject[] = [];
   public style;
   public text = "";
-  private name?: string;
+  public name: string;
   public color?: string;
 
   constructor(textureManager, x, y, content, styleOptions) {
     this.scene = textureManager.scene;
     this.textureManager = textureManager;
     this.style = {};
-    // Phaser.GameObjects.TextStyle.prototype.setStyle = () => null;
+    // Phaser.GameObjects.TextStyle.prototype.setStyle = () => this;
     // Phaser.GameObjects.Text.prototype.updateText = () => null;
     // Phaser.Textures.TextureManager.prototype.addCanvas = () => {};
     UI.prototype.showText = this.showText;
+    UI.prototype.showDialogue = this.showDialogue;
     this.text = "";
     this.phaserText = "";
     // super(scene, x, y);
@@ -78,8 +79,15 @@ export default class MockText implements MockGameObject {
     return result;
   }
 
-  showText(text, delay, callback, callbackDelay, prompt, promptDelay) {
+  showText(text: string, delay?: integer | null, callback?: Function | null, callbackDelay?: integer | null, prompt?: boolean | null, promptDelay?: integer | null) {
     this.scene.messageWrapper.showText(text, delay, callback, callbackDelay, prompt, promptDelay);
+    if (callback) {
+      callback();
+    }
+  }
+
+  showDialogue(keyOrText: string, name: string | undefined, delay: integer | null = 0, callback: Function, callbackDelay?: integer, promptDelay?: integer) {
+    this.scene.messageWrapper.showDialogue(keyOrText, name, delay, callback, callbackDelay, promptDelay);
     if (callback) {
       callback();
     }
@@ -192,9 +200,9 @@ export default class MockText implements MockGameObject {
     };
   }
 
-  setColor = (color: string) => {
+  setColor(color: string) {
     this.color = color;
-  };
+  }
 
   setInteractive = () => null;
 
@@ -222,9 +230,9 @@ export default class MockText implements MockGameObject {
     // return this.phaserText.setAlpha(alpha);
   }
 
-  setName = (name: string) => {
+  setName(name: string) {
     this.name = name;
-  };
+  }
 
   setAlign(align) {
     // return this.phaserText.setAlign(align);
@@ -246,6 +254,14 @@ export default class MockText implements MockGameObject {
       x: 0,
       y: 0,
     };
+  }
+
+  disableInteractive() {
+    // Disables interaction with this Game Object.
+  }
+
+  clearTint() {
+    // Clears tint on this Game Object.
   }
 
   add(obj) {

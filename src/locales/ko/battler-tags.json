@@ -71,5 +71,8 @@
   "disabledOnAdd": "{{pokemonNameWithAffix}}의 {{moveName}}[[는]]\n사용할 수 없다!",
   "disabledLapse": "{{pokemonNameWithAffix}}의 {{moveName}}[[는]]\n이제 사용할 수 있다.",
   "tarShotOnAdd": "{{pokemonNameWithAffix}}[[는]] 불꽃에 약해졌다!",
+  "substituteOnAdd": "{{pokemonNameWithAffix}}의\n대타가 나타났다!",
+  "substituteOnHit": "{{pokemonNameWithAffix}}[[를]] 대신하여\n대타가 공격을 받았다!",
+  "substituteOnRemove": "{{pokemonNameWithAffix}}의\n대타는 사라져 버렸다...",
   "powerTrickActive": "{{pokemonNameWithAffix}}[[는]]\n공격과 방어를 바꿨다!"
 }

@@ -53,6 +53,5 @@
   "safeguardOnAddEnemy": "¡El equipo enemigo se ha protegido con Velo Sagrado!",
   "safeguardOnRemove": "¡Velo Sagrado dejó de hacer efecto!",
   "safeguardOnRemovePlayer": "El efecto de Velo Sagrado en tu equipo se ha disipado.",
-  "safeguardOnRemoveEnemy": "El efecto de Velo Sagrado en el equipo enemigo se ha disipado.",
-  "powerTrickActive": "¡{{pokemonNameWithAffix}} cambió su Ataque y Defensa!"
+  "safeguardOnRemoveEnemy": "El efecto de Velo Sagrado en el equipo enemigo se ha disipado."
 }
