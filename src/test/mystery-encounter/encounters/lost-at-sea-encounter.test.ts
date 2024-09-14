@@ -14,8 +14,7 @@ import { initSceneWithoutEncounterPhase } from "#test/utils/gameManagerUtils";
 import BattleScene from "#app/battle-scene";
 import { MysteryEncounterPhase } from "#app/phases/mystery-encounter-phases";
 import { PartyExpPhase } from "#app/phases/party-exp-phase";
-import {Moves} from "#enums/moves";
-import i18next from "i18next";
+
 
 const namespace = "mysteryEncounter:lostAtSea";
 /** Blastoise for surf. Pidgeot for fly. Abra for none. */
@@ -103,8 +102,8 @@ describe("Lost at Sea - Mystery Encounter", () => {
     const onInitResult = onInit!(scene);
 
     expect(LostAtSeaEncounter.dialogueTokens?.damagePercentage).toBe("25");
-    expect(LostAtSeaEncounter.dialogueTokens?.option1RequiredMove).toBe(i18next.t(`move:${Moves[Moves.SURF].toLowerCase()}.name`));
-    expect(LostAtSeaEncounter.dialogueTokens?.option2RequiredMove).toBe(i18next.t(`move:${Moves[Moves.FLY].toLowerCase()}.name`));
+    expect(LostAtSeaEncounter.dialogueTokens?.option1RequiredMove).toBe("Surf");
+    expect(LostAtSeaEncounter.dialogueTokens?.option2RequiredMove).toBe("Fly");
     expect(onInitResult).toBe(true);
   });
 
