@@ -43,6 +43,7 @@ import { UnavailablePhase } from "#app/phases/unavailable-phase";
 import { VictoryPhase } from "#app/phases/victory-phase";
 import { PartyHealPhase } from "#app/phases/party-heal-phase";
 import UI, { Mode } from "#app/ui/ui";
+import { ExpPhase } from "#app/phases/exp-phase";
 
 export default class PhaseInterceptor {
   public scene;
@@ -104,6 +105,7 @@ export default class PhaseInterceptor {
     [EndEvolutionPhase, this.startPhase],
     [LevelCapPhase, this.startPhase],
     [AttemptRunPhase, this.startPhase],
+    [ExpPhase, this.startPhase],
   ];
 
   private endBySetMode = [
