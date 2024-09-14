@@ -1,19 +1,19 @@
 {
-  "intro": "It's a massive pile of garbage!\nWhere did this come from?",
+  "intro": "C’est un énorme tas de déchets !\nComment il est arrivé là ?",
   "title": "Trash to Treasure",
-  "description": "The garbage heap looms over you, and you can spot some items of value buried amidst the refuse. Are you sure you want to get covered in filth to get them, though?",
-  "query": "What will you do?",
+  "description": "Un énorme tas d’ordures se dresse devant vos yeux, dans lequel vous arrivez à entrevoir quelques objets de valeur.\nPar contre, il faut que vous acceptiez l’idée de vous couvrir de saletés pour allez les récupérer…",
+  "query": "Que voulez-vous faire ?",
   "option": {
     "1": {
-      "label": "Dig for Valuables",
-      "tooltip": "(-) Lose Healing Items in Shops\n(+) Gain Amazing Items",
-      "selected": "You wade through the garbage pile, becoming mired in filth.$There's no way any respectable shopkeepers\nwill sell you anything in your grimy state!$You'll just have to make do without shop healing items.$However, you found some incredible items in the garbage!"
+      "label": "Chercher des trésors",
+      "tooltip": "(-) Aucun objet de soin en boutique\n(+) Gain d’objets exceptionnels",
+      "selected": "Vous barbotez dans le tas d’ordures et vous vous couvrez de crasse.$Vu votre état, il n’y a vraiment plus aucune chance qu’un vendeur accpete de vous vendre quoi que ce soit !$Vous aller devoir vous débrouiller sans objet de soin.$Mais ça valait le coup, car ce que vous avez trouvé\ndans les ordures est incroyable !"
     },
     "2": {
-      "label": "Investigate Further",
-      "tooltip": "(?) Find the Source of the Garbage",
-      "selected": "You wander around the heap, searching for any indication as to how this might have appeared here...",
-      "selected_2": "Suddenly, the garbage shifts! It wasn't just garbage, it was a Pokémon!"
+      "label": "Enquêter",
+      "tooltip": "(?) Trouver la source des déchets",
+      "selected": "Vous vous baladez autour du tas, à la recherche du moindre indice sur comment ça a bien pu arriver ici…",
+      "selected_2": "Oh, un des déchets bouge !\nC’était pas un déchet, mais un Pokémon !"
     }
   }
 }
