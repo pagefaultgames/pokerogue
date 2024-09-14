@@ -54,6 +54,7 @@ import { MysteryEncounterPhase } from "#app/phases/mystery-encounter-phases";
 import { expect } from "vitest";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { isNullOrUndefined } from "#app/utils";
+import { ExpGainsSpeed } from "#app/enums/exp-gains-speed";
 
 /**
  * Class to manage the game state and transitions between phases.
@@ -148,7 +149,7 @@ export default class GameManager {
     this.scene.gameSpeed = 5;
     this.scene.moveAnimations = false;
     this.scene.showLevelUpStats = false;
-    this.scene.expGainsSpeed = 3;
+    this.scene.expGainsSpeed = ExpGainsSpeed.SKIP;
     this.scene.expParty = ExpNotification.SKIP;
     this.scene.hpBarSpeed = 3;
     this.scene.enableTutorials = false;
