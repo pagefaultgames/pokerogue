@@ -1,23 +1,23 @@
 {
-  "intro": "A chipper elderly man approaches you.",
-  "speaker": "Gentleman",
-  "intro_dialogue": "Hello there! Have I got a deal just for YOU!",
-  "title": "The Pokémon Salesman",
-  "description": "\"This {{purchasePokemon}} is extremely unique and carries an ability not normally found in its species! I'll let you have this swell {{purchasePokemon}} for just {{price, money}}!\"\n\n\"What do you say?\"",
-  "description_shiny": "\"This {{purchasePokemon}} is extremely unique and has a pigment not normally found in its species! I'll let you have this swell {{purchasePokemon}} for just {{price, money}}!\"\n\n\"What do you say?\"",
-  "query": "What will you do?",
+  "intro": "Ein fröhlicher älterer Mann kommt auf dich zu.",
+  "speaker": "Reicher Mann",
+  "intro_dialogue": "Hallo! Ich habe ein Angebot, das du nicht ablehnen kannst!",
+  "title": "Der Pokémon-Verkäufer",
+  "description": "Dieses {{purchasePokemon}} ist extrem einzigartig und hat eine Fähigkeit, die normalerweise nicht bei seiner Art zu finden ist! Ich lasse dich dieses tolle {{purchasePokemon}} für gerade einmal {{price, money}} haben!\"\n\"Was sagst du dazu?\"",
+  "description_shiny": "Dieses {{purchasePokemon}} ist extrem einzigartig und hat eine Farbe, die normalerweise nicht bei seiner Art zu finden ist! Ich lasse dich dieses tolle {{purchasePokemon}} für gerade einmal {{price, money}} haben!\"\n\"Was sagst du dazu?\"",
+  "query": "Was wirst du tun?",
   "option": {
     "1": {
-      "label": "Accept",
-      "tooltip": "(-) Pay {{price, money}}\n(+) Gain a {{purchasePokemon}} with its Hidden Ability",
-      "tooltip_shiny": "(-) Pay {{price, money}}\n(+) Gain a shiny {{purchasePokemon}}",
-      "selected_message": "You paid an outrageous sum and bought the {{purchasePokemon}}.",
-      "selected_dialogue": "Excellent choice!$I can see you've a keen eye for business.$Oh, yeah...@d{64} Returns not accepted, got that?"
+      "label": "Akzeptieren",
+      "tooltip": "(-) Bezahlen {{price, money}}\n(+) Erhalte ein {{purchasePokemon}} mit seiner versteckten Fähigkeit",
+      "tooltip_shiny": "(-) Bezahlen {{price, money}}\n(+) Erhalte ein schillerndes {{purchasePokemon}}",
+      "selected_message": "Du bezahlst einen unverschämten Betrag und kaufst das {{purchasePokemon}}.",
+      "selected_dialogue": "Ausgezeichnete Wahl!$Ich sehe, dass du ein gutes Auge für Geschäfte hast.$Oh, ja...@d{64} Rückgaben werden nicht akzeptiert, hast du das verstanden?"
     },
     "2": {
-      "label": "Refuse",
-      "tooltip": "(-) No Rewards",
-      "selected": "No?@d{32} You say no?$I'm only doing this as a favor to you!"
+      "label": "Ablehnen",
+      "tooltip": "(-) Keine Belohnung",
+      "selected": "Nein?@d{32} Du sagst nein?$Ich mache das nur als Gefallen für dich!"
     }
   }
 }

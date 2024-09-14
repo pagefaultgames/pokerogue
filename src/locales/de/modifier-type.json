@@ -69,18 +69,18 @@
       "description": "Erhöht den {{stat}} Basiswert des Trägers um 10%. Das Stapellimit erhöht sich, je höher dein IS-Wert ist."
     },
     "PokemonBaseStatTotalModifierType": {
-      "name": "Shuckle Juice",
-      "description": "{{increaseDecrease}} all of the holder's base stats by {{statValue}}. You were {{blessCurse}} by the Shuckle.",
+      "name": "Pottrottsaft",
+      "description": "{{increaseDecrease}} alle Basiswerte des Trägers um {{statValue}}. Du wurdest von Pottrott {{blessCurse}}.",
       "extra": {
-        "increase": "Increases",
-        "decrease": "Decreases",
-        "blessed": "blessed",
-        "cursed": "cursed"
+        "increase": "Erhöht",
+        "decrease": "Verringert",
+        "blessed": "gesegnet",
+        "cursed": "verflucht"
       }
     },
     "PokemonBaseStatFlatModifierType": {
-      "name": "Old Gateau",
-      "description": "Increases the holder's {{stats}} base stats by {{statValue}}. Found after a strange dream."
+      "name": "Spezialität",
+      "description": "Erhöht den {{stats}}-Wert des Trägers um {{statValue}}. Nach einem komischen Traum gefunden."
     },
     "AllPokemonFullHpRestoreModifierType": {
       "description": "Stellt 100% der KP aller Pokémon her."
@@ -417,11 +417,11 @@
       "description": "Fügt eine 1%ige Chance hinzu, dass ein wildes Pokémon eine Fusion ist."
     },
 
-    "MYSTERY_ENCOUNTER_SHUCKLE_JUICE": { "name": "Shuckle Juice" },
-    "MYSTERY_ENCOUNTER_BLACK_SLUDGE": { "name": "Black Sludge", "description": "The stench is so powerful that shops will only sell you items at a steep cost increase." },
-    "MYSTERY_ENCOUNTER_MACHO_BRACE": { "name": "Macho Brace", "description": "Defeating a Pokémon grants the holder a Macho Brace stack. Each stack slightly boosts stats, with an extra bonus at max stacks." },
-    "MYSTERY_ENCOUNTER_OLD_GATEAU": { "name": "Old Gateau", "description": "Increases the holder's {{stats}} stats by {{statValue}}." },
-    "MYSTERY_ENCOUNTER_GOLDEN_BUG_NET": { "name": "Golden Bug Net", "description": "Imbues the owner with luck to find Bug Type Pokémon more often. Has a strange heft to it." }
+    "MYSTERY_ENCOUNTER_SHUCKLE_JUICE": { "name": "Pottrottsaft" },
+    "MYSTERY_ENCOUNTER_BLACK_SLUDGE": { "name": "Giftschleim", "description": "Der Geruch ist so stark, dass die Geschäfte ihre Items nur zu einem stark erhöhten Preis verkaufen." },
+    "MYSTERY_ENCOUNTER_MACHO_BRACE": { "name": "Machoschiene", "description": "Das Besiegen eines Pokémon gewährt dem Besitzer einen Machoschiene-Stapel. Jeder Stapel steigert die Werte leicht, mit einem zusätzlichen Bonus bei maximalen Stapeln." },
+    "MYSTERY_ENCOUNTER_OLD_GATEAU": { "name": "Spezialität", "description":  "Erhöht den {{stats}}-Wert des Trägers um {{statValue}}." },
+    "MYSTERY_ENCOUNTER_GOLDEN_BUG_NET": { "name": "Golden Bug Net", "description": "Erhöht die Chance, dass der Besitzer mehr Pokémon vom Typ Käfer findet. Hat ein seltsames Gewicht." }
   },
   "SpeciesBoosterItem": {
     "LIGHT_BALL": {
