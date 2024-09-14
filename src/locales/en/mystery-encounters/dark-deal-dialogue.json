@@ -1,0 +1,24 @@
+
+
+{
+  "intro": "A strange man in a tattered coat\nstands in your way...",
+  "speaker": "Shady Guy",
+  "intro_dialogue": "Hey, you!$I've been working on a new device\nto bring out a Pokémon's latent power!$It completely rebinds the Pokémon's atoms\nat a molecular level into a far more powerful form.$Hehe...@d{64} I just need some sac-@d{32}\nErr, test subjects, to prove it works.",
+  "title": "Dark Deal",
+  "description": "The disturbing fellow holds up some Pokéballs.\n\"I'll make it worth your while! You can have these strong Pokéballs as payment, All I need is a Pokémon from your team! Hehe...\"",
+  "query": "What will you do?",
+  "option": {
+    "1": {
+      "label": "Accept",
+      "tooltip": "(+) 5 Rogue Balls\n(?) Enhance a Random Pokémon",
+      "selected_dialogue": "Let's see, that {{pokeName}} will do nicely!$Remember, I'm not responsible\nif anything bad happens!@d{32} Hehe...",
+      "selected_message": "The man hands you 5 Rogue Balls.${{pokeName}} hops into the strange machine...$Flashing lights and weird noises\nstart coming from the machine!$...@d{96} Something emerges\nfrom the device, raging wildly!"
+    },
+    "2": {
+      "label": "Refuse",
+      "tooltip": "(-) No Rewards",
+      "selected": "Not gonna help a poor fellow out?\nPah!"
+    }
+  },
+  "outro": "After the harrowing encounter,\nyou collect yourself and depart."
+}

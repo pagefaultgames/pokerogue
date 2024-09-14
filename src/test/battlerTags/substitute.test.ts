@@ -1,8 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import Pokemon, { MoveResult, PokemonTurnData, TurnMove, PokemonMove } from "#app/field/pokemon";
 import BattleScene from "#app/battle-scene";
-import { BattlerTagLapseType, SubstituteTag, TrappedTag } from "#app/data/battler-tags";
-import { BattlerTagType } from "#app/enums/battler-tag-type";
+import { BattlerTagLapseType, BindTag, SubstituteTag } from "#app/data/battler-tags";
 import { Moves } from "#app/enums/moves";
 import { PokemonAnimType } from "#app/enums/pokemon-anim-type";
 import * as messages from "#app/messages";
@@ -25,7 +24,7 @@ describe("BattlerTag - SubstituteTag", () => {
         getMaxHp: vi.fn().mockReturnValue(101) as Pokemon["getMaxHp"],
         findAndRemoveTags: vi.fn().mockImplementation((tagFilter) => {
           // simulate a Trapped tag set by another Pokemon, then expect the filter to catch it.
-          const trapTag = new TrappedTag(BattlerTagType.TRAPPED, BattlerTagLapseType.CUSTOM, 0, Moves.NONE, 1);
+          const trapTag = new BindTag(5, 0);
           expect(tagFilter(trapTag)).toBeTruthy();
           return true;
         }) as Pokemon["findAndRemoveTags"]

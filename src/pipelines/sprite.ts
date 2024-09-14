@@ -4,6 +4,7 @@ import Pokemon from "../field/pokemon";
 import Trainer from "../field/trainer";
 import FieldSpritePipeline from "./field-sprite";
 import * as Utils from "../utils";
+import MysteryEncounterIntroVisuals from "../field/mystery-encounter-intro";
 
 const spriteFragShader = `
 #ifdef GL_FRAGMENT_PRECISION_HIGH
@@ -37,6 +38,7 @@ uniform vec2 texFrameUv;
 uniform vec2 size;
 uniform vec2 texSize;
 uniform float yOffset;
+uniform float yShadowOffset;
 uniform vec4 tone;
 uniform ivec4 baseVariantColors[32];
 uniform vec4 variantColors[32];
@@ -251,7 +253,7 @@ void main() {
         float width = size.x - (yOffset / 2.0);
 
         float spriteX = ((floor(outPosition.x / fieldScale) - relPosition.x) / width) + 0.5;
-        float spriteY = ((floor(outPosition.y / fieldScale) - relPosition.y) / size.y);
+        float spriteY = ((floor(outPosition.y / fieldScale) - relPosition.y - yShadowOffset) / size.y);
 
         if (yCenter == 1) {
             spriteY += 0.5;
@@ -338,6 +340,7 @@ export default class SpritePipeline extends FieldSpritePipeline {
     this.set2f("size", 0, 0);
     this.set2f("texSize", 0, 0);
     this.set1f("yOffset", 0);
+    this.set1f("yShadowOffset", 0);
     this.set4fv("tone", this._tone);
   }
 
@@ -350,10 +353,11 @@ export default class SpritePipeline extends FieldSpritePipeline {
     const tone = data["tone"] as number[];
     const teraColor = data["teraColor"] as integer[] ?? [ 0, 0, 0 ];
     const hasShadow = data["hasShadow"] as boolean;
+    const yShadowOffset = data["yShadowOffset"] as number;
     const ignoreFieldPos = data["ignoreFieldPos"] as boolean;
     const ignoreOverride = data["ignoreOverride"] as boolean;
 
-    const isEntityObj = sprite.parentContainer instanceof Pokemon || sprite.parentContainer instanceof Trainer;
+    const isEntityObj = sprite.parentContainer instanceof Pokemon || sprite.parentContainer instanceof Trainer || sprite.parentContainer instanceof MysteryEncounterIntroVisuals;
     const field = isEntityObj ? sprite.parentContainer.parentContainer : sprite.parentContainer;
     const position = isEntityObj
       ? [ sprite.parentContainer.x, sprite.parentContainer.y ]
@@ -376,6 +380,7 @@ export default class SpritePipeline extends FieldSpritePipeline {
     this.set2f("size", sprite.frame.width, sprite.height);
     this.set2f("texSize", sprite.texture.source[0].width, sprite.texture.source[0].height);
     this.set1f("yOffset", sprite.height - sprite.frame.height * (isEntityObj ? sprite.parentContainer.scale : sprite.scale));
+    this.set1f("yShadowOffset", yShadowOffset ?? 0);
     this.set4fv("tone", tone);
     this.bindTexture(this.game.textures.get("tera").source[0].glTexture!, 1); // TODO: is this bang correct?
 
@@ -447,14 +452,15 @@ export default class SpritePipeline extends FieldSpritePipeline {
     this.set1f("vCutoff", v1);
 
     const hasShadow = sprite.pipelineData["hasShadow"] as boolean;
+    const yShadowOffset = sprite.pipelineData["yShadowOffset"] as number ?? 0;
     if (hasShadow) {
-      const isEntityObj = sprite.parentContainer instanceof Pokemon || sprite.parentContainer instanceof Trainer;
+      const isEntityObj = sprite.parentContainer instanceof Pokemon || sprite.parentContainer instanceof Trainer || sprite.parentContainer instanceof MysteryEncounterIntroVisuals;
       const field = isEntityObj ? sprite.parentContainer.parentContainer : sprite.parentContainer;
       const fieldScaleRatio = field.scale / 6;
       const baseY = (isEntityObj
         ? sprite.parentContainer.y
         : sprite.y + sprite.height) * 6 / fieldScaleRatio;
-      const bottomPadding = Math.ceil(sprite.height * 0.05) * 6 / fieldScaleRatio;
+      const bottomPadding = Math.ceil(sprite.height * 0.05 + Math.max(yShadowOffset, 0)) * 6 / fieldScaleRatio;
       const yDelta = (baseY - y1) / field.scale;
       y2 = y1 = baseY + bottomPadding;
       const pixelHeight = (v1 - v0) / (sprite.frame.height * (isEntityObj ? sprite.parentContainer.scale : sprite.scale));
