@@ -43,7 +43,7 @@ describe("Moves - Obstruct", () => {
     expect(enemy.getStatStage(Stat.DEF)).toBe(-2);
   }, TIMEOUT);
 
-  it("obstruct miss test, should still reduce defense despite missed attack", async () => {
+  it("bypasses accuracy checks when applying protection and defense reduction", async () => {
     game.override.enemyMoveset(Array(4).fill(Moves.ICE_PUNCH));
     await game.classicMode.startBattle();
 
