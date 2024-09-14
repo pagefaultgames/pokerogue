@@ -34,7 +34,7 @@ describe("Moves - Beak Blast", () => {
       .moveset([Moves.BEAK_BLAST])
       .enemySpecies(Species.SNORLAX)
       .enemyAbility(Abilities.INSOMNIA)
-      .enemyMoveset(Array(4).fill(Moves.TACKLE))
+      .enemyMoveset([Moves.TACKLE])
       .startingLevel(100)
       .enemyLevel(100);
   });
@@ -80,7 +80,7 @@ describe("Moves - Beak Blast", () => {
   it(
     "should not burn attackers that don't make contact",
     async () => {
-      game.override.enemyMoveset(Array(4).fill(Moves.WATER_GUN));
+      game.override.enemyMoveset([Moves.WATER_GUN]);
 
       await game.startBattle([Species.BLASTOISE]);
 
@@ -116,7 +116,7 @@ describe("Moves - Beak Blast", () => {
   it(
     "should be blocked by Protect",
     async () => {
-      game.override.enemyMoveset(Array(4).fill(Moves.PROTECT));
+      game.override.enemyMoveset([Moves.PROTECT]);
 
       await game.startBattle([Species.BLASTOISE]);
 

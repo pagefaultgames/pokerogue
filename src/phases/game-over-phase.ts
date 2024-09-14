@@ -49,7 +49,9 @@ export class GameOverPhase extends BattlePhase {
     }
 
     if (this.victory && this.scene.gameMode.isEndless) {
-      this.scene.ui.showDialogue(i18next.t("PGMmiscDialogue:ending_endless"), i18next.t("PGMmiscDialogue:ending_name"), 0, () => this.handleGameOver());
+      const genderIndex = this.scene.gameData.gender ?? PlayerGender.UNSET;
+      const genderStr = PlayerGender[genderIndex].toLowerCase();
+      this.scene.ui.showDialogue(i18next.t("miscDialogue:ending_endless", { context: genderStr }), i18next.t("miscDialogue:ending_name"), 0, () => this.handleGameOver());
     } else if (this.victory || !this.scene.enableRetries) {
       this.handleGameOver();
     } else {
@@ -235,7 +237,9 @@ export class GameOverPhase extends BattlePhase {
       trainer: this.scene.currentBattle.battleType === BattleType.TRAINER ? new TrainerData(this.scene.currentBattle.trainer) : null,
       gameVersion: this.scene.game.config.gameVersion,
       timestamp: new Date().getTime(),
-      challenges: this.scene.gameMode.challenges.map(c => new ChallengeData(c))
+      challenges: this.scene.gameMode.challenges.map(c => new ChallengeData(c)),
+      mysteryEncounterType: this.scene.currentBattle.mysteryEncounter?.encounterType,
+      mysteryEncounterSaveData: this.scene.mysteryEncounterSaveData
     } as SessionSaveData;
   }
 }

@@ -6,7 +6,6 @@ import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { Moves } from "#enums/moves";
 import { Stat } from "#enums/stat";
 import { Abilities } from "#enums/abilities";
-import { SPLASH_ONLY } from "../utils/testUtils";
 
 describe("Moves - Power Split", () => {
   let phaserGame: Phaser.Game;
@@ -34,7 +33,7 @@ describe("Moves - Power Split", () => {
   });
 
   it("should average the user's ATK and SPATK stats with those of the target", async () => {
-    game.override.enemyMoveset(SPLASH_ONLY);
+    game.override.enemyMoveset(Moves.SPLASH);
     await game.startBattle([
       Species.INDEEDEE
     ]);
@@ -56,7 +55,7 @@ describe("Moves - Power Split", () => {
   }, 20000);
 
   it("should be idempotent", async () => {
-    game.override.enemyMoveset(new Array(4).fill(Moves.POWER_SPLIT));
+    game.override.enemyMoveset([Moves.POWER_SPLIT]);
     await game.startBattle([
       Species.INDEEDEE
     ]);

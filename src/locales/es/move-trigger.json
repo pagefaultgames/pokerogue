@@ -12,5 +12,6 @@
   "stoleItem": "¡{{pokemonName}} robó el objeto\n{{itemName}} de {{targetName}}!",
   "statEliminated": "¡Los cambios en estadísticas fueron eliminados!",
   "revivalBlessing": "¡{{pokemonName}} ha revivido!",
-  "safeguard": "¡{{targetName}} está protegido por Velo Sagrado!"
+  "safeguard": "¡{{targetName}} está protegido por Velo Sagrado!",
+  "afterYou": "¡{{pokemonName}} ha decidido aprovechar la oportunidad!"
 }
