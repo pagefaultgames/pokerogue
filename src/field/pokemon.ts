@@ -5,12 +5,12 @@ import { variantData } from "#app/data/variant";
 import BattleInfo, { PlayerBattleInfo, EnemyBattleInfo } from "../ui/battle-info";
 import Move, { HighCritAttr, HitsTagAttr, applyMoveAttrs, FixedDamageAttr, VariableAtkAttr, allMoves, MoveCategory, TypelessAttr, CritOnlyAttr, getMoveTargets, OneHitKOAttr, VariableMoveTypeAttr, VariableDefAttr, AttackMove, ModifiedDamageAttr, VariableMoveTypeMultiplierAttr, IgnoreOpponentStatStagesAttr, SacrificialAttr, VariableMoveCategoryAttr, CounterDamageAttr, StatStageChangeAttr, RechargeAttr, ChargeAttr, IgnoreWeatherTypeDebuffAttr, BypassBurnDamageReductionAttr, SacrificialAttrOnHit, OneHitKOAccuracyAttr, RespectAttackTypeImmunityAttr } from "../data/move";
 import { default as PokemonSpecies, PokemonSpeciesForm, SpeciesFormKey, getFusedSpeciesName, getPokemonSpecies, getPokemonSpeciesForm, getStarterValueFriendshipCap, speciesStarters, starterPassiveAbilities } from "../data/pokemon-species";
-import { Constructor } from "#app/utils";
+import { Constructor, isNullOrUndefined, randSeedInt } from "#app/utils";
 import * as Utils from "../utils";
 import { Type, TypeDamageMultiplier, getTypeDamageMultiplier, getTypeRgb } from "../data/type";
 import { getLevelTotalExp } from "../data/exp";
 import { Stat, type PermanentStat, type BattleStat, type EffectiveStat, PERMANENT_STATS, BATTLE_STATS, EFFECTIVE_STATS } from "#enums/stat";
-import { DamageMoneyRewardModifier, EnemyDamageBoosterModifier, EnemyDamageReducerModifier, EnemyEndureChanceModifier, EnemyFusionChanceModifier, HiddenAbilityRateBoosterModifier, BaseStatModifier, PokemonFriendshipBoosterModifier, PokemonHeldItemModifier, PokemonNatureWeightModifier, ShinyRateBoosterModifier, SurviveDamageModifier, TempStatStageBoosterModifier, TempCritBoosterModifier, StatBoosterModifier, CritBoosterModifier, TerastallizeModifier } from "../modifier/modifier";
+import { DamageMoneyRewardModifier, EnemyDamageBoosterModifier, EnemyDamageReducerModifier, EnemyEndureChanceModifier, EnemyFusionChanceModifier, HiddenAbilityRateBoosterModifier, BaseStatModifier, PokemonFriendshipBoosterModifier, PokemonHeldItemModifier, PokemonNatureWeightModifier, ShinyRateBoosterModifier, SurviveDamageModifier, TempStatStageBoosterModifier, TempCritBoosterModifier, StatBoosterModifier, CritBoosterModifier, TerastallizeModifier, PokemonBaseStatFlatModifier, PokemonBaseStatTotalModifier, PokemonIncrementingStatModifier } from "../modifier/modifier";
 import { PokeballType } from "../data/pokeball";
 import { Gender } from "../data/gender";
 import { initMoveAnim, loadMoveAnimAssets } from "../data/battle-anims";
@@ -60,6 +60,7 @@ import { ToggleDoublePositionPhase } from "#app/phases/toggle-double-position-ph
 import { Challenges } from "#enums/challenges";
 import { PokemonAnimType } from "#app/enums/pokemon-anim-type";
 import { PLAYER_PARTY_MAX_SIZE } from "#app/constants";
+import { MysteryEncounterPokemonData } from "#app/data/mystery-encounters/mystery-encounter-pokemon-data";
 
 export enum FieldPosition {
   CENTER,
@@ -113,6 +114,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   public battleData: PokemonBattleData;
   public battleSummonData: PokemonBattleSummonData;
   public turnData: PokemonTurnData;
+  public mysteryEncounterPokemonData: MysteryEncounterPokemonData;
+
+  /** Used by Mystery Encounters to execute pokemon-specific logic (such as stat boosts) at start of battle */
+  public mysteryEncounterBattleEffects?: (pokemon: Pokemon) => void;
 
   public fieldPosition: FieldPosition;
 
@@ -198,6 +203,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       this.fusionGender = dataSource.fusionGender;
       this.fusionLuck = dataSource.fusionLuck;
       this.usedTMs = dataSource.usedTMs ?? [];
+      this.mysteryEncounterPokemonData = new MysteryEncounterPokemonData(dataSource.mysteryEncounterPokemonData);
     } else {
       this.id = Utils.randSeedInt(4294967296);
       this.ivs = ivs || Utils.getIvsFromId(this.id);
@@ -217,6 +223,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       if (this.variant === undefined) {
         this.variant = this.shiny ? this.generateVariant() : 0;
       }
+
+      this.mysteryEncounterPokemonData = new MysteryEncounterPokemonData();
 
       if (nature !== undefined) {
         this.setNature(nature);
@@ -319,9 +327,18 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * @returns {boolean} True if pokemon is allowed in battle
    */
   isAllowedInBattle(): boolean {
+    return !this.isFainted() && this.isAllowed();
+  }
+
+  /**
+   * Check if this pokemon is allowed (no challenge exclusion)
+   * This is frequently a better alternative to {@link isFainted}
+   * @returns {boolean} True if pokemon is allowed in battle
+   */
+  isAllowed(): boolean {
     const challengeAllowed = new Utils.BooleanHolder(true);
     applyChallenges(this.scene.gameMode, ChallengeType.POKEMON_IN_BATTLE, this, challengeAllowed);
-    return !this.isFainted() && !this.wildFlee && challengeAllowed.value;
+    return !this.wildFlee && challengeAllowed.value;
   }
 
   isActive(onField?: boolean): boolean {
@@ -532,10 +549,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     if (!ignoreOverride && this.summonData?.speciesForm) {
       return this.summonData.speciesForm;
     }
-    if (!this.species.forms?.length) {
-      return this.species;
+    if (this.species.forms && this.species.forms.length > 0) {
+      return this.species.forms[this.formIndex];
     }
-    return this.species.forms[this.formIndex];
+
+    return this.species;
   }
 
   getFusionSpeciesForm(ignoreOverride?: boolean): PokemonSpeciesForm {
@@ -563,6 +581,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     const formKey = this.getFormKey();
     if (formKey.indexOf(SpeciesFormKey.GIGANTAMAX) > -1 || formKey.indexOf(SpeciesFormKey.ETERNAMAX) > -1) {
       return 1.5;
+    } else if (this.mysteryEncounterPokemonData.spriteScale > 0) {
+      return this.mysteryEncounterPokemonData.spriteScale;
     }
     return 1;
   }
@@ -922,19 +942,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     }
 
     // Get and manipulate base stats
-    const baseStats = this.getSpeciesForm(true).baseStats.slice();
-    if (this.isFusion()) {
-      const fusionBaseStats = this.getFusionSpeciesForm(true).baseStats;
-      for (const s of PERMANENT_STATS) {
-        baseStats[s] = Math.ceil((baseStats[s] + fusionBaseStats[s]) / 2);
-      }
-    } else if (this.scene.gameMode.isSplicedOnly) {
-      for (const s of PERMANENT_STATS) {
-        baseStats[s] = Math.ceil(baseStats[s] / 2);
-      }
-    }
-    this.scene.applyModifiers(BaseStatModifier, this.isPlayer(), this, baseStats);
-
+    const baseStats = this.calculateBaseStats();
     // Using base stats, calculate and store stats one by one
     for (const s of PERMANENT_STATS) {
       let value = Math.floor(((2 * baseStats[s] + this.ivs[s]) * this.level) * 0.01);
@@ -962,6 +970,29 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
       this.setStat(s, value);
     }
+    this.scene.applyModifier(PokemonIncrementingStatModifier, this.isPlayer(), this, this.stats);
+  }
+
+  calculateBaseStats(): number[] {
+    const baseStats = this.getSpeciesForm(true).baseStats.slice(0);
+    // Shuckle Juice
+    this.scene.applyModifiers(PokemonBaseStatTotalModifier, this.isPlayer(), this, baseStats);
+    // Old Gateau
+    this.scene.applyModifiers(PokemonBaseStatFlatModifier, this.isPlayer(), this, baseStats);
+    if (this.isFusion()) {
+      const fusionBaseStats = this.getFusionSpeciesForm(true).baseStats;
+      for (const s of PERMANENT_STATS) {
+        baseStats[s] = Math.ceil((baseStats[s] + fusionBaseStats[s]) / 2);
+      }
+    } else if (this.scene.gameMode.isSplicedOnly) {
+      for (const s of PERMANENT_STATS) {
+        baseStats[s] = Math.ceil(baseStats[s] / 2);
+      }
+    }
+    // Vitamins
+    this.scene.applyModifiers(BaseStatModifier, this.isPlayer(), this, baseStats);
+
+    return baseStats;
   }
 
   getNature(): Nature {
@@ -1129,7 +1160,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     }
 
     if (!types.length || !includeTeraType) {
-      if (!ignoreOverride && this.summonData?.types && this.summonData.types.length !== 0) {
+      if (this.mysteryEncounterPokemonData.types && this.mysteryEncounterPokemonData.types.length > 0) {
+        // "Permanent" override for a Pokemon's normal types, currently only used by Mystery Encounters
+        this.mysteryEncounterPokemonData.types.forEach(t => types.push(t));
+      } else if (!ignoreOverride && this.summonData?.types && this.summonData.types.length > 0) {
         this.summonData.types.forEach(t => types.push(t));
       } else {
         const speciesForm = this.getSpeciesForm(ignoreOverride);
@@ -1190,6 +1224,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     if (Overrides.OPP_ABILITY_OVERRIDE && !this.isPlayer()) {
       return allAbilities[Overrides.OPP_ABILITY_OVERRIDE];
     }
+    if (!isNullOrUndefined(this.mysteryEncounterPokemonData.ability) && this.mysteryEncounterPokemonData.ability !== -1) {
+      return allAbilities[this.mysteryEncounterPokemonData.ability];
+    }
     if (this.isFusion()) {
       return allAbilities[this.getFusionSpeciesForm(ignoreOverride).getAbility(this.fusionAbilityIndex)];
     }
@@ -1213,6 +1250,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     }
     if (Overrides.OPP_PASSIVE_ABILITY_OVERRIDE && !this.isPlayer()) {
       return allAbilities[Overrides.OPP_PASSIVE_ABILITY_OVERRIDE];
+    }
+    if (!isNullOrUndefined(this.mysteryEncounterPokemonData.passive) && this.mysteryEncounterPokemonData.passive !== -1) {
+      return allAbilities[this.mysteryEncounterPokemonData.passive];
     }
 
     let starterSpeciesId = this.species.speciesId;
@@ -1704,6 +1744,15 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
 
+  /**
+   * Get a list of all egg moves
+   *
+   * @returns list of egg moves
+   */
+  getEggMoves() : Moves[] {
+    return speciesEggMoves[this.species.speciesId];
+  }
+
   setMove(moveIndex: integer, moveId: Moves): void {
     const move = moveId ? new PokemonMove(moveId) : null;
     this.moveset[moveIndex] = move;
@@ -1750,6 +1799,42 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     }
 
     this.shiny = (E ^ F) < shinyThreshold.value;
+
+    if (this.shiny) {
+      this.initShinySparkle();
+    }
+
+    return this.shiny;
+  }
+
+  /**
+   * Function that tries to set a Pokemon shiny based on seed.
+   * For manual use only, usually to roll a Pokemon's shiny chance a second time.
+   *
+   * The base shiny odds are {@linkcode baseShinyChance} / 65536
+   * @param thresholdOverride number that is divided by 2^16 (65536) to get the shiny chance, overrides {@linkcode shinyThreshold} if set (bypassing shiny rate modifiers such as Shiny Charm)
+   * @param applyModifiersToOverride If {@linkcode thresholdOverride} is set and this is true, will apply Shiny Charm and event modifiers to {@linkcode thresholdOverride}
+   * @returns true if the Pokemon has been set as a shiny, false otherwise
+   */
+  trySetShinySeed(thresholdOverride?: integer, applyModifiersToOverride?: boolean): boolean {
+    /** `64/65536 -> 1/1024` */
+    const baseShinyChance = 64;
+    const shinyThreshold = new Utils.IntegerHolder(baseShinyChance);
+    if (thresholdOverride === undefined || applyModifiersToOverride) {
+      if (thresholdOverride !== undefined && applyModifiersToOverride) {
+        shinyThreshold.value = thresholdOverride;
+      }
+      if (this.scene.eventManager.isEventActive()) {
+        shinyThreshold.value *= this.scene.eventManager.getShinyMultiplier();
+      }
+      if (!this.hasTrainer()) {
+        this.scene.applyModifiers(ShinyRateBoosterModifier, true, shinyThreshold);
+      }
+    } else {
+      shinyThreshold.value = thresholdOverride;
+    }
+
+    this.shiny = randSeedInt(65536) < shinyThreshold.value;
 
     if (this.shiny) {
       this.initShinySparkle();
@@ -2041,7 +2126,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   hideInfo(): Promise<void> {
     return new Promise(resolve => {
-      if (this.battleInfo.visible) {
+      if (this.battleInfo && this.battleInfo.visible) {
         this.scene.tweens.add({
           targets: [ this.battleInfo, this.battleInfo.expMaskRect ],
           x: this.isPlayer() ? "+=150" : `-=${!this.isBoss() ? 150 : 246}`,
@@ -4732,6 +4817,7 @@ export class PokemonSummonData {
   public speciesForm: PokemonSpeciesForm | null;
   public fusionSpeciesForm: PokemonSpeciesForm;
   public ability: Abilities = Abilities.NONE;
+  public passiveAbility: Abilities = Abilities.NONE;
   public gender: Gender;
   public fusionGender: Gender;
   public stats: number[] = [ 0, 0, 0, 0, 0, 0 ];
