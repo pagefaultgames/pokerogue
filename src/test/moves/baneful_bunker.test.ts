@@ -38,7 +38,7 @@ describe("Moves - Baneful Bunker", () => {
     game.override.enemyLevel(100);
   });
   test(
-    "Baneful Bunker test",
+    "should protect the user and poison attackers that make contact",
     async () => {
       await game.classicMode.startBattle([Species.CHARIZARD]);
 
@@ -47,14 +47,14 @@ describe("Moves - Baneful Bunker", () => {
 
       game.move.select(Moves.SLASH);
       await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
-      await game.phaseInterceptor.to("MoveEffectPhase");
-      await game.phaseInterceptor.to("TurnEndPhase");
+      await game.phaseInterceptor.to("BerryPhase", false);
+
       expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp());
       expect(leadPokemon.status?.effect  === StatusEffect.POISON).toBeTruthy();
     }, TIMEOUT
   );
   test(
-    "Baneful Bunker miss test",
+    "should protect the user and poison attackers that make contact, regardless of accuracy checks",
     async () => {
       await game.classicMode.startBattle([Species.CHARIZARD]);
 
@@ -66,14 +66,14 @@ describe("Moves - Baneful Bunker", () => {
       await game.phaseInterceptor.to("MoveEffectPhase");
 
       await game.move.forceMiss();
-      await game.phaseInterceptor.to("TurnEndPhase");
+      await game.phaseInterceptor.to("BerryPhase", false);
       expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp());
       expect(leadPokemon.status?.effect  === StatusEffect.POISON).toBeTruthy();
     }, TIMEOUT
   );
 
   test(
-    "Baneful Bunker miss test with non contact attack",
+    "should not poison attackers that don't make contact",
     async () => {
       game.override.moveset(Moves.FLASH_CANNON);
       await game.classicMode.startBattle([Species.CHARIZARD]);
@@ -86,7 +86,7 @@ describe("Moves - Baneful Bunker", () => {
       await game.phaseInterceptor.to("MoveEffectPhase");
 
       await game.move.forceMiss();
-      await game.phaseInterceptor.to("TurnEndPhase");
+      await game.phaseInterceptor.to("BerryPhase", false);
       expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp());
       expect(leadPokemon.status?.effect  === StatusEffect.POISON).toBeFalsy();
     }, TIMEOUT
