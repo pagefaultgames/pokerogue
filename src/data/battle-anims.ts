@@ -910,7 +910,7 @@ export abstract class BattleAnim {
               const sprites = spriteCache[isUser ? AnimFrameTarget.USER : AnimFrameTarget.TARGET];
               const spriteSource = isUser ? userSprite : targetSprite;
               if ((isUser ? u : t) === sprites.length) {
-                if (!isUser && !!targetSubstitute) {
+                if (isUser || !targetSubstitute) {
                   const sprite = scene.addPokemonSprite(isUser ? user! : target, 0, 0, spriteSource!.texture, spriteSource!.frame.name, true); // TODO: are those bangs correct?
                   [ "spriteColors", "fusionSpriteColors" ].map(k => sprite.pipelineData[k] = (isUser ? user! : target).getSprite().pipelineData[k]); // TODO: are those bangs correct?
                   sprite.setPipelineData("spriteKey", (isUser ? user! : target).getBattleSpriteKey());

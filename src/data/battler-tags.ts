@@ -2238,8 +2238,8 @@ export class SubstituteTag extends BattlerTag {
     pokemon.scene.triggerPokemonBattleAnim(pokemon, PokemonAnimType.SUBSTITUTE_ADD);
     pokemon.scene.queueMessage(i18next.t("battlerTags:substituteOnAdd", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }), 1500);
 
-    // Remove any trapping effects from the user
-    pokemon.findAndRemoveTags(tag => tag instanceof TrappedTag);
+    // Remove any binding effects from the user
+    pokemon.findAndRemoveTags(tag => tag instanceof DamagingTrapTag);
   }
 
   /** Queues an on-remove battle animation that removes the Substitute's sprite. */

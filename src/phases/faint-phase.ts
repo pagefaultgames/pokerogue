@@ -124,9 +124,6 @@ export class FaintPhase extends PokemonPhase {
       this.scene.redirectPokemonMoves(pokemon, allyPokemon);
     }
 
-    pokemon.lapseTags(BattlerTagLapseType.FAINT);
-    this.scene.getField(true).filter(p => p !== pokemon).forEach(p => p.removeTagsBySourceId(pokemon.id));
-
     pokemon.faintCry(() => {
       if (pokemon instanceof PlayerPokemon) {
         pokemon.addFriendship(-10);
@@ -140,6 +137,9 @@ export class FaintPhase extends PokemonPhase {
         ease: "Sine.easeIn",
         onComplete: () => {
           pokemon.resetSprite();
+          pokemon.lapseTags(BattlerTagLapseType.FAINT);
+          this.scene.getField(true).filter(p => p !== pokemon).forEach(p => p.removeTagsBySourceId(pokemon.id));
+
           pokemon.y -= 150;
           pokemon.trySetStatus(StatusEffect.FAINT);
           if (pokemon.isPlayer()) {
