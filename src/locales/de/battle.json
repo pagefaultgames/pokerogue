@@ -14,10 +14,10 @@
   "moneyWon": "Du gewinnst {{moneyAmount}} ₽!",
   "moneyPickedUp": "Du hebst {{moneyAmount}} ₽ auf!",
   "pokemonCaught": "{{pokemonName}} wurde gefangen!",
-  "pokemonObtained": "You got {{pokemonName}}!",
-  "pokemonBrokeFree": "Oh no!\nThe Pokémon broke free!",
-  "pokemonFled": "The wild {{pokemonName}} fled!",
-  "playerFled": "You fled from the {{pokemonName}}!",
+  "pokemonObtained": "Du erhältst {{pokemonName}}!",
+  "pokemonBrokeFree": "Mist!\nDas Pokémon hat sich befreit!",
+  "pokemonFled": "Das wilde {{pokemonName}} ist geflohen!",
+  "playerFled": "Du bist vor dem wilden {{pokemonName}} geflohen!",
   "addedAsAStarter": "{{pokemonName}} wurde als Starterpokémon hinzugefügt!",
   "partyFull": "Dein Team ist voll. Möchtest du ein Pokémon durch {{pokemonName}} ersetzen?",
   "pokemon": "Pokémon",
@@ -102,5 +102,5 @@
   "congratulations": "Glückwunsch!",
   "beatModeFirstTime": "{{speciesName}} hat den {{gameMode}} Modus zum ersten Mal beendet! Du erhältst {{newModifier}}!",
   "eggSkipPrompt": "Zur Ei-Zusammenfassung springen?",
-  "mysteryEncounterAppeared": "What's this?"
+  "mysteryEncounterAppeared": "Was ist das?"
 }
