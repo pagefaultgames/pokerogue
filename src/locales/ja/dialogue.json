@@ -2734,7 +2734,7 @@
   },
   "rival_2": {
     "encounter": {
-      "1": "@c{smile}おや、なんと　グウゼン。\n@c{smile_eclosed}今までも　パーフェクトに　勝った　ようだな……\n$@c{serious_mopen_fists}なんか　忍び寄った　みたいだとは　分かるけど、　そんなことない…　ほとんどはな。\n$@c{serious_smile_fists}ぶっちゃけ言うと、　オレが　負けた時から　再戦したくて　ウズウズしてたぜ。\n$張り切って　特訓したから　今は　ちゃんと　勢い　見せるんだ。\n$@c{serious_mopen_fists}今回も　遠慮しな！\n行こうぜ！"
+      "1": "@c{smile}おや、なんと　グウゼン。\n@c{smile_eclosed}今までも　パーフェクトに　勝った　ようだな……\n$@c{serious_mopen_fists}なんか　忍び寄った　みたいだとは　分かるけど、　そんなことない…　ほとんどはな。\n$@c{serious_smile_fists}ぶっちゃけ言うと、　おれが　負けた時から　再戦したくて　ウズウズしてたぜ。\n$張り切って　特訓したから　今は　ちゃんと　勢い　見せるんだ。\n$@c{serious_mopen_fists}今回も　遠慮しな！\n行こうぜ！"
     },
     "victory": {
       "1": "@c{neutral_eclosed}あ。　自信過剰かも。\n$@c{smile}いいけどさ、　こうなるのを　見込んだから。\n@c{serious_mopen_fists}次回まで　もっと頑張らなくちゃ　ってことだよな！\n\n$@c{smile}きっと　助け　要らないんだが、　もう一つの　アイテムが　欲しいかと　思ったから　あげるぜ。\n\n$@c{serious_smile_fists}でも　これで　ラストだ！\n相手に　利点を　あげ続けると　行けないんだろう！"
@@ -2772,10 +2772,10 @@
   },
   "rival_4": {
     "encounter": {
-      "1": "@c{neutral}Hey.\n$I won't mince words or pleasantries with you.\n@c{neutral_eclosed}I'm here to win, plain and simple.\n$@c{serious_mhalf_fists}I've learned to maximize my potential by putting all my time into training.\n$@c{smile}You get a lot of extra time when you cut out the unnecessary sleep and social interaction.\n$@c{serious_mopen_fists}None of that matters anymore, not until I win.\n$@c{neutral_eclosed}I've even reached the point where I don't lose anymore.\n@c{smile_eclosed}I suppose your philosophy wasn't so wrong after all.\n$@c{angry_mhalf}Losing is for the weak, and I'm not weak anymore.\n$@c{serious_mopen_fists}Prepare yourself."
+      "1": "@c{neutral}よっ。\n$歯に　衣着せない。\n@c{neutral_eclosed}キミに　勝つために　ここに　来た、それだけ。\n$@c{serious_mhalf_fists}地力を　最大限に　引き出す　ために\n全労力を　費やして　訓練していた。\n$@c{smile}不要な　睡眠や　社会性なんか　抜くと　訓練の　時間は　割と　増えるね。\n$@c{serious_mopen_fists}そんなことは　勝てるときまで　全部　どうでもない。\n$@c{neutral_eclosed}今　負けられないとこまで　やって来た。\n@c{smile_eclosed}キミの　考え方は　違いない　ようだね。\n$@c{angry_mhalf}負けるのは　弱き者。　おれは　もう　弱くない。\n$@c{serious_mopen_fists}覚悟せよ。"
     },
     "victory": {
-      "1": "@c{neutral}What…@d{64} What are you?"
+      "1": "@c{neutral}一体…@d{64} 何モノか……？"
     }
   },
   "rival_4_female": {
@@ -2783,7 +2783,7 @@
       "1": "@c{neutral}アタシよ！　また　忘れちゃった…　のね？\n$@c{smile}こんな　遠くまで　来たのは　鼻が高いことだよ！　おめでと～\nしかし、　ここは　終着点だね。\n$@c{smile_eclosed}アタシの　中にある　全然　知らなかった　部分を　目覚めたよ。\n今は、　トレーニングしか　してないみたい。\n$@c{smile_ehalf}食べたり　寝たりも　しなくて　朝から晩まで　ポケモンを　育って、　毎日　昨日より　強くなってる。\n$@c{neutral}実は…　もう　自分　認識できない。\n$結局、　峠を越して　まるで　カミに　なった。\n今は　誰にも　アタシを　倒せないと　思う。\n$ねえ、分かる？　全ては　アンタの　お陰で。\n@c{smile_ehalf}お礼を言うか　アンタのこと嫌いか　どうしたらいいの　分からない。\n$@c{angry_mopen}覚悟しなさい。"
     },
     "victory": {
-      "1": "@c{neutral}一体…@d{64} 何モノか…？"
+      "1": "@c{neutral}一体…@d{64} 何モノか……？"
     },
     "defeat": {
       "1": "$@c{smile}ここまで　頑張ってたのを　誇りに思ってね。"
