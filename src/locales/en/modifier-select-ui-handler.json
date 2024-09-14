@@ -8,5 +8,7 @@
   "lockRaritiesDesc": "Lock item rarities on reroll (affects reroll cost).",
   "checkTeamDesc": "Check your team or use a form changing item.",
   "rerollCost": "₽{{formattedMoney}}",
-  "itemCost": "₽{{formattedMoney}}"
+  "itemCost": "₽{{formattedMoney}}",
+  "continueNextWaveButton": "Continue",
+  "continueNextWaveDescription": "Continue to the next wave."
 }

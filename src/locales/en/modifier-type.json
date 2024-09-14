@@ -68,6 +68,20 @@
     "BaseStatBoosterModifierType": {
       "description": "Increases the holder's base {{stat}} by 10%. The higher your IVs, the higher the stack limit."
     },
+    "PokemonBaseStatTotalModifierType": {
+      "name": "Shuckle Juice",
+      "description": "{{increaseDecrease}} all of the holder's base stats by {{statValue}}. You were {{blessCurse}} by the Shuckle.",
+      "extra": {
+        "increase": "Increases",
+        "decrease": "Decreases",
+        "blessed": "blessed",
+        "cursed": "cursed"
+      }
+    },
+    "PokemonBaseStatFlatModifierType": {
+      "name": "Old Gateau",
+      "description": "Increases the holder's {{stats}} base stats by {{statValue}}. Found after a strange dream."
+    },
     "AllPokemonFullHpRestoreModifierType": {
       "description": "Restores 100% HP for all Pokémon."
     },
@@ -247,7 +261,13 @@
     "ENEMY_ATTACK_BURN_CHANCE": { "name": "Burn Token" },
     "ENEMY_STATUS_EFFECT_HEAL_CHANCE": { "name": "Full Heal Token", "description": "Adds a 2.5% chance every turn to heal a status condition." },
     "ENEMY_ENDURE_CHANCE": { "name": "Endure Token" },
-    "ENEMY_FUSED_CHANCE": { "name": "Fusion Token", "description": "Adds a 1% chance that a wild Pokémon will be a fusion." }
+    "ENEMY_FUSED_CHANCE": { "name": "Fusion Token", "description": "Adds a 1% chance that a wild Pokémon will be a fusion." },
+
+    "MYSTERY_ENCOUNTER_SHUCKLE_JUICE": { "name": "Shuckle Juice" },
+    "MYSTERY_ENCOUNTER_BLACK_SLUDGE": { "name": "Black Sludge", "description": "The stench is so powerful that shops will only sell you items at a steep cost increase." },
+    "MYSTERY_ENCOUNTER_MACHO_BRACE": { "name": "Macho Brace", "description": "Defeating a Pokémon grants the holder a Macho Brace stack. Each stack slightly boosts stats, with an extra bonus at max stacks." },
+    "MYSTERY_ENCOUNTER_OLD_GATEAU": { "name": "Old Gateau", "description": "Increases the holder's {{stats}} stats by {{statValue}}." },
+    "MYSTERY_ENCOUNTER_GOLDEN_BUG_NET": { "name": "Golden Bug Net", "description": "Imbues the owner with luck to find Bug Type Pokémon more often. Has a strange heft to it." }
   },
   "SpeciesBoosterItem": {
     "LIGHT_BALL": { "name": "Light Ball", "description": "It's a mysterious orb that boosts Pikachu's Attack and Sp. Atk stats." },
