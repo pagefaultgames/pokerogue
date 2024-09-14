@@ -40,227 +40,227 @@
   },
   "lass": {
     "encounter": {
-      "1": "Let's have a battle, shall we?",
-      "2": "You look like a new trainer. Let's have a battle!",
-      "2_female": "You look like a new trainer. Let's have a battle!",
-      "3": "I don't recognize you. How about a battle?",
-      "4": "Let's have a fun Pokémon battle!",
-      "5": "I'll show you the ropes of how to really use Pokémon!",
-      "6": "A serious battle starts from a serious beginning! Are you sure you're ready?",
-      "6_female": "A serious battle starts from a serious beginning! Are you sure you're ready?",
-      "7": "You're only young once. And you only get one shot at a given battle. Soon, you'll be nothing but a memory.",
-      "8": "You'd better go easy on me, OK? Though I'll be seriously fighting!",
-      "9": "School is boring. I've got nothing to do. Yawn. I'm only battling to kill the time."
+      "1": "勝負しない？",
+      "2": "新人　トレーナーだろう？　勝負しよう！",
+      "2_female": "新しい　トレーナーだろう？　勝負しよう！",
+      "3": "初めて　見る　顔ね！ 勝負しない？",
+      "4": "ドッキドキで　ワックワクな\nポケモン勝負に　しよう！",//ORAS
+      "5": "手取り　足取り　教えて　あげる！\nホントの　ポケモンの　使いかた！",//ORAS
+      "6": "マジの　勝負　マジ始めっからー\n準備とか　覚悟とか　オーケー？",//ORAS
+      "6_female": "マジの　勝負　マジ始めっからー\n準備とか　覚悟とか　オーケー？",
+      "7": "青春も　バトルも　一度きり！！\nあなたを　思い出に　させて！！",//ORAS
+      "8": "あんた　ちょっとは　手加減してよ…\nあたしは　本気で　いくけど！", //ORAS
+      "9": "学校　タルいし　やることないし\nヒマだけあるから　バトルしてんの。"//ORAS
     },
     "victory": {
-      "1": "That was impressive! I've got a lot to learn.",
-      "2": "I didn't think you'd beat me that bad…",
-      "2_female": "I didn't think you'd beat me that bad…",
-      "3": "I hope we get to have a rematch some day.",
-      "4": "That was pretty amazingly fun! You've totally exhausted me…",
-      "5": "You actually taught me a lesson! You're pretty amazing!",
-      "6": "Seriously, I lost. That is, like, seriously depressing, but you were seriously cool.",
-      "6_female": "Seriously, I lost. That is, like, seriously depressing, but you were seriously cool.",
-      "7": "I don't need memories like this. Deleting memory…",
-      "8": "Hey! I told you to go easy on me! Still, you're pretty cool when you're serious.",
-      "8_female": "Hey! I told you to go easy on me! Still, you're pretty cool when you're serious.",
-      "9": "I'm actually getting tired of battling… There's gotta be something new to do…"
+      "1": "すごい！ 覚えること　いっぱいね。",
+      "2": "新人に　こんなに　ぶっ壊されて　なんて……",
+      "2_female": "新人に　こんなに　ぶっ壊されて　なんて……",
+      "3": "またいつか　勝負を　できると　いいね！",
+      "4": "キミに　ドッキ　ドキドキ\n私は　ボッロ　ボロボロ……",//ORAS
+      "5": "逆に　教えられちゃった！\nキミって　結構　スゴいんだ！", //ORAS
+      "6": "マジ負けてる　マジ凹む　マジ辛い\nでも　アンタは　マジで　イケてるかも。",
+      "6_female": "マジ負けてる　マジ凹む　マジ辛い\nでも　アンタは　マジで　イケてるかも。",
+      "7": "こんな　思い出　いらないし\n記憶から　消しちゃおっと…",
+      "8": "ぷんぷん！　手加減してよね！！\n……本気の　あんたも　いいけどさ。",
+      "8_female": "ぷんぷん！　手加減してよね！！\n……本気の　あんたも　いいけどさ。",
+      "9": "バトルも　そろそろ　あきたわ　実際…\n何か　新しいこと　とか　ない？"
     }
   },
   "breeder": {
     "encounter": {
-      "1": "Obedient Pokémon, selfish Pokémon… Pokémon have unique characteristics.",
-      "2": "Even though my upbringing and behavior are poor, I've raised my Pokémon well.",
-      "3": "Hmm, do you discipline your Pokémon? Pampering them too much is no good."
+      "1": "素直なヤツに　ワガママなヤツ……\nポケモンにも　個性が　あるんだよな。",
+      "2": "育ちも　素行も　悪い　オレが\n育てた割に　いい　ポケモン　だぜ！",
+      "3": "きみは　ポケモンを　しつけてるか？\n甘やかすだけじゃ　ダメなんだぜ！"
     },
     "victory": {
-      "1": "It is important to nurture and train each Pokémon's characteristics.",
-      "2": "Unlike my diabolical self, these are some good Pokémon.",
-      "3": "Too much praise can spoil both Pokémon and people."
+      "1": "ポケモンの　持っている　個性を\n活かして　育てることが　大切だ。",
+      "2": "極悪非道の　オレと　違って\nこいつらは　いいポケモン　だよ！",
+      "3": "褒めてばっかりだと　ポケモンも\n人も　ダメに　なっちゃうよな…"
     },
     "defeat": {
-      "1": "You should not get angry at your Pokémon, even if you lose a battle.",
-      "2": "Right? Pretty good Pokémon, huh? I'm suited to raising things.",
-      "3": "No matter how much you love your Pokémon, you still have to discipline them when they misbehave."
+      "1": "負けたからって　むやみに　ポケモンを\n怒ったりしては　ダメなんだぞ。",
+      "2": "な？　なかなか　いいポケモン　だろ？\n育てるってのが　向いてるんだな　オレ。",
+      "3": "可愛くて　大好きなポケモンでも\n悪いこと　したら　叱らないとな！"
     }
   },
   "breeder_female": {
     "encounter": {
-      "1": "Pokémon never betray you. They return all the love you give them.",
-      "2": "Shall I give you a tip for training good Pokémon?",
-      "3": "I have raised these very special Pokémon using a special method."
+      "1": "ポケモンは　裏切らないからね、\nささげた　愛情は　返ってくる。",
+      "2": "いいポケモンを　育てるコツを\nキミに　教えてあげようかな？",
+      "3": "秘密の　方法で　育てあげた\nとっても　スペシャルな　ポケモンだ。"
     },
     "victory": {
-      "1": "Ugh… It wasn't supposed to be like this. Did I administer the wrong blend?",
-      "2": "How could that happen to my Pokémon… What are you feeding your Pokémon?",
-      "3": "If I lose, that tells you I was just killing time. It doesn't damage my ego at all."
+      "1": "うーん……　こんな　はずでは……\nエキスの　配合を　間違えたか？",
+      "2": "ワイの　育てた　ポケモンが　そんな……\nキミは　ポケモンに　なに　あげとるんや？",
+      "3": "負けたところで　ただのヒマつぶし\n心に　ダメージ　ございません…"
     },
     "defeat": {
-      "1": "This proves my Pokémon have accepted my love.",
-      "2": "The real trick behind training good Pokémon is catching good Pokémon.",
-      "3": "Pokémon will be strong or weak depending on how you raise them."
+      "1": "私の　愛情が　ポケモンに\n届いてる　証拠　だわね。",
+      "2": "いいポケモンを　育てるコツは\nいいポケモンを　捕まえることだ。",
+      "3": "育てかた　次第で　ポケモンは\n強くも　弱くも　なるのだ。"
     }
   },
   "fisherman": {
     "encounter": {
-      "1": "Aack! You made me lose a bite!\nWhat are you going to do about it?",
-      "2": "Go away! You're scaring the Pokémon!",
-      "3": "Let's see if you can reel in a victory!"
+      "1": "釣り糸が　絡まって　イライラするーっ！\nええいっ　勝負だっ！",
+      "2": "海釣りと　川釣り　キミは　どっちが　好き？",
+      "3": "よーし！　ポケモン好きと　釣り好きの　対決だ！"
     },
     "victory": {
-      "1": "Just forget about it.",
-      "2": "Next time, I'll be reelin' in the triumph!",
-      "3": "Guess I underestimated the currents this time."
+      "1": "負けたっ！　余計に　イライラするぞーっ！",
+      "2": "まるで　海釣りの　ように　豪快に　負けたぞーっ！",
+      "3": "わあ！　糸が　絡まった！　まさに　後の祭り…"
     }
   },
   "fisherman_female": {
     "encounter": {
-      "1": "Woah! I've hooked a big one!",
-      "2": "Line's in, ready to reel in success!",
-      "3": "Ready to make waves!"
+      "1": "でっかいの　釣れたっ　でっかいの！",
+      "2": "うちは　常に　大物ねらい！\n雑魚だったら　引っ込んで　おくれよ！",
+      "3": "釣りたて　ピチピチの\nポケモンで　勝負してあげよう！!"
     },
     "victory": {
-      "1": "I'll be back with a stronger hook.",
-      "2": "I'll reel in victory next time.",
-      "3": "I'm just sharpening my hooks for the comeback!"
+      "1": "あれー　大きさで　負けたかな…",
+      "2": "なかなかの　引きな　キミ！\nナイス　ファイトだった！",
+      "3": "釣りあげられたのは……\nこの　私だったか！"
     }
   },
   "swimmer": {
     "encounter": {
-      "1": "Time to dive in!",
-      "2": "Let's ride the waves of victory!",
-      "3": "Ready to make a splash!"
+      "1": "全力で　飛び込むよ！",
+      "2": "勝利の　大波に　乗っていくよ！",
+      "3": "完全に　浸すよ！"
     },
     "victory": {
-      "1": "Drenched in defeat!",
-      "2": "A wave of defeat!",
-      "3": "Back to shore, I guess."
+      "1": "失敗で　ぐしゃぐしゃ！",
+      "2": "敗北の　波だった！",
+      "3": "そろそろ　漂って帰ろう…"
     }
   },
   "backpacker": {
     "encounter": {
-      "1": "Pack up, game on!",
-      "2": "Let's see if you can keep pace!",
-      "3": "Gear up, challenger!",
-      "4": "I've spent 20 years trying to find myself… But where am I?"
+      "1": "旅する　バックパッカー\n同じく　旅のトレーナーに　会う…",
+      "2": "私と　旅しているのは　人気の\nガイドブックで お薦めの　ポケモン　です！",
+      "3": "旅をしても　していなくても\n私は　発見したいのです！",
+      "4": "旅を　続け　幾年月、\n知らない　国は　ないくらい。"
     },
     "victory": {
-      "1": "Tripped up this time!",
-      "2": "Oh, I think I'm lost.",
-      "3": "Dead end!",
-      "4": "Wait up a second! Hey! Don't you know who I am?"
+      "1": "きみと　出会うため\n旅していたのかも？　なんて",
+      "2": "ガイドブックに　勝ち方は\n載っていないのよね…",
+      "3": "あっ！　あなたの　いいところ\n発見しちゃったかも！",
+      "4": "本当は　ただ　「お帰り」　って\n言ってくれる　ダーリンが　欲しい…"
     }
   },
   "ace_trainer": {
     "encounter": {
-      "1": "You seem quite confident.",
-      "1_female": "You seem quite confident.",
-      "2": "Your Pokémon… Show them to me…",
-      "3": "Because I'm an Ace Trainer, people think I'm strong.",
-      "4": "Are you aware of what it takes to be an Ace Trainer?"
+      "1": "自信満々って　感じ　ですな…",
+      "1_female": "自信満々って　感じ　だね…",
+      "2": "君の　ポケモン…… 私に　見せてごらんよ……",
+      "3": "エリートトレーナーなんて　やってるから\n強い　人って　思われるんだ。",
+      "4": "エリートトレーナーたる　資格　って\nあなたは　ご存じ　かしら？"
     },
     "victory": {
-      "1": "Yes… You have good Pokémon…",
-      "2": "What?! But I'm a battling genius!",
-      "3": "Of course, you are the main character!",
-      "3_female": "Of course, you are the main character!",
-      "4": "OK! OK! You could be an Ace Trainer!",
-      "4_female": "OK! OK! You could be an Ace Trainer!"
+      "1": "うん……　いいポケモンだね……",
+      "2": "勝負の　天才　いわれる\n私も　負けるこつの　あっけんか！",
+      "3": "やはり　あなたこそ　主人公だ！",
+      "3_female": "やはり　あなたこそ　主人公だ！",
+      "4": "戦う　姿が　なじんでるのね\nエリートトレーナーに　なれるよ　キミ！",
+      "4_female": "戦う　姿が　なじんでるのね\nエリートトレーナーに　なれるよ　キミ！"
     },
     "defeat": {
-      "1": "I am devoting my body and soul to Pokémon battles!",
-      "2": "All within my expectations… Nothing to be surprised about…",
-      "3": "I thought I'd grow up to be a frail person who looked like they would break if you squeezed them too hard.",
-      "4": "Of course I'm strong and don't lose. It's important that I win gracefully."
+      "1": "私はな　ポケモン勝負に\n魂　かけてんだよォ！",
+      "2": "すべて　予想の　はんちゅう……\n何の　驚きもないね……",
+      "3": "弱くて　抱きしめたら　折れそうな\n人に　なるはずだったのにな。",
+      "4": "強いこと　負けないことは　当たり前……\nいかに　優雅に　勝つかが　重要　なの。"
     }
   },
   "parasol_lady": {
     "encounter": {
-      "1": "Time to grace the battlefield with elegance and poise!"
+      "1": "傘が　ないと　パラソルおねえさんって\n言えないからさ　仕方なく　差してんの。"
     },
     "victory": {
-      "1": "My elegance remains unbroken!"
+      "1": "傘がっ　傘が　折れちゃったっ！\nただの　おねえさんに　なっちゃう！"
     }
   },
   "twins": {
     "encounter": {
-      "1": "Get ready, because when we team up, it's double the trouble!",
-      "2": "Two hearts, one strategy – let's see if you can keep up with our twin power!",
-      "3": "Hope you're ready for double trouble, because we're about to bring the heat!",
-      "3_female": "Hope you're ready for double trouble, because we're about to bring the heat!"
+      "1": "準備してね！　あたしたちが　力を　組み合うと Ｗトラブルでちゅ！",
+      "2": "心は二つ、　作戦は一つ！\nツインパワーを　見せるなだ！",
+      "3": "二倍の　力で　熱いバトルを　しましょうよ！",
+      "3_female": "二倍の　力で　熱いバトルを　しましょうよ！"
     },
     "victory": {
-      "1": "We may have lost this round, but our bond remains unbreakable!",
-      "2": "Our twin spirit won't be dimmed for long.",
-      "3": "We'll come back stronger as a dynamic duo!"
+      "1": "バトル　負けたけど、　絆　壊れないんでちゅ！",
+      "2": "何が起こっても　ツイン魂が　あせてはしないよ！",
+      "3": "二倍、　いや、　四倍の　力で　戻って来るよ！"
     },
     "defeat": {
-      "1": "Twin power reigns supreme!",
-      "2": "Two hearts, one triumph!",
-      "3": "Double the smiles, double the victory dance!"
+      "1": "ツインパワーに　誰も　勝てない！",
+      "2": "心は二つ、　勝利は一つ！",
+      "3": "笑顔も　勝利の舞も　二倍！"
     }
   },
   "cyclist": {
     "encounter": {
-      "1": "Get ready to eat my dust!",
-      "2": "Gear up, challenger! I'm about to leave you in the dust!",
-      "3": "Pedal to the metal, let's see if you can keep pace!"
+      "1": "両足　砕けようとも　漕ぐ、\nこれ サイクリング 極意なり…",
+      "2": "やー　悪いねー　ついつい　パートナー\n連れてきちゃったわ　ラブラブだからさ！",
+      "3": "もうダメェ！　物足りないのォ！\n自転車じゃ　物足りないよォ！"
     },
     "victory": {
-      "1": "Spokes may be still, but determination pedals on.",
-      "2": "Outpaced!",
-      "3": "The road to victory has many twists and turns yet to explore."
+      "1": "我が サイクリングは　無限\nいずれまた　貴様に 挑む…",
+      "2": "冷たいボディに　ふんわりサドル\nコイツは　最高の　パートナーだぜ…",
+      "3": "自転車じゃ　満足できないのォ！\n暴走族に　入れてもらうのォ！"
     }
   },
   "black_belt": {
     "encounter": {
-      "1": "I praise your courage in challenging me! For I am the one with the strongest kick!",
-      "2": "Oh, I see. Would you like to be cut to pieces? Or do you prefer the role of punching bag?",
-      "2_female": "Oh, I see. Would you like to be cut to pieces? Or do you prefer the role of punching bag?"
+      "1": "宇宙一の　キックを　持つ\nわしに　挑むとは　褒めてやろう！",
+      "2": "んー　そうだね、　ズタズタ　されたい？\nそれとも　ボロボロが　好み　かな？",
+      "2_female": "んー　そうだね、　ズタズタ　されたい？\nそれとも　ボロボロが　好み　かな？"
     },
     "victory": {
-      "1": "Oh. The Pokémon did the fighting. My strong kick didn't help a bit.",
-      "2": "Hmmm… If I was going to lose anyway, I was hoping to get totally messed up in the process."
+      "1": "あ　戦うのは　ポケモンだっけ\nわしの　キックは　関係ないわ。",
+      "2": "んー……　どうせ　負けるなら\nボクは　メチャクチャに　されたかったんだけどね。"
     }
   },
   "battle_girl": {
     "encounter": {
-      "1": "You don't have to try to impress me. You can lose against me."
+      "1": "いいのよ、　見栄　張らなくても\n私には　負けてもいいのよ。"
     },
     "victory": {
-      "1": "It's hard to say good-bye, but we are running out of time…"
+      "1": "さようならするのは　つらいけれど\nもう　時間が　ないわね……"
     }
   },
   "hiker": {
     "encounter": {
-      "1": "My middle-age spread has given me as much gravitas as the mountains I hike!",
-      "2": "I inherited this big-boned body from my parents… I'm like a living mountain range…"
+      "1": "中年太りの　このボディ\n山の　ごとき　貫禄で　ゴワス！",
+      "2": "親　から　もらった　メタボな　ボディ……\n生ける　山脈とは　オレの　こと……"
     },
     "victory": {
-      "1": "At least I cannot lose when it comes to BMI!",
-      "2": "It's not enough… It's never enough. My bad cholesterol isn't high enough…"
+      "1": "皮下脂肪　だったら\n負けないのにで　ゴワス！",
+      "2": "足りぬ……　足りぬぞ……\n悪玉コレステロールが　足りぬぞ……"
     }
   },
   "ranger": {
     "encounter": {
-      "1": "When I am surrounded by nature, most other things cease to matter.",
-      "2": "When I'm living without nature in my life, sometimes I'll suddenly feel an anxiety attack coming on."
+      "1": "自然に　囲まれ　暮らしているとな\n大抵の　ことが　どうでも良くなる……",
+      "2": "自然から　離れ　暮らしているとな\n時々　急に　苦しくなるのさ。"
     },
     "victory": {
-      "1": "It doesn't matter to the vastness of nature whether I win or lose…",
-      "2": "Something like this is pretty trivial compared to the stifling feelings of city life."
+      "1": "ぼくが　負けたって　大自然に\nとっては　どうだって　いいことさ……",
+      "2": "都会の　息苦しさに　比べれば\nこんなこと　へ　でも　ないさ……"
     },
     "defeat": {
-      "1": "I won the battle. But victory is nothing compared to the vastness of nature…",
-      "2": "I'm sure how you feel is not so bad if you compare it to my anxiety attacks…"
+      "1": "ぼくが　勝ったことも　大自然に\n比べたら　どうだっていいのさ……",
+      "2": "僕の　不安に　比べれば\n大したこと　ないさ　きっと……"
     }
   },
   "scientist": {
     "encounter": {
-      "1": "My research will lead this world to peace and joy."
+      "1": "ボクノ　研究ガ　世界ヲ\n平和ト　幸セニ　導クノデス。"
     },
     "victory": {
-      "1": "I am a genius… I am not supposed to lose against someone like you…"
+      "1": "ボクハ　天才　ナンダ……\nコンナ　相手ニ　負ケルハズ……"
     }
   },
   "school_kid": {
