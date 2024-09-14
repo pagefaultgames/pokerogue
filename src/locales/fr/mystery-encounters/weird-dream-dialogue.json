@@ -3,15 +3,15 @@
   "speaker": "Femme mystérieuse",
   "intro_dialogue": "J’ai tout vu…\nTes futurs, tes passés…$Les perçois-tu aussi, mon enfant ?",
   "title": "???",
-  "description": "Les paroles de cette mystérieuse femme raisonnent dans votre tête. Ce n’est pas qu’une simple voix isolée, mais une infinité, d’une infinité d’espace-temps et de réalités. Vous commencez ressentir des vertiges à mesure que cette question s’empare de votre esprit…\n\n@[TOOLTIP_TITLE]{« J’ai tout vu… Tes futurs, tes passés… Les perçois-tu aussi, mon enfant ? »}",
+  "description": "Les paroles de cette mystérieuse femme raisonnent dans votre tête. Ce n’est pas qu’une simple voix isolée, mais une infinité, d’une infinité d’espace-temps et de réalités.\nVous commencez ressentir des vertiges à mesure que cette question s’empare de votre esprit…\n\n@[TOOLTIP_TITLE]{« J’ai tout vu… Tes futurs, tes passés… Les perçois-tu aussi, mon enfant ? »}",
   "query": "Que voulez-vous faire ?",
   "option": {
     "1": {
       "label": "« Je les vois »",
       "tooltip": "@[SUMMARY_GREEN]{(?) Affecte vos Pokémon}",
-      "selected": "Sa main s’approche de vous et vous touche.\nTout devient subitement sombre.$Puis enfin…@d{64} La lumière.\nChaque espace-temps. Chacune de vos incarnations.$Tout de qui a composé, compose\net composersa votre être…@d{64}",
-      "cutscene": "Vous percevez vos Pokémon,@d{32} convergeant de chaque\nde chaque réalité pour former quelque chose de nouveau…@d{64}",
-      "dream_complete": "Vous vous réveillez, mais la femme a disparu…\nOu bien n’etait-elle qu’une hallucination ?$.@d{32}.@d{32}.@d{32}$Les Pokémon de votre équipe ont changé…$Mais alors, comment peuvent-ils quand même vous sembler si familiers ?"
+      "selected": "Sa main s’approche de vous et vous touche.\nTout devient subitement sombre.$Puis enfin…@d{64} La lumière.\nChaque espace-temps. Chacune de vos incarnations.$Tout ce qui a composé, compose\net composersa votre être…@d{64}",
+      "cutscene": "Vous percevez vos Pokémon,@d{32} convergeant de chaque\nréalité pour former quelque chose de nouveau…@d{64}",
+      "dream_complete": "Vous vous réveillez, mais la femme a disparu…\nOu bien n’etait-elle qu’une hallucination ?$.@d{32}.@d{32}.@d{32}$Les Pokémon de votre équipe ont changé…$Mais alors, comment peuvent-ils quand même\ntoujours vous sembler si familiers ?"
     },
     "2": {
       "label": "Partir en courant",
