@@ -1,27 +1,27 @@
 {
   "intro": "Un homme en manteau noir vous aborde.",
   "speaker": "Dealer",
-  "intro_dialogue": ".@d{16}.@d{16}.@d{16}$J’ai de la bonne came, mais seulement si t’as les thunes.$Assure-toi quand même que tes Pokémon puissent encaisser.",
+  "intro_dialogue": ".@d{16}.@d{16}.@d{16}$J’ai de la bonne came, mais seulement si t’as les thunes.$Assure-toi quand même que tes Pokémon\npuissent encaisser.",
   "title": "Le Dealer d’Accélérateurs",
-  "description": "L’homme ouvre son manteau et vous laisse apercevoir des Accélérateurs pour Pokémon. Le tarif qu’il annonce semble être une bonne affaire. Peut-être même un peu trop…\nIl vous laisse le choix entre deux offres.",
-  "query": "Que choisissez-vous ?",
+  "description": "L’homme ouvre son manteau et vous laisse apercevoir des Accélérateurs pour Pokémon. Le tarif qu’il annonce semble être une bonne affaire. Peut-être même un peu trop belle…\nIl vous laisse le choix entre deux offres.",
+  "query": "Laquelle choisissez-vous ?",
   "invalid_selection": "Le Pokémon doit être en bonne santé.",
   "option": {
     "1": {
-      "label": "Deal douteux",
+      "label": "Offre douteuse",
       "tooltip": "(-) Payer {{option1Money, money}}\n(-) Effets secondaires ?\n(+) Le Pokémon gagne 2 Accélérateurs au hasard"
     },
     "2": {
-      "label": "Deal honnête",
+      "label": "Offre honnête",
       "tooltip": "(-) Payer {{option2Money, money}}\n(+) le Pokémon choisi 2 Accélérateurs au hasard"
     },
     "3": {
       "label": "Partir",
       "tooltip": "(-) Aucune récompense",
-      "selected": "Eh bien, j’aurais pas cru que tu ferais preuve d’une telle lâcheté."
+      "selected": "Eh bien, j’aurais pas cru que\ntu ferais preuve d’une telle lâcheté."
     },
-    "selected": "L’homme vous remet deux Accélérateurs et s’évapore.${{selectedPokemon}} reçoit un gain en {{boost1}} et en {{boost2}} !"
+    "selected": "L’homme vous remet deux Accélérateurs et s’évapore.${{selectedPokemon}} reçoit 1 {{boost1}} et 1 {{boost2}} !"
   },
-  "cheap_side_effects": "Ah ! Des effets secondaires se manifestent !$Votre {{selectedPokemon}} prend des dégâts,\net sa nature se change en {{newNature}} !",
+  "cheap_side_effects": "Ah !\nDes effets secondaires se manifestent !$Votre {{selectedPokemon}} prend des dégâts,\net sa nature se change en {{newNature}} !",
   "no_bad_effects": "Tout semble bien se passer, aucun effet indésirable à signaler !"
 }
