@@ -48,7 +48,6 @@ describe("Moves - Baneful Bunker", () => {
       game.move.select(Moves.SLASH);
       await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
       await game.phaseInterceptor.to("BerryPhase", false);
-
       expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp());
       expect(leadPokemon.status?.effect  === StatusEffect.POISON).toBeTruthy();
     }, TIMEOUT

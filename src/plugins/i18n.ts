@@ -167,6 +167,25 @@ export async function initI18n(): Promise<void> {
     postProcess: ["korean-postposition"],
   });
 
+  // Input: {{myMoneyValue, money}}
+  // Output: @[MONEY]{₽100,000,000} (useful for BBCode coloring of text)
+  // If you don't want the BBCode tag applied, just use 'number' formatter
+  i18next.services.formatter?.add("money", (value, lng, options) => {
+    const numberFormattedString = Intl.NumberFormat(lng, options).format(value);
+    switch (lng) {
+    case "ja":
+      return `@[MONEY]{${numberFormattedString}}円`;
+    case "de":
+    case "es":
+    case "fr":
+    case "it":
+      return `@[MONEY]{${numberFormattedString} ₽}`;
+    default:
+      // English and other languages that use same format
+      return `@[MONEY]{₽${numberFormattedString}}`;
+    }
+  });
+
   await initFonts(localStorage.getItem("prLang") ?? undefined);
 }
 
