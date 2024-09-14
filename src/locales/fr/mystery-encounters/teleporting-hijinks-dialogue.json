@@ -11,17 +11,17 @@
     },
     "2": {
       "label": "Un Pokémon à l’aide",
-      "tooltip": "(-) {{option2PrimaryName}} aide\n(+) Gain d’Exp pour {{option2PrimaryName}}\n(?) Téléportation vers un nouveau biome",
+      "tooltip": "(-) {{option2PrimaryName}} vous aide\n(+) Gain d’Exp pour {{option2PrimaryName}}\n(?) Téléportation vers un nouveau biome",
       "disabled_tooltip": "Vous avez besoin d’un Pokémon de type Électrik ou Acier pour choisir cette option",
       "selected": "Le type de {{option2PrimaryName}} vous permet de frauder la machine !$La capsule s’ouvre et y pénétrez…"
     },
     "3": {
       "label": "Inspecter la machine",
       "tooltip": "(-) Combat Pokémon",
-      "selected": "Tous ces bruits et lumières clignotantes\némis par la machine titillent vos sens…$Mais vous manquez d’apercevoir un Pokémon\nsauvage et vous tend une embuscade !"
+      "selected": "Tous ces bruits et lumières clignotantes\némis par la machine titillent vos sens…$Mais vous manquez d’apercevoir un Pokémon\nsauvage et qui tend une embuscade !"
     }
   },
-  "transport": "La machine vibre violemment,\nen émattant toutes sortes de bruits !$À peine la machine lancée, elle redevient soudainement très silencieuse.",
+  "transport": "Elle vibre violemment, émettant\ntoutes sortes de bruits !$À peine la machine lancée, elle redevient\nsubitement très silencieuse…",
   "attacked": "Vous en ressortez en un lieu complètement nouveau, effrayant au passage un Pokémon sauvage !$Le Pokémon sauvage vous attaque !",
   "boss_enraged": "Le {{enemyPokemon}} ennemi s’énerve !"
 }
