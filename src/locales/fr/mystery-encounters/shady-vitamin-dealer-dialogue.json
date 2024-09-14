@@ -1,7 +1,7 @@
 {
   "intro": "Un homme en manteau noir vous aborde.",
   "speaker": "Dealer",
-  "intro_dialogue": ".@d{16}.@d{16}.@d{16}$J’ai de la bonne came, mais seulement si t’as les thunes.$Assure-toi quand même que tes Pokémon\npuissent encaisser.",
+  "intro_dialogue": ".@d{16}.@d{16}.@d{16}$J’ai de la bonne came pour toi, mais seulement si t’as les thunes.$Assure-toi quand même que tes Pokémon\npuissent encaisser.",
   "title": "Le Dealer d’Accélérateurs",
   "description": "L’homme ouvre son manteau et vous laisse apercevoir des Accélérateurs pour Pokémon. Le tarif qu’il annonce semble être une bonne affaire. Peut-être même un peu trop belle…\nIl vous laisse le choix entre deux offres.",
   "query": "Laquelle choisissez-vous ?",
