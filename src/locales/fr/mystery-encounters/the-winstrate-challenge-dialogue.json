@@ -1,22 +1,22 @@
 {
-  "intro": "It's a family standing outside their house!",
-  "speaker": "The Winstrates",
-  "intro_dialogue": "We're the Winstrates!$What do you say to taking on our family in a series of Pokémon battles?",
-  "title": "The Winstrate Challenge",
-  "description": "The Winstrates are a family of 5 trainers, and they want to battle! If you beat all of them back-to-back, they'll give you a grand prize. But can you handle the heat?",
-  "query": "What will you do?",
+  "intro": "C’est une famille dans la cour de leur maison !",
+  "speaker": "La Famille Stratège",
+  "intro_dialogue": "Nous sommes les Stratège !$Ça te dirait d’affronter la famille dans une série de combats ?",
+  "title": "Le défi de la Famille Stratège",
+  "description": "Les Stratège sont une famille de 5 Dresseurs, et ne demandent qu’à se battre ! Si vous parvenez à tous les battre à la suite, ils vous remettront une grosse récompense. Vous sentez-vous d’encaisser ce défi ?",
+  "query": "Que voulez-vous faire ?",
   "option": {
     "1": {
-      "label": "Accept the Challenge",
-      "tooltip": "(-) Brutal Battle\n(+) Special Item Reward",
-      "selected": "Let the challenge begin!"
+      "label": "Accepter le défi",
+      "tooltip": "(-) Combat brutal\n(+) Récompense d’un objet spécial",
+      "selected": "Que le défi commence !"
     },
     "2": {
-      "label": "Refuse the Challenge",
-      "tooltip": "(+) Full Heal Party\n(+) Gain a Rarer Candy",
-      "selected": "That's too bad. Say, your team looks worn out, why don't you stay awhile and rest?"
+      "label": "Décliner le défi",
+      "tooltip": "(+) Équipe soignée\n(+) Gain d’un Hyper Bonbon",
+      "selected": "C’est bien dommage. Hé, ton équipe a quand même l’air bien au bout, ça te dirait de rester te reposer un peu ?"
     }
   },
-  "victory": "Congratulations on beating our challenge!$First off, we'd like you to have this Voucher.",
-  "victory_2": "Also, our family uses this Macho Brace to strengthen\nour Pokémon more effectively during training.$You may not need it considering that you beat the whole lot of us, but we hope you'll accept it anyway!"
+  "victory": "Félicitations pour avoir relevé notre défi !$Tout d’abourd, nous aimerions t’offir ce Coupon.",
+  "victory_2": "Mais aussi, notre famille utilise ce Bracelet Macho\npour entrainer plus efficacement nos Pokémon.$Il ne te sera peut-être d’aucune utilité vu que tu nous as tous battus, mais on serait ravis que tu l’accepte !"
 }
