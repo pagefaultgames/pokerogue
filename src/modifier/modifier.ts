@@ -29,7 +29,6 @@ import { Abilities } from "#app/enums/abilities";
 import { LearnMovePhase } from "#app/phases/learn-move-phase";
 import { LevelUpPhase } from "#app/phases/level-up-phase";
 import { PokemonHealPhase } from "#app/phases/pokemon-heal-phase";
-import { SpeciesFormKey } from "#app/data/pokemon-species";
 
 export type ModifierPredicate = (modifier: Modifier) => boolean;
 
@@ -1086,7 +1085,7 @@ export class EvolutionStatBoosterModifier extends StatBoosterModifier {
    * @returns true if the stat boosts can be applied, false otherwise
    */
   shouldApply(args: any[]): boolean {
-    return super.shouldApply(args) && ((args[0] as Pokemon).getFormKey() !== SpeciesFormKey.GIGANTAMAX);
+    return super.shouldApply(args) && !(args[0] as Pokemon).isMax();
   }
 
   /**
