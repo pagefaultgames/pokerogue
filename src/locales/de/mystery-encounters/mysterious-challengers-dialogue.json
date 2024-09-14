@@ -1,22 +1,22 @@
 {
-  "intro": "Mysteriöse Herausforderer sind aufgetaucht!",
-  "title": "Mysteriöse Herausforderer",
-  "description": "Wenn du einen Herausforderer besiegst, könntest du sie beeindrucken und eine Belohnung erhalten. Aber manche sehen ziemlich stark aus. Bist du bereit für die Herausforderung?",
-  "query": "Wen wirst du bekämpfen?",
+  "intro": "Mysterious challengers have appeared!",
+  "title": "Mysterious Challengers",
+  "description": "If you defeat a challenger, you might impress them enough to receive a boon. But some look tough, are you up to the challenge?",
+  "query": "Who will you battle?",
   "option": {
     "1": {
-      "label": "Schlauer Trainer",
-      "tooltip": "(-) Standardkampf\n(+) TM Belohnungen"
+      "label": "A Clever, Mindful Foe",
+      "tooltip": "(-) Standard Battle\n(+) Move Item Rewards"
     },
     "2": {
-      "label": "Starker Trainer",
-      "tooltip": "(-) Harter Kampf\n(+) Gute Belohnungen"
+      "label": "A Strong Foe",
+      "tooltip": "(-) Hard Battle\n(+) Good Rewards"
     },
     "3": {
-      "label": "Mächtigster Trainer",
-      "tooltip":  "(-) Brutaler Kampf\n(+) Großartige Belohnungen"
+      "label": "The Mightiest Foe",
+      "tooltip": "(-) Brutal Battle\n(+) Great Rewards"
     },
-    "selected": "Der Herausforderer tritt vor..."
+    "selected": "The trainer steps forward..."
   },
-  "outro": "Der mysteriöse Herausforderer wurde besiegt!"
+  "outro": "The mysterious challenger was defeated!"
 }

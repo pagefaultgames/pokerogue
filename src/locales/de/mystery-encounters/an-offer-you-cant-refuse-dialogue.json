@@ -1,26 +1,26 @@
 {
-  "intro": "Du wirst von einem reich aussehenden Jungen aufgehalten.",
-  "speaker": "Reicher Junge",
-  "intro_dialogue": "Guten Tag!$Ich kann nicht anders, als zu bemerken, dass dein\n{{strongestPokemon}} einfach göttlich aussieht!$Ich habe schon immer ein Haustier wie dieses haben wollen!$Ich würde dir großzügig bezahlen, und dir auch diesen alten Kram geben!",
-  "title": "Ein Angebot das du nicht ablehnen kannst",
-  "description": "Dir wird ein @[TOOLTIP_TITLE]{Schillerpin} und {{price, money}} für dein {{strongestPokemon}} angeboten!\nEs ist ein extrem gutes Angebot, aber kannst du es wirklich ertragen, dich von einem so starken Teammitglied zu trennen?",
-  "query": "Was wirst du tun?",
+  "intro": "You're stopped by a rich looking boy.",
+  "speaker": "Rich Boy",
+  "intro_dialogue": "Good day to you.$I can't help but notice that your\n{{strongestPokemon}} looks positively divine!$I've always wanted to have a pet like that!$I'd pay you handsomely,\nand also give you this old bauble!",
+  "title": "An Offer You Can't Refuse",
+  "description": "You're being offered a @[TOOLTIP_TITLE]{Shiny Charm} and {{price, money}} for your {{strongestPokemon}}!\n\nIt's an extremely good deal, but can you really bear to part with such a strong team member?",
+  "query": "What will you do?",
   "option": {
     "1": {
-      "label": "Den Deal annehmen",
-      "tooltip": "(-) Verliere {{strongestPokemon}}\n(+) Erhalte einen @[TOOLTIP_TITLE]{Schillerpin}\n(+) Erhalte {{price, money}}",
-      "selected": "Wunderbar!@d{32} Komm mit, {{strongestPokemon}}!$Es ist Zeit, dich allen im Yachtclub zu zeigen!$Die werden so neidisch sein!"
+      "label": "Accept the Deal",
+      "tooltip": "(-) Lose {{strongestPokemon}}\n(+) Gain a @[TOOLTIP_TITLE]{Shiny Charm}\n(+) Gain {{price, money}}",
+      "selected": "Wonderful!@d{32} Come along, {{strongestPokemon}}!$It's time to show you off to everyone at the yacht club!$They'll be so jealous!"
     },
     "2": {
-      "label": "Das Kind erpressen",
-      "tooltip": "(+) {{option2PrimaryName}} setzt {{moveOrAbility}} ein\n(+) Erhalte {{price, money}}",
-      "tooltip_disabled": "Dein Pokémon muss bestimmte Attacken oder Fähigkeiten haben, um diese Option zu wählen",
-      "selected": "Mein Gott, wir werden ausgeraubt, {{liepardName}}!$Du wirst von meinen Anwälten hören!"
+      "label": "Extort the Kid",
+      "tooltip": "(+) {{option2PrimaryName}} uses {{moveOrAbility}}\n(+) Gain {{price, money}}",
+      "tooltip_disabled": "Your Pokémon need to have certain moves or abilities to choose this",
+      "selected": "My word, we're being robbed, {{liepardName}}!$You'll be hearing from my lawyers for this!"
     },
     "3": {
-      "label": "Weggehen",
-      "tooltip": "(-) Keine Belohnung",
-      "selected": "Was ein beschissener Tag...$Ach, was solls. Lass uns zurück zum Yachtclub gehen, {{liepardName}}."
+      "label": "Leave",
+      "tooltip": "(-) No Rewards",
+      "selected": "What a rotten day...$Ah, well. Let's return to the yacht club then, {{liepardName}}."
     }
   }
 }
