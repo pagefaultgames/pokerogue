@@ -2772,7 +2772,7 @@
   },
   "rival_4": {
     "encounter": {
-      "1": "@c{neutral}よっ。\n$歯に　衣着せない。\n@c{neutral_eclosed}キミに　勝つために　ここに　来た、それだけ。\n$@c{serious_mhalf_fists}地力を　最大限に　引き出す　ために\n全労力を　費やして　訓練していた。\n$@c{smile}不要な　睡眠や　社会性なんか　抜くと　訓練の　時間は　割と　増えるね。\n$@c{serious_mopen_fists}そんなことは　勝てるときまで　全部　どうでもない。\n$@c{neutral_eclosed}今　負けられないとこまで　やって来た。\n@c{smile_eclosed}キミの　考え方は　違いない　ようだね。\n$@c{angry_mhalf}負けるのは　弱き者。　おれは　もう　弱くない。\n$@c{serious_mopen_fists}覚悟せよ。"
+      "1": "@c{neutral}よっ。\n$歯に　衣着せない。\n@c{neutral_eclosed}キミに　勝つために　ここに　来た、それだけ。\n$@c{serious_mhalf_fists}地力を　最大限に　引き出す　ために\n全労力を　費やして　訓練していた。\n$@c{smile}不要な　睡眠や　人間関係なんか　抜くと\n訓練の　時間は　割と　増えるね。\n$@c{serious_mopen_fists}そんなことは　勝てるときまで　全然　どうでもない。\n$@c{neutral_eclosed}今　負けられないとこまで　やって来た。\n@c{smile_eclosed}キミの　考え方は　違いない　ようだね。\n$@c{angry_mhalf}負けるのは　弱き者。　おれは　もう　弱くない。\n$@c{serious_mopen_fists}覚悟せよ。"
     },
     "victory": {
       "1": "@c{neutral}一体…@d{64} 何モノか……？"
