@@ -4410,7 +4410,10 @@ export class EnemyPokemon extends Pokemon {
           const isCritical = move.hasAttr(CritOnlyAttr) || !!this.getTag(BattlerTagType.ALWAYS_CRIT);
 
           return move.category !== MoveCategory.STATUS
-            && moveTargets.some(p => p.getAttackDamage(this, move, !p.battleData.abilityRevealed, false, isCritical).damage >= p.hp);
+            && moveTargets.some(p => {
+              const doesNotFail = move.applyConditions(this, p, move) || [Moves.SUCKER_PUNCH, Moves.UPPER_HAND, Moves.THUNDERCLAP].includes(move.id);
+              return doesNotFail && p.getAttackDamage(this, move, !p.battleData.abilityRevealed, false, isCritical).damage >= p.hp;
+            });
         }, this);
 
         if (koMoves.length > 0) {
