@@ -2621,10 +2621,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         return result;
       }
 
-      if (isCritical) {
-        this.scene.queueMessage(i18next.t("battle:hitResultCriticalHit"));
-      }
-
       // In case of fatal damage, this tag would have gotten cleared before we could lapse it.
       const destinyTag = this.getTag(BattlerTagType.DESTINY_BOND);
 
@@ -2665,6 +2661,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
             this.scene.applyModifiers(DamageMoneyRewardModifier, true, source, new Utils.NumberHolder(damage));
           }
         }
+      }
+
+      if (isCritical) {
+        this.scene.queueMessage(i18next.t("battle:hitResultCriticalHit"));
       }
 
       // want to include is.Fainted() in case multi hit move ends early, still want to render message
