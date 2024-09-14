@@ -2615,7 +2615,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           if (result === HitResult.IMMUNE) {
             this.scene.queueMessage(i18next.t("battle:hitResultImmune", { pokemonName: getPokemonNameWithAffix(this) }));
           } else {
-            this.scene.queueMessage(i18next.t("battle:hitResultNoEffect"));
+            this.scene.queueMessage(i18next.t("battle:hitResultNoEffect", { pokemonName: getPokemonNameWithAffix(this) }));
           }
         }
         return result;
