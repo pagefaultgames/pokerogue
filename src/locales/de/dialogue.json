@@ -935,112 +935,112 @@
   },
   "stat_trainer_buck": {
     "encounter": {
-      "1": "...I'm telling you right now. I'm seriously tough. Act surprised!",
-      "2": "I can feel my Pokémon shivering inside their Pokéballs!"
+      "1": "...Ich sag dir jetzt mal was. Ich bin echt stark. Tue überrascht!",
+      "2": "Ich fühle, wie meine Pokémon in ihren Pokébällen zittern!"
     },
     "victory": {
-      "1": "Heeheehee!\nSo hot, you!",
-      "2": "Heeheehee!\nSo hot, you!"
+      "1": "Hehehehe! So heiß bist du!",
+      "2": "Hehehehe! So heiß bist du!"
     },
     "defeat": {
-      "1": "Whoa! You're all out of gas, I guess.",
-      "2": "Whoa! You're all out of gas, I guess."
+      "1": "Whoa! Du scheinst ja wirklich erschöpft zu sein.",
+      "2": "Whoa! Du scheinst ja wirklich erschöpft zu sein."
     }
   },
   "stat_trainer_cheryl": {
     "encounter": {
-      "1": "My Pokémon have been itching for a battle.",
-      "2": "I should warn you, my Pokémon can be quite rambunctious."
+      "1": "Meine Pokémon können es kaum erwarten, zu kämpfen.",
+      "2": "Ich sollte dich warnen, meine Pokémon können ziemlich wild sein."
     },
     "victory": {
-      "1": "Striking the right balance of offense and defense... It's not easy to do.",
-      "2": "Striking the right balance of offense and defense... It's not easy to do."
+      "1": "Ein gutes Verhältnis von Angriff und Verteidigung... Das ist nicht einfach.",
+      "2": "Ein gutes Verhältnis von Angriff und Verteidigung... Das ist nicht einfach."
     },
     "defeat": {
-      "1": "Do your Pokémon need any healing?",
-      "2": "Do your Pokémon need any healing?"
+      "1": "Brauchen deine Pokémon Heilung?",
+      "2": "Brauchen deine Pokémon Heilung?"
     }
   },
   "stat_trainer_marley": {
     "encounter": {
-      "1": "... OK.\nI'll do my best.",
-      "2": "... OK.\nI... won't lose...!"
+      "1": "...OK. Ich werde mein Bestes geben.",
+      "2": "...OK. Ich werde nicht verlieren...!"
     },
     "victory": {
       "1": "... Awww.",
       "2": "... Awww."
     },
     "defeat": {
-      "1": "... Goodbye.",
-      "2": "... Goodbye."
+      "1": "... Auf Wiedersehen.",
+      "2": "... Auf Wiedersehen."
     }
   },
   "stat_trainer_mira": {
     "encounter": {
-      "1": "You will be shocked by Mira!",
-      "2": "Mira will show you that Mira doesn't get lost anymore!"
+      "1": "Du wirst von Mira schockiert sein!",
+      "2": "Mira wird dir zeigen, dass Mira sich nicht mehr verirrt!"
     },
     "victory": {
-      "1": "Mira wonders if she can get very far in this land.",
-      "2": "Mira wonders if she can get very far in this land."
+      "1": "Mira wundern, ob sie in diesem Land weit kommen kann.",
+      "2": "Mira wundern, ob sie in diesem Land weit kommen kann."
     },
     "defeat": {
-      "1": "Mira knew she would win!",
-      "2": "Mira knew she would win!"
+      "1": "Mira wuss, dass sie gewinnen würde!",
+      "2": "Mira wuss, dass sie gewinnen würde!"
     }
   },
   "stat_trainer_riley": {
     "encounter": {
-      "1": "Battling is our way of greeting!",
-      "2": "We're pulling out all the stops to put your Pokémon down."
+      "1": "Kämpfe sind unsere Art der Begrüßung.",
+      "2": "Wir setzen alles daran, deine Pokémon zu besiegen."
     },
     "victory": {
-      "1": "At times we battle, and sometimes we team up...$It's great how Trainers can interact.",
-      "2": "At times we battle, and sometimes we team up...$It's great how Trainers can interact."
+      "1": "Manchmal kämpfen wir, und manchmal schließen wir uns zusammen...\n$Es ist großartig, wie Trainer interagieren können.",
+      "2": "Manchmal kämpfen wir, und manchmal schließen wir uns zusammen...\n$Es ist großartig, wie Trainer interagieren können."
     },
     "defeat": {
-      "1": "You put up quite the display.\nBetter luck next time.",
-      "2": "You put up quite the display.\nBetter luck next time."
+      "1": "Du hast dich gut geschlagen. Bis zum nächsten Mal.",
+      "2": "Du hast dich gut geschlagen. Bis zum nächsten Mal."
     }
   },
   "winstrates_victor": {
     "encounter": {
-      "1": "That's the spirit! I like you!"
+      "1": "Das ist der Kampfgeist den ich sehen will! Ich mag dich!"
     },
     "victory": {
-      "1": "A-ha! You're stronger than I thought!"
+      "1": "Ahh! Du bist stärker als ich dachte!"
     }
   },
   "winstrates_victoria": {
     "encounter": {
-      "1": "My goodness! Aren't you young?$You must be quite the trainer to beat my husband, though.$Now I suppose it's my turn to battle!"
+      "1": "Mein Gott! Bist du nicht etwas jung?\n$Du musst ein ziemlich guter Trainer sein, um meinen Mann zu besiegen.\n$Jetzt bin ich wohl an der Reihe!"
     },
     "victory": {
-      "1": "Uwah! Just how strong are you?!"
+      "1": "Waas? Wie stark bist du denn?"
     }
   },
   "winstrates_vivi": {
     "encounter": {
-      "1": "You're stronger than Mom? Wow!$But I'm strong, too!\nReally! Honestly!"
+      "1": "Du bist stärker als Mama? Wow! Aber ich bin auch stark! Wirklich! Ehrlich!"
     },
     "victory": {
-      "1": "Huh? Did I really lose?\nSnivel... Grandmaaa!"
+      "1": "Huh? Habe ich wirklich verloren?\nSchnief... Omaaa!"
     }
   },
   "winstrates_vicky": {
     "encounter": {
-      "1": "How dare you make my precious\ngranddaughter cry!$I see I need to teach you a lesson.\nPrepare to feel the sting of defeat!"
+      "1": "Wie kannst du es wagen, meine kostbare Enkelin zum Weinen zu bringen!\n$Ich sehe, ich muss dir eine Lektion erteilen.\n$Mach dich bereit, eine Niederlage zu erleiden!"
     },
     "victory": {
-      "1": "Whoa! So strong!\nMy granddaughter wasn't lying."
+      "1": "Wow! So stark!\nMeine Enkelin hat nicht gelogen."
     }
   },
   "winstrates_vito": {
     "encounter": {
-      "1": "I trained together with my whole family,\nevery one of us!$I'm not losing to anyone!"
+      "1": "Ich habe zusammen mit meiner ganzen Familie trainiert, mit jedem von uns!\n$Ich verliere gegen niemanden!"
     },
     "victory": {
-      "1": "I was better than everyone in my family.\nI've never lost before..."
+      "1": "Ich war besser als jeder in meiner Familie. Ich habe noch nie verloren..."
     }
   },
   "brock": {

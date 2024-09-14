@@ -1,27 +1,27 @@
 {
-  "intro": "It's a lady with a ton of shopping bags.",
-  "speaker": "Shopper",
-  "intro_dialogue": "Hello! Are you here for\nthe amazing sales too?$There's a special coupon that you can\nredeem for a free item during the sale!$I have an extra one. Here you go!",
-  "title": "Department Store Sale",
-  "description": "There is merchandise in every direction! It looks like there are 4 counters where you can redeem the coupon for various items. The possibilities are endless!",
-  "query": "Which counter will you go to?",
+  "intro": "Es ist eine Dame mit vielen Einkaufstüten.",
+  "speaker": "Einkäuferin",
+  "intro_dialogue": "Hallo! Bist du auch wegen der tollen Angebote hier?$Es gibt einen speziellen Gutschein, den du während des Verkaufs einlösen kannst!$Ich habe einen zusätzlichen. Hier, bitte!",
+  "title": "Einkaufszentrum-Verkauf",
+  "description": "Es gibt Angebote in jede Richtung! Es sieht so aus, als ob es 4 Kassen gibt, an denen du den Gutschein gegen verschiedene Artikel eintauschen kannst. Die Möglichkeiten sind endlos!",
+  "query": "Welche Kasse wählst du?",
   "option": {
     "1": {
-      "label": "TM Counter",
+      "label": "TM-Kasse",
       "tooltip": "(+) TM Shop"
     },
     "2": {
-      "label": "Vitamin Counter",
-      "tooltip": "(+) Vitamin Shop"
+      "label": "Nährstoff-Kasse",
+      "tooltip": "(+) Nährstoff Shop"
     },
     "3": {
-      "label": "Battle Item Counter",
-      "tooltip": "(+) X Item Shop"
+      "label": "Kampf-Item-Kasse",
+      "tooltip": "(+) X-Item Shop"
     },
     "4": {
-      "label": "Pokéball Counter",
+      "label": "Pokéball-Kasse",
       "tooltip": "(+) Pokéball Shop"
     }
   },
-  "outro": "What a deal! You should shop there more often."
+  "outro": "Was für ein Schnäppchen! Du solltest öfter hier einkaufen."
 }

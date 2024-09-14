@@ -1,25 +1,25 @@
 {
-  "intro": "A {{greedentName}} ambushes you\nand steals your party's berries!",
-  "title": "Absolute Avarice",
-  "description": "The {{greedentName}} has caught you totally off guard now all your berries are gone!\n\nThe {{greedentName}} looks like it's about to eat them when it pauses to look at you, interested.",
-  "query": "What will you do?",
+  "intro": "Ein {{greedentName}} überfällt dich und stiehlt die Beeren deines Teams!",
+  "title":  "Absoluter Geiz",
+  "description": "Der {{greedentName}} hat dich total überrascht und all deine Beeren gestohlen!\nEs sieht so aus, als ob das {{greedentName}} sie gleich essen würde, aber dann hält es inne und sieht dich interessiert an.",
+  "query": "Was wirst du tun?",
   "option": {
     "1": {
-      "label": "Battle It",
-      "tooltip": "(-) Tough Battle\n(+) Rewards from its Berry Hoard",
-      "selected": "The {{greedentName}} stuffs its cheeks\nand prepares for battle!",
-      "boss_enraged": "{{greedentName}}'s fierce love for food has it incensed!",
-      "food_stash": "It looks like the {{greedentName}} was guarding an enormous stash of food!$@s{item_fanfare}Each Pokémon in your party gains a {{foodReward}}!"
+      "label": "Kampf beginnen",
+      "tooltip": "(-) Schwerer Kampf\n(+) Belohnungen aus seinem Beerenversteck",
+      "selected":  "Der {{greedentName}} füllt seine Backen und bereitet sich auf den Kampf vor!",
+      "boss_enraged": "{{greedentName}} Liebe für Essen hat es aufgebracht!",
+      "food_stash": "Es scheint, als ob das {{greedentName}} ein riesiges Nahrungslager bewacht hat!$Jedes Pokémon in deinem Team erhält {{foodReward}}!"
     },
     "2": {
-      "label": "Reason with It",
-      "tooltip": "(+) Regain Some Lost Berries",
-      "selected": "Your pleading strikes a chord with the {{greedentName}}.$It doesn't give all your berries back, but still tosses a few in your direction."
+      "label": "Verhandeln",
+      "tooltip": "(+) Einige Beeren zurückbekommen",
+      "selected": "Deine Bitte berührt das {{greedentName}}.$Es gibt dir nicht alle Beeren zurück, aber wirft dir trotzdem ein paar zu."
     },
     "3": {
-      "label": "Let It Have the Food",
-      "tooltip": "(-) Lose All Berries\n(?) The {{greedentName}} Will Like You",
-      "selected": "The {{greedentName}} devours the entire\nstash of berries in a flash!$Patting its stomach,\nit looks at you appreciatively.$Perhaps you could feed it\nmore berries on your adventure...$@s{level_up_fanfare}The {{greedentName}} wants to join your party!"
+      "label": "Beeren überlassen",
+      "tooltip":  "(-) Alle Beeren verlieren\n(?) Das {{greedentName}} wird dich mögen",
+      "selected":  "Das {{greedentName}} verschlingt den gesamten Beerenversteck in einem Blitz!$Es klopft sich auf den Bauch und sieht dich dankbar an.$Vielleicht könntest du ihm auf deinem Abenteuer mehr Beeren geben...$@s{level_up_fanfare}Das {{greedentName}} möchte sich deiner Gruppe anschließen!"
     }
   }
 }

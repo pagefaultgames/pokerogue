@@ -1,26 +1,26 @@
 {
-  "intro": "That isn't just an ordinary Pokémon!",
-  "title": "Uncommon Breed",
-  "description": "That {{enemyPokemon}} looks special compared to others of its kind. @[TOOLTIP_TITLE]{Perhaps it knows a special move?} You could battle and catch it outright, but there might also be a way to befriend it.",
-  "query": "What will you do?",
+  "intro": "Das ist kein gewöhnliches Pokémon!",
+  "title": "Ungewöhnliche Züchtung",
+  "description": "Das {{enemyPokemon}} sieht im Vergleich zu anderen seiner Art besonders aus. @[TOOLTIP_TITLE]{Vielleicht kennt es einen besondere Attacke?} Du könntest es einfach bekämpfen und fangen, aber es gibt vielleicht auch eine Möglichkeit, es zu befreunden.",
+  "query": "Was wirst du tun?",
   "option": {
     "1": {
-      "label": "Battle the Pokémon",
-      "tooltip": "(-) Tricky Battle\n(+) Strong Catchable Foe",
-      "selected": "You approach the\n{{enemyPokemon}} without fear.",
-      "stat_boost": "The {{enemyPokemon}}'s heightened abilities boost its stats!"
+      "label": "Kampf beginnen",
+      "tooltip": "(-) Schwieriger Kampf\n(+) Starkes fangbares Pokémon",
+      "selected": "Du stellst dich dem {{enemyPokemon}} ohne Furcht.",
+      "stat_boost": "Die gesteigerten Fähigkeiten des {{enemyPokemon}} erhöhen seine Werte!"
     },
     "2": {
-      "label": "Give It Food",
-      "disabled_tooltip": "You need 4 berry items to choose this",
-      "tooltip": "(-) Give 4 Berries\n(+) The {{enemyPokemon}} Likes You",
-      "selected": "You toss the berries at the {{enemyPokemon}}!$It eats them happily!$The {{enemyPokemon}} wants to join your party!"
+      "label": "Ihm Futter geben",
+      "disabled_tooltip": "Du brauchst 4 Beeren, um diese Option zu wählen",
+      "tooltip": "(-) Gib 4 Beeren\n(+) Das {{enemyPokemon}} mag dich",
+      "selected": "Du wirfst die Beeren zu {{enemyPokemon}}!$Es frisst sie glücklich!$Das {{enemyPokemon}} möchte sich dir anschließen!"
     },
     "3": {
-      "label": "Befriend It",
-      "disabled_tooltip": "Your Pokémon need to know certain moves to choose this",
-      "tooltip": "(+) {{option3PrimaryName}} uses {{option3PrimaryMove}}\n(+) The {{enemyPokemon}} Likes You",
-      "selected": "Your {{option3PrimaryName}} uses {{option3PrimaryMove}} to charm the {{enemyPokemon}}!$The {{enemyPokemon}} wants to join your party!"
+      "label": "Es befreunden",
+      "disabled_tooltip": "Dein Pokémon muss bestimmte Attacken kennen, um diese Option zu wählen",
+      "tooltip": "(+) {{option3PrimaryName}} setzt {{option3PrimaryMove}} ein\n(+) Das {{enemyPokemon}} mag dich",
+      "selected": "Dein {{option3PrimaryName}} setzt {{option3PrimaryMove}} ein, um das {{enemyPokemon}} zu bezaubern!$Das {{enemyPokemon}} möchte sich dir anschließen!"
     }
   }
 }
