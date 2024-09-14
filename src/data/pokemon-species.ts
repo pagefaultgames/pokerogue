@@ -244,15 +244,23 @@ export abstract class PokemonSpeciesForm {
   }
 
   /**
+   * Gets the BST for the species
+   * @returns The species' BST.
+   */
+  getBaseStatTotal(): number {
+    return this.baseStats.reduce((i, n) => n + i);
+  }
+
+  /**
    * Gets the species' base stat amount for the given stat.
    * @param stat  The desired stat.
    * @returns The species' base stat amount.
    */
-  getBaseStat(stat: Stat): integer {
+  getBaseStat(stat: Stat): number {
     return this.baseStats[stat];
   }
 
-  getBaseExp(): integer {
+  getBaseExp(): number {
     let ret = this.baseExp;
     switch (this.getFormSpriteKey()) {
     case SpeciesFormKey.MEGA:

@@ -22,6 +22,7 @@ import { initStatsKeys } from "./ui/game-stats-ui-handler";
 import { initVouchers } from "./system/voucher";
 import { Biome } from "#enums/biome";
 import { TrainerType } from "#enums/trainer-type";
+import {initMysteryEncounters} from "#app/data/mystery-encounters/mystery-encounters";
 
 export class LoadingScene extends SceneBase {
   public static readonly KEY = "loading";
@@ -286,6 +287,9 @@ export class LoadingScene extends SceneBase {
       }
     }
 
+    // Load Mystery Encounter dex progress icon
+    this.loadImage("encounter_radar", "mystery-encounters");
+
     this.loadAtlas("dualshock", "inputs");
     this.loadAtlas("xbox", "inputs");
     this.loadAtlas("keyboard", "inputs");
@@ -362,6 +366,7 @@ export class LoadingScene extends SceneBase {
     initMoves();
     initAbilities();
     initChallenges();
+    initMysteryEncounters();
   }
 
   loadLoadingScreen() {
