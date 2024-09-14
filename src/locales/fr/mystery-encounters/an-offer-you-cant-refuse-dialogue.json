@@ -20,7 +20,7 @@
     "3": {
       "label": "Partir",
       "tooltip": "(-) Aucune récompense",
-      "selected": "Quelle journée pourrie…$Viens {{liepardName}}. On retourne au club de yacht…"
+      "selected": "Quelle journée pourrie…$Viens {{liepardName}}.\nOn retourne au club de yacht…"
     }
   }
 }
