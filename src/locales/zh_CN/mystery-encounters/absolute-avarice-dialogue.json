@@ -1,7 +1,7 @@
 {
   "intro": "一个{{greedentName}}埋伏了你\\n并且偷走了你队伍携带的树果！",
   "title": "贪得无厌",
-  "description": "{{greedentName}}让你措手不及，现在你所有的树果都被夺走了！\\n\\n{{greedentName}}正要吃掉它们时，突然停下来饶有兴趣地看着你。",
+  "description": "{{greedentName}}让你措手不及，现在你所有的树果都被夺走了！\n\n{{greedentName}}正要吃掉它们时，突然停下来饶有兴趣地看着你。",
   "query": "你要怎么做？"
   "option": {
     "1": {
