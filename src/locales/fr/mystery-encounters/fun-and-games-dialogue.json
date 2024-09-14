@@ -2,13 +2,13 @@
   "intro_dialogue": "Approchez mesdames et messieurs ! Tentez votre chance au tout nouveau Ripost-o-matic de {{wobbuffetName}} !",
   "speaker": "Animateur",
   "title": "Du rire et des jeux !",
-  "description": "Vous rencontrez un forain avec un jeu de hasard ! Vous avez @[TOOLTIP_TITLE]{3 tours} pour amener {{wobbuffetName}} le plus près possible de @[TOOLTIP_TITLE]{1 PV}, mais @[TOOLTIP_TITLE]{sans le mettre K.O.} afin qu’il puisse charger la Riposte la plus forte possible sur la cloche de la machine.\nMais attention ! Si {{wobbuffetName}} est mis K.O., vous devrez payer pour la ranimer !",
+  "description": "Vous rencontrez un forain avec un jeu de hasard ! Vous disposez de @[TOOLTIP_TITLE]{3 tours} pour amener {{wobbuffetName}} le plus près possible de @[TOOLTIP_TITLE]{1 PV}, mais @[TOOLTIP_TITLE]{sans le mettre K.O.} afin qu’il puisse charger la Riposte la plus forte possible sur la cloche de la machine.\nMais attention ! Si {{wobbuffetName}} est mis K.O., vous devrez payer pour la ranimer !",
   "query": "Voulez-vous jouer ?",
   "option": {
     "1": {
       "label": "Jouer",
       "tooltip": "(-) Payer {{option1Money, money}}\n(+) Jouer au Ripost-o-matic",
-      "selected": "Tentez votre chance !"
+      "selected": "Vous tentez votre chance !"
     },
     "2": {
       "label": "Partir",
@@ -23,7 +23,7 @@
   "turn_remaining_1": "Un tour restant !",
   "end_game": "Temps écoulé !$Le {{wobbuffetName}} relâche sa Riposte et@d{16}.@d{16}.@d{16}.",
   "best_result": "Le {{wobbuffetName}} éclate le bouton si fort que la cloche crève le plafond !$Vous remportez le premier prix !",
-  "great_result": "Le {{wobbuffetName}} éclate le bouton, et touche quasi la cloche !$Presque !\nVous remportez le deuxième prix !",
+  "great_result": "Le {{wobbuffetName}} éclate le bouton, et touche presque la cloche !$Mince, à deux doigts !\nVous remportez le deuxième prix !",
   "good_result": "Le {{wobbuffetName}} tape le bouton assez fort pour atteindre la moitié !$Vous remportez le troisième prix !",
   "bad_result": "Le {{wobbuffetName}} touche à peine le bouton et rien ne se passe…$Oh non!\nVous repartez les mains vides !",
   "outro": "Ouais, ça va, c’était sympa comme jeu !"
