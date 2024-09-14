@@ -2315,9 +2315,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     const evasionMultiplier = new Utils.NumberHolder(1);
     applyStatMultiplierAbAttrs(StatMultiplierAbAttr, target, Stat.EVA, evasionMultiplier);
 
-    accuracyMultiplier.value /= evasionMultiplier.value;
-
-    return accuracyMultiplier.value;
+    return accuracyMultiplier.value / evasionMultiplier.value;
   }
 
   /**
@@ -2336,7 +2334,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     const damage = new Utils.NumberHolder(0);
     const defendingSide = this.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY;
 
-    const variableCategory = new Utils.IntegerHolder(move.category);
+    const variableCategory = new Utils.NumberHolder(move.category);
     applyMoveAttrs(VariableMoveCategoryAttr, source, this, move, variableCategory);
     const moveCategory = variableCategory.value as MoveCategory;
 
@@ -4890,9 +4888,13 @@ export enum HitResult {
 
 export type DamageResult = HitResult.EFFECTIVE | HitResult.SUPER_EFFECTIVE | HitResult.NOT_VERY_EFFECTIVE | HitResult.ONE_HIT_KO | HitResult.OTHER;
 
+/** Interface containing the results of a damage calculation for a given move */
 export interface DamageCalculationResult {
+  /** `true` if the move was cancelled (thus suppressing "No Effect" messages) */
   cancelled: boolean;
+  /** The effectiveness of the move */
   result: HitResult;
+  /** The damage dealt by the move */
   damage: number;
 }
 
