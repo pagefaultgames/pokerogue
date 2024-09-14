@@ -1,5 +1,5 @@
 {
-  "intro": "An extremely strong trainer approaches you...",
+  "intro": "一个十分强大的训练家向你走来…",
   "buck": {
     "intro_dialogue": "Yo, trainer! My name's Buck.$I have a super awesome proposal\nfor a strong trainer such as yourself!$I'm carrying two rare Pokémon Eggs with me,\nbut I'd like someone else to care for one.$If you can prove your strength as a trainer to me,\nI'll give you the rarer egg!",
     "accept": "Whoooo, I'm getting fired up!",
@@ -25,9 +25,9 @@
     "accept": "That look you have...\nLet's do this.",
     "decline": "I understand, your team looks beat up.$Here, let me help with that."
   },
-  "title": "A Trainer's Test",
-  "description": "It seems this trainer is willing to give you an Egg regardless of your decision. However, if you can manage to defeat this strong trainer, you'll receive a much rarer Egg.",
-  "query": "What will you do?",
+  "title": "训练家试炼",
+  "description": "不管你选择什么，此训练家都会给你一个蛋。\n然而，如果你能击败他，就会获得一个更稀有的蛋。",
+  "query": "你要怎么做？",
   "option": {
     "1": {
       "label": "Accept the Challenge",
@@ -43,5 +43,5 @@
     "epic": "an Epic Egg",
     "legendary": "a Legendary Egg"
   },
-  "outro": "{{statTrainerName}} gave you {{eggType}}!"
+  "outro": "{{statTrainerName}}给了你{{eggType}}！"
 }
