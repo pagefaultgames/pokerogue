@@ -14,14 +14,14 @@ import { isNullOrUndefined } from "#app/utils";
 
 export class SelectModifierPhase extends BattlePhase {
   private rerollCount: integer;
-  private modifierTiers: ModifierTier[];
+  private modifierTiers?: ModifierTier[];
   private customModifierSettings?: CustomModifierSettings;
 
   constructor(scene: BattleScene, rerollCount: integer = 0, modifierTiers?: ModifierTier[], customModifierSettings?: CustomModifierSettings) {
     super(scene);
 
     this.rerollCount = rerollCount;
-    this.modifierTiers = modifierTiers!; // TODO: is this bang correct?
+    this.modifierTiers = modifierTiers;
     this.customModifierSettings = customModifierSettings;
   }
 
