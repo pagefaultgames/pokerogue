@@ -12,6 +12,7 @@ import { loadBattlerTag } from "../data/battler-tags";
 import { Biome } from "#enums/biome";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
+import { MysteryEncounterPokemonData } from "#app/data/mystery-encounters/mystery-encounter-pokemon-data";
 
 export default class PokemonData {
   public id: integer;
@@ -57,6 +58,8 @@ export default class PokemonData {
   public bossSegments?: integer;
 
   public summonData: PokemonSummonData;
+  /** Data that can customize a Pokemon in non-standard ways from its Species */
+  public mysteryEncounterPokemonData: MysteryEncounterPokemonData;
 
   constructor(source: Pokemon | any, forHistory: boolean = false) {
     const sourcePokemon = source instanceof Pokemon ? source : null;
@@ -103,6 +106,8 @@ export default class PokemonData {
     this.fusionGender = source.fusionGender;
     this.fusionLuck = source.fusionLuck !== undefined ? source.fusionLuck : (source.fusionShiny ? source.fusionVariant + 1 : 0);
     this.usedTMs = source.usedTMs ?? [];
+
+    this.mysteryEncounterPokemonData = new MysteryEncounterPokemonData(source.mysteryEncounterPokemonData);
 
     if (!forHistory) {
       this.boss = (source instanceof EnemyPokemon && !!source.bossSegments) || (!this.player && !!source.boss);

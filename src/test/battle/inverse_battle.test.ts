@@ -8,7 +8,6 @@ import { Species } from "#enums/species";
 import { StatusEffect } from "#enums/status-effect";
 import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
-import { SPLASH_ONLY } from "#test/utils/testUtils";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 const TIMEOUT = 20 * 1000;
@@ -38,7 +37,7 @@ describe("Inverse Battle", () => {
       .ability(Abilities.BALL_FETCH)
       .enemySpecies(Species.MAGIKARP)
       .enemyAbility(Abilities.BALL_FETCH)
-      .enemyMoveset(SPLASH_ONLY);
+      .enemyMoveset(Moves.SPLASH);
   });
 
   it("Immune types are 2x effective - Thunderbolt against Ground Type", async () => {

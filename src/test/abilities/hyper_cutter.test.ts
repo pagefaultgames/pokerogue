@@ -3,7 +3,6 @@ import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/utils/gameManager";
-import { SPLASH_ONLY } from "#test/utils/testUtils";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
@@ -29,7 +28,7 @@ describe("Abilities - Hyper Cutter", () => {
       .ability(Abilities.BALL_FETCH)
       .enemySpecies(Species.SHUCKLE)
       .enemyAbility(Abilities.HYPER_CUTTER)
-      .enemyMoveset(SPLASH_ONLY);
+      .enemyMoveset(Moves.SPLASH);
   });
 
   // Reference Link: https://bulbapedia.bulbagarden.net/wiki/Hyper_Cutter_(Ability)

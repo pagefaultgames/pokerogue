@@ -65,7 +65,7 @@ export class QuietFormChangePhase extends BattlePhase {
     pokemonFormTintSprite.setVisible(false);
     pokemonFormTintSprite.setTintFill(0xFFFFFF);
 
-    this.scene.playSound("PRSFX- Transform");
+    this.scene.playSound("battle_anims/PRSFX- Transform");
 
     this.scene.tweens.add({
       targets: pokemonTintSprite,
