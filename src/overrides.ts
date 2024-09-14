@@ -1,19 +1,19 @@
-import { Abilities } from "#enums/abilities";
-import { Biome } from "#enums/biome";
-import { EggTier } from "#enums/egg-type";
-import { Moves } from "#enums/moves";
-import { PokeballType } from "#enums/pokeball";
-import { Species } from "#enums/species";
-import { StatusEffect } from "#enums/status-effect";
-import { TimeOfDay } from "#enums/time-of-day";
-import { VariantTier } from "#enums/variant-tiers";
-import { WeatherType } from "#enums/weather-type";
-import { type PokeballCounts } from "./battle-scene";
-import { Gender } from "./data/gender";
-import { Variant } from "./data/variant";
-import { type ModifierOverride } from "./modifier/modifier-type";
-import { MysteryEncounterType } from "#enums/mystery-encounter-type";
-import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
+import {Abilities} from "#enums/abilities";
+import {Biome} from "#enums/biome";
+import {EggTier} from "#enums/egg-type";
+import {Moves} from "#enums/moves";
+import {PokeballType} from "#enums/pokeball";
+import {Species} from "#enums/species";
+import {StatusEffect} from "#enums/status-effect";
+import {TimeOfDay} from "#enums/time-of-day";
+import {VariantTier} from "#enums/variant-tiers";
+import {WeatherType} from "#enums/weather-type";
+import {type PokeballCounts} from "./battle-scene";
+import {Gender} from "./data/gender";
+import {Variant} from "./data/variant";
+import {type ModifierOverride} from "./modifier/modifier-type";
+import {MysteryEncounterType} from "#enums/mystery-encounter-type";
+import {MysteryEncounterTier} from "#enums/mystery-encounter-tier";
 
 /**
  * Overrides that are using when testing different in game situations
@@ -47,7 +47,7 @@ class DefaultOverrides {
   readonly SEED_OVERRIDE: string = "";
   readonly WEATHER_OVERRIDE: WeatherType = WeatherType.NONE;
   readonly BATTLE_TYPE_OVERRIDE: "double" | "single" | null = null;
-  readonly STARTING_WAVE_OVERRIDE: number = 0;
+  readonly STARTING_WAVE_OVERRIDE: number = 11;
   readonly STARTING_BIOME_OVERRIDE: Biome = Biome.TOWN;
   readonly ARENA_TINT_OVERRIDE: TimeOfDay | null = null;
   /** Multiplies XP gained by this value including 0. Set to null to ignore the override */
@@ -143,7 +143,7 @@ class DefaultOverrides {
   /** 1 to 256, set to null to ignore */
   readonly MYSTERY_ENCOUNTER_RATE_OVERRIDE: number | null = 256;
   readonly MYSTERY_ENCOUNTER_TIER_OVERRIDE: MysteryEncounterTier | null = null;
-  readonly MYSTERY_ENCOUNTER_OVERRIDE: MysteryEncounterType | null = null;
+  readonly MYSTERY_ENCOUNTER_OVERRIDE: MysteryEncounterType | null = MysteryEncounterType.TRASH_TO_TREASURE;
 
   // -------------------------
   // MODIFIER / ITEM OVERRIDES

@@ -1,19 +1,19 @@
 {
-  "intro": "It's a massive pile of garbage!\nWhere did this come from?",
-  "title": "Trash to Treasure",
-  "description": "The garbage heap looms over you, and you can spot some items of value buried amidst the refuse. Are you sure you want to get covered in filth to get them, though?",
-  "query": "What will you do?",
+  "intro":"Ein riesieger Haufen Müll. Wo kommt der auf einmal her?",
+  "title": "Vom Müllhaufen zum Schatzhaufen",
+  "description": "Der Müllberg ragt über dir auf und du kannst einige wertvolle Gegenstände im Müll entdecken. Bist du sicher, dass du dich in den Dreck wälzen willst, um sie zu bekommen?",
+  "query": "Was willst du tun?",
   "option": {
     "1": {
-      "label": "Dig for Valuables",
-      "tooltip": "(-) Lose Healing Items in Shops\n(+) Gain Amazing Items",
-      "selected": "You wade through the garbage pile, becoming mired in filth.$There's no way any respectable shopkeepers\nwill sell you anything in your grimy state!$You'll just have to make do without shop healing items.$However, you found some incredible items in the garbage!"
+      "label": "Nach Wertsachen suchen",
+      "tooltip": "(-) Keine Heilitems in Läden\n(+) Erhalte tolle Items",
+      "selected": "Du arbeitest dich durch den Müllhaufen und wirst von Dreck überzogen.$Kein respektabler Ladenbesitzer wird dir in deinem schmutzigen Zustand etwas verkaufen!$Du musst ohne Heilitems auskommen.$Aber du hast einige unglaubliche Items im Müll gefunden!"
     },
     "2": {
-      "label": "Investigate Further",
-      "tooltip": "(?) Find the Source of the Garbage",
-      "selected": "You wander around the heap, searching for any indication as to how this might have appeared here...",
-      "selected_2": "Suddenly, the garbage shifts! It wasn't just garbage, it was a Pokémon!"
+      "label": "Genauer untersuchen",
+      "tooltip":  "(?) Finde die Quelle des Mülls",
+      "selected": "Du wanderst um den Müllhaufen herum und suchst nach Hinweisen, wie dieser hier gelandet sein könnte...",
+      "selected_2": "Der Müll bewegt sich! Es war nicht nur Müll, es war ein Pokémon!"
     }
   }
 }

@@ -1,26 +1,26 @@
 {
-  "intro": "You encounter a blistering storm of smoke and ash!",
-  "title": "Fiery Fallout",
-  "description": "The whirling ash and embers have cut visibility to nearly zero. It seems like there might be some... source that is causing these conditions. But what could be behind a phenomenon of this magnitude?",
-  "query": "What will you do?",
+  "intro":  "Du hast einen Sturm aus Rauch und Asche entdeckt!",
+  "title": "Feurige Folgen",
+  "description": "Die umherwirbelnde Asche und Glut haben die Sicht auf fast Null reduziert. Es scheint, als könnte es eine... Quelle geben, die diese Bedingungen verursacht. Aber was könnte hinter einem Phänomen dieser Größe stecken?",
+  "query": "Was wirst du tun?",
   "option": {
     "1": {
-      "label": "Find the Source",
-      "tooltip": "(?) Discover the source\n(-) Hard Battle",
-      "selected": "You push through the storm, and find two {{volcaronaName}}s in the middle of a mating dance!$They don't take kindly to the interruption and attack!"
+      "label": "Finde die Quelle",
+      "tooltip": "(?) Entdecke die Quelle\n(-) Schwieriger Kampf",
+      "selected": "Du hast die Quelle des Sturms gefunden!$Es sind zwei {{volcaronaName}}, die in der Mitte eines Paarungstanzes sind!$Sie nehmen die Unterbrechung nicht gut auf und greifen an!"
     },
     "2": {
-      "label": "Hunker Down",
-      "tooltip": "(-) Suffer the effects of the weather",
-      "selected": "The weather effects cause significant\nharm as you struggle to find shelter!$Your party takes 20% Max HP damage!",
-      "target_burned": "Your {{burnedPokemon}} also became burned!"
+      "label": "Sich einigeln",
+      "tooltip": "(-) Die Folgen des Wetters erleiden",
+      "selected": "Die Folgen des Wetters sind verheerend!$Deine Pokémon nehmen 20% ihrer maximalen KP als Schaden!",
+      "target_burned": "Dein {{burnedPokemon}} wurde auch verbrannt!"
     },
     "3": {
-      "label": "Your Fire Types Help",
-      "tooltip": "(+) End the conditions\n(+) Gain a Charcoal",
-      "disabled_tooltip": "You need at least 2 Fire Type Pokémon to choose this",
-      "selected": "Your {{option3PrimaryName}} and {{option3SecondaryName}} guide you to where two {{volcaronaName}}s are in the middle of a mating dance!$Thankfully, your Pokémon are able to calm them,\nand they depart without issue."
+      "label": "Dein Feuer-Pokémon hilft",
+      "tooltip":  "(+) Das Wetter klärt auf\n(+) Erhalte ein Holzkohle",
+      "disabled_tooltip": "Du benötigst mindestens 2 Feuer-Pokémon, um diese Option auszuwählen",
+      "selected":  "Dein {{option3PrimaryName}} und {{option3SecondaryName}} führen dich zu zwei {{volcaronaName}}, die in der Mitte eines Paarungstanzes sind!$Zum Glück können deine Pokémon sie beruhigen,und sie ziehen ohne Probleme ab."
     }
   },
-  "found_charcoal": "After the weather clears,\nyour {{leadPokemon}} spots something on the ground.$@s{item_fanfare}{{leadPokemon}} gained a Charcoal!"
+  "found_charcoal":  "Nachdem das Wetter aufklart, entdeckt dein {{leadPokemon}} etwas auf dem Boden.$@s{item_fanfare}{{leadPokemon}} erhält eine Holzkohle!"
 }
