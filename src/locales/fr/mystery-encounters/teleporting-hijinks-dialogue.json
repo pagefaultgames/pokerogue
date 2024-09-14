@@ -1,12 +1,12 @@
 {
   "intro": "Cette machine un peu étrange émet un lourd ronronnement…",
-  "title": "Teleportating Hijinks",
+  "title": "Le télé-torpeur",
   "description": "Vous pouvez lire sur la machine :\n  « Notice d’utilisation : Insérez de l’argent et pénétrez dans la capsule. »\n\nPeut-être qu’elle vous emmènera quelque part…",
   "query": "Que voulez-vous faire ?",
   "option": {
     "1": {
       "label": "Insérer de l’argent",
-      "tooltip": "(-) Payer {{price, money}}\n(?) Teleportation vers un nouveau biome",
+      "tooltip": "(-) Payer {{price, money}}\n(?) Téléportation vers un nouveau biome",
       "selected": "Vous insérez un peu d’argent et la capsule s’ouvre.\nVous y pénétrez…"
     },
     "2": {
@@ -18,10 +18,10 @@
     "3": {
       "label": "Inspecter la machine",
       "tooltip": "(-) Combat Pokémon",
-      "selected": "Tous ces bruits et lumières clignotantes\némis par la machine titillent vos sens…$Mais vous manquez d’apercevoir un Pokémon\nsauvage et vous tend une emuscade !"
+      "selected": "Tous ces bruits et lumières clignotantes\némis par la machine titillent vos sens…$Mais vous manquez d’apercevoir un Pokémon\nsauvage et vous tend une embuscade !"
     }
   },
-  "transport": "La machine vibre violemment,\nen émattant toutes sortes de bruits !$À peine la machine lancée, elle revient soudainement très silencieuse.",
+  "transport": "La machine vibre violemment,\nen émattant toutes sortes de bruits !$À peine la machine lancée, elle redevient soudainement très silencieuse.",
   "attacked": "Vous en ressortez en un lieu complètement nouveau, effrayant au passage un Pokémon sauvage !$Le Pokémon sauvage vous attaque !",
   "boss_enraged": "Le {{enemyPokemon}} ennemi s’énerve !"
 }
