@@ -1,8 +1,8 @@
 {
-  "intro": "Vous tomber sur du matériel d’entrainement.",
+  "intro": "Vous tombez sur du matériel d’entrainement.",
   "title": "Session d’entrainement",
-  "description": "Ce matériel semble pouvoir être utilisé pour entrainer un membre de votre équipe ! Il existe plusieurs moyens avec lesquels vous pourriez entrainer votre Pokémon, comme en le faisant combattre le reste de votre équipe.",
-  "query": "Quel entrainement chosir ?",
+  "description": "Ce matériel semble pouvoir être utilisé pour entrainer un membre de votre équipe ! Il existe plusieurs moyens avec lesquels vous pourriez entrainer un Pokémon, comme en le faisant combattre le reste de votre équipe.",
+  "query": "Quel entrainement choisir ?",
   "invalid_selection": "Le Pokémon doit être en bonne santé.",
   "option": {
     "1": {
@@ -12,7 +12,7 @@
     },
     "2": {
       "label": "Modéré",
-      "tooltip": "(-) Combat modérée\n(+) Modifie la nature du Pokémon",
+      "tooltip": "(-) Combat modéré\n(+) Modifie la nature du Pokémon",
       "select_prompt": "Sélectionnez la nature pour laquelle\nvotre Pokémon doit s’entrainer.",
       "finished": "{{selectedPokemon}} revient vers vous,\nl’air fatigué mais fier de lui !$Il a beaucoup changé et\nest devenu {{nature}} !"
     },
@@ -25,7 +25,7 @@
     "4": {
       "label": "Partir",
       "tooltip": "(-) Aucune récompense",
-      "selected": "Oh la flemme, pas le temps de faire sport.\nAllons ailleurs."
+      "selected": "Oh la flemme, pas le temps de faire du sport.\nAllons ailleurs."
     },
     "selected": "{{selectedPokemon}} va de l’autre côté\ndu terrain pour vous faire face…"
   },
