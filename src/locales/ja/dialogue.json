@@ -2718,7 +2718,7 @@
   },
   "rival": {
     "encounter": {
-      "1": "@c{smile}あっ、ここに　いたんだ！　旅に　出る前に　「じゃ　またね！」って　くらい　聞きたかったよ……$@c{smile_eclosed}やっぱり　夢を　追ってこうと　しているんだ？　信じられない　ほどね……$@c{serious_smile_fists}じゃあ、　ここまで　来たから　バトルしよっか？　覚悟してるかを　確かめたい　から！$@c{serious_mopen_fists}遠慮せずに　全力で　かかってこいぜ！"
+      "1": "@c{smile}あっ、ここに　いたんだ！　旅に　出る前に\n「じゃ　またね！」って　くらい　聞きたかったよ……$@c{smile_eclosed}やっぱり　夢を　追ってこうと　しているんだ？\n信じられない　ほどね……$@c{serious_smile_fists}じゃあ、　ここまで　来たから　バトルしよっか？\n覚悟してるかを　確かめたい　から！$@c{serious_mopen_fists}遠慮せずに　全力で　かかってこいぜ！"
     },
     "victory": {
       "1": "@c{shock}ウワッ、カンゼンに　ぶっ壊したぜ。\n初心者だとは　思えないほど……$@c{smile}たぶん　運が良っかった　だけが……\n最後まで　行ける素質が　あるかもな！$こっちの　アイテムを　あげよう、　博士に そう言いつけたから。　結構　スゴそうな　もんだ！$@c{serious_smile_fists}ここからも　ガンバレ！"
@@ -2753,10 +2753,10 @@
   },
   "rival_3": {
     "encounter": {
-      "1": "@c{smile}Hey, look who it is! It's been a while.\n@c{neutral}You're… still undefeated? Huh.\n$@c{neutral_eclosed}Things have been kind of… strange.\nIt's not the same back home without you.\n$@c{serious}I know it's selfish, but I need to get this off my chest.\n@c{neutral_eclosed}I think you're in over your head here.\n$@c{serious}Never losing once is just unrealistic.\nWe need to lose sometimes in order to grow.\n$@c{neutral_eclosed}You've had a great run but there's still so much ahead, and it only gets harder. @c{neutral}Are you prepared for that?\n$@c{serious_mopen_fists}If so, prove it to me."
+      "1": "@c{smile}おお　誰かと思ったら　な！　久しぶり！\n@c{neutral}もう…　倒されなかった　か？　フン\n$@c{neutral_eclosed}最近　なんか…　変な　気分だな。\nキミが　いないと　ふるさとは　同じ場所　じゃない。\n$@c{serious}わがまま　かもしれないが、本音　明かさなくちゃ。\n@c{neutral_eclosed}このままで　すぐ　キミの　手に　負えなくなる。\n$@c{serious}一回も　負けないこと　って　むちゃくちゃだろう。\nみんなは　時々　失敗しなくちゃ。　そうでなけりゃ　成長できない。\n$@c{neutral_eclosed}ここまで　よく　やって来たが、\nまだまだ　先が　辛いこと　ばかり。@c{neutral}覚悟してるか？\n$@c{serious_mopen_fists}それなら、見せてくれ。"
     },
     "victory": {
-      "1": "@c{angry_mhalf}This is ridiculous… I've hardly stopped training…\nHow are we still so far apart?"
+      "1": "@c{angry_mhalf}こりゃ　むっちゃ　だろ…　訓練しか　してないよ…\nなぜ　力が　もう　こんなに　違うなだ？"
     }
   },
   "rival_3_female": {
