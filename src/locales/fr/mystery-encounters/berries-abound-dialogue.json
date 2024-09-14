@@ -1,7 +1,7 @@
 {
   "intro": "Il y a un gros buisson à Baies\nprès de ce Pokémon !",
   "title": "Baies à gogo",
-  "description": "Un Pokémon a l’air de monter la garde sur ce buissons à Baies. Vous pourriez aller frontalement au combat, mais il a l’air costaud. Un Pokémon rapide pourrait peut-être en attraper quelques-unes sans se faire prendre ?",
+  "description": "Un Pokémon a l’air de monter la garde de ce buisson à Baies. Vous pourriez aller frontalement au combat, mais il a l’air costaud. Un Pokémon rapide pourrait peut-être en attraper quelques-unes sans se faire prendre ?",
   "query": "Que voulez-vous faire ?",
   "berries": "Des Baies !",
   "option": {
@@ -19,7 +19,7 @@
     },
     "3": {
       "label": "Partir",
-      "tooltip": "(-) Aucun récompense",
+      "tooltip": "(-) Aucune récompense",
       "selected": "Vous renoncez à ce Pokémon avec\nson butin et continuez votre route."
     }
   }
