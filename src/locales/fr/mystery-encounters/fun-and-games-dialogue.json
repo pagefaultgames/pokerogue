@@ -25,6 +25,6 @@
   "best_result": "Le {{wobbuffetName}} éclate le bouton si fort que la cloche crève le plafond !$Vous remportez le premier prix !",
   "great_result": "Le {{wobbuffetName}} éclate le bouton, et touche presque la cloche !$Mince, à deux doigts !\nVous remportez le deuxième prix !",
   "good_result": "Le {{wobbuffetName}} tape le bouton assez fort pour atteindre la moitié !$Vous remportez le troisième prix !",
-  "bad_result": "Le {{wobbuffetName}} touche à peine le bouton et rien ne se passe…$Oh non!\nVous repartez les mains vides !",
+  "bad_result": "Le {{wobbuffetName}} touche à peine le bouton et rien ne se passe…$Oh non dommage !\nVous repartez les mains vides !",
   "outro": "Ouais, ça va, c’était sympa comme jeu !"
 }
