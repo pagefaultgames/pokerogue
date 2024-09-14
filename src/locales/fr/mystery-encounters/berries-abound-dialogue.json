@@ -6,7 +6,7 @@
   "berries": "Des Baies !",
   "option": {
     "1": {
-      "label": "Combattre le Pokémon",
+      "label": "L’affronter",
       "tooltip": "(-) Combat difficile\n(+) Gain de Baies",
       "selected": "Vous approchez\nle Pokémon sans frémir."
     },
