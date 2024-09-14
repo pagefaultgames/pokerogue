@@ -71,4 +71,24 @@ describe("Moves - Baneful Bunker", () => {
       expect(leadPokemon.status?.effect  === StatusEffect.POISON).toBeTruthy();
     }, TIMEOUT
   );
+
+  test(
+    "Baneful Bunker miss test with non contact attack",
+    async () => {
+      game.override.moveset(Moves.FLASH_CANNON);
+      await game.classicMode.startBattle([Species.CHARIZARD]);
+
+      const leadPokemon = game.scene.getPlayerPokemon()!;
+      const enemyPokemon = game.scene.getEnemyPokemon()!;
+
+      game.move.select(Moves.FLASH_CANNON);
+      await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+      await game.phaseInterceptor.to("MoveEffectPhase");
+
+      await game.move.forceMiss();
+      await game.phaseInterceptor.to("TurnEndPhase");
+      expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp());
+      expect(leadPokemon.status?.effect  === StatusEffect.POISON).toBeFalsy();
+    }, TIMEOUT
+  );
 });
