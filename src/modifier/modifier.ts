@@ -15,20 +15,20 @@ import { BerryType } from "#enums/berry-type";
 import { StatusEffect, getStatusEffectHealText } from "../data/status-effect";
 import { achvs } from "../system/achv";
 import { VoucherType } from "../system/voucher";
-import { FormChangeItem, SpeciesFormChangeItemTrigger } from "../data/pokemon-forms";
+import { FormChangeItem, SpeciesFormChangeItemTrigger, SpeciesFormChangeLapseTeraTrigger, SpeciesFormChangeTeraTrigger } from "../data/pokemon-forms";
 import { Nature } from "#app/data/nature";
 import Overrides from "#app/overrides";
 import { ModifierType, modifierTypes } from "./modifier-type";
 import { Command } from "#app/ui/command-ui-handler";
 import { Species } from "#enums/species";
-import { Stat, type PermanentStat, type TempBattleStat, BATTLE_STATS, TEMP_BATTLE_STATS  } from "#app/enums/stat";
+import { Stat, type PermanentStat, type TempBattleStat, BATTLE_STATS, TEMP_BATTLE_STATS } from "#app/enums/stat";
 import i18next from "i18next";
 
 import { allMoves } from "#app/data/move";
 import { Abilities } from "#app/enums/abilities";
-import { LearnMovePhase } from "#app/phases/learn-move-phase.js";
-import { LevelUpPhase } from "#app/phases/level-up-phase.js";
-import { PokemonHealPhase } from "#app/phases/pokemon-heal-phase.js";
+import { LearnMovePhase } from "#app/phases/learn-move-phase";
+import { LevelUpPhase } from "#app/phases/level-up-phase";
+import { PokemonHealPhase } from "#app/phases/pokemon-heal-phase";
 
 export type ModifierPredicate = (modifier: Modifier) => boolean;
 
@@ -292,70 +292,136 @@ export class AddVoucherModifier extends ConsumableModifier {
   }
 }
 
+/**
+ * Modifier used for party-wide or passive items that start an initial
+ * {@linkcode battleCount} equal to {@linkcode maxBattles} that, for every
+ * battle, decrements. Typically, when {@linkcode battleCount} reaches 0, the
+ * modifier will be removed. If a modifier of the same type is to be added, it
+ * will reset {@linkcode battleCount} back to {@linkcode maxBattles} of the
+ * existing modifier instead of adding that modifier directly.
+ * @extends PersistentModifier
+ * @abstract
+ * @see {@linkcode add}
+ */
 export abstract class LapsingPersistentModifier extends PersistentModifier {
-  protected battlesLeft: integer;
+  /** The maximum amount of battles the modifier will exist for */
+  private maxBattles: number;
+  /** The current amount of battles the modifier will exist for */
+  private battleCount: number;
 
-  constructor(type: ModifierTypes.ModifierType, battlesLeft?: integer, stackCount?: integer) {
+  constructor(type: ModifierTypes.ModifierType, maxBattles: number, battleCount?: number, stackCount?: integer) {
     super(type, stackCount);
 
-    this.battlesLeft = battlesLeft!; // TODO: is this bang correct?
+    this.maxBattles = maxBattles;
+    this.battleCount = battleCount ?? this.maxBattles;
   }
 
-  lapse(args: any[]): boolean {
-    return !!--this.battlesLeft;
+  /**
+   * Goes through existing modifiers for any that match the selected modifier,
+   * which will then either add it to the existing modifiers if none were found
+   * or, if one was found, it will refresh {@linkcode battleCount}.
+   * @param modifiers {@linkcode PersistentModifier} array of the player's modifiers
+   * @param _virtual N/A
+   * @param _scene N/A
+   * @returns true if the modifier was successfully added or applied, false otherwise
+   */
+  add(modifiers: PersistentModifier[], _virtual: boolean, scene: BattleScene): boolean {
+    for (const modifier of modifiers) {
+      if (this.match(modifier)) {
+        const modifierInstance = modifier as LapsingPersistentModifier;
+        if (modifierInstance.getBattleCount() < modifierInstance.getMaxBattles()) {
+          modifierInstance.resetBattleCount();
+          scene.playSound("se/restore");
+          return true;
+        }
+        // should never get here
+        return false;
+      }
+    }
+
+    modifiers.push(this);
+    return true;
+  }
+
+  lapse(_args: any[]): boolean {
+    this.battleCount--;
+    return this.battleCount > 0;
   }
 
   getIcon(scene: BattleScene): Phaser.GameObjects.Container {
     const container = super.getIcon(scene);
 
-    const battleCountText = addTextObject(scene, 27, 0, this.battlesLeft.toString(), TextStyle.PARTY, { fontSize: "66px", color: "#f89890" });
+    // Linear interpolation on hue
+    const hue = Math.floor(120 * (this.battleCount / this.maxBattles) + 5);
+
+    // Generates the color hex code with a constant saturation and lightness but varying hue
+    const typeHex = Utils.hslToHex(hue, 0.50, 0.90);
+    const strokeHex = Utils.hslToHex(hue, 0.70, 0.30);
+
+    const battleCountText = addTextObject(scene, 27, 0, this.battleCount.toString(), TextStyle.PARTY, { fontSize: "66px", color: typeHex });
     battleCountText.setShadow(0, 0);
-    battleCountText.setStroke("#984038", 16);
+    battleCountText.setStroke(strokeHex, 16);
     battleCountText.setOrigin(1, 0);
     container.add(battleCountText);
 
     return container;
   }
 
-  getBattlesLeft(): integer {
-    return this.battlesLeft;
+  getIconStackText(_scene: BattleScene, _virtual?: boolean): Phaser.GameObjects.BitmapText | null {
+    return null;
   }
 
-  getMaxStackCount(scene: BattleScene, forThreshold?: boolean): number {
-    return 99;
-  }
-}
-
-export class DoubleBattleChanceBoosterModifier extends LapsingPersistentModifier {
-  constructor(type: ModifierTypes.DoubleBattleChanceBoosterModifierType, battlesLeft: integer, stackCount?: integer) {
-    super(type, battlesLeft, stackCount);
+  getBattleCount(): number {
+    return this.battleCount;
   }
 
-  match(modifier: Modifier): boolean {
-    if (modifier instanceof DoubleBattleChanceBoosterModifier) {
-      // Check type id to not match different tiers of lures
-      return modifier.type.id === this.type.id && modifier.battlesLeft === this.battlesLeft;
-    }
-    return false;
+  resetBattleCount(): void {
+    this.battleCount = this.maxBattles;
   }
 
-  clone(): DoubleBattleChanceBoosterModifier {
-    return new DoubleBattleChanceBoosterModifier(this.type as ModifierTypes.DoubleBattleChanceBoosterModifierType, this.battlesLeft, this.stackCount);
+  getMaxBattles(): number {
+    return this.maxBattles;
   }
 
   getArgs(): any[] {
-    return [ this.battlesLeft ];
+    return [ this.maxBattles, this.battleCount ];
   }
+
+  getMaxStackCount(_scene: BattleScene, _forThreshold?: boolean): number {
+    // Must be an abitrary number greater than 1
+    return 2;
+  }
+}
+
+/**
+ * Modifier used for passive items, specifically lures, that
+ * temporarily increases the chance of a double battle.
+ * @extends LapsingPersistentModifier
+ * @see {@linkcode apply}
+ */
+export class DoubleBattleChanceBoosterModifier extends LapsingPersistentModifier {
+  constructor(type: ModifierType, maxBattles:number, battleCount?: number, stackCount?: integer) {
+    super(type, maxBattles, battleCount, stackCount);
+  }
+
+  match(modifier: Modifier): boolean {
+    return (modifier instanceof DoubleBattleChanceBoosterModifier) && (modifier.getMaxBattles() === this.getMaxBattles());
+  }
+
+  clone(): DoubleBattleChanceBoosterModifier {
+    return new DoubleBattleChanceBoosterModifier(this.type as ModifierTypes.DoubleBattleChanceBoosterModifierType, this.getMaxBattles(), this.getBattleCount(), this.stackCount);
+  }
+
   /**
    * Modifies the chance of a double battle occurring
-   * @param args A single element array containing the double battle chance as a NumberHolder
-   * @returns {boolean} Returns true if the modifier was applied
+   * @param args [0] {@linkcode Utils.NumberHolder} for double battle chance
+   * @returns true if the modifier was applied
    */
   apply(args: any[]): boolean {
     const doubleBattleChance = args[0] as Utils.NumberHolder;
     // This is divided because the chance is generated as a number from 0 to doubleBattleChance.value using Utils.randSeedInt
     // A double battle will initiate if the generated number is 0
-    doubleBattleChance.value = Math.ceil(doubleBattleChance.value / 2);
+    doubleBattleChance.value = Math.ceil(doubleBattleChance.value / 4);
 
     return true;
   }
@@ -369,16 +435,18 @@ export class DoubleBattleChanceBoosterModifier extends LapsingPersistentModifier
  * @see {@linkcode apply}
  */
 export class TempStatStageBoosterModifier extends LapsingPersistentModifier {
+  /** The stat whose stat stage multiplier will be temporarily increased */
   private stat: TempBattleStat;
-  private multiplierBoost: number;
+  /** The amount by which the stat stage itself or its multiplier will be increased by */
+  private boost: number;
 
-  constructor(type: ModifierType, stat: TempBattleStat, battlesLeft?: number, stackCount?: number) {
-    super(type, battlesLeft ?? 5, stackCount);
+  constructor(type: ModifierType, stat: TempBattleStat, maxBattles: number, battleCount?: number, stackCount?: number) {
+    super(type, maxBattles, battleCount, stackCount);
 
     this.stat = stat;
     // Note that, because we want X Accuracy to maintain its original behavior,
     // it will increment as it did previously, directly to the stat stage.
-    this.multiplierBoost = stat !== Stat.ACC ? 0.3 : 1;
+    this.boost = (stat !== Stat.ACC) ? 0.3 : 1;
   }
 
   match(modifier: Modifier): boolean {
@@ -390,11 +458,11 @@ export class TempStatStageBoosterModifier extends LapsingPersistentModifier {
   }
 
   clone() {
-    return new TempStatStageBoosterModifier(this.type, this.stat, this.battlesLeft, this.stackCount);
+    return new TempStatStageBoosterModifier(this.type, this.stat, this.getMaxBattles(), this.getBattleCount(), this.stackCount);
   }
 
   getArgs(): any[] {
-    return [ this.stat, this.battlesLeft ];
+    return [ this.stat, ...super.getArgs() ];
   }
 
   /**
@@ -409,43 +477,13 @@ export class TempStatStageBoosterModifier extends LapsingPersistentModifier {
   }
 
   /**
-   * Increases the incoming stat stage matching {@linkcode stat} by {@linkcode multiplierBoost}.
+   * Increases the incoming stat stage matching {@linkcode stat} by {@linkcode boost}.
    * @param args [0] {@linkcode TempBattleStat} N/A
    *             [1] {@linkcode Utils.NumberHolder} that holds the resulting value of the stat stage multiplier
    */
   apply(args: any[]): boolean {
-    (args[1] as Utils.NumberHolder).value += this.multiplierBoost;
+    (args[1] as Utils.NumberHolder).value += this.boost;
     return true;
-  }
-
-  /**
-   * Goes through existing modifiers for any that match the selected modifier,
-   * which will then either add it to the existing modifiers if none were found
-   * or, if one was found, it will refresh {@linkcode battlesLeft}.
-   * @param modifiers {@linkcode PersistentModifier} array of the player's modifiers
-   * @param _virtual N/A
-   * @param _scene N/A
-   * @returns true if the modifier was successfully added or applied, false otherwise
-   */
-  add(modifiers: PersistentModifier[], _virtual: boolean, _scene: BattleScene): boolean {
-    for (const modifier of modifiers) {
-      if (this.match(modifier)) {
-        const modifierInstance = modifier as TempStatStageBoosterModifier;
-        if (modifierInstance.getBattlesLeft() < 5) {
-          modifierInstance.battlesLeft = 5;
-          return true;
-        }
-        // should never get here
-        return false;
-      }
-    }
-
-    modifiers.push(this);
-    return true;
-  }
-
-  getMaxStackCount(_scene: BattleScene, _forThreshold?: boolean): number {
-    return 1;
   }
 }
 
@@ -456,12 +494,12 @@ export class TempStatStageBoosterModifier extends LapsingPersistentModifier {
  * @see {@linkcode apply}
  */
 export class TempCritBoosterModifier extends LapsingPersistentModifier {
-  constructor(type: ModifierType, battlesLeft?: integer, stackCount?: number) {
-    super(type, battlesLeft || 5, stackCount);
+  constructor(type: ModifierType, maxBattles: number, battleCount?: number, stackCount?: number) {
+    super(type, maxBattles, battleCount, stackCount);
   }
 
   clone() {
-    return new TempCritBoosterModifier(this.type, this.stackCount);
+    return new TempCritBoosterModifier(this.type, this.getMaxBattles(), this.getBattleCount(), this.stackCount);
   }
 
   match(modifier: Modifier): boolean {
@@ -485,36 +523,6 @@ export class TempCritBoosterModifier extends LapsingPersistentModifier {
   apply(args: any[]): boolean {
     (args[0] as Utils.NumberHolder).value++;
     return true;
-  }
-
-  /**
-   * Goes through existing modifiers for any that match the selected modifier,
-   * which will then either add it to the existing modifiers if none were found
-   * or, if one was found, it will refresh {@linkcode battlesLeft}.
-   * @param modifiers {@linkcode PersistentModifier} array of the player's modifiers
-   * @param _virtual N/A
-   * @param _scene N/A
-   * @returns true if the modifier was successfully added or applied, false otherwise
-   */
-  add(modifiers: PersistentModifier[], _virtual: boolean, _scene: BattleScene): boolean {
-    for (const modifier of modifiers) {
-      if (this.match(modifier)) {
-        const modifierInstance = modifier as TempCritBoosterModifier;
-        if (modifierInstance.getBattlesLeft() < 5) {
-          modifierInstance.battlesLeft = 5;
-          return true;
-        }
-        // should never get here
-        return false;
-      }
-    }
-
-    modifiers.push(this);
-    return true;
-  }
-
-  getMaxStackCount(_scene: BattleScene, _forThreshold?: boolean): number {
-    return 1;
   }
 }
 
@@ -754,6 +762,7 @@ export class TerastallizeModifier extends LapsingPokemonHeldItemModifier {
   apply(args: any[]): boolean {
     const pokemon = args[0] as Pokemon;
     if (pokemon.isPlayer()) {
+      pokemon.scene.triggerPokemonFormChange(pokemon, SpeciesFormChangeTeraTrigger);
       pokemon.scene.validateAchv(achvs.TERASTALLIZE);
       if (this.teraType === Type.STELLAR) {
         pokemon.scene.validateAchv(achvs.STELLAR_TERASTALLIZE);
@@ -767,6 +776,7 @@ export class TerastallizeModifier extends LapsingPokemonHeldItemModifier {
     const ret = super.lapse(args);
     if (!ret) {
       const pokemon = args[0] as Pokemon;
+      pokemon.scene.triggerPokemonFormChange(pokemon, SpeciesFormChangeLapseTeraTrigger);
       pokemon.updateSpritePipelineData();
     }
     return ret;
@@ -784,7 +794,7 @@ export class TerastallizeModifier extends LapsingPokemonHeldItemModifier {
 /**
  * Modifier used for held items, specifically vitamins like Carbos, Hp Up, etc., that
  * increase the value of a given {@linkcode PermanentStat}.
- * @extends LapsingPersistentModifier
+ * @extends PokemonHeldItemModifier
  * @see {@linkcode apply}
  */
 export class BaseStatModifier extends PokemonHeldItemModifier {
@@ -827,6 +837,157 @@ export class BaseStatModifier extends PokemonHeldItemModifier {
 
   getMaxHeldItemCount(pokemon: Pokemon): integer {
     return pokemon.ivs[this.stat];
+  }
+}
+
+/**
+ * Currently used by Shuckle Juice item
+ */
+export class PokemonBaseStatTotalModifier extends PokemonHeldItemModifier {
+  private statModifier: integer;
+  readonly isTransferrable: boolean = false;
+
+  constructor(type: ModifierTypes.PokemonBaseStatTotalModifierType, pokemonId: integer, statModifier: integer, stackCount?: integer) {
+    super(type, pokemonId, stackCount);
+    this.statModifier = statModifier;
+  }
+
+  override matchType(modifier: Modifier): boolean {
+    return modifier instanceof PokemonBaseStatTotalModifier;
+  }
+
+  override clone(): PersistentModifier {
+    return new PokemonBaseStatTotalModifier(this.type as ModifierTypes.PokemonBaseStatTotalModifierType, this.pokemonId, this.statModifier, this.stackCount);
+  }
+
+  override getArgs(): any[] {
+    return super.getArgs().concat(this.statModifier);
+  }
+
+  override shouldApply(args: any[]): boolean {
+    return super.shouldApply(args) && args.length === 2 && args[1] instanceof Array;
+  }
+
+  override apply(args: any[]): boolean {
+    // Modifies the passed in baseStats[] array
+    args[1].forEach((v, i) => {
+      // HP is affected by half as much as other stats
+      const newVal = i === 0 ? Math.floor(v + this.statModifier / 2) : Math.floor(v + this.statModifier);
+      args[1][i] = Math.min(Math.max(newVal, 1), 999999);
+    });
+
+    return true;
+  }
+
+  override getScoreMultiplier(): number {
+    return 1.2;
+  }
+
+  override getMaxHeldItemCount(pokemon: Pokemon): integer {
+    return 2;
+  }
+}
+
+/**
+ * Currently used by Old Gateau item
+ */
+export class PokemonBaseStatFlatModifier extends PokemonHeldItemModifier {
+  private statModifier: integer;
+  private stats: Stat[];
+  readonly isTransferrable: boolean = false;
+
+  constructor (type: ModifierType, pokemonId: integer, statModifier: integer, stats: Stat[], stackCount?: integer) {
+    super(type, pokemonId, stackCount);
+
+    this.statModifier = statModifier;
+    this.stats = stats;
+  }
+
+  override matchType(modifier: Modifier): boolean {
+    return modifier instanceof PokemonBaseStatFlatModifier;
+  }
+
+  override clone(): PersistentModifier {
+    return new PokemonBaseStatFlatModifier(this.type, this.pokemonId, this.statModifier, this.stats, this.stackCount);
+  }
+
+  override getArgs(): any[] {
+    return super.getArgs().concat(this.statModifier, this.stats);
+  }
+
+  override shouldApply(args: any[]): boolean {
+    return super.shouldApply(args) && args.length === 2 && args[1] instanceof Array;
+  }
+
+  override apply(args: any[]): boolean {
+    // Modifies the passed in baseStats[] array by a flat value, only if the stat is specified in this.stats
+    args[1].forEach((v, i) => {
+      if (this.stats.includes(i)) {
+        const newVal = Math.floor(v + this.statModifier);
+        args[1][i] = Math.min(Math.max(newVal, 1), 999999);
+      }
+    });
+
+    return true;
+  }
+
+  override getScoreMultiplier(): number {
+    return 1.1;
+  }
+
+  override getMaxHeldItemCount(pokemon: Pokemon): integer {
+    return 1;
+  }
+}
+
+/**
+ * Currently used by Macho Brace item
+ */
+export class PokemonIncrementingStatModifier extends PokemonHeldItemModifier {
+  readonly isTransferrable: boolean = false;
+
+  constructor (type: ModifierType, pokemonId: integer, stackCount?: integer) {
+    super(type, pokemonId, stackCount);
+  }
+
+  matchType(modifier: Modifier): boolean {
+    return modifier instanceof PokemonIncrementingStatModifier;
+  }
+
+  clone(): PersistentModifier {
+    return new PokemonIncrementingStatModifier(this.type, this.pokemonId);
+  }
+
+  getArgs(): any[] {
+    return super.getArgs();
+  }
+
+  shouldApply(args: any[]): boolean {
+    return super.shouldApply(args) && args.length === 2 && args[1] instanceof Array;
+  }
+
+  apply(args: any[]): boolean {
+    // Modifies the passed in stats[] array by +1 per stack for HP, +2 per stack for other stats
+    // If the Macho Brace is at max stacks (50), adds additional 5% to total HP and 10% to other stats
+    args[1].forEach((v, i) => {
+      const isHp = i === 0;
+      let mult = 1;
+      if (this.stackCount === this.getMaxHeldItemCount()) {
+        mult = isHp ? 1.05 : 1.1;
+      }
+      const newVal = Math.floor((v + this.stackCount * (isHp ? 1 : 2)) * mult);
+      args[1][i] = Math.min(Math.max(newVal, 1), 999999);
+    });
+
+    return true;
+  }
+
+  getScoreMultiplier(): number {
+    return 1.2;
+  }
+
+  getMaxHeldItemCount(pokemon?: Pokemon): integer {
+    return 50;
   }
 }
 
@@ -913,6 +1074,18 @@ export class EvolutionStatBoosterModifier extends StatBoosterModifier {
 
   matchType(modifier: Modifier): boolean {
     return modifier instanceof EvolutionStatBoosterModifier;
+  }
+
+  /**
+   * Checks if the stat boosts can apply and if the holder is not currently
+   * Gigantamax'd.
+   * @param args [0] {@linkcode Pokemon} that holds the held item
+   *             [1] {@linkcode Stat} N/A
+   *             [2] {@linkcode Utils.NumberHolder} N/A
+   * @returns true if the stat boosts can be applied, false otherwise
+   */
+  shouldApply(args: any[]): boolean {
+    return super.shouldApply(args) && !(args[0] as Pokemon).isMax();
   }
 
   /**
@@ -2355,6 +2528,55 @@ export class LockModifierTiersModifier extends PersistentModifier {
   }
 }
 
+/**
+ * Black Sludge item
+ */
+export class HealShopCostModifier extends PersistentModifier {
+  constructor(type: ModifierType, stackCount?: integer) {
+    super(type, stackCount);
+  }
+
+  match(modifier: Modifier): boolean {
+    return modifier instanceof HealShopCostModifier;
+  }
+
+  clone(): HealShopCostModifier {
+    return new HealShopCostModifier(this.type, this.stackCount);
+  }
+
+  apply(args: any[]): boolean {
+    (args[0] as Utils.IntegerHolder).value *= Math.pow(3, this.getStackCount());
+
+    return true;
+  }
+
+  getMaxStackCount(scene: BattleScene): integer {
+    return 1;
+  }
+}
+
+export class BoostBugSpawnModifier extends PersistentModifier {
+  constructor(type: ModifierType, stackCount?: integer) {
+    super(type, stackCount);
+  }
+
+  match(modifier: Modifier): boolean {
+    return modifier instanceof BoostBugSpawnModifier;
+  }
+
+  clone(): HealShopCostModifier {
+    return new BoostBugSpawnModifier(this.type, this.stackCount);
+  }
+
+  apply(args: any[]): boolean {
+    return true;
+  }
+
+  getMaxStackCount(scene: BattleScene): integer {
+    return 1;
+  }
+}
+
 export class SwitchEffectTransferModifier extends PokemonHeldItemModifier {
   constructor(type: ModifierType, pokemonId: integer, stackCount?: integer) {
     super(type, pokemonId, stackCount);
@@ -2922,6 +3144,10 @@ export function overrideHeldItems(scene: BattleScene, pokemon: Pokemon, isPlayer
   const heldItemsOverride: ModifierTypes.ModifierOverride[] = isPlayer ? Overrides.STARTING_HELD_ITEMS_OVERRIDE : Overrides.OPP_HELD_ITEMS_OVERRIDE;
   if (!heldItemsOverride || heldItemsOverride.length === 0 || !scene) {
     return;
+  }
+
+  if (!isPlayer) {
+    scene.clearEnemyHeldItemModifiers();
   }
 
   heldItemsOverride.forEach(item => {
