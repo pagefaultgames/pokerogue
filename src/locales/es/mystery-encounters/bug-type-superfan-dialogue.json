@@ -1,38 +1,38 @@
 {
-  "intro": "An unusual trainer with all kinds of Bug paraphernalia blocks your way!",
-  "intro_dialogue": "Hey, trainer! I'm on a mission to find the rarest Bug Pokémon in existence!$You must love Bug Pokémon too, right?\nEveryone loves Bug Pokémon!",
-  "title": "The Bug-Type Superfan",
-  "speaker": "Bug-Type Superfan",
-  "description": "The trainer prattles, not even waiting for a response...\n\nIt seems the only way to get out of this situation is by catching the trainer's attention!",
-  "query": "What will you do?",
+  "intro": "¡Un entrenador inusual con todo tipo de parafernalia de bichos bloquea tu camino!",
+  "intro_dialogue": "¡Hola, entrenador! ¡Estoy en una misión para encontrar el Pokémon Bicho más raro que existe!$¿A ti también te encantan los Pokémon Bicho, verdad? ¡A todos les encantan los Pokémon Bicho!",
+  "title": "El Superfan de los Pokémon Bicho",
+  "speaker": "Superfan de los Pokémon Bicho",
+  "description": "El entrenador parlotea, sin siquiera esperar una respuesta...\n\n¡Parece que la única forma de salir de esta situación es captando la atención del entrenador!",
+  "query": "¿Qué harás?",
   "option": {
     "1": {
-      "label": "Offer to Battle",
-      "tooltip": "(-) Challenging Battle\n(+) Teach a Pokémon a Bug Type Move",
-      "selected": "A challenge, eh?\nMy bugs are more than ready for you!"
+      "label": "Proponer a luchar",
+      "tooltip": "(-) Batalla Desafiante\n(+) Enseña un movimiento de tipo Bicho a un Pokémon",
+      "selected": "¿Un desafío, eh?\n¡Mis Pokémon Bicho están más que preparados para ti!"
     },
     "2": {
-      "label": "Show Your Bug Types",
-      "tooltip": "(+) Receive a Gift Item",
-      "disabled_tooltip": "You need at least 1 Bug Type Pokémon on your team to select this.",
-      "selected": "You show the trainer all your Bug Type Pokémon...",
-      "selected_0_to_1": "Huh? You only have {{numBugTypes}}...$Guess I'm wasting my breath on someone like you...",
-      "selected_2_to_3": "Hey, you've got {{numBugTypes}} Bug Types!\nNot bad.$Here, this might help you on your journey to catch more!",
-      "selected_4_to_5": "What? You have {{numBugTypes}} Bug Types?\nNice!$You're not quite at my level, but I can see shades of myself in you!\n$Take this, my young apprentice!",
-      "selected_6": "Whoa! {{numBugTypes}} Bug Types!\n$You must love Bug Types almost as much as I do!$Here, take this as a token of our camaraderie!"
+      "label": "Muestra tus tipos Bicho",
+      "tooltip": "(+) ¡Recibe un objeto de regalo!",
+      "disabled_tooltip": "Necesitas al menos 1 Pokémon de tipo Bicho en tu equipo para seleccionar esto.",
+      "selected": "Le muestras al entrenador todos tus Pokémon de tipo Bicho...",
+      "selected_0_to_1": "¿Eh? Solo tienes {{numBugTypes}}...$Supongo que estoy perdiendo el tiempo con alguien como tú...",
+      "selected_2_to_3": "¡Oye, tienes {{numBugTypes}} Pokémon de tipo Bicho! No está mal.$Aquí, esto podría ayudarte en tu viaje para atrapar más.",
+      "selected_4_to_5": "¿Qué? ¿Tienes {{numBugTypes}} Bug Types?\nNice!$No estás a mi nivel, pero puedo ver destellos de mí en ti.$¡Toma esto, mi joven aprendiz!",
+      "selected_6": "¡Vaya! {{numBugTypes}}Pokémon de tipo Bicho!$¡Debes amar a los Pokémon de tipo Bicho casi tanto como yo!$Aquí, toma esto como un símbolo de nuestra camaradería."
     },
     "3": {
-      "label": "Gift a Bug Item",
-      "tooltip": "(-) Give the trainer a {{requiredBugItems}}\n(+) Receive a Gift Item",
-      "disabled_tooltip": "You need to have a {{requiredBugItems}} to select this.",
-      "select_prompt": "Select an item to give.",
-      "invalid_selection": "Pokémon doesn't have that kind of item.",
-      "selected": "You hand the trainer a {{selectedItem}}.",
-      "selected_dialogue": "Whoa! A {{selectedItem}}, for me?\nYou're not so bad, kid!$As a token of my appreciation,\nI want you to have this special gift!$It's been passed all through my family, and now I want you to have it!"
+      "label": "Regala un objeto de tipo Bicho",
+      "tooltip": "(-) Dale al entrenador un {{requiredBugItems}}\n(+) Recibe un item de regalo",
+      "disabled_tooltip": "Necesitas tener un {{requiredBugItems}} para seleccionar esto.",
+      "select_prompt": "Selecciona un objeto para dar",
+      "invalid_selection": "El Pokémon no tiene ese tipe de objeto.",
+      "selected": "Le entregas al entrenador un{{selectedItem}}.",
+      "selected_dialogue": "¡Vaya! ¿Un {{selectedItem}}, para mí? ¡No eres tan malo, chico!$Como muestra de mi agradecimiento, quiero que tengas este regalo especial.$Ha pasado por toda mi familia, y ahora quiero que lo tengas tú."
     }
   },
-  "battle_won": "Your knowledge and skill were perfect at exploiting our weaknesses!$In exchange for the valuable lesson,\nallow me to teach one of your Pokémon a Bug Type Move!",
-  "teach_move_prompt": "Select a move to teach a Pokémon.",
-  "confirm_no_teach": "You sure you don't want to learn one of these great moves?",
-  "outro": "I see great Bug Pokémon in your future!\nMay our paths cross again!$Bug out!"
+  "battle_won": "¡Tu conocimiento y habilidad fueron perfectos para explotar nuestras debilidades!$A cambio de la valiosa lección, permíteme enseñarle a uno de tus Pokémon un movimiento de tipo Bicho.",
+  "teach_move_prompt": "Selecciona un movimiento para enseñar a un Pokémon.",
+  "confirm_no_teach": "¿Estás seguro de que no quieres aprender uno de estos excellentes movimientos?",
+  "outro": "¡Veo grandes Pokémon de tipo Bicho en tu futuro! ¡Que nuestros caminos se crucen de nuevo! ¡Bicho fuera!"
 }
