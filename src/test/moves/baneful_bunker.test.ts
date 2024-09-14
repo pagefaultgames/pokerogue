@@ -86,7 +86,7 @@ describe("Moves - Baneful Bunker", () => {
       await game.phaseInterceptor.to("MoveEffectPhase");
 
       await game.move.forceMiss();
-      await game.phaseInterceptor.to("TurnEndPhase");
+      await game.phaseInterceptor.to("BerryPhase", false);
       expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp());
       expect(leadPokemon.status?.effect  === StatusEffect.POISON).toBeFalsy();
     }, TIMEOUT
