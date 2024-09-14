@@ -165,14 +165,27 @@ export class BlockRecoilDamageAttr extends AbAttr {
   }
 }
 
+/**
+ * Attribute for abilities that increase the chance of a double battle
+ * occurring.
+ * @see apply
+ */
 export class DoubleBattleChanceAbAttr extends AbAttr {
   constructor() {
     super(false);
   }
 
-  apply(pokemon: Pokemon, passive: boolean, simulated: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean {
-    const doubleChance = (args[0] as Utils.IntegerHolder);
-    doubleChance.value = Math.max(doubleChance.value / 2, 1);
+  /**
+   * Increases the chance of a double battle occurring
+   * @param args [0] {@linkcode Utils.NumberHolder} for double battle chance
+   * @returns true if the ability was applied
+   */
+  apply(_pokemon: Pokemon, _passive: boolean, _simulated: boolean, _cancelled: Utils.BooleanHolder, args: any[]): boolean {
+    const doubleBattleChance = args[0] as Utils.NumberHolder;
+    // This is divided because the chance is generated as a number from 0 to doubleBattleChance.value using Utils.randSeedInt
+    // A double battle will initiate if the generated number is 0
+    doubleBattleChance.value = doubleBattleChance.value / 4;
+
     return true;
   }
 }
