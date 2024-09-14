@@ -1,26 +1,26 @@
 {
-  "intro": "There's a huge berry bush\nnear that Pokémon!",
-  "title": "Berries Abound",
-  "description": "It looks like there's a strong Pokémon guarding a berry bush. Battling is the straightforward approach, but it looks strong. Perhaps a fast Pokémon could grab some berries without getting caught?",
-  "query": "What will you do?",
-  "berries": "Berries!",
+  "intro": "¡Hay un gran arbusto de bayas cerca de ese Pokémon!",
+  "title": "Bayas Abundantes",
+  "description": "Parece que hay un Pokémon fuerte protegiendo un arbusto de bayas. Luchar es el enfoque directo, pero parece fuerte. Quizás un Pokémon rápido podría agarrar algunas bayas sin ser descubierto?",
+  "query": "¿Que harás?",
+  "berries": "¡Bayas!",
   "option": {
     "1": {
-      "label": "Battle the Pokémon",
-      "tooltip": "(-) Hard Battle\n(+) Gain Berries",
+      "label": "Enfréntate al Pokémon",
+      "tooltip": "(-) Batalla Difícil\n(+) Obtén bayas",
       "selected": "You approach the\nPokémon without fear."
     },
     "2": {
-      "label": "Race to the Bush",
-      "tooltip": "(-) {{fastestPokemon}} Uses its Speed\n(+) Gain Berries",
-      "selected": "Your {{fastestPokemon}} races for the berry bush!$It manages to nab {{numBerries}} before the {{enemyPokemon}} can react!$You quickly retreat with your newfound prize.",
-      "selected_bad": "Your {{fastestPokemon}} races for the berry bush!$Oh no! The {{enemyPokemon}} was faster and blocked off the approach!",
-      "boss_enraged": "The opposing {{enemyPokemon}} has become enraged!"
+      "label": "Corre hacia el arbusto",
+      "tooltip": "(-) {{fastestPokemon}} Utiliza su velocidad\n(+) Obtén bayas",
+      "selected": "¡Tu {{fastestPokemon}} corre hacia el arbusto de bayas!$¡Logra agarrar {{numBerries}} antes de que {{enemyPokemon}} pueda reaccionar!$Huyes rápidamente con tu nuevo premio.",
+      "selected_bad": "¡Tu {{fastestPokemon}} corre hacia el arbusto de bayas!$¡Oh no! ¡El {{enemyPokemon}} fue más rápido y bloqueó el camino!",
+      "boss_enraged": "¡El {{enemyPokemon}} oponente se ha enfurecido!"
     },
     "3": {
-      "label": "Leave",
-      "tooltip": "(-) No Rewards",
-      "selected": "You leave the strong Pokémon\nwith its prize and continue on."
+      "label": "Irse",
+      "tooltip": "(-) Ninguna Recompensa",
+      "selected": "Dejas al Pokémon fuerte con su premio y continúas."
     }
   }
 }
