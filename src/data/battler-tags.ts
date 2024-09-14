@@ -5,7 +5,7 @@ import { StatusEffect } from "./status-effect";
 import * as Utils from "../utils";
 import { ChargeAttr, MoveFlags, allMoves } from "./move";
 import { Type } from "./type";
-import { BlockNonDirectDamageAbAttr, FlinchEffectAbAttr, ReverseDrainAbAttr, applyAbAttrs } from "./ability";
+import { BlockNonDirectDamageAbAttr, FlinchEffectAbAttr, ReverseDrainAbAttr, applyAbAttrs, ProtectStatAbAttr } from "./ability";
 import { TerrainType } from "./terrain";
 import { WeatherType } from "./weather";
 import { allAbilities } from "./ability";
@@ -22,6 +22,7 @@ import { MovePhase } from "#app/phases/move-phase";
 import { PokemonHealPhase } from "#app/phases/pokemon-heal-phase";
 import { ShowAbilityPhase } from "#app/phases/show-ability-phase";
 import { StatStageChangePhase, StatStageChangeCallback } from "#app/phases/stat-stage-change-phase";
+import { PokemonAnimType } from "#app/enums/pokemon-anim-type";
 
 export enum BattlerTagLapseType {
   FAINT,
@@ -30,6 +31,7 @@ export enum BattlerTagLapseType {
   AFTER_MOVE,
   MOVE_EFFECT,
   TURN_END,
+  HIT,
   CUSTOM
 }
 
@@ -391,9 +393,11 @@ export class BeakBlastChargingTag extends BattlerTag {
   lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
     if (lapseType === BattlerTagLapseType.CUSTOM) {
       const effectPhase = pokemon.scene.getCurrentPhase();
-      if (effectPhase instanceof MoveEffectPhase && effectPhase.move.getMove().hasFlag(MoveFlags.MAKES_CONTACT)) {
+      if (effectPhase instanceof MoveEffectPhase) {
         const attacker = effectPhase.getPokemon();
-        attacker.trySetStatus(StatusEffect.BURN, true, pokemon);
+        if (effectPhase.move.getMove().checkFlag(MoveFlags.MAKES_CONTACT, attacker, pokemon)) {
+          attacker.trySetStatus(StatusEffect.BURN, true, pokemon);
+        }
       }
       return true;
     }
@@ -451,10 +455,14 @@ export class TrappedTag extends BattlerTag {
   }
 
   canAdd(pokemon: Pokemon): boolean {
+    const source = pokemon.scene.getPokemonById(this.sourceId!)!;
+    const move = allMoves[this.sourceMove];
+
     const isGhost = pokemon.isOfType(Type.GHOST);
     const isTrapped = pokemon.getTag(TrappedTag);
+    const hasSubstitute = move.hitsSubstitute(source, pokemon);
 
-    return !isTrapped && !isGhost;
+    return !isTrapped && !isGhost && !hasSubstitute;
   }
 
   onAdd(pokemon: Pokemon): void {
@@ -514,10 +522,6 @@ export class FlinchedTag extends BattlerTag {
     super.onAdd(pokemon);
 
     applyAbAttrs(FlinchEffectAbAttr, pokemon, null);
-  }
-
-  canAdd(pokemon: Pokemon): boolean {
-    return !pokemon.isMax();
   }
 
   /**
@@ -870,10 +874,6 @@ export class EncoreTag extends BattlerTag {
   }
 
   canAdd(pokemon: Pokemon): boolean {
-    if (pokemon.isMax()) {
-      return false;
-    }
-
     const lastMoves = pokemon.getLastXMoves(1);
     if (!lastMoves.length) {
       return false;
@@ -1052,19 +1052,11 @@ export class MinimizeTag extends BattlerTag {
     super(BattlerTagType.MINIMIZED, BattlerTagLapseType.TURN_END, 1, Moves.MINIMIZE);
   }
 
-  canAdd(pokemon: Pokemon): boolean {
-    return !pokemon.isMax();
-  }
-
   onAdd(pokemon: Pokemon): void {
     super.onAdd(pokemon);
   }
 
   lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
-    //If a pokemon dynamaxes they lose minimized status
-    if (pokemon.isMax()) {
-      return false;
-    }
     return lapseType !== BattlerTagLapseType.CUSTOM || super.lapse(pokemon, lapseType);
   }
 
@@ -1121,7 +1113,7 @@ export abstract class DamagingTrapTag extends TrappedTag {
   }
 
   canAdd(pokemon: Pokemon): boolean {
-    return !pokemon.getTag(TrappedTag);
+    return !pokemon.getTag(TrappedTag) && !pokemon.getTag(BattlerTagType.SUBSTITUTE);
   }
 
   lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
@@ -2007,7 +1999,6 @@ export class FormBlockDamageTag extends BattlerTag {
     pokemon.scene.triggerPokemonFormChange(pokemon, SpeciesFormChangeManualTrigger);
   }
 }
-
 /** Provides the additional weather-based effects of the Ice Face ability */
 export class IceFaceBlockDamageTag extends FormBlockDamageTag {
   constructor(tagType: BattlerTagType) {
@@ -2055,7 +2046,6 @@ export class StockpilingTag extends BattlerTag {
     if (defChange) {
       this.statChangeCounts[Stat.DEF]++;
     }
-
     if (spDefChange) {
       this.statChangeCounts[Stat.SPDEF]++;
     }
@@ -2208,6 +2198,132 @@ export class TarShotTag extends BattlerTag {
 
   override onAdd(pokemon: Pokemon): void {
     pokemon.scene.queueMessage(i18next.t("battlerTags:tarShotOnAdd", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }));
+  }
+}
+
+export class SubstituteTag extends BattlerTag {
+  /** The substitute's remaining HP. If HP is depleted, the Substitute fades. */
+  public hp: number;
+  /** A reference to the sprite representing the Substitute doll */
+  public sprite: Phaser.GameObjects.Sprite;
+  /** Is the source Pokemon "in focus," i.e. is it fully visible on the field? */
+  public sourceInFocus: boolean;
+
+  constructor(sourceMove: Moves, sourceId: integer) {
+    super(BattlerTagType.SUBSTITUTE, [BattlerTagLapseType.PRE_MOVE, BattlerTagLapseType.AFTER_MOVE, BattlerTagLapseType.HIT], 0, sourceMove, sourceId, true);
+  }
+
+  /** Sets the Substitute's HP and queues an on-add battle animation that initializes the Substitute's sprite. */
+  onAdd(pokemon: Pokemon): void {
+    this.hp = Math.floor(pokemon.scene.getPokemonById(this.sourceId!)!.getMaxHp() / 4);
+    this.sourceInFocus = false;
+
+    // Queue battle animation and message
+    pokemon.scene.triggerPokemonBattleAnim(pokemon, PokemonAnimType.SUBSTITUTE_ADD);
+    pokemon.scene.queueMessage(i18next.t("battlerTags:substituteOnAdd", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }), 1500);
+
+    // Remove any binding effects from the user
+    pokemon.findAndRemoveTags(tag => tag instanceof DamagingTrapTag);
+  }
+
+  /** Queues an on-remove battle animation that removes the Substitute's sprite. */
+  onRemove(pokemon: Pokemon): void {
+    // Only play the animation if the cause of removal isn't from the source's own move
+    if (!this.sourceInFocus) {
+      pokemon.scene.triggerPokemonBattleAnim(pokemon, PokemonAnimType.SUBSTITUTE_REMOVE, [this.sprite]);
+    } else {
+      this.sprite.destroy();
+    }
+    pokemon.scene.queueMessage(i18next.t("battlerTags:substituteOnRemove", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }));
+  }
+
+  lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
+    switch (lapseType) {
+    case BattlerTagLapseType.PRE_MOVE:
+      this.onPreMove(pokemon);
+      break;
+    case BattlerTagLapseType.AFTER_MOVE:
+      this.onAfterMove(pokemon);
+      break;
+    case BattlerTagLapseType.HIT:
+      this.onHit(pokemon);
+      break;
+    }
+    return lapseType !== BattlerTagLapseType.CUSTOM; // only remove this tag on custom lapse
+  }
+
+  /** Triggers an animation that brings the Pokemon into focus before it uses a move */
+  onPreMove(pokemon: Pokemon): void {
+    pokemon.scene.triggerPokemonBattleAnim(pokemon, PokemonAnimType.SUBSTITUTE_PRE_MOVE, [this.sprite]);
+    this.sourceInFocus = true;
+  }
+
+  /** Triggers an animation that brings the Pokemon out of focus after it uses a move */
+  onAfterMove(pokemon: Pokemon): void {
+    pokemon.scene.triggerPokemonBattleAnim(pokemon, PokemonAnimType.SUBSTITUTE_POST_MOVE, [this.sprite]);
+    this.sourceInFocus = false;
+  }
+
+  /** If the Substitute redirects damage, queue a message to indicate it. */
+  onHit(pokemon: Pokemon): void {
+    const moveEffectPhase = pokemon.scene.getCurrentPhase();
+    if (moveEffectPhase instanceof MoveEffectPhase) {
+      const attacker = moveEffectPhase.getUserPokemon()!;
+      const move = moveEffectPhase.move.getMove();
+      const firstHit = (attacker.turnData.hitCount === attacker.turnData.hitsLeft);
+
+      if (firstHit && move.hitsSubstitute(attacker, pokemon)) {
+        pokemon.scene.queueMessage(i18next.t("battlerTags:substituteOnHit", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }));
+      }
+    }
+  }
+
+  /**
+  * When given a battler tag or json representing one, load the data for it.
+  * @param {BattlerTag | any} source A battler tag
+  */
+  loadTag(source: BattlerTag | any): void {
+    super.loadTag(source);
+    this.hp = source.hp;
+  }
+}
+
+/**
+ * Tag that adds extra post-summon effects to a battle for a specific Pokemon.
+ * These post-summon effects are performed through {@linkcode Pokemon.mysteryEncounterBattleEffects},
+ * and can be used to unshift special phases, etc.
+ * Currently used only in MysteryEncounters to provide start of fight stat buffs.
+ */
+export class MysteryEncounterPostSummonTag extends BattlerTag {
+  constructor() {
+    super(BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON, BattlerTagLapseType.CUSTOM, 1);
+  }
+
+  /** Event when tag is added */
+  onAdd(pokemon: Pokemon): void {
+    super.onAdd(pokemon);
+  }
+
+  /** Performs post-summon effects through {@linkcode Pokemon.mysteryEncounterBattleEffects} */
+  lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
+    const ret = super.lapse(pokemon, lapseType);
+
+    if (lapseType === BattlerTagLapseType.CUSTOM) {
+      const cancelled = new Utils.BooleanHolder(false);
+      applyAbAttrs(ProtectStatAbAttr, pokemon, cancelled);
+      if (!cancelled.value) {
+        if (pokemon.mysteryEncounterBattleEffects) {
+          pokemon.mysteryEncounterBattleEffects(pokemon);
+        }
+      }
+    }
+
+    return ret;
+  }
+
+  /** Event when tag is removed */
+  onRemove(pokemon: Pokemon): void {
+    super.onRemove(pokemon);
   }
 }
 
@@ -2370,6 +2486,10 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: number, source
     return new ThroatChoppedTag();
   case BattlerTagType.GORILLA_TACTICS:
     return new GorillaTacticsTag();
+  case BattlerTagType.SUBSTITUTE:
+    return new SubstituteTag(sourceMove, sourceId);
+  case BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON:
+    return new MysteryEncounterPostSummonTag();
   case BattlerTagType.NONE:
   default:
     return new BattlerTag(tagType, BattlerTagLapseType.CUSTOM, turnCount, sourceMove, sourceId);
