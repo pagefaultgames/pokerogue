@@ -931,7 +931,7 @@ export function initSpecies() {
       new PokemonForm("Normal", "", Type.FIRE, Type.FLYING, 1.7, 90.5, Abilities.BLAZE, Abilities.NONE, Abilities.SOLAR_POWER, 534, 78, 84, 78, 109, 85, 100, 45, 50, 267, false, null, true),
       new PokemonForm("Mega X", SpeciesFormKey.MEGA_X, Type.FIRE, Type.DRAGON, 1.7, 110.5, Abilities.TOUGH_CLAWS, Abilities.NONE, Abilities.TOUGH_CLAWS, 634, 78, 130, 111, 130, 85, 100, 45, 50, 267),
       new PokemonForm("Mega Y", SpeciesFormKey.MEGA_Y, Type.FIRE, Type.FLYING, 1.7, 100.5, Abilities.DROUGHT, Abilities.NONE, Abilities.DROUGHT, 634, 78, 104, 78, 159, 115, 100, 45, 50, 267),
-      new PokemonForm("G-Max", SpeciesFormKey.GIGANTAMAX, Type.FIRE, Type.FLYING, 28, 90.5, Abilities.SOLAR_POWER, Abilities.SOLAR_POWER, Abilities.SOLAR_POWER, 634, 118, 84, 93, 139, 110, 100, 45, 50, 267),
+      new PokemonForm("G-Max", SpeciesFormKey.GIGANTAMAX, Type.FIRE, Type.FLYING, 28, 90.5, Abilities.BERSERK, Abilities.BERSERK, Abilities.BERSERK, 634, 118, 84, 93, 139, 110, 100, 45, 50, 267),
     ),
     new PokemonSpecies(Species.SQUIRTLE, 1, false, false, false, "Tiny Turtle Pokémon", Type.WATER, null, 0.5, 9, Abilities.TORRENT, Abilities.NONE, Abilities.RAIN_DISH, 314, 44, 48, 65, 50, 64, 43, 45, 50, 63, GrowthRate.MEDIUM_SLOW, 87.5, false),
     new PokemonSpecies(Species.WARTORTLE, 1, false, false, false, "Turtle Pokémon", Type.WATER, null, 1, 22.5, Abilities.TORRENT, Abilities.NONE, Abilities.RAIN_DISH, 405, 59, 63, 80, 65, 80, 58, 45, 50, 142, GrowthRate.MEDIUM_SLOW, 87.5, false),
@@ -1116,7 +1116,7 @@ export function initSpecies() {
     new PokemonSpecies(Species.EEVEE, 1, false, false, false, "Evolution Pokémon", Type.NORMAL, null, 0.3, 6.5, Abilities.RUN_AWAY, Abilities.ADAPTABILITY, Abilities.ANTICIPATION, 325, 55, 55, 50, 45, 65, 55, 45, 50, 65, GrowthRate.MEDIUM_FAST, 87.5, false, true,
       new PokemonForm("Normal", "", Type.NORMAL, null, 0.3, 6.5, Abilities.RUN_AWAY, Abilities.ADAPTABILITY, Abilities.ANTICIPATION, 325, 55, 55, 50, 45, 65, 55, 45, 50, 65, false, null, true),
       new PokemonForm("Partner", "partner", Type.NORMAL, null, 0.3, 6.5, Abilities.RUN_AWAY, Abilities.ADAPTABILITY, Abilities.ANTICIPATION, 435, 65, 75, 70, 65, 85, 75, 45, 50, 65, false, null, true),
-      new PokemonForm("G-Max", SpeciesFormKey.GIGANTAMAX, Type.NORMAL, null, 18, 6.5, Abilities.PROTEAN, Abilities.PROTEAN, Abilities.PROTEAN, 535, 105, 95, 70, 95, 85, 85, 45, 50, 65), //+100 BST from Partner Form
+      new PokemonForm("G-Max", SpeciesFormKey.GIGANTAMAX, Type.NORMAL, null, 18, 6.5, Abilities.PROTEAN, Abilities.PROTEAN, Abilities.PROTEAN, 535, 110, 90, 70, 95, 85, 85, 45, 50, 65), //+100 BST from Partner Form
     ),
     new PokemonSpecies(Species.VAPOREON, 1, false, false, false, "Bubble Jet Pokémon", Type.WATER, null, 1, 29, Abilities.WATER_ABSORB, Abilities.NONE, Abilities.HYDRATION, 525, 130, 65, 60, 110, 95, 65, 45, 50, 184, GrowthRate.MEDIUM_FAST, 87.5, false),
     new PokemonSpecies(Species.JOLTEON, 1, false, false, false, "Lightning Pokémon", Type.ELECTRIC, null, 0.8, 24.5, Abilities.VOLT_ABSORB, Abilities.NONE, Abilities.QUICK_FEET, 525, 65, 65, 60, 110, 95, 130, 45, 50, 184, GrowthRate.MEDIUM_FAST, 87.5, false),
@@ -2400,7 +2400,7 @@ export function initSpecies() {
     new PokemonSpecies(Species.ARCTOVISH, 8, false, false, false, "Fossil Pokémon", Type.WATER, Type.ICE, 2, 175, Abilities.WATER_ABSORB, Abilities.ICE_BODY, Abilities.SLUSH_RUSH, 505, 90, 90, 100, 80, 90, 55, 45, 50, 177, GrowthRate.SLOW, null, false),
     new PokemonSpecies(Species.DURALUDON, 8, false, false, false, "Alloy Pokémon", Type.STEEL, Type.DRAGON, 1.8, 40, Abilities.LIGHT_METAL, Abilities.HEAVY_METAL, Abilities.STALWART, 535, 70, 95, 115, 120, 50, 85, 45, 50, 187, GrowthRate.MEDIUM_FAST, 50, false, true,
       new PokemonForm("Normal", "", Type.STEEL, Type.DRAGON, 1.8, 40, Abilities.LIGHT_METAL, Abilities.HEAVY_METAL, Abilities.STALWART, 535, 70, 95, 115, 120, 50, 85, 45, 50, 187, false, null, true),
-      new PokemonForm("G-Max", SpeciesFormKey.GIGANTAMAX, Type.STEEL, Type.DRAGON, 43, 40, Abilities.LIGHTNING_ROD, Abilities.LIGHTNING_ROD, Abilities.LIGHTNING_ROD, 635, 100, 105, 119, 166, 57, 88, 45, 50, 187),
+      new PokemonForm("G-Max", SpeciesFormKey.GIGANTAMAX, Type.STEEL, Type.DRAGON, 43, 40, Abilities.LIGHTNING_ROD, Abilities.LIGHTNING_ROD, Abilities.LIGHTNING_ROD, 635, 100, 110, 120, 175, 60, 70, 45, 50, 187),
     ),
     new PokemonSpecies(Species.DREEPY, 8, false, false, false, "Lingering Pokémon", Type.DRAGON, Type.GHOST, 0.5, 2, Abilities.CLEAR_BODY, Abilities.INFILTRATOR, Abilities.CURSED_BODY, 270, 28, 60, 30, 40, 30, 82, 45, 50, 54, GrowthRate.SLOW, 50, false),
     new PokemonSpecies(Species.DRAKLOAK, 8, false, false, false, "Caretaker Pokémon", Type.DRAGON, Type.GHOST, 1.4, 11, Abilities.CLEAR_BODY, Abilities.INFILTRATOR, Abilities.CURSED_BODY, 410, 68, 80, 50, 60, 50, 102, 45, 50, 144, GrowthRate.SLOW, 50, false),
