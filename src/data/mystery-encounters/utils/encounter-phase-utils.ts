@@ -129,6 +129,7 @@ export async function initBattleWithEnemyConfig(scene: BattleScene, partyConfig:
     }
 
     trainerConfig = partyConfig?.trainerConfig ? partyConfig?.trainerConfig : trainerConfigs[trainerType!];
+    trainerConfig.name = i18next.t(`trainerNames:${trainerConfigs[trainerType!].name.toLowerCase()}`);
 
     const doubleTrainer = trainerConfig.doubleOnly || (trainerConfig.hasDouble && !!partyConfig.doubleBattle);
     doubleBattle = doubleTrainer;
