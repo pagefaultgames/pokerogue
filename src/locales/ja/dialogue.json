@@ -2810,10 +2810,10 @@
   },
   "rival_6": {
     "encounter": {
-      "1": "@c{smile_eclosed}We meet again.\n$@c{neutral}I've had some time to reflect on all this.\nThere's a reason this all seems so strange.\n$@c{neutral_eclosed}Your dream, my drive to beat you…\nIt's all a part of something greater.\n$@c{serious}This isn't about me, or about you… This is about the world, @c{serious_mhalf_fists}and it's my purpose to push you to your limits.\n$@c{neutral_eclosed}Whether I've fulfilled that purpose I can't say, but I've done everything in my power.\n$@c{neutral}This place we ended up in is terrifying… Yet somehow I feel unphased, like I've been here before.\n$@c{serious_mhalf_fists}You feel the same, don't you?\n$@c{serious}…and it's like something here is speaking to me.\nThis is all the world's known for a long time now.\n$Those times we cherished together that seem so recent are nothing but a distant memory.\n$@c{neutral_eclosed}Who can say whether they were ever even real in the first place.\n$@c{serious_mopen_fists}You need to keep pushing, because if you don't, it will never end. You're the only one who can do this.\n$@c{serious_smile_fists}I hardly know what any of this means, I just know that it's true.\n$@c{serious_mopen_fists}If you can't defeat me here and now, you won't stand a chance."
+      "1": "@c{smile_eclosed}また　会ったね。\n$@c{neutral}今までの　ことを　振り返る　時間があった。\n全てが　変に感じる　訳が　あるよ。\n$@c{neutral_eclosed}キミの夢、おれが　キミに　倒したい熱心……\nより大きい　何かの　部分だけだ。\n$@c{serious}おれや　キミの　物語じゃない。これは　全世界の物語だ。\n@c{serious_mhalf_fists}この物語で、　おれの「役割」　っていうのは　キミを　限界まで　押すこと。\n$@c{neutral_eclosed}その役割を　果たしたのかは　言えないが、　全力を尽くした。\n$@c{neutral}最後に行き着いた　この場所って　恐ろしいが……\n以前　ここに来た　ことがある　ような　気がして、　怯えもしない。\n$@c{serious_mhalf_fists}キミも　同じ　気がするん　だろう？\n$@c{serious}……何かが　おれに　話してるようだ。\n昔から　これだけしかは　この世界こそ　そのもの。\n$大事にしてた　最近だと思ってた　一緒にいた日々、\n今は　もう　遠い記憶　だけだ。\n$@c{neutral_eclosed}そもそも　現実だったかは　もう　言えなくなったな。\n$@c{serious_mopen_fists}キミは　頑張り続かないと、\n決して　終わらない。　キミしか　できやしない。\n$@c{serious_smile_fists}全ての意味、　全然　分からない。\nしかし、　真実だと　知ってるな。\n$@c{serious_mopen_fists}今ここで　おれを　倒せなきゃ、　最後に　勝ち目が　ナイ。"
     },
     "victory": {
-      "1": "@c{smile_eclosed}It looks like my work is done here.\n$I want you to promise me one thing.\n@c{smile}After you heal the world, please come home."
+      "1": "@c{smile_eclosed}おれの　仕事が　終わったようだな。\n$一つだけの　ことを　約束してほしい。\n@c{smile}この世界を　癒やした後、　お願い……　帰ってくれ。"
     }
   },
   "rival_6_female": {
