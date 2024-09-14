@@ -122,7 +122,7 @@ export class ModifierType {
    * Populates item tier for ModifierType instance
    * Tier is a necessary field for items that appear in player shop (determines the Pokeball visual they use)
    * To find the tier, this function performs a reverse lookup of the item type in modifier pools
-   * @param poolType - Default 'ModifierPoolType.PLAYER'. Which pool to lookup item tier from
+   * @param poolType Default 'ModifierPoolType.PLAYER'. Which pool to lookup item tier from
    */
   withTierFromPool(poolType: ModifierPoolType = ModifierPoolType.PLAYER): ModifierType {
     for (const tier of Object.values(getModifierPoolForType(poolType))) {

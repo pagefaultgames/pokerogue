@@ -43,7 +43,7 @@ export const MysteriousChallengersEncounter: MysteryEncounter =
 
       // Normal difficulty trainer is randomly pulled from biome
       const normalTrainerType = scene.arena.randomTrainerType(scene.currentBattle.waveIndex);
-      const normalConfig = trainerConfigs[normalTrainerType].copy();
+      const normalConfig = trainerConfigs[normalTrainerType].clone();
       let female = false;
       if (normalConfig.hasGenders) {
         female = !!Utils.randSeedInt(2);
@@ -66,7 +66,7 @@ export const MysteriousChallengersEncounter: MysteryEncounter =
           true
         )
       );
-      const hardConfig = trainerConfigs[hardTrainerType].copy();
+      const hardConfig = trainerConfigs[hardTrainerType].clone();
       hardConfig.setPartyTemplates(hardTemplate);
       female = false;
       if (hardConfig.hasGenders) {
@@ -86,7 +86,7 @@ export const MysteriousChallengersEncounter: MysteryEncounter =
         true
       );
       const e4Template = trainerPartyTemplates.ELITE_FOUR;
-      const brutalConfig = trainerConfigs[brutalTrainerType].copy();
+      const brutalConfig = trainerConfigs[brutalTrainerType].clone();
       brutalConfig.setPartyTemplates(e4Template);
       // @ts-ignore
       brutalConfig.partyTemplateFunc = null; // Overrides gym leader party template func

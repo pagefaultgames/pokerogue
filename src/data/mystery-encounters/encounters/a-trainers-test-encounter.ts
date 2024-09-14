@@ -96,7 +96,7 @@ export const ATrainersTestEncounter: MysteryEncounter =
       encounter.misc = { trainerType, trainerNameKey, trainerEggDescription: eggDescription };
 
       // Trainer config
-      const trainerConfig = trainerConfigs[trainerType].copy();
+      const trainerConfig = trainerConfigs[trainerType].clone();
       const trainerSpriteKey = trainerConfig.getSpriteKey();
       encounter.enemyPartyConfigs.push({
         levelAdditiveMultiplier: 1,
