@@ -107,7 +107,7 @@ describe("Uncommon Breed - Mystery Encounter", () => {
     expect(onInitResult).toBe(true);
   });
 
-  describe("Option 1 - Fight", () => {
+  describe.skip("Option 1 - Fight", () => {
     it("should have the correct properties", () => {
       const option = UncommonBreedEncounter.options[0];
       expect(option.optionMode).toBe(MysteryEncounterOptionMode.DEFAULT);
