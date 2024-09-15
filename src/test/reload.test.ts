@@ -71,7 +71,7 @@ describe("Reload", () => {
       .enemyLevel(1000) // Avoid opponent dying before game.doKillOpponents()
       .disableTrainerWaves()
       .moveset([Moves.KOWTOW_CLEAVE])
-      .enemyMoveset(SPLASH_ONLY);
+      .enemyMoveset(Moves.SPLASH);
     await game.classicMode.startBattle(); // Apparently daily mode would override the biome
 
     // Transition from Wave 10 to Wave 11 in order to trigger biome switch
