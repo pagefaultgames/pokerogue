@@ -1,26 +1,26 @@
 {
   "intro": "一名看上去就很有钱的小男孩拦住了你。",
   "speaker": "富家子弟",
-  "intro_dialogue": "向你问好。$你的{{strongestPokemon}}看起来举世无双，我挪不开我的眼睛了！\n$我一直也想要一只那样的小跟班！$你的报酬不会少的，\n这个老家伙也可以送给你！",
+  "intro_dialogue": "向你问好。$你的{{strongestPokemon}}看起来举世无双，我挪不开我的眼睛了！\n$我一直也想要一只那样的宝可梦！$你的报酬不会少的，\n这个老家伙也可以送给你！",
   "title": "难以拒绝的买卖",
   "description": "对方愿意为了你的{{strongestPokemon}}出一个@[TOOLTIP_TITLE]{闪光护符}和{{price, money}}。\n\n这交易非常值得，但是你真的舍得放弃如此强大的伙伴吗？",
   "query": "你要怎么做？"
   "option": {
     "1": {
-      "label": "Accept the Deal",
-      "tooltip": "(-) Lose {{strongestPokemon}}\n(+) Gain a @[TOOLTIP_TITLE]{Shiny Charm}\n(+) Gain {{price, money}}",
-      "selected": "Wonderful!@d{32} Come along, {{strongestPokemon}}!$It's time to show you off to everyone at the yacht club!$They'll be so jealous!"
+      "label": "接受交易",
+      "tooltip": "(-)失去{{strongestPokemon}}\n(+)获得一个@[TOOLTIP_TITLE]{闪光护符}\n(+)获得{{price, money}}",
+      "selected": "太棒了！@d{32}过来吧，{{strongestPokemon}}！$现在是时候向游艇俱乐部的那帮小子炫耀一番了！$他们肯定得酸爆了！"
     },
     "2": {
-      "label": "Extort the Kid",
-      "tooltip": "(+) {{option2PrimaryName}} uses {{moveOrAbility}}\n(+) Gain {{price, money}}",
-      "tooltip_disabled": "Your Pokémon need to have certain moves or abilities to choose this",
-      "selected": "My word, we're being robbed, {{liepardName}}!$You'll be hearing from my lawyers for this!"
+      "label": "敲诈他",
+      "tooltip": "(+){{option2PrimaryName}}使用{{moveOrAbility}}\n(+)获得{{price, money}}",
+      "tooltip_disabled": "你的宝可梦需要具备某些特性或招式才能选择此项",
+      "selected": "我的天，你抢劫我。{{liepardName}}，走了！$我要找律师告你！"
     },
     "3": {
-      "label": "Leave",
-      "tooltip": "(-) No Rewards",
-      "selected": "What a rotten day...$Ah, well. Let's return to the yacht club then, {{liepardName}}."
+      "label": "离开",
+      "tooltip": "(-)无奖励",
+      "selected": "真够跌份儿的……$啊，好吧。那我们回游艇吧，{{liepardName}}。"
     }
   }
 }
