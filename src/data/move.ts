@@ -813,10 +813,6 @@ export default class Move implements Localizable {
       power.value *= typeBoost.boostValue;
     }
 
-    if (source.scene.arena.getTerrainType() === TerrainType.GRASSY && target.isGrounded() && this.type === Type.GROUND && this.moveTarget === MoveTarget.ALL_NEAR_OTHERS) {
-      power.value /= 2;
-    }
-
     applyMoveAttrs(VariablePowerAttr, source, target, this, power);
 
     source.scene.applyModifiers(PokemonMultiHitModifier, source.isPlayer(), source, new Utils.IntegerHolder(0), power);
