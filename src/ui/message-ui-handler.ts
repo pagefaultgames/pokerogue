@@ -22,13 +22,15 @@ export default abstract class MessageUiHandler extends AwaitableUiHandler {
    * @param container the container to add the sprite to
    */
   initPromptSprite(container: Phaser.GameObjects.Container) {
-    if (container && !this.prompt) {
+    if (!this.prompt) {
       const promptSprite = this.scene.add.sprite(0, 0, "prompt");
       promptSprite.setVisible(false);
       promptSprite.setOrigin(0, 0);
-      container.add(promptSprite);
-
       this.prompt = promptSprite;
+    }
+
+    if (container) {
+      container.add(this.prompt);
     }
   }
 
