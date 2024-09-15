@@ -8,7 +8,7 @@
   "option": {
     "1": {
       "label": "Aceptar el trato",
-      "tooltip": "(-) Pierdes a {{strongestPokemon}}\n(+) Obtén un @[TOOLTIP_TITLE]{Shiny Charm}\n(+) Obtén {{price, money}}",
+      "tooltip": "(-) Pierdes a {{strongestPokemon}}\n(+) Obtén un @[TOOLTIP_TITLE]{Amuleto Iris}\n(+) Obtén {{price, money}}",
       "selected": "¡Maravilloso!@d{32} ¡Ven, John!, {{strongestPokemon}}!$¡Es hora de mostrarte a todos en el club náutico!$¡Estarán tan celosos!"
     },
     "2": {
