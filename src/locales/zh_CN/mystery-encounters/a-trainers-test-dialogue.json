@@ -1,14 +1,14 @@
 {
   "intro": "一个十分强大的训练家向你走来…",
   "buck": {
-    "intro_dialogue": "Yo, trainer! My name's Buck.$I have a super awesome proposal\nfor a strong trainer such as yourself!$I'm carrying two rare Pokémon Eggs with me,\nbut I'd like someone else to care for one.$If you can prove your strength as a trainer to me,\nI'll give you the rarer egg!",
-    "accept": "Whoooo, I'm getting fired up!",
-    "decline": "Darn, it looks like your\nteam isn't in peak condition.$Here, let me help with that."
+    "intro_dialogue": "哟，训练师！我叫麦可。$我有一个非常棒的提议，\n适合像你这样强大的训练师！$我随身带着两颗稀有的宝可梦蛋，\n但我想让别人来照顾一颗。$如果你能向我证明你作为训练师的实力，\n我会给你更稀有的蛋！",
+    "accept": "芜！！我燃起来了！",
+    "decline": "害，看起来你的\n队伍状态不佳。$来，让我来帮忙。"
   },
   "cheryl": {
-    "intro_dialogue": "Hello, my name's Cheryl.$I have a particularly interesting request,\nfor a strong trainer such as yourself.$I'm carrying two rare Pokémon Eggs with me,\nbut I'd like someone else to care for one.$If you can prove your strength as a trainer to me,\nI'll give you the rarer Egg!",
-    "accept": "I hope you're ready!",
-    "decline": "I understand, it looks like your team\nisn't in the best condition at the moment.$Here, let me help with that."
+    "intro_dialogue": "你好，我是芽米。$我有一个特别有趣的请求，\n因为看起来你是一位强大的训练师。$我随身带着两颗稀有的神奇宝贝蛋，\n但我想让别人照顾一颗。$如果你能向我证明你作为训练师的实力，\n我会给你更稀有的蛋！",
+    "accept": "我希望你准备好了！",
+    "decline": "我明白，看起来你的团队\n目前状态不佳。$来，让我来帮忙。"
   },
   "marley": {
     "intro_dialogue": "...@d{64} I'm Marley.$I have an offer for you...$I'm carrying two Pokémon Eggs with me,\nbut I'd like someone else to care for one.$If you're stronger than me,\nI'll give you the rarer Egg.",
