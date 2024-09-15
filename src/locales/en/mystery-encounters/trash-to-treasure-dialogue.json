@@ -7,7 +7,7 @@
     "1": {
       "label": "Dig for Valuables",
       "tooltip": "(-) Items in Shops Cost 3x\n(+) Gain Amazing Items",
-      "selected": "You wade through the garbage pile, becoming mired in filth.$There's no way any respectable shopkeeper would\nsell you items at the normal rate in your grimy state!$You'll have to pay extra for healing items now.$However, you found some incredible items in the garbage!"
+      "selected": "You wade through the garbage pile, becoming mired in filth.$There's no way any respectable shopkeeper would\nsell you items at the normal rate in your grimy state!$You'll have to pay extra for items now.$However, you found some incredible items in the garbage!"
     },
     "2": {
       "label": "Investigate Further",
