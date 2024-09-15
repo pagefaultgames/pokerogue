@@ -1873,3 +1873,9 @@ export enum Moves {
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Malignant_Chain_(move) | Source} */
   MALIGNANT_CHAIN,
 }
+
+export class MovesUtil {
+  public static filename(move: Moves) {
+    return Moves[move].toLowerCase().replace(/\_/g, "-");
+  }
+}

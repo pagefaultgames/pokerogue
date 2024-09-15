@@ -5,7 +5,7 @@ import Pokemon from "../field/pokemon";
 import * as Utils from "../utils";
 import { BattlerIndex } from "../battle";
 import { Element } from "json-stable-stringify";
-import { Moves } from "#enums/moves";
+import { Moves, MovesUtil } from "#enums/moves";
 import { SubstituteTag } from "./battler-tags";
 import { isNullOrUndefined } from "../utils";
 import Phaser from "phaser";
@@ -488,14 +488,13 @@ export function initMoveAnim(scene: BattleScene, move: Moves): Promise<void> {
     } else {
       moveAnims.set(move, null);
       const defaultMoveAnim = allMoves[move] instanceof AttackMove ? Moves.TACKLE : allMoves[move] instanceof SelfStatusMove ? Moves.FOCUS_ENERGY : Moves.TAIL_WHIP;
-      const moveName = Moves[move].toLowerCase().replace(/\_/g, "-");
+
       const fetchAnimAndResolve = (move: Moves) => {
-        scene.cachedFetch(`./battle-anims/${moveName}.json`)
+        scene.cachedFetch(`./battle-anims/${MovesUtil.filename(move)}.json`)
           .then(response => {
             const contentType = response.headers.get("content-type");
             if (!response.ok || contentType?.indexOf("application/json") === -1) {
-              console.error(`Could not load animation file for move '${moveName}'`, response.status, response.statusText);
-              populateMoveAnim(move, moveAnims.get(defaultMoveAnim));
+              useDefaultAnim(move, defaultMoveAnim, response.status, response.statusText);
               return resolve();
             }
             return response.json();
@@ -515,11 +514,21 @@ export function initMoveAnim(scene: BattleScene, move: Moves): Promise<void> {
             } else {
               resolve();
             }
+          })
+          .catch(error => {
+            useDefaultAnim(move, defaultMoveAnim, error);
+            return resolve();
           });
       };
       fetchAnimAndResolve(move);
     }
   });
+}
+
+function useDefaultAnim(move: Moves, defaultMoveAnim: Moves, ...optionalParams: any[]) {
+  const moveName = MovesUtil.filename(move);
+  console.error(`Could not load animation file for move '${moveName}'`, ...optionalParams);
+  populateMoveAnim(move, moveAnims.get(defaultMoveAnim));
 }
 
 /**
