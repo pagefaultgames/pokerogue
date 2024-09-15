@@ -3349,7 +3349,7 @@ export function getStarterValueFriendshipCap(value: integer): integer {
 }
 
 export const POKERUS_STARTER_COUNT = 5; //adjust here!
-/** 
+/**
 * Method to get the daily list of starters with Pokerus.
 * @param scene {@linkcode BattleScene} used as part of RNG
 * @returns A list of starters with Pokerus
