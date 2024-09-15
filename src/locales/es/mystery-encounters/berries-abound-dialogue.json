@@ -1,14 +1,14 @@
 {
   "intro": "¡Hay un gran arbusto de bayas cerca de ese Pokémon!",
   "title": "Bayas Abundantes",
-  "description": "Parece que hay un Pokémon fuerte protegiendo un arbusto de bayas. Luchar es el enfoque directo, pero parece fuerte. Quizás un Pokémon rápido podría agarrar algunas bayas sin ser descubierto?",
-  "query": "¿Que harás?",
+  "description": "Parece que hay un Pokémon fuerte protegiendo un arbusto de bayas. Luchar es el enfoque directo, pero parece fuerte. ¿Quizás un Pokémon rápido podría agarrar algunas bayas sin ser descubierto?",
+  "query": "¿Qué harás?",
   "berries": "¡Bayas!",
   "option": {
     "1": {
       "label": "Enfréntate al Pokémon",
       "tooltip": "(-) Batalla Difícil\n(+) Obtén bayas",
-      "selected": "You approach the\nPokémon without fear."
+      "selected": "Te acercas al\nPokémon sin miedo."
     },
     "2": {
       "label": "Corre hacia el arbusto",

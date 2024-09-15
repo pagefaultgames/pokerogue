@@ -1,22 +1,22 @@
 {
-  "intro": "It's a family standing outside their house!",
-  "speaker": "The Winstrates",
-  "intro_dialogue": "We're the Winstrates!$What do you say to taking on our family in a series of Pokémon battles?",
-  "title": "The Winstrate Challenge",
-  "description": "The Winstrates are a family of 5 trainers, and they want to battle! If you beat all of them back-to-back, they'll give you a grand prize. But can you handle the heat?",
-  "query": "What will you do?",
+  "intro":  "Eine Familie steht vor ihrem Haus!",
+  "speaker": "Die Sihgers",
+  "intro_dialogue": "Wir sind die Sihgers!$Wie wäre es, wenn du gegen unsere Familie in einer Reihe von Pokémon-Kämpfen antrittst?",
+  "title": "Die Sihgers-Herausforderung",
+  "description": "Die Sihgers sind eine Familie von 5 Trainern, und sie wollen kämpfen! Wenn du sie alle hintereinander besiegst, bekommst du einen grandiosen Preis. Aber kannst du die Hitze aushalten?",
+  "query": "Was wirst du tun?",
   "option": {
     "1": {
-      "label": "Accept the Challenge",
-      "tooltip": "(-) Brutal Battle\n(+) Special Item Reward",
-      "selected": "Let the challenge begin!"
+      "label": "Die Herausforderung annehmen",
+      "tooltip": "(-) Brutaler Kampf\n(+) Spezielle Belohnung",
+      "selected": "Lass die Herausforderung beginnen!"
     },
     "2": {
-      "label": "Refuse the Challenge",
-      "tooltip": "(+) Full Heal Party\n(+) Gain a Rarer Candy",
-      "selected": "That's too bad. Say, your team looks worn out, why don't you stay awhile and rest?"
+      "label": "Die Herausforderung ablehnen",
+      "tooltip": "(+) Team wird geheilt\n(+) Erhalte ein Supersondererbonbon",
+      "selected": "Das ist zu schade. Dein Team sieht ziemlich mitgenommen aus, warum ruhst du dich nicht eine Weile aus?"
     }
   },
-  "victory": "Congratulations on beating our challenge!$First off, we'd like you to have this Voucher.",
-  "victory_2": "Also, our family uses this Macho Brace to strengthen\nour Pokémon more effectively during training.$You may not need it considering that you beat the whole lot of us, but we hope you'll accept it anyway!"
+  "victory": "Glückwunsch, du hast unsere Herausforderung gemeistert!$Zuerst möchten wir dir diesen Gutschein geben.",
+  "victory_2": "Außerdem benutzt unsere Familie diese Machoschiene, um unsere Pokémon effektiver zu tranieren.$Du brauchst es vielleicht nicht, da du uns alle geschlagen hast, aber wir hoffen, dass du es trotzdem annimmst!"
 }

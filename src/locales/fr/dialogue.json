@@ -509,8 +509,8 @@
       "2": "Hé, hé, hé !\nTu mets le feu !"
     },
     "defeat": {
-      "1": "Oh ? En panne de carburant je suppose ?",
-      "2": "Oh ? En panne de carburant je suppose ?"
+      "1": "Oh ?\nEn panne de carburant je suppose ?",
+      "2": "Oh ?\nEn panne de carburant je suppose ?"
     }
   },
   "stat_trainer_cheryl": {
@@ -571,7 +571,7 @@
   },
   "winstrates_victor": {
     "encounter": {
-      "1": "Bon esprit ! J’aime ça !"
+      "1": "Bon esprit !\nJ’aime ça !"
     },
     "victory": {
       "1": "Mince !\nTu as un meilleur niveau que je ne le pensais !"
@@ -579,7 +579,7 @@
   },
   "winstrates_victoria": {
     "encounter": {
-      "1": "Oh, ciel ! Ce que tu es jeune !$Mais si tu as battu mon mari, c’est que tu sais t’y prendre.$À nous deux, maintenant !"
+      "1": "Oh, ciel !\nCe que tu es jeune !$Mais si tu as battu mon mari,\nc’est que tu sais t’y prendre.$À nous deux, maintenant !"
     },
     "victory": {
       "1": "Ciel ! Cette force !\nJ’en suis toute retournée !"
@@ -595,7 +595,7 @@
   },
   "winstrates_vicky": {
     "encounter": {
-      "1": "Comment oses-tu faire pleurer mon adorable petite-fille !$Tu vas me le payer !\nTes Pokémon vont mordre la poussière !"
+      "1": "Comment oses-tu faire pleurer\nmon adorable petite-fille !$Tu vas me le payer !\nTes Pokémon vont mordre la poussière !"
     },
     "victory": {
       "1": "Ouh! Quelle puissance…\nMa petite-fille avait raison…"
@@ -603,7 +603,7 @@
   },
   "winstrates_vito": {
     "encounter": {
-      "1": "On s’entraine tous ensemble, avec les membres de ma famille !$Je ne perds contre personne !"
+      "1": "On s’entraine tous ensemble,\navec les membres de ma famille !$Je ne perds contre personne !"
     },
     "victory": {
       "1": "J’ai toujours été le meilleur de la famille.\nJe n’avais encore jamais perdu…"

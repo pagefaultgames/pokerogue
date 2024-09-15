@@ -1,7 +1,7 @@
 {
   "intro": "Vous tombez sur…@d{32} un coffre ?",
   "title": "Un étrange coffre",
-  "description": "Un mangifique coffre orné est posé en travers du chemin. Il doit forcément contenir quelque chose… pas vrai ?",
+  "description": "Un mangifique coffre orné est posé en travers du chemin.\nIl doit forcément contenir quelque chose… pas vrai ?",
   "query": "Voulez-vous ouvrir le coffre ?",
   "option": {
     "1": {

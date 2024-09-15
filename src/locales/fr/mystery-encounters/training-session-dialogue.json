@@ -1,33 +1,33 @@
 {
-  "intro": "You've come across some\ntraining tools and supplies.",
-  "title": "Training Session",
-  "description": "These supplies look like they could be used to train a member of your party! There are a few ways you could train your Pokémon, by battling against it with the rest of your team.",
-  "query": "How should you train?",
-  "invalid_selection": "Pokémon must be healthy enough.",
+  "intro": "Vous tombez sur du matériel d’entrainement.",
+  "title": "Session d’entrainement",
+  "description": "Ce matériel semble pouvoir être utilisé pour entrainer un membre de votre équipe ! Il existe plusieurs moyens avec lesquels vous pourriez entrainer un Pokémon, comme en le faisant combattre le reste de votre équipe.",
+  "query": "Quel entrainement choisir ?",
+  "invalid_selection": "Le Pokémon doit être en bonne santé.",
   "option": {
     "1": {
-      "label": "Light Training",
-      "tooltip": "(-) Light Battle\n(+) Improve 2 Random IVs of Pokémon",
-      "finished": "{{selectedPokemon}} returns, feeling\nworn out but accomplished!$Its {{stat1}} and {{stat2}} IVs were improved!"
+      "label": "Léger",
+      "tooltip": "(-) Combat léger\n(+) Augmente au hasard 2 IV du Pokémon",
+      "finished": "{{selectedPokemon}} revient vers vous,\nl’air fatigué mais fier de lui !$Ses IV en {{stat1}} et\nen {{stat2}} augmentent !"
     },
     "2": {
-      "label": "Moderate Training",
-      "tooltip": "(-) Moderate Battle\n(+) Change Pokémon's Nature",
-      "select_prompt": "Select a new nature\nto train your Pokémon in.",
-      "finished": "{{selectedPokemon}} returns, feeling\nworn out but accomplished!$Its nature was changed to {{nature}}!"
+      "label": "Modéré",
+      "tooltip": "(-) Combat modéré\n(+) Modifie la nature du Pokémon",
+      "select_prompt": "Sélectionnez la nature pour laquelle\nvotre Pokémon doit s’entrainer.",
+      "finished": "{{selectedPokemon}} revient vers vous,\nl’air fatigué mais fier de lui !$Il a beaucoup changé et\nest devenu {{nature}} !"
     },
     "3": {
-      "label": "Heavy Training",
-      "tooltip": "(-) Harsh Battle\n(+) Change Pokémon's Ability",
-      "select_prompt": "Select a new ability\nto train your Pokémon in.",
-      "finished": "{{selectedPokemon}} returns, feeling\nworn out but accomplished!$Its ability was changed to {{ability}}!"
+      "label": "Intense",
+      "tooltip": "(-) Combat intense\n(+) Modifie le talent du Pokémon",
+      "select_prompt": "Sélectionnez le talent pour lequel\nvotre Pokémon doit s’entrainer.",
+      "finished": "{{selectedPokemon}} revient vers vous,\nl’air fatigué mais fier de lui !$Il a beaucoup changé possède\ndesormais le talent {{ability}} !"
     },
     "4": {
-      "label": "Leave",
-      "tooltip": "(-) No Rewards",
-      "selected": "You've no time for training.\nTime to move on."
+      "label": "Partir",
+      "tooltip": "(-) Aucune récompense",
+      "selected": "Oh la flemme, pas le temps de faire du sport.\nAllons ailleurs."
     },
-    "selected": "{{selectedPokemon}} moves across\nthe clearing to face you..."
+    "selected": "{{selectedPokemon}} va de l’autre côté\ndu terrain pour vous faire face…"
   },
-  "outro": "That was a successful training session!"
+  "outro": "Cet entrainement a vraiement été très stimulant !"
 }

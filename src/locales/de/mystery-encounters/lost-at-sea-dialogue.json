@@ -1,28 +1,28 @@
 {
-  "intro": "Wandering aimlessly through the sea, you've effectively gotten nowhere.",
-  "title": "Lost at Sea",
-  "description": "The sea is turbulent in this area, and you're running out of energy.\nThis is bad. Is there a way out of the situation?",
-  "query": "What will you do?",
+  "intro": "Du warst auf dem Meer umhergeirrt und effektiv nirgendwohin gekommen.",
+  "title": "Verloren auf See",
+  "description": "Die See ist in diesem Gebiet stürmisch und du hast kaum noch Energie. Das ist schlecht. Gibt es einen Ausweg aus der Situation?",
+  "query": "Was wirst du tun?",
   "option": {
     "1": {
-      "label": "{{option1PrimaryName}} Might Help",
-      "label_disabled": "Can't {{option1RequiredMove}}",
-      "tooltip": "(+) {{option1PrimaryName}} saves you\n(+) {{option1PrimaryName}} gains some EXP",
-      "tooltip_disabled": "You have no Pokémon to {{option1RequiredMove}} on",
-      "selected": "{{option1PrimaryName}} swims ahead, guiding you back on track.${{option1PrimaryName}} seems to also have gotten stronger in this time of need!"
+      "label": "{{option1PrimaryName}} kann helfen",
+      "label_disabled": "Kein {{option1RequiredMove}}",
+      "tooltip":  "(+) {{option1PrimaryName}} rettet dich\n(+) {{option1PrimaryName}} erhält etwas EP",
+      "tooltip_disabled": "Du hast kein Pokémon, das {{option1RequiredMove}} erlernen kann",
+      "selected": "{{option1PrimaryName}} schwimmt voraus und führt dich zurück auf den richtigen Weg.${{option1PrimaryName}} scheint auch stärker geworden zu sein in dieser Zeit der Not!"
     },
     "2": {
-      "label": "{{option2PrimaryName}} Might Help",
-      "label_disabled": "Can't {{option2RequiredMove}}",
-      "tooltip": "(+) {{option2PrimaryName}} saves you\n(+) {{option2PrimaryName}} gains some EXP",
-      "tooltip_disabled": "You have no Pokémon to {{option2RequiredMove}} with",
-      "selected": "{{option2PrimaryName}} flies ahead of your boat, guiding you back on track.${{option2PrimaryName}} seems to also have gotten stronger in this time of need!"
+      "label": "{{option2PrimaryName}} kann helfen",
+      "label_disabled":  "Kein {{option2RequiredMove}}",
+      "tooltip":  "(+) {{option2PrimaryName}} rettet dich\n(+) {{option2PrimaryName}} erhält etwas EP",
+      "tooltip_disabled":  "Du hast kein Pokémon, das {{option2RequiredMove}} erlernen kann",
+      "selected": "{{option2PrimaryName}} fliegt vor deinem Boot und führt dich zurück auf den richtigen Weg.${{option2PrimaryName}} scheint auch stärker geworden zu sein in dieser Zeit der Not!"
     },
     "3": {
-      "label": "Wander Aimlessly",
-      "tooltip": "(-) Each of your Pokémon lose {{damagePercentage}}% of their total HP",
-      "selected": "You float about in the boat, steering without direction until you finally spot a landmark you remember.$You and your Pokémon are fatigued from the whole ordeal."
+      "label": "Umherirren",
+      "tooltip": "(-) Jedes deiner Pokémon verliert {{damagePercentage}}% seiner maximalen KP",
+      "selected": "Du treibst im Boot umher, steuerst ohne Richtung, bis du endlich ein Wahrzeichen siehst, das du wiedererkennst.$Du und deine Pokémon sind erschöpft von dem ganzen Vorfall."
     }
   },
-  "outro": "You are back on track."
+  "outro": "Du bist wieder auf dem richtigen Weg."
 }

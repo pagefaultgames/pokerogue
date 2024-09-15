@@ -1,47 +1,47 @@
 {
-  "intro": "An extremely strong trainer approaches you...",
+  "intro": "Ein sehr starker Trainer kommt auf dich zu...",
   "buck": {
-    "intro_dialogue": "Yo, trainer! My name's Buck.$I have a super awesome proposal\nfor a strong trainer such as yourself!$I'm carrying two rare Pokémon Eggs with me,\nbut I'd like someone else to care for one.$If you can prove your strength as a trainer to me,\nI'll give you the rarer egg!",
-    "accept": "Whoooo, I'm getting fired up!",
-    "decline": "Darn, it looks like your\nteam isn't in peak condition.$Here, let me help with that."
+    "intro_dialogue": "Yo, Trainer! Mein Name ist Avenaro.$Ich habe ein super Angebot für einen starken Trainer wie dich!$Ich trage zwei seltene Pokémon-Eier bei mir, aber ich möchte, dass sich jemand anderes um eines kümmert.$Wenn du mir beweisen kannst, dass du ein starker Trainer bist, werde ich dir das seltenere Ei geben!",
+    "accept": "Wohooo! Ich bin Feuer und Flamme!",
+    "decline": "Manno, es sieht so aus, als wäre dein Team nicht in Bestform.$Hier, lass mich dir helfen."
   },
   "cheryl": {
-    "intro_dialogue": "Hello, my name's Cheryl.$I have a particularly interesting request,\nfor a strong trainer such as yourself.$I'm carrying two rare Pokémon Eggs with me,\nbut I'd like someone else to care for one.$If you can prove your strength as a trainer to me,\nI'll give you the rarer Egg!",
-    "accept": "I hope you're ready!",
-    "decline": "I understand, it looks like your team\nisn't in the best condition at the moment.$Here, let me help with that."
+    "intro_dialogue": "Hallo mein Name ist Raissa, ich habe eine besondere Bitte an dich, einen starken Trainer.$Ich trage zwei seltene Pokémon-Eier bei mir, aber ich möchte, dass sich jemand anderes um eines kümmert.$Wenn du mir beweisen kannst, dass du ein starker Trainer bist, werde ich dir das seltenere Ei geben!",
+    "accept": "Ich hoffe, du bist bereit!",
+    "decline": "Ich verstehe, es sieht so aus, als wäre dein Team nicht in der besten Verfassung.$Hier, lass mich dir helfen."
   },
   "marley": {
-    "intro_dialogue": "...@d{64} I'm Marley.$I have an offer for you...$I'm carrying two Pokémon Eggs with me,\nbut I'd like someone else to care for one.$If you're stronger than me,\nI'll give you the rarer Egg.",
-    "accept": "... I see.",
-    "decline": "... I see.$Your Pokémon look hurt...\nLet me help."
+    "intro_dialogue": "...@d{64} Ich bin Charlie.$Ich habe ein Angebot für dich...$Ich trage zwei Pokémon-Eier bei mir, aber ich möchte, dass sich jemand anderes um eines kümmert.$Wenn du stärker bist als ich, werde ich dir das seltenere Ei geben.",
+    "accept": "...So ist das also.",
+    "decline": "...Deine Pokémon sehen verletzt aus...Lass mich helfen."
   },
   "mira": {
-    "intro_dialogue": "Hi! I'm Mira!$Mira has a request\nfor a strong trainer like you!$Mira has two rare Pokémon Eggs,\nbut Mira wants someone else to take one!$If you show Mira that you're strong,\nMira will give you the rarer Egg!",
-    "accept": "You'll battle Mira?\nYay!",
-    "decline": "Aww, no battle?\nThat's okay!$Here, Mira will heal your team!"
+    "intro_dialogue": "Hi, ich bin Orisa!$Ich habe eine Bitte an dich, einen starken Trainer.$Ich trage zwei seltene Pokémon-Eier bei mir, aber ich möchte, dass sich jemand anderes um eines kümmert.$Wenn du mir beweisen kannst, dass du ein starker Trainer bist, werde ich dir das seltenere Ei geben!",
+    "accept": "Du wirst Orisa herausfordern? Juhu!",
+    "decline": "Aww, kein Kampf? Das ist okay!$Hier, Orisa wird dein Team heilen!"
   },
   "riley": {
-    "intro_dialogue": "I'm Riley.$I have an odd proposal\nfor a strong trainer such as yourself.$I'm carrying two rare Pokémon Eggs with me,\nbut I'd like to give one to another trainer.$If you can prove your strength to me,\nI'll give you the rarer Egg!",
-    "accept": "That look you have...\nLet's do this.",
-    "decline": "I understand, your team looks beat up.$Here, let me help with that."
+    "intro_dialogue": "Ich Urs, ich habe eine Bitte an dich, einen starken Trainer.$Ich trage zwei seltene Pokémon-Eier bei mir, aber ich möchte, dass sich jemand anderes um eines kümmert.$Wenn du mir beweisen kannst, dass du ein starker Trainer bist, werde ich dir das seltenere Ei geben!",
+    "accept":  "Dieser Blick...Lass uns das machen.",
+    "decline": "Ich verstehe, dein Team sieht geschlagen aus.$Hier, lass mich dir helfen."
   },
-  "title": "A Trainer's Test",
-  "description": "It seems this trainer is willing to give you an Egg regardless of your decision. However, if you can manage to defeat this strong trainer, you'll receive a much rarer Egg.",
-  "query": "What will you do?",
+  "title":  "Ein Trainer-Test",
+  "description": "Es scheint als würde dieser Trainer dir ein Ei geben, egal wie du dich entscheidest. Wenn du es jedoch schaffst, diesen starken Trainer zu besiegen, wirst du ein viel selteneres Ei erhalten.",
+  "query": "Was wirst du tun?",
   "option": {
     "1": {
-      "label": "Accept the Challenge",
-      "tooltip": "(-) Tough Battle\n(+) Gain a @[TOOLTIP_TITLE]{Very Rare Egg}"
+      "label": "Die Herausforderung annehmen",
+      "tooltip": "(-) Schwerer Kampf\n(+) Erhalte ein @[TOOLTIP_TITLE]{Sehr seltenes Ei}"
     },
     "2": {
-      "label": "Refuse the Challenge",
-      "tooltip": "(+) Full Heal Party\n(+) Gain an @[TOOLTIP_TITLE]{Egg}"
+      "label": "Die Herausforderung ablehnen",
+      "tooltip":  "(+) Team wird geheilt\n(+) Erhalte ein @[TOOLTIP_TITLE]{Ei}"
     }
   },
   "eggTypes": {
-    "rare": "a Rare Egg",
-    "epic": "an Epic Egg",
-    "legendary": "a Legendary Egg"
+    "rare": "seltenes Ei",
+    "epic": "episches Ei",
+    "legendary": "legendäres Ei"
   },
-  "outro": "{{statTrainerName}} gave you {{eggType}}!"
+  "outro": "{{statTrainerName}} gibt dir ein {{eggType}}!"
 }

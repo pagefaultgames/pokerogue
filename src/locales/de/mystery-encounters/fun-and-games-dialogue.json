@@ -1,30 +1,30 @@
 {
-  "intro_dialogue": "Step right up, folks! Try your luck\non the brand new {{wobbuffetName}} Whack-o-matic!",
-  "speaker": "Showman",
-  "title": "Fun And Games!",
-  "description": "You've encountered a traveling show with a prize game! You will have @[TOOLTIP_TITLE]{3 turns} to bring the {{wobbuffetName}} as close to @[TOOLTIP_TITLE]{1 HP} as possible @[TOOLTIP_TITLE]{without KOing it} so it can wind up a huge Counter on the bell-ringing machine.\nBut be careful! If you KO the {{wobbuffetName}}, you'll have to pay for the cost of reviving it!",
-  "query": "Would you like to play?",
+  "intro_dialogue": "Kommen Sie näher, meine Damen und Herren!$Versuchen Sie Ihr Glück mit dem brandneuen {{wobbuffetName}}-Hau-den-Lukas!",
+  "speaker": "Animateur",
+  "title": "Spaß und Spiele!",
+  "description": "Du hast ein {{wobbuffetName}} gefunden, das ein Spiel spielt! Du hast @[TOOLTIP_TITLE]{3 Züge}, um das {{wobbuffetName}} so nah wie möglich an @[TOOLTIP_TITLE]{1 KP} heranzubringen, @[TOOLTIP_TITLE]{ohne es zu besiegen}, damit es eine riesige Gegenattacke auf der Glockenmaschine ausführen kann.\nAber sei vorsichtig! Wenn du das {{wobbuffetName}} besiegst, musst du die Kosten für die Wiederbelebung bezahlen!",
+  "query": "Möchtest du spielen?",
   "option": {
     "1": {
-      "label": "Play the Game",
-      "tooltip": "(-) Pay {{option1Money, money}}\n(+) Play {{wobbuffetName}} Whack-o-matic",
-      "selected": "Time to test your luck!"
+      "label": "Das Spiel spielen",
+      "tooltip": "(-) Zahle {{option1Money, money}}\n(+) Spiele {{wobbuffetName}} Hau-den-Lukas",
+      "selected": "Zeit dein Glück herauszufordern!"
     },
     "2": {
-      "label": "Leave",
-      "tooltip": "(-) No Rewards",
-      "selected": "You hurry along your way,\nwith a slight feeling of regret."
+      "label": "Weggehen",
+      "tooltip": "(-) Keine Belohnung",
+      "selected": "Du beeilst dich auf deinem Weg, mit einem leichten Gefühl der Reue."
     }
   },
-  "ko": "Oh no! The {{wobbuffetName}} fainted!$You lose the game and\nhave to pay for the revive cost...",
-  "charging_continue": "The Wubboffet keeps charging its counter-swing!",
-  "turn_remaining_3": "Three turns remaining!",
-  "turn_remaining_2": "Two turns remaining!",
-  "turn_remaining_1": "One turn remaining!",
-  "end_game": "Time's up!$The {{wobbuffetName}} winds up to counter-swing and@d{16}.@d{16}.@d{16}.",
-  "best_result": "The {{wobbuffetName}} smacks the button so hard\nthe bell breaks off the top!$You win the grand prize!",
-  "great_result": "The {{wobbuffetName}} smacks the button, nearly hitting the bell!$So close!\nYou earn the second tier prize!",
-  "good_result": "The {{wobbuffetName}} hits the button hard enough to go midway up the scale!$You earn the third tier prize!",
-  "bad_result": "The {{wobbuffetName}} barely taps the button and nothing happens...$Oh no!\nYou don't win anything!",
-  "outro": "That was a fun little game!"
+  "ko": "Oh nein! Das {{wobbuffetName}} ist ohnmächtig geworden!$Du verlierst das Spiel und musst die Kosten für die Wiederbelebung bezahlen...",
+  "charging_continue": "Das {{wobbuffetName}} lädt seine Gegenattacke auf!",
+  "turn_remaining_3": "Drei Runden verbleiben!",
+  "turn_remaining_2": "Zwei Runden verbleiben!",
+  "turn_remaining_1": "Nur noch eine Runde!",
+  "end_game": "Die Zeit ist um!$Das {{wobbuffetName}} holt zum Gegenangriff aus und@d{16}.@d{16}.@d{16}.",
+  "best_result": "Das {{wobbuffetName}} schlägt so hart auf den Knopf, dass die Glocke vom oberen Teil abbricht!$Du gewinnst den Hauptpreis!",
+  "great_result": "Das {{wobbuffetName}} schlägt den Knopf so hart, dass die Glocke fast getroffen wird!$So nah! Du gewinnst den zweiten Preis!",
+  "good_result": "Das {{wobbuffetName}} trifft den Knopf stark genug, um die Hälfte der Skala zu erreichen!$Du verdienst den dritten Preis!",
+  "bad_result": "Das {{wobbuffetName}} trifft den Knopf kaum und nichts passiert...$Oh nein! Du gewinnst nichts!",
+  "outro": "Das war ein lustiges kleines Spiel!"
 }

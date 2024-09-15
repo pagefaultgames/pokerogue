@@ -1,34 +1,35 @@
 {
-  "intro": "It's...@d{64} a clown?",
+  "intro": "Es ist...@d{64} ein Clown?",
   "speaker": "Clown",
-  "intro_dialogue": "Bumbling buffoon, brace for a brilliant battle!\nYou'll be beaten by this brawling busker!",
-  "title": "Clowning Around",
-  "description": "Something is off about this encounter. The clown seems eager to goad you into a battle, but to what end?\n\nThe {{blacephalonName}} is especially strange, like it has @[TOOLTIP_TITLE]{weird types and ability.}",
-  "query": "What will you do?",
+  "intro_dialogue": "Du tollpatschiger Trottel, bereite dich auf einen brillanten Kampf vor!\nDu wirst von diesem prügelnden Straßenmusikanten besiegt!",
+  "title":  "Rumgeblödel",
+  "description": "Irgendwas stimmt nicht mit dieser Begegnung. Der Clown scheint darauf aus zu sein, dich zu einem Kampf zu provozieren, aber zu welchem Zweck?\n\nDas {{blacephalonName}} ist besonders seltsam, als hätte es  @[TOOLTIP_TITLE]{seltsame Typen} und eine @[TOOLTIP_TITLE]{Fähigkeit.}",
+  "query": "Was wirst du tun?",
   "option": {
     "1": {
-      "label": "Battle the Clown",
-      "tooltip": "(-) Strange Battle\n(?) Affects Pokémon Abilities",
-      "selected": "Your pitiful Pokémon are poised for a pathetic performance!",
-      "apply_ability_dialogue": "A sensational showcase!\nYour savvy suits a sensational skill as spoils!",
-      "apply_ability_message": "The clown is offering to permanently Skill Swap one of your Pokémon's ability to {{ability}}!",
-      "ability_prompt": "Would you like to permanently teach a Pokémon the {{ability}} ability?",
-      "ability_gained": "@s{level_up_fanfare}{{chosenPokemon}} gained the {{ability}} ability!"
+      "label": "Kampf beginnen",
+      "tooltip": "(-) Komischer Kampf\n(?) Beeinflusst Pokémon-Fähigkeiten",
+      "selected": "Deine erbärmlichen Pokémon sind bereit für eine erbärmliche Vorstellung!",
+      "apply_ability_dialogue": "Eine sensationelle Vorstellung! Dein Können passt zu einer sensationellen Fähigkeit als Beute!",
+      "apply_ability_message": "Der Clown bietet an, die Fähigkeit eines deiner Pokémon dauerhaft auf {{ability}} zu wechseln!",
+      "ability_prompt": "Soll eines deiner Pokémon die Fähigkeit {{ability}} dauerhaft erlangen?",
+      "ability_gained": "@s{level_up_fanfare}{{chosenPokemon}} hat die Fähigkeit {{ability}} erhalten!"
     },
     "2": {
-      "label": "Remain Unprovoked",
-      "tooltip": "(-) Upsets the Clown\n(?) Affects Pokémon Items",
-      "selected": "Dismal dodger, you deny a delightful duel?\nFeel my fury!",
-      "selected_2": "The clown's {{blacephalonName}} uses Trick!\nAll of your {{switchPokemon}}'s items were randomly swapped!",
-      "selected_3": "Flustered fool, fall for my flawless deception!"
+      "label": "Nicht provozieren lassen",
+      "tooltip": "(-) Der Clown ist beleidigt\n(?) Beeinflusst Pokémon-Items",
+      "selected":  "Du erbärmlicher Feigling, du verweigerst einen wunderbaren Kampf? Fühle meinen Zorn!",
+      "selected_2": "Das {{blacephalonName}} des Clowns verwendet Trickbetrug! Alle Items deines {{switchPokemon}} wurden zufällig vertauscht!",
+      "selected_3": "Meine perfekte List hat dich in die Irre geführt!"
     },
     "3": {
-      "label": "Return the Insults",
-      "tooltip": "(-) Upsets the Clown\n(?) Affects Pokémon Types",
-      "selected": "Dismal dodger, you deny a delightful duel?\nFeel my fury!",
-      "selected_2": "The clown's {{blacephalonName}} uses a strange move!\nAll of your team's types were randomly swapped!",
-      "selected_3": "Flustered fool, fall for my flawless deception!"
+      "label": "Die Beleidigungen erwidern",
+      "tooltip": "(-) Den Clown verärgern\n(?) Beeinflusst Pokémon-Typen",
+      "selected": "Du erbärmlicher Feigling verweigerst einen wunderbaren Kampf? Fühle meinen Zorn!",
+      "selected_2": "Das {{blacephalonName}} des Clowns verwendet eine seltsame Attacke! Alle Typen deines Teams wurden zufällig vertauscht!",
+      "selected_3": "Meine perfekte List hat dich in die Irre geführt!"
     }
+
   },
-  "outro": "The clown and his cohorts\ndisappear in a puff of smoke."
+  "outro": "Der Clown und seine Kumpanen verschwinden in einer Rauchwolke."
 }
