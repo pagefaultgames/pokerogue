@@ -117,7 +117,7 @@ const languageSettings: { [key: string]: LanguageSetting } = {
     starterInfoTextSize: "56px",
     instructionTextSize: "38px",
   },
-  "he-IL":{
+  "he":{
     starterInfoTextSize: "56px",
     instructionTextSize: "38px",
   },
