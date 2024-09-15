@@ -2190,14 +2190,14 @@ export const trainerConfigs: TrainerConfigs = {
     })),
   [TrainerType.PENNY]: new TrainerConfig(++t).setName("Penny").initForEvilTeamLeader("Star Boss", []).setMixedBattleBgm("battle_star_boss").setVictoryBgm("victory_team_plasma")
     .setPartyMemberFunc(0, getRandomPartyMemberFunc([ Species.VAPOREON, Species.JOLTEON, Species.FLAREON ]))
-    .setPartyMemberFunc(1, getRandomPartyMemberFunc([ Species.ESPEON, Species.UMBREON ],TrainerSlot.TRAINER, true, p => {
+    .setPartyMemberFunc(1, getRandomPartyMemberFunc([ Species.ESPEON, Species.UMBREON ], TrainerSlot.TRAINER, true, p => {
       p.abilityIndex = 2; // Magic Bounce Espeon, Inner Focus Umbreon
       p.generateAndPopulateMoveset();
     }))
     .setPartyMemberFunc(2, getRandomPartyMemberFunc([ Species.LEAFEON, Species.GLACEON ]))
     .setPartyMemberFunc(3, getRandomPartyMemberFunc([ Species.ROTOM ], TrainerSlot.TRAINER, true, p => {
       p.generateAndPopulateMoveset();
-      p.formIndex = Utils.randSeedInt(5, 1) // Heat, Wash, Frost, Fan, or Mow
+      p.formIndex = Utils.randSeedInt(5, 1); // Heat, Wash, Frost, Fan, or Mow
     }))
     .setPartyMemberFunc(4, getRandomPartyMemberFunc([ Species.SYLVEON ], TrainerSlot.TRAINER, true, p => {
       p.generateAndPopulateMoveset();
