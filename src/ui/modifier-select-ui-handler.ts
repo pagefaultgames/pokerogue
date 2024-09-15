@@ -4,9 +4,9 @@ import { getPokeballAtlasKey, PokeballType } from "../data/pokeball";
 import { addTextObject, getTextStyleOptions, getModifierTierTextTint, getTextColor, TextStyle } from "./text";
 import AwaitableUiHandler from "./awaitable-ui-handler";
 import { Mode } from "./ui";
-import { LockModifierTiersModifier, PokemonHeldItemModifier } from "../modifier/modifier";
+import { LockModifierTiersModifier, PokemonHeldItemModifier, HealShopCostModifier } from "../modifier/modifier";
 import { handleTutorial, Tutorial } from "../tutorial";
-import {Button} from "#enums/buttons";
+import { Button } from "#enums/buttons";
 import MoveInfoOverlay from "./move-info-overlay";
 import { allMoves } from "../data/move";
 import * as Utils from "./../utils";
@@ -14,6 +14,8 @@ import Overrides from "#app/overrides";
 import i18next from "i18next";
 import { ShopCursorTarget } from "#app/enums/shop-cursor-target";
 import { GameModes } from "#app/game-mode";
+import { IntegerHolder } from "./../utils";
+import Phaser from "phaser";
 
 export const SHOP_OPTIONS_ROW_LIMIT = 6;
 
@@ -23,13 +25,18 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
   private lockRarityButtonContainer: Phaser.GameObjects.Container;
   private transferButtonContainer: Phaser.GameObjects.Container;
   private checkButtonContainer: Phaser.GameObjects.Container;
+  private continueButtonContainer: Phaser.GameObjects.Container;
   private rerollCostText: Phaser.GameObjects.Text;
   private lockRarityButtonText: Phaser.GameObjects.Text;
-  private moveInfoOverlay : MoveInfoOverlay;
-  private moveInfoOverlayActive : boolean = false;
+  private moveInfoOverlay: MoveInfoOverlay;
+  private moveInfoOverlayActive: boolean = false;
 
   private rowCursor: integer = 0;
   private player: boolean;
+  /**
+   * If reroll cost is negative, it is assumed there are 0 items in the shop.
+   * It will cause reroll button to be disabled, and a "Continue" button to show in the place of shop items
+   */
   private rerollCost: integer;
   private transferButtonWidth: integer;
   private checkButtonWidth: integer;
@@ -106,6 +113,15 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
     this.lockRarityButtonText.setOrigin(0, 0);
     this.lockRarityButtonContainer.add(this.lockRarityButtonText);
 
+    this.continueButtonContainer = this.scene.add.container((this.scene.game.canvas.width / 12), -(this.scene.game.canvas.height / 12));
+    this.continueButtonContainer.setVisible(false);
+    ui.add(this.continueButtonContainer);
+
+    // Create continue button
+    const continueButtonText = addTextObject(this.scene, -24, 5, i18next.t("modifierSelectUiHandler:continueNextWaveButton"), TextStyle.MESSAGE);
+    continueButtonText.setName("text-continue-btn");
+    this.continueButtonContainer.add(continueButtonText);
+
     // prepare move overlay
     const overlayScale = 1;
     this.moveInfoOverlay = new MoveInfoOverlay(this.scene, {
@@ -114,7 +130,7 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
       onSide: true,
       right: true,
       x: 1,
-      y: -MoveInfoOverlay.getHeight(overlayScale, true) -1,
+      y: -MoveInfoOverlay.getHeight(overlayScale, true) - 1,
       width: (this.scene.game.canvas.width / 6) - 2,
     });
     ui.add(this.moveInfoOverlay);
@@ -135,7 +151,7 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
       return false;
     }
 
-    if (args.length !== 4 || !(args[1] instanceof Array) || !args[1].length || !(args[2] instanceof Function)) {
+    if (args.length !== 4 || !(args[1] instanceof Array) || !(args[2] instanceof Function)) {
       return false;
     }
 
@@ -160,6 +176,9 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
     this.lockRarityButtonContainer.setVisible(false);
     this.lockRarityButtonContainer.setAlpha(0);
 
+    this.continueButtonContainer.setVisible(false);
+    this.continueButtonContainer.setAlpha(0);
+
     this.rerollButtonContainer.setPositionRelative(this.lockRarityButtonContainer, 0, canLockRarities ? -12 : 0);
 
     this.rerollCost = args[3] as integer;
@@ -167,8 +186,11 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
     this.updateRerollCostText();
 
     const typeOptions = args[1] as ModifierTypeOption[];
-    const shopTypeOptions = !this.scene.gameMode.hasNoShop
-      ? getPlayerShopModifierTypeOptionsForWave(this.scene.currentBattle.waveIndex, this.scene.getWaveMoneyAmount(1))
+    const removeHealShop = this.scene.gameMode.hasNoShop;
+    const baseShopCost = new IntegerHolder(this.scene.getWaveMoneyAmount(1));
+    this.scene.applyModifier(HealShopCostModifier, true, baseShopCost);
+    const shopTypeOptions = !removeHealShop
+      ? getPlayerShopModifierTypeOptionsForWave(this.scene.currentBattle.waveIndex, baseShopCost.value)
       : [];
     const optionsYOffset = shopTypeOptions.length >= SHOP_OPTIONS_ROW_LIMIT ? -8 : -24;
 
@@ -180,6 +202,11 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
       this.modifierContainer.add(option);
       this.options.push(option);
     }
+
+    // Set "Continue" button height based on number of rows in healing items shop
+    const continueButton = this.continueButtonContainer.getAt<Phaser.GameObjects.Text>(0);
+    continueButton.y = optionsYOffset - 5;
+    continueButton.setVisible(this.options.length === 0);
 
     for (let m = 0; m < shopTypeOptions.length; m++) {
       const row = m < SHOP_OPTIONS_ROW_LIMIT ? 0 : 1;
@@ -244,13 +271,21 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
       this.rerollButtonContainer.setAlpha(0);
       this.checkButtonContainer.setAlpha(0);
       this.lockRarityButtonContainer.setAlpha(0);
+      this.continueButtonContainer.setAlpha(0);
       this.rerollButtonContainer.setVisible(true);
       this.checkButtonContainer.setVisible(true);
+      this.continueButtonContainer.setVisible(this.rerollCost < 0);
       this.lockRarityButtonContainer.setVisible(canLockRarities);
 
       this.scene.tweens.add({
-        targets: [ this.rerollButtonContainer, this.lockRarityButtonContainer, this.checkButtonContainer ],
+        targets: [ this.lockRarityButtonContainer, this.checkButtonContainer, this.continueButtonContainer ],
         alpha: 1,
+        duration: 250
+      });
+
+      this.scene.tweens.add({
+        targets: [this.rerollButtonContainer],
+        alpha: this.rerollCost < 0 ? 0.5 : 1,
         duration: 250
       });
 
@@ -419,6 +454,14 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
     // the modifier selection has been updated, always hide the overlay
     this.moveInfoOverlay.clear();
     if (this.rowCursor) {
+      if (this.rowCursor === 1 && options.length === 0) {
+        // Continue button when no shop items
+        this.cursorObj.setScale(1.25);
+        this.cursorObj.setPosition((this.scene.game.canvas.width / 18) + 23, (-this.scene.game.canvas.height / 12) - (this.shopOptionsRows.length > 1 ? 6 : 22));
+        ui.showText(i18next.t("modifierSelectUiHandler:continueNextWaveDescription"));
+        return ret;
+      }
+
       const sliceWidth = (this.scene.game.canvas.width / 6) / (options.length + 2);
       if (this.rowCursor < 2) {
         this.cursorObj.setPosition(sliceWidth * (cursor + 1) + (sliceWidth * 0.5) - 20, (-this.scene.game.canvas.height / 12) - (this.shopOptionsRows.length > 1 ? 6 : 22));
@@ -436,10 +479,10 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
       this.cursorObj.setPosition(6, this.lockRarityButtonContainer.visible ? -72 : -60);
       ui.showText(i18next.t("modifierSelectUiHandler:rerollDesc"));
     } else if (cursor === 1) {
-      this.cursorObj.setPosition((this.scene.game.canvas.width - this.transferButtonWidth - this.checkButtonWidth)/6 - 30, -60);
+      this.cursorObj.setPosition((this.scene.game.canvas.width - this.transferButtonWidth - this.checkButtonWidth) / 6 - 30, -60);
       ui.showText(i18next.t("modifierSelectUiHandler:transferDesc"));
     } else if (cursor === 2) {
-      this.cursorObj.setPosition((this.scene.game.canvas.width - this.checkButtonWidth)/6 - 10, -60);
+      this.cursorObj.setPosition((this.scene.game.canvas.width - this.checkButtonWidth) / 6 - 10, -60);
       ui.showText(i18next.t("modifierSelectUiHandler:checkTeamDesc"));
     } else {
       this.cursorObj.setPosition(6, -60);
@@ -455,7 +498,14 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
     if (rowCursor !== lastRowCursor) {
       this.rowCursor = rowCursor;
       let newCursor = Math.round(this.cursor / Math.max(this.getRowItems(lastRowCursor) - 1, 1) * (this.getRowItems(rowCursor) - 1));
+      if (rowCursor === 1 && this.options.length === 0) {
+        // Handle empty shop
+        newCursor = 0;
+      }
       if (rowCursor === 0) {
+        if (this.options.length === 0) {
+          newCursor = 1;
+        }
         if (newCursor === 0 && !this.rerollButtonContainer.visible) {
           newCursor = 1;
         }
@@ -496,6 +546,13 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
   }
 
   updateRerollCostText(): void {
+    const rerollDisabled = this.rerollCost < 0;
+    if (rerollDisabled) {
+      this.rerollCostText.setVisible(false);
+      return;
+    } else {
+      this.rerollCostText.setVisible(true);
+    }
     const canReroll = this.scene.money >= this.rerollCost;
 
     const formattedMoney = Utils.formatMoney(this.scene.moneyFormat, this.rerollCost);
@@ -540,7 +597,7 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
       onComplete: () => options.forEach(o => o.destroy())
     });
 
-    [ this.rerollButtonContainer, this.checkButtonContainer, this.transferButtonContainer, this.lockRarityButtonContainer ].forEach(container => {
+    [ this.rerollButtonContainer, this.checkButtonContainer, this.transferButtonContainer, this.lockRarityButtonContainer, this.continueButtonContainer ].forEach(container => {
       if (container.visible) {
         this.scene.tweens.add({
           targets: container,

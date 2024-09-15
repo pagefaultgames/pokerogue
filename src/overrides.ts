@@ -10,10 +10,11 @@ import { VariantTier } from "#enums/variant-tiers";
 import { WeatherType } from "#enums/weather-type";
 import { type PokeballCounts } from "./battle-scene";
 import { Gender } from "./data/gender";
-import { allSpecies } from "./data/pokemon-species"; // eslint-disable-line @typescript-eslint/no-unused-vars
 import { Variant } from "./data/variant";
 import { type ModifierOverride } from "./modifier/modifier-type";
 import { Unlockables } from "./system/unlockables";
+import { MysteryEncounterType } from "#enums/mystery-encounter-type";
+import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 
 /**
  * Overrides that are using when testing different in game situations
@@ -137,6 +138,15 @@ class DefaultOverrides {
   readonly EGG_VARIANT_OVERRIDE: VariantTier | null = null;
   readonly EGG_FREE_GACHA_PULLS_OVERRIDE: boolean = false;
   readonly EGG_GACHA_PULL_COUNT_OVERRIDE: number = 0;
+
+  // -------------------------
+  // MYSTERY ENCOUNTER OVERRIDES
+  // -------------------------
+
+  /** 1 to 256, set to null to ignore */
+  readonly MYSTERY_ENCOUNTER_RATE_OVERRIDE: number | null = null;
+  readonly MYSTERY_ENCOUNTER_TIER_OVERRIDE: MysteryEncounterTier | null = null;
+  readonly MYSTERY_ENCOUNTER_OVERRIDE: MysteryEncounterType | null = null;
 
   // -------------------------
   // MODIFIER / ITEM OVERRIDES

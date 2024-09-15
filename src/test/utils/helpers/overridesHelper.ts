@@ -12,6 +12,8 @@ import { vi } from "vitest";
 import { GameManagerHelper } from "./gameManagerHelper";
 import { Unlockables } from "#app/system/unlockables";
 import { Variant } from "#app/data/variant";
+import { MysteryEncounterType } from "#enums/mystery-encounter-type";
+import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 
 /**
  * Helper to handle overrides in tests
@@ -349,6 +351,41 @@ export class OverridesHelper extends GameManagerHelper {
   enemyHealthSegments(healthSegments: number) {
     vi.spyOn(Overrides, "OPP_HEALTH_SEGMENTS_OVERRIDE", "get").mockReturnValue(healthSegments);
     this.log("Enemy Pokemon health segments set to:", healthSegments);
+    return this;
+  }
+
+  /**
+   * Override the encounter chance for a mystery encounter.
+   * @param percentage the encounter chance in %
+   * @returns spy instance
+   */
+  mysteryEncounterChance(percentage: number) {
+    const maxRate: number = 256; // 100%
+    const rate = maxRate * (percentage / 100);
+    vi.spyOn(Overrides, "MYSTERY_ENCOUNTER_RATE_OVERRIDE", "get").mockReturnValue(rate);
+    this.log(`Mystery encounter chance set to ${percentage}% (=${rate})!`);
+    return this;
+  }
+
+  /**
+   * Override the encounter chance for a mystery encounter.
+   * @returns spy instance
+   * @param tier
+   */
+  mysteryEncounterTier(tier: MysteryEncounterTier) {
+    vi.spyOn(Overrides, "MYSTERY_ENCOUNTER_TIER_OVERRIDE", "get").mockReturnValue(tier);
+    this.log(`Mystery encounter tier set to ${tier}!`);
+    return this;
+  }
+
+  /**
+   * Override the encounter that spawns for the scene
+   * @param encounterType
+   * @returns spy instance
+   */
+  mysteryEncounter(encounterType: MysteryEncounterType) {
+    vi.spyOn(Overrides, "MYSTERY_ENCOUNTER_OVERRIDE", "get").mockReturnValue(encounterType);
+    this.log(`Mystery encounter override set to ${encounterType}!`);
     return this;
   }
 
