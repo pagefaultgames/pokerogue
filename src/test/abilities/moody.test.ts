@@ -1,17 +1,14 @@
-import { BattleStat } from "#app/data/battle-stat";
+import { BATTLE_STATS, EFFECTIVE_STATS } from "#enums/stat";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/utils/gameManager";
-import { SPLASH_ONLY } from "#test/utils/testUtils";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Abilities - Moody", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
-
-  const battleStatsArray = [BattleStat.ATK, BattleStat.DEF, BattleStat.SPATK, BattleStat.SPDEF, BattleStat.SPD];
 
   beforeAll(() => {
     phaserGame = new Phaser.Game({
@@ -30,63 +27,61 @@ describe("Abilities - Moody", () => {
       .battleType("single")
       .enemySpecies(Species.RATTATA)
       .enemyAbility(Abilities.BALL_FETCH)
-      .enemyPassiveAbility(Abilities.HYDRATION)
       .ability(Abilities.MOODY)
-      .enemyMoveset(SPLASH_ONLY)
-      .moveset(SPLASH_ONLY);
+      .enemyMoveset(Moves.SPLASH)
+      .moveset(Moves.SPLASH);
   });
 
-  it(
-    "should increase one BattleStat by 2 stages and decrease a different BattleStat by 1 stage",
+  it("should increase one stat stage by 2 and decrease a different stat stage by 1",
     async () => {
-      await game.startBattle();
+      await game.classicMode.startBattle();
 
       const playerPokemon = game.scene.getPlayerPokemon()!;
       game.move.select(Moves.SPLASH);
       await game.toNextTurn();
 
       // Find the increased and decreased stats, make sure they are different.
-      const statChanges = playerPokemon.summonData.battleStats;
-      const changedStats = battleStatsArray.filter(bs => statChanges[bs] === 2 || statChanges[bs] === -1);
+      const changedStats = EFFECTIVE_STATS.filter(s => playerPokemon.getStatStage(s) === 2 || playerPokemon.getStatStage(s) === -1);
 
       expect(changedStats).toBeTruthy();
       expect(changedStats.length).toBe(2);
       expect(changedStats[0] !== changedStats[1]).toBeTruthy();
     });
 
-  it(
-    "should only increase one BattleStat by 2 stages if all BattleStats are at -6",
+  it("should only increase one stat stage by 2 if all stat stages are at -6",
     async () => {
-      await game.startBattle();
+      await game.classicMode.startBattle();
 
       const playerPokemon = game.scene.getPlayerPokemon()!;
-      // Set all BattleStats to -6
-      battleStatsArray.forEach(bs => playerPokemon.summonData.battleStats[bs] = -6);
+
+      // Set all stat stages to -6
+      vi.spyOn(playerPokemon.summonData, "statStages", "get").mockReturnValue(new Array(BATTLE_STATS.length).fill(-6));
 
       game.move.select(Moves.SPLASH);
       await game.toNextTurn();
 
-      // Should increase one BattleStat by 2 (from -6, meaning it will be -4)
-      const increasedStat = battleStatsArray.filter(bs => playerPokemon.summonData.battleStats[bs] === -4);
+      // Should increase one stat stage by 2 (from -6, meaning it will be -4)
+      const increasedStat = EFFECTIVE_STATS.filter(s => playerPokemon.getStatStage(s) === -4);
 
       expect(increasedStat).toBeTruthy();
       expect(increasedStat.length).toBe(1);
     });
 
-  it(
-    "should only decrease one BattleStat by 1 stage if all BattleStats are at 6",
+  it("should only decrease one stat stage by 1 stage if all stat stages are at 6",
     async () => {
-      await game.startBattle();
+      await game.classicMode.startBattle();
 
       const playerPokemon = game.scene.getPlayerPokemon()!;
-      // Set all BattleStats to 6
-      battleStatsArray.forEach(bs => playerPokemon.summonData.battleStats[bs] = 6);
+
+      // Set all stat stages to 6
+      vi.spyOn(playerPokemon.summonData, "statStages", "get").mockReturnValue(new Array(BATTLE_STATS.length).fill(6));
 
       game.move.select(Moves.SPLASH);
       await game.toNextTurn();
 
-      // Should decrease one BattleStat by 1 (from 6, meaning it will be 5)
-      const decreasedStat = battleStatsArray.filter(bs => playerPokemon.summonData.battleStats[bs] === 5);
+      // Should decrease one stat stage by 1 (from 6, meaning it will be 5)
+      const decreasedStat = EFFECTIVE_STATS.filter(s => playerPokemon.getStatStage(s) === 5);
+
       expect(decreasedStat).toBeTruthy();
       expect(decreasedStat.length).toBe(1);
     });

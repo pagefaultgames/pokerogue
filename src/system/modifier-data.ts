@@ -3,11 +3,11 @@ import { PersistentModifier } from "../modifier/modifier";
 import { GeneratedPersistentModifierType, ModifierType, ModifierTypeGenerator, getModifierTypeFuncById } from "../modifier/modifier-type";
 
 export default class ModifierData {
-  private player: boolean;
-  private typeId: string;
-  private typePregenArgs: any[];
-  private args: any[];
-  private stackCount: integer;
+  public player: boolean;
+  public typeId: string;
+  public typePregenArgs: any[];
+  public args: any[];
+  public stackCount: integer;
 
   public className: string;
 

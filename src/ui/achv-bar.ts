@@ -25,7 +25,7 @@ export default class AchvBar extends Phaser.GameObjects.Container {
   }
 
   setup(): void {
-    this.defaultWidth = 160;
+    this.defaultWidth = 200;
     this.defaultHeight = 40;
 
     this.bg = this.scene.add.nineslice(0, 0, "achv_bar", undefined, this.defaultWidth, this.defaultHeight, 41, 6, 16, 4);

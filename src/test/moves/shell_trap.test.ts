@@ -9,7 +9,6 @@ import { MovePhase } from "#app/phases/move-phase";
 import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import { SPLASH_ONLY } from "../utils/testUtils";
 
 const TIMEOUT = 20 * 1000;
 
@@ -33,7 +32,7 @@ describe("Moves - Shell Trap", () => {
       .battleType("double")
       .moveset([Moves.SHELL_TRAP, Moves.SPLASH, Moves.BULLDOZE])
       .enemySpecies(Species.SNORLAX)
-      .enemyMoveset(Array(4).fill(Moves.RAZOR_LEAF))
+      .enemyMoveset([Moves.RAZOR_LEAF])
       .startingLevel(100)
       .enemyLevel(100);
 
@@ -67,7 +66,7 @@ describe("Moves - Shell Trap", () => {
   it(
     "should fail if the user is only hit by special attacks",
     async () => {
-      game.override.enemyMoveset(Array(4).fill(Moves.SWIFT));
+      game.override.enemyMoveset([Moves.SWIFT]);
 
       await game.startBattle([Species.CHARIZARD, Species.TURTONATOR]);
 
@@ -93,7 +92,7 @@ describe("Moves - Shell Trap", () => {
   it(
     "should fail if the user isn't hit with any attack",
     async () => {
-      game.override.enemyMoveset(SPLASH_ONLY);
+      game.override.enemyMoveset(Moves.SPLASH);
 
       await game.startBattle([Species.CHARIZARD, Species.TURTONATOR]);
 
@@ -119,7 +118,7 @@ describe("Moves - Shell Trap", () => {
   it(
     "should not activate from an ally's attack",
     async () => {
-      game.override.enemyMoveset(SPLASH_ONLY);
+      game.override.enemyMoveset(Moves.SPLASH);
 
       await game.startBattle([Species.BLASTOISE, Species.CHARIZARD]);
 

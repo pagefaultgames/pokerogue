@@ -7,6 +7,7 @@ import MockSprite from "#test/utils/mocks/mocksContainer/mockSprite";
 import MockText from "#test/utils/mocks/mocksContainer/mockText";
 import MockTexture from "#test/utils/mocks/mocksContainer/mockTexture";
 import { MockGameObject } from "./mockGameObject";
+import { MockVideoGameObject } from "./mockVideoGameObject";
 
 /**
  * Stub class for Phaser.Textures.TextureManager
@@ -34,6 +35,7 @@ export default class MockTextureManager {
       text: this.text.bind(this),
       bitmapText: this.text.bind(this),
       displayList: this.displayList,
+      video: () => new MockVideoGameObject(),
     };
   }
 

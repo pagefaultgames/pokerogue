@@ -6,17 +6,18 @@
     "ATKshortened": "Atq",
     "DEF": "Défense",
     "DEFshortened": "Déf",
-    "SPATK": "Atq. Spé.",
+    "SPATK": "Atq. Spé.",
     "SPATKshortened": "AtqSp",
-    "SPDEF": "Déf. Spé.",
+    "SPDEF": "Déf. Spé.",
     "SPDEFshortened": "DéfSp",
     "SPD": "Vitesse",
     "SPDshortened": "Vit",
     "ACC": "Précison",
-    "EVA": "Esquive"
+    "EVA": "Esquive",
+    "HPStat": "PV"
   },
   "Type": {
-    "UNKNOWN": "Inconnu",
+    "UNKNOWN": "???",
     "NORMAL": "Normal",
     "FIGHTING": "Combat",
     "FLYING": "Vol",

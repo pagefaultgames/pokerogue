@@ -1,14 +1,12 @@
-import { BattleStat } from "#app/data/battle-stat";
-import { Stat } from "#app/data/pokemon-stat";
-import { EnemyCommandPhase } from "#app/phases/enemy-command-phase";
-import { TurnInitPhase } from "#app/phases/turn-init-phase";
+import { Stat } from "#enums/stat";
+import GameManager from "#test/utils/gameManager";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
-import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-
+import { EnemyCommandPhase } from "#app/phases/enemy-command-phase";
+import { TurnInitPhase } from "#app/phases/turn-init-phase";
 
 describe("Moves - Growth", () => {
   let phaserGame: Phaser.Game;
@@ -26,31 +24,25 @@ describe("Moves - Growth", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    const moveToUse = Moves.GROWTH;
     game.override.battleType("single");
-    game.override.enemySpecies(Species.RATTATA);
     game.override.enemyAbility(Abilities.MOXIE);
     game.override.ability(Abilities.INSOMNIA);
-    game.override.startingLevel(2000);
-    game.override.moveset([moveToUse]);
-    game.override.enemyMoveset([Moves.TACKLE, Moves.TACKLE, Moves.TACKLE, Moves.TACKLE]);
+    game.override.moveset([ Moves.GROWTH ]);
+    game.override.enemyMoveset(Moves.SPLASH);
   });
 
-  it("GROWTH", async () => {
-    const moveToUse = Moves.GROWTH;
+  it("should raise SPATK stat stage by 1", async() => {
     await game.startBattle([
-      Species.MIGHTYENA,
-      Species.MIGHTYENA,
+      Species.MIGHTYENA
     ]);
-    let battleStatsPokemon = game.scene.getParty()[0].summonData.battleStats;
-    expect(battleStatsPokemon[Stat.SPATK]).toBe(0);
 
-    const battleStatsOpponent = game.scene.currentBattle.enemyParty[0].summonData.battleStats;
-    expect(battleStatsOpponent[BattleStat.SPATK]).toBe(0);
+    const playerPokemon = game.scene.getPlayerPokemon()!;
 
-    game.move.select(moveToUse);
+    expect(playerPokemon.getStatStage(Stat.SPATK)).toBe(0);
+
+    game.move.select(Moves.GROWTH);
     await game.phaseInterceptor.runFrom(EnemyCommandPhase).to(TurnInitPhase);
-    battleStatsPokemon = game.scene.getParty()[0].summonData.battleStats;
-    expect(battleStatsPokemon[BattleStat.SPATK]).toBe(1);
+
+    expect(playerPokemon.getStatStage(Stat.SPATK)).toBe(1);
   }, 20000);
 });

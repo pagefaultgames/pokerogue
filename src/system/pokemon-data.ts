@@ -12,6 +12,7 @@ import { loadBattlerTag } from "../data/battler-tags";
 import { Biome } from "#enums/biome";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
+import { MysteryEncounterPokemonData } from "#app/data/mystery-encounters/mystery-encounter-pokemon-data";
 
 export default class PokemonData {
   public id: integer;
@@ -42,6 +43,8 @@ export default class PokemonData {
   public luck: integer;
   public pauseEvolutions: boolean;
   public pokerus: boolean;
+  public usedTMs: Moves[];
+  public evoCounter: integer;
 
   public fusionSpecies: Species;
   public fusionFormIndex: integer;
@@ -55,6 +58,8 @@ export default class PokemonData {
   public bossSegments?: integer;
 
   public summonData: PokemonSummonData;
+  /** Data that can customize a Pokemon in non-standard ways from its Species */
+  public mysteryEncounterPokemonData: MysteryEncounterPokemonData;
 
   constructor(source: Pokemon | any, forHistory: boolean = false) {
     const sourcePokemon = source instanceof Pokemon ? source : null;
@@ -91,6 +96,8 @@ export default class PokemonData {
     }
     this.pokerus = !!source.pokerus;
 
+    this.evoCounter = source.evoCounter ?? 0;
+
     this.fusionSpecies = sourcePokemon ? sourcePokemon.fusionSpecies?.speciesId : source.fusionSpecies;
     this.fusionFormIndex = source.fusionFormIndex;
     this.fusionAbilityIndex = source.fusionAbilityIndex;
@@ -98,6 +105,9 @@ export default class PokemonData {
     this.fusionVariant = source.fusionVariant;
     this.fusionGender = source.fusionGender;
     this.fusionLuck = source.fusionLuck !== undefined ? source.fusionLuck : (source.fusionShiny ? source.fusionVariant + 1 : 0);
+    this.usedTMs = source.usedTMs ?? [];
+
+    this.mysteryEncounterPokemonData = new MysteryEncounterPokemonData(source.mysteryEncounterPokemonData);
 
     if (!forHistory) {
       this.boss = (source instanceof EnemyPokemon && !!source.bossSegments) || (!this.player && !!source.boss);
@@ -122,10 +132,9 @@ export default class PokemonData {
 
       this.summonData = new PokemonSummonData();
       if (!forHistory && source.summonData) {
-        this.summonData.battleStats = source.summonData.battleStats;
+        this.summonData.stats = source.summonData.stats;
+        this.summonData.statStages = source.summonData.statStages;
         this.summonData.moveQueue = source.summonData.moveQueue;
-        this.summonData.disabledMove = source.summonData.disabledMove;
-        this.summonData.disabledTurns = source.summonData.disabledTurns;
         this.summonData.abilitySuppressed = source.summonData.abilitySuppressed;
         this.summonData.abilitiesApplied = source.summonData.abilitiesApplied;
 

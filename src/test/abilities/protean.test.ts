@@ -9,7 +9,6 @@ import { Biome } from "#enums/biome";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/utils/gameManager";
-import { SPLASH_ONLY } from "#test/utils/testUtils";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
@@ -76,7 +75,7 @@ describe("Abilities - Protean", () => {
 
       expect(leadPokemon.summonData.abilitiesApplied.filter((a) => a === Abilities.PROTEAN)).toHaveLength(1);
       const leadPokemonType = Type[leadPokemon.getTypes()[0]];
-      const moveType = Type[allMoves[Moves.AGILITY].defaultType];
+      const moveType = Type[allMoves[Moves.AGILITY].type];
       expect(leadPokemonType).not.toBe(moveType);
 
       await game.toNextTurn();
@@ -183,7 +182,7 @@ describe("Abilities - Protean", () => {
     "ability applies correctly even if the pokemon's move misses",
     async () => {
       game.override.moveset([Moves.TACKLE]);
-      game.override.enemyMoveset(SPLASH_ONLY);
+      game.override.enemyMoveset(Moves.SPLASH);
 
       await game.startBattle([Species.MAGIKARP]);
 
@@ -249,7 +248,7 @@ describe("Abilities - Protean", () => {
       const leadPokemon = game.scene.getPlayerPokemon()!;
       expect(leadPokemon).not.toBe(undefined);
 
-      leadPokemon.summonData.types = [allMoves[Moves.SPLASH].defaultType];
+      leadPokemon.summonData.types = [allMoves[Moves.SPLASH].type];
       game.move.select(Moves.SPLASH);
       await game.phaseInterceptor.to(TurnEndPhase);
 
@@ -357,6 +356,6 @@ function testPokemonTypeMatchesDefaultMoveType(pokemon: PlayerPokemon, move: Mov
   expect(pokemon.summonData.abilitiesApplied).toContain(Abilities.PROTEAN);
   expect(pokemon.getTypes()).toHaveLength(1);
   const pokemonType = Type[pokemon.getTypes()[0]],
-    moveType = Type[allMoves[move].defaultType];
+    moveType = Type[allMoves[move].type];
   expect(pokemonType).toBe(moveType);
 }

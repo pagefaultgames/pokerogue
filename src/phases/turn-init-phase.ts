@@ -1,7 +1,7 @@
-import BattleScene from "#app/battle-scene.js";
-import { BattlerIndex } from "#app/battle.js";
-import { TurnInitEvent } from "#app/events/battle-scene.js";
-import { PlayerPokemon } from "#app/field/pokemon.js";
+import BattleScene from "#app/battle-scene";
+import { BattlerIndex } from "#app/battle";
+import { TurnInitEvent } from "#app/events/battle-scene";
+import { PlayerPokemon } from "#app/field/pokemon";
 import i18next from "i18next";
 import { FieldPhase } from "./field-phase";
 import { ToggleDoublePositionPhase } from "./toggle-double-position-phase";
@@ -9,6 +9,7 @@ import { CommandPhase } from "./command-phase";
 import { EnemyCommandPhase } from "./enemy-command-phase";
 import { GameOverPhase } from "./game-over-phase";
 import { TurnStartPhase } from "./turn-start-phase";
+import { handleMysteryEncounterBattleStartEffects, handleMysteryEncounterTurnStartEffects } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 
 export class TurnInitPhase extends FieldPhase {
   constructor(scene: BattleScene) {
@@ -45,6 +46,14 @@ export class TurnInitPhase extends FieldPhase {
 
     //this.scene.pushPhase(new MoveAnimTestPhase(this.scene));
     this.scene.eventTarget.dispatchEvent(new TurnInitEvent());
+
+    handleMysteryEncounterBattleStartEffects(this.scene);
+
+    // If true, will skip remainder of current phase (and not queue CommandPhases etc.)
+    if (handleMysteryEncounterTurnStartEffects(this.scene)) {
+      this.end();
+      return;
+    }
 
     this.scene.getField().forEach((pokemon, i) => {
       if (pokemon?.isActive()) {

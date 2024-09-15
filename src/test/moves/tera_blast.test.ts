@@ -1,16 +1,14 @@
 import { BattlerIndex } from "#app/battle";
-import { BattleStat } from "#app/data/battle-stat";
+import { Stat } from "#enums/stat";
 import { allMoves } from "#app/data/move";
 import { Type } from "#app/data/type";
 import { Abilities } from "#app/enums/abilities";
-import { Stat } from "#app/enums/stat";
 import { HitResult } from "#app/field/pokemon";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import { SPLASH_ONLY } from "../utils/testUtils";
 
 describe("Moves - Tera Blast", () => {
   let phaserGame: Phaser.Game;
@@ -38,7 +36,7 @@ describe("Moves - Tera Blast", () => {
       .ability(Abilities.BALL_FETCH)
       .startingHeldItems([{ name: "TERA_SHARD", type: Type.FIRE }])
       .enemySpecies(Species.MAGIKARP)
-      .enemyMoveset(SPLASH_ONLY)
+      .enemyMoveset(Moves.SPLASH)
       .enemyAbility(Abilities.BALL_FETCH)
       .enemyLevel(20);
 
@@ -62,9 +60,6 @@ describe("Moves - Tera Blast", () => {
 
   it("increases power if user is Stellar tera type", async () => {
     game.override.startingHeldItems([{ name: "TERA_SHARD", type: Type.STELLAR }]);
-    const stellarTypeMultiplier = 2;
-    const stellarTypeDmgBonus = 20;
-    const basePower = moveToCheck.power;
 
     await game.startBattle();
 
@@ -72,8 +67,24 @@ describe("Moves - Tera Blast", () => {
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.phaseInterceptor.to("MoveEffectPhase");
 
-    expect(moveToCheck.calculateBattlePower).toHaveReturnedWith((basePower + stellarTypeDmgBonus) * stellarTypeMultiplier);
+    expect(moveToCheck.calculateBattlePower).toHaveReturnedWith(100);
   }, 20000);
+
+  it("is super effective against terastallized targets if user is Stellar tera type", async () => {
+    game.override.startingHeldItems([{ name: "TERA_SHARD", type: Type.STELLAR }]);
+
+    await game.startBattle();
+
+    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    vi.spyOn(enemyPokemon, "apply");
+    vi.spyOn(enemyPokemon, "isTerastallized").mockReturnValue(true);
+
+    game.move.select(Moves.TERA_BLAST);
+    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    await game.phaseInterceptor.to("MoveEffectPhase");
+
+    expect(enemyPokemon.apply).toHaveReturnedWith(HitResult.SUPER_EFFECTIVE);
+  });
 
   // Currently abilities are bugged and can't see when a move's category is changed
   it.skip("uses the higher stat of the user's Atk and SpAtk for damage calculation", async () => {
@@ -99,7 +110,7 @@ describe("Moves - Tera Blast", () => {
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.phaseInterceptor.to("MoveEndPhase");
 
-    expect(playerPokemon.summonData.battleStats[BattleStat.SPATK]).toBe(-1);
-    expect(playerPokemon.summonData.battleStats[BattleStat.ATK]).toBe(-1);
+    expect(playerPokemon.getStatStage(Stat.SPATK)).toBe(-1);
+    expect(playerPokemon.getStatStage(Stat.ATK)).toBe(-1);
   }, 20000);
 });
