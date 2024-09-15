@@ -7,7 +7,7 @@
   "query": "Que voulez-vous faire ?",
   "option": {
     "1": {
-      "label": "« Je les vois »",
+      "label": "« Je les vois. »",
       "tooltip": "@[SUMMARY_GREEN]{(?) Affecte vos Pokémon}",
       "selected": "Sa main s’approche de vous et vous touche.\nTout devient subitement sombre.$Puis enfin…@d{64} La lumière.\nChaque espace-temps. Chacune de vos incarnations.$Tout ce qui a composé, compose\net composersa votre être…@d{64}",
       "cutscene": "Vous percevez vos Pokémon,@d{32} convergeant de chaque\nréalité pour former quelque chose de nouveau…@d{64}",
