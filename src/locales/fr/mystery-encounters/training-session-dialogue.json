@@ -7,8 +7,8 @@
   "option": {
     "1": {
       "label": "Léger",
-      "tooltip": "(-) Combat léger\n(+) Augumente au hasard 2 IV du Pokémon",
-      "finished": "{{selectedPokemon}} revient vers vous,\nl’air fatigué mais fier de lui !$Ses IV en {{stat1}} et\nen {{stat2}} augumentent !"
+      "tooltip": "(-) Combat léger\n(+) Augmente au hasard 2 IV du Pokémon",
+      "finished": "{{selectedPokemon}} revient vers vous,\nl’air fatigué mais fier de lui !$Ses IV en {{stat1}} et\nen {{stat2}} augmentent !"
     },
     "2": {
       "label": "Modéré",
