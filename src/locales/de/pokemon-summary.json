@@ -11,7 +11,7 @@
   "cancel": "Abbrechen",
   "memoString": "Wesen: {{natureFragment}}\n{{metFragment}}",
   "metFragment": {
-    "normal": "Herkunft: {{biome}}\nMit Lv. {{level}} erhalten.",
+    "normal": "Herkunft: {{biome}}\nMit Lv. {{level}} erhalten, Welle {{wave}}.",
     "apparently": "Herkunft: {{biome}}\nOffenbar mit Lv. {{level}} erhalten."
   },
   "natureFragment": {
