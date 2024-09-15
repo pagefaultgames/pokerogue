@@ -265,163 +265,163 @@
   },
   "school_kid": {
     "encounter": {
-      "1": "…Heehee. I'm confident in my calculations and analysis.",
-      "2": "I'm gaining as much experience as I can because I want to be a Gym Leader someday."
+      "1": "……グフフ　計算と　分析には\n自信が　ありますからね　僕！",
+      "2": "ここで　いっぱい　経験　積んで\nいつかは　ジムリーダーを　目指すんだ！"
     },
     "victory": {
-      "1": "Ohhhh… Calculation and analysis are perhaps no match for chance…",
-      "2": "Even difficult, trying experiences have their purpose, I suppose."
+      "1": "ムググ……　計算も　分析も\n偶然には　敵わないか……",
+      "2": "辛く　悲しい　経験も\nいつかは　役に　立つはずです……"
     }
   },
   "artist": {
     "encounter": {
-      "1": "I used to be popular, but now I am all washed up."
+      "1": "かつては　おれも　売れっ子だったが\n今では　だれにも　相手にされん……"
     },
     "victory": {
-      "1": "As times change, values also change. I realized that too late."
+      "1": "時代が　変われば　価値も　移ろう\nそれに　気がつくのが　遅かったのだ……"
     }
   },
   "guitarist": {
     "encounter": {
-      "1": "Get ready to feel the rhythm of defeat as I strum my way to victory!"
+      "1": "ロックン　ロールッ！\n戦いは　リズムッ！"
     },
     "victory": {
-      "1": "Silenced for now, but my melody of resilience will play on."
+      "1": "ぎゅぎゅーん……\n悲しい　メロディ　だぜ……"
     }
   },
   "worker": {
     "encounter": {
-      "1": "It bothers me that people always misunderstand me. I'm a lot more pure than everyone thinks."
+      "1": "作業員　ってのは　命がけ\nだけど　やりがいは　十分よ！"
     },
     "victory": {
-      "1": "I really don't want my skin to burn, so I want to stay in the shade while I work."
+      "1": "１００年　残る　ビルや　橋を\n建てるなんて　ロマン　だろう？"
     }
   },
   "worker_female": {
     "encounter": {
-      "1": "It bothers me that people always misunderstand me.\n$I'm a lot more pure than everyone thinks."
+      "1": "よく　勘違い　されて　困るんだけど\nみんなが　思うよりも　ナイーブ　なのね。"
     },
     "victory": {
-      "1": "I really don't want my skin to burn, so I want to stay in the shade while I work."
+      "1": "本当は　お肌　焼きたくない　から\n日陰　でしか　作業　したくないのね……"
     },
     "defeat": {
-      "1": "My body and mind aren't necessarily always in sync."
+      "1": "心と体は　必ずしも\n一致するわけでは　ないのね……"
     }
   },
   "worker_double": {
     "encounter": {
-      "1": "I'll show you we can break you. We've been training in the field!"
+      "1": "現場で　鍛えた　ワシらの　力\n今　見せちゃるけえのぉ！"
     },
     "victory": {
-      "1": "How strange… How could this be… I shouldn't have been outmuscled."
+      "1": "おかしいのぉ　なんでかのぉ\n力で　負けるはず　ないんじゃが……"
     }
   },
   "hex_maniac": {
     "encounter": {
-      "1": "I normally only ever listen to classical music, but if I lose, I think I shall try a bit of new age!",
-      "2": "I grow stronger with each tear I cry."
+      "1": "普段　クラシックしか　聴きませんが　負けたら　ラップを　してみます！",
+      "2": "涙の　数だけ　強くなれるの　だって\nわたし　女の子　だもん。"
     },
     "victory": {
-      "1": "Is this the dawning of the age of Aquarius?",
-      "2": "Now I can get even stronger. I grow with every grudge."
+      "1": "アタイの　想いは　アイツに　重い！\n呪いと　願いは　大体　同じッ！",
+      "2": "これで　わたしは　また　強くなれる\n恨んだ数だけ　成長　するの。"
     },
     "defeat": {
-      "1": "New age simply refers to twentieth century classical composers, right?",
-      "2": "Don't get hung up on sadness or frustration. You can use your grudges to motivate yourself.",
-      "2_female": "Don't get hung up on sadness or frustration. You can use your grudges to motivate yourself."
+      "1": "ラッパーって　ラップ現象を\n起こすのが　仕事なんですよね？",
+      "2": "辛いことや　悲しいことを　バネにせず\nそのまま　恨みの　力に　変えるんだ。",
+      "2_female": "辛いことや　悲しいことを　バネにせず\nそのまま　恨みの　力に　変えるんだ。","
     }
   },
   "psychic": {
     "encounter": {
-      "1": "Hi! Focus!"
+      "1": "ハイッ！！　集中ッ！！"
     },
     "victory": {
-      "1": "Eeeeek!"
+      "1": "フギャンッ！！"
     }
   },
   "officer": {
     "encounter": {
-      "1": "Brace yourself, because justice is about to be served!",
-      "2": "Ready to uphold the law and serve justice on the battlefield!"
+      "1": "ボクは　お巡り　なんだよ！！\nつまり　ボクは　ジャスティスだよ！",
+      "2": "さぼってないのでー　ありますっ！\nパトロールなのでー　ありますっ！"
     },
     "victory": {
-      "1": "The weight of justice feels heavier than ever…",
-      "2": "The shadows of defeat linger in the precinct."
+      "1": "ボクはっ　ボクは　お巡りだぞぉ！！\nジャスティス　なのにーっ！！",
+      "2": "キミ　要注意でー　ありますっ！\nマークしちゃうでー　ありますっ！"
     }
   },
   "beauty": {
     "encounter": {
-      "1": "My last ever battle… That's the way I'd like us to view this match…"
+      "1": "これが　最後の　勝負……\nそう　思って　相手するわね。"
     },
     "victory": {
-      "1": "It's been fun… Let's have another last battle again someday…"
+      "1": "楽しかった……\nまた 最後の　勝負を　したいものね。"
     }
   },
   "baker": {
     "encounter": {
-      "1": "Hope you're ready to taste defeat!",
-      "1_female": "Hope you're ready to taste defeat!"
+      "1": "きみは　もうすぐ\n敗北を　味わっちゃうわ！",
+      "1_female": "君は　もうすぐ\n敗北を　味わっちゃうわ！"
     },
     "victory": {
-      "1": "I'll bake a comeback."
+      "1": "諦める　べーき　かもね……"
     }
   },
   "biker": {
     "encounter": {
-      "1": "Time to rev up and leave you in the dust!"
+      "1": "おんしゃー　覚悟は　できとるんか？\n暴走族　なめたら　いかんぜよ！"
     },
     "victory": {
-      "1": "I'll tune up for the next race."
+      "1": "ボクらぁー　ほんまは　真面目です！\nちっくとも　悪いことは　せんです！！"
     }
   },
   "firebreather": {
     "encounter": {
-      "1": "My flames shall devour you!",
-      "2": "My soul is on fire. I'll show you how hot it burns!",
-      "3": "Step right up and take a look!"
+      "1": "やけたとうで　火を　吹く　練習をした！\n良い子は　真似　すんなよ！",
+      "2": "俺たち　火吹きやろうは　誰よりも　火の　こわさを 知ってるのさ！",
+      "3": "よってらっしゃい　みてらっしゃい！"
     },
     "victory": {
-      "1": "I burned down to ashes...",
-      "2": "Yow! That's hot!",
-      "3": "Ow! I scorched the tip of my nose!"
+      "1": "おっと　誤解　しないでくれ！\nあのとうが　燃えたのは　俺のせいじゃ　ないんだ！",
+      "2": "アツい　勝負を　ありがとう！",
+      "3": "あちちち　鼻の　先っぽ　焦げちゃった！"
     }
   },
   "sailor": {
     "encounter": {
-      "1": "Matey, you're walking the plank if you lose!",
-      "2": "Come on then! My sailor's pride is at stake!",
-      "3": "Ahoy there! Are you seasick?",
-      "3_female": "Ahoy there! Are you seasick?"
+      "1": "うっしゃー！　負けたら　海に　落とすぞー！",
+      "2": "そら　来い！　船乗り　魂に　かけて　勝つ！",
+      "3": "おい　あんた！　乗ってて　船酔い　しないか？",
+      "3_female": "おい　あんた！　乗ってて　船酔い　しないか？"
     },
     "victory": {
-      "1": "Argh! Beaten by a kid!",
-      "2": "Your spirit sank me!",
-      "3": "I think it's me that's seasick..."
+      "1": "くー　やられた！",
+      "2": "船乗り　魂も　お前には　負けた！",
+      "3": "船酔いしてるのが　俺か……"
     }
   },
   "archer": {
     "encounter": {
-      "1": "Before you go any further, let's see how you fare against us, Team Rocket!",
-      "2": "I have received reports that your skills are not insignificant. Let's see if they are true.",
-      "3": "I am Archer, an Admin of Team Rocket. And I do not go easy on enemies of our organization."
+      "1": "先に進む　前に　我々　ロケット団と　戦って　もらおうか？",
+      "2": "あなたも　相当の腕だと　報告が　来ています。　確認しましょう。",
+      "3": "私は　ロケット団　幹部の　アポロ。\n私達の　敵に　手加減　しませんよ！"
     },
     "victory": {
-      "1": "What a blunder!",
-      "2": "With my current skills, I was not up to the task after all.",
-      "3": "F-forgive me, Giovanni... For me to be defeated by a mere trainer..."
+      "1": "……なんという　失態！",
+      "2": "今の腕で　やはり　私では　無理　でしたか……",
+      "3": "さ　サカキ様　お許しください\n私とも　あろう　ものが……"
     }
   },
   "ariana": {
     "encounter": {
-      "1": "Hold it right there! We can't someone on the loose.\n$It's harmful to Team Rocket's pride, you see.",
-      "2": "I don't know or care if what I'm doing is right or wrong...\n$I just put my faith in Giovanni and do as I am told",
-      "3": "Your trip ends here. I'm going to take you down!"
+      "1": "そこまでよーーーっ！！\n$あなたみたいな　ヤツを　いつまでも　のさばらせて　おいたら\nロケット団の　プライドは　キズついて　キズついて　キズだらけに　なっちゃうのよー！",
+      "2": "私たちの　している　ことが\n正しいかどうか　なんて　どうでもいい…\n$私は　サカキ様を　信じて　ただ　付いてきた　のよ！",
+      "3": "ここは　通さないよ。\nだって　私が　勝つんだから！"
     },
     "victory": {
-      "1": "Tch, you really are strong. It's too bad.\n$If you were to join Team Rocket, you could become an Executive.",
-      "1_female": "Tch, you really are strong. It's too bad.\n$If you were to join Team Rocket, you could become an Executive.",
-      "2": "I... I'm shattered...",
-      "3": "Aaaieeeee! This can't be happening! I fought hard, but I still lost…"
+      "1": "あら　強いのね　残念ね\nあなたなら　ロケット団に　くれば　幹部に　だって　なれるかもよ。",
+      "1_female": "あら　強いのね　残念ね\nあなたなら　ロケット団に　くれば　幹部に　だって　なれるかもよ。",
+      "2": "ま　まけたわ……",
+      "3": "くききききーっ！　全力で　戦ったのに……\nこれでも　勝てない　なんて！"
     }
   },
   "proton": {
