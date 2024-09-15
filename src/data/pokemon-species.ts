@@ -3356,7 +3356,7 @@ export function getStarterValueFriendshipCap(value: integer): integer {
 export function getPokerusStarters(scene: BattleScene): PokemonSpecies[] {
   const pokerusStarters: PokemonSpecies[] = [];
   const date = new Date();
-  const starterCount = 3; //for easy future adjustment!
+  const starterCount = 5; //for easy future adjustment!
   date.setUTCHours(0, 0, 0, 0);
   scene.executeWithSeedOffset(() => {
     while (pokerusStarters.length < starterCount) {
