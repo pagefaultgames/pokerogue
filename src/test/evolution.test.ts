@@ -6,7 +6,6 @@ import * as Utils from "#app/utils";
 import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import { SPLASH_ONLY } from "./utils/testUtils";
 
 describe("Evolution", () => {
   let phaserGame: Phaser.Game;
@@ -99,7 +98,7 @@ describe("Evolution", () => {
   it("should increase both HP and max HP when evolving", async () => {
     game.override.moveset([Moves.SURF])
       .enemySpecies(Species.GOLEM)
-      .enemyMoveset(SPLASH_ONLY)
+      .enemyMoveset(Moves.SPLASH)
       .startingWave(21)
       .startingLevel(16)
       .enemyLevel(50);
@@ -126,7 +125,7 @@ describe("Evolution", () => {
   it("should not fully heal HP when evolving", async () => {
     game.override.moveset([Moves.SURF])
       .enemySpecies(Species.GOLEM)
-      .enemyMoveset(SPLASH_ONLY)
+      .enemyMoveset(Moves.SPLASH)
       .startingWave(21)
       .startingLevel(13)
       .enemyLevel(30);

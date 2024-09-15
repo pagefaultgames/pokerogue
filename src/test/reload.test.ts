@@ -2,7 +2,6 @@ import { Species } from "#app/enums/species";
 import { GameModes } from "#app/game-mode";
 import GameManager from "#test/utils/gameManager";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import { SPLASH_ONLY } from "./utils/testUtils";
 import { Moves } from "#app/enums/moves";
 import { Biome } from "#app/enums/biome";
 
@@ -44,7 +43,7 @@ describe("Reload", () => {
       .enemyLevel(1000) // Avoid opponent dying before game.doKillOpponents()
       .disableTrainerWaves()
       .moveset([Moves.KOWTOW_CLEAVE])
-      .enemyMoveset(SPLASH_ONLY);
+      .enemyMoveset(Moves.SPLASH);
     await game.dailyMode.startBattle();
 
     // Transition from Wave 10 to Wave 11 in order to trigger biome switch

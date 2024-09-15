@@ -1,6 +1,7 @@
 {
   "title": "Paramètres du Challenge",
   "illegalEvolution": "{{pokemon}} est devenu\ninéligible pour ce challenge !",
+  "noneSelected": "Aucun sélectionné",
   "singleGeneration": {
     "name": "Monogénération",
     "desc": "Vous ne pouvez choisir que des Pokémon de {{gen}} génération.",

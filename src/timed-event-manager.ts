@@ -25,14 +25,14 @@ interface TimedEvent extends EventBanner {
 
 const timedEvents: TimedEvent[] = [
   {
-    name: "September Update",
+    name: "Egg Skip Update",
     eventType: EventType.GENERIC,
-    startDate: new Date(Date.UTC(2024, 7, 28, 0)),
-    endDate: new Date(Date.UTC(2024, 8, 15, 0)),
-    bannerKey: "september-update",
+    startDate: new Date(Date.UTC(2024, 8, 8, 0)),
+    endDate: new Date(Date.UTC(2024, 8, 12, 0)),
+    bannerKey: "egg-update",
     xPosition: 19,
-    yPosition: 115,
-    scale: 0.30,
+    yPosition: 120,
+    scale: 0.21,
     availableLangs: ["en", "de", "it", "fr", "ja", "ko", "es", "pt-BR", "zh-CN"]
   }
 ];
@@ -94,9 +94,9 @@ export class TimedEventDisplay extends Phaser.GameObjects.Container {
       let key = this.event.bannerKey;
       if (lang && this.event.availableLangs && this.event.availableLangs.length > 0) {
         if (this.event.availableLangs.includes(lang)) {
-          key += "-"+lang;
+          key += "_"+lang;
         } else {
-          key += "-en";
+          key += "_en";
         }
       }
       console.log(this.event.bannerKey);

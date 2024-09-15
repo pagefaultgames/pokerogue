@@ -5,7 +5,6 @@ import { Species } from "#app/enums/species";
 import { CommandPhase } from "#app/phases/command-phase";
 import { MessagePhase } from "#app/phases/message-phase";
 import GameManager from "#test/utils/gameManager";
-import { SPLASH_ONLY } from "#test/utils/testUtils";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest";
 
@@ -30,7 +29,7 @@ describe("Abilities - COSTAR", () => {
     game.override.battleType("double");
     game.override.ability(Abilities.COSTAR);
     game.override.moveset([Moves.SPLASH, Moves.NASTY_PLOT]);
-    game.override.enemyMoveset(SPLASH_ONLY);
+    game.override.enemyMoveset(Moves.SPLASH);
   });
 
 
