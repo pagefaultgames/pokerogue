@@ -8,7 +8,7 @@
       "label": "L’affronter",
       "tooltip": "(-) Combat compliqué\n(+) Capturer un adversaire puissant",
       "selected": "Vous approchez\nle Pokémon sans frémir.",
-      "stat_boost": "Les caractéristiques particulières\nde ce {{enemyPokemon}} augumentent ses stats !"
+      "stat_boost": "Les caractéristiques particulières\nde ce {{enemyPokemon}} augmentent ses stats !"
     },
     "2": {
       "label": "Le nourrir",
