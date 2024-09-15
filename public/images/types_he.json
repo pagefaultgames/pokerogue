@@ -1,7 +1,7 @@
 {
 	"textures": [
 		{
-			"image": "types_he-IL.png",
+			"image": "types_he.png",
 			"format": "RGBA8888",
 			"size": {
 				"w": 32,
