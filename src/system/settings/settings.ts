@@ -907,7 +907,7 @@ export function setSetting(scene: BattleScene, setting: string, value: integer):
             // },
             {
               label: "עִבְרִית",
-              handler: () => changeLocaleHandler("he-IL")
+              handler: () => changeLocaleHandler("he")
             },
             {
               label: i18next.t("settings:back"),
