@@ -1,7 +1,7 @@
 {
   "intro": "Te detiene un chico de aspecto rico.",
   "speaker": "Niño Bien",
-  "intro_dialogue": "Buenos días a usted.$¡No puedo evitar notar que tu\n{{strongestPokemon}} se ve absolutamente divino!$¡Siempre he querido tener una mascota así!$¡Te pagaría generosamente,\n también te daría este viejo abalorio!",
+  "intro_dialogue": "Buenos días a usted.$¡No puedo evitar notar que tu\n{{strongestPokemon}} se ve absolutamente divino!$¡Siempre he querido tener un Pokémon así!$¡Te pagaría generosamente,\n también te daría este viejo abalorio!",
   "title": "Una oferta que no puedes rechazar",
   "description": "Te están ofreciendo @[TOOLTIP_TITLE]{Amuleto Iris} y {{price, money}} por tu {{strongestPokemon}}!¡Es un trato extremadamente bueno, pero ¿realmente puedes soportar separarte de un miembro tan fuerte de tu equipo?",
   "query": "¿Qué harás?",
