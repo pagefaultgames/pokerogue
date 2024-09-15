@@ -1,7 +1,7 @@
 {
   "intro": "Un jeune garçon aux airs très bougeois vous arrête.",
   "speaker": "Richard",
-  "intro_dialogue": "Bonchour-haann !$Je ne puis carrément pas ignorer que votre\n{{strongestPokemon}} m’a l’air fa-bu-leux !$J’ai toujours désiré posséder un tel compagnon !$Je peux vous payer grassement,\nainsi que vous donner petite babiole !",
+  "intro_dialogue": "Bonchour-haann !$Je ne puis carrément pas ignorer que votre\n{{strongestPokemon}} m’a l’air fa-bu-leux !$J’ai toujours désiré posséder un tel Pokémon !$Je peux vous payer grassement,\nainsi que vous donner petite babiole !",
   "title": "L’affaire du siècle",
   "description": "Un fils à papa vous offre un @[TOOLTIP_TITLE]{Charme Chroma} et {{price, money}} en échange de votre {{strongestPokemon}} !\n\nÇa semble être une bonne affaire, mais pourrez vous supporter de priver votre équipe d’un tel atout ?",
   "query": "Que voulez-vous faire ?",
