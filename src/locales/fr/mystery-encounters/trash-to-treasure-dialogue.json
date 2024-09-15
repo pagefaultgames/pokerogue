@@ -1,19 +1,19 @@
 {
-  "intro": "C’est un énorme tas de déchets !\nComment il est arrivé là ?",
-  "title": "Trash to Treasure",
+  "intro": "C’est un énorme tas d’ordures !\nComment il est arrivé là ?",
+  "title": "20 000 lieues sous la mer-",
   "description": "Un énorme tas d’ordures se dresse devant vos yeux, dans lequel vous arrivez à entrevoir quelques objets de valeur.\nPar contre, il faut que vous acceptiez l’idée de vous couvrir de saletés pour allez les récupérer…",
   "query": "Que voulez-vous faire ?",
   "option": {
     "1": {
-      "label": "Chercher des trésors",
+      "label": "Le fouiller",
       "tooltip": "(-) Aucun objet de soin en boutique\n(+) Gain d’objets exceptionnels",
-      "selected": "Vous barbotez dans le tas d’ordures et vous vous couvrez de crasse.$Vu votre état, il n’y a vraiment plus aucune chance qu’un vendeur accpete de vous vendre quoi que ce soit !$Vous aller devoir vous débrouiller sans objet de soin.$Mais ça valait le coup, car ce que vous avez trouvé\ndans les ordures est incroyable !"
+      "selected": "Vous barbotez dans le tas d’ordures et\nvous vous couvrez de crasse.$Vu votre état, il n’y a vraiment plus aucune chance qu’une boutique accpete de vous donner quoi que ce soit !$Vous aller devoir vous débrouiller sans objet de soin.$Mais ça valait le coup, car ce que vous avez trouvé\ndans les ordures est incroyable !"
     },
     "2": {
-      "label": "Enquêter",
-      "tooltip": "(?) Trouver la source des déchets",
-      "selected": "Vous vous baladez autour du tas, à la recherche du moindre indice sur comment ça a bien pu arriver ici…",
-      "selected_2": "Oh, un des déchets bouge !\nC’était pas un déchet, mais un Pokémon !"
+      "label": "Enquêter sur le tas",
+      "tooltip": "(?) Trouver la source des ordures",
+      "selected": "Vous vous baladez autour du tas, à la recherche du moindre indice sur la raison de sa présence ici…",
+      "selected_2": "Oh !\nLes ordures se mettent à bouger !$Le tas est en réalité un Pokémon !\nIl vous attaque !"
     }
   }
 }
