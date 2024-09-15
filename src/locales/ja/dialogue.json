@@ -403,7 +403,7 @@
     "encounter": {
       "1": "先に進む　前に　我々　ロケット団と　戦って　もらおうか？",
       "2": "あなたも　相当の腕だと　報告が　来ています。　確認しましょう。",
-      "3": "私は　ロケット団　幹部の　アポロ。\n私達の　敵に　手加減　しませんよ！"
+      "3": "私は　ロケット団幹部の　アポロ。\n私達の　敵に　手加減　しませんよ！"
     },
     "victory": {
       "1": "……なんという　失態！",
@@ -426,51 +426,51 @@
   },
   "proton": {
     "encounter": {
-      "1": "What do you want? If you interrupt our work, don't expect any mercy!",
-      "2": "What do we have here? I am often labeled as the scariest and cruelest guy in Team Rocket…\n$I strongly urge you not to interfere with our business!",
-      "3": "I am Proton, an Admin of Team Rocket. I am here to put an end to your meddling!"
+      "1": "まちな！　ロケット団の　砦と言われた　この私！\nこれ以上　先には　行かせません！",
+      "2": "なんですか？　私は　ロケット団で　もっとも　冷酷と　呼ばれた　男……\n$私達の　仕事の　ジャマなど　させはしませんよ！",
+      "3": "私は　ロケット団幹部の　ランス。\nこれ以上　仕事の　ジャマは　させませんよ！"
     },
     "victory": {
-      "1": "The fortress came down!",
-      "2": "You may have won this time… But all you did was make Team Rocket's wrath grow…",
-      "3": "I am defeated… But I will not forget this!"
+      "1": "砦が　崩れました……",
+      "2": "私に　勝った　ところで\n所詮は　ロケット団の　怒りを　強めた　だけですよ……",
+      "3": "くっ！　なかなか　やりますね。\nしかし、　次からは　そうは　行きません！"
     }
   },
   "petrel": {
     "encounter": {
-      "1": "Muhahaha, we've been waiting for you. Me? You don't know who I am? It is me, Giovanni.\n$The majestic Giovanni himself! Wahahaha! …Huh? I don't sound anything like Giovanni?\n$I don't even look like Giovanni? How come? I've worked so hard to mimic him!",
-      "2": "I am Petrel, an Admin of Team Rocket. I will not allow you to interfere with our plans!",
-      "3": "Rocket Executive Petrel will deal with this intruder!"
+      "1": "ぐっふっふっ　よくきたな…　おや？　私が　誰か　分からんかね？\n$サカキだよ　サカキ様　だよ！　ぐわぁーっはっはーっ！\n$	……あれ？　全然　似てない？　サカキ様に　見えない？\nくっそー　一生懸命　練習したのに！",
+      "2": "私は　ロケット団幹部の　ラムダ。\n計画を　邪魔するのは　許さない！",
+      "3": "侵入者には 　ロケット団幹部の　ラムダが　対処するぞ！"
     },
     "victory": {
-      "1": "OK, OK. I'll tell you where he is.",
-      "2": "I… I couldn't do a thing… Giovanni, please forgive me…",
-      "3": "No, I can't let this affect me. I have to inform the others…"
+      "1": "わ　分かった……　局長の　居場所　教える……",
+      "2": "ぐうう……　まったく　歯が立たない……\nサカキ様　お許し　ください……",
+      "3": "いかん　負けて　落ち込んでる　場合じゃない\n仲間に　知らせなくては……"
     }
   },
   "tabitha": {
     "encounter": {
-      "1": "Hehehe! So you've come all the way here! But you're too late!",
-      "2": "Hehehe... Got here already, did you? We underestimated you! But this is it! \n$I'm a cut above the Grunts you've seen so far. I'm not stalling for time.\n$I'm going to pulverize you!",
-      "3": "I'm going to give you a little taste of pain! Resign yourself to it!"
+      "1": "ウヒョヒョ！　お前　ここまで　来たのか！　だけど 遅かったぜ！",
+      "2": "ウヒョヒョ……　もう　ここまで　来たのか！\n思っていたより　やるな！　だが　ここまでだ！\n$俺は　これまでの　下っ端ども　とは　一味違う！\n時間稼ぎなんか　しねえで　コテンパンしてやるぜ！",
+      "3": "ウヒョヒョ！　痛みを　味わわせて　あげますよ！　身を　委ねろ！"
     },
     "victory": {
-      "1": "Hehehe! You might have beaten me, but you don't stand a chance against the boss!\n$If you get lost now, you won't have to face a sound whipping!",
-      "2": "Hehehe... So, I lost, too...",
-      "3": "Ahya! How could this be? For an Admin like me to lose to some random trainer...",
-      "3_female": "Ahya! How could this be? For an Admin like me to lose to some random trainer..."
+      "1": "「ウヒョヒョ‥‥！　俺に　勝てても　リーダーには　勝てないぜ！\n$さっさと　帰ったほうが　痛い　思い しなくて　済むぜ！",
+      "2": "ウヒョヒョ……　負けちまったか……",
+      "3": "うっひょーん……！　なんたる事だろうか……！\nサブリーダーの　ホムラさんが　こんな　デタラメなヤツ　なぞに……",
+      "3_female": "うっひょーん……！　なんたる事だろうか……！\nサブリーダーの　ホムラさんが　こんな　デタラメなヤツ　なぞに……"
     }
   },
   "courtney": {
     "encounter": {
-      "1": "Don't. Get. In. My. Way.",
-      "2": "You... ...I want to...analyze. Ahahaha",
-      "3": "... Well then...Deleting..."
+      "1": "………ジャっ…マ……ッ\nするなあああああッッッッ！！！！！！",
+      "2": "キミを …………アナライズ\n…………したい …………ァハハハッ♪",
+      "3": "…………………じゃあ\n…………………デリートします"
     },
     "victory": {
-      "1": "Hah hah... Uhn...hah hah...",
-      "2": "As anticipated. Unanticipated. You. Target lock...completed.\n$Commencing...experiment. You. Forever. Aha... ♪",
-      "3": "That's unanticipated. ...I knew it. You...are interesting! ...Haha. ♪"
+      "1": "…………はぁはぁ……\n………んぅ…はぁはぁ………",
+      "2": "…………予想内 …………予想外\n…………キミ　…………ターゲットロック …………したから\n$…………エクスペリメント …………するから\n…………キミを …………ずっと …………ァハッ……♪",
+      "3": "…………また　…………予想外\n…………やっぱり …………キミ……オモチロイ……！ ……ァハハッ……♪"
     }
   },
   "shelly": {
