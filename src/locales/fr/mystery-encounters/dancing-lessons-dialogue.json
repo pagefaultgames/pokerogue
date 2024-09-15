@@ -8,7 +8,7 @@
       "label": "L’affronter",
       "tooltip": "(-) Combat difficile\n(+) Gain d’un Bâton",
       "selected": "Le {{oricorioName}} est desemparé\net tente de se défendre !",
-      "boss_enraged": "La peur de {{oricorioName}} augumente beaucoup ses stats !"
+      "boss_enraged": "La peur de {{oricorioName}} augmente beaucoup ses stats !"
     },
     "2": {
       "label": "Apprendre sa danse",
