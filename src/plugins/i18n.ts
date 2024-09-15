@@ -7,7 +7,7 @@ import { deConfig } from "#app/locales/de/config";
 import { enConfig } from "#app/locales/en/config";
 import { esConfig } from "#app/locales/es/config";
 import { frConfig } from "#app/locales/fr/config";
-import { heIlConfig } from "#app/locales/he_IL/config";
+import { heConfig } from "#app/locales/he/config";
 import { itConfig } from "#app/locales/it/config";
 import { koConfig } from "#app/locales/ko/config";
 import { jaConfig } from "#app/locales/ja/config";
@@ -164,8 +164,8 @@ export async function initI18n(): Promise<void> {
       "ca-ES": {
         ...caEsConfig
       },
-      "he-IL": {
-        ...heIlConfig
+      "he": {
+        ...heConfig
       }
     },
     postProcess: ["korean-postposition"],
