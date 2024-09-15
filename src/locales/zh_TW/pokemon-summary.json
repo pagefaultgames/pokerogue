@@ -12,7 +12,7 @@
 
   "memoString": "{{natureFragment}} 性格，\n{{metFragment}}",
   "metFragment": {
-    "normal": "met at Lv{{level}},\n{{biome}}.",
+    "normal": "met at Lv{{level}},\n{{biome}}, Wave {{wave}}.",
     "apparently": "命中注定般地相遇于Lv.{{level}}，\n{{biome}}。"
   },
   "natureFragment": {
