@@ -3,8 +3,8 @@
 {
   "intro": "{{delibirdName}} 무리가 나타났다!",
   "title": "딜리버-디",
-  "description": "{{delibirdName}}들의 눈이 초롱초롱하다.\n뭔가 바라는 게 있는 것 같다.\n혹시 아이템이나 돈을 원하는 걸까?",
-  "query": "무언가 줘 볼까?",
+  "description": "{{delibirdName}}들의 눈이 초롱초롱합니다.\n뭔가 바라는 게 있는 것 같습니다.\n혹시 아이템이나 돈을 원하는 걸까요?",
+  "query": "무언가 주시겠습니까?",
   "invalid_selection": "포켓몬이 그런 종류의 아이템이 없다.",
   "option": {
     "1": {

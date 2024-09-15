@@ -1,19 +1,19 @@
 {
   "intro": "금수저 도련님에게 붙들렸다!",
   "speaker": "금수저 도련님",
-  "intro_dialogue": "안녕하세요.$당신의 {{strongestPokemon}}[[가]] 정말 멋져서 그냥 지나칠수가 없네요!$항상 저런 애완동물을 갖고 싶었거든요!$제가 오래된 장신구랑\n돈도 함께 섭섭지 않게 챙겨주도록 하죠!",
+  "intro_dialogue": "안녕하세요.$당신의 {{strongestPokemon}}[[가]] 정말 멋져서 그냥 지나칠수가 없네요!$항상 저런 애완 포켓몬을 갖고 싶었거든요!$제가 오래된 장신구랑\n돈도 함께 섭섭지 않게 챙겨주도록 하죠!",
   "title": "거절할 수 없는 제안",
   "description": "{{strongestPokemon}}[[를]] 넘기는 대신\n@[TOOLTIP_TITLE]{Shiny Charm}과 {{price, money}}을 준다고 합니다!\n\n매우 좋은 조건이지만,\n이렇게 든든한 동료를 보내줘야 할까요?",
   "query": "어떻게 하시겠습니까?",
   "option": {
     "1": {
       "label": "제안을 받아들인다",
-      "tooltip": "(-) {{strongestPokemon}}[[를]] 보내줌.\n(+) @[TOOLTIP_TITLE]{Shiny Charm}[[를]] 획득.\n(+) {{price, money}}[[를]] 획득.",
+      "tooltip": "(-) {{strongestPokemon}}[[를]] 보내줌\n(+) @[TOOLTIP_TITLE]{Shiny Charm}[[를]] 획득\n(+) {{price, money}}[[를]] 획득",
       "selected": "좋아요!@d{32} 이리와, {{strongestPokemon}}!$요트 클럽에 가서 다른 사람들에게 자랑해야겠어!$다들 엄청 부러워하겠는걸!"
     },
     "2": {
       "label": "꼬마녀석을 혼내준다",
-      "tooltip": "(+) {{option2PrimaryName}}의 {{moveOrAbility}} 사용.\n(+) {{price, money}} 획득.",
+      "tooltip": "(+) {{option2PrimaryName}}의 {{moveOrAbility}} 사용\n(+) {{price, money}} 획득",
       "tooltip_disabled": "이 선택지를 선택하려면 포켓몬이 특정 기술이나 능력을 가지고 있어야 한다.",
       "selected": "말도 안 돼!\n{{liepardName}}, 우리 지금 삥 뜯긴거야?!$너...!\n곧 우리 변호사 연락을 받게 될 거다!"
     },
