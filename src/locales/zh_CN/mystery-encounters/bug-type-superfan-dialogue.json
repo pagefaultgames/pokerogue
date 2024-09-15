@@ -1,38 +1,38 @@
 {
-  "intro": "An unusual trainer with all kinds of Bug paraphernalia blocks your way!",
-  "intro_dialogue": "Hey, trainer! I'm on a mission to find the rarest Bug Pokémon in existence!$You must love Bug Pokémon too, right?\nEveryone loves Bug Pokémon!",
-  "title": "The Bug-Type Superfan",
-  "speaker": "Bug-Type Superfan",
-  "description": "The trainer prattles, not even waiting for a response...\n\nIt seems the only way to get out of this situation is by catching the trainer's attention!",
-  "query": "What will you do?",
+  "intro": "一个特殊的训练家带着各种捕虫设备挡住了你的去路！",
+  "intro_dialogue": "嘿，训练家！我正在寻找最稀有的虫系宝可梦！\n你一定也很喜欢虫系宝可梦吧？\n大家都喜欢虫系宝可梦！",
+  "title": "超级虫系粉丝",
+  "speaker": "超级虫系粉丝",
+  "description": "训练家喋喋不休，根本不听你回应…\n\n似乎唯一的办法就是引起他的注意！",
+  "query": "你要怎么做？",
   "option": {
     "1": {
-      "label": "Offer to Battle",
-      "tooltip": "(-) Challenging Battle\n(+) Teach a Pokémon a Bug Type Move",
-      "selected": "A challenge, eh?\nMy bugs are more than ready for you!"
+      "label": "请求对战",
+      "tooltip": "(-)挑战对战\n(+)习得虫系招式",
+      "selected": "对战，呃？\n我的虫系宝可梦早就准备好了。"
     },
     "2": {
-      "label": "Show Your Bug Types",
-      "tooltip": "(+) Receive a Gift Item",
-      "disabled_tooltip": "You need at least 1 Bug Type Pokémon on your team to select this.",
-      "selected": "You show the trainer all your Bug Type Pokémon...",
-      "selected_0_to_1": "Huh? You only have {{numBugTypes}}...$Guess I'm wasting my breath on someone like you...",
-      "selected_2_to_3": "Hey, you've got {{numBugTypes}} Bug Types!\nNot bad.$Here, this might help you on your journey to catch more!",
-      "selected_4_to_5": "What? You have {{numBugTypes}} Bug Types?\nNice!$You're not quite at my level, but I can see shades of myself in you!\n$Take this, my young apprentice!",
-      "selected_6": "Whoa! {{numBugTypes}} Bug Types!\n$You must love Bug Types almost as much as I do!$Here, take this as a token of our camaraderie!"
+      "label": "展示虫宝可梦",
+      "tooltip": "(+)获得一件道具",
+      "disabled_tooltip": "你需要至少携带一只虫系宝可梦",
+      "selected": "你向训练师展示了你所有的虫系宝可梦",
+      "selected_0_to_1": "哈？你才有{{numBugTypes}}种。$你对我来说真是浪费时间。",
+      "selected_2_to_3": "嘿，你有{{numBugTypes}}种虫子！\n不错。$来，这能帮你多抓点虫虫。",
+      "selected_4_to_5": "啥？你有{{numBugTypes}}种虫子！！\n牛啊！$你还没有达到我的水平，\n但我可以从你身上看到自己的影子！$拿着，我的小徒弟！",
+      "selected_6": "哇哦！{{numBugTypes}}种虫虫！\n$您一定和我一样喜欢虫属性！$来，把这个当作我们友谊的象征吧！"
     },
     "3": {
-      "label": "Gift a Bug Item",
-      "tooltip": "(-) Give the trainer a {{requiredBugItems}}\n(+) Receive a Gift Item",
-      "disabled_tooltip": "You need to have a {{requiredBugItems}} to select this.",
-      "select_prompt": "Select an item to give.",
-      "invalid_selection": "Pokémon doesn't have that kind of item.",
-      "selected": "You hand the trainer a {{selectedItem}}.",
-      "selected_dialogue": "Whoa! A {{selectedItem}}, for me?\nYou're not so bad, kid!$As a token of my appreciation,\nI want you to have this special gift!$It's been passed all through my family, and now I want you to have it!"
+      "label": "赠送虫系道具",
+      "tooltip": "(-)给予训练师{{requiredBugItems}}\n(+)得到一件礼物",
+      "disabled_tooltip": "你需要一件{{requiredBugItems}}才能选择",
+      "select_prompt": "选择一件道具",
+      "invalid_selection": "宝可梦未持有该类道具",
+      "selected": "你递交了{{selectedItem}}.",
+      "selected_dialogue": "哇！一件{{selectedItem}}，给我的？\n你可以啊小子！$为了表达我的谢意，\n我希望你能拥有这份特别的礼物！$这可是我的传家宝啊，现在我希望你能拥有它！"
     }
   },
-  "battle_won": "Your knowledge and skill were perfect at exploiting our weaknesses!$In exchange for the valuable lesson,\nallow me to teach one of your Pokémon a Bug Type Move!",
-  "teach_move_prompt": "Select a move to teach a Pokémon.",
-  "confirm_no_teach": "You sure you don't want to learn one of these great moves?",
-  "outro": "I see great Bug Pokémon in your future!\nMay our paths cross again!$Bug out!"
+  "battle_won": "你利用知识和技巧完美地痛击了我们的弱点！\n作为这一课的学费，请让我教你一个虫系招式！",
+  "teach_move_prompt": "选择要教给宝可梦的招式",
+  "confirm_no_teach": "你确定你不需要学习任何招式么？",
+  "outro": "我看到你的未来将伴随伟大的虫系宝可梦！\n愿我们再次相遇！虫虫出动！"
 }
