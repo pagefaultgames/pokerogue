@@ -985,6 +985,116 @@
       "1": "I suppose it must seem that I am doing something terrible. I don't expect you to understand.\n$But I must provide the Galar region with limitless energy to ensure everlasting prosperity."
     }
   },
+  "stat_trainer_buck": {
+    "encounter": {
+      "1": "...I'm telling you right now. I'm seriously tough. Act surprised!",
+      "2": "I can feel my Pokémon shivering inside their Pokéballs!"
+    },
+    "victory": {
+      "1": "Heeheehee!\nSo hot, you!",
+      "2": "Heeheehee!\nSo hot, you!"
+    },
+    "defeat": {
+      "1": "Whoa! You're all out of gas, I guess.",
+      "2": "Whoa! You're all out of gas, I guess."
+    }
+  },
+  "stat_trainer_cheryl": {
+    "encounter": {
+      "1": "My Pokémon have been itching for a battle.",
+      "2": "I should warn you, my Pokémon can be quite rambunctious."
+    },
+    "victory": {
+      "1": "Striking the right balance of offense and defense... It's not easy to do.",
+      "2": "Striking the right balance of offense and defense... It's not easy to do."
+    },
+    "defeat": {
+      "1": "Do your Pokémon need any healing?",
+      "2": "Do your Pokémon need any healing?"
+    }
+  },
+  "stat_trainer_marley": {
+    "encounter": {
+      "1": "... OK.\nI'll do my best.",
+      "2": "... OK.\nI... won't lose...!"
+    },
+    "victory": {
+      "1": "... Awww.",
+      "2": "... Awww."
+    },
+    "defeat": {
+      "1": "... Goodbye.",
+      "2": "... Goodbye."
+    }
+  },
+  "stat_trainer_mira": {
+    "encounter": {
+      "1": "You will be shocked by Mira!",
+      "2": "Mira will show you that Mira doesn't get lost anymore!"
+    },
+    "victory": {
+      "1": "Mira wonders if she can get very far in this land.",
+      "2": "Mira wonders if she can get very far in this land."
+    },
+    "defeat": {
+      "1": "Mira knew she would win!",
+      "2": "Mira knew she would win!"
+    }
+  },
+  "stat_trainer_riley": {
+    "encounter": {
+      "1": "Battling is our way of greeting!",
+      "2": "We're pulling out all the stops to put your Pokémon down."
+    },
+    "victory": {
+      "1": "At times we battle, and sometimes we team up...$It's great how Trainers can interact.",
+      "2": "At times we battle, and sometimes we team up...$It's great how Trainers can interact."
+    },
+    "defeat": {
+      "1": "You put up quite the display.\nBetter luck next time.",
+      "2": "You put up quite the display.\nBetter luck next time."
+    }
+  },
+  "winstrates_victor": {
+    "encounter": {
+      "1": "That's the spirit! I like you!"
+    },
+    "victory": {
+      "1": "A-ha! You're stronger than I thought!"
+    }
+  },
+  "winstrates_victoria": {
+    "encounter": {
+      "1": "My goodness! Aren't you young?$You must be quite the trainer to beat my husband, though.$Now I suppose it's my turn to battle!"
+    },
+    "victory": {
+      "1": "Uwah! Just how strong are you?!"
+    }
+  },
+  "winstrates_vivi": {
+    "encounter": {
+      "1": "You're stronger than Mom? Wow!$But I'm strong, too!\nReally! Honestly!"
+    },
+    "victory": {
+      "1": "Huh? Did I really lose?\nSnivel... Grandmaaa!"
+    }
+  },
+  "winstrates_vicky": {
+    "encounter": {
+      "1": "How dare you make my precious\ngranddaughter cry!$I see I need to teach you a lesson.\nPrepare to feel the sting of defeat!"
+    },
+    "victory": {
+      "1": "Whoa! So strong!\nMy granddaughter wasn't lying."
+    }
+  },
+  "winstrates_vito": {
+    "encounter": {
+      "1": "I trained together with my whole family,\nevery one of us!$I'm not losing to anyone!"
+    },
+    "victory": {
+      "1": "I was better than everyone in my family.\nI've never lost before..."
+    }
+  },
   "brock": {
     "encounter": {
       "1": "My expertise on Rock-type Pokémon will take you down! Come on!",
