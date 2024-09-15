@@ -6,7 +6,7 @@
   "option": {
     "1": {
       "label": "Le fouiller",
-      "tooltip": "(-) Aucun objet de soin en boutique\n(+) Gain d’objets exceptionnels",
+      "tooltip": "(-) Prix de la boutique triplés\n(+) Gain d’objets exceptionnels",
       "selected": "Vous barbotez dans le tas d’ordures et\nvous vous couvrez de crasse.$Vu votre état, la prochaine boutique va pour sûr\nfortement gonfler ses prix pour vous forcer à fuir !$Mais ça valait le coup, car ce que vous avez trouvé\ndans les ordures est incroyable !"
     },
     "2": {
