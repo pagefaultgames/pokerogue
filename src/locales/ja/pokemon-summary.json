@@ -11,7 +11,7 @@
   "cancel": "キャンセル",
   "memoString": "{{natureFragment}}な性格。\n{{metFragment}}",
   "metFragment": {
-    "normal": "{{biome}}で\nLv.{{level}}の時に出会った, ラウンド{{wave}}。",
+    "normal": "{{biome}}, ラウンド{{wave}}で\nLv.{{level}}の時に出会った。",
     "apparently": "{{biome}}で\nLv.{{level}}の時に出会ったようだ。"
   },
   "natureFragment": {
