@@ -2225,7 +2225,11 @@ export const trainerConfigs: TrainerConfigs = {
       p.formIndex = 2; // G-Max Eevee
       p.pokeball = PokeballType.ULTRA_BALL;
       p.generateName();
-    })),
+    }))
+    .setGenModifiersFunc(party => {
+      const teraPokemon = party[4];
+      return [modifierTypes.TERA_SHARD().generateType([], [teraPokemon.species.type1])!.withIdFromFunc(modifierTypes.TERA_SHARD).newModifier(teraPokemon) as PersistentModifier]; //TODO: is the bang correct?
+    }),
   [TrainerType.PENNY_2]: new TrainerConfig(++t).setName("Penny").initForEvilTeamLeader("Star Boss", [], true).setMixedBattleBgm("battle_star_boss").setVictoryBgm("victory_team_plasma")
     .setPartyMemberFunc(0, getRandomPartyMemberFunc([ Species.REVAVROOM ], TrainerSlot.TRAINER, true, p => {
       p.setBoss(true, 2);
@@ -2253,7 +2257,11 @@ export const trainerConfigs: TrainerConfigs = {
       p.setBoss(true, 2);
       p.generateAndPopulateMoveset();
       p.pokeball = PokeballType.MASTER_BALL;
-    })),
+    }))
+    .setGenModifiersFunc(party => {
+      const teraPokemon = party[3];
+      return [modifierTypes.TERA_SHARD().generateType([], [teraPokemon.species.type1])!.withIdFromFunc(modifierTypes.TERA_SHARD).newModifier(teraPokemon) as PersistentModifier]; //TODO: is the bang correct?
+    }),
   [TrainerType.BUCK]: new TrainerConfig(++t).setName("Buck").initForStatTrainer([], true)
     .setPartyMemberFunc(0, getRandomPartyMemberFunc([ Species.CLAYDOL ], TrainerSlot.TRAINER, true, p => {
       p.setBoss(true, 3);
