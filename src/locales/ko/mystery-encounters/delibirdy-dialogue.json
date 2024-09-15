@@ -1,29 +1,29 @@
 
 
 {
-  "intro": "A pack of {{delibirdName}} have appeared!",
-  "title": "Delibir-dy",
-  "description": "The {{delibirdName}}s are looking at you expectantly, as if they want something. Perhaps giving them an item or some money would satisfy them?",
-  "query": "What will you give them?",
-  "invalid_selection": "Pokémon doesn't have that kind of item.",
+  "intro": "{{delibirdName}} 무리가 나타났다!",
+  "title": "딜리버-디",
+  "description": "{{delibirdName}}들의 눈이 초롱초롱하다.\n뭔가 바라는 게 있는 것 같다.\n혹시 아이템이나 돈을 원하는 걸까?",
+  "query": "무언가 줘 볼까?",
+  "invalid_selection": "포켓몬이 그런 종류의 아이템이 없다.",
   "option": {
     "1": {
-      "label": "Give Money",
-      "tooltip": "(-) Give the {{delibirdName}}s {{money, money}}\n(+) Receive a Gift Item",
-      "selected": "You toss the money to the {{delibirdName}}s,\nwho chatter amongst themselves excitedly.$They turn back to you and happily give you a present!"
+      "label": "돈을 준다",
+      "tooltip": "(-) {{delibirdName}}들에게 {{money, money}} 선물\n(+) 선물 아이템 획득",
+      "selected": "돈을 건네니,\n{{delibirdName}}들은 자기들끼리 신나서 떠들어댔다.$그리고 당신에게 돌아와 행복하게 선물을 건넨다!"
     },
     "2": {
-      "label": "Give Food",
-      "tooltip": "(-) Give the {{delibirdName}}s a Berry or Reviver Seed\n(+) Receive a Gift Item",
-      "select_prompt": "Select an item to give.",
-      "selected": "You toss the {{chosenItem}} to the {{delibirdName}}s,\nwho chatter amongst themselves excitedly.$They turn back to you and happily give you a present!"
+      "label": "음식을 준다",
+      "tooltip": "(-) {{delibirdName}}들에게 나무열매나 기적의씨를 선물\n(+) 선물 아이템 획득",
+      "select_prompt": "건네줄 아이템을 선택하세요.",
+      "selected": "{{chosenItem}}}[[를]] 건네니,\n{{delibirdName}}들은 자기들끼리 신나서 떠들어댔다.$그리고 당신에게 돌아와 행복하게 선물을 건넨다!"
     },
     "3": {
-      "label": "Give an Item",
-      "tooltip": "(-) Give the {{delibirdName}}s a Held Item\n(+) Receive a Gift Item",
-      "select_prompt": "Select an item to give.",
-      "selected": "You toss the {{chosenItem}} to the {{delibirdName}}s,\nwho chatter amongst themselves excitedly.$They turn back to you and happily give you a present!"
+      "label": "아이템을 준다",
+      "tooltip": "(-) {{delibirdName}}들에게 지니고 있는 아이템을 선물\n(+) 선물 아이템 획득",
+      "select_prompt": "건네줄 아이템을 선택하세요.",
+      "selected": "{{chosenItem}}}[[를]] 건네니,\n{{delibirdName}}들은 자기들끼리 신나서 떠들어댔다.$그리고 당신에게 돌아와 행복하게 선물을 건넨다!"
     }
   },
-  "outro": "The {{delibirdName}} pack happily waddles off into the distance.$What a curious little exchange!"
+  "outro": "{{delibirdName}} 무리가 행복하게 뒤뚱거리며 저 멀리 날아간다..$정말 별난 선물교환이었다!"
 }
