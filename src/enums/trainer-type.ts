@@ -182,6 +182,7 @@ export enum TrainerType {
   RYME,
   TULIP,
   GRUSHA,
+  KOGA_GYM,
   LORELEI = 300,
   BRUNO,
   AGATHA,
