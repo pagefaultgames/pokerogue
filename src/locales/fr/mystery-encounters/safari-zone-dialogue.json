@@ -23,7 +23,7 @@
     },
     "2": {
       "label": "Lancer un appât",
-      "tooltip": "(+) Augumente le taux de capture\n(-) Augumente le risque de fuite",
+      "tooltip": "(+) Augmente le taux de capture\n(-) Augmente le risque de fuite",
       "selected": "Vous lancez quelques appâts !"
     },
     "3": {
