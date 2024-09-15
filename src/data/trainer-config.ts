@@ -255,7 +255,9 @@ export class TrainerConfig {
         name = i18next.t("trainerNames:rival");
       }
     }
+
     this.name = name;
+
     return this;
   }
 
@@ -896,6 +898,20 @@ export class TrainerConfig {
     this.setVictoryBgm("victory_champion");
     this.setGenModifiersFunc(party => getRandomTeraModifiers(party, 3));
 
+    return this;
+  }
+
+  /**
+   * Sets a localized name for the trainer. This should only be used for trainers that dont use a "initFor" function and are considered "named" trainers
+   * @param name - The name of the trainer.
+   * @returns {TrainerConfig} The updated TrainerConfig instance.
+   */
+  setLocalizedName(name: string): TrainerConfig {
+    // Check if the internationalization (i18n) system is initialized.
+    if (!getIsInitialized()) {
+      initI18n();
+    }
+    this.name = i18next.t(`trainerNames:${name.toLowerCase()}`);
     return this;
   }
 
@@ -2270,21 +2286,22 @@ export const trainerConfigs: TrainerConfigs = {
       }
       p.pokeball = PokeballType.MASTER_BALL;
     })),
-  [TrainerType.VICTOR]: new TrainerConfig(++t).setName("Victor").setTitle("The Winstrates")
+  [TrainerType.VICTOR]: new TrainerConfig(++t).setTitle("The Winstrates").setLocalizedName("Victor")
     .setMoneyMultiplier(1) // The Winstrate trainers have total money multiplier of 6
     .setPartyTemplates(trainerPartyTemplates.ONE_AVG_ONE_STRONG),
-  [TrainerType.VICTORIA]: new TrainerConfig(++t).setName("Victoria").setTitle("The Winstrates")
+  [TrainerType.VICTORIA]: new TrainerConfig(++t).setTitle("The Winstrates").setLocalizedName("Victoria")
     .setMoneyMultiplier(1)
     .setPartyTemplates(trainerPartyTemplates.ONE_AVG_ONE_STRONG),
-  [TrainerType.VIVI]: new TrainerConfig(++t).setName("Vivi").setTitle("The Winstrates")
+  [TrainerType.VIVI]: new TrainerConfig(++t).setTitle("The Winstrates").setLocalizedName("Vivi")
     .setMoneyMultiplier(1)
     .setPartyTemplates(trainerPartyTemplates.TWO_AVG_ONE_STRONG),
-  [TrainerType.VICKY]: new TrainerConfig(++t).setName("Vicky").setTitle("The Winstrates")
+  [TrainerType.VICKY]: new TrainerConfig(++t).setTitle("The Winstrates").setLocalizedName("Vicky")
     .setMoneyMultiplier(1)
     .setPartyTemplates(trainerPartyTemplates.ONE_AVG),
-  [TrainerType.VITO]: new TrainerConfig(++t).setName("Vito").setTitle("The Winstrates")
+  [TrainerType.VITO]: new TrainerConfig(++t).setTitle("The Winstrates").setLocalizedName("Vito")
     .setMoneyMultiplier(2)
     .setPartyTemplates(new TrainerPartyCompoundTemplate(new TrainerPartyTemplate(3, PartyMemberStrength.AVERAGE), new TrainerPartyTemplate(2, PartyMemberStrength.STRONG))),
   [TrainerType.BUG_TYPE_SUPERFAN]: new TrainerConfig(++t).setMoneyMultiplier(2.25).setEncounterBgm(TrainerType.ACE_TRAINER)
     .setPartyTemplates(new TrainerPartyTemplate(2, PartyMemberStrength.AVERAGE))
 };
+
