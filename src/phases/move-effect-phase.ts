@@ -102,7 +102,7 @@ export class MoveEffectPhase extends PokemonPhase {
          * (and not random target) and failed the hit check against its target (MISS), log the move
          * as FAILed or MISSed (depending on the conditions above) and end this phase.
          */
-      if (!hasActiveTargets || (!move.hasAttr(VariableTargetAttr) && !move.isMultiTarget() && !targetHitChecks[this.targets[0]])) {
+      if (!hasActiveTargets || (!move.hasAttr(VariableTargetAttr) && !move.isMultiTarget() && !targetHitChecks[this.targets[0]] && !targets[0].getTag(ProtectedTag))) {
         this.stopMultiHit();
         if (hasActiveTargets) {
           this.scene.queueMessage(i18next.t("battle:attackMissed", { pokemonNameWithAffix: this.getTarget()? getPokemonNameWithAffix(this.getTarget()!) : "" }));
@@ -119,25 +119,12 @@ export class MoveEffectPhase extends PokemonPhase {
       /** All move effect attributes are chained together in this array to be applied asynchronously. */
       const applyAttrs: Promise<void>[] = [];
 
+      const playOnEmptyField = this.scene.currentBattle?.mysteryEncounter?.hasBattleAnimationsWithoutTargets ?? false;
       // Move animation only needs one target
-      new MoveAnim(move.id as Moves, user, this.getTarget()!.getBattlerIndex()).play(this.scene, move.hitsSubstitute(user, this.getTarget()!), () => {
+      new MoveAnim(move.id as Moves, user, this.getTarget()!.getBattlerIndex()!, playOnEmptyField).play(this.scene, move.hitsSubstitute(user, this.getTarget()!), () => {
         /** Has the move successfully hit a target (for damage) yet? */
         let hasHit: boolean = false;
         for (const target of targets) {
-          /**
-             * If the move missed a target, stop all future hits against that target
-             * and move on to the next target (if there is one).
-             */
-          if (!targetHitChecks[target.getBattlerIndex()]) {
-            this.stopMultiHit(target);
-            this.scene.queueMessage(i18next.t("battle:attackMissed", { pokemonNameWithAffix: getPokemonNameWithAffix(target) }));
-            if (moveHistoryEntry.result === MoveResult.PENDING) {
-              moveHistoryEntry.result = MoveResult.MISS;
-            }
-            user.pushMoveHistory(moveHistoryEntry);
-            applyMoveAttrs(MissEffectAttr, user, null, move);
-            continue;
-          }
 
           /** The {@linkcode ArenaTagSide} to which the target belongs */
           const targetSide = target.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY;
@@ -154,6 +141,21 @@ export class MoveEffectPhase extends PokemonPhase {
           const isProtected = (bypassIgnoreProtect.value || !this.move.getMove().checkFlag(MoveFlags.IGNORE_PROTECT, user, target))
               && (hasConditionalProtectApplied.value || (!target.findTags(t => t instanceof DamageProtectedTag).length && target.findTags(t => t instanceof ProtectedTag).find(t => target.lapseTag(t.tagType)))
               || (this.move.getMove().category !== MoveCategory.STATUS && target.findTags(t => t instanceof DamageProtectedTag).find(t => target.lapseTag(t.tagType))));
+
+          /**
+             * If the move missed a target, stop all future hits against that target
+             * and move on to the next target (if there is one).
+             */
+          if (!isProtected && !targetHitChecks[target.getBattlerIndex()]) {
+            this.stopMultiHit(target);
+            this.scene.queueMessage(i18next.t("battle:attackMissed", { pokemonNameWithAffix: getPokemonNameWithAffix(target) }));
+            if (moveHistoryEntry.result === MoveResult.PENDING) {
+              moveHistoryEntry.result = MoveResult.MISS;
+            }
+            user.pushMoveHistory(moveHistoryEntry);
+            applyMoveAttrs(MissEffectAttr, user, null, move);
+            continue;
+          }
 
           /** Does this phase represent the invoked move's first strike? */
           const firstHit = (user.turnData.hitsLeft === user.turnData.hitCount);
