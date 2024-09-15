@@ -8,7 +8,7 @@ import { PlayerPokemon } from "#app/field/pokemon";
 import i18next from "i18next";
 import { EggTier } from "#enums/egg-type";
 import { Species } from "#enums/species";
-import { EggSourceType } from "#app/enums/egg-source-types.js";
+import { EggSourceType } from "#app/enums/egg-source-types";
 
 export const EGG_SEED = 1073741824;
 
@@ -61,7 +61,10 @@ export interface IEggOptions {
   /** Defines if the egg will hatch with the hidden ability of this species.
    *  If no hidden ability exist, a random one will get choosen.
    */
-  overrideHiddenAbility?: boolean
+  overrideHiddenAbility?: boolean,
+
+  /** Can customize the message displayed for where the egg was obtained */
+  eggDescriptor?: string;
 }
 
 export class Egg {
@@ -82,6 +85,8 @@ export class Egg {
   private _eggMoveIndex: number;
 
   private _overrideHiddenAbility: boolean;
+
+  private _eggDescriptor?: string;
 
   ////
   // #endregion
@@ -191,6 +196,8 @@ export class Egg {
     } else { // For legacy eggs without scene
       generateEggProperties(eggOptions);
     }
+
+    this._eggDescriptor = eggOptions?.eggDescriptor;
   }
 
   ////
@@ -222,7 +229,7 @@ export class Egg {
 
       let pokemonSpecies = getPokemonSpecies(this._species);
       // Special condition to have Phione eggs also have a chance of generating Manaphy
-      if (this._species === Species.PHIONE) {
+      if (this._species === Species.PHIONE && this._sourceType === EggSourceType.SAME_SPECIES_EGG) {
         pokemonSpecies = getPokemonSpecies(Utils.randSeedInt(MANAPHY_EGG_MANAPHY_RATE) ? Species.PHIONE : Species.MANAPHY);
       }
 
@@ -292,13 +299,15 @@ export class Egg {
   public getEggTypeDescriptor(scene: BattleScene): string {
     switch (this.sourceType) {
     case EggSourceType.SAME_SPECIES_EGG:
-      return i18next.t("egg:sameSpeciesEgg", { species: getPokemonSpecies(this._species).getName()});
+      return this._eggDescriptor ?? i18next.t("egg:sameSpeciesEgg", { species: getPokemonSpecies(this._species).getName()});
     case EggSourceType.GACHA_LEGENDARY:
-      return `${i18next.t("egg:gachaTypeLegendary")} (${getPokemonSpecies(getLegendaryGachaSpeciesForTimestamp(scene, this.timestamp)).getName()})`;
+      return this._eggDescriptor ?? `${i18next.t("egg:gachaTypeLegendary")} (${getPokemonSpecies(getLegendaryGachaSpeciesForTimestamp(scene, this.timestamp)).getName()})`;
     case EggSourceType.GACHA_SHINY:
-      return i18next.t("egg:gachaTypeShiny");
+      return this._eggDescriptor ?? i18next.t("egg:gachaTypeShiny");
     case EggSourceType.GACHA_MOVE:
-      return i18next.t("egg:gachaTypeMove");
+      return this._eggDescriptor ?? i18next.t("egg:gachaTypeMove");
+    case EggSourceType.EVENT:
+      return this._eggDescriptor ?? i18next.t("egg:eventType");
     default:
       console.warn("getEggTypeDescriptor case not defined. Returning default empty string");
       return "";
@@ -326,7 +335,8 @@ export class Egg {
       break;
     }
 
-    return Utils.randSeedInt(baseChance * Math.pow(2, 3 - this.tier)) ? Utils.randSeedInt(3) : 3;
+    const tierMultiplier = this.isManaphyEgg() ? 2 : Math.pow(2, 3 - this.tier);
+    return Utils.randSeedInt(baseChance * tierMultiplier) ? Utils.randSeedInt(3) : 3;
   }
 
   private getEggTierDefaultHatchWaves(eggTier?: EggTier): number {
@@ -361,7 +371,12 @@ export class Egg {
      * the species that was the legendary focus at the time
      */
     if (this.isManaphyEgg()) {
-      const rand = Utils.randSeedInt(MANAPHY_EGG_MANAPHY_RATE);
+      /**
+       * Adding a technicality to make unit tests easier: By making this check pass
+       * when Utils.randSeedInt(8) = 1, and by making the generatePlayerPokemon() species
+       * check pass when Utils.randSeedInt(8) = 0, we can tell them apart during tests.
+       */
+      const rand = (Utils.randSeedInt(MANAPHY_EGG_MANAPHY_RATE) !== 1);
       return rand ? Species.PHIONE : Species.MANAPHY;
     } else if (this.tier === EggTier.MASTER
       && this._sourceType === EggSourceType.GACHA_LEGENDARY) {

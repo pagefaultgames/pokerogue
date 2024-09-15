@@ -7,7 +7,6 @@ import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/utils/gameManager";
-import { SPLASH_ONLY } from "#test/utils/testUtils";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
@@ -30,7 +29,7 @@ describe("Moves - Stockpile", () => {
       game.override.battleType("single");
 
       game.override.enemySpecies(Species.RATTATA);
-      game.override.enemyMoveset(SPLASH_ONLY);
+      game.override.enemyMoveset(Moves.SPLASH);
       game.override.enemyAbility(Abilities.NONE);
 
       game.override.startingLevel(2000);

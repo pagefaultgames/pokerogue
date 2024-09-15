@@ -1,21 +1,21 @@
-import BattleScene from "#app/battle-scene.js";
-import { BattlerIndex } from "#app/battle.js";
-import { applyAbAttrs, applyPostMoveUsedAbAttrs, applyPreAttackAbAttrs, BlockRedirectAbAttr, IncreasePpAbAttr, PokemonTypeChangeAbAttr, PostMoveUsedAbAttr, RedirectMoveAbAttr } from "#app/data/ability.js";
-import { CommonAnim } from "#app/data/battle-anims.js";
-import { BattlerTagLapseType, CenterOfAttentionTag } from "#app/data/battler-tags.js";
-import { allMoves, applyMoveAttrs, BypassRedirectAttr, BypassSleepAttr, ChargeAttr, CopyMoveAttr, HealStatusEffectAttr, MoveFlags, PreMoveMessageAttr } from "#app/data/move.js";
-import { SpeciesFormChangePreMoveTrigger } from "#app/data/pokemon-forms.js";
-import { getStatusEffectActivationText, getStatusEffectHealText } from "#app/data/status-effect.js";
-import { Type } from "#app/data/type.js";
-import { getTerrainBlockMessage } from "#app/data/weather.js";
-import { Abilities } from "#app/enums/abilities.js";
-import { BattlerTagType } from "#app/enums/battler-tag-type.js";
-import { Moves } from "#app/enums/moves.js";
-import { StatusEffect } from "#app/enums/status-effect.js";
-import { MoveUsedEvent } from "#app/events/battle-scene.js";
-import Pokemon, { MoveResult, PokemonMove, TurnMove } from "#app/field/pokemon.js";
-import { getPokemonNameWithAffix } from "#app/messages.js";
-import * as Utils from "#app/utils.js";
+import BattleScene from "#app/battle-scene";
+import { BattlerIndex } from "#app/battle";
+import { applyAbAttrs, applyPostMoveUsedAbAttrs, applyPreAttackAbAttrs, BlockRedirectAbAttr, IncreasePpAbAttr, PokemonTypeChangeAbAttr, PostMoveUsedAbAttr, RedirectMoveAbAttr } from "#app/data/ability";
+import { CommonAnim } from "#app/data/battle-anims";
+import { BattlerTagLapseType, CenterOfAttentionTag } from "#app/data/battler-tags";
+import { allMoves, applyMoveAttrs, BypassRedirectAttr, BypassSleepAttr, ChargeAttr, CopyMoveAttr, HealStatusEffectAttr, MoveFlags, PreMoveMessageAttr } from "#app/data/move";
+import { SpeciesFormChangePreMoveTrigger } from "#app/data/pokemon-forms";
+import { getStatusEffectActivationText, getStatusEffectHealText } from "#app/data/status-effect";
+import { Type } from "#app/data/type";
+import { getTerrainBlockMessage } from "#app/data/weather";
+import { Abilities } from "#app/enums/abilities";
+import { BattlerTagType } from "#app/enums/battler-tag-type";
+import { Moves } from "#app/enums/moves";
+import { StatusEffect } from "#app/enums/status-effect";
+import { MoveUsedEvent } from "#app/events/battle-scene";
+import Pokemon, { MoveResult, PokemonMove, TurnMove } from "#app/field/pokemon";
+import { getPokemonNameWithAffix } from "#app/messages";
+import * as Utils from "#app/utils";
 import i18next from "i18next";
 import { BattlePhase } from "./battle-phase";
 import { CommonAnimPhase } from "./common-anim-phase";
@@ -167,6 +167,7 @@ export class MovePhase extends BattlePhase {
         this.pokemon.pushMoveHistory({ move: Moves.NONE, result: MoveResult.FAIL, targets: this.targets });
 
         this.pokemon.lapseTags(BattlerTagLapseType.MOVE_EFFECT); // Remove any tags from moves like Fly/Dive/etc.
+        this.pokemon.lapseTags(BattlerTagLapseType.AFTER_MOVE);
         moveQueue.shift(); // Remove the second turn of charge moves
         return this.end();
       }
@@ -186,6 +187,7 @@ export class MovePhase extends BattlePhase {
         this.pokemon.pushMoveHistory({ move: Moves.NONE, result: MoveResult.FAIL, targets: [] });
 
         this.pokemon.lapseTags(BattlerTagLapseType.MOVE_EFFECT); // Remove any tags from moves like Fly/Dive/etc.
+        this.pokemon.lapseTags(BattlerTagLapseType.AFTER_MOVE);
 
         moveQueue.shift();
         return this.end();
@@ -204,7 +206,7 @@ export class MovePhase extends BattlePhase {
       let success = this.move.getMove().applyConditions(this.pokemon, targets[0], this.move.getMove());
       const cancelled = new Utils.BooleanHolder(false);
       let failedText = this.move.getMove().getFailedText(this.pokemon, targets[0], this.move.getMove(), cancelled);
-      if (success && this.scene.arena.isMoveWeatherCancelled(this.move.getMove())) {
+      if (success && this.scene.arena.isMoveWeatherCancelled(this.pokemon, this.move.getMove())) {
         success = false;
       } else if (success && this.scene.arena.isMoveTerrainCancelled(this.pokemon, this.targets, this.move.getMove())) {
         success = false;

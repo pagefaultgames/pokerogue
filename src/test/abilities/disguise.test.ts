@@ -6,7 +6,6 @@ import { StatusEffect } from "#app/data/status-effect";
 import { Stat } from "#enums/stat";
 import GameManager from "#test/utils/gameManager";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import { SPLASH_ONLY } from "../utils/testUtils";
 
 const TIMEOUT = 20 * 1000;
 
@@ -31,7 +30,7 @@ describe("Abilities - Disguise", () => {
     game.override
       .battleType("single")
       .enemySpecies(Species.MIMIKYU)
-      .enemyMoveset(SPLASH_ONLY)
+      .enemyMoveset(Moves.SPLASH)
       .starterSpecies(Species.REGIELEKI)
       .moveset([Moves.SHADOW_SNEAK, Moves.VACUUM_WAVE, Moves.TOXIC_THREAD, Moves.SPLASH]);
   }, TIMEOUT);
@@ -108,7 +107,7 @@ describe("Abilities - Disguise", () => {
   }, TIMEOUT);
 
   it("persists form change when switched out", async () => {
-    game.override.enemyMoveset(Array(4).fill(Moves.SHADOW_SNEAK));
+    game.override.enemyMoveset([Moves.SHADOW_SNEAK]);
     game.override.starterSpecies(0);
 
     await game.classicMode.startBattle([ Species.MIMIKYU, Species.FURRET ]);
@@ -194,7 +193,7 @@ describe("Abilities - Disguise", () => {
   }, TIMEOUT);
 
   it("doesn't faint twice when fainting due to Disguise break damage, nor prevent faint from Disguise break damage if using Endure", async () => {
-    game.override.enemyMoveset(Array(4).fill(Moves.ENDURE));
+    game.override.enemyMoveset([Moves.ENDURE]);
     await game.classicMode.startBattle();
 
     const mimikyu = game.scene.getEnemyPokemon()!;

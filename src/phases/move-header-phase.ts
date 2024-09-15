@@ -1,6 +1,6 @@
-import BattleScene from "#app/battle-scene.js";
-import { applyMoveAttrs, MoveHeaderAttr } from "#app/data/move.js";
-import Pokemon, { PokemonMove } from "#app/field/pokemon.js";
+import BattleScene from "#app/battle-scene";
+import { applyMoveAttrs, MoveHeaderAttr } from "#app/data/move";
+import Pokemon, { PokemonMove } from "#app/field/pokemon";
 import { BattlePhase } from "./battle-phase";
 
 export class MoveHeaderPhase extends BattlePhase {

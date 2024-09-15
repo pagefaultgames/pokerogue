@@ -42,7 +42,7 @@ describe("Moves - Flame Burst", () => {
     game.override.startingWave(4);
     game.override.enemySpecies(Species.SHUCKLE);
     game.override.enemyAbility(Abilities.BALL_FETCH);
-    game.override.enemyMoveset(new Array(4).fill(Moves.SPLASH));
+    game.override.enemyMoveset([Moves.SPLASH]);
   });
 
   it("inflicts damage to the target's ally equal to 1/16 of its max HP", async () => {
