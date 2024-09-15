@@ -1,23 +1,23 @@
 {
-  "intro": "You found...@d{32} a chest?",
-  "title": "The Mysterious Chest",
-  "description": "A beautifully ornamented chest stands on the ground. There must be something good inside... right?",
-  "query": "Will you open it?",
+  "intro": "이건...@d{32} 뭐지?",
+  "title": "수수께끼 상자",
+  "description": "아름답게 장식된 상자가 바닥에 놓여있습니다. 보통 이럴 땐, 안에 뭔가 좋은 것이 있는 것이 인지상정...\n그렇지 않을까요?",
+  "query": "열어보시겠습니까?",
   "option": {
     "1": {
-      "label": "Open It",
-      "tooltip": "@[SUMMARY_BLUE]{(35%) Something terrible}\n@[SUMMARY_GREEN]{(40%) Okay Rewards}\n@[SUMMARY_GREEN]{(20%) Good Rewards}\n@[SUMMARY_GREEN]{(4%) Great Rewards}\n@[SUMMARY_GREEN]{(1%) Amazing Rewards}",
-      "selected": "You open the chest to find...",
-      "normal": "Just some normal tools and items.",
-      "good": "Some pretty nice tools and items.",
-      "great": "A couple great tools and items!",
-      "amazing": "Whoa! An amazing item!",
-      "bad": "Oh no!@d{32}\nThe chest was actually a {{gimmighoulName}} in disguise!$Your {{pokeName}} jumps in front of you\nbut is KOed in the process!"
+      "label": "열어본다",
+      "tooltip": "@[SUMMARY_BLUE]{(35%) 끔찍한 무언가}\n@[SUMMARY_GREEN]{(40%) 평범한 보상}\n@[SUMMARY_GREEN]{(20%) 좋은 보상}\n@[SUMMARY_GREEN]{(4%) 훌륭한 보상}\n@[SUMMARY_GREEN]{(1%) 대단한 보상}",
+      "selected": "당신이 상자안에서 찾은 것은...",
+      "normal": "평범한 도구와 아이템이다.",
+      "good": "꽤 좋은 도구와 아이템이다.",
+      "great": "훌륭한 도구와 아이템이다!",
+      "amazing": "앗! 대단한 아이템!",
+      "bad": "으악!@d{32}\n상자는 사실 변장한 {{gimmighoulName}}이었다!${{pokeName}}[[가]] 앞으로 뛰어들어 막았지만\n기절해버렸다!"
     },
     "2": {
-      "label": "Too Risky, Leave",
-      "tooltip": "(-) No Rewards",
-      "selected": "You hurry along your way,\nwith a slight feeling of regret."
+      "label": "위험할 수 있으니 떠난다",
+      "tooltip": "(-) 보상 없음",
+      "selected": "아쉬움을 뒤로 하고,\n당신은 서둘러 떠났다."
     }
   }
 }
