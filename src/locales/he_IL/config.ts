@@ -95,7 +95,7 @@ import globalTradeSystem from "./mystery-encounters/global-trade-system-dialogue
  *   - (see [i18next interpolations](https://www.i18next.com/translation-function/interpolation)) for more details.
  * - `@[<TextStyle>]{<text>}` (STATIC TEXT ONLY, NOT USEABLE WITH {@link UI.showText()} OR {@link UI.showDialogue()}) will auto-color the given text to a specified {@link TextStyle} (e.g. `TextStyle.SUMMARY_GREEN`).
  */
-export const heIlConfig = {
+export const heConfig = {
   ability,
   abilityTriggers,
   arenaFlyout,
