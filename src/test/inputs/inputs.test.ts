@@ -52,6 +52,11 @@ describe("Inputs", () => {
     expect(game.inputsHandler.log.length).toBe(5);
   });
 
+  it("keyboard - test input holding meta key - 0 input", async() => {
+    await game.inputsHandler.pressKeyboardKey(cfg_keyboard_qwerty.deviceMapping.KEY_ARROW_UP, 1, true);
+    expect(game.inputsHandler.log.length).toBe(0);
+  });
+
   it("keyboard - test input holding for 200ms - 1 input", async() => {
     await game.inputsHandler.pressKeyboardKey(cfg_keyboard_qwerty.deviceMapping.KEY_ARROW_UP, 200);
     expect(game.inputsHandler.log.length).toBe(1);
