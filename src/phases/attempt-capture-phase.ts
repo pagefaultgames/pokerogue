@@ -15,6 +15,7 @@ import { Mode } from "#app/ui/ui";
 import i18next from "i18next";
 import { PokemonPhase } from "./pokemon-phase";
 import { VictoryPhase } from "./victory-phase";
+import { SubstituteTag } from "#app/data/battler-tags";
 
 export class AttemptCapturePhase extends PokemonPhase {
   private pokeballType: PokeballType;
@@ -34,6 +35,11 @@ export class AttemptCapturePhase extends PokemonPhase {
 
     if (!pokemon?.hp) {
       return this.end();
+    }
+
+    const substitute = pokemon.getTag(SubstituteTag);
+    if (substitute) {
+      substitute.sprite.setVisible(false);
     }
 
     this.scene.pokeballCounts[this.pokeballType]--;
@@ -164,6 +170,11 @@ export class AttemptCapturePhase extends PokemonPhase {
     pokemon.tint(getPokeballTintColor(this.pokeballType));
     pokemon.setVisible(true);
     pokemon.untint(250, "Sine.easeOut");
+
+    const substitute = pokemon.getTag(SubstituteTag);
+    if (substitute) {
+      substitute.sprite.setVisible(true);
+    }
 
     const pokeballAtlasKey = getPokeballAtlasKey(this.pokeballType);
     this.pokeball.setTexture("pb", `${pokeballAtlasKey}_opening`);

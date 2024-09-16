@@ -13,7 +13,7 @@ import { allMoves } from "../data/move";
 import { Nature, getNatureName } from "../data/nature";
 import { pokemonFormChanges } from "../data/pokemon-forms";
 import { LevelMoves, pokemonFormLevelMoves, pokemonSpeciesLevelMoves } from "../data/pokemon-level-moves";
-import PokemonSpecies, { allSpecies, getPokemonSpeciesForm, getStarterValueFriendshipCap, speciesStarters, starterPassiveAbilities, getPokerusStarters } from "../data/pokemon-species";
+import PokemonSpecies, { allSpecies, getPokemonSpeciesForm, getStarterValueFriendshipCap, speciesStarters, starterPassiveAbilities, POKERUS_STARTER_COUNT, getPokerusStarters } from "../data/pokemon-species";
 import { Type } from "../data/type";
 import { GameModes } from "../game-mode";
 import { AbilityAttr, DexAttr, DexAttrProps, DexEntry, StarterMoveset, StarterAttributes, StarterPreferences, StarterPrefs } from "../system/game-data";
@@ -631,7 +631,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
     starterBoxContainer.add(this.starterSelectScrollBar);
 
-    this.pokerusCursorObjs = new Array(3).fill(null).map(() => {
+    this.pokerusCursorObjs = new Array(POKERUS_STARTER_COUNT).fill(null).map(() => {
       const cursorObj = this.scene.add.image(0, 0, "select_cursor_pokerus");
       cursorObj.setVisible(false);
       cursorObj.setOrigin(0, 0);
@@ -995,15 +995,14 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       delete starterAttributes.shiny;
     }
 
-    if (starterAttributes.variant !== undefined && !isNaN(starterAttributes.variant)) {
+    if (starterAttributes.variant !== undefined) {
       const unlockedVariants = [
-        hasNonShiny,
         hasShiny && caughtAttr & DexAttr.DEFAULT_VARIANT,
         hasShiny && caughtAttr & DexAttr.VARIANT_2,
         hasShiny && caughtAttr & DexAttr.VARIANT_3
       ];
-      if (!unlockedVariants[starterAttributes.variant + 1]) { // add 1 as -1 = non-shiny
-        // requested variant wasn't unlocked, purging setting
+      if (isNaN(starterAttributes.variant) || starterAttributes.variant < 0 || !unlockedVariants[starterAttributes.variant]) {
+        // variant value is invalid or requested variant wasn't unlocked, purging setting
         delete starterAttributes.variant;
       }
     }

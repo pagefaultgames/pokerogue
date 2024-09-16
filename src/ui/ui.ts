@@ -53,6 +53,7 @@ import EggSummaryUiHandler from "./egg-summary-ui-handler";
 import TestDialogueUiHandler from "#app/ui/test-dialogue-ui-handler";
 import AutoCompleteUiHandler from "./autocomplete-ui-handler";
 import { Device } from "#enums/devices";
+import MysteryEncounterUiHandler from "./mystery-encounter-ui-handler";
 
 export enum Mode {
   MESSAGE,
@@ -97,6 +98,7 @@ export enum Mode {
   TEST_DIALOGUE,
   AUTO_COMPLETE,
   ADMIN,
+  MYSTERY_ENCOUNTER
 }
 
 const transitionModes = [
@@ -137,6 +139,7 @@ const noTransitionModes = [
   Mode.TEST_DIALOGUE,
   Mode.AUTO_COMPLETE,
   Mode.ADMIN,
+  Mode.MYSTERY_ENCOUNTER
 ];
 
 export default class UI extends Phaser.GameObjects.Container {
@@ -204,6 +207,7 @@ export default class UI extends Phaser.GameObjects.Container {
       new TestDialogueUiHandler(scene, Mode.TEST_DIALOGUE),
       new AutoCompleteUiHandler(scene),
       new AdminUiHandler(scene),
+      new MysteryEncounterUiHandler(scene),
     ];
   }
 
