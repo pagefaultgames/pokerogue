@@ -90,12 +90,12 @@ export class CommandPhase extends FieldPhase {
       if (cursor === -1 ||
             playerPokemon.trySelectMove(cursor, args[0] as boolean) ||
             (useStruggle = cursor > -1 && !playerPokemon.getMoveset().filter(m => m?.isUsable(playerPokemon)).length)) {
-        const turnMove: TurnMove | undefined = args.length === 1 ? (args[0] as TurnMove) : undefined;
+        const turnMove: TurnMove | undefined = (args.length === 1 ? (args[0] as TurnMove) : undefined);
 
         let moveId: Moves;
         if (useStruggle) {
           moveId = Moves.STRUGGLE;
-        } else if (turnMove !== undefined) {
+        } else if (turnMove) {
           moveId = turnMove.move;
         } else if (cursor > -1) {
           moveId = playerPokemon.getMoveset()[cursor]!.moveId;
