@@ -9,6 +9,6 @@
   "checkTeamDesc": "Controlla la squadra Pokémon.",
   "rerollCost": "{{formattedMoney}}₽",
   "itemCost": "{{formattedMoney}}₽",
-  "continueNextWaveButton": "Continue",
-  "continueNextWaveDescription": "Continue to the next wave"
+  "continueNextWaveButton": "Continua",
+  "continueNextWaveDescription": "Continua alla onda successiva"
 }
