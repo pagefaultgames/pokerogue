@@ -9,7 +9,6 @@ import { Biome } from "#enums/biome";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/utils/gameManager";
-import { SPLASH_ONLY } from "#test/utils/testUtils";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
@@ -183,7 +182,7 @@ describe("Abilities - Libero", () => {
     "ability applies correctly even if the pokemon's move misses",
     async () => {
       game.override.moveset([Moves.TACKLE]);
-      game.override.enemyMoveset(SPLASH_ONLY);
+      game.override.enemyMoveset(Moves.SPLASH);
 
       await game.startBattle([Species.MAGIKARP]);
 

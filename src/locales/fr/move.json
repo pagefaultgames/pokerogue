@@ -364,8 +364,8 @@
     "effect": "Le lanceur creuse au premier tour et frappe au second."
   },
   "toxic": {
-    "name": "Fil Toxique",
-    "effect": "Tisse un fil imprégné de venin. Empoisonne la cible et baisse sa Vitesse."
+    "name": "Toxik",
+    "effect": "Le lanceur empoisonne gravement la cible. Les dégâts dus au poison augmentent à chaque tour."
   },
   "confusion": {
     "name": "Choc Mental",

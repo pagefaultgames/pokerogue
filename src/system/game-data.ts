@@ -1,7 +1,7 @@
 import i18next from "i18next";
 import BattleScene, { PokeballCounts, bypassLogin } from "../battle-scene";
 import Pokemon, { EnemyPokemon, PlayerPokemon } from "../field/pokemon";
-import { pokemonEvolutions, pokemonPrevolutions } from "../data/pokemon-evolutions";
+import { pokemonPrevolutions } from "../data/pokemon-evolutions";
 import PokemonSpecies, { allSpecies, getPokemonSpecies, noStarterFormKeys, speciesStarters } from "../data/pokemon-species";
 import * as Utils from "../utils";
 import Overrides from "#app/overrides";
@@ -27,24 +27,27 @@ import { Tutorial } from "../tutorial";
 import { speciesEggMoves } from "../data/egg-moves";
 import { allMoves } from "../data/move";
 import { TrainerVariant } from "../field/trainer";
-import { Variant, variantData } from "#app/data/variant";
+import { Variant } from "#app/data/variant";
 import {setSettingGamepad, SettingGamepad, settingGamepadDefaults} from "./settings/settings-gamepad";
 import {setSettingKeyboard, SettingKeyboard} from "#app/system/settings/settings-keyboard";
-import { TerrainChangedEvent, WeatherChangedEvent } from "#app/events/arena.js";
-import { EnemyAttackStatusEffectChanceModifier } from "../modifier/modifier";
-import { StatusEffect } from "#app/data/status-effect.js";
+import { TerrainChangedEvent, WeatherChangedEvent } from "#app/events/arena";
+import * as Modifier from "../modifier/modifier";
+import { StatusEffect } from "#app/data/status-effect";
 import ChallengeData from "./challenge-data";
 import { Device } from "#enums/devices";
 import { GameDataType } from "#enums/game-data-type";
 import { Moves } from "#enums/moves";
 import { PlayerGender } from "#enums/player-gender";
 import { Species } from "#enums/species";
-import { applyChallenges, ChallengeType } from "#app/data/challenge.js";
-import { WeatherType } from "#app/enums/weather-type.js";
-import { TerrainType } from "#app/data/terrain.js";
-import { OutdatedPhase } from "#app/phases/outdated-phase.js";
-import { ReloadSessionPhase } from "#app/phases/reload-session-phase.js";
+import { applyChallenges, ChallengeType } from "#app/data/challenge";
+import { WeatherType } from "#app/enums/weather-type";
+import { TerrainType } from "#app/data/terrain";
+import { OutdatedPhase } from "#app/phases/outdated-phase";
+import { ReloadSessionPhase } from "#app/phases/reload-session-phase";
 import { RUN_HISTORY_LIMIT } from "#app/ui/run-history-ui-handler";
+import { applySessionDataPatches, applySettingsDataPatches, applySystemDataPatches } from "./version-converter";
+import { MysteryEncounterSaveData } from "../data/mystery-encounters/mystery-encounter-save-data";
+import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 
 export const defaultStarterSpecies: Species[] = [
   Species.BULBASAUR, Species.CHARMANDER, Species.SQUIRTLE,
@@ -93,7 +96,7 @@ export function decrypt(data: string, bypassLogin: boolean): string {
     : (data: string) => AES.decrypt(data, saveKey).toString(enc.Utf8))(data);
 }
 
-interface SystemSaveData {
+export interface SystemSaveData {
   trainerId: integer;
   secretId: integer;
   gender: PlayerGender;
@@ -129,6 +132,8 @@ export interface SessionSaveData {
   gameVersion: string;
   timestamp: integer;
   challenges: ChallengeData[];
+  mysteryEncounterType: MysteryEncounterType | -1; // Only defined when current wave is ME,
+  mysteryEncounterSaveData: MysteryEncounterSaveData;
 }
 
 interface Unlocks {
@@ -456,16 +461,13 @@ export class GameData {
 
         localStorage.setItem(`data_${loggedInUser?.username}`, encrypt(systemDataStr, bypassLogin));
 
-        /*const versions = [ this.scene.game.config.gameVersion, data.gameVersion || '0.0.0' ];
-
-        if (versions[0] !== versions[1]) {
-          const [ versionNumbers, oldVersionNumbers ] = versions.map(ver => ver.split('.').map(v => parseInt(v)));
-        }*/
         const lsItemKey = `runHistoryData_${loggedInUser?.username}`;
         const lsItem = localStorage.getItem(lsItemKey);
         if (!lsItem) {
           localStorage.setItem(lsItemKey, "");
         }
+
+        applySystemDataPatches(systemData);
 
         this.trainerId = systemData.trainerId;
         this.secretId = systemData.secretId;
@@ -474,9 +476,7 @@ export class GameData {
 
         this.saveSetting(SettingKeys.Player_Gender, systemData.gender === PlayerGender.FEMALE ? 1 : 0);
 
-        const initStarterData = !systemData.starterData;
-
-        if (initStarterData) {
+        if (!systemData.starterData) {
           this.initStarterData();
 
           if (systemData["starterMoveData"]) {
@@ -494,25 +494,20 @@ export class GameData {
           }
 
           this.migrateStarterAbilities(systemData, this.starterData);
-        } else {
-          if ([ "1.0.0", "1.0.1" ].includes(systemData.gameVersion)) {
-            this.migrateStarterAbilities(systemData);
-          }
-          //this.fixVariantData(systemData);
-          this.fixStarterData(systemData);
-          // Migrate ability starter data if empty for caught species
-          Object.keys(systemData.starterData).forEach(sd => {
-            if (systemData.dexData[sd].caughtAttr && !systemData.starterData[sd].abilityAttr) {
-              systemData.starterData[sd].abilityAttr = 1;
+
+          const starterIds = Object.keys(this.starterData).map(s => parseInt(s) as Species);
+          for (const s of starterIds) {
+            this.starterData[s].candyCount += this.dexData[s].caughtCount;
+            this.starterData[s].candyCount += this.dexData[s].hatchedCount * 2;
+            if (this.dexData[s].caughtAttr & DexAttr.SHINY) {
+              this.starterData[s].candyCount += 4;
             }
-          });
+          }
+        } else {
           this.starterData = systemData.starterData;
         }
 
         if (systemData.gameStats) {
-          if (systemData.gameStats.legendaryPokemonCaught !== undefined && systemData.gameStats.subLegendaryPokemonCaught === undefined) {
-            this.fixLegendaryStats(systemData);
-          }
           this.gameStats = systemData.gameStats;
         }
 
@@ -557,17 +552,6 @@ export class GameData {
         this.dexData = Object.assign(this.dexData, systemData.dexData);
         this.consolidateDexData(this.dexData);
         this.defaultDexData = null;
-
-        if (initStarterData) {
-          const starterIds = Object.keys(this.starterData).map(s => parseInt(s) as Species);
-          for (const s of starterIds) {
-            this.starterData[s].candyCount += this.dexData[s].caughtCount;
-            this.starterData[s].candyCount += this.dexData[s].hatchedCount * 2;
-            if (this.dexData[s].caughtAttr & DexAttr.SHINY) {
-              this.starterData[s].candyCount += 4;
-            }
-          }
-        }
 
         resolve(true);
       } catch (err) {
@@ -747,6 +731,7 @@ export class GameData {
     setSetting(this.scene, setting, valueIndex);
 
     settings[setting] = valueIndex;
+    settings["gameVersion"] = this.scene.game.config.gameVersion;
 
     localStorage.setItem("settings", JSON.stringify(settings));
 
@@ -857,13 +842,7 @@ export class GameData {
 
     const settings = JSON.parse(localStorage.getItem("settings")!); // TODO: is this bang correct?
 
-    // TODO: Remove this block after save migration is implemented
-    if (settings.hasOwnProperty("REROLL_TARGET") && !settings.hasOwnProperty(SettingKeys.Shop_Cursor_Target)) {
-      settings[SettingKeys.Shop_Cursor_Target] = settings["REROLL_TARGET"];
-      delete settings["REROLL_TARGET"];
-      localStorage.setItem("settings", JSON.stringify(settings));
-    }
-    // End of block to remove
+    applySettingsDataPatches(settings);
 
     for (const setting of Object.keys(settings)) {
       setSetting(this.scene, setting, settings[setting]);
@@ -972,7 +951,9 @@ export class GameData {
       trainer: scene.currentBattle.battleType === BattleType.TRAINER ? new TrainerData(scene.currentBattle.trainer) : null,
       gameVersion: scene.game.config.gameVersion,
       timestamp: new Date().getTime(),
-      challenges: scene.gameMode.challenges.map(c => new ChallengeData(c))
+      challenges: scene.gameMode.challenges.map(c => new ChallengeData(c)),
+      mysteryEncounterType: scene.currentBattle.mysteryEncounter?.encounterType ?? -1,
+      mysteryEncounterSaveData: scene.mysteryEncounterSaveData
     } as SessionSaveData;
   }
 
@@ -1063,11 +1044,14 @@ export class GameData {
           scene.score = sessionData.score;
           scene.updateScoreText();
 
+          scene.mysteryEncounterSaveData = new MysteryEncounterSaveData(sessionData.mysteryEncounterSaveData);
+
           scene.newArena(sessionData.arena.biome);
 
           const battleType = sessionData.battleType || 0;
           const trainerConfig = sessionData.trainer ? trainerConfigs[sessionData.trainer.trainerType] : null;
-          const battle = scene.newBattle(sessionData.waveIndex, battleType, sessionData.trainer, battleType === BattleType.TRAINER ? trainerConfig?.doubleOnly || sessionData.trainer?.variant === TrainerVariant.DOUBLE : sessionData.enemyParty.length > 1)!; // TODO: is this bang correct?
+          const mysteryEncounterType = sessionData.mysteryEncounterType !== -1 ? sessionData.mysteryEncounterType : undefined;
+          const battle = scene.newBattle(sessionData.waveIndex, battleType, sessionData.trainer, battleType === BattleType.TRAINER ? trainerConfig?.doubleOnly || sessionData.trainer?.variant === TrainerVariant.DOUBLE : sessionData.enemyParty.length > 1, mysteryEncounterType)!; // TODO: is this bang correct?
           battle.enemyLevels = sessionData.enemyParty.map(p => p.level);
 
           scene.arena.init();
@@ -1090,10 +1074,8 @@ export class GameData {
           // TODO
           //scene.arena.tags = sessionData.arena.tags;
 
-          const modifiersModule = await import("../modifier/modifier");
-
           for (const modifierData of sessionData.modifiers) {
-            const modifier = modifierData.toModifier(scene, modifiersModule[modifierData.className]);
+            const modifier = modifierData.toModifier(scene, Modifier[modifierData.className]);
             if (modifier) {
               scene.addModifier(modifier, true);
             }
@@ -1102,7 +1084,7 @@ export class GameData {
           scene.updateModifiers(true);
 
           for (const enemyModifierData of sessionData.enemyModifiers) {
-            const modifier = enemyModifierData.toModifier(scene, modifiersModule[enemyModifierData.className]);
+            const modifier = enemyModifierData.toModifier(scene, Modifier[enemyModifierData.className]);
             if (modifier) {
               scene.addEnemyModifier(modifier, true);
             }
@@ -1226,7 +1208,7 @@ export class GameData {
   }
 
   parseSessionData(dataStr: string): SessionSaveData {
-    return JSON.parse(dataStr, (k: string, v: any) => {
+    const sessionData = JSON.parse(dataStr, (k: string, v: any) => {
       /*const versions = [ scene.game.config.gameVersion, sessionData.gameVersion || '0.0.0' ];
 
       if (versions[0] !== versions[1]) {
@@ -1258,7 +1240,7 @@ export class GameData {
           if (md?.className === "ExpBalanceModifier") { // Temporarily limit EXP Balance until it gets reworked
             md.stackCount = Math.min(md.stackCount, 4);
           }
-          if (md instanceof EnemyAttackStatusEffectChanceModifier && md.effect === StatusEffect.FREEZE || md.effect === StatusEffect.SLEEP) {
+          if (md instanceof Modifier.EnemyAttackStatusEffectChanceModifier && md.effect === StatusEffect.FREEZE || md.effect === StatusEffect.SLEEP) {
             continue;
           }
           ret.push(new PersistentModifierData(md, player));
@@ -1281,8 +1263,20 @@ export class GameData {
         return ret;
       }
 
+      if (k === "mysteryEncounterType") {
+        return v as MysteryEncounterType;
+      }
+
+      if (k === "mysteryEncounterSaveData") {
+        return new MysteryEncounterSaveData(v);
+      }
+
       return v;
     }) as SessionSaveData;
+
+    applySessionDataPatches(sessionData);
+
+    return sessionData;
   }
 
   saveAll(scene: BattleScene, skipVerification: boolean = false, sync: boolean = false, useCachedSession: boolean = false, useCachedSystem: boolean = false): Promise<boolean> {
@@ -1561,12 +1555,28 @@ export class GameData {
     }
   }
 
-  setPokemonCaught(pokemon: Pokemon, incrementCount: boolean = true, fromEgg: boolean = false, showMessage: boolean = true): Promise<void> {
+  /**
+   *
+   * @param pokemon
+   * @param incrementCount
+   * @param fromEgg
+   * @param showMessage
+   * @returns `true` if Pokemon catch unlocked a new starter, `false` if Pokemon catch did not unlock a starter
+   */
+  setPokemonCaught(pokemon: Pokemon, incrementCount: boolean = true, fromEgg: boolean = false, showMessage: boolean = true): Promise<boolean> {
     return this.setPokemonSpeciesCaught(pokemon, pokemon.species, incrementCount, fromEgg, showMessage);
   }
 
-  setPokemonSpeciesCaught(pokemon: Pokemon, species: PokemonSpecies, incrementCount: boolean = true, fromEgg: boolean = false, showMessage: boolean = true): Promise<void> {
-    return new Promise<void>(resolve => {
+  /**
+   *
+   * @param pokemon
+   * @param incrementCount
+   * @param fromEgg
+   * @param showMessage
+   * @returns `true` if Pokemon catch unlocked a new starter, `false` if Pokemon catch did not unlock a starter
+   */
+  setPokemonSpeciesCaught(pokemon: Pokemon, species: PokemonSpecies, incrementCount: boolean = true, fromEgg: boolean = false, showMessage: boolean = true): Promise<boolean> {
+    return new Promise<boolean>(resolve => {
       const dexEntry = this.dexData[species.speciesId];
       const caughtAttr = dexEntry.caughtAttr;
       const formIndex = pokemon.formIndex;
@@ -1621,24 +1631,24 @@ export class GameData {
         }
       }
 
-      const checkPrevolution = () => {
+      const checkPrevolution = (newStarter: boolean) => {
         if (hasPrevolution) {
           const prevolutionSpecies = pokemonPrevolutions[species.speciesId];
-          this.setPokemonSpeciesCaught(pokemon, getPokemonSpecies(prevolutionSpecies), incrementCount, fromEgg, showMessage).then(() => resolve());
+          this.setPokemonSpeciesCaught(pokemon, getPokemonSpecies(prevolutionSpecies), incrementCount, fromEgg, showMessage).then(result => resolve(result));
         } else {
-          resolve();
+          resolve(newStarter);
         }
       };
 
       if (newCatch && speciesStarters.hasOwnProperty(species.speciesId)) {
         if (!showMessage) {
-          resolve();
+          resolve(true);
           return;
         }
         this.scene.playSound("level_up_fanfare");
-        this.scene.ui.showText(i18next.t("battle:addedAsAStarter", { pokemonName: species.name }), null, () => checkPrevolution(), null, true);
+        this.scene.ui.showText(i18next.t("battle:addedAsAStarter", { pokemonName: species.name }), null, () => checkPrevolution(true), null, true);
       } else {
-        checkPrevolution();
+        checkPrevolution(false);
       }
     });
   }
@@ -1680,7 +1690,14 @@ export class GameData {
     this.starterData[species.speciesId].candyCount += count;
   }
 
-  setEggMoveUnlocked(species: PokemonSpecies, eggMoveIndex: integer, showMessage: boolean = true): Promise<boolean> {
+  /**
+   *
+   * @param species
+   * @param eggMoveIndex
+   * @param showMessage Default true. If true, will display message for unlocked egg move
+   * @param prependSpeciesToMessage Default false. If true, will change message from "X Egg Move Unlocked!" to "Bulbasaur X Egg Move Unlocked!"
+   */
+  setEggMoveUnlocked(species: PokemonSpecies, eggMoveIndex: integer, showMessage: boolean = true, prependSpeciesToMessage: boolean = false): Promise<boolean> {
     return new Promise<boolean>(resolve => {
       const speciesId = species.speciesId;
       if (!speciesEggMoves.hasOwnProperty(speciesId) || !speciesEggMoves[speciesId][eggMoveIndex]) {
@@ -1706,9 +1723,10 @@ export class GameData {
       }
       this.scene.playSound("level_up_fanfare");
       const moveName = allMoves[speciesEggMoves[speciesId][eggMoveIndex]].name;
-      this.scene.ui.showText(eggMoveIndex === 3 ? i18next.t("egg:rareEggMoveUnlock", { moveName: moveName }) : i18next.t("egg:eggMoveUnlock", { moveName: moveName }), null, (() => {
-        resolve(true);
-      }), null, true);
+      let message = prependSpeciesToMessage ? species.getName() + " " : "";
+      message += eggMoveIndex === 3 ? i18next.t("egg:rareEggMoveUnlock", { moveName: moveName }) : i18next.t("egg:eggMoveUnlock", { moveName: moveName });
+
+      this.scene.ui.showText(message, null, () => resolve(true), null, true);
     });
   }
 
@@ -1884,76 +1902,5 @@ export class GameData {
         }
       }
     }
-  }
-
-  fixVariantData(systemData: SystemSaveData): void {
-    const starterIds = Object.keys(this.starterData).map(s => parseInt(s) as Species);
-    const starterData = systemData.starterData;
-    const dexData = systemData.dexData;
-    if (starterIds.find(id => (dexData[id].caughtAttr & DexAttr.VARIANT_2 || dexData[id].caughtAttr & DexAttr.VARIANT_3) && !variantData[id])) {
-      for (const s of starterIds) {
-        const species = getPokemonSpecies(s);
-        if (variantData[s]) {
-          const tempCaughtAttr = dexData[s].caughtAttr;
-          let seenVariant2 = false;
-          let seenVariant3 = false;
-          const checkEvoSpecies = (es: Species) => {
-            seenVariant2 ||= !!(dexData[es].seenAttr & DexAttr.VARIANT_2);
-            seenVariant3 ||= !!(dexData[es].seenAttr & DexAttr.VARIANT_3);
-            if (pokemonEvolutions.hasOwnProperty(es)) {
-              for (const pe of pokemonEvolutions[es]) {
-                checkEvoSpecies(pe.speciesId);
-              }
-            }
-          };
-          checkEvoSpecies(s);
-          if (dexData[s].caughtAttr & DexAttr.VARIANT_2 && !seenVariant2) {
-            dexData[s].caughtAttr ^= DexAttr.VARIANT_2;
-          }
-          if (dexData[s].caughtAttr & DexAttr.VARIANT_3 && !seenVariant3) {
-            dexData[s].caughtAttr ^= DexAttr.VARIANT_3;
-          }
-          starterData[s].abilityAttr = (tempCaughtAttr & DexAttr.DEFAULT_VARIANT ? AbilityAttr.ABILITY_1 : 0)
-            | (tempCaughtAttr & DexAttr.VARIANT_2 && species.ability2 ? AbilityAttr.ABILITY_2 : 0)
-            | (tempCaughtAttr & DexAttr.VARIANT_3 && species.abilityHidden ? AbilityAttr.ABILITY_HIDDEN : 0);
-        } else {
-          const tempCaughtAttr = dexData[s].caughtAttr;
-          if (dexData[s].caughtAttr & DexAttr.VARIANT_2) {
-            dexData[s].caughtAttr ^= DexAttr.VARIANT_2;
-          }
-          if (dexData[s].caughtAttr & DexAttr.VARIANT_3) {
-            dexData[s].caughtAttr ^= DexAttr.VARIANT_3;
-          }
-          starterData[s].abilityAttr = (tempCaughtAttr & DexAttr.DEFAULT_VARIANT ? AbilityAttr.ABILITY_1 : 0)
-            | (tempCaughtAttr & DexAttr.VARIANT_2 && species.ability2 ? AbilityAttr.ABILITY_2 : 0)
-            | (tempCaughtAttr & DexAttr.VARIANT_3 && species.abilityHidden ? AbilityAttr.ABILITY_HIDDEN : 0);
-        }
-      }
-    }
-  }
-
-  fixStarterData(systemData: SystemSaveData): void {
-    for (const starterId of defaultStarterSpecies) {
-      systemData.starterData[starterId].abilityAttr |= AbilityAttr.ABILITY_1;
-      systemData.dexData[starterId].caughtAttr |= DexAttr.FEMALE;
-    }
-  }
-
-  fixLegendaryStats(systemData: SystemSaveData): void {
-    systemData.gameStats.subLegendaryPokemonSeen = 0;
-    systemData.gameStats.subLegendaryPokemonCaught = 0;
-    systemData.gameStats.subLegendaryPokemonHatched = 0;
-    allSpecies.filter(s => s.subLegendary).forEach(s => {
-      const dexEntry = systemData.dexData[s.speciesId];
-      systemData.gameStats.subLegendaryPokemonSeen += dexEntry.seenCount;
-      systemData.gameStats.legendaryPokemonSeen = Math.max(systemData.gameStats.legendaryPokemonSeen - dexEntry.seenCount, 0);
-      systemData.gameStats.subLegendaryPokemonCaught += dexEntry.caughtCount;
-      systemData.gameStats.legendaryPokemonCaught = Math.max(systemData.gameStats.legendaryPokemonCaught - dexEntry.caughtCount, 0);
-      systemData.gameStats.subLegendaryPokemonHatched += dexEntry.hatchedCount;
-      systemData.gameStats.legendaryPokemonHatched = Math.max(systemData.gameStats.legendaryPokemonHatched - dexEntry.hatchedCount, 0);
-    });
-    systemData.gameStats.subLegendaryPokemonSeen = Math.max(systemData.gameStats.subLegendaryPokemonSeen, systemData.gameStats.subLegendaryPokemonCaught);
-    systemData.gameStats.legendaryPokemonSeen = Math.max(systemData.gameStats.legendaryPokemonSeen, systemData.gameStats.legendaryPokemonCaught);
-    systemData.gameStats.mythicalPokemonSeen = Math.max(systemData.gameStats.mythicalPokemonSeen, systemData.gameStats.mythicalPokemonCaught);
   }
 }

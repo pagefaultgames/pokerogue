@@ -469,7 +469,7 @@
   },
   "honeyGather": {
     "name": "採蜜",
-    "description": "The Pokémon gathers Honey after a battle. The Honey is then sold for money."
+    "description": "戰鬥結束時，有時候會撿來甜甜蜜。\n甜甜蜜會轉換成金錢。"
   },
   "frisk": {
     "name": "察覺",

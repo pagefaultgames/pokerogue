@@ -29,7 +29,7 @@ describe("Moves - Beat Up", () => {
 
     game.override.enemySpecies(Species.SNORLAX);
     game.override.enemyLevel(100);
-    game.override.enemyMoveset(Array(4).fill(Moves.SPLASH));
+    game.override.enemyMoveset([Moves.SPLASH]);
     game.override.enemyAbility(Abilities.INSOMNIA);
 
     game.override.startingLevel(100);
