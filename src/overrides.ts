@@ -70,7 +70,7 @@ class DefaultOverrides {
       [PokeballType.MASTER_BALL]: 0,
     },
   };
-  /** Set to true to show all tutorials */
+  /** Set to `true` to show all tutorials */
   readonly BYPASS_TUTORIAL_SKIP: boolean = false;
 
   // ----------------

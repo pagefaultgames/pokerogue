@@ -71,7 +71,7 @@ const tutorialHandlers = {
  * The main menu will also get disabled while the tutorial is running
  * @param scene the current {@linkcode BattleScene}
  * @param tutorial the {@linkcode Tutorial} to play
- * @returns a promise with result true is the tutorial was run and finished, false otherwise
+ * @returns a promise with result `true` if the tutorial was run and finished, `false` otherwise
  */
 export async function handleTutorial(scene: BattleScene, tutorial: Tutorial): Promise<boolean> {
   if (!scene.enableTutorials && !Overrides.BYPASS_TUTORIAL_SKIP) {
@@ -109,7 +109,7 @@ export async function handleTutorial(scene: BattleScene, tutorial: Tutorial): Pr
  * Show the tutorial overlay if there is one
  * @param scene the current BattleScene
  * @param handler the current UiHandler
- * @returns true once the overlay has finished appearing, or if there is no overlay
+ * @returns `true` once the overlay has finished appearing, or if there is no overlay
  */
 async function showTutorialOverlay(scene: BattleScene, handler: UiHandler) {
   if (handler instanceof AwaitableUiHandler && handler.tutorialOverlay) {
@@ -131,7 +131,7 @@ async function showTutorialOverlay(scene: BattleScene, handler: UiHandler) {
  * Hide the tutorial overlay if there is one
  * @param scene the current BattleScene
  * @param handler the current UiHandler
- * @returns true once the overlay has finished disappearing, or if there is no overlay
+ * @returns `true` once the overlay has finished disappearing, or if there is no overlay
  */
 async function hideTutorialOverlay(scene: BattleScene, handler: UiHandler) {
   if (handler instanceof AwaitableUiHandler && handler.tutorialOverlay) {
