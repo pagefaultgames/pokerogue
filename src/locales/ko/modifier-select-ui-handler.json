@@ -10,5 +10,5 @@
   "rerollCost": "₽{{formattedMoney}}",
   "itemCost": "₽{{formattedMoney}}",
   "continueNextWaveButton": "진행하기",
-  "continueNextWaveDescription": "다음 웨이브로 진행한다."
+  "continueNextWaveDescription": "다음 웨이브로 진행합니다."
 }
