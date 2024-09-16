@@ -1,22 +1,22 @@
 {
-  "intro": "A shadowy woman blocks your path.\nSomething about her is unsettling...",
-  "speaker": "Woman",
-  "intro_dialogue": "I have seen your futures, your pasts...$Child, do you see them too?",
+  "intro": "Une femme aux airs sombres vous coupe la route.\nElle dégage comme une aura troublante…",
+  "speaker": "Femme mystérieuse",
+  "intro_dialogue": "J’ai tout vu…\nTes futurs, tes passés…$Les perçois-tu aussi, mon enfant ?",
   "title": "???",
-  "description": "The woman's words echo in your head. It wasn't just a singular voice, but a vast multitude, from all timelines and realities. You begin to feel dizzy, the question lingering on your mind...\n\n@[TOOLTIP_TITLE]{\"I have seen your futures, your pasts... Child, do you see them too?\"}",
-  "query": "What will you do?",
+  "description": "Les paroles de cette mystérieuse femme raisonnent dans votre tête. Ce n’est pas qu’une simple voix isolée, mais une infinité, d’une infinité d’espace-temps et de réalités.\nVous commencez ressentir des vertiges à mesure que cette question s’empare de votre esprit…\n\n@[TOOLTIP_TITLE]{« J’ai tout vu… Tes futurs, tes passés… Les perçois-tu aussi, mon enfant ? »}",
+  "query": "Que voulez-vous faire ?",
   "option": {
     "1": {
-      "label": "\"I See Them\"",
-      "tooltip": "@[SUMMARY_GREEN]{(?) Affects your Pokémon}",
-      "selected": "Her hand reaches out to touch you,\nand everything goes black.$Then...@d{64} You see everything.\nEvery timeline, all your different selves,\n past and future.$Everything that has made you,\neverything you will become...@d{64}",
-      "cutscene": "You see your Pokémon,@d{32} converging from\nevery reality to become something new...@d{64}",
-      "dream_complete": "When you awaken, the woman - was it a woman or a ghost? - is gone...$.@d{32}.@d{32}.@d{32}$Your Pokémon team has changed...\nOr is it the same team you've always had?"
+      "label": "« Je les vois. »",
+      "tooltip": "@[SUMMARY_GREEN]{(?) Affecte vos Pokémon}",
+      "selected": "Sa main s’approche de vous et vous touche.\nTout devient subitement sombre.$Puis enfin…@d{64} La lumière.\nChaque espace-temps. Chacune de vos incarnations.$Tout ce qui a composé, compose\net composersa votre être…@d{64}",
+      "cutscene": "Vous percevez vos Pokémon,@d{32} convergeant de chaque\nréalité pour former quelque chose de nouveau…@d{64}",
+      "dream_complete": "Vous vous réveillez, mais la femme a disparu…\nOu bien n’etait-elle qu’une hallucination ?$.@d{32}.@d{32}.@d{32}$Les Pokémon de votre équipe ont changé…$Mais alors, comment peuvent-ils quand même\ntoujours vous sembler si familiers ?"
     },
     "2": {
-      "label": "Quickly Leave",
-      "tooltip": "(-) Affects your Pokémon",
-      "selected": "You tear your mind from a numbing grip, and hastily depart.$When you finally stop to collect yourself, you check the Pokémon in your team.$For some reason, all of their levels have decreased!"
+      "label": "Partir en courant",
+      "tooltip": "(-) Affecte vos Pokémon",
+      "selected": "Vous parvenez à vous extraire de son emprise\net prenez vos jambes à votre cou.$Vous vous remettez de vos émotions et\nvérifiez si votre équipe va bien.$Mais pour une raison mystérieuse,\nils ont tous perdu des niveaux !"
     }
   }
 }

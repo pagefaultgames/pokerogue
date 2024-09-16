@@ -9,6 +9,6 @@
   "checkTeamDesc": "Überprüfe dein Team or nutze Formänderungsitems.",
   "rerollCost": "{{formattedMoney}}₽",
   "itemCost": "{{formattedMoney}}₽",
-  "continueNextWaveButton": "Continue",
-  "continueNextWaveDescription": "Continue to the next wave"
+  "continueNextWaveButton": "Fortfahren",
+  "continueNextWaveDescription": "Zur nächsten Welle fortfahren."
 }

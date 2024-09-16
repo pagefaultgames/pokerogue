@@ -1,14 +1,14 @@
 {
   "intro": "Quelque chose d’une lueur éclatante\nbrille sur sol près de ce Pokémon !",
   "title": "Voler ou s’envoler",
-  "description": "Un puissant Pokémon semble monter la garde d’un objet. Vous pourriez aller frontalement au combat, mais il a l’air costaud. Le bon Pokémon pourrait peut-être voler l’objet sans se faire prendre ?",
+  "description": "Un puissant Pokémon semble monter la garde d’un objet. Vous pourriez aller frontalement au combat, mais il a l’air costaud. Avec le bon Pokémon, vous pourriez peut-être voler l’objet sans vous faire prendre ?",
   "query": "Que voulez-vous faire ?",
   "option": {
     "1": {
-      "label": "Affronter le Pokémon",
+      "label": "L’affronter",
       "tooltip": "(-) Combat difficile\n(+) Nouvel objet",
       "selected": "Vous approchez\nle Pokémon sans frémir.",
-      "stat_boost": "Les forces dormantes du {{enemyPokemon}} augmentent une de ses stats !"
+      "stat_boost": "Les forces dormantes de {{enemyPokemon}}\naugmentent une de ses stats !"
     },
     "2": {
       "label": "Voler l’objet",

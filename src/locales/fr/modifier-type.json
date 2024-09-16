@@ -72,7 +72,7 @@
       "name": "Jus de Caratroc",
       "description": "{{increaseDecrease}} toutes les stats de son porteur de {{statValue}} cran. Caratroc vous a {{blessCurse}}.",
       "extra": {
-        "increase": "Augumente",
+        "increase": "Augmente",
         "decrease": "Baisse",
         "blessed": "accordé sa bénédiction",
         "cursed": "jeté une malédiction"

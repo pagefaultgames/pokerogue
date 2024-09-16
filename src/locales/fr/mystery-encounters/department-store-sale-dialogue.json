@@ -1,27 +1,27 @@
 {
   "intro": "Il y a une dame avec des tas de sacs de courses.",
   "speaker": "Cliente",
-  "intro_dialogue": "Bonjour !\nToi aussi t’es là pour les incroyables promos ?$Il y a un coupon spécial que tu peux utiliser en échange\nd’un objet gratuit pendant toute la durée de la promo !$J’en ai un en trop.\nTiens, prends-le!",
+  "intro_dialogue": "Bonjour !\nToi aussi t’es là pour les incroyables promos ?$Il y a un coupon spécial que tu peux utiliser en échange\nd’un objet gratuit pendant toute la durée de la promo !$J’en ai un en trop.\nTiens, prends-le !",
   "title": "Promos au Centre Commercial",
   "description": "Vous voyez des produits où que vous regardez ! Il y a 4 comptoirs auprès desquels vous pouvez dépenser ce coupon contre une grande variété d’objets. Que de choix !",
   "query": "À quel comptoir se rendre ?",
   "option": {
     "1": {
-      "label": "Comptoir de CT",
+      "label": "CT",
       "tooltip": "(+) Boutique de CT"
     },
     "2": {
-      "label": "Comptoir de Vitamines",
-      "tooltip": "(+) Boutique de Vitamines"
+      "label": "Accélérateurs",
+      "tooltip": "(+) Boutique d’Accélérateurs"
     },
     "3": {
-      "label": "Comptoir d’Objets de Combat",
+      "label": "Objets de Combat",
       "tooltip": "(+) Boutique d’objets de boost"
     },
     "4": {
-      "label": "Comptoir de Poké Balls",
+      "label": "Poké Balls",
       "tooltip": "(+) Boutique de Poké Balls"
     }
   },
-  "outro": "Quelle affaire ! Vous devriez revenir y faire vos achats plus souvent."
+  "outro": "Quelle affaire !\nVous devriez revenir y faire vos achats plus souvent."
 }

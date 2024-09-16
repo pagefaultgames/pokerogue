@@ -29,7 +29,12 @@ interface GameModeConfig {
   hasRandomBosses?: boolean;
   isSplicedOnly?: boolean;
   isChallenge?: boolean;
+  hasMysteryEncounters?: boolean;
 }
+
+// Describes min and max waves for MEs in specific game modes
+export const CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES: [number, number] = [10, 180];
+export const CHALLENGE_MODE_MYSTERY_ENCOUNTER_WAVES: [number, number] = [10, 180];
 
 export class GameMode implements GameModeConfig {
   public modeId: GameModes;
@@ -45,6 +50,9 @@ export class GameMode implements GameModeConfig {
   public isChallenge: boolean;
   public challenges: Challenge[];
   public battleConfig: FixedBattleConfigs;
+  public hasMysteryEncounters: boolean;
+  public minMysteryEncounterWave: number;
+  public maxMysteryEncounterWave: number;
 
   constructor(modeId: GameModes, config: GameModeConfig, battleConfig?: FixedBattleConfigs) {
     this.modeId = modeId;
@@ -317,6 +325,20 @@ export class GameMode implements GameModeConfig {
     }
   }
 
+  /**
+   * Returns the wave range where MEs can spawn for the game mode [min, max]
+   */
+  getMysteryEncounterLegalWaves(): [number, number] {
+    switch (this.modeId) {
+    default:
+      return [0, 0];
+    case GameModes.CLASSIC:
+      return CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES;
+    case GameModes.CHALLENGE:
+      return CHALLENGE_MODE_MYSTERY_ENCOUNTER_WAVES;
+    }
+  }
+
   static getModeName(modeId: GameModes): string {
     switch (modeId) {
     case GameModes.CLASSIC:
@@ -336,7 +358,7 @@ export class GameMode implements GameModeConfig {
 export function getGameMode(gameMode: GameModes): GameMode {
   switch (gameMode) {
   case GameModes.CLASSIC:
-    return new GameMode(GameModes.CLASSIC, { isClassic: true, hasTrainers: true }, classicFixedBattles);
+    return new GameMode(GameModes.CLASSIC, { isClassic: true, hasTrainers: true, hasMysteryEncounters: true }, classicFixedBattles);
   case GameModes.ENDLESS:
     return new GameMode(GameModes.ENDLESS, { isEndless: true, hasShortBiomes: true, hasRandomBosses: true });
   case GameModes.SPLICED_ENDLESS:
@@ -344,6 +366,6 @@ export function getGameMode(gameMode: GameModes): GameMode {
   case GameModes.DAILY:
     return new GameMode(GameModes.DAILY, { isDaily: true, hasTrainers: true, hasNoShop: true });
   case GameModes.CHALLENGE:
-    return new GameMode(GameModes.CHALLENGE, { isClassic: true, hasTrainers: true, isChallenge: true }, classicFixedBattles);
+    return new GameMode(GameModes.CHALLENGE, { isClassic: true, hasTrainers: true, isChallenge: true, hasMysteryEncounters: true }, classicFixedBattles);
   }
 }

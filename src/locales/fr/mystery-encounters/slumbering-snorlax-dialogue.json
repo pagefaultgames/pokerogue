@@ -1,7 +1,7 @@
 {
-  "intro": "Alors que vous vous aventurez dans un passage étroit, une silhouette imposante bloque le passage.$En vous approchant, vous apercevez un {{snorlaxName}}\nendormi paisiblement.$Il semble n’y avoir aucun chemin alternatif.",
+  "intro": "Alors que vous vous aventurez dans un passage étroit, une silhouette imposante bloque le passage.$En vous approchant, vous apercevez un {{snorlaxName}}\nendormi paisiblement.$Vous regardez autour de vous, mais n’apercevez aucun chemin alternatif.",
   "title": "{{snorlaxName}} au Bois dormant",
-  "description": "Vous pourriez soit tenter de le faire bouger en l’attaquant, soit attendre son réveil. Mais impossible de savoir combien de temps ça prendrait…",
+  "description": "Vous pourriez soit tenter de le faire bouger en l’attaquant, soit attendre son réveil.\nMais impossible de savoir combien de temps cette dernière option prendrait…",
   "query": "Que voulez-vous faire ?",
   "option": {
     "1": {

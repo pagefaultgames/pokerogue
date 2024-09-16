@@ -31,11 +31,11 @@
   "option": {
     "1": {
       "label": "Aceptar el Desafío",
-      "tooltip": "(-) Batalla Difícil\n(+) Obtén un @[TOOLTIP_TITLE]{Very Rare Egg}"
+      "tooltip": "(-) Batalla Ardua\n(+) Obtén un @[TOOLTIP_TITLE]{Huevo muy raro}"
     },
     "2": {
       "label": "Rechazar el Desafío",
-      "tooltip": "(+) Equipo Curado\n(+) Obtén un @[TOOLTIP_TITLE]{Egg}"
+      "tooltip": "(+) Equipo Curado\n(+) Obtén un @[TOOLTIP_TITLE]{Huevo}"
     }
   },
   "eggTypes": {
