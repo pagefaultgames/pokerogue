@@ -92,7 +92,17 @@ export class CommandPhase extends FieldPhase {
             (useStruggle = cursor > -1 && !playerPokemon.getMoveset().filter(m => m?.isUsable(playerPokemon)).length)) {
         const turnMove: TurnMove | undefined = args.length === 1 ? (args[0] as TurnMove) : undefined;
         /* THIS NEEDS FURTHER TESTING */
-        const moveId = !useStruggle ? !turnMove ? cursor > -1 ? playerPokemon.getMoveset()[cursor]!.moveId : Moves.NONE : turnMove.move : Moves.STRUGGLE; // TODO: is the bang correct?
+        let moveId: Moves;
+        if (useStruggle) {
+          moveId = Moves.STRUGGLE;
+        } else if (turnMove) {
+          moveId = turnMove.move;
+        } else if (cursor > -1) {
+          moveId = playerPokemon.getMoveset()[cursor]!.moveId;
+        } else {
+          moveId = Moves.NONE;
+        }
+
         const turnCommand: TurnCommand = { command: Command.FIGHT, cursor: cursor, move: { move: moveId, targets: [], ignorePP: args[0] }, args: args };
         const moveTargets: MoveTargetSet = args.length < 3 ? getMoveTargets(playerPokemon, moveId) : args[2];
         if (!moveId) {
