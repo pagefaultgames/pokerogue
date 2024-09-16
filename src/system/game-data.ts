@@ -1174,6 +1174,9 @@ export class GameData {
     });
   }
 
+  /**
+   * Attempt to clear session data. After session data is removed, attempt to update user info so the menu updates
+   */
   tryClearSession(scene: BattleScene, slotId: integer): Promise<[success: boolean, newClear: boolean]> {
     return new Promise<[boolean, boolean]>(resolve => {
       if (bypassLogin) {
@@ -1181,29 +1184,33 @@ export class GameData {
         return resolve([true, true]);
       }
 
+      const sessionData = this.getSessionSaveData(scene);
+      Utils.apiPost(`savedata/session/clear?slot=${slotId}&trainerId=${this.trainerId}&secretId=${this.secretId}&clientSessionId=${clientSessionId}`, JSON.stringify(sessionData), undefined, true).then(response => {
+        if (response.ok) {
+          loggedInUser!.lastSessionSlot = -1; // TODO: is the bang correct?
+          localStorage.removeItem(`sessionData${this.scene.sessionSlotId ? this.scene.sessionSlotId : ""}_${loggedInUser?.username}`);
+        }
+        return response.json();
+      }).then(jsonResponse => {
+        if (!jsonResponse.error) {
+          return resolve([true, jsonResponse.success as boolean]);
+        }
+        if (jsonResponse && jsonResponse.error.startsWith("session out of date")) {
+          this.scene.clearPhaseQueue();
+          this.scene.unshiftPhase(new ReloadSessionPhase(this.scene));
+        }
+        console.error(jsonResponse);
+        resolve([false, false]);
+      });
+    }).then(result => {
       updateUserInfo().then(success => {
         if (success !== null && !success) {
-          return resolve([false, false]);
+          return new Promise<[boolean, boolean]>(resolve => {
+            return resolve([false, false]);
+          });
         }
-        const sessionData = this.getSessionSaveData(scene);
-        Utils.apiPost(`savedata/session/clear?slot=${slotId}&trainerId=${this.trainerId}&secretId=${this.secretId}&clientSessionId=${clientSessionId}`, JSON.stringify(sessionData), undefined, true).then(response => {
-          if (response.ok) {
-            loggedInUser!.lastSessionSlot = -1; // TODO: is the bang correct?
-            localStorage.removeItem(`sessionData${this.scene.sessionSlotId ? this.scene.sessionSlotId : ""}_${loggedInUser?.username}`);
-          }
-          return response.json();
-        }).then(jsonResponse => {
-          if (!jsonResponse.error) {
-            return resolve([true, jsonResponse.success as boolean]);
-          }
-          if (jsonResponse && jsonResponse.error.startsWith("session out of date")) {
-            this.scene.clearPhaseQueue();
-            this.scene.unshiftPhase(new ReloadSessionPhase(this.scene));
-          }
-          console.error(jsonResponse);
-          resolve([false, false]);
-        });
       });
+      return result;
     });
   }
 
