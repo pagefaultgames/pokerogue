@@ -475,95 +475,95 @@
   },
   "shelly": {
     "encounter": {
-      "1": "Ahahahaha! You're going to meddle in Team Aqua's affairs?\n$You're either absolutely fearless, simply ignorant, or both!\n$You're so cute, you're disgusting! I'll put you down",
-      "2": "What's this? Who's this spoiled brat?",
-      "3": "Cool your jets. Be patient. I'll crush you shortly.",
-      "3_female": "Cool your jets. Be patient. I'll crush you shortly."
+      "1": "オーッホッホ！　我々　アクア団の\n邪魔を　しようと　言うの！？\n$もう　怖いもの知らず　と言おうか\nただの　愚か者　と言おうか……\n$かわいすぎて　憎らしく　なっちゃう！\nやっつけて　あげるわね！",
+      "2": "ああん？　なんだい？\nこの　クソ生意気な　オコチャマは……？",
+      "3": "熱くなってん　じゃないよ、　少しは　頭を　冷やしな。\nすぐ　ぶっ壊すから。",
+      "3_female": "熱くなってん　じゃないよ、　少しは　頭を　冷やしな。\nすぐ　ぶっ壊すから。"
     },
     "victory": {
-      "1": "Ahahahaha! We got meddled with unexpectedly! We're out of options.\n$We'll have to pull out. But this isn't the last you'll see of Team Aqua!\n$We have other plans! Don't you forget it!",
-      "2": "Ahhh?! Did I go too easy on you?!",
-      "3": "Uh. Are you telling me you've upped your game even more during the fight?\n$You're a brat with a bright future… My Pokémon and I don't have any strength left to fight…\n$Go on… Go and be destroyed by Archie.",
-      "3_female": "Uh. Are you telling me you've upped your game even more during the fight?\n$You're a brat with a bright future… My Pokémon and I don't have any strength left to fight…\n$Go on… Go and be destroyed by Archie."
+      "1": "オーッホッホ！　思わぬ　邪魔が　入っちゃったわ！\n仕方ないわね！\n$ここは　一度　引き上げちゃう！　でもね　アクア団の\n活動は　まだまだ　続くんだから　覚えておきなさーい！",
+      "2": "くううっ……！？\n手を　抜きすぎちゃった かしら……！",
+      "3": "……うぅ　……この間　よりも\n更に　ウデを上げてる　ですって……！？\n$末恐ろしい　オコチャマだわ……\n……アタシと　ポケモンたちに　もう　戦うチカラは　残っちゃいない\n$……行きなさいよ　行って\nアオギリ様に　粛清されるが　いいわ。",
+      "3_female": "……うぅ　……この間　よりも\n更に　ウデを上げてる　ですって……！？\n$末恐ろしい　オコチャマだわ……\n……アタシと　ポケモンたちに　もう　戦うチカラは　残っちゃいない\n$……行きなさいよ　行って\nアオギリ様に　粛清されるが　いいわ。"
     }
   },
   "matt": {
     "encounter": {
-      "1": "All right then, until the boss has time for you, I'll be your opponent!",
-      "2": "Hooah! Full on! I'm burning up! Well! Welll! Wellllll! Let's battle it out until we've got nothing left!",
-      "3": "Hoo hah! I'm gonna smash you up!"
+      "1": "……ってな　ワケでヨォ　あにィが　ジカンが開くマデ\nオレッちの　相手を　してもらうゼぃ！",
+      "2": "フウハアッ！！ マックスッ！！\nタギってッ！！ きたゼェェェェッ！！！！！\n$サアッ！　サアッ！　サアアアッ！！！\nチカラ　尽きハテるまで　ヤリあおうゼッッ！！！",
+      "3": "UPAAAAA！！！\nモミツブシテ　ヤルゼェェェ！！"
     },
     "victory": {
-      "1": "Muwuhahaha! That battle was fun even though I lost!",
-      "2": "I can feel it! I can feel it, all right! The strength coming offa you!\n$More! I still want more! But looks like we're outta time...",
-      "3": "Oho! That's a loss I can be proud of!",
-      "3_female": "Oho! That's a loss I can be proud of!"
+      "1": "フゥーハッハッハァァァ！！！\nマケても　タノしい　ショウブ　だったゼ！",
+      "2": "ビンビン　かんじるゼェ！！　オメェの　ツヨサ！\n$モミつぶせる　ときを　タノシミに　してるゼィ！",
+      "3": "オウホウッ！　タカぶる　ハイボク　だぜっ！",
+      "3_female": "オウホウッ！　タカぶる　ハイボク　だぜっ！"
     }
   },
   "mars": {
     "encounter": {
-      "1": "I'm Mars, one of Team Galactic's top Commanders.",
-      "2": "Team Galactic's vision for the future is unwavering. Opposition will be crushed without mercy!",
-      "3": "Feeling nervous? You should be!",
-      "3_female": "Feeling nervous? You should be!"
+      "1": "あたしは　ギンガ団幹部の　マーズ！\n強くて　美しいの！",
+      "2": "ギンガ団は　生み出そうと　しているのは　新しい　世界。\nジャマは　許さないわ！",
+      "3": "ボスの　ジャマは　させないわよ！\nこの先に　進みたいなら　あたしが　相手するわ！",
+      "3_female": "ボスの　ジャマは　させないわよ！\nこの先に　進みたいなら　あたしが　相手するわ！"
     },
     "victory": {
-      "1": "This can't be happening! How did I lose?!",
-      "2": "You have some skill, I'll give you that.",
-      "3": "Defeated... This was a costly mistake."
+      "1": "負けた……！　ギンガ団の　幹部　として……\nこんなことって　ありえない！！",
+      "2": "何なのよッ！　あたしのこと　嫌いなの！？",
+      "3": "まさか！　負けるだなんて！？\n生意気な　ヤツね！！"
     }
   },
   "jupiter": {
     "encounter": {
-      "1": "Jupiter, Commander of Team Galactic, at your service.",
-      "2": "Resistance is futile. Team Galactic will prevail!",
-      "3": "You're trembling... scared already?"
+      "1": "いいわ！\nこの　ジュピターが　相手　してあげましょう！",
+      "2": "反対なんて　虚しい！\nギンガ団は　勝利するわ！",
+      "3": "どうしたの？　もしかして　震えているのかしら？"
     },
     "victory": {
-      "1": "No way... I lost?!",
-      "2": "Impressive, you've got guts!",
-      "3": "Losing like this... How embarrassing."
+      "1": "フン！　相変わらずの　強さ　ちっとも　かわいくないわね！",
+      "2": "フン！　なかなか　やるじゃない！",
+      "3": "フン！　次は　泣かして　あげるんだから！"
     }
   },
   "saturn": {
     "encounter": {
-      "1": "I am Saturn, Commander of Team Galactic.",
-      "2": "Our mission is absolute. Any hindrance will be obliterated!",
-      "3": "Is that fear I see in your eyes?"
+      "1": "ミッションは　順調！\nボスも　満足　なさるだろう。\n$全ては　みんなの　ために\nそして　ギンガ団の　ために！",
+      "2": "ギンガ団の　使命を　ジャマするなら\nどんな　可能性でも　潰す!",
+      "3": "わたしたち　ギンガ団は　必要な　ものを　独占し\n要らない　ものは　捨てるだけ！"
     },
     "victory": {
-      "1": "Impossible... Defeated by you?!",
-      "2": "You have proven yourself a worthy adversary.",
-      "3": "Bestowed in defeat... This is unacceptable."
+      "1": "強い！　だが　哀れだな。",
+      "2": "……なるほど　強い！\nギンガ団に　歯向かう　わけだ。",
+      "3": "くっ！　この　わたしが！\n時間稼ぎにしか　ならないだと…\n$まあ　いい！　おまえが　何をしても\n流れる　時間は　止められない！"
     }
   },
   "zinzolin": {
     "encounter": {
-      "1": "You could become a threat to Team Plasma, so we will eliminate you here and now!",
-      "1_female": "You could become a threat to Team Plasma, so we will eliminate you here and now!",
-      "2": "You don't have the sense to know when to quit, it seems. It's an act of mercy on my part to bring an end to this now!",
-      "3": "You're an impressive Trainer to have made it this far. But it ends here.",
-      "3_female": "You're an impressive Trainer to have made it this far. But it ends here."
+      "1": "さて……　おまえは　プラズマ団に　とって\n不安要素に　なりかねない。\n$ここで　排除するのだ！",
+      "1_female": "さて……　おまえは　プラズマ団に　とって\n不安要素に　なりかねない。\n$ここで　排除するのだ！",
+      "2": "諦めきれぬか？　なら　引導を　渡すのが\nワタシなりの　優しさ　なのだ！",
+      "3": "ここまで　来るとは　大した　トレーナー　だが、\n今は　終わりだ。",
+      "3_female": "ここまで　来るとは　大した　トレーナー　が、\n今は　終わりだ。"
     },
     "victory": {
-      "1": "Ghetsis... I have failed you...",
-      "2": "It's bitter cold. I'm shivering. I'm suffering. Yet, we will stand victorious.",
-      "3": "Hmph. You're a smarter Trainer than I expected, but not smart enough.",
-      "3_female": "Hmph. You're a smarter Trainer than I expected, but not smart enough."
+      "1": "ゲーチス様……　失望させました……",
+      "2": "寒い。　ワタシは　震えている。\n苦しいが　いつか　ワタシたちは　成功する。",
+      "3": "ふむう。　存外　さとい　トレーナーだ。",
+      "3_female": "ふむう。　存外　さとい　トレーナーだ。"
     }
   },
   "rood": {
     "encounter": {
-      "1": "You are a threat to Team Plasma. We cannot let you walk away from here and now!",
-      "1_female": "You are a threat to Team Plasma. We cannot let you walk away from here and now!",
-      "2": "It seems you don't know when to give up. I'll make sure no one interferes with our plans!",
-      "3": "You are a remarkable Trainer to have made it this far. But this is where it ends.",
-      "3_female": "You are a remarkable Trainer to have made it this far. But this is where it ends."
+      "1": "おまえ　という　トレーナーが\nどんな　人物か　見せてもらいたい…\n$そう、　ポケモン勝負　でな。",
+      "1_female": "おまえ　という　トレーナーが\nどんな　人物か　見せてもらいたい…\n$そう、　ポケモン勝負　でな。",
+      "2": "見限らぬようだ。　だれにも　ジャマは　させぬよ。",
+      "3": "……これが　おまえの\n望みと　あらば",
+      "3_female": "……これが　おまえの\n望みと　あらば"
     },
     "victory": {
-      "1": "Ghetsis... I have failed my mission...",
-      "2": "The cold is piercing. I'm shivering. I'm suffering. Yet, we will stand triumphant.",
-      "3": "Hm. You are a talented Trainer, but unfortunately not talented enough."
+      "1": "ほう！　ポケモンと　心が\n通じているような　戦い方……",
+      "2": "失敗しました……\nそぞろに　潮の　匂いが　恋しくなる……",
+      "3": "正直言って……　ゲーチス様の　なにが　真実で\nなにが　虚構か　わからないがね……"
     }
   },
   "xerosic": {
