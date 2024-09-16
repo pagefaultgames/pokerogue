@@ -5426,7 +5426,7 @@ export class CallMoveAttr extends OverrideMoveEffectAttr {
         ? [ target.getBattlerIndex() ]
         : [ moveTargets.targets[user.randSeedInt(moveTargets.targets.length)] ];
     user.getMoveQueue().push({ move: move.id, targets: targets, virtual: true, ignorePP: true });
-    user.scene.unshiftPhase(new MovePhase(user.scene, user, targets, new PokemonMove(move.id, 0, 0, true), true));
+    user.scene.unshiftPhase(new MovePhase(user.scene, user, targets, new PokemonMove(move.id, 0, 0, true), true, true));
 
     await Promise.resolve(initMoveAnim(user.scene, move.id).then(() => {
       loadMoveAnimAssets(user.scene, [ move.id ], true);

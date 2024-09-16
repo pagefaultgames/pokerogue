@@ -65,7 +65,7 @@ export class CommandPhase extends FieldPhase {
         if (moveIndex > -1 && playerPokemon.getMoveset()[moveIndex]!.isUsable(playerPokemon, queuedMove.ignorePP)) { // TODO: is the bang correct?
           this.handleCommand(Command.FIGHT, moveIndex, queuedMove.ignorePP, { targets: queuedMove.targets, multiple: queuedMove.targets.length > 1 });
         } else if (queuedMove.virtual) {
-          this.handleCommand(Command.FIGHT, moveIndex, queuedMove);
+          this.handleCommand(Command.FIGHT, moveIndex, queuedMove.ignorePP, queuedMove);
         } else {
           this.scene.ui.setMode(Mode.COMMAND, this.fieldIndex);
         }
@@ -90,12 +90,12 @@ export class CommandPhase extends FieldPhase {
       if (cursor === -1 ||
             playerPokemon.trySelectMove(cursor, args[0] as boolean) ||
             (useStruggle = cursor > -1 && !playerPokemon.getMoveset().filter(m => m?.isUsable(playerPokemon)).length)) {
-        const turnMove: TurnMove | undefined = (args.length === 1 ? (args[0] as TurnMove) : undefined);
+        const turnMove: TurnMove | undefined = (args.length === 2 ? (args[1] as TurnMove) : undefined);
 
         let moveId: Moves;
         if (useStruggle) {
           moveId = Moves.STRUGGLE;
-        } else if (turnMove) {
+        } else if (turnMove !== undefined) {
           moveId = turnMove.move;
         } else if (cursor > -1) {
           moveId = playerPokemon.getMoveset()[cursor]!.moveId;
