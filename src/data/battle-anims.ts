@@ -494,7 +494,8 @@ export function initMoveAnim(scene: BattleScene, move: Moves): Promise<void> {
           .then(response => {
             const contentType = response.headers.get("content-type");
             if (!response.ok || contentType?.indexOf("application/json") === -1) {
-              useAndLogDefaultAnim(move, defaultMoveAnim, response.status, response.statusText);
+              useDefaultAnim(move, defaultMoveAnim);
+              logMissingMoveAnim(move, response.status, response.statusText)
               return resolve();
             }
             return response.json();
@@ -516,7 +517,8 @@ export function initMoveAnim(scene: BattleScene, move: Moves): Promise<void> {
             }
           })
           .catch(error => {
-            useAndLogDefaultAnim(move, defaultMoveAnim, error);
+            useDefaultAnim(move, defaultMoveAnim);
+            logMissingMoveAnim(move, error)
             return resolve();
           });
       };
@@ -530,12 +532,22 @@ export function initMoveAnim(scene: BattleScene, move: Moves): Promise<void> {
  *
  * @param move the move to populate an animation for
  * @param defaultMoveAnim the default move to use as the default animation
- * @param optionalParams parameters to add to the error logging
  */
-function useAndLogDefaultAnim(move: Moves, defaultMoveAnim: Moves, ...optionalParams: any[]) {
-  const moveName = Utils.animationFileName(move);
-  console.error(`Could not load animation file for move '${moveName}'`, ...optionalParams);
+function useDefaultAnim(move: Moves, defaultMoveAnim: Moves) {
   populateMoveAnim(move, moveAnims.get(defaultMoveAnim));
+}
+
+/**
+ * Helper method to call when an move animation is missing.
+ *
+ * @param move the move to populate an animation for
+ * @param optionalParams parameters to add to the error logging
+ *
+ * @remarks use {@link useDefaultAnim} to use a default animation
+ */
+function logMissingMoveAnim(move: Moves, ...optionalParams: any[]) {
+  const moveName = Utils.animationFileName(move);
+  console.warn(`Could not load animation file for move '${moveName}'`, ...optionalParams);
 }
 
 /**
