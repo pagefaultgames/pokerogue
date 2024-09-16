@@ -40,7 +40,7 @@ export default class PokemonData {
   public metLevel: integer;
   public metBiome: Biome | -1;        // -1 for starters
   public metSpecies: Species;
-  public metWave: integer;            // 0 for unknown (previous saves), -1 for starters
+  public metWave: number;            // 0 for unknown (previous saves), -1 for starters
   public luck: integer;
   public pauseEvolutions: boolean;
   public pokerus: boolean;
@@ -91,7 +91,7 @@ export default class PokemonData {
     this.metLevel = source.metLevel || 5;
     this.metBiome = source.metBiome !== undefined ? source.metBiome : -1;
     this.metSpecies = source.metSpecies;
-    this.metWave = source.metWave !== undefined ? source.metWave : 0;
+    this.metWave = source.metWave ?? (this.metBiome === -1 ? -1 : 0);
     this.luck = source.luck !== undefined ? source.luck : (source.shiny ? (source.variant + 1) : 0);
     if (!forHistory) {
       this.pauseEvolutions = !!source.pauseEvolutions;
