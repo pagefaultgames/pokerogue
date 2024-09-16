@@ -105,5 +105,5 @@
   "congratulations": "축하합니다!",
   "beatModeFirstTime": "{{speciesName}}[[가]] {{gameMode}} 모드를 처음으로 클리어했다!\n{{newModifier}}[[를]] 손에 넣었다!",
   "ppReduced": "{{targetName}}의\n{{moveName}}[[를]] {{reduction}} 깎았다!",
-  "mysteryEncounterAppeared": "What's this?"
+  "mysteryEncounterAppeared": "어라?"
 }
