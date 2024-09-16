@@ -1,7 +1,7 @@
 {
   "ModifierType": {
     "AddPokeballModifierType": {
-      "name": "Receive {{pokeballName}} x{{modifierCount}}\nInventory: {{pokeballAmount}}",
+      "name": "{{pokeballName}} x{{modifierCount}}\nInventory: {{pokeballAmount}}",
       "description": "Catch Rate: {{catchRate}}",
       "catchRateGenerator": "{{normalCatchRate}}x ({{boostedCatchRate}}x if Pokémon has new gender, variant, form, or ability)"
     },
