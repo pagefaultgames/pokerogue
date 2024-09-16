@@ -217,7 +217,6 @@ export default class RunInfoUiHandler extends UiHandler {
         case 1:
           // Wild - Singles
           this.parseWildSingleDefeat(enemyContainer);
-          console.log("should go through here");
           break;
         case 2:
           //Wild - Doubles
