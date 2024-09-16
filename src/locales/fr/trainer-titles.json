@@ -16,6 +16,10 @@
   "galactic_boss": "Leader de la Team Galaxie",
   "plasma_boss": "Leader de la Team Plasma",
   "flare_boss": "Leader de la Team Flare",
+  "aether_boss": "Présidente d’Æther",
+  "skull_boss": "Boss de la Team Skull",
+  "macro_boss": "Président de Macro Cosmos",
+
   "rocket_admin": "Admin Team Rocket",
   "rocket_admin_female": "Admin Team Rocket",
   "magma_admin": "Admin Team Magma",
@@ -27,5 +31,8 @@
   "plasma_sage": "Sage Plasma",
   "plasma_admin": "Admin Team Plasma",
   "flare_admin": "Manager de la Team Flare",
-  "flare_admin_female": "Manageuse de la Team Flare"
+  "flare_admin_female": "Manageuse de la Team Flare",
+  "aether_admin": "Directeur d’Æther",
+  "skull_admin": "Admin Team Skull",
+  "macro_admin": "Macro Cosmos"
 }

@@ -1,4 +1,0 @@
-{
-  "encounter": "Es scheint, als wäre es wieder mal an der Zeit.\nDu weißt, warum du hierher kommen musst, oder?\n$Dich hat es hierher gezogen, du warst bereits hier.\nUnzählige Male.\n$Obwohl, vielleicht doch nicht unzählig.\nUm genau zu sein, dies ist der {{cycleCount}}te Zyklus.\n$Du verlierst jeden Zyklus dein Gedächtnis. Trotzdem \nbleibt etwas, ein Teil deines ehemaligen Ichs, erhalten.\n$Bis jetzt hast du es noch nicht vollbracht zu siegen, aber dieses Mal spüre ich eine andere Präsenz in dir.\n\n$Du bist der Einzige hier, aber es kommt mir so vor als wäre da...jemand anderes.\n$Wirst du endlich beweisen, dass du ein würdiger Herausforder bist?\nDie Herausforderung auf die ich seit Jahrtausenden warte?\n$Lass uns beginnen.","firstStageWin": "Ahh verstehe. Diese Präsenz, die ich gespürt habe, ist wirklich real.\nEs scheint als müsste ich micht nicht länger zurück halten.\n$Enttäusche mich nicht.",
-  "secondStageWin": "…Herrlich."
-}
