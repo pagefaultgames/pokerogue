@@ -4,7 +4,6 @@ import { Species } from "#enums/species";
 import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import { SPLASH_ONLY } from "../utils/testUtils";
 
 
 describe("Moves - Spikes", () => {
@@ -28,7 +27,7 @@ describe("Moves - Spikes", () => {
       .enemySpecies(Species.MAGIKARP)
       .enemyAbility(Abilities.BALL_FETCH)
       .ability(Abilities.BALL_FETCH)
-      .enemyMoveset(SPLASH_ONLY)
+      .enemyMoveset(Moves.SPLASH)
       .moveset([Moves.SPIKES, Moves.SPLASH, Moves.ROAR]);
   });
 

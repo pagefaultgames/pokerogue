@@ -1,4 +1,4 @@
-import { allSpecies } from "#app/data/pokemon-species.js";
+import { allSpecies } from "#app/data/pokemon-species";
 import { AbilityAttr, defaultStarterSpecies, DexAttr, SessionSaveData, SystemSaveData } from "./game-data";
 import { SettingKeys } from "./settings/settings";
 
@@ -31,7 +31,7 @@ export function applySessionDataPatches(data: SessionSaveData) {
 
           // From [ stat, battlesLeft ] to [ stat, maxBattles, battleCount ]
           m.args = [ newStat, 5, m.args[1] ];
-        } else if (m.className === "DoubleBattleChanceBoosterModifier") {
+        } else if (m.className === "DoubleBattleChanceBoosterModifier" && m.args.length === 1) {
           let maxBattles: number;
           switch (m.typeId) {
           case "MAX_LURE":
@@ -53,6 +53,8 @@ export function applySessionDataPatches(data: SessionSaveData) {
       data.enemyModifiers.forEach((m) => {
         if (m.className === "PokemonBaseStatModifier") {
           m.className = "BaseStatModifier";
+        } else if (m.className === "PokemonResetNegativeStatStageModifier") {
+          m.className = "ResetNegativeStatStageModifier";
         }
       });
     }
@@ -74,7 +76,7 @@ export function applySystemDataPatches(data: SystemSaveData) {
       if (data.starterData) {
         // Migrate ability starter data if empty for caught species
         Object.keys(data.starterData).forEach(sd => {
-          if (data.dexData[sd].caughtAttr && !data.starterData[sd].abilityAttr) {
+          if (data.dexData[sd]?.caughtAttr && (data.starterData[sd] && !data.starterData[sd].abilityAttr)) {
             data.starterData[sd].abilityAttr = 1;
           }
         });
@@ -102,9 +104,11 @@ export function applySystemDataPatches(data: SystemSaveData) {
       // --- PATCHES ---
 
       // Fix Starter Data
-      if (data.gameVersion) {
-        for (const starterId of defaultStarterSpecies) {
+      for (const starterId of defaultStarterSpecies) {
+        if (data.starterData[starterId]?.abilityAttr) {
           data.starterData[starterId].abilityAttr |= AbilityAttr.ABILITY_1;
+        }
+        if (data.dexData[starterId]?.caughtAttr) {
           data.dexData[starterId].caughtAttr |= DexAttr.FEMALE;
         }
       }

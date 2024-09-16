@@ -6,7 +6,6 @@ import { Species } from "#enums/species";
 import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import { SPLASH_ONLY } from "../utils/testUtils";
 
 const TIMEOUT = 20 * 1000;
 
@@ -30,7 +29,7 @@ describe("Moves - Thunder Wave", () => {
       .battleType("single")
       .starterSpecies(Species.PIKACHU)
       .moveset([Moves.THUNDER_WAVE])
-      .enemyMoveset(SPLASH_ONLY);
+      .enemyMoveset(Moves.SPLASH);
   });
 
   // References: https://bulbapedia.bulbagarden.net/wiki/Thunder_Wave_(move)
