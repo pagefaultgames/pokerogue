@@ -3,7 +3,6 @@ import * as MysteryEncounters from "#app/data/mystery-encounters/mystery-encount
 import * as EncounterPhaseUtils from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import { getPokemonSpecies } from "#app/data/pokemon-species";
 import { Biome } from "#app/enums/biome";
-import { Moves } from "#app/enums/moves";
 import { MysteryEncounterType } from "#app/enums/mystery-encounter-type";
 import { Species } from "#app/enums/species";
 import GameManager from "#app/test/utils/gameManager";
@@ -15,6 +14,7 @@ import { initSceneWithoutEncounterPhase } from "#test/utils/gameManagerUtils";
 import BattleScene from "#app/battle-scene";
 import { MysteryEncounterPhase } from "#app/phases/mystery-encounter-phases";
 import { PartyExpPhase } from "#app/phases/party-exp-phase";
+
 
 const namespace = "mysteryEncounter:lostAtSea";
 /** Blastoise for surf. Pidgeot for fly. Abra for none. */
@@ -102,8 +102,8 @@ describe("Lost at Sea - Mystery Encounter", () => {
     const onInitResult = onInit!(scene);
 
     expect(LostAtSeaEncounter.dialogueTokens?.damagePercentage).toBe("25");
-    expect(LostAtSeaEncounter.dialogueTokens?.option1RequiredMove).toBe(Moves[Moves.SURF]);
-    expect(LostAtSeaEncounter.dialogueTokens?.option2RequiredMove).toBe(Moves[Moves.FLY]);
+    expect(LostAtSeaEncounter.dialogueTokens?.option1RequiredMove).toBe("Surf");
+    expect(LostAtSeaEncounter.dialogueTokens?.option2RequiredMove).toBe("Fly");
     expect(onInitResult).toBe(true);
   });
 
