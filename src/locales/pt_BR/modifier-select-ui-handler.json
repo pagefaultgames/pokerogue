@@ -9,6 +9,6 @@
   "checkTeamDesc": "Cheque seu time ou use um item de mudança de forma.",
   "rerollCost": "₽{{formattedMoney}}",
   "itemCost": "₽{{formattedMoney}}",
-  "continueNextWaveButton": "Continue",
-  "continueNextWaveDescription": "Continue to the next wave"
+  "continueNextWaveButton": "Continuar",
+  "continueNextWaveDescription": "Continuar para a próxima onda"
 }
