@@ -91,11 +91,11 @@ export class CommandPhase extends FieldPhase {
             playerPokemon.trySelectMove(cursor, args[0] as boolean) ||
             (useStruggle = cursor > -1 && !playerPokemon.getMoveset().filter(m => m?.isUsable(playerPokemon)).length)) {
         const turnMove: TurnMove | undefined = args.length === 1 ? (args[0] as TurnMove) : undefined;
-        /* THIS NEEDS FURTHER TESTING */
+
         let moveId: Moves;
         if (useStruggle) {
           moveId = Moves.STRUGGLE;
-        } else if (turnMove) {
+        } else if (turnMove !== undefined) {
           moveId = turnMove.move;
         } else if (cursor > -1) {
           moveId = playerPokemon.getMoveset()[cursor]!.moveId;
