@@ -1,12 +1,12 @@
 {
   "intro": "一位{{oricorioName}}正孤独起舞，没有舞伴。",
   "title": "舞蹈课",
-  "description": "{{oricorioName}}并不咄咄逼人，反而有些哀伤。\\n\\n也许他只想找个人一起跳舞…",
+  "description": "{{oricorioName}}并不咄咄逼人，反而有些哀伤。\n\n也许他只想找个人一起跳舞…",
   "query": "你要怎么做？",
   "option": {
     "1": {
       "label": "战斗",
-      "tooltip": "(-)艰难的战斗\n(+) Gain a Baton",
+      "tooltip": "(-)艰难的战斗\n(+)获得接力棒",
       "selected": "{{oricorioName}}变得急躁，想要采取行动进行自卫！",
       "boss_enraged": "{{oricorioName}}的恐惧使它的能力上升了！"
     },
