@@ -65,6 +65,14 @@ const tutorialHandlers = {
   },
 };
 
+/**
+ * Run through the specified tutorial if it hasn't been seen before and mark it as seen once done
+ * This will show a tutorial overlay if defined in the current {@linkcode AwaitableUiHandler}
+ * The main menu will also get disabled while the tutorial is running
+ * @param scene the current {@linkcode BattleScene}
+ * @param tutorial the {@linkcode Tutorial} to play
+ * @returns a promise with result true is the tutorial was run and finished, false otherwise
+ */
 export async function handleTutorial(scene: BattleScene, tutorial: Tutorial): Promise<boolean> {
   if (!scene.enableTutorials && !Overrides.BYPASS_TUTORIAL_SKIP) {
     return false;
