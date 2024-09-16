@@ -494,7 +494,7 @@ export function initMoveAnim(scene: BattleScene, move: Moves): Promise<void> {
           .then(response => {
             const contentType = response.headers.get("content-type");
             if (!response.ok || contentType?.indexOf("application/json") === -1) {
-              useDefaultAnim(move, defaultMoveAnim, response.status, response.statusText);
+              useAndLogDefaultAnim(move, defaultMoveAnim, response.status, response.statusText);
               return resolve();
             }
             return response.json();
@@ -516,7 +516,7 @@ export function initMoveAnim(scene: BattleScene, move: Moves): Promise<void> {
             }
           })
           .catch(error => {
-            useDefaultAnim(move, defaultMoveAnim, error);
+            useAndLogDefaultAnim(move, defaultMoveAnim, error);
             return resolve();
           });
       };
@@ -532,7 +532,7 @@ export function initMoveAnim(scene: BattleScene, move: Moves): Promise<void> {
  * @param defaultMoveAnim the default move to use as the default animation
  * @param optionalParams parameters to add to the error logging
  */
-function useDefaultAnim(move: Moves, defaultMoveAnim: Moves, ...optionalParams: any[]) {
+function useAndLogDefaultAnim(move: Moves, defaultMoveAnim: Moves, ...optionalParams: any[]) {
   const moveName = Utils.animationFileName(move);
   console.error(`Could not load animation file for move '${moveName}'`, ...optionalParams);
   populateMoveAnim(move, moveAnims.get(defaultMoveAnim));
