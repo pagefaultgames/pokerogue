@@ -495,7 +495,7 @@ export function initMoveAnim(scene: BattleScene, move: Moves): Promise<void> {
             const contentType = response.headers.get("content-type");
             if (!response.ok || contentType?.indexOf("application/json") === -1) {
               useDefaultAnim(move, defaultMoveAnim);
-              logMissingMoveAnim(move, response.status, response.statusText)
+              logMissingMoveAnim(move, response.status, response.statusText);
               return resolve();
             }
             return response.json();
@@ -518,7 +518,7 @@ export function initMoveAnim(scene: BattleScene, move: Moves): Promise<void> {
           })
           .catch(error => {
             useDefaultAnim(move, defaultMoveAnim);
-            logMissingMoveAnim(move, error)
+            logMissingMoveAnim(move, error);
             return resolve();
           });
       };
