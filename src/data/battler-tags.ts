@@ -2186,11 +2186,11 @@ export class HealBlockTag extends BattlerTag {
     super(BattlerTagType.HEAL_BLOCK, BattlerTagLapseType.TURN_END, 5, Moves.HEAL_BLOCK);
   }
 
-  onAdd(pokemon: Pokemon): void {
+  override onAdd(pokemon: Pokemon): void {
     super.onAdd(pokemon);
   }
 
-  lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
+  override lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
     return super.lapse(pokemon, lapseType);
   }
 
@@ -2198,7 +2198,7 @@ export class HealBlockTag extends BattlerTag {
     return i18next.t("battle:battlerTagsHealBlock", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) });
   }
 
-  onRemove(pokemon: Pokemon): void {
+  override onRemove(pokemon: Pokemon): void {
     super.onRemove(pokemon);
 
     pokemon.scene.queueMessage(i18next.t("battle:battlerTagsHealBlockOnRemove", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }), null, false, null);
