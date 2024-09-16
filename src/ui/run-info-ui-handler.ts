@@ -93,6 +93,7 @@ export default class RunInfoUiHandler extends UiHandler {
     const run = args[0];
     // Assigning information necessary for the UI's creation
     this.runInfo = this.scene.gameData.parseSessionData(JSON.stringify(run.entry));
+    console.log(this.runInfo);
     this.isVictory = run.isVictory;
     this.pageMode = RunInfoUiMode.MAIN;
 
@@ -211,18 +212,19 @@ export default class RunInfoUiHandler extends UiHandler {
     if (!this.isVictory) {
       const enemyContainer = this.scene.add.container(0, 0);
       // Wild - Single and Doubles
-      if (this.runInfo.battleType === BattleType.WILD) {
+      if (this.runInfo.battleType === BattleType.WILD || (this.runInfo.battleType === BattleType.MYSTERY_ENCOUNTER && !this.runInfo.trainer)) {
         switch (this.runInfo.enemyParty.length) {
         case 1:
           // Wild - Singles
           this.parseWildSingleDefeat(enemyContainer);
+          console.log("should go through here");
           break;
         case 2:
           //Wild - Doubles
           this.parseWildDoubleDefeat(enemyContainer);
           break;
         }
-      } else if (this.runInfo.battleType === BattleType.TRAINER) {
+      } else if (this.runInfo.battleType === BattleType.TRAINER || (this.runInfo.battleType === BattleType.MYSTERY_ENCOUNTER && this.runInfo.trainer)) {
         this.parseTrainerDefeat(enemyContainer);
       }
       this.runResultContainer.add(enemyContainer);
