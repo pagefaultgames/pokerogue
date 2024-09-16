@@ -17,6 +17,23 @@ export default abstract class MessageUiHandler extends AwaitableUiHandler {
     this.pendingPrompt = false;
   }
 
+  /**
+   * Add the sprite to be displayed at the end of messages with prompts
+   * @param container the container to add the sprite to
+   */
+  initPromptSprite(container: Phaser.GameObjects.Container) {
+    if (!this.prompt) {
+      const promptSprite = this.scene.add.sprite(0, 0, "prompt");
+      promptSprite.setVisible(false);
+      promptSprite.setOrigin(0, 0);
+      this.prompt = promptSprite;
+    }
+
+    if (container) {
+      container.add(this.prompt);
+    }
+  }
+
   showText(text: string, delay?: integer | null, callback?: Function | null, callbackDelay?: integer | null, prompt?: boolean | null, promptDelay?: integer | null) {
     this.showTextInternal(text, delay, callback, callbackDelay, prompt, promptDelay);
   }
@@ -180,7 +197,7 @@ export default abstract class MessageUiHandler extends AwaitableUiHandler {
     const lastLineWidth = lastLineTest.displayWidth;
     lastLineTest.destroy();
     if (this.prompt) {
-      this.prompt.setPosition(lastLineWidth + 2, (textLinesCount - 1) * 18 + 2);
+      this.prompt.setPosition(this.message.x + lastLineWidth + 2, this.message.y + (textLinesCount - 1) * 18 + 2);
       this.prompt.play("prompt");
     }
     this.pendingPrompt = false;
