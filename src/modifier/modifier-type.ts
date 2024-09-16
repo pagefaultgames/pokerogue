@@ -168,10 +168,10 @@ export interface GeneratedPersistentModifierType {
 
 export class AddPokeballModifierType extends ModifierType {
   private pokeballType: PokeballType;
-  private count: integer;
-  private scene: BattleScene;
+  private count: number;
+  private currentAmount: number;
 
-  constructor(iconImage: string, pokeballType: PokeballType, count: integer) {
+  constructor(iconImage: string, pokeballType: PokeballType, count: number) {
     super("", iconImage, (_type, _args) => new Modifiers.AddPokeballModifier(this, pokeballType, count), "pb", "se/pb_bounce_1");
     this.pokeballType = pokeballType;
     this.count = count;
@@ -181,12 +181,16 @@ export class AddPokeballModifierType extends ModifierType {
     return i18next.t("modifierType:ModifierType.AddPokeballModifierType.name", {
       "modifierCount": this.count,
       "pokeballName": getPokeballName(this.pokeballType),
-      "pokeballAmount": `${this.scene.pokeballCounts[this.pokeballType]}`,
+      "pokeballAmount": `${this.currentAmount}`,
     });
   }
 
-  addScene(scene: BattleScene) {
-    this.scene = scene;
+  addAmount(currentAmount: number) {
+    this.currentAmount = currentAmount;
+  }
+
+  getPokeballType(): PokeballType {
+    return this.pokeballType as PokeballType;
   }
 
   getDescription(scene: BattleScene): string {
@@ -2153,13 +2157,13 @@ function getModifierTypeOptionWithRetry(existingOptions: ModifierTypeOption[], r
   allowLuckUpgrades = allowLuckUpgrades ?? true;
   let candidate = getNewModifierTypeOption(party, ModifierPoolType.PLAYER, tier, undefined, 0, allowLuckUpgrades);
   if (candidate?.type instanceof AddPokeballModifierType) {
-    candidate.type.addScene(party[0].scene);
+    candidate.type.addAmount(party[0].scene.pokeballCounts[candidate.type.getPokeballType()]);
   }
   let r = 0;
   while (existingOptions.length && ++r < retryCount && existingOptions.filter(o => o.type.name === candidate?.type.name || o.type.group === candidate?.type.group).length) {
     candidate = getNewModifierTypeOption(party, ModifierPoolType.PLAYER, candidate?.type.tier ?? tier, candidate?.upgradeCount, 0, allowLuckUpgrades);
     if (candidate?.type instanceof AddPokeballModifierType) {
-      candidate.type.addScene(party[0].scene);
+      candidate.type.addAmount(party[0].scene.pokeballCounts[candidate.type.getPokeballType()]);
     }
   }
   return candidate!;

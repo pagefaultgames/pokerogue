@@ -214,7 +214,7 @@ describe("Field Trip - Mystery Encounter", () => {
       expect(modifierSelectHandler.options.length).toEqual(5);
       expect(modifierSelectHandler.options[0].modifierTypeOption.type.name).toBe("X Accuracy");
       expect(modifierSelectHandler.options[1].modifierTypeOption.type.name).toBe("X Speed");
-      expect(modifierSelectHandler.options[2].modifierTypeOption.type.name).toBe("5x Great Ball");
+      expect(modifierSelectHandler.options[2].modifierTypeOption.type.name).toBe("Great Ball x5\nInventory: 0");
       expect(modifierSelectHandler.options[3].modifierTypeOption.type.name).toBe("IV Scanner");
       expect(modifierSelectHandler.options[4].modifierTypeOption.type.name).toBe("Rarer Candy");
     });
