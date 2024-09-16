@@ -23,5 +23,5 @@
       "selected": "¡El {{oricorioName}} observa fascinado mientras\n{{selectedPokemon}} muestra {{selectedMove}}!$¡Le encanta la exhibición!$@s{level_up_fanfare}¡El {{oricorioName}} quiere unirse a tu equipo!"
     }
   },
-  "invalid_selection": "Este Pokémon no conoce un movimiento de danza"
+  "invalid_selection": "Este Pokémon no conoce ningún movimiento de danza"
 }
