@@ -5,7 +5,6 @@ import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/utils/gameManager";
-import { SPLASH_ONLY } from "#test/utils/testUtils";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -26,7 +25,7 @@ describe("Moves - Sparkly Swirl", () => {
     game.override
       .enemySpecies(Species.SHUCKLE)
       .enemyLevel(100)
-      .enemyMoveset(SPLASH_ONLY)
+      .enemyMoveset(Array(4).fill(Moves.SPLASH))
       .enemyAbility(Abilities.BALL_FETCH)
       .moveset([Moves.SPARKLY_SWIRL, Moves.SPLASH])
       .ability(Abilities.BALL_FETCH);
