@@ -10,7 +10,7 @@ import * as Utils from "../utils";
 import { Type, TypeDamageMultiplier, getTypeDamageMultiplier, getTypeRgb } from "../data/type";
 import { getLevelTotalExp } from "../data/exp";
 import { Stat, type PermanentStat, type BattleStat, type EffectiveStat, PERMANENT_STATS, BATTLE_STATS, EFFECTIVE_STATS } from "#enums/stat";
-import { DamageMoneyRewardModifier, EnemyDamageBoosterModifier, EnemyDamageReducerModifier, EnemyEndureChanceModifier, EnemyFusionChanceModifier, HiddenAbilityRateBoosterModifier, BaseStatModifier, PokemonFriendshipBoosterModifier, PokemonHeldItemModifier, PokemonNatureWeightModifier, ShinyRateBoosterModifier, SurviveDamageModifier, TempStatStageBoosterModifier, TempCritBoosterModifier, StatBoosterModifier, CritBoosterModifier, TerastallizeModifier, PokemonBaseStatFlatModifier, PokemonBaseStatTotalModifier, PokemonIncrementingStatModifier } from "../modifier/modifier";
+import { DamageMoneyRewardModifier, EnemyDamageBoosterModifier, EnemyDamageReducerModifier, EnemyEndureChanceModifier, EnemyFusionChanceModifier, HiddenAbilityRateBoosterModifier, BaseStatModifier, PokemonFriendshipBoosterModifier, PokemonHeldItemModifier, PokemonNatureWeightModifier, ShinyRateBoosterModifier, SurviveDamageModifier, TempStatStageBoosterModifier, TempCritBoosterModifier, StatBoosterModifier, CritBoosterModifier, TerastallizeModifier, PokemonBaseStatFlatModifier, PokemonBaseStatTotalModifier, PokemonIncrementingStatModifier, EvoTrackerModifier } from "../modifier/modifier";
 import { PokeballType } from "../data/pokeball";
 import { Gender } from "../data/gender";
 import { initMoveAnim, loadMoveAnimAssets } from "../data/battle-anims";
@@ -95,10 +95,12 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   public metLevel: integer;
   public metBiome: Biome | -1;
   public metSpecies: Species;
+  public metWave: number;
   public luck: integer;
   public pauseEvolutions: boolean;
   public pokerus: boolean;
   public wildFlee: boolean;
+  public evoCounter: integer;
 
   public fusionSpecies: PokemonSpecies | null;
   public fusionFormIndex: integer;
@@ -193,8 +195,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       this.luck = dataSource.luck;
       this.metBiome = dataSource.metBiome;
       this.metSpecies = dataSource.metSpecies ?? (this.metBiome !== -1 ? this.species.speciesId : this.species.getRootSpeciesId(true));
+      this.metWave = dataSource.metWave ?? (this.metBiome === -1 ? -1 : 0);
       this.pauseEvolutions = dataSource.pauseEvolutions;
       this.pokerus = !!dataSource.pokerus;
+      this.evoCounter = dataSource.evoCounter ?? 0;
       this.fusionSpecies = dataSource.fusionSpecies instanceof PokemonSpecies ? dataSource.fusionSpecies : dataSource.fusionSpecies ? getPokemonSpecies(dataSource.fusionSpecies) : null;
       this.fusionFormIndex = dataSource.fusionFormIndex;
       this.fusionAbilityIndex = dataSource.fusionAbilityIndex;
@@ -238,6 +242,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       this.metLevel = level;
       this.metBiome = scene.currentBattle ? scene.arena.biomeType : -1;
       this.metSpecies = species.speciesId;
+      this.metWave = scene.currentBattle ? scene.currentBattle.waveIndex : -1;
       this.pokerus = false;
 
       if (level > 1) {
@@ -592,8 +597,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     // Resetting properties should not be shown on the field
     this.setVisible(false);
 
-    // Reset field position
-    this.setFieldPosition(FieldPosition.CENTER);
+    // Remove the offset from having a Substitute active
     if (this.isOffsetBySubstitute()) {
       this.x -= this.getSubstituteOffset()[0];
       this.y -= this.getSubstituteOffset()[1];
@@ -2621,10 +2625,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         return result;
       }
 
-      if (isCritical) {
-        this.scene.queueMessage(i18next.t("battle:hitResultCriticalHit"));
-      }
-
       // In case of fatal damage, this tag would have gotten cleared before we could lapse it.
       const destinyTag = this.getTag(BattlerTagType.DESTINY_BOND);
 
@@ -2665,6 +2665,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
             this.scene.applyModifiers(DamageMoneyRewardModifier, true, source, new Utils.NumberHolder(damage));
           }
         }
+      }
+
+      if (isCritical) {
+        this.scene.queueMessage(i18next.t("battle:hitResultCriticalHit"));
       }
 
       // want to include is.Fainted() in case multi hit move ends early, still want to render message
@@ -4047,6 +4051,12 @@ export class PlayerPokemon extends Pokemon {
           this.updateInfo(true).then(() => resolve());
         });
       };
+      if (preEvolution.speciesId === Species.GIMMIGHOUL) {
+        const evotracker = this.getHeldItems().filter(m => m instanceof EvoTrackerModifier)[0] ?? null;
+        if (evotracker) {
+          this.scene.removeModifier(evotracker);
+        }
+      }
       if (!this.scene.gameMode.isDaily || this.metBiome > -1) {
         this.scene.gameData.updateSpeciesDexIvs(this.species.speciesId, this.ivs);
         this.scene.gameData.setPokemonSeen(this, false);
@@ -4074,6 +4084,7 @@ export class PlayerPokemon extends Pokemon {
         newPokemon.metLevel = this.metLevel;
         newPokemon.metBiome = this.metBiome;
         newPokemon.metSpecies = this.metSpecies;
+        newPokemon.metWave = this.metWave;
         newPokemon.fusionSpecies = this.fusionSpecies;
         newPokemon.fusionFormIndex = this.fusionFormIndex;
         newPokemon.fusionAbilityIndex = this.fusionAbilityIndex;
@@ -4081,6 +4092,7 @@ export class PlayerPokemon extends Pokemon {
         newPokemon.fusionVariant = this.fusionVariant;
         newPokemon.fusionGender = this.fusionGender;
         newPokemon.fusionLuck = this.fusionLuck;
+        newPokemon.usedTMs = this.usedTMs;
 
         this.scene.getParty().push(newPokemon);
         newPokemon.evolve((!isFusion ? newEvolution : new FusionSpeciesFormEvolution(this.id, newEvolution)), evoSpecies);
@@ -4772,6 +4784,7 @@ export class EnemyPokemon extends Pokemon {
       this.pokeball = pokeballType;
       this.metLevel = this.level;
       this.metBiome = this.scene.arena.biomeType;
+      this.metWave = this.scene.currentBattle.waveIndex;
       this.metSpecies = this.species.speciesId;
       const newPokemon = this.scene.addPlayerPokemon(this.species, this.level, this.abilityIndex, this.formIndex, this.gender, this.shiny, this.variant, this.ivs, this.nature, this);
 
