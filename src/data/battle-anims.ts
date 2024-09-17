@@ -538,7 +538,7 @@ function useDefaultAnim(move: Moves, defaultMoveAnim: Moves) {
 }
 
 /**
- * Helper method to call when an move animation is missing.
+ * Helper method for printing a warning to the console when a move animation is missing.
  *
  * @param move the move to populate an animation for
  * @param optionalParams parameters to add to the error logging
