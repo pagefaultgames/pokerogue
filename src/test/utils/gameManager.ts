@@ -461,11 +461,11 @@ export default class GameManager {
    * await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2, BattlerIndex.PLAYER_2]);
    * ```
    */
-  async setTurnOrder(order: BattlerIndex[]): Promise<void> {
+  async setTurnOrder(order: BattlerIndex[], modifyPriority: boolean = false): Promise<void> {
     await this.phaseInterceptor.to(TurnStartPhase, false);
-    console.log("Base turn order (before priority) set to:", order);
+    console.log(`${modifyPriority ? "Turn" : "Speed"} order modified to: `, order);
 
-    vi.spyOn(this.scene.getCurrentPhase() as TurnStartPhase, "getSpeedOrder").mockReturnValue(order);
+    vi.spyOn(this.scene.getCurrentPhase() as TurnStartPhase, (modifyPriority ? "getCommandOrder" : "getSpeedOrder")).mockReturnValue(order);
   }
 
   /**

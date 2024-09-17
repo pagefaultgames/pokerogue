@@ -337,6 +337,16 @@ export class OverridesHelper extends GameManagerHelper {
   }
 
   /**
+   * Forces the AI to always switch out, or reset to allow normal switching decisions
+   * @returns this
+   */
+  forceTrainerSwitches(newValue: boolean = true) {
+    vi.spyOn(Overrides, "TRAINER_ALWAYS_SWITCHES_OVERRIDE", "get").mockReturnValue(newValue);
+    this.log("Trainers will always switch out set to:", newValue);
+    return this;
+  }
+
+  /**
    * Override the encounter chance for a mystery encounter.
    * @param percentage the encounter chance in %
    * @returns spy instance

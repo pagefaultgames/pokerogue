@@ -1,17 +1,16 @@
+import { BattlerIndex } from "#app/battle";
 import BattleScene from "#app/battle-scene";
-import { applyAbAttrs, BypassSpeedChanceAbAttr, PreventBypassSpeedChanceAbAttr, ChangeMovePriorityAbAttr } from "#app/data/ability";
+import { applyAbAttrs, BypassSpeedChanceAbAttr, ChangeMovePriorityAbAttr, PreventBypassSpeedChanceAbAttr } from "#app/data/ability";
+import { TrickRoomTag } from "#app/data/arena-tag";
 import { allMoves, applyMoveAttrs, IncrementMovePriorityAttr, MoveHeaderAttr } from "#app/data/move";
 import { Abilities } from "#app/enums/abilities";
+import { BattlerTagType } from "#app/enums/battler-tag-type";
+import { Moves } from "#app/enums/moves";
 import { Stat } from "#app/enums/stat";
 import Pokemon, { PokemonMove } from "#app/field/pokemon";
 import { BypassSpeedChanceModifier } from "#app/modifier/modifier";
 import { Command } from "#app/ui/command-ui-handler";
 import * as Utils from "#app/utils";
-
-import { BattlerIndex } from "#app/battle";
-
-import { BattlerTagType } from "#app/enums/battler-tag-type";
-import { Moves } from "#app/enums/moves";
 import { AttemptCapturePhase } from "./attempt-capture-phase";
 import { AttemptRunPhase } from "./attempt-run-phase";
 import { BerryPhase } from "./berry-phase";
@@ -22,8 +21,6 @@ import { PostTurnStatusEffectPhase } from "./post-turn-status-effect-phase";
 import { SwitchSummonPhase } from "./switch-summon-phase";
 import { TurnEndPhase } from "./turn-end-phase";
 import { WeatherEffectPhase } from "./weather-effect-phase";
-import { BattlerIndex } from "#app/battle";
-import { TrickRoomTag } from "#app/data/arena-tag";
 
 export class TurnStartPhase extends FieldPhase {
   constructor(scene: BattleScene) {
@@ -173,7 +170,7 @@ export class TurnStartPhase extends FieldPhase {
         if (!queuedMove) {
           continue;
         }
-        const move = pokemon.getMoveset().find(m => m?.moveId === queuedMove.move) || new PokemonMove(queuedMove.move);
+        const move = pokemon.getMoveset().find(m => m?.moveId === queuedMove.move) ?? new PokemonMove(queuedMove.move);
         if (move.getMove().hasAttr(MoveHeaderAttr)) {
           this.scene.unshiftPhase(new MoveHeaderPhase(this.scene, pokemon, move));
         }
