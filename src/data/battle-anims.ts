@@ -531,7 +531,7 @@ export function initMoveAnim(scene: BattleScene, move: Moves): Promise<void> {
  * Populates the default animation for the given move.
  *
  * @param move the move to populate an animation for
- * @param defaultMoveAnim the default move to use as the default animation
+ * @param defaultMoveAnim the move to use as the default animation
  */
 function useDefaultAnim(move: Moves, defaultMoveAnim: Moves) {
   populateMoveAnim(move, moveAnims.get(defaultMoveAnim));
