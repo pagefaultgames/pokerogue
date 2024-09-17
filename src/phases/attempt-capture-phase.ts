@@ -1,20 +1,21 @@
-import BattleScene from "#app/battle-scene.js";
-import { BattlerIndex } from "#app/battle.js";
-import { getPokeballCatchMultiplier, getPokeballAtlasKey, getPokeballTintColor, doPokeballBounceAnim } from "#app/data/pokeball.js";
-import { getStatusEffectCatchRateMultiplier } from "#app/data/status-effect.js";
-import { PokeballType } from "#app/enums/pokeball.js";
-import { StatusEffect } from "#app/enums/status-effect.js";
-import { addPokeballOpenParticles, addPokeballCaptureStars } from "#app/field/anims.js";
-import { EnemyPokemon } from "#app/field/pokemon.js";
-import { getPokemonNameWithAffix } from "#app/messages.js";
-import { PokemonHeldItemModifier } from "#app/modifier/modifier.js";
-import { achvs } from "#app/system/achv.js";
-import { PartyUiMode, PartyOption } from "#app/ui/party-ui-handler.js";
-import { SummaryUiMode } from "#app/ui/summary-ui-handler.js";
-import { Mode } from "#app/ui/ui.js";
+import BattleScene from "#app/battle-scene";
+import { BattlerIndex } from "#app/battle";
+import { getPokeballCatchMultiplier, getPokeballAtlasKey, getPokeballTintColor, doPokeballBounceAnim } from "#app/data/pokeball";
+import { getStatusEffectCatchRateMultiplier } from "#app/data/status-effect";
+import { PokeballType } from "#app/enums/pokeball";
+import { StatusEffect } from "#app/enums/status-effect";
+import { addPokeballOpenParticles, addPokeballCaptureStars } from "#app/field/anims";
+import { EnemyPokemon } from "#app/field/pokemon";
+import { getPokemonNameWithAffix } from "#app/messages";
+import { PokemonHeldItemModifier } from "#app/modifier/modifier";
+import { achvs } from "#app/system/achv";
+import { PartyUiMode, PartyOption } from "#app/ui/party-ui-handler";
+import { SummaryUiMode } from "#app/ui/summary-ui-handler";
+import { Mode } from "#app/ui/ui";
 import i18next from "i18next";
 import { PokemonPhase } from "./pokemon-phase";
 import { VictoryPhase } from "./victory-phase";
+import { SubstituteTag } from "#app/data/battler-tags";
 
 export class AttemptCapturePhase extends PokemonPhase {
   private pokeballType: PokeballType;
@@ -36,6 +37,11 @@ export class AttemptCapturePhase extends PokemonPhase {
       return this.end();
     }
 
+    const substitute = pokemon.getTag(SubstituteTag);
+    if (substitute) {
+      substitute.sprite.setVisible(false);
+    }
+
     this.scene.pokeballCounts[this.pokeballType]--;
 
     this.originalY = pokemon.y;
@@ -54,7 +60,7 @@ export class AttemptCapturePhase extends PokemonPhase {
     this.pokeball.setOrigin(0.5, 0.625);
     this.scene.field.add(this.pokeball);
 
-    this.scene.playSound("pb_throw");
+    this.scene.playSound("se/pb_throw");
     this.scene.time.delayedCall(300, () => {
       this.scene.field.moveBelow(this.pokeball as Phaser.GameObjects.GameObject, pokemon);
     });
@@ -67,7 +73,7 @@ export class AttemptCapturePhase extends PokemonPhase {
       onComplete: () => {
         this.pokeball.setTexture("pb", `${pokeballAtlasKey}_opening`);
         this.scene.time.delayedCall(17, () => this.pokeball.setTexture("pb", `${pokeballAtlasKey}_open`));
-        this.scene.playSound("pb_rel");
+        this.scene.playSound("se/pb_rel");
         pokemon.tint(getPokeballTintColor(this.pokeballType));
 
         addPokeballOpenParticles(this.scene, this.pokeball.x, this.pokeball.y, this.pokeballType);
@@ -81,7 +87,7 @@ export class AttemptCapturePhase extends PokemonPhase {
           onComplete: () => {
             this.pokeball.setTexture("pb", `${pokeballAtlasKey}_opening`);
             pokemon.setVisible(false);
-            this.scene.playSound("pb_catch");
+            this.scene.playSound("se/pb_catch");
             this.scene.time.delayedCall(17, () => this.pokeball.setTexture("pb", `${pokeballAtlasKey}`));
 
             const doShake = () => {
@@ -109,13 +115,13 @@ export class AttemptCapturePhase extends PokemonPhase {
                     this.failCatch(shakeCount);
                   } else if (shakeCount++ < 3) {
                     if (pokeballMultiplier === -1 || pokemon.randSeedInt(65536) < y) {
-                      this.scene.playSound("pb_move");
+                      this.scene.playSound("se/pb_move");
                     } else {
                       shakeCounter.stop();
                       this.failCatch(shakeCount);
                     }
                   } else {
-                    this.scene.playSound("pb_lock");
+                    this.scene.playSound("se/pb_lock");
                     addPokeballCaptureStars(this.scene, this.pokeball);
 
                     const pbTint = this.scene.add.sprite(this.pokeball.x, this.pokeball.y, "pb", "pb");
@@ -156,7 +162,7 @@ export class AttemptCapturePhase extends PokemonPhase {
   failCatch(shakeCount: integer) {
     const pokemon = this.getPokemon();
 
-    this.scene.playSound("pb_rel");
+    this.scene.playSound("se/pb_rel");
     pokemon.setY(this.originalY);
     if (pokemon.status?.effect !== StatusEffect.SLEEP) {
       pokemon.cry(pokemon.getHpRatio() > 0.25 ? undefined : { rate: 0.85 });
@@ -164,6 +170,11 @@ export class AttemptCapturePhase extends PokemonPhase {
     pokemon.tint(getPokeballTintColor(this.pokeballType));
     pokemon.setVisible(true);
     pokemon.untint(250, "Sine.easeOut");
+
+    const substitute = pokemon.getTag(SubstituteTag);
+    if (substitute) {
+      substitute.sprite.setVisible(true);
+    }
 
     const pokeballAtlasKey = getPokeballAtlasKey(this.pokeballType);
     this.pokeball.setTexture("pb", `${pokeballAtlasKey}_opening`);
@@ -221,8 +232,8 @@ export class AttemptCapturePhase extends PokemonPhase {
         this.scene.clearEnemyHeldItemModifiers();
         this.scene.field.remove(pokemon, true);
       };
-      const addToParty = () => {
-        const newPokemon = pokemon.addToParty(this.pokeballType);
+      const addToParty = (slotIndex?: number) => {
+        const newPokemon = pokemon.addToParty(this.pokeballType, slotIndex);
         const modifiers = this.scene.findModifiers(m => m instanceof PokemonHeldItemModifier, false);
         if (this.scene.getParty().filter(p => p.isShiny()).length === 6) {
           this.scene.validateAchv(achvs.SHINY_PARTY);
@@ -253,7 +264,7 @@ export class AttemptCapturePhase extends PokemonPhase {
                 this.scene.ui.setMode(Mode.PARTY, PartyUiMode.RELEASE, this.fieldIndex, (slotIndex: integer, _option: PartyOption) => {
                   this.scene.ui.setMode(Mode.MESSAGE).then(() => {
                     if (slotIndex < 6) {
-                      addToParty();
+                      addToParty(slotIndex);
                     } else {
                       promptRelease();
                     }

@@ -1,9 +1,6 @@
-import BattleScene from "#app/battle-scene.js";
-import { BattlerIndex } from "#app/battle.js";
-import { applyCheckTrappedAbAttrs, CheckTrappedAbAttr } from "#app/data/ability.js";
-import { TrappedTag } from "#app/data/battler-tags.js";
-import { Command } from "#app/ui/command-ui-handler.js";
-import * as Utils from "#app/utils.js";
+import BattleScene from "#app/battle-scene";
+import { BattlerIndex } from "#app/battle";
+import { Command } from "#app/ui/command-ui-handler";
 import { FieldPhase } from "./field-phase";
 
 /**
@@ -17,11 +14,15 @@ import { FieldPhase } from "./field-phase";
  */
 export class EnemyCommandPhase extends FieldPhase {
   protected fieldIndex: integer;
+  protected skipTurn: boolean = false;
 
   constructor(scene: BattleScene, fieldIndex: integer) {
     super(scene);
 
     this.fieldIndex = fieldIndex;
+    if (this.scene.currentBattle.mysteryEncounter?.skipEnemyBattleTurns) {
+      this.skipTurn = true;
+    }
   }
 
   start() {
@@ -45,10 +46,7 @@ export class EnemyCommandPhase extends FieldPhase {
     if (trainer && !enemyPokemon.getMoveQueue().length) {
       const opponents = enemyPokemon.getOpponents();
 
-      const trapTag = enemyPokemon.findTag(t => t instanceof TrappedTag) as TrappedTag;
-      const trapped = new Utils.BooleanHolder(false);
-      opponents.forEach(playerPokemon => applyCheckTrappedAbAttrs(CheckTrappedAbAttr, playerPokemon, trapped, enemyPokemon, true, []));
-      if (!trapTag && !trapped.value) {
+      if (!enemyPokemon.isTrapped()) {
         const partyMemberScores = trainer.getPartyMemberMatchupScores(enemyPokemon.trainerSlot, true);
 
         if (partyMemberScores.length) {
@@ -63,7 +61,7 @@ export class EnemyCommandPhase extends FieldPhase {
             const index = trainer.getNextSummonIndex(enemyPokemon.trainerSlot, partyMemberScores);
 
             battle.turnCommands[this.fieldIndex + BattlerIndex.ENEMY] =
-                { command: Command.POKEMON, cursor: index, args: [false] };
+                { command: Command.POKEMON, cursor: index, args: [false], skip: this.skipTurn };
 
             battle.enemySwitchCounter++;
 
@@ -77,10 +75,14 @@ export class EnemyCommandPhase extends FieldPhase {
     const nextMove = enemyPokemon.getNextMove();
 
     this.scene.currentBattle.turnCommands[this.fieldIndex + BattlerIndex.ENEMY] =
-        { command: Command.FIGHT, move: nextMove };
+        { command: Command.FIGHT, move: nextMove, skip: this.skipTurn };
 
     this.scene.currentBattle.enemySwitchCounter = Math.max(this.scene.currentBattle.enemySwitchCounter - 1, 0);
 
     this.end();
+  }
+
+  getFieldIndex(): number {
+    return this.fieldIndex;
   }
 }

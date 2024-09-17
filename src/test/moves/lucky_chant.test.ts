@@ -1,12 +1,11 @@
+import { Abilities } from "#app/enums/abilities";
+import { BattlerTagType } from "#app/enums/battler-tag-type";
+import { Moves } from "#app/enums/moves";
+import { Species } from "#app/enums/species";
+import { BerryPhase } from "#app/phases/berry-phase";
+import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import GameManager from "../utils/gameManager";
-import { getMovePosition } from "../utils/gameManagerUtils";
-import { Moves } from "#app/enums/moves.js";
-import { Species } from "#app/enums/species.js";
-import { Abilities } from "#app/enums/abilities.js";
-import { BattlerTagType } from "#app/enums/battler-tag-type.js";
-import { BerryPhase } from "#app/phases/berry-phase.js";
-import { TurnEndPhase } from "#app/phases/turn-end-phase.js";
 
 const TIMEOUT = 20 * 1000;
 
@@ -32,7 +31,7 @@ describe("Moves - Lucky Chant", () => {
       .moveset([Moves.LUCKY_CHANT, Moves.SPLASH, Moves.FOLLOW_ME])
       .enemySpecies(Species.SNORLAX)
       .enemyAbility(Abilities.INSOMNIA)
-      .enemyMoveset(Array(4).fill(Moves.FLOWER_TRICK))
+      .enemyMoveset([Moves.FLOWER_TRICK])
       .startingLevel(100)
       .enemyLevel(100);
   });
@@ -44,13 +43,13 @@ describe("Moves - Lucky Chant", () => {
 
       const playerPokemon = game.scene.getPlayerPokemon()!;
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
+      game.move.select(Moves.SPLASH);
 
       await game.phaseInterceptor.to(TurnEndPhase);
 
       const firstTurnDamage = playerPokemon.getMaxHp() - playerPokemon.hp;
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.LUCKY_CHANT));
+      game.move.select(Moves.LUCKY_CHANT);
 
       await game.phaseInterceptor.to(BerryPhase, false);
 
@@ -68,15 +67,15 @@ describe("Moves - Lucky Chant", () => {
 
       const playerPokemon = game.scene.getPlayerField();
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.FOLLOW_ME));
-      game.doAttack(getMovePosition(game.scene, 1, Moves.SPLASH));
+      game.move.select(Moves.FOLLOW_ME);
+      game.move.select(Moves.SPLASH, 1);
 
       await game.phaseInterceptor.to(TurnEndPhase);
 
       const firstTurnDamage = playerPokemon[0].getMaxHp() - playerPokemon[0].hp;
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.FOLLOW_ME));
-      game.doAttack(getMovePosition(game.scene, 1, Moves.LUCKY_CHANT));
+      game.move.select(Moves.FOLLOW_ME);
+      game.move.select(Moves.LUCKY_CHANT, 1);
 
       await game.phaseInterceptor.to(BerryPhase, false);
 
@@ -88,7 +87,7 @@ describe("Moves - Lucky Chant", () => {
   it(
     "should prevent critical hits from field effects",
     async () => {
-      game.override.enemyMoveset(Array(4).fill(Moves.TACKLE));
+      game.override.enemyMoveset([Moves.TACKLE]);
 
       await game.startBattle([Species.CHARIZARD]);
 
@@ -97,13 +96,13 @@ describe("Moves - Lucky Chant", () => {
 
       enemyPokemon.addTag(BattlerTagType.ALWAYS_CRIT, 2, Moves.NONE, 0);
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
+      game.move.select(Moves.SPLASH);
 
       await game.phaseInterceptor.to(TurnEndPhase);
 
       const firstTurnDamage = playerPokemon.getMaxHp() - playerPokemon.hp;
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.LUCKY_CHANT));
+      game.move.select(Moves.LUCKY_CHANT);
 
       await game.phaseInterceptor.to(BerryPhase, false);
 

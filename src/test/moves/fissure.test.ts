@@ -1,15 +1,13 @@
-import { BattleStat } from "#app/data/battle-stat";
-import { Species } from "#app/enums/species.js";
+import { Stat } from "#enums/stat";
+import { Species } from "#app/enums/species";
 import { EnemyPokemon, PlayerPokemon } from "#app/field/pokemon";
-import GameManager from "#test/utils/gameManager";
-import { getMovePosition } from "#test/utils/gameManagerUtils";
+import { DamagePhase } from "#app/phases/damage-phase";
+import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
+import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import { SPLASH_ONLY } from "#test/utils/testUtils";
-import { DamagePhase } from "#app/phases/damage-phase.js";
-import { TurnEndPhase } from "#app/phases/turn-end-phase.js";
 
 describe("Moves - Fissure", () => {
   let phaserGame: Phaser.Game;
@@ -39,7 +37,7 @@ describe("Moves - Fissure", () => {
     game.override.startingLevel(100);
 
     game.override.enemySpecies(Species.SNORLAX);
-    game.override.enemyMoveset(SPLASH_ONLY);
+    game.override.enemyMoveset(Moves.SPLASH);
     game.override.enemyPassiveAbility(Abilities.BALL_FETCH);
     game.override.enemyLevel(100);
 
@@ -53,22 +51,22 @@ describe("Moves - Fissure", () => {
     game.scene.clearEnemyHeldItemModifiers();
   });
 
-  it("ignores damage modification from abilities such as fur coat", async () => {
+  it("ignores damage modification from abilities, for example FUR_COAT", async () => {
     game.override.ability(Abilities.NO_GUARD);
     game.override.enemyAbility(Abilities.FUR_COAT);
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.FISSURE));
+    game.move.select(Moves.FISSURE);
     await game.phaseInterceptor.to(DamagePhase, true);
 
     expect(enemyPokemon.isFainted()).toBe(true);
   });
 
-  it("ignores accuracy stat", async () => {
+  it("ignores user's ACC stat stage", async () => {
     vi.spyOn(partyPokemon, "getAccuracyMultiplier");
 
-    enemyPokemon.summonData.battleStats[BattleStat.ACC] = -6;
+    partyPokemon.setStatStage(Stat.ACC, -6);
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.FISSURE));
+    game.move.select(Moves.FISSURE);
 
     // wait for TurnEndPhase instead of DamagePhase as fissure might not actually inflict damage
     await game.phaseInterceptor.to(TurnEndPhase);
@@ -76,12 +74,12 @@ describe("Moves - Fissure", () => {
     expect(partyPokemon.getAccuracyMultiplier).toHaveReturnedWith(1);
   });
 
-  it("ignores evasion stat", async () => {
+  it("ignores target's EVA stat stage", async () => {
     vi.spyOn(partyPokemon, "getAccuracyMultiplier");
 
-    enemyPokemon.summonData.battleStats[BattleStat.EVA] = 6;
+    enemyPokemon.setStatStage(Stat.EVA, 6);
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.FISSURE));
+    game.move.select(Moves.FISSURE);
 
     // wait for TurnEndPhase instead of DamagePhase as fissure might not actually inflict damage
     await game.phaseInterceptor.to(TurnEndPhase);

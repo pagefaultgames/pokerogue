@@ -1,8 +1,8 @@
-import BattleScene from "#app/battle-scene.js";
-import { BattlerIndex } from "#app/battle.js";
-import { BattleSpec } from "#app/enums/battle-spec.js";
-import { DamageResult, HitResult } from "#app/field/pokemon.js";
-import * as Utils from "#app/utils.js";
+import BattleScene from "#app/battle-scene";
+import { BattlerIndex } from "#app/battle";
+import { BattleSpec } from "#app/enums/battle-spec";
+import { DamageResult, HitResult } from "#app/field/pokemon";
+import * as Utils from "#app/utils";
 import { PokemonPhase } from "./pokemon-phase";
 
 export class DamagePhase extends PokemonPhase {
@@ -42,14 +42,14 @@ export class DamagePhase extends PokemonPhase {
   applyDamage() {
     switch (this.damageResult) {
     case HitResult.EFFECTIVE:
-      this.scene.playSound("hit");
+      this.scene.playSound("se/hit");
       break;
     case HitResult.SUPER_EFFECTIVE:
     case HitResult.ONE_HIT_KO:
-      this.scene.playSound("hit_strong");
+      this.scene.playSound("se/hit_strong");
       break;
     case HitResult.NOT_VERY_EFFECTIVE:
-      this.scene.playSound("hit_weak");
+      this.scene.playSound("se/hit_weak");
       break;
     }
 
@@ -57,7 +57,7 @@ export class DamagePhase extends PokemonPhase {
       this.scene.damageNumberHandler.add(this.getPokemon(), this.amount, this.damageResult, this.critical);
     }
 
-    if (this.damageResult !== HitResult.OTHER) {
+    if (this.damageResult !== HitResult.OTHER && this.amount > 0) {
       const flashTimer = this.scene.time.addEvent({
         delay: 100,
         repeat: 5,

@@ -1,6 +1,6 @@
-import BattleScene from "#app/battle-scene.js";
-import { ModifierTypeFunc } from "#app/modifier/modifier-type.js";
-import { Mode } from "#app/ui/ui.js";
+import BattleScene from "#app/battle-scene";
+import { ModifierTypeFunc } from "#app/modifier/modifier-type";
+import { Mode } from "#app/ui/ui";
 import i18next from "i18next";
 import { ModifierRewardPhase } from "./modifier-reward-phase";
 
@@ -13,6 +13,7 @@ export class GameOverModifierRewardPhase extends ModifierRewardPhase {
     return new Promise<void>(resolve => {
       const newModifier = this.modifierType.newModifier();
       this.scene.addModifier(newModifier).then(() => {
+        // Sound loaded into game as is
         this.scene.playSound("level_up_fanfare");
         this.scene.ui.setMode(Mode.MESSAGE);
         this.scene.ui.fadeIn(250).then(() => {

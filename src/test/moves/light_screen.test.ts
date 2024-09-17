@@ -1,14 +1,13 @@
-import { ArenaTagSide } from "#app/data/arena-tag.js";
-import Move, { allMoves } from "#app/data/move.js";
-import { Abilities } from "#app/enums/abilities.js";
-import { ArenaTagType } from "#app/enums/arena-tag-type.js";
-import Pokemon from "#app/field/pokemon.js";
-import { TurnEndPhase } from "#app/phases/turn-end-phase.js";
-import GameManager from "#test/utils/gameManager";
-import { getMovePosition } from "#test/utils/gameManagerUtils";
-import { NumberHolder } from "#app/utils.js";
+import { ArenaTagSide } from "#app/data/arena-tag";
+import Move, { allMoves } from "#app/data/move";
+import { Abilities } from "#app/enums/abilities";
+import { ArenaTagType } from "#app/enums/arena-tag-type";
+import Pokemon from "#app/field/pokemon";
+import { TurnEndPhase } from "#app/phases/turn-end-phase";
+import { NumberHolder } from "#app/utils";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
+import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
@@ -17,7 +16,7 @@ describe("Moves - Light Screen", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
   const singleBattleMultiplier = 0.5;
-  const doubleBattleMultiplier = 2732/4096;
+  const doubleBattleMultiplier = 2732 / 4096;
 
   beforeAll(() => {
     phaserGame = new Phaser.Game({
@@ -40,11 +39,11 @@ describe("Moves - Light Screen", () => {
     game.override.disableCrits();
   });
 
-  it("reduces damage of special attacks by half in a single battle", async() => {
+  it("reduces damage of special attacks by half in a single battle", async () => {
     const moveToUse = Moves.ABSORB;
     await game.startBattle([Species.SHUCKLE]);
 
-    game.doAttack(getMovePosition(game.scene, 0, moveToUse));
+    game.move.select(moveToUse);
 
     await game.phaseInterceptor.to(TurnEndPhase);
 
@@ -53,14 +52,14 @@ describe("Moves - Light Screen", () => {
     expect(mockedDmg).toBe(allMoves[moveToUse].power * singleBattleMultiplier);
   });
 
-  it("reduces damage of special attacks by a third in a double battle", async() => {
+  it("reduces damage of special attacks by a third in a double battle", async () => {
     game.override.battleType("double");
 
     const moveToUse = Moves.DAZZLING_GLEAM;
     await game.startBattle([Species.SHUCKLE, Species.SHUCKLE]);
 
-    game.doAttack(getMovePosition(game.scene, 0, moveToUse));
-    game.doAttack(getMovePosition(game.scene, 1, moveToUse));
+    game.move.select(moveToUse);
+    game.move.select(moveToUse, 1);
 
     await game.phaseInterceptor.to(TurnEndPhase);
     const mockedDmg = getMockedMoveDamage(game.scene.getEnemyPokemon()!, game.scene.getPlayerPokemon()!, allMoves[moveToUse]);
@@ -68,11 +67,11 @@ describe("Moves - Light Screen", () => {
     expect(mockedDmg).toBe(allMoves[moveToUse].power * doubleBattleMultiplier);
   });
 
-  it("does not affect physical attacks", async() => {
+  it("does not affect physical attacks", async () => {
     const moveToUse = Moves.TACKLE;
     await game.startBattle([Species.SHUCKLE]);
 
-    game.doAttack(getMovePosition(game.scene, 0, moveToUse));
+    game.move.select(moveToUse);
 
     await game.phaseInterceptor.to(TurnEndPhase);
     const mockedDmg = getMockedMoveDamage(game.scene.getEnemyPokemon()!, game.scene.getPlayerPokemon()!, allMoves[moveToUse]);

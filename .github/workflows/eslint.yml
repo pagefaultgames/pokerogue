@@ -11,6 +11,8 @@ on:
     branches:
       - main  # Trigger on pull request events targeting the main branch
       - beta # Trigger on pull request events targeting the beta branch
+  merge_group:
+    types: [checks_requested]
 
 jobs:
   run-linters:  # Define a job named "run-linters"
@@ -19,10 +21,10 @@ jobs:
 
     steps:
       - name: Check out Git repository  # Step to check out the repository
-        uses: actions/checkout@v2  # Use the checkout action version 2
+        uses: actions/checkout@v4  # Use the checkout action version 4
 
       - name: Set up Node.js  # Step to set up Node.js environment
-        uses: actions/setup-node@v1  # Use the setup-node action version 1
+        uses: actions/setup-node@v4  # Use the setup-node action version 4
         with:
           node-version: 20  # Specify Node.js version 20
 

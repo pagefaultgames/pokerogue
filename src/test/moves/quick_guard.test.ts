@@ -4,10 +4,9 @@ import GameManager from "../utils/gameManager";
 import { Species } from "#enums/species";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
-import { getMovePosition } from "../utils/gameManagerUtils";
-import { BattleStat } from "#app/data/battle-stat.js";
-import { BerryPhase } from "#app/phases/berry-phase.js";
-import { CommandPhase } from "#app/phases/command-phase.js";
+import { Stat } from "#enums/stat";
+import { BattlerIndex } from "#app/battle";
+import { MoveResult } from "#app/field/pokemon";
 
 const TIMEOUT = 20 * 1000;
 
@@ -33,7 +32,7 @@ describe("Moves - Quick Guard", () => {
     game.override.moveset([Moves.QUICK_GUARD, Moves.SPLASH, Moves.FOLLOW_ME]);
 
     game.override.enemySpecies(Species.SNORLAX);
-    game.override.enemyMoveset(Array(4).fill(Moves.QUICK_ATTACK));
+    game.override.enemyMoveset([Moves.QUICK_ATTACK]);
     game.override.enemyAbility(Abilities.INSOMNIA);
 
     game.override.startingLevel(100);
@@ -43,19 +42,16 @@ describe("Moves - Quick Guard", () => {
   test(
     "should protect the user and allies from priority moves",
     async () => {
-      await game.startBattle([Species.CHARIZARD, Species.BLASTOISE]);
+      await game.classicMode.startBattle([Species.CHARIZARD, Species.BLASTOISE]);
 
-      const leadPokemon = game.scene.getPlayerField();
+      const playerPokemon = game.scene.getPlayerField();
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.QUICK_GUARD));
+      game.move.select(Moves.QUICK_GUARD);
+      game.move.select(Moves.SPLASH, 1);
 
-      await game.phaseInterceptor.to(CommandPhase);
+      await game.phaseInterceptor.to("BerryPhase", false);
 
-      game.doAttack(getMovePosition(game.scene, 1, Moves.SPLASH));
-
-      await game.phaseInterceptor.to(BerryPhase, false);
-
-      leadPokemon.forEach(p => expect(p.hp).toBe(p.getMaxHp()));
+      playerPokemon.forEach(p => expect(p.hp).toBe(p.getMaxHp()));
     }, TIMEOUT
   );
 
@@ -63,44 +59,60 @@ describe("Moves - Quick Guard", () => {
     "should protect the user and allies from Prankster-boosted moves",
     async () => {
       game.override.enemyAbility(Abilities.PRANKSTER);
-      game.override.enemyMoveset(Array(4).fill(Moves.GROWL));
+      game.override.enemyMoveset([Moves.GROWL]);
 
-      await game.startBattle([Species.CHARIZARD, Species.BLASTOISE]);
+      await game.classicMode.startBattle([Species.CHARIZARD, Species.BLASTOISE]);
 
-      const leadPokemon = game.scene.getPlayerField();
+      const playerPokemon = game.scene.getPlayerField();
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.QUICK_GUARD));
+      game.move.select(Moves.QUICK_GUARD);
+      game.move.select(Moves.SPLASH, 1);
 
-      await game.phaseInterceptor.to(CommandPhase);
+      await game.phaseInterceptor.to("BerryPhase", false);
 
-      game.doAttack(getMovePosition(game.scene, 1, Moves.SPLASH));
-
-      await game.phaseInterceptor.to(BerryPhase, false);
-
-      leadPokemon.forEach(p => expect(p.summonData.battleStats[BattleStat.ATK]).toBe(0));
+      playerPokemon.forEach(p => expect(p.getStatStage(Stat.ATK)).toBe(0));
     }, TIMEOUT
   );
 
   test(
     "should stop subsequent hits of a multi-hit priority move",
     async () => {
-      game.override.enemyMoveset(Array(4).fill(Moves.WATER_SHURIKEN));
+      game.override.enemyMoveset([Moves.WATER_SHURIKEN]);
 
-      await game.startBattle([Species.CHARIZARD, Species.BLASTOISE]);
+      await game.classicMode.startBattle([Species.CHARIZARD, Species.BLASTOISE]);
 
-      const leadPokemon = game.scene.getPlayerField();
+      const playerPokemon = game.scene.getPlayerField();
       const enemyPokemon = game.scene.getEnemyField();
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.QUICK_GUARD));
+      game.move.select(Moves.QUICK_GUARD);
+      game.move.select(Moves.FOLLOW_ME, 1);
 
-      await game.phaseInterceptor.to(CommandPhase);
+      await game.phaseInterceptor.to("BerryPhase", false);
 
-      game.doAttack(getMovePosition(game.scene, 1, Moves.FOLLOW_ME));
-
-      await game.phaseInterceptor.to(BerryPhase, false);
-
-      leadPokemon.forEach(p => expect(p.hp).toBe(p.getMaxHp()));
+      playerPokemon.forEach(p => expect(p.hp).toBe(p.getMaxHp()));
       enemyPokemon.forEach(p => expect(p.turnData.hitCount).toBe(1));
     }
+  );
+
+  test(
+    "should fail if the user is the last to move in the turn",
+    async () => {
+      game.override.battleType("single");
+      game.override.enemyMoveset([Moves.QUICK_GUARD]);
+
+      await game.classicMode.startBattle([Species.CHARIZARD]);
+
+      const playerPokemon = game.scene.getPlayerPokemon()!;
+      const enemyPokemon = game.scene.getEnemyPokemon()!;
+
+      game.move.select(Moves.QUICK_GUARD);
+
+      await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+
+      await game.phaseInterceptor.to("BerryPhase", false);
+
+      expect(enemyPokemon.getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);
+      expect(playerPokemon.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
+    }, TIMEOUT
   );
 });

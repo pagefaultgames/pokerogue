@@ -1,16 +1,17 @@
-import BattleScene from "#app/battle-scene.js";
-import { applyPreSwitchOutAbAttrs, PreSwitchOutAbAttr } from "#app/data/ability.js";
-import { allMoves, ForceSwitchOutAttr } from "#app/data/move.js";
-import { getPokeballTintColor } from "#app/data/pokeball.js";
-import { SpeciesFormChangeActiveTrigger } from "#app/data/pokemon-forms.js";
-import { TrainerSlot } from "#app/data/trainer-config.js";
-import Pokemon from "#app/field/pokemon.js";
-import { getPokemonNameWithAffix } from "#app/messages.js";
-import { SwitchEffectTransferModifier } from "#app/modifier/modifier.js";
-import { Command } from "#app/ui/command-ui-handler.js";
+import BattleScene from "#app/battle-scene";
+import { applyPreSwitchOutAbAttrs, PreSwitchOutAbAttr } from "#app/data/ability";
+import { allMoves, ForceSwitchOutAttr } from "#app/data/move";
+import { getPokeballTintColor } from "#app/data/pokeball";
+import { SpeciesFormChangeActiveTrigger } from "#app/data/pokemon-forms";
+import { TrainerSlot } from "#app/data/trainer-config";
+import Pokemon from "#app/field/pokemon";
+import { getPokemonNameWithAffix } from "#app/messages";
+import { SwitchEffectTransferModifier } from "#app/modifier/modifier";
+import { Command } from "#app/ui/command-ui-handler";
 import i18next from "i18next";
 import { PostSummonPhase } from "./post-summon-phase";
 import { SummonPhase } from "./summon-phase";
+import { SubstituteTag } from "#app/data/battler-tags";
 
 export class SwitchSummonPhase extends SummonPhase {
   private slotIndex: integer;
@@ -65,16 +66,26 @@ export class SwitchSummonPhase extends SummonPhase {
 
     if (!this.batonPass) {
       (this.player ? this.scene.getEnemyField() : this.scene.getPlayerField()).forEach(enemyPokemon => enemyPokemon.removeTagsBySourceId(pokemon.id));
+      const substitute = pokemon.getTag(SubstituteTag);
+      if (substitute) {
+        this.scene.tweens.add({
+          targets: substitute.sprite,
+          duration: 250,
+          scale: substitute.sprite.scale * 0.5,
+          ease: "Sine.easeIn",
+          onComplete: () => substitute.sprite.destroy()
+        });
+      }
     }
 
     this.scene.ui.showText(this.player ?
       i18next.t("battle:playerComeBack", { pokemonName: getPokemonNameWithAffix(pokemon) }) :
       i18next.t("battle:trainerComeBack", {
         trainerName: this.scene.currentBattle.trainer?.getName(!(this.fieldIndex % 2) ? TrainerSlot.TRAINER : TrainerSlot.TRAINER_PARTNER),
-        pokemonName: getPokemonNameWithAffix(pokemon)
+        pokemonName: pokemon.getNameToRender()
       })
     );
-    this.scene.playSound("pb_rel");
+    this.scene.playSound("se/pb_rel");
     pokemon.hideInfo();
     pokemon.tint(getPokeballTintColor(pokemon.pokeball), 1, 250, "Sine.easeIn");
     this.scene.tweens.add({
@@ -115,8 +126,18 @@ export class SwitchSummonPhase extends SummonPhase {
             pokemonName: this.getPokemon().getNameToRender()
           })
         );
-        // Ensure improperly persisted summon data (such as tags) is cleared upon switching
-        if (!this.batonPass) {
+        /**
+         * If this switch is passing a Substitute, make the switched Pokemon match the returned Pokemon's state as it left.
+         * Otherwise, clear any persisting tags on the returned Pokemon.
+         */
+        if (this.batonPass) {
+          const substitute = this.lastPokemon.getTag(SubstituteTag);
+          if (substitute) {
+            switchedInPokemon.x += this.lastPokemon.getSubstituteOffset()[0];
+            switchedInPokemon.y += this.lastPokemon.getSubstituteOffset()[1];
+            switchedInPokemon.setAlpha(0.5);
+          }
+        } else {
           switchedInPokemon.resetBattleData();
           switchedInPokemon.resetSummonData();
         }
@@ -160,6 +181,8 @@ export class SwitchSummonPhase extends SummonPhase {
     this.lastPokemon?.resetSummonData();
 
     this.scene.triggerPokemonFormChange(pokemon, SpeciesFormChangeActiveTrigger, true);
+    // Reverts to weather-based forms when weather suppressors (Cloud Nine/Air Lock) are switched out
+    this.scene.arena.triggerWeatherBasedFormChanges();
   }
 
   queuePostSummon(): void {

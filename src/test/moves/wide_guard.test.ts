@@ -4,10 +4,9 @@ import GameManager from "../utils/gameManager";
 import { Species } from "#enums/species";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
-import { getMovePosition } from "../utils/gameManagerUtils";
-import { BattleStat } from "#app/data/battle-stat.js";
-import { BerryPhase } from "#app/phases/berry-phase.js";
-import { CommandPhase } from "#app/phases/command-phase.js";
+import { Stat } from "#enums/stat";
+import { BerryPhase } from "#app/phases/berry-phase";
+import { CommandPhase } from "#app/phases/command-phase";
 
 const TIMEOUT = 20 * 1000;
 
@@ -33,7 +32,7 @@ describe("Moves - Wide Guard", () => {
     game.override.moveset([Moves.WIDE_GUARD, Moves.SPLASH, Moves.SURF]);
 
     game.override.enemySpecies(Species.SNORLAX);
-    game.override.enemyMoveset(Array(4).fill(Moves.SWIFT));
+    game.override.enemyMoveset([Moves.SWIFT]);
     game.override.enemyAbility(Abilities.INSOMNIA);
 
     game.override.startingLevel(100);
@@ -47,11 +46,11 @@ describe("Moves - Wide Guard", () => {
 
       const leadPokemon = game.scene.getPlayerField();
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.WIDE_GUARD));
+      game.move.select(Moves.WIDE_GUARD);
 
       await game.phaseInterceptor.to(CommandPhase);
 
-      game.doAttack(getMovePosition(game.scene, 1, Moves.SPLASH));
+      game.move.select(Moves.SPLASH, 1);
 
       await game.phaseInterceptor.to(BerryPhase, false);
 
@@ -62,38 +61,38 @@ describe("Moves - Wide Guard", () => {
   test(
     "should protect the user and allies from multi-target status moves",
     async () => {
-      game.override.enemyMoveset(Array(4).fill(Moves.GROWL));
+      game.override.enemyMoveset([Moves.GROWL]);
 
       await game.startBattle([Species.CHARIZARD, Species.BLASTOISE]);
 
       const leadPokemon = game.scene.getPlayerField();
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.WIDE_GUARD));
+      game.move.select(Moves.WIDE_GUARD);
 
       await game.phaseInterceptor.to(CommandPhase);
 
-      game.doAttack(getMovePosition(game.scene, 1, Moves.SPLASH));
+      game.move.select(Moves.SPLASH, 1);
 
       await game.phaseInterceptor.to(BerryPhase, false);
 
-      leadPokemon.forEach(p => expect(p.summonData.battleStats[BattleStat.ATK]).toBe(0));
+      leadPokemon.forEach(p => expect(p.getStatStage(Stat.ATK)).toBe(0));
     }, TIMEOUT
   );
 
   test(
     "should not protect the user and allies from single-target moves",
     async () => {
-      game.override.enemyMoveset(Array(4).fill(Moves.TACKLE));
+      game.override.enemyMoveset([Moves.TACKLE]);
 
       await game.startBattle([Species.CHARIZARD, Species.BLASTOISE]);
 
       const leadPokemon = game.scene.getPlayerField();
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.WIDE_GUARD));
+      game.move.select(Moves.WIDE_GUARD);
 
       await game.phaseInterceptor.to(CommandPhase);
 
-      game.doAttack(getMovePosition(game.scene, 1, Moves.SPLASH));
+      game.move.select(Moves.SPLASH, 1);
 
       await game.phaseInterceptor.to(BerryPhase, false);
 
@@ -104,18 +103,18 @@ describe("Moves - Wide Guard", () => {
   test(
     "should protect the user from its ally's multi-target move",
     async () => {
-      game.override.enemyMoveset(Array(4).fill(Moves.SPLASH));
+      game.override.enemyMoveset([Moves.SPLASH]);
 
       await game.startBattle([Species.CHARIZARD, Species.BLASTOISE]);
 
       const leadPokemon = game.scene.getPlayerField();
       const enemyPokemon = game.scene.getEnemyField();
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.WIDE_GUARD));
+      game.move.select(Moves.WIDE_GUARD);
 
       await game.phaseInterceptor.to(CommandPhase);
 
-      game.doAttack(getMovePosition(game.scene, 1, Moves.SURF));
+      game.move.select(Moves.SURF, 1);
 
       await game.phaseInterceptor.to(BerryPhase, false);
 

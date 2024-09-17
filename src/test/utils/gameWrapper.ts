@@ -1,31 +1,28 @@
 /* eslint-disable */
 // @ts-nocheck
-import * as main from "#app/main";
+import BattleScene, * as battleScene from "#app/battle-scene";
+import { MoveAnim } from "#app/data/battle-anims";
+import Pokemon from "#app/field/pokemon";
+import * as Utils from "#app/utils";
+import { blobToString } from "#test/utils/gameManagerUtils";
+import { MockClock } from "#test/utils/mocks/mockClock";
+import mockConsoleLog from "#test/utils/mocks/mockConsoleLog";
+import { MockFetch } from "#test/utils/mocks/mockFetch";
+import MockLoader from "#test/utils/mocks/mockLoader";
+import mockLocalStorage from "#test/utils/mocks/mockLocalStorage";
+import MockImage from "#test/utils/mocks/mocksContainer/mockImage";
+import MockTextureManager from "#test/utils/mocks/mockTextureManager";
 import fs from "fs";
+import Phaser from "phaser";
+import InputText from "phaser3-rex-plugins/plugins/inputtext";
+import { vi } from "vitest";
+import { MockGameObjectCreator } from "./mocks/mockGameObjectCreator";
 import InputManager = Phaser.Input.InputManager;
 import KeyboardManager = Phaser.Input.Keyboard.KeyboardManager;
 import KeyboardPlugin = Phaser.Input.Keyboard.KeyboardPlugin;
 import GamepadPlugin = Phaser.Input.Gamepad.GamepadPlugin;
 import EventEmitter = Phaser.Events.EventEmitter;
 import UpdateList = Phaser.GameObjects.UpdateList;
-import MockGraphics from "#test/utils/mocks/mocksContainer/mockGraphics";
-import MockTextureManager from "#test/utils/mocks/mockTextureManager";
-import Phaser from "phaser";
-import { blobToString } from "#test/utils/gameManagerUtils";
-import { vi } from "vitest";
-import mockLocalStorage from "#test/utils/mocks/mockLocalStorage";
-import mockConsoleLog from "#test/utils/mocks/mockConsoleLog";
-import MockLoader from "#test/utils/mocks/mockLoader";
-import { MockFetch } from "#test/utils/mocks/mockFetch";
-import * as Utils from "#app/utils";
-import InputText from "phaser3-rex-plugins/plugins/inputtext";
-import { MockClock } from "#test/utils/mocks/mockClock";
-import BattleScene from "#app/battle-scene.js";
-import { MoveAnim } from "#app/data/battle-anims";
-import Pokemon from "#app/field/pokemon";
-import * as battleScene from "#app/battle-scene";
-import MockImage from "#test/utils/mocks/mocksContainer/mockImage.js";
-import { MockGameObjectCreator } from "./mocks/mockGameObjectCreator";
 
 Object.defineProperty(window, "localStorage", {
   value: mockLocalStorage(),
@@ -44,7 +41,7 @@ window.URL.createObjectURL = (blob: Blob) => {
   });
   return null;
 };
-navigator.getGamepads = vi.fn().mockReturnValue([]);
+navigator.getGamepads = () => [];
 global.fetch = vi.fn(MockFetch);
 Utils.setCookie(Utils.sessionIdKey, 'fake_token');
 
@@ -90,6 +87,8 @@ export default class GameWrapper {
     });
     Pokemon.prototype.enableMask = () => null;
     Pokemon.prototype.updateFusionPalette = () => null;
+    Pokemon.prototype.cry = () => null;
+    Pokemon.prototype.faintCry = (cb) => { if (cb) cb(); };
   }
 
   setScene(scene: BattleScene) {
@@ -230,7 +229,7 @@ export default class GameWrapper {
     };
     this.scene.make = new MockGameObjectCreator(mockTextureManager);
     this.scene.time = new MockClock(this.scene);
-    this.scene.remove = vi.fn();
+    this.scene.remove = vi.fn(); // TODO: this should be stubbed differently
   }
 }
 

@@ -1,11 +1,12 @@
+import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
-import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest";
 import GameManager from "#test/utils/gameManager";
-import { getMovePosition } from "#test/utils/gameManagerUtils";
-import { TurnEndPhase } from "#app/phases/turn-end-phase.js";
+import Phaser from "phaser";
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { BattlerTagType } from "#app/enums/battler-tag-type";
+import { BerryPhase } from "#app/phases/berry-phase";
 
 const TIMEOUT = 20 * 1000;
 
@@ -33,36 +34,56 @@ describe("Abilities - Unseen Fist", () => {
     game.override.enemyLevel(100);
   });
 
-  test(
-    "ability causes a contact move to ignore Protect",
+  it(
+    "should cause a contact move to ignore Protect",
     () => testUnseenFistHitResult(game, Moves.QUICK_ATTACK, Moves.PROTECT, true),
     TIMEOUT
   );
 
-  test(
-    "ability does not cause a non-contact move to ignore Protect",
+  it(
+    "should not cause a non-contact move to ignore Protect",
     () => testUnseenFistHitResult(game, Moves.ABSORB, Moves.PROTECT, false),
     TIMEOUT
   );
 
-  test(
-    "ability does not apply if the source has Long Reach",
+  it(
+    "should not apply if the source has Long Reach",
     () => {
       game.override.passiveAbility(Abilities.LONG_REACH);
       testUnseenFistHitResult(game, Moves.QUICK_ATTACK, Moves.PROTECT, false);
     }, TIMEOUT
   );
 
-  test(
-    "ability causes a contact move to ignore Wide Guard",
+  it(
+    "should cause a contact move to ignore Wide Guard",
     () => testUnseenFistHitResult(game, Moves.BREAKING_SWIPE, Moves.WIDE_GUARD, true),
     TIMEOUT
   );
 
-  test(
-    "ability does not cause a non-contact move to ignore Wide Guard",
+  it(
+    "should not cause a non-contact move to ignore Wide Guard",
     () => testUnseenFistHitResult(game, Moves.BULLDOZE, Moves.WIDE_GUARD, false),
     TIMEOUT
+  );
+
+  it(
+    "should cause a contact move to ignore Protect, but not Substitute",
+    async () => {
+      game.override.enemyLevel(1);
+      game.override.moveset([Moves.TACKLE]);
+
+      await game.startBattle();
+
+      const enemyPokemon = game.scene.getEnemyPokemon()!;
+      enemyPokemon.addTag(BattlerTagType.SUBSTITUTE, 0, Moves.NONE, enemyPokemon.id);
+
+      game.move.select(Moves.TACKLE);
+
+      await game.phaseInterceptor.to(BerryPhase, false);
+
+      expect(enemyPokemon.getTag(BattlerTagType.SUBSTITUTE)).toBeUndefined();
+      expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp());
+    }, TIMEOUT
   );
 });
 
@@ -80,7 +101,7 @@ async function testUnseenFistHitResult(game: GameManager, attackMove: Moves, pro
 
   const enemyStartingHp = enemyPokemon.hp;
 
-  game.doAttack(getMovePosition(game.scene, 0, attackMove));
+  game.move.select(attackMove);
   await game.phaseInterceptor.to(TurnEndPhase, false);
 
   if (shouldSucceed) {

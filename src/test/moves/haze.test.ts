@@ -1,14 +1,11 @@
-import { BattleStat } from "#app/data/battle-stat";
+import { Stat } from "#enums/stat";
 import GameManager from "#test/utils/gameManager";
-import { getMovePosition } from "#test/utils/gameManagerUtils";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import { SPLASH_ONLY } from "#test/utils/testUtils";
-import { MoveEndPhase } from "#app/phases/move-end-phase.js";
-import { TurnInitPhase } from "#app/phases/turn-init-phase.js";
+import { TurnInitPhase } from "#app/phases/turn-init-phase";
 
 describe("Moves - Haze", () => {
   describe("integration tests", () => {
@@ -30,7 +27,7 @@ describe("Moves - Haze", () => {
 
       game.override.enemySpecies(Species.RATTATA);
       game.override.enemyLevel(100);
-      game.override.enemyMoveset(SPLASH_ONLY);
+      game.override.enemyMoveset(Moves.SPLASH);
       game.override.enemyAbility(Abilities.NONE);
 
       game.override.startingLevel(100);
@@ -38,44 +35,28 @@ describe("Moves - Haze", () => {
       game.override.ability(Abilities.NONE);
     });
 
-    it("Uses Swords Dance to raise own ATK by 2, Charm to lower enemy ATK by 2, player uses Haze to clear all stat changes", { timeout: 10000 }, async () => {
+    it("should reset all stat changes of all Pokemon on field", { timeout: 10000 }, async () => {
       await game.startBattle([Species.RATTATA]);
       const user = game.scene.getPlayerPokemon()!;
       const enemy = game.scene.getEnemyPokemon()!;
-      expect(user.summonData.battleStats[BattleStat.ATK]).toBe(0);
-      expect(enemy.summonData.battleStats[BattleStat.ATK]).toBe(0);
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.SWORDS_DANCE));
+      expect(user.getStatStage(Stat.ATK)).toBe(0);
+      expect(enemy.getStatStage(Stat.ATK)).toBe(0);
+
+      game.move.select(Moves.SWORDS_DANCE);
       await game.phaseInterceptor.to(TurnInitPhase);
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.CHARM));
-      await game.phaseInterceptor.to(TurnInitPhase);
-      const userAtkBefore = user.summonData.battleStats[BattleStat.ATK];
-      const enemyAtkBefore = enemy.summonData.battleStats[BattleStat.ATK];
-      expect(userAtkBefore).toBe(2);
-      expect(enemyAtkBefore).toBe(-2);
-
-      game.doAttack(getMovePosition(game.scene, 0, Moves.HAZE));
-      await game.phaseInterceptor.to(TurnInitPhase);
-      expect(user.summonData.battleStats[BattleStat.ATK]).toBe(0);
-      expect(enemy.summonData.battleStats[BattleStat.ATK]).toBe(0);
-    });
-
-    it("Uses Swords Dance to raise own ATK by 2, Charm to lower enemy ATK by 2, enemy uses Haze to clear all stat changes", { timeout: 10000 }, async () => {
-      game.override.enemyMoveset([Moves.HAZE, Moves.HAZE, Moves.HAZE, Moves.HAZE]);
-      await game.startBattle([Species.SHUCKLE]); // Shuckle for slower Swords Dance on first turn so Haze doesn't affect it.
-      const user = game.scene.getPlayerPokemon()!;
-      expect(user.summonData.battleStats[BattleStat.ATK]).toBe(0);
-
-      game.doAttack(getMovePosition(game.scene, 0, Moves.SWORDS_DANCE));
+      game.move.select(Moves.CHARM);
       await game.phaseInterceptor.to(TurnInitPhase);
 
-      const userAtkBefore = user.summonData.battleStats[BattleStat.ATK];
-      expect(userAtkBefore).toBe(2);
+      expect(user.getStatStage(Stat.ATK)).toBe(2);
+      expect(enemy.getStatStage(Stat.ATK)).toBe(-2);
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
-      await game.phaseInterceptor.to(MoveEndPhase);
-      expect(user.summonData.battleStats[BattleStat.ATK]).toBe(0);
+      game.move.select(Moves.HAZE);
+      await game.phaseInterceptor.to(TurnInitPhase);
+
+      expect(user.getStatStage(Stat.ATK)).toBe(0);
+      expect(enemy.getStatStage(Stat.ATK)).toBe(0);
     });
   });
 });

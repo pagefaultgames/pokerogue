@@ -16,7 +16,7 @@ import {
   getIconForLatestInput, swap,
 } from "#app/configs/inputs/configHandler";
 import BattleScene from "./battle-scene";
-import {SettingGamepad} from "#app/system/settings/settings-gamepad.js";
+import {SettingGamepad} from "#app/system/settings/settings-gamepad";
 import {SettingKeyboard} from "#app/system/settings/settings-keyboard";
 import TouchControl from "#app/touch-controls";
 import { Button } from "#enums/buttons";
@@ -50,21 +50,6 @@ export interface InterfaceConfig {
 }
 
 const repeatInputDelayMillis = 250;
-
-// Phaser.Input.Gamepad.GamepadPlugin#refreshPads
-declare module "phaser" {
-  namespace Input {
-    namespace Gamepad {
-      interface GamepadPlugin {
-        /**
-         * Refreshes the list of connected Gamepads.
-         * This is called automatically when a gamepad is connected or disconnected, and during the update loop.
-         */
-        refreshPads(): void;
-      }
-    }
-  }
-}
 
 /**
  * Manages and handles all input controls for the game, including keyboard and gamepad interactions.

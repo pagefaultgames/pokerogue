@@ -1,18 +1,15 @@
-import { allMoves } from "#app/data/move.js";
-import { CommandPhase } from "#app/phases/command-phase.js";
+import { allMoves } from "#app/data/move";
+import { CommandPhase } from "#app/phases/command-phase";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/utils/gameManager";
-import { getMovePosition } from "#test/utils/gameManagerUtils";
-import { SPLASH_ONLY } from "#test/utils/testUtils";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Moves - Rollout", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
-  const TIMEOUT = 20 * 1000;
 
   beforeAll(() => {
     phaserGame = new Phaser.Game({
@@ -34,7 +31,7 @@ describe("Moves - Rollout", () => {
     game.override.enemyAbility(Abilities.BALL_FETCH);
     game.override.startingLevel(100);
     game.override.enemyLevel(100);
-    game.override.enemyMoveset(SPLASH_ONLY);
+    game.override.enemyMoveset(Moves.SPLASH);
   });
 
   it("should double it's dmg on sequential uses but reset after 5", async () => {
@@ -58,7 +55,7 @@ describe("Moves - Rollout", () => {
     let previousHp = enemyPkm.hp;
 
     for (let i = 0; i < turns; i++) {
-      game.doAttack(getMovePosition(game.scene, 0, Moves.ROLLOUT));
+      game.move.select(Moves.ROLLOUT);
       await game.phaseInterceptor.to(CommandPhase);
 
       dmgHistory.push(previousHp - enemyPkm.hp);
@@ -78,5 +75,5 @@ describe("Moves - Rollout", () => {
     // reset
     expect(turn6Dmg).toBeGreaterThanOrEqual(turn1Dmg - variance);
     expect(turn6Dmg).toBeLessThanOrEqual(turn1Dmg + variance);
-  }, TIMEOUT);
+  });
 });

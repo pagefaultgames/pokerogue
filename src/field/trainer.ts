@@ -36,11 +36,16 @@ export default class Trainer extends Phaser.GameObjects.Container {
   public name: string;
   public partnerName: string;
 
-  constructor(scene: BattleScene, trainerType: TrainerType, variant: TrainerVariant, partyTemplateIndex?: integer, name?: string, partnerName?: string) {
+  constructor(scene: BattleScene, trainerType: TrainerType, variant: TrainerVariant, partyTemplateIndex?: integer, name?: string, partnerName?: string, trainerConfigOverride?: TrainerConfig) {
     super(scene, -72, 80);
     this.config = trainerConfigs.hasOwnProperty(trainerType)
       ? trainerConfigs[trainerType]
       : trainerConfigs[TrainerType.ACE_TRAINER];
+
+    if (trainerConfigOverride) {
+      this.config = trainerConfigOverride;
+    }
+
     this.variant = variant;
     this.partyTemplateIndex = Math.min(partyTemplateIndex !== undefined ? partyTemplateIndex : Utils.randSeedWeightedItem(this.config.partyTemplates.map((_, i) => i)),
       this.config.partyTemplates.length - 1);
@@ -76,7 +81,7 @@ export default class Trainer extends Phaser.GameObjects.Container {
     console.log(Object.keys(trainerPartyTemplates)[Object.values(trainerPartyTemplates).indexOf(this.getPartyTemplate())]);
 
     const getSprite = (hasShadow?: boolean, forceFemale?: boolean) => {
-      const ret = this.scene.addFieldSprite(0, 0, this.config.getSpriteKey(variant === TrainerVariant.FEMALE || forceFemale,this.isDouble()));
+      const ret = this.scene.addFieldSprite(0, 0, this.config.getSpriteKey(variant === TrainerVariant.FEMALE || forceFemale, this.isDouble()));
       ret.setOrigin(0.5, 1);
       ret.setPipeline(this.scene.spritePipeline, {tone: [0.0, 0.0, 0.0, 0.0], hasShadow: !!hasShadow});
       return ret;
@@ -107,7 +112,7 @@ export default class Trainer extends Phaser.GameObjects.Container {
   }
 
   getKey(forceFemale?: boolean): string {
-    return this.config.getSpriteKey(this.variant === TrainerVariant.FEMALE || forceFemale,this.isDouble());
+    return this.config.getSpriteKey(this.variant === TrainerVariant.FEMALE || forceFemale, this.isDouble());
   }
 
   /**
@@ -369,14 +374,14 @@ export default class Trainer extends Phaser.GameObjects.Container {
 
       // If useNewSpeciesPool is true, we need to generate a new species from the new species pool, otherwise we generate a random species
       let species = useNewSpeciesPool
-        ? getPokemonSpecies(newSpeciesPool[Math.floor(Math.random() * newSpeciesPool.length)])
+        ? getPokemonSpecies(newSpeciesPool[Math.floor(Utils.randSeedInt(newSpeciesPool.length))])
         : template.isSameSpecies(index) && index > offset
-          ? getPokemonSpecies(battle.enemyParty[offset].species.getTrainerSpeciesForLevel(level, false, template.getStrength(offset)))
+          ? getPokemonSpecies(battle.enemyParty[offset].species.getTrainerSpeciesForLevel(level, false, template.getStrength(offset), this.scene.currentBattle.waveIndex))
           : this.genNewPartyMemberSpecies(level, strength);
 
       // If the species is from newSpeciesPool, we need to adjust it based on the level and strength
       if (newSpeciesPool) {
-        species = getPokemonSpecies(species.getSpeciesForLevel(level, true, true, strength));
+        species = getPokemonSpecies(species.getSpeciesForLevel(level, true, true, strength, this.scene.currentBattle.waveIndex));
       }
 
       ret = this.scene.addEnemyPokemon(species, level, !this.isDouble() || !(index % 2) ? TrainerSlot.TRAINER : TrainerSlot.TRAINER_PARTNER);
@@ -405,7 +410,7 @@ export default class Trainer extends Phaser.GameObjects.Container {
       species = this.scene.randomSpecies(battle.waveIndex, level, false, this.config.speciesFilter);
     }
 
-    let ret = getPokemonSpecies(species.getTrainerSpeciesForLevel(level, true, strength));
+    let ret = getPokemonSpecies(species.getTrainerSpeciesForLevel(level, true, strength, this.scene.currentBattle.waveIndex));
     let retry = false;
 
     console.log(ret.getName());
@@ -424,7 +429,7 @@ export default class Trainer extends Phaser.GameObjects.Container {
       console.log("Attempting reroll of species evolution to fit specialty type...");
       let evoAttempt = 0;
       while (retry && evoAttempt++ < 10) {
-        ret = getPokemonSpecies(species.getTrainerSpeciesForLevel(level, true, strength));
+        ret = getPokemonSpecies(species.getTrainerSpeciesForLevel(level, true, strength, this.scene.currentBattle.waveIndex));
         console.log(ret.name);
         if (this.config.specialtyTypes.find(t => ret.isOfType(t))) {
           retry = false;
