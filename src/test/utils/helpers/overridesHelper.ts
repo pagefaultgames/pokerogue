@@ -8,10 +8,10 @@ import * as GameMode from "#app/game-mode";
 import { GameModes, getGameMode } from "#app/game-mode";
 import { ModifierOverride } from "#app/modifier/modifier-type";
 import Overrides from "#app/overrides";
+import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
+import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { vi } from "vitest";
 import { GameManagerHelper } from "./gameManagerHelper";
-import { MysteryEncounterType } from "#enums/mystery-encounter-type";
-import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 
 /**
  * Helper to handle overrides in tests
@@ -322,6 +322,17 @@ export class OverridesHelper extends GameManagerHelper {
   enemyHealthSegments(healthSegments: number) {
     vi.spyOn(Overrides, "OPP_HEALTH_SEGMENTS_OVERRIDE", "get").mockReturnValue(healthSegments);
     this.log("Enemy Pokemon health segments set to:", healthSegments);
+    return this;
+  }
+
+  /**
+   * Overrides the trainer AI's party
+   * @param species List of pokemon to generate in the party
+   * @returns this
+   */
+  enemyParty(species: Species[]) {
+    vi.spyOn(Overrides, "TRAINER_PARTY_OVERRIDE", "get").mockReturnValue(species);
+    this.log("Enemy trainer party set to:", species);
     return this;
   }
 

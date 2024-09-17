@@ -1,5 +1,4 @@
 import { Phase } from "#app/phase";
-import ErrorInterceptor from "#app/test/utils/errorInterceptor";
 import { AttemptRunPhase } from "#app/phases/attempt-run-phase";
 import { BattleEndPhase } from "#app/phases/battle-end-phase";
 import { BerryPhase } from "#app/phases/berry-phase";
@@ -11,17 +10,28 @@ import { EncounterPhase } from "#app/phases/encounter-phase";
 import { EndEvolutionPhase } from "#app/phases/end-evolution-phase";
 import { EnemyCommandPhase } from "#app/phases/enemy-command-phase";
 import { EvolutionPhase } from "#app/phases/evolution-phase";
+import { ExpPhase } from "#app/phases/exp-phase";
 import { FaintPhase } from "#app/phases/faint-phase";
 import { LearnMovePhase } from "#app/phases/learn-move-phase";
 import { LevelCapPhase } from "#app/phases/level-cap-phase";
 import { LoginPhase } from "#app/phases/login-phase";
 import { MessagePhase } from "#app/phases/message-phase";
+import { ModifierRewardPhase } from "#app/phases/modifier-reward-phase";
 import { MoveEffectPhase } from "#app/phases/move-effect-phase";
 import { MoveEndPhase } from "#app/phases/move-end-phase";
 import { MovePhase } from "#app/phases/move-phase";
+import {
+  MysteryEncounterBattlePhase,
+  MysteryEncounterOptionSelectedPhase,
+  MysteryEncounterPhase,
+  MysteryEncounterRewardsPhase,
+  PostMysteryEncounterPhase
+} from "#app/phases/mystery-encounter-phases";
 import { NewBattlePhase } from "#app/phases/new-battle-phase";
 import { NewBiomeEncounterPhase } from "#app/phases/new-biome-encounter-phase";
 import { NextEncounterPhase } from "#app/phases/next-encounter-phase";
+import { PartyExpPhase } from "#app/phases/party-exp-phase";
+import { PartyHealPhase } from "#app/phases/party-heal-phase";
 import { PostSummonPhase } from "#app/phases/post-summon-phase";
 import { QuietFormChangePhase } from "#app/phases/quiet-form-change-phase";
 import { SelectGenderPhase } from "#app/phases/select-gender-phase";
@@ -41,17 +51,9 @@ import { TurnInitPhase } from "#app/phases/turn-init-phase";
 import { TurnStartPhase } from "#app/phases/turn-start-phase";
 import { UnavailablePhase } from "#app/phases/unavailable-phase";
 import { VictoryPhase } from "#app/phases/victory-phase";
-import { PartyHealPhase } from "#app/phases/party-heal-phase";
+import ErrorInterceptor from "#app/test/utils/errorInterceptor";
 import UI, { Mode } from "#app/ui/ui";
-import {
-  MysteryEncounterBattlePhase,
-  MysteryEncounterOptionSelectedPhase,
-  MysteryEncounterPhase,
-  MysteryEncounterRewardsPhase,
-  PostMysteryEncounterPhase
-} from "#app/phases/mystery-encounter-phases";
-import { ModifierRewardPhase } from "#app/phases/modifier-reward-phase";
-import { PartyExpPhase } from "#app/phases/party-exp-phase";
+import { expect } from "vitest";
 
 type PhaseClassType = (abstract new (...args: any) => Phase); // `typeof Phase` does not work here because of some issue with ctor signatures
 
@@ -62,7 +64,6 @@ export interface PromptHandler {
   expireFn?: () => void;
   awaitingActionInput?: boolean;
 }
-import { ExpPhase } from "#app/phases/exp-phase";
 
 export default class PhaseInterceptor {
   public scene;
@@ -227,7 +228,7 @@ export default class PhaseInterceptor {
    * @param skipFn - Optional skip function.
    * @returns A promise that resolves when the phase is run.
    */
-  run(phaseTarget, skipFn?): Promise<void> {
+  async run(phaseTarget, skipFn?): Promise<void> {
     const targetName = typeof phaseTarget === "string" ? phaseTarget : phaseTarget.name;
     this.scene.moveAnimations = null; // Mandatory to avoid crash
     return new Promise(async (resolve, reject) => {
