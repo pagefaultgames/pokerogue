@@ -43,5 +43,6 @@
     "epic": "un huavo Épico",
     "legendary": "un huevo Legendario "
   },
+  "egg_list_full_dialogue": "Oh, it looks like you don't have room to carry another egg.$Here, take these instead!"
   "outro": "{{statTrainerName}} te dio {{eggType}}!"
 }
