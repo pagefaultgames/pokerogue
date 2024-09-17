@@ -235,7 +235,7 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
         this.pokemonGenderText.setVisible(false);
       }
 
-      if (pokemon.species.forms?.[pokemon.formIndex]?.formName) {
+      if (pokemon.species.forms?.[pokemon.formIndex]?.formName && pokemon.species.forms?.[pokemon.formIndex]?.formName !== "Normal") {
         this.pokemonFormLabelText.setVisible(true);
         this.pokemonFormText.setVisible(true);
         const newForm = BigInt(1 << pokemon.formIndex) * DexAttr.DEFAULT_FORM;
