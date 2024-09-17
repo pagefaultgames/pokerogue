@@ -107,7 +107,7 @@ describe("Uncommon Breed - Mystery Encounter", () => {
     expect(onInitResult).toBe(true);
   });
 
-  describe.skip("Option 1 - Fight", () => {
+  describe("Option 1 - Fight", () => {
     it("should have the correct properties", () => {
       const option = UncommonBreedEncounter.options[0];
       expect(option.optionMode).toBe(MysteryEncounterOptionMode.DEFAULT);
@@ -168,7 +168,7 @@ describe("Uncommon Breed - Mystery Encounter", () => {
     });
 
     // TODO: there is some severe test flakiness occurring for this file, needs to be looked at/addressed in separate issue
-    it.skip("should NOT be selectable if the player doesn't have enough berries", async () => {
+    it("should NOT be selectable if the player doesn't have enough berries", async () => {
       await game.runToMysteryEncounter(MysteryEncounterType.UNCOMMON_BREED, defaultParty);
       // Clear out any pesky mods that slipped through test spin-up
       scene.modifiers.forEach(mod => {
@@ -193,7 +193,7 @@ describe("Uncommon Breed - Mystery Encounter", () => {
     });
 
     // TODO: there is some severe test flakiness occurring for this file, needs to be looked at/addressed in separate issue
-    it.skip("Should skip fight when player meets requirements", { retry: 5 }, async () => {
+    it("Should skip fight when player meets requirements", { retry: 5 }, async () => {
       const leaveEncounterWithoutBattleSpy = vi.spyOn(EncounterPhaseUtils, "leaveEncounterWithoutBattle");
 
       await game.runToMysteryEncounter(MysteryEncounterType.UNCOMMON_BREED, defaultParty);

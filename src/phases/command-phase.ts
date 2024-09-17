@@ -16,6 +16,7 @@ import i18next from "i18next";
 import { FieldPhase } from "./field-phase";
 import { SelectTargetPhase } from "./select-target-phase";
 import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
+import { isNullOrUndefined } from "#app/utils";
 
 export class CommandPhase extends FieldPhase {
   protected fieldIndex: integer;
@@ -179,7 +180,8 @@ export class CommandPhase extends FieldPhase {
     case Command.POKEMON:
     case Command.RUN:
       const isSwitch = command === Command.POKEMON;
-      if (!isSwitch && this.scene.arena.biomeType === Biome.END) {
+      const mysteryEncounterFleeAllowed = this.scene.currentBattle.mysteryEncounter?.fleeAllowed;
+      if (!isSwitch && (this.scene.arena.biomeType === Biome.END || (!isNullOrUndefined(mysteryEncounterFleeAllowed) && !mysteryEncounterFleeAllowed))) {
         this.scene.ui.setMode(Mode.COMMAND, this.fieldIndex);
         this.scene.ui.setMode(Mode.MESSAGE);
         this.scene.ui.showText(i18next.t("battle:noEscapeForce"), null, () => {

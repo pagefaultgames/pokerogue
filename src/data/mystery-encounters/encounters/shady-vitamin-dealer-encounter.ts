@@ -5,9 +5,9 @@ import { randSeedInt } from "#app/utils";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { Species } from "#enums/species";
 import BattleScene from "#app/battle-scene";
-import MysteryEncounter, { MysteryEncounterBuilder } from "../mystery-encounter";
-import { MysteryEncounterOptionBuilder } from "../mystery-encounter-option";
-import { MoneyRequirement } from "../mystery-encounter-requirements";
+import MysteryEncounter, { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-encounter";
+import { MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/mystery-encounter-option";
+import { MoneyRequirement } from "#app/data/mystery-encounters/mystery-encounter-requirements";
 import { getEncounterText, queueEncounterMessage } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
 import { applyDamageToPokemon, applyModifierTypeToPlayerPokemon } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
@@ -115,7 +115,7 @@ export const ShadyVitaminDealerEncounter: MysteryEncounter =
             await applyModifierTypeToPlayerPokemon(scene, chosenPokemon, modType);
           }
 
-          leaveEncounterWithoutBattle(scene);
+          leaveEncounterWithoutBattle(scene, true);
         })
         .withPostOptionPhase(async (scene: BattleScene) => {
           // Damage and status applied after dealer leaves (to make thematic sense)
@@ -193,7 +193,7 @@ export const ShadyVitaminDealerEncounter: MysteryEncounter =
             await applyModifierTypeToPlayerPokemon(scene, chosenPokemon, modType);
           }
 
-          leaveEncounterWithoutBattle(scene);
+          leaveEncounterWithoutBattle(scene, true);
         })
         .withPostOptionPhase(async (scene: BattleScene) => {
           // Status applied after dealer leaves (to make thematic sense)

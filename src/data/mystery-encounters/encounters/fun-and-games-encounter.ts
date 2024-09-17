@@ -1,7 +1,7 @@
 import { leaveEncounterWithoutBattle, selectPokemonForOption, setEncounterRewards, transitionMysteryEncounterIntroVisuals, updatePlayerMoney, } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import BattleScene from "#app/battle-scene";
-import MysteryEncounter, { MysteryEncounterBuilder } from "../mystery-encounter";
+import MysteryEncounter, { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-encounter";
 import { MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/mystery-encounter-option";
 import { TrainerSlot } from "#app/data/trainer-config";
 import Pokemon, { FieldPosition, PlayerPokemon } from "#app/field/pokemon";
@@ -175,7 +175,9 @@ async function summonPlayerPokemon(scene: BattleScene) {
     const party = scene.getParty();
     const chosenIndex = party.indexOf(playerPokemon);
     if (chosenIndex !== 0) {
-      [party[chosenIndex], party[0]] = [party[chosenIndex], party[chosenIndex]];
+      const leadPokemon = party[0];
+      party[0] = playerPokemon;
+      party[chosenIndex] = leadPokemon;
     }
 
     // Do trainer summon animation

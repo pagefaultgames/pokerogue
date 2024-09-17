@@ -60,6 +60,11 @@ export class GameOverPhase extends BattlePhase {
           this.scene.ui.fadeOut(1250).then(() => {
             this.scene.reset();
             this.scene.clearPhaseQueue();
+            // If this is a ME, clear any residual visual sprites before reloading
+            const encounter = this.scene.currentBattle.mysteryEncounter;
+            if (encounter && encounter.introVisuals) {
+              this.scene.field.remove(encounter.introVisuals, true);
+            }
             this.scene.gameData.loadSession(this.scene, this.scene.sessionSlotId).then(() => {
               this.scene.pushPhase(new EncounterPhase(this.scene, true));
 

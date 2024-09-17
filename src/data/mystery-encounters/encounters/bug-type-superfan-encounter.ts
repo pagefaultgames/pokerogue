@@ -19,7 +19,7 @@ import { PartyMemberStrength } from "#enums/party-member-strength";
 import BattleScene from "#app/battle-scene";
 import * as Utils from "#app/utils";
 import { isNullOrUndefined, randSeedInt, randSeedShuffle } from "#app/utils";
-import MysteryEncounter, { MysteryEncounterBuilder } from "../mystery-encounter";
+import MysteryEncounter, { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-encounter";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { TrainerType } from "#enums/trainer-type";
 import { Species } from "#enums/species";
@@ -192,6 +192,7 @@ export const BugTypeSuperfanEncounter: MysteryEncounter =
       new AttackTypeBoosterHeldItemTypeRequirement(Type.BUG, 1),
       new TypeRequirement(Type.BUG, false, 1)
     ))
+    .withMaxAllowedEncounters(1)
     .withSceneWaveRangeRequirement(...CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES)
     .withIntroSpriteConfigs([]) // These are set in onInit()
     .withAutoHideIntroVisuals(false)

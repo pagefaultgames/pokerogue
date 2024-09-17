@@ -145,7 +145,7 @@ class DefaultOverrides {
   /** 1 to 256, set to null to ignore */
   readonly MYSTERY_ENCOUNTER_RATE_OVERRIDE: number | null = null;
   readonly MYSTERY_ENCOUNTER_TIER_OVERRIDE: MysteryEncounterTier | null = null;
-  readonly MYSTERY_ENCOUNTER_OVERRIDE: MysteryEncounterType | null = null;
+  readonly MYSTERY_ENCOUNTER_OVERRIDE: MysteryEncounterType | null = MysteryEncounterType.WEIRD_DREAM;
 
   // -------------------------
   // MODIFIER / ITEM OVERRIDES

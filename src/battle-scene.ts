@@ -2603,7 +2603,7 @@ export default class BattleScene extends SceneBase {
       }
 
       party.forEach((enemyPokemon: EnemyPokemon, i: integer) => {
-        if (heldModifiersConfigs && i < heldModifiersConfigs.length && heldModifiersConfigs[i] && heldModifiersConfigs[i].length > 0) {
+        if (heldModifiersConfigs && i < heldModifiersConfigs.length && heldModifiersConfigs[i]) {
           heldModifiersConfigs[i].forEach(mt => {
             let modifier: PokemonHeldItemModifier;
             if (mt.modifier instanceof PokemonHeldItemModifierType) {
@@ -2614,8 +2614,7 @@ export default class BattleScene extends SceneBase {
             }
             const stackCount = mt.stackCount ?? 1;
             modifier.stackCount = stackCount;
-            // TODO: set isTransferable
-            // modifier.isTransferrable = mt.isTransferable ?? true;
+            modifier.isTransferable = mt.isTransferable ?? modifier.isTransferable;
             this.addEnemyModifier(modifier, true);
           });
         } else {

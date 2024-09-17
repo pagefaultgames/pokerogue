@@ -1,13 +1,13 @@
 import { STEALING_MOVES } from "#app/data/mystery-encounters/requirements/requirement-groups";
-import { modifierTypes } from "#app/modifier/modifier-type";
+import { modifierTypes, PokemonHeldItemModifierType } from "#app/modifier/modifier-type";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { Species } from "#enums/species";
 import BattleScene from "#app/battle-scene";
 import { StatusEffect } from "#app/data/status-effect";
-import MysteryEncounter, { MysteryEncounterBuilder } from "../mystery-encounter";
-import { MysteryEncounterOptionBuilder } from "../mystery-encounter-option";
-import { MoveRequirement } from "../mystery-encounter-requirements";
-import { EnemyPartyConfig, EnemyPokemonConfig, initBattleWithEnemyConfig, loadCustomMovesForEncounter, leaveEncounterWithoutBattle, setEncounterExp, setEncounterRewards, } from "../utils/encounter-phase-utils";
+import MysteryEncounter, { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-encounter";
+import { MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/mystery-encounter-option";
+import { MoveRequirement } from "#app/data/mystery-encounters/mystery-encounter-requirements";
+import { EnemyPartyConfig, EnemyPokemonConfig, initBattleWithEnemyConfig, loadCustomMovesForEncounter, leaveEncounterWithoutBattle, setEncounterExp, setEncounterRewards, generateModifierType, } from "../utils/encounter-phase-utils";
 import { queueEncounterMessage } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
 import { Moves } from "#enums/moves";
 import { BattlerIndex } from "#app/battle";
@@ -17,6 +17,7 @@ import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { PartyHealPhase } from "#app/phases/party-heal-phase";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
+import { BerryType } from "#enums/berry-type";
 
 /** i18n namespace for the encounter */
 const namespace = "mysteryEncounter:slumberingSnorlax";
@@ -58,10 +59,20 @@ export const SlumberingSnorlaxEncounter: MysteryEncounter =
         species: bossSpecies,
         isBoss: true,
         status: [StatusEffect.SLEEP, 5], // Extra turns on timer for Snorlax's start of fight moves
-        moveSet: [Moves.REST, Moves.SLEEP_TALK, Moves.CRUNCH, Moves.GIGA_IMPACT]
+        moveSet: [Moves.REST, Moves.SLEEP_TALK, Moves.CRUNCH, Moves.GIGA_IMPACT],
+        modifierConfigs: [
+          {
+            modifier: generateModifierType(scene, modifierTypes.BERRY, [BerryType.SITRUS]) as PokemonHeldItemModifierType,
+            stackCount: 2
+          },
+          {
+            modifier: generateModifierType(scene, modifierTypes.BERRY, [BerryType.ENIGMA]) as PokemonHeldItemModifierType,
+            stackCount: 2
+          },
+        ],
       };
       const config: EnemyPartyConfig = {
-        levelAdditiveMultiplier: 0.5,
+        levelAdditiveModifier: 0.5,
         pokemonConfigs: [pokemonConfig],
       };
       encounter.enemyPartyConfigs = [config];
