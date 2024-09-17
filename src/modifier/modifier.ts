@@ -982,7 +982,7 @@ export class PokemonBaseStatTotalModifier extends PokemonHeldItemModifier {
     baseStats.forEach((v, i) => {
       // HP is affected by half as much as other stats
       const newVal = i === 0 ? Math.floor(v + this.statModifier / 2) : Math.floor(v + this.statModifier);
-      baseStats[1][i] = Math.min(Math.max(newVal, 1), 999999);
+      baseStats[i] = Math.min(Math.max(newVal, 1), 999999);
     });
 
     return true;
