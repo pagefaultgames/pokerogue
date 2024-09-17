@@ -93,6 +93,17 @@ export const DelibirdyEncounter: MysteryEncounter =
     .withOnInit((scene: BattleScene) => {
       const encounter = scene.currentBattle.mysteryEncounter!;
       encounter.setDialogueToken("delibirdName", getPokemonSpecies(Species.DELIBIRD).getName());
+
+      scene.loadBgm("mystery_encounter_delibirdy", "mystery_encounter_delibirdy.mp3");
+      return true;
+    })
+    .withOnVisualsStart((scene: BattleScene) => {
+      // Change the bgm
+      scene.fadeOutBgm(2000, false);
+      scene.time.delayedCall(2000, () => {
+        scene.playBgm("mystery_encounter_delibirdy");
+      });
+
       return true;
     })
     .withOption(

@@ -2157,6 +2157,16 @@ export default class BattleScene extends SceneBase {
       return 13.13;
     case "battle_macro_boss": //SWSH Rose Battle
       return 11.42;
+    case "mystery_encounter_gen_5_gts": // BW GTS
+      return 8.52;
+    case "mystery_encounter_gen_6_gts": // XY GTS
+      return 9.24;
+    case "mystery_encounter_fun_and_games": // EoS Guildmaster Wigglytuff
+      return 4.78;
+    case "mystery_encounter_weird_dream": // EoS Temporal Spire
+      return 41.42;
+    case "mystery_encounter_delibirdy": // Firel Delibirdy
+      return 82.28;
     }
 
     return 0;
