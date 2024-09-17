@@ -1,26 +1,26 @@
 {
-  "intro": "That isn't just an ordinary Pokémon!",
-  "title": "Uncommon Breed",
-  "description": "That {{enemyPokemon}} looks special compared to others of its kind. @[TOOLTIP_TITLE]{Perhaps it knows a special move?} You could battle and catch it outright, but there might also be a way to befriend it.",
-  "query": "What will you do?",
+  "intro": "저건 평범한 포켓몬이 아닌 것 같다!",
+  "title": "흔하지 않은 포켓몬",
+  "description": "저 {{enemyPokemon}}[[는]] 어딘가 다른 {{enemyPokemon}}[[과]]는 달라보입니다. @[TOOLTIP_TITLE]{아마 특별한 기술을 알고 있을지도?}\n평범하게 배틀로 잡을 수도 있지만, 친구가 되는 방법도 있을 것 같습니다.",
+  "query": "어떻게 하시겠습니까?",
   "option": {
     "1": {
-      "label": "Battle the Pokémon",
-      "tooltip": "(-) Tricky Battle\n(+) Strong Catchable Foe",
-      "selected": "You approach the\n{{enemyPokemon}} without fear.",
-      "stat_boost": "The {{enemyPokemon}}'s heightened abilities boost its stats!"
+      "label": "포켓몬과 싸운다",
+      "tooltip": "(-) 까다로운 배틀\n(+) 포획가능한 강한 적",
+      "selected": "{{enemyPokemon}}에게 용감하게 맞섰다.",
+      "stat_boost": "{{enemyPokemon}}[[가]] 집중해서 능력치가 상승했다!"
     },
     "2": {
-      "label": "Give It Food",
-      "disabled_tooltip": "You need 4 berry items to choose this",
-      "tooltip": "(-) Give 4 Berries\n(+) The {{enemyPokemon}} Likes You",
-      "selected": "You toss the berries at the {{enemyPokemon}}!$It eats them happily!$The {{enemyPokemon}} wants to join your party!"
+      "label": "음식을 준다",
+      "disabled_tooltip": "선택지를 고르려면 나무열매가 4개 필요하다.",
+      "tooltip": "(-) 나무열매 4개를 줌\n(+) {{enemyPokemon}}[[가]] 좋아함",
+      "selected": "{{enemyPokemon}}에게 나무열매를 주었다!$행복한 듯 맛있게 먹기 시작했다!${{enemyPokemon}}[[는]] 동료가 되고 싶어하는 것 같다!"
     },
     "3": {
-      "label": "Befriend It",
-      "disabled_tooltip": "Your Pokémon need to know certain moves to choose this",
-      "tooltip": "(+) {{option3PrimaryName}} uses {{option3PrimaryMove}}\n(+) The {{enemyPokemon}} Likes You",
-      "selected": "Your {{option3PrimaryName}} uses {{option3PrimaryMove}} to charm the {{enemyPokemon}}!$The {{enemyPokemon}} wants to join your party!"
+      "label": "친구가 되기",
+      "disabled_tooltip": "파티의 포켓몬이 특정한 기술을 알고 있어야한다.",
+      "tooltip": "(+) {{option3PrimaryName}}[[가]] {{option3PrimaryMove}}[[를]] 사용\n(+) {{enemyPokemon}}[[가]] 좋아함",
+      "selected": "{{option3PrimaryName}}[[가]] {{option3PrimaryMove}}[[를]] 사용해,\n{{enemyPokemon}}를 매료시켰다!${{enemyPokemon}}[[는]] 동료가 되고 싶어하는 것 같다!"
     }
   }
 }
