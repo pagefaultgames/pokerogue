@@ -543,7 +543,7 @@ function useDefaultAnim(move: Moves, defaultMoveAnim: Moves) {
  * @param move the move to populate an animation for
  * @param optionalParams parameters to add to the error logging
  *
- * @remarks use {@link useDefaultAnim} to use a default animation
+ * @remarks use {@linkcode useDefaultAnim} to use a default animation
  */
 function logMissingMoveAnim(move: Moves, ...optionalParams: any[]) {
   const moveName = Utils.animationFileName(move);
