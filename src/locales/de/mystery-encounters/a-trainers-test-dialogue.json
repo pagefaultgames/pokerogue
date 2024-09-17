@@ -43,6 +43,6 @@
     "epic": "episches Ei",
     "legendary": "legendäres Ei"
   },
-  "egg_list_full_dialogue": "Oh, it looks like you don't have room to carry another egg.$Here, take these instead!"
+  "egg_list_full_dialogue": "Oh, it looks like you don't have room to carry another egg.$Here, take these instead!",
   "outro": "{{statTrainerName}} gibt dir ein {{eggType}}!"
 }
