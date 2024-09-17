@@ -15,6 +15,7 @@ import { Mode } from "#app/ui/ui";
 import i18next from "i18next";
 import { FieldPhase } from "./field-phase";
 import { SelectTargetPhase } from "./select-target-phase";
+import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
 
 export class CommandPhase extends FieldPhase {
   protected fieldIndex: integer;
@@ -68,7 +69,12 @@ export class CommandPhase extends FieldPhase {
         }
       }
     } else {
-      this.scene.ui.setMode(Mode.COMMAND, this.fieldIndex);
+      if (this.scene.currentBattle.battleType === BattleType.MYSTERY_ENCOUNTER && this.scene.currentBattle.mysteryEncounter?.skipToFightInput) {
+        this.scene.ui.clearText();
+        this.scene.ui.setMode(Mode.FIGHT, this.fieldIndex);
+      } else {
+        this.scene.ui.setMode(Mode.COMMAND, this.fieldIndex);
+      }
     }
   }
 
@@ -107,8 +113,9 @@ export class CommandPhase extends FieldPhase {
 
         // Decides between a Disabled, Not Implemented, or No PP translation message
         const errorMessage =
-              playerPokemon.summonData.disabledMove === move.moveId ? "battle:moveDisabled" :
-                move.getName().endsWith(" (N)") ? "battle:moveNotImplemented" : "battle:moveNoPP";
+          playerPokemon.isMoveRestricted(move.moveId)
+            ? playerPokemon.getRestrictingTag(move.moveId)!.selectionDeniedText(playerPokemon, move.moveId)
+            : move.getName().endsWith(" (N)") ? "battle:moveNotImplemented" : "battle:moveNoPP";
         const moveName = move.getName().replace(" (N)", ""); // Trims off the indicator
 
         this.scene.ui.showText(i18next.t(errorMessage, { moveName: moveName }), null, () => {
@@ -130,6 +137,13 @@ export class CommandPhase extends FieldPhase {
         this.scene.ui.setMode(Mode.COMMAND, this.fieldIndex);
         this.scene.ui.setMode(Mode.MESSAGE);
         this.scene.ui.showText(i18next.t("battle:noPokeballTrainer"), null, () => {
+          this.scene.ui.showText("", 0);
+          this.scene.ui.setMode(Mode.COMMAND, this.fieldIndex);
+        }, null, true);
+      } else if (this.scene.currentBattle.battleType === BattleType.MYSTERY_ENCOUNTER && !this.scene.currentBattle.mysteryEncounter!.catchAllowed) {
+        this.scene.ui.setMode(Mode.COMMAND, this.fieldIndex);
+        this.scene.ui.setMode(Mode.MESSAGE);
+        this.scene.ui.showText(i18next.t("battle:noPokeballMysteryEncounter"), null, () => {
           this.scene.ui.showText("", 0);
           this.scene.ui.setMode(Mode.COMMAND, this.fieldIndex);
         }, null, true);
@@ -172,7 +186,7 @@ export class CommandPhase extends FieldPhase {
           this.scene.ui.showText("", 0);
           this.scene.ui.setMode(Mode.COMMAND, this.fieldIndex);
         }, null, true);
-      } else if (!isSwitch && this.scene.currentBattle.battleType === BattleType.TRAINER) {
+      } else if (!isSwitch && (this.scene.currentBattle.battleType === BattleType.TRAINER || this.scene.currentBattle.mysteryEncounter?.encounterMode === MysteryEncounterMode.TRAINER_BATTLE)) {
         this.scene.ui.setMode(Mode.COMMAND, this.fieldIndex);
         this.scene.ui.setMode(Mode.MESSAGE);
         this.scene.ui.showText(i18next.t("battle:noEscapeTrainer"), null, () => {

@@ -3,7 +3,6 @@ import GameManager from "#test/utils/gameManager";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
-import { SPLASH_ONLY } from "#test/utils/testUtils";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
@@ -28,7 +27,7 @@ describe("Abilities - Wind Rider", () => {
       .enemySpecies(Species.SHIFTRY)
       .enemyAbility(Abilities.WIND_RIDER)
       .moveset([Moves.TAILWIND, Moves.SPLASH, Moves.PETAL_BLIZZARD, Moves.SANDSTORM])
-      .enemyMoveset(SPLASH_ONLY);
+      .enemyMoveset(Moves.SPLASH);
   });
 
   it("takes no damage from wind moves and its ATK stat stage is raised by 1 when hit by one", async () => {

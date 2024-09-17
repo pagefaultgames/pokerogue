@@ -7,7 +7,6 @@ import { GameModes } from "#app/game-mode";
 import { TurnHeldItemTransferModifier } from "#app/modifier/modifier";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import GameManager from "./utils/gameManager";
-import { SPLASH_ONLY } from "./utils/testUtils";
 
 const FinalWave = {
   Classic: 200,
@@ -29,7 +28,7 @@ describe("Final Boss", () => {
       .startingWave(FinalWave.Classic)
       .startingBiome(Biome.END)
       .disableCrits()
-      .enemyMoveset(SPLASH_ONLY)
+      .enemyMoveset(Moves.SPLASH)
       .moveset([ Moves.SPLASH, Moves.WILL_O_WISP, Moves.DRAGON_PULSE ])
       .startingLevel(10000);
   });

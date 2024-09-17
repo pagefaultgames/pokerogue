@@ -1,16 +1,17 @@
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import Phaser from "phaser";
 import GameManager from "#app/test/utils/gameManager";
 import { Species } from "#enums/species";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { Moves } from "#enums/moves";
-import { Stat } from "#enums/stat";
+import { Stat, BATTLE_STATS } from "#enums/stat";
 import { Abilities } from "#enums/abilities";
 import { MoveEndPhase } from "#app/phases/move-end-phase";
 
 describe("Moves - Guard Swap", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
+  const TIMEOUT = 20 * 1000;
 
   beforeAll(() => {
     phaserGame = new Phaser.Game({
@@ -27,37 +28,42 @@ describe("Moves - Guard Swap", () => {
     game.override
       .battleType("single")
       .enemyAbility(Abilities.BALL_FETCH)
-      .enemyMoveset(new Array(4).fill(Moves.SHELL_SMASH))
-      .enemySpecies(Species.MEW)
+      .enemyMoveset(Moves.SPLASH)
+      .enemySpecies(Species.INDEEDEE)
       .enemyLevel(200)
       .moveset([ Moves.GUARD_SWAP ])
       .ability(Abilities.NONE);
   });
 
-  it("should swap the user's DEF AND SPDEF stat stages with the target's", async () => {
-    await game.startBattle([
+  it("should swap the user's DEF and SPDEF stat stages with the target's", async () => {
+    await game.classicMode.startBattle([
       Species.INDEEDEE
     ]);
 
-    // Should start with no stat stages
     const player = game.scene.getPlayerPokemon()!;
-    // After Shell Smash, should have +2 in ATK and SPATK, -1 in DEF and SPDEF
     const enemy = game.scene.getEnemyPokemon()!;
+
+    vi.spyOn(enemy.summonData, "statStages", "get").mockReturnValue(new Array(BATTLE_STATS.length).fill(1));
 
     game.move.select(Moves.GUARD_SWAP);
 
     await game.phaseInterceptor.to(MoveEndPhase);
 
-    expect(player.getStatStage(Stat.DEF)).toBe(0);
-    expect(player.getStatStage(Stat.SPDEF)).toBe(0);
-    expect(enemy.getStatStage(Stat.DEF)).toBe(-1);
-    expect(enemy.getStatStage(Stat.SPDEF)).toBe(-1);
+    for (const s of BATTLE_STATS) {
+      expect(player.getStatStage(s)).toBe(0);
+      expect(enemy.getStatStage(s)).toBe(1);
+    }
 
     await game.phaseInterceptor.to(TurnEndPhase);
 
-    expect(player.getStatStage(Stat.DEF)).toBe(-1);
-    expect(player.getStatStage(Stat.SPDEF)).toBe(-1);
-    expect(enemy.getStatStage(Stat.DEF)).toBe(0);
-    expect(enemy.getStatStage(Stat.SPDEF)).toBe(0);
-  }, 20000);
+    for (const s of BATTLE_STATS) {
+      if (s === Stat.DEF || s === Stat.SPDEF) {
+        expect(player.getStatStage(s)).toBe(1);
+        expect(enemy.getStatStage(s)).toBe(0);
+      } else {
+        expect(player.getStatStage(s)).toBe(0);
+        expect(enemy.getStatStage(s)).toBe(1);
+      }
+    }
+  }, TIMEOUT);
 });

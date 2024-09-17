@@ -3,7 +3,6 @@ import { Abilities } from "#app/enums/abilities";
 import { Moves } from "#app/enums/moves";
 import { Species } from "#app/enums/species";
 import GameManager from "#test/utils/gameManager";
-import { SPLASH_ONLY } from "#test/utils/testUtils";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -28,7 +27,7 @@ describe("Moves - Freeze-Dry", () => {
       .battleType("single")
       .enemySpecies(Species.MAGIKARP)
       .enemyAbility(Abilities.BALL_FETCH)
-      .enemyMoveset(SPLASH_ONLY)
+      .enemyMoveset(Moves.SPLASH)
       .starterSpecies(Species.FEEBAS)
       .ability(Abilities.BALL_FETCH)
       .moveset([Moves.FREEZE_DRY]);
@@ -92,7 +91,7 @@ describe("Moves - Freeze-Dry", () => {
 
   // enable once Electrify is implemented (and the interaction is fixed, as above)
   it.todo("should deal 2x damage to water types under Electrify", async () => {
-    game.override.enemyMoveset(Array(4).fill(Moves.ELECTRIFY));
+    game.override.enemyMoveset([Moves.ELECTRIFY]);
     await game.classicMode.startBattle();
 
     const enemy = game.scene.getEnemyPokemon()!;
