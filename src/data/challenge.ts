@@ -773,6 +773,38 @@ export class LowerStarterPointsChallenge extends Challenge {
 }
 
 /**
+ * Implements a mono generation challenge.
+ */
+export class SmeargleChallenge extends Challenge {
+  constructor() {
+    super(Challenges.SMEARGLE, 1);
+  }
+
+  applyStarterChoice(pokemon: PokemonSpecies, valid: Utils.BooleanHolder, dexAttr: DexAttrProps, soft: boolean = false): boolean {
+    if (pokemon.speciesId !== Species.SMEARGLE) {
+      valid.value = false;
+      return true;
+    }
+    return false;
+  }
+
+  applyPokemonInBattle(pokemon: Pokemon, valid: Utils.BooleanHolder): boolean {
+    if (pokemon.species.speciesId !== Species.SMEARGLE || pokemon.isFusion()) {
+      valid.value = false;
+      return true;
+    }
+    return false;
+  }
+
+  static loadChallenge(source: SmeargleChallenge | any): SmeargleChallenge {
+    const newChallenge = new SmeargleChallenge();
+    newChallenge.value = source.value;
+    newChallenge.severity = source.severity;
+    return newChallenge;
+  }
+}
+
+/**
  * Apply all challenges that modify starter choice.
  * @param gameMode {@link GameMode} The current gameMode
  * @param challengeType {@link ChallengeType} ChallengeType.STARTER_CHOICE
@@ -961,6 +993,8 @@ export function copyChallenge(source: Challenge | any): Challenge {
     return FreshStartChallenge.loadChallenge(source);
   case Challenges.INVERSE_BATTLE:
     return InverseBattleChallenge.loadChallenge(source);
+  case Challenges.SMEARGLE:
+    return SmeargleChallenge.loadChallenge(source);
   }
   throw new Error("Unknown challenge copied");
 }
@@ -973,5 +1007,6 @@ export function initChallenges() {
     new SingleTypeChallenge(),
     new FreshStartChallenge(),
     new InverseBattleChallenge(),
+    new SmeargleChallenge()
   );
 }

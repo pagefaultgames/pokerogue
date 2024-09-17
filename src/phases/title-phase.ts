@@ -3,6 +3,7 @@ import BattleScene from "#app/battle-scene";
 import { BattleType } from "#app/battle";
 import { getDailyRunStarters, fetchDailyRunSeed } from "#app/data/daily-run";
 import { Gender } from "#app/data/gender";
+import { getPokemonSpecies } from "#app/data/pokemon-species";
 import { getBiomeKey } from "#app/field/arena";
 import { GameModes, GameMode, getGameMode } from "#app/game-mode";
 import { regenerateModifierPoolThresholds, ModifierPoolType, modifierTypes, getDailyRunStarterModifiers } from "#app/modifier/modifier-type";
@@ -21,7 +22,9 @@ import { EncounterPhase } from "./encounter-phase";
 import { SelectChallengePhase } from "./select-challenge-phase";
 import { SelectStarterPhase } from "./select-starter-phase";
 import { SummonPhase } from "./summon-phase";
-
+import { Species } from "#app/enums/species";
+import { Moves } from "#app/enums/moves";
+import { Challenges } from "#app/enums/challenges";
 
 export class TitlePhase extends Phase {
   private loaded: boolean;
@@ -150,6 +153,15 @@ export class TitlePhase extends Phase {
       keepOpen: true
     },
     {
+      label: "Smeargle",
+      handler: () => {
+        this.gameMode = GameModes.CHALLENGE;
+        this.initSmeargle();
+        return true;
+      },
+      keepOpen: true
+    },
+    {
       label: i18next.t("menu:settings"),
       handler: () => {
         this.scene.ui.setOverlayMode(Mode.SETTINGS);
@@ -179,6 +191,51 @@ export class TitlePhase extends Phase {
     }).catch(err => {
       console.error(err);
       this.scene.ui.showText(i18next.t("menu:failedToLoadSession"), null);
+    });
+  }
+
+  initSmeargle(): void {
+    this.scene.ui.setMode(Mode.SAVE_SLOT, SaveSlotUiMode.SAVE, (slotId: integer) => {
+      this.scene.clearPhaseQueue();
+      if (slotId === -1) {
+        this.scene.pushPhase(new TitlePhase(this.scene));
+        return super.end();
+      }
+      this.scene.sessionSlotId = slotId;
+
+
+      const generateSmeargles = () => {
+        this.scene.money = 2500;
+        const startingLevel = 5;
+
+        const party = this.scene.getParty();
+        const loadPokemonAssets: Promise<void>[] = [];
+
+        for (let i = 0; i < 6; i++) {
+          const smeargle = this.scene.addPlayerPokemon(getPokemonSpecies(Species.SMEARGLE), startingLevel);
+          smeargle.setVisible(false);
+          party.push(smeargle);
+          loadPokemonAssets.push(smeargle.loadAssets());
+        }
+
+        Promise.all(loadPokemonAssets).then(() => {
+          this.scene.sessionPlayTime = 0;
+          this.scene.lastSavePlayTime = 0;
+          party.forEach((p, i) => {
+            for (let m = 0; m < 4; m++) {
+              if (i === 0 && m === 0) {
+                p.setMove(m, Moves.TACKLE);
+              } else {
+                p.setMove(m, Moves.SKETCH);
+              }
+            }
+          });
+
+          this.end(true);
+        });
+      };
+      generateSmeargles();
+
     });
   }
 
@@ -257,12 +314,22 @@ export class TitlePhase extends Phase {
     });
   }
 
-  end(): void {
+  end(smeargle = false): void {
     if (!this.loaded && !this.scene.gameMode.isDaily) {
       this.scene.arena.preloadBgm();
       this.scene.gameMode = getGameMode(this.gameMode);
-      if (this.gameMode === GameModes.CHALLENGE) {
+      if (this.gameMode === GameModes.CHALLENGE && !smeargle) {
         this.scene.pushPhase(new SelectChallengePhase(this.scene));
+      } else if (this.gameMode === GameModes.CHALLENGE && smeargle) {
+        this.scene.gameMode = getGameMode(GameModes.CHALLENGE);
+        this.scene.gameMode.challenges.forEach(c => {
+          if (c.id === Challenges.SMEARGLE) {
+            c.value = 1;
+          }
+        });
+        this.scene.newArena(this.scene.gameMode.getStartingBiome(this.scene));
+        this.scene.newBattle();
+        this.scene.arena.init();
       } else {
         this.scene.pushPhase(new SelectStarterPhase(this.scene));
       }

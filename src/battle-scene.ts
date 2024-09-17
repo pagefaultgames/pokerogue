@@ -653,6 +653,8 @@ export default class BattleScene extends SceneBase {
       }
     });
 
+    console.log(this);
+
     this.updateBiomeWaveText();
     this.updateMoneyText();
     this.updateScoreText();
