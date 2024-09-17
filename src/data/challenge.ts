@@ -789,7 +789,7 @@ export class SmeargleChallenge extends Challenge {
   }
 
   applyPokemonInBattle(pokemon: Pokemon, valid: Utils.BooleanHolder): boolean {
-    if (pokemon.species.speciesId !== Species.SMEARGLE || pokemon.isFusion()) {
+    if ((pokemon.species.speciesId !== Species.SMEARGLE || pokemon.isFusion()) && pokemon.isPlayer()) {
       valid.value = false;
       return true;
     }
