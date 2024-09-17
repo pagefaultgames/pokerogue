@@ -6,8 +6,9 @@
   "option": {
     "1": {
       "label": "Nach Wertsachen suchen",
-      "tooltip": "(-) Keine Heilitems in Läden\n(+) Erhalte tolle Items",
-      "selected": "Du arbeitest dich durch den Müllhaufen und wirst von Dreck überzogen.$Kein respektabler Ladenbesitzer wird dir in deinem schmutzigen Zustand etwas verkaufen!$Du musst ohne Heilitems auskommen.$Aber du hast einige unglaubliche Items im Müll gefunden!"
+      "tooltip": "(-) Heilitems kosten ab jetzt das Dreifache\n(+) Erhalte tolle Items",
+      "selected": "Du arbeitest dich durch den Müllhaufen und wirst von Dreck überzogen.$Kein respektabler Ladenbesitzer wird dir in deinem schmutzigen Zustand etwas verkaufen!$Aber es gibt ja auch andere... weniger respektable.$Natürlich verlangen sie höhere Preise.$Aber du hast einige unglaubliche Items im Müll gefunden!"
+
     },
     "2": {
       "label": "Genauer untersuchen",

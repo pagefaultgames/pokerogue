@@ -6,7 +6,7 @@
   "option": {
     "1": {
       "label": "Combatir",
-      "tooltip": "(-) Batalla Difícil\n(+) Recompensas de su Alijo de Bayas",
+      "tooltip": "(-) Batalla Ardua\n(+) Recompensas de su Alijo de Bayas",
       "selected": "El {{greedentName}} llena sus mejillas y se prepara para la batalla!",
       "boss_enraged": "¡El feroz amor de {{greedentName}} por la comida lo tiene enfurecido!",
       "food_stash": "¡Parece que el {{greedentName}} estaba protegiendo un enorme alijo de comida!$@s{item_fanfare}¡Cada Pokémon en tu grupo obtiene una {{foodReward}}!"

@@ -1,24 +1,24 @@
 
 
 {
-  "intro": "A strange man in a tattered coat\nstands in your way...",
-  "speaker": "Shady Guy",
-  "intro_dialogue": "Hey, you!$I've been working on a new device\nto bring out a Pokémon's latent power!$It completely rebinds the Pokémon's atoms\nat a molecular level into a far more powerful form.$Hehe...@d{64} I just need some sac-@d{32}\nErr, test subjects, to prove it works.",
-  "title": "Dark Deal",
-  "description": "The disturbing fellow holds up some Pokéballs.\n\"I'll make it worth your while! You can have these strong Pokéballs as payment, All I need is a Pokémon from your team! Hehe...\"",
-  "query": "What will you do?",
+  "intro": "Un hombre extraño con un abrigo andrajoso se interpone en tu camino...",
+  "speaker": "Tipo sombrío",
+  "intro_dialogue": "¡Oye, tú!$He estado trabajando en un nuevo dispositivo\npara sacar el poder latente de un Pokémon!$Reorganiza completamente los átomos del Pokémon\na nivel molecular en una forma mucho más poderosa.$Jeje…@d{64} Solo necesito algunos sac-@d{32}\nEh, sujetos de prueba, para demostrar que funciona.",
+  "title": "Pacto Oscuro",
+  "description": "El tipo inquietante sostiene unas Pokéballs.\n\"¡Te lo compensaré! Puedes tener estas Pokéballs fuertes como pago. ¡Todo lo que necesito es un Pokémon de tu equipo! Jeje...",
+  "query": "¿Qué harás?",
   "option": {
     "1": {
-      "label": "Accept",
-      "tooltip": "(+) 5 Rogue Balls\n(?) Enhance a Random Pokémon",
-      "selected_dialogue": "Let's see, that {{pokeName}} will do nicely!$Remember, I'm not responsible\nif anything bad happens!@d{32} Hehe...",
-      "selected_message": "The man hands you 5 Rogue Balls.${{pokeName}} hops into the strange machine...$Flashing lights and weird noises\nstart coming from the machine!$...@d{96} Something emerges\nfrom the device, raging wildly!"
+      "label": "Acceptar",
+      "tooltip": "(+) 5 Rogue Balls\n(?) Mejora un Pokémon aleatorio",
+      "selected_dialogue": "Veamos, ¡Ese {{pokeName}} servirá muy bien!$Recuerda, no soy responsable\nsi algo malo sucede!@d{32} Jeje...",
+      "selected_message": "El hombre te entrega 5 Rogue Balls.${{pokeName}} entra dentro de la máquina...$¡Luces intermitentes y ruidos extraños\ncomienzan a salir de la máquina!$...@d{96} Algo emerge\ndel dispositivo, ¡furiosamente!"
     },
     "2": {
-      "label": "Refuse",
-      "tooltip": "(-) No Rewards",
-      "selected": "Not gonna help a poor fellow out?\nPah!"
+      "label": "Rechazar",
+      "tooltip": "(-) Ninguna Recompensa",
+      "selected": "¿No vas a ayudar a un pobre hombre?\n¡Bah!"
     }
   },
-  "outro": "After the harrowing encounter,\nyou collect yourself and depart."
+  "outro": "Después del encuentro angustioso, te recuperas y te marchas."
 }
