@@ -684,7 +684,7 @@ export const pokemonFormChanges: PokemonFormChanges = {
     new SpeciesFormChange(Species.GROUDON, "", SpeciesFormKey.PRIMAL, new SpeciesFormChangeItemTrigger(FormChangeItem.RED_ORB))
   ],
   [Species.RAYQUAZA]: [
-    new SpeciesFormChange(Species.RAYQUAZA, "", SpeciesFormKey.MEGA, new SpeciesFormChangeCompoundTrigger(new SpeciesFormChangeItemTrigger(FormChangeItem.RAYQUAZITE), new SpeciesFormChangeMoveLearnedTrigger(Moves.DRAGON_ASCENT)))
+    new SpeciesFormChange(Species.RAYQUAZA, "", SpeciesFormKey.MEGA, new SpeciesFormChangeItemTrigger(FormChangeItem.RAYQUAZITE))
   ],
   [Species.DEOXYS]: [
     new SpeciesFormChange(Species.DEOXYS, "normal", "attack", new SpeciesFormChangeItemTrigger(FormChangeItem.SHARP_METEORITE)),

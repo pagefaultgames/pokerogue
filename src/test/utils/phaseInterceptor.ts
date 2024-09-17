@@ -60,6 +60,7 @@ export interface PromptHandler {
   expireFn?: () => void;
   awaitingActionInput?: boolean;
 }
+import { ExpPhase } from "#app/phases/exp-phase";
 
 export default class PhaseInterceptor {
   public scene;
@@ -127,7 +128,8 @@ export default class PhaseInterceptor {
     [MysteryEncounterRewardsPhase, this.startPhase],
     [PostMysteryEncounterPhase, this.startPhase],
     [ModifierRewardPhase, this.startPhase],
-    [PartyExpPhase, this.startPhase]
+    [PartyExpPhase, this.startPhase],
+    [ExpPhase, this.startPhase],
   ];
 
   private endBySetMode = [

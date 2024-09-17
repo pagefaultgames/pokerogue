@@ -11,7 +11,7 @@
   "cancel": "Cancelar",
   "memoString": "Natureza {{natureFragment}},\n{{metFragment}}",
   "metFragment": {
-    "normal": "encontrado no Nv.{{level}},\n{{biome}}.",
+    "normal": "encontrado no Nv.{{level}},\n{{biome}}, Onda {{wave}}.",
     "apparently": "aparentemente encontrado no Nv.{{level}},\n{{biome}}."
   },
   "natureFragment": {

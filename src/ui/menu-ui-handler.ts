@@ -157,6 +157,9 @@ export default class MenuUiHandler extends MessageUiHandler {
     menuMessageText.setOrigin(0, 0);
     this.menuMessageBoxContainer.add(menuMessageText);
 
+    this.initTutorialOverlay(this.menuContainer);
+    this.initPromptSprite(this.menuMessageBoxContainer);
+
     this.message = menuMessageText;
 
     // By default we use the general purpose message window
@@ -433,6 +436,9 @@ export default class MenuUiHandler extends MessageUiHandler {
 
     this.scene.playSound("ui/menu_open");
 
+    // Make sure the tutorial overlay sits above everything, but below the message box
+    this.menuContainer.bringToTop(this.tutorialOverlay);
+    this.menuContainer.bringToTop(this.menuMessageBoxContainer);
     handleTutorial(this.scene, Tutorial.Menu);
 
     this.bgmBar.toggleBgmBar(true);

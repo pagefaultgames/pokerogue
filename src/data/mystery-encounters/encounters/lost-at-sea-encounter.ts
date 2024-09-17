@@ -10,6 +10,7 @@ import { applyDamageToPokemon } from "#app/data/mystery-encounters/utils/encount
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
+import {PokemonMove} from "#app/field/pokemon";
 
 const OPTION_1_REQUIRED_MOVE = Moves.SURF;
 const OPTION_2_REQUIRED_MOVE = Moves.FLY;
@@ -44,8 +45,8 @@ export const LostAtSeaEncounter: MysteryEncounter = MysteryEncounterBuilder.with
     const encounter = scene.currentBattle.mysteryEncounter!;
 
     encounter.setDialogueToken("damagePercentage", String(DAMAGE_PERCENTAGE));
-    encounter.setDialogueToken("option1RequiredMove", Moves[OPTION_1_REQUIRED_MOVE]);
-    encounter.setDialogueToken("option2RequiredMove", Moves[OPTION_2_REQUIRED_MOVE]);
+    encounter.setDialogueToken("option1RequiredMove", new PokemonMove(OPTION_1_REQUIRED_MOVE).getName());
+    encounter.setDialogueToken("option2RequiredMove", new PokemonMove(OPTION_2_REQUIRED_MOVE).getName());
 
     return true;
   })

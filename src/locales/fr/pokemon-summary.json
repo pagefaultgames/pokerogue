@@ -11,7 +11,7 @@
   "cancel": "Annuler",
   "memoString": "{{natureFragment}} de nature,\n{{metFragment}}",
   "metFragment": {
-    "normal": "rencontré au N.{{level}},\n{{biome}}.",
+    "normal": "rencontré au N.{{level}},\n{{biome}}, Vague {{wave}}.",
     "apparently": "apparemment rencontré au N.{{level}},\n{{biome}}."
   },
   "natureFragment": {

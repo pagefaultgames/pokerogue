@@ -105,6 +105,7 @@ import HeldModifierConfig from "#app/interfaces/held-modifier-config";
 import { ExpPhase } from "#app/phases/exp-phase";
 import { ShowPartyExpBarPhase } from "#app/phases/show-party-exp-bar-phase";
 import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
+import { ExpGainsSpeed } from "./enums/exp-gains-speed";
 
 export const bypassLogin = import.meta.env.VITE_BYPASS_LOGIN === "1";
 
@@ -180,7 +181,7 @@ export default class BattleScene extends SceneBase {
   public experimentalSprites: boolean = false;
   public musicPreference: integer = 0;
   public moveAnimations: boolean = true;
-  public expGainsSpeed: integer = 0;
+  public expGainsSpeed: ExpGainsSpeed = ExpGainsSpeed.DEFAULT;
   public skipSeenDialogues: boolean = false;
   /**
    * Determines if the egg hatching animation should be skipped

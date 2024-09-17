@@ -214,7 +214,7 @@ export default class SummaryUiHandler extends UiHandler {
 
     this.statusContainer.add(statusLabel);
 
-    this.status = this.scene.add.sprite(91, 4, "statuses");
+    this.status = this.scene.add.sprite(91, 4, `statuses_${i18next.resolvedLanguage}`);
     this.status.setOrigin(0.5, 0);
 
     this.statusContainer.add(this.status);
@@ -824,6 +824,7 @@ export default class SummaryUiHandler extends UiHandler {
         metFragment: i18next.t(`pokemonSummary:metFragment.${this.pokemon?.metBiome === -1? "apparently": "normal"}`, {
           biome: `${getBBCodeFrag(getBiomeName(this.pokemon?.metBiome!), TextStyle.SUMMARY_RED)}${closeFragment}`, // TODO: is this bang correct?
           level: `${getBBCodeFrag(this.pokemon?.metLevel.toString()!, TextStyle.SUMMARY_RED)}${closeFragment}`, // TODO: is this bang correct?
+          wave: `${getBBCodeFrag((this.pokemon?.metWave ? this.pokemon.metWave.toString()! : i18next.t("pokemonSummary:unknownTrainer")), TextStyle.SUMMARY_RED)}${closeFragment}`,
         }),
         natureFragment: i18next.t(`pokemonSummary:natureFragment.${rawNature}`, { nature: nature })
       });

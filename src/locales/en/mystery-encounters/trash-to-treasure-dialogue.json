@@ -6,8 +6,8 @@
   "option": {
     "1": {
       "label": "Dig for Valuables",
-      "tooltip": "(-) Lose Healing Items in Shops\n(+) Gain Amazing Items",
-      "selected": "You wade through the garbage pile, becoming mired in filth.$There's no way any respectable shopkeepers\nwill sell you anything in your grimy state!$You'll just have to make do without shop healing items.$However, you found some incredible items in the garbage!"
+      "tooltip": "(-) Items in Shops Cost 3x\n(+) Gain Amazing Items",
+      "selected": "You wade through the garbage pile, becoming mired in filth.$There's no way any respectable shopkeeper would\nsell you items at the normal rate in your grimy state!$You'll have to pay extra for items now.$However, you found some incredible items in the garbage!"
     },
     "2": {
       "label": "Investigate Further",

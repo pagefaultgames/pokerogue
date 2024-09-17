@@ -1109,11 +1109,11 @@ class EvolutionItemModifierTypeGenerator extends ModifierTypeGenerator {
       }
 
       const evolutionItemPool = [
-        party.filter(p => pokemonEvolutions.hasOwnProperty(p.species.speciesId)).map(p => {
+        party.filter(p => pokemonEvolutions.hasOwnProperty(p.species.speciesId) && (!p.pauseEvolutions || p.species.speciesId === Species.SLOWPOKE || p.species.speciesId === Species.EEVEE)).map(p => {
           const evolutions = pokemonEvolutions[p.species.speciesId];
           return evolutions.filter(e => e.item !== EvolutionItem.NONE && (e.evoFormKey === null || (e.preFormKey || "") === p.getFormKey()) && (!e.condition || e.condition.predicate(p)));
         }).flat(),
-        party.filter(p => p.isFusion() && p.fusionSpecies && pokemonEvolutions.hasOwnProperty(p.fusionSpecies.speciesId)).map(p => {
+        party.filter(p => p.isFusion() && p.fusionSpecies && pokemonEvolutions.hasOwnProperty(p.fusionSpecies.speciesId) && (!p.pauseEvolutions || p.fusionSpecies.speciesId === Species.SLOWPOKE || p.fusionSpecies.speciesId === Species.EEVEE)).map(p => {
           const evolutions = pokemonEvolutions[p.fusionSpecies!.speciesId];
           return evolutions.filter(e => e.item !== EvolutionItem.NONE && (e.evoFormKey === null || (e.preFormKey || "") === p.getFusionFormKey()) && (!e.condition || e.condition.predicate(p)));
         }).flat()
@@ -1371,6 +1371,8 @@ export const modifierTypes = {
   RARE_EVOLUTION_ITEM: () => new EvolutionItemModifierTypeGenerator(true),
   FORM_CHANGE_ITEM: () => new FormChangeItemModifierTypeGenerator(false),
   RARE_FORM_CHANGE_ITEM: () => new FormChangeItemModifierTypeGenerator(true),
+
+  EVOLUTION_TRACKER_GIMMIGHOUL: () => new PokemonHeldItemModifierType("modifierType:ModifierType.EVOLUTION_TRACKER_GIMMIGHOUL", "relic_gold", (type, _args) => new Modifiers.EvoTrackerModifier(type, (_args[0] as Pokemon).id, Species.GIMMIGHOUL, 10)),
 
   MEGA_BRACELET: () => new ModifierType("modifierType:ModifierType.MEGA_BRACELET", "mega_bracelet", (type, _args) => new Modifiers.MegaEvolutionAccessModifier(type)),
   DYNAMAX_BAND: () => new ModifierType("modifierType:ModifierType.DYNAMAX_BAND", "dynamax_band", (type, _args) => new Modifiers.GigantamaxAccessModifier(type)),

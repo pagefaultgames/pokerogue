@@ -43,6 +43,23 @@ describe("Moves - Obstruct", () => {
     expect(enemy.getStatStage(Stat.DEF)).toBe(-2);
   }, TIMEOUT);
 
+  it("bypasses accuracy checks when applying protection and defense reduction", async () => {
+    game.override.enemyMoveset(Array(4).fill(Moves.ICE_PUNCH));
+    await game.classicMode.startBattle();
+
+    game.move.select(Moves.OBSTRUCT);
+    await game.phaseInterceptor.to("MoveEffectPhase");
+    await game.move.forceMiss();
+
+    const player = game.scene.getPlayerPokemon()!;
+    const enemy = game.scene.getEnemyPokemon()!;
+
+    await game.phaseInterceptor.to("TurnEndPhase");
+    expect(player.isFullHp()).toBe(true);
+    expect(enemy.getStatStage(Stat.DEF)).toBe(-2);
+  }, TIMEOUT
+  );
+
   it("protects from non-contact damaging moves and doesn't lower the opponent's defense by 2 stages", async () => {
     game.override.enemyMoveset(Array(4).fill(Moves.WATER_GUN));
     await game.classicMode.startBattle();

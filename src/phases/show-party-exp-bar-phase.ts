@@ -1,4 +1,5 @@
 import BattleScene from "#app/battle-scene";
+import { ExpGainsSpeed } from "#app/enums/exp-gains-speed";
 import { ExpNotification } from "#app/enums/exp-notification";
 import { ExpBoosterModifier } from "#app/modifier/modifier";
 import * as Utils from "#app/utils";
@@ -44,7 +45,7 @@ export class ShowPartyExpBarPhase extends PlayerPartyMemberPokemonPhase {
       } else {
         this.end();
       }
-    } else if (this.scene.expGainsSpeed < 3) {
+    } else if (this.scene.expGainsSpeed < ExpGainsSpeed.SKIP) {
       this.scene.partyExpBar.showPokemonExp(pokemon, exp.value, false, newLevel).then(() => {
         setTimeout(() => this.end(), 500 / Math.pow(2, this.scene.expGainsSpeed));
       });

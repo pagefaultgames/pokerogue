@@ -241,12 +241,15 @@ export class LoadingScene extends SceneBase {
     const lang = i18next.resolvedLanguage;
     if (lang !== "en") {
       if (Utils.verifyLang(lang)) {
+        this.loadAtlas(`statuses_${lang}`, "");
         this.loadAtlas(`types_${lang}`, "");
       } else {
         // Fallback to English
+        this.loadAtlas("statuses", "");
         this.loadAtlas("types", "");
       }
     } else {
+      this.loadAtlas("statuses", "");
       this.loadAtlas("types", "");
     }
     const availableLangs = ["en", "de", "it", "fr", "ja", "ko", "es", "pt-BR", "zh-CN"];

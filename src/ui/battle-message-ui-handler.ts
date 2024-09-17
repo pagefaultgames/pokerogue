@@ -83,12 +83,7 @@ export default class BattleMessageUiHandler extends MessageUiHandler {
     this.nameBoxContainer.add(this.nameText);
     messageContainer.add(this.nameBoxContainer);
 
-    const prompt = this.scene.add.sprite(0, 0, "prompt");
-    prompt.setVisible(false);
-    prompt.setOrigin(0, 0);
-    messageContainer.add(prompt);
-
-    this.prompt = prompt;
+    this.initPromptSprite(messageContainer);
 
     const levelUpStatsContainer = this.scene.add.container(0, 0);
     levelUpStatsContainer.setVisible(false);
