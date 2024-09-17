@@ -73,6 +73,8 @@ class DefaultOverrides {
   };
   /** Forces an item to be UNLOCKED */
   readonly UNLOCK_OVERRIDE: Unlockables[] = [];
+  /** Set to `true` to show all tutorials */
+  readonly BYPASS_TUTORIAL_SKIP: boolean = false;
 
   // ----------------
   // PLAYER OVERRIDES

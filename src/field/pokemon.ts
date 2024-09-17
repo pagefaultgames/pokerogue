@@ -95,6 +95,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   public metLevel: integer;
   public metBiome: Biome | -1;
   public metSpecies: Species;
+  public metWave: number;
   public luck: integer;
   public pauseEvolutions: boolean;
   public pokerus: boolean;
@@ -194,6 +195,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       this.luck = dataSource.luck;
       this.metBiome = dataSource.metBiome;
       this.metSpecies = dataSource.metSpecies ?? (this.metBiome !== -1 ? this.species.speciesId : this.species.getRootSpeciesId(true));
+      this.metWave = dataSource.metWave ?? (this.metBiome === -1 ? -1 : 0);
       this.pauseEvolutions = dataSource.pauseEvolutions;
       this.pokerus = !!dataSource.pokerus;
       this.evoCounter = dataSource.evoCounter ?? 0;
@@ -240,6 +242,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       this.metLevel = level;
       this.metBiome = scene.currentBattle ? scene.arena.biomeType : -1;
       this.metSpecies = species.speciesId;
+      this.metWave = scene.currentBattle ? scene.currentBattle.waveIndex : -1;
       this.pokerus = false;
 
       if (level > 1) {
@@ -4081,6 +4084,7 @@ export class PlayerPokemon extends Pokemon {
         newPokemon.metLevel = this.metLevel;
         newPokemon.metBiome = this.metBiome;
         newPokemon.metSpecies = this.metSpecies;
+        newPokemon.metWave = this.metWave;
         newPokemon.fusionSpecies = this.fusionSpecies;
         newPokemon.fusionFormIndex = this.fusionFormIndex;
         newPokemon.fusionAbilityIndex = this.fusionAbilityIndex;
@@ -4088,6 +4092,7 @@ export class PlayerPokemon extends Pokemon {
         newPokemon.fusionVariant = this.fusionVariant;
         newPokemon.fusionGender = this.fusionGender;
         newPokemon.fusionLuck = this.fusionLuck;
+        newPokemon.usedTMs = this.usedTMs;
 
         this.scene.getParty().push(newPokemon);
         newPokemon.evolve((!isFusion ? newEvolution : new FusionSpeciesFormEvolution(this.id, newEvolution)), evoSpecies);
@@ -4779,6 +4784,7 @@ export class EnemyPokemon extends Pokemon {
       this.pokeball = pokeballType;
       this.metLevel = this.level;
       this.metBiome = this.scene.arena.biomeType;
+      this.metWave = this.scene.currentBattle.waveIndex;
       this.metSpecies = this.species.speciesId;
       const newPokemon = this.scene.addPlayerPokemon(this.species, this.level, this.abilityIndex, this.formIndex, this.gender, this.shiny, this.variant, this.ivs, this.nature, this);
 
