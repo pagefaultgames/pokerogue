@@ -638,10 +638,11 @@ export class TrainerConfig {
      * Initializes the trainer configuration for an evil team admin.
      * @param title The title of the evil team admin.
      * @param poolName The evil team the admin belongs to.
-     * @param {Species | Species[]} signatureSpecies The signature species for the evil team leader.
+     * @param {Species | Species[]} signatureSpecies The signature species for the evil team admin.
+     * @param {Type} specialtyType The specialty type for the evil team admin.
      * @returns {TrainerConfig} The updated TrainerConfig instance.
      * **/
-  initForEvilTeamAdmin(title: string, poolName: string, signatureSpecies: (Species | Species[])[],): TrainerConfig {
+  initForEvilTeamAdmin(title: string, poolName: string, signatureSpecies: (Species | Species[])[], specialtyType?: Type): TrainerConfig {
     if (!getIsInitialized()) {
       initI18n();
     }
@@ -656,6 +657,10 @@ export class TrainerConfig {
       }
       this.setPartyMemberFunc(-(s + 1), getRandomPartyMemberFunc(speciesPool));
     });
+    if (specialtyType) {
+      this.setSpeciesFilter(p => p.isOfType(specialtyType));
+      this.setSpecialtyType(specialtyType);
+    }
 
     const nameForCall = this.name.toLowerCase().replace(/\s/g, "_");
     this.name = i18next.t(`trainerNames:${nameForCall}`);
@@ -673,11 +678,11 @@ export class TrainerConfig {
   /**
    * Initializes the trainer configuration for a Stat Trainer, as part of the Trainer's Test Mystery Encounter.
    * @param {Species | Species[]} signatureSpecies The signature species for the Elite Four member.
-   * @param {Type[]} specialtyTypes The specialty types for the Stat Trainer.
+   * @param {Type} specialtyType The specialty type for the Stat Trainer.
    * @param isMale Whether the Elite Four Member is Male or Female (for localization of the title).
    * @returns {TrainerConfig} The updated TrainerConfig instance.
    **/
-  initForStatTrainer(signatureSpecies: (Species | Species[])[], isMale: boolean, ...specialtyTypes: Type[]): TrainerConfig {
+  initForStatTrainer(signatureSpecies: (Species | Species[])[], isMale: boolean, specialtyType?: Type): TrainerConfig {
     if (!getIsInitialized()) {
       initI18n();
     }
@@ -690,9 +695,9 @@ export class TrainerConfig {
       }
       this.setPartyMemberFunc(-(s + 1), getRandomPartyMemberFunc(speciesPool));
     });
-    if (specialtyTypes.length) {
-      this.setSpeciesFilter(p => specialtyTypes.find(t => p.isOfType(t)) !== undefined);
-      this.setSpecialtyTypes(...specialtyTypes);
+    if (specialtyType) {
+      this.setSpeciesFilter(p => p.isOfType(specialtyType));
+      this.setSpecialtyType(specialtyType);
     }
     const nameForCall = this.name.toLowerCase().replace(/\s/g, "_");
     this.name = i18next.t(`trainerNames:${nameForCall}`);
@@ -1060,8 +1065,8 @@ export class TrainerConfig {
 
     clone = this.speciesPools ? clone.setSpeciesPools(this.speciesPools) : clone;
     clone = this.speciesFilter ? clone.setSpeciesFilter(this.speciesFilter) : clone;
-    if (this.specialtyTypes) {
-      clone.specialtyTypes = this.specialtyTypes.slice(0);
+    if (this.specialtyType) {
+      clone.specialtyType = this.specialtyType;
     }
 
     clone.encounterMessages = this.encounterMessages?.slice(0);
