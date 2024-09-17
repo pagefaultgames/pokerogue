@@ -1,36 +1,37 @@
-import * as ModifierTypes from "./modifier-type";
-import BattleScene from "../battle-scene";
-import { getLevelTotalExp } from "../data/exp";
-import { MAX_PER_TYPE_POKEBALLS, PokeballType } from "../data/pokeball";
-import Pokemon, { PlayerPokemon } from "../field/pokemon";
-import { addTextObject, TextStyle } from "../ui/text";
-import { Type } from "../data/type";
-import { EvolutionPhase } from "../phases/evolution-phase";
-import { FusionSpeciesFormEvolution, pokemonEvolutions, pokemonPrevolutions } from "../data/pokemon-evolutions";
-import { getPokemonNameWithAffix } from "../messages";
-import * as Utils from "../utils";
-import { getBerryEffectFunc, getBerryPredicate } from "../data/berry";
+import { Nature } from "#app/data/nature";
+import { BATTLE_STATS, Stat, TEMP_BATTLE_STATS, type PermanentStat, type TempBattleStat } from "#app/enums/stat";
+import Overrides from "#app/overrides";
+import { Command } from "#app/ui/command-ui-handler";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { BerryType } from "#enums/berry-type";
-import { StatusEffect, getStatusEffectHealText } from "../data/status-effect";
+import { Species } from "#enums/species";
+import i18next from "i18next";
+import BattleScene from "../battle-scene";
+import { getBerryEffectFunc, getBerryPredicate } from "../data/berry";
+import { getLevelTotalExp } from "../data/exp";
+import { MAX_PER_TYPE_POKEBALLS, PokeballType } from "../data/pokeball";
+import { FusionSpeciesFormEvolution, pokemonEvolutions, pokemonPrevolutions } from "../data/pokemon-evolutions";
+import { FormChangeItem, SpeciesFormChangeItemTrigger, SpeciesFormChangeLapseTeraTrigger, SpeciesFormChangeTeraTrigger } from "../data/pokemon-forms";
+import { getStatusEffectHealText, StatusEffect } from "../data/status-effect";
+import { Type } from "../data/type";
+import EnemyPokemon, { PlayerPokemon } from "../field/pokemon";
+import { getPokemonNameWithAffix } from "../messages";
+import { EvolutionPhase } from "../phases/evolution-phase";
 import { achvs } from "../system/achv";
 import { VoucherType } from "../system/voucher";
-import { FormChangeItem, SpeciesFormChangeItemTrigger, SpeciesFormChangeLapseTeraTrigger, SpeciesFormChangeTeraTrigger } from "../data/pokemon-forms";
-import { Nature } from "#app/data/nature";
-import Overrides from "#app/overrides";
+import { addTextObject, TextStyle } from "../ui/text";
+import * as Utils from "../utils";
+import * as ModifierTypes from "./modifier-type";
 import { ModifierType, modifierTypes } from "./modifier-type";
-import { Command } from "#app/ui/command-ui-handler";
-import { Species } from "#enums/species";
-import { Stat, type PermanentStat, type TempBattleStat, BATTLE_STATS, TEMP_BATTLE_STATS } from "#app/enums/stat";
-import i18next from "i18next";
 
 import { allMoves } from "#app/data/move";
 import { Abilities } from "#app/enums/abilities";
 import { LearnMovePhase } from "#app/phases/learn-move-phase";
 import { LevelUpPhase } from "#app/phases/level-up-phase";
 import { PokemonHealPhase } from "#app/phases/pokemon-heal-phase";
+import Pokemon from "../field/pokemon";
 
-export type ModifierPredicate = (modifier: Modifier) => boolean;
+export type ModifierPredicate<T extends Modifier = Modifier> = (modifier: T) => boolean;
 
 const iconOverflowIndex = 24;
 
@@ -142,11 +143,20 @@ export abstract class Modifier {
     return false;
   }
 
-  shouldApply(_args: any[]): boolean {
+  /**
+   * Checks if {@linkcode Modifier} should applied
+   * @param _args parameters passed to {@linkcode Modifier#apply}
+   * @returns always `true` by default
+   */
+  shouldApply(..._args: Parameters<this["apply"]>): boolean {
     return true;
   }
 
-  abstract apply(args: any[]): boolean | Promise<boolean>;
+  /**
+   * Handles applying of {@linkcode Modifier}
+   * @param args collection of all passed parameters
+   */
+  abstract apply(...args: unknown[]): boolean | Promise<boolean>;
 }
 
 export abstract class PersistentModifier extends Modifier {
@@ -248,10 +258,6 @@ export abstract class ConsumableModifier extends Modifier {
   add(_modifiers: Modifier[]): boolean {
     return true;
   }
-
-  shouldApply(args: any[]): boolean {
-    return super.shouldApply(args) && args.length === 1 && args[0] instanceof BattleScene;
-  }
 }
 
 export class AddPokeballModifier extends ConsumableModifier {
@@ -265,8 +271,13 @@ export class AddPokeballModifier extends ConsumableModifier {
     this.count = count;
   }
 
-  apply(args: any[]): boolean {
-    const pokeballCounts = (args[0] as BattleScene).pokeballCounts;
+  /**
+   * Applies {@linkcode AddPokeballModifier}
+   * @param battleScene {@linkcode BattleScene}
+   * @returns always `true`
+   */
+  override apply(battleScene: BattleScene): boolean {
+    const pokeballCounts = battleScene.pokeballCounts;
     pokeballCounts[this.pokeballType] = Math.min(pokeballCounts[this.pokeballType] + this.count, MAX_PER_TYPE_POKEBALLS);
 
     return true;
@@ -284,8 +295,13 @@ export class AddVoucherModifier extends ConsumableModifier {
     this.count = count;
   }
 
-  apply(args: any[]): boolean {
-    const voucherCounts = (args[0] as BattleScene).gameData.voucherCounts;
+  /**
+   * Applies {@linkcode AddVoucherModifier}
+   * @param battleScene {@linkcode BattleScene}
+   * @returns always `true`
+   */
+  override apply(battleScene: BattleScene): boolean {
+    const voucherCounts = battleScene.gameData.voucherCounts;
     voucherCounts[this.voucherType] += this.count;
 
     return true;
@@ -323,7 +339,7 @@ export abstract class LapsingPersistentModifier extends PersistentModifier {
    * @param modifiers {@linkcode PersistentModifier} array of the player's modifiers
    * @param _virtual N/A
    * @param _scene N/A
-   * @returns true if the modifier was successfully added or applied, false otherwise
+   * @returns `true` if the modifier was successfully added or applied, false otherwise
    */
   add(modifiers: PersistentModifier[], _virtual: boolean, scene: BattleScene): boolean {
     for (const modifier of modifiers) {
@@ -414,11 +430,10 @@ export class DoubleBattleChanceBoosterModifier extends LapsingPersistentModifier
 
   /**
    * Modifies the chance of a double battle occurring
-   * @param args [0] {@linkcode Utils.NumberHolder} for double battle chance
-   * @returns true if the modifier was applied
+   * @param doubleBattleChance {@linkcode Utils.NumberHolder} for double battle chance
+   * @returns true
    */
-  apply(args: any[]): boolean {
-    const doubleBattleChance = args[0] as Utils.NumberHolder;
+  override apply(doubleBattleChance: Utils.NumberHolder): boolean {
     // This is divided because the chance is generated as a number from 0 to doubleBattleChance.value using Utils.randSeedInt
     // A double battle will initiate if the generated number is 0
     doubleBattleChance.value = Math.ceil(doubleBattleChance.value / 4);
@@ -468,21 +483,21 @@ export class TempStatStageBoosterModifier extends LapsingPersistentModifier {
   /**
    * Checks if {@linkcode args} contains the necessary elements and if the
    * incoming stat is matches {@linkcode stat}.
-   * @param args [0] {@linkcode TempBattleStat} being checked at the time
-   *             [1] {@linkcode Utils.NumberHolder} N/A
-   * @returns true if the modifier can be applied, false otherwise
+   * @param tempBattleStat {@linkcode TempBattleStat} N/A
+   * @param statLevel {@linkcode Utils.NumberHolder} that holds the resulting value of the stat stage multiplier
+   * @returns `true` if the modifier can be applied, false otherwise
    */
-  shouldApply(args: any[]): boolean {
-    return args && (args.length === 2) && TEMP_BATTLE_STATS.includes(args[0]) && (args[0] === this.stat) && (args[1] instanceof Utils.NumberHolder);
+  override shouldApply(tempBattleStat?: TempBattleStat, statLevel?: Utils.IntegerHolder): boolean {
+    return !!tempBattleStat && !!statLevel && TEMP_BATTLE_STATS.includes(tempBattleStat) && (tempBattleStat === this.stat) && (statLevel instanceof Utils.NumberHolder);
   }
 
   /**
    * Increases the incoming stat stage matching {@linkcode stat} by {@linkcode boost}.
-   * @param args [0] {@linkcode TempBattleStat} N/A
-   *             [1] {@linkcode Utils.NumberHolder} that holds the resulting value of the stat stage multiplier
+   * @param _tempBattleStat {@linkcode TempBattleStat} N/A
+   * @param statLevel {@linkcode Utils.NumberHolder} that holds the resulting value of the stat stage multiplier
    */
-  apply(args: any[]): boolean {
-    (args[1] as Utils.NumberHolder).value += this.boost;
+  override apply(_tempBattleStat: TempBattleStat, statLevel: Utils.IntegerHolder): boolean {
+    statLevel.value += this.boost;
     return true;
   }
 }
@@ -508,20 +523,20 @@ export class TempCritBoosterModifier extends LapsingPersistentModifier {
 
   /**
    * Checks if {@linkcode args} contains the necessary elements.
-   * @param args [1] {@linkcode Utils.NumberHolder} N/A
-   * @returns true if the critical-hit stage boost applies successfully
+   * @param critLevel {@linkcode Utils.NumberHolder} N/A
+   * @returns `true` if the critical-hit stage boost applies successfully
    */
-  shouldApply(args: any[]): boolean {
-    return args && (args.length === 1) && (args[0] instanceof Utils.NumberHolder);
+  override shouldApply(critLevel?: Utils.IntegerHolder): boolean {
+    return !!critLevel && (critLevel instanceof Utils.NumberHolder);
   }
 
   /**
    * Increases the current critical-hit stage value by 1.
-   * @param args [0] {@linkcode Utils.IntegerHolder} that holds the resulting critical-hit level
-   * @returns true if the critical-hit stage boost applies successfully
+   * @param critLevel {@linkcode Utils.IntegerHolder} that holds the resulting critical-hit level
+   * @returns `true` if the critical-hit stage boost applies successfully
    */
-  apply(args: any[]): boolean {
-    (args[0] as Utils.NumberHolder).value++;
+  override apply(critLevel: Utils.IntegerHolder): boolean {
+    critLevel.value++;
     return true;
   }
 }
@@ -535,7 +550,7 @@ export class MapModifier extends PersistentModifier {
     return new MapModifier(this.type, this.stackCount);
   }
 
-  apply(args: any[]): boolean {
+  override apply(..._args: unknown[]): boolean {
     return true;
   }
 
@@ -553,7 +568,12 @@ export class MegaEvolutionAccessModifier extends PersistentModifier {
     return new MegaEvolutionAccessModifier(this.type, this.stackCount);
   }
 
-  apply(args: any[]): boolean {
+  /**
+   * Apply {@linkcode MegaEvolutionAccessModifier}
+   * @param _args N/A
+   * @returns always `true`
+   */
+  override apply(..._args: unknown[]): boolean {
     return true;
   }
 
@@ -571,7 +591,12 @@ export class GigantamaxAccessModifier extends PersistentModifier {
     return new GigantamaxAccessModifier(this.type, this.stackCount);
   }
 
-  apply(args: any[]): boolean {
+  /**
+   * Apply {@linkcode GigantamaxAccessModifier}
+   * @param _args N/A
+   * @returns always `true`
+   */
+  apply(..._args: unknown[]): boolean {
     return true;
   }
 
@@ -589,7 +614,12 @@ export class TerastallizeAccessModifier extends PersistentModifier {
     return new TerastallizeAccessModifier(this.type, this.stackCount);
   }
 
-  apply(args: any[]): boolean {
+  /**
+   * Apply {@linkcode TerastallizeAccessModifier}
+   * @param _args N/A
+   * @returns always `true`
+   */
+  override apply(..._args: unknown[]): boolean {
     return true;
   }
 
@@ -618,8 +648,21 @@ export abstract class PokemonHeldItemModifier extends PersistentModifier {
     return [ this.pokemonId ];
   }
 
-  shouldApply(args: any[]): boolean {
-    return super.shouldApply(args) && args.length !== 0 && args[0] instanceof Pokemon && (this.pokemonId === -1 || (args[0] as Pokemon).id === this.pokemonId);
+  /**
+   * Applies the {@linkcode PokemonHeldItemModifier} to the given {@linkcode Pokemon}.
+   * @param pokemon The {@linkcode Pokemon} that holds the held item
+   * @param args additional parameters
+   */
+  abstract override apply(pokemon: Pokemon, ...args: unknown[]): boolean;
+
+  /**
+   * Checks if {@linkcode PokemonHeldItemModifier} should be applied.
+   * @param pokemon The {@linkcode Pokemon} that holds the item
+   * @param _args N/A
+   * @returns if {@linkcode PokemonHeldItemModifier} should be applied
+   */
+  override shouldApply(pokemon?: Pokemon, ..._args: unknown[]): boolean {
+    return !!pokemon && pokemon instanceof Pokemon && (this.pokemonId === -1 || pokemon.id === this.pokemonId);
   }
 
   isIconVisible(scene: BattleScene): boolean {
@@ -759,8 +802,12 @@ export class TerastallizeModifier extends LapsingPokemonHeldItemModifier {
     return [ this.pokemonId, this.teraType, this.battlesLeft ];
   }
 
-  apply(args: any[]): boolean {
-    const pokemon = args[0] as Pokemon;
+  /**
+   * Applies the {@linkcode TerastallizeModifier} to the specified {@linkcode Pokemon}.
+   * @param pokemon the {@linkcode Pokemon} to be terastallized
+   * @returns always `true`
+   */
+  override apply(pokemon: Pokemon): boolean {
     if (pokemon.isPlayer()) {
       pokemon.scene.triggerPokemonFormChange(pokemon, SpeciesFormChangeTeraTrigger);
       pokemon.scene.validateAchv(achvs.TERASTALLIZE);
@@ -821,12 +868,23 @@ export class BaseStatModifier extends PokemonHeldItemModifier {
     return super.getArgs().concat(this.stat);
   }
 
-  shouldApply(args: any[]): boolean {
-    return super.shouldApply(args) && args.length === 2 && Array.isArray(args[1]);
+  /**
+   * Checks if {@linkcode BaseStatModifier} should be applied to the specified {@linkcode Pokemon}.
+   * @param _pokemon the {@linkcode Pokemon} to be modified
+   * @param baseStats the base stats of the {@linkcode Pokemon}
+   * @returns `true` if the {@linkcode Pokemon} should be modified
+   */
+  override shouldApply(_pokemon?: Pokemon, baseStats?: number[]): boolean {
+    return super.shouldApply(_pokemon, baseStats) && Array.isArray(baseStats);
   }
 
-  apply(args: any[]): boolean {
-    const baseStats = args[1] as number[];
+  /**
+   * Applies the {@linkcode BaseStatModifier} to the specified {@linkcode Pokemon}.
+   * @param _pokemon the {@linkcode Pokemon} to be modified
+   * @param baseStats the base stats of the {@linkcode Pokemon}
+   * @returns always `true`
+   */
+  override apply(_pokemon: Pokemon, baseStats: number[]): boolean {
     baseStats[this.stat] = Math.floor(baseStats[this.stat] * (1 + this.getStackCount() * 0.1));
     return true;
   }
@@ -866,7 +924,11 @@ export class EvoTrackerModifier extends PokemonHeldItemModifier {
     return super.getArgs().concat(this.species);
   }
 
-  apply(args: any[]): boolean {
+  /**
+   * Applies the {@linkcode EvoTrackerModifier}
+   * @returns always `true`
+   */
+  override apply(): boolean {
     return true;
   }
 
@@ -899,16 +961,28 @@ export class PokemonBaseStatTotalModifier extends PokemonHeldItemModifier {
     return super.getArgs().concat(this.statModifier);
   }
 
-  override shouldApply(args: any[]): boolean {
-    return super.shouldApply(args) && args.length === 2 && args[1] instanceof Array;
+  /**
+   * Checks if {@linkcode PokemonBaseStatTotalModifier} should be applied to the specified {@linkcode Pokemon}.
+   * @param pokemon the {@linkcode Pokemon} to be modified
+   * @param baseStats the base stats of the {@linkcode Pokemon}
+   * @returns `true` if the {@linkcode Pokemon} should be modified
+   */
+  override shouldApply(pokemon?: Pokemon, baseStats?: number[]): boolean {
+    return super.shouldApply(pokemon, baseStats) && Array.isArray(baseStats);
   }
 
-  override apply(args: any[]): boolean {
+  /**
+   * Applies the {@linkcode PokemonBaseStatTotalModifier}
+   * @param _pokemon the {@linkcode Pokemon} to be modified
+   * @param baseStats the base stats of the {@linkcode Pokemon}
+   * @returns always `true`
+   */
+  override apply(_pokemon: Pokemon, baseStats: number[]): boolean {
     // Modifies the passed in baseStats[] array
-    args[1].forEach((v, i) => {
+    baseStats.forEach((v, i) => {
       // HP is affected by half as much as other stats
       const newVal = i === 0 ? Math.floor(v + this.statModifier / 2) : Math.floor(v + this.statModifier);
-      args[1][i] = Math.min(Math.max(newVal, 1), 999999);
+      baseStats[1][i] = Math.min(Math.max(newVal, 1), 999999);
     });
 
     return true;
@@ -950,16 +1024,28 @@ export class PokemonBaseStatFlatModifier extends PokemonHeldItemModifier {
     return super.getArgs().concat(this.statModifier, this.stats);
   }
 
-  override shouldApply(args: any[]): boolean {
-    return super.shouldApply(args) && args.length === 2 && args[1] instanceof Array;
+  /**
+   * Checks if the {@linkcode PokemonBaseStatFlatModifier} should be applied to the {@linkcode Pokemon}.
+   * @param pokemon The {@linkcode Pokemon} that holds the item
+   * @param baseStats The base stats of the {@linkcode Pokemon}
+   * @returns `true` if the {@linkcode PokemonBaseStatFlatModifier} should be applied
+   */
+  override shouldApply(pokemon?: Pokemon, baseStats?: number[]): boolean {
+    return super.shouldApply(pokemon, baseStats) && Array.isArray(baseStats);
   }
 
-  override apply(args: any[]): boolean {
+  /**
+   * Applies the {@linkcode PokemonBaseStatFlatModifier}
+   * @param _pokemon The {@linkcode Pokemon} that holds the item
+   * @param baseStats The base stats of the {@linkcode Pokemon}
+   * @returns always `true`
+   */
+  override apply(_pokemon: Pokemon, baseStats: number[]): boolean {
     // Modifies the passed in baseStats[] array by a flat value, only if the stat is specified in this.stats
-    args[1].forEach((v, i) => {
+    baseStats.forEach((v, i) => {
       if (this.stats.includes(i)) {
         const newVal = Math.floor(v + this.statModifier);
-        args[1][i] = Math.min(Math.max(newVal, 1), 999999);
+        baseStats[i] = Math.min(Math.max(newVal, 1), 999999);
       }
     });
 
@@ -997,21 +1083,33 @@ export class PokemonIncrementingStatModifier extends PokemonHeldItemModifier {
     return super.getArgs();
   }
 
-  shouldApply(args: any[]): boolean {
-    return super.shouldApply(args) && args.length === 2 && args[1] instanceof Array;
+  /**
+   * Checks if the {@linkcode PokemonIncrementingStatModifier} should be applied to the {@linkcode Pokemon}.
+   * @param pokemon The {@linkcode Pokemon} that holds the item
+   * @param baseStats The base stats of the {@linkcode Pokemon}
+   * @returns `true` if the {@linkcode PokemonBaseStatFlatModifier} should be applied
+   */
+  override shouldApply(pokemon?: Pokemon, baseStats?: number[]): boolean {
+    return super.shouldApply(pokemon, baseStats) && Array.isArray(baseStats);
   }
 
-  apply(args: any[]): boolean {
+  /**
+   * Applies the {@linkcode PokemonIncrementingStatModifier}
+   * @param _pokemon The {@linkcode Pokemon} that holds the item
+   * @param baseStats The base stats of the {@linkcode Pokemon}
+   * @returns always `true`
+   */
+  override apply(_pokemon: Pokemon, baseStats: number[]): boolean {
     // Modifies the passed in stats[] array by +1 per stack for HP, +2 per stack for other stats
     // If the Macho Brace is at max stacks (50), adds additional 5% to total HP and 10% to other stats
-    args[1].forEach((v, i) => {
+    baseStats.forEach((v, i) => {
       const isHp = i === 0;
       let mult = 1;
       if (this.stackCount === this.getMaxHeldItemCount()) {
         mult = isHp ? 1.05 : 1.1;
       }
       const newVal = Math.floor((v + this.stackCount * (isHp ? 1 : 2)) * mult);
-      args[1][i] = Math.min(Math.max(newVal, 1), 999999);
+      baseStats[i] = Math.min(Math.max(newVal, 1), 999999);
     });
 
     return true;
@@ -1066,27 +1164,25 @@ export class StatBoosterModifier extends PokemonHeldItemModifier {
 
   /**
    * Checks if the incoming stat is listed in {@linkcode stats}
-   * @param args [0] {@linkcode Pokemon} N/A
-   *             [1] {@linkcode Stat} being checked at the time
-   *             [2] {@linkcode Utils.NumberHolder} N/A
-   * @returns true if the stat could be boosted, false otherwise
+   * @param _pokemon the {@linkcode Pokemon} that holds the item
+   * @param _stat the {@linkcode Stat} to be boosted
+   * @param statValue {@linkcode Utils.NumberHolder} that holds the resulting value of the stat
+   * @returns `true` if the stat could be boosted, false otherwise
    */
-  shouldApply(args: any[]): boolean {
-    return super.shouldApply(args) && this.stats.includes(args[1] as Stat);
+  override shouldApply(pokemon: Pokemon, stat: Stat, statValue: Utils.NumberHolder): boolean {
+    return super.shouldApply(pokemon, stat, statValue) && this.stats.includes(stat);
   }
 
   /**
    * Boosts the incoming stat by a {@linkcode multiplier} if the stat is listed
    * in {@linkcode stats}.
-   * @param args [0] {@linkcode Pokemon} N/A
-   *             [1] {@linkcode Stat} N/A
-   *             [2] {@linkcode Utils.NumberHolder} that holds the resulting value of the stat
-   * @returns true if the stat boost applies successfully, false otherwise
+   * @param _pokemon the {@linkcode Pokemon} that holds the item
+   * @param _stat the {@linkcode Stat} to be boosted
+   * @param statValue {@linkcode Utils.NumberHolder} that holds the resulting value of the stat
+   * @returns `true` if the stat boost applies successfully, false otherwise
    * @see shouldApply
    */
-  apply(args: any[]): boolean {
-    const statValue = args[2] as Utils.NumberHolder;
-
+  override apply(_pokemon: Pokemon, _stat: Stat, statValue: Utils.NumberHolder): boolean {
     statValue.value *= this.multiplier;
     return true;
   }
@@ -1114,39 +1210,37 @@ export class EvolutionStatBoosterModifier extends StatBoosterModifier {
   /**
    * Checks if the stat boosts can apply and if the holder is not currently
    * Gigantamax'd.
-   * @param args [0] {@linkcode Pokemon} that holds the held item
-   *             [1] {@linkcode Stat} N/A
-   *             [2] {@linkcode Utils.NumberHolder} N/A
-   * @returns true if the stat boosts can be applied, false otherwise
+   * @param pokemon {@linkcode Pokemon} that holds the held item
+   * @param stat {@linkcode Stat} The {@linkcode Stat} to be boosted
+   * @param statValue {@linkcode Utils.NumberHolder} that holds the resulting value of the stat
+   * @returns `true` if the stat boosts can be applied, false otherwise
    */
-  shouldApply(args: any[]): boolean {
-    return super.shouldApply(args) && !(args[0] as Pokemon).isMax();
+  override shouldApply(pokemon: Pokemon, stat: Stat, statValue: Utils.NumberHolder): boolean {
+    return super.shouldApply(pokemon, stat, statValue) && !pokemon.isMax();
   }
 
   /**
-   * Boosts the incoming stat value by a {@linkcode multiplier} if the holder
+   * Boosts the incoming stat value by a {@linkcode EvolutionStatBoosterModifier#multiplier} if the holder
    * can evolve. Note that, if the holder is a fusion, they will receive
    * only half of the boost if either of the fused members are fully
    * evolved. However, if they are both unevolved, the full boost
    * will apply.
-   * @param args [0] {@linkcode Pokemon} that holds the held item
-   *             [1] {@linkcode Stat} N/A
-   *             [2] {@linkcode Utils.NumberHolder} that holds the resulting value of the stat
-   * @returns true if the stat boost applies successfully, false otherwise
+   * @param pokemon {@linkcode Pokemon} that holds the item
+   * @param _stat {@linkcode Stat} The {@linkcode Stat} to be boosted
+   * @param statValue{@linkcode Utils.NumberHolder} that holds the resulting value of the stat
+   * @returns `true` if the stat boost applies successfully, false otherwise
    * @see shouldApply
    */
-  apply(args: any[]): boolean {
-    const holder = args[0] as Pokemon;
-    const statValue = args[2] as Utils.NumberHolder;
-    const isUnevolved = holder.getSpeciesForm(true).speciesId in pokemonEvolutions;
+  override apply(pokemon: Pokemon, stat: Stat, statValue: Utils.NumberHolder): boolean {
+    const isUnevolved = pokemon.getSpeciesForm(true).speciesId in pokemonEvolutions;
 
-    if (holder.isFusion() && (holder.getFusionSpeciesForm(true).speciesId in pokemonEvolutions) !== isUnevolved) {
-      // Half boost applied if holder is fused and either part of fusion is fully evolved
+    if (pokemon.isFusion() && (pokemon.getFusionSpeciesForm(true).speciesId in pokemonEvolutions) !== isUnevolved) {
+      // Half boost applied if pokemon is fused and either part of fusion is fully evolved
       statValue.value *= 1 + (this.multiplier - 1) / 2;
       return true;
     } else if (isUnevolved) {
       // Full boost applied if holder is unfused and unevolved or, if fused, both parts of fusion are unevolved
-      return super.apply(args);
+      return super.apply(pokemon, stat, statValue);
     }
 
     return false;
@@ -1191,21 +1285,20 @@ export class SpeciesStatBoosterModifier extends StatBoosterModifier {
   /**
    * Checks if the incoming stat is listed in {@linkcode stats} and if the holder's {@linkcode Species}
    * (or its fused species) is listed in {@linkcode species}.
-   * @param args [0] {@linkcode Pokemon} that holds the held item
-   *             [1] {@linkcode Stat} being checked at the time
-   *             [2] {@linkcode Utils.NumberHolder} N/A
-   * @returns true if the stat could be boosted, false otherwise
+   * @param pokemon {@linkcode Pokemon} that holds the item
+   * @param stat {@linkcode Stat} being checked at the time
+   * @param statValue {@linkcode Utils.NumberHolder} that holds the resulting value of the stat
+   * @returns `true` if the stat could be boosted, false otherwise
    */
-  shouldApply(args: any[]): boolean {
-    const holder = args[0] as Pokemon;
-    return super.shouldApply(args) && (this.species.includes(holder.getSpeciesForm(true).speciesId) || (holder.isFusion() && this.species.includes(holder.getFusionSpeciesForm(true).speciesId)));
+  override shouldApply(pokemon: Pokemon, stat: Stat, statValue: Utils.NumberHolder): boolean {
+    return super.shouldApply(pokemon, stat, statValue) && (this.species.includes(pokemon.getSpeciesForm(true).speciesId) || (pokemon.isFusion() && this.species.includes(pokemon.getFusionSpeciesForm(true).speciesId)));
   }
 
   /**
    * Checks if either parameter is included in the corresponding lists
    * @param speciesId {@linkcode Species} being checked
    * @param stat {@linkcode Stat} being checked
-   * @returns true if both parameters are in {@linkcode species} and {@linkcode stats} respectively, false otherwise
+   * @returns `true` if both parameters are in {@linkcode species} and {@linkcode stats} respectively, false otherwise
    */
   contains(speciesId: Species, stat: Stat): boolean {
     return this.species.includes(speciesId) && this.stats.includes(stat);
@@ -1245,13 +1338,11 @@ export class CritBoosterModifier extends PokemonHeldItemModifier {
 
   /**
    * Increases the current critical-hit stage value by {@linkcode stageIncrement}.
-   * @param args [0] {@linkcode Pokemon} N/A
-   *             [1] {@linkcode Utils.IntegerHolder} that holds the resulting critical-hit level
-   * @returns true if the critical-hit stage boost applies successfully, false otherwise
+   * @param _pokemon {@linkcode Pokemon} N/A
+   * @param critStage {@linkcode Utils.IntegerHolder} that holds the resulting critical-hit level
+   * @returns always `true`
    */
-  apply(args: any[]): boolean {
-    const critStage = args[1] as Utils.NumberHolder;
-
+  override apply(_pokemon: Pokemon, critStage: Utils.NumberHolder): boolean {
     critStage.value += this.stageIncrement;
     return true;
   }
@@ -1292,14 +1383,12 @@ export class SpeciesCritBoosterModifier extends CritBoosterModifier {
   /**
    * Checks if the holder's {@linkcode Species} (or its fused species) is listed
    * in {@linkcode species}.
-   * @param args [0] {@linkcode Pokemon} that holds the held item
-   *             [1] {@linkcode Utils.IntegerHolder} N/A
-   * @returns true if the critical-hit level can be incremented, false otherwise
+   * @param pokemon {@linkcode Pokemon} that holds the held item
+   * @param critStage {@linkcode Utils.IntegerHolder} that holds the resulting critical-hit level
+   * @returns `true` if the critical-hit level can be incremented, false otherwise
    */
-  shouldApply(args: any[]) {
-    const holder = args[0] as Pokemon;
-
-    return super.shouldApply(args) && (this.species.includes(holder.getSpeciesForm(true).speciesId) || (holder.isFusion() && this.species.includes(holder.getFusionSpeciesForm(true).speciesId)));
+  override shouldApply(pokemon: Pokemon, critStage: Utils.NumberHolder): boolean {
+    return super.shouldApply(pokemon, critStage) && (this.species.includes(pokemon.getSpeciesForm(true).speciesId) || (pokemon.isFusion() && this.species.includes(pokemon.getFusionSpeciesForm(true).speciesId)));
   }
 }
 
@@ -1334,20 +1423,27 @@ export class AttackTypeBoosterModifier extends PokemonHeldItemModifier {
     return super.getArgs().concat([ this.moveType, this.boostMultiplier * 100 ]);
   }
 
-  shouldApply(args: any[]): boolean {
-    return super.shouldApply(args) && args.length === 3 && typeof args[1] === "number" && args[2] instanceof Utils.NumberHolder;
+  /**
+   * Checks if {@linkcode AttackTypeBoosterModifier} should be applied
+   * @param pokemon the {@linkcode Pokemon} that holds the held item
+   * @param moveType the {@linkcode Type} of the move being used
+   * @param movePower the {@linkcode Utils.NumberHolder} that holds the power of the move
+   * @returns `true` if boosts should be applied to the move.
+   */
+  override shouldApply(pokemon?: Pokemon, moveType?: Type, movePower?: Utils.NumberHolder): boolean {
+    return super.shouldApply(pokemon, moveType, movePower) && typeof moveType === "number" && movePower instanceof Utils.NumberHolder;
   }
 
   /**
- * @param {Array<any>} args Array
- *                          - Index 0: {Pokemon} Pokemon
- *                          - Index 1: {number} Move type
- *                          - Index 2: {Utils.NumberHolder} Move power
- * @returns {boolean} Returns true if boosts have been applied to the move.
- */
-  apply(args: any[]): boolean {
-    if (args[1] === this.moveType && (args[2] as Utils.NumberHolder).value >= 1) {
-      (args[2] as Utils.NumberHolder).value = Math.floor((args[2] as Utils.NumberHolder).value * (1 + (this.getStackCount() * this.boostMultiplier)));
+   * Applies {@linkcode AttackTypeBoosterModifier}
+   * @param pokemon {@linkcode Pokemon} that holds the held item
+   * @param moveType {@linkcode Type} of the move being used
+   * @param movePower {@linkcode Utils.NumberHolder} that holds the power of the move
+   * @returns `true` if boosts have been applied to the move.
+   */
+  override apply(_pokemon: Pokemon, moveType: Type, movePower: Utils.NumberHolder): boolean {
+    if (moveType === this.moveType && movePower.value >= 1) {
+      (movePower as Utils.NumberHolder).value = Math.floor((movePower as Utils.NumberHolder).value * (1 + (this.getStackCount() * this.boostMultiplier)));
       return true;
     }
 
@@ -1376,14 +1472,23 @@ export class SurviveDamageModifier extends PokemonHeldItemModifier {
     return new SurviveDamageModifier(this.type, this.pokemonId, this.stackCount);
   }
 
-  shouldApply(args: any[]): boolean {
-    return super.shouldApply(args) && args.length === 2 && args[1] instanceof Utils.BooleanHolder;
+  /**
+   * Checks if the {@linkcode SurviveDamageModifier} should be applied
+   * @param pokemon the {@linkcode Pokemon} that holds the item
+   * @param surviveDamage {@linkcode Utils.BooleanHolder} that holds the survive damage
+   * @returns `true` if the {@linkcode SurviveDamageModifier} should be applied
+   */
+  override shouldApply(pokemon?: Pokemon, surviveDamage?: Utils.BooleanHolder): boolean {
+    return super.shouldApply(pokemon, surviveDamage) && surviveDamage instanceof Utils.BooleanHolder;
   }
 
-  apply(args: any[]): boolean {
-    const pokemon = args[0] as Pokemon;
-    const surviveDamage = args[1] as Utils.BooleanHolder;
-
+  /**
+   * Applies {@linkcode SurviveDamageModifier}
+   * @param pokemon the {@linkcode Pokemon} that holds the item
+   * @param surviveDamage {@linkcode Utils.BooleanHolder} that holds the survive damage
+   * @returns `true` if the survive damage has been applied
+   */
+  override apply(pokemon: Pokemon, surviveDamage: Utils.BooleanHolder): boolean {
     if (!surviveDamage.value && pokemon.randSeedInt(10) < this.getStackCount()) {
       surviveDamage.value = true;
 
@@ -1412,16 +1517,25 @@ export class BypassSpeedChanceModifier extends PokemonHeldItemModifier {
     return new BypassSpeedChanceModifier(this.type, this.pokemonId, this.stackCount);
   }
 
-  shouldApply(args: any[]): boolean {
-    return super.shouldApply(args) && args.length === 2 && args[1] instanceof Utils.BooleanHolder;
+  /**
+   * Checks if {@linkcode BypassSpeedChanceModifier} should be applied
+   * @param pokemon the {@linkcode Pokemon} that holds the item
+   * @param doBypassSpeed {@linkcode Utils.BooleanHolder} that is `true` if speed should be bypassed
+   * @returns `true` if {@linkcode BypassSpeedChanceModifier} should be applied
+   */
+  override shouldApply(pokemon?: Pokemon, doBypassSpeed?: Utils.BooleanHolder): boolean {
+    return super.shouldApply(pokemon, doBypassSpeed) && doBypassSpeed instanceof Utils.BooleanHolder;
   }
 
-  apply(args: any[]): boolean {
-    const pokemon = args[0] as Pokemon;
-    const bypassSpeed = args[1] as Utils.BooleanHolder;
-
-    if (!bypassSpeed.value && pokemon.randSeedInt(10) < this.getStackCount()) {
-      bypassSpeed.value = true;
+  /**
+   * Applies {@linkcode BypassSpeedChanceModifier}
+   * @param pokemon the {@linkcode Pokemon} that holds the item
+   * @param doBypassSpeed {@linkcode Utils.BooleanHolder} that is `true` if speed should be bypassed
+   * @returns `true` if {@linkcode BypassSpeedChanceModifier} has been applied
+   */
+  override apply(pokemon: Pokemon, doBypassSpeed: Utils.BooleanHolder): boolean {
+    if (!doBypassSpeed.value && pokemon.randSeedInt(10) < this.getStackCount()) {
+      doBypassSpeed.value = true;
       const isCommandFight = pokemon.scene.currentBattle.turnCommands[pokemon.getBattlerIndex()]?.command === Command.FIGHT;
       const hasQuickClaw = this.type instanceof ModifierTypes.PokemonHeldItemModifierType && this.type.id === "QUICK_CLAW";
 
@@ -1452,14 +1566,23 @@ export class FlinchChanceModifier extends PokemonHeldItemModifier {
     return new FlinchChanceModifier(this.type, this.pokemonId, this.stackCount);
   }
 
-  shouldApply(args: any[]): boolean {
-    return super.shouldApply(args) && args.length === 2 && args[1] instanceof Utils.BooleanHolder;
+  /**
+   * Checks if {@linkcode FlinchChanceModifier} should be applied
+   * @param pokemon the {@linkcode Pokemon} that holds the item
+   * @param flinched {@linkcode Utils.BooleanHolder} that is `true` if the pokemon flinched
+   * @returns `true` if {@linkcode FlinchChanceModifier} should be applied
+   */
+  override shouldApply(pokemon?: Pokemon, flinched?: Utils.BooleanHolder): boolean {
+    return super.shouldApply(pokemon, flinched) && flinched instanceof Utils.BooleanHolder;
   }
 
-  apply(args: any[]): boolean {
-    const pokemon = args[0] as Pokemon;
-    const flinched = args[1] as Utils.BooleanHolder;
-
+  /**
+   * Applies {@linkcode FlinchChanceModifier}
+   * @param pokemon the {@linkcode Pokemon} that holds the item
+   * @param flinched {@linkcode Utils.BooleanHolder} that is `true` if the pokemon flinched
+   * @returns `true` if {@linkcode FlinchChanceModifier} has been applied
+   */
+  override apply(pokemon: Pokemon, flinched: Utils.BooleanHolder): boolean {
     if (!flinched.value && pokemon.randSeedInt(10) < (this.getStackCount() * this.getSecondaryChanceMultiplier(pokemon))) {
       flinched.value = true;
       return true;
@@ -1486,9 +1609,12 @@ export class TurnHealModifier extends PokemonHeldItemModifier {
     return new TurnHealModifier(this.type, this.pokemonId, this.stackCount);
   }
 
-  apply(args: any[]): boolean {
-    const pokemon = args[0] as Pokemon;
-
+  /**
+   * Applies {@linkcode TurnHealModifier}
+   * @param pokemon The {@linkcode Pokemon} that holds the item
+   * @returns `true` if the {@linkcode Pokemon} was healed
+   */
+  override apply(pokemon: Pokemon): boolean {
     if (!pokemon.isFullHp()) {
       const scene = pokemon.scene;
       scene.unshiftPhase(new PokemonHealPhase(scene, pokemon.getBattlerIndex(),
@@ -1534,7 +1660,7 @@ export class TurnStatusEffectModifier extends PokemonHeldItemModifier {
    * would be the only item able to {@linkcode apply} successfully.
    * @override
    * @param modifier {@linkcode Modifier} being type tested
-   * @return true if {@linkcode modifier} is an instance of
+   * @return `true` if {@linkcode modifier} is an instance of
    * TurnStatusEffectModifier, false otherwise
    */
   matchType(modifier: Modifier): boolean {
@@ -1547,12 +1673,11 @@ export class TurnStatusEffectModifier extends PokemonHeldItemModifier {
 
   /**
    * Tries to inflicts the holder with the associated {@linkcode StatusEffect}.
-   * @param args [0] {@linkcode Pokemon} that holds the held item
-   * @returns true if the status effect was applied successfully, false if
-   * otherwise
+   * @param pokemon {@linkcode Pokemon} that holds the held item
+   * @returns `true` if the status effect was applied successfully
    */
-  apply(args: any[]): boolean {
-    return (args[0] as Pokemon).trySetStatus(this.effect, true, undefined, undefined, this.type.name);
+  override apply(pokemon: Pokemon): boolean {
+    return pokemon.trySetStatus(this.effect, true, undefined, undefined, this.type.name);
   }
 
   getMaxHeldItemCount(pokemon: Pokemon): integer {
@@ -1577,9 +1702,12 @@ export class HitHealModifier extends PokemonHeldItemModifier {
     return new HitHealModifier(this.type, this.pokemonId, this.stackCount);
   }
 
-  apply(args: any[]): boolean {
-    const pokemon = args[0] as Pokemon;
-
+  /**
+   * Applies {@linkcode HitHealModifier}
+   * @param pokemon The {@linkcode Pokemon} that holds the item
+   * @returns `true` if the {@linkcode Pokemon} was healed
+   */
+  override apply(pokemon: Pokemon): boolean {
     if (pokemon.turnData.damageDealt && !pokemon.isFullHp()) {
       const scene = pokemon.scene;
       scene.unshiftPhase(new PokemonHealPhase(scene, pokemon.getBattlerIndex(),
@@ -1607,12 +1735,22 @@ export class LevelIncrementBoosterModifier extends PersistentModifier {
     return new LevelIncrementBoosterModifier(this.type, this.stackCount);
   }
 
-  shouldApply(args: any[]): boolean {
-    return super.shouldApply(args) && args[0] instanceof Utils.IntegerHolder;
+  /**
+   * Checks if {@linkcode LevelIncrementBoosterModifier} should be applied
+   * @param count {@linkcode Utils.IntegerHolder} holding the level increment count
+   * @returns `true` if {@linkcode LevelIncrementBoosterModifier} should be applied
+   */
+  override shouldApply(count: Utils.IntegerHolder): boolean {
+    return count instanceof Utils.IntegerHolder;
   }
 
-  apply(args: any[]): boolean {
-    (args[0] as Utils.IntegerHolder).value += this.getStackCount();
+  /**
+   * Applies {@linkcode LevelIncrementBoosterModifier}
+   * @param count {@linkcode Utils.IntegerHolder} holding the level increment count
+   * @returns always `true`
+   */
+  override apply(count: Utils.IntegerHolder): boolean {
+    count.value += this.getStackCount();
 
     return true;
   }
@@ -1645,13 +1783,21 @@ export class BerryModifier extends PokemonHeldItemModifier {
     return super.getArgs().concat(this.berryType);
   }
 
-  shouldApply(args: any[]): boolean {
-    return !this.consumed && super.shouldApply(args) && getBerryPredicate(this.berryType)(args[0] as Pokemon);
+  /**
+   * Checks if {@linkcode BerryModifier} should be applied
+   * @param pokemon The {@linkcode Pokemon} that holds the berry
+   * @returns `true` if {@linkcode BerryModifier} should be applied
+   */
+  override shouldApply(pokemon: Pokemon): boolean {
+    return !this.consumed && super.shouldApply(pokemon) && getBerryPredicate(this.berryType)(pokemon);
   }
 
-  apply(args: any[]): boolean {
-    const pokemon = args[0] as Pokemon;
-
+  /**
+   * Applies {@linkcode BerryModifier}
+   * @param pokemon The {@linkcode Pokemon} that holds the berry
+   * @returns always `true`
+   */
+  override apply(pokemon: Pokemon): boolean {
     const preserve = new Utils.BooleanHolder(false);
     pokemon.scene.applyModifiers(PreserveBerryModifier, pokemon.isPlayer(), pokemon, preserve);
 
@@ -1684,13 +1830,25 @@ export class PreserveBerryModifier extends PersistentModifier {
     return new PreserveBerryModifier(this.type, this.stackCount);
   }
 
-  shouldApply(args: any[]): boolean {
-    return super.shouldApply(args) && args[0] instanceof Pokemon && args[1] instanceof Utils.BooleanHolder;
+  /**
+   * Checks if {@linkcode PreserveBerryModifier} should be applied
+   * @param pokemon {@linkcode Pokemon} that holds the berry
+   * @param doPreserve {@linkcode Utils.BooleanHolder} that is `true` if the berry should be preserved
+   * @returns `true` if {@linkcode PreserveBerryModifier} should be applied
+   */
+  override shouldApply(pokemon?: Pokemon, doPreserve?: Utils.BooleanHolder): boolean {
+    return pokemon instanceof Pokemon && doPreserve instanceof Utils.BooleanHolder;
   }
 
-  apply(args: any[]): boolean {
-    if (!(args[1] as Utils.BooleanHolder).value) {
-      (args[1] as Utils.BooleanHolder).value = (args[0] as Pokemon).randSeedInt(10) < this.getStackCount() * 3;
+  /**
+   * Applies {@linkcode PreserveBerryModifier}
+   * @param pokemon The {@linkcode Pokemon} that holds the berry
+   * @param doPreserve {@linkcode Utils.BooleanHolder} that is `true` if the berry should be preserved
+   * @returns always `true`
+   */
+  override apply(pokemon: Pokemon, doPreserve: Utils.BooleanHolder): boolean {
+    if (!doPreserve.value) {
+      doPreserve.value = pokemon.randSeedInt(10) < this.getStackCount() * 3;
     }
 
     return true;
@@ -1714,9 +1872,12 @@ export class PokemonInstantReviveModifier extends PokemonHeldItemModifier {
     return new PokemonInstantReviveModifier(this.type, this.pokemonId, this.stackCount);
   }
 
-  apply(args: any[]): boolean {
-    const pokemon = args[0] as Pokemon;
-
+  /**
+   * Applies {@linkcode PokemonInstantReviveModifier}
+   * @param pokemon The {@linkcode Pokemon} that holds the item
+   * @returns always `true`
+   */
+  override apply(pokemon: Pokemon): boolean {
     pokemon.scene.unshiftPhase(new PokemonHealPhase(pokemon.scene, pokemon.getBattlerIndex(),
       Utils.toDmgValue(pokemon.getMaxHp() / 2), i18next.t("modifier:pokemonInstantReviveApply", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), typeName: this.type.name }), false, false, true));
 
@@ -1751,11 +1912,10 @@ export class ResetNegativeStatStageModifier extends PokemonHeldItemModifier {
   /**
    * Goes through the holder's stat stages and, if any are negative, resets that
    * stat stage back to 0.
-   * @param args [0] {@linkcode Pokemon} that holds the held item
-   * @returns true if any stat stages were reset, false otherwise
+   * @param pokemon {@linkcode Pokemon} that holds the item
+   * @returns `true` if any stat stages were reset, false otherwise
    */
-  apply(args: any[]): boolean {
-    const pokemon = args[0] as Pokemon;
+  override apply(pokemon: Pokemon): boolean {
     let statRestored = false;
 
     for (const s of BATTLE_STATS) {
@@ -1785,9 +1945,22 @@ export abstract class ConsumablePokemonModifier extends ConsumableModifier {
     this.pokemonId = pokemonId;
   }
 
-  shouldApply(args: any[]): boolean {
-    return args.length !== 0 && args[0] instanceof PlayerPokemon && (this.pokemonId === -1 || (args[0] as PlayerPokemon).id === this.pokemonId);
+  /**
+   * Checks if {@linkcode ConsumablePokemonModifier} should be applied
+   * @param playerPokemon The {@linkcode PlayerPokemon} that consumes the item
+   * @param _args N/A
+   * @returns `true` if {@linkcode ConsumablePokemonModifier} should be applied
+   */
+  override shouldApply(playerPokemon?: PlayerPokemon, ..._args: unknown[]): boolean {
+    return !!playerPokemon && playerPokemon instanceof PlayerPokemon && (this.pokemonId === -1 || playerPokemon.id === this.pokemonId);
   }
+
+  /**
+   * Applies {@linkcode ConsumablePokemonModifier}
+   * @param playerPokemon The {@linkcode PlayerPokemon} that consumes the item
+   * @param args Additional arguments passed to {@linkcode ConsumablePokemonModifier#apply}
+   */
+  abstract override apply(playerPokemon: PlayerPokemon, ...args: unknown[]): boolean | Promise<boolean>;
 
   getPokemon(scene: BattleScene) {
     return scene.getParty().find(p => p.id === this.pokemonId);
@@ -1809,16 +1982,27 @@ export class PokemonHpRestoreModifier extends ConsumablePokemonModifier {
     this.fainted = !!fainted;
   }
 
-  shouldApply(args: any[]): boolean {
-    return super.shouldApply(args) && (this.fainted || (args.length > 1 && typeof(args[1]) === "number"));
+  /**
+   * Checks if {@linkcode PokemonHpRestoreModifier} should be applied
+   * @param playerPokemon The {@linkcode PlayerPokemon} that consumes the item
+   * @param multiplier The multiplier of the hp restore
+   * @returns `true` if the {@linkcode PokemonHpRestoreModifier} should be applied
+   */
+  override shouldApply(playerPokemon?: PlayerPokemon, multiplier?: number): boolean {
+    return super.shouldApply(playerPokemon) && (this.fainted || (!Utils.isNullOrUndefined(multiplier) && typeof(multiplier) === "number"));
   }
 
-  apply(args: any[]): boolean {
-    const pokemon = args[0] as Pokemon;
+  /**
+   * Applies {@linkcode PokemonHpRestoreModifier}
+   * @param pokemon The {@linkcode PlayerPokemon} that consumes the item
+   * @param multiplier The multiplier of the hp restore
+   * @returns `true` if hp was restored
+   */
+  override apply(pokemon: Pokemon, multiplier: number): boolean {
     if (!pokemon.hp === this.fainted) {
       let restorePoints = this.restorePoints;
       if (!this.fainted) {
-        restorePoints = Math.floor(restorePoints * (args[1] as number));
+        restorePoints = Math.floor(restorePoints * multiplier);
       }
       if (this.fainted || this.healStatus) {
         pokemon.resetStatus(true, true);
@@ -1835,9 +2019,13 @@ export class PokemonStatusHealModifier extends ConsumablePokemonModifier {
     super(type, pokemonId);
   }
 
-  apply(args: any[]): boolean {
-    const pokemon = args[0] as Pokemon;
-    pokemon.resetStatus(true, true);
+  /**
+   * Applies {@linkcode PokemonStatusHealModifier}
+   * @param playerPokemon The {@linkcode PlayerPokemon} that gets healed from the status
+   * @returns always `true`
+   */
+  override apply(playerPokemon: PlayerPokemon): boolean {
+    playerPokemon.resetStatus(true, true);
     return true;
   }
 }
@@ -1861,10 +2049,17 @@ export class PokemonPpRestoreModifier extends ConsumablePokemonMoveModifier {
     this.restorePoints = restorePoints;
   }
 
-  apply(args: any[]): boolean {
-    const pokemon = args[0] as Pokemon;
-    const move = pokemon.getMoveset()[this.moveIndex]!; //TODO: is the bang correct?
-    move.ppUsed = this.restorePoints > -1 ? Math.max(move.ppUsed - this.restorePoints, 0) : 0;
+  /**
+   * Applies {@linkcode PokemonPpRestoreModifier}
+   * @param playerPokemon The {@linkcode PlayerPokemon} that should get move pp restored
+   * @returns always `true`
+   */
+  override apply(playerPokemon: PlayerPokemon): boolean {
+    const move = playerPokemon.getMoveset()[this.moveIndex];
+
+    if (move) {
+      move.ppUsed = this.restorePoints > -1 ? Math.max(move.ppUsed - this.restorePoints, 0) : 0;
+    }
 
     return true;
   }
@@ -1879,10 +2074,16 @@ export class PokemonAllMovePpRestoreModifier extends ConsumablePokemonModifier {
     this.restorePoints = restorePoints;
   }
 
-  apply(args: any[]): boolean {
-    const pokemon = args[0] as Pokemon;
-    for (const move of pokemon.getMoveset()) {
-      move!.ppUsed = this.restorePoints > -1 ? Math.max(move!.ppUsed - this.restorePoints, 0) : 0; // TODO: are those bangs correct?
+  /**
+   * Applies {@linkcode PokemonAllMovePpRestoreModifier}
+   * @param playerPokemon The {@linkcode PlayerPokemon} that should get all move pp restored
+   * @returns always `true`
+   */
+  override apply(playerPokemon: PlayerPokemon): boolean {
+    for (const move of playerPokemon.getMoveset()) {
+      if (move) {
+        move.ppUsed = this.restorePoints > -1 ? Math.max(move.ppUsed - this.restorePoints, 0) : 0;
+      }
     }
 
     return true;
@@ -1898,10 +2099,17 @@ export class PokemonPpUpModifier extends ConsumablePokemonMoveModifier {
     this.upPoints = upPoints;
   }
 
-  apply(args: any[]): boolean {
-    const pokemon = args[0] as Pokemon;
-    const move = pokemon.getMoveset()[this.moveIndex]!; // TODO: is the bang correct?
-    move.ppUp = Math.min(move.ppUp + this.upPoints, 3);
+  /**
+   * Applies {@linkcode PokemonPpUpModifier}
+   * @param playerPokemon The {@linkcode PlayerPokemon} that gets a pp up on move-slot {@linkcode moveIndex}
+   * @returns
+   */
+  override apply(playerPokemon: PlayerPokemon): boolean {
+    const move = playerPokemon.getMoveset()[this.moveIndex];
+
+    if (move) {
+      move.ppUp = Math.min(move.ppUp + this.upPoints, 3);
+    }
 
     return true;
   }
@@ -1916,15 +2124,19 @@ export class PokemonNatureChangeModifier extends ConsumablePokemonModifier {
     this.nature = nature;
   }
 
-  apply(args: any[]): boolean {
-    const pokemon = args[0] as Pokemon;
-    pokemon.natureOverride = this.nature;
-    let speciesId = pokemon.species.speciesId;
-    pokemon.scene.gameData.dexData[speciesId].natureAttr |= 1 << (this.nature + 1);
+  /**
+   * Applies {@linkcode PokemonNatureChangeModifier}
+   * @param playerPokemon {@linkcode PlayerPokemon} to apply the {@linkcode Nature} change to
+   * @returns
+   */
+  override apply(playerPokemon: PlayerPokemon): boolean {
+    playerPokemon.natureOverride = this.nature;
+    let speciesId = playerPokemon.species.speciesId;
+    playerPokemon.scene.gameData.dexData[speciesId].natureAttr |= 1 << (this.nature + 1);
 
     while (pokemonPrevolutions.hasOwnProperty(speciesId)) {
       speciesId = pokemonPrevolutions[speciesId];
-      pokemon.scene.gameData.dexData[speciesId].natureAttr |= 1 << (this.nature + 1);
+      playerPokemon.scene.gameData.dexData[speciesId].natureAttr |= 1 << (this.nature + 1);
     }
 
     return true;
@@ -1936,20 +2148,24 @@ export class PokemonLevelIncrementModifier extends ConsumablePokemonModifier {
     super(type, pokemonId);
   }
 
-  apply(args: any[]): boolean {
-    const pokemon = args[0] as PlayerPokemon;
-    const levelCount = new Utils.IntegerHolder(1);
-    pokemon.scene.applyModifiers(LevelIncrementBoosterModifier, true, levelCount);
+  /**
+   * Applies {@linkcode PokemonLevelIncrementModifier}
+   * @param playerPokemon The {@linkcode PlayerPokemon} that should get levels incremented
+   * @param levelCount The amount of levels to increment
+   * @returns always `true`
+   */
+  override apply(playerPokemon: PlayerPokemon, levelCount: Utils.IntegerHolder): boolean {
+    playerPokemon.scene.applyModifiers(LevelIncrementBoosterModifier, true, levelCount);
 
-    pokemon.level += levelCount.value;
-    if (pokemon.level <= pokemon.scene.getMaxExpLevel(true)) {
-      pokemon.exp = getLevelTotalExp(pokemon.level, pokemon.species.growthRate);
-      pokemon.levelExp = 0;
+    playerPokemon.level += levelCount.value;
+    if (playerPokemon.level <= playerPokemon.scene.getMaxExpLevel(true)) {
+      playerPokemon.exp = getLevelTotalExp(playerPokemon.level, playerPokemon.species.growthRate);
+      playerPokemon.levelExp = 0;
     }
 
-    pokemon.addFriendship(5);
+    playerPokemon.addFriendship(5);
 
-    pokemon.scene.unshiftPhase(new LevelUpPhase(pokemon.scene, pokemon.scene.getParty().indexOf(pokemon), pokemon.level - levelCount.value, pokemon.level));
+    playerPokemon.scene.unshiftPhase(new LevelUpPhase(playerPokemon.scene, playerPokemon.scene.getParty().indexOf(playerPokemon), playerPokemon.level - levelCount.value, playerPokemon.level));
 
     return true;
   }
@@ -1960,10 +2176,14 @@ export class TmModifier extends ConsumablePokemonModifier {
     super(type, pokemonId);
   }
 
-  apply(args: any[]): boolean {
-    const pokemon = args[0] as PlayerPokemon;
+  /**
+   * Applies {@linkcode TmModifier}
+   * @param playerPokemon The {@linkcode PlayerPokemon} that should learn the TM
+   * @returns always `true`
+   */
+  override apply(playerPokemon: PlayerPokemon): boolean {
 
-    pokemon.scene.unshiftPhase(new LearnMovePhase(pokemon.scene, pokemon.scene.getParty().indexOf(pokemon), (this.type as ModifierTypes.TmModifierType).moveId, true));
+    playerPokemon.scene.unshiftPhase(new LearnMovePhase(playerPokemon.scene, playerPokemon.scene.getParty().indexOf(playerPokemon), (this.type as ModifierTypes.TmModifierType).moveId, true));
 
     return true;
   }
@@ -1978,10 +2198,13 @@ export class RememberMoveModifier extends ConsumablePokemonModifier {
     this.levelMoveIndex = levelMoveIndex;
   }
 
-  apply(args: any[]): boolean {
-    const pokemon = args[0] as PlayerPokemon;
-
-    pokemon.scene.unshiftPhase(new LearnMovePhase(pokemon.scene, pokemon.scene.getParty().indexOf(pokemon), pokemon.getLearnableLevelMoves()[this.levelMoveIndex]));
+  /**
+   * Applies {@linkcode RememberMoveModifier}
+   * @param playerPokemon The {@linkcode PlayerPokemon} that should remember the move
+   * @returns always `true`
+   */
+  override apply(playerPokemon: PlayerPokemon): boolean {
+    playerPokemon.scene.unshiftPhase(new LearnMovePhase(playerPokemon.scene, playerPokemon.scene.getParty().indexOf(playerPokemon), playerPokemon.getLearnableLevelMoves()[this.levelMoveIndex]));
 
     return true;
   }
@@ -1992,26 +2215,29 @@ export class EvolutionItemModifier extends ConsumablePokemonModifier {
     super(type, pokemonId);
   }
 
-  apply(args: any[]): boolean {
-    const pokemon = args[0] as PlayerPokemon;
-
-    let matchingEvolution = pokemonEvolutions.hasOwnProperty(pokemon.species.speciesId)
-      ? pokemonEvolutions[pokemon.species.speciesId].find(e => e.item === (this.type as ModifierTypes.EvolutionItemModifierType).evolutionItem
-        && (e.evoFormKey === null || (e.preFormKey || "") === pokemon.getFormKey())
-        && (!e.condition || e.condition.predicate(pokemon)))
+  /**
+   * Applies {@linkcode EvolutionItemModifier}
+   * @param playerPokemon The {@linkcode PlayerPokemon} that should evolve via item
+   * @returns `true` if the evolution was successful
+   */
+  override apply(playerPokemon: PlayerPokemon): boolean {
+    let matchingEvolution = pokemonEvolutions.hasOwnProperty(playerPokemon.species.speciesId)
+      ? pokemonEvolutions[playerPokemon.species.speciesId].find(e => e.item === (this.type as ModifierTypes.EvolutionItemModifierType).evolutionItem
+        && (e.evoFormKey === null || (e.preFormKey || "") === playerPokemon.getFormKey())
+        && (!e.condition || e.condition.predicate(playerPokemon)))
       : null;
 
-    if (!matchingEvolution && pokemon.isFusion()) {
-      matchingEvolution = pokemonEvolutions[pokemon.fusionSpecies!.speciesId].find(e => e.item === (this.type as ModifierTypes.EvolutionItemModifierType).evolutionItem // TODO: is the bang correct?
-        && (e.evoFormKey === null || (e.preFormKey || "") === pokemon.getFusionFormKey())
-        && (!e.condition || e.condition.predicate(pokemon)));
+    if (!matchingEvolution && playerPokemon.isFusion()) {
+      matchingEvolution = pokemonEvolutions[playerPokemon.fusionSpecies!.speciesId].find(e => e.item === (this.type as ModifierTypes.EvolutionItemModifierType).evolutionItem // TODO: is the bang correct?
+        && (e.evoFormKey === null || (e.preFormKey || "") === playerPokemon.getFusionFormKey())
+        && (!e.condition || e.condition.predicate(playerPokemon)));
       if (matchingEvolution) {
-        matchingEvolution = new FusionSpeciesFormEvolution(pokemon.species.speciesId, matchingEvolution);
+        matchingEvolution = new FusionSpeciesFormEvolution(playerPokemon.species.speciesId, matchingEvolution);
       }
     }
 
     if (matchingEvolution) {
-      pokemon.scene.unshiftPhase(new EvolutionPhase(pokemon.scene, pokemon, matchingEvolution, pokemon.level - 1));
+      playerPokemon.scene.unshiftPhase(new EvolutionPhase(playerPokemon.scene, playerPokemon, matchingEvolution, playerPokemon.level - 1));
       return true;
     }
 
@@ -2028,14 +2254,25 @@ export class FusePokemonModifier extends ConsumablePokemonModifier {
     this.fusePokemonId = fusePokemonId;
   }
 
-  shouldApply(args: any[]): boolean {
-    return super.shouldApply(args) && args[1] instanceof PlayerPokemon && this.fusePokemonId === (args[1] as PlayerPokemon).id;
+  /**
+   * Checks if {@linkcode FusePokemonModifier} should be applied
+   * @param playerPokemon {@linkcode PlayerPokemon} that should be fused
+   * @param playerPokemon2 {@linkcode PlayerPokemon} that should be fused with {@linkcode playerPokemon}
+   * @returns `true` if {@linkcode FusePokemonModifier} should be applied
+   */
+  override shouldApply(playerPokemon?: PlayerPokemon, playerPokemon2?: PlayerPokemon): boolean {
+    return super.shouldApply(playerPokemon, playerPokemon2) && playerPokemon2 instanceof PlayerPokemon && this.fusePokemonId === playerPokemon2.id;
   }
 
-  apply(args: any[]): Promise<boolean> {
-    return new Promise<boolean>(resolve => {
-      (args[0] as PlayerPokemon).fuse(args[1] as PlayerPokemon).then(() => resolve(true));
-    });
+  /**
+   * Applies {@linkcode FusePokemonModifier}
+   * @param playerPokemon {@linkcode PlayerPokemon} that should be fused
+   * @param playerPokemon2 {@linkcode PlayerPokemon} that should be fused with {@linkcode playerPokemon}
+   * @returns always Promise<true>
+   */
+  override async apply(playerPokemon: PlayerPokemon, playerPokemon2: PlayerPokemon): Promise<boolean> {
+    await playerPokemon.fuse(playerPokemon2);
+    return true;
   }
 }
 
@@ -2048,7 +2285,11 @@ export class MultipleParticipantExpBonusModifier extends PersistentModifier {
     return modifier instanceof MultipleParticipantExpBonusModifier;
   }
 
-  apply(_args: any[]): boolean {
+  /**
+   * Applies {@linkcode MultipleParticipantExpBonusModifier}
+   * @returns always `true`
+   */
+  apply(): boolean {
     return true;
   }
 
@@ -2082,8 +2323,12 @@ export class HealingBoosterModifier extends PersistentModifier {
     return [ this.multiplier ];
   }
 
-  apply(args: any[]): boolean {
-    const healingMultiplier = args[0] as Utils.IntegerHolder;
+  /**
+   * Applies {@linkcode HealingBoosterModifier}
+   * @param healingMultiplier the multiplier to apply to the healing
+   * @returns always `true`
+   */
+  override apply(healingMultiplier: Utils.IntegerHolder): boolean {
     healingMultiplier.value *= 1 + ((this.multiplier - 1) * this.getStackCount());
 
     return true;
@@ -2119,8 +2364,13 @@ export class ExpBoosterModifier extends PersistentModifier {
     return [ this.boostMultiplier * 100 ];
   }
 
-  apply(args: any[]): boolean {
-    (args[0] as Utils.NumberHolder).value = Math.floor((args[0] as Utils.NumberHolder).value * (1 + (this.getStackCount() * this.boostMultiplier)));
+  /**
+   * Applies {@linkcode ExpBoosterModifier}
+   * @param boost {@linkcode Utils.NumberHolder} holding the boost value
+   * @returns always `true`
+   */
+  override apply(boost: Utils.NumberHolder): boolean {
+    boost.value = Math.floor(boost.value * (1 + (this.getStackCount() * this.boostMultiplier)));
 
     return true;
   }
@@ -2154,12 +2404,24 @@ export class PokemonExpBoosterModifier extends PokemonHeldItemModifier {
     return super.getArgs().concat(this.boostMultiplier * 100);
   }
 
-  shouldApply(args: any[]): boolean {
-    return super.shouldApply(args) && args.length === 2 && args[1] instanceof Utils.NumberHolder;
+  /**
+   * Checks if {@linkcode PokemonExpBoosterModifier} should be applied
+   * @param pokemon The {@linkcode Pokemon} to apply the exp boost to
+   * @param boost {@linkcode Utils.NumberHolder} holding the exp boost value
+   * @returns `true` if {@linkcode PokemonExpBoosterModifier} should be applied
+   */
+  override shouldApply(pokemon: Pokemon, boost: Utils.NumberHolder): boolean {
+    return super.shouldApply(pokemon, boost) && boost instanceof Utils.NumberHolder;
   }
 
-  apply(args: any[]): boolean {
-    (args[1] as Utils.NumberHolder).value = Math.floor((args[1] as Utils.NumberHolder).value * (1 + (this.getStackCount() * this.boostMultiplier)));
+  /**
+   * Applies {@linkcode PokemonExpBoosterModifier}
+   * @param _pokemon The {@linkcode Pokemon} to apply the exp boost to
+   * @param boost {@linkcode Utils.NumberHolder} holding the exp boost value
+   * @returns always `true`
+   */
+  override apply(_pokemon: Pokemon, boost: Utils.NumberHolder): boolean {
+    boost.value = Math.floor(boost.value * (1 + (this.getStackCount() * this.boostMultiplier)));
 
     return true;
   }
@@ -2182,7 +2444,11 @@ export class ExpShareModifier extends PersistentModifier {
     return new ExpShareModifier(this.type, this.stackCount);
   }
 
-  apply(_args: any[]): boolean {
+  /**
+   * Applies {@linkcode ExpShareModifier}
+   * @returns always `true`
+   */
+  override apply(): boolean {
     return true;
   }
 
@@ -2204,7 +2470,11 @@ export class ExpBalanceModifier extends PersistentModifier {
     return new ExpBalanceModifier(this.type, this.stackCount);
   }
 
-  apply(_args: any[]): boolean {
+  /**
+   * Applies {@linkcode ExpBalanceModifier}
+   * @returns always `true`
+   */
+  override apply(): boolean {
     return true;
   }
 
@@ -2226,8 +2496,13 @@ export class PokemonFriendshipBoosterModifier extends PokemonHeldItemModifier {
     return new PokemonFriendshipBoosterModifier(this.type as ModifierTypes.PokemonFriendshipBoosterModifierType, this.pokemonId, this.stackCount);
   }
 
-  apply(args: any[]): boolean {
-    const friendship = args[1] as Utils.IntegerHolder;
+  /**
+   * Applies {@linkcode PokemonFriendshipBoosterModifier}
+   * @param _pokemon The {@linkcode Pokemon} to apply the friendship boost to
+   * @param friendship {@linkcode Utils.IntegerHolder} holding the friendship boost value
+   * @returns always `true`
+   */
+  override apply(_pokemon: Pokemon, friendship: Utils.IntegerHolder): boolean {
     friendship.value = Math.floor(friendship.value * (1 + 0.5 * this.getStackCount()));
 
     return true;
@@ -2251,8 +2526,13 @@ export class PokemonNatureWeightModifier extends PokemonHeldItemModifier {
     return new PokemonNatureWeightModifier(this.type, this.pokemonId, this.stackCount);
   }
 
-  apply(args: any[]): boolean {
-    const multiplier = args[1] as Utils.IntegerHolder;
+  /**
+   * Applies {@linkcode PokemonNatureWeightModifier}
+   * @param _pokemon The {@linkcode Pokemon} to apply the nature weight to
+   * @param multiplier {@linkcode Utils.IntegerHolder} holding the nature weight
+   * @returns `true` if multiplier was applied
+   */
+  override apply(_pokemon: Pokemon, multiplier: Utils.IntegerHolder): boolean {
     if (multiplier.value !== 1) {
       multiplier.value += 0.1 * this.getStackCount() * (multiplier.value > 1 ? 1 : -1);
       return true;
@@ -2290,12 +2570,23 @@ export class PokemonMoveAccuracyBoosterModifier extends PokemonHeldItemModifier 
     return super.getArgs().concat(this.accuracyAmount);
   }
 
-  shouldApply(args: any[]): boolean {
-    return super.shouldApply(args) && args.length === 2 && args[1] instanceof Utils.NumberHolder;
+  /**
+   * Checks if {@linkcode PokemonMoveAccuracyBoosterModifier} should be applied
+   * @param pokemon The {@linkcode Pokemon} to apply the move accuracy boost to
+   * @param moveAccuracy {@linkcode Utils.IntegerHolder} holding the move accuracy boost
+   * @returns `true` if {@linkcode PokemonMoveAccuracyBoosterModifier} should be applied
+   */
+  override shouldApply(pokemon?: Pokemon, moveAccuracy?: Utils.IntegerHolder): boolean {
+    return super.shouldApply(pokemon, moveAccuracy) && moveAccuracy instanceof Utils.NumberHolder;
   }
 
-  apply(args: any[]): boolean {
-    const moveAccuracy = (args[1] as Utils.IntegerHolder);
+  /**
+   * Applies {@linkcode PokemonMoveAccuracyBoosterModifier}
+   * @param _pokemon The {@linkcode Pokemon} to apply the move accuracy boost to
+   * @param moveAccuracy {@linkcode Utils.IntegerHolder} holding the move accuracy boost
+   * @returns always `true`
+   */
+  override apply(_pokemon: Pokemon, moveAccuracy: Utils.IntegerHolder): boolean {
     moveAccuracy.value = Math.min(moveAccuracy.value + this.accuracyAmount * this.getStackCount(), 100);
 
     return true;
@@ -2319,10 +2610,16 @@ export class PokemonMultiHitModifier extends PokemonHeldItemModifier {
     return new PokemonMultiHitModifier(this.type as ModifierTypes.PokemonMultiHitModifierType, this.pokemonId, this.stackCount);
   }
 
-  apply(args: any[]): boolean {
-    (args[1] as Utils.IntegerHolder).value *= (this.getStackCount() + 1);
+  /**
+   * Applies {@linkcode PokemonMultiHitModifier}
+   * @param _pokemon The {@linkcode Pokemon} using the move
+   * @param count {@linkcode Utils.NumberHolder} holding the number of items
+   * @param power {@linkcode Utils.IntegerHolder} holding the power of the move
+   * @returns always `true`
+   */
+  override apply(_pokemon: Pokemon, count: Utils.NumberHolder, power: Utils.IntegerHolder): boolean {
+    count.value *= (this.getStackCount() + 1);
 
-    const power = args[2] as Utils.NumberHolder;
     switch (this.getStackCount()) {
     case 1:
       power.value *= 0.4;
@@ -2366,10 +2663,13 @@ export class PokemonFormChangeItemModifier extends PokemonHeldItemModifier {
     return super.getArgs().concat(this.formChangeItem, this.active);
   }
 
-  apply(args: any[]): boolean {
-    const pokemon = args[0] as Pokemon;
-    const active = args[1] as boolean;
-
+  /**
+   * Applies {@linkcode PokemonFormChangeItemModifier}
+   * @param pokemon The {@linkcode Pokemon} to apply the form change item to
+   * @param active `true` if the form change item is active
+   * @returns `true` if the form change item was applied
+   */
+  override apply(pokemon: Pokemon, active: boolean): boolean {
     const switchActive = this.active && !active;
 
     if (switchActive) {
@@ -2399,20 +2699,24 @@ export class MoneyRewardModifier extends ConsumableModifier {
     this.moneyMultiplier = moneyMultiplier;
   }
 
-  apply(args: any[]): boolean {
-    const scene = args[0] as BattleScene;
-    const moneyAmount = new Utils.IntegerHolder(scene.getWaveMoneyAmount(this.moneyMultiplier));
+  /**
+   * Applies {@linkcode MoneyRewardModifier}
+   * @param battleScene The current {@linkcode BattleScene}
+   * @returns always `true`
+   */
+  override apply(battleScene: BattleScene): boolean {
+    const moneyAmount = new Utils.IntegerHolder(battleScene.getWaveMoneyAmount(this.moneyMultiplier));
 
-    scene.applyModifiers(MoneyMultiplierModifier, true, moneyAmount);
+    battleScene.applyModifiers(MoneyMultiplierModifier, true, moneyAmount);
 
-    scene.addMoney(moneyAmount.value);
+    battleScene.addMoney(moneyAmount.value);
 
-    scene.getParty().map(p => {
+    battleScene.getParty().map(p => {
       if (p.species?.speciesId === Species.GIMMIGHOUL || p.fusionSpecies?.speciesId === Species.GIMMIGHOUL) {
         p.evoCounter++;
         const modifierType: ModifierType = modifierTypes.EVOLUTION_TRACKER_GIMMIGHOUL();
         const modifier = modifierType!.newModifier(p);
-        scene.addModifier(modifier);
+        battleScene.addModifier(modifier);
       }
     });
 
@@ -2433,8 +2737,13 @@ export class MoneyMultiplierModifier extends PersistentModifier {
     return new MoneyMultiplierModifier(this.type, this.stackCount);
   }
 
-  apply(args: any[]): boolean {
-    (args[0] as Utils.IntegerHolder).value += Math.floor((args[0] as Utils.IntegerHolder).value * 0.2 * this.getStackCount());
+  /**
+   * Applies {@linkcode MoneyMultiplierModifier}
+   * @param multiplier {@linkcode Utils.IntegerHolder} holding the money multiplier value
+   * @returns always `true`
+   */
+  override apply(multiplier: Utils.IntegerHolder): boolean {
+    multiplier.value += Math.floor(multiplier.value * 0.2 * this.getStackCount());
 
     return true;
   }
@@ -2457,11 +2766,17 @@ export class DamageMoneyRewardModifier extends PokemonHeldItemModifier {
     return new DamageMoneyRewardModifier(this.type, this.pokemonId, this.stackCount);
   }
 
-  apply(args: any[]): boolean {
-    const scene = (args[0] as Pokemon).scene;
-    const moneyAmount = new Utils.IntegerHolder(Math.floor((args[1] as Utils.IntegerHolder).value * (0.5 * this.getStackCount())));
-    scene.applyModifiers(MoneyMultiplierModifier, true, moneyAmount);
-    scene.addMoney(moneyAmount.value);
+  /**
+   * Applies {@linkcode DamageMoneyRewardModifier}
+   * @param pokemon The {@linkcode Pokemon} attacking
+   * @param multiplier {@linkcode Utils.IntegerHolder} holding the multiplier value
+   * @returns always `true`
+   */
+  override apply(pokemon: Pokemon, multiplier: Utils.IntegerHolder): boolean {
+    const battleScene = pokemon.scene;
+    const moneyAmount = new Utils.IntegerHolder(Math.floor(multiplier.value * (0.5 * this.getStackCount())));
+    battleScene.applyModifiers(MoneyMultiplierModifier, true, moneyAmount);
+    battleScene.addMoney(moneyAmount.value);
 
     return true;
   }
@@ -2480,15 +2795,19 @@ export class MoneyInterestModifier extends PersistentModifier {
     return modifier instanceof MoneyInterestModifier;
   }
 
-  apply(args: any[]): boolean {
-    const scene = args[0] as BattleScene;
-    const interestAmount = Math.floor(scene.money * 0.1 * this.getStackCount());
-    scene.addMoney(interestAmount);
+  /**
+   * Applies {@linkcode MoneyInterestModifier}
+   * @param battleScene The current {@linkcode BattleScene}
+   * @returns always `true`
+   */
+  override apply(battleScene: BattleScene): boolean {
+    const interestAmount = Math.floor(battleScene.money * 0.1 * this.getStackCount());
+    battleScene.addMoney(interestAmount);
 
     const userLocale = navigator.language || "en-US";
     const formattedMoneyAmount = interestAmount.toLocaleString(userLocale);
     const message = i18next.t("modifier:moneyInterestApply", { moneyAmount: formattedMoneyAmount, typeName: this.type.name });
-    scene.queueMessage(message, undefined, true);
+    battleScene.queueMessage(message, undefined, true);
 
     return true;
   }
@@ -2515,8 +2834,13 @@ export class HiddenAbilityRateBoosterModifier extends PersistentModifier {
     return new HiddenAbilityRateBoosterModifier(this.type, this.stackCount);
   }
 
-  apply(args: any[]): boolean {
-    (args[0] as Utils.IntegerHolder).value *= Math.pow(2, -1 - this.getStackCount());
+  /**
+   * Applies {@linkcode HiddenAbilityRateBoosterModifier}
+   * @param boost {@linkcode Utils.IntegerHolder} holding the boost value
+   * @returns always `true`
+   */
+  override apply(boost: Utils.IntegerHolder): boolean {
+    boost.value *= Math.pow(2, -1 - this.getStackCount());
 
     return true;
   }
@@ -2539,8 +2863,13 @@ export class ShinyRateBoosterModifier extends PersistentModifier {
     return new ShinyRateBoosterModifier(this.type, this.stackCount);
   }
 
-  apply(args: any[]): boolean {
-    (args[0] as Utils.IntegerHolder).value *= Math.pow(2, 1 + this.getStackCount());
+  /**
+   * Applies {@linkcode ShinyRateBoosterModifier}
+   * @param boost {@linkcode Utils.IntegerHolder} holding the boost value
+   * @returns always `true`
+   */
+  override apply(boost: Utils.IntegerHolder): boolean {
+    boost.value *= Math.pow(2, 1 + this.getStackCount());
 
     return true;
   }
@@ -2559,7 +2888,11 @@ export class LockModifierTiersModifier extends PersistentModifier {
     return modifier instanceof LockModifierTiersModifier;
   }
 
-  apply(args: any[]): boolean {
+  /**
+   * Applies {@linkcode LockModifierTiersModifier}
+   * @returns always `true`
+   */
+  override apply(): boolean {
     return true;
   }
 
@@ -2588,8 +2921,13 @@ export class HealShopCostModifier extends PersistentModifier {
     return new HealShopCostModifier(this.type, this.stackCount);
   }
 
-  apply(args: any[]): boolean {
-    (args[0] as Utils.IntegerHolder).value *= Math.pow(3, this.getStackCount());
+  /**
+   * Applies {@linkcode HealShopCostModifier}
+   * @param cost {@linkcode Utils.IntegerHolder} holding the heal shop cost
+   * @returns always `true`
+   */
+  override apply(cost: Utils.IntegerHolder): boolean {
+    cost.value *= Math.pow(3, this.getStackCount());
 
     return true;
   }
@@ -2612,7 +2950,11 @@ export class BoostBugSpawnModifier extends PersistentModifier {
     return new BoostBugSpawnModifier(this.type, this.stackCount);
   }
 
-  apply(args: any[]): boolean {
+  /**
+   * Applies {@linkcode BoostBugSpawnModifier}
+   * @returns always `true`
+   */
+  override apply(): boolean {
     return true;
   }
 
@@ -2634,7 +2976,11 @@ export class SwitchEffectTransferModifier extends PokemonHeldItemModifier {
     return new SwitchEffectTransferModifier(this.type, this.pokemonId, this.stackCount);
   }
 
-  apply(args: any[]): boolean {
+  /**
+   * Applies {@linkcode SwitchEffectTransferModifier}
+   * @returns always `true`
+   */
+  override apply(): boolean {
     return true;
   }
 
@@ -2655,12 +3001,11 @@ export abstract class HeldItemTransferModifier extends PokemonHeldItemModifier {
 
   /**
    * Determines the targets to transfer items from when this applies.
-   * @param args\[0\] the {@linkcode Pokemon} holding this item
+   * @param pokemon the {@linkcode Pokemon} holding this item
+   * @param _args N/A
    * @returns the opponents of the source {@linkcode Pokemon}
    */
-  getTargets(args: any[]): Pokemon[] {
-    const pokemon = args[0];
-
+  getTargets(pokemon?: Pokemon, ..._args: unknown[]): Pokemon[] {
     return pokemon instanceof Pokemon
       ? pokemon.getOpponents()
       : [];
@@ -2669,12 +3014,11 @@ export abstract class HeldItemTransferModifier extends PokemonHeldItemModifier {
   /**
    * Steals an item from a set of target Pokemon.
    * This prioritizes high-tier held items when selecting the item to steal.
-   * @param args \[0\] The {@linkcode Pokemon} holding this item
-   * @returns true if an item was stolen; false otherwise.
+   * @param pokemon The {@linkcode Pokemon} holding this item
+   * @returns `true` if an item was stolen; false otherwise.
    */
-  apply(args: any[]): boolean {
-    const pokemon = args[0] as Pokemon;
-    const opponents = this.getTargets(args);
+  override apply(pokemon: Pokemon): boolean {
+    const opponents = this.getTargets(pokemon);
 
     if (!opponents.length) {
       return false;
@@ -2783,15 +3127,13 @@ export class ContactHeldItemTransferChanceModifier extends HeldItemTransferModif
 
   /**
    * Determines the target to steal items from when this applies.
-   * @param args\[0\] The {@linkcode Pokemon} holding this item
-   * @param args\[1\] The {@linkcode Pokemon} the holder is targeting with an attack
+   * @param _holderPokemon The {@linkcode Pokemon} holding this item
+   * @param targetPokemon The {@linkcode Pokemon} the holder is targeting with an attack
    * @returns The target (args[1]) stored in array format for use in {@linkcode HeldItemTransferModifier.apply}
    */
-  getTargets(args: any[]): Pokemon[] {
-    const target = args[1];
-
-    return target instanceof Pokemon
-      ? [ target ]
+  override getTargets(_holderPokemon: Pokemon, targetPokemon: Pokemon): Pokemon[] {
+    return targetPokemon instanceof Pokemon
+      ? [ targetPokemon ]
       : [];
   }
 
@@ -2833,7 +3175,11 @@ export class IvScannerModifier extends PersistentModifier {
     return new IvScannerModifier(this.type, this.stackCount);
   }
 
-  apply(args: any[]): boolean {
+  /**
+   * Applies {@linkcode IvScannerModifier}
+   * @returns always `true`
+   */
+  override apply(): boolean {
     return true;
   }
 
@@ -2855,8 +3201,13 @@ export class ExtraModifierModifier extends PersistentModifier {
     return new ExtraModifierModifier(this.type, this.stackCount);
   }
 
-  apply(args: any[]): boolean {
-    (args[0] as Utils.IntegerHolder).value += this.getStackCount();
+  /**
+   * Applies {@linkcode ExtraModifierModifier}
+   * @param count {Utils.IntegerHolder} holding the count value
+   * @returns always `true`
+   */
+  override apply(count: Utils.IntegerHolder): boolean {
+    count.value += this.getStackCount();
 
     return true;
   }
@@ -2885,8 +3236,13 @@ abstract class EnemyDamageMultiplierModifier extends EnemyPersistentModifier {
     this.damageMultiplier = damageMultiplier;
   }
 
-  apply(args: any[]): boolean {
-    (args[0] as Utils.NumberHolder).value = Math.floor((args[0] as Utils.NumberHolder).value * Math.pow(this.damageMultiplier, this.getStackCount()));
+  /**
+   * Applies {@linkcode EnemyDamageMultiplierModifier}
+   * @param multiplier {Utils.NumberHolder} holding the multiplier value
+   * @returns always `true`
+   */
+  override apply(multiplier: Utils.NumberHolder): boolean {
+    multiplier.value = Math.floor(multiplier.value * Math.pow(this.damageMultiplier, this.getStackCount()));
 
     return true;
   }
@@ -2964,13 +3320,16 @@ export class EnemyTurnHealModifier extends EnemyPersistentModifier {
     return [ this.healPercent ];
   }
 
-  apply(args: any[]): boolean {
-    const pokemon = args[0] as Pokemon;
-
-    if (!pokemon.isFullHp()) {
-      const scene = pokemon.scene;
-      scene.unshiftPhase(new PokemonHealPhase(scene, pokemon.getBattlerIndex(),
-        Math.max(Math.floor(pokemon.getMaxHp() / (100 / this.healPercent)) * this.stackCount, 1), i18next.t("modifier:enemyTurnHealApply", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }), true, false, false, false, true));
+  /**
+   * Applies {@linkcode EnemyTurnHealModifier}
+   * @param enemyPokemon The {@linkcode EnemyPokemon} to heal
+   * @returns `true` if the {@linkcode EnemyPokemon} was healed
+   */
+  override apply(enemyPokemon: EnemyPokemon): boolean {
+    if (!enemyPokemon.isFullHp()) {
+      const scene = enemyPokemon.scene;
+      scene.unshiftPhase(new PokemonHealPhase(scene, enemyPokemon.getBattlerIndex(),
+        Math.max(Math.floor(enemyPokemon.getMaxHp() / (100 / this.healPercent)) * this.stackCount, 1), i18next.t("modifier:enemyTurnHealApply", { pokemonNameWithAffix: getPokemonNameWithAffix(enemyPokemon) }), true, false, false, false, true));
       return true;
     }
 
@@ -3006,10 +3365,14 @@ export class EnemyAttackStatusEffectChanceModifier extends EnemyPersistentModifi
     return [ this.effect, this.chance * 100 ];
   }
 
-  apply(args: any[]): boolean {
-    const target = (args[0] as Pokemon);
+  /**
+   * Applies {@linkcode EnemyAttackStatusEffectChanceModifier}
+   * @param enemyPokemon {@linkcode EnemyPokemon} to apply the status effect to
+   * @returns `true` if the {@linkcode EnemyPokemon} was affected
+   */
+  override apply(enemyPokemon: EnemyPokemon): boolean {
     if (Phaser.Math.RND.realInRange(0, 1) < (this.chance * this.getStackCount())) {
-      return target.trySetStatus(this.effect, true);
+      return enemyPokemon.trySetStatus(this.effect, true);
     }
 
     return false;
@@ -3042,12 +3405,16 @@ export class EnemyStatusEffectHealChanceModifier extends EnemyPersistentModifier
     return [ this.chance * 100 ];
   }
 
-  apply(args: any[]): boolean {
-    const target = (args[0] as Pokemon);
-    if (target.status && Phaser.Math.RND.realInRange(0, 1) < (this.chance * this.getStackCount())) {
-      target.scene.queueMessage(getStatusEffectHealText(target.status.effect, getPokemonNameWithAffix(target)));
-      target.resetStatus();
-      target.updateInfo();
+  /**
+   * Applies {@linkcode EnemyStatusEffectHealChanceModifier}
+   * @param enemyPokemon The {@linkcode EnemyPokemon} to heal
+   * @returns `true` if the {@linkcode EnemyPokemon} was healed
+   */
+  override apply(enemyPokemon: EnemyPokemon): boolean {
+    if (enemyPokemon.status && Phaser.Math.RND.realInRange(0, 1) < (this.chance * this.getStackCount())) {
+      enemyPokemon.scene.queueMessage(getStatusEffectHealText(enemyPokemon.status.effect, getPokemonNameWithAffix(enemyPokemon)));
+      enemyPokemon.resetStatus();
+      enemyPokemon.updateInfo();
       return true;
     }
 
@@ -3081,9 +3448,12 @@ export class EnemyEndureChanceModifier extends EnemyPersistentModifier {
     return [ this.chance * 100 ];
   }
 
-  apply(args: any[]): boolean {
-    const target = (args[0] as Pokemon);
-
+  /**
+   * Applies {@linkcode EnemyEndureChanceModifier}
+   * @param target {@linkcode EnemyPokemon} to apply the {@linkcode BattlerTagType.ENDURING} chance to
+   * @returns `true` if {@linkcode EnemyPokemon} endured
+   */
+  override apply(target: EnemyPokemon): boolean {
     if (target.battleData.endured || Phaser.Math.RND.realInRange(0, 1) >= (this.chance * this.getStackCount())) {
       return false;
     }
@@ -3121,12 +3491,17 @@ export class EnemyFusionChanceModifier extends EnemyPersistentModifier {
     return [ this.chance * 100 ];
   }
 
-  apply(args: any[]): boolean {
+  /**
+   * Applies {@linkcode EnemyFusionChanceModifier}
+   * @param isFusion {@linkcode Utils.BooleanHolder} that will be set to `true` if the {@linkcode EnemyPokemon} is a fusion
+   * @returns `true` if the {@linkcode EnemyPokemon} is a fusion
+   */
+  override apply(isFusion: Utils.BooleanHolder): boolean {
     if (Phaser.Math.RND.realInRange(0, 1) >= (this.chance * this.getStackCount())) {
       return false;
     }
 
-    (args[0] as Utils.BooleanHolder).value = true;
+    isFusion.value = true;
 
     return true;
   }
