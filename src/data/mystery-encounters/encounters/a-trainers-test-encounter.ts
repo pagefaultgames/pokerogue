@@ -191,8 +191,7 @@ export const ATrainersTestEncounter: MysteryEncounter =
           // Eggs already full, give 2 10x Voucher instead
           encounter.dialogue.outro = [];
           scene.unshiftPhase(new MessagePhase(scene, i18next.t(`${namespace}.egg_list_full_dialogue`), undefined, true, undefined, i18next.t(`trainerNames:${encounter.misc.trainerNameKey}`)));
-          scene.unshiftPhase(new ModifierRewardPhase(scene, modifierTypes.VOUCHER_PREMIUM));
-          scene.unshiftPhase(new ModifierRewardPhase(scene, modifierTypes.VOUCHER_PREMIUM));
+          scene.unshiftPhase(new ModifierRewardPhase(scene, modifierTypes.VOUCHER_PLUS));
           setEncounterRewards(scene, { fillRemaining: false, rerollMultiplier: -1 });
         } else {
           encounter.dialogue.outro = [{ text: `${namespace}.outro` }];
