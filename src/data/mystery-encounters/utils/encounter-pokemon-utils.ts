@@ -737,10 +737,10 @@ export function getGoldenBugNetSpecies(): PokemonSpecies {
 /**
  * Generates a Pokemon level for a given wave, with an option to increase/decrease by a scaling modifier
  */
-export function getEncounterPokemonLevelForWave(scene: BattleScene, levelAdditiveModifier: number = 0) {
+export function getEncounterPokemonLevelForWave({currentBattle}: BattleScene, levelAdditiveModifier: number = 0) {
   // Default to use the first generated level from enemyLevels, or generate a new one if it DNE
-  const baseLevel = scene.currentBattle.enemyLevels && scene.currentBattle.enemyLevels?.length > 0 ? scene.currentBattle.enemyLevels[0] : scene.currentBattle.getLevelForWave();
+  const baseLevel = currentBattle.enemyLevels && currentBattle.enemyLevels?.length > 0 ? currentBattle.enemyLevels[0] : currentBattle.getLevelForWave();
 
   // Add a level scaling modifier that is (+1 level per 10 waves) * levelAdditiveModifier
-  return baseLevel + Math.max(Math.round((scene.currentBattle.waveIndex / 10) * levelAdditiveModifier), 0);
+  return baseLevel + Math.max(Math.round((currentBattle.waveIndex / 10) * levelAdditiveModifier), 0);
 }

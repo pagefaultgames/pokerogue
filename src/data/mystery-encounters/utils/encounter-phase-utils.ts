@@ -158,8 +158,8 @@ export async function initBattleWithEnemyConfig(scene: BattleScene, partyConfig:
 
   // ME levels are modified by an additive value that scales with wave index
   // Base scaling: Every 10 waves, modifier gets +1 level
-  // This can be amplified or counteracted by setting levelAdditiveMultiplier in config
-  // levelAdditiveMultiplier value of 0.5 will halve the modifier scaling, 2 will double it, etc.
+  // This can be amplified or counteracted by setting levelAdditiveModifier in config
+  // levelAdditiveModifier value of 0.5 will halve the modifier scaling, 2 will double it, etc.
   // Leaving null/undefined will disable level scaling
   const mult: number = !isNullOrUndefined(partyConfig.levelAdditiveModifier) ? partyConfig.levelAdditiveModifier! : 0;
   const additive = Math.max(Math.round((scene.currentBattle.waveIndex / 10) * mult), 0);

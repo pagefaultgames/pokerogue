@@ -14,7 +14,7 @@ import { PlayerGender } from "#enums/player-gender";
 import { Species } from "#enums/species";
 import { TrainerType } from "#enums/trainer-type";
 import i18next from "#app/plugins/i18n";
-import MysteryEncounter from "./data/mystery-encounters/mystery-encounter";
+import MysteryEncounter from "#app/data/mystery-encounters/mystery-encounter";
 import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
 
 export enum BattleType {
