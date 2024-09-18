@@ -43,6 +43,5 @@
     "epic": "Œuf Épique",
     "legendary": "Œuf Légendaire"
   },
-  "egg_list_full_dialogue": "Oh, il semblerait que tu n’as plus de place\npour un nouvel Œuf.$Tiens, prends plutôt ça à la place !",
   "outro": "{{statTrainerName}} vous donne un {{eggType}} !"
 }
