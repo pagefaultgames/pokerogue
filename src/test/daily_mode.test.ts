@@ -75,7 +75,7 @@ describe("Shop modifications", async () => {
     itemPoolChecks.clear();
   });
 
-  it("should do literally anything please god im begging you", async () => {
+  it("should have Eviolite and Mini Black Hole available in Daily", async () => {
     await game.dailyMode.runToSummon();
     const party = game.scene.getParty();
     expect(party[0]).toBeDefined();
