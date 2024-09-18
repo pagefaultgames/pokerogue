@@ -2,6 +2,7 @@ import BattleScene from "#app/battle-scene";
 import { EvolutionItem, pokemonEvolutions } from "#app/data/balance/pokemon-evolutions";
 import { tmPoolTiers, tmSpecies } from "#app/data/balance/tms";
 import { getBerryEffectDescription, getBerryName } from "#app/data/berry";
+import { applyChallenges, ChallengeType } from "#app/data/challenge";
 import { allMoves, AttackMove, selfStatLowerMoves } from "#app/data/move";
 import { getNatureName, getNatureStatMultiplier, Nature } from "#app/data/nature";
 import { getPokeballCatchMultiplier, getPokeballName, MAX_PER_TYPE_POKEBALLS, PokeballType } from "#app/data/pokeball";
@@ -9,6 +10,7 @@ import { FormChangeItem, pokemonFormChanges, SpeciesFormChangeCondition, Species
 import { getStatusEffectDescriptor, StatusEffect } from "#app/data/status-effect";
 import { Type } from "#app/data/type";
 import Pokemon, { EnemyPokemon, PlayerPokemon, PokemonMove } from "#app/field/pokemon";
+import { GameMode } from "#app/game-mode";
 import { getPokemonNameWithAffix } from "#app/messages";
 import {
   AddPokeballModifier, AddVoucherModifier, AttackTypeBoosterModifier, BaseStatModifier, BerryModifier, BoostBugSpawnModifier, BypassSpeedChanceModifier, ContactHeldItemTransferChanceModifier, CritBoosterModifier, DamageMoneyRewardModifier, DoubleBattleChanceBoosterModifier, EnemyAttackStatusEffectChanceModifier, EnemyDamageBoosterModifier, EnemyDamageReducerModifier, EnemyEndureChanceModifier, EnemyFusionChanceModifier, EnemyStatusEffectHealChanceModifier, EnemyTurnHealModifier, EvolutionItemModifier, EvolutionStatBoosterModifier, EvoTrackerModifier, ExpBalanceModifier, ExpBoosterModifier, ExpShareModifier, ExtraModifierModifier, FlinchChanceModifier, FusePokemonModifier, GigantamaxAccessModifier, HealingBoosterModifier, HealShopCostModifier, HiddenAbilityRateBoosterModifier, HitHealModifier, IvScannerModifier, LevelIncrementBoosterModifier, LockModifierTiersModifier, MapModifier, MegaEvolutionAccessModifier, MoneyInterestModifier, MoneyMultiplierModifier, MoneyRewardModifier, MultipleParticipantExpBonusModifier, PokemonAllMovePpRestoreModifier, PokemonBaseStatFlatModifier, PokemonBaseStatTotalModifier, PokemonExpBoosterModifier, PokemonFormChangeItemModifier, PokemonFriendshipBoosterModifier, PokemonHeldItemModifier, PokemonHpRestoreModifier, PokemonIncrementingStatModifier, PokemonInstantReviveModifier, PokemonLevelIncrementModifier, PokemonMoveAccuracyBoosterModifier, PokemonMultiHitModifier, PokemonNatureChangeModifier, PokemonNatureWeightModifier, PokemonPpRestoreModifier, PokemonPpUpModifier, PokemonStatusHealModifier, PreserveBerryModifier, RememberMoveModifier, ResetNegativeStatStageModifier, ShinyRateBoosterModifier, SpeciesCritBoosterModifier, SpeciesStatBoosterModifier, SurviveDamageModifier, SwitchEffectTransferModifier, TempCritBoosterModifier, TempStatStageBoosterModifier, TerastallizeAccessModifier, TerastallizeModifier, TmModifier, TurnHealModifier, TurnHeldItemTransferModifier, TurnStatusEffectModifier, type EnemyPersistentModifier, type Modifier, type PersistentModifier, TempExtraModifierModifier
@@ -19,7 +21,7 @@ import { Unlockables } from "#app/system/unlockables";
 import { getVoucherTypeIcon, getVoucherTypeName, VoucherType } from "#app/system/voucher";
 import PartyUiHandler, { PokemonMoveSelectFilter, PokemonSelectFilter } from "#app/ui/party-ui-handler";
 import { getModifierTierTextTint } from "#app/ui/text";
-import { formatMoney, getEnumKeys, getEnumValues, IntegerHolder, NumberHolder, padInt, randSeedInt, randSeedItem } from "#app/utils";
+import { BooleanHolder, formatMoney, getEnumKeys, getEnumValues, IntegerHolder, NumberHolder, padInt, randSeedInt, randSeedItem } from "#app/utils";
 import { Abilities } from "#enums/abilities";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { BerryType } from "#enums/berry-type";
@@ -144,7 +146,7 @@ export class ModifierType {
 type ModifierTypeGeneratorFunc = (party: Pokemon[], pregenArgs?: any[]) => ModifierType | null;
 
 export class ModifierTypeGenerator extends ModifierType {
-  private genTypeFunc:  ModifierTypeGeneratorFunc;
+  private genTypeFunc: ModifierTypeGeneratorFunc;
 
   constructor(genTypeFunc: ModifierTypeGeneratorFunc) {
     super(null, null, null);
@@ -873,7 +875,7 @@ export class FormChangeItemModifierType extends PokemonModifierType implements G
         if (pokemonFormChanges.hasOwnProperty(pokemon.species.speciesId)
           // Get all form changes for this species with an item trigger, including any compound triggers
           && pokemonFormChanges[pokemon.species.speciesId].filter(fc => fc.trigger.hasTriggerType(SpeciesFormChangeItemTrigger) && (fc.preFormKey === pokemon.getFormKey()))
-          // Returns true if any form changes match this item
+            // Returns true if any form changes match this item
             .map(fc => fc.findTrigger(SpeciesFormChangeItemTrigger) as SpeciesFormChangeItemTrigger)
             .flat().flatMap(fc => fc.item).includes(this.formChangeItem)
         ) {
@@ -1272,7 +1274,7 @@ type WeightedModifierTypeWeightFunc = (party: Pokemon[], rerollCount?: integer) 
  */
 function skipInClassicAfterWave(wave: integer, defaultWeight: integer): WeightedModifierTypeWeightFunc {
   return (party: Pokemon[]) => {
-    const gameMode =  party[0].scene.gameMode;
+    const gameMode = party[0].scene.gameMode;
     const currentWave = party[0].scene.currentBattle.waveIndex;
     return gameMode.isClassic && currentWave >= wave ? 0 : defaultWeight;
   };
@@ -1284,7 +1286,7 @@ function skipInClassicAfterWave(wave: integer, defaultWeight: integer): Weighted
  * @param defaultWeight ModifierType default weight
  * @returns A WeightedModifierTypeWeightFunc
  */
-function skipInLastClassicWaveOrDefault(defaultWeight: integer) : WeightedModifierTypeWeightFunc {
+function skipInLastClassicWaveOrDefault(defaultWeight: number): WeightedModifierTypeWeightFunc {
   return skipInClassicAfterWave(199, defaultWeight);
 }
 
@@ -1302,7 +1304,7 @@ function lureWeightFunc(maxBattles: number, weight: number): WeightedModifierTyp
   };
 }
 
-class WeightedModifierType {
+export class WeightedModifierType {
   public modifierType: ModifierType;
   public weight: integer | WeightedModifierTypeWeightFunc;
   public maxWeight: integer;
@@ -1598,7 +1600,7 @@ export const modifierTypes = {
   MYSTERY_ENCOUNTER_GOLDEN_BUG_NET: () => new ModifierType("modifierType:ModifierType.MYSTERY_ENCOUNTER_GOLDEN_BUG_NET", "golden_net", (type, _args) => new BoostBugSpawnModifier(type)),
 };
 
-interface ModifierPool {
+export interface ModifierPool {
   [tier: string]: WeightedModifierType[]
 }
 
@@ -1910,10 +1912,10 @@ const enemyBuffModifierPool: ModifierPool = {
   ].map(m => {
     m.setTier(ModifierTier.ULTRA); return m;
   }),
-  [ModifierTier.ROGUE]: [ ].map((m: WeightedModifierType) => {
+  [ModifierTier.ROGUE]: [].map((m: WeightedModifierType) => {
     m.setTier(ModifierTier.ROGUE); return m;
   }),
-  [ModifierTier.MASTER]: [ ].map((m: WeightedModifierType) => {
+  [ModifierTier.MASTER]: [].map((m: WeightedModifierType) => {
     m.setTier(ModifierTier.MASTER); return m;
   })
 };
@@ -2018,7 +2020,7 @@ export function regenerateModifierPoolThresholds(party: Pokemon[], poolType: Mod
     let tierMaxWeight = 0;
     let i = 0;
     pool[t].reduce((total: integer, modifierType: WeightedModifierType) => {
-      const weightedModifierType = modifierType as WeightedModifierType;
+      const weightedModifierType = modifierType;
       const existingModifiers = party[0].scene.findModifiers(m => m.type.id === weightedModifierType.modifierType.id, poolType === ModifierPoolType.PLAYER);
       const itemModifierType = weightedModifierType.modifierType instanceof ModifierTypeGenerator
         ? weightedModifierType.modifierType.generateType(party)
@@ -2028,8 +2030,8 @@ export function regenerateModifierPoolThresholds(party: Pokemon[], poolType: Mod
         || itemModifierType instanceof FormChangeItemModifierType
         || existingModifiers.find(m => m.stackCount < m.getMaxStackCount(party[0].scene, true))
         ? weightedModifierType.weight instanceof Function
-          ? (weightedModifierType.weight as Function)(party, rerollCount)
-          : weightedModifierType.weight as integer
+          ? weightedModifierType.weight(party, rerollCount)
+          : weightedModifierType.weight
         : 0;
       if (weightedModifierType.maxWeight) {
         const modifierId = weightedModifierType.modifierType.id;
@@ -2174,12 +2176,23 @@ export function getPlayerModifierTypeOptions(count: integer, party: PlayerPokemo
  * @param tier If specified will generate item of tier
  * @param allowLuckUpgrades `true` to allow items to upgrade tiers (the little animation that plays and is affected by luck)
  */
-function getModifierTypeOptionWithRetry(existingOptions: ModifierTypeOption[], retryCount: integer, party: PlayerPokemon[], tier?: ModifierTier, allowLuckUpgrades?: boolean): ModifierTypeOption {
+function getModifierTypeOptionWithRetry(existingOptions: ModifierTypeOption[], retryCount: number, party: PlayerPokemon[], tier?: ModifierTier, allowLuckUpgrades?: boolean): ModifierTypeOption {
   allowLuckUpgrades = allowLuckUpgrades ?? true;
   let candidate = getNewModifierTypeOption(party, ModifierPoolType.PLAYER, tier, undefined, 0, allowLuckUpgrades);
   let r = 0;
-  while (existingOptions.length && ++r < retryCount && existingOptions.filter(o => o.type.name === candidate?.type.name || o.type.group === candidate?.type.group).length) {
+  let isValidForChallenge = new BooleanHolder(true);
+  applyChallenges(party[0].scene.gameMode, ChallengeType.RANDOM_ITEM_BLACKLIST, candidate, isValidForChallenge);
+  while (
+    (
+      existingOptions.length
+      && ++r < retryCount
+      && existingOptions.filter(o => o.type.name === candidate?.type.name || o.type.group === candidate?.type.group).length
+    )
+    || !isValidForChallenge.value
+  ) {
     candidate = getNewModifierTypeOption(party, ModifierPoolType.PLAYER, candidate?.type.tier ?? tier, candidate?.upgradeCount, 0, allowLuckUpgrades);
+    isValidForChallenge = new BooleanHolder(true);
+    applyChallenges(party[0].scene.gameMode, ChallengeType.RANDOM_ITEM_BLACKLIST, candidate, isValidForChallenge);
   }
   return candidate!;
 }
@@ -2209,7 +2222,7 @@ export function overridePlayerModifierTypeOptions(options: ModifierTypeOption[],
   }
 }
 
-export function getPlayerShopModifierTypeOptionsForWave(waveIndex: integer, baseCost: integer): ModifierTypeOption[] {
+export function getPlayerShopModifierTypeOptionsForWave(waveIndex: number, baseCost: number, gameMode: GameMode): ModifierTypeOption[] {
   if (!(waveIndex % 10)) {
     return [];
   }
@@ -2244,7 +2257,11 @@ export function getPlayerShopModifierTypeOptionsForWave(waveIndex: integer, base
       new ModifierTypeOption(modifierTypes.SACRED_ASH(), 0, baseCost * 10)
     ]
   ];
-  return options.slice(0, Math.ceil(Math.max(waveIndex + 10, 0) / 30)).flat();
+  return options.slice(0, Math.ceil(Math.max(waveIndex + 10, 0) / 30)).flat().filter(item => {
+    const isValidForChallenge = new BooleanHolder(true);
+    applyChallenges(gameMode, ChallengeType.SHOP_ITEM_BLACKLIST, item, isValidForChallenge);
+    return isValidForChallenge.value;
+  });
 }
 
 export function getEnemyBuffModifierForWave(tier: ModifierTier, enemyModifiers: PersistentModifier[], scene: BattleScene): EnemyPersistentModifier {
@@ -2319,8 +2336,8 @@ export function getDailyRunStarterModifiers(party: PlayerPokemon[]): PokemonHeld
  * @param retryCount Max allowed tries before the next tier down is checked for a valid ModifierType
  * @param allowLuckUpgrades Default true. If false, will not allow ModifierType to randomly upgrade to next tier
  */
-function getNewModifierTypeOption(party: Pokemon[], poolType: ModifierPoolType, tier?: ModifierTier, upgradeCount?: integer, retryCount: integer = 0, allowLuckUpgrades: boolean = true): ModifierTypeOption | null {
-  const player = !poolType;
+function getNewModifierTypeOption(party: Pokemon[], poolType: ModifierPoolType, tier?: ModifierTier, upgradeCount?: number, retryCount: number = 0, allowLuckUpgrades: boolean = true): ModifierTypeOption | null {
+  const player = poolType === ModifierPoolType.PLAYER;
   const pool = getModifierPoolForType(poolType);
   let thresholds: object;
   switch (poolType) {
@@ -2370,7 +2387,7 @@ function getNewModifierTypeOption(party: Pokemon[], poolType: ModifierPoolType, 
     }
 
     tier += upgradeCount;
-    while (tier && (!modifierPool.hasOwnProperty(tier) || !modifierPool[tier].length)) {
+    while (tier && (!pool.hasOwnProperty(tier) || !pool[tier].length)) {
       tier--;
       if (upgradeCount) {
         upgradeCount--;
@@ -2381,7 +2398,7 @@ function getNewModifierTypeOption(party: Pokemon[], poolType: ModifierPoolType, 
     if (tier < ModifierTier.MASTER && allowLuckUpgrades) {
       const partyShinyCount = party.filter(p => p.isShiny() && !p.isFainted()).length;
       const upgradeOdds = Math.floor(32 / ((partyShinyCount + 2) / 2));
-      while (modifierPool.hasOwnProperty(tier + upgradeCount + 1) && modifierPool[tier + upgradeCount + 1].length) {
+      while (pool.hasOwnProperty(tier + upgradeCount + 1) && pool[tier + upgradeCount + 1].length) {
         if (!randSeedInt(upgradeOdds)) {
           upgradeCount++;
         } else {

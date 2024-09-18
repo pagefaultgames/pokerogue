@@ -1,22 +1,23 @@
+import { BattleType, TurnCommand } from "#app/battle";
 import BattleScene from "#app/battle-scene";
-import { TurnCommand, BattleType } from "#app/battle";
-import { TrappedTag, EncoreTag } from "#app/data/battler-tags";
-import { MoveTargetSet, getMoveTargets } from "#app/data/move";
 import { speciesStarterCosts } from "#app/data/balance/starters";
-import { Abilities } from "#app/enums/abilities";
-import { BattlerTagType } from "#app/enums/battler-tag-type";
-import { Biome } from "#app/enums/biome";
-import { Moves } from "#app/enums/moves";
+import { EncoreTag, TrappedTag } from "#app/data/battler-tags";
+import { applyChallenges, ChallengeType } from "#app/data/challenge";
+import { getMoveTargets, MoveTargetSet } from "#app/data/move";
 import { PokeballType } from "#app/enums/pokeball";
 import { FieldPosition, PlayerPokemon } from "#app/field/pokemon";
 import { getPokemonNameWithAffix } from "#app/messages";
+import { FieldPhase } from "#app/phases/field-phase";
+import { SelectTargetPhase } from "#app/phases/select-target-phase";
 import { Command } from "#app/ui/command-ui-handler";
 import { Mode } from "#app/ui/ui";
-import i18next from "i18next";
-import { FieldPhase } from "./field-phase";
-import { SelectTargetPhase } from "./select-target-phase";
+import { BooleanHolder, isNullOrUndefined } from "#app/utils";
+import { Abilities } from "#enums/abilities";
+import { BattlerTagType } from "#enums/battler-tag-type";
+import { Biome } from "#enums/biome";
+import { Moves } from "#enums/moves";
 import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
-import { isNullOrUndefined } from "#app/utils";
+import i18next from "i18next";
 
 export class CommandPhase extends FieldPhase {
   protected fieldIndex: integer;
@@ -94,6 +95,18 @@ export class CommandPhase extends FieldPhase {
 
     switch (command) {
       case Command.FIGHT:
+      // Check if move can be used in challenge
+        const isValidForChallenge = new BooleanHolder(true);
+        applyChallenges(this.scene.gameMode, ChallengeType.MOVE_BLACKLIST, playerPokemon.getMoveset()[cursor]!, isValidForChallenge);
+        if (!isValidForChallenge.value) {
+          const moveName = playerPokemon.getMoveset()[cursor]?.getName();
+          this.scene.ui.setMode(Mode.MESSAGE);
+          this.scene.ui.showText(i18next.t("challenges:illegalMove", { moveName: moveName }), null, () => {
+            this.scene.ui.clearText();
+            this.scene.ui.setMode(Mode.FIGHT, this.fieldIndex);
+          }, null, true);
+          break;
+        }
         let useStruggle = false;
         if (cursor === -1 ||
             playerPokemon.trySelectMove(cursor, args[0] as boolean) ||

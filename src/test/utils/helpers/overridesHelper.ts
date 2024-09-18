@@ -1,19 +1,20 @@
 import { StatusEffect } from "#app/data/status-effect";
+import { Variant } from "#app/data/variant";
 import { Weather, WeatherType } from "#app/data/weather";
-import { Abilities } from "#app/enums/abilities";
-import { Biome } from "#app/enums/biome";
-import { Moves } from "#app/enums/moves";
-import { Species } from "#app/enums/species";
 import * as GameMode from "#app/game-mode";
 import { GameModes, getGameMode } from "#app/game-mode";
 import { ModifierOverride } from "#app/modifier/modifier-type";
 import Overrides from "#app/overrides";
-import { vi } from "vitest";
-import { GameManagerHelper } from "./gameManagerHelper";
 import { Unlockables } from "#app/system/unlockables";
-import { Variant } from "#app/data/variant";
-import { MysteryEncounterType } from "#enums/mystery-encounter-type";
+import { Abilities } from "#enums/abilities";
+import { Biome } from "#enums/biome";
+import { Moves } from "#enums/moves";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
+import { MysteryEncounterType } from "#enums/mystery-encounter-type";
+import { PokeballType } from "#enums/pokeball";
+import { Species } from "#enums/species";
+import { GameManagerHelper } from "#test/utils/helpers/gameManagerHelper";
+import { vi } from "vitest";
 
 /**
  * Helper to handle overrides in tests
@@ -27,14 +28,14 @@ export class OverridesHelper extends GameManagerHelper {
   /**
    * Override the starting biome
    * @warning Any event listeners that are attached to [NewArenaEvent](events\battle-scene.ts) may need to be handled down the line
-   * @param biome the biome to set
+   * @param biome The {@linkcode Biome} to set
+   * @returns `this`
    */
   public startingBiome(biome: Biome): this {
     this.game.scene.newArena(biome);
     this.log(`Starting biome set to ${Biome[biome]} (=${biome})!`);
     return this;
   }
-
   /**
    * Override the starting wave (index)
    * @param wave the wave (index) to set. Classic: `1`-`200`
@@ -47,8 +48,8 @@ export class OverridesHelper extends GameManagerHelper {
   }
 
   /**
-   * Override the player (pokemon) starting level
-   * @param level the (pokemon) level to set
+   * Override the player pokemon's starting level
+   * @param level the level to set
    * @returns `this`
    */
   public startingLevel(level: Species | number): this {
@@ -69,8 +70,8 @@ export class OverridesHelper extends GameManagerHelper {
   }
 
   /**
-   * Override the player (pokemon) starting held items
-   * @param items the items to hold
+   * Override the player pokemon's starting held items
+   * @param items the {@linkcode ModifierOverride | items} to hold
    * @returns `this`
    */
   public startingHeldItems(items: ModifierOverride[]): this {
@@ -80,8 +81,35 @@ export class OverridesHelper extends GameManagerHelper {
   }
 
   /**
-   * Override the player (pokemon) {@linkcode Species | species}
-   * @param species the (pokemon) {@linkcode Species | species} to set
+   * Override the player's pokeball inventory
+   * @param pokeballs Array specifying the amount of each pokeball to set, or `null` if disabling the override
+   * @param enable Whether to enable or disable the override, default `true`
+   * @returns `this`
+   */
+  pokeballs(pokeballs: [number, number, number, number, number] | null, enable: boolean = true): this {
+    if (!pokeballs) {
+      pokeballs = [ 5, 0, 0, 0, 0 ];
+    }
+    pokeballs = pokeballs!;
+    const pokeballOverride = {
+      active: enable,
+      pokeballs: {
+        [PokeballType.POKEBALL]: pokeballs[0],
+        [PokeballType.GREAT_BALL]: pokeballs[1],
+        [PokeballType.ULTRA_BALL]: pokeballs[2],
+        [PokeballType.ROGUE_BALL]: pokeballs[3],
+        [PokeballType.MASTER_BALL]: pokeballs[4],
+      },
+    };
+    vi.spyOn(Overrides, "POKEBALL_OVERRIDE", "get").mockReturnValue(pokeballOverride);
+    this.log(`Pokeball override ${enable ? `set to [${pokeballs}]!` : "disabled!"}`);
+    return this;
+  }
+
+  /**
+   * Override the player pokemon's species.
+   * It's preferred to use `startBattle([Species.PKMN1, Species.PKMN2, ...])` if possible.
+   * @param species the {@linkcode Species} to set
    * @returns `this`
    */
   public starterSpecies(species: Species | number): this {
@@ -112,8 +140,15 @@ export class OverridesHelper extends GameManagerHelper {
   }
 
   /**
-   * Override the player (pokemons) forms
-   * @param forms the (pokemon) forms to set
+   * Override the player pokemons' forms
+   * @param forms the forms to set
+   * @example
+   * ```ts
+   * game.override.starterForms({
+   *   [Species.KYOGRE]: 1,
+   *   [Species.PIKACHU]: 3,
+   * });
+   * ```
    * @returns `this`
    */
   public starterForms(forms: Partial<Record<Species, number>>): this {
@@ -127,7 +162,7 @@ export class OverridesHelper extends GameManagerHelper {
 
   /**
    * Override the player's starting modifiers
-   * @param modifiers the modifiers to set
+   * @param modifiers the {@linkcode ModifierOverride | modifiers} to set
    * @returns `this`
    */
   public startingModifier(modifiers: ModifierOverride[]): this {
@@ -137,8 +172,8 @@ export class OverridesHelper extends GameManagerHelper {
   }
 
   /**
-   * Override the player (pokemon) {@linkcode Abilities | ability}
-   * @param ability the (pokemon) {@linkcode Abilities | ability} to set
+   * Override the player pokemon's ability
+   * @param ability the {@linkcode Abilities | ability} to set
    * @returns `this`
    */
   public ability(ability: Abilities): this {
@@ -148,8 +183,8 @@ export class OverridesHelper extends GameManagerHelper {
   }
 
   /**
-   * Override the player (pokemon) **passive** {@linkcode Abilities | ability}
-   * @param passiveAbility the (pokemon) **passive** {@linkcode Abilities | ability} to set
+   * Override the player pokemon's **passive** ability
+   * @param passiveAbility the **passive** {@linkcode Abilities | ability} to set
    * @returns `this`
    */
   public passiveAbility(passiveAbility: Abilities): this {
@@ -159,8 +194,8 @@ export class OverridesHelper extends GameManagerHelper {
   }
 
   /**
-   * Override the player (pokemon) {@linkcode Moves | moves}set
-   * @param moveset the {@linkcode Moves | moves}set to set
+   * Override the player pokemon's moveset
+   * @param moveset the {@linkcode Moves | moveset} to set
    * @returns `this`
    */
   public moveset(moveset: Moves | Moves[]): this {
@@ -174,9 +209,9 @@ export class OverridesHelper extends GameManagerHelper {
   }
 
   /**
-   * Override the player (pokemon) {@linkcode StatusEffect | status-effect}
-   * @param statusEffect the {@linkcode StatusEffect | status-effect} to set
-   * @returns
+   * Override the player pokemon's status effect
+   * @param statusEffect the {@linkcode StatusEffect | status effect} to set
+   * @returns `this`
    */
   public statusEffect(statusEffect: StatusEffect): this {
     vi.spyOn(Overrides, "STATUS_OVERRIDE", "get").mockReturnValue(statusEffect);
@@ -210,8 +245,8 @@ export class OverridesHelper extends GameManagerHelper {
   }
 
   /**
-   * Override the {@linkcode WeatherType | weather (type)}
-   * @param type {@linkcode WeatherType | weather type} to set
+   * Override the weather
+   * @param type The {@linkcode WeatherType} to set
    * @returns `this`
    */
   public weather(type: WeatherType): this {
@@ -237,8 +272,8 @@ export class OverridesHelper extends GameManagerHelper {
   }
 
   /**
-   * Override the battle type (single or double)
-   * @param battleType battle type to set
+   * Override the battle type
+   * @param battleType - The battle type to set ("single" or "double"), `null` to disable
    * @returns `this`
    */
   public battleType(battleType: "single" | "double" | null): this {
@@ -248,8 +283,8 @@ export class OverridesHelper extends GameManagerHelper {
   }
 
   /**
-   * Override the enemy (pokemon) {@linkcode Species | species}
-   * @param species the (pokemon) {@linkcode Species | species} to set
+   * Override the enemy pokemon's species
+   * @param species the {@linkcode Species} to set
    * @returns `this`
    */
   public enemySpecies(species: Species | number): this {
@@ -280,7 +315,7 @@ export class OverridesHelper extends GameManagerHelper {
   }
 
   /**
-   * Override the enemy (pokemon) {@linkcode Abilities | ability}
+   * Override the enemy pokemon's ability
    * @param ability the (pokemon) {@linkcode Abilities | ability} to set
    * @returns `this`
    */
@@ -291,8 +326,8 @@ export class OverridesHelper extends GameManagerHelper {
   }
 
   /**
-   * Override the enemy (pokemon) **passive** {@linkcode Abilities | ability}
-   * @param passiveAbility the (pokemon) **passive** {@linkcode Abilities | ability} to set
+   * Override the enemy pokemon's **passive** ability
+   * @param passiveAbility the **passive** {@linkcode Abilities | ability} to set
    * @returns `this`
    */
   public enemyPassiveAbility(passiveAbility: Abilities): this {
@@ -302,8 +337,8 @@ export class OverridesHelper extends GameManagerHelper {
   }
 
   /**
-   * Override the enemy (pokemon) {@linkcode Moves | moves}set
-   * @param moveset the {@linkcode Moves | moves}set to set
+   * Override the enemy pokemon's moveset
+   * @param moveset the {@linkcode Moves | moveset} to set
    * @returns `this`
    */
   public enemyMoveset(moveset: Moves | Moves[]): this {
@@ -317,7 +352,7 @@ export class OverridesHelper extends GameManagerHelper {
   }
 
   /**
-   * Override the enemy (pokemon) level
+   * Override the enemy pokemon's level
    * @param level the level to set
    * @returns `this`
    */
@@ -328,8 +363,8 @@ export class OverridesHelper extends GameManagerHelper {
   }
 
   /**
-   * Override the enemy (pokemon) {@linkcode StatusEffect | status-effect}
-   * @param statusEffect the {@linkcode StatusEffect | status-effect} to set
+   * Override the enemy pokemon's status effect
+   * @param statusEffect the {@linkcode StatusEffect} to set
    * @returns
    */
   public enemyStatusEffect(statusEffect: StatusEffect): this {
@@ -339,8 +374,8 @@ export class OverridesHelper extends GameManagerHelper {
   }
 
   /**
-   * Override the enemy (pokemon) held items
-   * @param items the items to hold
+   * Override the enemy pokemon's held items
+   * @param items the {@linkcode ModifierOverride | items} to hold
    * @returns `this`
    */
   public enemyHeldItems(items: ModifierOverride[]): this {
@@ -362,7 +397,7 @@ export class OverridesHelper extends GameManagerHelper {
 
   /**
    * Override the items rolled at the end of a battle
-   * @param items the items to be rolled
+   * @param items the {@linkcode ModifierOverride | items} to be rolled
    * @returns `this`
    */
   public itemRewards(items: ModifierOverride[]): this {
@@ -420,7 +455,7 @@ export class OverridesHelper extends GameManagerHelper {
   }
 
   /**
-   * Override the enemy (Pokemon) to have the given amount of health segments
+   * Override the enemy Pokemon to have the given amount of health segments
    * @param healthSegments the number of segments to give
    * - `0` (default): the health segments will be handled like in the game based on wave, level and species
    * - `1`: the Pokemon will not be a boss
@@ -462,8 +497,8 @@ export class OverridesHelper extends GameManagerHelper {
   }
 
   /**
-   * Override the encounter chance for a mystery encounter.
-   * @param tier - The {@linkcode MysteryEncounterTier} to encounter
+   * Override the encounter tier for a mystery encounter.
+   * @param tier What {@linkcode MysteryEncounterTier | tier} of encounter to set
    * @returns `this`
    */
   public mysteryEncounterTier(tier: MysteryEncounterTier): this {
@@ -474,7 +509,7 @@ export class OverridesHelper extends GameManagerHelper {
 
   /**
    * Override the encounter that spawns for the scene
-   * @param encounterType - The {@linkcode MysteryEncounterType} of the encounter
+   * @param encounterType What {@linkcode MysteryEncounterType | type} of encounter to set
    * @returns `this`
    */
   public mysteryEncounter(encounterType: MysteryEncounterType): this {

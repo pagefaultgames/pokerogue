@@ -1,16 +1,18 @@
-import BattleScene from "#app/battle-scene";
 import { BattlerIndex, BattleType, ClassicFixedBossWaves } from "#app/battle";
-import { CustomModifierSettings, modifierTypes } from "#app/modifier/modifier-type";
-import { BattleEndPhase } from "./battle-end-phase";
-import { NewBattlePhase } from "./new-battle-phase";
-import { PokemonPhase } from "./pokemon-phase";
-import { AddEnemyBuffModifierPhase } from "./add-enemy-buff-modifier-phase";
-import { EggLapsePhase } from "./egg-lapse-phase";
-import { GameOverPhase } from "./game-over-phase";
-import { ModifierRewardPhase } from "./modifier-reward-phase";
-import { SelectModifierPhase } from "./select-modifier-phase";
-import { TrainerVictoryPhase } from "./trainer-victory-phase";
+import BattleScene from "#app/battle-scene";
+import { applyChallenges, ChallengeType } from "#app/data/challenge";
 import { handleMysteryEncounterVictory } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
+import { CustomModifierSettings, modifierTypes } from "#app/modifier/modifier-type";
+import { AddEnemyBuffModifierPhase } from "#app/phases/add-enemy-buff-modifier-phase";
+import { BattleEndPhase } from "#app/phases/battle-end-phase";
+import { EggLapsePhase } from "#app/phases/egg-lapse-phase";
+import { GameOverPhase } from "#app/phases/game-over-phase";
+import { ModifierRewardPhase } from "#app/phases/modifier-reward-phase";
+import { NewBattlePhase } from "#app/phases/new-battle-phase";
+import { PokemonPhase } from "#app/phases/pokemon-phase";
+import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
+import { TrainerVictoryPhase } from "#app/phases/trainer-victory-phase";
+import { BooleanHolder } from "#app/utils";
 
 export class VictoryPhase extends PokemonPhase {
   /** If true, indicates that the phase is intended for EXP purposes only, and not to continue a battle to next phase */
@@ -40,6 +42,9 @@ export class VictoryPhase extends PokemonPhase {
       return this.end();
     }
 
+    const isHealPhaseActive = new BooleanHolder(true);
+    applyChallenges(this.scene.gameMode, ChallengeType.NO_HEAL_PHASE, isHealPhaseActive);
+
     if (!this.scene.getEnemyParty().find(p => this.scene.currentBattle.battleType === BattleType.WILD ? p.isOnField() : !p?.isFainted(true))) {
       this.scene.pushPhase(new BattleEndPhase(this.scene));
       if (this.scene.currentBattle.battleType === BattleType.TRAINER) {
@@ -51,7 +56,7 @@ export class VictoryPhase extends PokemonPhase {
           // Should get Lock Capsule on 165 before shop phase so it can be used in the rewards shop
           this.scene.pushPhase(new ModifierRewardPhase(this.scene, modifierTypes.LOCK_CAPSULE));
         }
-        if (this.scene.currentBattle.waveIndex % 10) {
+        if (this.scene.currentBattle.waveIndex % 10 || (this.scene.currentBattle.waveIndex === 0 && !isHealPhaseActive.value)) {
           this.scene.pushPhase(new SelectModifierPhase(this.scene, undefined, undefined, this.getFixedBattleCustomModifiers()));
         } else if (this.scene.gameMode.isDaily) {
           this.scene.pushPhase(new ModifierRewardPhase(this.scene, modifierTypes.EXP_CHARM));

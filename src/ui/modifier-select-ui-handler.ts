@@ -1,20 +1,20 @@
-import BattleScene from "../battle-scene";
-import { getPlayerShopModifierTypeOptionsForWave, ModifierTypeOption, TmModifierType } from "../modifier/modifier-type";
-import { getPokeballAtlasKey, PokeballType } from "../data/pokeball";
-import { addTextObject, getTextStyleOptions, getModifierTierTextTint, getTextColor, TextStyle } from "./text";
-import AwaitableUiHandler from "./awaitable-ui-handler";
-import { Mode } from "./ui";
-import { LockModifierTiersModifier, PokemonHeldItemModifier, HealShopCostModifier } from "../modifier/modifier";
-import { handleTutorial, Tutorial } from "../tutorial";
-import { Button } from "#enums/buttons";
-import MoveInfoOverlay from "./move-info-overlay";
-import { allMoves } from "../data/move";
-import * as Utils from "./../utils";
+import BattleScene from "#app/battle-scene";
+import { applyChallenges, ChallengeType } from "#app/data/challenge";
+import { allMoves } from "#app/data/move";
+import { getPokeballAtlasKey, PokeballType } from "#app/data/pokeball";
+import { HealShopCostModifier, LockModifierTiersModifier, PokemonHeldItemModifier } from "#app/modifier/modifier";
+import { getPlayerShopModifierTypeOptionsForWave, ModifierTypeOption, TmModifierType } from "#app/modifier/modifier-type";
 import Overrides from "#app/overrides";
+import { handleTutorial, Tutorial } from "#app/tutorial";
+import { BooleanHolder, formatMoney, NumberHolder } from "#app/utils";
+import { Button } from "#enums/buttons";
+import { ShopCursorTarget } from "#enums/shop-cursor-target";
 import i18next from "i18next";
-import { ShopCursorTarget } from "#app/enums/shop-cursor-target";
-import { IntegerHolder } from "./../utils";
 import Phaser from "phaser";
+import AwaitableUiHandler from "./awaitable-ui-handler";
+import MoveInfoOverlay from "./move-info-overlay";
+import { addTextObject, getModifierTierTextTint, getTextColor, getTextStyleOptions, TextStyle } from "./text";
+import { Mode } from "./ui";
 
 export const SHOP_OPTIONS_ROW_LIMIT = 7;
 const SINGLE_SHOP_ROW_YOFFSET = 12;
@@ -189,10 +189,16 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
 
     const typeOptions = args[1] as ModifierTypeOption[];
     const removeHealShop = this.scene.gameMode.hasNoShop;
-    const baseShopCost = new IntegerHolder(this.scene.getWaveMoneyAmount(1));
+    const baseShopCost = new NumberHolder(this.scene.getWaveMoneyAmount(1));
+
     this.scene.applyModifier(HealShopCostModifier, true, baseShopCost);
+
     const shopTypeOptions = !removeHealShop
-      ? getPlayerShopModifierTypeOptionsForWave(this.scene.currentBattle.waveIndex, baseShopCost.value)
+      ? getPlayerShopModifierTypeOptionsForWave(this.scene.currentBattle.waveIndex, baseShopCost.value, this.scene.gameMode).filter(shopItem => {
+        const isValidForChallenge = new BooleanHolder(true);
+        applyChallenges(this.scene.gameMode, ChallengeType.SHOP_ITEM_BLACKLIST, shopItem, isValidForChallenge);
+        return isValidForChallenge.value;
+      })
       : [];
     const optionsYOffset = shopTypeOptions.length > SHOP_OPTIONS_ROW_LIMIT ? -SINGLE_SHOP_ROW_YOFFSET : -DOUBLE_SHOP_ROW_YOFFSET;
 
@@ -559,7 +565,7 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
     }
     const canReroll = this.scene.money >= this.rerollCost;
 
-    const formattedMoney = Utils.formatMoney(this.scene.moneyFormat, this.rerollCost);
+    const formattedMoney = formatMoney(this.scene.moneyFormat, this.rerollCost);
 
     this.rerollCostText.setText(i18next.t("modifierSelectUiHandler:rerollCost", { formattedMoney }));
     this.rerollCostText.setColor(this.getTextColor(canReroll ? TextStyle.MONEY : TextStyle.PARTY_RED));
@@ -828,7 +834,7 @@ class ModifierOption extends Phaser.GameObjects.Container {
     const cost = Overrides.WAIVE_ROLL_FEE_OVERRIDE ? 0 : this.modifierTypeOption.cost;
     const textStyle = cost <= scene.money ? TextStyle.MONEY : TextStyle.PARTY_RED;
 
-    const formattedMoney = Utils.formatMoney(scene.moneyFormat, cost);
+    const formattedMoney = formatMoney(scene.moneyFormat, cost);
 
     this.itemCostText.setText(i18next.t("modifierSelectUiHandler:itemCost", { formattedMoney }));
     this.itemCostText.setColor(getTextColor(textStyle, false, scene.uiTheme));
