@@ -1,47 +1,47 @@
 {
-  "intro": "An extremely strong trainer approaches you...",
+  "intro": "무척 강해보이는 트레이너가 다가왔다…",
   "buck": {
-    "intro_dialogue": "Yo, trainer! My name's Buck.$I have a super awesome proposal\nfor a strong trainer such as yourself!$I'm carrying two rare Pokémon Eggs with me,\nbut I'd like someone else to care for one.$If you can prove your strength as a trainer to me,\nI'll give you the rarer egg!",
-    "accept": "Whoooo, I'm getting fired up!",
-    "decline": "Darn, it looks like your\nteam isn't in peak condition.$Here, let me help with that."
+    "intro_dialogue": "여-, 트레이너!\n나는 맥이라고해.$너처럼 강한 트레이너를 만난 김에\n엄청난 제안을 하나 할게!$희귀한 알을 두 개 가지고 있는데,\n하나를 누군가 맡아줬으면 하거든.$네가 나를 이긴다면,\n더 희귀한 알을 너한테 맡기도록 할게!",
+    "accept": "좋아, 불타오르는걸!",
+    "decline": "쳇, 아무래도 네 포켓몬들 컨디션이 별로인 거 같구나.$자, 내가 좀 도와줄게."
   },
   "cheryl": {
-    "intro_dialogue": "Hello, my name's Cheryl.$I have a particularly interesting request,\nfor a strong trainer such as yourself.$I'm carrying two rare Pokémon Eggs with me,\nbut I'd like someone else to care for one.$If you can prove your strength as a trainer to me,\nI'll give you the rarer Egg!",
-    "accept": "I hope you're ready!",
-    "decline": "I understand, it looks like your team\nisn't in the best condition at the moment.$Here, let me help with that."
+    "intro_dialogue": "안녕, 내 이름은 모미야.$너처럼 강한 트레이너가\n관심 있을 만한 제안이 있어.$희귀한 알을 두 개 가지고 있는데,\n하나를 누가 맡아줬으면 해.$네가 승부에서 이긴다면,\n더 희귀한 알을 너한테 맡기도록 할게!",
+    "accept": "준비 됐겠지!",
+    "decline": "알았어.\n네 포켓몬들 좀 지쳐 보이네.$자, 내가 좀 도와줄게."
   },
   "marley": {
-    "intro_dialogue": "...@d{64} I'm Marley.$I have an offer for you...$I'm carrying two Pokémon Eggs with me,\nbut I'd like someone else to care for one.$If you're stronger than me,\nI'll give you the rarer Egg.",
-    "accept": "... I see.",
-    "decline": "... I see.$Your Pokémon look hurt...\nLet me help."
+    "intro_dialogue": "…@d{64}난 미정이야.$제안이 있어…$알 두 개가 있는데,\n하나를 다른 사람이 맡아줬으면 해.$네가 나보다 강하다면,\n더 희귀한 알을 줄게.",
+    "accept": "…알겠어.",
+    "decline": "…알겠어.$네 포켓몬 좀 다쳤구나…\n내가 도와줄게."
   },
   "mira": {
-    "intro_dialogue": "Hi! I'm Mira!$Mira has a request\nfor a strong trainer like you!$Mira has two rare Pokémon Eggs,\nbut Mira wants someone else to take one!$If you show Mira that you're strong,\nMira will give you the rarer Egg!",
-    "accept": "You'll battle Mira?\nYay!",
-    "decline": "Aww, no battle?\nThat's okay!$Here, Mira will heal your team!"
+    "intro_dialogue": "안녕!\n나는 미루!$너처럼 강한 트레이너에게\n미루가 제안이 있어!$미루가 지금 희귀한 알 두개가 있거든\n하나를 다른 사람이 맡아줬으면 좋겠어!$미루에게 네가 더 강하다는걸 보여주면,\n미루가 더 희귀한 알을 줄게!",
+    "accept": "승부하는 거지?\n야호!",
+    "decline": "어라, 승부 안 하는 거야?\n괜찮아!$미루가 네 포켓몬들을 치료해 줄게!"
   },
   "riley": {
-    "intro_dialogue": "I'm Riley.$I have an odd proposal\nfor a strong trainer such as yourself.$I'm carrying two rare Pokémon Eggs with me,\nbut I'd like to give one to another trainer.$If you can prove your strength to me,\nI'll give you the rarer Egg!",
-    "accept": "That look you have...\nLet's do this.",
-    "decline": "I understand, your team looks beat up.$Here, let me help with that."
+    "intro_dialogue": "나는 현이.$너처럼 강한 트레이너에게\n별난 제안을 하나 할게.$지금 두 개의 희귀한 알이 있는데,\n하나를 다른 트레이너에게 맡기고 싶어.$네가 승부에서 이긴다면,\n더 희귀한 알을 줄게!",
+    "accept": "그 얼굴…\n승부다.",
+    "decline": "알겠어, 네 포켓몬들 지쳐 보이는구나.$자, 내가 도와줄게."
   },
-  "title": "A Trainer's Test",
-  "description": "It seems this trainer is willing to give you an Egg regardless of your decision. However, if you can manage to defeat this strong trainer, you'll receive a much rarer Egg.",
-  "query": "What will you do?",
+  "title": "선배 트레이너의 테스트",
+  "description": "이 트레이너는 승부를 받아들이든 거절하든 알을 줄 것 같습니다.\n하지만 이 강한 트레이너를 쓰러트린다면 훨씬 더 희귀한 알을 받을 수 있을 겁니다.",
+  "query": "어떻게 하시겠습니까?",
   "option": {
     "1": {
-      "label": "Accept the Challenge",
-      "tooltip": "(-) Tough Battle\n(+) Gain a @[TOOLTIP_TITLE]{Very Rare Egg}"
+      "label": "승부한다",
+      "tooltip": "(-) 힘든 전투\n(+) @[TOOLTIP_TITLE]{매우 희귀한 알} 획득"
     },
     "2": {
-      "label": "Refuse the Challenge",
-      "tooltip": "(+) Full Heal Party\n(+) Gain an @[TOOLTIP_TITLE]{Egg}"
+      "label": "승부를 거절한다",
+      "tooltip": "(+) 파티 전체 회복\n(+) @[TOOLTIP_TITLE]{알} 획득"
     }
   },
   "eggTypes": {
-    "rare": "a Rare Egg",
-    "epic": "an Epic Egg",
-    "legendary": "a Legendary Egg"
+    "rare": "레어 알",
+    "epic": "에픽 알",
+    "legendary": "레전더리 알"
   },
-  "outro": "{{statTrainerName}} gave you {{eggType}}!"
+  "outro": "{{statTrainerName}}[[가]] {{eggType}}[[를]] 줬다!"
 }

@@ -91,7 +91,7 @@ export default class MoveInfoOverlay extends Phaser.GameObjects.Container implem
     valuesBg.setOrigin(0, 0);
     this.val.add(valuesBg);
 
-    this.typ = this.scene.add.sprite(25, EFF_HEIGHT - 35, `types${Utils.verifyLang(i18next.language) ? `_${i18next.language}` : ""}`, "unknown");
+    this.typ = this.scene.add.sprite(25, EFF_HEIGHT - 35, Utils.getLocalizedSpriteKey("types"), "unknown");
     this.typ.setScale(0.8);
     this.val.add(this.typ);
 
@@ -138,7 +138,7 @@ export default class MoveInfoOverlay extends Phaser.GameObjects.Container implem
     this.pow.setText(move.power >= 0 ? move.power.toString() : "---");
     this.acc.setText(move.accuracy >= 0 ? move.accuracy.toString() : "---");
     this.pp.setText(move.pp >= 0 ? move.pp.toString() : "---");
-    this.typ.setTexture(`types${Utils.verifyLang(i18next.language) ? `_${i18next.language}` : ""}`, Type[move.type].toLowerCase());
+    this.typ.setTexture(Utils.getLocalizedSpriteKey("types"), Type[move.type].toLowerCase());
     this.cat.setFrame(MoveCategory[move.category].toLowerCase());
 
     this.desc.setText(move?.effect || "");

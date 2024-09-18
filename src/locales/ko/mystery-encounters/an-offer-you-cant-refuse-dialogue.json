@@ -1,26 +1,26 @@
 {
-  "intro": "You're stopped by a rich looking boy.",
-  "speaker": "Rich Boy",
-  "intro_dialogue": "Good day to you.$I can't help but notice that your\n{{strongestPokemon}} looks positively divine!$I've always wanted to have a Pokémon like that!$I'd pay you handsomely,\nand also give you this old bauble!",
-  "title": "An Offer You Can't Refuse",
-  "description": "You're being offered a @[TOOLTIP_TITLE]{Shiny Charm} and {{price, money}} for your {{strongestPokemon}}!\n\nIt's an extremely good deal, but can you really bear to part with such a strong team member?",
-  "query": "What will you do?",
+  "intro": "금수저 도련님에게 붙들렸다!",
+  "speaker": "금수저 도련님",
+  "intro_dialogue": "안녕하세요.$당신의 {{strongestPokemon}}[[가]] 정말 멋져서 그냥 지나칠 수가 없네요!$항상 저런 애완 포켓몬을 갖고 싶었거든요!$제가 오래된 장신구랑\n돈도 함께 섭섭지 않게 챙겨주도록 하죠!",
+  "title": "거절할 수 없는 제안",
+  "description": "{{strongestPokemon}}[[를]] 넘기는 대신\n@[TOOLTIP_TITLE]{빛나는부적}과 {{price, money}}을 준다고 합니다!\n\n매우 좋은 조건이지만,\n이렇게 든든한 동료를 보내줘야 할까요?",
+  "query": "어떻게 하시겠습니까?",
   "option": {
     "1": {
-      "label": "Accept the Deal",
-      "tooltip": "(-) Lose {{strongestPokemon}}\n(+) Gain a @[TOOLTIP_TITLE]{Shiny Charm}\n(+) Gain {{price, money}}",
-      "selected": "Wonderful!@d{32} Come along, {{strongestPokemon}}!$It's time to show you off to everyone at the yacht club!$They'll be so jealous!"
+      "label": "제안을 받아들인다",
+      "tooltip": "(-) {{strongestPokemon}}[[를]] 보내줌\n(+) @[TOOLTIP_TITLE]{빛나는부적}[[를]] 획득\n(+) {{price, money}}[[를]] 획득",
+      "selected": "좋아요!@d{32} 이리와, {{strongestPokemon}}!$요트 클럽에 가서 다른 사람들에게 자랑해야겠어!$다들 엄청 부러워하겠는걸!"
     },
     "2": {
-      "label": "Extort the Kid",
-      "tooltip": "(+) {{option2PrimaryName}} uses {{moveOrAbility}}\n(+) Gain {{price, money}}",
-      "tooltip_disabled": "Your Pokémon need to have certain moves or abilities to choose this",
-      "selected": "My word, we're being robbed, {{liepardName}}!$You'll be hearing from my lawyers for this!"
+      "label": "꼬마 녀석을 혼내준다",
+      "tooltip": "(+) {{option2PrimaryName}}의 {{moveOrAbility}} 사용\n(+) {{price, money}} 획득",
+      "tooltip_disabled": "이 선택지를 선택하려면 포켓몬이 특정 기술이나 능력을 가지고 있어야 한다.",
+      "selected": "말도 안 돼!\n{{liepardName}}, 우리 지금 삥 뜯긴 거야?!$너…!\n곧 우리 변호사 연락을 받게 될 거다!"
     },
     "3": {
-      "label": "Leave",
-      "tooltip": "(-) No Rewards",
-      "selected": "What a rotten day...$Ah, well. Let's return to the yacht club then, {{liepardName}}."
+      "label": "떠난다",
+      "tooltip": "(-) 보상 없음",
+      "selected": "재수 없는 날이네요....$뭐, 어때. 요트 클럽이나 가자, {{liepardName}}."
     }
   }
 }

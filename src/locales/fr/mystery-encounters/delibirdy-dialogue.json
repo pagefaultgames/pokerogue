@@ -15,13 +15,13 @@
     "2": {
       "label": "Donner de la nourriture",
       "tooltip": "(-) Donner une Baie ou une Résugraine aux {{delibirdName}}\n(+) Recevez un objet",
-      "select_prompt": "Sélectionner un objet à donner.",
+      "select_prompt": "Sélectionnez un objet à donner.",
       "selected": "Vous lancez la {{chosenItem}} aux {{delibirdName}},\nqui se lancent dans une grande délibération.$Ils reviennent ravis vers vous avec un cadeau !"
     },
     "3": {
       "label": "Donner un objet",
       "tooltip": "(-) Donner un objet tenu aux {{delibirdName}}\n(+) Recevez un objet",
-      "select_prompt": "Sélectionner un objet à donner.",
+      "select_prompt": "Sélectionnez un objet à donner.",
       "selected": "Vous lancez l’objet {{chosenItem}} aux {{delibirdName}},\nqui se lancent dans une grande délibération.$Ils reviennent ravis vers vous avec un cadeau !"
     }
   },

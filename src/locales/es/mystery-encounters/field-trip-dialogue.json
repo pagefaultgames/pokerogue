@@ -1,31 +1,31 @@
 {
-  "intro": "It's a teacher and some school children!",
-  "speaker": "Teacher",
-  "intro_dialogue": "Hello, there! Would you be able to\nspare a minute for my students?$I'm teaching them about Pokémon moves\nand would love to show them a demonstration.$Would you mind showing us one of\nthe moves your Pokémon can use?",
-  "title": "Field Trip",
-  "description": "A teacher is requesting a move demonstration from a Pokémon. Depending on the move you choose, she might have something useful for you in exchange.",
-  "query": "Which move category will you show off?",
+  "intro": "¡Es un profesor y alugnos estudiantes parvulitos",
+  "speaker": "Profesor",
+  "intro_dialogue": "¡Hola! ¿Podrías dedicar un minuto a mis alumnos?$Les estoy enseñando sobre los movimientos de Pokémon\ny me encantaría mostrarles una demostración.$¿Te importaría mostrarnos uno de los movimientos\nque puede usar tu Pokémon?",
+  "title": "Excursión",
+  "description": "Una profesora está solicitando una demostración de un movimiento de un Pokémon. Dependiendo del movimiento que elijas, podría tener algo útil para ti a cambio.",
+  "query": "¿Qué categoría de movimiento mostrarás?",
   "option": {
     "1": {
-      "label": "A Physical Move",
-      "tooltip": "(+) Physical Item Rewards"
+      "label": "Un movimiento físico",
+      "tooltip": "(+) Recompensas de objetos para movimientos físicos"
     },
     "2": {
-      "label": "A Special Move",
-      "tooltip": "(+) Special Item Rewards"
+      "label": "Un movimiento especial",
+      "tooltip": "(+)  Recompensas de objetos para movimientos especiales"
     },
     "3": {
-      "label": "A Status Move",
-      "tooltip": "(+) Status Item Rewards"
+      "label": "Un ataque de estado",
+      "tooltip": "(+) Recompensas de objetos de estado"
     },
-    "selected": "{{pokeName}} shows off an awesome display of {{move}}!"
+    "selected": "¡{{pokeName}} muestra una increíble exhibición de {{move}}!"
   },
-  "second_option_prompt": "Choose a move for your Pokémon to use.",
-  "incorrect": "...$That isn't a {{moveCategory}} move!\nI'm sorry, but I can't give you anything.$Come along children, we'll\nfind a better demonstration elsewhere.",
-  "incorrect_exp": "Looks like you learned a valuable lesson?$Your Pokémon also gained some experience.",
-  "correct": "Thank you so much for your kindness!\nI hope these items might be of use to you!",
-  "correct_exp": "{{pokeName}} also gained some valuable experience!",
-  "status": "Status",
-  "physical": "Physical",
-  "special": "Special"
+  "second_option_prompt": "Elige un movimiento para que tu Pokémon use.",
+  "incorrect": "...$¡Eso no es un movimiento {{moveCategory}}!\nLo siento, pero no puedo darte nada.$Vamos niños, encontraremos una mejor demostración en otro lugar.",
+  "incorrect_exp": "Parece que has aprendido una valiosa lección.$Tu Pokémon también ganó algo de experiencia.",
+  "correct": "¡Muchas gracias por tu amabilidad!\n¡Espero que estos objetos te sean de utilidad!",
+  "correct_exp": "{{pokeName}} también ganó una valiosa experiencia!",
+  "status": "Estado",
+  "physical": "Físico",
+  "special": "Especial"
 }

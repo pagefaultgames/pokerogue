@@ -1,30 +1,30 @@
 {
-  "intro_dialogue": "Step right up, folks! Try your luck\non the brand new {{wobbuffetName}} Whack-o-matic!",
-  "speaker": "Showman",
-  "title": "Fun And Games!",
-  "description": "You've encountered a traveling show with a prize game! You will have @[TOOLTIP_TITLE]{3 turns} to bring the {{wobbuffetName}} as close to @[TOOLTIP_TITLE]{1 HP} as possible @[TOOLTIP_TITLE]{without KOing it} so it can wind up a huge Counter on the bell-ringing machine.\nBut be careful! If you KO the {{wobbuffetName}}, you'll have to pay for the cost of reviving it!",
-  "query": "Would you like to play?",
+  "intro_dialogue": "자, 오세요 여러분!\n새로 나온 {{wobbuffetName}} 해머 게임에 도전해 보세요!",
+  "speaker": "진행자",
+  "title": "재밌는 놀이!",
+  "description": "상품이 걸린 게임이 진행 중입니다!\n@[TOOLTIP_TITLE]{3턴} 안에 {{wobbuffetName}}[[를]] @[TOOLTIP_TITLE]{기절시키지 않고 HP를 1}에 가깝게 만들어서, {{wobbuffetName}}이 해머기계에 최고로 강력한 카운터를 날리도록 해야합니다.\n하지만 조심하세요! 만약 {{wobbuffetName}}[[가]] 기절해버리면, 치료비를 내야 할테니까요!",
+  "query": "게임에 참가해 볼까요?",
   "option": {
     "1": {
-      "label": "Play the Game",
-      "tooltip": "(-) Pay {{option1Money, money}}\n(+) Play {{wobbuffetName}} Whack-o-matic",
-      "selected": "Time to test your luck!"
+      "label": "게임에 참가한다",
+      "tooltip": "(-) {{option1Money, money}} 지불\n(+) {{wobbuffetName}} 해머 게임 플레이",
+      "selected": "시작합니다!"
     },
     "2": {
-      "label": "Leave",
-      "tooltip": "(-) No Rewards",
-      "selected": "You hurry along your way,\nwith a slight feeling of regret."
+      "label": "떠난다",
+      "tooltip": "(-) 보상 없음",
+      "selected": "약간의 아쉬움을 안고, 서둘러 길을 떠났다."
     }
   },
-  "ko": "Oh no! The {{wobbuffetName}} fainted!$You lose the game and\nhave to pay for the revive cost...",
-  "charging_continue": "The Wubboffet keeps charging its counter-swing!",
-  "turn_remaining_3": "Three turns remaining!",
-  "turn_remaining_2": "Two turns remaining!",
-  "turn_remaining_1": "One turn remaining!",
-  "end_game": "Time's up!$The {{wobbuffetName}} winds up to counter-swing and@d{16}.@d{16}.@d{16}.",
-  "best_result": "The {{wobbuffetName}} smacks the button so hard\nthe bell breaks off the top!$You win the grand prize!",
-  "great_result": "The {{wobbuffetName}} smacks the button, nearly hitting the bell!$So close!\nYou earn the second tier prize!",
-  "good_result": "The {{wobbuffetName}} hits the button hard enough to go midway up the scale!$You earn the third tier prize!",
-  "bad_result": "The {{wobbuffetName}} barely taps the button and nothing happens...$Oh no!\nYou don't win anything!",
-  "outro": "That was a fun little game!"
+  "ko": "안 돼! {{wobbuffetName}}[[가]] 기절해버렸다!$게임에 지고 {{wobbuffetName}}의 병원비까지 내야할 판이다…",
+  "charging_continue": "마자용은 카운터 한 방을 충전하고 있다!",
+  "turn_remaining_3": "세 턴 남았다!",
+  "turn_remaining_2": "두 턴 남았다!",
+  "turn_remaining_1": "남은 턴은 단 한 번!",
+  "end_game": "거기까지!${{wobbuffetName}}[[가]] 한껏 충전한 카운터를 날릴 준비를 한다@d{16}.@d{16}.@d{16}.",
+  "best_result": "{{wobbuffetName}}[[가]] 기계를 때려 부술 기세로 내리쳤다!!!$기계 맨 위에 달려 있던 벨이\n아예 박살나 날아가 버렸다!$최고 1등상을 얻었다!",
+  "great_result": "{{wobbuffetName}}[[가]] 버튼을 박살낼 듯 내려쳤다!!$벨에 닿을락 말락 하는 곳까지 올라갔다!\n아깝다!!$2등상을 받았다!",
+  "good_result": "{{wobbuffetName}}[[가]] 버튼을 내리쳤다!$거의 중간까지 올라갔다!$3등상을 받았다!",
+  "bad_result": "{{wobbuffetName}}[[는]] 힘차게 휘둘러 봤지만\n버튼을 살짝 건드렸을 뿐 아무일도 일어나지 않았다…$안 돼!\n본전도 못 건졌다!",
+  "outro": "재밌는 미니게임이었다!"
 }

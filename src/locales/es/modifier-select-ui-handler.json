@@ -9,6 +9,6 @@
   "checkTeamDesc": "Revisa tu equipo o usa un objeto que cambia de forma.",
   "rerollCost": "{{formattedMoney}} ₽",
   "itemCost": "{{formattedMoney}} ₽",
-  "continueNextWaveButton": "Continue",
-  "continueNextWaveDescription": "Continue to the next wave"
+  "continueNextWaveButton": "Continuar",
+  "continueNextWaveDescription": "Continuar a la siguiente ronda"
 }
