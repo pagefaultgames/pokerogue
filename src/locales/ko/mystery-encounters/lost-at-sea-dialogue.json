@@ -19,7 +19,7 @@
       "selected": "{{option2PrimaryName}}[[가]] 보트 앞에서 날아가며, 돌아가는 길을 안내했다.${{option2PrimaryName}} 역시 이번 기회로 더 강해진 것 같다!"
     },
     "3": {
-      "label": "정처없이 방황한다",
+      "label": "정처 없이 방황한다",
       "tooltip": "(-) 모든 포켓몬 HP {{damagePercentage}}% 감소",
       "selected": "마침내 기억하는 곳에 다다를 때까지,\n정처없이 배를 타고 떠돌아다닌다.$길고 긴 표류에 포켓몬과 당신 모두 지쳐버렸다."
     }
