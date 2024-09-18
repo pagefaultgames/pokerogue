@@ -371,8 +371,14 @@ export class GameData {
       unlockPity: this.unlockPity.slice(0)
     };
   }
+
+  /**
+   * Checks if an `Unlockable` has been unlocked.
+   * @param unlockable The Unlockable to check
+   * @returns `true` if the player has unlocked this `Unlockable` or an override has enabled it
+   */
   public isUnlocked(unlockable: Unlockables): boolean {
-    if (Overrides.UNLOCK_OVERRIDE.includes(unlockable)) {
+    if (Overrides.ITEM_UNLOCK_OVERRIDE.includes(unlockable)) {
       return true;
     }
     return this.unlocks[unlockable];

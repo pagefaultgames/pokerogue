@@ -13,7 +13,6 @@ import * as Utils from "./../utils";
 import Overrides from "#app/overrides";
 import i18next from "i18next";
 import { ShopCursorTarget } from "#app/enums/shop-cursor-target";
-import { GameModes } from "#app/game-mode";
 import { IntegerHolder } from "./../utils";
 import Phaser from "phaser";
 
@@ -231,7 +230,7 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
 
     /* Multiplies the appearance duration by the speed parameter so that it is always constant, and avoids "flashbangs" at game speed x5 */
     this.scene.showShopOverlay(750 * this.scene.gameSpeed);
-    this.scene.updateAndShowText(750, this.scene.gameMode.modeId === GameModes.DAILY);
+    this.scene.updateAndShowText(750, this.scene.gameMode.isDaily);
     this.scene.updateBiomeWaveText();
     this.scene.updateMoneyText();
 

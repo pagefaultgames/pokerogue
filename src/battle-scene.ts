@@ -1674,6 +1674,11 @@ export default class BattleScene extends SceneBase {
     this.scoreText.setVisible(this.gameMode.isDaily);
   }
 
+  /**
+   * Displays the current luck value.
+   * @param duration The time for this label to fade in, if it is not already visible.
+   * @param isDaily If true, hides the label. (This is done because Luck does not apply in Daily Mode anymore)
+   */
   updateAndShowText(duration: number, isDaily?: boolean): void {
     const labels = [ this.luckLabelText, this.luckText ];
     labels.forEach(t => t.setAlpha(0));
@@ -1685,6 +1690,10 @@ export default class BattleScene extends SceneBase {
       this.luckText.setTint(0xffef5c, 0x47ff69, 0x6b6bff, 0xff6969);
     }
     this.luckLabelText.setX((this.game.canvas.width / 6) - 2 - (this.luckText.displayWidth + 2));
+    if (isDaily) {
+      // Hide luck label
+      labels.forEach(t => t.setVisible(false));
+    }
     this.tweens.add({
       targets: labels,
       duration: duration,

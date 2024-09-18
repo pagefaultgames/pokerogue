@@ -1700,7 +1700,7 @@ const modifierPool: ModifierPool = {
     new WeightedModifierType(modifierTypes.AMULET_COIN, skipInLastClassicWaveOrDefault(3)),
     new WeightedModifierType(modifierTypes.EVIOLITE, (party: Pokemon[]) => {
       const { gameMode, gameData } = party[0].scene;
-      if (party[0].scene.gameMode.isDaily || gameMode.isDaily || (!gameMode.isFreshStartChallenge() && gameData.isUnlocked(Unlockables.EVIOLITE))) {
+      if (gameMode.isDaily || (!gameMode.isFreshStartChallenge() && gameData.isUnlocked(Unlockables.EVIOLITE))) {
         return party.some(p => ((p.getSpeciesForm(true).speciesId in pokemonEvolutions) || (p.isFusion() && (p.getFusionSpeciesForm(true).speciesId in pokemonEvolutions))) && !p.getHeldItems().some(i => i instanceof Modifiers.EvolutionStatBoosterModifier)) ? 10 : 0;
       }
       return 0;
@@ -2418,11 +2418,16 @@ export class ModifierTypeOption {
   }
 }
 
+/**
+ * Calculates the team's luck value.
+ * @param party The player's party.
+ * @returns A value between 0 and 14, or 0 if the player is in Daily Run mode.
+ */
 export function getPartyLuckValue(party: Pokemon[]): integer {
   if (party[0].scene.gameMode.isDaily) {
     return 0;
   }
-  const luck = Phaser.Math.Clamp(party.map(p => p.isAllowedInBattle() ? p.getLuck() : 0)
+  const luck = Phaser.Math.Clamp(party.map(p => p.isAllowedInBattle() ? (p.scene.gameMode.isDaily ? 0 : p.getLuck()) : 0)
     .reduce((total: integer, value: integer) => total += value, 0), 0, 14);
   return luck || 0;
 }

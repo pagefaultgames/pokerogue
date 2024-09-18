@@ -302,8 +302,13 @@ export class OverridesHelper extends GameManagerHelper {
     return this;
   }
 
-  unlockUnlockable(unlockable: Unlockables[]) {
-    vi.spyOn(Overrides, "UNLOCK_OVERRIDE", "get").mockReturnValue(unlockable);
+  /**
+   * Gives the player access to an Unlockable.
+   * @param unlockable The Unlockable to enable.
+   * @returns this
+   */
+  enableUnlockable(unlockable: Unlockables[]) {
+    vi.spyOn(Overrides, "ITEM_UNLOCK_OVERRIDE", "get").mockReturnValue(unlockable);
     this.log("Temporarily unlocked the following content: ", unlockable);
     return this;
   }

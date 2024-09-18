@@ -2,8 +2,10 @@ import { GameMode, GameModes, getGameMode } from "#app/game-mode";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import * as Utils from "../utils";
 import GameManager from "./utils/gameManager";
-//import { getPartyLuckValue } from "#app/modifier/modifier-type";
-//import { Species } from "#app/enums/species";
+import { getPartyLuckValue } from "#app/modifier/modifier-type";
+import { Species } from "#app/enums/species";
+import { getPokemonSpecies } from "#app/data/pokemon-species";
+
 describe("game-mode", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
@@ -14,6 +16,7 @@ describe("game-mode", () => {
   });
   afterEach(() => {
     game.phaseInterceptor.restoreOg();
+    vi.clearAllMocks();
     vi.resetAllMocks();
   });
   beforeEach(() => {
@@ -43,12 +46,7 @@ describe("game-mode", () => {
       expect(classicGameMode.isWaveTrainer(19, arena)).toBeFalsy();
     });
   });
-  /*
-  // Need to figure out how to properly start a battle
-  describe("Luck Check", async () => {
-    let classicGameMode: GameMode;
-    let dailyGameMode: GameMode;
-
+  describe.skip("Luck Check", async () => {
     beforeAll(() => {
       phaserGame = new Phaser.Game({
         type: Phaser.HEADLESS,
@@ -61,24 +59,29 @@ describe("game-mode", () => {
 
     beforeEach(() => {
       game = new GameManager(phaserGame);
-      classicGameMode = getGameMode(GameModes.CLASSIC);
-      dailyGameMode = getGameMode(GameModes.DAILY);
     });
 
     it("applies luck in Classic", () => {
       game.override
         .shinyLevel(true, 2);
       game.classicMode.startBattle([Species.PICHU]);
+      game.scene.addPlayerPokemon(getPokemonSpecies(Species.PICHU), 5, undefined, undefined, undefined, true, 2);
       const party = game.scene.getParty();
-      expect(getPartyLuckValue(party)).toBe(3);
+      const luck = Phaser.Math.Clamp(party.map(p => p.isAllowedInBattle() ? p.getLuck() : 0)
+        .reduce((total: integer, value: integer) => total += value, 0), 0, 14);
+      expect(luck).toBeGreaterThan(0);
+      expect(getPartyLuckValue(party)).toBeGreaterThan(0);
     });
     it("does not apply luck in Daily Runs", () => {
       game.override
         .shinyLevel(true, 2);
       game.dailyMode.startBattle();
+      game.scene.addPlayerPokemon(getPokemonSpecies(Species.PICHU), 5, undefined, undefined, undefined, true, 2);
       const party = game.scene.getParty();
+      const luck = Phaser.Math.Clamp(party.map(p => p.isAllowedInBattle() ? p.getLuck() : 0)
+        .reduce((total: integer, value: integer) => total += value, 0), 0, 14);
+      expect(luck).toBeGreaterThan(0);
       expect(getPartyLuckValue(party)).toBe(0);
     });
   });
-  //*/
 });

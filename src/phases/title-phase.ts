@@ -76,7 +76,8 @@ export class TitlePhase extends Phase {
           this.scene.ui.clearText();
           this.end();
         };
-        if (this.scene.gameData.isUnlocked(Unlockables.ENDLESS_MODE)) {
+        const { gameData } = this.scene;
+        if (gameData.isUnlocked(Unlockables.ENDLESS_MODE)) {
           const options: OptionSelectItem[] = [
             {
               label: GameMode.getModeName(GameModes.CLASSIC),
@@ -100,7 +101,7 @@ export class TitlePhase extends Phase {
               }
             }
           ];
-          if (this.scene.gameData.isUnlocked(Unlockables.SPLICED_ENDLESS_MODE)) {
+          if (gameData.isUnlocked(Unlockables.SPLICED_ENDLESS_MODE)) {
             options.push({
               label: GameMode.getModeName(GameModes.SPLICED_ENDLESS),
               handler: () => {
