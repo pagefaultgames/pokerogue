@@ -420,7 +420,7 @@
     "MYSTERY_ENCOUNTER_SHUCKLE_JUICE": { "name": "단단지주스" },
     "MYSTERY_ENCOUNTER_BLACK_SLUDGE": { "name": "검은진흙", "description": "악취가 너무 심한 나머지 상점 물건 가격이 크게 비싸진다." },
     "MYSTERY_ENCOUNTER_MACHO_BRACE": { "name": "교정깁스", "description": "포켓몬을 쓰러뜨리면 교정깁스 스택을 얻는다. 스택이 올라갈수록 능력치가 약간 올라가고, 최대 스택에서 추가 보너스를 얻는다." },
-    "MYSTERY_ENCOUNTER_OLD_GATEAU": { "name": "숲의양갱", "description": "{{stats}} 종족값을 {{statValue}}만큼 올려준다." },
+    "MYSTERY_ENCOUNTER_OLD_GATEAU": { "name": "숲의양갱", "description": "{{stats}} 종족치를 {{statValue}}만큼 올려준다." },
     "MYSTERY_ENCOUNTER_GOLDEN_BUG_NET": { "name": "황금잠자리채", "description": "벌레타입 포켓몬을 더 자주 만날 수 있는 행운을 부여한다. 묘한 무게감이 든다." }
   },
   "SpeciesBoosterItem": {
