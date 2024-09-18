@@ -43,5 +43,6 @@
     "epic": "에픽 알",
     "legendary": "레전더리 알"
   },
+  "egg_list_full_dialogue": "Oh, it looks like you don't have room to carry another egg.$Here, take these instead!",
   "outro": "{{statTrainerName}}[[가]] {{eggType}}[[를]] 줬다!"
 }
