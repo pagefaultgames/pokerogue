@@ -26,6 +26,6 @@
   },
   "job_complete_good": "도와줘서 고마워요!\n오늘은 거의 {{selectedPokemon}} 혼자서 일을 다한 것 같네요!$여기 일당이에요!",
   "job_complete_bad": "{{selectedPokemon}}[[가]] 뭐… 조금은 도움이 된 거 같네요!$여기 일당이에요.",
-  "pokemon_tired": "{{selectedPokemon}}[[가]] 지친 것 같다!\n모든 기술의 PP가 2까지 줄었다!",
+  "pokemon_tired": "{{selectedPokemon}}[[가]] 지친 것 같다!\n모든 기술의 PP가 2로 감소했다!",
   "outro": "다음에 또 도와주러 와요!"
 }
