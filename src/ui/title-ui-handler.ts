@@ -75,7 +75,7 @@ export default class TitleUiHandler extends OptionSelectUiHandler {
       .then(request => request.json())
       .then(stats => {
         this.playerCountLabel.setText(`${stats.playerCount} ${i18next.t("menu:playersOnline")}`);
-        if (this.splashMessage === "battlesWon") {
+        if (this.splashMessage === "splashMessages:battlesWon") {
           this.splashMessageText.setText(i18next.t(this.splashMessage, { count: stats.battlesWon }));
         }
       })
