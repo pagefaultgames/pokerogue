@@ -1,13 +1,13 @@
-import { BattleStat } from "#app/data/battle-stat";
-import { BattlerTagType } from "#app/enums/battler-tag-type";
-import { BerryPhase } from "#app/phases/berry-phase";
-import { CommandPhase } from "#app/phases/command-phase";
-import { Abilities } from "#enums/abilities";
-import { Moves } from "#enums/moves";
-import { Species } from "#enums/species";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest";
 import GameManager from "../utils/gameManager";
+import { Species } from "#enums/species";
+import { Abilities } from "#enums/abilities";
+import { Moves } from "#enums/moves";
+import { Stat } from "#enums/stat";
+import { BattlerTagType } from "#app/enums/battler-tag-type";
+import { BerryPhase } from "#app/phases/berry-phase";
+import { CommandPhase } from "#app/phases/command-phase";
 
 const TIMEOUT = 20 * 1000;
 
@@ -33,7 +33,7 @@ describe("Moves - Crafty Shield", () => {
     game.override.moveset([Moves.CRAFTY_SHIELD, Moves.SPLASH, Moves.SWORDS_DANCE]);
 
     game.override.enemySpecies(Species.SNORLAX);
-    game.override.enemyMoveset(Array(4).fill(Moves.GROWL));
+    game.override.enemyMoveset([Moves.GROWL]);
     game.override.enemyAbility(Abilities.INSOMNIA);
 
     game.override.startingLevel(100);
@@ -55,14 +55,14 @@ describe("Moves - Crafty Shield", () => {
 
       await game.phaseInterceptor.to(BerryPhase, false);
 
-      leadPokemon.forEach(p => expect(p.summonData.battleStats[BattleStat.ATK]).toBe(0));
+      leadPokemon.forEach(p => expect(p.getStatStage(Stat.ATK)).toBe(0));
     }, TIMEOUT
   );
 
   test(
     "should not protect the user and allies from attack moves",
     async () => {
-      game.override.enemyMoveset(Array(4).fill(Moves.TACKLE));
+      game.override.enemyMoveset([Moves.TACKLE]);
 
       await game.startBattle([Species.CHARIZARD, Species.BLASTOISE]);
 
@@ -84,7 +84,7 @@ describe("Moves - Crafty Shield", () => {
     "should protect the user and allies from moves that ignore other protection",
     async () => {
       game.override.enemySpecies(Species.DUSCLOPS);
-      game.override.enemyMoveset(Array(4).fill(Moves.CURSE));
+      game.override.enemyMoveset([Moves.CURSE]);
 
       await game.startBattle([Species.CHARIZARD, Species.BLASTOISE]);
 
@@ -117,8 +117,8 @@ describe("Moves - Crafty Shield", () => {
 
       await game.phaseInterceptor.to(BerryPhase, false);
 
-      expect(leadPokemon[0].summonData.battleStats[BattleStat.ATK]).toBe(0);
-      expect(leadPokemon[1].summonData.battleStats[BattleStat.ATK]).toBe(2);
+      expect(leadPokemon[0].getStatStage(Stat.ATK)).toBe(0);
+      expect(leadPokemon[1].getStatStage(Stat.ATK)).toBe(2);
     }
   );
 });

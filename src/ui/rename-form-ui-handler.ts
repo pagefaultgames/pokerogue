@@ -1,7 +1,7 @@
 import { FormModalUiHandler } from "./form-modal-ui-handler";
 import { ModalConfig } from "./modal-ui-handler";
 import i18next from "i18next";
-import { PlayerPokemon } from "#app/field/pokemon.js";
+import { PlayerPokemon } from "#app/field/pokemon";
 import { Mode } from "./ui";
 import { OptionSelectItem } from "./abstact-option-select-ui-handler";
 import { addWindow } from "./ui-theme";

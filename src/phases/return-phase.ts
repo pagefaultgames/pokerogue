@@ -1,5 +1,5 @@
-import BattleScene from "#app/battle-scene.js";
-import { SpeciesFormChangeActiveTrigger } from "#app/data/pokemon-forms.js";
+import BattleScene from "#app/battle-scene";
+import { SpeciesFormChangeActiveTrigger } from "#app/data/pokemon-forms";
 import { SwitchSummonPhase } from "./switch-summon-phase";
 
 export class ReturnPhase extends SwitchSummonPhase {
@@ -16,6 +16,7 @@ export class ReturnPhase extends SwitchSummonPhase {
   onEnd(): void {
     const pokemon = this.getPokemon();
 
+    pokemon.resetSprite();
     pokemon.resetTurnData();
     pokemon.resetSummonData();
 

@@ -23,7 +23,7 @@ import OptionSelectUiHandler from "./settings/option-select-ui-handler";
 import EggHatchSceneHandler from "./egg-hatch-scene-handler";
 import EggListUiHandler from "./egg-list-ui-handler";
 import EggGachaUiHandler from "./egg-gacha-ui-handler";
-import {addWindow} from "./ui-theme";
+import { addWindow } from "./ui-theme";
 import LoginFormUiHandler from "./login-form-ui-handler";
 import RegistrationFormUiHandler from "./registration-form-ui-handler";
 import LoadingModalUiHandler from "./loading-modal-ui-handler";
@@ -37,7 +37,7 @@ import UnavailableModalUiHandler from "./unavailable-modal-ui-handler";
 import OutdatedModalUiHandler from "./outdated-modal-ui-handler";
 import SessionReloadModalUiHandler from "./session-reload-modal-ui-handler";
 import { Button } from "#enums/buttons";
-import i18next, { ParseKeys } from "i18next";
+import i18next from "i18next";
 import GamepadBindingUiHandler from "./settings/gamepad-binding-ui-handler";
 import SettingsKeyboardUiHandler from "#app/ui/settings/settings-keyboard-ui-handler";
 import KeyboardBindingUiHandler from "#app/ui/settings/keyboard-binding-ui-handler";
@@ -46,9 +46,14 @@ import SettingsAudioUiHandler from "./settings/settings-audio-ui-handler";
 import { PlayerGender } from "#enums/player-gender";
 import BgmBar from "#app/ui/bgm-bar";
 import RenameFormUiHandler from "./rename-form-ui-handler";
+import AdminUiHandler from "./admin-ui-handler";
 import RunHistoryUiHandler from "./run-history-ui-handler";
 import RunInfoUiHandler from "./run-info-ui-handler";
+import EggSummaryUiHandler from "./egg-summary-ui-handler";
+import TestDialogueUiHandler from "#app/ui/test-dialogue-ui-handler";
 import AutoCompleteUiHandler from "./autocomplete-ui-handler";
+import { Device } from "#enums/devices";
+import MysteryEncounterUiHandler from "./mystery-encounter-ui-handler";
 
 export enum Mode {
   MESSAGE,
@@ -64,6 +69,7 @@ export enum Mode {
   STARTER_SELECT,
   EVOLUTION_SCENE,
   EGG_HATCH_SCENE,
+  EGG_HATCH_SUMMARY,
   CONFIRM,
   OPTION_SELECT,
   MENU,
@@ -89,7 +95,10 @@ export enum Mode {
   RENAME_POKEMON,
   RUN_HISTORY,
   RUN_INFO,
+  TEST_DIALOGUE,
   AUTO_COMPLETE,
+  ADMIN,
+  MYSTERY_ENCOUNTER
 }
 
 const transitionModes = [
@@ -127,7 +136,10 @@ const noTransitionModes = [
   Mode.UNAVAILABLE,
   Mode.OUTDATED,
   Mode.RENAME_POKEMON,
-  Mode.AUTO_COMPLETE
+  Mode.TEST_DIALOGUE,
+  Mode.AUTO_COMPLETE,
+  Mode.ADMIN,
+  Mode.MYSTERY_ENCOUNTER
 ];
 
 export default class UI extends Phaser.GameObjects.Container {
@@ -165,6 +177,7 @@ export default class UI extends Phaser.GameObjects.Container {
       new StarterSelectUiHandler(scene),
       new EvolutionSceneHandler(scene),
       new EggHatchSceneHandler(scene),
+      new EggSummaryUiHandler(scene),
       new ConfirmUiHandler(scene),
       new OptionSelectUiHandler(scene),
       new MenuUiHandler(scene),
@@ -191,7 +204,10 @@ export default class UI extends Phaser.GameObjects.Container {
       new RenameFormUiHandler(scene),
       new RunHistoryUiHandler(scene),
       new RunInfoUiHandler(scene),
+      new TestDialogueUiHandler(scene, Mode.TEST_DIALOGUE),
       new AutoCompleteUiHandler(scene),
+      new AdminUiHandler(scene),
+      new MysteryEncounterUiHandler(scene),
     ];
   }
 
@@ -233,7 +249,7 @@ export default class UI extends Phaser.GameObjects.Container {
 
     this.tooltipContent = addTextObject(this.scene, 6, 16, "", TextStyle.TOOLTIP_CONTENT);
     this.tooltipContent.setName("text-tooltip-content");
-    this.tooltipContent.setWordWrapWidth(696);
+    this.tooltipContent.setWordWrapWidth(850);
 
     this.tooltipContainer.add(this.tooltipBg);
     this.tooltipContainer.add(this.tooltipTitle);
@@ -278,6 +294,12 @@ export default class UI extends Phaser.GameObjects.Container {
     return handler.processInput(button);
   }
 
+  showTextPromise(text: string, callbackDelay: number = 0, prompt: boolean = true, promptDelay?: integer | null): Promise<void> {
+    return new Promise<void>(resolve => {
+      this.showText(text ?? "", null, () => resolve(), callbackDelay, prompt, promptDelay);
+    });
+  }
+
   showText(text: string, delay?: integer | null, callback?: Function | null, callbackDelay?: integer | null, prompt?: boolean | null, promptDelay?: integer | null): void {
     if (prompt && text.indexOf("$") > -1) {
       const messagePages = text.split(/\$/g).map(m => m.trim());
@@ -298,30 +320,29 @@ export default class UI extends Phaser.GameObjects.Container {
     }
   }
 
-  showDialogue(text: string, name: string | undefined, delay: integer | null = 0, callback: Function, callbackDelay?: integer, promptDelay?: integer): void {
-    // First get the gender of the player (default male) (also used if UNSET)
-    let playerGenderPrefix = "PGM";
-    if ((this.scene as BattleScene).gameData.gender === PlayerGender.FEMALE) {
-      playerGenderPrefix = "PGF";
-    }
-    // Add the prefix to the text
-    const localizationKey: string = playerGenderPrefix + text;
-
+  showDialogue(keyOrText: string, name: string | undefined, delay: integer | null = 0, callback: Function, callbackDelay?: integer, promptDelay?: integer): void {
+    const battleScene = this.scene as BattleScene;
     // Get localized dialogue (if available)
     let hasi18n = false;
-    if (i18next.exists(localizationKey) ) {
-      text = i18next.t(localizationKey as ParseKeys);
+    let text = keyOrText;
+    const genderIndex = battleScene.gameData.gender ?? PlayerGender.UNSET;
+    const genderStr = PlayerGender[genderIndex].toLowerCase();
+
+    if (i18next.exists(keyOrText) ) {
+      const i18nKey = keyOrText;
       hasi18n = true;
 
+      text = i18next.t(i18nKey, { context: genderStr }); // override text with translation
+
       // Skip dialogue if the player has enabled the option and the dialogue has been already seen
-      if ((this.scene as BattleScene).skipSeenDialogues && (this.scene as BattleScene).gameData.getSeenDialogues()[localizationKey] === true) {
-        console.log(`Dialogue ${localizationKey} skipped`);
+      if (this.shouldSkipDialogue(i18nKey)) {
+        console.log(`Dialogue ${i18nKey} skipped`);
         callback();
         return;
       }
     }
     let showMessageAndCallback = () => {
-      hasi18n && (this.scene as BattleScene).gameData.saveSeenDialogue(localizationKey);
+      hasi18n && battleScene.gameData.saveSeenDialogue(keyOrText);
       callback();
     };
     if (text.indexOf("$") > -1) {
@@ -341,35 +362,38 @@ export default class UI extends Phaser.GameObjects.Container {
     }
   }
 
-  shouldSkipDialogue(text): boolean {
-    let playerGenderPrefix = "PGM";
-    if ((this.scene as BattleScene).gameData.gender === PlayerGender.FEMALE) {
-      playerGenderPrefix = "PGF";
-    }
+  shouldSkipDialogue(i18nKey: string): boolean {
+    const battleScene = this.scene as BattleScene;
 
-    const key = playerGenderPrefix + text;
-
-    if (i18next.exists(key) ) {
-      if ((this.scene as BattleScene).skipSeenDialogues && (this.scene as BattleScene).gameData.getSeenDialogues()[key] === true) {
+    if (i18next.exists(i18nKey) ) {
+      if (battleScene.skipSeenDialogues && battleScene.gameData.getSeenDialogues()[i18nKey] === true) {
         return true;
       }
     }
     return false;
   }
 
+  getTooltip(): { visible: boolean; title: string; content: string } {
+    return { visible: this.tooltipContainer.visible, title: this.tooltipTitle.text, content: this.tooltipContent.text };
+  }
+
   showTooltip(title: string, content: string, overlap?: boolean): void {
     this.tooltipContainer.setVisible(true);
-    this.tooltipTitle.setText(title || "");
-    const wrappedContent = this.tooltipContent.runWordWrap(content);
-    this.tooltipContent.setText(wrappedContent);
-    this.tooltipContent.y = title ? 16 : 4;
-    this.tooltipBg.width = Math.min(Math.max(this.tooltipTitle.displayWidth, this.tooltipContent.displayWidth) + 12, 684);
-    this.tooltipBg.height = (title ? 31 : 19) + 10.5 * (wrappedContent.split("\n").length - 1);
+    this.editTooltip(title, content);
     if (overlap) {
       (this.scene as BattleScene).uiContainer.moveAbove(this.tooltipContainer, this);
     } else {
       (this.scene as BattleScene).uiContainer.moveBelow(this.tooltipContainer, this);
     }
+  }
+
+  editTooltip(title: string, content: string): void {
+    this.tooltipTitle.setText(title || "");
+    const wrappedContent = this.tooltipContent.runWordWrap(content);
+    this.tooltipContent.setText(wrappedContent);
+    this.tooltipContent.y = title ? 16 : 4;
+    this.tooltipBg.width = Math.min(Math.max(this.tooltipTitle.displayWidth, this.tooltipContent.displayWidth) + 12, 838);
+    this.tooltipBg.height = (title ? 31 : 19) + 10.5 * (wrappedContent.split("\n").length - 1);
   }
 
   hideTooltip(): void {
@@ -379,8 +403,12 @@ export default class UI extends Phaser.GameObjects.Container {
 
   update(): void {
     if (this.tooltipContainer.visible) {
-      const reverse = this.scene.game.input.mousePointer && this.scene.game.input.mousePointer.x >= this.scene.game.canvas.width - this.tooltipBg.width * 6 - 12;
-      this.tooltipContainer.setPosition(!reverse ? this.scene.game.input.mousePointer!.x / 6 + 2 : this.scene.game.input.mousePointer!.x / 6 - this.tooltipBg.width - 2, this.scene.game.input.mousePointer!.y / 6 + 2); // TODO: are these bangs correct?
+      const xReverse = this.scene.game.input.mousePointer && this.scene.game.input.mousePointer.x >= this.scene.game.canvas.width - this.tooltipBg.width * 6 - 12;
+      const yReverse = this.scene.game.input.mousePointer && this.scene.game.input.mousePointer.y >= this.scene.game.canvas.height - this.tooltipBg.height * 6 - 12;
+      this.tooltipContainer.setPosition(
+        !xReverse ? this.scene.game.input.mousePointer!.x / 6 + 2 : this.scene.game.input.mousePointer!.x / 6 - this.tooltipBg.width - 2,
+        !yReverse ? this.scene.game.input.mousePointer!.y / 6 + 2 : this.scene.game.input.mousePointer!.y / 6 - this.tooltipBg.height - 2,
+      );
     }
   }
 
@@ -554,5 +582,21 @@ export default class UI extends Phaser.GameObjects.Container {
 
   public getModeChain(): Mode[] {
     return this.modeChain;
+  }
+
+  /**
+   * getGamepadType - returns the type of gamepad being used
+   * inputMethod could be "keyboard" or "touch" or "gamepad"
+   * if inputMethod is "keyboard" or "touch", then the inputMethod is returned
+   * if inputMethod is "gamepad", then the gamepad type is returned it could be "xbox" or "dualshock"
+   * @returns gamepad type
+   */
+  public getGamepadType(): string {
+    const scene = this.scene as BattleScene;
+    if (scene.inputMethod === "gamepad") {
+      return scene.inputController.getConfig(scene.inputController.selectedDevice[Device.GAMEPAD]).padType;
+    } else {
+      return scene.inputMethod;
+    }
   }
 }

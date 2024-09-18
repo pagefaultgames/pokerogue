@@ -52,5 +52,7 @@
   "rename": "Rinomina",
   "renameHelpEmoji": "Use \"/\" to access emoji library and enter a number to choose an emoji\n(e.g. \"/1\" for the first emoji)",
   "nickname": "Nickname",
-  "errorServerDown": "Poffarbacco! C'è stato un errore nella comunicazione col server.\n\nPuoi lasciare questa finestra aperta,\nil gioco si riconnetterà automaticamente."
+  "errorServerDown": "Poffarbacco! C'è stato un errore nella comunicazione col server.\n\nPuoi lasciare questa finestra aperta,\nil gioco si riconnetterà automaticamente.",
+  "noSaves": "Non ci sono file di salvataggio registrati!",
+  "tooManySaves": "Ci sono troppi file di salvataggio registrati!"
 }

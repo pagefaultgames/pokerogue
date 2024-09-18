@@ -8,7 +8,6 @@ import { Species } from "#enums/species";
 import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import { SPLASH_ONLY } from "../utils/testUtils";
 
 describe("Abilities - Pastel Veil", () => {
   let phaserGame: Phaser.Game;
@@ -31,7 +30,7 @@ describe("Abilities - Pastel Veil", () => {
       .moveset([Moves.TOXIC_THREAD, Moves.SPLASH])
       .enemyAbility(Abilities.BALL_FETCH)
       .enemySpecies(Species.SUNKERN)
-      .enemyMoveset(SPLASH_ONLY);
+      .enemyMoveset(Moves.SPLASH);
   });
 
   it("prevents the user and its allies from being afflicted by poison", async () => {

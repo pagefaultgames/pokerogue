@@ -113,6 +113,7 @@ export default class AutoCompleteUiHandler extends AbstractOptionSelectUiHandler
   protected setupOptions() {
     super.setupOptions();
     if (this.modalContainer) {
+      this.optionSelectContainer.setSize(this.optionSelectContainer.height, Math.max(this.optionSelectText.displayWidth + 24, this.getWindowWidth()));
       if (this.reverse) {
         this.optionSelectContainer.setPositionRelative(this.modalContainer, this.optionSelectBg.width + this.inputContainer.x, this.inputContainer.y);
         return;
