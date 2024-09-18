@@ -411,6 +411,7 @@ export default class AchvsUiHandler extends MessageUiHandler {
     super.clear();
     this.currentPage = Page.ACHIEVEMENTS;
     this.mainContainer.setVisible(false);
+    this.setScrollCursor(0);
     this.eraseCursor();
   }
 
