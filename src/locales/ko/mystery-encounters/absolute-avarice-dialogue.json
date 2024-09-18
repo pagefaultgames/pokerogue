@@ -1,7 +1,7 @@
 {
   "intro": "갑자기 나타난 {{greedentName}}[[가]]\n나무열매를 훔쳐갔다!",
   "title": "끝없는 욕심",
-  "description": "당신이 방심한 틈에 {{greedentName}}[[가]] 나무열매를 모두 훔쳐가버렸습니다!\n\n{{greedentName}}[[는]] 나무열매를 먹으려다가,\n잠시 멈춰서 당신을 재밌다는 듯 바라보고 있습니다.",
+  "description": "당신이 방심한 틈에 {{greedentName}}[[가]] 나무열매를 모두 훔쳐 가버렸습니다!\n\n{{greedentName}}[[는]] 나무열매를 먹으려다가,\n잠시 멈춰서 당신을 재밌다는 듯 바라보고 있습니다.",
   "query": "어떻게 하시겠습니까?",
   "option": {
     "1": {
