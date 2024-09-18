@@ -327,21 +327,19 @@ export class OverridesHelper extends GameManagerHelper {
   /**
    * Override player shininess
    * @param shininess Whether the player's Pokemon should be shiny.
+   */
+  shinyLevel(shininess: boolean): this {
+    vi.spyOn(Overrides, "SHINY_OVERRIDE", "get").mockReturnValue(shininess);
+    this.log(`Set player Pokemon as ${shininess ? "" : "not "}shiny!`);
+    return this;
+  }
+  /**
+   * Override player shiny variant
    * @param variant The player's shiny variant.
    */
-  shinyLevel(shininess?: boolean, variant?: Variant): this {
-    if (shininess !== undefined) {
-      vi.spyOn(Overrides, "SHINY_OVERRIDE", "get").mockReturnValue(shininess);
-    }
-    if (variant !== undefined) {
-      vi.spyOn(Overrides, "VARIANT_OVERRIDE", "get").mockReturnValue(variant);
-    }
-    if (shininess !== undefined) {
-      this.log(`Set player Pokemon as ${shininess ? "" : "not "}shiny!`);
-    }
-    if (variant !== undefined) {
-      this.log(`Set player Pokemon's shiny variant to ${variant}!`);
-    }
+  variantLevel(variant: Variant): this {
+    vi.spyOn(Overrides, "VARIANT_OVERRIDE", "get").mockReturnValue(variant);
+    this.log(`Set player Pokemon's shiny variant to ${variant}!`);
     return this;
   }
 

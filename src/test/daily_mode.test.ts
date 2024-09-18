@@ -7,6 +7,7 @@ import { Biome } from "#app/enums/biome";
 import { BattleEndPhase } from "#app/phases/battle-end-phase";
 import { Mode } from "#app/ui/ui";
 import ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
+import Overrides from "#app/overrides";
 
 //const TIMEOUT = 20 * 1000;
 
@@ -60,7 +61,7 @@ describe("Shop modifications", async () => {
       .startingWave(9)
       .startingBiome(Biome.ICE_CAVE) // Will lead to Snowy Forest with randomly generated weather
       .battleType("single")
-      .shinyLevel(true, 2)
+      .shinyLevel(true)
       .startingLevel(100) // Avoid levelling up
       .enemyLevel(1000) // Avoid opponent dying before game.doKillOpponents()
       .disableTrainerWaves()
@@ -75,11 +76,27 @@ describe("Shop modifications", async () => {
     itemPoolChecks.clear();
   });
 
+  it("should not have Eviolite and Mini Black Hole available in Classic if not unlocked", async () => {
+    await game.classicMode.runToSummon();
+    expect(itemPoolChecks.get("EVIOLITE")).toBeDefined();
+    expect(itemPoolChecks.get("EVIOLITE")).toBeFalsy();
+    expect(itemPoolChecks.get("MINI_BLACK_HOLE")).toBeDefined();
+    expect(itemPoolChecks.get("MINI_BLACK_HOLE")).toBeFalsy();
+    game.move.select(Moves.KOWTOW_CLEAVE);
+    await game.phaseInterceptor.to("DamagePhase");
+    await game.doKillOpponents();
+    await game.phaseInterceptor.to(BattleEndPhase);
+    game.onNextPrompt("SelectModifierPhase", Mode.MODIFIER_SELECT, () => {
+      expect(game.scene.ui.getHandler()).toBeInstanceOf(ModifierSelectUiHandler);
+      expect(itemPoolChecks.get("EVIOLITE")).toBeDefined();
+      expect(itemPoolChecks.get("EVIOLITE")).toBeFalsy();
+      expect(itemPoolChecks.get("MINI_BLACK_HOLE")).toBeDefined();
+      expect(itemPoolChecks.get("MINI_BLACK_HOLE")).toBeFalsy();
+    });
+  });
+
   it("should have Eviolite and Mini Black Hole available in Daily", async () => {
     await game.dailyMode.runToSummon();
-    const party = game.scene.getParty();
-    expect(party[0]).toBeDefined();
-    expect(getPartyLuckValue(party)).toBe(0);
     expect(itemPoolChecks.get("EVIOLITE")).toBeDefined();
     expect(itemPoolChecks.get("EVIOLITE")).toBeFalsy();
     expect(itemPoolChecks.get("MINI_BLACK_HOLE")).toBeDefined();
@@ -95,6 +112,23 @@ describe("Shop modifications", async () => {
       expect(itemPoolChecks.get("MINI_BLACK_HOLE")).toBeDefined();
       expect(itemPoolChecks.get("MINI_BLACK_HOLE")).toBeTruthy();
     });
+  });
+
+  it("should apply luck in Classic Mode", async () => {
+    await game.classicMode.runToSummon();
+    const party = game.scene.getParty();
+    expect(Overrides.SHINY_OVERRIDE).toBeTruthy();
+    expect(party[0]).toBeDefined();
+    expect(party[0].getLuck()).toBeGreaterThan(0);
+    expect(getPartyLuckValue(party)).toBeGreaterThan(0);
+  });
+
+  it("should not apply luck in Daily Run", async () => {
+    await game.dailyMode.runToSummon();
+    const party = game.scene.getParty();
+    expect(party[0]).toBeDefined();
+    expect(party[0].getLuck()).toBeGreaterThan(0);
+    expect(getPartyLuckValue(party)).toBe(0);
   });
 });
 //*/
