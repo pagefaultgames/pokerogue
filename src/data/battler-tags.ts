@@ -852,8 +852,8 @@ export class FrenzyTag extends BattlerTag {
     super.onRemove(pokemon);
     if ([Moves.OUTRAGE, Moves.PETAL_DANCE, Moves.THRASH].includes(this.sourceMove)) {
       if (this.turnCount < 2) { // Only add CONFUSED tag if a disruption occurs on the final confusion-inducing turn of FRENZY
-      pokemon.addTag(BattlerTagType.CONFUSED, pokemon.randSeedIntRange(2, 4));
-    }
+        pokemon.addTag(BattlerTagType.CONFUSED, pokemon.randSeedIntRange(2, 4));
+      }
     }
   }
 }
