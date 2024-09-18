@@ -43,6 +43,5 @@
     "epic": "에픽 알",
     "legendary": "레전더리 알"
   },
-  "egg_list_full_dialogue": "앗, 너 새로운 알을 받을 자리가 없어 보이는구나.$자, 대신 이걸 줄게!",
   "outro": "{{statTrainerName}}[[가]] {{eggType}}[[를]] 줬다!"
 }
