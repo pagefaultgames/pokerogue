@@ -214,7 +214,7 @@ export default class SummaryUiHandler extends UiHandler {
 
     this.statusContainer.add(statusLabel);
 
-    this.status = this.scene.add.sprite(91, 4, `statuses_${i18next.resolvedLanguage}`);
+    this.status = this.scene.add.sprite(91, 4, Utils.getLocalizedSpriteKey("statuses"));
     this.status.setOrigin(0.5, 0);
 
     this.statusContainer.add(this.status);
