@@ -14,7 +14,7 @@
       "label": "일반적인 트레이닝",
       "tooltip": "(-) 평범한 배틀\n(+) 선택 포켓몬 성격 변경",
       "select_prompt": "포켓몬과 훈련할\n새로운 성격을 선택하세요.",
-      "finished": "훈련을 마친 {{selectedPokemon}}[[는]] 조금 지쳤지만 뿌듯해보인다!${{selectedPokemon}}의 성격이 {{nature}}[[로]] 바뀌었다!"
+      "finished": "훈련을 마친 {{selectedPokemon}}[[는]] 조금 지쳤지만 뿌듯해 보인다!${{selectedPokemon}}의 성격이 {{nature}}[[로]] 바뀌었다!"
     },
     "3": {
       "label": "고강도 트레이닝",
