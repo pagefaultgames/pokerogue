@@ -52,6 +52,9 @@ import {
 } from "#app/phases/mystery-encounter-phases";
 import { ModifierRewardPhase } from "#app/phases/modifier-reward-phase";
 import { PartyExpPhase } from "#app/phases/party-exp-phase";
+import { ExpPhase } from "#app/phases/exp-phase";
+import { SelectBiomePhase } from "#app/phases/select-biome-phase";
+
 
 export interface PromptHandler {
   phaseTarget?: string;
@@ -60,7 +63,6 @@ export interface PromptHandler {
   expireFn?: () => void;
   awaitingActionInput?: boolean;
 }
-import { ExpPhase } from "#app/phases/exp-phase";
 
 export default class PhaseInterceptor {
   public scene;
@@ -130,6 +132,7 @@ export default class PhaseInterceptor {
     [ModifierRewardPhase, this.startPhase],
     [PartyExpPhase, this.startPhase],
     [ExpPhase, this.startPhase],
+    [SelectBiomePhase, this.startPhase],
   ];
 
   private endBySetMode = [
