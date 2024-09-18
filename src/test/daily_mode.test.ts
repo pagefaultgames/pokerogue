@@ -1,5 +1,6 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import GameManager from "./utils/gameManager";
+import { MapModifier } from "#app/modifier/modifier";
 
 describe("Daily Mode", () => {
   let phaserGame: Phaser.Game;
@@ -28,5 +29,6 @@ describe("Daily Mode", () => {
       expect(pkm.level).toBe(20);
       expect(pkm.moveset.length).toBeGreaterThan(0);
     });
+    expect(game.scene.getModifiers(MapModifier).length).toBeGreaterThan(0);
   });
 });
