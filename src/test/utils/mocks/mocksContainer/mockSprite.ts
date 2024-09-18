@@ -1,6 +1,5 @@
 import Phaser from "phaser";
 import { MockGameObject } from "../mockGameObject";
-import { vi } from "vitest";
 import Sprite = Phaser.GameObjects.Sprite;
 import Frame = Phaser.Textures.Frame;
 
@@ -15,6 +14,7 @@ export default class MockSprite implements MockGameObject {
   public scene;
   public anims;
   public list: MockGameObject[] = [];
+  public name: string;
   constructor(textureManager, x, y, texture) {
     this.textureManager = textureManager;
     this.scene = textureManager.scene;
@@ -102,7 +102,7 @@ export default class MockSprite implements MockGameObject {
     return this.phaserSprite.stop();
   }
 
-  setInteractive = vi.fn();
+  setInteractive = () => null;
 
   on(event, callback, source) {
     return this.phaserSprite.on(event, callback, source);

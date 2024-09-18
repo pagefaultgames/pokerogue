@@ -24,7 +24,6 @@ import { TurnInitPhase } from "#app/phases/turn-init-phase";
 import { TurnStartPhase } from "#app/phases/turn-start-phase";
 import ErrorInterceptor from "#app/test/utils/errorInterceptor";
 import InputsHandler from "#app/test/utils/inputsHandler";
-import { MockClock } from "#app/test/utils/mocks/mockClock";
 import CommandUiHandler from "#app/ui/command-ui-handler";
 import ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
 import PartyUiHandler from "#app/ui/party-ui-handler";
@@ -32,7 +31,6 @@ import TargetSelectUiHandler from "#app/ui/target-select-ui-handler";
 import { Mode } from "#app/ui/ui";
 import { Button } from "#enums/buttons";
 import { ExpNotification } from "#enums/exp-notification";
-import { GameDataType } from "#enums/game-data-type";
 import { PlayerGender } from "#enums/player-gender";
 import { Species } from "#enums/species";
 import { generateStarter, waitUntil } from "#test/utils/gameManagerUtils";
@@ -50,6 +48,12 @@ import { OverridesHelper } from "./helpers/overridesHelper";
 import { SettingsHelper } from "./helpers/settingsHelper";
 import { ReloadHelper } from "./helpers/reloadHelper";
 import { CheckSwitchPhase } from "#app/phases/check-switch-phase";
+import BattleMessageUiHandler from "#app/ui/battle-message-ui-handler";
+import { MysteryEncounterPhase } from "#app/phases/mystery-encounter-phases";
+import { expect } from "vitest";
+import { MysteryEncounterType } from "#enums/mystery-encounter-type";
+import { isNullOrUndefined } from "#app/utils";
+import { ExpGainsSpeed } from "#app/enums/exp-gains-speed";
 
 /**
  * Class to manage the game state and transitions between phases.
@@ -89,6 +93,9 @@ export default class GameManager {
     this.challengeMode = new ChallengeModeHelper(this);
     this.settings = new SettingsHelper(this);
     this.reload = new ReloadHelper(this);
+
+    // Disables Mystery Encounters on all tests (can be overridden at test level)
+    this.override.mysteryEncounterChance(0);
   }
 
   /**
@@ -141,7 +148,7 @@ export default class GameManager {
     this.scene.gameSpeed = 5;
     this.scene.moveAnimations = false;
     this.scene.showLevelUpStats = false;
-    this.scene.expGainsSpeed = 3;
+    this.scene.expGainsSpeed = ExpGainsSpeed.SKIP;
     this.scene.expParty = ExpNotification.SKIP;
     this.scene.hpBarSpeed = 3;
     this.scene.enableTutorials = false;
@@ -177,6 +184,39 @@ export default class GameManager {
 
     await this.phaseInterceptor.to(EncounterPhase);
     console.log("===finished run to final boss encounter===");
+  }
+
+  /**
+   * Runs the game to a mystery encounter phase.
+   * @param encounterType if specified, will expect encounter to have been spawned
+   * @param species Optional array of species for party.
+   * @returns A promise that resolves when the EncounterPhase ends.
+   */
+  async runToMysteryEncounter(encounterType?: MysteryEncounterType, species?: Species[]) {
+    if (!isNullOrUndefined(encounterType)) {
+      this.override.disableTrainerWaves();
+      this.override.mysteryEncounter(encounterType!);
+    }
+
+    await this.runToTitle();
+
+    this.onNextPrompt("TitlePhase", Mode.TITLE, () => {
+      this.scene.gameMode = getGameMode(GameModes.CLASSIC);
+      const starters = generateStarter(this.scene, species);
+      const selectStarterPhase = new SelectStarterPhase(this.scene);
+      this.scene.pushPhase(new EncounterPhase(this.scene, false));
+      selectStarterPhase.initBattle(starters);
+    }, () => this.isCurrentPhase(EncounterPhase));
+
+    this.onNextPrompt("EncounterPhase", Mode.MESSAGE, () => {
+      const handler = this.scene.ui.getHandler() as BattleMessageUiHandler;
+      handler.processInput(Button.ACTION);
+    }, () => this.isCurrentPhase(MysteryEncounterPhase), true);
+
+    await this.phaseInterceptor.run(EncounterPhase);
+    if (!isNullOrUndefined(encounterType)) {
+      expect(this.scene.currentBattle?.mysteryEncounter?.encounterType).toBe(encounterType);
+    }
   }
 
   /**
@@ -330,13 +370,11 @@ export default class GameManager {
    * @returns A promise that resolves with the exported save data.
    */
   exportSaveToTest(): Promise<string> {
+    const saveKey = "x0i2O7WRiANTqPmZ";
     return new Promise(async (resolve) => {
-      await this.scene.gameData.saveAll(this.scene, true, true, true, true);
-      this.scene.reset(true);
-      await waitUntil(() => this.scene.ui?.getMode() === Mode.TITLE);
-      await this.scene.gameData.tryExportData(GameDataType.SESSION, 0);
-      await waitUntil(() => localStorage.hasOwnProperty("toExport"));
-      return resolve(localStorage.getItem("toExport")!); // TODO: is this bang correct?;
+      const sessionSaveData = this.scene.gameData.getSessionSaveData(this.scene);
+      const encryptedSaveData = AES.encrypt(JSON.stringify(sessionSaveData), saveKey).toString();
+      resolve(encryptedSaveData);
     });
   }
 
@@ -360,12 +398,10 @@ export default class GameManager {
   }
 
   async killPokemon(pokemon: PlayerPokemon | EnemyPokemon) {
-    (this.scene.time as MockClock).overrideDelay = 0.01;
     return new Promise<void>(async (resolve, reject) => {
       pokemon.hp = 0;
       this.scene.pushPhase(new FaintPhase(this.scene, pokemon.getBattlerIndex(), true));
       await this.phaseInterceptor.to(FaintPhase).catch((e) => reject(e));
-      (this.scene.time as MockClock).overrideDelay = undefined;
       resolve();
     });
   }

@@ -1086,7 +1086,7 @@ export class PostDefendMoveDisableAbAttr extends PostDefendAbAttr {
 
   applyPostDefend(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker: Pokemon, move: Move, hitResult: HitResult, args: any[]): boolean {
     if (attacker.getTag(BattlerTagType.DISABLED) === null) {
-      if (move.checkFlag(MoveFlags.MAKES_CONTACT, attacker, pokemon) && (this.chance === -1 || pokemon.randSeedInt(100) < this.chance) && !attacker.isMax()) {
+      if (move.checkFlag(MoveFlags.MAKES_CONTACT, attacker, pokemon) && (this.chance === -1 || pokemon.randSeedInt(100) < this.chance)) {
         if (simulated) {
           return true;
         }
@@ -1706,6 +1706,10 @@ export class PostAttackApplyStatusEffectAbAttr extends PostAttackAbAttr {
   }
 
   applyPostAttackAfterMoveTypeCheck(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker: Pokemon, move: Move, hitResult: HitResult, args: any[]): boolean {
+    if (pokemon !== attacker && move.hitsSubstitute(attacker, pokemon)) {
+      return false;
+    }
+
     /**Status inflicted by abilities post attacking are also considered additional effects.*/
     if (!attacker.hasAbilityWithAttr(IgnoreMoveEffectsAbAttr) && !simulated && pokemon !== attacker && (!this.contactRequired || move.checkFlag(MoveFlags.MAKES_CONTACT, attacker, pokemon)) && pokemon.randSeedInt(100) < this.chance && !pokemon.status) {
       const effect = this.effects.length === 1 ? this.effects[0] : this.effects[pokemon.randSeedInt(this.effects.length)];
@@ -2119,6 +2123,10 @@ export class PostSummonStatStageChangeAbAttr extends PostSummonAbAttr {
       if (this.intimidate) {
         applyAbAttrs(IntimidateImmunityAbAttr, opponent, cancelled, simulated);
         applyAbAttrs(PostIntimidateStatStageChangeAbAttr, opponent, cancelled, simulated);
+
+        if (opponent.getTag(BattlerTagType.SUBSTITUTE)) {
+          cancelled.value = true;
+        }
       }
       if (!cancelled.value) {
         pokemon.scene.unshiftPhase(new StatStageChangePhase(pokemon.scene, opponent.getBattlerIndex(), false, this.stats, this.stages));
@@ -2198,7 +2206,6 @@ export class DownloadAbAttr extends PostSummonAbAttr {
   private enemyCountTally: integer;
   private stats: BattleStat[];
 
-  // TODO: Implement the Substitute feature(s) once move is implemented.
   /**
    * Checks to see if it is the opening turn (starting a new game), if so, Download won't work. This is because Download takes into account
    * vitamins and items, so it needs to use the Stat and the stat alone.
@@ -4840,7 +4847,7 @@ export const allAbilities = [ new Ability(Abilities.NONE, 3) ];
 export function initAbilities() {
   allAbilities.push(
     new Ability(Abilities.STENCH, 3)
-      .attr(PostAttackApplyBattlerTagAbAttr, false, (user, target, move) => !move.hasAttr(FlinchAttr) ? 10 : 0, BattlerTagType.FLINCHED),
+      .attr(PostAttackApplyBattlerTagAbAttr, false, (user, target, move) => !move.hasAttr(FlinchAttr) && !move.hitsSubstitute(user, target) ? 10 : 0, BattlerTagType.FLINCHED),
     new Ability(Abilities.DRIZZLE, 3)
       .attr(PostSummonWeatherChangeAbAttr, WeatherType.RAIN)
       .attr(PostBiomeChangeWeatherChangeAbAttr, WeatherType.RAIN),

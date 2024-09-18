@@ -167,6 +167,7 @@ export class MovePhase extends BattlePhase {
         this.pokemon.pushMoveHistory({ move: Moves.NONE, result: MoveResult.FAIL });
 
         this.pokemon.lapseTags(BattlerTagLapseType.MOVE_EFFECT); // Remove any tags from moves like Fly/Dive/etc.
+        this.pokemon.lapseTags(BattlerTagLapseType.AFTER_MOVE);
         moveQueue.shift(); // Remove the second turn of charge moves
         return this.end();
       }
@@ -186,6 +187,7 @@ export class MovePhase extends BattlePhase {
         this.pokemon.pushMoveHistory({ move: Moves.NONE, result: MoveResult.FAIL });
 
         this.pokemon.lapseTags(BattlerTagLapseType.MOVE_EFFECT); // Remove any tags from moves like Fly/Dive/etc.
+        this.pokemon.lapseTags(BattlerTagLapseType.AFTER_MOVE);
 
         moveQueue.shift();
         return this.end();
@@ -204,7 +206,7 @@ export class MovePhase extends BattlePhase {
       let success = this.move.getMove().applyConditions(this.pokemon, targets[0], this.move.getMove());
       const cancelled = new Utils.BooleanHolder(false);
       let failedText = this.move.getMove().getFailedText(this.pokemon, targets[0], this.move.getMove(), cancelled);
-      if (success && this.scene.arena.isMoveWeatherCancelled(this.move.getMove())) {
+      if (success && this.scene.arena.isMoveWeatherCancelled(this.pokemon, this.move.getMove())) {
         success = false;
       } else if (success && this.scene.arena.isMoveTerrainCancelled(this.pokemon, this.targets, this.move.getMove())) {
         success = false;
