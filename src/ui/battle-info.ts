@@ -162,7 +162,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
     this.splicedIcon.setInteractive(new Phaser.Geom.Rectangle(0, 0, 12, 15), Phaser.Geom.Rectangle.Contains);
     this.add(this.splicedIcon);
 
-    this.statusIndicator = this.scene.add.sprite(0, 0, "statuses");
+    this.statusIndicator = this.scene.add.sprite(0, 0, `statuses_${i18next.resolvedLanguage}`);
     this.statusIndicator.setName("icon_status");
     this.statusIndicator.setVisible(false);
     this.statusIndicator.setOrigin(0, 0);
