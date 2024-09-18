@@ -2,6 +2,7 @@
   "confirmStartTeam": "이 포켓몬들로 시작하시겠습니까?",
   "confirmExit": "나가시겠습니까?",
   "invalidParty": "스타팅 포켓몬 파티에 적합하지 않습니다!",
+  "emptyParty": "Press Space or Z to add Pokémon to your party.\nPress ENTER or Start to start the run.",
   "gen1": "1세대",
   "gen2": "2세대",
   "gen3": "3세대",
