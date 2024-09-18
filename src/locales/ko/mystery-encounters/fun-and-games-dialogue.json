@@ -21,7 +21,7 @@
   "turn_remaining_3": "세 턴 남았다!",
   "turn_remaining_2": "두 턴 남았다!",
   "turn_remaining_1": "남은 턴은 단 한 번!",
-  "end_game": "거기까지!${{wobbuffetName}}[[가]] 한껏 충전한 카운터를 날릴준비를 한다@d{16}.@d{16}.@d{16}.",
+  "end_game": "거기까지!${{wobbuffetName}}[[가]] 한껏 충전한 카운터를 날릴 준비를 한다@d{16}.@d{16}.@d{16}.",
   "best_result": "{{wobbuffetName}}[[가]] 기계를 때려부술 기세로 내리쳤다!!!$기계 맨 위에 달려있던 벨이\n아예 박살나 날아가 버렸다!$최고 1등상을 얻었다!",
   "great_result": "{{wobbuffetName}}[[가]] 버튼을 박살낼 듯 내려쳤다!!$벨에 닿을랑 말랑한 곳까지 올라갔다!\n아깝다!!$2등상을 받았다!",
   "good_result": "{{wobbuffetName}}[[가]] 버튼을 내리쳤다!$거의 중간까지 올라갔다!$3등상을 받았다!",
