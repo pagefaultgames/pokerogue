@@ -134,5 +134,5 @@ export const battle: SimpleTranslationEntries = {
   "battlerTagsSaltCuredLapse": "{{pokemonNameWithAffix}} viene colpito da {{moveName}}!",
   "battlerTagsCursedOnAdd": "{{pokemonNameWithAffix}} ha sacrificato metà dei suoi PS per\nlanciare una maledizione su {{pokemonName}}!",
   "battlerTagsCursedLapse": "{{pokemonNameWithAffix}} subisce la maledizione!",
-  "battlerTagsUproar": "{{pokemonNameWithAffix}} caused\nan uproar!",
+  "battlerTagsUproar": "{{pokemonNameWithAffix}} scatena\nuna baraonda!",
 } as const;
