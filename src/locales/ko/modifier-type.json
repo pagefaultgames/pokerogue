@@ -70,7 +70,7 @@
     },
     "PokemonBaseStatTotalModifierType": {
       "name": "단단지주스",
-      "description": "모든 종족값을 {{statValue}}만큼 {{increaseDecrease}}. 단단지의 {{blessCurse}}[[를]] 받았다.",
+      "description": "모든 종족치를 {{statValue}}만큼 {{increaseDecrease}}. 단단지의 {{blessCurse}}[[를]] 받았다.",
       "extra": {
         "increase": "올려준다",
         "decrease": "떨어뜨린다",
