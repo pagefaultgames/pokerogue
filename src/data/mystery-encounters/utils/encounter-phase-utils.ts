@@ -291,7 +291,7 @@ export async function initBattleWithEnemyConfig(scene: BattleScene, partyConfig:
 
       // Set AI type
       if (!isNullOrUndefined(config.aiType)) {
-        enemyPokemon.aiType = config.aiType;
+        enemyPokemon.aiType = config.aiType!;
       }
 
       // Set moves
