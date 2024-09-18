@@ -93,7 +93,6 @@ export default class RunInfoUiHandler extends UiHandler {
     const run = args[0];
     // Assigning information necessary for the UI's creation
     this.runInfo = this.scene.gameData.parseSessionData(JSON.stringify(run.entry));
-    console.log(this.runInfo);
     this.isVictory = run.isVictory;
     this.pageMode = RunInfoUiMode.MAIN;
 
