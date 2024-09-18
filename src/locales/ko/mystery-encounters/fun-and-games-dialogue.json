@@ -16,7 +16,7 @@
       "selected": "약간의 아쉬움을 안고, 서둘러 길을 떠났다."
     }
   },
-  "ko": "안 돼! {{wobbuffetName}}[[가]] 기절해버렸다!$게임에 지고 {{wobbuffetName}} 병원비까지 내야할 판이다…",
+  "ko": "안 돼! {{wobbuffetName}}[[가]] 기절해버렸다!$게임에 지고 {{wobbuffetName}}의 병원비까지 내야할 판이다…",
   "charging_continue": "마자용은 카운터 한 방을 충전하고 있다!",
   "turn_remaining_3": "세 턴 남았다!",
   "turn_remaining_2": "두 턴 남았다!",
