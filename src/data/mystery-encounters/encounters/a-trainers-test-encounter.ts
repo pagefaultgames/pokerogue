@@ -15,8 +15,6 @@ import { EggTier } from "#enums/egg-type";
 import { PartyHealPhase } from "#app/phases/party-heal-phase";
 import { ModifierTier } from "#app/modifier/modifier-tier";
 import { modifierTypes } from "#app/modifier/modifier-type";
-import { MessagePhase } from "#app/phases/message-phase";
-import { ModifierRewardPhase } from "#app/phases/modifier-reward-phase";
 
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounter:aTrainersTest";
@@ -153,19 +151,7 @@ export const ATrainersTestEncounter: MysteryEncounter =
           tier: EggTier.ULTRA
         };
         encounter.setDialogueToken("eggType", i18next.t(`${namespace}.eggTypes.epic`));
-        if (scene.gameData.eggs.length >= 99) {
-          // Eggs already full, give 2 10x Voucher instead
-          encounter.dialogue.outro = [];
-          setEncounterRewards(scene, { guaranteedModifierTypeFuncs: [modifierTypes.SACRED_ASH], guaranteedModifierTiers: [ModifierTier.ROGUE, ModifierTier.ULTRA], fillRemaining: true }, undefined, () => {
-            scene.unshiftPhase(new MessagePhase(scene, i18next.t(`${namespace}.egg_list_full_dialogue`), undefined, true, undefined, i18next.t(`trainerNames:${encounter.misc.trainerNameKey}`)));
-            scene.unshiftPhase(new ModifierRewardPhase(scene, modifierTypes.VOUCHER_PREMIUM));
-            scene.unshiftPhase(new ModifierRewardPhase(scene, modifierTypes.VOUCHER_PREMIUM));
-          });
-        } else {
-          encounter.dialogue.outro = [{ text: `${namespace}.outro` }];
-          setEncounterRewards(scene, { guaranteedModifierTypeFuncs: [modifierTypes.SACRED_ASH], guaranteedModifierTiers: [ModifierTier.ROGUE, ModifierTier.ULTRA], fillRemaining: true }, [eggOptions]);
-        }
-
+        setEncounterRewards(scene, { guaranteedModifierTypeFuncs: [modifierTypes.SACRED_ASH], guaranteedModifierTiers: [ModifierTier.ROGUE, ModifierTier.ULTRA], fillRemaining: true }, [eggOptions]);
         return initBattleWithEnemyConfig(scene, config);
       }
     )
@@ -187,17 +173,13 @@ export const ATrainersTestEncounter: MysteryEncounter =
           tier: EggTier.GREAT
         };
         encounter.setDialogueToken("eggType", i18next.t(`${namespace}.eggTypes.rare`));
-        if (scene.gameData.eggs.length >= 99) {
-          // Eggs already full, give 2 10x Voucher instead
-          encounter.dialogue.outro = [];
-          scene.unshiftPhase(new MessagePhase(scene, i18next.t(`${namespace}.egg_list_full_dialogue`), undefined, true, undefined, i18next.t(`trainerNames:${encounter.misc.trainerNameKey}`)));
-          scene.unshiftPhase(new ModifierRewardPhase(scene, modifierTypes.VOUCHER_PLUS));
-          setEncounterRewards(scene, { fillRemaining: false, rerollMultiplier: -1 });
-        } else {
-          encounter.dialogue.outro = [{ text: `${namespace}.outro` }];
-          setEncounterRewards(scene, { fillRemaining: false, rerollMultiplier: -1 }, [eggOptions]);
-        }
+        setEncounterRewards(scene, { fillRemaining: false, rerollMultiplier: -1 }, [eggOptions]);
         leaveEncounterWithoutBattle(scene);
       }
     )
+    .withOutroDialogue([
+      {
+        text: `${namespace}.outro`
+      }
+    ])
     .build();

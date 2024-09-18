@@ -25,7 +25,7 @@ const namespace = "mysteryEncounter:safariZone";
 
 const TRAINER_THROW_ANIMATION_TIMES = [512, 184, 768];
 
-const SAFARI_MONEY_MULTIPLIER = 2.75;
+const SAFARI_MONEY_MULTIPLIER = 2;
 
 /**
  * Safari Zone encounter.

@@ -7,17 +7,18 @@ import { StatusEffect } from "#app/data/status-effect";
 import MysteryEncounter, { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-encounter";
 import { MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/mystery-encounter-option";
 import { MoveRequirement } from "#app/data/mystery-encounters/mystery-encounter-requirements";
-import { EnemyPartyConfig, EnemyPokemonConfig, initBattleWithEnemyConfig, loadCustomMovesForEncounter, leaveEncounterWithoutBattle, setEncounterExp, setEncounterRewards, generateModifierType, } from "../utils/encounter-phase-utils";
+import { EnemyPartyConfig, EnemyPokemonConfig, generateModifierType, initBattleWithEnemyConfig, leaveEncounterWithoutBattle, loadCustomMovesForEncounter, setEncounterExp, setEncounterRewards, } from "../utils/encounter-phase-utils";
 import { queueEncounterMessage } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
 import { Moves } from "#enums/moves";
 import { BattlerIndex } from "#app/battle";
-import { PokemonMove } from "#app/field/pokemon";
+import { AiType, PokemonMove } from "#app/field/pokemon";
 import { getPokemonSpecies } from "#app/data/pokemon-species";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { PartyHealPhase } from "#app/phases/party-heal-phase";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
 import { BerryType } from "#enums/berry-type";
+import { MysteryEncounterPokemonData } from "#app/data/mystery-encounters/mystery-encounter-pokemon-data";
 
 /** i18n namespace for the encounter */
 const namespace = "mysteryEncounter:slumberingSnorlax";
@@ -39,7 +40,7 @@ export const SlumberingSnorlaxEncounter: MysteryEncounter =
         fileRoot: "pokemon",
         hasShadow: true,
         tint: 0.25,
-        scale: 1.5,
+        scale: 1.25,
         repeat: true,
         y: 5,
       },
@@ -70,6 +71,8 @@ export const SlumberingSnorlaxEncounter: MysteryEncounter =
             stackCount: 2
           },
         ],
+        mysteryEncounterPokemonData: new MysteryEncounterPokemonData({ spriteScale: 1.25 }),
+        aiType: AiType.SMART // Required to ensure Snorlax uses Sleep Talk while it is asleep
       };
       const config: EnemyPartyConfig = {
         levelAdditiveModifier: 0.5,

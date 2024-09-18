@@ -723,10 +723,10 @@ export function getGoldenBugNetSpecies(): PokemonSpecies {
   const roll = randSeedInt(totalWeight);
 
   let w = 0;
-  for (const species of GOLDEN_BUG_NET_SPECIES_POOL) {
-    w += species[1];
+  for (const speciesWeightPair of GOLDEN_BUG_NET_SPECIES_POOL) {
+    w += speciesWeightPair[1];
     if (roll < w) {
-      return getPokemonSpecies(species);
+      return getPokemonSpecies(speciesWeightPair[0]);
     }
   }
 

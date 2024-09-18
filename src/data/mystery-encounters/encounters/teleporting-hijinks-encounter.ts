@@ -25,8 +25,8 @@ import { getEncounterPokemonLevelForWave } from "#app/data/mystery-encounters/ut
 /** the i18n namespace for this encounter */
 const namespace = "mysteryEncounter:teleportingHijinks";
 
-const MONEY_COST_MULTIPLIER = 2.5;
-const BIOME_CANDIDATES = [Biome.SPACE, Biome.FAIRY_CAVE, Biome.LABORATORY, Biome.ISLAND];
+const MONEY_COST_MULTIPLIER = 1.75;
+const BIOME_CANDIDATES = [Biome.SPACE, Biome.FAIRY_CAVE, Biome.LABORATORY, Biome.ISLAND, Biome.WASTELAND, Biome.DOJO];
 const MACHINE_INTERFACING_TYPES = [Type.ELECTRIC, Type.STEEL];
 
 /**

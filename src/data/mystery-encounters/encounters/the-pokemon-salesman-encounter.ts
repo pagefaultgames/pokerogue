@@ -20,7 +20,7 @@ import { Abilities } from "#enums/abilities";
 /** the i18n namespace for this encounter */
 const namespace = "mysteryEncounter:pokemonSalesman";
 
-const MAX_POKEMON_PRICE_MULTIPLIER = 6;
+const MAX_POKEMON_PRICE_MULTIPLIER = 4;
 
 /**
  * Pokemon Salesman encounter.
