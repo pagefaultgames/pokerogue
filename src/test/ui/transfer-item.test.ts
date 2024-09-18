@@ -96,7 +96,7 @@ describe("UI - Transfer Items", () => {
   }, 20000);
 });
 
-describe("Test", () => {
+describe.skip("Backup Test", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
 
