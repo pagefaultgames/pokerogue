@@ -3839,7 +3839,7 @@ export class StormAccuracyAttr extends VariableAccuracyAttr {
  * @extends VariableAccuracyAttr
  * @see {@linkcode apply}
  */
-export class MinimizeAccuracyAttr extends VariableAccuracyAttr {
+export class AlwaysHitMinimizeAttr extends VariableAccuracyAttr {
   /**
    * @see {@linkcode apply}
    * @param user N/A
@@ -6769,7 +6769,7 @@ export function initMoves() {
     new AttackMove(Moves.SLAM, Type.NORMAL, MoveCategory.PHYSICAL, 80, 75, 20, -1, 0, 1),
     new AttackMove(Moves.VINE_WHIP, Type.GRASS, MoveCategory.PHYSICAL, 45, 100, 25, -1, 0, 1),
     new AttackMove(Moves.STOMP, Type.NORMAL, MoveCategory.PHYSICAL, 65, 100, 20, 30, 0, 1)
-      .attr(MinimizeAccuracyAttr)
+      .attr(AlwaysHitMinimizeAttr)
       .attr(HitsTagAttr, BattlerTagType.MINIMIZED, true)
       .attr(FlinchAttr),
     new AttackMove(Moves.DOUBLE_KICK, Type.FIGHTING, MoveCategory.PHYSICAL, 30, 100, 30, -1, 0, 1)
@@ -6794,7 +6794,7 @@ export function initMoves() {
       .attr(OneHitKOAccuracyAttr),
     new AttackMove(Moves.TACKLE, Type.NORMAL, MoveCategory.PHYSICAL, 40, 100, 35, -1, 0, 1),
     new AttackMove(Moves.BODY_SLAM, Type.NORMAL, MoveCategory.PHYSICAL, 85, 100, 15, 30, 0, 1)
-      .attr(MinimizeAccuracyAttr)
+      .attr(AlwaysHitMinimizeAttr)
       .attr(HitsTagAttr, BattlerTagType.MINIMIZED, true)
       .attr(StatusEffectAttr, StatusEffect.PARALYSIS),
     new AttackMove(Moves.WRAP, Type.NORMAL, MoveCategory.PHYSICAL, 15, 90, 20, -1, 0, 1)
@@ -7888,7 +7888,7 @@ export function initMoves() {
     new AttackMove(Moves.DRAGON_PULSE, Type.DRAGON, MoveCategory.SPECIAL, 85, 100, 10, -1, 0, 4)
       .pulseMove(),
     new AttackMove(Moves.DRAGON_RUSH, Type.DRAGON, MoveCategory.PHYSICAL, 100, 75, 10, 20, 0, 4)
-      .attr(MinimizeAccuracyAttr)
+      .attr(AlwaysHitMinimizeAttr)
       .attr(HitsTagAttr, BattlerTagType.MINIMIZED, true)
       .attr(FlinchAttr),
     new AttackMove(Moves.POWER_GEM, Type.ROCK, MoveCategory.SPECIAL, 80, 100, 20, -1, 0, 4),
@@ -8099,7 +8099,7 @@ export function initMoves() {
       .attr(StatStageChangeAttr, [ Stat.SPATK, Stat.SPDEF, Stat.SPD ], 1, true)
       .danceMove(),
     new AttackMove(Moves.HEAVY_SLAM, Type.STEEL, MoveCategory.PHYSICAL, -1, 100, 10, -1, 0, 5)
-      .attr(MinimizeAccuracyAttr)
+      .attr(AlwaysHitMinimizeAttr)
       .attr(CompareWeightPowerAttr)
       .attr(HitsTagAttr, BattlerTagType.MINIMIZED, true),
     new AttackMove(Moves.SYNCHRONOISE, Type.PSYCHIC, MoveCategory.SPECIAL, 120, 100, 10, -1, 0, 5)
@@ -8252,13 +8252,13 @@ export function initMoves() {
       .attr(StatStageChangeAttr, [ Stat.DEF ], -1)
       .slicingMove(),
     new AttackMove(Moves.HEAT_CRASH, Type.FIRE, MoveCategory.PHYSICAL, -1, 100, 10, -1, 0, 5)
-      .attr(MinimizeAccuracyAttr)
+      .attr(AlwaysHitMinimizeAttr)
       .attr(CompareWeightPowerAttr)
       .attr(HitsTagAttr, BattlerTagType.MINIMIZED, true),
     new AttackMove(Moves.LEAF_TORNADO, Type.GRASS, MoveCategory.SPECIAL, 65, 90, 10, 50, 0, 5)
       .attr(StatStageChangeAttr, [ Stat.ACC ], -1),
     new AttackMove(Moves.STEAMROLLER, Type.BUG, MoveCategory.PHYSICAL, 65, 100, 20, 30, 0, 5)
-      .attr(MinimizeAccuracyAttr)
+      .attr(AlwaysHitMinimizeAttr)
       .attr(HitsTagAttr, BattlerTagType.MINIMIZED, true)
       .attr(FlinchAttr),
     new SelfStatusMove(Moves.COTTON_GUARD, Type.GRASS, -1, 10, -1, 0, 5)
@@ -8326,7 +8326,7 @@ export function initMoves() {
       .attr(LastMoveDoublePowerAttr, Moves.FUSION_FLARE)
       .makesContact(false),
     new AttackMove(Moves.FLYING_PRESS, Type.FIGHTING, MoveCategory.PHYSICAL, 100, 95, 10, -1, 0, 6)
-      .attr(MinimizeAccuracyAttr)
+      .attr(AlwaysHitMinimizeAttr)
       .attr(FlyingTypeMultiplierAttr)
       .attr(HitsTagAttr, BattlerTagType.MINIMIZED, true)
       .condition(failOnGravityCondition),
@@ -8757,7 +8757,7 @@ export function initMoves() {
       .partial()
       .ignoresVirtual(),
     new AttackMove(Moves.MALICIOUS_MOONSAULT, Type.DARK, MoveCategory.PHYSICAL, 180, -1, 1, -1, 0, 7)
-      .attr(MinimizeAccuracyAttr)
+      .attr(AlwaysHitMinimizeAttr)
       .attr(HitsTagAttr, BattlerTagType.MINIMIZED, true)
       .partial()
       .ignoresVirtual(),
