@@ -20,7 +20,7 @@ import { getPokemonNameWithAffix } from "#app/messages";
 import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
 import { Stat } from "#enums/stat";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
-import { getEncounterPokemonLevelForWave } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
+import { getEncounterPokemonLevelForWave, STANDARD_ENCOUNTER_BOOSTED_LEVEL_MODIFIER } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
 
 /** the i18n namespace for this encounter */
 const namespace = "mysteryEncounter:teleportingHijinks";
@@ -131,7 +131,7 @@ export const TeleportingHijinksEncounter: MysteryEncounter =
         const encounter = scene.currentBattle.mysteryEncounter!;
 
         // Init enemy
-        const level = getEncounterPokemonLevelForWave(scene, 1);
+        const level = getEncounterPokemonLevelForWave(scene, STANDARD_ENCOUNTER_BOOSTED_LEVEL_MODIFIER);
         const bossSpecies = scene.arena.randomSpecies(scene.currentBattle.waveIndex, level, 0, getPartyLuckValue(scene.getParty()), true);
         const bossPokemon = new EnemyPokemon(scene, bossSpecies, level, TrainerSlot.NONE, true);
         encounter.setDialogueToken("enemyPokemon", getPokemonNameWithAffix(bossPokemon));
@@ -167,7 +167,7 @@ async function doBiomeTransitionDialogueAndBattleInit(scene: BattleScene) {
   await showEncounterText(scene, `${namespace}.attacked`);
 
   // Init enemy
-  const level = getEncounterPokemonLevelForWave(scene, 1);
+  const level = getEncounterPokemonLevelForWave(scene, STANDARD_ENCOUNTER_BOOSTED_LEVEL_MODIFIER);
   const bossSpecies = scene.arena.randomSpecies(scene.currentBattle.waveIndex, level, 0, getPartyLuckValue(scene.getParty()), true);
   const bossPokemon = new EnemyPokemon(scene, bossSpecies, level, TrainerSlot.NONE, true);
   encounter.setDialogueToken("enemyPokemon", getPokemonNameWithAffix(bossPokemon));

@@ -22,7 +22,7 @@ import { MoveRequirement } from "#app/data/mystery-encounters/mystery-encounter-
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { TrainerSlot } from "#app/data/trainer-config";
-import { getEncounterPokemonLevelForWave, getSpriteKeysFromPokemon } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
+import { getEncounterPokemonLevelForWave, getSpriteKeysFromPokemon, STANDARD_ENCOUNTER_BOOSTED_LEVEL_MODIFIER } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
 import PokemonData from "#app/system/pokemon-data";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { queueEncounterMessage } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
@@ -54,7 +54,7 @@ export const FightOrFlightEncounter: MysteryEncounter =
       const encounter = scene.currentBattle.mysteryEncounter!;
 
       // Calculate boss mon
-      const level = getEncounterPokemonLevelForWave(scene, 1);
+      const level = getEncounterPokemonLevelForWave(scene, STANDARD_ENCOUNTER_BOOSTED_LEVEL_MODIFIER);
       const bossSpecies = scene.arena.randomSpecies(scene.currentBattle.waveIndex, level, 0, getPartyLuckValue(scene.getParty()), true);
       const bossPokemon = new EnemyPokemon(scene, bossSpecies, level, TrainerSlot.NONE, true);
       encounter.setDialogueToken("enemyPokemon", bossPokemon.getNameToRender());

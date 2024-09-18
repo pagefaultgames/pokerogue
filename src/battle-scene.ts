@@ -1911,6 +1911,13 @@ export default class BattleScene extends SceneBase {
     return false;
   }
 
+  fadeAndSwitchBgm(newBgmKey: string, destroy: boolean = false, delay: number = 2000) {
+    this.fadeOutBgm(delay, destroy);
+    this.time.delayedCall(delay, () => {
+      this.playBgm(newBgmKey);
+    });
+  }
+
   playSound(sound: string | AnySound, config?: object): AnySound {
     const key = typeof sound === "string" ? sound : sound.key;
     config = config ?? {};

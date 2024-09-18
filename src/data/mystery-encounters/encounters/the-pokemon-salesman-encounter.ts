@@ -22,6 +22,9 @@ const namespace = "mysteryEncounter:pokemonSalesman";
 
 const MAX_POKEMON_PRICE_MULTIPLIER = 4;
 
+/** Odds of shiny magikarp will be 1/value */
+const SHINY_MAGIKARP_WEIGHT = 100;
+
 /**
  * Pokemon Salesman encounter.
  * @see {@link https://github.com/pagefaultgames/pokerogue/issues/3799 | GitHub Issue #3799}
@@ -64,7 +67,7 @@ export const ThePokemonSalesmanEncounter: MysteryEncounter =
       }
 
       let pokemon: PlayerPokemon;
-      if (randSeedInt(100) === 0 || isNullOrUndefined(species.abilityHidden) || species.abilityHidden === Abilities.NONE) {
+      if (randSeedInt(SHINY_MAGIKARP_WEIGHT) === 0 || isNullOrUndefined(species.abilityHidden) || species.abilityHidden === Abilities.NONE) {
         // If no HA mon found or you roll 1%, give shiny Magikarp
         species = getPokemonSpecies(Species.MAGIKARP);
         const hiddenIndex = species.ability2 ? 2 : 1;

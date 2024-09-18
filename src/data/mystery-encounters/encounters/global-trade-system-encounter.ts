@@ -119,12 +119,7 @@ export const GlobalTradeSystemEncounter: MysteryEncounter =
       return true;
     })
     .withOnVisualsStart((scene: BattleScene) => {
-      // Change the bgm
-      scene.fadeOutBgm(1500, false);
-      scene.time.delayedCall(1500, () => {
-        scene.playBgm(scene.currentBattle.mysteryEncounter!.misc.bgmKey);
-      });
-
+      scene.fadeAndSwitchBgm(scene.currentBattle.mysteryEncounter!.misc.bgmKey);
       return true;
     })
     .withOption(

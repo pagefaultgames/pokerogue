@@ -19,7 +19,7 @@ import { MoveRequirement } from "#app/data/mystery-encounters/mystery-encounter-
 import { DANCING_MOVES } from "#app/data/mystery-encounters/requirements/requirement-groups";
 import { OptionSelectItem } from "#app/ui/abstact-option-select-ui-handler";
 import { BattlerIndex } from "#app/battle";
-import { catchPokemon, getEncounterPokemonLevelForWave } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
+import { catchPokemon, getEncounterPokemonLevelForWave, STANDARD_ENCOUNTER_BOOSTED_LEVEL_MODIFIER } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
 import { PokeballType } from "#enums/pokeball";
 import { modifierTypes } from "#app/modifier/modifier-type";
 import { LearnMovePhase } from "#app/phases/learn-move-phase";
@@ -107,7 +107,7 @@ export const DancingLessonsEncounter: MysteryEncounter =
       const encounter = scene.currentBattle.mysteryEncounter!;
 
       const species = getPokemonSpecies(Species.ORICORIO);
-      const level = getEncounterPokemonLevelForWave(scene, 1);
+      const level = getEncounterPokemonLevelForWave(scene, STANDARD_ENCOUNTER_BOOSTED_LEVEL_MODIFIER);
       const enemyPokemon = new EnemyPokemon(scene, species, level, TrainerSlot.NONE, false);
       if (!enemyPokemon.moveset.some(m => m && m.getMove().id === Moves.REVELATION_DANCE)) {
         if (enemyPokemon.moveset.length < 4) {

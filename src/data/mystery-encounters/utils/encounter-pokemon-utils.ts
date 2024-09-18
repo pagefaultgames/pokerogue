@@ -21,6 +21,9 @@ import { PermanentStat } from "#enums/stat";
 import { VictoryPhase } from "#app/phases/victory-phase";
 import { SummaryUiMode } from "#app/ui/summary-ui-handler";
 
+/** Will give +1 level every 10 waves */
+export const STANDARD_ENCOUNTER_BOOSTED_LEVEL_MODIFIER = 1;
+
 /**
  * Gets the sprite key and file root for a given PokemonSpecies (accounts for gender, shiny, variants, forms, and experimental)
  * @param species
@@ -736,8 +739,11 @@ export function getGoldenBugNetSpecies(): PokemonSpecies {
 
 /**
  * Generates a Pokemon level for a given wave, with an option to increase/decrease by a scaling modifier
+ * @param scene
+ * @param levelAdditiveModifier Default 0. will add +(1 level / 10 waves * levelAdditiveModifier) to the level calculation
  */
-export function getEncounterPokemonLevelForWave({currentBattle}: BattleScene, levelAdditiveModifier: number = 0) {
+export function getEncounterPokemonLevelForWave(scene: BattleScene, levelAdditiveModifier: number = 0) {
+  const currentBattle = scene.currentBattle;
   // Default to use the first generated level from enemyLevels, or generate a new one if it DNE
   const baseLevel = currentBattle.enemyLevels && currentBattle.enemyLevels?.length > 0 ? currentBattle.enemyLevels[0] : currentBattle.getLevelForWave();
 

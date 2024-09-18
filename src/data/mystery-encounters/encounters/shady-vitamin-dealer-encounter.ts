@@ -19,6 +19,9 @@ import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
 /** the i18n namespace for this encounter */
 const namespace = "mysteryEncounter:shadyVitaminDealer";
 
+const VITAMIN_DEALER_CHEAP_PRICE_MULTIPLIER = 1.5;
+const VITAMIN_DEALER_EXPENSIVE_PRICE_MULTIPLIER = 3.5;
+
 /**
  * Shady Vitamin Dealer encounter.
  * @see {@link https://github.com/pagefaultgames/pokerogue/issues/3798 | GitHub Issue #3798}
@@ -28,7 +31,7 @@ export const ShadyVitaminDealerEncounter: MysteryEncounter =
   MysteryEncounterBuilder.withEncounterType(MysteryEncounterType.SHADY_VITAMIN_DEALER)
     .withEncounterTier(MysteryEncounterTier.COMMON)
     .withSceneWaveRangeRequirement(...CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES)
-    .withSceneRequirement(new MoneyRequirement(0, 1.5)) // Must have the money for at least the cheap deal
+    .withSceneRequirement(new MoneyRequirement(0, VITAMIN_DEALER_CHEAP_PRICE_MULTIPLIER)) // Must have the money for at least the cheap deal
     .withPrimaryPokemonHealthRatioRequirement([0.5, 1]) // At least 1 Pokemon must have above half HP
     .withIntroSpriteConfigs([
       {
@@ -64,7 +67,7 @@ export const ShadyVitaminDealerEncounter: MysteryEncounter =
     .withOption(
       MysteryEncounterOptionBuilder
         .newOptionWithMode(MysteryEncounterOptionMode.DISABLED_OR_DEFAULT)
-        .withSceneMoneyRequirement(0, 1.5)
+        .withSceneMoneyRequirement(0, VITAMIN_DEALER_CHEAP_PRICE_MULTIPLIER)
         .withDialogue({
           buttonLabel: `${namespace}.option.1.label`,
           buttonTooltip: `${namespace}.option.1.tooltip`,
@@ -142,7 +145,7 @@ export const ShadyVitaminDealerEncounter: MysteryEncounter =
     .withOption(
       MysteryEncounterOptionBuilder
         .newOptionWithMode(MysteryEncounterOptionMode.DISABLED_OR_DEFAULT)
-        .withSceneMoneyRequirement(0, 3.5)
+        .withSceneMoneyRequirement(0, VITAMIN_DEALER_EXPENSIVE_PRICE_MULTIPLIER)
         .withDialogue({
           buttonLabel: `${namespace}.option.2.label`,
           buttonTooltip: `${namespace}.option.2.tooltip`,

@@ -84,12 +84,7 @@ export const FunAndGamesEncounter: MysteryEncounter =
       return true;
     })
     .withOnVisualsStart((scene: BattleScene) => {
-      // Change the bgm
-      scene.fadeOutBgm(2000, false);
-      scene.time.delayedCall(2000, () => {
-        scene.playBgm("mystery_encounter_fun_and_games");
-      });
-
+      scene.fadeAndSwitchBgm("mystery_encounter_fun_and_games");
       return true;
     })
     .withOption(MysteryEncounterOptionBuilder

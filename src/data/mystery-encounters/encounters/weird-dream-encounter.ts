@@ -130,12 +130,7 @@ export const WeirdDreamEncounter: MysteryEncounter =
       return true;
     })
     .withOnVisualsStart((scene: BattleScene) => {
-      // Change the bgm
-      scene.fadeOutBgm(3000, false);
-      scene.time.delayedCall(3000, () => {
-        scene.playBgm("mystery_encounter_weird_dream");
-      });
-
+      scene.fadeAndSwitchBgm("mystery_encounter_weird_dream");
       return true;
     })
     .withOption(

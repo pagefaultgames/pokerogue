@@ -2416,8 +2416,14 @@ export class BypassSleepAttr extends MoveAttr {
     return false;
   }
 
+  /**
+   * Returns arbitrarily high score when Pokemon is asleep, otherwise shouldn't be used
+   * @param user
+   * @param target
+   * @param move
+   */
   getUserBenefitScore(user: Pokemon, target: Pokemon, move: Move): integer {
-    return user.status && user.status.effect === StatusEffect.SLEEP ? 100 : -10;
+    return user.status && user.status.effect === StatusEffect.SLEEP ? 200 : -10;
   }
 }
 
