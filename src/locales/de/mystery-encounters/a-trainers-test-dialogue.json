@@ -43,6 +43,5 @@
     "epic": "episches Ei",
     "legendary": "legendäres Ei"
   },
-  "egg_list_full_dialogue": "Oh, es sieht so aus, als hättest du keinen Platz, um ein weiteres Ei zu tragen.$Hier, nimm stattdessen das hier!",
   "outro": "{{statTrainerName}} gibt dir ein {{eggType}}!"
 }
