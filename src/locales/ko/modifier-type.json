@@ -80,7 +80,7 @@
     },
     "PokemonBaseStatFlatModifierType": {
       "name": "숲의양갱",
-      "description": "{{stats}} 종족값을 {{statValue}}만큼 올려준다. 이상한 꿈을 꾸고 얻었다."
+      "description": "{{stats}} 종족치를 {{statValue}}만큼 올려준다. 이상한 꿈을 꾸고 얻었다."
     },
     "AllPokemonFullHpRestoreModifierType": {
       "description": "자신의 포켓몬의 HP를 모두 회복한다."
