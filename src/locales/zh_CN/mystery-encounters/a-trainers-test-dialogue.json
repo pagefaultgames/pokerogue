@@ -43,6 +43,5 @@
     "epic": "史诗的蛋",
     "legendary": "传说的蛋"
   },
-  "egg_list_full_dialogue": "噢，看起来你没有更多的空间来获得蛋了。$来，给你这个吧。"
   "outro": "{{statTrainerName}}给了你{{eggType}}！"
 }
