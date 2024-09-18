@@ -13,7 +13,7 @@
       "selected": "{{selectedPokemon}}[[는]] 배달 아르바이트를 시작했다."
     },
     "2": {
-      "label": "창고정리",
+      "label": "창고 정리",
       "tooltip": "(-) 포켓몬의 힘과 튼튼함을 활용\n(+) @[MONEY]{Money} 획득",
       "selected": "{{selectedPokemon}}[[는]] 창고 정리를 시작했다."
     },
