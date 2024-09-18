@@ -11,7 +11,7 @@
       "tooltip": "(-) 이상한 배틀\n(?) 포켓몬의 특성 조정",
       "selected": "당신의 불쌍한 포켓몬들이 한심한 공연을 할 준비가 된 것 같군요!",
       "apply_ability_dialogue": "센세이셔널한 쇼였습니다!\n당신의 멋진 기지에는 이 센세이셔널한 보상이 잘 어울릴 것 같군요!",
-      "apply_ability_message": "어릿광대가 포켓몬 한 마리의 특성을 영구적으로 {{ability}}로 교환해주겠다고 제안했다!",
+      "apply_ability_message": "어릿광대가 포켓몬 한 마리의 특성을 영구적으로 {{ability}}로 교환해 주겠다고 제안했다!",
       "ability_prompt": "포켓몬의 특성을 영구적으로 {{ability}} 특성으로 바꾸시겠습니까?",
       "ability_gained": "@s{level_up_fanfare}{{chosenPokemon}}[[는]] {{ability}} 특성을 얻었다!"
     },
