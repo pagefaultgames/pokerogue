@@ -34,5 +34,7 @@
   "battle_won": "你利用知识和技巧完美地痛击了我们的弱点！\n作为这一课的学费，请让我教你一个虫系招式！",
   "teach_move_prompt": "选择要教给宝可梦的招式",
   "confirm_no_teach": "你确定你不需要学习任何招式么？",
-  "outro": "我看到你的未来将伴随伟大的虫系宝可梦！\n愿我们再次相遇！虫虫出动！"
+  "outro": "我看到你的未来将伴随伟大的虫系宝可梦！\n愿我们再次相遇！虫虫出动！",
+  "numBugTypes_one": "{{count}} Bug Type",
+  "numBugTypes_other": "{{count}} Bug Types"
 }
