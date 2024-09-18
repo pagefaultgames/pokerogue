@@ -4,10 +4,11 @@ import BattleScene from "./battle-scene";
 import { allChallenges, applyChallenges, Challenge, ChallengeType, copyChallenge } from "./data/challenge";
 import PokemonSpecies, { allSpecies } from "./data/pokemon-species";
 import { Arena } from "./field/arena";
-import * as Overrides from "./overrides";
+import Overrides from "#app/overrides";
 import * as Utils from "./utils";
 import { Biome } from "#enums/biome";
 import { Species } from "#enums/species";
+import { Challenges } from "./enums/challenges";
 
 export enum GameModes {
   CLASSIC,
@@ -28,7 +29,12 @@ interface GameModeConfig {
   hasRandomBosses?: boolean;
   isSplicedOnly?: boolean;
   isChallenge?: boolean;
+  hasMysteryEncounters?: boolean;
 }
+
+// Describes min and max waves for MEs in specific game modes
+export const CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES: [number, number] = [10, 180];
+export const CHALLENGE_MODE_MYSTERY_ENCOUNTER_WAVES: [number, number] = [10, 180];
 
 export class GameMode implements GameModeConfig {
   public modeId: GameModes;
@@ -44,6 +50,9 @@ export class GameMode implements GameModeConfig {
   public isChallenge: boolean;
   public challenges: Challenge[];
   public battleConfig: FixedBattleConfigs;
+  public hasMysteryEncounters: boolean;
+  public minMysteryEncounterWave: number;
+  public maxMysteryEncounterWave: number;
 
   constructor(modeId: GameModes, config: GameModeConfig, battleConfig?: FixedBattleConfigs) {
     this.modeId = modeId;
@@ -53,6 +62,23 @@ export class GameMode implements GameModeConfig {
       this.challenges = allChallenges.map(c => copyChallenge(c));
     }
     this.battleConfig = battleConfig || {};
+  }
+
+  /**
+   * Helper function to see if a GameMode has a specific challenge type
+   * @param challenge the Challenges it looks for
+   * @returns true if the game mode has that challenge
+   */
+  hasChallenge(challenge: Challenges): boolean {
+    return this.challenges.some(c => c.id === challenge && c.value !== 0);
+  }
+
+  /**
+   * Helper function to see if the game mode is using fresh start
+   * @returns true if a fresh start challenge is being applied
+   */
+  isFreshStartChallenge(): boolean {
+    return this.hasChallenge(Challenges.FRESH_START);
   }
 
   /**
@@ -107,22 +133,37 @@ export class GameMode implements GameModeConfig {
     }
   }
 
+  /**
+   * Determines whether or not to generate a trainer
+   * @param waveIndex the current floor the player is on (trainer sprites fail to generate on X1 floors)
+   * @param arena the arena that contains the scene and functions
+   * @returns true if a trainer should be generated, false otherwise
+   */
   isWaveTrainer(waveIndex: integer, arena: Arena): boolean {
+    /**
+     * Daily spawns trainers on floors 5, 15, 20, 25, 30, 35, 40, and 45
+     */
     if (this.isDaily) {
       return waveIndex % 10 === 5 || (!(waveIndex % 10) && waveIndex > 10 && !this.isWaveFinal(waveIndex));
     }
     if ((waveIndex % 30) === (arena.scene.offsetGym ? 0 : 20) && !this.isWaveFinal(waveIndex)) {
       return true;
     } else if (waveIndex % 10 !== 1 && waveIndex % 10) {
+      /**
+       * Do not check X1 floors since there's a bug that stops trainer sprites from appearing
+       * after a X0 full party heal
+       */
+
       const trainerChance = arena.getTrainerChance();
       let allowTrainerBattle = true;
       if (trainerChance) {
         const waveBase = Math.floor(waveIndex / 10) * 10;
+        // Stop generic trainers from spawning in within 3 waves of a trainer battle
         for (let w = Math.max(waveIndex - 3, waveBase + 2); w <= Math.min(waveIndex + 3, waveBase + 9); w++) {
           if (w === waveIndex) {
             continue;
           }
-          if ((w % 30) === (arena.scene.offsetGym ? 0 : 20) || this.isFixedBattle(waveIndex)) {
+          if ((w % 30) === (arena.scene.offsetGym ? 0 : 20) || this.isFixedBattle(w)) {
             allowTrainerBattle = false;
             break;
           } else if (w < waveIndex) {
@@ -138,7 +179,7 @@ export class GameMode implements GameModeConfig {
           }
         }
       }
-      return allowTrainerBattle && trainerChance && !Utils.randSeedInt(trainerChance);
+      return Boolean(allowTrainerBattle && trainerChance && !Utils.randSeedInt(trainerChance));
     }
     return false;
   }
@@ -152,7 +193,7 @@ export class GameMode implements GameModeConfig {
     }
   }
 
-  getOverrideSpecies(waveIndex: integer): PokemonSpecies {
+  getOverrideSpecies(waveIndex: integer): PokemonSpecies | null {
     if (this.isDaily && this.isWaveFinal(waveIndex)) {
       const allFinalBossSpecies = allSpecies.filter(s => (s.subLegendary || s.legendary || s.mythical)
         && s.baseTotal >= 600 && s.speciesId !== Species.ETERNATUS && s.speciesId !== Species.ARCEUS);
@@ -195,7 +236,7 @@ export class GameMode implements GameModeConfig {
      * @returns true if waveIndex is a multiple of 50 in Endless
      */
   isEndlessBoss(waveIndex: integer): boolean {
-    return waveIndex % 50 &&
+    return !!(waveIndex % 50) &&
         (this.modeId === GameModes.ENDLESS || this.modeId === GameModes.SPLICED_ENDLESS);
   }
 
@@ -252,6 +293,8 @@ export class GameMode implements GameModeConfig {
       return 5000;
     case GameModes.DAILY:
       return 2500;
+    default:
+      return 0;
     }
   }
 
@@ -282,6 +325,20 @@ export class GameMode implements GameModeConfig {
     }
   }
 
+  /**
+   * Returns the wave range where MEs can spawn for the game mode [min, max]
+   */
+  getMysteryEncounterLegalWaves(): [number, number] {
+    switch (this.modeId) {
+    default:
+      return [0, 0];
+    case GameModes.CLASSIC:
+      return CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES;
+    case GameModes.CHALLENGE:
+      return CHALLENGE_MODE_MYSTERY_ENCOUNTER_WAVES;
+    }
+  }
+
   static getModeName(modeId: GameModes): string {
     switch (modeId) {
     case GameModes.CLASSIC:
@@ -301,7 +358,7 @@ export class GameMode implements GameModeConfig {
 export function getGameMode(gameMode: GameModes): GameMode {
   switch (gameMode) {
   case GameModes.CLASSIC:
-    return new GameMode(GameModes.CLASSIC, { isClassic: true, hasTrainers: true }, classicFixedBattles);
+    return new GameMode(GameModes.CLASSIC, { isClassic: true, hasTrainers: true, hasMysteryEncounters: true }, classicFixedBattles);
   case GameModes.ENDLESS:
     return new GameMode(GameModes.ENDLESS, { isEndless: true, hasShortBiomes: true, hasRandomBosses: true });
   case GameModes.SPLICED_ENDLESS:
@@ -309,6 +366,6 @@ export function getGameMode(gameMode: GameModes): GameMode {
   case GameModes.DAILY:
     return new GameMode(GameModes.DAILY, { isDaily: true, hasTrainers: true, hasNoShop: true });
   case GameModes.CHALLENGE:
-    return new GameMode(GameModes.CHALLENGE, { isClassic: true, hasTrainers: true, isChallenge: true }, classicFixedBattles);
+    return new GameMode(GameModes.CHALLENGE, { isClassic: true, hasTrainers: true, isChallenge: true, hasMysteryEncounters: true }, classicFixedBattles);
   }
 }

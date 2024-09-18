@@ -45,12 +45,7 @@ export default class EvolutionSceneHandler extends MessageUiHandler {
 
     this.message = message;
 
-    const prompt = this.scene.add.sprite(0, 0, "prompt");
-    prompt.setVisible(false);
-    prompt.setOrigin(0, 0);
-    this.messageContainer.add(prompt);
-
-    this.prompt = prompt;
+    this.initPromptSprite(this.messageContainer);
   }
 
   show(_args: any[]): boolean {
@@ -83,6 +78,8 @@ export default class EvolutionSceneHandler extends MessageUiHandler {
         }
       }
     }
+
+    return false;
   }
 
   setCursor(_cursor: integer): boolean {

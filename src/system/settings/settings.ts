@@ -8,14 +8,32 @@ import SettingsUiHandler from "#app/ui/settings/settings-ui-handler";
 import { EaseType } from "#enums/ease-type";
 import { MoneyFormat } from "#enums/money-format";
 import { PlayerGender } from "#enums/player-gender";
+import { getIsInitialized, initI18n } from "#app/plugins/i18n";
+import { ShopCursorTarget } from "#app/enums/shop-cursor-target";
+
+function getTranslation(key: string): string {
+  if (!getIsInitialized()) {
+    initI18n();
+  }
+  return i18next.t(key);
+}
 
 const VOLUME_OPTIONS: SettingOption[] = new Array(11).fill(null).map((_, i) => i ? {
   value: (i * 10).toString(),
   label: (i * 10).toString(),
 } : {
   value: "Mute",
-  label: i18next.t("settings:mute")
+  label: getTranslation("settings:mute")
 });
+
+const SHOP_OVERLAY_OPACITY_OPTIONS: SettingOption[] = new Array(9).fill(null).map((_, i) => {
+  const value = ((i + 1) * 10).toString();
+  return {
+    value,
+    label: value,
+  };
+});
+
 const OFF_ON: SettingOption[] = [
   {
     value: "Off",
@@ -36,6 +54,40 @@ const AUTO_DISABLED: SettingOption[] = [
     label: i18next.t("settings:disabled")
   }
 ];
+
+const SHOP_CURSOR_TARGET_OPTIONS: SettingOption[] = [
+  {
+    value: "Rewards",
+    label: i18next.t("settings:rewards")
+  },
+  {
+    value: "Shop",
+    label: i18next.t("settings:shop")
+  },
+  {
+    value: "Reroll",
+    label: i18next.t("settings:reroll")
+  },
+  {
+    value: "Check Team",
+    label: i18next.t("settings:checkTeam")
+  }
+];
+
+const shopCursorTargetIndexMap = SHOP_CURSOR_TARGET_OPTIONS.map(option => {
+  switch (option.value) {
+  case "Rewards":
+    return ShopCursorTarget.REWARDS;
+  case "Shop":
+    return ShopCursorTarget.SHOP;
+  case "Reroll":
+    return ShopCursorTarget.REROLL;
+  case "Check Team":
+    return ShopCursorTarget.CHECK_TEAM;
+  default:
+    throw new Error(`Unknown value: ${option.value}`);
+  }
+});
 
 /**
  * Types for helping separate settings to different menus
@@ -58,6 +110,10 @@ export interface Setting {
   default: number
   type: SettingType
   requireReload?: boolean
+  /** Whether the setting can be activated or not */
+  activatable?: boolean
+  /** Determines whether the setting should be hidden from the UI */
+  isHidden?: () => boolean
 }
 
 /**
@@ -70,8 +126,10 @@ export const SettingKeys = {
   EXP_Gains_Speed: "EXP_GAINS_SPEED",
   EXP_Party_Display: "EXP_PARTY_DISPLAY",
   Skip_Seen_Dialogues: "SKIP_SEEN_DIALOGUES",
+  Egg_Skip: "EGG_SKIP",
   Battle_Style: "BATTLE_STYLE",
   Enable_Retries: "ENABLE_RETRIES",
+  Hide_IVs: "HIDE_IVS",
   Tutorials: "TUTORIALS",
   Touch_Controls: "TOUCH_CONTROLS",
   Vibration: "VIBRATION",
@@ -82,6 +140,7 @@ export const SettingKeys = {
   Damage_Numbers: "DAMAGE_NUMBERS",
   Move_Animations: "MOVE_ANIMATIONS",
   Show_Stats_on_Level_Up: "SHOW_LEVEL_UP_STATS",
+  Shop_Cursor_Target: "SHOP_CURSOR_TARGET",
   Candy_Upgrade_Notification: "CANDY_UPGRADE_NOTIFICATION",
   Candy_Upgrade_Display: "CANDY_UPGRADE_DISPLAY",
   Move_Info: "MOVE_INFO",
@@ -95,9 +154,13 @@ export const SettingKeys = {
   Type_Hints: "TYPE_HINTS",
   Master_Volume: "MASTER_VOLUME",
   BGM_Volume: "BGM_VOLUME",
+  Field_Volume: "FIELD_VOLUME",
   SE_Volume: "SE_VOLUME",
+  UI_Volume: "UI_SOUND_EFFECTS",
   Music_Preference: "MUSIC_PREFERENCE",
   Show_BGM_Bar: "SHOW_BGM_BAR",
+  Move_Touch_Controls: "MOVE_TOUCH_CONTROLS",
+  Shop_Overlay_Opacity: "SHOP_OVERLAY_OPACITY"
 };
 
 /**
@@ -220,6 +283,26 @@ export const Setting: Array<Setting> = [
     type: SettingType.GENERAL
   },
   {
+    key: SettingKeys.Egg_Skip,
+    label: i18next.t("settings:eggSkip"),
+    options: [
+      {
+        value: "Never",
+        label: i18next.t("settings:never")
+      },
+      {
+        value: "Ask",
+        label: i18next.t("settings:ask")
+      },
+      {
+        value: "Always",
+        label: i18next.t("settings:always")
+      }
+    ],
+    default: 1,
+    type: SettingType.GENERAL
+  },
+  {
     key: SettingKeys.Battle_Style,
     label: i18next.t("settings:battleStyle"),
     options: [
@@ -238,6 +321,13 @@ export const Setting: Array<Setting> = [
   {
     key: SettingKeys.Enable_Retries,
     label: i18next.t("settings:enableRetries"),
+    options: OFF_ON,
+    default: 0,
+    type: SettingType.GENERAL
+  },
+  {
+    key: SettingKeys.Hide_IVs,
+    label: i18next.t("settings:hideIvs"),
     options: OFF_ON,
     default: 0,
     type: SettingType.GENERAL
@@ -493,9 +583,8 @@ export const Setting: Array<Setting> = [
     key: SettingKeys.Show_BGM_Bar,
     label: i18next.t("settings:showBgmBar"),
     options: OFF_ON,
-    default: 0,
-    type: SettingType.DISPLAY,
-    requireReload: true
+    default: 1,
+    type: SettingType.DISPLAY
   },
   {
     key: SettingKeys.Master_Volume,
@@ -512,8 +601,22 @@ export const Setting: Array<Setting> = [
     type: SettingType.AUDIO
   },
   {
+    key: SettingKeys.Field_Volume,
+    label: i18next.t("settings:fieldVolume"),
+    options: VOLUME_OPTIONS,
+    default: 10,
+    type: SettingType.AUDIO
+  },
+  {
     key: SettingKeys.SE_Volume,
     label: i18next.t("settings:seVolume"),
+    options: VOLUME_OPTIONS,
+    default: 10,
+    type: SettingType.AUDIO
+  },
+  {
+    key: SettingKeys.UI_Volume,
+    label: i18next.t("settings:uiVolume"),
     options: VOLUME_OPTIONS,
     default: 10,
     type: SettingType.AUDIO
@@ -535,7 +638,35 @@ export const Setting: Array<Setting> = [
     type: SettingType.AUDIO,
     requireReload: true
   },
-
+  {
+    key: SettingKeys.Move_Touch_Controls,
+    label: i18next.t("settings:moveTouchControls"),
+    options: [
+      {
+        value: "Configure",
+        label: i18next.t("settings:change")
+      }
+    ],
+    default: 0,
+    type: SettingType.GENERAL,
+    activatable: true,
+    isHidden: () => !hasTouchscreen()
+  },
+  {
+    key: SettingKeys.Shop_Cursor_Target,
+    label: i18next.t("settings:shopCursorTarget"),
+    options: SHOP_CURSOR_TARGET_OPTIONS,
+    default: 0,
+    type: SettingType.DISPLAY
+  },
+  {
+    key: SettingKeys.Shop_Overlay_Opacity,
+    label: i18next.t("settings:shopOverlayOpacity"),
+    options: SHOP_OVERLAY_OPACITY_OPTIONS,
+    default: 7,
+    type: SettingType.DISPLAY,
+    requireReload: false
+  }
 ];
 
 /**
@@ -579,9 +710,16 @@ export function setSetting(scene: BattleScene, setting: string, value: integer):
     scene.bgmVolume = value ? parseInt(Setting[index].options[value].value) * 0.01 : 0;
     scene.updateSoundVolume();
     break;
+  case SettingKeys.Field_Volume:
+    scene.fieldVolume = value ? parseInt(Setting[index].options[value].value) * 0.01 : 0;
+    scene.updateSoundVolume();
+    break;
   case SettingKeys.SE_Volume:
     scene.seVolume = value ? parseInt(Setting[index].options[value].value) * 0.01 : 0;
     scene.updateSoundVolume();
+    break;
+  case SettingKeys.UI_Volume:
+    scene.uiVolume = value ? parseInt(Setting[index].options[value].value) * 0.01 : 0;
     break;
   case SettingKeys.Music_Preference:
     scene.musicPreference = value;
@@ -604,8 +742,14 @@ export function setSetting(scene: BattleScene, setting: string, value: integer):
   case SettingKeys.Enable_Retries:
     scene.enableRetries = Setting[index].options[value].value === "On";
     break;
+  case SettingKeys.Hide_IVs:
+    scene.hideIvs = Setting[index].options[value].value === "On";
+    break;
   case SettingKeys.Skip_Seen_Dialogues:
     scene.skipSeenDialogues = Setting[index].options[value].value === "On";
+    break;
+  case SettingKeys.Egg_Skip:
+    scene.eggSkipPreference = value;
     break;
   case SettingKeys.Battle_Style:
     scene.battleStyle = value;
@@ -656,6 +800,10 @@ export function setSetting(scene: BattleScene, setting: string, value: integer):
     break;
   case SettingKeys.Show_Stats_on_Level_Up:
     scene.showLevelUpStats = Setting[index].options[value].value === "On";
+    break;
+  case SettingKeys.Shop_Cursor_Target:
+    const selectedValue = shopCursorTargetIndexMap[value];
+    scene.shopCursorTarget = selectedValue;
     break;
   case SettingKeys.EXP_Gains_Speed:
     scene.expGainsSpeed = value;
@@ -750,6 +898,14 @@ export function setSetting(scene: BattleScene, setting: string, value: integer):
               handler: () => changeLocaleHandler("ko")
             },
             {
+              label: "日本語",
+              handler: () => changeLocaleHandler("ja")
+            },
+            // {
+            //   label: "Català",
+            //   handler: () => changeLocaleHandler("ca-ES")
+            // },
+            {
               label: i18next.t("settings:back"),
               handler: () => cancelHandler()
             }
@@ -759,6 +915,9 @@ export function setSetting(scene: BattleScene, setting: string, value: integer):
         return false;
       }
     }
+    break;
+  case SettingKeys.Shop_Overlay_Opacity:
+    scene.updateShopOverlayOpacity(parseInt(Setting[index].options[value].value) * .01);
     break;
   }
 

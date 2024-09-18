@@ -1,96 +1,113 @@
-import { ability } from "./ability";
-import { abilityTriggers } from "./ability-trigger";
-import { PGFachv, PGMachv } from "./achv";
-import { battle } from "./battle";
-import { battleMessageUiHandler } from "./battle-message-ui-handler";
-import { berry } from "./berry";
-import { bgmName } from "./bgm-name";
-import { biome } from "./biome";
-import { challenges } from "./challenges";
-import { commandUiHandler } from "./command-ui-handler";
-import {
-  PGFbattleSpecDialogue,
-  PGFdialogue,
-  PGFdoubleBattleDialogue,
-  PGFmiscDialogue,
-  PGMbattleSpecDialogue,
-  PGMdialogue,
-  PGMdoubleBattleDialogue,
-  PGMmiscDialogue
-} from "./dialogue";
-import { egg } from "./egg";
-import { fightUiHandler } from "./fight-ui-handler";
-import { gameMode } from "./game-mode";
-import { gameStatsUiHandler } from "./game-stats-ui-handler";
-import { growth } from "./growth";
-import { menu } from "./menu";
-import { menuUiHandler } from "./menu-ui-handler";
-import { modifierType } from "./modifier-type";
-import { move } from "./move";
-import { nature } from "./nature";
-import { pokeball } from "./pokeball";
-import { pokemon } from "./pokemon";
-import { pokemonInfo } from "./pokemon-info";
-import { pokemonInfoContainer } from "./pokemon-info-container";
-import { saveSlotSelectUiHandler } from "./save-slot-select-ui-handler";
-import { splashMessages } from "./splash-messages";
-import { starterSelectUiHandler } from "./starter-select-ui-handler";
-import { statusEffect } from "./status-effect";
-import { titles, trainerClasses, trainerNames } from "./trainers";
-import { tutorial } from "./tutorial";
-import { voucher } from "./voucher";
-import { weather } from "./weather";
-import { partyUiHandler } from "./party-ui-handler";
-import { settings } from "./settings.js";
-import { common } from "./common.js";
-import { modifierSelectUiHandler } from "./modifier-select-ui-handler";
+import common from "./common.json";
+import settings from "./settings.json";
+import ability from "./ability.json";
+import abilityTriggers from "./ability-trigger.json";
+import arenaFlyout from "./arena-flyout.json";
+import arenaTag from "./arena-tag.json";
+import achv from "./achv.json";
+import battle from "./battle.json";
+import battleScene from "./battle-scene.json";
+import battleInfo from "./battle-info.json";
+import battleMessageUiHandler from "./battle-message-ui-handler.json";
+import battlerTags from "./battler-tags.json";
+import berry from "./berry.json";
+import bgmName from "./bgm-name.json";
+import biome from "./biome.json";
+import challenges from "./challenges.json";
+import commandUiHandler from "./command-ui-handler.json";
+import dialogue from "./dialogue.json";
+import battleSpecDialogue from "./dialogue-final-boss.json";
+import miscDialogue from "./dialogue-misc.json";
+import doubleBattleDialogue from "./dialogue-double-battle.json";
+import egg from "./egg.json";
+import fightUiHandler from "./fight-ui-handler.json";
+import filterBar from "./filter-bar.json";
+import gameMode from "./game-mode.json";
+import gameStatsUiHandler from "./game-stats-ui-handler.json";
+import growth from "./growth.json";
+import menu from "./menu.json";
+import menuUiHandler from "./menu-ui-handler.json";
+import modifier from "./modifier.json";
+import modifierType from "./modifier-type.json";
+import move from "./move.json";
+import nature from "./nature.json";
+import partyUiHandler from "./party-ui-handler.json";
+import pokeball from "./pokeball.json";
+import pokemon from "./pokemon.json";
+import pokemonForm from "./pokemon-form.json";
+import battlePokemonForm from "./pokemon-form-battle.json";
+import pokemonInfo from "./pokemon-info.json";
+import pokemonInfoContainer from "./pokemon-info-container.json";
+import pokemonSummary from "./pokemon-summary.json";
+import saveSlotSelectUiHandler from "./save-slot-select-ui-handler.json";
+import splashMessages from "./splash-messages.json";
+import starterSelectUiHandler from "./starter-select-ui-handler.json";
+import statusEffect from "./status-effect.json";
+import trainerTitles from "./trainer-titles.json";
+import trainerClasses from "./trainer-classes.json";
+import trainerNames from "./trainer-names.json";
+import tutorial from "./tutorial.json";
+import voucher from "./voucher.json";
+import weather from "./weather.json";
+import terrain from "./terrain.json";
+import modifierSelectUiHandler from "./modifier-select-ui-handler.json";
+import moveTriggers from "./move-trigger.json";
+import runHistory from "./run-history.json";
 
 export const koConfig = {
-  ability: ability,
-  abilityTriggers: abilityTriggers,
-  battle: battle,
-  battleMessageUiHandler: battleMessageUiHandler,
-  berry: berry,
-  bgmName: bgmName,
-  biome: biome,
-  challenges: challenges,
-  commandUiHandler: commandUiHandler,
-  common: common,
-  PGMachv: PGMachv,
-  PGFachv: PGFachv,
-  PGMdialogue: PGMdialogue,
-  PGFdialogue: PGFdialogue,
-  PGMbattleSpecDialogue: PGMbattleSpecDialogue,
-  PGFbattleSpecDialogue: PGFbattleSpecDialogue,
-  PGMmiscDialogue: PGMmiscDialogue,
-  PGFmiscDialogue: PGFmiscDialogue,
-  PGMdoubleBattleDialogue: PGMdoubleBattleDialogue,
-  PGFdoubleBattleDialogue: PGFdoubleBattleDialogue,
-  egg: egg,
-  fightUiHandler: fightUiHandler,
-  gameMode: gameMode,
-  gameStatsUiHandler: gameStatsUiHandler,
-  growth: growth,
-  menu: menu,
-  menuUiHandler: menuUiHandler,
-  modifierType: modifierType,
-  move: move,
-  nature: nature,
-  pokeball: pokeball,
-  pokemon: pokemon,
-  pokemonInfo: pokemonInfo,
-  pokemonInfoContainer: pokemonInfoContainer,
-  saveSlotSelectUiHandler: saveSlotSelectUiHandler,
-  settings: settings,
-  splashMessages: splashMessages,
-  starterSelectUiHandler: starterSelectUiHandler,
-  statusEffect: statusEffect,
-  titles: titles,
-  trainerClasses: trainerClasses,
-  trainerNames: trainerNames,
-  tutorial: tutorial,
-  voucher: voucher,
-  weather: weather,
-  partyUiHandler: partyUiHandler,
-  modifierSelectUiHandler: modifierSelectUiHandler
+  ability,
+  abilityTriggers,
+  arenaFlyout,
+  arenaTag,
+  battle,
+  battleScene,
+  battleInfo,
+  battleMessageUiHandler,
+  battlePokemonForm,
+  battlerTags,
+  berry,
+  bgmName,
+  biome,
+  challenges,
+  commandUiHandler,
+  common,
+  achv,
+  dialogue,
+  battleSpecDialogue,
+  miscDialogue,
+  doubleBattleDialogue,
+  egg,
+  fightUiHandler,
+  filterBar,
+  gameMode,
+  gameStatsUiHandler,
+  growth,
+  menu,
+  menuUiHandler,
+  modifier,
+  modifierType,
+  move,
+  nature,
+  pokeball,
+  pokemon,
+  pokemonForm,
+  pokemonInfo,
+  pokemonInfoContainer,
+  pokemonSummary,
+  saveSlotSelectUiHandler,
+  settings,
+  splashMessages,
+  starterSelectUiHandler,
+  statusEffect,
+  terrain,
+  titles: trainerTitles,
+  trainerClasses,
+  trainerNames,
+  tutorial,
+  voucher,
+  weather,
+  partyUiHandler,
+  modifierSelectUiHandler,
+  moveTriggers,
+  runHistory,
 };

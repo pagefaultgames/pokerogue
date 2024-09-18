@@ -1,6 +1,7 @@
-import MockTextureManager from "#app/test/utils/mocks/mockTextureManager";
+import MockTextureManager from "#test/utils/mocks/mockTextureManager";
+import { MockGameObject } from "../mockGameObject";
 
-export default class MockContainer {
+export default class MockContainer implements MockGameObject {
   protected x;
   protected y;
   protected scene;
@@ -11,7 +12,8 @@ export default class MockContainer {
   private style;
   public frame;
   protected textureManager;
-  public list = [];
+  public list: MockGameObject[] = [];
+  public name: string;
 
   constructor(textureManager: MockTextureManager, x, y) {
     this.x = x;
@@ -33,6 +35,10 @@ export default class MockContainer {
     // same as remove or destroy
   }
 
+  removeBetween(startIndex, endIndex, destroyChild) {
+    // Removes multiple children across an index range
+  }
+
   addedToScene() {
     // This callback is invoked when this Game Object is added to a Scene.
   }
@@ -49,9 +55,8 @@ export default class MockContainer {
     /// Sets the position of this Game Object to be a relative position from the source Game Object.
   }
 
-  setInteractive(hitArea?, callback?, dropZone?) {
-    /// Sets the InteractiveObject to be a drop zone for a drag and drop operation.
-  }
+  setInteractive = () => null;
+
   setOrigin(x, y) {
     this.x = x;
     this.y = y;
@@ -150,6 +155,10 @@ export default class MockContainer {
     // Sends this Game Object to the back of its parent's display list.
   }
 
+  moveTo(obj) {
+    // Moves this Game Object to the given index in the list.
+  }
+
   moveAbove(obj) {
     // Moves this Game Object to be above the given Game Object in the display list.
   }
@@ -158,8 +167,8 @@ export default class MockContainer {
     // Moves this Game Object to be below the given Game Object in the display list.
   }
 
-  setName(name) {
-    // return this.phaserSprite.setName(name);
+  setName(name: string) {
+    this.name = name;
   }
 
   bringToTop(obj) {
@@ -204,4 +213,9 @@ export default class MockContainer {
     return this.list;
   }
 
+  getByName(key: string) {
+    return this.list.find(v => v.name === key) ?? new MockContainer(this.textureManager, 0, 0);
+  }
+
+  disableInteractive = () => null;
 }

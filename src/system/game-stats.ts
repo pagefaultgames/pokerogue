@@ -58,9 +58,9 @@ export class GameStats {
     this.pokemonCaught = source?.pokemonCaught || 0;
     this.pokemonHatched = source?.pokemonHatched || 0;
     // Currently handled by migration
-    this.subLegendaryPokemonSeen = source?.subLegendaryPokemonSeen;
-    this.subLegendaryPokemonCaught = source?.subLegendaryPokemonCaught;
-    this.subLegendaryPokemonHatched = source?.subLegendaryPokemonHatched;
+    this.subLegendaryPokemonSeen = source?.subLegendaryPokemonSeen ?? 0;
+    this.subLegendaryPokemonCaught = source?.subLegendaryPokemonCaught ?? 0;
+    this.subLegendaryPokemonHatched = source?.subLegendaryPokemonHatched ?? 0;
     this.legendaryPokemonSeen = source?.legendaryPokemonSeen || 0;
     this.legendaryPokemonCaught = source?.legendaryPokemonCaught || 0;
     this.legendaryPokemonHatched = source?.legendaryPokemonHatched || 0;

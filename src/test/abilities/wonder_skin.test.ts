@@ -1,16 +1,12 @@
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import Phaser from "phaser";
-import GameManager from "#app/test/utils/gameManager";
-import * as overrides from "#app/overrides";
-import { Species } from "#enums/species";
-import { TurnEndPhase, } from "#app/phases";
-import { Moves } from "#enums/moves";
-import { getMovePosition } from "#app/test/utils/gameManagerUtils";
+import { allAbilities } from "#app/data/ability";
+import { allMoves } from "#app/data/move";
+import { MoveEffectPhase } from "#app/phases/move-effect-phase";
 import { Abilities } from "#enums/abilities";
-import Move, { allMoves } from "#app/data/move.js";
-import { MoveAbilityBypassAbAttr, WonderSkinAbAttr } from "#app/data/ability.js";
-import { NumberHolder } from "#app/utils.js";
-import Pokemon from "#app/field/pokemon.js";
+import { Moves } from "#enums/moves";
+import { Species } from "#enums/species";
+import GameManager from "#test/utils/gameManager";
+import Phaser from "phaser";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Abilities - Wonder Skin", () => {
   let phaserGame: Phaser.Game;
@@ -28,114 +24,52 @@ describe("Abilities - Wonder Skin", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    vi.spyOn(overrides, "SINGLE_BATTLE_OVERRIDE", "get").mockReturnValue(true);
-    vi.spyOn(overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.WONDER_SKIN);
-    vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.TACKLE, Moves.CHARM]);
-    vi.spyOn(overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH, Moves.SPLASH, Moves.SPLASH, Moves.SPLASH]);
+    game.override.battleType("single");
+    game.override.moveset([Moves.TACKLE, Moves.CHARM]);
+    game.override.ability(Abilities.BALL_FETCH);
+    game.override.enemySpecies(Species.SHUCKLE);
+    game.override.enemyAbility(Abilities.WONDER_SKIN);
+    game.override.enemyMoveset(Moves.SPLASH);
   });
 
   it("lowers accuracy of status moves to 50%", async () => {
-    await game.startBattle([Species.MAGIKARP]);
+    const moveToCheck = allMoves[Moves.CHARM];
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.CHARM));
+    vi.spyOn(moveToCheck, "calculateBattleAccuracy");
 
-    const mockedAccuracy = getMockedMoveAccuracy(game.scene.getEnemyPokemon(), game.scene.getPlayerPokemon(), allMoves[Moves.CHARM]);
+    await game.startBattle([Species.PIKACHU]);
+    game.move.select(Moves.CHARM);
+    await game.phaseInterceptor.to(MoveEffectPhase);
 
-    await game.phaseInterceptor.to(TurnEndPhase);
-
-    expect(mockedAccuracy).not.toBe(undefined);
-    expect(mockedAccuracy).not.toBe(100);
-    expect(mockedAccuracy).toBe(50);
+    expect(moveToCheck.calculateBattleAccuracy).toHaveReturnedWith(50);
   });
 
   it("does not lower accuracy of non-status moves", async () => {
-    await game.startBattle([Species.MAGIKARP]);
+    const moveToCheck = allMoves[Moves.TACKLE];
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.TACKLE));
+    vi.spyOn(moveToCheck, "calculateBattleAccuracy");
 
-    const mockedAccuracy = getMockedMoveAccuracy(game.scene.getEnemyPokemon(), game.scene.getPlayerPokemon(), allMoves[Moves.TACKLE]);
+    await game.startBattle([Species.PIKACHU]);
+    game.move.select(Moves.TACKLE);
+    await game.phaseInterceptor.to(MoveEffectPhase);
 
-    await game.phaseInterceptor.to(TurnEndPhase);
-
-    expect(mockedAccuracy).not.toBe(undefined);
-    expect(mockedAccuracy).toBe(100);
-    expect(mockedAccuracy).not.toBe(50);
+    expect(moveToCheck.calculateBattleAccuracy).toHaveReturnedWith(100);
   });
 
-  it("does not affect pokemon with Mold Breaker", async () => {
-    vi.spyOn(overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.MOLD_BREAKER);
+  const bypassAbilities = [Abilities.MOLD_BREAKER, Abilities.TERAVOLT, Abilities.TURBOBLAZE];
 
-    await game.startBattle([Species.MAGIKARP]);
+  bypassAbilities.forEach(ability => {
+    it(`does not affect pokemon with ${allAbilities[ability].name}`, async () => {
+      const moveToCheck = allMoves[Moves.CHARM];
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.CHARM));
+      game.override.ability(ability);
+      vi.spyOn(moveToCheck, "calculateBattleAccuracy");
 
-    const mockedAccuracy = getMockedMoveAccuracy(game.scene.getEnemyPokemon(), game.scene.getPlayerPokemon(), allMoves[Moves.CHARM]);
+      await game.startBattle([Species.PIKACHU]);
+      game.move.select(Moves.CHARM);
+      await game.phaseInterceptor.to(MoveEffectPhase);
 
-    await game.phaseInterceptor.to(TurnEndPhase);
-
-    expect(mockedAccuracy).not.toBe(undefined);
-    expect(mockedAccuracy).toBe(100);
-    expect(mockedAccuracy).not.toBe(50);
-  });
-
-  it("does not affect pokemon with Teravolt", async () => {
-    vi.spyOn(overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.TERAVOLT);
-
-    await game.startBattle([Species.MAGIKARP]);
-
-    game.doAttack(getMovePosition(game.scene, 0, Moves.CHARM));
-
-    const mockedAccuracy = getMockedMoveAccuracy(game.scene.getEnemyPokemon(), game.scene.getPlayerPokemon(), allMoves[Moves.CHARM]);
-
-    await game.phaseInterceptor.to(TurnEndPhase);
-
-    expect(mockedAccuracy).not.toBe(undefined);
-    expect(mockedAccuracy).toBe(100);
-    expect(mockedAccuracy).not.toBe(50);
-  });
-
-  it("does not affect pokemon with Turboblaze", async () => {
-    vi.spyOn(overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.TURBOBLAZE);
-
-    await game.startBattle([Species.MAGIKARP]);
-
-    game.doAttack(getMovePosition(game.scene, 0, Moves.CHARM));
-
-    const mockedAccuracy = getMockedMoveAccuracy(game.scene.getEnemyPokemon(), game.scene.getPlayerPokemon(), allMoves[Moves.CHARM]);
-
-    await game.phaseInterceptor.to(TurnEndPhase);
-
-    expect(mockedAccuracy).not.toBe(undefined);
-    expect(mockedAccuracy).toBe(100);
-    expect(mockedAccuracy).not.toBe(50);
+      expect(moveToCheck.calculateBattleAccuracy).toHaveReturnedWith(100);
+    });
   });
 });
-
-/**
- * Calculates the mocked accuracy of a move.
- * Note this does not consider other accuracy calculations
- * except the power multiplier from Wonder Skin.
- * Bypassed by MoveAbilityBypassAbAttr {@linkcode MoveAbilityBypassAbAttr}
- *
- * @param defender - The defending Pokémon.
- * @param attacker - The attacking Pokémon.
- * @param move - The move being used by the attacker.
- * @returns The adjusted accuracy of the move.
- */
-const getMockedMoveAccuracy = (defender: Pokemon, attacker: Pokemon, move: Move) => {
-  const accuracyHolder = new NumberHolder(move.accuracy);
-
-  /**
-     * Simulate ignoring ability
-     * @see MoveAbilityBypassAbAttr
-     */
-  if (attacker.hasAbilityWithAttr(MoveAbilityBypassAbAttr)) {
-    return accuracyHolder.value;
-  }
-
-  const wonderSkinInstance = new WonderSkinAbAttr();
-
-  wonderSkinInstance.applyPreDefend(defender, false, attacker, move, { value: false }, [ accuracyHolder ]);
-
-  return accuracyHolder.value;
-};

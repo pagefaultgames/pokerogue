@@ -7,7 +7,7 @@ export default class PartyExpBar extends Phaser.GameObjects.Container {
   private pokemonIcon: Phaser.GameObjects.Container;
   private expText: Phaser.GameObjects.Text;
 
-  private tween: Phaser.Tweens.Tween;
+  private tween: Phaser.Tweens.Tween | null;
 
   public shown: boolean;
 
@@ -16,7 +16,7 @@ export default class PartyExpBar extends Phaser.GameObjects.Container {
   }
 
   setup(): void {
-    this.bg = this.scene.add.nineslice(0, 0, "party_exp_bar", null, 8, 18, 21, 5, 6, 4);
+    this.bg = this.scene.add.nineslice(0, 0, "party_exp_bar", undefined, 8, 18, 21, 5, 6, 4);
     this.bg.setOrigin(0, 0);
 
     this.add(this.bg);

@@ -24,7 +24,7 @@ export default class BgmBar extends Phaser.GameObjects.Container {
     this.defaultWidth = 230;
     this.defaultHeight = 100;
 
-    this.bg = this.scene.add.nineslice(-5, -5, "bgm_bar", null, this.defaultWidth, this.defaultHeight, 0, 0, 10, 10);
+    this.bg = this.scene.add.nineslice(-5, -5, "bgm_bar", undefined, this.defaultWidth, this.defaultHeight, 0, 0, 10, 10);
     this.bg.setOrigin(0, 0);
 
     this.add(this.bg);
@@ -45,9 +45,6 @@ export default class BgmBar extends Phaser.GameObjects.Container {
    */
   setBgmToBgmBar(bgmName: string): void {
     this.musicText.setText(`${i18next.t("bgmName:music")}${this.getRealBgmName(bgmName)}`);
-    if (!(this.scene as BattleScene).showBgmBar) {
-      return;
-    }
 
     this.musicText.width = this.bg.width - 20;
     this.musicText.setWordWrapWidth(this.defaultWidth * 4);
@@ -65,6 +62,16 @@ export default class BgmBar extends Phaser.GameObjects.Container {
     @param {boolean} visible Whether to show or hide the BGM bar.
    */
   public toggleBgmBar(visible: boolean): void {
+    /*
+      Prevents the bar from being displayed if musicText is completely empty.
+      This can be the case, for example, when the game's 1st music track takes a long time to reach the client,
+      and the menu is opened before it is played.
+    */
+    if (this.musicText.text === "") {
+      this.setVisible(false);
+      return;
+    }
+
     if (!(this.scene as BattleScene).showBgmBar) {
       this.setVisible(false);
       return;

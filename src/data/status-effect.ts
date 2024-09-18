@@ -1,26 +1,18 @@
 import * as Utils from "../utils";
+import { StatusEffect } from "#enums/status-effect";
 import i18next, { ParseKeys } from "i18next";
 
-export enum StatusEffect {
-  NONE,
-  POISON,
-  TOXIC,
-  PARALYSIS,
-  SLEEP,
-  FREEZE,
-  BURN,
-  FAINT
-}
+export { StatusEffect };
 
 export class Status {
   public effect: StatusEffect;
   public turnCount: integer;
-  public cureTurn: integer;
+  public cureTurn: integer | null;
 
   constructor(effect: StatusEffect, turnCount: integer = 0, cureTurn?: integer) {
     this.effect = effect;
     this.turnCount = turnCount === undefined ? 0 : turnCount;
-    this.cureTurn = cureTurn;
+    this.cureTurn = cureTurn!; // TODO: is this bang correct?
   }
 
   incrementTurn(): void {
@@ -32,7 +24,7 @@ export class Status {
   }
 }
 
-function getStatusEffectMessageKey(statusEffect: StatusEffect): string {
+function getStatusEffectMessageKey(statusEffect: StatusEffect | undefined): string {
   switch (statusEffect) {
   case StatusEffect.POISON:
     return "statusEffect:poison";
@@ -51,7 +43,7 @@ function getStatusEffectMessageKey(statusEffect: StatusEffect): string {
   }
 }
 
-export function getStatusEffectObtainText(statusEffect: StatusEffect, pokemonNameWithAffix: string, sourceText?: string): string {
+export function getStatusEffectObtainText(statusEffect: StatusEffect | undefined, pokemonNameWithAffix: string, sourceText?: string): string {
   if (!sourceText) {
     const i18nKey = `${getStatusEffectMessageKey(statusEffect)}.obtain`as ParseKeys;
     return i18next.t(i18nKey, { pokemonNameWithAffix: pokemonNameWithAffix });
@@ -123,11 +115,11 @@ export function getRandomStatusEffect(statusEffectA: StatusEffect, statusEffectB
 * @param statusA The first Status
 * @param statusB The second Status
 */
-export function getRandomStatus(statusA: Status, statusB: Status): Status {
-  if (statusA === undefined || statusA.effect === StatusEffect.NONE || statusA.effect === StatusEffect.FAINT) {
+export function getRandomStatus(statusA: Status | null, statusB: Status | null): Status | null {
+  if (!statusA || statusA.effect === StatusEffect.NONE || statusA.effect === StatusEffect.FAINT) {
     return statusB;
   }
-  if (statusB === undefined || statusB.effect === StatusEffect.NONE || statusB.effect === StatusEffect.FAINT) {
+  if (!statusB || statusB.effect === StatusEffect.NONE || statusB.effect === StatusEffect.FAINT) {
     return statusA;
   }
 

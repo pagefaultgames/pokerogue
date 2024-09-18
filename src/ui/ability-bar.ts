@@ -1,3 +1,4 @@
+import { getPokemonNameWithAffix } from "#app/messages";
 import BattleScene from "../battle-scene";
 import Pokemon from "../field/pokemon";
 import { TextStyle, addTextObject } from "./text";
@@ -11,8 +12,8 @@ export default class AbilityBar extends Phaser.GameObjects.Container {
   private bg: Phaser.GameObjects.Image;
   private abilityBarText: Phaser.GameObjects.Text;
 
-  private tween: Phaser.Tweens.Tween;
-  private autoHideTimer: NodeJS.Timeout;
+  private tween: Phaser.Tweens.Tween | null;
+  private autoHideTimer: NodeJS.Timeout | null;
 
   public shown: boolean;
 
@@ -36,7 +37,7 @@ export default class AbilityBar extends Phaser.GameObjects.Container {
   }
 
   showAbility(pokemon: Pokemon, passive: boolean = false): void {
-    this.abilityBarText.setText(`${i18next.t("fightUiHandler:abilityFlyInText", { pokemonName: pokemon.name, passive: passive ? i18next.t("fightUiHandler:passive") : "", abilityName: !passive ?  pokemon.getAbility().name : pokemon.getPassiveAbility().name })}`);
+    this.abilityBarText.setText(`${i18next.t("fightUiHandler:abilityFlyInText", { pokemonName: getPokemonNameWithAffix(pokemon), passive: passive ? i18next.t("fightUiHandler:passive") : "", abilityName: !passive ?  pokemon.getAbility().name : pokemon.getPassiveAbility().name })}`);
 
     if (this.shown) {
       return;

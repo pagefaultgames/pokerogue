@@ -1,10 +1,10 @@
 <picture><img src="./public/images/logo.png" width="300" alt="PokéRogue"></picture>
 
-PokéRogue is a browser based Pokémon fangame heavily inspired by the roguelite genre. Battle endlessly while gathering stacking items, exploring many different biomes, fighting trainers, bosses, and more! 
+PokéRogue is a browser based Pokémon fangame heavily inspired by the roguelite genre. Battle endlessly while gathering stacking items, exploring many different biomes, fighting trainers, bosses, and more!
 
 # Contributing
 ## 🛠️ Development
-If you have the motivation and experience with Typescript/Javascript (or are willing to learn) please feel free to fork the repository and make pull requests with contributions. If you don't know what to work on but want to help, reference the below **To-Do** section or the **#feature-vote** channel in the discord. 
+If you have the motivation and experience with Typescript/Javascript (or are willing to learn) please feel free to fork the repository and make pull requests with contributions. If you don't know what to work on but want to help, reference the below **To-Do** section or the **#feature-vote** channel in the discord.
 
 ### 💻 Environment Setup
 #### Prerequisites
@@ -17,9 +17,9 @@ If you have the motivation and experience with Typescript/Javascript (or are wil
 2. Run `npm run start:dev` to locally run the project in `localhost:8000`
 
 #### Linting
-We're using ESLint as our common linter and formatter. It will run automatically during the pre-commit hook but if you would like to manually run it, use the `npm run eslint` script. 
+We're using ESLint as our common linter and formatter. It will run automatically during the pre-commit hook but if you would like to manually run it, use the `npm run eslint` script.
 
-### ❔ FAQ 
+### ❔ FAQ
 
 **How do I test a new _______?**
 - In the `src/overrides.ts` file there are overrides for most values you'll need to change for testing
@@ -53,9 +53,11 @@ Check out [Github Issues](https://github.com/pagefaultgames/pokerogue/issues) to
   - Pokémon Sun/Moon
   - Pokémon Ultra Sun/Ultra Moon
   - Pokémon Sword/Shield
+  - Pokémon Legends: Arceus
   - Pokémon Scarlet/Violet
-  - Firel (Custom Laboratory, Metropolis, Seabed, and Space biome music)
+  - Firel (Custom Ice Cave, Laboratory, Metropolis, Plains, Power Plant, Seabed, Space, and Volcano biome music)
   - Lmz (Custom Jungle biome music)
+  - Andr06 (Custom Slum and Sea biome music)
 
 ### 🎵 Sound Effects
   - Pokémon Emerald
@@ -80,6 +82,7 @@ Check out [Github Issues](https://github.com/pagefaultgames/pokerogue/issues) to
   - kyledove
   - Brumirage
   - pkmn_realidea (Paid Commissions)
+  - IceJkai 
 
 ### 🎨 Trainer Portraits
   - pkmn_realidea (Paid Commissions)
@@ -111,6 +114,7 @@ Check out [Github Issues](https://github.com/pagefaultgames/pokerogue/issues) to
   - mangalos810
   - Involuntary-Twitch
   - selstar
+  - koda_want_to_sleep
 
 ### 🎨 Move Animations
   - Pokémon Reborn

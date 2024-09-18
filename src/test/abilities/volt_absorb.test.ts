@@ -1,16 +1,12 @@
-import {afterEach, beforeAll, beforeEach, describe, expect, it, vi} from "vitest";
-import Phaser from "phaser";
-import GameManager from "#app/test/utils/gameManager";
-import * as overrides from "#app/overrides";
-import {
-  TurnEndPhase,
-} from "#app/phases";
-import {getMovePosition} from "#app/test/utils/gameManagerUtils";
-import { BattleStat } from "#app/data/battle-stat.js";
+import { Stat } from "#enums/stat";
+import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { Abilities } from "#enums/abilities";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
+import GameManager from "#test/utils/gameManager";
+import Phaser from "phaser";
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 // See also: TypeImmunityAbAttr
 describe("Abilities - Volt Absorb", () => {
@@ -29,28 +25,30 @@ describe("Abilities - Volt Absorb", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    vi.spyOn(overrides, "SINGLE_BATTLE_OVERRIDE", "get").mockReturnValue(true);
-    vi.spyOn(overrides, "NEVER_CRIT_OVERRIDE", "get").mockReturnValue(true);
+    game.override.battleType("single");
+    game.override.disableCrits();
   });
 
   it("does not activate when CHARGE is used", async () => {
     const moveToUse = Moves.CHARGE;
     const ability = Abilities.VOLT_ABSORB;
 
-    vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([moveToUse]);
-    vi.spyOn(overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(ability);
-    vi.spyOn(overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH, Moves.NONE, Moves.NONE, Moves.NONE]);
-    vi.spyOn(overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.DUSKULL);
-    vi.spyOn(overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.BALL_FETCH);
+    game.override.moveset([moveToUse]);
+    game.override.ability(ability);
+    game.override.enemyMoveset([Moves.SPLASH, Moves.NONE, Moves.NONE, Moves.NONE]);
+    game.override.enemySpecies(Species.DUSKULL);
+    game.override.enemyAbility(Abilities.BALL_FETCH);
 
     await game.startBattle();
 
-    game.doAttack(getMovePosition(game.scene, 0, moveToUse));
+    const playerPokemon = game.scene.getPlayerPokemon()!;
+
+    game.move.select(moveToUse);
 
     await game.phaseInterceptor.to(TurnEndPhase);
 
-    expect(game.scene.getParty()[0].summonData.battleStats[BattleStat.SPDEF]).toBe(1);
-    expect(game.scene.getParty()[0].getTag(BattlerTagType.CHARGED)).toBeDefined();
+    expect(playerPokemon.getStatStage(Stat.SPDEF)).toBe(1);
+    expect(playerPokemon.getTag(BattlerTagType.CHARGED)).toBeDefined();
     expect(game.phaseInterceptor.log).not.toContain("ShowAbilityPhase");
   });
 });
