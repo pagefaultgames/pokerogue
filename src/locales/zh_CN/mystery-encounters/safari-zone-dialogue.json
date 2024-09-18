@@ -1,46 +1,46 @@
 {
-  "intro": "It's a safari zone!",
-  "title": "The Safari Zone",
-  "description": "There are all kinds of rare and special Pokémon that can be found here!\nIf you choose to enter, you'll have a time limit of 3 wild encounters where you can try to catch these special Pokémon.\n\nBeware, though. These Pokémon may flee before you're able to catch them!",
-  "query": "Would you like to enter?",
+  "intro": "到狩猎地带了！",
+  "title": "狩猎地带",
+  "description": "这里有各种稀有和特殊的宝可梦！\n如果选择进入，你将有3次机会遇到野生宝可梦，供你捕获。\n但注意了，它们可能会在你捕捉到之前逃走！",
+  "query": "要进去试试吗？",
   "option": {
     "1": {
-      "label": "Enter",
-      "tooltip": "(-) Pay {{option1Money, money}}\n@[SUMMARY_GREEN]{(?) Safari Zone}",
-      "selected": "Time to test your luck!"
+      "label": "进入",
+      "tooltip": "(-)支付{{option1Money, money}}\n@[SUMMARY_GREEN]{(?)狩猎地带}",
+      "selected": "该试试运气了！"
     },
     "2": {
-      "label": "Leave",
-      "tooltip": "(-) No Rewards",
-      "selected": "You hurry along your way,\nwith a slight feeling of regret."
+      "label": "离开",
+      "tooltip": "(-)无奖励",
+      "selected": "你匆匆上路，心里却有一丝遗憾。"
     }
   },
   "safari": {
     "1": {
-      "label": "Throw a Pokéball",
-      "tooltip": "(+) Throw a Pokéball",
-      "selected": "You throw a Pokéball!"
+      "label": "投掷精灵球",
+      "tooltip": "(+)投掷一颗精灵球",
+      "selected": "你扔出了精灵球！"
     },
     "2": {
-      "label": "Throw Bait",
-      "tooltip": "(+) Increases Capture Rate\n(-) Chance to Increase Flee Rate",
-      "selected": "You throw some bait!"
+      "label": "投掷诱饵",
+      "tooltip": "(+)增加捕获率\n(-)有概率增加逃跑率",
+      "selected": "你扔了些诱饵！"
     },
     "3": {
-      "label": "Throw Mud",
-      "tooltip": "(+) Decreases Flee Rate\n(-) Chance to Decrease Capture Rate",
-      "selected": "You throw some mud!"
+      "label": "投掷泥巴",
+      "tooltip": "(+)降低逃跑率\n(-)有概率降低逃跑率",
+      "selected": "你扔了些泥巴！"
     },
     "4": {
-      "label": "Flee",
-      "tooltip": "(?) Flee from this Pokémon"
+      "label": "逃跑",
+      "tooltip": "(?)逃离宝可梦"
     },
-    "watching": "{{pokemonName}} is watching carefully!",
-    "eating": "{{pokemonName}} is eating!",
-    "busy_eating": "{{pokemonName}} is busy eating!",
-    "angry": "{{pokemonName}} is angry!",
-    "beside_itself_angry": "{{pokemonName}} is beside itself with anger!",
-    "remaining_count": "{{remainingCount}} Pokémon remaining!"
+    "watching": "{{pokemonName}}正在凝视你！",
+    "eating": "{{pokemonName}}正在进食！",
+    "busy_eating": "{{pokemonName}}忙着进食！",
+    "angry": "{{pokemonName}}发怒了！",
+    "beside_itself_angry": "{{pokemonName}}愤怒至极！",
+    "remaining_count": "还有{{remainingCount}}只宝可梦！"
   },
-  "outro": "That was a fun little excursion!"
+  "outro": "真是有趣的经历！"
 }
