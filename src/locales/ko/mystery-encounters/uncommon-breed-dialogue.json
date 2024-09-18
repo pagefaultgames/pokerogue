@@ -6,7 +6,7 @@
   "option": {
     "1": {
       "label": "포켓몬과 싸운다",
-      "tooltip": "(-) 까다로운 배틀\n(+) 포획가능한 강한 적",
+      "tooltip": "(-) 까다로운 배틀\n(+) 포획 가능한 강한 적",
       "selected": "{{enemyPokemon}}에게 용감하게 맞섰다.",
       "stat_boost": "{{enemyPokemon}}[[가]] 집중해서 능력치가 상승했다!"
     },
