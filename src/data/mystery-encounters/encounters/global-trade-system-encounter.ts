@@ -23,7 +23,7 @@ import { getPokeballAtlasKey, getPokeballTintColor, PokeballType } from "#app/da
 import { getEncounterText, showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
 import { trainerNamePools } from "#app/data/trainer-names";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
-import { achvs } from "#app/system/achv";
+import { addPokemonDataToDexAndValidateAchievements } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
 
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounter:globalTradeSystem";
@@ -513,29 +513,6 @@ function hideTradeBackground(scene: BattleScene) {
       }
     });
   });
-}
-
-async function addPokemonDataToDexAndValidateAchievements(scene: BattleScene, pokemon: PlayerPokemon) {
-  const speciesForm = !pokemon.fusionSpecies ? pokemon.getSpeciesForm() : pokemon.getFusionSpeciesForm();
-
-  if (speciesForm.abilityHidden && (pokemon.fusionSpecies ? pokemon.fusionAbilityIndex : pokemon.abilityIndex) === speciesForm.getAbilityCount() - 1) {
-    scene.validateAchv(achvs.HIDDEN_ABILITY);
-  }
-
-  if (pokemon.species.subLegendary) {
-    scene.validateAchv(achvs.CATCH_SUB_LEGENDARY);
-  }
-
-  if (pokemon.species.legendary) {
-    scene.validateAchv(achvs.CATCH_LEGENDARY);
-  }
-
-  if (pokemon.species.mythical) {
-    scene.validateAchv(achvs.CATCH_MYTHICAL);
-  }
-
-  scene.gameData.updateSpeciesDexIvs(pokemon.species.getRootSpeciesId(true), pokemon.ivs);
-  return scene.gameData.setPokemonCaught(pokemon, true, false, false);
 }
 
 /**

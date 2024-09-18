@@ -256,7 +256,7 @@ export default class MysteryEncounter implements IMysteryEncounter {
     this.dialogue = this.dialogue ?? {};
     this.spriteConfigs = this.spriteConfigs ? [...this.spriteConfigs] : [];
     // Default max is 1 for ROGUE encounters, 2 for others
-    this.maxAllowedEncounters = this.maxAllowedEncounters ?? this.encounterTier === MysteryEncounterTier.ROGUE ? DEFAULT_MAX_ALLOWED_ENCOUNTERS : DEFAULT_MAX_ALLOWED_ROGUE_ENCOUNTERS;
+    this.maxAllowedEncounters = this.maxAllowedEncounters ?? this.encounterTier === MysteryEncounterTier.ROGUE ? DEFAULT_MAX_ALLOWED_ROGUE_ENCOUNTERS : DEFAULT_MAX_ALLOWED_ENCOUNTERS;
     this.encounterMode = MysteryEncounterMode.DEFAULT;
     this.requirements = this.requirements ? this.requirements : [];
     this.hideBattleIntroMessage = this.hideBattleIntroMessage ?? false;

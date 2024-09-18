@@ -287,7 +287,8 @@ export const BugTypeSuperfanEncounter: MysteryEncounter =
 
         // Player gets different rewards depending on the number of bug types they have
         const numBugTypes = scene.getParty().filter(p => p.isOfType(Type.BUG, true)).length;
-        encounter.setDialogueToken("numBugTypes", numBugTypes.toString());
+        const numBugTypesText = i18next.t(`${namespace}.numBugTypes`, { count: numBugTypes });
+        encounter.setDialogueToken("numBugTypes", numBugTypesText);
 
         if (numBugTypes < 2) {
           setEncounterRewards(scene, { guaranteedModifierTypeFuncs: [modifierTypes.SUPER_LURE, modifierTypes.GREAT_BALL], fillRemaining: false });

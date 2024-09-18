@@ -1911,6 +1911,12 @@ export default class BattleScene extends SceneBase {
     return false;
   }
 
+  /**
+   * Fades out current track for `delay` ms, then fades in new track.
+   * @param newBgmKey
+   * @param destroy
+   * @param delay
+   */
   fadeAndSwitchBgm(newBgmKey: string, destroy: boolean = false, delay: number = 2000) {
     this.fadeOutBgm(delay, destroy);
     this.time.delayedCall(delay, () => {

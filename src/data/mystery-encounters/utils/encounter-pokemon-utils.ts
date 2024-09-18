@@ -750,3 +750,26 @@ export function getEncounterPokemonLevelForWave(scene: BattleScene, levelAdditiv
   // Add a level scaling modifier that is (+1 level per 10 waves) * levelAdditiveModifier
   return baseLevel + Math.max(Math.round((currentBattle.waveIndex / 10) * levelAdditiveModifier), 0);
 }
+
+export async function addPokemonDataToDexAndValidateAchievements(scene: BattleScene, pokemon: PlayerPokemon) {
+  const speciesForm = !pokemon.fusionSpecies ? pokemon.getSpeciesForm() : pokemon.getFusionSpeciesForm();
+
+  if (speciesForm.abilityHidden && (pokemon.fusionSpecies ? pokemon.fusionAbilityIndex : pokemon.abilityIndex) === speciesForm.getAbilityCount() - 1) {
+    scene.validateAchv(achvs.HIDDEN_ABILITY);
+  }
+
+  if (pokemon.species.subLegendary) {
+    scene.validateAchv(achvs.CATCH_SUB_LEGENDARY);
+  }
+
+  if (pokemon.species.legendary) {
+    scene.validateAchv(achvs.CATCH_LEGENDARY);
+  }
+
+  if (pokemon.species.mythical) {
+    scene.validateAchv(achvs.CATCH_MYTHICAL);
+  }
+
+  scene.gameData.updateSpeciesDexIvs(pokemon.species.getRootSpeciesId(true), pokemon.ivs);
+  return scene.gameData.setPokemonCaught(pokemon, true, false, false);
+}
