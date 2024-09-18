@@ -3355,6 +3355,7 @@ export function getStarterValueFriendshipCap(value: integer): integer {
   }
 }
 
+export const POKERUS_STARTER_COUNT = 5; //adjust here!
 /**
 * Method to get the daily list of starters with Pokerus.
 * @param scene {@linkcode BattleScene} used as part of RNG
@@ -3363,10 +3364,9 @@ export function getStarterValueFriendshipCap(value: integer): integer {
 export function getPokerusStarters(scene: BattleScene): PokemonSpecies[] {
   const pokerusStarters: PokemonSpecies[] = [];
   const date = new Date();
-  const starterCount = 3; //for easy future adjustment!
   date.setUTCHours(0, 0, 0, 0);
   scene.executeWithSeedOffset(() => {
-    while (pokerusStarters.length < starterCount) {
+    while (pokerusStarters.length < POKERUS_STARTER_COUNT) {
       const randomSpeciesId = parseInt(Utils.randSeedItem(Object.keys(speciesStarters)), 10);
       const species = getPokemonSpecies(randomSpeciesId);
       if (!pokerusStarters.includes(species)) {
