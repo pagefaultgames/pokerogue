@@ -3786,6 +3786,25 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     const rootForm = getPokemonSpecies(this.species.getRootSpeciesId());
     return rootForm.getAbility(abilityIndex) === rootForm.getAbility(currentAbilityIndex);
   }
+
+  /**
+   * Helper function to check if the player already owns the starter data of the Pokemon's
+   * current ability
+   * @param ownedAbilityAttrs the owned abilityAttr of this Pokemon's root form
+   * @returns true if the player already has it, false otherwise
+   */
+  checkIfPlayerHasAbilityOfStarter(ownedAbilityAttrs: number): boolean {
+    if ((ownedAbilityAttrs & 1) > 0 && this.hasSameAbilityInRootForm(0)) {
+      return true;
+    }
+    if ((ownedAbilityAttrs & 2) > 0 && this.hasSameAbilityInRootForm(1)) {
+      return true;
+    }
+    if ((ownedAbilityAttrs & 4) > 0 && this.hasSameAbilityInRootForm(2)) {
+      return true;
+    }
+    return false;
+  }
 }
 
 export default interface Pokemon {
