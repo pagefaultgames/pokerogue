@@ -8,7 +8,7 @@
     "1": {
       "label": "가벼운 트레이닝",
       "tooltip": "(-) 쉬운 배틀 \n(+) 선택 포켓몬 무작위 개체치 2가지 향상",
-      "finished": "훈련을 마친 {{selectedPokemon}}[[는]] 조금 지쳤지만 뿌듯해보인다!${{selectedPokemon}}의 {{stat1}}[[과]] {{stat2}}[[가]] 상승했다!"
+      "finished": "훈련을 마친 {{selectedPokemon}}[[는]] 조금 지쳤지만 뿌듯해 보인다!${{selectedPokemon}}의 {{stat1}}[[과]] {{stat2}}[[가]] 상승했다!"
     },
     "2": {
       "label": "일반적인 트레이닝",
