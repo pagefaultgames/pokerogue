@@ -20,7 +20,7 @@
       "label": "친구가 되기",
       "disabled_tooltip": "파티의 포켓몬이 특정한 기술을 알고 있어야한다.",
       "tooltip": "(+) {{option3PrimaryName}}[[가]] {{option3PrimaryMove}}[[를]] 사용\n(+) {{enemyPokemon}}[[가]] 좋아함",
-      "selected": "{{option3PrimaryName}}[[가]] {{option3PrimaryMove}}[[를]] 사용해,\n{{enemyPokemon}}를 매료시켰다!${{enemyPokemon}}[[는]] 동료가 되고 싶어하는 것 같다!"
+      "selected": "{{option3PrimaryName}}[[가]] {{option3PrimaryMove}}[[를]] 사용해\n{{enemyPokemon}}를 매료시켰다!${{enemyPokemon}}[[는]] 동료가 되고 싶어하는 것 같다!"
     }
   }
 }
