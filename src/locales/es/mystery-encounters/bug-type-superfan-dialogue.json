@@ -16,7 +16,7 @@
       "tooltip": "(+) ¡Recibe un objeto de regalo!",
       "disabled_tooltip": "Necesitas al menos 1 Pokémon de tipo Bicho en tu equipo para seleccionar esto.",
       "selected": "Le muestras al entrenador todos tus Pokémon de tipo Bicho...",
-      "selected_0_to_1": "¿Eh? Solo tienes {{numBugTypes}}...$Supongo que estoy perdiendo el tiempo con alguien como tú...",
+      "selected_0_to_1": "¿Eh? Solo tienes {{numBugTypes}} tipo Bicho...$Supongo que estoy perdiendo el tiempo con alguien como tú...",
       "selected_2_to_3": "¡Oye, tienes {{numBugTypes}} Pokémon de tipo Bicho! No está mal.$Aquí, esto podría ayudarte en tu viaje para atrapar más.",
       "selected_4_to_5": "¿Qué? ¿Tienes {{numBugTypes}} Bug Types?\nNice!$No estás a mi nivel, pero puedo ver destellos de mí en ti.$¡Toma esto, mi joven aprendiz!",
       "selected_6": "¡Vaya! {{numBugTypes}}Pokémon de tipo Bicho!$¡Debes amar a los Pokémon de tipo Bicho casi tanto como yo!$Aquí, toma esto como un símbolo de nuestra camaradería."
