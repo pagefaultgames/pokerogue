@@ -2,7 +2,7 @@
   "intro_dialogue": "자, 오세요 여러분!\n새로 나온 {{wobbuffetName}} 해머 게임에 도전해 보세요!",
   "speaker": "진행자",
   "title": "재밌는 놀이!",
-  "description": "상품이 걸린 게임이 진행 중입니다!\n@[TOOLTIP_TITLE]{3턴}안에 {{wobbuffetName}}[[를]] @[TOOLTIP_TITLE]{기절시키지 않고 HP를 1}에 가깝게 만들어서, {{wobbuffetName}}이 해머기계에 최고로 강력한 카운터를 날리도록 해야합니다.\n하지만 조심하세요! 만약 {{wobbuffetName}}[[가]] 기절해버리면, 치료비를 내야 할테니까요!",
+  "description": "상품이 걸린 게임이 진행 중입니다!\n@[TOOLTIP_TITLE]{3턴} 안에 {{wobbuffetName}}[[를]] @[TOOLTIP_TITLE]{기절시키지 않고 HP를 1}에 가깝게 만들어서, {{wobbuffetName}}이 해머기계에 최고로 강력한 카운터를 날리도록 해야합니다.\n하지만 조심하세요! 만약 {{wobbuffetName}}[[가]] 기절해버리면, 치료비를 내야 할테니까요!",
   "query": "게임에 참가해볼까요?",
   "option": {
     "1": {
