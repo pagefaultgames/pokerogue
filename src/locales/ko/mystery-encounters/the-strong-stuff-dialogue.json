@@ -8,7 +8,7 @@
       "label": "{{shuckleName}}에게 다가간다",
       "tooltip": "(?) 끔찍하거나 놀라운 일",
       "selected": "당신은 기절해버렸다……….",
-      "selected_2": "@f{150}정신을 차리고 나니, {{shuckleName}}[[는]] 사라지고\n주스도 완전히 비었다.${{highBstPokemon1}}[[과]] {{highBstPokemon2}}[[는]]\n굉장히 무기력해졌다!$두 포켓몬의 종족값이 {{reductionValue}}만큼 감소했다!$하지만 다른 포켓몬들은 놀라울만큼 활력이 넘친다!\n다른 포켓몬의 종족값이 {{increaseValue}}만큼 증가했다!"
+      "selected_2": "@f{150}정신을 차리고 나니, {{shuckleName}}[[는]] 사라지고\n주스도 완전히 비었다.${{highBstPokemon1}}[[과]] {{highBstPokemon2}}[[는]]\n굉장히 무기력해졌다!$두 포켓몬의 종족값이 각각 {{reductionValue}}만큼 감소했다!$하지만 다른 포켓몬들은 놀라울만큼 활력이 넘친다!\n다른 포켓몬들의 종족값이 각각 {{increaseValue}}만큼 증가했다!"
     },
     "2": {
       "label": "{{shuckleName}}[[과]] 싸운다",
