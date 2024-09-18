@@ -1,25 +1,25 @@
 {
-  "intro": "As you walk down a narrow pathway, you see a towering silhouette blocking your path.$You get closer to see a {{snorlaxName}} sleeping peacefully.\nIt seems like there's no way around it.",
-  "title": "Slumbering {{snorlaxName}}",
-  "description": "You could attack it to try and get it to move, or simply wait for it to wake up. Who knows how long that could take, though...",
-  "query": "What will you do?",
+  "intro": "좁은 길을 걷다보니 거대한 실루엣이\n길을 막고 있는 것을 발견했다.$가까이 다가가 보니 평화롭게 자고있는 {{snorlaxName}}였다.\n피할 수 있는 방법은 없는 것 같다….",
+  "title": "잠자는 {{snorlaxName}}",
+  "description": "자고있는 {{snorlaxName}}[[를]] 지금 당장 공격해서 자리를 비키게 할 수도, 그냥 알아서 잠에서 깨어날 때까지 기다릴 수도 있습니다.\n얼마나 기다려야 할지는 알 수 없겠지만요….",
+  "query": "어떻게 하시겠습니까?",
   "option": {
     "1": {
-      "label": "Battle It",
-      "tooltip": "(-) Fight Sleeping {{snorlaxName}}\n(+) Special Reward",
-      "selected": "You approach the\nPokémon without fear."
+      "label": "싸운다",
+      "tooltip": "(-) 잠자는 {{snorlaxName}}[[과]] 배틀\n(+) 특별한 보상",
+      "selected": "용감하게 포켓몬에게 다가갔다."
     },
     "2": {
-      "label": "Wait for It to Move",
-      "tooltip": "(-) Wait a Long Time\n(+) Recover Party",
-      "selected": ".@d{32}.@d{32}.@d{32}$You wait for a time, but the {{snorlaxName}}'s yawns make your party sleepy...",
-      "rest_result": "When you all awaken, the {{snorlaxName}} is no where to be found -\nbut your Pokémon are all healed!"
+      "label": "움직일 때까지 기다린다",
+      "tooltip": "(-) 긴 시간을 기다림 \n(+) 멤버 HP회복",
+      "selected": ".@d{32}.@d{32}.@d{32}$한참을 기다리다보니, {{snorlaxName}}의 하품이 모두를 졸리게 만든다….",
+      "rest_result": "모두가 잠에서 깨어났을 무렵, {{snorlaxName}}[[는]] 어디에도 없었다.\n하지만 모든 포켓몬이 회복되었다!"
     },
     "3": {
-      "label": "Steal Its Item",
-      "tooltip": "(+) {{option3PrimaryName}} uses {{option3PrimaryMove}}\n(+) Special Reward",
-      "disabled_tooltip": "Your Pokémon need to know certain moves to choose this",
-      "selected": "Your {{option3PrimaryName}} uses {{option3PrimaryMove}}!$@s{item_fanfare}It steals Leftovers off the sleeping\n{{snorlaxName}} and you make out like bandits!"
+      "label": "아이템을 훔친다",
+      "tooltip": "(+) {{option3PrimaryName}}[[가]] {{option3PrimaryMove}}[[를]] 사용\n(+) 특별한 보상",
+      "disabled_tooltip": "포켓몬이 특정 기술을 알고 있어야 한다.",
+      "selected": "{{option3PrimaryName}}[[는]] {{option3PrimaryMove}}[[를]] 사용했다!$@s{item_fanfare}자고 있는 {{snorlaxName}}[[로]]부터\n남은 음식을 훔쳐서 살금살금 도망쳤다!"
     }
   }
 }
