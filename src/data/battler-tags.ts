@@ -2518,6 +2518,8 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: number, source
     return new GorillaTacticsTag();
   case BattlerTagType.SUBSTITUTE:
     return new SubstituteTag(sourceMove, sourceId);
+  case BattlerTagType.AUTOTOMIZED:
+    return new AutotomizedTag();
   case BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON:
     return new MysteryEncounterPostSummonTag();
   case BattlerTagType.NONE:

@@ -1401,7 +1401,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   getWeight(): number {
     const autotomizedTag = this.getTag(AutotomizedTag);
     let weightRemoved = 0;
-    if (autotomizedTag !== null) {
+    if (autotomizedTag !== null && autotomizedTag !== undefined) {
       weightRemoved = 100 * autotomizedTag.autotomizeCount;
     }
     const minWeight = 0.1;
