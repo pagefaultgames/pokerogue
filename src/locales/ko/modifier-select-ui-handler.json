@@ -9,6 +9,6 @@
   "checkTeamDesc": "파티를 확인하거나 폼 변경 아이템을 사용합니다.",
   "rerollCost": "₽{{formattedMoney}}",
   "itemCost": "₽{{formattedMoney}}",
-  "continueNextWaveButton": "Continue",
-  "continueNextWaveDescription": "Continue to the next wave"
+  "continueNextWaveButton": "진행하기",
+  "continueNextWaveDescription": "다음 웨이브로 진행합니다."
 }

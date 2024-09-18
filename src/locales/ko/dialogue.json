@@ -935,112 +935,112 @@
   },
   "stat_trainer_buck": {
     "encounter": {
-      "1": "...I'm telling you right now. I'm seriously tough. Act surprised!",
-      "2": "I can feel my Pokémon shivering inside their Pokéballs!"
+      "1": "…말해두겠지만 나 강하다고!\n놀라기나 해라!",
+      "2": "몬스터볼 안에서 내 포켓몬들이 떨고 있다!\n이게 흥분해서 떨린다는 것이구나!"
     },
     "victory": {
-      "1": "Heeheehee!\nSo hot, you!",
-      "2": "Heeheehee!\nSo hot, you!"
+      "1": "이히히!\n너 열정이 뜨거운걸!!",
+      "2": "이히히!\n너 열정이 뜨거운걸!!"
     },
     "defeat": {
-      "1": "Whoa! You're all out of gas, I guess.",
-      "2": "Whoa! You're all out of gas, I guess."
+      "1": "우왓!\n연료가 다 떨어졌나 본데?",
+      "2": "우왓!\n연료가 다 떨어졌나 본데?"
     }
   },
   "stat_trainer_cheryl": {
     "encounter": {
-      "1": "My Pokémon have been itching for a battle.",
-      "2": "I should warn you, my Pokémon can be quite rambunctious."
+      "1": "내 포켓몬들\n싸우고 싶어서 근질근질하고 있었어.",
+      "2": "내 포켓몬들\n꽤나 개구쟁이라니까."
     },
     "victory": {
-      "1": "Striking the right balance of offense and defense... It's not easy to do.",
-      "2": "Striking the right balance of offense and defense... It's not easy to do."
+      "1": "공격하는 것과 방어하는 것\n그 밸런스 유지가 큰일이네.",
+      "2": "공격하는 것과 방어하는 것\n그 밸런스 유지가 큰일이네."
     },
     "defeat": {
-      "1": "Do your Pokémon need any healing?",
-      "2": "Do your Pokémon need any healing?"
+      "1": "네 포켓몬들 다친 것 같은데?",
+      "2": "네 포켓몬들 다친 것 같은데?"
     }
   },
   "stat_trainer_marley": {
     "encounter": {
-      "1": "... OK.\nI'll do my best.",
-      "2": "... OK.\nI... won't lose...!"
+      "1": "…좋아.\n최선을 다할게.",
+      "2": "…좋아.\n난…지지 않아…!"
     },
     "victory": {
-      "1": "... Awww.",
-      "2": "... Awww."
+      "1": "…으윽.",
+      "2": "…으윽."
     },
     "defeat": {
-      "1": "... Goodbye.",
-      "2": "... Goodbye."
+      "1": "…잘 가.",
+      "2": "…잘 가."
     }
   },
   "stat_trainer_mira": {
     "encounter": {
-      "1": "You will be shocked by Mira!",
-      "2": "Mira will show you that Mira doesn't get lost anymore!"
+      "1": "너 깜짝 놀랄 거야!",
+      "2": "더는 헤매거나 하지 않는다는 것을 너에게 보여줄게!"
     },
     "victory": {
-      "1": "Mira wonders if she can get very far in this land.",
-      "2": "Mira wonders if she can get very far in this land."
+      "1": "이거라면 이곳에서\n미루가 활약할 수 없을까.",
+      "2": "이거라면 이곳에서\n미루가 활약할 수 없을까."
     },
     "defeat": {
-      "1": "Mira knew she would win!",
-      "2": "Mira knew she would win!"
+      "1": "미루가 이길 줄 알았어!",
+      "2": "미루가 이길 줄 알았어!"
     }
   },
   "stat_trainer_riley": {
     "encounter": {
-      "1": "Battling is our way of greeting!",
-      "2": "We're pulling out all the stops to put your Pokémon down."
+      "1": "포켓몬 승부야말로\n우리들의 인사 방식이지!",
+      "2": "전력을 다해서\n네 포켓몬을 쓰러뜨리겠다."
     },
     "victory": {
-      "1": "At times we battle, and sometimes we team up...$It's great how Trainers can interact.",
-      "2": "At times we battle, and sometimes we team up...$It's great how Trainers can interact."
+      "1": "싸우거나 편을 만들거나…\n트레이너들은 좋겠어.",
+      "2": "싸우거나 편을 만들거나…\n트레이너들은 좋겠어."
     },
     "defeat": {
-      "1": "You put up quite the display.\nBetter luck next time.",
-      "2": "You put up quite the display.\nBetter luck next time."
+      "1": "꽤 인상적인 실력이었어.\n다음엔 더 잘해봐.",
+      "2": "꽤 인상적인 실력이었어.\n다음엔 더 잘해봐."
     }
   },
   "winstrates_victor": {
     "encounter": {
-      "1": "That's the spirit! I like you!"
+      "1": "멋진 배짱이군! 마음에 들었다!"
     },
     "victory": {
-      "1": "A-ha! You're stronger than I thought!"
+      "1": "아-앗! 생각보다 더 강하구나!"
     }
   },
   "winstrates_victoria": {
     "encounter": {
-      "1": "My goodness! Aren't you young?$You must be quite the trainer to beat my husband, though.$Now I suppose it's my turn to battle!"
+      "1": "어머머! 생각보다 어리군요?!$우리 남편을 이기다니\n정말 굉장한 실력의 트레이너인가 보죠?$자 그럼 이번엔 저와 승부해요!"
     },
     "victory": {
-      "1": "Uwah! Just how strong are you?!"
+      "1": "에구머니나!\n어쩜 그렇게 강하신가요?!"
     }
   },
   "winstrates_vivi": {
     "encounter": {
-      "1": "You're stronger than Mom? Wow!$But I'm strong, too!\nReally! Honestly!"
+      "1": "엄마보다 강하다니 굉장하다!$하지만 나도 꽤 강하다고!\n진짜라니까?!"
     },
     "victory": {
-      "1": "Huh? Did I really lose?\nSnivel... Grandmaaa!"
+      "1": "너무 분해…\n…훌쩍!$할머니이~이!!"
     }
   },
   "winstrates_vicky": {
     "encounter": {
-      "1": "How dare you make my precious\ngranddaughter cry!$I see I need to teach you a lesson.\nPrepare to feel the sting of defeat!"
+      "1": "요 녀석~!\n우리 귀여운 손녀에게 무슨 짓을 한 게냐!$이렇게 된 이상 내가 직접\n네 포켓몬을 혼내줄 테니 각오해라잇!"
     },
     "victory": {
-      "1": "Whoa! So strong!\nMy granddaughter wasn't lying."
+      "1": "에구! 정말 강하구나!\n우리 손녀 말이 진짜였구나."
     }
   },
   "winstrates_vito": {
     "encounter": {
-      "1": "I trained together with my whole family,\nevery one of us!$I'm not losing to anyone!"
+      "1": "가족들끼리 포켓몬 수행을 했었어!\n누구에게도 지지 않는다고!"
     },
     "victory": {
-      "1": "I was better than everyone in my family.\nI've never lost before..."
+      "1": "난 우리 가족 중에서도 제일 강했어.\n한 번도 져본 적이 없었는데…"
     }
   },
   "brock": {
@@ -2556,7 +2556,7 @@
   },
   "iono": {
     "encounter": {
-      "1": "자~ 오늘의 각오는~ 모야모야~?\n$...\n$그럼, 이제 시작해 볼까! \n$도전자님의 실력은 과연 과연~!?"
+      "1": "자~ 오늘의 각오는~ 모야모야~?\n$…\n$그럼, 이제 시작해 볼까! \n$도전자님의 실력은 과연 과연~!?"
     },
     "victory": {
       "1": "너의 반짝임은 1000만볼트!"
@@ -2676,7 +2676,7 @@
       "1": "장하구나! 실로 견줄 자가 천하에 없도다!"
     },
     "defeat": {
-      "1": "나의 마음에 상쾌한 바람이 지나갔다...\n$정말 대단한 노력이다!"
+      "1": "나의 마음에 상쾌한 바람이 지나갔다…\n$정말 대단한 노력이다!"
     }
   },
   "kieran": {
@@ -2684,7 +2684,7 @@
       "1": "난 노력을 통해 강해지고 또 강해지지!\n$난 지지 않아."
     },
     "victory": {
-      "1": "믿을 수 없어...\n$정말 재밌고 가슴 뛰는 배틀이었어!"
+      "1": "믿을 수 없어…\n$정말 재밌고 가슴 뛰는 배틀이었어!"
     },
     "defeat": {
       "1": "세상에 마상에! 정말 멋진 배틀이었어!\n$네가 더 열심히 훈련할 시간이야."
