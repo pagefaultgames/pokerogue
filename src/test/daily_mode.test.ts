@@ -60,6 +60,7 @@ describe("Shop modifications", async () => {
       .startingWave(9)
       .startingBiome(Biome.ICE_CAVE) // Will lead to Snowy Forest with randomly generated weather
       .battleType("single")
+      .shinyLevel(true, 2)
       .startingLevel(100) // Avoid levelling up
       .enemyLevel(1000) // Avoid opponent dying before game.doKillOpponents()
       .disableTrainerWaves()
@@ -78,7 +79,6 @@ describe("Shop modifications", async () => {
     await game.dailyMode.runToSummon();
     const party = game.scene.getParty();
     expect(party[0]).toBeDefined();
-    party[0].shiny = true;
     expect(getPartyLuckValue(party)).toBe(0);
     expect(itemPoolChecks.get("EVIOLITE")).toBeDefined();
     expect(itemPoolChecks.get("EVIOLITE")).toBeFalsy();
@@ -90,6 +90,10 @@ describe("Shop modifications", async () => {
     await game.phaseInterceptor.to(BattleEndPhase);
     game.onNextPrompt("SelectModifierPhase", Mode.MODIFIER_SELECT, () => {
       expect(game.scene.ui.getHandler()).toBeInstanceOf(ModifierSelectUiHandler);
+      expect(itemPoolChecks.get("EVIOLITE")).toBeDefined();
+      expect(itemPoolChecks.get("EVIOLITE")).toBeTruthy();
+      expect(itemPoolChecks.get("MINI_BLACK_HOLE")).toBeDefined();
+      expect(itemPoolChecks.get("MINI_BLACK_HOLE")).toBeTruthy();
     });
   });
 });
