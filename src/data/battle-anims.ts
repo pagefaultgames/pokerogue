@@ -488,14 +488,14 @@ export function initMoveAnim(scene: BattleScene, move: Moves): Promise<void> {
     } else {
       moveAnims.set(move, null);
       const defaultMoveAnim = allMoves[move] instanceof AttackMove ? Moves.TACKLE : allMoves[move] instanceof SelfStatusMove ? Moves.FOCUS_ENERGY : Moves.TAIL_WHIP;
-      const moveName = Moves[move].toLowerCase().replace(/\_/g, "-");
+
       const fetchAnimAndResolve = (move: Moves) => {
-        scene.cachedFetch(`./battle-anims/${moveName}.json`)
+        scene.cachedFetch(`./battle-anims/${Utils.animationFileName(move)}.json`)
           .then(response => {
             const contentType = response.headers.get("content-type");
             if (!response.ok || contentType?.indexOf("application/json") === -1) {
-              console.error(`Could not load animation file for move '${moveName}'`, response.status, response.statusText);
-              populateMoveAnim(move, moveAnims.get(defaultMoveAnim));
+              useDefaultAnim(move, defaultMoveAnim);
+              logMissingMoveAnim(move, response.status, response.statusText);
               return resolve();
             }
             return response.json();
@@ -515,11 +515,39 @@ export function initMoveAnim(scene: BattleScene, move: Moves): Promise<void> {
             } else {
               resolve();
             }
+          })
+          .catch(error => {
+            useDefaultAnim(move, defaultMoveAnim);
+            logMissingMoveAnim(move, error);
+            return resolve();
           });
       };
       fetchAnimAndResolve(move);
     }
   });
+}
+
+/**
+ * Populates the default animation for the given move.
+ *
+ * @param move the move to populate an animation for
+ * @param defaultMoveAnim the move to use as the default animation
+ */
+function useDefaultAnim(move: Moves, defaultMoveAnim: Moves) {
+  populateMoveAnim(move, moveAnims.get(defaultMoveAnim));
+}
+
+/**
+ * Helper method for printing a warning to the console when a move animation is missing.
+ *
+ * @param move the move to populate an animation for
+ * @param optionalParams parameters to add to the error logging
+ *
+ * @remarks use {@linkcode useDefaultAnim} to use a default animation
+ */
+function logMissingMoveAnim(move: Moves, ...optionalParams: any[]) {
+  const moveName = Utils.animationFileName(move);
+  console.warn(`Could not load animation file for move '${moveName}'`, ...optionalParams);
 }
 
 /**
