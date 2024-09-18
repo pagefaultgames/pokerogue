@@ -15,8 +15,6 @@ import { fileURLToPath } from "url";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const typeChoices = ["Move", "Ability", "Item", "EXIT"];
-
 /**
  * Prompts the user to select a type via list.
  * @returns {Promise<{selectedOption: string}>} the selected type
@@ -27,7 +25,7 @@ async function promptTestType() {
       type: "list",
       name: "selectedOption",
       message: "What type of test would you like to create:",
-      choices: typeChoices,
+      choices: ["Move", "Ability", "Item", "EXIT"],
     },
   ]);
 
