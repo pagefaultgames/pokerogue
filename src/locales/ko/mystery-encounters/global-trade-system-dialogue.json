@@ -22,7 +22,7 @@
     "4": {
       "label": "떠난다",
       "tooltip": "(-) 보상 없음",
-      "selected": "교환할 시간 없다!\n서둘러 떠난다!"
+      "selected": "교환할 시간이 없다!\n서둘러 떠났다."
     }
   },
   "pokemon_trade_selected": "{{tradedPokemon}}[[를]] {{tradeTrainerName}}에게 보냅니다.",
