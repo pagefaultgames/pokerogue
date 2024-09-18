@@ -1272,7 +1272,7 @@ class PartySlot extends Phaser.GameObjects.Container {
     }
 
     if (this.pokemon.status) {
-      const statusIndicator = this.scene.add.sprite(0, 0, `statuses_${i18next.resolvedLanguage}`);
+      const statusIndicator = this.scene.add.sprite(0, 0, Utils.getLocalizedSpriteKey("statuses"));
       statusIndicator.setFrame(StatusEffect[this.pokemon.status?.effect].toLowerCase());
       statusIndicator.setOrigin(0, 0);
       statusIndicator.setPositionRelative(slotLevelLabel, this.slotIndex >= battlerCount ? 43 : 55, 0);

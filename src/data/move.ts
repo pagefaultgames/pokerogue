@@ -3841,7 +3841,7 @@ export class StormAccuracyAttr extends VariableAccuracyAttr {
  * @extends VariableAccuracyAttr
  * @see {@linkcode apply}
  */
-export class MinimizeAccuracyAttr extends VariableAccuracyAttr {
+export class AlwaysHitMinimizeAttr extends VariableAccuracyAttr {
   /**
    * @see {@linkcode apply}
    * @param user N/A
@@ -4857,10 +4857,10 @@ export class RemoveAllSubstitutesAttr extends MoveEffectAttr {
  * Attribute used when a move hits a {@linkcode BattlerTagType} for double damage
  * @extends MoveAttr
 */
-export class HitsTagAttr extends MoveAttr {
+export class DealsDoubleDamageToTagAttr extends MoveAttr {
   /** The {@linkcode BattlerTagType} this move hits */
   public tagType: BattlerTagType;
-  /** Should this move deal double damage against {@linkcode HitsTagAttr.tagType}? */
+  /** Should this move deal double damage against {@linkcode DealsDoubleDamageToTagAttr.tagType}? */
   public doubleDamage: boolean;
 
   constructor(tagType: BattlerTagType, doubleDamage?: boolean) {
@@ -6754,12 +6754,11 @@ export function initMoves() {
     new AttackMove(Moves.CUT, Type.NORMAL, MoveCategory.PHYSICAL, 50, 95, 30, -1, 0, 1)
       .slicingMove(),
     new AttackMove(Moves.GUST, Type.FLYING, MoveCategory.SPECIAL, 40, 100, 35, -1, 0, 1)
-      .attr(HitsTagAttr, BattlerTagType.FLYING, true)
+      .attr(DealsDoubleDamageToTagAttr, BattlerTagType.FLYING, true)
       .windMove(),
     new AttackMove(Moves.WING_ATTACK, Type.FLYING, MoveCategory.PHYSICAL, 60, 100, 35, -1, 0, 1),
     new StatusMove(Moves.WHIRLWIND, Type.NORMAL, -1, 20, -1, -6, 1)
       .attr(ForceSwitchOutAttr)
-      .attr(HitsTagAttr, BattlerTagType.FLYING, false)
       .ignoresSubstitute()
       .hidesTarget()
       .windMove(),
@@ -6772,8 +6771,8 @@ export function initMoves() {
     new AttackMove(Moves.SLAM, Type.NORMAL, MoveCategory.PHYSICAL, 80, 75, 20, -1, 0, 1),
     new AttackMove(Moves.VINE_WHIP, Type.GRASS, MoveCategory.PHYSICAL, 45, 100, 25, -1, 0, 1),
     new AttackMove(Moves.STOMP, Type.NORMAL, MoveCategory.PHYSICAL, 65, 100, 20, 30, 0, 1)
-      .attr(MinimizeAccuracyAttr)
-      .attr(HitsTagAttr, BattlerTagType.MINIMIZED, true)
+      .attr(AlwaysHitMinimizeAttr)
+      .attr(DealsDoubleDamageToTagAttr, BattlerTagType.MINIMIZED, true)
       .attr(FlinchAttr),
     new AttackMove(Moves.DOUBLE_KICK, Type.FIGHTING, MoveCategory.PHYSICAL, 30, 100, 30, -1, 0, 1)
       .attr(MultiHitAttr, MultiHitType._2),
@@ -6797,8 +6796,8 @@ export function initMoves() {
       .attr(OneHitKOAccuracyAttr),
     new AttackMove(Moves.TACKLE, Type.NORMAL, MoveCategory.PHYSICAL, 40, 100, 35, -1, 0, 1),
     new AttackMove(Moves.BODY_SLAM, Type.NORMAL, MoveCategory.PHYSICAL, 85, 100, 15, 30, 0, 1)
-      .attr(MinimizeAccuracyAttr)
-      .attr(HitsTagAttr, BattlerTagType.MINIMIZED, true)
+      .attr(AlwaysHitMinimizeAttr)
+      .attr(DealsDoubleDamageToTagAttr, BattlerTagType.MINIMIZED, true)
       .attr(StatusEffectAttr, StatusEffect.PARALYSIS),
     new AttackMove(Moves.WRAP, Type.NORMAL, MoveCategory.PHYSICAL, 15, 90, 20, -1, 0, 1)
       .attr(TrapAttr, BattlerTagType.WRAP),
@@ -6866,7 +6865,7 @@ export function initMoves() {
     new AttackMove(Moves.HYDRO_PUMP, Type.WATER, MoveCategory.SPECIAL, 110, 80, 5, -1, 0, 1),
     new AttackMove(Moves.SURF, Type.WATER, MoveCategory.SPECIAL, 90, 100, 15, -1, 0, 1)
       .target(MoveTarget.ALL_NEAR_OTHERS)
-      .attr(HitsTagAttr, BattlerTagType.UNDERWATER, true)
+      .attr(DealsDoubleDamageToTagAttr, BattlerTagType.UNDERWATER, true)
       .attr(GulpMissileTagAttr),
     new AttackMove(Moves.ICE_BEAM, Type.ICE, MoveCategory.SPECIAL, 90, 100, 10, 10, 0, 1)
       .attr(StatusEffectAttr, StatusEffect.FREEZE),
@@ -6949,18 +6948,18 @@ export function initMoves() {
     new AttackMove(Moves.THUNDER, Type.ELECTRIC, MoveCategory.SPECIAL, 110, 70, 10, 30, 0, 1)
       .attr(StatusEffectAttr, StatusEffect.PARALYSIS)
       .attr(ThunderAccuracyAttr)
-      .attr(HitsTagAttr, BattlerTagType.FLYING, false),
+      .attr(DealsDoubleDamageToTagAttr, BattlerTagType.FLYING, false),
     new AttackMove(Moves.ROCK_THROW, Type.ROCK, MoveCategory.PHYSICAL, 50, 90, 15, -1, 0, 1)
       .makesContact(false),
     new AttackMove(Moves.EARTHQUAKE, Type.GROUND, MoveCategory.PHYSICAL, 100, 100, 10, -1, 0, 1)
-      .attr(HitsTagAttr, BattlerTagType.UNDERGROUND, true)
+      .attr(DealsDoubleDamageToTagAttr, BattlerTagType.UNDERGROUND, true)
       .attr(MovePowerMultiplierAttr, (user, target, move) => user.scene.arena.getTerrainType() === TerrainType.GRASSY && target.isGrounded() ? 0.5 : 1)
       .makesContact(false)
       .target(MoveTarget.ALL_NEAR_OTHERS),
     new AttackMove(Moves.FISSURE, Type.GROUND, MoveCategory.PHYSICAL, 200, 30, 5, -1, 0, 1)
       .attr(OneHitKOAttr)
       .attr(OneHitKOAccuracyAttr)
-      .attr(HitsTagAttr, BattlerTagType.UNDERGROUND, false)
+      .attr(DealsDoubleDamageToTagAttr, BattlerTagType.UNDERGROUND, false)
       .makesContact(false),
     new AttackMove(Moves.DIG, Type.GROUND, MoveCategory.PHYSICAL, 80, 100, 10, -1, 0, 1)
       .attr(ChargeAttr, ChargeAnim.DIG_CHARGING, i18next.t("moveTriggers:dugAHole", {pokemonName: "{USER}"}), BattlerTagType.UNDERGROUND)
@@ -7349,7 +7348,7 @@ export function initMoves() {
       .attr(PreMoveMessageAttr, magnitudeMessageFunc)
       .attr(MagnitudePowerAttr)
       .attr(MovePowerMultiplierAttr, (user, target, move) => user.scene.arena.getTerrainType() === TerrainType.GRASSY && target.isGrounded() ? 0.5 : 1)
-      .attr(HitsTagAttr, BattlerTagType.UNDERGROUND, true)
+      .attr(DealsDoubleDamageToTagAttr, BattlerTagType.UNDERGROUND, true)
       .makesContact(false)
       .target(MoveTarget.ALL_NEAR_OTHERS),
     new AttackMove(Moves.DYNAMIC_PUNCH, Type.FIGHTING, MoveCategory.PHYSICAL, 100, 50, 5, 100, 0, 2)
@@ -7405,7 +7404,7 @@ export function initMoves() {
     new AttackMove(Moves.CROSS_CHOP, Type.FIGHTING, MoveCategory.PHYSICAL, 100, 80, 5, -1, 0, 2)
       .attr(HighCritAttr),
     new AttackMove(Moves.TWISTER, Type.DRAGON, MoveCategory.SPECIAL, 40, 100, 20, 20, 0, 2)
-      .attr(HitsTagAttr, BattlerTagType.FLYING, true)
+      .attr(DealsDoubleDamageToTagAttr, BattlerTagType.FLYING, true)
       .attr(FlinchAttr)
       .windMove()
       .target(MoveTarget.ALL_NEAR_ENEMIES),
@@ -7437,7 +7436,7 @@ export function initMoves() {
       .attr(StatStageChangeAttr, [ Stat.DEF ], -1),
     new AttackMove(Moves.WHIRLPOOL, Type.WATER, MoveCategory.SPECIAL, 35, 85, 15, -1, 0, 2)
       .attr(TrapAttr, BattlerTagType.WHIRLPOOL)
-      .attr(HitsTagAttr, BattlerTagType.UNDERWATER, true),
+      .attr(DealsDoubleDamageToTagAttr, BattlerTagType.UNDERWATER, true),
     new AttackMove(Moves.BEAT_UP, Type.DARK, MoveCategory.PHYSICAL, -1, 100, 10, -1, 0, 2)
       .attr(MultiHitAttr, MultiHitType.BEAT_UP)
       .attr(BeatUpAttr)
@@ -7660,7 +7659,7 @@ export function initMoves() {
     new AttackMove(Moves.EXTRASENSORY, Type.PSYCHIC, MoveCategory.SPECIAL, 80, 100, 20, 10, 0, 3)
       .attr(FlinchAttr),
     new AttackMove(Moves.SKY_UPPERCUT, Type.FIGHTING, MoveCategory.PHYSICAL, 85, 90, 15, -1, 0, 3)
-      .attr(HitsTagAttr, BattlerTagType.FLYING)
+      .attr(DealsDoubleDamageToTagAttr, BattlerTagType.FLYING)
       .punchingMove(),
     new AttackMove(Moves.SAND_TOMB, Type.GROUND, MoveCategory.PHYSICAL, 35, 85, 15, -1, 0, 3)
       .attr(TrapAttr, BattlerTagType.SAND_TOMB)
@@ -7891,8 +7890,8 @@ export function initMoves() {
     new AttackMove(Moves.DRAGON_PULSE, Type.DRAGON, MoveCategory.SPECIAL, 85, 100, 10, -1, 0, 4)
       .pulseMove(),
     new AttackMove(Moves.DRAGON_RUSH, Type.DRAGON, MoveCategory.PHYSICAL, 100, 75, 10, 20, 0, 4)
-      .attr(MinimizeAccuracyAttr)
-      .attr(HitsTagAttr, BattlerTagType.MINIMIZED, true)
+      .attr(AlwaysHitMinimizeAttr)
+      .attr(DealsDoubleDamageToTagAttr, BattlerTagType.MINIMIZED, true)
       .attr(FlinchAttr),
     new AttackMove(Moves.POWER_GEM, Type.ROCK, MoveCategory.SPECIAL, 80, 100, 20, -1, 0, 4),
     new AttackMove(Moves.DRAIN_PUNCH, Type.FIGHTING, MoveCategory.PHYSICAL, 75, 100, 10, -1, 0, 4)
@@ -8089,7 +8088,7 @@ export function initMoves() {
       .attr(AddBattlerTagAttr, BattlerTagType.IGNORE_FLYING, false, false, 1, 1, true)
       .attr(AddBattlerTagAttr, BattlerTagType.INTERRUPTED)
       .attr(RemoveBattlerTagAttr, [BattlerTagType.FLYING, BattlerTagType.MAGNET_RISEN])
-      .attr(HitsTagAttr, BattlerTagType.FLYING, false)
+      .attr(DealsDoubleDamageToTagAttr, BattlerTagType.FLYING, false)
       .makesContact(false),
     new AttackMove(Moves.STORM_THROW, Type.FIGHTING, MoveCategory.PHYSICAL, 60, 100, 10, -1, 0, 5)
       .attr(CritOnlyAttr),
@@ -8102,9 +8101,9 @@ export function initMoves() {
       .attr(StatStageChangeAttr, [ Stat.SPATK, Stat.SPDEF, Stat.SPD ], 1, true)
       .danceMove(),
     new AttackMove(Moves.HEAVY_SLAM, Type.STEEL, MoveCategory.PHYSICAL, -1, 100, 10, -1, 0, 5)
-      .attr(MinimizeAccuracyAttr)
+      .attr(AlwaysHitMinimizeAttr)
       .attr(CompareWeightPowerAttr)
-      .attr(HitsTagAttr, BattlerTagType.MINIMIZED, true),
+      .attr(DealsDoubleDamageToTagAttr, BattlerTagType.MINIMIZED, true),
     new AttackMove(Moves.SYNCHRONOISE, Type.PSYCHIC, MoveCategory.SPECIAL, 120, 100, 10, -1, 0, 5)
       .target(MoveTarget.ALL_NEAR_OTHERS)
       .condition(unknownTypeCondition)
@@ -8255,12 +8254,14 @@ export function initMoves() {
       .attr(StatStageChangeAttr, [ Stat.DEF ], -1)
       .slicingMove(),
     new AttackMove(Moves.HEAT_CRASH, Type.FIRE, MoveCategory.PHYSICAL, -1, 100, 10, -1, 0, 5)
-      .attr(MinimizeAccuracyAttr)
+      .attr(AlwaysHitMinimizeAttr)
       .attr(CompareWeightPowerAttr)
-      .attr(HitsTagAttr, BattlerTagType.MINIMIZED, true),
+      .attr(DealsDoubleDamageToTagAttr, BattlerTagType.MINIMIZED, true),
     new AttackMove(Moves.LEAF_TORNADO, Type.GRASS, MoveCategory.SPECIAL, 65, 90, 10, 50, 0, 5)
       .attr(StatStageChangeAttr, [ Stat.ACC ], -1),
     new AttackMove(Moves.STEAMROLLER, Type.BUG, MoveCategory.PHYSICAL, 65, 100, 20, 30, 0, 5)
+      .attr(AlwaysHitMinimizeAttr)
+      .attr(DealsDoubleDamageToTagAttr, BattlerTagType.MINIMIZED, true)
       .attr(FlinchAttr),
     new SelfStatusMove(Moves.COTTON_GUARD, Type.GRASS, -1, 10, -1, 0, 5)
       .attr(StatStageChangeAttr, [ Stat.DEF ], 3, true),
@@ -8273,7 +8274,7 @@ export function initMoves() {
     new AttackMove(Moves.HURRICANE, Type.FLYING, MoveCategory.SPECIAL, 110, 70, 10, 30, 0, 5)
       .attr(ThunderAccuracyAttr)
       .attr(ConfuseAttr)
-      .attr(HitsTagAttr, BattlerTagType.FLYING, false)
+      .attr(DealsDoubleDamageToTagAttr, BattlerTagType.FLYING, false)
       .windMove(),
     new AttackMove(Moves.HEAD_CHARGE, Type.NORMAL, MoveCategory.PHYSICAL, 120, 100, 15, -1, 0, 5)
       .attr(RecoilAttr)
@@ -8327,9 +8328,9 @@ export function initMoves() {
       .attr(LastMoveDoublePowerAttr, Moves.FUSION_FLARE)
       .makesContact(false),
     new AttackMove(Moves.FLYING_PRESS, Type.FIGHTING, MoveCategory.PHYSICAL, 100, 95, 10, -1, 0, 6)
-      .attr(MinimizeAccuracyAttr)
+      .attr(AlwaysHitMinimizeAttr)
       .attr(FlyingTypeMultiplierAttr)
-      .attr(HitsTagAttr, BattlerTagType.MINIMIZED, true)
+      .attr(DealsDoubleDamageToTagAttr, BattlerTagType.MINIMIZED, true)
       .condition(failOnGravityCondition),
     new StatusMove(Moves.MAT_BLOCK, Type.FIGHTING, -1, 10, -1, 0, 6)
       .target(MoveTarget.USER_SIDE)
@@ -8500,8 +8501,8 @@ export function initMoves() {
     new AttackMove(Moves.THOUSAND_ARROWS, Type.GROUND, MoveCategory.PHYSICAL, 90, 100, 10, -1, 0, 6)
       .attr(NeutralDamageAgainstFlyingTypeMultiplierAttr)
       .attr(AddBattlerTagAttr, BattlerTagType.IGNORE_FLYING, false, false, 1, 1, true)
-      .attr(HitsTagAttr, BattlerTagType.FLYING, false)
-      .attr(HitsTagAttr, BattlerTagType.MAGNET_RISEN, false)
+      .attr(DealsDoubleDamageToTagAttr, BattlerTagType.FLYING, false)
+      .attr(DealsDoubleDamageToTagAttr, BattlerTagType.MAGNET_RISEN, false)
       .attr(AddBattlerTagAttr, BattlerTagType.INTERRUPTED)
       .attr(RemoveBattlerTagAttr, [BattlerTagType.FLYING, BattlerTagType.MAGNET_RISEN])
       .makesContact(false)
@@ -8758,6 +8759,8 @@ export function initMoves() {
       .partial()
       .ignoresVirtual(),
     new AttackMove(Moves.MALICIOUS_MOONSAULT, Type.DARK, MoveCategory.PHYSICAL, 180, -1, 1, -1, 0, 7)
+      .attr(AlwaysHitMinimizeAttr)
+      .attr(DealsDoubleDamageToTagAttr, BattlerTagType.MINIMIZED, true)
       .partial()
       .ignoresVirtual(),
     new AttackMove(Moves.OCEANIC_OPERETTA, Type.WATER, MoveCategory.SPECIAL, 195, -1, 1, -1, 0, 7)
