@@ -1,21 +1,25 @@
 import { Button } from "#enums/buttons";
 import BattleScene from "../battle-scene";
-import AbstractOptionSelectUiHandler from "./abstact-option-select-ui-handler";
+import AbstractOptionSelectUiHandler, { OptionSelectConfig } from "./abstact-option-select-ui-handler";
 import { Mode } from "./ui";
 import InputText from "phaser3-rex-plugins/plugins/inputtext";
-// import * as Utils from "#app/utils";
+
+export interface OptionSelectConfigAC extends OptionSelectConfig {
+  inputContainer: Phaser.GameObjects.Container;
+  modalContainer: Phaser.GameObjects.Container;
+  maxOptionsReverse?: number;
+  reverse?: true;
+}
 
 export default class AutoCompleteUiHandler extends AbstractOptionSelectUiHandler {
   modalContainer: Phaser.GameObjects.Container;
   inputContainer: Phaser.GameObjects.Container;
   handlerKeyDown: (inputObject: InputText, evt: KeyboardEvent) => void;
+  reverse?: true;
 
-
-  constructor(scene: BattleScene, mode: Mode = Mode.OPTION_SELECT, ...args) {
+  constructor(scene: BattleScene, mode: Mode = Mode.AUTO_COMPLETE) {
     super(scene, mode);
-    this.config = {
-      options: []
-    };
+
     this.handlerKeyDown = (inputObject, evt) => {
       // Don't move inputText cursor
       if (["arrowup"].some((key) => key === (evt.code || evt.key).toLowerCase())) {
@@ -37,6 +41,7 @@ export default class AutoCompleteUiHandler extends AbstractOptionSelectUiHandler
         inputObject.on("blur", recoveryFocus);
       }
     };
+
   }
 
   getWindowWidth(): integer {
@@ -45,9 +50,12 @@ export default class AutoCompleteUiHandler extends AbstractOptionSelectUiHandler
 
   show(args: any[]): boolean {
     if (args[0].modalContainer && args[0].inputContainer && args[0].inputContainer.list.some((el) => el instanceof InputText)) {
-      const { modalContainer, inputContainer } = args[0];
-      args[0].options?.forEach((opt)=>{
-        const originalHandler = opt.handler;
+      const { modalContainer, inputContainer, reverse } = args[0] as OptionSelectConfigAC;
+      const newArgs = JSON.parse(JSON.stringify(args));
+      this.reverse = reverse;
+
+      newArgs[0].options?.forEach((opt, index)=>{
+        const originalHandler = args[0].options[index].handler;
         opt.handler = () => {
           if (originalHandler()) {
             ui.revertMode();
@@ -83,10 +91,21 @@ export default class AutoCompleteUiHandler extends AbstractOptionSelectUiHandler
         input.on("keydown", originalsEvents[i]);
       }
 
-      const show = super.show(args);
-      this.setupOptions();
+      if (this.reverse && newArgs[0].maxOptionsReverse) {
+        newArgs[0].maxOptions = newArgs[0].maxOptionsReverse;
+      }
 
-      return show;
+      if (this.reverse) {
+        newArgs[0].options.reverse();
+      }
+
+      if (super.show(newArgs)) {
+        if (this.reverse) {
+          this.processInput(Button.UP);
+        }
+
+        return true;
+      }
     }
     return false;
   }
@@ -94,16 +113,13 @@ export default class AutoCompleteUiHandler extends AbstractOptionSelectUiHandler
   protected setupOptions() {
     super.setupOptions();
     if (this.modalContainer) {
+      if (this.reverse) {
+        this.optionSelectContainer.setPositionRelative(this.modalContainer, this.optionSelectBg.width + this.inputContainer.x, this.inputContainer.y);
+        return;
+      }
       this.optionSelectContainer.setPositionRelative(this.modalContainer, this.optionSelectBg.width + this.inputContainer.x, this.optionSelectBg.height + this.inputContainer.y + (this.inputContainer.list.find((el) => el instanceof Phaser.GameObjects.NineSlice)?.height ?? 0));
     }
   }
-
-  // processInput(button: Button): boolean {
-  //   if (button !== Button.CANCEL) {
-  //     return super.processInput(button);
-  //   }
-  //   return false;
-  // }
 
   clear(): void {
     super.clear();
