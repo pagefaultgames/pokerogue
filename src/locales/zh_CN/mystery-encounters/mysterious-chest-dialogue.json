@@ -1,23 +1,23 @@
 {
-  "intro": "You found...@d{32} a chest?",
-  "title": "The Mysterious Chest",
-  "description": "A beautifully ornamented chest stands on the ground. There must be something good inside... right?",
-  "query": "Will you open it?",
+  "intro": "你发现了一个…@d{32}宝箱?",
+  "title": "神秘宝箱",
+  "description": "一个装饰精美的箱子立在地上。里面一定有好东西…吧？",
+  "query": "要打开么?"
   "option": {
     "1": {
-      "label": "Open It",
-      "tooltip": "@[SUMMARY_BLUE]{(35%) Something terrible}\n@[SUMMARY_GREEN]{(40%) Okay Rewards}\n@[SUMMARY_GREEN]{(20%) Good Rewards}\n@[SUMMARY_GREEN]{(4%) Great Rewards}\n@[SUMMARY_GREEN]{(1%) Amazing Rewards}",
-      "selected": "You open the chest to find...",
-      "normal": "Just some normal tools and items.",
-      "good": "Some pretty nice tools and items.",
-      "great": "A couple great tools and items!",
-      "amazing": "Whoa! An amazing item!",
-      "bad": "Oh no!@d{32}\nThe chest was actually a {{gimmighoulName}} in disguise!$Your {{pokeName}} jumps in front of you\nbut is KOed in the process!"
+      "label": "打开",
+      "tooltip": "@[SUMMARY_BLUE]{(35%) 某种东西}\n@[SUMMARY_GREEN]{(40%) 一般奖励}\n@[SUMMARY_GREEN]{(20%) 精美奖励}\n@[SUMMARY_GREEN]{(4%) 珍稀奖励}\n@[SUMMARY_GREEN]{(1%) 超凡奖励}",
+      "selected": "你打开箱子发现......",
+      "normal": "只是一些普通的工具和物品。",
+      "good": "一些不错的工具和物品！",
+      "great": "一些很稀有的工具和物品！！",
+      "amazing": "哇！金色传说！",
+      "bad": "哦不！@d{32}\n这个箱子实际上是一个伪装的{{gimmighoul Name}}！$你的{{pokeName}}跳到了你面前\n但为了保护你被打倒了！"
     },
     "2": {
-      "label": "Too Risky, Leave",
-      "tooltip": "(-) No Rewards",
-      "selected": "You hurry along your way,\nwith a slight feeling of regret."
+      "label": "有诈，走了",
+      "tooltip": "(-)无奖励",
+      "selected": "你匆匆上路，心里却有一丝遗憾。"
     }
   }
 }
