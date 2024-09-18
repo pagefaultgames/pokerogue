@@ -50,8 +50,6 @@ export function getPokeballName(type: PokeballType): string {
 }
 
 export function getPokeballCatchMultiplier(type: PokeballType, enemyPokemon?: Pokemon, getBoostedDescription?: boolean): number {
-  const pokemon = enemyPokemon ?? null;
-  const description = getBoostedDescription ?? false;
   switch (type) {
   case PokeballType.POKEBALL:
     return 1;
@@ -63,7 +61,7 @@ export function getPokeballCatchMultiplier(type: PokeballType, enemyPokemon?: Po
     /* making rogue balls have a higher chance to catch pokemon if they have a tinted pokeball (i.e. at least one thing is new for them)
        * you can also get the boosted type for a description (i.e. for modifier-type)
        */
-    if (pokemon?.isTintedPokeball() || description) {
+    if (enemyPokemon?.isTintedPokeball() || getBoostedDescription) {
       return 5;
     }
     return 3;
