@@ -6,7 +6,7 @@
   "option": {
     "1": {
       "label": "싸운다",
-      "tooltip": "(-) 어려운 배틀\n(+) 바톤 획득",
+      "tooltip": "(-) 어려운 배틀\n(+) 배턴 획득",
       "selected": "{{oricorioName}}[[는]] 혼란스러워하며 방어태세를 갖췄다!",
       "boss_enraged": "{{oricorioName}}[[는]] 겁에 질려 능력치가 상승했다!"
     },
