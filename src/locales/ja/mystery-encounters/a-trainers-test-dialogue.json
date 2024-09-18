@@ -43,6 +43,5 @@
     "epic": "an Epic Egg",
     "legendary": "a Legendary Egg"
   },
-  "egg_list_full_dialogue": "Oh, it looks like you don't have room to carry another egg.$Here, take these instead!",
   "outro": "{{statTrainerName}} gave you {{eggType}}!"
 }
