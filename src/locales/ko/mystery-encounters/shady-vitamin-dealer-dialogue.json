@@ -23,5 +23,5 @@
     "selected": "남자는 영양제 두 병을 건넨 뒤,\n빠르게 사라졌다.${{selectedPokemon}}[[는]] {{boost1}}[[과]] {{boost2}} 효과를 얻었다!"
   },
   "cheap_side_effects": "그런데 약이 부작용이 있는 것 같다!${{selectedPokemon}}[[가]] 약간 고통스러워 한다.\n성격이 {{newNature}}[[로]] 변해버렸다!",
-  "no_bad_effects": "딱히 부작용도 없는 것 같다!"
+  "no_bad_effects": "딱히 부작용은 없는 것 같다!"
 }
