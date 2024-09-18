@@ -21,7 +21,7 @@
       "label": "바람잡이",
       "tooltip": "(-) {{option3PrimaryName}}의 {{option3PrimaryMove}}를 활용\n(+) @[MONEY]{Money} 획득",
       "disabled_tooltip": "포켓몬이 해당 작업에 필요한 기술이 없습니다.",
-      "selected": "{{option3PrimaryName}}[[는]] {{option3PrimaryMove}}[[로]]\n하루종일 손님들을 끌어모았다!"
+      "selected": "{{option3PrimaryName}}[[는]] {{option3PrimaryMove}}[[로]]\n하루 종일 손님들을 끌어모았다!"
     }
   },
   "job_complete_good": "도와줘서 고마워요!\n오늘은 거의 {{selectedPokemon}} 혼자서 일을 다한 것 같네요!$여기 일당이에요!",
