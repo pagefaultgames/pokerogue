@@ -35,7 +35,7 @@
     },
     "2": {
       "label": "승부를 거절한다",
-      "tooltip": "(+) 파티 전체 회복\n(+) @[TOOLTIP_TITLE]{Egg} 획득"
+      "tooltip": "(+) 파티 전체 회복\n(+) @[TOOLTIP_TITLE]{알} 획득"
     }
   },
   "eggTypes": {
