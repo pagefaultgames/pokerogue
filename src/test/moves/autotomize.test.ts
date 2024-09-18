@@ -39,17 +39,16 @@ describe("Moves - Autotomize", () => {
     const playerPokemon = game.scene.getPlayerPokemon()!;
     expect(playerPokemon.getWeight()).toBe(baseDracozoltWeight);
     game.move.select(Moves.AUTOTOMIZE);
-    // expect a queued message here
+    await game.toNextTurn();
     expect(playerPokemon.getWeight()).toBe(oneAutotomizeDracozoltWeight);
-    await game.toNextTurn();
 
     game.move.select(Moves.AUTOTOMIZE);
-    //expect a queued message here
+    await game.toNextTurn();
     expect(playerPokemon.getWeight()).toBe(twoAutotomizeDracozoltWeight);
-    await game.toNextTurn();
+
 
     game.move.select(Moves.AUTOTOMIZE);
-    // expect no queued message here
+    await game.toNextTurn();
     expect(playerPokemon.getWeight()).toBe(threeAutotomizeDracozoltWeight);
   }, TIMEOUT);
 
@@ -62,21 +61,38 @@ describe("Moves - Autotomize", () => {
 
     expect(playerPokemon.getWeight()).toBe(baseAegislashWeight);
     game.move.select(Moves.AUTOTOMIZE);
+    await game.toNextTurn();
     expect(playerPokemon.getWeight()).toBe(autotomizeAegislashWeight);
+    game.move.select(Moves.FALSE_SWIPE);
     await game.toNextTurn();
 
     game.move.select(Moves.KINGS_SHIELD);
-    expect(playerPokemon.getWeight()).toBe(baseAegislashWeight);
     await game.toNextTurn();
+    expect(playerPokemon.getWeight()).toBe(baseAegislashWeight);
+
 
     game.move.select(Moves.AUTOTOMIZE);
+    await game.toNextTurn();
     expect(playerPokemon.getWeight()).toBe(autotomizeAegislashWeight);
 
     game.move.select(Moves.FALSE_SWIPE);
-    expect(playerPokemon.getWeight()).toBe(baseAegislashWeight);
     await game.toNextTurn();
+    expect(playerPokemon.getWeight()).toBe(baseAegislashWeight);
 
     game.move.select(Moves.AUTOTOMIZE);
+    await game.toNextTurn();
     expect(playerPokemon.getWeight()).toBe(autotomizeAegislashWeight);
+  }, TIMEOUT);
+
+  it("Autotomize should interact with light metal correctly", async () => {
+    const baseLightGroudonWeight = 475;
+    const autotomizeLightGroudonWeight = 425;
+    game.override.ability(Abilities.LIGHT_METAL);
+    await game.classicMode.startBattle([Species.GROUDON]);
+    const playerPokemon = game.scene.getPlayerPokemon()!;
+    expect(playerPokemon.getWeight()).toBe(baseLightGroudonWeight);
+    game.move.select(Moves.AUTOTOMIZE);
+    await game.toNextTurn();
+    expect(playerPokemon.getWeight()).toBe(autotomizeLightGroudonWeight);
   }, TIMEOUT);
 });

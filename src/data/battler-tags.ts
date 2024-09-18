@@ -2207,12 +2207,12 @@ export class TarShotTag extends BattlerTag {
  */
 export class AutotomizedTag extends BattlerTag {
   public autotomizeCount: number = 0;
-  constructor(sourceMove: Moves = Moves.NONE) {
+  constructor(sourceMove: Moves = Moves.AUTOTOMIZE) {
     super(BattlerTagType.AUTOTOMIZED, BattlerTagLapseType.CUSTOM, 1, sourceMove);
   }
 
   /**
-   * Adds an autotmize count to the Pokemon. Each stack reduces weight by 100kg
+   * Adds an autotomize count to the Pokemon. Each stack reduces weight by 100kg
    * If the Pokemon is over 0.1kg it also displays a message.
    * @param pokemon The Pokemon that is being autotomized
    */
