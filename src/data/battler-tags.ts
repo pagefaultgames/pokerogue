@@ -5,7 +5,7 @@ import { StatusEffect } from "./status-effect";
 import * as Utils from "../utils";
 import { ChargeAttr, MoveFlags, allMoves } from "./move";
 import { Type } from "./type";
-import { BlockNonDirectDamageAbAttr, FlinchEffectAbAttr, ReverseDrainAbAttr, applyAbAttrs } from "./ability";
+import { BlockNonDirectDamageAbAttr, FlinchEffectAbAttr, ReverseDrainAbAttr, applyAbAttrs, ProtectStatAbAttr } from "./ability";
 import { TerrainType } from "./terrain";
 import { WeatherType } from "./weather";
 import { allAbilities } from "./ability";
@@ -524,10 +524,6 @@ export class FlinchedTag extends BattlerTag {
     applyAbAttrs(FlinchEffectAbAttr, pokemon, null);
   }
 
-  canAdd(pokemon: Pokemon): boolean {
-    return !pokemon.isMax();
-  }
-
   /**
    * Cancels the Pokemon's next Move on the turn this tag is applied
    * @param pokemon The {@linkcode Pokemon} with this tag
@@ -878,10 +874,6 @@ export class EncoreTag extends BattlerTag {
   }
 
   canAdd(pokemon: Pokemon): boolean {
-    if (pokemon.isMax()) {
-      return false;
-    }
-
     const lastMoves = pokemon.getLastXMoves(1);
     if (!lastMoves.length) {
       return false;
@@ -1060,19 +1052,11 @@ export class MinimizeTag extends BattlerTag {
     super(BattlerTagType.MINIMIZED, BattlerTagLapseType.TURN_END, 1, Moves.MINIMIZE);
   }
 
-  canAdd(pokemon: Pokemon): boolean {
-    return !pokemon.isMax();
-  }
-
   onAdd(pokemon: Pokemon): void {
     super.onAdd(pokemon);
   }
 
   lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
-    //If a pokemon dynamaxes they lose minimized status
-    if (pokemon.isMax()) {
-      return false;
-    }
     return lapseType !== BattlerTagLapseType.CUSTOM || super.lapse(pokemon, lapseType);
   }
 
@@ -2268,8 +2252,8 @@ export class SubstituteTag extends BattlerTag {
     pokemon.scene.triggerPokemonBattleAnim(pokemon, PokemonAnimType.SUBSTITUTE_ADD);
     pokemon.scene.queueMessage(i18next.t("battlerTags:substituteOnAdd", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }), 1500);
 
-    // Remove any trapping effects from the user
-    pokemon.findAndRemoveTags(tag => tag instanceof TrappedTag);
+    // Remove any binding effects from the user
+    pokemon.findAndRemoveTags(tag => tag instanceof DamagingTrapTag);
   }
 
   /** Queues an on-remove battle animation that removes the Substitute's sprite. */
@@ -2331,6 +2315,45 @@ export class SubstituteTag extends BattlerTag {
   loadTag(source: BattlerTag | any): void {
     super.loadTag(source);
     this.hp = source.hp;
+  }
+}
+
+/**
+ * Tag that adds extra post-summon effects to a battle for a specific Pokemon.
+ * These post-summon effects are performed through {@linkcode Pokemon.mysteryEncounterBattleEffects},
+ * and can be used to unshift special phases, etc.
+ * Currently used only in MysteryEncounters to provide start of fight stat buffs.
+ */
+export class MysteryEncounterPostSummonTag extends BattlerTag {
+  constructor() {
+    super(BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON, BattlerTagLapseType.CUSTOM, 1);
+  }
+
+  /** Event when tag is added */
+  onAdd(pokemon: Pokemon): void {
+    super.onAdd(pokemon);
+  }
+
+  /** Performs post-summon effects through {@linkcode Pokemon.mysteryEncounterBattleEffects} */
+  lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
+    const ret = super.lapse(pokemon, lapseType);
+
+    if (lapseType === BattlerTagLapseType.CUSTOM) {
+      const cancelled = new Utils.BooleanHolder(false);
+      applyAbAttrs(ProtectStatAbAttr, pokemon, cancelled);
+      if (!cancelled.value) {
+        if (pokemon.mysteryEncounterBattleEffects) {
+          pokemon.mysteryEncounterBattleEffects(pokemon);
+        }
+      }
+    }
+
+    return ret;
+  }
+
+  /** Event when tag is removed */
+  onRemove(pokemon: Pokemon): void {
+    super.onRemove(pokemon);
   }
 }
 
@@ -2495,6 +2518,8 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: number, source
     return new GorillaTacticsTag();
   case BattlerTagType.SUBSTITUTE:
     return new SubstituteTag(sourceMove, sourceId);
+  case BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON:
+    return new MysteryEncounterPostSummonTag();
   case BattlerTagType.NONE:
   default:
     return new BattlerTag(tagType, BattlerTagLapseType.CUSTOM, turnCount, sourceMove, sourceId);
