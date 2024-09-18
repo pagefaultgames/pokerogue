@@ -31,7 +31,7 @@
   "option": {
     "1": {
       "label": "승부한다",
-      "tooltip": "(-) 힘든 전투\n(+) @[TOOLTIP_TITLE]{Very Rare Egg} 획득"
+      "tooltip": "(-) 힘든 전투\n(+) @[TOOLTIP_TITLE]{매우 희귀한 알} 획득"
     },
     "2": {
       "label": "승부를 거절한다",
