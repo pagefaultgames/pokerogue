@@ -12,7 +12,7 @@
       "selected": "좋아요!@d{32} 이리와, {{strongestPokemon}}!$요트 클럽에 가서 다른 사람들에게 자랑해야겠어!$다들 엄청 부러워하겠는걸!"
     },
     "2": {
-      "label": "꼬마녀석을 혼내준다",
+      "label": "꼬마 녀석을 혼내준다",
       "tooltip": "(+) {{option2PrimaryName}}의 {{moveOrAbility}} 사용\n(+) {{price, money}} 획득",
       "tooltip_disabled": "이 선택지를 선택하려면 포켓몬이 특정 기술이나 능력을 가지고 있어야 한다.",
       "selected": "말도 안 돼!\n{{liepardName}}, 우리 지금 삥 뜯긴거야?!$너...!\n곧 우리 변호사 연락을 받게 될 거다!"
