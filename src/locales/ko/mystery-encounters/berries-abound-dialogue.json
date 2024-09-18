@@ -14,7 +14,7 @@
       "label": "덤불을 향해 뛴다",
       "tooltip": "(-) {{fastestPokemon}}의 스피드를 활용\n(+) 나무열매 획득",
       "selected": "{{fastestPokemon}}[[가]] 나무열매 덤불을 향해 달려간다!${{enemyPokemon}}[[가]] 반응하기 전에 나무열매 {{numBerries}}개를 낚아챘다!$빼앗은 열매를 들고 재빨리 도망쳤다.",
-      "selected_bad": "{{fastestPokemon}}[[가]] 나무열매 덤불을 행해 달려간다!$이런! {{enemyPokemon}}[[가]] 더 빨라서, 가로막혔다!",
+      "selected_bad": "{{fastestPokemon}}[[가]] 나무열매 덤불을 향해 달려간다!$이런! {{enemyPokemon}}[[가]] 더 빨라서 가로막혔다!",
       "boss_enraged": "상대 {{enemyPokemon}}[[는]] 분노했다!"
     },
     "3": {
