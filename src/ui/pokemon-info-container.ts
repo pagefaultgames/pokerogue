@@ -235,7 +235,19 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
         this.pokemonGenderText.setVisible(false);
       }
 
-      if (pokemon.species.forms?.[pokemon.formIndex]?.formName && pokemon.species.forms?.[pokemon.formIndex]?.formName !== "Normal") {
+      const formKey = (pokemon.species?.forms?.[pokemon.formIndex!]?.formKey);
+      const formText = Utils.capitalizeString(formKey, "-", false, false) || "";
+      const speciesName = Utils.capitalizeString(Species[pokemon.species.getRootSpeciesId()], "_", true, false);
+
+      let formName = "";
+      if (pokemon.species.speciesId === Species.ARCEUS) {
+        formName = i18next.t(`pokemonInfo:Type.${formText?.toUpperCase()}`);
+      } else {
+        const i18key = `pokemonForm:${speciesName}${formText}`;
+        formName = i18next.exists(i18key) ? i18next.t(i18key) : formText;
+      }
+
+      if (formName) {
         this.pokemonFormLabelText.setVisible(true);
         this.pokemonFormText.setVisible(true);
         const newForm = BigInt(1 << pokemon.formIndex) * DexAttr.DEFAULT_FORM;
@@ -248,26 +260,13 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
           this.pokemonFormLabelText.setShadowColor(getTextColor(TextStyle.WINDOW, true, this.scene.uiTheme));
         }
 
-        const pokemonForm = (pokemon.species?.forms?.[pokemon.formIndex!]?.formKey) || "";
-        let formName = "";
-        if (pokemonForm !== "") {
-          const formText = Utils.capitalizeString(pokemonForm, "-", false, false);
-
-          const speciesName = Utils.capitalizeString(Species[pokemon.species.getRootSpeciesId()], "_", true, false);
-          if (pokemon.species.speciesId === Species.ARCEUS) {
-            formName = i18next.t(`pokemonInfo:Type.${formText?.toUpperCase()}`);
-          } else {
-            formName =  formText ? i18next.t(`pokemonForm:${speciesName}${formText}`) : "";
-          }
-
-          this.pokemonFormText.setText(formName.length > this.numCharsBeforeCutoff ? formName.substring(0, this.numCharsBeforeCutoff - 3) + "..." : formName);
-          if (formName.length > this.numCharsBeforeCutoff) {
-            this.pokemonFormText.setInteractive(new Phaser.Geom.Rectangle(0, 0, this.pokemonFormText.width, this.pokemonFormText.height), Phaser.Geom.Rectangle.Contains);
-            this.pokemonFormText.on("pointerover", () => (this.scene as BattleScene).ui.showTooltip("", formName, true));
-            this.pokemonFormText.on("pointerout", () => (this.scene as BattleScene).ui.hideTooltip());
-          } else {
-            this.pokemonFormText.disableInteractive();
-          }
+        this.pokemonFormText.setText(formName.length > this.numCharsBeforeCutoff ? formName.substring(0, this.numCharsBeforeCutoff - 3) + "..." : formName);
+        if (formName.length > this.numCharsBeforeCutoff) {
+          this.pokemonFormText.setInteractive(new Phaser.Geom.Rectangle(0, 0, this.pokemonFormText.width, this.pokemonFormText.height), Phaser.Geom.Rectangle.Contains);
+          this.pokemonFormText.on("pointerover", () => (this.scene as BattleScene).ui.showTooltip("", formName, true));
+          this.pokemonFormText.on("pointerout", () => (this.scene as BattleScene).ui.hideTooltip());
+        } else {
+          this.pokemonFormText.disableInteractive();
         }
       } else {
         this.pokemonFormLabelText.setVisible(false);
