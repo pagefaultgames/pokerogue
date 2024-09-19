@@ -83,7 +83,7 @@ const languageSettings: { [key: string]: LanguageSetting } = {
   },
   "fr":{
     starterInfoTextSize: "54px",
-    instructionTextSize: "35px",
+    instructionTextSize: "38px",
   },
   "it":{
     starterInfoTextSize: "56px",

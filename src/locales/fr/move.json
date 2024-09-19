@@ -3121,11 +3121,11 @@
   },
   "behemothBlade": {
     "name": "Gladius Maximus",
-    "effect": "Le lanceur se transforme en une immense épée et pourfend sa cible. Cette capacité inflige le double de dégâts aux Pokémon Dynamax."
+    "effect": "Le lanceur se transforme en une immense épée et pourfend sa cible."
   },
   "behemothBash": {
     "name": "Aegis Maxima",
-    "effect": "Le lanceur se transforme en un immense bouclier et charge sa cible. Cette capacité inflige le double de dégâts aux Pokémon Dynamax."
+    "effect": "Le lanceur se transforme en un immense bouclier et charge sa cible."
   },
   "auraWheel": {
     "name": "Roue Libre",
