@@ -353,6 +353,10 @@ export class TypeImmunityAbAttr extends PreDefendAbAttr {
     return false;
   }
 
+  getImmuneType(): Type | null {
+    return this.immuneType;
+  }
+
   override getCondition(): AbAttrCondition | null {
     return this.condition;
   }
