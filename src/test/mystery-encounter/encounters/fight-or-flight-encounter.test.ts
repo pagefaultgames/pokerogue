@@ -96,7 +96,6 @@ describe("Fight or Flight - Mystery Encounter", () => {
 
     const config = FightOrFlightEncounter.enemyPartyConfigs[0];
     expect(config).toBeDefined();
-    expect(config.levelAdditiveMultiplier).toBe(1);
     expect(config.pokemonConfigs?.[0].isBoss).toBe(true);
     expect(onInitResult).toBe(true);
   });

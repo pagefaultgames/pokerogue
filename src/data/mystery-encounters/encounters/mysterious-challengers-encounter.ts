@@ -15,7 +15,7 @@ import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { PartyMemberStrength } from "#enums/party-member-strength";
 import BattleScene from "#app/battle-scene";
 import * as Utils from "#app/utils";
-import MysteryEncounter, { MysteryEncounterBuilder } from "../mystery-encounter";
+import MysteryEncounter, { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-encounter";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
 
@@ -75,7 +75,7 @@ export const MysteriousChallengersEncounter: MysteryEncounter =
       const hardSpriteKey = hardConfig.getSpriteKey(female, hardConfig.doubleOnly);
       encounter.enemyPartyConfigs.push({
         trainerConfig: hardConfig,
-        levelAdditiveMultiplier: 1,
+        levelAdditiveModifier: 1,
         female: female,
       });
 
@@ -98,7 +98,7 @@ export const MysteriousChallengersEncounter: MysteryEncounter =
       const brutalSpriteKey = brutalConfig.getSpriteKey(female, brutalConfig.doubleOnly);
       encounter.enemyPartyConfigs.push({
         trainerConfig: brutalConfig,
-        levelAdditiveMultiplier: 1.5,
+        levelAdditiveModifier: 1.5,
         female: female,
       });
 

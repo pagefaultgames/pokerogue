@@ -115,13 +115,13 @@
   "island": "PMD EoS Craggy Coast",
   "jungle": "Lmz - Jungle",
   "laboratory": "Firel - Laboratory",
-  "lake": "PMD EoS Crystal Cave",
+  "lake": "Lmz - Lake",
   "meadow": "PMD EoS Sky Peak Forest",
   "metropolis": "Firel - Metropolis",
   "mountain": "PMD EoS Mt. Horn",
   "plains": "Firel - Route 888",
   "power_plant": "Firel - The Klink",
-  "ruins": "PMD EoS Deep Sealed Ruin",
+  "ruins": "Lmz - Ancient Ruins",
   "sea": "Andr06 - Marine Mystique",
   "seabed": "Firel - Seabed",
   "slum": "Andr06 - Sneaky Snom",
@@ -154,5 +154,6 @@
   "mystery_encounter_weird_dream": "PMD EoS Temporal Spire",
   "mystery_encounter_fun_and_games": "PMD EoS Guildmaster Wigglytuff",
   "mystery_encounter_gen_5_gts": "BW GTS",
-  "mystery_encounter_gen_6_gts": "XY GTS"
+  "mystery_encounter_gen_6_gts": "XY GTS",
+  "mystery_encounter_delibirdy": "Firel - DeliDelivery!"
 }
