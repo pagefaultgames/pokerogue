@@ -13,7 +13,7 @@ import { RunEntry } from "../system/game-data";
 import { PlayerGender } from "#enums/player-gender";
 import { TrainerVariant } from "../field/trainer";
 
-export type RunSelectCallback = (cursor: integer) => void;
+export type RunSelectCallback = (cursor: number) => void;
 
 export const RUN_HISTORY_LIMIT: number = 25;
 
@@ -25,15 +25,15 @@ export const RUN_HISTORY_LIMIT: number = 25;
  */
 export default class RunHistoryUiHandler extends MessageUiHandler {
 
+  private readonly maxRows = 3;
+
   private runSelectContainer: Phaser.GameObjects.Container;
   private runsContainer: Phaser.GameObjects.Container;
-  private runSelectMessageBox: Phaser.GameObjects.NineSlice;
-  private runSelectMessageBoxContainer: Phaser.GameObjects.Container;
   private runs: RunEntryContainer[];
 
   private runSelectCallback: RunSelectCallback | null;
 
-  private scrollCursor: integer = 0;
+  private scrollCursor: number = 0;
 
   private cursorObj: Phaser.GameObjects.NineSlice | null;
 
@@ -74,15 +74,15 @@ export default class RunHistoryUiHandler extends MessageUiHandler {
 
     this.getUi().bringToTop(this.runSelectContainer);
     this.runSelectContainer.setVisible(true);
-    this.populateRuns(this.scene);
+    this.populateRuns(this.scene).then(() => {
+      this.setScrollCursor(0);
+      this.setCursor(0);
 
-    this.setScrollCursor(0);
-    this.setCursor(0);
-
-    //Destroys the cursor if there are no runs saved so far.
-    if (this.runs.length === 0) {
-      this.clearCursor();
-    }
+      //Destroys the cursor if there are no runs saved so far.
+      if (this.runs.length === 0) {
+        this.clearCursor();
+      }
+    });
 
     return true;
   }
@@ -122,13 +122,21 @@ export default class RunHistoryUiHandler extends MessageUiHandler {
           success = this.setCursor(this.cursor - 1);
         } else if (this.scrollCursor) {
           success = this.setScrollCursor(this.scrollCursor - 1);
+        } else if (this.runs.length > 1) {
+          // wrap around to the bottom
+          success = this.setCursor(Math.min(this.runs.length - 1, this.maxRows - 1));
+          success = this.setScrollCursor(Math.max(0, this.runs.length - this.maxRows)) || success;
         }
         break;
       case Button.DOWN:
-        if (this.cursor < 2) {
+        if (this.cursor < Math.min(this.maxRows - 1, this.runs.length - this.scrollCursor - 1)) {
           success = this.setCursor(this.cursor + 1);
-        } else if (this.scrollCursor < this.runs.length - 3) {
+        } else if (this.scrollCursor < this.runs.length - this.maxRows) {
           success = this.setScrollCursor(this.scrollCursor + 1);
+        } else if (this.runs.length > 1) {
+          // wrap around to the top
+          success = this.setCursor(0);
+          success = this.setScrollCursor(0) || success;
         }
         break;
       }
@@ -218,6 +226,7 @@ export default class RunHistoryUiHandler extends MessageUiHandler {
   override clear() {
     super.clear();
     this.runSelectContainer.setVisible(false);
+    this.setScrollCursor(0);
     this.clearCursor();
     this.runSelectCallback = null;
     this.clearRuns();
@@ -360,7 +369,7 @@ class RunEntryContainer extends Phaser.GameObjects.Container {
     // The code here does not account for icon weirdness.
     const pokemonIconsContainer = this.scene.add.container(140, 17);
 
-    data.party.forEach((p: PokemonData, i: integer) => {
+    data.party.forEach((p: PokemonData, i: number) => {
       const iconContainer = this.scene.add.container(26 * i, 0);
       iconContainer.setScale(0.75);
       const pokemon = p.toPokemon(this.scene);
