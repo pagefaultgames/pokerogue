@@ -1237,6 +1237,6 @@
   },
   "poisonPuppeteer": {
     "name": "Emprise Toxique",
-    "description": "Lorsque Pêchaminus empoisonne un Pokémon grâce à l’une de ses capacités, ce dernier devient également confus."
+    "description": "Lorsque Pêchaminus empoisonne un Pokémon grâce à l’une de ses capacités, ce dernier devient également confus. //TODO"
   }
 }

@@ -1237,6 +1237,6 @@
   },
   "poisonPuppeteer": {
     "name": "Giftpuppenspiel",
-    "description": "Wenn Infamomo ein Ziel mit einer Attacke vergiftet, so wird dieses auch verwirrt."
+    "description": "Wenn Infamomo ein Ziel mit einer Attacke vergiftet, so wird dieses auch verwirrt. //TODO"
   }
 }

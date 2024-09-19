@@ -3129,7 +3129,7 @@
   },
   "auraWheel": {
     "name": "Roue Libre",
-    "effect": "Inflige et change en type Ténèbres"
+    "effect": "Inflige et change en type Ténèbres //TODO"
   },
   "breakingSwipe": {
     "name": "Abattage",
