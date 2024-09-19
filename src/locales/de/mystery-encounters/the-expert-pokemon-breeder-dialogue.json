@@ -1,8 +1,8 @@
 {
   "intro": "Ein Trainer mit vielen Pokémon-Eiern!",
   "intro_dialogue": "Hey Trainer!$Es sieht so aus, als ob einige deiner Pokémon sich ein wenig niedergeschlagen fühlen.$Warum kämpfst du nicht gegen mich, um sie aufzumuntern?",
-  "title": "Triff den Pokémon-Züchter-Experten!",
-  "description":  "Du wurdest zu einem Kampf herausgefordert, bei dem du nur @[TOOLTIP_TITLE]{ein einziges Pokémon verwenden darfst}. Es könnte schwierig werden, aber es würde sicherlich die Bindung vertiefen, die du mit dem Pokémon hast, das du wählst!$Wenn du gewinnst, wird der Züchter dir einige @[TOOLTIP_TITLE]{Pokémon-Eier} geben!",
+  "title": "Triff die Pokémon-Züchter-Expertin!",
+  "description":  "Du wurdest zu einem Kampf herausgefordert, bei dem du nur @[TOOLTIP_TITLE]{ein einziges Pokémon verwenden darfst}. Es könnte schwierig werden, aber es würde sicherlich die Bindung vertiefen, die du mit dem Pokémon hast, das du wählst!$Wenn du gewinnst, wird die Züchterin dir einige @[TOOLTIP_TITLE]{Pokémon-Eier} geben!",
   "query": "Wer wird für dich kämpfen?",
   "cleffa_1_nickname": "Ass-Pii-Rin",
   "cleffa_2_nickname": "Pi-mal-Daumen",
