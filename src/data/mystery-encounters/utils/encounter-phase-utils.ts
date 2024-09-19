@@ -3,7 +3,7 @@ import { biomeLinks, BiomePoolTier } from "#app/data/biomes";
 import MysteryEncounterOption from "#app/data/mystery-encounters/mystery-encounter-option";
 import { AVERAGE_ENCOUNTERS_PER_RUN_TARGET, WEIGHT_INCREMENT_ON_SPAWN_MISS } from "#app/data/mystery-encounters/mystery-encounters";
 import { showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
-import Pokemon, { FieldPosition, PlayerPokemon, PokemonMove, PokemonSummonData } from "#app/field/pokemon";
+import Pokemon, { AiType, FieldPosition, PlayerPokemon, PokemonMove, PokemonSummonData } from "#app/field/pokemon";
 import { CustomModifierSettings, ModifierPoolType, ModifierType, ModifierTypeGenerator, ModifierTypeOption, modifierTypes, regenerateModifierPoolThresholds } from "#app/modifier/modifier-type";
 import { MysteryEncounterBattlePhase, MysteryEncounterBattleStartCleanupPhase, MysteryEncounterPhase, MysteryEncounterRewardsPhase } from "#app/phases/mystery-encounter-phases";
 import PokemonData from "#app/system/pokemon-data";
@@ -85,21 +85,24 @@ export interface EnemyPokemonConfig {
   modifierConfigs?: HeldModifierConfig[];
   tags?: BattlerTagType[];
   dataSource?: PokemonData;
+  aiType?: AiType;
 }
 
 export interface EnemyPartyConfig {
-  /** Formula for enemy: level += waveIndex / 10 * levelAdditive */
-  levelAdditiveMultiplier?: number;
+  /** Formula for enemy level: level += waveIndex / 10 * levelAdditiveModifier */
+  levelAdditiveModifier?: number;
   doubleBattle?: boolean;
   /** Generates trainer battle solely off trainer type */
   trainerType?: TrainerType;
   /** More customizable option for configuring trainer battle */
   trainerConfig?: TrainerConfig;
   pokemonConfigs?: EnemyPokemonConfig[];
-  /** True for female trainer, false for male */
+  /** `true` for female trainer, false for male */
   female?: boolean;
-  /** True will prevent player from switching */
+  /** `true` will prevent player from switching */
   disableSwitch?: boolean;
+  /** `true` or leaving undefined will increment dex seen count for the encounter battle, `false` will not */
+  countAsSeen?: boolean;
 }
 
 /**
@@ -156,10 +159,10 @@ export async function initBattleWithEnemyConfig(scene: BattleScene, partyConfig:
 
   // ME levels are modified by an additive value that scales with wave index
   // Base scaling: Every 10 waves, modifier gets +1 level
-  // This can be amplified or counteracted by setting levelAdditiveMultiplier in config
-  // levelAdditiveMultiplier value of 0.5 will halve the modifier scaling, 2 will double it, etc.
+  // This can be amplified or counteracted by setting levelAdditiveModifier in config
+  // levelAdditiveModifier value of 0.5 will halve the modifier scaling, 2 will double it, etc.
   // Leaving null/undefined will disable level scaling
-  const mult: number = !isNullOrUndefined(partyConfig.levelAdditiveMultiplier) ? partyConfig.levelAdditiveMultiplier! : 0;
+  const mult: number = !isNullOrUndefined(partyConfig.levelAdditiveModifier) ? partyConfig.levelAdditiveModifier! : 0;
   const additive = Math.max(Math.round((scene.currentBattle.waveIndex / 10) * mult), 0);
   battle.enemyLevels = battle.enemyLevels.map(level => level + additive);
 
@@ -210,7 +213,7 @@ export async function initBattleWithEnemyConfig(scene: BattleScene, partyConfig:
       enemyPokemon.resetSummonData();
     }
 
-    if (!loaded) {
+    if (!loaded && isNullOrUndefined(partyConfig.countAsSeen) || partyConfig.countAsSeen) {
       scene.gameData.setPokemonSeen(enemyPokemon, true, !!(trainerType || trainerConfig));
     }
 
@@ -284,6 +287,11 @@ export async function initBattleWithEnemyConfig(scene: BattleScene, partyConfig:
       if (!isNullOrUndefined(config.gender)) {
         enemyPokemon.gender = config.gender!;
         enemyPokemon.summonData.gender = config.gender!;
+      }
+
+      // Set AI type
+      if (!isNullOrUndefined(config.aiType)) {
+        enemyPokemon.aiType = config.aiType!;
       }
 
       // Set moves
@@ -702,19 +710,19 @@ export function handleMysteryEncounterVictory(scene: BattleScene, addHealPhase: 
   if (encounter.continuousEncounter || doNotContinue) {
     return;
   } else if (encounter.encounterMode === MysteryEncounterMode.NO_BATTLE) {
-    scene.pushPhase(new EggLapsePhase(scene));
     scene.pushPhase(new MysteryEncounterRewardsPhase(scene, addHealPhase));
+    scene.pushPhase(new EggLapsePhase(scene));
   } else if (!scene.getEnemyParty().find(p => encounter.encounterMode !== MysteryEncounterMode.TRAINER_BATTLE ? p.isOnField() : !p?.isFainted(true))) {
     scene.pushPhase(new BattleEndPhase(scene));
     if (encounter.encounterMode === MysteryEncounterMode.TRAINER_BATTLE) {
       scene.pushPhase(new TrainerVictoryPhase(scene));
     }
     if (scene.gameMode.isEndless || !scene.gameMode.isWaveFinal(scene.currentBattle.waveIndex)) {
+      scene.pushPhase(new MysteryEncounterRewardsPhase(scene, addHealPhase));
       if (!encounter.doContinueEncounter) {
         // Only lapse eggs once for multi-battle encounters
         scene.pushPhase(new EggLapsePhase(scene));
       }
-      scene.pushPhase(new MysteryEncounterRewardsPhase(scene, addHealPhase));
     }
   }
 }

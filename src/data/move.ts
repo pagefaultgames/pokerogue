@@ -1,16 +1,15 @@
-import { ChargeAnim, MoveChargeAnim, initMoveAnim, loadMoveAnimAssets } from "./battle-anims";
-import { EncoreTag, GulpMissileTag, HelpingHandTag, SemiInvulnerableTag, ShellTrapTag, StockpilingTag, TrappedTag, SubstituteTag, TypeBoostTag } from "./battler-tags";
+import { ChargeAnim, initMoveAnim, loadMoveAnimAssets, MoveChargeAnim } from "./battle-anims";
+import { EncoreTag, GulpMissileTag, HelpingHandTag, SemiInvulnerableTag, ShellTrapTag, StockpilingTag, SubstituteTag, TrappedTag, TypeBoostTag } from "./battler-tags";
 import { getPokemonNameWithAffix } from "../messages";
 import Pokemon, { AttackMoveResult, EnemyPokemon, HitResult, MoveResult, PlayerPokemon, PokemonMove, TurnMove } from "../field/pokemon";
-import { StatusEffect, getStatusEffectHealText, isNonVolatileStatusEffect, getNonVolatileStatusEffects } from "./status-effect";
+import { getNonVolatileStatusEffects, getStatusEffectHealText, isNonVolatileStatusEffect, StatusEffect } from "./status-effect";
 import { getTypeDamageMultiplier, Type } from "./type";
-import { Constructor } from "#app/utils";
+import { Constructor, NumberHolder } from "#app/utils";
 import * as Utils from "../utils";
 import { WeatherType } from "./weather";
 import { ArenaTagSide, ArenaTrapTag, WeakenMoveTypeTag } from "./arena-tag";
-import { UnswappableAbilityAbAttr, UncopiableAbilityAbAttr, UnsuppressableAbilityAbAttr, BlockRecoilDamageAttr, BlockOneHitKOAbAttr, IgnoreContactAbAttr, MaxMultiHitAbAttr, applyAbAttrs, BlockNonDirectDamageAbAttr, MoveAbilityBypassAbAttr, ReverseDrainAbAttr, FieldPreventExplosiveMovesAbAttr, ForceSwitchOutImmunityAbAttr, BlockItemTheftAbAttr, applyPostAttackAbAttrs, ConfusionOnStatusEffectAbAttr, HealFromBerryUseAbAttr, IgnoreProtectOnContactAbAttr, IgnoreMoveEffectsAbAttr, applyPreDefendAbAttrs, MoveEffectChanceMultiplierAbAttr, WonderSkinAbAttr, applyPreAttackAbAttrs, MoveTypeChangeAbAttr, UserFieldMoveTypePowerBoostAbAttr, FieldMoveTypePowerBoostAbAttr, AllyMoveCategoryPowerBoostAbAttr, VariableMovePowerAbAttr } from "./ability";
-import { allAbilities } from "./ability";
-import { PokemonHeldItemModifier, BerryModifier, PreserveBerryModifier, PokemonMoveAccuracyBoosterModifier, AttackTypeBoosterModifier, PokemonMultiHitModifier } from "../modifier/modifier";
+import { allAbilities, AllyMoveCategoryPowerBoostAbAttr, applyAbAttrs, applyPostAttackAbAttrs, applyPreAttackAbAttrs, applyPreDefendAbAttrs, BlockItemTheftAbAttr, BlockNonDirectDamageAbAttr, BlockOneHitKOAbAttr, BlockRecoilDamageAttr, ConfusionOnStatusEffectAbAttr, FieldMoveTypePowerBoostAbAttr, FieldPreventExplosiveMovesAbAttr, ForceSwitchOutImmunityAbAttr, HealFromBerryUseAbAttr, IgnoreContactAbAttr, IgnoreMoveEffectsAbAttr, IgnoreProtectOnContactAbAttr, MaxMultiHitAbAttr, MoveAbilityBypassAbAttr, MoveEffectChanceMultiplierAbAttr, MoveTypeChangeAbAttr, ReverseDrainAbAttr, UncopiableAbilityAbAttr, UnsuppressableAbilityAbAttr, UnswappableAbilityAbAttr, UserFieldMoveTypePowerBoostAbAttr, VariableMovePowerAbAttr, WonderSkinAbAttr } from "./ability";
+import { AttackTypeBoosterModifier, BerryModifier, PokemonHeldItemModifier, PokemonMoveAccuracyBoosterModifier, PokemonMultiHitModifier, PreserveBerryModifier } from "../modifier/modifier";
 import { BattlerIndex, BattleType } from "../battle";
 import { TerrainType } from "./terrain";
 import { ModifierPoolType } from "#app/modifier/modifier-type";
@@ -25,7 +24,7 @@ import { Biome } from "#enums/biome";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import { MoveUsedEvent } from "#app/events/battle-scene";
-import { Stat, type BattleStat, type EffectiveStat, BATTLE_STATS, EFFECTIVE_STATS, getStatKey } from "#app/enums/stat";
+import { BATTLE_STATS, type BattleStat, EFFECTIVE_STATS, type EffectiveStat, getStatKey, Stat } from "#app/enums/stat";
 import { PartyStatusCurePhase } from "#app/phases/party-status-cure-phase";
 import { BattleEndPhase } from "#app/phases/battle-end-phase";
 import { MoveEndPhase } from "#app/phases/move-end-phase";
@@ -36,7 +35,6 @@ import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
 import { SwitchPhase } from "#app/phases/switch-phase";
 import { SwitchSummonPhase } from "#app/phases/switch-summon-phase";
 import { SpeciesFormChangeRevertWeatherFormTrigger } from "./pokemon-forms";
-import { NumberHolder } from "#app/utils";
 import { GameMode } from "#app/game-mode";
 import { applyChallenges, ChallengeType } from "./challenge";
 
@@ -2136,7 +2134,7 @@ export class StealHeldItemChanceAttr extends MoveEffectAttr {
       if (rand >= this.chance) {
         return resolve(false);
       }
-      const heldItems = this.getTargetHeldItems(target).filter(i => i.isTransferrable);
+      const heldItems = this.getTargetHeldItems(target).filter(i => i.isTransferable);
       if (heldItems.length) {
         const poolType = target.isPlayer() ? ModifierPoolType.PLAYER : target.hasTrainer() ? ModifierPoolType.TRAINER : ModifierPoolType.WILD;
         const highestItemTier = heldItems.map(m => m.type.getOrInferTier(poolType)).reduce((highestTier, tier) => Math.max(tier!, highestTier), 0); // TODO: is the bang after tier correct?
@@ -2213,7 +2211,7 @@ export class RemoveHeldItemAttr extends MoveEffectAttr {
     }
 
     // Considers entire transferrable item pool by default (Knock Off). Otherwise berries only if specified (Incinerate).
-    let heldItems = this.getTargetHeldItems(target).filter(i => i.isTransferrable);
+    let heldItems = this.getTargetHeldItems(target).filter(i => i.isTransferable);
 
     if (this.berriesOnly) {
       heldItems = heldItems.filter(m => m instanceof BerryModifier && m.pokemonId === target.id, target.isPlayer());
@@ -2416,6 +2414,16 @@ export class BypassSleepAttr extends MoveAttr {
     }
 
     return false;
+  }
+
+  /**
+   * Returns arbitrarily high score when Pokemon is asleep, otherwise shouldn't be used
+   * @param user
+   * @param target
+   * @param move
+   */
+  getUserBenefitScore(user: Pokemon, target: Pokemon, move: Move): integer {
+    return user.status && user.status.effect === StatusEffect.SLEEP ? 200 : -10;
   }
 }
 
@@ -6392,7 +6400,7 @@ export class AttackedByItemAttr extends MoveAttr {
    */
   getCondition(): MoveConditionFunc {
     return (user: Pokemon, target: Pokemon, move: Move) => {
-      const heldItems = target.getHeldItems().filter(i => i.isTransferrable);
+      const heldItems = target.getHeldItems().filter(i => i.isTransferable);
       if (heldItems.length === 0) {
         return false;
       }
@@ -7531,7 +7539,7 @@ export function initMoves() {
       .attr(AddBattlerTagAttr, BattlerTagType.DROWSY, false, true)
       .condition((user, target, move) => !target.status && !target.scene.arena.getTagOnSide(ArenaTagType.SAFEGUARD, target.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY)),
     new AttackMove(Moves.KNOCK_OFF, Type.DARK, MoveCategory.PHYSICAL, 65, 100, 20, -1, 0, 3)
-      .attr(MovePowerMultiplierAttr, (user, target, move) => target.getHeldItems().filter(i => i.isTransferrable).length > 0 ? 1.5 : 1)
+      .attr(MovePowerMultiplierAttr, (user, target, move) => target.getHeldItems().filter(i => i.isTransferable).length > 0 ? 1.5 : 1)
       .attr(RemoveHeldItemAttr, false),
     new AttackMove(Moves.ENDEAVOR, Type.NORMAL, MoveCategory.PHYSICAL, -1, 100, 5, -1, 0, 3)
       .attr(MatchHpAttr)
@@ -8183,7 +8191,7 @@ export function initMoves() {
     new StatusMove(Moves.QUASH, Type.DARK, 100, 15, -1, 0, 5)
       .unimplemented(),
     new AttackMove(Moves.ACROBATICS, Type.FLYING, MoveCategory.PHYSICAL, 55, 100, 15, -1, 0, 5)
-      .attr(MovePowerMultiplierAttr, (user, target, move) => Math.max(1, 2 - 0.2 * user.getHeldItems().filter(i => i.isTransferrable).reduce((v, m) => v + m.stackCount, 0))),
+      .attr(MovePowerMultiplierAttr, (user, target, move) => Math.max(1, 2 - 0.2 * user.getHeldItems().filter(i => i.isTransferable).reduce((v, m) => v + m.stackCount, 0))),
     new StatusMove(Moves.REFLECT_TYPE, Type.NORMAL, -1, 15, -1, 0, 5)
       .ignoresSubstitute()
       .attr(CopyTypeAttr),

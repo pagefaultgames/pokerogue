@@ -102,7 +102,7 @@ describe("Trash to Treasure - Mystery Encounter", () => {
 
     expect(TrashToTreasureEncounter.enemyPartyConfigs).toEqual([
       {
-        levelAdditiveMultiplier: 1,
+        levelAdditiveModifier: 1,
         disableSwitch: true,
         pokemonConfigs: [
           {
