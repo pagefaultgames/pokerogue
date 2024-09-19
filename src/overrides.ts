@@ -47,7 +47,7 @@ class DefaultOverrides {
   readonly SEED_OVERRIDE: string = "";
   readonly WEATHER_OVERRIDE: WeatherType = WeatherType.NONE;
   readonly BATTLE_TYPE_OVERRIDE: "double" | "single" | null = null;
-  readonly STARTING_WAVE_OVERRIDE: number = 145;
+  readonly STARTING_WAVE_OVERRIDE: number = 0;
   readonly STARTING_BIOME_OVERRIDE: Biome = Biome.TOWN;
   readonly ARENA_TINT_OVERRIDE: TimeOfDay | null = null;
   /** Multiplies XP gained by this value including 0. Set to null to ignore the override */
@@ -89,7 +89,7 @@ class DefaultOverrides {
   readonly STARTER_FORM_OVERRIDES: Partial<Record<Species, number>> = {};
 
   /** default 5 or 20 for Daily */
-  readonly STARTING_LEVEL_OVERRIDE: number = 10000;
+  readonly STARTING_LEVEL_OVERRIDE: number = 0;
   /**
    * SPECIES OVERRIDE
    * will only apply to the first starter in your party or each enemy pokemon
