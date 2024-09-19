@@ -2,7 +2,7 @@
   "intro": "这可不是一只普通的宝可梦！",
   "title": "罕见物种",
   "description": "{{enemyPokemon}}看起来与其他同种宝可梦大相径庭。\n@[TOOLTIP_TITLE]{也许它会特殊招式？}\n你可以直接进行战斗并尝试捕获它，但可能也有办法和它交朋友。",
-  "query": "你要怎么做？"
+  "query": "你要怎么做？",
   "option": {
     "1": {
       "label": "与它战斗",
