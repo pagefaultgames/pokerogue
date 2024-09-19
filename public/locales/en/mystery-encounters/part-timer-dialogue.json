@@ -21,7 +21,7 @@
       "label": "Sales Assistant",
       "tooltip": "(-) Your {{option3PrimaryName}} uses {{option3PrimaryMove}}\n(+) Earn @[MONEY]{Money}",
       "disabled_tooltip": "Your Pokémon need to know certain moves for this job",
-      "selected": "Your {{option3PrimaryName}} spends the day using {{option3PrimaryMove}} to attract customers to the business!"
+      "selected": "Your {{option3PrimaryName}} spends the day using {{option3PrimaryMove}} to draw customers to the business!"
     }
   },
   "job_complete_good": "Thanks for the assistance!\nYour {{selectedPokemon}} was incredibly helpful!$Here's your check for the day.",
