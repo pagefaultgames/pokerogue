@@ -1,18 +1,8 @@
 //#region Interfaces/Types
 
+type Month = "01" | "02" | "03" | "04" | "05" | "06" | "07" | "08" | "09" | "10" | "11" | "12";
 type Day =
-  | "01"
-  | "02"
-  | "03"
-  | "04"
-  | "05"
-  | "06"
-  | "07"
-  | "08"
-  | "09"
-  | "10"
-  | "11"
-  | "12"
+  | Month
   | "13"
   | "14"
   | "15"
@@ -32,7 +22,6 @@ type Day =
   | "29"
   | "30"
   | "31";
-type Month = "Jan" | "Feb" | "Mar" | "Apr" | "May" | "Jun" | "Jul" | "Aug" | "Sep" | "Oct" | "Nov" | "Dec";
 
 /**
  * Represents a season with its {@linkcode name},
@@ -42,10 +31,10 @@ type Month = "Jan" | "Feb" | "Mar" | "Apr" | "May" | "Jun" | "Jul" | "Aug" | "Se
 interface Season {
   /** The name of the season (internal use only) */
   name: string;
-  /** The start day and month of the season. Format `DD-MMM` */
-  start: `${Day}-${Month}`;
-  /** The end day and month of the season. Format `DD-MMM` */
-  end: `${Day}-${Month}`;
+  /** The start day and month of the season. Format `MM-DD` */
+  start: `${Month}-${Day}`;
+  /** The end day and month of the season. Format `MM-DD` */
+  end: `${Month}-${Day}`;
   /** Collection of the messages to display (without the `i18next.t()` call!) */
   messages: string[];
 }
@@ -101,20 +90,20 @@ const commonSplashMessages = [
 const seasonalSplashMessages: Season[] = [
   {
     name: "Halloween",
-    start: "15-Sep",
-    end: "31-Oct",
+    start: "09-15",
+    end: "10-31",
     messages: ["halloween.pumpkaboosAbout", "halloween.mayContainSpiders", "halloween.spookyScaryDuskulls"],
   },
   {
     name: "XMAS",
-    start: "01-Dec",
-    end: "26-Dec",
+    start: "12-01",
+    end: "12-26",
     messages: ["xmas.happyHolidays", "xmas.delibirdSeason"],
   },
   {
     name: "New Year's",
-    start: "01-Jan",
-    end: "31-Jan",
+    start: "01-01",
+    end: "01-31",
     messages: ["newYears.happyNewYear"],
   },
 ];
