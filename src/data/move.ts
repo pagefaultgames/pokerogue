@@ -8,7 +8,7 @@ import { Constructor } from "#app/utils";
 import * as Utils from "../utils";
 import { WeatherType } from "./weather";
 import { ArenaTagSide, ArenaTrapTag, WeakenMoveTypeTag } from "./arena-tag";
-import { UnswappableAbilityAbAttr, UncopiableAbilityAbAttr, UnsuppressableAbilityAbAttr, BlockRecoilDamageAttr, BlockOneHitKOAbAttr, IgnoreContactAbAttr, MaxMultiHitAbAttr, applyAbAttrs, BlockNonDirectDamageAbAttr, MoveAbilityBypassAbAttr, ReverseDrainAbAttr, FieldPreventExplosiveMovesAbAttr, ForceSwitchOutImmunityAbAttr, BlockItemTheftAbAttr, applyPostAttackAbAttrs, ConfusionOnStatusEffectAbAttr, HealFromBerryUseAbAttr, IgnoreProtectOnContactAbAttr, IgnoreMoveEffectsAbAttr, applyPreDefendAbAttrs, MoveEffectChanceMultiplierAbAttr, WonderSkinAbAttr, applyPreAttackAbAttrs, MoveTypeChangeAbAttr, UserFieldMoveTypePowerBoostAbAttr, FieldMoveTypePowerBoostAbAttr, AllyMoveCategoryPowerBoostAbAttr, VariableMovePowerAbAttr } from "./ability";
+import { UnswappableAbilityAbAttr, UncopiableAbilityAbAttr, UnsuppressableAbilityAbAttr, BlockRecoilDamageAttr, BlockOneHitKOAbAttr, IgnoreContactAbAttr, MaxMultiHitAbAttr, applyAbAttrs, BlockNonDirectDamageAbAttr, MoveAbilityBypassAbAttr, ReverseDrainAbAttr, FieldPreventExplosiveMovesAbAttr, ForceSwitchOutImmunityAbAttr, BlockItemTheftAbAttr, applyPostAttackAbAttrs, ConfusionOnStatusEffectAbAttr, HealFromBerryUseAbAttr, IgnoreProtectOnContactAbAttr, IgnoreMoveEffectsAbAttr, applyPreDefendAbAttrs, MoveEffectChanceMultiplierAbAttr, WonderSkinAbAttr, applyPreAttackAbAttrs, MoveTypeChangeAbAttr, UserFieldMoveTypePowerBoostAbAttr, FieldMoveTypePowerBoostAbAttr, AllyMoveCategoryPowerBoostAbAttr, VariableMovePowerAbAttr, ProtectStatAbAttr } from "./ability";
 import { allAbilities } from "./ability";
 import { PokemonHeldItemModifier, BerryModifier, PreserveBerryModifier, PokemonMoveAccuracyBoosterModifier, AttackTypeBoosterModifier, PokemonMultiHitModifier } from "../modifier/modifier";
 import { BattlerIndex, BattleType } from "../battle";
@@ -5179,7 +5179,6 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
 	  const switchOutTarget = this.user ? user : target;
 	  if (switchOutTarget instanceof PlayerPokemon) {
         switchOutTarget.leaveField(!this.batonPass);
-
         if (switchOutTarget.hp > 0) {
           user.scene.prependToPhase(new SwitchPhase(user.scene, switchOutTarget.getFieldIndex(), true, true), MoveEndPhase);
           resolve(true);
@@ -5272,6 +5271,45 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
       ret = ret / 2 + (Phaser.Tweens.Builders.GetEaseFunction("Sine.easeOut")(Math.min(Math.abs(statStageTotal), 10) / 10) * (statStageTotal >= 0 ? 10 : -10));
     }
     return ret;
+  }
+}
+
+/**
+ * Attr used by parting shot, it is a combo of ForceSwitchOut and StatChange with a special getCondition()
+ */
+export class PartingShotAttr extends ForceSwitchOutAttr {
+  private statChange = new StatStageChangeAttr([ Stat.ATK, Stat.SPATK ], -1, false, null, true, true, MoveEffectTrigger.PRE_APPLY);
+  private canLowerStats = true;
+
+  // using inherited constructor
+
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): Promise<boolean> {
+    // apply stat change, conditionally apply switch-out
+    this.statChange.apply(user, target, move, args);
+    if (this.canLowerStats) {
+      return super.apply(user, target, move, args);
+    } else {
+      return new Promise(resolve => {
+        resolve(false);
+      });
+    }
+  }
+
+  getCondition(): MoveConditionFunc {
+    return (user, target, move) => {
+      // conditions on if move should fail or not don't depend on if user is able to switch
+      // getCondition() is called before move is applied: move will only switch out if canLowerStats === true
+      if (target.hasAbilityWithAttr(ProtectStatAbAttr) ||
+          (target.getStatStage(Stat.ATK) === -6 && target.getStatStage(Stat.SPATK) === -6 && !target.hasAbility(Abilities.CONTRARY, true, false)) ||
+          target.scene.arena.findTagsOnSide(t => t.tagType === ArenaTagType.MIST, ArenaTagSide.ENEMY).length > 0 ||
+          (target.getStatStage(Stat.ATK) === 6 && target.getStatStage(Stat.SPATK) === 6 && target.hasAbility(Abilities.CONTRARY, true, false))
+      ) {
+        this.canLowerStats = false;
+      } else {
+        this.canLowerStats = true;
+      }
+      return true;
+    };
   }
 }
 
@@ -8380,8 +8418,7 @@ export function initMoves() {
       .soundBased()
       .target(MoveTarget.ALL_NEAR_ENEMIES),
     new StatusMove(Moves.PARTING_SHOT, Type.DARK, 100, 20, -1, 0, 6)
-      .attr(StatStageChangeAttr, [ Stat.ATK, Stat.SPATK ], -1, false, null, true, true, MoveEffectTrigger.PRE_APPLY)
-      .attr(ForceSwitchOutAttr, true, false)
+      .attr(PartingShotAttr, true, false)
       .soundBased(),
     new StatusMove(Moves.TOPSY_TURVY, Type.DARK, -1, 20, -1, 0, 6)
       .attr(InvertStatsAttr),
