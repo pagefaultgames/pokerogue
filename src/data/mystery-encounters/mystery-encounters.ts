@@ -31,6 +31,7 @@ import { BugTypeSuperfanEncounter } from "#app/data/mystery-encounters/encounter
 import { FunAndGamesEncounter } from "#app/data/mystery-encounters/encounters/fun-and-games-encounter";
 import { UncommonBreedEncounter } from "#app/data/mystery-encounters/encounters/uncommon-breed-encounter";
 import { GlobalTradeSystemEncounter } from "#app/data/mystery-encounters/encounters/global-trade-system-encounter";
+import { TheExpertBreederEncounter } from "#app/data/mystery-encounters/encounters/the-expert-breeder-encounter";
 
 /**
  * Spawn chance: (BASE_MYSTERY_ENCOUNTER_SPAWN_WEIGHT + WIGHT_INCREMENT_ON_SPAWN_MISS * <number of missed spawns>) / MYSTERY_ENCOUNTER_SPAWN_MAX_WEIGHT
@@ -184,7 +185,8 @@ const humanTransitableBiomeEncounters: MysteryEncounterType[] = [
   MysteryEncounterType.SHADY_VITAMIN_DEALER,
   MysteryEncounterType.THE_POKEMON_SALESMAN,
   MysteryEncounterType.AN_OFFER_YOU_CANT_REFUSE,
-  MysteryEncounterType.THE_WINSTRATE_CHALLENGE
+  MysteryEncounterType.THE_WINSTRATE_CHALLENGE,
+  MysteryEncounterType.THE_EXPERT_BREEDER
 ];
 
 const civilizationBiomeEncounters: MysteryEncounterType[] = [
@@ -238,7 +240,6 @@ export const mysteryEncountersByBiome = new Map<Biome, MysteryEncounterType[]>([
     MysteryEncounterType.SAFARI_ZONE,
     MysteryEncounterType.ABSOLUTE_AVARICE
   ]],
-
   [Biome.SEA, [
     MysteryEncounterType.LOST_AT_SEA
   ]],
@@ -275,7 +276,9 @@ export const mysteryEncountersByBiome = new Map<Biome, MysteryEncounterType[]>([
   [Biome.ABYSS, [
     MysteryEncounterType.DANCING_LESSONS
   ]],
-  [Biome.SPACE, []],
+  [Biome.SPACE, [
+    MysteryEncounterType.THE_EXPERT_BREEDER
+  ]],
   [Biome.CONSTRUCTION_SITE, []],
   [Biome.JUNGLE, [
     MysteryEncounterType.SAFARI_ZONE
@@ -319,6 +322,7 @@ export function initMysteryEncounters() {
   allMysteryEncounters[MysteryEncounterType.FUN_AND_GAMES] = FunAndGamesEncounter;
   allMysteryEncounters[MysteryEncounterType.UNCOMMON_BREED] = UncommonBreedEncounter;
   allMysteryEncounters[MysteryEncounterType.GLOBAL_TRADE_SYSTEM] = GlobalTradeSystemEncounter;
+  allMysteryEncounters[MysteryEncounterType.THE_EXPERT_BREEDER] = TheExpertBreederEncounter;
 
   // Add extreme encounters to biome map
   extremeBiomeEncounters.forEach(encounter => {
