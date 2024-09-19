@@ -61,7 +61,6 @@ describe("Shop modifications", async () => {
       .startingWave(9)
       .startingBiome(Biome.ICE_CAVE) // Will lead to Snowy Forest with randomly generated weather
       .battleType("single")
-      .shinyLevel(true)
       .startingLevel(100) // Avoid levelling up
       .enemyLevel(1000) // Avoid opponent dying before game.doKillOpponents()
       .disableTrainerWaves()
@@ -121,7 +120,6 @@ describe("Luck modifications", async() => {
       .startingWave(9)
       .startingBiome(Biome.ICE_CAVE) // Will lead to Snowy Forest with randomly generated weather
       .battleType("single")
-      .shinyLevel(true)
       .startingLevel(100) // Avoid levelling up
       .enemyLevel(1000) // Avoid opponent dying before game.doKillOpponents()
       .disableTrainerWaves()
@@ -131,8 +129,8 @@ describe("Luck modifications", async() => {
 
   afterEach(() => {
     game.phaseInterceptor.restoreOg();
-    vi.resetAllMocks();
-    vi.clearAllMocks();
+    //vi.resetAllMocks();
+    //vi.clearAllMocks();
   });
 
   it("should apply luck in Classic Mode", async () => {
