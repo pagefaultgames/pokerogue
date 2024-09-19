@@ -74,5 +74,5 @@
   "substituteOnAdd": "{{pokemonNameWithAffix}}의\n대타가 나타났다!",
   "substituteOnHit": "{{pokemonNameWithAffix}}[[를]] 대신하여\n대타가 공격을 받았다!",
   "substituteOnRemove": "{{pokemonNameWithAffix}}의\n대타는 사라져 버렸다...",
-  "uproarOnAdd": "{{pokemonNameWithAffix}} caused\nan uproar!"
+  "uproarOnAdd": "{{pokemonNameWithAffix}}[[는]]\n소란을 피우기 시작했다!"
 }
