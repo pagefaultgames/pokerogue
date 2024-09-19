@@ -1,30 +1,30 @@
 {
-  "intro": "It's a trainer carrying tons of Pokémon Eggs!",
-  "intro_dialogue": "Hey there, trainer!$It looks like some of your\npartner Pokémon are feeling a little down.$Why not have a battle with me to cheer them up?",
-  "title": "The Expert Breeder",
-  "description": "You've been challenged to a battle where @[TOOLTIP_TITLE]{you can only use a single Pokémon}. It might be tough, but it would surely deepen the bond you have with the Pokémon you choose!\nThe breeder will also give you some @[TOOLTIP_TITLE]{Pokémon Eggs} if you win!",
-  "query": "Who will you battle with?",
-  "cleffa_1_nickname": "Ace",
-  "cleffa_2_nickname": "Clefablest",
-  "cleffa_3_nickname": "{{speciesName}} the Great",
+  "intro": "C’est une Dresseuse avec une quantité astronomique d’Œufs !",
+  "intro_dialogue": "Hé, toi !$Certains de tes Pokémon m’ont l’air\nun peu à plat.$Ça te dirait un p’tit combat pour\nleur redonner un peu de peps ?",
+  "title": "L’experte en élevage",
+  "description": "Une Éleveuse vous propose un combat où @[TOOLTIP_TITLE]{vous ne pouvez utiliser qu’un seul Pokémon}. Ça s’annonce un peu compliqué, mais devrait certainement approfondir vos liens avec le Pokémon choisi !\nL’Éleveuse devrait vous faire don de quelques @[TOOLTIP_TITLE]{Œufs} si vous gagnez !",
+  "query": "Avec qui voulez-vous combattre ?",
+  "cleffa_1_nickname": "As",
+  "cleffa_2_nickname": "Mélodelfissime",
+  "cleffa_3_nickname": "{{speciesName}} le Grand",
   "option": {
     "1": {
       "label": "{{pokemon1Name}}",
-      "tooltip_base": "(-) Tough Battle\n(+) Gain Friendship with {{pokemon1Name}}"
+      "tooltip_base": "(-) Combat difficile\n(+) Augmente le bonheur de {{pokemon1Name}}"
     },
     "2": {
       "label": "{{pokemon2Name}}",
-      "tooltip_base": "(-) Tough Battle\n(+) Gain Friendship with {{pokemon2Name}}"
+      "tooltip_base": "(-) Combat difficile\n(+) Augmente le bonheur de {{pokemon2Name}}"
     },
     "3": {
       "label": "{{pokemon3Name}}",
-      "tooltip_base": "(-) Tough Battle\n(+) Gain Friendship with {{pokemon3Name}}"
+      "tooltip_base": "(-) Combat difficile\n(+) Augmente le bonheur de {{pokemon3Name}}"
     },
-    "selected": "Let's do this!"
+    "selected": "D’accord, faisons ça !"
   },
-  "outro": "Look how happy your {{chosenPokemon}} is now!$Here, you can have these as well.",
-  "gained_eggs": "@s{item_fanfare}You received {{numEggs}}!",
-  "eggs_tooltip": "\n(+) Earn {{eggs}}",
-  "numEggs_one": "{{count}} {{rarity}} Egg",
-  "numEggs_other": "{{count}} {{rarity}} Eggs"
+  "outro": "Ton {{chosenPokemon}} et toi avez\nl’air très heureux !$Tiens, prends ça aussi.",
+  "gained_eggs": "@s{item_fanfare}Vous recevez\n{{numEggs}} !",
+  "eggs_tooltip": "\n(+) Recevez {{eggs}}",
+  "numEggs_one": "{{count}} Œuf {{rarity}}",
+  "numEggs_other": "{{count}} Œufs {{rarity}}s"
 }
