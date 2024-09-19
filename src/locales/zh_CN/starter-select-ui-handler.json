@@ -2,7 +2,7 @@
   "confirmStartTeam": "使用这些宝可梦开始游戏吗？",
   "confirmExit": "确定要退出吗？",
   "invalidParty": "初始队伍不可用！",
-  "emptyParty": "Press Space or Z to add Pokémon to your party.\nPress ENTER or Start to start the run.",
+  "emptyParty": "按空格或Z来添加宝可梦。\n按回车键或开始键来开始游戏。",
   "gen1": "I",
   "gen2": "II",
   "gen3": "III",
