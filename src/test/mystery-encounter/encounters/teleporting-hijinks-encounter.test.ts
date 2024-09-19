@@ -294,8 +294,8 @@ describe("Teleporting Hijinks - Mystery Encounter", () => {
 
       expect(scene.ui.getMode()).to.equal(Mode.MODIFIER_SELECT);
       const modifierSelectHandler = scene.ui.handlers.find(h => h instanceof ModifierSelectUiHandler) as ModifierSelectUiHandler;
-      expect(modifierSelectHandler.options.some(opt => opt.modifierTypeOption.type.name === "Metal Coat")).toBe(true);
-      expect(modifierSelectHandler.options.some(opt => opt.modifierTypeOption.type.name === "Magnet")).toBe(true);
+      expect(modifierSelectHandler.options.some(opt => opt.modifierTypeOption.type.name === "modifierType:AttackTypeBoosterItem.metal_coat")).toBe(true);
+      expect(modifierSelectHandler.options.some(opt => opt.modifierTypeOption.type.name === "modifierType:AttackTypeBoosterItem.magnet")).toBe(true);
     });
   });
 });
