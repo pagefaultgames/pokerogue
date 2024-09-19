@@ -1237,6 +1237,6 @@
   },
   "poisonPuppeteer": {
     "name": "Emprise Toxique",
-    "description": "Lorsque Pêchaminus empoisonne un Pokémon grâce à l’une de ses capacités, ce dernier devient également confus. //TODO"
+    "description": "Le Pokémon libère l’énergie stockée dans ses joues pour attaquer et augmenter sa Vitesse. Le type de cette capacité change en fonction de la forme de son utilisateur."
   }
 }
