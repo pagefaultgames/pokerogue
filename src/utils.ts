@@ -647,6 +647,5 @@ export function animationFileName(move: Moves): string {
  * @source {@link https://stackoverflow.com/a/67243723/}
  */
 export function camelCaseToKebabCase(str: string): string {
-  console.log("str:", str);
   return str.replace(/[A-Z]+(?![a-z])|[A-Z]/g, (s, o) => (o ? "-" : "") + s.toLowerCase());
 }
