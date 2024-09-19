@@ -21,6 +21,8 @@ const defaultParty = [Species.LAPRAS, Species.GENGAR, Species.ABRA];
 const defaultBiome = Biome.CAVE;
 const defaultWave = 45;
 
+const TRANSPORT_BIOMES = [Biome.SPACE, Biome.ISLAND, Biome.LABORATORY, Biome.FAIRY_CAVE, Biome.WASTELAND, Biome.DOJO];
+
 describe("Teleporting Hijinks - Mystery Encounter", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
@@ -183,7 +185,7 @@ describe("Teleporting Hijinks - Mystery Encounter", () => {
       await runMysteryEncounterToEnd(game, 1, undefined, true);
 
       expect(previousBiome).not.toBe(scene.arena.biomeType);
-      expect([Biome.SPACE, Biome.ISLAND, Biome.LABORATORY, Biome.FAIRY_CAVE]).toContain(scene.arena.biomeType);
+      expect(TRANSPORT_BIOMES).toContain(scene.arena.biomeType);
     });
 
     it("should start a battle against an enraged boss", { retry: 5 }, async () => {
@@ -246,7 +248,7 @@ describe("Teleporting Hijinks - Mystery Encounter", () => {
       await runMysteryEncounterToEnd(game, 2, undefined, true);
 
       expect(previousBiome).not.toBe(scene.arena.biomeType);
-      expect([Biome.SPACE, Biome.ISLAND, Biome.LABORATORY, Biome.FAIRY_CAVE]).toContain(scene.arena.biomeType);
+      expect(TRANSPORT_BIOMES).toContain(scene.arena.biomeType);
     });
 
     it("should start a battle against an enraged boss", async () => {
