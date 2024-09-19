@@ -1237,6 +1237,6 @@
   },
   "poisonPuppeteer": {
     "name": "Poison Puppeteer",
-    "description": "Pokémon poisoned by this Pokemon's moves will also become confused."
+    "description": "Pokémon poisoned by this Pokémon's moves will also become confused."
   }
 }
