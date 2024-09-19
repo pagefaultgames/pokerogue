@@ -2,7 +2,6 @@ import { BerryType } from "#app/enums/berry-type";
 import { Button } from "#app/enums/buttons";
 import { Moves } from "#app/enums/moves";
 import { Species } from "#app/enums/species";
-import { itemPoolChecks } from "#app/modifier/modifier-type";
 import { BattleEndPhase } from "#app/phases/battle-end-phase";
 import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
 import ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
@@ -94,48 +93,4 @@ describe("UI - Transfer Items", () => {
 
     await game.phaseInterceptor.to(SelectModifierPhase);
   }, 20000);
-});
-
-describe.skip("Backup Test", () => {
-  let phaserGame: Phaser.Game;
-  let game: GameManager;
-
-  beforeAll(() => {
-    phaserGame = new Phaser.Game({
-      type: Phaser.HEADLESS,
-    });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
-  });
-
-  beforeEach(async () => {
-    game = new GameManager(phaserGame);
-    game.override
-      .battleType("single")
-      .startingLevel(100)
-      .startingWave(1)
-      .startingHeldItems([
-        { name: "BERRY", count: 1, type: BerryType.SITRUS },
-        { name: "BERRY", count: 2, type: BerryType.APICOT },
-        { name: "BERRY", count: 2, type: BerryType.LUM },
-      ])
-      .moveset([Moves.DRAGON_CLAW])
-      .enemySpecies(Species.MAGIKARP)
-      .enemyMoveset([Moves.SPLASH]);
-    itemPoolChecks.set("EVIOLITE", false);
-    itemPoolChecks.set("MINI_BLACK_HOLE", false);
-  });
-  it("should run", async () => {
-    await game.classicMode.startBattle([Species.RAYQUAZA, Species.RAYQUAZA, Species.RAYQUAZA]);
-
-    game.move.select(Moves.DRAGON_CLAW);
-
-    game.onNextPrompt("SelectModifierPhase", Mode.MODIFIER_SELECT, () => {
-      expect(game.scene.ui.getHandler()).toBeInstanceOf(ModifierSelectUiHandler);
-    });
-
-    await game.phaseInterceptor.to(BattleEndPhase);
-  });
 });
