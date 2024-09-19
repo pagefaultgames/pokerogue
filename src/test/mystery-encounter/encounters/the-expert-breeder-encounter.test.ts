@@ -14,7 +14,7 @@ import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
 import MysteryEncounter from "#app/data/mystery-encounters/mystery-encounter";
 import { CommandPhase } from "#app/phases/command-phase";
 import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
-import { TheExpertBreederEncounter } from "#app/data/mystery-encounters/encounters/the-expert-breeder-encounter";
+import { TheExpertPokemonBreederEncounter } from "#app/data/mystery-encounters/encounters/the-expert-pokemon-breeder-encounter";
 import { TrainerType } from "#enums/trainer-type";
 import { EggTier } from "#enums/egg-type";
 import { PostMysteryEncounterPhase } from "#app/phases/mystery-encounter-phases";
@@ -24,7 +24,7 @@ const defaultParty = [Species.LAPRAS, Species.GENGAR, Species.ABRA];
 const defaultBiome = Biome.CAVE;
 const defaultWave = 45;
 
-describe("The Expert Breeder - Mystery Encounter", () => {
+describe("The Expert Pokémon Breeder - Mystery Encounter", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
   let scene: BattleScene;
@@ -45,7 +45,7 @@ describe("The Expert Breeder - Mystery Encounter", () => {
       [Biome.VOLCANO, [MysteryEncounterType.FIGHT_OR_FLIGHT]],
     ]);
     HUMAN_TRANSITABLE_BIOMES.forEach(biome => {
-      biomeMap.set(biome, [MysteryEncounterType.THE_EXPERT_BREEDER]);
+      biomeMap.set(biome, [MysteryEncounterType.THE_EXPERT_POKEMON_BREEDER]);
     });
     vi.spyOn(MysteryEncounters, "mysteryEncountersByBiome", "get").mockReturnValue(biomeMap);
   });
@@ -57,24 +57,24 @@ describe("The Expert Breeder - Mystery Encounter", () => {
   });
 
   it("should have the correct properties", async () => {
-    await game.runToMysteryEncounter(MysteryEncounterType.THE_EXPERT_BREEDER, defaultParty);
+    await game.runToMysteryEncounter(MysteryEncounterType.THE_EXPERT_POKEMON_BREEDER, defaultParty);
 
-    expect(TheExpertBreederEncounter.encounterType).toBe(MysteryEncounterType.THE_EXPERT_BREEDER);
-    expect(TheExpertBreederEncounter.encounterTier).toBe(MysteryEncounterTier.ULTRA);
-    expect(TheExpertBreederEncounter.dialogue).toBeDefined();
-    expect(TheExpertBreederEncounter.dialogue.intro).toStrictEqual([
+    expect(TheExpertPokemonBreederEncounter.encounterType).toBe(MysteryEncounterType.THE_EXPERT_POKEMON_BREEDER);
+    expect(TheExpertPokemonBreederEncounter.encounterTier).toBe(MysteryEncounterTier.ULTRA);
+    expect(TheExpertPokemonBreederEncounter.dialogue).toBeDefined();
+    expect(TheExpertPokemonBreederEncounter.dialogue.intro).toStrictEqual([
       {
         text: `${namespace}.intro`
       },
       {
-        speaker: "trainerNames:expert_breeder",
+        speaker: "trainerNames:expert_pokemon_breeder",
         text: `${namespace}.intro_dialogue`
       },
     ]);
-    expect(TheExpertBreederEncounter.dialogue.encounterOptionsDialogue?.title).toBe(`${namespace}.title`);
-    expect(TheExpertBreederEncounter.dialogue.encounterOptionsDialogue?.description).toBe(`${namespace}.description`);
-    expect(TheExpertBreederEncounter.dialogue.encounterOptionsDialogue?.query).toBe(`${namespace}.query`);
-    expect(TheExpertBreederEncounter.options.length).toBe(3);
+    expect(TheExpertPokemonBreederEncounter.dialogue.encounterOptionsDialogue?.title).toBe(`${namespace}.title`);
+    expect(TheExpertPokemonBreederEncounter.dialogue.encounterOptionsDialogue?.description).toBe(`${namespace}.description`);
+    expect(TheExpertPokemonBreederEncounter.dialogue.encounterOptionsDialogue?.query).toBe(`${namespace}.query`);
+    expect(TheExpertPokemonBreederEncounter.options.length).toBe(3);
   });
 
   it("should not spawn outside of HUMAN_TRANSITABLE_BIOMES", async () => {
@@ -82,12 +82,12 @@ describe("The Expert Breeder - Mystery Encounter", () => {
     game.override.startingBiome(Biome.VOLCANO);
     await game.runToMysteryEncounter();
 
-    expect(scene.currentBattle?.mysteryEncounter?.encounterType).not.toBe(MysteryEncounterType.THE_EXPERT_BREEDER);
+    expect(scene.currentBattle?.mysteryEncounter?.encounterType).not.toBe(MysteryEncounterType.THE_EXPERT_POKEMON_BREEDER);
   });
 
   it("should initialize fully", async () => {
     initSceneWithoutEncounterPhase(scene, defaultParty);
-    scene.currentBattle.mysteryEncounter = new MysteryEncounter(TheExpertBreederEncounter);
+    scene.currentBattle.mysteryEncounter = new MysteryEncounter(TheExpertPokemonBreederEncounter);
     const encounter = scene.currentBattle.mysteryEncounter!;
     scene.currentBattle.waveIndex = defaultWave;
 
@@ -100,7 +100,7 @@ describe("The Expert Breeder - Mystery Encounter", () => {
 
     expect(encounter.enemyPartyConfigs).toBeDefined();
     expect(encounter.enemyPartyConfigs.length).toBe(1);
-    expect(encounter.enemyPartyConfigs[0].trainerType).toBe(TrainerType.EXPERT_BREEDER);
+    expect(encounter.enemyPartyConfigs[0].trainerType).toBe(TrainerType.EXPERT_POKEMON_BREEDER);
     expect(encounter.enemyPartyConfigs[0].pokemonConfigs?.length).toBe(3);
     expect(encounter.spriteConfigs).toBeDefined();
     expect(encounter.spriteConfigs.length).toBe(2);
@@ -109,7 +109,7 @@ describe("The Expert Breeder - Mystery Encounter", () => {
 
   describe("Option 1 - Battle with Pokemon 1", () => {
     it("should have the correct properties", () => {
-      const option = TheExpertBreederEncounter.options[0];
+      const option = TheExpertPokemonBreederEncounter.options[0];
       expect(option.optionMode).toBe(MysteryEncounterOptionMode.DEFAULT);
       expect(option.dialogue).toBeDefined();
       expect(option.dialogue).toStrictEqual({
@@ -117,7 +117,7 @@ describe("The Expert Breeder - Mystery Encounter", () => {
         buttonTooltip: expect.any(String), // Varies based on pokemon
         selected: [
           {
-            speaker: "trainerNames:expert_breeder",
+            speaker: "trainerNames:expert_pokemon_breeder",
             text: `${namespace}.option.selected`,
           },
         ],
@@ -125,7 +125,7 @@ describe("The Expert Breeder - Mystery Encounter", () => {
     });
 
     it("should start battle against the trainer", async () => {
-      await game.runToMysteryEncounter(MysteryEncounterType.THE_EXPERT_BREEDER, defaultParty);
+      await game.runToMysteryEncounter(MysteryEncounterType.THE_EXPERT_POKEMON_BREEDER, defaultParty);
       await runMysteryEncounterToEnd(game, 1, undefined, true);
 
       expect(scene.getCurrentPhase()?.constructor.name).toBe(CommandPhase.name);
@@ -135,7 +135,7 @@ describe("The Expert Breeder - Mystery Encounter", () => {
     });
 
     it("Should reward the player with friendship and eggs based on pokemon selected", async () => {
-      await game.runToMysteryEncounter(MysteryEncounterType.THE_EXPERT_BREEDER, defaultParty);
+      await game.runToMysteryEncounter(MysteryEncounterType.THE_EXPERT_POKEMON_BREEDER, defaultParty);
 
       const friendshipBefore = scene.currentBattle.mysteryEncounter!.misc.pokemon1.friendship;
 
@@ -167,7 +167,7 @@ describe("The Expert Breeder - Mystery Encounter", () => {
 
   describe("Option 2 - Battle with Pokemon 2", () => {
     it("should have the correct properties", () => {
-      const option = TheExpertBreederEncounter.options[1];
+      const option = TheExpertPokemonBreederEncounter.options[1];
       expect(option.optionMode).toBe(MysteryEncounterOptionMode.DEFAULT);
       expect(option.dialogue).toBeDefined();
       expect(option.dialogue).toStrictEqual({
@@ -175,7 +175,7 @@ describe("The Expert Breeder - Mystery Encounter", () => {
         buttonTooltip: expect.any(String), // Varies based on pokemon
         selected: [
           {
-            speaker: "trainerNames:expert_breeder",
+            speaker: "trainerNames:expert_pokemon_breeder",
             text: `${namespace}.option.selected`,
           },
         ],
@@ -183,7 +183,7 @@ describe("The Expert Breeder - Mystery Encounter", () => {
     });
 
     it("should start battle against the trainer", async () => {
-      await game.runToMysteryEncounter(MysteryEncounterType.THE_EXPERT_BREEDER, defaultParty);
+      await game.runToMysteryEncounter(MysteryEncounterType.THE_EXPERT_POKEMON_BREEDER, defaultParty);
       await runMysteryEncounterToEnd(game, 2, undefined, true);
 
       expect(scene.getCurrentPhase()?.constructor.name).toBe(CommandPhase.name);
@@ -193,7 +193,7 @@ describe("The Expert Breeder - Mystery Encounter", () => {
     });
 
     it("Should reward the player with friendship and eggs based on pokemon selected", async () => {
-      await game.runToMysteryEncounter(MysteryEncounterType.THE_EXPERT_BREEDER, defaultParty);
+      await game.runToMysteryEncounter(MysteryEncounterType.THE_EXPERT_POKEMON_BREEDER, defaultParty);
 
       const friendshipBefore = scene.currentBattle.mysteryEncounter!.misc.pokemon2.friendship;
 
@@ -225,7 +225,7 @@ describe("The Expert Breeder - Mystery Encounter", () => {
 
   describe("Option 3 - Battle with Pokemon 3", () => {
     it("should have the correct properties", () => {
-      const option = TheExpertBreederEncounter.options[2];
+      const option = TheExpertPokemonBreederEncounter.options[2];
       expect(option.optionMode).toBe(MysteryEncounterOptionMode.DEFAULT);
       expect(option.dialogue).toBeDefined();
       expect(option.dialogue).toStrictEqual({
@@ -233,7 +233,7 @@ describe("The Expert Breeder - Mystery Encounter", () => {
         buttonTooltip: expect.any(String), // Varies based on pokemon
         selected: [
           {
-            speaker: "trainerNames:expert_breeder",
+            speaker: "trainerNames:expert_pokemon_breeder",
             text: `${namespace}.option.selected`,
           },
         ],
@@ -241,7 +241,7 @@ describe("The Expert Breeder - Mystery Encounter", () => {
     });
 
     it("should start battle against the trainer", async () => {
-      await game.runToMysteryEncounter(MysteryEncounterType.THE_EXPERT_BREEDER, defaultParty);
+      await game.runToMysteryEncounter(MysteryEncounterType.THE_EXPERT_POKEMON_BREEDER, defaultParty);
       await runMysteryEncounterToEnd(game, 3, undefined, true);
 
       expect(scene.getCurrentPhase()?.constructor.name).toBe(CommandPhase.name);
@@ -251,7 +251,7 @@ describe("The Expert Breeder - Mystery Encounter", () => {
     });
 
     it("Should reward the player with friendship and eggs based on pokemon selected", async () => {
-      await game.runToMysteryEncounter(MysteryEncounterType.THE_EXPERT_BREEDER, defaultParty);
+      await game.runToMysteryEncounter(MysteryEncounterType.THE_EXPERT_POKEMON_BREEDER, defaultParty);
 
       const friendshipBefore = scene.currentBattle.mysteryEncounter!.misc.pokemon3.friendship;
 

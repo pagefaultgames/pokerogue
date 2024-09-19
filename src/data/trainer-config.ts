@@ -2311,7 +2311,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setPartyTemplates(new TrainerPartyCompoundTemplate(new TrainerPartyTemplate(3, PartyMemberStrength.AVERAGE), new TrainerPartyTemplate(2, PartyMemberStrength.STRONG))),
   [TrainerType.BUG_TYPE_SUPERFAN]: new TrainerConfig(++t).setMoneyMultiplier(2.25).setEncounterBgm(TrainerType.ACE_TRAINER)
     .setPartyTemplates(new TrainerPartyTemplate(2, PartyMemberStrength.AVERAGE)),
-  [TrainerType.EXPERT_BREEDER]: new TrainerConfig(++t).setMoneyMultiplier(3).setEncounterBgm(TrainerType.ACE_TRAINER)
+  [TrainerType.EXPERT_POKEMON_BREEDER]: new TrainerConfig(++t).setMoneyMultiplier(3).setEncounterBgm(TrainerType.ACE_TRAINER)
     .setPartyTemplates(new TrainerPartyTemplate(3, PartyMemberStrength.STRONG))
 };
 

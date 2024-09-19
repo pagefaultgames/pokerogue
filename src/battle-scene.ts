@@ -1139,7 +1139,10 @@ export default class BattleScene extends SceneBase {
 
     let battleConfig: FixedBattleConfig | null = null;
 
-    this.newArena(Biome.SPACE);
+    this.fieldUI.setVisible(false);
+    this.trainer.setVisible(false);
+    this.ui.setVisible(false);
+    this.modifierBar.setVisible(false);
 
     this.resetSeed(newWaveIndex);
 

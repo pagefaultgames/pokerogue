@@ -1,7 +1,7 @@
 {
 	"textures": [
 		{
-			"image": "expert_breeder.png",
+			"image": "expert_pokemon_breeder.png",
 			"format": "RGBA8888",
 			"size": {
 				"w": 39,

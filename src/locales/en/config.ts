@@ -84,7 +84,7 @@ import bugTypeSuperfan from "#app/locales/en/mystery-encounters/bug-type-superfa
 import funAndGames from "#app/locales/en/mystery-encounters/fun-and-games-dialogue.json";
 import uncommonBreed from "#app/locales/en/mystery-encounters/uncommon-breed-dialogue.json";
 import globalTradeSystem from "#app/locales/en/mystery-encounters/global-trade-system-dialogue.json";
-import expertBreeder from "#app/locales/en/mystery-encounters/the-expert-breeder-dialogue.json";
+import expertPokemonBreeder from "#app/locales/en/mystery-encounters/the-expert-pokemon-breeder-dialogue.json";
 
 /**
  * Dialogue/Text token injection patterns that can be used:
@@ -185,7 +185,7 @@ export const enConfig = {
     funAndGames,
     uncommonBreed,
     globalTradeSystem,
-    expertBreeder
+    expertPokemonBreeder
   },
   mysteryEncounterMessages
 };

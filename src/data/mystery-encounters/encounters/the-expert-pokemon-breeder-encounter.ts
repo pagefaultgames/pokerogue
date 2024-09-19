@@ -26,9 +26,9 @@ import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode
 import { achvs } from "#app/system/achv";
 
 /** the i18n namespace for the encounter */
-const namespace = "mysteryEncounter:expertBreeder";
+const namespace = "mysteryEncounter:expertPokemonBreeder";
 
-const trainerNameKey = "trainerNames:expert_breeder";
+const trainerNameKey = "trainerNames:expert_pokemon_breeder";
 
 const FIRST_STAGE_EVOLUTION_WAVE = 30;
 const SECOND_STAGE_EVOLUTION_WAVE = 45;
@@ -73,12 +73,12 @@ const POOL_2_POKEMON: (Species | BreederSpeciesEvolution)[][] = [
 ];
 
 /**
- * The Expert Breeder encounter.
+ * The Expert Pokémon Breeder encounter.
  * @see {@link https://github.com/pagefaultgames/pokerogue/issues/3818 | GitHub Issue #3818}
  * @see For biome requirements check {@linkcode mysteryEncountersByBiome}
  */
-export const TheExpertBreederEncounter: MysteryEncounter =
-  MysteryEncounterBuilder.withEncounterType(MysteryEncounterType.THE_EXPERT_BREEDER)
+export const TheExpertPokemonBreederEncounter: MysteryEncounter =
+  MysteryEncounterBuilder.withEncounterType(MysteryEncounterType.THE_EXPERT_POKEMON_BREEDER)
     .withEncounterTier(MysteryEncounterTier.ULTRA)
     .withSceneWaveRangeRequirement(...CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES)
     .withScenePartySizeRequirement(4, 6, true) // Must have at least 4 legal pokemon in party
@@ -114,7 +114,7 @@ export const TheExpertBreederEncounter: MysteryEncounter =
           yShadow: -2
         },
         {
-          spriteKey: "expert_breeder",
+          spriteKey: "expert_pokemon_breeder",
           fileRoot: "trainer",
           hasShadow: true,
           x: -14,
@@ -370,13 +370,13 @@ export const TheExpertBreederEncounter: MysteryEncounter =
 function getPartyConfig(scene: BattleScene): EnemyPartyConfig {
   // Bug type superfan trainer config
   const waveIndex = scene.currentBattle.waveIndex;
-  const breederConfig = trainerConfigs[TrainerType.EXPERT_BREEDER].clone();
+  const breederConfig = trainerConfigs[TrainerType.EXPERT_POKEMON_BREEDER].clone();
   breederConfig.name = i18next.t(trainerNameKey);
 
   // First mon is *always* this special cleffa
   const cleffaSpecies = waveIndex < FIRST_STAGE_EVOLUTION_WAVE ? Species.CLEFFA : waveIndex < FINAL_STAGE_EVOLUTION_WAVE ? Species.CLEFAIRY : Species.CLEFABLE;
   const baseConfig: EnemyPartyConfig = {
-    trainerType: TrainerType.EXPERT_BREEDER,
+    trainerType: TrainerType.EXPERT_POKEMON_BREEDER,
     pokemonConfigs: [
       {
         nickname: i18next.t(`${namespace}.cleffa_1_nickname`),
