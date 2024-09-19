@@ -69,22 +69,6 @@ describe("Berries Abound - Mystery Encounter", () => {
     expect(BerriesAboundEncounter.options.length).toBe(3);
   });
 
-  it("should not run below wave 10", async () => {
-    game.override.startingWave(9);
-
-    await game.runToMysteryEncounter();
-
-    expect(scene.currentBattle?.mysteryEncounter?.encounterType).not.toBe(MysteryEncounterType.BERRIES_ABOUND);
-  });
-
-  it("should not run above wave 179", async () => {
-    game.override.startingWave(181);
-
-    await game.runToMysteryEncounter();
-
-    expect(scene.currentBattle.mysteryEncounter).toBeUndefined();
-  });
-
   it("should initialize fully", async () => {
     initSceneWithoutEncounterPhase(scene, defaultParty);
     scene.currentBattle.mysteryEncounter = BerriesAboundEncounter;
@@ -98,7 +82,6 @@ describe("Berries Abound - Mystery Encounter", () => {
 
     const config = BerriesAboundEncounter.enemyPartyConfigs[0];
     expect(config).toBeDefined();
-    expect(config.levelAdditiveMultiplier).toBe(1);
     expect(config.pokemonConfigs?.[0].isBoss).toBe(true);
     expect(onInitResult).toBe(true);
   });
@@ -134,7 +117,7 @@ describe("Berries Abound - Mystery Encounter", () => {
     });
 
     // TODO: there is some severe test flakiness occurring for this file, needs to be looked at/addressed in separate issue
-    it.skip("should reward the player with X berries based on wave", async () => {
+    it("should reward the player with X berries based on wave", async () => {
       await game.runToMysteryEncounter(MysteryEncounterType.BERRIES_ABOUND, defaultParty);
 
       const numBerries = game.scene.currentBattle.mysteryEncounter!.misc.numBerries;

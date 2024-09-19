@@ -3121,11 +3121,11 @@
   },
   "behemothBlade": {
     "name": "Gigantenhieb",
-    "effect": "Der Anwender wird zu einem riesigen Schwert und greift das Ziel an. Dynamaximierte Ziele erleiden doppelten Schaden."
+    "effect": "Der Anwender wird zu einem riesigen Schwert und greift das Ziel an."
   },
   "behemothBash": {
     "name": "Gigantenstoß",
-    "effect": "Der Anwender wird zu einem riesigen Schild und greift das Ziel an. Dynamaximierte Ziele erleiden doppelten Schaden."
+    "effect": "Der Anwender wird zu einem riesigen Schild und greift das Ziel an."
   },
   "auraWheel": {
     "name": "Aura-Rad",
