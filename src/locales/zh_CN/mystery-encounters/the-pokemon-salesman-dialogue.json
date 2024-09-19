@@ -5,7 +5,7 @@
   "title": "宝可梦销售员",
   "description": "“这个{{purchasePokemon}}非常独特，拥有该物种通常不具备的特性！只需{{price, money}}就让你拥有这个与众不同的{{purchasePokemon}}！”\n\n“你怎么说？”",
   "description_shiny": "“这个{{purchasePokemon}}非常独特，拥有该物种非常不寻常的颜色！只需{{price, money}}就让你拥有这个与众不同的{{purchasePokemon}}！”\n\n“你怎么说？”",
-  "query": "你要怎么做？"
+  "query": "你要怎么做？",
   "option": {
     "1": {
       "label": "接受",
