@@ -1,5 +1,5 @@
 {
-  "battlesWon": "{{count, number}} Battles Won!",
+  "battlesWon": "勝ったバトル：{{count, number}}回！",
   "joinTheDiscord": "Join the Discord!",
   "infiniteLevels": "Infinite Levels!",
   "everythingStacks": "Everything Stacks!",
