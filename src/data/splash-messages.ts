@@ -1,3 +1,5 @@
+import { USE_SEASONAL_SPLASH_MESSAGES } from "#app/constants";
+
 //#region Interfaces/Types
 
 type Month = "01" | "02" | "03" | "04" | "05" | "06" | "07" | "08" | "09" | "10" | "11" | "12";
@@ -41,8 +43,6 @@ interface Season {
 
 //#region Constants
 
-/** Whether to use seasonal splash messages in general */
-const USE_SEASONAL_SPLASH_MESSAGES = false;
 /** The weight multiplier for the battles-won splash message */
 const BATTLES_WON_WEIGHT_MULTIPLIER = 10;
 /** The weight multiplier for the seasonal splash messages */
@@ -114,7 +114,7 @@ const seasonalSplashMessages: Season[] = [
 
 export function getSplashMessages(): string[] {
   const splashMessages: string[] = [...commonSplashMessages];
-
+  console.log("use seasonal splash messages", USE_SEASONAL_SPLASH_MESSAGES);
   if (USE_SEASONAL_SPLASH_MESSAGES) {
     // add seasonal splash messages if the season is active
     for (const { name, start, end, messages } of seasonalSplashMessages) {
