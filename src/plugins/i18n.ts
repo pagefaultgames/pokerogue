@@ -2,17 +2,17 @@ import i18next from "i18next";
 import LanguageDetector from "i18next-browser-languagedetector";
 import processor, { KoreanPostpositionProcessor } from "i18next-korean-postposition-processor";
 
-import { caEsConfig} from "#app/locales/ca_ES/config";
-import { deConfig } from "#app/locales/de/config";
-import { enConfig } from "#app/locales/en/config";
-import { esConfig } from "#app/locales/es/config";
-import { frConfig } from "#app/locales/fr/config";
-import { itConfig } from "#app/locales/it/config";
-import { koConfig } from "#app/locales/ko/config";
-import { jaConfig } from "#app/locales/ja/config";
-import { ptBrConfig } from "#app/locales/pt_BR/config";
-import { zhCnConfig } from "#app/locales/zh_CN/config";
-import { zhTwConfig } from "#app/locales/zh_TW/config";
+import { caEsConfig} from "../../public/locales/ca_ES/config";
+import { deConfig } from "../../public/locales/de/config";
+import { enConfig } from "../../public/locales/en/config";
+import { esConfig } from "../../public/locales/es/config";
+import { frConfig } from "../../public/locales/fr/config";
+import { itConfig } from "../../public/locales/it/config";
+import { koConfig } from "../../public/locales/ko/config";
+import { jaConfig } from "../../public/locales/ja/config";
+import { ptBrConfig } from "../../public/locales/pt_BR/config";
+import { zhCnConfig } from "../../public/locales/zh_CN/config";
+import { zhTwConfig } from "../../public/locales/zh_TW/config";
 
 interface LoadingFontFaceProperty {
   face: FontFace,
