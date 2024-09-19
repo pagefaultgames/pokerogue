@@ -1,7 +1,7 @@
 import { initSubsequentOptionSelect, leaveEncounterWithoutBattle, transitionMysteryEncounterIntroVisuals, updatePlayerMoney, } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import BattleScene from "#app/battle-scene";
-import MysteryEncounter, { MysteryEncounterBuilder } from "../mystery-encounter";
+import MysteryEncounter, { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-encounter";
 import MysteryEncounterOption, { MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/mystery-encounter-option";
 import { TrainerSlot } from "#app/data/trainer-config";
 import { HiddenAbilityRateBoosterModifier, IvScannerModifier } from "#app/modifier/modifier";
@@ -25,7 +25,7 @@ const namespace = "mysteryEncounter:safariZone";
 
 const TRAINER_THROW_ANIMATION_TIMES = [512, 184, 768];
 
-const SAFARI_MONEY_MULTIPLIER = 2.75;
+const SAFARI_MONEY_MULTIPLIER = 2;
 
 /**
  * Safari Zone encounter.

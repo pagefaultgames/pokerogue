@@ -114,7 +114,7 @@ describe("The Strong Stuff - Mystery Encounter", () => {
 
     expect(TheStrongStuffEncounter.enemyPartyConfigs).toEqual([
       {
-        levelAdditiveMultiplier: 1,
+        levelAdditiveModifier: 1,
         disableSwitch: true,
         pokemonConfigs: [
           {

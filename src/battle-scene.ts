@@ -1911,6 +1911,19 @@ export default class BattleScene extends SceneBase {
     return false;
   }
 
+  /**
+   * Fades out current track for `delay` ms, then fades in new track.
+   * @param newBgmKey
+   * @param destroy
+   * @param delay
+   */
+  fadeAndSwitchBgm(newBgmKey: string, destroy: boolean = false, delay: number = 2000) {
+    this.fadeOutBgm(delay, destroy);
+    this.time.delayedCall(delay, () => {
+      this.playBgm(newBgmKey);
+    });
+  }
+
   playSound(sound: string | AnySound, config?: object): AnySound {
     const key = typeof sound === "string" ? sound : sound.key;
     config = config ?? {};
@@ -2157,6 +2170,16 @@ export default class BattleScene extends SceneBase {
       return 13.13;
     case "battle_macro_boss": //SWSH Rose Battle
       return 11.42;
+    case "mystery_encounter_gen_5_gts": // BW GTS
+      return 8.52;
+    case "mystery_encounter_gen_6_gts": // XY GTS
+      return 9.24;
+    case "mystery_encounter_fun_and_games": // EoS Guildmaster Wigglytuff
+      return 4.78;
+    case "mystery_encounter_weird_dream": // EoS Temporal Spire
+      return 41.42;
+    case "mystery_encounter_delibirdy": // Firel Delibirdy
+      return 82.28;
     }
 
     return 0;
@@ -2603,7 +2626,7 @@ export default class BattleScene extends SceneBase {
       }
 
       party.forEach((enemyPokemon: EnemyPokemon, i: integer) => {
-        if (heldModifiersConfigs && i < heldModifiersConfigs.length && heldModifiersConfigs[i] && heldModifiersConfigs[i].length > 0) {
+        if (heldModifiersConfigs && i < heldModifiersConfigs.length && heldModifiersConfigs[i]) {
           heldModifiersConfigs[i].forEach(mt => {
             let modifier: PokemonHeldItemModifier;
             if (mt.modifier instanceof PokemonHeldItemModifierType) {
@@ -2614,8 +2637,7 @@ export default class BattleScene extends SceneBase {
             }
             const stackCount = mt.stackCount ?? 1;
             modifier.stackCount = stackCount;
-            // TODO: set isTransferable
-            // modifier.isTransferrable = mt.isTransferable ?? true;
+            modifier.isTransferable = mt.isTransferable ?? modifier.isTransferable;
             this.addEnemyModifier(modifier, true);
           });
         } else {
