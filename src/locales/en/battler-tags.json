@@ -26,6 +26,8 @@
   "seededOnAdd": "{{pokemonNameWithAffix}} was seeded!",
   "seededLapse": "{{pokemonNameWithAffix}}'s health is\nsapped by Leech Seed!",
   "seededLapseShed": "{{pokemonNameWithAffix}}'s Leech Seed\nsucked up the liquid ooze!",
+  "powderOnAdd": "{{pokemonNameWithAffix}} is covered in powder!",
+  "powderLapse": "When the flame touched the powder\non the Pokémon, it exploded!",
   "nightmareOnAdd": "{{pokemonNameWithAffix}} began\nhaving a Nightmare!",
   "nightmareOnOverlap": "{{pokemonNameWithAffix}} is\nalready locked in a Nightmare!",
   "nightmareLapse": "{{pokemonNameWithAffix}} is locked\nin a Nightmare!",
