@@ -5,13 +5,13 @@ import { initAbilities } from "#app/data/ability";
 import { initBiomes } from "#app/data/biomes";
 import { initEggMoves } from "#app/data/egg-moves";
 import { initMoves } from "#app/data/move";
+import { initMysteryEncounters } from "#app/data/mystery-encounters/mystery-encounters";
 import { initPokemonPrevolutions } from "#app/data/pokemon-evolutions";
 import { initPokemonForms } from "#app/data/pokemon-forms";
 import { initSpecies } from "#app/data/pokemon-species";
 import { initAchievements } from "#app/system/achv";
 import { initVouchers } from "#app/system/voucher";
 import { initStatsKeys } from "#app/ui/game-stats-ui-handler";
-import { initMysteryEncounters } from "#app/data/mystery-encounters/mystery-encounters";
 import { beforeAll, vi } from "vitest";
 
 /** Mock the override import to always return default values, ignoring any custom overrides. */
@@ -20,9 +20,30 @@ vi.mock("#app/overrides", async (importOriginal) => {
 
   return {
     default: defaultOverrides,
-    defaultOverrides
+    defaultOverrides,
   } satisfies typeof import("#app/overrides");
 });
+
+vi.mock("i18next", () => ({
+  default: {
+    use: () => {},
+    t: (key: string) => key,
+    changeLanguage: () => Promise.resolve(),
+    init: () => Promise.resolve(),
+    resolvedLanguage: "en",
+    exists: vi.fn(() => true),
+    getDataByLanguage:() => ({
+      en: {
+        keys: ["foo"]
+      },
+    }),
+    services: {
+      formatter: {
+        add: vi.fn(),
+      }
+    },
+  },
+}));
 
 initVouchers();
 initAchievements();
@@ -44,6 +65,6 @@ beforeAll(() => {
     writable: true,
     value: {
       add: () => {},
-    }
+    },
   });
 });
