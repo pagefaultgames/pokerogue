@@ -238,6 +238,7 @@ export async function initI18n(): Promise<void> {
       "mysteryEncounters/funAndGames",
       "mysteryEncounters/uncommonBreed",
       "mysteryEncounters/globalTradeSystem",
+      "mysteryEncounters/theExpertPokemonBreeder",
       "mysteryEncounterMessages",
 
     ],
