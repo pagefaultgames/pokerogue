@@ -5,7 +5,7 @@
   "description": "Une Éleveuse vous propose un combat où @[TOOLTIP_TITLE]{vous ne pouvez utiliser qu’un seul Pokémon}. Ça s’annonce un peu compliqué, mais devrait certainement approfondir vos liens avec le Pokémon choisi !\nL’Éleveuse devrait vous faire don de quelques @[TOOLTIP_TITLE]{Œufs} si vous gagnez !",
   "query": "Avec qui voulez-vous combattre ?",
   "cleffa_1_nickname": "As",
-  "cleffa_2_nickname": "Mélodelfissime",
+  "cleffa_2_nickname": "Méloïssime",
   "cleffa_3_nickname": "{{speciesName}} le Grand",
   "option": {
     "1": {
