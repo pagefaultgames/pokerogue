@@ -18,7 +18,7 @@ import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
 import { Abilities } from "#enums/abilities";
 
 /** the i18n namespace for this encounter */
-const namespace = "mysteryEncounters/pokemonSalesman";
+const namespace = "mysteryEncounters/thePokemonSalesman";
 
 const MAX_POKEMON_PRICE_MULTIPLIER = 4;
 

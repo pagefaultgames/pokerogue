@@ -15,7 +15,7 @@ import { ModifierRewardPhase } from "#app/phases/modifier-reward-phase";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
 
 /** the i18n namespace for this encounter */
-const namespace = "mysteryEncounters/offerYouCantRefuse";
+const namespace = "mysteryEncounters/anOfferYouCantRefuse";
 
 /**
  * An Offer You Can't Refuse encounter.
