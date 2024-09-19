@@ -41,6 +41,8 @@ interface Season {
 
 //#region Constants
 
+/** Whether to use seasonal splash messages in general */
+const USE_SEASONAL_SPLASH_MESSAGES = false;
 /** The weight multiplier for the battles-won splash message */
 const BATTLES_WON_WEIGHT_MULTIPLIER = 10;
 /** The weight multiplier for the seasonal splash messages */
@@ -113,18 +115,20 @@ const seasonalSplashMessages: Season[] = [
 export function getSplashMessages(): string[] {
   const splashMessages: string[] = [...commonSplashMessages];
 
-  // add seasonal splash messages if the season is active
-  for (const { name, start, end, messages } of seasonalSplashMessages) {
-    const now = new Date();
-    const startDate = new Date(`${start}-${now.getFullYear()}`);
-    const endDate = new Date(`${end}-${now.getFullYear()}`);
+  if (USE_SEASONAL_SPLASH_MESSAGES) {
+    // add seasonal splash messages if the season is active
+    for (const { name, start, end, messages } of seasonalSplashMessages) {
+      const now = new Date();
+      const startDate = new Date(`${start}-${now.getFullYear()}`);
+      const endDate = new Date(`${end}-${now.getFullYear()}`);
 
-    if (now >= startDate && now <= endDate) {
-      console.log(`Adding ${messages.length} ${name} splash messages (weight: x${SEASONAL_WEIGHT_MULTIPLIER})`);
-      messages.forEach((message) => {
-        const weightedMessage = Array(SEASONAL_WEIGHT_MULTIPLIER).fill(message);
-        splashMessages.push(...weightedMessage);
-      });
+      if (now >= startDate && now <= endDate) {
+        console.log(`Adding ${messages.length} ${name} splash messages (weight: x${SEASONAL_WEIGHT_MULTIPLIER})`);
+        messages.forEach((message) => {
+          const weightedMessage = Array(SEASONAL_WEIGHT_MULTIPLIER).fill(message);
+          splashMessages.push(...weightedMessage);
+        });
+      }
     }
   }
 
