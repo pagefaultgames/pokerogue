@@ -84,6 +84,7 @@ import bugTypeSuperfan from "./mystery-encounters/bug-type-superfan-dialogue.jso
 import funAndGames from "./mystery-encounters/fun-and-games-dialogue.json";
 import uncommonBreed from "./mystery-encounters/uncommon-breed-dialogue.json";
 import globalTradeSystem from "./mystery-encounters/global-trade-system-dialogue.json";
+import expertBreeder from "./mystery-encounters/the-expert-breeder-dialogue.json";
 
 /**
  * Dialogue/Text token injection patterns that can be used:
@@ -183,7 +184,8 @@ export const deConfig = {
     bugTypeSuperfan,
     funAndGames,
     uncommonBreed,
-    globalTradeSystem
+    globalTradeSystem,
+    expertBreeder
   },
   mysteryEncounterMessages
 };
