@@ -91,8 +91,7 @@ export class VictoryPhase extends PokemonPhase {
     const gameMode = this.scene.gameMode;
     const waveIndex = this.scene.currentBattle.waveIndex;
     if (gameMode.isFixedBattle(waveIndex)) {
-      const fixedBattleConfig = gameMode.getFixedBattle(waveIndex);
-      return fixedBattleConfig.customModifierRewardSettings;
+      return gameMode.getFixedBattle(waveIndex).customModifierRewardSettings;
     }
 
     return undefined;
