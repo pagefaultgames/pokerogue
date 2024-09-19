@@ -235,7 +235,19 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
         this.pokemonGenderText.setVisible(false);
       }
 
-      if (pokemon.species.forms?.[pokemon.formIndex]?.formName) {
+      const formKey = (pokemon.species?.forms?.[pokemon.formIndex!]?.formKey);
+      const formText = Utils.capitalizeString(formKey, "-", false, false) || "";
+      const speciesName = Utils.capitalizeString(Species[pokemon.species.getRootSpeciesId()], "_", true, false);
+
+      let formName = "";
+      if (pokemon.species.speciesId === Species.ARCEUS) {
+        formName = i18next.t(`pokemonInfo:Type.${formText?.toUpperCase()}`);
+      } else {
+        const i18key = `pokemonForm:${speciesName}${formText}`;
+        formName = i18next.exists(i18key) ? i18next.t(i18key) : formText;
+      }
+
+      if (formName) {
         this.pokemonFormLabelText.setVisible(true);
         this.pokemonFormText.setVisible(true);
         const newForm = BigInt(1 << pokemon.formIndex) * DexAttr.DEFAULT_FORM;
@@ -246,18 +258,6 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
         } else {
           this.pokemonFormLabelText.setColor(getTextColor(TextStyle.WINDOW, false, this.scene.uiTheme));
           this.pokemonFormLabelText.setShadowColor(getTextColor(TextStyle.WINDOW, true, this.scene.uiTheme));
-        }
-
-        const formKey = (pokemon.species?.forms?.[pokemon.formIndex!]?.formKey);
-        const formText = Utils.capitalizeString(formKey, "-", false, false) || "";
-        const speciesName = Utils.capitalizeString(Species[pokemon.species.getRootSpeciesId()], "_", true, false);
-
-        let formName = "";
-        if (pokemon.species.speciesId === Species.ARCEUS) {
-          formName = i18next.t(`pokemonInfo:Type.${formText?.toUpperCase()}`);
-        } else {
-          const i18key = `pokemonForm:${speciesName}${formText}`;
-          formName = i18next.exists(i18key) ? i18next.t(i18key) : formText;
         }
 
         this.pokemonFormText.setText(formName.length > this.numCharsBeforeCutoff ? formName.substring(0, this.numCharsBeforeCutoff - 3) + "..." : formName);
