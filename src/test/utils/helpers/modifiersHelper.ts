@@ -3,12 +3,10 @@ import { GameManagerHelper } from "./gameManagerHelper";
 import { itemPoolChecks, ModifierTypeKeys } from "#app/modifier/modifier-type";
 
 export class ModifierHelper extends GameManagerHelper {
-  // TODO
-
   /**
    * Adds a Modifier to the list of modifiers to check for.
    *
-   * Note that all modifiers are updated during the start of SelectModifierPhase.
+   * Note that all modifiers are updated during the start of `SelectModifierPhase`.
    * @param modifier The Modifier to add.
    */
   addCheck(modifier: ModifierTypeKeys) {
@@ -42,8 +40,8 @@ export class ModifierHelper extends GameManagerHelper {
    *
    * Note that if a `SelectModifierPhase` has not been run yet, these values will be `undefined`, and the check will fail.
    * @param modifier The modifier to check.
-   * @param expectToBePreset Whether the Modifier should be in the Modifier Pool. Set to false to expect it to be absent instead.
-   * @returns this
+   * @param expectToBePreset Whether the Modifier should be in the Modifier Pool. Set to `false` to expect it to be absent instead.
+   * @returns `this`
    */
   testCheck(modifier: ModifierTypeKeys, expectToBePreset: boolean): this {
     if (expectToBePreset) {

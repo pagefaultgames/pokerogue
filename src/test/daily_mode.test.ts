@@ -4,7 +4,6 @@ import GameManager from "./utils/gameManager";
 import { Moves } from "#app/enums/moves";
 import { getPartyLuckValue } from "#app/modifier/modifier-type";
 import { Biome } from "#app/enums/biome";
-import { BattleEndPhase } from "#app/phases/battle-end-phase";
 import { Mode } from "#app/ui/ui";
 import ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
 import { Species } from "#app/enums/species";
@@ -42,9 +41,6 @@ describe("Daily Mode", () => {
   });
 });
 
-//*
-// Need to figure out how to properly start a battle
-// Need to fix eviolite - test keeps insisting it is not in loot table, even though Mini Black Hole (which is using the exact same condition) is
 describe("Shop modifications", async () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
@@ -80,7 +76,7 @@ describe("Shop modifications", async () => {
     game.move.select(Moves.KOWTOW_CLEAVE);
     await game.phaseInterceptor.to("DamagePhase");
     await game.doKillOpponents();
-    await game.phaseInterceptor.to(BattleEndPhase);
+    await game.phaseInterceptor.to("BattleEndPhase");
     game.onNextPrompt("SelectModifierPhase", Mode.MODIFIER_SELECT, () => {
       expect(game.scene.ui.getHandler()).toBeInstanceOf(ModifierSelectUiHandler);
       game.modifiers
@@ -129,14 +125,11 @@ describe("Luck modifications", async() => {
 
   afterEach(() => {
     game.phaseInterceptor.restoreOg();
-    //vi.resetAllMocks();
-    //vi.clearAllMocks();
   });
 
   it("should apply luck in Classic Mode", async () => {
     await game.classicMode.runToSummon([Species.PIKACHU]);
     const party = game.scene.getParty();
-    expect(party[0]).toBeDefined();
     vi.spyOn(party[0], "getLuck").mockReturnValue(3);
     expect(party[0].getLuck()).toBeGreaterThan(0);
     expect(getPartyLuckValue(party)).toBeGreaterThan(0);
@@ -145,7 +138,6 @@ describe("Luck modifications", async() => {
   it("should not apply luck in Daily Run", async () => {
     await game.dailyMode.runToSummon();
     const party = game.scene.getParty();
-    expect(party[0]).toBeDefined();
     vi.spyOn(party[0], "getLuck").mockReturnValue(3);
     expect(party[0].getLuck()).toBeGreaterThan(0);
     expect(getPartyLuckValue(party)).toBe(0);

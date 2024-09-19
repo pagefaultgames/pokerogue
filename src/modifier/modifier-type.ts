@@ -2432,7 +2432,7 @@ export function getPartyLuckValue(party: Pokemon[]): integer {
   }
   const luck = Phaser.Math.Clamp(party.map(p => p.isAllowedInBattle() ? (p.scene.gameMode.isDaily ? 0 : p.getLuck()) : 0)
     .reduce((total: integer, value: integer) => total += value, 0), 0, 14);
-  return luck || 0;
+  return luck ?? 0;
 }
 
 export function getLuckString(luckValue: integer): string {
