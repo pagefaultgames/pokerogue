@@ -14,6 +14,7 @@ import { fileURLToPath } from "url";
 // Get the directory name of the current module file
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+const typeChoices = ["Move", "Ability", "Item"];
 
 /**
  * Prompts the user to select a type via list.
@@ -25,7 +26,7 @@ async function promptTestType() {
       type: "list",
       name: "selectedOption",
       message: "What type of test would you like to create:",
-      choices: ["Move", "Ability", "Item", "EXIT"],
+      choices: [...typeChoices, "EXIT"],
     },
   ]);
 
