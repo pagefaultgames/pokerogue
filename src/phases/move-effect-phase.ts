@@ -4,7 +4,7 @@ import { applyPreAttackAbAttrs, AddSecondStrikeAbAttr, IgnoreMoveEffectsAbAttr, 
 import { ArenaTagSide, ConditionalProtectTag } from "#app/data/arena-tag";
 import { MoveAnim } from "#app/data/battle-anims";
 import { BattlerTagLapseType, DamageProtectedTag, ProtectedTag, SemiInvulnerableTag, SubstituteTag } from "#app/data/battler-tags";
-import { MoveTarget, applyMoveAttrs, OverrideMoveEffectAttr, MultiHitAttr, AttackMove, FixedDamageAttr, VariableTargetAttr, MissEffectAttr, MoveFlags, applyFilteredMoveAttrs, MoveAttr, MoveEffectAttr, MoveEffectTrigger, ChargeAttr, MoveCategory, NoEffectAttr, HitsTagAttr } from "#app/data/move";
+import { MoveTarget, applyMoveAttrs, OverrideMoveEffectAttr, MultiHitAttr, AttackMove, FixedDamageAttr, VariableTargetAttr, MissEffectAttr, MoveFlags, applyFilteredMoveAttrs, MoveAttr, MoveEffectAttr, MoveEffectTrigger, ChargeAttr, MoveCategory, NoEffectAttr, DealsDoubleDamageToTagAttr } from "#app/data/move";
 import { SpeciesFormChangePostMoveTrigger } from "#app/data/pokemon-forms";
 import { BattlerTagType } from "#app/enums/battler-tag-type";
 import { Moves } from "#app/enums/moves";
@@ -102,7 +102,7 @@ export class MoveEffectPhase extends PokemonPhase {
          * (and not random target) and failed the hit check against its target (MISS), log the move
          * as FAILed or MISSed (depending on the conditions above) and end this phase.
          */
-      if (!hasActiveTargets || (!move.hasAttr(VariableTargetAttr) && !move.isMultiTarget() && !targetHitChecks[this.targets[0]])) {
+      if (!hasActiveTargets || (!move.hasAttr(VariableTargetAttr) && !move.isMultiTarget() && !targetHitChecks[this.targets[0]] && !targets[0].getTag(ProtectedTag))) {
         this.stopMultiHit();
         if (hasActiveTargets) {
           this.scene.queueMessage(i18next.t("battle:attackMissed", { pokemonNameWithAffix: this.getTarget()? getPokemonNameWithAffix(this.getTarget()!) : "" }));
@@ -125,20 +125,6 @@ export class MoveEffectPhase extends PokemonPhase {
         /** Has the move successfully hit a target (for damage) yet? */
         let hasHit: boolean = false;
         for (const target of targets) {
-          /**
-             * If the move missed a target, stop all future hits against that target
-             * and move on to the next target (if there is one).
-             */
-          if (!targetHitChecks[target.getBattlerIndex()]) {
-            this.stopMultiHit(target);
-            this.scene.queueMessage(i18next.t("battle:attackMissed", { pokemonNameWithAffix: getPokemonNameWithAffix(target) }));
-            if (moveHistoryEntry.result === MoveResult.PENDING) {
-              moveHistoryEntry.result = MoveResult.MISS;
-            }
-            user.pushMoveHistory(moveHistoryEntry);
-            applyMoveAttrs(MissEffectAttr, user, null, move);
-            continue;
-          }
 
           /** The {@linkcode ArenaTagSide} to which the target belongs */
           const targetSide = target.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY;
@@ -155,6 +141,21 @@ export class MoveEffectPhase extends PokemonPhase {
           const isProtected = (bypassIgnoreProtect.value || !this.move.getMove().checkFlag(MoveFlags.IGNORE_PROTECT, user, target))
               && (hasConditionalProtectApplied.value || (!target.findTags(t => t instanceof DamageProtectedTag).length && target.findTags(t => t instanceof ProtectedTag).find(t => target.lapseTag(t.tagType)))
               || (this.move.getMove().category !== MoveCategory.STATUS && target.findTags(t => t instanceof DamageProtectedTag).find(t => target.lapseTag(t.tagType))));
+
+          /**
+             * If the move missed a target, stop all future hits against that target
+             * and move on to the next target (if there is one).
+             */
+          if (!isProtected && !targetHitChecks[target.getBattlerIndex()]) {
+            this.stopMultiHit(target);
+            this.scene.queueMessage(i18next.t("battle:attackMissed", { pokemonNameWithAffix: getPokemonNameWithAffix(target) }));
+            if (moveHistoryEntry.result === MoveResult.PENDING) {
+              moveHistoryEntry.result = MoveResult.MISS;
+            }
+            user.pushMoveHistory(moveHistoryEntry);
+            applyMoveAttrs(MissEffectAttr, user, null, move);
+            continue;
+          }
 
           /** Does this phase represent the invoked move's first strike? */
           const firstHit = (user.turnData.hitsLeft === user.turnData.hitCount);
@@ -393,7 +394,7 @@ export class MoveEffectPhase extends PokemonPhase {
     }
 
     const semiInvulnerableTag = target.getTag(SemiInvulnerableTag);
-    if (semiInvulnerableTag && !this.move.getMove().getAttrs(HitsTagAttr).some(hta => hta.tagType === semiInvulnerableTag.tagType)) {
+    if (semiInvulnerableTag && !this.move.getMove().getAttrs(DealsDoubleDamageToTagAttr).some(hta => hta.tagType === semiInvulnerableTag.tagType)) {
       return false;
     }
 

@@ -3,14 +3,14 @@ import BattleScene, { AnySound } from "../battle-scene";
 import { Variant, VariantSet, variantColorCache } from "#app/data/variant";
 import { variantData } from "#app/data/variant";
 import BattleInfo, { PlayerBattleInfo, EnemyBattleInfo } from "../ui/battle-info";
-import Move, { HighCritAttr, HitsTagAttr, applyMoveAttrs, FixedDamageAttr, VariableAtkAttr, allMoves, MoveCategory, TypelessAttr, CritOnlyAttr, getMoveTargets, OneHitKOAttr, VariableMoveTypeAttr, VariableDefAttr, AttackMove, ModifiedDamageAttr, VariableMoveTypeMultiplierAttr, IgnoreOpponentStatStagesAttr, SacrificialAttr, VariableMoveCategoryAttr, CounterDamageAttr, StatStageChangeAttr, RechargeAttr, ChargeAttr, IgnoreWeatherTypeDebuffAttr, BypassBurnDamageReductionAttr, SacrificialAttrOnHit, OneHitKOAccuracyAttr, RespectAttackTypeImmunityAttr, MoveTarget } from "../data/move";
+import Move, { HighCritAttr, DealsDoubleDamageToTagAttr, applyMoveAttrs, FixedDamageAttr, VariableAtkAttr, allMoves, MoveCategory, TypelessAttr, CritOnlyAttr, getMoveTargets, OneHitKOAttr, VariableMoveTypeAttr, VariableDefAttr, AttackMove, ModifiedDamageAttr, VariableMoveTypeMultiplierAttr, IgnoreOpponentStatStagesAttr, SacrificialAttr, VariableMoveCategoryAttr, CounterDamageAttr, StatStageChangeAttr, RechargeAttr, ChargeAttr, IgnoreWeatherTypeDebuffAttr, BypassBurnDamageReductionAttr, SacrificialAttrOnHit, OneHitKOAccuracyAttr, RespectAttackTypeImmunityAttr, MoveTarget } from "../data/move";
 import { default as PokemonSpecies, PokemonSpeciesForm, SpeciesFormKey, getFusedSpeciesName, getPokemonSpecies, getPokemonSpeciesForm, getStarterValueFriendshipCap, speciesStarters, starterPassiveAbilities } from "../data/pokemon-species";
 import { Constructor, isNullOrUndefined, randSeedInt } from "#app/utils";
 import * as Utils from "../utils";
 import { Type, TypeDamageMultiplier, getTypeDamageMultiplier, getTypeRgb } from "../data/type";
 import { getLevelTotalExp } from "../data/exp";
 import { Stat, type PermanentStat, type BattleStat, type EffectiveStat, PERMANENT_STATS, BATTLE_STATS, EFFECTIVE_STATS } from "#enums/stat";
-import { DamageMoneyRewardModifier, EnemyDamageBoosterModifier, EnemyDamageReducerModifier, EnemyEndureChanceModifier, EnemyFusionChanceModifier, HiddenAbilityRateBoosterModifier, BaseStatModifier, PokemonFriendshipBoosterModifier, PokemonHeldItemModifier, PokemonNatureWeightModifier, ShinyRateBoosterModifier, SurviveDamageModifier, TempStatStageBoosterModifier, TempCritBoosterModifier, StatBoosterModifier, CritBoosterModifier, TerastallizeModifier, PokemonBaseStatFlatModifier, PokemonBaseStatTotalModifier, PokemonIncrementingStatModifier } from "../modifier/modifier";
+import { DamageMoneyRewardModifier, EnemyDamageBoosterModifier, EnemyDamageReducerModifier, EnemyEndureChanceModifier, EnemyFusionChanceModifier, HiddenAbilityRateBoosterModifier, BaseStatModifier, PokemonFriendshipBoosterModifier, PokemonHeldItemModifier, PokemonNatureWeightModifier, ShinyRateBoosterModifier, SurviveDamageModifier, TempStatStageBoosterModifier, TempCritBoosterModifier, StatBoosterModifier, CritBoosterModifier, TerastallizeModifier, PokemonBaseStatFlatModifier, PokemonBaseStatTotalModifier, PokemonIncrementingStatModifier, EvoTrackerModifier } from "../modifier/modifier";
 import { PokeballType } from "../data/pokeball";
 import { Gender } from "../data/gender";
 import { initMoveAnim, loadMoveAnimAssets } from "../data/battle-anims";
@@ -95,10 +95,12 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   public metLevel: integer;
   public metBiome: Biome | -1;
   public metSpecies: Species;
+  public metWave: number;
   public luck: integer;
   public pauseEvolutions: boolean;
   public pokerus: boolean;
   public wildFlee: boolean;
+  public evoCounter: integer;
 
   public fusionSpecies: PokemonSpecies | null;
   public fusionFormIndex: integer;
@@ -193,8 +195,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       this.luck = dataSource.luck;
       this.metBiome = dataSource.metBiome;
       this.metSpecies = dataSource.metSpecies ?? (this.metBiome !== -1 ? this.species.speciesId : this.species.getRootSpeciesId(true));
+      this.metWave = dataSource.metWave ?? (this.metBiome === -1 ? -1 : 0);
       this.pauseEvolutions = dataSource.pauseEvolutions;
       this.pokerus = !!dataSource.pokerus;
+      this.evoCounter = dataSource.evoCounter ?? 0;
       this.fusionSpecies = dataSource.fusionSpecies instanceof PokemonSpecies ? dataSource.fusionSpecies : dataSource.fusionSpecies ? getPokemonSpecies(dataSource.fusionSpecies) : null;
       this.fusionFormIndex = dataSource.fusionFormIndex;
       this.fusionAbilityIndex = dataSource.fusionAbilityIndex;
@@ -238,6 +242,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       this.metLevel = level;
       this.metBiome = scene.currentBattle ? scene.arena.biomeType : -1;
       this.metSpecies = species.speciesId;
+      this.metWave = scene.currentBattle ? scene.currentBattle.waveIndex : -1;
       this.pokerus = false;
 
       if (level > 1) {
@@ -592,8 +597,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     // Resetting properties should not be shown on the field
     this.setVisible(false);
 
-    // Reset field position
-    this.setFieldPosition(FieldPosition.CENTER);
+    // Remove the offset from having a Substitute active
     if (this.isOffsetBySubstitute()) {
       this.x -= this.getSubstituteOffset()[0];
       this.y -= this.getSubstituteOffset()[1];
@@ -1269,13 +1273,13 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * @param attrType {@linkcode AbAttr} The ability attribute to check for.
    * @param canApply {@linkcode Boolean} If false, it doesn't check whether the ability is currently active
    * @param ignoreOverride {@linkcode Boolean} If true, it ignores ability changing effects
-   * @returns {AbAttr[]} A list of all the ability attributes on this ability.
+   * @returns A list of all the ability attributes on this ability.
    */
-  getAbilityAttrs(attrType: { new(...args: any[]): AbAttr }, canApply: boolean = true, ignoreOverride?: boolean): AbAttr[] {
-    const abilityAttrs: AbAttr[] = [];
+  getAbilityAttrs<T extends AbAttr = AbAttr>(attrType: { new(...args: any[]): T }, canApply: boolean = true, ignoreOverride?: boolean): T[] {
+    const abilityAttrs: T[] = [];
 
     if (!canApply || this.canApplyAbility()) {
-      abilityAttrs.push(...this.getAbility(ignoreOverride).getAttrs(attrType));
+      abilityAttrs.push(...this.getAbility(ignoreOverride).getAttrs<T>(attrType));
     }
 
     if (!canApply || this.canApplyAbility(true)) {
@@ -1509,7 +1513,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
     const immuneTags = this.findTags(tag => tag instanceof TypeImmuneTag && tag.immuneType === moveType);
     for (const tag of immuneTags) {
-      if (move && !move.getAttrs(HitsTagAttr).some(attr => attr.tagType === tag.tagType)) {
+      if (move && !move.getAttrs(DealsDoubleDamageToTagAttr).some(attr => attr.tagType === tag.tagType)) {
         typeMultiplier.value = 0;
         break;
       }
@@ -2319,10 +2323,60 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
+   * Calculates the base damage of the given move against this Pokemon when attacked by the given source.
+   * Used during damage calculation and for Shell Side Arm's forecasting effect.
+   * @param source the attacking {@linkcode Pokemon}.
+   * @param move the {@linkcode Move} used in the attack.
+   * @param moveCategory the move's {@linkcode MoveCategory} after variable-category effects are applied.
+   * @param ignoreAbility if `true`, ignores this Pokemon's defensive ability effects (defaults to `false`).
+   * @param ignoreSourceAbility if `true`, ignore's the attacking Pokemon's ability effects (defaults to `false`).
+   * @param isCritical if `true`, calculates effective stats as if the hit were critical (defaults to `false`).
+   * @param simulated if `true`, suppresses changes to game state during calculation (defaults to `true`).
+   * @returns The move's base damage against this Pokemon when used by the source Pokemon.
+   */
+  getBaseDamage(source: Pokemon, move: Move, moveCategory: MoveCategory, ignoreAbility: boolean = false, ignoreSourceAbility: boolean = false, isCritical: boolean = false, simulated: boolean = true): number {
+    const isPhysical = moveCategory === MoveCategory.PHYSICAL;
+
+    /** A base damage multiplier based on the source's level */
+    const levelMultiplier = (2 * source.level / 5 + 2);
+
+    /** The power of the move after power boosts from abilities, etc. have applied */
+    const power = move.calculateBattlePower(source, this, simulated);
+
+    /**
+     * The attacker's offensive stat for the given move's category.
+     * Critical hits cause negative stat stages to be ignored.
+     */
+    const sourceAtk = new Utils.NumberHolder(source.getEffectiveStat(isPhysical ? Stat.ATK : Stat.SPATK, this, undefined, ignoreSourceAbility, ignoreAbility, isCritical, simulated));
+    applyMoveAttrs(VariableAtkAttr, source, this, move, sourceAtk);
+
+    /**
+     * This Pokemon's defensive stat for the given move's category.
+     * Critical hits cause positive stat stages to be ignored.
+     */
+    const targetDef = new Utils.NumberHolder(this.getEffectiveStat(isPhysical ? Stat.DEF : Stat.SPDEF, source, move, ignoreAbility, ignoreSourceAbility, isCritical, simulated));
+    applyMoveAttrs(VariableDefAttr, source, this, move, targetDef);
+
+    /**
+     * The attack's base damage, as determined by the source's level, move power
+     * and Attack stat as well as this Pokemon's Defense stat
+     */
+    const baseDamage = ((levelMultiplier * power * sourceAtk.value / targetDef.value) / 50) + 2;
+
+    /** Debug message for non-simulated calls (i.e. when damage is actually dealt) */
+    if (!simulated) {
+      console.log("base damage", baseDamage, move.name, power, sourceAtk.value, targetDef.value);
+    }
+
+    return baseDamage;
+  }
+
+  /**
    * Calculates the damage of an attack made by another Pokemon against this Pokemon
    * @param source {@linkcode Pokemon} the attacking Pokemon
    * @param move {@linkcode Pokemon} the move used in the attack
    * @param ignoreAbility If `true`, ignores this Pokemon's defensive ability effects
+   * @param ignoreSourceAbility If `true`, ignores the attacking Pokemon's ability effects
    * @param isCritical If `true`, calculates damage for a critical hit.
    * @param simulated If `true`, suppresses changes to game state during the calculation.
    * @returns a {@linkcode DamageCalculationResult} object with three fields:
@@ -2391,35 +2445,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       };
     }
 
-    // ----- BEGIN BASE DAMAGE MULTIPLIERS -----
-
-    /** A base damage multiplier based on the source's level */
-    const levelMultiplier = (2 * source.level / 5 + 2);
-
-    /** The power of the move after power boosts from abilities, etc. have applied */
-    const power = move.calculateBattlePower(source, this, simulated);
-
-    /**
-     * The attacker's offensive stat for the given move's category.
-     * Critical hits ignore negative stat stages.
-     */
-    const sourceAtk = new Utils.NumberHolder(source.getEffectiveStat(isPhysical ? Stat.ATK : Stat.SPATK, this, undefined, ignoreSourceAbility, ignoreAbility, isCritical, simulated));
-    applyMoveAttrs(VariableAtkAttr, source, this, move, sourceAtk);
-
-    /**
-     * This Pokemon's defensive stat for the given move's category.
-     * Critical hits ignore positive stat stages.
-     */
-    const targetDef = new Utils.NumberHolder(this.getEffectiveStat(isPhysical ? Stat.DEF : Stat.SPDEF, source, move, ignoreAbility, ignoreSourceAbility, isCritical, simulated));
-    applyMoveAttrs(VariableDefAttr, source, this, move, targetDef);
-
     /**
      * The attack's base damage, as determined by the source's level, move power
      * and Attack stat as well as this Pokemon's Defense stat
      */
-    const baseDamage = ((levelMultiplier * power * sourceAtk.value / targetDef.value) / 50) + 2;
-
-    // ------ END BASE DAMAGE MULTIPLIERS ------
+    const baseDamage = this.getBaseDamage(source, move, moveCategory, ignoreAbility, ignoreSourceAbility, isCritical, simulated);
 
     /** 25% damage debuff on moves hitting more than one non-fainted target (regardless of immunities) */
     const { targets, multiple } = getMoveTargets(source, move.id);
@@ -2485,13 +2515,13 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     this.scene.arena.applyTagsForSide(WeakenMoveScreenTag, defendingSide, move.category, this.scene.currentBattle.double, screenMultiplier);
 
     /**
-     * For each {@linkcode HitsTagAttr} the move has, doubles the damage of the move if:
+     * For each {@linkcode DealsDoubleDamageToTagAttr} the move has, doubles the damage of the move if:
      * The target has a {@linkcode BattlerTagType} that this move interacts with
      * AND
      * The move doubles damage when used against that tag
      */
     const hitsTagMultiplier = new Utils.NumberHolder(1);
-    move.getAttrs(HitsTagAttr).filter(hta => hta.doubleDamage).forEach(hta => {
+    move.getAttrs(DealsDoubleDamageToTagAttr).filter(hta => hta.doubleDamage).forEach(hta => {
       if (this.getTag(hta.tagType)) {
         hitsTagMultiplier.value *= 2;
       }
@@ -2545,7 +2575,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
     // debug message for when damage is applied (i.e. not simulated)
     if (!simulated) {
-      console.log("damage", damage.value, move.name, power, sourceAtk, targetDef);
+      console.log("damage", damage.value, move.name);
     }
 
     let hitResult: HitResult;
@@ -2621,10 +2651,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         return result;
       }
 
-      if (isCritical) {
-        this.scene.queueMessage(i18next.t("battle:hitResultCriticalHit"));
-      }
-
       // In case of fatal damage, this tag would have gotten cleared before we could lapse it.
       const destinyTag = this.getTag(BattlerTagType.DESTINY_BOND);
 
@@ -2665,6 +2691,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
             this.scene.applyModifiers(DamageMoneyRewardModifier, true, source, new Utils.NumberHolder(damage));
           }
         }
+      }
+
+      if (isCritical) {
+        this.scene.queueMessage(i18next.t("battle:hitResultCriticalHit"));
       }
 
       // want to include is.Fainted() in case multi hit move ends early, still want to render message
@@ -4047,6 +4077,12 @@ export class PlayerPokemon extends Pokemon {
           this.updateInfo(true).then(() => resolve());
         });
       };
+      if (preEvolution.speciesId === Species.GIMMIGHOUL) {
+        const evotracker = this.getHeldItems().filter(m => m instanceof EvoTrackerModifier)[0] ?? null;
+        if (evotracker) {
+          this.scene.removeModifier(evotracker);
+        }
+      }
       if (!this.scene.gameMode.isDaily || this.metBiome > -1) {
         this.scene.gameData.updateSpeciesDexIvs(this.species.speciesId, this.ivs);
         this.scene.gameData.setPokemonSeen(this, false);
@@ -4074,6 +4110,7 @@ export class PlayerPokemon extends Pokemon {
         newPokemon.metLevel = this.metLevel;
         newPokemon.metBiome = this.metBiome;
         newPokemon.metSpecies = this.metSpecies;
+        newPokemon.metWave = this.metWave;
         newPokemon.fusionSpecies = this.fusionSpecies;
         newPokemon.fusionFormIndex = this.fusionFormIndex;
         newPokemon.fusionAbilityIndex = this.fusionAbilityIndex;
@@ -4081,6 +4118,7 @@ export class PlayerPokemon extends Pokemon {
         newPokemon.fusionVariant = this.fusionVariant;
         newPokemon.fusionGender = this.fusionGender;
         newPokemon.fusionLuck = this.fusionLuck;
+        newPokemon.usedTMs = this.usedTMs;
 
         this.scene.getParty().push(newPokemon);
         newPokemon.evolve((!isFusion ? newEvolution : new FusionSpeciesFormEvolution(this.id, newEvolution)), evoSpecies);
@@ -4410,7 +4448,10 @@ export class EnemyPokemon extends Pokemon {
           const isCritical = move.hasAttr(CritOnlyAttr) || !!this.getTag(BattlerTagType.ALWAYS_CRIT);
 
           return move.category !== MoveCategory.STATUS
-            && moveTargets.some(p => p.getAttackDamage(this, move, !p.battleData.abilityRevealed, false, isCritical).damage >= p.hp);
+            && moveTargets.some(p => {
+              const doesNotFail = move.applyConditions(this, p, move) || [Moves.SUCKER_PUNCH, Moves.UPPER_HAND, Moves.THUNDERCLAP].includes(move.id);
+              return doesNotFail && p.getAttackDamage(this, move, !p.battleData.abilityRevealed, false, isCritical).damage >= p.hp;
+            });
         }, this);
 
         if (koMoves.length > 0) {
@@ -4769,6 +4810,7 @@ export class EnemyPokemon extends Pokemon {
       this.pokeball = pokeballType;
       this.metLevel = this.level;
       this.metBiome = this.scene.arena.biomeType;
+      this.metWave = this.scene.currentBattle.waveIndex;
       this.metSpecies = this.species.speciesId;
       const newPokemon = this.scene.addPlayerPokemon(this.species, this.level, this.abilityIndex, this.formIndex, this.gender, this.shiny, this.variant, this.ivs, this.nature, this);
 
