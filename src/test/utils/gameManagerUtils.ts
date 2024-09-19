@@ -8,7 +8,6 @@ import { GameModes, getGameMode } from "#app/game-mode";
 import { Starter } from "#app/ui/starter-select-ui-handler";
 import { Species } from "#enums/species";
 import Battle, { BattleType } from "#app/battle";
-import Overrides from "#app/overrides";
 
 /** Function to convert Blob to string */
 export function blobToString(blob) {
@@ -42,7 +41,7 @@ export function generateStarter(scene, species?: Species[]) {
     const starterGender = starter.species.malePercent !== null
       ? !starterProps.female ? Gender.MALE : Gender.FEMALE
       : Gender.GENDERLESS;
-    const starterPokemon = scene.addPlayerPokemon(starter.species, startingLevel, starter.abilityIndex, starterFormIndex, starterGender, Overrides.SHINY_OVERRIDE || starterProps.shiny, Overrides.VARIANT_OVERRIDE ? Overrides.VARIANT_OVERRIDE : starterProps.variant, undefined, starter.nature);
+    const starterPokemon = scene.addPlayerPokemon(starter.species, startingLevel, starter.abilityIndex, starterFormIndex, starterGender, starterProps.shiny, starterProps.variant, undefined, starter.nature);
     starter.moveset = starterPokemon.moveset;
   }
   return starters;

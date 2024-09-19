@@ -5,7 +5,6 @@ import { PlayerPokemon } from "../field/pokemon";
 import { Starter } from "../ui/starter-select-ui-handler";
 import * as Utils from "../utils";
 import PokemonSpecies, { PokemonSpeciesForm, getPokemonSpecies, getPokemonSpeciesForm, speciesStarters } from "./pokemon-species";
-import Overrides from "#app/overrides";
 
 export interface DailyRunConfig {
   seed: integer;
@@ -62,7 +61,7 @@ export function getDailyRunStarters(scene: BattleScene, seed: string): Starter[]
 function getDailyRunStarter(scene: BattleScene, starterSpeciesForm: PokemonSpeciesForm, startingLevel: integer): Starter {
   const starterSpecies = starterSpeciesForm instanceof PokemonSpecies ? starterSpeciesForm : getPokemonSpecies(starterSpeciesForm.speciesId);
   const formIndex = starterSpeciesForm instanceof PokemonSpecies ? undefined : starterSpeciesForm.formIndex;
-  const pokemon = new PlayerPokemon(scene, starterSpecies, startingLevel, undefined, formIndex, undefined, Overrides.SHINY_OVERRIDE ? Overrides.SHINY_OVERRIDE : undefined, Overrides.VARIANT_OVERRIDE ? Overrides.VARIANT_OVERRIDE : undefined, undefined, undefined, undefined);
+  const pokemon = new PlayerPokemon(scene, starterSpecies, startingLevel, undefined, formIndex, undefined, undefined, undefined, undefined, undefined, undefined);
   const starter: Starter = {
     species: starterSpecies,
     dexAttr: pokemon.getDexAttr(),
