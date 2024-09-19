@@ -160,7 +160,7 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
 
     this.player = args[0];
 
-    const partyHasHeldItem = this.player && !!this.scene.findModifiers(m => m instanceof PokemonHeldItemModifier && m.isTransferrable).length;
+    const partyHasHeldItem = this.player && !!this.scene.findModifiers(m => m instanceof PokemonHeldItemModifier && m.isTransferable).length;
     const canLockRarities = !!this.scene.findModifier(m => m instanceof LockModifierTiersModifier);
 
     this.transferButtonContainer.setVisible(false);
@@ -277,13 +277,13 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
       this.lockRarityButtonContainer.setVisible(canLockRarities);
 
       this.scene.tweens.add({
-        targets: [ this.lockRarityButtonContainer, this.checkButtonContainer, this.continueButtonContainer ],
+        targets: [ this.checkButtonContainer, this.continueButtonContainer ],
         alpha: 1,
         duration: 250
       });
 
       this.scene.tweens.add({
-        targets: [this.rerollButtonContainer],
+        targets: [this.rerollButtonContainer, this.lockRarityButtonContainer],
         alpha: this.rerollCost < 0 ? 0.5 : 1,
         duration: 250
       });
