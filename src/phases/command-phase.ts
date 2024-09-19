@@ -60,12 +60,10 @@ export class CommandPhase extends FieldPhase {
     if (moveQueue.length !== 0) {
       const queuedMove = moveQueue[0];
       if (!queuedMove.move) {
-        this.handleCommand(Command.FIGHT, -1, false);
+        this.handleCommand(Command.FIGHT, -1, undefined);
       } else {
         const moveIndex = playerPokemon.getMoveset().findIndex(m => m?.moveId === queuedMove.move);
-        if (moveIndex > -1 && playerPokemon.getMoveset()[moveIndex]!.isUsable(playerPokemon, queuedMove.ignorePP)) { // TODO: is the bang correct?
-          this.handleCommand(Command.FIGHT, moveIndex, queuedMove.ignorePP, { targets: queuedMove.targets, multiple: queuedMove.targets.length > 1 });
-        } else if (queuedMove.virtual) {
+        if ((moveIndex > -1 && playerPokemon.getMoveset()[moveIndex]!.isUsable(playerPokemon, queuedMove.ignorePP)) || queuedMove.virtual) { // TODO: is the bang correct?
           this.handleCommand(Command.FIGHT, moveIndex, queuedMove.ignorePP, queuedMove);
         } else {
           this.scene.ui.setMode(Mode.COMMAND, this.fieldIndex);
@@ -88,10 +86,10 @@ export class CommandPhase extends FieldPhase {
     switch (command) {
     case Command.FIGHT:
       let useStruggle = false;
+      const turnMove: TurnMove | undefined = (args.length === 2 ? (args[1] as TurnMove) : undefined);
       if (cursor === -1 ||
             playerPokemon.trySelectMove(cursor, args[0] as boolean) ||
             (useStruggle = cursor > -1 && !playerPokemon.getMoveset().filter(m => m?.isUsable(playerPokemon)).length)) {
-        const turnMove: TurnMove | undefined = (args.length === 2 ? (args[1] as TurnMove) : undefined);
 
         let moveId: Moves;
         if (useStruggle) {
@@ -105,7 +103,7 @@ export class CommandPhase extends FieldPhase {
         }
 
         const turnCommand: TurnCommand = { command: Command.FIGHT, cursor: cursor, move: { move: moveId, targets: [], ignorePP: args[0] }, args: args };
-        const moveTargets: MoveTargetSet = args.length < 3 ? getMoveTargets(playerPokemon, moveId) : args[2];
+        const moveTargets: MoveTargetSet = turnMove === undefined ? getMoveTargets(playerPokemon, moveId) : { targets: turnMove.targets, multiple: turnMove.targets.length > 1 };
         if (!moveId) {
           turnCommand.targets = [this.fieldIndex];
         }
