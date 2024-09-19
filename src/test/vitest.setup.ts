@@ -31,7 +31,7 @@ vi.mock("i18next", () => ({
     changeLanguage: () => Promise.resolve(),
     init: () => Promise.resolve(),
     resolvedLanguage: "en",
-    exists: vi.fn(() => true),
+    exists: () => true,
     getDataByLanguage:() => ({
       en: {
         keys: ["foo"]
@@ -39,7 +39,7 @@ vi.mock("i18next", () => ({
     }),
     services: {
       formatter: {
-        add: vi.fn(),
+        add: () => {},
       }
     },
   },
