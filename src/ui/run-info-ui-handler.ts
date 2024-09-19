@@ -211,7 +211,7 @@ export default class RunInfoUiHandler extends UiHandler {
     if (!this.isVictory) {
       const enemyContainer = this.scene.add.container(0, 0);
       // Wild - Single and Doubles
-      if (this.runInfo.battleType === BattleType.WILD) {
+      if (this.runInfo.battleType === BattleType.WILD || (this.runInfo.battleType === BattleType.MYSTERY_ENCOUNTER && !this.runInfo.trainer)) {
         switch (this.runInfo.enemyParty.length) {
         case 1:
           // Wild - Singles
@@ -222,7 +222,7 @@ export default class RunInfoUiHandler extends UiHandler {
           this.parseWildDoubleDefeat(enemyContainer);
           break;
         }
-      } else if (this.runInfo.battleType === BattleType.TRAINER) {
+      } else if (this.runInfo.battleType === BattleType.TRAINER || (this.runInfo.battleType === BattleType.MYSTERY_ENCOUNTER && this.runInfo.trainer)) {
         this.parseTrainerDefeat(enemyContainer);
       }
       this.runResultContainer.add(enemyContainer);
@@ -381,10 +381,6 @@ export default class RunInfoUiHandler extends UiHandler {
       break;
     case GameModes.SPLICED_ENDLESS:
       modeText.appendText(`${i18next.t("gameMode:endlessSpliced")}`, false);
-      if (this.runInfo.waveIndex === this.scene.gameData.gameStats.highestEndlessWave) {
-        modeText.appendText(` [${i18next.t("runHistory:personalBest")}]`, false);
-        modeText.setTint(0xffef5c, 0x47ff69, 0x6b6bff, 0xff6969);
-      }
       break;
     case GameModes.CHALLENGE:
       modeText.appendText(`${i18next.t("gameMode:challenge")}`, false);
@@ -403,15 +399,16 @@ export default class RunInfoUiHandler extends UiHandler {
       break;
     case GameModes.ENDLESS:
       modeText.appendText(`${i18next.t("gameMode:endless")}`, false);
-      // If the player achieves a personal best in Endless, the mode text will be tinted similarly to SSS luck to celebrate their achievement.
-      if (this.runInfo.waveIndex === this.scene.gameData.gameStats.highestEndlessWave) {
-        modeText.appendText(` [${i18next.t("runHistory:personalBest")}]`, false);
-        modeText.setTint(0xffef5c, 0x47ff69, 0x6b6bff, 0xff6969);
-      }
       break;
     case GameModes.CLASSIC:
       modeText.appendText(`${i18next.t("gameMode:classic")}`, false);
       break;
+    }
+
+    // If the player achieves a personal best in Endless, the mode text will be tinted similarly to SSS luck to celebrate their achievement.
+    if ((this.runInfo.gameMode === GameModes.ENDLESS || this.runInfo.gameMode === GameModes.SPLICED_ENDLESS) && this.runInfo.waveIndex === this.scene.gameData.gameStats.highestEndlessWave) {
+      modeText.appendText(` [${i18next.t("runHistory:personalBest")}]`);
+      modeText.setTint(0xffef5c, 0x47ff69, 0x6b6bff, 0xff6969);
     }
 
     // Duration + Money
