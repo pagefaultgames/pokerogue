@@ -10,7 +10,7 @@ import { CombinationPokemonRequirement, HeldItemRequirement, MoneyRequirement } 
 import { getEncounterText, showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
-import { HealingBoosterModifier, HiddenAbilityRateBoosterModifier, LevelIncrementBoosterModifier, PokemonHeldItemModifier, PreserveBerryModifier } from "#app/modifier/modifier";
+import { BerryModifier, HealingBoosterModifier, HiddenAbilityRateBoosterModifier, LevelIncrementBoosterModifier, PokemonHeldItemModifier, PreserveBerryModifier } from "#app/modifier/modifier";
 import { OptionSelectItem } from "#app/ui/abstact-option-select-ui-handler";
 import { applyModifierTypeToPlayerPokemon } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
 import i18next from "#app/plugins/i18n";
@@ -194,10 +194,10 @@ export const DelibirdyEncounter: MysteryEncounter =
         })
         .withOptionPhase(async (scene: BattleScene) => {
           const encounter = scene.currentBattle.mysteryEncounter!;
-          const modifier = encounter.misc.chosenModifier;
+          const modifier: BerryModifier | HealingBoosterModifier = encounter.misc.chosenModifier;
 
           // Give the player a Candy Jar if they gave a Berry, and a Healing Charm for Reviver Seed
-          if (modifier.type.name.includes("Berry")) {
+          if (modifier instanceof BerryModifier) {
             // Check if the player has max stacks of that Candy Jar already
             const existing = scene.findModifier(m => m instanceof LevelIncrementBoosterModifier) as LevelIncrementBoosterModifier;
 
