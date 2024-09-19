@@ -1,27 +1,27 @@
 {
-  "intro": "It's a strange machine, whirring noisily...",
-  "title": "Teleportating Hijinks",
-  "description": "The machine has a sign on it that reads:\n  \"To use, insert money then step into the capsule.\"\n\nPerhaps it can transport you somewhere...",
-  "query": "What will you do?",
+  "intro": "一台奇怪的机器，发出呜呜的噪音…",
+  "title": "瞬移把戏",
+  "description": "机器上有一块牌子，上面写着：\n“使用时，先投币，然后走入胶囊。”\n\n也许它可以将你传送至某处…",
+  "query": "你要怎么做？",
   "option": {
     "1": {
-      "label": "Put Money In",
-      "tooltip": "(-) Pay {{price, money}}\n(?) Teleport to New Biome",
-      "selected": "You insert some money, and the capsule opens.\nYou step inside..."
+      "label": "投币",
+      "tooltip": "(-)支付{{price, money}}\n(?)传送至随机地图",
+      "selected": "你投入一些钱，胶囊就打开了。\n你走了进去……"
     },
     "2": {
-      "label": "A Pokémon Helps",
-      "tooltip": "(-) {{option2PrimaryName}} Helps\n(+) {{option2PrimaryName}} gains EXP\n(?) Teleport to New Biome",
-      "disabled_tooltip": "You need a Steel or Electric Type Pokémon to choose this",
-      "selected": "{{option2PrimaryName}}'s Type allows it to bypass the machine's paywall!$The capsule opens, and you step inside..."
+      "label": "宝可梦帮忙",
+      "tooltip": "(-){{option2PrimaryName}}帮忙\n(+){{option2PrimaryName}}获得经验\n(?)传送至随机地图",
+      "disabled_tooltip": "你需要一只钢系或电系宝可梦来选择此项",
+      "selected": "{{option2PrimaryName}}的类型允许你绕过机器的付费装置！$胶囊打开，你走进去……"
     },
     "3": {
-      "label": "Inspect the Machine",
-      "tooltip": "(-) Pokémon Battle",
-      "selected": "You are drawn in by the blinking lights\nand strange noises coming from the machine...$You don't even notice as a wild\nPokémon sneaks up and ambushes you!"
+      "label": "检查机器",
+      "tooltip": "(-)战斗",
+      "selected": "你被闪烁的灯光和机器发出的奇怪声音吸引住了……$你甚至没有注意到一只野生的\n宝可梦偷偷接近并偷袭了你！"
     }
   },
-  "transport": "The machine shakes violently,\nmaking all sorts of strange noises!$Just as soon as it had started, it quiets once more.",
-  "attacked": "You step out into a completely new area, startling a wild Pokémon!$The wild Pokémon attacks!",
-  "boss_enraged": "The opposing {{enemyPokemon}} has become enraged!"
+  "transport": "机器剧烈震动，发出各种奇怪的噪音！\n刚启动没多久，就又一次安静了下来。",
+  "attacked": "你走出来，到了一个全新的区域，惊动了一只野生宝可梦。\n野生宝可梦发动了攻击！",
+  "boss_enraged": "敌对的{{enemyPokemon}}被激怒了！"
 }
