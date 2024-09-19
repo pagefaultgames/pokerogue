@@ -185,7 +185,7 @@ export class AddPokeballModifierType extends ModifierType {
     });
   }
 
-  addAmount(currentAmount: number) {
+  setAmount(currentAmount: number) {
     this.currentAmount = currentAmount;
   }
 
@@ -2157,13 +2157,13 @@ function getModifierTypeOptionWithRetry(existingOptions: ModifierTypeOption[], r
   allowLuckUpgrades = allowLuckUpgrades ?? true;
   let candidate = getNewModifierTypeOption(party, ModifierPoolType.PLAYER, tier, undefined, 0, allowLuckUpgrades);
   if (candidate?.type instanceof AddPokeballModifierType) {
-    candidate.type.addAmount(party[0].scene.pokeballCounts[candidate.type.getPokeballType()]);
+    candidate.type.setAmount(party[0].scene.pokeballCounts[candidate.type.getPokeballType()]);
   }
   let r = 0;
   while (existingOptions.length && ++r < retryCount && existingOptions.filter(o => o.type.name === candidate?.type.name || o.type.group === candidate?.type.group).length) {
     candidate = getNewModifierTypeOption(party, ModifierPoolType.PLAYER, candidate?.type.tier ?? tier, candidate?.upgradeCount, 0, allowLuckUpgrades);
     if (candidate?.type instanceof AddPokeballModifierType) {
-      candidate.type.addAmount(party[0].scene.pokeballCounts[candidate.type.getPokeballType()]);
+      candidate.type.setAmount(party[0].scene.pokeballCounts[candidate.type.getPokeballType()]);
     }
   }
   return candidate!;

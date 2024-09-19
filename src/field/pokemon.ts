@@ -3784,12 +3784,13 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return rootForm.getAbility(abilityIndex) === rootForm.getAbility(currentAbilityIndex);
   }
 
-  /* Checks whether or not the pokemon's pokeball will be tinted.
-   * This checks the dex attributes (gender, shiny/non shiny, variant and forms)
-   * These values are checked against the exact pokemon you're catching (i.e. catching charizard won't compare against charmander)
-   * It also checks your abilities against the starter version
-   * If any are "new", the pokemon's pokeball is tinted
-   * @returns true if the pokemon's pokeball should be tinted, meaning at least one thing is new
+  /*
+   * Checks whether or not the pokemon's pokeball icon will be tinted.
+   * This checks the dex attributes (gender, shiny/non shiny, variant and forms).
+   * These values are checked against the exact pokemon you're catching (i.e. catching charizard won't compare against charmander).
+   * It also checks your abilities against the starter version.
+   * If you are missing any, the pokemon's pokeball icon is tinted.
+   * @returns `true` if the pokemon's pokeball icon should be tinted, meaning at least one thing is new
    */
   isTintedPokeball(): boolean {
     const dexEntry = this.scene.gameData.dexData[this.species.speciesId];

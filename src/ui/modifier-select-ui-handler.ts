@@ -678,7 +678,7 @@ class ModifierOption extends Phaser.GameObjects.Container {
     }
 
     if (this.modifierTypeOption.type instanceof AddPokeballModifierType) {
-      this.modifierTypeOption.type.addAmount((this.scene as BattleScene).pokeballCounts[this.modifierTypeOption.type.getPokeballType()]);
+      this.modifierTypeOption.type.setAmount((this.scene as BattleScene).pokeballCounts[this.modifierTypeOption.type.getPokeballType()]);
     }
 
     this.itemText = addTextObject(this.scene, 0, 35, this.modifierTypeOption.type?.name!, TextStyle.PARTY, { align: "center" }); // TODO: is this bang correct?
