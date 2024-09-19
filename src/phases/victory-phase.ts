@@ -11,7 +11,6 @@ import { ModifierRewardPhase } from "./modifier-reward-phase";
 import { SelectModifierPhase } from "./select-modifier-phase";
 import { TrainerVictoryPhase } from "./trainer-victory-phase";
 import { handleMysteryEncounterVictory } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
-import { LockModifierTiersModifier } from "#app/modifier/modifier";
 
 export class VictoryPhase extends PokemonPhase {
   /** If true, indicates that the phase is intended for EXP purposes only, and not to continue a battle to next phase */
@@ -43,9 +42,8 @@ export class VictoryPhase extends PokemonPhase {
       }
       if (this.scene.gameMode.isEndless || !this.scene.gameMode.isWaveFinal(this.scene.currentBattle.waveIndex)) {
         this.scene.pushPhase(new EggLapsePhase(this.scene));
-        // If player doesn't have a lock capsule in Classic, they get in rewards on 165
-        if (this.scene.gameMode.isClassic && this.scene.currentBattle.waveIndex === 165 && !(this.scene.findModifier(m => m instanceof LockModifierTiersModifier))) {
-          // Should happen before shop phase so they can use the lock capsule
+        if (this.scene.gameMode.isClassic && this.scene.currentBattle.waveIndex === 165) {
+          // Should get Lock Capsule before shop phase so it can be used in the rewards shop
           this.scene.pushPhase(new ModifierRewardPhase(this.scene, modifierTypes.LOCK_CAPSULE));
         }
         if (this.scene.currentBattle.waveIndex % 10) {
