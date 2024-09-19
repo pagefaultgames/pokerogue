@@ -117,12 +117,12 @@ describe("Mysterious Challengers - Mystery Encounter", () => {
       },
       {
         trainerConfig: expect.any(TrainerConfig),
-        levelAdditiveMultiplier: 1,
+        levelAdditiveModifier: 1,
         female: expect.any(Boolean),
       },
       {
         trainerConfig: expect.any(TrainerConfig),
-        levelAdditiveMultiplier: 1.5,
+        levelAdditiveModifier: 1.5,
         female: expect.any(Boolean),
       }
     ]);
