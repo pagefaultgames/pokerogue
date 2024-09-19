@@ -1,4 +1,3 @@
-import { type enConfig } from "../../public/locales/en/config";
 import { TOptions } from "i18next";
 
 //TODO: this needs to be type properly in the future
@@ -6,7 +5,7 @@ import { TOptions } from "i18next";
 declare module "i18next" {
     interface CustomTypeOptions {
       defaultNS: "menu", // needed here as well for typedoc
-      resources: typeof enConfig
+      // resources: typeof enConfig
     }
 
     interface TFunction {
