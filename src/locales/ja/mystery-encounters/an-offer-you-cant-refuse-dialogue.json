@@ -1,6 +1,6 @@
 {
-  "intro": "You're stopped by a rich looking boy.",
-  "speaker": "Rich Boy",
+  "intro": "お金持ちっぽいな　男の子が　通せんぼ……",
+  "speaker": "お坊っちゃま",
   "intro_dialogue": "Good day to you.$I can't help but notice that your\n{{strongestPokemon}} looks positively divine!$I've always wanted to have a Pokémon like that!$I'd pay you handsomely,\nand also give you this old bauble!",
   "title": "An Offer You Can't Refuse",
   "description": "You're being offered a @[TOOLTIP_TITLE]{Shiny Charm} and {{price, money}} for your {{strongestPokemon}}!\n\nIt's an extremely good deal, but can you really bear to part with such a strong team member?",
