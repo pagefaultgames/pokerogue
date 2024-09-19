@@ -2,8 +2,8 @@ import { Type } from "#app/data/type";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { Species } from "#enums/species";
 import BattleScene from "#app/battle-scene";
-import MysteryEncounter, { MysteryEncounterBuilder } from "../mystery-encounter";
-import { MysteryEncounterOptionBuilder } from "../mystery-encounter-option";
+import MysteryEncounter, { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-encounter";
+import { MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/mystery-encounter-option";
 import { leaveEncounterWithoutBattle, setEncounterRewards, } from "../utils/encounter-phase-utils";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
@@ -14,7 +14,7 @@ import { HiddenAbilityRateBoosterModifier, PokemonFormChangeItemModifier, Pokemo
 import { achvs } from "#app/system/achv";
 import { speciesEggMoves } from "#app/data/egg-moves";
 import { MysteryEncounterPokemonData } from "#app/data/mystery-encounters/mystery-encounter-pokemon-data";
-import { queueEncounterMessage, showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
+import { showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
 import { modifierTypes } from "#app/modifier/modifier-type";
 import i18next from "#app/plugins/i18n";
 import { doPokemonTransformationSequence, TransformationScreenPosition } from "#app/data/mystery-encounters/utils/encounter-transformation-sequence";
@@ -130,12 +130,7 @@ export const WeirdDreamEncounter: MysteryEncounter =
       return true;
     })
     .withOnVisualsStart((scene: BattleScene) => {
-      // Change the bgm
-      scene.fadeOutBgm(3000, false);
-      scene.time.delayedCall(3000, () => {
-        scene.playBgm("mystery_encounter_weird_dream");
-      });
-
+      scene.fadeAndSwitchBgm("mystery_encounter_weird_dream");
       return true;
     })
     .withOption(
@@ -340,7 +335,7 @@ async function doNewTeamPostProcess(scene: BattleScene, transformations: Pokemon
       const newStarterUnlocked = await scene.gameData.setPokemonCaught(newPokemon, true, false, false);
       if (newStarterUnlocked) {
         atLeastOneNewStarter = true;
-        queueEncounterMessage(scene, i18next.t("battle:addedAsAStarter", { pokemonName: getPokemonSpecies(speciesRootForm).getName() }));
+        await showEncounterText(scene, i18next.t("battle:addedAsAStarter", { pokemonName: getPokemonSpecies(speciesRootForm).getName() }));
       }
     }
 
