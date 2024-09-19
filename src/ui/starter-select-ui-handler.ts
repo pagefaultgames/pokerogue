@@ -13,7 +13,7 @@ import { allMoves } from "../data/move";
 import { Nature, getNatureName } from "../data/nature";
 import { pokemonFormChanges } from "../data/pokemon-forms";
 import { LevelMoves, pokemonFormLevelMoves, pokemonSpeciesLevelMoves } from "../data/pokemon-level-moves";
-import PokemonSpecies, { allSpecies, getPokemonSpeciesForm, getStarterValueFriendshipCap, speciesStarters, starterPassiveAbilities, getPokerusStarters } from "../data/pokemon-species";
+import PokemonSpecies, { allSpecies, getPokemonSpeciesForm, getStarterValueFriendshipCap, speciesStarters, starterPassiveAbilities, POKERUS_STARTER_COUNT, getPokerusStarters } from "../data/pokemon-species";
 import { Type } from "../data/type";
 import { GameModes } from "../game-mode";
 import { AbilityAttr, DexAttr, DexAttrProps, DexEntry, StarterMoveset, StarterAttributes, StarterPreferences, StarterPrefs } from "../system/game-data";
@@ -28,15 +28,15 @@ import { Mode } from "./ui";
 import { addWindow } from "./ui-theme";
 import { Egg } from "#app/data/egg";
 import Overrides from "#app/overrides";
-import {SettingKeyboard} from "#app/system/settings/settings-keyboard";
-import {Passive as PassiveAttr} from "#enums/passive";
+import { SettingKeyboard } from "#app/system/settings/settings-keyboard";
+import { Passive as PassiveAttr } from "#enums/passive";
 import * as Challenge from "../data/challenge";
 import MoveInfoOverlay from "./move-info-overlay";
 import { getEggTierForSpecies } from "#app/data/egg";
 import { Device } from "#enums/devices";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
-import {Button} from "#enums/buttons";
+import { Button } from "#enums/buttons";
 import { EggSourceType } from "#app/enums/egg-source-types";
 import AwaitableUiHandler from "./awaitable-ui-handler";
 import { DropDown, DropDownLabel, DropDownOption, DropDownState, DropDownType, SortCriteria } from "./dropdown";
@@ -266,6 +266,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
   private pokemonPassiveDisabledIcon: Phaser.GameObjects.Sprite;
   private pokemonPassiveLockedIcon: Phaser.GameObjects.Sprite;
 
+  private activeTooltip: "ABILITY" | "PASSIVE" | "CANDY" | undefined;
   private instructionsContainer: Phaser.GameObjects.Container;
   private filterInstructionsContainer: Phaser.GameObjects.Container;
   private shinyIconElement: Phaser.GameObjects.Sprite;
@@ -561,10 +562,13 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.pokemonAbilityLabelText = addTextObject(this.scene, 6, 127 + starterInfoYOffset, i18next.t("starterSelectUiHandler:ability"), TextStyle.SUMMARY_ALT, { fontSize: starterInfoTextSize });
     this.pokemonAbilityLabelText.setOrigin(0, 0);
     this.pokemonAbilityLabelText.setVisible(false);
+
     this.starterSelectContainer.add(this.pokemonAbilityLabelText);
 
     this.pokemonAbilityText = addTextObject(this.scene, starterInfoXPos, 127 + starterInfoYOffset, "", TextStyle.SUMMARY_ALT, { fontSize: starterInfoTextSize });
     this.pokemonAbilityText.setOrigin(0, 0);
+    this.pokemonAbilityText.setInteractive(new Phaser.Geom.Rectangle(0, 0, 250, 55), Phaser.Geom.Rectangle.Contains);
+
     this.starterSelectContainer.add(this.pokemonAbilityText);
 
     this.pokemonPassiveLabelText = addTextObject(this.scene, 6, 136 + starterInfoYOffset, i18next.t("starterSelectUiHandler:passive"), TextStyle.SUMMARY_ALT, { fontSize: starterInfoTextSize });
@@ -574,6 +578,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
     this.pokemonPassiveText = addTextObject(this.scene, starterInfoXPos, 136 + starterInfoYOffset, "", TextStyle.SUMMARY_ALT, { fontSize: starterInfoTextSize });
     this.pokemonPassiveText.setOrigin(0, 0);
+    this.pokemonPassiveText.setInteractive(new Phaser.Geom.Rectangle(0, 0, 250, 55), Phaser.Geom.Rectangle.Contains);
     this.starterSelectContainer.add(this.pokemonPassiveText);
 
     this.pokemonPassiveDisabledIcon = this.scene.add.sprite(starterInfoXPos, 137 + starterInfoYOffset, "icon_stop");
@@ -622,11 +627,11 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
     const starterBoxContainer = this.scene.add.container(speciesContainerX + 6, 9); //115
 
-    this.starterSelectScrollBar = new ScrollBar(this.scene, 161, 12, 0);
+    this.starterSelectScrollBar = new ScrollBar(this.scene, 161, 12, 5, starterContainerWindow.height - 6, 9);
 
     starterBoxContainer.add(this.starterSelectScrollBar);
 
-    this.pokerusCursorObjs = new Array(3).fill(null).map(() => {
+    this.pokerusCursorObjs = new Array(POKERUS_STARTER_COUNT).fill(null).map(() => {
       const cursorObj = this.scene.add.image(0, 0, "select_cursor_pokerus");
       cursorObj.setVisible(false);
       cursorObj.setOrigin(0, 0);
@@ -755,7 +760,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.pokemonCaughtHatchedContainer.add(this.pokemonHatchedCountText);
 
     this.pokemonMovesContainer = this.scene.add.container(102, 16);
-    this.pokemonMovesContainer.setScale(0.5);
+    this.pokemonMovesContainer.setScale(0.375);
 
     for (let m = 0; m < 4; m++) {
       const moveContainer = this.scene.add.container(0, 14 * m);
@@ -889,6 +894,9 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.message.setOrigin(0, 0);
     this.starterSelectMessageBoxContainer.add(this.message);
 
+    // arrow icon for the message box
+    this.initPromptSprite(this.starterSelectMessageBoxContainer);
+
     this.statsContainer = new StatsContainer(this.scene, 6, 16);
 
     this.scene.add.existing(this.statsContainer);
@@ -906,7 +914,11 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       y: this.scene.game.canvas.height / 6 - MoveInfoOverlay.getHeight(overlayScale) - 29,
     });
     this.starterSelectContainer.add(this.moveInfoOverlay);
+
+    // Filter bar sits above everything, except the tutorial overlay and message box
     this.starterSelectContainer.bringToTop(this.filterBarContainer);
+    this.initTutorialOverlay(this.starterSelectContainer);
+    this.starterSelectContainer.bringToTop(this.starterSelectMessageBoxContainer);
 
     this.scene.eventTarget.addEventListener(BattleSceneEventType.CANDY_UPGRADE_NOTIFICATION_CHANGED, (e) => this.onCandyUpgradeDisplayChanged(e));
 
@@ -990,15 +1002,14 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       delete starterAttributes.shiny;
     }
 
-    if (starterAttributes.variant !== undefined && !isNaN(starterAttributes.variant)) {
+    if (starterAttributes.variant !== undefined) {
       const unlockedVariants = [
-        hasNonShiny,
         hasShiny && caughtAttr & DexAttr.DEFAULT_VARIANT,
         hasShiny && caughtAttr & DexAttr.VARIANT_2,
         hasShiny && caughtAttr & DexAttr.VARIANT_3
       ];
-      if (!unlockedVariants[starterAttributes.variant + 1]) { // add 1 as -1 = non-shiny
-        // requested variant wasn't unlocked, purging setting
+      if (isNaN(starterAttributes.variant) || starterAttributes.variant < 0 || !unlockedVariants[starterAttributes.variant]) {
+        // variant value is invalid or requested variant wasn't unlocked, purging setting
         delete starterAttributes.variant;
       }
     }
@@ -1212,6 +1223,19 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       starter.candyUpgradeIcon.setVisible(
         slotVisible && ( isPassiveAvailable || isValueReductionAvailable || isSameSpeciesEggAvailable ));
       starter.candyUpgradeOverlayIcon.setVisible(slotVisible && starter.candyUpgradeIcon.visible);
+    }
+  }
+
+  /**
+   * Update the display of candy upgrade icons or animations for the given StarterContainer
+   * @param starterContainer the container for the Pokemon to update
+   */
+  updateCandyUpgradeDisplay(starterContainer: StarterContainer) {
+    if (this.isUpgradeIconEnabled() ) {
+      this.setUpgradeIcon(starterContainer);
+    }
+    if (this.isUpgradeAnimationEnabled()) {
+      this.setUpgradeAnimation(starterContainer.icon, this.lastSpecies, true);
     }
   }
 
@@ -1619,7 +1643,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
               }
             });
           }
-          const candyCount = starterData.candyCount;
+
           const passiveAttr = starterData.passiveAttr;
           if (passiveAttr & PassiveAttr.UNLOCKED) { // this is for enabling and disabling the passive
             if (!(passiveAttr & PassiveAttr.ENABLED)) {
@@ -1700,8 +1724,13 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
               return true;
             }
           });
-          const showUseCandies = () => { // this lets you use your candies
+
+          // Purchases with Candy
+          const candyCount = starterData.candyCount;
+          const showUseCandies = () => {
             const options: any[] = []; // TODO: add proper type
+
+            // Unlock passive option
             if (!(passiveAttr & PassiveAttr.UNLOCKED)) {
               const passiveCost = getPassiveCandyCount(speciesStarters[this.lastSpecies.speciesId]);
               options.push({
@@ -1719,18 +1748,12 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
                       }
                     });
                     ui.setMode(Mode.STARTER_SELECT);
-                    this.setSpeciesDetails(this.lastSpecies, undefined, undefined, undefined, undefined, undefined, undefined);
+                    this.setSpeciesDetails(this.lastSpecies);
+                    this.scene.playSound("se/buy");
 
-                    // if starterContainer exists, update the passive background
+                    // update the passive background and icon/animation for available upgrade
                     if (starterContainer) {
-                      // Update the candy upgrade display
-                      if (this.isUpgradeIconEnabled() ) {
-                        this.setUpgradeIcon(starterContainer);
-                      }
-                      if (this.isUpgradeAnimationEnabled()) {
-                        this.setUpgradeAnimation(starterContainer.icon, this.lastSpecies, true);
-                      }
-
+                      this.updateCandyUpgradeDisplay(starterContainer);
                       starterContainer.starterPassiveBgs.setVisible(!!this.scene.gameData.starterData[this.lastSpecies.speciesId].passiveAttr);
                     }
                     return true;
@@ -1741,6 +1764,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
                 itemArgs: starterColors[this.lastSpecies.speciesId]
               });
             }
+
+            // Reduce cost option
             const valueReduction = starterData.valueReduction;
             if (valueReduction < valueReductionMax) {
               const reductionCost = getValueReductionCandyCounts(speciesStarters[this.lastSpecies.speciesId])[valueReduction];
@@ -1762,19 +1787,10 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
                     ui.setMode(Mode.STARTER_SELECT);
                     this.scene.playSound("se/buy");
 
-                    // if starterContainer exists, update the value reduction background
+                    // update the value label and icon/animation for available upgrade
                     if (starterContainer) {
                       this.updateStarterValueLabel(starterContainer);
-
-                      // If the notification setting is set to 'On', update the candy upgrade display
-                      if (this.scene.candyUpgradeNotification === 2) {
-                        if (this.isUpgradeIconEnabled() ) {
-                          this.setUpgradeIcon(starterContainer);
-                        }
-                        if (this.isUpgradeAnimationEnabled()) {
-                          this.setUpgradeAnimation(starterContainer.icon, this.lastSpecies, true);
-                        }
-                      }
+                      this.updateCandyUpgradeDisplay(starterContainer);
                     }
                     return true;
                   }
@@ -1806,6 +1822,11 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
                   });
                   ui.setMode(Mode.STARTER_SELECT);
                   this.scene.playSound("se/buy");
+
+                  // update the icon/animation for available upgrade
+                  if (starterContainer) {
+                    this.updateCandyUpgradeDisplay(starterContainer);
+                  }
 
                   return true;
                 }
@@ -1921,6 +1942,14 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
               }
             } while (newAbilityIndex !== this.abilityCursor);
             starterAttributes.ability = newAbilityIndex; // store the selected ability
+
+            const { visible: tooltipVisible } = this.scene.ui.getTooltip();
+
+            if (tooltipVisible && this.activeTooltip === "ABILITY") {
+              const newAbility = allAbilities[this.lastSpecies.getAbility(newAbilityIndex)];
+              this.scene.ui.editTooltip(`${newAbility.name}`, `${newAbility.description}`);
+            }
+
             this.setSpeciesDetails(this.lastSpecies, undefined, undefined, undefined, undefined, newAbilityIndex, undefined);
             success = true;
           }
@@ -2511,8 +2540,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       }
     });
 
-    this.starterSelectScrollBar.setPages(Math.max(Math.ceil(this.filteredStarterContainers.length / 9), 1));
-    this.starterSelectScrollBar.setPage(0);
+    this.starterSelectScrollBar.setTotalRows(Math.max(Math.ceil(this.filteredStarterContainers.length / 9), 1));
+    this.starterSelectScrollBar.setScrollCursor(0);
 
     // sort
     const sort = this.filterBar.getVals(DropDownColumn.SORT)[0];
@@ -2547,7 +2576,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     const onScreenFirstIndex = this.scrollCursor * maxColumns;
     const onScreenLastIndex = Math.min(this.filteredStarterContainers.length - 1, onScreenFirstIndex + maxRows * maxColumns -1);
 
-    this.starterSelectScrollBar.setPage(this.scrollCursor);
+    this.starterSelectScrollBar.setScrollCursor(this.scrollCursor);
 
     let pokerusCursorIndex = 0;
     this.filteredStarterContainers.forEach((container, i) => {
@@ -2687,11 +2716,29 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     }
   }
 
+  getFriendship(speciesId: number) {
+    let currentFriendship = this.scene.gameData.starterData[speciesId].friendship;
+    if (!currentFriendship || currentFriendship === undefined) {
+      currentFriendship = 0;
+    }
+
+    const friendshipCap = getStarterValueFriendshipCap(speciesStarters[speciesId]);
+
+    return { currentFriendship, friendshipCap };
+  }
+
   setSpecies(species: PokemonSpecies | null) {
     this.speciesStarterDexEntry = species ? this.scene.gameData.dexData[species.speciesId] : null;
     this.dexAttrCursor = species ? this.getCurrentDexProps(species.speciesId) : 0n;
     this.abilityCursor = species ? this.scene.gameData.getStarterSpeciesDefaultAbilityIndex(species) : 0;
     this.natureCursor = species ? this.scene.gameData.getSpeciesDefaultNature(species) : 0;
+
+    if (!species && this.scene.ui.getTooltip().visible) {
+      this.scene.ui.hideTooltip();
+    }
+
+    this.pokemonAbilityText.off("pointerover");
+    this.pokemonPassiveText.off("pointerover");
 
     const starterAttributes : StarterAttributes | null = species ? {...this.starterPreferences[species.speciesId]} : null;
 
@@ -2807,17 +2854,18 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           this.pokemonHatchedIcon.setVisible(true);
           this.pokemonHatchedCountText.setVisible(true);
 
-          let currentFriendship = this.scene.gameData.starterData[this.lastSpecies.speciesId].friendship;
-          if (!currentFriendship || currentFriendship === undefined) {
-            currentFriendship = 0;
-          }
-
-          const friendshipCap = getStarterValueFriendshipCap(speciesStarters[this.lastSpecies.speciesId]);
+          const { currentFriendship, friendshipCap } = this.getFriendship(this.lastSpecies.speciesId);
           const candyCropY = 16 - (16 * (currentFriendship / friendshipCap));
 
           if (this.pokemonCandyDarknessOverlay.visible) {
-            this.pokemonCandyDarknessOverlay.on("pointerover", () => (this.scene as BattleScene).ui.showTooltip("", `${currentFriendship}/${friendshipCap}`, true));
-            this.pokemonCandyDarknessOverlay.on("pointerout", () => (this.scene as BattleScene).ui.hideTooltip());
+            this.pokemonCandyDarknessOverlay.on("pointerover", () => {
+              this.scene.ui.showTooltip("", `${currentFriendship}/${friendshipCap}`, true);
+              this.activeTooltip = "CANDY";
+            });
+            this.pokemonCandyDarknessOverlay.on("pointerout", () => {
+              this.scene.ui.hideTooltip();
+              this.activeTooltip = undefined;
+            });
           }
 
           this.pokemonCandyDarknessOverlay.setCrop(0, 0, 16, candyCropY);
@@ -2863,7 +2911,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         }
 
         const speciesForm = getPokemonSpeciesForm(species.speciesId, props.formIndex);
-        this.setTypeIcons(speciesForm.type1, speciesForm!.type2!); // TODO: are those bangs correct?
+        this.setTypeIcons(speciesForm.type1, speciesForm.type2);
 
         this.pokemonSprite.clearTint();
         if (this.pokerusSpecies.includes(species)) {
@@ -2931,6 +2979,11 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.dexAttrCursor = 0n;
     this.abilityCursor = -1;
     this.natureCursor = -1;
+
+    if (this.activeTooltip === "CANDY") {
+      const { currentFriendship, friendshipCap } = this.getFriendship(this.lastSpecies.speciesId);
+      this.scene.ui.editTooltip("", `${currentFriendship}/${friendshipCap}`);
+    }
 
     if (species?.forms?.find(f => f.formKey === "female")) {
       if (female !== undefined) {
@@ -3081,8 +3134,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       }
 
       if (dexEntry.caughtAttr) {
-        const ability = this.lastSpecies.getAbility(abilityIndex!); // TODO: is this bang correct?
-        this.pokemonAbilityText.setText(allAbilities[ability].name);
+        const ability = allAbilities[this.lastSpecies.getAbility(abilityIndex!)]; // TODO: is this bang correct?
+        this.pokemonAbilityText.setText(ability.name);
 
         const isHidden = abilityIndex === (this.lastSpecies.ability2 ? 2 : 1);
         this.pokemonAbilityText.setColor(this.getTextColor(!isHidden ? TextStyle.SUMMARY_ALT : TextStyle.SUMMARY_GOLD));
@@ -3090,6 +3143,21 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
         const passiveAttr = this.scene.gameData.starterData[species.speciesId].passiveAttr;
         const passiveAbility = allAbilities[starterPassiveAbilities[this.lastSpecies.speciesId]];
+
+        if (this.pokemonAbilityText.visible) {
+          if (this.activeTooltip === "ABILITY") {
+            this.scene.ui.editTooltip(`${ability.name}`, `${ability.description}`);
+          }
+
+          this.pokemonAbilityText.on("pointerover", () => {
+            this.scene.ui.showTooltip(`${ability.name}`, `${ability.description}`, true);
+            this.activeTooltip = "ABILITY";
+          });
+          this.pokemonAbilityText.on("pointerout", () => {
+            this.scene.ui.hideTooltip();
+            this.activeTooltip = undefined;
+          });
+        }
 
         if (passiveAbility) {
           const isUnlocked = !!(passiveAttr & PassiveAttr.UNLOCKED);
@@ -3106,6 +3174,21 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           this.pokemonPassiveText.setColor(this.getTextColor(textStyle));
           this.pokemonPassiveText.setAlpha(textAlpha);
           this.pokemonPassiveText.setShadowColor(this.getTextColor(textStyle, true));
+
+          if (this.activeTooltip === "PASSIVE") {
+            this.scene.ui.editTooltip(`${passiveAbility.name}`, `${passiveAbility.description}`);
+          }
+
+          if (this.pokemonPassiveText.visible) {
+            this.pokemonPassiveText.on("pointerover", () => {
+              this.scene.ui.showTooltip(`${passiveAbility.name}`, `${passiveAbility.description}`, true);
+              this.activeTooltip = "PASSIVE";
+            });
+            this.pokemonPassiveText.on("pointerout", () => {
+              this.scene.ui.hideTooltip();
+              this.activeTooltip = undefined;
+            });
+          }
 
           const iconPosition = {
             x: this.pokemonPassiveText.x + this.pokemonPassiveText.displayWidth + 1,
@@ -3165,13 +3248,12 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           this.pokemonFormText.setText(formText ? i18next.t(`pokemonForm:${speciesName}${formText}`) : "");
         }
 
-        this.setTypeIcons(speciesForm.type1, speciesForm.type2!); // TODO: is this bang correct?
+        this.setTypeIcons(speciesForm.type1, speciesForm.type2);
       } else {
         this.pokemonAbilityText.setText("");
         this.pokemonPassiveText.setText("");
         this.pokemonNatureText.setText("");
-        // @ts-ignore
-        this.setTypeIcons(null, null); // TODO: resolve ts-ignore.. huh!?
+        this.setTypeIcons(null, null);
       }
     } else {
       this.shinyOverlay.setVisible(false);
@@ -3181,8 +3263,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       this.pokemonAbilityText.setText("");
       this.pokemonPassiveText.setText("");
       this.pokemonNatureText.setText("");
-      // @ts-ignore
-      this.setTypeIcons(null, null); // TODO: resolve ts-ignore.. huh!?
+      this.setTypeIcons(null, null);
     }
 
     if (!this.starterMoveset) {
@@ -3215,7 +3296,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.updateInstructions();
   }
 
-  setTypeIcons(type1: Type, type2: Type): void {
+  setTypeIcons(type1: Type | null, type2: Type | null): void {
     if (type1 !== null) {
       this.type1Icon.setVisible(true);
       this.type1Icon.setFrame(Type[type1].toLowerCase());

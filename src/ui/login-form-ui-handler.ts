@@ -8,7 +8,21 @@ import { addTextObject, TextStyle } from "./text";
 import { addWindow } from "./ui-theme";
 import { OptionSelectItem } from "#app/ui/abstact-option-select-ui-handler";
 
+interface BuildInteractableImageOpts {
+  scale?: number;
+  x?: number;
+  y?: number;
+  origin?: { x: number; y: number };
+}
+
 export default class LoginFormUiHandler extends FormModalUiHandler {
+  private readonly ERR_USERNAME: string = "invalid username";
+  private readonly ERR_PASSWORD: string =  "invalid password";
+  private readonly ERR_ACCOUNT_EXIST: string =  "account doesn't exist";
+  private readonly ERR_PASSWORD_MATCH: string =  "password doesn't match";
+  private readonly ERR_NO_SAVES: string = "No save files found";
+  private readonly ERR_TOO_MANY_SAVES: string = "Too many save files found";
+
   private googleImage: Phaser.GameObjects.Image;
   private discordImage: Phaser.GameObjects.Image;
   private usernameInfoImage: Phaser.GameObjects.Image;
@@ -21,8 +35,23 @@ export default class LoginFormUiHandler extends FormModalUiHandler {
   }
 
   setup(): void {
-
     super.setup();
+    this.buildExternalPartyContainer();
+
+    this.infoContainer = this.scene.add.container(0, 0);
+
+    this.usernameInfoImage = this.buildInteractableImage("settings_icon", "username-info-icon", {
+      x: 20,
+      scale: 0.5
+    });
+
+    this.infoContainer.add(this.usernameInfoImage);
+    this.getUi().add(this.infoContainer);
+    this.infoContainer.setVisible(false);
+    this.infoContainer.disableInteractive();
+  }
+
+  private buildExternalPartyContainer() {
     this.externalPartyContainer = this.scene.add.container(0, 0);
     this.externalPartyContainer.setInteractive(new Phaser.Geom.Rectangle(0, 0, this.scene.game.canvas.width / 12, this.scene.game.canvas.height / 12), Phaser.Geom.Rectangle.Contains);
     this.externalPartyTitle = addTextObject(this.scene, 0, 4, "", TextStyle.SETTINGS_LABEL);
@@ -31,23 +60,8 @@ export default class LoginFormUiHandler extends FormModalUiHandler {
     this.externalPartyContainer.add(this.externalPartyBg);
     this.externalPartyContainer.add(this.externalPartyTitle);
 
-    this.infoContainer = this.scene.add.container(0, 0);
-    this.infoContainer.setInteractive(new Phaser.Geom.Rectangle(0, 0, this.scene.game.canvas.width / 12, this.scene.game.canvas.height / 12), Phaser.Geom.Rectangle.Contains);
-
-    const googleImage = this.scene.add.image(0, 0, "google");
-    googleImage.setOrigin(0, 0);
-    googleImage.setScale(0.07);
-    googleImage.setInteractive();
-    googleImage.setName("google-icon");
-    this.googleImage = googleImage;
-
-    const discordImage = this.scene.add.image(20, 0, "discord");
-    discordImage.setOrigin(0, 0);
-    discordImage.setScale(0.07);
-    discordImage.setInteractive();
-    discordImage.setName("discord-icon");
-
-    this.discordImage = discordImage;
+    this.googleImage = this.buildInteractableImage("google", "google-icon");
+    this.discordImage = this.buildInteractableImage("discord", "discord-icon");
 
     this.externalPartyContainer.add(this.googleImage);
     this.externalPartyContainer.add(this.discordImage);
@@ -55,59 +69,52 @@ export default class LoginFormUiHandler extends FormModalUiHandler {
     this.externalPartyContainer.add(this.googleImage);
     this.externalPartyContainer.add(this.discordImage);
     this.externalPartyContainer.setVisible(false);
-
-    const usernameInfoImage = this.scene.add.image(20, 0, "settings_icon");
-    usernameInfoImage.setOrigin(0, 0);
-    usernameInfoImage.setScale(0.5);
-    usernameInfoImage.setInteractive();
-    usernameInfoImage.setName("username-info-icon");
-    this.usernameInfoImage = usernameInfoImage;
-
-    this.infoContainer.add(this.usernameInfoImage);
-    this.getUi().add(this.infoContainer);
-    this.infoContainer.setVisible(false);
   }
 
-  getModalTitle(config?: ModalConfig): string {
+  override getModalTitle(_config?: ModalConfig): string {
     return i18next.t("menu:login");
   }
 
-  getFields(config?: ModalConfig): string[] {
+  override getFields(_config?: ModalConfig): string[] {
     return [ i18next.t("menu:username"), i18next.t("menu:password") ];
   }
 
-  getWidth(config?: ModalConfig): number {
+  override getWidth(_config?: ModalConfig): number {
     return 160;
   }
 
-  getMargin(config?: ModalConfig): [number, number, number, number] {
+  override getMargin(_config?: ModalConfig): [number, number, number, number] {
     return [ 0, 0, 48, 0 ];
   }
 
-  getButtonLabels(config?: ModalConfig): string[] {
+  override getButtonLabels(_config?: ModalConfig): string[] {
     return [ i18next.t("menu:login"), i18next.t("menu:register")];
   }
 
-  getReadableErrorMessage(error: string): string {
+  override getReadableErrorMessage(error: string): string {
     const colonIndex = error?.indexOf(":");
     if (colonIndex > 0) {
       error = error.slice(0, colonIndex);
     }
     switch (error) {
-    case "invalid username":
+    case this.ERR_USERNAME:
       return i18next.t("menu:invalidLoginUsername");
-    case "invalid password":
+    case this.ERR_PASSWORD:
       return i18next.t("menu:invalidLoginPassword");
-    case "account doesn't exist":
+    case this.ERR_ACCOUNT_EXIST:
       return i18next.t("menu:accountNonExistent");
-    case "password doesn't match":
+    case this.ERR_PASSWORD_MATCH:
       return i18next.t("menu:unmatchingPassword");
+    case this.ERR_NO_SAVES:
+      return i18next.t("menu:noSaves");
+    case this.ERR_TOO_MANY_SAVES:
+      return i18next.t("menu:tooManySaves");
     }
 
     return super.getReadableErrorMessage(error);
   }
 
-  show(args: any[]): boolean {
+  override show(args: any[]): boolean {
     if (super.show(args)) {
 
       const config = args[0] as ModalConfig;
@@ -148,17 +155,16 @@ export default class LoginFormUiHandler extends FormModalUiHandler {
     return false;
   }
 
-  clear() {
+  override clear() {
     super.clear();
     this.externalPartyContainer.setVisible(false);
     this.infoContainer.setVisible(false);
+    this.setMouseCursorStyle("default"); //reset cursor
 
-    this.discordImage.off("pointerdown");
-    this.googleImage.off("pointerdown");
-    this.usernameInfoImage.off("pointerdown");
+    [this.discordImage, this.googleImage, this.usernameInfoImage].forEach((img) => img.off("pointerdown"));
   }
 
-  processExternalProvider(config: ModalConfig) : void {
+  private processExternalProvider(config: ModalConfig) : void {
     this.externalPartyTitle.setText(i18next.t("menu:orUse") ?? "");
     this.externalPartyTitle.setX(20+this.externalPartyTitle.text.length);
     this.externalPartyTitle.setVisible(true);
@@ -205,6 +211,7 @@ export default class LoginFormUiHandler extends FormModalUiHandler {
             label: dataKeys[i].replace(keyToFind, ""),
             handler: () => {
               this.scene.ui.revertMode();
+              this.infoContainer.disableInteractive();
               return true;
             }
           });
@@ -213,8 +220,13 @@ export default class LoginFormUiHandler extends FormModalUiHandler {
           options: options,
           delay: 1000
         });
+        this.infoContainer.setInteractive(new Phaser.Geom.Rectangle(0, 0, this.scene.game.canvas.width, this.scene.game.canvas.height), Phaser.Geom.Rectangle.Contains);
       } else {
-        return onFail("You have too many save files to use this");
+        if (dataKeys.length > 2) {
+          return onFail(this.ERR_TOO_MANY_SAVES);
+        } else {
+          return onFail(this.ERR_NO_SAVES);
+        }
       }
     });
 
@@ -235,5 +247,22 @@ export default class LoginFormUiHandler extends FormModalUiHandler {
       y: "-=24",
       alpha: 1
     });
+  }
+
+  private buildInteractableImage(texture: string, name: string, opts: BuildInteractableImageOpts = {}) {
+    const {
+      scale = 0.07,
+      x = 0,
+      y = 0,
+      origin = { x: 0, y: 0 }
+    } = opts;
+    const img = this.scene.add.image(x, y, texture);
+    img.setName(name);
+    img.setOrigin(origin.x, origin.y);
+    img.setScale(scale);
+    img.setInteractive();
+    this.addInteractionHoverEffect(img);
+
+    return img;
   }
 }

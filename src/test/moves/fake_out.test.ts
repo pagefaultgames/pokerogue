@@ -3,7 +3,6 @@ import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import { SPLASH_ONLY } from "../utils/testUtils";
 
 describe("Moves - Fake Out", () => {
   let phaserGame: Phaser.Game;
@@ -26,7 +25,7 @@ describe("Moves - Fake Out", () => {
       .enemySpecies(Species.CORVIKNIGHT)
       .starterSpecies(Species.FEEBAS)
       .moveset([Moves.FAKE_OUT, Moves.SPLASH])
-      .enemyMoveset(SPLASH_ONLY)
+      .enemyMoveset(Moves.SPLASH)
       .disableCrits();
   });
 

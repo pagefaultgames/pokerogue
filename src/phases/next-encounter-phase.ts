@@ -1,4 +1,4 @@
-import BattleScene from "#app/battle-scene.js";
+import BattleScene from "#app/battle-scene";
 import { EncounterPhase } from "./encounter-phase";
 
 export class NextEncounterPhase extends EncounterPhase {
@@ -23,8 +23,28 @@ export class NextEncounterPhase extends EncounterPhase {
     this.scene.arenaNextEnemy.setVisible(true);
 
     const enemyField = this.scene.getEnemyField();
+    const moveTargets: any[] = [this.scene.arenaEnemy, this.scene.arenaNextEnemy, this.scene.currentBattle.trainer, enemyField, this.scene.lastEnemyTrainer];
+    const lastEncounterVisuals = this.scene.lastMysteryEncounter?.introVisuals;
+    if (lastEncounterVisuals) {
+      moveTargets.push(lastEncounterVisuals);
+    }
+    const nextEncounterVisuals = this.scene.currentBattle.mysteryEncounter?.introVisuals;
+    if (nextEncounterVisuals) {
+      const enterFromRight = nextEncounterVisuals.enterFromRight;
+      if (enterFromRight) {
+        nextEncounterVisuals.x += 500;
+        this.scene.tweens.add({
+          targets: nextEncounterVisuals,
+          x: "-=200",
+          duration: 2000
+        });
+      } else {
+        moveTargets.push(nextEncounterVisuals);
+      }
+    }
+
     this.scene.tweens.add({
-      targets: [this.scene.arenaEnemy, this.scene.arenaNextEnemy, this.scene.currentBattle.trainer, enemyField, this.scene.lastEnemyTrainer].flat(),
+      targets: moveTargets.flat(),
       x: "+=300",
       duration: 2000,
       onComplete: () => {
@@ -36,11 +56,21 @@ export class NextEncounterPhase extends EncounterPhase {
         if (this.scene.lastEnemyTrainer) {
           this.scene.lastEnemyTrainer.destroy();
         }
+        if (lastEncounterVisuals) {
+          this.scene.field.remove(lastEncounterVisuals, true);
+          this.scene.lastMysteryEncounter!.introVisuals = undefined;
+        }
 
         if (!this.tryOverrideForBattleSpec()) {
           this.doEncounterCommon();
         }
       }
     });
+  }
+
+  /**
+   * Do nothing (since this is simply the next wave in the same biome).
+   */
+  trySetWeatherIfNewBiome(): void {
   }
 }

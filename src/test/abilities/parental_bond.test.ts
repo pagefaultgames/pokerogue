@@ -7,7 +7,6 @@ import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/utils/gameManager";
-import { SPLASH_ONLY } from "#test/utils/testUtils";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
@@ -34,7 +33,7 @@ describe("Abilities - Parental Bond", () => {
     game.override.ability(Abilities.PARENTAL_BOND);
     game.override.enemySpecies(Species.SNORLAX);
     game.override.enemyAbility(Abilities.FUR_COAT);
-    game.override.enemyMoveset(SPLASH_ONLY);
+    game.override.enemyMoveset(Moves.SPLASH);
     game.override.startingLevel(100);
     game.override.enemyLevel(100);
   });
@@ -175,7 +174,7 @@ describe("Abilities - Parental Bond", () => {
     "should not apply multiplier to counter moves",
     async () => {
       game.override.moveset([Moves.COUNTER]);
-      game.override.enemyMoveset(Array(4).fill(Moves.TACKLE));
+      game.override.enemyMoveset([Moves.TACKLE]);
 
       await game.classicMode.startBattle([Species.SHUCKLE]);
 
@@ -465,7 +464,7 @@ describe("Abilities - Parental Bond", () => {
     "should not cause user to hit into King's Shield more than once",
     async () => {
       game.override.moveset([Moves.TACKLE]);
-      game.override.enemyMoveset(Array(4).fill(Moves.KINGS_SHIELD));
+      game.override.enemyMoveset([Moves.KINGS_SHIELD]);
 
       await game.classicMode.startBattle([Species.MAGIKARP]);
 

@@ -6,13 +6,14 @@ import { PokeballType } from "#enums/pokeball";
 import { Species } from "#enums/species";
 import { StatusEffect } from "#enums/status-effect";
 import { TimeOfDay } from "#enums/time-of-day";
-import { VariantTier } from "#enums/variant-tiers";
+import { VariantTier } from "#enums/variant-tier";
 import { WeatherType } from "#enums/weather-type";
 import { type PokeballCounts } from "./battle-scene";
 import { Gender } from "./data/gender";
-import { allSpecies } from "./data/pokemon-species"; // eslint-disable-line @typescript-eslint/no-unused-vars
 import { Variant } from "./data/variant";
 import { type ModifierOverride } from "./modifier/modifier-type";
+import { MysteryEncounterType } from "#enums/mystery-encounter-type";
+import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 
 /**
  * Overrides that are using when testing different in game situations
@@ -69,6 +70,8 @@ class DefaultOverrides {
       [PokeballType.MASTER_BALL]: 0,
     },
   };
+  /** Set to `true` to show all tutorials */
+  readonly BYPASS_TUTORIAL_SKIP: boolean = false;
 
   // ----------------
   // PLAYER OVERRIDES
@@ -98,7 +101,7 @@ class DefaultOverrides {
   readonly PASSIVE_ABILITY_OVERRIDE: Abilities = Abilities.NONE;
   readonly STATUS_OVERRIDE: StatusEffect = StatusEffect.NONE;
   readonly GENDER_OVERRIDE: Gender | null = null;
-  readonly MOVESET_OVERRIDE: Array<Moves> = [];
+  readonly MOVESET_OVERRIDE: Moves | Array<Moves> = [];
   readonly SHINY_OVERRIDE: boolean = false;
   readonly VARIANT_OVERRIDE: Variant = 0;
 
@@ -111,7 +114,7 @@ class DefaultOverrides {
   readonly OPP_PASSIVE_ABILITY_OVERRIDE: Abilities = Abilities.NONE;
   readonly OPP_STATUS_OVERRIDE: StatusEffect = StatusEffect.NONE;
   readonly OPP_GENDER_OVERRIDE: Gender | null = null;
-  readonly OPP_MOVESET_OVERRIDE: Array<Moves> = [];
+  readonly OPP_MOVESET_OVERRIDE: Moves | Array<Moves> = [];
   readonly OPP_SHINY_OVERRIDE: boolean = false;
   readonly OPP_VARIANT_OVERRIDE: Variant = 0;
   readonly OPP_IVS_OVERRIDE: number | number[] = [];
@@ -134,6 +137,15 @@ class DefaultOverrides {
   readonly EGG_VARIANT_OVERRIDE: VariantTier | null = null;
   readonly EGG_FREE_GACHA_PULLS_OVERRIDE: boolean = false;
   readonly EGG_GACHA_PULL_COUNT_OVERRIDE: number = 0;
+
+  // -------------------------
+  // MYSTERY ENCOUNTER OVERRIDES
+  // -------------------------
+
+  /** 1 to 256, set to null to ignore */
+  readonly MYSTERY_ENCOUNTER_RATE_OVERRIDE: number | null = null;
+  readonly MYSTERY_ENCOUNTER_TIER_OVERRIDE: MysteryEncounterTier | null = null;
+  readonly MYSTERY_ENCOUNTER_OVERRIDE: MysteryEncounterType | null = null;
 
   // -------------------------
   // MODIFIER / ITEM OVERRIDES
