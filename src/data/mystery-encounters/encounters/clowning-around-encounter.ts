@@ -33,7 +33,7 @@ import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES, GameModes } from "#app/game-mode"
 import { EncounterAnim } from "#enums/encounter-anims";
 
 /** the i18n namespace for the encounter */
-const namespace = "mysteryEncounter:clowningAround";
+const namespace = "mysteryEncounters/clowningAround";
 
 const RANDOM_ABILITY_POOL = [
   Abilities.STURDY,
@@ -97,11 +97,11 @@ export const ClowningAroundEncounter: MysteryEncounter =
     ])
     .withIntroDialogue([
       {
-        text: `${namespace}.intro`,
+        text: `${namespace}:intro`,
       },
       {
-        text: `${namespace}.intro_dialogue`,
-        speaker: `${namespace}.speaker`
+        text: `${namespace}:intro_dialogue`,
+        speaker: `${namespace}:speaker`
       },
     ])
     .withOnInit((scene: BattleScene) => {
@@ -147,19 +147,19 @@ export const ClowningAroundEncounter: MysteryEncounter =
 
       return true;
     })
-    .withTitle(`${namespace}.title`)
-    .withDescription(`${namespace}.description`)
-    .withQuery(`${namespace}.query`)
+    .withTitle(`${namespace}:title`)
+    .withDescription(`${namespace}:description`)
+    .withQuery(`${namespace}:query`)
     .withOption(
       MysteryEncounterOptionBuilder
         .newOptionWithMode(MysteryEncounterOptionMode.DEFAULT)
         .withDialogue({
-          buttonLabel: `${namespace}.option.1.label`,
-          buttonTooltip: `${namespace}.option.1.tooltip`,
+          buttonLabel: `${namespace}:option.1.label`,
+          buttonTooltip: `${namespace}:option.1.tooltip`,
           selected: [
             {
-              text: `${namespace}.option.1.selected`,
-              speaker: `${namespace}.speaker`
+              text: `${namespace}:option.1.selected`,
+              speaker: `${namespace}:speaker`
             },
           ],
         })
@@ -198,7 +198,7 @@ export const ClowningAroundEncounter: MysteryEncounter =
           // After the battle, offer the player the opportunity to permanently swap ability
           const abilityWasSwapped = await handleSwapAbility(scene);
           if (abilityWasSwapped) {
-            await showEncounterText(scene, `${namespace}.option.1.ability_gained`);
+            await showEncounterText(scene, `${namespace}:option.1.ability_gained`);
           }
 
           // Play animations once ability swap is complete
@@ -221,19 +221,19 @@ export const ClowningAroundEncounter: MysteryEncounter =
       MysteryEncounterOptionBuilder
         .newOptionWithMode(MysteryEncounterOptionMode.DEFAULT)
         .withDialogue({
-          buttonLabel: `${namespace}.option.2.label`,
-          buttonTooltip: `${namespace}.option.2.tooltip`,
+          buttonLabel: `${namespace}:option.2.label`,
+          buttonTooltip: `${namespace}:option.2.tooltip`,
           selected: [
             {
-              text: `${namespace}.option.2.selected`,
-              speaker: `${namespace}.speaker`
+              text: `${namespace}:option.2.selected`,
+              speaker: `${namespace}:speaker`
             },
             {
-              text: `${namespace}.option.2.selected_2`,
+              text: `${namespace}:option.2.selected_2`,
             },
             {
-              text: `${namespace}.option.2.selected_3`,
-              speaker: `${namespace}.speaker`
+              text: `${namespace}:option.2.selected_3`,
+              speaker: `${namespace}:speaker`
             },
           ],
         })
@@ -307,19 +307,19 @@ export const ClowningAroundEncounter: MysteryEncounter =
       MysteryEncounterOptionBuilder
         .newOptionWithMode(MysteryEncounterOptionMode.DEFAULT)
         .withDialogue({
-          buttonLabel: `${namespace}.option.3.label`,
-          buttonTooltip: `${namespace}.option.3.tooltip`,
+          buttonLabel: `${namespace}:option.3.label`,
+          buttonTooltip: `${namespace}:option.3.tooltip`,
           selected: [
             {
-              text: `${namespace}.option.3.selected`,
-              speaker: `${namespace}.speaker`
+              text: `${namespace}:option.3.selected`,
+              speaker: `${namespace}:speaker`
             },
             {
-              text: `${namespace}.option.3.selected_2`,
+              text: `${namespace}:option.3.selected_2`,
             },
             {
-              text: `${namespace}.option.3.selected_3`,
-              speaker: `${namespace}.speaker`
+              text: `${namespace}:option.3.selected_3`,
+              speaker: `${namespace}:speaker`
             },
           ],
         })
@@ -368,15 +368,15 @@ export const ClowningAroundEncounter: MysteryEncounter =
     )
     .withOutroDialogue([
       {
-        text: `${namespace}.outro`,
+        text: `${namespace}:outro`,
       },
     ])
     .build();
 
 async function handleSwapAbility(scene: BattleScene) {
   return new Promise<boolean>(async resolve => {
-    await showEncounterDialogue(scene, `${namespace}.option.1.apply_ability_dialogue`, `${namespace}.speaker`);
-    await showEncounterText(scene, `${namespace}.option.1.apply_ability_message`);
+    await showEncounterDialogue(scene, `${namespace}:option.1.apply_ability_dialogue`, `${namespace}:speaker`);
+    await showEncounterText(scene, `${namespace}:option.1.apply_ability_message`);
 
     scene.ui.setMode(Mode.MESSAGE).then(() => {
       displayYesNoOptions(scene, resolve);
@@ -385,7 +385,7 @@ async function handleSwapAbility(scene: BattleScene) {
 }
 
 function displayYesNoOptions(scene: BattleScene, resolve) {
-  showEncounterText(scene, `${namespace}.option.1.ability_prompt`, null, 500, false);
+  showEncounterText(scene, `${namespace}:option.1.ability_prompt`, null, 500, false);
   const fullOptions = [
     {
       label: i18next.t("menu:yes"),

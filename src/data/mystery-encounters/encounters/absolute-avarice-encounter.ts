@@ -26,7 +26,7 @@ import { Stat } from "#enums/stat";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
 
 /** the i18n namespace for this encounter */
-const namespace = "mysteryEncounter:absoluteAvarice";
+const namespace = "mysteryEncounters/absoluteAvarice";
 
 /**
  * Absolute Avarice encounter.
@@ -167,12 +167,12 @@ export const AbsoluteAvariceEncounter: MysteryEncounter =
     })
     .withIntroDialogue([
       {
-        text: `${namespace}.intro`,
+        text: `${namespace}:intro`,
       }
     ])
-    .withTitle(`${namespace}.title`)
-    .withDescription(`${namespace}.description`)
-    .withQuery(`${namespace}.query`)
+    .withTitle(`${namespace}:title`)
+    .withDescription(`${namespace}:description`)
+    .withQuery(`${namespace}:query`)
     .withOnInit((scene: BattleScene) => {
       const encounter = scene.currentBattle.mysteryEncounter!;
 
@@ -218,7 +218,7 @@ export const AbsoluteAvariceEncounter: MysteryEncounter =
             modifierConfigs: bossModifierConfigs,
             tags: [BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON],
             mysteryEncounterBattleEffects: (pokemon: Pokemon) => {
-              queueEncounterMessage(pokemon.scene, `${namespace}.option.1.boss_enraged`);
+              queueEncounterMessage(pokemon.scene, `${namespace}:option.1.boss_enraged`);
               pokemon.scene.unshiftPhase(new StatStageChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [Stat.ATK, Stat.DEF, Stat.SPATK, Stat.SPDEF, Stat.SPD], 1));
             }
           }
@@ -234,11 +234,11 @@ export const AbsoluteAvariceEncounter: MysteryEncounter =
       MysteryEncounterOptionBuilder
         .newOptionWithMode(MysteryEncounterOptionMode.DEFAULT)
         .withDialogue({
-          buttonLabel: `${namespace}.option.1.label`,
-          buttonTooltip: `${namespace}.option.1.tooltip`,
+          buttonLabel: `${namespace}:option.1.label`,
+          buttonTooltip: `${namespace}:option.1.tooltip`,
           selected: [
             {
-              text: `${namespace}.option.1.selected`,
+              text: `${namespace}:option.1.selected`,
             },
           ],
         })
@@ -259,7 +259,7 @@ export const AbsoluteAvariceEncounter: MysteryEncounter =
                 scene.addModifier(seedModifier, false, false, false, true);
               }
             });
-            queueEncounterMessage(scene, `${namespace}.option.1.food_stash`);
+            queueEncounterMessage(scene, `${namespace}:option.1.food_stash`);
           };
 
           setEncounterRewards(scene, { fillRemaining: true }, undefined, givePartyPokemonReviverSeeds);
@@ -279,11 +279,11 @@ export const AbsoluteAvariceEncounter: MysteryEncounter =
       MysteryEncounterOptionBuilder
         .newOptionWithMode(MysteryEncounterOptionMode.DEFAULT)
         .withDialogue({
-          buttonLabel: `${namespace}.option.2.label`,
-          buttonTooltip: `${namespace}.option.2.tooltip`,
+          buttonLabel: `${namespace}:option.2.label`,
+          buttonTooltip: `${namespace}:option.2.tooltip`,
           selected: [
             {
-              text: `${namespace}.option.2.selected`,
+              text: `${namespace}:option.2.selected`,
             },
           ],
         })
@@ -321,11 +321,11 @@ export const AbsoluteAvariceEncounter: MysteryEncounter =
       MysteryEncounterOptionBuilder
         .newOptionWithMode(MysteryEncounterOptionMode.DEFAULT)
         .withDialogue({
-          buttonLabel: `${namespace}.option.3.label`,
-          buttonTooltip: `${namespace}.option.3.tooltip`,
+          buttonLabel: `${namespace}:option.3.label`,
+          buttonTooltip: `${namespace}:option.3.tooltip`,
           selected: [
             {
-              text: `${namespace}.option.3.selected`,
+              text: `${namespace}:option.3.selected`,
             },
           ],
         })

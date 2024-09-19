@@ -15,7 +15,7 @@ import { ModifierRewardPhase } from "#app/phases/modifier-reward-phase";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
 
 /** the i18n namespace for this encounter */
-const namespace = "mysteryEncounter:offerYouCantRefuse";
+const namespace = "mysteryEncounters/offerYouCantRefuse";
 
 /**
  * An Offer You Can't Refuse encounter.
@@ -48,16 +48,16 @@ export const AnOfferYouCantRefuseEncounter: MysteryEncounter =
     ])
     .withIntroDialogue([
       {
-        text: `${namespace}.intro`,
+        text: `${namespace}:intro`,
       },
       {
-        text: `${namespace}.intro_dialogue`,
-        speaker: `${namespace}.speaker`,
+        text: `${namespace}:intro_dialogue`,
+        speaker: `${namespace}:speaker`,
       },
     ])
-    .withTitle(`${namespace}.title`)
-    .withDescription(`${namespace}.description`)
-    .withQuery(`${namespace}.query`)
+    .withTitle(`${namespace}:title`)
+    .withDescription(`${namespace}:description`)
+    .withQuery(`${namespace}:query`)
     .withOnInit((scene: BattleScene) => {
       const encounter = scene.currentBattle.mysteryEncounter!;
       const pokemon = getHighestStatTotalPlayerPokemon(scene, false);
@@ -92,12 +92,12 @@ export const AnOfferYouCantRefuseEncounter: MysteryEncounter =
       MysteryEncounterOptionBuilder
         .newOptionWithMode(MysteryEncounterOptionMode.DEFAULT)
         .withDialogue({
-          buttonLabel: `${namespace}.option.1.label`,
-          buttonTooltip: `${namespace}.option.1.tooltip`,
+          buttonLabel: `${namespace}:option.1.label`,
+          buttonTooltip: `${namespace}:option.1.tooltip`,
           selected: [
             {
-              text: `${namespace}.option.1.selected`,
-              speaker: `${namespace}.speaker`,
+              text: `${namespace}:option.1.selected`,
+              speaker: `${namespace}:speaker`,
             },
           ],
         })
@@ -123,13 +123,13 @@ export const AnOfferYouCantRefuseEncounter: MysteryEncounter =
           new AbilityRequirement(EXTORTION_ABILITIES))
         )
         .withDialogue({
-          buttonLabel: `${namespace}.option.2.label`,
-          buttonTooltip: `${namespace}.option.2.tooltip`,
-          disabledButtonTooltip: `${namespace}.option.2.tooltip_disabled`,
+          buttonLabel: `${namespace}:option.2.label`,
+          buttonTooltip: `${namespace}:option.2.tooltip`,
+          disabledButtonTooltip: `${namespace}:option.2.tooltip_disabled`,
           selected: [
             {
-              speaker: `${namespace}.speaker`,
-              text: `${namespace}.option.2.selected`,
+              speaker: `${namespace}:speaker`,
+              text: `${namespace}:option.2.selected`,
             },
           ],
         })
@@ -147,12 +147,12 @@ export const AnOfferYouCantRefuseEncounter: MysteryEncounter =
     )
     .withSimpleOption(
       {
-        buttonLabel: `${namespace}.option.3.label`,
-        buttonTooltip: `${namespace}.option.3.tooltip`,
+        buttonLabel: `${namespace}:option.3.label`,
+        buttonTooltip: `${namespace}:option.3.tooltip`,
         selected: [
           {
-            speaker: `${namespace}.speaker`,
-            text: `${namespace}.option.3.selected`,
+            speaker: `${namespace}:speaker`,
+            text: `${namespace}:option.3.selected`,
           },
         ],
       },

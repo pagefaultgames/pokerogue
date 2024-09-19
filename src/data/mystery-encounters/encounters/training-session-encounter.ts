@@ -22,7 +22,7 @@ import { getStatKey } from "#enums/stat";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
 
 /** The i18n namespace for the encounter */
-const namespace = "mysteryEncounter:trainingSession";
+const namespace = "mysteryEncounters/trainingSession";
 
 /**
  * Training Session encounter.
@@ -48,22 +48,22 @@ export const TrainingSessionEncounter: MysteryEncounter =
     ])
     .withIntroDialogue([
       {
-        text: `${namespace}.intro`,
+        text: `${namespace}:intro`,
       }
     ])
-    .withTitle(`${namespace}.title`)
-    .withDescription(`${namespace}.description`)
-    .withQuery(`${namespace}.query`)
+    .withTitle(`${namespace}:title`)
+    .withDescription(`${namespace}:description`)
+    .withQuery(`${namespace}:query`)
     .withOption(
       MysteryEncounterOptionBuilder
         .newOptionWithMode(MysteryEncounterOptionMode.DEFAULT)
         .withHasDexProgress(true)
         .withDialogue({
-          buttonLabel: `${namespace}.option.1.label`,
-          buttonTooltip: `${namespace}.option.1.tooltip`,
+          buttonLabel: `${namespace}:option.1.label`,
+          buttonTooltip: `${namespace}:option.1.tooltip`,
           selected: [
             {
-              text: `${namespace}.option.selected`,
+              text: `${namespace}:option.selected`,
             },
           ],
         })
@@ -79,7 +79,7 @@ export const TrainingSessionEncounter: MysteryEncounter =
           const selectableFilter = (pokemon: Pokemon) => {
             const meetsReqs = pokemon.isAllowedInBattle();
             if (!meetsReqs) {
-              return getEncounterText(scene, `${namespace}.invalid_selection`) ?? null;
+              return getEncounterText(scene, `${namespace}:invalid_selection`) ?? null;
             }
 
             return null;
@@ -163,7 +163,7 @@ export const TrainingSessionEncounter: MysteryEncounter =
               scene.addModifier(mod, true, false, false, true);
             }
             scene.updateModifiers(true);
-            queueEncounterMessage(scene, `${namespace}.option.1.finished`);
+            queueEncounterMessage(scene, `${namespace}:option.1.finished`);
           };
 
           setEncounterRewards(scene, { fillRemaining: true }, undefined, onBeforeRewardsPhase);
@@ -177,12 +177,12 @@ export const TrainingSessionEncounter: MysteryEncounter =
         .newOptionWithMode(MysteryEncounterOptionMode.DEFAULT)
         .withHasDexProgress(true)
         .withDialogue({
-          buttonLabel: `${namespace}.option.2.label`,
-          buttonTooltip: `${namespace}.option.2.tooltip`,
-          secondOptionPrompt: `${namespace}.option.2.select_prompt`,
+          buttonLabel: `${namespace}:option.2.label`,
+          buttonTooltip: `${namespace}:option.2.tooltip`,
+          secondOptionPrompt: `${namespace}:option.2.select_prompt`,
           selected: [
             {
-              text: `${namespace}.option.selected`,
+              text: `${namespace}:option.selected`,
             },
           ],
         })
@@ -213,7 +213,7 @@ export const TrainingSessionEncounter: MysteryEncounter =
           const selectableFilter = (pokemon: Pokemon) => {
             const meetsReqs = pokemon.isAllowedInBattle();
             if (!meetsReqs) {
-              return getEncounterText(scene, `${namespace}.invalid_selection`) ?? null;
+              return getEncounterText(scene, `${namespace}:invalid_selection`) ?? null;
             }
 
             return null;
@@ -233,7 +233,7 @@ export const TrainingSessionEncounter: MysteryEncounter =
           scene.removePokemonFromPlayerParty(playerPokemon, false);
 
           const onBeforeRewardsPhase = () => {
-            queueEncounterMessage(scene, `${namespace}.option.2.finished`);
+            queueEncounterMessage(scene, `${namespace}:option.2.finished`);
             // Add the pokemon back to party with Nature change
             playerPokemon.setNature(encounter.misc.chosenNature);
             scene.gameData.setPokemonCaught(playerPokemon, false);
@@ -258,12 +258,12 @@ export const TrainingSessionEncounter: MysteryEncounter =
         .newOptionWithMode(MysteryEncounterOptionMode.DEFAULT)
         .withHasDexProgress(true)
         .withDialogue({
-          buttonLabel: `${namespace}.option.3.label`,
-          buttonTooltip: `${namespace}.option.3.tooltip`,
-          secondOptionPrompt: `${namespace}.option.3.select_prompt`,
+          buttonLabel: `${namespace}:option.3.label`,
+          buttonTooltip: `${namespace}:option.3.tooltip`,
+          secondOptionPrompt: `${namespace}:option.3.select_prompt`,
           selected: [
             {
-              text: `${namespace}.option.selected`,
+              text: `${namespace}:option.selected`,
             },
           ],
         })
@@ -309,7 +309,7 @@ export const TrainingSessionEncounter: MysteryEncounter =
           const selectableFilter = (pokemon: Pokemon) => {
             const meetsReqs = pokemon.isAllowedInBattle();
             if (!meetsReqs) {
-              return getEncounterText(scene, `${namespace}.invalid_selection`) ?? null;
+              return getEncounterText(scene, `${namespace}:invalid_selection`) ?? null;
             }
 
             return null;
@@ -333,7 +333,7 @@ export const TrainingSessionEncounter: MysteryEncounter =
           scene.removePokemonFromPlayerParty(playerPokemon, false);
 
           const onBeforeRewardsPhase = () => {
-            queueEncounterMessage(scene, `${namespace}.option.3.finished`);
+            queueEncounterMessage(scene, `${namespace}:option.3.finished`);
             // Add the pokemon back to party with ability change
             const abilityIndex = encounter.misc.abilityIndex;
             if (!!playerPokemon.getFusionSpeciesForm()) {
@@ -380,11 +380,11 @@ export const TrainingSessionEncounter: MysteryEncounter =
     )
     .withSimpleOption(
       {
-        buttonLabel: `${namespace}.option.4.label`,
-        buttonTooltip: `${namespace}.option.4.tooltip`,
+        buttonLabel: `${namespace}:option.4.label`,
+        buttonTooltip: `${namespace}:option.4.tooltip`,
         selected: [
           {
-            text: `${namespace}.option.4.selected`,
+            text: `${namespace}:option.4.selected`,
           },
         ],
       },

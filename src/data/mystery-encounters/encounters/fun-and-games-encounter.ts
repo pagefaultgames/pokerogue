@@ -24,7 +24,7 @@ import { Nature } from "#enums/nature";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
 
 /** the i18n namespace for the encounter */
-const namespace = "mysteryEncounter:funAndGames";
+const namespace = "mysteryEncounters/funAndGames";
 
 /**
  * Fun and Games! encounter.
@@ -70,13 +70,13 @@ export const FunAndGamesEncounter: MysteryEncounter =
     ])
     .withIntroDialogue([
       {
-        speaker: `${namespace}.speaker`,
-        text: `${namespace}.intro_dialogue`,
+        speaker: `${namespace}:speaker`,
+        text: `${namespace}:intro_dialogue`,
       },
     ])
-    .withTitle(`${namespace}.title`)
-    .withDescription(`${namespace}.description`)
-    .withQuery(`${namespace}.query`)
+    .withTitle(`${namespace}:title`)
+    .withDescription(`${namespace}:description`)
+    .withQuery(`${namespace}:query`)
     .withOnInit((scene: BattleScene) => {
       const encounter = scene.currentBattle.mysteryEncounter!;
       scene.loadBgm("mystery_encounter_fun_and_games", "mystery_encounter_fun_and_games.mp3");
@@ -91,11 +91,11 @@ export const FunAndGamesEncounter: MysteryEncounter =
       .newOptionWithMode(MysteryEncounterOptionMode.DISABLED_OR_DEFAULT)
       .withSceneRequirement(new MoneyRequirement(0, 1.5)) // Cost equal to 1 Max Potion
       .withDialogue({
-        buttonLabel: `${namespace}.option.1.label`,
-        buttonTooltip: `${namespace}.option.1.tooltip`,
+        buttonLabel: `${namespace}:option.1.label`,
+        buttonTooltip: `${namespace}:option.1.tooltip`,
         selected: [
           {
-            text: `${namespace}.option.1.selected`,
+            text: `${namespace}:option.1.selected`,
           },
         ],
       })
@@ -112,7 +112,7 @@ export const FunAndGamesEncounter: MysteryEncounter =
         const selectableFilter = (pokemon: Pokemon) => {
           const meetsReqs = pokemon.isAllowedInBattle();
           if (!meetsReqs) {
-            return getEncounterText(scene, `${namespace}.invalid_selection`) ?? null;
+            return getEncounterText(scene, `${namespace}:invalid_selection`) ?? null;
           }
 
           return null;
@@ -144,11 +144,11 @@ export const FunAndGamesEncounter: MysteryEncounter =
     )
     .withSimpleOption(
       {
-        buttonLabel: `${namespace}.option.2.label`,
-        buttonTooltip: `${namespace}.option.2.tooltip`,
+        buttonLabel: `${namespace}:option.2.label`,
+        buttonTooltip: `${namespace}:option.2.tooltip`,
         selected: [
           {
-            text: `${namespace}.option.2.selected`,
+            text: `${namespace}:option.2.selected`,
           },
         ],
       },
@@ -234,7 +234,7 @@ function handleLoseMinigame(scene: BattleScene) {
       scene.currentBattle.enemyParty = [];
       scene.currentBattle.mysteryEncounter!.doContinueEncounter = undefined;
       leaveEncounterWithoutBattle(scene, true);
-      await showEncounterText(scene, `${namespace}.ko`);
+      await showEncounterText(scene, `${namespace}:ko`);
       const reviveCost = scene.getWaveMoneyAmount(1.5);
       updatePlayerMoney(scene, -reviveCost, true, false);
     }
@@ -260,19 +260,19 @@ function handleNextTurn(scene: BattleScene) {
     if (healthRatio < 0.03) {
       // Grand prize
       setEncounterRewards(scene, { guaranteedModifierTypeFuncs: [modifierTypes.MULTI_LENS], fillRemaining: false });
-      resultMessageKey = `${namespace}.best_result`;
+      resultMessageKey = `${namespace}:best_result`;
     } else if (healthRatio < 0.15) {
       // 2nd prize
       setEncounterRewards(scene, { guaranteedModifierTypeFuncs: [modifierTypes.SCOPE_LENS], fillRemaining: false });
-      resultMessageKey = `${namespace}.great_result`;
+      resultMessageKey = `${namespace}:great_result`;
     } else if (healthRatio < 0.33) {
       // 3rd prize
       setEncounterRewards(scene, { guaranteedModifierTypeFuncs: [modifierTypes.WIDE_LENS], fillRemaining: false });
-      resultMessageKey = `${namespace}.good_result`;
+      resultMessageKey = `${namespace}:good_result`;
     } else {
       // No prize
       isHealPhase = true;
-      resultMessageKey = `${namespace}.bad_result`;
+      resultMessageKey = `${namespace}:bad_result`;
     }
 
     // End the battle
@@ -282,7 +282,7 @@ function handleNextTurn(scene: BattleScene) {
     scene.currentBattle.mysteryEncounter!.doContinueEncounter = undefined;
     leaveEncounterWithoutBattle(scene, isHealPhase);
     // Must end the TurnInit phase prematurely so battle phases aren't added to queue
-    queueEncounterMessage(scene, `${namespace}.end_game`);
+    queueEncounterMessage(scene, `${namespace}:end_game`);
     queueEncounterMessage(scene, resultMessageKey);
 
     // Skip remainder of TurnInitPhase
@@ -290,9 +290,9 @@ function handleNextTurn(scene: BattleScene) {
   } else {
     if (encounter.misc.turnsRemaining < 3) {
       // Display charging messages on turns that aren't the initial turn
-      queueEncounterMessage(scene, `${namespace}.charging_continue`);
+      queueEncounterMessage(scene, `${namespace}:charging_continue`);
     }
-    queueEncounterMessage(scene, `${namespace}.turn_remaining_${encounter.misc.turnsRemaining}`);
+    queueEncounterMessage(scene, `${namespace}:turn_remaining_${encounter.misc.turnsRemaining}`);
     encounter.misc.turnsRemaining--;
   }
 

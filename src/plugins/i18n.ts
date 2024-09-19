@@ -1,8 +1,8 @@
+import { camelCaseToKebabCase, } from "#app/utils";
 import i18next from "i18next";
 import LanguageDetector from "i18next-browser-languagedetector";
-import processor, { KoreanPostpositionProcessor } from "i18next-korean-postposition-processor";
 import HttpBackend from "i18next-http-backend";
-import { camelCaseToKebabCase } from "#app/utils";
+import processor, { KoreanPostpositionProcessor } from "i18next-korean-postposition-processor";
 import pkg from "../../package.json";
 
 //#region Interfaces/Types
@@ -143,11 +143,10 @@ export async function initI18n(): Promise<void> {
         let fileName: string;
         if (namespaceMap[ns]) {
           fileName = namespaceMap[ns];
+        } else if (ns.startsWith("mysteryEncounters/")) {
+          fileName = camelCaseToKebabCase(ns + "Dialogue");
         } else {
           fileName = camelCaseToKebabCase(ns);
-          if (fileName.startsWith("mystery-encounters/")) {
-            fileName += "-dialogue";
-          }
         }
         return `/locales/${lng}/${fileName}.json?v=${pkg.version}`;
       },
@@ -209,8 +208,6 @@ export async function initI18n(): Promise<void> {
       "modifierSelectUiHandler",
       "moveTriggers",
       "runHistory",
-      // DO NOT REMOVE
-      // "mysteryEncounter/unit_test_dialogue": "{{test}}{{test}} {{test{{test}}}} {{test1}} {{test\}} {{test\\}} {{test\\\}} {test}}",
       "mysteryEncounters/mysteriousChallengers",
       "mysteryEncounters/mysteriousChest",
       "mysteryEncounters/darkDeal",
