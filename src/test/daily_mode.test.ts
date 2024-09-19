@@ -90,7 +90,7 @@ describe("Shop modifications", async () => {
     game.move.select(Moves.KOWTOW_CLEAVE);
     await game.phaseInterceptor.to("DamagePhase");
     await game.doKillOpponents();
-    await game.phaseInterceptor.to(BattleEndPhase);
+    await game.phaseInterceptor.to("BattleEndPhase");
     game.onNextPrompt("SelectModifierPhase", Mode.MODIFIER_SELECT, () => {
       expect(game.scene.ui.getHandler()).toBeInstanceOf(ModifierSelectUiHandler);
       game.modifiers
