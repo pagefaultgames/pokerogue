@@ -5,7 +5,7 @@
   "query": "どうしますか",
   "option": {
     "1": {
-      "label": "勝負",
+      "label": "勝負だ",
       "tooltip": "(-) 勝負がきつい\n(+) きのみの山積みからご褒美",
       "selected": "{{greedentName}}は　頬張って　おそいかかってくる！",
       "boss_enraged": "{{greedentName}}の　食べ物への　情熱で　ぐっと　キレた！",
