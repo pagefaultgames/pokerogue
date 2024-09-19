@@ -79,8 +79,8 @@ describe("Mystery Encounter Phases", () => {
       expect(ui.showDialogue).toHaveBeenCalledTimes(1);
       expect(ui.showText).toHaveBeenCalledTimes(2);
       expect(ui.showDialogue).toHaveBeenCalledWith("battle:mysteryEncounterAppeared", "???", null, expect.any(Function));
-      expect(ui.showText).toHaveBeenCalledWith("mysteryEncounter:mysteriousChallengers.intro", null, expect.any(Function), 750, true);
-      expect(ui.showText).toHaveBeenCalledWith("mysteryEncounter:mysteriousChallengers.option.selected", null, expect.any(Function), 300, true);
+      expect(ui.showText).toHaveBeenCalledWith("mysteryEncounters/mysteriousChallengers:intro", null, expect.any(Function), 750, true);
+      expect(ui.showText).toHaveBeenCalledWith("mysteryEncounters/mysteriousChallengers:option.selected", null, expect.any(Function), 300, true);
     });
   });
 

@@ -17,7 +17,7 @@ import { CommandPhase } from "#app/phases/command-phase";
 import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
 import { PartyHealPhase } from "#app/phases/party-heal-phase";
 
-const namespace = "mysteryEncounter:aTrainersTest";
+const namespace = "mysteryEncounters/aTrainersTest";
 const defaultParty = [Species.LAPRAS, Species.GENGAR, Species.ABRA];
 const defaultBiome = Biome.CAVE;
 const defaultWave = 45;
@@ -63,9 +63,9 @@ describe("A Trainer's Test - Mystery Encounter", () => {
     expect(ATrainersTestEncounter.dialogue.intro).toBeDefined();
     expect(ATrainersTestEncounter.dialogue.intro?.[0].speaker).toBeDefined();
     expect(ATrainersTestEncounter.dialogue.intro?.[0].text).toBeDefined();
-    expect(ATrainersTestEncounter.dialogue.encounterOptionsDialogue?.title).toBe(`${namespace}.title`);
-    expect(ATrainersTestEncounter.dialogue.encounterOptionsDialogue?.description).toBe(`${namespace}.description`);
-    expect(ATrainersTestEncounter.dialogue.encounterOptionsDialogue?.query).toBe(`${namespace}.query`);
+    expect(ATrainersTestEncounter.dialogue.encounterOptionsDialogue?.title).toBe(`${namespace}:title`);
+    expect(ATrainersTestEncounter.dialogue.encounterOptionsDialogue?.description).toBe(`${namespace}:description`);
+    expect(ATrainersTestEncounter.dialogue.encounterOptionsDialogue?.query).toBe(`${namespace}:query`);
     expect(ATrainersTestEncounter.options.length).toBe(2);
   });
 
@@ -110,8 +110,8 @@ describe("A Trainer's Test - Mystery Encounter", () => {
       const option = ATrainersTestEncounter.options[0];
       expect(option.optionMode).toBe(MysteryEncounterOptionMode.DEFAULT);
       expect(option.dialogue).toBeDefined();
-      expect(option.dialogue!.buttonLabel).toStrictEqual(`${namespace}.option.1.label`);
-      expect(option.dialogue!.buttonTooltip).toStrictEqual(`${namespace}.option.1.tooltip`);
+      expect(option.dialogue!.buttonLabel).toStrictEqual(`${namespace}:option.1.label`);
+      expect(option.dialogue!.buttonTooltip).toStrictEqual(`${namespace}:option.1.tooltip`);
     });
 
     it("Should start battle against the trainer", async () => {
@@ -161,8 +161,8 @@ describe("A Trainer's Test - Mystery Encounter", () => {
       const option = ATrainersTestEncounter.options[1];
       expect(option.optionMode).toBe(MysteryEncounterOptionMode.DEFAULT);
       expect(option.dialogue).toBeDefined();
-      expect(option.dialogue?.buttonLabel).toStrictEqual(`${namespace}.option.2.label`);
-      expect(option.dialogue?.buttonTooltip).toStrictEqual(`${namespace}.option.2.tooltip`);
+      expect(option.dialogue?.buttonLabel).toStrictEqual(`${namespace}:option.2.label`);
+      expect(option.dialogue?.buttonTooltip).toStrictEqual(`${namespace}:option.2.tooltip`);
     });
 
     it("Should fully heal the party", async () => {

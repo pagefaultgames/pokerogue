@@ -25,7 +25,7 @@ import { Stat } from "#enums/stat";
 import { BerryModifier } from "#app/modifier/modifier";
 import { modifierTypes } from "#app/modifier/modifier-type";
 
-const namespace = "mysteryEncounter:uncommonBreed";
+const namespace = "mysteryEncounters/uncommonBreed";
 const defaultParty = [Species.LAPRAS, Species.GENGAR, Species.ABRA];
 const defaultBiome = Biome.CAVE;
 const defaultWave = 45;
@@ -67,10 +67,10 @@ describe("Uncommon Breed - Mystery Encounter", () => {
     expect(UncommonBreedEncounter.encounterType).toBe(MysteryEncounterType.UNCOMMON_BREED);
     expect(UncommonBreedEncounter.encounterTier).toBe(MysteryEncounterTier.COMMON);
     expect(UncommonBreedEncounter.dialogue).toBeDefined();
-    expect(UncommonBreedEncounter.dialogue.intro).toStrictEqual([{ text: `${namespace}.intro` }]);
-    expect(UncommonBreedEncounter.dialogue.encounterOptionsDialogue?.title).toBe(`${namespace}.title`);
-    expect(UncommonBreedEncounter.dialogue.encounterOptionsDialogue?.description).toBe(`${namespace}.description`);
-    expect(UncommonBreedEncounter.dialogue.encounterOptionsDialogue?.query).toBe(`${namespace}.query`);
+    expect(UncommonBreedEncounter.dialogue.intro).toStrictEqual([{ text: `${namespace}:intro` }]);
+    expect(UncommonBreedEncounter.dialogue.encounterOptionsDialogue?.title).toBe(`${namespace}:title`);
+    expect(UncommonBreedEncounter.dialogue.encounterOptionsDialogue?.description).toBe(`${namespace}:description`);
+    expect(UncommonBreedEncounter.dialogue.encounterOptionsDialogue?.query).toBe(`${namespace}:query`);
     expect(UncommonBreedEncounter.options.length).toBe(3);
   });
 
@@ -113,11 +113,11 @@ describe("Uncommon Breed - Mystery Encounter", () => {
       expect(option.optionMode).toBe(MysteryEncounterOptionMode.DEFAULT);
       expect(option.dialogue).toBeDefined();
       expect(option.dialogue).toStrictEqual({
-        buttonLabel: `${namespace}.option.1.label`,
-        buttonTooltip: `${namespace}.option.1.tooltip`,
+        buttonLabel: `${namespace}:option.1.label`,
+        buttonTooltip: `${namespace}:option.1.tooltip`,
         selected: [
           {
-            text: `${namespace}.option.1.selected`,
+            text: `${namespace}:option.1.selected`,
           },
         ],
       });
@@ -156,12 +156,12 @@ describe("Uncommon Breed - Mystery Encounter", () => {
       expect(option.optionMode).toBe(MysteryEncounterOptionMode.DISABLED_OR_SPECIAL);
       expect(option.dialogue).toBeDefined();
       expect(option.dialogue).toStrictEqual({
-        buttonLabel: `${namespace}.option.2.label`,
-        buttonTooltip: `${namespace}.option.2.tooltip`,
-        disabledButtonTooltip: `${namespace}.option.2.disabled_tooltip`,
+        buttonLabel: `${namespace}:option.2.label`,
+        buttonTooltip: `${namespace}:option.2.tooltip`,
+        disabledButtonTooltip: `${namespace}:option.2.disabled_tooltip`,
         selected: [
           {
-            text: `${namespace}.option.2.selected`,
+            text: `${namespace}:option.2.selected`,
           }
         ],
       });
@@ -221,12 +221,12 @@ describe("Uncommon Breed - Mystery Encounter", () => {
       expect(option.optionMode).toBe(MysteryEncounterOptionMode.DISABLED_OR_SPECIAL);
       expect(option.dialogue).toBeDefined();
       expect(option.dialogue).toStrictEqual({
-        buttonLabel: `${namespace}.option.3.label`,
-        buttonTooltip: `${namespace}.option.3.tooltip`,
-        disabledButtonTooltip: `${namespace}.option.3.disabled_tooltip`,
+        buttonLabel: `${namespace}:option.3.label`,
+        buttonTooltip: `${namespace}:option.3.tooltip`,
+        disabledButtonTooltip: `${namespace}:option.3.disabled_tooltip`,
         selected: [
           {
-            text: `${namespace}.option.3.selected`,
+            text: `${namespace}:option.3.selected`,
           }
         ],
       });

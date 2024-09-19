@@ -15,7 +15,7 @@ import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
 
-const namespace = "mysteryEncounter:departmentStoreSale";
+const namespace = "mysteryEncounters/departmentStoreSale";
 const defaultParty = [Species.LAPRAS, Species.GENGAR, Species.ABRA];
 const defaultBiome = Biome.PLAINS;
 const defaultWave = 37;
@@ -59,15 +59,15 @@ describe("Department Store Sale - Mystery Encounter", () => {
     expect(DepartmentStoreSaleEncounter.encounterTier).toBe(MysteryEncounterTier.COMMON);
     expect(DepartmentStoreSaleEncounter.dialogue).toBeDefined();
     expect(DepartmentStoreSaleEncounter.dialogue.intro).toStrictEqual([
-      { text: `${namespace}.intro` },
+      { text: `${namespace}:intro` },
       {
-        speaker: `${namespace}.speaker`,
-        text: `${namespace}.intro_dialogue`,
+        speaker: `${namespace}:speaker`,
+        text: `${namespace}:intro_dialogue`,
       }
     ]);
-    expect(DepartmentStoreSaleEncounter.dialogue.encounterOptionsDialogue?.title).toBe(`${namespace}.title`);
-    expect(DepartmentStoreSaleEncounter.dialogue.encounterOptionsDialogue?.description).toBe(`${namespace}.description`);
-    expect(DepartmentStoreSaleEncounter.dialogue.encounterOptionsDialogue?.query).toBe(`${namespace}.query`);
+    expect(DepartmentStoreSaleEncounter.dialogue.encounterOptionsDialogue?.title).toBe(`${namespace}:title`);
+    expect(DepartmentStoreSaleEncounter.dialogue.encounterOptionsDialogue?.description).toBe(`${namespace}:description`);
+    expect(DepartmentStoreSaleEncounter.dialogue.encounterOptionsDialogue?.query).toBe(`${namespace}:query`);
     expect(DepartmentStoreSaleEncounter.options.length).toBe(4);
   });
 
@@ -101,8 +101,8 @@ describe("Department Store Sale - Mystery Encounter", () => {
       expect(option.optionMode).toBe(MysteryEncounterOptionMode.DEFAULT);
       expect(option.dialogue).toBeDefined();
       expect(option.dialogue).toStrictEqual({
-        buttonLabel: `${namespace}.option.1.label`,
-        buttonTooltip: `${namespace}.option.1.tooltip`,
+        buttonLabel: `${namespace}:option.1.label`,
+        buttonTooltip: `${namespace}:option.1.tooltip`,
       });
     });
 
@@ -136,8 +136,8 @@ describe("Department Store Sale - Mystery Encounter", () => {
       expect(option.optionMode).toBe(MysteryEncounterOptionMode.DEFAULT);
       expect(option.dialogue).toBeDefined();
       expect(option.dialogue).toStrictEqual({
-        buttonLabel: `${namespace}.option.2.label`,
-        buttonTooltip: `${namespace}.option.2.tooltip`,
+        buttonLabel: `${namespace}:option.2.label`,
+        buttonTooltip: `${namespace}:option.2.tooltip`,
       });
     });
 
@@ -172,8 +172,8 @@ describe("Department Store Sale - Mystery Encounter", () => {
       expect(option.optionMode).toBe(MysteryEncounterOptionMode.DEFAULT);
       expect(option.dialogue).toBeDefined();
       expect(option.dialogue).toStrictEqual({
-        buttonLabel: `${namespace}.option.3.label`,
-        buttonTooltip: `${namespace}.option.3.tooltip`,
+        buttonLabel: `${namespace}:option.3.label`,
+        buttonTooltip: `${namespace}:option.3.tooltip`,
       });
     });
 
@@ -208,8 +208,8 @@ describe("Department Store Sale - Mystery Encounter", () => {
       expect(option.optionMode).toBe(MysteryEncounterOptionMode.DEFAULT);
       expect(option.dialogue).toBeDefined();
       expect(option.dialogue).toStrictEqual({
-        buttonLabel: `${namespace}.option.4.label`,
-        buttonTooltip: `${namespace}.option.4.tooltip`,
+        buttonLabel: `${namespace}:option.4.label`,
+        buttonTooltip: `${namespace}:option.4.tooltip`,
       });
     });
 

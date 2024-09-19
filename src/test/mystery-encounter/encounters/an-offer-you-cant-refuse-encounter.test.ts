@@ -18,7 +18,7 @@ import { Moves } from "#enums/moves";
 import { ShinyRateBoosterModifier } from "#app/modifier/modifier";
 import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
 
-const namespace = "mysteryEncounter:offerYouCantRefuse";
+const namespace = "mysteryEncounters/anOfferYouCantRefuse";
 /** Gyarados for Indimidate */
 const defaultParty = [Species.GYARADOS, Species.GENGAR, Species.ABRA];
 const defaultBiome = Biome.CAVE;
@@ -63,12 +63,12 @@ describe("An Offer You Can't Refuse - Mystery Encounter", () => {
     expect(AnOfferYouCantRefuseEncounter.encounterTier).toBe(MysteryEncounterTier.GREAT);
     expect(AnOfferYouCantRefuseEncounter.dialogue).toBeDefined();
     expect(AnOfferYouCantRefuseEncounter.dialogue.intro).toStrictEqual([
-      { text: `${namespace}.intro` },
-      { speaker: `${namespace}.speaker`, text: `${namespace}.intro_dialogue` }
+      { text: `${namespace}:intro` },
+      { speaker: `${namespace}:speaker`, text: `${namespace}:intro_dialogue` }
     ]);
-    expect(AnOfferYouCantRefuseEncounter.dialogue.encounterOptionsDialogue?.title).toBe(`${namespace}.title`);
-    expect(AnOfferYouCantRefuseEncounter.dialogue.encounterOptionsDialogue?.description).toBe(`${namespace}.description`);
-    expect(AnOfferYouCantRefuseEncounter.dialogue.encounterOptionsDialogue?.query).toBe(`${namespace}.query`);
+    expect(AnOfferYouCantRefuseEncounter.dialogue.encounterOptionsDialogue?.title).toBe(`${namespace}:title`);
+    expect(AnOfferYouCantRefuseEncounter.dialogue.encounterOptionsDialogue?.description).toBe(`${namespace}:description`);
+    expect(AnOfferYouCantRefuseEncounter.dialogue.encounterOptionsDialogue?.query).toBe(`${namespace}:query`);
     expect(AnOfferYouCantRefuseEncounter.options.length).toBe(3);
   });
 
@@ -122,12 +122,12 @@ describe("An Offer You Can't Refuse - Mystery Encounter", () => {
       expect(option.optionMode).toBe(MysteryEncounterOptionMode.DEFAULT);
       expect(option.dialogue).toBeDefined();
       expect(option.dialogue).toStrictEqual({
-        buttonLabel: `${namespace}.option.1.label`,
-        buttonTooltip: `${namespace}.option.1.tooltip`,
+        buttonLabel: `${namespace}:option.1.label`,
+        buttonTooltip: `${namespace}:option.1.tooltip`,
         selected: [
           {
-            speaker: `${namespace}.speaker`,
-            text: `${namespace}.option.1.selected`,
+            speaker: `${namespace}:speaker`,
+            text: `${namespace}:option.1.selected`,
           },
         ],
       });
@@ -185,13 +185,13 @@ describe("An Offer You Can't Refuse - Mystery Encounter", () => {
       expect(option.optionMode).toBe(MysteryEncounterOptionMode.DISABLED_OR_SPECIAL);
       expect(option.dialogue).toBeDefined();
       expect(option.dialogue).toStrictEqual({
-        buttonLabel: `${namespace}.option.2.label`,
-        buttonTooltip: `${namespace}.option.2.tooltip`,
-        disabledButtonTooltip: `${namespace}.option.2.tooltip_disabled`,
+        buttonLabel: `${namespace}:option.2.label`,
+        buttonTooltip: `${namespace}:option.2.tooltip`,
+        disabledButtonTooltip: `${namespace}:option.2.tooltip_disabled`,
         selected: [
           {
-            speaker: `${namespace}.speaker`,
-            text: `${namespace}.option.2.selected`,
+            speaker: `${namespace}:speaker`,
+            text: `${namespace}:option.2.selected`,
           },
         ],
       });

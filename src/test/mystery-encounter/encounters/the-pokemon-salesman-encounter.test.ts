@@ -15,7 +15,7 @@ import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { initSceneWithoutEncounterPhase } from "#test/utils/gameManagerUtils";
 import { MysteryEncounterPhase } from "#app/phases/mystery-encounter-phases";
 
-const namespace = "mysteryEncounter:pokemonSalesman";
+const namespace = "mysteryEncounters/thePokemonSalesman";
 const defaultParty = [Species.LAPRAS, Species.GENGAR, Species.ABRA];
 const defaultBiome = Biome.CAVE;
 const defaultWave = 45;
@@ -59,12 +59,12 @@ describe("The Pokemon Salesman - Mystery Encounter", () => {
     expect(ThePokemonSalesmanEncounter.encounterTier).toBe(MysteryEncounterTier.ULTRA);
     expect(ThePokemonSalesmanEncounter.dialogue).toBeDefined();
     expect(ThePokemonSalesmanEncounter.dialogue.intro).toStrictEqual([
-      { text: `${namespace}.intro` },
-      { speaker: `${namespace}.speaker`, text: `${namespace}.intro_dialogue` }
+      { text: `${namespace}:intro` },
+      { speaker: `${namespace}:speaker`, text: `${namespace}:intro_dialogue` }
     ]);
-    expect(ThePokemonSalesmanEncounter.dialogue.encounterOptionsDialogue?.title).toBe(`${namespace}.title`);
-    expect(ThePokemonSalesmanEncounter.dialogue.encounterOptionsDialogue?.description).toBe(`${namespace}.description`);
-    expect(ThePokemonSalesmanEncounter.dialogue.encounterOptionsDialogue?.query).toBe(`${namespace}.query`);
+    expect(ThePokemonSalesmanEncounter.dialogue.encounterOptionsDialogue?.title).toBe(`${namespace}:title`);
+    expect(ThePokemonSalesmanEncounter.dialogue.encounterOptionsDialogue?.description).toBe(`${namespace}:description`);
+    expect(ThePokemonSalesmanEncounter.dialogue.encounterOptionsDialogue?.query).toBe(`${namespace}:query`);
     expect(ThePokemonSalesmanEncounter.options.length).toBe(2);
   });
 
@@ -124,11 +124,11 @@ describe("The Pokemon Salesman - Mystery Encounter", () => {
       expect(option.optionMode).toBe(MysteryEncounterOptionMode.DISABLED_OR_DEFAULT);
       expect(option.dialogue).toBeDefined();
       expect(option.dialogue).toStrictEqual({
-        buttonLabel: `${namespace}.option.1.label`,
-        buttonTooltip: `${namespace}.option.1.tooltip`,
+        buttonLabel: `${namespace}:option.1.label`,
+        buttonTooltip: `${namespace}:option.1.tooltip`,
         selected: [
           {
-            text: `${namespace}.option.1.selected_message`,
+            text: `${namespace}:option.1.selected_message`,
           },
         ],
       });

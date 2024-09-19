@@ -16,7 +16,7 @@ import { Mode } from "#app/ui/ui";
 import ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
 import i18next from "i18next";
 
-const namespace = "mysteryEncounter:fieldTrip";
+const namespace = "mysteryEncounters/fieldTrip";
 const defaultParty = [Species.LAPRAS, Species.GENGAR, Species.ABRA];
 const defaultBiome = Biome.CAVE;
 const defaultWave = 45;
@@ -60,16 +60,16 @@ describe("Field Trip - Mystery Encounter", () => {
     expect(FieldTripEncounter.dialogue).toBeDefined();
     expect(FieldTripEncounter.dialogue.intro).toStrictEqual([
       {
-        text: `${namespace}.intro`
+        text: `${namespace}:intro`
       },
       {
-        speaker: `${namespace}.speaker`,
-        text: `${namespace}.intro_dialogue`
+        speaker: `${namespace}:speaker`,
+        text: `${namespace}:intro_dialogue`
       }
     ]);
-    expect(FieldTripEncounter.dialogue.encounterOptionsDialogue?.title).toBe(`${namespace}.title`);
-    expect(FieldTripEncounter.dialogue.encounterOptionsDialogue?.description).toBe(`${namespace}.description`);
-    expect(FieldTripEncounter.dialogue.encounterOptionsDialogue?.query).toBe(`${namespace}.query`);
+    expect(FieldTripEncounter.dialogue.encounterOptionsDialogue?.title).toBe(`${namespace}:title`);
+    expect(FieldTripEncounter.dialogue.encounterOptionsDialogue?.description).toBe(`${namespace}:description`);
+    expect(FieldTripEncounter.dialogue.encounterOptionsDialogue?.query).toBe(`${namespace}:query`);
     expect(FieldTripEncounter.options.length).toBe(3);
   });
 
@@ -95,9 +95,9 @@ describe("Field Trip - Mystery Encounter", () => {
       expect(option.optionMode).toBe(MysteryEncounterOptionMode.DEFAULT);
       expect(option.dialogue).toBeDefined();
       expect(option.dialogue).toStrictEqual({
-        buttonLabel: `${namespace}.option.1.label`,
-        buttonTooltip: `${namespace}.option.1.tooltip`,
-        secondOptionPrompt: `${namespace}.second_option_prompt`,
+        buttonLabel: `${namespace}:option.1.label`,
+        buttonTooltip: `${namespace}:option.1.tooltip`,
+        secondOptionPrompt: `${namespace}:second_option_prompt`,
       });
     });
 
@@ -142,9 +142,9 @@ describe("Field Trip - Mystery Encounter", () => {
       expect(option.optionMode).toBe(MysteryEncounterOptionMode.DEFAULT);
       expect(option.dialogue).toBeDefined();
       expect(option.dialogue).toStrictEqual({
-        buttonLabel: `${namespace}.option.2.label`,
-        buttonTooltip: `${namespace}.option.2.tooltip`,
-        secondOptionPrompt: `${namespace}.second_option_prompt`,
+        buttonLabel: `${namespace}:option.2.label`,
+        buttonTooltip: `${namespace}:option.2.tooltip`,
+        secondOptionPrompt: `${namespace}:second_option_prompt`,
       });
     });
 
@@ -189,9 +189,9 @@ describe("Field Trip - Mystery Encounter", () => {
       expect(option.optionMode).toBe(MysteryEncounterOptionMode.DEFAULT);
       expect(option.dialogue).toBeDefined();
       expect(option.dialogue).toStrictEqual({
-        buttonLabel: `${namespace}.option.3.label`,
-        buttonTooltip: `${namespace}.option.3.tooltip`,
-        secondOptionPrompt: `${namespace}.second_option_prompt`,
+        buttonLabel: `${namespace}:option.3.label`,
+        buttonTooltip: `${namespace}:option.3.tooltip`,
+        secondOptionPrompt: `${namespace}:second_option_prompt`,
       });
     });
 

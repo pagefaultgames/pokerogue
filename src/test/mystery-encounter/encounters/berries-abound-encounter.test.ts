@@ -18,7 +18,7 @@ import * as EncounterDialogueUtils from "#app/data/mystery-encounters/utils/enco
 import { CommandPhase } from "#app/phases/command-phase";
 import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
 
-const namespace = "mysteryEncounter:berriesAbound";
+const namespace = "mysteryEncounters/berriesAbound";
 const defaultParty = [Species.PYUKUMUKU];
 const defaultBiome = Biome.CAVE;
 const defaultWave = 45;
@@ -62,10 +62,10 @@ describe("Berries Abound - Mystery Encounter", () => {
     expect(BerriesAboundEncounter.encounterType).toBe(MysteryEncounterType.BERRIES_ABOUND);
     expect(BerriesAboundEncounter.encounterTier).toBe(MysteryEncounterTier.COMMON);
     expect(BerriesAboundEncounter.dialogue).toBeDefined();
-    expect(BerriesAboundEncounter.dialogue.intro).toStrictEqual([{ text: `${namespace}.intro` }]);
-    expect(BerriesAboundEncounter.dialogue.encounterOptionsDialogue?.title).toBe(`${namespace}.title`);
-    expect(BerriesAboundEncounter.dialogue.encounterOptionsDialogue?.description).toBe(`${namespace}.description`);
-    expect(BerriesAboundEncounter.dialogue.encounterOptionsDialogue?.query).toBe(`${namespace}.query`);
+    expect(BerriesAboundEncounter.dialogue.intro).toStrictEqual([{ text: `${namespace}:intro` }]);
+    expect(BerriesAboundEncounter.dialogue.encounterOptionsDialogue?.title).toBe(`${namespace}:title`);
+    expect(BerriesAboundEncounter.dialogue.encounterOptionsDialogue?.description).toBe(`${namespace}:description`);
+    expect(BerriesAboundEncounter.dialogue.encounterOptionsDialogue?.query).toBe(`${namespace}:query`);
     expect(BerriesAboundEncounter.options.length).toBe(3);
   });
 
@@ -108,11 +108,11 @@ describe("Berries Abound - Mystery Encounter", () => {
       expect(option.optionMode).toBe(MysteryEncounterOptionMode.DEFAULT);
       expect(option.dialogue).toBeDefined();
       expect(option.dialogue).toStrictEqual({
-        buttonLabel: `${namespace}.option.1.label`,
-        buttonTooltip: `${namespace}.option.1.tooltip`,
+        buttonLabel: `${namespace}:option.1.label`,
+        buttonTooltip: `${namespace}:option.1.tooltip`,
         selected: [
           {
-            text: `${namespace}.option.1.selected`,
+            text: `${namespace}:option.1.selected`,
           },
         ],
       });
@@ -177,8 +177,8 @@ describe("Berries Abound - Mystery Encounter", () => {
       expect(option.optionMode).toBe(MysteryEncounterOptionMode.DEFAULT);
       expect(option.dialogue).toBeDefined();
       expect(option.dialogue).toStrictEqual({
-        buttonLabel: `${namespace}.option.2.label`,
-        buttonTooltip: `${namespace}.option.2.tooltip`,
+        buttonLabel: `${namespace}:option.2.label`,
+        buttonTooltip: `${namespace}:option.2.tooltip`,
       });
     });
 
@@ -200,7 +200,7 @@ describe("Berries Abound - Mystery Encounter", () => {
 
       // Should be enraged
       expect(enemyField[0].summonData.statStages).toEqual([1, 1, 1, 1, 1, 0, 0]);
-      expect(encounterTextSpy).toHaveBeenCalledWith(expect.any(BattleScene), `${namespace}.option.2.selected_bad`);
+      expect(encounterTextSpy).toHaveBeenCalledWith(expect.any(BattleScene), `${namespace}:option.2.selected_bad`);
     });
 
     it("Should skip battle when fastest pokemon is faster than boss", async () => {
@@ -226,7 +226,7 @@ describe("Berries Abound - Mystery Encounter", () => {
         expect(option.modifierTypeOption.type.id).toContain("BERRY");
       }
 
-      expect(encounterTextSpy).toHaveBeenCalledWith(expect.any(BattleScene), `${namespace}.option.2.selected`);
+      expect(encounterTextSpy).toHaveBeenCalledWith(expect.any(BattleScene), `${namespace}:option.2.selected`);
       expect(leaveEncounterWithoutBattleSpy).toBeCalled();
     });
   });
