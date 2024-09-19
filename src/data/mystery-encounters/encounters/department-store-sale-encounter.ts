@@ -9,7 +9,7 @@ import { Species } from "#enums/species";
 import BattleScene from "#app/battle-scene";
 import MysteryEncounter, {
   MysteryEncounterBuilder,
-} from "../mystery-encounter";
+} from "#app/data/mystery-encounters/mystery-encounter";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
 

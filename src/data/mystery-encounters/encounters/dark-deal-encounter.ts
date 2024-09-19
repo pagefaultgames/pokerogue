@@ -5,8 +5,8 @@ import { Species } from "#enums/species";
 import BattleScene from "#app/battle-scene";
 import { modifierTypes } from "#app/modifier/modifier-type";
 import { getPokemonSpecies } from "#app/data/pokemon-species";
-import MysteryEncounter, { MysteryEncounterBuilder } from "../mystery-encounter";
-import { MysteryEncounterOptionBuilder } from "../mystery-encounter-option";
+import MysteryEncounter, { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-encounter";
+import { MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/mystery-encounter-option";
 import { EnemyPartyConfig, EnemyPokemonConfig, initBattleWithEnemyConfig, leaveEncounterWithoutBattle, } from "../utils/encounter-phase-utils";
 import { getRandomPlayerPokemon, getRandomSpeciesByStarterTier } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
@@ -18,7 +18,7 @@ import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
 /** i18n namespace for encounter */
 const namespace = "mysteryEncounter:darkDeal";
 
-/** Exclude Ultra Beasts (inludes Cosmog/Solgaleo/Lunala/Necrozma), Paradox (includes Miraidon/Koraidon), Eternatus, and egg-locked mythicals */
+/** Exclude Ultra Beasts (inludes Cosmog/Solgaleo/Lunala/Necrozma), Paradox (includes Miraidon/Koraidon), Eternatus, and Mythicals */
 const excludedBosses = [
   Species.NECROZMA,
   Species.COSMOG,
@@ -63,11 +63,24 @@ const excludedBosses = [
   Species.CELEBI,
   Species.DEOXYS,
   Species.JIRACHI,
+  Species.DARKRAI,
   Species.PHIONE,
   Species.MANAPHY,
   Species.ARCEUS,
+  Species.SHAYMIN,
   Species.VICTINI,
+  Species.MELOETTA,
+  Species.KELDEO,
+  Species.GENESECT,
+  Species.DIANCIE,
+  Species.HOOPA,
+  Species.VOLCANION,
+  Species.MAGEARNA,
+  Species.MARSHADOW,
+  Species.ZERAORA,
+  Species.ZARUDE,
   Species.MELTAN,
+  Species.MELMETAL,
   Species.PECHARUNT,
 ];
 
@@ -151,7 +164,7 @@ export const DarkDealEncounter: MysteryEncounter =
           // Starter egg tier, 35/50/10/5 %odds for tiers 6/7/8/9+
           const roll = randSeedInt(100);
           const starterTier: number | [number, number] =
-            roll > 65 ? 6 : roll > 15 ? 7 : roll > 5 ? 8 : [9, 10];
+            roll >= 65 ? 6 : roll >= 15 ? 7 : roll >= 5 ? 8 : [9, 10];
           const bossSpecies = getPokemonSpecies(getRandomSpeciesByStarterTier(starterTier, excludedBosses, bossTypes));
           const pokemonConfig: EnemyPokemonConfig = {
             species: bossSpecies,

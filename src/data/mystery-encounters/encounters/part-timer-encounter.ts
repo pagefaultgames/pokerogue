@@ -2,8 +2,8 @@ import { MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/myst
 import { leaveEncounterWithoutBattle, selectPokemonForOption, setEncounterExp, setEncounterRewards, transitionMysteryEncounterIntroVisuals, updatePlayerMoney } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import BattleScene from "#app/battle-scene";
-import MysteryEncounter, { MysteryEncounterBuilder } from "../mystery-encounter";
-import { MoveRequirement } from "../mystery-encounter-requirements";
+import MysteryEncounter, { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-encounter";
+import { MoveRequirement } from "#app/data/mystery-encounters/mystery-encounter-requirements";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { Stat } from "#enums/stat";

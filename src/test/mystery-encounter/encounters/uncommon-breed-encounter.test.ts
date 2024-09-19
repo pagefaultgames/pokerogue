@@ -107,7 +107,7 @@ describe("Uncommon Breed - Mystery Encounter", () => {
     expect(onInitResult).toBe(true);
   });
 
-  describe.skip("Option 1 - Fight", () => {
+  describe("Option 1 - Fight", () => {
     it("should have the correct properties", () => {
       const option = UncommonBreedEncounter.options[0];
       expect(option.optionMode).toBe(MysteryEncounterOptionMode.DEFAULT);
@@ -123,7 +123,7 @@ describe("Uncommon Breed - Mystery Encounter", () => {
       });
     });
 
-    it("should start a fight against the boss", async () => {
+    it.skip("should start a fight against the boss", async () => {
       const phaseSpy = vi.spyOn(scene, "pushPhase");
       const unshiftPhaseSpy = vi.spyOn(scene, "unshiftPhase");
       await game.runToMysteryEncounter(MysteryEncounterType.UNCOMMON_BREED, defaultParty);

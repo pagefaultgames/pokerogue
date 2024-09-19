@@ -83,7 +83,7 @@ const languageSettings: { [key: string]: LanguageSetting } = {
   },
   "fr":{
     starterInfoTextSize: "54px",
-    instructionTextSize: "35px",
+    instructionTextSize: "38px",
   },
   "it":{
     starterInfoTextSize: "56px",
@@ -631,7 +631,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
     const starterBoxContainer = this.scene.add.container(speciesContainerX + 6, 9); //115
 
-    this.starterSelectScrollBar = new ScrollBar(this.scene, 161, 12, 0);
+    this.starterSelectScrollBar = new ScrollBar(this.scene, 161, 12, 5, starterContainerWindow.height - 6, 9);
 
     starterBoxContainer.add(this.starterSelectScrollBar);
 
@@ -2544,8 +2544,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       }
     });
 
-    this.starterSelectScrollBar.setPages(Math.max(Math.ceil(this.filteredStarterContainers.length / 9), 1));
-    this.starterSelectScrollBar.setPage(0);
+    this.starterSelectScrollBar.setTotalRows(Math.max(Math.ceil(this.filteredStarterContainers.length / 9), 1));
+    this.starterSelectScrollBar.setScrollCursor(0);
 
     // sort
     const sort = this.filterBar.getVals(DropDownColumn.SORT)[0];
@@ -2580,7 +2580,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     const onScreenFirstIndex = this.scrollCursor * maxColumns;
     const onScreenLastIndex = Math.min(this.filteredStarterContainers.length - 1, onScreenFirstIndex + maxRows * maxColumns -1);
 
-    this.starterSelectScrollBar.setPage(this.scrollCursor);
+    this.starterSelectScrollBar.setScrollCursor(this.scrollCursor);
 
     let pokerusCursorIndex = 0;
     this.filteredStarterContainers.forEach((container, i) => {

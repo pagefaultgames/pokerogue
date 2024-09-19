@@ -4,9 +4,9 @@ import { BerryModifierType, modifierTypes, PokemonHeldItemModifierType } from "#
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { Species } from "#enums/species";
 import BattleScene from "#app/battle-scene";
-import MysteryEncounter, { MysteryEncounterBuilder } from "../mystery-encounter";
-import { MysteryEncounterOptionBuilder } from "../mystery-encounter-option";
-import { PersistentModifierRequirement } from "../mystery-encounter-requirements";
+import MysteryEncounter, { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-encounter";
+import { MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/mystery-encounter-option";
+import { PersistentModifierRequirement } from "#app/data/mystery-encounters/mystery-encounter-requirements";
 import { queueEncounterMessage } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
@@ -208,7 +208,7 @@ export const AbsoluteAvariceEncounter: MysteryEncounter =
 
       // Calculate boss mon
       const config: EnemyPartyConfig = {
-        levelAdditiveMultiplier: 1,
+        levelAdditiveModifier: 1,
         pokemonConfigs: [
           {
             species: getPokemonSpecies(Species.GREEDENT),
@@ -291,7 +291,7 @@ export const AbsoluteAvariceEncounter: MysteryEncounter =
           const encounter = scene.currentBattle.mysteryEncounter!;
           const berryMap = encounter.misc.berryItemsMap;
 
-          // Returns 2/5 of the berries stolen from each Pokemon
+          // Returns 2/5 of the berries stolen to each Pokemon
           const party = scene.getParty();
           party.forEach(pokemon => {
             const stolenBerries: BerryModifier[] = berryMap.get(pokemon.id);
@@ -310,6 +310,7 @@ export const AbsoluteAvariceEncounter: MysteryEncounter =
               }
             }
           });
+          await scene.updateModifiers(true);
 
           transitionMysteryEncounterIntroVisuals(scene, true, true, 500);
           leaveEncounterWithoutBattle(scene, true);
