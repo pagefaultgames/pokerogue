@@ -36,6 +36,7 @@ import { BattleEndPhase } from "#app/phases/battle-end-phase";
 import { GameOverPhase } from "#app/phases/game-over-phase";
 import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
 import { PartyExpPhase } from "#app/phases/party-exp-phase";
+import { Variant } from "#app/data/variant";
 
 /**
  * Animates exclamation sprite over trainer's head at start of encounter
@@ -67,6 +68,7 @@ export function doTrainerExclamation(scene: BattleScene) {
 export interface EnemyPokemonConfig {
   species: PokemonSpecies;
   isBoss: boolean;
+  nickname?: string;
   bossSegments?: number;
   bossSegmentModifier?: number; // Additive to the determined segment number
   mysteryEncounterPokemonData?: MysteryEncounterPokemonData;
@@ -79,6 +81,8 @@ export interface EnemyPokemonConfig {
   nature?: Nature;
   ivs?: [number, number, number, number, number, number];
   shiny?: boolean;
+  /** Is only checked if Pokemon is shiny */
+  variant?: Variant;
   /** Can set just the status, or pass a timer on the status turns */
   status?: StatusEffect | [StatusEffect, number];
   mysteryEncounterBattleEffects?: (pokemon: Pokemon) => void;
@@ -220,6 +224,11 @@ export async function initBattleWithEnemyConfig(scene: BattleScene, partyConfig:
     if (partyConfig?.pokemonConfigs && e < partyConfig.pokemonConfigs.length) {
       const config = partyConfig.pokemonConfigs[e];
 
+      // Set form
+      if (!isNullOrUndefined(config.nickname)) {
+        enemyPokemon.nickname = btoa(unescape(encodeURIComponent(config.nickname!)));
+      }
+
       // Generate new id, reset status and HP in case using data source
       if (config.dataSource) {
         enemyPokemon.id = Utils.randSeedInt(4294967296);
@@ -233,6 +242,11 @@ export async function initBattleWithEnemyConfig(scene: BattleScene, partyConfig:
       // Set shiny
       if (!isNullOrUndefined(config.shiny)) {
         enemyPokemon.shiny = config.shiny!;
+      }
+
+      // Set Variant
+      if (enemyPokemon.shiny && !isNullOrUndefined(config.variant)) {
+        enemyPokemon.variant = config.variant!;
       }
 
       // Set custom mystery encounter data fields (such as sprite scale, custom abilities, types, etc.)
@@ -315,6 +329,9 @@ export async function initBattleWithEnemyConfig(scene: BattleScene, partyConfig:
       // Requires re-priming summon data to update everything properly
       enemyPokemon.primeSummonData(enemyPokemon.summonData);
 
+      if (enemyPokemon.isShiny() && !enemyPokemon["shinySparkle"]) {
+        enemyPokemon.initShinySparkle();
+      }
       enemyPokemon.initBattleInfo();
       enemyPokemon.getBattleInfo().initInfo(enemyPokemon);
       enemyPokemon.generateName();
