@@ -1,33 +1,33 @@
 {
-  "intro": "You've come across some\ntraining tools and supplies.",
-  "title": "Training Session",
-  "description": "These supplies look like they could be used to train a member of your party! There are a few ways you could train your Pokémon, by battling against it with the rest of your team.",
-  "query": "How should you train?",
-  "invalid_selection": "Pokémon must be healthy enough.",
+  "intro": "你遇到了一些\n训练工具和用品。",
+  "title": "集训",
+  "description": "这些物品似乎可以用来训练你的队伍！\n有数种方式可以进行训练：让你队伍中的其他宝可梦与其进行对战。",
+  "query": "要怎么训练？",
+  "invalid_selection": "宝可梦必须足够健康",
   "option": {
     "1": {
-      "label": "Light Training",
-      "tooltip": "(-) Light Battle\n(+) Improve 2 Random IVs of Pokémon",
-      "finished": "{{selectedPokemon}} returns, feeling\nworn out but accomplished!$Its {{stat1}} and {{stat2}} IVs were improved!"
+      "label": "轻量训练",
+      "tooltip": "(-)轻松战斗\n(+)提升随机2只宝可梦的个体",
+      "finished": "{{selectedPokemon}}回来了，感觉\n虽然疲惫不堪，但很有成就！$它的{{stat1}}和{{stat2}}的个体得到了改善！"
     },
     "2": {
-      "label": "Moderate Training",
-      "tooltip": "(-) Moderate Battle\n(+) Change Pokémon's Nature",
-      "select_prompt": "Select a new nature\nto train your Pokémon in.",
-      "finished": "{{selectedPokemon}} returns, feeling\nworn out but accomplished!$Its nature was changed to {{nature}}!"
+      "label": "适度训练",
+      "tooltip": "(-)适中的战斗\n(+)改变宝可梦的性格",
+      "select_prompt": "选择一种想要的性格\n来训练你的神奇宝贝。",
+      "finished": "{{selectedPokemon}}回来了，感觉\n虽然疲惫不堪，但很有成就！$它的性格变成了{{nature}}！"
     },
     "3": {
-      "label": "Heavy Training",
-      "tooltip": "(-) Harsh Battle\n(+) Change Pokémon's Ability",
-      "select_prompt": "Select a new ability\nto train your Pokémon in.",
-      "finished": "{{selectedPokemon}} returns, feeling\nworn out but accomplished!$Its ability was changed to {{ability}}!"
+      "label": "重磅训练",
+      "tooltip": "(-)艰苦的战斗\n(+)改变宝可梦的特性",
+      "select_prompt": "选择一种想要的特性\n来训练你的神奇宝贝。",
+      "finished": "{{selectedPokemon}}回来了，感觉\n虽然疲惫不堪，但很有成就！$它的特性变成了{{nature}}！"
     },
     "4": {
-      "label": "Leave",
-      "tooltip": "(-) No Rewards",
-      "selected": "You've no time for training.\nTime to move on."
+      "label": "离开",
+      "tooltip": "(-)无奖励",
+      "selected": "你无暇训练\n该动身了。"
     },
-    "selected": "{{selectedPokemon}} moves across\nthe clearing to face you..."
+    "selected": "{{selected Pokemon}}穿过空地来到你面前……"
   },
-  "outro": "That was a successful training session!"
+  "outro": "这次训练成果不错！"
 }
