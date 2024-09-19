@@ -294,7 +294,7 @@ export abstract class PokemonSpeciesForm {
     `${back ? "back__" : ""}${baseSpriteKey}`.split("__").map(p => config ? config = config[p] : null);
     const variantSet = config as VariantSet;
 
-    return `${back ? "back__" : ""}${shiny && (!variantSet || (!variant && !variantSet[variant || 0])) ? "shiny__" : ""}${baseSpriteKey}${shiny && variantSet && variantSet[variant] === 2 ? `_${variant + 1}` : ""}`;
+    return `${back ? "back__" : ""}${shiny && (!variantSet || (!variant && !variantSet[variant || 0])) ? "shiny__" : ""}${baseSpriteKey}${shiny && variantSet && variantSet[variant] > 0 ? `_${variant + 1}` : ""}`;
   }
 
   getSpriteKey(female: boolean, formIndex?: integer, shiny?: boolean, variant?: integer): string {
@@ -491,7 +491,7 @@ export abstract class PokemonSpeciesForm {
         let config = variantData;
         spritePath.split("/").map(p => config ? config = config[p] : null);
         const variantSet = config as VariantSet;
-        if (variantSet && (variant !== undefined && variantSet[variant] === 1)) {
+        if (variantSet && (variant !== undefined && variantSet[variant] > 0)) {
           const populateVariantColors = (key: string): Promise<void> => {
             return new Promise(resolve => {
               if (variantColorCache.hasOwnProperty(key)) {
