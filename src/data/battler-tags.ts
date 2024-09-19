@@ -834,7 +834,7 @@ export class PowderTag extends BattlerTag {
         if (pokemon.getMoveType(move) === Type.FIRE) {
           movePhase.cancel();
 
-          new CommonBattleAnim(CommonAnim.POWDER, pokemon).play(pokemon.scene);
+          pokemon.scene.unshiftPhase(new CommonAnimPhase(pokemon.scene, pokemon.getBattlerIndex(), pokemon.getBattlerIndex(), CommonAnim.POWDER));
 
           const cancelDamage = new Utils.BooleanHolder(false);
           applyAbAttrs(BlockNonDirectDamageAbAttr, pokemon, cancelDamage);
