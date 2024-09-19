@@ -1139,6 +1139,8 @@ export default class BattleScene extends SceneBase {
 
     let battleConfig: FixedBattleConfig | null = null;
 
+    this.newArena(Biome.SPACE);
+
     this.resetSeed(newWaveIndex);
 
     const playerField = this.getPlayerField();

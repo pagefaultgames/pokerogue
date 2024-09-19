@@ -23,6 +23,7 @@ import { EggSourceType } from "#enums/egg-source-types";
 import { EggTier } from "#enums/egg-type";
 import { MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/mystery-encounter-option";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
+import { achvs } from "#app/system/achv";
 
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounter:expertBreeder";
@@ -243,6 +244,8 @@ export const TheExpertBreederEncounter: MysteryEncounter =
           initBattleWithEnemyConfig(scene, config);
         })
         .withPostOptionPhase(async (scene: BattleScene) => {
+          // Give achievement if in Space biome
+          checkAchievement(scene);
           // Give 20 friendship to the chosen pokemon
           scene.currentBattle.mysteryEncounter!.misc.pokemon1.addFriendship(FRIENDSHIP_ADDED);
           await restorePartyAndHeldItems(scene);
@@ -295,6 +298,8 @@ export const TheExpertBreederEncounter: MysteryEncounter =
           initBattleWithEnemyConfig(scene, config);
         })
         .withPostOptionPhase(async (scene: BattleScene) => {
+          // Give achievement if in Space biome
+          checkAchievement(scene);
           // Give 20 friendship to the chosen pokemon
           scene.currentBattle.mysteryEncounter!.misc.pokemon2.addFriendship(FRIENDSHIP_ADDED);
           await restorePartyAndHeldItems(scene);
@@ -347,6 +352,8 @@ export const TheExpertBreederEncounter: MysteryEncounter =
           initBattleWithEnemyConfig(scene, config);
         })
         .withPostOptionPhase(async (scene: BattleScene) => {
+          // Give achievement if in Space biome
+          checkAchievement(scene);
           // Give 20 friendship to the chosen pokemon
           scene.currentBattle.mysteryEncounter!.misc.pokemon3.addFriendship(FRIENDSHIP_ADDED);
           await restorePartyAndHeldItems(scene);
@@ -518,6 +525,12 @@ function removePokemonFromPartyAndStoreHeldItems(scene: BattleScene, encounter: 
   scene["party"] = [
     chosenPokemon
   ];
+}
+
+function checkAchievement(scene: BattleScene) {
+  if (scene.arena.biomeType === Biome.SPACE) {
+    scene.validateAchv(achvs.BREEDERS_IN_SPACE);
+  }
 }
 
 async function restorePartyAndHeldItems(scene: BattleScene) {

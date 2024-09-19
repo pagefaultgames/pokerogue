@@ -329,6 +329,9 @@ export async function initBattleWithEnemyConfig(scene: BattleScene, partyConfig:
       // Requires re-priming summon data to update everything properly
       enemyPokemon.primeSummonData(enemyPokemon.summonData);
 
+      if (enemyPokemon.isShiny() && !enemyPokemon["shinySparkle"]) {
+        enemyPokemon.initShinySparkle();
+      }
       enemyPokemon.initBattleInfo();
       enemyPokemon.getBattleInfo().initInfo(enemyPokemon);
       enemyPokemon.generateName();

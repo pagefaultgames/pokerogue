@@ -143,9 +143,9 @@ class DefaultOverrides {
   // -------------------------
 
   /** 1 to 256, set to null to ignore */
-  readonly MYSTERY_ENCOUNTER_RATE_OVERRIDE: number | null = null;
+  readonly MYSTERY_ENCOUNTER_RATE_OVERRIDE: number | null = 256;
   readonly MYSTERY_ENCOUNTER_TIER_OVERRIDE: MysteryEncounterTier | null = null;
-  readonly MYSTERY_ENCOUNTER_OVERRIDE: MysteryEncounterType | null = null;
+  readonly MYSTERY_ENCOUNTER_OVERRIDE: MysteryEncounterType | null = MysteryEncounterType.THE_EXPERT_BREEDER;
 
   // -------------------------
   // MODIFIER / ITEM OVERRIDES
