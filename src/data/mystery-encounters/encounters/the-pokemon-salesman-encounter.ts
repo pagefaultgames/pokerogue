@@ -2,8 +2,8 @@ import { leaveEncounterWithoutBattle, transitionMysteryEncounterIntroVisuals, up
 import { isNullOrUndefined, randSeedInt } from "#app/utils";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import BattleScene from "#app/battle-scene";
-import MysteryEncounter, { MysteryEncounterBuilder } from "../mystery-encounter";
-import { MoneyRequirement } from "../mystery-encounter-requirements";
+import MysteryEncounter, { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-encounter";
+import { MoneyRequirement } from "#app/data/mystery-encounters/mystery-encounter-requirements";
 import { catchPokemon, getRandomSpeciesByStarterTier, getSpriteKeysFromPokemon } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
 import { getPokemonSpecies, speciesStarters } from "#app/data/pokemon-species";
 import { Species } from "#enums/species";
@@ -15,11 +15,15 @@ import PokemonData from "#app/system/pokemon-data";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
+import { Abilities } from "#enums/abilities";
 
 /** the i18n namespace for this encounter */
 const namespace = "mysteryEncounter:pokemonSalesman";
 
-const MAX_POKEMON_PRICE_MULTIPLIER = 6;
+const MAX_POKEMON_PRICE_MULTIPLIER = 4;
+
+/** Odds of shiny magikarp will be 1/value */
+const SHINY_MAGIKARP_WEIGHT = 100;
 
 /**
  * Pokemon Salesman encounter.
@@ -58,12 +62,12 @@ export const ThePokemonSalesmanEncounter: MysteryEncounter =
       const tries = 0;
 
       // Reroll any species that don't have HAs
-      while (isNullOrUndefined(species.abilityHidden) && tries < 5) {
+      while ((isNullOrUndefined(species.abilityHidden) || species.abilityHidden === Abilities.NONE) && tries < 5) {
         species = getPokemonSpecies(getRandomSpeciesByStarterTier([0, 5]));
       }
 
       let pokemon: PlayerPokemon;
-      if (isNullOrUndefined(species.abilityHidden) || randSeedInt(100) === 0) {
+      if (randSeedInt(SHINY_MAGIKARP_WEIGHT) === 0 || isNullOrUndefined(species.abilityHidden) || species.abilityHidden === Abilities.NONE) {
         // If no HA mon found or you roll 1%, give shiny Magikarp
         species = getPokemonSpecies(Species.MAGIKARP);
         const hiddenIndex = species.ability2 ? 2 : 1;
