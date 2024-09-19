@@ -9,6 +9,6 @@
   "checkTeamDesc": "手持ちポケモンの　状態を　確認する\nフォルムチェンジアイテムを　有効・無効にする",
   "rerollCost": "{{formattedMoney}}円",
   "itemCost": "{{formattedMoney}}円",
-  "continueNextWaveButton": "Continue",
-  "continueNextWaveDescription": "Continue to the next wave"
+  "continueNextWaveButton": "続く",
+  "continueNextWaveDescription": "次の　ラウンドに　続く"
 }
