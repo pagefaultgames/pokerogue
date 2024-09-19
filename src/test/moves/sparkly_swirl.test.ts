@@ -25,7 +25,7 @@ describe("Moves - Sparkly Swirl", () => {
     game.override
       .enemySpecies(Species.SHUCKLE)
       .enemyLevel(100)
-      .enemyMoveset(Array(4).fill(Moves.SPLASH))
+      .enemyMoveset(Moves.SPLASH)
       .enemyAbility(Abilities.BALL_FETCH)
       .moveset([Moves.SPARKLY_SWIRL, Moves.SPLASH])
       .ability(Abilities.BALL_FETCH);
