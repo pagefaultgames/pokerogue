@@ -84,7 +84,7 @@ import bugTypeSuperfan from "./mystery-encounters/bug-type-superfan-dialogue.jso
 import funAndGames from "./mystery-encounters/fun-and-games-dialogue.json";
 import uncommonBreed from "./mystery-encounters/uncommon-breed-dialogue.json";
 import globalTradeSystem from "./mystery-encounters/global-trade-system-dialogue.json";
-import expertBreeder from "./mystery-encounters/the-expert-breeder-dialogue.json";
+import expertPokemonBreeder from "./mystery-encounters/the-expert-pokemon-breeder-dialogue.json";
 
 /**
  * Dialogue/Text token injection patterns that can be used:
@@ -185,7 +185,7 @@ export const jaConfig = {
     funAndGames,
     uncommonBreed,
     globalTradeSystem,
-    expertBreeder
+    expertPokemonBreeder
   },
   mysteryEncounterMessages
 };
