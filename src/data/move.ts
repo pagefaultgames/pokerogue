@@ -3974,18 +3974,17 @@ export class StatusCategoryOnAllyAttr extends VariableMoveCategoryAttr {
 export class ShellSideArmCategoryAttr extends VariableMoveCategoryAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     const category = (args[0] as Utils.NumberHolder);
-    const atkRatio = user.getEffectiveStat(Stat.ATK, target, move) / target.getEffectiveStat(Stat.DEF, user, move);
-    const specialRatio = user.getEffectiveStat(Stat.SPATK, target, move) / target.getEffectiveStat(Stat.SPDEF, user, move);
 
-    // Shell Side Arm is much more complicated than it looks, this is a partial implementation to try to achieve something similar to the games
-    if (atkRatio > specialRatio) {
+    const predictedPhysDmg = target.getBaseDamage(user, move, MoveCategory.PHYSICAL, true, true);
+    const predictedSpecDmg = target.getBaseDamage(user, move, MoveCategory.SPECIAL, true, true);
+
+    if (predictedPhysDmg > predictedSpecDmg) {
       category.value = MoveCategory.PHYSICAL;
       return true;
-    } else if (atkRatio === specialRatio && user.randSeedInt(2) === 0) {
+    } else if (predictedPhysDmg === predictedSpecDmg && user.randSeedInt(2) === 0) {
       category.value = MoveCategory.PHYSICAL;
       return true;
     }
-
     return false;
   }
 }
@@ -9126,7 +9125,7 @@ export function initMoves() {
     new AttackMove(Moves.SHELL_SIDE_ARM, Type.POISON, MoveCategory.SPECIAL, 90, 100, 10, 20, 0, 8)
       .attr(ShellSideArmCategoryAttr)
       .attr(StatusEffectAttr, StatusEffect.POISON)
-      .partial(),
+      .partial(), // Physical version of the move does not make contact
     new AttackMove(Moves.MISTY_EXPLOSION, Type.FAIRY, MoveCategory.SPECIAL, 100, 100, 5, -1, 0, 8)
       .attr(SacrificialAttr)
       .target(MoveTarget.ALL_NEAR_OTHERS)
