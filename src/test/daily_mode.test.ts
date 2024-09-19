@@ -72,7 +72,7 @@ describe("Shop modifications", async () => {
   });
 
   it("should not have Eviolite and Mini Black Hole available in Classic if not unlocked", async () => {
-    await game.classicMode.runToSummon();
+    await game.classicMode.startBattle();
     game.move.select(Moves.KOWTOW_CLEAVE);
     await game.phaseInterceptor.to("DamagePhase");
     await game.doKillOpponents();
@@ -86,7 +86,7 @@ describe("Shop modifications", async () => {
   });
 
   it("should have Eviolite and Mini Black Hole available in Daily", async () => {
-    await game.dailyMode.runToSummon();
+    await game.dailyMode.startBattle();
     game.move.select(Moves.KOWTOW_CLEAVE);
     await game.phaseInterceptor.to("DamagePhase");
     await game.doKillOpponents();
@@ -128,7 +128,7 @@ describe("Luck modifications", async() => {
   });
 
   it("should apply luck in Classic Mode", async () => {
-    await game.classicMode.runToSummon([Species.PIKACHU]);
+    await game.classicMode.startBattle([Species.PIKACHU]);
     const party = game.scene.getParty();
     vi.spyOn(party[0], "getLuck").mockReturnValue(3);
     expect(party[0].getLuck()).toBeGreaterThan(0);
@@ -136,7 +136,7 @@ describe("Luck modifications", async() => {
   });
 
   it("should not apply luck in Daily Run", async () => {
-    await game.dailyMode.runToSummon();
+    await game.dailyMode.startBattle();
     const party = game.scene.getParty();
     vi.spyOn(party[0], "getLuck").mockReturnValue(3);
     expect(party[0].getLuck()).toBeGreaterThan(0);
