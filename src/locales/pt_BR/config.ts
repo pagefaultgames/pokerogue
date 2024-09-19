@@ -62,7 +62,7 @@ import trainingSession from "./mystery-encounters/training-session-dialogue.json
 import trashToTreasure from "./mystery-encounters/trash-to-treasure-dialogue.json";
 import uncommonBreed from "./mystery-encounters/uncommon-breed-dialogue.json";
 import weirdDream from "./mystery-encounters/weird-dream-dialogue.json";
-import expertBreeder from "./mystery-encounters/the-expert-breeder-dialogue.json";
+import expertPokemonBreeder from "./mystery-encounters/the-expert-pokemon-breeder-dialogue.json";
 import nature from "./nature.json";
 import partyUiHandler from "./party-ui-handler.json";
 import pokeball from "./pokeball.json";
@@ -185,7 +185,7 @@ export const ptBrConfig = {
     funAndGames,
     uncommonBreed,
     globalTradeSystem,
-    expertBreeder
+    expertPokemonBreeder
   },
   mysteryEncounterMessages
 };
