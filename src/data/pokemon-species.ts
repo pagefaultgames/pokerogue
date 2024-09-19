@@ -45,7 +45,7 @@ export function getPokemonSpecies(species: Species | Species[] | undefined): Pok
   return allSpecies[species - 1];
 }
 
-export function getPokemonSpeciesForm(species: Species, formIndex: integer): PokemonSpeciesForm {
+export function getPokemonSpeciesForm(species: Species, formIndex: number): PokemonSpeciesForm {
   const retSpecies: PokemonSpecies = species >= 2000
     ? allSpecies.find(s => s.speciesId === species)! // TODO: is the bang correct?
     : allSpecies[species - 1];
@@ -127,26 +127,26 @@ export type PokemonSpeciesFilter = (species: PokemonSpecies) => boolean;
 
 export abstract class PokemonSpeciesForm {
   public speciesId: Species;
-  public formIndex: integer;
-  public generation: integer;
-  public type1: Type;
-  public type2: Type | null;
-  public height: number;
-  public weight: number;
-  public ability1: Abilities;
-  public ability2: Abilities;
-  public abilityHidden: Abilities;
-  public baseTotal: integer;
-  public baseStats: integer[];
-  public catchRate: integer;
-  public baseFriendship: integer;
-  public baseExp: integer;
-  public genderDiffs: boolean;
-  public isStarterSelectable: boolean;
+  public formIndex: number;
+  protected generation: number;
+  readonly type1: Type;
+  readonly type2: Type | null;
+  readonly height: number;
+  readonly weight: number;
+  readonly ability1: Abilities;
+  readonly ability2: Abilities;
+  readonly abilityHidden: Abilities;
+  readonly baseTotal: number;
+  readonly baseStats: number[];
+  readonly catchRate: number;
+  readonly baseFriendship: number;
+  readonly baseExp: number;
+  readonly genderDiffs: boolean;
+  readonly isStarterSelectable: boolean;
 
   constructor(type1: Type, type2: Type | null, height: number, weight: number, ability1: Abilities, ability2: Abilities, abilityHidden: Abilities,
-    baseTotal: integer, baseHp: integer, baseAtk: integer, baseDef: integer, baseSpatk: integer, baseSpdef: integer, baseSpd: integer,
-    catchRate: integer, baseFriendship: integer, baseExp: integer, genderDiffs: boolean, isStarterSelectable: boolean) {
+    baseTotal: number, baseHp: number, baseAtk: number, baseDef: number, baseSpatk: number, baseSpdef: number, baseSpd: number,
+    catchRate: number, baseFriendship: number, baseExp: number, genderDiffs: boolean, isStarterSelectable: boolean) {
     this.type1 = type1;
     this.type2 = type2;
     this.height = height;
@@ -178,7 +178,23 @@ export abstract class PokemonSpeciesForm {
     return ret;
   }
 
-  isOfType(type: integer): boolean {
+  /**
+   * Method to retrieve the origin generation of a Pokemon species
+   * @returns a number
+   */
+  getGeneration(): number {
+    return this.generation;
+  }
+
+  /**
+   * Method to set the generation of a specific form
+   * @param the generation of the form involved
+   */
+  setGeneration(generation: number) {
+    this.generation = generation;
+  }
+
+  isOfType(type: number): boolean {
     return this.type1 === type || (this.type2 !== null && this.type2 === type);
   }
 
@@ -186,7 +202,7 @@ export abstract class PokemonSpeciesForm {
    * Method to get the total number of abilities a Pokemon species has.
    * @returns Number of abilities
    */
-  getAbilityCount(): integer {
+  getAbilityCount(): number {
     return this.abilityHidden !== Abilities.NONE ? 3 : 2;
   }
 
@@ -195,7 +211,7 @@ export abstract class PokemonSpeciesForm {
    * @param abilityIndex Which ability to get (should only be 0-2)
    * @returns The id of the Ability
    */
-  getAbility(abilityIndex: integer): Abilities {
+  getAbility(abilityIndex: number): Abilities {
     let ret: Abilities;
     if (abilityIndex === 0) {
       ret = this.ability1;
@@ -248,11 +264,11 @@ export abstract class PokemonSpeciesForm {
    * @param stat  The desired stat.
    * @returns The species' base stat amount.
    */
-  getBaseStat(stat: Stat): integer {
+  getBaseStat(stat: Stat): number {
     return this.baseStats[stat];
   }
 
-  getBaseExp(): integer {
+  getBaseExp(): number {
     let ret = this.baseExp;
     switch (this.getFormSpriteKey()) {
     case SpeciesFormKey.MEGA:
@@ -267,12 +283,12 @@ export abstract class PokemonSpeciesForm {
     return ret;
   }
 
-  getSpriteAtlasPath(female: boolean, formIndex?: integer, shiny?: boolean, variant?: integer): string {
+  getSpriteAtlasPath(female: boolean, formIndex?: number, shiny?: boolean, variant?: number): string {
     const spriteId = this.getSpriteId(female, formIndex, shiny, variant).replace(/\_{2}/g, "/");
     return `${/_[1-3]$/.test(spriteId) ? "variant/" : ""}${spriteId}`;
   }
 
-  getSpriteId(female: boolean, formIndex?: integer, shiny?: boolean, variant: integer = 0, back?: boolean): string {
+  getSpriteId(female: boolean, formIndex?: number, shiny?: boolean, variant: number = 0, back?: boolean): string {
     if (formIndex === undefined || this instanceof PokemonForm) {
       formIndex = this.formIndex;
     }
@@ -289,11 +305,11 @@ export abstract class PokemonSpeciesForm {
     return `${back ? "back__" : ""}${shiny && (!variantSet || (!variant && !variantSet[variant || 0])) ? "shiny__" : ""}${baseSpriteKey}${shiny && variantSet && variantSet[variant] === 2 ? `_${variant + 1}` : ""}`;
   }
 
-  getSpriteKey(female: boolean, formIndex?: integer, shiny?: boolean, variant?: integer): string {
+  getSpriteKey(female: boolean, formIndex?: number, shiny?: boolean, variant?: number): string {
     return `pkmn__${this.getSpriteId(female, formIndex, shiny, variant)}`;
   }
 
-  abstract getFormSpriteKey(formIndex?: integer): string;
+  abstract getFormSpriteKey(formIndex?: number): string;
 
 
   /**
@@ -301,9 +317,9 @@ export abstract class PokemonSpeciesForm {
    * @param formIndex optional form index for pokemon with different forms
    * @returns species id if no additional forms, index with formkey if a pokemon with a form
    */
-  getVariantDataIndex(formIndex?: integer) {
+  getVariantDataIndex(formIndex?: number) {
     let formkey: string | null = null;
-    let variantDataIndex: integer | string = this.speciesId;
+    let variantDataIndex: number | string = this.speciesId;
     const species = getPokemonSpecies(this.speciesId);
     if (species.forms.length > 0 && formIndex !== undefined) {
       formkey = species.forms[formIndex]?.getFormSpriteKey(formIndex);
@@ -314,13 +330,13 @@ export abstract class PokemonSpeciesForm {
     return variantDataIndex;
   }
 
-  getIconAtlasKey(formIndex?: integer, shiny?: boolean, variant?: integer): string {
+  getIconAtlasKey(formIndex?: number, shiny?: boolean, variant?: number): string {
     const variantDataIndex = this.getVariantDataIndex(formIndex);
     const isVariant = shiny && variantData[variantDataIndex] && (variant !== undefined && variantData[variantDataIndex][variant]);
     return `pokemon_icons_${this.generation}${isVariant ? "v" : ""}`;
   }
 
-  getIconId(female: boolean, formIndex?: integer, shiny?: boolean, variant?: integer): string {
+  getIconId(female: boolean, formIndex?: number, shiny?: boolean, variant?: number): string {
     if (formIndex === undefined) {
       formIndex = this.formIndex;
     }
@@ -369,7 +385,7 @@ export abstract class PokemonSpeciesForm {
     return ret;
   }
 
-  getCryKey(formIndex?: integer): string {
+  getCryKey(formIndex?: number): string {
     let speciesId = this.speciesId;
     if (this.speciesId > 2000) {
       switch (this.speciesId) {
@@ -435,7 +451,7 @@ export abstract class PokemonSpeciesForm {
     return ret;
   }
 
-  validateStarterMoveset(moveset: StarterMoveset, eggMoves: integer): boolean {
+  validateStarterMoveset(moveset: StarterMoveset, eggMoves: number): boolean {
     const rootSpeciesId = this.getRootSpeciesId();
     for (const moveId of moveset) {
       if (speciesEggMoves.hasOwnProperty(rootSpeciesId)) {
@@ -456,7 +472,7 @@ export abstract class PokemonSpeciesForm {
     return true;
   }
 
-  loadAssets(scene: BattleScene, female: boolean, formIndex?: integer, shiny?: boolean, variant?: Variant, startLoad?: boolean): Promise<void> {
+  loadAssets(scene: BattleScene, female: boolean, formIndex?: number, shiny?: boolean, variant?: Variant, startLoad?: boolean): Promise<void> {
     return new Promise(resolve => {
       const spriteKey = this.getSpriteKey(female, formIndex, shiny, variant);
       scene.loadPokemonAtlas(spriteKey, this.getSpriteAtlasPath(female, formIndex, shiny, variant));
@@ -523,7 +539,7 @@ export abstract class PokemonSpeciesForm {
     return cry;
   }
 
-  generateCandyColors(scene: BattleScene): integer[][] {
+  generateCandyColors(scene: BattleScene): number[][] {
     const sourceTexture = scene.textures.get(this.getSpriteKey(false));
 
     const sourceFrame = sourceTexture.frames[sourceTexture.firstFrame];
@@ -531,7 +547,7 @@ export abstract class PokemonSpeciesForm {
 
     const canvas = document.createElement("canvas");
 
-    const spriteColors: integer[][] = [];
+    const spriteColors: number[][] = [];
 
     const context = canvas.getContext("2d");
     const frame = sourceFrame;
@@ -554,7 +570,7 @@ export abstract class PokemonSpeciesForm {
       }
 
       for (let i = 0; i < pixelData.length; i += 4) {
-        const total = pixelData.slice(i, i + 3).reduce((total: integer, value: integer) => total + value, 0);
+        const total = pixelData.slice(i, i + 3).reduce((total: number, value: number) => total + value, 0);
         if (!total) {
           continue;
         }
@@ -573,7 +589,7 @@ export abstract class PokemonSpeciesForm {
 
     Math.random = originalRandom;
 
-    return Array.from(paletteColors.keys()).map(c => Object.values(rgbaFromArgb(c)) as integer[]);
+    return Array.from(paletteColors.keys()).map(c => Object.values(rgbaFromArgb(c)) as number[]);
   }
 }
 
@@ -589,10 +605,10 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
   readonly canChangeForm: boolean;
   readonly forms: PokemonForm[];
 
-  constructor(id: Species, generation: integer, subLegendary: boolean, legendary: boolean, mythical: boolean, species: string,
+  constructor(id: Species, generation: number, subLegendary: boolean, legendary: boolean, mythical: boolean, species: string,
     type1: Type, type2: Type | null, height: number, weight: number, ability1: Abilities, ability2: Abilities, abilityHidden: Abilities,
-    baseTotal: integer, baseHp: integer, baseAtk: integer, baseDef: integer, baseSpatk: integer, baseSpdef: integer, baseSpd: integer,
-    catchRate: integer, baseFriendship: integer, baseExp: integer, growthRate: GrowthRate, malePercent: number | null,
+    baseTotal: number, baseHp: number, baseAtk: number, baseDef: number, baseSpatk: number, baseSpdef: number, baseSpd: number,
+    catchRate: number, baseFriendship: number, baseExp: number, growthRate: GrowthRate, malePercent: number | null,
     genderDiffs: boolean, canChangeForm?: boolean, ...forms: PokemonForm[]) {
     super(type1, type2, height, weight, ability1, ability2, abilityHidden, baseTotal, baseHp, baseAtk, baseDef, baseSpatk, baseSpdef, baseSpd,
       catchRate, baseFriendship, baseExp, genderDiffs, false);
@@ -614,11 +630,11 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
     forms.forEach((form, f) => {
       form.speciesId = id;
       form.formIndex = f;
-      form.generation = generation;
+      form.setGeneration(generation);
     });
   }
 
-  getName(formIndex?: integer): string {
+  getName(formIndex?: number): string {
     if (formIndex !== undefined && this.forms.length) {
       const form = this.forms[formIndex];
       let key: string | null;
@@ -649,15 +665,15 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
     this.name = i18next.t(`pokemon:${Species[this.speciesId].toLowerCase()}`);
   }
 
-  getWildSpeciesForLevel(level: integer, allowEvolving: boolean, isBoss: boolean, gameMode: GameMode): Species {
+  getWildSpeciesForLevel(level: number, allowEvolving: boolean, isBoss: boolean, gameMode: GameMode): Species {
     return this.getSpeciesForLevel(level, allowEvolving, false, (isBoss ? PartyMemberStrength.WEAKER : PartyMemberStrength.AVERAGE) + (gameMode?.isEndless ? 1 : 0));
   }
 
-  getTrainerSpeciesForLevel(level: integer, allowEvolving: boolean = false, strength: PartyMemberStrength, currentWave: number = 0): Species {
+  getTrainerSpeciesForLevel(level: number, allowEvolving: boolean = false, strength: PartyMemberStrength, currentWave: number = 0): Species {
     return this.getSpeciesForLevel(level, allowEvolving, true, strength, currentWave);
   }
 
-  private getStrengthLevelDiff(strength: PartyMemberStrength): integer {
+  private getStrengthLevelDiff(strength: PartyMemberStrength): number {
     switch (Math.min(strength, PartyMemberStrength.STRONGER)) {
     case PartyMemberStrength.WEAKEST:
       return 60;
@@ -674,7 +690,7 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
     }
   }
 
-  getSpeciesForLevel(level: integer, allowEvolving: boolean = false, forTrainer: boolean = false, strength: PartyMemberStrength = PartyMemberStrength.WEAKER, currentWave: number = 0): Species {
+  getSpeciesForLevel(level: number, allowEvolving: boolean = false, forTrainer: boolean = false, strength: PartyMemberStrength = PartyMemberStrength.WEAKER, currentWave: number = 0): Species {
     const prevolutionLevels = this.getPrevolutionLevels();
 
     if (prevolutionLevels.length) {
@@ -814,7 +830,7 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
   }
 
   // This could definitely be written better and more accurate to the getSpeciesForLevel logic, but it is only for generating movesets for evolved Pokemon
-  getSimulatedEvolutionChain(currentLevel: integer, forTrainer: boolean = false, isBoss: boolean = false, player: boolean = false): EvolutionLevel[] {
+  getSimulatedEvolutionChain(currentLevel: number, forTrainer: boolean = false, isBoss: boolean = false, player: boolean = false): EvolutionLevel[] {
     const ret: EvolutionLevel[] = [];
     if (pokemonPrevolutions.hasOwnProperty(this.speciesId)) {
       const prevolutionLevels = this.getPrevolutionLevels().reverse();
@@ -866,7 +882,7 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
     return variantData.hasOwnProperty(variantDataIndex) || variantData.hasOwnProperty(this.speciesId);
   }
 
-  getFormSpriteKey(formIndex?: integer) {
+  getFormSpriteKey(formIndex?: number) {
     if (this.forms.length && (formIndex !== undefined && formIndex >= this.forms.length)) {
       console.warn(`Attempted accessing form with index ${formIndex} of species ${this.getName()} with only ${this.forms.length || 0} forms`);
       formIndex = Math.min(formIndex, this.forms.length - 1);
@@ -886,8 +902,8 @@ export class PokemonForm extends PokemonSpeciesForm {
   private starterSelectableKeys: string[] = ["10", "50", "10-pc", "50-pc", "red", "orange", "yellow", "green", "blue", "indigo", "violet"];
 
   constructor(formName: string, formKey: string, type1: Type, type2: Type | null, height: number, weight: number, ability1: Abilities, ability2: Abilities, abilityHidden: Abilities,
-    baseTotal: integer, baseHp: integer, baseAtk: integer, baseDef: integer, baseSpatk: integer, baseSpdef: integer, baseSpd: integer,
-    catchRate: integer, baseFriendship: integer, baseExp: integer, genderDiffs?: boolean, formSpriteKey?: string | null, isStarterSelectable?: boolean, ) {
+    baseTotal: number, baseHp: number, baseAtk: number, baseDef: number, baseSpatk: number, baseSpdef: number, baseSpd: number,
+    catchRate: number, baseFriendship: number, baseExp: number, genderDiffs?: boolean, formSpriteKey?: string | null, isStarterSelectable?: boolean, ) {
     super(type1, type2, height, weight, ability1, ability2, abilityHidden, baseTotal, baseHp, baseAtk, baseDef, baseSpatk, baseSpdef, baseSpd,
       catchRate, baseFriendship, baseExp, !!genderDiffs, (!!isStarterSelectable || !formKey));
     this.formName = formName;
@@ -895,7 +911,7 @@ export class PokemonForm extends PokemonSpeciesForm {
     this.formSpriteKey = formSpriteKey !== undefined ? formSpriteKey : null;
   }
 
-  getFormSpriteKey(_formIndex?: integer) {
+  getFormSpriteKey(_formIndex?: number) {
     return this.formSpriteKey !== null ? this.formSpriteKey : this.formKey;
   }
 }
@@ -3303,7 +3319,7 @@ export const noStarterFormKeys: string[] = [
   SpeciesFormKey.ETERNAMAX
 ].map(k => k.toString());
 
-export function getStarterValueFriendshipCap(value: integer): integer {
+export function getStarterValueFriendshipCap(value: number): number {
   switch (value) {
   case 1:
     return 20;

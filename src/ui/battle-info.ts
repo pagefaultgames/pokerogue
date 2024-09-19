@@ -360,7 +360,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
 
     if (!this.player) {
       if (this.nameText.visible) {
-        this.nameText.on("pointerover", () => (this.scene as BattleScene).ui.showTooltip("", i18next.t("battleInfo:generation", { generation: i18next.t(`starterSelectUiHandler:gen${pokemon.species.generation}`) })));
+        this.nameText.on("pointerover", () => (this.scene as BattleScene).ui.showTooltip("", i18next.t("battleInfo:generation", { generation: i18next.t(`starterSelectUiHandler:gen${pokemon.species.getGeneration()}`) })));
         this.nameText.on("pointerout", () => (this.scene as BattleScene).ui.hideTooltip());
       }
 
