@@ -2,7 +2,7 @@ import { MapModifier } from "#app/modifier/modifier";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import GameManager from "./utils/gameManager";
 import { Moves } from "#app/enums/moves";
-import { getPartyLuckValue, itemPoolChecks } from "#app/modifier/modifier-type";
+import { getPartyLuckValue } from "#app/modifier/modifier-type";
 import { Biome } from "#app/enums/biome";
 import { BattleEndPhase } from "#app/phases/battle-end-phase";
 import { Mode } from "#app/ui/ui";
@@ -67,49 +67,72 @@ describe("Shop modifications", async () => {
       .disableTrainerWaves()
       .moveset([Moves.KOWTOW_CLEAVE])
       .enemyMoveset(Moves.SPLASH);
-    itemPoolChecks.set("EVIOLITE", false);
-    itemPoolChecks.set("MINI_BLACK_HOLE", false);
+    game.modifiers.addCheck("EVIOLITE");
+    game.modifiers.addCheck("MINI_BLACK_HOLE");
   });
 
   afterEach(() => {
     game.phaseInterceptor.restoreOg();
-    itemPoolChecks.clear();
-    vi.resetAllMocks();
-    vi.clearAllMocks();
+    game.modifiers.clearChecks();
   });
 
   it("should not have Eviolite and Mini Black Hole available in Classic if not unlocked", async () => {
     await game.classicMode.runToSummon();
-    expect(itemPoolChecks.get("EVIOLITE")).toBeFalsy();
-    expect(itemPoolChecks.get("MINI_BLACK_HOLE")).toBeFalsy();
-    const party = game.scene.getParty();
     game.move.select(Moves.KOWTOW_CLEAVE);
     await game.phaseInterceptor.to("DamagePhase");
     await game.doKillOpponents();
     await game.phaseInterceptor.to(BattleEndPhase);
     game.onNextPrompt("SelectModifierPhase", Mode.MODIFIER_SELECT, () => {
       expect(game.scene.ui.getHandler()).toBeInstanceOf(ModifierSelectUiHandler);
-      expect(itemPoolChecks.get("EVIOLITE")).toBeFalsy();
-      expect(itemPoolChecks.get("MINI_BLACK_HOLE")).toBeFalsy();
-      expect(party[0].getLuck()).toBeGreaterThan(0);
+      game.modifiers
+        .testCheck("EVIOLITE", false)
+        .testCheck("MINI_BLACK_HOLE", false);
     });
   });
 
   it("should have Eviolite and Mini Black Hole available in Daily", async () => {
     await game.dailyMode.runToSummon();
-    expect(itemPoolChecks.get("EVIOLITE")).toBeFalsy();
-    expect(itemPoolChecks.get("MINI_BLACK_HOLE")).toBeFalsy();
-    const party = game.scene.getParty();
     game.move.select(Moves.KOWTOW_CLEAVE);
     await game.phaseInterceptor.to("DamagePhase");
     await game.doKillOpponents();
     await game.phaseInterceptor.to(BattleEndPhase);
     game.onNextPrompt("SelectModifierPhase", Mode.MODIFIER_SELECT, () => {
       expect(game.scene.ui.getHandler()).toBeInstanceOf(ModifierSelectUiHandler);
-      expect(itemPoolChecks.get("EVIOLITE")).toBeTruthy();
-      expect(itemPoolChecks.get("MINI_BLACK_HOLE")).toBeTruthy();
-      expect(party[0].getLuck()).toBeGreaterThan(0);
+      game.modifiers
+        .testCheck("EVIOLITE", true)
+        .testCheck("MINI_BLACK_HOLE", true);
     });
+  });
+});
+
+describe("Luck modifications", async() => {
+  let phaserGame: Phaser.Game;
+  let game: GameManager;
+
+  beforeAll(() => {
+    phaserGame = new Phaser.Game({
+      type: Phaser.HEADLESS,
+    });
+  });
+  beforeEach(() => {
+    game = new GameManager(phaserGame);
+
+    game.override
+      .startingWave(9)
+      .startingBiome(Biome.ICE_CAVE) // Will lead to Snowy Forest with randomly generated weather
+      .battleType("single")
+      .shinyLevel(true)
+      .startingLevel(100) // Avoid levelling up
+      .enemyLevel(1000) // Avoid opponent dying before game.doKillOpponents()
+      .disableTrainerWaves()
+      .moveset([Moves.KOWTOW_CLEAVE])
+      .enemyMoveset(Moves.SPLASH);
+  });
+
+  afterEach(() => {
+    game.phaseInterceptor.restoreOg();
+    vi.resetAllMocks();
+    vi.clearAllMocks();
   });
 
   it("should apply luck in Classic Mode", async () => {

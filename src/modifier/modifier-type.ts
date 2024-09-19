@@ -1972,14 +1972,8 @@ export function getModifierPoolForType(poolType: ModifierPoolType): ModifierPool
 const tierWeights = [ 768 / 1024, 195 / 1024, 48 / 1024, 12 / 1024, 1 / 1024 ];
 /**
  * Allows a unit test to check if an item exists in the Modifier Pool. Checks the pool directly, rather than attempting to reroll for the item.
- * `set` a key to `false` to create a check for it. (I.E. `itemPoolChecks.set("RARE_CANDY", false)`)
- *
- *
- * Within the SelectModifierPhase (`GameManager.onNextPrompt("SelectModifierPhase", Mode.MODIFIER_SELECT, () => {})`), you can `expect` these values.
- *
- * (I.E. `expect(itemPoolChecks.get("RARE_CANDY")).toBeTruthy()` checks whether Rare Candy can be offered to the player)
  */
-export const itemPoolChecks: Map<ModifierTypeKeys, boolean> = new Map();
+export const itemPoolChecks: Map<ModifierTypeKeys, boolean | undefined> = new Map();
 
 export function regenerateModifierPoolThresholds(party: Pokemon[], poolType: ModifierPoolType, rerollCount: integer = 0) {
   const pool = getModifierPoolForType(poolType);
