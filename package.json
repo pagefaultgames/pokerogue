@@ -49,6 +49,7 @@
 		"crypto-js": "^4.2.0",
 		"i18next": "^23.11.1",
 		"i18next-browser-languagedetector": "^7.2.1",
+		"i18next-http-backend": "^2.6.1",
 		"i18next-korean-postposition-processor": "^1.0.0",
 		"json-stable-stringify": "^1.1.0",
 		"phaser": "^3.70.0",
