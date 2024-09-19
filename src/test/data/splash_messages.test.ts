@@ -1,11 +1,5 @@
 import { getSplashMessages } from "#app/data/splash-messages";
-import { afterEach } from "node:test";
-import { describe, expect, it, vi } from "vitest";
-
-const Jan = 1;
-const Sep = 8;
-const Oct = 9;
-const Dec = 11;
+import { describe, expect, it, vi, afterEach } from "vitest";
 
 describe("Data - Splash Messages", () => {
   it("should contain at least 15 splash messages", () => {
@@ -24,15 +18,15 @@ describe("Data - Splash Messages", () => {
     });
 
     it("should contain halloween messages from Sep 15 to Oct 31", () => {
-      testSeason(new Date(2023, Sep, 15), new Date(2023, Oct, 31), "halloween");
+      testSeason(new Date("2024-09-15"), new Date("2024-10-31"), "halloween");
     });
 
     it("should contain xmas messages from Dec 1 to Dec 26", () => {
-      testSeason(new Date(2023, Dec, 1), new Date(2023, Dec, 26), "xmas");
+      testSeason(new Date("2024-12-01"), new Date("2024-12-26"), "xmas");
     });
 
     it("should contain new years messages frm Jan 1 to Jan 31", () => {
-      testSeason(new Date(2024, Jan, 1), new Date(2024, Jan, 31), "newYears");
+      testSeason(new Date("2024-01-01"), new Date("2024-01-31"), "newYears");
     });
   });
 });
@@ -56,11 +50,12 @@ function testSeason(startDate: Date, endDate: Date, prefix: string) {
   const [before, start, end, after] = dates.map((date) => {
     vi.setSystemTime(date);
     console.log("System time set to", date);
-    return getSplashMessages().filter(filterFn).length;
+    const count = getSplashMessages().filter(filterFn).length;
+    return count;
   });
 
   expect(before).toBe(0);
-  expect(start).toBeGreaterThan(0);
-  expect(end).toBeGreaterThan(0);
+  expect(start).toBeGreaterThanOrEqual(10); // make sure to adjust if weight is changed!
+  expect(end).toBeGreaterThanOrEqual(10); // make sure to adjust if weight is changed!
   expect(after).toBe(0);
 }
