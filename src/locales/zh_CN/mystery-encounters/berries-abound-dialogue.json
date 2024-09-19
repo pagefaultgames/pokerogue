@@ -1,26 +1,26 @@
 {
-  "intro": "There's a huge berry bush\nnear that Pokémon!",
-  "title": "Berries Abound",
-  "description": "It looks like there's a strong Pokémon guarding a berry bush. Battling is the straightforward approach, but it looks strong. Perhaps a fast Pokémon could grab some berries without getting caught?",
-  "query": "What will you do?",
-  "berries": "Berries!",
+  "intro": "宝可梦旁边\n有着巨大的树果丛！",
+  "title": "硕“果”累累",
+  "description": "似乎有强大的宝可梦守护着树果丛。\n最简单的方法是战斗，但它的实力不容小觑。\n也许一只速度很快的宝可梦可以乘机顺走一些树果？",
+  "query": "你要怎么做？",
+  "berries": "树果！！"
   "option": {
     "1": {
-      "label": "Battle the Pokémon",
-      "tooltip": "(-) Hard Battle\n(+) Gain Berries",
-      "selected": "You approach the\nPokémon without fear."
+      "label": "与它战斗",
+      "tooltip": "(-)艰难的战斗\n(+)获得树果",
+      "selected": "你无所畏惧地\n走向了宝可梦们。"
     },
     "2": {
-      "label": "Race to the Bush",
-      "tooltip": "(-) {{fastestPokemon}} Uses its Speed\n(+) Gain Berries",
-      "selected": "Your {{fastestPokemon}} races for the berry bush!$It manages to nab {{numBerries}} before the {{enemyPokemon}} can react!$You quickly retreat with your newfound prize.",
-      "selected_bad": "Your {{fastestPokemon}} races for the berry bush!$Oh no! The {{enemyPokemon}} was faster and blocked off the approach!",
-      "boss_enraged": "The opposing {{enemyPokemon}} has become enraged!"
+      "label": "冲向果丛",
+      "tooltip": "(-){{fastestPokemon}}试试速度\n(+)获得树果",
+      "selected": "你的{{fastestPokemon}}冲向了果丛！$它在{{enemyPokemon}}做出反应之前成功抓住了{{numBerries}}！$你带着你的战利品迅速撤退。",
+      "selected_bad": "你的{{fastestPokemon}}向浆果丛奔去！$哦不！{{enemyPokemon}}速度更快，挡住了它的去路！",
+      "boss_enraged": "对方的{{enemyPokemon}}变得非常愤怒！"
     },
     "3": {
-      "label": "Leave",
-      "tooltip": "(-) No Rewards",
-      "selected": "You leave the strong Pokémon\nwith its prize and continue on."
+      "label": "离开",
+      "tooltip": "(-)无奖励",
+      "selected": "你让那个宝可梦留着属于它的果子\n继续上路了。"
     }
   }
 }

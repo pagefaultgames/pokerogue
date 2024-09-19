@@ -1,21 +1,21 @@
 {
-  "intro": "It's a massive {{shuckleName}} and what appears\nto be a large stash of... juice?",
-  "title": "The Strong Stuff",
-  "description": "The {{shuckleName}} that blocks your path looks incredibly strong. Meanwhile, the juice next to it is emanating power of some kind.\n\nThe {{shuckleName}} extends its feelers in your direction. It seems like it wants to do something...",
-  "query": "What will you do?",
+  "intro": "眼前是一个巨大的{{shuckleName}}而看起来\n有一大壶……果汁？",
+  "title": "满满当当",
+  "description": "挡住你去路的{{shuckleName}}看起来异常强大。与此同时，它旁边的果汁散发着某种力量。\n\n{{shuckleName}}向你伸出了触角。它似乎想做些什么……",
+  "query": "你要怎么做？",
   "option": {
     "1": {
-      "label": "Approach the {{shuckleName}}",
-      "tooltip": "(?) Something awful or amazing might happen",
-      "selected": "You black out.",
-      "selected_2": "@f{150}When you awaken, the {{shuckleName}} is gone\nand juice stash completely drained.${{highBstPokemon1}} and {{highBstPokemon2}}\nfeel a terrible lethargy come over them!$Their base stats were reduced by {{reductionValue}}!$Your remaining Pokémon feel an incredible vigor, though!\nTheir base stats are increased by {{increaseValue}}!"
+      "label": "接近{{shuckleName}}",
+      "tooltip": "(?)可能会发生一些可怕或惊奇的事情",
+      "selected": "你眼前一黑",
+      "selected_2": "@f{150}当你醒来时，{{shuckleName}}不见了。\n并且壶里的果汁完全耗尽。${{highBstPokemon1}}和{{highBstPokemon2}}\n觉得一阵可怕的无力感袭来！$他们的基础属性减少了{{reductionValue}}！$然而，你剩下的神奇宝贝却感到精力充沛！\n他们的基础属性增加了{{increaseValue}}！"
     },
     "2": {
-      "label": "Battle the {{shuckleName}}",
-      "tooltip": "(-) Hard Battle\n(+) Special Rewards",
-      "selected": "Enraged, the {{shuckleName}} drinks some of its juice and attacks!",
-      "stat_boost": "The {{shuckleName}}'s juice boosts its stats!"
+      "label": "与{{shuckleName}}战斗",
+      "tooltip": "(-)艰难的战斗\n(+)特别的奖励",
+      "selected": "{{shuckleName}}被激怒了，它喝了一些果汁并发起了攻击！",
+      "stat_boost": "{{shuckleName}}的果汁提升了它的能力！"
     }
   },
-  "outro": "What a bizarre turn of events."
+  "outro": "好诡异的一回啊。"
 }

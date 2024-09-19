@@ -1,26 +1,26 @@
 {
-  "intro": "That isn't just an ordinary Pokémon!",
-  "title": "Uncommon Breed",
-  "description": "That {{enemyPokemon}} looks special compared to others of its kind. @[TOOLTIP_TITLE]{Perhaps it knows a special move?} You could battle and catch it outright, but there might also be a way to befriend it.",
-  "query": "What will you do?",
+  "intro": "这可不是一只普通的宝可梦！",
+  "title": "罕见物种",
+  "description": "{{enemyPokemon}}看起来与其他同种宝可梦大相径庭。\n@[TOOLTIP_TITLE]{也许它会特殊招式？}\n你可以直接进行战斗并尝试捕获它，但可能也有办法和它交朋友。",
+  "query": "你要怎么做？"
   "option": {
     "1": {
-      "label": "Battle the Pokémon",
-      "tooltip": "(-) Tricky Battle\n(+) Strong Catchable Foe",
-      "selected": "You approach the\n{{enemyPokemon}} without fear.",
-      "stat_boost": "The {{enemyPokemon}}'s heightened abilities boost its stats!"
+      "label": "与它战斗",
+      "tooltip": "(-)蹊跷的战斗\n(+)可捕获强敌",
+      "selected": "你毫无畏惧地接近\n{{enemyPokemon}}。",
+      "stat_boost": "{{enemyPokemon}}的不凡实力让它的能力提高！"
     },
     "2": {
-      "label": "Give It Food",
-      "disabled_tooltip": "You need 4 berry items to choose this",
-      "tooltip": "(-) Give 4 Berries\n(+) The {{enemyPokemon}} Likes You",
-      "selected": "You toss the berries at the {{enemyPokemon}}!$It eats them happily!$The {{enemyPokemon}} wants to join your party!"
+      "label": "给他吃的",
+      "disabled_tooltip": "你需要4个树果来选择此项",
+      "tooltip": "(-)给予4个树果\n(+){{enemyPokemon}}会喜欢你",
+      "selected": "你把树果扔向{{enemyPokemon}}！$它高兴地把树果吃干抹净！${{enemyPokemon}}想加入你的队伍！"
     },
     "3": {
-      "label": "Befriend It",
-      "disabled_tooltip": "Your Pokémon need to know certain moves to choose this",
-      "tooltip": "(+) {{option3PrimaryName}} uses {{option3PrimaryMove}}\n(+) The {{enemyPokemon}} Likes You",
-      "selected": "Your {{option3PrimaryName}} uses {{option3PrimaryMove}} to charm the {{enemyPokemon}}!$The {{enemyPokemon}} wants to join your party!"
+      "label": "交朋友",
+      "disabled_tooltip": "你的宝可梦需要习得某些招式才能选择此项",
+      "tooltip": "(+){{option3PrimaryName}}使用{{option3PrimaryMove}}\n(+){{enemyPokemon}}会喜欢你",
+      "selected": "你的{{option3PrimaryName}}使用了{{option3PrimaryMove}}来吸引{{enemyPokemon}}！${{enemyPokemon}}想加入你的队伍！"
     }
   }
 }

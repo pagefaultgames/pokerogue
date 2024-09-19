@@ -1,25 +1,25 @@
 {
-  "intro": "As you walk down a narrow pathway, you see a towering silhouette blocking your path.$You get closer to see a {{snorlaxName}} sleeping peacefully.\nIt seems like there's no way around it.",
-  "title": "Slumbering {{snorlaxName}}",
-  "description": "You could attack it to try and get it to move, or simply wait for it to wake up. Who knows how long that could take, though...",
-  "query": "What will you do?",
+  "intro": "当你走在一条狭窄的小路上时，\n一个高耸的身影挡住了你的去路。\n当你走近时，你看到了一个{{snorlaxName}}正在酣睡。\n似乎没有办法绕过它。",
+  "title": "沉睡的{{snorlaxName}}",
+  "description": "你可以攻击它来让它醒来，要么就等它睡醒。\n谁知道要等多久呢？",
+  "query": "你要怎么做？"
   "option": {
     "1": {
-      "label": "Battle It",
-      "tooltip": "(-) Fight Sleeping {{snorlaxName}}\n(+) Special Reward",
+      "label": "抡醒",
+      "tooltip": "(-)与沉睡的{{snorlaxName}}战斗\n(+)特别的奖励",
       "selected": "You approach the\nPokémon without fear."
     },
     "2": {
-      "label": "Wait for It to Move",
-      "tooltip": "(-) Wait a Long Time\n(+) Recover Party",
-      "selected": ".@d{32}.@d{32}.@d{32}$You wait for a time, but the {{snorlaxName}}'s yawns make your party sleepy...",
-      "rest_result": "When you all awaken, the {{snorlaxName}} is no where to be found -\nbut your Pokémon are all healed!"
+      "label": "干等",
+      "tooltip": "(-)漫长的等待\n(+)回复队伍",
+      "selected": ".@d{32}.@d{32}.@d{32}$您等待了好一段时间，但是\n{{snorlaxName}}的哈欠让你的队伍昏昏欲睡…………",
+      "rest_result": "当你们醒来时，{{snorlax Name}}已无处可寻。\n但你所有的宝可梦都痊愈了！"
     },
     "3": {
-      "label": "Steal Its Item",
-      "tooltip": "(+) {{option3PrimaryName}} uses {{option3PrimaryMove}}\n(+) Special Reward",
-      "disabled_tooltip": "Your Pokémon need to know certain moves to choose this",
-      "selected": "Your {{option3PrimaryName}} uses {{option3PrimaryMove}}!$@s{item_fanfare}It steals Leftovers off the sleeping\n{{snorlaxName}} and you make out like bandits!"
+      "label": "偷摸",
+      "tooltip": "(+){{option3PrimaryName}}使用{{option3PrimaryMove}}\n(+)特别的奖励",
+      "disabled_tooltip": "宝可梦需要习得特别的招式来选择",
+      "selected": "你的{{option3PrimaryName}}使用{{option3PrimaryMove}}！$@s{item_fanfare}它从熟睡的\n{{snorlaxName}}身上偷走了吃剩的东西，简直像个怪盗！"
     }
   }
 }

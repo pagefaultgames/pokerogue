@@ -1,22 +1,22 @@
 {
-  "intro": "It's a family standing outside their house!",
-  "speaker": "The Winstrates",
-  "intro_dialogue": "We're the Winstrates!$What do you say to taking on our family in a series of Pokémon battles?",
-  "title": "The Winstrate Challenge",
-  "description": "The Winstrates are a family of 5 trainers, and they want to battle! If you beat all of them back-to-back, they'll give you a grand prize. But can you handle the heat?",
-  "query": "What will you do?",
+  "intro": "房子外站着一家人！",
+  "speaker": "连胜家族",
+  "intro_dialogue": "我们是连胜家族！$你觉得和我们一家人来一场宝可梦车轮战怎么样？",
+  "title": "连胜家族的挑战",
+  "description": "连胜家族由 5 名训练师组成，他们想要战斗！\n如果你连续击败他们所有人，他们会给你一份大奖。但你能承受压力吗？",
+  "query": "你要怎么做？",
   "option": {
     "1": {
-      "label": "Accept the Challenge",
-      "tooltip": "(-) Brutal Battle\n(+) Special Item Reward",
-      "selected": "Let the challenge begin!"
+      "label": "接受挑战",
+      "tooltip": "(-)残酷的战斗\n(+)特别的奖励",
+      "selected": "挑战开始！"
     },
     "2": {
-      "label": "Refuse the Challenge",
-      "tooltip": "(+) Full Heal Party\n(+) Gain a Rarer Candy",
-      "selected": "That's too bad. Say, your team looks worn out, why don't you stay awhile and rest?"
+      "label": "拒绝挑战",
+      "tooltip": "(+)队伍痊愈\n(+)获得一个超神奇糖果",
+      "selected": "太可惜了。话说，你们队伍看上去很疲惫，为什么不留下来休息一会儿呢？"
     }
   },
-  "victory": "Congratulations on beating our challenge!$First off, we'd like you to have this Voucher.",
-  "victory_2": "Also, our family uses this Macho Brace to strengthen\nour Pokémon more effectively during training.$You may not need it considering that you beat the whole lot of us, but we hope you'll accept it anyway!"
+  "victory": "恭喜您赢得了我们的挑战！\n$事不宜迟，希望您收下这张扭蛋券。",
+  "victory_2": "此外，我们家也使用这款强制锻炼器来在训练中\n更有效地强化我们的宝可梦。\n鉴于你能打败我们所有人，你可能用不着，\n但我们希望你无论如何都能收下它！"
 }

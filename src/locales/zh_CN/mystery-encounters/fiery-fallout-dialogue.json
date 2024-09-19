@@ -1,26 +1,26 @@
 {
-  "intro": "You encounter a blistering storm of smoke and ash!",
-  "title": "Fiery Fallout",
-  "description": "The whirling ash and embers have cut visibility to nearly zero. It seems like there might be some... source that is causing these conditions. But what could be behind a phenomenon of this magnitude?",
-  "query": "What will you do?",
+  "intro": "你遭遇了一场烟灰风暴！",
+  "title": "炽热余波",
+  "description": "呼啸的火山灰和余烬使能见度几乎为零。\n看来可能有什么…东西造成了这种状况。\n但到底会是什么呢？",
+  "query": "你要怎么做？",
   "option": {
     "1": {
-      "label": "Find the Source",
-      "tooltip": "(?) Discover the source\n(-) Hard Battle",
-      "selected": "You push through the storm, and find two {{volcaronaName}}s in the middle of a mating dance!$They don't take kindly to the interruption and attack!"
+      "label": "找到源头",
+      "tooltip": "(?)寻找源头\n(-)困难的战斗",
+      "selected": "你冲破风暴，发现两只{{volcaronaName}}正在相互求偶！$它们很不情愿被打扰，并发起了攻击！"
     },
     "2": {
-      "label": "Hunker Down",
-      "tooltip": "(-) Suffer the effects of the weather",
-      "selected": "The weather effects cause significant\nharm as you struggle to find shelter!$Your party takes 20% Max HP damage!",
-      "target_burned": "Your {{burnedPokemon}} also became burned!"
+      "label": "原地趴下",
+      "tooltip": "(-)忍受天气的影响",
+      "selected": "当您努力寻找庇护所时，天气影响会造成严重伤害！$您的队伍受到最大生命值20%的伤害！",
+      "target_burned": "你的{{burnedPokemon}}还被灼伤了！"
     },
     "3": {
-      "label": "Your Fire Types Help",
-      "tooltip": "(+) End the conditions\n(+) Gain a Charcoal",
-      "disabled_tooltip": "You need at least 2 Fire Type Pokémon to choose this",
-      "selected": "Your {{option3PrimaryName}} and {{option3SecondaryName}} guide you to where two {{volcaronaName}}s are in the middle of a mating dance!$Thankfully, your Pokémon are able to calm them,\nand they depart without issue."
+      "label": "让火系宝可梦帮忙",
+      "tooltip": "(+)解决困境\n(+)获得木炭",
+      "disabled_tooltip": "你至少需要两只火系宝可梦来选择",
+      "selected": "你的{{option3PrimaryName}}和{{option3SecondaryName}}引导你发现了两只{{volcaronaName}}正在求偶起舞的地方！$幸运的是，你的宝可梦能够让它们平静下来，\n然后它们就平安离开了。"
     }
   },
-  "found_charcoal": "After the weather clears,\nyour {{leadPokemon}} spots something on the ground.$@s{item_fanfare}{{leadPokemon}} gained a Charcoal!"
+  "found_charcoal": "天气转晴后，你的{{leadPokemon}}沾上了什么东西。\\n@s{item_fanfare}{{leadPokemon}}获得了煤炭！"
 }

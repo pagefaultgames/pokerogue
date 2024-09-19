@@ -1,47 +1,47 @@
 {
-  "intro": "An extremely strong trainer approaches you...",
+  "intro": "一个十分强大的训练家向你走来…",
   "buck": {
-    "intro_dialogue": "Yo, trainer! My name's Buck.$I have a super awesome proposal\nfor a strong trainer such as yourself!$I'm carrying two rare Pokémon Eggs with me,\nbut I'd like someone else to care for one.$If you can prove your strength as a trainer to me,\nI'll give you the rarer egg!",
-    "accept": "Whoooo, I'm getting fired up!",
-    "decline": "Darn, it looks like your\nteam isn't in peak condition.$Here, let me help with that."
+    "intro_dialogue": "哟，训练师！我叫麦可。$我有一个非常棒的提议，\n适合像你这样强大的训练师！$我随身带着两颗稀有的宝可梦蛋，\n但我想让别人来照顾一颗。$如果你能向我证明你作为训练师的实力，\n我会给你更稀有的蛋！",
+    "accept": "芜！！我燃起来了！",
+    "decline": "害，看起来你的\n队伍状态不佳。$来，让我来帮忙。"
   },
   "cheryl": {
-    "intro_dialogue": "Hello, my name's Cheryl.$I have a particularly interesting request,\nfor a strong trainer such as yourself.$I'm carrying two rare Pokémon Eggs with me,\nbut I'd like someone else to care for one.$If you can prove your strength as a trainer to me,\nI'll give you the rarer Egg!",
-    "accept": "I hope you're ready!",
-    "decline": "I understand, it looks like your team\nisn't in the best condition at the moment.$Here, let me help with that."
+    "intro_dialogue": "你好，我是芽米。$我有一个特别有趣的请求，\n因为看起来你是一位强大的训练师。$我随身带着两颗稀有的宝可梦蛋，\n但我想让别人照顾一颗。$如果你能向我证明你作为训练师的实力，\n我会给你更稀有的蛋！",
+    "accept": "我希望你准备好了！",
+    "decline": "我明白，看起来你的团队\n目前状态不佳。$来，让我来帮忙。"
   },
   "marley": {
-    "intro_dialogue": "...@d{64} I'm Marley.$I have an offer for you...$I'm carrying two Pokémon Eggs with me,\nbut I'd like someone else to care for one.$If you're stronger than me,\nI'll give you the rarer Egg.",
-    "accept": "... I see.",
-    "decline": "... I see.$Your Pokémon look hurt...\nLet me help."
+    "intro_dialogue": "……@d{64} 我是米依。$我有一个提议给你...$我随身带着两颗宝可梦蛋，\n但我想让别人照顾一颗。$如果你比我强，\n我会给你更稀有的蛋。",
+    "accept": "……我明白了。",
+    "decline": "... 我明白了。$你的宝可梦看起来伤得很重...\n让我来帮忙。"
   },
   "mira": {
-    "intro_dialogue": "Hi! I'm Mira!$Mira has a request\nfor a strong trainer like you!$Mira has two rare Pokémon Eggs,\nbut Mira wants someone else to take one!$If you show Mira that you're strong,\nMira will give you the rarer Egg!",
-    "accept": "You'll battle Mira?\nYay!",
-    "decline": "Aww, no battle?\nThat's okay!$Here, Mira will heal your team!"
+    "intro_dialogue": "嗨！我是麦儿！$麦儿有一个请求\n需要像你一样强大的训练师！$麦儿有两颗稀有的宝可梦蛋，\n但麦儿希望别人拿走一颗！$如果你向麦儿展示你的实力，\n麦儿会给你更稀有的蛋！",
+    "accept": "你会和麦儿对战吗？\n耶！",
+    "decline": "噢……不战斗？\n没关系！$来，麦尔会治疗你的宝可梦！"
   },
   "riley": {
-    "intro_dialogue": "I'm Riley.$I have an odd proposal\nfor a strong trainer such as yourself.$I'm carrying two rare Pokémon Eggs with me,\nbut I'd like to give one to another trainer.$If you can prove your strength to me,\nI'll give you the rarer Egg!",
-    "accept": "That look you have...\nLet's do this.",
-    "decline": "I understand, your team looks beat up.$Here, let me help with that."
+    "intro_dialogue": "我是亚玄。$我有一个有点怪的提议，\n毕竟面前是像你这样的强大训练师。$我随身带着两颗稀有的宝可梦蛋，\n但我想把其中一颗送给另一位训练师。$如果你能向我证明你的实力，\n我会给你更稀有的蛋！",
+    "accept": "你那表情……\n我们开始吧。",
+    "decline": "我明白，毕竟你的队伍看起来很疲惫。$来，让我来帮你。"
   },
-  "title": "A Trainer's Test",
-  "description": "It seems this trainer is willing to give you an Egg regardless of your decision. However, if you can manage to defeat this strong trainer, you'll receive a much rarer Egg.",
-  "query": "What will you do?",
+  "title": "训练家试炼",
+  "description": "不管你选择什么，此训练家都会给你一个蛋。\n然而，如果你能击败他，就会获得一个更稀有的蛋。",
+  "query": "你要怎么做？",
   "option": {
     "1": {
-      "label": "Accept the Challenge",
-      "tooltip": "(-) Tough Battle\n(+) Gain a @[TOOLTIP_TITLE]{Very Rare Egg}"
+      "label": "接受挑战",
+      "tooltip": "(-)艰难的战斗\n(+)获得一个@[TOOLTIP_TITLE]{非常稀有的蛋}"
     },
     "2": {
-      "label": "Refuse the Challenge",
-      "tooltip": "(+) Full Heal Party\n(+) Gain an @[TOOLTIP_TITLE]{Egg}"
+      "label": "拒绝挑战",
+      "tooltip": "(+)治疗全队\n(+)获得一个@[TOOLTIP_TITLE]{蛋}"
     }
   },
   "eggTypes": {
-    "rare": "a Rare Egg",
-    "epic": "an Epic Egg",
-    "legendary": "a Legendary Egg"
+    "rare": "稀有的蛋",
+    "epic": "史诗的蛋",
+    "legendary": "传说的蛋"
   },
-  "outro": "{{statTrainerName}} gave you {{eggType}}!"
+  "outro": "{{statTrainerName}}给了你{{eggType}}！"
 }

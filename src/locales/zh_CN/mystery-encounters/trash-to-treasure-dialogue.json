@@ -1,19 +1,19 @@
 {
-  "intro": "It's a massive pile of garbage!\nWhere did this come from?",
-  "title": "Trash to Treasure",
-  "description": "The garbage heap looms over you, and you can spot some items of value buried amidst the refuse. Are you sure you want to get covered in filth to get them, though?",
-  "query": "What will you do?",
+  "intro": "一大堆垃圾！\n这是从哪儿来的？",
+  "title": "变废为宝",
+  "description": "垃圾堆在你眼前晃来晃去，你似乎在垃圾中发现一些有价值的物品。\n不过，你确定要弄得脏兮兮地去拿它们吗？",
+  "query": "你要怎么做？"
   "option": {
     "1": {
-      "label": "Dig for Valuables",
-      "tooltip": "(-) Lose Healing Items in Shops\n(+) Gain Amazing Items",
-      "selected": "You wade through the garbage pile, becoming mired in filth.$There's no way any respectable shopkeepers\nwill sell you anything in your grimy state!$You'll just have to make do without shop healing items.$However, you found some incredible items in the garbage!"
+      "label": "挖掘宝贝",
+      "tooltip": "(-)商店的治疗用品消失\n(+)获得精美礼品",
+      "selected": "你穿过垃圾堆，没入污秽之中。$在你这样肮脏的状态下，任何有尊严的店主\n都不会卖给你任何东西！$你只能将就将就，不再购买治疗物品。$然而，你在垃圾中还是发现了一些不可思议的宝贝！"
     },
     "2": {
-      "label": "Investigate Further",
-      "tooltip": "(?) Find the Source of the Garbage",
-      "selected": "You wander around the heap, searching for any indication as to how this might have appeared here...",
-      "selected_2": "Suddenly, the garbage shifts! It wasn't just garbage, it was a Pokémon!"
+      "label": "探究来源",
+      "tooltip": "(?)找到垃圾的来源",
+      "selected": "你在这堆东西周围徘徊，寻找表明这东西可能出现在这里的任何迹象……",
+      "selected_2": "突然，垃圾动了！那不是垃圾，是一只宝可梦！"
     }
   }
 }
