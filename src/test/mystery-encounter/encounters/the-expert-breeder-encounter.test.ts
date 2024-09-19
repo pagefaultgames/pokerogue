@@ -19,7 +19,7 @@ import { TrainerType } from "#enums/trainer-type";
 import { EggTier } from "#enums/egg-type";
 import { PostMysteryEncounterPhase } from "#app/phases/mystery-encounter-phases";
 
-const namespace = "mysteryEncounter:expertBreeder";
+const namespace = "mysteryEncounter:expertPokemonBreeder";
 const defaultParty = [Species.LAPRAS, Species.GENGAR, Species.ABRA];
 const defaultBiome = Biome.CAVE;
 const defaultWave = 45;
