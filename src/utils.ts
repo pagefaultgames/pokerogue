@@ -638,3 +638,15 @@ export function isBetween(num: number, min: number, max: number): boolean {
 export function animationFileName(move: Moves): string {
   return Moves[move].toLowerCase().replace(/\_/g, "-");
 }
+
+/**
+ * Transforms a camelCase string into a kebab-case string
+ * @param str The camelCase string
+ * @returns A kebab-case string
+ *
+ * @source {@link https://stackoverflow.com/a/67243723/}
+ */
+export function camelCaseToKebabCase(str: string): string {
+  console.log("str:", str);
+  return str.replace(/[A-Z]+(?![a-z])|[A-Z]/g, (s, o) => (o ? "-" : "") + s.toLowerCase());
+}
