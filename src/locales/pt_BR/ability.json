@@ -1237,6 +1237,6 @@
   },
   "poisonPuppeteer": {
     "name": "Poison Puppeteer",
-    "description": "Pokémon envenenados pelos movimentos de Pecharunt também ficarão confusos. //TODO"
+    "description": "Pokémon envenenados pelos movimentos deste Pokémon também ficarão confusos."
   }
 }
