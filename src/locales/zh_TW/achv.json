@@ -264,5 +264,9 @@
   "INVERSE_BATTLE": {
     "name": "鏡子子鏡",
     "description": "完成逆轉之戰挑戰\n戰挑戰之轉逆成完"
+  },
+  "BREEDERS_IN_SPACE": {
+    "name": "Breeders in Space!",
+    "description": "Beat the Expert Pokémon Breeder in the Space Biome."
   }
 }
