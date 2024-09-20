@@ -60,6 +60,10 @@ export enum ChallengeType {
   */
   TYPE_EFFECTIVENESS,
   /**
+   * Challenge that enables Trick Room in a run
+   */
+  TRICK_ROOM,
+  /**
    * Modifies what level the AI pokemon are. UNIMPLEMENTED.
    */
   AI_LEVEL,
@@ -337,6 +341,15 @@ export abstract class Challenge {
    * @returns Whether this function did anything.
    */
   applyTypeEffectiveness(effectiveness: Utils.NumberHolder): boolean {
+    return false;
+  }
+
+  /**
+   * An apply function for TRICK_ROOM challenges. Derived classes should alter this.
+   * @param enabled {@link Utils.BooleanHolder} Whether the challenge is enabled.
+   * @returns {@link boolean} Whether this function did anything.
+   */
+  applyTrickRoom(enabled: Utils.BooleanHolder): boolean {
     return false;
   }
 
@@ -708,6 +721,35 @@ export class InverseBattleChallenge extends Challenge {
 }
 
 /**
+ * Challenge that enables Trick Room in a run
+ */
+export class TrickRoomChallenge extends Challenge {
+  constructor() {
+    super(Challenges.TRICK_ROOM, 1);
+  }
+
+  static loadChallenge(source: TrickRoomChallenge | any): TrickRoomChallenge {
+    const newChallenge = new TrickRoomChallenge();
+    newChallenge.value = source.value;
+    newChallenge.severity = source.severity;
+    return newChallenge;
+  }
+
+  override getDifficulty(): number {
+    return 0;
+  }
+
+  applyTrickRoom(enabled: Utils.BooleanHolder): boolean {
+    if (!enabled.value) {
+      enabled.value = true;
+    } else {
+      enabled.value = false;
+    }
+    return true;
+  }
+}
+
+/**
  * Lowers the amount of starter points available.
  */
 export class LowerStarterMaxCostChallenge extends Challenge {
@@ -835,6 +877,14 @@ export function applyChallenges(gameMode: GameMode, challengeType: ChallengeType
  */
 export function applyChallenges(gameMode: GameMode, challengeType: ChallengeType.TYPE_EFFECTIVENESS, effectiveness: Utils.NumberHolder): boolean;
 /**
+ * Apply all challenges that modify Trick Room.
+ * @param gameMode {@linkcode GameMode} The current gameMode
+ * @param challengeType {@linkcode ChallengeType} ChallengeType.TRICK_ROOM
+ * @param enabled {@linkcode Utils.BooleanHolder} Whether Trick Room is enabled.
+ * @returns True if any challenge was successfully applied.
+ */
+export function applyChallenges(gameMode: GameMode, challengeType: ChallengeType.TRICK_ROOM, enabled: Utils.BooleanHolder): boolean;
+/**
  * Apply all challenges that modify what level AI are.
  * @param gameMode {@link GameMode} The current gameMode
  * @param challengeType {@link ChallengeType} ChallengeType.AI_LEVEL
@@ -918,6 +968,9 @@ export function applyChallenges(gameMode: GameMode, challengeType: ChallengeType
       case ChallengeType.TYPE_EFFECTIVENESS:
         ret ||= c.applyTypeEffectiveness(args[0]);
         break;
+      case ChallengeType.TRICK_ROOM:
+        ret ||= c.applyTrickRoom(args[0]);
+        break;
       case ChallengeType.AI_LEVEL:
         ret ||= c.applyLevelChange(args[0], args[1], args[2], args[3]);
         break;
@@ -961,6 +1014,8 @@ export function copyChallenge(source: Challenge | any): Challenge {
     return FreshStartChallenge.loadChallenge(source);
   case Challenges.INVERSE_BATTLE:
     return InverseBattleChallenge.loadChallenge(source);
+  case Challenges.TRICK_ROOM:
+    return TrickRoomChallenge.loadChallenge(source);
   }
   throw new Error("Unknown challenge copied");
 }
@@ -973,5 +1028,6 @@ export function initChallenges() {
     new SingleTypeChallenge(),
     new FreshStartChallenge(),
     new InverseBattleChallenge(),
+    new TrickRoomChallenge(),
   );
 }

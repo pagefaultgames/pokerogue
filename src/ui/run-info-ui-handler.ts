@@ -489,8 +489,10 @@ export default class RunInfoUiHandler extends UiHandler {
           rules.push(i18next.t("challenges:freshStart.name"));
           break;
         case Challenges.INVERSE_BATTLE:
-          //
           rules.push(i18next.t("challenges:inverseBattle.shortName"));
+          break;
+        case Challenges.TRICK_ROOM:
+          rules.push(i18next.t("challenges:trickRoom.shortName"));
           break;
         }
       }

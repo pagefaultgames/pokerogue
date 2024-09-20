@@ -19,6 +19,7 @@ import { TurnEndPhase } from "./turn-end-phase";
 import { WeatherEffectPhase } from "./weather-effect-phase";
 import { BattlerIndex } from "#app/battle";
 import { TrickRoomTag } from "#app/data/arena-tag";
+import { applyChallenges, ChallengeType } from "#app/data/challenge";
 
 export class TurnStartPhase extends FieldPhase {
   constructor(scene: BattleScene) {
@@ -52,6 +53,7 @@ export class TurnStartPhase extends FieldPhase {
     // Next, a check for Trick Room is applied. If Trick Room is present, the order is reversed.
     const speedReversed = new Utils.BooleanHolder(false);
     this.scene.arena.applyTags(TrickRoomTag, speedReversed);
+    applyChallenges(this.scene.gameMode, ChallengeType.TRICK_ROOM, speedReversed);
 
     if (speedReversed.value) {
       orderedTargets = orderedTargets.reverse();
