@@ -264,5 +264,9 @@
   "INVERSE_BATTLE": {
     "name": "상성 전문가(였던 것)",
     "description": "거꾸로 배틀 챌린지 모드 클리어."
+  },
+  "BREEDERS_IN_SPACE": {
+    "name": "Breeders in Space!",
+    "description": "Beat the Expert Pokémon Breeder in the Space Biome."
   }
 }
