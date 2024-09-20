@@ -3969,6 +3969,7 @@ export class StatusCategoryOnAllyAttr extends VariableMoveCategoryAttr {
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     const category = (args[0] as Utils.IntegerHolder);
+    // Need to check for strict equality or something better than this.
     const isAlly = (user.isPlayer() && target.isPlayer()) || (!user.isPlayer() && !target.isPlayer());
 
     if (isAlly) {

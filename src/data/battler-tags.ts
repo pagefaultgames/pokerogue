@@ -141,6 +141,14 @@ export abstract class MoveRestrictionBattlerTag extends BattlerTag {
    */
   abstract isMoveRestricted(move: Moves): boolean;
 
+  /**
+   * Checks if this tag is restricting a move based on a user's decisions during the target selection phase
+   *
+   * @param {Moves} move {@linkcode Moves} move ID to check restriction for
+   * @param {Pokemon} user {@linkcode Pokemon} the user of the above move
+   * @param {Pokemon} target {@linkcode Pokemon} the target of the above move
+   * @returns {boolean} `false` unless overridden by the child tag
+   */
   isMoveTargetRestricted(move: Moves, user: Pokemon, target: Pokemon): boolean {
     return false;
   }
@@ -2183,25 +2191,32 @@ export class ExposedTag extends BattlerTag {
 }
 
 /**
- * Describes the behavior of a Heal Block Tag.
+ * Tag that prevents HP recovery from held items and move effects. It also blocks the usage of recovery moves.
+ * Applied by moves:  {@linkcode Moves.HEAL_BLOCK | Heal Block (5 turns)}, {@linkcode Moves.PSYCHIC_NOISE | Psychic Noise (2 turns)}
+ *
+ * @extends MoveRestrictionBattlerTag
  */
 export class HealBlockTag extends MoveRestrictionBattlerTag {
   constructor(turnCount: number, sourceMove: Moves) {
     super(BattlerTagType.HEAL_BLOCK, [ BattlerTagLapseType.PRE_MOVE, BattlerTagLapseType.TURN_END ], turnCount, sourceMove);
   }
 
+  /**
+   * Uses the default onAdd method
+   */
   override onAdd(pokemon: Pokemon): void {
     super.onAdd(pokemon);
-  }
-
-  override lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
-    return super.lapse(pokemon, lapseType);
   }
 
   onActivation(pokemon: Pokemon): string {
     return i18next.t("battle:battlerTagsHealBlock", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) });
   }
 
+  /**
+   * Checks if a move is disabled under Heal Block
+   * @param {Moves} move {@linkcode Moves} the move ID
+   * @returns {boolean} T/F if the move has a TRIAGE_MOVE flag and is a status move
+   */
   override isMoveRestricted(move: Moves): boolean {
     if (allMoves[move].hasFlag(MoveFlags.TRIAGE_MOVE) && allMoves[move].category === MoveCategory.STATUS) {
       return true;
@@ -2209,6 +2224,14 @@ export class HealBlockTag extends MoveRestrictionBattlerTag {
     return false;
   }
 
+  /**
+   * Checks if a move is disabled under Heal Block because of its choice of target
+   * Implemented b/c of Pollen Puff
+   * @param {Moves} move {@linkcode Moves} the move ID
+   * @param {Pokemon} user {@linkcode Pokemon} the move user
+   * @param {Pokemon} target {@linkcode Pokemon} the target of the move
+   * @returns {boolean} the move cannot be used b/c the target is an ally
+   */
   override isMoveTargetRestricted(move: Moves, user: Pokemon, target: Pokemon) {
     const moveCategory = new Utils.IntegerHolder(allMoves[move].category);
     applyMoveAttrs(StatusCategoryOnAllyAttr, user, target, allMoves[move], moveCategory);
@@ -2218,6 +2241,9 @@ export class HealBlockTag extends MoveRestrictionBattlerTag {
     return false;
   }
 
+  /**
+   * Uses DisabledTag's selectionDeniedText() message
+   */
   override selectionDeniedText(pokemon: Pokemon, move: Moves): string {
     return i18next.t("battle:moveDisabled", { moveName: allMoves[move].name });
   }
