@@ -8,8 +8,6 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 describe("Moves - Baddy Bad", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
-  const TIMEOUT = 20 * 1000;
-
   beforeAll(() => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
@@ -39,5 +37,5 @@ describe("Moves - Baddy Bad", () => {
     await game.phaseInterceptor.to("BerryPhase");
 
     expect(game.scene.arena.tags.length).toBe(0);
-  }, TIMEOUT);
+  });
 });

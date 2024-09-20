@@ -9,7 +9,7 @@ import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest";
 
-const TIMEOUT = 20 * 1000;
+
 
 describe("Moves - Roost", () => {
   let phaserGame: Phaser.Game;
@@ -72,7 +72,7 @@ describe("Moves - Roost", () => {
       expect(playerPokemonTypes[0] === Type.NORMAL).toBeTruthy();
       expect(playerPokemonTypes.length === 1).toBeTruthy();
       expect(playerPokemon.isGrounded()).toBeTruthy();
-    }, TIMEOUT
+    }
   );
 
   test(
@@ -100,7 +100,7 @@ describe("Moves - Roost", () => {
       expect(playerPokemonTypes[0] === Type.FLYING).toBeTruthy();
       expect(playerPokemon.isGrounded()).toBeFalsy();
 
-    }, TIMEOUT
+    }
   );
 
   test(
@@ -128,7 +128,7 @@ describe("Moves - Roost", () => {
       expect(playerPokemonTypes[1] === Type.FLYING).toBeTruthy();
       expect(playerPokemon.isGrounded()).toBeFalsy();
 
-    }, TIMEOUT
+    }
   );
 
   test(
@@ -157,7 +157,7 @@ describe("Moves - Roost", () => {
       expect(playerPokemonTypes[1] === Type.FLYING).toBeTruthy();
       expect(playerPokemon.isGrounded()).toBeFalsy();
 
-    }, TIMEOUT
+    }
   );
 
   test(
@@ -196,7 +196,7 @@ describe("Moves - Roost", () => {
       expect(playerPokemonTypes.length === 1).toBeTruthy();
       expect(playerPokemon.isGrounded()).toBeFalsy();
 
-    }, TIMEOUT
+    }
   );
 
   test(
@@ -236,7 +236,7 @@ describe("Moves - Roost", () => {
       expect(playerPokemonTypes.length === 1).toBeTruthy();
       expect(playerPokemon.isGrounded()).toBeFalsy();
 
-    }, TIMEOUT
+    }
   );
 
   test(
@@ -263,7 +263,7 @@ describe("Moves - Roost", () => {
       expect(playerPokemonTypes.length === 3).toBeTruthy();
       expect(playerPokemon.isGrounded()).toBeFalsy();
 
-    }, TIMEOUT
+    }
   );
 
 });

@@ -8,7 +8,7 @@ import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest";
 import { Abilities } from "#app/enums/abilities";
 
-const TIMEOUT = 20 * 1000;
+
 // RATIO : HP Cost of Move
 const RATIO = 2;
 // PREDAMAGE : Amount of extra HP lost
@@ -54,7 +54,7 @@ describe("Moves - BELLY DRUM", () => {
 
       expect(leadPokemon.hp).toBe(leadPokemon.getMaxHp() - hpLost);
       expect(leadPokemon.getStatStage(Stat.ATK)).toBe(6);
-    }, TIMEOUT
+    }
   );
 
   test("will still take effect if an uninvolved stat stage is at max",
@@ -74,7 +74,7 @@ describe("Moves - BELLY DRUM", () => {
       expect(leadPokemon.hp).toBe(leadPokemon.getMaxHp() - hpLost);
       expect(leadPokemon.getStatStage(Stat.ATK)).toBe(6);
       expect(leadPokemon.getStatStage(Stat.SPATK)).toBe(6);
-    }, TIMEOUT
+    }
   );
 
   test("fails if the pokemon's ATK stat stage is at its maximum",
@@ -90,7 +90,7 @@ describe("Moves - BELLY DRUM", () => {
 
       expect(leadPokemon.hp).toBe(leadPokemon.getMaxHp());
       expect(leadPokemon.getStatStage(Stat.ATK)).toBe(6);
-    }, TIMEOUT
+    }
   );
 
   test("fails if the user's health is less than 1/2",
@@ -106,6 +106,6 @@ describe("Moves - BELLY DRUM", () => {
 
       expect(leadPokemon.hp).toBe(hpLost - PREDAMAGE);
       expect(leadPokemon.getStatStage(Stat.ATK)).toBe(0);
-    }, TIMEOUT
+    }
   );
 });
