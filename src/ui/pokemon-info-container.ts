@@ -270,7 +270,7 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
 
       const ownedAbilityAttrs = pokemon.scene.gameData.starterData[pokemon.species.getRootSpeciesId()].abilityAttr;
 
-      // Check if the playe rowns ability for the root form
+      // Check if the player owns ability for the root form
       const playerOwnsThisAbility = pokemon.checkIfPlayerHasAbilityOfStarter(ownedAbilityAttrs);
 
       if (!playerOwnsThisAbility) {
