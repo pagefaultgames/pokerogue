@@ -7,7 +7,7 @@ import * as Utils from "../utils";
 import { PlayerGender } from "#enums/player-gender";
 import { Challenge, FreshStartChallenge, SingleGenerationChallenge, SingleTypeChallenge, InverseBattleChallenge } from "#app/data/challenge";
 import { ConditionFn } from "#app/@types/common";
-import { Stat, getShortenedStatKey  } from "#app/enums/stat";
+import { Stat, getShortenedStatKey } from "#app/enums/stat";
 import { Challenges } from "#app/enums/challenges";
 
 export enum AchvTier {
@@ -197,7 +197,7 @@ export function getAchievementDescription(localizationKey: string): string {
   case "100_RIBBONS":
     return i18next.t("achv:RibbonAchv.description", {context: genderStr, "ribbonAmount": achvs._100_RIBBONS.ribbonAmount.toLocaleString("en-US")});
   case "TRANSFER_MAX_STAT_STAGE":
-    return i18next.t("achv:TRANSFER_MAX_BATTLE_STAT.description", { context: genderStr });
+    return i18next.t("achv:TRANSFER_MAX_STAT_STAGE.description", { context: genderStr });
   case "MAX_FRIENDSHIP":
     return i18next.t("achv:MAX_FRIENDSHIP.description", { context: genderStr });
   case "MEGA_EVOLVE":
@@ -279,6 +279,8 @@ export function getAchievementDescription(localizationKey: string): string {
     return i18next.t("achv:FRESH_START.description", { context: genderStr });
   case "INVERSE_BATTLE":
     return i18next.t("achv:INVERSE_BATTLE.description", { context: genderStr });
+  case "BREEDERS_IN_SPACE":
+    return i18next.t("achv:BREEDERS_IN_SPACE.description", { context: genderStr });
   default:
     return "";
   }
@@ -356,6 +358,7 @@ export const achvs = {
   MONO_FAIRY: new ChallengeAchv("MONO_FAIRY", "", "MONO_FAIRY.description", "fairy_feather", 100, (c, scene) => c instanceof SingleTypeChallenge && c.value === 18 && !scene.gameMode.challenges.some(c => c.id === Challenges.INVERSE_BATTLE && c.value > 0)),
   FRESH_START: new ChallengeAchv("FRESH_START", "", "FRESH_START.description", "reviver_seed", 100, (c, scene) => c instanceof FreshStartChallenge && c.value > 0 && !scene.gameMode.challenges.some(c => c.id === Challenges.INVERSE_BATTLE && c.value > 0)),
   INVERSE_BATTLE: new ChallengeAchv("INVERSE_BATTLE", "", "INVERSE_BATTLE.description", "inverse", 100, c => c instanceof InverseBattleChallenge && c.value > 0),
+  BREEDERS_IN_SPACE: new Achv("BREEDERS_IN_SPACE", "", "BREEDERS_IN_SPACE.description", "moon_stone", 100).setSecret(),
 };
 
 export function initAchievements() {

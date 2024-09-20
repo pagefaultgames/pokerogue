@@ -32,7 +32,7 @@ describe("Moves - Hyper Beam", () => {
     game.override.ability(Abilities.BALL_FETCH);
     game.override.enemySpecies(Species.SNORLAX);
     game.override.enemyAbility(Abilities.BALL_FETCH);
-    game.override.enemyMoveset(Array(4).fill(Moves.SPLASH));
+    game.override.enemyMoveset([Moves.SPLASH]);
     game.override.enemyLevel(100);
 
     game.override.moveset([Moves.HYPER_BEAM, Moves.TACKLE]);

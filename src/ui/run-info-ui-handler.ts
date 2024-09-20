@@ -21,6 +21,7 @@ import { getVariantTint } from "#app/data/variant";
 import * as Modifier from "../modifier/modifier";
 import { Species } from "#enums/species";
 import { PlayerGender } from "#enums/player-gender";
+import { SettingKeyboard } from "#app/system/settings/settings-keyboard";
 
 /**
  * RunInfoUiMode indicates possible overlays of RunInfoUiHandler.
@@ -151,7 +152,13 @@ export default class RunInfoUiHandler extends UiHandler {
       const headerBgCoords = headerBg.getTopRight();
       const abilityButtonContainer = this.scene.add.container(0, 0);
       const abilityButtonText = addTextObject(this.scene, 8, 0, i18next.t("runHistory:viewHeldItems"), TextStyle.WINDOW, {fontSize:"34px"});
-      const abilityButtonElement = new Phaser.GameObjects.Sprite(this.scene, 0, 2, "keyboard", "E.png");
+      const gamepadType = this.getUi().getGamepadType();
+      let abilityButtonElement: Phaser.GameObjects.Sprite;
+      if (gamepadType === "touch") {
+        abilityButtonElement = new Phaser.GameObjects.Sprite(this.scene, 0, 2, "keyboard", "E.png");
+      } else {
+        abilityButtonElement = new Phaser.GameObjects.Sprite(this.scene, 0, 2, gamepadType, this.scene.inputController?.getIconForLatestInputRecorded(SettingKeyboard.Button_Cycle_Ability));
+      }
       abilityButtonContainer.add([abilityButtonText, abilityButtonElement]);
       abilityButtonContainer.setPosition(headerBgCoords.x - abilityButtonText.displayWidth - abilityButtonElement.displayWidth - 8, 10);
       this.runContainer.add(abilityButtonContainer);
@@ -173,18 +180,26 @@ export default class RunInfoUiHandler extends UiHandler {
   private async parseRunResult() {
     const genderIndex = this.scene.gameData.gender ?? PlayerGender.UNSET;
     const genderStr = PlayerGender[genderIndex];
-    const runResultTextStyle = this.isVictory ? TextStyle.SUMMARY : TextStyle.SUMMARY_RED;
+    const runResultTextStyle = this.isVictory ? TextStyle.PERFECT_IV : TextStyle.SUMMARY_RED;
     const runResultTitle = this.isVictory ? i18next.t("runHistory:victory") : i18next.t("runHistory:defeated", { context: genderStr });
-    const runResultText = addBBCodeTextObject(this.scene, 6, 5, `${runResultTitle} - ${i18next.t("saveSlotSelectUiHandler:wave")} ${this.runInfo.waveIndex}`, runResultTextStyle, {fontSize : "65px", lineSpacing: 0.1});
+    const runResultText = addTextObject(this.scene, 6, 5, `${runResultTitle} - ${i18next.t("saveSlotSelectUiHandler:wave")} ${this.runInfo.waveIndex}`, runResultTextStyle, {fontSize : "65px", lineSpacing: 0.1});
 
     if (this.isVictory) {
       const hallofFameInstructionContainer = this.scene.add.container(0, 0);
       const shinyButtonText = addTextObject(this.scene, 8, 0, i18next.t("runHistory:viewHallOfFame"), TextStyle.WINDOW, {fontSize:"65px"});
-      const shinyButtonElement = new Phaser.GameObjects.Sprite(this.scene, 0, 4, "keyboard", "R.png");
+      const formButtonText = addTextObject(this.scene, 8, 12, i18next.t("runHistory:viewEndingSplash"), TextStyle.WINDOW, {fontSize:"65px"});
+      const gamepadType = this.getUi().getGamepadType();
+      let shinyButtonElement: Phaser.GameObjects.Sprite;
+      let formButtonElement: Phaser.GameObjects.Sprite;
+      if (gamepadType === "touch") {
+        shinyButtonElement = new Phaser.GameObjects.Sprite(this.scene, 0, 4, "keyboard", "R.png");
+        formButtonElement = new Phaser.GameObjects.Sprite(this.scene, 0, 16, "keyboard", "F.png");
+      } else {
+        shinyButtonElement = new Phaser.GameObjects.Sprite(this.scene, 0, 4, gamepadType, this.scene.inputController?.getIconForLatestInputRecorded(SettingKeyboard.Button_Cycle_Shiny));
+        formButtonElement = new Phaser.GameObjects.Sprite(this.scene, 0, 16, gamepadType, this.scene.inputController?.getIconForLatestInputRecorded(SettingKeyboard.Button_Cycle_Form));
+      }
       hallofFameInstructionContainer.add([shinyButtonText, shinyButtonElement]);
 
-      const formButtonText = addTextObject(this.scene, 8, 12, i18next.t("runHistory:viewEndingSplash"), TextStyle.WINDOW, {fontSize:"65px"});
-      const formButtonElement = new Phaser.GameObjects.Sprite(this.scene, 0, 16, "keyboard", "F.png");
       hallofFameInstructionContainer.add([formButtonText, formButtonElement]);
 
       hallofFameInstructionContainer.setPosition(12, 25);
@@ -196,7 +211,7 @@ export default class RunInfoUiHandler extends UiHandler {
     if (!this.isVictory) {
       const enemyContainer = this.scene.add.container(0, 0);
       // Wild - Single and Doubles
-      if (this.runInfo.battleType === BattleType.WILD) {
+      if (this.runInfo.battleType === BattleType.WILD || (this.runInfo.battleType === BattleType.MYSTERY_ENCOUNTER && !this.runInfo.trainer)) {
         switch (this.runInfo.enemyParty.length) {
         case 1:
           // Wild - Singles
@@ -207,7 +222,7 @@ export default class RunInfoUiHandler extends UiHandler {
           this.parseWildDoubleDefeat(enemyContainer);
           break;
         }
-      } else if (this.runInfo.battleType === BattleType.TRAINER) {
+      } else if (this.runInfo.battleType === BattleType.TRAINER || (this.runInfo.battleType === BattleType.MYSTERY_ENCOUNTER && this.runInfo.trainer)) {
         this.parseTrainerDefeat(enemyContainer);
       }
       this.runResultContainer.add(enemyContainer);
@@ -366,10 +381,6 @@ export default class RunInfoUiHandler extends UiHandler {
       break;
     case GameModes.SPLICED_ENDLESS:
       modeText.appendText(`${i18next.t("gameMode:endlessSpliced")}`, false);
-      if (this.runInfo.waveIndex === this.scene.gameData.gameStats.highestEndlessWave) {
-        modeText.appendText(` [${i18next.t("runHistory:personalBest")}]`, false);
-        modeText.setTint(0xffef5c, 0x47ff69, 0x6b6bff, 0xff6969);
-      }
       break;
     case GameModes.CHALLENGE:
       modeText.appendText(`${i18next.t("gameMode:challenge")}`, false);
@@ -388,15 +399,16 @@ export default class RunInfoUiHandler extends UiHandler {
       break;
     case GameModes.ENDLESS:
       modeText.appendText(`${i18next.t("gameMode:endless")}`, false);
-      // If the player achieves a personal best in Endless, the mode text will be tinted similarly to SSS luck to celebrate their achievement.
-      if (this.runInfo.waveIndex === this.scene.gameData.gameStats.highestEndlessWave) {
-        modeText.appendText(` [${i18next.t("runHistory:personalBest")}]`, false);
-        modeText.setTint(0xffef5c, 0x47ff69, 0x6b6bff, 0xff6969);
-      }
       break;
     case GameModes.CLASSIC:
       modeText.appendText(`${i18next.t("gameMode:classic")}`, false);
       break;
+    }
+
+    // If the player achieves a personal best in Endless, the mode text will be tinted similarly to SSS luck to celebrate their achievement.
+    if ((this.runInfo.gameMode === GameModes.ENDLESS || this.runInfo.gameMode === GameModes.SPLICED_ENDLESS) && this.runInfo.waveIndex === this.scene.gameData.gameStats.highestEndlessWave) {
+      modeText.appendText(` [${i18next.t("runHistory:personalBest")}]`);
+      modeText.setTint(0xffef5c, 0x47ff69, 0x6b6bff, 0xff6969);
     }
 
     // Duration + Money
@@ -526,7 +538,9 @@ export default class RunInfoUiHandler extends UiHandler {
       // Contains Name, Level + Nature, Ability, Passive
       const pokeInfoTextContainer = this.scene.add.container(-85, 3.5);
       const textContainerFontSize = "34px";
-      const pNature = getNatureName(pokemon.nature);
+      // This checks if the Pokemon's nature has been overwritten during the run and displays the change accurately
+      const pNature = pokemon.getNature();
+      const pNatureName = getNatureName(pNature);
       const pName = pokemon.getNameToRender();
       //With the exception of Korean/Traditional Chinese/Simplified Chinese, the code shortens the terms for ability and passive to their first letter.
       //These languages are exempted because they are already short enough.
@@ -542,7 +556,7 @@ export default class RunInfoUiHandler extends UiHandler {
       // Japanese is set to a greater line spacing of 35px in addBBCodeTextObject() if lineSpacing < 12.
       const lineSpacing = (i18next.resolvedLanguage === "ja") ? 12 : 3;
       const pokeInfoText = addBBCodeTextObject(this.scene, 0, 0, pName, TextStyle.SUMMARY, {fontSize: textContainerFontSize, lineSpacing: lineSpacing});
-      pokeInfoText.appendText(`${i18next.t("saveSlotSelectUiHandler:lv")}${Utils.formatFancyLargeNumber(pokemon.level, 1)} - ${pNature}`);
+      pokeInfoText.appendText(`${i18next.t("saveSlotSelectUiHandler:lv")}${Utils.formatFancyLargeNumber(pokemon.level, 1)} - ${pNatureName}`);
       pokeInfoText.appendText(pAbilityInfo);
       pokeInfoText.appendText(pPassiveInfo);
       pokeInfoTextContainer.add(pokeInfoText);
@@ -553,7 +567,7 @@ export default class RunInfoUiHandler extends UiHandler {
       const pStats : string[]= [];
       pokemon.stats.forEach((element) => pStats.push(Utils.formatFancyLargeNumber(element, 1)));
       for (let i = 0; i < pStats.length; i++) {
-        const isMult = getNatureStatMultiplier(pokemon.nature, i);
+        const isMult = getNatureStatMultiplier(pNature, i);
         pStats[i] = (isMult < 1) ? pStats[i] + "[color=#40c8f8]↓[/color]" : pStats[i];
         pStats[i] = (isMult > 1) ? pStats[i] + "[color=#f89890]↑[/color]" : pStats[i];
       }
@@ -874,10 +888,12 @@ export default class RunInfoUiHandler extends UiHandler {
       }
       break;
     case Button.CYCLE_ABILITY:
-      if (this.partyVisibility) {
-        this.showParty(false);
-      } else {
-        this.showParty(true);
+      if (this.runInfo.modifiers.length !== 0) {
+        if (this.partyVisibility) {
+          this.showParty(false);
+        } else {
+          this.showParty(true);
+        }
       }
       break;
     }

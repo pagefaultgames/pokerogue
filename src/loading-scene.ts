@@ -7,21 +7,22 @@ import { WindowVariant, getWindowVariantSuffix } from "./ui/ui-theme";
 import { isMobile } from "./touch-controls";
 import * as Utils from "./utils";
 import { initI18n } from "./plugins/i18n";
-import {initPokemonPrevolutions} from "#app/data/pokemon-evolutions";
-import {initBiomes} from "#app/data/biomes";
-import {initEggMoves} from "#app/data/egg-moves";
-import {initPokemonForms} from "#app/data/pokemon-forms";
-import {initSpecies} from "#app/data/pokemon-species";
-import {initMoves} from "#app/data/move";
-import {initAbilities} from "#app/data/ability";
-import {initAchievements} from "#app/system/achv";
-import {initTrainerTypeDialogue} from "#app/data/dialogue";
+import { initPokemonPrevolutions } from "#app/data/pokemon-evolutions";
+import { initBiomes } from "#app/data/biomes";
+import { initEggMoves } from "#app/data/egg-moves";
+import { initPokemonForms } from "#app/data/pokemon-forms";
+import { initSpecies } from "#app/data/pokemon-species";
+import { initMoves } from "#app/data/move";
+import { initAbilities } from "#app/data/ability";
+import { initAchievements } from "#app/system/achv";
+import { initTrainerTypeDialogue } from "#app/data/dialogue";
 import { initChallenges } from "./data/challenge";
 import i18next from "i18next";
 import { initStatsKeys } from "./ui/game-stats-ui-handler";
 import { initVouchers } from "./system/voucher";
 import { Biome } from "#enums/biome";
 import { TrainerType } from "#enums/trainer-type";
+import {initMysteryEncounters} from "#app/data/mystery-encounters/mystery-encounters";
 
 export class LoadingScene extends SceneBase {
   public static readonly KEY = "loading";
@@ -240,19 +241,22 @@ export class LoadingScene extends SceneBase {
     const lang = i18next.resolvedLanguage;
     if (lang !== "en") {
       if (Utils.verifyLang(lang)) {
+        this.loadAtlas(`statuses_${lang}`, "");
         this.loadAtlas(`types_${lang}`, "");
       } else {
         // Fallback to English
+        this.loadAtlas("statuses", "");
         this.loadAtlas("types", "");
       }
     } else {
+      this.loadAtlas("statuses", "");
       this.loadAtlas("types", "");
     }
     const availableLangs = ["en", "de", "it", "fr", "ja", "ko", "es", "pt-BR", "zh-CN"];
     if (lang && availableLangs.includes(lang)) {
-      this.loadImage("september-update-"+lang, "events");
+      this.loadImage("egg-update_"+lang, "events");
     } else {
-      this.loadImage("september-update-en", "events");
+      this.loadImage("egg-update_en", "events");
     }
 
     this.loadAtlas("statuses", "");
@@ -285,6 +289,9 @@ export class LoadingScene extends SceneBase {
         this.loadAtlas(`pokemon_icons_${i}v`, "");
       }
     }
+
+    // Load Mystery Encounter dex progress icon
+    this.loadImage("encounter_radar", "mystery-encounters");
 
     this.loadAtlas("dualshock", "inputs");
     this.loadAtlas("xbox", "inputs");
@@ -362,6 +369,7 @@ export class LoadingScene extends SceneBase {
     initMoves();
     initAbilities();
     initChallenges();
+    initMysteryEncounters();
   }
 
   loadLoadingScreen() {

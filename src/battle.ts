@@ -1,5 +1,4 @@
 import BattleScene from "./battle-scene";
-import { EnemyPokemon, PlayerPokemon, QueuedMove } from "./field/pokemon";
 import { Command } from "./ui/command-ui-handler";
 import * as Utils from "./utils";
 import Trainer, { TrainerVariant } from "./field/trainer";
@@ -8,6 +7,7 @@ import { MoneyMultiplierModifier, PokemonHeldItemModifier } from "./modifier/mod
 import { PokeballType } from "./data/pokeball";
 import { trainerConfigs } from "#app/data/trainer-config";
 import { SpeciesFormKey } from "#app/data/pokemon-species";
+import Pokemon, { EnemyPokemon, PlayerPokemon, QueuedMove } from "#app/field/pokemon";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { BattleSpec } from "#enums/battle-spec";
 import { Moves } from "#enums/moves";
@@ -16,32 +16,40 @@ import { MusicPreference } from "./system/settings/settings";
 import { Species } from "#enums/species";
 import { TrainerType } from "#enums/trainer-type";
 import i18next from "#app/plugins/i18n";
+import MysteryEncounter from "#app/data/mystery-encounters/mystery-encounter";
+import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
 
 export enum BattleType {
-    WILD,
-    TRAINER,
-    CLEAR
+  WILD,
+  TRAINER,
+  CLEAR,
+  MYSTERY_ENCOUNTER
 }
 
 export enum BattlerIndex {
-    ATTACKER = -1,
-    PLAYER,
-    PLAYER_2,
-    ENEMY,
-    ENEMY_2
+  ATTACKER = -1,
+  PLAYER,
+  PLAYER_2,
+  ENEMY,
+  ENEMY_2
 }
 
 export interface TurnCommand {
-    command: Command;
-    cursor?: number;
-    move?: QueuedMove;
-    targets?: BattlerIndex[];
-    skip?: boolean;
-    args?: any[];
+  command: Command;
+  cursor?: number;
+  move?: QueuedMove;
+  targets?: BattlerIndex[];
+  skip?: boolean;
+  args?: any[];
+}
+
+export interface FaintLogEntry {
+  pokemon: Pokemon,
+  turn: number
 }
 
 interface TurnCommands {
-    [key: number]: TurnCommand | null
+  [key: number]: TurnCommand | null
 }
 
 export default class Battle {
@@ -71,6 +79,11 @@ export default class Battle {
   public playerFaints: number = 0;
   /** The number of times a Pokemon on the enemy's side has fainted this battle */
   public enemyFaints: number = 0;
+  public playerFaintsHistory: FaintLogEntry[] = [];
+  public enemyFaintsHistory: FaintLogEntry[] = [];
+
+  /** If the current battle is a Mystery Encounter, this will always be defined */
+  public mysteryEncounter?: MysteryEncounter;
 
   private rngCounter: number = 0;
 
@@ -94,7 +107,7 @@ export default class Battle {
     this.battleSpec = spec;
   }
 
-  private getLevelForWave(): number {
+  public getLevelForWave(): number {
     const levelWaveIndex = this.gameMode.getWaveForDifficulty(this.waveIndex);
     const baseLevel = 1 + levelWaveIndex / 2 + Math.pow(levelWaveIndex / 25, 2);
     const bossMultiplier = 1.2;
@@ -146,7 +159,7 @@ export default class Battle {
   }
 
   addPostBattleLoot(enemyPokemon: EnemyPokemon): void {
-    this.postBattleLoot.push(...enemyPokemon.scene.findModifiers(m => m instanceof PokemonHeldItemModifier && m.pokemonId === enemyPokemon.id && m.isTransferrable, false).map(i => {
+    this.postBattleLoot.push(...enemyPokemon.scene.findModifiers(m => m instanceof PokemonHeldItemModifier && m.pokemonId === enemyPokemon.id && m.isTransferable, false).map(i => {
       const ret = i as PokemonHeldItemModifier;
       //@ts-ignore - this is awful to fix/change
       ret.pokemonId = null;
@@ -191,8 +204,12 @@ export default class Battle {
   }
 
   getBgmOverride(scene: BattleScene): string | null {
-
-    if (this.battleType === BattleType.TRAINER) {
+    const battlers = this.enemyParty.slice(0, this.getBattlerCount());
+    if (this.battleType === BattleType.MYSTERY_ENCOUNTER && this.mysteryEncounter?.encounterMode === MysteryEncounterMode.DEFAULT) {
+      // Music is overridden for MEs during ME onInit()
+      // Should not use any BGM overrides before swapping from DEFAULT mode
+      return null;
+    } else if (this.battleType === BattleType.TRAINER || this.mysteryEncounter?.encounterMode === MysteryEncounterMode.TRAINER_BATTLE) {
       if (!this.started && this.trainer?.config.encounterBgm && this.trainer?.getEncounterMessages()?.length) {
         return `encounter_${this.trainer?.getEncounterBgm()}`;
       }

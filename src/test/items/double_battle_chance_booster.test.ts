@@ -1,14 +1,13 @@
-import { Moves } from "#app/enums/moves.js";
-import { Species } from "#app/enums/species.js";
+import { Moves } from "#app/enums/moves";
+import { Species } from "#app/enums/species";
 import { DoubleBattleChanceBoosterModifier } from "#app/modifier/modifier";
 import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import { SPLASH_ONLY } from "../utils/testUtils";
-import { ShopCursorTarget } from "#app/enums/shop-cursor-target.js";
-import { Mode } from "#app/ui/ui.js";
-import ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler.js";
-import { Button } from "#app/enums/buttons.js";
+import { ShopCursorTarget } from "#app/enums/shop-cursor-target";
+import { Mode } from "#app/ui/ui";
+import ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
+import { Button } from "#app/enums/buttons";
 
 describe("Items - Double Battle Chance Boosters", () => {
   let phaserGame: Phaser.Game;
@@ -64,7 +63,7 @@ describe("Items - Double Battle Chance Boosters", () => {
     game.override
       .startingModifier([{ name: "LURE" }])
       .itemRewards([{ name: "LURE" }])
-      .moveset(SPLASH_ONLY)
+      .moveset(Moves.SPLASH)
       .startingLevel(200);
 
     await game.classicMode.startBattle([
