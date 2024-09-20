@@ -33,7 +33,7 @@ describe("Boss Pokemon / Shields", () => {
       .enemyMoveset(Moves.SPLASH)
       .enemyHeldItems([])
       .startingLevel(1000)
-      .moveset([Moves.FALSE_SWIPE, Moves.SUPER_FANG, Moves.SPLASH])
+      .moveset([Moves.FALSE_SWIPE, Moves.SUPER_FANG, Moves.SPLASH, Moves.PSYCHIC])
       .ability(Abilities.NO_GUARD);
   });
 
@@ -195,6 +195,28 @@ describe("Boss Pokemon / Shields", () => {
     expect(getTotalStatStageBoosts(boss2)).toBe(totalStatStages);
 
   });
+
+  it("the boss enduring does not proc an extra stat boost", async () => {
+    game.override
+      .enemyHealthSegments(2)
+      .enemyAbility(Abilities.STURDY);
+
+    await game.classicMode.startBattle([ Species.MEWTWO ]);
+
+    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    expect(enemyPokemon.isBoss()).toBe(true);
+    expect(enemyPokemon.bossSegments).toBe(2);
+    expect(getTotalStatStageBoosts(enemyPokemon)).toBe(0);
+
+    game.move.select(Moves.PSYCHIC);
+    await game.toNextTurn();
+
+    // Enemy survived with Sturdy
+    expect(enemyPokemon.bossSegmentIndex).toBe(0);
+    expect(enemyPokemon.hp).toBe(1);
+    expect(getTotalStatStageBoosts(enemyPokemon)).toBe(1);
+
+  }, TIMEOUT);
 
   /**
    * Gets the sum of the effective stat stage boosts for the given Pokemon
