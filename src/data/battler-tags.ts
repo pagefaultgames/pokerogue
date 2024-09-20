@@ -2201,13 +2201,6 @@ export class HealBlockTag extends MoveRestrictionBattlerTag {
     super(BattlerTagType.HEAL_BLOCK, [ BattlerTagLapseType.PRE_MOVE, BattlerTagLapseType.TURN_END ], turnCount, sourceMove);
   }
 
-  /**
-   * Uses the default onAdd method
-   */
-  override onAdd(pokemon: Pokemon): void {
-    super.onAdd(pokemon);
-  }
-
   onActivation(pokemon: Pokemon): string {
     return i18next.t("battle:battlerTagsHealBlock", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) });
   }
