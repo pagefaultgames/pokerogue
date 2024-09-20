@@ -38,7 +38,7 @@ export const TrainingSessionEncounter: MysteryEncounter =
     .withHideWildIntroMessage(true)
     .withIntroSpriteConfigs([
       {
-        spriteKey: "training_gear",
+        spriteKey: "training_session_gear",
         fileRoot: "mystery-encounters",
         hasShadow: true,
         y: 6,

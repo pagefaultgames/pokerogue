@@ -43,7 +43,7 @@ import { Variant } from "#app/data/variant";
  * @param scene
  */
 export function doTrainerExclamation(scene: BattleScene) {
-  const exclamationSprite = scene.add.sprite(0, 0, "exclaim");
+  const exclamationSprite = scene.add.sprite(0, 0, "encounter_exclaim");
   exclamationSprite.setName("exclamation");
   scene.field.add(exclamationSprite);
   scene.field.moveTo(exclamationSprite, scene.field.getAll().length - 1);

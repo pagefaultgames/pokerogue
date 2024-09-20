@@ -37,7 +37,7 @@ export const MysteriousChestEncounter: MysteryEncounter =
     .withCatchAllowed(true)
     .withIntroSpriteConfigs([
       {
-        spriteKey: "chest_blue",
+        spriteKey: "mysterious_chest_blue",
         fileRoot: "mystery-encounters",
         hasShadow: true,
         y: 8,
@@ -46,7 +46,7 @@ export const MysteriousChestEncounter: MysteryEncounter =
         disableAnimation: true, // Re-enabled after option select
       },
       {
-        spriteKey: "chest_red",
+        spriteKey: "mysterious_chest_red",
         fileRoot: "mystery-encounters",
         hasShadow: false,
         y: 8,

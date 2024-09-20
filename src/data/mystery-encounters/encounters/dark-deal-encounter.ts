@@ -94,7 +94,7 @@ export const DarkDealEncounter: MysteryEncounter =
     .withEncounterTier(MysteryEncounterTier.ROGUE)
     .withIntroSpriteConfigs([
       {
-        spriteKey: "mad_scientist_m",
+        spriteKey: "dark_deal_scientist",
         fileRoot: "mystery-encounters",
         hasShadow: true,
       },

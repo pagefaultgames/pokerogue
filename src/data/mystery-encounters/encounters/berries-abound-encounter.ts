@@ -82,7 +82,7 @@ export const BerriesAboundEncounter: MysteryEncounter =
       const { spriteKey, fileRoot } = getSpriteKeysFromPokemon(bossPokemon);
       encounter.spriteConfigs = [
         {
-          spriteKey: "berry_bush",
+          spriteKey: "berries_abound_bush",
           fileRoot: "mystery-encounters",
           x: 25,
           y: -6,

@@ -44,7 +44,7 @@ export const TeleportingHijinksEncounter: MysteryEncounter =
     .withCatchAllowed(true)
     .withIntroSpriteConfigs([
       {
-        spriteKey: "teleporter",
+        spriteKey: "teleporting_hijinks_teleporter",
         fileRoot: "mystery-encounters",
         hasShadow: true,
         x: 4,

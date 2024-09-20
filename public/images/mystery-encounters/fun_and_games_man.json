@@ -1,11 +1,11 @@
 {
 	"textures": [
 		{
-			"image": "teacher.png",
+			"image": "fun_and_games_man.png",
 			"format": "RGBA8888",
 			"size": {
-				"w": 43,
-				"h": 74
+				"w": 50,
+				"h": 77
 			},
 			"scale": 1,
 			"frames": [
@@ -18,16 +18,16 @@
 						"h": 80
 					},
 					"spriteSourceSize": {
-						"x": 19,
-						"y": 8,
-						"w": 41,
-						"h": 72
+						"x": 15,
+						"y": 3,
+						"w": 50,
+						"h": 77
 					},
 					"frame": {
-						"x": 1,
-						"y": 1,
-						"w": 41,
-						"h": 72
+						"x": 0,
+						"y": 0,
+						"w": 50,
+						"h": 77
 					}
 				}
 			]
@@ -36,6 +36,6 @@
 	"meta": {
 		"app": "https://www.codeandweb.com/texturepacker",
 		"version": "3.0",
-		"smartupdate": "$TexturePacker:SmartUpdate:506e5a4ce79c134a7b4af90a90aef244:1b81d3d84bf12cedc419805eaff82548:59bc5dd000b5e72588320b473e31c312$"
+		"smartupdate": "$TexturePacker:SmartUpdate:e80aa9a809a7cca6d05992cb82f6dbd9:ea9962edd1cdc1e503deecf2ce1863c1:55647352b6547cf03212506309f2abf5$"
 	}
 }

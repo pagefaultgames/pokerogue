@@ -27,7 +27,7 @@ export const PartTimerEncounter: MysteryEncounter =
     .withSceneWaveRangeRequirement(...CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES)
     .withIntroSpriteConfigs([
       {
-        spriteKey: "warehouse_crate",
+        spriteKey: "part_timer_crate",
         fileRoot: "mystery-encounters",
         hasShadow: false,
         y: 6,

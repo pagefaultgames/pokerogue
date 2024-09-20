@@ -44,7 +44,7 @@ export const ShadyVitaminDealerEncounter: MysteryEncounter =
         yShadow: -5
       },
       {
-        spriteKey: "b2w2_veteran_m",
+        spriteKey: "shady_vitamin_dealer",
         fileRoot: "mystery-encounters",
         hasShadow: true,
         x: -12,

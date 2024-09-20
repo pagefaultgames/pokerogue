@@ -45,14 +45,14 @@ export const FunAndGamesEncounter: MysteryEncounter =
     .withSkipToFightInput(true)
     .withIntroSpriteConfigs([
       {
-        spriteKey: "carnival_game",
+        spriteKey: "fun_and_games_game",
         fileRoot: "mystery-encounters",
         hasShadow: false,
         x: 0,
         y: 6,
       },
       {
-        spriteKey: "carnival_wobbuffet",
+        spriteKey: "fun_and_games_wobbuffet",
         fileRoot: "mystery-encounters",
         hasShadow: true,
         x: -28,
@@ -60,7 +60,7 @@ export const FunAndGamesEncounter: MysteryEncounter =
         yShadow: 6
       },
       {
-        spriteKey: "carnival_man",
+        spriteKey: "fun_and_games_man",
         fileRoot: "mystery-encounters",
         hasShadow: true,
         x: 40,
