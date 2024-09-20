@@ -347,7 +347,7 @@ export abstract class Challenge {
   /**
    * An apply function for TRICK_ROOM challenges. Derived classes should alter this.
    * @param isTrickRoom {@link Utils.BooleanHolder} Whether the battle is under the effect of Trick Room.
-   * @returns {@link boolean} Whether this function did anything.
+   * @returns `true` if this function did anything.
    */
   applyTrickRoom(isTrickRoom: Utils.BooleanHolder): boolean {
     return false;
