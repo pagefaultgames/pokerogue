@@ -19,7 +19,7 @@ import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest";
 import { Status, StatusEffect } from "#app/data/status-effect";
 
-const TIMEOUT = 20 * 1000;
+
 
 describe("Abilities - ZEN MODE", () => {
   let phaserGame: Phaser.Game;
@@ -67,7 +67,6 @@ describe("Abilities - ZEN MODE", () => {
       expect(game.scene.getParty()[0].hp).toBeLessThan(100);
       expect(game.scene.getParty()[0].formIndex).toBe(0);
     },
-    TIMEOUT
   );
 
   test(
@@ -87,7 +86,6 @@ describe("Abilities - ZEN MODE", () => {
       expect(game.scene.getParty()[0].hp).not.toBe(100);
       expect(game.scene.getParty()[0].formIndex).not.toBe(0);
     },
-    TIMEOUT
   );
 
   test(
@@ -125,7 +123,6 @@ describe("Abilities - ZEN MODE", () => {
       await game.phaseInterceptor.to(PostSummonPhase);
       expect(game.scene.getParty()[1].formIndex).toBe(1);
     },
-    TIMEOUT
   );
 
   test(
@@ -156,6 +153,5 @@ describe("Abilities - ZEN MODE", () => {
 
       expect(darmanitan.formIndex).toBe(baseForm);
     },
-    TIMEOUT
   );
 });
