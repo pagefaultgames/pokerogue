@@ -878,10 +878,10 @@ export function applyChallenges(gameMode: GameMode, challengeType: ChallengeType
 export function applyChallenges(gameMode: GameMode, challengeType: ChallengeType.TYPE_EFFECTIVENESS, effectiveness: Utils.NumberHolder): boolean;
 /**
  * Apply all challenges that modify Trick Room.
- * @param gameMode {@linkcode GameMode} The current gameMode
- * @param challengeType {@linkcode ChallengeType} ChallengeType.TRICK_ROOM
+ * @param gameMode The current {@linkcode GameMode}
+ * @param challengeType {@linkcode ChallengeType.TRICK_ROOM}
  * @param isTrickRoom {@linkcode Utils.BooleanHolder} Whether the battle is under the effect of Trick Room.
- * @returns True if any challenge was successfully applied.
+ * @returns `true` if any challenge was successfully applied.
  */
 export function applyChallenges(gameMode: GameMode, challengeType: ChallengeType.TRICK_ROOM, isTrickRoom: Utils.BooleanHolder): boolean;
 /**
