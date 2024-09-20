@@ -19,7 +19,7 @@ import { CommandPhase } from "#app/phases/command-phase";
 import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
 
 const namespace = "mysteryEncounter:berriesAbound";
-const defaultParty = [Species.PYUKUMUKU];
+const defaultParty = [Species.PYUKUMUKU, Species.MAGIKARP, Species.PIKACHU];
 const defaultBiome = Biome.CAVE;
 const defaultWave = 45;
 
@@ -116,7 +116,9 @@ describe("Berries Abound - Mystery Encounter", () => {
       expect(enemyField[0].species.speciesId).toBe(speciesToSpawn);
     });
 
-    // TODO: there is some severe test flakiness occurring for this file, needs to be looked at/addressed in separate issue
+    /**
+     * Related issue-comment: {@link https://github.com/pagefaultgames/pokerogue/issues/4300#issuecomment-2362849444}
+     */
     it("should reward the player with X berries based on wave", async () => {
       await game.runToMysteryEncounter(MysteryEncounterType.BERRIES_ABOUND, defaultParty);
 
@@ -188,15 +190,14 @@ describe("Berries Abound - Mystery Encounter", () => {
     });
 
     it("Should skip battle when fastest pokemon is faster than boss", async () => {
-      const leaveEncounterWithoutBattleSpy = vi.spyOn(EncounterPhaseUtils, "leaveEncounterWithoutBattle");
-      const encounterTextSpy = vi.spyOn(EncounterDialogueUtils, "showEncounterText");
+      vi.spyOn(EncounterPhaseUtils, "leaveEncounterWithoutBattle");
+      vi.spyOn(EncounterDialogueUtils, "showEncounterText");
 
       await game.runToMysteryEncounter(MysteryEncounterType.BERRIES_ABOUND, defaultParty);
 
-      // Setting party pokemon's level arbitrarily high to outspeed
-      const fastestPokemon = scene.getParty()[0];
-      fastestPokemon.level = 1000;
-      fastestPokemon.calculateStats();
+      scene.getParty().forEach(pkm => {
+        vi.spyOn(pkm, "getStat").mockReturnValue(9999); // for ease return for every stat
+      });
 
       await runMysteryEncounterToEnd(game, 2);
       await game.phaseInterceptor.to(SelectModifierPhase, false);
@@ -210,8 +211,8 @@ describe("Berries Abound - Mystery Encounter", () => {
         expect(option.modifierTypeOption.type.id).toContain("BERRY");
       }
 
-      expect(encounterTextSpy).toHaveBeenCalledWith(expect.any(BattleScene), `${namespace}.option.2.selected`);
-      expect(leaveEncounterWithoutBattleSpy).toBeCalled();
+      expect(EncounterDialogueUtils.showEncounterText).toHaveBeenCalledWith(expect.any(BattleScene), `${namespace}.option.2.selected`);
+      expect(EncounterPhaseUtils.leaveEncounterWithoutBattle).toBeCalled();
     });
   });
 
