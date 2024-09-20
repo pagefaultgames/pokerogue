@@ -39,7 +39,7 @@ describe("Abilities - Volt Absorb", () => {
     game.override.enemySpecies(Species.DUSKULL);
     game.override.enemyAbility(Abilities.BALL_FETCH);
 
-    await game.startBattle();
+    await game.classicMode.startBattle();
 
     const playerPokemon = game.scene.getPlayerPokemon()!;
 
@@ -50,5 +50,22 @@ describe("Abilities - Volt Absorb", () => {
     expect(playerPokemon.getStatStage(Stat.SPDEF)).toBe(1);
     expect(playerPokemon.getTag(BattlerTagType.CHARGED)).toBeDefined();
     expect(game.phaseInterceptor.log).not.toContain("ShowAbilityPhase");
+  });
+  it("should activate regardless of accuracy checks", async () => {
+    game.override.moveset(Moves.THUNDERBOLT);
+    game.override.enemyMoveset(Moves.SPLASH);
+    game.override.enemySpecies(Species.MAGIKARP);
+    game.override.enemyAbility(Abilities.VOLT_ABSORB);
+
+    await game.classicMode.startBattle();
+
+    const enemyPokemon = game.scene.getEnemyPokemon()!;
+
+    game.move.select(Moves.THUNDERBOLT);
+    await game.phaseInterceptor.to("MoveEffectPhase");
+
+    await game.move.forceMiss();
+    await game.phaseInterceptor.to("BerryPhase", false);
+    expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp());
   });
 });

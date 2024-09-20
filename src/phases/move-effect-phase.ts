@@ -98,8 +98,8 @@ export class MoveEffectPhase extends PokemonPhase {
       const targetHitChecks = Object.fromEntries(targets.map(p => [p.getBattlerIndex(), this.hitCheck(p)]));
       const hasActiveTargets = targets.some(t => t.isActive(true));
 
-      /** Check if the target is immune via ability */
-      const isImmune = targets[0].hasAbilityWithAttr(TypeImmunityAbAttr) && targets[0].getAbility().getAttrs(TypeImmunityAbAttr)[0].getImmuneType() === user.getMoveType(move);
+      /** Check if the target is immune via ability to the attacking move */
+      const isImmune = targets[0].hasAbilityWithAttr(TypeImmunityAbAttr) && (targets[0].getAbility()?.getAttrs(TypeImmunityAbAttr)?.[0]?.getImmuneType() === user.getMoveType(move));
 
       /**
          * If no targets are left for the move to hit (FAIL), or the invoked move is single-target
@@ -148,7 +148,7 @@ export class MoveEffectPhase extends PokemonPhase {
               || (this.move.getMove().category !== MoveCategory.STATUS && target.findTags(t => t instanceof DamageProtectedTag).find(t => target.lapseTag(t.tagType))));
 
           /** Is the pokemon immune due to an ablility?  */
-          const isImmune = target.hasAbilityWithAttr(TypeImmunityAbAttr) && target.getAbility().getAttrs(TypeImmunityAbAttr)[0].getImmuneType() === user.getMoveType(move);
+          const isImmune = target.hasAbilityWithAttr(TypeImmunityAbAttr) && (target.getAbility()?.getAttrs(TypeImmunityAbAttr)?.[0]?.getImmuneType() === user.getMoveType(move));
 
           /**
              * If the move missed a target, stop all future hits against that target
@@ -415,7 +415,7 @@ export class MoveEffectPhase extends PokemonPhase {
     const accuracyMultiplier = user.getAccuracyMultiplier(target, this.move.getMove());
     const rand = user.randSeedInt(100);
 
-    return rand < accuracyMultiplier * moveAccuracy;
+    return (rand < accuracyMultiplier * moveAccuracy);
   }
 
   /** Returns the {@linkcode Pokemon} using this phase's invoked move */
