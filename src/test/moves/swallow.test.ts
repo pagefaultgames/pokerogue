@@ -38,7 +38,7 @@ describe("Moves - Swallow", () => {
   });
 
   describe("consumes all stockpile stacks to heal (scaling with stacks)", () => {
-    it("1 stack -> 25% heal", { timeout: 10000 }, async () => {
+    it("1 stack -> 25% heal", async () => {
       const stacksToSetup = 1;
       const expectedHeal = 25;
 
@@ -65,7 +65,7 @@ describe("Moves - Swallow", () => {
       expect(pokemon.getTag(StockpilingTag)).toBeUndefined();
     });
 
-    it("2 stacks -> 50% heal", { timeout: 10000 }, async () => {
+    it("2 stacks -> 50% heal", async () => {
       const stacksToSetup = 2;
       const expectedHeal = 50;
 
@@ -93,7 +93,7 @@ describe("Moves - Swallow", () => {
       expect(pokemon.getTag(StockpilingTag)).toBeUndefined();
     });
 
-    it("3 stacks -> 100% heal", { timeout: 10000 }, async () => {
+    it("3 stacks -> 100% heal", async () => {
       const stacksToSetup = 3;
       const expectedHeal = 100;
 
@@ -123,7 +123,7 @@ describe("Moves - Swallow", () => {
     });
   });
 
-  it("fails without stacks", { timeout: 10000 }, async () => {
+  it("fails without stacks", async () => {
     await game.startBattle([Species.ABOMASNOW]);
 
     const pokemon = game.scene.getPlayerPokemon()!;
@@ -138,7 +138,7 @@ describe("Moves - Swallow", () => {
   });
 
   describe("restores stat stage boosts granted by stacks", () => {
-    it("decreases stats based on stored values (both boosts equal)", { timeout: 10000 }, async () => {
+    it("decreases stats based on stored values (both boosts equal)", async () => {
       await game.startBattle([Species.ABOMASNOW]);
 
       const pokemon = game.scene.getPlayerPokemon()!;
@@ -163,7 +163,7 @@ describe("Moves - Swallow", () => {
       expect(pokemon.getTag(StockpilingTag)).toBeUndefined();
     });
 
-    it("lower stat stages based on stored values (different boosts)", { timeout: 10000 }, async () => {
+    it("lower stat stages based on stored values (different boosts)", async () => {
       await game.startBattle([Species.ABOMASNOW]);
 
       const pokemon = game.scene.getPlayerPokemon()!;

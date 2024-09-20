@@ -14,7 +14,7 @@ import { fileURLToPath } from "url";
 // Get the directory name of the current module file
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const typeChoices = ["Move", "Ability", "Item"];
+const typeChoices = ["Move", "Ability", "Item", "Mystery Encounter"];
 
 /**
  * Prompts the user to select a type via list.
@@ -76,6 +76,7 @@ async function runInteractive() {
   const fileName = fileNameAnswer.userInput
     .replace(/-+/g, "_") // Convert kebab-case (dashes) to underscores
     .replace(/([a-z])([A-Z])/g, "$1_$2") // Convert camelCase to snake_case
+    .replace(/\s+/g, '_') // Replace spaces with underscores
     .toLowerCase(); // Ensure all lowercase
   // Format the description for the test case
 
@@ -95,6 +96,10 @@ async function runInteractive() {
     case "item":
       dir = path.join(__dirname, "src", "test", "items");
       description = `Items - ${formattedName}`;
+      break;
+    case "mystery encounter":
+      dir = path.join(__dirname, "src", "test", "mystery-encounter", "encounters");
+      description = `Mystery Encounter - ${formattedName}`;
       break;
     default:
       console.error('Invalid type. Please use "move", "ability", or "item".');
