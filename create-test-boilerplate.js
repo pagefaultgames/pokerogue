@@ -76,6 +76,7 @@ async function runInteractive() {
   const fileName = fileNameAnswer.userInput
     .replace(/-+/g, "_") // Convert kebab-case (dashes) to underscores
     .replace(/([a-z])([A-Z])/g, "$1_$2") // Convert camelCase to snake_case
+    .replace(/\s+/g, '_') // Replace spaces with underscores
     .toLowerCase(); // Ensure all lowercase
   // Format the description for the test case
 
