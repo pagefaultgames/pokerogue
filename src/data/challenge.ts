@@ -740,11 +740,7 @@ export class TrickRoomChallenge extends Challenge {
   }
 
   applyTrickRoom(isTrickRoom: Utils.BooleanHolder): boolean {
-    if (!isTrickRoom.value) {
-      isTrickRoom.value = true;
-    } else {
-      isTrickRoom.value = false;
-    }
+    isTrickRoom.value = !isTrickRoom.value;
     return true;
   }
 }
