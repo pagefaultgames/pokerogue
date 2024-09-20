@@ -1143,8 +1143,16 @@ function getGymLeaderPartyTemplate(scene: BattleScene) {
   return getWavePartyTemplate(scene, trainerPartyTemplates.GYM_LEADER_1, trainerPartyTemplates.GYM_LEADER_2, trainerPartyTemplates.GYM_LEADER_3, trainerPartyTemplates.GYM_LEADER_4, trainerPartyTemplates.GYM_LEADER_5);
 }
 
-function getRandomPartyMemberFunc(speciesPool: Species[], trainerSlot: TrainerSlot = TrainerSlot.TRAINER, ignoreEvolution: boolean = false, postProcess?: (enemyPokemon: EnemyPokemon) => void): PartyMemberFunc {
-  return (scene: BattleScene, level: integer, strength: PartyMemberStrength) => {
+/**
+ * Randomly selects one of the `Species` from `speciesPool`, determines its evolution, level, and strength.
+ * Then adds Pokemon to scene.
+ * @param speciesPool
+ * @param trainerSlot
+ * @param ignoreEvolution
+ * @param postProcess
+ */
+export function getRandomPartyMemberFunc(speciesPool: Species[], trainerSlot: TrainerSlot = TrainerSlot.TRAINER, ignoreEvolution: boolean = false, postProcess?: (enemyPokemon: EnemyPokemon) => void) {
+  return (scene: BattleScene, level: number, strength: PartyMemberStrength) => {
     let species = Utils.randSeedItem(speciesPool);
     if (!ignoreEvolution) {
       species = getPokemonSpecies(species).getTrainerSpeciesForLevel(level, true, strength, scene.currentBattle.waveIndex);
@@ -2430,6 +2438,8 @@ export const trainerConfigs: TrainerConfigs = {
     .setMoneyMultiplier(2)
     .setPartyTemplates(new TrainerPartyCompoundTemplate(new TrainerPartyTemplate(3, PartyMemberStrength.AVERAGE), new TrainerPartyTemplate(2, PartyMemberStrength.STRONG))),
   [TrainerType.BUG_TYPE_SUPERFAN]: new TrainerConfig(++t).setMoneyMultiplier(2.25).setEncounterBgm(TrainerType.ACE_TRAINER)
-    .setPartyTemplates(new TrainerPartyTemplate(2, PartyMemberStrength.AVERAGE))
+    .setPartyTemplates(new TrainerPartyTemplate(2, PartyMemberStrength.AVERAGE)),
+  [TrainerType.EXPERT_POKEMON_BREEDER]: new TrainerConfig(++t).setMoneyMultiplier(3).setEncounterBgm(TrainerType.ACE_TRAINER)
+    .setPartyTemplates(new TrainerPartyTemplate(3, PartyMemberStrength.STRONG))
 };
 

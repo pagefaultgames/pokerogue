@@ -1,5 +1,5 @@
 {
-  "battlesWon": "Battles Won!",
+  "battlesWon": "{{count, number}} Battles Won!",
   "joinTheDiscord": "Join the Discord!",
   "infiniteLevels": "Infinite Levels!",
   "everythingStacks": "Everything Stacks!",
@@ -32,5 +32,17 @@
   "alsoTryRadicalRed": "Also Try Radical Red!",
   "eeveeExpo": "Eevee Expo!",
   "ynoproject": "YNOproject!",
-  "breedersInSpace": "Breeders in space!"
+  "breedersInSpace": "Breeders in space!",
+  "halloween": {
+    "pumpkaboosAbout": "Pumpkaboos about!",
+    "mayContainSpiders": "May contain spiders!",
+    "spookyScaryDuskulls": "Spooky, Scary Duskulls!"
+  },
+  "xmas": {
+    "happyHolidays": "Happy Holidays!",
+    "delibirdSeason": "Delibird Season!"
+  },
+  "newYears": {
+    "happyNewYear": "Happy New Year!"
+  }
 }

@@ -115,6 +115,7 @@ export enum TrainerType {
   VICKY,
   VITO,
   BUG_TYPE_SUPERFAN,
+  EXPERT_POKEMON_BREEDER,
 
   BROCK = 200,
   MISTY,
