@@ -7,7 +7,7 @@ import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
-const TIMEOUT = 20 * 1000; // 20 sec timeout
+// 20 sec timeout
 
 describe("Moves - Beat Up", () => {
   let phaserGame: Phaser.Game;
@@ -57,7 +57,7 @@ describe("Moves - Beat Up", () => {
         await game.phaseInterceptor.to(MoveEffectPhase);
         expect(enemyPokemon.hp).toBeLessThan(enemyStartingHp);
       }
-    }, TIMEOUT
+    }
   );
 
   it(
@@ -74,7 +74,7 @@ describe("Moves - Beat Up", () => {
       await game.phaseInterceptor.to(MoveEffectPhase);
 
       expect(playerPokemon.turnData.hitCount).toBe(5);
-    }, TIMEOUT
+    }
   );
 
   it(
@@ -99,6 +99,6 @@ describe("Moves - Beat Up", () => {
         await game.phaseInterceptor.to(MoveEffectPhase);
         expect(enemyPokemon.hp).toBeLessThan(enemyStartingHp);
       }
-    }, TIMEOUT
+    }
   );
 });

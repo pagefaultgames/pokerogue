@@ -11,7 +11,7 @@ import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
-const TIMEOUT = 20 * 1000; // 20 sec timeout
+// 20 sec timeout
 
 describe("Abilities - Magic Guard", () => {
   let phaserGame: Phaser.Game;
@@ -67,7 +67,7 @@ describe("Abilities - Magic Guard", () => {
        */
       expect(leadPokemon.hp).toBe(leadPokemon.getMaxHp());
       expect(enemyPokemon.hp).toBeLessThan(enemyPokemon.getMaxHp());
-    }, TIMEOUT
+    }
   );
 
   it(
@@ -91,7 +91,7 @@ describe("Abilities - Magic Guard", () => {
        */
       expect(leadPokemon.hp).toBe(leadPokemon.getMaxHp());
       expect(getStatusEffectCatchRateMultiplier(leadPokemon.status!.effect)).toBe(1.5);
-    }, TIMEOUT
+    }
   );
 
   it(
@@ -113,7 +113,7 @@ describe("Abilities - Magic Guard", () => {
        * - The player Pokemon (that just lost its Magic Guard ability) has taken damage from poison
        */
       expect(leadPokemon.hp).toBeLessThan(leadPokemon.getMaxHp());
-    }, TIMEOUT
+    }
   );
 
 
@@ -138,7 +138,7 @@ describe("Abilities - Magic Guard", () => {
        */
       expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp());
       expect(getStatusEffectCatchRateMultiplier(enemyPokemon.status!.effect)).toBe(1.5);
-    }, TIMEOUT
+    }
   );
 
   it("Magic Guard prevents damage caused by toxic but other non-damaging effects are still applied",
@@ -166,7 +166,7 @@ describe("Abilities - Magic Guard", () => {
       expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp());
       expect(enemyPokemon.status!.turnCount).toBeGreaterThan(toxicStartCounter);
       expect(getStatusEffectCatchRateMultiplier(enemyPokemon.status!.effect)).toBe(1.5);
-    }, TIMEOUT
+    }
   );
 
 
@@ -191,7 +191,7 @@ describe("Abilities - Magic Guard", () => {
     */
     expect(leadPokemon.hp).toBe(leadPokemon.getMaxHp());
     expect(enemyPokemon.hp).toBeLessThan(enemyPokemon.getMaxHp());
-  }, TIMEOUT
+  }
   );
 
   it("Magic Guard does not prevent poison from Toxic Spikes", async () => {
@@ -220,7 +220,7 @@ describe("Abilities - Magic Guard", () => {
     expect(enemyPokemon.status!.effect).toBe(StatusEffect.POISON);
     expect(leadPokemon.hp).toBe(leadPokemon.getMaxHp());
     expect(enemyPokemon.hp).toBeLessThan(enemyPokemon.getMaxHp());
-  }, TIMEOUT
+  }
   );
 
   it("Magic Guard prevents against damage from volatile status effects",
@@ -246,7 +246,7 @@ describe("Abilities - Magic Guard", () => {
       expect(leadPokemon.hp).toBeLessThan(leadPokemon.getMaxHp());
       expect(enemyPokemon.getTag(BattlerTagType.CURSED)).not.toBe(undefined);
       expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp());
-    }, TIMEOUT
+    }
   );
 
   it("Magic Guard prevents crash damage", async () => {
@@ -265,7 +265,7 @@ describe("Abilities - Magic Guard", () => {
     * - The player Pokemon (with Magic Guard) misses High Jump Kick but does not lose HP as a result
     */
     expect(leadPokemon.hp).toBe(leadPokemon.getMaxHp());
-  }, TIMEOUT
+  }
   );
 
   it("Magic Guard prevents damage from recoil", async () => {
@@ -283,7 +283,7 @@ describe("Abilities - Magic Guard", () => {
     * - The player Pokemon (with Magic Guard) uses a recoil move but does not lose HP from recoil
     */
     expect(leadPokemon.hp).toBe(leadPokemon.getMaxHp());
-  }, TIMEOUT
+  }
   );
 
   it("Magic Guard does not prevent damage from Struggle's recoil", async () => {
@@ -301,7 +301,7 @@ describe("Abilities - Magic Guard", () => {
     * - The player Pokemon (with Magic Guard) uses Struggle but does lose HP from Struggle's recoil
     */
     expect(leadPokemon.hp).toBeLessThan(leadPokemon.getMaxHp());
-  }, TIMEOUT
+  }
   );
 
   //This tests different move attributes than the recoil tests above
@@ -320,7 +320,7 @@ describe("Abilities - Magic Guard", () => {
     * - The player Pokemon (with Magic Guard) uses a move with an HP cost but does not lose HP from using it
     */
     expect(leadPokemon.hp).toBe(leadPokemon.getMaxHp());
-  }, TIMEOUT
+  }
   );
 
   /*
@@ -348,7 +348,7 @@ describe("Abilities - Magic Guard", () => {
     * - The player Pokemon (with Magic Guard) uses a non-attacking move with an HP cost and thus loses HP from using it
     */
     expect(leadPokemon.hp).toBeLessThan(leadPokemon.getMaxHp());
-  }, TIMEOUT
+  }
   );
 
   it("Magic Guard prevents damage from abilities with PostTurnHurtIfSleepingAbAttr", async () => {
@@ -373,7 +373,7 @@ describe("Abilities - Magic Guard", () => {
     */
     expect(leadPokemon.hp).toBe(leadPokemon.getMaxHp());
     expect(leadPokemon.status!.effect).toBe(StatusEffect.SLEEP);
-  }, TIMEOUT
+  }
   );
 
   it("Magic Guard prevents damage from abilities with PostFaintContactDamageAbAttr", async () => {
@@ -398,7 +398,7 @@ describe("Abilities - Magic Guard", () => {
     */
     expect(enemyPokemon.hp).toBe(0);
     expect(leadPokemon.hp).toBe(leadPokemon.getMaxHp());
-  }, TIMEOUT
+  }
   );
 
   it("Magic Guard prevents damage from abilities with PostDefendContactDamageAbAttr", async () => {
@@ -422,7 +422,7 @@ describe("Abilities - Magic Guard", () => {
     */
     expect(enemyPokemon.hp).toBeLessThan(enemyPokemon.getMaxHp());
     expect(leadPokemon.hp).toBe(leadPokemon.getMaxHp());
-  }, TIMEOUT
+  }
   );
 
   it("Magic Guard prevents damage from abilities with ReverseDrainAbAttr", async () => {
@@ -446,7 +446,7 @@ describe("Abilities - Magic Guard", () => {
     */
     expect(enemyPokemon.hp).toBeLessThan(enemyPokemon.getMaxHp());
     expect(leadPokemon.hp).toBe(leadPokemon.getMaxHp());
-  }, TIMEOUT
+  }
   );
 
   it("Magic Guard prevents HP loss from abilities with PostWeatherLapseDamageAbAttr", async () => {
@@ -464,6 +464,6 @@ describe("Abilities - Magic Guard", () => {
     * - The player Pokemon (with Magic Guard) should not lose HP due to this ability attribute
     */
     expect(leadPokemon.hp).toBe(leadPokemon.getMaxHp());
-  }, TIMEOUT
+  }
   );
 });

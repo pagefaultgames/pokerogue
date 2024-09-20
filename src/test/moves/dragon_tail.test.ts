@@ -10,7 +10,7 @@ import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 import GameManager from "../utils/gameManager";
 
-const TIMEOUT = 20 * 1000;
+
 
 describe("Moves - Dragon Tail", () => {
   let phaserGame: Phaser.Game;
@@ -55,7 +55,7 @@ describe("Moves - Dragon Tail", () => {
 
       // simply want to test that the game makes it this far without crashing
       await game.phaseInterceptor.to(BattleEndPhase);
-    }, TIMEOUT
+    }
   );
 
   test(
@@ -75,7 +75,7 @@ describe("Moves - Dragon Tail", () => {
       const hasFled = enemyPokemon.wildFlee;
       expect(!isVisible && hasFled).toBe(true);
       expect(leadPokemon.hp).toBeLessThan(leadPokemon.getMaxHp());
-    }, TIMEOUT
+    }
   );
 
   test(
@@ -109,7 +109,7 @@ describe("Moves - Dragon Tail", () => {
 
       await game.phaseInterceptor.to(BerryPhase);
       expect(enemySecPokemon.hp).toBeLessThan(enemySecPokemon.getMaxHp());
-    }, TIMEOUT
+    }
   );
 
   test(
@@ -141,6 +141,6 @@ describe("Moves - Dragon Tail", () => {
       expect(secPokemon.hp).toBeLessThan(secPokemon.getMaxHp());
       expect(enemyLeadPokemon.hp).toBeLessThan(enemyLeadPokemon.getMaxHp());
       expect(enemySecPokemon.hp).toBeLessThan(enemySecPokemon.getMaxHp());
-    }, TIMEOUT
+    }
   );
 });
