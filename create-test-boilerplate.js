@@ -1,7 +1,3 @@
-import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
-
 /**
  * This script creates a test boilerplate file for a move or ability.
  * @param {string} type - The type of test to create. Either "move", "ability",
@@ -10,63 +6,103 @@ import { fileURLToPath } from 'url';
  * @example npm run create-test move tackle
  */
 
+import fs from "fs";
+import inquirer from "inquirer";
+import path from "path";
+import { fileURLToPath } from "url";
+
 // Get the directory name of the current module file
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+const typeChoices = ["Move", "Ability", "Item"];
 
-// Get the arguments from the command line
-const args = process.argv.slice(2);
-const type = args[0]; // "move" or "ability"
-let fileName = args[1]; // The file name
+/**
+ * Prompts the user to select a type via list.
+ * @returns {Promise<{selectedOption: string}>} the selected type
+ */
+async function promptTestType() {
+  const typeAnswer = await inquirer.prompt([
+    {
+      type: "list",
+      name: "selectedOption",
+      message: "What type of test would you like to create:",
+      choices: [...typeChoices, "EXIT"],
+    },
+  ]);
 
-if (!type || !fileName) {
-  console.error('Please provide a type ("move", "ability", or "item") and a file name.');
-  process.exit(1);
+  if (typeAnswer.selectedOption === "EXIT") {
+    console.log("Exiting...");
+    return process.exit();
+  } else if (!typeChoices.includes(typeAnswer.selectedOption)) {
+    console.error('Please provide a valid type ("move", "ability", or "item")!');
+    return await promptTestType();
+  }
+
+  return typeAnswer;
 }
 
-// Convert fileName from kebab-case or camelCase to snake_case
-fileName = fileName
-  .replace(/-+/g, '_') // Convert kebab-case (dashes) to underscores
-  .replace(/([a-z])([A-Z])/g, '$1_$2') // Convert camelCase to snake_case
-  .toLowerCase(); // Ensure all lowercase
+/**
+ * Prompts the user to provide a file name.
+ * @param {string} selectedType
+ * @returns {Promise<{userInput: string}>} the selected file name
+ */
+async function promptFileName(selectedType) {
+  const fileNameAnswer = await inquirer.prompt([
+    {
+      type: "input",
+      name: "userInput",
+      message: `Please provide a file name for the ${selectedType} test:`,
+    },
+  ]);
 
-// Format the description for the test case
-const formattedName = fileName
-  .replace(/_/g, ' ')
-  .replace(/\b\w/g, char => char.toUpperCase());
+  if (!fileNameAnswer.userInput || fileNameAnswer.userInput.trim().length === 0) {
+    console.error("Please provide a valid file name!");
+    return await promptFileName(selectedType);
+  }
 
-// Determine the directory based on the type
-let dir;
-let description;
-if (type === 'move') {
-  dir = path.join(__dirname, 'src', 'test', 'moves');
-  description = `Moves - ${formattedName}`;
-} else if (type === 'ability') {
-  dir = path.join(__dirname, 'src', 'test', 'abilities');
-  description = `Abilities - ${formattedName}`;
-} else if (type === "item") {
-  dir = path.join(__dirname, 'src', 'test', 'items');
-  description = `Items - ${formattedName}`;
-} else {
-  console.error('Invalid type. Please use "move", "ability", or "item".');
-  process.exit(1);
+  return fileNameAnswer;
 }
 
-// Ensure the directory exists
-if (!fs.existsSync(dir)) {
-  fs.mkdirSync(dir, { recursive: true });
-}
+/**
+ * Runs the interactive create-test "CLI"
+ * @returns {Promise<void>}
+ */
+async function runInteractive() {
+  const typeAnswer = await promptTestType();
+  const fileNameAnswer = await promptFileName(typeAnswer.selectedOption);
 
-// Create the file with the given name
-const filePath = path.join(dir, `${fileName}.test.ts`);
+  const type = typeAnswer.selectedOption.toLowerCase();
+  // Convert fileName from kebab-case or camelCase to snake_case
+  const fileName = fileNameAnswer.userInput
+    .replace(/-+/g, "_") // Convert kebab-case (dashes) to underscores
+    .replace(/([a-z])([A-Z])/g, "$1_$2") // Convert camelCase to snake_case
+    .toLowerCase(); // Ensure all lowercase
+  // Format the description for the test case
 
-if (fs.existsSync(filePath)) {
-  console.error(`File "${fileName}.test.ts" already exists.`);
-  process.exit(1);
-}
+  const formattedName = fileName.replace(/_/g, " ").replace(/\b\w/g, (char) => char.toUpperCase());
+  // Determine the directory based on the type
+  let dir;
+  let description;
+  switch (type) {
+    case "move":
+      dir = path.join(__dirname, "src", "test", "moves");
+      description = `Moves - ${formattedName}`;
+      break;
+    case "ability":
+      dir = path.join(__dirname, "src", "test", "abilities");
+      description = `Abilities - ${formattedName}`;
+      break;
+    case "item":
+      dir = path.join(__dirname, "src", "test", "items");
+      description = `Items - ${formattedName}`;
+      break;
+    default:
+      console.error('Invalid type. Please use "move", "ability", or "item".');
+      process.exit(1);
+  }
 
-// Define the content template
-const content = `import { Abilities } from "#enums/abilities";
+  // Define the content template
+  const content = `import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/utils/gameManager";
@@ -103,7 +139,23 @@ describe("${description}", () => {
 });
 `;
 
-// Write the template content to the file
-fs.writeFileSync(filePath, content, 'utf8');
+  // Ensure the directory exists
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir, { recursive: true });
+  }
 
-console.log(`File created at: ${filePath}`);
+  // Create the file with the given name
+  const filePath = path.join(dir, `${fileName}.test.ts`);
+
+  if (fs.existsSync(filePath)) {
+    console.error(`File "${fileName}.test.ts" already exists.`);
+    process.exit(1);
+  }
+
+  // Write the template content to the file
+  fs.writeFileSync(filePath, content, "utf8");
+
+  console.log(`File created at: ${filePath}`);
+}
+
+runInteractive();
