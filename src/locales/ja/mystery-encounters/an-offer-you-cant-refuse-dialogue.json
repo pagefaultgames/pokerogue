@@ -1,26 +1,26 @@
 {
   "intro": "お金持ちっぽいな　男の子が　通せんぼ……",
   "speaker": "お坊っちゃま",
-  "intro_dialogue": "Good day to you.$I can't help but notice that your\n{{strongestPokemon}} looks positively divine!$I've always wanted to have a Pokémon like that!$I'd pay you handsomely,\nand also give you this old bauble!",
-  "title": "An Offer You Can't Refuse",
-  "description": "You're being offered a @[TOOLTIP_TITLE]{Shiny Charm} and {{price, money}} for your {{strongestPokemon}}!\n\nIt's an extremely good deal, but can you really bear to part with such a strong team member?",
-  "query": "What will you do?",
+  "intro_dialogue": "こんにちは！$まるで　素敵滅法な　{{strongestPokemon}}を　飼っている　ことに　気づかず　にはいられません！$ずーっと　そのような　ポケモンを　飼いたかったんです！$ね、　気前よく　支払って、\nサービスで　この古くて　安かった石を　あげて　いかがですか？",
+  "title": "断れない申し出",
+  "description": "お坊っちゃまは　{{strongestPokemon}}の代わりに　@[TOOLTIP_TITLE]{Shiny Charm}と　{{price, money}}を　申し出ています。\n交換として　結構　すごいですが、　本当に　こんな　強い仲間と　別れるのを　耐えられますか？",
+  "query": "どうしますか",
   "option": {
     "1": {
-      "label": "Accept the Deal",
-      "tooltip": "(-) Lose {{strongestPokemon}}\n(+) Gain a @[TOOLTIP_TITLE]{Shiny Charm}\n(+) Gain {{price, money}}",
-      "selected": "Wonderful!@d{32} Come along, {{strongestPokemon}}!$It's time to show you off to everyone at the yacht club!$They'll be so jealous!"
+      "label": "申し出を受け取る",
+      "tooltip": "(-) {{strongestPokemon}}を失う\n(+) @[TOOLTIP_TITLE]{Shiny Charm}をもらう\n(+) {{price, money}}をもらう",
+      "selected": "素晴らしい！@d{32} {{strongestPokemon}}　こっち　こっち！$ヨットクラブの　みんなに　おまえを　自慢するぞ！$きっと　ヤキモチを　焼くね……　ふへへへ"
     },
     "2": {
-      "label": "Extort the Kid",
-      "tooltip": "(+) {{option2PrimaryName}} uses {{moveOrAbility}}\n(+) Gain {{price, money}}",
-      "tooltip_disabled": "Your Pokémon need to have certain moves or abilities to choose this",
-      "selected": "My word, we're being robbed, {{liepardName}}!$You'll be hearing from my lawyers for this!"
+      "label": "ガキを恐喝",
+      "tooltip": "(+) {{option2PrimaryName}}は{{moveOrAbility}}を使う\n(+) {{price, money}}を貰う",
+      "tooltip_disabled": "選べるには　手持ちポケモンが　特定な　技や　特性が　必要",
+      "selected": "いやあ！　{{liepardName}}　泥棒だ！$お父さんの　弁護士は　キサマを　連絡するぞ！！"
     },
     "3": {
-      "label": "Leave",
-      "tooltip": "(-) No Rewards",
-      "selected": "What a rotten day...$Ah, well. Let's return to the yacht club then, {{liepardName}}."
+      "label": "立ち去る",
+      "tooltip": "(-) ご褒美なし",
+      "selected": "フン　今日は　最低だ……$まあね　ヨットクラブへ　戻ろう、　{{liepardName}}"
     }
   }
 }
