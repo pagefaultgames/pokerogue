@@ -428,7 +428,7 @@ class AnimTimedAddBgEvent extends AnimTimedBgEvent {
     moveAnim.bgSprite.setScale(1.25);
     moveAnim.bgSprite.setAlpha(this.opacity / 255);
     scene.field.add(moveAnim.bgSprite);
-    const fieldPokemon = scene.getEnemyPokemon() || scene.getPlayerPokemon();
+    const fieldPokemon = scene.getNonSwitchedEnemyPokemon() || scene.getNonSwitchedPlayerPokemon();
     if (!isNullOrUndefined(priority)) {
       scene.field.moveTo(moveAnim.bgSprite as Phaser.GameObjects.GameObject, priority!);
     } else if (fieldPokemon?.isOnField()) {
@@ -488,14 +488,14 @@ export function initMoveAnim(scene: BattleScene, move: Moves): Promise<void> {
     } else {
       moveAnims.set(move, null);
       const defaultMoveAnim = allMoves[move] instanceof AttackMove ? Moves.TACKLE : allMoves[move] instanceof SelfStatusMove ? Moves.FOCUS_ENERGY : Moves.TAIL_WHIP;
-      const moveName = Moves[move].toLowerCase().replace(/\_/g, "-");
+
       const fetchAnimAndResolve = (move: Moves) => {
-        scene.cachedFetch(`./battle-anims/${moveName}.json`)
+        scene.cachedFetch(`./battle-anims/${Utils.animationFileName(move)}.json`)
           .then(response => {
             const contentType = response.headers.get("content-type");
             if (!response.ok || contentType?.indexOf("application/json") === -1) {
-              console.error(`Could not load animation file for move '${moveName}'`, response.status, response.statusText);
-              populateMoveAnim(move, moveAnims.get(defaultMoveAnim));
+              useDefaultAnim(move, defaultMoveAnim);
+              logMissingMoveAnim(move, response.status, response.statusText);
               return resolve();
             }
             return response.json();
@@ -515,11 +515,39 @@ export function initMoveAnim(scene: BattleScene, move: Moves): Promise<void> {
             } else {
               resolve();
             }
+          })
+          .catch(error => {
+            useDefaultAnim(move, defaultMoveAnim);
+            logMissingMoveAnim(move, error);
+            return resolve();
           });
       };
       fetchAnimAndResolve(move);
     }
   });
+}
+
+/**
+ * Populates the default animation for the given move.
+ *
+ * @param move the move to populate an animation for
+ * @param defaultMoveAnim the move to use as the default animation
+ */
+function useDefaultAnim(move: Moves, defaultMoveAnim: Moves) {
+  populateMoveAnim(move, moveAnims.get(defaultMoveAnim));
+}
+
+/**
+ * Helper method for printing a warning to the console when a move animation is missing.
+ *
+ * @param move the move to populate an animation for
+ * @param optionalParams parameters to add to the error logging
+ *
+ * @remarks use {@linkcode useDefaultAnim} to use a default animation
+ */
+function logMissingMoveAnim(move: Moves, ...optionalParams: any[]) {
+  const moveName = Utils.animationFileName(move);
+  console.warn(`Could not load animation file for move '${moveName}'`, ...optionalParams);
 }
 
 /**
@@ -961,7 +989,7 @@ export abstract class BattleAnim {
                 const setSpritePriority = (priority: integer) => {
                   switch (priority) {
                   case 0:
-                    scene.field.moveBelow(moveSprite as Phaser.GameObjects.GameObject, scene.getEnemyPokemon() || scene.getPlayerPokemon()!); // TODO: is this bang correct?
+                    scene.field.moveBelow(moveSprite as Phaser.GameObjects.GameObject, scene.getNonSwitchedEnemyPokemon() || scene.getNonSwitchedPlayerPokemon()!); // This bang assumes that if (the EnemyPokemon is undefined, then the PlayerPokemon function must return an object), correct assumption?
                     break;
                   case 1:
                     scene.field.moveTo(moveSprite, scene.field.getAll().length - 1);
