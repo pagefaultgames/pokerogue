@@ -8,7 +8,7 @@ import { Stat } from "#enums/stat";
 import { BerryPhase } from "#app/phases/berry-phase";
 import { CommandPhase } from "#app/phases/command-phase";
 
-const TIMEOUT = 20 * 1000;
+
 
 describe("Moves - Wide Guard", () => {
   let phaserGame: Phaser.Game;
@@ -55,7 +55,7 @@ describe("Moves - Wide Guard", () => {
       await game.phaseInterceptor.to(BerryPhase, false);
 
       leadPokemon.forEach(p => expect(p.hp).toBe(p.getMaxHp()));
-    }, TIMEOUT
+    }
   );
 
   test(
@@ -76,7 +76,7 @@ describe("Moves - Wide Guard", () => {
       await game.phaseInterceptor.to(BerryPhase, false);
 
       leadPokemon.forEach(p => expect(p.getStatStage(Stat.ATK)).toBe(0));
-    }, TIMEOUT
+    }
   );
 
   test(
@@ -97,7 +97,7 @@ describe("Moves - Wide Guard", () => {
       await game.phaseInterceptor.to(BerryPhase, false);
 
       expect(leadPokemon.some(p => p.hp < p.getMaxHp())).toBeTruthy();
-    }, TIMEOUT
+    }
   );
 
   test(
@@ -120,6 +120,6 @@ describe("Moves - Wide Guard", () => {
 
       expect(leadPokemon[0].hp).toBe(leadPokemon[0].getMaxHp());
       enemyPokemon.forEach(p => expect(p.hp).toBeLessThan(p.getMaxHp()));
-    }, TIMEOUT
+    }
   );
 });
