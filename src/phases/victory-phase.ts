@@ -1,5 +1,5 @@
 import BattleScene from "#app/battle-scene";
-import { BattlerIndex, BattleType } from "#app/battle";
+import { BattlerIndex, BattleType, ClassicFixedBossWaves } from "#app/battle";
 import { CustomModifierSettings, modifierTypes } from "#app/modifier/modifier-type";
 import { BattleEndPhase } from "./battle-end-phase";
 import { NewBattlePhase } from "./new-battle-phase";
@@ -42,8 +42,8 @@ export class VictoryPhase extends PokemonPhase {
       }
       if (this.scene.gameMode.isEndless || !this.scene.gameMode.isWaveFinal(this.scene.currentBattle.waveIndex)) {
         this.scene.pushPhase(new EggLapsePhase(this.scene));
-        if (this.scene.gameMode.isClassic && this.scene.currentBattle.waveIndex === 165) {
-          // Should get Lock Capsule before shop phase so it can be used in the rewards shop
+        if (this.scene.gameMode.isClassic && this.scene.currentBattle.waveIndex === ClassicFixedBossWaves.EVIL_BOSS_2) {
+          // Should get Lock Capsule on 165 before shop phase so it can be used in the rewards shop
           this.scene.pushPhase(new ModifierRewardPhase(this.scene, modifierTypes.LOCK_CAPSULE));
         }
         if (this.scene.currentBattle.waveIndex % 10) {
@@ -83,7 +83,7 @@ export class VictoryPhase extends PokemonPhase {
 
   /**
    * If this wave is a fixed battle with special custom modifier rewards,
-   * will pass those settings to the upcoming `SelectModifierPhase`.
+   * will pass those settings to the upcoming {@linkcode SelectModifierPhase}`.
    */
   getFixedBattleCustomModifiers(): CustomModifierSettings | undefined {
     const gameMode = this.scene.gameMode;
