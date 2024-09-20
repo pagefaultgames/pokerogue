@@ -3,7 +3,7 @@ import { getPokemonNameWithAffix } from "../messages";
 import Pokemon, { MoveResult, HitResult } from "../field/pokemon";
 import { StatusEffect } from "./status-effect";
 import * as Utils from "../utils";
-import { ChargeAttr, MoveFlags, allMoves } from "./move";
+import { ChargeAttr, MoveFlags, allMoves, MoveCategory } from "./move";
 import { Type } from "./type";
 import { BlockNonDirectDamageAbAttr, FlinchEffectAbAttr, ReverseDrainAbAttr, applyAbAttrs, ProtectStatAbAttr } from "./ability";
 import { TerrainType } from "./terrain";
@@ -2183,7 +2183,7 @@ export class ExposedTag extends BattlerTag {
  */
 export class HealBlockTag extends MoveRestrictionBattlerTag {
   constructor() {
-    super(BattlerTagType.HEAL_BLOCK, 5, Moves.HEAL_BLOCK);
+    super(BattlerTagType.HEAL_BLOCK, [ BattlerTagLapseType.PRE_MOVE, BattlerTagLapseType.TURN_END ], 5, Moves.HEAL_BLOCK);
   }
 
   override onAdd(pokemon: Pokemon): void {
@@ -2199,7 +2199,7 @@ export class HealBlockTag extends MoveRestrictionBattlerTag {
   }
 
   override isMoveRestricted(move: Moves): boolean {
-    if (move.hasFlag(MoveFlags.TRIAGE_MOVE) && move.category() === MoveCategory.STATUS) {
+    if (allMoves[move].hasFlag(MoveFlags.TRIAGE_MOVE) && allMoves[move].category === MoveCategory.STATUS) {
       return true;
     }
     return false;
@@ -2209,15 +2209,14 @@ export class HealBlockTag extends MoveRestrictionBattlerTag {
     return i18next.t("battle:moveDisabled", { moveName: allMoves[move].name });
   }
 
-  override isMoveRestricted(move: Moves): boolean {
-    if (move.hasFlag(MoveFlags.TRIAGE_MOVE) && move.category() === MoveCategory.STATUS) {
-      return true;
-    }
-    return false;
-  }
-
-  override selectionDeniedText(pokemon: Pokemon, move: Moves): string {
-    return i18next.t("battle:moveDisabled", { moveName: allMoves[move].name });
+  /**
+   * @override
+   * @param {Pokemon} pokemon {@linkcode Pokemon} attempting to use the restricted move
+   * @param {Moves} move {@linkcode Moves} ID of the move being interrupted
+   * @returns {string} text to display when the move is interrupted
+   */
+  override interruptedText(pokemon: Pokemon, move: Moves): string {
+    return i18next.t("battle:disableInterruptedMove", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), moveName: allMoves[move].name });
   }
 
   override onRemove(pokemon: Pokemon): void {
