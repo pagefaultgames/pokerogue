@@ -2223,7 +2223,7 @@ export class HealBlockTag extends MoveRestrictionBattlerTag {
    * @param {Moves} move {@linkcode Moves} the move ID
    * @param {Pokemon} user {@linkcode Pokemon} the move user
    * @param {Pokemon} target {@linkcode Pokemon} the target of the move
-   * @returns {boolean} the move cannot be used b/c the target is an ally
+   * @returns `true` if the move cannot be used because the target is an ally
    */
   override isMoveTargetRestricted(move: Moves, user: Pokemon, target: Pokemon) {
     const moveCategory = new Utils.IntegerHolder(allMoves[move].category);
