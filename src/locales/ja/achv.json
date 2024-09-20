@@ -265,5 +265,9 @@
   "INVERSE_BATTLE": {
     "name": "カガミよミガカ",
     "description": "反転バトルチャレンジを　クリアする\nるすアリク　をジンレャチルトバ転反"
+  },
+  "BREEDERS_IN_SPACE": {
+    "name": "Breeders in Space!",
+    "description": "Beat the Expert Pokémon Breeder in the Space Biome."
   }
 }
