@@ -1,30 +1,31 @@
 {
-  "intro": "It's a trainer carrying tons of Pokémon Eggs!",
-  "intro_dialogue": "Hey there, trainer!$It looks like some of your\npartner Pokémon are feeling a little down.$Why not have a battle with me to cheer them up?",
-  "title": "The Expert Breeder",
-  "description": "You've been challenged to a battle where @[TOOLTIP_TITLE]{you can only use a single Pokémon}. It might be tough, but it would surely deepen the bond you have with the Pokémon you choose!\nThe breeder will also give you some @[TOOLTIP_TITLE]{Pokémon Eggs} if you win!",
+  "intro": "这是一位携带大量神奇宝贝蛋的训练师！",
+  "intro_dialogue": "嘿，训练师！$看起来你的一些\n宝可梦感觉有点沮丧。$为什么不和我打一场来让它们兴奋一下呢？",
+  "title": "专业饲养员",
+  "description": "你被发起了一场@[TOOLTIP_TITLE]{只能使用一只宝可梦}的挑战。\n这可能很难，但它肯定会\n加深你与所选神奇宝贝之间的联系！\n如果你赢了，饲养员还会给你一些@[TOOLTIP_TITLE]{蛋}！",
   "query": "Who will you battle with?",
-  "cleffa_1_nickname": "Ace",
-  "cleffa_2_nickname": "Clefablest",
-  "cleffa_3_nickname": "{{speciesName}} the Great",
+  "cleffa_1_nickname": "王牌",
+  "cleffa_2_nickname": "皮氪稀",
+  "cleffa_3_nickname": "帝王{{speciesName}}",
   "option": {
     "1": {
       "label": "{{pokemon1Name}}",
-      "tooltip_base": "(-) Tough Battle\n(+) Gain Friendship with {{pokemon1Name}}"
+      "tooltip_base": "(-)艰难的战斗\n(+)获得与{{pokemon1Name}}的友谊"
     },
     "2": {
       "label": "{{pokemon2Name}}",
-      "tooltip_base": "(-) Tough Battle\n(+) Gain Friendship with {{pokemon2Name}}"
+      "tooltip_base": "(-)艰难的战斗\n(+)获得与{{pokemon2Name}}的友谊"
     },
     "3": {
       "label": "{{pokemon3Name}}",
-      "tooltip_base": "(-) Tough Battle\n(+) Gain Friendship with {{pokemon3Name}}"
+      "tooltip_base": "(-)艰难的战斗\n(+)获得与{{pokemon3Name}}的友谊"
     },
-    "selected": "Let's do this!"
+    "selected": "我们开始吧！"
   },
-  "outro": "Look how happy your {{chosenPokemon}} is now!$Here, you can have these as well.",
-  "gained_eggs": "@s{item_fanfare}You received {{numEggs}}!",
-  "eggs_tooltip": "\n(+) Earn {{eggs}}",
-  "numEggs_one": "{{count}} {{rarity}} Egg",
-  "numEggs_other": "{{count}} {{rarity}} Eggs"
+  "outro": "看看你的 {{chosenPokemon}}现在有多开心！$给，这些你也拿着。",
+  "gained_eggs": "@s{item_fanfare}你获得了{{numEggs}}！",
+  "eggs_tooltip": "\n(+)获得{{eggs}}",
+  "numEggs_one": "{{count}}个{{rarity}}蛋",
+  "numEggs_other": "{{count}}个{{rarity}}蛋"
+
 }
