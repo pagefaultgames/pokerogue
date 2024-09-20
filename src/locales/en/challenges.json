@@ -33,5 +33,12 @@
     "desc": "Type matchups are reversed and no type is immune to any other type.\nDisables other challenges' achievements.",
     "value.0": "Off",
     "value.1": "On"
+  },
+  "trickRoom": {
+    "name": "Trick Room",
+    "shortName": "Trick Room",
+    "desc": "All battles are under the effect of Trick Room, where slower Pokémon move sooner and faster Pokémon move later.\nDisables other challenges' achievements.",
+    "value.0": "Off",
+    "value.1": "On"
   }
 }
