@@ -53,19 +53,22 @@ describe("The Pokemon Salesman - Mystery Encounter", () => {
   });
 
   it("should have the correct properties", async () => {
+    const { encounterType, encounterTier, dialogue, options } = ThePokemonSalesmanEncounter;
+
     await game.runToMysteryEncounter(MysteryEncounterType.THE_POKEMON_SALESMAN, defaultParty);
 
-    expect(ThePokemonSalesmanEncounter.encounterType).toBe(MysteryEncounterType.THE_POKEMON_SALESMAN);
-    expect(ThePokemonSalesmanEncounter.encounterTier).toBe(MysteryEncounterTier.ULTRA);
-    expect(ThePokemonSalesmanEncounter.dialogue).toBeDefined();
-    expect(ThePokemonSalesmanEncounter.dialogue.intro).toStrictEqual([
+    expect(encounterType).toBe(MysteryEncounterType.THE_POKEMON_SALESMAN);
+    expect(encounterTier).toBe(MysteryEncounterTier.ULTRA);
+    expect(dialogue).toBeDefined();
+    expect(dialogue.intro).toStrictEqual([
       { text: `${namespace}.intro` },
       { speaker: `${namespace}.speaker`, text: `${namespace}.intro_dialogue` }
     ]);
-    expect(ThePokemonSalesmanEncounter.dialogue.encounterOptionsDialogue?.title).toBe(`${namespace}.title`);
-    expect(ThePokemonSalesmanEncounter.dialogue.encounterOptionsDialogue?.description).toBe(`${namespace}.description`);
-    expect(ThePokemonSalesmanEncounter.dialogue.encounterOptionsDialogue?.query).toBe(`${namespace}.query`);
-    expect(ThePokemonSalesmanEncounter.options.length).toBe(2);
+    const { title, description, query } = dialogue.encounterOptionsDialogue!;
+    expect(title).toBe(`${namespace}.title`);
+    expect(description).toMatch(new RegExp(`^${namespace}\\.description(_shiny)?$`));
+    expect(query).toBe(`${namespace}.query`);
+    expect(options.length).toBe(2);
   });
 
   it("should not spawn outside of HUMAN_TRANSITABLE_BIOMES", async () => {
@@ -104,12 +107,13 @@ describe("The Pokemon Salesman - Mystery Encounter", () => {
 
   describe("Option 1 - Purchase the pokemon", () => {
     it("should have the correct properties", () => {
-      const option = ThePokemonSalesmanEncounter.options[0];
-      expect(option.optionMode).toBe(MysteryEncounterOptionMode.DISABLED_OR_DEFAULT);
-      expect(option.dialogue).toBeDefined();
-      expect(option.dialogue).toStrictEqual({
+      const { optionMode, dialogue } = ThePokemonSalesmanEncounter.options[0];
+
+      expect(optionMode).toBe(MysteryEncounterOptionMode.DISABLED_OR_DEFAULT);
+      expect(dialogue).toBeDefined();
+      expect(dialogue).toStrictEqual({
         buttonLabel: `${namespace}.option.1.label`,
-        buttonTooltip: `${namespace}.option.1.tooltip`,
+        buttonTooltip: expect.stringMatching(new RegExp(`^${namespace}\\.option\\.1\\.tooltip(_shiny)?$`)),
         selected: [
           {
             text: `${namespace}.option.1.selected_message`,
