@@ -987,12 +987,12 @@
   },
   "stat_trainer_buck": {
     "encounter": {
-      "1": "...I'm telling you right now. I'm seriously tough. Act surprised!",
-      "2": "I can feel my Pokémon shivering inside their Pokéballs!"
+      "1": "……言っとくけど　オレ　強いからな！　驚けよ！",
+      "2": "モンスターボールの　中で　オレの　ポケモン達　震えてる！\nこれ　武者震いって　やつだな！"
     },
     "victory": {
-      "1": "Heeheehee!\nSo hot, you!",
-      "2": "Heeheehee!\nSo hot, you!"
+      "1": "イヒヒ！\nあっちーな 　おまえ！！",
+      "2": "イヒヒ！\nあっちーな　 おまえ！！"
     },
     "defeat": {
       "1": "Whoa! You're all out of gas, I guess.",
