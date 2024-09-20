@@ -49,15 +49,11 @@ export default class RunInfoUiHandler extends UiHandler {
   private runResultContainer: Phaser.GameObjects.Container;
   private runInfoContainer: Phaser.GameObjects.Container;
   private partyContainer: Phaser.GameObjects.Container;
-  private partyHeldItemsContainer: Phaser.GameObjects.Container;
   private statsBgWidth: integer;
-  private partyContainerHeight: integer;
-  private partyContainerWidth: integer;
 
   private hallofFameContainer: Phaser.GameObjects.Container;
   private endCardContainer: Phaser.GameObjects.Container;
 
-  private partyInfo: Phaser.GameObjects.Container[];
   private partyVisibility: Boolean;
   private modifiersModule: any;
 
@@ -863,7 +859,7 @@ export default class RunInfoUiHandler extends UiHandler {
   private buttonCycleOption(button: Button) {
     switch (button) {
     case Button.CYCLE_FORM:
-      if (this.isVictory) {
+      if (this.isVictory && this.pageMode !== RunInfoUiMode.HALL_OF_FAME) {
         if (!this.endCardContainer || !this.endCardContainer.visible) {
           this.createVictorySplash();
           this.endCardContainer.setVisible(true);
@@ -877,7 +873,7 @@ export default class RunInfoUiHandler extends UiHandler {
       }
       break;
     case Button.CYCLE_SHINY:
-      if (this.isVictory) {
+      if (this.isVictory && this.pageMode !== RunInfoUiMode.ENDING_ART) {
         if (!this.hallofFameContainer.visible) {
           this.hallofFameContainer.setVisible(true);
           this.pageMode = RunInfoUiMode.HALL_OF_FAME;
@@ -888,7 +884,7 @@ export default class RunInfoUiHandler extends UiHandler {
       }
       break;
     case Button.CYCLE_ABILITY:
-      if (this.runInfo.modifiers.length !== 0) {
+      if (this.runInfo.modifiers.length !== 0 && this.pageMode === RunInfoUiMode.MAIN) {
         if (this.partyVisibility) {
           this.showParty(false);
         } else {
