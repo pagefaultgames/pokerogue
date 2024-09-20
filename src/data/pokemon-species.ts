@@ -127,7 +127,7 @@ export type PokemonSpeciesFilter = (species: PokemonSpecies) => boolean;
 
 export abstract class PokemonSpeciesForm {
   public speciesId: Species;
-  public formIndex: number;
+  protected formIndex: number;
   protected generation: number;
   readonly type1: Type;
   readonly type2: Type | null;
@@ -192,6 +192,22 @@ export abstract class PokemonSpeciesForm {
    */
   setGeneration(generation: number) {
     this.generation = generation;
+  }
+
+  /**
+   * Method to retrieve the form index of a Pokemon species
+   * @returns the form index
+   */
+  getFormIndex(): number {
+    return this.formIndex;
+  }
+
+  /**
+   * Method to set the form index of a specific Pokemon species
+   * @param the form index
+   */
+  setFormIndex(formIndex: number) {
+    this.formIndex = formIndex;
   }
 
   isOfType(type: number): boolean {
@@ -629,7 +645,7 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
 
     forms.forEach((form, f) => {
       form.speciesId = id;
-      form.formIndex = f;
+      form.setFormIndex(f);
       form.setGeneration(generation);
     });
   }
