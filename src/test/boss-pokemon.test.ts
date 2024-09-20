@@ -216,7 +216,7 @@ describe("Boss Pokemon / Shields", () => {
     expect(enemyPokemon.hp).toBe(1);
     expect(getTotalStatStageBoosts(enemyPokemon)).toBe(1);
 
-  }, TIMEOUT);
+  });
 
   /**
    * Gets the sum of the effective stat stage boosts for the given Pokemon
