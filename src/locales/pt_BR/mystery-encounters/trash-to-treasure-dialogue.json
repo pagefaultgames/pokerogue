@@ -1,19 +1,19 @@
 {
-  "intro": "It's a massive pile of garbage!\nWhere did this come from?",
-  "title": "Trash to Treasure",
-  "description": "The garbage heap looms over you, and you can spot some items of value buried amidst the refuse. Are you sure you want to get covered in filth to get them, though?",
-  "query": "What will you do?",
+  "intro": "É uma pilha enorme de lixo!\nDe onde isso veio?",
+  "title": "Do Lixo ao Luxo",
+  "description": "A pilha de lixo se ergue sobre você, e você pode ver alguns itens de valor enterrados no meio dos detritos. Você tem certeza de que quer se cobrir de sujeira para pegá-los?",
+  "query": "O que você vai fazer?",
   "option": {
     "1": {
-      "label": "Dig for Valuables",
-      "tooltip": "(-) Lose Healing Items in Shops\n(+) Gain Amazing Items",
-      "selected": "You wade through the garbage pile, becoming mired in filth.$There's no way any respectable shopkeepers\nwill sell you anything in your grimy state!$You'll just have to make do without shop healing items.$However, you found some incredible items in the garbage!"
+      "label": "Cavar em Busca de Valiosos",
+      "tooltip": "(-) Perder Itens de Cura nas Lojas\n(+) Ganhar Itens Incríveis",
+      "selected": "Você vasculha a pilha de lixo, ficando preso na sujeira.$Não há como os lojistas respeitáveis\nvenderem algo para você nesse estado imundo!$Você terá que se virar sem itens de cura nas lojas.$No entanto, você encontrou alguns itens incríveis no lixo!"
     },
     "2": {
-      "label": "Investigate Further",
-      "tooltip": "(?) Find the Source of the Garbage",
-      "selected": "You wander around the heap, searching for any indication as to how this might have appeared here...",
-      "selected_2": "Suddenly, the garbage shifts! It wasn't just garbage, it was a Pokémon!"
+      "label": "Investigar Mais",
+      "tooltip": "(?) Encontrar a Fonte do Lixo",
+      "selected": "Você vagueia ao redor da pilha, procurando qualquer indicação de como isso apareceu aqui...",
+      "selected_2": "De repente, o lixo se move! Não era apenas lixo, era um Pokémon!"
     }
   }
 }

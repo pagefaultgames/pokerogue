@@ -1,25 +1,25 @@
 {
-  "intro": "A {{greedentName}} ambushes you\nand steals your party's berries!",
-  "title": "Absolute Avarice",
-  "description": "The {{greedentName}} has caught you totally off guard now all your berries are gone!\n\nThe {{greedentName}} looks like it's about to eat them when it pauses to look at you, interested.",
-  "query": "What will you do?",
+  "intro": "Um {{greedentName}} te embosca\ne rouba as Frutas do seu time!",
+  "title": "Ganância Absoluta",
+  "description": "Um {{greedentName}} te pegou completamente desprevenido e agora todas as suas Frutas se foram!\n\nA {{greedentName}} parece prestes a comê-las quando para para te olhar, interessado.",
+  "query": "O que você vai fazer?",
   "option": {
     "1": {
-      "label": "Battle It",
-      "tooltip": "(-) Tough Battle\n(+) Rewards from its Berry Hoard",
-      "selected": "The {{greedentName}} stuffs its cheeks\nand prepares for battle!",
-      "boss_enraged": "{{greedentName}}'s fierce love for food has it incensed!",
-      "food_stash": "It looks like the {{greedentName}} was guarding an enormous stash of food!$@s{item_fanfare}Each Pokémon in your party gains a {{foodReward}}!"
+      "label": "Batalhar",
+      "tooltip": "(-) Batalha Difícil\n(+) Recompensas do Tesouro de Frutas",
+      "selected": "Um {{greedentName}} enche suas bochechas\ne se prepara para a batalha!",
+      "boss_enraged": "O amor feroz de {{greedentName}} por comida o deixou enfurecido!",
+      "food_stash": "Parece que o {{greedentName}} estava guardando um enorme estoque de comida!$@s{item_fanfare}Cada Pokémon do seu time ganha um {{foodReward}}!"
     },
     "2": {
-      "label": "Reason with It",
-      "tooltip": "(+) Regain Some Lost Berries",
-      "selected": "Your pleading strikes a chord with the {{greedentName}}.$It doesn't give all your berries back, but still tosses a few in your direction."
+      "label": "Resolver com Ele",
+      "tooltip": "(+) Recuperar Algumas Frutas Perdidas",
+      "selected": "Seu apelo toca o coração de {{greedentName}}.$Ele não devolve todas as suas Frutas, mas joga algumas na sua direção."
     },
     "3": {
-      "label": "Let It Have the Food",
-      "tooltip": "(-) Lose All Berries\n(?) The {{greedentName}} Will Like You",
-      "selected": "The {{greedentName}} devours the entire\nstash of berries in a flash!$Patting its stomach,\nit looks at you appreciatively.$Perhaps you could feed it\nmore berries on your adventure...$@s{level_up_fanfare}The {{greedentName}} wants to join your party!"
+      "label": "Deixá-lo Ficar com a Comida",
+      "tooltip": "(-) Perder Todas as Frutas\n(?) O {{greedentName}} Vai Gostar de Você",
+      "selected": "O {{greedentName}} devora todo o\nestoque de Frutas num piscar de olhos!$Bate na barriga satisfeito\ne olha para você agradecido.$Talvez você possa alimentá-lo\ncom mais Frutas em sua aventura...$@s{level_up_fanfare}O {{greedentName}} quer se juntar ao seu time!"
     }
   }
 }

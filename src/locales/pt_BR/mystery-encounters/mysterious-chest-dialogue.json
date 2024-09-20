@@ -1,23 +1,23 @@
 {
-  "intro": "You found...@d{32} a chest?",
-  "title": "The Mysterious Chest",
-  "description": "A beautifully ornamented chest stands on the ground. There must be something good inside... right?",
-  "query": "Will you open it?",
+  "intro": "Você encontrou...@d{32} um baú?",
+  "title": "O Baú Misterioso",
+  "description": "Um baú lindamente decorado está no chão. Deve haver algo bom dentro... certo?",
+  "query": "Você vai abri-lo?",
   "option": {
     "1": {
-      "label": "Open It",
-      "tooltip": "@[SUMMARY_BLUE]{(35%) Something terrible}\n@[SUMMARY_GREEN]{(40%) Okay Rewards}\n@[SUMMARY_GREEN]{(20%) Good Rewards}\n@[SUMMARY_GREEN]{(4%) Great Rewards}\n@[SUMMARY_GREEN]{(1%) Amazing Rewards}",
-      "selected": "You open the chest to find...",
-      "normal": "Just some normal tools and items.",
-      "good": "Some pretty nice tools and items.",
-      "great": "A couple great tools and items!",
-      "amazing": "Whoa! An amazing item!",
-      "bad": "Oh no!@d{32}\nThe chest was actually a {{gimmighoulName}} in disguise!$Your {{pokeName}} jumps in front of you\nbut is KOed in the process!"
+      "label": "Abrir",
+      "tooltip": "@[SUMMARY_BLUE]{(35%) Algo terrível}\n@[SUMMARY_GREEN]{(40%) Recompensas razoáveis}\n@[SUMMARY_GREEN]{(20%) Boas Recompensas}\n@[SUMMARY_GREEN]{(4%) Ótimas Recompensas}\n@[SUMMARY_GREEN]{(1%) Recompensas Incríveis}",
+      "selected": "Você abre o baú e encontra...",
+      "normal": "Apenas algumas ferramentas e itens normais.",
+      "good": "Algumas ferramentas e itens bem legais.",
+      "great": "Algumas ferramentas e itens ótimos!",
+      "amazing": "Uau! Um item incrível!",
+      "bad": "Oh não!@d{32}\nO baú era na verdade um {{gimmighoulName}} disfarçado!$Seu {{pokeName}} pula na sua frente,\nmas é nocauteado no processo!"
     },
     "2": {
-      "label": "Too Risky, Leave",
-      "tooltip": "(-) No Rewards",
-      "selected": "You hurry along your way,\nwith a slight feeling of regret."
+      "label": "Muito Arriscado, Sair",
+      "tooltip": "(-) Sem Recompensas",
+      "selected": "Você segue seu caminho apressadamente,\ncom uma leve sensação de arrependimento."
     }
   }
 }

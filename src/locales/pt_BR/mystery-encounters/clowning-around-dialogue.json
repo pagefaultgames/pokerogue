@@ -1,34 +1,34 @@
 {
-  "intro": "It's...@d{64} a clown?",
-  "speaker": "Clown",
-  "intro_dialogue": "Bumbling buffoon, brace for a brilliant battle!\nYou'll be beaten by this brawling busker!",
-  "title": "Clowning Around",
-  "description": "Something is off about this encounter. The clown seems eager to goad you into a battle, but to what end?\n\nThe {{blacephalonName}} is especially strange, like it has @[TOOLTIP_TITLE]{weird types and ability.}",
-  "query": "What will you do?",
+  "intro": "É...@d{64} um palhaço?",
+  "speaker": "Palhaço",
+  "intro_dialogue": "Pateta trapalhão, prepare-se para uma batalha brilhante!\nVocê será derrotado por este artista de rua brigão!",
+  "title": "Brincando de Palhaço",
+  "description": "Algo está estranho nesse encontro. O palhaço parece ansioso para provocá-lo a entrar em uma batalha, mas com que objetivo?\n\nO {{blacephalonName}} é especialmente estranho, como se tivesse @[TOOLTIP_TITLE]{tipos e habilidade esquisitos.}",
+  "query": "O que você vai fazer?",
   "option": {
     "1": {
-      "label": "Battle the Clown",
-      "tooltip": "(-) Strange Battle\n(?) Affects Pokémon Abilities",
-      "selected": "Your pitiful Pokémon are poised for a pathetic performance!",
-      "apply_ability_dialogue": "A sensational showcase!\nYour savvy suits a sensational skill as spoils!",
-      "apply_ability_message": "The clown is offering to permanently Skill Swap one of your Pokémon's ability to {{ability}}!",
-      "ability_prompt": "Would you like to permanently teach a Pokémon the {{ability}} ability?",
-      "ability_gained": "@s{level_up_fanfare}{{chosenPokemon}} gained the {{ability}} ability!"
+      "label": "Batalhar com o Palhaço",
+      "tooltip": "(-) Batalha Estranha\n(?) Afeta Habilidades dos Pokémon",
+      "selected": "Seus Pokémon patéticos estão preparados para uma performance patética!",
+      "apply_ability_dialogue": "Um espetáculo sensacional!\nSeu conhecimento garante uma habilidade sensacional como recompensa!",
+      "apply_ability_message": "O palhaço está oferecendo para trocar permanentemente a habilidade de um dos seus Pokémon por {{ability}}!",
+      "ability_prompt": "Você gostaria de ensinar permanentemente a habilidade {{ability}} a um Pokémon?",
+      "ability_gained": "@s{level_up_fanfare}{{chosenPokemon}} adquiriu a habilidade {{ability}}!"
     },
     "2": {
-      "label": "Remain Unprovoked",
-      "tooltip": "(-) Upsets the Clown\n(?) Affects Pokémon Items",
-      "selected": "Dismal dodger, you deny a delightful duel?\nFeel my fury!",
-      "selected_2": "The clown's {{blacephalonName}} uses Trick!\nAll of your {{switchPokemon}}'s items were randomly swapped!",
-      "selected_3": "Flustered fool, fall for my flawless deception!"
+      "label": "Não Se Provocar",
+      "tooltip": "(-) Irrita o Palhaço\n(?) Afeta os Itens dos Pokémon",
+      "selected": "Covarde dissimulado, você nega um duelo delicioso?\nSinta minha fúria!",
+      "selected_2": "O {{blacephalonName}} do palhaço usa Trick!\nTodos os itens de {{switchPokemon}} foram trocados aleatoriamente!",
+      "selected_3": "Tolo frustrado, caia na minha enganação impecável!"
     },
     "3": {
-      "label": "Return the Insults",
-      "tooltip": "(-) Upsets the Clown\n(?) Affects Pokémon Types",
-      "selected": "Dismal dodger, you deny a delightful duel?\nFeel my fury!",
-      "selected_2": "The clown's {{blacephalonName}} uses a strange move!\nAll of your team's types were randomly swapped!",
-      "selected_3": "Flustered fool, fall for my flawless deception!"
+      "label": "Retrucar os Insultos",
+      "tooltip": "(-) Irrita o Palhaço\n(?) Afeta os Tipos dos Pokémon",
+      "selected": "Covarde dissimulado, você nega um duelo delicioso?\nSinta minha fúria!",
+      "selected_2": "O {{blacephalonName}} do palhaço usa um movimento estranho!\nTodos os tipos da sua equipe foram trocados aleatoriamente!",
+      "selected_3": "Tolo frustrado, caia na minha enganação impecável!"
     }
   },
-  "outro": "The clown and his cohorts\ndisappear in a puff of smoke."
+  "outro": "O palhaço e seus companheiros\ndesaparecem em uma nuvem de fumaça."
 }

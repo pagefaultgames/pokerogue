@@ -1,27 +1,27 @@
 {
-  "intro": "It's a strange machine, whirring noisily...",
-  "title": "Teleportating Hijinks",
-  "description": "The machine has a sign on it that reads:\n  \"To use, insert money then step into the capsule.\"\n\nPerhaps it can transport you somewhere...",
-  "query": "What will you do?",
+  "intro": "É uma máquina estranha, zumbindo ruidosamente...",
+  "title": "Travessuras de Teletransporte",
+  "description": "A máquina tem uma placa que diz:\n  \"Para usar, insira dinheiro e entre na cápsula.\"\n\nTalvez ela possa te transportar para algum lugar...",
+  "query": "O que você vai fazer?",
   "option": {
     "1": {
-      "label": "Put Money In",
-      "tooltip": "(-) Pay {{price, money}}\n(?) Teleport to New Biome",
-      "selected": "You insert some money, and the capsule opens.\nYou step inside..."
+      "label": "Colocar Dinheiro",
+      "tooltip": "(-) Pagar {{price, money}}\n(?) Teletransportar para Novo Bioma",
+      "selected": "Você insere algum dinheiro, e a cápsula se abre.\nVocê entra..."
     },
     "2": {
-      "label": "A Pokémon Helps",
-      "tooltip": "(-) {{option2PrimaryName}} Helps\n(+) {{option2PrimaryName}} gains EXP\n(?) Teleport to New Biome",
-      "disabled_tooltip": "You need a Steel or Electric Type Pokémon to choose this",
-      "selected": "{{option2PrimaryName}}'s Type allows it to bypass the machine's paywall!$The capsule opens, and you step inside..."
+      "label": "Um Pokémon Ajuda",
+      "tooltip": "(-) {{option2PrimaryName}} Ajuda\n(+) {{option2PrimaryName}} ganha EXP\n(?) Teletransportar para Novo Bioma",
+      "disabled_tooltip": "Você precisa de um Pokémon do Tipo Aço ou Elétrico para escolher isso",
+      "selected": "O Tipo de {{option2PrimaryName}} permite que ele contorne a barreira de pagamento da máquina!$A cápsula se abre, e você entra..."
     },
     "3": {
-      "label": "Inspect the Machine",
-      "tooltip": "(-) Pokémon Battle",
-      "selected": "You are drawn in by the blinking lights\nand strange noises coming from the machine...$You don't even notice as a wild\nPokémon sneaks up and ambushes you!"
+      "label": "Inspecionar a Máquina",
+      "tooltip": "(-) Batalha de Pokémon",
+      "selected": "Você é atraído pelas luzes piscantes\ne pelos sons estranhos vindos da máquina...$Você nem percebe enquanto um Pokémon selvagem\nse aproxima e te embosca!"
     }
   },
-  "transport": "The machine shakes violently,\nmaking all sorts of strange noises!$Just as soon as it had started, it quiets once more.",
-  "attacked": "You step out into a completely new area, startling a wild Pokémon!$The wild Pokémon attacks!",
-  "boss_enraged": "The opposing {{enemyPokemon}} has become enraged!"
+  "transport": "A máquina treme violentamente,\nemitindo todo tipo de som estranho!$Logo após começar, ela se silencia mais uma vez.",
+  "attacked": "Você sai em uma área completamente nova, assustando um Pokémon selvagem!$O Pokémon selvagem ataca!",
+  "boss_enraged": "O {{enemyPokemon}} oponente ficou furioso!"
 }

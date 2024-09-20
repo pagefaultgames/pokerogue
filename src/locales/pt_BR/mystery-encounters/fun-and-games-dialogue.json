@@ -1,30 +1,30 @@
 {
-  "intro_dialogue": "Step right up, folks! Try your luck\non the brand new {{wobbuffetName}} Whack-o-matic!",
-  "speaker": "Showman",
-  "title": "Fun And Games!",
-  "description": "You've encountered a traveling show with a prize game! You will have @[TOOLTIP_TITLE]{3 turns} to bring the {{wobbuffetName}} as close to @[TOOLTIP_TITLE]{1 HP} as possible @[TOOLTIP_TITLE]{without KOing it} so it can wind up a huge Counter on the bell-ringing machine.\nBut be careful! If you KO the {{wobbuffetName}}, you'll have to pay for the cost of reviving it!",
-  "query": "Would you like to play?",
+  "intro_dialogue": "Venham, venham, pessoal! Tentem a sorte\nno novíssimo {{wobbuffetName}} Bate-o-mático!",
+  "speaker": "Animador",
+  "title": "Diversão e Jogos!",
+  "description": "Você encontrou um show itinerante com um jogo de prêmios! Você terá @[TOOLTIP_TITLE]{3 turnos} para deixar o {{wobbuffetName}} o mais próximo possível de @[TOOLTIP_TITLE]{1 PS} @[TOOLTIP_TITLE]{sem nocauteá-lo} para que ele possa carregar um grande Counter na máquina de tocar o sino.\nMas cuidado! Se você nocautear o {{wobbuffetName}}, terá que pagar o custo de revivê-lo!",
+  "query": "Gostaria de jogar?",
   "option": {
     "1": {
-      "label": "Play the Game",
-      "tooltip": "(-) Pay {{option1Money, money}}\n(+) Play {{wobbuffetName}} Whack-o-matic",
-      "selected": "Time to test your luck!"
+      "label": "Jogar",
+      "tooltip": "(-) Pagar {{option1Money, money}}\n(+) Jogar {{wobbuffetName}} Bate-o-mático",
+      "selected": "Hora de testar sua sorte!"
     },
     "2": {
-      "label": "Leave",
-      "tooltip": "(-) No Rewards",
-      "selected": "You hurry along your way,\nwith a slight feeling of regret."
+      "label": "Sair",
+      "tooltip": "(-) Sem Recompensas",
+      "selected": "Você segue seu caminho apressadamente,\ncom uma leve sensação de arrependimento."
     }
   },
-  "ko": "Oh no! The {{wobbuffetName}} fainted!$You lose the game and\nhave to pay for the revive cost...",
-  "charging_continue": "The Wubboffet keeps charging its counter-swing!",
-  "turn_remaining_3": "Three turns remaining!",
-  "turn_remaining_2": "Two turns remaining!",
-  "turn_remaining_1": "One turn remaining!",
-  "end_game": "Time's up!$The {{wobbuffetName}} winds up to counter-swing and@d{16}.@d{16}.@d{16}.",
-  "best_result": "The {{wobbuffetName}} smacks the button so hard\nthe bell breaks off the top!$You win the grand prize!",
-  "great_result": "The {{wobbuffetName}} smacks the button, nearly hitting the bell!$So close!\nYou earn the second tier prize!",
-  "good_result": "The {{wobbuffetName}} hits the button hard enough to go midway up the scale!$You earn the third tier prize!",
-  "bad_result": "The {{wobbuffetName}} barely taps the button and nothing happens...$Oh no!\nYou don't win anything!",
-  "outro": "That was a fun little game!"
+  "ko": "Oh não! O {{wobbuffetName}} desmaiou!$Você perdeu o jogo e\nterá que pagar o custo da reanimação...",
+  "charging_continue": "O Wobbuffet continua carregando seu contra-ataque!",
+  "turn_remaining_3": "Restam três turnos!",
+  "turn_remaining_2": "Restam dois turnos!",
+  "turn_remaining_1": "Resta um turno!",
+  "end_game": "O tempo acabou!$O {{wobbuffetName}} se prepara para o contra-ataque e@d{16}.@d{16}.@d{16}.",
+  "best_result": "O {{wobbuffetName}} bate o botão com tanta força\nque o sino se quebra no topo!$Você ganhou o grande prêmio!",
+  "great_result": "O {{wobbuffetName}} bate o botão, quase acertando o sino!$Tão perto!\nVocê ganhou o prêmio de segundo nível!",
+  "good_result": "O {{wobbuffetName}} bate o botão com força suficiente para chegar no meio da escala!$Você ganhou o prêmio de terceiro nível!",
+  "bad_result": "O {{wobbuffetName}} mal toca o botão e nada acontece...$Oh não!\nVocê não ganhou nada!",
+  "outro": "Esse foi um joguinho divertido!"
 }
