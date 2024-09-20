@@ -2181,9 +2181,9 @@ export class ExposedTag extends BattlerTag {
 /**
  * Describes the behavior of a Heal Block Tag.
  */
-export class HealBlockTag extends BattlerTag {
+export class HealBlockTag extends MoveRestrictionBattlerTag {
   constructor() {
-    super(BattlerTagType.HEAL_BLOCK, BattlerTagLapseType.TURN_END, 5, Moves.HEAL_BLOCK);
+    super(BattlerTagType.HEAL_BLOCK, 5, Moves.HEAL_BLOCK);
   }
 
   override onAdd(pokemon: Pokemon): void {
@@ -2196,6 +2196,28 @@ export class HealBlockTag extends BattlerTag {
 
   onActivation(pokemon: Pokemon): string {
     return i18next.t("battle:battlerTagsHealBlock", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) });
+  }
+
+  override isMoveRestricted(move: Moves): boolean {
+    if (move.hasFlag(MoveFlags.TRIAGE_MOVE) && move.category() === MoveCategory.STATUS) {
+      return true;
+    }
+    return false;
+  }
+
+  override selectionDeniedText(pokemon: Pokemon, move: Moves): string {
+    return i18next.t("battle:moveDisabled", { moveName: allMoves[move].name });
+  }
+
+  override isMoveRestricted(move: Moves): boolean {
+    if (move.hasFlag(MoveFlags.TRIAGE_MOVE) && move.category() === MoveCategory.STATUS) {
+      return true;
+    }
+    return false;
+  }
+
+  override selectionDeniedText(pokemon: Pokemon, move: Moves): string {
+    return i18next.t("battle:moveDisabled", { moveName: allMoves[move].name });
   }
 
   override onRemove(pokemon: Pokemon): void {
