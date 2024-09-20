@@ -268,5 +268,9 @@
   "INVERSE_BATTLE": {
     "name": "A torre da derrotA",
     "description": "Complete o desafio da Batalha Inversa.\n.asrevnI ahlataB ad oifased o etelpmoC"
+  },
+  "BREEDERS_IN_SPACE": {
+    "name": "Breeders in Space!",
+    "description": "Beat the Expert Pokémon Breeder in the Space Biome."
   }
 }
