@@ -19,6 +19,10 @@ import { modifierTypes, PokemonHeldItemModifierType } from "#app/modifier/modifi
 import { Gender } from "#app/data/gender";
 import { PermanentStat } from "#enums/stat";
 import { VictoryPhase } from "#app/phases/victory-phase";
+import { SummaryUiMode } from "#app/ui/summary-ui-handler";
+
+/** Will give +1 level every 10 waves */
+export const STANDARD_ENCOUNTER_BOOSTED_LEVEL_MODIFIER = 1;
 
 /**
  * Gets the sprite key and file root for a given PokemonSpecies (accounts for gender, shiny, variants, forms, and experimental)
@@ -289,10 +293,12 @@ export async function modifyPlayerPokemonBST(pokemon: PlayerPokemon, value: numb
  */
 export async function applyModifierTypeToPlayerPokemon(scene: BattleScene, pokemon: PlayerPokemon, modType: PokemonHeldItemModifierType, fallbackModifierType?: PokemonHeldItemModifierType) {
   // Check if the Pokemon has max stacks of that item already
+  const modifier = modType.newModifier(pokemon);
   const existing = scene.findModifier(m => (
     m instanceof PokemonHeldItemModifier &&
     m.type.id === modType.id &&
-    m.pokemonId === pokemon.id
+    m.pokemonId === pokemon.id &&
+    m.matchType(modifier)
   )) as PokemonHeldItemModifier;
 
   // At max stacks
@@ -305,7 +311,6 @@ export async function applyModifierTypeToPlayerPokemon(scene: BattleScene, pokem
     return applyModifierTypeToPlayerPokemon(scene, pokemon, fallbackModifierType);
   }
 
-  const modifier = modType.newModifier(pokemon);
   await scene.addModifier(modifier, false, false, false, true);
 }
 
@@ -327,7 +332,7 @@ export function trainerThrowPokeball(scene: BattleScene, pokemon: EnemyPokemon, 
     const _3m = 3 * pokemon.getMaxHp();
     const _2h = 2 * pokemon.hp;
     const catchRate = pokemon.species.catchRate;
-    const pokeballMultiplier = getPokeballCatchMultiplier(this.pokeballType);
+    const pokeballMultiplier = getPokeballCatchMultiplier(pokeballType);
     const statusMultiplier = pokemon.status ? getStatusEffectCatchRateMultiplier(pokemon.status.effect) : 1;
     const x = Math.round((((_3m - _2h) * catchRate * pokeballMultiplier) / _3m) * statusMultiplier);
     ballTwitchRate = Math.round(65536 / Math.sqrt(Math.sqrt(255 / x)));
@@ -501,8 +506,6 @@ function failCatch(scene: BattleScene, pokemon: EnemyPokemon, originalY: number,
  * @param isObtain
  */
 export async function catchPokemon(scene: BattleScene, pokemon: EnemyPokemon, pokeball: Phaser.GameObjects.Sprite | null, pokeballType: PokeballType, showCatchObtainMessage: boolean = true, isObtain: boolean = false): Promise<void> {
-  scene.unshiftPhase(new VictoryPhase(scene, pokemon.id, true));
-
   const speciesForm = !pokemon.fusionSpecies ? pokemon.getSpeciesForm() : pokemon.getFusionSpeciesForm();
 
   if (speciesForm.abilityHidden && (pokemon.fusionSpecies ? pokemon.fusionAbilityIndex : pokemon.abilityIndex) === speciesForm.getAbilityCount() - 1) {
@@ -528,6 +531,11 @@ export async function catchPokemon(scene: BattleScene, pokemon: EnemyPokemon, po
   return new Promise(resolve => {
     const doPokemonCatchMenu = () => {
       const end = () => {
+        // Ensure the pokemon is in the enemy party in all situations
+        if (!scene.getEnemyParty().some(p => p.id === pokemon.id)) {
+          scene.getEnemyParty().push(pokemon);
+        }
+        scene.unshiftPhase(new VictoryPhase(scene, pokemon.id, true));
         scene.pokemonInfoContainer.hide();
         if (pokeball) {
           removePb(scene, pokeball);
@@ -539,8 +547,8 @@ export async function catchPokemon(scene: BattleScene, pokemon: EnemyPokemon, po
           scene.field.remove(pokemon, true);
         }
       };
-      const addToParty = () => {
-        const newPokemon = pokemon.addToParty(pokeballType);
+      const addToParty = (slotIndex?: number) => {
+        const newPokemon = pokemon.addToParty(pokeballType, slotIndex);
         const modifiers = scene.findModifiers(m => m instanceof PokemonHeldItemModifier, false);
         if (scene.getParty().filter(p => p.isShiny()).length === 6) {
           scene.validateAchv(achvs.SHINY_PARTY);
@@ -559,12 +567,19 @@ export async function catchPokemon(scene: BattleScene, pokemon: EnemyPokemon, po
         if (scene.getParty().length === 6) {
           const promptRelease = () => {
             scene.ui.showText(i18next.t("battle:partyFull", { pokemonName: pokemon.getNameToRender() }), null, () => {
-              scene.pokemonInfoContainer.makeRoomForConfirmUi();
+              scene.pokemonInfoContainer.makeRoomForConfirmUi(1, true);
               scene.ui.setMode(Mode.CONFIRM, () => {
-                scene.ui.setMode(Mode.PARTY, PartyUiMode.RELEASE, 0, (slotIndex: number, _option: PartyOption) => {
+                const newPokemon = scene.addPlayerPokemon(pokemon.species, pokemon.level, pokemon.abilityIndex, pokemon.formIndex, pokemon.gender, pokemon.shiny, pokemon.variant, pokemon.ivs, pokemon.nature, pokemon);
+                scene.ui.setMode(Mode.SUMMARY, newPokemon, 0, SummaryUiMode.DEFAULT, () => {
+                  scene.ui.setMode(Mode.MESSAGE).then(() => {
+                    promptRelease();
+                  });
+                }, false);
+              }, () => {
+                scene.ui.setMode(Mode.PARTY, PartyUiMode.RELEASE, 0, (slotIndex: integer, _option: PartyOption) => {
                   scene.ui.setMode(Mode.MESSAGE).then(() => {
                     if (slotIndex < 6) {
-                      addToParty();
+                      addToParty(slotIndex);
                     } else {
                       promptRelease();
                     }
@@ -575,7 +590,7 @@ export async function catchPokemon(scene: BattleScene, pokemon: EnemyPokemon, po
                   removePokemon();
                   end();
                 });
-              });
+              }, "fullParty");
             });
           };
           promptRelease();
@@ -711,13 +726,50 @@ export function getGoldenBugNetSpecies(): PokemonSpecies {
   const roll = randSeedInt(totalWeight);
 
   let w = 0;
-  for (const species of GOLDEN_BUG_NET_SPECIES_POOL) {
-    w += species[1];
+  for (const speciesWeightPair of GOLDEN_BUG_NET_SPECIES_POOL) {
+    w += speciesWeightPair[1];
     if (roll < w) {
-      return getPokemonSpecies(species);
+      return getPokemonSpecies(speciesWeightPair[0]);
     }
   }
 
   // Defaults to Scyther
   return getPokemonSpecies(Species.SCYTHER);
+}
+
+/**
+ * Generates a Pokemon level for a given wave, with an option to increase/decrease by a scaling modifier
+ * @param scene
+ * @param levelAdditiveModifier Default 0. will add +(1 level / 10 waves * levelAdditiveModifier) to the level calculation
+ */
+export function getEncounterPokemonLevelForWave(scene: BattleScene, levelAdditiveModifier: number = 0) {
+  const currentBattle = scene.currentBattle;
+  // Default to use the first generated level from enemyLevels, or generate a new one if it DNE
+  const baseLevel = currentBattle.enemyLevels && currentBattle.enemyLevels?.length > 0 ? currentBattle.enemyLevels[0] : currentBattle.getLevelForWave();
+
+  // Add a level scaling modifier that is (+1 level per 10 waves) * levelAdditiveModifier
+  return baseLevel + Math.max(Math.round((currentBattle.waveIndex / 10) * levelAdditiveModifier), 0);
+}
+
+export async function addPokemonDataToDexAndValidateAchievements(scene: BattleScene, pokemon: PlayerPokemon) {
+  const speciesForm = !pokemon.fusionSpecies ? pokemon.getSpeciesForm() : pokemon.getFusionSpeciesForm();
+
+  if (speciesForm.abilityHidden && (pokemon.fusionSpecies ? pokemon.fusionAbilityIndex : pokemon.abilityIndex) === speciesForm.getAbilityCount() - 1) {
+    scene.validateAchv(achvs.HIDDEN_ABILITY);
+  }
+
+  if (pokemon.species.subLegendary) {
+    scene.validateAchv(achvs.CATCH_SUB_LEGENDARY);
+  }
+
+  if (pokemon.species.legendary) {
+    scene.validateAchv(achvs.CATCH_LEGENDARY);
+  }
+
+  if (pokemon.species.mythical) {
+    scene.validateAchv(achvs.CATCH_MYTHICAL);
+  }
+
+  scene.gameData.updateSpeciesDexIvs(pokemon.species.getRootSpeciesId(true), pokemon.ivs);
+  return scene.gameData.setPokemonCaught(pokemon, true, false, false);
 }
