@@ -346,10 +346,10 @@ export abstract class Challenge {
 
   /**
    * An apply function for TRICK_ROOM challenges. Derived classes should alter this.
-   * @param enabled {@link Utils.BooleanHolder} Whether the challenge is enabled.
+   * @param isTrickRoom {@link Utils.BooleanHolder} Whether the battle is under the effect of Trick Room.
    * @returns {@link boolean} Whether this function did anything.
    */
-  applyTrickRoom(enabled: Utils.BooleanHolder): boolean {
+  applyTrickRoom(isTrickRoom: Utils.BooleanHolder): boolean {
     return false;
   }
 
@@ -739,11 +739,11 @@ export class TrickRoomChallenge extends Challenge {
     return 0;
   }
 
-  applyTrickRoom(enabled: Utils.BooleanHolder): boolean {
-    if (!enabled.value) {
-      enabled.value = true;
+  applyTrickRoom(isTrickRoom: Utils.BooleanHolder): boolean {
+    if (!isTrickRoom.value) {
+      isTrickRoom.value = true;
     } else {
-      enabled.value = false;
+      isTrickRoom.value = false;
     }
     return true;
   }
@@ -880,10 +880,10 @@ export function applyChallenges(gameMode: GameMode, challengeType: ChallengeType
  * Apply all challenges that modify Trick Room.
  * @param gameMode {@linkcode GameMode} The current gameMode
  * @param challengeType {@linkcode ChallengeType} ChallengeType.TRICK_ROOM
- * @param enabled {@linkcode Utils.BooleanHolder} Whether Trick Room is enabled.
+ * @param isTrickRoom {@linkcode Utils.BooleanHolder} Whether the battle is under the effect of Trick Room.
  * @returns True if any challenge was successfully applied.
  */
-export function applyChallenges(gameMode: GameMode, challengeType: ChallengeType.TRICK_ROOM, enabled: Utils.BooleanHolder): boolean;
+export function applyChallenges(gameMode: GameMode, challengeType: ChallengeType.TRICK_ROOM, isTrickRoom: Utils.BooleanHolder): boolean;
 /**
  * Apply all challenges that modify what level AI are.
  * @param gameMode {@link GameMode} The current gameMode
