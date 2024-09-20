@@ -1,7 +1,7 @@
 {
   "paid_money": "{{amount, number}}円　払った",
   "receive_money": "{{amount, number}}円　もらった！",
-  "affects_pokedex": "ポケモン図鑑の　データを　変える",
+  "affects_pokedex": "ポケモン図鑑の　データに　影響する",
   "cancel_option": "遭遇の　選択肢に　戻る",
   "view_party_button": "手持ちを確認"
 }
