@@ -166,11 +166,12 @@ export interface GeneratedPersistentModifierType {
   getPregenArgs(): any[];
 }
 
-class AddPokeballModifierType extends ModifierType {
+export class AddPokeballModifierType extends ModifierType {
   private pokeballType: PokeballType;
-  private count: integer;
+  private count: number;
+  private currentAmount: number;
 
-  constructor(iconImage: string, pokeballType: PokeballType, count: integer) {
+  constructor(iconImage: string, pokeballType: PokeballType, count: number) {
     super("", iconImage, (_type, _args) => new Modifiers.AddPokeballModifier(this, pokeballType, count), "pb", "se/pb_bounce_1");
     this.pokeballType = pokeballType;
     this.count = count;
@@ -180,15 +181,32 @@ class AddPokeballModifierType extends ModifierType {
     return i18next.t("modifierType:ModifierType.AddPokeballModifierType.name", {
       "modifierCount": this.count,
       "pokeballName": getPokeballName(this.pokeballType),
+      "pokeballAmount": `${this.currentAmount}`,
     });
   }
 
+  setAmount(currentAmount: number) {
+    this.currentAmount = currentAmount;
+  }
+
+  getPokeballType(): PokeballType {
+    return this.pokeballType as PokeballType;
+  }
+
   getDescription(scene: BattleScene): string {
+    let catchRate: String = "";
+    if (this.pokeballType === PokeballType.ROGUE_BALL) {
+      catchRate = i18next.t("modifierType:ModifierType.AddPokeballModifierType.catchRateGenerator", {
+        "normalCatchRate": getPokeballCatchMultiplier(this.pokeballType),
+        "boostedCatchRate": getPokeballCatchMultiplier(this.pokeballType, undefined, true),
+      });
+    } else if (this.pokeballType !== PokeballType.MASTER_BALL) {
+      catchRate = `${getPokeballCatchMultiplier(this.pokeballType)}x`;
+    }
     return i18next.t("modifierType:ModifierType.AddPokeballModifierType.description", {
       "modifierCount": this.count,
       "pokeballName": getPokeballName(this.pokeballType),
-      "catchRate": getPokeballCatchMultiplier(this.pokeballType) > -1 ? `${getPokeballCatchMultiplier(this.pokeballType)}x` : "100%",
-      "pokeballAmount": `${scene.pokeballCounts[this.pokeballType]}`,
+      "catchRate": catchRate,
     });
   }
 }
@@ -2138,9 +2156,15 @@ export function getPlayerModifierTypeOptions(count: integer, party: PlayerPokemo
 function getModifierTypeOptionWithRetry(existingOptions: ModifierTypeOption[], retryCount: integer, party: PlayerPokemon[], tier?: ModifierTier, allowLuckUpgrades?: boolean): ModifierTypeOption {
   allowLuckUpgrades = allowLuckUpgrades ?? true;
   let candidate = getNewModifierTypeOption(party, ModifierPoolType.PLAYER, tier, undefined, 0, allowLuckUpgrades);
+  if (candidate?.type instanceof AddPokeballModifierType) {
+    candidate.type.setAmount(party[0].scene.pokeballCounts[candidate.type.getPokeballType()]);
+  }
   let r = 0;
   while (existingOptions.length && ++r < retryCount && existingOptions.filter(o => o.type.name === candidate?.type.name || o.type.group === candidate?.type.group).length) {
     candidate = getNewModifierTypeOption(party, ModifierPoolType.PLAYER, candidate?.type.tier ?? tier, candidate?.upgradeCount, 0, allowLuckUpgrades);
+    if (candidate?.type instanceof AddPokeballModifierType) {
+      candidate.type.setAmount(party[0].scene.pokeballCounts[candidate.type.getPokeballType()]);
+    }
   }
   return candidate!;
 }
