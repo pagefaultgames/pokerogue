@@ -624,37 +624,37 @@ export class TrainerConfig {
     }
     case "star_1": {
       return {
-        [TrainerPoolTier.COMMON]: [ Species.MURKROW, Species.CACNEA, Species.STUNKY, Species.SANDILE, Species.NYMBLE, Species.MASCHIFF, Species.GALAR_ZIGZAGOON ],
-        [TrainerPoolTier.UNCOMMON]: [ Species.SNEASEL, Species.SABLEYE, Species.SCRAGGY, Species.ZORUA ],
-        [TrainerPoolTier.RARE]: [ Species.DEINO, Species.HISUI_SAMUROTT ]
+        [TrainerPoolTier.COMMON]: [ Species.MURKROW, Species.SEEDOT, Species.CACNEA, Species.STUNKY, Species.SANDILE, Species.NYMBLE, Species.MASCHIFF, Species.GALAR_ZIGZAGOON ],
+        [TrainerPoolTier.UNCOMMON]: [ Species.UMBREON, Species.SNEASEL, Species.CORPHISH, Species.ZORUA, Species.INKAY, Species.BOMBIRDIER ],
+        [TrainerPoolTier.RARE]: [ Species.DEINO, Species.SPRIGATITO ]
       };
     }
     case "star_2": {
       return {
-        [TrainerPoolTier.COMMON]: [ Species.GROWLITHE, Species.HOUNDOUR, Species.NUMEL, Species.FLETCHLING, Species.LITLEO, Species.CAPSAKID ],
-        [TrainerPoolTier.UNCOMMON]: [ Species.PONYTA, Species.TORKOAL, Species.ROLYCOLY, Species.SALAZZLE ],
-        [TrainerPoolTier.RARE]: [ Species.LARVESTA, Species.HISUI_GROWLITHE ]
+        [TrainerPoolTier.COMMON]: [ Species.GROWLITHE, Species.HOUNDOUR, Species.NUMEL, Species.LITWICK, Species.FLETCHLING, Species.LITLEO, Species.ROLYCOLY, Species.CAPSAKID ],
+        [TrainerPoolTier.UNCOMMON]: [ Species.PONYTA, Species.FLAREON, Species.MAGBY, Species.TORKOAL, Species.SALANDIT, Species.TURTONATOR ],
+        [TrainerPoolTier.RARE]: [ Species.LARVESTA, Species.FUECOCO ]
       };
     }
     case "star_3": {
       return {
-        [TrainerPoolTier.COMMON]: [ Species.VENONAT, Species.GRIMER, Species.GULPIN, Species.STUNKY, Species.FOONGUS, Species.SHROODLE, Species.PALDEA_WOOPER ],
-        [TrainerPoolTier.UNCOMMON]: [ Species.GASTLY, Species.SEVIPER, Species.MAREANIE, Species.VAROOM ],
-        [TrainerPoolTier.RARE]: [ Species.SKRELP, Species.HISUI_SNEASEL ]
+        [TrainerPoolTier.COMMON]: [ Species.ZUBAT, Species.GRIMER, Species.STUNKY, Species.FOONGUS, Species.MAREANIE, Species.TOXEL, Species.SHROODLE, Species.PALDEA_WOOPER ],
+        [TrainerPoolTier.UNCOMMON]: [ Species.GASTLY, Species.SEVIPER, Species.SKRELP, Species.VAROOM, Species.ALOLA_GRIMER, Species.GALAR_SLOWPOKE ],
+        [TrainerPoolTier.RARE]: [ Species.BULBASAUR, Species.GLIMMET ]
       };
     }
     case "star_4": {
       return {
-        [TrainerPoolTier.COMMON]: [ Species.CLEFFA, Species.IGGLYBUFF, Species.AZURILL, Species.FLABEBE, Species.MORELULL, Species.HATENNA, Species.IMPIDIMP ],
-        [TrainerPoolTier.UNCOMMON]: [ Species.TOGEPI, Species.KLEFKI, Species.MIMIKYU, Species.TINKATINK ],
+        [TrainerPoolTier.COMMON]: [ Species.CLEFFA, Species.IGGLYBUFF, Species.AZURILL, Species.COTTONEE, Species.FLABEBE, Species.HATENNA, Species.IMPIDIMP, Species.TINKATINK ],
+        [TrainerPoolTier.UNCOMMON]: [ Species.TOGEPI, Species.GARDEVOIR, Species.SYLVEON, Species.KLEFKI, Species.MIMIKYU, Species.ALOLA_VULPIX ],
         [TrainerPoolTier.RARE]: [ Species.POPPLIO, Species.GALAR_PONYTA ]
       };
     }
     case "star_5": {
       return {
-        [TrainerPoolTier.COMMON]: [ Species.SHROOMISH, Species.MAKUHITA, Species.MEDITITE, Species.CROAGUNK, Species.MIENFOO, Species.CRABRAWLER, Species.FALINKS ],
-        [TrainerPoolTier.UNCOMMON]: [ Species.HERACROSS, Species.RIOLU, Species.HAWLUCHA, Species.PASSIMIAN ],
-        [TrainerPoolTier.RARE]: [ Species.JANGMO_O, Species.PALDEA_TAUROS ]
+        [TrainerPoolTier.COMMON]: [ Species.HERACROSS, Species.SHROOMISH, Species.MAKUHITA, Species.MEDITITE, Species.CROAGUNK, Species.SCRAGGY, Species.MIENFOO, Species.PALDEA_TAUROS ],
+        [TrainerPoolTier.UNCOMMON]: [ Species.RIOLU, Species.TIMBURR, Species.HAWLUCHA, Species.PASSIMIAN, Species.FALINKS, Species.FLAMIGO ],
+        [TrainerPoolTier.RARE]: [ Species.JANGMO_O, Species.QUAXLY ]
       };
     }
     }
@@ -1568,10 +1568,10 @@ export const trainerConfigs: TrainerConfigs = {
   [TrainerType.OLEANA]: new TrainerConfig(++t).setMoneyMultiplier(1.5).initForEvilTeamAdmin("macro_admin", "macro", [Species.GARBODOR]).setEncounterBgm(TrainerType.PLASMA_GRUNT).setBattleBgm("battle_plasma_grunt").setMixedBattleBgm("battle_oleana").setVictoryBgm("victory_team_plasma").setPartyTemplateFunc(scene => getEvilGruntPartyTemplate(scene)),
   [TrainerType.STAR_GRUNT]: new TrainerConfig(++t).setHasGenders("Star Grunt Female").setHasDouble("Star Grunts").setMoneyMultiplier(1.0).setEncounterBgm(TrainerType.PLASMA_GRUNT).setBattleBgm("battle_plasma_grunt").setMixedBattleBgm("battle_star_grunt").setVictoryBgm("victory_team_plasma").setPartyTemplateFunc(scene => getEvilGruntPartyTemplate(scene))
     .setSpeciesPools({
-      [TrainerPoolTier.COMMON]: [ Species.VENONAT, Species.MURKROW, Species.HOUNDOUR, Species.AZURILL, Species.GULPIN, Species.NUMEL, Species.STUNKY, Species.FOONGUS, Species.LITLEO, Species.YUNGOOS, Species.CRABRAWLER, Species.NYMBLE, Species.SHROODLE, Species.PALDEA_WOOPER ],
-      [TrainerPoolTier.UNCOMMON]: [ Species.RALTS, Species.TORKOAL, Species.SEVIPER, Species.ZORUA, Species.FLABEBE, Species.MIMIKYU, Species.ROLYCOLY, Species.IMPIDIMP, Species.FALINKS ],
-      [TrainerPoolTier.RARE]: [ Species.MANKEY, Species.PAWNIARD, Species.FIDOUGH, Species.CHARCADET, Species.VAROOM ],
-      [TrainerPoolTier.SUPER_RARE]: [ Species.TINKATINK, Species.PALDEA_TAUROS ]
+      [TrainerPoolTier.COMMON]: [ Species.EEVEE, Species.DUNSPARCE, Species.HOUNDOUR, Species.AZURILL, Species.GULPIN, Species.FOONGUS, Species.FLETCHLING, Species.LITLEO, Species.FLABEBE, Species.CRABRAWLER, Species.NYMBLE, Species.PAWMI, Species.FIDOUGH, Species.SQUAWKABILLY, Species.MASCHIFF, Species.SHROODLE, Species.KLAWF, Species.WIGLETT, Species.PALDEA_WOOPER ],
+      [TrainerPoolTier.UNCOMMON]: [ Species.KOFFING, Species.GIRAFARIG, Species.RALTS, Species.TORKOAL, Species.SEVIPER, Species.SCRAGGY, Species.ZORUA, Species.MIMIKYU, Species.IMPIDIMP, Species.FALINKS, Species.CAPSAKID, Species.TINKATINK, Species.BOMBIRDIER, Species.CYCLIZAR, Species.FLAMIGO, Species.PALDEA_TAUROS ],
+      [TrainerPoolTier.RARE]: [ Species.MANKEY, Species.PAWNIARD, Species.CHARCADET, Species.FLITTLE, Species.VAROOM, Species.ORTHWORM],
+      [TrainerPoolTier.SUPER_RARE]: [ Species.DONDOZO, Species.GIMMIGHOUL ]
     }),
   [TrainerType.GIACOMO]: new TrainerConfig(++t).setMoneyMultiplier(1.5).initForEvilTeamAdmin("star_admin", "star_1", [Species.KINGAMBIT]).setEncounterBgm(TrainerType.PLASMA_GRUNT).setBattleBgm("battle_plasma_grunt").setMixedBattleBgm("battle_star_admin").setVictoryBgm("victory_team_plasma").setPartyTemplateFunc(scene => getEvilGruntPartyTemplate(scene))
     .setPartyMemberFunc(3, getRandomPartyMemberFunc([Species.REVAVROOM], TrainerSlot.TRAINER, true, p => {
