@@ -60,22 +60,22 @@ describe("Moves - Autotomize", () => {
     const playerPokemon = game.scene.getPlayerPokemon()!;
 
     expect(playerPokemon.getWeight()).toBe(baseAegislashWeight);
+
     game.move.select(Moves.AUTOTOMIZE);
     await game.toNextTurn();
     expect(playerPokemon.getWeight()).toBe(autotomizeAegislashWeight);
-    game.move.select(Moves.FALSE_SWIPE);
-    await game.toNextTurn();
 
-    game.move.select(Moves.KINGS_SHIELD);
+    // Transform to sword form
+    game.move.select(Moves.FALSE_SWIPE);
     await game.toNextTurn();
     expect(playerPokemon.getWeight()).toBe(baseAegislashWeight);
 
-
     game.move.select(Moves.AUTOTOMIZE);
     await game.toNextTurn();
     expect(playerPokemon.getWeight()).toBe(autotomizeAegislashWeight);
 
-    game.move.select(Moves.FALSE_SWIPE);
+    // Transform to shield form
+    game.move.select(Moves.KINGS_SHIELD);
     await game.toNextTurn();
     expect(playerPokemon.getWeight()).toBe(baseAegislashWeight);
 
