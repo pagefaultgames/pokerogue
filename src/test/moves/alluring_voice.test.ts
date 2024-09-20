@@ -8,7 +8,7 @@ import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
-const TIMEOUT = 20 * 1000;
+
 
 describe("Moves - Alluring Voice", () => {
   let phaserGame: Phaser.Game;
@@ -50,5 +50,5 @@ describe("Moves - Alluring Voice", () => {
     await game.phaseInterceptor.to(BerryPhase);
 
     expect(enemy.getTag(BattlerTagType.CONFUSED)?.tagType).toBe("CONFUSED");
-  }, TIMEOUT);
+  });
 });

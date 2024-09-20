@@ -9,8 +9,6 @@ import { EnemyPokemon } from "#app/field/pokemon";
 import { toDmgValue } from "#app/utils";
 
 describe("Boss Pokemon / Shields", () => {
-  const TIMEOUT = 20 * 1000;
-
   let phaserGame: Phaser.Game;
   let game: GameManager;
 
@@ -35,7 +33,7 @@ describe("Boss Pokemon / Shields", () => {
       .enemyMoveset(Moves.SPLASH)
       .enemyHeldItems([])
       .startingLevel(1000)
-      .moveset([Moves.FALSE_SWIPE, Moves.SUPER_FANG, Moves.SPLASH])
+      .moveset([Moves.FALSE_SWIPE, Moves.SUPER_FANG, Moves.SPLASH, Moves.PSYCHIC])
       .ability(Abilities.NO_GUARD);
   });
 
@@ -62,7 +60,7 @@ describe("Boss Pokemon / Shields", () => {
     // Pokemon above level 100 get an extra shield
     level = 100;
     expect(game.scene.getEncounterBossSegments(wave, level, getPokemonSpecies(Species.RATTATA))).toBe(7);
-  }, TIMEOUT);
+  });
 
   it("should reduce the number of shields if we are in a double battle", async () => {
     game.override
@@ -77,7 +75,7 @@ describe("Boss Pokemon / Shields", () => {
     expect(boss1.bossSegments).toBe(2);
     expect(boss2.isBoss()).toBe(true);
     expect(boss2.bossSegments).toBe(2);
-  }, TIMEOUT);
+  });
 
   it("shields should stop overflow damage and give stat stage boosts when broken", async () => {
     game.override.startingWave(150); // Floor 150 > 2 shields / 3 health segments
@@ -107,7 +105,7 @@ describe("Boss Pokemon / Shields", () => {
     // Breaking the last shield gives a +2 boost to ATK, DEF, SP ATK, SP DEF or SPD
     expect(getTotalStatStageBoosts(enemyPokemon)).toBe(3);
 
-  }, TIMEOUT);
+  });
 
   it("breaking multiple shields at once requires extra damage", async () => {
     game.override
@@ -143,7 +141,7 @@ describe("Boss Pokemon / Shields", () => {
     expect(boss2.bossSegmentIndex).toBe(0);
     expect(boss2.hp).toBe(boss2.getMaxHp() - toDmgValue(boss2SegmentHp * 4));
 
-  }, TIMEOUT);
+  });
 
   it("the number of stat stage boosts is consistent when several shields are broken at once", async () => {
     const shieldsToBreak = 4;
@@ -195,6 +193,28 @@ describe("Boss Pokemon / Shields", () => {
     game.move.select(Moves.SPLASH);
     await game.toNextTurn();
     expect(getTotalStatStageBoosts(boss2)).toBe(totalStatStages);
+
+  });
+
+  it("the boss enduring does not proc an extra stat boost", async () => {
+    game.override
+      .enemyHealthSegments(2)
+      .enemyAbility(Abilities.STURDY);
+
+    await game.classicMode.startBattle([ Species.MEWTWO ]);
+
+    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    expect(enemyPokemon.isBoss()).toBe(true);
+    expect(enemyPokemon.bossSegments).toBe(2);
+    expect(getTotalStatStageBoosts(enemyPokemon)).toBe(0);
+
+    game.move.select(Moves.PSYCHIC);
+    await game.toNextTurn();
+
+    // Enemy survived with Sturdy
+    expect(enemyPokemon.bossSegmentIndex).toBe(0);
+    expect(enemyPokemon.hp).toBe(1);
+    expect(getTotalStatStageBoosts(enemyPokemon)).toBe(1);
 
   }, TIMEOUT);
 
