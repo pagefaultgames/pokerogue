@@ -1,26 +1,26 @@
 {
-  "intro": "There's a huge berry bush\nnear that Pokémon!",
-  "title": "Berries Abound",
-  "description": "It looks like there's a strong Pokémon guarding a berry bush. Battling is the straightforward approach, but it looks strong. Perhaps a fast Pokémon could grab some berries without getting caught?",
-  "query": "What will you do?",
-  "berries": "Berries!",
+  "intro": "あのポケモンの　近くに\n巨大な　きのみの木が　あります！",
+  "title": "溢れるきのみ",
+  "description": "強いポケモンは　きのみの木を　守っている　ようです。一番　当たり前な　対処法は　バトルですが、　結構　強力そう　です。　早いポケモンが　いれば　捕まえられずに　数個　取れる　かもしれません……",
+  "query": "どうしますか？",
+  "berries": "きのみ！",
   "option": {
     "1": {
-      "label": "Battle the Pokémon",
-      "tooltip": "(-) Hard Battle\n(+) Gain Berries",
-      "selected": "You approach the\nPokémon without fear."
+      "label": "バトルだ",
+      "tooltip": "(-) 勝負がきつい\n(+) きのみをもらう",
+      "selected": "怖がらないで　ポケモンに　近寄っていく……"
     },
     "2": {
-      "label": "Race to the Bush",
-      "tooltip": "(-) {{fastestPokemon}} Uses its Speed\n(+) Gain Berries",
-      "selected": "Your {{fastestPokemon}} races for the berry bush!$It manages to nab {{numBerries}} before the {{enemyPokemon}} can react!$You quickly retreat with your newfound prize.",
-      "selected_bad": "Your {{fastestPokemon}} races for the berry bush!$Oh no! The {{enemyPokemon}} was faster and blocked off the approach!",
-      "boss_enraged": "The opposing {{enemyPokemon}} has become enraged!"
+      "label": "木に突っ走る！",
+      "tooltip": "(-) {{fastestPokemon}}は素早さを使う\n(+) きのみをもらう",
+      "selected": "{{fastestPokemon}}は　きのみの木へ　突っ走っていきます！${{enemyPokemon}}は　受け止められる　前に　{{numBerries}}を　取れます！$新たに得た　ご褒美で　早く　逃げます。",
+      "selected_bad": "{{fastestPokemon}}は　きのみの木へ　突っ走って行きます！$だめ！　{{enemyPokemon}}の方は　早くて　受け止められました！",
+      "boss_enraged": "相手の　{{enemyPokemon}}は　怒り出した！"
     },
     "3": {
-      "label": "Leave",
-      "tooltip": "(-) No Rewards",
-      "selected": "You leave the strong Pokémon\nwith its prize and continue on."
+      "label": "置いていく",
+      "tooltip": "(-) ご褒美なし",
+      "selected": "強いポケモンを　そのままで　置いて　進んでいきます。"
     }
   }
 }
