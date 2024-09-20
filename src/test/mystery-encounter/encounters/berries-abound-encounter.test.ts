@@ -116,9 +116,11 @@ describe("Berries Abound - Mystery Encounter", () => {
       expect(enemyField[0].species.speciesId).toBe(speciesToSpawn);
     });
 
-    // TODO: there is some severe test flakiness occurring for this file, needs to be looked at/addressed in separate issue
+    /**
+     * Related issue-comment: {@link https://github.com/pagefaultgames/pokerogue/issues/4300#issuecomment-2362849444}
+     */
     it("should reward the player with X berries based on wave", async () => {
-      await game.runToMysteryEncounter(MysteryEncounterType.BERRIES_ABOUND, defaultParty);
+      await game.runToMysteryEncounter(MysteryEncounterType.BERRIES_ABOUND, [Species.PYUKUMUKU, Species.MAGIKARP, Species.PIKACHU]);
 
       const numBerries = game.scene.currentBattle.mysteryEncounter!.misc.numBerries;
 
