@@ -716,7 +716,6 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
    * @param strength {@linkcode PartyMemberStrength} The strength of the party member in question
    * @returns {@linkcode integer} The level difference from expected evolution level tolerated for a mon to be unevolved. Lower value = higher evolution chance.
    */
-  private getStrengthLevelDiff(strength: PartyMemberStrength): integer {
     switch (Math.min(strength, PartyMemberStrength.STRONGER)) {
     case PartyMemberStrength.WEAKEST:
       return 60;
