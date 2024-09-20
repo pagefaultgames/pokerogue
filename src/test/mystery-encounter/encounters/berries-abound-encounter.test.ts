@@ -19,7 +19,7 @@ import { CommandPhase } from "#app/phases/command-phase";
 import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
 
 const namespace = "mysteryEncounter:berriesAbound";
-const defaultParty = [Species.PYUKUMUKU];
+const defaultParty = [Species.PYUKUMUKU, Species.MAGIKARP, Species.PIKACHU];
 const defaultBiome = Biome.CAVE;
 const defaultWave = 45;
 
@@ -120,7 +120,7 @@ describe("Berries Abound - Mystery Encounter", () => {
      * Related issue-comment: {@link https://github.com/pagefaultgames/pokerogue/issues/4300#issuecomment-2362849444}
      */
     it("should reward the player with X berries based on wave", async () => {
-      await game.runToMysteryEncounter(MysteryEncounterType.BERRIES_ABOUND, [Species.PYUKUMUKU, Species.MAGIKARP, Species.PIKACHU]);
+      await game.runToMysteryEncounter(MysteryEncounterType.BERRIES_ABOUND, defaultParty);
 
       const numBerries = game.scene.currentBattle.mysteryEncounter!.misc.numBerries;
 
