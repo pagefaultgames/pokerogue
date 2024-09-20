@@ -379,7 +379,7 @@ function getPartyConfig(scene: BattleScene): EnemyPartyConfig {
     trainerType: TrainerType.EXPERT_POKEMON_BREEDER,
     pokemonConfigs: [
       {
-        nickname: i18next.t(`${namespace}:cleffa_1_nickname`),
+        nickname: i18next.t(`${namespace}:cleffa_1_nickname`, { speciesName: getPokemonSpecies(cleffaSpecies).getName() }),
         species: getPokemonSpecies(cleffaSpecies),
         isBoss: false,
         abilityIndex: 1, // Magic Guard
@@ -407,7 +407,7 @@ function getPartyConfig(scene: BattleScene): EnemyPartyConfig {
   if (scene.arena.biomeType === Biome.SPACE) {
     // All 3 members always Cleffa line, but different configs
     baseConfig.pokemonConfigs!.push({
-      nickname: i18next.t(`${namespace}:cleffa_2_nickname`),
+      nickname: i18next.t(`${namespace}:cleffa_2_nickname`, { speciesName: getPokemonSpecies(cleffaSpecies).getName() }),
       species: getPokemonSpecies(cleffaSpecies),
       isBoss: false,
       abilityIndex: 1, // Magic Guard

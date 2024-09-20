@@ -15,6 +15,7 @@ import { TeleportingHijinksEncounter } from "#app/data/mystery-encounters/encoun
 import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
 import { Mode } from "#app/ui/ui";
 import ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
+import { Abilities } from "#app/enums/abilities";
 
 const namespace = "mysteryEncounters/teleportingHijinks";
 const defaultParty = [Species.LAPRAS, Species.GENGAR, Species.ABRA];
@@ -36,10 +37,12 @@ describe("Teleporting Hijinks - Mystery Encounter", () => {
     game = new GameManager(phaserGame);
     scene = game.scene;
     scene.money = 20000;
-    game.override.mysteryEncounterChance(100);
-    game.override.startingWave(defaultWave);
-    game.override.startingBiome(defaultBiome);
-    game.override.disableTrainerWaves();
+    game.override
+      .mysteryEncounterChance(100)
+      .startingWave(defaultWave)
+      .startingBiome(defaultBiome)
+      .disableTrainerWaves()
+      .enemyPassiveAbility(Abilities.BALL_FETCH);
 
     vi.spyOn(MysteryEncounters, "mysteryEncountersByBiome", "get").mockReturnValue(
       new Map<Biome, MysteryEncounterType[]>([

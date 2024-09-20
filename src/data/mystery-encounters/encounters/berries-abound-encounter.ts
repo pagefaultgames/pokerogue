@@ -162,10 +162,10 @@ export const BerriesAboundEncounter: MysteryEncounter =
         .withOptionPhase(async (scene: BattleScene) => {
           // Pick race for berries
           const encounter = scene.currentBattle.mysteryEncounter!;
-          const fastestPokemon = encounter.misc.fastestPokemon;
-          const enemySpeed = encounter.misc.enemySpeed;
+          const fastestPokemon: PlayerPokemon = encounter.misc.fastestPokemon;
+          const enemySpeed: number = encounter.misc.enemySpeed;
           const speedDiff = fastestPokemon.getStat(Stat.SPD) / (enemySpeed * 1.1);
-          const numBerries = encounter.misc.numBerries;
+          const numBerries: number = encounter.misc.numBerries;
 
           const shopOptions: ModifierTypeOption[] = [];
           for (let i = 0; i < 5; i++) {

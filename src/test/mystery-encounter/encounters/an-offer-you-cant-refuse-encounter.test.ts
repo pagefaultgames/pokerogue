@@ -231,7 +231,7 @@ describe("An Offer You Can't Refuse - Mystery Encounter", () => {
   });
 
   describe("Option 3 - Leave", () => {
-    it("should leave encounter without battle", async () => {
+    it.each(Array.from({length: 30}))("should leave encounter without battle", async () => {
       const leaveEncounterWithoutBattleSpy = vi.spyOn(EncounterPhaseUtils, "leaveEncounterWithoutBattle");
 
       await game.runToMysteryEncounter(MysteryEncounterType.AN_OFFER_YOU_CANT_REFUSE, defaultParty);
