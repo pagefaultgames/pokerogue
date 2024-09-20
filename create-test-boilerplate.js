@@ -76,7 +76,6 @@ import { afterEach, beforeAll, beforeEach, describe, it, expect } from "vitest";
 describe("${description}", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
-  const TIMEOUT = 20 * 1000;
 
   beforeAll(() => {
     phaserGame = new Phaser.Game({
@@ -100,7 +99,7 @@ describe("${description}", () => {
   it("test case", async () => {
     // await game.classicMode.startBattle([Species.MAGIKARP]);
     // game.move.select(Moves.SPLASH);
-  }, TIMEOUT);
+  });
 });
 `;
 
