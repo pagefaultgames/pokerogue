@@ -2215,7 +2215,7 @@ export class HealBlockTag extends MoveRestrictionBattlerTag {
   /**
    * Checks if a move is disabled under Heal Block
    * @param {Moves} move {@linkcode Moves} the move ID
-   * @returns {boolean} T/F if the move has a TRIAGE_MOVE flag and is a status move
+   * @returns `true` if the move has a TRIAGE_MOVE flag and is a status move
    */
   override isMoveRestricted(move: Moves): boolean {
     if (allMoves[move].hasFlag(MoveFlags.TRIAGE_MOVE) && allMoves[move].category === MoveCategory.STATUS) {
