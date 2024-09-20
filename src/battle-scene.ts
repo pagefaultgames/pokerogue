@@ -45,6 +45,7 @@ import { Gender } from "./data/gender";
 import UIPlugin from "phaser3-rex-plugins/templates/ui/ui-plugin";
 import { addUiThemeOverrides } from "./ui/ui-theme";
 import PokemonData from "./system/pokemon-data";
+import { MusicPreference } from "./system/settings/settings";
 import { Nature } from "./data/nature";
 import { SpeciesFormChangeManualTrigger, SpeciesFormChangeTimeOfDayTrigger, SpeciesFormChangeTrigger, pokemonFormChanges, FormChangeItem, SpeciesFormChange } from "./data/pokemon-forms";
 import { FormChangePhase } from "./phases/form-change-phase";
@@ -179,7 +180,7 @@ export default class BattleScene extends SceneBase {
   public uiTheme: UiTheme = UiTheme.DEFAULT;
   public windowType: integer = 0;
   public experimentalSprites: boolean = false;
-  public musicPreference: integer = 0;
+  public musicPreference: integer = MusicPreference.CONSISTENT;
   public moveAnimations: boolean = true;
   public expGainsSpeed: ExpGainsSpeed = ExpGainsSpeed.DEFAULT;
   public skipSeenDialogues: boolean = false;
@@ -2942,18 +2943,18 @@ export default class BattleScene extends SceneBase {
     playerParty.forEach(p => {
       keys.push(p.getSpriteKey(true));
       keys.push(p.getBattleSpriteKey(true, true));
-      keys.push("cry/" + p.species.getCryKey(p.formIndex));
+      keys.push(p.species.getCryKey(p.formIndex));
       if (p.fusionSpecies) {
-        keys.push("cry/"+p.fusionSpecies.getCryKey(p.fusionFormIndex));
+        keys.push(p.fusionSpecies.getCryKey(p.fusionFormIndex));
       }
     });
     // enemyParty has to be operated on separately from playerParty because playerPokemon =/= enemyPokemon
     const enemyParty = this.getEnemyParty();
     enemyParty.forEach(p => {
       keys.push(p.getSpriteKey(true));
-      keys.push("cry/" + p.species.getCryKey(p.formIndex));
+      keys.push(p.species.getCryKey(p.formIndex));
       if (p.fusionSpecies) {
-        keys.push("cry/"+p.fusionSpecies.getCryKey(p.fusionFormIndex));
+        keys.push(p.fusionSpecies.getCryKey(p.fusionFormIndex));
       }
     });
     return keys;
