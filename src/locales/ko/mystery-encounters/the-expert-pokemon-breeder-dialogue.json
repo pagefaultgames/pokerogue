@@ -1,30 +1,31 @@
 {
-  "intro": "It's a trainer carrying tons of Pokémon Eggs!",
-  "intro_dialogue": "Hey there, trainer!$It looks like some of your\npartner Pokémon are feeling a little down.$Why not have a battle with me to cheer them up?",
-  "title": "The Expert Breeder",
-  "description": "You've been challenged to a battle where @[TOOLTIP_TITLE]{you can only use a single Pokémon}. It might be tough, but it would surely deepen the bond you have with the Pokémon you choose!\nThe breeder will also give you some @[TOOLTIP_TITLE]{Pokémon Eggs} if you win!",
-  "query": "Who will you battle with?",
-  "cleffa_1_nickname": "Ace",
-  "cleffa_2_nickname": "Clefablest",
-  "cleffa_3_nickname": "{{speciesName}} the Great",
+  "intro": "포켓몬 알을 잔뜩 가진 트레이너가 나타났다!",
+  "intro_dialogue": "안녕하세요, 트레이너!$당신의 몇몇 파트너 포켓몬이\n조금 기운 없어 보이네요.$저와 배틀을 해서\n기운이 나게끔 해주는 건 어떨까요?",
+  "title": "전문 브리더",
+  "description": "브리더를 상대로 @[TOOLTIP_TITLE]{포켓몬 1마리만} 사용해서 승부해야 합니다. 조금 힘들겠지만, 선택한 포켓몬과 유대감이 더욱 깊어질 기회입니다!\n게다가 승리하면 @[TOOLTIP_TITLE]{포켓몬 알}까지 준다고 합니다!",
+
+  "query": "어떤 포켓몬으로 싸우겠습니까?",
+  "cleffa_1_nickname": "에이스",
+  "cleffa_2_nickname": "픽시짱",
+  "cleffa_3_nickname": "{{speciesName}} 대왕",
   "option": {
     "1": {
       "label": "{{pokemon1Name}}",
-      "tooltip_base": "(-) Tough Battle\n(+) Gain Friendship with {{pokemon1Name}}"
+      "tooltip_base": "(-) 힘든 배틀\n(+) {{pokemon1Name}} 친밀도 상승"
     },
     "2": {
       "label": "{{pokemon2Name}}",
-      "tooltip_base": "(-) Tough Battle\n(+) Gain Friendship with {{pokemon2Name}}"
+      "tooltip_base": "(-) 힘든 배틀\n(+) {{pokemon2Name}} 친밀도 상승"
     },
     "3": {
       "label": "{{pokemon3Name}}",
-      "tooltip_base": "(-) Tough Battle\n(+) Gain Friendship with {{pokemon3Name}}"
+      "tooltip_base": "(-) 힘든 배틀\n(+) {{pokemon3Name}} 친밀도 상승"
     },
-    "selected": "Let's do this!"
+    "selected": "그럼 갑니다!"
   },
-  "outro": "Look how happy your {{chosenPokemon}} is now!$Here, you can have these as well.",
-  "gained_eggs": "@s{item_fanfare}You received {{numEggs}}!",
-  "eggs_tooltip": "\n(+) Earn {{eggs}}",
-  "numEggs_one": "{{count}} {{rarity}} Egg",
-  "numEggs_other": "{{count}} {{rarity}} Eggs"
+  "outro": "{{chosenPokemon}}[[가]] 정말 행복해 보이네요!$여기, 이것도 드릴게요.",
+  "gained_eggs": "@s{item_fanfare}{{numEggs}}[[를]] 받았습니다!",
+  "eggs_tooltip": "\n(+) {{eggs}} 획득",
+  "numEggs_one": "{{rarity}}알 {{count}}개",
+  "numEggs_other": "{{rarity}}알 {{count}}개"
 }
