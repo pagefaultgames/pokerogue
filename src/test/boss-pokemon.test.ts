@@ -2,7 +2,6 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import GameManager from "./utils/gameManager";
 import { Species } from "#app/enums/species";
 import { getPokemonSpecies } from "#app/data/pokemon-species";
-import { SPLASH_ONLY } from "./utils/testUtils";
 import { Abilities } from "#app/enums/abilities";
 import { Moves } from "#app/enums/moves";
 import { EFFECTIVE_STATS } from "#app/enums/stat";
@@ -33,7 +32,7 @@ describe("Boss Pokemon / Shields", () => {
       .disableTrainerWaves()
       .disableCrits()
       .enemySpecies(Species.RATTATA)
-      .enemyMoveset(SPLASH_ONLY)
+      .enemyMoveset(Moves.SPLASH)
       .enemyHeldItems([])
       .startingLevel(1000)
       .moveset([Moves.FALSE_SWIPE, Moves.SUPER_FANG, Moves.SPLASH])

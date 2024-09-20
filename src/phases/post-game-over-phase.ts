@@ -1,5 +1,5 @@
-import BattleScene from "#app/battle-scene.js";
-import { Phase } from "#app/phase.js";
+import BattleScene from "#app/battle-scene";
+import { Phase } from "#app/phase";
 import { EndCardPhase } from "./end-card-phase";
 import { TitlePhase } from "./title-phase";
 

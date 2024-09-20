@@ -49,7 +49,9 @@ export class GameOverPhase extends BattlePhase {
     }
 
     if (this.victory && this.scene.gameMode.isEndless) {
-      this.scene.ui.showDialogue(i18next.t("PGMmiscDialogue:ending_endless"), i18next.t("PGMmiscDialogue:ending_name"), 0, () => this.handleGameOver());
+      const genderIndex = this.scene.gameData.gender ?? PlayerGender.UNSET;
+      const genderStr = PlayerGender[genderIndex].toLowerCase();
+      this.scene.ui.showDialogue(i18next.t("miscDialogue:ending_endless", { context: genderStr }), i18next.t("miscDialogue:ending_name"), 0, () => this.handleGameOver());
     } else if (this.victory || !this.scene.enableRetries) {
       this.handleGameOver();
     } else {
@@ -58,6 +60,11 @@ export class GameOverPhase extends BattlePhase {
           this.scene.ui.fadeOut(1250).then(() => {
             this.scene.reset();
             this.scene.clearPhaseQueue();
+            // If this is a ME, clear any residual visual sprites before reloading
+            const encounter = this.scene.currentBattle.mysteryEncounter;
+            if (encounter?.introVisuals) {
+              this.scene.field.remove(encounter.introVisuals, true);
+            }
             this.scene.gameData.loadSession(this.scene, this.scene.sessionSlotId).then(() => {
               this.scene.pushPhase(new EncounterPhase(this.scene, true));
 
@@ -235,7 +242,9 @@ export class GameOverPhase extends BattlePhase {
       trainer: this.scene.currentBattle.battleType === BattleType.TRAINER ? new TrainerData(this.scene.currentBattle.trainer) : null,
       gameVersion: this.scene.game.config.gameVersion,
       timestamp: new Date().getTime(),
-      challenges: this.scene.gameMode.challenges.map(c => new ChallengeData(c))
+      challenges: this.scene.gameMode.challenges.map(c => new ChallengeData(c)),
+      mysteryEncounterType: this.scene.currentBattle.mysteryEncounter?.encounterType ?? -1,
+      mysteryEncounterSaveData: this.scene.mysteryEncounterSaveData
     } as SessionSaveData;
   }
 }

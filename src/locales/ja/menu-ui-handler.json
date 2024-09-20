@@ -24,6 +24,6 @@
   "linkGoogle": "Google連携",
   "unlinkGoogle": "Google連携解除",
   "cancel": "キャンセル",
-  "losingProgressionWarning": "戦闘開始からの　データが　保存されません。\nよろしいですか？",
-  "noEggs": "現在は　タマゴを　孵化していません！"
+  "losingProgressionWarning": "戦闘開始からの　データが　セーブされません。\nよろしいですか？",
+  "noEggs": "現在は　タマゴを　ふかしていません！"
 }
