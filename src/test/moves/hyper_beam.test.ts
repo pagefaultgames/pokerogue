@@ -9,8 +9,6 @@ import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
-// 20 sec timeout for all tests
-
 describe("Moves - Hyper Beam", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;

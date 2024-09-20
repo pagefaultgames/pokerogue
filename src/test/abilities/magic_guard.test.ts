@@ -11,8 +11,6 @@ import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
-// 20 sec timeout
-
 describe("Abilities - Magic Guard", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
