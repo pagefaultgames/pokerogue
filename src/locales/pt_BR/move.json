@@ -3129,7 +3129,7 @@
   },
   "auraWheel": {
     "name": "Aura Wheel",
-    "effect": "Morpeko ataca e aumenta sua Velocidade com a energia armazenada em suas bochechas. O tipo deste movimento muda dependendo da forma do usuário. //TODO"
+    "effect": "O usuário ataca e aumenta sua Velocidade com a energia armazenada em suas bochechas. Se usado por Morpeko, o tipo deste movimento muda dependendo da forma do usuário."
   },
   "breakingSwipe": {
     "name": "Breaking Swipe",
