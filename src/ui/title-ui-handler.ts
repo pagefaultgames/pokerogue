@@ -71,9 +71,9 @@ export default class TitleUiHandler extends OptionSelectUiHandler {
       yoyo: true,
     });
 
-    this.appVersionText = addTextObject(this.scene, logo.x + 64, logo.y + logo.displayHeight - 8, "", TextStyle.MONEY, { fontSize: "54px" });
+    this.appVersionText = addTextObject(this.scene, logo.x - 60, logo.y + logo.displayHeight + 4, "", TextStyle.MONEY, { fontSize: "54px" });
     this.appVersionText.setOrigin(0.5, 0.5);
-    this.appVersionText.setAngle(-20);
+    this.appVersionText.setAngle(0);
     this.titleContainer.add(this.appVersionText);
   }
 
