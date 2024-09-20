@@ -578,7 +578,7 @@ describe("UI - Starter select", () => {
     });
 
     expect(starterSelectUiHandler?.starterSpecies.length).toBe(1);
-    expect(starterSelectUiHandler?.starterSpecies[0].getGeneration()).toBe(1);
+    expect(starterSelectUiHandler?.starterSpecies[0].generation).toBe(1);
     expect(starterSelectUiHandler?.starterSpecies[0].speciesId).toBe(32);
     expect(starterSelectUiHandler?.cursorObj.x).toBe(53);
     expect(starterSelectUiHandler?.cursorObj.y).toBe(31);

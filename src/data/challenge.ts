@@ -417,7 +417,7 @@ export class SingleGenerationChallenge extends Challenge {
   }
 
   applyStarterChoice(pokemon: PokemonSpecies, valid: Utils.BooleanHolder, dexAttr: DexAttrProps, soft: boolean = false): boolean {
-    const generations = [pokemon.getGeneration()];
+    const generations = [pokemon.generation];
     if (soft) {
       const speciesToCheck = [pokemon.speciesId];
       while (speciesToCheck.length) {
@@ -425,7 +425,7 @@ export class SingleGenerationChallenge extends Challenge {
         if (checking && pokemonEvolutions.hasOwnProperty(checking)) {
           pokemonEvolutions[checking].forEach(e => {
             speciesToCheck.push(e.speciesId);
-            generations.push(getPokemonSpecies(e.speciesId).getGeneration());
+            generations.push(getPokemonSpecies(e.speciesId).generation);
           });
         }
       }
@@ -439,7 +439,7 @@ export class SingleGenerationChallenge extends Challenge {
   }
 
   applyPokemonInBattle(pokemon: Pokemon, valid: Utils.BooleanHolder): boolean {
-    const baseGeneration = pokemon.species.speciesId === Species.VICTINI ? 5 : getPokemonSpecies(pokemon.species.speciesId).getGeneration();
+    const baseGeneration = pokemon.species.speciesId === Species.VICTINI ? 5 : getPokemonSpecies(pokemon.species.speciesId).generation;
     const fusionGeneration = pokemon.isFusion() ? pokemon.fusionSpecies?.speciesId === Species.VICTINI ? 5 : getPokemonSpecies(pokemon.fusionSpecies!.speciesId).getGeneration() : 0; // TODO: is the bang on fusionSpecies correct?
     if (pokemon.isPlayer() && (baseGeneration !== this.value || (pokemon.isFusion() && fusionGeneration !== this.value))) {
       valid.value = false;

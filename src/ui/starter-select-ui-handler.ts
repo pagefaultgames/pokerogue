@@ -1463,7 +1463,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
           Challenge.applyChallenges(this.scene.gameMode, Challenge.ChallengeType.STARTER_CHOICE, this.lastSpecies, isValidForChallenge, this.scene.gameData.getSpeciesDexAttrProps(this.lastSpecies, this.getCurrentDexProps(this.lastSpecies.speciesId)), isPartyValid);
 
-          const currentPartyValue = this.starterSpecies.map(s => s.getGeneration()).reduce((total: number, gen: number, i: number) => total += this.scene.gameData.getSpeciesStarterValue(this.starterSpecies[i].speciesId), 0);
+          const currentPartyValue = this.starterSpecies.map(s => s.generation).reduce((total: number, gen: number, i: number) => total += this.scene.gameData.getSpeciesStarterValue(this.starterSpecies[i].speciesId), 0);
           const newCost = this.scene.gameData.getSpeciesStarterValue(this.lastSpecies.speciesId);
           if (!isDupe && isValidForChallenge.value && currentPartyValue + newCost <= this.getValueLimit() && this.starterSpecies.length < 6) { // this checks to make sure the pokemon doesn't exist in your party, it's valid for the challenge and that it won't go over the cost limit; if it meets all these criteria it will add it to your party
             options = [
@@ -2415,7 +2415,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       const isStarterProgressable = speciesEggMoves.hasOwnProperty(container.species.speciesId);
 
       // Gen filter
-      const fitsGen =   this.filterBar.getVals(DropDownColumn.GEN).includes(container.species.getGeneration());
+      const fitsGen =   this.filterBar.getVals(DropDownColumn.GEN).includes(container.species.generation);
 
       // Type filter
       const fitsType =  this.filterBar.getVals(DropDownColumn.TYPES).some(type => container.species.isOfType((type as number) - 1));
@@ -3382,7 +3382,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
   }
 
   tryUpdateValue(add?: integer, addingToParty?: boolean): boolean {
-    const value = this.starterSpecies.map(s => s.getGeneration()).reduce((total: integer, gen: integer, i: integer) => total += this.scene.gameData.getSpeciesStarterValue(this.starterSpecies[i].speciesId), 0);
+    const value = this.starterSpecies.map(s => s.generation).reduce((total: integer, gen: integer, i: integer) => total += this.scene.gameData.getSpeciesStarterValue(this.starterSpecies[i].speciesId), 0);
     const newValue = value + (add || 0);
     const valueLimit = this.getValueLimit();
     const overLimit = newValue > valueLimit;

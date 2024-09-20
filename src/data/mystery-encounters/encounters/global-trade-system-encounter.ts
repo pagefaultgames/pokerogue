@@ -403,7 +403,7 @@ function getPokemonTradeOptions(scene: BattleScene): Map<number, EnemyPokemon[]>
   scene.getParty().forEach(pokemon => {
     // If the party member is legendary/mythical, the only trade options available are always pulled from generation-specific legendary trade pools
     if (pokemon.species.legendary || pokemon.species.subLegendary || pokemon.species.mythical) {
-      const generation = pokemon.species.getGeneration();
+      const generation = pokemon.species.generation;
       const tradeOptions: EnemyPokemon[] = LEGENDARY_TRADE_POOLS[generation].map(s => {
         const pokemonSpecies = getPokemonSpecies(s);
         return new EnemyPokemon(scene, pokemonSpecies, 5, TrainerSlot.NONE, false);
