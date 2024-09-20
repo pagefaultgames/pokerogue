@@ -987,112 +987,112 @@
   },
   "stat_trainer_buck": {
     "encounter": {
-      "1": "...I'm telling you right now. I'm seriously tough. Act surprised!",
-      "2": "I can feel my Pokémon shivering inside their Pokéballs!"
+      "1": "……言っとくけど　オレ　強いからな！　驚けよ！",
+      "2": "モンスターボールの　中で　オレの　ポケモン達　震えてる！\nこれ　武者震いって　やつだな！"
     },
     "victory": {
-      "1": "Heeheehee!\nSo hot, you!",
-      "2": "Heeheehee!\nSo hot, you!"
+      "1": "イヒヒ！\nあっちーな 　おまえ！！",
+      "2": "イヒヒ！\nあっちーな　 おまえ！！"
     },
     "defeat": {
-      "1": "Whoa! You're all out of gas, I guess.",
-      "2": "Whoa! You're all out of gas, I guess."
+      "1": "おっと！　元気切れか",
+      "2": "おっと！　元気切れか"
     }
   },
   "stat_trainer_cheryl": {
     "encounter": {
-      "1": "My Pokémon have been itching for a battle.",
-      "2": "I should warn you, my Pokémon can be quite rambunctious."
+      "1": "あたしの　ポケモンたち　戦いたくて　ウズウズしてるよ",
+      "2": "あたしの　ポケモン達　結構　ヤンチャですわよ"
     },
     "victory": {
-      "1": "Striking the right balance of offense and defense... It's not easy to do.",
-      "2": "Striking the right balance of offense and defense... It's not easy to do."
+      "1": "攻めること　守ること　その　バランスは　大変ですね…",
+      "2": "攻めること　守ること　その　バランスは　大変ですね…"
     },
     "defeat": {
-      "1": "Do your Pokémon need any healing?",
-      "2": "Do your Pokémon need any healing?"
+      "1": "早く　ポケモンを　回復してくださいね",
+      "2": "早く　ポケモンを　回復してくださいね?"
     }
   },
   "stat_trainer_marley": {
     "encounter": {
-      "1": "... OK.\nI'll do my best.",
-      "2": "... OK.\nI... won't lose...!"
+      "1": "……わかった\nできるだけ　がんばるから",
+      "2": "……わかった\nあたし……　負けないから……！"
     },
     "victory": {
-      "1": "... Awww.",
-      "2": "... Awww."
+      "1": "……もう",
+      "2": "……もう"
     },
     "defeat": {
-      "1": "... Goodbye.",
-      "2": "... Goodbye."
+      "1": "…… サヨナラ.",
+      "2": "…… サヨナラ"
     }
   },
   "stat_trainer_mira": {
     "encounter": {
-      "1": "You will be shocked by Mira!",
-      "2": "Mira will show you that Mira doesn't get lost anymore!"
+      "1": "ミル　ビックリしちゃいますよ！",
+      "2": "もう　迷ったりしない　ってところ\nトレーナーさんに　見せるからね!"
     },
     "victory": {
-      "1": "Mira wonders if she can get very far in this land.",
-      "2": "Mira wonders if she can get very far in this land."
+      "1": "これだと　この地方で\nミル　活躍　できないかな…",
+      "2": "これだと　この地方で\nミル　活躍　できないかな…"
     },
     "defeat": {
-      "1": "Mira knew she would win!",
-      "2": "Mira knew she would win!"
+      "1": "やった！　ミル　最強！",
+      "2": "やった！　ミル　最強！"
     }
   },
   "stat_trainer_riley": {
     "encounter": {
-      "1": "Battling is our way of greeting!",
-      "2": "We're pulling out all the stops to put your Pokémon down."
+      "1": "ポケモン勝負　こそが　私達の　挨拶さ！",
+      "2": "全力を出して　君の　ポケモンを　倒して見せるよ"
     },
     "victory": {
-      "1": "At times we battle, and sometimes we team up...$It's great how Trainers can interact.",
-      "2": "At times we battle, and sometimes we team up...$It's great how Trainers can interact."
+      "1": "戦ったり　組んでみたり……$トレーナー同士って　いいよね",
+      "2": "戦ったり　組んでみたり……$トレーナー同士って　いいよね"
     },
     "defeat": {
-      "1": "You put up quite the display.\nBetter luck next time.",
-      "2": "You put up quite the display.\nBetter luck next time."
+      "1": "よく　頑張ってた…\n次が　あるよ",
+      "2": "よく　頑張ってた…\n次が　あるよ"
     }
   },
   "winstrates_victor": {
     "encounter": {
-      "1": "That's the spirit! I like you!"
+      "1": "いい　度胸だ！　気に入ったぞ！"
     },
     "victory": {
-      "1": "A-ha! You're stronger than I thought!"
+      "1": "たはーっ！　思っていたより　強いんだね　きみは！"
     }
   },
   "winstrates_victoria": {
     "encounter": {
-      "1": "My goodness! Aren't you young?$You must be quite the trainer to beat my husband, though.$Now I suppose it's my turn to battle!"
+      "1": "あれま！　意外に　若いのね！$うちの　主人に　勝ってしまうとは　なんと　凄腕の　トレーナー　なの！$じゃあ　こんどは　私と　勝負よ！"
     },
     "victory": {
-      "1": "Uwah! Just how strong are you?!"
+      "1": "んまーっ！　あなたって　なんて　強いのかしら！"
     }
   },
   "winstrates_vivi": {
     "encounter": {
-      "1": "You're stronger than Mom? Wow!$But I'm strong, too!\nReally! Honestly!"
+      "1": "ママより　強いなんて　すごーい！$でも　あたし　だって　強いんだから！\nほんと　なんだってば！"
     },
     "victory": {
-      "1": "Huh? Did I really lose?\nSnivel... Grandmaaa!"
+      "1": "悔しい……\n……ぐっすん！　おばあちゃーん！！"
     }
   },
   "winstrates_vicky": {
     "encounter": {
-      "1": "How dare you make my precious\ngranddaughter cry!$I see I need to teach you a lesson.\nPrepare to feel the sting of defeat!"
+      "1": "こらーっ！　わしの　かわいい　孫に　何すんじゃ！$こうなったら　わしが　おまえさんの\nポケモンを　こらしめちゃるから　覚悟せぇ！"
     },
     "victory": {
-      "1": "Whoa! So strong!\nMy granddaughter wasn't lying."
+      "1": "フガッ！　強いのう……\n孫の　いうことは　本当　じゃった"
     }
   },
   "winstrates_vito": {
     "encounter": {
-      "1": "I trained together with my whole family,\nevery one of us!$I'm not losing to anyone!"
+      "1": "家族　全員で\nポケモンの　修行を　してたんだ！$誰にも　負けないぜ！"
     },
     "victory": {
-      "1": "I was better than everyone in my family.\nI've never lost before..."
+      "1": "家族の　誰よりも　つよかった　おれ……\n今まで　誰にも　負けなかった　おれ……"
     }
   },
   "brock": {
