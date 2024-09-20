@@ -260,5 +260,9 @@
   "FRESH_START": {
     "name": "Buona la prima!",
     "description": "Completa la modalità sfida 'Un nuovo inizio'."
+  },
+  "BREEDERS_IN_SPACE": {
+    "name": "Breeders in Space!",
+    "description": "Beat the Expert Pokémon Breeder in the Space Biome."
   }
 }
