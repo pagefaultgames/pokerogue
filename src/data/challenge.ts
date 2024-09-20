@@ -62,6 +62,7 @@ export enum ChallengeType {
   TYPE_EFFECTIVENESS,
   /**
    * Challenge that enables Trick Room in a run
+   * @see {@link https://bulbapedia.bulbagarden.net/wiki/Trick_Room_(move)}
    */
   TRICK_ROOM,
   /**
@@ -740,12 +741,24 @@ export class TrickRoomChallenge extends Challenge {
     return 0;
   }
 
-  applyStarterModify(pokemon: Pokemon): boolean {
+  /**
+   * @override
+   * this challenge inverts the Speed IV of the pokemon.
+   * @param pokemon {@link Pokemon} The pokemon to modify.
+   * @returns `true` if any challenge was successfully applied.
+   */
+  override applyStarterModify(pokemon: Pokemon): boolean {
     pokemon.ivs[Stat.SPD] = 31 - pokemon.ivs[Stat.SPD];
     return true;
   }
 
-  applyTrickRoom(isTrickRoom: Utils.BooleanHolder): boolean {
+  /**
+   * @override
+   * this challenge inverts whether the battle is under the effect of Trick Room.
+   * @param isTrickRoom {@link Utils.BooleanHolder} Whether the battle is under the effect of Trick Room.
+   * @returns `true` if any challenge was successfully applied.
+   */
+  override applyTrickRoom(isTrickRoom: Utils.BooleanHolder): boolean {
     isTrickRoom.value = !isTrickRoom.value;
     return true;
   }
