@@ -17,13 +17,13 @@ import { randSeedInt } from "#app/utils";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import BattleScene from "#app/battle-scene";
-import MysteryEncounter, { MysteryEncounterBuilder } from "../mystery-encounter";
+import MysteryEncounter, { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-encounter";
 import { queueEncounterMessage, showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { TrainerSlot } from "#app/data/trainer-config";
-import { applyModifierTypeToPlayerPokemon, getHighestStatPlayerPokemon, getSpriteKeysFromPokemon } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
+import { applyModifierTypeToPlayerPokemon, getEncounterPokemonLevelForWave, getHighestStatPlayerPokemon, getSpriteKeysFromPokemon, STANDARD_ENCOUNTER_BOOSTED_LEVEL_MODIFIER } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
 import PokemonData from "#app/system/pokemon-data";
 import { BerryModifier } from "#app/modifier/modifier";
 import i18next from "#app/plugins/i18n";
@@ -56,12 +56,11 @@ export const BerriesAboundEncounter: MysteryEncounter =
       const encounter = scene.currentBattle.mysteryEncounter!;
 
       // Calculate boss mon
-      const level = (scene.currentBattle.enemyLevels?.[0] ?? scene.currentBattle.waveIndex) + Math.max(Math.round((scene.currentBattle.waveIndex / 10)), 0);
+      const level = getEncounterPokemonLevelForWave(scene, STANDARD_ENCOUNTER_BOOSTED_LEVEL_MODIFIER);
       const bossSpecies = scene.arena.randomSpecies(scene.currentBattle.waveIndex, level, 0, getPartyLuckValue(scene.getParty()), true);
       const bossPokemon = new EnemyPokemon(scene, bossSpecies, level, TrainerSlot.NONE, true);
       encounter.setDialogueToken("enemyPokemon", getPokemonNameWithAffix(bossPokemon));
       const config: EnemyPartyConfig = {
-        levelAdditiveMultiplier: 1,
         pokemonConfigs: [{
           level: level,
           species: bossSpecies,
@@ -163,10 +162,10 @@ export const BerriesAboundEncounter: MysteryEncounter =
         .withOptionPhase(async (scene: BattleScene) => {
           // Pick race for berries
           const encounter = scene.currentBattle.mysteryEncounter!;
-          const fastestPokemon = encounter.misc.fastestPokemon;
-          const enemySpeed = encounter.misc.enemySpeed;
+          const fastestPokemon: PlayerPokemon = encounter.misc.fastestPokemon;
+          const enemySpeed: number = encounter.misc.enemySpeed;
           const speedDiff = fastestPokemon.getStat(Stat.SPD) / (enemySpeed * 1.1);
-          const numBerries = encounter.misc.numBerries;
+          const numBerries: number = encounter.misc.numBerries;
 
           const shopOptions: ModifierTypeOption[] = [];
           for (let i = 0; i < 5; i++) {

@@ -1,5 +1,5 @@
 {
-  "battlesWon": "Kämpfe gewonnen!",
+  "battlesWon": "{{count, number}} Kämpfe gewonnen!",
   "joinTheDiscord": "Tritt dem Discord bei!",
   "infiniteLevels": "Unendliche Level!",
   "everythingStacks": "Alles stapelt sich!",
