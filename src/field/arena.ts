@@ -1,19 +1,19 @@
 import BattleScene from "../battle-scene";
-import { BiomePoolTier, PokemonPools, BiomeTierTrainerPools, biomePokemonPools, biomeTrainerPools } from "../data/biomes";
+import { biomePokemonPools, BiomePoolTier, BiomeTierTrainerPools, biomeTrainerPools, PokemonPools } from "../data/biomes";
 import { Constructor } from "#app/utils";
 import * as Utils from "../utils";
 import PokemonSpecies, { getPokemonSpecies } from "../data/pokemon-species";
-import { Weather, WeatherType, getTerrainClearMessage, getTerrainStartMessage, getWeatherClearMessage, getWeatherStartMessage } from "../data/weather";
+import { getTerrainClearMessage, getTerrainStartMessage, getWeatherClearMessage, getWeatherStartMessage, Weather, WeatherType } from "../data/weather";
 import { CommonAnim } from "../data/battle-anims";
 import { Type } from "../data/type";
 import Move from "../data/move";
 import { ArenaTag, ArenaTagSide, ArenaTrapTag, getArenaTag } from "../data/arena-tag";
 import { BattlerIndex } from "../battle";
 import { Terrain, TerrainType } from "../data/terrain";
-import { PostTerrainChangeAbAttr, PostWeatherChangeAbAttr, applyPostTerrainChangeAbAttrs, applyPostWeatherChangeAbAttrs } from "../data/ability";
+import { applyPostTerrainChangeAbAttrs, applyPostWeatherChangeAbAttrs, PostTerrainChangeAbAttr, PostWeatherChangeAbAttr } from "../data/ability";
 import Pokemon from "./pokemon";
 import Overrides from "#app/overrides";
-import { WeatherChangedEvent, TerrainChangedEvent, TagAddedEvent, TagRemovedEvent } from "../events/arena";
+import { TagAddedEvent, TagRemovedEvent, TerrainChangedEvent, WeatherChangedEvent } from "../events/arena";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { Biome } from "#enums/biome";
 import { Moves } from "#enums/moves";
@@ -762,7 +762,7 @@ export class Arena {
     case Biome.BEACH:
       return 3.462;
     case Biome.LAKE:
-      return 5.350;
+      return 7.215;
     case Biome.SEABED:
       return 2.600;
     case Biome.MOUNTAIN:
@@ -788,7 +788,7 @@ export class Arena {
     case Biome.FACTORY:
       return 4.985;
     case Biome.RUINS:
-      return 2.270;
+      return 0.000;
     case Biome.WASTELAND:
       return 6.336;
     case Biome.ABYSS:
