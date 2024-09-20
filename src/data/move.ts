@@ -4540,6 +4540,7 @@ export class AddBattlerTagAttr extends MoveEffectAttr {
     case BattlerTagType.NIGHTMARE:
     case BattlerTagType.DROWSY:
     case BattlerTagType.DISABLED:
+    case BattlerTagType.HEAL_BLOCK:
       return -5;
     case BattlerTagType.SEEDED:
     case BattlerTagType.SALT_CURED:
@@ -7827,7 +7828,7 @@ export function initMoves() {
       .makesContact()
       .attr(LessPPMorePowerAttr),
     new StatusMove(Moves.HEAL_BLOCK, Type.PSYCHIC, 100, 15, -1, 0, 4)
-      .attr(AddBattlerTagAttr, BattlerTagType.HEAL_BLOCK, false, false, 5)
+      .attr(AddBattlerTagAttr, BattlerTagType.HEAL_BLOCK, false, true, 5)
       .target(MoveTarget.ALL_NEAR_ENEMIES),
     new AttackMove(Moves.WRING_OUT, Type.NORMAL, MoveCategory.SPECIAL, -1, 100, 5, -1, 0, 4)
       .attr(OpponentHighHpPowerAttr, 120)

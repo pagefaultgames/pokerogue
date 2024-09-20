@@ -2186,8 +2186,8 @@ export class ExposedTag extends BattlerTag {
  * Describes the behavior of a Heal Block Tag.
  */
 export class HealBlockTag extends MoveRestrictionBattlerTag {
-  constructor() {
-    super(BattlerTagType.HEAL_BLOCK, [ BattlerTagLapseType.PRE_MOVE, BattlerTagLapseType.TURN_END ], 5, Moves.HEAL_BLOCK);
+  constructor(turnCount: number, sourceMove: Moves) {
+    super(BattlerTagType.HEAL_BLOCK, [ BattlerTagLapseType.PRE_MOVE, BattlerTagLapseType.TURN_END ], turnCount, sourceMove);
   }
 
   override onAdd(pokemon: Pokemon): void {
@@ -2552,7 +2552,7 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: number, source
   case BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON:
     return new MysteryEncounterPostSummonTag();
   case BattlerTagType.HEAL_BLOCK:
-    return new HealBlockTag();
+    return new HealBlockTag(turnCount, sourceMove);
   case BattlerTagType.NONE:
   default:
     return new BattlerTag(tagType, BattlerTagLapseType.CUSTOM, turnCount, sourceMove, sourceId);
