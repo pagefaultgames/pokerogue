@@ -126,4 +126,23 @@ describe("Abilities - Flash Fire", () => {
 
     expect(flashFireDmg).toBeGreaterThan(originalDmg);
   }, 20000);
+
+  it("still activates regardless of accuracy check", async () => {
+    game.override.moveset(Moves.FLAMETHROWER);
+    game.override.enemyMoveset(Moves.SPLASH);
+    game.override.enemySpecies(Species.MAGIKARP);
+    game.override.enemyAbility(Abilities.FLASH_FIRE);
+
+    await game.classicMode.startBattle();
+
+    const enemyPokemon = game.scene.getEnemyPokemon()!;
+
+    game.move.select(Moves.FLAMETHROWER);
+    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+    await game.phaseInterceptor.to("MoveEffectPhase");
+
+    await game.move.forceMiss();
+    await game.phaseInterceptor.to("BerryPhase", false);
+    expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp());
+  }, 20000);
 });
