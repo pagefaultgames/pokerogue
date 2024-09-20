@@ -381,17 +381,8 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
 
       const ownedAbilityAttrs = pokemon.scene.gameData.starterData[pokemon.species.getRootSpeciesId()].abilityAttr;
 
-      let playerOwnsThisAbility = false;
       // Check if the player owns ability for the root form
-      if ((ownedAbilityAttrs & 1) > 0 && pokemon.hasSameAbilityInRootForm(0)) {
-        playerOwnsThisAbility = true;
-      }
-      if ((ownedAbilityAttrs & 2) > 0 && pokemon.hasSameAbilityInRootForm(1)) {
-        playerOwnsThisAbility = true;
-      }
-      if ((ownedAbilityAttrs & 4) > 0 && pokemon.hasSameAbilityInRootForm(2)) {
-        playerOwnsThisAbility = true;
-      }
+      const playerOwnsThisAbility = pokemon.checkIfPlayerHasAbilityOfStarter(ownedAbilityAttrs);
 
       if (missingDexAttrs || !playerOwnsThisAbility) {
         this.ownedIcon.setTint(0x808080);
