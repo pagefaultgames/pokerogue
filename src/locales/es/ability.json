@@ -1237,6 +1237,6 @@
   },
   "poisonPuppeteer": {
     "name": "Títere Tóxico",
-    "description": "Los rivales que Pecharunt envenene con sus movimientos también sufrirán confusión. //TODO"
+    "description": "Los rivales que el usuario envenene con sus movimientos también sufrirán confusión."
   }
 }
