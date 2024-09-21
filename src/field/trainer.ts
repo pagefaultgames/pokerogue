@@ -425,12 +425,30 @@ export default class Trainer extends Phaser.GameObjects.Container {
       }
     }
 
+    // Prompts reroll of party member species if species already present in the enemy party
+    if (this.checkDuplicateSpecies(ret)) {
+      console.log("Duplicate species detected, prompting reroll...");
+      retry = true;
+    }
+
     if (retry && (attempt || 0) < 10) {
       console.log("Rerolling party member...");
       ret = this.genNewPartyMemberSpecies(level, strength, (attempt || 0) + 1);
     }
 
     return ret;
+  }
+
+  /**
+   * Checks if the enemy trainer already has the Pokemon species in their party
+   * @param {PokemonSpecies} species {@linkcode PokemonSpecies}
+   * @returns `true` if the species is already present in the party
+   */
+  checkDuplicateSpecies(species: PokemonSpecies): boolean {
+    const currentPartySpecies = this.scene.getEnemyParty().map(p => {
+      return p.species.speciesId;
+    });
+    return currentPartySpecies.includes(species.speciesId);
   }
 
   getPartyMemberMatchupScores(trainerSlot: TrainerSlot = TrainerSlot.NONE, forSwitch: boolean = false): [integer, integer][] {
