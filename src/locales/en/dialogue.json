@@ -764,12 +764,16 @@
       "1": "It looks like this is the end of the line for you!",
       "2": "You are a trainer aren't you? I'm afraid that doesn't give you the right to interfere in our work.",
       "2_female": "You are a trainer aren't you? I'm afraid that doesn't give you the right to interfere in our work.",
-      "3": "I'm from Macro Cosmos Insurance! Do you have a life insurance policy?"
+      "3": "I'm from Macro Cosmos Insurance! Do you have a life insurance policy?",
+      "4": "I found you! In that case, time for a Pokémon battle!",
+      "5": "An earful from Ms. Oleana is way worse than anything you can do!"
     },
     "victory": {
       "1": "I have little choice but to respectfully retreat.",
       "2": "Having to give up my pocket money... Losing means I'm back in the red...",
-      "3": "Nobody can beat Macro Cosmos when it comes to our dedication to our work!"
+      "3": "Nobody can beat Macro Cosmos when it comes to our dedication to our work!",
+      "4": "I even switched up my Pokémon...",
+      "5": "Battles didn't work... Only thing to do now is run!"
     }
   },
   "oleana": {
@@ -783,6 +787,73 @@
       "2": "Arghhh! This is inexcusable... What was I thinking... Any trainer who's made it this far would be no pushover..",
       "2_female": "Arghhh! This is inexcusable... What was I thinking... Any trainer who's made it this far would be no pushover..",
       "3": "*sigh* I am one tired Oleana..."
+    }
+  },
+  "star_grunt": {
+    "encounter": {
+      "1": "We're Team Star, kid. We burn so bright, it hurts to look at us!",
+      "2": "We'll come at you full force - Hasta la vistaaar! ☆",
+      "3": "If you don't clear out real quick-like, I'll hafta come at you in self-defense. You get me?",
+      "4": "Sorry, but if you don't turn yourself around here, amigo, we'll have to send you packing!",
+      "4_female": "Sorry, but if you don't turn yourself around here, amiga, we'll have to send you packing!",
+      "5": "Oh great. Here comes another rando to ruin my day."
+    },
+    "victory": {
+      "1": "How come I'M the one seeing stars?!",
+      "2": "You're scary, kid. If you joined Team Star, you'd be looking down from the top in no time!",
+      "3": "I defended myself all right... But it wasn't enough!",
+      "4": "H-hasta la vistar... ☆",
+      "5": "I didn't think grunt work for Team Star newbies would be this much of a chore..."
+    }
+  },
+  "giacomo": {
+    "encounter": {
+      "1": "You don't really think things through, do ya? Declarin' war on Team Star is a real bad move.",
+      "2": "I'll play you a sick requiem as you crash and burn. Let's get this party staaarteeed!"
+    },
+    "victory": {
+      "1": "Guess that's that...",
+      "2": "You turned my melody into a threnody..."
+    }
+  },
+  "mela": {
+    "encounter": {
+      "1": "So you're the dope who picked a fight with Team Star... Prepare to get messed up.",
+      "2": "All riiight, BRING IT! I'll blow everythin' sky high!"
+    },
+    "victory": {
+      "1": "Ugh. Is this really how it's gonna end? What a hassle...",
+      "2": "I burned through everythin' I had...and now I've sputtered out."
+    }
+  },
+  "atticus": {
+    "encounter": {
+      "1": "You have some nerve baring your fangs at Team Star. Come, then, villainous wretch!",
+      "2": "Be warned—I shall spare thee no mercy! En garde!"
+    },
+    "victory": {
+      "1": "Forgive me, my friends...",
+      "2": "You have utterly bested me. But thy victory stir'd no bitterness within me—such was its brilliance."
+    }
+  },
+  "ortega": {
+    "encounter": {
+      "1": "I promise I'll play nice, so don't blame me when this battle sends you blubbering back home!",
+      "2": "I'll wipe that smug look off your face for sure! You're going down!"
+    },
+    "victory": {
+      "1": "Ugh! How could I LOSE! What the HECK!",
+      "2": "Arrrrgggh! That strength of yours is SO. NOT. FAIR."
+    }
+  },
+  "eri": {
+    "encounter": {
+      "1": "Doesn't matter who you are. I'll bury anyone who tries to take down Team Star!",
+      "2": "I give as good as I get—that's a promise! We'll see who's left standing in the end!"
+    },
+    "victory": {
+      "1": "I'm so sorry, everyone...",
+      "2": "I gave it my all, but it wasn't enough—I wasn't enough..."
     }
   },
   "rocket_boss_giovanni_1": {
@@ -983,6 +1054,28 @@
     },
     "defeat": {
       "1": "I suppose it must seem that I am doing something terrible. I don't expect you to understand.\n$But I must provide the Galar region with limitless energy to ensure everlasting prosperity."
+    }
+  },
+  "star_boss_penny_1": {
+    "encounter": {
+      "1": "I'm the big boss of Team Star. The name's Cassiopeia. \n$Now, bow down before the overwhelming might of Team Star's founder!"
+    },
+    "victory": {
+      "1": "... ... .."
+    },
+    "defeat": {
+      "1": "Heh..."
+    }
+  },
+  "star_boss_penny_2": {
+    "encounter": {
+      "1": "I won't hold back in this battle! I'll stay true to Team Star's code! \n$My Veevee power will crush you into stardust!"
+    },
+    "victory": {
+      "1": "...It's all over now."
+    },
+    "defeat": {
+      "1": "I can't fault you on your battle skills at all... Considering how the bosses fell at your hands."
     }
   },
   "stat_trainer_buck": {
