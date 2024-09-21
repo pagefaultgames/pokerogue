@@ -69,6 +69,7 @@
   "skipItemQuestion": "Êtes-vous sûr·e de ne pas vouloir prendre d’objet ?",
   "itemStackFull": "Quantité maximale de {{fullItemName}} atteinte.\nVous recevez {{itemName}} à la place.",
   "eggHatching": "Hein ?",
+  "eggSkipPrompt": "Aller directement au résumé des Œufs éclos ?",
   "ivScannerUseQuestion": "Utiliser le Scanner d’IV\nsur {{pokemonName}} ?",
   "wildPokemonWithAffix": "{{pokemonName}} sauvage",
   "foePokemonWithAffix": "{{pokemonName}} ennemi",
@@ -104,5 +105,6 @@
   "congratulations": "Félicitations !",
   "beatModeFirstTime": "{{speciesName}} a battu le mode {{gameMode}} pour la première fois !\nVous avez reçu {{newModifier}} !",
   "ppReduced": "Les PP de la capacité {{moveName}}\nde{{targetName}} baissent de {{reduction}} !",
-  "eggSkipPrompt": "Aller directement au résumé des Œufs éclos ?"
+  "battlerTagsHealBlock": "{{pokemonNameWithAffix}} ne peut pas guérir !",
+  "battlerTagsHealBlockOnRemove": "Le blocage de soins qui affectait\n{{pokemonNameWithAffix}} s’est dissipé !"
 }
