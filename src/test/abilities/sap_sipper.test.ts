@@ -181,6 +181,6 @@ describe("Abilities - Sap Sipper", () => {
 
     await game.move.forceMiss();
     await game.phaseInterceptor.to("BerryPhase", false);
-    expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp());
+    expect(enemyPokemon.getStatStage(Stat.ATK)).toBe(1);
   });
 });

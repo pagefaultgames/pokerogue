@@ -38,7 +38,7 @@ describe("Abilities - Flash Fire", () => {
 
   it("immune to Fire-type moves", async () => {
     game.override.enemyMoveset([Moves.EMBER]).moveset(Moves.SPLASH);
-    await game.startBattle([Species.BLISSEY]);
+    await game.classicMode.startBattle([Species.BLISSEY]);
 
     const blissey = game.scene.getPlayerPokemon()!;
 
@@ -49,7 +49,7 @@ describe("Abilities - Flash Fire", () => {
 
   it("not activate if the Pokémon is protected from the Fire-type move", async () => {
     game.override.enemyMoveset([Moves.EMBER]).moveset([Moves.PROTECT]);
-    await game.startBattle([Species.BLISSEY]);
+    await game.classicMode.startBattle([Species.BLISSEY]);
 
     const blissey = game.scene.getPlayerPokemon()!;
 
@@ -60,7 +60,7 @@ describe("Abilities - Flash Fire", () => {
 
   it("activated by Will-O-Wisp", async () => {
     game.override.enemyMoveset([Moves.WILL_O_WISP]).moveset(Moves.SPLASH);
-    await game.startBattle([Species.BLISSEY]);
+    await game.classicMode.startBattle([Species.BLISSEY]);
 
     const blissey = game.scene.getPlayerPokemon()!;
 
@@ -76,7 +76,7 @@ describe("Abilities - Flash Fire", () => {
   it("activated after being frozen", async () => {
     game.override.enemyMoveset([Moves.EMBER]).moveset(Moves.SPLASH);
     game.override.statusEffect(StatusEffect.FREEZE);
-    await game.startBattle([Species.BLISSEY]);
+    await game.classicMode.startBattle([Species.BLISSEY]);
 
     const blissey = game.scene.getPlayerPokemon()!;
 
@@ -88,7 +88,7 @@ describe("Abilities - Flash Fire", () => {
 
   it("not passing with baton pass", async () => {
     game.override.enemyMoveset([Moves.EMBER]).moveset([Moves.BATON_PASS]);
-    await game.startBattle([Species.BLISSEY, Species.CHANSEY]);
+    await game.classicMode.startBattle([Species.BLISSEY, Species.CHANSEY]);
 
     // ensure use baton pass after enemy moved
     game.move.select(Moves.BATON_PASS);
@@ -105,7 +105,7 @@ describe("Abilities - Flash Fire", () => {
   it("boosts Fire-type move when the ability is activated", async () => {
     game.override.enemyMoveset([Moves.FIRE_PLEDGE]).moveset([Moves.EMBER, Moves.SPLASH]);
     game.override.enemyAbility(Abilities.FLASH_FIRE).ability(Abilities.NONE);
-    await game.startBattle([Species.BLISSEY]);
+    await game.classicMode.startBattle([Species.BLISSEY]);
     const blissey = game.scene.getPlayerPokemon()!;
     const initialHP = 1000;
     blissey.hp = initialHP;
@@ -128,21 +128,31 @@ describe("Abilities - Flash Fire", () => {
   }, 20000);
 
   it("still activates regardless of accuracy check", async () => {
-    game.override.moveset(Moves.FLAMETHROWER);
-    game.override.enemyMoveset(Moves.SPLASH);
-    game.override.enemySpecies(Species.MAGIKARP);
-    game.override.enemyAbility(Abilities.FLASH_FIRE);
+    game.override.moveset(Moves.FIRE_PLEDGE).enemyMoveset(Moves.EMBER);
+    game.override.enemyAbility(Abilities.NONE).ability(Abilities.FLASH_FIRE);
+    game.override.enemySpecies(Species.BLISSEY);
+    await game.classicMode.startBattle([Species.RATTATA]);
 
-    await game.classicMode.startBattle();
+    const blissey = game.scene.getEnemyPokemon()!;
+    const initialHP = 1000;
+    blissey.hp = initialHP;
 
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
-
-    game.move.select(Moves.FLAMETHROWER);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+    // first turn
+    game.move.select(Moves.FIRE_PLEDGE);
+    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.phaseInterceptor.to("MoveEffectPhase");
-
     await game.move.forceMiss();
-    await game.phaseInterceptor.to("BerryPhase", false);
-    expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp());
+    await game.phaseInterceptor.to(TurnEndPhase);
+    const originalDmg = initialHP - blissey.hp;
+
+    expect(blissey.hp > 0);
+    blissey.hp = initialHP;
+
+    // second turn
+    game.move.select(Moves.FIRE_PLEDGE);
+    await game.phaseInterceptor.to(TurnEndPhase);
+    const flashFireDmg = initialHP - blissey.hp;
+
+    expect(flashFireDmg).toBeGreaterThan(originalDmg);
   }, 20000);
 });
