@@ -758,22 +758,22 @@
   },
   "giacomo": {
     "encounter": {
-      "1": "You don't really think things through, do ya? Declarin' war on Team Star is a real bad move.",
-      "2": "I'll play you a sick requiem as you crash and burn. Let's get this party staaarteeed!"
+      "1": "Du willst dich echt mit Team Star anlegen? Bist du lebensmüde, oder was?",
+      "2": "Weil ich so nett bin, leg ich zu deinem Abgang auch ein fettes Requiem auf!$Lass uns die Party in Schwung bringen"
     },
     "victory": {
-      "1": "Guess that's that...",
-      "2": "You turned my melody into a threnody..."
+      "1": " Besser hätte ich es auch nicht sagen können...",
+      "2": "Uff, da hab ich schon bessere Shows gegeben... Schade, aber verloren ist verloren."
     }
   },
   "mela": {
     "encounter": {
-      "1": "So you're the dope who picked a fight with Team Star... Prepare to get messed up.",
-      "2": "All riiight, BRING IT! I'll blow everythin' sky high!"
+      "1": "Du bist also diese Pfeife, die sich unbedingt mit uns anlegen will...$Dir werd ich zeigen, was mit Leuten passiert, die sich mit uns anlegen!",
+      "2": "Yeah, lassen wir’s krachen!"
     },
     "victory": {
-      "1": "Ugh. Is this really how it's gonna end? What a hassle...",
-      "2": "I burned through everythin' I had...and now I've sputtered out."
+      "1": "Uff, ich hab echt versagt... Das war’s dann wohl...",
+      "2": "Ich... brannte so sehr auf diesen Kampf. Doch jetzt ist meine Flamme erloschen..."
     }
   },
   "atticus": {
