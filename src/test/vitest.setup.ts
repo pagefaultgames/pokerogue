@@ -14,6 +14,8 @@ import { initStatsKeys } from "#app/ui/game-stats-ui-handler";
 import { initMysteryEncounters } from "#app/data/mystery-encounters/mystery-encounters";
 import { beforeAll, vi } from "vitest";
 
+process.env.TZ = "UTC";
+
 /** Mock the override import to always return default values, ignoring any custom overrides. */
 vi.mock("#app/overrides", async (importOriginal) => {
   const { defaultOverrides } = await importOriginal<typeof import("#app/overrides")>();

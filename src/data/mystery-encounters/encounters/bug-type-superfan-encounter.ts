@@ -9,6 +9,7 @@ import {
   transitionMysteryEncounterIntroVisuals,
 } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import {
+  getRandomPartyMemberFunc,
   trainerConfigs,
   TrainerPartyCompoundTemplate,
   TrainerPartyTemplate,
@@ -17,14 +18,12 @@ import {
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { PartyMemberStrength } from "#enums/party-member-strength";
 import BattleScene from "#app/battle-scene";
-import * as Utils from "#app/utils";
 import { isNullOrUndefined, randSeedInt, randSeedShuffle } from "#app/utils";
-import MysteryEncounter, { MysteryEncounterBuilder } from "../mystery-encounter";
+import MysteryEncounter, { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-encounter";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { TrainerType } from "#enums/trainer-type";
 import { Species } from "#enums/species";
-import Pokemon, { EnemyPokemon, PlayerPokemon, PokemonMove } from "#app/field/pokemon";
-import { getPokemonSpecies } from "#app/data/pokemon-species";
+import Pokemon, { PlayerPokemon, PokemonMove } from "#app/field/pokemon";
 import { getEncounterText, showEncounterDialogue } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
 import { LearnMovePhase } from "#app/phases/learn-move-phase";
 import { Moves } from "#enums/moves";
@@ -192,6 +191,7 @@ export const BugTypeSuperfanEncounter: MysteryEncounter =
       new AttackTypeBoosterHeldItemTypeRequirement(Type.BUG, 1),
       new TypeRequirement(Type.BUG, false, 1)
     ))
+    .withMaxAllowedEncounters(1)
     .withSceneWaveRangeRequirement(...CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES)
     .withIntroSpriteConfigs([]) // These are set in onInit()
     .withAutoHideIntroVisuals(false)
@@ -286,7 +286,8 @@ export const BugTypeSuperfanEncounter: MysteryEncounter =
 
         // Player gets different rewards depending on the number of bug types they have
         const numBugTypes = scene.getParty().filter(p => p.isOfType(Type.BUG, true)).length;
-        encounter.setDialogueToken("numBugTypes", numBugTypes.toString());
+        const numBugTypesText = i18next.t(`${namespace}.numBugTypes`, { count: numBugTypes });
+        encounter.setDialogueToken("numBugTypes", numBugTypesText);
 
         if (numBugTypes < 2) {
           setEncounterRewards(scene, { guaranteedModifierTypeFuncs: [modifierTypes.SUPER_LURE, modifierTypes.GREAT_BALL], fillRemaining: false });
@@ -580,16 +581,6 @@ function getTrainerConfigForWave(waveIndex: number) {
   }
 
   return config;
-}
-
-function getRandomPartyMemberFunc(speciesPool: Species[], trainerSlot: TrainerSlot = TrainerSlot.TRAINER, ignoreEvolution: boolean = false, postProcess?: (enemyPokemon: EnemyPokemon) => void) {
-  return (scene: BattleScene, level: number, strength: PartyMemberStrength) => {
-    let species = Utils.randSeedItem(speciesPool);
-    if (!ignoreEvolution) {
-      species = getPokemonSpecies(species).getTrainerSpeciesForLevel(level, true, strength);
-    }
-    return scene.addEnemyPokemon(getPokemonSpecies(species), level, trainerSlot, undefined, undefined, postProcess);
-  };
 }
 
 function doBugTypeMoveTutor(scene: BattleScene): Promise<void> {
