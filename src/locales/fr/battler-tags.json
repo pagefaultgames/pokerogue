@@ -73,5 +73,6 @@
   "tarShotOnAdd": "{{pokemonNameWithAffix}} est maintenant\nvulnérable au feu !",
   "substituteOnAdd": "{{pokemonNameWithAffix}}\ncrée un clone !",
   "substituteOnHit": "Le clone subit les dégâts à la place\nde {{pokemonNameWithAffix}} !",
-  "substituteOnRemove": "Le clone de {{pokemonNameWithAffix}}\ndisparait…"
+  "substituteOnRemove": "Le clone de {{pokemonNameWithAffix}}\ndisparait…",
+  "powerTrickActive": "{{pokemonNameWithAffix}} échange\nson Attaque et sa Défense !"
 }

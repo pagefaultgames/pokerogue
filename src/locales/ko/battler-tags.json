@@ -73,5 +73,6 @@
   "tarShotOnAdd": "{{pokemonNameWithAffix}}[[는]] 불꽃에 약해졌다!",
   "substituteOnAdd": "{{pokemonNameWithAffix}}의\n대타가 나타났다!",
   "substituteOnHit": "{{pokemonNameWithAffix}}[[를]] 대신하여\n대타가 공격을 받았다!",
-  "substituteOnRemove": "{{pokemonNameWithAffix}}의\n대타는 사라져 버렸다..."
+  "substituteOnRemove": "{{pokemonNameWithAffix}}의\n대타는 사라져 버렸다...",
+  "powerTrickActive": "{{pokemonNameWithAffix}}[[는]]\n공격과 방어를 바꿨다!"
 }

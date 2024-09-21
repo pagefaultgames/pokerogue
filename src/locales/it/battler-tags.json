@@ -73,5 +73,6 @@
   "tarShotOnAdd": "{{pokemonNameWithAffix}} è diventato vulnerabile\nal tipo Fuoco!",
   "substituteOnAdd": "Appare un sostituto di {{pokemonNameWithAffix}}!",
   "substituteOnHit": "Il sostituto viene colpito al posto di {{pokemonNameWithAffix}}!",
-  "substituteOnRemove": "Il sostituto di {{pokemonNameWithAffix}} svanisce!"
+  "substituteOnRemove": "Il sostituto di {{pokemonNameWithAffix}} svanisce!",
+  "powerTrickActive": "{{pokemonNameWithAffix}} inverte l’Attacco con la Difesa!"
 }

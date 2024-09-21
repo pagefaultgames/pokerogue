@@ -2328,6 +2328,44 @@ export class MysteryEncounterPostSummonTag extends BattlerTag {
 }
 
 /**
+ * Tag that swaps the user's base ATK stat with its base DEF stat.
+ * @extends BattlerTag
+ */
+export class PowerTrickTag extends BattlerTag {
+  constructor(sourceMove: Moves, sourceId: number) {
+    super(BattlerTagType.POWER_TRICK, BattlerTagLapseType.CUSTOM, 0, sourceMove, sourceId, true);
+  }
+
+  onAdd(pokemon: Pokemon): void {
+    this.swapStat(pokemon);
+    pokemon.scene.queueMessage(i18next.t("battlerTags:powerTrickActive", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }));
+  }
+
+  onRemove(pokemon: Pokemon): void {
+    this.swapStat(pokemon);
+    pokemon.scene.queueMessage(i18next.t("battlerTags:powerTrickActive", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }));
+  }
+
+  /**
+   * Removes the Power Trick tag and reverts any stat changes if the tag is already applied.
+   * @param {Pokemon} pokemon The {@linkcode Pokemon} that already has the Power Trick tag.
+   */
+  onOverlap(pokemon: Pokemon): void {
+    pokemon.removeTag(this.tagType);
+  }
+
+  /**
+   * Swaps the user's base ATK stat with its base DEF stat.
+   * @param {Pokemon} pokemon The {@linkcode Pokemon} whose stats will be swapped.
+   */
+  swapStat(pokemon: Pokemon): void {
+    const temp = pokemon.getStat(Stat.ATK, false);
+    pokemon.setStat(Stat.ATK, pokemon.getStat(Stat.DEF, false), false);
+    pokemon.setStat(Stat.DEF, temp, false);
+  }
+}
+
+/**
  * Retrieves a {@linkcode BattlerTag} based on the provided tag type, turn count, source move, and source ID.
  *
  * @param {BattlerTagType} tagType the type of the {@linkcode BattlerTagType}.
@@ -2490,6 +2528,8 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: number, source
     return new SubstituteTag(sourceMove, sourceId);
   case BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON:
     return new MysteryEncounterPostSummonTag();
+  case BattlerTagType.POWER_TRICK:
+    return new PowerTrickTag(sourceMove, sourceId);
   case BattlerTagType.NONE:
   default:
     return new BattlerTag(tagType, BattlerTagLapseType.CUSTOM, turnCount, sourceMove, sourceId);
