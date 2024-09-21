@@ -5210,7 +5210,6 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
 	  	switchOutTarget.leaveField(false);
 
 	  	if (switchOutTarget.hp) {
-          switchOutTarget.setWildFlee(true);
 	  	  user.scene.queueMessage(i18next.t("moveTriggers:fled", {pokemonName: getPokemonNameWithAffix(switchOutTarget)}), null, true, 500);
 
           // in double battles redirect potential moves off fled pokemon
