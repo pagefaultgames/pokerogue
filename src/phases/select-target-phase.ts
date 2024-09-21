@@ -25,7 +25,7 @@ export class SelectTargetPhase extends PokemonPhase {
       if (moveObject && user.isMoveTargetRestricted(moveObject.id, user, fieldSide[targets[0]])) {
         const errorMessage = user.getRestrictingTag(move!, user, fieldSide[targets[0]])!.selectionDeniedText(user, moveObject.id);
         user.scene.queueMessage(i18next.t(errorMessage, { moveName: moveObject.name }), 0, true);
-        targets.length = 0;
+        targets = [];
       }
       if (targets.length < 1) {
         this.scene.currentBattle.turnCommands[this.fieldIndex] = null;
