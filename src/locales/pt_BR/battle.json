@@ -102,5 +102,7 @@
   "unlockedSomething": "{{unlockedThing}}\nfoi desbloqueado.",
   "congratulations": "Parabéns!",
   "beatModeFirstTime": "{{speciesName}} venceu o Modo {{gameMode}} pela primeira vez!\nVocê recebeu {{newModifier}}!",
-  "mysteryEncounterAppeared": "O que é isso?"
+  "mysteryEncounterAppeared": "O que é isso?",
+  "battlerTagsHealBlock": "{{pokemonNameWithAffix}} não pode restaurar seus PS!",
+  "battlerTagsHealBlockOnRemove": "{{pokemonNameWithAffix}} pode restaurar seus PS novamente!"
 }

@@ -102,5 +102,7 @@
   "congratulations": "Glückwunsch!",
   "beatModeFirstTime": "{{speciesName}} hat den {{gameMode}} Modus zum ersten Mal beendet! Du erhältst {{newModifier}}!",
   "eggSkipPrompt": "Zur Ei-Zusammenfassung springen?",
-  "mysteryEncounterAppeared": "Was ist das?"
+  "mysteryEncounterAppeared": "Was ist das?",
+  "battlerTagsHealBlock": "{{pokemonNameWithAffix}} kann nicht geheilt werden, da die Heilung blockiert wird!",
+  "battlerTagsHealBlockOnRemove": "{{pokemonNameWithAffix}} kann wieder geheilt werden!"
 }
