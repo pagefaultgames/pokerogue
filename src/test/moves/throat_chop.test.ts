@@ -10,8 +10,6 @@ import { afterEach, beforeAll, beforeEach, describe, it, expect } from "vitest";
 describe("Moves - Throat Chop", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
-  const TIMEOUT = 20 * 1000;
-
   beforeAll(() => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
@@ -53,5 +51,5 @@ describe("Moves - Throat Chop", () => {
 
     await game.phaseInterceptor.to("MoveEndPhase");
     expect(enemy.isFullHp()).toBe(false);
-  }, TIMEOUT);
+  });
 });
