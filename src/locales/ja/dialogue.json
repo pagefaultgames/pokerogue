@@ -985,6 +985,28 @@
       "1": "I suppose it must seem that I am doing something terrible. I don't expect you to understand.\n$But I must provide the Galar region with limitless energy to ensure everlasting prosperity."
     }
   },
+  "star_boss_penny_1": {
+    "encounter": {
+      "1": "I'm the big boss of Team Star. The name's Cassiopeia. \n$Now, bow down before the overwhelming might of Team Star's founder!"
+    },
+    "victory": {
+      "1": "... ... .."
+    },
+    "defeat": {
+      "1": "Heh..."
+    }
+  },
+  "star_boss_penny_2": {
+    "encounter": {
+      "1": "I won't hold back in this battle! I'll stay true to Team Star's code! \n$My Veevee power will crush you into stardust!"
+    },
+    "victory": {
+      "1": "...It's all over now."
+    },
+    "defeat": {
+      "1": "I can't fault you on your battle skills at all... Considering how the bosses fell at your hands."
+    }
+  },
   "brock": {
     "encounter": {
       "1": "My expertise on Rock-type Pokémon will take you down! Come on!",
