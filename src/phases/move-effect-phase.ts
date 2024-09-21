@@ -415,7 +415,7 @@ export class MoveEffectPhase extends PokemonPhase {
     const accuracyMultiplier = user.getAccuracyMultiplier(target, this.move.getMove());
     const rand = user.randSeedInt(100);
 
-    return (rand < accuracyMultiplier * moveAccuracy);
+    return rand < (moveAccuracy * accuracyMultiplier);
   }
 
   /** Returns the {@linkcode Pokemon} using this phase's invoked move */
