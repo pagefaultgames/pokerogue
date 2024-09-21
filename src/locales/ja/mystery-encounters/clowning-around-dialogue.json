@@ -12,23 +12,23 @@
       "selected": "パッとしない　ポケモンを　ぽかぽか　パンチしちゃう、　ぴょん！",
       "apply_ability_dialogue": "とても　たくましく　倒した！\n倒すのが　得意な　トレーナーと　特性を　取り替えたい！",
       "apply_ability_message": "ピエロは　スキルスワップで　手持ちポケモン　１匹の　特性を　{{ability}}と　取り替えることを　申し出ています！",
-      "ability_prompt": "手持ちポケモンの　特性を　{{ability}}に　変化しますか？teach a Pokémon the  ability?",
-      "ability_gained": "@s{level_up_fanfare}{{chosenPokemon}} gained the {{ability}} ability!"
+      "ability_prompt": "手持ちポケモンの　特性を　恒久的に　{{ability}}に　変化しますか？",
+      "ability_gained": "@s{level_up_fanfare}{{chosenPokemon}}は {{ability}}の　特性を　身についた！"
     },
     "2": {
-      "label": "Remain Unprovoked",
-      "tooltip": "(-) Upsets the Clown\n(?) Affects Pokémon Items",
-      "selected": "Dismal dodger, you deny a delightful duel?\nFeel my fury!",
-      "selected_2": "The clown's {{blacephalonName}} uses Trick!\nAll of your {{switchPokemon}}'s items were randomly swapped!",
-      "selected_3": "Flustered fool, fall for my flawless deception!"
+      "label": "怒らない",
+      "tooltip": "(-) ピエロは起こる\n(?) 手持ちポケモンのアイテムは変化",
+      "selected": "しつこい！　シンプルな　勝負を　スルー？！\n己は　俺の　怒りを　起こした！",
+      "selected_2": "ピエロの {{blacephalonName}}は　トリックを　使った！\n{{switchPokemon}}の　持ったアイテムは　全て　デタラメに　交換された！",
+      "selected_3": "豪華に　ごまかした　下衆……　元気でね！"
     },
     "3": {
-      "label": "Return the Insults",
-      "tooltip": "(-) Upsets the Clown\n(?) Affects Pokémon Types",
-      "selected": "Dismal dodger, you deny a delightful duel?\nFeel my fury!",
-      "selected_2": "The clown's {{blacephalonName}} uses a strange move!\nAll of your team's types were randomly swapped!",
-      "selected_3": "Flustered fool, fall for my flawless deception!"
+      "label": "悪口を返す",
+      "tooltip": "(-) ピエロは起こる\n(?) 手持ちポケモンのタイプは変化",
+      "selected": "しつこい！　シンプルな　勝負を　スルー？！\n己は　俺の　怒りを　起こした！",
+      "selected_2": "ピエロの　{{blacephalonName}}は　変な技を　使った！\n手持ちポケモン　全員の　タイプは　デタラメに　交換された！",
+      "selected_3": "豪華に　ごまかした　下衆……　元気でね！"
     }
   },
-  "outro": "The clown and his cohorts\ndisappear in a puff of smoke."
+  "outro": "ピエロたちは　パッと\n煙に　なっちゃいます。"
 }
