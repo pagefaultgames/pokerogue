@@ -3129,7 +3129,7 @@
   },
   "auraWheel": {
     "name": "Rueda Aural",
-    "effect": "La energía que acumula en las mejillas le sirve para atacar y aumentar su Velocidad. Este movimiento cambia de tipo según la forma que adopte Morpeko. //TODO"
+    "effect": "La energía que acumula en las mejillas le sirve para atacar y aumentar su Velocidad. Si es utilizado por Morpeko, este movimiento cambia de tipo según la forma que adopte."
   },
   "breakingSwipe": {
     "name": "Vasto Impacto",
