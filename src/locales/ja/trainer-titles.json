@@ -19,6 +19,7 @@
   "aether_boss": "エーテル代表",
   "skull_boss": "スカル団ボス",
   "macro_boss": "マクロコスモス社長",
+  "star_boss": "Team Star Leader",
 
   "rocket_admin": "ロケット団幹部",
   "rocket_admin_female": "ロケット団幹部",
@@ -34,5 +35,6 @@
   "flare_admin_female": "フレア団幹部",
   "aether_admin": "エーテル支部長",
   "skull_admin": "スカル団幹部",
-  "macro_admin": "マクロコスモス"
+  "macro_admin": "マクロコスモス",
+  "star_admin": "Team Star Squad Boss"
 }
