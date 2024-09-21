@@ -15,7 +15,6 @@ import { Moves } from "#app/enums/moves";
 import { TypeColor, TypeShadow } from "#app/enums/color";
 import { pokemonEvolutions } from "./pokemon-evolutions";
 import { pokemonFormChanges } from "./pokemon-forms";
-import { Stat } from "#enums/stat";
 
 /** A constant for the default max cost of the starting party before a run */
 const DEFAULT_PARTY_MAX_COST = 10;
@@ -739,17 +738,6 @@ export class TrickRoomChallenge extends Challenge {
 
   override getDifficulty(): number {
     return 0;
-  }
-
-  /**
-   * @override
-   * this challenge inverts the Speed IV of the pokemon.
-   * @param pokemon {@link Pokemon} The pokemon to modify.
-   * @returns `true` if any challenge was successfully applied.
-   */
-  override applyStarterModify(pokemon: Pokemon): boolean {
-    pokemon.ivs[Stat.SPD] = 31 - pokemon.ivs[Stat.SPD];
-    return true;
   }
 
   /**
