@@ -584,7 +584,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   getSpriteScale(): number {
     const formKey = this.getFormKey();
-    if (formKey.indexOf(SpeciesFormKey.GIGANTAMAX) > -1 || formKey.indexOf(SpeciesFormKey.ETERNAMAX) > -1) {
+    if (this.isMax() === true || formKey === "segin-starmobile" || formKey === "schedar-starmobile" || formKey === "navi-starmobile" || formKey === "ruchbah-starmobile" || formKey === "caph-starmobile") {
       return 1.5;
     } else if (this.mysteryEncounterPokemonData.spriteScale > 0) {
       return this.mysteryEncounterPokemonData.spriteScale;
@@ -4749,8 +4749,15 @@ export class EnemyPokemon extends Pokemon {
     return true;
   }
 
+  /**
+   * Go through a boss' health segments and give stats boosts for each newly cleared segment
+   * The base boost is 1 to a random stat that's not already maxed out per broken shield
+   * For Pokemon with 3 health segments or more, breaking the last shield gives +2 instead
+   * For Pokemon with 5 health segments or more, breaking the last two shields give +2 each
+   * @param segmentIndex index of the segment to get down to (0 = no shield left, 1 = 1 shield left, etc.)
+   */
   handleBossSegmentCleared(segmentIndex: integer): void {
-    while (segmentIndex - 1 < this.bossSegmentIndex) {
+    while (this.bossSegmentIndex > 0 && segmentIndex - 1 < this.bossSegmentIndex) {
       // Filter out already maxed out stat stages and weigh the rest based on existing stats
       const leftoverStats = EFFECTIVE_STATS.filter((s: EffectiveStat) => this.getStatStage(s) < 6);
       const statWeights = leftoverStats.map((s: EffectiveStat) => this.getStat(s, false));

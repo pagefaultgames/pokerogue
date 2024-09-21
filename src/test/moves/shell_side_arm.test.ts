@@ -10,8 +10,6 @@ import { afterEach, beforeAll, beforeEach, describe, it, expect, vi } from "vite
 describe("Moves - Shell Side Arm", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
-  const TIMEOUT = 20 * 1000;
-
   beforeAll(() => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
@@ -47,7 +45,7 @@ describe("Moves - Shell Side Arm", () => {
     await game.phaseInterceptor.to("MoveEffectPhase");
 
     expect(shellSideArmAttr.apply).toHaveLastReturnedWith(true);
-  }, TIMEOUT);
+  });
 
   it("remains a special attack if forecasted to deal more damage as special", async () => {
     game.override.enemySpecies(Species.SLOWBRO);
@@ -63,7 +61,7 @@ describe("Moves - Shell Side Arm", () => {
     await game.phaseInterceptor.to("MoveEffectPhase");
 
     expect(shellSideArmAttr.apply).toHaveLastReturnedWith(false);
-  }, TIMEOUT);
+  });
 
   it("respects stat stage changes when forecasting base damage", async () => {
     game.override
@@ -83,5 +81,5 @@ describe("Moves - Shell Side Arm", () => {
     await game.phaseInterceptor.to("BerryPhase", false);
 
     expect(shellSideArmAttr.apply).toHaveLastReturnedWith(false);
-  }, TIMEOUT);
+  });
 });

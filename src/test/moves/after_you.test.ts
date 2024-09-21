@@ -8,7 +8,7 @@ import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
-const TIMEOUT = 20 * 1000;
+
 
 describe("Moves - After You", () => {
   let phaserGame: Phaser.Game;
@@ -47,7 +47,7 @@ describe("Moves - After You", () => {
     const phase = game.scene.getCurrentPhase() as MovePhase;
     expect(phase.pokemon).toBe(game.scene.getPlayerField()[1]);
     await game.phaseInterceptor.to("MoveEndPhase");
-  }, TIMEOUT);
+  });
 
   it("fails if target already moved", async () => {
     game.override.enemySpecies(Species.SHUCKLE);
@@ -61,5 +61,5 @@ describe("Moves - After You", () => {
     await game.phaseInterceptor.to(MovePhase);
 
     expect(game.scene.getPlayerField()[1].getLastXMoves(1)[0].result).toBe(MoveResult.FAIL);
-  }, TIMEOUT);
+  });
 });
