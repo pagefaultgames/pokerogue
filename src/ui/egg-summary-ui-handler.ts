@@ -273,21 +273,29 @@ export default class EggSummaryUiHandler extends MessageUiHandler {
       case Button.UP:
         if (row) {
           success = this.setCursor(this.cursor - numCols);
+        } else if (rows > 1) {
+          success = this.setCursor((rows-1) * numCols + this.cursor < count ? (rows-1) * numCols + this.cursor : (rows-2) * numCols + this.cursor);
         }
         break;
       case Button.DOWN:
         if (row < rows - 2 || (row < rows - 1 && this.cursor % numCols <= (count - 1) % numCols)) {
           success = this.setCursor(this.cursor + numCols);
+        } else {
+          this.setCursor(this.cursor % numCols);
         }
         break;
       case Button.LEFT:
-        if (this.cursor % numCols) {
+        if (this.cursor === 0) {
+          success = this.setCursor(count - 1);
+        } else {
           success = this.setCursor(this.cursor - 1);
         }
         break;
       case Button.RIGHT:
-        if (this.cursor % numCols < (row < rows - 1 ? 10 : (count - 1) % numCols)) {
+        if (this.cursor < count - 1) {
           success = this.setCursor(this.cursor + 1);
+        } else {
+          success = this.setCursor(0);
         }
         break;
       }
