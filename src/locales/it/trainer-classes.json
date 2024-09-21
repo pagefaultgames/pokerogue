@@ -126,5 +126,8 @@
   "skull_grunts": "Reclute Team Skull",
   "macro_grunt": "Impiegato Macro Cosmos",
   "macro_grunt_female": "Impiegata Macro Cosmos",
-  "macro_grunts": "Impiegati Macro Cosmos"
+  "macro_grunts": "Impiegati Macro Cosmos",
+  "star_grunt": "Star Grunt",
+  "star_grunt_female": "Star Grunt",
+  "star_grunts": "Star Grunts"
 }
