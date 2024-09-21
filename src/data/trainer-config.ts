@@ -1316,7 +1316,7 @@ export const signatureSpecies: SignatureSpecies = {
   IRIS: [Species.HAXORUS, Species.RESHIRAM, Species.ARCHEOPS], // Druddigon lead, Gmax Lapras
   DIANTHA: [Species.HAWLUCHA, Species.XERNEAS, Species.GOODRA], // Gourgeist lead, Mega Gardevoir
   HAU: [[Species.SOLGALEO, Species.LUNALA], Species.NOIVERN, [Species.DECIDUEYE, Species.INCINEROAR, Species.PRIMARINA], [Species.TAPU_BULU, Species.TAPU_FINI, Species.TAPU_KOKO, Species.TAPU_LELE]], // Alola Raichu lead
-  LEON: [Species.DRAGAPULT, [Species.ZACIAN, Species.ZAMAZENTA], Species.AEGISLASH], // Rillaboom/Cinderace/Inteleon lead, GMax Charizard
+  LEON: [Species.DRAGAPULT, Species.ZACIAN, Species.AEGISLASH], // Rillaboom/Cinderace/Inteleon lead, GMax Charizard
   GEETA: [Species.MIRAIDON, [Species.ESPATHRA, Species.VELUZA], [Species.AVALUGG, Species.HISUI_AVALUGG], Species.KINGAMBIT], // Glimmora lead
   NEMONA: [Species.KORAIDON, Species.PAWMOT, [Species.DUDUNSPARCE, Species.ORTHWORM], [Species.MEOWSCARADA, Species.SKELEDIRGE, Species.QUAQUAVAL]], // Lycanroc lead
   KIERAN: [[Species.GRIMMSNARL, Species.INCINEROAR, Species.PORYGON_Z], Species.OGERPON, Species.TERAPAGOS, Species.HYDRAPPLE], // Poliwrath/Politoed lead
@@ -2232,7 +2232,7 @@ export const trainerConfigs: TrainerConfigs = {
       p.generateName();
       p.pokeball = PokeballType.ULTRA_BALL;
     })),
-  [TrainerType.PENNY]: new TrainerConfig(++t).setName("Penny").initForEvilTeamLeader("Star Boss", []).setMixedBattleBgm("battle_star_boss").setVictoryBgm("victory_team_plasma")
+  [TrainerType.PENNY]: new TrainerConfig(++t).setName("Cassiopeia").initForEvilTeamLeader("Star Boss", []).setMixedBattleBgm("battle_star_boss").setVictoryBgm("victory_team_plasma")
     .setPartyMemberFunc(0, getRandomPartyMemberFunc([ Species.VAPOREON, Species.JOLTEON, Species.FLAREON ]))
     .setPartyMemberFunc(1, getRandomPartyMemberFunc([ Species.ESPEON, Species.UMBREON ], TrainerSlot.TRAINER, true, p => {
       p.abilityIndex = 2; // Magic Bounce Espeon, Inner Focus Umbreon
@@ -2258,7 +2258,7 @@ export const trainerConfigs: TrainerConfigs = {
       const teraPokemon = party[4];
       return [modifierTypes.TERA_SHARD().generateType([], [teraPokemon.species.type1])!.withIdFromFunc(modifierTypes.TERA_SHARD).newModifier(teraPokemon) as PersistentModifier]; //TODO: is the bang correct?
     }),
-  [TrainerType.PENNY_2]: new TrainerConfig(++t).setName("Penny").initForEvilTeamLeader("Star Boss", [], true).setMixedBattleBgm("battle_star_boss").setVictoryBgm("victory_team_plasma")
+  [TrainerType.PENNY_2]: new TrainerConfig(++t).setName("Cassiopeia").initForEvilTeamLeader("Star Boss", [], true).setMixedBattleBgm("battle_star_boss").setVictoryBgm("victory_team_plasma")
     .setPartyMemberFunc(0, getRandomPartyMemberFunc([ Species.REVAVROOM ], TrainerSlot.TRAINER, true, p => {
       p.setBoss(true, 2);
       p.generateAndPopulateMoveset();
