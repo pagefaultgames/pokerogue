@@ -8,20 +8,21 @@ export interface OptionSelectConfigAC extends OptionSelectConfig {
   inputContainer: Phaser.GameObjects.Container;
   modalContainer: Phaser.GameObjects.Container;
   maxOptionsReverse?: number;
-  reverse?: true;
+  reverse?: true; // So that instead of showing the options looking below the input, they are shown above
 }
 
 export default class AutoCompleteUiHandler extends AbstractOptionSelectUiHandler {
   modalContainer: Phaser.GameObjects.Container;
   inputContainer: Phaser.GameObjects.Container;
   handlerKeyDown: (inputObject: InputText, evt: KeyboardEvent) => void;
+  revertAutoCompleteMode: () => void;
   reverse?: true;
 
   constructor(scene: BattleScene, mode: Mode = Mode.AUTO_COMPLETE) {
     super(scene, mode);
 
     this.handlerKeyDown = (inputObject, evt) => {
-      // Don't move inputText cursor
+      // Don't move inputText cursor, cursor move fast for this
       if (["arrowup"].some((key) => key === (evt.code || evt.key).toLowerCase())) {
         evt.preventDefault();
         this.processInput(Button.UP);
@@ -30,15 +31,22 @@ export default class AutoCompleteUiHandler extends AbstractOptionSelectUiHandler
         this.processInput(Button.DOWN);
       }
 
-      // Revert Mode when not press...
-      if (!["enter", "arrowup", "arrowdown"].some((key) => (evt.code || evt.key).toLowerCase().includes(key))) {
-        this.scene.ui.revertMode();
+      // Revert Mode if not press...
+      if (!["enter", "arrowup", "arrowdown", "shift", "control", "alt"].some((key) => (evt.code || evt.key).toLowerCase().includes(key))) {
+        this.revertAutoCompleteMode();
       }
 
       // Recovery focus
       if (["escape"].some((key) => key === (evt.code || evt.key).toLowerCase())) {
         const recoveryFocus = () => (inputObject.setFocus(), inputObject.off("blur", recoveryFocus));
         inputObject.on("blur", recoveryFocus);
+      }
+    };
+
+    this.revertAutoCompleteMode = () => {
+      const ui = this.getUi();
+      if (ui.getMode() === Mode.AUTO_COMPLETE) {
+        ui.revertMode();
       }
     };
 
@@ -58,7 +66,7 @@ export default class AutoCompleteUiHandler extends AbstractOptionSelectUiHandler
         const originalHandler = args[0].options[index].handler;
         opt.handler = () => {
           if (originalHandler()) {
-            ui.revertMode();
+            this.revertAutoCompleteMode();
             return true;
           }
           return false;
@@ -67,35 +75,26 @@ export default class AutoCompleteUiHandler extends AbstractOptionSelectUiHandler
       this.modalContainer = modalContainer;
       this.inputContainer = inputContainer;
       const input = args[0].inputContainer.list.find((el) => el instanceof InputText);
-      const ui = this.getUi();
 
       const originalsEvents = input.listeners("keydown");
+      // Remove the current keydown events from the input so that the one added in this mode is executed first
       for (let i = 0; i < originalsEvents?.length; i++) {
         input.off("keydown", originalsEvents[i]);
       }
 
-      const handlerBlur = () => {
-        ui.revertMode();
-        input.off("blur", handlerBlur);
-      };
-      const handlerPointerUp = () => {
-        ui.revertMode();
-        this.modalContainer.off("pointerup", handlerPointerUp);
-      };
-
-      input.on("blur", handlerBlur);
+      input.on("blur", this.revertAutoCompleteMode);
       input.on("keydown", this.handlerKeyDown);
-      this.modalContainer.on("pointerup", handlerPointerUp);
+      this.modalContainer.on("pointerdown", this.revertAutoCompleteMode);
 
+      // After adding the event that will execute this mode first, return the ones it already had
       for (let i = 0; i < originalsEvents?.length; i++) {
         input.on("keydown", originalsEvents[i]);
       }
 
-      if (this.reverse && newArgs[0].maxOptionsReverse) {
-        newArgs[0].maxOptions = newArgs[0].maxOptionsReverse;
-      }
-
       if (this.reverse) {
+        if (newArgs[0].maxOptionsReverse) {
+          newArgs[0].maxOptions = newArgs[0].maxOptionsReverse;
+        }
         newArgs[0].options.reverse();
       }
 
@@ -113,18 +112,39 @@ export default class AutoCompleteUiHandler extends AbstractOptionSelectUiHandler
   protected setupOptions() {
     super.setupOptions();
     if (this.modalContainer) {
-      this.optionSelectContainer.setSize(this.optionSelectContainer.height, Math.max(this.optionSelectText.displayWidth + 24, this.getWindowWidth()));
+      // Adjust the width to the minimum of the visible options
+      this.optionSelectContainer.setSize(this.optionSelectContainer.height, Math.max(this.optionSelectText.displayWidth, this.getWindowWidth()));
       if (this.reverse) {
+        // Position above the input
         this.optionSelectContainer.setPositionRelative(this.modalContainer, this.optionSelectBg.width + this.inputContainer.x, this.inputContainer.y);
         return;
       }
+      // Position below the input
       this.optionSelectContainer.setPositionRelative(this.modalContainer, this.optionSelectBg.width + this.inputContainer.x, this.optionSelectBg.height + this.inputContainer.y + (this.inputContainer.list.find((el) => el instanceof Phaser.GameObjects.NineSlice)?.height ?? 0));
+
+      // If the modal goes off screen, center it
+      // if ((this.optionSelectContainer.getBounds().width + this.optionSelectContainer.getBounds().x) > this.scene.game.canvas.width) {
+      //   this.optionSelectContainer.setX(this.optionSelectContainer.getBounds().x - ((this.optionSelectContainer.getBounds().width + this.optionSelectContainer.getBounds().x) - this.scene.game.canvas.width));
+      // }
     }
+  }
+
+  processInput(button: Button): boolean {
+    // the cancel and action button are here because if you're typing, x and z are used for cancel/action. This means you could be typing something and accidentally cancel/select when you don't mean to
+    // the submit button is therefore used to select a choice (the enter button), though this does not work on my local dev testing for phones, as for my phone/keyboard combo, the enter and z key are both
+    // bound to Button.ACTION, which makes this not work on mobile
+    if (button !== Button.CANCEL && button !== Button.ACTION) {
+      return super.processInput(button);
+    }
+    return false;
   }
 
   clear(): void {
     super.clear();
     const input = this.inputContainer.list.find((el) => el instanceof InputText);
     input?.off("keydown", this.handlerKeyDown);
+    input?.off("blur", this.revertAutoCompleteMode);
+    this.modalContainer.off("pointerdown", this.revertAutoCompleteMode);
+    this.scrollCursor = 0;
   }
 }

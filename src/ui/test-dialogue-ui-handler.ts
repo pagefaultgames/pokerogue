@@ -5,6 +5,8 @@ import { PlayerPokemon } from "#app/field/pokemon";
 import { OptionSelectItem } from "./abstact-option-select-ui-handler";
 import { isNullOrUndefined } from "#app/utils";
 import { Mode } from "./ui";
+import { OptionSelectConfigAC } from "./autocomplete-ui-handler";
+import InputText from "phaser3-rex-plugins/plugins/inputtext";
 
 export default class TestDialogueUiHandler extends FormModalUiHandler {
 
@@ -23,7 +25,6 @@ export default class TestDialogueUiHandler extends FormModalUiHandler {
 
         if (typeof value === "object" && !isNullOrUndefined(value)) { // we check for not null or undefined here because if the language json file has a null key, the typeof will still be an object, but that object will be null, causing issues
           // If the value is an object, execute the same process
-          // si el valor es un objeto ejecuta el mismo proceso
 
           return flattenKeys(value, topKey ?? t, topKey ? midleKey ? [...midleKey, t] : [t] : undefined).filter((t) => t.length > 0);
         } else if (typeof value === "string" || isNullOrUndefined(value)) { // we check for null or undefined here as per above - the typeof is still an object but the value is null so we need to exit out of this and pass the null key
@@ -73,37 +74,33 @@ export default class TestDialogueUiHandler extends FormModalUiHandler {
     const input = this.inputs[0];
     input.setMaxLength(255);
 
-    input.on("keydown", (inputObject, evt: KeyboardEvent) => {
-      if (["escape", "space"].some((v) => v === evt.key.toLowerCase() || v === evt.code.toLowerCase()) && ui.getMode() === Mode.AUTO_COMPLETE) {
-        // Delete autocomplete list and recovery focus.
-        inputObject.on("blur", () => inputObject.node.focus(), { once: true });
-        ui.revertMode();
-      }
-    });
-
-    input.on("textchange", (inputObject, evt: InputEvent) => {
-      // Delete autocomplete.
-      if (ui.getMode() === Mode.AUTO_COMPLETE) {
-        ui.revertMode();
-      }
-
+    input.on("textchange", (inputObject: InputText, evt: InputEvent) => {
       let options: OptionSelectItem[] = [];
       const splitArr = inputObject.text.split(" ");
-      const filteredKeys = this.keys.filter((command) => command.toLowerCase().includes(splitArr[splitArr.length - 1].toLowerCase()));
+
+      // At what index of splitArr is the input cursor located
+      let indexInOriginalArray = 0;
+      let cumulativeLength = 0;
+      for (let i = 0; i < splitArr.length; i++) {
+        const spaceAndWordLength = splitArr[i] === "" ? 2 : 1;
+        cumulativeLength += (splitArr[i].length + spaceAndWordLength);
+        if (cumulativeLength > input.cursorPosition) {
+          indexInOriginalArray = i;
+          break;
+        }
+      }
+
+      const filteredKeys = this.keys.filter((command) => command.toLowerCase().includes(splitArr[indexInOriginalArray].toLowerCase()));
       if (inputObject.text !== "" && filteredKeys.length > 0) {
-        // if performance is required, you could reduce the number of total results by changing the slice below to not have all ~8000 inputs going
-        options = filteredKeys.slice(0).map((value) => {
+        options = filteredKeys.map((value) => {
           return {
             label: value,
             handler: () => {
-              // this is here to make sure that if you try to backspace then enter, the last known evt.data (backspace) is picked up
-              // this is because evt.data is null for backspace, so without this, the autocomplete windows just closes
-              if (!isNullOrUndefined(evt.data) || evt.inputType?.toLowerCase() === "deletecontentbackward") {
-                const separatedArray = inputObject.text.split(" ");
-                separatedArray[separatedArray.length - 1] = value;
-                inputObject.setText(separatedArray.join(" "));
-              }
-              ui.revertMode();
+              const separatedArray = inputObject.text.split(" ");
+              separatedArray[indexInOriginalArray] = value;
+              const cursorPosition = inputObject.cursorPosition - splitArr[indexInOriginalArray].length + separatedArray[indexInOriginalArray].length;
+              inputObject.setText(separatedArray.join(" "));
+              inputObject.setCursorPosition(cursorPosition);
               return true;
             }
           };
@@ -111,10 +108,11 @@ export default class TestDialogueUiHandler extends FormModalUiHandler {
       }
 
       if (options.length > 0) {
-        const modalOpts = {
+        const modalOpts: OptionSelectConfigAC = {
           options: options,
           maxOptions: 5,
-          modalContainer: this.modalContainer
+          modalContainer: this.modalContainer,
+          inputContainer: this.inputContainers[0]
         };
         ui.setOverlayMode(Mode.AUTO_COMPLETE, modalOpts);
       }
@@ -139,6 +137,12 @@ export default class TestDialogueUiHandler extends FormModalUiHandler {
           return true;
         }
         return false;
+      };
+      const originalCancel = config.buttonActions[1];
+      config.buttonActions[1] = ()=>{
+        if (ui.getMode() === Mode.TEST_DIALOGUE) {
+          originalCancel();
+        }
       };
       return true;
     }

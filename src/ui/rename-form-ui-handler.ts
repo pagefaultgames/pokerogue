@@ -7,10 +7,30 @@ import { OptionSelectItem } from "./abstact-option-select-ui-handler";
 import { addWindow } from "./ui-theme";
 import { addTextObject, getTextStyleOptions, TextStyle } from "./text";
 import InputText from "phaser3-rex-plugins/plugins/inputtext";
-import BattleScene from "#app/battle-scene.js";
+import BattleScene from "#app/battle-scene";
 import AutoCompleteUiHandler, { OptionSelectConfigAC } from "./autocomplete-ui-handler";
+import emojisAvailable from "#app/data/emoji";
+import { emojiRegex } from "#app/data/emoji";
 
-const emojiAvailable = ["♪", "★", "♥", "♣", "☻", "ª", "☼", "►", "♫", "←", "→", "↩", "↪"];
+function textArrayWithEmojis(str: string): string[] {
+  const result: string[] = [];
+  let match;
+  let lastIndex = 0;
+
+  while ((match = emojiRegex.exec(str)) !== null) {
+    if (match.index > lastIndex) {
+      result.push(...str.slice(lastIndex, match.index).split(""));
+    }
+    result.push(match[0]);
+    lastIndex = emojiRegex.lastIndex;
+  }
+
+  if (lastIndex < str.length) {
+    result.push(...str.slice(lastIndex).split(""));
+  }
+
+  return result;
+}
 
 export default class RenameFormUiHandler extends FormModalUiHandler {
   protected autocomplete: AutoCompleteUiHandler;
@@ -94,7 +114,7 @@ export default class RenameFormUiHandler extends FormModalUiHandler {
       const maxEmojis = 6;
 
       const modalOptions: OptionSelectConfigAC = {
-        options: emojiAvailable.map((emoji, index): OptionSelectItem => {
+        options: emojisAvailable.map((emoji, index): OptionSelectItem => {
           return {
             label: `${emoji} /${index + 1}`,
             handler: ()=> {
@@ -125,62 +145,81 @@ export default class RenameFormUiHandler extends FormModalUiHandler {
         // If deleting and currently positioned at "/", display the list of emojis
         if (
           !evt.data &&
-          input.text.split("").filter((char) => emojiAvailable.some((em) => em === char)).length < maxEmojis &&
+          input.text.split("").filter((char) => emojisAvailable.some((em) => em === char)).length < maxEmojis &&
           input.text.split("").some((char, i) => char === "/" && i + 1 === input.cursorPosition)
         ) {
           ui.setOverlayMode(Mode.AUTO_COMPLETE, modalOptions);
         }
 
-        const getDisallowedEmojis = (text) => {
-          return text.split("").filter((char) => {
-            const isEmoji = !char.match(/[\u0000-\u00ff]/);
-            const isAllowedEmoji = emojiAvailable.includes(char);
-            return isEmoji && !isAllowedEmoji;
-          });
-        };
-
         // Remove disallowed emojis.
-        while (getDisallowedEmojis(input.text).length > 0) {
-          const disallowedEmojis = getDisallowedEmojis(input.text);
-          const lastDisallowedEmojiIndex = input.text.lastIndexOf(disallowedEmojis[0]);
-
-          if (lastDisallowedEmojiIndex !== -1) {
-            const textBeforeCursor = input.text.substring(0, lastDisallowedEmojiIndex);
-            const textAfterCursor = input.text.substring(lastDisallowedEmojiIndex + 1);
-            const newText = textBeforeCursor + textAfterCursor;
-
-            if (newText !== input.text) {
-              input.setText(newText);
-              input.setCursorPosition(lastDisallowedEmojiIndex);
+        if (textArrayWithEmojis(input.text).filter((char) => {
+          // const isEmoji = !char.match(/[\u0000-\u00ff]/); // Emojis, special characters and kaomojis
+          const isEmoji = char.match(emojiRegex); // Only Emojis
+          const isAllowedEmoji = emojisAvailable.includes(char);
+          return isEmoji && !isAllowedEmoji;
+        }).length) {
+          const regex = emojiRegex;
+          let totalLength: number = 0;
+          const newText = input.text.replace(regex, (match) => {
+            if (emojisAvailable.includes(match)) {
+              return match;
             }
-          }
+            totalLength += match.length;
+            return  "";
+          });
+
+          const cursorPosition = input.cursorPosition;
+          input.setText(newText);
+          input.setCursorPosition(cursorPosition - totalLength);
+
         }
 
 
         // If the number of available emojis exceeds the maximum allowed number of emojis..
         //.. Delete any attempt to insert another one.
-        if (evt.data && input.text.split("").filter((char) => emojiAvailable.some((em) => em === char)).length > maxEmojis) {
-          const texto = input.text;
-          const textBeforeCursor = texto.substring(0, input.cursorPosition);
-          const textAfterCursor = texto.substring(input.cursorPosition);
+        while (textArrayWithEmojis(input.text).filter((char) => emojisAvailable.includes(char)).length > maxEmojis) {
+          const charactersWithEmojis = textArrayWithEmojis(input.text);
+          const emojis = charactersWithEmojis.filter((char, i, arr) => {
+            if (emojisAvailable.includes(char)) {
+              let totalLength = 0;
+              for (let j = 0; j <= i; j++) {
+                totalLength += arr[j].length;
+              }
+              return totalLength < input.cursorPosition + 1;
+            }
+            return false;
+          });
+          const cursorPosition = input.cursorPosition;
+          const lastEmoji = emojis[emojis.length - 1];
+          const lastEmojiIndex = charactersWithEmojis.filter((char, i, arr) => {
+            let totalLength = 0;
+            for (let j = 0; j <= i; j++) {
+              totalLength += arr[j].length;
+            }
+            return totalLength < input.cursorPosition + 1;
+          }).lastIndexOf(lastEmoji);
 
-          const exactlyEmoji = textBeforeCursor.lastIndexOf(evt.data);
-          if (exactlyEmoji !== -1) {
-            const textReplace = textBeforeCursor.substring(0, exactlyEmoji) + textAfterCursor;
-            if (textReplace !== input.text) {
-              input.setText(textReplace);
-              input.setCursorPosition(exactlyEmoji);
+          if (lastEmojiIndex !== -1) {
+            const textBeforeCursor = charactersWithEmojis.slice(0, lastEmojiIndex).join("");
+            const textAfterCursor = charactersWithEmojis.slice(lastEmojiIndex + 1).join("");
+            const newText = textBeforeCursor + textAfterCursor;
+
+            if (newText !== input.text) {
+              input.setText(newText);
+              input.setCursorPosition(cursorPosition - lastEmoji.length);
             }
           }
         }
 
         // If the number of available emojis has been reached, do not display the list of emojis
-        if (evt.data && input.text.split("").filter((char) => emojiAvailable.some((em) => em === char)).length < maxEmojis) {
+        if (evt.data && input.text.split("").filter((char) => emojisAvailable.some((em) => em === char)).length < maxEmojis) {
 
           // Retrieve the exact command, as it can be either "/", or "/n"
-          const command = input.text.split("").filter((_, i, arr) => arr.includes("/") && i >= (input.text.split("").filter((_, i) => i < input.cursorPosition).lastIndexOf("/")) && i < input.cursorPosition).join("");
+          const command = input.text.split("").filter((_, i, arr) => i >= (input.text.split("").filter((_, i) => i < input.cursorPosition).lastIndexOf("/")) && i < input.cursorPosition).join("");
 
-          if (modalOptions.options.some((opt) => opt.label.includes(command))) {
+          if (evt.data === "/") {
+            ui.setOverlayMode(Mode.AUTO_COMPLETE, modalOptions);
+          } else if (command.includes("/") && modalOptions.options.some((opt) => opt.label.includes(command))) {
             const filterOptions = {
               ...modalOptions,
               options: modalOptions.options.filter((opt) => opt.label.includes(command))

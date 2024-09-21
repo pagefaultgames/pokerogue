@@ -84,7 +84,7 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
     // for performance reasons, this limits how many options we can see at once. Without this, it would try to make text options for every single options
     // which makes the performance take a hit. If there's not enough options to do this (set to 10 at the moment) and the ui mode !== Mode.AUTO_COMPLETE,
     // this is ignored and the original code is untouched, with the options array being all the options from the config
-    if (configOptions.length >= 10 && this.scene.ui.getMode() === Mode.AUTO_COMPLETE) {
+    if (configOptions.length >= 10 && this.mode === Mode.AUTO_COMPLETE) {
       const optionsScrollTotal = configOptions.length;
       const optionStartIndex = this.scrollCursor;
       const optionEndIndex = Math.min(optionsScrollTotal, optionStartIndex + (!optionStartIndex || this.scrollCursor + (this.config?.maxOptions! - 1) >= optionsScrollTotal ? this.config?.maxOptions! - 1 : this.config?.maxOptions! - 2));
@@ -101,7 +101,9 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
       this.optionSelectIcons.splice(0, this.optionSelectIcons.length);
     }
 
-    this.optionSelectText = addTextObject(this.scene, 0, 0, options.map(o => o.item ? `    ${o.label}` : o.label).join("\n"), TextStyle.WINDOW, { maxLines: options.length });
+    this.optionSelectText = addTextObject(this.scene, 0, 0, options.map(o => o.item ? `    ${o.label}` : o.label).join("\n"), TextStyle.WINDOW, {
+      maxLines: options.length + 1 // +1 because at the end of the options in autocomplete it hides the last option
+    });
     this.optionSelectText.setLineSpacing(this.scale * 72);
     this.optionSelectText.setName("text-option-select");
     this.optionSelectText.setLineSpacing(12);
