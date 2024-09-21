@@ -14,6 +14,10 @@
   "moneyWon": "Vous remportez\n{{moneyAmount}} ₽ !",
   "moneyPickedUp": "Vous obtenez {{moneyAmount}} ₽ !",
   "pokemonCaught": "Vous avez attrapé\n{{pokemonName}} !",
+  "pokemonObtained": "Vous obtenez\nun {{pokemonName}} !",
+  "pokemonBrokeFree": "Oh non !\nLe Pokémon s’est libéré !",
+  "pokemonFled": "Le {{pokemonName}} sauvage\nprend la fuite !",
+  "playerFled": "Vous fuyez le {{pokemonName}} !",
   "addedAsAStarter": "{{pokemonName}} est ajouté\ncomme starter !",
   "partyFull": "Votre équipe est pleine.\nRelâcher un Pokémon pour {{pokemonName}} ?",
   "pokemon": "de Pokémon",
@@ -99,5 +103,6 @@
   "unlockedSomething": "{{unlockedThing}}\na été débloqué.",
   "congratulations": "Félicitations !",
   "beatModeFirstTime": "{{speciesName}} a battu le mode {{gameMode}} pour la première fois !\nVous avez reçu {{newModifier}} !",
+  "ppReduced": "Les PP de la capacité {{moveName}}\nde{{targetName}} baissent de {{reduction}} !",
   "eggSkipPrompt": "Aller directement au résumé des Œufs éclos ?"
 }
