@@ -132,7 +132,7 @@ export class RechargingTag extends BattlerTag {
  */
 export class BeakBlastChargingTag extends BattlerTag {
   constructor() {
-    super(BattlerTagType.BEAK_BLAST_CHARGING, [ BattlerTagLapseType.PRE_MOVE, BattlerTagLapseType.TURN_END, BattlerTagLapseType.ON_GET_HIT], 1, Moves.BEAK_BLAST);
+    super(BattlerTagType.BEAK_BLAST_CHARGING, [BattlerTagLapseType.PRE_MOVE, BattlerTagLapseType.TURN_END, BattlerTagLapseType.ON_GET_HIT], 1, Moves.BEAK_BLAST);
   }
 
   onAdd(pokemon: Pokemon): void {
@@ -1996,7 +1996,7 @@ export function loadBattlerTag(source: BattlerTag | any): BattlerTag {
  * @returns null if current phase is not MoveEffectPhase, otherwise Object containing the {@linkcode MoveEffectPhase}, and its
  * corresponding {@linkcode Move} and user {@linkcode Pokemon}
  */
-function getMoveEffectPhaseData(pokemon : Pokemon) : {phase : MoveEffectPhase, attacker: Pokemon, move: Move } | null {
+function getMoveEffectPhaseData(pokemon: Pokemon): {phase: MoveEffectPhase, attacker: Pokemon, move: Move} | null {
   const phase = pokemon.scene.getCurrentPhase();
   if (phase instanceof MoveEffectPhase) {
     return {
