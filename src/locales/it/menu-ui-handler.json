@@ -16,6 +16,8 @@
   "exportSlotSelect": "Seleziona uno slot da cui esportare.",
   "importRunHistory":"Importa run precedenti",
   "exportRunHistory":"Esporta run precedenti",
+  "importSettings": "Importa impostazioni",
+  "exportSettings": "Esporta impostazioni",
   "importData": "Importa dati",
   "exportData": "Esporta dati",
   "consentPreferences": "Consenti preferenze",

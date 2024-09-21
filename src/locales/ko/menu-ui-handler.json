@@ -16,6 +16,8 @@
   "exportSlotSelect": "내보낼 슬롯을 골라주세요.",
   "importRunHistory":"플레이 이력 불러오기",
   "exportRunHistory":"플레이 이력 내보내기",
+  "importSettings": "설정 불러오기",
+  "exportSettings": "설정 내보내기",
   "importData": "데이터 불러오기",
   "exportData": "데이터 내보내기",
   "consentPreferences": "쿠키 설정 동의",

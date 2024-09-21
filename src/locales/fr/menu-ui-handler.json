@@ -18,6 +18,8 @@
   "exportData": "Exporter données",
   "importRunHistory":"Importer historique",
   "exportRunHistory":"Exporter historique",
+  "importSettings": "Importer paramètres",
+  "exportSettings": "Exporter paramètres",
   "consentPreferences": "Gérer les cookies",
   "linkDiscord": "Lier à Discord",
   "unlinkDiscord": "Délier Discord",

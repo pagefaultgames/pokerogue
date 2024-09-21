@@ -16,6 +16,8 @@
   "exportSlotSelect": "Selecciona una ranura para exportar.",
   "importRunHistory":"Importar Historial de partida",
   "exportRunHistory":"Exportar Historial de partida",
+  "importSettings": "Importar Configuraciones",
+  "exportSettings": "Exportar Configuraciones",
   "importData": "Importar Datos",
   "exportData": "Exportar Datos",
   "consentPreferences": "Consentimiento de datos",

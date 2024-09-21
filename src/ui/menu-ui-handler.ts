@@ -244,6 +244,22 @@ export default class MenuUiHandler extends MessageUiHandler {
       },
       keepOpen: true
     });
+    manageDataOptions.push({
+      label: i18next.t("menuUiHandler:importSettings"),
+      handler: () => {
+        this.scene.gameData.importData(GameDataType.SETTINGS);
+        return true;
+      },
+      keepOpen: true
+    });
+    manageDataOptions.push({
+      label: i18next.t("menuUiHandler:exportSettings"),
+      handler: () => {
+        this.scene.gameData.tryExportData(GameDataType.SETTINGS);
+        return true;
+      },
+      keepOpen: true
+    });
     if (Utils.isLocal || Utils.isBeta) {
       manageDataOptions.push({
         label: i18next.t("menuUiHandler:importData"),

@@ -16,6 +16,8 @@
   "exportSlotSelect": "Wähle einen Slot zum Exportieren.",
   "importRunHistory": "Laufhistorie importieren",
   "exportRunHistory": "Laufhistorie exportieren",
+  "importSettings": "Einstellungen importieren",
+  "exportSettings": "Einstellungen exportieren",
   "importData": "Daten importieren",
   "exportData": "Daten exportieren",
   "consentPreferences": "Einwilligungspräferenzen",

@@ -13,7 +13,7 @@ import { GameModes, getGameMode } from "../game-mode";
 import { BattleType } from "../battle";
 import TrainerData from "./trainer-data";
 import { trainerConfigs } from "../data/trainer-config";
-import { SettingKeys, resetSettings, setSetting } from "./settings/settings";
+import { Setting, SettingKeys, resetSettings, setSetting, settingIndex } from "./settings/settings";
 import { achvs } from "./achv";
 import EggData from "./egg-data";
 import { Egg } from "../data/egg";
@@ -63,16 +63,12 @@ export const defaultStarterSpecies: Species[] = [
 
 const saveKey = "x0i2O7WRiANTqPmZ"; // Temporary; secure encryption is not yet necessary
 
-export function getDataTypeKey(dataType: GameDataType, slotId: integer = 0): string {
+export function getDataTypeKey(dataType: GameDataType, slotId: integer = 0, username?: string): string {
   switch (dataType) {
   case GameDataType.SYSTEM:
-    return "data";
+    return `data_${username}`;
   case GameDataType.SESSION:
-    let ret = "sessionData";
-    if (slotId) {
-      ret += slotId;
-    }
-    return ret;
+    return `sessionData${slotId || ""}_${username}`;
   case GameDataType.SETTINGS:
     return "settings";
   case GameDataType.TUTORIALS:
@@ -80,7 +76,7 @@ export function getDataTypeKey(dataType: GameDataType, slotId: integer = 0): str
   case GameDataType.SEEN_DIALOGUES:
     return "seenDialogues";
   case GameDataType.RUN_HISTORY:
-    return "runHistoryData";
+    return `runHistoryData_${username}`;
   }
 }
 
@@ -1339,7 +1335,7 @@ export class GameData {
 
   public tryExportData(dataType: GameDataType, slotId: integer = 0): Promise<boolean> {
     return new Promise<boolean>(resolve => {
-      const dataKey: string = `${getDataTypeKey(dataType, slotId)}_${loggedInUser?.username}`;
+      const dataKey: string = getDataTypeKey(dataType, slotId, loggedInUser?.username);
       const handleData = (dataStr: string) => {
         switch (dataType) {
         case GameDataType.SYSTEM:
@@ -1370,7 +1366,8 @@ export class GameData {
       } else {
         const data = localStorage.getItem(dataKey);
         if (data) {
-          handleData(decrypt(data, bypassLogin));
+          const decryptedData = (dataType === GameDataType.SETTINGS) ? data : decrypt(data, bypassLogin);
+          handleData(decryptedData);
         }
         resolve(!!data);
       }
@@ -1378,7 +1375,7 @@ export class GameData {
   }
 
   public importData(dataType: GameDataType, slotId: integer = 0): void {
-    const dataKey = `${getDataTypeKey(dataType, slotId)}_${loggedInUser?.username}`;
+    const dataKey = getDataTypeKey(dataType, slotId, loggedInUser?.username);
 
     let saveFile: any = document.getElementById("saveFile");
     if (saveFile) {
@@ -1421,6 +1418,12 @@ export class GameData {
                 });
                 break;
               case GameDataType.SETTINGS:
+                valid = Object.entries(JSON.parse(dataStr))
+                  .every(([k, v]: [string, number]) => {
+                    const index: number = settingIndex(k);
+                    return index === -1 || Setting[index].options.length > v;
+                  });
+                break;
               case GameDataType.TUTORIALS:
                 valid = true;
                 break;
@@ -1438,7 +1441,8 @@ export class GameData {
 
             this.scene.ui.showText(`Your ${dataName} data will be overridden and the page will reload. Proceed?`, null, () => {
               this.scene.ui.setOverlayMode(Mode.CONFIRM, () => {
-                localStorage.setItem(dataKey, encrypt(dataStr, bypassLogin));
+                const encryptedData = (dataType === GameDataType.SETTINGS) ? dataStr : encrypt(dataStr, bypassLogin);
+                localStorage.setItem(dataKey, encryptedData);
 
                 if (!bypassLogin && dataType < GameDataType.SETTINGS) {
                   updateUserInfo().then(success => {

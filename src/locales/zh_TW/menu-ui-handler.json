@@ -16,6 +16,8 @@
   "exportSlotSelect": "選擇要導出的存檔位。",
   "importRunHistory":"導入歷史記錄",
   "exportRunHistory":"導出歷史記錄",
+  "importSettings": "導入設置",
+  "exportSettings": "導出設置",
   "importData": "導入數據",
   "exportData": "導出數據",
   "consentPreferences": "同意偏好",

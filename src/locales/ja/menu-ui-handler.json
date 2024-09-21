@@ -16,6 +16,8 @@
   "exportSlotSelect": "エクスポート元の　スロットを　選んでください",
   "importRunHistory": "ラン歴をインポート",
   "exportRunHistory": "ラン歴をエクスポート",
+  "importSettings": "Import Settings",
+  "exportSettings": "Export Settings",
   "importData": "データをインポート",
   "exportData": "データをエクスポート",
   "consentPreferences": "同意設定",
