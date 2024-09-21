@@ -742,7 +742,7 @@
   "star_grunt": {
     "encounter": {
       "1": "We're Team Star, kid. We burn so bright, it hurts to look at us!",
-      "2": "We'll come at you full force - Hasta la vistaaar! ☆",
+      "2": "We'll come at you full force - Hasta la vistaaar! ★",
       "3": "If you don't clear out real quick-like, I'll hafta come at you in self-defense. You get me?",
       "4": "Sorry, but if you don't turn yourself around here, amigo, we'll have to send you packing!",
       "4_female": "Sorry, but if you don't turn yourself around here, amiga, we'll have to send you packing!",
@@ -752,7 +752,7 @@
       "1": "How come I'M the one seeing stars?!",
       "2": "You're scary, kid. If you joined Team Star, you'd be looking down from the top in no time!",
       "3": "I defended myself all right... But it wasn't enough!",
-      "4": "H-hasta la vistar... ☆",
+      "4": "H-hasta la vistar... ★",
       "5": "I didn't think grunt work for Team Star newbies would be this much of a chore..."
     }
   },
