@@ -736,10 +736,6 @@ export class TrickRoomChallenge extends Challenge {
     return newChallenge;
   }
 
-  override getDifficulty(): number {
-    return 0;
-  }
-
   /**
    * @override
    * this challenge inverts whether the battle is under the effect of Trick Room.
