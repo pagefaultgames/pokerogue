@@ -12,7 +12,7 @@ import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
-const TIMEOUT = 20 * 1000;
+
 
 describe("Abilities - Protean", () => {
   let phaserGame: Phaser.Game;
@@ -52,7 +52,6 @@ describe("Abilities - Protean", () => {
 
       testPokemonTypeMatchesDefaultMoveType(leadPokemon, Moves.SPLASH);
     },
-    TIMEOUT,
   );
 
   test.skip(
@@ -92,7 +91,6 @@ describe("Abilities - Protean", () => {
 
       testPokemonTypeMatchesDefaultMoveType(leadPokemon, Moves.SPLASH);
     },
-    TIMEOUT,
   );
 
   test(
@@ -115,7 +113,6 @@ describe("Abilities - Protean", () => {
         moveType = Type[Type.FIRE];
       expect(leadPokemonType).toBe(moveType);
     },
-    TIMEOUT,
   );
 
   test(
@@ -138,7 +135,6 @@ describe("Abilities - Protean", () => {
         moveType = Type[Type.ICE];
       expect(leadPokemonType).toBe(moveType);
     },
-    TIMEOUT,
   );
 
   test(
@@ -157,7 +153,6 @@ describe("Abilities - Protean", () => {
 
       testPokemonTypeMatchesDefaultMoveType(leadPokemon, Moves.AIR_SLASH);
     },
-    TIMEOUT,
   );
 
   test(
@@ -175,7 +170,6 @@ describe("Abilities - Protean", () => {
 
       testPokemonTypeMatchesDefaultMoveType(leadPokemon, Moves.DIG);
     },
-    TIMEOUT,
   );
 
   test(
@@ -197,7 +191,6 @@ describe("Abilities - Protean", () => {
       expect(enemyPokemon.isFullHp()).toBe(true);
       testPokemonTypeMatchesDefaultMoveType(leadPokemon, Moves.TACKLE);
     },
-    TIMEOUT,
   );
 
   test(
@@ -216,7 +209,6 @@ describe("Abilities - Protean", () => {
 
       testPokemonTypeMatchesDefaultMoveType(leadPokemon, Moves.TACKLE);
     },
-    TIMEOUT,
   );
 
   test(
@@ -235,7 +227,6 @@ describe("Abilities - Protean", () => {
 
       testPokemonTypeMatchesDefaultMoveType(leadPokemon, Moves.TACKLE);
     },
-    TIMEOUT,
   );
 
   test(
@@ -254,7 +245,6 @@ describe("Abilities - Protean", () => {
 
       expect(leadPokemon.summonData.abilitiesApplied).not.toContain(Abilities.PROTEAN);
     },
-    TIMEOUT,
   );
 
   test(
@@ -274,7 +264,6 @@ describe("Abilities - Protean", () => {
 
       expect(leadPokemon.summonData.abilitiesApplied).not.toContain(Abilities.PROTEAN);
     },
-    TIMEOUT,
   );
 
   test(
@@ -292,7 +281,6 @@ describe("Abilities - Protean", () => {
 
       expect(leadPokemon.summonData.abilitiesApplied).not.toContain(Abilities.PROTEAN);
     },
-    TIMEOUT,
   );
 
   test(
@@ -310,7 +298,6 @@ describe("Abilities - Protean", () => {
 
       expect(leadPokemon.summonData.abilitiesApplied).not.toContain(Abilities.PROTEAN);
     },
-    TIMEOUT,
   );
 
   test(
@@ -329,7 +316,6 @@ describe("Abilities - Protean", () => {
 
       testPokemonTypeMatchesDefaultMoveType(leadPokemon, Moves.TRICK_OR_TREAT);
     },
-    TIMEOUT,
   );
 
   test(
@@ -348,7 +334,6 @@ describe("Abilities - Protean", () => {
       testPokemonTypeMatchesDefaultMoveType(leadPokemon, Moves.CURSE);
       expect(leadPokemon.getTag(BattlerTagType.CURSED)).not.toBe(undefined);
     },
-    TIMEOUT,
   );
 });
 
