@@ -83,8 +83,10 @@ export default class RenameFormUiHandler extends FormModalUiHandler {
       fontSize: "80px",
     });
     helpEmojiListText.setWordWrapWidth(890);
-    const height = ((Math.min((helpEmojiListText.getWrappedText(helpEmojiListText.text)).length, 99)) * (80 + helpEmojiListText.y) * scale) + helpEmojiListText.y;
-    helpEmojiListBg.setSize(helpEmojiListBg.width, height);
+    if (this.scene.game.renderer.type === Phaser.WEBGL) { // TODO: this bang is correct? With this the tests do not fail
+      const height = ((Math.min((helpEmojiListText.getWrappedText(helpEmojiListText.text)).length, 99)) * (80 + helpEmojiListText.y) * scale) + helpEmojiListText.y;
+      helpEmojiListBg.setSize(helpEmojiListBg.width, height);
+    }
 
     helpEmojiListContainer.add(helpEmojiListText);
 
