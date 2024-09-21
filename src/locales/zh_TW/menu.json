@@ -47,6 +47,7 @@
   "choosePokemon": "選擇一只寶可夢。",
   "renamePokemon": "給寶可夢起名",
   "rename": "起名",
+  "renameHelpEmoji": "Use \"/\" to access emoji library and enter a number to choose an emoji\n(e.g. \"/1\" for the first emoji, max. 6)",
   "nickname": "昵稱",
   "errorServerDown": "糟糕！訪問服務器時發生了錯誤。\n\n你可以保持頁面開啓，\n遊戲會自動重新連接。",
   "noSaves": "你沒有任何記錄檔!",

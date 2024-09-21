@@ -50,6 +50,7 @@
   "choosePokemon": "Elegir un Pokémon.",
   "renamePokemon": "Rebatejar Pokémon",
   "rename": "Rebatejar",
+  "renameHelpEmoji": "Use \"/\" to access emoji library and enter a number to choose an emoji\n(e.g. \"/1\" for the first emoji, max. 6)",
   "nickname": "Sobrenom",
   "errorServerDown": "Vaja! S'ha produït un problema en contactar amb el servidor.\n\nPots deixar aquesta pestanya oberta,\nel joc es tornarà a connectar automàticament."
 }

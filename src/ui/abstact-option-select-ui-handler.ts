@@ -354,5 +354,6 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
       this.cursorObj.destroy();
     }
     this.cursorObj = null;
+    this.scrollCursor = 0;
   }
 }

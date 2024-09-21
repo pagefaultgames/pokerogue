@@ -14,42 +14,11 @@ export interface OptionSelectConfigAC extends OptionSelectConfig {
 export default class AutoCompleteUiHandler extends AbstractOptionSelectUiHandler {
   modalContainer: Phaser.GameObjects.Container;
   inputContainer: Phaser.GameObjects.Container;
-  handlerKeyDown: (inputObject: InputText, evt: KeyboardEvent) => void;
-  revertAutoCompleteMode: () => void;
   reverse?: true;
 
   constructor(scene: BattleScene, mode: Mode = Mode.AUTO_COMPLETE) {
     super(scene, mode);
-
-    this.handlerKeyDown = (inputObject, evt) => {
-      // Don't move inputText cursor, cursor move fast for this
-      if (["arrowup"].some((key) => key === (evt.code || evt.key).toLowerCase())) {
-        evt.preventDefault();
-        this.processInput(Button.UP);
-      } else if (["arrowdown"].some((key) => key === (evt.code || evt.key).toLowerCase())) {
-        evt.preventDefault();
-        this.processInput(Button.DOWN);
-      }
-
-      // Revert Mode if not press...
-      if (!["enter", "arrowup", "arrowdown", "shift", "control", "alt"].some((key) => (evt.code || evt.key).toLowerCase().includes(key))) {
-        this.revertAutoCompleteMode();
-      }
-
-      // Recovery focus
-      if (["escape"].some((key) => key === (evt.code || evt.key).toLowerCase())) {
-        const recoveryFocus = () => (inputObject.setFocus(), inputObject.off("blur", recoveryFocus));
-        inputObject.on("blur", recoveryFocus);
-      }
-    };
-
-    this.revertAutoCompleteMode = () => {
-      const ui = this.getUi();
-      if (ui.getMode() === Mode.AUTO_COMPLETE) {
-        ui.revertMode();
-      }
-    };
-
+    this.handlerKeyDown = this.handlerKeyDown.bind(this);
   }
 
   getWindowWidth(): integer {
@@ -124,7 +93,7 @@ export default class AutoCompleteUiHandler extends AbstractOptionSelectUiHandler
 
       // If the modal goes off screen, center it
       // if ((this.optionSelectContainer.getBounds().width + this.optionSelectContainer.getBounds().x) > this.scene.game.canvas.width) {
-      //   this.optionSelectContainer.setX(this.optionSelectContainer.getBounds().x - ((this.optionSelectContainer.getBounds().width + this.optionSelectContainer.getBounds().x) - this.scene.game.canvas.width));
+      //   this.optionSelectContainer.setX((this.optionSelectContainer.x) - ((this.optionSelectContainer.width + this.optionSelectContainer.x) - (this.scene.game.canvas.width / 6)));
       // }
     }
   }
@@ -139,12 +108,44 @@ export default class AutoCompleteUiHandler extends AbstractOptionSelectUiHandler
     return false;
   }
 
+  handlerKeyDown (inputObject: InputText, evt: KeyboardEvent): void {
+    // Don't move inputText cursor
+    // TODO: cursor move fast for this
+    if (["arrowup"].some((key) => key === (evt.code || evt.key).toLowerCase())) {
+      evt.preventDefault();
+      this.processInput(Button.UP);
+    } else if (["arrowdown"].some((key) => key === (evt.code || evt.key).toLowerCase())) {
+      evt.preventDefault();
+      this.processInput(Button.DOWN);
+    }
+
+    // Revert Mode if not press...
+    if (!["enter", "arrowup", "arrowdown", "shift", "control", "alt"].some((key) => (evt.code || evt.key).toLowerCase().includes(key))) {
+      this.revertAutoCompleteMode();
+    }
+
+    // Recovery focus
+    if (["escape"].some((key) => key === (evt.code || evt.key).toLowerCase())) {
+      const recoveryFocus = () => {
+        inputObject.setFocus();
+        inputObject.off("blur", recoveryFocus);
+      };
+      inputObject.on("blur", recoveryFocus);
+    }
+  }
+
+  revertAutoCompleteMode(): void {
+    const ui = this.scene.ui;
+    if (ui.getMode() === Mode.AUTO_COMPLETE) {
+      ui.revertMode();
+    }
+  }
+
   clear(): void {
     super.clear();
     const input = this.inputContainer.list.find((el) => el instanceof InputText);
     input?.off("keydown", this.handlerKeyDown);
     input?.off("blur", this.revertAutoCompleteMode);
     this.modalContainer.off("pointerdown", this.revertAutoCompleteMode);
-    this.scrollCursor = 0;
   }
 }

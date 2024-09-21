@@ -8,10 +8,15 @@ import { addWindow } from "./ui-theme";
 import { addTextObject, getTextStyleOptions, TextStyle } from "./text";
 import InputText from "phaser3-rex-plugins/plugins/inputtext";
 import BattleScene from "#app/battle-scene";
-import AutoCompleteUiHandler, { OptionSelectConfigAC } from "./autocomplete-ui-handler";
+import { OptionSelectConfigAC } from "./autocomplete-ui-handler";
 import emojisAvailable from "#app/data/emoji";
 import { emojiRegex } from "#app/data/emoji";
 
+/**
+ * Split string with emojis, since emojis length is longer and native split doesn't work.
+ * @param str
+ * @returns string[]
+ */
 function textArrayWithEmojis(str: string): string[] {
   const result: string[] = [];
   let match;
@@ -33,7 +38,10 @@ function textArrayWithEmojis(str: string): string[] {
 }
 
 export default class RenameFormUiHandler extends FormModalUiHandler {
-  protected autocomplete: AutoCompleteUiHandler;
+
+  constructor (scene, mode: Mode | null = Mode.RENAME_POKEMON) {
+    super(scene, mode);
+  }
 
   getModalTitle(config?: ModalConfig): string {
     return i18next.t("menu:renamePokemon");
@@ -71,11 +79,11 @@ export default class RenameFormUiHandler extends FormModalUiHandler {
     helpEmojiListContainer.add(helpEmojiListBg);
     const scale = getTextStyleOptions(TextStyle.WINDOW, (this.scene as BattleScene).uiTheme).scale ?? 0.1666666667;
 
-    const helpEmojiListText = addTextObject(this.scene, 8, 8, i18next.t("menu:renameHelpEmoji"), TextStyle.TOOLTIP_CONTENT, {
+    const helpEmojiListText = addTextObject(this.scene, 8, 4, i18next.t("menu:renameHelpEmoji"), TextStyle.TOOLTIP_CONTENT, {
       fontSize: "80px",
     });
-    helpEmojiListText.setWordWrapWidth(this.modalContainer.getBounds().width * 0.95);
-    const height = ((Math.min((helpEmojiListText.getWrappedText(helpEmojiListText.text) || []).length, 99)) * 96 * scale) + helpEmojiListText.y;
+    helpEmojiListText.setWordWrapWidth(890);
+    const height = ((Math.min((helpEmojiListText.getWrappedText(helpEmojiListText.text)).length, 99)) * (80 + helpEmojiListText.y) * scale) + helpEmojiListText.y;
     helpEmojiListBg.setSize(helpEmojiListBg.width, height);
 
     helpEmojiListContainer.add(helpEmojiListText);
@@ -96,18 +104,10 @@ export default class RenameFormUiHandler extends FormModalUiHandler {
         this.inputs[0].text = args[1];
       }
       this.submitAction = (_) => {
-        if (ui.getMode() === Mode.RENAME_POKEMON) {
-          this.sanitizeInputs();
-          const sanitizedName = btoa(unescape(encodeURIComponent(this.inputs[0].text)));
-          config.buttonActions[0](sanitizedName);
-          return true;
-        }
-      };
-      const originalCancel = config.buttonActions[1];
-      config.buttonActions[1] = ()=>{
-        if (ui.getMode() === Mode.RENAME_POKEMON) {
-          originalCancel();
-        }
+        this.sanitizeInputs();
+        const sanitizedName = btoa(unescape(encodeURIComponent(this.inputs[0].text)));
+        config.buttonActions[0](sanitizedName);
+        return true;
       };
 
       // emoji list config
@@ -119,11 +119,11 @@ export default class RenameFormUiHandler extends FormModalUiHandler {
             label: `${emoji} /${index + 1}`,
             handler: ()=> {
               // Retrieve the exact command, as it can be either "/", or "/n"
-              const command = input.text.split("").filter((_, i) => i >= (input.text.split("").filter((_, i) => i < input.cursorPosition).lastIndexOf("/")) && i < input.cursorPosition).join("");
+              const command = textArrayWithEmojis(input.text).filter((_, i) => i >= (textArrayWithEmojis(input.text).filter((_, i) => i < input.cursorPosition).lastIndexOf("/")) && i < input.cursorPosition).join("");
 
-              const texto = input.text;
-              const textBeforeCursor = texto.substring(0, input.cursorPosition);
-              const textAfterCursor = texto.substring(input.cursorPosition);
+              const text = input.text;
+              const textBeforeCursor = text.substring(0, input.cursorPosition);
+              const textAfterCursor = text.substring(input.cursorPosition);
 
               const exactlyCommand = textBeforeCursor.lastIndexOf(command);
               if (exactlyCommand !== -1) {
@@ -142,25 +142,19 @@ export default class RenameFormUiHandler extends FormModalUiHandler {
       };
 
       input.on("textchange", (inputObject:InputText, evt:InputEvent) => {
-        // If deleting and currently positioned at "/", display the list of emojis
-        if (
-          !evt.data &&
-          input.text.split("").filter((char) => emojisAvailable.some((em) => em === char)).length < maxEmojis &&
-          input.text.split("").some((char, i) => char === "/" && i + 1 === input.cursorPosition)
-        ) {
-          ui.setOverlayMode(Mode.AUTO_COMPLETE, modalOptions);
-        }
+        const text = input.text;
+        const arrayText = textArrayWithEmojis(text);
 
         // Remove disallowed emojis.
-        if (textArrayWithEmojis(input.text).filter((char) => {
-          // const isEmoji = !char.match(/[\u0000-\u00ff]/); // Emojis, special characters and kaomojis
+        if (arrayText.filter((char) => {
+          // const isEmoji = !char.match(/[\u0000-\u00ff]/); // Emojis, special characters and kaomojis, technically
           const isEmoji = char.match(emojiRegex); // Only Emojis
           const isAllowedEmoji = emojisAvailable.includes(char);
           return isEmoji && !isAllowedEmoji;
         }).length) {
           const regex = emojiRegex;
           let totalLength: number = 0;
-          const newText = input.text.replace(regex, (match) => {
+          const newText = text.replace(regex, (match) => {
             if (emojisAvailable.includes(match)) {
               return match;
             }
@@ -174,13 +168,16 @@ export default class RenameFormUiHandler extends FormModalUiHandler {
 
         }
 
-
         // If the number of available emojis exceeds the maximum allowed number of emojis..
         //.. Delete any attempt to insert another one.
         while (textArrayWithEmojis(input.text).filter((char) => emojisAvailable.includes(char)).length > maxEmojis) {
-          const charactersWithEmojis = textArrayWithEmojis(input.text);
-          const emojis = charactersWithEmojis.filter((char, i, arr) => {
+          const splitWithEmojis = textArrayWithEmojis(input.text);
+
+          // Retrieve only the emojis that are trying to be inserted
+          const emojis = splitWithEmojis.filter((char, i, arr) => {
             if (emojisAvailable.includes(char)) {
+              // The length of the emojis is usually greater than one
+              // And many can also be inserted by pasting
               let totalLength = 0;
               for (let j = 0; j <= i; j++) {
                 totalLength += arr[j].length;
@@ -189,9 +186,10 @@ export default class RenameFormUiHandler extends FormModalUiHandler {
             }
             return false;
           });
-          const cursorPosition = input.cursorPosition;
           const lastEmoji = emojis[emojis.length - 1];
-          const lastEmojiIndex = charactersWithEmojis.filter((char, i, arr) => {
+
+          // Retrieve only the position before the cursorInput of the last available emoji that you want to insert
+          const lastEmojiIndex = splitWithEmojis.filter((char, i, arr) => {
             let totalLength = 0;
             for (let j = 0; j <= i; j++) {
               totalLength += arr[j].length;
@@ -200,22 +198,23 @@ export default class RenameFormUiHandler extends FormModalUiHandler {
           }).lastIndexOf(lastEmoji);
 
           if (lastEmojiIndex !== -1) {
-            const textBeforeCursor = charactersWithEmojis.slice(0, lastEmojiIndex).join("");
-            const textAfterCursor = charactersWithEmojis.slice(lastEmojiIndex + 1).join("");
+            const textBeforeCursor = splitWithEmojis.slice(0, lastEmojiIndex).join("");
+            const textAfterCursor = splitWithEmojis.slice(lastEmojiIndex + 1).join("");
             const newText = textBeforeCursor + textAfterCursor;
 
-            if (newText !== input.text) {
+            if (newText !== text) {
+              const previousCursor = input.cursorPosition;
               input.setText(newText);
-              input.setCursorPosition(cursorPosition - lastEmoji.length);
+              input.setCursorPosition(previousCursor - lastEmoji.length);
             }
           }
         }
 
         // If the number of available emojis has been reached, do not display the list of emojis
-        if (evt.data && input.text.split("").filter((char) => emojisAvailable.some((em) => em === char)).length < maxEmojis) {
+        if (arrayText.filter((char) => emojisAvailable.some((em) => em === char)).length < maxEmojis) {
 
           // Retrieve the exact command, as it can be either "/", or "/n"
-          const command = input.text.split("").filter((_, i, arr) => i >= (input.text.split("").filter((_, i) => i < input.cursorPosition).lastIndexOf("/")) && i < input.cursorPosition).join("");
+          const command = arrayText.filter((_, i) => i >= (arrayText.filter((_, i) => i < input.cursorPosition).lastIndexOf("/")) && i < input.cursorPosition).join("");
 
           if (evt.data === "/") {
             ui.setOverlayMode(Mode.AUTO_COMPLETE, modalOptions);

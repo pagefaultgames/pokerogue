@@ -50,6 +50,7 @@
   "choosePokemon": "ポケモンを選ぶ",
   "renamePokemon": "ニックネームを変える",
   "rename": "名前を変える",
+  "renameHelpEmoji": "Use \"/\" to access emoji library and enter a number to choose an emoji\n(e.g. \"/1\" for the first emoji, max. 6)",
   "nickname": "ニックネーム",
   "errorServerDown": "おや！\nサーバーとの 接続中に 問題が 発生しました。\nゲームは 自動的に 再接続されます から\nウィンドウは 開いたままに しておいても よろしいです。",
   "noSaves": "何の　セーブファイルも　ありません！",

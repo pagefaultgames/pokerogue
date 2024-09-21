@@ -130,19 +130,10 @@ export default class TestDialogueUiHandler extends FormModalUiHandler {
         this.inputs[0].text = args[1];
       }
       this.submitAction = (_) => {
-        if (ui.getMode() === Mode.TEST_DIALOGUE) {
-          this.sanitizeInputs();
-          const sanitizedName = btoa(unescape(encodeURIComponent(this.inputs[0].text)));
-          config.buttonActions[0](sanitizedName);
-          return true;
-        }
-        return false;
-      };
-      const originalCancel = config.buttonActions[1];
-      config.buttonActions[1] = ()=>{
-        if (ui.getMode() === Mode.TEST_DIALOGUE) {
-          originalCancel();
-        }
+        this.sanitizeInputs();
+        const sanitizedName = btoa(unescape(encodeURIComponent(this.inputs[0].text)));
+        config.buttonActions[0](sanitizedName);
+        return true;
       };
       return true;
     }

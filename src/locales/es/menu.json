@@ -50,7 +50,7 @@
   "choosePokemon": "Elige un Pokémon.",
   "renamePokemon": "Renombrar Pokémon.",
   "rename": "Renombrar",
-  "renameHelpEmoji": "Use \"/\" to access emoji library and enter a number to choose an emoji\n(e.g. \"/1\" for the first emoji)",
+  "renameHelpEmoji": "Use \"/\" to access emoji library and enter a number to choose an emoji\n(e.g. \"/1\" for the first emoji, max. 6)",
   "nickname": "Apodo",
   "errorServerDown": "¡Ups! Ha habido un problema al contactar con el servidor.\n\nPuedes mantener esta ventana abierta,\nel juego se reconectará automáticamente.",
   "noSaves": "No tienes ninguna partida guardada registrada!",

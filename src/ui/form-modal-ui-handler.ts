@@ -91,7 +91,7 @@ export abstract class FormModalUiHandler extends ModalUiHandler {
       if (this.buttonBgs.length) {
         this.buttonBgs[0].off("pointerdown");
         this.buttonBgs[0].on("pointerdown", () => {
-          if (this.submitAction) {
+          if (this.scene.ui.getMode() === this.mode && this.submitAction) {
             this.submitAction();
           }
         });
