@@ -584,7 +584,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   getSpriteScale(): number {
     const formKey = this.getFormKey();
-    if (formKey.indexOf(SpeciesFormKey.GIGANTAMAX) > -1 || formKey.indexOf(SpeciesFormKey.ETERNAMAX) > -1) {
+    if (this.isMax() === true || formKey === "segin-starmobile" || formKey === "schedar-starmobile" || formKey === "navi-starmobile" || formKey === "ruchbah-starmobile" || formKey === "caph-starmobile") {
       return 1.5;
     } else if (this.mysteryEncounterPokemonData.spriteScale > 0) {
       return this.mysteryEncounterPokemonData.spriteScale;
