@@ -9,17 +9,17 @@
   "option": {
     "1": {
       "label": "배달하기",
-      "tooltip": "(-) 포켓몬의 스피드를 활용\n(+) @[MONEY]{Money} 획득",
+      "tooltip": "(-) 포켓몬의 스피드를 활용\n(+) @[MONEY]{소지금} 획득",
       "selected": "{{selectedPokemon}}[[는]] 배달 아르바이트를 시작했다."
     },
     "2": {
       "label": "창고 정리",
-      "tooltip": "(-) 포켓몬의 힘과 튼튼함을 활용\n(+) @[MONEY]{Money} 획득",
+      "tooltip": "(-) 포켓몬의 힘과 튼튼함을 활용\n(+) @[MONEY]{소지금} 획득",
       "selected": "{{selectedPokemon}}[[는]] 창고 정리를 시작했다."
     },
     "3": {
       "label": "바람잡이",
-      "tooltip": "(-) {{option3PrimaryName}}의 {{option3PrimaryMove}}를 활용\n(+) @[MONEY]{Money} 획득",
+      "tooltip": "(-) {{option3PrimaryName}}의 {{option3PrimaryMove}}를 활용\n(+) @[MONEY]{소지금} 획득",
       "disabled_tooltip": "포켓몬이 해당 작업에 필요한 기술이 없습니다.",
       "selected": "{{option3PrimaryName}}[[는]] {{option3PrimaryMove}}[[로]]\n하루 종일 손님들을 끌어모았다!"
     }
