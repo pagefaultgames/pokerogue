@@ -1670,7 +1670,7 @@ export class PostAttackStealHeldItemAbAttr extends PostAttackAbAttr {
   applyPostAttackAfterMoveTypeCheck(pokemon: Pokemon, passive: boolean, simulated: boolean, defender: Pokemon, move: Move, hitResult: HitResult, args: any[]): Promise<boolean> {
     return new Promise<boolean>(resolve => {
       if (!simulated && hitResult < HitResult.NO_EFFECT && (!this.stealCondition || this.stealCondition(pokemon, defender, move))) {
-        const heldItems = this.getTargetHeldItems(defender).filter(i => i.isTransferrable);
+        const heldItems = this.getTargetHeldItems(defender).filter(i => i.isTransferable);
         if (heldItems.length) {
           const stolenItem = heldItems[pokemon.randSeedInt(heldItems.length)];
           pokemon.scene.tryTransferHeldItemModifier(stolenItem, pokemon, false).then(success => {
@@ -1763,7 +1763,7 @@ export class PostDefendStealHeldItemAbAttr extends PostDefendAbAttr {
   applyPostDefend(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker: Pokemon, move: Move, hitResult: HitResult, args: any[]): Promise<boolean> {
     return new Promise<boolean>(resolve => {
       if (!simulated && hitResult < HitResult.NO_EFFECT && (!this.condition || this.condition(pokemon, attacker, move))) {
-        const heldItems = this.getTargetHeldItems(attacker).filter(i => i.isTransferrable);
+        const heldItems = this.getTargetHeldItems(attacker).filter(i => i.isTransferable);
         if (heldItems.length) {
           const stolenItem = heldItems[pokemon.randSeedInt(heldItems.length)];
           pokemon.scene.tryTransferHeldItemModifier(stolenItem, pokemon, false).then(success => {
@@ -2625,7 +2625,11 @@ export class PreStatStageChangeAbAttr extends AbAttr {
   }
 }
 
+/**
+ * Protect one or all {@linkcode BattleStat} from reductions caused by other Pokémon's moves and Abilities
+ */
 export class ProtectStatAbAttr extends PreStatStageChangeAbAttr {
+  /** {@linkcode BattleStat} to protect or `undefined` if **all** {@linkcode BattleStat} are protected */
   private protectedStat?: BattleStat;
 
   constructor(protectedStat?: BattleStat) {
@@ -2634,7 +2638,17 @@ export class ProtectStatAbAttr extends PreStatStageChangeAbAttr {
     this.protectedStat = protectedStat;
   }
 
-  applyPreStatStageChange(_pokemon: Pokemon, _passive: boolean, simulated: boolean, stat: BattleStat, cancelled: Utils.BooleanHolder, _args: any[]): boolean {
+  /**
+   * Apply the {@linkcode ProtectedStatAbAttr} to an interaction
+   * @param _pokemon
+   * @param _passive
+   * @param simulated
+   * @param stat the {@linkcode BattleStat} being affected
+   * @param cancelled The {@linkcode Utils.BooleanHolder} that will be set to true if the stat is protected
+   * @param _args
+   * @returns true if the stat is protected, false otherwise
+   */
+  applyPreStatStageChange(_pokemon: Pokemon, _passive: boolean, _simulated: boolean, stat: BattleStat, cancelled: Utils.BooleanHolder, _args: any[]): boolean {
     if (Utils.isNullOrUndefined(this.protectedStat) || stat === this.protectedStat) {
       cancelled.value = true;
       return true;
@@ -3757,7 +3771,7 @@ export class StatStageChangeMultiplierAbAttr extends AbAttr {
     this.multiplier = multiplier;
   }
 
-  apply(pokemon: Pokemon, passive: boolean, simulated: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean {
+  override apply(pokemon: Pokemon, passive: boolean, simulated: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean {
     (args[0] as Utils.IntegerHolder).value *= this.multiplier;
 
     return true;

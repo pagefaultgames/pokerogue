@@ -1,0 +1,41 @@
+{
+	"textures": [
+		{
+			"image": "star_grunt_m.png",
+			"format": "RGBA8888",
+			"size": {
+				"w": 70,
+				"h": 70
+			},
+			"scale": 1,
+			"frames": [
+				{
+					"filename": "0001.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 80,
+						"h": 80
+					},
+					"spriteSourceSize": {
+						"x": 24,
+						"y": 9,
+						"w": 31,
+						"h": 70
+					},
+					"frame": {
+						"x": 0,
+						"y": 0,
+						"w": 31,
+						"h": 70
+					}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "https://www.codeandweb.com/texturepacker",
+		"version": "3.0",
+		"smartupdate": "$TexturePacker:SmartUpdate:abc4b0424c37fd55a2bf2e9f5142adce:41a140aa68a1eda61d9a00cab4e07721:a0796711f9e0333796b6629cd43ff8e8$"
+	}
+}

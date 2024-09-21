@@ -5,7 +5,7 @@ import { modifierTypes, PokemonHeldItemModifierType } from "#app/modifier/modifi
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { PartyMemberStrength } from "#enums/party-member-strength";
 import BattleScene from "#app/battle-scene";
-import MysteryEncounter, { MysteryEncounterBuilder } from "../mystery-encounter";
+import MysteryEncounter, { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-encounter";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { Species } from "#enums/species";
 import { TrainerType } from "#enums/trainer-type";
@@ -246,12 +246,12 @@ export const ClowningAroundEncounter: MysteryEncounter =
           const party = scene.getParty();
           let mostHeldItemsPokemon = party[0];
           let count = mostHeldItemsPokemon.getHeldItems()
-            .filter(m => m.isTransferrable && !(m instanceof BerryModifier))
+            .filter(m => m.isTransferable && !(m instanceof BerryModifier))
             .reduce((v, m) => v + m.stackCount, 0);
 
           party.forEach(pokemon => {
             const nextCount = pokemon.getHeldItems()
-              .filter(m => m.isTransferrable && !(m instanceof BerryModifier))
+              .filter(m => m.isTransferable && !(m instanceof BerryModifier))
               .reduce((v, m) => v + m.stackCount, 0);
             if (nextCount > count) {
               mostHeldItemsPokemon = pokemon;
@@ -276,7 +276,7 @@ export const ClowningAroundEncounter: MysteryEncounter =
           // Shuffle Transferable held items in the same tier (only shuffles Ultra and Rogue atm)
           let numUltra = 0;
           let numRogue = 0;
-          items.filter(m => m.isTransferrable && !(m instanceof BerryModifier))
+          items.filter(m => m.isTransferable && !(m instanceof BerryModifier))
             .forEach(m => {
               const type = m.type.withTierFromPool();
               const tier = type.tier ?? ModifierTier.ULTRA;

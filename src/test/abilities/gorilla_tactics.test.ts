@@ -10,8 +10,6 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 describe("Abilities - Gorilla Tactics", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
-  const TIMEOUT = 20 * 1000;
-
   beforeAll(() => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
@@ -49,7 +47,7 @@ describe("Abilities - Gorilla Tactics", () => {
     // Other moves should be restricted
     expect(darmanitan.isMoveRestricted(Moves.TACKLE)).toBe(true);
     expect(darmanitan.isMoveRestricted(Moves.SPLASH)).toBe(false);
-  }, TIMEOUT);
+  });
 
   it("should struggle if the only usable move is disabled", async () => {
     await game.classicMode.startBattle([Species.GALAR_DARMANITAN]);
@@ -79,5 +77,5 @@ describe("Abilities - Gorilla Tactics", () => {
 
     await game.phaseInterceptor.to("MoveEndPhase");
     expect(darmanitan.hp).toBeLessThan(darmanitan.getMaxHp());
-  }, TIMEOUT);
+  });
 });

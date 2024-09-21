@@ -6,7 +6,7 @@ import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest";
 
-const TIMEOUT = 20 * 1000;
+
 
 describe("Moves - Rage Powder", () => {
   let phaserGame: Phaser.Game;
@@ -50,7 +50,7 @@ describe("Moves - Rage Powder", () => {
       // If redirection was bypassed, both enemies should be damaged
       expect(enemyPokemon[0].hp).toBeLessThan(enemyPokemon[0].getMaxHp());
       expect(enemyPokemon[1].hp).toBeLessThan(enemyPokemon[0].getMaxHp());
-    }, TIMEOUT
+    }
   );
 
   test(
@@ -76,6 +76,6 @@ describe("Moves - Rage Powder", () => {
       // If redirection was bypassed, both enemies should be damaged
       expect(enemyPokemon[0].hp).toBeLessThan(enemyStartingHp[0]);
       expect(enemyPokemon[1].hp).toBeLessThan(enemyStartingHp[1]);
-    }, TIMEOUT
+    }
   );
 });
