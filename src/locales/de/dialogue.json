@@ -778,32 +778,33 @@
   },
   "atticus": {
     "encounter": {
-      "1": "You have some nerve baring your fangs at Team Star. Come, then, villainous wretch!",
-      "2": "Be warned—I shall spare thee no mercy! En garde!"
+      "1": "hr habt Team Star Leid angetan, unverschämter Schurke! Mein Gift soll Euer Niedergang sein!",
+      "2": "Eure Bereitschaft zum Duell erfreut mich! Möge der Kampf ein ehrwürdiger sein!"
     },
     "victory": {
-      "1": "Forgive me, my friends...",
-      "2": "You have utterly bested me. But thy victory stir'd no bitterness within me—such was its brilliance."
+      "1": "Meine Gefährten... Vergebt mir...",
+      "2": "Ich habe eine klare Niederlage erlitten, bei der Groll und Bitterkeit fehl am Platz wären."
     }
   },
   "ortega": {
     "encounter": {
-      "1": "I promise I'll play nice, so don't blame me when this battle sends you blubbering back home!",
-      "2": "I'll wipe that smug look off your face for sure! You're going down!"
+      "1": "Wenn ich mit dir fertig bin, wirst du heulend nach Hause rennen!",
+      "2": "Ich werde gewinnen, also spar dir deinen
+überheblichen Auftritt!"
     },
     "victory": {
-      "1": "Ugh! How could I LOSE! What the HECK!",
-      "2": "Arrrrgggh! That strength of yours is SO. NOT. FAIR."
+      "1": "Was?! Wie konnte ich nur verlieren? Warum? Warum nur?!",
+      "2": "Graaaah! Du bist viel zu stark, das ist so was von unfair!"
     }
   },
   "eri": {
     "encounter": {
-      "1": "Doesn't matter who you are. I'll bury anyone who tries to take down Team Star!",
-      "2": "I give as good as I get—that's a promise! We'll see who's left standing in the end!"
+      "1": "Wer auch immer es auf Team Star abgesehen hat, wird zerschmettert!",
+      "2": "Ich kann genauso gut austeilen wie einstecken! Wer am Ende noch steht, gewinnt."
     },
     "victory": {
-      "1": "I'm so sorry, everyone...",
-      "2": "I gave it my all, but it wasn't enough—I wasn't enough..."
+      "1": "Leute, es tut mir so leid...",
+      "2": "Ich habe alles gegeben... Ich bereue nichts..."
     }
   },
   "rocket_boss_giovanni_1": {
