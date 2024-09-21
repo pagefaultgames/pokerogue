@@ -2164,12 +2164,16 @@ export default class BattleScene extends SceneBase {
       return 20.87;
     case "battle_macro_grunt": // SWSH Trainer Battle
       return 11.56;
+    case "battle_star_grunt": //SV Team Star Battle
+      return 133.362;
     case "battle_galactic_admin": //BDSP Team Galactic Admin Battle
       return 11.997;
     case "battle_skull_admin": //SM Team Skull Admin Battle
       return 15.463;
     case "battle_oleana": //SWSH Oleana Battle
       return 14.110;
+    case "battle_star_admin": //SV Team Star Boss Battle
+      return 9.493;
     case "battle_rocket_boss": //USUM Giovanni Battle
       return 9.115;
     case "battle_aqua_magma_boss": //ORAS Archie & Maxie Battle
@@ -2186,6 +2190,8 @@ export default class BattleScene extends SceneBase {
       return 13.13;
     case "battle_macro_boss": //SWSH Rose Battle
       return 11.42;
+    case "battle_star_boss": //SV Cassiopeia Battle
+      return 25.764;
     case "mystery_encounter_gen_5_gts": // BW GTS
       return 8.52;
     case "mystery_encounter_gen_6_gts": // XY GTS
