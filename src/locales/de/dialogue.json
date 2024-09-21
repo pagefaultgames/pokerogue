@@ -1006,7 +1006,7 @@
   },
   "star_boss_penny_1": {
     "encounter": {
-      "1": "I'm the big boss of Team Star. The name's Cassiopeia. \n$Now, bow down before the overwhelming might of Team Star's founder!"
+      "1": "Ich bin Team Stars Big Boss. Mein Name ist Cassiopeia...$Die Gründerin von Team Star ist kampfbereit! Verneigt euch vor meiner unermesslichen Kraft!"
     },
     "victory": {
       "1": "... ... .."
@@ -1017,13 +1017,13 @@
   },
   "star_boss_penny_2": {
     "encounter": {
-      "1": "I won't hold back in this battle! I'll stay true to Team Star's code! \n$My Veevee power will crush you into stardust!"
+      "1": "Ich werde mich in diesem Kampf nicht zurückhalten! Ich werde dem Kodex von Team Star treu bleiben!$Unsere Evoli-Power verwandelt euch in Sternenstaub!"
     },
     "victory": {
-      "1": "...It's all over now."
+      "1": "Es ist vorbei..."
     },
     "defeat": {
-      "1": "I can't fault you on your battle skills at all... Considering how the bosses fell at your hands."
+      "1": "Du bist unfassbar stark. Kein Wunder, dass die anderen Bosse gegen dich verloren haben..."
     }
   },
   "brock": {
