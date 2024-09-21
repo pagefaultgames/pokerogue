@@ -7,7 +7,7 @@ import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
-const TIMEOUT = 20 * 1000;
+
 
 describe("Multi-target damage reduction", () => {
   let phaserGame: Phaser.Game;
@@ -75,7 +75,7 @@ describe("Multi-target damage reduction", () => {
     // Moves that target all enemies get reduced if there's more than one enemy
     expect(gleam1).toBeLessThanOrEqual(Utils.toDmgValue(gleam2 * 0.75) + 1);
     expect(gleam1).toBeGreaterThanOrEqual(Utils.toDmgValue(gleam2 * 0.75) - 1);
-  }, TIMEOUT);
+  });
 
   it("should reduce earthquake when more than one pokemon other than user is not fainted", async () => {
     await game.startBattle([Species.MAGIKARP, Species.FEEBAS]);
@@ -126,5 +126,5 @@ describe("Multi-target damage reduction", () => {
     // Turn 3: 1 target, should be no damage reduction
     expect(damageEnemy1Turn1).toBeLessThanOrEqual(Utils.toDmgValue(damageEnemy1Turn3 * 0.75) + 1);
     expect(damageEnemy1Turn1).toBeGreaterThanOrEqual(Utils.toDmgValue(damageEnemy1Turn3 * 0.75) - 1);
-  }, TIMEOUT);
+  });
 });

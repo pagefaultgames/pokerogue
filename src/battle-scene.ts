@@ -783,6 +783,14 @@ export default class BattleScene extends SceneBase {
   }
 
   /**
+   * Finds the first {@linkcode Pokemon.isActive() | active PlayerPokemon} that isn't also currently switching out
+   * @returns Either the first {@linkcode PlayerPokemon} satisfying, or undefined if no player pokemon on the field satisfy
+   */
+  getNonSwitchedPlayerPokemon(): PlayerPokemon | undefined {
+    return this.getPlayerField().find(p => p.isActive() && p.switchOutStatus === false);
+  }
+
+  /**
    * Returns an array of PlayerPokemon of length 1 or 2 depending on if double battles or not
    * @returns array of {@linkcode PlayerPokemon}
    */
@@ -797,6 +805,14 @@ export default class BattleScene extends SceneBase {
 
   getEnemyPokemon(): EnemyPokemon | undefined {
     return this.getEnemyField().find(p => p.isActive());
+  }
+
+  /**
+   * Finds the first {@linkcode Pokemon.isActive() | active EnemyPokemon} pokemon from the enemy that isn't also currently switching out
+   * @returns Either the first {@linkcode EnemyPokemon} satisfying, or undefined if no player pokemon on the field satisfy
+   */
+  getNonSwitchedEnemyPokemon(): EnemyPokemon | undefined {
+    return this.getEnemyField().find(p => p.isActive() && p.switchOutStatus === false);
   }
 
   /**
@@ -2148,12 +2164,16 @@ export default class BattleScene extends SceneBase {
       return 20.87;
     case "battle_macro_grunt": // SWSH Trainer Battle
       return 11.56;
+    case "battle_star_grunt": //SV Team Star Battle
+      return 133.362;
     case "battle_galactic_admin": //BDSP Team Galactic Admin Battle
       return 11.997;
     case "battle_skull_admin": //SM Team Skull Admin Battle
       return 15.463;
     case "battle_oleana": //SWSH Oleana Battle
       return 14.110;
+    case "battle_star_admin": //SV Team Star Boss Battle
+      return 9.493;
     case "battle_rocket_boss": //USUM Giovanni Battle
       return 9.115;
     case "battle_aqua_magma_boss": //ORAS Archie & Maxie Battle
@@ -2170,6 +2190,8 @@ export default class BattleScene extends SceneBase {
       return 13.13;
     case "battle_macro_boss": //SWSH Rose Battle
       return 11.42;
+    case "battle_star_boss": //SV Cassiopeia Battle
+      return 25.764;
     case "mystery_encounter_gen_5_gts": // BW GTS
       return 8.52;
     case "mystery_encounter_gen_6_gts": // XY GTS
