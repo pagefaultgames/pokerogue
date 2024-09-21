@@ -50,8 +50,8 @@ export class TurnStartPhase extends FieldPhase {
 
     // Adjust the sort function based on whether Trick Room is active.
     orderedTargets.sort((a: Pokemon, b: Pokemon) => {
-      const aSpeed = a?.getEffectiveStat(Stat.SPD) || 0;
-      const bSpeed = b?.getEffectiveStat(Stat.SPD) || 0;
+      const aSpeed = a?.getEffectiveStat(Stat.SPD) ?? 0;
+      const bSpeed = b?.getEffectiveStat(Stat.SPD) ?? 0;
 
       return speedReversed.value ? aSpeed - bSpeed : bSpeed - aSpeed;
     });
