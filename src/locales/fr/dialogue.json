@@ -345,15 +345,16 @@
       "2": "T’es un Dresseur n’est-ce pas ?\n$J’ai bien peur ce que ne soit pas une excuse suffisante pour nous interrompre dans notre travail.",
       "2_female": "T’es une Dresseuse n’est-ce pas ?\n$J’ai bien peur ce que ne soit pas une excuse suffisante pour nous interrompre dans notre travail.",
       "3": "Je travaille à Macro Cosmos Assurances !\nBesoin d’une assurance-vie ?",
-      "4": "I found you! In that case, time for a Pokémon battle!",
-      "5": "An earful from Ms. Oleana is way worse than anything you can do!"
+      "4": "Trouvé !\nPetit interlude combat !",
+      "4_female": "Trouvée !\nPetit interlude combat !",
+      "5": "Une soufflante de la part de madame Liv est la pire chose qui puisse arriver !"
     },
     "victory": {
       "1": "Je n’ai d’autre choix que respectueusement me retirer.",
       "2": "Mon argent de poche…\nPlus qu’à manger des pâtes pour la fin du mois…",
       "3": "Chez Macro Cosmos, rien n’est comparable à notre dévotion au travail !",
-      "4": "I even switched up my Pokémon...",
-      "5": "Battles didn't work... Only thing to do now is run!"
+      "4": "J’ai même pensé à chager de Pokémon en combat…",
+      "5": "Combattre ne sert à rien…\nPlus qu’à me barrer !"
     }
   },
   "oleana": {
@@ -371,69 +372,73 @@
   },
   "star_grunt": {
     "encounter": {
-      "1": "We're Team Star, kid. We burn so bright, it hurts to look at us!",
-      "2": "We'll come at you full force - Hasta la vistaaar! ☆",
-      "3": "If you don't clear out real quick-like, I'll hafta come at you in self-defense. You get me?",
-      "4": "Sorry, but if you don't turn yourself around here, amigo, we'll have to send you packing!",
-      "4_female": "Sorry, but if you don't turn yourself around here, amiga, we'll have to send you packing!",
-      "5": "Oh great. Here comes another rando to ruin my day."
+      "1": "Ouais, un peu de respect, tu veux ?\n Tu sais à qui t’as affaire ?",
+      "2": "Notre comité d’accueil va pas te faire de cadeau ! Hasta la vistaaar ! ☆",
+      "3": "Tu peux aller voir ailleurs si j’y suis ?\n$Si tu refuses, je m’autorise à faire valoir mes droits de légitime défense, je te préviens !",
+      "4": "Désolé, mais si tu refuses de partir, on sera obligés de t’y forcer, et ça sera pas joli joli.",
+      "4_female": "Désolé, mais si tu refuses de partir, on sera obligés de t’y forcer, et ça sera pas joli joli.",
+      "5": "Quoi ? Toi aussi, t’es venu me casser les pieds ? C’est vraiment pas ma journée…"
+      "5_female": "Quoi ? Toi aussi, t’es venue me casser les pieds ? C’est vraiment pas ma journée…"
     },
     "victory": {
-      "1": "How come I'M the one seeing stars?!",
-      "2": "You're scary, kid. If you joined Team Star, you'd be looking down from the top in no time!",
-      "3": "I defended myself all right... But it wasn't enough!",
-      "4": "H-hasta la vistar... ☆",
-      "5": "I didn't think grunt work for Team Star newbies would be this much of a chore..."
+      "1": "Comment c'est ça peut être moi qui voit les étoiles ?!",
+      "2": "T’en as dans le ventre.\n$T’as peut-être ce qu’il faut pour te faire une place dans la constellation de la Team Star.",
+      "3": "Ma défense était pourtant bonne…\nMais c’était pas assez visiblement !",
+      "4": "Ha… hasta la vistar… ☆",
+      "5": "J’aurais jamais cru qu’être Sbire de la Team Star serait un tel fadeau…"
     }
   },
   "giacomo": {
     "encounter": {
-      "1": "You don't really think things through, do ya? Declarin' war on Team Star is a real bad move.",
-      "2": "I'll play you a sick requiem as you crash and burn. Let's get this party staaarteeed!"
+      "1": "Tu dois vraiment pas tenir à ta life pour défier la Team Star comme ça !",
+      "2": "Tends un peu l’oreille… Tu l’entends ?\nC’est ton requiem !"
     },
     "victory": {
-      "1": "Guess that's that...",
-      "2": "You turned my melody into a threnody..."
+      "1": "Pfff, quelle ironie, franchement…",
+      "2": "J’pensais pas jouer le refrain de ma défaite…"
     }
   },
   "mela": {
     "encounter": {
-      "1": "So you're the dope who picked a fight with Team Star... Prepare to get messed up.",
-      "2": "All riiight, BRING IT! I'll blow everythin' sky high!"
+      "1": "Alors, c’est toi le guedin qu’ose nous défier ?\nSois prêt pour ta raclée.",
+      "1_female": "Alors, c’est toi la guedin qu’ose nous défier ?\nSois prête pour ta raclée.",
+      "2": "Y a pas à dire, t’es bien une tête brûlée !\nMais fais gaffe, j’en ai aussi sous l’capot !"
     },
     "victory": {
-      "1": "Ugh. Is this really how it's gonna end? What a hassle...",
-      "2": "I burned through everythin' I had...and now I've sputtered out."
+      "1": "Quoi, c’est comme ça qu’ça finit ?\nPfff… J’ai la haine…",
+      "2": "J’voulais tout bruler… Mais j’me suis juste consumée.\nY reste plus rien."
     }
   },
   "atticus": {
     "encounter": {
-      "1": "You have some nerve baring your fangs at Team Star. Come, then, villainous wretch!",
-      "2": "Be warned—I shall spare thee no mercy! En garde!"
+      "1": "T’as vraiment du cran de venir provoquer la Team Star.\nDestinée fatale - Au poison succombera - L’ennemi juré.",
+      "1_female": "T’as vraiment du cran de venir provoquer la Team Star.\nDestinée fatale - Au poison succombera - L’ennemie jurée.",
+      "2": "Vive expectative - Respect et adversité - Combat au sommet."
     },
     "victory": {
-      "1": "Forgive me, my friends...",
-      "2": "You have utterly bested me. But thy victory stir'd no bitterness within me—such was its brilliance."
+      "1": "Pardon, mes amis…",
+      "2": "Ta victoire n’évoque en moi ni rancune ni douleur.\nMon âme est en paix et j’accepte ma défaite."
     }
   },
   "ortega": {
     "encounter": {
-      "1": "I promise I'll play nice, so don't blame me when this battle sends you blubbering back home!",
-      "2": "I'll wipe that smug look off your face for sure! You're going down!"
+      "1": "J’vais bien m’occuper de toi, alors viens pas pleurer si tu perds.",
+      "2": "T’as beau avoir l’air sûr de toi, aujourd’hui, c’est moi qui vais gagner. Je te le garantis !"
+      "2_female": "T’as beau avoir l’air sûr de toi, aujourd’hui, c’est moi qui vais gagner. Je te le garantis !"
     },
     "victory": {
-      "1": "Ugh! How could I LOSE! What the HECK!",
-      "2": "Arrrrgggh! That strength of yours is SO. NOT. FAIR."
+      "1": "Hein ? J’ai perdu ? Mais pourquoi ?!\nPourquoi, pourquoi, pourquoi, POURQUOI ?!",
+      "2": "Mais pourquoi ça fonctionne pas ?!"
     }
   },
   "eri": {
     "encounter": {
-      "1": "Doesn't matter who you are. I'll bury anyone who tries to take down Team Star!",
-      "2": "I give as good as I get—that's a promise! We'll see who's left standing in the end!"
+      "1": "J’ignore tes intentions, mais mon rôle est d’anéantir quiconque s’attaque à la Team Star !",
+      "2": "Si on m’attaque, je riposte ! Nous verrons bien qui de nous deux restera debout à la fin !"
     },
     "victory": {
-      "1": "I'm so sorry, everyone...",
-      "2": "I gave it my all, but it wasn't enough—I wasn't enough..."
+      "1": "Les amis…\nJe suis désolée…",
+      "2": "J’ai donné mon maximum… et pourtant…\nÇa n’a pas suffi… J’ai échoué…"
     }
   },
   "rocket_boss_giovanni_1": {
@@ -572,24 +577,24 @@
   },
   "star_boss_penny_1": {
     "encounter": {
-      "1": "I'm the big boss of Team Star. The name's Cassiopeia. \n$Now, bow down before the overwhelming might of Team Star's founder!"
+      "1": "Je suis la Big Boss de la Team Star, Cassiopée…\n$Incline-toi devant la toute-puissance de la Big Boss !!!"
     },
     "victory": {
-      "1": "... ... .."
+      "1": "… … …"
     },
     "defeat": {
-      "1": "Heh..."
+      "1": "Hé…"
     }
   },
   "star_boss_penny_2": {
     "encounter": {
-      "1": "I won't hold back in this battle! I'll stay true to Team Star's code! \n$My Veevee power will crush you into stardust!"
+      "1": "Le code d’honneur de la Team Star exige que nous donnions le maximum en combat !\n$Par le pouvoir de l’Évolition, on va te réduire en poussière d’étoiles !"
     },
     "victory": {
-      "1": "...It's all over now."
+      "1": "… Tout est fini"
     },
     "defeat": {
-      "1": "I can't fault you on your battle skills at all... Considering how the bosses fell at your hands."
+      "1": "Tu es redoutable.\nPas étonnant que les boss de la Team aient perdu contre toi."
     }
   },
   "brock": {
