@@ -5,7 +5,7 @@
   "query": "¿Qué harás?",
   "option": {
     "1": {
-      "label": "Ver ofertas de intercambio"
+      "label": "Ver ofertas de intercambio",
       "tooltip": "(+) Selecciona una oferta de intercambio para uno de tus Pokémon",
       "trade_options_prompt": "Selecciona un Pokémon para recibir a través del intercambio."
     },
