@@ -19,6 +19,7 @@
   "aether_boss": "Direttrice Æther",
   "skull_boss": "Capo Team Skull",
   "macro_boss": "Presidente Macro Cosmos",
+  "star_boss": "Team Star Leader",
 
   "rocket_admin": "Tenente Team Rocket",
   "rocket_admin_female": "Tenente Team Rocket",
@@ -34,6 +35,7 @@
   "flare_admin_female": "Ufficiale Team Flare",
   "aether_admin": "Capo Filiale Æther",
   "skull_admin": "Ufficiale Team Skull",
-  "macro_admin": "Vicepresidente Macro Cosmos"
+  "macro_admin": "Vicepresidente Macro Cosmos",
+  "star_admin": "Team Star Squad Boss"
 }
 
