@@ -431,9 +431,9 @@ export default class Trainer extends Phaser.GameObjects.Container {
       retry = true;
     }
 
-    if (retry && (attempt || 0) < 10) {
+    if (retry && (attempt ?? 0) < 10) {
       console.log("Rerolling party member...");
-      ret = this.genNewPartyMemberSpecies(level, strength, (attempt || 0) + 1);
+      ret = this.genNewPartyMemberSpecies(level, strength, (attempt ?? 0) + 1);
     }
 
     return ret;
