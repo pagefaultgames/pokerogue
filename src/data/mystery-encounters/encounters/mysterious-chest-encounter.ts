@@ -163,11 +163,12 @@ export const MysteriousChestEncounter: MysteryEncounter =
             leaveEncounterWithoutBattle(scene);
           } else {
             // Your highest level unfainted Pokemon gets OHKO. Start battle against a Gimmighoul (35%)
-            const highestLevelPokemon = getHighestLevelPlayerPokemon(
-              scene,
-              true
-            );
+            const highestLevelPokemon = getHighestLevelPlayerPokemon(scene, true);
             koPlayerPokemon(scene, highestLevelPokemon);
+
+            encounter.setDialogueToken("pokeName", highestLevelPokemon.getNameToRender());
+            await showEncounterText(scene, `${namespace}.option.1.bad`);
+
             // Handle game over edge case
             const allowedPokemon = scene.getParty().filter(p => p.isAllowedInBattle());
             if (allowedPokemon.length === 0) {
@@ -176,8 +177,6 @@ export const MysteriousChestEncounter: MysteryEncounter =
               scene.unshiftPhase(new GameOverPhase(scene));
             } else {
               // Show which Pokemon was KOed, then start battle against Gimmighoul
-              encounter.setDialogueToken("pokeName", highestLevelPokemon.getNameToRender());
-              await showEncounterText(scene, `${namespace}.option.1.bad`);
               transitionMysteryEncounterIntroVisuals(scene, true, true, 500);
               setEncounterRewards(scene, { fillRemaining: true });
               await initBattleWithEnemyConfig(scene, encounter.enemyPartyConfigs[0]);

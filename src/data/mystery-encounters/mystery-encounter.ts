@@ -161,6 +161,11 @@ export default class MysteryEncounter implements IMysteryEncounter {
   doEncounterRewards?: (scene: BattleScene) => boolean;
   /** Will execute callback during VictoryPhase of a continuousEncounter */
   doContinueEncounter?: (scene: BattleScene) => Promise<void>;
+  /**
+   * Can perform special logic when a ME battle is lost, before GameOver/battle retry prompt.
+   * Should return `true` if it is treated as "real" Game Over, `false` if not.
+   */
+  onGameOver?: (scene: BattleScene) => boolean;
 
   /**
    * Requirements
@@ -742,11 +747,11 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
    *
    * @param min min wave (or exact size if only min is given)
    * @param max optional max size. If not given, defaults to min => exact wave
-   * @param excludeFainted if true, only counts unfainted mons
+   * @param excludeDisallowedPokemon if true, only counts allowed (legal in Challenge/unfainted) mons
    * @returns
    */
-  withScenePartySizeRequirement(min: number, max?: number, excludeFainted: boolean = false): this & Required<Pick<IMysteryEncounter, "requirements">> {
-    return this.withSceneRequirement(new PartySizeRequirement([min, max ?? min], excludeFainted));
+  withScenePartySizeRequirement(min: number, max?: number, excludeDisallowedPokemon: boolean = false): this & Required<Pick<IMysteryEncounter, "requirements">> {
+    return this.withSceneRequirement(new PartySizeRequirement([min, max ?? min], excludeDisallowedPokemon));
   }
 
   /**

@@ -171,6 +171,12 @@ async function doBiomeTransitionDialogueAndBattleInit(scene: BattleScene) {
   const bossSpecies = scene.arena.randomSpecies(scene.currentBattle.waveIndex, level, 0, getPartyLuckValue(scene.getParty()), true);
   const bossPokemon = new EnemyPokemon(scene, bossSpecies, level, TrainerSlot.NONE, true);
   encounter.setDialogueToken("enemyPokemon", getPokemonNameWithAffix(bossPokemon));
+
+  // Defense/Spd buffs below wave 50, Atk/Def/Spd buffs otherwise
+  const statChangesForBattle: (Stat.ATK | Stat.DEF | Stat.SPATK | Stat.SPDEF | Stat.SPD | Stat.ACC | Stat.EVA)[] = scene.currentBattle.waveIndex < 50 ?
+    [Stat.DEF, Stat.SPDEF, Stat.SPD] :
+    [Stat.ATK, Stat.DEF, Stat.SPATK, Stat.SPDEF, Stat.SPD];
+
   const config: EnemyPartyConfig = {
     pokemonConfigs: [{
       level: level,
@@ -180,7 +186,7 @@ async function doBiomeTransitionDialogueAndBattleInit(scene: BattleScene) {
       tags: [BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON],
       mysteryEncounterBattleEffects: (pokemon: Pokemon) => {
         queueEncounterMessage(pokemon.scene, `${namespace}.boss_enraged`);
-        pokemon.scene.unshiftPhase(new StatStageChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [Stat.ATK, Stat.DEF, Stat.SPATK, Stat.SPDEF, Stat.SPD], 1));
+        pokemon.scene.unshiftPhase(new StatStageChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, statChangesForBattle, 1));
       }
     }],
   };

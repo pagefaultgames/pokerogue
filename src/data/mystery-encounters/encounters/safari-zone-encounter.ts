@@ -254,7 +254,7 @@ async function summonSafariPokemon(scene: BattleScene) {
   let enemySpecies;
   let pokemon;
   scene.executeWithSeedOffset(() => {
-    enemySpecies = getPokemonSpecies(getRandomSpeciesByStarterTier([0, 5]));
+    enemySpecies = getPokemonSpecies(getRandomSpeciesByStarterTier([0, 5], undefined, undefined, false, false, false));
     const level = scene.currentBattle.getLevelForWave();
     enemySpecies = getPokemonSpecies(enemySpecies.getWildSpeciesForLevel(level, true, false, scene.gameMode));
     pokemon = scene.addEnemyPokemon(enemySpecies, level, TrainerSlot.NONE, false);
@@ -282,7 +282,7 @@ async function summonSafariPokemon(scene: BattleScene) {
     pokemon.calculateStats();
 
     scene.currentBattle.enemyParty.unshift(pokemon);
-  }, scene.currentBattle.waveIndex * 1000 + encounter.misc.safariPokemonRemaining);
+  }, scene.currentBattle.waveIndex * 1000 * encounter.misc.safariPokemonRemaining);
 
   scene.gameData.setPokemonSeen(pokemon, true);
   await pokemon.loadAssets();

@@ -745,6 +745,37 @@ export function handleMysteryEncounterVictory(scene: BattleScene, addHealPhase: 
 }
 
 /**
+ * Similar to {@linkcode handleMysteryEncounterVictory}, but for cases where the player lost a battle or failed a challenge
+ * @param scene
+ * @param addHealPhase
+ */
+export function handleMysteryEncounterBattleFailed(scene: BattleScene, addHealPhase: boolean = false, doNotContinue: boolean = false) {
+  const allowedPkm = scene.getParty().filter((pkm) => pkm.isAllowedInBattle());
+
+  if (allowedPkm.length === 0) {
+    scene.clearPhaseQueue();
+    scene.unshiftPhase(new GameOverPhase(scene));
+    return;
+  }
+
+  // If in repeated encounter variant, do nothing
+  // Variant must eventually be swapped in order to handle "true" end of the encounter
+  const encounter = scene.currentBattle.mysteryEncounter!;
+  if (encounter.continuousEncounter || doNotContinue) {
+    return;
+  } else if (encounter.encounterMode !== MysteryEncounterMode.NO_BATTLE) {
+    scene.pushPhase(new BattleEndPhase(scene));
+  }
+
+  scene.pushPhase(new MysteryEncounterRewardsPhase(scene, addHealPhase));
+
+  if (!encounter.doContinueEncounter) {
+    // Only lapse eggs once for multi-battle encounters
+    scene.pushPhase(new EggLapsePhase(scene));
+  }
+}
+
+/**
  *
  * @param scene
  * @param hide - If true, performs ease out and hide visuals. If false, eases in visuals. Defaults to true

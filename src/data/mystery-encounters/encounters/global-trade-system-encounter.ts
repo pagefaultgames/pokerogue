@@ -317,7 +317,6 @@ export const GlobalTradeSystemEncounter: MysteryEncounter =
             });
           };
 
-          // Only Pokemon that can gain benefits are above 1/3rd HP with no status
           const selectableFilter = (pokemon: Pokemon) => {
             // If pokemon has items to trade
             const meetsReqs = pokemon.getHeldItems().filter((it) => {

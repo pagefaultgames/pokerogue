@@ -349,10 +349,18 @@ export const ClowningAroundEncounter: MysteryEncounter =
               }
             }
             newTypes.push(secondType);
+
+            // Apply the type changes (to both base and fusion, if pokemon is fused)
             if (!pokemon.mysteryEncounterPokemonData) {
               pokemon.mysteryEncounterPokemonData = new MysteryEncounterPokemonData();
             }
             pokemon.mysteryEncounterPokemonData.types = newTypes;
+            if (pokemon.isFusion()) {
+              if (!pokemon.fusionMysteryEncounterPokemonData) {
+                pokemon.fusionMysteryEncounterPokemonData = new MysteryEncounterPokemonData();
+              }
+              pokemon.fusionMysteryEncounterPokemonData.types = newTypes;
+            }
           }
         })
         .withOptionPhase(async (scene: BattleScene) => {
@@ -415,10 +423,17 @@ function onYesAbilitySwap(scene: BattleScene, resolve) {
   const onPokemonSelected = (pokemon: PlayerPokemon) => {
     // Do ability swap
     const encounter = scene.currentBattle.mysteryEncounter!;
-    if (!pokemon.mysteryEncounterPokemonData) {
-      pokemon.mysteryEncounterPokemonData = new MysteryEncounterPokemonData();
+    if (pokemon.isFusion()) {
+      if (!pokemon.fusionMysteryEncounterPokemonData) {
+        pokemon.fusionMysteryEncounterPokemonData = new MysteryEncounterPokemonData();
+      }
+      pokemon.fusionMysteryEncounterPokemonData.ability = encounter.misc.ability;
+    } else {
+      if (!pokemon.mysteryEncounterPokemonData) {
+        pokemon.mysteryEncounterPokemonData = new MysteryEncounterPokemonData();
+      }
+      pokemon.mysteryEncounterPokemonData.ability = encounter.misc.ability;
     }
-    pokemon.mysteryEncounterPokemonData.ability = encounter.misc.ability;
     encounter.setDialogueToken("chosenPokemon", pokemon.getNameToRender());
     scene.ui.setMode(Mode.MESSAGE).then(() => resolve(true));
   };

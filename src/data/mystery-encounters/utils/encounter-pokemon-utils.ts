@@ -13,7 +13,7 @@ import { PartyOption, PartyUiMode } from "#app/ui/party-ui-handler";
 import { Species } from "#enums/species";
 import { Type } from "#app/data/type";
 import PokemonSpecies, { getPokemonSpecies, speciesStarters } from "#app/data/pokemon-species";
-import { queueEncounterMessage, showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
+import { getEncounterText, queueEncounterMessage, showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { modifierTypes, PokemonHeldItemModifierType } from "#app/modifier/modifier-type";
 import { Gender } from "#app/data/gender";
@@ -170,15 +170,24 @@ export function getHighestStatTotalPlayerPokemon(scene: BattleScene, unfainted: 
  * @param starterTiers
  * @param excludedSpecies
  * @param types
+ * @param allowSubLegendary
+ * @param allowLegendary
+ * @param allowMythical
  * @returns
  */
-export function getRandomSpeciesByStarterTier(starterTiers: number | [number, number], excludedSpecies?: Species[], types?: Type[]): Species {
+export function getRandomSpeciesByStarterTier(starterTiers: number | [number, number], excludedSpecies?: Species[], types?: Type[], allowSubLegendary: boolean = true, allowLegendary: boolean = true, allowMythical: boolean = true): Species {
   let min = Array.isArray(starterTiers) ? starterTiers[0] : starterTiers;
   let max = Array.isArray(starterTiers) ? starterTiers[1] : starterTiers;
 
   let filteredSpecies: [PokemonSpecies, number][] = Object.keys(speciesStarters)
     .map(s => [parseInt(s) as Species, speciesStarters[s] as number])
-    .filter(s => getPokemonSpecies(s[0]) && (!excludedSpecies || !excludedSpecies.includes(s[0])))
+    .filter(s => {
+      const pokemonSpecies = getPokemonSpecies(s[0]);
+      return pokemonSpecies && (!excludedSpecies || !excludedSpecies.includes(s[0])
+        && (allowSubLegendary || !pokemonSpecies.subLegendary)
+        && (allowLegendary || !pokemonSpecies.legendary)
+        && (allowMythical || !pokemonSpecies.mythical));
+    })
     .map(s => [getPokemonSpecies(s[0]), s[1]]);
 
   if (types && types.length > 0) {
@@ -772,4 +781,24 @@ export async function addPokemonDataToDexAndValidateAchievements(scene: BattleSc
 
   scene.gameData.updateSpeciesDexIvs(pokemon.species.getRootSpeciesId(true), pokemon.ivs);
   return scene.gameData.setPokemonCaught(pokemon, true, false, false);
+}
+
+/**
+ * Checks if a Pokemon is allowed under a challenge, and allowed in battle.
+ * If both are true, returns `null`.
+ * If one of them is not true, returns message content that the Pokemon is invalid.
+ * Typically used for cheecking whether a Pokemon can be selected for a {@linkcode MysteryEncounterOption}
+ * @param pokemon
+ * @param scene
+ * @param invalidSelectionKey
+ */
+export function isPokemonValidForEncounterOptionSelection(pokemon: Pokemon, scene: BattleScene, invalidSelectionKey: string): string | null {
+  if (!pokemon.isAllowed()) {
+    return i18next.t("partyUiHandler:cantBeUsed", { pokemonName: pokemon.getNameToRender() }) ?? null;
+  }
+  if (!pokemon.isAllowedInBattle()) {
+    return getEncounterText(scene, invalidSelectionKey) ?? null;
+  }
+
+  return null;
 }
