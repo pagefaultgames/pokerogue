@@ -35,7 +35,7 @@ describe("Reload", () => {
     expect(preReloadRngState).toBe(postReloadRngState);
   }, 20000);
 
-  it("should not have RNG inconsistencies after a biome switch", async () => {
+  it.each(Array.from({length: 100}))("should not have RNG inconsistencies after a biome switch", async () => {
     game.override
       .startingWave(10)
       .battleType("single")
