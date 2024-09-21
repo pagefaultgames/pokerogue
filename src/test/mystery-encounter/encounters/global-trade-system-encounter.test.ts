@@ -69,7 +69,7 @@ describe("Global Trade System - Mystery Encounter", () => {
     expect(GlobalTradeSystemEncounter.options.length).toBe(4);
   });
 
-  it("should not freeze when generating trade options for extreme BST non-legendaries", async () => {
+  it("should not loop infinitely when generating trade options for extreme BST non-legendaries", async () => {
     const extremeBstTeam = [Species.SLAKING, Species.WISHIWASHI, Species.SUNKERN];
     await game.runToMysteryEncounter(MysteryEncounterType.GLOBAL_TRADE_SYSTEM, extremeBstTeam);
 
