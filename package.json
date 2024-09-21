@@ -18,7 +18,8 @@
 		"eslint-ci": "eslint .",
 		"docs": "typedoc",
 		"depcruise": "depcruise src",
-		"depcruise:graph": "depcruise src --output-type dot | node dependency-graph.js > dependency-graph.svg"
+		"depcruise:graph": "depcruise src --output-type dot | node dependency-graph.js > dependency-graph.svg",
+		"create-test": "node ./create-test-boilerplate.js"
 	},
 	"devDependencies": {
 		"@eslint/js": "^9.3.0",
@@ -31,6 +32,8 @@
 		"@vitest/coverage-istanbul": "^2.0.4",
 		"dependency-cruiser": "^16.3.10",
 		"eslint": "^9.7.0",
+		"eslint-plugin-import-x": "^4.2.1",
+		"inquirer": "^11.0.2",
 		"jsdom": "^24.0.0",
 		"lefthook": "^1.6.12",
 		"phaser3spectorjs": "^0.0.8",

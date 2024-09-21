@@ -8,7 +8,6 @@ import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import MockText from "../utils/mocks/mocksContainer/mockText";
-import { SPLASH_ONLY } from "../utils/testUtils";
 
 describe("UI - Type Hints", () => {
   let phaserGame: Phaser.Game;
@@ -27,7 +26,7 @@ describe("UI - Type Hints", () => {
   beforeEach(async () => {
     game = new GameManager(phaserGame);
     game.settings.typeHints(true); //activate type hints
-    game.override.battleType("single").startingLevel(100).startingWave(1).enemyMoveset(SPLASH_ONLY);
+    game.override.battleType("single").startingLevel(100).startingWave(1).enemyMoveset(Moves.SPLASH);
   });
 
   it("check immunity color", async () => {
@@ -36,7 +35,7 @@ describe("UI - Type Hints", () => {
       .startingLevel(100)
       .startingWave(1)
       .enemySpecies(Species.FLORGES)
-      .enemyMoveset(SPLASH_ONLY)
+      .enemyMoveset(Moves.SPLASH)
       .moveset([Moves.DRAGON_CLAW]);
     game.settings.typeHints(true); //activate type hints
 

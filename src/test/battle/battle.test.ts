@@ -1,5 +1,5 @@
 import { allSpecies } from "#app/data/pokemon-species";
-import { TempBattleStat } from "#app/data/temp-battle-stat";
+import { Stat } from "#enums/stat";
 import { GameModes, getGameMode } from "#app/game-mode";
 import { BattleEndPhase } from "#app/phases/battle-end-phase";
 import { CommandPhase } from "#app/phases/command-phase";
@@ -24,8 +24,8 @@ import { Moves } from "#enums/moves";
 import { PlayerGender } from "#enums/player-gender";
 import { Species } from "#enums/species";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import { SPLASH_ONLY } from "../utils/testUtils";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { Biome } from "#app/enums/biome";
 
 describe("Test Battle Phase", () => {
   let phaserGame: Phaser.Game;
@@ -43,6 +43,7 @@ describe("Test Battle Phase", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
+    game.scene.gameData.gender = undefined!; // just for these tests!
   });
 
   it("test phase interceptor with prompt", async () => {
@@ -290,22 +291,27 @@ describe("Test Battle Phase", () => {
     expect(game.scene.currentBattle.turn).toBeGreaterThan(turn);
   }, 20000);
 
-  it("to next wave with pokemon killed, single", async () => {
+  it("does not set new weather if staying in same biome", async () => {
     const moveToUse = Moves.SPLASH;
-    game.override.battleType("single");
-    game.override.starterSpecies(Species.MEWTWO);
-    game.override.enemySpecies(Species.RATTATA);
-    game.override.enemyAbility(Abilities.HYDRATION);
-    game.override.ability(Abilities.ZEN_MODE);
-    game.override.startingLevel(2000);
-    game.override.startingWave(3);
-    game.override.moveset([moveToUse]);
+    game.override
+      .battleType("single")
+      .starterSpecies(Species.MEWTWO)
+      .enemySpecies(Species.RATTATA)
+      .enemyAbility(Abilities.HYDRATION)
+      .ability(Abilities.ZEN_MODE)
+      .startingLevel(2000)
+      .startingWave(3)
+      .startingBiome(Biome.LAKE)
+      .moveset([moveToUse]);
     game.override.enemyMoveset([Moves.TACKLE, Moves.TACKLE, Moves.TACKLE, Moves.TACKLE]);
-    await game.startBattle();
+    await game.classicMode.startBattle();
     const waveIndex = game.scene.currentBattle.waveIndex;
     game.move.select(moveToUse);
+
+    vi.spyOn(game.scene.arena, "trySetWeather");
     await game.doKillOpponents();
     await game.toNextWave();
+    expect(game.scene.arena.trySetWeather).not.toHaveBeenCalled();
     expect(game.scene.currentBattle.waveIndex).toBeGreaterThan(waveIndex);
   }, 20000);
 
@@ -318,8 +324,8 @@ describe("Test Battle Phase", () => {
       .startingWave(1)
       .startingLevel(100)
       .moveset([moveToUse])
-      .enemyMoveset(SPLASH_ONLY)
-      .startingHeldItems([{ name: "TEMP_STAT_BOOSTER", type: TempBattleStat.ACC }]);
+      .enemyMoveset(Moves.SPLASH)
+      .startingHeldItems([{ name: "TEMP_STAT_STAGE_BOOSTER", type: Stat.ACC }]);
 
     await game.startBattle();
     game.scene.getPlayerPokemon()!.hp = 1;

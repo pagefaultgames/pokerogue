@@ -224,7 +224,7 @@ describe("achvs", () => {
     expect(achvs._50_RIBBONS).toBeInstanceOf(RibbonAchv);
     expect(achvs._75_RIBBONS).toBeInstanceOf(RibbonAchv);
     expect(achvs._100_RIBBONS).toBeInstanceOf(RibbonAchv);
-    expect(achvs.TRANSFER_MAX_BATTLE_STAT).toBeInstanceOf(Achv);
+    expect(achvs.TRANSFER_MAX_STAT_STAGE).toBeInstanceOf(Achv);
     expect(achvs.MAX_FRIENDSHIP).toBeInstanceOf(Achv);
     expect(achvs.MEGA_EVOLVE).toBeInstanceOf(Achv);
     expect(achvs.GIGANTAMAX).toBeInstanceOf(Achv);

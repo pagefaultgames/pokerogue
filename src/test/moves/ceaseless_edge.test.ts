@@ -10,7 +10,7 @@ import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
-const TIMEOUT = 20 * 1000;
+
 
 describe("Moves - Ceaseless Edge", () => {
   let phaserGame: Phaser.Game;
@@ -61,7 +61,7 @@ describe("Moves - Ceaseless Edge", () => {
       expect(tagAfter instanceof ArenaTrapTag).toBeTruthy();
       expect(tagAfter.layers).toBe(1);
       expect(enemyPokemon.hp).toBeLessThan(enemyStartingHp);
-    }, TIMEOUT
+    }
   );
 
   test(
@@ -86,7 +86,7 @@ describe("Moves - Ceaseless Edge", () => {
       expect(tagAfter instanceof ArenaTrapTag).toBeTruthy();
       expect(tagAfter.layers).toBe(2);
       expect(enemyPokemon.hp).toBeLessThan(enemyStartingHp);
-    }, TIMEOUT
+    }
   );
 
   test(
@@ -110,10 +110,10 @@ describe("Moves - Ceaseless Edge", () => {
 
       const hpBeforeSpikes = game.scene.currentBattle.enemyParty[1].hp;
       // Check HP of pokemon that WILL BE switched in (index 1)
-      game.forceOpponentToSwitch();
+      game.forceEnemyToSwitch();
       game.move.select(Moves.SPLASH);
       await game.phaseInterceptor.to(TurnEndPhase, false);
       expect(game.scene.currentBattle.enemyParty[0].hp).toBeLessThan(hpBeforeSpikes);
-    }, TIMEOUT
+    }
   );
 });

@@ -42,6 +42,7 @@
   "moveNotImplemented": "{{moveName}} aún no está implementado y no se puede seleccionar.",
   "moveNoPP": "¡No hay suficientes PP\npara este movimiento!",
   "moveDisabled": "!No puede usar {{moveName}} porque ha sido anulado!",
+  "disableInterruptedMove": "¡Se ha anulado el movimiento {{moveName}}\nde {{pokemonNameWithAffix}}!",
   "noPokeballForce": "Una fuerza misteriosa\nte impide usar Poké Balls.",
   "noPokeballTrainer": "¡No puedes atrapar a los\nPokémon de los demás!",
   "noPokeballMulti": "¡No se pueden lanzar Poké Balls\ncuando hay más de un Pokémon!",
@@ -84,5 +85,7 @@
   "statSeverelyFell_one": "¡El {{stats}} de {{pokemonNameWithAffix}} ha bajado muchísimo!",
   "statSeverelyFell_other": "¡{{stats}} de\n{{pokemonNameWithAffix}} han bajado muchísimo!",
   "statWontGoAnyLower_one": "¡El {{stats}} de {{pokemonNameWithAffix}} no puede bajar más!",
-  "statWontGoAnyLower_other": "¡{{stats}} de\n{{pokemonNameWithAffix}} no pueden bajar más!"
+  "statWontGoAnyLower_other": "¡{{stats}} de\n{{pokemonNameWithAffix}} no pueden bajar más!",
+  "battlerTagsHealBlock": "¡{{pokemonNameWithAffix}} no puede restaurar sus PS!",
+  "battlerTagsHealBlockOnRemove": "¡{{pokemonNameWithAffix}} ya puede recuperar PS!"
 }

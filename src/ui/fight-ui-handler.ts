@@ -5,11 +5,12 @@ import { Command } from "./command-ui-handler";
 import { Mode } from "./ui";
 import UiHandler from "./ui-handler";
 import * as Utils from "../utils";
-import { MoveCategory } from "#app/data/move.js";
+import { MoveCategory } from "#app/data/move";
 import i18next from "i18next";
 import {Button} from "#enums/buttons";
-import Pokemon, { PokemonMove } from "#app/field/pokemon.js";
-import { CommandPhase } from "#app/phases/command-phase.js";
+import Pokemon, { PokemonMove } from "#app/field/pokemon";
+import { CommandPhase } from "#app/phases/command-phase";
+import { BattleType } from "#app/battle";
 
 export default class FightUiHandler extends UiHandler {
   public static readonly MOVES_CONTAINER_NAME = "moves";
@@ -95,9 +96,13 @@ export default class FightUiHandler extends UiHandler {
     messageHandler.bg.setVisible(false);
     messageHandler.commandWindow.setVisible(false);
     messageHandler.movesWindowContainer.setVisible(true);
-    this.setCursor(this.getCursor());
+    const pokemon = (this.scene.getCurrentPhase() as CommandPhase).getPokemon();
+    if (pokemon.battleSummonData.turnCount <= 1) {
+      this.setCursor(0);
+    } else {
+      this.setCursor(this.getCursor());
+    }
     this.displayMoves();
-
     return true;
   }
 
@@ -116,8 +121,12 @@ export default class FightUiHandler extends UiHandler {
           ui.playError();
         }
       } else {
-        ui.setMode(Mode.COMMAND, this.fieldIndex);
-        success = true;
+        // Cannot back out of fight menu if skipToFightInput is enabled
+        const { battleType, mysteryEncounter } = this.scene.currentBattle;
+        if (battleType !== BattleType.MYSTERY_ENCOUNTER || !mysteryEncounter?.skipToFightInput) {
+          ui.setMode(Mode.COMMAND, this.fieldIndex);
+          success = true;
+        }
       }
     } else {
       switch (button) {

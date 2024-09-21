@@ -5,8 +5,8 @@ import { Mode } from "./ui";
 import UiHandler from "./ui-handler";
 import i18next from "i18next";
 import {Button} from "#enums/buttons";
-import { getPokemonNameWithAffix } from "#app/messages.js";
-import { CommandPhase } from "#app/phases/command-phase.js";
+import { getPokemonNameWithAffix } from "#app/messages";
+import { CommandPhase } from "#app/phases/command-phase";
 
 export enum Command {
   FIGHT = 0,
@@ -73,7 +73,11 @@ export default class CommandUiHandler extends UiHandler {
     messageHandler.adjustText(commandMessage, messageHandler.message, messageMaxWidth, { ignoreTextBalance: "all" });
 
     messageHandler.showText(commandMessage, 0);
-    this.setCursor(this.getCursor());
+    if (this.getCursor() === Command.POKEMON) {
+      this.setCursor(Command.FIGHT);
+    } else {
+      this.setCursor(this.getCursor());
+    }
 
     return true;
   }
@@ -90,7 +94,7 @@ export default class CommandUiHandler extends UiHandler {
       if (button === Button.ACTION) {
         switch (cursor) {
         // Fight
-        case 0:
+        case Command.FIGHT:
           if ((this.scene.getCurrentPhase() as CommandPhase).checkFightOverride()) {
             return true;
           }
@@ -98,17 +102,17 @@ export default class CommandUiHandler extends UiHandler {
           success = true;
           break;
           // Ball
-        case 1:
+        case Command.BALL:
           ui.setModeWithoutClear(Mode.BALL);
           success = true;
           break;
           // Pokemon
-        case 2:
+        case Command.POKEMON:
           ui.setMode(Mode.PARTY, PartyUiMode.SWITCH, (this.scene.getCurrentPhase() as CommandPhase).getPokemon().getFieldIndex(), null, PartyUiHandler.FilterNonFainted);
           success = true;
           break;
           // Run
-        case 3:
+        case Command.RUN:
           (this.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.RUN, 0);
           success = true;
           break;

@@ -1,4 +1,4 @@
-import { BattleStat } from "#app/data/battle-stat";
+import { Stat } from "#enums/stat";
 import { TerrainType } from "#app/data/terrain";
 import { MoveEndPhase } from "#app/phases/move-end-phase";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
@@ -31,52 +31,55 @@ describe("Abilities - Sap Sipper", () => {
     game.override.disableCrits();
   });
 
-  it("raise attack 1 level and block effects when activated against a grass attack", async () => {
+  it("raises ATK stat stage by 1 and block effects when activated against a grass attack", async() => {
     const moveToUse = Moves.LEAFAGE;
     const enemyAbility = Abilities.SAP_SIPPER;
 
-    game.override.moveset([moveToUse]);
-    game.override.enemyMoveset([Moves.SPLASH, Moves.NONE, Moves.NONE, Moves.NONE]);
+    game.override.moveset([ moveToUse ]);
+    game.override.enemyMoveset(Moves.SPLASH);
     game.override.enemySpecies(Species.DUSKULL);
     game.override.enemyAbility(enemyAbility);
 
     await game.startBattle();
 
-    const startingOppHp = game.scene.currentBattle.enemyParty[0].hp;
+    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const initialEnemyHp = enemyPokemon.hp;
 
     game.move.select(moveToUse);
 
     await game.phaseInterceptor.to(TurnEndPhase);
 
-    expect(startingOppHp - game.scene.getEnemyParty()[0].hp).toBe(0);
-    expect(game.scene.getEnemyParty()[0].summonData.battleStats[BattleStat.ATK]).toBe(1);
+    expect(initialEnemyHp - enemyPokemon.hp).toBe(0);
+    expect(enemyPokemon.getStatStage(Stat.ATK)).toBe(1);
   });
 
-  it("raise attack 1 level and block effects when activated against a grass status move", async () => {
+  it("raises ATK stat stage by 1 and block effects when activated against a grass status move", async() => {
     const moveToUse = Moves.SPORE;
     const enemyAbility = Abilities.SAP_SIPPER;
 
-    game.override.moveset([moveToUse]);
-    game.override.enemyMoveset([Moves.SPLASH, Moves.NONE, Moves.NONE, Moves.NONE]);
+    game.override.moveset([ moveToUse ]);
+    game.override.enemyMoveset(Moves.SPLASH);
     game.override.enemySpecies(Species.RATTATA);
     game.override.enemyAbility(enemyAbility);
 
     await game.startBattle();
 
+    const enemyPokemon = game.scene.getEnemyPokemon()!;
+
     game.move.select(moveToUse);
 
     await game.phaseInterceptor.to(TurnEndPhase);
 
-    expect(game.scene.getEnemyParty()[0].status).toBeUndefined();
-    expect(game.scene.getEnemyParty()[0].summonData.battleStats[BattleStat.ATK]).toBe(1);
+    expect(enemyPokemon.status).toBeUndefined();
+    expect(enemyPokemon.getStatStage(Stat.ATK)).toBe(1);
   });
 
   it("do not activate against status moves that target the field", async () => {
     const moveToUse = Moves.GRASSY_TERRAIN;
     const enemyAbility = Abilities.SAP_SIPPER;
 
-    game.override.moveset([moveToUse]);
-    game.override.enemyMoveset([Moves.SPLASH, Moves.NONE, Moves.NONE, Moves.NONE]);
+    game.override.moveset([ moveToUse ]);
+    game.override.enemyMoveset(Moves.SPLASH);
     game.override.enemySpecies(Species.RATTATA);
     game.override.enemyAbility(enemyAbility);
 
@@ -88,51 +91,54 @@ describe("Abilities - Sap Sipper", () => {
 
     expect(game.scene.arena.terrain).toBeDefined();
     expect(game.scene.arena.terrain!.terrainType).toBe(TerrainType.GRASSY);
-    expect(game.scene.getEnemyParty()[0].summonData.battleStats[BattleStat.ATK]).toBe(0);
+    expect(game.scene.getEnemyPokemon()!.getStatStage(Stat.ATK)).toBe(0);
   });
 
   it("activate once against multi-hit grass attacks", async () => {
     const moveToUse = Moves.BULLET_SEED;
     const enemyAbility = Abilities.SAP_SIPPER;
 
-    game.override.moveset([moveToUse]);
-    game.override.enemyMoveset([Moves.SPLASH, Moves.NONE, Moves.NONE, Moves.NONE]);
+    game.override.moveset([ moveToUse ]);
+    game.override.enemyMoveset(Moves.SPLASH);
     game.override.enemySpecies(Species.RATTATA);
     game.override.enemyAbility(enemyAbility);
 
     await game.startBattle();
 
-    const startingOppHp = game.scene.currentBattle.enemyParty[0].hp;
+    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const initialEnemyHp = enemyPokemon.hp;
 
     game.move.select(moveToUse);
 
     await game.phaseInterceptor.to(TurnEndPhase);
 
-    expect(startingOppHp - game.scene.getEnemyParty()[0].hp).toBe(0);
-    expect(game.scene.getEnemyParty()[0].summonData.battleStats[BattleStat.ATK]).toBe(1);
+    expect(initialEnemyHp - enemyPokemon.hp).toBe(0);
+    expect(enemyPokemon.getStatStage(Stat.ATK)).toBe(1);
   });
 
   it("do not activate against status moves that target the user", async () => {
     const moveToUse = Moves.SPIKY_SHIELD;
     const ability = Abilities.SAP_SIPPER;
 
-    game.override.moveset([moveToUse]);
+    game.override.moveset([ moveToUse ]);
     game.override.ability(ability);
-    game.override.enemyMoveset([Moves.SPLASH, Moves.NONE, Moves.NONE, Moves.NONE]);
+    game.override.enemyMoveset(Moves.SPLASH);
     game.override.enemySpecies(Species.RATTATA);
     game.override.enemyAbility(Abilities.NONE);
 
     await game.startBattle();
 
+    const playerPokemon = game.scene.getPlayerPokemon()!;
+
     game.move.select(moveToUse);
 
     await game.phaseInterceptor.to(MoveEndPhase);
 
-    expect(game.scene.getParty()[0].getTag(BattlerTagType.SPIKY_SHIELD)).toBeDefined();
+    expect(playerPokemon.getTag(BattlerTagType.SPIKY_SHIELD)).toBeDefined();
 
     await game.phaseInterceptor.to(TurnEndPhase);
 
-    expect(game.scene.getParty()[0].summonData.battleStats[BattleStat.ATK]).toBe(0);
+    expect(playerPokemon.getStatStage(Stat.ATK)).toBe(0);
     expect(game.phaseInterceptor.log).not.toContain("ShowAbilityPhase");
   });
 
@@ -149,13 +155,14 @@ describe("Abilities - Sap Sipper", () => {
 
     await game.startBattle();
 
-    const startingOppHp = game.scene.currentBattle.enemyParty[0].hp;
+    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const initialEnemyHp = enemyPokemon.hp;
 
     game.move.select(moveToUse);
 
     await game.phaseInterceptor.to(TurnEndPhase);
 
-    expect(startingOppHp - game.scene.getEnemyParty()[0].hp).toBe(0);
-    expect(game.scene.getEnemyParty()[0].summonData.battleStats[BattleStat.ATK]).toBe(1);
+    expect(initialEnemyHp - enemyPokemon.hp).toBe(0);
+    expect(enemyPokemon.getStatStage(Stat.ATK)).toBe(1);
   });
 });

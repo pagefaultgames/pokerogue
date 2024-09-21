@@ -10,6 +10,7 @@ export const defaultConfig: UserConfig  = {
 	clearScreen: false,
 	appType: "mpa",
 	build: {
+		chunkSizeWarningLimit: 10000,
 		minify: 'esbuild',
 		sourcemap: false,
 		rollupOptions: {
@@ -30,6 +31,7 @@ export default defineConfig(({mode}) => {
 
 	return ({
 		...defaultConfig,
+		base: '',
 		esbuild: {
 			pure: mode === 'production' ? ['console.log'] : [],
 			keepNames: true,
