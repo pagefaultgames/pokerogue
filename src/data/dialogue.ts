@@ -878,7 +878,6 @@ export const trainerTypeDialogue: TrainerTypeDialogue = {
         "dialogue:star_grunt.victory.3",
         "dialogue:star_grunt.victory.4",
         "dialogue:star_grunt.victory.5",
-
       ]
     }
   ],
