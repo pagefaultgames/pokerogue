@@ -1,32 +1,32 @@
 {
-  "intro": "It's an interface for the Global Trade System!",
-  "title": "The GTS",
-  "description": "Ah, the GTS! A technological wonder, you can connect with anyone else around the globe to trade Pokémon with them! Will fortune smile upon your trade today?",
-  "query": "What will you do?",
+  "intro": "¡Es una interfaz para la Estación de Intercambio Global, la GTS!",
+  "title": "La GTS",
+  "description": "¡Ah, la GTS! Una maravilla tecnológica, puedes conectarte con cualquier persona en todo el mundo para intercambiar Pokémon con ellos. ¿Tendrás suerte en tu intercambio hoy?",
+  "query": "¿Qué harás?",
   "option": {
     "1": {
-      "label": "Check Trade Offers",
-      "tooltip": "(+) Select a trade offer for one of your Pokémon",
-      "trade_options_prompt": "Select a Pokémon to receive through trade."
+      "label": "Ver ofertas de intercambio"
+      "tooltip": "(+) Selecciona una oferta de intercambio para uno de tus Pokémon",
+      "trade_options_prompt": "Selecciona un Pokémon para recibir a través del intercambio."
     },
     "2": {
-      "label": "Wonder Trade",
-      "tooltip": "(+) Send one of your Pokémon to the GTS and get a random Pokémon in return"
+      "label": "Intercambio Prodigioso",
+      "tooltip": "(+) Envía uno de tus Pokémon a la GTS y recibe un Pokémon aleatorio a cambio."
     },
     "3": {
-      "label": "Trade an Item",
-      "trade_options_prompt": "Select an item to send.",
-      "invalid_selection": "This Pokémon doesn't have legal items to trade.",
-      "tooltip": "(+) Send one of your Items to the GTS and get a random new Item"
+      "label": "Intercambia un objeto",
+      "trade_options_prompt": "Selecciona un objeto para enviar.",
+      "invalid_selection": "Este Pokémon no tiene objetos legales para intercambiar.",
+      "tooltip": "(+) Envía uno de tus objetos a la GTS y recibe un nuevo objeto aleatorio."
     },
     "4": {
-      "label": "Leave",
-      "tooltip": "(-) No Rewards",
-      "selected": "No time to trade today!\nYou continue on."
+      "label": "Irse",
+      "tooltip": "(-) Ninguna Recompensa",
+      "selected": "¡No hay tiempo para intercambiar hoy!\nSigues adelante."
     }
   },
-  "pokemon_trade_selected": "{{tradedPokemon}} will be sent to {{tradeTrainerName}}.",
-  "pokemon_trade_goodbye": "Goodbye, {{tradedPokemon}}!",
-  "item_trade_selected": "{{chosenItem}} will be sent to {{tradeTrainerName}}.$.@d{64}.@d{64}.@d{64}\n@s{level_up_fanfare}Trade complete!$You received a {{itemName}} from {{tradeTrainerName}}!",
-  "trade_received": "@s{evolution_fanfare}{{tradeTrainerName}} sent over {{received}}!"
+  "pokemon_trade_selected": "{{tradedPokemon}} será enviado a {{tradeTrainerName}}.",
+  "pokemon_trade_goodbye": "¡Adiós, {{tradedPokemon}}!",
+  "item_trade_selected": "{{chosenItem}} será enviado a {{tradeTrainerName}}.$.@d{64}.@d{64}.@d{64}\n@s{level_up_fanfare}¡Intercambio completo!$¡Has recibido un {{itemName}} de {{tradeTrainerName}}!",
+  "trade_received": "¡@s{evolution_fanfare}{{tradeTrainerName}} envió a {{received}}!"
 }
