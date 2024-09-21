@@ -797,7 +797,7 @@
       "3": "If you don't clear out real quick-like, I'll hafta come at you in self-defense. You get me?",
       "4": "Sorry, but if you don't turn yourself around here, amigo, we'll have to send you packing!",
       "4_female": "Sorry, but if you don't turn yourself around here, amiga, we'll have to send you packing!",
-      "5": "Oh great. Here comes another rando to ruin my day."
+      "5": "Oh great. Here comes another rando to ruin my day.",
       "5_female": "Oh great. Here comes another rando to ruin my day."
     },
     "victory": {
@@ -843,7 +843,7 @@
   "ortega": {
     "encounter": {
       "1": "I promise I'll play nice, so don't blame me when this battle sends you blubbering back home!",
-      "2": "I'll wipe that smug look off your face for sure! You're going down!"
+      "2": "I'll wipe that smug look off your face for sure! You're going down!",
       "2_female": "I'll wipe that smug look off your face for sure! You're going down!"
     },
     "victory": {
