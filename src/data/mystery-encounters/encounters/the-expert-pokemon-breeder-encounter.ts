@@ -1,4 +1,4 @@
-import { EnemyPartyConfig, handleMysteryEncounterBattleFailed, initBattleWithEnemyConfig, setEncounterRewards, } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
+import { EnemyPartyConfig, generateModifierType, handleMysteryEncounterBattleFailed, initBattleWithEnemyConfig, setEncounterRewards, } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import { trainerConfigs } from "#app/data/trainer-config";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import BattleScene from "#app/battle-scene";
@@ -21,6 +21,9 @@ import { EggTier } from "#enums/egg-type";
 import { MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/mystery-encounter-option";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { achvs } from "#app/system/achv";
+import { modifierTypes, PokemonHeldItemModifierType } from "#app/modifier/modifier-type";
+import { Type } from "#app/data/type";
+import { getPokeballTintColor } from "#app/data/pokeball";
 
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounter:expertPokemonBreeder";
@@ -190,12 +193,6 @@ export const TheExpertPokemonBreederEncounter: MysteryEncounter =
         pokemon3RareEggs
       };
 
-      encounter.dialogue.outro = [
-        {
-          text: `${namespace}.outro`,
-        },
-      ];
-
       return true;
     })
     .withTitle(`${namespace}.title`)
@@ -359,6 +356,7 @@ export const TheExpertPokemonBreederEncounter: MysteryEncounter =
     )
     .withOutroDialogue([
       {
+        speaker: trainerNameKey,
         text: `${namespace}.outro`,
       },
     ])
@@ -384,6 +382,11 @@ function getPartyConfig(scene: BattleScene): EnemyPartyConfig {
         nature: Nature.ADAMANT,
         moveSet: [Moves.METEOR_MASH, Moves.FIRE_PUNCH, Moves.ICE_PUNCH, Moves.THUNDER_PUNCH],
         ivs: [31, 31, 31, 31, 31, 31],
+        modifierConfigs: [
+          {
+            modifier: generateModifierType(scene, modifierTypes.TERA_SHARD, [Type.STEEL]) as PokemonHeldItemModifierType,
+          }
+        ]
       }
     ]
   };
@@ -537,6 +540,7 @@ function onGameOver(scene: BattleScene) {
 
   encounter.dialogue.outro = [
     {
+      speaker: trainerNameKey,
       text: `${namespace}.outro_failed`,
     },
   ];
@@ -551,6 +555,49 @@ function onGameOver(scene: BattleScene) {
 
   // Set flag that encounter was failed
   encounter.misc.encounterFailed = true;
+
+  // Revert BGM
+  scene.playBgm(scene.arena.bgm);
+
+  // Return enemy Pokemon
+  const pokemon = scene.getEnemyPokemon();
+  if (pokemon) {
+    scene.playSound("se/pb_rel");
+    pokemon.hideInfo();
+    pokemon.tint(getPokeballTintColor(pokemon.pokeball), 1, 250, "Sine.easeIn");
+    scene.tweens.add({
+      targets: pokemon,
+      duration: 250,
+      ease: "Sine.easeIn",
+      scale: 0.5,
+      onComplete: () => {
+        scene.field.remove(pokemon, true);
+      }
+    });
+  }
+
+  // Show the enemy trainer
+  scene.time.delayedCall(250, () => {
+    const sprites = scene.currentBattle.trainer?.getSprites();
+    const tintSprites = scene.currentBattle.trainer?.getTintSprites();
+    if (sprites && tintSprites) {
+      for (let i = 0; i < sprites.length; i++) {
+        sprites[i].setVisible(true);
+        tintSprites[i].setVisible(true);
+        sprites[i].clearTint();
+        tintSprites[i].clearTint();
+      }
+    }
+    scene.tweens.add({
+      targets: scene.currentBattle.trainer,
+      x: "-=16",
+      y: "+=16",
+      alpha: 1,
+      ease: "Sine.easeInOut",
+      duration: 750
+    });
+  });
+
 
   handleMysteryEncounterBattleFailed(scene, true);
 

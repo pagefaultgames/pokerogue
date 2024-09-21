@@ -764,7 +764,7 @@ export function handleMysteryEncounterBattleFailed(scene: BattleScene, addHealPh
   if (encounter.continuousEncounter || doNotContinue) {
     return;
   } else if (encounter.encounterMode !== MysteryEncounterMode.NO_BATTLE) {
-    scene.pushPhase(new BattleEndPhase(scene));
+    scene.pushPhase(new BattleEndPhase(scene, false));
   }
 
   scene.pushPhase(new MysteryEncounterRewardsPhase(scene, addHealPhase));
