@@ -106,7 +106,7 @@ export class FaintPhase extends PokemonPhase {
          * If previous conditions weren't met, and the player has at least 1 legal Pokemon off the field,
          * push a phase that prompts the player to summon a Pokemon from their party.
          */
-        this.scene.pushPhase(new SwitchPhase(this.scene, this.fieldIndex, true, false));
+        this.scene.pushPhase(new SwitchPhase(this.scene, this.fieldIndex, "faint", false));
       }
     } else {
       this.scene.unshiftPhase(new VictoryPhase(this.scene, this.battlerIndex));

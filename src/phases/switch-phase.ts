@@ -10,52 +10,56 @@ import { SwitchSummonPhase } from "./switch-summon-phase";
  */
 export class SwitchPhase extends BattlePhase {
   protected fieldIndex: integer;
-  private isModal: boolean;
+  private switchReason: "faint" | "moveEffect" | "switchMode";
   private doReturn: boolean;
 
   /**
      * Creates a new SwitchPhase
      * @param scene {@linkcode BattleScene} Current battle scene
      * @param fieldIndex Field index to switch out
-     * @param isModal Indicates if the switch should be forced (true) or is
-     * optional (false).
-     * @param doReturn Indicates if the party member on the field should be
-     * recalled to ball or has already left the field. Passed to {@linkcode SwitchSummonPhase}.
-     */
-  constructor(scene: BattleScene, fieldIndex: integer, isModal: boolean, doReturn: boolean) {
+   * @param switchReason Indicates why this switch is occurring. The valid options are
+   * `'faint'` (party member fainted), `'moveEffect'` (uturn, baton pass, dragon
+   * tail, etc), and `'switchMode'` (start-of-battle optional switch). This
+   * helps the phase determine both if the switch should be cancellable by the
+   * user, as well as determine if the party UI should be shown at all.
+   * @param doReturn Indicates if this switch should call back the pokemon at
+   * the {@linkcode fieldIndex} (true), or if the mon has already been recalled
+   * (false).
+   */
+  constructor(scene: BattleScene, fieldIndex: integer, switchReason: "faint" | "moveEffect" | "switchMode", doReturn: boolean) {
     super(scene);
 
     this.fieldIndex = fieldIndex;
-    this.isModal = isModal;
+    this.switchReason = switchReason;
     this.doReturn = doReturn;
   }
 
   start() {
     super.start();
 
-    // Skip modal switch if impossible (no remaining party members that aren't in battle)
-    if (this.isModal && !this.scene.getParty().filter(p => p.isAllowedInBattle() && !p.isActive(true)).length) {
+    const isForcedSwitch = this.switchReason !== "switchMode";
+
+    // Skip forced switch if impossible (no remaining party members that aren't in battle)
+    if (isForcedSwitch && !this.scene.getParty().filter(p => p.isAllowedInBattle() && !p.isActive(true)).length) {
       return super.end();
     }
 
-    // Skip if the fainted party member has been revived already. doReturn is
-    // only passed as `false` from FaintPhase (as opposed to other usages such
-    // as ForceSwitchOutAttr or CheckSwitchPhase), so we only want to check this
-    // if the mon should have already been returned but is still alive and well
-    // on the field. see also; battle.test.ts
-    if (this.isModal && !this.doReturn && !this.scene.getParty()[this.fieldIndex].isFainted()) {
+    // Skip if the fainted party member has been revived already. see also; battle.test.ts
+    if (this.switchReason === "faint" && !this.scene.getParty()[this.fieldIndex].isFainted()) {
       return super.end();
     }
 
     // Check if there is any space still in field
-    if (this.isModal && this.scene.getPlayerField().filter(p => p.isAllowedInBattle() && p.isActive(true)).length >= this.scene.currentBattle.getBattlerCount()) {
+    const numActiveBattlers = this.scene.getPlayerField().filter(p => p.isAllowedInBattle() && p.isActive(true)).length;
+    const willReturnModifer = (this.doReturn ? 1 : 0); // need to subtract this if doReturn is true, because the pokemon in the given index hasn't left the field yet. (used for volt switch + pursuit, etc)
+    if (isForcedSwitch && numActiveBattlers - willReturnModifer >= this.scene.currentBattle.getBattlerCount()) {
       return super.end();
     }
 
     // Override field index to 0 in case of double battle where 2/3 remaining legal party members fainted at once
     const fieldIndex = this.scene.currentBattle.getBattlerCount() === 1 || this.scene.getParty().filter(p => p.isAllowedInBattle()).length > 1 ? this.fieldIndex : 0;
 
-    this.scene.ui.setMode(Mode.PARTY, this.isModal ? PartyUiMode.FAINT_SWITCH : PartyUiMode.POST_BATTLE_SWITCH, fieldIndex, (slotIndex: integer, option: PartyOption) => {
+    this.scene.ui.setMode(Mode.PARTY, isForcedSwitch ? PartyUiMode.FAINT_SWITCH : PartyUiMode.POST_BATTLE_SWITCH, fieldIndex, (slotIndex: integer, option: PartyOption) => {
       if (slotIndex >= this.scene.currentBattle.getBattlerCount() && slotIndex < 6) {
         this.scene.unshiftPhase(new SwitchSummonPhase(this.scene, fieldIndex, slotIndex, this.doReturn, option === PartyOption.PASS_BATON));
       }

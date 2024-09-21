@@ -21,6 +21,7 @@ import i18next from "i18next";
 import { PartyMemberStrength } from "#enums/party-member-strength";
 import { Species } from "#enums/species";
 import { TrainerType } from "#enums/trainer-type";
+import Overrides from "#app/overrides";
 
 export enum TrainerVariant {
     DEFAULT,
@@ -267,6 +268,17 @@ export default class Trainer extends Phaser.GameObjects.Container {
     let ret: EnemyPokemon;
 
     this.scene.executeWithSeedOffset(() => {
+      if (Overrides.TRAINER_PARTY_OVERRIDE?.length) {
+        ret = this.scene.addEnemyPokemon(
+          getPokemonSpecies(Overrides.TRAINER_PARTY_OVERRIDE[index % Overrides.TRAINER_PARTY_OVERRIDE.length]),
+          level,
+          !this.isDouble() || !(index % 2)
+            ? TrainerSlot.TRAINER
+            : TrainerSlot.TRAINER_PARTNER
+        );
+        return;
+      }
+
       const template = this.getPartyTemplate();
       const strength: PartyMemberStrength = template.getStrength(index);
 
@@ -440,6 +452,11 @@ export default class Trainer extends Phaser.GameObjects.Container {
 
     const party = this.scene.getEnemyParty();
     const nonFaintedLegalPartyMembers = party.slice(this.scene.currentBattle.getBattlerCount()).filter(p => p.isAllowedInBattle()).filter(p => !trainerSlot || p.trainerSlot === trainerSlot);
+
+    if (Overrides.TRAINER_ALWAYS_SWITCHES_OVERRIDE) {
+      return nonFaintedLegalPartyMembers.map(p => [party.indexOf(p), 100]);
+    }
+
     const partyMemberScores = nonFaintedLegalPartyMembers.map(p => {
       const playerField = this.scene.getPlayerField().filter(p => p.isAllowedInBattle());
       let score = 0;

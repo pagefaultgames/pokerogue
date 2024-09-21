@@ -1,20 +1,23 @@
 import { updateUserInfo } from "#app/account";
 import { BattlerIndex } from "#app/battle";
 import BattleScene from "#app/battle-scene";
-import { BattleStyle } from "#app/enums/battle-style";
-import { Moves } from "#app/enums/moves";
 import { getMoveTargets } from "#app/data/move";
-import { EnemyPokemon, PlayerPokemon } from "#app/field/pokemon";
+import { BattleStyle } from "#app/enums/battle-style";
+import { ExpGainsSpeed } from "#app/enums/exp-gains-speed";
+import { Moves } from "#app/enums/moves";
+import Pokemon from "#app/field/pokemon";
 import Trainer from "#app/field/trainer";
 import { GameModes, getGameMode } from "#app/game-mode";
 import { ModifierTypeOption, modifierTypes } from "#app/modifier/modifier-type";
 import overrides from "#app/overrides";
+import { CheckSwitchPhase } from "#app/phases/check-switch-phase";
 import { CommandPhase } from "#app/phases/command-phase";
 import { EncounterPhase } from "#app/phases/encounter-phase";
 import { EnemyCommandPhase } from "#app/phases/enemy-command-phase";
 import { FaintPhase } from "#app/phases/faint-phase";
 import { LoginPhase } from "#app/phases/login-phase";
 import { MovePhase } from "#app/phases/move-phase";
+import { MysteryEncounterPhase } from "#app/phases/mystery-encounter-phases";
 import { NewBattlePhase } from "#app/phases/new-battle-phase";
 import { SelectStarterPhase } from "#app/phases/select-starter-phase";
 import { SelectTargetPhase } from "#app/phases/select-target-phase";
@@ -24,13 +27,16 @@ import { TurnInitPhase } from "#app/phases/turn-init-phase";
 import { TurnStartPhase } from "#app/phases/turn-start-phase";
 import ErrorInterceptor from "#app/test/utils/errorInterceptor";
 import InputsHandler from "#app/test/utils/inputsHandler";
+import BattleMessageUiHandler from "#app/ui/battle-message-ui-handler";
 import CommandUiHandler from "#app/ui/command-ui-handler";
 import ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
 import PartyUiHandler from "#app/ui/party-ui-handler";
 import TargetSelectUiHandler from "#app/ui/target-select-ui-handler";
 import { Mode } from "#app/ui/ui";
+import { isNullOrUndefined } from "#app/utils";
 import { Button } from "#enums/buttons";
 import { ExpNotification } from "#enums/exp-notification";
+import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { PlayerGender } from "#enums/player-gender";
 import { Species } from "#enums/species";
 import { generateStarter, waitUntil } from "#test/utils/gameManagerUtils";
@@ -39,21 +45,14 @@ import PhaseInterceptor from "#test/utils/phaseInterceptor";
 import TextInterceptor from "#test/utils/TextInterceptor";
 import { AES, enc } from "crypto-js";
 import fs from "fs";
-import { vi } from "vitest";
+import { expect, vi } from "vitest";
+import { ChallengeModeHelper } from "./helpers/challengeModeHelper";
 import { ClassicModeHelper } from "./helpers/classicModeHelper";
 import { DailyModeHelper } from "./helpers/dailyModeHelper";
-import { ChallengeModeHelper } from "./helpers/challengeModeHelper";
 import { MoveHelper } from "./helpers/moveHelper";
 import { OverridesHelper } from "./helpers/overridesHelper";
-import { SettingsHelper } from "./helpers/settingsHelper";
 import { ReloadHelper } from "./helpers/reloadHelper";
-import { CheckSwitchPhase } from "#app/phases/check-switch-phase";
-import BattleMessageUiHandler from "#app/ui/battle-message-ui-handler";
-import { MysteryEncounterPhase } from "#app/phases/mystery-encounter-phases";
-import { expect } from "vitest";
-import { MysteryEncounterType } from "#enums/mystery-encounter-type";
-import { isNullOrUndefined } from "#app/utils";
-import { ExpGainsSpeed } from "#app/enums/exp-gains-speed";
+import { SettingsHelper } from "./helpers/settingsHelper";
 
 /**
  * Class to manage the game state and transitions between phases.
@@ -141,7 +140,7 @@ export default class GameManager {
    * @returns A promise that resolves when the title phase is reached.
    */
   async runToTitle(): Promise<void> {
-    await this.phaseInterceptor.whenAboutToRun(LoginPhase);
+    await this.phaseInterceptor.to(LoginPhase, false);
     this.phaseInterceptor.pop();
     await this.phaseInterceptor.run(TitlePhase);
 
@@ -251,7 +250,7 @@ export default class GameManager {
    * @param {BattlerIndex} targetIndex The index of the attack target, or `undefined` for multi-target attacks
    * @param movePosition The index of the move in the pokemon's moveset array
    */
-  selectTarget(movePosition: integer, targetIndex?: BattlerIndex) {
+  selectTarget(movePosition: number, targetIndex?: BattlerIndex) {
     this.onNextPrompt("SelectTargetPhase", Mode.TARGET_SELECT, () => {
       const handler = this.scene.ui.getHandler() as TargetSelectUiHandler;
       const move = (this.scene.getCurrentPhase() as SelectTargetPhase).getPokemon().getMoveset()[movePosition]!.getMove(); // TODO: is the bang correct?
@@ -397,7 +396,7 @@ export default class GameManager {
     return updateUserInfo();
   }
 
-  async killPokemon(pokemon: PlayerPokemon | EnemyPokemon) {
+  async killPokemon(pokemon: Pokemon) {
     return new Promise<void>(async (resolve, reject) => {
       pokemon.hp = 0;
       this.scene.pushPhase(new FaintPhase(this.scene, pokemon.getBattlerIndex(), true));
@@ -441,6 +440,10 @@ export default class GameManager {
    */
   doSelectPartyPokemon(slot: number, inPhase = "SwitchPhase") {
     this.onNextPrompt(inPhase, Mode.PARTY, () => {
+      if (this.scene.getParty()[slot].isActive(true)) {
+        throw new Error("Attempting to switch in a party member that is already active");
+      }
+
       const partyHandler = this.scene.ui.getHandler() as PartyUiHandler;
 
       partyHandler.setCursor(slot);
@@ -458,10 +461,11 @@ export default class GameManager {
    * await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2, BattlerIndex.PLAYER_2]);
    * ```
    */
-  async setTurnOrder(order: BattlerIndex[]): Promise<void> {
+  async setTurnOrder(order: BattlerIndex[], modifyPriority: boolean = false): Promise<void> {
     await this.phaseInterceptor.to(TurnStartPhase, false);
+    console.log(`${modifyPriority ? "Turn" : "Speed"} order modified to: `, order);
 
-    vi.spyOn(this.scene.getCurrentPhase() as TurnStartPhase, "getSpeedOrder").mockReturnValue(order);
+    vi.spyOn(this.scene.getCurrentPhase() as TurnStartPhase, (modifyPriority ? "getCommandOrder" : "getSpeedOrder")).mockReturnValue(order);
   }
 
   /**

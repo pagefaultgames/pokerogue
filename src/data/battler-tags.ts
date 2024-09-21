@@ -2490,6 +2490,10 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: number, source
     return new SubstituteTag(sourceMove, sourceId);
   case BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON:
     return new MysteryEncounterPostSummonTag();
+  case BattlerTagType.ANTICIPATING_ACTION:
+    return new BattlerTag(BattlerTagType.ANTICIPATING_ACTION, BattlerTagLapseType.TURN_END, 1, sourceMove);
+  case BattlerTagType.ESCAPING:
+    return new BattlerTag(BattlerTagType.ESCAPING, BattlerTagLapseType.TURN_END, 1, sourceMove);
   case BattlerTagType.NONE:
   default:
     return new BattlerTag(tagType, BattlerTagLapseType.CUSTOM, turnCount, sourceMove, sourceId);

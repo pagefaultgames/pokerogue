@@ -80,4 +80,14 @@ export enum BattlerTagType {
   BURNED_UP = "BURNED_UP",
   DOUBLE_SHOCKED = "DOUBLE_SHOCKED",
   MYSTERY_ENCOUNTER_POST_SUMMON = "MYSTERY_ENCOUNTER_POST_SUMMON",
+
+  /**
+   * Tag which indicates the battler is waiting for their opponent to make some
+   * sort of action (switch out, use a type of move, make contact, etc)
+   */
+  ANTICIPATING_ACTION = "ANTICIPATING_ACTION",
+  /**
+   * Tag which indicates the battler is about to switch out.
+   */
+  ESCAPING = "ESCAPING",
 }
