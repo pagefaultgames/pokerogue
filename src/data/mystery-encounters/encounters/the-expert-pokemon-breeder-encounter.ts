@@ -219,6 +219,7 @@ export const TheExpertPokemonBreederEncounter: MysteryEncounter =
           const config: EnemyPartyConfig = encounter.enemyPartyConfigs[0];
 
           const { pokemon1, pokemon1CommonEggs, pokemon1RareEggs } = encounter.misc;
+          encounter.misc.chosenPokemon = pokemon1;
           encounter.setDialogueToken("chosenPokemon", pokemon1.getNameToRender());
           const eggOptions = getEggOptions(scene, pokemon1CommonEggs, pokemon1RareEggs);
           setEncounterRewards(scene, { fillRemaining: true }, eggOptions);
@@ -270,6 +271,7 @@ export const TheExpertPokemonBreederEncounter: MysteryEncounter =
           const config: EnemyPartyConfig = encounter.enemyPartyConfigs[0];
 
           const { pokemon2, pokemon2CommonEggs, pokemon2RareEggs } = encounter.misc;
+          encounter.misc.chosenPokemon = pokemon2;
           encounter.setDialogueToken("chosenPokemon", pokemon2.getNameToRender());
           const eggOptions = getEggOptions(scene, pokemon2CommonEggs, pokemon2RareEggs);
           setEncounterRewards(scene, { fillRemaining: true }, eggOptions);
@@ -321,6 +323,7 @@ export const TheExpertPokemonBreederEncounter: MysteryEncounter =
           const config: EnemyPartyConfig = encounter.enemyPartyConfigs[0];
 
           const { pokemon3, pokemon3CommonEggs, pokemon3RareEggs } = encounter.misc;
+          encounter.misc.chosenPokemon = pokemon3;
           encounter.setDialogueToken("chosenPokemon", pokemon3.getNameToRender());
           const eggOptions = getEggOptions(scene, pokemon3CommonEggs, pokemon3RareEggs);
           setEncounterRewards(scene, { fillRemaining: true }, eggOptions);
