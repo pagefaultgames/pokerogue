@@ -423,7 +423,7 @@
   "ortega": {
     "encounter": {
       "1": "J’vais bien m’occuper de toi, alors viens pas pleurer si tu perds.",
-      "2": "T’as beau avoir l’air sûr de toi, aujourd’hui, c’est moi qui vais gagner. Je te le garantis !"
+      "2": "T’as beau avoir l’air sûr de toi, aujourd’hui, c’est moi qui vais gagner. Je te le garantis !",
       "2_female": "T’as beau avoir l’air sûr de toi, aujourd’hui, c’est moi qui vais gagner. Je te le garantis !"
     },
     "victory": {
