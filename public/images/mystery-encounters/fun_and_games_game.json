@@ -1,11 +1,11 @@
 {
 	"textures": [
 		{
-			"image": "teleporter.png",
+			"image": "fun_and_games_game.png",
 			"format": "RGBA8888",
 			"size": {
-				"w": 74,
-				"h": 79
+				"w": 38,
+				"h": 82
 			},
 			"scale": 1,
 			"frames": [
@@ -14,20 +14,20 @@
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
-						"w": 74,
-						"h": 79
+						"w": 38,
+						"h": 82
 					},
 					"spriteSourceSize": {
 						"x": 0,
 						"y": 0,
-						"w": 74,
-						"h": 79
+						"w": 38,
+						"h": 82
 					},
 					"frame": {
 						"x": 0,
 						"y": 0,
-						"w": 74,
-						"h": 79
+						"w": 38,
+						"h": 82
 					}
 				}
 			]
@@ -36,6 +36,6 @@
 	"meta": {
 		"app": "https://www.codeandweb.com/texturepacker",
 		"version": "3.0",
-		"smartupdate": "$TexturePacker:SmartUpdate:937d8502b98f79720118061b6021e108:2b4f9db00d5b0997b42a5466f808509b:ce1615396ce7b0a146766d50b319bb81$"
+		"smartupdate": "$TexturePacker:SmartUpdate:d40b6742392c2fe8ca0735b3f561e319:5dcda5410b12f0aa75eb0dd1fbcbe4f9:d171fb17d3017d1f655cd8dd14c252b7$"
 	}
 }
