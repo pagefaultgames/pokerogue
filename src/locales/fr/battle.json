@@ -99,5 +99,7 @@
   "unlockedSomething": "{{unlockedThing}}\na été débloqué.",
   "congratulations": "Félicitations !",
   "beatModeFirstTime": "{{speciesName}} a battu le mode {{gameMode}} pour la première fois !\nVous avez reçu {{newModifier}} !",
-  "eggSkipPrompt": "Aller directement au résumé des Œufs éclos ?"
+  "eggSkipPrompt": "Aller directement au résumé des Œufs éclos ?",
+  "battlerTagsHealBlock": "{{pokemonNameWithAffix}} ne peut pas guérir !",
+  "battlerTagsHealBlockOnRemove": "Le blocage de soins qui affectait\n{{pokemonNameWithAffix}} s’est dissipé !"
 }
