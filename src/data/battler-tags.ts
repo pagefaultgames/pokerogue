@@ -2407,6 +2407,43 @@ export class MysteryEncounterPostSummonTag extends BattlerTag {
   }
 }
 
+export class TormentTag extends MoveRestrictionBattlerTag {
+  private target: Pokemon;
+
+  constructor(sourceId: number) {
+    super(BattlerTagType.TORMENT, BattlerTagLapseType.AFTER_MOVE, 1, Moves.TORMENT, sourceId);
+  }
+
+  onAdd(pokemon: Pokemon) {
+    super.onAdd(pokemon);
+    this.target = pokemon;
+    //pokemon.scene.triggerPokemonBattleAnim(pokemon, PokemonAnimType.TORMENT_ADD);
+    pokemon.scene.queueMessage(i18next.t("battlerTags:tormentOnAdd", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }), 1500);
+  }
+
+  override lapse(pokemon: Pokemon, tagType: BattlerTagLapseType): boolean {
+    if (!pokemon.isActive(true)) {
+      return super.lapse(pokemon, tagType);
+    }
+    return true;
+  }
+
+  isMoveRestricted(move: Moves): boolean {
+    const lastMove = this.target.getLastXMoves(1)[0];
+    if ( !lastMove ) {
+      return false;
+    }
+    if (lastMove.move === move && lastMove.result === MoveResult.SUCCESS && lastMove.move !== Moves.STRUGGLE) {
+      return true;
+    }
+    return false;
+  }
+
+  override selectionDeniedText(_pokemon: Pokemon, move: Moves): string {
+    return i18next.t("battle:moveCannotBeSelected", { moveName: allMoves[move].name });
+  }
+}
+
 /**
  * Retrieves a {@linkcode BattlerTag} based on the provided tag type, turn count, source move, and source ID.
  *
@@ -2572,6 +2609,8 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: number, source
     return new MysteryEncounterPostSummonTag();
   case BattlerTagType.HEAL_BLOCK:
     return new HealBlockTag(turnCount, sourceMove);
+  case BattlerTagType.TORMENT:
+    return new TormentTag(sourceId);
   case BattlerTagType.NONE:
   default:
     return new BattlerTag(tagType, BattlerTagLapseType.CUSTOM, turnCount, sourceMove, sourceId);
