@@ -2,17 +2,17 @@
   "intro": "……@d{64}クラウン？",
   "speaker": "クラウン",
   "intro_dialogue": "バカバカしい　ボンクラ、　抜本的な　バトルで　ぶっ壊す！\n微笑で　ボコボコ　Ｂａｂｙ！",
-  "title": "くらくらクラウン",
+  "title": "くらくらクラウンの変え方",
   "description": "この遭遇は　変な　気がします。\nクラウンは　バトルを　引き起こりたがります　が、\n一体　どうして　ですか？\n\nあの{{blacephalonName}}は　特に　おかしい…… @[TOOLTIP_TITLE]{変わったタイプと特性}が　ある　みたいです。",
   "query": "どうします？",
   "option": {
     "1": {
       "label": "クラウンと勝負",
       "tooltip": "(-) 勝負はおかしい\n(?) 手持ちポケモンの特性は変化",
-      "selected": "パッとしない　ポケモンを　ぽかぽか　パンチしちゃう、　ぴょん！",
-      "apply_ability_dialogue": "とても　たくましく　倒した！\n倒すのが　得意な　トレーナーと　特性を　取り替えたい！",
-      "apply_ability_message": "クラウンは　スキルスワップで　手持ちポケモン　１匹の　特性を　{{ability}}と　取り替えることを　申し出ています！",
-      "ability_prompt": "手持ちポケモンの　特性を　恒久的に　{{ability}}に　変化しますか？",
+      "selected": "パッとしない　ポケモンを　ぽかぽか　パンチしちゃうんだ　ぴょん！",
+      "apply_ability_dialogue": "とても　たくましく　倒した！\n倒すのが　得意な　トレーナーと一緒に　特性を　取り替えたい！",
+      "apply_ability_message": "クラウンは　スキルスワップで　手持ちポケモン　１匹の\n特性を　{{ability}}と　取り替えることを　申し出ています！",
+      "ability_prompt": "手持ちポケモンの　特性を\n恒久的に　{{ability}}に　変化しますか？",
       "ability_gained": "@s{level_up_fanfare}{{chosenPokemon}}は {{ability}}の　特性を　身についた！"
     },
     "2": {
