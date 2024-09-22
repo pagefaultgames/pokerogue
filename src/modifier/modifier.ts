@@ -888,7 +888,7 @@ export class PokemonBaseStatTotalModifier extends PokemonHeldItemModifier {
   }
 
   override matchType(modifier: Modifier): boolean {
-    return modifier instanceof PokemonBaseStatTotalModifier;
+    return modifier instanceof PokemonBaseStatTotalModifier && this.statModifier === modifier.statModifier;
   }
 
   override clone(): PersistentModifier {
@@ -939,7 +939,7 @@ export class PokemonBaseStatFlatModifier extends PokemonHeldItemModifier {
   }
 
   override matchType(modifier: Modifier): boolean {
-    return modifier instanceof PokemonBaseStatFlatModifier;
+    return modifier instanceof PokemonBaseStatFlatModifier && modifier.statModifier === this.statModifier && this.stats.every(s => modifier.stats.some(stat => s === stat));
   }
 
   override clone(): PersistentModifier {
