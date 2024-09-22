@@ -6,7 +6,7 @@
   "option": {
     "1": {
       "label": "Abrir",
-      "tooltip": "@[SUMMARY_BLUE]{(35%) Algo terrível}\n@[SUMMARY_GREEN]{(40%) Recompensas razoáveis}\n@[SUMMARY_GREEN]{(20%) Boas Recompensas}\n@[SUMMARY_GREEN]{(4%) Ótimas Recompensas}\n@[SUMMARY_GREEN]{(1%) Recompensas Incríveis}",
+      "tooltip": "@[SUMMARY_BLUE]{({{trapPercent}}%) Algo terrível}\n@[SUMMARY_GREEN]{({{commonPercent}}%) Recompensas razoáveis}\n@[SUMMARY_GREEN]{({{ultraPercent}}%) Boas Recompensas}\n@[SUMMARY_GREEN]{({{roguePercent}}%) Ótimas Recompensas}\n@[SUMMARY_GREEN]{({{masterPercent}}%) Recompensas Incríveis}",
       "selected": "Você abre o baú e encontra...",
       "normal": "Apenas algumas ferramentas e itens normais.",
       "good": "Algumas ferramentas e itens bem legais.",
