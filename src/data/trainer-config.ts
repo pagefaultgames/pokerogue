@@ -1916,7 +1916,14 @@ export const trainerConfigs: TrainerConfigs = {
       p.formIndex = 1; // Mega Kangaskhan
       p.generateName();
     }))
-    .setPartyMemberFunc(4, getRandomPartyMemberFunc([Species.GASTRODON, Species.SEISMITOAD]))
+    .setPartyMemberFunc(4, getRandomPartyMemberFunc([Species.GASTRODON, Species.SEISMITOAD], TrainerSlot.TRAINER, true, p => {
+      //Storm Drain Gastrodon, Water Absorb Seismitoad
+      if (p.species.speciesId === Species.GASTRODON) {
+        p.abilityIndex = 0;
+      } else if (p.species.speciesId === Species.SEISMITOAD) {
+        p.abilityIndex = 2;
+      }
+    }))
     .setPartyMemberFunc(5, getRandomPartyMemberFunc([Species.MEWTWO], TrainerSlot.TRAINER, true, p => {
       p.setBoss(true, 2);
       p.generateAndPopulateMoveset();
@@ -2153,7 +2160,14 @@ export const trainerConfigs: TrainerConfigs = {
       p.pokeball = PokeballType.MASTER_BALL;
     })),
   [TrainerType.GUZMA]: new TrainerConfig(++t).setName("Guzma").initForEvilTeamLeader("Skull Boss", []).setMixedBattleBgm("battle_skull_boss").setVictoryBgm("victory_team_plasma")
-    .setPartyMemberFunc(0, getRandomPartyMemberFunc([ Species.LOKIX, Species.YANMEGA ]))
+    .setPartyMemberFunc(0, getRandomPartyMemberFunc([ Species.LOKIX, Species.YANMEGA ], TrainerSlot.TRAINER, true, p => {
+      //Tinted Lens Lokix, Tinted Lens Yanmega
+      if (p.species.speciesId === Species.LOKIX) {
+        p.abilityIndex = 2;
+      } else if (p.species.speciesId === Species.YANMEGA) {
+        p.abilityIndex = 1;
+      }
+    }))
     .setPartyMemberFunc(1, getRandomPartyMemberFunc([ Species.HERACROSS ]))
     .setPartyMemberFunc(2, getRandomPartyMemberFunc([ Species.SCIZOR, Species.KLEAVOR ]))
     .setPartyMemberFunc(3, getRandomPartyMemberFunc([ Species.GALVANTULA, Species.VIKAVOLT]))
@@ -2176,7 +2190,12 @@ export const trainerConfigs: TrainerConfigs = {
       p.pokeball = PokeballType.ULTRA_BALL;
     }))
     .setPartyMemberFunc(1, getRandomPartyMemberFunc([ Species.SCIZOR, Species.KLEAVOR ], TrainerSlot.TRAINER, true, p => {
-      p.abilityIndex = 1; //Technician Scizor, Sheer Force Kleavor
+      //Technician Scizor, Sharpness Kleavor
+      if (p.species.speciesId === Species.SCIZOR) {
+        p.abilityIndex = 1;
+      } else if (p.species.speciesId === Species.KLEAVOR) {
+        p.abilityIndex = 2;
+      }
     }))
     .setPartyMemberFunc(2, getRandomPartyMemberFunc([ Species.HISUI_SAMUROTT, Species.CRAWDAUNT ], TrainerSlot.TRAINER, true, p => {
       p.abilityIndex = 2; //Sharpness Hisui Samurott, Adaptability Crawdaunt
