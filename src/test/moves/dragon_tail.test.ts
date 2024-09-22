@@ -10,7 +10,7 @@ import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 import GameManager from "../utils/gameManager";
 
-const TIMEOUT = 20 * 1000;
+
 
 describe("Moves - Dragon Tail", () => {
   let phaserGame: Phaser.Game;
@@ -50,12 +50,12 @@ describe("Moves - Dragon Tail", () => {
       await game.phaseInterceptor.to(BerryPhase);
 
       const isVisible = enemyPokemon.visible;
-      const hasFled = enemyPokemon.wildFlee;
+      const hasFled = enemyPokemon.switchOutStatus;
       expect(!isVisible && hasFled).toBe(true);
 
       // simply want to test that the game makes it this far without crashing
       await game.phaseInterceptor.to(BattleEndPhase);
-    }, TIMEOUT
+    }
   );
 
   test(
@@ -72,10 +72,10 @@ describe("Moves - Dragon Tail", () => {
       await game.phaseInterceptor.to(BerryPhase);
 
       const isVisible = enemyPokemon.visible;
-      const hasFled = enemyPokemon.wildFlee;
+      const hasFled = enemyPokemon.switchOutStatus;
       expect(!isVisible && hasFled).toBe(true);
       expect(leadPokemon.hp).toBeLessThan(leadPokemon.getMaxHp());
-    }, TIMEOUT
+    }
   );
 
   test(
@@ -97,9 +97,9 @@ describe("Moves - Dragon Tail", () => {
       await game.phaseInterceptor.to(TurnEndPhase);
 
       const isVisibleLead = enemyLeadPokemon.visible;
-      const hasFledLead = enemyLeadPokemon.wildFlee;
+      const hasFledLead = enemyLeadPokemon.switchOutStatus;
       const isVisibleSec = enemySecPokemon.visible;
-      const hasFledSec = enemySecPokemon.wildFlee;
+      const hasFledSec = enemySecPokemon.switchOutStatus;
       expect(!isVisibleLead && hasFledLead && isVisibleSec && !hasFledSec).toBe(true);
       expect(leadPokemon.hp).toBeLessThan(leadPokemon.getMaxHp());
 
@@ -109,7 +109,7 @@ describe("Moves - Dragon Tail", () => {
 
       await game.phaseInterceptor.to(BerryPhase);
       expect(enemySecPokemon.hp).toBeLessThan(enemySecPokemon.getMaxHp());
-    }, TIMEOUT
+    }
   );
 
   test(
@@ -133,14 +133,14 @@ describe("Moves - Dragon Tail", () => {
       await game.phaseInterceptor.to(BerryPhase);
 
       const isVisibleLead = enemyLeadPokemon.visible;
-      const hasFledLead = enemyLeadPokemon.wildFlee;
+      const hasFledLead = enemyLeadPokemon.switchOutStatus;
       const isVisibleSec = enemySecPokemon.visible;
-      const hasFledSec = enemySecPokemon.wildFlee;
+      const hasFledSec = enemySecPokemon.switchOutStatus;
       expect(!isVisibleLead && hasFledLead && !isVisibleSec && hasFledSec).toBe(true);
       expect(leadPokemon.hp).toBeLessThan(leadPokemon.getMaxHp());
       expect(secPokemon.hp).toBeLessThan(secPokemon.getMaxHp());
       expect(enemyLeadPokemon.hp).toBeLessThan(enemyLeadPokemon.getMaxHp());
       expect(enemySecPokemon.hp).toBeLessThan(enemySecPokemon.getMaxHp());
-    }, TIMEOUT
+    }
   );
 });

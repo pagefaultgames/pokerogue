@@ -6,7 +6,7 @@ import { PokeballType } from "#enums/pokeball";
 import { Species } from "#enums/species";
 import { StatusEffect } from "#enums/status-effect";
 import { TimeOfDay } from "#enums/time-of-day";
-import { VariantTier } from "#enums/variant-tiers";
+import { VariantTier } from "#enums/variant-tier";
 import { WeatherType } from "#enums/weather-type";
 import { type PokeballCounts } from "./battle-scene";
 import { Gender } from "./data/gender";
@@ -70,6 +70,8 @@ class DefaultOverrides {
       [PokeballType.MASTER_BALL]: 0,
     },
   };
+  /** Set to `true` to show all tutorials */
+  readonly BYPASS_TUTORIAL_SKIP: boolean = false;
 
   // ----------------
   // PLAYER OVERRIDES

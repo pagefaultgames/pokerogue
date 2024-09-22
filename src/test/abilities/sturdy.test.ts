@@ -8,7 +8,7 @@ import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest";
 
-const TIMEOUT = 20 * 1000;
+
 
 describe("Abilities - Sturdy", () => {
   let phaserGame: Phaser.Game;
@@ -45,7 +45,6 @@ describe("Abilities - Sturdy", () => {
       await game.phaseInterceptor.to(MoveEndPhase);
       expect(game.scene.getEnemyParty()[0].hp).toBe(1);
     },
-    TIMEOUT
   );
 
   test(
@@ -62,7 +61,6 @@ describe("Abilities - Sturdy", () => {
       expect(enemyPokemon.hp).toBe(0);
       expect(enemyPokemon.isFainted()).toBe(true);
     },
-    TIMEOUT
   );
 
   test(
@@ -75,7 +73,6 @@ describe("Abilities - Sturdy", () => {
       const enemyPokemon: EnemyPokemon = game.scene.getEnemyParty()[0];
       expect(enemyPokemon.isFullHp()).toBe(true);
     },
-    TIMEOUT
   );
 
   test(
@@ -91,7 +88,6 @@ describe("Abilities - Sturdy", () => {
       expect(enemyPokemon.hp).toBe(0);
       expect(enemyPokemon.isFainted()).toBe(true);
     },
-    TIMEOUT
   );
 
 });

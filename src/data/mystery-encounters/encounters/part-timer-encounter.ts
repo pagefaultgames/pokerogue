@@ -2,16 +2,17 @@ import { MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/myst
 import { leaveEncounterWithoutBattle, selectPokemonForOption, setEncounterExp, setEncounterRewards, transitionMysteryEncounterIntroVisuals, updatePlayerMoney } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import BattleScene from "#app/battle-scene";
-import MysteryEncounter, { MysteryEncounterBuilder } from "../mystery-encounter";
-import { MoveRequirement } from "../mystery-encounter-requirements";
+import MysteryEncounter, { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-encounter";
+import { MoveRequirement } from "#app/data/mystery-encounters/mystery-encounter-requirements";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { Stat } from "#enums/stat";
 import { CHARMING_MOVES } from "#app/data/mystery-encounters/requirements/requirement-groups";
-import { getEncounterText, showEncounterDialogue, showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
+import { showEncounterDialogue, showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
 import i18next from "i18next";
 import Pokemon, { PlayerPokemon } from "#app/field/pokemon";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
+import { isPokemonValidForEncounterOptionSelection } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
 
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounter:partTimer";
@@ -27,7 +28,7 @@ export const PartTimerEncounter: MysteryEncounter =
     .withSceneWaveRangeRequirement(...CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES)
     .withIntroSpriteConfigs([
       {
-        spriteKey: "warehouse_crate",
+        spriteKey: "part_timer_crate",
         fileRoot: "mystery-encounters",
         hasShadow: false,
         y: 6,
@@ -117,11 +118,7 @@ export const PartTimerEncounter: MysteryEncounter =
 
         // Only Pokemon non-KOd pokemon can be selected
         const selectableFilter = (pokemon: Pokemon) => {
-          if (!pokemon.isAllowedInBattle()) {
-            return getEncounterText(scene, `${namespace}.invalid_selection`) ?? null;
-          }
-
-          return null;
+          return isPokemonValidForEncounterOptionSelection(pokemon, scene, `${namespace}.invalid_selection`);
         };
 
         return selectPokemonForOption(scene, onPokemonSelected, undefined, selectableFilter);
@@ -198,11 +195,7 @@ export const PartTimerEncounter: MysteryEncounter =
 
         // Only Pokemon non-KOd pokemon can be selected
         const selectableFilter = (pokemon: Pokemon) => {
-          if (!pokemon.isAllowedInBattle()) {
-            return getEncounterText(scene, `${namespace}.invalid_selection`) ?? null;
-          }
-
-          return null;
+          return isPokemonValidForEncounterOptionSelection(pokemon, scene, `${namespace}.invalid_selection`);
         };
 
         return selectPokemonForOption(scene, onPokemonSelected, undefined, selectableFilter);

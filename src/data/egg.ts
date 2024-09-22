@@ -1,6 +1,6 @@
 import BattleScene from "../battle-scene";
 import PokemonSpecies, { getPokemonSpecies, speciesStarters } from "./pokemon-species";
-import { VariantTier } from "../enums/variant-tiers";
+import { VariantTier } from "../enums/variant-tier";
 import * as Utils from "../utils";
 import Overrides from "#app/overrides";
 import { pokemonPrevolutions } from "./pokemon-evolutions";
@@ -178,7 +178,7 @@ export class Egg {
       // be done because species with no variants get filtered at rollSpecies but if the
       // species is set via options or the legendary gacha pokemon gets choosen the check never happens
       if (this._species && !getPokemonSpecies(this._species).hasVariants()) {
-        this._variantTier = VariantTier.COMMON;
+        this._variantTier = VariantTier.STANDARD;
       }
       // Needs this._tier so it needs to be generated afer the tier override if bought from same species
       this._eggMoveIndex = eggOptions?.eggMoveIndex ?? this.rollEggMoveIndex();
@@ -494,12 +494,12 @@ export class Egg {
   // place but I don't want to touch the pokemon class.
   private rollVariant(): VariantTier {
     if (!this.isShiny) {
-      return VariantTier.COMMON;
+      return VariantTier.STANDARD;
     }
 
     const rand = Utils.randSeedInt(10);
     if (rand >= 4) {
-      return VariantTier.COMMON; // 6/10
+      return VariantTier.STANDARD; // 6/10
     } else if (rand >= 1) {
       return VariantTier.RARE;   // 3/10
     } else {
