@@ -1,6 +1,5 @@
-import { EnemyPartyConfig, generateModifierType, initBattleWithEnemyConfig, setEncounterRewards, } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
+import { EnemyPartyConfig, generateModifierType, handleMysteryEncounterBattleFailed, initBattleWithEnemyConfig, setEncounterRewards, } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import { trainerConfigs } from "#app/data/trainer-config";
-import { modifierTypes, PokemonHeldItemModifierType } from "#app/modifier/modifier-type";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import BattleScene from "#app/battle-scene";
 import { randSeedShuffle } from "#app/utils";
@@ -14,8 +13,6 @@ import { Species } from "#enums/species";
 import { getPokemonSpecies, speciesStarters } from "#app/data/pokemon-species";
 import { Nature } from "#enums/nature";
 import { Moves } from "#enums/moves";
-import { Type } from "#app/data/type";
-import { Stat } from "#enums/stat";
 import { PlayerPokemon } from "#app/field/pokemon";
 import { getEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
 import { IEggOptions } from "#app/data/egg";
@@ -24,15 +21,18 @@ import { EggTier } from "#enums/egg-type";
 import { MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/mystery-encounter-option";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { achvs } from "#app/system/achv";
+import { modifierTypes, PokemonHeldItemModifierType } from "#app/modifier/modifier-type";
+import { Type } from "#app/data/type";
+import { getPokeballTintColor } from "#app/data/pokeball";
 
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounter:expertPokemonBreeder";
 
 const trainerNameKey = "trainerNames:expert_pokemon_breeder";
 
-const FIRST_STAGE_EVOLUTION_WAVE = 30;
-const SECOND_STAGE_EVOLUTION_WAVE = 45;
-const FINAL_STAGE_EVOLUTION_WAVE = 60;
+const FIRST_STAGE_EVOLUTION_WAVE = 45;
+const SECOND_STAGE_EVOLUTION_WAVE = 60;
+const FINAL_STAGE_EVOLUTION_WAVE = 75;
 
 const FRIENDSHIP_ADDED = 20;
 
@@ -216,6 +216,7 @@ export const TheExpertPokemonBreederEncounter: MysteryEncounter =
           const config: EnemyPartyConfig = encounter.enemyPartyConfigs[0];
 
           const { pokemon1, pokemon1CommonEggs, pokemon1RareEggs } = encounter.misc;
+          encounter.misc.chosenPokemon = pokemon1;
           encounter.setDialogueToken("chosenPokemon", pokemon1.getNameToRender());
           const eggOptions = getEggOptions(scene, pokemon1CommonEggs, pokemon1RareEggs);
           setEncounterRewards(scene, { fillRemaining: true }, eggOptions);
@@ -241,14 +242,11 @@ export const TheExpertPokemonBreederEncounter: MysteryEncounter =
             });
           }
 
+          encounter.onGameOver = onGameOver;
           initBattleWithEnemyConfig(scene, config);
         })
         .withPostOptionPhase(async (scene: BattleScene) => {
-          // Give achievement if in Space biome
-          checkAchievement(scene);
-          // Give 20 friendship to the chosen pokemon
-          scene.currentBattle.mysteryEncounter!.misc.pokemon1.addFriendship(FRIENDSHIP_ADDED);
-          await restorePartyAndHeldItems(scene);
+          await doPostEncounterCleanup(scene);
         })
         .build()
     )
@@ -270,6 +268,7 @@ export const TheExpertPokemonBreederEncounter: MysteryEncounter =
           const config: EnemyPartyConfig = encounter.enemyPartyConfigs[0];
 
           const { pokemon2, pokemon2CommonEggs, pokemon2RareEggs } = encounter.misc;
+          encounter.misc.chosenPokemon = pokemon2;
           encounter.setDialogueToken("chosenPokemon", pokemon2.getNameToRender());
           const eggOptions = getEggOptions(scene, pokemon2CommonEggs, pokemon2RareEggs);
           setEncounterRewards(scene, { fillRemaining: true }, eggOptions);
@@ -295,14 +294,11 @@ export const TheExpertPokemonBreederEncounter: MysteryEncounter =
             });
           }
 
+          encounter.onGameOver = onGameOver;
           initBattleWithEnemyConfig(scene, config);
         })
         .withPostOptionPhase(async (scene: BattleScene) => {
-          // Give achievement if in Space biome
-          checkAchievement(scene);
-          // Give 20 friendship to the chosen pokemon
-          scene.currentBattle.mysteryEncounter!.misc.pokemon2.addFriendship(FRIENDSHIP_ADDED);
-          await restorePartyAndHeldItems(scene);
+          await doPostEncounterCleanup(scene);
         })
         .build()
     )
@@ -324,6 +320,7 @@ export const TheExpertPokemonBreederEncounter: MysteryEncounter =
           const config: EnemyPartyConfig = encounter.enemyPartyConfigs[0];
 
           const { pokemon3, pokemon3CommonEggs, pokemon3RareEggs } = encounter.misc;
+          encounter.misc.chosenPokemon = pokemon3;
           encounter.setDialogueToken("chosenPokemon", pokemon3.getNameToRender());
           const eggOptions = getEggOptions(scene, pokemon3CommonEggs, pokemon3RareEggs);
           setEncounterRewards(scene, { fillRemaining: true }, eggOptions);
@@ -349,19 +346,17 @@ export const TheExpertPokemonBreederEncounter: MysteryEncounter =
             });
           }
 
+          encounter.onGameOver = onGameOver;
           initBattleWithEnemyConfig(scene, config);
         })
         .withPostOptionPhase(async (scene: BattleScene) => {
-          // Give achievement if in Space biome
-          checkAchievement(scene);
-          // Give 20 friendship to the chosen pokemon
-          scene.currentBattle.mysteryEncounter!.misc.pokemon3.addFriendship(FRIENDSHIP_ADDED);
-          await restorePartyAndHeldItems(scene);
+          await doPostEncounterCleanup(scene);
         })
         .build()
     )
     .withOutroDialogue([
       {
+        speaker: trainerNameKey,
         text: `${namespace}.outro`,
       },
     ])
@@ -390,15 +385,7 @@ function getPartyConfig(scene: BattleScene): EnemyPartyConfig {
         modifierConfigs: [
           {
             modifier: generateModifierType(scene, modifierTypes.TERA_SHARD, [Type.STEEL]) as PokemonHeldItemModifierType,
-          },
-          {
-            modifier: generateModifierType(scene, modifierTypes.BASE_STAT_BOOSTER, [Stat.ATK]) as PokemonHeldItemModifierType,
-            stackCount: 1 + Math.floor(waveIndex / 20), // +1 Protein every 20 waves
-          },
-          {
-            modifier: generateModifierType(scene, modifierTypes.BASE_STAT_BOOSTER, [Stat.SPD]) as PokemonHeldItemModifierType,
-            stackCount: 1 + Math.floor(waveIndex / 40), // +1 Carbos every 40 waves
-          },
+          }
         ]
       }
     ]
@@ -546,4 +533,84 @@ async function restorePartyAndHeldItems(scene: BattleScene) {
     });
   });
   await scene.updateModifiers(true);
+}
+
+function onGameOver(scene: BattleScene) {
+  const encounter = scene.currentBattle.mysteryEncounter!;
+
+  encounter.dialogue.outro = [
+    {
+      speaker: trainerNameKey,
+      text: `${namespace}.outro_failed`,
+    },
+  ];
+
+  // Restore original party, player loses all friendship with chosen mon (it remains fainted)
+  restorePartyAndHeldItems(scene);
+  const chosenPokemon  = encounter.misc.chosenPokemon;
+  chosenPokemon.friendship = 0;
+
+  // Clear all rewards that would have been earned
+  encounter.doEncounterRewards = undefined;
+
+  // Set flag that encounter was failed
+  encounter.misc.encounterFailed = true;
+
+  // Revert BGM
+  scene.playBgm(scene.arena.bgm);
+
+  // Return enemy Pokemon
+  const pokemon = scene.getEnemyPokemon();
+  if (pokemon) {
+    scene.playSound("se/pb_rel");
+    pokemon.hideInfo();
+    pokemon.tint(getPokeballTintColor(pokemon.pokeball), 1, 250, "Sine.easeIn");
+    scene.tweens.add({
+      targets: pokemon,
+      duration: 250,
+      ease: "Sine.easeIn",
+      scale: 0.5,
+      onComplete: () => {
+        scene.field.remove(pokemon, true);
+      }
+    });
+  }
+
+  // Show the enemy trainer
+  scene.time.delayedCall(250, () => {
+    const sprites = scene.currentBattle.trainer?.getSprites();
+    const tintSprites = scene.currentBattle.trainer?.getTintSprites();
+    if (sprites && tintSprites) {
+      for (let i = 0; i < sprites.length; i++) {
+        sprites[i].setVisible(true);
+        tintSprites[i].setVisible(true);
+        sprites[i].clearTint();
+        tintSprites[i].clearTint();
+      }
+    }
+    scene.tweens.add({
+      targets: scene.currentBattle.trainer,
+      x: "-=16",
+      y: "+=16",
+      alpha: 1,
+      ease: "Sine.easeInOut",
+      duration: 750
+    });
+  });
+
+
+  handleMysteryEncounterBattleFailed(scene, true);
+
+  return false;
+}
+
+async function doPostEncounterCleanup(scene: BattleScene) {
+  const encounter = scene.currentBattle.mysteryEncounter!;
+  if (!encounter.misc.encounterFailed) {
+    // Give achievement if in Space biome
+    checkAchievement(scene);
+    // Give 20 friendship to the chosen pokemon
+    encounter.misc.chosenPokemon.addFriendship(FRIENDSHIP_ADDED);
+    await restorePartyAndHeldItems(scene);
+  }
 }
