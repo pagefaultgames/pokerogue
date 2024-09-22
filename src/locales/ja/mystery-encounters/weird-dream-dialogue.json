@@ -1,14 +1,14 @@
 {
-  "intro": "A shadowy woman blocks your path.\nSomething about her is unsettling...",
-  "speaker": "Woman",
-  "intro_dialogue": "I have seen your futures, your pasts...$Child, do you see them too?",
-  "title": "???",
-  "description": "The woman's words echo in your head. It wasn't just a singular voice, but a vast multitude, from all timelines and realities. You begin to feel dizzy, the question lingering on your mind...\n\n@[TOOLTIP_TITLE]{\"I have seen your futures, your pasts... Child, do you see them too?\"}",
-  "query": "What will you do?",
+  "intro": "影で　隠れている　謎の　女の人が　道を　さえぎる。\n何か　不安に　なる……",
+  "speaker": "女の人",
+  "intro_dialogue": "あなたの　未来たちも　過去たちも　全て　見えます。$我が子よ、　見えますか？",
+  "title": "？？？",
+  "description": "女の人の　言葉は　頭に　響いています。　一人の声じゃなくて、　全ての　異世界と　時間軸から　数多な　声々でした。　クラッと　めまいがして、　あの質問が　頭で　めぐります……\n\n@[TOOLTIP_TITLE]{「あなたの　未来たちも　過去たちも　全て　見えます。　我が子よ、　見えますか？」}",
+  "query": "どうしますか？",
   "option": {
     "1": {
-      "label": "\"I See Them\"",
-      "tooltip": "@[SUMMARY_GREEN]{(?) Affects your Pokémon}",
+      "label": "「見えます。」",
+      "tooltip": "@[SUMMARY_GREEN]{(?) 手持ちポケモンに影響}",
       "selected": "Her hand reaches out to touch you,\nand everything goes black.$Then...@d{64} You see everything.\nEvery timeline, all your different selves,\n past and future.$Everything that has made you,\neverything you will become...@d{64}",
       "cutscene": "You see your Pokémon,@d{32} converging from\nevery reality to become something new...@d{64}",
       "dream_complete": "When you awaken, the woman - was it a woman or a ghost? - is gone...$.@d{32}.@d{32}.@d{32}$Your Pokémon team has changed...\nOr is it the same team you've always had?"
