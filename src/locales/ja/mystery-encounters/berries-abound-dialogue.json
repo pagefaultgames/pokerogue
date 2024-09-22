@@ -14,7 +14,7 @@
       "label": "木に突っ走る！",
       "tooltip": "(-) {{fastestPokemon}}は素早さを使う\n(+) きのみをもらう",
       "selected": "{{fastestPokemon}}は　きのみの木へ　突っ走っていきます！${{enemyPokemon}}は　受け止められる　前に　{{numBerries}}を　取れます！$新たに得た　ご褒美で　早く　逃げます。",
-      "selected_bad": "{{fastestPokemon}}は　きのみの木へ　突っ走って行きます！$だめ！　{{enemyPokemon}}の方は　早くて　受け止められました！",
+      "selected_bad": "{{fastestPokemon}}は　きのみの木へ　突っ走って行きます！$ダメ！　{{enemyPokemon}}の方は　早くて　受け止められました！",
       "boss_enraged": "相手の　{{enemyPokemon}}は　怒り出した！"
     },
     "3": {
