@@ -311,7 +311,9 @@ export function applyHealToPokemon(scene: BattleScene, pokemon: PlayerPokemon, h
  * @param value
  */
 export async function modifyPlayerPokemonBST(pokemon: PlayerPokemon, value: number) {
-  const modType = modifierTypes.MYSTERY_ENCOUNTER_SHUCKLE_JUICE().generateType(pokemon.scene.getParty(), [value]);
+  const modType = modifierTypes.MYSTERY_ENCOUNTER_SHUCKLE_JUICE()
+    .generateType(pokemon.scene.getParty(), [value])
+    ?.withIdFromFunc(modifierTypes.MYSTERY_ENCOUNTER_SHUCKLE_JUICE);
   const modifier = modType?.newModifier(pokemon);
   if (modifier) {
     await pokemon.scene.addModifier(modifier, false, false, false, true);
@@ -780,8 +782,7 @@ export function getGoldenBugNetSpecies(): PokemonSpecies {
  */
 export function getEncounterPokemonLevelForWave(scene: BattleScene, levelAdditiveModifier: number = 0) {
   const currentBattle = scene.currentBattle;
-  // Default to use the first generated level from enemyLevels, or generate a new one if it DNE
-  const baseLevel = currentBattle.enemyLevels && currentBattle.enemyLevels?.length > 0 ? currentBattle.enemyLevels[0] : currentBattle.getLevelForWave();
+  const baseLevel = currentBattle.getLevelForWave();
 
   // Add a level scaling modifier that is (+1 level per 10 waves) * levelAdditiveModifier
   return baseLevel + Math.max(Math.round((currentBattle.waveIndex / 10) * levelAdditiveModifier), 0);
