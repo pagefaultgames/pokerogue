@@ -6,7 +6,7 @@
   "option": {
     "1": {
       "label": "打开",
-      "tooltip": "@[SUMMARY_BLUE]{(35%) 某种东西}\n@[SUMMARY_GREEN]{(40%) 一般奖励}\n@[SUMMARY_GREEN]{(20%) 精美奖励}\n@[SUMMARY_GREEN]{(4%) 珍稀奖励}\n@[SUMMARY_GREEN]{(1%) 超凡奖励}",
+      "tooltip": "@[SUMMARY_BLUE]{(35%) 某种东西}\n@[SUMMARY_GREEN]{({{trapPercent}}%) 一般奖励}\n@[SUMMARY_GREEN]{({{commonPercent}}%) 精美奖励}\n@[SUMMARY_GREEN]{({{roguePercent}}%) 珍稀奖励}\n@[SUMMARY_GREEN]{({{masterPercent}}%) 超凡奖励}",
       "selected": "你打开箱子发现......",
       "normal": "只是一些普通的工具和物品。",
       "good": "一些不错的工具和物品！",
