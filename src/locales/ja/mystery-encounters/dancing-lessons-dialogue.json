@@ -1,27 +1,27 @@
 {
-  "intro": "An {{oricorioName}} dances sadly alone, without a partner.",
-  "title": "Dancing Lessons",
-  "description": "The {{oricorioName}} doesn't seem aggressive, if anything it seems sad.\n\nMaybe it just wants someone to dance with...",
-  "query": "What will you do?",
+  "intro": "相手　いなくて　寂しそうな　{{oricorioName}}は　悲しく　踊ってます。",
+  "title": "フリフリ振り付け",
+  "description": "{{oricorioName}}は　攻撃的　じゃなさそう……　むしろ、　悲しい　顔を　しています。\n\n誰かと　踊りたいだけ　かもしれません……",
+  "query": "どうしますか？",
   "option": {
     "1": {
-      "label": "Battle It",
-      "tooltip": "(-) Tough Battle\n(+) Gain a Baton",
-      "selected": "The {{oricorioName}} is distraught and moves to defend itself!",
-      "boss_enraged": "The {{oricorioName}}'s fear boosted its stats!"
+      "label": "バトルだ",
+      "tooltip": "(-) 勝負はきつい\n(+) バトンをもらう",
+      "selected": "{{oricorioName}}は　取り乱して　防御の　体勢に　入る！",
+      "boss_enraged": "{{oricorioName}}は　恐れで　能力を　上げた！"
     },
     "2": {
-      "label": "Learn Its Dance",
-      "tooltip": "(+) Teach a Pokémon Revelation Dance",
-      "selected": "You watch the {{oricorioName}} closely as it performs its dance...$@s{level_up_fanfare}Your {{selectedPokemon}} learned from the {{oricorioName}}!"
+      "label": "踊りを覚える",
+      "tooltip": "(+) ポケモンにめざめるダンスを教える",
+      "selected": "{{oricorioName}}の　踊りを　よく 調べます……$@s{level_up_fanfare}{{selectedPokemon}}が　{{oricorioName}}から　技を　覚えました!"
     },
     "3": {
-      "label": "Show It a Dance",
-      "tooltip": "(-) Teach the {{oricorioName}} a Dance Move\n(+) The {{oricorioName}} Will Like You",
-      "disabled_tooltip": "Your Pokémon need to know a Dance move for this.",
-      "select_prompt": "Select a Dance type move to use.",
-      "selected": "The {{oricorioName}} watches in fascination as\n{{selectedPokemon}} shows off {{selectedMove}}!$It loves the display!$@s{level_up_fanfare}The {{oricorioName}} wants to join your party!"
+      "label": "踊りを教える",
+      "tooltip": "(-) {{oricorioName}}に踊りの技を教える\n(+) {{oricorioName}}は好きになる",
+      "disabled_tooltip": "選べるには　踊りの技がある　手持ちポケモンが　必要",
+      "select_prompt": "踊りの技を　選んでください",
+      "selected": "{{oricorioName}}は　{{selectedPokemon}}が　{{selectedMove}}を\n演舞する　姿を　じっと　見とれています！!$演舞に　全く　好きになった　ようです！$@s{level_up_fanfare}{{oricorioName}}は　手持ちに　入りたい！"
     }
   },
-  "invalid_selection": "This Pokémon doesn't know a Dance move"
+  "invalid_selection": "このポケモンは　踊りの技を　覚えていません！"
 }
