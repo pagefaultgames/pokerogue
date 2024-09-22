@@ -27,6 +27,7 @@ import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
 import { Stat } from "#enums/stat";
 import { EncounterAnim } from "#enums/encounter-anims";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
+import i18next from "i18next";
 
 /** the i18n namespace for this encounter */
 const namespace = "mysteryEncounter:dancingLessons";
@@ -133,7 +134,7 @@ export const DancingLessonsEncounter: MysteryEncounter =
       }
 
       const oricorioData = new PokemonData(enemyPokemon);
-      const oricorio = scene.addEnemyPokemon(species, scene.currentBattle.enemyLevels![0], TrainerSlot.NONE, false, oricorioData);
+      const oricorio = scene.addEnemyPokemon(species, level, TrainerSlot.NONE, false, oricorioData);
 
       // Adds a real Pokemon sprite to the field (required for the animation)
       scene.getEnemyParty().forEach(enemyPokemon => {
@@ -268,9 +269,12 @@ export const DancingLessonsEncounter: MysteryEncounter =
               });
           };
 
-          // Only Pokemon that have a Dancing move can be selected
+          // Only challenge legal/unfainted Pokemon that have a Dancing move can be selected
           const selectableFilter = (pokemon: Pokemon) => {
             // If pokemon meets primary pokemon reqs, it can be selected
+            if (!pokemon.isAllowedInBattle()) {
+              return i18next.t("partyUiHandler:cantBeUsed", { pokemonName: pokemon.getNameToRender() }) ?? null;
+            }
             const meetsReqs = encounter.options[2].pokemonMeetsPrimaryRequirements(scene, pokemon);
             if (!meetsReqs) {
               return getEncounterText(scene, `${namespace}.invalid_selection`) ?? null;
