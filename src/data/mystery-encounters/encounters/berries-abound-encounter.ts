@@ -102,7 +102,7 @@ export const BerriesAboundEncounter: MysteryEncounter =
       ];
 
       // Get fastest party pokemon for option 2
-      const fastestPokemon = getHighestStatPlayerPokemon(scene, PERMANENT_STATS[Stat.SPD], true);
+      const fastestPokemon = getHighestStatPlayerPokemon(scene, PERMANENT_STATS[Stat.SPD], true, false);
       encounter.misc.fastestPokemon = fastestPokemon;
       encounter.misc.enemySpeed = bossPokemon.getStat(Stat.SPD);
       encounter.setDialogueToken("fastestPokemon", fastestPokemon.getNameToRender());

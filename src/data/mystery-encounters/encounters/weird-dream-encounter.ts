@@ -20,7 +20,8 @@ import i18next from "#app/plugins/i18n";
 import { doPokemonTransformationSequence, TransformationScreenPosition } from "#app/data/mystery-encounters/utils/encounter-transformation-sequence";
 import { getLevelTotalExp } from "#app/data/exp";
 import { Stat } from "#enums/stat";
-import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES, GameModes } from "#app/game-mode";
+import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
+import { Challenges } from "#enums/challenges";
 
 /** i18n namespace for encounter */
 const namespace = "mysteryEncounter:weirdDream";
@@ -104,7 +105,7 @@ const STANDARD_BST_TRANSFORM_BASE_VALUES: [number, number] = [40, 50];
 export const WeirdDreamEncounter: MysteryEncounter =
   MysteryEncounterBuilder.withEncounterType(MysteryEncounterType.WEIRD_DREAM)
     .withEncounterTier(MysteryEncounterTier.ROGUE)
-    .withDisabledGameModes(GameModes.CHALLENGE)
+    .withDisallowedChallenges(Challenges.SINGLE_TYPE)
     .withSceneWaveRangeRequirement(...CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES)
     .withIntroSpriteConfigs([
       {

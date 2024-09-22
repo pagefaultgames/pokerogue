@@ -139,7 +139,7 @@ export const DarkDealEncounter: MysteryEncounter =
         .withPreOptionPhase(async (scene: BattleScene) => {
           // Removes random pokemon (including fainted) from party and adds name to dialogue data tokens
           // Will never return last battle able mon and instead pick fainted/unable to battle
-          const removedPokemon = getRandomPlayerPokemon(scene, false, true);
+          const removedPokemon = getRandomPlayerPokemon(scene, true, false, true);
           // Get all the pokemon's held items
           const modifiers = removedPokemon.getHeldItems().filter(m => !(m instanceof PokemonFormChangeItemModifier));
           scene.removePokemonFromPlayerParty(removedPokemon);

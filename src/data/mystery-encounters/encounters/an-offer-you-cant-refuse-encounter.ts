@@ -60,7 +60,7 @@ export const AnOfferYouCantRefuseEncounter: MysteryEncounter =
     .withQuery(`${namespace}.query`)
     .withOnInit((scene: BattleScene) => {
       const encounter = scene.currentBattle.mysteryEncounter!;
-      const pokemon = getHighestStatTotalPlayerPokemon(scene, false);
+      const pokemon = getHighestStatTotalPlayerPokemon(scene, true, true);
       const price = scene.getWaveMoneyAmount(10);
 
       encounter.setDialogueToken("strongestPokemon", pokemon.getNameToRender());

@@ -50,28 +50,39 @@ export function getSpriteKeysFromPokemon(pokemon: Pokemon): { spriteKey: string,
 }
 
 /**
- *
  * Will never remove the player's last non-fainted Pokemon (if they only have 1)
  * Otherwise, picks a Pokemon completely at random and removes from the party
  * @param scene
- * @param isAllowedInBattle Default false. If true, only picks from unfainted mons. If there is only 1 unfainted mon left and doNotReturnLastAbleMon is also true, will return fainted mon
- * @param doNotReturnLastAbleMon Default false. If true, will never return the last unfainted pokemon in the party. Useful when this function is being used to determine what Pokemon to remove from the party (Don't want to remove last unfainted)
+ * @param isAllowed Default false. If true, only picks from legal mons. If no legal mons are found (or there is 1, with `doNotReturnLastAllowedMon = true), will return a mon that is not allowed.
+ * @param isFainted Default false. If true, includes fainted mons.
+ * @param doNotReturnLastAllowedMon Default false. If true, will never return the last unfainted pokemon in the party. Useful when this function is being used to determine what Pokemon to remove from the party (Don't want to remove last unfainted)
  * @returns
  */
-export function getRandomPlayerPokemon(scene: BattleScene, isAllowedInBattle: boolean = false, doNotReturnLastAbleMon: boolean = false): PlayerPokemon {
+export function getRandomPlayerPokemon(scene: BattleScene, isAllowed: boolean = false, isFainted: boolean = false, doNotReturnLastAllowedMon: boolean = false): PlayerPokemon {
   const party = scene.getParty();
   let chosenIndex: number;
-  let chosenPokemon: PlayerPokemon;
-  const unfaintedMons = party.filter(p => p.isAllowedInBattle());
-  const faintedMons = party.filter(p => !p.isAllowedInBattle());
+  let chosenPokemon: PlayerPokemon | null = null;
+  const fullyLegalMons = party.filter(p => (!isAllowed || p.isAllowed()) && (isFainted || !p.isFainted()));
+  const allowedOnlyMons = party.filter(p => p.isAllowed());
 
-  if (doNotReturnLastAbleMon && unfaintedMons.length === 1) {
-    chosenIndex = randSeedInt(faintedMons.length);
-    chosenPokemon = faintedMons[chosenIndex];
-  } else if (isAllowedInBattle) {
-    chosenIndex = randSeedInt(unfaintedMons.length);
-    chosenPokemon = unfaintedMons[chosenIndex];
-  } else {
+  if (doNotReturnLastAllowedMon && fullyLegalMons.length === 1) {
+    // If there is only 1 legal/unfainted mon left, select from fainted legal mons
+    const faintedLegalMons = party.filter(p => (!isAllowed || p.isAllowed()) && p.isFainted());
+    if (faintedLegalMons.length > 0) {
+      chosenIndex = randSeedInt(faintedLegalMons.length);
+      chosenPokemon = faintedLegalMons[chosenIndex];
+    }
+  }
+  if (!chosenPokemon && fullyLegalMons.length > 0) {
+    chosenIndex = randSeedInt(fullyLegalMons.length);
+    chosenPokemon = fullyLegalMons[chosenIndex];
+  }
+  if (!chosenPokemon && isAllowed && allowedOnlyMons.length > 0) {
+    chosenIndex = randSeedInt(allowedOnlyMons.length);
+    chosenPokemon = allowedOnlyMons[chosenIndex];
+  }
+  if (!chosenPokemon) {
+    // If no other options worked, returns fully random
     chosenIndex = randSeedInt(party.length);
     chosenPokemon = party[chosenIndex];
   }
@@ -82,15 +93,19 @@ export function getRandomPlayerPokemon(scene: BattleScene, isAllowedInBattle: bo
 /**
  * Ties are broken by whatever mon is closer to the front of the party
  * @param scene
- * @param unfainted Default false. If true, only picks from unfainted mons.
+ * @param isAllowed Default false. If true, only picks from legal mons.
+ * @param isFainted Default false. If true, includes fainted mons.
  * @returns
  */
-export function getHighestLevelPlayerPokemon(scene: BattleScene, unfainted: boolean = false): PlayerPokemon {
+export function getHighestLevelPlayerPokemon(scene: BattleScene, isAllowed: boolean = false, isFainted: boolean = false): PlayerPokemon {
   const party = scene.getParty();
   let pokemon: PlayerPokemon | null = null;
 
   for (const p of party) {
-    if (unfainted && p.isFainted()) {
+    if (isAllowed && !p.isAllowed()) {
+      continue;
+    }
+    if (!isFainted && p.isFainted()) {
       continue;
     }
 
@@ -104,15 +119,19 @@ export function getHighestLevelPlayerPokemon(scene: BattleScene, unfainted: bool
  * Ties are broken by whatever mon is closer to the front of the party
  * @param scene
  * @param stat Stat to search for
- * @param unfainted Default false. If true, only picks from unfainted mons.
+ * @param isAllowed Default false. If true, only picks from legal mons.
+ * @param isFainted Default false. If true, includes fainted mons.
  * @returns
  */
-export function getHighestStatPlayerPokemon(scene: BattleScene, stat: PermanentStat, unfainted: boolean = false): PlayerPokemon {
+export function getHighestStatPlayerPokemon(scene: BattleScene, stat: PermanentStat, isAllowed: boolean = false, isFainted: boolean = false): PlayerPokemon {
   const party = scene.getParty();
   let pokemon: PlayerPokemon | null = null;
 
   for (const p of party) {
-    if (unfainted && p.isFainted()) {
+    if (isAllowed && !p.isAllowed()) {
+      continue;
+    }
+    if (!isFainted && p.isFainted()) {
       continue;
     }
 
@@ -125,15 +144,19 @@ export function getHighestStatPlayerPokemon(scene: BattleScene, stat: PermanentS
 /**
  * Ties are broken by whatever mon is closer to the front of the party
  * @param scene
- * @param unfainted - default false. If true, only picks from unfainted mons.
+ * @param isAllowed Default false. If true, only picks from legal mons.
+ * @param isFainted Default false. If true, includes fainted mons.
  * @returns
  */
-export function getLowestLevelPlayerPokemon(scene: BattleScene, unfainted: boolean = false): PlayerPokemon {
+export function getLowestLevelPlayerPokemon(scene: BattleScene, isAllowed: boolean = false, isFainted: boolean = false): PlayerPokemon {
   const party = scene.getParty();
   let pokemon: PlayerPokemon | null = null;
 
   for (const p of party) {
-    if (unfainted && p.isFainted()) {
+    if (isAllowed && !p.isAllowed()) {
+      continue;
+    }
+    if (!isFainted && p.isFainted()) {
       continue;
     }
 
@@ -146,15 +169,19 @@ export function getLowestLevelPlayerPokemon(scene: BattleScene, unfainted: boole
 /**
  * Ties are broken by whatever mon is closer to the front of the party
  * @param scene
- * @param unfainted - default false. If true, only picks from unfainted mons.
+ * @param isAllowed Default false. If true, only picks from legal mons.
+ * @param isFainted Default false. If true, includes fainted mons.
  * @returns
  */
-export function getHighestStatTotalPlayerPokemon(scene: BattleScene, unfainted: boolean = false): PlayerPokemon {
+export function getHighestStatTotalPlayerPokemon(scene: BattleScene, isAllowed: boolean = false, isFainted: boolean = false): PlayerPokemon {
   const party = scene.getParty();
   let pokemon: PlayerPokemon | null = null;
 
   for (const p of party) {
-    if (unfainted && p.isFainted()) {
+    if (isAllowed && !p.isAllowed()) {
+      continue;
+    }
+    if (!isFainted && p.isFainted()) {
       continue;
     }
 

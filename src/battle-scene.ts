@@ -3165,10 +3165,16 @@ export default class BattleScene extends SceneBase {
           if (encounterCandidate.encounterTier !== tier) { // Encounter is in tier
             return false;
           }
-          const disabledModes = encounterCandidate.disabledGameModes;
-          if (disabledModes && disabledModes.length > 0
-            && disabledModes.includes(this.gameMode.modeId)) { // Encounter is enabled for game mode
+          const disallowedGameModes = encounterCandidate.disallowedGameModes;
+          if (disallowedGameModes && disallowedGameModes.length > 0
+            && disallowedGameModes.includes(this.gameMode.modeId)) { // Encounter is enabled for game mode
             return false;
+          }
+          if (this.gameMode.modeId === GameModes.CHALLENGE) { // Encounter is enabled for challenges
+            const disallowedChallenges = encounterCandidate.disallowedChallenges;
+            if (disallowedChallenges && disallowedChallenges.length > 0 && this.gameMode.challenges.some(challenge => disallowedChallenges.includes(challenge.id))) {
+              return false;
+            }
           }
           if (!encounterCandidate.meetsRequirements(this)) { // Meets encounter requirements
             return false;

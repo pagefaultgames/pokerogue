@@ -269,10 +269,10 @@ export const DancingLessonsEncounter: MysteryEncounter =
               });
           };
 
-          // Only Pokemon that have a Dancing move can be selected
+          // Only challenge legal/unfainted Pokemon that have a Dancing move can be selected
           const selectableFilter = (pokemon: Pokemon) => {
             // If pokemon meets primary pokemon reqs, it can be selected
-            if (!pokemon.isAllowed()) {
+            if (!pokemon.isAllowedInBattle()) {
               return i18next.t("partyUiHandler:cantBeUsed", { pokemonName: pokemon.getNameToRender() }) ?? null;
             }
             const meetsReqs = encounter.options[2].pokemonMeetsPrimaryRequirements(scene, pokemon);
