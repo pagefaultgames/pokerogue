@@ -59,11 +59,12 @@ export const ThePokemonSalesmanEncounter: MysteryEncounter =
       const encounter = scene.currentBattle.mysteryEncounter!;
 
       let species = getPokemonSpecies(getRandomSpeciesByStarterTier([0, 5], undefined, undefined, false, false, false));
-      const tries = 0;
+      let tries = 0;
 
       // Reroll any species that don't have HAs
       while ((isNullOrUndefined(species.abilityHidden) || species.abilityHidden === Abilities.NONE) && tries < 5) {
         species = getPokemonSpecies(getRandomSpeciesByStarterTier([0, 5], undefined, undefined, false, false, false));
+        tries++;
       }
 
       let pokemon: PlayerPokemon;
@@ -71,7 +72,7 @@ export const ThePokemonSalesmanEncounter: MysteryEncounter =
         // If no HA mon found or you roll 1%, give shiny Magikarp
         species = getPokemonSpecies(Species.MAGIKARP);
         const hiddenIndex = species.ability2 ? 2 : 1;
-        pokemon = new PlayerPokemon(scene, species, 5, hiddenIndex, species.formIndex, undefined, true);
+        pokemon = new PlayerPokemon(scene, species, 5, hiddenIndex, species.formIndex, undefined, true, 0);
       } else {
         const hiddenIndex = species.ability2 ? 2 : 1;
         pokemon = new PlayerPokemon(scene, species, 5, hiddenIndex, species.formIndex);
