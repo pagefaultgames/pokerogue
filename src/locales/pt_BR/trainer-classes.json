@@ -126,5 +126,8 @@
   "skull_grunts": "Capangas da Equipe Skull",
   "macro_grunt": "Treinador da Macro Cosmos",
   "macro_grunt_female": "Treinadora da Macro Cosmos",
-  "macro_grunts": "Treinadores da Macro Cosmos"
+  "macro_grunts": "Treinadores da Macro Cosmos",
+  "star_grunt": "Capanga da Equipe Estrela",
+  "star_grunt_female": "Capanga da Equipe Estrela",
+  "star_grunts": "Capangas da Equipe Estrela"
 }

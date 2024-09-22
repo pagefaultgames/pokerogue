@@ -19,6 +19,7 @@
   "aether_boss": "Æther-Präsidentin",
   "skull_boss": "Skull-Boss",
   "macro_boss": "Geschäftsführer von Macro Cosmos",
+  "star_boss": "Team Star Big Boss",
   "rocket_admin": "Team Rocket Vorstand",
   "rocket_admin_female": "Team Rocket Vorstand",
   "magma_admin": "Team Magma Vorstand",
@@ -34,6 +35,7 @@
   "aether_admin": "Æther-Regionalleiter",
   "skull_admin": "Team Skull Vorstand",
   "macro_admin": "Vizepräsidentin von Macro Cosmos",
+  "star_admin": "Team Star Boss",
 
   "the_winstrates": "Sihgers"
 }

@@ -344,12 +344,17 @@
       "1": "Hop hop hop ! Terminus !",
       "2": "T’es un Dresseur n’est-ce pas ?\n$J’ai bien peur ce que ne soit pas une excuse suffisante pour nous interrompre dans notre travail.",
       "2_female": "T’es une Dresseuse n’est-ce pas ?\n$J’ai bien peur ce que ne soit pas une excuse suffisante pour nous interrompre dans notre travail.",
-      "3": "Je travaille à Macro Cosmos Assurances !\nBesoin d’une assurance-vie ?"
+      "3": "Je travaille à Macro Cosmos Assurances !\nBesoin d’une assurance-vie ?",
+      "4": "Trouvé !\nPetit interlude combat !",
+      "4_female": "Trouvée !\nPetit interlude combat !",
+      "5": "Une soufflante de la part de madame Liv est la pire chose qui puisse arriver !"
     },
     "victory": {
       "1": "Je n’ai d’autre choix que respectueusement me retirer.",
       "2": "Mon argent de poche…\nPlus qu’à manger des pâtes pour la fin du mois…",
-      "3": "Chez Macro Cosmos, rien n’est comparable à notre dévotion au travail !"
+      "3": "Chez Macro Cosmos, rien n’est comparable à notre dévotion au travail !",
+      "4": "J’ai même pensé à chager de Pokémon en combat…",
+      "5": "Combattre ne sert à rien…\nPlus qu’à me barrer !"
     }
   },
   "oleana": {
@@ -363,6 +368,77 @@
       "2": "Ah ! Quelle erreur… Je n’aurais pas dû sous-estimer un Dresseur de ton calibre…",
       "2_female": "Ah ! Quelle erreur… Je n’aurais pas dû sous-estimer une Dresseuse de ton calibre…",
       "3": "*soupir* Je suis fatiguée parton…"
+    }
+  },
+  "star_grunt": {
+    "encounter": {
+      "1": "Ouais, un peu de respect, tu veux ?\n Tu sais à qui t’as affaire ?",
+      "2": "Notre comité d’accueil va pas te faire de cadeau ! Hasta la vistaaar ! ★",
+      "3": "Tu peux aller voir ailleurs si j’y suis ?\n$Si tu refuses, je m’autorise à faire valoir mes droits de légitime défense, je te préviens !",
+      "4": "Désolé, mais si tu refuses de partir, on sera obligés de t’y forcer, et ça sera pas joli joli.",
+      "4_female": "Désolé, mais si tu refuses de partir, on sera obligés de t’y forcer, et ça sera pas joli joli.",
+      "5": "Quoi ? Toi aussi, t’es venu me casser les pieds ? C’est vraiment pas ma journée…",
+      "5_female": "Quoi ? Toi aussi, t’es venue me casser les pieds ? C’est vraiment pas ma journée…"
+    },
+    "victory": {
+      "1": "Comment c'est ça peut être moi qui voit les étoiles ?!",
+      "2": "T’en as dans le ventre.\n$T’as peut-être ce qu’il faut pour te faire une place dans la constellation de la Team Star.",
+      "3": "Ma défense était pourtant bonne…\nMais c’était pas assez visiblement !",
+      "4": "Ha… hasta la vistar… ☆",
+      "5": "J’aurais jamais cru qu’être Sbire de la Team Star serait un tel fadeau…"
+    }
+  },
+  "giacomo": {
+    "encounter": {
+      "1": "Tu dois vraiment pas tenir à ta life pour défier la Team Star comme ça !",
+      "2": "Tends un peu l’oreille… Tu l’entends ?\nC’est ton requiem !"
+    },
+    "victory": {
+      "1": "Pfff, quelle ironie, franchement…",
+      "2": "J’pensais pas jouer le refrain de ma défaite…"
+    }
+  },
+  "mela": {
+    "encounter": {
+      "1": "Alors, c’est toi le guedin qu’ose nous défier ?\nSois prêt pour ta raclée.",
+      "1_female": "Alors, c’est toi la guedin qu’ose nous défier ?\nSois prête pour ta raclée.",
+      "2": "Y a pas à dire, t’es bien une tête brûlée !\nMais fais gaffe, j’en ai aussi sous l’capot !"
+    },
+    "victory": {
+      "1": "Quoi, c’est comme ça qu’ça finit ?\nPfff… J’ai la haine…",
+      "2": "J’voulais tout bruler… Mais j’me suis juste consumée.\nY reste plus rien."
+    }
+  },
+  "atticus": {
+    "encounter": {
+      "1": "T’as vraiment du cran de venir provoquer la Team Star.\nDestinée fatale - Au poison succombera - L’ennemi juré.",
+      "1_female": "T’as vraiment du cran de venir provoquer la Team Star.\nDestinée fatale - Au poison succombera - L’ennemie jurée.",
+      "2": "Vive expectative - Respect et adversité - Combat au sommet."
+    },
+    "victory": {
+      "1": "Pardon, mes amis…",
+      "2": "Ta victoire n’évoque en moi ni rancune ni douleur.\nMon âme est en paix et j’accepte ma défaite."
+    }
+  },
+  "ortega": {
+    "encounter": {
+      "1": "J’vais bien m’occuper de toi, alors viens pas pleurer si tu perds.",
+      "2": "T’as beau avoir l’air sûr de toi, aujourd’hui, c’est moi qui vais gagner. Je te le garantis !",
+      "2_female": "T’as beau avoir l’air sûr de toi, aujourd’hui, c’est moi qui vais gagner. Je te le garantis !"
+    },
+    "victory": {
+      "1": "Hein ? J’ai perdu ? Mais pourquoi ?!\nPourquoi, pourquoi, pourquoi, POURQUOI ?!",
+      "2": "Mais pourquoi ça fonctionne pas ?!"
+    }
+  },
+  "eri": {
+    "encounter": {
+      "1": "J’ignore tes intentions, mais mon rôle est d’anéantir quiconque s’attaque à la Team Star !",
+      "2": "Si on m’attaque, je riposte ! Nous verrons bien qui de nous deux restera debout à la fin !"
+    },
+    "victory": {
+      "1": "Les amis…\nJe suis désolée…",
+      "2": "J’ai donné mon maximum… et pourtant…\nÇa n’a pas suffi… J’ai échoué…"
     }
   },
   "rocket_boss_giovanni_1": {
@@ -497,6 +573,28 @@
     },
     "defeat": {
       "1": "Les ignorants sans aucune vision n’auront donc de cesse de souiller ce monde."
+    }
+  },
+  "star_boss_penny_1": {
+    "encounter": {
+      "1": "Je suis la Big Boss de la Team Star, Cassiopée…\n$Incline-toi devant la toute-puissance de la Big Boss !!!"
+    },
+    "victory": {
+      "1": "… … …"
+    },
+    "defeat": {
+      "1": "Hé…"
+    }
+  },
+  "star_boss_penny_2": {
+    "encounter": {
+      "1": "Le code d’honneur de la Team Star exige que nous donnions le maximum en combat !\n$Par le pouvoir de l’Évolition, on va te réduire en poussière d’étoiles !"
+    },
+    "victory": {
+      "1": "… Tout est fini"
+    },
+    "defeat": {
+      "1": "Tu es redoutable.\nPas étonnant que les boss de la Team aient perdu contre toi."
     }
   },
   "stat_trainer_buck": {

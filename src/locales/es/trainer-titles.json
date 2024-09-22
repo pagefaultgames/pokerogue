@@ -17,6 +17,9 @@
   "plasma_boss": "Team Plasma Boss",
   "flare_boss": "Team Flare Boss",
   "aether_boss": "Presidente Æther",
+  "skull_boss": "Team Skull Boss",
+  "macro_boss": "Macro Cosmos President",
+  "star_boss": "Team Star Leader",
 
   "rocket_admin": "Team Rocket Admin",
   "rocket_admin_female": "Team Rocket Admin",
@@ -31,6 +34,9 @@
   "flare_admin": "Team Flare Admin",
   "flare_admin_female": "Team Flare Admin",
   "aether_admin": "Director de la Fundación Æther",
+  "skull_admin": "Team Skull Admin",
+  "macro_admin": "Macro Cosmos",
+  "star_admin": "Team Star Squad Boss",
 
   "the_winstrates": "The Winstrates'"
 }

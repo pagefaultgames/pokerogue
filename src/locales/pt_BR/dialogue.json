@@ -749,12 +749,16 @@
     "encounter": {
       "1": "Parece que aqui é o fim da linha para você!",
       "2": "Você é um treinador, não é? Temo que isso não lhe dê o direito de interferir em nosso trabalho.",
-      "3": "Sou da Macro Cosmos Seguros! Já tem um seguro de vida?"
+      "3": "Sou da Macro Cosmos Seguros! Já tem um seguro de vida?",
+      "4": "Te encontrei! Nesse caso, é hora de uma batalha Pokémon!",
+      "5": "Ouvir uma bronca da Srta. Oleana é bem pior do que qualquer coisa que você possa fazer!"
     },
     "victory": {
       "1": "Eu não tenho muita escolha a não ser recuar respeitosamente.",
       "2": "Ter que desistir do meu dinheiro... Perder significa que estou de volta no vermelho...",
-      "3": "Ninguém pode vencer a Macro Cosmos quando se trata de nossa dedicação ao trabalho!"
+      "3": "Ninguém pode vencer a Macro Cosmos quando se trata de nossa dedicação ao trabalho!",
+      "4": "Eu até troquei meu Pokémon...",
+      "5": "As batalhas não funcionaram... A única coisa a fazer agora é fugir!"
     }
   },
   "oleana": {
@@ -767,6 +771,73 @@
       "1": "*suspiro* Eu não consegui vencer... Oleana... você realmente é uma mulher sem esperança.",
       "2": "Aff! Isso é inaceitável... O que eu estava pensando... Qualquer treinador que chega tão longe não seria um fracote...",
       "3": "*suspiro* Eu sou uma Oleana cansada..."
+    }
+  },
+  "star_grunt": {
+    "encounter": {
+      "1": "Nós somos a Equipe Estrela, garoto. Brilhamos tão forte que dói olhar pra nós!",
+      "2": "Vamos com tudo pra cima de você - Hasta la vistaaar! ★",
+      "3": "Se você não sair rapidinho, vou ter que me defender. Entendeu?",
+      "4": "Desculpe, mas se você não der meia-volta, amigo, vamos ter que te despachar!",
+      "4_female": "Desculpe, mas se você não der meia-volta, amiga, vamos ter que te despachar!",
+      "5": "Ótimo. Lá vem mais um qualquer para estragar o meu dia."
+    },
+    "victory": {
+      "1": "Como é que EU estou vendo estrelas?!",
+      "2": "Você é assustador, garoto. Se você se juntasse à Equipe Estrela, estaria no topo rapidinho!",
+      "3": "Me defendi bem... Mas não foi o suficiente!",
+      "4": "H-hasta la vistar... ★",
+      "5": "Eu não achei que o trabalho de recruta da Equipe Estrela seria uma tarefa tão pesada..."
+    }
+  },
+  "giacomo": {
+    "encounter": {
+      "1": "Você realmente não pensa muito, né? Declarar guerra contra a Equipe Estrela é uma jogada muito ruim.",
+      "2": "Vou tocar uma sinfonia do seu fracasso enquanto você cai e queima. Vamos começar a festa!"
+    },
+    "victory": {
+      "1": "Acho que é isso...",
+      "2": "Você transformou minha melodia em um lamento..."
+    }
+  },
+  "mela": {
+    "encounter": {
+      "1": "Então você é o idiota que arrumou briga com a Equipe Estrela... Prepare-se para ser destruído.",
+      "2": "Tudo bem, VAMOS LÁ! Vou explodir tudo!"
+    },
+    "victory": {
+      "1": "Ugh. É assim que isso vai acabar? Que problema...",
+      "2": "Usei tudo o que eu tinha... e agora apaguei."
+    }
+  },
+  "atticus": {
+    "encounter": {
+      "1": "Você tem coragem de mostrar suas garras para a Equipe Estrela. Venha, então, vil criatura!",
+      "2": "Esteja avisado—não te darei misericórdia! Em guarda!"
+    },
+    "victory": {
+      "1": "Perdoem-me, meus amigos...",
+      "2": "Você me venceu completamente. Mas sua vitória não me trouxe amargura—tamanha foi sua brilhante execução."
+    }
+  },
+  "ortega": {
+    "encounter": {
+      "1": "Prometo que serei gentil, então não me culpe quando essa batalha te mandar chorando de volta para casa!",
+      "2": "Vou apagar esse sorriso convencido do seu rosto com certeza! Você vai perder!"
+    },
+    "victory": {
+      "1": "Ugh! Como eu pude PERDER! Que RAIVA!",
+      "2": "Arrrrgggh! Essa sua força é tão INJUSTA."
+    }
+  },
+  "eri": {
+    "encounter": {
+      "1": "Não importa quem você é. Vou derrubar qualquer um que tente destruir a Equipe Estrela!",
+      "2": "Eu dou tudo de mim, e isso é uma promessa! Vamos ver quem fica de pé no final!"
+    },
+    "victory": {
+      "1": "Me desculpem, pessoal...",
+      "2": "Dei tudo de mim, mas não foi o suficiente—eu não fui o suficiente..."
     }
   },
   "rocket_boss_giovanni_1": {
@@ -966,6 +1037,28 @@
     },
     "defeat": {
       "1": "Eu suponho que deve parecer que estou fazendo algo terrível. Eu não espero que você entenda.\n$Mas eu devo fornecer à região de Galar energia ilimitada para garantir prosperidade eterna."
+    }
+  },
+  "star_boss_penny_1": {
+    "encounter": {
+      "1": "Eu sou a grande chefe da Equipe Estrela. Meu nome é Cassiopeia. \n$Agora, ajoelhe-se diante do poder esmagador da fundadora da Equipe Estrela!"
+    },
+    "victory": {
+      "1": "... ... .."
+    },
+    "defeat": {
+      "1": "Heh..."
+    }
+  },
+  "star_boss_penny_2": {
+    "encounter": {
+      "1": "Não vou me segurar nesta batalha! Vou permanecer fiel ao código da Equipe Estrela! \n$Meu poder Veevee vai te reduzir a pó estelar!"
+    },
+    "victory": {
+      "1": "...Agora acabou tudo."
+    },
+    "defeat": {
+      "1": "Não posso te culpar por suas habilidades de batalha... Considerando como os chefes caíram diante de você."
     }
   },
   "stat_trainer_buck": {
