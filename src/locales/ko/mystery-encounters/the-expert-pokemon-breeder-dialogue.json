@@ -24,6 +24,7 @@
     "selected": "그럼 갑니다!"
   },
   "outro": "{{chosenPokemon}}[[가]] 정말 행복해 보이네요!$여기, 이것도 드릴게요.",
+  "outro_failed": "How disappointing...$It looks like you still have a long way\nto go to earn your Pokémon's trust!",
   "gained_eggs": "@s{item_fanfare}{{numEggs}}[[를]] 받았습니다!",
   "eggs_tooltip": "\n(+) {{eggs}} 획득",
   "numEggs_one": "{{rarity}}알 {{count}}개",
