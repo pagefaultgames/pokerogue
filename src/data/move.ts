@@ -5476,8 +5476,12 @@ export class RandomMoveAttr extends CallMoveAttr {
    * Invalid moves are indicated by what is passed in to invalidMoves: @constant {invalidMetronomeMoves}
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): Promise<boolean> {
-    const moveIds = Utils.getEnumValues(Moves).filter(m => !this.invalidMoves.includes(m) && !allMoves[m].name.endsWith(" (N)"));
-    const moveId = moveIds[user.randSeedInt(moveIds.length)];
+    const moveIds = Utils.getEnumValues(Moves).map(m => !this.invalidMoves.includes(m) && !allMoves[m].name.endsWith(" (N)") ? m : Moves.NONE);
+    let moveId: Moves = Moves.NONE;
+    do {
+      moveId = moveIds[user.randSeedInt(moveIds.length)];
+    }
+    while (moveId === Moves.NONE);
     return super.apply(user, target, allMoves[moveId], args);
   }
 }
