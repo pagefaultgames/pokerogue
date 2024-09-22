@@ -23,7 +23,7 @@
     "selected": "Lass uns beginnen!"
   },
   "outro": "Schau wie glücklich dein {{chosenPokemon}} nun ist!$Hier, diese Pokémon-Eier kannst du auch haben.",
-  "outro_failed": "How disappointing...$It looks like you still have a long way\nto go to earn your Pokémon's trust!",
+  "outro_failed": "Wie enttäuschend...$Es sieht so aus, als hättest du noch einen langen Weg vor dir, um das Vertrauen deines Pokémon zu gewinnen!"
   "gained_eggs": "@s{item_fanfare}Du erhählst {{numEggs}}!",
   "eggs_tooltip": "\n(+) Erhalte {{eggs}}",
   "numEggs_one": "{{count}} Ei der Stufe {{rarity}}",
