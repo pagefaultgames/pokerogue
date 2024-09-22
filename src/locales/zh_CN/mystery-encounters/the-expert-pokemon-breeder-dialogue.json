@@ -23,6 +23,7 @@
     "selected": "我们开始吧！"
   },
   "outro": "看看你的 {{chosenPokemon}}现在有多开心！$给，这些你也拿着。",
+  "outro_failed": "How disappointing...$It looks like you still have a long way\nto go to earn your Pokémon's trust!",
   "gained_eggs": "@s{item_fanfare}你获得了{{numEggs}}！",
   "eggs_tooltip": "\n(+)获得{{eggs}}",
   "numEggs_one": "{{count}}个{{rarity}}蛋",
