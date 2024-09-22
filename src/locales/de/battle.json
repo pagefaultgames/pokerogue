@@ -28,6 +28,7 @@
   "attackMissed": "Die Attacke hat {{pokemonNameWithAffix}} verfehlt!",
   "attackHitsCount": "{{count}}-mal getroffen!",
   "rewardGain": "Du erhältst {{modifierName}}!",
+  "rewardGainCount": "Du erhältst {{rewardCount}} {{modifierName}}!",
   "expGain": "{{pokemonName}} erhält {{exp}} Erfahrungspunkte!",
   "levelUp": "{{pokemonName}} erreicht Lv. {{level}}!",
   "learnMove": "{{pokemonName}} erlernt {{moveName}}!",

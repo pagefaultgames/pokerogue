@@ -26,6 +26,7 @@
   "attackMissed": "¡{{pokemonNameWithAffix}}\nha evitado el ataque!",
   "attackHitsCount": "N.º de golpes: {{count}}.",
   "rewardGain": "¡Has obtenido\n{{modifierName}}!",
+  "rewardGainCount": "¡Has obtenido\n{{rewardCount}} {{modifierName}}!",
   "expGain": "{{pokemonName}} ha ganado\n{{exp}} puntos de experiencia.",
   "levelUp": "¡{{pokemonName}} ha subido al \nNv. {{level}}!",
   "learnMove": "¡{{pokemonName}} ha aprendido {{moveName}}!",
