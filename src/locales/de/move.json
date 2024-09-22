@@ -3129,7 +3129,7 @@
   },
   "auraWheel": {
     "name": "Aura-Rad",
-    "effect": "Mithilfe der in den Backentaschen gespeicherten Energie greift der Anwender an und erhöht seine Initiative. Der Typ der Attacke hängt von Morpekos Form ab."
+    "effect": "Mithilfe der in den Backentaschen gespeicherten Energie greift der Anwender an und erhöht seine Initiative. Wenn dies von Morpeko verwendet wird hängt der Typ der Attacke von dessen Form ab."
   },
   "breakingSwipe": {
     "name": "Breitseite",

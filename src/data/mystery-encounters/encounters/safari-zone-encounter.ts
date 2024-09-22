@@ -79,8 +79,8 @@ export const SafariZoneEncounter: MysteryEncounter =
         scene.loadSe("PRSFX- Bug Bite", "battle_anims", "PRSFX- Bug Bite.wav");
         scene.loadSe("PRSFX- Sludge Bomb2", "battle_anims", "PRSFX- Sludge Bomb2.wav");
         scene.loadSe("PRSFX- Taunt2", "battle_anims", "PRSFX- Taunt2.wav");
-        scene.loadAtlas("bait", "mystery-encounters");
-        scene.loadAtlas("mud", "mystery-encounters");
+        scene.loadAtlas("safari_zone_bait", "mystery-encounters");
+        scene.loadAtlas("safari_zone_mud", "mystery-encounters");
         // Clear enemy party
         scene.currentBattle.enemyParty = [];
         await transitionMysteryEncounterIntroVisuals(scene);
@@ -254,7 +254,7 @@ async function summonSafariPokemon(scene: BattleScene) {
   let enemySpecies;
   let pokemon;
   scene.executeWithSeedOffset(() => {
-    enemySpecies = getPokemonSpecies(getRandomSpeciesByStarterTier([0, 5]));
+    enemySpecies = getPokemonSpecies(getRandomSpeciesByStarterTier([0, 5], undefined, undefined, false, false, false));
     const level = scene.currentBattle.getLevelForWave();
     enemySpecies = getPokemonSpecies(enemySpecies.getWildSpeciesForLevel(level, true, false, scene.gameMode));
     pokemon = scene.addEnemyPokemon(enemySpecies, level, TrainerSlot.NONE, false);
@@ -282,7 +282,7 @@ async function summonSafariPokemon(scene: BattleScene) {
     pokemon.calculateStats();
 
     scene.currentBattle.enemyParty.unshift(pokemon);
-  }, scene.currentBattle.waveIndex * 1000 + encounter.misc.safariPokemonRemaining);
+  }, scene.currentBattle.waveIndex * 1000 * encounter.misc.safariPokemonRemaining);
 
   scene.gameData.setPokemonSeen(pokemon, true);
   await pokemon.loadAssets();
@@ -322,7 +322,7 @@ async function throwBait(scene: BattleScene, pokemon: EnemyPokemon): Promise<boo
   const originalY: number = pokemon.y;
 
   const fpOffset = pokemon.getFieldPositionOffset();
-  const bait: Phaser.GameObjects.Sprite = scene.addFieldSprite(16 + 75, 80 + 25, "bait", "0001.png");
+  const bait: Phaser.GameObjects.Sprite = scene.addFieldSprite(16 + 75, 80 + 25, "safari_zone_bait", "0001.png");
   bait.setOrigin(0.5, 0.625);
   scene.field.add(bait);
 
@@ -388,7 +388,7 @@ async function throwMud(scene: BattleScene, pokemon: EnemyPokemon): Promise<bool
   const originalY: number = pokemon.y;
 
   const fpOffset = pokemon.getFieldPositionOffset();
-  const mud: Phaser.GameObjects.Sprite = scene.addFieldSprite(16 + 75, 80 + 35, "mud", "0001.png");
+  const mud: Phaser.GameObjects.Sprite = scene.addFieldSprite(16 + 75, 80 + 35, "safari_zone_mud", "0001.png");
   mud.setOrigin(0.5, 0.625);
   scene.field.add(mud);
 

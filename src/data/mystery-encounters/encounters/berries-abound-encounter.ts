@@ -82,7 +82,7 @@ export const BerriesAboundEncounter: MysteryEncounter =
       const { spriteKey, fileRoot } = getSpriteKeysFromPokemon(bossPokemon);
       encounter.spriteConfigs = [
         {
-          spriteKey: "berry_bush",
+          spriteKey: "berries_abound_bush",
           fileRoot: "mystery-encounters",
           x: 25,
           y: -6,
@@ -102,7 +102,7 @@ export const BerriesAboundEncounter: MysteryEncounter =
       ];
 
       // Get fastest party pokemon for option 2
-      const fastestPokemon = getHighestStatPlayerPokemon(scene, PERMANENT_STATS[Stat.SPD], true);
+      const fastestPokemon = getHighestStatPlayerPokemon(scene, PERMANENT_STATS[Stat.SPD], true, false);
       encounter.misc.fastestPokemon = fastestPokemon;
       encounter.misc.enemySpeed = bossPokemon.getStat(Stat.SPD);
       encounter.setDialogueToken("fastestPokemon", fastestPokemon.getNameToRender());
@@ -162,10 +162,10 @@ export const BerriesAboundEncounter: MysteryEncounter =
         .withOptionPhase(async (scene: BattleScene) => {
           // Pick race for berries
           const encounter = scene.currentBattle.mysteryEncounter!;
-          const fastestPokemon = encounter.misc.fastestPokemon;
-          const enemySpeed = encounter.misc.enemySpeed;
+          const fastestPokemon: PlayerPokemon = encounter.misc.fastestPokemon;
+          const enemySpeed: number = encounter.misc.enemySpeed;
           const speedDiff = fastestPokemon.getStat(Stat.SPD) / (enemySpeed * 1.1);
-          const numBerries = encounter.misc.numBerries;
+          const numBerries: number = encounter.misc.numBerries;
 
           const shopOptions: ModifierTypeOption[] = [];
           for (let i = 0; i < 5; i++) {
