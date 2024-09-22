@@ -1,1 +1,24 @@
-{}
+{
+  "snow_worker": {
+   "encounter": {
+     "1": "Col freddo ci vogliono vestiti pesanti!\n$Questa è saggezza! Viva l'intelletto!"
+    },
+    "victory": {
+      "1": "Agitarsi quando è troppo tardi è inutile.\nAnche questa è saggezza."
+    },
+    "defeat": {
+      "1": "Ascolta questa perla di saggezza! Se usi delle mosse di tipo Fuoco su un Pokémon congelato, questo si riprenderà."
+    } 
+  }, 
+  "snow_worker_double": {   
+    "encounter": {
+      "1": "...\n$Lo-Lo-Lotta..."
+    },
+    "victory": {
+      "1": "...\n$Tre-Tremo..."
+    },
+    "defeat": {
+	  "1": "...\n$Sai che-che...\nQui fa-fa freddo?"
+    } 
+  }	
+}

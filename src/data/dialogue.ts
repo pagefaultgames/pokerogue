@@ -353,6 +353,25 @@ export const trainerTypeDialogue: TrainerTypeDialogue = {
       ]
     },
   ],
+  // Defeat dialogue in the language .JSONS exist as translated or placeholders; (en, fr, it, es, de, ja, ko, zh_cn, zh_tw, pt_br)
+  [TrainerType.SNOW_WORKER]: [
+    {
+      encounter: [
+        "dialogue:snow_worker.encounter.1",
+      ],
+      victory: [
+        "dialogue:snow_worker.victory.1",
+      ]
+    },
+    {
+      encounter: [
+        "dialogue:snow_worker_double.encounter.1",
+      ],
+      victory: [
+        "dialogue:snow_worker_double.victory.1",
+      ]
+    },
+  ],
   [TrainerType.HEX_MANIAC]: [
     {
       encounter: [
