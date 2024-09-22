@@ -6,7 +6,7 @@
   "option": {
     "1": {
       "label": "열어본다",
-      "tooltip": "@[SUMMARY_BLUE]{(35%) 끔찍한 무언가}\n@[SUMMARY_GREEN]{(40%) 평범한 보상}\n@[SUMMARY_GREEN]{(20%) 좋은 보상}\n@[SUMMARY_GREEN]{(4%) 훌륭한 보상}\n@[SUMMARY_GREEN]{(1%) 대단한 보상}",
+      "tooltip": "@[SUMMARY_BLUE]{({{trapPercent}}%) 끔찍한 무언가}\n@[SUMMARY_GREEN]{({{commonPercent}}%) 평범한 보상}\n@[SUMMARY_GREEN]{({{ultraPercent}}%) 좋은 보상}\n@[SUMMARY_GREEN]{({{roguePercent}}%) 훌륭한 보상}\n@[SUMMARY_GREEN]{({{masterPercent}}%) 대단한 보상}",
       "selected": "당신이 상자안에서 찾은 것은…",
       "normal": "평범한 도구와 아이템이다.",
       "good": "꽤 좋은 도구와 아이템이다.",
