@@ -743,16 +743,21 @@ export abstract class BattleAnim {
   public target: Pokemon | null;
   public sprites: Phaser.GameObjects.Sprite[];
   public bgSprite: Phaser.GameObjects.TileSprite | Phaser.GameObjects.Rectangle;
-  public playOnEmptyField: boolean;
+  /**
+   * Will attempt to play as much of an animation as possible, even if not all targets are on the field.
+   * Will also play the animation, even if the user has selected "Move Animations" OFF in Settings.
+   * Exclusively used by MEs atm, for visual animations at the start of an encounter.
+   */
+  public playRegardlessOfIssues: boolean;
 
   private srcLine: number[];
   private dstLine: number[];
 
-  constructor(user?: Pokemon, target?: Pokemon, playOnEmptyField: boolean = false) {
+  constructor(user?: Pokemon, target?: Pokemon, playRegardlessOfIssues: boolean = false) {
     this.user = user ?? null;
     this.target = target ?? null;
     this.sprites = [];
-    this.playOnEmptyField = playOnEmptyField;
+    this.playRegardlessOfIssues = playRegardlessOfIssues;
   }
 
     abstract getAnim(): AnimConfig | null;
@@ -829,7 +834,7 @@ export abstract class BattleAnim {
       const user = !isOppAnim ? this.user! : this.target!; // TODO: are those bangs correct?
       const target = !isOppAnim ? this.target! : this.user!;
 
-      if (!target?.isOnField() && !this.playOnEmptyField) {
+      if (!target?.isOnField() && !this.playRegardlessOfIssues) {
         if (callback) {
           callback();
         }
@@ -896,7 +901,7 @@ export abstract class BattleAnim {
         }
       };
 
-      if (!scene.moveAnimations) {
+      if (!scene.moveAnimations && !this.playRegardlessOfIssues) {
         return cleanUpAndComplete();
       }
 
@@ -932,7 +937,7 @@ export abstract class BattleAnim {
               const isUser = frame.target === AnimFrameTarget.USER;
               if (isUser && target === user) {
                 continue;
-              } else if (this.playOnEmptyField && frame.target === AnimFrameTarget.TARGET && !target.isOnField()) {
+              } else if (this.playRegardlessOfIssues && frame.target === AnimFrameTarget.TARGET && !target.isOnField()) {
                 continue;
               }
               const sprites = spriteCache[isUser ? AnimFrameTarget.USER : AnimFrameTarget.TARGET];
@@ -1145,7 +1150,7 @@ export abstract class BattleAnim {
         }
       };
 
-      if (!scene.moveAnimations) {
+      if (!scene.moveAnimations && !this.playRegardlessOfIssues) {
         return cleanUpAndComplete();
       }
 

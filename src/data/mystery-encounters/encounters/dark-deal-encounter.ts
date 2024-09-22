@@ -94,7 +94,7 @@ export const DarkDealEncounter: MysteryEncounter =
     .withEncounterTier(MysteryEncounterTier.ROGUE)
     .withIntroSpriteConfigs([
       {
-        spriteKey: "mad_scientist_m",
+        spriteKey: "dark_deal_scientist",
         fileRoot: "mystery-encounters",
         hasShadow: true,
       },
@@ -115,7 +115,7 @@ export const DarkDealEncounter: MysteryEncounter =
       },
     ])
     .withSceneWaveRangeRequirement(30, CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES[1])
-    .withScenePartySizeRequirement(2, 6) // Must have at least 2 pokemon in party
+    .withScenePartySizeRequirement(2, 6, true) // Must have at least 2 pokemon in party
     .withCatchAllowed(true)
     .withTitle(`${namespace}.title`)
     .withDescription(`${namespace}.description`)
@@ -139,7 +139,7 @@ export const DarkDealEncounter: MysteryEncounter =
         .withPreOptionPhase(async (scene: BattleScene) => {
           // Removes random pokemon (including fainted) from party and adds name to dialogue data tokens
           // Will never return last battle able mon and instead pick fainted/unable to battle
-          const removedPokemon = getRandomPlayerPokemon(scene, false, true);
+          const removedPokemon = getRandomPlayerPokemon(scene, true, false, true);
           // Get all the pokemon's held items
           const modifiers = removedPokemon.getHeldItems().filter(m => !(m instanceof PokemonFormChangeItemModifier));
           scene.removePokemonFromPlayerParty(removedPokemon);

@@ -32,7 +32,7 @@ export const FieldTripEncounter: MysteryEncounter =
         hasShadow: true,
       },
       {
-        spriteKey: "teacher",
+        spriteKey: "field_trip_teacher",
         fileRoot: "mystery-encounters",
         hasShadow: true,
       },
