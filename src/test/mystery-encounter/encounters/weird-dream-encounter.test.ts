@@ -174,7 +174,7 @@ describe("Weird Dream - Mystery Encounter", () => {
       });
     });
 
-    it("should reduce party levels by 20%", async () => {
+    it("should reduce party levels by 12.5%", async () => {
       const leaveEncounterWithoutBattleSpy = vi.spyOn(EncounterPhaseUtils, "leaveEncounterWithoutBattle");
 
       await game.runToMysteryEncounter(MysteryEncounterType.WEIRD_DREAM, defaultParty);
@@ -184,7 +184,7 @@ describe("Weird Dream - Mystery Encounter", () => {
       const levelsAfter = scene.getParty().map(p => p.level);
 
       for (let i = 0; i < levelsPrior.length; i++) {
-        expect(Math.max(Math.ceil(0.8 * levelsPrior[i]), 1)).toBe(levelsAfter[i]);
+        expect(Math.max(Math.ceil(0.8875 * levelsPrior[i]), 1)).toBe(levelsAfter[i]);
         expect(scene.getParty()[i].levelExp).toBe(0);
       }
 

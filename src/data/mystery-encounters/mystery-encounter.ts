@@ -15,6 +15,7 @@ import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { GameModes } from "#app/game-mode";
 import { EncounterAnim } from "#enums/encounter-anims";
+import { Challenges } from "#enums/challenges";
 
 export interface EncounterStartOfBattleEffect {
   sourcePokemon?: Pokemon;
@@ -40,7 +41,8 @@ export interface IMysteryEncounter {
   spriteConfigs: MysteryEncounterSpriteConfig[];
   encounterTier: MysteryEncounterTier;
   encounterAnimations?: EncounterAnim[];
-  disabledGameModes?: GameModes[];
+  disallowedGameModes?: GameModes[];
+  disallowedChallenges?: Challenges[];
   hideBattleIntroMessage: boolean;
   autoHideIntroVisuals: boolean;
   enterIntroVisualsFromRight: boolean;
@@ -93,7 +95,11 @@ export default class MysteryEncounter implements IMysteryEncounter {
   /**
    * If specified, defines any game modes where the {@linkcode MysteryEncounter} should *NOT* spawn
    */
-  disabledGameModes?: GameModes[];
+  disallowedGameModes?: GameModes[];
+  /**
+   * If specified, defines any challenges (from Challenge game mode) where the {@linkcode MysteryEncounter} should *NOT* spawn
+   */
+  disallowedChallenges?: Challenges[];
   /**
    * If true, hides "A Wild X Appeared" etc. messages
    * Default true
@@ -161,6 +167,11 @@ export default class MysteryEncounter implements IMysteryEncounter {
   doEncounterRewards?: (scene: BattleScene) => boolean;
   /** Will execute callback during VictoryPhase of a continuousEncounter */
   doContinueEncounter?: (scene: BattleScene) => Promise<void>;
+  /**
+   * Can perform special logic when a ME battle is lost, before GameOver/battle retry prompt.
+   * Should return `true` if it is treated as "real" Game Over, `false` if not.
+   */
+  onGameOver?: (scene: BattleScene) => boolean;
 
   /**
    * Requirements
@@ -656,11 +667,21 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
   /**
    * Defines any game modes where the Mystery Encounter should *NOT* spawn
    * @returns
-   * @param disabledGameModes
+   * @param disallowedGameModes
    */
-  withDisabledGameModes(...disabledGameModes: GameModes[]): this & Required<Pick<IMysteryEncounter, "disabledGameModes">> {
-    const gameModes = Array.isArray(disabledGameModes) ? disabledGameModes : [disabledGameModes];
-    return Object.assign(this, { disabledGameModes: gameModes });
+  withDisallowedGameModes(...disallowedGameModes: GameModes[]): this & Required<Pick<IMysteryEncounter, "disallowedGameModes">> {
+    const gameModes = Array.isArray(disallowedGameModes) ? disallowedGameModes : [disallowedGameModes];
+    return Object.assign(this, { disallowedGameModes: gameModes });
+  }
+
+  /**
+   * Defines any challenges (from Challenge game mode) where the Mystery Encounter should *NOT* spawn
+   * @returns
+   * @param disallowedChallenges
+   */
+  withDisallowedChallenges(...disallowedChallenges: Challenges[]): this & Required<Pick<IMysteryEncounter, "disallowedChallenges">> {
+    const challenges = Array.isArray(disallowedChallenges) ? disallowedChallenges : [disallowedChallenges];
+    return Object.assign(this, { disallowedChallenges: challenges });
   }
 
   /**
@@ -742,11 +763,11 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
    *
    * @param min min wave (or exact size if only min is given)
    * @param max optional max size. If not given, defaults to min => exact wave
-   * @param excludeFainted if true, only counts unfainted mons
+   * @param excludeDisallowedPokemon if true, only counts allowed (legal in Challenge/unfainted) mons
    * @returns
    */
-  withScenePartySizeRequirement(min: number, max?: number, excludeFainted: boolean = false): this & Required<Pick<IMysteryEncounter, "requirements">> {
-    return this.withSceneRequirement(new PartySizeRequirement([min, max ?? min], excludeFainted));
+  withScenePartySizeRequirement(min: number, max?: number, excludeDisallowedPokemon: boolean = false): this & Required<Pick<IMysteryEncounter, "requirements">> {
+    return this.withSceneRequirement(new PartySizeRequirement([min, max ?? min], excludeDisallowedPokemon));
   }
 
   /**

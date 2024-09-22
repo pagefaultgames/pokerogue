@@ -1,33 +1,33 @@
 {
 	"textures": [
 		{
-			"image": "berry_bush.png",
+			"image": "part_timer_crate.png",
 			"format": "RGBA8888",
 			"size": {
-				"w": 49,
-				"h": 53
+				"w": 71,
+				"h": 52
 			},
 			"scale": 1,
 			"frames": [
 				{
 					"filename": "0001.png",
 					"rotated": false,
-					"trimmed": false,
+					"trimmed": true,
 					"sourceSize": {
-						"w": 49,
-						"h": 53
+						"w": 80,
+						"h": 56
 					},
 					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 49,
-						"h": 53
+						"x": 5,
+						"y": 4,
+						"w": 71,
+						"h": 52
 					},
 					"frame": {
 						"x": 0,
 						"y": 0,
-						"w": 49,
-						"h": 53
+						"w": 71,
+						"h": 52
 					}
 				}
 			]
@@ -36,6 +36,6 @@
 	"meta": {
 		"app": "https://www.codeandweb.com/texturepacker",
 		"version": "3.0",
-		"smartupdate": "$TexturePacker:SmartUpdate:d5f83625477b5f98b726343f4a3a396f:f4665258986e97345cfeee041b4b8bcf:e7781fcc447e6d12deb2af78c9493c7f$"
+		"smartupdate": "$TexturePacker:SmartUpdate:c8df5f0b35fb9c2a69b0e4aaa9fa9f91:f1d4643c26f2aed86ad77d354e669aaf:0c073e3c2048ea0779db9429e5e1d8bc$"
 	}
 }

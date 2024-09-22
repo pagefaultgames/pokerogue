@@ -68,6 +68,7 @@ export const FightOrFlightEncounter: MysteryEncounter =
           mysteryEncounterBattleEffects: (pokemon: Pokemon) => {
             queueEncounterMessage(pokemon.scene, `${namespace}.option.1.stat_boost`);
             // Randomly boost 1 stat 2 stages
+            // Cannot boost Spd, Acc, or Evasion
             pokemon.scene.unshiftPhase(new StatStageChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [randSeedInt(4, 1)], 2));
           }
         }],
