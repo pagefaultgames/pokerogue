@@ -1,29 +1,29 @@
 
 
 {
-  "intro": "A pack of {{delibirdName}} have appeared!",
-  "title": "Delibir-dy",
-  "description": "The {{delibirdName}}s are looking at you expectantly, as if they want something. Perhaps giving them an item or some money would satisfy them?",
-  "query": "What will you give them?",
-  "invalid_selection": "Pokémon doesn't have that kind of item.",
+  "intro": "{{delibirdName}}の　群れは　現れてきた!",
+  "title": "デリバリーか　デリシャスか",
+  "description": "何かを　ほしがる　表情で　{{delibirdName}}は　期待で　見つめる。　アイテムや　お金で　満足できる　かもしれません…",
+  "query": "何をあげますか？",
+  "invalid_selection": "このポケモンは　そのような　アイテムが　持っていない！",
   "option": {
     "1": {
-      "label": "Give Money",
-      "tooltip": "(-) Give the {{delibirdName}}s {{money, money}}\n(+) Receive a Gift Item",
-      "selected": "You toss the money to the {{delibirdName}}s,\nwho chatter amongst themselves excitedly.$They turn back to you and happily give you a present!"
+      "label": "お金をあげる",
+      "tooltip": "(-) {{delibirdName}}に{{money, money}}あげる\n(+) プレセントをもらう",
+      "selected": "お金を {{delibirdName}}に　投げます。\n興奮で ペチャペチャと　話し合います。$話しが　終わってから　ありがたく　プレセントを　くれます！"
     },
     "2": {
-      "label": "Give Food",
-      "tooltip": "(-) Give the {{delibirdName}}s a Berry or Reviver Seed\n(+) Receive a Gift Item",
-      "select_prompt": "Select an item to give.",
-      "selected": "You toss the {{chosenItem}} to the {{delibirdName}}s,\nwho chatter amongst themselves excitedly.$They turn back to you and happily give you a present!"
+      "label": "食べ物をあげる",
+      "tooltip": "(-) {{delibirdName}}に きのみ や ふっかつのタネ をあげる\n(+) プレセントをもらう",
+      "select_prompt": "あげたい　アイテムを　選んでください",
+      "selected": "{{chosenItem}}を　{{delibirdName}}に　投げます。\n興奮で ペチャペチャと　話し合います。$話しが　終わってから　ありがたく　プレセントを　くれます！"
     },
     "3": {
-      "label": "Give an Item",
-      "tooltip": "(-) Give the {{delibirdName}}s a Held Item\n(+) Receive a Gift Item",
-      "select_prompt": "Select an item to give.",
-      "selected": "You toss the {{chosenItem}} to the {{delibirdName}}s,\nwho chatter amongst themselves excitedly.$They turn back to you and happily give you a present!"
+      "label": "アイテムをあげる",
+      "tooltip": "(-) {{delibirdName}}に持ち物をあげる\n(+) プレセントをもらう",
+      "select_prompt": "あげたい　アイテムを　選んでください",
+      "selected": "{{chosenItem}}を　{{delibirdName}}に　投げます。\n興奮で ペチャペチャと　話し合います。$話しが　終わってから　ありがたく　プレセントを　くれます！"
     }
   },
-  "outro": "The {{delibirdName}} pack happily waddles off into the distance.$What a curious little exchange!"
+  "outro": "{{delibirdName}}の　群れが　嬉しそうに ちょこちょこ歩きで　帰ります。$何と　不思議な　遭遇！"
 }
