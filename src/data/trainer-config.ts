@@ -2169,7 +2169,14 @@ export const trainerConfigs: TrainerConfigs = {
       }
     }))
     .setPartyMemberFunc(1, getRandomPartyMemberFunc([ Species.HERACROSS ]))
-    .setPartyMemberFunc(2, getRandomPartyMemberFunc([ Species.SCIZOR, Species.KLEAVOR ]))
+    .setPartyMemberFunc(2, getRandomPartyMemberFunc([ Species.SCIZOR, Species.KLEAVOR ], TrainerSlot.TRAINER, true, p => {
+      //Technician Scizor, Sharpness Kleavor
+      if (p.species.speciesId === Species.SCIZOR) {
+        p.abilityIndex = 1;
+      } else if (p.species.speciesId === Species.KLEAVOR) {
+        p.abilityIndex = 2;
+      }
+    }))
     .setPartyMemberFunc(3, getRandomPartyMemberFunc([ Species.GALVANTULA, Species.VIKAVOLT]))
     .setPartyMemberFunc(4, getRandomPartyMemberFunc([ Species.PINSIR ], TrainerSlot.TRAINER, true, p => {
       p.generateAndPopulateMoveset();
