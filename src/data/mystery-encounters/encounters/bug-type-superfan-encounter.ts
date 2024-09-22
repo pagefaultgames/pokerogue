@@ -376,9 +376,10 @@ export const BugTypeSuperfanEncounter: MysteryEncounter =
         const onPokemonSelected = (pokemon: PlayerPokemon) => {
           // Get Pokemon held items and filter for valid ones
           const validItems = pokemon.getHeldItems().filter(item => {
-            return item instanceof BypassSpeedChanceModifier ||
+            return (item instanceof BypassSpeedChanceModifier ||
               item instanceof ContactHeldItemTransferChanceModifier ||
-              (item instanceof AttackTypeBoosterModifier && (item.type as AttackTypeBoosterModifierType).moveType === Type.BUG);
+              (item instanceof AttackTypeBoosterModifier && (item.type as AttackTypeBoosterModifierType).moveType === Type.BUG)) &&
+              item.isTransferable;
           });
 
           return validItems.map((modifier: PokemonHeldItemModifier) => {
