@@ -175,7 +175,16 @@ describe("Teleporting Hijinks - Mystery Encounter", () => {
       expect(TRANSPORT_BIOMES).toContain(scene.arena.biomeType);
     });
 
-    it("should start a battle against an enraged boss", { retry: 5 }, async () => {
+    it("should start a battle against an enraged boss below wave 50", { retry: 5 }, async () => {
+      await game.runToMysteryEncounter(MysteryEncounterType.TELEPORTING_HIJINKS, defaultParty);
+      await runMysteryEncounterToEnd(game, 1, undefined, true);
+      const enemyField = scene.getEnemyField();
+      expect(enemyField[0].summonData.statStages).toEqual([0, 1, 0, 1, 1, 0, 0]);
+      expect(enemyField[0].isBoss()).toBe(true);
+    });
+
+    it("should start a battle against an extra enraged boss above wave 50", { retry: 5 }, async () => {
+      game.override.startingWave(56);
       await game.runToMysteryEncounter(MysteryEncounterType.TELEPORTING_HIJINKS, defaultParty);
       await runMysteryEncounterToEnd(game, 1, undefined, true);
       const enemyField = scene.getEnemyField();
@@ -238,9 +247,18 @@ describe("Teleporting Hijinks - Mystery Encounter", () => {
       expect(TRANSPORT_BIOMES).toContain(scene.arena.biomeType);
     });
 
-    it("should start a battle against an enraged boss", async () => {
+    it("should start a battle against an enraged boss below wave 50", async () => {
       await game.runToMysteryEncounter(MysteryEncounterType.TELEPORTING_HIJINKS, [Species.PIKACHU]);
       await runMysteryEncounterToEnd(game, 2, undefined, true);
+      const enemyField = scene.getEnemyField();
+      expect(enemyField[0].summonData.statStages).toEqual([0, 1, 0, 1, 1, 0, 0]);
+      expect(enemyField[0].isBoss()).toBe(true);
+    });
+
+    it("should start a battle against an extra enraged boss above wave 50", { retry: 5 }, async () => {
+      game.override.startingWave(56);
+      await game.runToMysteryEncounter(MysteryEncounterType.TELEPORTING_HIJINKS, defaultParty);
+      await runMysteryEncounterToEnd(game, 1, undefined, true);
       const enemyField = scene.getEnemyField();
       expect(enemyField[0].summonData.statStages).toEqual([1, 1, 1, 1, 1, 0, 0]);
       expect(enemyField[0].isBoss()).toBe(true);
