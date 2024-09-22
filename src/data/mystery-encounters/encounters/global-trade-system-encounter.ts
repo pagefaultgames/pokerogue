@@ -431,14 +431,13 @@ function getPokemonTradeOptions(scene: BattleScene): Map<number, EnemyPokemon[]>
 
 function generateTradeOption(alreadyUsedSpecies: PokemonSpecies[], originalBst?: number): PokemonSpecies {
   let newSpecies: PokemonSpecies | undefined;
+  let bstCap = 9999;
+  let bstMin = 0;
+  if (originalBst) {
+    bstCap = originalBst + 100;
+    bstMin = originalBst - 100;
+  }
   while (isNullOrUndefined(newSpecies)) {
-    let bstCap = 9999;
-    let bstMin = 0;
-    if (originalBst) {
-      bstCap = originalBst + 100;
-      bstMin = originalBst - 100;
-    }
-
     // Get all non-legendary species that fall within the Bst range requirements
     let validSpecies = allSpecies
       .filter(s => {
