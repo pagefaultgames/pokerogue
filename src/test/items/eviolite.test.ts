@@ -9,8 +9,6 @@ import { StatBoosterModifier } from "#app/modifier/modifier";
 describe("Items - Eviolite", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
-  const TIMEOUT = 20 * 1000;
-
   beforeAll(() => {
     phaserGame = new Phase.Game({
       type: Phaser.HEADLESS,
@@ -50,7 +48,7 @@ describe("Items - Eviolite", () => {
 
     expect(partyMember.getEffectiveStat(Stat.DEF)).toBe(Math.floor(defStat * 1.5));
     expect(partyMember.getEffectiveStat(Stat.SPDEF)).toBe(Math.floor(spDefStat * 1.5));
-  }, TIMEOUT);
+  });
 
   it("should not provide a boost for fully evolved, unfused pokemon", async() => {
     await game.classicMode.startBattle([
@@ -74,7 +72,7 @@ describe("Items - Eviolite", () => {
     expect(partyMember.getEffectiveStat(Stat.DEF)).toBe(defStat);
     expect(partyMember.getEffectiveStat(Stat.SPDEF)).toBe(spDefStat);
 
-  }, TIMEOUT);
+  });
 
   it("should provide 50% boost to DEF and SPDEF for completely unevolved, fused pokemon", async() => {
     await game.classicMode.startBattle([
@@ -107,7 +105,7 @@ describe("Items - Eviolite", () => {
 
     expect(partyMember.getEffectiveStat(Stat.DEF)).toBe(Math.floor(defStat * 1.5));
     expect(partyMember.getEffectiveStat(Stat.SPDEF)).toBe(Math.floor(spDefStat * 1.5));
-  }, TIMEOUT);
+  });
 
   it("should provide 25% boost to DEF and SPDEF for partially unevolved (base), fused pokemon", async() => {
     await game.classicMode.startBattle([
@@ -140,7 +138,7 @@ describe("Items - Eviolite", () => {
 
     expect(partyMember.getEffectiveStat(Stat.DEF)).toBe(Math.floor(defStat * 1.25));
     expect(partyMember.getEffectiveStat(Stat.SPDEF)).toBe(Math.floor(spDefStat * 1.25));
-  }, TIMEOUT);
+  });
 
   it("should provide 25% boost to DEF and SPDEF for partially unevolved (fusion), fused pokemon", async() => {
     await game.classicMode.startBattle([
@@ -173,7 +171,7 @@ describe("Items - Eviolite", () => {
 
     expect(partyMember.getEffectiveStat(Stat.DEF)).toBe(Math.floor(defStat * 1.25));
     expect(partyMember.getEffectiveStat(Stat.SPDEF)).toBe(Math.floor(spDefStat * 1.25));
-  }, TIMEOUT);
+  });
 
   it("should not provide a boost for fully evolved, fused pokemon", async() => {
     await game.classicMode.startBattle([
@@ -206,7 +204,7 @@ describe("Items - Eviolite", () => {
 
     expect(partyMember.getEffectiveStat(Stat.DEF)).toBe(defStat);
     expect(partyMember.getEffectiveStat(Stat.SPDEF)).toBe(spDefStat);
-  }, TIMEOUT);
+  });
 
   it("should not provide a boost for Gigantamax Pokémon", async() => {
     game.override.starterForms({
@@ -238,5 +236,5 @@ describe("Items - Eviolite", () => {
 
     expect(partyMember.getEffectiveStat(Stat.DEF)).toBe(defStat);
     expect(partyMember.getEffectiveStat(Stat.SPDEF)).toBe(spDefStat);
-  }, TIMEOUT);
+  });
 });
