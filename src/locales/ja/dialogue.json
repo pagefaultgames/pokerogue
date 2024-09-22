@@ -334,8 +334,8 @@
     "victory": {
       "1": "...\n$...I'm sh-shivering!"
     },
-	"defeat": {
-	  "1": "...\n$...Kn-know what?\n...Th-this place is cold."
+    "defeat": {
+	    "1": "...\n$...Kn-know what?\n...Th-this place is cold."
     } 
   },
   "hex_maniac": {
