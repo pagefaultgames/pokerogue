@@ -127,7 +127,7 @@ export const BerriesAboundEncounter: MysteryEncounter =
         const encounter = scene.currentBattle.mysteryEncounter!;
         const numBerries = encounter.misc.numBerries;
 
-        const doBerryRewards = async () => {
+        const doBerryRewards = () => {
           const berryText = numBerries + " " + i18next.t(`${namespace}.berries`);
 
           scene.playSound("item_fanfare");
@@ -135,7 +135,7 @@ export const BerriesAboundEncounter: MysteryEncounter =
 
           // Generate a random berry and give it to the first Pokemon with room for it
           for (let i = 0; i < numBerries; i++) {
-            await tryGiveBerry(scene);
+            tryGiveBerry(scene);
           }
         };
 
@@ -178,7 +178,7 @@ export const BerriesAboundEncounter: MysteryEncounter =
 
           if (speedDiff < 1) {
             // Caught and attacked by boss, gets +1 to all stats at start of fight
-            const doBerryRewards = async () => {
+            const doBerryRewards = () => {
               const berryText = numBerries + " " + i18next.t(`${namespace}.berries`);
 
               scene.playSound("item_fanfare");
@@ -186,7 +186,7 @@ export const BerriesAboundEncounter: MysteryEncounter =
 
               // Generate a random berry and give it to the first Pokemon with room for it
               for (let i = 0; i < numBerries; i++) {
-                await tryGiveBerry(scene);
+                tryGiveBerry(scene);
               }
             };
 
@@ -204,7 +204,7 @@ export const BerriesAboundEncounter: MysteryEncounter =
             // Gains 1 berry for every 10% faster the player's pokemon is than the enemy, up to a max of numBerries, minimum of 2
             const numBerriesGrabbed = Math.max(Math.min(Math.round((speedDiff - 1)/0.08), numBerries), 2);
             encounter.setDialogueToken("numBerries", String(numBerriesGrabbed));
-            const doFasterBerryRewards = async () => {
+            const doFasterBerryRewards = () => {
               const berryText = numBerriesGrabbed + " " + i18next.t(`${namespace}.berries`);
 
               scene.playSound("item_fanfare");
@@ -212,7 +212,7 @@ export const BerriesAboundEncounter: MysteryEncounter =
 
               // Generate a random berry and give it to the first Pokemon with room for it (trying to give to fastest first)
               for (let i = 0; i < numBerriesGrabbed; i++) {
-                await tryGiveBerry(scene, fastestPokemon);
+                tryGiveBerry(scene, fastestPokemon);
               }
             };
 
@@ -242,7 +242,7 @@ export const BerriesAboundEncounter: MysteryEncounter =
     )
     .build();
 
-async function tryGiveBerry(scene: BattleScene, prioritizedPokemon?: PlayerPokemon) {
+function tryGiveBerry(scene: BattleScene, prioritizedPokemon?: PlayerPokemon) {
   const berryType = randSeedInt(Object.keys(BerryType).filter(s => !isNaN(Number(s))).length) as BerryType;
   const berry = generateModifierType(scene, modifierTypes.BERRY, [berryType]) as BerryModifierType;
 
@@ -254,7 +254,7 @@ async function tryGiveBerry(scene: BattleScene, prioritizedPokemon?: PlayerPokem
       && m.pokemonId === prioritizedPokemon.id && (m as BerryModifier).berryType === berryType, true) as BerryModifier;
 
     if (!heldBerriesOfType || heldBerriesOfType.getStackCount() < heldBerriesOfType.getMaxStackCount(scene)) {
-      await applyModifierTypeToPlayerPokemon(scene, prioritizedPokemon, berry);
+      applyModifierTypeToPlayerPokemon(scene, prioritizedPokemon, berry);
       return;
     }
   }
@@ -265,7 +265,7 @@ async function tryGiveBerry(scene: BattleScene, prioritizedPokemon?: PlayerPokem
       && m.pokemonId === pokemon.id && (m as BerryModifier).berryType === berryType, true) as BerryModifier;
 
     if (!heldBerriesOfType || heldBerriesOfType.getStackCount() < heldBerriesOfType.getMaxStackCount(scene)) {
-      await applyModifierTypeToPlayerPokemon(scene, pokemon, berry);
+      applyModifierTypeToPlayerPokemon(scene, pokemon, berry);
       return;
     }
   }
