@@ -1,10 +1,10 @@
 import Phaser from "phaser";
 import UI from "./ui/ui";
-import Pokemon, { PlayerPokemon, EnemyPokemon } from "./field/pokemon";
-import PokemonSpecies, { PokemonSpeciesFilter, allSpecies, getPokemonSpecies } from "./data/pokemon-species";
+import Pokemon, { EnemyPokemon, PlayerPokemon } from "./field/pokemon";
+import PokemonSpecies, { allSpecies, getPokemonSpecies, PokemonSpeciesFilter } from "./data/pokemon-species";
 import { Constructor, isNullOrUndefined } from "#app/utils";
 import * as Utils from "./utils";
-import { Modifier, ModifierBar, ConsumablePokemonModifier, ConsumableModifier, PokemonHpRestoreModifier, TurnHeldItemTransferModifier, HealingBoosterModifier, PersistentModifier, PokemonHeldItemModifier, ModifierPredicate, DoubleBattleChanceBoosterModifier, FusePokemonModifier, PokemonFormChangeItemModifier, TerastallizeModifier, overrideModifiers, overrideHeldItems, PokemonIncrementingStatModifier, ExpShareModifier, ExpBalanceModifier, MultipleParticipantExpBonusModifier, PokemonExpBoosterModifier } from "./modifier/modifier";
+import { ConsumableModifier, ConsumablePokemonModifier, DoubleBattleChanceBoosterModifier, ExpBalanceModifier, ExpShareModifier, FusePokemonModifier, HealingBoosterModifier, Modifier, ModifierBar, ModifierPredicate, MultipleParticipantExpBonusModifier, overrideHeldItems, overrideModifiers, PersistentModifier, PokemonExpBoosterModifier, PokemonFormChangeItemModifier, PokemonHeldItemModifier, PokemonHpRestoreModifier, PokemonIncrementingStatModifier, TerastallizeModifier, TurnHeldItemTransferModifier } from "./modifier/modifier";
 import { PokeballType } from "./data/pokeball";
 import { initCommonAnims, initMoveAnim, loadCommonAnimAssets, loadMoveAnimAssets, populateAnims } from "./data/battle-anims";
 import { Phase } from "./phase";
@@ -13,20 +13,9 @@ import { Arena, ArenaBase } from "./field/arena";
 import { GameData } from "./system/game-data";
 import { addTextObject, getTextColor, TextStyle } from "./ui/text";
 import { allMoves } from "./data/move";
-import {
-  ModifierPoolType,
-  getDefaultModifierTypeForTier,
-  getEnemyModifierTypesForWave,
-  getLuckString,
-  getLuckTextTint,
-  getModifierPoolForType,
-  getModifierType,
-  getPartyLuckValue,
-  modifierTypes, PokemonHeldItemModifierType
-} from "./modifier/modifier-type";
+import { getDefaultModifierTypeForTier, getEnemyModifierTypesForWave, getLuckString, getLuckTextTint, getModifierPoolForType, getModifierType, getPartyLuckValue, ModifierPoolType, modifierTypes, PokemonHeldItemModifierType } from "./modifier/modifier-type";
 import AbilityBar from "./ui/ability-bar";
-import { BlockItemTheftAbAttr, DoubleBattleChanceAbAttr, ChangeMovePriorityAbAttr, PostBattleInitAbAttr, applyAbAttrs, applyPostBattleInitAbAttrs } from "./data/ability";
-import { allAbilities } from "./data/ability";
+import { allAbilities, applyAbAttrs, applyPostBattleInitAbAttrs, BlockItemTheftAbAttr, ChangeMovePriorityAbAttr, DoubleBattleChanceAbAttr, PostBattleInitAbAttr } from "./data/ability";
 import Battle, { BattleType, FixedBattleConfig } from "./battle";
 import { GameMode, GameModes, getGameMode } from "./game-mode";
 import FieldSpritePipeline from "./pipelines/field-sprite";
@@ -46,7 +35,7 @@ import UIPlugin from "phaser3-rex-plugins/templates/ui/ui-plugin";
 import { addUiThemeOverrides } from "./ui/ui-theme";
 import PokemonData from "./system/pokemon-data";
 import { Nature } from "./data/nature";
-import { SpeciesFormChangeManualTrigger, SpeciesFormChangeTimeOfDayTrigger, SpeciesFormChangeTrigger, pokemonFormChanges, FormChangeItem, SpeciesFormChange } from "./data/pokemon-forms";
+import { FormChangeItem, pokemonFormChanges, SpeciesFormChange, SpeciesFormChangeManualTrigger, SpeciesFormChangeTimeOfDayTrigger, SpeciesFormChangeTrigger } from "./data/pokemon-forms";
 import { FormChangePhase } from "./phases/form-change-phase";
 import { getTypeRgb } from "./data/type";
 import PokemonSpriteSparkleHandler from "./field/pokemon-sprite-sparkle-handler";
@@ -1083,6 +1072,11 @@ export default class BattleScene extends SceneBase {
       p.destroy();
     }
 
+    // If this is a ME, clear any residual visual sprites before reloading
+    if (this.currentBattle?.mysteryEncounter?.introVisuals) {
+      this.field.remove(this.currentBattle.mysteryEncounter?.introVisuals, true);
+    }
+
     //@ts-ignore  - allowing `null` for currentBattle causes a lot of trouble
     this.currentBattle = null; // TODO: resolve ts-ignore
 
@@ -1112,6 +1106,8 @@ export default class BattleScene extends SceneBase {
     this.trainer.setTexture(`trainer_${this.gameData.gender === PlayerGender.FEMALE ? "f" : "m"}_back`);
     this.trainer.setPosition(406, 186);
     this.trainer.setVisible(true);
+
+    this.mysteryEncounterSaveData = new MysteryEncounterSaveData();
 
     this.updateGameInfo();
 
@@ -1146,6 +1142,13 @@ export default class BattleScene extends SceneBase {
         }
       });
     }
+  }
+
+  getDoubleBattleChance(newWaveIndex: number, playerField: PlayerPokemon[]) {
+    const doubleChance = new Utils.IntegerHolder(newWaveIndex % 10 === 0 ? 32 : 8);
+    this.applyModifiers(DoubleBattleChanceBoosterModifier, true, doubleChance);
+    playerField.forEach(p => applyAbAttrs(DoubleBattleChanceAbAttr, p, null, false, doubleChance));
+    return Math.max(doubleChance.value, 1);
   }
 
   newBattle(waveIndex?: integer, battleType?: BattleType, trainerData?: TrainerData, double?: boolean, mysteryEncounterType?: MysteryEncounterType): Battle | null {
@@ -1231,10 +1234,7 @@ export default class BattleScene extends SceneBase {
 
     if (double === undefined && newWaveIndex > 1) {
       if (newBattleType === BattleType.WILD && !this.gameMode.isWaveFinal(newWaveIndex)) {
-        const doubleChance = new Utils.IntegerHolder(newWaveIndex % 10 === 0 ? 32 : 8);
-        this.applyModifiers(DoubleBattleChanceBoosterModifier, true, doubleChance);
-        playerField.forEach(p => applyAbAttrs(DoubleBattleChanceAbAttr, p, null, false, doubleChance));
-        newDouble = !Utils.randSeedInt(doubleChance.value);
+        newDouble = !Utils.randSeedInt(this.getDoubleBattleChance(newWaveIndex, playerField));
       } else if (newBattleType === BattleType.TRAINER) {
         newDouble = newTrainer?.variant === TrainerVariant.DOUBLE;
       }
@@ -2166,12 +2166,16 @@ export default class BattleScene extends SceneBase {
       return 20.87;
     case "battle_macro_grunt": // SWSH Trainer Battle
       return 11.56;
+    case "battle_star_grunt": //SV Team Star Battle
+      return 133.362;
     case "battle_galactic_admin": //BDSP Team Galactic Admin Battle
       return 11.997;
     case "battle_skull_admin": //SM Team Skull Admin Battle
       return 15.463;
     case "battle_oleana": //SWSH Oleana Battle
       return 14.110;
+    case "battle_star_admin": //SV Team Star Boss Battle
+      return 9.493;
     case "battle_rocket_boss": //USUM Giovanni Battle
       return 9.115;
     case "battle_aqua_magma_boss": //ORAS Archie & Maxie Battle
@@ -2188,6 +2192,8 @@ export default class BattleScene extends SceneBase {
       return 13.13;
     case "battle_macro_boss": //SWSH Rose Battle
       return 11.42;
+    case "battle_star_boss": //SV Cassiopeia Battle
+      return 25.764;
     case "mystery_encounter_gen_5_gts": // BW GTS
       return 8.52;
     case "mystery_encounter_gen_6_gts": // XY GTS
@@ -3165,10 +3171,16 @@ export default class BattleScene extends SceneBase {
           if (encounterCandidate.encounterTier !== tier) { // Encounter is in tier
             return false;
           }
-          const disabledModes = encounterCandidate.disabledGameModes;
-          if (disabledModes && disabledModes.length > 0
-            && disabledModes.includes(this.gameMode.modeId)) { // Encounter is enabled for game mode
+          const disallowedGameModes = encounterCandidate.disallowedGameModes;
+          if (disallowedGameModes && disallowedGameModes.length > 0
+            && disallowedGameModes.includes(this.gameMode.modeId)) { // Encounter is enabled for game mode
             return false;
+          }
+          if (this.gameMode.modeId === GameModes.CHALLENGE) { // Encounter is enabled for challenges
+            const disallowedChallenges = encounterCandidate.disallowedChallenges;
+            if (disallowedChallenges && disallowedChallenges.length > 0 && this.gameMode.challenges.some(challenge => disallowedChallenges.includes(challenge.id))) {
+              return false;
+            }
           }
           if (!encounterCandidate.meetsRequirements(this)) { // Meets encounter requirements
             return false;
