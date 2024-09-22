@@ -10,7 +10,7 @@
       "label": "Battle the Clown",
       "tooltip": "(-) Strange Battle\n(?) Affects Pokémon Abilities",
       "selected": "Your pitiful Pokémon are poised for a pathetic performance!",
-      "apply_ability_dialogue": "A sensational showcase!\nYour savvy suits a sensational skill as spoils!",
+      "apply_ability_dialogue": "A sensational showcase!\nYour savvy suits a special skill as spoils!",
       "apply_ability_message": "The clown is offering to permanently Skill Swap one of your Pokémon's ability to {{ability}}!",
       "ability_prompt": "Would you like to permanently teach a Pokémon the {{ability}} ability?",
       "ability_gained": "@s{level_up_fanfare}{{chosenPokemon}} gained the {{ability}} ability!"

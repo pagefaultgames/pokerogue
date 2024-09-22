@@ -12,7 +12,7 @@
     },
     "2": {
       "label": "Learn Its Dance",
-      "tooltip": "(+) Teach a Pokémon Revelation Dance",
+      "tooltip": "(+) Teach any Pokémon Revelation Dance",
       "selected": "You watch the {{oricorioName}} closely as it performs its dance...$@s{level_up_fanfare}Your {{selectedPokemon}} learned from the {{oricorioName}}!"
     },
     "3": {
