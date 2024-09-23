@@ -19,6 +19,7 @@
   "aether_boss": "에테르재단 대표",
   "skull_boss": "스컬단 보스",
   "macro_boss": "매크로코스모스 사장",
+  "star_boss": "스타단 보스",
 
   "rocket_admin": "로켓단 간부",
   "rocket_admin_female": "로켓단 간부",
@@ -34,5 +35,6 @@
   "flare_admin_female": "플레어단 간부",
   "aether_admin": "에테르재단 지부장",
   "skull_admin": "스컬단 간부",
-  "macro_admin": "매크로코스모스 간부"
+  "macro_admin": "매크로코스모스 간부",
+  "star_admin": "스타단 군단 보스"
 }
