@@ -651,7 +651,7 @@ export default class Move implements Localizable {
   }
 
   /**
-   * Applies each {@linkcode MoveCondition} of this move to the params
+   * Applies each {@linkcode MoveCondition} function of this move to the params, determines if the move can be used prior to calling each attribute's apply()
    * @param user {@linkcode Pokemon} to apply conditions to
    * @param target {@linkcode Pokemon} to apply conditions to
    * @param move {@linkcode Move} to apply conditions to
@@ -2156,21 +2156,20 @@ export class PsychoShiftEffectAttr extends MoveEffectAttr {
 
     if (target.status) {
       return false;
-    }
-    //@ts-ignore - how can target.status.effect be checked when we return `false` before when it's defined?
-    if (!target.status || (target.status.effect === statusToApply && move.chance < 0)) { // TODO: resolve ts-ignore
-      const statusAfflictResult = target.trySetStatus(statusToApply, true, user);
-      if (statusAfflictResult) {
+    } else {
+      const canSetStatus = target.canSetStatus(statusToApply, true, false, user);
+
+      if (canSetStatus) {
         if (user.status) {
           user.scene.queueMessage(getStatusEffectHealText(user.status.effect, getPokemonNameWithAffix(user)));
         }
         user.resetStatus();
         user.updateInfo();
+        target.trySetStatus(statusToApply, true, user);
       }
-      return statusAfflictResult;
-    }
 
-    return false;
+      return canSetStatus;
+    }
   }
 
   getTargetBenefitScore(user: Pokemon, target: Pokemon, move: Move): number {
@@ -5358,6 +5357,21 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
   }
 }
 
+
+export class ChillyReceptionAttr extends ForceSwitchOutAttr {
+
+  // using inherited constructor
+
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): Promise<boolean> {
+    user.scene.arena.trySetWeather(WeatherType.SNOW, true);
+    return super.apply(user, target, move, args);
+  }
+
+  getCondition(): MoveConditionFunc {
+    // chilly reception move will go through if the weather is change-able to snow, or the user can switch out, else move will fail
+    return (user, target, move) => user.scene.arena.trySetWeather(WeatherType.SNOW, true) || super.getSwitchOutCondition()(user, target, move);
+  }
+}
 export class RemoveTypeAttr extends MoveEffectAttr {
 
   private removedType: Type;
@@ -9135,8 +9149,7 @@ export function initMoves() {
     new AttackMove(Moves.AURA_WHEEL, Type.ELECTRIC, MoveCategory.PHYSICAL, 110, 100, 10, 100, 0, 8)
       .attr(StatStageChangeAttr, [ Stat.SPD ], 1, true)
       .makesContact(false)
-      .attr(AuraWheelTypeAttr)
-      .condition((user, target, move) => [user.species.speciesId, user.fusionSpecies?.speciesId].includes(Species.MORPEKO)), // Missing custom fail message
+      .attr(AuraWheelTypeAttr),
     new AttackMove(Moves.BREAKING_SWIPE, Type.DRAGON, MoveCategory.PHYSICAL, 60, 100, 15, 100, 0, 8)
       .target(MoveTarget.ALL_NEAR_ENEMIES)
       .attr(StatStageChangeAttr, [ Stat.ATK ], -1),
@@ -9548,10 +9561,9 @@ export function initMoves() {
       .makesContact(),
     new SelfStatusMove(Moves.SHED_TAIL, Type.NORMAL, -1, 10, -1, 0, 9)
       .attr(ShedTailAttr),
-    new StatusMove(Moves.CHILLY_RECEPTION, Type.ICE, -1, 10, -1, 0, 9)
-      .attr(WeatherChangeAttr, WeatherType.SNOW)
-      .attr(ForceSwitchOutAttr, true)
-      .target(MoveTarget.BOTH_SIDES),
+    new SelfStatusMove(Moves.CHILLY_RECEPTION, Type.ICE, -1, 10, -1, 0, 9)
+      .attr(PreMoveMessageAttr, (user, move) => i18next.t("moveTriggers:chillyReception", {pokemonName: getPokemonNameWithAffix(user)}))
+      .attr(ChillyReceptionAttr, true),
     new SelfStatusMove(Moves.TIDY_UP, Type.NORMAL, -1, 10, -1, 0, 9)
       .attr(StatStageChangeAttr, [ Stat.ATK, Stat.SPD ], 1, true, null, true, true)
       .attr(RemoveArenaTrapAttr, true)
