@@ -23,6 +23,7 @@ import { initVouchers } from "./system/voucher";
 import { Biome } from "#enums/biome";
 import { TrainerType } from "#enums/trainer-type";
 import {initMysteryEncounters} from "#app/data/mystery-encounters/mystery-encounters";
+import { allDefaultBgmAssets, allDefaultSeAssets } from "#app/default-assets";
 
 export class LoadingScene extends SceneBase {
   public static readonly KEY = "loading";
@@ -297,61 +298,13 @@ export class LoadingScene extends SceneBase {
     this.loadAtlas("xbox", "inputs");
     this.loadAtlas("keyboard", "inputs");
 
-    this.loadSe("select", "ui");
-    this.loadSe("menu_open", "ui");
-    this.loadSe("error", "ui");
-    this.loadSe("hit");
-    this.loadSe("hit_strong");
-    this.loadSe("hit_weak");
-    this.loadSe("stat_up");
-    this.loadSe("stat_down");
-    this.loadSe("faint");
-    this.loadSe("flee");
-    this.loadSe("low_hp");
-    this.loadSe("exp");
-    this.loadSe("level_up");
-    this.loadSe("sparkle");
-    this.loadSe("restore");
-    this.loadSe("shine");
-    this.loadSe("shing");
-    this.loadSe("charge");
-    this.loadSe("beam");
-    this.loadSe("upgrade");
-    this.loadSe("buy");
-    this.loadSe("achv");
+    for (const key of allDefaultSeAssets.keys()) {
+      this.loadSe(key, allDefaultSeAssets.get(key));
+    }
 
-    this.loadSe("pb_rel");
-    this.loadSe("pb_throw");
-    this.loadSe("pb_bounce_1");
-    this.loadSe("pb_bounce_2");
-    this.loadSe("pb_move");
-    this.loadSe("pb_catch");
-    this.loadSe("pb_lock");
-
-    this.loadSe("pb_tray_enter");
-    this.loadSe("pb_tray_ball");
-    this.loadSe("pb_tray_empty");
-
-    this.loadSe("egg_crack");
-    this.loadSe("egg_hatch");
-    this.loadSe("gacha_dial");
-    this.loadSe("gacha_running");
-    this.loadSe("gacha_dispense");
-
-    this.loadSe("PRSFX- Transform", "battle_anims");
-
-    this.loadBgm("menu");
-
-    this.loadBgm("level_up_fanfare", "bw/level_up_fanfare.mp3");
-    this.loadBgm("item_fanfare", "bw/item_fanfare.mp3");
-    this.loadBgm("minor_fanfare", "bw/minor_fanfare.mp3");
-    this.loadBgm("heal", "bw/heal.mp3");
-    this.loadBgm("victory_trainer", "bw/victory_trainer.mp3");
-    this.loadBgm("victory_team_plasma", "bw/victory_team_plasma.mp3");
-    this.loadBgm("victory_gym", "bw/victory_gym.mp3");
-    this.loadBgm("victory_champion", "bw/victory_champion.mp3");
-    this.loadBgm("evolution", "bw/evolution.mp3");
-    this.loadBgm("evolution_fanfare", "bw/evolution_fanfare.mp3");
+    for (const key of allDefaultBgmAssets.keys()) {
+      this.loadBgm(key, allDefaultBgmAssets.get(key));
+    }
 
     this.load.plugin("rextexteditplugin", "https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rextexteditplugin.min.js", true);
 

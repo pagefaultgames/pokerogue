@@ -1,3 +1,5 @@
+import { allDefaultBgmAssets, allDefaultSeAssets } from "#app/default-assets";
+
 export const legacyCompatibleImages: string[] = [];
 
 export class SceneBase extends Phaser.Scene {
@@ -90,5 +92,30 @@ export class SceneBase extends Phaser.Scene {
       filename = `${key}.mp3`;
     }
     this.load.audio(key, this.getCachedUrl(`audio/bgm/${filename}`));
+  }
+
+  clearAllAudio() {
+    let removedAssets = "";
+    for (const key of this.cache.audio.entries.keys()) {
+      const audioKey = key as string;
+      const keyWithoutFolder = audioKey.split("/").pop();
+      if (allDefaultBgmAssets.has(audioKey) || (keyWithoutFolder && allDefaultSeAssets.has(keyWithoutFolder))) {
+        // Default audio asset, don't unload
+        continue;
+      }
+
+      // TODO: filter for player's Pokemon assets and do not unload
+      // if (audioKey.includes("PRSFX - ")) {
+      //   // Asset in use by one of the player's party Pokemon, don't unload
+      //   continue;
+      // }
+
+      if (this.cache.audio.has(audioKey)) {
+        removedAssets += `${audioKey}\n`;
+        this.cache.audio.remove(audioKey);
+      }
+    }
+
+    console.log(`Audio keys removed from cache:\n${removedAssets}`);
   }
 }

@@ -8,6 +8,12 @@ export class NewBiomeEncounterPhase extends NextEncounterPhase {
     super(scene);
   }
 
+  start() {
+    super.start();
+
+    this.scene.clearAllAudio();
+  }
+
   doEncounter(): void {
     this.scene.playBgm(undefined, true);
 
