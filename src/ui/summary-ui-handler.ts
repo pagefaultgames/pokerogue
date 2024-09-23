@@ -214,7 +214,7 @@ export default class SummaryUiHandler extends UiHandler {
 
     this.statusContainer.add(statusLabel);
 
-    this.status = this.scene.add.sprite(91, 4, `statuses_${i18next.resolvedLanguage}`);
+    this.status = this.scene.add.sprite(91, 4, Utils.getLocalizedSpriteKey("statuses"));
     this.status.setOrigin(0.5, 0);
 
     this.statusContainer.add(this.status);
@@ -701,6 +701,7 @@ export default class SummaryUiHandler extends UiHandler {
       const profileContainer = this.scene.add.container(0, -pageBg.height);
       pageContainer.add(profileContainer);
 
+      // TODO: should add field for original trainer name to Pokemon object, to support gift/traded Pokemon from MEs
       const trainerText = addBBCodeTextObject(this.scene, 7, 12, `${i18next.t("pokemonSummary:ot")}/${getBBCodeFrag(loggedInUser?.username || i18next.t("pokemonSummary:unknown"), this.scene.gameData.gender === PlayerGender.FEMALE ? TextStyle.SUMMARY_PINK : TextStyle.SUMMARY_BLUE)}`, TextStyle.SUMMARY_ALT);
       trainerText.setOrigin(0, 0);
       profileContainer.add(trainerText);

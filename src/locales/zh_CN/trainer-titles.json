@@ -19,6 +19,7 @@
   "aether_boss": "以太基金会理事长",
   "skull_boss": "骷髅队老大",
   "macro_boss": "马洛科蒙总裁",
+  "star_boss": "Team Star Leader",
 
   "rocket_admin": "火箭队干部",
   "rocket_admin_female": "火箭队干部",
@@ -34,5 +35,6 @@
   "flare_admin_female": "闪焰队干部",
   "aether_admin": "以太基金会干部",
   "skull_admin": "骷髅队干部",
-  "macro_admin": "马洛科蒙干部"
+  "macro_admin": "马洛科蒙干部",
+  "star_admin": "Team Star Squad Boss"
 }
