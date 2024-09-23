@@ -17,6 +17,7 @@ import * as EncounterPhaseUtils from "#app/data/mystery-encounters/utils/encount
 import * as EncounterDialogueUtils from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
 import { CommandPhase } from "#app/phases/command-phase";
 import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
+import { Abilities } from "#enums/abilities";
 
 const namespace = "mysteryEncounter:berriesAbound";
 const defaultParty = [Species.PYUKUMUKU, Species.MAGIKARP, Species.PIKACHU];
@@ -35,13 +36,15 @@ describe("Berries Abound - Mystery Encounter", () => {
   beforeEach(async () => {
     game = new GameManager(phaserGame);
     scene = game.scene;
-    game.override.mysteryEncounterChance(100);
-    game.override.mysteryEncounterTier(MysteryEncounterTier.COMMON);
-    game.override.startingWave(defaultWave);
-    game.override.startingBiome(defaultBiome);
-    game.override.disableTrainerWaves();
-    game.override.startingModifier([]);
-    game.override.startingHeldItems([]);
+    game.override.mysteryEncounterChance(100)
+      .mysteryEncounterTier(MysteryEncounterTier.COMMON)
+      .startingWave(defaultWave)
+      .startingBiome(defaultBiome)
+      .disableTrainerWaves()
+      .startingModifier([])
+      .startingHeldItems([])
+      .enemyAbility(Abilities.BALL_FETCH)
+      .enemyPassiveAbility(Abilities.BALL_FETCH);
 
     vi.spyOn(MysteryEncounters, "mysteryEncountersByBiome", "get").mockReturnValue(
       new Map<Biome, MysteryEncounterType[]>([
@@ -168,7 +171,30 @@ describe("Berries Abound - Mystery Encounter", () => {
       });
     });
 
-    it("should start battle if fastest pokemon is slower than boss", async () => {
+    it("should start battle if fastest pokemon is slower than boss below wave 50", async () => {
+      game.override.startingWave(41);
+      const encounterTextSpy = vi.spyOn(EncounterDialogueUtils, "showEncounterText");
+      await game.runToMysteryEncounter(MysteryEncounterType.BERRIES_ABOUND, defaultParty);
+
+      const config = game.scene.currentBattle.mysteryEncounter!.enemyPartyConfigs[0];
+      const speciesToSpawn = config.pokemonConfigs?.[0].species.speciesId;
+      // Setting enemy's level arbitrarily high to outspeed
+      config.pokemonConfigs![0].dataSource!.level = 1000;
+
+      await runMysteryEncounterToEnd(game, 2, undefined, true);
+
+      const enemyField = scene.getEnemyField();
+      expect(scene.getCurrentPhase()?.constructor.name).toBe(CommandPhase.name);
+      expect(enemyField.length).toBe(1);
+      expect(enemyField[0].species.speciesId).toBe(speciesToSpawn);
+
+      // Should be enraged
+      expect(enemyField[0].summonData.statStages).toEqual([0, 1, 0, 1, 1, 0, 0]);
+      expect(encounterTextSpy).toHaveBeenCalledWith(expect.any(BattleScene), `${namespace}.option.2.selected_bad`);
+    });
+
+    it("should start battle if fastest pokemon is slower than boss above wave 50", async () => {
+      game.override.startingWave(57);
       const encounterTextSpy = vi.spyOn(EncounterDialogueUtils, "showEncounterText");
       await game.runToMysteryEncounter(MysteryEncounterType.BERRIES_ABOUND, defaultParty);
 

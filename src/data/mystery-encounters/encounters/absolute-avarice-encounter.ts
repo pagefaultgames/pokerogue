@@ -202,9 +202,14 @@ export const AbsoluteAvariceEncounter: MysteryEncounter =
           const modifierType = generateModifierType(scene, modifierTypes.BERRY, [berryMod.berryType]) as PokemonHeldItemModifierType;
           bossModifierConfigs.push({ modifier: modifierType });
         }
-
-        scene.removeModifier(berryMod);
       });
+
+      // Do NOT remove the real berries yet or else it will be persisted in the session data
+
+      // SpDef buff below wave 50, +1 to all stats otherwise
+      const statChangesForBattle: (Stat.ATK | Stat.DEF | Stat.SPATK | Stat.SPDEF | Stat.SPD | Stat.ACC | Stat.EVA)[] = scene.currentBattle.waveIndex < 50 ?
+        [Stat.SPDEF] :
+        [Stat.ATK, Stat.DEF, Stat.SPATK, Stat.SPDEF, Stat.SPD];
 
       // Calculate boss mon
       const config: EnemyPartyConfig = {
@@ -214,12 +219,12 @@ export const AbsoluteAvariceEncounter: MysteryEncounter =
             species: getPokemonSpecies(Species.GREEDENT),
             isBoss: true,
             bossSegments: 3,
-            moveSet: [Moves.THRASH, Moves.BODY_PRESS, Moves.STUFF_CHEEKS, Moves.SLACK_OFF],
+            moveSet: [Moves.THRASH, Moves.BODY_PRESS, Moves.STUFF_CHEEKS, Moves.CRUNCH],
             modifierConfigs: bossModifierConfigs,
             tags: [BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON],
             mysteryEncounterBattleEffects: (pokemon: Pokemon) => {
               queueEncounterMessage(pokemon.scene, `${namespace}.option.1.boss_enraged`);
-              pokemon.scene.unshiftPhase(new StatStageChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [Stat.ATK, Stat.DEF, Stat.SPATK, Stat.SPDEF, Stat.SPD], 1));
+              pokemon.scene.unshiftPhase(new StatStageChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, statChangesForBattle, 1));
             }
           }
         ],
@@ -227,6 +232,18 @@ export const AbsoluteAvariceEncounter: MysteryEncounter =
 
       encounter.enemyPartyConfigs = [config];
       encounter.setDialogueToken("greedentName", getPokemonSpecies(Species.GREEDENT).getName());
+
+      return true;
+    })
+    .withOnVisualsStart((scene: BattleScene) => {
+      // Remove the berries from the party
+      // Session has been safely saved at this point, so data won't be lost
+      const berryItems = scene.findModifiers(m => m instanceof BerryModifier) as BerryModifier[];
+      berryItems.forEach(berryMod => {
+        scene.removeModifier(berryMod);
+      });
+
+      scene.updateModifiers(true);
 
       return true;
     })
