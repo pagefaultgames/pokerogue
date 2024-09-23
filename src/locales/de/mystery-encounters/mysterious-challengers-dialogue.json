@@ -1,0 +1,22 @@
+{
+  "intro": "Mysteriöse Herausforderer sind aufgetaucht!",
+  "title": "Mysteriöse Herausforderer",
+  "description": "Wenn du einen Herausforderer besiegst, könntest du sie beeindrucken und eine Belohnung erhalten. Aber manche sehen ziemlich stark aus. Bist du bereit für die Herausforderung?",
+  "query": "Wen wirst du bekämpfen?",
+  "option": {
+    "1": {
+      "label": "Schlauer Trainer",
+      "tooltip": "(-) Standardkampf\n(+) TM Belohnungen"
+    },
+    "2": {
+      "label": "Starker Trainer",
+      "tooltip": "(-) Harter Kampf\n(+) Gute Belohnungen"
+    },
+    "3": {
+      "label": "Mächtigster Trainer",
+      "tooltip":  "(-) Brutaler Kampf\n(+) Großartige Belohnungen"
+    },
+    "selected": "Der Herausforderer tritt vor..."
+  },
+  "outro": "Der mysteriöse Herausforderer wurde besiegt!"
+}
