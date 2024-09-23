@@ -14,6 +14,10 @@
   "moneyWon": "Du gewinnst {{moneyAmount}} ₽!",
   "moneyPickedUp": "Du hebst {{moneyAmount}} ₽ auf!",
   "pokemonCaught": "{{pokemonName}} wurde gefangen!",
+  "pokemonObtained": "Du erhältst {{pokemonName}}!",
+  "pokemonBrokeFree": "Mist!\nDas Pokémon hat sich befreit!",
+  "pokemonFled": "Das wilde {{pokemonName}} ist geflohen!",
+  "playerFled": "Du bist vor dem wilden {{pokemonName}} geflohen!",
   "addedAsAStarter": "{{pokemonName}} wurde als Starterpokémon hinzugefügt!",
   "partyFull": "Dein Team ist voll. Möchtest du ein Pokémon durch {{pokemonName}} ersetzen?",
   "pokemon": "Pokémon",
@@ -49,6 +53,7 @@
   "noPokeballTrainer": "Du kannst das Pokémon eines anderen Trainers nicht fangen!",
   "noPokeballMulti": "Du kannst erst einen Pokéball werfen, wenn nur noch ein Pokémon übrig ist!",
   "noPokeballStrong": "Das Ziel-Pokémon ist zu stark, um gefangen zu werden! Du musst es zuerst schwächen!",
+  "noPokeballMysteryEncounter": "You aren't able to\ncatch this Pokémon!",
   "noEscapeForce": "Eine unsichtbare Kraft verhindert die Flucht.",
   "noEscapeTrainer": "Du kannst nicht aus einem Trainerkampf fliehen!",
   "noEscapePokemon": "{{moveName}} von {{pokemonName}} verhindert {{escapeVerb}}!",
@@ -97,6 +102,7 @@
   "congratulations": "Glückwunsch!",
   "beatModeFirstTime": "{{speciesName}} hat den {{gameMode}} Modus zum ersten Mal beendet! Du erhältst {{newModifier}}!",
   "eggSkipPrompt": "Zur Ei-Zusammenfassung springen?",
+  "mysteryEncounterAppeared": "Was ist das?",
   "battlerTagsHealBlock": "{{pokemonNameWithAffix}} kann nicht geheilt werden, da die Heilung blockiert wird!",
   "battlerTagsHealBlockOnRemove": "{{pokemonNameWithAffix}} kann wieder geheilt werden!"
 }
