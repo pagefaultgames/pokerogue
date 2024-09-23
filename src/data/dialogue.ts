@@ -867,9 +867,17 @@ export const trainerTypeDialogue: TrainerTypeDialogue = {
     {
       encounter: [
         "dialogue:star_grunt.encounter.1",
+        "dialogue:star_grunt.encounter.2",
+        "dialogue:star_grunt.encounter.3",
+        "dialogue:star_grunt.encounter.4",
+        "dialogue:star_grunt.encounter.5",
       ],
       victory: [
         "dialogue:star_grunt.victory.1",
+        "dialogue:star_grunt.victory.2",
+        "dialogue:star_grunt.victory.3",
+        "dialogue:star_grunt.victory.4",
+        "dialogue:star_grunt.victory.5",
       ]
     }
   ],
@@ -877,9 +885,11 @@ export const trainerTypeDialogue: TrainerTypeDialogue = {
     {
       encounter: [
         "dialogue:giacomo.encounter.1",
+        "dialogue:giacomo.encounter.2",
       ],
       victory: [
         "dialogue:giacomo.victory.1",
+        "dialogue:giacomo.victory.2",
       ]
     }
   ],
@@ -887,9 +897,11 @@ export const trainerTypeDialogue: TrainerTypeDialogue = {
     {
       encounter: [
         "dialogue:mela.encounter.1",
+        "dialogue:mela.encounter.2",
       ],
       victory: [
         "dialogue:mela.victory.1",
+        "dialogue:mela.victory.2",
       ]
     }
   ],
@@ -897,9 +909,11 @@ export const trainerTypeDialogue: TrainerTypeDialogue = {
     {
       encounter: [
         "dialogue:atticus.encounter.1",
+        "dialogue:atticus.encounter.2",
       ],
       victory: [
         "dialogue:atticus.victory.1",
+        "dialogue:atticus.victory.2",
       ]
     }
   ],
@@ -907,9 +921,11 @@ export const trainerTypeDialogue: TrainerTypeDialogue = {
     {
       encounter: [
         "dialogue:ortega.encounter.1",
+        "dialogue:ortega.encounter.2",
       ],
       victory: [
         "dialogue:ortega.victory.1",
+        "dialogue:ortega.victory.2",
       ]
     }
   ],
@@ -917,9 +933,11 @@ export const trainerTypeDialogue: TrainerTypeDialogue = {
     {
       encounter: [
         "dialogue:eri.encounter.1",
+        "dialogue:eri.encounter.2",
       ],
       victory: [
         "dialogue:eri.victory.1",
+        "dialogue:eri.victory.2",
       ]
     }
   ],

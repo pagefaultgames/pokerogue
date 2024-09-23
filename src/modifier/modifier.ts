@@ -427,14 +427,14 @@ export class DoubleBattleChanceBoosterModifier extends LapsingPersistentModifier
   }
 
   /**
-   * Modifies the chance of a double battle occurring
+   * Increases the chance of a double battle occurring
    * @param doubleBattleChance {@linkcode Utils.NumberHolder} for double battle chance
    * @returns true
    */
   override apply(doubleBattleChance: Utils.NumberHolder): boolean {
     // This is divided because the chance is generated as a number from 0 to doubleBattleChance.value using Utils.randSeedInt
     // A double battle will initiate if the generated number is 0
-    doubleBattleChance.value = Math.ceil(doubleBattleChance.value / 4);
+    doubleBattleChance.value = doubleBattleChance.value / 4;
 
     return true;
   }
@@ -948,7 +948,7 @@ export class PokemonBaseStatTotalModifier extends PokemonHeldItemModifier {
   }
 
   override matchType(modifier: Modifier): boolean {
-    return modifier instanceof PokemonBaseStatTotalModifier;
+    return modifier instanceof PokemonBaseStatTotalModifier && this.statModifier === modifier.statModifier;
   }
 
   override clone(): PersistentModifier {
@@ -1011,7 +1011,7 @@ export class PokemonBaseStatFlatModifier extends PokemonHeldItemModifier {
   }
 
   override matchType(modifier: Modifier): boolean {
-    return modifier instanceof PokemonBaseStatFlatModifier;
+    return modifier instanceof PokemonBaseStatFlatModifier && modifier.statModifier === this.statModifier && this.stats.every(s => modifier.stats.some(stat => s === stat));
   }
 
   override clone(): PersistentModifier {
