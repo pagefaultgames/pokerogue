@@ -1,0 +1,29 @@
+
+
+{
+  "intro": "¡Ha aparecido una bandada de {{delibirdName}}!",
+  "title": "Pajarradas",
+  "description": "Los {{delibirdName}} te miran expectantes, como si quisieran algo. Tal vez darles un objeto o algo de dinero los satisfaría.",
+  "query": "¿Qué les darás?",
+  "invalid_selection": "Pokémon no tienen ese tipo de objeto.",
+  "option": {
+    "1": {
+      "label": "Dar dinero",
+      "tooltip": "(-) Dar a los {{delibirdName}}s {{money, money}}\n(+) Recibe un objeto de regalo",
+      "selected": "Lanzas el dinero a los {{delibirdName}}s, \nque charlan emocionados entre ellos.$Luego se vuelven hacia ti y te dan un regalo con alegría."
+    },
+    "2": {
+      "label": "Dar comida",
+      "tooltip": "(-) Dar a los {{delibirdName}}s una Baya o Semilla milagro\n(+) Recibe un objeto de regalo",
+      "select_prompt": "Selecciona un objeto para dar.",
+      "selected": "Lanzas el {{chosenItem}} a los {{delibirdName}},\nque charlan emocionados entre ellos.$Se vuelven hacia ti y te dan un regalo alegremente."
+    },
+    "3": {
+      "label": "Dar objeto",
+      "tooltip": "(-) Dar a los {{delibirdName}}s un objeto equipado\n(+) Recibe un objeto de regalo",
+      "select_prompt": "Selecciona un objeto para dar.",
+      "selected": "Lanzas el {{chosenItem}} a los {{delibirdName}},\nque charlan emocionados entre ellos.$Se vuelven hacia ti y te dan un regalo alegremente."
+    }
+  },
+  "outro": "La bandada de {{delibirdName}} se aleja felizmente a lo lejos. ¡Qué intercambio tan curioso!"
+}

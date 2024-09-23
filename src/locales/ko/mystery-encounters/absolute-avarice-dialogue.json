@@ -1,0 +1,25 @@
+{
+  "intro": "갑자기 나타난 {{greedentName}}[[가]]\n나무열매를 훔쳐갔다!",
+  "title": "끝없는 욕심",
+  "description": "당신이 방심한 틈에 {{greedentName}}[[가]] 나무열매를 모두 훔쳐 가버렸습니다!\n\n{{greedentName}}[[는]] 나무열매를 먹으려다가,\n잠시 멈춰서 당신을 재밌다는 듯 바라보고 있습니다.",
+  "query": "어떻게 하시겠습니까?",
+  "option": {
+    "1": {
+      "label": "싸운다",
+      "tooltip": "(-) 어려운 배틀\n(+) 비축한 나무열매 획득",
+      "selected": "{{greedentName}}[[는]] 볼을 빵빵하게 채우고 덤벼들었다!",
+      "boss_enraged": "{{greedentName}}[[는]] 식탐으로 가득 차 있다!",
+      "food_stash": "{{greedentName}}[[는]] 많은 음식을 가지고 있는 것 같다!$@s{item_fanfare}모든 포켓몬이 각각 {{foodReward}}[[를]] 얻었다!"
+    },
+    "2": {
+      "label": "설득한다",
+      "tooltip": "(+) 나무열매 일부를 돌려받음",
+      "selected": "{{greedentName}}의 마음이 움직인 것 같다.$훔쳐간 나무열매 일부를 이쪽으로 던졌다."
+    },
+    "3": {
+      "label": "먹게 둔다",
+      "tooltip": "(-) 모든 나무열매를 잃음\n(?) {{greedentName}}[[가]] 매우 좋아함",
+      "selected": "{{greedentName}}[[가]] 눈 깜짝할 새에\n모든 나무열매를 먹어치웠다!$흡족하게 이쪽을 바라보면서\n빵빵해진 배를 두드렸다.$아마 앞으로 식비가 만만치 않을 것 같다…$@s{level_up_fanfare}{{greedentName}}[[는]] 동료가 되고 싶어하는 것 같다!"
+    }
+  }
+}

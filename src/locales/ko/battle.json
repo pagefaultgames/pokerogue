@@ -14,6 +14,10 @@
   "moneyWon": "상금으로\n₽{{moneyAmount}}을 손에 넣었다!",
   "moneyPickedUp": "₽{{moneyAmount}}을 주웠다!",
   "pokemonCaught": "신난다-!\n{{pokemonName}}[[를]] 잡았다!",
+  "pokemonObtained": "{{pokemonName}}[[를]] 손에 넣었다!",
+  "pokemonBrokeFree": "안 돼!\n포켓몬이 볼에서 나와 버렸다!",
+  "pokemonFled": "야생 {{pokemonName}}[[는]]\n도망쳤다!",
+  "playerFled": "{{pokemonName}}[[로]]부터 도망쳤다!",
   "addedAsAStarter": "{{pokemonName}}[[가]]\n스타팅 포켓몬에 추가되었다!",
   "partyFull": "지닌 포켓몬이 가득 찼습니다. {{pokemonName}}[[를]]\n대신해 포켓몬을 놓아주시겠습니까?",
   "pokemon": "포켓몬",
@@ -53,6 +57,7 @@
   "noPokeballTrainer": "다른 트레이너의 포켓몬은 잡을 수 없다!",
   "noPokeballMulti": "안돼! 2마리 있어서\n목표를 정할 수가 없어…!",
   "noPokeballStrong": "너무 강해서 잡을 수가 없다!\n먼저 약화시켜야 한다!",
+  "noPokeballMysteryEncounter": "이 포켓몬은 잡을 수 없습니다!",
   "noEscapeForce": "본 적 없는 힘이\n도망칠 수 없게 한다.",
   "noEscapeTrainer": "안돼! 승부 도중에\n상대에게 등을 보일 순 없어!",
   "noEscapePokemon": "{{pokemonName}}의 {{moveName}}때문에\n{{escapeVerb}} 수 없다!",
@@ -100,5 +105,6 @@
   "unlockedSomething": "{{unlockedThing}}[[가]]\n해금되었다.",
   "congratulations": "축하합니다!",
   "beatModeFirstTime": "{{speciesName}}[[가]] {{gameMode}} 모드를 처음으로 클리어했다!\n{{newModifier}}[[를]] 손에 넣었다!",
-  "ppReduced": "{{targetName}}의\n{{moveName}}[[를]] {{reduction}} 깎았다!"
+  "ppReduced": "{{targetName}}의\n{{moveName}}[[를]] {{reduction}} 깎았다!",
+  "mysteryEncounterAppeared": "어라?"
 }

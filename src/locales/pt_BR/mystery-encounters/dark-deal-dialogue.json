@@ -1,0 +1,22 @@
+{
+  "intro": "Um homem estranho com um casaco esfarrapado\nbloqueia seu caminho...",
+  "speaker": "Cara Sombrio",
+  "intro_dialogue": "Ei, você!$Tenho trabalhado em um novo dispositivo\npara trazer à tona o poder latente de um Pokémon!$Ele reorganiza completamente os átomos do Pokémon\nem nível molecular, tornando-o muito mais poderoso.$Hehe...@d{64} Só preciso de alguns volunt-@d{32}\nErr, sujeitos de teste, para provar que funciona.",
+  "title": "Acordo Sombrio",
+  "description": "O sujeito perturbador levanta algumas Pokébolas.\n\"Vou fazer valer a pena! Você pode ficar com estas Pokébolas fortes como pagamento, só preciso de um Pokémon da sua equipe! Hehe...\"",
+  "query": "O que você vai fazer?",
+  "option": {
+    "1": {
+      "label": "Aceitar",
+      "tooltip": "(+) 5 Bolas Desonestas\n(?) Melhorar um Pokémon Aleatório",
+      "selected_dialogue": "Vamos ver, aquele {{pokeName}} serve muito bem!$Lembre-se, não sou responsável\nse algo de ruim acontecer!@d{32} Hehe...",
+      "selected_message": "O homem te entrega 5 Bolas Desonestas.${{pokeName}} pula na máquina estranha...$Luzes piscando e sons estranhos\ncomeçam a sair da máquina!$...@d{96} Algo emerge\ndo dispositivo, enfurecido!"
+    },
+    "2": {
+      "label": "Recusar",
+      "tooltip": "(-) Sem Recompensas",
+      "selected": "Não vai ajudar um pobre coitado?\nBah!"
+    }
+  },
+  "outro": "Após o encontro aterrorizante,\nvocê se recompõe e parte."
+}
