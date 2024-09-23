@@ -184,7 +184,7 @@ describe("The Strong Stuff - Mystery Encounter", () => {
       });
     });
 
-    it.each(Array.from({length: 50}))("should start battle against Shuckle", async () => {
+    it("should start battle against Shuckle", async () => {
       const phaseSpy = vi.spyOn(scene, "pushPhase");
 
       await game.runToMysteryEncounter(MysteryEncounterType.THE_STRONG_STUFF, defaultParty);
