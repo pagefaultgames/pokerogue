@@ -7,7 +7,7 @@ import { TrainerSlot } from "#app/data/trainer-config";
 import Pokemon, { FieldPosition, PlayerPokemon } from "#app/field/pokemon";
 import { getPokemonSpecies } from "#app/data/pokemon-species";
 import { MoneyRequirement } from "#app/data/mystery-encounters/mystery-encounter-requirements";
-import { getEncounterText, queueEncounterMessage, showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
+import { queueEncounterMessage, showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { Species } from "#enums/species";
@@ -22,6 +22,7 @@ import { PostSummonPhase } from "#app/phases/post-summon-phase";
 import { modifierTypes } from "#app/modifier/modifier-type";
 import { Nature } from "#enums/nature";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
+import { isPokemonValidForEncounterOptionSelection } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
 
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounters/funAndGames";
@@ -45,14 +46,14 @@ export const FunAndGamesEncounter: MysteryEncounter =
     .withSkipToFightInput(true)
     .withIntroSpriteConfigs([
       {
-        spriteKey: "carnival_game",
+        spriteKey: "fun_and_games_game",
         fileRoot: "mystery-encounters",
         hasShadow: false,
         x: 0,
         y: 6,
       },
       {
-        spriteKey: "carnival_wobbuffet",
+        spriteKey: "fun_and_games_wobbuffet",
         fileRoot: "mystery-encounters",
         hasShadow: true,
         x: -28,
@@ -60,7 +61,7 @@ export const FunAndGamesEncounter: MysteryEncounter =
         yShadow: 6
       },
       {
-        spriteKey: "carnival_man",
+        spriteKey: "fun_and_games_man",
         fileRoot: "mystery-encounters",
         hasShadow: true,
         x: 40,
@@ -110,12 +111,7 @@ export const FunAndGamesEncounter: MysteryEncounter =
 
         // Only Pokemon that are not KOed/legal can be selected
         const selectableFilter = (pokemon: Pokemon) => {
-          const meetsReqs = pokemon.isAllowedInBattle();
-          if (!meetsReqs) {
-            return getEncounterText(scene, `${namespace}:invalid_selection`) ?? null;
-          }
-
-          return null;
+          return isPokemonValidForEncounterOptionSelection(pokemon, scene, `${namespace}:invalid_selection`);
         };
 
         return selectPokemonForOption(scene, onPokemonSelected, undefined, selectableFilter);

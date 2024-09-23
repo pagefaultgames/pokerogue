@@ -96,5 +96,7 @@
   "retryBattle": "Você gostaria de tentar novamente desde o início da batalha?",
   "unlockedSomething": "{{unlockedThing}}\nfoi desbloqueado.",
   "congratulations": "Parabéns!",
-  "beatModeFirstTime": "{{speciesName}} venceu o Modo {{gameMode}} pela primeira vez!\nVocê recebeu {{newModifier}}!"
+  "beatModeFirstTime": "{{speciesName}} venceu o Modo {{gameMode}} pela primeira vez!\nVocê recebeu {{newModifier}}!",
+  "battlerTagsHealBlock": "{{pokemonNameWithAffix}} não pode restaurar seus PS!",
+  "battlerTagsHealBlockOnRemove": "{{pokemonNameWithAffix}} pode restaurar seus PS novamente!"
 }

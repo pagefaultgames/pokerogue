@@ -159,7 +159,7 @@ export const DelibirdyEncounter: MysteryEncounter =
           const onPokemonSelected = (pokemon: PlayerPokemon) => {
             // Get Pokemon held items and filter for valid ones
             const validItems = pokemon.getHeldItems().filter((it) => {
-              return OPTION_2_ALLOWED_MODIFIERS.some(heldItem => it.constructor.name === heldItem);
+              return OPTION_2_ALLOWED_MODIFIERS.some(heldItem => it.constructor.name === heldItem) && it.isTransferable;
             });
 
             return validItems.map((modifier: PokemonHeldItemModifier) => {
@@ -179,9 +179,8 @@ export const DelibirdyEncounter: MysteryEncounter =
             });
           };
 
-          // Only Pokemon that can gain benefits are above 1/3rd HP with no status
           const selectableFilter = (pokemon: Pokemon) => {
-            // If pokemon meets primary pokemon reqs, it can be selected
+            // If pokemon has valid item, it can be selected
             const meetsReqs = encounter.options[1].pokemonMeetsPrimaryRequirements(scene, pokemon);
             if (!meetsReqs) {
               return getEncounterText(scene, `${namespace}:invalid_selection`) ?? null;
@@ -254,7 +253,7 @@ export const DelibirdyEncounter: MysteryEncounter =
           const onPokemonSelected = (pokemon: PlayerPokemon) => {
             // Get Pokemon held items and filter for valid ones
             const validItems = pokemon.getHeldItems().filter((it) => {
-              return !OPTION_3_DISALLOWED_MODIFIERS.some(heldItem => it.constructor.name === heldItem);
+              return !OPTION_3_DISALLOWED_MODIFIERS.some(heldItem => it.constructor.name === heldItem) && it.isTransferable;
             });
 
             return validItems.map((modifier: PokemonHeldItemModifier) => {
@@ -274,9 +273,8 @@ export const DelibirdyEncounter: MysteryEncounter =
             });
           };
 
-          // Only Pokemon that can gain benefits are above 1/3rd HP with no status
           const selectableFilter = (pokemon: Pokemon) => {
-            // If pokemon meets primary pokemon reqs, it can be selected
+            // If pokemon has valid item, it can be selected
             const meetsReqs = encounter.options[2].pokemonMeetsPrimaryRequirements(scene, pokemon);
             if (!meetsReqs) {
               return getEncounterText(scene, `${namespace}:invalid_selection`) ?? null;

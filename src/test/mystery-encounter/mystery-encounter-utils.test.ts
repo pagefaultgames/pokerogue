@@ -67,7 +67,7 @@ describe("Mystery Encounter Utils", () => {
       expect(result.species.speciesId).toBe(Species.ARCEUS);
     });
 
-    it("gets an unfainted pokemon from player party if isAllowedInBattle is true", () => {
+    it("gets an unfainted legal pokemon from player party if isAllowed is true and isFainted is false", () => {
       // Only faint 1st pokemon
       const party = scene.getParty();
       party[0].hp = 0;
@@ -115,12 +115,12 @@ describe("Mystery Encounter Utils", () => {
       // Seeds are calculated to return index 0 first, 1 second (if both pokemon are legal)
       game.override.seed("random");
 
-      let result = getRandomPlayerPokemon(scene, true, true);
+      let result = getRandomPlayerPokemon(scene, true, false, true);
       expect(result.species.speciesId).toBe(Species.ARCEUS);
 
       game.override.seed("random2");
 
-      result = getRandomPlayerPokemon(scene, true, true);
+      result = getRandomPlayerPokemon(scene, true, false, true);
       expect(result.species.speciesId).toBe(Species.ARCEUS);
     });
   });
@@ -299,42 +299,6 @@ describe("Mystery Encounter Utils", () => {
 
       await showEncounterDialogue(scene, "mysteryEncounter:unit_test_dialogue", "mysteryEncounter:unit_test_dialogue");
       expect(spy).toHaveBeenCalledWith("mysteryEncounter:unit_test_dialogue", "mysteryEncounter:unit_test_dialogue", null, expect.any(Function), 0);
-    });
-  });
-
-  describe("initBattleWithEnemyConfig", () => {
-    it("", () => {
-
-    });
-  });
-
-  describe("setCustomEncounterRewards", () => {
-    it("", () => {
-
-    });
-  });
-
-  describe("selectPokemonForOption", () => {
-    it("", () => {
-
-    });
-  });
-
-  describe("setEncounterExp", () => {
-    it("", () => {
-
-    });
-  });
-
-  describe("leaveEncounterWithoutBattle", () => {
-    it("", () => {
-
-    });
-  });
-
-  describe("handleMysteryEncounterVictory", () => {
-    it("", () => {
-
     });
   });
 });
