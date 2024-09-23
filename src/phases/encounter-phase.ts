@@ -141,7 +141,7 @@ export class EncounterPhase extends BattlePhase {
 
       loadEnemyAssets.push(enemyPokemon.loadAssets());
 
-      console.log(getPokemonNameWithAffix(enemyPokemon), enemyPokemon.species.speciesId, enemyPokemon.stats);
+      console.log(`Pokemon: ${getPokemonNameWithAffix(enemyPokemon)}`, `Species ID: ${enemyPokemon.species.speciesId}`, `Stats: ${enemyPokemon.stats}`, `Ability: ${enemyPokemon.getAbility().name}`, `Passive Ability: ${enemyPokemon.getPassiveAbility().name}`);
       return true;
     });
 
