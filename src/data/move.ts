@@ -5216,8 +5216,8 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
       if (switchOutTarget.hp > 0) {
         // for opponent switching out
         user.scene.prependToPhase(new SwitchSummonPhase(user.scene, this.switchType, switchOutTarget.getFieldIndex(),
-            (user.scene.currentBattle.trainer ? user.scene.currentBattle.trainer.getNextSummonIndex((switchOutTarget as EnemyPokemon).trainerSlot) : 0),
-            false, false), MoveEndPhase);
+          (user.scene.currentBattle.trainer ? user.scene.currentBattle.trainer.getNextSummonIndex((switchOutTarget as EnemyPokemon).trainerSlot) : 0),
+          false, false), MoveEndPhase);
       }
     } else {
       // Switch out logic for everything else (eg: WILD battles)
@@ -5226,12 +5226,12 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
       if (switchOutTarget.hp) {
         user.scene.queueMessage(i18next.t("moveTriggers:fled", {pokemonName: getPokemonNameWithAffix(switchOutTarget)}), null, true, 500);
 
-      // in double battles redirect potential moves off fled pokemon
-      if (switchOutTarget.scene.currentBattle.double) {
-        const allyPokemon = switchOutTarget.getAlly();
-        switchOutTarget.scene.redirectPokemonMoves(switchOutTarget, allyPokemon);
+        // in double battles redirect potential moves off fled pokemon
+        if (switchOutTarget.scene.currentBattle.double) {
+          const allyPokemon = switchOutTarget.getAlly();
+          switchOutTarget.scene.redirectPokemonMoves(switchOutTarget, allyPokemon);
+        }
       }
-    }
 
       if (!switchOutTarget.getAlly()?.isActive(true)) {
         user.scene.clearEnemyHeldItemModifiers();
