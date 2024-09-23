@@ -42,7 +42,6 @@ import { Species } from "#enums/species";
 import { applyChallenges, ChallengeType } from "#app/data/challenge";
 import { WeatherType } from "#app/enums/weather-type";
 import { TerrainType } from "#app/data/terrain";
-import { OutdatedPhase } from "#app/phases/outdated-phase";
 import { ReloadSessionPhase } from "#app/phases/reload-session-phase";
 import { RUN_HISTORY_LIMIT } from "#app/ui/run-history-ui-handler";
 import { applySessionDataPatches, applySettingsDataPatches, applySystemDataPatches } from "./version-converter";
@@ -388,10 +387,7 @@ export class GameData {
           .then(error => {
             this.scene.ui.savingIcon.hide();
             if (error) {
-              if (error.startsWith("client version out of date")) {
-                this.scene.clearPhaseQueue();
-                this.scene.unshiftPhase(new OutdatedPhase(this.scene));
-              } else if (error.startsWith("session out of date")) {
+              if (error.startsWith("session out of date")) {
                 this.scene.clearPhaseQueue();
                 this.scene.unshiftPhase(new ReloadSessionPhase(this.scene));
               }
@@ -1315,10 +1311,7 @@ export class GameData {
                 this.scene.ui.savingIcon.hide();
               }
               if (error) {
-                if (error.startsWith("client version out of date")) {
-                  this.scene.clearPhaseQueue();
-                  this.scene.unshiftPhase(new OutdatedPhase(this.scene));
-                } else if (error.startsWith("session out of date")) {
+                if (error.startsWith("session out of date")) {
                   this.scene.clearPhaseQueue();
                   this.scene.unshiftPhase(new ReloadSessionPhase(this.scene));
                 }
