@@ -172,7 +172,7 @@ async function doBiomeTransitionDialogueAndBattleInit(scene: BattleScene) {
   const bossPokemon = new EnemyPokemon(scene, bossSpecies, level, TrainerSlot.NONE, true);
   encounter.setDialogueToken("enemyPokemon", getPokemonNameWithAffix(bossPokemon));
 
-  // Defense/Spd buffs below wave 50, Atk/Def/Spd buffs otherwise
+  // Defense/Spd buffs below wave 50, +1 to all stats otherwise
   const statChangesForBattle: (Stat.ATK | Stat.DEF | Stat.SPATK | Stat.SPDEF | Stat.SPD | Stat.ACC | Stat.EVA)[] = scene.currentBattle.waveIndex < 50 ?
     [Stat.DEF, Stat.SPDEF, Stat.SPD] :
     [Stat.ATK, Stat.DEF, Stat.SPATK, Stat.SPDEF, Stat.SPD];

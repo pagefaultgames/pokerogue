@@ -190,11 +190,16 @@ export const BerriesAboundEncounter: MysteryEncounter =
               }
             };
 
+            // Defense/Spd buffs below wave 50, +1 to all stats otherwise
+            const statChangesForBattle: (Stat.ATK | Stat.DEF | Stat.SPATK | Stat.SPDEF | Stat.SPD | Stat.ACC | Stat.EVA)[] = scene.currentBattle.waveIndex < 50 ?
+              [Stat.DEF, Stat.SPDEF, Stat.SPD] :
+              [Stat.ATK, Stat.DEF, Stat.SPATK, Stat.SPDEF, Stat.SPD];
+
             const config = scene.currentBattle.mysteryEncounter!.enemyPartyConfigs[0];
             config.pokemonConfigs![0].tags = [BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON];
             config.pokemonConfigs![0].mysteryEncounterBattleEffects = (pokemon: Pokemon) => {
               queueEncounterMessage(pokemon.scene, `${namespace}.option.2.boss_enraged`);
-              pokemon.scene.unshiftPhase(new StatStageChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [Stat.ATK, Stat.DEF, Stat.SPATK, Stat.SPDEF, Stat.SPD], 1));
+              pokemon.scene.unshiftPhase(new StatStageChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, statChangesForBattle, 1));
             };
             setEncounterRewards(scene, { guaranteedModifierTypeOptions: shopOptions, fillRemaining: false }, undefined, doBerryRewards);
             await showEncounterText(scene, `${namespace}.option.2.selected_bad`);
