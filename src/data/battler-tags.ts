@@ -2423,7 +2423,7 @@ export class TormentTag extends MoveRestrictionBattlerTag {
 
   override lapse(pokemon: Pokemon, tagType: BattlerTagLapseType): boolean {
     if (!pokemon.isActive(true)) {
-      return super.lapse(pokemon, tagType);
+      return false;
     }
     return true;
   }
@@ -2443,6 +2443,63 @@ export class TormentTag extends MoveRestrictionBattlerTag {
     return i18next.t("battle:moveCannotBeSelected", { moveName: allMoves[move].name });
   }
 }
+
+export class TauntTag extends MoveRestrictionBattlerTag {
+  constructor() {
+    super(BattlerTagType.TAUNT, [BattlerTagLapseType.PRE_MOVE, BattlerTagLapseType.AFTER_MOVE], 4, Moves.TAUNT);
+  }
+
+  override onAdd(pokemon: Pokemon) {
+    super.onAdd(pokemon);
+    // Needs onAdd animation
+    pokemon.scene.queueMessage(i18next.t("battlerTags:tauntOnAdd", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }), 1500);
+  }
+
+  override isMoveRestricted(move: Moves): boolean {
+    return allMoves[move].category === MoveCategory.STATUS;
+  }
+
+  override selectionDeniedText(_pokemon: Pokemon, move: Moves): string {
+    return i18next.t("battle:moveCannotBeSelected", { moveName: allMoves[move].name });
+  }
+
+  override interruptedText(pokemon: Pokemon, move: Moves): string {
+    return i18next.t("battle:disableInterruptedMove", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), moveName: allMoves[move].name });
+  }
+}
+
+export class ImprisonTag extends MoveRestrictionBattlerTag {
+  private source: Pokemon;
+
+  constructor(sourceId: number) {
+    super(BattlerTagType.IMPRISON, [BattlerTagLapseType.PRE_MOVE, BattlerTagLapseType.AFTER_MOVE], 1, Moves.IMPRISON, sourceId);
+  }
+
+  override onAdd(pokemon: Pokemon) {
+    this.source = pokemon.scene.getPokemonById(this.sourceId!)!;
+    pokemon.scene.queueMessage(i18next.t("battlerTags:imprisonOnAdd", {pokemonNameWithAffix: getPokemonNameWithAffix(this.source)}), 1500);
+  }
+
+  override lapse(_pokemon: Pokemon, _lapseType: BattlerTagLapseType): boolean {
+    return this.source.isActive(true);
+  }
+
+  override isMoveRestricted(move: Moves): boolean {
+    const sourceMoveset = this.source.getMoveset().map(m => {
+      return m!.moveId;
+    });
+    return sourceMoveset.includes(move);
+  }
+
+  override selectionDeniedText(_pokemon: Pokemon, move: Moves): string {
+    return i18next.t("battle:moveCannotBeSelected", { moveName: allMoves[move].name });
+  }
+
+  override interruptedText(pokemon: Pokemon, move: Moves): string {
+    return i18next.t("battle:disableInterruptedMove", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), moveName: allMoves[move].name });
+  }
+}
+
 
 /**
  * Retrieves a {@linkcode BattlerTag} based on the provided tag type, turn count, source move, and source ID.
@@ -2611,6 +2668,10 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: number, source
     return new HealBlockTag(turnCount, sourceMove);
   case BattlerTagType.TORMENT:
     return new TormentTag(sourceId);
+  case BattlerTagType.TAUNT:
+    return new TauntTag();
+  case BattlerTagType.IMPRISON:
+    return new ImprisonTag(sourceId);
   case BattlerTagType.NONE:
   default:
     return new BattlerTag(tagType, BattlerTagLapseType.CUSTOM, turnCount, sourceMove, sourceId);
