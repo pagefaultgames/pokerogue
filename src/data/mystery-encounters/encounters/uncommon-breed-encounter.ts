@@ -50,7 +50,7 @@ export const UncommonBreedEncounter: MysteryEncounter =
 
       // Calculate boss mon
       // Level equal to 2 below highest party member
-      const level = getHighestLevelPlayerPokemon(scene).level - 2;
+      const level = getHighestLevelPlayerPokemon(scene, false, true).level - 2;
       const species = scene.arena.randomSpecies(scene.currentBattle.waveIndex, level, 0, getPartyLuckValue(scene.getParty()), true);
       const pokemon = new EnemyPokemon(scene, species, level, TrainerSlot.NONE, true);
       const speciesRootForm = pokemon.species.getRootSpeciesId();

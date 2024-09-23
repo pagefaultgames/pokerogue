@@ -1288,6 +1288,21 @@ function skipInClassicAfterWave(wave: integer, defaultWeight: integer): Weighted
 function skipInLastClassicWaveOrDefault(defaultWeight: integer) : WeightedModifierTypeWeightFunc {
   return skipInClassicAfterWave(199, defaultWeight);
 }
+
+/**
+ * High order function that returns a WeightedModifierTypeWeightFunc to ensure Lures don't spawn on Classic 199
+ * or if the lure still has over 60% of its duration left
+ * @param maxBattles The max battles the lure type in question lasts. 10 for green, 15 for Super, 30 for Max
+ * @param weight The desired weight for the lure when it does spawn
+ * @returns A WeightedModifierTypeWeightFunc
+ */
+function lureWeightFunc(maxBattles: number, weight: number): WeightedModifierTypeWeightFunc {
+  return (party: Pokemon[]) => {
+    const lures = party[0].scene.getModifiers(Modifiers.DoubleBattleChanceBoosterModifier);
+    return !(party[0].scene.gameMode.isClassic && party[0].scene.currentBattle.waveIndex === 199) && (lures.length === 0 || lures.filter(m => m.getMaxBattles() === maxBattles && m.getBattleCount() >= maxBattles * 0.6).length === 0) ? weight : 0;
+  };
+}
+
 class WeightedModifierType {
   public modifierType: ModifierType;
   public weight: integer | WeightedModifierTypeWeightFunc;
@@ -1611,7 +1626,7 @@ const modifierPool: ModifierPool = {
       const thresholdPartyMemberCount = Math.min(party.filter(p => p.hp && p.getMoveset().filter(m => m?.ppUsed && (m.getMovePp() - m.ppUsed) <= 5 && m.ppUsed >= Math.floor(m.getMovePp() / 2)).length).length, 3);
       return thresholdPartyMemberCount;
     }, 3),
-    new WeightedModifierType(modifierTypes.LURE, skipInLastClassicWaveOrDefault(2)),
+    new WeightedModifierType(modifierTypes.LURE, lureWeightFunc(10, 2)),
     new WeightedModifierType(modifierTypes.TEMP_STAT_STAGE_BOOSTER, 4),
     new WeightedModifierType(modifierTypes.BERRY, 2),
     new WeightedModifierType(modifierTypes.TM_COMMON, 2),
@@ -1668,7 +1683,7 @@ const modifierPool: ModifierPool = {
       return thresholdPartyMemberCount;
     }, 3),
     new WeightedModifierType(modifierTypes.DIRE_HIT, 4),
-    new WeightedModifierType(modifierTypes.SUPER_LURE, skipInLastClassicWaveOrDefault(4)),
+    new WeightedModifierType(modifierTypes.SUPER_LURE, lureWeightFunc(15, 4)),
     new WeightedModifierType(modifierTypes.NUGGET, skipInLastClassicWaveOrDefault(5)),
     new WeightedModifierType(modifierTypes.EVOLUTION_ITEM, (party: Pokemon[]) => {
       return Math.min(Math.ceil(party[0].scene.currentBattle.waveIndex / 15), 8);
@@ -1691,7 +1706,7 @@ const modifierPool: ModifierPool = {
   }),
   [ModifierTier.ULTRA]: [
     new WeightedModifierType(modifierTypes.ULTRA_BALL, (party: Pokemon[]) => (hasMaximumBalls(party, PokeballType.ULTRA_BALL)) ? 0 : 15, 15),
-    new WeightedModifierType(modifierTypes.MAX_LURE, skipInLastClassicWaveOrDefault(4)),
+    new WeightedModifierType(modifierTypes.MAX_LURE, lureWeightFunc(30, 4)),
     new WeightedModifierType(modifierTypes.BIG_NUGGET, skipInLastClassicWaveOrDefault(12)),
     new WeightedModifierType(modifierTypes.PP_MAX, 3),
     new WeightedModifierType(modifierTypes.MINT, 4),

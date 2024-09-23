@@ -3129,7 +3129,7 @@
   },
   "auraWheel": {
     "name": "Aura Wheel",
-    "effect": "Morpeko attacks and raises its Speed with the energy stored in its cheeks. This move's type changes depending on the user's form."
+    "effect": "The user attacks and raises its Speed with the energy stored in its cheeks. If used by Morpeko, this move's type changes depending on the user's form."
   },
   "breakingSwipe": {
     "name": "Breaking Swipe",

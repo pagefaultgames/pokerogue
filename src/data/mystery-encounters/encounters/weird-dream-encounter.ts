@@ -20,7 +20,8 @@ import i18next from "#app/plugins/i18n";
 import { doPokemonTransformationSequence, TransformationScreenPosition } from "#app/data/mystery-encounters/utils/encounter-transformation-sequence";
 import { getLevelTotalExp } from "#app/data/exp";
 import { Stat } from "#enums/stat";
-import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES, GameModes } from "#app/game-mode";
+import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
+import { Challenges } from "#enums/challenges";
 
 /** i18n namespace for encounter */
 const namespace = "mysteryEncounter:weirdDream";
@@ -82,6 +83,9 @@ const SUPER_LEGENDARY_BST_THRESHOLD = 600;
 const NON_LEGENDARY_BST_THRESHOLD = 570;
 const GAIN_OLD_GATEAU_ITEM_BST_THRESHOLD = 450;
 
+/** 0-100 */
+const PERCENT_LEVEL_LOSS_ON_REFUSE = 12.5;
+
 /**
  * Value ranges of the resulting species BST transformations after adding values to original species
  * 2 Pokemon in the party use this range
@@ -101,7 +105,7 @@ const STANDARD_BST_TRANSFORM_BASE_VALUES: [number, number] = [40, 50];
 export const WeirdDreamEncounter: MysteryEncounter =
   MysteryEncounterBuilder.withEncounterType(MysteryEncounterType.WEIRD_DREAM)
     .withEncounterTier(MysteryEncounterTier.ROGUE)
-    .withDisabledGameModes(GameModes.CHALLENGE)
+    .withDisallowedChallenges(Challenges.SINGLE_TYPE)
     .withSceneWaveRangeRequirement(...CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES)
     .withIntroSpriteConfigs([
       {
@@ -207,7 +211,7 @@ export const WeirdDreamEncounter: MysteryEncounter =
       async (scene: BattleScene) => {
         // Reduce party levels by 20%
         for (const pokemon of scene.getParty()) {
-          pokemon.level = Math.max(Math.ceil(0.8 * pokemon.level), 1);
+          pokemon.level = Math.max(Math.ceil((100 - PERCENT_LEVEL_LOSS_ON_REFUSE) / 100 * pokemon.level), 1);
           pokemon.exp = getLevelTotalExp(pokemon.level, pokemon.species.growthRate);
           pokemon.levelExp = 0;
 
@@ -339,6 +343,9 @@ async function doNewTeamPostProcess(scene: BattleScene, transformations: Pokemon
       }
     }
 
+    // If the previous pokemon had pokerus, transfer to new pokemon
+    newPokemon.pokerus = previousPokemon.pokerus;
+
     // If the previous pokemon had higher IVs, override to those (after updating dex IVs > prevents perfect 31s on a new unlock)
     newPokemon.ivs = newPokemon.ivs.map((iv, index) => {
       return previousPokemon.ivs[index] > iv ? previousPokemon.ivs[index] : iv;
@@ -349,21 +356,45 @@ async function doNewTeamPostProcess(scene: BattleScene, transformations: Pokemon
       scene.gameData.addStarterCandy(getPokemonSpecies(speciesRootForm), 1);
     }
 
-    // Set the moveset of the new pokemon to be the same as previous, but with 1 egg move of the new species
+    // Set the moveset of the new pokemon to be the same as previous, but with 1 egg move and 1 (attempted) STAB move of the new species
+    newPokemon.generateAndPopulateMoveset();
+
+    // Try to find a favored STAB move
+    let favoredMove;
+    for (const move of newPokemon.moveset) {
+      // Needs to match first type, second type will be replaced
+      if (move?.getMove().type === newPokemon.getTypes()[0]) {
+        favoredMove = move;
+        break;
+      }
+    }
+    // If was unable to find a move, uses first move in moveset (typically a high power STAB move)
+    favoredMove = favoredMove ?? newPokemon.moveset[0];
+
     newPokemon.moveset = previousPokemon.moveset;
+    let eggMoveIndex: null | number = null;
     if (speciesEggMoves.hasOwnProperty(speciesRootForm)) {
       const eggMoves = speciesEggMoves[speciesRootForm];
-      const eggMoveIndex = randSeedInt(4);
-      const randomEggMove = eggMoves[eggMoveIndex];
+      const randomEggMoveIndex = randSeedInt(4);
+      const randomEggMove = eggMoves[randomEggMoveIndex];
       if (newPokemon.moveset.length < 4) {
         newPokemon.moveset.push(new PokemonMove(randomEggMove));
       } else {
-        newPokemon.moveset[randSeedInt(4)] = new PokemonMove(randomEggMove);
+        eggMoveIndex = randSeedInt(4);
+        newPokemon.moveset[eggMoveIndex] = new PokemonMove(randomEggMove);
       }
       // For pokemon that the player owns (including ones just caught), unlock the egg move
       if (!!scene.gameData.dexData[speciesRootForm].caughtAttr) {
-        await scene.gameData.setEggMoveUnlocked(getPokemonSpecies(speciesRootForm), eggMoveIndex, true);
+        await scene.gameData.setEggMoveUnlocked(getPokemonSpecies(speciesRootForm), randomEggMoveIndex, true);
       }
+    }
+    if (favoredMove) {
+      let favoredMoveIndex = randSeedInt(4);
+      while (favoredMoveIndex === eggMoveIndex) {
+        favoredMoveIndex = randSeedInt(4);
+      }
+
+      newPokemon.moveset[favoredMoveIndex] = favoredMove;
     }
 
     // Randomize the second type of the pokemon
