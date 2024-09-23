@@ -2913,8 +2913,7 @@
   },
   "zippyZap": {
     "name": "Pikaturbo",
-    "effect": "Ataque eléctrico a la velocidad del rayo. Este
-movimiento tiene prioridad alta y aumenta la Evasión del usuario."
+    "effect": "Ataque eléctrico a la velocidad del rayo. Este movimiento tiene prioridad alta y aumenta la Evasión del usuario."
   },
   "splishySplash": {
     "name": "Salpikasurf",
