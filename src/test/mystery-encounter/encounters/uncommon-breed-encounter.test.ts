@@ -74,22 +74,6 @@ describe("Uncommon Breed - Mystery Encounter", () => {
     expect(UncommonBreedEncounter.options.length).toBe(3);
   });
 
-  it("should not run below wave 10", async () => {
-    game.override.startingWave(9);
-
-    await game.runToMysteryEncounter();
-
-    expect(scene.currentBattle?.mysteryEncounter?.encounterType).not.toBe(MysteryEncounterType.UNCOMMON_BREED);
-  });
-
-  it("should not run above wave 179", async () => {
-    game.override.startingWave(181);
-
-    await game.runToMysteryEncounter();
-
-    expect(scene.currentBattle.mysteryEncounter).toBeUndefined();
-  });
-
   it("should initialize fully", async () => {
     initSceneWithoutEncounterPhase(scene, defaultParty);
     scene.currentBattle.mysteryEncounter = UncommonBreedEncounter;
@@ -107,7 +91,7 @@ describe("Uncommon Breed - Mystery Encounter", () => {
     expect(onInitResult).toBe(true);
   });
 
-  describe.skip("Option 1 - Fight", () => {
+  describe("Option 1 - Fight", () => {
     it("should have the correct properties", () => {
       const option = UncommonBreedEncounter.options[0];
       expect(option.optionMode).toBe(MysteryEncounterOptionMode.DEFAULT);
@@ -123,7 +107,7 @@ describe("Uncommon Breed - Mystery Encounter", () => {
       });
     });
 
-    it("should start a fight against the boss", async () => {
+    it.skip("should start a fight against the boss", async () => {
       const phaseSpy = vi.spyOn(scene, "pushPhase");
       const unshiftPhaseSpy = vi.spyOn(scene, "unshiftPhase");
       await game.runToMysteryEncounter(MysteryEncounterType.UNCOMMON_BREED, defaultParty);

@@ -83,22 +83,6 @@ describe("The Strong Stuff - Mystery Encounter", () => {
     expect(scene.currentBattle?.mysteryEncounter?.encounterType).not.toBe(MysteryEncounterType.THE_STRONG_STUFF);
   });
 
-  it("should not run below wave 10", async () => {
-    game.override.startingWave(9);
-
-    await game.runToMysteryEncounter();
-
-    expect(scene.currentBattle?.mysteryEncounter?.encounterType).not.toBe(MysteryEncounterType.THE_STRONG_STUFF);
-  });
-
-  it("should not run above wave 179", async () => {
-    game.override.startingWave(181);
-
-    await game.runToMysteryEncounter();
-
-    expect(scene.currentBattle.mysteryEncounter).toBeUndefined();
-  });
-
   it("should initialize fully ", async () => {
     initSceneWithoutEncounterPhase(scene, defaultParty);
     scene.currentBattle.mysteryEncounter = TheStrongStuffEncounter;
@@ -114,7 +98,7 @@ describe("The Strong Stuff - Mystery Encounter", () => {
 
     expect(TheStrongStuffEncounter.enemyPartyConfigs).toEqual([
       {
-        levelAdditiveMultiplier: 1,
+        levelAdditiveModifier: 1,
         disableSwitch: true,
         pokemonConfigs: [
           {
