@@ -9,7 +9,7 @@ import { BattlerTagType } from "#app/enums/battler-tag-type";
 import { BerryPhase } from "#app/phases/berry-phase";
 import { CommandPhase } from "#app/phases/command-phase";
 
-const TIMEOUT = 20 * 1000;
+
 
 describe("Moves - Crafty Shield", () => {
   let phaserGame: Phaser.Game;
@@ -56,7 +56,7 @@ describe("Moves - Crafty Shield", () => {
       await game.phaseInterceptor.to(BerryPhase, false);
 
       leadPokemon.forEach(p => expect(p.getStatStage(Stat.ATK)).toBe(0));
-    }, TIMEOUT
+    }
   );
 
   test(
@@ -77,7 +77,7 @@ describe("Moves - Crafty Shield", () => {
       await game.phaseInterceptor.to(BerryPhase, false);
 
       expect(leadPokemon.some(p => p.hp < p.getMaxHp())).toBeTruthy();
-    }, TIMEOUT
+    }
   );
 
   test(
@@ -99,7 +99,7 @@ describe("Moves - Crafty Shield", () => {
       await game.phaseInterceptor.to(BerryPhase, false);
 
       leadPokemon.forEach(p => expect(p.getTag(BattlerTagType.CURSED)).toBeUndefined());
-    }, TIMEOUT
+    }
   );
 
   test(

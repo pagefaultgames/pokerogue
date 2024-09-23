@@ -9,8 +9,6 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vite
 describe("Arena - Grassy Terrain", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
-  const TIMEOUT = 20 * 1000;
-
   beforeAll(() => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
@@ -52,7 +50,7 @@ describe("Arena - Grassy Terrain", () => {
     await game.phaseInterceptor.to("BerryPhase");
 
     expect(eq.calculateBattlePower).toHaveReturnedWith(50);
-  }, TIMEOUT);
+  });
 
   it("Does not halve the damage of Earthquake if opponent is not grounded", async () => {
     await game.classicMode.startBattle([Species.NINJASK]);
@@ -67,5 +65,5 @@ describe("Arena - Grassy Terrain", () => {
     await game.phaseInterceptor.to("BerryPhase");
 
     expect(eq.calculateBattlePower).toHaveReturnedWith(100);
-  }, TIMEOUT);
+  });
 });

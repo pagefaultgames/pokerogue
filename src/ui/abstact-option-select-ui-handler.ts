@@ -344,6 +344,7 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
     super.clear();
     this.config = null;
     this.optionSelectContainer.setVisible(false);
+    this.scrollCursor = 0;
     this.eraseCursor();
   }
 

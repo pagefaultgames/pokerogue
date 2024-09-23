@@ -1,5 +1,5 @@
 {
-  "battlesWon": "场胜利！",
+  "battlesWon": "{{count, number}} 场胜利！",
   "joinTheDiscord": "加入Discord！",
   "infiniteLevels": "等级无限！",
   "everythingStacks": "道具全部叠加！",

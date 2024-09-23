@@ -223,6 +223,14 @@ export default abstract class MessageUiHandler extends AwaitableUiHandler {
     };
   }
 
+  isTextAnimationInProgress() {
+    if (this.textTimer) {
+      return this.textTimer.repeatCount < this.textTimer.repeat;
+    }
+
+    return false;
+  }
+
   clearText() {
     this.message.setText("");
     this.pendingPrompt = false;

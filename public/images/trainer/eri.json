@@ -1,0 +1,41 @@
+{
+	"textures": [
+		{
+			"image": "eri.png",
+			"format": "RGBA8888",
+			"size": {
+				"w": 74,
+				"h": 74
+			},
+			"scale": 1,
+			"frames": [
+				{
+					"filename": "0001.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 80,
+						"h": 80
+					},
+					"spriteSourceSize": {
+						"x": 15,
+						"y": 5,
+						"w": 45,
+						"h": 74
+					},
+					"frame": {
+						"x": 0,
+						"y": 0,
+						"w": 45,
+						"h": 74
+					}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "https://www.codeandweb.com/texturepacker",
+		"version": "3.0",
+		"smartupdate": "$TexturePacker:SmartUpdate:59594ac27e74ec85e2949d12ff680dc2:d65b6b00858ac47b26ef8393a8fa6795:d7f4cd3ff755f8074c14d3006b0c8301$"
+	}
+}

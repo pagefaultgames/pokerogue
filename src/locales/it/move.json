@@ -3129,7 +3129,7 @@
   },
   "auraWheel": {
     "name": "Ruota d'Aura",
-    "effect": "Il Pokémon emette l'energia accumulata nelle guance per attaccare e aumentare la Velocità. Il tipo della mossa cambia in base alla forma assunta da Morpeko."
+    "effect": "Il Pokémon emette l'energia accumulata nelle guance per attaccare e aumentare la Velocità. Se usata da Morpeko, il tipo della mossa cambia in base alla forma assunta."
   },
   "breakingSwipe": {
     "name": "Vastoimpatto",

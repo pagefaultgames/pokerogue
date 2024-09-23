@@ -8,7 +8,7 @@ import { Stat } from "#enums/stat";
 import { BattlerIndex } from "#app/battle";
 import { MoveResult } from "#app/field/pokemon";
 
-const TIMEOUT = 20 * 1000;
+
 
 describe("Moves - Quick Guard", () => {
   let phaserGame: Phaser.Game;
@@ -52,7 +52,7 @@ describe("Moves - Quick Guard", () => {
       await game.phaseInterceptor.to("BerryPhase", false);
 
       playerPokemon.forEach(p => expect(p.hp).toBe(p.getMaxHp()));
-    }, TIMEOUT
+    }
   );
 
   test(
@@ -71,7 +71,7 @@ describe("Moves - Quick Guard", () => {
       await game.phaseInterceptor.to("BerryPhase", false);
 
       playerPokemon.forEach(p => expect(p.getStatStage(Stat.ATK)).toBe(0));
-    }, TIMEOUT
+    }
   );
 
   test(
@@ -113,6 +113,6 @@ describe("Moves - Quick Guard", () => {
 
       expect(enemyPokemon.getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);
       expect(playerPokemon.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
-    }, TIMEOUT
+    }
   );
 });

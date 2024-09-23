@@ -6,7 +6,7 @@ import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest";
 
-const TIMEOUT = 20 * 1000;
+
 
 describe("Moves - Spotlight", () => {
   let phaserGame: Phaser.Game;
@@ -50,7 +50,7 @@ describe("Moves - Spotlight", () => {
 
       expect(enemyPokemon[0].hp).toBeLessThan(enemyPokemon[0].getMaxHp());
       expect(enemyPokemon[1].hp).toBe(enemyPokemon[1].getMaxHp());
-    }, TIMEOUT
+    }
   );
 
   test(
@@ -70,6 +70,6 @@ describe("Moves - Spotlight", () => {
 
       expect(enemyPokemon[0].hp).toBeLessThan(enemyPokemon[0].getMaxHp());
       expect(enemyPokemon[1].hp).toBe(enemyPokemon[1].getMaxHp());
-    }, TIMEOUT
+    }
   );
 });

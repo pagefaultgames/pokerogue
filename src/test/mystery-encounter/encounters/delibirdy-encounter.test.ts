@@ -66,22 +66,6 @@ describe("Delibird-y - Mystery Encounter", () => {
     expect(DelibirdyEncounter.options.length).toBe(3);
   });
 
-  it("should not run below wave 10", async () => {
-    game.override.startingWave(9);
-
-    await game.runToMysteryEncounter();
-
-    expect(scene.currentBattle?.mysteryEncounter?.encounterType).not.toBe(MysteryEncounterType.DELIBIRDY);
-  });
-
-  it("should not run above wave 179", async () => {
-    game.override.startingWave(181);
-
-    await game.runToMysteryEncounter();
-
-    expect(scene.currentBattle.mysteryEncounter).toBeUndefined();
-  });
-
   it("should not spawn if player does not have enough money", async () => {
     scene.money = 0;
 

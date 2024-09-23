@@ -105,5 +105,7 @@
   "congratulations": "Congratulations!",
   "beatModeFirstTime": "{{speciesName}} beat {{gameMode}} Mode for the first time!\nYou received {{newModifier}}!",
   "ppReduced": "It reduced the PP of {{targetName}}'s\n{{moveName}} by {{reduction}}!",
-  "mysteryEncounterAppeared": "What's this?"
+  "mysteryEncounterAppeared": "What's this?",
+  "battlerTagsHealBlock": "{{pokemonNameWithAffix}} can't restore its HP!",
+  "battlerTagsHealBlockOnRemove": "{{pokemonNameWithAffix}} can restore its HP again!"
 }

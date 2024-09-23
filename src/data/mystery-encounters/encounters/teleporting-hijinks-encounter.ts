@@ -2,8 +2,8 @@ import { EnemyPartyConfig, generateModifierTypeOption, initBattleWithEnemyConfig
 import { randSeedInt } from "#app/utils";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import BattleScene from "#app/battle-scene";
-import MysteryEncounter, { MysteryEncounterBuilder } from "../mystery-encounter";
-import { MoneyRequirement, WaveModulusRequirement } from "../mystery-encounter-requirements";
+import MysteryEncounter, { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-encounter";
+import { MoneyRequirement, WaveModulusRequirement } from "#app/data/mystery-encounters/mystery-encounter-requirements";
 import Pokemon, { EnemyPokemon } from "#app/field/pokemon";
 import { MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/mystery-encounter-option";
 import { queueEncounterMessage, showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
@@ -20,12 +20,13 @@ import { getPokemonNameWithAffix } from "#app/messages";
 import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
 import { Stat } from "#enums/stat";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
+import { getEncounterPokemonLevelForWave, STANDARD_ENCOUNTER_BOOSTED_LEVEL_MODIFIER } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
 
 /** the i18n namespace for this encounter */
 const namespace = "mysteryEncounter:teleportingHijinks";
 
-const MONEY_COST_MULTIPLIER = 2.5;
-const BIOME_CANDIDATES = [Biome.SPACE, Biome.FAIRY_CAVE, Biome.LABORATORY, Biome.ISLAND];
+const MONEY_COST_MULTIPLIER = 1.75;
+const BIOME_CANDIDATES = [Biome.SPACE, Biome.FAIRY_CAVE, Biome.LABORATORY, Biome.ISLAND, Biome.WASTELAND, Biome.DOJO];
 const MACHINE_INTERFACING_TYPES = [Type.ELECTRIC, Type.STEEL];
 
 /**
@@ -43,7 +44,7 @@ export const TeleportingHijinksEncounter: MysteryEncounter =
     .withCatchAllowed(true)
     .withIntroSpriteConfigs([
       {
-        spriteKey: "teleporter",
+        spriteKey: "teleporting_hijinks_teleporter",
         fileRoot: "mystery-encounters",
         hasShadow: true,
         x: 4,
@@ -130,7 +131,7 @@ export const TeleportingHijinksEncounter: MysteryEncounter =
         const encounter = scene.currentBattle.mysteryEncounter!;
 
         // Init enemy
-        const level = (scene.currentBattle.enemyLevels?.[0] ?? scene.currentBattle.waveIndex) + Math.max(Math.round((scene.currentBattle.waveIndex / 10)), 0);
+        const level = getEncounterPokemonLevelForWave(scene, STANDARD_ENCOUNTER_BOOSTED_LEVEL_MODIFIER);
         const bossSpecies = scene.arena.randomSpecies(scene.currentBattle.waveIndex, level, 0, getPartyLuckValue(scene.getParty()), true);
         const bossPokemon = new EnemyPokemon(scene, bossSpecies, level, TrainerSlot.NONE, true);
         encounter.setDialogueToken("enemyPokemon", getPokemonNameWithAffix(bossPokemon));
@@ -166,10 +167,16 @@ async function doBiomeTransitionDialogueAndBattleInit(scene: BattleScene) {
   await showEncounterText(scene, `${namespace}.attacked`);
 
   // Init enemy
-  const level = (scene.currentBattle.enemyLevels?.[0] ?? scene.currentBattle.waveIndex) + Math.max(Math.round((scene.currentBattle.waveIndex / 10)), 0);
+  const level = getEncounterPokemonLevelForWave(scene, STANDARD_ENCOUNTER_BOOSTED_LEVEL_MODIFIER);
   const bossSpecies = scene.arena.randomSpecies(scene.currentBattle.waveIndex, level, 0, getPartyLuckValue(scene.getParty()), true);
   const bossPokemon = new EnemyPokemon(scene, bossSpecies, level, TrainerSlot.NONE, true);
   encounter.setDialogueToken("enemyPokemon", getPokemonNameWithAffix(bossPokemon));
+
+  // Defense/Spd buffs below wave 50, Atk/Def/Spd buffs otherwise
+  const statChangesForBattle: (Stat.ATK | Stat.DEF | Stat.SPATK | Stat.SPDEF | Stat.SPD | Stat.ACC | Stat.EVA)[] = scene.currentBattle.waveIndex < 50 ?
+    [Stat.DEF, Stat.SPDEF, Stat.SPD] :
+    [Stat.ATK, Stat.DEF, Stat.SPATK, Stat.SPDEF, Stat.SPD];
+
   const config: EnemyPartyConfig = {
     pokemonConfigs: [{
       level: level,
@@ -179,7 +186,7 @@ async function doBiomeTransitionDialogueAndBattleInit(scene: BattleScene) {
       tags: [BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON],
       mysteryEncounterBattleEffects: (pokemon: Pokemon) => {
         queueEncounterMessage(pokemon.scene, `${namespace}.boss_enraged`);
-        pokemon.scene.unshiftPhase(new StatStageChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [Stat.ATK, Stat.DEF, Stat.SPATK, Stat.SPDEF, Stat.SPD], 1));
+        pokemon.scene.unshiftPhase(new StatStageChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, statChangesForBattle, 1));
       }
     }],
   };

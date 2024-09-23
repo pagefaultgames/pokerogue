@@ -79,22 +79,6 @@ describe("Mysterious Challengers - Mystery Encounter", () => {
     expect(scene.currentBattle?.mysteryEncounter?.encounterType).not.toBe(MysteryEncounterType.MYSTERIOUS_CHALLENGERS);
   });
 
-  it("should not run below wave 10", async () => {
-    game.override.startingWave(9);
-
-    await game.runToMysteryEncounter();
-
-    expect(scene.currentBattle?.mysteryEncounter?.encounterType).not.toBe(MysteryEncounterType.MYSTERIOUS_CHALLENGERS);
-  });
-
-  it("should not run above wave 179", async () => {
-    game.override.startingWave(181);
-
-    await game.runToMysteryEncounter();
-
-    expect(scene.currentBattle.mysteryEncounter).toBeUndefined();
-  });
-
   it("should initialize fully", async () => {
     initSceneWithoutEncounterPhase(scene, defaultParty);
     scene.currentBattle.mysteryEncounter = new MysteryEncounter(MysteriousChallengersEncounter);
@@ -117,12 +101,12 @@ describe("Mysterious Challengers - Mystery Encounter", () => {
       },
       {
         trainerConfig: expect.any(TrainerConfig),
-        levelAdditiveMultiplier: 1,
+        levelAdditiveModifier: 1,
         female: expect.any(Boolean),
       },
       {
         trainerConfig: expect.any(TrainerConfig),
-        levelAdditiveMultiplier: 1.5,
+        levelAdditiveModifier: 1.5,
         female: expect.any(Boolean),
       }
     ]);

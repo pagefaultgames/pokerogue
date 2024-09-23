@@ -1,7 +1,7 @@
 import { Egg, getLegendaryGachaSpeciesForTimestamp } from "#app/data/egg";
 import { EggSourceType } from "#app/enums/egg-source-types";
 import { EggTier } from "#app/enums/egg-type";
-import { VariantTier } from "#app/enums/variant-tiers";
+import { VariantTier } from "#app/enums/variant-tier";
 import EggData from "#app/system/egg-data";
 import * as Utils from "#app/utils";
 import { Species } from "#enums/species";
@@ -136,9 +136,9 @@ describe("Egg Generation Tests", () => {
 
     expect(result).toBe(expectedResult);
   });
-  it("should return a shiny common variant", () => {
+  it("should return a shiny standard variant", () => {
     const scene = game.scene;
-    const expectedVariantTier = VariantTier.COMMON;
+    const expectedVariantTier = VariantTier.STANDARD;
 
     const result = new Egg({ scene, isShiny: true, variantTier: expectedVariantTier, species: Species.BULBASAUR }).generatePlayerPokemon(scene).variant;
 

@@ -10,7 +10,7 @@ import { ArenaTagSide, ArenaTrapTag } from "#app/data/arena-tag";
 import { BattlerIndex } from "#app/battle";
 import { MoveResult } from "#app/field/pokemon";
 
-const TIMEOUT = 20 * 1000;
+
 
 describe("Moves - Protect", () => {
   let phaserGame: Phaser.Game;
@@ -53,7 +53,7 @@ describe("Moves - Protect", () => {
       await game.phaseInterceptor.to("BerryPhase", false);
 
       expect(leadPokemon.hp).toBe(leadPokemon.getMaxHp());
-    }, TIMEOUT
+    }
   );
 
   test(
@@ -72,7 +72,7 @@ describe("Moves - Protect", () => {
 
       expect(leadPokemon.hp).toBe(leadPokemon.getMaxHp());
       expect(game.scene.arena.getTagOnSide(ArenaTrapTag, ArenaTagSide.ENEMY)).toBeUndefined();
-    }, TIMEOUT
+    }
   );
 
   test(
@@ -89,7 +89,7 @@ describe("Moves - Protect", () => {
       await game.phaseInterceptor.to("BerryPhase", false);
 
       expect(leadPokemon.getStatStage(Stat.ATK)).toBe(0);
-    }, TIMEOUT
+    }
   );
 
   test(
@@ -108,7 +108,7 @@ describe("Moves - Protect", () => {
 
       expect(leadPokemon.hp).toBe(leadPokemon.getMaxHp());
       expect(enemyPokemon.turnData.hitCount).toBe(1);
-    }, TIMEOUT
+    }
   );
 
   test(
@@ -129,6 +129,6 @@ describe("Moves - Protect", () => {
 
       expect(enemyPokemon.getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);
       expect(leadPokemon.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
-    }, TIMEOUT
+    }
   );
 });

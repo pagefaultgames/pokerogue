@@ -40,7 +40,7 @@ export class EggLapsePhase extends Phase {
             this.showSummary();
           }, () => {
             this.hatchEggsRegular(eggsToHatch);
-            this.showSummary();
+            this.end();
           }
           );
         }, 100, true);

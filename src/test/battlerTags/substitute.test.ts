@@ -10,8 +10,6 @@ import { MoveEffectPhase } from "#app/phases/move-effect-phase";
 
 vi.mock("#app/battle-scene.js");
 
-const TIMEOUT = 5 * 1000; // 5 sec timeout
-
 describe("BattlerTag - SubstituteTag", () => {
   let mockPokemon: Pokemon;
 
@@ -45,7 +43,7 @@ describe("BattlerTag - SubstituteTag", () => {
         subject.onAdd(mockPokemon);
 
         expect(subject.hp).toBe(25);
-      }, TIMEOUT
+      }
     );
 
     it(
@@ -67,7 +65,7 @@ describe("BattlerTag - SubstituteTag", () => {
         expect(subject.sourceInFocus).toBeFalsy();
         expect(mockPokemon.scene.triggerPokemonBattleAnim).toHaveBeenCalledTimes(1);
         expect(mockPokemon.scene.queueMessage).toHaveBeenCalledTimes(1);
-      }, TIMEOUT
+      }
     );
 
     it(
@@ -79,7 +77,7 @@ describe("BattlerTag - SubstituteTag", () => {
 
         subject.onAdd(mockPokemon);
         expect(mockPokemon.findAndRemoveTags).toHaveBeenCalledTimes(1);
-      }, TIMEOUT
+      }
     );
   });
 
@@ -114,7 +112,7 @@ describe("BattlerTag - SubstituteTag", () => {
 
         expect(mockPokemon.scene.triggerPokemonBattleAnim).toHaveBeenCalledTimes(1);
         expect(mockPokemon.scene.queueMessage).toHaveBeenCalledTimes(1);
-      }, TIMEOUT
+      }
     );
   });
 
@@ -150,7 +148,7 @@ describe("BattlerTag - SubstituteTag", () => {
         expect(subject.sourceInFocus).toBeTruthy();
         expect(mockPokemon.scene.triggerPokemonBattleAnim).toHaveBeenCalledTimes(1);
         expect(mockPokemon.scene.queueMessage).not.toHaveBeenCalled();
-      }, TIMEOUT
+      }
     );
 
     it(
@@ -172,7 +170,7 @@ describe("BattlerTag - SubstituteTag", () => {
         expect(subject.sourceInFocus).toBeFalsy();
         expect(mockPokemon.scene.triggerPokemonBattleAnim).toHaveBeenCalledTimes(1);
         expect(mockPokemon.scene.queueMessage).not.toHaveBeenCalled();
-      }, TIMEOUT
+      }
     );
 
     /** TODO: Figure out how to mock a MoveEffectPhase correctly for this test */
@@ -200,7 +198,7 @@ describe("BattlerTag - SubstituteTag", () => {
 
         expect(mockPokemon.scene.triggerPokemonBattleAnim).not.toHaveBeenCalled();
         expect(mockPokemon.scene.queueMessage).toHaveBeenCalledTimes(1);
-      }, TIMEOUT
+      }
     );
 
     it(
@@ -212,7 +210,7 @@ describe("BattlerTag - SubstituteTag", () => {
         vi.spyOn(mockPokemon.scene, "queueMessage").mockReturnValue();
 
         expect(subject.lapse(mockPokemon, BattlerTagLapseType.CUSTOM)).toBeFalsy();
-      }, TIMEOUT
+      }
     );
 
     it(

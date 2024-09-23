@@ -103,7 +103,7 @@ export function doPokemonTransformationSequence(scene: BattleScene, previousPoke
               scene.time.delayedCall(1000, () => {
                 pokemonEvoTintSprite.setScale(0.25);
                 pokemonEvoTintSprite.setVisible(true);
-                doCycle(scene, 2, 6, pokemonTintSprite, pokemonEvoTintSprite).then(() => {
+                doCycle(scene, 1.5, 6, pokemonTintSprite, pokemonEvoTintSprite).then(() => {
                   pokemonEvoSprite.setVisible(true);
                   doCircleInward(scene, transformationBaseBg, transformationContainer, xOffset, yOffset);
 
@@ -115,7 +115,7 @@ export function doPokemonTransformationSequence(scene: BattleScene, previousPoke
                       delay: 150,
                       easing: "Sine.easeIn",
                       onComplete: () => {
-                        scene.time.delayedCall(2500, () => {
+                        scene.time.delayedCall(3000, () => {
                           resolve();
                           scene.tweens.add({
                             targets: pokemonEvoSprite,

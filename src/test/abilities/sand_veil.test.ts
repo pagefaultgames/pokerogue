@@ -11,7 +11,7 @@ import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
-const TIMEOUT = 20 * 1000;
+
 
 describe("Abilities - Sand Veil", () => {
   let phaserGame: Phaser.Game;
@@ -75,6 +75,6 @@ describe("Abilities - Sand Veil", () => {
 
       expect(leadPokemon[0].isFullHp()).toBe(true);
       expect(leadPokemon[1].hp).toBeLessThan(leadPokemon[1].getMaxHp());
-    }, TIMEOUT
+    }
   );
 });

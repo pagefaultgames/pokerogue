@@ -10,7 +10,7 @@ import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
-const TIMEOUT = 20 * 1000;
+
 
 describe("Moves - Shell Trap", () => {
   let phaserGame: Phaser.Game;
@@ -60,7 +60,7 @@ describe("Moves - Shell Trap", () => {
 
       await game.phaseInterceptor.to(MoveEndPhase);
       enemyPokemon.forEach(p => expect(p.hp).toBeLessThan(p.getMaxHp()));
-    }, TIMEOUT
+    }
   );
 
   it(
@@ -86,7 +86,7 @@ describe("Moves - Shell Trap", () => {
 
       await game.phaseInterceptor.to(BerryPhase, false);
       enemyPokemon.forEach(p => expect(p.hp).toBe(p.getMaxHp()));
-    }, TIMEOUT
+    }
   );
 
   it(
@@ -112,7 +112,7 @@ describe("Moves - Shell Trap", () => {
 
       await game.phaseInterceptor.to(BerryPhase, false);
       enemyPokemon.forEach(p => expect(p.hp).toBe(p.getMaxHp()));
-    }, TIMEOUT
+    }
   );
 
   it(
@@ -138,7 +138,7 @@ describe("Moves - Shell Trap", () => {
 
       await game.phaseInterceptor.to(BerryPhase, false);
       enemyPokemon.forEach((p, i) => expect(p.hp).toBe(enemyStartingHp[i]));
-    }, TIMEOUT
+    }
   );
 
   it(
@@ -158,6 +158,6 @@ describe("Moves - Shell Trap", () => {
 
       expect(playerPokemon.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
       expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp());
-    }, TIMEOUT
+    }
   );
 });

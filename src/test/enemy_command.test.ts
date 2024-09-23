@@ -8,7 +8,7 @@ import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
-const TIMEOUT = 20 * 1000;
+
 const NUM_TRIALS = 300;
 
 type MoveChoiceSet = { [key: number]: number };
@@ -74,7 +74,7 @@ describe("Enemy Commands - Move Selection", () => {
           expect(moveChoices[mv.moveId]).toBe(0);
         }
       });
-    }, TIMEOUT
+    }
   );
 
   it(
@@ -101,6 +101,6 @@ describe("Enemy Commands - Move Selection", () => {
           expect(moveChoices[mv.moveId]).toBe(0);
         }
       });
-    }, TIMEOUT
+    }
   );
 });

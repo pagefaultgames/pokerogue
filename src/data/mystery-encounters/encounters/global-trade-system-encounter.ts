@@ -4,7 +4,7 @@ import { ModifierTier } from "#app/modifier/modifier-tier";
 import { getPlayerModifierTypeOptions, ModifierPoolType, ModifierTypeOption, regenerateModifierPoolThresholds } from "#app/modifier/modifier-type";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import BattleScene from "#app/battle-scene";
-import MysteryEncounter, { MysteryEncounterBuilder } from "../mystery-encounter";
+import MysteryEncounter, { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-encounter";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { Species } from "#enums/species";
 import PokemonSpecies, { allSpecies, getPokemonSpecies } from "#app/data/pokemon-species";
@@ -23,6 +23,7 @@ import { getPokeballAtlasKey, getPokeballTintColor, PokeballType } from "#app/da
 import { getEncounterText, showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
 import { trainerNamePools } from "#app/data/trainer-names";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
+import { addPokemonDataToDexAndValidateAchievements } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
 
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounter:globalTradeSystem";
@@ -118,17 +119,13 @@ export const GlobalTradeSystemEncounter: MysteryEncounter =
       return true;
     })
     .withOnVisualsStart((scene: BattleScene) => {
-      // Change the bgm
-      scene.fadeOutBgm(1500, false);
-      scene.time.delayedCall(1500, () => {
-        scene.playBgm(scene.currentBattle.mysteryEncounter!.misc.bgmKey);
-      });
-
+      scene.fadeAndSwitchBgm(scene.currentBattle.mysteryEncounter!.misc.bgmKey);
       return true;
     })
     .withOption(
       MysteryEncounterOptionBuilder
         .newOptionWithMode(MysteryEncounterOptionMode.DEFAULT)
+        .withHasDexProgress(true)
         .withDialogue({
           buttonLabel: `${namespace}.option.1.label`,
           buttonTooltip: `${namespace}.option.1.tooltip`,
@@ -200,6 +197,7 @@ export const GlobalTradeSystemEncounter: MysteryEncounter =
           await doPokemonTradeSequence(scene, tradedPokemon, newPlayerPokemon);
           await showEncounterText(scene, `${namespace}.trade_received`, null, 0, true, 4000);
           scene.playBgm(encounter.misc.bgmKey);
+          await addPokemonDataToDexAndValidateAchievements(scene, newPlayerPokemon);
           await hideTradeBackground(scene);
           tradedPokemon.destroy();
 
@@ -210,6 +208,7 @@ export const GlobalTradeSystemEncounter: MysteryEncounter =
     .withOption(
       MysteryEncounterOptionBuilder
         .newOptionWithMode(MysteryEncounterOptionMode.DEFAULT)
+        .withHasDexProgress(true)
         .withDialogue({
           buttonLabel: `${namespace}.option.2.label`,
           buttonTooltip: `${namespace}.option.2.tooltip`,
@@ -218,8 +217,7 @@ export const GlobalTradeSystemEncounter: MysteryEncounter =
           const encounter = scene.currentBattle.mysteryEncounter!;
           const onPokemonSelected = (pokemon: PlayerPokemon) => {
             // Randomly generate a Wonder Trade pokemon
-            // const randomTradeOption = generateTradeOption(scene.getParty().map(p => p.species));
-            const randomTradeOption = getPokemonSpecies(Species.BURMY);
+            const randomTradeOption = generateTradeOption(scene.getParty().map(p => p.species));
             const tradePokemon = new EnemyPokemon(scene, randomTradeOption, pokemon.level, TrainerSlot.NONE, false);
             // Extra shiny roll at 1/128 odds (boosted by events and charms)
             if (!tradePokemon.shiny) {
@@ -280,7 +278,8 @@ export const GlobalTradeSystemEncounter: MysteryEncounter =
           await showTradeBackground(scene);
           await doPokemonTradeSequence(scene, tradedPokemon, newPlayerPokemon);
           await showEncounterText(scene, `${namespace}.trade_received`, null, 0, true, 4000);
-          scene.playBgm(scene.currentBattle.mysteryEncounter!.misc.bgmKey);
+          scene.playBgm(encounter.misc.bgmKey);
+          await addPokemonDataToDexAndValidateAchievements(scene, newPlayerPokemon);
           await hideTradeBackground(scene);
           tradedPokemon.destroy();
 
@@ -301,7 +300,7 @@ export const GlobalTradeSystemEncounter: MysteryEncounter =
           const onPokemonSelected = (pokemon: PlayerPokemon) => {
             // Get Pokemon held items and filter for valid ones
             const validItems = pokemon.getHeldItems().filter((it) => {
-              return it.isTransferrable;
+              return it.isTransferable;
             });
 
             return validItems.map((modifier: PokemonHeldItemModifier) => {
@@ -318,11 +317,10 @@ export const GlobalTradeSystemEncounter: MysteryEncounter =
             });
           };
 
-          // Only Pokemon that can gain benefits are above 1/3rd HP with no status
           const selectableFilter = (pokemon: Pokemon) => {
             // If pokemon has items to trade
             const meetsReqs = pokemon.getHeldItems().filter((it) => {
-              return it.isTransferrable;
+              return it.isTransferable;
             }).length > 0;
             if (!meetsReqs) {
               return getEncounterText(scene, `${namespace}.option.3.invalid_selection`) ?? null;
@@ -432,14 +430,13 @@ function getPokemonTradeOptions(scene: BattleScene): Map<number, EnemyPokemon[]>
 
 function generateTradeOption(alreadyUsedSpecies: PokemonSpecies[], originalBst?: number): PokemonSpecies {
   let newSpecies: PokemonSpecies | undefined;
+  let bstCap = 9999;
+  let bstMin = 0;
+  if (originalBst) {
+    bstCap = originalBst + 100;
+    bstMin = originalBst - 100;
+  }
   while (isNullOrUndefined(newSpecies)) {
-    let bstCap = 9999;
-    let bstMin = 0;
-    if (originalBst) {
-      bstCap = originalBst + 100;
-      bstMin = originalBst - 100;
-    }
-
     // Get all non-legendary species that fall within the Bst range requirements
     let validSpecies = allSpecies
       .filter(s => {

@@ -264,7 +264,7 @@ export const speciesEggMoves = {
   [Species.PANPOUR]: [ Moves.NASTY_PLOT, Moves.ENERGY_BALL, Moves.EARTH_POWER, Moves.STEAM_ERUPTION ],
   [Species.MUNNA]: [ Moves.COSMIC_POWER, Moves.AURA_SPHERE, Moves.EARTH_POWER, Moves.MYSTICAL_POWER ],
   [Species.PIDOVE]: [ Moves.GUNK_SHOT, Moves.TIDY_UP, Moves.FLOATY_FALL, Moves.TRIPLE_ARROWS ],
-  [Species.BLITZLE]: [ Moves.HIGH_HORSEPOWER, Moves.THUNDEROUS_KICK, Moves.FLARE_BLITZ, Moves.VOLT_TACKLE ],
+  [Species.BLITZLE]: [ Moves.HORN_LEECH, Moves.SWORDS_DANCE, Moves.FLARE_BLITZ, Moves.BOLT_STRIKE ],
   [Species.ROGGENROLA]: [ Moves.BODY_PRESS, Moves.CURSE, Moves.SHORE_UP, Moves.DIAMOND_STORM ],
   [Species.WOOBAT]: [ Moves.ESPER_WING, Moves.STORED_POWER, Moves.MYSTICAL_FIRE, Moves.OBLIVION_WING ],
   [Species.DRILBUR]: [ Moves.IRON_HEAD, Moves.MOUNTAIN_GALE, Moves.SHIFT_GEAR, Moves.THOUSAND_ARROWS ],

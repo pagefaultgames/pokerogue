@@ -9,7 +9,7 @@ import { BerryPhase } from "#app/phases/berry-phase";
 import { CommandPhase } from "#app/phases/command-phase";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
 
-const TIMEOUT = 20 * 1000;
+
 
 describe("Moves - Mat Block", () => {
   let phaserGame: Phaser.Game;
@@ -56,7 +56,7 @@ describe("Moves - Mat Block", () => {
       await game.phaseInterceptor.to(BerryPhase, false);
 
       leadPokemon.forEach(p => expect(p.hp).toBe(p.getMaxHp()));
-    }, TIMEOUT
+    }
   );
 
   test(
@@ -77,7 +77,7 @@ describe("Moves - Mat Block", () => {
       await game.phaseInterceptor.to(BerryPhase, false);
 
       leadPokemon.forEach(p => expect(p.getStatStage(Stat.ATK)).toBe(-2));
-    }, TIMEOUT
+    }
   );
 
   test(
@@ -103,6 +103,6 @@ describe("Moves - Mat Block", () => {
       await game.phaseInterceptor.to(BerryPhase, false);
 
       expect(leadPokemon.some((p, i) => p.hp < leadStartingHp[i])).toBeTruthy();
-    }, TIMEOUT
+    }
   );
 });

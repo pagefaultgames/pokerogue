@@ -1,13 +1,13 @@
 import { leaveEncounterWithoutBattle, selectPokemonForOption, setEncounterRewards, transitionMysteryEncounterIntroVisuals, updatePlayerMoney, } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import BattleScene from "#app/battle-scene";
-import MysteryEncounter, { MysteryEncounterBuilder } from "../mystery-encounter";
+import MysteryEncounter, { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-encounter";
 import { MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/mystery-encounter-option";
 import { TrainerSlot } from "#app/data/trainer-config";
 import Pokemon, { FieldPosition, PlayerPokemon } from "#app/field/pokemon";
 import { getPokemonSpecies } from "#app/data/pokemon-species";
 import { MoneyRequirement } from "#app/data/mystery-encounters/mystery-encounter-requirements";
-import { getEncounterText, queueEncounterMessage, showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
+import { queueEncounterMessage, showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { Species } from "#enums/species";
@@ -22,6 +22,7 @@ import { PostSummonPhase } from "#app/phases/post-summon-phase";
 import { modifierTypes } from "#app/modifier/modifier-type";
 import { Nature } from "#enums/nature";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
+import { isPokemonValidForEncounterOptionSelection } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
 
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounter:funAndGames";
@@ -45,14 +46,14 @@ export const FunAndGamesEncounter: MysteryEncounter =
     .withSkipToFightInput(true)
     .withIntroSpriteConfigs([
       {
-        spriteKey: "carnival_game",
+        spriteKey: "fun_and_games_game",
         fileRoot: "mystery-encounters",
         hasShadow: false,
         x: 0,
         y: 6,
       },
       {
-        spriteKey: "carnival_wobbuffet",
+        spriteKey: "fun_and_games_wobbuffet",
         fileRoot: "mystery-encounters",
         hasShadow: true,
         x: -28,
@@ -60,7 +61,7 @@ export const FunAndGamesEncounter: MysteryEncounter =
         yShadow: 6
       },
       {
-        spriteKey: "carnival_man",
+        spriteKey: "fun_and_games_man",
         fileRoot: "mystery-encounters",
         hasShadow: true,
         x: 40,
@@ -84,12 +85,7 @@ export const FunAndGamesEncounter: MysteryEncounter =
       return true;
     })
     .withOnVisualsStart((scene: BattleScene) => {
-      // Change the bgm
-      scene.fadeOutBgm(2000, false);
-      scene.time.delayedCall(2000, () => {
-        scene.playBgm("mystery_encounter_fun_and_games");
-      });
-
+      scene.fadeAndSwitchBgm("mystery_encounter_fun_and_games");
       return true;
     })
     .withOption(MysteryEncounterOptionBuilder
@@ -115,12 +111,7 @@ export const FunAndGamesEncounter: MysteryEncounter =
 
         // Only Pokemon that are not KOed/legal can be selected
         const selectableFilter = (pokemon: Pokemon) => {
-          const meetsReqs = pokemon.isAllowedInBattle();
-          if (!meetsReqs) {
-            return getEncounterText(scene, `${namespace}.invalid_selection`) ?? null;
-          }
-
-          return null;
+          return isPokemonValidForEncounterOptionSelection(pokemon, scene, `${namespace}.invalid_selection`);
         };
 
         return selectPokemonForOption(scene, onPokemonSelected, undefined, selectableFilter);
@@ -175,7 +166,9 @@ async function summonPlayerPokemon(scene: BattleScene) {
     const party = scene.getParty();
     const chosenIndex = party.indexOf(playerPokemon);
     if (chosenIndex !== 0) {
-      [party[chosenIndex], party[0]] = [party[chosenIndex], party[chosenIndex]];
+      const leadPokemon = party[0];
+      party[0] = playerPokemon;
+      party[chosenIndex] = leadPokemon;
     }
 
     // Do trainer summon animation

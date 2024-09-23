@@ -1,0 +1,41 @@
+{
+	"textures": [
+		{
+			"image": "berries_abound_bush.png",
+			"format": "RGBA8888",
+			"size": {
+				"w": 49,
+				"h": 53
+			},
+			"scale": 1,
+			"frames": [
+				{
+					"filename": "0001.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 49,
+						"h": 53
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 49,
+						"h": 53
+					},
+					"frame": {
+						"x": 0,
+						"y": 0,
+						"w": 49,
+						"h": 53
+					}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "https://www.codeandweb.com/texturepacker",
+		"version": "3.0",
+		"smartupdate": "$TexturePacker:SmartUpdate:d5f83625477b5f98b726343f4a3a396f:f4665258986e97345cfeee041b4b8bcf:e7781fcc447e6d12deb2af78c9493c7f$"
+	}
+}

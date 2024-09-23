@@ -2,8 +2,8 @@ import { EnemyPartyConfig, EnemyPokemonConfig, generateModifierType, initBattleW
 import { modifierTypes, PokemonHeldItemModifierType } from "#app/modifier/modifier-type";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import BattleScene from "#app/battle-scene";
-import MysteryEncounter, { MysteryEncounterBuilder } from "../mystery-encounter";
-import { MysteryEncounterOptionBuilder } from "../mystery-encounter-option";
+import MysteryEncounter, { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-encounter";
+import { MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/mystery-encounter-option";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { Species } from "#enums/species";
@@ -67,7 +67,7 @@ export const TrashToTreasureEncounter: MysteryEncounter =
         moveSet: [Moves.PAYBACK, Moves.GUNK_SHOT, Moves.STOMPING_TANTRUM, Moves.DRAIN_PUNCH]
       };
       const config: EnemyPartyConfig = {
-        levelAdditiveMultiplier: 1,
+        levelAdditiveModifier: 1,
         pokemonConfigs: [pokemonConfig],
         disableSwitch: true
       };

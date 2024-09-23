@@ -8,7 +8,7 @@ import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest";
 
-const TIMEOUT = 20 * 1000;
+
 
 describe("Moves - Purify", () => {
   let phaserGame: Phaser.Game;
@@ -55,7 +55,6 @@ describe("Moves - Purify", () => {
       expect(enemyPokemon.status).toBeNull();
       expect(playerPokemon.isFullHp()).toBe(true);
     },
-    TIMEOUT
   );
 
   test(
@@ -74,7 +73,6 @@ describe("Moves - Purify", () => {
 
       expect(playerPokemon.hp).toBe(playerInitialHp);
     },
-    TIMEOUT
   );
 
 });

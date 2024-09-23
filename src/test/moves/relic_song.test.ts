@@ -10,8 +10,6 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 describe("Moves - Relic Song", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
-  const TIMEOUT = 20 * 1000;
-
   beforeAll(() => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
@@ -47,7 +45,7 @@ describe("Moves - Relic Song", () => {
     await game.phaseInterceptor.to("BerryPhase");
 
     expect(meloetta.formIndex).toBe(0);
-  }, TIMEOUT);
+  });
 
   it("doesn't swap Meloetta's form during a mono-type challenge", async () => {
     game.challengeMode.addChallenge(Challenges.SINGLE_TYPE, Type.PSYCHIC + 1, 0);
@@ -62,7 +60,7 @@ describe("Moves - Relic Song", () => {
     await game.toNextTurn();
 
     expect(meloetta.formIndex).toBe(0);
-  }, TIMEOUT);
+  });
 
   it("doesn't swap Meloetta's form during biome change (arena reset)", async () => {
     game.override
@@ -77,5 +75,5 @@ describe("Moves - Relic Song", () => {
     await game.toNextWave();
 
     expect(meloetta.formIndex).toBe(1);
-  }, TIMEOUT);
+  });
 });

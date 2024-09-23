@@ -8,7 +8,7 @@ import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest";
 
-const TIMEOUT = 20 * 1000;
+
 
 describe("Moves - Follow Me", () => {
   let phaserGame: Phaser.Game;
@@ -54,7 +54,7 @@ describe("Moves - Follow Me", () => {
 
       expect(playerPokemon[0].hp).toBeLessThan(playerPokemon[0].getMaxHp());
       expect(playerPokemon[1].hp).toBe(playerPokemon[1].getMaxHp());
-    }, TIMEOUT
+    }
   );
 
   test(
@@ -77,7 +77,7 @@ describe("Moves - Follow Me", () => {
 
       expect(playerPokemon[1].hp).toBeLessThan(playerPokemon[1].getMaxHp());
       expect(playerPokemon[0].hp).toBe(playerPokemon[0].getMaxHp());
-    }, TIMEOUT
+    }
   );
 
   test(
@@ -102,7 +102,7 @@ describe("Moves - Follow Me", () => {
       // If redirection was bypassed, both enemies should be damaged
       expect(enemyPokemon[0].hp).toBeLessThan(enemyPokemon[0].getMaxHp());
       expect(enemyPokemon[1].hp).toBeLessThan(enemyPokemon[1].getMaxHp());
-    }, TIMEOUT
+    }
   );
 
   test(
@@ -125,6 +125,6 @@ describe("Moves - Follow Me", () => {
       // If redirection was bypassed, both enemies should be damaged
       expect(enemyPokemon[0].hp).toBeLessThan(enemyPokemon[0].getMaxHp());
       expect(enemyPokemon[1].hp).toBeLessThan(enemyPokemon[1].getMaxHp());
-    }, TIMEOUT
+    }
   );
 });

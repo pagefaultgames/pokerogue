@@ -2,5 +2,6 @@
   "moveset": "Movimientos",
   "gender": "Género:",
   "ability": "Habilid:",
-  "nature": "Natur:"
+  "nature": "Natur:",
+  "form": "Forma:"
 }

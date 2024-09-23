@@ -54,6 +54,7 @@ export default class PokemonData {
   public fusionVariant: Variant;
   public fusionGender: Gender;
   public fusionLuck: integer;
+  public fusionMysteryEncounterPokemonData: MysteryEncounterPokemonData;
 
   public boss: boolean;
   public bossSegments?: integer;

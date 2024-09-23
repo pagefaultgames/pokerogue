@@ -6,7 +6,7 @@ import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
-const TIMEOUT = 20 * 1000;
+
 
 describe("Moves - Glaive Rush", () => {
   let phaserGame: Phaser.Game;
@@ -49,7 +49,7 @@ describe("Moves - Glaive Rush", () => {
     await game.phaseInterceptor.to("DamagePhase");
     expect(enemy.hp).toBeLessThanOrEqual(1001 - (damageDealt * 3));
 
-  }, TIMEOUT);
+  });
 
   it("always gets hit by attacks", async () => {
     await game.classicMode.startBattle();
@@ -62,7 +62,7 @@ describe("Moves - Glaive Rush", () => {
     await game.phaseInterceptor.to("TurnEndPhase");
     expect(enemy.hp).toBeLessThan(1000);
 
-  }, TIMEOUT);
+  });
 
   it("interacts properly with multi-lens", async () => {
     game.override
@@ -85,7 +85,7 @@ describe("Moves - Glaive Rush", () => {
     await game.phaseInterceptor.to("TurnEndPhase");
     expect(player.hp).toBe(1000);
 
-  }, TIMEOUT);
+  });
 
   it("secondary effects only last until next move", async () => {
     game.override.enemyMoveset([Moves.SHADOW_SNEAK]);
@@ -111,7 +111,7 @@ describe("Moves - Glaive Rush", () => {
     await game.phaseInterceptor.to("TurnEndPhase");
     expect(player.hp).toBe(damagedHp);
 
-  }, TIMEOUT);
+  });
 
   it("secondary effects are removed upon switching", async () => {
     game.override
@@ -135,7 +135,7 @@ describe("Moves - Glaive Rush", () => {
     await game.phaseInterceptor.to("TurnEndPhase");
     expect(player.hp).toBe(player.getMaxHp());
 
-  }, TIMEOUT);
+  });
 
   it("secondary effects don't activate if move fails", async () => {
     game.override.moveset([Moves.SHADOW_SNEAK, Moves.PROTECT, Moves.SPLASH, Moves.GLAIVE_RUSH]);
@@ -161,5 +161,5 @@ describe("Moves - Glaive Rush", () => {
     const damagedHP2 = 1000 - enemy.hp;
 
     expect(damagedHP2).toBeGreaterThanOrEqual((damagedHP1 * 2) - 1);
-  }, TIMEOUT);
+  });
 });

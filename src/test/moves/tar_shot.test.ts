@@ -11,8 +11,6 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vite
 describe("Moves - Tar Shot", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
-  const TIMEOUT = 20 * 1000;
-
   beforeAll(() => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
@@ -54,7 +52,7 @@ describe("Moves - Tar Shot", () => {
 
     await game.phaseInterceptor.to("MoveEndPhase");
     expect(enemy.getMoveEffectiveness).toHaveReturnedWith(4);
-  }, TIMEOUT);
+  });
 
   it("will not double the effectiveness of Fire-type moves used on a target that is already under the effect of Tar Shot (but may still lower its Speed)", async () => {
     await game.classicMode.startBattle([Species.PIKACHU]);
@@ -82,7 +80,7 @@ describe("Moves - Tar Shot", () => {
 
     await game.phaseInterceptor.to("MoveEndPhase");
     expect(enemy.getMoveEffectiveness).toHaveReturnedWith(4);
-  }, TIMEOUT);
+  });
 
   it("does not double the effectiveness of Fire-type moves against a Pokémon that is Terastallized", async () => {
     game.override.enemyHeldItems([{ name: "TERA_SHARD", type: Type.GRASS }]).enemySpecies(Species.SPRIGATITO);
@@ -104,7 +102,7 @@ describe("Moves - Tar Shot", () => {
 
     await game.phaseInterceptor.to("MoveEndPhase");
     expect(enemy.getMoveEffectiveness).toHaveReturnedWith(2);
-  }, TIMEOUT);
+  });
 
   it("doubles the effectiveness of Fire-type moves against a Pokémon that is already under the effects of Tar Shot before it Terastallized", async () => {
     game.override.enemySpecies(Species.SPRIGATITO);
@@ -128,5 +126,5 @@ describe("Moves - Tar Shot", () => {
 
     await game.phaseInterceptor.to("MoveEndPhase");
     expect(enemy.getMoveEffectiveness).toHaveReturnedWith(4);
-  }, TIMEOUT);
+  });
 });

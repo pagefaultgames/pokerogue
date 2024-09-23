@@ -11,7 +11,7 @@ import { Species } from "#enums/species";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
-const TIMEOUT = 20 * 1000;
+
 
 describe("Moves - Jaw Lock", () => {
   let phaserGame: Phaser.Game;
@@ -61,7 +61,7 @@ describe("Moves - Jaw Lock", () => {
 
       expect(leadPokemon.getTag(BattlerTagType.TRAPPED)).toBeDefined();
       expect(enemyPokemon.getTag(BattlerTagType.TRAPPED)).toBeDefined();
-    }, TIMEOUT
+    }
   );
 
   it(
@@ -90,7 +90,7 @@ describe("Moves - Jaw Lock", () => {
 
       expect(leadPokemon.getTag(BattlerTagType.TRAPPED)).toBeUndefined();
       expect(enemyPokemon.getTag(BattlerTagType.TRAPPED)).toBeUndefined();
-    }, TIMEOUT
+    }
   );
 
   it(
@@ -114,7 +114,7 @@ describe("Moves - Jaw Lock", () => {
       await game.doKillOpponents();
 
       expect(leadPokemon.getTag(BattlerTagType.TRAPPED)).toBeUndefined();
-    }, TIMEOUT
+    }
   );
 
   it(
@@ -146,7 +146,7 @@ describe("Moves - Jaw Lock", () => {
       expect(enemyPokemon[1].getTag(BattlerTagType.TRAPPED)).toBeUndefined();
       expect(playerPokemon[0].getTag(BattlerTagType.TRAPPED)).toBeDefined();
       expect(playerPokemon[0].getTag(BattlerTagType.TRAPPED)?.sourceId).toBe(enemyPokemon[0].id);
-    }, TIMEOUT
+    }
   );
 
   it(
@@ -165,6 +165,6 @@ describe("Moves - Jaw Lock", () => {
 
       expect(playerPokemon.getTag(BattlerTagType.TRAPPED)).toBeUndefined();
       expect(enemyPokemon.getTag(BattlerTagType.TRAPPED)).toBeUndefined();
-    }, TIMEOUT
+    }
   );
 });

@@ -7,7 +7,7 @@ import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
-const TIMEOUT = 20 * 1000;
+
 
 describe("Moves - Thunder Wave", () => {
   let phaserGame: Phaser.Game;
@@ -45,7 +45,7 @@ describe("Moves - Thunder Wave", () => {
     await game.phaseInterceptor.to("BerryPhase", false);
 
     expect(enemyPokemon.status?.effect).toBe(StatusEffect.PARALYSIS);
-  }, TIMEOUT);
+  });
 
   it("does not paralyze if the Pokemon is a Ground-type", async () => {
     game.override.enemySpecies(Species.DIGLETT);
@@ -58,7 +58,7 @@ describe("Moves - Thunder Wave", () => {
     await game.phaseInterceptor.to("BerryPhase", false);
 
     expect(enemyPokemon.status).toBeUndefined();
-  }, TIMEOUT);
+  });
 
   it("does not paralyze if the Pokemon already has a status effect", async () => {
     game.override.enemySpecies(Species.MAGIKARP).enemyStatusEffect(StatusEffect.BURN);
@@ -71,7 +71,7 @@ describe("Moves - Thunder Wave", () => {
     await game.phaseInterceptor.to("BerryPhase", false);
 
     expect(enemyPokemon.status?.effect).not.toBe(StatusEffect.PARALYSIS);
-  }, TIMEOUT);
+  });
 
   it("affects Ground types if the user has Normalize", async () => {
     game.override.ability(Abilities.NORMALIZE).enemySpecies(Species.DIGLETT);
@@ -84,7 +84,7 @@ describe("Moves - Thunder Wave", () => {
     await game.phaseInterceptor.to("BerryPhase", false);
 
     expect(enemyPokemon.status?.effect).toBe(StatusEffect.PARALYSIS);
-  }, TIMEOUT);
+  });
 
   it("does not affect Ghost types if the user has Normalize", async () => {
     game.override.ability(Abilities.NORMALIZE).enemySpecies(Species.HAUNTER);
@@ -97,5 +97,5 @@ describe("Moves - Thunder Wave", () => {
     await game.phaseInterceptor.to("BerryPhase", false);
 
     expect(enemyPokemon.status).toBeUndefined();
-  }, TIMEOUT);
+  });
 });

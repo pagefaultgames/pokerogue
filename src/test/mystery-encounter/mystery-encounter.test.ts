@@ -4,10 +4,12 @@ import Phaser from "phaser";
 import { Species } from "#enums/species";
 import { MysteryEncounterPhase } from "#app/phases/mystery-encounter-phases";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
+import BattleScene from "#app/battle-scene";
 
 describe("Mystery Encounters", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
+  let scene: BattleScene;
 
   beforeAll(() => {
     phaserGame = new Phaser.Game({
@@ -21,6 +23,7 @@ describe("Mystery Encounters", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
+    scene = game.scene;
     game.override.startingWave(11);
     game.override.mysteryEncounterChance(100);
   });
@@ -32,23 +35,20 @@ describe("Mystery Encounters", () => {
     expect(game.scene.getCurrentPhase()!.constructor.name).toBe(MysteryEncounterPhase.name);
   });
 
-  it("", async () => {
-    await game.runToMysteryEncounter(MysteryEncounterType.MYSTERIOUS_CHALLENGERS, [Species.CHARIZARD, Species.VOLCARONA]);
+  it("Encounters should not run below wave 10", async () => {
+    game.override.startingWave(9);
 
-    await game.phaseInterceptor.to(MysteryEncounterPhase, false);
-    expect(game.scene.getCurrentPhase()!.constructor.name).toBe(MysteryEncounterPhase.name);
+    await game.runToMysteryEncounter();
+
+    expect(scene.currentBattle?.mysteryEncounter?.encounterType).not.toBe(MysteryEncounterType.MYSTERIOUS_CHALLENGERS);
   });
 
-  it("spawns mysterious challengers encounter", async () => {
-  });
+  it("Encounters should not run above wave 180", async () => {
+    game.override.startingWave(181);
 
-  it("spawns mysterious chest encounter", async () => {
-  });
+    await game.runToMysteryEncounter();
 
-  it("spawns dark deal encounter", async () => {
-  });
-
-  it("spawns fight or flight encounter", async () => {
+    expect(scene.currentBattle.mysteryEncounter).toBeUndefined();
   });
 });
 

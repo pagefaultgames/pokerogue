@@ -10,7 +10,7 @@ import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
-const TIMEOUT = 20 * 1000;
+
 
 describe("Moves - Focus Punch", () => {
   let phaserGame: Phaser.Game;
@@ -61,7 +61,7 @@ describe("Moves - Focus Punch", () => {
       expect(enemyPokemon.hp).toBeLessThan(enemyStartingHp);
       expect(leadPokemon.getMoveHistory().length).toBe(1);
       expect(leadPokemon.turnData.damageDealt).toBe(enemyStartingHp - enemyPokemon.hp);
-    }, TIMEOUT
+    }
   );
 
   it(
@@ -88,7 +88,7 @@ describe("Moves - Focus Punch", () => {
       expect(enemyPokemon.hp).toBe(enemyStartingHp);
       expect(leadPokemon.getMoveHistory().length).toBe(1);
       expect(leadPokemon.turnData.damageDealt).toBe(0);
-    }, TIMEOUT
+    }
   );
 
   it(
@@ -111,7 +111,7 @@ describe("Moves - Focus Punch", () => {
 
       expect(leadPokemon.getMoveHistory().length).toBe(1);
       expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp());
-    }, TIMEOUT
+    }
   );
 
   it(
@@ -129,6 +129,6 @@ describe("Moves - Focus Punch", () => {
 
       expect(game.scene.getCurrentPhase() instanceof SwitchSummonPhase).toBeTruthy();
       expect(game.scene.phaseQueue.find(phase => phase instanceof MoveHeaderPhase)).toBeDefined();
-    }, TIMEOUT
+    }
   );
 });

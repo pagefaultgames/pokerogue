@@ -9,6 +9,7 @@ import PartyUiHandler from "../ui/party-ui-handler";
 import { getPokemonNameWithAffix } from "../messages";
 import { EndEvolutionPhase } from "./end-evolution-phase";
 import { EvolutionPhase } from "./evolution-phase";
+import { BattlerTagType } from "#app/enums/battler-tag-type";
 
 export class FormChangePhase extends EvolutionPhase {
   private formChange: SpeciesFormChange;
@@ -157,6 +158,7 @@ export class FormChangePhase extends EvolutionPhase {
   }
 
   end(): void {
+    this.pokemon.findAndRemoveTags(t => t.tagType === BattlerTagType.AUTOTOMIZED);
     if (this.modal) {
       this.scene.ui.revertMode().then(() => {
         if (this.scene.ui.getMode() === Mode.PARTY) {

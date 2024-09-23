@@ -1,0 +1,41 @@
+{
+	"textures": [
+		{
+			"image": "expert_pokemon_breeder.png",
+			"format": "RGBA8888",
+			"size": {
+				"w": 39,
+				"h": 75
+			},
+			"scale": 1,
+			"frames": [
+				{
+					"filename": "0001.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 80,
+						"h": 80
+					},
+					"spriteSourceSize": {
+						"x": 21,
+						"y": 3,
+						"w": 39,
+						"h": 75
+					},
+					"frame": {
+						"x": 0,
+						"y": 0,
+						"w": 39,
+						"h": 75
+					}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "https://www.codeandweb.com/texturepacker",
+		"version": "3.0",
+		"smartupdate": "$TexturePacker:SmartUpdate:cb681265d8dca038a518ab14076fd140:18ff41b1ef6967682643a11695926e58:c59ea3971195f5a395b75223a77d9068$"
+	}
+}

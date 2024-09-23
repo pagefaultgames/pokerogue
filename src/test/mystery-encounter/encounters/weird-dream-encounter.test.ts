@@ -73,22 +73,6 @@ describe("Weird Dream - Mystery Encounter", () => {
     expect(WeirdDreamEncounter.options.length).toBe(2);
   });
 
-  it("should not run below wave 10", async () => {
-    game.override.startingWave(9);
-
-    await game.runToMysteryEncounter();
-
-    expect(scene.currentBattle?.mysteryEncounter?.encounterType).not.toBe(MysteryEncounterType.WEIRD_DREAM);
-  });
-
-  it("should not run above wave 179", async () => {
-    game.override.startingWave(181);
-
-    await game.runToMysteryEncounter();
-
-    expect(scene.currentBattle.mysteryEncounter).toBeUndefined();
-  });
-
   it("should initialize fully", async () => {
     initSceneWithoutEncounterPhase(scene, defaultParty);
     scene.currentBattle.mysteryEncounter = WeirdDreamEncounter;
@@ -190,7 +174,7 @@ describe("Weird Dream - Mystery Encounter", () => {
       });
     });
 
-    it("should reduce party levels by 20%", async () => {
+    it("should reduce party levels by 12.5%", async () => {
       const leaveEncounterWithoutBattleSpy = vi.spyOn(EncounterPhaseUtils, "leaveEncounterWithoutBattle");
 
       await game.runToMysteryEncounter(MysteryEncounterType.WEIRD_DREAM, defaultParty);
@@ -200,7 +184,7 @@ describe("Weird Dream - Mystery Encounter", () => {
       const levelsAfter = scene.getParty().map(p => p.level);
 
       for (let i = 0; i < levelsPrior.length; i++) {
-        expect(Math.max(Math.ceil(0.8 * levelsPrior[i]), 1)).toBe(levelsAfter[i]);
+        expect(Math.max(Math.ceil(0.8875 * levelsPrior[i]), 1)).toBe(levelsAfter[i]);
         expect(scene.getParty()[i].levelExp).toBe(0);
       }
 

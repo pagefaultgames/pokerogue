@@ -3,7 +3,7 @@ import BattleScene from "../battle-scene";
 import { Phase } from "../phase";
 import { Mode } from "../ui/ui";
 import { transitionMysteryEncounterIntroVisuals, OptionSelectSettings } from "../data/mystery-encounters/utils/encounter-phase-utils";
-import MysteryEncounterOption, { OptionPhaseCallback } from "../data/mystery-encounters/mystery-encounter-option";
+import MysteryEncounterOption, { OptionPhaseCallback } from "#app/data/mystery-encounters/mystery-encounter-option";
 import { getCharVariantFromDialogue } from "../data/dialogue";
 import { TrainerSlot } from "../data/trainer-config";
 import { BattleSpec } from "#enums/battle-spec";

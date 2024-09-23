@@ -283,5 +283,9 @@
   "INVERSE_BATTLE": {
     "name": "Mirror rorriM",
     "description": "Complete the Inverse Battle challenge.\n.egnellahc elttaB esrevnI eht etelpmoC"
+  },
+  "BREEDERS_IN_SPACE": {
+    "name": "Breeders in Space!",
+    "description": "Beat the Expert Pokémon Breeder in the Space Biome."
   }
 }

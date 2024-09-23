@@ -7,7 +7,7 @@ import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
-const TIMEOUT = 20 * 1000;
+
 
 describe("Moves - Lash Out", () => {
   let phaserGame: Phaser.Game;
@@ -48,5 +48,5 @@ describe("Moves - Lash Out", () => {
     await game.phaseInterceptor.to("BerryPhase");
 
     expect(allMoves[Moves.LASH_OUT].calculateBattlePower).toHaveReturnedWith(150);
-  }, TIMEOUT);
+  });
 });

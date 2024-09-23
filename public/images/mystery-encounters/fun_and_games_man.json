@@ -1,0 +1,41 @@
+{
+	"textures": [
+		{
+			"image": "fun_and_games_man.png",
+			"format": "RGBA8888",
+			"size": {
+				"w": 50,
+				"h": 77
+			},
+			"scale": 1,
+			"frames": [
+				{
+					"filename": "0001.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 80,
+						"h": 80
+					},
+					"spriteSourceSize": {
+						"x": 15,
+						"y": 3,
+						"w": 50,
+						"h": 77
+					},
+					"frame": {
+						"x": 0,
+						"y": 0,
+						"w": 50,
+						"h": 77
+					}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "https://www.codeandweb.com/texturepacker",
+		"version": "3.0",
+		"smartupdate": "$TexturePacker:SmartUpdate:e80aa9a809a7cca6d05992cb82f6dbd9:ea9962edd1cdc1e503deecf2ce1863c1:55647352b6547cf03212506309f2abf5$"
+	}
+}

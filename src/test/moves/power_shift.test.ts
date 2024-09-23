@@ -9,8 +9,6 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 describe("Moves - Power Shift", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
-  const TIMEOUT = 20 * 1000;
-
   beforeAll(() => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
@@ -59,5 +57,5 @@ describe("Moves - Power Shift", () => {
     // Raw stats are swapped
     expect(playerPokemon.getStat(Stat.ATK, false)).toBe(20);
     expect(playerPokemon.getStat(Stat.DEF, false)).toBe(10);
-  }, TIMEOUT);
+  });
 });

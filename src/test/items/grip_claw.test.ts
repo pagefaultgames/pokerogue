@@ -9,7 +9,7 @@ import GameManager from "#test/utils/gameManager";
 import Phase from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
-const TIMEOUT = 20 * 1000; // 20 seconds
+// 20 seconds
 
 describe("Items - Grip Claw", () => {
   let phaserGame: Phaser.Game;
@@ -63,6 +63,6 @@ describe("Items - Grip Claw", () => {
       await game.phaseInterceptor.to(MoveEndPhase, false);
 
       expect(enemyPokemon[1].getHeldItems.length).toBe(enemyHeldItemCt[1]);
-    }, TIMEOUT
+    }
   );
 });

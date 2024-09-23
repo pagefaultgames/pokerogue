@@ -72,22 +72,6 @@ describe("Field Trip - Mystery Encounter", () => {
     expect(FieldTripEncounter.options.length).toBe(3);
   });
 
-  it("should not run below wave 10", async () => {
-    game.override.startingWave(9);
-
-    await game.runToMysteryEncounter();
-
-    expect(scene.currentBattle?.mysteryEncounter?.encounterType).not.toBe(MysteryEncounterType.FIELD_TRIP);
-  });
-
-  it("should not run above wave 179", async () => {
-    game.override.startingWave(181);
-
-    await game.runToMysteryEncounter();
-
-    expect(scene.currentBattle.mysteryEncounter).toBeUndefined();
-  });
-
   describe("Option 1 - Show off a physical move", () => {
     it("should have the correct properties", () => {
       const option = FieldTripEncounter.options[0];

@@ -2,7 +2,7 @@ import { EnemyPartyConfig, generateModifierType, generateModifierTypeOption, ini
 import { modifierTypes, PokemonHeldItemModifierType } from "#app/modifier/modifier-type";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import BattleScene from "#app/battle-scene";
-import MysteryEncounter, { MysteryEncounterBuilder } from "../mystery-encounter";
+import MysteryEncounter, { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-encounter";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { TrainerType } from "#enums/trainer-type";
 import { Species } from "#enums/species";
@@ -146,7 +146,7 @@ async function spawnNextTrainerOrEndEncounter(scene: BattleScene) {
 
     // Give 10x Voucher
     const newModifier = modifierTypes.VOUCHER_PREMIUM().newModifier();
-    scene.addModifier(newModifier);
+    await scene.addModifier(newModifier);
     scene.playSound("item_fanfare");
     await showEncounterText(scene, i18next.t("battle:rewardGain", { modifierName: newModifier?.type.name }));
 

@@ -11,7 +11,7 @@ import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
-const TIMEOUT = 20 * 1000;
+
 
 describe("Moves - Astonish", () => {
   let phaserGame: Phaser.Game;
@@ -67,6 +67,6 @@ describe("Moves - Astonish", () => {
       await game.phaseInterceptor.to(BerryPhase, false);
 
       expect(leadPokemon.hp).toBeLessThan(leadPokemon.getMaxHp());
-    }, TIMEOUT
+    }
   );
 });

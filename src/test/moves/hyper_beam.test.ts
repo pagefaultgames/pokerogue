@@ -9,8 +9,6 @@ import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
-const TIMEOUT = 20 * 1000; // 20 sec timeout for all tests
-
 describe("Moves - Hyper Beam", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
@@ -67,6 +65,6 @@ describe("Moves - Hyper Beam", () => {
       await game.phaseInterceptor.to(BerryPhase, false);
 
       expect(enemyPokemon.hp).toBeLessThan(enemyPostAttackHp);
-    }, TIMEOUT
+    }
   );
 });

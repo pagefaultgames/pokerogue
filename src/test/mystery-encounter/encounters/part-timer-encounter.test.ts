@@ -80,22 +80,6 @@ describe("Part-Timer - Mystery Encounter", () => {
     expect(scene.currentBattle?.mysteryEncounter?.encounterType).not.toBe(MysteryEncounterType.PART_TIMER);
   });
 
-  it("should not run below wave 10", async () => {
-    game.override.startingWave(9);
-
-    await game.runToMysteryEncounter();
-
-    expect(scene.currentBattle?.mysteryEncounter?.encounterType).not.toBe(MysteryEncounterType.PART_TIMER);
-  });
-
-  it("should not run above wave 179", async () => {
-    game.override.startingWave(181);
-
-    await game.runToMysteryEncounter();
-
-    expect(scene.currentBattle.mysteryEncounter).toBeUndefined();
-  });
-
   describe("Option 1 - Make Deliveries", () => {
     it("should have the correct properties", () => {
       const option = PartTimerEncounter.options[0];

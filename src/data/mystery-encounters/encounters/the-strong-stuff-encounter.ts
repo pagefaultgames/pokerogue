@@ -2,7 +2,7 @@ import { EnemyPartyConfig, initBattleWithEnemyConfig, loadCustomMovesForEncounte
 import { modifierTypes, PokemonHeldItemModifierType, } from "#app/modifier/modifier-type";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import BattleScene from "#app/battle-scene";
-import MysteryEncounter, { MysteryEncounterBuilder } from "../mystery-encounter";
+import MysteryEncounter, { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-encounter";
 import { getPokemonSpecies } from "#app/data/pokemon-species";
 import { Species } from "#enums/species";
 import { Nature } from "#app/data/nature";
@@ -36,6 +36,7 @@ export const TheStrongStuffEncounter: MysteryEncounter =
     .withEncounterTier(MysteryEncounterTier.GREAT)
     .withSceneWaveRangeRequirement(...CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES)
     .withScenePartySizeRequirement(3, 6) // Must have at least 3 pokemon in party
+    .withMaxAllowedEncounters(1)
     .withHideWildIntroMessage(true)
     .withAutoHideIntroVisuals(false)
     .withIntroSpriteConfigs([
@@ -70,7 +71,7 @@ export const TheStrongStuffEncounter: MysteryEncounter =
 
       // Calculate boss mon
       const config: EnemyPartyConfig = {
-        levelAdditiveMultiplier: 1,
+        levelAdditiveModifier: 1,
         disableSwitch: true,
         pokemonConfigs: [
           {
@@ -159,6 +160,11 @@ export const TheStrongStuffEncounter: MysteryEncounter =
         encounter.setDialogueToken("increaseValue", BST_INCREASE_VALUE.toString());
         await showEncounterText(scene, `${namespace}.option.1.selected_2`, null, undefined, true);
 
+        encounter.dialogue.outro = [
+          {
+            text: `${namespace}.outro`,
+          }
+        ];
         setEncounterRewards(scene, { fillRemaining: true });
         leaveEncounterWithoutBattle(scene, true);
         return true;
@@ -192,6 +198,7 @@ export const TheStrongStuffEncounter: MysteryEncounter =
             ignorePp: true
           });
 
+        encounter.dialogue.outro = [];
         transitionMysteryEncounterIntroVisuals(scene, true, true, 500);
         await initBattleWithEnemyConfig(scene, encounter.enemyPartyConfigs[0]);
       }

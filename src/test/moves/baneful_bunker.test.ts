@@ -7,7 +7,7 @@ import { Moves } from "#enums/moves";
 import { BattlerIndex } from "#app/battle";
 import { StatusEffect } from "#app/enums/status-effect";
 
-const TIMEOUT = 20 * 1000;
+
 
 describe("Moves - Baneful Bunker", () => {
   let phaserGame: Phaser.Game;
@@ -50,7 +50,7 @@ describe("Moves - Baneful Bunker", () => {
       await game.phaseInterceptor.to("BerryPhase", false);
       expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp());
       expect(leadPokemon.status?.effect  === StatusEffect.POISON).toBeTruthy();
-    }, TIMEOUT
+    }
   );
   test(
     "should protect the user and poison attackers that make contact, regardless of accuracy checks",
@@ -68,7 +68,7 @@ describe("Moves - Baneful Bunker", () => {
       await game.phaseInterceptor.to("BerryPhase", false);
       expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp());
       expect(leadPokemon.status?.effect  === StatusEffect.POISON).toBeTruthy();
-    }, TIMEOUT
+    }
   );
 
   test(
@@ -88,6 +88,6 @@ describe("Moves - Baneful Bunker", () => {
       await game.phaseInterceptor.to("BerryPhase", false);
       expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp());
       expect(leadPokemon.status?.effect  === StatusEffect.POISON).toBeFalsy();
-    }, TIMEOUT
+    }
   );
 });

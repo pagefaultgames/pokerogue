@@ -16,8 +16,6 @@ import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 
-const TIMEOUT = 20 * 1000; // 20 sec timeout
-
 describe("Moves - Substitute", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
@@ -57,7 +55,7 @@ describe("Moves - Substitute", () => {
       await game.phaseInterceptor.to("MoveEndPhase", false);
 
       expect(leadPokemon.hp).toBe(Math.ceil(leadPokemon.getMaxHp() * 3/4));
-    }, TIMEOUT
+    }
   );
 
   it(
@@ -81,7 +79,7 @@ describe("Moves - Substitute", () => {
 
       expect(leadPokemon.hp).toBe(postSubHp);
       expect(leadPokemon.getTag(BattlerTagType.SUBSTITUTE)).toBeDefined();
-    }, TIMEOUT
+    }
   );
 
   it(
@@ -107,7 +105,7 @@ describe("Moves - Substitute", () => {
 
       expect(leadPokemon.hp).toBe(postSubHp);
       expect(leadPokemon.getTag(BattlerTagType.SUBSTITUTE)).toBeUndefined();
-    }, TIMEOUT
+    }
   );
 
   it(
@@ -148,7 +146,7 @@ describe("Moves - Substitute", () => {
 
       expect(leadPokemon.getTag(BattlerTagType.SUBSTITUTE)).toBeDefined();
       expect(leadPokemon.hp).toBeLessThan(postSubHp);
-    }, TIMEOUT
+    }
   );
 
   it(
@@ -172,7 +170,7 @@ describe("Moves - Substitute", () => {
 
       expect(leadPokemon.getTag(BattlerTagType.SUBSTITUTE)).toBeDefined();
       expect(leadPokemon.hp).toBeLessThan(postSubHp);
-    }, TIMEOUT
+    }
   );
 
   it(
@@ -192,7 +190,7 @@ describe("Moves - Substitute", () => {
       await game.phaseInterceptor.to("MoveEndPhase", false);
 
       expect(leadPokemon.getStatStage(Stat.ATK)).toBe(2);
-    }, TIMEOUT
+    }
   );
 
   it(
@@ -213,7 +211,7 @@ describe("Moves - Substitute", () => {
       await game.phaseInterceptor.to("BerryPhase", false);
 
       expect(enemyPokemon.hp).toBeLessThan(enemyPokemon.getMaxHp());
-    }, TIMEOUT
+    }
   );
 
   it(
@@ -233,7 +231,7 @@ describe("Moves - Substitute", () => {
       await game.phaseInterceptor.to("BerryPhase", false);
 
       expect(leadPokemon.getTag(TrappedTag)).toBeUndefined();
-    }, TIMEOUT
+    }
   );
 
   it(
@@ -253,7 +251,7 @@ describe("Moves - Substitute", () => {
       await game.phaseInterceptor.to("BerryPhase", false);
 
       expect(leadPokemon.getStatStage(Stat.DEF)).toBe(0);
-    }, TIMEOUT
+    }
   );
 
   it(
@@ -272,7 +270,7 @@ describe("Moves - Substitute", () => {
       await game.phaseInterceptor.to("BerryPhase", false);
 
       expect(leadPokemon.status?.effect).not.toBe(StatusEffect.PARALYSIS);
-    }, TIMEOUT
+    }
   );
 
   it(
@@ -293,7 +291,7 @@ describe("Moves - Substitute", () => {
       await game.phaseInterceptor.to("BerryPhase", false);
 
       expect(leadPokemon.getHeldItems().length).toBe(1);
-    }, TIMEOUT
+    }
   );
 
   it(
@@ -314,7 +312,7 @@ describe("Moves - Substitute", () => {
       await game.phaseInterceptor.to("MoveEndPhase", false);
 
       expect(enemyPokemon.getHeldItems().length).toBe(enemyNumItems);
-    }, TIMEOUT
+    }
   );
 
   it(
@@ -339,7 +337,7 @@ describe("Moves - Substitute", () => {
 
       expect(leadPokemon.getHeldItems().length).toBe(1);
       expect(enemyPokemon.hp).toBe(enemyPostAttackHp);
-    }, TIMEOUT
+    }
   );
 
   it(
@@ -358,7 +356,7 @@ describe("Moves - Substitute", () => {
       await game.phaseInterceptor.to("BerryPhase", false);
 
       expect(leadPokemon.getStatStage(Stat.ATK)).toBe(2);
-    }, TIMEOUT
+    }
   );
 
   it(
@@ -404,7 +402,7 @@ describe("Moves - Substitute", () => {
       const subTag = switchedPokemon.getTag(SubstituteTag)!;
       expect(subTag).toBeDefined();
       expect(subTag.hp).toBe(Math.floor(leadPokemon.getMaxHp() * 1/4));
-    }, TIMEOUT
+    }
   );
 
   it(
@@ -422,7 +420,7 @@ describe("Moves - Substitute", () => {
       await game.phaseInterceptor.to("BerryPhase", false);
 
       expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp());
-    }, TIMEOUT
+    }
   );
 
   it(
@@ -447,7 +445,7 @@ describe("Moves - Substitute", () => {
 
       expect(playerPokemon.getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);
       expect(enemyPokemon.hp).toBeLessThan(enemyPokemon.getMaxHp());
-    }, TIMEOUT
+    }
   );
 
   it(
@@ -467,7 +465,7 @@ describe("Moves - Substitute", () => {
       await game.phaseInterceptor.to("BerryPhase", false);
 
       expect(playerPokemon.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
-    }, TIMEOUT
+    }
   );
 
   it(
@@ -488,7 +486,7 @@ describe("Moves - Substitute", () => {
       await game.phaseInterceptor.to("MoveEndPhase");
 
       expect(enemyPokemon.status?.effect).not.toBe(StatusEffect.BURN);
-    }, TIMEOUT
+    }
   );
 
   it(

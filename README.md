@@ -56,7 +56,7 @@ Check out [Github Issues](https://github.com/pagefaultgames/pokerogue/issues) to
   - Pokémon Legends: Arceus
   - Pokémon Scarlet/Violet
   - Firel (Custom Ice Cave, Laboratory, Metropolis, Plains, Power Plant, Seabed, Space, and Volcano biome music)
-  - Lmz (Custom Jungle biome music)
+  - Lmz (Custom Ancient Ruins, Jungle, and Lake biome music)
   - Andr06 (Custom Slum and Sea biome music)
 
 ### 🎵 Sound Effects

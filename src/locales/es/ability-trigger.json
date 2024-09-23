@@ -4,7 +4,7 @@
   "costar": "¡{{pokemonName}} copió los cambios de características de {{allyName}}!",
   "iceFaceAvoidedDamage": "¡{{pokemonNameWithAffix}} evitó\ndaño con {{abilityName}}!",
   "perishBody": "¡{{abilityName}} de {{pokemonName}} debilitará a ambos Pokémon en 3 turnos!",
-  "poisonHeal": "¡{{pokemonNameWithAffix}} restauró algunos de sus PS gracias a {{abilityName}}!",
+  "poisonHeal": "¡{{pokemonName}} restauró algunos de sus PS gracias a {{abilityName}}!",
   "trace": "¡{{pokemonName}} ha copiado la habilidad {{abilityName}} \nde {{targetName}}!",
   "windPowerCharged": "¡{{pokemonName}} se ha cargado de electricidad gracias a {{moveName}}!",
   "quickDraw": "¡{{pokemonName}} ataca primero gracias a la habilidad Mano Rápida!",

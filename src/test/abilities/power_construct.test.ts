@@ -7,7 +7,7 @@ import { Species } from "#enums/species";
 import GameManager from "#test/utils/gameManager";
 import { afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest";
 
-const TIMEOUT = 20 * 1000;
+
 
 describe("Abilities - POWER CONSTRUCT", () => {
   let phaserGame: Phaser.Game;
@@ -60,6 +60,5 @@ describe("Abilities - POWER CONSTRUCT", () => {
 
       expect(zygarde!.formIndex).toBe(baseForm);
     },
-    TIMEOUT
   );
 });

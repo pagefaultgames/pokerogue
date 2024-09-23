@@ -74,22 +74,6 @@ describe("Lost at Sea - Mystery Encounter", () => {
     expect(game.scene.currentBattle.mysteryEncounter?.encounterType).not.toBe(MysteryEncounterType.LOST_AT_SEA);
   });
 
-  it("should not run below wave 11", async () => {
-    game.override.startingWave(9);
-
-    await game.runToMysteryEncounter();
-
-    expect(game.scene.currentBattle.mysteryEncounter).toBeUndefined();
-  });
-
-  it("should not run above wave 179", async () => {
-    game.override.startingWave(181);
-
-    await game.runToMysteryEncounter();
-
-    expect(game.scene.currentBattle.mysteryEncounter).toBeUndefined();
-  });
-
   it("should initialize fully", () => {
     initSceneWithoutEncounterPhase(scene, defaultParty);
     scene.currentBattle.mysteryEncounter = LostAtSeaEncounter;

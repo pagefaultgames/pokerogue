@@ -35,7 +35,7 @@ describe("Moves - Haze", () => {
       game.override.ability(Abilities.NONE);
     });
 
-    it("should reset all stat changes of all Pokemon on field", { timeout: 10000 }, async () => {
+    it("should reset all stat changes of all Pokemon on field", async () => {
       await game.startBattle([Species.RATTATA]);
       const user = game.scene.getPlayerPokemon()!;
       const enemy = game.scene.getEnemyPokemon()!;

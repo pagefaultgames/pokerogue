@@ -6,7 +6,7 @@ import { MoveResult } from "#app/field/pokemon";
 import GameManager from "#test/utils/gameManager";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
-const TIMEOUT = 20 * 1000;
+
 
 describe("Moves - Gastro Acid", () => {
   let phaserGame: Phaser.Game;
@@ -60,7 +60,7 @@ describe("Moves - Gastro Acid", () => {
 
     expect(enemyField[0].hp).toBeLessThan(enemyField[0].getMaxHp());
     expect(enemyField[1].isFullHp()).toBe(true);
-  }, TIMEOUT);
+  });
 
   it("fails if used on an enemy with an already-suppressed ability", async () => {
     game.override.battleType(null);
@@ -78,5 +78,5 @@ describe("Moves - Gastro Acid", () => {
     await game.phaseInterceptor.to("TurnInitPhase");
 
     expect(game.scene.getPlayerPokemon()!.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
-  }, TIMEOUT);
+  });
 });

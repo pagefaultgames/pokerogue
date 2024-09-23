@@ -1,0 +1,41 @@
+{
+	"textures": [
+		{
+			"image": "dark_deal_scientist.png",
+			"format": "RGBA8888",
+			"size": {
+				"w": 46,
+				"h": 76
+			},
+			"scale": 1,
+			"frames": [
+				{
+					"filename": "0001.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 44,
+						"h": 74
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 44,
+						"h": 74
+					},
+					"frame": {
+						"x": 1,
+						"y": 1,
+						"w": 44,
+						"h": 74
+					}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "https://www.codeandweb.com/texturepacker",
+		"version": "3.0",
+		"smartupdate": "$TexturePacker:SmartUpdate:a7f8ff2bbb362868f51125c254eb6681:cf76e61ddd31a8f46af67ced168c44a2:4fc09abe16c0608828269e5da81d0744$"
+	}
+}

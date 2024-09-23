@@ -259,23 +259,23 @@ export class WeatherRequirement extends EncounterSceneRequirement {
 
 export class PartySizeRequirement extends EncounterSceneRequirement {
   partySizeRange: [number, number];
-  excludeFainted: boolean;
+  excludeDisallowedPokemon: boolean;
 
   /**
    * Used for specifying a party size requirement
    * If min and max are equivalent, will check for exact size
    * @param partySizeRange
-   * @param excludeFainted
+   * @param excludeDisallowedPokemon
    */
-  constructor(partySizeRange: [number, number], excludeFainted: boolean) {
+  constructor(partySizeRange: [number, number], excludeDisallowedPokemon: boolean) {
     super();
     this.partySizeRange = partySizeRange;
-    this.excludeFainted = excludeFainted;
+    this.excludeDisallowedPokemon = excludeDisallowedPokemon;
   }
 
   override meetsRequirement(scene: BattleScene): boolean {
     if (!isNullOrUndefined(this.partySizeRange) && this.partySizeRange?.[0] <= this.partySizeRange?.[1]) {
-      const partySize = this.excludeFainted ? scene.getParty().filter(p => p.isAllowedInBattle()).length : scene.getParty().length;
+      const partySize = this.excludeDisallowedPokemon ? scene.getParty().filter(p => p.isAllowedInBattle()).length : scene.getParty().length;
       if (partySize >= 0 && (this.partySizeRange?.[0] >= 0 && this.partySizeRange?.[0] > partySize) || (this.partySizeRange?.[1] >= 0 && this.partySizeRange?.[1] < partySize)) {
         return false;
       }
@@ -767,12 +767,14 @@ export class HeldItemRequirement extends EncounterPokemonRequirement {
   requiredHeldItemModifiers: string[];
   minNumberOfPokemon: number;
   invertQuery: boolean;
+  requireTransferable: boolean;
 
-  constructor(heldItem: string | string[], minNumberOfPokemon: number = 1, invertQuery: boolean = false) {
+  constructor(heldItem: string | string[], minNumberOfPokemon: number = 1, invertQuery: boolean = false, requireTransferable: boolean = true) {
     super();
     this.minNumberOfPokemon = minNumberOfPokemon;
     this.invertQuery = invertQuery;
     this.requiredHeldItemModifiers = Array.isArray(heldItem) ? heldItem : [heldItem];
+    this.requireTransferable = requireTransferable;
   }
 
   override meetsRequirement(scene: BattleScene): boolean {
@@ -787,21 +789,23 @@ export class HeldItemRequirement extends EncounterPokemonRequirement {
     if (!this.invertQuery) {
       return partyPokemon.filter((pokemon) => this.requiredHeldItemModifiers.some((heldItem) => {
         return pokemon.getHeldItems().some((it) => {
-          return it.constructor.name === heldItem;
+          return it.constructor.name === heldItem && (!this.requireTransferable || it.isTransferable);
         });
       }));
     } else {
       // for an inverted query, we only want to get the pokemon that have any held items that are NOT in requiredHeldItemModifiers
       // E.g. functions as a blacklist
       return partyPokemon.filter((pokemon) => pokemon.getHeldItems().filter((it) => {
-        return !this.requiredHeldItemModifiers.some(heldItem => it.constructor.name === heldItem);
+        return !this.requiredHeldItemModifiers.some(heldItem => it.constructor.name === heldItem)
+          && (!this.requireTransferable || it.isTransferable);
       }).length > 0);
     }
   }
 
   override getDialogueToken(scene: BattleScene, pokemon?: PlayerPokemon): [string, string] {
     const requiredItems = pokemon?.getHeldItems().filter((it) => {
-      return this.requiredHeldItemModifiers.some(heldItem => it.constructor.name === heldItem);
+      return this.requiredHeldItemModifiers.some(heldItem => it.constructor.name === heldItem)
+        && (!this.requireTransferable || it.isTransferable);
     });
     if (requiredItems && requiredItems.length > 0) {
       return ["heldItem", requiredItems[0].type.name];
@@ -814,12 +818,14 @@ export class AttackTypeBoosterHeldItemTypeRequirement extends EncounterPokemonRe
   requiredHeldItemTypes: Type[];
   minNumberOfPokemon: number;
   invertQuery: boolean;
+  requireTransferable: boolean;
 
-  constructor(heldItemTypes: Type | Type[], minNumberOfPokemon: number = 1, invertQuery: boolean = false) {
+  constructor(heldItemTypes: Type | Type[], minNumberOfPokemon: number = 1, invertQuery: boolean = false, requireTransferable: boolean = true) {
     super();
     this.minNumberOfPokemon = minNumberOfPokemon;
     this.invertQuery = invertQuery;
     this.requiredHeldItemTypes = Array.isArray(heldItemTypes) ? heldItemTypes : [heldItemTypes];
+    this.requireTransferable = requireTransferable;
   }
 
   override meetsRequirement(scene: BattleScene): boolean {
@@ -834,21 +840,29 @@ export class AttackTypeBoosterHeldItemTypeRequirement extends EncounterPokemonRe
     if (!this.invertQuery) {
       return partyPokemon.filter((pokemon) => this.requiredHeldItemTypes.some((heldItemType) => {
         return pokemon.getHeldItems().some((it) => {
-          return it instanceof AttackTypeBoosterModifier && (it.type as AttackTypeBoosterModifierType).moveType === heldItemType;
+          return it instanceof AttackTypeBoosterModifier
+            && (it.type as AttackTypeBoosterModifierType).moveType === heldItemType
+            && (!this.requireTransferable || it.isTransferable);
         });
       }));
     } else {
       // for an inverted query, we only want to get the pokemon that have any held items that are NOT in requiredHeldItemModifiers
       // E.g. functions as a blacklist
       return partyPokemon.filter((pokemon) => pokemon.getHeldItems().filter((it) => {
-        return !this.requiredHeldItemTypes.some(heldItemType => it instanceof AttackTypeBoosterModifier && (it.type as AttackTypeBoosterModifierType).moveType === heldItemType);
+        return !this.requiredHeldItemTypes.some(heldItemType =>
+          it instanceof AttackTypeBoosterModifier
+          && (it.type as AttackTypeBoosterModifierType).moveType === heldItemType
+          && (!this.requireTransferable || it.isTransferable));
       }).length > 0);
     }
   }
 
   override getDialogueToken(scene: BattleScene, pokemon?: PlayerPokemon): [string, string] {
     const requiredItems = pokemon?.getHeldItems().filter((it) => {
-      return this.requiredHeldItemTypes.some(heldItemType => it instanceof AttackTypeBoosterModifier && (it.type as AttackTypeBoosterModifierType).moveType === heldItemType);
+      return this.requiredHeldItemTypes.some(heldItemType =>
+        it instanceof AttackTypeBoosterModifier
+        && (it.type as AttackTypeBoosterModifierType).moveType === heldItemType)
+        && (!this.requireTransferable || it.isTransferable);
     });
     if (requiredItems && requiredItems.length > 0) {
       return ["heldItem", requiredItems[0].type.name];

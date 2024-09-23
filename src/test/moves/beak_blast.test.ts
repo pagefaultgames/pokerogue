@@ -10,7 +10,7 @@ import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
-const TIMEOUT = 20 * 1000;
+
 
 describe("Moves - Beak Blast", () => {
   let phaserGame: Phaser.Game;
@@ -54,7 +54,7 @@ describe("Moves - Beak Blast", () => {
 
       await game.phaseInterceptor.to(BerryPhase, false);
       expect(enemyPokemon.status?.effect).toBe(StatusEffect.BURN);
-    }, TIMEOUT
+    }
   );
 
   it(
@@ -74,7 +74,7 @@ describe("Moves - Beak Blast", () => {
 
       await game.phaseInterceptor.to(BerryPhase, false);
       expect(enemyPokemon.status?.effect).toBe(StatusEffect.BURN);
-    }, TIMEOUT
+    }
   );
 
   it(
@@ -94,7 +94,7 @@ describe("Moves - Beak Blast", () => {
 
       await game.phaseInterceptor.to(BerryPhase, false);
       expect(enemyPokemon.status?.effect).not.toBe(StatusEffect.BURN);
-    }, TIMEOUT
+    }
   );
 
   it(
@@ -110,7 +110,7 @@ describe("Moves - Beak Blast", () => {
 
       await game.phaseInterceptor.to(BerryPhase, false);
       expect(leadPokemon.turnData.hitCount).toBe(2);
-    }, TIMEOUT
+    }
   );
 
   it(
@@ -131,6 +131,6 @@ describe("Moves - Beak Blast", () => {
       await game.phaseInterceptor.to(TurnEndPhase);
       expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp());
       expect(leadPokemon.getTag(BattlerTagType.BEAK_BLAST_CHARGING)).toBeUndefined();
-    }, TIMEOUT
+    }
   );
 });

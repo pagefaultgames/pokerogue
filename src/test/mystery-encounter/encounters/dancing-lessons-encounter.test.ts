@@ -69,22 +69,6 @@ describe("Dancing Lessons - Mystery Encounter", () => {
     expect(DancingLessonsEncounter.options.length).toBe(3);
   });
 
-  it("should not run below wave 10", async () => {
-    game.override.startingWave(9);
-
-    await game.runToMysteryEncounter();
-
-    expect(scene.currentBattle?.mysteryEncounter?.encounterType).not.toBe(MysteryEncounterType.DANCING_LESSONS);
-  });
-
-  it("should not run above wave 179", async () => {
-    game.override.startingWave(181);
-
-    await game.runToMysteryEncounter();
-
-    expect(scene.currentBattle.mysteryEncounter).toBeUndefined();
-  });
-
   it("should not spawn outside of proper biomes", async () => {
     game.override.mysteryEncounterTier(MysteryEncounterTier.GREAT);
     game.override.startingBiome(Biome.SPACE);

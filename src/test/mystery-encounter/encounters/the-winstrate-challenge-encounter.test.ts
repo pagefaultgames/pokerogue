@@ -90,22 +90,6 @@ describe("The Winstrate Challenge - Mystery Encounter", () => {
     expect(scene.currentBattle?.mysteryEncounter?.encounterType).not.toBe(MysteryEncounterType.THE_WINSTRATE_CHALLENGE);
   });
 
-  it("should not run below wave 10", async () => {
-    game.override.startingWave(9);
-
-    await game.runToMysteryEncounter();
-
-    expect(scene.currentBattle?.mysteryEncounter?.encounterType).not.toBe(MysteryEncounterType.THE_WINSTRATE_CHALLENGE);
-  });
-
-  it("should not run above wave 179", async () => {
-    game.override.startingWave(181);
-
-    await game.runToMysteryEncounter();
-
-    expect(scene.currentBattle.mysteryEncounter).toBeUndefined();
-  });
-
   it("should initialize fully", async () => {
     initSceneWithoutEncounterPhase(scene, defaultParty);
     scene.currentBattle.mysteryEncounter = new MysteryEncounter(TheWinstrateChallengeEncounter);

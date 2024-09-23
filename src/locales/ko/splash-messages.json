@@ -1,5 +1,5 @@
 {
-  "battlesWon": "전투에서 승리하세요!",
+  "battlesWon": "{{count, number}} 전투에서 승리하세요!",
   "joinTheDiscord": "디스코드에 가입하세요!",
   "infiniteLevels": "무한한 레벨!",
   "everythingStacks": "모든 것이 누적됩니다!",

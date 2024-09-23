@@ -1077,7 +1077,7 @@
   },
   "thermalExchange": {
     "name": "Thermodynamique",
-    "description": "Lorsque le Pokémon est touché par une capacité de type Feu, il ne subit aucun dégât et son Attaque augmente."
+    "description": "Lorsque le Pokémon est touché par une capacité de type Feu, son Attaque augmente. Il ne peut pas être brulé."
   },
   "angerShell": {
     "name": "Courroupace",
@@ -1237,6 +1237,6 @@
   },
   "poisonPuppeteer": {
     "name": "Emprise Toxique",
-    "description": "Lorsque Pêchaminus empoisonne un Pokémon grâce à l’une de ses capacités, ce dernier devient également confus."
+    "description": "Lorsque le Pokémon en empoisonne un autre grâce à l’une de ses capacités, ce dernier devient également confus."
   }
 }

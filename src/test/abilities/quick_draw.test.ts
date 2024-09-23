@@ -55,7 +55,6 @@ describe("Abilities - Quick Draw", () => {
   }, 20000);
 
   test("does not triggered by non damage moves", {
-    timeout: 20000,
     retry: 5
   }, async () => {
     await game.startBattle();

@@ -7,7 +7,7 @@ import { Species } from "#enums/species";
 import GameManager from "#test/utils/gameManager";
 import { afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest";
 
-const TIMEOUT = 20 * 1000;
+
 
 describe("Abilities - BATTLE BOND", () => {
   let phaserGame: Phaser.Game;
@@ -60,6 +60,5 @@ describe("Abilities - BATTLE BOND", () => {
 
       expect(greninja!.formIndex).toBe(baseForm);
     },
-    TIMEOUT
   );
 });
