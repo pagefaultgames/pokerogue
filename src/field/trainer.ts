@@ -35,11 +35,16 @@ export default class Trainer extends Phaser.GameObjects.Container {
   public name: string;
   public partnerName: string;
 
-  constructor(scene: BattleScene, trainerType: TrainerType, variant: TrainerVariant, partyTemplateIndex?: integer, name?: string, partnerName?: string) {
+  constructor(scene: BattleScene, trainerType: TrainerType, variant: TrainerVariant, partyTemplateIndex?: integer, name?: string, partnerName?: string, trainerConfigOverride?: TrainerConfig) {
     super(scene, -72, 80);
     this.config = trainerConfigs.hasOwnProperty(trainerType)
       ? trainerConfigs[trainerType]
       : trainerConfigs[TrainerType.ACE_TRAINER];
+
+    if (trainerConfigOverride) {
+      this.config = trainerConfigOverride;
+    }
+
     this.variant = variant;
     this.partyTemplateIndex = Math.min(partyTemplateIndex !== undefined ? partyTemplateIndex : Utils.randSeedWeightedItem(this.config.partyTemplates.map((_, i) => i)),
       this.config.partyTemplates.length - 1);
@@ -420,12 +425,30 @@ export default class Trainer extends Phaser.GameObjects.Container {
       }
     }
 
-    if (retry && (attempt || 0) < 10) {
+    // Prompts reroll of party member species if species already present in the enemy party
+    if (this.checkDuplicateSpecies(ret)) {
+      console.log("Duplicate species detected, prompting reroll...");
+      retry = true;
+    }
+
+    if (retry && (attempt ?? 0) < 10) {
       console.log("Rerolling party member...");
-      ret = this.genNewPartyMemberSpecies(level, strength, (attempt || 0) + 1);
+      ret = this.genNewPartyMemberSpecies(level, strength, (attempt ?? 0) + 1);
     }
 
     return ret;
+  }
+
+  /**
+   * Checks if the enemy trainer already has the Pokemon species in their party
+   * @param {PokemonSpecies} species {@linkcode PokemonSpecies}
+   * @returns `true` if the species is already present in the party
+   */
+  checkDuplicateSpecies(species: PokemonSpecies): boolean {
+    const currentPartySpecies = this.scene.getEnemyParty().map(p => {
+      return p.species.speciesId;
+    });
+    return currentPartySpecies.includes(species.speciesId);
   }
 
   getPartyMemberMatchupScores(trainerSlot: TrainerSlot = TrainerSlot.NONE, forSwitch: boolean = false): [integer, integer][] {

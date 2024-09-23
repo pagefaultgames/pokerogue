@@ -110,7 +110,7 @@ export class FaintPhase extends PokemonPhase {
       }
     } else {
       this.scene.unshiftPhase(new VictoryPhase(this.scene, this.battlerIndex));
-      if (this.scene.currentBattle.battleType === BattleType.TRAINER) {
+      if ([BattleType.TRAINER, BattleType.MYSTERY_ENCOUNTER].includes(this.scene.currentBattle.battleType)) {
         const hasReservePartyMember = !!this.scene.getEnemyParty().filter(p => p.isActive() && !p.isOnField() && p.trainerSlot === (pokemon as EnemyPokemon).trainerSlot).length;
         if (hasReservePartyMember) {
           this.scene.pushPhase(new SwitchSummonPhase(this.scene, this.fieldIndex, -1, false, false, false));
@@ -124,9 +124,6 @@ export class FaintPhase extends PokemonPhase {
       this.scene.redirectPokemonMoves(pokemon, allyPokemon);
     }
 
-    pokemon.lapseTags(BattlerTagLapseType.FAINT);
-    this.scene.getField(true).filter(p => p !== pokemon).forEach(p => p.removeTagsBySourceId(pokemon.id));
-
     pokemon.faintCry(() => {
       if (pokemon instanceof PlayerPokemon) {
         pokemon.addFriendship(-10);
@@ -139,7 +136,10 @@ export class FaintPhase extends PokemonPhase {
         y: pokemon.y + 150,
         ease: "Sine.easeIn",
         onComplete: () => {
-          pokemon.setVisible(false);
+          pokemon.resetSprite();
+          pokemon.lapseTags(BattlerTagLapseType.FAINT);
+          this.scene.getField(true).filter(p => p !== pokemon).forEach(p => p.removeTagsBySourceId(pokemon.id));
+
           pokemon.y -= 150;
           pokemon.trySetStatus(StatusEffect.FAINT);
           if (pokemon.isPlayer()) {

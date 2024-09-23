@@ -1,4 +1,5 @@
 import { MoneyFormat } from "#enums/money-format";
+import { Moves } from "#enums/moves";
 import i18next from "i18next";
 
 export const MissingTextureKey = "__MISSING";
@@ -588,6 +589,14 @@ export function isNullOrUndefined(object: any): boolean {
 }
 
 /**
+ * Capitalizes the first letter of a string
+ * @param str
+ */
+export function capitalizeFirstLetter(str: string) {
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
+/**
  * This function is used in the context of a Pokémon battle game to calculate the actual integer damage value from a float result.
  * Many damage calculation formulas involve various parameters and result in float values.
  * The actual damage applied to a Pokémon's HP must be an integer.
@@ -619,4 +628,13 @@ export function getLocalizedSpriteKey(baseKey: string) {
  */
 export function isBetween(num: number, min: number, max: number): boolean {
   return num >= min && num <= max;
+}
+
+/**
+ * Helper method to return the animation filename for a given move
+ *
+ * @param move the move for which the animation filename is needed
+ */
+export function animationFileName(move: Moves): string {
+  return Moves[move].toLowerCase().replace(/\_/g, "-");
 }
