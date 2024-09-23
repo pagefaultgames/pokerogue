@@ -2281,6 +2281,36 @@ export class TarShotTag extends BattlerTag {
   }
 }
 
+/**
+ * Battler Tag that keeps track of how many times the user has Autotomized
+ * Each count of Autotomization reduces the weight by 100kg
+ */
+export class AutotomizedTag extends BattlerTag {
+  public autotomizeCount: number = 0;
+  constructor(sourceMove: Moves = Moves.AUTOTOMIZE) {
+    super(BattlerTagType.AUTOTOMIZED, BattlerTagLapseType.CUSTOM, 1, sourceMove);
+  }
+
+  /**
+   * Adds an autotomize count to the Pokemon. Each stack reduces weight by 100kg
+   * If the Pokemon is over 0.1kg it also displays a message.
+   * @param pokemon The Pokemon that is being autotomized
+   */
+  onAdd(pokemon: Pokemon): void {
+    const minWeight = 0.1;
+    if (pokemon.getWeight() > minWeight) {
+      pokemon.scene.queueMessage(i18next.t("battlerTags:autotomizeOnAdd", {
+        pokemonNameWithAffix: getPokemonNameWithAffix(pokemon)
+      }));
+    }
+    this.autotomizeCount += 1;
+  }
+
+  onOverlap(pokemon: Pokemon): void {
+    this.onAdd(pokemon);
+  }
+}
+
 export class SubstituteTag extends BattlerTag {
   /** The substitute's remaining HP. If HP is depleted, the Substitute fades. */
   public hp: number;
@@ -2568,6 +2598,8 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: number, source
     return new GorillaTacticsTag();
   case BattlerTagType.SUBSTITUTE:
     return new SubstituteTag(sourceMove, sourceId);
+  case BattlerTagType.AUTOTOMIZED:
+    return new AutotomizedTag();
   case BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON:
     return new MysteryEncounterPostSummonTag();
   case BattlerTagType.HEAL_BLOCK:
