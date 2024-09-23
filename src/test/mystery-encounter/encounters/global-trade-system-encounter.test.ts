@@ -69,20 +69,18 @@ describe("Global Trade System - Mystery Encounter", () => {
     expect(GlobalTradeSystemEncounter.options.length).toBe(4);
   });
 
-  it("should not run below wave 10", async () => {
-    game.override.startingWave(9);
+  it("should not loop infinitely when generating trade options for extreme BST non-legendaries", async () => {
+    const extremeBstTeam = [Species.SLAKING, Species.WISHIWASHI, Species.SUNKERN];
+    await game.runToMysteryEncounter(MysteryEncounterType.GLOBAL_TRADE_SYSTEM, extremeBstTeam);
 
-    await game.runToMysteryEncounter();
-
-    expect(scene.currentBattle?.mysteryEncounter?.encounterType).not.toBe(MysteryEncounterType.GLOBAL_TRADE_SYSTEM);
-  });
-
-  it("should not run above wave 179", async () => {
-    game.override.startingWave(181);
-
-    await game.runToMysteryEncounter();
-
-    expect(scene.currentBattle.mysteryEncounter).toBeUndefined();
+    expect(GlobalTradeSystemEncounter.encounterType).toBe(MysteryEncounterType.GLOBAL_TRADE_SYSTEM);
+    expect(GlobalTradeSystemEncounter.encounterTier).toBe(MysteryEncounterTier.COMMON);
+    expect(GlobalTradeSystemEncounter.dialogue).toBeDefined();
+    expect(GlobalTradeSystemEncounter.dialogue.intro).toStrictEqual([{ text: `${namespace}.intro` }]);
+    expect(GlobalTradeSystemEncounter.dialogue.encounterOptionsDialogue?.title).toBe(`${namespace}.title`);
+    expect(GlobalTradeSystemEncounter.dialogue.encounterOptionsDialogue?.description).toBe(`${namespace}.description`);
+    expect(GlobalTradeSystemEncounter.dialogue.encounterOptionsDialogue?.query).toBe(`${namespace}.query`);
+    expect(GlobalTradeSystemEncounter.options.length).toBe(4);
   });
 
   it("should not spawn outside of CIVILIZATION_ENCOUNTER_BIOMES", async () => {

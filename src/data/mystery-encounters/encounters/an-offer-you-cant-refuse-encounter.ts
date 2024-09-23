@@ -3,9 +3,9 @@ import { modifierTypes } from "#app/modifier/modifier-type";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { Species } from "#enums/species";
 import BattleScene from "#app/battle-scene";
-import MysteryEncounter, { MysteryEncounterBuilder } from "../mystery-encounter";
-import { MysteryEncounterOptionBuilder } from "../mystery-encounter-option";
-import { AbilityRequirement, CombinationPokemonRequirement, MoveRequirement } from "../mystery-encounter-requirements";
+import MysteryEncounter, { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-encounter";
+import { MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/mystery-encounter-option";
+import { AbilityRequirement, CombinationPokemonRequirement, MoveRequirement } from "#app/data/mystery-encounters/mystery-encounter-requirements";
 import { getHighestStatTotalPlayerPokemon } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
 import { EXTORTION_ABILITIES, EXTORTION_MOVES } from "#app/data/mystery-encounters/requirements/requirement-groups";
 import { getPokemonSpecies } from "#app/data/pokemon-species";
@@ -26,7 +26,7 @@ export const AnOfferYouCantRefuseEncounter: MysteryEncounter =
   MysteryEncounterBuilder.withEncounterType(MysteryEncounterType.AN_OFFER_YOU_CANT_REFUSE)
     .withEncounterTier(MysteryEncounterTier.GREAT)
     .withSceneWaveRangeRequirement(...CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES)
-    .withScenePartySizeRequirement(2, 6) // Must have at least 2 pokemon in party
+    .withScenePartySizeRequirement(2, 6, true) // Must have at least 2 pokemon in party
     .withIntroSpriteConfigs([
       {
         spriteKey: Species.LIEPARD.toString(),
@@ -60,7 +60,7 @@ export const AnOfferYouCantRefuseEncounter: MysteryEncounter =
     .withQuery(`${namespace}.query`)
     .withOnInit((scene: BattleScene) => {
       const encounter = scene.currentBattle.mysteryEncounter!;
-      const pokemon = getHighestStatTotalPlayerPokemon(scene, false);
+      const pokemon = getHighestStatTotalPlayerPokemon(scene, true, true);
       const price = scene.getWaveMoneyAmount(10);
 
       encounter.setDialogueToken("strongestPokemon", pokemon.getNameToRender());

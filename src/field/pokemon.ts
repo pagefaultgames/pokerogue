@@ -3,7 +3,7 @@ import BattleScene, { AnySound } from "../battle-scene";
 import { Variant, VariantSet, variantColorCache } from "#app/data/variant";
 import { variantData } from "#app/data/variant";
 import BattleInfo, { PlayerBattleInfo, EnemyBattleInfo } from "../ui/battle-info";
-import Move, { HighCritAttr, DealsDoubleDamageToTagAttr, applyMoveAttrs, FixedDamageAttr, VariableAtkAttr, allMoves, MoveCategory, TypelessAttr, CritOnlyAttr, getMoveTargets, OneHitKOAttr, VariableMoveTypeAttr, VariableDefAttr, AttackMove, ModifiedDamageAttr, VariableMoveTypeMultiplierAttr, IgnoreOpponentStatStagesAttr, SacrificialAttr, VariableMoveCategoryAttr, CounterDamageAttr, StatStageChangeAttr, RechargeAttr, ChargeAttr, IgnoreWeatherTypeDebuffAttr, BypassBurnDamageReductionAttr, SacrificialAttrOnHit, OneHitKOAccuracyAttr, RespectAttackTypeImmunityAttr, MoveTarget } from "../data/move";
+import Move, { HighCritAttr, HitsTagAttr, applyMoveAttrs, FixedDamageAttr, VariableAtkAttr, allMoves, MoveCategory, TypelessAttr, CritOnlyAttr, getMoveTargets, OneHitKOAttr, VariableMoveTypeAttr, VariableDefAttr, AttackMove, ModifiedDamageAttr, VariableMoveTypeMultiplierAttr, IgnoreOpponentStatStagesAttr, SacrificialAttr, VariableMoveCategoryAttr, CounterDamageAttr, StatStageChangeAttr, RechargeAttr, ChargeAttr, IgnoreWeatherTypeDebuffAttr, BypassBurnDamageReductionAttr, SacrificialAttrOnHit, OneHitKOAccuracyAttr, RespectAttackTypeImmunityAttr, MoveTarget } from "../data/move";
 import { default as PokemonSpecies, PokemonSpeciesForm, SpeciesFormKey, getFusedSpeciesName, getPokemonSpecies, getPokemonSpeciesForm, getStarterValueFriendshipCap, speciesStarters, starterPassiveAbilities } from "../data/pokemon-species";
 import { Constructor, isNullOrUndefined, randSeedInt } from "#app/utils";
 import * as Utils from "../utils";
@@ -99,7 +99,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   public luck: integer;
   public pauseEvolutions: boolean;
   public pokerus: boolean;
-  public wildFlee: boolean;
+  public switchOutStatus: boolean;
   public evoCounter: integer;
 
   public fusionSpecies: PokemonSpecies | null;
@@ -109,6 +109,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   public fusionVariant: Variant;
   public fusionGender: Gender;
   public fusionLuck: integer;
+  public fusionMysteryEncounterPokemonData: MysteryEncounterPokemonData | null;
 
   private summonDataPrimer: PokemonSummonData | null;
 
@@ -145,7 +146,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     this.species = species;
     this.pokeball = dataSource?.pokeball || PokeballType.POKEBALL;
     this.level = level;
-    this.wildFlee = false;
+    this.switchOutStatus = false;
 
     // Determine the ability index
     if (abilityIndex !== undefined) {
@@ -206,6 +207,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       this.fusionVariant = dataSource.fusionVariant || 0;
       this.fusionGender = dataSource.fusionGender;
       this.fusionLuck = dataSource.fusionLuck;
+      this.fusionMysteryEncounterPokemonData = dataSource.fusionMysteryEncounterPokemonData;
       this.usedTMs = dataSource.usedTMs ?? [];
       this.mysteryEncounterPokemonData = new MysteryEncounterPokemonData(dataSource.mysteryEncounterPokemonData);
     } else {
@@ -343,7 +345,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   isAllowed(): boolean {
     const challengeAllowed = new Utils.BooleanHolder(true);
     applyChallenges(this.scene.gameMode, ChallengeType.POKEMON_IN_BATTLE, this, challengeAllowed);
-    return !this.wildFlee && challengeAllowed.value;
+    return challengeAllowed.value;
   }
 
   isActive(onField?: boolean): boolean {
@@ -584,7 +586,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   getSpriteScale(): number {
     const formKey = this.getFormKey();
-    if (formKey.indexOf(SpeciesFormKey.GIGANTAMAX) > -1 || formKey.indexOf(SpeciesFormKey.ETERNAMAX) > -1) {
+    if (this.isMax() === true || formKey === "segin-starmobile" || formKey === "schedar-starmobile" || formKey === "navi-starmobile" || formKey === "ruchbah-starmobile" || formKey === "caph-starmobile") {
       return 1.5;
     } else if (this.mysteryEncounterPokemonData.spriteScale > 0) {
       return this.mysteryEncounterPokemonData.spriteScale;
@@ -1164,11 +1166,31 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     }
 
     if (!types.length || !includeTeraType) {
-      if (this.mysteryEncounterPokemonData.types && this.mysteryEncounterPokemonData.types.length > 0) {
-        // "Permanent" override for a Pokemon's normal types, currently only used by Mystery Encounters
-        this.mysteryEncounterPokemonData.types.forEach(t => types.push(t));
-      } else if (!ignoreOverride && this.summonData?.types && this.summonData.types.length > 0) {
+      if (!ignoreOverride && this.summonData?.types && this.summonData.types.length > 0) {
         this.summonData.types.forEach(t => types.push(t));
+      } else if (this.mysteryEncounterPokemonData.types && this.mysteryEncounterPokemonData.types.length > 0) {
+        // "Permanent" override for a Pokemon's normal types, currently only used by Mystery Encounters
+        types.push(this.mysteryEncounterPokemonData.types[0]);
+
+        // Fusing a Pokemon onto something with "permanently changed" types will still apply the fusion's types as normal
+        const fusionSpeciesForm = this.getFusionSpeciesForm(ignoreOverride);
+        if (fusionSpeciesForm) {
+          // Check if the fusion Pokemon also had "permanently changed" types
+          const fusionMETypes = this.fusionMysteryEncounterPokemonData?.types;
+          if (fusionMETypes && fusionMETypes.length >= 2 && fusionMETypes[1] !== types[0]) {
+            types.push(fusionMETypes[1]);
+          } else if (fusionMETypes && fusionMETypes.length === 1 && fusionMETypes[0] !== types[0]) {
+            types.push(fusionMETypes[0]);
+          } else if (fusionSpeciesForm.type2 !== null && fusionSpeciesForm.type2 !== types[0]) {
+            types.push(fusionSpeciesForm.type2);
+          } else if (fusionSpeciesForm.type1 !== types[0]) {
+            types.push(fusionSpeciesForm.type1);
+          }
+        }
+
+        if (types.length === 1 && this.mysteryEncounterPokemonData.types.length >= 2) {
+          types.push(this.mysteryEncounterPokemonData.types[1]);
+        }
       } else {
         const speciesForm = this.getSpeciesForm(ignoreOverride);
 
@@ -1176,7 +1198,14 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
         const fusionSpeciesForm = this.getFusionSpeciesForm(ignoreOverride);
         if (fusionSpeciesForm) {
-          if (fusionSpeciesForm.type2 !== null && fusionSpeciesForm.type2 !== speciesForm.type1) {
+          // Check if the fusion Pokemon also had "permanently changed" types
+          // Otherwise, use standard fusion type logic
+          const fusionMETypes = this.fusionMysteryEncounterPokemonData?.types;
+          if (fusionMETypes && fusionMETypes.length >= 2 && fusionMETypes[1] !== types[0]) {
+            types.push(fusionMETypes[1]);
+          } else if (fusionMETypes && fusionMETypes.length === 1 && fusionMETypes[0] !== types[0]) {
+            types.push(fusionMETypes[0]);
+          } else if (fusionSpeciesForm.type2 !== null && fusionSpeciesForm.type2 !== speciesForm.type1) {
             types.push(fusionSpeciesForm.type2);
           } else if (fusionSpeciesForm.type1 !== speciesForm.type1) {
             types.push(fusionSpeciesForm.type1);
@@ -1228,11 +1257,15 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     if (Overrides.OPP_ABILITY_OVERRIDE && !this.isPlayer()) {
       return allAbilities[Overrides.OPP_ABILITY_OVERRIDE];
     }
+    if (this.isFusion()) {
+      if (!isNullOrUndefined(this.fusionMysteryEncounterPokemonData?.ability) && this.fusionMysteryEncounterPokemonData!.ability !== -1) {
+        return allAbilities[this.fusionMysteryEncounterPokemonData!.ability];
+      } else {
+        return allAbilities[this.getFusionSpeciesForm(ignoreOverride).getAbility(this.fusionAbilityIndex)];
+      }
+    }
     if (!isNullOrUndefined(this.mysteryEncounterPokemonData.ability) && this.mysteryEncounterPokemonData.ability !== -1) {
       return allAbilities[this.mysteryEncounterPokemonData.ability];
-    }
-    if (this.isFusion()) {
-      return allAbilities[this.getFusionSpeciesForm(ignoreOverride).getAbility(this.fusionAbilityIndex)];
     }
     let abilityId = this.getSpeciesForm(ignoreOverride).getAbility(this.abilityIndex);
     if (abilityId === Abilities.NONE) {
@@ -1513,7 +1546,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
     const immuneTags = this.findTags(tag => tag instanceof TypeImmuneTag && tag.immuneType === moveType);
     for (const tag of immuneTags) {
-      if (move && !move.getAttrs(DealsDoubleDamageToTagAttr).some(attr => attr.tagType === tag.tagType)) {
+      if (move && !move.getAttrs(HitsTagAttr).some(attr => attr.tagType === tag.tagType)) {
         typeMultiplier.value = 0;
         break;
       }
@@ -1927,6 +1960,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     this.fusionVariant = 0;
     this.fusionGender = 0;
     this.fusionLuck = 0;
+    this.fusionMysteryEncounterPokemonData = null;
 
     this.generateName();
     this.calculateStats();
@@ -2152,11 +2186,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-   * sets if the pokemon has fled (implies it's a wild pokemon)
+   * sets if the pokemon is switching out (if it's a enemy wild implies it's going to flee)
    * @param status - boolean
    */
-  setWildFlee(status: boolean): void {
-    this.wildFlee = status;
+  setSwitchOutStatus(status: boolean): void {
+    this.switchOutStatus = status;
   }
 
   updateInfo(instant?: boolean): Promise<void> {
@@ -2515,13 +2549,13 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     this.scene.arena.applyTagsForSide(WeakenMoveScreenTag, defendingSide, move.category, this.scene.currentBattle.double, screenMultiplier);
 
     /**
-     * For each {@linkcode DealsDoubleDamageToTagAttr} the move has, doubles the damage of the move if:
+     * For each {@linkcode HitsTagAttr} the move has, doubles the damage of the move if:
      * The target has a {@linkcode BattlerTagType} that this move interacts with
      * AND
      * The move doubles damage when used against that tag
      */
     const hitsTagMultiplier = new Utils.NumberHolder(1);
-    move.getAttrs(DealsDoubleDamageToTagAttr).filter(hta => hta.doubleDamage).forEach(hta => {
+    move.getAttrs(HitsTagAttr).filter(hta => hta.doubleDamage).forEach(hta => {
       if (this.getTag(hta.tagType)) {
         hitsTagMultiplier.value *= 2;
       }
@@ -2972,14 +3006,38 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
+   * Gets whether the given move is currently disabled for the user based on the player's target selection
+   *
+   * @param {Moves} moveId {@linkcode Moves} ID of the move to check
+   * @param {Pokemon} user {@linkcode Pokemon} the move user
+   * @param {Pokemon} target {@linkcode Pokemon} the target of the move
+   *
+   * @returns {boolean} `true` if the move is disabled for this Pokemon due to the player's target selection
+   *
+   * @see {@linkcode MoveRestrictionBattlerTag}
+   */
+  isMoveTargetRestricted(moveId: Moves, user: Pokemon, target: Pokemon): boolean {
+    for (const tag of this.findTags(t => t instanceof MoveRestrictionBattlerTag)) {
+      if ((tag as MoveRestrictionBattlerTag).isMoveTargetRestricted(moveId, user, target)) {
+        return (tag as MoveRestrictionBattlerTag !== null);
+      }
+    }
+    return false;
+  }
+
+  /**
    * Gets the {@link MoveRestrictionBattlerTag} that is restricting a move, if it exists.
    *
    * @param {Moves} moveId {@linkcode Moves} ID of the move to check
+   * @param {Pokemon} user {@linkcode Pokemon} the move user, optional and used when the target is a factor in the move's restricted status
+   * @param {Pokemon} target {@linkcode Pokemon} the target of the move, optional and used when the target is a factor in the move's restricted status
    * @returns {MoveRestrictionBattlerTag | null} the first tag on this Pokemon that restricts the move, or `null` if the move is not restricted.
    */
-  getRestrictingTag(moveId: Moves): MoveRestrictionBattlerTag | null {
+  getRestrictingTag(moveId: Moves, user?: Pokemon, target?: Pokemon): MoveRestrictionBattlerTag | null {
     for (const tag of this.findTags(t => t instanceof MoveRestrictionBattlerTag)) {
       if ((tag as MoveRestrictionBattlerTag).isMoveRestricted(moveId)) {
+        return tag as MoveRestrictionBattlerTag;
+      } else if (user && target && (tag as MoveRestrictionBattlerTag).isMoveTargetRestricted(moveId, user, target)) {
         return tag as MoveRestrictionBattlerTag;
       }
     }
@@ -3385,6 +3443,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       this.updateFusionPalette();
     }
     this.summonData = new PokemonSummonData();
+    this.setSwitchOutStatus(false);
     if (!this.battleData) {
       this.resetBattleData();
     }
@@ -3790,6 +3849,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       this.hideInfo();
     }
     this.scene.field.remove(this);
+    this.setSwitchOutStatus(true);
     this.scene.triggerPokemonFormChange(this, SpeciesFormChangeActiveTrigger, true);
   }
 
@@ -3812,6 +3872,25 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     const currentAbilityIndex = this.abilityIndex;
     const rootForm = getPokemonSpecies(this.species.getRootSpeciesId());
     return rootForm.getAbility(abilityIndex) === rootForm.getAbility(currentAbilityIndex);
+  }
+
+  /**
+   * Helper function to check if the player already owns the starter data of the Pokemon's
+   * current ability
+   * @param ownedAbilityAttrs the owned abilityAttr of this Pokemon's root form
+   * @returns true if the player already has it, false otherwise
+   */
+  checkIfPlayerHasAbilityOfStarter(ownedAbilityAttrs: number): boolean {
+    if ((ownedAbilityAttrs & 1) > 0 && this.hasSameAbilityInRootForm(0)) {
+      return true;
+    }
+    if ((ownedAbilityAttrs & 2) > 0 && this.hasSameAbilityInRootForm(1)) {
+      return true;
+    }
+    if ((ownedAbilityAttrs & 4) > 0 && this.hasSameAbilityInRootForm(2)) {
+      return true;
+    }
+    return false;
   }
 }
 
@@ -4187,6 +4266,7 @@ export class PlayerPokemon extends Pokemon {
       this.fusionVariant = pokemon.variant;
       this.fusionGender = pokemon.gender;
       this.fusionLuck = pokemon.luck;
+      this.fusionMysteryEncounterPokemonData = pokemon.mysteryEncounterPokemonData;
       if ((pokemon.pauseEvolutions) || (this.pauseEvolutions)) {
         this.pauseEvolutions = true;
       }
@@ -4729,8 +4809,15 @@ export class EnemyPokemon extends Pokemon {
     return true;
   }
 
+  /**
+   * Go through a boss' health segments and give stats boosts for each newly cleared segment
+   * The base boost is 1 to a random stat that's not already maxed out per broken shield
+   * For Pokemon with 3 health segments or more, breaking the last shield gives +2 instead
+   * For Pokemon with 5 health segments or more, breaking the last two shields give +2 each
+   * @param segmentIndex index of the segment to get down to (0 = no shield left, 1 = 1 shield left, etc.)
+   */
   handleBossSegmentCleared(segmentIndex: integer): void {
-    while (segmentIndex - 1 < this.bossSegmentIndex) {
+    while (this.bossSegmentIndex > 0 && segmentIndex - 1 < this.bossSegmentIndex) {
       // Filter out already maxed out stat stages and weigh the rest based on existing stats
       const leftoverStats = EFFECTIVE_STATS.filter((s: EffectiveStat) => this.getStatStage(s) < 6);
       const statWeights = leftoverStats.map((s: EffectiveStat) => this.getStat(s, false));
