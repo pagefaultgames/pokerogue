@@ -28,7 +28,6 @@ export class SwitchSummonPhase extends SummonPhase {
      * @param fieldIndex integer representing position on the battle field
      * @param slotIndex integer for the index of pokemon (in party of 6) to switch into
      * @param doReturn boolean whether to render "comeback" dialogue
-     * @param batonPass boolean if the switch is from baton pass
      * @param player boolean if the switch is from the player
      */
   constructor(scene: BattleScene, switchType: SwitchType, fieldIndex: integer, slotIndex: integer, doReturn: boolean, player?: boolean) {
