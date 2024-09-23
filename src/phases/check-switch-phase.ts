@@ -8,7 +8,7 @@ import { BattlePhase } from "./battle-phase";
 import { PostSummonPhase } from "./post-summon-phase";
 import { SummonMissingPhase } from "./summon-missing-phase";
 import { SwitchPhase } from "./switch-phase";
-import { SwitchType } from "#app/enums/switch-type";
+import { SwitchType } from "#enums/switch-type";
 
 export class CheckSwitchPhase extends BattlePhase {
   protected fieldIndex: integer;

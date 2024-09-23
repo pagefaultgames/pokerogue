@@ -1,6 +1,6 @@
 import BattleScene from "#app/battle-scene";
 import { SpeciesFormChangeActiveTrigger } from "#app/data/pokemon-forms";
-import { SwitchType } from "#app/enums/switch-type";
+import { SwitchType } from "#enums/switch-type";
 import { SwitchSummonPhase } from "./switch-summon-phase";
 
 export class ReturnPhase extends SwitchSummonPhase {

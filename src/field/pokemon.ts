@@ -61,7 +61,7 @@ import { Challenges } from "#enums/challenges";
 import { PokemonAnimType } from "#app/enums/pokemon-anim-type";
 import { PLAYER_PARTY_MAX_SIZE } from "#app/constants";
 import { MysteryEncounterPokemonData } from "#app/data/mystery-encounters/mystery-encounter-pokemon-data";
-import { SwitchType } from "#app/enums/switch-type";
+import { SwitchType } from "#enums/switch-type";
 
 export enum FieldPosition {
   CENTER,
