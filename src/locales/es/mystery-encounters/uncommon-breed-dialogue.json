@@ -1,1 +1,26 @@
-{}
+{
+  "intro": "That isn't just an ordinary Pokémon!",
+  "title": "Uncommon Breed",
+  "description": "That {{enemyPokemon}} looks special compared to others of its kind. @[TOOLTIP_TITLE]{Perhaps it knows a special move?} You could battle and catch it outright, but there might also be a way to befriend it.",
+  "query": "What will you do?",
+  "option": {
+    "1": {
+      "label": "Battle the Pokémon",
+      "tooltip": "(-) Tricky Battle\n(+) Strong Catchable Foe",
+      "selected": "You approach the\n{{enemyPokemon}} without fear.",
+      "stat_boost": "The {{enemyPokemon}}'s heightened abilities boost its stats!"
+    },
+    "2": {
+      "label": "Give It Food",
+      "disabled_tooltip": "You need 4 berry items to choose this",
+      "tooltip": "(-) Give 4 Berries\n(+) The {{enemyPokemon}} Likes You",
+      "selected": "You toss the berries at the {{enemyPokemon}}!$It eats them happily!$The {{enemyPokemon}} wants to join your party!"
+    },
+    "3": {
+      "label": "Befriend It",
+      "disabled_tooltip": "Your Pokémon need to know certain moves to choose this",
+      "tooltip": "(+) {{option3PrimaryName}} uses {{option3PrimaryMove}}\n(+) The {{enemyPokemon}} Likes You",
+      "selected": "Your {{option3PrimaryName}} uses {{option3PrimaryMove}} to charm the {{enemyPokemon}}!$The {{enemyPokemon}} wants to join your party!"
+    }
+  }
+}

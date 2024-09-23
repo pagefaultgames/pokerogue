@@ -1,1 +1,25 @@
-{}
+{
+  "intro": "As you walk down a narrow pathway, you see a towering silhouette blocking your path.$You get closer to see a {{snorlaxName}} sleeping peacefully.\nIt seems like there's no way around it.",
+  "title": "Slumbering {{snorlaxName}}",
+  "description": "You could attack it to try and get it to move, or simply wait for it to wake up. Who knows how long that could take, though...",
+  "query": "What will you do?",
+  "option": {
+    "1": {
+      "label": "Battle It",
+      "tooltip": "(-) Fight Sleeping {{snorlaxName}}\n(+) Special Reward",
+      "selected": "You approach the\nPokémon without fear."
+    },
+    "2": {
+      "label": "Wait for It to Move",
+      "tooltip": "(-) Wait a Long Time\n(+) Recover Party",
+      "selected": ".@d{32}.@d{32}.@d{32}$You wait for a time, but the {{snorlaxName}}'s yawns make your party sleepy...",
+      "rest_result": "When you all awaken, the {{snorlaxName}} is no where to be found -\nbut your Pokémon are all healed!"
+    },
+    "3": {
+      "label": "Steal Its Item",
+      "tooltip": "(+) {{option3PrimaryName}} uses {{option3PrimaryMove}}\n(+) Special Reward",
+      "disabled_tooltip": "Your Pokémon need to know certain moves to choose this",
+      "selected": "Your {{option3PrimaryName}} uses {{option3PrimaryMove}}!$@s{item_fanfare}It steals Leftovers off the sleeping\n{{snorlaxName}} and you make out like bandits!"
+    }
+  }
+}
