@@ -2525,7 +2525,6 @@ export class ImprisonTag extends MoveRestrictionBattlerTag {
 
   override onAdd(pokemon: Pokemon) {
     this.source = pokemon.scene.getPokemonById(this.sourceId!)!;
-    pokemon.scene.queueMessage(i18next.t("battlerTags:imprisonOnAdd", {pokemonNameWithAffix: getPokemonNameWithAffix(this.source)}), 1500);
   }
 
   override lapse(_pokemon: Pokemon, _lapseType: BattlerTagLapseType): boolean {

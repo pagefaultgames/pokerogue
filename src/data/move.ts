@@ -7583,7 +7583,7 @@ export function initMoves() {
       .attr(SwitchAbilitiesAttr),
     new StatusMove(Moves.IMPRISON, Type.PSYCHIC, 100, 10, -1, 0, 3)
       .ignoresSubstitute()
-      .attr(AddBattlerTagAttr, BattlerTagType.IMPRISON, false, true, 1),
+      .attr(AddArenaTagAttr, ArenaTagType.IMPRISON, 1, true, false),
     new SelfStatusMove(Moves.REFRESH, Type.NORMAL, -1, 20, -1, 0, 3)
       .attr(HealStatusEffectAttr, true, StatusEffect.PARALYSIS, StatusEffect.POISON, StatusEffect.TOXIC, StatusEffect.BURN)
       .condition((user, target, move) => !!user.status && (user.status.effect === StatusEffect.PARALYSIS || user.status.effect === StatusEffect.POISON || user.status.effect === StatusEffect.TOXIC || user.status.effect === StatusEffect.BURN)),

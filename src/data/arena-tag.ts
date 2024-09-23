@@ -919,13 +919,41 @@ class SafeguardTag extends ArenaTag {
   }
 }
 
-/**
-class ImprisonTag extends ArenaTag {
-  constructor(turnCount: integer, sourceId: integer, side: ArenaTagSide) {
-    super();
+class ImprisonTag extends ArenaTrapTag {
+  private source: Pokemon;
+
+  constructor(sourceId: integer, side: ArenaTagSide) {
+    super(ArenaTagType.IMPRISON, Moves.IMPRISON, sourceId, side, 1);
+  }
+
+  onAdd(arena: Arena) {
+    this.source = arena.scene.getPokemonById(this.sourceId!)!;
+    const party = (this.side === ArenaTagSide.PLAYER) ? arena.scene.getPlayerField() : arena.scene.getEnemyField();
+    party?.forEach((p: PlayerPokemon | EnemyPokemon ) => {
+      p.addTag(BattlerTagType.IMPRISON, 1, Moves.IMPRISON, this.sourceId);
+    });
+    arena.scene.queueMessage(i18next.t("battlerTags:imprisonOnAdd", {pokemonNameWithAffix: getPokemonNameWithAffix(this.source)}), 1500);
+    console.log(arena.scene);
+  }
+
+  lapse(_arena: Arena): boolean {
+    return this.source.isActive(true);
+  }
+
+  activateTrap(pokemon: Pokemon): boolean {
+    if (this.source.isActive(true)) {
+      pokemon.addTag(BattlerTagType.IMPRISON, 1, Moves.IMPRISON, this.sourceId);
+    }
+    return true;
+  }
+
+  onRemove(arena: Arena): void {
+    const party = (this.side === ArenaTagSide.PLAYER) ? arena.scene.getPlayerField() : arena.scene.getEnemyField();
+    party?.forEach((p: PlayerPokemon | EnemyPokemon) => {
+      p.removeTag(BattlerTagType.IMPRISON);
+    });
   }
 }
-*/
 
 class AromaVeilTag extends ArenaTag {
   private protectedTags: BattlerTagType[];
@@ -935,7 +963,6 @@ class AromaVeilTag extends ArenaTag {
     super(ArenaTagType.AROMA_VEIL, turnCount, undefined, sourceId, side);
     this.protectedTags = [BattlerTagType.TAUNT, BattlerTagType.TORMENT, BattlerTagType.DISABLED, BattlerTagType.HEAL_BLOCK, BattlerTagType.ENCORE, BattlerTagType.INFATUATED];
   }
-
 
   onAdd(arena: Arena): void {
     this.source = arena.scene.getPokemonById(this.sourceId!)!;
@@ -1009,6 +1036,8 @@ export function getArenaTag(tagType: ArenaTagType, turnCount: integer, sourceMov
     return new HappyHourTag(turnCount, sourceId, side);
   case ArenaTagType.SAFEGUARD:
     return new SafeguardTag(turnCount, sourceId, side);
+  case ArenaTagType.IMPRISON:
+    return new ImprisonTag(sourceId, side);
   case ArenaTagType.AROMA_VEIL:
     return new AromaVeilTag(turnCount, sourceId, side);
   default:
