@@ -1,30 +1,30 @@
 {
-  "intro_dialogue": "Step right up, folks! Try your luck\non the brand new {{wobbuffetName}} Whack-o-matic!",
-  "speaker": "Showman",
-  "title": "Fun And Games!",
-  "description": "You've encountered a traveling show with a prize game! You will have @[TOOLTIP_TITLE]{3 turns} to bring the {{wobbuffetName}} as close to @[TOOLTIP_TITLE]{1 HP} as possible @[TOOLTIP_TITLE]{without KOing it} so it can wind up a huge Counter on the bell-ringing machine.\nBut be careful! If you KO the {{wobbuffetName}}, you'll have to pay for the cost of reviving it!",
-  "query": "Would you like to play?",
+  "intro_dialogue": "さあ　さあ、　皆さま！　新しい　{{wobbuffetName}}叩き　で運試しを　しましょう！",
+  "speaker": "興行主",
+  "title": "叩きゲーム？　ソーナンス！",
+  "description": "移動遊園地の　ご褒美ゲーム　です！　@[TOOLTIP_TITLE]{３ターン以内で}　{{wobbuffetName}}を　@[TOOLTIP_TITLE]{倒せずに}　@[TOOLTIP_TITLE]{1 HP}に　できるだけ　近づけて、　そして {{wobbuffetName}}が　大きい　カウンターで　ベルを　鳴らします。\n気をつけて！　{{wobbuffetName}}を　倒すと　復活費を　払わなければ　なりません！",
+  "query": "試しますか？",
   "option": {
     "1": {
-      "label": "Play the Game",
-      "tooltip": "(-) Pay {{option1Money, money}}\n(+) Play {{wobbuffetName}} Whack-o-matic",
-      "selected": "Time to test your luck!"
+      "label": "ゲームを試す",
+      "tooltip": "(-) {{option1Money, money}}を払う\n(+) {{wobbuffetName}}叩き　を　試して",
+      "selected": "運試し、　しましょう！"
     },
     "2": {
-      "label": "Leave",
-      "tooltip": "(-) No Rewards",
-      "selected": "You hurry along your way,\nwith a slight feeling of regret."
+      "label": "立ち去る",
+      "tooltip": "(-) ご褒美なし",
+      "selected": "僅かな　後悔の　気持ちで\n冒険を　進みます。"
     }
   },
-  "ko": "Oh no! The {{wobbuffetName}} fainted!$You lose the game and\nhave to pay for the revive cost...",
-  "charging_continue": "The Wubboffet keeps charging its counter-swing!",
-  "turn_remaining_3": "Three turns remaining!",
-  "turn_remaining_2": "Two turns remaining!",
-  "turn_remaining_1": "One turn remaining!",
-  "end_game": "Time's up!$The {{wobbuffetName}} winds up to counter-swing and@d{16}.@d{16}.@d{16}.",
-  "best_result": "The {{wobbuffetName}} smacks the button so hard\nthe bell breaks off the top!$You win the grand prize!",
-  "great_result": "The {{wobbuffetName}} smacks the button, nearly hitting the bell!$So close!\nYou earn the second tier prize!",
-  "good_result": "The {{wobbuffetName}} hits the button hard enough to go midway up the scale!$You earn the third tier prize!",
-  "bad_result": "The {{wobbuffetName}} barely taps the button and nothing happens...$Oh no!\nYou don't win anything!",
-  "outro": "That was a fun little game!"
+  "ko": "ダメ！ {{wobbuffetName}}は　倒れました！$ゲームを　負けて\n復活費を　払わなくちゃ　いけません……",
+  "charging_continue": "{{wobbuffetName}}は　カウンターの　力を　たくわえて続けます！",
+  "turn_remaining_3": "残り　３ターン！",
+  "turn_remaining_2": "残り　２ターン！",
+  "turn_remaining_1": "残り　１ターン！",
+  "end_game": "時間です！${{wobbuffetName}}は　カウンターを　繰り出すと@d{16}.@d{16}.@d{16}.",
+  "best_result": "{{wobbuffetName}}は　ボタンを　ぶん殴り、\nベルが　上部から　外れました！$大賞を　勝ちました！",
+  "great_result": "{{wobbuffetName}}は　ボタンを　叩き、　ベルを　鳴らす　寸前でした！$おしい！\n２位賞を　勝ちました！",
+  "good_result": "{{wobbuffetName}}は　ボタンを　叩き、　スケールの　真ん中まで　上がりました！$３位賞を　勝ちました！",
+  "bad_result": "{{wobbuffetName}}は　微妙に　ボタンを　触ります。　何も　起こりません。$やだ！\n何も　勝ちませんでした！",
+  "outro": "楽しいゲーム　でした！"
 }
