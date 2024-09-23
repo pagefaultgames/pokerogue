@@ -1526,66 +1526,6 @@ export class AddSubstituteAttr extends MoveEffectAttr {
   }
 }
 
-/**
- * Attribute implementing the effects of {@link https://bulbapedia.bulbagarden.net/wiki/Shed_Tail_(move) | Shed Tail}.
- * This is essentially a wrapper for two internal attributes: {@linkcode AddSubstituteAttr} which handles creating
- * a Substitute for the user, and {@linkcode ForceSwitchOutAttr} which forces the user to switch out and transfers the
- * Substitute to the switched in Pokemon.
- */
-export class ShedTailAttr extends MoveEffectAttr {
-  private addSubstituteAttr: AddSubstituteAttr;
-  private forceSwitchOutAttr: ForceSwitchOutAttr;
-
-  constructor() {
-    super(true);
-
-    this.addSubstituteAttr = new AddSubstituteAttr(0.5);
-    this.forceSwitchOutAttr = new ForceSwitchOutAttr(true, SwitchType.SHED_TAIL);
-  }
-
-  /**
-   * Has the user put in a substitute, prompt a switch, and transfer the substitute
-   * to the switched in Pokemon.
-   * @param user The {@linkcode Pokemon} using this move
-   * @param target n/a
-   * @param move The move being used (i.e. Shed Tail)
-   * @param args n/a
-   * @returns a `Promise` that resolves `true` if all effects apply successfully; `false` otherwise
-   */
-  override apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    if (this.addSubstituteAttr.apply(user, target, move, args)) {
-      return this.forceSwitchOutAttr.apply(user, target, move, args);
-    } else {
-      return false;
-    }
-  }
-
-  /**
-   * The conditions determining whether the move fails.
-   * @returns A function that returns `true` if the move will not fail.
-   */
-  override getCondition(): MoveConditionFunc {
-    return this.addSubstituteAttr.getCondition() && this.forceSwitchOutAttr.getCondition();
-  }
-
-  /**
-   * Gets the text to show when the move fails. Identical to the fail messages for Substitute
-   * @param user The {@linkcode Pokemon} using the move
-   * @param target n/a
-   * @param move n/a
-   * @param cancelled n/a
-   * @returns The string to display upon the move failing. May vary with different fail conditions.
-   */
-  override getFailedText(user: Pokemon, target: Pokemon, move: Move, cancelled: Utils.BooleanHolder): string | null {
-    return this.addSubstituteAttr.getFailedText(user, target, move, cancelled);
-  }
-
-  override getUserBenefitScore(user: Pokemon, target: Pokemon, move: Move): integer {
-    return this.addSubstituteAttr.getUserBenefitScore(user, target, move)
-      + this.forceSwitchOutAttr.getUserBenefitScore(user, target, move);
-  }
-}
-
 export enum MultiHitType {
   _2,
   _2_TO_5,
@@ -9560,7 +9500,8 @@ export function initMoves() {
       .attr(MovePowerMultiplierAttr, (user, target, move) => target.getAttackTypeEffectiveness(move.type, user) >= 2 ? 5461/4096 : 1)
       .makesContact(),
     new SelfStatusMove(Moves.SHED_TAIL, Type.NORMAL, -1, 10, -1, 0, 9)
-      .attr(ShedTailAttr),
+      .attr(AddSubstituteAttr, 0.5)
+      .attr(ForceSwitchOutAttr, true, SwitchType.SHED_TAIL),
     new SelfStatusMove(Moves.CHILLY_RECEPTION, Type.ICE, -1, 10, -1, 0, 9)
       .attr(PreMoveMessageAttr, (user, move) => i18next.t("moveTriggers:chillyReception", {pokemonName: getPokemonNameWithAffix(user)}))
       .attr(ChillyReceptionAttr, true),
