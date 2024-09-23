@@ -9,14 +9,14 @@
     "1": {
       "label": "「見えます。」",
       "tooltip": "@[SUMMARY_GREEN]{(?) 手持ちポケモンに影響}",
-      "selected": "Her hand reaches out to touch you,\nand everything goes black.$Then...@d{64} You see everything.\nEvery timeline, all your different selves,\n past and future.$Everything that has made you,\neverything you will become...@d{64}",
-      "cutscene": "You see your Pokémon,@d{32} converging from\nevery reality to become something new...@d{64}",
-      "dream_complete": "When you awaken, the woman - was it a woman or a ghost? - is gone...$.@d{32}.@d{32}.@d{32}$Your Pokémon team has changed...\nOr is it the same team you've always had?"
+      "selected": "女の人は　手を　伸ばすと\n全部は　真っ黒に　なります。$そして……@d{64}　何事も　見えます。\n時間軸たち。　自分たち。\n過去たち。　未来たち。 $自分を　作り出した　何事も\nいつか　成る　何事も……@d{64}",
+      "cutscene": "手持ちポケモンも　見えます……@d{32} 各現実　から\n集中してきて　混じって　新しい　生存たちに　なります……@d{64}",
+      "dream_complete": "目が　覚めると、　女の人が　（女か？　幽霊か？）　消えました……$.@d{32}.@d{32}.@d{32}$手持ちポケモンが　変わった……\nもしくは　前と　同じ　手持ち　かな……？"
     },
     "2": {
-      "label": "Quickly Leave",
-      "tooltip": "(-) Affects your Pokémon",
-      "selected": "You tear your mind from a numbing grip, and hastily depart.$When you finally stop to collect yourself, you check the Pokémon in your team.$For some reason, all of their levels have decreased!"
+      "label": "さっさと逃げる",
+      "tooltip": "(-) 手持ちポケモンに影響",
+      "selected": "ジーンと握った　意識を　取り戻して　さっさと　逃げます。$一旦止まって　気を取り戻すと　手持ちポケモンを　見ます。$なんとなく　全員の　レベルが　減っている　ようです！"
     }
   }
 }
