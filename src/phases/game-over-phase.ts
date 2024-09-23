@@ -48,6 +48,14 @@ export class GameOverPhase extends BattlePhase {
       this.victory = true;
     }
 
+    // Handle Mystery Encounter special Game Over cases
+    // Situations such as when player lost a battle, but it isn't treated as full Game Over
+    if (!this.victory && this.scene.currentBattle.mysteryEncounter?.onGameOver && !this.scene.currentBattle.mysteryEncounter.onGameOver(this.scene)) {
+      // Do not end the game
+      return this.end();
+    }
+    // Otherwise, continue standard Game Over logic
+
     if (this.victory && this.scene.gameMode.isEndless) {
       const genderIndex = this.scene.gameData.gender ?? PlayerGender.UNSET;
       const genderStr = PlayerGender[genderIndex].toLowerCase();
@@ -60,11 +68,6 @@ export class GameOverPhase extends BattlePhase {
           this.scene.ui.fadeOut(1250).then(() => {
             this.scene.reset();
             this.scene.clearPhaseQueue();
-            // If this is a ME, clear any residual visual sprites before reloading
-            const encounter = this.scene.currentBattle.mysteryEncounter;
-            if (encounter?.introVisuals) {
-              this.scene.field.remove(encounter.introVisuals, true);
-            }
             this.scene.gameData.loadSession(this.scene, this.scene.sessionSlotId).then(() => {
               this.scene.pushPhase(new EncounterPhase(this.scene, true));
 

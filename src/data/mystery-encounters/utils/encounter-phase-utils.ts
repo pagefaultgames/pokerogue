@@ -43,7 +43,7 @@ import { Variant } from "#app/data/variant";
  * @param scene
  */
 export function doTrainerExclamation(scene: BattleScene) {
-  const exclamationSprite = scene.add.sprite(0, 0, "exclaim");
+  const exclamationSprite = scene.add.sprite(0, 0, "encounter_exclaim");
   exclamationSprite.setName("exclamation");
   scene.field.add(exclamationSprite);
   scene.field.moveTo(exclamationSprite, scene.field.getAll().length - 1);
@@ -339,7 +339,7 @@ export async function initBattleWithEnemyConfig(scene: BattleScene, partyConfig:
 
     loadEnemyAssets.push(enemyPokemon.loadAssets());
 
-    console.log(enemyPokemon.name, enemyPokemon.species.speciesId, enemyPokemon.stats);
+    console.log(`Pokemon: ${enemyPokemon.name}`, `Species ID: ${enemyPokemon.species.speciesId}`, `Stats: ${enemyPokemon.stats}`, `Ability: ${enemyPokemon.getAbility().name}`, `Passive Ability: ${enemyPokemon.getPassiveAbility().name}`);
   });
 
   scene.pushPhase(new MysteryEncounterBattlePhase(scene, partyConfig.disableSwitch));
@@ -741,6 +741,37 @@ export function handleMysteryEncounterVictory(scene: BattleScene, addHealPhase: 
         scene.pushPhase(new EggLapsePhase(scene));
       }
     }
+  }
+}
+
+/**
+ * Similar to {@linkcode handleMysteryEncounterVictory}, but for cases where the player lost a battle or failed a challenge
+ * @param scene
+ * @param addHealPhase
+ */
+export function handleMysteryEncounterBattleFailed(scene: BattleScene, addHealPhase: boolean = false, doNotContinue: boolean = false) {
+  const allowedPkm = scene.getParty().filter((pkm) => pkm.isAllowedInBattle());
+
+  if (allowedPkm.length === 0) {
+    scene.clearPhaseQueue();
+    scene.unshiftPhase(new GameOverPhase(scene));
+    return;
+  }
+
+  // If in repeated encounter variant, do nothing
+  // Variant must eventually be swapped in order to handle "true" end of the encounter
+  const encounter = scene.currentBattle.mysteryEncounter!;
+  if (encounter.continuousEncounter || doNotContinue) {
+    return;
+  } else if (encounter.encounterMode !== MysteryEncounterMode.NO_BATTLE) {
+    scene.pushPhase(new BattleEndPhase(scene, false));
+  }
+
+  scene.pushPhase(new MysteryEncounterRewardsPhase(scene, addHealPhase));
+
+  if (!encounter.doContinueEncounter) {
+    // Only lapse eggs once for multi-battle encounters
+    scene.pushPhase(new EggLapsePhase(scene));
   }
 }
 

@@ -17,10 +17,10 @@ import { initMoveAnim, loadMoveAnimAssets } from "../data/battle-anims";
 import { Status, StatusEffect, getRandomStatus } from "../data/status-effect";
 import { pokemonEvolutions, pokemonPrevolutions, SpeciesFormEvolution, SpeciesEvolutionCondition, FusionSpeciesFormEvolution } from "../data/pokemon-evolutions";
 import { reverseCompatibleTms, tmSpecies, tmPoolTiers } from "../data/tms";
-import { BattlerTag, BattlerTagLapseType, EncoreTag, GroundedTag, HighestStatBoostTag, SubstituteTag, TypeImmuneTag, getBattlerTag, SemiInvulnerableTag, TypeBoostTag, MoveRestrictionBattlerTag, ExposedTag, DragonCheerTag, CritBoostTag, TrappedTag, TarShotTag } from "../data/battler-tags";
+import { BattlerTag, BattlerTagLapseType, EncoreTag, GroundedTag, HighestStatBoostTag, SubstituteTag, TypeImmuneTag, getBattlerTag, SemiInvulnerableTag, TypeBoostTag, MoveRestrictionBattlerTag, ExposedTag, DragonCheerTag, CritBoostTag, TrappedTag, TarShotTag, AutotomizedTag } from "../data/battler-tags";
 import { WeatherType } from "../data/weather";
 import { ArenaTagSide, NoCritTag, WeakenMoveScreenTag } from "../data/arena-tag";
-import { Ability, AbAttr, StatMultiplierAbAttr, BlockCritAbAttr, BonusCritAbAttr, BypassBurnDamageReductionAbAttr, FieldPriorityMoveImmunityAbAttr, IgnoreOpponentStatStagesAbAttr, MoveImmunityAbAttr, PreDefendFullHpEndureAbAttr, ReceivedMoveDamageMultiplierAbAttr, ReduceStatusEffectDurationAbAttr, StabBoostAbAttr, StatusEffectImmunityAbAttr, TypeImmunityAbAttr, WeightMultiplierAbAttr, allAbilities, applyAbAttrs, applyStatMultiplierAbAttrs, applyPreApplyBattlerTagAbAttrs, applyPreAttackAbAttrs, applyPreDefendAbAttrs, applyPreSetStatusAbAttrs, UnsuppressableAbilityAbAttr, SuppressFieldAbilitiesAbAttr, NoFusionAbilityAbAttr, MultCritAbAttr, IgnoreTypeImmunityAbAttr, DamageBoostAbAttr, IgnoreTypeStatusEffectImmunityAbAttr, ConditionalCritAbAttr, applyFieldStatMultiplierAbAttrs, FieldMultiplyStatAbAttr, AddSecondStrikeAbAttr, UserFieldStatusEffectImmunityAbAttr, UserFieldBattlerTagImmunityAbAttr, BattlerTagImmunityAbAttr, MoveTypeChangeAbAttr, FullHpResistTypeAbAttr, applyCheckTrappedAbAttrs, CheckTrappedAbAttr } from "../data/ability";
+import { Ability, AbAttr, StatMultiplierAbAttr, BlockCritAbAttr, BonusCritAbAttr, BypassBurnDamageReductionAbAttr, FieldPriorityMoveImmunityAbAttr, IgnoreOpponentStatStagesAbAttr, MoveImmunityAbAttr, PreDefendFullHpEndureAbAttr, ReceivedMoveDamageMultiplierAbAttr, ReduceStatusEffectDurationAbAttr, StabBoostAbAttr, StatusEffectImmunityAbAttr, TypeImmunityAbAttr, WeightMultiplierAbAttr, allAbilities, applyAbAttrs, applyStatMultiplierAbAttrs, applyPreApplyBattlerTagAbAttrs, applyPreAttackAbAttrs, applyPreDefendAbAttrs, applyPreSetStatusAbAttrs, UnsuppressableAbilityAbAttr, SuppressFieldAbilitiesAbAttr, NoFusionAbilityAbAttr, MultCritAbAttr, IgnoreTypeImmunityAbAttr, DamageBoostAbAttr, IgnoreTypeStatusEffectImmunityAbAttr, ConditionalCritAbAttr, applyFieldStatMultiplierAbAttrs, FieldMultiplyStatAbAttr, AddSecondStrikeAbAttr, UserFieldStatusEffectImmunityAbAttr, UserFieldBattlerTagImmunityAbAttr, BattlerTagImmunityAbAttr, MoveTypeChangeAbAttr, FullHpResistTypeAbAttr, applyCheckTrappedAbAttrs, CheckTrappedAbAttr, PostSetStatusAbAttr, applyPostSetStatusAbAttrs } from "../data/ability";
 import PokemonData from "../system/pokemon-data";
 import { BattlerIndex } from "../battle";
 import { Mode } from "../ui/ui";
@@ -109,6 +109,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   public fusionVariant: Variant;
   public fusionGender: Gender;
   public fusionLuck: integer;
+  public fusionMysteryEncounterPokemonData: MysteryEncounterPokemonData | null;
 
   private summonDataPrimer: PokemonSummonData | null;
 
@@ -206,6 +207,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       this.fusionVariant = dataSource.fusionVariant || 0;
       this.fusionGender = dataSource.fusionGender;
       this.fusionLuck = dataSource.fusionLuck;
+      this.fusionMysteryEncounterPokemonData = dataSource.fusionMysteryEncounterPokemonData;
       this.usedTMs = dataSource.usedTMs ?? [];
       this.mysteryEncounterPokemonData = new MysteryEncounterPokemonData(dataSource.mysteryEncounterPokemonData);
     } else {
@@ -343,7 +345,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   isAllowed(): boolean {
     const challengeAllowed = new Utils.BooleanHolder(true);
     applyChallenges(this.scene.gameMode, ChallengeType.POKEMON_IN_BATTLE, this, challengeAllowed);
-    return !this.isFainted() && challengeAllowed.value;
+    return challengeAllowed.value;
   }
 
   isActive(onField?: boolean): boolean {
@@ -1164,11 +1166,31 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     }
 
     if (!types.length || !includeTeraType) {
-      if (this.mysteryEncounterPokemonData.types && this.mysteryEncounterPokemonData.types.length > 0) {
-        // "Permanent" override for a Pokemon's normal types, currently only used by Mystery Encounters
-        this.mysteryEncounterPokemonData.types.forEach(t => types.push(t));
-      } else if (!ignoreOverride && this.summonData?.types && this.summonData.types.length > 0) {
+      if (!ignoreOverride && this.summonData?.types && this.summonData.types.length > 0) {
         this.summonData.types.forEach(t => types.push(t));
+      } else if (this.mysteryEncounterPokemonData.types && this.mysteryEncounterPokemonData.types.length > 0) {
+        // "Permanent" override for a Pokemon's normal types, currently only used by Mystery Encounters
+        types.push(this.mysteryEncounterPokemonData.types[0]);
+
+        // Fusing a Pokemon onto something with "permanently changed" types will still apply the fusion's types as normal
+        const fusionSpeciesForm = this.getFusionSpeciesForm(ignoreOverride);
+        if (fusionSpeciesForm) {
+          // Check if the fusion Pokemon also had "permanently changed" types
+          const fusionMETypes = this.fusionMysteryEncounterPokemonData?.types;
+          if (fusionMETypes && fusionMETypes.length >= 2 && fusionMETypes[1] !== types[0]) {
+            types.push(fusionMETypes[1]);
+          } else if (fusionMETypes && fusionMETypes.length === 1 && fusionMETypes[0] !== types[0]) {
+            types.push(fusionMETypes[0]);
+          } else if (fusionSpeciesForm.type2 !== null && fusionSpeciesForm.type2 !== types[0]) {
+            types.push(fusionSpeciesForm.type2);
+          } else if (fusionSpeciesForm.type1 !== types[0]) {
+            types.push(fusionSpeciesForm.type1);
+          }
+        }
+
+        if (types.length === 1 && this.mysteryEncounterPokemonData.types.length >= 2) {
+          types.push(this.mysteryEncounterPokemonData.types[1]);
+        }
       } else {
         const speciesForm = this.getSpeciesForm(ignoreOverride);
 
@@ -1176,7 +1198,14 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
         const fusionSpeciesForm = this.getFusionSpeciesForm(ignoreOverride);
         if (fusionSpeciesForm) {
-          if (fusionSpeciesForm.type2 !== null && fusionSpeciesForm.type2 !== speciesForm.type1) {
+          // Check if the fusion Pokemon also had "permanently changed" types
+          // Otherwise, use standard fusion type logic
+          const fusionMETypes = this.fusionMysteryEncounterPokemonData?.types;
+          if (fusionMETypes && fusionMETypes.length >= 2 && fusionMETypes[1] !== types[0]) {
+            types.push(fusionMETypes[1]);
+          } else if (fusionMETypes && fusionMETypes.length === 1 && fusionMETypes[0] !== types[0]) {
+            types.push(fusionMETypes[0]);
+          } else if (fusionSpeciesForm.type2 !== null && fusionSpeciesForm.type2 !== speciesForm.type1) {
             types.push(fusionSpeciesForm.type2);
           } else if (fusionSpeciesForm.type1 !== speciesForm.type1) {
             types.push(fusionSpeciesForm.type1);
@@ -1228,11 +1257,15 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     if (Overrides.OPP_ABILITY_OVERRIDE && !this.isPlayer()) {
       return allAbilities[Overrides.OPP_ABILITY_OVERRIDE];
     }
+    if (this.isFusion()) {
+      if (!isNullOrUndefined(this.fusionMysteryEncounterPokemonData?.ability) && this.fusionMysteryEncounterPokemonData!.ability !== -1) {
+        return allAbilities[this.fusionMysteryEncounterPokemonData!.ability];
+      } else {
+        return allAbilities[this.getFusionSpeciesForm(ignoreOverride).getAbility(this.fusionAbilityIndex)];
+      }
+    }
     if (!isNullOrUndefined(this.mysteryEncounterPokemonData.ability) && this.mysteryEncounterPokemonData.ability !== -1) {
       return allAbilities[this.mysteryEncounterPokemonData.ability];
-    }
-    if (this.isFusion()) {
-      return allAbilities[this.getFusionSpeciesForm(ignoreOverride).getAbility(this.fusionAbilityIndex)];
     }
     let abilityId = this.getSpeciesForm(ignoreOverride).getAbility(this.abilityIndex);
     if (abilityId === Abilities.NONE) {
@@ -1331,7 +1364,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     if (this.isFusion() && ability.hasAttr(NoFusionAbilityAbAttr)) {
       return false;
     }
-    if (this.scene?.arena.ignoreAbilities && ability.isIgnorable) {
+    const arena = this.scene?.arena;
+    if (arena.ignoreAbilities && arena.ignoringEffectSource !== this.getBattlerIndex() && ability.isIgnorable) {
       return false;
     }
     if (this.summonData?.abilitySuppressed && !ability.hasAttr(UnsuppressableAbilityAbAttr)) {
@@ -1393,11 +1427,23 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return false;
   }
 
+  /**
+   * Gets the weight of the Pokemon with subtractive modifiers (Autotomize) happening first
+   * and then multiplicative modifiers happening after (Heavy Metal and Light Metal)
+   * @returns the kg of the Pokemon (minimum of 0.1)
+   */
   getWeight(): number {
-    const weight = new Utils.NumberHolder(this.species.weight);
+    const autotomizedTag = this.getTag(AutotomizedTag);
+    let weightRemoved = 0;
+    if (!Utils.isNullOrUndefined(autotomizedTag)) {
+      weightRemoved = 100 * autotomizedTag!.autotomizeCount;
+    }
+    const minWeight = 0.1;
+    const weight = new Utils.NumberHolder(this.species.weight - weightRemoved);
+
     // This will trigger the ability overlay so only call this function when necessary
     applyAbAttrs(WeightMultiplierAbAttr, this, null, false, weight);
-    return weight.value;
+    return Math.max(minWeight, weight.value);
   }
 
   /**
@@ -1927,6 +1973,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     this.fusionVariant = 0;
     this.fusionGender = 0;
     this.fusionLuck = 0;
+    this.fusionMysteryEncounterPokemonData = null;
 
     this.generateName();
     this.calculateStats();
@@ -3331,7 +3378,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     }
 
     if (asPhase) {
-      this.scene.unshiftPhase(new ObtainStatusEffectPhase(this.scene, this.getBattlerIndex(), effect, cureTurn, sourceText!, sourcePokemon!)); // TODO: are these bangs correct?
+      this.scene.unshiftPhase(new ObtainStatusEffectPhase(this.scene, this.getBattlerIndex(), effect, cureTurn, sourceText, sourcePokemon));
       return true;
     }
 
@@ -3365,6 +3412,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
     if (effect !== StatusEffect.FAINT) {
       this.scene.triggerPokemonFormChange(this, SpeciesFormChangeStatusEffectTrigger, true);
+      applyPostSetStatusAbAttrs(PostSetStatusAbAttr, this, effect, sourcePokemon);
     }
 
     return true;
@@ -4231,6 +4279,7 @@ export class PlayerPokemon extends Pokemon {
       this.fusionVariant = pokemon.variant;
       this.fusionGender = pokemon.gender;
       this.fusionLuck = pokemon.luck;
+      this.fusionMysteryEncounterPokemonData = pokemon.mysteryEncounterPokemonData;
       if ((pokemon.pauseEvolutions) || (this.pauseEvolutions)) {
         this.pauseEvolutions = true;
       }
