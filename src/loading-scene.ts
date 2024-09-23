@@ -1,5 +1,4 @@
 import { GachaType } from "./enums/gacha-types";
-import { trainerConfigs } from "./data/trainer-config";
 import { getBiomeHasProps } from "./field/arena";
 import CacheBustedLoaderPlugin from "./plugins/cache-busted-loader-plugin";
 import { SceneBase } from "./scene-base";
@@ -21,9 +20,8 @@ import i18next from "i18next";
 import { initStatsKeys } from "./ui/game-stats-ui-handler";
 import { initVouchers } from "./system/voucher";
 import { Biome } from "#enums/biome";
-import { TrainerType } from "#enums/trainer-type";
 import {initMysteryEncounters} from "#app/data/mystery-encounters/mystery-encounters";
-import { allDefaultBgmAssets, allDefaultSeAssets } from "#app/default-assets";
+import { allDefaultAtlasAssets, allDefaultBgmAssets, allDefaultImageAssets, allDefaultSeAssets } from "#app/default-assets";
 
 export class LoadingScene extends SceneBase {
   public static readonly KEY = "loading";
@@ -38,265 +36,9 @@ export class LoadingScene extends SceneBase {
   }
 
   preload() {
+    this.logPartitionedStorageSize();
     Utils.localPing();
     this.load["manifest"] = this.game["manifest"];
-
-    this.loadImage("loading_bg", "arenas");
-    this.loadImage("logo", "");
-
-    // Load menu images
-    this.loadAtlas("bg", "ui");
-    this.loadAtlas("prompt", "ui");
-    this.loadImage("candy", "ui");
-    this.loadImage("candy_overlay", "ui");
-    this.loadImage("cursor", "ui");
-    this.loadImage("cursor_reverse", "ui");
-    for (const wv of Utils.getEnumValues(WindowVariant)) {
-      for (let w = 1; w <= 5; w++) {
-        this.loadImage(`window_${w}${getWindowVariantSuffix(wv)}`, "ui/windows");
-      }
-    }
-    this.loadAtlas("namebox", "ui");
-    this.loadImage("pbinfo_player", "ui");
-    this.loadImage("pbinfo_player_stats", "ui");
-    this.loadImage("pbinfo_player_mini", "ui");
-    this.loadImage("pbinfo_player_mini_stats", "ui");
-    this.loadAtlas("pbinfo_player_type", "ui");
-    this.loadAtlas("pbinfo_player_type1", "ui");
-    this.loadAtlas("pbinfo_player_type2", "ui");
-    this.loadImage("pbinfo_enemy_mini", "ui");
-    this.loadImage("pbinfo_enemy_mini_stats", "ui");
-    this.loadImage("pbinfo_enemy_boss", "ui");
-    this.loadImage("pbinfo_enemy_boss_stats", "ui");
-    this.loadAtlas("pbinfo_enemy_type", "ui");
-    this.loadAtlas("pbinfo_enemy_type1", "ui");
-    this.loadAtlas("pbinfo_enemy_type2", "ui");
-    this.loadAtlas("pbinfo_stat", "ui");
-    this.loadAtlas("pbinfo_stat_numbers", "ui");
-    this.loadImage("overlay_lv", "ui");
-    this.loadAtlas("numbers", "ui");
-    this.loadAtlas("numbers_red", "ui");
-    this.loadAtlas("overlay_hp", "ui");
-    this.loadAtlas("overlay_hp_boss", "ui");
-    this.loadImage("overlay_exp", "ui");
-    this.loadImage("icon_owned", "ui");
-    this.loadImage("icon_egg_move", "ui");
-    this.loadImage("ability_bar_left", "ui");
-    this.loadImage("bgm_bar", "ui");
-    this.loadImage("party_exp_bar", "ui");
-    this.loadImage("achv_bar", "ui");
-    this.loadImage("achv_bar_2", "ui");
-    this.loadImage("achv_bar_3", "ui");
-    this.loadImage("achv_bar_4", "ui");
-    this.loadImage("achv_bar_5", "ui");
-    this.loadImage("shiny_star", "ui", "shiny.png");
-    this.loadImage("shiny_star_1", "ui", "shiny_1.png");
-    this.loadImage("shiny_star_2", "ui", "shiny_2.png");
-    this.loadImage("shiny_star_small", "ui", "shiny_small.png");
-    this.loadImage("shiny_star_small_1", "ui", "shiny_small_1.png");
-    this.loadImage("shiny_star_small_2", "ui", "shiny_small_2.png");
-    this.loadImage("favorite", "ui", "favorite.png");
-    this.loadImage("passive_bg", "ui", "passive_bg.png");
-    this.loadAtlas("shiny_icons", "ui");
-    this.loadImage("ha_capsule", "ui", "ha_capsule.png");
-    this.loadImage("champion_ribbon", "ui", "champion_ribbon.png");
-    this.loadImage("icon_spliced", "ui");
-    this.loadImage("icon_lock", "ui", "icon_lock.png");
-    this.loadImage("icon_stop", "ui", "icon_stop.png");
-    this.loadImage("icon_tera", "ui");
-    this.loadImage("type_tera", "ui");
-    this.loadAtlas("type_bgs", "ui");
-
-    this.loadImage("dawn_icon_fg", "ui");
-    this.loadImage("dawn_icon_mg", "ui");
-    this.loadImage("dawn_icon_bg", "ui");
-    this.loadImage("day_icon_fg", "ui");
-    this.loadImage("day_icon_mg", "ui");
-    this.loadImage("day_icon_bg", "ui");
-    this.loadImage("dusk_icon_fg", "ui");
-    this.loadImage("dusk_icon_mg", "ui");
-    this.loadImage("dusk_icon_bg", "ui");
-    this.loadImage("night_icon_fg", "ui");
-    this.loadImage("night_icon_mg", "ui");
-    this.loadImage("night_icon_bg", "ui");
-
-    this.loadImage("pb_tray_overlay_player", "ui");
-    this.loadImage("pb_tray_overlay_enemy", "ui");
-    this.loadAtlas("pb_tray_ball", "ui");
-
-    this.loadImage("party_bg", "ui");
-    this.loadImage("party_bg_double", "ui");
-    this.loadAtlas("party_slot_main", "ui");
-    this.loadAtlas("party_slot", "ui");
-    this.loadImage("party_slot_overlay_lv", "ui");
-    this.loadImage("party_slot_hp_bar", "ui");
-    this.loadAtlas("party_slot_hp_overlay", "ui");
-    this.loadAtlas("party_pb", "ui");
-    this.loadAtlas("party_cancel", "ui");
-
-    this.loadImage("summary_bg", "ui");
-    this.loadImage("summary_overlay_shiny", "ui");
-    this.loadImage("summary_profile", "ui");
-    this.loadImage("summary_profile_prompt_z", "ui");      // The pixel Z button prompt
-    this.loadImage("summary_profile_prompt_a", "ui");     // The pixel A button prompt
-    this.loadImage("summary_profile_ability", "ui");      // Pixel text 'ABILITY'
-    this.loadImage("summary_profile_passive", "ui");      // Pixel text 'PASSIVE'
-    this.loadImage("summary_status", "ui");
-    this.loadImage("summary_stats", "ui");
-    this.loadImage("summary_stats_overlay_exp", "ui");
-    this.loadImage("summary_moves", "ui");
-    this.loadImage("summary_moves_effect", "ui");
-    this.loadImage("summary_moves_overlay_row", "ui");
-    this.loadImage("summary_moves_overlay_pp", "ui");
-    this.loadAtlas("summary_moves_cursor", "ui");
-    for (let t = 1; t <= 3; t++) {
-      this.loadImage(`summary_tabs_${t}`, "ui");
-    }
-
-    this.loadImage("scroll_bar", "ui");
-    this.loadImage("scroll_bar_handle", "ui");
-    this.loadImage("starter_container_bg", "ui");
-    this.loadImage("starter_select_bg", "ui");
-    this.loadImage("select_cursor", "ui");
-    this.loadImage("select_cursor_highlight", "ui");
-    this.loadImage("select_cursor_highlight_thick", "ui");
-    this.loadImage("select_cursor_pokerus", "ui");
-    this.loadImage("select_gen_cursor", "ui");
-    this.loadImage("select_gen_cursor_highlight", "ui");
-
-    this.loadImage("saving_icon", "ui");
-    this.loadImage("discord", "ui");
-    this.loadImage("google", "ui");
-    this.loadImage("settings_icon", "ui");
-
-    this.loadImage("default_bg", "arenas");
-    // Load arena images
-    Utils.getEnumValues(Biome).map(bt => {
-      const btKey = Biome[bt].toLowerCase();
-      const isBaseAnimated = btKey === "end";
-      const baseAKey = `${btKey}_a`;
-      const baseBKey = `${btKey}_b`;
-      this.loadImage(`${btKey}_bg`, "arenas");
-      if (!isBaseAnimated) {
-        this.loadImage(baseAKey, "arenas");
-      } else {
-        this.loadAtlas(baseAKey, "arenas");
-      }
-      if (!isBaseAnimated) {
-        this.loadImage(baseBKey, "arenas");
-      } else {
-        this.loadAtlas(baseBKey, "arenas");
-      }
-      if (getBiomeHasProps(bt)) {
-        for (let p = 1; p <= 3; p++) {
-          const isPropAnimated = p === 3 && [ "power_plant", "end" ].find(b => b === btKey);
-          const propKey = `${btKey}_b_${p}`;
-          if (!isPropAnimated) {
-            this.loadImage(propKey, "arenas");
-          } else {
-            this.loadAtlas(propKey, "arenas");
-          }
-        }
-      }
-    });
-
-    // Load bitmap fonts
-    this.load.bitmapFont("item-count", "fonts/item-count.png", "fonts/item-count.xml");
-
-    // Load trainer images
-    this.loadAtlas("trainer_m_back", "trainer");
-    this.loadAtlas("trainer_m_back_pb", "trainer");
-    this.loadAtlas("trainer_f_back", "trainer");
-    this.loadAtlas("trainer_f_back_pb", "trainer");
-
-    Utils.getEnumValues(TrainerType).map(tt => {
-      const config = trainerConfigs[tt];
-      this.loadAtlas(config.getSpriteKey(), "trainer");
-      if (config.doubleOnly || config.hasDouble) {
-        this.loadAtlas(config.getSpriteKey(true), "trainer");
-      }
-    });
-
-    // Load character sprites
-    this.loadAtlas("c_rival_m", "character", "rival_m");
-    this.loadAtlas("c_rival_f", "character", "rival_f");
-
-    // Load pokemon-related images
-    this.loadImage("pkmn__back__sub", "pokemon/back", "sub.png");
-    this.loadImage("pkmn__sub", "pokemon", "sub.png");
-    this.loadAtlas("battle_stats", "effects");
-    this.loadAtlas("shiny", "effects");
-    this.loadAtlas("shiny_2", "effects");
-    this.loadAtlas("shiny_3", "effects");
-    this.loadImage("tera", "effects");
-    this.loadAtlas("pb_particles", "effects");
-    this.loadImage("evo_sparkle", "effects");
-    this.loadAtlas("tera_sparkle", "effects");
-    this.load.video("evo_bg", "images/effects/evo_bg.mp4", true);
-
-    this.loadAtlas("pb", "");
-    this.loadAtlas("items", "");
-    this.loadAtlas("types", "");
-
-    // Get current lang and load the types atlas for it. English will only load types while all other languages will load types and types_<lang>
-    const lang = i18next.resolvedLanguage;
-    if (lang !== "en") {
-      if (Utils.verifyLang(lang)) {
-        this.loadAtlas(`statuses_${lang}`, "");
-        this.loadAtlas(`types_${lang}`, "");
-      } else {
-        // Fallback to English
-        this.loadAtlas("statuses", "");
-        this.loadAtlas("types", "");
-      }
-    } else {
-      this.loadAtlas("statuses", "");
-      this.loadAtlas("types", "");
-    }
-    const availableLangs = ["en", "de", "it", "fr", "ja", "ko", "es", "pt-BR", "zh-CN"];
-    if (lang && availableLangs.includes(lang)) {
-      this.loadImage("egg-update_"+lang, "events");
-    } else {
-      this.loadImage("egg-update_en", "events");
-    }
-
-    this.loadAtlas("statuses", "");
-    this.loadAtlas("categories", "");
-
-    this.loadAtlas("egg", "egg");
-    this.loadAtlas("egg_crack", "egg");
-    this.loadAtlas("egg_icons", "egg");
-    this.loadAtlas("egg_shard", "egg");
-    this.loadAtlas("egg_lightrays", "egg");
-    Utils.getEnumKeys(GachaType).forEach(gt => {
-      const key = gt.toLowerCase();
-      this.loadImage(`gacha_${key}`, "egg");
-      this.loadAtlas(`gacha_underlay_${key}`, "egg");
-    });
-    this.loadImage("gacha_glass", "egg");
-    this.loadImage("gacha_eggs", "egg");
-    this.loadAtlas("gacha_hatch", "egg");
-    this.loadImage("gacha_knob", "egg");
-
-    this.loadImage("egg_list_bg", "ui");
-    this.loadImage("egg_summary_bg", "ui");
-
-    this.loadImage("end_m", "cg");
-    this.loadImage("end_f", "cg");
-
-    for (let i = 0; i < 10; i++) {
-      this.loadAtlas(`pokemon_icons_${i}`, "");
-      if (i) {
-        this.loadAtlas(`pokemon_icons_${i}v`, "");
-      }
-    }
-
-    // Load Mystery Encounter dex progress icon
-    this.loadImage("encounter_radar", "mystery-encounters");
-
-    this.loadAtlas("dualshock", "inputs");
-    this.loadAtlas("xbox", "inputs");
-    this.loadAtlas("keyboard", "inputs");
 
     for (const key of allDefaultSeAssets.keys()) {
       this.loadSe(key, allDefaultSeAssets.get(key));
@@ -304,6 +46,132 @@ export class LoadingScene extends SceneBase {
 
     for (const key of allDefaultBgmAssets.keys()) {
       this.loadBgm(key, allDefaultBgmAssets.get(key));
+    }
+
+    for (const key of allDefaultImageAssets.keys()) {
+      const val = allDefaultImageAssets.get(key);
+      if (val instanceof Array) {
+        this.loadImage(key, val[0], val[1]);
+      } else if (val !== undefined) {
+        this.loadImage(key, val);
+      }
+    }
+
+    for (const key of allDefaultAtlasAssets.keys()) {
+      const val = allDefaultAtlasAssets.get(key);
+      if (val instanceof Array) {
+        this.loadAtlas(key, val[0], val[1]);
+      } else if (val !== undefined) {
+        this.loadAtlas(key, val);
+      }
+    }
+
+    // UI windows
+    for (const wv of Utils.getEnumValues(WindowVariant)) {
+      for (let w = 1; w <= 5; w++) {
+        const key = `window_${w}${getWindowVariantSuffix(wv)}`;
+        allDefaultImageAssets.set(key, "ui/windows");
+        this.loadImage(key, "ui/windows");
+      }
+    }
+
+    // Summary screen tabs
+    for (let t = 1; t <= 3; t++) {
+      const key = `summary_tabs_${t}`;
+      allDefaultImageAssets.set(key, "ui");
+      this.loadImage(key, "ui");
+    }
+
+    // Load arena images
+    Utils.getEnumValues(Biome).map(bt => {
+      const btKey = Biome[bt].toLowerCase();
+      const isBaseAnimated = btKey === "end";
+      const baseAKey = `${btKey}_a`;
+      const baseBKey = `${btKey}_b`;
+      allDefaultImageAssets.set(`${btKey}_bg`, "arenas");
+      this.loadImage(`${btKey}_bg`, "arenas");
+      if (!isBaseAnimated) {
+        allDefaultImageAssets.set(baseAKey, "arenas");
+        this.loadImage(baseAKey, "arenas");
+      } else {
+        allDefaultAtlasAssets.set(baseAKey, "arenas");
+        this.loadAtlas(baseAKey, "arenas");
+      }
+      if (!isBaseAnimated) {
+        allDefaultImageAssets.set(baseBKey, "arenas");
+        this.loadImage(baseBKey, "arenas");
+      } else {
+        allDefaultAtlasAssets.set(baseBKey, "arenas");
+        this.loadAtlas(baseBKey, "arenas");
+      }
+      if (getBiomeHasProps(bt)) {
+        for (let p = 1; p <= 3; p++) {
+          const isPropAnimated = p === 3 && [ "power_plant", "end" ].find(b => b === btKey);
+          const propKey = `${btKey}_b_${p}`;
+          if (!isPropAnimated) {
+            allDefaultImageAssets.set(propKey, "arenas");
+            this.loadImage(propKey, "arenas");
+          } else {
+            allDefaultAtlasAssets.set(propKey, "arenas");
+            this.loadAtlas(propKey, "arenas");
+          }
+        }
+      }
+    });
+
+    // Load bitmap fonts
+    allDefaultAtlasAssets.set("item-count", "");
+    this.load.bitmapFont("item-count", "fonts/item-count.png", "fonts/item-count.xml");
+
+    this.load.video("evo_bg", "images/effects/evo_bg.mp4", true);
+
+    // Get current lang and load the types atlas for it. English will only load types while all other languages will load types and types_<lang>
+    const lang = i18next.resolvedLanguage;
+    if (lang !== "en") {
+      if (Utils.verifyLang(lang)) {
+        allDefaultAtlasAssets.set(`statuses_${lang}`, "");
+        allDefaultAtlasAssets.set(`types_${lang}`, "");
+        this.loadAtlas(`statuses_${lang}`, "");
+        this.loadAtlas(`types_${lang}`, "");
+      } else {
+        // Fallback to English
+        allDefaultAtlasAssets.set("statuses", "");
+        allDefaultAtlasAssets.set("types", "");
+        this.loadAtlas("statuses", "");
+        this.loadAtlas("types", "");
+      }
+    } else {
+      allDefaultAtlasAssets.set("statuses", "");
+      allDefaultAtlasAssets.set("types", "");
+      this.loadAtlas("statuses", "");
+      this.loadAtlas("types", "");
+    }
+    const availableLangs = ["en", "de", "it", "fr", "ja", "ko", "es", "pt-BR", "zh-CN"];
+    if (lang && availableLangs.includes(lang)) {
+      const key = "egg-update_"+lang;
+      allDefaultImageAssets.set(key, "events");
+      this.loadImage(key, "events");
+    } else {
+      allDefaultImageAssets.set("egg-update_en", "events");
+      this.loadImage("egg-update_en", "events");
+    }
+
+    // Gacha UI
+    Utils.getEnumKeys(GachaType).forEach(gt => {
+      const key = gt.toLowerCase();
+      allDefaultImageAssets.set(`gacha_${key}`, "egg");
+      allDefaultAtlasAssets.set(`gacha_underlay_${key}`, "egg");
+      this.loadImage(`gacha_${key}`, "egg");
+      this.loadAtlas(`gacha_underlay_${key}`, "egg");
+    });
+
+    for (let i = 0; i < 10; i++) {
+      allDefaultAtlasAssets.set(`pokemon_icons_${i}`, "");
+      this.loadAtlas(`pokemon_icons_${i}`, "");
+      if (i) {
+        allDefaultAtlasAssets.set(`pokemon_icons_${i}v`, "");
+        this.loadAtlas(`pokemon_icons_${i}v`, "");
+      }
     }
 
     this.load.plugin("rextexteditplugin", "https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rextexteditplugin.min.js", true);
@@ -323,6 +191,9 @@ export class LoadingScene extends SceneBase {
     initAbilities();
     initChallenges();
     initMysteryEncounters();
+
+    this.logLocalStorageSize();
+    this.logSessionStorageSize();
   }
 
   loadLoadingScreen() {

@@ -33,6 +33,8 @@ const config: Phaser.Types.Core.GameConfig = {
     height: 1080,
     mode: Phaser.Scale.FIT
   },
+  /** Unnecessary since there is full-screen background art {@link https://newdocs.phaser.io/docs/3.85.1/focus/Phaser.Core.Config-clearBeforeRender} */
+  clearBeforeRender: false,
   plugins: {
     global: [{
       key: "rexInputTextPlugin",
@@ -67,6 +69,7 @@ const config: Phaser.Types.Core.GameConfig = {
   },
   pixelArt: true,
   pipeline: [ InvertPostFX ] as unknown as Phaser.Types.Core.PipelineConfig,
+  powerPreference: "high-performance",
   scene: [ LoadingScene, BattleScene ],
   version: version
 };

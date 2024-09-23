@@ -6,7 +6,7 @@ import { Constructor, isNullOrUndefined } from "#app/utils";
 import * as Utils from "./utils";
 import { ConsumableModifier, ConsumablePokemonModifier, DoubleBattleChanceBoosterModifier, ExpBalanceModifier, ExpShareModifier, FusePokemonModifier, HealingBoosterModifier, Modifier, ModifierBar, ModifierPredicate, MultipleParticipantExpBonusModifier, overrideHeldItems, overrideModifiers, PersistentModifier, PokemonExpBoosterModifier, PokemonFormChangeItemModifier, PokemonHeldItemModifier, PokemonHpRestoreModifier, PokemonIncrementingStatModifier, TerastallizeModifier, TurnHeldItemTransferModifier } from "./modifier/modifier";
 import { PokeballType } from "./data/pokeball";
-import { initCommonAnims, initMoveAnim, loadCommonAnimAssets, loadMoveAnimAssets, populateAnims } from "./data/battle-anims";
+import { getAnimAssetKeys, getCommonAnimConfigs, getMoveAnimConfigs, initCommonAnims, initMoveAnim, loadCommonAnimAssets, loadMoveAnimAssets, populateAnims } from "./data/battle-anims";
 import { Phase } from "./phase";
 import { initGameSpeed } from "./system/game-speed";
 import { Arena, ArenaBase } from "./field/arena";
@@ -336,7 +336,7 @@ export default class BattleScene extends SceneBase {
     if (variant) {
       atlasPath = atlasPath.replace("variant/", "");
     }
-    this.load.atlas(key, `images/pokemon/${variant ? "variant/" : ""}${experimental ? "exp/" : ""}${atlasPath}.png`,  `images/pokemon/${variant ? "variant/" : ""}${experimental ? "exp/" : ""}${atlasPath}.json`);
+    this.load.atlas(key, this.getCachedUrl(`images/pokemon/${variant ? "variant/" : ""}${experimental ? "exp/" : ""}${atlasPath}.png`),  this.getCachedUrl(`images/pokemon/${variant ? "variant/" : ""}${experimental ? "exp/" : ""}${atlasPath}.json`));
   }
 
   async preload() {
@@ -2205,6 +2205,49 @@ export default class BattleScene extends SceneBase {
     }
 
     return 0;
+  }
+
+  clearUnusedAssets() {
+    // Get manifest of assets that are used by the player's party Pokemon or general-use
+    // These should not be unloaded
+    const backgrounds = new Set<string>();
+    const sounds = new Set<string>();
+    const graphics = new Set<string>();
+
+    // Player Pokemon assets and Enemy Pokemon assets for upcoming battle
+    const allPokemon: Pokemon[] = [...this.getParty(), ...this.getEnemyParty()];
+    for (const p of allPokemon) {
+      // Move assets
+      const animConfigs = getMoveAnimConfigs(p.getMoveset().filter(m => !!m).map(m => m.getMove().id));
+      getAnimAssetKeys(animConfigs, sounds, backgrounds, graphics);
+
+      // Cry
+      sounds.add(`cry/${p.getSpeciesForm().getCryKey(p.formIndex)}`);
+
+      // Sprite assets
+      let spriteKey = p.getSpeciesForm().getSpriteKey(p.getGender() === Gender.FEMALE, p.formIndex, p.shiny, p.variant);
+      graphics.add(spriteKey);
+      let spriteBackKey = spriteKey.replace("pkmn__", "pkmn__back__");
+      graphics.add(spriteBackKey);
+      if (p.getFusionSpeciesForm()) {
+        spriteKey = p.getFusionSpeciesForm().getSpriteKey(p.getGender() === Gender.FEMALE, p.formIndex, p.shiny, p.variant);
+        graphics.add(spriteKey);
+        spriteBackKey = spriteKey.replace("pkmn__", "pkmn__back__");
+        graphics.add(spriteBackKey);
+      }
+    }
+
+    // Common Move assets
+    getAnimAssetKeys(getCommonAnimConfigs(), sounds, backgrounds, graphics);
+
+    // Current Biome BGM
+    sounds.add(this.arena.bgm);
+
+    // Rival sprites
+    graphics.add("rival_m");
+    graphics.add("rival_f");
+
+    this.clearAssets(sounds, backgrounds, graphics);
   }
 
   toggleInvert(invert: boolean): void {

@@ -620,8 +620,13 @@ function populateMoveChargeAnim(chargeAnim: ChargeAnim, animSource: any) {
 
 export function loadCommonAnimAssets(scene: BattleScene, startLoad?: boolean): Promise<void> {
   return new Promise(resolve => {
-    loadAnimAssets(scene, Array.from(commonAnims.values()), startLoad).then(() => resolve());
+    const animConfigs = getCommonAnimConfigs();
+    loadAnimAssets(scene, animConfigs, startLoad).then(() => resolve());
   });
+}
+
+export function getCommonAnimConfigs() {
+  return Array.from(commonAnims.values());
 }
 
 /**
@@ -634,50 +639,45 @@ export async function loadEncounterAnimAssets(scene: BattleScene, startLoad?: bo
   await loadAnimAssets(scene, Array.from(encounterAnims.values()), startLoad);
 }
 
-export function loadMoveAnimAssets(scene: BattleScene, moveIds: Moves[], startLoad?: boolean): Promise<void> {
-  return new Promise(resolve => {
-    const moveAnimations = moveIds.map(m => moveAnims.get(m) as AnimConfig).flat();
-    for (const moveId of moveIds) {
-      const chargeAttr = allMoves[moveId].getAttrs(ChargeAttr)[0]
-                      || allMoves[moveId].getAttrs(DelayedAttackAttr)[0]
-                      || allMoves[moveId].getAttrs(BeakBlastHeaderAttr)[0];
-      if (chargeAttr) {
-        const moveChargeAnims = chargeAnims.get(chargeAttr.chargeAnim);
-        moveAnimations.push(moveChargeAnims instanceof AnimConfig ? moveChargeAnims : moveChargeAnims![0]); // TODO: is the bang correct?
-        if (Array.isArray(moveChargeAnims)) {
-          moveAnimations.push(moveChargeAnims[1]);
-        }
+export async function loadMoveAnimAssets(scene: BattleScene, moveIds: Moves[], startLoad?: boolean): Promise<void> {
+  const moveAnimations = getMoveAnimConfigs(moveIds);
+  await loadAnimAssets(scene, moveAnimations, startLoad);
+}
+
+export function getMoveAnimConfigs(moveIds: Moves[]): AnimConfig[] {
+  const moveAnimations: AnimConfig[] = moveIds.map(m => moveAnims.get(m) as AnimConfig).flat();
+  for (const moveId of moveIds) {
+    const chargeAttr = allMoves[moveId].getAttrs(ChargeAttr)[0]
+      || allMoves[moveId].getAttrs(DelayedAttackAttr)[0]
+      || allMoves[moveId].getAttrs(BeakBlastHeaderAttr)[0];
+    if (chargeAttr) {
+      const moveChargeAnims = chargeAnims.get(chargeAttr.chargeAnim);
+      moveAnimations.push(moveChargeAnims instanceof AnimConfig ? moveChargeAnims : moveChargeAnims![0]); // TODO: is the bang correct?
+      if (Array.isArray(moveChargeAnims)) {
+        moveAnimations.push(moveChargeAnims[1]);
       }
     }
-    loadAnimAssets(scene, moveAnimations, startLoad).then(() => resolve());
-  });
+  }
+
+  return moveAnimations;
 }
 
 function loadAnimAssets(scene: BattleScene, anims: AnimConfig[], startLoad?: boolean): Promise<void> {
   return new Promise(resolve => {
     const backgrounds = new Set<string>();
     const sounds = new Set<string>();
-    for (const a of anims) {
-      if (!a.frames?.length) {
-        continue;
-      }
-      const animSounds = a.getSoundResourceNames();
-      for (const ms of animSounds) {
-        sounds.add(ms);
-      }
-      const animBackgrounds = a.getBackgroundResourceNames();
-      for (const abg of animBackgrounds) {
-        backgrounds.add(abg);
-      }
-      if (a.graphic) {
-        scene.loadSpritesheet(a.graphic, "battle_anims", 96);
-      }
-    }
+    const graphics = new Set<string>();
+
+    getAnimAssetKeys(anims, sounds, backgrounds, graphics);
+
     for (const bg of backgrounds) {
       scene.loadImage(bg, "battle_anims");
     }
     for (const s of sounds) {
       scene.loadSe(s, "battle_anims", s);
+    }
+    for (const g of graphics) {
+      scene.loadSpritesheet(g, "battle_anims", 96);
     }
     if (startLoad) {
       scene.load.once(Phaser.Loader.Events.COMPLETE, () => resolve());
@@ -688,6 +688,33 @@ function loadAnimAssets(scene: BattleScene, anims: AnimConfig[], startLoad?: boo
       resolve();
     }
   });
+}
+
+/**
+ * Gets the asset keys for the specified {@linkcode AnimConfig}s.
+ * Passes the keys by reference via `backgrounds` and `sounds`.
+ * @param anims
+ * @param backgrounds Returns Set of image keys passed by reference
+ * @param sounds Returns Set of sound effect keys passed by reference
+ * @param graphics Returns Set of graphics keys passed by reference
+ */
+export function getAnimAssetKeys(anims: AnimConfig[], sounds: Set<string>, backgrounds: Set<string>, graphics: Set<string>): void {
+  for (const a of anims) {
+    if (!a || !a.frames?.length) {
+      continue;
+    }
+    const animSounds = a.getSoundResourceNames();
+    for (const ms of animSounds) {
+      sounds.add(ms);
+    }
+    const animBackgrounds = a.getBackgroundResourceNames();
+    for (const abg of animBackgrounds) {
+      backgrounds.add(abg);
+    }
+    if (a.graphic) {
+      graphics.add(a.graphic);
+    }
+  }
 }
 
 interface GraphicFrameData {

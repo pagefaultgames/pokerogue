@@ -8,6 +8,8 @@ export class NextEncounterPhase extends EncounterPhase {
 
   start() {
     super.start();
+
+    this.scene.clearUnusedAssets();
   }
 
   doEncounter(): void {

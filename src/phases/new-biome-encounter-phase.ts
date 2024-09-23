@@ -11,7 +11,7 @@ export class NewBiomeEncounterPhase extends NextEncounterPhase {
   start() {
     super.start();
 
-    this.scene.clearAllAudio();
+    // this.scene.clearAllAudio();
   }
 
   doEncounter(): void {
