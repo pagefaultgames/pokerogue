@@ -1,0 +1,14 @@
+{
+  "intro": "Es ist eine Lehrer mit seiner Klasse!",
+  "speaker": "Lehrer",
+  "intro_dialogue": "Hallo! \nHätten Sie einen Moment?$Ich unterrichte meinen Schülern aktuell in Pokémon Attacken \nund würde gerne eine Demonstration zeigen.$Würde es Ihnen was ausmachen\neine Attacke eines Ihrer Pokemon zu präsentieren?",
+  "title": "Wandertag",
+  "option": {
+    "2": {
+      "label": "Eine Spezialattacke"
+    }
+  },
+  "status": "Status",
+  "physical": "Physisch",
+  "special": "Spezial"
+}
