@@ -915,12 +915,12 @@ export abstract class BattleAnim {
       this.srcLine = [ userFocusX, userFocusY, targetFocusX, targetFocusY ];
       this.dstLine = [ userInitialX, userInitialY, targetInitialX, targetInitialY ];
 
-      let r = anim!.frames.length; // TODO: is this bang correct?
+      let r = anim?.frames.length ?? 0;
       let f = 0;
 
       scene.tweens.addCounter({
         duration: Utils.getFrameMs(3),
-        repeat: anim!.frames.length, // TODO: is this bang correct?
+        repeat: anim?.frames.length ?? 0,
         onRepeat: () => {
           if (!f) {
             userSprite.setVisible(false);
@@ -1264,7 +1264,7 @@ export class CommonBattleAnim extends BattleAnim {
   }
 
   getAnim(): AnimConfig | null {
-    return this.commonAnim ? commonAnims.get(this.commonAnim)! : null; // TODO: is this bang correct?
+    return this.commonAnim ? commonAnims.get(this.commonAnim) ?? null : null;
   }
 
   isOppAnim(): boolean {
@@ -1284,7 +1284,7 @@ export class MoveAnim extends BattleAnim {
   getAnim(): AnimConfig {
     return moveAnims.get(this.move) instanceof AnimConfig
       ? moveAnims.get(this.move) as AnimConfig
-      : moveAnims.get(this.move)![this.user?.isPlayer() ? 0 : 1] as AnimConfig; // TODO: is this bang correct?
+      : moveAnims.get(this.move)?.[this.user?.isPlayer() ? 0 : 1] as AnimConfig;
   }
 
   isOppAnim(): boolean {
@@ -1316,7 +1316,7 @@ export class MoveChargeAnim extends MoveAnim {
   getAnim(): AnimConfig {
     return chargeAnims.get(this.chargeAnim) instanceof AnimConfig
       ? chargeAnims.get(this.chargeAnim) as AnimConfig
-      : chargeAnims.get(this.chargeAnim)![this.user?.isPlayer() ? 0 : 1] as AnimConfig; // TODO: is this bang correct?
+      : chargeAnims.get(this.chargeAnim)?.[this.user?.isPlayer() ? 0 : 1] as AnimConfig;
   }
 }
 
