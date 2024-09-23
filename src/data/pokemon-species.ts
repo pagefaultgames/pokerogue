@@ -2545,7 +2545,14 @@ export function initSpecies() {
       new PokemonForm("Hero Form", "hero", Type.WATER, null, 1.8, 97.4, Abilities.ZERO_TO_HERO, Abilities.NONE, Abilities.ZERO_TO_HERO, 650, 100, 160, 97, 106, 87, 100, 45, 50, 160),
     ),
     new PokemonSpecies(Species.VAROOM, 9, false, false, false, "Single-Cyl Pokémon", Type.STEEL, Type.POISON, 1, 35, Abilities.OVERCOAT, Abilities.NONE, Abilities.SLOW_START, 300, 45, 70, 63, 30, 45, 47, 190, 50, 60, GrowthRate.MEDIUM_FAST, 50, false),
-    new PokemonSpecies(Species.REVAVROOM, 9, false, false, false, "Multi-Cyl Pokémon", Type.STEEL, Type.POISON, 1.8, 120, Abilities.OVERCOAT, Abilities.NONE, Abilities.FILTER, 500, 80, 119, 90, 54, 67, 90, 75, 50, 175, GrowthRate.MEDIUM_FAST, 50, false),
+    new PokemonSpecies(Species.REVAVROOM, 9, false, false, false, "Multi-Cyl Pokémon", Type.STEEL, Type.POISON, 1.8, 120, Abilities.OVERCOAT, Abilities.NONE, Abilities.FILTER, 500, 80, 119, 90, 54, 67, 90, 75, 50, 175, GrowthRate.MEDIUM_FAST, 50, false, false,
+      new PokemonForm("Normal", "", Type.STEEL, Type.POISON, 1.8, 120, Abilities.OVERCOAT, Abilities.NONE, Abilities.FILTER, 500, 80, 119, 90, 54, 67, 90, 75, 50, 175, false, null, true),
+      new PokemonForm("Segin Starmobile", "segin-starmobile", Type.STEEL, Type.DARK, 1.8, 240, Abilities.INTIMIDATE, Abilities.NONE, Abilities.INTIMIDATE, 600, 120, 129, 100, 59, 77, 115, 75, 50, 175),
+      new PokemonForm("Schedar Starmobile", "schedar-starmobile", Type.STEEL, Type.FIRE, 1.8, 240, Abilities.SPEED_BOOST, Abilities.NONE, Abilities.SPEED_BOOST, 600, 120, 129, 100, 59, 77, 115, 75, 50, 175),
+      new PokemonForm("Navi Starmobile", "navi-starmobile", Type.STEEL, Type.POISON, 1.8, 240, Abilities.TOXIC_DEBRIS, Abilities.NONE, Abilities.TOXIC_DEBRIS, 600, 120, 129, 100, 59, 77, 115, 75, 50, 175),
+      new PokemonForm("Ruchbah Starmobile", "ruchbah-starmobile", Type.STEEL, Type.FAIRY, 1.8, 240, Abilities.MISTY_SURGE, Abilities.NONE, Abilities.MISTY_SURGE, 600, 120, 129, 100, 59, 77, 115, 75, 50, 175),
+      new PokemonForm("Caph Starmobile", "caph-starmobile", Type.STEEL, Type.FIGHTING, 1.8, 240, Abilities.STAMINA, Abilities.NONE, Abilities.STAMINA, 600, 120, 129, 100, 59, 77, 115, 75, 50, 175),
+    ),
     new PokemonSpecies(Species.CYCLIZAR, 9, false, false, false, "Mount Pokémon", Type.DRAGON, Type.NORMAL, 1.6, 63, Abilities.SHED_SKIN, Abilities.NONE, Abilities.REGENERATOR, 501, 70, 95, 65, 85, 65, 121, 190, 50, 175, GrowthRate.MEDIUM_SLOW, 50, false),
     new PokemonSpecies(Species.ORTHWORM, 9, false, false, false, "Earthworm Pokémon", Type.STEEL, null, 2.5, 310, Abilities.EARTH_EATER, Abilities.NONE, Abilities.SAND_VEIL, 480, 70, 85, 145, 60, 55, 65, 25, 50, 240, GrowthRate.SLOW, 50, false),
     new PokemonSpecies(Species.GLIMMET, 9, false, false, false, "Ore Pokémon", Type.ROCK, Type.POISON, 0.7, 8, Abilities.TOXIC_DEBRIS, Abilities.NONE, Abilities.CORROSION, 350, 48, 35, 42, 105, 60, 60, 70, 50, 70, GrowthRate.MEDIUM_SLOW, 50, false),
@@ -3348,6 +3355,7 @@ export function getStarterValueFriendshipCap(value: integer): integer {
   }
 }
 
+export const POKERUS_STARTER_COUNT = 5; //adjust here!
 /**
 * Method to get the daily list of starters with Pokerus.
 * @param scene {@linkcode BattleScene} used as part of RNG
@@ -3356,10 +3364,9 @@ export function getStarterValueFriendshipCap(value: integer): integer {
 export function getPokerusStarters(scene: BattleScene): PokemonSpecies[] {
   const pokerusStarters: PokemonSpecies[] = [];
   const date = new Date();
-  const starterCount = 3; //for easy future adjustment!
   date.setUTCHours(0, 0, 0, 0);
   scene.executeWithSeedOffset(() => {
-    while (pokerusStarters.length < starterCount) {
+    while (pokerusStarters.length < POKERUS_STARTER_COUNT) {
       const randomSpeciesId = parseInt(Utils.randSeedItem(Object.keys(speciesStarters)), 10);
       const species = getPokemonSpecies(randomSpeciesId);
       if (!pokerusStarters.includes(species)) {
@@ -3396,7 +3403,7 @@ export const starterPassiveAbilities = {
   [Species.POLIWAG]: Abilities.NO_GUARD,
   [Species.ABRA]: Abilities.PSYCHIC_SURGE,
   [Species.MACHOP]: Abilities.QUICK_FEET,
-  [Species.BELLSPROUT]: Abilities.PROTOSYNTHESIS,
+  [Species.BELLSPROUT]: Abilities.FLOWER_GIFT,
   [Species.TENTACOOL]: Abilities.TOXIC_CHAIN,
   [Species.GEODUDE]: Abilities.DRY_SKIN,
   [Species.PONYTA]: Abilities.MAGIC_GUARD,
@@ -3424,7 +3431,7 @@ export const starterPassiveAbilities = {
   [Species.STARYU]: Abilities.REGENERATOR,
   [Species.SCYTHER]: Abilities.TINTED_LENS,
   [Species.PINSIR]: Abilities.TINTED_LENS,
-  [Species.TAUROS]: Abilities.SCRAPPY,
+  [Species.TAUROS]: Abilities.STAMINA,
   [Species.MAGIKARP]: Abilities.MULTISCALE,
   [Species.LAPRAS]: Abilities.LIGHTNING_ROD,
   [Species.DITTO]: Abilities.ADAPTABILITY,
@@ -3492,7 +3499,7 @@ export const starterPassiveAbilities = {
   [Species.LARVITAR]: Abilities.SAND_RUSH,
   [Species.LUGIA]: Abilities.DELTA_STREAM,
   [Species.HO_OH]: Abilities.MAGIC_GUARD,
-  [Species.CELEBI]: Abilities.GRASSY_SURGE,
+  [Species.CELEBI]: Abilities.PSYCHIC_SURGE,
   [Species.TREECKO]: Abilities.TINTED_LENS,
   [Species.TORCHIC]: Abilities.RECKLESS,
   [Species.MUDKIP]: Abilities.DRIZZLE,
@@ -3630,7 +3637,7 @@ export const starterPassiveAbilities = {
   [Species.PANPOUR]: Abilities.SAP_SIPPER,
   [Species.MUNNA]: Abilities.NEUTRALIZING_GAS,
   [Species.PIDOVE]: Abilities.SNIPER,
-  [Species.BLITZLE]: Abilities.RECKLESS,
+  [Species.BLITZLE]: Abilities.ELECTRIC_SURGE,
   [Species.ROGGENROLA]: Abilities.SOLID_ROCK,
   [Species.WOOBAT]: Abilities.OPPORTUNIST,
   [Species.DRILBUR]: Abilities.SAND_STREAM,
@@ -3830,7 +3837,7 @@ export const starterPassiveAbilities = {
   [Species.DURALUDON]: Abilities.STEELWORKER,
   [Species.DREEPY]: Abilities.PARENTAL_BOND,
   [Species.ZACIAN]: Abilities.UNNERVE,
-  [Species.ZAMAZENTA]: Abilities.STAMINA,
+  [Species.ZAMAZENTA]: Abilities.UNNERVE,
   [Species.ETERNATUS]: Abilities.NEUTRALIZING_GAS,
   [Species.KUBFU]: Abilities.IRON_FIST,
   [Species.ZARUDE]: Abilities.TOUGH_CLAWS,
@@ -3862,7 +3869,7 @@ export const starterPassiveAbilities = {
   [Species.KLAWF]: Abilities.WATER_ABSORB,
   [Species.CAPSAKID]: Abilities.PARENTAL_BOND,
   [Species.RELLOR]: Abilities.PRANKSTER,
-  [Species.FLITTLE]: Abilities.MAGIC_BOUNCE,
+  [Species.FLITTLE]: Abilities.DAZZLING,
   [Species.TINKATINK]: Abilities.STEELWORKER,
   [Species.WIGLETT]: Abilities.STURDY,
   [Species.BOMBIRDIER]: Abilities.UNBURDEN,
@@ -3913,7 +3920,7 @@ export const starterPassiveAbilities = {
   [Species.TERAPAGOS]: Abilities.SOUL_HEART,
   [Species.PECHARUNT]: Abilities.TOXIC_CHAIN,
   [Species.ALOLA_RATTATA]: Abilities.ADAPTABILITY,
-  [Species.ALOLA_SANDSHREW]: Abilities.TOUGH_CLAWS,
+  [Species.ALOLA_SANDSHREW]: Abilities.ICE_SCALES,
   [Species.ALOLA_VULPIX]: Abilities.SHEER_FORCE,
   [Species.ALOLA_DIGLETT]: Abilities.STURDY,
   [Species.ALOLA_MEOWTH]: Abilities.DARK_AURA,

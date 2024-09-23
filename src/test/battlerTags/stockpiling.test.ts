@@ -12,7 +12,7 @@ beforeEach(() => {
 
 describe("BattlerTag - StockpilingTag", () => {
   describe("onAdd", () => {
-    it("unshifts a StatStageChangePhase with expected stat stage changes on add", { timeout: 10000 }, async () => {
+    it("unshifts a StatStageChangePhase with expected stat stage changes on add", async () => {
       const mockPokemon = {
         scene: vi.mocked(new BattleScene()) as BattleScene,
         getBattlerIndex: () => 0,
@@ -35,7 +35,7 @@ describe("BattlerTag - StockpilingTag", () => {
       expect(mockPokemon.scene.unshiftPhase).toBeCalledTimes(1);
     });
 
-    it("unshifts a StatStageChangePhase with expected stat changes on add (one stat maxed)", { timeout: 10000 }, async () => {
+    it("unshifts a StatStageChangePhase with expected stat changes on add (one stat maxed)", async () => {
       const mockPokemon = {
         scene: new BattleScene(),
         summonData: new PokemonSummonData(),
@@ -64,7 +64,7 @@ describe("BattlerTag - StockpilingTag", () => {
   });
 
   describe("onOverlap", () => {
-    it("unshifts a StatStageChangePhase with expected stat changes on overlap", { timeout: 10000 }, async () => {
+    it("unshifts a StatStageChangePhase with expected stat changes on overlap", async () => {
       const mockPokemon = {
         scene: new BattleScene(),
         getBattlerIndex: () => 0,
@@ -89,7 +89,7 @@ describe("BattlerTag - StockpilingTag", () => {
   });
 
   describe("stack limit, stat tracking, and removal", () => {
-    it("can be added up to three times, even when one stat does not change", { timeout: 10000 }, async () => {
+    it("can be added up to three times, even when one stat does not change", async () => {
       const mockPokemon = {
         scene: new BattleScene(),
         summonData: new PokemonSummonData(),

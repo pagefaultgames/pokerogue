@@ -164,7 +164,7 @@ export class EncounterPhase extends BattlePhase {
       // Load Mystery Encounter Exclamation bubble and sfx
       loadEnemyAssets.push(new Promise<void>(resolve => {
         this.scene.loadSe("GEN8- Exclaim", "battle_anims", "GEN8- Exclaim.wav");
-        this.scene.loadImage("exclaim", "mystery-encounters");
+        this.scene.loadImage("encounter_exclaim", "mystery-encounters");
         this.scene.load.once(Phaser.Loader.Events.COMPLETE, () => resolve());
         if (!this.scene.load.isLoading()) {
           this.scene.load.start();
@@ -216,8 +216,8 @@ export class EncounterPhase extends BattlePhase {
 
       this.scene.ui.setMode(Mode.MESSAGE).then(() => {
         if (!this.loaded) {
-          //@ts-ignore
-          this.scene.gameData.saveAll(this.scene, true, battle.waveIndex % 10 === 1 || this.scene.lastSavePlayTime >= 300).then(success => { // TODO: get rid of ts-ignore
+          this.trySetWeatherIfNewBiome(); // Set weather before session gets saved
+          this.scene.gameData.saveAll(this.scene, true, battle.waveIndex % 10 === 1 || (this.scene.lastSavePlayTime ?? 0) >= 300).then(success => {
             this.scene.disableMenu = false;
             if (!success) {
               return this.scene.reset(true);
@@ -248,10 +248,6 @@ export class EncounterPhase extends BattlePhase {
       if (pokemon) {
         pokemon.resetBattleData();
       }
-    }
-
-    if (!this.loaded) {
-      this.scene.arena.trySetWeather(getRandomWeatherType(this.scene.arena), false);
     }
 
     const enemyField = this.scene.getEnemyField();
@@ -518,5 +514,19 @@ export class EncounterPhase extends BattlePhase {
       return true;
     }
     return false;
+  }
+
+  /**
+   * Set biome weather if and only if this encounter is the start of a new biome.
+   *
+   * By using function overrides, this should happen if and only if this phase
+   * is exactly a NewBiomeEncounterPhase or an EncounterPhase (to account for
+   * Wave 1 of a Daily Run), but NOT NextEncounterPhase (which starts the next
+   * wave in the same biome).
+   */
+  trySetWeatherIfNewBiome(): void {
+    if (!this.loaded) {
+      this.scene.arena.trySetWeather(getRandomWeatherType(this.scene.arena), false);
+    }
   }
 }

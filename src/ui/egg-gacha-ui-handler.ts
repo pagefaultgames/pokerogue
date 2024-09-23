@@ -287,7 +287,6 @@ export default class EggGachaUiHandler extends MessageUiHandler {
     this.eggGachaContainer.add(this.eggGachaSummaryContainer);
 
     const gachaMessageBoxContainer = this.scene.add.container(0, 148);
-    this.eggGachaContainer.add(gachaMessageBoxContainer);
 
     const gachaMessageBox = addWindow(this.scene, 0, 0, 320, 32);
     gachaMessageBox.setOrigin(0, 0);
@@ -301,7 +300,10 @@ export default class EggGachaUiHandler extends MessageUiHandler {
 
     this.message = gachaMessageText;
 
+    this.initTutorialOverlay(this.eggGachaContainer);
     this.eggGachaContainer.add(gachaMessageBoxContainer);
+
+    this.initPromptSprite(gachaMessageBoxContainer);
 
     this.setCursor(0);
   }

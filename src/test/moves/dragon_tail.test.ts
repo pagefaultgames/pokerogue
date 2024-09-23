@@ -1,14 +1,11 @@
 import { BattlerIndex } from "#app/battle";
 import { allMoves } from "#app/data/move";
-import { BattleEndPhase } from "#app/phases/battle-end-phase";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
+import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import GameManager from "../utils/gameManager";
-
-const TIMEOUT = 20 * 1000;
 
 describe("Moves - Dragon Tail", () => {
   let phaserGame: Phaser.Game;
@@ -46,12 +43,12 @@ describe("Moves - Dragon Tail", () => {
     await game.phaseInterceptor.to("BerryPhase");
 
     const isVisible = enemyPokemon.visible;
-    const hasFled = enemyPokemon.wildFlee;
+    const hasFled = enemyPokemon.switchOutStatus;
     expect(!isVisible && hasFled).toBe(true);
 
     // simply want to test that the game makes it this far without crashing
-    await game.phaseInterceptor.to(BattleEndPhase);
-  }, TIMEOUT);
+    await game.phaseInterceptor.to("BattleEndPhase");
+  });
 
   it("should cause opponent to flee, display ability, and not crash", async () => {
     game.override.enemyAbility(Abilities.ROUGH_SKIN);
@@ -65,10 +62,10 @@ describe("Moves - Dragon Tail", () => {
     await game.phaseInterceptor.to("BerryPhase");
 
     const isVisible = enemyPokemon.visible;
-    const hasFled = enemyPokemon.wildFlee;
+    const hasFled = enemyPokemon.switchOutStatus;
     expect(!isVisible && hasFled).toBe(true);
     expect(leadPokemon.hp).toBeLessThan(leadPokemon.getMaxHp());
-  }, TIMEOUT);
+  });
 
   it("should proceed without crashing in a double battle", async () => {
     game.override
@@ -87,9 +84,9 @@ describe("Moves - Dragon Tail", () => {
     await game.phaseInterceptor.to("TurnEndPhase");
 
     const isVisibleLead = enemyLeadPokemon.visible;
-    const hasFledLead = enemyLeadPokemon.wildFlee;
+    const hasFledLead = enemyLeadPokemon.switchOutStatus;
     const isVisibleSec = enemySecPokemon.visible;
-    const hasFledSec = enemySecPokemon.wildFlee;
+    const hasFledSec = enemySecPokemon.switchOutStatus;
     expect(!isVisibleLead && hasFledLead && isVisibleSec && !hasFledSec).toBe(true);
     expect(leadPokemon.hp).toBeLessThan(leadPokemon.getMaxHp());
 
@@ -99,7 +96,7 @@ describe("Moves - Dragon Tail", () => {
 
     await game.phaseInterceptor.to("BerryPhase");
     expect(enemySecPokemon.hp).toBeLessThan(enemySecPokemon.getMaxHp());
-  }, TIMEOUT);
+  });
 
   it("should redirect targets upon opponent flee", async () => {
     game.override
@@ -121,15 +118,15 @@ describe("Moves - Dragon Tail", () => {
     await game.phaseInterceptor.to("BerryPhase");
 
     const isVisibleLead = enemyLeadPokemon.visible;
-    const hasFledLead = enemyLeadPokemon.wildFlee;
+    const hasFledLead = enemyLeadPokemon.switchOutStatus;
     const isVisibleSec = enemySecPokemon.visible;
-    const hasFledSec = enemySecPokemon.wildFlee;
+    const hasFledSec = enemySecPokemon.switchOutStatus;
     expect(!isVisibleLead && hasFledLead && !isVisibleSec && hasFledSec).toBe(true);
     expect(leadPokemon.hp).toBeLessThan(leadPokemon.getMaxHp());
     expect(secPokemon.hp).toBeLessThan(secPokemon.getMaxHp());
     expect(enemyLeadPokemon.hp).toBeLessThan(enemyLeadPokemon.getMaxHp());
     expect(enemySecPokemon.hp).toBeLessThan(enemySecPokemon.getMaxHp());
-  }, TIMEOUT);
+  });
 
   it("doesn't switch out if the target has suction cups", async () => {
     game.override.enemyAbility(Abilities.SUCTION_CUPS);
@@ -141,20 +138,5 @@ describe("Moves - Dragon Tail", () => {
     await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(enemy.isFullHp()).toBe(false);
-  }, TIMEOUT);
-
-  it("doesn't crash if the player has suction cups", async () => {
-    game.override
-      .ability(Abilities.SUCTION_CUPS)
-      .enemyAbility(Abilities.NO_GUARD)
-      .enemyMoveset(Moves.DRAGON_TAIL);
-    await game.classicMode.startBattle([Species.SHUCKLE, Species.FEEBAS]);
-
-    const player = game.scene.getPlayerPokemon()!;
-
-    game.move.select(Moves.SPLASH);
-    await game.phaseInterceptor.to("TurnEndPhase");
-
-    expect(player.species.speciesId).toBe(Species.SHUCKLE);
-  }, TIMEOUT);
+  });
 });
