@@ -1,4 +1,5 @@
 import { MoneyFormat } from "#enums/money-format";
+import { Moves } from "#enums/moves";
 import i18next from "i18next";
 
 export type nil = null | undefined;
@@ -629,4 +630,13 @@ export function getLocalizedSpriteKey(baseKey: string) {
  */
 export function isBetween(num: number, min: number, max: number): boolean {
   return num >= min && num <= max;
+}
+
+/**
+ * Helper method to return the animation filename for a given move
+ *
+ * @param move the move for which the animation filename is needed
+ */
+export function animationFileName(move: Moves): string {
+  return Moves[move].toLowerCase().replace(/\_/g, "-");
 }

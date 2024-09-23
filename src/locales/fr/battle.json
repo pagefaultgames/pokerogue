@@ -14,6 +14,10 @@
   "moneyWon": "Vous remportez\n{{moneyAmount}} ₽ !",
   "moneyPickedUp": "Vous obtenez {{moneyAmount}} ₽ !",
   "pokemonCaught": "Vous avez attrapé\n{{pokemonName}} !",
+  "pokemonObtained": "Vous obtenez\nun {{pokemonName}} !",
+  "pokemonBrokeFree": "Oh non !\nLe Pokémon s’est libéré !",
+  "pokemonFled": "Le {{pokemonName}} sauvage\nprend la fuite !",
+  "playerFled": "Vous fuyez le {{pokemonName}} !",
   "addedAsAStarter": "{{pokemonName}} est ajouté\ncomme starter !",
   "partyFull": "Votre équipe est pleine.\nRelâcher un Pokémon pour {{pokemonName}} ?",
   "pokemon": "de Pokémon",
@@ -44,7 +48,10 @@
   "moveNotImplemented": "{{moveName}} n’est pas encore implémenté et ne peut pas être sélectionné.",
   "moveNoPP": "Il n’y a plus de PP pour\ncette capacité !",
   "moveDisabled": "{{moveName}} est sous entrave !",
+  "canOnlyUseMove": "{{pokemonName}} ne peut utiliser\nque la capacité {{moveName}} !",
+  "moveCannotBeSelected": "La capacité {{moveName}}\nne peut pas être choisie !",
   "disableInterruptedMove": "Il y a une entrave sur la capacité {{moveName}}\nde{{pokemonNameWithAffix}} !",
+  "throatChopInterruptedMove": "Exécu-Son empêche {{pokemonName}}\nd’utiliser la capacité !",
   "noPokeballForce": "Une force mystérieuse\nempêche l’utilisation des Poké Balls.",
   "noPokeballTrainer": "Le Dresseur détourne la Ball\nVoler, c’est mal !",
   "noPokeballMulti": "Impossible ! On ne peut pas viser\nquand il y a deux Pokémon !",
@@ -62,6 +69,7 @@
   "skipItemQuestion": "Êtes-vous sûr·e de ne pas vouloir prendre d’objet ?",
   "itemStackFull": "Quantité maximale de {{fullItemName}} atteinte.\nVous recevez {{itemName}} à la place.",
   "eggHatching": "Hein ?",
+  "eggSkipPrompt": "Aller directement au résumé des Œufs éclos ?",
   "ivScannerUseQuestion": "Utiliser le Scanner d’IV\nsur {{pokemonName}} ?",
   "wildPokemonWithAffix": "{{pokemonName}} sauvage",
   "foePokemonWithAffix": "{{pokemonName}} ennemi",
@@ -96,5 +104,7 @@
   "unlockedSomething": "{{unlockedThing}}\na été débloqué.",
   "congratulations": "Félicitations !",
   "beatModeFirstTime": "{{speciesName}} a battu le mode {{gameMode}} pour la première fois !\nVous avez reçu {{newModifier}} !",
-  "eggSkipPrompt": "Aller directement au résumé des Œufs éclos ?"
+  "ppReduced": "Les PP de la capacité {{moveName}}\nde{{targetName}} baissent de {{reduction}} !",
+  "battlerTagsHealBlock": "{{pokemonNameWithAffix}} ne peut pas guérir !",
+  "battlerTagsHealBlockOnRemove": "Le blocage de soins qui affectait\n{{pokemonNameWithAffix}} s’est dissipé !"
 }
