@@ -1,31 +1,31 @@
 {
-  "intro": "It's a teacher and some school children!",
-  "speaker": "Teacher",
-  "intro_dialogue": "Hello, there! Would you be able to\nspare a minute for my students?$I'm teaching them about Pokémon moves\nand would love to show them a demonstration.$Would you mind showing us one of\nthe moves your Pokémon can use?",
-  "title": "Field Trip",
-  "description": "A teacher is requesting a move demonstration from a Pokémon. Depending on the move you choose, she might have something useful for you in exchange.",
-  "query": "Which move category will you show off?",
+  "intro": "先生と　生徒です！",
+  "speaker": "先生",
+  "intro_dialogue": "あら、　こんにちは！　少しも　生徒のために\nお時間を　させていただきますか？$ポケモンの　技に付いて　教えています　から\n実演を　見た方が　良いです。$手持ちポケモンの　技を　一つ　見させても　良いですか？",
+  "title": "修学旅行",
+  "description": "先生は　ポケモンの　技の　実演を　頼んでいます。　技の　分類によって　お礼に　便利な　アイテムを　くれるかもしれません。",
+  "query": "どの分類の　技を　見せますか？",
   "option": {
     "1": {
-      "label": "A Physical Move",
-      "tooltip": "(+) Physical Item Rewards"
+      "label": "物理技",
+      "tooltip": "(+) 物理アイテム"
     },
     "2": {
-      "label": "A Special Move",
-      "tooltip": "(+) Special Item Rewards"
+      "label": "特殊技",
+      "tooltip": "(+) 特殊アイテム"
     },
     "3": {
-      "label": "A Status Move",
-      "tooltip": "(+) Status Item Rewards"
+      "label": "変化技",
+      "tooltip": "(+) 変化アイテム"
     },
-    "selected": "{{pokeName}} shows off an awesome display of {{move}}!"
+    "selected": "{{pokeName}}は {{move}}を　堂々と　実演します！"
   },
-  "second_option_prompt": "Choose a move for your Pokémon to use.",
-  "incorrect": "...$That isn't a {{moveCategory}} move!\nI'm sorry, but I can't give you anything.$Come along children, we'll\nfind a better demonstration elsewhere.",
-  "incorrect_exp": "Looks like you learned a valuable lesson?$Your Pokémon also gained some experience.",
-  "correct": "Thank you so much for your kindness!\nI hope these items might be of use to you!",
-  "correct_exp": "{{pokeName}} also gained some valuable experience!",
-  "status": "Status",
-  "physical": "Physical",
-  "special": "Special"
+  "second_option_prompt": "使いたい　技を　選んでください",
+  "incorrect": "……$あれは　{{moveCategory}}では　ありませんね！\n申し訳ありませんが、　何も　あげられません。$さあ　みんな、\nましな　実演を　探しに　行きましょう。",
+  "incorrect_exp": "……とにかく　いい勉強に　なりました？$ポケモンも　経験値を　得ました。",
+  "correct": "見せてくれて　ありがとう　ございます！\nこのアイテムは　冒険中に　役に立つと 良いです！",
+  "correct_exp": "{{pokeName}}も　貴重な　経験値を　得ました！",
+  "status": "変化技",
+  "physical": "物理技",
+  "special": "特殊技"
 }
