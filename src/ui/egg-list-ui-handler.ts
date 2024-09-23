@@ -1,12 +1,13 @@
-import BattleScene from "../battle-scene";
-import { Mode } from "./ui";
-import PokemonIconAnimHandler, { PokemonIconAnimMode } from "./pokemon-icon-anim-handler";
-import { TextStyle, addTextObject } from "./text";
-import MessageUiHandler from "./message-ui-handler";
-import { addWindow } from "./ui-theme";
+import BattleScene from "#app/battle-scene";
+import { Mode } from "#app/ui/ui";
+import PokemonIconAnimHandler, { PokemonIconAnimMode } from "#app/ui/pokemon-icon-anim-handler";
+import { TextStyle, addTextObject } from "#app/ui/text";
+import MessageUiHandler from "#app/ui/message-ui-handler";
+import { addWindow } from "#app/ui/ui-theme";
 import {Button} from "#enums/buttons";
 import i18next from "i18next";
-import { ScrollBar } from "./scroll-bar";
+import ScrollableGridUiHandler from "#app/ui/scrollable-grid-handler";
+import { ScrollBar } from "#app/ui/scroll-bar";
 
 export default class EggListUiHandler extends MessageUiHandler {
   private readonly ROWS = 9;
@@ -23,8 +24,7 @@ export default class EggListUiHandler extends MessageUiHandler {
   private eggListMessageBoxContainer: Phaser.GameObjects.Container;
 
   private cursorObj: Phaser.GameObjects.Image;
-  private scrollCursor: number;
-  private scrollBar: ScrollBar;
+  private scrollGridHandler : ScrollableGridUiHandler;
 
   private iconAnimHandler: PokemonIconAnimHandler;
 
@@ -80,8 +80,13 @@ export default class EggListUiHandler extends MessageUiHandler {
     this.eggSprite = this.scene.add.sprite(54, 37, "egg");
     this.eggListContainer.add(this.eggSprite);
 
-    this.scrollBar = new ScrollBar(this.scene, 310, 5, 4, 170, this.ROWS);
-    this.eggListContainer.add(this.scrollBar);
+    const scrollBar = new ScrollBar(this.scene, 310, 5, 4, 170, this.ROWS);
+    this.eggListContainer.add(scrollBar);
+
+    this.scrollGridHandler = new ScrollableGridUiHandler(this, this.ROWS, this.COLUMNS)
+      .withScrollBar(scrollBar)
+      .withUpdateGridCallBack(() => this.updateEggIcons())
+      .withUpdateSingleElementCallback((i:number) => this.setEggDetails(i));
 
     this.eggListMessageBoxContainer = this.scene.add.container(0, this.scene.game.canvas.height / 6);
     this.eggListMessageBoxContainer.setVisible(false);
@@ -96,7 +101,6 @@ export default class EggListUiHandler extends MessageUiHandler {
     this.eggListMessageBoxContainer.add(this.message);
 
     this.cursor = -1;
-    this.scrollCursor = 0;
   }
 
   show(args: any[]): boolean {
@@ -108,11 +112,10 @@ export default class EggListUiHandler extends MessageUiHandler {
 
     this.eggListContainer.setVisible(true);
 
-    this.scrollBar.setTotalRows(Math.ceil(this.scene.gameData.eggs.length / this.COLUMNS));
+    this.scrollGridHandler.setTotalElements(this.scene.gameData.eggs.length);
 
     this.updateEggIcons();
     this.setCursor(0);
-    this.setScrollCursor(0);
 
     return true;
   }
@@ -131,11 +134,13 @@ export default class EggListUiHandler extends MessageUiHandler {
   }
 
   private updateEggIcons() {
-    const indexOffset = this.scrollCursor * this.COLUMNS;
+    const indexOffset = this.scrollGridHandler.getItemOffset();
     const eggsToShow = Math.min(this.eggIcons.length, this.scene.gameData.eggs.length - indexOffset);
 
     this.eggIcons.forEach((icon, i) => {
-      this.iconAnimHandler.addOrUpdate(icon, PokemonIconAnimMode.NONE);
+      if (i !== this.cursor) {
+        this.iconAnimHandler.addOrUpdate(icon, PokemonIconAnimMode.NONE);
+      }
       if (i < eggsToShow) {
         const egg = this.scene.gameData.eggs[i + indexOffset];
         icon.setFrame(egg.getKey());
@@ -144,82 +149,9 @@ export default class EggListUiHandler extends MessageUiHandler {
         icon.setVisible(false);
       }
     });
-
   }
 
-  processInput(button: Button): boolean {
-    const ui = this.getUi();
-
-    let success = false;
-    const error = false;
-
-    if (button === Button.CANCEL) {
-      ui.revertMode();
-      success = true;
-    } else {
-      const totalEggs = this.scene.gameData.eggs.length;
-      const onScreenRows = Math.min(this.ROWS,  Math.ceil(this.eggIcons.length / this.COLUMNS));
-      const maxScrollCursor = Math.max(0, Math.ceil(totalEggs / this.COLUMNS) - onScreenRows);
-      const currentRowIndex = Math.floor(this.cursor / this.COLUMNS);
-      const currentColumnIndex = this.cursor % this.COLUMNS;
-      const lastEggIndex = Math.min(this.eggIcons.length - 1, totalEggs - maxScrollCursor * this.COLUMNS - 1);
-      switch (button) {
-      case Button.UP:
-        if (currentRowIndex > 0) {
-          success = this.setCursor(this.cursor - this.COLUMNS);
-        } else if (this.scrollCursor > 0) {
-          success = this.setScrollCursor(this.scrollCursor - 1);
-        } else {
-          // wrap around to the last row
-          const newCursor = this.cursor + (onScreenRows - 1) * this.COLUMNS;
-          if (newCursor > lastEggIndex) {
-            success = this.setCursor(newCursor - this.COLUMNS);
-          } else {
-            success = this.setCursor(newCursor);
-          }
-          success = this.setScrollCursor(maxScrollCursor) || success;
-        }
-        break;
-      case Button.DOWN:
-        if (currentRowIndex < onScreenRows - 1) {
-          // Go down one row
-          success = this.setCursor(Math.min(this.cursor + this.COLUMNS, totalEggs - this.scrollCursor * this.COLUMNS - 1));
-        } else if (this.scrollCursor < maxScrollCursor) {
-          // Scroll down one row
-          success = this.setScrollCursor(this.scrollCursor + 1);
-        } else {
-          // Wrap around to the top row
-          success = this.setCursor(this.cursor % this.COLUMNS);
-          success = this.setScrollCursor(0) || success;
-        }
-        break;
-      case Button.LEFT:
-        if (currentColumnIndex > 0) {
-          success = this.setCursor(this.cursor - 1);
-        } else {
-          success = this.setCursor(Math.min(this.cursor + this.COLUMNS - 1, lastEggIndex));
-        }
-        break;
-      case Button.RIGHT:
-        if (currentColumnIndex === this.COLUMNS - 1 || this.cursor === lastEggIndex) {
-          success = this.setCursor(this.cursor - currentColumnIndex);
-        } else {
-          success = this.setCursor(this.cursor + 1);
-        }
-        break;
-      }
-    }
-
-    if (success) {
-      ui.playSelect();
-    } else if (error) {
-      ui.playError();
-    }
-
-    return success || error;
-  }
-
-  setEggDetails(index: number): void {
+  private setEggDetails(index: number): void {
     const egg = this.scene.gameData.eggs[index];
     this.eggSprite.setFrame(`egg_${egg.getKey()}`);
     this.eggNameText.setText(`${i18next.t("egg:egg")} (${egg.getEggDescriptor()})`);
@@ -235,6 +167,28 @@ export default class EggListUiHandler extends MessageUiHandler {
     this.eggGachaInfoText.setText(egg.getEggTypeDescriptor(this.scene));
   }
 
+  processInput(button: Button): boolean {
+    const ui = this.getUi();
+
+    let success = false;
+    const error = false;
+
+    if (button === Button.CANCEL) {
+      ui.revertMode();
+      success = true;
+    } else {
+      success = this.scrollGridHandler.processInput(button);
+    }
+
+    if (success) {
+      ui.playSelect();
+    } else if (error) {
+      ui.playError();
+    }
+
+    return success || error;
+  }
+
   setCursor(cursor: number): boolean {
     let changed = false;
 
@@ -244,41 +198,22 @@ export default class EggListUiHandler extends MessageUiHandler {
 
     if (changed) {
       const icon = this.eggIcons[cursor];
-      this.cursorObj.setPosition(icon.x + 114, icon.y + 5);
+      this.cursorObj.setPositionRelative(icon, 114, 5);
 
       if (lastCursor > -1) {
-        this.iconAnimHandler.addOrUpdate(this.eggListIconContainer.getAt(lastCursor) as Phaser.GameObjects.Sprite, PokemonIconAnimMode.NONE);
+        this.iconAnimHandler.addOrUpdate(this.eggIcons[lastCursor], PokemonIconAnimMode.NONE);
       }
-      this.iconAnimHandler.addOrUpdate(this.eggListIconContainer.getAt(cursor) as Phaser.GameObjects.Sprite, PokemonIconAnimMode.ACTIVE);
+      this.iconAnimHandler.addOrUpdate(icon, PokemonIconAnimMode.ACTIVE);
 
-      this.setEggDetails(cursor + this.scrollCursor * this.COLUMNS);
+      this.setEggDetails(cursor + this.scrollGridHandler.getItemOffset());
     }
 
     return changed;
   }
 
-  setScrollCursor(cursor: number): boolean {
-    if (cursor === this.scrollCursor) {
-      return false;
-    }
-
-    this.scrollCursor = cursor;
-    this.scrollBar.setScrollCursor(cursor);
-
-    const newEggIndex = this.cursor + this.scrollCursor * this.COLUMNS;
-    if (newEggIndex >= this.scene.gameData.eggs.length) {
-      this.setCursor(this.scene.gameData.eggs.length - this.scrollCursor * this.COLUMNS - 1);
-    } else {
-      this.setEggDetails(newEggIndex);
-    }
-
-    this.updateEggIcons();
-    return true;
-  }
-
   clear(): void {
     super.clear();
-    this.setScrollCursor(0);
+    this.scrollGridHandler.reset();
     this.cursor = -1;
     this.eggListContainer.setVisible(false);
     this.iconAnimHandler.removeAll();
