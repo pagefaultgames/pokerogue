@@ -650,7 +650,7 @@ export default class Move implements Localizable {
   }
 
   /**
-   * Applies each {@linkcode MoveCondition} of this move to the params
+   * Applies each {@linkcode MoveCondition} function of this move to the params, determines if the move can be used prior to calling each attribute's apply()
    * @param user {@linkcode Pokemon} to apply conditions to
    * @param target {@linkcode Pokemon} to apply conditions to
    * @param move {@linkcode Move} to apply conditions to
@@ -5295,6 +5295,21 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
   }
 }
 
+
+export class ChillyReceptionAttr extends ForceSwitchOutAttr {
+
+  // using inherited constructor
+
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): Promise<boolean> {
+    user.scene.arena.trySetWeather(WeatherType.SNOW, true);
+    return super.apply(user, target, move, args);
+  }
+
+  getCondition(): MoveConditionFunc {
+    // chilly reception move will go through if the weather is change-able to snow, or the user can switch out, else move will fail
+    return (user, target, move) => user.scene.arena.trySetWeather(WeatherType.SNOW, true) || super.getSwitchOutCondition()(user, target, move);
+  }
+}
 export class RemoveTypeAttr extends MoveEffectAttr {
 
   private removedType: Type;
@@ -9484,10 +9499,9 @@ export function initMoves() {
       .makesContact(),
     new SelfStatusMove(Moves.SHED_TAIL, Type.NORMAL, -1, 10, -1, 0, 9)
       .unimplemented(),
-    new StatusMove(Moves.CHILLY_RECEPTION, Type.ICE, -1, 10, -1, 0, 9)
-      .attr(WeatherChangeAttr, WeatherType.SNOW)
-      .attr(ForceSwitchOutAttr, true, false)
-      .target(MoveTarget.BOTH_SIDES),
+    new SelfStatusMove(Moves.CHILLY_RECEPTION, Type.ICE, -1, 10, -1, 0, 9)
+      .attr(PreMoveMessageAttr, (user, move) => i18next.t("moveTriggers:chillyReception", {pokemonName: getPokemonNameWithAffix(user)}))
+      .attr(ChillyReceptionAttr, true, false),
     new SelfStatusMove(Moves.TIDY_UP, Type.NORMAL, -1, 10, -1, 0, 9)
       .attr(StatStageChangeAttr, [ Stat.ATK, Stat.SPD ], 1, true, null, true, true)
       .attr(RemoveArenaTrapAttr, true)
