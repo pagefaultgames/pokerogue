@@ -1,0 +1,26 @@
+{
+  "intro": "Das ist kein gewöhnliches Pokémon!",
+  "title": "Ungewöhnliche Züchtung",
+  "description": "Das {{enemyPokemon}} sieht im Vergleich zu anderen seiner Art besonders aus. @[TOOLTIP_TITLE]{Vielleicht kennt es einen besondere Attacke?} Du könntest es einfach bekämpfen und fangen, aber es gibt vielleicht auch eine Möglichkeit, es zu befreunden.",
+  "query": "Was wirst du tun?",
+  "option": {
+    "1": {
+      "label": "Kampf beginnen",
+      "tooltip": "(-) Schwieriger Kampf\n(+) Starkes fangbares Pokémon",
+      "selected": "Du stellst dich dem {{enemyPokemon}} ohne Furcht.",
+      "stat_boost": "Die gesteigerten Fähigkeiten des {{enemyPokemon}} erhöhen seine Werte!"
+    },
+    "2": {
+      "label": "Ihm Futter geben",
+      "disabled_tooltip": "Du brauchst 4 Beeren, um diese Option zu wählen",
+      "tooltip": "(-) Gib 4 Beeren\n(+) Das {{enemyPokemon}} mag dich",
+      "selected": "Du wirfst die Beeren zu {{enemyPokemon}}!$Es frisst sie glücklich!$Das {{enemyPokemon}} möchte sich dir anschließen!"
+    },
+    "3": {
+      "label": "Es befreunden",
+      "disabled_tooltip": "Dein Pokémon muss bestimmte Attacken kennen, um diese Option zu wählen",
+      "tooltip": "(+) {{option3PrimaryName}} setzt {{option3PrimaryMove}} ein\n(+) Das {{enemyPokemon}} mag dich",
+      "selected": "Dein {{option3PrimaryName}} setzt {{option3PrimaryMove}} ein, um das {{enemyPokemon}} zu bezaubern!$Das {{enemyPokemon}} möchte sich dir anschließen!"
+    }
+  }
+}

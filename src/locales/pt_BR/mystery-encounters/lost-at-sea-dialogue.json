@@ -1,0 +1,28 @@
+{
+  "intro": "Vagando sem rumo pelo mar, você efetivamente não chegou a lugar nenhum.",
+  "title": "Perdido no Mar",
+  "description": "O mar está turbulento nesta área, e você está ficando sem energia.\nIsso é ruim. Haverá uma saída para essa situação?",
+  "query": "O que você vai fazer?",
+  "option": {
+    "1": {
+      "label": "{{option1PrimaryName}} Pode Ajudar",
+      "label_disabled": "Não pode {{option1RequiredMove}}",
+      "tooltip": "(+) {{option1PrimaryName}} te salva\n(+) {{option1PrimaryName}} ganha um pouco de EXP",
+      "tooltip_disabled": "Você não tem um Pokémon que possa {{option1RequiredMove}}",
+      "selected": "{{option1PrimaryName}} nada à frente, guiando você de volta ao caminho.${{option1PrimaryName}} parece ter ficado mais forte nesse momento de necessidade!"
+    },
+    "2": {
+      "label": "{{option2PrimaryName}} Pode Ajudar",
+      "label_disabled": "Não pode {{option2RequiredMove}}",
+      "tooltip": "(+) {{option2PrimaryName}} te salva\n(+) {{option2PrimaryName}} ganha um pouco de EXP",
+      "tooltip_disabled": "Você não tem um Pokémon que possa {{option2RequiredMove}}",
+      "selected": "{{option2PrimaryName}} voa à frente do seu barco, guiando você de volta ao caminho.${{option2PrimaryName}} parece ter ficado mais forte nesse momento de necessidade!"
+    },
+    "3": {
+      "label": "Vaguear Sem Rumo",
+      "tooltip": "(-) Cada um dos seus Pokémon perde {{damagePercentage}}% de seus PS totais",
+      "selected": "Você flutua no barco, navegando sem direção até finalmente avistar um ponto de referência que você se lembra.$Você e seus Pokémon estão exaustos de toda a provação."
+    }
+  },
+  "outro": "Você está de volta ao caminho."
+}

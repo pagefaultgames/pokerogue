@@ -1,0 +1,46 @@
+{
+  "intro": "Es ist die Safari-Zone!",
+  "title": "Die Safari-Zone",
+  "description": "Es gibt alle Arten von seltenen und besonderen Pokémon, die hier gefunden werden können!\nWenn du dich entscheidest, einzutreten, hast du kannst du in den nächsten 3 Wellen versuchen, besondere Pokémon zu fangen.\nAber sei gewarnt, diese Pokémon können fliehen, bevor du sie fangen kannst!",
+  "query": "Willst du eintreten?",
+  "option": {
+    "1": {
+      "label": "Eintreten",
+      "tooltip": "(-) Zahle {{option1Money, money}}\n@[SUMMARY_GREEN]{(?) Safari Zone}",
+      "selected": "Zeit, dein Glück herauszufordern!"
+    },
+    "2": {
+      "label": "Weggehen",
+      "tooltip": "(-) Keine Belohnung",
+      "selected": "Du gehst deines Weges, mit einem leichten Gefühl der Reue."
+    }
+  },
+  "safari": {
+    "1": {
+      "label":  "Pokéball werfen",
+      "tooltip": "(+) Werfe einen Pokéball",
+      "selected": "Du wirfst einen Pokéball!"
+    },
+    "2": {
+      "label": "Köder werfen",
+      "tooltip": "(+) Erhöht die Fangrate\n(-) Erhöht die Fluchtchance",
+      "selected": "Du wirfst einen Köder!"
+    },
+    "3": {
+      "label":"Matsch werfen",
+      "tooltip": "(+) Vermindert die Fluchtchance\n(-) Chance, die Fangrate zu verringern",
+      "selected":  "Du wirst ein wenig Matsch!"
+    },
+    "4": {
+      "label": "Fliehen",
+      "tooltip": "(?) Fliehe vor diesem Pokémon"
+    },
+    "watching": "{{pokemonName}} beobachtet alles aufmerksam!",
+    "eating": "{{pokemonName}} frisst!",
+    "busy_eating": "{{pokemonName}} konzentriert sich aufs Futter!",
+    "angry": "{{pokemonName}} ist wütend!",
+    "beside_itself_angry": "{{pokemonName}} ist außer sich vor Wut!",
+    "remaining_count": "{{remainingCount}} Pokémon übrig!"
+  },
+  "outro": "Das war ein spannendes Abenteuer in der Safari-Zone!"
+}
