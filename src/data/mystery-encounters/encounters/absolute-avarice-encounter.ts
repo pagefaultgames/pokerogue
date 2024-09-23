@@ -10,7 +10,7 @@ import { PersistentModifierRequirement } from "#app/data/mystery-encounters/myst
 import { queueEncounterMessage } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
-import { BerryModifier } from "#app/modifier/modifier";
+import { BerryModifier, PokemonInstantReviveModifier } from "#app/modifier/modifier";
 import { getPokemonSpecies } from "#app/data/pokemon-species";
 import { Moves } from "#enums/moves";
 import { BattlerTagType } from "#enums/battler-tag-type";
@@ -268,7 +268,8 @@ export const AbsoluteAvariceEncounter: MysteryEncounter =
           const givePartyPokemonReviverSeeds = () => {
             const party = scene.getParty();
             party.forEach(p => {
-              if (revSeed) {
+              const heldItems = p.getHeldItems();
+              if (revSeed && !heldItems.some(item => item instanceof PokemonInstantReviveModifier)) {
                 const seedModifier = revSeed.newModifier(p);
                 if (seedModifier) {
                   encounter.setDialogueToken("foodReward", seedModifier.type.name);
