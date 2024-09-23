@@ -74,7 +74,7 @@ export class MovePhase extends BattlePhase {
 
     if (!this.followUp) {
       if (this.move.getMove().checkFlag(MoveFlags.IGNORE_ABILITIES, this.pokemon, null)) {
-        this.scene.arena.setIgnoreAbilities();
+        this.scene.arena.setIgnoreAbilities(true, this.pokemon.getBattlerIndex());
       }
     } else {
       this.pokemon.turnData.hitsLeft = 0; // TODO: is `0` correct?

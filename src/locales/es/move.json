@@ -2913,7 +2913,7 @@
   },
   "zippyZap": {
     "name": "Pikaturbo",
-    "effect": "The user attacks the target with bursts of electricity at high speed. This move always goes first and raises the user's evasiveness."
+    "effect": "Ataque eléctrico a la velocidad del rayo. Este movimiento tiene prioridad alta y aumenta la Evasión del usuario."
   },
   "splishySplash": {
     "name": "Salpikasurf",
@@ -3129,7 +3129,7 @@
   },
   "auraWheel": {
     "name": "Rueda Aural",
-    "effect": "La energía que acumula en las mejillas le sirve para atacar y aumentar su Velocidad. Este movimiento cambia de tipo según la forma que adopte Morpeko."
+    "effect": "La energía que acumula en las mejillas le sirve para atacar y aumentar su Velocidad. Si es utilizado por Morpeko, este movimiento cambia de tipo según la forma que adopte."
   },
   "breakingSwipe": {
     "name": "Vasto Impacto",
