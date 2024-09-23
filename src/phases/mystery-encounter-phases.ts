@@ -24,7 +24,7 @@ import { NewBattlePhase } from "#app/phases/new-battle-phase";
 import { GameOverPhase } from "#app/phases/game-over-phase";
 import { SwitchPhase } from "#app/phases/switch-phase";
 import { SeenEncounterData } from "#app/data/mystery-encounters/mystery-encounter-save-data";
-import { SwitchType } from "#app/enums/switch-type";
+import { SwitchType } from "#enums/switch-type";
 
 /**
  * Will handle (in order):

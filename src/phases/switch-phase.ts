@@ -1,5 +1,5 @@
 import BattleScene from "#app/battle-scene";
-import { SwitchType } from "#app/enums/switch-type";
+import { SwitchType } from "#enums/switch-type";
 import PartyUiHandler, { PartyUiMode, PartyOption } from "#app/ui/party-ui-handler";
 import { Mode } from "#app/ui/ui";
 import { BattlePhase } from "./battle-phase";

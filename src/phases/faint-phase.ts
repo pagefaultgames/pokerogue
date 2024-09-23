@@ -18,7 +18,7 @@ import { GameOverPhase } from "./game-over-phase";
 import { SwitchPhase } from "./switch-phase";
 import { VictoryPhase } from "./victory-phase";
 import { SpeciesFormChangeActiveTrigger } from "#app/data/pokemon-forms";
-import { SwitchType } from "#app/enums/switch-type";
+import { SwitchType } from "#enums/switch-type";
 
 export class FaintPhase extends PokemonPhase {
   private preventEndure: boolean;
