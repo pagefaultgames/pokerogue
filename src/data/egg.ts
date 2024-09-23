@@ -1,6 +1,6 @@
 import BattleScene from "../battle-scene";
 import PokemonSpecies, { getPokemonSpecies, speciesStarters } from "./pokemon-species";
-import { VariantTier } from "../enums/variant-tiers";
+import { VariantTier } from "../enums/variant-tier";
 import * as Utils from "../utils";
 import Overrides from "#app/overrides";
 import { pokemonPrevolutions } from "./pokemon-evolutions";
@@ -61,7 +61,10 @@ export interface IEggOptions {
   /** Defines if the egg will hatch with the hidden ability of this species.
    *  If no hidden ability exist, a random one will get choosen.
    */
-  overrideHiddenAbility?: boolean
+  overrideHiddenAbility?: boolean,
+
+  /** Can customize the message displayed for where the egg was obtained */
+  eggDescriptor?: string;
 }
 
 export class Egg {
@@ -82,6 +85,8 @@ export class Egg {
   private _eggMoveIndex: number;
 
   private _overrideHiddenAbility: boolean;
+
+  private _eggDescriptor?: string;
 
   ////
   // #endregion
@@ -173,7 +178,7 @@ export class Egg {
       // be done because species with no variants get filtered at rollSpecies but if the
       // species is set via options or the legendary gacha pokemon gets choosen the check never happens
       if (this._species && !getPokemonSpecies(this._species).hasVariants()) {
-        this._variantTier = VariantTier.COMMON;
+        this._variantTier = VariantTier.STANDARD;
       }
       // Needs this._tier so it needs to be generated afer the tier override if bought from same species
       this._eggMoveIndex = eggOptions?.eggMoveIndex ?? this.rollEggMoveIndex();
@@ -191,6 +196,8 @@ export class Egg {
     } else { // For legacy eggs without scene
       generateEggProperties(eggOptions);
     }
+
+    this._eggDescriptor = eggOptions?.eggDescriptor;
   }
 
   ////
@@ -292,13 +299,15 @@ export class Egg {
   public getEggTypeDescriptor(scene: BattleScene): string {
     switch (this.sourceType) {
     case EggSourceType.SAME_SPECIES_EGG:
-      return i18next.t("egg:sameSpeciesEgg", { species: getPokemonSpecies(this._species).getName()});
+      return this._eggDescriptor ?? i18next.t("egg:sameSpeciesEgg", { species: getPokemonSpecies(this._species).getName()});
     case EggSourceType.GACHA_LEGENDARY:
-      return `${i18next.t("egg:gachaTypeLegendary")} (${getPokemonSpecies(getLegendaryGachaSpeciesForTimestamp(scene, this.timestamp)).getName()})`;
+      return this._eggDescriptor ?? `${i18next.t("egg:gachaTypeLegendary")} (${getPokemonSpecies(getLegendaryGachaSpeciesForTimestamp(scene, this.timestamp)).getName()})`;
     case EggSourceType.GACHA_SHINY:
-      return i18next.t("egg:gachaTypeShiny");
+      return this._eggDescriptor ?? i18next.t("egg:gachaTypeShiny");
     case EggSourceType.GACHA_MOVE:
-      return i18next.t("egg:gachaTypeMove");
+      return this._eggDescriptor ?? i18next.t("egg:gachaTypeMove");
+    case EggSourceType.EVENT:
+      return this._eggDescriptor ?? i18next.t("egg:eventType");
     default:
       console.warn("getEggTypeDescriptor case not defined. Returning default empty string");
       return "";
@@ -485,12 +494,12 @@ export class Egg {
   // place but I don't want to touch the pokemon class.
   private rollVariant(): VariantTier {
     if (!this.isShiny) {
-      return VariantTier.COMMON;
+      return VariantTier.STANDARD;
     }
 
     const rand = Utils.randSeedInt(10);
     if (rand >= 4) {
-      return VariantTier.COMMON; // 6/10
+      return VariantTier.STANDARD; // 6/10
     } else if (rand >= 1) {
       return VariantTier.RARE;   // 3/10
     } else {

@@ -49,15 +49,11 @@ export default class RunInfoUiHandler extends UiHandler {
   private runResultContainer: Phaser.GameObjects.Container;
   private runInfoContainer: Phaser.GameObjects.Container;
   private partyContainer: Phaser.GameObjects.Container;
-  private partyHeldItemsContainer: Phaser.GameObjects.Container;
   private statsBgWidth: integer;
-  private partyContainerHeight: integer;
-  private partyContainerWidth: integer;
 
   private hallofFameContainer: Phaser.GameObjects.Container;
   private endCardContainer: Phaser.GameObjects.Container;
 
-  private partyInfo: Phaser.GameObjects.Container[];
   private partyVisibility: Boolean;
   private modifiersModule: any;
 
@@ -180,9 +176,9 @@ export default class RunInfoUiHandler extends UiHandler {
   private async parseRunResult() {
     const genderIndex = this.scene.gameData.gender ?? PlayerGender.UNSET;
     const genderStr = PlayerGender[genderIndex];
-    const runResultTextStyle = this.isVictory ? TextStyle.SUMMARY : TextStyle.SUMMARY_RED;
+    const runResultTextStyle = this.isVictory ? TextStyle.PERFECT_IV : TextStyle.SUMMARY_RED;
     const runResultTitle = this.isVictory ? i18next.t("runHistory:victory") : i18next.t("runHistory:defeated", { context: genderStr });
-    const runResultText = addBBCodeTextObject(this.scene, 6, 5, `${runResultTitle} - ${i18next.t("saveSlotSelectUiHandler:wave")} ${this.runInfo.waveIndex}`, runResultTextStyle, {fontSize : "65px", lineSpacing: 0.1});
+    const runResultText = addTextObject(this.scene, 6, 5, `${runResultTitle} - ${i18next.t("saveSlotSelectUiHandler:wave")} ${this.runInfo.waveIndex}`, runResultTextStyle, {fontSize : "65px", lineSpacing: 0.1});
 
     if (this.isVictory) {
       const hallofFameInstructionContainer = this.scene.add.container(0, 0);
@@ -211,7 +207,7 @@ export default class RunInfoUiHandler extends UiHandler {
     if (!this.isVictory) {
       const enemyContainer = this.scene.add.container(0, 0);
       // Wild - Single and Doubles
-      if (this.runInfo.battleType === BattleType.WILD) {
+      if (this.runInfo.battleType === BattleType.WILD || (this.runInfo.battleType === BattleType.MYSTERY_ENCOUNTER && !this.runInfo.trainer)) {
         switch (this.runInfo.enemyParty.length) {
         case 1:
           // Wild - Singles
@@ -222,7 +218,7 @@ export default class RunInfoUiHandler extends UiHandler {
           this.parseWildDoubleDefeat(enemyContainer);
           break;
         }
-      } else if (this.runInfo.battleType === BattleType.TRAINER) {
+      } else if (this.runInfo.battleType === BattleType.TRAINER || (this.runInfo.battleType === BattleType.MYSTERY_ENCOUNTER && this.runInfo.trainer)) {
         this.parseTrainerDefeat(enemyContainer);
       }
       this.runResultContainer.add(enemyContainer);
@@ -381,10 +377,6 @@ export default class RunInfoUiHandler extends UiHandler {
       break;
     case GameModes.SPLICED_ENDLESS:
       modeText.appendText(`${i18next.t("gameMode:endlessSpliced")}`, false);
-      if (this.runInfo.waveIndex === this.scene.gameData.gameStats.highestEndlessWave) {
-        modeText.appendText(` [${i18next.t("runHistory:personalBest")}]`, false);
-        modeText.setTint(0xffef5c, 0x47ff69, 0x6b6bff, 0xff6969);
-      }
       break;
     case GameModes.CHALLENGE:
       modeText.appendText(`${i18next.t("gameMode:challenge")}`, false);
@@ -403,15 +395,16 @@ export default class RunInfoUiHandler extends UiHandler {
       break;
     case GameModes.ENDLESS:
       modeText.appendText(`${i18next.t("gameMode:endless")}`, false);
-      // If the player achieves a personal best in Endless, the mode text will be tinted similarly to SSS luck to celebrate their achievement.
-      if (this.runInfo.waveIndex === this.scene.gameData.gameStats.highestEndlessWave) {
-        modeText.appendText(` [${i18next.t("runHistory:personalBest")}]`, false);
-        modeText.setTint(0xffef5c, 0x47ff69, 0x6b6bff, 0xff6969);
-      }
       break;
     case GameModes.CLASSIC:
       modeText.appendText(`${i18next.t("gameMode:classic")}`, false);
       break;
+    }
+
+    // If the player achieves a personal best in Endless, the mode text will be tinted similarly to SSS luck to celebrate their achievement.
+    if ((this.runInfo.gameMode === GameModes.ENDLESS || this.runInfo.gameMode === GameModes.SPLICED_ENDLESS) && this.runInfo.waveIndex === this.scene.gameData.gameStats.highestEndlessWave) {
+      modeText.appendText(` [${i18next.t("runHistory:personalBest")}]`);
+      modeText.setTint(0xffef5c, 0x47ff69, 0x6b6bff, 0xff6969);
     }
 
     // Duration + Money
@@ -866,7 +859,7 @@ export default class RunInfoUiHandler extends UiHandler {
   private buttonCycleOption(button: Button) {
     switch (button) {
     case Button.CYCLE_FORM:
-      if (this.isVictory) {
+      if (this.isVictory && this.pageMode !== RunInfoUiMode.HALL_OF_FAME) {
         if (!this.endCardContainer || !this.endCardContainer.visible) {
           this.createVictorySplash();
           this.endCardContainer.setVisible(true);
@@ -880,7 +873,7 @@ export default class RunInfoUiHandler extends UiHandler {
       }
       break;
     case Button.CYCLE_SHINY:
-      if (this.isVictory) {
+      if (this.isVictory && this.pageMode !== RunInfoUiMode.ENDING_ART) {
         if (!this.hallofFameContainer.visible) {
           this.hallofFameContainer.setVisible(true);
           this.pageMode = RunInfoUiMode.HALL_OF_FAME;
@@ -891,7 +884,7 @@ export default class RunInfoUiHandler extends UiHandler {
       }
       break;
     case Button.CYCLE_ABILITY:
-      if (this.runInfo.modifiers.length !== 0) {
+      if (this.runInfo.modifiers.length !== 0 && this.pageMode === RunInfoUiMode.MAIN) {
         if (this.partyVisibility) {
           this.showParty(false);
         } else {

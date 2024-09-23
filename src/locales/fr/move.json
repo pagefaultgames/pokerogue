@@ -364,8 +364,8 @@
     "effect": "Le lanceur creuse au premier tour et frappe au second."
   },
   "toxic": {
-    "name": "Fil Toxique",
-    "effect": "Tisse un fil imprégné de venin. Empoisonne la cible et baisse sa Vitesse."
+    "name": "Toxik",
+    "effect": "Le lanceur empoisonne gravement la cible. Les dégâts dus au poison augmentent à chaque tour."
   },
   "confusion": {
     "name": "Choc Mental",
@@ -3121,15 +3121,15 @@
   },
   "behemothBlade": {
     "name": "Gladius Maximus",
-    "effect": "Le lanceur se transforme en une immense épée et pourfend sa cible. Cette capacité inflige le double de dégâts aux Pokémon Dynamax."
+    "effect": "Le lanceur se transforme en une immense épée et pourfend sa cible."
   },
   "behemothBash": {
     "name": "Aegis Maxima",
-    "effect": "Le lanceur se transforme en un immense bouclier et charge sa cible. Cette capacité inflige le double de dégâts aux Pokémon Dynamax."
+    "effect": "Le lanceur se transforme en un immense bouclier et charge sa cible."
   },
   "auraWheel": {
     "name": "Roue Libre",
-    "effect": "Inflige et change en type Ténèbres"
+    "effect": "Le Pokémon libère l’énergie stockée dans ses joues pour attaquer et augmenter sa Vitesse. Le type de cette capacité change en fonction de la forme du lanceur."
   },
   "breakingSwipe": {
     "name": "Abattage",

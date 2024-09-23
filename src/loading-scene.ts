@@ -22,6 +22,7 @@ import { initStatsKeys } from "./ui/game-stats-ui-handler";
 import { initVouchers } from "./system/voucher";
 import { Biome } from "#enums/biome";
 import { TrainerType } from "#enums/trainer-type";
+import {initMysteryEncounters} from "#app/data/mystery-encounters/mystery-encounters";
 
 export class LoadingScene extends SceneBase {
   public static readonly KEY = "loading";
@@ -240,12 +241,15 @@ export class LoadingScene extends SceneBase {
     const lang = i18next.resolvedLanguage;
     if (lang !== "en") {
       if (Utils.verifyLang(lang)) {
+        this.loadAtlas(`statuses_${lang}`, "");
         this.loadAtlas(`types_${lang}`, "");
       } else {
         // Fallback to English
+        this.loadAtlas("statuses", "");
         this.loadAtlas("types", "");
       }
     } else {
+      this.loadAtlas("statuses", "");
       this.loadAtlas("types", "");
     }
     const availableLangs = ["en", "de", "it", "fr", "ja", "ko", "es", "pt-BR", "zh-CN"];
@@ -285,6 +289,9 @@ export class LoadingScene extends SceneBase {
         this.loadAtlas(`pokemon_icons_${i}v`, "");
       }
     }
+
+    // Load Mystery Encounter dex progress icon
+    this.loadImage("encounter_radar", "mystery-encounters");
 
     this.loadAtlas("dualshock", "inputs");
     this.loadAtlas("xbox", "inputs");
@@ -362,6 +369,7 @@ export class LoadingScene extends SceneBase {
     initMoves();
     initAbilities();
     initChallenges();
+    initMysteryEncounters();
   }
 
   loadLoadingScreen() {

@@ -13,7 +13,7 @@ import { allMoves } from "../data/move";
 import { Nature, getNatureName } from "../data/nature";
 import { pokemonFormChanges } from "../data/pokemon-forms";
 import { LevelMoves, pokemonFormLevelMoves, pokemonSpeciesLevelMoves } from "../data/pokemon-level-moves";
-import PokemonSpecies, { allSpecies, getPokemonSpeciesForm, getStarterValueFriendshipCap, speciesStarters, starterPassiveAbilities, getPokerusStarters } from "../data/pokemon-species";
+import PokemonSpecies, { allSpecies, getPokemonSpeciesForm, getStarterValueFriendshipCap, speciesStarters, starterPassiveAbilities, POKERUS_STARTER_COUNT, getPokerusStarters } from "../data/pokemon-species";
 import { Type } from "../data/type";
 import { GameModes } from "../game-mode";
 import { AbilityAttr, DexAttr, DexAttrProps, DexEntry, StarterMoveset, StarterAttributes, StarterPreferences, StarterPrefs } from "../system/game-data";
@@ -83,7 +83,7 @@ const languageSettings: { [key: string]: LanguageSetting } = {
   },
   "fr":{
     starterInfoTextSize: "54px",
-    instructionTextSize: "35px",
+    instructionTextSize: "38px",
   },
   "it":{
     starterInfoTextSize: "56px",
@@ -627,11 +627,11 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
     const starterBoxContainer = this.scene.add.container(speciesContainerX + 6, 9); //115
 
-    this.starterSelectScrollBar = new ScrollBar(this.scene, 161, 12, 0);
+    this.starterSelectScrollBar = new ScrollBar(this.scene, 161, 12, 5, starterContainerWindow.height - 6, 9);
 
     starterBoxContainer.add(this.starterSelectScrollBar);
 
-    this.pokerusCursorObjs = new Array(3).fill(null).map(() => {
+    this.pokerusCursorObjs = new Array(POKERUS_STARTER_COUNT).fill(null).map(() => {
       const cursorObj = this.scene.add.image(0, 0, "select_cursor_pokerus");
       cursorObj.setVisible(false);
       cursorObj.setOrigin(0, 0);
@@ -760,7 +760,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.pokemonCaughtHatchedContainer.add(this.pokemonHatchedCountText);
 
     this.pokemonMovesContainer = this.scene.add.container(102, 16);
-    this.pokemonMovesContainer.setScale(0.5);
+    this.pokemonMovesContainer.setScale(0.375);
 
     for (let m = 0; m < 4; m++) {
       const moveContainer = this.scene.add.container(0, 14 * m);
@@ -894,6 +894,9 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.message.setOrigin(0, 0);
     this.starterSelectMessageBoxContainer.add(this.message);
 
+    // arrow icon for the message box
+    this.initPromptSprite(this.starterSelectMessageBoxContainer);
+
     this.statsContainer = new StatsContainer(this.scene, 6, 16);
 
     this.scene.add.existing(this.statsContainer);
@@ -911,7 +914,11 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       y: this.scene.game.canvas.height / 6 - MoveInfoOverlay.getHeight(overlayScale) - 29,
     });
     this.starterSelectContainer.add(this.moveInfoOverlay);
+
+    // Filter bar sits above everything, except the tutorial overlay and message box
     this.starterSelectContainer.bringToTop(this.filterBarContainer);
+    this.initTutorialOverlay(this.starterSelectContainer);
+    this.starterSelectContainer.bringToTop(this.starterSelectMessageBoxContainer);
 
     this.scene.eventTarget.addEventListener(BattleSceneEventType.CANDY_UPGRADE_NOTIFICATION_CHANGED, (e) => this.onCandyUpgradeDisplayChanged(e));
 
@@ -995,15 +1002,14 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       delete starterAttributes.shiny;
     }
 
-    if (starterAttributes.variant !== undefined && !isNaN(starterAttributes.variant)) {
+    if (starterAttributes.variant !== undefined) {
       const unlockedVariants = [
-        hasNonShiny,
         hasShiny && caughtAttr & DexAttr.DEFAULT_VARIANT,
         hasShiny && caughtAttr & DexAttr.VARIANT_2,
         hasShiny && caughtAttr & DexAttr.VARIANT_3
       ];
-      if (!unlockedVariants[starterAttributes.variant + 1]) { // add 1 as -1 = non-shiny
-        // requested variant wasn't unlocked, purging setting
+      if (isNaN(starterAttributes.variant) || starterAttributes.variant < 0 || !unlockedVariants[starterAttributes.variant]) {
+        // variant value is invalid or requested variant wasn't unlocked, purging setting
         delete starterAttributes.variant;
       }
     }
@@ -2534,8 +2540,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       }
     });
 
-    this.starterSelectScrollBar.setPages(Math.max(Math.ceil(this.filteredStarterContainers.length / 9), 1));
-    this.starterSelectScrollBar.setPage(0);
+    this.starterSelectScrollBar.setTotalRows(Math.max(Math.ceil(this.filteredStarterContainers.length / 9), 1));
+    this.starterSelectScrollBar.setScrollCursor(0);
 
     // sort
     const sort = this.filterBar.getVals(DropDownColumn.SORT)[0];
@@ -2570,7 +2576,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     const onScreenFirstIndex = this.scrollCursor * maxColumns;
     const onScreenLastIndex = Math.min(this.filteredStarterContainers.length - 1, onScreenFirstIndex + maxRows * maxColumns -1);
 
-    this.starterSelectScrollBar.setPage(this.scrollCursor);
+    this.starterSelectScrollBar.setScrollCursor(this.scrollCursor);
 
     let pokerusCursorIndex = 0;
     this.filteredStarterContainers.forEach((container, i) => {

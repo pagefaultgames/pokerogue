@@ -226,6 +226,34 @@ export function getBBCodeFrag(content: string, textStyle: TextStyle, uiTheme: Ui
   return `[color=${getTextColor(textStyle, false, uiTheme)}][shadow=${getTextColor(textStyle, true, uiTheme)}]${content}`;
 }
 
+/**
+ * Should only be used with BBCodeText (see {@linkcode addBBCodeTextObject()})
+ * This does NOT work with UI showText() or showDialogue() methods.
+ * Method will do pattern match/replace and apply BBCode color/shadow styling to substrings within the content:
+ * @[<TextStyle>]{<text to color>}
+ *
+ * Example: passing a content string of "@[SUMMARY_BLUE]{blue text} primaryStyle text @[SUMMARY_RED]{red text}" will result in:
+ * - "blue text" with TextStyle.SUMMARY_BLUE applied
+ * - " primaryStyle text " with primaryStyle TextStyle applied
+ * - "red text" with TextStyle.SUMMARY_RED applied
+ * @param content string with styling that need to be applied for BBCodeTextObject
+ * @param primaryStyle Primary style is required in order to escape BBCode styling properly.
+ * @param uiTheme
+ */
+export function getTextWithColors(content: string, primaryStyle: TextStyle, uiTheme: UiTheme = UiTheme.DEFAULT): string {
+  // Apply primary styling before anything else
+  let text = getBBCodeFrag(content, primaryStyle, uiTheme) + "[/color][/shadow]";
+  const primaryStyleString = [...text.match(new RegExp(/\[color=[^\[]*\]\[shadow=[^\[]*\]/i))!][0];
+
+  // Set custom colors
+  text = text.replace(/@\[([^{]*)\]{([^}]*)}/gi, (substring, textStyle: string, textToColor: string) => {
+    return "[/color][/shadow]" + getBBCodeFrag(textToColor, TextStyle[textStyle], uiTheme) + "[/color][/shadow]" + primaryStyleString;
+  });
+
+  // Remove extra style block at the end
+  return text.replace(/\[color=[^\[]*\]\[shadow=[^\[]*\]\[\/color\]\[\/shadow\]/gi, "");
+}
+
 export function getTextColor(textStyle: TextStyle, shadow?: boolean, uiTheme: UiTheme = UiTheme.DEFAULT): string {
   const isLegacyTheme = uiTheme === UiTheme.LEGACY;
   switch (textStyle) {
