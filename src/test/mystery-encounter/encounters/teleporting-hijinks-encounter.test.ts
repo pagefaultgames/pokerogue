@@ -42,7 +42,8 @@ describe("Teleporting Hijinks - Mystery Encounter", () => {
       .startingWave(defaultWave)
       .startingBiome(defaultBiome)
       .disableTrainerWaves()
-      .enemyPassiveAbility(Abilities.BALL_FETCH);
+      .enemyPassiveAbility(Abilities.BALL_FETCH)
+      .enemyAbility(Abilities.BALL_FETCH);
 
     vi.spyOn(MysteryEncounters, "mysteryEncountersByBiome", "get").mockReturnValue(
       new Map<Biome, MysteryEncounterType[]>([
