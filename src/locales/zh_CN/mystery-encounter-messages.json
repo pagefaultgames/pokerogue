@@ -1,0 +1,7 @@
+{
+  "paid_money": "你支付了 ₽{{amount, number}}。",
+  "receive_money": "你获得了 ₽{{amount, number}}！",
+  "affects_pokedex": "影响图鉴数据",
+  "cancel_option": "回到事件选项",
+  "view_party_button": "查看队伍"
+}

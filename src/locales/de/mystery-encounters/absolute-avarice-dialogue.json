@@ -1,0 +1,25 @@
+{
+  "intro": "Ein {{greedentName}} überfällt dich und stiehlt die Beeren deines Teams!",
+  "title":  "Absoluter Geiz",
+  "description": "Der {{greedentName}} hat dich total überrascht und all deine Beeren gestohlen!\nEs sieht so aus, als ob das {{greedentName}} sie gleich essen würde, aber dann hält es inne und sieht dich interessiert an.",
+  "query": "Was wirst du tun?",
+  "option": {
+    "1": {
+      "label": "Kampf beginnen",
+      "tooltip": "(-) Schwerer Kampf\n(+) Belohnungen aus seinem Beerenversteck",
+      "selected":  "Der {{greedentName}} füllt seine Backen und bereitet sich auf den Kampf vor!",
+      "boss_enraged": "{{greedentName}} Liebe für Essen hat es aufgebracht!",
+      "food_stash": "Es scheint, als ob das {{greedentName}} ein riesiges Nahrungslager bewacht hat!$Jedes Pokémon in deinem Team erhält {{foodReward}}!"
+    },
+    "2": {
+      "label": "Verhandeln",
+      "tooltip": "(+) Einige Beeren zurückbekommen",
+      "selected": "Deine Bitte berührt das {{greedentName}}.$Es gibt dir nicht alle Beeren zurück, aber wirft dir trotzdem ein paar zu."
+    },
+    "3": {
+      "label": "Beeren überlassen",
+      "tooltip":  "(-) Alle Beeren verlieren\n(?) Das {{greedentName}} wird dich mögen",
+      "selected":  "Das {{greedentName}} verschlingt den gesamten Beerenversteck in einem Blitz!$Es klopft sich auf den Bauch und sieht dich dankbar an.$Vielleicht könntest du ihm auf deinem Abenteuer mehr Beeren geben...$@s{level_up_fanfare}Das {{greedentName}} möchte sich deiner Gruppe anschließen!"
+    }
+  }
+}

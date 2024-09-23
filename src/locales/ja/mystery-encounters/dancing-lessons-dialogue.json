@@ -1,0 +1,27 @@
+{
+  "intro": "相手が　いなくて　寂しそうな　{{oricorioName}}は　悲しく　踊ってます。",
+  "title": "フリフリ振り付け",
+  "description": "{{oricorioName}}は　攻撃的　じゃなさそう……　むしろ、　悲しい　顔を　しています。\n\n誰かと　踊りたいだけ　かもしれません……",
+  "query": "どうしますか？",
+  "option": {
+    "1": {
+      "label": "バトルする",
+      "tooltip": "(-) 勝負はきつい\n(+) バトンをもらう",
+      "selected": "{{oricorioName}}は　取り乱して　防御の　体勢に　入る！",
+      "boss_enraged": "{{oricorioName}}は　恐れで　能力を　上げた！"
+    },
+    "2": {
+      "label": "踊りを覚える",
+      "tooltip": "(+) ポケモンにめざめるダンスを教える",
+      "selected": "{{oricorioName}}の　踊りを　よく 調べます……$@s{level_up_fanfare}{{selectedPokemon}}が　{{oricorioName}}から　技を　覚えました!"
+    },
+    "3": {
+      "label": "踊りを教える",
+      "tooltip": "(-) {{oricorioName}}に踊りの技を教える\n(+) {{oricorioName}}は好きになる",
+      "disabled_tooltip": "選ぶには　踊りの技がある　手持ちポケモンが　必要",
+      "select_prompt": "踊りの技を　選んでください",
+      "selected": "{{oricorioName}}は　{{selectedPokemon}}が　{{selectedMove}}を\n演舞する　姿を　じっと　見とれています！!$演舞に　全く　好きになった　ようです！$@s{level_up_fanfare}{{oricorioName}}は　手持ちに　入りたい！"
+    }
+  },
+  "invalid_selection": "このポケモンは　踊りの技を　覚えていません！"
+}
