@@ -76,10 +76,10 @@ describe("Global Trade System - Mystery Encounter", () => {
     expect(GlobalTradeSystemEncounter.encounterType).toBe(MysteryEncounterType.GLOBAL_TRADE_SYSTEM);
     expect(GlobalTradeSystemEncounter.encounterTier).toBe(MysteryEncounterTier.COMMON);
     expect(GlobalTradeSystemEncounter.dialogue).toBeDefined();
-    expect(GlobalTradeSystemEncounter.dialogue.intro).toStrictEqual([{ text: `${namespace}.intro` }]);
-    expect(GlobalTradeSystemEncounter.dialogue.encounterOptionsDialogue?.title).toBe(`${namespace}.title`);
-    expect(GlobalTradeSystemEncounter.dialogue.encounterOptionsDialogue?.description).toBe(`${namespace}.description`);
-    expect(GlobalTradeSystemEncounter.dialogue.encounterOptionsDialogue?.query).toBe(`${namespace}.query`);
+    expect(GlobalTradeSystemEncounter.dialogue.intro).toStrictEqual([{ text: `${namespace}:intro` }]);
+    expect(GlobalTradeSystemEncounter.dialogue.encounterOptionsDialogue?.title).toBe(`${namespace}:title`);
+    expect(GlobalTradeSystemEncounter.dialogue.encounterOptionsDialogue?.description).toBe(`${namespace}:description`);
+    expect(GlobalTradeSystemEncounter.dialogue.encounterOptionsDialogue?.query).toBe(`${namespace}:query`);
     expect(GlobalTradeSystemEncounter.options.length).toBe(4);
   });
 
