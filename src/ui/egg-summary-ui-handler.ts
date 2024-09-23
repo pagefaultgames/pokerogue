@@ -3,7 +3,7 @@ import { Mode } from "./ui";
 import PokemonIconAnimHandler, { PokemonIconAnimMode } from "./pokemon-icon-anim-handler";
 import MessageUiHandler from "./message-ui-handler";
 import { getEggTierForSpecies } from "../data/egg";
-import {Button} from "#enums/buttons";
+import { Button } from "#enums/buttons";
 import PokemonHatchInfoContainer from "./pokemon-hatch-info-container";
 import { EggSummaryPhase } from "#app/phases/egg-summary-phase";
 import { EggHatchData } from "#app/data/egg-hatch-data";
@@ -29,6 +29,7 @@ export default class EggSummaryUiHandler extends MessageUiHandler {
   private summaryContainer: Phaser.GameObjects.Container;
   /** container for the each pokemon sprites and icons */
   private pokemonIconsContainer: Phaser.GameObjects.Container;
+  /** list of the containers added to pokemonIconsContainer for easier access */
   private pokemonContainers: HatchedPokemonContainer[];
 
   /** hatch info container that displays the current pokemon / hatch (main element on left hand side) */
@@ -101,6 +102,8 @@ export default class EggSummaryUiHandler extends MessageUiHandler {
     this.cursor = -1;
     this.scrollGridHandler.reset();
     this.summaryContainer.setVisible(false);
+    this.pokemonIconsContainer.removeAll(true);
+    this.pokemonContainers = [];
     this.eggHatchBg.setVisible(false);
     this.getUi().hideTooltip();
 
@@ -167,7 +170,10 @@ export default class EggSummaryUiHandler extends MessageUiHandler {
     return true;
   }
 
-  updatePokemonIcons(): void {
+  /**
+   * Show the grid of Pokemon icons
+   */
+  private updatePokemonIcons(): void {
     const itemOffset = this.scrollGridHandler.getItemOffset();
     const eggsToShow = Math.min(numRows * numCols, this.eggHatchData.length - itemOffset);
 

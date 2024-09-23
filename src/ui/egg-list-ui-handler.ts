@@ -120,6 +120,9 @@ export default class EggListUiHandler extends MessageUiHandler {
     return true;
   }
 
+  /**
+   * Create the grid of egg icons to display
+   */
   private initEggIcons() {
     this.eggIcons = [];
     for (let i = 0; i < Math.min(this.ROWS * this.COLUMNS, this.scene.gameData.eggs.length); i++) {
@@ -133,6 +136,9 @@ export default class EggListUiHandler extends MessageUiHandler {
     }
   }
 
+  /**
+   * Show the grid of egg icons
+   */
   private updateEggIcons() {
     const indexOffset = this.scrollGridHandler.getItemOffset();
     const eggsToShow = Math.min(this.eggIcons.length, this.scene.gameData.eggs.length - indexOffset);
@@ -151,6 +157,10 @@ export default class EggListUiHandler extends MessageUiHandler {
     });
   }
 
+  /**
+   * Update the information panel with the information of the given egg
+   * @param index which egg in the list to display the info for
+   */
   private setEggDetails(index: number): void {
     const egg = this.scene.gameData.eggs[index];
     this.eggSprite.setFrame(`egg_${egg.getKey()}`);
