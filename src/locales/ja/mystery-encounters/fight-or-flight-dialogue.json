@@ -1,25 +1,25 @@
 {
-  "intro": "Something shiny is sparkling\non the ground near that Pokémon!",
-  "title": "Fight or Flight",
-  "description": "It looks like there's a strong Pokémon guarding an item. Battling is the straightforward approach, but it looks strong. Perhaps you could steal the item, if you have the right Pokémon for the job.",
-  "query": "What will you do?",
+  "intro": "あの　ポケモンの　近くで　地面に何かが　きらきらと　輝いています！",
+  "title": "闘争・逃走",
+  "description": "アイテムを　守っている　強いポケモンが　いる　ようです。バトルは　直接的な　取り方ですが、　強そうです。　適切な　手持ちポケモンが　いれば、　アイテムを盗まれる　かもしれません。",
+  "query": "どうしますか？",
   "option": {
     "1": {
-      "label": "Battle the Pokémon",
-      "tooltip": "(-) Hard Battle\n(+) New Item",
-      "selected": "You approach the\nPokémon without fear.",
-      "stat_boost": "The {{enemyPokemon}}'s latent strength boosted one of its stats!"
+      "label": "バトルする",
+      "tooltip": "(-) 勝負がキツい\n(+) 新しいアイテム",
+      "selected": "恐れないで　強いポケモンに　近寄ります。",
+      "stat_boost": "{{enemyPokemon}}は　潜在的な　強さで　能力を　一つ　上げた！"
     },
     "2": {
-      "label": "Steal the Item",
-      "disabled_tooltip": "Your Pokémon need to know certain moves to choose this",
-      "tooltip": "(+) {{option2PrimaryName}} uses {{option2PrimaryMove}}",
-      "selected": ".@d{32}.@d{32}.@d{32}$Your {{option2PrimaryName}} helps you out and uses {{option2PrimaryMove}}!$You nabbed the item!"
+      "label": "アイテムを盗む",
+      "disabled_tooltip": "選ぶには　手持ちポケモンが　特定な　技を　覚えている必要　が　ある",
+      "tooltip": "(+) {{option2PrimaryName}}が　 {{option2PrimaryMove}}を使う",
+      "selected": ".@d{32}.@d{32}.@d{32}${{option2PrimaryName}}が　手を貸し　 {{option2PrimaryMove}}を　使います！$アイテムを　奪いました！"
     },
     "3": {
-      "label": "Leave",
-      "tooltip": "(-) No Rewards",
-      "selected": "You leave the strong Pokémon\nwith its prize and continue on."
+      "label": "立ち去る",
+      "tooltip": "(-) ご褒美なし",
+      "selected": "強いポケモンと　アイテムを　置いて　冒険を　進みます。"
     }
   }
 }

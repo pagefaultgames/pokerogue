@@ -1,26 +1,26 @@
 {
-  "intro": "You encounter a blistering storm of smoke and ash!",
-  "title": "Fiery Fallout",
-  "description": "The whirling ash and embers have cut visibility to nearly zero. It seems like there might be some... source that is causing these conditions. But what could be behind a phenomenon of this magnitude?",
-  "query": "What will you do?",
+  "intro": "猛烈な　煙と灰の嵐に　遭遇しました！ ",
+  "title": "燃える熱気",
+  "description": "渦巻く　灰と　残り火に　より、　視界は　ほぼゼロに　なりました。　どうやら　この状況を　引き起こしている　原因は　何かある　ようです…… しかし、これほどの規模の　現象を　起こしたのは　一体　何でしょうのか​​？",
+  "query": "どうしますか？",
   "option": {
     "1": {
-      "label": "Find the Source",
-      "tooltip": "(?) Discover the source\n(-) Hard Battle",
-      "selected": "You push through the storm, and find two {{volcaronaName}}s in the middle of a mating dance!$They don't take kindly to the interruption and attack!"
+      "label": "原因を見つける",
+      "tooltip": "(?) 原因を発見\n(-) キツいバトル",
+      "selected": "火の嵐を　突き進むと、　交配の踊りを　している　2匹の　{{volcaronaName}} を　見つけます！$邪魔を快く思わず　襲いかかってきます！"
     },
     "2": {
-      "label": "Hunker Down",
-      "tooltip": "(-) Suffer the effects of the weather",
-      "selected": "The weather effects cause significant\nharm as you struggle to find shelter!$Your party takes 20% Max HP damage!",
-      "target_burned": "Your {{burnedPokemon}} also became burned!"
+      "label": "避難してみる",
+      "tooltip": "(-) 気象状態に耐える",
+      "selected": "避難場所を　探してみる　間に　気象状態が　重大な　被害を　もたらします！ $ 手持ちポケモンは　最大HPの　20％の　ダメージを受けます！",
+      "target_burned": "その上、　{{burnedPokemon}} も　やけど状態　になりました！"
     },
     "3": {
-      "label": "Your Fire Types Help",
-      "tooltip": "(+) End the conditions\n(+) Gain a Charcoal",
-      "disabled_tooltip": "You need at least 2 Fire Type Pokémon to choose this",
-      "selected": "Your {{option3PrimaryName}} and {{option3SecondaryName}} guide you to where two {{volcaronaName}}s are in the middle of a mating dance!$Thankfully, your Pokémon are able to calm them,\nand they depart without issue."
+      "label": "ほのおポケモンが助ける",
+      "tooltip": "(+) 状態が治る\n(+) もくたんをもらう",
+      "disabled_tooltip": "選ぶには　2匹の　ほのおタイプの　ポケモンが　必要",
+      "selected": "{{option3PrimaryName}}と　{{option3SecondaryName}}が　交配の踊りを　している　2匹の　{{volcaronaName}}まで　導きます！$おかげさまで　落ち着かせる　ことができ\n{{volcaronaName}}が　問題なく　立ち去ります。"
     }
   },
-  "found_charcoal": "After the weather clears,\nyour {{leadPokemon}} spots something on the ground.$@s{item_fanfare}{{leadPokemon}} gained a Charcoal!"
+  "found_charcoal": "気象状態が　治ってから　\n{{leadPokemon}}が　地面で　何かを　見つけます。$@s{item_fanfare}{{leadPokemon}}が　もくたんを　手に入れた！"
 }
