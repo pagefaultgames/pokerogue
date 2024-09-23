@@ -1,1 +1,31 @@
-{}
+{
+  "intro": "It's a trainer carrying tons of Pokémon Eggs!",
+  "intro_dialogue": "Hey there, trainer!$It looks like some of your\npartner Pokémon are feeling a little down.$Why not have a battle with me to cheer them up?",
+  "title": "The Expert Breeder",
+  "description": "You've been challenged to a battle where @[TOOLTIP_TITLE]{you can only use a single Pokémon}. It might be tough, but it would surely deepen the bond you have with the Pokémon you choose!\nThe breeder will also give you some @[TOOLTIP_TITLE]{Pokémon Eggs} if you win!",
+  "query": "Who will you battle with?",
+  "cleffa_1_nickname": "Ace",
+  "cleffa_2_nickname": "Clefablest",
+  "cleffa_3_nickname": "{{speciesName}} the Great",
+  "option": {
+    "1": {
+      "label": "{{pokemon1Name}}",
+      "tooltip_base": "(-) Tough Battle\n(+) Gain Friendship with {{pokemon1Name}}"
+    },
+    "2": {
+      "label": "{{pokemon2Name}}",
+      "tooltip_base": "(-) Tough Battle\n(+) Gain Friendship with {{pokemon2Name}}"
+    },
+    "3": {
+      "label": "{{pokemon3Name}}",
+      "tooltip_base": "(-) Tough Battle\n(+) Gain Friendship with {{pokemon3Name}}"
+    },
+    "selected": "Let's do this!"
+  },
+  "outro": "Look how happy your {{chosenPokemon}} is now!$Here, you can have these as well.",
+  "outro_failed": "How disappointing...$It looks like you still have a long way\nto go to earn your Pokémon's trust!",
+  "gained_eggs": "@s{item_fanfare}You received {{numEggs}}!",
+  "eggs_tooltip": "\n(+) Earn {{eggs}}",
+  "numEggs_one": "{{count}} {{rarity}} Egg",
+  "numEggs_other": "{{count}} {{rarity}} Eggs"
+}
