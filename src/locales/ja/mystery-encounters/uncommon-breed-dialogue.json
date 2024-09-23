@@ -1,26 +1,26 @@
 {
-  "intro": "That isn't just an ordinary Pokémon!",
-  "title": "Uncommon Breed",
-  "description": "That {{enemyPokemon}} looks special compared to others of its kind. @[TOOLTIP_TITLE]{Perhaps it knows a special move?} You could battle and catch it outright, but there might also be a way to befriend it.",
-  "query": "What will you do?",
+  "intro": "普段の　ポケモン　じゃなそうです……！",
+  "title": "珍しい類型",
+  "description": "他の　{{enemyPokemon}}と　比べて　特別そう　です。@[TOOLTIP_TITLE]{特別な　技を　覚えている　かな？}　普通に　バトルで　捕まえてみることが　できます　が、　仲良くする　方法も　ある　かもしれません。",
+  "query": "どうしますか",
   "option": {
     "1": {
-      "label": "Battle the Pokémon",
-      "tooltip": "(-) Tricky Battle\n(+) Strong Catchable Foe",
-      "selected": "You approach the\n{{enemyPokemon}} without fear.",
-      "stat_boost": "The {{enemyPokemon}}'s heightened abilities boost its stats!"
+      "label": "バトルする",
+      "tooltip": "(-) 勝負が厳しい\n(+) 相手が強くて捕まえられる",
+      "selected": "恐れないで　{{enemyPokemon}}に　近寄ります！",
+      "stat_boost": "{{enemyPokemon}}の　強めた実力で　能力を上げた！"
     },
     "2": {
-      "label": "Give It Food",
-      "disabled_tooltip": "You need 4 berry items to choose this",
-      "tooltip": "(-) Give 4 Berries\n(+) The {{enemyPokemon}} Likes You",
-      "selected": "You toss the berries at the {{enemyPokemon}}!$It eats them happily!$The {{enemyPokemon}} wants to join your party!"
+      "label": "食べ物をあげる",
+      "disabled_tooltip": "選ぶには　４個の　きのみが　必要",
+      "tooltip": "(-) きのみを４個あげる\n(+) {{enemyPokemon}}が好きになる",
+      "selected": "{{enemyPokemon}}に　きのみを　なげます！$嬉しそうに　食べます！${{enemyPokemon}}は　手持ちに　入りたいです！"
     },
     "3": {
-      "label": "Befriend It",
-      "disabled_tooltip": "Your Pokémon need to know certain moves to choose this",
-      "tooltip": "(+) {{option3PrimaryName}} uses {{option3PrimaryMove}}\n(+) The {{enemyPokemon}} Likes You",
-      "selected": "Your {{option3PrimaryName}} uses {{option3PrimaryMove}} to charm the {{enemyPokemon}}!$The {{enemyPokemon}} wants to join your party!"
+      "label": "仲良くする",
+      "disabled_tooltip": "選ぶには　手持ちポケモンが　特定な　技が　必要",
+      "tooltip": "(+) {{option3PrimaryName}}は{{option3PrimaryMove}}を使う\n(+) {{enemyPokemon}}は好きになる",
+      "selected": "{{enemyPokemon}}を　魅了するには　{{option3PrimaryName}}は {{option3PrimaryMove}}を　使います！${{enemyPokemon}}が　手持ちに 入りたいです！"
     }
   }
 }
