@@ -6,7 +6,7 @@ import { Button } from "#enums/buttons";
 import { addWindow, WindowVariant } from "./ui-theme";
 import { MysteryEncounterPhase } from "../phases/mystery-encounter-phases";
 import { PartyUiMode } from "./party-ui-handler";
-import MysteryEncounterOption from "../data/mystery-encounters/mystery-encounter-option";
+import MysteryEncounterOption from "#app/data/mystery-encounters/mystery-encounter-option";
 import * as Utils from "../utils";
 import { isNullOrUndefined } from "../utils";
 import { getPokeballAtlasKey } from "../data/pokeball";
@@ -42,7 +42,8 @@ export default class MysteryEncounterUiHandler extends UiHandler {
   private encounterOptions: MysteryEncounterOption[] = [];
   private optionsMeetsReqs: boolean[];
 
-  protected viewPartyIndex: integer = 0;
+  protected viewPartyIndex: number = 0;
+  protected viewPartyXPosition: number = 0;
 
   protected blockInput: boolean = true;
 
@@ -300,11 +301,11 @@ export default class MysteryEncounterUiHandler extends UiHandler {
     }
   }
 
-  override getCursor(): integer {
+  override getCursor(): number {
     return this.cursor ? this.cursor : 0;
   }
 
-  override setCursor(cursor: integer): boolean {
+  override setCursor(cursor: number): boolean {
     const prevCursor = this.getCursor();
     const changed = prevCursor !== cursor;
     if (changed) {
@@ -319,7 +320,7 @@ export default class MysteryEncounterUiHandler extends UiHandler {
     }
 
     if (cursor === this.viewPartyIndex) {
-      this.cursorObj.setPosition(246, -17);
+      this.cursorObj.setPosition(this.viewPartyXPosition, -17);
     } else if (this.optionsContainer.getAll()?.length === 3) { // 2 Options
       this.cursorObj.setPosition(-10.5 + (cursor % 2 === 1 ? 100 : 0), 15);
     } else if (this.optionsContainer.getAll()?.length === 4) { // 3 Options
@@ -419,8 +420,10 @@ export default class MysteryEncounterUiHandler extends UiHandler {
     }
 
     // View Party Button
-    const viewPartyText = addBBCodeTextObject(this.scene, 256, -24, getBBCodeFrag(i18next.t("mysteryEncounterMessages:view_party_button"), TextStyle.PARTY), TextStyle.PARTY);
+    const viewPartyText = addBBCodeTextObject(this.scene, (this.scene.game.canvas.width) / 6, -24, getBBCodeFrag(i18next.t("mysteryEncounterMessages:view_party_button"), TextStyle.PARTY), TextStyle.PARTY);
     this.optionsContainer.add(viewPartyText);
+    viewPartyText.x -= (viewPartyText.displayWidth + 16);
+    this.viewPartyXPosition = viewPartyText.x - 10;
 
     // Description Window
     const titleTextObject = addBBCodeTextObject(this.scene, 0, 0, titleText ?? "", TextStyle.TOOLTIP_TITLE, { wordWrap: { width: 750 }, align: "center", lineSpacing: -8 });

@@ -837,11 +837,15 @@ export const trainerTypeDialogue: TrainerTypeDialogue = {
         "dialogue:macro_grunt.encounter.1",
         "dialogue:macro_grunt.encounter.2",
         "dialogue:macro_grunt.encounter.3",
+        "dialogue:macro_grunt.encounter.4",
+        "dialogue:macro_grunt.encounter.5",
       ],
       victory: [
         "dialogue:macro_grunt.victory.1",
         "dialogue:macro_grunt.victory.2",
         "dialogue:macro_grunt.victory.3",
+        "dialogue:macro_grunt.victory.4",
+        "dialogue:macro_grunt.victory.5",
       ]
     }
   ],
@@ -856,6 +860,84 @@ export const trainerTypeDialogue: TrainerTypeDialogue = {
         "dialogue:oleana.victory.1",
         "dialogue:oleana.victory.2",
         "dialogue:oleana.victory.3",
+      ]
+    }
+  ],
+  [TrainerType.STAR_GRUNT]: [
+    {
+      encounter: [
+        "dialogue:star_grunt.encounter.1",
+        "dialogue:star_grunt.encounter.2",
+        "dialogue:star_grunt.encounter.3",
+        "dialogue:star_grunt.encounter.4",
+        "dialogue:star_grunt.encounter.5",
+      ],
+      victory: [
+        "dialogue:star_grunt.victory.1",
+        "dialogue:star_grunt.victory.2",
+        "dialogue:star_grunt.victory.3",
+        "dialogue:star_grunt.victory.4",
+        "dialogue:star_grunt.victory.5",
+      ]
+    }
+  ],
+  [TrainerType.GIACOMO]: [
+    {
+      encounter: [
+        "dialogue:giacomo.encounter.1",
+        "dialogue:giacomo.encounter.2",
+      ],
+      victory: [
+        "dialogue:giacomo.victory.1",
+        "dialogue:giacomo.victory.2",
+      ]
+    }
+  ],
+  [TrainerType.MELA]: [
+    {
+      encounter: [
+        "dialogue:mela.encounter.1",
+        "dialogue:mela.encounter.2",
+      ],
+      victory: [
+        "dialogue:mela.victory.1",
+        "dialogue:mela.victory.2",
+      ]
+    }
+  ],
+  [TrainerType.ATTICUS]: [
+    {
+      encounter: [
+        "dialogue:atticus.encounter.1",
+        "dialogue:atticus.encounter.2",
+      ],
+      victory: [
+        "dialogue:atticus.victory.1",
+        "dialogue:atticus.victory.2",
+      ]
+    }
+  ],
+  [TrainerType.ORTEGA]: [
+    {
+      encounter: [
+        "dialogue:ortega.encounter.1",
+        "dialogue:ortega.encounter.2",
+      ],
+      victory: [
+        "dialogue:ortega.victory.1",
+        "dialogue:ortega.victory.2",
+      ]
+    }
+  ],
+  [TrainerType.ERI]: [
+    {
+      encounter: [
+        "dialogue:eri.encounter.1",
+        "dialogue:eri.encounter.2",
+      ],
+      victory: [
+        "dialogue:eri.victory.1",
+        "dialogue:eri.victory.2",
       ]
     }
   ],
@@ -1090,6 +1172,32 @@ export const trainerTypeDialogue: TrainerTypeDialogue = {
       ],
       defeat: [
         "dialogue:macro_boss_rose_2.defeat.1"
+      ]
+    }
+  ],
+  [TrainerType.PENNY]: [
+    {
+      encounter: [
+        "dialogue:star_boss_penny_1.encounter.1"
+      ],
+      victory: [
+        "dialogue:star_boss_penny_1.victory.1"
+      ],
+      defeat: [
+        "dialogue:star_boss_penny_1.defeat.1"
+      ]
+    }
+  ],
+  [TrainerType.PENNY_2]: [
+    {
+      encounter: [
+        "dialogue:star_boss_penny_2.encounter.1"
+      ],
+      victory: [
+        "dialogue:star_boss_penny_2.victory.1"
+      ],
+      defeat: [
+        "dialogue:star_boss_penny_2.defeat.1"
       ]
     }
   ],

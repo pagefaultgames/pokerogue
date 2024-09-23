@@ -6,8 +6,6 @@ import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
-const TIMEOUT = 10 * 1000; // 10 second timeout
-
 describe("Abilities - Tera Shell", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
@@ -54,7 +52,7 @@ describe("Abilities - Tera Shell", () => {
 
       await game.phaseInterceptor.to("MoveEndPhase");
       expect(playerPokemon.getMoveEffectiveness).toHaveLastReturnedWith(2);
-    }, TIMEOUT
+    }
   );
 
   it(
@@ -71,7 +69,7 @@ describe("Abilities - Tera Shell", () => {
 
       await game.phaseInterceptor.to("MoveEndPhase");
       expect(playerPokemon.getMoveEffectiveness).toHaveLastReturnedWith(0);
-    }, TIMEOUT
+    }
   );
 
   it(
@@ -88,7 +86,7 @@ describe("Abilities - Tera Shell", () => {
 
       await game.phaseInterceptor.to("MoveEndPhase");
       expect(playerPokemon.getMoveEffectiveness).toHaveLastReturnedWith(0.25);
-    }, TIMEOUT
+    }
   );
 
   it(
@@ -106,6 +104,6 @@ describe("Abilities - Tera Shell", () => {
       await game.phaseInterceptor.to("BerryPhase", false);
       expect(playerPokemon.apply).toHaveLastReturnedWith(HitResult.EFFECTIVE);
       expect(playerPokemon.hp).toBe(playerPokemon.getMaxHp() - 40);
-    }, TIMEOUT
+    }
   );
 });
