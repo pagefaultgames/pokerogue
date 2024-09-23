@@ -1,0 +1,27 @@
+{
+  "intro": "Un {{oricorioName}} danse tristement seul,\nsans partenaire pour l’accompagner.",
+  "title": "Leçons de danse",
+  "description": "Ce {{oricorioName}} ne semble pas hostile, mais a tout au plus juste l’air triste.\n\nPeut-être a-t-il juste besoin d’un ou d’une partenaire pour l’accompagner ?…",
+  "query": "Que voulez-vous faire ?",
+  "option": {
+    "1": {
+      "label": "L’affronter",
+      "tooltip": "(-) Combat difficile\n(+) Gain d’un Bâton",
+      "selected": "Le {{oricorioName}} est desemparé\net tente de se défendre !",
+      "boss_enraged": "La peur de {{oricorioName}} augmente beaucoup ses stats !"
+    },
+    "2": {
+      "label": "Apprendre sa danse",
+      "tooltip": "(+) Apprendre Danse Éveil à un Pokémon",
+      "selected": "Vos scrutez {{oricorioName}} de près pendant sa danse…$@s{level_up_fanfare}Votre {{selectedPokemon}} apprend la capacité\nDanse Éveil de {{oricorioName}} !"
+    },
+    "3": {
+      "label": "Montrer une danse",
+      "tooltip": "(-) Apprendre à {{oricorioName}} une capacité dansante\n(+) Le {{oricorioName}} vous apprécie",
+      "disabled_tooltip": "Votre Pokémon doit connaitre une capacité dansante pour choisir cette option.",
+      "select_prompt": "Sélectionnez une capacité dansante.",
+      "selected": "Le {{oricorioName}} observe avec fascination\n{{selectedPokemon}} exécuter {{selectedMove}} !$Il adore le démonstration !$@s{level_up_fanfare}Le {{oricorioName}} veut se joindre à votre équipe !"
+    }
+  },
+  "invalid_selection": "Il ne connait aucune capacité dansante"
+}

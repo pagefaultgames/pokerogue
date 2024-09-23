@@ -1,0 +1,40 @@
+{
+  "intro": "Une Dresseur un peu étrange avec tout un attirail pour Insectes vous bloque la route !",
+  "intro_dialogue": "Hé, toi ! Je suis en mission, je dois trouver le Pokémon Inscete le plus rare du monde !$Toi aussi t’aimes les Pokémon Insecte, non ?\nTout le monde aime les Pokémon Insecte !",
+  "title": "Le Fan d’entomologie",
+  "speaker": "Fan d’entomologie",
+  "description": "Ce Dresseur est un vrai moulin à parole, il ne vous laisse aucune ouverture pour répondre…\n\nMais attirer son attention semble être le seul moyen possible de vous sortir de là !",
+  "query": "Que voulez-vous faire ?",
+  "option": {
+    "1": {
+      "label": "Proposer un combat",
+      "tooltip": "(-) Combat compliqué\n(+) Apprendre une capacité Insecte à un Pokémon",
+      "selected": "Un combat hein ?\nMes Insectes sont plus que prêts !"
+    },
+    "2": {
+      "label": "Montrer vos types Insecte",
+      "tooltip": "(+) Revecez un objet en cadeau",
+      "disabled_tooltip": "Vous devez avoir au moins un Pokémon Insecte dans votre équipe pour choisir cette option.",
+      "selected": "Vous lui montrez tous les types Insecte de votre équipe…",
+      "selected_0_to_1": "Oh ? T’as qu’{{numBugTypes}}…$Pourquoi je gaspille ma salive à te parler…",
+      "selected_2_to_3": "Oh, t’as {{numBugTypes}} !\nC’est pas si mal.$Tiens, voilà qui devrait t’aider dans ta quête pour en attraper encore plus !",
+      "selected_4_to_5": "Quoi ? T’as {{numBugTypes}} ?\nSympa !$T’en est pas encore à mon niveau, mais je me reconnais un peu en toi !\n$Prends ça mon poulain, c’est cadeau !",
+      "selected_6": "Impressionnant ! {{numBugTypes}} !\n$Tu dois vraiment les aimer presque autant que moi !$Tiens, accepte ceci en signe de notre camaraderie !"
+    },
+    "3": {
+      "label": "Donner un objet Insecte",
+      "tooltip": "(-) Lui donner l’objet {{requiredBugItems}}\n(+) Revecez un objet en cadeau",
+      "disabled_tooltip": "Vous avez besoin d’un objet {{requiredBugItems}} pour choisir cette option.",
+      "select_prompt": "Choisissez un objet à donner.",
+      "invalid_selection": "Ce Pokémon ne porte pas ce genre d’objet.",
+      "selected": "Vous remettez l’objet {{selectedItem}} au Dresseur.",
+      "selected_dialogue": "Sérieux ? {{selectedItem}}, comme ça en cadeau ?\nC’est très générieux !$En guise de ma reconnaissance, laisse-moi\nte faire un cadeau un peu spécial !$Il est dans ma famille depusi des générations, et ça me ferait plaisir de te l’offrir !"
+    }
+  },
+  "battle_won": "Tes connaissances et tes capacités ont totalement exploité nos faiblesses !$En remerciement de cette leçon, permets-moi\nd’apprendre une capacité Insecte à un de tes Pokémon !",
+  "teach_move_prompt": "Sélectionnez une capacité à enseigner.",
+  "confirm_no_teach": "T’es sûr·e de vouloir renoncer à une des ces incroyables capacités ?",
+  "outro": "Je te prédis un futur plein d’incroyables Insectes !\nJ’espère qu’on se reverra !$À plus !",
+  "numBugTypes_one": "{{count}} type Insecte",
+  "numBugTypes_other": "{{count}} types Insecte"
+}
