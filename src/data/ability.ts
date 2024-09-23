@@ -4850,6 +4850,7 @@ export function initAbilities() {
       .ignorable(),
     new Ability(Abilities.OBLIVIOUS, 3)
       .attr(BattlerTagImmunityAbAttr, BattlerTagType.INFATUATED)
+      .attr(BattlerTagImmunityAbAttr, BattlerTagType.TAUNT)
       .attr(IntimidateImmunityAbAttr)
       .ignorable(),
     new Ability(Abilities.CLOUD_NINE, 3)
@@ -5334,8 +5335,13 @@ export function initAbilities() {
       .attr(PostSummonMessageAbAttr, (pokemon: Pokemon) => i18next.t("abilityTriggers:postSummonTeravolt", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }))
       .attr(MoveAbilityBypassAbAttr),
     new Ability(Abilities.AROMA_VEIL, 6)
-      .ignorable()
-      .unimplemented(),
+      .attr(BattlerTagImmunityAbAttr, BattlerTagType.INFATUATED)
+      .attr(BattlerTagImmunityAbAttr, BattlerTagType.TAUNT)
+      .attr(BattlerTagImmunityAbAttr, BattlerTagType.TORMENT)
+      .attr(BattlerTagImmunityAbAttr, BattlerTagType.DISABLE)
+      .attr(BattlerTagImmunityAbAttr, BattlerTagType.HEAL_BLOCK)
+      .attr(BattlerTagImmunityAbAttr, BattlerTagType.ENCORE)
+      .partial(),
     new Ability(Abilities.FLOWER_VEIL, 6)
       .ignorable()
       .unimplemented(),
