@@ -1,5 +1,5 @@
 import { BattlerIndex } from "#app/battle";
-import { allMoves, ShellSideArmCategoryAttr } from "#app/data/move";
+import { allMoves, MoveCategory, ShellSideArmCategoryAttr } from "#app/data/move";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
@@ -36,6 +36,15 @@ describe("Moves - Shell Side Arm", () => {
 
     await game.classicMode.startBattle([Species.MANAPHY]);
 
+    const enemySnorlax = game.scene.getEnemyPokemon()!;
+    vi.spyOn(enemySnorlax, "getBaseDamage").mockImplementation((_user, _move, category) => {
+      if (category === MoveCategory.PHYSICAL) {
+        return 100;
+      } else {
+        return 10;
+      }
+    });
+
     const shellSideArm = allMoves[Moves.SHELL_SIDE_ARM];
     const shellSideArmAttr = shellSideArm.getAttrs(ShellSideArmCategoryAttr)[0];
     vi.spyOn(shellSideArmAttr, "apply");
@@ -51,6 +60,15 @@ describe("Moves - Shell Side Arm", () => {
     game.override.enemySpecies(Species.SLOWBRO);
 
     await game.classicMode.startBattle([Species.MANAPHY]);
+
+    const enemySlowbro = game.scene.getEnemyPokemon()!;
+    vi.spyOn(enemySlowbro, "getBaseDamage").mockImplementation((_user, _move, category) => {
+      if (category === MoveCategory.SPECIAL) {
+        return 100;
+      } else {
+        return 10;
+      }
+    });
 
     const shellSideArm = allMoves[Moves.SHELL_SIDE_ARM];
     const shellSideArmAttr = shellSideArm.getAttrs(ShellSideArmCategoryAttr)[0];
