@@ -764,6 +764,8 @@ export class PostDefendHpGatedStatStageChangeAbAttr extends PostDefendAbAttr {
   }
 }
 
+
+
 export class PostDefendApplyArenaTrapTagAbAttr extends PostDefendAbAttr {
   private condition: PokemonDefendCondition;
   private tagType: ArenaTagType;
@@ -2022,6 +2024,25 @@ export class PostSummonAbAttr extends AbAttr {
     return false;
   }
 }
+
+export class ApplyArenaTagAbAttr extends PostSummonAbAttr {
+  private tagType: ArenaTagType;
+
+  constructor(tagtype: ArenaTagType) {
+    super(true);
+    this.tagType = tagtype;
+  }
+
+  applyPostSummon(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
+    const tag = pokemon.scene.arena.getTag(this.tagType);
+    if (!tag && !simulated) {
+      pokemon.scene.arena.addTag(this.tagType, 0, undefined, pokemon.id, pokemon.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY);
+      return true;
+    }
+    return false;
+  }
+}
+
 /**
  * Removes specified arena tags when a Pokemon is summoned.
  */
@@ -5395,13 +5416,7 @@ export function initAbilities() {
       .attr(PostSummonMessageAbAttr, (pokemon: Pokemon) => i18next.t("abilityTriggers:postSummonTeravolt", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }))
       .attr(MoveAbilityBypassAbAttr),
     new Ability(Abilities.AROMA_VEIL, 6)
-      .attr(BattlerTagImmunityAbAttr, BattlerTagType.INFATUATED)
-      .attr(BattlerTagImmunityAbAttr, BattlerTagType.TAUNT)
-      .attr(BattlerTagImmunityAbAttr, BattlerTagType.TORMENT)
-      .attr(BattlerTagImmunityAbAttr, BattlerTagType.DISABLE)
-      .attr(BattlerTagImmunityAbAttr, BattlerTagType.HEAL_BLOCK)
-      .attr(BattlerTagImmunityAbAttr, BattlerTagType.ENCORE)
-      .partial(),
+      .attr(ApplyArenaTagAbAttr, ArenaTagType.AROMA_VEIL),
     new Ability(Abilities.FLOWER_VEIL, 6)
       .ignorable()
       .unimplemented(),

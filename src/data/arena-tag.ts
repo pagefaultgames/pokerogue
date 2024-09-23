@@ -3,7 +3,7 @@ import { Type } from "./type";
 import * as Utils from "../utils";
 import { MoveCategory, allMoves, MoveTarget, IncrementMovePriorityAttr, applyMoveAttrs } from "./move";
 import { getPokemonNameWithAffix } from "../messages";
-import Pokemon, { HitResult, PokemonMove } from "../field/pokemon";
+import Pokemon, { HitResult, PlayerPokemon, PokemonMove, EnemyPokemon } from "../field/pokemon";
 import { StatusEffect } from "./status-effect";
 import { BattlerIndex } from "../battle";
 import { BlockNonDirectDamageAbAttr, ChangeMovePriorityAbAttr, ProtectStatAbAttr, applyAbAttrs } from "./ability";
@@ -919,6 +919,48 @@ class SafeguardTag extends ArenaTag {
   }
 }
 
+/**
+class ImprisonTag extends ArenaTag {
+  constructor(turnCount: integer, sourceId: integer, side: ArenaTagSide) {
+    super();
+  }
+}
+*/
+
+class AromaVeilTag extends ArenaTag {
+  private protectedTags: BattlerTagType[];
+  private source: Pokemon;
+
+  constructor(turnCount: number, sourceId: number, side: ArenaTagSide) {
+    super(ArenaTagType.AROMA_VEIL, turnCount, undefined, sourceId, side);
+    this.protectedTags = [BattlerTagType.TAUNT, BattlerTagType.TORMENT, BattlerTagType.DISABLED, BattlerTagType.HEAL_BLOCK, BattlerTagType.ENCORE, BattlerTagType.INFATUATED];
+  }
+
+
+  onAdd(arena: Arena): void {
+    this.source = arena.scene.getPokemonById(this.sourceId!)!;
+    const party = this.source.isPlayer() ? this.source.scene.getPlayerField() : this.source.scene.getEnemyField();
+    party?.forEach((p: PlayerPokemon | EnemyPokemon ) => {
+      p.findAndRemoveTags(t => this.protectedTags.includes(t.tagType));
+    });
+  }
+
+  lapse(_arena: Arena): boolean {
+    return this.source.isActive(true);
+  }
+
+  apply(arena: Arena, args: any[]): boolean {
+    const targetPokemon = args[2];
+    if (this.protectedTags.includes(args[1] as BattlerTagType)) {
+      (args[0] as Utils.BooleanHolder).value = false;
+      arena.scene.queueMessage(i18next.t("abilityTriggers:aromaVeilImmunity", {
+        pokemonNameWithAffix: targetPokemon,
+      }));
+    }
+    return true;
+  }
+}
+
 
 export function getArenaTag(tagType: ArenaTagType, turnCount: integer, sourceMove: Moves | undefined, sourceId: integer, targetIndex?: BattlerIndex, side: ArenaTagSide = ArenaTagSide.BOTH): ArenaTag | null {
   switch (tagType) {
@@ -967,6 +1009,8 @@ export function getArenaTag(tagType: ArenaTagType, turnCount: integer, sourceMov
     return new HappyHourTag(turnCount, sourceId, side);
   case ArenaTagType.SAFEGUARD:
     return new SafeguardTag(turnCount, sourceId, side);
+  case ArenaTagType.AROMA_VEIL:
+    return new AromaVeilTag(turnCount, sourceId, side);
   default:
     return null;
   }

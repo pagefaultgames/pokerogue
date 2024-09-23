@@ -23,6 +23,8 @@ import { PokemonHealPhase } from "#app/phases/pokemon-heal-phase";
 import { ShowAbilityPhase } from "#app/phases/show-ability-phase";
 import { StatStageChangePhase, StatStageChangeCallback } from "#app/phases/stat-stage-change-phase";
 import { PokemonAnimType } from "#app/enums/pokemon-anim-type";
+import { ArenaTagType } from "#app/enums/arena-tag-type";
+import { ArenaTagSide } from "./arena-tag";
 
 export enum BattlerTagLapseType {
   FAINT,
@@ -111,6 +113,15 @@ export interface TerrainBattlerTag {
 export abstract class MoveRestrictionBattlerTag extends BattlerTag {
   constructor(tagType: BattlerTagType, lapseType: BattlerTagLapseType | BattlerTagLapseType[], turnCount: integer, sourceMove?: Moves, sourceId?: integer) {
     super(tagType, lapseType, turnCount, sourceMove, sourceId);
+  }
+
+  override canAdd(pokemon: Pokemon): boolean {
+    const validArena = new Utils.BooleanHolder(true);
+    const arenaTag = pokemon.scene.arena.findTagsOnSide(t => t.tagType === ArenaTagType.AROMA_VEIL, pokemon.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY)[0];
+    if (arenaTag) {
+      arenaTag.apply(pokemon.scene.arena, [validArena, this.tagType, getPokemonNameWithAffix(pokemon)]);
+    }
+    return validArena.value;
   }
 
   /** @override */
@@ -692,9 +703,16 @@ export class InfatuatedTag extends BattlerTag {
   canAdd(pokemon: Pokemon): boolean {
     if (this.sourceId) {
       const pkm = pokemon.scene.getPokemonById(this.sourceId);
+      console.log(pkm);
+
+      const validArena = new Utils.BooleanHolder(true);
+      const arenaTag = pokemon.scene.arena.findTagsOnSide(t => t.tagType === ArenaTagType.AROMA_VEIL, pokemon.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY)[0];
+      if (arenaTag) {
+        arenaTag.apply(pokemon.scene.arena, [validArena, this.tagType, getPokemonNameWithAffix(pokemon)]);
+      }
 
       if (pkm) {
-        return pokemon.isOppositeGender(pkm);
+        return pokemon.isOppositeGender(pkm) && validArena.value;
       } else  {
         console.warn("canAdd: this.sourceId is not a valid pokemon id!", this.sourceId);
         return false;
