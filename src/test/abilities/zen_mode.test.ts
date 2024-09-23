@@ -18,6 +18,7 @@ import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest";
 import { Status, StatusEffect } from "#app/data/status-effect";
+import { SwitchType } from "#app/enums/switch-type";
 
 
 
@@ -113,7 +114,7 @@ describe("Abilities - ZEN MODE", () => {
       await game.phaseInterceptor.run(EnemyCommandPhase);
       await game.phaseInterceptor.run(TurnStartPhase);
       game.onNextPrompt("SwitchPhase", Mode.PARTY, () => {
-        game.scene.unshiftPhase(new SwitchSummonPhase(game.scene, 0, 1, false, false));
+        game.scene.unshiftPhase(new SwitchSummonPhase(game.scene, SwitchType.SWITCH, 0, 1, false));
         game.scene.ui.setMode(Mode.MESSAGE);
       });
       game.onNextPrompt("SwitchPhase", Mode.MESSAGE, () => {

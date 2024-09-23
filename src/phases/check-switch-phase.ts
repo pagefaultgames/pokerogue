@@ -8,6 +8,7 @@ import { BattlePhase } from "./battle-phase";
 import { PostSummonPhase } from "./post-summon-phase";
 import { SummonMissingPhase } from "./summon-missing-phase";
 import { SwitchPhase } from "./switch-phase";
+import { SwitchType } from "#app/enums/switch-type";
 
 export class CheckSwitchPhase extends BattlePhase {
   protected fieldIndex: integer;
@@ -50,7 +51,7 @@ export class CheckSwitchPhase extends BattlePhase {
       this.scene.ui.setMode(Mode.CONFIRM, () => {
         this.scene.ui.setMode(Mode.MESSAGE);
         this.scene.tryRemovePhase(p => p instanceof PostSummonPhase && p.player && p.fieldIndex === this.fieldIndex);
-        this.scene.unshiftPhase(new SwitchPhase(this.scene, this.fieldIndex, false, true));
+        this.scene.unshiftPhase(new SwitchPhase(this.scene, SwitchType.SWITCH, this.fieldIndex, false, true));
         this.end();
       }, () => {
         this.scene.ui.setMode(Mode.MESSAGE);

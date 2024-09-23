@@ -1,4 +1,5 @@
 import BattleScene from "#app/battle-scene";
+import { SwitchType } from "#app/enums/switch-type";
 import PartyUiHandler, { PartyUiMode, PartyOption } from "#app/ui/party-ui-handler";
 import { Mode } from "#app/ui/ui";
 import { BattlePhase } from "./battle-phase";
@@ -10,21 +11,24 @@ import { SwitchSummonPhase } from "./switch-summon-phase";
  */
 export class SwitchPhase extends BattlePhase {
   protected fieldIndex: integer;
+  private switchType: SwitchType;
   private isModal: boolean;
   private doReturn: boolean;
 
   /**
      * Creates a new SwitchPhase
      * @param scene {@linkcode BattleScene} Current battle scene
+     * @param switchType The type of switch logic this phase implements
      * @param fieldIndex Field index to switch out
      * @param isModal Indicates if the switch should be forced (true) or is
      * optional (false).
      * @param doReturn Indicates if the party member on the field should be
      * recalled to ball or has already left the field. Passed to {@linkcode SwitchSummonPhase}.
      */
-  constructor(scene: BattleScene, fieldIndex: integer, isModal: boolean, doReturn: boolean) {
+  constructor(scene: BattleScene, switchType: SwitchType, fieldIndex: integer, isModal: boolean, doReturn: boolean) {
     super(scene);
 
+    this.switchType = switchType;
     this.fieldIndex = fieldIndex;
     this.isModal = isModal;
     this.doReturn = doReturn;
@@ -38,11 +42,13 @@ export class SwitchPhase extends BattlePhase {
       return super.end();
     }
 
-    // Skip if the fainted party member has been revived already. doReturn is
-    // only passed as `false` from FaintPhase (as opposed to other usages such
-    // as ForceSwitchOutAttr or CheckSwitchPhase), so we only want to check this
-    // if the mon should have already been returned but is still alive and well
-    // on the field. see also; battle.test.ts
+    /**
+     * Skip if the fainted party member has been revived already. doReturn is
+     * only passed as `false` from FaintPhase (as opposed to other usages such
+     * as ForceSwitchOutAttr or CheckSwitchPhase), so we only want to check this
+     * if the mon should have already been returned but is still alive and well
+     * on the field. see also; battle.test.ts
+     */
     if (this.isModal && !this.doReturn && !this.scene.getParty()[this.fieldIndex].isFainted()) {
       return super.end();
     }
@@ -57,7 +63,8 @@ export class SwitchPhase extends BattlePhase {
 
     this.scene.ui.setMode(Mode.PARTY, this.isModal ? PartyUiMode.FAINT_SWITCH : PartyUiMode.POST_BATTLE_SWITCH, fieldIndex, (slotIndex: integer, option: PartyOption) => {
       if (slotIndex >= this.scene.currentBattle.getBattlerCount() && slotIndex < 6) {
-        this.scene.unshiftPhase(new SwitchSummonPhase(this.scene, fieldIndex, slotIndex, this.doReturn, option === PartyOption.PASS_BATON));
+        const switchType = (option === PartyOption.PASS_BATON) ? SwitchType.BATON_PASS : this.switchType;
+        this.scene.unshiftPhase(new SwitchSummonPhase(this.scene, switchType, fieldIndex, slotIndex, this.doReturn));
       }
       this.scene.ui.setMode(Mode.MESSAGE).then(() => super.end());
     }, PartyUiHandler.FilterNonFainted);

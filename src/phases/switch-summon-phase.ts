@@ -12,29 +12,31 @@ import i18next from "i18next";
 import { PostSummonPhase } from "./post-summon-phase";
 import { SummonPhase } from "./summon-phase";
 import { SubstituteTag } from "#app/data/battler-tags";
+import { SwitchType } from "#app/enums/switch-type";
 
 export class SwitchSummonPhase extends SummonPhase {
+  private switchType: SwitchType;
   private slotIndex: integer;
   private doReturn: boolean;
-  private batonPass: boolean;
 
   private lastPokemon: Pokemon;
 
   /**
      * Constructor for creating a new SwitchSummonPhase
      * @param scene {@linkcode BattleScene} the scene the phase is associated with
+     * @param switchType the type of switch behavior
      * @param fieldIndex integer representing position on the battle field
      * @param slotIndex integer for the index of pokemon (in party of 6) to switch into
      * @param doReturn boolean whether to render "comeback" dialogue
      * @param batonPass boolean if the switch is from baton pass
      * @param player boolean if the switch is from the player
      */
-  constructor(scene: BattleScene, fieldIndex: integer, slotIndex: integer, doReturn: boolean, batonPass: boolean, player?: boolean) {
+  constructor(scene: BattleScene, switchType: SwitchType, fieldIndex: integer, slotIndex: integer, doReturn: boolean, player?: boolean) {
     super(scene, fieldIndex, player !== undefined ? player : true);
 
+    this.switchType = switchType;
     this.slotIndex = slotIndex;
     this.doReturn = doReturn;
-    this.batonPass = batonPass;
   }
 
   start(): void {
@@ -64,7 +66,7 @@ export class SwitchSummonPhase extends SummonPhase {
 
     const pokemon = this.getPokemon();
 
-    if (!this.batonPass) {
+    if (this.switchType === SwitchType.SWITCH) {
       (this.player ? this.scene.getEnemyField() : this.scene.getPlayerField()).forEach(enemyPokemon => enemyPokemon.removeTagsBySourceId(pokemon.id));
       const substitute = pokemon.getTag(SubstituteTag);
       if (substitute) {
@@ -94,7 +96,7 @@ export class SwitchSummonPhase extends SummonPhase {
       ease: "Sine.easeIn",
       scale: 0.5,
       onComplete: () => {
-        pokemon.leaveField(!this.batonPass, false);
+        pokemon.leaveField(this.switchType === SwitchType.SWITCH, false);
         this.scene.time.delayedCall(750, () => this.switchAndSummon());
       }
     });
@@ -105,7 +107,7 @@ export class SwitchSummonPhase extends SummonPhase {
     const switchedInPokemon = party[this.slotIndex];
     this.lastPokemon = this.getPokemon();
     applyPreSwitchOutAbAttrs(PreSwitchOutAbAttr, this.lastPokemon);
-    if (this.batonPass && switchedInPokemon) {
+    if (this.switchType === SwitchType.BATON_PASS && switchedInPokemon) {
       (this.player ? this.scene.getEnemyField() : this.scene.getPlayerField()).forEach(enemyPokemon => enemyPokemon.transferTagsBySourceId(this.lastPokemon.id, switchedInPokemon.id));
       if (!this.scene.findModifier(m => m instanceof SwitchEffectTransferModifier && (m as SwitchEffectTransferModifier).pokemonId === switchedInPokemon.id)) {
         const batonPassModifier = this.scene.findModifier(m => m instanceof SwitchEffectTransferModifier
@@ -130,7 +132,7 @@ export class SwitchSummonPhase extends SummonPhase {
          * If this switch is passing a Substitute, make the switched Pokemon match the returned Pokemon's state as it left.
          * Otherwise, clear any persisting tags on the returned Pokemon.
          */
-        if (this.batonPass) {
+        if (this.switchType === SwitchType.BATON_PASS || this.switchType === SwitchType.SHED_TAIL) {
           const substitute = this.lastPokemon.getTag(SubstituteTag);
           if (substitute) {
             switchedInPokemon.x += this.lastPokemon.getSubstituteOffset()[0];
@@ -174,8 +176,13 @@ export class SwitchSummonPhase extends SummonPhase {
       pokemon.battleSummonData.turnCount--;
     }
 
-    if (this.batonPass && pokemon) {
+    if (this.switchType === SwitchType.BATON_PASS && pokemon) {
       pokemon.transferSummon(this.lastPokemon);
+    } else if (this.switchType === SwitchType.SHED_TAIL && pokemon) {
+      const subTag = this.lastPokemon.getTag(SubstituteTag);
+      if (subTag) {
+        pokemon.summonData.tags.push(subTag);
+      }
     }
 
     this.lastPokemon?.resetSummonData();
