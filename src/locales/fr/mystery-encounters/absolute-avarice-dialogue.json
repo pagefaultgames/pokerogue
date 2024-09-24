@@ -18,7 +18,7 @@
     },
     "3": {
       "label": "Lui laisser les Baies",
-      "tooltip": "(-) Baies définitement perdues\n(?) {{greedentName}} vous apprécie",
+      "tooltip": "(-) Baies définitivement perdues\n(?) {{greedentName}} vous apprécie",
       "selected": "Le {{greedentName}} engloutit l’intégralité\ndes Baies en un éclair !$Il vous regarde avec tendresse\nen se tapotant le ventre.$Peut-être pourriez-vous lui en donner encore\nplus pendant votre périple…$@s{level_up_fanfare}Le {{greedentName}} veut rejoindre votre équipe !"
     }
   }

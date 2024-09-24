@@ -11,7 +11,7 @@ import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { DelibirdyEncounter } from "#app/data/mystery-encounters/encounters/delibirdy-encounter";
 import * as MysteryEncounters from "#app/data/mystery-encounters/mystery-encounters";
 import { MoneyRequirement } from "#app/data/mystery-encounters/mystery-encounter-requirements";
-import { BerryModifier, HealingBoosterModifier, HiddenAbilityRateBoosterModifier, HitHealModifier, LevelIncrementBoosterModifier, PokemonInstantReviveModifier, PokemonNatureWeightModifier, PreserveBerryModifier } from "#app/modifier/modifier";
+import { BerryModifier, HealingBoosterModifier, HitHealModifier, LevelIncrementBoosterModifier, MoneyMultiplierModifier, PokemonInstantReviveModifier, PokemonNatureWeightModifier, PreserveBerryModifier } from "#app/modifier/modifier";
 import { MysteryEncounterPhase } from "#app/phases/mystery-encounter-phases";
 import { generateModifierType } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import { modifierTypes } from "#app/modifier/modifier-type";
@@ -104,35 +104,35 @@ describe("Delibird-y - Mystery Encounter", () => {
       expect(scene.money).toBe(initialMoney - price);
     });
 
-    it("Should give the player a Hidden Ability Charm", async () => {
+    it("Should give the player an Amulet Coin", async () => {
       scene.money = 200000;
       await game.runToMysteryEncounter(MysteryEncounterType.DELIBIRDY, defaultParty);
       await runMysteryEncounterToEnd(game, 1);
 
-      const itemModifier = scene.findModifier(m => m instanceof HiddenAbilityRateBoosterModifier) as HiddenAbilityRateBoosterModifier;
+      const itemModifier = scene.findModifier(m => m instanceof MoneyMultiplierModifier) as MoneyMultiplierModifier;
 
       expect(itemModifier).toBeDefined();
       expect(itemModifier?.stackCount).toBe(1);
     });
 
-    it("Should give the player a Shell Bell if they have max stacks of Berry Pouches", async () => {
+    it("Should give the player a Shell Bell if they have max stacks of Amulet Coins", async () => {
       scene.money = 200000;
       await game.runToMysteryEncounter(MysteryEncounterType.DELIBIRDY, defaultParty);
 
-      // 5 Healing Charms
+      // Max Amulet Coins
       scene.modifiers = [];
-      const abilityCharm = generateModifierType(scene, modifierTypes.ABILITY_CHARM)!.newModifier() as HiddenAbilityRateBoosterModifier;
-      abilityCharm.stackCount = 4;
-      await scene.addModifier(abilityCharm, true, false, false, true);
+      const amuletCoin = generateModifierType(scene, modifierTypes.AMULET_COIN)!.newModifier() as MoneyMultiplierModifier;
+      amuletCoin.stackCount = 5;
+      await scene.addModifier(amuletCoin, true, false, false, true);
       await scene.updateModifiers(true);
 
       await runMysteryEncounterToEnd(game, 1);
 
-      const abilityCharmAfter = scene.findModifier(m => m instanceof HiddenAbilityRateBoosterModifier);
+      const amuletCoinAfter = scene.findModifier(m => m instanceof MoneyMultiplierModifier);
       const shellBellAfter = scene.findModifier(m => m instanceof HitHealModifier);
 
-      expect(abilityCharmAfter).toBeDefined();
-      expect(abilityCharmAfter?.stackCount).toBe(4);
+      expect(amuletCoinAfter).toBeDefined();
+      expect(amuletCoinAfter?.stackCount).toBe(5);
       expect(shellBellAfter).toBeDefined();
       expect(shellBellAfter?.stackCount).toBe(1);
     });
