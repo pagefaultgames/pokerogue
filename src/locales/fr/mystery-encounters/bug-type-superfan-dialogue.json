@@ -13,7 +13,7 @@
     },
     "2": {
       "label": "Montrer vos types Insecte",
-      "tooltip": "(+) Revecez un objet en cadeau",
+      "tooltip": "(+) Recevez un objet en cadeau",
       "disabled_tooltip": "Vous devez avoir au moins un Pokémon Insecte dans votre équipe pour choisir cette option.",
       "selected": "Vous lui montrez tous les types Insecte de votre équipe…",
       "selected_0_to_1": "Oh ? T’as qu’{{numBugTypes}}…$Pourquoi je gaspille ma salive à te parler…",
@@ -23,7 +23,7 @@
     },
     "3": {
       "label": "Donner un objet Insecte",
-      "tooltip": "(-) Lui donner l’objet {{requiredBugItems}}\n(+) Revecez un objet en cadeau",
+      "tooltip": "(-) Lui donner l’objet {{requiredBugItems}}\n(+) Recevez un objet en cadeau",
       "disabled_tooltip": "Vous avez besoin d’un objet {{requiredBugItems}} pour choisir cette option.",
       "select_prompt": "Choisissez un objet à donner.",
       "invalid_selection": "Ce Pokémon ne porte pas ce genre d’objet.",

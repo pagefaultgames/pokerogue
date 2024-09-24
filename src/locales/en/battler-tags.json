@@ -74,5 +74,5 @@
   "substituteOnAdd": "{{pokemonNameWithAffix}} put in a substitute!",
   "substituteOnHit": "The substitute took damage for {{pokemonNameWithAffix}}!",
   "substituteOnRemove": "{{pokemonNameWithAffix}}'s substitute faded!",
-  "autotomizeOnAdd": "{{pokemonNameWIthAffix}} became nimble!"
+  "autotomizeOnAdd": "{{pokemonNameWithAffix}} became nimble!"
 }

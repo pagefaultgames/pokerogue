@@ -5,7 +5,7 @@
   "speaker": "Savant fou",
   "intro_dialogue": "Hé, toi !$Je travaille sur un dispositif qui permet d’éveiller\nla vraie puissance d’un Pokémon !$Il restructure complètement les atomes du Pokémon\npour en faire une version bien plus puissante.$Héhé…@d{64} Je n’ai besoin que de sac-@d{32}\nEuuh, sujets tests, pour prouver son fonctionnement.",
   "title": "L’Expérience interdite",
-  "description": "Ce scientifique à l’air un peu taré tient dans ses mains quelques Poké Balls.\n« T’inquites pas, je gère ! Voilà quelques Poké Balls plutôt efficaces en caution, tout ce dont j’ai besoin, c’est un de tes Pokémon ! Héhé… »",
+  "description": "Ce scientifique à l’air un peu taré tient dans ses mains quelques Poké Balls.\n« T’inquiètes pas, je gère ! Voilà quelques Poké Balls plutôt efficaces en caution, tout ce dont j’ai besoin, c’est un de tes Pokémon ! Héhé… »",
   "query": "Que voulez-vous faire ?",
   "option": {
     "1": {
