@@ -2454,6 +2454,11 @@ export class MysteryEncounterPostSummonTag extends BattlerTag {
   }
 }
 
+/**
+ * Battle Tag that applies the move Torment to the target Pokemon
+ * Torment restricts the consecutive use of moves.
+ * The tag is only removed if the target leaves the battle.
+ */
 export class TormentTag extends MoveRestrictionBattlerTag {
   private target: Pokemon;
 
@@ -2464,7 +2469,6 @@ export class TormentTag extends MoveRestrictionBattlerTag {
   onAdd(pokemon: Pokemon) {
     super.onAdd(pokemon);
     this.target = pokemon;
-    //pokemon.scene.triggerPokemonBattleAnim(pokemon, PokemonAnimType.TORMENT_ADD);
     pokemon.scene.queueMessage(i18next.t("battlerTags:tormentOnAdd", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }), 1500);
   }
 
@@ -2493,6 +2497,11 @@ export class TormentTag extends MoveRestrictionBattlerTag {
   }
 }
 
+/**
+ * Battle Tag that applies the move Taunt to the target Pokemon
+ * Taunt restricts the use of status moves.
+ * The tag is removed after 4 turns.
+ */
 export class TauntTag extends MoveRestrictionBattlerTag {
   constructor() {
     super(BattlerTagType.TAUNT, [BattlerTagLapseType.PRE_MOVE, BattlerTagLapseType.AFTER_MOVE], 4, Moves.TAUNT);
@@ -2500,7 +2509,6 @@ export class TauntTag extends MoveRestrictionBattlerTag {
 
   override onAdd(pokemon: Pokemon) {
     super.onAdd(pokemon);
-    // Needs onAdd animation
     pokemon.scene.queueMessage(i18next.t("battlerTags:tauntOnAdd", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }), 1500);
   }
 
@@ -2517,6 +2525,11 @@ export class TauntTag extends MoveRestrictionBattlerTag {
   }
 }
 
+/**
+ * Battle Tag that applies the move Imprison to the target Pokemon
+ * Imprison restricts the opposing side's usage of moves shared by the source-user of Imprison.
+ * The tag is only removed when the source-user is removed from the field.
+ */
 export class ImprisonTag extends MoveRestrictionBattlerTag {
   private source: Pokemon;
 
