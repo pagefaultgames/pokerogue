@@ -8,9 +8,11 @@ export class ModifierHelper extends GameManagerHelper {
    *
    * Note that all modifiers are updated during the start of `SelectModifierPhase`.
    * @param modifier The Modifier to add.
+   * @returns `this`
    */
-  addCheck(modifier: ModifierTypeKeys) {
+  addCheck(modifier: ModifierTypeKeys): this {
     itemPoolChecks.set(modifier, undefined);
+    return this;
   }
 
   checkHasRun(modifier: ModifierTypeKeys): boolean {
@@ -51,9 +53,10 @@ export class ModifierHelper extends GameManagerHelper {
     return this;
   }
 
-  /** Removes all modifier checks. */
+  /** Removes all modifier checks. @returns `this` */
   clearChecks() {
     itemPoolChecks.clear();
+    return this;
   }
 
   private log(...params: any[]) {

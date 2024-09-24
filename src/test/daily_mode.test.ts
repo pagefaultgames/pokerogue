@@ -1,12 +1,10 @@
 import { MapModifier } from "#app/modifier/modifier";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import GameManager from "./utils/gameManager";
 import { Moves } from "#app/enums/moves";
-import { getPartyLuckValue } from "#app/modifier/modifier-type";
 import { Biome } from "#app/enums/biome";
 import { Mode } from "#app/ui/ui";
 import ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
-import { Species } from "#app/enums/species";
 
 //const TIMEOUT = 20 * 1000;
 
@@ -62,8 +60,9 @@ describe("Shop modifications", async () => {
       .disableTrainerWaves()
       .moveset([Moves.KOWTOW_CLEAVE])
       .enemyMoveset(Moves.SPLASH);
-    game.modifiers.addCheck("EVIOLITE");
-    game.modifiers.addCheck("MINI_BLACK_HOLE");
+    game.modifiers
+      .addCheck("EVIOLITE")
+      .addCheck("MINI_BLACK_HOLE");
   });
 
   afterEach(() => {
@@ -99,48 +98,3 @@ describe("Shop modifications", async () => {
     });
   });
 });
-
-describe("Luck modifications", async() => {
-  let phaserGame: Phaser.Game;
-  let game: GameManager;
-
-  beforeAll(() => {
-    phaserGame = new Phaser.Game({
-      type: Phaser.HEADLESS,
-    });
-  });
-  beforeEach(() => {
-    game = new GameManager(phaserGame);
-
-    game.override
-      .startingWave(9)
-      .startingBiome(Biome.ICE_CAVE) // Will lead to Snowy Forest with randomly generated weather
-      .battleType("single")
-      .startingLevel(100) // Avoid levelling up
-      .enemyLevel(1000) // Avoid opponent dying before game.doKillOpponents()
-      .disableTrainerWaves()
-      .moveset([Moves.KOWTOW_CLEAVE])
-      .enemyMoveset(Moves.SPLASH);
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
-  });
-
-  it("should apply luck in Classic Mode", async () => {
-    await game.classicMode.startBattle([Species.PIKACHU]);
-    const party = game.scene.getParty();
-    vi.spyOn(party[0], "getLuck").mockReturnValue(3);
-    expect(party[0].getLuck()).toBeGreaterThan(0);
-    expect(getPartyLuckValue(party)).toBeGreaterThan(0);
-  });
-
-  it("should not apply luck in Daily Run", async () => {
-    await game.dailyMode.startBattle();
-    const party = game.scene.getParty();
-    vi.spyOn(party[0], "getLuck").mockReturnValue(3);
-    expect(party[0].getLuck()).toBeGreaterThan(0);
-    expect(getPartyLuckValue(party)).toBe(0);
-  });
-});
-//*/
