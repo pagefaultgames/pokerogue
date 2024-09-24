@@ -932,6 +932,11 @@ class ImprisonTag extends ArenaTrapTag {
     super(ArenaTagType.IMPRISON, Moves.IMPRISON, sourceId, side, 1);
   }
 
+  /**
+   * Helper function that retrieves the Pokemon effected
+   * @param scene medium to retrieve the involved Pokemon
+   * @returns list of PlayerPokemon or EnemyPokemon on the field
+   */
   retrieveField(scene: BattleScene): PlayerPokemon[] | EnemyPokemon[] {
     if (!this.source.isPlayer()) {
       return scene.getPlayerField();
