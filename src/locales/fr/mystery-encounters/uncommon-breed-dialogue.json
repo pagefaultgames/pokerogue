@@ -1,7 +1,7 @@
 {
   "intro": "C’est un Pokémon tout ce qu’il y a de plus banal !",
   "title": "Une forme peu commune",
-  "description": "Ce {{enemyPokemon}} a l’air speical par rapport au reste de son espèce. @[TOOLTIP_TITLE]{Peut-être connait-il une capacité particulière ?} Vous pourriez décider de l’affronter sur-le-champ, mais il y a peut-être moyen d’en faire un nouvel ami.",
+  "description": "Ce {{enemyPokemon}} a l’air spécial par rapport au reste de son espèce. @[TOOLTIP_TITLE]{Peut-être connait-il une capacité particulière ?} Vous pourriez décider de l’affronter sur-le-champ, mais il y a peut-être moyen d’en faire un nouvel ami.",
   "query": "Que voulez-vous faire ?",
   "option": {
     "1": {
@@ -12,9 +12,9 @@
     },
     "2": {
       "label": "Le nourrir",
-      "disabled_tooltip": "Vous avez besoin de 4 Baies pour chosir cette option",
+      "disabled_tooltip": "Vous avez besoin de 4 Baies pour choisir cette option",
       "tooltip": "(-) Donner 4 Baies\n(+) Le {{enemyPokemon}} vous apprécie",
-      "selected": "Vous lancer quelques Baies\nau {{enemyPokemon}} !$Il les englouit avec joie !$Le {{enemyPokemon}} veut se joindre\nà votre équipe !"
+      "selected": "Vous lancer quelques Baies\nau {{enemyPokemon}} !$Il les engloutit avec joie !$Le {{enemyPokemon}} veut se joindre\nà votre équipe !"
     },
     "3": {
       "label": "Devenir amis",

@@ -1,5 +1,5 @@
 {
-  "intro_dialogue": "Approchez mesdames et messieurs !$Tentez votre chance au tout nouveau\nRipost-o-matic de {{wobbuffetName}} !",
+  "intro_dialogue": "Approchez mesdames et messieurs !$Tentez votre chance au tout nouveau\nQulbut-o-matic de {{wobbuffetName}} !",
   "speaker": "Animateur",
   "title": "Du rire et des jeux !",
   "description": "Vous rencontrez un forain avec une mailloche ! Vous disposez de @[TOOLTIP_TITLE]{3 tours} pour amener {{wobbuffetName}} le plus près possible de @[TOOLTIP_TITLE]{1 PV} pour ainsi charger la Riposte la plus puissante possible, @[TOOLTIP_TITLE]{sans le mettre K.O.} .\nMais attention ! Si {{wobbuffetName}} est mis K.O., vous devrez payer pour le ranimer !",
@@ -7,7 +7,7 @@
   "option": {
     "1": {
       "label": "Jouer",
-      "tooltip": "(-) Payer {{option1Money, money}}\n(+) Jouer au Ripost-o-matic",
+      "tooltip": "(-) Payer {{option1Money, money}}\n(+) Jouer au Qulbut-o-matic",
       "selected": "Vous tentez votre chance !"
     },
     "2": {
