@@ -3,12 +3,12 @@
   "speaker": "Die Sihgers",
   "intro_dialogue": "Wir sind die Sihgers!$Wie wäre es, wenn du gegen unsere Familie in einer Reihe von Pokémon-Kämpfen antrittst?",
   "title": "Die Sihgers-Herausforderung",
-  "description": "Die Sihgers sind eine Familie von 5 Trainern, und sie wollen kämpfen! Wenn du sie alle hintereinander besiegst, bekommst du einen grandiosen Preis. Aber kannst du die Hitze aushalten?",
+  "description": "Die Sihgers sind eine Familie von 5 Trainern, und sie wollen kämpfen! Wenn du sie alle hintereinander besiegst, bekommst du einen grandiosen Preis. Aber kannst du die Hitze aushalten?",//TODO
   "query": "Was wirst du tun?",
   "option": {
     "1": {
       "label": "Die Herausforderung annehmen",
-      "tooltip": "(-) Brutaler Kampf\n(+) Spezielle Belohnung",
+      "tooltip": "(-) Brutaler Kampf\n(+) Spezielle Belohnung",//TODO
       "selected": "Lass die Herausforderung beginnen!"
     },
     "2": {
