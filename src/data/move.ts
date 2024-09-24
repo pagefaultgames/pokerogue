@@ -5303,9 +5303,6 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
 
 
 export class ChillyReceptionAttr extends ForceSwitchOutAttr {
-
-  // using inherited constructor
-
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     user.scene.arena.trySetWeather(WeatherType.SNOW, true);
     return super.apply(user, target, move, args);
