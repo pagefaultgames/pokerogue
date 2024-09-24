@@ -25,7 +25,6 @@ import { getEncounterText, showEncounterText } from "#app/data/mystery-encounter
 import { trainerNamePools } from "#app/data/trainer-names";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
 import { addPokemonDataToDexAndValidateAchievements } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
-import { Moves } from "#enums/moves";
 
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounter:globalTradeSystem";
@@ -258,19 +257,17 @@ export const GlobalTradeSystemEncounter: MysteryEncounter =
 
             // If Pokemon is still not shiny or with HA, give the Pokemon a random Common egg move in its moveset
             if (!tradePokemon.shiny && (!tradePokemon.species.abilityHidden || tradePokemon.abilityIndex < hiddenIndex)) {
-              const eggMoves: Moves[] = tradePokemon.getEggMoves();
-
+              const eggMoves = tradePokemon.getEggMoves();
               if (eggMoves) {
-
-              }
-              // Cannot gen the rare egg move, only 1 of the first 3 common moves
-              const eggMove = eggMoves[randSeedInt(3)];
-              if (!tradePokemon.moveset.some(m => m?.moveId === eggMove)) {
-                if (tradePokemon.moveset.length < 4) {
-                  tradePokemon.moveset.push(new PokemonMove(eggMove));
-                } else {
-                  const eggMoveIndex = randSeedInt(4);
-                  tradePokemon.moveset[eggMoveIndex] = new PokemonMove(eggMove);
+                // Cannot gen the rare egg move, only 1 of the first 3 common moves
+                const eggMove = eggMoves[randSeedInt(3)];
+                if (!tradePokemon.moveset.some(m => m?.moveId === eggMove)) {
+                  if (tradePokemon.moveset.length < 4) {
+                    tradePokemon.moveset.push(new PokemonMove(eggMove));
+                  } else {
+                    const eggMoveIndex = randSeedInt(4);
+                    tradePokemon.moveset[eggMoveIndex] = new PokemonMove(eggMove);
+                  }
                 }
               }
             }

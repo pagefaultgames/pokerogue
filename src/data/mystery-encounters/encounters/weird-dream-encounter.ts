@@ -12,7 +12,6 @@ import { IntegerHolder, isNullOrUndefined, randSeedInt, randSeedShuffle } from "
 import PokemonSpecies, { allSpecies, getPokemonSpecies } from "#app/data/pokemon-species";
 import { HiddenAbilityRateBoosterModifier, PokemonFormChangeItemModifier, PokemonHeldItemModifier } from "#app/modifier/modifier";
 import { achvs } from "#app/system/achv";
-import { speciesEggMoves } from "#app/data/egg-moves";
 import { MysteryEncounterPokemonData } from "#app/data/mystery-encounters/mystery-encounter-pokemon-data";
 import { showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
 import { modifierTypes } from "#app/modifier/modifier-type";
@@ -22,7 +21,6 @@ import { getLevelTotalExp } from "#app/data/exp";
 import { Stat } from "#enums/stat";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
 import { Challenges } from "#enums/challenges";
-import { Moves } from "#enums/moves";
 
 /** i18n namespace for encounter */
 const namespace = "mysteryEncounter:weirdDream";
@@ -553,8 +551,8 @@ function doSideBySideTransformations(scene: BattleScene, transformations: Pokemo
  */
 async function addEggMoveToNewPokemonMoveset(scene: BattleScene, newPokemon: PlayerPokemon, speciesRootForm: Species): Promise<number | null> {
   let eggMoveIndex: null | number = null;
-  if (speciesEggMoves.hasOwnProperty(speciesRootForm)) {
-    const eggMoves: Moves[] = newPokemon.getEggMoves().slice(0);
+  const eggMoves = newPokemon.getEggMoves()?.slice(0);
+  if (eggMoves) {
     const eggMoveIndices = [0, 1, 2, 3];
     randSeedShuffle(eggMoveIndices);
     let randomEggMoveIndex = eggMoveIndices.pop();
