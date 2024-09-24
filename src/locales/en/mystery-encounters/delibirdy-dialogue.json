@@ -1,7 +1,7 @@
 
 
 {
-  "intro": "A pack of {{delibirdName}} have appeared!",
+  "intro": "A flock of {{delibirdName}} have appeared!",
   "title": "Delibir-dy",
   "description": "The {{delibirdName}}s are looking at you expectantly, as if they want something. Perhaps giving them an item or some money would satisfy them?",
   "query": "What will you give them?",

@@ -11,9 +11,10 @@ import PokemonSpecies, { allSpecies, getPokemonSpecies } from "#app/data/pokemon
 import { getTypeRgb } from "#app/data/type";
 import { MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/mystery-encounter-option";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
+import * as Utils from "#app/utils";
 import { IntegerHolder, isNullOrUndefined, randInt, randSeedInt, randSeedShuffle } from "#app/utils";
-import Pokemon, { EnemyPokemon, PlayerPokemon } from "#app/field/pokemon";
-import { HiddenAbilityRateBoosterModifier, PokemonFormChangeItemModifier, PokemonHeldItemModifier, SpeciesStatBoosterModifier } from "#app/modifier/modifier";
+import Pokemon, { EnemyPokemon, PlayerPokemon, PokemonMove } from "#app/field/pokemon";
+import { HiddenAbilityRateBoosterModifier, PokemonFormChangeItemModifier, PokemonHeldItemModifier, ShinyRateBoosterModifier, SpeciesStatBoosterModifier } from "#app/modifier/modifier";
 import { OptionSelectItem } from "#app/ui/abstact-option-select-ui-handler";
 import PokemonData from "#app/system/pokemon-data";
 import i18next from "i18next";
@@ -24,6 +25,8 @@ import { getEncounterText, showEncounterText } from "#app/data/mystery-encounter
 import { trainerNamePools } from "#app/data/trainer-names";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
 import { addPokemonDataToDexAndValidateAchievements } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
+import { Moves } from "#enums/moves";
+import { speciesEggMoves } from "#app/data/egg-moves";
 
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounter:globalTradeSystem";
@@ -222,21 +225,48 @@ export const GlobalTradeSystemEncounter: MysteryEncounter =
             const tradePokemon = new EnemyPokemon(scene, randomTradeOption, pokemon.level, TrainerSlot.NONE, false);
             // Extra shiny roll at 1/128 odds (boosted by events and charms)
             if (!tradePokemon.shiny) {
-              // 512/65536 -> 1/128
-              tradePokemon.trySetShinySeed(512, true);
+              const baseShinyChance = 512;
+              const shinyThreshold = new Utils.IntegerHolder(baseShinyChance);
+              if (scene.eventManager.isEventActive()) {
+                shinyThreshold.value *= scene.eventManager.getShinyMultiplier();
+              }
+              scene.applyModifiers(ShinyRateBoosterModifier, true, shinyThreshold);
+
+              // Base shiny chance of 512/65536 -> 1/128, affected by events and Shiny Charms
+              // Maximum shiny chance of 4090/65536 -> 1/16, cannot improve further after that
+              const shinyChance = Math.min(shinyThreshold.value, 4090);
+
+              tradePokemon.trySetShinySeed(shinyChance, false);
             }
 
             // Extra HA roll at base 1/64 odds (boosted by events and charms)
-            if (pokemon.species.abilityHidden) {
-              const hiddenIndex = pokemon.species.ability2 ? 2 : 1;
-              if (pokemon.abilityIndex < hiddenIndex) {
+            const hiddenIndex = tradePokemon.species.ability2 ? 2 : 1;
+            if (tradePokemon.species.abilityHidden) {
+              if (tradePokemon.abilityIndex < hiddenIndex) {
                 const hiddenAbilityChance = new IntegerHolder(64);
                 scene.applyModifiers(HiddenAbilityRateBoosterModifier, true, hiddenAbilityChance);
 
                 const hasHiddenAbility = !randSeedInt(hiddenAbilityChance.value);
 
                 if (hasHiddenAbility) {
-                  pokemon.abilityIndex = hiddenIndex;
+                  tradePokemon.abilityIndex = hiddenIndex;
+                }
+              }
+            }
+
+            // If Pokemon is still not shiny or with HA, give the Pokemon a random Common egg move in its moveset
+            if (!tradePokemon.shiny && (!tradePokemon.species.abilityHidden || tradePokemon.abilityIndex < hiddenIndex)) {
+              const eggMoves: Moves[] = speciesEggMoves[tradePokemon.getSpeciesForm().getRootSpeciesId()];
+              if (eggMoves) {
+                // Cannot gen the rare egg move, only 1 of the first 3 common moves
+                const eggMove = eggMoves[randSeedInt(3)];
+                if (!tradePokemon.moveset.some(m => m?.moveId === eggMove)) {
+                  if (tradePokemon.moveset.length < 4) {
+                    tradePokemon.moveset.push(new PokemonMove(eggMove));
+                  } else {
+                    const eggMoveIndex = randSeedInt(4);
+                    tradePokemon.moveset[eggMoveIndex] = new PokemonMove(eggMove);
+                  }
                 }
               }
             }

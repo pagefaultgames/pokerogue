@@ -159,12 +159,6 @@ export const AbsoluteAvariceEncounter: MysteryEncounter =
     ])
     .withHideWildIntroMessage(true)
     .withAutoHideIntroVisuals(false)
-    .withOnVisualsStart((scene: BattleScene) => {
-      doGreedentSpriteSteal(scene);
-      doBerrySpritePile(scene);
-
-      return true;
-    })
     .withIntroDialogue([
       {
         text: `${namespace}.intro`,
@@ -236,6 +230,9 @@ export const AbsoluteAvariceEncounter: MysteryEncounter =
       return true;
     })
     .withOnVisualsStart((scene: BattleScene) => {
+      doGreedentSpriteSteal(scene);
+      doBerrySpritePile(scene);
+
       // Remove the berries from the party
       // Session has been safely saved at this point, so data won't be lost
       const berryItems = scene.findModifiers(m => m instanceof BerryModifier) as BerryModifier[];

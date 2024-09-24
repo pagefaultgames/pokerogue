@@ -8,7 +8,7 @@
   "option": {
     "1": {
       "label": "Battle the Clown",
-      "tooltip": "(-) Strange Battle\n(?) Affects Pokémon Abilities",
+      "tooltip": "(-) Strange Battle\n(?) Affects One Pokémon's Ability",
       "selected": "Your pitiful Pokémon are poised for a pathetic performance!",
       "apply_ability_dialogue": "A sensational showcase!\nYour savvy suits a special skill as spoils!",
       "apply_ability_message": "The clown is offering to permanently Skill Swap one of your Pokémon's ability to {{ability}}!",
@@ -17,14 +17,14 @@
     },
     "2": {
       "label": "Remain Unprovoked",
-      "tooltip": "(-) Upsets the Clown\n(?) Affects Pokémon Items",
+      "tooltip": "(?) Affects One Pokémon's Items",
       "selected": "Dismal dodger, you deny a delightful duel?\nFeel my fury!",
       "selected_2": "The clown's {{blacephalonName}} uses Trick!\nAll of your {{switchPokemon}}'s items were randomly swapped!",
       "selected_3": "Flustered fool, fall for my flawless deception!"
     },
     "3": {
       "label": "Return the Insults",
-      "tooltip": "(-) Upsets the Clown\n(?) Affects Pokémon Types",
+      "tooltip": "(?) Affects Your Pokémons' Types",
       "selected": "Dismal dodger, you deny a delightful duel?\nFeel my fury!",
       "selected_2": "The clown's {{blacephalonName}} uses a strange move!\nAll of your team's types were randomly swapped!",
       "selected_3": "Flustered fool, fall for my flawless deception!"

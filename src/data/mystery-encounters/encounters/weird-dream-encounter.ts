@@ -429,7 +429,7 @@ async function doNewTeamPostProcess(scene: BattleScene, transformations: Pokemon
 }
 
 function getTransformedSpecies(originalBst: number, bstSearchRange: [number, number], hasPokemonBstHigherThan600: boolean, hasPokemonBstBetween570And600: boolean, alreadyUsedSpecies: PokemonSpecies[]): PokemonSpecies {
-  let newSpecies: PokemonSpecies | undefined = undefined;
+  let newSpecies: PokemonSpecies | undefined;
   while (isNullOrUndefined(newSpecies)) {
     const bstCap = originalBst + bstSearchRange[1];
     const bstMin = Math.max(originalBst + bstSearchRange[0], 0);
