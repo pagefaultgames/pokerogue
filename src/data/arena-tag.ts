@@ -919,27 +919,47 @@ class SafeguardTag extends ArenaTag {
   }
 }
 
+/**
+ * This arena tag facilitates the application of the move Imprison
+ * Imprison remains in effect as long as the source Pokemon is active and present on the field.
+ * Imprison will apply to any opposing Pokemon that switch onto the field as well.
+ */
 class ImprisonTag extends ArenaTrapTag {
   private source: Pokemon;
 
   constructor(sourceId: integer, side: ArenaTagSide) {
-    console.log(side);
     super(ArenaTagType.IMPRISON, Moves.IMPRISON, sourceId, side, 1);
   }
 
-  onAdd(arena: Arena) {
+  /**
+   * This function applies the effects of Imprison to the opposing Pokemon already present on the field.
+   * @param arena
+   */
+  override onAdd(arena: Arena) {
     this.source = arena.scene.getPokemonById(this.sourceId!)!;
-    const party = !this.source.isPlayer() ? arena.scene.getPlayerField() : arena.scene.getEnemyField();
-    party?.forEach((p: PlayerPokemon | EnemyPokemon ) => {
-      p.addTag(BattlerTagType.IMPRISON, 1, Moves.IMPRISON, this.sourceId);
-    });
-    arena.scene.queueMessage(i18next.t("battlerTags:imprisonOnAdd", {pokemonNameWithAffix: getPokemonNameWithAffix(this.source)}));
+    if (this.source) {
+      const party = !this.source.isPlayer() ? arena.scene.getPlayerField() : arena.scene.getEnemyField();
+      party?.forEach((p: PlayerPokemon | EnemyPokemon ) => {
+        p.addTag(BattlerTagType.IMPRISON, 1, Moves.IMPRISON, this.sourceId);
+      });
+      arena.scene.queueMessage(i18next.t("battlerTags:imprisonOnAdd", {pokemonNameWithAffix: getPokemonNameWithAffix(this.source)}));
+    }
   }
 
+  /**
+   * Checks if the source Pokemon is still active on the field
+   * @param _arena
+   * @returns `true` if the source of the tag is still active on the field | `false` if not
+   */
   lapse(_arena: Arena): boolean {
     return this.source.isActive(true);
   }
 
+  /**
+   * This applies the effects of Imprison to any opposing Pokemon that switch into the field while the source Pokemon is still active
+   * @param pokemon the Pokemon Imprison is applied to
+   * @returns `true`
+   */
   activateTrap(pokemon: Pokemon): boolean {
     if (this.source.isActive(true)) {
       pokemon.addTag(BattlerTagType.IMPRISON, 1, Moves.IMPRISON, this.sourceId);
@@ -947,6 +967,10 @@ class ImprisonTag extends ArenaTrapTag {
     return true;
   }
 
+  /**
+   * When the arena tag is removed, it also attempts to remove any related Battler Tags if they haven't already been removed from the affected Pokemon
+   * @param arena
+   */
   onRemove(arena: Arena): void {
     const party = !this.source.isPlayer() ? arena.scene.getPlayerField() : arena.scene.getEnemyField();
     party?.forEach((p: PlayerPokemon | EnemyPokemon) => {

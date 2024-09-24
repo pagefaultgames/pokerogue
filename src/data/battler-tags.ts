@@ -2455,18 +2455,30 @@ export class TormentTag extends MoveRestrictionBattlerTag {
     pokemon.scene.queueMessage(i18next.t("battlerTags:tormentOnAdd", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }), 1500);
   }
 
-  override lapse(pokemon: Pokemon, tagType: BattlerTagLapseType): boolean {
+  /**
+   * Torment only ends when the affected Pokemon leaves the battle field
+   * @param pokemon the Pokemon under the effects of Torment
+   * @param _tagType
+   * @returns `true` if still present | `false` if not
+   */
+  override lapse(pokemon: Pokemon, _tagType: BattlerTagLapseType): boolean {
     if (!pokemon.isActive(true)) {
       return false;
     }
     return true;
   }
 
+  /**
+   * This checks if the current move used is identical to the last used move with a MoveResult of SUCCESS/MISS
+   * @param move the move under investigation
+   * @returns `true` if there is valid consecutive usage | `false` if the moves are different from each other
+   */
   isMoveRestricted(move: Moves): boolean {
     const lastMove = this.target.getLastXMoves(1)[0];
     if ( !lastMove ) {
       return false;
     }
+    // This checks for moves like Rollout and Iceball, which are immune to the move restrictions of Torment
     const isLockedIntoMove = allMoves[lastMove.move].hasAttr(ConsecutiveUseDoublePowerAttr);
     const validLastMoveResult = (lastMove.result === MoveResult.SUCCESS) || (lastMove.result === MoveResult.MISS);
     if (lastMove.move === move && validLastMoveResult && lastMove.move !== Moves.STRUGGLE && !isLockedIntoMove) {
@@ -2478,6 +2490,8 @@ export class TormentTag extends MoveRestrictionBattlerTag {
   override selectionDeniedText(_pokemon: Pokemon, move: Moves): string {
     return i18next.t("battle:moveCannotBeSelected", { moveName: allMoves[move].name });
   }
+
+  //Torment does not interrupt the move if the move is performed consecutively in the same turn and right after Torment is applied
 }
 
 /**
@@ -2495,6 +2509,11 @@ export class TauntTag extends MoveRestrictionBattlerTag {
     pokemon.scene.queueMessage(i18next.t("battlerTags:tauntOnAdd", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }), 1500);
   }
 
+  /**
+   * Checks if a move is a status move and determines its restriction status on that basis
+   * @param move the move under investigation
+   * @returns `true` if the move is a status move | `false` if not
+   */
   override isMoveRestricted(move: Moves): boolean {
     return allMoves[move].category === MoveCategory.STATUS;
   }
@@ -2524,15 +2543,26 @@ export class ImprisonTag extends MoveRestrictionBattlerTag {
     this.source = pokemon.scene.getPokemonById(this.sourceId!)!;
   }
 
+  /**
+   * Checks if the source of Imprison is still active
+   * @param _pokemon
+   * @param _lapseType
+   * @returns `true` if the source is still active | `false` if not
+   */
   override lapse(_pokemon: Pokemon, _lapseType: BattlerTagLapseType): boolean {
     return this.source.isActive(true);
   }
 
+  /**
+   * Checks if the source of the tag has the parameter move in its moveset and that the source is still active
+   * @param move the move under investigation
+   * @returns `true` if both conditions are met | `false` if either conditions are not met
+   */
   override isMoveRestricted(move: Moves): boolean {
     const sourceMoveset = this.source.getMoveset().map(m => {
       return m!.moveId;
     });
-    return sourceMoveset.includes(move);
+    return sourceMoveset.includes(move) && this.source.isActive(true);
   }
 
   override selectionDeniedText(_pokemon: Pokemon, move: Moves): string {
