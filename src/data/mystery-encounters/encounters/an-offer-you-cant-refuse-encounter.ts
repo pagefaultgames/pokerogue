@@ -18,6 +18,14 @@ import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
 const namespace = "mysteryEncounter:offerYouCantRefuse";
 
 /**
+ * Money offered starts at base value of Relic Gold, increasing linearly up to 3x Relic Gold based on the starter tier of the Pokemon being purchased
+ * Starter value 1-3 -> Relic Gold
+ * Starter value 10 -> 3 * Relic Gold
+ */
+const MONEY_MINIMUM_MULTIPLIER = 10;
+const MONEY_MAXIMUM_MULTIPLIER = 30;
+
+/**
  * An Offer You Can't Refuse encounter.
  * @see {@link https://github.com/pagefaultgames/pokerogue/issues/3808 | GitHub Issue #3808}
  * @see For biome requirements check {@linkcode mysteryEncountersByBiome}
@@ -62,12 +70,9 @@ export const AnOfferYouCantRefuseEncounter: MysteryEncounter =
       const encounter = scene.currentBattle.mysteryEncounter!;
       const pokemon = getHighestStatTotalPlayerPokemon(scene, true, true);
 
-      // Base value of Relic Gold, increased linearly up to 3x Relic Gold based on the starter tier of the Pokemon being purchased
-      // Starter value 1-3 -> 10x
-      // Starter value 10 -> 30x
       const baseSpecies = pokemon.getSpeciesForm().getRootSpeciesId(true);
       const starterValue: number = speciesStarters[baseSpecies] ?? 1;
-      const multiplier = Math.max(3 * starterValue, 10);
+      const multiplier = Math.max(MONEY_MAXIMUM_MULTIPLIER / 10 * starterValue, MONEY_MINIMUM_MULTIPLIER);
       const price = scene.getWaveMoneyAmount(multiplier);
 
       encounter.setDialogueToken("strongestPokemon", pokemon.getNameToRender());
