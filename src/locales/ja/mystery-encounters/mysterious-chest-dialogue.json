@@ -6,7 +6,7 @@
   "option": {
     "1": {
       "label": "開ける",
-      "tooltip": "@[SUMMARY_BLUE]{({{trapPercent}}%) 何かヒドいこと}\n@[SUMMARY_GREEN]{({{commonPercent}}%) まあいいご褒美}\n@[SUMMARY_GREEN]{({{ultraPercent}}%) 良いご褒美}\n@[SUMMARY_GREEN]{({{roguePercent}}%) すごいご褒美}\n@[SUMMARY_GREEN]{({{masterPercent}}%) 素晴らしいご褒美}",
+      "tooltip": "@[SUMMARY_BLUE]{({{trapPercent}}%) 何かヒドい事}\n@[SUMMARY_GREEN]{({{commonPercent}}%) まあいいご褒美}\n@[SUMMARY_GREEN]{({{ultraPercent}}%) 良いご褒美}\n@[SUMMARY_GREEN]{({{roguePercent}}%) すごいご褒美}\n@[SUMMARY_GREEN]{({{masterPercent}}%) 素晴らしいご褒美}",
       "selected": "宝箱を　開けると　見つけるのは……",
       "normal": "普通の　道具や　アイテム　だけです…… ",
       "good": "結構　良い道具や　アイテム　です。",
