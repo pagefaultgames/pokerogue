@@ -1,21 +1,21 @@
 {
-  "intro": "It's a massive {{shuckleName}} and what appears\nto be a large stash of... juice?",
-  "title": "The Strong Stuff",
-  "description": "The {{shuckleName}} that blocks your path looks incredibly strong. Meanwhile, the juice next to it is emanating power of some kind.\n\nThe {{shuckleName}} extends its feelers in your direction. It seems like it wants to do something...",
-  "query": "What will you do?",
+  "intro": "どっしりとした　{{shuckleName}}です。\nその隣には…　ジュースのたくわえ？の　ようです……",
+  "title": "残酷に濃く",
+  "description": "道を　塞ぐ　{{shuckleName}}は　信じられないほど　強そう　です。 そして、　その隣に　ある　ジュースは　何らかの　力を　発しています。\n\n　{{shuckleName}}は　触手を　伸ばしていて　何かを　したがります……",
+  "query": "どうします？",
   "option": {
     "1": {
-      "label": "Approach the {{shuckleName}}",
-      "tooltip": "(?) Something awful or amazing might happen",
-      "selected": "You black out.",
-      "selected_2": "@f{150}When you awaken, the {{shuckleName}} is gone\nand juice stash completely drained.${{highBstPokemon1}} and {{highBstPokemon2}}\nfeel a terrible lethargy come over them!$Their base stats were reduced by {{reductionValue}}!$Your remaining Pokémon feel an incredible vigor, though!\nTheir base stats are increased by {{increaseValue}}!"
+      "label": "{{shuckleName}}に近寄る",
+      "tooltip": "(?) 何か ヒドいこと や スゴいことが 起こる",
+      "selected": "突然に　気を　失います。",
+      "selected_2": "@f{150}目覚めると、　{{shuckleName}}は　消えて\nジュースは　飲み干されている　ようです。${{highBstPokemon1}}と {{highBstPokemon2}}は\nヒドい　無気力に　襲われます！$基本能力は　{{reductionValue}}で　減っています！$残りの　ポケモンは　スゴい　活力を　感じます！\n基本能力は　{{increaseValue}}で　上がっています！"
     },
     "2": {
-      "label": "Battle the {{shuckleName}}",
-      "tooltip": "(-) Hard Battle\n(+) Special Rewards",
-      "selected": "Enraged, the {{shuckleName}} drinks some of its juice and attacks!",
-      "stat_boost": "The {{shuckleName}}'s juice boosts its stats!"
+      "label": "{{shuckleName}}とバトルする",
+      "tooltip": "(-) 勝負がキツい\n(+) 特別なご褒美",
+      "selected": "怒り出した　{{shuckleName}}は　ジュースを　少し　飲んで　襲いかかる！",
+      "stat_boost": "{{shuckleName}}の ジュースは　能力を　上げた！"
     }
   },
-  "outro": "What a bizarre turn of events."
+  "outro": "なんとも　奇妙な　展開ですね……"
 }
