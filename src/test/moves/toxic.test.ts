@@ -26,14 +26,14 @@ describe("Moves - Toxic", () => {
     game = new GameManager(phaserGame);
     game.override
       .battleType("single")
-      .moveset([Moves.TOXIC])
+      .moveset(Moves.TOXIC)
       .enemySpecies(Species.MAGIKARP)
       .enemyMoveset(Moves.SPLASH);
   });
 
   it("should be guaranteed to hit if user is Poison-type", async () => {
     vi.spyOn(allMoves[Moves.TOXIC], "accuracy", "get").mockReturnValue(0);
-    await game.startBattle([Species.TOXAPEX]);
+    await game.classicMode.startBattle([Species.TOXAPEX]);
 
     game.move.select(Moves.TOXIC);
     await game.phaseInterceptor.to(BerryPhase, false);
@@ -43,7 +43,7 @@ describe("Moves - Toxic", () => {
 
   it("may miss if user is not Poison-type", async () => {
     vi.spyOn(allMoves[Moves.TOXIC], "accuracy", "get").mockReturnValue(0);
-    await game.startBattle([Species.UMBREON]);
+    await game.classicMode.startBattle([Species.UMBREON]);
 
     game.move.select(Moves.TOXIC);
     await game.phaseInterceptor.to(BerryPhase, false);
@@ -53,8 +53,8 @@ describe("Moves - Toxic", () => {
 
   it("should hit semi-invulnerable targets if user is Poison-type", async () => {
     vi.spyOn(allMoves[Moves.TOXIC], "accuracy", "get").mockReturnValue(0);
-    game.override.enemyMoveset([Moves.FLY]);
-    await game.startBattle([Species.TOXAPEX]);
+    game.override.enemyMoveset(Moves.FLY);
+    await game.classicMode.startBattle([Species.TOXAPEX]);
 
     game.move.select(Moves.TOXIC);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
@@ -65,8 +65,8 @@ describe("Moves - Toxic", () => {
 
   it("should miss semi-invulnerable targets if user is not Poison-type", async () => {
     vi.spyOn(allMoves[Moves.TOXIC], "accuracy", "get").mockReturnValue(-1);
-    game.override.enemyMoveset([Moves.FLY]);
-    await game.startBattle([Species.UMBREON]);
+    game.override.enemyMoveset(Moves.FLY);
+    await game.classicMode.startBattle([Species.UMBREON]);
 
     game.move.select(Moves.TOXIC);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
