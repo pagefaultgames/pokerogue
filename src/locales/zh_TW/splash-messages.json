@@ -1,5 +1,5 @@
 {
-  "battlesWon": "勝利場數！",
+  "battlesWon": "{{count, number}} 勝利場數！",
   "joinTheDiscord": "加入Discord！",
   "infiniteLevels": "無限等級！",
   "everythingStacks": "所有效果都能疊加！",
@@ -31,5 +31,6 @@
   "alsoTryEmeraldRogue": "也試試翡翠流氓！",
   "alsoTryRadicalRed": "也試試激進紅！",
   "eeveeExpo": "伊布博覽會！",
-  "ynoproject": "YNO專案！"
+  "ynoproject": "YNO專案！",
+  "breedersInSpace": "飼養員也能上太空？"
 }

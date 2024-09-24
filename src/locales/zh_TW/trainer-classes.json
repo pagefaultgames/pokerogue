@@ -100,6 +100,8 @@
   "worker_female": "工人",
   "workers": "工人組合",
   "youngster": "短褲小子",
+  "rocket_grunt": "火箭队手下",
+  "rocket_grunt_female": "火箭队手下",
   "rocket_grunts": "火箭队手下們",
   "magma_grunt": "熔岩队手下",
   "magma_grunt_female": "熔岩队手下",
@@ -115,5 +117,8 @@
   "plasma_grunts": "等离子队手下們",
   "flare_grunt": "闪焰队手下",
   "flare_grunt_female": "闪焰队手下",
-  "flare_grunts": "闪焰队手下們"
+  "flare_grunts": "闪焰队手下們",
+  "star_grunt": "Star Grunt",
+  "star_grunt_female": "Star Grunt",
+  "star_grunts": "Star Grunts"
 }

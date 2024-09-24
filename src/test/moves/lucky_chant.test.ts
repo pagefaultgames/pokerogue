@@ -7,7 +7,7 @@ import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import GameManager from "../utils/gameManager";
 
-const TIMEOUT = 20 * 1000;
+
 
 describe("Moves - Lucky Chant", () => {
   let phaserGame: Phaser.Game;
@@ -31,7 +31,7 @@ describe("Moves - Lucky Chant", () => {
       .moveset([Moves.LUCKY_CHANT, Moves.SPLASH, Moves.FOLLOW_ME])
       .enemySpecies(Species.SNORLAX)
       .enemyAbility(Abilities.INSOMNIA)
-      .enemyMoveset(Array(4).fill(Moves.FLOWER_TRICK))
+      .enemyMoveset([Moves.FLOWER_TRICK])
       .startingLevel(100)
       .enemyLevel(100);
   });
@@ -55,7 +55,7 @@ describe("Moves - Lucky Chant", () => {
 
       const secondTurnDamage = playerPokemon.getMaxHp() - playerPokemon.hp - firstTurnDamage;
       expect(secondTurnDamage).toBeLessThan(firstTurnDamage);
-    }, TIMEOUT
+    }
   );
 
   it(
@@ -81,13 +81,13 @@ describe("Moves - Lucky Chant", () => {
 
       const secondTurnDamage = playerPokemon[0].getMaxHp() - playerPokemon[0].hp - firstTurnDamage;
       expect(secondTurnDamage).toBeLessThan(firstTurnDamage);
-    }, TIMEOUT
+    }
   );
 
   it(
     "should prevent critical hits from field effects",
     async () => {
-      game.override.enemyMoveset(Array(4).fill(Moves.TACKLE));
+      game.override.enemyMoveset([Moves.TACKLE]);
 
       await game.startBattle([Species.CHARIZARD]);
 
@@ -108,6 +108,6 @@ describe("Moves - Lucky Chant", () => {
 
       const secondTurnDamage = playerPokemon.getMaxHp() - playerPokemon.hp - firstTurnDamage;
       expect(secondTurnDamage).toBeLessThan(firstTurnDamage);
-    }, TIMEOUT
+    }
   );
 });

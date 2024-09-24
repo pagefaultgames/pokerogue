@@ -77,7 +77,21 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
   }
 
   protected setupOptions() {
-    const options = this.config?.options || [];
+    const configOptions = this.config?.options ?? [];
+
+    let options: OptionSelectItem[];
+
+    // for performance reasons, this limits how many options we can see at once. Without this, it would try to make text options for every single options
+    // which makes the performance take a hit. If there's not enough options to do this (set to 10 at the moment) and the ui mode !== Mode.AUTO_COMPLETE,
+    // this is ignored and the original code is untouched, with the options array being all the options from the config
+    if (configOptions.length >= 10 && this.scene.ui.getMode() === Mode.AUTO_COMPLETE) {
+      const optionsScrollTotal = configOptions.length;
+      const optionStartIndex = this.scrollCursor;
+      const optionEndIndex = Math.min(optionsScrollTotal, optionStartIndex + (!optionStartIndex || this.scrollCursor + (this.config?.maxOptions! - 1) >= optionsScrollTotal ? this.config?.maxOptions! - 1 : this.config?.maxOptions! - 2));
+      options = configOptions.slice(optionStartIndex, optionEndIndex + 2);
+    } else {
+      options = configOptions;
+    }
 
     if (this.optionSelectText) {
       this.optionSelectText.destroy();
@@ -183,6 +197,19 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
           return false;
         }
       }
+      const option = this.config?.options[this.cursor + (this.scrollCursor - (this.scrollCursor ? 1 : 0))];
+      if (option?.handler()) {
+        if (!option.keepOpen) {
+          this.clear();
+        }
+        playSound = !option.overrideSound;
+      } else {
+        ui.playError();
+      }
+    } else if (button === Button.SUBMIT && ui.getMode() === Mode.AUTO_COMPLETE) {
+      // this is here to differentiate between a Button.SUBMIT vs Button.ACTION within the autocomplete handler
+      // this is here because Button.ACTION is picked up as z on the keyboard, meaning if you're typing and hit z, it'll select the option you've chosen
+      success = true;
       const option = this.config?.options[this.cursor + (this.scrollCursor - (this.scrollCursor ? 1 : 0))];
       if (option?.handler()) {
         if (!option.keepOpen) {
@@ -317,6 +344,7 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
     super.clear();
     this.config = null;
     this.optionSelectContainer.setVisible(false);
+    this.scrollCursor = 0;
     this.eraseCursor();
   }
 

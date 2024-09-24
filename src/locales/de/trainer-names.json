@@ -139,12 +139,24 @@
   "rood": "Rubius",
   "xerosic": "Xeros",
   "bryony": "Begonia",
+  "faba": "Fabian",
+  "plumeria": "Fran",
+  "oleana": "Olivia",
+  "giacomo": "Pinio",
+  "mela": "Irsa",
+  "atticus": "Shugi",
+  "ortega": "Otis",
+  "eri": "Rioba",
 
   "maxie": "Marc",
   "archie": "Adrian",
   "cyrus": "Zyrus",
   "ghetsis": "G-Cis",
   "lysandre": "Flordelis",
+  "lusamine": "Samantha",
+  "guzma": "Bromley",
+  "rose": "Rose",
+  "cassiopeia": "Cosima",
 
   "blue_red_double": "Blau & Rot",
   "red_blue_double": "Rot & Blau",
@@ -155,5 +167,19 @@
   "alder_iris_double": "Lauro & Lilia",
   "iris_alder_double": "Lilia & Lauro",
   "piers_marnie_double": "Nezz & Mary",
-  "marnie_piers_double": "Mary & Nezz"
+  "marnie_piers_double": "Mary & Nezz",
+
+  "buck": "Avenaro",
+  "cheryl": "Raissa",
+  "marley": "Charlie",
+  "mira": "Orisa",
+  "riley": "Urs",
+  "victor": "Viktor",
+  "victoria": "Viktoria",
+  "vivi": "Sieglinde",
+  "vicky": "Vicky",
+  "vito": "Paul",
+  "bug_type_superfan": "Käfersammler-Superfan",
+  "expert_pokemon_breeder": "Pokémon-Züchter-Expertin"
+
 }

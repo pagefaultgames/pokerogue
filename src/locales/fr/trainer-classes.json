@@ -101,8 +101,8 @@
   "workers": "Ouvriers",
   "youngster": "Gamin",
   "rocket_grunt": "Sbire de la Team Rocket",
-  "rocket_grunt_female": "Sbire de la Team Rocket",
   "rocket_grunts": "Sbires de la Team Rocket",
+  "rocket_grunt_female": "Sbire de la Team Rocket",
   "magma_grunt": "Sbire de la Team Magma",
   "magma_grunt_female": "Sbire de la Team Magma",
   "magma_grunts": "Sbires de la Team Magma",
@@ -117,5 +117,17 @@
   "plasma_grunts": "Sbires de la Team Plasma",
   "flare_grunt": "Sbire de la Team Flare",
   "flare_grunt_female": "Sbire de la Team Flare",
-  "flare_grunts": "Sbires de la Team Flare"
+  "flare_grunts": "Sbires de la Team Flare",
+  "aether_grunt": "Employé de la Fondation Æther",
+  "aether_grunt_female": "Employée de la Fondation Æther",
+  "aether_grunts": "Employés de la Fondation Æther",
+  "skull_grunt": "Sbire de la Team Skull",
+  "skull_grunt_female": "Sbire de la Team Skull",
+  "skull_grunts": "Sbires de la Team Skull",
+  "macro_grunt": "Employé de Macro Cosmos",
+  "macro_grunt_female": "Employée de Macro Cosmos",
+  "macro_grunts": "Employés de Macro Cosmos",
+  "star_grunt": "Sbire de la Team Star",
+  "star_grunt_female": "Sbire de la Team Star",
+  "star_grunts": "Sbires de la Team Star"
 }

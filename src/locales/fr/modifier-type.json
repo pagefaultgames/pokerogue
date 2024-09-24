@@ -2,7 +2,7 @@
   "ModifierType": {
     "AddPokeballModifierType": {
       "name": "{{pokeballName}} x{{modifierCount}}",
-      "description": "Recevez {{modifierCount}} {{pokeballName}}·s. (Inventaire : {{pokeballAmount}})\nTaux de capture : {{catchRate}}"
+      "description": "Recevez {{modifierCount}} {{pokeballName}}·s. (Inventaire : {{pokeballAmount}})\nTaux de capture : {{catchRate}}"
     },
     "AddVoucherModifierType": {
       "name": "{{voucherTypeName}} x{{modifierCount}}",
@@ -10,8 +10,8 @@
     },
     "PokemonHeldItemModifierType": {
       "extra": {
-        "inoperable": "{{pokemonName}} ne peut pas\nporter cet objet !",
-        "tooMany": "{{pokemonName}} porte trop\nd’exemplaires de cet objet !"
+        "inoperable": "{{pokemonName}} ne peut pas\nporter cet objet !",
+        "tooMany": "{{pokemonName}} porte trop\nd’exemplaires de cet objet !"
       }
     },
     "PokemonHpRestoreModifierType": {
@@ -47,10 +47,14 @@
       "description": "Donne la nature {{natureName}} à un Pokémon et la débloque pour le starter lui étant lié."
     },
     "DoubleBattleChanceBoosterModifierType": {
-      "description": "Double les chances de tomber sur un combat double pendant {{battleCount}} combats."
+      "description": "Quadruple les chances de tomber sur un combat double pendant {{battleCount}} combats."
     },
-    "TempBattleStatBoosterModifierType": {
-      "description": "Augmente d’un cran {{tempBattleStatName}} pour toute l’équipe pendant 5 combats."
+    "TempStatStageBoosterModifierType": {
+      "description": "Augmente {{amount}} {{stat}} de toute l’équipe pendant 5 combats.",
+      "extra": {
+        "stage": "d’un cran",
+        "percentage": "de 30%"
+      }
     },
     "AttackTypeBoosterModifierType": {
       "description": "Augmente de 20% la puissance des capacités de type {{moveType}} d’un Pokémon."
@@ -61,8 +65,22 @@
     "AllPokemonLevelIncrementModifierType": {
       "description": "Fait monter toute l’équipe de {{levels}} niveau·x."
     },
-    "PokemonBaseStatBoosterModifierType": {
-      "description": "Augmente de 10% {{statName}} de base de son porteur. Plus les IV sont hauts, plus il peut en porter."
+    "BaseStatBoosterModifierType": {
+      "description": "Augmente de 10% {{stat}} de base de son porteur. Plus les IV sont hauts, plus il peut en porter."
+    },
+    "PokemonBaseStatTotalModifierType": {
+      "name": "Jus de Caratroc",
+      "description": "{{increaseDecrease}} toutes les stats de son porteur de {{statValue}} cran. Caratroc vous a {{blessCurse}}.",
+      "extra": {
+        "increase": "Augmente",
+        "decrease": "Baisse",
+        "blessed": "accordé sa bénédiction",
+        "cursed": "jeté une malédiction"
+      }
+    },
+    "PokemonBaseStatFlatModifierType": {
+      "name": "Vieux Gâteau",
+      "description": "Augmente de {{statValue}} {{stats}} de base du porteur. Trouvé après un étrange rêve."
     },
     "AllPokemonFullHpRestoreModifierType": {
       "description": "Restaure tous les PV de toute l’équipe."
@@ -85,7 +103,7 @@
       "description": "Augmente de {{boostPercent}}% le gain de Points d’Exp du porteur."
     },
     "PokemonFriendshipBoosterModifierType": {
-      "description": "Augmente le gain d’amitié de 50% par victoire."
+      "description": "Augmente le gain de bonheur de 50% par victoire."
     },
     "PokemonMoveAccuracyBoosterModifierType": {
       "description": "Augmente de {{accuracyAmount}} la précision des capacités (maximum 100)."
@@ -102,17 +120,17 @@
       "description": "Apprend la capacité {{moveName}} à un Pokémon.\n(Maintenez C ou Maj pour plus d’infos)"
     },
     "EvolutionItemModifierType": {
-      "description": "Permet à certains Pokémon d’évoluer."
+      "description": "Permet à certains Pokémon d’évoluer à son contact."
     },
     "FormChangeItemModifierType": {
-      "description": "Permet à certains Pokémon de changer de forme."
+      "description": "Permet à certains Pokémon de changer de forme à son contact."
     },
     "FusePokemonModifierType": {
       "description": "Fusionne deux Pokémon (transfère le talent, sépare les stats de base et les types, partage les capacités)."
     },
     "TerastallizeModifierType": {
       "name": "Téra-Éclat {{teraType}}",
-      "description": "{{teraType}} Téracristallise son porteur pendant 10 combats."
+      "description": "Téracristallise son porteur en type {{teraType}} pendant 10 combats."
     },
     "ContactHeldItemTransferChanceModifierType": {
       "description": "{{chancePercent}}% de chances de voler un objet de l’adversaire en l’attaquant."
@@ -183,6 +201,7 @@
     "SOOTHE_BELL": { "name": "Grelot Zen" },
 
     "SCOPE_LENS": { "name": "Lentilscope", "description": "Une lentille qui augmente d’un cran le taux de critiques du porteur." },
+    "DIRE_HIT": { "name": "Muscle +", "extra": { "raises": "Taux de critique" } },
     "LEEK": { "name": "Poireau", "description": "À faire tenir à Canarticho ou Palarticho. Un poireau très long et solide qui augmente de 2 crans le taux de critiques." },
 
     "EVIOLITE": { "name": "Évoluroc", "description": "Augmente de 50% la Défense et Déf. Spé. si le porteur peut évoluer, 25% aux fusions dont une moitié le peut encore." },
@@ -197,7 +216,7 @@
     "GOLDEN_PUNCH": { "name": "Poing Doré", "description": "La moitié des dégâts infligés sont convertis en argent." },
     "COIN_CASE": { "name": "Boite Jetons", "description": "Tous les 10 combats, recevez 10% de votre argent en intérêts." },
 
-    "LOCK_CAPSULE": { "name": "Poké Écrin", "description": "Permet de conserver la rareté des objets si vous relancez les objets proposés." },
+    "LOCK_CAPSULE": { "name": "Poké Écrin", "description": "Permet de choisir de bloquer le niveau de rareté lors d’une relance des objets gratuits proposés." },
 
     "GRIP_CLAW": { "name": "Accro Griffe" },
     "WIDE_LENS": { "name": "Loupe" },
@@ -242,36 +261,28 @@
     "ENEMY_ATTACK_BURN_CHANCE": { "name": "Jeton Brulure" },
     "ENEMY_STATUS_EFFECT_HEAL_CHANCE": { "name": "Jeton Total Soin", "description": "Ajoute 2,5% de chances à chaque tour de se soigner d’un problème de statut." },
     "ENEMY_ENDURE_CHANCE": { "name": "Jeton Ténacité" },
-    "ENEMY_FUSED_CHANCE": { "name": "Jeton Fusion", "description": "Ajoute 1% de chances qu’un Pokémon sauvage soit une fusion." }
+    "ENEMY_FUSED_CHANCE": { "name": "Jeton Fusion", "description": "Ajoute 1% de chances qu’un Pokémon sauvage soit une fusion." },
+
+    "MYSTERY_ENCOUNTER_SHUCKLE_JUICE": { "name": "Jus de Caratroc" },
+    "MYSTERY_ENCOUNTER_BLACK_SLUDGE": { "name": "Boue Noire", "description": "Sa puenteur est telle que la boutique ne vous vendra que des objets aux prix fortement augmentés." },
+    "MYSTERY_ENCOUNTER_MACHO_BRACE": { "name": "Bracelet Macho", "description": "Battre un Pokémon donnera à son porteur un lot de Bracelet Macho. Chacun augmentant légèrement les stats, avec un bonus au max de lots." },
+    "MYSTERY_ENCOUNTER_OLD_GATEAU": { "name": "Vieux Gâteau", "description": "Augmente de {{statValue}} {{stats}} de base du porteur." },
+    "MYSTERY_ENCOUNTER_GOLDEN_BUG_NET": { "name": "Filet Doré", "description": "Impreigne son propriétaire d’une chance qui attire les Pokémon Insecte. Sa prise en main est étrange." }
   },
   "SpeciesBoosterItem": {
     "LIGHT_BALL": { "name": "Balle Lumière", "description": "À faire tenir à Pikachu. Un orbe énigmatique qui double son Attaque et son Atq. Spé. ." },
-    "THICK_CLUB": { "name": "Masse Os", "description": "À faire tenir à Osselait ou Ossatueur. Un os dur qui double leur Attaque." },
+    "THICK_CLUB": { "name": "Masse Os", "description": "À faire tenir à Osselait ou à Ossatueur, formes d’Alola incluses. Un os dur qui double leur Attaque." },
     "METAL_POWDER": { "name": "Poudre Métal", "description": "À faire tenir à Métamorph. Cette poudre étrange, très fine mais résistante, double sa Défense." },
     "QUICK_POWDER": { "name": "Poudre Vite", "description": "À faire tenir à Métamorph. Cette poudre étrange, très fine mais résistante, double sa Vitesse." }
   },
-  "TempBattleStatBoosterItem": {
+  "TempStatStageBoosterItem": {
     "x_attack": "Attaque +",
     "x_defense": "Défense +",
     "x_sp_atk": "Atq. Spé. +",
     "x_sp_def": "Déf. Spé. +",
     "x_speed": "Vitesse +",
-    "x_accuracy": "Précision +",
-    "dire_hit": "Muscle +"
+    "x_accuracy": "Précision +"
   },
-
-  "TempBattleStatBoosterStatName": {
-    "ATK": "l’Attaque",
-    "DEF": "la Défense",
-    "SPATK": "l’Atq. Spé.",
-    "SPDEF": "la Déf. Spé.",
-    "SPD": "la Vitesse",
-    "ACC": "la précision",
-    "CRIT": "le taux de critique",
-    "EVA": "l’esquive",
-    "DEFAULT": "???"
-  },
-
   "AttackTypeBoosterItem": {
     "silk_scarf": "Mouchoir Soie",
     "black_belt": "Ceinture Noire",
@@ -450,6 +461,6 @@
     "DRAGON_MEMORY": "ROM Dragon",
     "DARK_MEMORY": "ROM Ténèbres",
     "FAIRY_MEMORY": "ROM Fée",
-    "BLANK_MEMORY": "ROM Vierge"
+    "NORMAL_MEMORY": "ROM Normal"
   }
 }

@@ -117,5 +117,17 @@
   "plasma_grunts": "Plasma Grunts",
   "flare_grunt": "Flare Grunt",
   "flare_grunt_female": "Flare Grunt",
-  "flare_grunts": "Flare Grunts"
+  "flare_grunts": "Flare Grunts",
+  "aether_grunt": "Aether Foundation Employee",
+  "aether_grunt_female": "Aether Foundation Employee",
+  "aether_grunts": "Aether Foundation Employees",
+  "skull_grunt": "Team Skull Grunt",
+  "skull_grunt_female": "Team Skull Grunt",
+  "skull_grunts": "Team Skull Grunts",
+  "macro_grunt": "Macro Cosmos Trainer",
+  "macro_grunt_female": "Macro Cosmos Trainer",
+  "macro_grunts": "Macro Cosmos Trainers",
+  "star_grunt": "Star Grunt",
+  "star_grunt_female": "Star Grunt",
+  "star_grunts": "Star Grunts"
 }

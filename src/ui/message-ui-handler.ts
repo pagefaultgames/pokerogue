@@ -17,6 +17,23 @@ export default abstract class MessageUiHandler extends AwaitableUiHandler {
     this.pendingPrompt = false;
   }
 
+  /**
+   * Add the sprite to be displayed at the end of messages with prompts
+   * @param container the container to add the sprite to
+   */
+  initPromptSprite(container: Phaser.GameObjects.Container) {
+    if (!this.prompt) {
+      const promptSprite = this.scene.add.sprite(0, 0, "prompt");
+      promptSprite.setVisible(false);
+      promptSprite.setOrigin(0, 0);
+      this.prompt = promptSprite;
+    }
+
+    if (container) {
+      container.add(this.prompt);
+    }
+  }
+
   showText(text: string, delay?: integer | null, callback?: Function | null, callbackDelay?: integer | null, prompt?: boolean | null, promptDelay?: integer | null) {
     this.showTextInternal(text, delay, callback, callbackDelay, prompt, promptDelay);
   }
@@ -29,10 +46,13 @@ export default abstract class MessageUiHandler extends AwaitableUiHandler {
     if (delay === null || delay === undefined) {
       delay = 20;
     }
+
+    // Pattern matching regex that checks for @c{}, @f{}, @s{}, and @f{} patterns within message text and parses them to their respective behaviors.
     const charVarMap = new Map<integer, string>();
     const delayMap = new Map<integer, integer>();
     const soundMap = new Map<integer, string>();
-    const actionPattern = /@(c|d|s)\{(.*?)\}/;
+    const fadeMap = new Map<integer, integer>();
+    const actionPattern = /@(c|d|s|f)\{(.*?)\}/;
     let actionMatch: RegExpExecArray | null;
     while ((actionMatch = actionPattern.exec(text))) {
       switch (actionMatch[1]) {
@@ -44,6 +64,9 @@ export default abstract class MessageUiHandler extends AwaitableUiHandler {
         break;
       case "s":
         soundMap.set(actionMatch.index, actionMatch[2]);
+        break;
+      case "f":
+        fadeMap.set(actionMatch.index, parseInt(actionMatch[2]));
         break;
       }
       text = text.slice(0, actionMatch.index) + text.slice(actionMatch.index + actionMatch[2].length + 4);
@@ -103,13 +126,14 @@ export default abstract class MessageUiHandler extends AwaitableUiHandler {
           const charVar = charVarMap.get(charIndex);
           const charSound = soundMap.get(charIndex);
           const charDelay = delayMap.get(charIndex);
+          const charFade = fadeMap.get(charIndex);
           this.message.setText(text.slice(0, charIndex));
           const advance = () => {
             if (charVar) {
               this.scene.charSprite.setVariant(charVar);
             }
             if (charSound) {
-              this.scene.playSound(`se/${charSound}`);
+              this.scene.playSound(charSound);
             }
             if (callback && !this.textTimer?.repeatCount) {
               if (callbackDelay && !prompt) {
@@ -133,6 +157,19 @@ export default abstract class MessageUiHandler extends AwaitableUiHandler {
                 this.textTimer!.paused = false; // TODO: is the bang correct?
                 advance();
               }
+            });
+          } else if (charFade) {
+            this.textTimer!.paused = true;
+            this.scene.time.delayedCall(150, () => {
+              this.scene.ui.fadeOut(750).then(() => {
+                const delay = Utils.getFrameMs(charFade);
+                this.scene.time.delayedCall(delay, () => {
+                  this.scene.ui.fadeIn(500).then(() => {
+                    this.textTimer!.paused = false;
+                    advance();
+                  });
+                });
+              });
             });
           } else {
             advance();
@@ -160,7 +197,7 @@ export default abstract class MessageUiHandler extends AwaitableUiHandler {
     const lastLineWidth = lastLineTest.displayWidth;
     lastLineTest.destroy();
     if (this.prompt) {
-      this.prompt.setPosition(lastLineWidth + 2, (textLinesCount - 1) * 18 + 2);
+      this.prompt.setPosition(this.message.x + lastLineWidth + 2, this.message.y + (textLinesCount - 1) * 18 + 2);
       this.prompt.play("prompt");
     }
     this.pendingPrompt = false;
@@ -184,6 +221,14 @@ export default abstract class MessageUiHandler extends AwaitableUiHandler {
         }
       }
     };
+  }
+
+  isTextAnimationInProgress() {
+    if (this.textTimer) {
+      return this.textTimer.repeatCount < this.textTimer.repeat;
+    }
+
+    return false;
   }
 
   clearText() {

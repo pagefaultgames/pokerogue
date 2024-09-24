@@ -117,5 +117,17 @@
   "plasma_grunts": "Capangas da Equipe Plasma",
   "flare_grunt": "Capanga da Equipe Flare",
   "flare_grunt_female": "Capanga da Equipe Flare",
-  "flare_grunts": "Capangas da Equipe Flare"
+  "flare_grunts": "Capangas da Equipe Flare",
+  "aether_grunt": "Funcionário da Fundação Aether",
+  "aether_grunt_female": "Funcionária da Fundação Aether",
+  "aether_grunts": "Funcionários da Fundação Aether",
+  "skull_grunt": "Capanga da Equipe Skull",
+  "skull_grunt_female": "Capanga da Equipe Skull",
+  "skull_grunts": "Capangas da Equipe Skull",
+  "macro_grunt": "Treinador da Macro Cosmos",
+  "macro_grunt_female": "Treinadora da Macro Cosmos",
+  "macro_grunts": "Treinadores da Macro Cosmos",
+  "star_grunt": "Capanga da Equipe Estrela",
+  "star_grunt_female": "Capanga da Equipe Estrela",
+  "star_grunts": "Capangas da Equipe Estrela"
 }

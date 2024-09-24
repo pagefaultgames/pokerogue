@@ -1,12 +1,6 @@
 {
   "none": {
-    "name": "없음",
-    "description": "",
-    "obtain": "",
-    "obtainSource": "",
-    "activation": "",
-    "overlap": "",
-    "heal": ""
+    "name": "없음"
   },
   "poison": {
     "name": "독",

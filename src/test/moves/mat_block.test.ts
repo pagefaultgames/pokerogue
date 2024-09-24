@@ -1,15 +1,15 @@
-import { BattleStat } from "#app/data/battle-stat";
-import { BerryPhase } from "#app/phases/berry-phase";
-import { CommandPhase } from "#app/phases/command-phase";
-import { TurnEndPhase } from "#app/phases/turn-end-phase";
-import { Abilities } from "#enums/abilities";
-import { Moves } from "#enums/moves";
-import { Species } from "#enums/species";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest";
 import GameManager from "../utils/gameManager";
+import { Species } from "#enums/species";
+import { Abilities } from "#enums/abilities";
+import { Moves } from "#enums/moves";
+import { Stat } from "#enums/stat";
+import { BerryPhase } from "#app/phases/berry-phase";
+import { CommandPhase } from "#app/phases/command-phase";
+import { TurnEndPhase } from "#app/phases/turn-end-phase";
 
-const TIMEOUT = 20 * 1000;
+
 
 describe("Moves - Mat Block", () => {
   let phaserGame: Phaser.Game;
@@ -33,7 +33,7 @@ describe("Moves - Mat Block", () => {
     game.override.moveset([Moves.MAT_BLOCK, Moves.SPLASH]);
 
     game.override.enemySpecies(Species.SNORLAX);
-    game.override.enemyMoveset(Array(4).fill(Moves.TACKLE));
+    game.override.enemyMoveset([Moves.TACKLE]);
     game.override.enemyAbility(Abilities.INSOMNIA);
 
     game.override.startingLevel(100);
@@ -56,13 +56,13 @@ describe("Moves - Mat Block", () => {
       await game.phaseInterceptor.to(BerryPhase, false);
 
       leadPokemon.forEach(p => expect(p.hp).toBe(p.getMaxHp()));
-    }, TIMEOUT
+    }
   );
 
   test(
     "should not protect the user and allies from status moves",
     async () => {
-      game.override.enemyMoveset(Array(4).fill(Moves.GROWL));
+      game.override.enemyMoveset([Moves.GROWL]);
 
       await game.startBattle([Species.CHARIZARD, Species.BLASTOISE]);
 
@@ -76,8 +76,8 @@ describe("Moves - Mat Block", () => {
 
       await game.phaseInterceptor.to(BerryPhase, false);
 
-      leadPokemon.forEach(p => expect(p.summonData.battleStats[BattleStat.ATK]).toBe(-2));
-    }, TIMEOUT
+      leadPokemon.forEach(p => expect(p.getStatStage(Stat.ATK)).toBe(-2));
+    }
   );
 
   test(
@@ -103,6 +103,6 @@ describe("Moves - Mat Block", () => {
       await game.phaseInterceptor.to(BerryPhase, false);
 
       expect(leadPokemon.some((p, i) => p.hp < leadStartingHp[i])).toBeTruthy();
-    }, TIMEOUT
+    }
   );
 });

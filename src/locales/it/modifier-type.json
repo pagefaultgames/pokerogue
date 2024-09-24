@@ -47,10 +47,14 @@
       "description": "Cambia la natura del Pokémon in {{natureName}} e sblocca la natura nel menu degli starter."
     },
     "DoubleBattleChanceBoosterModifierType": {
-      "description": "Raddoppia la possibilità di imbattersi in doppie battaglie per {{battleCount}} battaglie."
+      "description": "Quadruplica la possibilità di imbattersi in doppie battaglie per {{battleCount}} battaglie."
     },
-    "TempBattleStatBoosterModifierType": {
-      "description": "Aumenta {{tempBattleStatName}} di un livello a tutti i Pokémon nel gruppo per 5 battaglie."
+    "TempStatStageBoosterModifierType": {
+      "description": "Aumenta la statistica {{stat}} di {{amount}}\na tutti i Pokémon nel gruppo per 5 battaglie",
+      "extra": {
+        "stage": "un livello",
+        "percentage": "30%"
+      }
     },
     "AttackTypeBoosterModifierType": {
       "description": "Aumenta la potenza delle mosse di tipo {{moveType}} del 20% per un Pokémon."
@@ -59,10 +63,24 @@
       "description": "Aumenta il livello di un Pokémon di {{levels}}."
     },
     "AllPokemonLevelIncrementModifierType": {
-      "description": "Aumenta i livell di tutti i Pokémon della squadra di {{levels}}."
+      "description": "Aumenta il livello di tutti i Pokémon della squadra di {{levels}}."
     },
-    "PokemonBaseStatBoosterModifierType": {
-      "description": "Aumenta {{statName}} di base del possessore del 10%."
+    "BaseStatBoosterModifierType": {
+      "description": "Aumenta l'/la {{stat}} di base del possessore del 10%."
+    },
+    "PokemonBaseStatTotalModifierType": {
+      "name": "Succo Shuckle",
+      "description": "{{increaseDecrease}} tutte le statistiche del possessore di {{statValue}}. Shuckle ti ha {{blessCurse}}.",
+      "extra": {
+        "increase": "Aumenta",
+        "decrease": "Diminuisce",
+        "blessed": "benedetto/a",
+        "cursed": "maledetto/a"
+      }
+    },
+    "PokemonBaseStatFlatModifierType": {
+      "name": "Dolce Gateau",
+      "description": "Aumenta le statistiche {{stats}} del possessore di {{statValue}}. Trovato dopo uno strano sogno."
     },
     "AllPokemonFullHpRestoreModifierType": {
       "description": "Restituisce il 100% dei PS a tutti i Pokémon."
@@ -248,6 +266,12 @@
       "name": "Mirino",
       "description": "Lente che aumenta la probabilità di sferrare brutti colpi."
     },
+    "DIRE_HIT": { 
+      "name": "Supercolpo", 
+      "extra": { 
+        "raises": "Tasso di brutti colpi"
+      } 
+    },
     "LEEK": {
       "name": "Porro",
       "description": "Strumento da dare a Farfetch'd. Lungo gambo di porro che aumenta la probabilità di sferrare brutti colpi."
@@ -391,7 +415,13 @@
     "ENEMY_FUSED_CHANCE": {
       "name": "Gettone della fusione",
       "description": "Aggiunge l'1% di possibilità che un Pokémon selvatico sia una fusione."
-    }
+    },
+
+    "MYSTERY_ENCOUNTER_SHUCKLE_JUICE": { "name": "Succo Shuckle" },
+    "MYSTERY_ENCOUNTER_BLACK_SLUDGE": { "name": "Fangopece", "description": "L'odore è talmente sgradevole che i prezzi dei negozi aumentano drasticamente." },
+    "MYSTERY_ENCOUNTER_MACHO_BRACE": { "name": "Crescicappa", "description": "Sconfiggere un Pokémon aumenta di 1 il punteggio Crescicappa. Maggiore il punteggio, maggiore l'aumento alle statistiche, con un ulteriore bonus al massimo." },
+    "MYSTERY_ENCOUNTER_OLD_GATEAU": { "name": "Dolce Gateau", "description": "Aumenta le statistiche {{stats}} del possessore di {{statValue}}." },
+    "MYSTERY_ENCOUNTER_GOLDEN_BUG_NET": { "name": "Retino Dorato", "description": "Infonde fortuna nel possessore affinché trovi più Pokémon coleottero. Ha uno strano peso." }
   },
   "SpeciesBoosterItem": {
     "LIGHT_BALL": {
@@ -411,25 +441,13 @@
       "description": "Strumento da dare a Ditto. Questa strana polvere, fine e al contempo dura, aumenta la Velocità."
     }
   },
-  "TempBattleStatBoosterItem": {
+  "TempStatStageBoosterItem": {
     "x_attack": "Attacco X",
     "x_defense": "Difesa X",
     "x_sp_atk": "Att. Speciale X",
     "x_sp_def": "Dif. Speciale X",
     "x_speed": "Velocità X",
-    "x_accuracy": "Precisione X",
-    "dire_hit": "Supercolpo"
-  },
-  "TempBattleStatBoosterStatName": {
-    "ATK": "Attacco",
-    "DEF": "Difesa",
-    "SPATK": "Att. Speciale",
-    "SPDEF": "Dif. Speciale",
-    "SPD": "Velocità",
-    "ACC": "Precisione",
-    "CRIT": "Tasso di brutti colpi",
-    "EVA": "Elusione",
-    "DEFAULT": "???"
+    "x_accuracy": "Precisione X"
   },
   "AttackTypeBoosterItem": {
     "silk_scarf": "Sciarpa seta",
@@ -604,6 +622,6 @@
     "DRAGON_MEMORY": "ROM Drago",
     "DARK_MEMORY": "ROM Buio",
     "FAIRY_MEMORY": "ROM Folletto",
-    "BLANK_MEMORY": "ROM Vuota"
+    "NORMAL_MEMORY": "ROM Normale"
   }
 }

@@ -1,4 +1,3 @@
-import { CommandPhase } from "#app/phases/command-phase";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
@@ -23,93 +22,61 @@ describe("Moves - Spikes", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.scene.battleStyle = 1;
-    game.override.battleType("single");
-    game.override.enemySpecies(Species.RATTATA);
-    game.override.enemyAbility(Abilities.HYDRATION);
-    game.override.enemyPassiveAbility(Abilities.HYDRATION);
-    game.override.ability(Abilities.HYDRATION);
-    game.override.passiveAbility(Abilities.HYDRATION);
-    game.override.startingWave(3);
-    game.override.enemyMoveset([Moves.SPLASH, Moves.SPLASH, Moves.SPLASH, Moves.SPLASH]);
-    game.override.moveset([Moves.SPIKES, Moves.SPLASH, Moves.ROAR]);
+    game.override
+      .battleType("single")
+      .enemySpecies(Species.MAGIKARP)
+      .enemyAbility(Abilities.BALL_FETCH)
+      .ability(Abilities.BALL_FETCH)
+      .enemyMoveset(Moves.SPLASH)
+      .moveset([Moves.SPIKES, Moves.SPLASH, Moves.ROAR]);
   });
 
-  it("single - wild - stay on field - no damage", async () => {
-    await game.classicMode.runToSummon([
-      Species.MIGHTYENA,
-      Species.POOCHYENA,
-    ]);
-    await game.phaseInterceptor.to(CommandPhase, true);
-    const initialHp = game.scene.getParty()[0].hp;
-    expect(game.scene.getParty()[0].hp).toBe(initialHp);
+  it("should not damage the team that set them", async () => {
+    await game.startBattle([Species.MIGHTYENA, Species.POOCHYENA]);
+
     game.move.select(Moves.SPIKES);
     await game.toNextTurn();
+
     game.move.select(Moves.SPLASH);
     await game.toNextTurn();
-    expect(game.scene.getParty()[0].hp).toBe(initialHp);
-  }, 20000);
-
-  it("single - wild - take some damage", async () => {
-    // player set spikes on the field and switch back to back
-    // opponent do splash for 2 turns
-    // nobody should take damage
-    await game.classicMode.runToSummon([
-      Species.MIGHTYENA,
-      Species.POOCHYENA,
-    ]);
-    await game.phaseInterceptor.to(CommandPhase, false);
-
-    const initialHp = game.scene.getParty()[0].hp;
-    game.doSwitchPokemon(1);
-    await game.phaseInterceptor.run(CommandPhase);
-    await game.phaseInterceptor.to(CommandPhase, false);
 
     game.doSwitchPokemon(1);
-    await game.phaseInterceptor.run(CommandPhase);
-    await game.phaseInterceptor.to(CommandPhase, false);
+    await game.toNextTurn();
 
-    expect(game.scene.getParty()[0].hp).toBe(initialHp);
+    game.doSwitchPokemon(1);
+    await game.toNextTurn();
+
+    const player = game.scene.getParty()[0];
+    expect(player.hp).toBe(player.getMaxHp());
   }, 20000);
 
-  it("trainer - wild - force switch opponent - should take damage", async () => {
+  it("should damage opposing pokemon that are forced to switch in", async () => {
     game.override.startingWave(5);
-    // player set spikes on the field and do splash for 3 turns
-    // opponent do splash for 4 turns
-    // nobody should take damage
-    await game.classicMode.runToSummon([
-      Species.MIGHTYENA,
-      Species.POOCHYENA,
-    ]);
-    await game.phaseInterceptor.to(CommandPhase, true);
-    const initialHpOpponent = game.scene.currentBattle.enemyParty[1].hp;
+    await game.startBattle([Species.MIGHTYENA, Species.POOCHYENA]);
+
     game.move.select(Moves.SPIKES);
     await game.toNextTurn();
+
     game.move.select(Moves.ROAR);
     await game.toNextTurn();
-    expect(game.scene.currentBattle.enemyParty[0].hp).toBeLessThan(initialHpOpponent);
+
+    const enemy = game.scene.getEnemyParty()[0];
+    expect(enemy.hp).toBeLessThan(enemy.getMaxHp());
   }, 20000);
 
-  it("trainer - wild - force switch by himself opponent - should take damage", async () => {
+  it("should damage opposing pokemon that choose to switch in", async () => {
     game.override.startingWave(5);
-    game.override.startingLevel(5000);
-    game.override.enemySpecies(0);
-    // turn 1: player set spikes, opponent do splash
-    // turn 2: player do splash, opponent switch pokemon
-    // opponent pokemon should trigger spikes and lose HP
-    await game.classicMode.runToSummon([
-      Species.MIGHTYENA,
-      Species.POOCHYENA,
-    ]);
-    await game.phaseInterceptor.to(CommandPhase, true);
-    const initialHpOpponent = game.scene.currentBattle.enemyParty[1].hp;
+    await game.startBattle([Species.MIGHTYENA, Species.POOCHYENA]);
+
     game.move.select(Moves.SPIKES);
     await game.toNextTurn();
 
-    game.forceOpponentToSwitch();
     game.move.select(Moves.SPLASH);
+    game.forceEnemyToSwitch();
     await game.toNextTurn();
-    expect(game.scene.currentBattle.enemyParty[0].hp).toBeLessThan(initialHpOpponent);
+
+    const enemy = game.scene.getEnemyParty()[0];
+    expect(enemy.hp).toBeLessThan(enemy.getMaxHp());
   }, 20000);
 
 });
