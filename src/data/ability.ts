@@ -2856,10 +2856,10 @@ export class PreApplyBattlerTagImmunityAbAttr extends PreApplyBattlerTagAbAttr {
   private immuneTagTypes: BattlerTagType[];
   private battlerTag: BattlerTag;
 
-  constructor(immuneTagTypes: BattlerTagType[]) {
+  constructor(immuneTagTypes: BattlerTagType | BattlerTagType[]) {
     super();
 
-    this.immuneTagTypes = immuneTagTypes;
+    this.immuneTagTypes = Array.isArray(immuneTagTypes) ? immuneTagTypes : [immuneTagTypes];
   }
 
   applyPreApplyBattlerTag(pokemon: Pokemon, passive: boolean, simulated: boolean, tag: BattlerTag, cancelled: Utils.BooleanHolder, args: any[]): boolean {
@@ -4930,7 +4930,7 @@ export function initAbilities() {
       .attr(StatMultiplierAbAttr, Stat.ACC, 1.3),
     new Ability(Abilities.INSOMNIA, 3)
       .attr(StatusEffectImmunityAbAttr, StatusEffect.SLEEP)
-      .attr(BattlerTagImmunityAbAttr, [BattlerTagType.DROWSY])
+      .attr(BattlerTagImmunityAbAttr, BattlerTagType.DROWSY)
       .ignorable(),
     new Ability(Abilities.COLOR_CHANGE, 3)
       .attr(PostDefendTypeChangeAbAttr)
@@ -4945,7 +4945,7 @@ export function initAbilities() {
       .attr(IgnoreMoveEffectsAbAttr)
       .partial(),
     new Ability(Abilities.OWN_TEMPO, 3)
-      .attr(BattlerTagImmunityAbAttr, [BattlerTagType.CONFUSED])
+      .attr(BattlerTagImmunityAbAttr, BattlerTagType.CONFUSED)
       .attr(IntimidateImmunityAbAttr)
       .ignorable(),
     new Ability(Abilities.SUCTION_CUPS, 3)
@@ -5008,7 +5008,7 @@ export function initAbilities() {
       .attr(PostDefendContactApplyStatusEffectAbAttr, 30, StatusEffect.POISON)
       .bypassFaint(),
     new Ability(Abilities.INNER_FOCUS, 3)
-      .attr(BattlerTagImmunityAbAttr, [BattlerTagType.FLINCHED])
+      .attr(BattlerTagImmunityAbAttr, BattlerTagType.FLINCHED)
       .attr(IntimidateImmunityAbAttr)
       .ignorable(),
     new Ability(Abilities.MAGMA_ARMOR, 3)
@@ -5109,7 +5109,7 @@ export function initAbilities() {
       .attr(DoubleBattleChanceAbAttr),
     new Ability(Abilities.VITAL_SPIRIT, 3)
       .attr(StatusEffectImmunityAbAttr, StatusEffect.SLEEP)
-      .attr(BattlerTagImmunityAbAttr, [BattlerTagType.DROWSY])
+      .attr(BattlerTagImmunityAbAttr, BattlerTagType.DROWSY)
       .ignorable(),
     new Ability(Abilities.WHITE_SMOKE, 3)
       .attr(ProtectStatAbAttr)
@@ -5428,7 +5428,7 @@ export function initAbilities() {
       .attr(MoveTypeChangeAbAttr, Type.ICE, 1.2, (user, target, move) => move.type === Type.NORMAL && !move.hasAttr(VariableMoveTypeAttr)),
     new Ability(Abilities.SWEET_VEIL, 6)
       .attr(UserFieldStatusEffectImmunityAbAttr, StatusEffect.SLEEP)
-      .attr(UserFieldBattlerTagImmunityAbAttr, [ BattlerTagType.DROWSY])
+      .attr(UserFieldBattlerTagImmunityAbAttr, BattlerTagType.DROWSY)
       .ignorable()
       .partial(), // Mold Breaker ally should not be affected by Sweet Veil
     new Ability(Abilities.STANCE_CHANGE, 6)
@@ -5582,7 +5582,7 @@ export function initAbilities() {
       .attr(UnswappableAbilityAbAttr)
       .attr(UnsuppressableAbilityAbAttr)
       .attr(StatusEffectImmunityAbAttr, ...getNonVolatileStatusEffects())
-      .attr(BattlerTagImmunityAbAttr, [BattlerTagType.DROWSY]),
+      .attr(BattlerTagImmunityAbAttr, BattlerTagType.DROWSY),
     new Ability(Abilities.QUEENLY_MAJESTY, 7)
       .attr(FieldPriorityMoveImmunityAbAttr)
       .ignorable(),
