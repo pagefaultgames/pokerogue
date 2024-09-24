@@ -3,8 +3,8 @@
   "speaker": "ジェントルマン",
   "intro_dialogue": "ハローゼアー！　どこにも　見つけない　ディールが　あります！",
   "title": "ポケモンのセールスマン",
-  "description": "「この　{{purchasePokemon}}は　とても　ユニークで　種類の　中で　滅多に　見られない　特性が　あります！　{{price, money}}だけで　この　アメイジングな　{{purchasePokemon}}を　もらいますよ！」\n\n　「いかがですか？」",
-  "description_shiny": "「この　{{purchasePokemon}}は　とても　ユニークで　種類の　中で　滅多に　見られない　カラーが　あります！　{{price, money}}だけで　この　アメイジングな　{{purchasePokemon}}を　もらいますよ！」\n\n　「いかがですか？」",
+  "description": "「この　{{purchasePokemon}}は　とても　ユニークで　種類の　中で　@[TOOLTIP_TITLE]{滅多に　見られない　特性が　あります}！　{{price, money}}だけで　この　アメイジングな　{{purchasePokemon}}を　もらいますよ！」\n\n　「いかがですか？」",
+  "description_shiny": "「この　{{purchasePokemon}}は　とても　ユニークで　種類の　中で　@[TOOLTIP_TITLE]{滅多に　見られない　カラーが　あります}！　{{price, money}}だけで　この　アメイジングな　{{purchasePokemon}}を　もらいますよ！」\n\n　「いかがですか？」",
   "query": "どうします？",
   "option": {
     "1": {
