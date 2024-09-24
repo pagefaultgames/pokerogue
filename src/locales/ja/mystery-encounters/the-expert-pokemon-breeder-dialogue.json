@@ -25,7 +25,7 @@
   "outro": "ねえ、　{{chosenPokemon}}　すごく　嬉しくなったわ！$そして、　これらも　どうぞ！",
   "outro_failed": "なんか　ガッカリ　ね……$手持ち　ポケモンの　信用を　得るまで\nまだまだ　みたいんだわ！",
   "gained_eggs": "@s{item_fanfare}{{numEggs}}を　もらいました！",
-  "eggs_tooltip": "\n(+) {{eggs}}を得る",
+  "eggs_tooltip": "\n(+) @[TOOLTIP_TITLE]{{{eggs}}}を得る",
   "numEggs_one": "{{count}}　{{rarity}}　タマゴ",
   "numEggs_other": "{{count}}　{{rarity}}　タマゴ"
 }
