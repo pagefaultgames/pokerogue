@@ -1,0 +1,7 @@
+{
+  "paid_money": "₽{{amount, number}}[[를]] 지불했다.",
+  "receive_money": "₽{{amount, number}}[[를]] 받았다!",
+  "affects_pokedex": "도감에 추가 가능",
+  "cancel_option": "조우 선택지로 돌아가기",
+  "view_party_button": "파티 확인"
+}

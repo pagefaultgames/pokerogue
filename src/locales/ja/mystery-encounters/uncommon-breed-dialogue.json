@@ -1,0 +1,26 @@
+{
+  "intro": "普段の　ポケモン　じゃなそうです……！",
+  "title": "珍しい類型",
+  "description": "他の　{{enemyPokemon}}と　比べて　特別そう　です。@[TOOLTIP_TITLE]{特別な　技を　覚えている　かな？}　普通に　バトルで　捕まえてみることが　できます　が、　仲良くする　方法も　ある　かもしれません。",
+  "query": "どうしますか",
+  "option": {
+    "1": {
+      "label": "バトルする",
+      "tooltip": "(-) 勝負が厳しい\n(+) 相手が強くて捕まえられる",
+      "selected": "恐れないで　{{enemyPokemon}}に　近寄ります！",
+      "stat_boost": "{{enemyPokemon}}の　強めた実力で　能力を上げた！"
+    },
+    "2": {
+      "label": "食べ物をあげる",
+      "disabled_tooltip": "選ぶには　４個の　きのみが　必要",
+      "tooltip": "(-) きのみを４個あげる\n(+) {{enemyPokemon}}が好きになる",
+      "selected": "{{enemyPokemon}}に　きのみを　なげます！$嬉しそうに　食べます！${{enemyPokemon}}は　手持ちに　入りたいです！"
+    },
+    "3": {
+      "label": "仲良くする",
+      "disabled_tooltip": "選ぶには　手持ちポケモンが　特定な　技が　必要",
+      "tooltip": "(+) {{option3PrimaryName}}は{{option3PrimaryMove}}を使う\n(+) {{enemyPokemon}}は好きになる",
+      "selected": "{{enemyPokemon}}を　魅了するには　{{option3PrimaryName}}は {{option3PrimaryMove}}を　使います！${{enemyPokemon}}が　手持ちに 入りたいです！"
+    }
+  }
+}

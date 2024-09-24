@@ -2907,8 +2907,12 @@ export class LockModifierTiersModifier extends PersistentModifier {
  * Black Sludge item
  */
 export class HealShopCostModifier extends PersistentModifier {
-  constructor(type: ModifierType, stackCount?: integer) {
+  public readonly shopMultiplier: number;
+
+  constructor(type: ModifierType, shopMultiplier: number, stackCount?: integer) {
     super(type, stackCount);
+
+    this.shopMultiplier = shopMultiplier;
   }
 
   match(modifier: Modifier): boolean {
@@ -2916,7 +2920,7 @@ export class HealShopCostModifier extends PersistentModifier {
   }
 
   clone(): HealShopCostModifier {
-    return new HealShopCostModifier(this.type, this.stackCount);
+    return new HealShopCostModifier(this.type, this.shopMultiplier, this.stackCount);
   }
 
   /**
@@ -2925,7 +2929,7 @@ export class HealShopCostModifier extends PersistentModifier {
    * @returns always `true`
    */
   override apply(cost: Utils.IntegerHolder): boolean {
-    cost.value *= Math.pow(3, this.getStackCount());
+    cost.value *= this.shopMultiplier;
 
     return true;
   }
@@ -2944,7 +2948,7 @@ export class BoostBugSpawnModifier extends PersistentModifier {
     return modifier instanceof BoostBugSpawnModifier;
   }
 
-  clone(): HealShopCostModifier {
+  clone(): BoostBugSpawnModifier {
     return new BoostBugSpawnModifier(this.type, this.stackCount);
   }
 

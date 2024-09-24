@@ -140,5 +140,11 @@
   
   "heal": "黑白「寶可夢回複」",
   "menu": "空之探險隊「歡迎來到寶可夢的世界」",
-  "title": "空之探險隊「主題曲」"
+  "title": "空之探險隊「主題曲」",
+
+  "mystery_encounter_weird_dream": "PMD EoS Temporal Spire",
+  "mystery_encounter_fun_and_games": "PMD EoS Guildmaster Wigglytuff",
+  "mystery_encounter_gen_5_gts": "BW GTS",
+  "mystery_encounter_gen_6_gts": "XY GTS",
+  "mystery_encounter_delibirdy": "Firel - DeliDelivery!"
 }
