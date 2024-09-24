@@ -35,7 +35,7 @@ describe("Moves - Taunt", () => {
 
     const playerPokemon = game.scene.getPlayerPokemon();
 
-    // First turn, Player Pokemon succeeds using Growl
+    // First turn, Player Pokemon succeeds using Growl without Torment
     game.move.select(Moves.GROWL);
     await game.forceEnemyMove(Moves.TAUNT);
     await game.toNextTurn();
