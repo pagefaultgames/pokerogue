@@ -1,4 +1,5 @@
 import { Arena } from "#app/field/arena";
+import BattleScene from "#app/battle-scene";
 import { Type } from "#app/data/type";
 import * as Utils from "#app/utils";
 import { MoveCategory, allMoves, MoveTarget, IncrementMovePriorityAttr, applyMoveAttrs } from "#app/data/move";
@@ -931,6 +932,13 @@ class ImprisonTag extends ArenaTrapTag {
     super(ArenaTagType.IMPRISON, Moves.IMPRISON, sourceId, side, 1);
   }
 
+  retrieveField(scene: BattleScene): PlayerPokemon[] | EnemyPokemon[] {
+    if (!this.source.isPlayer()) {
+      return scene.getPlayerField();
+    }
+    return scene.getEnemyField();
+  }
+
   /**
    * This function applies the effects of Imprison to the opposing Pokemon already present on the field.
    * @param arena
@@ -938,7 +946,7 @@ class ImprisonTag extends ArenaTrapTag {
   override onAdd({ scene }: Arena) {
     this.source = scene.getPokemonById(this.sourceId!)!;
     if (this.source) {
-      const party = !this.source.isPlayer() ? scene.getPlayerField() : scene.getEnemyField();
+      const party = this.retrieveField(scene);
       party?.forEach((p: PlayerPokemon | EnemyPokemon ) => {
         p.addTag(BattlerTagType.IMPRISON, 1, Moves.IMPRISON, this.sourceId);
       });
@@ -971,8 +979,8 @@ class ImprisonTag extends ArenaTrapTag {
    * When the arena tag is removed, it also attempts to remove any related Battler Tags if they haven't already been removed from the affected Pokemon
    * @param arena
    */
-  override onRemove(arena: Arena): void {
-    const party = !this.source.isPlayer() ? arena.scene.getPlayerField() : arena.scene.getEnemyField();
+  override onRemove({ scene }: Arena): void {
+    const party = this.retrieveField(scene);
     party?.forEach((p: PlayerPokemon | EnemyPokemon) => {
       p.removeTag(BattlerTagType.IMPRISON);
     });
