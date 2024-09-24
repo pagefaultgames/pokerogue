@@ -935,14 +935,14 @@ class ImprisonTag extends ArenaTrapTag {
    * This function applies the effects of Imprison to the opposing Pokemon already present on the field.
    * @param arena
    */
-  override onAdd(arena: Arena) {
-    this.source = arena.scene.getPokemonById(this.sourceId!)!;
+  override onAdd({ scene }: Arena) {
+    this.source = scene.getPokemonById(this.sourceId!)!;
     if (this.source) {
-      const party = !this.source.isPlayer() ? arena.scene.getPlayerField() : arena.scene.getEnemyField();
+      const party = !this.source.isPlayer() ? scene.getPlayerField() : scene.getEnemyField();
       party?.forEach((p: PlayerPokemon | EnemyPokemon ) => {
         p.addTag(BattlerTagType.IMPRISON, 1, Moves.IMPRISON, this.sourceId);
       });
-      arena.scene.queueMessage(i18next.t("battlerTags:imprisonOnAdd", {pokemonNameWithAffix: getPokemonNameWithAffix(this.source)}));
+      scene.queueMessage(i18next.t("battlerTags:imprisonOnAdd", {pokemonNameWithAffix: getPokemonNameWithAffix(this.source)}));
     }
   }
 
