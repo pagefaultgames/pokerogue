@@ -22,6 +22,7 @@ import { MovePhase } from "#app/phases/move-phase";
 import { PokemonHealPhase } from "#app/phases/pokemon-heal-phase";
 import { ShowAbilityPhase } from "#app/phases/show-ability-phase";
 import { StatStageChangePhase, StatStageChangeCallback } from "#app/phases/stat-stage-change-phase";
+import { PokemonAnimType } from "#app/enums/pokemon-anim-type";
 
 export enum BattlerTagLapseType {
   FAINT,
@@ -30,6 +31,7 @@ export enum BattlerTagLapseType {
   AFTER_MOVE,
   MOVE_EFFECT,
   TURN_END,
+  HIT,
   CUSTOM
 }
 
@@ -391,9 +393,11 @@ export class BeakBlastChargingTag extends BattlerTag {
   lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
     if (lapseType === BattlerTagLapseType.CUSTOM) {
       const effectPhase = pokemon.scene.getCurrentPhase();
-      if (effectPhase instanceof MoveEffectPhase && effectPhase.move.getMove().hasFlag(MoveFlags.MAKES_CONTACT)) {
+      if (effectPhase instanceof MoveEffectPhase) {
         const attacker = effectPhase.getPokemon();
-        attacker.trySetStatus(StatusEffect.BURN, true, pokemon);
+        if (effectPhase.move.getMove().checkFlag(MoveFlags.MAKES_CONTACT, attacker, pokemon)) {
+          attacker.trySetStatus(StatusEffect.BURN, true, pokemon);
+        }
       }
       return true;
     }
@@ -451,10 +455,14 @@ export class TrappedTag extends BattlerTag {
   }
 
   canAdd(pokemon: Pokemon): boolean {
+    const source = pokemon.scene.getPokemonById(this.sourceId!)!;
+    const move = allMoves[this.sourceMove];
+
     const isGhost = pokemon.isOfType(Type.GHOST);
     const isTrapped = pokemon.getTag(TrappedTag);
+    const hasSubstitute = move.hitsSubstitute(source, pokemon);
 
-    return !isTrapped && !isGhost;
+    return !isTrapped && !isGhost && !hasSubstitute;
   }
 
   onAdd(pokemon: Pokemon): void {
@@ -1121,7 +1129,7 @@ export abstract class DamagingTrapTag extends TrappedTag {
   }
 
   canAdd(pokemon: Pokemon): boolean {
-    return !pokemon.getTag(TrappedTag);
+    return !pokemon.getTag(TrappedTag) && !pokemon.getTag(BattlerTagType.SUBSTITUTE);
   }
 
   lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
@@ -1885,15 +1893,86 @@ export class CursedTag extends BattlerTag {
     return ret;
   }
 }
+/**
+ * Battler tag for attacks that remove a type post use.
+ */
+export class RemovedTypeTag extends BattlerTag {
+  constructor(tagType: BattlerTagType, lapseType: BattlerTagLapseType, sourceMove: Moves) {
+    super(tagType, lapseType, 1, sourceMove);
+  }
+}
 
 /**
- * Battler tag for effects that ground the source, allowing Ground-type moves to hit them. Encompasses two tag types:
- * @item `IGNORE_FLYING`: Persistent grounding effects (i.e. from Smack Down and Thousand Waves)
- * @item `ROOSTED`: One-turn grounding effects (i.e. from Roost)
+ * Battler tag for effects that ground the source, allowing Ground-type moves to hit them.
+ * @description `IGNORE_FLYING`: Persistent grounding effects (i.e. from Smack Down and Thousand Waves)
  */
 export class GroundedTag extends BattlerTag {
   constructor(tagType: BattlerTagType, lapseType: BattlerTagLapseType, sourceMove: Moves) {
     super(tagType, lapseType, 1, sourceMove);
+  }
+}
+
+/**
+ * @description `ROOSTED`: Tag for temporary grounding if only source of ungrounding is flying and pokemon uses Roost.
+ * Roost removes flying type from a pokemon for a single turn.
+ */
+
+export class RoostedTag extends BattlerTag {
+  private isBaseFlying : boolean;
+  private isBasePureFlying : boolean;
+
+  constructor() {
+    super(BattlerTagType.ROOSTED, BattlerTagLapseType.TURN_END, 1, Moves.ROOST);
+  }
+
+  onRemove(pokemon: Pokemon): void {
+    const currentTypes = pokemon.getTypes();
+    const baseTypes = pokemon.getTypes(false, false, true);
+
+    const forestsCurseApplied: boolean = currentTypes.includes(Type.GRASS) && !baseTypes.includes(Type.GRASS);
+    const trickOrTreatApplied: boolean = currentTypes.includes(Type.GHOST) && !baseTypes.includes(Type.GHOST);
+
+    if (this.isBaseFlying) {
+      let modifiedTypes: Type[] = [];
+      if (this.isBasePureFlying) {
+        if (forestsCurseApplied || trickOrTreatApplied) {
+          modifiedTypes = currentTypes.filter(type => type !== Type.NORMAL);
+          modifiedTypes.push(Type.FLYING);
+        } else {
+          modifiedTypes = [Type.FLYING];
+        }
+      } else {
+        modifiedTypes = [...currentTypes];
+        modifiedTypes.push(Type.FLYING);
+      }
+      pokemon.summonData.types = modifiedTypes;
+      pokemon.updateInfo();
+    }
+  }
+
+  onAdd(pokemon: Pokemon): void {
+    const currentTypes = pokemon.getTypes();
+    const baseTypes = pokemon.getTypes(false, false, true);
+
+    const isOriginallyDualType = baseTypes.length === 2;
+    const isCurrentlyDualType = currentTypes.length === 2;
+    this.isBaseFlying = baseTypes.includes(Type.FLYING);
+    this.isBasePureFlying = baseTypes[0] === Type.FLYING && baseTypes.length === 1;
+
+    if (this.isBaseFlying) {
+      let modifiedTypes: Type[];
+      if (this.isBasePureFlying && !isCurrentlyDualType) {
+        modifiedTypes = [Type.NORMAL];
+      } else {
+        if (!!pokemon.getTag(RemovedTypeTag) && isOriginallyDualType && !isCurrentlyDualType) {
+          modifiedTypes = [Type.UNKNOWN];
+        } else {
+          modifiedTypes = currentTypes.filter(type => type !== Type.FLYING);
+        }
+      }
+      pokemon.summonData.types = modifiedTypes;
+      pokemon.updateInfo();
+    }
   }
 }
 
@@ -1936,7 +2015,6 @@ export class FormBlockDamageTag extends BattlerTag {
     pokemon.scene.triggerPokemonFormChange(pokemon, SpeciesFormChangeManualTrigger);
   }
 }
-
 /** Provides the additional weather-based effects of the Ice Face ability */
 export class IceFaceBlockDamageTag extends FormBlockDamageTag {
   constructor(tagType: BattlerTagType) {
@@ -1984,7 +2062,6 @@ export class StockpilingTag extends BattlerTag {
     if (defChange) {
       this.statChangeCounts[Stat.DEF]++;
     }
-
     if (spDefChange) {
       this.statChangeCounts[Stat.SPDEF]++;
     }
@@ -2140,6 +2217,93 @@ export class TarShotTag extends BattlerTag {
   }
 }
 
+export class SubstituteTag extends BattlerTag {
+  /** The substitute's remaining HP. If HP is depleted, the Substitute fades. */
+  public hp: number;
+  /** A reference to the sprite representing the Substitute doll */
+  public sprite: Phaser.GameObjects.Sprite;
+  /** Is the source Pokemon "in focus," i.e. is it fully visible on the field? */
+  public sourceInFocus: boolean;
+
+  constructor(sourceMove: Moves, sourceId: integer) {
+    super(BattlerTagType.SUBSTITUTE, [BattlerTagLapseType.PRE_MOVE, BattlerTagLapseType.AFTER_MOVE, BattlerTagLapseType.HIT], 0, sourceMove, sourceId, true);
+  }
+
+  /** Sets the Substitute's HP and queues an on-add battle animation that initializes the Substitute's sprite. */
+  onAdd(pokemon: Pokemon): void {
+    this.hp = Math.floor(pokemon.scene.getPokemonById(this.sourceId!)!.getMaxHp() / 4);
+    this.sourceInFocus = false;
+
+    // Queue battle animation and message
+    pokemon.scene.triggerPokemonBattleAnim(pokemon, PokemonAnimType.SUBSTITUTE_ADD);
+    pokemon.scene.queueMessage(i18next.t("battlerTags:substituteOnAdd", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }), 1500);
+
+    // Remove any trapping effects from the user
+    pokemon.findAndRemoveTags(tag => tag instanceof TrappedTag);
+  }
+
+  /** Queues an on-remove battle animation that removes the Substitute's sprite. */
+  onRemove(pokemon: Pokemon): void {
+    // Only play the animation if the cause of removal isn't from the source's own move
+    if (!this.sourceInFocus) {
+      pokemon.scene.triggerPokemonBattleAnim(pokemon, PokemonAnimType.SUBSTITUTE_REMOVE, [this.sprite]);
+    } else {
+      this.sprite.destroy();
+    }
+    pokemon.scene.queueMessage(i18next.t("battlerTags:substituteOnRemove", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }));
+  }
+
+  lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
+    switch (lapseType) {
+    case BattlerTagLapseType.PRE_MOVE:
+      this.onPreMove(pokemon);
+      break;
+    case BattlerTagLapseType.AFTER_MOVE:
+      this.onAfterMove(pokemon);
+      break;
+    case BattlerTagLapseType.HIT:
+      this.onHit(pokemon);
+      break;
+    }
+    return lapseType !== BattlerTagLapseType.CUSTOM; // only remove this tag on custom lapse
+  }
+
+  /** Triggers an animation that brings the Pokemon into focus before it uses a move */
+  onPreMove(pokemon: Pokemon): void {
+    pokemon.scene.triggerPokemonBattleAnim(pokemon, PokemonAnimType.SUBSTITUTE_PRE_MOVE, [this.sprite]);
+    this.sourceInFocus = true;
+  }
+
+  /** Triggers an animation that brings the Pokemon out of focus after it uses a move */
+  onAfterMove(pokemon: Pokemon): void {
+    pokemon.scene.triggerPokemonBattleAnim(pokemon, PokemonAnimType.SUBSTITUTE_POST_MOVE, [this.sprite]);
+    this.sourceInFocus = false;
+  }
+
+  /** If the Substitute redirects damage, queue a message to indicate it. */
+  onHit(pokemon: Pokemon): void {
+    const moveEffectPhase = pokemon.scene.getCurrentPhase();
+    if (moveEffectPhase instanceof MoveEffectPhase) {
+      const attacker = moveEffectPhase.getUserPokemon()!;
+      const move = moveEffectPhase.move.getMove();
+      const firstHit = (attacker.turnData.hitCount === attacker.turnData.hitsLeft);
+
+      if (firstHit && move.hitsSubstitute(attacker, pokemon)) {
+        pokemon.scene.queueMessage(i18next.t("battlerTags:substituteOnHit", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }));
+      }
+    }
+  }
+
+  /**
+  * When given a battler tag or json representing one, load the data for it.
+  * @param {BattlerTag | any} source A battler tag
+  */
+  loadTag(source: BattlerTag | any): void {
+    super.loadTag(source);
+    this.hp = source.hp;
+  }
+}
+
 /**
  * Retrieves a {@linkcode BattlerTag} based on the provided tag type, turn count, source move, and source ID.
  *
@@ -2259,7 +2423,11 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: number, source
   case BattlerTagType.IGNORE_FLYING:
     return new GroundedTag(tagType, BattlerTagLapseType.CUSTOM, sourceMove);
   case BattlerTagType.ROOSTED:
-    return new GroundedTag(tagType, BattlerTagLapseType.TURN_END, sourceMove);
+    return new RoostedTag();
+  case BattlerTagType.BURNED_UP:
+    return new RemovedTypeTag(tagType, BattlerTagLapseType.CUSTOM, sourceMove);
+  case BattlerTagType.DOUBLE_SHOCKED:
+    return new RemovedTypeTag(tagType, BattlerTagLapseType.CUSTOM, sourceMove);
   case BattlerTagType.SALT_CURED:
     return new SaltCuredTag(sourceId);
   case BattlerTagType.CURSED:
@@ -2295,6 +2463,8 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: number, source
     return new ThroatChoppedTag();
   case BattlerTagType.GORILLA_TACTICS:
     return new GorillaTacticsTag();
+  case BattlerTagType.SUBSTITUTE:
+    return new SubstituteTag(sourceMove, sourceId);
   case BattlerTagType.NONE:
   default:
     return new BattlerTag(tagType, BattlerTagLapseType.CUSTOM, turnCount, sourceMove, sourceId);
