@@ -3972,8 +3972,8 @@ export class PlayerPokemon extends Pokemon {
       let compatible = false;
       for (const p of tmSpecies[tm]) {
         if (Array.isArray(p)) {
-          const [pkm, ...forms] = p;
-          if ((pkm === this.species.speciesId || this.fusionSpecies && pkm === this.fusionSpecies.speciesId) && forms.some(form => form === this.species.forms[this.formIndex])) {
+          const [pkm, form] = p;
+          if ((pkm === this.species.speciesId || this.fusionSpecies && pkm === this.fusionSpecies.speciesId) && form === this.getFormKey()) {
             compatible = true;
             break;
           }

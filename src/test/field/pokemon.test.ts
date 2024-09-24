@@ -3,6 +3,7 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import GameManager from "../utils/gameManager";
 import { PokeballType } from "#app/enums/pokeball";
 import BattleScene from "#app/battle-scene";
+import { tmSpecies } from "#app/data/tms";
 
 describe("Spec - Pokemon", () => {
   let phaserGame: Phaser.Game;
@@ -62,5 +63,33 @@ describe("Spec - Pokemon", () => {
         expect(pkm.species.speciesId).toBe(index === slotIndex ? Species.ZUBAT : Species.ABRA);
       });
     });
+  });
+  it("pokemon that have form changes and different tms per form should not share tms between forms", async () => {
+    game.override.starterForms({ [Species.ROTOM]: 4 });
+    await game.classicMode.startBattle([Species.ROTOM]);
+    const playerPokemon = game.scene.getPlayerPokemon()!;
+
+    // 59 is blizzard, fan rotom should not be in that array
+    const compatible1 = tmSpecies[59].some(p => {
+      if (Array.isArray(p)) {
+        const [pkm, form] = p;
+        return pkm === playerPokemon.species.speciesId && playerPokemon.getFormKey() === form;
+      }
+      return false;
+    });
+
+    // Air slash is 403, fan rotom should be in it
+    const compatible2 = tmSpecies[403].some(p => {
+      if (Array.isArray(p)) {
+        const [pkm, form] = p;
+        return pkm === playerPokemon.species.speciesId && playerPokemon.getFormKey() === form;
+      }
+      return false;
+    });
+
+    expect(playerPokemon.compatibleTms.includes(59)).toBeFalsy();
+    expect(playerPokemon.compatibleTms.includes(403)).toBeTruthy();
+    expect(compatible1).toBeFalsy();
+    expect(compatible2).toBeTruthy();
   });
 });
