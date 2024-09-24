@@ -3,7 +3,7 @@
   "title": "Baies à gogo",
   "description": "Un Pokémon a l’air de monter la garde de ce buisson à Baies. Vous pourriez aller frontalement au combat, mais il a l’air costaud. Un Pokémon rapide pourrait peut-être en attraper quelques-unes sans se faire prendre ?",
   "query": "Que voulez-vous faire ?",
-  "berries": "Des Baies !",
+  "berries": "Baies ",
   "option": {
     "1": {
       "label": "L’affronter",
