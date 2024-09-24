@@ -3,7 +3,7 @@
   "title": "Bayas Abundantes",
   "description": "Parece que hay un Pokémon fuerte protegiendo un arbusto de bayas. Luchar es el enfoque directo, pero parece fuerte. ¿Quizás un Pokémon rápido podría agarrar algunas bayas sin ser descubierto?",
   "query": "¿Qué harás?",
-  "berries": "¡Bayas!",
+  "berries": "Bayas",
   "option": {
     "1": {
       "label": "Enfréntate al Pokémon",
