@@ -1,4 +1,4 @@
-{
+tr{
   "intro": "Quelqu’un à l’air très balèze s’apporche de vous…",
   "buck": {
     "intro_dialogue": "Oh, salut toi, je suis Cornil !$J’ai une bonne affaire à proposer\npour quelqu’un d’aussi costaud que toi !$J’ai deux Œufs de Pokémon sur moi,\net j’aimerais que quelqu’un prenne soin d’un.$Si t’arrives à me prouver que t’en est digne,\nje te donne l’Œuf le plus rare !",
@@ -31,7 +31,7 @@
   "option": {
     "1": {
       "label": "Accepter le défi",
-      "tooltip": "(-) Combat difficile\n(+) Gain d’un @[TOOLTIP_TITLE]{Œuf très rare}"
+      "tooltip": "(-) Combat extrême\n(+) Gain d’un @[TOOLTIP_TITLE]{Œuf très rare}"
     },
     "2": {
       "label": "Décliner le défi",
