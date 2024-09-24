@@ -939,9 +939,9 @@ class ImprisonTag extends ArenaTrapTag {
    */
   private retrieveField(scene: BattleScene): PlayerPokemon[] | EnemyPokemon[] {
     if (!this.source.isPlayer()) {
-      return scene.getPlayerField();
+      return scene.getPlayerField() ?? [];
     }
-    return scene.getEnemyField();
+    return scene.getEnemyField() ?? [];
   }
 
   /**
