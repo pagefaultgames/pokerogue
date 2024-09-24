@@ -9,9 +9,9 @@
     "1": {
       "label": "« Je les vois. »",
       "tooltip": "@[SUMMARY_GREEN]{(?) Affecte vos Pokémon}",
-      "selected": "Sa main s’approche de vous et vous touche.\nTout devient subitement sombre.$Puis enfin…@d{64} La lumière.\nChaque espace-temps. Chacune de vos incarnations.$Tout ce qui a composé, compose\net composersa votre être…@d{64}",
+      "selected": "Sa main s’approche de vous et vous touche.\nTout devient subitement sombre.$Puis enfin…@d{64} La lumière.\nChaque espace-temps. Chacune de vos incarnations.$Tout ce qui a composé, compose\net composera votre être…@d{64}",
       "cutscene": "Vous percevez vos Pokémon,@d{32} convergeant de chaque\nréalité pour former quelque chose de nouveau…@d{64}",
-      "dream_complete": "Vous vous réveillez, mais la femme a disparu…\nOu bien n’etait-elle qu’une hallucination ?$.@d{32}.@d{32}.@d{32}$Les Pokémon de votre équipe ont changé…$Mais alors, comment peuvent-ils quand même\ntoujours vous sembler si familiers ?"
+      "dream_complete": "Vous vous réveillez, mais la femme a disparu…\nOu bien n’était-elle qu’une hallucination ?$.@d{32}.@d{32}.@d{32}$Les Pokémon de votre équipe ont changé…$Mais alors, comment peuvent-ils quand même\ntoujours vous sembler si familiers ?"
     },
     "2": {
       "label": "Partir en courant",
