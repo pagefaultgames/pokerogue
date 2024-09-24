@@ -2452,7 +2452,7 @@ export function getPartyLuckValue(party: Pokemon[]): integer {
     party[0].scene.executeWithSeedOffset(() => {
       DailyLuck.value = Utils.randSeedInt(15); // Random number between 0 and 14
     }, 0, party[0].scene.seed);
-    return DailyLuck;
+    return DailyLuck.value;
   }
   const luck = Phaser.Math.Clamp(party.map(p => p.isAllowedInBattle() ? (p.scene.gameMode.isDaily ? 0 : p.getLuck()) : 0)
     .reduce((total: integer, value: integer) => total += value, 0), 0, 14);
