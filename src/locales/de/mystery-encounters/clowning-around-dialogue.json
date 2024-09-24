@@ -17,14 +17,14 @@
     },
     "2": {
       "label": "Nicht provozieren lassen",
-      "tooltip": "(-) Der Clown ist beleidigt\n(?) Beeinflusst Pokémon-Items",//TODO
+      "tooltip": "(?) Beeinflusst Pokémon-Items",//TODO
       "selected":  "Du erbärmlicher Feigling, du verweigerst einen wunderbaren Kampf? Fühle meinen Zorn!",
       "selected_2": "Das {{blacephalonName}} des Clowns verwendet Trickbetrug! Alle Items deines {{switchPokemon}} wurden zufällig vertauscht!",
       "selected_3": "Meine perfekte List hat dich in die Irre geführt!"
     },
     "3": {
       "label": "Die Beleidigungen erwidern",
-      "tooltip": "(-) Den Clown verärgern\n(?) Beeinflusst Pokémon-Typen",//TODO
+      "tooltip": "(?) Beeinflusst Pokémon-Typen",//TODO
       "selected": "Du erbärmlicher Feigling verweigerst einen wunderbaren Kampf? Fühle meinen Zorn!",
       "selected_2": "Das {{blacephalonName}} des Clowns verwendet eine seltsame Attacke! Alle Typen deines Teams wurden zufällig vertauscht!",
       "selected_3": "Meine perfekte List hat dich in die Irre geführt!"
