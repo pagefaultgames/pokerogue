@@ -2482,7 +2482,8 @@ export class TormentTag extends MoveRestrictionBattlerTag {
       return false;
     }
     const isLockedIntoMove = allMoves[lastMove.move].hasAttr(ConsecutiveUseDoublePowerAttr);
-    if (lastMove.move === move && lastMove.result === MoveResult.SUCCESS && lastMove.move !== Moves.STRUGGLE && !isLockedIntoMove) {
+    const validLastMoveResult = (lastMove.result === MoveResult.SUCCESS) || (lastMove.result === MoveResult.MISS);
+    if (lastMove.move === move && validLastMoveResult && lastMove.move !== Moves.STRUGGLE && !isLockedIntoMove) {
       return true;
     }
     return false;
