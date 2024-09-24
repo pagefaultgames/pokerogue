@@ -1,3 +1,25 @@
 {
-  "intro": "Un {{greedentName}} vous tombe\ndessus et vole toutes vos baies !"
+  "intro": "Un {{greedentName}} vous tend une embuscade\net vole les Baies de votre équipe !",
+  "title": "Rongrigus-ratus",
+  "description": "Un {{greedentName}} vous a pris par surprise et a volé toutes vos Baies !\n\nIl semble sur le point de les dévorer mais s’arrête et vous fixe, l’air intéressé.",
+  "query": "Que voulez-vous faire ?",
+  "option": {
+    "1": {
+      "label": "L’affronter",
+      "tooltip": "(-) Combat difficile\n(+) Récompenses de sa planque à Baies",
+      "selected": "Le {{greedentName}} gonfle ses joues\net se prépare au combat !",
+      "boss_enraged": "L’insatiable amour de {{greedentName}}\npour la nourriture le rend fou !",
+      "food_stash": "Il semblerait que {{greedentName}}\ngardait une pile de nourriture colossale !$@s{item_fanfare}Tous les Pokémon de votre équipe\nremportent une {{foodReward}} !"
+    },
+    "2": {
+      "label": "Négocier",
+      "tooltip": "(+) Regagner quelques Baies",
+      "selected": "Vos arguments ont touché {{greedentName}}\nsur sa corde sensible.$Il accepte malgré tout de vous balancer\nquelques Baies et se garde le reste."
+    },
+    "3": {
+      "label": "Lui laisser les Baies",
+      "tooltip": "(-) Baies définitivement perdues\n(?) {{greedentName}} vous apprécie",
+      "selected": "Le {{greedentName}} engloutit l’intégralité\ndes Baies en un éclair !$Il vous regarde avec tendresse\nen se tapotant le ventre.$Peut-être pourriez-vous lui en donner encore\nplus pendant votre périple…$@s{level_up_fanfare}Le {{greedentName}} veut rejoindre votre équipe !"
+    }
+  }
 }

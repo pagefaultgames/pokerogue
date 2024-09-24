@@ -339,7 +339,7 @@ export async function initBattleWithEnemyConfig(scene: BattleScene, partyConfig:
 
     loadEnemyAssets.push(enemyPokemon.loadAssets());
 
-    console.log(enemyPokemon.name, enemyPokemon.species.speciesId, enemyPokemon.stats);
+    console.log(`Pokemon: ${enemyPokemon.name}`, `Species ID: ${enemyPokemon.species.speciesId}`, `Stats: ${enemyPokemon.stats}`, `Ability: ${enemyPokemon.getAbility().name}`, `Passive Ability: ${enemyPokemon.getPassiveAbility().name}`);
   });
 
   scene.pushPhase(new MysteryEncounterBattlePhase(scene, partyConfig.disableSwitch));
