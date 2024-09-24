@@ -165,9 +165,9 @@ export class WaveRangeRequirement extends EncounterSceneRequirement {
   }
 
   override meetsRequirement(scene: BattleScene): boolean {
-    if (!isNullOrUndefined(this.waveRange) && this.waveRange?.[0] <= this.waveRange?.[1]) {
+    if (!isNullOrUndefined(this.waveRange) && this.waveRange[0] <= this.waveRange[1]) {
       const waveIndex = scene.currentBattle.waveIndex;
-      if (waveIndex >= 0 && (this.waveRange?.[0] >= 0 && this.waveRange?.[0] > waveIndex) || (this.waveRange?.[1] >= 0 && this.waveRange?.[1] < waveIndex)) {
+      if (waveIndex >= 0 && (this.waveRange[0] >= 0 && this.waveRange[0] > waveIndex) || (this.waveRange[1] >= 0 && this.waveRange[1] < waveIndex)) {
         return false;
       }
     }
@@ -251,7 +251,7 @@ export class WeatherRequirement extends EncounterSceneRequirement {
     const currentWeather = scene.arena.weather?.weatherType;
     let token = "";
     if (!isNullOrUndefined(currentWeather)) {
-      token = WeatherType[currentWeather!].replace("_", " ").toLocaleLowerCase();
+      token = WeatherType[currentWeather].replace("_", " ").toLocaleLowerCase();
     }
     return ["weather", token];
   }
@@ -274,9 +274,9 @@ export class PartySizeRequirement extends EncounterSceneRequirement {
   }
 
   override meetsRequirement(scene: BattleScene): boolean {
-    if (!isNullOrUndefined(this.partySizeRange) && this.partySizeRange?.[0] <= this.partySizeRange?.[1]) {
+    if (!isNullOrUndefined(this.partySizeRange) && this.partySizeRange[0] <= this.partySizeRange[1]) {
       const partySize = this.excludeDisallowedPokemon ? scene.getParty().filter(p => p.isAllowedInBattle()).length : scene.getParty().length;
-      if (partySize >= 0 && (this.partySizeRange?.[0] >= 0 && this.partySizeRange?.[0] > partySize) || (this.partySizeRange?.[1] >= 0 && this.partySizeRange?.[1] < partySize)) {
+      if (partySize >= 0 && (this.partySizeRange[0] >= 0 && this.partySizeRange[0] > partySize) || (this.partySizeRange[1] >= 0 && this.partySizeRange[1] < partySize)) {
         return false;
       }
     }
@@ -326,7 +326,7 @@ export class MoneyRequirement extends EncounterSceneRequirement {
   requiredMoney: number; // Static value
   scalingMultiplier: number; // Calculates required money based off wave index
 
-  constructor(requiredMoney?: number, scalingMultiplier?: number) {
+  constructor(requiredMoney: number, scalingMultiplier?: number) {
     super();
     this.requiredMoney = requiredMoney ?? 0;
     this.scalingMultiplier = scalingMultiplier ?? 0;
@@ -418,8 +418,8 @@ export class NatureRequirement extends EncounterPokemonRequirement {
   }
 
   override getDialogueToken(scene: BattleScene, pokemon?: PlayerPokemon): [string, string] {
-    if (!isNullOrUndefined(pokemon?.nature) && this.requiredNature.includes(pokemon!.nature)) {
-      return ["nature", Nature[pokemon!.nature]];
+    if (!isNullOrUndefined(pokemon?.nature) && this.requiredNature.includes(pokemon.nature)) {
+      return ["nature", Nature[pokemon.nature]];
     }
     return ["nature", ""];
   }
@@ -620,7 +620,7 @@ export class StatusEffectRequirement extends EncounterPokemonRequirement {
         return this.requiredStatusEffect.some((statusEffect) => {
           if (statusEffect === StatusEffect.NONE) {
             // StatusEffect.NONE also checks for null or undefined status
-            return isNullOrUndefined(pokemon.status) || isNullOrUndefined(pokemon.status!.effect) || pokemon.status?.effect === statusEffect;
+            return isNullOrUndefined(pokemon.status) || isNullOrUndefined(pokemon.status.effect) || pokemon.status.effect === statusEffect;
           } else {
             return pokemon.status?.effect === statusEffect;
           }
@@ -628,12 +628,11 @@ export class StatusEffectRequirement extends EncounterPokemonRequirement {
       });
     } else {
       // for an inverted query, we only want to get the pokemon that don't have ANY of the listed StatusEffects
-      // return partyPokemon.filter((pokemon) => this.requiredStatusEffect.filter((statusEffect) => pokemon.status?.effect === statusEffect).length === 0);
       return partyPokemon.filter((pokemon) => {
         return !this.requiredStatusEffect.some((statusEffect) => {
           if (statusEffect === StatusEffect.NONE) {
             // StatusEffect.NONE also checks for null or undefined status
-            return isNullOrUndefined(pokemon.status) || isNullOrUndefined(pokemon.status!.effect) || pokemon.status?.effect === statusEffect;
+            return isNullOrUndefined(pokemon.status) || isNullOrUndefined(pokemon.status.effect) || pokemon.status.effect === statusEffect;
           } else {
             return pokemon.status?.effect === statusEffect;
           }
@@ -645,7 +644,7 @@ export class StatusEffectRequirement extends EncounterPokemonRequirement {
   override getDialogueToken(scene: BattleScene, pokemon?: PlayerPokemon): [string, string] {
     const reqStatus = this.requiredStatusEffect.filter((a) => {
       if (a === StatusEffect.NONE) {
-        return isNullOrUndefined(pokemon?.status) || isNullOrUndefined(pokemon!.status!.effect) || pokemon!.status!.effect === a;
+        return isNullOrUndefined(pokemon?.status) || isNullOrUndefined(pokemon.status.effect) || pokemon.status.effect === a;
       }
       return pokemon!.status?.effect === a;
     });
@@ -988,8 +987,9 @@ export class HealthRatioRequirement extends EncounterPokemonRequirement {
   }
 
   override getDialogueToken(scene: BattleScene, pokemon?: PlayerPokemon): [string, string] {
-    if (!isNullOrUndefined(pokemon?.getHpRatio())) {
-      return ["healthRatio", Math.floor(pokemon!.getHpRatio() * 100).toString() + "%"];
+    const hpRatio = pokemon?.getHpRatio();
+    if (!isNullOrUndefined(hpRatio)) {
+      return ["healthRatio", Math.floor(hpRatio * 100).toString() + "%"];
     }
     return ["healthRatio", ""];
   }
