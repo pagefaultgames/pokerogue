@@ -141,6 +141,11 @@
   "faba": "Saubohne",
   "plumeria": "Apocyne",
   "oleana": "Liv",
+  "giacomo": "Brome",
+  "mela": "Meloco",
+  "atticus": "Erio",
+  "ortega": "Ortiga",
+  "eri": "Nèflie",
 
   "maxie": "Max",
   "archie": "Arthur",
@@ -150,6 +155,7 @@
   "lusamine": "Elsa-Mina",
   "guzma": "Guzma",
   "rose": "Shehroz",
+  "cassiopeia": "Pania",
 
   "blue_red_double": "Blue & Red",
   "red_blue_double": "Red & Blue",
@@ -160,5 +166,18 @@
   "alder_iris_double": "Goyah & Iris",
   "iris_alder_double": "Iris & Goyah",
   "marnie_piers_double": "Rosemary & Peterson",
-  "piers_marnie_double": "Peterson & Rosemary"
+  "piers_marnie_double": "Peterson & Rosemary",
+
+  "buck": "Cornil",
+  "cheryl": "Sara",
+  "marley": "Viviane",
+  "mira": "Maïté",
+  "riley": "Armand",
+  "victor": "Atrée",
+  "victoria": "Électre",
+  "vivi": "Andromaque",
+  "vicky": "Clytemnestre",
+  "vito": "Adalbert",
+  "bug_type_superfan": "Fan d’entomologie",
+  "expert_pokemon_breeder": "Éleveuse Experte"
 }

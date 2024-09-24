@@ -3,8 +3,8 @@
   "speaker": "Gentleman",
   "intro_dialogue": "Hello there! Have I got a deal just for YOU!",
   "title": "The Pokémon Salesman",
-  "description": "\"This {{purchasePokemon}} is extremely unique and carries an ability not normally found in its species! I'll let you have this swell {{purchasePokemon}} for just {{price, money}}!\"\n\n\"What do you say?\"",
-  "description_shiny": "\"This {{purchasePokemon}} is extremely unique and has a pigment not normally found in its species! I'll let you have this swell {{purchasePokemon}} for just {{price, money}}!\"\n\n\"What do you say?\"",
+  "description": "\"This {{purchasePokemon}} is extremely unique and @[TOOLTIP_TITLE]{carries an ability not normally found in its species}! I'll let you have this swell {{purchasePokemon}} for just {{price, money}}!\"\n\n\"What do you say?\"",
+  "description_shiny": "\"This {{purchasePokemon}} is extremely unique and @[TOOLTIP_TITLE]{has a pigment not normally found in its species}! I'll let you have this swell {{purchasePokemon}} for just {{price, money}}!\"\n\n\"What do you say?\"",
   "query": "What will you do?",
   "option": {
     "1": {

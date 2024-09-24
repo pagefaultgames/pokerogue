@@ -737,12 +737,16 @@
     "encounter": {
       "1": "你的对战生涯到此为止了。",
       "2": "你是一名训练师吧\n你没有干涉我们工作的权力！",
-      "3": "我是马洛科蒙集团的，要买马洛科蒙人寿保险吗。"
+      "3": "我是马洛科蒙集团的，要买马洛科蒙人寿保险吗。",
+      "4": "I found you! In that case, time for a Pokémon battle!",
+      "5": "An earful from Ms. Oleana is way worse than anything you can do!"
     },
     "victory": {
       "1": "除了礼貌地撤退我似乎别无选择…",
       "2": "没法留住我的零花钱了，我又要财政赤字了…",
-      "3": "没人能比马洛科蒙集团的我们工作更卷！"
+      "3": "没人能比马洛科蒙集团的我们工作更卷！",
+      "4": "I even switched up my Pokémon...",
+      "5": "Battles didn't work... Only thing to do now is run!"
     }
   },
   "oleana": {
@@ -755,6 +759,73 @@
       "1": "*叹气*我赢不了。\n奥利薇，你真是个没用的女人",
       "2": "呃啊！不可饶恕...我在想什么。\n走到这里的训练师果然不会轻易屈服！",
       "3": "*叹气*奥利薇累累了……"
+    }
+  },
+  "star_grunt": {
+    "encounter": {
+      "1": "We're Team Star, kid. We burn so bright, it hurts to look at us!",
+      "2": "We'll come at you full force - Hasta la vistaaar! ★",
+      "3": "If you don't clear out real quick-like, I'll hafta come at you in self-defense. You get me?",
+      "4": "Sorry, but if you don't turn yourself around here, amigo, we'll have to send you packing!",
+      "4_female": "Sorry, but if you don't turn yourself around here, amiga, we'll have to send you packing!",
+      "5": "Oh great. Here comes another rando to ruin my day."
+    },
+    "victory": {
+      "1": "How come I'M the one seeing stars?!",
+      "2": "You're scary, kid. If you joined Team Star, you'd be looking down from the top in no time!",
+      "3": "I defended myself all right... But it wasn't enough!",
+      "4": "H-hasta la vistar... ★",
+      "5": "I didn't think grunt work for Team Star newbies would be this much of a chore..."
+    }
+  },
+  "giacomo": {
+    "encounter": {
+      "1": "You don't really think things through, do ya? Declarin' war on Team Star is a real bad move.",
+      "2": "I'll play you a sick requiem as you crash and burn. Let's get this party staaarteeed!"
+    },
+    "victory": {
+      "1": "Guess that's that...",
+      "2": "You turned my melody into a threnody..."
+    }
+  },
+  "mela": {
+    "encounter": {
+      "1": "So you're the dope who picked a fight with Team Star... Prepare to get messed up.",
+      "2": "All riiight, BRING IT! I'll blow everythin' sky high!"
+    },
+    "victory": {
+      "1": "Ugh. Is this really how it's gonna end? What a hassle...",
+      "2": "I burned through everythin' I had...and now I've sputtered out."
+    }
+  },
+  "atticus": {
+    "encounter": {
+      "1": "You have some nerve baring your fangs at Team Star. Come, then, villainous wretch!",
+      "2": "Be warned—I shall spare thee no mercy! En garde!"
+    },
+    "victory": {
+      "1": "Forgive me, my friends...",
+      "2": "You have utterly bested me. But thy victory stir'd no bitterness within me—such was its brilliance."
+    }
+  },
+  "ortega": {
+    "encounter": {
+      "1": "I promise I'll play nice, so don't blame me when this battle sends you blubbering back home!",
+      "2": "I'll wipe that smug look off your face for sure! You're going down!"
+    },
+    "victory": {
+      "1": "Ugh! How could I LOSE! What the HECK!",
+      "2": "Arrrrgggh! That strength of yours is SO. NOT. FAIR."
+    }
+  },
+  "eri": {
+    "encounter": {
+      "1": "Doesn't matter who you are. I'll bury anyone who tries to take down Team Star!",
+      "2": "I give as good as I get—that's a promise! We'll see who's left standing in the end!"
+    },
+    "victory": {
+      "1": "I'm so sorry, everyone...",
+      "2": "I gave it my all, but it wasn't enough—I wasn't enough..."
     }
   },
   "rocket_boss_giovanni_1": {
@@ -944,6 +1015,28 @@
       "1": "你完全不理解！"
     }
   },
+  "star_boss_penny_1": {
+    "encounter": {
+      "1": "I'm the big boss of Team Star. The name's Cassiopeia. \n$Now, bow down before the overwhelming might of Team Star's founder!"
+    },
+    "victory": {
+      "1": "... ... .."
+    },
+    "defeat": {
+      "1": "Heh..."
+    }
+  },
+  "star_boss_penny_2": {
+    "encounter": {
+      "1": "I won't hold back in this battle! I'll stay true to Team Star's code! \n$My Veevee power will crush you into stardust!"
+    },
+    "victory": {
+      "1": "...It's all over now."
+    },
+    "defeat": {
+      "1": "I can't fault you on your battle skills at all... Considering how the bosses fell at your hands."
+    }
+  },
   "macro_boss_rose_2": {
     "encounter": {
       "1": "我致力于解决伽勒尔的能源问题\n——当然也是全世界的能源问题。\n$我的经验与成果，造就了马洛科蒙集团，证明了我的正确与成功！\n$就算输了，我也不会改变主意的……"
@@ -953,6 +1046,116 @@
     },
     "defeat": {
       "1": "我承认我做的事情非常渗人，我也不指望你能理解。\n$但我必须为伽勒尔地区提供无限的能源，确保永久的繁荣。"
+    }
+  },
+  "stat_trainer_buck": {
+    "encounter": {
+      "1": "我现在告诉你！我强的不可思议，做好准备！",
+      "2": "我能感受到宝可梦在球中激动地颤抖！"
+    },
+    "victory": {
+      "1": "呵哈哈！\n真火热啊，你！",
+      "2": "呵哈哈！\n真火热啊，你！"
+    },
+    "defeat": {
+      "1": "哇哦！这下没气儿了吧，我猜。",
+      "2": "哇哦！这下没气儿了吧，我猜。"
+    }
+  },
+  "stat_trainer_cheryl": {
+    "encounter": {
+      "1": "我的宝可梦渴望着战斗。",
+      "2": "我应该警告你，我的神奇宝贝可能有点活泼。"
+    },
+    "victory": {
+      "1": "在进攻和防守之间找到平衡……这并不容易。",
+      "2": "在进攻和防守之间找到平衡……这并不容易。"
+    },
+    "defeat": {
+      "1": "你的宝可梦需要治疗吗？",
+      "2": "你的宝可梦需要治疗吗？"
+    }
+  },
+  "stat_trainer_marley": {
+    "encounter": {
+      "1": "……好的。\n我会尽力的。",
+      "2": "……好的。\n我不会输的。"
+    },
+    "victory": {
+      "1": "……噢",
+      "2": "……噢"
+    },
+    "defeat": {
+      "1": "……再见。",
+      "2": "……再见。"
+    }
+  },
+  "stat_trainer_mira": {
+    "encounter": {
+      "1": "你会被麦儿吓到的哦！",
+      "2": "麦儿不会再输了！"
+    },
+    "victory": {
+      "1": "麦儿在想……她的生涯还能不能走远。",
+      "2": "麦儿在想……她的生涯还能不能走远。"
+    },
+    "defeat": {
+      "1": "麦儿就知道自己会赢！",
+      "2": "麦儿就知道自己会赢！"
+    }
+  },
+  "stat_trainer_riley": {
+    "encounter": {
+      "1": "战斗是我们打招呼的方式！",
+      "2": "我们会尽一切努力来打败你的宝可梦。"
+    },
+    "victory": {
+      "1": "有时我们会战斗，有时我们会联手...$训练师之间能交流真好。",
+      "2": "有时我们会战斗，有时我们会联手...$训练师之间能交流真好。"
+    },
+    "defeat": {
+      "1": "你表现的相当出色\n祝你下次好运。",
+      "2": "你表现的相当出色\n祝你下次好运。"
+    }
+  },
+  "winstrates_victor": {
+    "encounter": {
+      "1": "就是这股势头！我看好你！"
+    },
+    "victory": {
+      "1": "啊哈！你比我想象的还要强！"
+    }
+  },
+  "winstrates_victoria": {
+    "encounter": {
+      "1": "天哪！这么年轻？$不过，能打败我的丈夫，你至少称得上是训练师。$现在轮到我上场了！"
+    },
+    "victory": {
+      "1": "呃啊！你这得多强啊！"
+    }
+  },
+  "winstrates_vivi": {
+    "encounter": {
+      "1": "你比妈妈还厉害？$但是，我也很厉害哦！\n真的！真的哦！"
+    },
+    "victory": {
+      "1": "啊？我真的输了吗？\n呜呜呜……奶奶！"
+    }
+  },
+  "winstrates_vicky": {
+    "encounter": {
+      "1": "你怎么敢让我的宝贝孙女哭！$看来我得给你一个教训。\n准备好吃点苦头吧！"
+    },
+    "victory": {
+      "1": "呜啊！这么强！\n我的孙女没在骗人。"
+    }
+  },
+  "winstrates_vito": {
+    "encounter": {
+      "1": "我和我的每位家人都一起训练！$我不会输给任何人了！"
+    },
+    "victory": {
+      "1": "我比家里的每个人都优秀。\n我从来没有输过……"
     }
   },
   "brock": {

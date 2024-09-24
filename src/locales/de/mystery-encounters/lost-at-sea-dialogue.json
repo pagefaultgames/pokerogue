@@ -1,0 +1,28 @@
+{
+  "intro": "Du warst auf dem Meer umhergeirrt und effektiv nirgendwohin gekommen.",
+  "title": "Verloren auf See",
+  "description": "Die See ist in diesem Gebiet stürmisch und du hast kaum noch Energie. Das ist schlecht. Gibt es einen Ausweg aus der Situation?",
+  "query": "Was wirst du tun?",
+  "option": {
+    "1": {
+      "label": "{{option1PrimaryName}} kann helfen",
+      "label_disabled": "Kein {{option1RequiredMove}}",
+      "tooltip":  "(+) {{option1PrimaryName}} rettet dich\n(+) {{option1PrimaryName}} erhält etwas EP",
+      "tooltip_disabled": "Du hast kein Pokémon, das {{option1RequiredMove}} erlernen kann",
+      "selected": "{{option1PrimaryName}} schwimmt voraus und führt dich zurück auf den richtigen Weg.${{option1PrimaryName}} scheint auch stärker geworden zu sein in dieser Zeit der Not!"
+    },
+    "2": {
+      "label": "{{option2PrimaryName}} kann helfen",
+      "label_disabled":  "Kein {{option2RequiredMove}}",
+      "tooltip":  "(+) {{option2PrimaryName}} rettet dich\n(+) {{option2PrimaryName}} erhält etwas EP",
+      "tooltip_disabled":  "Du hast kein Pokémon, das {{option2RequiredMove}} erlernen kann",
+      "selected": "{{option2PrimaryName}} fliegt vor deinem Boot und führt dich zurück auf den richtigen Weg.${{option2PrimaryName}} scheint auch stärker geworden zu sein in dieser Zeit der Not!"
+    },
+    "3": {
+      "label": "Umherirren",
+      "tooltip": "(-) Jedes deiner Pokémon verliert {{damagePercentage}}% seiner maximalen KP",
+      "selected": "Du treibst im Boot umher, steuerst ohne Richtung, bis du endlich ein Wahrzeichen siehst, das du wiedererkennst.$Du und deine Pokémon sind erschöpft von dem ganzen Vorfall."
+    }
+  },
+  "outro": "Du bist wieder auf dem richtigen Weg."
+}

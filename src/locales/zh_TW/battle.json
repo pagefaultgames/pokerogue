@@ -21,6 +21,10 @@
   "moneyWon": "你贏得了\n₽{{moneyAmount}}！",
   "moneyPickedUp": "撿到了₽{{moneyAmount}}！",
   "pokemonCaught": "{{pokemonName}}被抓住了！",
+  "pokemonObtained": "You got {{pokemonName}}!",
+  "pokemonBrokeFree": "Oh no!\nThe Pokémon broke free!",
+  "pokemonFled": "The wild {{pokemonName}} fled!",
+  "playerFled": "You fled from the {{pokemonName}}!",
   "addedAsAStarter": "增加了{{pokemonName}}作爲\n一個新的基礎寶可夢！",
   "partyFull": "你的隊伍已滿員。是否放生其他寶可夢\n爲{{pokemonName}}騰出空間？",
   "pokemon": "寶可夢",
@@ -56,6 +60,7 @@
   "noPokeballTrainer": "你不能捕捉其他訓練家的寶可夢！",
   "noPokeballMulti": "只能在剩下一只寶可夢時才能扔出精靈球！",
   "noPokeballStrong": "目標寶可夢太強了，無法捕捉！\n你需要先削弱它！",
+  "noPokeballMysteryEncounter": "You aren't able to\ncatch this Pokémon!",
   "noEscapeForce": "一股無形的力量阻止你逃跑。",
   "noEscapeTrainer": "你不能從與訓練家的戰鬥中逃跑！",
   "noEscapePokemon": "{{pokemonName}}的{{moveName}}\n阻止了你{{escapeVerb}}！",
@@ -94,5 +99,6 @@
   "retryBattle": "你要從對戰開始時重試麽？",
   "unlockedSomething": "{{unlockedThing}}\n已解鎖。",
   "congratulations": "恭喜！",
-  "beatModeFirstTime": "{{speciesName}}首次擊敗了{{gameMode}}！\n你獲得了{{newModifier}}！"
+  "beatModeFirstTime": "{{speciesName}}首次擊敗了{{gameMode}}！\n你獲得了{{newModifier}}！",
+  "mysteryEncounterAppeared": "What's this?"
 }
