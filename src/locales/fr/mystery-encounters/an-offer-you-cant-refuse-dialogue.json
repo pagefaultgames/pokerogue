@@ -1,0 +1,26 @@
+{
+  "intro": "Un jeune garçon aux airs très bougeois vous arrête.",
+  "speaker": "Richard",
+  "intro_dialogue": "Bonchour-haann !$Je ne puis carrément pas ignorer que votre\n{{strongestPokemon}} m’a l’air fa-bu-leux-han !$J’ai toujours désiré posséder un tel Pokémon !$Je peux vous payer grassement,\nainsi que vous donner petite babiole-han !",
+  "title": "L’affaire du siècle",
+  "description": "Un fils à papa vous offre un @[TOOLTIP_TITLE]{Charme Chroma} et {{price, money}} en échange de votre {{strongestPokemon}} !\n\nÇa semble être une bonne affaire, mais pourrez vous supporter de priver votre équipe d’un tel atout ?",
+  "query": "Que voulez-vous faire ?",
+  "option": {
+    "1": {
+      "label": "Accepter l’offre",
+      "tooltip": "(-) Vous perdez {{strongestPokemon}}\n(+) Gain d’un @[TOOLTIP_TITLE]{Charme Chroma}\n(+) Gain de {{price, money}}",
+      "selected": "Fa-bu-leux-han !@d{32} Par ici, {{strongestPokemon}} !$Viens que je te montre fièrement au club de yacht !$Ils vont trooop avoir le seum-haann !"
+    },
+    "2": {
+      "label": "Le racketter",
+      "tooltip": "(+) {{option2PrimaryName}} utilise {{moveOrAbility}}\n(+) Gain de {{price, money}}",
+      "tooltip_disabled": "Votre Pokémon doit connaitre certaines capacités ou talents pour choisir cette option",
+      "selected": "Oh les aïeux-haann ! {{liepardName}}, on se fait voler !$Attends que je t’envoie mes avocats !"
+    },
+    "3": {
+      "label": "Partir",
+      "tooltip": "(-) Aucune récompense",
+      "selected": "Quelle journée pourrie…$Viens {{liepardName}}.\nOn retourne au club de yacht…"
+    }
+  }
+}

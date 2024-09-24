@@ -1,0 +1,25 @@
+{
+  "intro": "Alors que vous vous aventurez dans un passage étroit, une silhouette imposante bloque le passage.$En vous approchant, vous apercevez un {{snorlaxName}}\nendormi paisiblement.$Vous regardez autour de vous, mais n’apercevez aucun chemin alternatif.",
+  "title": "{{snorlaxName}} au Bois dormant",
+  "description": "Vous pourriez soit tenter de le faire bouger en l’attaquant, soit attendre son réveil.\nMais impossible de savoir combien de temps cette dernière option prendrait…",
+  "query": "Que voulez-vous faire ?",
+  "option": {
+    "1": {
+      "label": "L’affronter",
+      "tooltip": "(-) Affronter le {{snorlaxName}} endormi\n(+) Récompense spéciale",
+      "selected": "Vous approchez\nle Pokémon sans frémir."
+    },
+    "2": {
+      "label": "Attendre qu’il bouge",
+      "tooltip": "(-) Attendre longtemps\n(+) Équipe soignée",
+      "selected": ".@d{32}.@d{32}.@d{32}$Vous attendez un long moment et les baillements de {{snorlaxName}} endorment votre équipe…",
+      "rest_result": "À votre réveil le {{snorlaxName}} a disparu,\net toute votre équipe est soignée !"
+    },
+    "3": {
+      "label": "Voler son objet",
+      "tooltip": "(+) {{option3PrimaryName}} utilise {{option3PrimaryMove}}\n(+) Récompense spéciale",
+      "disabled_tooltip": "Votre Pokémon doit connaitre certaines capacités pour choisir cette option",
+      "selected": "Votre {{option3PrimaryName}} utilise\n{{option3PrimaryMove}} !$@s{item_fanfare}Vole les Restes du {{snorlaxName}} encore endormi et ressentez de la culpabilité pour ce méfait !"
+    }
+  }
+}

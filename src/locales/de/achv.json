@@ -273,5 +273,9 @@
   "INVERSE_BATTLE": {
     "name": "Spieglein, Spieglein an der Wand",
     "description": "Schließe die 'Umkehrkampf' Herausforderung ab"
+  },
+  "BREEDERS_IN_SPACE": {
+    "name": "Züchter im Weltall!",
+    "description": "Besiege die Pokémon-Züchter-Expertin im Stratosphären Biome."
   }
 }

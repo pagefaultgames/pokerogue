@@ -1,0 +1,23 @@
+{
+  "intro": "Vous tombez sur…@d{32} un coffre ?",
+  "title": "Un étrange coffre",
+  "description": "Un mangifique coffre orné est posé en travers du chemin.\nIl doit forcément contenir quelque chose… pas vrai ?",
+  "query": "Voulez-vous ouvrir le coffre ?",
+  "option": {
+    "1": {
+      "label": "Ouvrir",
+      "tooltip": "@[SUMMARY_BLUE]{({{trapPercent}}%) Un truc terrible}\n@[SUMMARY_GREEN]{({{commonPercent}}%) Petites récompenses }\n@[SUMMARY_GREEN]{({{ultraPercent}}%) Bonnes récompenses}\n@[SUMMARY_GREEN]{({{roguePercent}}%) Super récompenses}\n@[SUMMARY_GREEN]{({{masterPercent}}%) Incroyables récompenses}",
+      "selected": "Vous décidez d’ouvrir le coffre et y trouvez…",
+      "normal": "De simples outils et objets banaux.",
+      "good": "Quelques bons outils et objets.",
+      "great": "Un outil et un objet plutôt sympas !",
+      "amazing": "Wow ! Quel objet incroyable !",
+      "bad": "Oh non !@d{32}\nCe coffre s’avère être possédé par un {{gimmighoulName}} !$Votre {{pokeName}} s’interpose\nmais est mis K.O. !"
+    },
+    "2": {
+      "label": "Trop risqué, partir",
+      "tooltip": "(-) Aucun récompense",
+      "selected": "Vous tracez votre chemin,\navec un léger sentiment de regret."
+    }
+  }
+}

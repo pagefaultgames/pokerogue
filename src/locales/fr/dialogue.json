@@ -597,6 +597,116 @@
       "1": "Tu es redoutable.\nPas étonnant que les boss de la Team aient perdu contre toi."
     }
   },
+  "stat_trainer_buck": {
+    "encounter": {
+      "1": "Je te préviens… Je suis sacrément coriace ! Fais comme si tu ne t’y attendais pas !",
+      "2": "Je sens mes Pokémon gigoter dans leurs Poké Balls !"
+    },
+    "victory": {
+      "1": "Hé, hé, hé !\nTu mets le feu !",
+      "2": "Hé, hé, hé !\nTu mets le feu !"
+    },
+    "defeat": {
+      "1": "Oh ?\nEn panne de carburant je suppose ?",
+      "2": "Oh ?\nEn panne de carburant je suppose ?"
+    }
+  },
+  "stat_trainer_cheryl": {
+    "encounter": {
+      "1": "Mes Pokémon meurent d’envie de se battre.",
+      "2": "Je dois te prévenir que mes Pokémon peuvent se montrer un peu exubérants."
+    },
+    "victory": {
+      "1": "Trouver le bon équilibre en attaque et défense…\nCe n’est pas la chose la plus aisée.",
+      "2": "Trouver le bon équilibre en attaque et défense…\nCe n’est pas la chose la plus aisée."
+    },
+    "defeat": {
+      "1": "T’as besoin que je soigne ton équipe ?",
+      "2": "T’as besoin que je soigne ton équipe ?"
+    }
+  },
+  "stat_trainer_marley": {
+    "encounter": {
+      "1": "OK…\nJe ferai de mon mieux.",
+      "2": "OK…\nJe… Je peux le faire… !"
+    },
+    "victory": {
+      "1": "Argh…",
+      "2": "Argh…"
+    },
+    "defeat": {
+      "1": "Au revoir…",
+      "2": "Au revoir…"
+    }
+  },
+  "stat_trainer_mira": {
+    "encounter": {
+      "1": "Maïté va t’éblouir !",
+      "2": "Je vais te prouver que je ne me mélange plus les pédales !"
+    },
+    "victory": {
+      "1": "Hum… Je me demande si je suis à la hauteur de ici…",
+      "2": "Hum… Je me demande si je suis à la hauteur de ici…"
+    },
+    "defeat": {
+      "1": "Maïté savait qu’elle t’éblouirait !",
+      "2": "Maïté savait qu’elle t’éblouirait !"
+    }
+  },
+  "stat_trainer_riley": {
+    "encounter": {
+      "1": "Le combat, c’est une façon de se saluer pour nous !",
+      "2": "On va mettre le paquet pour venir à bout de ton équipe."
+    },
+    "victory": {
+      "1": "Parfois, on fait équipe…\nEt parfois, on s’affronte…$La vie des Dresseurs est pleine de rebondissements.",
+      "2": "Parfois, on fait équipe…\nEt parfois, on s’affronte…$La vie des Dresseurs est pleine de rebondissements.."
+    },
+    "defeat": {
+      "1": "Tu t’en tire bien.\nTu feras mieux la prochaine fois.",
+      "2": "Tu t’en tire bien.\nTu feras mieux la prochaine fois."
+    }
+  },
+  "winstrates_victor": {
+    "encounter": {
+      "1": "Bon esprit !\nJ’aime ça !"
+    },
+    "victory": {
+      "1": "Mince !\nTu as un meilleur niveau que je ne le pensais !"
+    }
+  },
+  "winstrates_victoria": {
+    "encounter": {
+      "1": "Oh, ciel !\nCe que tu es jeune !$Mais si tu as battu mon mari,\nc’est que tu sais t’y prendre.$À nous deux, maintenant !"
+    },
+    "victory": {
+      "1": "Ciel ! Cette force !\nJ’en suis toute retournée !"
+    }
+  },
+  "winstrates_vivi": {
+    "encounter": {
+      "1": "Tu as un meilleur niveau que maman ?\nWaouh!$Mais moi aussi, je suis forte !\nVraiment ! Honnêtement !"
+    },
+    "victory": {
+      "1": "Quoi ?\nNe me dis pas que j’ai perdu !"
+    }
+  },
+  "winstrates_vicky": {
+    "encounter": {
+      "1": "Comment oses-tu faire pleurer\nmon adorable petite-fille !$Tu vas me le payer !\nTes Pokémon vont mordre la poussière !"
+    },
+    "victory": {
+      "1": "Ouh! Quelle puissance…\nMa petite-fille avait raison…"
+    }
+  },
+  "winstrates_vito": {
+    "encounter": {
+      "1": "On s’entraine tous ensemble,\navec les membres de ma famille !$Je ne perds contre personne !"
+    },
+    "victory": {
+      "1": "J’ai toujours été le meilleur de la famille.\nJe n’avais encore jamais perdu…"
+    }
+  },
   "brock": {
     "encounter": {
       "1": "Mon expertise des types Roche va te mettre au sol ! En garde !",

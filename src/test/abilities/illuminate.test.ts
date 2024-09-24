@@ -8,7 +8,6 @@ import { afterEach, beforeAll, beforeEach, describe, it, expect } from "vitest";
 describe("Abilities - Illuminate", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
-  const TIMEOUT = 20 * 1000;
 
   beforeAll(() => {
     phaserGame = new Phaser.Game({
@@ -43,7 +42,7 @@ describe("Abilities - Illuminate", () => {
     await game.toNextTurn();
 
     expect(player.getStatStage(Stat.ACC)).toBe(0);
-  }, TIMEOUT);
+  });
 
   it("should guarantee double battle with any one LURE", async () => {
     game.override
@@ -55,5 +54,5 @@ describe("Abilities - Illuminate", () => {
     await game.classicMode.startBattle();
 
     expect(game.scene.getEnemyField().length).toBe(2);
-  }, TIMEOUT);
+  });
 });
