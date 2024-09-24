@@ -1800,7 +1800,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * @returns list of egg moves
    */
   getEggMoves() : Moves[] {
-    return speciesEggMoves[this.species.speciesId];
+    return speciesEggMoves[this.getSpeciesForm().getRootSpeciesId(true)];
   }
 
   setMove(moveIndex: integer, moveId: Moves): void {
