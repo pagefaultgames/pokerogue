@@ -764,8 +764,6 @@ export class PostDefendHpGatedStatStageChangeAbAttr extends PostDefendAbAttr {
   }
 }
 
-
-
 export class PostDefendApplyArenaTrapTagAbAttr extends PostDefendAbAttr {
   private condition: PokemonDefendCondition;
   private tagType: ArenaTagType;
