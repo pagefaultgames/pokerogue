@@ -11,7 +11,6 @@ import { afterEach, beforeAll, beforeEach, describe, it, expect, vi } from "vite
 describe("Abilities - No Guard", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
-  const TIMEOUT = 20 * 1000;
 
   beforeAll(() => {
     phaserGame = new Phaser.Game({
@@ -52,7 +51,7 @@ describe("Abilities - No Guard", () => {
     await game.phaseInterceptor.to(MoveEndPhase);
 
     expect(moveEffectPhase.hitCheck).toHaveReturnedWith(true);
-  }, TIMEOUT);
+  });
 
   it("should guarantee double battle with any one LURE", async () => {
     game.override
@@ -64,5 +63,5 @@ describe("Abilities - No Guard", () => {
     await game.classicMode.startBattle();
 
     expect(game.scene.getEnemyField().length).toBe(2);
-  }, TIMEOUT);
+  });
 });
