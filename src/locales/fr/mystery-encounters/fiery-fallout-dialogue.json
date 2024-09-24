@@ -1,7 +1,7 @@
 {
   "intro": "Un vent incandescent de fumées et de cendres\nvous fonce dessus !",
   "title": "Fait chaud là, non ?",
-  "description": "La visiblité est quasi nulle à cause des cendres et les braises tourbillonnantes. Il doit forcément y avoir une quelconque source responsable de ces conditions. Mais que pourrait causer un phénomène d’une telle ampleur ?",
+  "description": "La visibilité est quasi nulle à cause des cendres et des braises tourbillonnantes. Il doit forcément y avoir une quelconque source responsable de ces conditions. Mais que pourrait causer un phénomène d’une telle ampleur ?",
   "query": "Que voulez-vous faire ?",
   "option": {
     "1": {
