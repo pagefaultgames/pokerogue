@@ -16,6 +16,7 @@ import i18next from "i18next";
 import { PokemonPhase } from "./pokemon-phase";
 import { VictoryPhase } from "./victory-phase";
 import { SubstituteTag } from "#app/data/battler-tags";
+import { PreviewMode } from "#app/ui/confirmPreview-ui-handler";
 
 export class AttemptCapturePhase extends PokemonPhase {
   private pokeballType: PokeballType;
@@ -253,7 +254,7 @@ export class AttemptCapturePhase extends PokemonPhase {
           const promptRelease = () => {
             this.scene.ui.showText(i18next.t("battle:partyFull", { pokemonName: pokemon.getNameToRender() }), null, () => {
               this.scene.pokemonInfoContainer.makeRoomForConfirmUi(1, true);
-              this.scene.ui.setMode(Mode.CONFIRM, () => {
+              this.scene.ui.setMode(Mode.CONFIRM_PREVIEW, () => {
                 const newPokemon = this.scene.addPlayerPokemon(pokemon.species, pokemon.level, pokemon.abilityIndex, pokemon.formIndex, pokemon.gender, pokemon.shiny, pokemon.variant, pokemon.ivs, pokemon.nature, pokemon);
                 this.scene.ui.setMode(Mode.SUMMARY, newPokemon, 0, SummaryUiMode.DEFAULT, () => {
                   this.scene.ui.setMode(Mode.MESSAGE).then(() => {
@@ -275,7 +276,7 @@ export class AttemptCapturePhase extends PokemonPhase {
                   removePokemon();
                   end();
                 });
-              }, "fullParty");
+              }, PreviewMode.CATCH_SUMMARY);
             });
           };
           promptRelease();
