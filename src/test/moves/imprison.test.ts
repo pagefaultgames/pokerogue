@@ -55,7 +55,6 @@ describe("Moves - Imprison", () => {
   });
 
   it("Imprison applies to Pokemon switched into Battle", async () => {
-    game.override.battleType("single");
     await game.classicMode.startBattle([Species.REGIELEKI, Species.BULBASAUR]);
 
     const playerPokemon1 = game.scene.getPlayerPokemon();
@@ -79,14 +78,13 @@ describe("Moves - Imprison", () => {
   });
 
   it("The effects of Imprison only end when the source is no longer active", async () => {
-    game.override.battleType("single");
     game.override.moveset([Moves.SPLASH, Moves.IMPRISON]);
     await game.classicMode.startBattle([Species.REGIELEKI, Species.BULBASAUR]);
 
     const playerPokemon = game.scene.getPlayerPokemon();
     const enemyPokemon = game.scene.getEnemyPokemon();
     game.move.select(Moves.IMPRISON);
-    await game.forceEnemyMove(Moves.IMPRISON);
+    await game.forceEnemyMove(Moves.GROWL);
     await game.toNextTurn();
     expect(game.scene.arena.getTag(ArenaTagType.IMPRISON)).toBeDefined();
     expect(enemyPokemon!.getTag(BattlerTagType.IMPRISON)).toBeDefined();
@@ -94,6 +92,7 @@ describe("Moves - Imprison", () => {
     await game.forceEnemyMove(Moves.SPLASH);
     await game.toNextTurn();
     expect(playerPokemon?.isActive(true)).toBeFalsy();
+    expect(game.scene.arena.getTag(ArenaTagType.IMPRISON)).toBeUndefined();
     expect(enemyPokemon!.getTag(BattlerTagType.IMPRISON)).toBeUndefined();
   });
 });

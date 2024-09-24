@@ -4,8 +4,9 @@ import { Abilities } from "#enums/abilities";
 import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import { MoveResult } from "#app/field/pokemon";
 import { BattlerTagType } from "#app/enums/battler-tag-type";
+import { ArenaTagType } from "#app/enums/arena-tag-type";
+import { BattlerIndex } from "#app/battle";
 
 describe("Moves - Aroma Veil", () => {
   let phaserGame: Phaser.Game;
@@ -23,32 +24,39 @@ describe("Moves - Aroma Veil", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .battleType("single")
+      .battleType("double")
       .enemyAbility(Abilities.BALL_FETCH)
-      .enemyMoveset([Moves.TAUNT, Moves.SPLASH])
+      .enemyMoveset([Moves.HEAL_BLOCK, Moves.IMPRISON, Moves.SPLASH])
       .enemySpecies(Species.SHUCKLE)
+      .ability(Abilities.AROMA_VEIL)
       .moveset([Moves.GROWL]);
   });
 
-  it("Pokemon should not be able to use the same move consecutively", async () => {
-    await game.classicMode.startBattle([Species.REGIELEKI]);
+  it("Aroma Veil protects the Pokemon's side against most Move Restriction Battler Tags", async () => {
+    await game.classicMode.startBattle([Species.REGIELEKI, Species.BULBASAUR]);
 
-    const playerPokemon = game.scene.getPlayerPokemon();
+    const playerPokemon = game.scene.getParty()!;
 
-    // First turn, Player Pokemon fails usin
     game.move.select(Moves.GROWL);
-    await game.forceEnemyMove(Moves.TAUNT);
+    game.move.select(Moves.GROWL);
+    await game.forceEnemyMove(Moves.HEAL_BLOCK);
     await game.toNextTurn();
-    const move1 = playerPokemon?.getLastXMoves(1)[0]!;
-    expect(move1.move).toBe(Moves.GROWL);
-    expect(move1.result).toBe(MoveResult.SUCCESS);
-    expect(playerPokemon?.getTag(BattlerTagType.TAUNT)).toBeDefined();
+    expect(playerPokemon[0].getTag(BattlerTagType.HEAL_BLOCK)).toBeUndefined();
+    expect(playerPokemon[1].getTag(BattlerTagType.HEAL_BLOCK)).toBeUndefined();
+  });
 
-    // Second turn, Taunt forces Struggle to occur
+  it("Aroma Veil does not protect against Imprison", async () => {
+    await game.classicMode.startBattle([Species.REGIELEKI, Species.BULBASAUR]);
+
+    const playerPokemon = game.scene.getParty()!;
+
     game.move.select(Moves.GROWL);
+    game.move.select(Moves.GROWL);
+    await game.forceEnemyMove(Moves.IMPRISON, BattlerIndex.PLAYER);
     await game.forceEnemyMove(Moves.SPLASH);
     await game.toNextTurn();
-    const move2 = playerPokemon?.getLastXMoves(1)[0]!;
-    expect(move2.move).toBe(Moves.STRUGGLE);
+    expect(game.scene.arena.getTag(ArenaTagType.IMPRISON)).toBeDefined();
+    expect(playerPokemon[0].getTag(BattlerTagType.IMPRISON)).toBeDefined();
+    expect(playerPokemon[1].getTag(BattlerTagType.IMPRISON)).toBeDefined();
   });
 });
