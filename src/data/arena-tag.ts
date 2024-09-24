@@ -937,7 +937,7 @@ class ImprisonTag extends ArenaTrapTag {
    * @param scene medium to retrieve the involved Pokemon
    * @returns list of PlayerPokemon or EnemyPokemon on the field
    */
-  retrieveField(scene: BattleScene): PlayerPokemon[] | EnemyPokemon[] {
+  private retrieveField(scene: BattleScene): PlayerPokemon[] | EnemyPokemon[] {
     if (!this.source.isPlayer()) {
       return scene.getPlayerField();
     }
