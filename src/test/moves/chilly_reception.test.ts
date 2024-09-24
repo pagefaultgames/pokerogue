@@ -6,8 +6,6 @@ import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
-const TIMEOUT = 20 * 1000;
-
 describe("Moves - Chilly Reception", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
@@ -39,7 +37,7 @@ describe("Moves - Chilly Reception", () => {
 
     await game.phaseInterceptor.to("BerryPhase", false);
     expect(game.scene.arena.weather?.weatherType).toBe(WeatherType.SNOW);
-  }, TIMEOUT);
+  });
 
   it("should switch out even if it's snowing", async () => {
     await game.classicMode.startBattle([Species.SLOWKING, Species.MEOWTH]);
@@ -55,7 +53,7 @@ describe("Moves - Chilly Reception", () => {
     await game.phaseInterceptor.to("BerryPhase", false);
     expect(game.scene.arena.weather?.weatherType).toBe(WeatherType.SNOW);
     expect(game.scene.getPlayerField()[0].species.speciesId).toBe(Species.MEOWTH);
-  }, TIMEOUT);
+  });
 
   it("happy case - switch out and weather changes", async () => {
 
@@ -67,5 +65,5 @@ describe("Moves - Chilly Reception", () => {
     await game.phaseInterceptor.to("BerryPhase", false);
     expect(game.scene.arena.weather?.weatherType).toBe(WeatherType.SNOW);
     expect(game.scene.getPlayerField()[0].species.speciesId).toBe(Species.MEOWTH);
-  }, TIMEOUT);
+  });
 });

@@ -1,0 +1,27 @@
+{
+  "intro": "Es ist eine Dame mit vielen Einkaufstüten.",
+  "speaker": "Einkäuferin",
+  "intro_dialogue": "Hallo! Bist du auch wegen der tollen Angebote hier?$Es gibt einen speziellen Gutschein, den du während des Verkaufs einlösen kannst!$Ich habe einen zusätzlichen. Hier, bitte!",
+  "title": "Einkaufszentrum-Verkauf",
+  "description": "Es gibt Angebote in jede Richtung! Es sieht so aus, als ob es 4 Kassen gibt, an denen du den Gutschein gegen verschiedene Artikel eintauschen kannst. Die Möglichkeiten sind endlos!",
+  "query": "Welche Kasse wählst du?",
+  "option": {
+    "1": {
+      "label": "TM-Kasse",
+      "tooltip": "(+) TM Shop"
+    },
+    "2": {
+      "label": "Nährstoff-Kasse",
+      "tooltip": "(+) Nährstoff Shop"
+    },
+    "3": {
+      "label": "Kampf-Item-Kasse",
+      "tooltip": "(+) X-Item Shop"
+    },
+    "4": {
+      "label": "Pokéball-Kasse",
+      "tooltip": "(+) Pokéball Shop"
+    }
+  },
+  "outro": "Was für ein Schnäppchen! Du solltest öfter hier einkaufen."
+}

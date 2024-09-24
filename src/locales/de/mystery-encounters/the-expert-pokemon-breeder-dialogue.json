@@ -1,0 +1,31 @@
+{
+  "intro": "Ein Trainer mit vielen Pokémon-Eiern!",
+  "intro_dialogue": "Hey Trainer!$Es sieht so aus, als ob einige deiner Pokémon sich ein wenig niedergeschlagen fühlen.$Warum kämpfst du nicht gegen mich, um sie aufzumuntern?",
+  "title": "Triff die Pokémon-Züchter-Expertin!",
+  "description":  "Du wurdest zu einem Kampf herausgefordert, bei dem du nur @[TOOLTIP_TITLE]{ein einziges Pokémon verwenden darfst}. Es könnte schwierig werden, aber es würde sicherlich die Bindung vertiefen, die du mit dem Pokémon hast, das du wählst!$Wenn du gewinnst, wird die Züchterin dir einige @[TOOLTIP_TITLE]{Pokémon-Eier} geben!",
+  "query": "Wer wird für dich kämpfen?",
+  "cleffa_1_nickname": "Ass-Pii-Rin",
+  "cleffa_2_nickname": "Pi-mal-Daumen",
+  "cleffa_3_nickname": "Pii-cknick",
+  "option": {
+    "1": {
+      "label": "{{pokemon1Name}}",
+      "tooltip_base": "(-) Harter Kampf\n(+) Erhöhe Freundschaft mit {{pokemon1Name}}"
+    },
+    "2": {
+      "label": "{{pokemon2Name}}",
+      "tooltip_base": "(-) Harter Kampf\n(+) Erhöhe Freundschaft mit {{pokemon2Name}}"
+    },
+    "3": {
+      "label": "{{pokemon3Name}}",
+      "tooltip_base": "(-) Harter Kampf\n(+) Erhöhe Freundschaft mit {{pokemon3Name}}"
+    },
+    "selected": "Lass uns beginnen!"
+  },
+  "outro": "Schau wie glücklich dein {{chosenPokemon}} nun ist!$Hier, diese Pokémon-Eier kannst du auch haben.",
+  "outro_failed": "Wie enttäuschend...$Es sieht so aus, als hättest du noch einen langen Weg vor dir, um das Vertrauen deines Pokémon zu gewinnen!",
+  "gained_eggs": "@s{item_fanfare}Du erhählst {{numEggs}}!",
+  "eggs_tooltip": "\n(+) Erhalte {{eggs}}",
+  "numEggs_one": "{{count}} Ei der Stufe {{rarity}}",
+  "numEggs_other": "{{count}} Eier der Stufe {{rarity}}"
+}

@@ -40,7 +40,7 @@
     "description": "dormir",
     "obtain": "¡{{pokemonNameWithAffix}}\nse ha dormido!",
     "obtainSource": "¡{{pokemonNameWithAffix}}\nse ha dormido\npor culpa de {{sourceText}}!",
-    "activation": "¡{{pokemonNameWithAffix}} está/ndormido como un tronco.",
+    "activation": "¡{{pokemonNameWithAffix}} está\ndormido como un tronco.",
     "overlap": "¡{{pokemonNameWithAffix}} ya\nestá dormido!",
     "heal": "¡{{pokemonNameWithAffix}} se despertó!"
   },

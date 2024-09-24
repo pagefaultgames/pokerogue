@@ -1,0 +1,27 @@
+{
+  "intro": "É uma máquina estranha, zumbindo ruidosamente...",
+  "title": "Travessuras de Teletransporte",
+  "description": "A máquina tem uma placa que diz:\n  \"Para usar, insira dinheiro e entre na cápsula.\"\n\nTalvez ela possa te transportar para algum lugar...",
+  "query": "O que você vai fazer?",
+  "option": {
+    "1": {
+      "label": "Colocar Dinheiro",
+      "tooltip": "(-) Pagar {{price, money}}\n(?) Teletransportar para Novo Bioma",
+      "selected": "Você insere algum dinheiro, e a cápsula se abre.\nVocê entra..."
+    },
+    "2": {
+      "label": "Um Pokémon Ajuda",
+      "tooltip": "(-) {{option2PrimaryName}} Ajuda\n(+) {{option2PrimaryName}} ganha EXP\n(?) Teletransportar para Novo Bioma",
+      "disabled_tooltip": "Você precisa de um Pokémon do Tipo Aço ou Elétrico para escolher isso",
+      "selected": "O Tipo de {{option2PrimaryName}} permite que ele contorne a barreira de pagamento da máquina!$A cápsula se abre, e você entra..."
+    },
+    "3": {
+      "label": "Inspecionar a Máquina",
+      "tooltip": "(-) Batalha de Pokémon",
+      "selected": "Você é atraído pelas luzes piscantes\ne pelos sons estranhos vindos da máquina...$Você nem percebe enquanto um Pokémon selvagem\nse aproxima e te embosca!"
+    }
+  },
+  "transport": "A máquina treme violentamente,\nemitindo todo tipo de som estranho!$Logo após começar, ela se silencia mais uma vez.",
+  "attacked": "Você sai em uma área completamente nova, assustando um Pokémon selvagem!$O Pokémon selvagem ataca!",
+  "boss_enraged": "O {{enemyPokemon}} oponente ficou furioso!"
+}
