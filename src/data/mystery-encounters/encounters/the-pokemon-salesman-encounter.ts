@@ -34,7 +34,7 @@ export const ThePokemonSalesmanEncounter: MysteryEncounter =
   MysteryEncounterBuilder.withEncounterType(MysteryEncounterType.THE_POKEMON_SALESMAN)
     .withEncounterTier(MysteryEncounterTier.ULTRA)
     .withSceneWaveRangeRequirement(...CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES)
-    .withSceneRequirement(new MoneyRequirement(undefined, MAX_POKEMON_PRICE_MULTIPLIER)) // Some costs may not be as significant, this is the max you'd pay
+    .withSceneRequirement(new MoneyRequirement(0, MAX_POKEMON_PRICE_MULTIPLIER)) // Some costs may not be as significant, this is the max you'd pay
     .withAutoHideIntroVisuals(false)
     .withIntroSpriteConfigs([
       {
@@ -59,11 +59,12 @@ export const ThePokemonSalesmanEncounter: MysteryEncounter =
       const encounter = scene.currentBattle.mysteryEncounter!;
 
       let species = getPokemonSpecies(getRandomSpeciesByStarterTier([0, 5], undefined, undefined, false, false, false));
-      const tries = 0;
+      let tries = 0;
 
       // Reroll any species that don't have HAs
       while ((isNullOrUndefined(species.abilityHidden) || species.abilityHidden === Abilities.NONE) && tries < 5) {
         species = getPokemonSpecies(getRandomSpeciesByStarterTier([0, 5], undefined, undefined, false, false, false));
+        tries++;
       }
 
       let pokemon: PlayerPokemon;
@@ -71,7 +72,7 @@ export const ThePokemonSalesmanEncounter: MysteryEncounter =
         // If no HA mon found or you roll 1%, give shiny Magikarp
         species = getPokemonSpecies(Species.MAGIKARP);
         const hiddenIndex = species.ability2 ? 2 : 1;
-        pokemon = new PlayerPokemon(scene, species, 5, hiddenIndex, species.formIndex, undefined, true);
+        pokemon = new PlayerPokemon(scene, species, 5, hiddenIndex, species.formIndex, undefined, true, 0);
       } else {
         const hiddenIndex = species.ability2 ? 2 : 1;
         pokemon = new PlayerPokemon(scene, species, 5, hiddenIndex, species.formIndex);
@@ -113,7 +114,7 @@ export const ThePokemonSalesmanEncounter: MysteryEncounter =
       MysteryEncounterOptionBuilder
         .newOptionWithMode(MysteryEncounterOptionMode.DISABLED_OR_DEFAULT)
         .withHasDexProgress(true)
-        .withSceneMoneyRequirement(undefined, MAX_POKEMON_PRICE_MULTIPLIER) // Wave scaling money multiplier of 2
+        .withSceneMoneyRequirement(0, MAX_POKEMON_PRICE_MULTIPLIER) // Wave scaling money multiplier of 2
         .withDialogue({
           buttonLabel: `${namespace}.option.1.label`,
           buttonTooltip: `${namespace}.option.1.tooltip`,
