@@ -54,16 +54,18 @@ export const UncommonBreedEncounter: MysteryEncounter =
       const pokemon = new EnemyPokemon(scene, species, level, TrainerSlot.NONE, true);
 
       // Pokemon will always have one of its egg moves in its moveset
-      const eggMoves: Moves[] = pokemon.getEggMoves();
-      const eggMoveIndex = randSeedInt(4);
-      const randomEggMove: Moves = eggMoves[eggMoveIndex];
-      encounter.misc = {
-        eggMove: randomEggMove
-      };
-      if (pokemon.moveset.length < 4) {
-        pokemon.moveset.push(new PokemonMove(randomEggMove));
-      } else {
-        pokemon.moveset[0] = new PokemonMove(randomEggMove);
+      const eggMoves = pokemon.getEggMoves();
+      if (eggMoves) {
+        const eggMoveIndex = randSeedInt(4);
+        const randomEggMove: Moves = eggMoves[eggMoveIndex];
+        encounter.misc = {
+          eggMove: randomEggMove
+        };
+        if (pokemon.moveset.length < 4) {
+          pokemon.moveset.push(new PokemonMove(randomEggMove));
+        } else {
+          pokemon.moveset[0] = new PokemonMove(randomEggMove);
+        }
       }
 
       encounter.misc.pokemon = pokemon;
@@ -243,14 +245,16 @@ export const UncommonBreedEncounter: MysteryEncounter =
     .build();
 
 function givePokemonExtraEggMove(pokemon: EnemyPokemon, previousEggMove: Moves) {
-  const eggMoves: Moves[] = pokemon.getEggMoves();
-  let randomEggMove: Moves = eggMoves[randSeedInt(4)];
-  while (randomEggMove === previousEggMove) {
-    randomEggMove = eggMoves[randSeedInt(4)];
-  }
-  if (pokemon.moveset.length < 4) {
-    pokemon.moveset.push(new PokemonMove(randomEggMove));
-  } else {
-    pokemon.moveset[1] = new PokemonMove(randomEggMove);
+  const eggMoves = pokemon.getEggMoves();
+  if (eggMoves) {
+    let randomEggMove: Moves = eggMoves[randSeedInt(4)];
+    while (randomEggMove === previousEggMove) {
+      randomEggMove = eggMoves[randSeedInt(4)];
+    }
+    if (pokemon.moveset.length < 4) {
+      pokemon.moveset.push(new PokemonMove(randomEggMove));
+    } else {
+      pokemon.moveset[1] = new PokemonMove(randomEggMove);
+    }
   }
 }
