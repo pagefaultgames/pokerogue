@@ -923,12 +923,13 @@ class ImprisonTag extends ArenaTrapTag {
   private source: Pokemon;
 
   constructor(sourceId: integer, side: ArenaTagSide) {
+    console.log(side);
     super(ArenaTagType.IMPRISON, Moves.IMPRISON, sourceId, side, 1);
   }
 
   onAdd(arena: Arena) {
     this.source = arena.scene.getPokemonById(this.sourceId!)!;
-    const party = (this.side === ArenaTagSide.PLAYER) ? arena.scene.getPlayerField() : arena.scene.getEnemyField();
+    const party = !this.source.isPlayer() ? arena.scene.getPlayerField() : arena.scene.getEnemyField();
     party?.forEach((p: PlayerPokemon | EnemyPokemon ) => {
       p.addTag(BattlerTagType.IMPRISON, 1, Moves.IMPRISON, this.sourceId);
     });
@@ -947,7 +948,7 @@ class ImprisonTag extends ArenaTrapTag {
   }
 
   onRemove(arena: Arena): void {
-    const party = (this.side === ArenaTagSide.PLAYER) ? arena.scene.getPlayerField() : arena.scene.getEnemyField();
+    const party = !this.source.isPlayer() ? arena.scene.getPlayerField() : arena.scene.getEnemyField();
     party?.forEach((p: PlayerPokemon | EnemyPokemon) => {
       p.removeTag(BattlerTagType.IMPRISON);
     });
