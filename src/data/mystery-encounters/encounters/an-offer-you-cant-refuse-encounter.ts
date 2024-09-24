@@ -8,7 +8,7 @@ import { MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/myst
 import { AbilityRequirement, CombinationPokemonRequirement, MoveRequirement } from "#app/data/mystery-encounters/mystery-encounter-requirements";
 import { getHighestStatTotalPlayerPokemon } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
 import { EXTORTION_ABILITIES, EXTORTION_MOVES } from "#app/data/mystery-encounters/requirements/requirement-groups";
-import { getPokemonSpecies } from "#app/data/pokemon-species";
+import { getPokemonSpecies, speciesStarters } from "#app/data/pokemon-species";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { ModifierRewardPhase } from "#app/phases/modifier-reward-phase";
@@ -61,7 +61,14 @@ export const AnOfferYouCantRefuseEncounter: MysteryEncounter =
     .withOnInit((scene: BattleScene) => {
       const encounter = scene.currentBattle.mysteryEncounter!;
       const pokemon = getHighestStatTotalPlayerPokemon(scene, true, true);
-      const price = scene.getWaveMoneyAmount(10);
+
+      // Base value of Relic Gold, increased linearly up to 3x Relic Gold based on the starter tier of the Pokemon being purchased
+      // Starter value 1-3 -> 10x
+      // Starter value 10 -> 30x
+      const baseSpecies = pokemon.getSpeciesForm().getRootSpeciesId(true);
+      const starterValue: number = speciesStarters[baseSpecies] ?? 1;
+      const multiplier = Math.max(3 * starterValue, 10);
+      const price = scene.getWaveMoneyAmount(multiplier);
 
       encounter.setDialogueToken("strongestPokemon", pokemon.getNameToRender());
       encounter.setDialogueToken("price", price.toString());
