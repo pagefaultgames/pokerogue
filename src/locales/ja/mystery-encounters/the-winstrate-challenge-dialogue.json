@@ -1,22 +1,22 @@
 {
-  "intro": "It's a family standing outside their house!",
-  "speaker": "The Winstrates",
-  "intro_dialogue": "We're the Winstrates!$What do you say to taking on our family in a series of Pokémon battles?",
-  "title": "The Winstrate Challenge",
-  "description": "The Winstrates are a family of 5 trainers, and they want to battle! If you beat all of them back-to-back, they'll give you a grand prize. But can you handle the heat?",
-  "query": "What will you do?",
+  "intro": "家の　外に　立っている　家族　です…",
+  "speaker": "カチヌキファミリー",
+  "intro_dialogue": "カチヌキファミリーです！$どうだ？　ここは　ひとつ　わたしたち\n家族と　ポケモン勝負を　してみないか？",
+  "title": "カチヌキファミリーの挑戦",
+  "description": "カチヌキファミリーは　５人の　家族で、　勝負をしたい　です！　連続で　全員に　勝つと、　特賞が　もらえます。　最後まで　耐えられますか？",
+  "query": "どうしますか？",
   "option": {
     "1": {
-      "label": "Accept the Challenge",
-      "tooltip": "(-) Brutal Battle\n(+) Special Item Reward",
-      "selected": "Let the challenge begin!"
+      "label": "挑戦を受け取る",
+      "tooltip": "(-) 勝負が残酷\n(+) 特別なアイテムのご褒美",
+      "selected": "挑戦を　始めましょう！"
     },
     "2": {
-      "label": "Refuse the Challenge",
-      "tooltip": "(+) Full Heal Party\n(+) Gain a Rarer Candy",
-      "selected": "That's too bad. Say, your team looks worn out, why don't you stay awhile and rest?"
+      "label": "挑戦を断る",
+      "tooltip": "(+) 手持ちポケモンが全回復\n(+) ふかしぎなアメをもらう",
+      "selected": "残念ですね。　でもよ、　手持ちポケモンは　疲れている　ようで、　ここで　ちょっと　休みませんか？"
     }
   },
-  "victory": "Congratulations on beating our challenge!$First off, we'd like you to have this Voucher.",
-  "victory_2": "Also, our family uses this Macho Brace to strengthen\nour Pokémon more effectively during training.$You may not need it considering that you beat the whole lot of us, but we hope you'll accept it anyway!"
+  "victory": "挑戦に　勝って　おめでとうございます！$まずは、このクーポンを　どうぞ！",
+  "victory_2": "また、　この家族は　トレーニング中に　ポケモンを　より効果的に　強くする　ために　このきょうせいギプスを　使います。$私たち全員に　勝ったから　必要ないかもしれませんが　とにかく　受け取って　いただければ　嬉しいです！"
 }
