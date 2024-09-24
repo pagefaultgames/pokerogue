@@ -955,40 +955,6 @@ class ImprisonTag extends ArenaTrapTag {
   }
 }
 
-class AromaVeilTag extends ArenaTag {
-  private protectedTags: BattlerTagType[];
-  private source: Pokemon;
-
-  constructor(turnCount: number, sourceId: number, side: ArenaTagSide) {
-    super(ArenaTagType.AROMA_VEIL, turnCount, undefined, sourceId, side);
-    this.protectedTags = [BattlerTagType.TAUNT, BattlerTagType.TORMENT, BattlerTagType.DISABLED, BattlerTagType.HEAL_BLOCK, BattlerTagType.ENCORE, BattlerTagType.INFATUATED];
-  }
-
-  onAdd(arena: Arena): void {
-    this.source = arena.scene.getPokemonById(this.sourceId!)!;
-    const party = this.source.isPlayer() ? this.source.scene.getPlayerField() : this.source.scene.getEnemyField();
-    party?.forEach((p: PlayerPokemon | EnemyPokemon ) => {
-      p.findAndRemoveTags(t => this.protectedTags.includes(t.tagType));
-    });
-  }
-
-  lapse(_arena: Arena): boolean {
-    return this.source.isActive(true) && this.source.hasAbility(Abilities.AROMA_VEIL);
-  }
-
-  apply(arena: Arena, args: any[]): boolean {
-    const targetPokemon = args[2];
-    if (this.protectedTags.includes(args[1] as BattlerTagType) && this.lapse(arena)) {
-      (args[0] as Utils.BooleanHolder).value = false;
-      arena.scene.queueMessage(i18next.t("abilityTriggers:aromaVeilImmunity", {
-        pokemonNameWithAffix: targetPokemon,
-      }));
-    }
-    return true;
-  }
-}
-
-
 export function getArenaTag(tagType: ArenaTagType, turnCount: integer, sourceMove: Moves | undefined, sourceId: integer, targetIndex?: BattlerIndex, side: ArenaTagSide = ArenaTagSide.BOTH): ArenaTag | null {
   switch (tagType) {
   case ArenaTagType.MIST:
@@ -1038,8 +1004,6 @@ export function getArenaTag(tagType: ArenaTagType, turnCount: integer, sourceMov
     return new SafeguardTag(turnCount, sourceId, side);
   case ArenaTagType.IMPRISON:
     return new ImprisonTag(sourceId, side);
-  case ArenaTagType.AROMA_VEIL:
-    return new AromaVeilTag(turnCount, sourceId, side);
   default:
     return null;
   }
