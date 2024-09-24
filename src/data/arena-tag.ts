@@ -973,7 +973,7 @@ class AromaVeilTag extends ArenaTag {
   }
 
   lapse(_arena: Arena): boolean {
-    return this.source.isActive(true);
+    return this.source.isActive(true) && this.source.hasAbility(Abilities.AROMA_VEIL);
   }
 
   apply(arena: Arena, args: any[]): boolean {

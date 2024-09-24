@@ -3,7 +3,7 @@ import { getPokemonNameWithAffix } from "../messages";
 import Pokemon, { MoveResult, HitResult } from "../field/pokemon";
 import { StatusEffect } from "./status-effect";
 import * as Utils from "../utils";
-import { ChargeAttr, MoveFlags, allMoves, MoveCategory, applyMoveAttrs, StatusCategoryOnAllyAttr, HealOnAllyAttr } from "./move";
+import { ChargeAttr, MoveFlags, allMoves, MoveCategory, applyMoveAttrs, StatusCategoryOnAllyAttr, HealOnAllyAttr, ConsecutiveUseDoublePowerAttr } from "./move";
 import { Type } from "./type";
 import { BlockNonDirectDamageAbAttr, FlinchEffectAbAttr, ReverseDrainAbAttr, applyAbAttrs, ProtectStatAbAttr } from "./ability";
 import { TerrainType } from "./terrain";
@@ -2481,7 +2481,8 @@ export class TormentTag extends MoveRestrictionBattlerTag {
     if ( !lastMove ) {
       return false;
     }
-    if (lastMove.move === move && lastMove.result === MoveResult.SUCCESS && lastMove.move !== Moves.STRUGGLE) {
+    const isLockedIntoMove = allMoves[lastMove.move].hasAttr(ConsecutiveUseDoublePowerAttr);
+    if (lastMove.move === move && lastMove.result === MoveResult.SUCCESS && lastMove.move !== Moves.STRUGGLE && !isLockedIntoMove) {
       return true;
     }
     return false;
