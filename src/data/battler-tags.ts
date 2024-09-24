@@ -2441,6 +2441,7 @@ export class MysteryEncounterPostSummonTag extends BattlerTag {
  * Battle Tag that applies the move Torment to the target Pokemon
  * Torment restricts the consecutive use of moves.
  * The tag is only removed if the target leaves the battle.
+ * Torment does not interrupt the move if the move is performed consecutively in the same turn and right after Torment is applied
  */
 export class TormentTag extends MoveRestrictionBattlerTag {
   private target: Pokemon;
@@ -2449,7 +2450,12 @@ export class TormentTag extends MoveRestrictionBattlerTag {
     super(BattlerTagType.TORMENT, BattlerTagLapseType.AFTER_MOVE, 1, Moves.TORMENT, sourceId);
   }
 
-  onAdd(pokemon: Pokemon) {
+  /**
+   * Adds the battler tag to the target Pokemon and defines the private class variable 'target'
+   * 'Target' is used to track the Pokemon's current status
+   * @param pokemon the Pokemon tormented
+   */
+  override onAdd(pokemon: Pokemon) {
     super.onAdd(pokemon);
     this.target = pokemon;
     pokemon.scene.queueMessage(i18next.t("battlerTags:tormentOnAdd", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }), 1500);
@@ -2473,7 +2479,7 @@ export class TormentTag extends MoveRestrictionBattlerTag {
    * @param move the move under investigation
    * @returns `true` if there is valid consecutive usage | `false` if the moves are different from each other
    */
-  isMoveRestricted(move: Moves): boolean {
+  override isMoveRestricted(move: Moves): boolean {
     const lastMove = this.target.getLastXMoves(1)[0];
     if ( !lastMove ) {
       return false;
@@ -2490,8 +2496,6 @@ export class TormentTag extends MoveRestrictionBattlerTag {
   override selectionDeniedText(_pokemon: Pokemon, move: Moves): string {
     return i18next.t("battle:moveCannotBeSelected", { moveName: allMoves[move].name });
   }
-
-  //Torment does not interrupt the move if the move is performed consecutively in the same turn and right after Torment is applied
 }
 
 /**

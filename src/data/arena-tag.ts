@@ -951,7 +951,7 @@ class ImprisonTag extends ArenaTrapTag {
    * @param _arena
    * @returns `true` if the source of the tag is still active on the field | `false` if not
    */
-  lapse(_arena: Arena): boolean {
+  override lapse(_arena: Arena): boolean {
     return this.source.isActive(true);
   }
 
@@ -960,7 +960,7 @@ class ImprisonTag extends ArenaTrapTag {
    * @param pokemon the Pokemon Imprison is applied to
    * @returns `true`
    */
-  activateTrap(pokemon: Pokemon): boolean {
+  override activateTrap(pokemon: Pokemon): boolean {
     if (this.source.isActive(true)) {
       pokemon.addTag(BattlerTagType.IMPRISON, 1, Moves.IMPRISON, this.sourceId);
     }
@@ -971,7 +971,7 @@ class ImprisonTag extends ArenaTrapTag {
    * When the arena tag is removed, it also attempts to remove any related Battler Tags if they haven't already been removed from the affected Pokemon
    * @param arena
    */
-  onRemove(arena: Arena): void {
+  override onRemove(arena: Arena): void {
     const party = !this.source.isPlayer() ? arena.scene.getPlayerField() : arena.scene.getEnemyField();
     party?.forEach((p: PlayerPokemon | EnemyPokemon) => {
       p.removeTag(BattlerTagType.IMPRISON);
