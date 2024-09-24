@@ -978,7 +978,7 @@ class AromaVeilTag extends ArenaTag {
 
   apply(arena: Arena, args: any[]): boolean {
     const targetPokemon = args[2];
-    if (this.protectedTags.includes(args[1] as BattlerTagType)) {
+    if (this.protectedTags.includes(args[1] as BattlerTagType) && this.lapse(arena)) {
       (args[0] as Utils.BooleanHolder).value = false;
       arena.scene.queueMessage(i18next.t("abilityTriggers:aromaVeilImmunity", {
         pokemonNameWithAffix: targetPokemon,
