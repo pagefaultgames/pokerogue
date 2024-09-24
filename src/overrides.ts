@@ -30,10 +30,7 @@ import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
  * }
  * ```
  */
-const overrides = {
-  OPP_MOVESET_OVERRIDE: Moves.THUNDER_WAVE,
-  MOVESET_OVERRIDE: [Moves.REFRESH]
-} satisfies Partial<InstanceType<typeof DefaultOverrides>>;
+const overrides = {} satisfies Partial<InstanceType<typeof DefaultOverrides>>;
 
 /**
  * If you need to add Overrides values for local testing do that inside {@linkcode overrides}
