@@ -218,7 +218,7 @@ export function getRandomSpeciesByStarterTier(starterTiers: number | [number, nu
     .map(s => [getPokemonSpecies(s[0]), s[1]]);
 
   if (types && types.length > 0) {
-    filteredSpecies = filteredSpecies.filter(s => types.includes(s[0].type1) || (!isNullOrUndefined(s[0].type2) && types.includes(s[0].type2!)));
+    filteredSpecies = filteredSpecies.filter(s => types.includes(s[0].type1) || (!isNullOrUndefined(s[0].type2) && types.includes(s[0].type2)));
   }
 
   // If no filtered mons exist at specified starter tiers, will expand starter search range until there are

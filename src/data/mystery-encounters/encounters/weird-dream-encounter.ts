@@ -449,7 +449,7 @@ function getTransformedSpecies(originalBst: number, bstSearchRange: [number, num
     if (validSpecies?.length > 20) {
       validSpecies = randSeedShuffle(validSpecies);
       newSpecies = validSpecies.pop();
-      while (isNullOrUndefined(newSpecies) || alreadyUsedSpecies.includes(newSpecies!)) {
+      while (isNullOrUndefined(newSpecies) || alreadyUsedSpecies.includes(newSpecies)) {
         newSpecies = validSpecies.pop();
       }
     } else {
@@ -459,7 +459,7 @@ function getTransformedSpecies(originalBst: number, bstSearchRange: [number, num
     }
   }
 
-  return newSpecies!;
+  return newSpecies;
 }
 
 function doShowDreamBackground(scene: BattleScene) {
@@ -554,16 +554,16 @@ function doSideBySideTransformations(scene: BattleScene, transformations: Pokemo
 async function addEggMoveToNewPokemonMoveset(scene: BattleScene, newPokemon: PlayerPokemon, speciesRootForm: Species): Promise<number | null> {
   let eggMoveIndex: null | number = null;
   if (speciesEggMoves.hasOwnProperty(speciesRootForm)) {
-    const eggMoves: Moves[] = speciesEggMoves[speciesRootForm].slice(0);
+    const eggMoves: Moves[] = newPokemon.getEggMoves().slice(0);
     const eggMoveIndices = [0, 1, 2, 3];
     randSeedShuffle(eggMoveIndices);
     let randomEggMoveIndex = eggMoveIndices.pop();
-    let randomEggMove = !isNullOrUndefined(randomEggMoveIndex) ? eggMoves[randomEggMoveIndex!] : null;
+    let randomEggMove = !isNullOrUndefined(randomEggMoveIndex) ? eggMoves[randomEggMoveIndex] : null;
     let retries = 0;
     while (retries < 3 && (!randomEggMove || newPokemon.moveset.some(m => m?.moveId === randomEggMove))) {
       // If Pokemon already knows this move, roll for another egg move
       randomEggMoveIndex = eggMoveIndices.pop();
-      randomEggMove = !isNullOrUndefined(randomEggMoveIndex) ? eggMoves[randomEggMoveIndex!] : null;
+      randomEggMove = !isNullOrUndefined(randomEggMoveIndex) ? eggMoves[randomEggMoveIndex] : null;
       retries++;
     }
 
@@ -579,7 +579,7 @@ async function addEggMoveToNewPokemonMoveset(scene: BattleScene, newPokemon: Pla
 
       // For pokemon that the player owns (including ones just caught), unlock the egg move
       if (!isNullOrUndefined(randomEggMoveIndex) && !!scene.gameData.dexData[speciesRootForm].caughtAttr) {
-        await scene.gameData.setEggMoveUnlocked(getPokemonSpecies(speciesRootForm), randomEggMoveIndex!, true);
+        await scene.gameData.setEggMoveUnlocked(getPokemonSpecies(speciesRootForm), randomEggMoveIndex, true);
       }
     }
   }

@@ -2636,8 +2636,7 @@ export default class BattleScene extends SceneBase {
               modifier = mt.modifier as PokemonHeldItemModifier;
               modifier.pokemonId = enemyPokemon.id;
             }
-            const stackCount = mt.stackCount ?? 1;
-            modifier.stackCount = stackCount;
+            modifier.stackCount = mt.stackCount ?? 1;
             modifier.isTransferable = mt.isTransferable ?? modifier.isTransferable;
             this.addEnemyModifier(modifier, true);
           });
@@ -3076,7 +3075,16 @@ export default class BattleScene extends SceneBase {
     }
   }
 
-  isWaveMysteryEncounter(newBattleType: BattleType, waveIndex: number, sessionDataEncounterType?: MysteryEncounterType): boolean {
+  /**
+   * Determines whether a wave should randomly generate a {@linkcode MysteryEncounter}.
+   * Currently, the only modes that MEs are allowed in are Classic and Challenge.
+   * Additionally, MEs cannot spawn outside of waves 10-180 in those modes
+   *
+   * @param newBattleType
+   * @param waveIndex
+   * @param sessionDataEncounterType
+   */
+  private isWaveMysteryEncounter(newBattleType: BattleType, waveIndex: number, sessionDataEncounterType?: MysteryEncounterType): boolean {
     const [lowestMysteryEncounterWave, highestMysteryEncounterWave] = this.gameMode.getMysteryEncounterLegalWaves();
     if (this.gameMode.hasMysteryEncounters && newBattleType === BattleType.WILD && !this.gameMode.isBoss(waveIndex) && waveIndex < highestMysteryEncounterWave && waveIndex > lowestMysteryEncounterWave) {
       // If ME type is already defined in session data, no need to roll RNG check
@@ -3120,10 +3128,10 @@ export default class BattleScene extends SceneBase {
   getMysteryEncounter(encounterType?: MysteryEncounterType): MysteryEncounter {
     // Loading override or session encounter
     let encounter: MysteryEncounter | null;
-    if (!isNullOrUndefined(Overrides.MYSTERY_ENCOUNTER_OVERRIDE) && allMysteryEncounters.hasOwnProperty(Overrides.MYSTERY_ENCOUNTER_OVERRIDE!)) {
-      encounter = allMysteryEncounters[Overrides.MYSTERY_ENCOUNTER_OVERRIDE!];
+    if (!isNullOrUndefined(Overrides.MYSTERY_ENCOUNTER_OVERRIDE) && allMysteryEncounters.hasOwnProperty(Overrides.MYSTERY_ENCOUNTER_OVERRIDE)) {
+      encounter = allMysteryEncounters[Overrides.MYSTERY_ENCOUNTER_OVERRIDE];
     } else {
-      encounter = !isNullOrUndefined(encounterType) ? allMysteryEncounters[encounterType!] : null;
+      encounter = !isNullOrUndefined(encounterType) ? allMysteryEncounters[encounterType] : null;
     }
 
     // Check for queued encounters first
@@ -3166,7 +3174,7 @@ export default class BattleScene extends SceneBase {
     let tier: MysteryEncounterTier | null = tierValue > commonThreshold ? MysteryEncounterTier.COMMON : tierValue > greatThreshold ? MysteryEncounterTier.GREAT : tierValue > ultraThreshold ? MysteryEncounterTier.ULTRA : MysteryEncounterTier.ROGUE;
 
     if (!isNullOrUndefined(Overrides.MYSTERY_ENCOUNTER_TIER_OVERRIDE)) {
-      tier = Overrides.MYSTERY_ENCOUNTER_TIER_OVERRIDE!;
+      tier = Overrides.MYSTERY_ENCOUNTER_TIER_OVERRIDE;
     }
 
     let availableEncounters: MysteryEncounter[] = [];

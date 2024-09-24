@@ -12,7 +12,6 @@ import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode
 import { TrainerSlot } from "#app/data/trainer-config";
 import { catchPokemon, getHighestLevelPlayerPokemon, getSpriteKeysFromPokemon } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
 import PokemonData from "#app/system/pokemon-data";
-import { speciesEggMoves } from "#app/data/egg-moves";
 import { isNullOrUndefined, randSeedInt } from "#app/utils";
 import { Moves } from "#enums/moves";
 import { BattlerIndex } from "#app/battle";
@@ -53,21 +52,18 @@ export const UncommonBreedEncounter: MysteryEncounter =
       const level = getHighestLevelPlayerPokemon(scene, false, true).level - 2;
       const species = scene.arena.randomSpecies(scene.currentBattle.waveIndex, level, 0, getPartyLuckValue(scene.getParty()), true);
       const pokemon = new EnemyPokemon(scene, species, level, TrainerSlot.NONE, true);
-      const speciesRootForm = pokemon.species.getRootSpeciesId();
 
       // Pokemon will always have one of its egg moves in its moveset
-      if (speciesEggMoves.hasOwnProperty(speciesRootForm)) {
-        const eggMoves: Moves[] = speciesEggMoves[speciesRootForm];
-        const eggMoveIndex = randSeedInt(4);
-        const randomEggMove: Moves = eggMoves[eggMoveIndex];
-        encounter.misc = {
-          eggMove: randomEggMove
-        };
-        if (pokemon.moveset.length < 4) {
-          pokemon.moveset.push(new PokemonMove(randomEggMove));
-        } else {
-          pokemon.moveset[0] = new PokemonMove(randomEggMove);
-        }
+      const eggMoves: Moves[] = pokemon.getEggMoves();
+      const eggMoveIndex = randSeedInt(4);
+      const randomEggMove: Moves = eggMoves[eggMoveIndex];
+      encounter.misc = {
+        eggMove: randomEggMove
+      };
+      if (pokemon.moveset.length < 4) {
+        pokemon.moveset.push(new PokemonMove(randomEggMove));
+      } else {
+        pokemon.moveset[0] = new PokemonMove(randomEggMove);
       }
 
       encounter.misc.pokemon = pokemon;
@@ -198,20 +194,7 @@ export const UncommonBreedEncounter: MysteryEncounter =
           const pokemon = encounter.misc.pokemon;
 
           // Give 1 additional egg move
-          const previousEggMove = encounter.misc.eggMove;
-          const speciesRootForm = pokemon.species.getRootSpeciesId();
-          if (speciesEggMoves.hasOwnProperty(speciesRootForm)) {
-            const eggMoves: Moves[] = speciesEggMoves[speciesRootForm];
-            let randomEggMove: Moves = eggMoves[randSeedInt(4)];
-            while (randomEggMove === previousEggMove) {
-              randomEggMove = eggMoves[randSeedInt(4)];
-            }
-            if (pokemon.moveset.length < 4) {
-              pokemon.moveset.push(new PokemonMove(randomEggMove));
-            } else {
-              pokemon.moveset[1] = new PokemonMove(randomEggMove);
-            }
-          }
+          givePokemonExtraEggMove(pokemon, encounter.misc.eggMove);
 
           await catchPokemon(scene, pokemon, null, PokeballType.POKEBALL, false);
           setEncounterRewards(scene, { fillRemaining: true });
@@ -240,20 +223,7 @@ export const UncommonBreedEncounter: MysteryEncounter =
           const pokemon = encounter.misc.pokemon;
 
           // Give 1 additional egg move
-          const previousEggMove = encounter.misc.eggMove;
-          const speciesRootForm = pokemon.species.getRootSpeciesId();
-          if (speciesEggMoves.hasOwnProperty(speciesRootForm)) {
-            const eggMoves: Moves[] = speciesEggMoves[speciesRootForm];
-            let randomEggMove: Moves = eggMoves[randSeedInt(4)];
-            while (randomEggMove === previousEggMove) {
-              randomEggMove = eggMoves[randSeedInt(4)];
-            }
-            if (pokemon.moveset.length < 4) {
-              pokemon.moveset.push(new PokemonMove(randomEggMove));
-            } else {
-              pokemon.moveset[1] = new PokemonMove(randomEggMove);
-            }
-          }
+          givePokemonExtraEggMove(pokemon, encounter.misc.eggMove);
 
           // Roll IVs a second time
           pokemon.ivs = pokemon.ivs.map(iv => {
@@ -271,3 +241,16 @@ export const UncommonBreedEncounter: MysteryEncounter =
         .build()
     )
     .build();
+
+function givePokemonExtraEggMove(pokemon: EnemyPokemon, previousEggMove: Moves) {
+  const eggMoves: Moves[] = pokemon.getEggMoves();
+  let randomEggMove: Moves = eggMoves[randSeedInt(4)];
+  while (randomEggMove === previousEggMove) {
+    randomEggMove = eggMoves[randSeedInt(4)];
+  }
+  if (pokemon.moveset.length < 4) {
+    pokemon.moveset.push(new PokemonMove(randomEggMove));
+  } else {
+    pokemon.moveset[1] = new PokemonMove(randomEggMove);
+  }
+}

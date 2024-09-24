@@ -39,7 +39,7 @@ export const TeleportingHijinksEncounter: MysteryEncounter =
     .withEncounterTier(MysteryEncounterTier.COMMON)
     .withSceneWaveRangeRequirement(...CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES)
     .withSceneRequirement(new WaveModulusRequirement([1, 2, 3], 10)) // Must be in first 3 waves after boss wave
-    .withSceneRequirement(new MoneyRequirement(undefined, MONEY_COST_MULTIPLIER)) // Must be able to pay teleport cost
+    .withSceneRequirement(new MoneyRequirement(0, MONEY_COST_MULTIPLIER)) // Must be able to pay teleport cost
     .withAutoHideIntroVisuals(false)
     .withCatchAllowed(true)
     .withIntroSpriteConfigs([
@@ -73,7 +73,7 @@ export const TeleportingHijinksEncounter: MysteryEncounter =
     .withOption(
       MysteryEncounterOptionBuilder
         .newOptionWithMode(MysteryEncounterOptionMode.DISABLED_OR_DEFAULT)
-        .withSceneMoneyRequirement(undefined, MONEY_COST_MULTIPLIER) // Must be able to pay teleport cost
+        .withSceneMoneyRequirement(0, MONEY_COST_MULTIPLIER) // Must be able to pay teleport cost
         .withDialogue({
           buttonLabel: `${namespace}.option.1.label`,
           buttonTooltip: `${namespace}.option.1.tooltip`,

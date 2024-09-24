@@ -63,7 +63,7 @@ export const DepartmentStoreSaleEncounter: MysteryEncounter =
         // Choose TMs
         const modifiers: ModifierTypeFunc[] = [];
         let i = 0;
-        while (i < 4) {
+        while (i < 6) {
           // 2/2/1 weight on TM rarity
           const roll = randSeedInt(5);
           if (roll < 2) {
