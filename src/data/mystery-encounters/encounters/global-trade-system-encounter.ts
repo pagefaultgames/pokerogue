@@ -260,6 +260,9 @@ export const GlobalTradeSystemEncounter: MysteryEncounter =
             if (!tradePokemon.shiny && (!tradePokemon.species.abilityHidden || tradePokemon.abilityIndex < hiddenIndex)) {
               const eggMoves: Moves[] = tradePokemon.getEggMoves();
 
+              if (eggMoves) {
+
+              }
               // Cannot gen the rare egg move, only 1 of the first 3 common moves
               const eggMove = eggMoves[randSeedInt(3)];
               if (!tradePokemon.moveset.some(m => m?.moveId === eggMove)) {
