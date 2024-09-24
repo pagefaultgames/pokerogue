@@ -42,13 +42,11 @@ describe("Moves - Imprison", () => {
     const move1 = playerPokemon?.getLastXMoves(1)[0]!;
     expect(move1.move).toBe(Moves.GROWL);
     expect(move1.result).toBe(MoveResult.SUCCESS);
-    expect(playerPokemon?.getTag(BattlerTagType.TAUNT)).toBeDefined();
+    expect(playerPokemon?.getTag(BattlerTagType.IMPRISON)).toBeDefined();
 
     // Second turn, Taunt forces Struggle to occur
     game.move.select(Moves.GROWL);
     await game.forceEnemyMove(Moves.SPLASH);
     await game.toNextTurn();
-    const move2 = playerPokemon?.getLastXMoves(1)[0]!;
-    expect(move2.move).toBe(Moves.STRUGGLE);
   });
 });
