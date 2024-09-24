@@ -8,9 +8,9 @@
   "option": {
     "1": {
       "label": "クラウンと勝負",
-      "tooltip": "(-) 勝負はおかしい\n(?) 手持ちポケモンの特性は変化",
+      "tooltip": "(-) 勝負はおかしい\n(?) 手持ちポケモン １匹の 特性は 変化",
       "selected": "パッとしない　ポケモンを　ぽかぽか　パンチしちゃうんだ　ぴょん！",
-      "apply_ability_dialogue": "とても　たくましく　倒した！\n倒すのが　得意な　トレーナーと一緒に　特性を　取り替えたい！",
+      "apply_ability_dialogue": "とても　たくましく　倒した！\n倒すのが　得意な　トレーナーと一緒に　特別な　特性を　取り替えたい！",
       "apply_ability_message": "クラウンは　スキルスワップで　手持ちポケモン　１匹の\n特性を　{{ability}}と　取り替えることを　申し出ています！",
       "ability_prompt": "手持ちポケモンの　特性を\n恒久的に　{{ability}}に　変化しますか？",
       "ability_gained": "@s{level_up_fanfare}{{chosenPokemon}}は {{ability}}の　特性を　身についた！"
