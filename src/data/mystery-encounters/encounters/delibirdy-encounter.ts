@@ -10,7 +10,7 @@ import { CombinationPokemonRequirement, HeldItemRequirement, MoneyRequirement } 
 import { getEncounterText, showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
-import { BerryModifier, HealingBoosterModifier, HiddenAbilityRateBoosterModifier, LevelIncrementBoosterModifier, PokemonHeldItemModifier, PreserveBerryModifier } from "#app/modifier/modifier";
+import { BerryModifier, HealingBoosterModifier, LevelIncrementBoosterModifier, MoneyMultiplierModifier, PokemonHeldItemModifier, PreserveBerryModifier } from "#app/modifier/modifier";
 import { OptionSelectItem } from "#app/ui/abstact-option-select-ui-handler";
 import { applyModifierTypeToPlayerPokemon } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
 import i18next from "#app/plugins/i18n";
@@ -33,7 +33,7 @@ const OPTION_3_DISALLOWED_MODIFIERS = [
   "PokemonBaseStatTotalModifier"
 ];
 
-const DELIBIRDY_MONEY_PRICE_MULTIPLIER = 1.5;
+const DELIBIRDY_MONEY_PRICE_MULTIPLIER = 2;
 
 /**
  * Delibird-y encounter.
@@ -122,9 +122,9 @@ export const DelibirdyEncounter: MysteryEncounter =
           return true;
         })
         .withOptionPhase(async (scene: BattleScene) => {
-          // Give the player an Ability Charm
+          // Give the player an Amulet Coin
           // Check if the player has max stacks of that item already
-          const existing = scene.findModifier(m => m instanceof HiddenAbilityRateBoosterModifier) as HiddenAbilityRateBoosterModifier;
+          const existing = scene.findModifier(m => m instanceof MoneyMultiplierModifier) as MoneyMultiplierModifier;
 
           if (existing && existing.getStackCount() >= existing.getMaxStackCount(scene)) {
             // At max stacks, give the first party pokemon a Shell Bell instead
@@ -133,7 +133,7 @@ export const DelibirdyEncounter: MysteryEncounter =
             scene.playSound("item_fanfare");
             await showEncounterText(scene, i18next.t("battle:rewardGain", { modifierName: shellBell.name }), null, undefined, true);
           } else {
-            scene.unshiftPhase(new ModifierRewardPhase(scene, modifierTypes.ABILITY_CHARM));
+            scene.unshiftPhase(new ModifierRewardPhase(scene, modifierTypes.AMULET_COIN));
           }
 
           leaveEncounterWithoutBattle(scene, true);

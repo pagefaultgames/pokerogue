@@ -1,0 +1,32 @@
+{
+  "intro": "포켓몬 알을 잔뜩 가진 트레이너가 나타났다!",
+  "intro_dialogue": "안녕하세요, 트레이너!$당신의 몇몇 파트너 포켓몬이\n조금 기운 없어 보이네요.$저와 배틀을 해서\n기운이 나게끔 해주는 건 어떨까요?",
+  "title": "전문 브리더",
+  "description": "브리더를 상대로 @[TOOLTIP_TITLE]{포켓몬 1마리만} 사용해서 승부해야 합니다. 조금 힘들겠지만, 선택한 포켓몬과 유대감이 더욱 깊어질 기회입니다!\n게다가 승리하면 @[TOOLTIP_TITLE]{포켓몬 알}까지 준다고 합니다!",
+
+  "query": "어떤 포켓몬으로 싸우겠습니까?",
+  "cleffa_1_nickname": "에이스",
+  "cleffa_2_nickname": "픽시짱",
+  "cleffa_3_nickname": "{{speciesName}} 대왕",
+  "option": {
+    "1": {
+      "label": "{{pokemon1Name}}",
+      "tooltip_base": "(-) 힘든 배틀\n(+) {{pokemon1Name}} 친밀도 상승"
+    },
+    "2": {
+      "label": "{{pokemon2Name}}",
+      "tooltip_base": "(-) 힘든 배틀\n(+) {{pokemon2Name}} 친밀도 상승"
+    },
+    "3": {
+      "label": "{{pokemon3Name}}",
+      "tooltip_base": "(-) 힘든 배틀\n(+) {{pokemon3Name}} 친밀도 상승"
+    },
+    "selected": "그럼 갑니다!"
+  },
+  "outro": "{{chosenPokemon}}[[가]] 정말 행복해 보이네요!$여기, 이것도 드릴게요.",
+  "outro_failed": "실망이네요….$포켓몬의 신뢰를 얻으려면 아직 멀었어요!",
+  "gained_eggs": "@s{item_fanfare}{{numEggs}}[[를]] 받았습니다!",
+  "eggs_tooltip": "\n(+) {{eggs}} 획득",
+  "numEggs_one": "{{rarity}}알 {{count}}개",
+  "numEggs_other": "{{rarity}}알 {{count}}개"
+}

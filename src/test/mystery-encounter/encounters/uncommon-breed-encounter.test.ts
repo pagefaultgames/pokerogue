@@ -24,6 +24,7 @@ import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
 import { Stat } from "#enums/stat";
 import { BerryModifier } from "#app/modifier/modifier";
 import { modifierTypes } from "#app/modifier/modifier-type";
+import { Abilities } from "#enums/abilities";
 
 const namespace = "mysteryEncounters/uncommonBreed";
 const defaultParty = [Species.LAPRAS, Species.GENGAR, Species.ABRA];
@@ -42,11 +43,13 @@ describe("Uncommon Breed - Mystery Encounter", () => {
   beforeEach(async () => {
     game = new GameManager(phaserGame);
     scene = game.scene;
-    game.override.mysteryEncounterChance(100);
-    game.override.mysteryEncounterTier(MysteryEncounterTier.COMMON);
-    game.override.startingWave(defaultWave);
-    game.override.startingBiome(defaultBiome);
-    game.override.disableTrainerWaves();
+    game.override.mysteryEncounterChance(100)
+      .mysteryEncounterTier(MysteryEncounterTier.COMMON)
+      .startingWave(defaultWave)
+      .startingBiome(defaultBiome)
+      .disableTrainerWaves()
+      .enemyAbility(Abilities.BALL_FETCH)
+      .enemyPassiveAbility(Abilities.BALL_FETCH);
 
     vi.spyOn(MysteryEncounters, "mysteryEncountersByBiome", "get").mockReturnValue(
       new Map<Biome, MysteryEncounterType[]>([
@@ -107,7 +110,34 @@ describe("Uncommon Breed - Mystery Encounter", () => {
       });
     });
 
-    it.skip("should start a fight against the boss", async () => {
+    it.skip("should start a fight against the boss below wave 50", async () => {
+      const phaseSpy = vi.spyOn(scene, "pushPhase");
+      const unshiftPhaseSpy = vi.spyOn(scene, "unshiftPhase");
+      await game.runToMysteryEncounter(MysteryEncounterType.UNCOMMON_BREED, defaultParty);
+
+      const config = game.scene.currentBattle.mysteryEncounter!.enemyPartyConfigs[0];
+      const speciesToSpawn = config.pokemonConfigs?.[0].species.speciesId;
+
+      await runMysteryEncounterToEnd(game, 1, undefined, true);
+
+      const enemyField = scene.getEnemyField();
+      expect(scene.getCurrentPhase()?.constructor.name).toBe(CommandPhase.name);
+      expect(enemyField.length).toBe(1);
+      expect(enemyField[0].species.speciesId).toBe(speciesToSpawn);
+
+      const statStagePhases = unshiftPhaseSpy.mock.calls.filter(p => p[0] instanceof StatStageChangePhase)[0][0] as any;
+      expect(statStagePhases.stats).toEqual([Stat.ATK, Stat.DEF, Stat.SPATK, Stat.SPDEF, Stat.SPD]);
+
+      // Should have used its egg move pre-battle
+      const movePhases = phaseSpy.mock.calls.filter(p => p[0] instanceof MovePhase).map(p => p[0]);
+      expect(movePhases.length).toBe(1);
+      const eggMoves: Moves[] = speciesEggMoves[getPokemonSpecies(speciesToSpawn).getRootSpeciesId()];
+      const usedMove = (movePhases[0] as MovePhase).move.moveId;
+      expect(eggMoves.includes(usedMove)).toBe(true);
+    });
+
+    it.skip("should start a fight against the boss above wave 50", async () => {
+      game.override.startingWave(57);
       const phaseSpy = vi.spyOn(scene, "pushPhase");
       const unshiftPhaseSpy = vi.spyOn(scene, "unshiftPhase");
       await game.runToMysteryEncounter(MysteryEncounterType.UNCOMMON_BREED, defaultParty);

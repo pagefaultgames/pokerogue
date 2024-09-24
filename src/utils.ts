@@ -584,7 +584,7 @@ export function capitalizeString(str: string, sep: string, lowerFirstChar: boole
  * Returns if an object is null or undefined
  * @param object
  */
-export function isNullOrUndefined(object: any): boolean {
+export function isNullOrUndefined(object: any): object is undefined | null {
   return null === object || undefined === object;
 }
 

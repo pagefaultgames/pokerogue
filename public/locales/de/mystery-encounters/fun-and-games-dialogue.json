@@ -1,0 +1,30 @@
+{
+  "intro_dialogue": "Kommen Sie näher, meine Damen und Herren!$Versuchen Sie Ihr Glück mit dem brandneuen {{wobbuffetName}}-Hau-den-Lukas!",
+  "speaker": "Animateur",
+  "title": "Spaß und Spiele!",
+  "description": "Du hast ein {{wobbuffetName}} gefunden, das ein Spiel spielt! Du hast @[TOOLTIP_TITLE]{3 Züge}, um das {{wobbuffetName}} so nah wie möglich an @[TOOLTIP_TITLE]{1 KP} heranzubringen, @[TOOLTIP_TITLE]{ohne es zu besiegen}, damit es eine riesige Gegenattacke auf der Glockenmaschine ausführen kann.\nAber sei vorsichtig! Wenn du das {{wobbuffetName}} besiegst, musst du die Kosten für die Wiederbelebung bezahlen!",
+  "query": "Möchtest du spielen?",
+  "option": {
+    "1": {
+      "label": "Das Spiel spielen",
+      "tooltip": "(-) Zahle {{option1Money, money}}\n(+) Spiele {{wobbuffetName}} Hau-den-Lukas",
+      "selected": "Zeit dein Glück herauszufordern!"
+    },
+    "2": {
+      "label": "Weggehen",
+      "tooltip": "(-) Keine Belohnung",
+      "selected": "Du beeilst dich auf deinem Weg, mit einem leichten Gefühl der Reue."
+    }
+  },
+  "ko": "Oh nein! Das {{wobbuffetName}} ist ohnmächtig geworden!$Du verlierst das Spiel und musst die Kosten für die Wiederbelebung bezahlen...",
+  "charging_continue": "Das {{wobbuffetName}} lädt seine Gegenattacke auf!",
+  "turn_remaining_3": "Drei Runden verbleiben!",
+  "turn_remaining_2": "Zwei Runden verbleiben!",
+  "turn_remaining_1": "Nur noch eine Runde!",
+  "end_game": "Die Zeit ist um!$Das {{wobbuffetName}} holt zum Gegenangriff aus und@d{16}.@d{16}.@d{16}.",
+  "best_result": "Das {{wobbuffetName}} schlägt so hart auf den Knopf, dass die Glocke vom oberen Teil abbricht!$Du gewinnst den Hauptpreis!",
+  "great_result": "Das {{wobbuffetName}} schlägt den Knopf so hart, dass die Glocke fast getroffen wird!$So nah! Du gewinnst den zweiten Preis!",
+  "good_result": "Das {{wobbuffetName}} trifft den Knopf stark genug, um die Hälfte der Skala zu erreichen!$Du verdienst den dritten Preis!",
+  "bad_result": "Das {{wobbuffetName}} trifft den Knopf kaum und nichts passiert...$Oh nein! Du gewinnst nichts!",
+  "outro": "Das war ein lustiges kleines Spiel!"
+}
