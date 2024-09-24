@@ -5,12 +5,13 @@ import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, it, expect, vi } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Moves - Shell Side Arm", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
-  const TIMEOUT = 20 * 1000;
+  const shellSideArm = allMoves[Moves.SHELL_SIDE_ARM];
+  const shellSideArmAttr = shellSideArm.getAttrs(ShellSideArmCategoryAttr)[0];
 
   beforeAll(() => {
     phaserGame = new Phaser.Game({
@@ -36,34 +37,28 @@ describe("Moves - Shell Side Arm", () => {
   it("becomes a physical attack if forecasted to deal more damage as physical", async () => {
     game.override.enemySpecies(Species.SNORLAX);
 
-    await game.classicMode.startBattle([Species.MANAPHY]);
+    await game.classicMode.startBattle([Species.RAMPARDOS]);
 
-    const shellSideArm = allMoves[Moves.SHELL_SIDE_ARM];
-    const shellSideArmAttr = shellSideArm.getAttrs(ShellSideArmCategoryAttr)[0];
     vi.spyOn(shellSideArmAttr, "apply");
 
     game.move.select(Moves.SHELL_SIDE_ARM);
-
     await game.phaseInterceptor.to("MoveEffectPhase");
 
     expect(shellSideArmAttr.apply).toHaveLastReturnedWith(true);
-  }, TIMEOUT);
+  });
 
   it("remains a special attack if forecasted to deal more damage as special", async () => {
     game.override.enemySpecies(Species.SLOWBRO);
 
-    await game.classicMode.startBattle([Species.MANAPHY]);
+    await game.classicMode.startBattle([Species.XURKITREE]);
 
-    const shellSideArm = allMoves[Moves.SHELL_SIDE_ARM];
-    const shellSideArmAttr = shellSideArm.getAttrs(ShellSideArmCategoryAttr)[0];
     vi.spyOn(shellSideArmAttr, "apply");
 
     game.move.select(Moves.SHELL_SIDE_ARM);
-
     await game.phaseInterceptor.to("MoveEffectPhase");
 
     expect(shellSideArmAttr.apply).toHaveLastReturnedWith(false);
-  }, TIMEOUT);
+  });
 
   it("respects stat stage changes when forecasting base damage", async () => {
     game.override
@@ -72,16 +67,12 @@ describe("Moves - Shell Side Arm", () => {
 
     await game.classicMode.startBattle([Species.MANAPHY]);
 
-    const shellSideArm = allMoves[Moves.SHELL_SIDE_ARM];
-    const shellSideArmAttr = shellSideArm.getAttrs(ShellSideArmCategoryAttr)[0];
     vi.spyOn(shellSideArmAttr, "apply");
 
     game.move.select(Moves.SHELL_SIDE_ARM);
-
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
-
     await game.phaseInterceptor.to("BerryPhase", false);
 
     expect(shellSideArmAttr.apply).toHaveLastReturnedWith(false);
-  }, TIMEOUT);
+  });
 });

@@ -413,7 +413,7 @@ export class DoubleBattleChanceBoosterModifier extends LapsingPersistentModifier
   }
 
   /**
-   * Modifies the chance of a double battle occurring
+   * Increases the chance of a double battle occurring
    * @param args [0] {@linkcode Utils.NumberHolder} for double battle chance
    * @returns true if the modifier was applied
    */
@@ -421,7 +421,7 @@ export class DoubleBattleChanceBoosterModifier extends LapsingPersistentModifier
     const doubleBattleChance = args[0] as Utils.NumberHolder;
     // This is divided because the chance is generated as a number from 0 to doubleBattleChance.value using Utils.randSeedInt
     // A double battle will initiate if the generated number is 0
-    doubleBattleChance.value = Math.ceil(doubleBattleChance.value / 4);
+    doubleBattleChance.value = doubleBattleChance.value / 4;
 
     return true;
   }
@@ -888,7 +888,7 @@ export class PokemonBaseStatTotalModifier extends PokemonHeldItemModifier {
   }
 
   override matchType(modifier: Modifier): boolean {
-    return modifier instanceof PokemonBaseStatTotalModifier;
+    return modifier instanceof PokemonBaseStatTotalModifier && this.statModifier === modifier.statModifier;
   }
 
   override clone(): PersistentModifier {
@@ -939,7 +939,7 @@ export class PokemonBaseStatFlatModifier extends PokemonHeldItemModifier {
   }
 
   override matchType(modifier: Modifier): boolean {
-    return modifier instanceof PokemonBaseStatFlatModifier;
+    return modifier instanceof PokemonBaseStatFlatModifier && modifier.statModifier === this.statModifier && this.stats.every(s => modifier.stats.some(stat => s === stat));
   }
 
   override clone(): PersistentModifier {
@@ -2576,8 +2576,12 @@ export class LockModifierTiersModifier extends PersistentModifier {
  * Black Sludge item
  */
 export class HealShopCostModifier extends PersistentModifier {
-  constructor(type: ModifierType, stackCount?: integer) {
+  public readonly shopMultiplier: number;
+
+  constructor(type: ModifierType, shopMultiplier: number, stackCount?: integer) {
     super(type, stackCount);
+
+    this.shopMultiplier = shopMultiplier;
   }
 
   match(modifier: Modifier): boolean {
@@ -2585,11 +2589,11 @@ export class HealShopCostModifier extends PersistentModifier {
   }
 
   clone(): HealShopCostModifier {
-    return new HealShopCostModifier(this.type, this.stackCount);
+    return new HealShopCostModifier(this.type, this.shopMultiplier, this.stackCount);
   }
 
   apply(args: any[]): boolean {
-    (args[0] as Utils.IntegerHolder).value *= Math.pow(3, this.getStackCount());
+    (args[0] as Utils.IntegerHolder).value *= this.shopMultiplier;
 
     return true;
   }
@@ -2608,7 +2612,7 @@ export class BoostBugSpawnModifier extends PersistentModifier {
     return modifier instanceof BoostBugSpawnModifier;
   }
 
-  clone(): HealShopCostModifier {
+  clone(): BoostBugSpawnModifier {
     return new BoostBugSpawnModifier(this.type, this.stackCount);
   }
 

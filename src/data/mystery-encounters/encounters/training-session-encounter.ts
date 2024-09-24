@@ -13,13 +13,14 @@ import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import BattleScene from "#app/battle-scene";
 import MysteryEncounter, { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-encounter";
 import { MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/mystery-encounter-option";
-import { getEncounterText, queueEncounterMessage, showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
+import { queueEncounterMessage, showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import HeldModifierConfig from "#app/interfaces/held-modifier-config";
 import i18next from "i18next";
 import { getStatKey } from "#enums/stat";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
+import { isPokemonValidForEncounterOptionSelection } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
 
 /** The i18n namespace for the encounter */
 const namespace = "mysteryEncounter:trainingSession";
@@ -38,7 +39,7 @@ export const TrainingSessionEncounter: MysteryEncounter =
     .withHideWildIntroMessage(true)
     .withIntroSpriteConfigs([
       {
-        spriteKey: "training_gear",
+        spriteKey: "training_session_gear",
         fileRoot: "mystery-encounters",
         hasShadow: true,
         y: 6,
@@ -77,12 +78,7 @@ export const TrainingSessionEncounter: MysteryEncounter =
 
           // Only Pokemon that are not KOed/legal can be trained
           const selectableFilter = (pokemon: Pokemon) => {
-            const meetsReqs = pokemon.isAllowedInBattle();
-            if (!meetsReqs) {
-              return getEncounterText(scene, `${namespace}.invalid_selection`) ?? null;
-            }
-
-            return null;
+            return isPokemonValidForEncounterOptionSelection(pokemon, scene, `${namespace}.invalid_selection`);
           };
 
           return selectPokemonForOption(scene, onPokemonSelected, undefined, selectableFilter);
@@ -211,12 +207,7 @@ export const TrainingSessionEncounter: MysteryEncounter =
 
           // Only Pokemon that are not KOed/legal can be trained
           const selectableFilter = (pokemon: Pokemon) => {
-            const meetsReqs = pokemon.isAllowedInBattle();
-            if (!meetsReqs) {
-              return getEncounterText(scene, `${namespace}.invalid_selection`) ?? null;
-            }
-
-            return null;
+            return isPokemonValidForEncounterOptionSelection(pokemon, scene, `${namespace}.invalid_selection`);
           };
 
           return selectPokemonForOption(scene, onPokemonSelected, undefined, selectableFilter);
@@ -307,12 +298,7 @@ export const TrainingSessionEncounter: MysteryEncounter =
 
           // Only Pokemon that are not KOed/legal can be trained
           const selectableFilter = (pokemon: Pokemon) => {
-            const meetsReqs = pokemon.isAllowedInBattle();
-            if (!meetsReqs) {
-              return getEncounterText(scene, `${namespace}.invalid_selection`) ?? null;
-            }
-
-            return null;
+            return isPokemonValidForEncounterOptionSelection(pokemon, scene, `${namespace}.invalid_selection`);
           };
 
           return selectPokemonForOption(scene, onPokemonSelected, undefined, selectableFilter);
@@ -338,21 +324,18 @@ export const TrainingSessionEncounter: MysteryEncounter =
             const abilityIndex = encounter.misc.abilityIndex;
             if (!!playerPokemon.getFusionSpeciesForm()) {
               playerPokemon.fusionAbilityIndex = abilityIndex;
-              if (!isNullOrUndefined(playerPokemon.fusionSpecies?.speciesId) && speciesStarters.hasOwnProperty(playerPokemon.fusionSpecies!.speciesId)) {
-                scene.gameData.starterData[playerPokemon.fusionSpecies!.speciesId]
+              if (!isNullOrUndefined(playerPokemon.fusionSpecies?.speciesId) && speciesStarters.hasOwnProperty(playerPokemon.fusionSpecies.speciesId)) {
+                scene.gameData.starterData[playerPokemon.fusionSpecies.speciesId]
                   .abilityAttr |=
-                  abilityIndex !== 1 || playerPokemon.fusionSpecies!.ability2
+                  abilityIndex !== 1 || playerPokemon.fusionSpecies.ability2
                     ? Math.pow(2, playerPokemon.fusionAbilityIndex)
                     : AbilityAttr.ABILITY_HIDDEN;
               }
             } else {
               playerPokemon.abilityIndex = abilityIndex;
-              if (
-                speciesStarters.hasOwnProperty(playerPokemon.species.speciesId)
-              ) {
-                scene.gameData.starterData[
-                  playerPokemon.species.speciesId
-                ].abilityAttr |=
+              if (speciesStarters.hasOwnProperty(playerPokemon.species.speciesId)) {
+                scene.gameData.starterData[playerPokemon.species.speciesId]
+                  .abilityAttr |=
                   abilityIndex !== 1 || playerPokemon.species.ability2
                     ? Math.pow(2, playerPokemon.abilityIndex)
                     : AbilityAttr.ABILITY_HIDDEN;

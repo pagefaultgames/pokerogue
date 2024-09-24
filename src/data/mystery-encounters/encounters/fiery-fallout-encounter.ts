@@ -189,7 +189,7 @@ export const FieryFalloutEncounter: MysteryEncounter =
         }
 
         // Burn random member
-        const burnable = nonFireTypes.filter(p => isNullOrUndefined(p.status) || isNullOrUndefined(p.status!.effect) || p.status?.effect === StatusEffect.BURN);
+        const burnable = nonFireTypes.filter(p => isNullOrUndefined(p.status) || isNullOrUndefined(p.status.effect) || p.status.effect === StatusEffect.NONE);
         if (burnable?.length > 0) {
           const roll = randSeedInt(burnable.length);
           const chosenPokemon = burnable[roll];

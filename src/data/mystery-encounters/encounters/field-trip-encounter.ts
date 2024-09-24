@@ -24,7 +24,7 @@ const namespace = "mysteryEncounter:fieldTrip";
 export const FieldTripEncounter: MysteryEncounter =
   MysteryEncounterBuilder.withEncounterType(MysteryEncounterType.FIELD_TRIP)
     .withEncounterTier(MysteryEncounterTier.COMMON)
-    .withSceneWaveRangeRequirement(...CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES)
+    .withSceneWaveRangeRequirement(CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES[0], 100)
     .withIntroSpriteConfigs([
       {
         spriteKey: "preschooler_m",
@@ -32,7 +32,7 @@ export const FieldTripEncounter: MysteryEncounter =
         hasShadow: true,
       },
       {
-        spriteKey: "teacher",
+        spriteKey: "field_trip_teacher",
         fileRoot: "mystery-encounters",
         hasShadow: true,
       },

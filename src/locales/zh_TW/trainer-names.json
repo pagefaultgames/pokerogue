@@ -141,6 +141,11 @@
   "faba": "扎奧博",
   "plumeria": "布爾美麗",
   "oleana": "奧利薇",
+  "giacomo": "Giacomo",
+  "mela": "Mela",
+  "atticus": "Atticus",
+  "ortega": "Ortega",
+  "eri": "Eri",
 
   "maxie": "赤焰松",
   "archie": "水梧桐",
@@ -150,6 +155,7 @@
   "lusamine": "露莎米奈",
   "guzma": "古茲馬",
   "rose": "洛茲",
+  "cassiopeia": "牡丹",
   
   "blue_red_double": "青綠 & 赤紅",
   "red_blue_double": "赤紅 & 青綠",
@@ -160,5 +166,18 @@
   "alder_iris_double": "阿戴克 & 艾莉絲",
   "iris_alder_double": "艾莉絲 & 阿戴克",
   "marnie_piers_double": "瑪俐 & 聶梓",
-  "piers_marnie_double": "聶梓 & 瑪俐"
+  "piers_marnie_double": "聶梓 & 瑪俐",
+
+  "buck": "Buck",
+  "cheryl": "Cheryl",
+  "marley": "Marley",
+  "mira": "Mira",
+  "riley": "Riley",
+  "victor": "Victor",
+  "victoria": "Victoria",
+  "vivi": "Vivi",
+  "vicky": "Vicky",
+  "vito": "Vito",
+  "bug_type_superfan": "Bug-Type Superfan",
+  "expert_pokemon_breeder": "Expert Pokémon Breeder"
 }

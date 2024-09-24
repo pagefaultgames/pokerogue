@@ -1,0 +1,32 @@
+{
+  "intro": "¡Es una interfaz para la Estación de Intercambio Global, la GTS!",
+  "title": "La GTS",
+  "description": "¡Ah, la GTS! Una maravilla tecnológica, puedes conectarte con cualquier persona en todo el mundo para intercambiar Pokémon con ellos. ¿Tendrás suerte en tu intercambio hoy?",
+  "query": "¿Qué harás?",
+  "option": {
+    "1": {
+      "label": "Ver ofertas de intercambio",
+      "tooltip": "(+) Selecciona una oferta de intercambio para uno de tus Pokémon",
+      "trade_options_prompt": "Selecciona un Pokémon para recibir a través del intercambio."
+    },
+    "2": {
+      "label": "Intercambio Prodigioso",
+      "tooltip": "(+) Envía uno de tus Pokémon a la GTS y recibe un Pokémon aleatorio a cambio."
+    },
+    "3": {
+      "label": "Intercambia un objeto",
+      "trade_options_prompt": "Selecciona un objeto para enviar.",
+      "invalid_selection": "Este Pokémon no tiene objetos legales para intercambiar.",
+      "tooltip": "(+) Envía uno de tus objetos a la GTS y recibe un nuevo objeto aleatorio."
+    },
+    "4": {
+      "label": "Irse",
+      "tooltip": "(-) Ninguna Recompensa",
+      "selected": "¡No hay tiempo para intercambiar hoy!\nSigues adelante."
+    }
+  },
+  "pokemon_trade_selected": "{{tradedPokemon}} será enviado a {{tradeTrainerName}}.",
+  "pokemon_trade_goodbye": "¡Adiós, {{tradedPokemon}}!",
+  "item_trade_selected": "{{chosenItem}} será enviado a {{tradeTrainerName}}.$.@d{64}.@d{64}.@d{64}\n@s{level_up_fanfare}¡Intercambio completo!$¡Has recibido un {{itemName}} de {{tradeTrainerName}}!",
+  "trade_received": "¡@s{evolution_fanfare}{{tradeTrainerName}} envió a {{received}}!"
+}

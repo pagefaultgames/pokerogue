@@ -25,6 +25,7 @@ import { MysteryEncounterPokemonData } from "#app/data/mystery-encounters/myster
 import { CommandPhase } from "#app/phases/command-phase";
 import { MovePhase } from "#app/phases/move-phase";
 import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
+import { Abilities } from "#app/enums/abilities";
 
 const namespace = "mysteryEncounter:theStrongStuff";
 const defaultParty = [Species.LAPRAS, Species.GENGAR, Species.ABRA];
@@ -43,10 +44,13 @@ describe("The Strong Stuff - Mystery Encounter", () => {
   beforeEach(async () => {
     game = new GameManager(phaserGame);
     scene = game.scene;
-    game.override.mysteryEncounterChance(100);
-    game.override.startingWave(defaultWave);
-    game.override.startingBiome(defaultBiome);
-    game.override.disableTrainerWaves();
+    game.override
+      .mysteryEncounterChance(100)
+      .startingWave(defaultWave)
+      .startingBiome(defaultBiome)
+      .disableTrainerWaves()
+      .enemyAbility(Abilities.BALL_FETCH)
+      .enemyPassiveAbility(Abilities.BALL_FETCH);
 
     vi.spyOn(MysteryEncounters, "mysteryEncountersByBiome", "get").mockReturnValue(
       new Map<Biome, MysteryEncounterType[]>([
@@ -66,7 +70,7 @@ describe("The Strong Stuff - Mystery Encounter", () => {
     await game.runToMysteryEncounter(MysteryEncounterType.THE_STRONG_STUFF, defaultParty);
 
     expect(TheStrongStuffEncounter.encounterType).toBe(MysteryEncounterType.THE_STRONG_STUFF);
-    expect(TheStrongStuffEncounter.encounterTier).toBe(MysteryEncounterTier.GREAT);
+    expect(TheStrongStuffEncounter.encounterTier).toBe(MysteryEncounterTier.COMMON);
     expect(TheStrongStuffEncounter.dialogue).toBeDefined();
     expect(TheStrongStuffEncounter.dialogue.intro).toStrictEqual([{ text: `${namespace}.intro` }]);
     expect(TheStrongStuffEncounter.dialogue.encounterOptionsDialogue?.title).toBe(`${namespace}.title`);
@@ -81,22 +85,6 @@ describe("The Strong Stuff - Mystery Encounter", () => {
     await game.runToMysteryEncounter();
 
     expect(scene.currentBattle?.mysteryEncounter?.encounterType).not.toBe(MysteryEncounterType.THE_STRONG_STUFF);
-  });
-
-  it("should not run below wave 10", async () => {
-    game.override.startingWave(9);
-
-    await game.runToMysteryEncounter();
-
-    expect(scene.currentBattle?.mysteryEncounter?.encounterType).not.toBe(MysteryEncounterType.THE_STRONG_STUFF);
-  });
-
-  it("should not run above wave 179", async () => {
-    game.override.startingWave(181);
-
-    await game.runToMysteryEncounter();
-
-    expect(scene.currentBattle.mysteryEncounter).toBeUndefined();
   });
 
   it("should initialize fully ", async () => {

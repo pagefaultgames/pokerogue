@@ -1,0 +1,25 @@
+{
+  "intro": "Um {{greedentName}} te embosca\ne rouba as Frutas do seu time!",
+  "title": "Ganância Absoluta",
+  "description": "Um {{greedentName}} te pegou completamente desprevenido e agora todas as suas Frutas se foram!\n\nA {{greedentName}} parece prestes a comê-las quando para para te olhar, interessado.",
+  "query": "O que você vai fazer?",
+  "option": {
+    "1": {
+      "label": "Batalhar",
+      "tooltip": "(-) Batalha Difícil\n(+) Recompensas do Tesouro de Frutas",
+      "selected": "Um {{greedentName}} enche suas bochechas\ne se prepara para a batalha!",
+      "boss_enraged": "O amor feroz de {{greedentName}} por comida o deixou enfurecido!",
+      "food_stash": "Parece que o {{greedentName}} estava guardando um enorme estoque de comida!$@s{item_fanfare}Cada Pokémon do seu time ganha um {{foodReward}}!"
+    },
+    "2": {
+      "label": "Resolver com Ele",
+      "tooltip": "(+) Recuperar Algumas Frutas Perdidas",
+      "selected": "Seu apelo toca o coração de {{greedentName}}.$Ele não devolve todas as suas Frutas, mas joga algumas na sua direção."
+    },
+    "3": {
+      "label": "Deixá-lo Ficar com a Comida",
+      "tooltip": "(-) Perder Todas as Frutas\n(?) O {{greedentName}} Vai Gostar de Você",
+      "selected": "O {{greedentName}} devora todo o\nestoque de Frutas num piscar de olhos!$Bate na barriga satisfeito\ne olha para você agradecido.$Talvez você possa alimentá-lo\ncom mais Frutas em sua aventura...$@s{level_up_fanfare}O {{greedentName}} quer se juntar ao seu time!"
+    }
+  }
+}

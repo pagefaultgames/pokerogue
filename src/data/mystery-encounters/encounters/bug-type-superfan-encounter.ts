@@ -9,6 +9,7 @@ import {
   transitionMysteryEncounterIntroVisuals,
 } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import {
+  getRandomPartyMemberFunc,
   trainerConfigs,
   TrainerPartyCompoundTemplate,
   TrainerPartyTemplate,
@@ -17,14 +18,12 @@ import {
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { PartyMemberStrength } from "#enums/party-member-strength";
 import BattleScene from "#app/battle-scene";
-import * as Utils from "#app/utils";
 import { isNullOrUndefined, randSeedInt, randSeedShuffle } from "#app/utils";
 import MysteryEncounter, { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-encounter";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { TrainerType } from "#enums/trainer-type";
 import { Species } from "#enums/species";
-import Pokemon, { EnemyPokemon, PlayerPokemon, PokemonMove } from "#app/field/pokemon";
-import { getPokemonSpecies } from "#app/data/pokemon-species";
+import Pokemon, { PlayerPokemon, PokemonMove } from "#app/field/pokemon";
 import { getEncounterText, showEncounterDialogue } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
 import { LearnMovePhase } from "#app/phases/learn-move-phase";
 import { Moves } from "#enums/moves";
@@ -377,9 +376,10 @@ export const BugTypeSuperfanEncounter: MysteryEncounter =
         const onPokemonSelected = (pokemon: PlayerPokemon) => {
           // Get Pokemon held items and filter for valid ones
           const validItems = pokemon.getHeldItems().filter(item => {
-            return item instanceof BypassSpeedChanceModifier ||
+            return (item instanceof BypassSpeedChanceModifier ||
               item instanceof ContactHeldItemTransferChanceModifier ||
-              (item instanceof AttackTypeBoosterModifier && (item.type as AttackTypeBoosterModifierType).moveType === Type.BUG);
+              (item instanceof AttackTypeBoosterModifier && (item.type as AttackTypeBoosterModifierType).moveType === Type.BUG)) &&
+              item.isTransferable;
           });
 
           return validItems.map((modifier: PokemonHeldItemModifier) => {
@@ -492,7 +492,7 @@ function getTrainerConfigForWave(waveIndex: number) {
       .setPartyMemberFunc(3, getRandomPartyMemberFunc(POOL_2_POKEMON, TrainerSlot.TRAINER, true))
       .setPartyMemberFunc(4, getRandomPartyMemberFunc([pool3Mon.species], TrainerSlot.TRAINER, true, p => {
         if (!isNullOrUndefined(pool3Mon.formIndex)) {
-          p.formIndex = pool3Mon.formIndex!;
+          p.formIndex = pool3Mon.formIndex;
           p.generateAndPopulateMoveset();
           p.generateName();
         }
@@ -515,14 +515,14 @@ function getTrainerConfigForWave(waveIndex: number) {
       .setPartyMemberFunc(2, getRandomPartyMemberFunc(POOL_2_POKEMON, TrainerSlot.TRAINER, true))
       .setPartyMemberFunc(3, getRandomPartyMemberFunc([pool3Mon.species], TrainerSlot.TRAINER, true, p => {
         if (!isNullOrUndefined(pool3Mon.formIndex)) {
-          p.formIndex = pool3Mon.formIndex!;
+          p.formIndex = pool3Mon.formIndex;
           p.generateAndPopulateMoveset();
           p.generateName();
         }
       }))
       .setPartyMemberFunc(4, getRandomPartyMemberFunc([pool3Mon2.species], TrainerSlot.TRAINER, true, p => {
         if (!isNullOrUndefined(pool3Mon2.formIndex)) {
-          p.formIndex = pool3Mon2.formIndex!;
+          p.formIndex = pool3Mon2.formIndex;
           p.generateAndPopulateMoveset();
           p.generateName();
         }
@@ -543,7 +543,7 @@ function getTrainerConfigForWave(waveIndex: number) {
       .setPartyMemberFunc(2, getRandomPartyMemberFunc(POOL_2_POKEMON, TrainerSlot.TRAINER, true))
       .setPartyMemberFunc(3, getRandomPartyMemberFunc([pool3Mon.species], TrainerSlot.TRAINER, true, p => {
         if (!isNullOrUndefined(pool3Mon.formIndex)) {
-          p.formIndex = pool3Mon.formIndex!;
+          p.formIndex = pool3Mon.formIndex;
           p.generateAndPopulateMoveset();
           p.generateName();
         }
@@ -566,14 +566,14 @@ function getTrainerConfigForWave(waveIndex: number) {
       }))
       .setPartyMemberFunc(2, getRandomPartyMemberFunc([pool3Mon.species], TrainerSlot.TRAINER, true, p => {
         if (!isNullOrUndefined(pool3Mon.formIndex)) {
-          p.formIndex = pool3Mon.formIndex!;
+          p.formIndex = pool3Mon.formIndex;
           p.generateAndPopulateMoveset();
           p.generateName();
         }
       }))
       .setPartyMemberFunc(3, getRandomPartyMemberFunc([pool3Mon.species], TrainerSlot.TRAINER, true, p => {
         if (!isNullOrUndefined(pool3Mon.formIndex)) {
-          p.formIndex = pool3Mon.formIndex!;
+          p.formIndex = pool3Mon.formIndex;
           p.generateAndPopulateMoveset();
           p.generateName();
         }
@@ -582,16 +582,6 @@ function getTrainerConfigForWave(waveIndex: number) {
   }
 
   return config;
-}
-
-function getRandomPartyMemberFunc(speciesPool: Species[], trainerSlot: TrainerSlot = TrainerSlot.TRAINER, ignoreEvolution: boolean = false, postProcess?: (enemyPokemon: EnemyPokemon) => void) {
-  return (scene: BattleScene, level: number, strength: PartyMemberStrength) => {
-    let species = Utils.randSeedItem(speciesPool);
-    if (!ignoreEvolution) {
-      species = getPokemonSpecies(species).getTrainerSpeciesForLevel(level, true, strength);
-    }
-    return scene.addEnemyPokemon(getPokemonSpecies(species), level, trainerSlot, undefined, undefined, postProcess);
-  };
 }
 
 function doBugTypeMoveTutor(scene: BattleScene): Promise<void> {
