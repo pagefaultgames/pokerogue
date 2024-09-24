@@ -1,7 +1,7 @@
 {
   "intro": "Ein {{oricorioName}} tanzt traurig allein, ohne einen Partner.",
   "title": "Tanzstunden",
-  "description": "Das {{oricorioName}} scheint nicht aggressiv zu sein, im Gegenteil, es scheint traurig zu sein.\nVielleicht möchte es einfach nur mit jemandem tanzen...",
+  "description": "Das {{oricorioName}} scheint nicht aggressiv zu sein, im Gegenteil, es scheint traurig zu sein.\nVielleicht möchte es einfach nur mit jemandem tanzen...",//TODO
   "query": "Was wirst du tun?",
   "option": {
     "1": {
@@ -12,7 +12,7 @@
     },
     "2": {
       "label": "Lerne den Tanz",
-      "tooltip": "(+) Bringe einem Pokémon Wecktanz bei",
+      "tooltip": "(+) Bringe einem Pokémon Wecktanz bei",//TODO
       "selected": "Du schaust dem {{oricorioName}} genau zu, wie es seinen Tanz aufführt...$@s{level_up_fanfare}Dein {{selectedPokemon}} hat von {{oricorioName}} gelernt!"
     },
     "3": {
