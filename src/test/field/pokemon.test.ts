@@ -3,7 +3,7 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import GameManager from "../utils/gameManager";
 import { PokeballType } from "#app/enums/pokeball";
 import BattleScene from "#app/battle-scene";
-import { tmSpecies } from "#app/data/tms";
+import { Moves } from "#app/enums/moves";
 
 describe("Spec - Pokemon", () => {
   let phaserGame: Phaser.Game;
