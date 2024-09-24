@@ -1,0 +1,26 @@
+{
+  "intro": "Um garoto de aparência rica te para.",
+  "speaker": "Garoto Rico",
+  "intro_dialogue": "Bom dia para você.$Não pude deixar de notar que seu\n{{strongestPokemon}} parece absolutamente divino!$Sempre quis ter um Pokémon assim!$Eu te pagaria generosamente,\ne também te daria este velho amuleto!",
+  "title": "Uma Oferta Irrecusável",
+  "description": "Você está sendo oferecido um @[TOOLTIP_TITLE]{Amuleto Brilhante} e {{price, money}} pelo seu {{strongestPokemon}}!\n\nÉ um negócio extremamente bom, mas será que você pode realmente se desfazer de um membro tão forte do seu time?",
+  "query": "O que você vai fazer?",
+  "option": {
+    "1": {
+      "label": "Aceitar o Acordo",
+      "tooltip": "(-) Perder {{strongestPokemon}}\n(+) Ganhar um @[TOOLTIP_TITLE]{Amuleto Brilhante}\n(+) Ganhar {{price, money}}",
+      "selected": "Maravilhoso!@d{32} Venha comigo, {{strongestPokemon}}!$É hora de mostrá-lo para todos no clube de iates!$Eles ficarão com tanta inveja!"
+    },
+    "2": {
+      "label": "Extorquir o Garoto",
+      "tooltip": "(+) {{option2PrimaryName}} usa {{moveOrAbility}}\n(+) Ganhar {{price, money}}",
+      "tooltip_disabled": "Seus Pokémon precisam ter certos golpes ou habilidades para escolher isso",
+      "selected": "Minha nossa, estamos sendo roubados, {{liepardName}}!$Você vai ouvir falar dos meus advogados por isso!"
+    },
+    "3": {
+      "label": "Sair",
+      "tooltip": "(-) Sem Recompensas",
+      "selected": "Que dia horrível...$Bem, vamos voltar ao clube de iates então, {{liepardName}}."
+    }
+  }
+}

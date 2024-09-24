@@ -10,8 +10,6 @@ import { Species } from "#enums/species";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
-const TIMEOUT = 20 * 1000;
-
 // Bulbapedia Reference: https://bulbapedia.bulbagarden.net/wiki/Heal_Block_(move)
 describe("Moves - Heal Block", () => {
   let phaserGame: Phaser.Game;
@@ -53,8 +51,7 @@ describe("Moves - Heal Block", () => {
 
     expect(player.hp).toBe(1);
     expect(enemy.hp).toBeLessThan(enemy.getMaxHp());
-  }, TIMEOUT
-  );
+  });
 
   it("shouldn't stop Liquid Ooze from dealing damage", async() => {
     game.override.enemyAbility(Abilities.LIQUID_OOZE);
@@ -70,7 +67,7 @@ describe("Moves - Heal Block", () => {
 
     expect(player.isFullHp()).toBe(false);
     expect(enemy.isFullHp()).toBe(false);
-  }, TIMEOUT);
+  });
 
   it("should stop delayed heals, such as from Wish", async() => {
     await game.classicMode.startBattle([Species.CHARIZARD]);
@@ -89,7 +86,7 @@ describe("Moves - Heal Block", () => {
     }
 
     expect(player.hp).toBe(1);
-  }, TIMEOUT);
+  });
 
   it("should prevent Grassy Terrain from restoring HP", async() => {
     game.override.enemyAbility(Abilities.GRASSY_SURGE);
@@ -104,7 +101,7 @@ describe("Moves - Heal Block", () => {
     await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(player.hp).toBe(1);
-  }, TIMEOUT);
+  });
 
   it("should prevent healing from heal-over-time moves", async() => {
     await game.classicMode.startBattle([Species.CHARIZARD]);
@@ -118,7 +115,7 @@ describe("Moves - Heal Block", () => {
 
     expect(player.getTag(BattlerTagType.AQUA_RING)).toBeDefined();
     expect(player.hp).toBe(1);
-  }, TIMEOUT);
+  });
 
   it("should prevent abilities from restoring HP", async() => {
     game.override
@@ -135,7 +132,7 @@ describe("Moves - Heal Block", () => {
     await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(player.hp).toBe(1);
-  }, TIMEOUT);
+  });
 
   it("should stop healing from items", async() => {
     game.override.startingHeldItems([{name: "LEFTOVERS"}]);
@@ -149,5 +146,5 @@ describe("Moves - Heal Block", () => {
     await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(player.hp).toBe(1);
-  }, TIMEOUT);
+  });
 });
