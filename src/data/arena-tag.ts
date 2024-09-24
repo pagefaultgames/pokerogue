@@ -932,8 +932,7 @@ class ImprisonTag extends ArenaTrapTag {
     party?.forEach((p: PlayerPokemon | EnemyPokemon ) => {
       p.addTag(BattlerTagType.IMPRISON, 1, Moves.IMPRISON, this.sourceId);
     });
-    arena.scene.queueMessage(i18next.t("battlerTags:imprisonOnAdd", {pokemonNameWithAffix: getPokemonNameWithAffix(this.source)}), 1500);
-    console.log(arena.scene);
+    arena.scene.queueMessage(i18next.t("battlerTags:imprisonOnAdd", {pokemonNameWithAffix: getPokemonNameWithAffix(this.source)}));
   }
 
   lapse(_arena: Arena): boolean {
