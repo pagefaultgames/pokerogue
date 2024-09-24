@@ -64,32 +64,15 @@ describe("Spec - Pokemon", () => {
       });
     });
   });
-  it("pokemon that have form changes and different tms per form should not share tms between forms", async () => {
+
+  it("should not share tms between different forms", async () => {
     game.override.starterForms({ [Species.ROTOM]: 4 });
+
     await game.classicMode.startBattle([Species.ROTOM]);
-    const playerPokemon = game.scene.getPlayerPokemon()!;
 
-    // 59 is blizzard, fan rotom should not be in that array
-    const compatible1 = tmSpecies[59].some(p => {
-      if (Array.isArray(p)) {
-        const [pkm, form] = p;
-        return pkm === playerPokemon.species.speciesId && playerPokemon.getFormKey() === form;
-      }
-      return false;
-    });
+    const fanRotom = game.scene.getPlayerPokemon()!;
 
-    // Air slash is 403, fan rotom should be in it
-    const compatible2 = tmSpecies[403].some(p => {
-      if (Array.isArray(p)) {
-        const [pkm, form] = p;
-        return pkm === playerPokemon.species.speciesId && playerPokemon.getFormKey() === form;
-      }
-      return false;
-    });
-
-    expect(playerPokemon.compatibleTms.includes(59)).toBeFalsy();
-    expect(playerPokemon.compatibleTms.includes(403)).toBeTruthy();
-    expect(compatible1).toBeFalsy();
-    expect(compatible2).toBeTruthy();
+    expect(fanRotom.compatibleTms).not.toContain(Moves.BLIZZARD);
+    expect(fanRotom.compatibleTms).toContain(Moves.AIR_SLASH);
   });
 });
