@@ -21,7 +21,7 @@ export default class ConfirmPreviewUiHandler extends AbstractOptionSelectUiHandl
   }
 
   getWindowWidth(): integer {
-    return PreviewUiHandler.windowWidth;
+    return ConfirmPreviewUiHandler.windowWidth;
   }
 
   determineLabels(mode: PreviewMode): string[] {

@@ -16,7 +16,7 @@ import i18next from "i18next";
 import { PokemonPhase } from "./pokemon-phase";
 import { VictoryPhase } from "./victory-phase";
 import { SubstituteTag } from "#app/data/battler-tags";
-import { PreviewMode } from "#app/ui/confirmPreview-ui-handler";
+import { PreviewMode } from "#app/ui/confirm-preview-ui-handler";
 
 export class AttemptCapturePhase extends PokemonPhase {
   private pokeballType: PokeballType;
