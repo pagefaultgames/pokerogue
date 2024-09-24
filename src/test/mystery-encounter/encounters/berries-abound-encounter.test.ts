@@ -190,7 +190,7 @@ describe("Berries Abound - Mystery Encounter", () => {
 
       // Should be enraged
       expect(enemyField[0].summonData.statStages).toEqual([0, 1, 0, 1, 1, 0, 0]);
-      expect(encounterTextSpy).toHaveBeenCalledWith(expect.any(BattleScene), `${namespace}.option.2.selected_bad`);
+      expect(encounterTextSpy).toHaveBeenCalledWith(expect.any(BattleScene), `${namespace}:option.2.selected_bad`);
     });
 
     it("should start battle if fastest pokemon is slower than boss above wave 50", async () => {
