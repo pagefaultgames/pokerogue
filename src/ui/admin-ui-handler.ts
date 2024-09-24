@@ -7,6 +7,8 @@ import { Button } from "#app/enums/buttons";
 
 export default class AdminUiHandler extends FormModalUiHandler {
 
+  private adminMode: string;
+
   private unlinkAction: Function;
 
   constructor(scene: BattleScene, mode: Mode | null = null) {
@@ -14,7 +16,7 @@ export default class AdminUiHandler extends FormModalUiHandler {
   }
 
   setup(): void {
-    super.setup();
+
   }
 
   getModalTitle(config?: ModalConfig): string {
@@ -22,7 +24,7 @@ export default class AdminUiHandler extends FormModalUiHandler {
   }
 
   getFields(config?: ModalConfig): string[] {
-    return ["Username", "Discord ID"];
+    return this.adminMode === "link" ? ["Username", "Discord ID"] : ["Test", "Hello"];
   }
 
   getWidth(config?: ModalConfig): number {
@@ -34,7 +36,7 @@ export default class AdminUiHandler extends FormModalUiHandler {
   }
 
   getButtonLabels(config?: ModalConfig): string[] {
-    return ["Link account", "Unlink account", "Cancel"];
+    return ["Link account", "Cancel"];
   }
 
   processInput(button: Button): boolean {
@@ -47,7 +49,10 @@ export default class AdminUiHandler extends FormModalUiHandler {
   }
 
   show(args: any[]): boolean {
-    if (super.show(args)) {
+    this.adminMode = args[args.length - 1];
+    super.setup();
+
+    if (super.show(args.slice(0, -1))) {
       const config = args[0] as ModalConfig;
       const originalSubmitAction = this.submitAction;
       let originAction: number = 0; // this is used to keep track of which button has been pressed

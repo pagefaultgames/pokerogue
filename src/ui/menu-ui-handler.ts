@@ -397,7 +397,7 @@ export default class MenuUiHandler extends MessageUiHandler {
                 ui.revertMode();
               }
             ]
-          });
+          }, "link");
           return true;
         },
         keepOpen: true
