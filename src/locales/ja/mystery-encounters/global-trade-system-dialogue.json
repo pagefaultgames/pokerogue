@@ -1,32 +1,32 @@
 {
-  "intro": "It's an interface for the Global Trade System!",
-  "title": "The GTS",
-  "description": "Ah, the GTS! A technological wonder, you can connect with anyone else around the globe to trade Pokémon with them! Will fortune smile upon your trade today?",
-  "query": "What will you do?",
+  "intro": "グローバルトレードシステムのインターフェイスです！",
+  "title": "ＧＴＳ",
+  "description": "ＧＴＳ：　この新技術の　軌跡で　世界中の　誰とでも　接続して　ポケモンを　通信交換できます。　今日の　交換に　幸運が　訪れるでしょうか？",
+  "query": "どうします？",
   "option": {
     "1": {
-      "label": "Check Trade Offers",
-      "tooltip": "(+) Select a trade offer for one of your Pokémon",
-      "trade_options_prompt": "Select a Pokémon to receive through trade."
+      "label": "交換申出を確認",
+      "tooltip": "(+) 手持ちポケモン　１匹に　対して　交換申出を　選ぶ",
+      "trade_options_prompt": "交換で　もらう　ポケモンを　選んでください"
     },
     "2": {
-      "label": "Wonder Trade",
-      "tooltip": "(+) Send one of your Pokémon to the GTS and get a random Pokémon in return"
+      "label": "ミラクル交換",
+      "tooltip": "(+) ポケモンを　１匹　ＧＴＳ に送ってから　ランダムな　ポケモンを　 １匹　もらう"
     },
     "3": {
-      "label": "Trade an Item",
-      "trade_options_prompt": "Select an item to send.",
-      "invalid_selection": "This Pokémon doesn't have legal items to trade.",
-      "tooltip": "(+) Send one of your Items to the GTS and get a random new Item"
+      "label": "アイテム交換",
+      "trade_options_prompt": "送る　アイテムを　選んでください",
+      "invalid_selection": "交換できる　アイテムが　ありません",
+      "tooltip": "(+) １つの　アイテムを　ＧＴＳに　送ってから　ランダムな　アイテムを　もらう"
     },
     "4": {
-      "label": "Leave",
-      "tooltip": "(-) No Rewards",
-      "selected": "No time to trade today!\nYou continue on."
+      "label": "立ち去ら",
+      "tooltip": "(-) ご褒美なし",
+      "selected": "今日は　交換する　暇は　ありません！\n進みましょう。"
     }
   },
-  "pokemon_trade_selected": "{{tradedPokemon}} will be sent to {{tradeTrainerName}}.",
-  "pokemon_trade_goodbye": "Goodbye, {{tradedPokemon}}!",
-  "item_trade_selected": "{{chosenItem}} will be sent to {{tradeTrainerName}}.$.@d{64}.@d{64}.@d{64}\n@s{level_up_fanfare}Trade complete!$You received a {{itemName}} from {{tradeTrainerName}}!",
-  "trade_received": "@s{evolution_fanfare}{{tradeTrainerName}} sent over {{received}}!"
+  "pokemon_trade_selected": "{{tradedPokemon}}は {{tradeTrainerName}}に　送られます。",
+  "pokemon_trade_goodbye": "さようなら　{{tradedPokemon}}!",
+  "item_trade_selected": "{{chosenItem}}は　{{tradeTrainerName}}に　送られます。$.@d{64}.@d{64}.@d{64}\n@s{level_up_fanfare}交換　完了！${{tradeTrainerName}}から　{{itemName}}を もらいました！",
+  "trade_received": "@s{evolution_fanfare}{{received}}を　{{tradeTrainerName}}から　もらいました！"
 }
