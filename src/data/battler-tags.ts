@@ -703,7 +703,6 @@ export class InfatuatedTag extends BattlerTag {
   canAdd(pokemon: Pokemon): boolean {
     if (this.sourceId) {
       const pkm = pokemon.scene.getPokemonById(this.sourceId);
-      console.log(pkm);
 
       const validArena = new Utils.BooleanHolder(true);
       const arenaTag = pokemon.scene.arena.findTagsOnSide(t => t.tagType === ArenaTagType.AROMA_VEIL, pokemon.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY)[0];
