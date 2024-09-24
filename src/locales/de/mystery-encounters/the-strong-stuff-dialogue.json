@@ -1,7 +1,7 @@
 {
   "intro": "Es ist ein riesiger {{shuckleName}} und ein riesiger Vorrat an... Saft?",
   "title":  "Das gute Zeug",
-  "description": "Das {{shuckleName}} das deinen Weg blockiert, sieht unglaublich stark aus. In der Zwischenzeit strahlt der Saft daneben eine Art Kraft aus.\nDas {{shuckleName}} streckt seine Fühler in deine Richtung aus. Es scheint, als wolle es etwas tun...",
+  "description": "Das {{shuckleName}} das deinen Weg blockiert, sieht unglaublich stark aus. In der Zwischenzeit strahlt der Saft daneben eine Art Kraft aus.\nDas {{shuckleName}} streckt seine Fühler in deine Richtung aus. Es scheint, als wolle es etwas tun...",//TODO
   "query": "Was wirst du tun?",
   "option": {
     "1": {
