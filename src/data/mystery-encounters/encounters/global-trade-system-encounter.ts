@@ -26,10 +26,14 @@ import { trainerNamePools } from "#app/data/trainer-names";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
 import { addPokemonDataToDexAndValidateAchievements } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
 import { Moves } from "#enums/moves";
-import { speciesEggMoves } from "#app/data/egg-moves";
 
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounter:globalTradeSystem";
+
+/** Base shiny chance of 512/65536 -> 1/128 odds, affected by events and Shiny Charms. Cannot exceed 1/16 odds. */
+const WONDER_TRADE_SHINY_CHANCE = 512;
+/** Max shiny chance of 4096/65536 -> 1/16 odds. */
+const MAX_WONDER_TRADE_SHINY_CHANCE = 4096;
 
 const LEGENDARY_TRADE_POOLS = {
   1: [Species.RATTATA, Species.PIDGEY, Species.WEEDLE],
@@ -224,16 +228,15 @@ export const GlobalTradeSystemEncounter: MysteryEncounter =
             const tradePokemon = new EnemyPokemon(scene, randomTradeOption, pokemon.level, TrainerSlot.NONE, false);
             // Extra shiny roll at 1/128 odds (boosted by events and charms)
             if (!tradePokemon.shiny) {
-              const baseShinyChance = 512;
-              const shinyThreshold = new Utils.IntegerHolder(baseShinyChance);
+              const shinyThreshold = new Utils.IntegerHolder(WONDER_TRADE_SHINY_CHANCE);
               if (scene.eventManager.isEventActive()) {
                 shinyThreshold.value *= scene.eventManager.getShinyMultiplier();
               }
               scene.applyModifiers(ShinyRateBoosterModifier, true, shinyThreshold);
 
               // Base shiny chance of 512/65536 -> 1/128, affected by events and Shiny Charms
-              // Maximum shiny chance of 4090/65536 -> 1/16, cannot improve further after that
-              const shinyChance = Math.min(shinyThreshold.value, 4090);
+              // Maximum shiny chance of 4096/65536 -> 1/16, cannot improve further after that
+              const shinyChance = Math.min(shinyThreshold.value, MAX_WONDER_TRADE_SHINY_CHANCE);
 
               tradePokemon.trySetShinySeed(shinyChance, false);
             }
@@ -255,17 +258,16 @@ export const GlobalTradeSystemEncounter: MysteryEncounter =
 
             // If Pokemon is still not shiny or with HA, give the Pokemon a random Common egg move in its moveset
             if (!tradePokemon.shiny && (!tradePokemon.species.abilityHidden || tradePokemon.abilityIndex < hiddenIndex)) {
-              const eggMoves: Moves[] = speciesEggMoves[tradePokemon.getSpeciesForm().getRootSpeciesId()];
-              if (eggMoves) {
-                // Cannot gen the rare egg move, only 1 of the first 3 common moves
-                const eggMove = eggMoves[randSeedInt(3)];
-                if (!tradePokemon.moveset.some(m => m?.moveId === eggMove)) {
-                  if (tradePokemon.moveset.length < 4) {
-                    tradePokemon.moveset.push(new PokemonMove(eggMove));
-                  } else {
-                    const eggMoveIndex = randSeedInt(4);
-                    tradePokemon.moveset[eggMoveIndex] = new PokemonMove(eggMove);
-                  }
+              const eggMoves: Moves[] = tradePokemon.getEggMoves();
+
+              // Cannot gen the rare egg move, only 1 of the first 3 common moves
+              const eggMove = eggMoves[randSeedInt(3)];
+              if (!tradePokemon.moveset.some(m => m?.moveId === eggMove)) {
+                if (tradePokemon.moveset.length < 4) {
+                  tradePokemon.moveset.push(new PokemonMove(eggMove));
+                } else {
+                  const eggMoveIndex = randSeedInt(4);
+                  tradePokemon.moveset[eggMoveIndex] = new PokemonMove(eggMove);
                 }
               }
             }
@@ -480,7 +482,7 @@ function generateTradeOption(alreadyUsedSpecies: PokemonSpecies[], originalBst?:
     if (validSpecies?.length > 20) {
       validSpecies = randSeedShuffle(validSpecies);
       newSpecies = validSpecies.pop();
-      while (isNullOrUndefined(newSpecies) || alreadyUsedSpecies.includes(newSpecies!)) {
+      while (isNullOrUndefined(newSpecies) || alreadyUsedSpecies.includes(newSpecies)) {
         newSpecies = validSpecies.pop();
       }
     } else {
