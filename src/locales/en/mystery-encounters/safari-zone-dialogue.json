@@ -1,7 +1,7 @@
 {
   "intro": "It's a safari zone!",
   "title": "The Safari Zone",
-  "description": "There are all kinds of rare and special Pokémon that can be found here!\nIf you choose to enter, you'll have a time limit of 3 wild encounters where you can try to catch these special Pokémon.\n\nBeware, though. These Pokémon may flee before you're able to catch them!",
+  "description": "There are all kinds of rare and special Pokémon that can be found here!\nIf you choose to enter, you'll have a time limit of @[TOOLTIP_TITLE]{{{numEncounters}} wild encounters} where you can try to catch these special Pokémon.\n\nBeware, though. These Pokémon may flee before you're able to catch them!",
   "query": "Would you like to enter?",
   "option": {
     "1": {

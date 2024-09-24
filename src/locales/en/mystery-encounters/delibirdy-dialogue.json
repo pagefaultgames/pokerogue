@@ -1,7 +1,7 @@
 
 
 {
-  "intro": "A pack of {{delibirdName}} have appeared!",
+  "intro": "A flock of {{delibirdName}} have appeared!",
   "title": "Delibir-dy",
   "description": "The {{delibirdName}}s are looking at you expectantly, as if they want something. Perhaps giving them an item or some money would satisfy them?",
   "query": "What will you give them?",
@@ -25,5 +25,5 @@
       "selected": "You toss the {{chosenItem}} to the {{delibirdName}}s,\nwho chatter amongst themselves excitedly.$They turn back to you and happily give you a present!"
     }
   },
-  "outro": "The {{delibirdName}} pack happily waddles off into the distance.$What a curious little exchange!"
+  "outro": "The {{delibirdName}} flock happily waddles off into the distance.$What a curious little exchange!"
 }
