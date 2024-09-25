@@ -1,7 +1,7 @@
 {
   "intro": "It's a massive {{shuckleName}} and what appears\nto be a large stash of... juice?",
   "title": "The Strong Stuff",
-  "description": "The {{shuckleName}} that blocks your path looks incredibly strong. Meanwhile, the juice next to it is emanating power of some kind.\n\nThe {{shuckleName}} extends its feelers in your direction. It seems like it wants to do something...",
+  "description": "The {{shuckleName}} that blocks your path looks formidable. Meanwhile, the juice next to it emanates power of some kind.\n\nThe {{shuckleName}} extends its feelers in your direction. It seems like it wants to do something...",
   "query": "What will you do?",
   "option": {
     "1": {

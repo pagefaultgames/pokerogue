@@ -31,7 +31,7 @@
   "option": {
     "1": {
       "label": "Accept the Challenge",
-      "tooltip": "(-) Tough Battle\n(+) Gain a @[TOOLTIP_TITLE]{Very Rare Egg}"
+      "tooltip": "(-) Extremely Tough Battle\n(+) Gain a @[TOOLTIP_TITLE]{Very Rare Egg}"
     },
     "2": {
       "label": "Refuse the Challenge",
