@@ -12,7 +12,7 @@
     },
     "2": {
       "label": "Aprender su danza",
-      "tooltip": "(+) Enseña a un Pokémon Danza despertar",
+      "tooltip": "(+) Enseña a cualquier Pokémon Danza despertar",
       "selected": "Observas atentamente al {{oricorioName}} mientras realiza su danza…$@s{level_up_fanfare}¡Tu {{selectedPokemon}} aprendió del {{oricorioName}}!"
     },
     "3": {
