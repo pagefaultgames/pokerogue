@@ -492,7 +492,7 @@ function getTrainerConfigForWave(waveIndex: number) {
       .setPartyMemberFunc(3, getRandomPartyMemberFunc(POOL_2_POKEMON, TrainerSlot.TRAINER, true))
       .setPartyMemberFunc(4, getRandomPartyMemberFunc([pool3Mon.species], TrainerSlot.TRAINER, true, p => {
         if (!isNullOrUndefined(pool3Mon.formIndex)) {
-          p.formIndex = pool3Mon.formIndex!;
+          p.formIndex = pool3Mon.formIndex;
           p.generateAndPopulateMoveset();
           p.generateName();
         }
@@ -515,14 +515,14 @@ function getTrainerConfigForWave(waveIndex: number) {
       .setPartyMemberFunc(2, getRandomPartyMemberFunc(POOL_2_POKEMON, TrainerSlot.TRAINER, true))
       .setPartyMemberFunc(3, getRandomPartyMemberFunc([pool3Mon.species], TrainerSlot.TRAINER, true, p => {
         if (!isNullOrUndefined(pool3Mon.formIndex)) {
-          p.formIndex = pool3Mon.formIndex!;
+          p.formIndex = pool3Mon.formIndex;
           p.generateAndPopulateMoveset();
           p.generateName();
         }
       }))
       .setPartyMemberFunc(4, getRandomPartyMemberFunc([pool3Mon2.species], TrainerSlot.TRAINER, true, p => {
         if (!isNullOrUndefined(pool3Mon2.formIndex)) {
-          p.formIndex = pool3Mon2.formIndex!;
+          p.formIndex = pool3Mon2.formIndex;
           p.generateAndPopulateMoveset();
           p.generateName();
         }
@@ -543,7 +543,7 @@ function getTrainerConfigForWave(waveIndex: number) {
       .setPartyMemberFunc(2, getRandomPartyMemberFunc(POOL_2_POKEMON, TrainerSlot.TRAINER, true))
       .setPartyMemberFunc(3, getRandomPartyMemberFunc([pool3Mon.species], TrainerSlot.TRAINER, true, p => {
         if (!isNullOrUndefined(pool3Mon.formIndex)) {
-          p.formIndex = pool3Mon.formIndex!;
+          p.formIndex = pool3Mon.formIndex;
           p.generateAndPopulateMoveset();
           p.generateName();
         }
@@ -566,14 +566,14 @@ function getTrainerConfigForWave(waveIndex: number) {
       }))
       .setPartyMemberFunc(2, getRandomPartyMemberFunc([pool3Mon.species], TrainerSlot.TRAINER, true, p => {
         if (!isNullOrUndefined(pool3Mon.formIndex)) {
-          p.formIndex = pool3Mon.formIndex!;
+          p.formIndex = pool3Mon.formIndex;
           p.generateAndPopulateMoveset();
           p.generateName();
         }
       }))
       .setPartyMemberFunc(3, getRandomPartyMemberFunc([pool3Mon.species], TrainerSlot.TRAINER, true, p => {
         if (!isNullOrUndefined(pool3Mon.formIndex)) {
-          p.formIndex = pool3Mon.formIndex!;
+          p.formIndex = pool3Mon.formIndex;
           p.generateAndPopulateMoveset();
           p.generateName();
         }

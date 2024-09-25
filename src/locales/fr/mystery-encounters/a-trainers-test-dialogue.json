@@ -21,9 +21,9 @@
     "decline": "Oh, pas de combat ?\nPas grave !$Je vais quand même soigner ton équipe !"
   },
   "riley": {
-    "intro_dialogue": "Enchanté, je m’appelle Armand.$J’ai une proposition un peu étange\npour une personne de ton calibre.$Je poste deux Œufs de Pokémon avec moi\nmais j’aimerais en donner un à quelqu’un d’autre.$Si tu prouves en être digne,\nje te donnerai le plus rare !",
+    "intro_dialogue": "Enchanté, je m’appelle Armand.$J’ai une proposition un peu étrange\npour une personne de ton calibre.$Je porte deux Œufs de Pokémon avec moi\nmais j’aimerais en donner un à quelqu’un d’autre.$Si tu prouves en être digne,\nje te donnerai le plus rare !",
     "accept": "Ce regard…\nBattons-nous.",
-    "decline": "Je comprends, ton équpie m’a l’air lessivée.$Laisse-moi t’aider."
+    "decline": "Je comprends, ton équipe m’a l’air lessivée.$Laisse-moi t’aider."
   },
   "title": "Prouver sa valeur",
   "description": "Cette personne semble déterminée à vous donner un Œuf, qu’importe votre décision. Cependant, si vous parvenez à la battre, vous recevrez l’Œuf le plus rare.",

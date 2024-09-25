@@ -2,7 +2,7 @@ import Phaser from "phaser";
 import UI from "./ui/ui";
 import Pokemon, { EnemyPokemon, PlayerPokemon } from "./field/pokemon";
 import PokemonSpecies, { allSpecies, getPokemonSpecies, PokemonSpeciesFilter } from "./data/pokemon-species";
-import { Constructor, isNullOrUndefined } from "#app/utils";
+import { Constructor, isNullOrUndefined, randSeedInt } from "#app/utils";
 import * as Utils from "./utils";
 import { ConsumableModifier, ConsumablePokemonModifier, DoubleBattleChanceBoosterModifier, ExpBalanceModifier, ExpShareModifier, FusePokemonModifier, HealingBoosterModifier, Modifier, ModifierBar, ModifierPredicate, MultipleParticipantExpBonusModifier, overrideHeldItems, overrideModifiers, PersistentModifier, PokemonExpBoosterModifier, PokemonFormChangeItemModifier, PokemonHeldItemModifier, PokemonHpRestoreModifier, PokemonIncrementingStatModifier, TerastallizeModifier, TurnHeldItemTransferModifier } from "./modifier/modifier";
 import { PokeballType } from "./data/pokeball";
@@ -1201,32 +1201,12 @@ export default class BattleScene extends SceneBase {
 
       // Check for mystery encounter
       // Can only occur in place of a standard (non-boss) wild battle, waves 10-180
-      const [lowestMysteryEncounterWave, highestMysteryEncounterWave] = this.gameMode.getMysteryEncounterLegalWaves();
-      if (this.gameMode.hasMysteryEncounters && newBattleType === BattleType.WILD && !this.gameMode.isBoss(newWaveIndex) && newWaveIndex < highestMysteryEncounterWave && newWaveIndex > lowestMysteryEncounterWave) {
-        const roll = Utils.randSeedInt(MYSTERY_ENCOUNTER_SPAWN_MAX_WEIGHT);
-
-        // Base spawn weight is BASE_MYSTERY_ENCOUNTER_SPAWN_WEIGHT/256, and increases by WEIGHT_INCREMENT_ON_SPAWN_MISS/256 for each missed attempt at spawning an encounter on a valid floor
-        const sessionEncounterRate = this.mysteryEncounterSaveData.encounterSpawnChance;
-        const encounteredEvents = this.mysteryEncounterSaveData.encounteredEvents;
-
-        // If total number of encounters is lower than expected for the run, slightly favor a new encounter spawn (reverse as well)
-        // Reduces occurrence of runs with total encounters significantly different from AVERAGE_ENCOUNTERS_PER_RUN_TARGET
-        const expectedEncountersByFloor = AVERAGE_ENCOUNTERS_PER_RUN_TARGET / (highestMysteryEncounterWave - lowestMysteryEncounterWave) * (newWaveIndex - lowestMysteryEncounterWave);
-        const currentRunDiffFromAvg = expectedEncountersByFloor - encounteredEvents.length;
-        const favoredEncounterRate = sessionEncounterRate + currentRunDiffFromAvg * ANTI_VARIANCE_WEIGHT_MODIFIER;
-
-        const successRate = isNullOrUndefined(Overrides.MYSTERY_ENCOUNTER_RATE_OVERRIDE) ? favoredEncounterRate : Overrides.MYSTERY_ENCOUNTER_RATE_OVERRIDE!;
-
-        // If the most recent ME was 3 or fewer waves ago, can never spawn a ME
-        const canSpawn = encounteredEvents.length === 0 || (newWaveIndex - encounteredEvents[encounteredEvents.length - 1].waveIndex) > 3 || !isNullOrUndefined(Overrides.MYSTERY_ENCOUNTER_RATE_OVERRIDE);
-
-        if (canSpawn && roll < successRate) {
-          newBattleType = BattleType.MYSTERY_ENCOUNTER;
-          // Reset base spawn weight
-          this.mysteryEncounterSaveData.encounterSpawnChance = BASE_MYSTERY_ENCOUNTER_SPAWN_WEIGHT;
-        } else {
-          this.mysteryEncounterSaveData.encounterSpawnChance = sessionEncounterRate + WEIGHT_INCREMENT_ON_SPAWN_MISS;
-        }
+      if (this.isWaveMysteryEncounter(newBattleType, newWaveIndex, mysteryEncounterType) || newBattleType === BattleType.MYSTERY_ENCOUNTER || !isNullOrUndefined(mysteryEncounterType)) {
+        newBattleType = BattleType.MYSTERY_ENCOUNTER;
+        // Reset base spawn weight
+        this.mysteryEncounterSaveData.encounterSpawnChance = BASE_MYSTERY_ENCOUNTER_SPAWN_WEIGHT;
+      } else if (newBattleType === BattleType.WILD) {
+        this.mysteryEncounterSaveData.encounterSpawnChance += WEIGHT_INCREMENT_ON_SPAWN_MISS;
       }
     }
 
@@ -1267,9 +1247,8 @@ export default class BattleScene extends SceneBase {
     if (newBattleType === BattleType.MYSTERY_ENCOUNTER) {
       // Disable double battle on mystery encounters (it may be re-enabled as part of encounter)
       this.currentBattle.double = false;
-      this.executeWithSeedOffset(() => {
-        this.currentBattle.mysteryEncounter = this.getMysteryEncounter(mysteryEncounterType);
-      }, this.currentBattle.waveIndex << 4);
+      // Will generate the actual Mystery Encounter during NextEncounterPhase, to ensure it uses proper biome
+      this.currentBattle.mysteryEncounterType = mysteryEncounterType;
     }
 
     //this.pushPhase(new TrainerMessageTestPhase(this, TrainerType.RIVAL, TrainerType.RIVAL_2, TrainerType.RIVAL_3, TrainerType.RIVAL_4, TrainerType.RIVAL_5, TrainerType.RIVAL_6));
@@ -2657,8 +2636,7 @@ export default class BattleScene extends SceneBase {
               modifier = mt.modifier as PokemonHeldItemModifier;
               modifier.pokemonId = enemyPokemon.id;
             }
-            const stackCount = mt.stackCount ?? 1;
-            modifier.stackCount = stackCount;
+            modifier.stackCount = mt.stackCount ?? 1;
             modifier.isTransferable = mt.isTransferable ?? modifier.isTransferable;
             this.addEnemyModifier(modifier, true);
           });
@@ -3098,6 +3076,51 @@ export default class BattleScene extends SceneBase {
   }
 
   /**
+   * Determines whether a wave should randomly generate a {@linkcode MysteryEncounter}.
+   * Currently, the only modes that MEs are allowed in are Classic and Challenge.
+   * Additionally, MEs cannot spawn outside of waves 10-180 in those modes
+   *
+   * @param newBattleType
+   * @param waveIndex
+   * @param sessionDataEncounterType
+   */
+  private isWaveMysteryEncounter(newBattleType: BattleType, waveIndex: number, sessionDataEncounterType?: MysteryEncounterType): boolean {
+    const [lowestMysteryEncounterWave, highestMysteryEncounterWave] = this.gameMode.getMysteryEncounterLegalWaves();
+    if (this.gameMode.hasMysteryEncounters && newBattleType === BattleType.WILD && !this.gameMode.isBoss(waveIndex) && waveIndex < highestMysteryEncounterWave && waveIndex > lowestMysteryEncounterWave) {
+      // If ME type is already defined in session data, no need to roll RNG check
+      if (!isNullOrUndefined(sessionDataEncounterType)) {
+        return true;
+      }
+
+      // Base spawn weight is BASE_MYSTERY_ENCOUNTER_SPAWN_WEIGHT/256, and increases by WEIGHT_INCREMENT_ON_SPAWN_MISS/256 for each missed attempt at spawning an encounter on a valid floor
+      const sessionEncounterRate = this.mysteryEncounterSaveData.encounterSpawnChance;
+      const encounteredEvents = this.mysteryEncounterSaveData.encounteredEvents;
+
+      // If total number of encounters is lower than expected for the run, slightly favor a new encounter spawn (reverse as well)
+      // Reduces occurrence of runs with total encounters significantly different from AVERAGE_ENCOUNTERS_PER_RUN_TARGET
+      const expectedEncountersByFloor = AVERAGE_ENCOUNTERS_PER_RUN_TARGET / (highestMysteryEncounterWave - lowestMysteryEncounterWave) * (waveIndex - lowestMysteryEncounterWave);
+      const currentRunDiffFromAvg = expectedEncountersByFloor - encounteredEvents.length;
+      const favoredEncounterRate = sessionEncounterRate + currentRunDiffFromAvg * ANTI_VARIANCE_WEIGHT_MODIFIER;
+
+      const successRate = isNullOrUndefined(Overrides.MYSTERY_ENCOUNTER_RATE_OVERRIDE) ? favoredEncounterRate : Overrides.MYSTERY_ENCOUNTER_RATE_OVERRIDE!;
+
+      // If the most recent ME was 3 or fewer waves ago, can never spawn a ME
+      const canSpawn = encounteredEvents.length === 0 || (waveIndex - encounteredEvents[encounteredEvents.length - 1].waveIndex) > 3 || !isNullOrUndefined(Overrides.MYSTERY_ENCOUNTER_RATE_OVERRIDE);
+
+      if (canSpawn) {
+        let roll = MYSTERY_ENCOUNTER_SPAWN_MAX_WEIGHT;
+        // Always rolls the check on the same offset to ensure no RNG changes from reloading session
+        this.executeWithSeedOffset(() => {
+          roll = randSeedInt(MYSTERY_ENCOUNTER_SPAWN_MAX_WEIGHT);
+        }, waveIndex * 3 * 1000);
+        return roll < successRate;
+      }
+    }
+
+    return false;
+  }
+
+  /**
    * Loads or generates a mystery encounter
    * @param encounterType used to load session encounter when restarting game, etc.
    * @returns
@@ -3105,10 +3128,10 @@ export default class BattleScene extends SceneBase {
   getMysteryEncounter(encounterType?: MysteryEncounterType): MysteryEncounter {
     // Loading override or session encounter
     let encounter: MysteryEncounter | null;
-    if (!isNullOrUndefined(Overrides.MYSTERY_ENCOUNTER_OVERRIDE) && allMysteryEncounters.hasOwnProperty(Overrides.MYSTERY_ENCOUNTER_OVERRIDE!)) {
-      encounter = allMysteryEncounters[Overrides.MYSTERY_ENCOUNTER_OVERRIDE!];
+    if (!isNullOrUndefined(Overrides.MYSTERY_ENCOUNTER_OVERRIDE) && allMysteryEncounters.hasOwnProperty(Overrides.MYSTERY_ENCOUNTER_OVERRIDE)) {
+      encounter = allMysteryEncounters[Overrides.MYSTERY_ENCOUNTER_OVERRIDE];
     } else {
-      encounter = !isNullOrUndefined(encounterType) ? allMysteryEncounters[encounterType!] : null;
+      encounter = !isNullOrUndefined(encounterType) ? allMysteryEncounters[encounterType] : null;
     }
 
     // Check for queued encounters first
@@ -3151,7 +3174,7 @@ export default class BattleScene extends SceneBase {
     let tier: MysteryEncounterTier | null = tierValue > commonThreshold ? MysteryEncounterTier.COMMON : tierValue > greatThreshold ? MysteryEncounterTier.GREAT : tierValue > ultraThreshold ? MysteryEncounterTier.ULTRA : MysteryEncounterTier.ROGUE;
 
     if (!isNullOrUndefined(Overrides.MYSTERY_ENCOUNTER_TIER_OVERRIDE)) {
-      tier = Overrides.MYSTERY_ENCOUNTER_TIER_OVERRIDE!;
+      tier = Overrides.MYSTERY_ENCOUNTER_TIER_OVERRIDE;
     }
 
     let availableEncounters: MysteryEncounter[] = [];
