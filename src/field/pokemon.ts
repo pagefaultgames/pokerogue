@@ -1913,7 +1913,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     if (!this.shiny || (!variantData.hasOwnProperty(variantDataIndex) && !variantData.hasOwnProperty(this.species.speciesId))) {
       return 0;
     }
-    const rand = new Utils.IntegerHolder(0);
+    const rand = new Utils.NumberHolder(0);
     this.scene.executeWithSeedOffset(() => {
       rand.value = Utils.randSeedInt(10);
     }, this.id, this.scene.waveSeed);
