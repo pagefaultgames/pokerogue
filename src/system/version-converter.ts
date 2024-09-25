@@ -22,25 +22,15 @@ export function applySessionDataPatches(data: SessionSaveData) {
         } else if (m.className === "PokemonResetNegativeStatStageModifier") {
           m.className = "ResetNegativeStatStageModifier";
         } else if (m.className === "TempBattleStatBoosterModifier") {
-          // Dire Hit no longer a part of the TempBattleStatBoosterModifierTypeGenerator
-          if (m.typeId !== "DIRE_HIT") {
-            m.className = "TempStatStageBoosterModifier";
-            m.typeId = "TEMP_STAT_STAGE_BOOSTER";
+          m.className = "TempStatStageBoosterModifier";
+          m.typeId = "TEMP_STAT_STAGE_BOOSTER";
 
-            // Migration from TempBattleStat to Stat
-            const newStat = m.typePregenArgs[0] + 1;
-            m.typePregenArgs[0] = newStat;
+          // Migration from TempBattleStat to Stat
+          const newStat = m.typePregenArgs[0] + 1;
+          m.typePregenArgs[0] = newStat;
 
-            // From [ stat, battlesLeft ] to [ stat, maxBattles, battleCount ]
-            m.args = [ newStat, 5, m.args[1] ];
-          } else {
-            m.className = "TempCritBoosterModifier";
-            m.typePregenArgs = [];
-
-            // From [ stat, battlesLeft ] to [ maxBattles, battleCount ]
-            m.args = [ 5, m.args[1] ];
-          }
-
+          // From [ stat, battlesLeft ] to [ stat, maxBattles, battleCount ]
+          m.args = [ newStat, 5, m.args[1] ];
         } else if (m.className === "DoubleBattleChanceBoosterModifier" && m.args.length === 1) {
           let maxBattles: number;
           switch (m.typeId) {
@@ -83,7 +73,7 @@ export function applySystemDataPatches(data: SystemSaveData) {
     case "1.0.3":
     case "1.0.4":
       // --- LEGACY PATCHES ---
-      if (data.starterData && data.dexData) {
+      if (data.starterData) {
         // Migrate ability starter data if empty for caught species
         Object.keys(data.starterData).forEach(sd => {
           if (data.dexData[sd]?.caughtAttr && (data.starterData[sd] && !data.starterData[sd].abilityAttr)) {
@@ -114,14 +104,12 @@ export function applySystemDataPatches(data: SystemSaveData) {
       // --- PATCHES ---
 
       // Fix Starter Data
-      if (data.starterData && data.dexData) {
-        for (const starterId of defaultStarterSpecies) {
-          if (data.starterData[starterId]?.abilityAttr) {
-            data.starterData[starterId].abilityAttr |= AbilityAttr.ABILITY_1;
-          }
-          if (data.dexData[starterId]?.caughtAttr) {
-            data.dexData[starterId].caughtAttr |= DexAttr.FEMALE;
-          }
+      for (const starterId of defaultStarterSpecies) {
+        if (data.starterData[starterId]?.abilityAttr) {
+          data.starterData[starterId].abilityAttr |= AbilityAttr.ABILITY_1;
+        }
+        if (data.dexData[starterId]?.caughtAttr) {
+          data.dexData[starterId].caughtAttr |= DexAttr.FEMALE;
         }
       }
     }
