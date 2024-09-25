@@ -73,5 +73,6 @@
   "tarShotOnAdd": "{{pokemonNameWithAffix}} ist nun schwach gegenüber Feuer-Attacken!",
   "substituteOnAdd": "Ein Delegator von {{pokemonNameWithAffix}} ist erschienen!",
   "substituteOnHit": "Der Delegator steckt den Schlag für {{pokemonNameWithAffix}} ein!",
-  "substituteOnRemove": "Der Delegator von {{pokemonNameWithAffix}} hört auf zu wirken!"
+  "substituteOnRemove": "Der Delegator von {{pokemonNameWithAffix}} hört auf zu wirken!",
+  "autotomizeOnAdd": "{{pokemonNameWIthAffix}} ist leichter geworden!"
 }
