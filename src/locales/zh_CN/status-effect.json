@@ -1,12 +1,6 @@
 {
   "none": {
-    "name": "无",
-    "description": "",
-    "obtain": "",
-    "obtainSource": "",
-    "activation": "",
-    "overlap": "",
-    "heal": ""
+    "name": "无"
   },
   "poison": {
     "name": "中毒",
