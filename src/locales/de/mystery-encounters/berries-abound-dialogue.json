@@ -3,7 +3,7 @@
   "title": "Überall Beeren",
   "description": "Es scheint, als ob ein starkes Pokémon einen Beerenstrauch bewacht. Ein Kampf wäre der direkte Weg, aber es sieht stark aus. Vielleicht könnte ein schnelles Pokémon ein paar Beeren schnappen, ohne erwischt zu werden?",
   "query": "Was wirst du tun?",
-  "berries": "Berren!",
+  "berries": "Berren",
   "option": {
     "1": {
       "label": "Kampf beginnen",

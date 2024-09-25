@@ -1,1 +1,30 @@
-{}
+{
+  "intro_dialogue": "さあ　さあ、　皆さま！　新しい　{{wobbuffetName}}叩き　で運試しを　しましょう！",
+  "speaker": "興行主",
+  "title": "叩きゲーム？　ソーナンス！",
+  "description": "移動遊園地の　ご褒美ゲーム　です！　@[TOOLTIP_TITLE]{３ターン以内で}　{{wobbuffetName}}を　@[TOOLTIP_TITLE]{倒せずに}　@[TOOLTIP_TITLE]{1 HP}に　できるだけ　近づけて、　そして {{wobbuffetName}}が　大きい　カウンターで　ベルを　鳴らします。\n気をつけて！　{{wobbuffetName}}を　倒すと　復活費を　払わなければ　なりません！",
+  "query": "試しますか？",
+  "option": {
+    "1": {
+      "label": "ゲームを試す",
+      "tooltip": "(-) {{option1Money, money}}を払う\n(+) {{wobbuffetName}}叩き　を　試して",
+      "selected": "運試し、　しましょう！"
+    },
+    "2": {
+      "label": "立ち去る",
+      "tooltip": "(-) ご褒美なし",
+      "selected": "僅かな　後悔の　気持ちで\n冒険を　進みます。"
+    }
+  },
+  "ko": "ダメ！ {{wobbuffetName}}は　倒れました！$ゲームを　負けて\n復活費を　払わなくちゃ　いけません……",
+  "charging_continue": "{{wobbuffetName}}は　カウンターの　力を　たくわえて続けます！",
+  "turn_remaining_3": "残り　３ターン！",
+  "turn_remaining_2": "残り　２ターン！",
+  "turn_remaining_1": "残り　１ターン！",
+  "end_game": "時間です！${{wobbuffetName}}は　カウンターを　繰り出すと@d{16}.@d{16}.@d{16}.",
+  "best_result": "{{wobbuffetName}}は　ボタンを　ぶん殴り、\nベルが　上部から　外れました！$大賞を　勝ちました！",
+  "great_result": "{{wobbuffetName}}は　ボタンを　叩き、　ベルを　鳴らす　寸前でした！$おしい！\n２位賞を　勝ちました！",
+  "good_result": "{{wobbuffetName}}は　ボタンを　叩き、　スケールの　真ん中まで　上がりました！$３位賞を　勝ちました！",
+  "bad_result": "{{wobbuffetName}}は　微妙に　ボタンを　触ります。　何も　起こりません。$やだ！\n何も　勝ちませんでした！",
+  "outro": "楽しいゲーム　でした！"
+}
