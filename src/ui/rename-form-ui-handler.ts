@@ -1,7 +1,7 @@
 import { FormModalUiHandler } from "./form-modal-ui-handler";
 import { ModalConfig } from "./modal-ui-handler";
 import i18next from "i18next";
-import { PlayerPokemon } from "#app/field/pokemon.js";
+import { PlayerPokemon } from "#app/field/pokemon";
 
 export default class RenameFormUiHandler extends FormModalUiHandler {
   getModalTitle(config?: ModalConfig): string {
@@ -36,17 +36,13 @@ export default class RenameFormUiHandler extends FormModalUiHandler {
   show(args: any[]): boolean {
     if (super.show(args)) {
       const config = args[0] as ModalConfig;
-      this.inputs[0].text = (args[1] as PlayerPokemon).getNameToRender();
-
+      if (args[1] && typeof (args[1] as PlayerPokemon).getNameToRender === "function") {
+        this.inputs[0].text = (args[1] as PlayerPokemon).getNameToRender();
+      } else {
+        this.inputs[0].text = args[1];
+      }
       this.submitAction = (_) => {
         this.sanitizeInputs();
-        // const onFail = () => {
-        //   this.scene.ui.setModeWithoutClear(Mode.RENAME_POKEMON, Object.assign(config));
-        //   this.scene.ui.playError();
-        // };
-        // if (!this.inputs[0].text) {
-        //   return onFail();
-        // }
         const sanitizedName = btoa(unescape(encodeURIComponent(this.inputs[0].text)));
         config.buttonActions[0](sanitizedName);
         return true;

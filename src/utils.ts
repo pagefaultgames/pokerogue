@@ -1,5 +1,6 @@
-import i18next from "i18next";
 import { MoneyFormat } from "#enums/money-format";
+import { Moves } from "#enums/moves";
+import i18next from "i18next";
 
 export const MissingTextureKey = "__MISSING";
 
@@ -82,6 +83,12 @@ export function randInt(range: integer, min: integer = 0): integer {
   return Math.floor(Math.random() * range) + min;
 }
 
+/**
+ * Generates a random number using the global seed, or the current battle's seed if called via `Battle.randSeedInt`
+ * @param range How large of a range of random numbers to choose from. If {@linkcode range} <= 1, returns {@linkcode min}
+ * @param min The minimum integer to pick, default `0`
+ * @returns A random integer between {@linkcode min} and ({@linkcode min} + {@linkcode range} - 1)
+ */
 export function randSeedInt(range: integer, min: integer = 0): integer {
   if (range <= 1) {
     return min;
@@ -116,7 +123,7 @@ export function randSeedWeightedItem<T>(items: T[]): T {
     : Phaser.Math.RND.weightedPick(items);
 }
 
-export function randSeedEasedWeightedItem<T>(items: T[], easingFunction: string = "Sine.easeIn"): T {
+export function randSeedEasedWeightedItem<T>(items: T[], easingFunction: string = "Sine.easeIn"): T | null {
   if (!items.length) {
     return null;
   }
@@ -246,16 +253,16 @@ export function formatStat(stat: integer, forHp: boolean = false): string {
   return formatLargeNumber(stat, forHp ? 100000 : 1000000);
 }
 
-export function getEnumKeys(enumType): string[] {
-  return Object.values(enumType).filter(v => isNaN(parseInt(v.toString()))).map(v => v.toString());
+export function getEnumKeys(enumType: any): string[] {
+  return Object.values(enumType).filter(v => isNaN(parseInt(v!.toString()))).map(v => v!.toString());
 }
 
-export function getEnumValues(enumType): integer[] {
-  return Object.values(enumType).filter(v => !isNaN(parseInt(v.toString()))).map(v => parseInt(v.toString()));
+export function getEnumValues(enumType: any): integer[] {
+  return Object.values(enumType).filter(v => !isNaN(parseInt(v!.toString()))).map(v => parseInt(v!.toString()));
 }
 
-export function executeIf<T>(condition: boolean, promiseFunc: () => Promise<T>): Promise<T> {
-  return condition ? promiseFunc() : new Promise<T>(resolve => resolve(null));
+export function executeIf<T>(condition: boolean, promiseFunc: () => Promise<T>): Promise<T | null> {
+  return condition ? promiseFunc() : new Promise<T | null>(resolve => resolve(null));
 }
 
 export const sessionIdKey = "pokerogue_sessionId";
@@ -281,6 +288,10 @@ export function setCookie(cName: string, cValue: string): void {
 }
 
 export function removeCookie(cName: string): void {
+  if (isBeta) {
+    document.cookie = `${cName}=;Secure;SameSite=Strict;Domain=pokerogue.net;Path=/;Max-Age=-1`; // we need to remove the cookie from the main domain as well
+  }
+
   document.cookie = `${cName}=;Secure;SameSite=Strict;Domain=${window.location.hostname};Path=/;Max-Age=-1`;
   document.cookie = `${cName}=;Secure;SameSite=Strict;Path=/;Max-Age=-1`; // legacy cookie without domain, for older cookies to prevent a login loop
 }
@@ -432,7 +443,7 @@ export function deltaRgb(rgb1: integer[], rgb2: integer[]): integer {
 }
 
 export function rgbHexToRgba(hex: string) {
-  const color = hex.match(/^([\da-f]{2})([\da-f]{2})([\da-f]{2})$/i);
+  const color = hex.match(/^([\da-f]{2})([\da-f]{2})([\da-f]{2})$/i)!; // TODO: is this bang correct?
   return {
     r: parseInt(color[1], 16),
     g: parseInt(color[2], 16),
@@ -443,6 +454,26 @@ export function rgbHexToRgba(hex: string) {
 
 export function rgbaToInt(rgba: integer[]): integer {
   return (rgba[0] << 24) + (rgba[1] << 16) + (rgba[2] << 8) + rgba[3];
+}
+
+/**
+ * Provided valid HSV values, calculates and stitches together a string of that
+ * HSV color's corresponding hex code.
+ *
+ * Sourced from {@link https://stackoverflow.com/a/44134328}.
+ * @param h Hue in degrees, must be in a range of [0, 360]
+ * @param s Saturation percentage, must be in a range of [0, 1]
+ * @param l Ligthness percentage, must be in a range of [0, 1]
+ * @returns a string of the corresponding color hex code with a "#" prefix
+ */
+export function hslToHex(h: number, s: number, l: number): string {
+  const a = s * Math.min(l, 1 - l);
+  const f = (n: number) => {
+    const k = (n + h / 30) % 12;
+    const rgb = l - a * Math.max(-1, Math.min(k - 3, 9 - k, 1));
+    return Math.round(rgb * 255).toString(16).padStart(2, "0");
+  };
+  return `#${f(0)}${f(8)}${f(4)}`;
 }
 
 /*This function returns true if the current lang is available for some functions
@@ -466,6 +497,7 @@ export function verifyLang(lang?: string): boolean {
   case "zh-TW":
   case "pt-BR":
   case "ko":
+  case "ja":
     return true;
   default:
     return false;
@@ -546,4 +578,63 @@ export function capitalizeString(str: string, sep: string, lowerFirstChar: boole
     return returnWithSpaces ? splitedStr.join(" ") : splitedStr.join("");
   }
   return null;
+}
+
+/**
+ * Returns if an object is null or undefined
+ * @param object
+ */
+export function isNullOrUndefined(object: any): object is undefined | null {
+  return null === object || undefined === object;
+}
+
+/**
+ * Capitalizes the first letter of a string
+ * @param str
+ */
+export function capitalizeFirstLetter(str: string) {
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
+/**
+ * This function is used in the context of a Pokémon battle game to calculate the actual integer damage value from a float result.
+ * Many damage calculation formulas involve various parameters and result in float values.
+ * The actual damage applied to a Pokémon's HP must be an integer.
+ * This function helps in ensuring that by flooring the float value and enforcing a minimum damage value.
+ *
+ * @param value - The float value to convert.
+ * @param minValue - The minimum integer value to return. Defaults to 1.
+ * @returns The converted value as an integer.
+ */
+export function toDmgValue(value: number, minValue: number = 1) {
+  return Math.max(Math.floor(value), minValue);
+}
+
+/**
+ * Helper method to localize a sprite key (e.g. for types)
+ * @param baseKey the base key of the sprite (e.g. `type`)
+ * @returns the localized sprite key
+ */
+export function getLocalizedSpriteKey(baseKey: string) {
+  return `${baseKey}${verifyLang(i18next.resolvedLanguage) ? `_${i18next.resolvedLanguage}` : ""}`;
+}
+
+/**
+ * Check if a number is **inclusive** between two numbers
+ * @param num the number to check
+ * @param min the minimum value (included)
+ * @param max the maximum value (included)
+ * @returns true if number is **inclusive** between min and max
+ */
+export function isBetween(num: number, min: number, max: number): boolean {
+  return num >= min && num <= max;
+}
+
+/**
+ * Helper method to return the animation filename for a given move
+ *
+ * @param move the move for which the animation filename is needed
+ */
+export function animationFileName(move: Moves): string {
+  return Moves[move].toLowerCase().replace(/\_/g, "-");
 }

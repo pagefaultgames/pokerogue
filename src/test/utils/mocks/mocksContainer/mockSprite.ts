@@ -1,9 +1,10 @@
+import Phaser from "phaser";
+import { MockGameObject } from "../mockGameObject";
 import Sprite = Phaser.GameObjects.Sprite;
 import Frame = Phaser.Textures.Frame;
-import Phaser from "phaser";
 
 
-export default class MockSprite {
+export default class MockSprite implements MockGameObject {
   private phaserSprite;
   public pipelineData;
   public texture;
@@ -12,10 +13,12 @@ export default class MockSprite {
   public textureManager;
   public scene;
   public anims;
-  public list = [];
+  public list: MockGameObject[] = [];
+  public name: string;
   constructor(textureManager, x, y, texture) {
     this.textureManager = textureManager;
     this.scene = textureManager.scene;
+    // @ts-ignore
     Phaser.GameObjects.Sprite.prototype.setInteractive = this.setInteractive;
     // @ts-ignore
     Phaser.GameObjects.Sprite.prototype.setTexture = this.setTexture;
@@ -99,9 +102,7 @@ export default class MockSprite {
     return this.phaserSprite.stop();
   }
 
-  setInteractive(hitArea, hitAreaCallback, dropZone) {
-    return null;
-  }
+  setInteractive = () => null;
 
   on(event, callback, source) {
     return this.phaserSprite.on(event, callback, source);

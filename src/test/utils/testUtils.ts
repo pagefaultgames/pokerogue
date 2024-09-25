@@ -1,10 +1,5 @@
-import BattleScene from "#app/battle-scene.js";
-import { Moves } from "#app/enums/moves.js";
 import i18next, { type ParseKeys } from "i18next";
 import { vi } from "vitest";
-
-/** Ready to use array of Moves.SPLASH x4 */
-export const SPLASH_ONLY = [Moves.SPLASH, Moves.SPLASH, Moves.SPLASH, Moves.SPLASH];
 
 /**
  * Sets up the i18next mock.
@@ -25,14 +20,4 @@ export function mockI18next() {
  */
 export function arrayOfRange(start: integer, end: integer) {
   return Array.from({ length: end - start }, (_v, k) => k + start);
-}
-
-/**
- * Removes all held items from enemy pokemon
- * @param scene `game.scene`
- */
-export function removeEnemyHeldItems(scene: BattleScene) {
-  scene.clearEnemyHeldItemModifiers();
-  scene.clearEnemyModifiers();
-  console.log("Enemy held items removed");
 }

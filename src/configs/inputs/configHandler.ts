@@ -20,7 +20,7 @@ export function getKeyWithKeycode(config, keycode) {
  */
 export function getSettingNameWithKeycode(config, keycode) {
   const key = getKeyWithKeycode(config, keycode);
-  return config.custom[key];
+  return key ? config.custom[key] : null;
 }
 
 /**
@@ -32,7 +32,7 @@ export function getSettingNameWithKeycode(config, keycode) {
  */
 export function getIconWithKeycode(config, keycode) {
   const key = getKeyWithKeycode(config, keycode);
-  return config.icons[key];
+  return key ? config.icons[key] : null;
 }
 
 /**
@@ -122,15 +122,21 @@ export function assign(config, settingNameTarget, keycode): boolean {
   // if it was already bound, we delete the bind
   if (previousSettingName) {
     const previousKey = getKeyWithSettingName(config, previousSettingName);
-    config.custom[previousKey] = -1;
+    if (previousKey) {
+      config.custom[previousKey] = -1;
+    }
   }
   // then, we need to delete the current key for this settingName
   const currentKey = getKeyWithSettingName(config, settingNameTarget);
-  config.custom[currentKey] = -1;
+  if (currentKey) {
+    config.custom[currentKey] = -1;
+  }
 
   // then, the new key is assigned to the new settingName
   const newKey = getKeyWithKeycode(config, keycode);
-  config.custom[newKey] = settingNameTarget;
+  if (newKey) {
+    config.custom[newKey] = settingNameTarget;
+  }
   return true;
 }
 
@@ -145,8 +151,12 @@ export function swap(config, settingNameTarget, keycode) {
   const new_key = getKeyWithKeycode(config, keycode);
   const new_settingName = getSettingNameWithKey(config, new_key);
 
-  config.custom[prev_key] = new_settingName;
-  config.custom[new_key] = prev_settingName;
+  if (prev_key) {
+    config.custom[prev_key] = new_settingName;
+  }
+  if (new_key) {
+    config.custom[new_key] = prev_settingName;
+  }
   return true;
 }
 
@@ -161,7 +171,9 @@ export function deleteBind(config, settingName) {
   if (config.blacklist.includes(key)) {
     return false;
   }
-  config.custom[key] = -1;
+  if (key) {
+    config.custom[key] = -1;
+  }
   return true;
 }
 

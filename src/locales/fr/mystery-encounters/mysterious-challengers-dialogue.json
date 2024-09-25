@@ -1,0 +1,22 @@
+{
+  "intro": "De mystérieux adversaires apparaissent !",
+  "title": "De mystérieux adversaires",
+  "description": "Si vous défaites un de ces adversaires, vous pourriez peut-être recevoir une récompense si vous les avez impressionnés.\nCertains ont cependant l’air bien coriaces. Acceptez-vous le défi ?",
+  "query": "Qui voulez-vous affronter ?",
+  "option": {
+    "1": {
+      "label": "Adversaire lucide",
+      "tooltip": "(-) Combat normal\n(+) Objets de capacités"
+    },
+    "2": {
+      "label": "Adversaire difficile",
+      "tooltip": "(-) Combat difficile\n(+) Bonnes récompenses"
+    },
+    "3": {
+      "label": "Adversaire puissant",
+      "tooltip": "(-) Combat brutal\n(+) Super récompenses"
+    },
+    "selected": "Votre adversaire s’avance…"
+  },
+  "outro": "Vous avez battu ce mystérieux adversaire !"
+}

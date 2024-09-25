@@ -1,0 +1,36 @@
+{
+  "title": "Parámetros de desafíos",
+  "illegalEvolution": "¡{{pokemon}} ha evolucionado! ¡No puede ser parte del desafío!",
+  "singleGeneration": {
+    "name": "Monogeneración",
+    "desc": "Solo puedes usar Pokémon de {{gen}} generación.",
+    "desc_default": "Solo puedes usar Pokémon de la generación elegida.",
+    "gen_1": "primera",
+    "gen_2": "segunda",
+    "gen_3": "tercera",
+    "gen_4": "cuarta",
+    "gen_5": "quinta",
+    "gen_6": "sexta",
+    "gen_7": "séptima",
+    "gen_8": "octava",
+    "gen_9": "novena"
+  },
+  "freshStart": {
+    "name": "Nuevo Comienzo",
+    "desc": "Sólo puedes usar Pokémon iniciales originales, como si acabases de empezar PokéRogue.",
+    "value.0": "Desact.",
+    "value.1": "Activo"
+  },
+  "singleType": {
+    "name": "Monotipo",
+    "desc": "Solo puedes usar Pokémon with the {{type}} type.",
+    "desc_default": "Solo puedes usar Pokémon del tipo elegido."
+  },
+  "inverseBattle": {
+    "name": "Lucha Inversa",
+    "shortName": "Inverso",
+    "desc": "Las relaciones entre tipos son invertidas y ningún tipo es inmune a otro.\nDesactiva el resto de desafíos.",
+    "value.0": "Desact.",
+    "value.1": "Activo"
+  }
+}

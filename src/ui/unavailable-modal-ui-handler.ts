@@ -7,7 +7,7 @@ import * as Utils from "#app/utils";
 import i18next from "i18next";
 
 export default class UnavailableModalUiHandler extends ModalUiHandler {
-  private reconnectTimer: NodeJS.Timeout;
+  private reconnectTimer: NodeJS.Timeout | null;
   private reconnectDuration: number;
   private reconnectCallback: () => void;
 
@@ -16,7 +16,7 @@ export default class UnavailableModalUiHandler extends ModalUiHandler {
 
   private readonly randVarianceTime = 1000 * 10;
 
-  constructor(scene: BattleScene, mode?: Mode) {
+  constructor(scene: BattleScene, mode: Mode | null = null) {
     super(scene, mode);
     this.reconnectDuration = this.minTime;
   }
@@ -55,7 +55,7 @@ export default class UnavailableModalUiHandler extends ModalUiHandler {
       if (response[0] || [200, 400].includes(response[1])) {
         this.reconnectTimer = null;
         this.reconnectDuration = this.minTime;
-        this.scene.playSound("pb_bounce_1");
+        this.scene.playSound("se/pb_bounce_1");
         this.reconnectCallback();
       } else if (response[1] === 401) {
         Utils.removeCookie(Utils.sessionIdKey);

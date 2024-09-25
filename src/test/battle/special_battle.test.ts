@@ -1,9 +1,9 @@
-import { CommandPhase } from "#app/phases";
-import GameManager from "#test/utils/gameManager";
+import { CommandPhase } from "#app/phases/command-phase";
 import { Mode } from "#app/ui/ui";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
+import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
@@ -40,7 +40,7 @@ describe("Test Battle Phase", () => {
       Species.CHARIZARD,
     ]);
     expect(game.scene.ui?.getMode()).toBe(Mode.COMMAND);
-    expect(game.scene.getCurrentPhase().constructor.name).toBe(CommandPhase.name);
+    expect(game.scene.getCurrentPhase()!.constructor.name).toBe(CommandPhase.name);
   }, 20000);
 
   it("startBattle 2vs2 boss", async() => {
@@ -52,7 +52,7 @@ describe("Test Battle Phase", () => {
       Species.CHARIZARD,
     ]);
     expect(game.scene.ui?.getMode()).toBe(Mode.COMMAND);
-    expect(game.scene.getCurrentPhase().constructor.name).toBe(CommandPhase.name);
+    expect(game.scene.getCurrentPhase()!.constructor.name).toBe(CommandPhase.name);
   }, 20000);
 
   it("startBattle 2vs2 trainer", async() => {
@@ -64,7 +64,7 @@ describe("Test Battle Phase", () => {
       Species.CHARIZARD,
     ]);
     expect(game.scene.ui?.getMode()).toBe(Mode.COMMAND);
-    expect(game.scene.getCurrentPhase().constructor.name).toBe(CommandPhase.name);
+    expect(game.scene.getCurrentPhase()!.constructor.name).toBe(CommandPhase.name);
   }, 20000);
 
   it("startBattle 2vs1 trainer", async() => {
@@ -76,7 +76,7 @@ describe("Test Battle Phase", () => {
       Species.CHARIZARD,
     ]);
     expect(game.scene.ui?.getMode()).toBe(Mode.COMMAND);
-    expect(game.scene.getCurrentPhase().constructor.name).toBe(CommandPhase.name);
+    expect(game.scene.getCurrentPhase()!.constructor.name).toBe(CommandPhase.name);
   }, 20000);
 
   it("startBattle 2vs1 rival", async() => {
@@ -88,7 +88,7 @@ describe("Test Battle Phase", () => {
       Species.CHARIZARD,
     ]);
     expect(game.scene.ui?.getMode()).toBe(Mode.COMMAND);
-    expect(game.scene.getCurrentPhase().constructor.name).toBe(CommandPhase.name);
+    expect(game.scene.getCurrentPhase()!.constructor.name).toBe(CommandPhase.name);
   }, 20000);
 
   it("startBattle 2vs2 rival", async() => {
@@ -100,7 +100,7 @@ describe("Test Battle Phase", () => {
       Species.CHARIZARD,
     ]);
     expect(game.scene.ui?.getMode()).toBe(Mode.COMMAND);
-    expect(game.scene.getCurrentPhase().constructor.name).toBe(CommandPhase.name);
+    expect(game.scene.getCurrentPhase()!.constructor.name).toBe(CommandPhase.name);
   }, 20000);
 
   it("startBattle 1vs1 trainer", async() => {
@@ -111,7 +111,7 @@ describe("Test Battle Phase", () => {
       Species.BLASTOISE,
     ]);
     expect(game.scene.ui?.getMode()).toBe(Mode.COMMAND);
-    expect(game.scene.getCurrentPhase().constructor.name).toBe(CommandPhase.name);
+    expect(game.scene.getCurrentPhase()!.constructor.name).toBe(CommandPhase.name);
   }, 20000);
 
   it("startBattle 2vs2 trainer", async() => {
@@ -123,7 +123,7 @@ describe("Test Battle Phase", () => {
       Species.CHARIZARD,
     ]);
     expect(game.scene.ui?.getMode()).toBe(Mode.COMMAND);
-    expect(game.scene.getCurrentPhase().constructor.name).toBe(CommandPhase.name);
+    expect(game.scene.getCurrentPhase()!.constructor.name).toBe(CommandPhase.name);
   }, 20000);
 
   it("startBattle 4vs2 trainer", async() => {
@@ -137,7 +137,7 @@ describe("Test Battle Phase", () => {
       Species.GABITE,
     ]);
     expect(game.scene.ui?.getMode()).toBe(Mode.COMMAND);
-    expect(game.scene.getCurrentPhase().constructor.name).toBe(CommandPhase.name);
+    expect(game.scene.getCurrentPhase()!.constructor.name).toBe(CommandPhase.name);
   }, 20000);
 });
 

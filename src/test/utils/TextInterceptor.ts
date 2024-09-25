@@ -1,6 +1,9 @@
+/**
+ * Class will intercept any text or dialogue message calls and log them for test purposes
+ */
 export default class TextInterceptor {
   private scene;
-  public logs = [];
+  public logs: string[] = [];
   constructor(scene) {
     this.scene = scene;
     scene.messageWrapper = this;
@@ -17,6 +20,6 @@ export default class TextInterceptor {
   }
 
   getLatestMessage(): string {
-    return this.logs.pop();
+    return this.logs.pop() ?? "";
   }
 }

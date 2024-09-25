@@ -1,19 +1,23 @@
 import BattleScene from "#app/battle-scene";
-import Phaser from "phaser";
-import { InputsController } from "#app/inputs-controller";
 import pad_xbox360 from "#app/configs/inputs/pad_xbox360";
-import { holdOn } from "#test/utils/gameManagerUtils";
+import { InputsController } from "#app/inputs-controller";
 import TouchControl from "#app/touch-controls";
-import { JSDOM } from "jsdom";
+import { holdOn } from "#test/utils/gameManagerUtils";
 import fs from "fs";
+import { JSDOM } from "jsdom";
+import Phaser from "phaser";
 
+interface LogEntry {
+  type: string;
+  button: any;
+}
 
 export default class InputsHandler {
   private scene: BattleScene;
   private events: Phaser.Events.EventEmitter;
   private inputController: InputsController;
-  public log = [];
-  public logUp = [];
+  public log: LogEntry[] = [];
+  public logUp: LogEntry[] = [];
   private fakePad: Fakepad;
   private fakeMobile: FakeMobile;
 
@@ -22,7 +26,7 @@ export default class InputsHandler {
     this.inputController = this.scene.inputController;
     this.fakePad = new Fakepad(pad_xbox360);
     this.fakeMobile = new FakeMobile();
-    this.scene.input.gamepad.gamepads.push(this.fakePad);
+    this.scene.input.gamepad?.gamepads.push(this.fakePad);
     this.init();
   }
 
@@ -37,18 +41,18 @@ export default class InputsHandler {
 
   pressGamepadButton(button: integer, duration: integer): Promise<void> {
     return new Promise(async (resolve) => {
-      this.scene.input.gamepad.emit("down", this.fakePad, {index: button});
+      this.scene.input.gamepad?.emit("down", this.fakePad, {index: button});
       await holdOn(duration);
-      this.scene.input.gamepad.emit("up", this.fakePad, {index: button});
+      this.scene.input.gamepad?.emit("up", this.fakePad, {index: button});
       resolve();
     });
   }
 
   pressKeyboardKey(key: integer, duration: integer): Promise<void> {
     return new Promise(async (resolve) => {
-      this.scene.input.keyboard.emit("keydown", {keyCode: key});
+      this.scene.input.keyboard?.emit("keydown", {keyCode: key});
       await holdOn(duration);
-      this.scene.input.keyboard.emit("keyup", {keyCode: key});
+      this.scene.input.keyboard?.emit("keyup", {keyCode: key});
       resolve();
     });
   }
@@ -57,7 +61,7 @@ export default class InputsHandler {
     const touchControl = new TouchControl(this.scene);
     touchControl.deactivatePressedKey(); //test purpose
     this.events = this.inputController.events;
-    this.scene.input.gamepad.emit("connected", this.fakePad);
+    this.scene.input.gamepad?.emit("connected", this.fakePad);
     this.listenInputs();
   }
 
@@ -77,7 +81,8 @@ class Fakepad extends Phaser.Input.Gamepad.Gamepad {
   public index: number;
 
   constructor(pad) {
-    super(undefined, {...pad, buttons: pad.deviceMapping, axes: []});
+    //@ts-ignore
+    super(undefined, {...pad, buttons: pad.deviceMapping, axes: []}); //TODO: resolve ts-ignore
     this.id = "xbox_360_fakepad";
     this.index = 0;
   }

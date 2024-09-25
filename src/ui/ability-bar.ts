@@ -1,4 +1,4 @@
-import { getPokemonNameWithAffix } from "#app/messages.js";
+import { getPokemonNameWithAffix } from "#app/messages";
 import BattleScene from "../battle-scene";
 import Pokemon from "../field/pokemon";
 import { TextStyle, addTextObject } from "./text";
@@ -12,8 +12,8 @@ export default class AbilityBar extends Phaser.GameObjects.Container {
   private bg: Phaser.GameObjects.Image;
   private abilityBarText: Phaser.GameObjects.Text;
 
-  private tween: Phaser.Tweens.Tween;
-  private autoHideTimer: NodeJS.Timeout;
+  private tween: Phaser.Tweens.Tween | null;
+  private autoHideTimer: NodeJS.Timeout | null;
 
   public shown: boolean;
 

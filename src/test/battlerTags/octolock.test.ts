@@ -1,16 +1,16 @@
+import BattleScene from "#app/battle-scene";
 import { describe, expect, it, vi } from "vitest";
-import Pokemon from "#app/field/pokemon.js";
-import BattleScene from "#app/battle-scene.js";
-import { BattlerTag, BattlerTagLapseType, OctolockTag, TrappedTag } from "#app/data/battler-tags.js";
-import { StatChangePhase } from "#app/phases.js";
-import { BattleStat } from "#app/data/battle-stat.js";
-import { BattlerTagType } from "#app/enums/battler-tag-type.js";
+import Pokemon from "#app/field/pokemon";
+import { BattlerTag, BattlerTagLapseType, OctolockTag, TrappedTag } from "#app/data/battler-tags";
+import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
+import { BattlerTagType } from "#app/enums/battler-tag-type";
+import { Stat } from "#enums/stat";
 
-jest.mock("#app/battle-scene.js");
+vi.mock("#app/battle-scene.js");
 
 describe("BattlerTag - OctolockTag", () => {
   describe("lapse behavior", () => {
-    it("unshifts a StatChangePhase with expected stat changes", { timeout: 10000 }, async () => {
+    it("unshifts a StatStageChangePhase with expected stat stage changes", async () => {
       const mockPokemon = {
         scene: new BattleScene(),
         getBattlerIndex: () => 0,
@@ -19,9 +19,9 @@ describe("BattlerTag - OctolockTag", () => {
       const subject = new OctolockTag(1);
 
       vi.spyOn(mockPokemon.scene, "unshiftPhase").mockImplementation(phase => {
-        expect(phase).toBeInstanceOf(StatChangePhase);
-        expect((phase as StatChangePhase)["levels"]).toEqual(-1);
-        expect((phase as StatChangePhase)["stats"]).toEqual([BattleStat.DEF, BattleStat.SPDEF]);
+        expect(phase).toBeInstanceOf(StatStageChangePhase);
+        expect((phase as StatStageChangePhase)["stages"]).toEqual(-1);
+        expect((phase as StatStageChangePhase)["stats"]).toEqual([ Stat.DEF, Stat.SPDEF ]);
       });
 
       subject.lapse(mockPokemon, BattlerTagLapseType.TURN_END);
@@ -30,11 +30,11 @@ describe("BattlerTag - OctolockTag", () => {
     });
   });
 
-  it ("traps its target (extends TrappedTag)", { timeout: 2000 }, async () => {
+  it ("traps its target (extends TrappedTag)", async () => {
     expect(new OctolockTag(1)).toBeInstanceOf(TrappedTag);
   });
 
-  it("can be added to pokemon who are not octolocked", { timeout: 2000 }, async => {
+  it("can be added to pokemon who are not octolocked", async => {
     const mockPokemon = {
       getTag: vi.fn().mockReturnValue(undefined) as Pokemon["getTag"],
     } as Pokemon;
@@ -47,9 +47,9 @@ describe("BattlerTag - OctolockTag", () => {
     expect(mockPokemon.getTag).toHaveBeenCalledWith(BattlerTagType.OCTOLOCK);
   });
 
-  it("cannot be added to pokemon who are octolocked", { timeout: 2000 }, async => {
+  it("cannot be added to pokemon who are octolocked", async => {
     const mockPokemon = {
-      getTag: vi.fn().mockReturnValue(new BattlerTag(null, null, null, null)) as Pokemon["getTag"],
+      getTag: vi.fn().mockReturnValue(new BattlerTag(null!, null!, null!, null!)) as Pokemon["getTag"],
     } as Pokemon;
 
     const subject = new OctolockTag(1);

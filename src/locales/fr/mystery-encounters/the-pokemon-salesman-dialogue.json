@@ -1,0 +1,23 @@
+{
+  "intro": "Un homme âgé a l’air malicieux vous aborde.",
+  "speaker": "Gentleman",
+  "intro_dialogue": "Salutations !\nJ’ai une offre à proposer rien qu’à VOUS !",
+  "title": "Le vendeur de Pokémon",
+  "description": "« Cet incroyable et unique {{purchasePokemon}} @[TOOLTIP_TITLE]{possède un talent jamais vu dans son espèce} ! Ce superbe {{purchasePokemon}} est à vous pour le prix imbattable de {{price, money}} ! »\n\n« Qu’en dites-vous ? »",
+  "description_shiny": "« Cet incroyable et unique {{purchasePokemon}} @[TOOLTIP_TITLE]{possède une pigmentation unique jamais vue dans son espèce} ! Ce superbe {{purchasePokemon}} est à vous pour le prix imbattable de {{price, money}} ! »\n\n« Qu’en dites-vous ? »",
+  "query": "Que voulez-vous faire ?",
+  "option": {
+    "1": {
+      "label": "Accepter",
+      "tooltip": "(-) Payer {{price, money}}\n(+) {{purchasePokemon}} obtenu avec son talent caché",
+      "tooltip_shiny": "(-) Payer {{price, money}}\n(+) {{purchasePokemon}} chromatique obtenu",
+      "selected_message": "Vous déboursez une somme absolument honteuse\npour acheter ce {{purchasePokemon}}.",
+      "selected_dialogue": "Excellent choix !\nVous avez pour sûr un sens aiguisé des affaires.$Oh, ah euh…@d{64}\nNi repris, ni échangé par contre hein, compris ?"
+    },
+    "2": {
+      "label": "Refuser",
+      "tooltip": "(-) Aucune récompense",
+      "selected": "Non ?@d{32} Vous déclinez ?$C’était pourtant offre en or que je vous faisais là !"
+    }
+  }
+}

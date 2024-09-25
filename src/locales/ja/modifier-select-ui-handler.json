@@ -1,0 +1,14 @@
+{
+  "transfer": "アイテム移行",
+  "reroll": "選択肢変更",
+  "lockRarities": "レア度を固定",
+  "checkTeam": "手持ちを確認",
+  "transferDesc": "手持ちポケモンの　持たせるアイテムを　移行する",
+  "rerollDesc": "お金を　使って　アイテムの　選択肢を　変更する",
+  "lockRaritiesDesc": "選択肢を　変更するときの　レア度を　固定する\n（選択肢変更の価格は変わる）",
+  "checkTeamDesc": "手持ちポケモンの　状態を　確認する\nフォルムチェンジアイテムを　有効・無効にする",
+  "rerollCost": "{{formattedMoney}}円",
+  "itemCost": "{{formattedMoney}}円",
+  "continueNextWaveButton": "続く",
+  "continueNextWaveDescription": "次の　ラウンドに　続く"
+}

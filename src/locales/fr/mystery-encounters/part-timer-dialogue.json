@@ -1,0 +1,31 @@
+{
+  "intro": "Un Ouvrière croulant sous le travail\nvous interpelle.",
+  "speaker": "Ouvrière",
+  "intro_dialogue": "T’as l’air d’avoir pas mal de Pokémon compétents\navec toi !$Si t’acceptes de nous aider pour quelques tâches,\non peut te payer !",
+  "title": "L’intérimaire",
+  "description": "La liste de tâches à effectuer a l’air incroyablement longue.\nEn fonction des compétences du Pokémon choisi à une tâche donnée, vous gagnerez plus ou moins d’argent.",
+  "query": "Quel poste vous intéresse le plus ?",
+  "invalid_selection": "Le Pokémon doit être en bonne santé.",
+  "option": {
+    "1": {
+      "label": "Livreur",
+      "tooltip": "(-) Votre Pokémon utilise sa Vitesse\n(+) Payé avec un @[MONEY]{salaire}",
+      "selected": "Votre {{selectedPokemon}} passe tout un shift\nà livrer des clients."
+    },
+    "2": {
+      "label": "Manutentionnaire",
+      "tooltip": "(-) Votre Pokémon utilise sa Force et son Endurance\n(+) Payé avec un @[MONEY]{salaire}",
+      "selected": "Votre {{selectedPokemon}} passe tout un shift\nà porter des charges à travers le hangar."
+    },
+    "3": {
+      "label": "Assistant vendeur",
+      "tooltip": "(-) Votre {{option3PrimaryName}} utilise {{option3PrimaryMove}}\n(+) Payé avec un @[MONEY]{salaire}",
+      "disabled_tooltip": "Votre Pokémon doit connaitre certaines capacités pour choisir ce poste",
+      "selected": "Votre {{option3PrimaryName}} passe sa journée à utiliser {{option3PrimaryMove}} pour attirer des clients !"
+    }
+  },
+  "job_complete_good": "Merci pour votre aide !\nVotre {{selectedPokemon}} nous a été d’un grand renfort !$Voici votre salaire.",
+  "job_complete_bad": "Votre {{selectedPokemon}} nous a plutôt bien aidé !$Voici votre salaire.",
+  "pokemon_tired": "Votre {{selectedPokemon}} est épuisé !\nLes PP de toutes ses capacités baissent de 2 !",
+  "outro": "Reviens nous aider à l’occasion !"
+}

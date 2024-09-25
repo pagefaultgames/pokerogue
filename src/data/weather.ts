@@ -88,12 +88,14 @@ export class Weather {
     return 1;
   }
 
-  isMoveWeatherCancelled(move: Move): boolean {
+  isMoveWeatherCancelled(user: Pokemon, move: Move): boolean {
+    const moveType = user.getMoveType(move);
+
     switch (this.weatherType) {
     case WeatherType.HARSH_SUN:
-      return move instanceof AttackMove && move.type === Type.WATER;
+      return move instanceof AttackMove && moveType === Type.WATER;
     case WeatherType.HEAVY_RAIN:
-      return move instanceof AttackMove && move.type === Type.FIRE;
+      return move instanceof AttackMove && moveType === Type.FIRE;
     }
 
     return false;
@@ -103,7 +105,7 @@ export class Weather {
     const field = scene.getField(true);
 
     for (const pokemon of field) {
-      let suppressWeatherEffectAbAttr = pokemon.getAbility().getAttrs(SuppressWeatherEffectAbAttr)[0];
+      let suppressWeatherEffectAbAttr: SuppressWeatherEffectAbAttr | null  = pokemon.getAbility().getAttrs(SuppressWeatherEffectAbAttr)[0];
       if (!suppressWeatherEffectAbAttr) {
         suppressWeatherEffectAbAttr = pokemon.hasPassive() ? pokemon.getPassiveAbility().getAttrs(SuppressWeatherEffectAbAttr)[0] : null;
       }
@@ -116,7 +118,7 @@ export class Weather {
   }
 }
 
-export function getWeatherStartMessage(weatherType: WeatherType): string {
+export function getWeatherStartMessage(weatherType: WeatherType): string | null {
   switch (weatherType) {
   case WeatherType.SUNNY:
     return i18next.t("weather:sunnyStartMessage");
@@ -141,7 +143,7 @@ export function getWeatherStartMessage(weatherType: WeatherType): string {
   return null;
 }
 
-export function getWeatherLapseMessage(weatherType: WeatherType): string {
+export function getWeatherLapseMessage(weatherType: WeatherType): string | null {
   switch (weatherType) {
   case WeatherType.SUNNY:
     return i18next.t("weather:sunnyLapseMessage");
@@ -166,7 +168,7 @@ export function getWeatherLapseMessage(weatherType: WeatherType): string {
   return null;
 }
 
-export function getWeatherDamageMessage(weatherType: WeatherType, pokemon: Pokemon): string {
+export function getWeatherDamageMessage(weatherType: WeatherType, pokemon: Pokemon): string | null {
   switch (weatherType) {
   case WeatherType.SANDSTORM:
     return i18next.t("weather:sandstormDamageMessage", {pokemonNameWithAffix: getPokemonNameWithAffix(pokemon)});
@@ -177,7 +179,7 @@ export function getWeatherDamageMessage(weatherType: WeatherType, pokemon: Pokem
   return null;
 }
 
-export function getWeatherClearMessage(weatherType: WeatherType): string {
+export function getWeatherClearMessage(weatherType: WeatherType): string | null {
   switch (weatherType) {
   case WeatherType.SUNNY:
     return i18next.t("weather:sunnyClearMessage");
@@ -202,7 +204,7 @@ export function getWeatherClearMessage(weatherType: WeatherType): string {
   return null;
 }
 
-export function getTerrainStartMessage(terrainType: TerrainType): string {
+export function getTerrainStartMessage(terrainType: TerrainType): string | null {
   switch (terrainType) {
   case TerrainType.MISTY:
     return i18next.t("terrain:mistyStartMessage");
@@ -212,10 +214,13 @@ export function getTerrainStartMessage(terrainType: TerrainType): string {
     return i18next.t("terrain:grassyStartMessage");
   case TerrainType.PSYCHIC:
     return i18next.t("terrain:psychicStartMessage");
+  default:
+    console.warn("getTerrainStartMessage not defined. Using default null");
+    return null;
   }
 }
 
-export function getTerrainClearMessage(terrainType: TerrainType): string {
+export function getTerrainClearMessage(terrainType: TerrainType): string | null {
   switch (terrainType) {
   case TerrainType.MISTY:
     return i18next.t("terrain:mistyClearMessage");
@@ -225,6 +230,9 @@ export function getTerrainClearMessage(terrainType: TerrainType): string {
     return i18next.t("terrain:grassyClearMessage");
   case TerrainType.PSYCHIC:
     return i18next.t("terrain:psychicClearMessage");
+  default:
+    console.warn("getTerrainClearMessage not defined. Using default null");
+    return null;
   }
 }
 

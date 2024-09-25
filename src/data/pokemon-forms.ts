@@ -1,15 +1,18 @@
-import { PokemonFormChangeItemModifier } from "../modifier/modifier";
+import { PokemonFormChangeItemModifier, TerastallizeModifier } from "../modifier/modifier";
 import Pokemon from "../field/pokemon";
 import { SpeciesFormKey } from "./pokemon-species";
 import { StatusEffect } from "./status-effect";
 import { MoveCategory, allMoves } from "./move";
+import { Type } from "./type";
 import { Constructor } from "#app/utils";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import { TimeOfDay } from "#enums/time-of-day";
-import { getPokemonNameWithAffix } from "#app/messages.js";
+import { getPokemonNameWithAffix } from "#app/messages";
 import i18next from "i18next";
+import { WeatherType } from "./weather";
+import { Challenges } from "#app/enums/challenges";
 
 export enum FormChangeItem {
   NONE,
@@ -65,33 +68,34 @@ export enum FormChangeItem {
 
   BLUE_ORB = 50,
   RED_ORB,
-  SHARP_METEORITE,
-  HARD_METEORITE,
-  SMOOTH_METEORITE,
   ADAMANT_CRYSTAL,
   LUSTROUS_GLOBE,
   GRISEOUS_CORE,
   REVEAL_GLASS,
-  GRACIDEA,
   MAX_MUSHROOMS,
   DARK_STONE,
   LIGHT_STONE,
   PRISON_BOTTLE,
-  N_LUNARIZER,
-  N_SOLARIZER,
   RUSTED_SWORD,
   RUSTED_SHIELD,
   ICY_REINS_OF_UNITY,
   SHADOW_REINS_OF_UNITY,
-  WELLSPRING_MASK,
-  HEARTHFLAME_MASK,
-  CORNERSTONE_MASK,
+  ULTRANECROZIUM_Z,
+
+  SHARP_METEORITE = 100,
+  HARD_METEORITE,
+  SMOOTH_METEORITE,
+  GRACIDEA,
   SHOCK_DRIVE,
   BURN_DRIVE,
   CHILL_DRIVE,
   DOUSE_DRIVE,
-
-  FIST_PLATE = 100,
+  N_SOLARIZER,
+  N_LUNARIZER,
+  WELLSPRING_MASK,
+  HEARTHFLAME_MASK,
+  CORNERSTONE_MASK,
+  FIST_PLATE,
   SKY_PLATE,
   TOXIC_PLATE,
   EARTH_PLATE,
@@ -127,7 +131,7 @@ export enum FormChangeItem {
   DRAGON_MEMORY,
   DARK_MEMORY,
   FAIRY_MEMORY,
-  BLANK_MEMORY  // TODO: Find a potential use for this
+  NORMAL_MEMORY // TODO: Find a potential use for this
 }
 
 export type SpeciesFormChangeConditionPredicate = (p: Pokemon) => boolean;
@@ -181,7 +185,7 @@ export class SpeciesFormChange {
     return true;
   }
 
-  findTrigger(triggerType: Constructor<SpeciesFormChangeTrigger>): SpeciesFormChangeTrigger {
+  findTrigger(triggerType: Constructor<SpeciesFormChangeTrigger>): SpeciesFormChangeTrigger | null {
     if (!this.trigger.hasTriggerType(triggerType)) {
       return null;
     }
@@ -189,7 +193,7 @@ export class SpeciesFormChange {
     const trigger = this.trigger;
 
     if (trigger instanceof SpeciesFormChangeCompoundTrigger) {
-      return trigger.triggers.find(t => t.hasTriggerType(triggerType));
+      return trigger.triggers.find(t => t.hasTriggerType(triggerType))!; // TODO: is this bang correct?
     }
 
     return trigger;
@@ -198,11 +202,11 @@ export class SpeciesFormChange {
 
 export class SpeciesFormChangeCondition {
   public predicate: SpeciesFormChangeConditionPredicate;
-  public enforceFunc: SpeciesFormChangeConditionEnforceFunc;
+  public enforceFunc: SpeciesFormChangeConditionEnforceFunc | null;
 
   constructor(predicate: SpeciesFormChangeConditionPredicate, enforceFunc?: SpeciesFormChangeConditionEnforceFunc) {
     this.predicate = predicate;
-    this.enforceFunc = enforceFunc;
+    this.enforceFunc = enforceFunc!; // TODO: is this bang correct?
   }
 }
 
@@ -314,7 +318,7 @@ export class SpeciesFormChangeMoveLearnedTrigger extends SpeciesFormChangeTrigge
   }
 
   canChange(pokemon: Pokemon): boolean {
-    return (!!pokemon.moveset.filter(m => m.moveId === this.move).length) === this.known;
+    return (!!pokemon.moveset.filter(m => m?.moveId === this.move).length) === this.known;
   }
 }
 
@@ -332,13 +336,23 @@ export abstract class SpeciesFormChangeMoveTrigger extends SpeciesFormChangeTrig
 export class SpeciesFormChangePreMoveTrigger extends SpeciesFormChangeMoveTrigger {
   canChange(pokemon: Pokemon): boolean {
     const command = pokemon.scene.currentBattle.turnCommands[pokemon.getBattlerIndex()];
-    return command?.move && this.movePredicate(command.move.move) === this.used;
+    return !!command?.move && this.movePredicate(command.move.move) === this.used;
   }
 }
 
 export class SpeciesFormChangePostMoveTrigger extends SpeciesFormChangeMoveTrigger {
   canChange(pokemon: Pokemon): boolean {
     return pokemon.summonData && !!pokemon.getLastXMoves(1).filter(m => this.movePredicate(m.move)).length === this.used;
+  }
+}
+
+export class MeloettaFormChangePostMoveTrigger extends SpeciesFormChangePostMoveTrigger {
+  override canChange(pokemon: Pokemon): boolean {
+    if (pokemon.scene.gameMode.hasChallenge(Challenges.SINGLE_TYPE)) {
+      return false;
+    } else {
+      return super.canChange(pokemon);
+    }
   }
 }
 
@@ -352,6 +366,113 @@ export class SpeciesDefaultFormMatchTrigger extends SpeciesFormChangeTrigger {
 
   canChange(pokemon: Pokemon): boolean {
     return this.formKey === pokemon.species.forms[pokemon.scene.getSpeciesFormIndex(pokemon.species, pokemon.gender, pokemon.getNature(), true)].formKey;
+  }
+}
+
+/**
+ * Class used for triggering form changes based on the user's Tera type.
+ * Used by Ogerpon and Terapagos.
+ * @extends SpeciesFormChangeTrigger
+ */
+export class SpeciesFormChangeTeraTrigger extends SpeciesFormChangeTrigger {
+  /** The Tera type that triggers the form change */
+  private teraType: Type;
+
+  constructor(teraType: Type) {
+    super();
+    this.teraType = teraType;
+  }
+
+  /**
+   * Checks if the associated Pokémon has the required Tera Shard that matches with the associated Tera type.
+   * @param {Pokemon} pokemon the Pokémon that is trying to do the form change
+   * @returns `true` if the Pokémon can change forms, `false` otherwise
+   */
+  canChange(pokemon: Pokemon): boolean {
+    return !!pokemon.scene.findModifier(m => m instanceof TerastallizeModifier && m.pokemonId === pokemon.id && m.teraType === this.teraType);
+  }
+}
+
+/**
+ * Class used for triggering form changes based on the user's lapsed Tera type.
+ * Used by Ogerpon and Terapagos.
+ * @extends SpeciesFormChangeTrigger
+ */
+export class SpeciesFormChangeLapseTeraTrigger extends SpeciesFormChangeTrigger {
+  canChange(pokemon: Pokemon): boolean {
+    return !!pokemon.scene.findModifier(m => m instanceof TerastallizeModifier && m.pokemonId === pokemon.id);
+  }
+}
+
+/**
+ * Class used for triggering form changes based on weather.
+ * Used by Castform and Cherrim.
+ * @extends SpeciesFormChangeTrigger
+ */
+export class SpeciesFormChangeWeatherTrigger extends SpeciesFormChangeTrigger {
+  /** The ability that  triggers the form change */
+  public ability: Abilities;
+  /** The list of weathers that trigger the form change */
+  public weathers: WeatherType[];
+
+  constructor(ability: Abilities, weathers: WeatherType[]) {
+    super();
+    this.ability = ability;
+    this.weathers = weathers;
+  }
+
+  /**
+   * Checks if the Pokemon has the required ability and is in the correct weather while
+   * the weather or ability is also not suppressed.
+   * @param {Pokemon} pokemon the pokemon that is trying to do the form change
+   * @returns `true` if the Pokemon can change forms, `false` otherwise
+   */
+  canChange(pokemon: Pokemon): boolean {
+    const currentWeather = pokemon.scene.arena.weather?.weatherType ?? WeatherType.NONE;
+    const isWeatherSuppressed = pokemon.scene.arena.weather?.isEffectSuppressed(pokemon.scene);
+    const isAbilitySuppressed = pokemon.summonData.abilitySuppressed;
+
+    return !isAbilitySuppressed && !isWeatherSuppressed && (pokemon.hasAbility(this.ability) && this.weathers.includes(currentWeather));
+  }
+}
+
+/**
+ * Class used for reverting to the original form when the weather runs out
+ * or when the user loses the ability/is suppressed.
+ * Used by Castform and Cherrim.
+ * @extends SpeciesFormChangeTrigger
+ */
+export class SpeciesFormChangeRevertWeatherFormTrigger extends SpeciesFormChangeTrigger {
+  /** The ability that triggers the form change*/
+  public ability: Abilities;
+  /** The list of weathers that will also trigger a form change to original form */
+  public weathers: WeatherType[];
+
+  constructor(ability: Abilities, weathers: WeatherType[]) {
+    super();
+    this.ability = ability;
+    this.weathers = weathers;
+  }
+
+  /**
+   * Checks if the Pokemon has the required ability and the weather is one that will revert
+   * the Pokemon to its original form or the weather or ability is suppressed
+   * @param {Pokemon} pokemon the pokemon that is trying to do the form change
+   * @returns `true` if the Pokemon will revert to its original form, `false` otherwise
+   */
+  canChange(pokemon: Pokemon): boolean {
+    if (pokemon.hasAbility(this.ability, false, true)) {
+      const currentWeather = pokemon.scene.arena.weather?.weatherType ?? WeatherType.NONE;
+      const isWeatherSuppressed = pokemon.scene.arena.weather?.isEffectSuppressed(pokemon.scene);
+      const isAbilitySuppressed = pokemon.summonData.abilitySuppressed;
+      const summonDataAbility = pokemon.summonData.ability;
+      const isAbilityChanged = summonDataAbility !== this.ability && summonDataAbility !== Abilities.NONE;
+
+      if (this.weathers.includes(currentWeather) || isWeatherSuppressed || isAbilitySuppressed || isAbilityChanged) {
+        return true;
+      }
+    }
+    return false;
   }
 }
 
@@ -371,6 +492,9 @@ export function getSpeciesFormChangeMessage(pokemon: Pokemon, formChange: Specie
   }
   if (isRevert) {
     return i18next.t("battlePokemonForm:revertChange", { pokemonName: getPokemonNameWithAffix(pokemon) });
+  }
+  if (pokemon.getAbility().id === Abilities.DISGUISE) {
+    return i18next.t("battlePokemonForm:disguiseChange");
   }
   return i18next.t("battlePokemonForm:formChange", { preName });
 }
@@ -515,6 +639,23 @@ export const pokemonFormChanges: PokemonFormChanges = {
   [Species.ALTARIA]: [
     new SpeciesFormChange(Species.ALTARIA, "", SpeciesFormKey.MEGA, new SpeciesFormChangeItemTrigger(FormChangeItem.ALTARIANITE))
   ],
+  [Species.CASTFORM]: [
+    new SpeciesFormChange(Species.CASTFORM, "", "sunny", new SpeciesFormChangeWeatherTrigger(Abilities.FORECAST, [WeatherType.SUNNY, WeatherType.HARSH_SUN]), true),
+    new SpeciesFormChange(Species.CASTFORM, "rainy", "sunny", new SpeciesFormChangeWeatherTrigger(Abilities.FORECAST, [WeatherType.SUNNY, WeatherType.HARSH_SUN]), true),
+    new SpeciesFormChange(Species.CASTFORM, "snowy", "sunny", new SpeciesFormChangeWeatherTrigger(Abilities.FORECAST, [WeatherType.SUNNY, WeatherType.HARSH_SUN]), true),
+    new SpeciesFormChange(Species.CASTFORM, "", "rainy", new SpeciesFormChangeWeatherTrigger(Abilities.FORECAST, [WeatherType.RAIN, WeatherType.HEAVY_RAIN]), true),
+    new SpeciesFormChange(Species.CASTFORM, "sunny", "rainy", new SpeciesFormChangeWeatherTrigger(Abilities.FORECAST, [WeatherType.RAIN, WeatherType.HEAVY_RAIN]), true),
+    new SpeciesFormChange(Species.CASTFORM, "snowy", "rainy", new SpeciesFormChangeWeatherTrigger(Abilities.FORECAST, [WeatherType.RAIN, WeatherType.HEAVY_RAIN]), true),
+    new SpeciesFormChange(Species.CASTFORM, "", "snowy", new SpeciesFormChangeWeatherTrigger(Abilities.FORECAST, [WeatherType.HAIL, WeatherType.SNOW]), true),
+    new SpeciesFormChange(Species.CASTFORM, "sunny", "snowy", new SpeciesFormChangeWeatherTrigger(Abilities.FORECAST, [WeatherType.HAIL, WeatherType.SNOW]), true),
+    new SpeciesFormChange(Species.CASTFORM, "rainy", "snowy", new SpeciesFormChangeWeatherTrigger(Abilities.FORECAST, [WeatherType.HAIL, WeatherType.SNOW]), true),
+    new SpeciesFormChange(Species.CASTFORM, "sunny", "", new SpeciesFormChangeRevertWeatherFormTrigger(Abilities.FORECAST, [WeatherType.NONE, WeatherType.SANDSTORM, WeatherType.STRONG_WINDS, WeatherType.FOG]), true),
+    new SpeciesFormChange(Species.CASTFORM, "rainy", "", new SpeciesFormChangeRevertWeatherFormTrigger(Abilities.FORECAST, [WeatherType.NONE, WeatherType.SANDSTORM, WeatherType.STRONG_WINDS, WeatherType.FOG]), true),
+    new SpeciesFormChange(Species.CASTFORM, "snowy", "", new SpeciesFormChangeRevertWeatherFormTrigger(Abilities.FORECAST, [WeatherType.NONE, WeatherType.SANDSTORM, WeatherType.STRONG_WINDS, WeatherType.FOG]), true),
+    new SpeciesFormChange(Species.CASTFORM, "sunny", "", new SpeciesFormChangeActiveTrigger(), true),
+    new SpeciesFormChange(Species.CASTFORM, "rainy", "", new SpeciesFormChangeActiveTrigger(), true),
+    new SpeciesFormChange(Species.CASTFORM, "snowy", "", new SpeciesFormChangeActiveTrigger(), true)
+  ],
   [Species.BANETTE]: [
     new SpeciesFormChange(Species.BANETTE, "", SpeciesFormKey.MEGA, new SpeciesFormChangeItemTrigger(FormChangeItem.BANETTITE))
   ],
@@ -543,12 +684,17 @@ export const pokemonFormChanges: PokemonFormChanges = {
     new SpeciesFormChange(Species.GROUDON, "", SpeciesFormKey.PRIMAL, new SpeciesFormChangeItemTrigger(FormChangeItem.RED_ORB))
   ],
   [Species.RAYQUAZA]: [
-    new SpeciesFormChange(Species.RAYQUAZA, "", SpeciesFormKey.MEGA, new SpeciesFormChangeCompoundTrigger(new SpeciesFormChangeItemTrigger(FormChangeItem.RAYQUAZITE), new SpeciesFormChangeMoveLearnedTrigger(Moves.DRAGON_ASCENT)))
+    new SpeciesFormChange(Species.RAYQUAZA, "", SpeciesFormKey.MEGA, new SpeciesFormChangeItemTrigger(FormChangeItem.RAYQUAZITE))
   ],
   [Species.DEOXYS]: [
     new SpeciesFormChange(Species.DEOXYS, "normal", "attack", new SpeciesFormChangeItemTrigger(FormChangeItem.SHARP_METEORITE)),
     new SpeciesFormChange(Species.DEOXYS, "normal", "defense", new SpeciesFormChangeItemTrigger(FormChangeItem.HARD_METEORITE)),
     new SpeciesFormChange(Species.DEOXYS, "normal", "speed", new SpeciesFormChangeItemTrigger(FormChangeItem.SMOOTH_METEORITE))
+  ],
+  [Species.CHERRIM]: [
+    new SpeciesFormChange(Species.CHERRIM, "overcast", "sunshine", new SpeciesFormChangeWeatherTrigger(Abilities.FLOWER_GIFT, [ WeatherType.SUNNY, WeatherType.HARSH_SUN ]), true),
+    new SpeciesFormChange(Species.CHERRIM, "sunshine", "overcast", new SpeciesFormChangeRevertWeatherFormTrigger(Abilities.FLOWER_GIFT, [ WeatherType.NONE, WeatherType.SANDSTORM, WeatherType.STRONG_WINDS, WeatherType.FOG, WeatherType.HAIL, WeatherType.HEAVY_RAIN, WeatherType.SNOW, WeatherType.RAIN ]), true),
+    new SpeciesFormChange(Species.CHERRIM, "sunshine", "overcast", new SpeciesFormChangeActiveTrigger(), true)
   ],
   [Species.LOPUNNY]: [
     new SpeciesFormChange(Species.LOPUNNY, "", SpeciesFormKey.MEGA, new SpeciesFormChangeItemTrigger(FormChangeItem.LOPUNNITE))
@@ -578,10 +724,7 @@ export const pokemonFormChanges: PokemonFormChanges = {
     new SpeciesFormChange(Species.GIRATINA, "altered", SpeciesFormKey.ORIGIN, new SpeciesFormChangeItemTrigger(FormChangeItem.GRISEOUS_CORE))
   ],
   [Species.SHAYMIN]: [
-    new SpeciesFormChange(Species.SHAYMIN, "land", "sky", new SpeciesFormChangeCompoundTrigger(new SpeciesFormChangeTimeOfDayTrigger(TimeOfDay.DAY, TimeOfDay.DUSK),
-      new SpeciesFormChangeItemTrigger(FormChangeItem.GRACIDEA), new SpeciesFormChangeStatusEffectTrigger(StatusEffect.FREEZE, true))),
-    new SpeciesFormChange(Species.SHAYMIN, "sky", "land", new SpeciesFormChangeTimeOfDayTrigger(TimeOfDay.DAWN, TimeOfDay.NIGHT)),
-    new SpeciesFormChange(Species.SHAYMIN, "sky", "land", new SpeciesFormChangeStatusEffectTrigger(StatusEffect.FREEZE))
+    new SpeciesFormChange(Species.SHAYMIN, "land", "sky", new SpeciesFormChangeItemTrigger(FormChangeItem.GRACIDEA)),
   ],
   [Species.ARCEUS]: [
     new SpeciesFormChange(Species.ARCEUS, "normal", "fighting", new SpeciesFormChangeItemTrigger(FormChangeItem.FIST_PLATE)),
@@ -627,9 +770,8 @@ export const pokemonFormChanges: PokemonFormChanges = {
     new SpeciesFormChange(Species.KELDEO, "resolute", "ordinary", new SpeciesFormChangeMoveLearnedTrigger(Moves.SECRET_SWORD, false))
   ],
   [Species.MELOETTA]: [
-    new SpeciesFormChange(Species.MELOETTA, "aria", "pirouette", new SpeciesFormChangePostMoveTrigger(Moves.RELIC_SONG), true),
-    new SpeciesFormChange(Species.MELOETTA, "pirouette", "aria", new SpeciesFormChangePostMoveTrigger(Moves.RELIC_SONG), true),
-    new SpeciesFormChange(Species.MELOETTA, "pirouette", "aria", new SpeciesFormChangeActiveTrigger(false), true)
+    new SpeciesFormChange(Species.MELOETTA, "aria", "pirouette", new MeloettaFormChangePostMoveTrigger(Moves.RELIC_SONG), true),
+    new SpeciesFormChange(Species.MELOETTA, "pirouette", "aria", new MeloettaFormChangePostMoveTrigger(Moves.RELIC_SONG), true)
   ],
   [Species.GENESECT]: [
     new SpeciesFormChange(Species.GENESECT, "", "shock", new SpeciesFormChangeItemTrigger(FormChangeItem.SHOCK_DRIVE)),
@@ -711,7 +853,9 @@ export const pokemonFormChanges: PokemonFormChanges = {
   ],
   [Species.NECROZMA]: [
     new SpeciesFormChange(Species.NECROZMA, "", "dawn-wings", new SpeciesFormChangeItemTrigger(FormChangeItem.N_LUNARIZER), false, getSpeciesDependentFormChangeCondition(Species.LUNALA)),
-    new SpeciesFormChange(Species.NECROZMA, "", "dusk-mane", new SpeciesFormChangeItemTrigger(FormChangeItem.N_SOLARIZER), false, getSpeciesDependentFormChangeCondition(Species.SOLGALEO))
+    new SpeciesFormChange(Species.NECROZMA, "", "dusk-mane", new SpeciesFormChangeItemTrigger(FormChangeItem.N_SOLARIZER), false, getSpeciesDependentFormChangeCondition(Species.SOLGALEO)),
+    new SpeciesFormChange(Species.NECROZMA, "dawn-wings", "ultra", new SpeciesFormChangeItemTrigger(FormChangeItem.ULTRANECROZIUM_Z)),
+    new SpeciesFormChange(Species.NECROZMA, "dusk-mane", "ultra", new SpeciesFormChangeItemTrigger(FormChangeItem.ULTRANECROZIUM_Z))
   ],
   [Species.MELMETAL]: [
     new SpeciesFormChange(Species.MELMETAL, "", SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS))
@@ -746,6 +890,14 @@ export const pokemonFormChanges: PokemonFormChanges = {
   [Species.SANDACONDA]: [
     new SpeciesFormChange(Species.SANDACONDA, "", SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS))
   ],
+  [Species.CRAMORANT]: [
+    new SpeciesFormChange(Species.CRAMORANT, "", "gulping", new SpeciesFormChangeManualTrigger, true, new SpeciesFormChangeCondition(p => p.getHpRatio() >= .5)),
+    new SpeciesFormChange(Species.CRAMORANT, "", "gorging", new SpeciesFormChangeManualTrigger, true, new SpeciesFormChangeCondition(p => p.getHpRatio() < .5)),
+    new SpeciesFormChange(Species.CRAMORANT, "gulping", "", new SpeciesFormChangeManualTrigger, true),
+    new SpeciesFormChange(Species.CRAMORANT, "gorging", "", new SpeciesFormChangeManualTrigger, true),
+    new SpeciesFormChange(Species.CRAMORANT, "gulping", "", new SpeciesFormChangeActiveTrigger(false), true),
+    new SpeciesFormChange(Species.CRAMORANT, "gorging", "", new SpeciesFormChangeActiveTrigger(false), true)
+  ],
   [Species.TOXTRICITY]: [
     new SpeciesFormChange(Species.TOXTRICITY, "amped", SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS)),
     new SpeciesFormChange(Species.TOXTRICITY, "lowkey", SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS)),
@@ -771,6 +923,10 @@ export const pokemonFormChanges: PokemonFormChanges = {
     new SpeciesFormChange(Species.ALCREMIE, "ruby-swirl", SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS)),
     new SpeciesFormChange(Species.ALCREMIE, "caramel-swirl", SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS)),
     new SpeciesFormChange(Species.ALCREMIE, "rainbow-swirl", SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS))
+  ],
+  [Species.EISCUE]: [
+    new SpeciesFormChange(Species.EISCUE, "", "no-ice", new SpeciesFormChangeManualTrigger(), true),
+    new SpeciesFormChange(Species.EISCUE, "no-ice", "", new SpeciesFormChangeManualTrigger(), true)
   ],
   [Species.MORPEKO]: [
     new SpeciesFormChange(Species.MORPEKO, "full-belly", "hangry", new SpeciesFormChangeManualTrigger(), true),
@@ -807,34 +963,24 @@ export const pokemonFormChanges: PokemonFormChanges = {
     new SpeciesFormChange(Species.OGERPON, "teal-mask", "wellspring-mask", new SpeciesFormChangeItemTrigger(FormChangeItem.WELLSPRING_MASK)),
     new SpeciesFormChange(Species.OGERPON, "teal-mask", "hearthflame-mask", new SpeciesFormChangeItemTrigger(FormChangeItem.HEARTHFLAME_MASK)),
     new SpeciesFormChange(Species.OGERPON, "teal-mask", "cornerstone-mask", new SpeciesFormChangeItemTrigger(FormChangeItem.CORNERSTONE_MASK)),
-    new SpeciesFormChange(Species.OGERPON, "teal-mask", "teal-mask-tera", new SpeciesFormChangeManualTrigger(), true), //When holding a Grass Tera Shard
-    new SpeciesFormChange(Species.OGERPON, "teal-mask-tera", "teal-mask", new SpeciesFormChangeManualTrigger(), true), //When no longer holding a Grass Tera Shard
-    new SpeciesFormChange(Species.OGERPON, "wellspring-mask", "wellspring-mask-tera", new SpeciesFormChangeManualTrigger(), true), //When holding a Water Tera Shard
-    new SpeciesFormChange(Species.OGERPON, "wellspring-mask-tera", "wellspring-mask", new SpeciesFormChangeManualTrigger(), true), //When no longer holding a Water Tera Shard
-    new SpeciesFormChange(Species.OGERPON, "hearthflame-mask", "hearthflame-mask-tera", new SpeciesFormChangeManualTrigger(), true), //When holding a Fire Tera Shard
-    new SpeciesFormChange(Species.OGERPON, "hearthflame-mask-tera", "hearthflame-mask", new SpeciesFormChangeManualTrigger(), true), //When no longer holding a Fire Tera Shard
-    new SpeciesFormChange(Species.OGERPON, "cornerstone-mask", "cornerstone-mask-tera", new SpeciesFormChangeManualTrigger(), true), //When holding a Rock Tera Shard
-    new SpeciesFormChange(Species.OGERPON, "cornerstone-mask-tera", "cornerstone-mask", new SpeciesFormChangeManualTrigger(), true) //When no longer holding a Rock Tera Shard
+    new SpeciesFormChange(Species.OGERPON, "teal-mask", "teal-mask-tera", new SpeciesFormChangeTeraTrigger(Type.GRASS)),
+    new SpeciesFormChange(Species.OGERPON, "teal-mask-tera", "teal-mask", new SpeciesFormChangeLapseTeraTrigger(), true, new SpeciesFormChangeCondition(p => p.getTeraType() !== Type.GRASS)),
+    new SpeciesFormChange(Species.OGERPON, "wellspring-mask", "wellspring-mask-tera", new SpeciesFormChangeTeraTrigger(Type.WATER)),
+    new SpeciesFormChange(Species.OGERPON, "wellspring-mask-tera", "wellspring-mask", new SpeciesFormChangeLapseTeraTrigger(), true, new SpeciesFormChangeCondition(p => p.getTeraType() !== Type.WATER)),
+    new SpeciesFormChange(Species.OGERPON, "hearthflame-mask", "hearthflame-mask-tera", new SpeciesFormChangeTeraTrigger(Type.FIRE)),
+    new SpeciesFormChange(Species.OGERPON, "hearthflame-mask-tera", "hearthflame-mask", new SpeciesFormChangeLapseTeraTrigger(), true, new SpeciesFormChangeCondition(p => p.getTeraType() !== Type.FIRE)),
+    new SpeciesFormChange(Species.OGERPON, "cornerstone-mask", "cornerstone-mask-tera", new SpeciesFormChangeTeraTrigger(Type.ROCK)),
+    new SpeciesFormChange(Species.OGERPON, "cornerstone-mask-tera", "cornerstone-mask", new SpeciesFormChangeLapseTeraTrigger(), true, new SpeciesFormChangeCondition(p => p.getTeraType() !== Type.ROCK))
   ],
   [Species.TERAPAGOS]: [
     new SpeciesFormChange(Species.TERAPAGOS, "", "terastal", new SpeciesFormChangeManualTrigger(), true),
-    new SpeciesFormChange(Species.TERAPAGOS, "terastal", "stellar", new SpeciesFormChangeManualTrigger(), true), //When holding a Stellar Tera Shard
-    new SpeciesFormChange(Species.TERAPAGOS, "stellar", "terastal", new SpeciesFormChangeManualTrigger(), true) //When no longer holding a Stellar Tera Shard
+    new SpeciesFormChange(Species.TERAPAGOS, "terastal", "stellar", new SpeciesFormChangeTeraTrigger(Type.STELLAR)),
+    new SpeciesFormChange(Species.TERAPAGOS, "stellar", "terastal", new SpeciesFormChangeLapseTeraTrigger(), true, new SpeciesFormChangeCondition(p => p.getTeraType() !== Type.STELLAR))
   ],
   [Species.GALAR_DARMANITAN]: [
     new SpeciesFormChange(Species.GALAR_DARMANITAN, "", "zen", new SpeciesFormChangeManualTrigger(), true),
     new SpeciesFormChange(Species.GALAR_DARMANITAN, "zen", "", new SpeciesFormChangeManualTrigger(), true)
   ],
-  [Species.EISCUE]: [
-    new SpeciesFormChange(Species.EISCUE, "", "no-ice", new SpeciesFormChangeManualTrigger(), true),
-    new SpeciesFormChange(Species.EISCUE, "no-ice", "", new SpeciesFormChangeManualTrigger(), true),
-  ],
-  [Species.CRAMORANT]: [
-    new SpeciesFormChange(Species.CRAMORANT, "", "gulping", new SpeciesFormChangeManualTrigger, true, new SpeciesFormChangeCondition(p => p.getHpRatio() >= .5)),
-    new SpeciesFormChange(Species.CRAMORANT, "", "gorging", new SpeciesFormChangeManualTrigger, true, new SpeciesFormChangeCondition(p => p.getHpRatio() < .5)),
-    new SpeciesFormChange(Species.CRAMORANT, "gulping", "", new SpeciesFormChangeManualTrigger, true),
-    new SpeciesFormChange(Species.CRAMORANT, "gorging", "", new SpeciesFormChangeManualTrigger, true),
-  ]
 };
 
 export function initPokemonForms() {

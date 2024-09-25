@@ -12,6 +12,7 @@ import { loadBattlerTag } from "../data/battler-tags";
 import { Biome } from "#enums/biome";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
+import { MysteryEncounterPokemonData } from "#app/data/mystery-encounters/mystery-encounter-pokemon-data";
 
 export default class PokemonData {
   public id: integer;
@@ -33,15 +34,18 @@ export default class PokemonData {
   public ivs: integer[];
   public nature: Nature;
   public natureOverride: Nature | -1;
-  public moveset: PokemonMove[];
-  public status: Status;
+  public moveset: (PokemonMove | null)[];
+  public status: Status | null;
   public friendship: integer;
   public metLevel: integer;
-  public metBiome: Biome | -1;
+  public metBiome: Biome | -1;        // -1 for starters
   public metSpecies: Species;
+  public metWave: number;            // 0 for unknown (previous saves), -1 for starters
   public luck: integer;
   public pauseEvolutions: boolean;
   public pokerus: boolean;
+  public usedTMs: Moves[];
+  public evoCounter: integer;
 
   public fusionSpecies: Species;
   public fusionFormIndex: integer;
@@ -50,11 +54,14 @@ export default class PokemonData {
   public fusionVariant: Variant;
   public fusionGender: Gender;
   public fusionLuck: integer;
+  public fusionMysteryEncounterPokemonData: MysteryEncounterPokemonData;
 
   public boss: boolean;
   public bossSegments?: integer;
 
   public summonData: PokemonSummonData;
+  /** Data that can customize a Pokemon in non-standard ways from its Species */
+  public mysteryEncounterPokemonData: MysteryEncounterPokemonData;
 
   constructor(source: Pokemon | any, forHistory: boolean = false) {
     const sourcePokemon = source instanceof Pokemon ? source : null;
@@ -85,9 +92,11 @@ export default class PokemonData {
     this.metLevel = source.metLevel || 5;
     this.metBiome = source.metBiome !== undefined ? source.metBiome : -1;
     this.metSpecies = source.metSpecies;
+    this.metWave = source.metWave ?? (this.metBiome === -1 ? -1 : 0);
     this.luck = source.luck !== undefined ? source.luck : (source.shiny ? (source.variant + 1) : 0);
     if (!forHistory) {
       this.pauseEvolutions = !!source.pauseEvolutions;
+      this.evoCounter = source.evoCounter ?? 0;
     }
     this.pokerus = !!source.pokerus;
 
@@ -98,6 +107,9 @@ export default class PokemonData {
     this.fusionVariant = source.fusionVariant;
     this.fusionGender = source.fusionGender;
     this.fusionLuck = source.fusionLuck !== undefined ? source.fusionLuck : (source.fusionShiny ? source.fusionVariant + 1 : 0);
+    this.usedTMs = source.usedTMs ?? [];
+
+    this.mysteryEncounterPokemonData = new MysteryEncounterPokemonData(source.mysteryEncounterPokemonData);
 
     if (!forHistory) {
       this.boss = (source instanceof EnemyPokemon && !!source.bossSegments) || (!this.player && !!source.boss);
@@ -117,15 +129,14 @@ export default class PokemonData {
       if (!forHistory) {
         this.status = source.status
           ? new Status(source.status.effect, source.status.turnCount, source.status.cureTurn)
-          : undefined;
+          : null;
       }
 
       this.summonData = new PokemonSummonData();
       if (!forHistory && source.summonData) {
-        this.summonData.battleStats = source.summonData.battleStats;
+        this.summonData.stats = source.summonData.stats;
+        this.summonData.statStages = source.summonData.statStages;
         this.summonData.moveQueue = source.summonData.moveQueue;
-        this.summonData.disabledMove = source.summonData.disabledMove;
-        this.summonData.disabledTurns = source.summonData.disabledTurns;
         this.summonData.abilitySuppressed = source.summonData.abilitySuppressed;
         this.summonData.abilitiesApplied = source.summonData.abilitiesApplied;
 

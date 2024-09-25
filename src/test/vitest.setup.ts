@@ -1,4 +1,3 @@
-import "#test/fontFace.setup";
 import "vitest-canvas-mock";
 
 import { initLoggedInUser } from "#app/account";
@@ -9,11 +8,13 @@ import { initMoves } from "#app/data/move";
 import { initPokemonPrevolutions } from "#app/data/pokemon-evolutions";
 import { initPokemonForms } from "#app/data/pokemon-forms";
 import { initSpecies } from "#app/data/pokemon-species";
-import { initAchievements } from "#app/system/achv.js";
-import { initVouchers } from "#app/system/voucher.js";
+import { initAchievements } from "#app/system/achv";
+import { initVouchers } from "#app/system/voucher";
 import { initStatsKeys } from "#app/ui/game-stats-ui-handler";
-
+import { initMysteryEncounters } from "#app/data/mystery-encounters/mystery-encounters";
 import { beforeAll, vi } from "vitest";
+
+process.env.TZ = "UTC";
 
 /** Mock the override import to always return default values, ignoring any custom overrides. */
 vi.mock("#app/overrides", async (importOriginal) => {
@@ -36,6 +37,7 @@ initSpecies();
 initMoves();
 initAbilities();
 initLoggedInUser();
+initMysteryEncounters();
 
 global.testFailed = false;
 
