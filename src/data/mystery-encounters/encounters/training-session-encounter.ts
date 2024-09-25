@@ -151,7 +151,7 @@ export const TrainingSessionEncounter: MysteryEncounter =
             }
 
             // Add pokemon and mods back
-            scene.getParty().push(playerPokemon);
+            scene.getPlayerParty().push(playerPokemon);
             for (const mod of modifiers.value) {
               mod.pokemonId = playerPokemon.id;
               scene.addModifier(mod, true, false, false, true);
@@ -228,7 +228,7 @@ export const TrainingSessionEncounter: MysteryEncounter =
             scene.gameData.setPokemonCaught(playerPokemon, false);
 
             // Add pokemon and modifiers back
-            scene.getParty().push(playerPokemon);
+            scene.getPlayerParty().push(playerPokemon);
             for (const mod of modifiers.value) {
               mod.pokemonId = playerPokemon.id;
               scene.addModifier(mod, true, false, false, true);
@@ -341,7 +341,7 @@ export const TrainingSessionEncounter: MysteryEncounter =
             scene.gameData.setPokemonCaught(playerPokemon, false);
 
             // Add pokemon and mods back
-            scene.getParty().push(playerPokemon);
+            scene.getPlayerParty().push(playerPokemon);
             for (const mod of modifiers.value) {
               mod.pokemonId = playerPokemon.id;
               scene.addModifier(mod, true, false, false, true);

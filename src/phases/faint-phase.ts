@@ -1,24 +1,24 @@
-import BattleScene from "#app/battle-scene";
 import { BattlerIndex, BattleType } from "#app/battle";
-import { applyPostFaintAbAttrs, PostFaintAbAttr, applyPostKnockOutAbAttrs, PostKnockOutAbAttr, applyPostVictoryAbAttrs, PostVictoryAbAttr } from "#app/data/ability";
+import BattleScene from "#app/battle-scene";
+import { applyPostFaintAbAttrs, applyPostKnockOutAbAttrs, applyPostVictoryAbAttrs, PostFaintAbAttr, PostKnockOutAbAttr, PostVictoryAbAttr } from "#app/data/ability";
 import { BattlerTagLapseType } from "#app/data/battler-tags";
 import { battleSpecDialogue } from "#app/data/dialogue";
 import { allMoves, PostVictoryStatStageChangeAttr } from "#app/data/move";
+import { SpeciesFormChangeActiveTrigger } from "#app/data/pokemon-forms";
 import { BattleSpec } from "#app/enums/battle-spec";
 import { StatusEffect } from "#app/enums/status-effect";
-import { PokemonMove, EnemyPokemon, PlayerPokemon, HitResult } from "#app/field/pokemon";
+import { EnemyPokemon, HitResult, PlayerPokemon, PokemonMove } from "#app/field/pokemon";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { PokemonInstantReviveModifier } from "#app/modifier/modifier";
+import { SwitchType } from "#enums/switch-type";
 import i18next from "i18next";
 import { DamagePhase } from "./damage-phase";
+import { GameOverPhase } from "./game-over-phase";
 import { PokemonPhase } from "./pokemon-phase";
+import { SwitchPhase } from "./switch-phase";
 import { SwitchSummonPhase } from "./switch-summon-phase";
 import { ToggleDoublePositionPhase } from "./toggle-double-position-phase";
-import { GameOverPhase } from "./game-over-phase";
-import { SwitchPhase } from "./switch-phase";
 import { VictoryPhase } from "./victory-phase";
-import { SpeciesFormChangeActiveTrigger } from "#app/data/pokemon-forms";
-import { SwitchType } from "#enums/switch-type";
 
 export class FaintPhase extends PokemonPhase {
   private preventEndure: boolean;
@@ -90,7 +90,7 @@ export class FaintPhase extends PokemonPhase {
 
     if (this.player) {
       /** The total number of Pokemon in the player's party that can legally fight */
-      const legalPlayerPokemon = this.scene.getParty().filter(p => p.isAllowedInBattle());
+      const legalPlayerPokemon = this.scene.getPokemonAllowedInBattle();
       /** The total number of legal player Pokemon that aren't currently on the field */
       const legalPlayerPartyPokemon = legalPlayerPokemon.filter(p => !p.isActive(true));
       if (!legalPlayerPokemon.length) {

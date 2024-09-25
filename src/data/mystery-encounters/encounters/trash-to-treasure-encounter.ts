@@ -164,7 +164,7 @@ async function tryApplyDigRewardItems(scene: BattleScene) {
   const shellBell = generateModifierType(scene, modifierTypes.SHELL_BELL) as PokemonHeldItemModifierType;
   const leftovers = generateModifierType(scene, modifierTypes.LEFTOVERS) as PokemonHeldItemModifierType;
 
-  const party = scene.getParty();
+  const party = scene.getPlayerParty();
 
   // Iterate over the party until an item was successfully given
   // First leftovers

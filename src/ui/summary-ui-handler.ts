@@ -554,7 +554,7 @@ export default class SummaryUiHandler extends UiHandler {
             break;
           }
           const isDown = button === Button.DOWN;
-          const party = this.scene.getParty();
+          const party = this.scene.getPlayerParty();
           const partyMemberIndex = this.pokemon ? party.indexOf(this.pokemon) : -1;
           if ((isDown && partyMemberIndex < party.length - 1) || (!isDown && partyMemberIndex)) {
             const page = this.cursor;

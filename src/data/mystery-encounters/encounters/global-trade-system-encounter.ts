@@ -191,7 +191,7 @@ export const GlobalTradeSystemEncounter: MysteryEncounter =
           receivedPokemonData.pokeball = randInt(4) as PokeballType;
           const dataSource = new PokemonData(receivedPokemonData);
           const newPlayerPokemon = scene.addPlayerPokemon(receivedPokemonData.species, receivedPokemonData.level, dataSource.abilityIndex, dataSource.formIndex, dataSource.gender, dataSource.shiny, dataSource.variant, dataSource.ivs, dataSource.nature, dataSource);
-          scene.getParty().push(newPlayerPokemon);
+          scene.getPlayerParty().push(newPlayerPokemon);
           await newPlayerPokemon.loadAssets();
 
           for (const mod of modifiers) {
@@ -224,7 +224,7 @@ export const GlobalTradeSystemEncounter: MysteryEncounter =
           const encounter = scene.currentBattle.mysteryEncounter!;
           const onPokemonSelected = (pokemon: PlayerPokemon) => {
             // Randomly generate a Wonder Trade pokemon
-            const randomTradeOption = generateTradeOption(scene.getParty().map(p => p.species));
+            const randomTradeOption = generateTradeOption(scene.getPlayerParty().map(p => p.species));
             const tradePokemon = new EnemyPokemon(scene, randomTradeOption, pokemon.level, TrainerSlot.NONE, false);
             // Extra shiny roll at 1/128 odds (boosted by events and charms)
             if (!tradePokemon.shiny) {
@@ -299,7 +299,7 @@ export const GlobalTradeSystemEncounter: MysteryEncounter =
           receivedPokemonData.pokeball = randInt(4) as PokeballType;
           const dataSource = new PokemonData(receivedPokemonData);
           const newPlayerPokemon = scene.addPlayerPokemon(receivedPokemonData.species, receivedPokemonData.level, dataSource.abilityIndex, dataSource.formIndex, dataSource.gender, dataSource.shiny, dataSource.variant, dataSource.ivs, dataSource.nature, dataSource);
-          scene.getParty().push(newPlayerPokemon);
+          scene.getPlayerParty().push(newPlayerPokemon);
           await newPlayerPokemon.loadAssets();
 
           for (const mod of modifiers) {
@@ -384,11 +384,11 @@ export const GlobalTradeSystemEncounter: MysteryEncounter =
             tier++;
           }
 
-          regenerateModifierPoolThresholds(scene.getParty(), ModifierPoolType.PLAYER, 0);
+          regenerateModifierPoolThresholds(scene.getPlayerParty(), ModifierPoolType.PLAYER, 0);
           let item: ModifierTypeOption | null = null;
           // TMs excluded from possible rewards
           while (!item || item.type.id.includes("TM_")) {
-            item = getPlayerModifierTypeOptions(1, scene.getParty(), [], { guaranteedModifierTiers: [ tier ], allowLuckUpgrades: false })[0];
+            item = getPlayerModifierTypeOptions(1, scene.getPlayerParty(), [], { guaranteedModifierTiers: [ tier ], allowLuckUpgrades: false })[0];
           }
 
           encounter.setDialogueToken("itemName", item.type.name);
@@ -430,9 +430,9 @@ export const GlobalTradeSystemEncounter: MysteryEncounter =
 function getPokemonTradeOptions(scene: BattleScene): Map<number, EnemyPokemon[]> {
   const tradeOptionsMap: Map<number, EnemyPokemon[]> = new Map<number, EnemyPokemon[]>();
   // Starts by filtering out any current party members as valid resulting species
-  const alreadyUsedSpecies: PokemonSpecies[] = scene.getParty().map(p => p.species);
+  const alreadyUsedSpecies: PokemonSpecies[] = scene.getPlayerParty().map(p => p.species);
 
-  scene.getParty().forEach(pokemon => {
+  scene.getPlayerParty().forEach(pokemon => {
     // If the party member is legendary/mythical, the only trade options available are always pulled from generation-specific legendary trade pools
     if (pokemon.species.legendary || pokemon.species.subLegendary || pokemon.species.mythical) {
       const generation = pokemon.species.generation;

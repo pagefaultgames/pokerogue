@@ -329,35 +329,45 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return this.scene.field.getIndex(this) > -1;
   }
 
-  isFainted(checkStatus?: boolean): boolean {
-    return !this.hp && (!checkStatus || this.status?.effect === StatusEffect.FAINT);
+  /**
+   * Checks if a pokemon is fainted (ie: its `hp <= 0`).
+   * It's usually better to call {@linkcode isAllowedInBattle()}
+   * @param checkStatus `true` to also check that the pokemon's status is {@linkcode StatusEffect.FAINT}
+   * @returns `true` if the pokemon is fainted
+   */
+  public isFainted(checkStatus: boolean = false): boolean {
+    return this.hp <= 0 && (!checkStatus || this.status?.effect === StatusEffect.FAINT);
   }
 
   /**
-   * Check if this pokemon is both not fainted (or a fled wild pokemon) and allowed to be in battle.
-   * This is frequently a better alternative to {@link isFainted}
-   * @returns {boolean} True if pokemon is allowed in battle
+   * Check if this pokemon is both not fainted and allowed to be in battle based on currently active challenges.
+   * @returns {boolean} `true` if pokemon is allowed in battle
    */
-  isAllowedInBattle(): boolean {
-    return !this.isFainted() && this.isAllowed();
+  public isAllowedInBattle(): boolean {
+    return !this.isFainted() && this.isAllowedInChallenge();
   }
 
   /**
-   * Check if this pokemon is allowed (no challenge exclusion)
-   * This is frequently a better alternative to {@link isFainted}
-   * @returns {boolean} True if pokemon is allowed in battle
+   * Check if this pokemon is allowed based on any active challenges.
+   * It's usually better to call {@linkcode isAllowedInBattle()}
+   * @returns {boolean} `true` if pokemon is allowed in battle
    */
-  isAllowed(): boolean {
+  public isAllowedInChallenge(): boolean {
     const challengeAllowed = new Utils.BooleanHolder(true);
     applyChallenges(this.scene.gameMode, ChallengeType.POKEMON_IN_BATTLE, this, challengeAllowed);
     return challengeAllowed.value;
   }
 
-  isActive(onField?: boolean): boolean {
+  /**
+   * Checks if the pokemon is allowed in battle (ie: not fainted, and allowed under any active challenges).
+   * @param onField `true` to also check if the pokemon is currently on the field, defaults to `false`
+   * @returns `true` if the pokemon is "active". Returns `false` if there is no active {@linkcode BattleScene}
+   */
+  public isActive(onField: boolean = false): boolean {
     if (!this.scene) {
       return false;
     }
-    return this.isAllowedInBattle() && !!this.scene && (!onField || this.isOnField());
+    return this.isAllowedInBattle() && (!onField || this.isOnField());
   }
 
   getDexAttr(): bigint {
@@ -4099,7 +4109,7 @@ export class PlayerPokemon extends Pokemon {
     return new Promise(resolve => {
       this.scene.ui.setMode(Mode.PARTY, PartyUiMode.REVIVAL_BLESSING, this.getFieldIndex(), (slotIndex:integer, option: PartyOption) => {
         if (slotIndex >= 0 && slotIndex < 6) {
-          const pokemon = this.scene.getParty()[slotIndex];
+          const pokemon = this.scene.getPlayerParty()[slotIndex];
           if (!pokemon || !pokemon.isFainted()) {
             resolve();
           }
@@ -4109,7 +4119,7 @@ export class PlayerPokemon extends Pokemon {
           pokemon.heal(Math.min(Utils.toDmgValue(0.5 * pokemon.getMaxHp()), pokemon.getMaxHp()));
           this.scene.queueMessage(i18next.t("moveTriggers:revivalBlessing", { pokemonName: pokemon.name }), 0, true);
 
-          if (this.scene.currentBattle.double && this.scene.getParty().length > 1) {
+          if (this.scene.currentBattle.double && this.scene.getPlayerParty().length > 1) {
             const allyPokemon = this.getAlly();
             if (slotIndex <= 1) {
               // Revived ally pokemon
@@ -4252,7 +4262,7 @@ export class PlayerPokemon extends Pokemon {
         newPokemon.fusionLuck = this.fusionLuck;
         newPokemon.usedTMs = this.usedTMs;
 
-        this.scene.getParty().push(newPokemon);
+        this.scene.getPlayerParty().push(newPokemon);
         newPokemon.evolve((!isFusion ? newEvolution : new FusionSpeciesFormEvolution(this.id, newEvolution)), evoSpecies);
         const modifiers = this.scene.findModifiers(m => m instanceof PokemonHeldItemModifier
           && m.pokemonId === this.id, true) as PokemonHeldItemModifier[];
@@ -4347,8 +4357,8 @@ export class PlayerPokemon extends Pokemon {
 
       this.generateCompatibleTms();
       this.updateInfo(true);
-      const fusedPartyMemberIndex = this.scene.getParty().indexOf(pokemon);
-      let partyMemberIndex = this.scene.getParty().indexOf(this);
+      const fusedPartyMemberIndex = this.scene.getPlayerParty().indexOf(pokemon);
+      let partyMemberIndex = this.scene.getPlayerParty().indexOf(this);
       if (partyMemberIndex > fusedPartyMemberIndex) {
         partyMemberIndex--;
       }
@@ -4361,8 +4371,8 @@ export class PlayerPokemon extends Pokemon {
       Promise.allSettled(transferModifiers).then(() => {
         this.scene.updateModifiers(true, true).then(() => {
           this.scene.removePartyMemberModifiers(fusedPartyMemberIndex);
-          this.scene.getParty().splice(fusedPartyMemberIndex, 1)[0];
-          const newPartyMemberIndex = this.scene.getParty().indexOf(this);
+          this.scene.getPlayerParty().splice(fusedPartyMemberIndex, 1)[0];
+          const newPartyMemberIndex = this.scene.getPlayerParty().indexOf(this);
           pokemon.getMoveset(true).map(m => this.scene.unshiftPhase(new LearnMovePhase(this.scene, newPartyMemberIndex, m!.getMove().id))); // TODO: is the bang correct?
           pokemon.destroy();
           this.updateFusionPalette();
@@ -4944,7 +4954,7 @@ export class EnemyPokemon extends Pokemon {
    * @returns the pokemon that was added or null if the pokemon could not be added
    */
   addToParty(pokeballType: PokeballType, slotIndex: number = -1) {
-    const party = this.scene.getParty();
+    const party = this.scene.getPlayerParty();
     let ret: PlayerPokemon | null = null;
 
     if (party.length < PLAYER_PARTY_MAX_SIZE) {

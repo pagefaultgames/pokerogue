@@ -165,7 +165,7 @@ async function summonPlayerPokemon(scene: BattleScene) {
 
     const playerPokemon = encounter.misc.playerPokemon;
     // Swaps the chosen Pokemon and the first player's lead Pokemon in the party
-    const party = scene.getParty();
+    const party = scene.getPlayerParty();
     const chosenIndex = party.indexOf(playerPokemon);
     if (chosenIndex !== 0) {
       const leadPokemon = party[0];

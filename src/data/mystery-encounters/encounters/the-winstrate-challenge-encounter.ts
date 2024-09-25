@@ -189,7 +189,7 @@ function endTrainerBattleAndShowDialogue(scene: BattleScene): Promise<void> {
       const playerField = scene.getPlayerField();
       playerField.forEach((_, p) => scene.unshiftPhase(new ReturnPhase(scene, p)));
 
-      for (const pokemon of scene.getParty()) {
+      for (const pokemon of scene.getPlayerParty()) {
         // Only trigger form change when Eiscue is in Noice form
         // Hardcoded Eiscue for now in case it is fused with another pokemon
         if (pokemon.species.speciesId === Species.EISCUE && pokemon.hasAbility(Abilities.ICE_FACE) && pokemon.formIndex === 1) {
