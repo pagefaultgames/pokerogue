@@ -1,7 +1,7 @@
 {
   "intro": "É um enorme {{shuckleName}} e o que parece ser\na grande reserva de... suco?",
   "title": "O Suco Forte",
-  "description": "O {{shuckleName}} que bloqueia seu caminho parece incrivelmente forte. Enquanto isso, o suco ao lado dele está emanando algum tipo de poder.\n\nO {{shuckleName}} estende seus tentáculos na sua direção. Parece que ele quer fazer algo...",
+  "description": "O {{shuckleName}} que bloqueia seu caminho parece formidável. Enquanto isso, o suco ao lado dele emana algum tipo de poder.\n\nO {{shuckleName}} estende seus tentáculos na sua direção. Parece que ele quer fazer algo...",
   "query": "O que você vai fazer?",
   "option": {
     "1": {

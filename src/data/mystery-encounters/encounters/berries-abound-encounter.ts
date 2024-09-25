@@ -128,10 +128,10 @@ export const BerriesAboundEncounter: MysteryEncounter =
         const numBerries = encounter.misc.numBerries;
 
         const doBerryRewards = () => {
-          const berryText = numBerries + " " + i18next.t(`${namespace}.berries`);
+          const berryText = i18next.t(`${namespace}.berries`);
 
           scene.playSound("item_fanfare");
-          queueEncounterMessage(scene, i18next.t("battle:rewardGain", { modifierName: berryText }));
+          queueEncounterMessage(scene, i18next.t("battle:rewardGainCount", { modifierName: berryText, count: numBerries }));
 
           // Generate a random berry and give it to the first Pokemon with room for it
           for (let i = 0; i < numBerries; i++) {
@@ -179,10 +179,10 @@ export const BerriesAboundEncounter: MysteryEncounter =
           if (speedDiff < 1) {
             // Caught and attacked by boss, gets +1 to all stats at start of fight
             const doBerryRewards = () => {
-              const berryText = numBerries + " " + i18next.t(`${namespace}.berries`);
+              const berryText = i18next.t(`${namespace}.berries`);
 
               scene.playSound("item_fanfare");
-              queueEncounterMessage(scene, i18next.t("battle:rewardGain", { modifierName: berryText }));
+              queueEncounterMessage(scene, i18next.t("battle:rewardGainCount", { modifierName: berryText, count: numBerries }));
 
               // Generate a random berry and give it to the first Pokemon with room for it
               for (let i = 0; i < numBerries; i++) {
@@ -210,10 +210,10 @@ export const BerriesAboundEncounter: MysteryEncounter =
             const numBerriesGrabbed = Math.max(Math.min(Math.round((speedDiff - 1)/0.08), numBerries), 2);
             encounter.setDialogueToken("numBerries", String(numBerriesGrabbed));
             const doFasterBerryRewards = () => {
-              const berryText = numBerriesGrabbed + " " + i18next.t(`${namespace}.berries`);
+              const berryText = i18next.t(`${namespace}.berries`);
 
               scene.playSound("item_fanfare");
-              queueEncounterMessage(scene, i18next.t("battle:rewardGain", { modifierName: berryText }));
+              queueEncounterMessage(scene, i18next.t("battle:rewardGainCount", { modifierName: berryText, count: numBerriesGrabbed }));
 
               // Generate a random berry and give it to the first Pokemon with room for it (trying to give to fastest first)
               for (let i = 0; i < numBerriesGrabbed; i++) {

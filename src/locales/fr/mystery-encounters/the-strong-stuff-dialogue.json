@@ -1,7 +1,7 @@
 {
   "intro": "C’est un {{shuckleName}} absolument énorme et\nce qui semble être un énorme bol de… jus ?",
   "title": "Un breuvage qui arrache",
-  "description": "Ce {{shuckleName}} qui bloque la route semble incroyablement puissant.\nLe jus qui l’accompagne semble émaner une étrange forme de puissance.\n\nIl tend une patte dans votre direction, l’air de vouloir quelque chose…",
+  "description": "Ce {{shuckleName}} qui bloque la route semble redoutable.\nLe jus qui l’accompagne semble émaner une étrange forme de puissance.\n\nIl tend une patte dans votre direction, l’air de vouloir quelque chose…",
   "query": "Que voulez-vous faire ?",
   "option": {
     "1": {
