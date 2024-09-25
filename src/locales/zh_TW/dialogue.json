@@ -299,28 +299,6 @@
       "1": "真奇怪…怎麼會這樣…我不應該被打敗的。"
     }
   },
-  "snow_worker": {
-    "encounter": {
-      "1": "When it's cold, wear a lot of clothes!\n$Only humans could come up with something so clever!"
-    },
-    "victory": {
-      "1": "How we struggle in vain at the end also shows how clever humans are!"
-    },
-    "defeat": {
-      "1": "I'll tell you something clever. If you use a Fire-type move on a Pokémon that is frozen solid, the ice will melt!"
-    } 
-  }, 
-  "snow_worker_double": {   
-    "encounter": {
-      "1": "...\n$...R-ready to b-battle?"
-    },
-    "victory": {
-      "1": "...\n$...I'm sh-shivering!"
-    },
-    "defeat": {
-      "1": "...\n$...Kn-know what?\n...Th-this place is cold."
-    } 
-  },
   "hex_maniac": {
     "encounter": {
       "1": "我通常只聽古典音樂，但如果我輸了，$我想我應該試試新時代的音樂！",
