@@ -2543,7 +2543,9 @@ export class ImprisonTag extends MoveRestrictionBattlerTag {
   }
 
   override onAdd(pokemon: Pokemon) {
-    this.source = pokemon.scene.getPokemonById(this.sourceId!)!;
+    if (this.sourceId) {
+      this.source = pokemon.scene.getPokemonById(this.sourceId)!;
+    }
   }
 
   /**
