@@ -69,7 +69,7 @@
   "turnEndHpRestore": "{{pokemonName}}의\n체력이 회복되었다!",
   "hpIsFull": "그러나 {{pokemonName}}의\n체력이 가득 찬 상태다!",
   "skipItemQuestion": "아이템을 받지 않고 넘어가시겠습니까?",
-  "itemStackFull": "{{fullItemName}}의 소지 한도에 도달했습니다.\n{{itemname}}[[를]] 대신 받습니다.",
+  "itemStackFull": "{{fullItemName}}의 소지 한도에 도달했습니다.\n{{itemName}}[[를]] 대신 받습니다.",
   "eggHatching": "어라…?",
   "eggSkipPrompt": "알 부화 요약 화면으로 바로 넘어가시겠습니까?",
   "ivScannerUseQuestion": "{{pokemonName}}에게 개체값탐지기를 사용하시겠습니까?",
