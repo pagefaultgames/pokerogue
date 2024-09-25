@@ -15,6 +15,7 @@ import { EggTier } from "#enums/egg-type";
 import { PartyHealPhase } from "#app/phases/party-heal-phase";
 import { ModifierTier } from "#app/modifier/modifier-tier";
 import { modifierTypes } from "#app/modifier/modifier-type";
+import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
 
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounter:aTrainersTest";
@@ -27,7 +28,7 @@ const namespace = "mysteryEncounter:aTrainersTest";
 export const ATrainersTestEncounter: MysteryEncounter =
   MysteryEncounterBuilder.withEncounterType(MysteryEncounterType.A_TRAINERS_TEST)
     .withEncounterTier(MysteryEncounterTier.ROGUE)
-    .withSceneWaveRangeRequirement(100, 180)
+    .withSceneWaveRangeRequirement(100, CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES[1])
     .withIntroSpriteConfigs([]) // These are set in onInit()
     .withIntroDialogue([
       {

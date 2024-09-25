@@ -1,0 +1,28 @@
+{
+  "intro": "Vous errez sans but en pleine mer\net n’arrivez à rien.",
+  "title": "Un cap pas clair",
+  "description": "La mer n’est pas très clémente dans cette zone et vous vous sentez faiblir à petit feu.\nÇa commence à sentir le roussi.\nEst-il au moins possible de se sortir de cette situation ?",
+  "query": "Que voulez-vous faire ?",
+  "option": {
+    "1": {
+      "label": "{{option1PrimaryName}} à l’aide",
+      "label_disabled": "{{option1RequiredMove}} impossible",
+      "tooltip": "(+) {{option1PrimaryName}} vous sauve\n(+) {{option1PrimaryName}} gagne un peu d’Exp",
+      "tooltip_disabled": "Vous n’avez aucun Pokémon avec {{option1RequiredMove}}",
+      "selected": "{{option1PrimaryName}} nage en tête et vous guide.${{option1PrimaryName}} semble ressorti plus fort de cette épreuve difficile !"
+    },
+    "2": {
+      "label": "{{option2PrimaryName}} à l’aide",
+      "label_disabled": "{{option2RequiredMove}} impossible",
+      "tooltip": "(+) {{option2PrimaryName}} vous sauve\n(+) {{option2PrimaryName}} gagne un peu d’Exp",
+      "tooltip_disabled": "Vous n’avez aucun Pokémon avec {{option2RequiredMove}}",
+      "selected": "{{option2PrimaryName}} vole au dessus de votre embarcation et vous guide.${{option2PrimaryName}} semble ressorti plus fort de cette épreuve difficile !"
+    },
+    "3": {
+      "label": "Naviguer au jugé",
+      "tooltip": "(-) Votre équipe perd {{damagePercentage}}% de ses PV totaux",
+      "selected": "Vous vous laissez porter sans but par les vagues, quand soudainement vous remarquez un lieu familier.$Vous et vos Pokémon êtes complètement rincés\nde fatigue par cette épreuve."
+    }
+  },
+  "outro": "Vous retrouvez un cap clair."
+}

@@ -39,7 +39,7 @@ export const TeleportingHijinksEncounter: MysteryEncounter =
     .withEncounterTier(MysteryEncounterTier.COMMON)
     .withSceneWaveRangeRequirement(...CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES)
     .withSceneRequirement(new WaveModulusRequirement([1, 2, 3], 10)) // Must be in first 3 waves after boss wave
-    .withSceneRequirement(new MoneyRequirement(undefined, MONEY_COST_MULTIPLIER)) // Must be able to pay teleport cost
+    .withSceneRequirement(new MoneyRequirement(0, MONEY_COST_MULTIPLIER)) // Must be able to pay teleport cost
     .withAutoHideIntroVisuals(false)
     .withCatchAllowed(true)
     .withIntroSpriteConfigs([
@@ -73,7 +73,7 @@ export const TeleportingHijinksEncounter: MysteryEncounter =
     .withOption(
       MysteryEncounterOptionBuilder
         .newOptionWithMode(MysteryEncounterOptionMode.DISABLED_OR_DEFAULT)
-        .withSceneMoneyRequirement(undefined, MONEY_COST_MULTIPLIER) // Must be able to pay teleport cost
+        .withSceneMoneyRequirement(0, MONEY_COST_MULTIPLIER) // Must be able to pay teleport cost
         .withDialogue({
           buttonLabel: `${namespace}.option.1.label`,
           buttonTooltip: `${namespace}.option.1.tooltip`,
@@ -172,7 +172,7 @@ async function doBiomeTransitionDialogueAndBattleInit(scene: BattleScene) {
   const bossPokemon = new EnemyPokemon(scene, bossSpecies, level, TrainerSlot.NONE, true);
   encounter.setDialogueToken("enemyPokemon", getPokemonNameWithAffix(bossPokemon));
 
-  // Defense/Spd buffs below wave 50, Atk/Def/Spd buffs otherwise
+  // Defense/Spd buffs below wave 50, +1 to all stats otherwise
   const statChangesForBattle: (Stat.ATK | Stat.DEF | Stat.SPATK | Stat.SPDEF | Stat.SPD | Stat.ACC | Stat.EVA)[] = scene.currentBattle.waveIndex < 50 ?
     [Stat.DEF, Stat.SPDEF, Stat.SPD] :
     [Stat.ATK, Stat.DEF, Stat.SPATK, Stat.SPDEF, Stat.SPD];

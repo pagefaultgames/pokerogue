@@ -116,7 +116,7 @@ export class MovePhase extends BattlePhase {
     // Check move to see if arena.ignoreAbilities should be true.
     if (!this.followUp) {
       if (this.move.getMove().checkFlag(MoveFlags.IGNORE_ABILITIES, this.pokemon, null)) {
-        this.scene.arena.setIgnoreAbilities();
+        this.scene.arena.setIgnoreAbilities(true, this.pokemon.getBattlerIndex());
       }
     }
 

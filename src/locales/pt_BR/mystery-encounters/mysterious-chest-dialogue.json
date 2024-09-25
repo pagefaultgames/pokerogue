@@ -1,0 +1,23 @@
+{
+  "intro": "Você encontrou...@d{32} um baú?",
+  "title": "O Baú Misterioso",
+  "description": "Um baú lindamente decorado está no chão. Deve haver algo bom dentro... certo?",
+  "query": "Você vai abri-lo?",
+  "option": {
+    "1": {
+      "label": "Abrir",
+      "tooltip": "@[SUMMARY_BLUE]{({{trapPercent}}%) Algo terrível}\n@[SUMMARY_GREEN]{({{commonPercent}}%) Recompensas razoáveis}\n@[SUMMARY_GREEN]{({{ultraPercent}}%) Boas Recompensas}\n@[SUMMARY_GREEN]{({{roguePercent}}%) Ótimas Recompensas}\n@[SUMMARY_GREEN]{({{masterPercent}}%) Recompensas Incríveis}",
+      "selected": "Você abre o baú e encontra...",
+      "normal": "Apenas algumas ferramentas e itens normais.",
+      "good": "Algumas ferramentas e itens bem legais.",
+      "great": "Algumas ferramentas e itens ótimos!",
+      "amazing": "Uau! Um item incrível!",
+      "bad": "Oh não!@d{32}\nO baú era na verdade um {{gimmighoulName}} disfarçado!$Seu {{pokeName}} pula na sua frente,\nmas é nocauteado no processo!"
+    },
+    "2": {
+      "label": "Muito Arriscado, Sair",
+      "tooltip": "(-) Sem Recompensas",
+      "selected": "Você segue seu caminho apressadamente,\ncom uma leve sensação de arrependimento."
+    }
+  }
+}

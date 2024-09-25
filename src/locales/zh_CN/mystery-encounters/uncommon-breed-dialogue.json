@@ -1,0 +1,26 @@
+{
+  "intro": "这可不是一只普通的宝可梦！",
+  "title": "罕见物种",
+  "description": "{{enemyPokemon}}看起来与其他同种宝可梦大相径庭。\n@[TOOLTIP_TITLE]{也许它会特殊招式？}\n你可以直接进行战斗并尝试捕获它，但可能也有办法和它交朋友。",
+  "query": "你要怎么做？",
+  "option": {
+    "1": {
+      "label": "与它战斗",
+      "tooltip": "(-)蹊跷的战斗\n(+)可捕获强敌",
+      "selected": "你毫无畏惧地接近\n{{enemyPokemon}}。",
+      "stat_boost": "{{enemyPokemon}}的不凡实力让它的能力提高！"
+    },
+    "2": {
+      "label": "给他吃的",
+      "disabled_tooltip": "你需要4个树果来选择此项",
+      "tooltip": "(-)给予4个树果\n(+){{enemyPokemon}}会喜欢你",
+      "selected": "你把树果扔向{{enemyPokemon}}！$它高兴地把树果吃干抹净！${{enemyPokemon}}想加入你的队伍！"
+    },
+    "3": {
+      "label": "交朋友",
+      "disabled_tooltip": "你的宝可梦需要习得某些招式才能选择此项",
+      "tooltip": "(+){{option3PrimaryName}}使用{{option3PrimaryMove}}\n(+){{enemyPokemon}}会喜欢你",
+      "selected": "你的{{option3PrimaryName}}使用了{{option3PrimaryMove}}来吸引{{enemyPokemon}}！${{enemyPokemon}}想加入你的队伍！"
+    }
+  }
+}
