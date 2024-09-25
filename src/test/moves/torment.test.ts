@@ -50,7 +50,7 @@ describe("Moves - Torment", () => {
     game.move.select(Moves.TACKLE);
     await game.forceEnemyMove(Moves.SPLASH);
     await game.toNextTurn();
-    const move2 = playerPokemon?.getLastXMoves(1)[0]!;
+    const move2 = playerPokemon.getLastXMoves(1)[0]!;
     expect(move2.move).toBe(Moves.STRUGGLE);
 
     // Third turn, Tackle can be used.
