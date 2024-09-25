@@ -49,7 +49,7 @@ describe("Moves - Metronome", () => {
     expect(enemy.isFullHp()).toBeFalsy();
   });
 
-  // FAILS UNTIL KEV'S MOVE PHASE REFACTOR IS PUT IN
+  // THESE FAIL UNTIL KEV'S MOVE PHASE REFACTOR IS PUT IN
   // it("should apply secondary effects of a move", async () => {
   //   await game.classicMode.startBattle([Species.REGIELEKI]);
   //   const player = game.scene.getPlayerPokemon()!;
@@ -62,4 +62,17 @@ describe("Moves - Metronome", () => {
 
   //   expect(player.isFullHp()).toBeFalsy();
   // });
+
+  // it("should recharge after using recharge move", async () => {
+  //   await game.classicMode.startBattle([Species.REGIELEKI]);
+  //   const player = game.scene.getPlayerPokemon()!;
+  //   vi.spyOn(player, "randSeedInt").mockReturnValue(Moves.HYPER_BEAM);
+
+  //   game.move.select(Moves.METRONOME);
+  //   await game.phaseInterceptor.to("MoveEffectPhase");
+  //   await game.move.forceHit();
+  //   await game.toNextTurn();
+
+  //   expect(player.getTag(RechargingTag)).toBeTruthy();
+  // })
 });
