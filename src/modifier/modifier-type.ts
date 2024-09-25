@@ -2444,7 +2444,7 @@ export class ModifierTypeOption {
 /**
  * Calculates the team's luck value.
  * @param party The player's party.
- * @returns A value between 0 and 14, or 0 if the player is in Daily Run mode.
+ * @returns A number between 0 and 14 based on the party's total luck value, or a random number between 0 and 14 if the player is in Daily Run mode.
  */
 export function getPartyLuckValue(party: Pokemon[]): integer {
   if (party[0].scene.gameMode.isDaily) {
