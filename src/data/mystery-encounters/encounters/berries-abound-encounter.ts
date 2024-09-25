@@ -127,7 +127,7 @@ export const BerriesAboundEncounter: MysteryEncounter =
         const encounter = scene.currentBattle.mysteryEncounter!;
         const numBerries = encounter.misc.numBerries;
 
-        const doBerryRewards = async () => {
+        const doBerryRewards = () => {
           const berryText = i18next.t(`${namespace}.berries`);
 
           scene.playSound("item_fanfare");
@@ -178,7 +178,7 @@ export const BerriesAboundEncounter: MysteryEncounter =
 
           if (speedDiff < 1) {
             // Caught and attacked by boss, gets +1 to all stats at start of fight
-            const doBerryRewards = async () => {
+            const doBerryRewards = () => {
               const berryText = i18next.t(`${namespace}.berries`);
 
               scene.playSound("item_fanfare");
@@ -209,7 +209,7 @@ export const BerriesAboundEncounter: MysteryEncounter =
             // Gains 1 berry for every 10% faster the player's pokemon is than the enemy, up to a max of numBerries, minimum of 2
             const numBerriesGrabbed = Math.max(Math.min(Math.round((speedDiff - 1)/0.08), numBerries), 2);
             encounter.setDialogueToken("numBerries", String(numBerriesGrabbed));
-            const doFasterBerryRewards = async () => {
+            const doFasterBerryRewards = () => {
               const berryText = i18next.t(`${namespace}.berries`);
 
               scene.playSound("item_fanfare");
