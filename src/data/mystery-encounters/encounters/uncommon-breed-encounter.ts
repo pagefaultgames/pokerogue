@@ -12,7 +12,6 @@ import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode
 import { TrainerSlot } from "#app/data/trainer-config";
 import { catchPokemon, getHighestLevelPlayerPokemon, getSpriteKeysFromPokemon } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
 import PokemonData from "#app/system/pokemon-data";
-import { speciesEggMoves } from "#app/data/egg-moves";
 import { isNullOrUndefined, randSeedInt } from "#app/utils";
 import { Moves } from "#enums/moves";
 import { BattlerIndex } from "#app/battle";
@@ -53,11 +52,10 @@ export const UncommonBreedEncounter: MysteryEncounter =
       const level = getHighestLevelPlayerPokemon(scene, false, true).level - 2;
       const species = scene.arena.randomSpecies(scene.currentBattle.waveIndex, level, 0, getPartyLuckValue(scene.getParty()), true);
       const pokemon = new EnemyPokemon(scene, species, level, TrainerSlot.NONE, true);
-      const speciesRootForm = pokemon.species.getRootSpeciesId();
 
       // Pokemon will always have one of its egg moves in its moveset
-      if (speciesEggMoves.hasOwnProperty(speciesRootForm)) {
-        const eggMoves: Moves[] = speciesEggMoves[speciesRootForm];
+      const eggMoves = pokemon.getEggMoves();
+      if (eggMoves) {
         const eggMoveIndex = randSeedInt(4);
         const randomEggMove: Moves = eggMoves[eggMoveIndex];
         encounter.misc = {
@@ -72,6 +70,11 @@ export const UncommonBreedEncounter: MysteryEncounter =
 
       encounter.misc.pokemon = pokemon;
 
+      // Defense/Spd buffs below wave 50, +1 to all stats otherwise
+      const statChangesForBattle: (Stat.ATK | Stat.DEF | Stat.SPATK | Stat.SPDEF | Stat.SPD | Stat.ACC | Stat.EVA)[] = scene.currentBattle.waveIndex < 50 ?
+        [Stat.DEF, Stat.SPDEF, Stat.SPD] :
+        [Stat.ATK, Stat.DEF, Stat.SPATK, Stat.SPDEF, Stat.SPD];
+
       const config: EnemyPartyConfig = {
         pokemonConfigs: [{
           level: level,
@@ -81,7 +84,7 @@ export const UncommonBreedEncounter: MysteryEncounter =
           tags: [BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON],
           mysteryEncounterBattleEffects: (pokemon: Pokemon) => {
             queueEncounterMessage(pokemon.scene, `${namespace}.option.1.stat_boost`);
-            pokemon.scene.unshiftPhase(new StatStageChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [Stat.ATK, Stat.DEF, Stat.SPATK, Stat.SPDEF, Stat.SPD], 1));
+            pokemon.scene.unshiftPhase(new StatStageChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, statChangesForBattle, 1));
           }
         }],
       };
@@ -193,20 +196,7 @@ export const UncommonBreedEncounter: MysteryEncounter =
           const pokemon = encounter.misc.pokemon;
 
           // Give 1 additional egg move
-          const previousEggMove = encounter.misc.eggMove;
-          const speciesRootForm = pokemon.species.getRootSpeciesId();
-          if (speciesEggMoves.hasOwnProperty(speciesRootForm)) {
-            const eggMoves: Moves[] = speciesEggMoves[speciesRootForm];
-            let randomEggMove: Moves = eggMoves[randSeedInt(4)];
-            while (randomEggMove === previousEggMove) {
-              randomEggMove = eggMoves[randSeedInt(4)];
-            }
-            if (pokemon.moveset.length < 4) {
-              pokemon.moveset.push(new PokemonMove(randomEggMove));
-            } else {
-              pokemon.moveset[1] = new PokemonMove(randomEggMove);
-            }
-          }
+          givePokemonExtraEggMove(pokemon, encounter.misc.eggMove);
 
           await catchPokemon(scene, pokemon, null, PokeballType.POKEBALL, false);
           setEncounterRewards(scene, { fillRemaining: true });
@@ -235,20 +225,7 @@ export const UncommonBreedEncounter: MysteryEncounter =
           const pokemon = encounter.misc.pokemon;
 
           // Give 1 additional egg move
-          const previousEggMove = encounter.misc.eggMove;
-          const speciesRootForm = pokemon.species.getRootSpeciesId();
-          if (speciesEggMoves.hasOwnProperty(speciesRootForm)) {
-            const eggMoves: Moves[] = speciesEggMoves[speciesRootForm];
-            let randomEggMove: Moves = eggMoves[randSeedInt(4)];
-            while (randomEggMove === previousEggMove) {
-              randomEggMove = eggMoves[randSeedInt(4)];
-            }
-            if (pokemon.moveset.length < 4) {
-              pokemon.moveset.push(new PokemonMove(randomEggMove));
-            } else {
-              pokemon.moveset[1] = new PokemonMove(randomEggMove);
-            }
-          }
+          givePokemonExtraEggMove(pokemon, encounter.misc.eggMove);
 
           // Roll IVs a second time
           pokemon.ivs = pokemon.ivs.map(iv => {
@@ -266,3 +243,18 @@ export const UncommonBreedEncounter: MysteryEncounter =
         .build()
     )
     .build();
+
+function givePokemonExtraEggMove(pokemon: EnemyPokemon, previousEggMove: Moves) {
+  const eggMoves = pokemon.getEggMoves();
+  if (eggMoves) {
+    let randomEggMove: Moves = eggMoves[randSeedInt(4)];
+    while (randomEggMove === previousEggMove) {
+      randomEggMove = eggMoves[randSeedInt(4)];
+    }
+    if (pokemon.moveset.length < 4) {
+      pokemon.moveset.push(new PokemonMove(randomEggMove));
+    } else {
+      pokemon.moveset[1] = new PokemonMove(randomEggMove);
+    }
+  }
+}

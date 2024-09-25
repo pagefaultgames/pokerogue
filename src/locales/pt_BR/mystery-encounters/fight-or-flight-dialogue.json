@@ -1,0 +1,25 @@
+{
+  "intro": "Algo brilhante está cintilando\nno chão perto daquele Pokémon!",
+  "title": "Lutar ou Fugir",
+  "description": "Parece que há um Pokémon forte guardando um item. Batalhar é a abordagem mais direta, mas ele parece ser forte. Talvez você possa roubar o item, se tiver o Pokémon certo para o trabalho.",
+  "query": "O que você vai fazer?",
+  "option": {
+    "1": {
+      "label": "Batalhar com o Pokémon",
+      "tooltip": "(-) Batalha Difícil\n(+) Novo Item",
+      "selected": "Você se aproxima do\nPokémon sem medo.",
+      "stat_boost": "A força latente do {{enemyPokemon}} aumentou um de seus atributos!"
+    },
+    "2": {
+      "label": "Roubar o Item",
+      "disabled_tooltip": "Seus Pokémon precisam conhecer certos movimentos para escolher isso",
+      "tooltip": "(+) {{option2PrimaryName}} usa {{option2PrimaryMove}}",
+      "selected": ".@d{32}.@d{32}.@d{32}$Seu {{option2PrimaryName}} te ajuda e usa {{option2PrimaryMove}}!$Você conseguiu pegar o item!"
+    },
+    "3": {
+      "label": "Sair",
+      "tooltip": "(-) Sem Recompensas",
+      "selected": "Você deixa o Pokémon forte\ncom seu prêmio e segue em frente."
+    }
+  }
+}

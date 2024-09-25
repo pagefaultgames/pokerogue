@@ -1577,17 +1577,22 @@ export const modifierTypes = {
 
   MYSTERY_ENCOUNTER_SHUCKLE_JUICE: () => new ModifierTypeGenerator((party: Pokemon[], pregenArgs?: any[]) => {
     if (pregenArgs) {
-      return new PokemonBaseStatTotalModifierType(pregenArgs[0] as integer);
+      return new PokemonBaseStatTotalModifierType(pregenArgs[0] as number);
     }
     return new PokemonBaseStatTotalModifierType(Utils.randSeedInt(20));
   }),
   MYSTERY_ENCOUNTER_OLD_GATEAU: () => new ModifierTypeGenerator((party: Pokemon[], pregenArgs?: any[]) => {
     if (pregenArgs) {
-      return new PokemonBaseStatFlatModifierType(pregenArgs[0] as integer, pregenArgs[1] as Stat[]);
+      return new PokemonBaseStatFlatModifierType(pregenArgs[0] as number, pregenArgs[1] as Stat[]);
     }
     return new PokemonBaseStatFlatModifierType(Utils.randSeedInt(20), [Stat.HP, Stat.ATK, Stat.DEF]);
   }),
-  MYSTERY_ENCOUNTER_BLACK_SLUDGE: () => new ModifierType("modifierType:ModifierType.MYSTERY_ENCOUNTER_BLACK_SLUDGE", "black_sludge", (type, _args) => new Modifiers.HealShopCostModifier(type)),
+  MYSTERY_ENCOUNTER_BLACK_SLUDGE: () => new ModifierTypeGenerator((party: Pokemon[], pregenArgs?: any[]) => {
+    if (pregenArgs) {
+      return new ModifierType("modifierType:ModifierType.MYSTERY_ENCOUNTER_BLACK_SLUDGE", "black_sludge", (type, _args) => new Modifiers.HealShopCostModifier(type, pregenArgs[0] as number));
+    }
+    return new ModifierType("modifierType:ModifierType.MYSTERY_ENCOUNTER_BLACK_SLUDGE", "black_sludge", (type, _args) => new Modifiers.HealShopCostModifier(type, 2.5));
+  }),
   MYSTERY_ENCOUNTER_MACHO_BRACE: () => new PokemonHeldItemModifierType("modifierType:ModifierType.MYSTERY_ENCOUNTER_MACHO_BRACE", "macho_brace", (type, args) => new Modifiers.PokemonIncrementingStatModifier(type, (args[0] as Pokemon).id)),
   MYSTERY_ENCOUNTER_GOLDEN_BUG_NET: () => new ModifierType("modifierType:ModifierType.MYSTERY_ENCOUNTER_GOLDEN_BUG_NET", "golden_net", (type, _args) => new Modifiers.BoostBugSpawnModifier(type)),
 };
