@@ -24,5 +24,5 @@ export enum ArenaTagType {
   HAPPY_HOUR = "HAPPY_HOUR",
   SAFEGUARD = "SAFEGUARD",
   NO_CRIT = "NO_CRIT",
-  IMPRISON = "IMPRISON"
+  IMPRISON = "IMPRISON",
 }

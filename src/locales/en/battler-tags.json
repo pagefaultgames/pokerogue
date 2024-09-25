@@ -77,5 +77,5 @@
   "tormentOnAdd": "{{pokemonNameWithAffix}} was subjected to torment!",
   "tauntOnAdd": "{{pokemonNameWithAffix}} fell for the taunt!",
   "imprisonOnAdd": "{{pokemonNameWithAffix}} sealed the opponents move(s)!",
-  "autotomizeOnAdd": "{{pokemonNameWIthAffix}} became nimble!"
+  "autotomizeOnAdd": "{{pokemonNameWithAffix}} became nimble!"
 }

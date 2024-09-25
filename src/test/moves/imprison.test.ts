@@ -1,11 +1,11 @@
-import { Moves } from "#app/enums/moves";
-import { Species } from "#app/enums/species";
+import { Moves } from "#enums/moves";
+import { Species } from "#enums/species";
 import { Abilities } from "#enums/abilities";
 import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import { BattlerTagType } from "#app/enums/battler-tag-type";
-import { ArenaTagType } from "#app/enums/arena-tag-type";
+import { BattlerTagType } from "#enums/battler-tag-type";
+import { ArenaTagType } from "#enums/arena-tag-type";
 
 describe("Moves - Imprison", () => {
   let phaserGame: Phaser.Game;
@@ -33,16 +33,16 @@ describe("Moves - Imprison", () => {
   it("Pokemon under Imprison cannot use shared moves", async () => {
     await game.classicMode.startBattle([Species.REGIELEKI]);
 
-    const playerPokemon = game.scene.getPlayerPokemon();
+    const playerPokemon = game.scene.getPlayerPokemon()!;
 
     game.move.select(Moves.TRANSFORM);
     await game.forceEnemyMove(Moves.IMPRISON);
     await game.toNextTurn();
-    const playerMoveset = playerPokemon!.getMoveset().map(x => x?.moveId);
+    const playerMoveset = playerPokemon.getMoveset().map(x => x?.moveId);
     const enemyMoveset = game.scene.getEnemyPokemon()!.getMoveset().map(x => x?.moveId);
     expect(enemyMoveset.includes(playerMoveset[0])).toBeTruthy();
     const imprisonArenaTag = game.scene.arena.getTag(ArenaTagType.IMPRISON);
-    const imprisonBattlerTag = playerPokemon!.getTag(BattlerTagType.IMPRISON);
+    const imprisonBattlerTag = playerPokemon.getTag(BattlerTagType.IMPRISON);
     expect(imprisonArenaTag).toBeDefined();
     expect(imprisonBattlerTag).toBeDefined();
 
@@ -50,20 +50,20 @@ describe("Moves - Imprison", () => {
     game.move.select(Moves.SPLASH);
     await game.forceEnemyMove(Moves.SPLASH);
     await game.toNextTurn();
-    const move1 = playerPokemon?.getLastXMoves(1)[0]!;
+    const move1 = playerPokemon.getLastXMoves(1)[0]!;
     expect(move1.move).toBe(Moves.STRUGGLE);
   });
 
   it("Imprison applies to Pokemon switched into Battle", async () => {
     await game.classicMode.startBattle([Species.REGIELEKI, Species.BULBASAUR]);
 
-    const playerPokemon1 = game.scene.getPlayerPokemon();
+    const playerPokemon1 = game.scene.getPlayerPokemon()!;
 
     game.move.select(Moves.SPLASH);
     await game.forceEnemyMove(Moves.IMPRISON);
     await game.toNextTurn();
     const imprisonArenaTag = game.scene.arena.getTag(ArenaTagType.IMPRISON);
-    const imprisonBattlerTag1 = playerPokemon1!.getTag(BattlerTagType.IMPRISON);
+    const imprisonBattlerTag1 = playerPokemon1.getTag(BattlerTagType.IMPRISON);
     expect(imprisonArenaTag).toBeDefined();
     expect(imprisonBattlerTag1).toBeDefined();
 
@@ -71,8 +71,8 @@ describe("Moves - Imprison", () => {
     game.doSwitchPokemon(1);
     await game.forceEnemyMove(Moves.SPLASH);
     await game.toNextTurn();
-    const playerPokemon2 = game.scene.getPlayerPokemon();
-    const imprisonBattlerTag2 = playerPokemon2!.getTag(BattlerTagType.IMPRISON);
+    const playerPokemon2 = game.scene.getPlayerPokemon()!;
+    const imprisonBattlerTag2 = playerPokemon2.getTag(BattlerTagType.IMPRISON);
     expect(playerPokemon1).not.toEqual(playerPokemon2);
     expect(imprisonBattlerTag2).toBeDefined();
   });
@@ -81,18 +81,18 @@ describe("Moves - Imprison", () => {
     game.override.moveset([Moves.SPLASH, Moves.IMPRISON]);
     await game.classicMode.startBattle([Species.REGIELEKI, Species.BULBASAUR]);
 
-    const playerPokemon = game.scene.getPlayerPokemon();
-    const enemyPokemon = game.scene.getEnemyPokemon();
+    const playerPokemon = game.scene.getPlayerPokemon()!;
+    const enemyPokemon = game.scene.getEnemyPokemon()!;
     game.move.select(Moves.IMPRISON);
     await game.forceEnemyMove(Moves.GROWL);
     await game.toNextTurn();
     expect(game.scene.arena.getTag(ArenaTagType.IMPRISON)).toBeDefined();
-    expect(enemyPokemon!.getTag(BattlerTagType.IMPRISON)).toBeDefined();
+    expect(enemyPokemon.getTag(BattlerTagType.IMPRISON)).toBeDefined();
     game.doSwitchPokemon(1);
     await game.forceEnemyMove(Moves.SPLASH);
     await game.toNextTurn();
-    expect(playerPokemon?.isActive(true)).toBeFalsy();
+    expect(playerPokemon.isActive(true)).toBeFalsy();
     expect(game.scene.arena.getTag(ArenaTagType.IMPRISON)).toBeUndefined();
-    expect(enemyPokemon!.getTag(BattlerTagType.IMPRISON)).toBeUndefined();
+    expect(enemyPokemon.getTag(BattlerTagType.IMPRISON)).toBeUndefined();
   });
 });

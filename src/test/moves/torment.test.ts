@@ -1,11 +1,11 @@
-import { Moves } from "#app/enums/moves";
-import { Species } from "#app/enums/species";
+import { Moves } from "#enums/moves";
+import { Species } from "#enums/species";
 import { Abilities } from "#enums/abilities";
 import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { MoveResult } from "#app/field/pokemon";
-import { BattlerTagType } from "#app/enums/battler-tag-type";
+import { BattlerTagType } from "#enums/battler-tag-type";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
 
 describe("Moves - Torment", () => {
@@ -35,13 +35,13 @@ describe("Moves - Torment", () => {
   it("Pokemon should not be able to use the same move consecutively", async () => {
     await game.classicMode.startBattle([Species.CHANSEY]);
 
-    const playerPokemon = game.scene.getPlayerPokemon();
+    const playerPokemon = game.scene.getPlayerPokemon()!;
 
     // First turn, Player Pokemon uses Tackle successfully
     game.move.select(Moves.TACKLE);
     await game.forceEnemyMove(Moves.TORMENT);
     await game.toNextTurn();
-    const move1 = playerPokemon?.getLastXMoves(1)[0]!;
+    const move1 = playerPokemon.getLastXMoves(1)[0]!;
     expect(move1.move).toBe(Moves.TACKLE);
     expect(move1.result).toBe(MoveResult.SUCCESS);
     expect(playerPokemon?.getTag(BattlerTagType.TORMENT)).toBeDefined();
@@ -57,7 +57,7 @@ describe("Moves - Torment", () => {
     game.move.select(Moves.TACKLE);
     await game.forceEnemyMove(Moves.SPLASH);
     await game.phaseInterceptor.to(TurnEndPhase);
-    const move3 = playerPokemon?.getLastXMoves(1)[0]!;
+    const move3 = playerPokemon.getLastXMoves(1)[0]!;
     expect(move3.move).toBe(Moves.TACKLE);
   });
 });

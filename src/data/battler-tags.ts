@@ -2468,14 +2468,11 @@ export class TormentTag extends MoveRestrictionBattlerTag {
    * @returns `true` if still present | `false` if not
    */
   override lapse(pokemon: Pokemon, _tagType: BattlerTagLapseType): boolean {
-    if (!pokemon.isActive(true)) {
-      return false;
-    }
-    return true;
+    return !pokemon.isActive(true);
   }
 
   /**
-   * This checks if the current move used is identical to the last used move with a MoveResult of SUCCESS/MISS
+   * This checks if the current move used is identical to the last used move with a {@linkcode MoveResult} of `SUCCESS`/`MISS`
    * @param move the move under investigation
    * @returns `true` if there is valid consecutive usage | `false` if the moves are different from each other
    */
@@ -2516,7 +2513,7 @@ export class TauntTag extends MoveRestrictionBattlerTag {
   /**
    * Checks if a move is a status move and determines its restriction status on that basis
    * @param move the move under investigation
-   * @returns `true` if the move is a status move | `false` if not
+   * @returns `true` if the move is a status move
    */
   override isMoveRestricted(move: Moves): boolean {
     return allMoves[move].category === MoveCategory.STATUS;
@@ -2551,7 +2548,7 @@ export class ImprisonTag extends MoveRestrictionBattlerTag {
    * Checks if the source of Imprison is still active
    * @param _pokemon
    * @param _lapseType
-   * @returns `true` if the source is still active | `false` if not
+   * @returns `true` if the source is still active
    */
   override lapse(_pokemon: Pokemon, _lapseType: BattlerTagLapseType): boolean {
     return this.source.isActive(true);
@@ -2560,12 +2557,10 @@ export class ImprisonTag extends MoveRestrictionBattlerTag {
   /**
    * Checks if the source of the tag has the parameter move in its moveset and that the source is still active
    * @param move the move under investigation
-   * @returns `true` if both conditions are met | `false` if either conditions are not met
+   * @returns `false` if either condition is not met
    */
   override isMoveRestricted(move: Moves): boolean {
-    const sourceMoveset = this.source.getMoveset().map(m => {
-      return m!.moveId;
-    });
+    const sourceMoveset = this.source.getMoveset().map(m => m!.moveId);
     return sourceMoveset.includes(move) && this.source.isActive(true);
   }
 

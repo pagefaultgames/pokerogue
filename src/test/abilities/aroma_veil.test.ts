@@ -1,11 +1,11 @@
-import { Moves } from "#app/enums/moves";
-import { Species } from "#app/enums/species";
+import { Moves } from "#enums/moves";
+import { Species } from "#enums/species";
 import { Abilities } from "#enums/abilities";
 import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import { BattlerTagType } from "#app/enums/battler-tag-type";
-import { ArenaTagType } from "#app/enums/arena-tag-type";
+import { BattlerTagType } from "#enums/battler-tag-type";
+import { ArenaTagType } from "#enums/arena-tag-type";
 import { BattlerIndex } from "#app/battle";
 
 describe("Moves - Aroma Veil", () => {
@@ -51,7 +51,7 @@ describe("Moves - Aroma Veil", () => {
     const playerPokemon = game.scene.getParty()!;
 
     game.move.select(Moves.GROWL);
-    game.move.select(Moves.GROWL);
+    game.move.select(Moves.GROWL, 1);
     await game.forceEnemyMove(Moves.IMPRISON, BattlerIndex.PLAYER);
     await game.forceEnemyMove(Moves.SPLASH);
     await game.toNextTurn();
