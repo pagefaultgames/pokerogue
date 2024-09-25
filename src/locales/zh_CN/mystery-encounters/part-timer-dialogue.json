@@ -1,0 +1,31 @@
+{
+  "intro": "一个忙碌的工人向你招手。",
+  "speaker": "工人",
+  "intro_dialogue": "你看起来有不少能干的宝可梦！\n如果你愿意帮忙干点活，我们会付钱的！",
+  "title": "兼职",
+  "description": "似乎有不少活要干。根据你宝可梦对任务的适应度，\n你能获得或多或少的报酬。",
+  "query": "你要干什么活？",
+  "invalid_selection": "宝可梦必须足够健康",
+  "option": {
+    "1": {
+      "label": "外卖",
+      "tooltip": "(-)宝可梦使用速度\n(+)赚取@[MONEY]{Money}",
+      "selected": "您的{{selectedPokemon}}轮班为客户配送订单。"
+    },
+    "2": {
+      "label": "仓管",
+      "tooltip": "(-)宝可梦使用力量和耐力\n(+)赚取@[MONEY]{Money}",
+      "selected": "你的{{selectedPokemon}}轮班工作，在仓库内搬运物品。"
+    },
+    "3": {
+      "label": "销售",
+      "tooltip": "(-)你的{{option3PrimaryName}}使用{{option3PrimaryMove}}\n(+)赚取@[MONEY]{Money}",
+      "disabled_tooltip": "你的宝可梦需要习得适合这份工作的招式",
+      "selected": "你的{{option3PrimaryName}}花费一天时间使用{{option3PrimaryMove}}来吸引客户！"
+    }
+  },
+  "job_complete_good": "谢谢你的帮助！\n你的{{selectedPokemon}}帮了大忙了！这是你的日结。",
+  "job_complete_bad": "你的{{selectedPokemon}}也帮了不少忙！这是你的日结。",
+  "pokemon_tired": "你的{{selectedPokemon}}疲惫不堪！\n它所有招式的PP值只剩2点！",
+  "outro": "下次还来帮忙啊！"
+}

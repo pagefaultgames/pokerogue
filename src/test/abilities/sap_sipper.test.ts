@@ -9,7 +9,6 @@ import { Species } from "#enums/species";
 import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import { SPLASH_ONLY } from "../utils/testUtils";
 
 // See also: TypeImmunityAbAttr
 describe("Abilities - Sap Sipper", () => {
@@ -37,7 +36,7 @@ describe("Abilities - Sap Sipper", () => {
     const enemyAbility = Abilities.SAP_SIPPER;
 
     game.override.moveset([ moveToUse ]);
-    game.override.enemyMoveset(SPLASH_ONLY);
+    game.override.enemyMoveset(Moves.SPLASH);
     game.override.enemySpecies(Species.DUSKULL);
     game.override.enemyAbility(enemyAbility);
 
@@ -59,7 +58,7 @@ describe("Abilities - Sap Sipper", () => {
     const enemyAbility = Abilities.SAP_SIPPER;
 
     game.override.moveset([ moveToUse ]);
-    game.override.enemyMoveset(SPLASH_ONLY);
+    game.override.enemyMoveset(Moves.SPLASH);
     game.override.enemySpecies(Species.RATTATA);
     game.override.enemyAbility(enemyAbility);
 
@@ -80,7 +79,7 @@ describe("Abilities - Sap Sipper", () => {
     const enemyAbility = Abilities.SAP_SIPPER;
 
     game.override.moveset([ moveToUse ]);
-    game.override.enemyMoveset(SPLASH_ONLY);
+    game.override.enemyMoveset(Moves.SPLASH);
     game.override.enemySpecies(Species.RATTATA);
     game.override.enemyAbility(enemyAbility);
 
@@ -100,7 +99,7 @@ describe("Abilities - Sap Sipper", () => {
     const enemyAbility = Abilities.SAP_SIPPER;
 
     game.override.moveset([ moveToUse ]);
-    game.override.enemyMoveset(SPLASH_ONLY);
+    game.override.enemyMoveset(Moves.SPLASH);
     game.override.enemySpecies(Species.RATTATA);
     game.override.enemyAbility(enemyAbility);
 
@@ -123,7 +122,7 @@ describe("Abilities - Sap Sipper", () => {
 
     game.override.moveset([ moveToUse ]);
     game.override.ability(ability);
-    game.override.enemyMoveset(SPLASH_ONLY);
+    game.override.enemyMoveset(Moves.SPLASH);
     game.override.enemySpecies(Species.RATTATA);
     game.override.enemyAbility(Abilities.NONE);
 
@@ -164,6 +163,24 @@ describe("Abilities - Sap Sipper", () => {
     await game.phaseInterceptor.to(TurnEndPhase);
 
     expect(initialEnemyHp - enemyPokemon.hp).toBe(0);
+    expect(enemyPokemon.getStatStage(Stat.ATK)).toBe(1);
+  });
+
+  it("still activates regardless of accuracy check", async () => {
+    game.override.moveset(Moves.LEAF_BLADE);
+    game.override.enemyMoveset(Moves.SPLASH);
+    game.override.enemySpecies(Species.MAGIKARP);
+    game.override.enemyAbility(Abilities.SAP_SIPPER);
+
+    await game.classicMode.startBattle();
+
+    const enemyPokemon = game.scene.getEnemyPokemon()!;
+
+    game.move.select(Moves.LEAF_BLADE);
+    await game.phaseInterceptor.to("MoveEffectPhase");
+
+    await game.move.forceMiss();
+    await game.phaseInterceptor.to("BerryPhase", false);
     expect(enemyPokemon.getStatStage(Stat.ATK)).toBe(1);
   });
 });

@@ -5,11 +5,10 @@ import { Species } from "#enums/species";
 import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import { SPLASH_ONLY } from "#test/utils/testUtils";
 import { MoveEndPhase } from "#app/phases/move-end-phase";
 import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
 
-const TIMEOUT = 20 * 1000;
+
 
 describe("Moves - Make It Rain", () => {
   let phaserGame: Phaser.Game;
@@ -31,7 +30,7 @@ describe("Moves - Make It Rain", () => {
     game.override.moveset([Moves.MAKE_IT_RAIN, Moves.SPLASH]);
     game.override.enemySpecies(Species.SNORLAX);
     game.override.enemyAbility(Abilities.INSOMNIA);
-    game.override.enemyMoveset(SPLASH_ONLY);
+    game.override.enemyMoveset(Moves.SPLASH);
     game.override.startingLevel(100);
     game.override.enemyLevel(100);
   });
@@ -47,7 +46,7 @@ describe("Moves - Make It Rain", () => {
     await game.phaseInterceptor.to(MoveEndPhase);
 
     expect(playerPokemon.getStatStage(Stat.SPATK)).toBe(-1);
-  }, TIMEOUT);
+  });
 
   it("should apply effects even if the target faints", async () => {
     game.override.enemyLevel(1); // ensures the enemy will faint
@@ -64,7 +63,7 @@ describe("Moves - Make It Rain", () => {
 
     expect(enemyPokemon.isFainted()).toBe(true);
     expect(playerPokemon.getStatStage(Stat.SPATK)).toBe(-1);
-  }, TIMEOUT);
+  });
 
   it("should reduce Sp. Atk. once after KOing two enemies", async () => {
     game.override.enemyLevel(1); // ensures the enemy will faint
@@ -81,7 +80,7 @@ describe("Moves - Make It Rain", () => {
 
     enemyPokemon.forEach(p => expect(p.isFainted()).toBe(true));
     expect(playerPokemon.getStatStage(Stat.SPATK)).toBe(-1);
-  }, TIMEOUT);
+  });
 
   it("should lower SPATK stat stage by 1 if it only hits the second target", async () => {
     await game.startBattle([Species.CHARIZARD, Species.BLASTOISE]);
@@ -97,5 +96,5 @@ describe("Moves - Make It Rain", () => {
     await game.phaseInterceptor.to(MoveEndPhase);
 
     expect(playerPokemon.getStatStage(Stat.SPATK)).toBe(-1);
-  }, TIMEOUT);
+  });
 });

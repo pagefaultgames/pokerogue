@@ -1,0 +1,26 @@
+{
+  "intro": "Há um enorme arbusto de frutas\nperto daquele Pokémon!",
+  "title": "Frutas em Abundância",
+  "description": "Parece que há um Pokémon forte guardando um arbusto de frutas. Batalhar é a abordagem mais direta, mas ele parece ser forte. Talvez um Pokémon rápido consiga pegar algumas frutas sem ser pego?",
+  "query": "O que você vai fazer?",
+  "berries": "Frutas",
+  "option": {
+    "1": {
+      "label": "Batalhar com o Pokémon",
+      "tooltip": "(-) Batalha Difícil\n(+) Ganhar Frutas",
+      "selected": "Você se aproxima do\nPokémon sem medo."
+    },
+    "2": {
+      "label": "Correr para o Arbusto",
+      "tooltip": "(-) {{fastestPokemon}} Usa sua Velocidade\n(+) Ganhar Frutas",
+      "selected": "Seu {{fastestPokemon}} corre em direção ao arbusto de frutas!$Ele consegue pegar {{numBerries}} antes que o {{enemyPokemon}} possa reagir!$Você rapidamente recua com seu novo prêmio.",
+      "selected_bad": "Seu {{fastestPokemon}} corre em direção ao arbusto de frutas!$Oh não! O {{enemyPokemon}} foi mais rápido e bloqueou o caminho!",
+      "boss_enraged": "O Pokémon oponente, {{enemyPokemon}}, ficou furioso!"
+    },
+    "3": {
+      "label": "Sair",
+      "tooltip": "(-) Sem Recompensas",
+      "selected": "Você deixa o Pokémon forte\ncom seu prêmio e segue em frente."
+    }
+  }
+}

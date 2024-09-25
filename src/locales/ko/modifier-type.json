@@ -47,10 +47,14 @@
       "description": "포켓몬의 성격을 {{natureName}}[[로]] 바꾸고 스타팅에도 등록한다."
     },
     "DoubleBattleChanceBoosterModifierType": {
-      "description": "{{battleCount}}번의 배틀 동안 더블 배틀이 등장할 확률이 두 배가 된다."
+      "description": "{{battleCount}}번의 배틀 동안 더블 배틀이 등장할 확률이 4배가 된다."
     },
     "TempStatStageBoosterModifierType": {
-      "description": "자신의 모든 포켓몬이 5번의 배틀 동안 {{stat}}[[가]] 한 단계 증가한다."
+      "description": "자신의 모든 포켓몬이 5번의 배틀 동안 {{stat}}[[가]] {{amount}} 증가한다.",
+      "extra": {
+        "stage": "1단계",
+        "percentage": "30%"
+      }
     },
     "AttackTypeBoosterModifierType": {
       "description": "지니게 하면 {{moveType}}타입 기술의 위력이 20% 상승한다."
@@ -62,7 +66,21 @@
       "description": "자신의 모든 포켓몬의 레벨이 {{levels}}만큼 상승한다."
     },
     "BaseStatBoosterModifierType": {
-      "description": "지니게 하면 {{stat}} 종족값을 10% 올려준다. 개체값이 높을수록 더 많이 누적시킬 수 있다."
+      "description": "지니게 하면 {{stat}} 종족치를 10% 올려준다. 개체값이 높을수록 더 많이 누적시킬 수 있다."
+    },
+    "PokemonBaseStatTotalModifierType": {
+      "name": "단단지주스",
+      "description": "모든 종족치를 {{statValue}}만큼 {{increaseDecrease}}. 단단지의 {{blessCurse}}[[를]] 받았다.",
+      "extra": {
+        "increase": "올려준다",
+        "decrease": "떨어뜨린다",
+        "blessed": "축복",
+        "cursed": "저주"
+      }
+    },
+    "PokemonBaseStatFlatModifierType": {
+      "name": "숲의양갱",
+      "description": "{{stats}} 종족치를 {{statValue}}만큼 올려준다. 이상한 꿈을 꾸고 얻었다."
     },
     "AllPokemonFullHpRestoreModifierType": {
       "description": "자신의 포켓몬의 HP를 모두 회복한다."
@@ -341,7 +359,7 @@
       "description": "이 도구를 지닌 포켓몬은 턴이 끝나는 시점에 상태이상에 걸리지 않았다면 화상 상태가 된다."
     },
     "BATON": {
-      "name": "바톤",
+      "name": "배턴",
       "description": "포켓몬을 교체할 때 효과를 넘겨줄 수 있으며, 함정의 영향을 받지 않게 함"
     },
     "SHINY_CHARM": {
@@ -397,7 +415,13 @@
     "ENEMY_FUSED_CHANCE": {
       "name": "합체 토큰",
       "description": "야생 포켓몬이 합체되어 등장할 확률이 1% 추가된다."
-    }
+    },
+
+    "MYSTERY_ENCOUNTER_SHUCKLE_JUICE": { "name": "단단지주스" },
+    "MYSTERY_ENCOUNTER_BLACK_SLUDGE": { "name": "검은진흙", "description": "악취가 너무 심한 나머지 상점 물건 가격이 크게 비싸진다." },
+    "MYSTERY_ENCOUNTER_MACHO_BRACE": { "name": "교정깁스", "description": "포켓몬을 쓰러뜨리면 교정깁스 스택을 얻는다. 스택이 올라갈수록 능력치가 약간 올라가고, 최대 스택에서 추가 보너스를 얻는다." },
+    "MYSTERY_ENCOUNTER_OLD_GATEAU": { "name": "숲의양갱", "description": "{{stats}} 종족치를 {{statValue}}만큼 올려준다." },
+    "MYSTERY_ENCOUNTER_GOLDEN_BUG_NET": { "name": "황금잠자리채", "description": "벌레 타입 포켓몬을 더 자주 만날 수 있는 행운을 부여한다. 묘한 무게감이 든다." }
   },
   "SpeciesBoosterItem": {
     "LIGHT_BALL": {

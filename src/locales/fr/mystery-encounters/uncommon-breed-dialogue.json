@@ -1,0 +1,26 @@
+{
+  "intro": "C’est un Pokémon tout ce qu’il y a de plus banal !",
+  "title": "Une forme peu commune",
+  "description": "Ce {{enemyPokemon}} a l’air spécial par rapport au reste de son espèce. @[TOOLTIP_TITLE]{Peut-être connait-il une capacité particulière ?} Vous pourriez décider de l’affronter sur-le-champ, mais il y a peut-être moyen d’en faire un nouvel ami.",
+  "query": "Que voulez-vous faire ?",
+  "option": {
+    "1": {
+      "label": "L’affronter",
+      "tooltip": "(-) Combat compliqué\n(+) Capturer un adversaire puissant",
+      "selected": "Vous approchez\nle Pokémon sans frémir.",
+      "stat_boost": "Les caractéristiques particulières\nde ce {{enemyPokemon}} augmentent ses stats !"
+    },
+    "2": {
+      "label": "Le nourrir",
+      "disabled_tooltip": "Vous avez besoin de 4 Baies pour choisir cette option",
+      "tooltip": "(-) Donner 4 Baies\n(+) Le {{enemyPokemon}} vous apprécie",
+      "selected": "Vous lancer quelques Baies\nau {{enemyPokemon}} !$Il les engloutit avec joie !$Le {{enemyPokemon}} veut se joindre\nà votre équipe !"
+    },
+    "3": {
+      "label": "Devenir amis",
+      "disabled_tooltip": "Votre Pokémon doit connaitre certaines capacités pour choisir cette option",
+      "tooltip": "(+) {{option3PrimaryName}} utilise {{option3PrimaryMove}}\n(+) Le {{enemyPokemon}} vous apprécie",
+      "selected": "Votre {{option3PrimaryName}} utilise {{option3PrimaryMove}} pour charmer le {{enemyPokemon}} !$The {{enemyPokemon}} veut se joindre\nà votre équipe !"
+    }
+  }
+}

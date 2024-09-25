@@ -1,0 +1,23 @@
+{
+  "intro": "You found...@d{32} a chest?",
+  "title": "The Mysterious Chest",
+  "description": "A beautifully ornamented chest stands on the ground. There must be something good inside... right?",
+  "query": "Will you open it?",
+  "option": {
+    "1": {
+      "label": "Open It",
+      "tooltip": "@[SUMMARY_BLUE]{({{trapPercent}}%) Something terrible}\n@[SUMMARY_GREEN]{({{commonPercent}}%) Okay Rewards}\n@[SUMMARY_GREEN]{({{ultraPercent}}%) Good Rewards}\n@[SUMMARY_GREEN]{({{roguePercent}}%) Great Rewards}\n@[SUMMARY_GREEN]{({{masterPercent}}%) Amazing Rewards}",
+      "selected": "You open the chest to find...",
+      "normal": "Just some normal tools and items.",
+      "good": "Some pretty nice tools and items.",
+      "great": "A couple great tools and items!",
+      "amazing": "Whoa! An amazing item!",
+      "bad": "Oh no!@d{32}\nThe chest was actually a {{gimmighoulName}} in disguise!$Your {{pokeName}} jumps in front of you\nbut is KOed in the process!"
+    },
+    "2": {
+      "label": "Too Risky, Leave",
+      "tooltip": "(-) No Rewards",
+      "selected": "You hurry along your way,\nwith a slight feeling of regret."
+    }
+  }
+}
