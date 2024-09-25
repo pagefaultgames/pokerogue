@@ -1,33 +1,33 @@
 {
-  "intro": "You've come across some\ntraining tools and supplies.",
-  "title": "Training Session",
-  "description": "These supplies look like they could be used to train a member of your party! There are a few ways you could train your Pokémon, by @[TOOLTIP_TITLE]{battling and defeating it with the rest of your team}.",
-  "query": "How should you train?",
-  "invalid_selection": "Pokémon must be healthy enough.",
+  "intro": "特訓ツールと　備品を　見つけました。",
+  "title": "特訓セッション",
+  "description": "このツールと　備品で　手持ちポケモン　１匹を　特訓できる　ようです！　 @[TOOLTIP_TITLE]{他の　手持ちポケモンで　選んだポケモンを　倒すこと}により　特訓できます。",
+  "query": "どう特訓しますか?",
+  "invalid_selection": "ポケモンは　十分に　元気でなければ　なりません。",
   "option": {
     "1": {
-      "label": "Light Training",
-      "tooltip": "(-) Light Battle with Chosen Pokémon\n(+) Permanently Improve 2 Random IVs of Chosen Pokémon",
-      "finished": "{{selectedPokemon}} returns, feeling\nworn out but accomplished!$Its {{stat1}} and {{stat2}} IVs were improved!"
+      "label": "軽い特訓",
+      "tooltip": "(-) 選んだ　ポケモンと　軽い　バトル\n(+) 選んだポケモンの　２つの　ランダムな　個体値を　恒久的に　上げる",
+      "finished": "戻ってから　{{selectedPokemon}}は\n疲れ果てながらも　達成感が　感じています！${{stat1}}と {{stat2}}の　個体値は　強化されました！"
     },
     "2": {
-      "label": "Moderate Training",
-      "tooltip": "(-) Moderate Battle with Chosen Pokémon\n(+) Permanently Change Chosen Pokémon's Nature",
-      "select_prompt": "Select a new nature\nto train your Pokémon in.",
-      "finished": "{{selectedPokemon}} returns, feeling\nworn out but accomplished!$Its nature was changed to {{nature}}!"
+      "label": "中程度の特訓",
+      "tooltip": "(-)　選んだ　ポケモンと　中程度の　バトル\n(+) 選んだ　ポケモンの　性格を　恒久的に　変える",
+      "select_prompt": "新しい　性格を　選んでください",
+      "finished": "戻ってから　{{selectedPokemon}}は\n疲れ果てながらも　達成感を　感じています！${{selectedPokemon}}の　性格は　{{nature}}に　変化しました！"
     },
     "3": {
-      "label": "Heavy Training",
-      "tooltip": "(-) Harsh Battle with Chosen Pokémon\n(+) Permanently Change Chosen Pokémon's Ability",
-      "select_prompt": "Select a new ability\nto train your Pokémon in.",
-      "finished": "{{selectedPokemon}} returns, feeling\nworn out but accomplished!$Its ability was changed to {{ability}}!"
+      "label": "激しい特訓",
+      "tooltip": "(-) 選んだ　ポケモンと　激しい　バトル\n(+) 選んだ　ポケモンの　特性を　恒久的に　変える",
+      "select_prompt": "新しい　特性を　選んでください",
+      "finished": "戻ってから　{{selectedPokemon}}は\n疲れ果てながらも　達成感を　感じています！${{selectedPokemon}}の　特性は　{{ability}}に　変化しました！"
     },
     "4": {
-      "label": "Leave",
-      "tooltip": "(-) No Rewards",
-      "selected": "You've no time for training.\nTime to move on."
+      "label": "立ち去る",
+      "tooltip": "(-) ご褒美なし",
+      "selected": "特訓する　暇は　ありません。\n行きましょう！"
     },
-    "selected": "{{selectedPokemon}} moves across\nthe clearing to face you..."
+    "selected": "{{selectedPokemon}}が　空き地を　横切って\n手持ちポケモンと　向き合います……"
   },
-  "outro": "That was a successful training session!"
+  "outro": "効果的な　特訓セッション　でした！"
 }
