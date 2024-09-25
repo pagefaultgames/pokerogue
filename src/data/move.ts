@@ -4581,11 +4581,24 @@ export class AddBattlerTagAttr extends MoveEffectAttr {
   }
 }
 
+/**
+ * Adds a {@link https://bulbapedia.bulbagarden.net/wiki/Seeding | Seeding} effect to the target
+ * as seen with Leech Seed and Sappy Seed.
+ * @extends AddBattlerTagAttr
+ */
 export class LeechSeedAttr extends AddBattlerTagAttr {
   constructor() {
     super(BattlerTagType.SEEDED);
   }
 
+  /**
+   * Adds a Seeding effect to the target if the target does not have an active Substitute.
+   * @param user the {@linkcode Pokemon} using the move
+   * @param target the {@linkcode Pokemon} targeted by the move
+   * @param move the {@linkcode Move} invoking this effect
+   * @param args n/a
+   * @returns `true` if the effect successfully applies; `false` otherwise
+   */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     return !move.hitsSubstitute(user, target)
       && super.apply(user, target, move, args);
