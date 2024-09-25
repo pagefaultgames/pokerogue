@@ -2438,7 +2438,7 @@ export class MysteryEncounterPostSummonTag extends BattlerTag {
 }
 
 /**
- * Battle Tag that applies the move Torment to the target Pokemon
+ * BattlerTag that applies the effects of Torment to the target Pokemon
  * Torment restricts the consecutive use of moves.
  * The tag is only removed if the target leaves the battle.
  * Torment does not interrupt the move if the move is performed consecutively in the same turn and right after Torment is applied
@@ -2453,7 +2453,7 @@ export class TormentTag extends MoveRestrictionBattlerTag {
   /**
    * Adds the battler tag to the target Pokemon and defines the private class variable 'target'
    * 'Target' is used to track the Pokemon's current status
-   * @param pokemon the Pokemon tormented
+   * @param {Pokemon} pokemon the Pokemon tormented
    */
   override onAdd(pokemon: Pokemon) {
     super.onAdd(pokemon);
@@ -2463,7 +2463,7 @@ export class TormentTag extends MoveRestrictionBattlerTag {
 
   /**
    * Torment only ends when the affected Pokemon leaves the battle field
-   * @param pokemon the Pokemon under the effects of Torment
+   * @param {Pokemon} pokemon the Pokemon under the effects of Torment
    * @param _tagType
    * @returns `true` if still present | `false` if not
    */
@@ -2473,7 +2473,7 @@ export class TormentTag extends MoveRestrictionBattlerTag {
 
   /**
    * This checks if the current move used is identical to the last used move with a {@linkcode MoveResult} of `SUCCESS`/`MISS`
-   * @param move the move under investigation
+   * @param {Moves} move the move under investigation
    * @returns `true` if there is valid consecutive usage | `false` if the moves are different from each other
    */
   override isMoveRestricted(move: Moves): boolean {
@@ -2498,7 +2498,7 @@ export class TormentTag extends MoveRestrictionBattlerTag {
 }
 
 /**
- * Battle Tag that applies the move Taunt to the target Pokemon
+ * BattlerTag that applies the effects of Taunt to the target Pokemon
  * Taunt restricts the use of status moves.
  * The tag is removed after 4 turns.
  */
@@ -2514,7 +2514,7 @@ export class TauntTag extends MoveRestrictionBattlerTag {
 
   /**
    * Checks if a move is a status move and determines its restriction status on that basis
-   * @param move the move under investigation
+   * @param {Moves} move the move under investigation
    * @returns `true` if the move is a status move
    */
   override isMoveRestricted(move: Moves): boolean {
@@ -2531,7 +2531,7 @@ export class TauntTag extends MoveRestrictionBattlerTag {
 }
 
 /**
- * Battle Tag that applies the move Imprison to the target Pokemon
+ * BattlerTag that applies the effects of Imprison to the target Pokemon
  * Imprison restricts the opposing side's usage of moves shared by the source-user of Imprison.
  * The tag is only removed when the source-user is removed from the field.
  */
@@ -2558,7 +2558,7 @@ export class ImprisonTag extends MoveRestrictionBattlerTag {
 
   /**
    * Checks if the source of the tag has the parameter move in its moveset and that the source is still active
-   * @param move the move under investigation
+   * @param {Moves} move the move under investigation
    * @returns `false` if either condition is not met
    */
   override isMoveRestricted(move: Moves): boolean {
