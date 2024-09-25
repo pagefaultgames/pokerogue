@@ -58,7 +58,7 @@ describe("Moves - Aroma Veil", () => {
     await game.toNextTurn();
     expect(game.scene.arena.getTag(ArenaTagType.IMPRISON)).toBeDefined();
     for (const pokemon in party) {
-      expect(pokemon).getTag(BattlerTagType.IMPRISON).toBeDefined();
+      expect(pokemon.getTag(BattlerTagType.IMPRISON)).toBeDefined();
     }
   });
 });
