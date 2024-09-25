@@ -35,20 +35,21 @@ describe("Moves - Aroma Veil", () => {
   it("Aroma Veil protects the Pokemon's side against most Move Restriction Battler Tags", async () => {
     await game.classicMode.startBattle([Species.REGIELEKI, Species.BULBASAUR]);
 
-    const playerPokemon = game.scene.getParty()!;
+    const party = game.scene.getParty()!;
 
     game.move.select(Moves.GROWL);
     game.move.select(Moves.GROWL);
     await game.forceEnemyMove(Moves.HEAL_BLOCK);
     await game.toNextTurn();
-    expect(playerPokemon[0].getTag(BattlerTagType.HEAL_BLOCK)).toBeUndefined();
-    expect(playerPokemon[1].getTag(BattlerTagType.HEAL_BLOCK)).toBeUndefined();
+    for (const pokemon in party) {
+      expect(pokemon.getTag(BattlerTagType.HEAL_BLOCK)).toBeUndefined();
+    }
   });
 
   it("Aroma Veil does not protect against Imprison", async () => {
     await game.classicMode.startBattle([Species.REGIELEKI, Species.BULBASAUR]);
 
-    const playerPokemon = game.scene.getParty()!;
+    const party = game.scene.getParty()!;
 
     game.move.select(Moves.GROWL);
     game.move.select(Moves.GROWL, 1);
@@ -56,7 +57,8 @@ describe("Moves - Aroma Veil", () => {
     await game.forceEnemyMove(Moves.SPLASH);
     await game.toNextTurn();
     expect(game.scene.arena.getTag(ArenaTagType.IMPRISON)).toBeDefined();
-    expect(playerPokemon[0].getTag(BattlerTagType.IMPRISON)).toBeDefined();
-    expect(playerPokemon[1].getTag(BattlerTagType.IMPRISON)).toBeDefined();
+    for (const pokemon in party) {
+      expect(pokemon).getTag(BattlerTagType.IMPRISON).toBeDefined();
+    }
   });
 });

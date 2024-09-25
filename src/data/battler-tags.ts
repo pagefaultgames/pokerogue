@@ -2438,8 +2438,8 @@ export class MysteryEncounterPostSummonTag extends BattlerTag {
 }
 
 /**
- * BattlerTag that applies the effects of Torment to the target Pokemon
- * Torment restricts the consecutive use of moves.
+ * Battle Tag that applies the move Torment to the target Pokemon
+ * Torment restricts the use of moves twice in a row.
  * The tag is only removed if the target leaves the battle.
  * Torment does not interrupt the move if the move is performed consecutively in the same turn and right after Torment is applied
  */
