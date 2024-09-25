@@ -11,12 +11,12 @@
       "boss_enraged": "¡El miedo del {{oricorioName}} aumentó sus estadísticas!"
     },
     "2": {
-      "label": "Aprende su danza",
+      "label": "Aprender su danza",
       "tooltip": "(+) Enseña a un Pokémon Danza despertar",
       "selected": "Observas atentamente al {{oricorioName}} mientras realiza su danza…$@s{level_up_fanfare}¡Tu {{selectedPokemon}} aprendió del {{oricorioName}}!"
     },
     "3": {
-      "label": "Muéstrale una danza",
+      "label": "Mostrarle una danza",
       "tooltip": "(-) Enseña al {{oricorioName}} un movimiento de danza\n(+) Le gustaras al {{oricorioName}}",
       "disabled_tooltip": "Tus Pokémon necesitan conocer un movimiento de danza para esto.",
       "select_prompt": "Selecciona un movimiento de tipo danza para usar.",
