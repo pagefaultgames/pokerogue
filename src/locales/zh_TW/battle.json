@@ -39,7 +39,7 @@
   "attackMissed": "沒有命中{{pokemonNameWithAffix}}！",
   "attackHitsCount": "擊中{{count}}次！",
   "rewardGain": "你獲得了\n{{modifierName}}！",
-  "rewardGainCount": "你獲得了\n{{count}}個{{modifierName}}!",
+  "rewardGainCount": "你獲得了\n{{count}}個$t(modifierName, {\"count\": {{count}} })!",
   "expGain": "{{pokemonName}}獲得了{{exp}} 點經驗值！",
   "levelUp": "{{pokemonName}}升級到Lv.{{level}}！",
   "learnMove": "{{pokemonName}}學會了{{moveName}}！",
