@@ -1722,7 +1722,6 @@ const modifierPool: ModifierPool = {
       const { gameMode, gameData } = party[0].scene;
       if (gameMode.isDaily || (!gameMode.isFreshStartChallenge() && gameData.isUnlocked(Unlockables.EVIOLITE))) {
         return party.some(p => ((p.getSpeciesForm(true).speciesId in pokemonEvolutions) || (p.isFusion() && (p.getFusionSpeciesForm(true).speciesId in pokemonEvolutions))) && !p.getHeldItems().some(i => i instanceof Modifiers.EvolutionStatBoosterModifier)) ? 10 : 0;
-          && !p.getHeldItems().some(i => i instanceof Modifiers.EvolutionStatBoosterModifier) && !p.isMax()) ? 10 : 0;
       }
       return 0;
     }),
