@@ -1258,8 +1258,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       return allAbilities[Overrides.OPP_ABILITY_OVERRIDE];
     }
     if (this.isFusion()) {
-      if (!isNullOrUndefined(this.fusionMysteryEncounterPokemonData?.ability) && this.fusionMysteryEncounterPokemonData!.ability !== -1) {
-        return allAbilities[this.fusionMysteryEncounterPokemonData!.ability];
+      if (!isNullOrUndefined(this.fusionMysteryEncounterPokemonData?.ability) && this.fusionMysteryEncounterPokemonData.ability !== -1) {
+        return allAbilities[this.fusionMysteryEncounterPokemonData.ability];
       } else {
         return allAbilities[this.getFusionSpeciesForm(ignoreOverride).getAbility(this.fusionAbilityIndex)];
       }
@@ -1799,8 +1799,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    *
    * @returns list of egg moves
    */
-  getEggMoves() : Moves[] {
-    return speciesEggMoves[this.species.speciesId];
+  getEggMoves() : Moves[] | undefined {
+    return speciesEggMoves[this.getSpeciesForm().getRootSpeciesId(true)];
   }
 
   setMove(moveIndex: integer, moveId: Moves): void {
