@@ -21,7 +21,7 @@
     "3": {
       "label": "Naviguer au jugé",
       "tooltip": "(-) Votre équipe perd {{damagePercentage}}% de ses PV totaux",
-      "selected": "Vous vous laissez porter sans but par les vagues, quand soudainement vous remarquez un lieu famillier.$Vous et vos Pokémon êtes compètement rincés\nde fatigue par cette épreuve."
+      "selected": "Vous vous laissez porter sans but par les vagues, quand soudainement vous remarquez un lieu familier.$Vous et vos Pokémon êtes complètement rincés\nde fatigue par cette épreuve."
     }
   },
   "outro": "Vous retrouvez un cap clair."

@@ -27,6 +27,8 @@ const TRAINER_THROW_ANIMATION_TIMES = [512, 184, 768];
 
 const SAFARI_MONEY_MULTIPLIER = 2;
 
+const NUM_SAFARI_ENCOUNTERS = 3;
+
 /**
  * Safari Zone encounter.
  * @see {@link https://github.com/pagefaultgames/pokerogue/issues/3800 | GitHub Issue #3800}
@@ -55,6 +57,10 @@ export const SafariZoneEncounter: MysteryEncounter =
     .withTitle(`${namespace}.title`)
     .withDescription(`${namespace}.description`)
     .withQuery(`${namespace}.query`)
+    .withOnInit((scene: BattleScene) => {
+      scene.currentBattle.mysteryEncounter?.setDialogueToken("numEncounters", NUM_SAFARI_ENCOUNTERS.toString());
+      return true;
+    })
     .withOption(MysteryEncounterOptionBuilder
       .newOptionWithMode(MysteryEncounterOptionMode.DISABLED_OR_DEFAULT)
       .withSceneRequirement(new MoneyRequirement(0, SAFARI_MONEY_MULTIPLIER)) // Cost equal to 1 Max Revive
@@ -72,7 +78,7 @@ export const SafariZoneEncounter: MysteryEncounter =
         const encounter = scene.currentBattle.mysteryEncounter!;
         encounter.continuousEncounter = true;
         encounter.misc = {
-          safariPokemonRemaining: 3
+          safariPokemonRemaining: NUM_SAFARI_ENCOUNTERS
         };
         updatePlayerMoney(scene, -(encounter.options[0].requirements[0] as MoneyRequirement).requiredMoney);
         // Load bait/mud assets
