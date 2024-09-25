@@ -8,7 +8,7 @@
   "option": {
     "1": {
       "label": "Pokémon-Kampf",
-      "tooltip": "(-) Herausfordernder Kampf\n(+) Einem Pokémon eine Käfer-Attacke beibringen",//TODO
+      "tooltip": "(-) Herausfordernder Kampf\n(+) Einem Pokémon eine Käfer-Attacke beibringen",
       "selected": "Ein Pokémon-Kampf? Meine Käfer-Pokémon sind mehr als bereit für dich!"
     },
     "2": {

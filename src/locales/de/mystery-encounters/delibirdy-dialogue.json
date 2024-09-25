@@ -1,7 +1,7 @@
 
 
 {
-  "intro": "Ein Schwarm {{delibirdName}} ist aufgetaucht!",//TODO
+  "intro": "Ein Schwarm {{delibirdName}} ist aufgetaucht!",
   "title": "Botogel-Bande",
   "description": "Die {{delibirdName}} schauen dich erwartungsvoll an, als ob sie etwas wollen. Vielleicht würde es sie zufriedenstellen, wenn du ihnen ein Item oder etwas Geld gibst?",
   "query": "Was möchtest du ihnen geben?",
@@ -25,5 +25,5 @@
       "selected": "Du wirfst {{chosenItem}} zu den {{delibirdName}}, die aufgeregt miteinander schnattern.$Sie drehen sich zu dir um und geben dir glücklich ein Geschenk!"
     }
   },
-  "outro": "Die {{delibirdName}} watscheln glücklich davon.$Was für ein seltsamer kleiner Austausch!"//TODO
+  "outro": "Die {{delibirdName}} watscheln glücklich davon.$Was für ein seltsamer kleiner Austausch!"
 }
