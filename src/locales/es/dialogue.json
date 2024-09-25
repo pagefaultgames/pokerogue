@@ -73,8 +73,8 @@
       "2": "No es fácil encontrar el equilibrio entre ataque y defensa..."
     },
     "defeat": {
-      "1": "Necesitas curar a tus Pokémon?",
-      "2": "Necesitas curar a tus Pokémon?"
+      "1": "¿Necesitas curar a tus Pokémon?",
+      "2": "¿Necesitas curar a tus Pokémon?"
     }
   },
   "stat_trainer_marley": {
@@ -93,8 +93,8 @@
   },
   "stat_trainer_mira": {
     "encounter": {
-      "1": "Serás sorprendido por Maiza!",
-      "2": "¡Maiza te mostrará que Mira ya no se pierde!"
+      "1": "¡Maiza te sorprenderá!",
+      "2": "¡Maiza te mostrará que Maiza ya no se pierde!"
     },
     "victory": {
       "1": "Maiza se pregunta si puede llegar muy lejos en esta tierra.",
@@ -115,8 +115,8 @@
       "2": "A veces combatimos entre nosotros y otras veces unimos fuerzas.$Es maravilloso ser entrenador."
     },
     "defeat": {
-      "1": "Vaya demostración pusiste.\nMejor suerte la próxima vez.",
-      "2": "Vaya demostración pusiste.\nMejor suerte la próxima vez."
+      "1": "Menuda demostración hiciste.\nMejor suerte la próxima vez.",
+      "2": "Menuda demostración hiciste.\nMejor suerte la próxima vez."
     }
   },
   "winstrates_victor": {

@@ -53,7 +53,7 @@
   "noPokeballTrainer": "¡No está bien capturar los\nPokémon de los demás!",
   "noPokeballMulti": "¡No puedes lanzar Poké Balls\ncuando hay más de un Pokémon!",
   "noPokeballStrong": "Este Pokémon es demasiado fuerte para ser capturado.\n¡Baja sus PS!",
-  "noPokeballMysteryEncounter": "¡No puedes capturar este Pokémon!",
+  "noPokeballMysteryEncounter": "¡No puedes capturar a este Pokémon!",
   "noEscapeForce": "Una fuerza misteriosa\nte impide huir.",
   "noEscapeTrainer": "¡No puedes huir de los\ncombates contra entrenadores!",
   "noEscapePokemon": "¡{{moveName}} de {{pokemonName}} no te deja huir!",
@@ -101,7 +101,7 @@
   "congratulations": "¡Enhorabuena!",
   "beatModeFirstTime": "¡{{speciesName}} ha completado el modo {{gameMode}} por primera vez!\n¡Has conseguido {{newModifier}}!",
   "ppReduced": "¡El movimiento {{moveName}} de {{targetName}} ha perdido {{reduction}} PP!",
-  "mysteryEncounterAppeared": "¿Que es esto?",
+  "mysteryEncounterAppeared": "¿Qué es esto?",
   "battlerTagsHealBlock": "¡{{pokemonNameWithAffix}} no puede restaurar sus PS!",
   "battlerTagsHealBlockOnRemove": "¡{{pokemonNameWithAffix}} ya puede recuperar PS!"
 }

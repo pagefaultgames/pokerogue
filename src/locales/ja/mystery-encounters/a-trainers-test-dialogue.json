@@ -31,7 +31,7 @@
   "option": {
     "1": {
       "label": "勝負を受け取る",
-      "tooltip": "(-) 勝負がきつい\n(+) @[TOOLTIP_TITLE]{Very Rare Egg}をもらう"
+      "tooltip": "(-) 勝負が非常にきつい\n(+) @[TOOLTIP_TITLE]{Very Rare Egg}をもらう"
     },
     "2": {
       "label": "勝負を断る",
