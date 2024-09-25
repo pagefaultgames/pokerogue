@@ -68,6 +68,7 @@ export abstract class FormModalUiHandler extends ModalUiHandler {
     this.formLabels= [];
     fields.forEach((field, f) => {
       const label = addTextObject(this.scene, 10, (hasTitle ? 31 : 5) + 20 * f, field, TextStyle.TOOLTIP_CONTENT);
+      label.name = "formLabel" + f;
 
       this.formLabels.push(label);
       this.modalContainer.add(this.formLabels[this.formLabels.length - 1]);

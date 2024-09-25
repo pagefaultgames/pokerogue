@@ -390,13 +390,14 @@ export default class MenuUiHandler extends MessageUiHandler {
         handler: () => {
 
           const options: OptionSelectItem[] = [];
-          Object.values(AdminMode).filter((v) => !isNaN(Number(v))).forEach((mode) => {
+          Object.values(AdminMode).filter((v) => !isNaN(Number(v))).forEach((mode) => { // this gets all the enums in a way we can use
             options.push({
               label: getAdminModeName(mode as AdminMode),
               handler: () => {
                 ui.playSelect();
                 ui.setOverlayMode(Mode.ADMIN, {
                   buttonActions: [
+                  // we double revert here and below to go back 2 layers of menus
                     () => {
                       ui.revertMode();
                       ui.revertMode();
@@ -406,7 +407,7 @@ export default class MenuUiHandler extends MessageUiHandler {
                       ui.revertMode();
                     }
                   ]
-                }, mode);
+                }, mode); // mode is our AdminMode enum
                 return true;
               }
             });

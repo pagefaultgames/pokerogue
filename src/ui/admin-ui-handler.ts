@@ -8,7 +8,6 @@ import { Button } from "#app/enums/buttons";
 export default class AdminUiHandler extends FormModalUiHandler {
 
   private adminMode: AdminMode;
-  private readonly errorMessageName = "errorMessageLabel";
 
   constructor(scene: BattleScene, mode: Mode | null = null) {
     super(scene, mode);
@@ -16,7 +15,6 @@ export default class AdminUiHandler extends FormModalUiHandler {
 
   setup(): void {
     super.setup();
-    this.errorMessage.name = this.errorMessageName;
   }
 
   getModalTitle(config?: ModalConfig): string {
@@ -63,7 +61,8 @@ export default class AdminUiHandler extends FormModalUiHandler {
   }
 
   show(args: any[]): boolean {
-    this.modalContainer.list = this.modalContainer.list.filter(mC => mC.type !== "Text" || mC.text === "" || mC.text === this.getModalTitle() || mC.name === this.errorMessageName);
+    // this is used to remove the existing fields on the admin panel so they can be updated
+    this.modalContainer.list = this.modalContainer.list.filter(mC => !mC.name.includes("formLabel"));
 
     this.adminMode = args[args.length - 1] as AdminMode;
 
@@ -113,6 +112,7 @@ export default class AdminUiHandler extends FormModalUiHandler {
               }
               this.inputs[0].setText("");
               this.inputs[1].setText("");
+              // we double revert here and below to go back 2 layers of menus
               this.scene.ui.revertMode();
               this.scene.ui.revertMode();
             })
@@ -129,6 +129,7 @@ export default class AdminUiHandler extends FormModalUiHandler {
               }
               this.inputs[0].setText("");
               this.inputs[1].setText("");
+              // we double revert here and below to go back 2 layers of menus
               this.scene.ui.revertMode();
               this.scene.ui.revertMode();
             })
