@@ -1,0 +1,32 @@
+{
+  "intro": "Es ist eine Schnittstelle für die Globale Tauschstation, das GTS.",
+  "title": "Das GTS",
+  "description": "Ah, das GTS! Ein technologisches Wunder, mit dem du dich mit jedem auf der Welt verbinden kannst, um Pokémon mit ihnen zu tauschen! Wird das Glück dir heute hold sein?",
+  "query": "Was wirst du tun?",
+  "option": {
+    "1": {
+      "label": "Tauschangebote prüfen",
+      "tooltip": "(+) Wähle ein Tauschangebot für eines deiner Pokémon aus",
+      "trade_options_prompt":  "Wähle ein Pokémon aus, das du erhalten möchtest."
+    },
+    "2": {
+      "label": "Zaubertausch",
+      "tooltip": "(+) Seine eine deiner Pokémon an die GTS und erhalte ein zufälliges besonderes Pokémon im Austausch"
+    },
+    "3": {
+      "label": "Tausche ein Item",
+      "trade_options_prompt": "Wähle ein Item aus, das du senden möchtest.",
+      "invalid_selection": "Dieses Pokémon hat keine Items die getauscht werden können.",
+      "tooltip": "(+) Sende eines deiner Items an die GTS und erhalte ein zufälliges verbessertes Item im Austausch"
+    },
+    "4": {
+      "label": "Weggehen",
+      "tooltip": "(-) Keine Belohnung",
+      "selected": "Heute ist keine Zeit zum Tauschen! Du gehst weiter."
+    }
+  },
+  "pokemon_trade_selected": "{{tradedPokemon}} wird an {{tradeTrainerName}} gesendet.",
+  "pokemon_trade_goodbye": "Machs gut, {{tradedPokemon}}!",
+  "item_trade_selected": "{{chosenItem}} wird an {{tradeTrainerName}} gesendet.$.@d{64}.@d{64}.@d{64}\n@s{level_up_fanfare}Tausch abgeschlossen!$Du hast {{itemName}} von {{tradeTrainerName}} erhalten!",
+  "trade_received": "@s{evolution_fanfare}{{tradeTrainerName}} hat dir {{received}} geschickt!"
+}

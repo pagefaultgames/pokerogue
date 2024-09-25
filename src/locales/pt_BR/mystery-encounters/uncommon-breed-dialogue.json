@@ -1,0 +1,26 @@
+{
+  "intro": "Esse não é um Pokémon comum!",
+  "title": "Raça Incomum",
+  "description": "O {{enemyPokemon}} parece especial comparado a outros de sua espécie. @[TOOLTIP_TITLE]{Talvez ele conheça um movimento especial?} Você poderia batalhar e capturá-lo diretamente, mas também pode haver uma maneira de fazer amizade com ele.",
+  "query": "O que você vai fazer?",
+  "option": {
+    "1": {
+      "label": "Batalhar com o Pokémon",
+      "tooltip": "(-) Batalha Difícil\n(+) Oponente Forte Capturável",
+      "selected": "Você se aproxima do\n{{enemyPokemon}} sem medo.",
+      "stat_boost": "As habilidades elevadas do {{enemyPokemon}} aumentam seus atributos!"
+    },
+    "2": {
+      "label": "Dar Comida",
+      "disabled_tooltip": "Você precisa de 4 itens de fruta para escolher isso",
+      "tooltip": "(-) Dar 4 Frutas\n(+) O {{enemyPokemon}} Gosta de Você",
+      "selected": "Você joga as frutas para o {{enemyPokemon}}!$Ele as come feliz!$O {{enemyPokemon}} quer se juntar ao seu time!"
+    },
+    "3": {
+      "label": "Fazer Amizade",
+      "disabled_tooltip": "Seus Pokémon precisam conhecer certos movimentos para escolher isso",
+      "tooltip": "(+) {{option3PrimaryName}} usa {{option3PrimaryMove}}\n(+) O {{enemyPokemon}} Gosta de Você",
+      "selected": "Seu {{option3PrimaryName}} usa {{option3PrimaryMove}} para encantar o {{enemyPokemon}}!$O {{enemyPokemon}} quer se juntar ao seu time!"
+    }
+  }
+}

@@ -1,0 +1,46 @@
+{
+  "intro": "サファリゾーン　です！",
+  "title": "サファリゾーン",
+  "description": "ここには　様々な　珍しい　特別な　ポケモンが　います！\n入場すれば　@[TOOLTIP_TITLE]{{{numEncounters}}回の遭遇}　という　制限時間で　野生ポケモンを　捕まえることが　できます。\n\n注意：　野生ポケモンは　捕まえる前に　逃げてしまう　可能性も　あります！",
+  "query": "入場しますか？",
+  "option": {
+    "1": {
+      "label": "入場する",
+      "tooltip": "(-) {{option1Money, money}}を払う\n@[SUMMARY_GREEN]{(?) サファリゾーン}",
+      "selected": "運試し　しましょう！"
+    },
+    "2": {
+      "label": "立ち去る",
+      "tooltip": "(-) ご褒美なし",
+      "selected": "僅かな　後悔の　気持ちで\nさっさと　先を　進みます。"
+    }
+  },
+  "safari": {
+    "1": {
+      "label": "ボールを投げる",
+      "tooltip": "(+) モンスターボールを投げる",
+      "selected": "モンスターボールを　投げた！"
+    },
+    "2": {
+      "label": "エサを投げる",
+      "tooltip": "(+) 捕捉率が上がる\n(-) 逃走率が上がる可能性",
+      "selected": "エサを　投げた！"
+    },
+    "3": {
+      "label": "どろを投げる",
+      "tooltip": "(+) 逃走率が下がる\n(-) 捕捉率が下がる可能性",
+      "selected": "どろを　投げた！"
+    },
+    "4": {
+      "label": "逃げる",
+      "tooltip": "(?) ポケモンから逃げる"
+    },
+    "watching": "{{pokemonName}}は　様子を　うかがっている！",
+    "eating": "{{pokemonName}}は　エサを　たべている！!",
+    "busy_eating": "{{pokemonName}}は　エサを　食べるのに　夢中だ！",
+    "angry": "{{pokemonName}}は　怒っている！",
+    "beside_itself_angry": "{{pokemonName}}は　怒りで　我を　忘れている！",
+    "remaining_count": "残る　ポケモン：　{{remainingCount}}匹！"
+  },
+  "outro": "楽しい　小旅行でした！"
+}

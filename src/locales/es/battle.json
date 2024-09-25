@@ -14,6 +14,10 @@
   "moneyWon": "¡Has ganado\n{{moneyAmount}}₽ por vencer!",
   "moneyPickedUp": "¡Has recogido {{moneyAmount}}₽!",
   "pokemonCaught": "¡{{pokemonName}} ha sido atrapado!",
+  "pokemonObtained": "¡Has recibido a {{pokemonName}}!",
+  "pokemonBrokeFree": "¡Oh, no!\n¡El Pokémon se ha escapado!",
+  "pokemonFled": "¡El {{pokemonName}} salvaje ha huido!",
+  "playerFled": "¡Huiste del {{pokemonName}}!",
   "addedAsAStarter": "¡{{pokemonName}} ha sido añadido a tus iniciales!",
   "partyFull": "Tu equipo está completo.\n¿Quieres liberar a un Pokémon para quedarte con {{pokemonName}}?",
   "pokemon": "Pokémon",
@@ -49,6 +53,7 @@
   "noPokeballTrainer": "¡No está bien capturar los\nPokémon de los demás!",
   "noPokeballMulti": "¡No puedes lanzar Poké Balls\ncuando hay más de un Pokémon!",
   "noPokeballStrong": "Este Pokémon es demasiado fuerte para ser capturado.\n¡Baja sus PS!",
+  "noPokeballMysteryEncounter": "¡No puedes capturar a este Pokémon!",
   "noEscapeForce": "Una fuerza misteriosa\nte impide huir.",
   "noEscapeTrainer": "¡No puedes huir de los\ncombates contra entrenadores!",
   "noEscapePokemon": "¡{{moveName}} de {{pokemonName}} no te deja huir!",
@@ -96,6 +101,7 @@
   "congratulations": "¡Enhorabuena!",
   "beatModeFirstTime": "¡{{speciesName}} ha completado el modo {{gameMode}} por primera vez!\n¡Has conseguido {{newModifier}}!",
   "ppReduced": "¡El movimiento {{moveName}} de {{targetName}} ha perdido {{reduction}} PP!",
+  "mysteryEncounterAppeared": "¿Qué es esto?",
   "battlerTagsHealBlock": "¡{{pokemonNameWithAffix}} no puede restaurar sus PS!",
   "battlerTagsHealBlockOnRemove": "¡{{pokemonNameWithAffix}} ya puede recuperar PS!"
 }

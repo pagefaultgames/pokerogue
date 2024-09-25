@@ -7,7 +7,7 @@
   "nightmareDesc": "les cauchemars",
   "ingrainDesc": "l’enracinement",
   "drowsyDesc": "la somnolence",
-  "rechargingLapse": "Le contrecoup empêche {{pokemonNameWithAffix}}\n de bouger !",
+  "rechargingLapse": "Le contrecoup empêche {{pokemonNameWithAffix}}\nde bouger !",
   "trappedOnAdd": "{{pokemonNameWithAffix}}\nne peut plus s’échapper !",
   "trappedOnRemove": "{{pokemonNameWithAffix}} est libéré\nde la capacité {{moveName}} !",
   "flinchedLapse": "{{pokemonNameWithAffix}} a la trouille !\nIl ne peut plus attaquer !",

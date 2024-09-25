@@ -1,0 +1,31 @@
+{
+  "intro": "C’est une enseignante avec ses élèves !",
+  "speaker": "Enseignante",
+  "intro_dialogue": "Hé, bonjour !\nAurais-tu une minute à accorder à mes élèves ?$Je leur apprends ce que sont les capacités et\nj’adorerais que tu leur fasse une démonstration.$Tu serais d’accord pour nous montrer ça\navec un de tes Pokémon ?",
+  "title": "Sortie scolaire",
+  "description": "Une enseignante vous demande de faire la démonstration d’une capacité d’un de vos Pokémon.\nEn fonction de la capacité, elle pourrait vous donner quelque chose d’utile.",
+  "query": "Utiliser quelle catégorie de capacité ?",
+  "option": {
+    "1": {
+      "label": "Physique",
+      "tooltip": "(+) Objets de boost axés sur le Physique à la prochaine boutique"
+    },
+    "2": {
+      "label": "Spéciale",
+      "tooltip": "(+) Objets de boost axés  sur le Spécial à la prochaine boutique"
+    },
+    "3": {
+      "label": "De Statut",
+      "tooltip": "(+) Objets de boost axés sur le Statut à la prochaine boutique"
+    },
+    "selected": "{{pokeName}} fait une incroyable démonstration de sa capacité {{move}} !"
+  },
+  "second_option_prompt": "Choisissez une capacité à utiliser.",
+  "incorrect": "…$Ce n’est pas une capacité {{moveCategory}} !\nJe suis désolée, mais je ne peux rien te donner.$Venez les enfants, on va trouver mieux ailleurs.",
+  "incorrect_exp": "Il semble que vous avez appris une précieuse leçon ?$Votre Pokémon a gagné un peu d’expérience.",
+  "correct": "Merci beaucoup de nous avoir accordé de ton temps !\nJ’espère que ces quelques objets de seront utiles !",
+  "correct_exp": "{{pokeName}} a aussi gagné un beaucoup d’expérience !",
+  "status": "de Statut",
+  "physical": "Physique",
+  "special": "Spéciale"
+}
