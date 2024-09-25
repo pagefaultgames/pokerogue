@@ -7,33 +7,33 @@
   "query": "¿Qué harás?",
   "option": {
     "1": {
-      "label": "Proponer a luchar",
-      "tooltip": "(-) Batalla Desafiante\n(+) Enseña un movimiento de tipo Bicho a un Pokémon",
+      "label": "Proponerle luchar",
+      "tooltip": "(-) Batalla Desafiante\n(+) Enseña un movimiento de tipo Bicho a cualquier Pokémon",
       "selected": "¿Un desafío, eh?\n¡Mis Pokémon Bicho están más que preparados para ti!"
     },
     "2": {
-      "label": "Muestra tus tipos Bicho",
+      "label": "Mostrar tus tipos Bicho",
       "tooltip": "(+) ¡Recibe un objeto de regalo!",
       "disabled_tooltip": "Necesitas al menos 1 Pokémon de tipo Bicho en tu equipo para seleccionar esto.",
       "selected": "Le muestras al entrenador todos tus Pokémon de tipo Bicho...",
       "selected_0_to_1": "¿Eh? Solo tienes {{numBugTypes}} tipo Bicho...$Supongo que estoy perdiendo el tiempo con alguien como tú...",
       "selected_2_to_3": "¡Oye, tienes {{numBugTypes}}! No está mal.$Aquí, esto podría ayudarte en tu viaje para atrapar más.",
-      "selected_4_to_5": "¿Qué? ¿Tienes {{numBugTypes}}?\nNice!$No estás a mi nivel, pero puedo ver destellos de mí en ti.$¡Toma esto, mi joven aprendiz!",
+      "selected_4_to_5": "¿Qué? ¿Tienes {{numBugTypes}}?\n¡Guau!$No estás a mi nivel, pero puedo ver un poco de mí reflejado en ti.$¡Toma esto, mi joven aprendiz!",
       "selected_6": "¡Vaya! {{numBugTypes}}!$¡Debes amar a los Pokémon de tipo Bicho casi tanto como yo!$Aquí, toma esto como un símbolo de nuestra camaradería."
     },
     "3": {
-      "label": "Regala un objeto de tipo Bicho",
+      "label": "Regalar un objeto de tipo Bicho",
       "tooltip": "(-) Dale al entrenador un {{requiredBugItems}}\n(+) Recibe un item de regalo",
       "disabled_tooltip": "Necesitas tener un {{requiredBugItems}} para seleccionar esto.",
       "select_prompt": "Selecciona un objeto para dar",
-      "invalid_selection": "El Pokémon no tiene ese tipe de objeto.",
+      "invalid_selection": "El Pokémon no tiene ese tipo de objeto.",
       "selected": "Le entregas al entrenador un{{selectedItem}}.",
       "selected_dialogue": "¡Vaya! ¿Un {{selectedItem}}, para mí? ¡No eres tan malo, chico!$Como muestra de mi agradecimiento, quiero que tengas este regalo especial.$Ha pasado por toda mi familia, y ahora quiero que lo tengas tú."
     }
   },
   "battle_won": "¡Tu conocimiento y habilidad fueron perfectos para explotar nuestras debilidades!$A cambio de la valiosa lección, permíteme enseñarle a uno de tus Pokémon un movimiento de tipo Bicho.",
   "teach_move_prompt": "Selecciona un movimiento para enseñar a un Pokémon.",
-  "confirm_no_teach": "¿Estás seguro de que no quieres aprender uno de estos excellentes movimientos?",
+  "confirm_no_teach": "¿Estás seguro de que no quieres aprender uno de estos excelentes movimientos?",
   "outro": "¡Veo grandes Pokémon de tipo Bicho en tu futuro! ¡Que nuestros caminos se crucen de nuevo! ¡Bicho fuera!",
   "numBugTypes_one": "{{count}} Pokémon de tipo Bicho",
   "numBugTypes_other": "{{count}} Pokémon de tipo Bicho"
