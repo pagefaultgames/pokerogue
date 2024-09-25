@@ -436,7 +436,7 @@
       "description": "Erhöht den {{stats}}-Wert des Trägers um {{statValue}}."
     },
     "MYSTERY_ENCOUNTER_GOLDEN_BUG_NET": {
-      "name": "Golden Bug Net",
+      "name": "Goldenes Käfersammlernetz",
       "description": "Erhöht die Chance, dass der Besitzer mehr Pokémon vom Typ Käfer findet. Hat ein seltsames Gewicht."
     }
   },

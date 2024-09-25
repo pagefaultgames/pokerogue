@@ -6,7 +6,7 @@
   "option": {
     "1": {
       "label": "Öffnen",
-      "tooltip": "@[SUMMARY_BLUE]{({{trapPercent}}%)} Etwas Schreckliches}\n@[SUMMARY_GREEN]{({{commonPercent}}%)} Standard Belohnung}\n@[SUMMARY_GREEN]{({{ultraPercent}}%)} Gute Belohnung}\n@[SUMMARY_GREEN]{({{roguePercent}}%)} Großartige Belohnung}\n@[SUMMARY_GREEN]{({{masterPercent}}%)} Erstaunliche Belohnung}",
+      "tooltip": "@[SUMMARY_BLUE]{({{trapPercent}}%) Etwas Schreckliches}\n@[SUMMARY_GREEN]{({{commonPercent}}%) Standard Belohnung}\n@[SUMMARY_GREEN]{({{ultraPercent}}%) Gute Belohnung}\n@[SUMMARY_GREEN]{({{roguePercent}}%) Großartige Belohnung}\n@[SUMMARY_GREEN]{({{masterPercent}}%) Erstaunliche Belohnung}",
       "selected": "Du öffnest die Truhe und findest...",
       "normal": "Einfach ein paar normale Werkzeuge und Gegenstände.",
       "good": "Ein paar ziemlich gute Werkzeuge und Gegenstände.",
