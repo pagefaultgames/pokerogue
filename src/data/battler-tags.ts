@@ -3,7 +3,7 @@ import { getPokemonNameWithAffix } from "../messages";
 import Pokemon, { MoveResult, HitResult } from "../field/pokemon";
 import { StatusEffect } from "./status-effect";
 import * as Utils from "../utils";
-import { ChargeAttr, MoveFlags, allMoves, MoveCategory, applyMoveAttrs, StatusCategoryOnAllyAttr, HealOnAllyAttr } from "./move";
+import { ChargeAttr, MoveFlags, allMoves, MoveCategory, applyMoveAttrs, StatusCategoryOnAllyAttr, HealOnAllyAttr, ConsecutiveUseDoublePowerAttr } from "./move";
 import { Type } from "./type";
 import { BlockNonDirectDamageAbAttr, FlinchEffectAbAttr, ReverseDrainAbAttr, applyAbAttrs, ProtectStatAbAttr } from "./ability";
 import { TerrainType } from "./terrain";
@@ -2438,6 +2438,150 @@ export class MysteryEncounterPostSummonTag extends BattlerTag {
 }
 
 /**
+ * Battle Tag that applies the move Torment to the target Pokemon
+ * Torment restricts the use of moves twice in a row.
+ * The tag is only removed if the target leaves the battle.
+ * Torment does not interrupt the move if the move is performed consecutively in the same turn and right after Torment is applied
+ */
+export class TormentTag extends MoveRestrictionBattlerTag {
+  private target: Pokemon;
+
+  constructor(sourceId: number) {
+    super(BattlerTagType.TORMENT, BattlerTagLapseType.AFTER_MOVE, 1, Moves.TORMENT, sourceId);
+  }
+
+  /**
+   * Adds the battler tag to the target Pokemon and defines the private class variable 'target'
+   * 'Target' is used to track the Pokemon's current status
+   * @param {Pokemon} pokemon the Pokemon tormented
+   */
+  override onAdd(pokemon: Pokemon) {
+    super.onAdd(pokemon);
+    this.target = pokemon;
+    pokemon.scene.queueMessage(i18next.t("battlerTags:tormentOnAdd", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }), 1500);
+  }
+
+  /**
+   * Torment only ends when the affected Pokemon leaves the battle field
+   * @param {Pokemon} pokemon the Pokemon under the effects of Torment
+   * @param _tagType
+   * @returns `true` if still present | `false` if not
+   */
+  override lapse(pokemon: Pokemon, _tagType: BattlerTagLapseType): boolean {
+    return !pokemon.isActive(true);
+  }
+
+  /**
+   * This checks if the current move used is identical to the last used move with a {@linkcode MoveResult} of `SUCCESS`/`MISS`
+   * @param {Moves} move the move under investigation
+   * @returns `true` if there is valid consecutive usage | `false` if the moves are different from each other
+   */
+  override isMoveRestricted(move: Moves): boolean {
+    const lastMove = this.target.getLastXMoves(1)[0];
+    if ( !lastMove ) {
+      return false;
+    }
+    // This checks for locking / momentum moves like Rollout and Hydro Cannon + if the user is under the influence of BattlerTagType.FRENZY
+    // Because Uproar's unique behavior is not implemented, it does not check for Uproar. Torment has been marked as partial in moves.ts
+    const moveObj = allMoves[lastMove.move];
+    const isUnaffected = moveObj.hasAttr(ConsecutiveUseDoublePowerAttr) || this.target.getTag(BattlerTagType.FRENZY) || moveObj.hasAttr(ChargeAttr);
+    const validLastMoveResult = (lastMove.result === MoveResult.SUCCESS) || (lastMove.result === MoveResult.MISS);
+    if (lastMove.move === move && validLastMoveResult && lastMove.move !== Moves.STRUGGLE && !isUnaffected) {
+      return true;
+    }
+    return false;
+  }
+
+  override selectionDeniedText(_pokemon: Pokemon, move: Moves): string {
+    return i18next.t("battle:moveCannotBeSelected", { moveName: allMoves[move].name });
+  }
+}
+
+/**
+ * BattlerTag that applies the effects of Taunt to the target Pokemon
+ * Taunt restricts the use of status moves.
+ * The tag is removed after 4 turns.
+ */
+export class TauntTag extends MoveRestrictionBattlerTag {
+  constructor() {
+    super(BattlerTagType.TAUNT, [BattlerTagLapseType.PRE_MOVE, BattlerTagLapseType.AFTER_MOVE], 4, Moves.TAUNT);
+  }
+
+  override onAdd(pokemon: Pokemon) {
+    super.onAdd(pokemon);
+    pokemon.scene.queueMessage(i18next.t("battlerTags:tauntOnAdd", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }), 1500);
+  }
+
+  /**
+   * Checks if a move is a status move and determines its restriction status on that basis
+   * @param {Moves} move the move under investigation
+   * @returns `true` if the move is a status move
+   */
+  override isMoveRestricted(move: Moves): boolean {
+    return allMoves[move].category === MoveCategory.STATUS;
+  }
+
+  override selectionDeniedText(_pokemon: Pokemon, move: Moves): string {
+    return i18next.t("battle:moveCannotBeSelected", { moveName: allMoves[move].name });
+  }
+
+  override interruptedText(pokemon: Pokemon, move: Moves): string {
+    return i18next.t("battle:disableInterruptedMove", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), moveName: allMoves[move].name });
+  }
+}
+
+/**
+ * BattlerTag that applies the effects of Imprison to the target Pokemon
+ * Imprison restricts the opposing side's usage of moves shared by the source-user of Imprison.
+ * The tag is only removed when the source-user is removed from the field.
+ */
+export class ImprisonTag extends MoveRestrictionBattlerTag {
+  private source: Pokemon | null;
+
+  constructor(sourceId: number) {
+    super(BattlerTagType.IMPRISON, [BattlerTagLapseType.PRE_MOVE, BattlerTagLapseType.AFTER_MOVE], 1, Moves.IMPRISON, sourceId);
+  }
+
+  override onAdd(pokemon: Pokemon) {
+    if (this.sourceId) {
+      this.source = pokemon.scene.getPokemonById(this.sourceId);
+    }
+  }
+
+  /**
+   * Checks if the source of Imprison is still active
+   * @param _pokemon
+   * @param _lapseType
+   * @returns `true` if the source is still active
+   */
+  override lapse(_pokemon: Pokemon, _lapseType: BattlerTagLapseType): boolean {
+    return this.source?.isActive(true) ?? false;
+  }
+
+  /**
+   * Checks if the source of the tag has the parameter move in its moveset and that the source is still active
+   * @param {Moves} move the move under investigation
+   * @returns `false` if either condition is not met
+   */
+  override isMoveRestricted(move: Moves): boolean {
+    if (this.source) {
+      const sourceMoveset = this.source.getMoveset().map(m => m!.moveId);
+      return sourceMoveset?.includes(move) && this.source.isActive(true);
+    }
+    return false;
+  }
+
+  override selectionDeniedText(_pokemon: Pokemon, move: Moves): string {
+    return i18next.t("battle:moveCannotBeSelected", { moveName: allMoves[move].name });
+  }
+
+  override interruptedText(pokemon: Pokemon, move: Moves): string {
+    return i18next.t("battle:disableInterruptedMove", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), moveName: allMoves[move].name });
+  }
+}
+
+
+/**
  * Retrieves a {@linkcode BattlerTag} based on the provided tag type, turn count, source move, and source ID.
  *
  * @param {BattlerTagType} tagType the type of the {@linkcode BattlerTagType}.
@@ -2604,6 +2748,12 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: number, source
     return new MysteryEncounterPostSummonTag();
   case BattlerTagType.HEAL_BLOCK:
     return new HealBlockTag(turnCount, sourceMove);
+  case BattlerTagType.TORMENT:
+    return new TormentTag(sourceId);
+  case BattlerTagType.TAUNT:
+    return new TauntTag();
+  case BattlerTagType.IMPRISON:
+    return new ImprisonTag(sourceId);
   case BattlerTagType.NONE:
   default:
     return new BattlerTag(tagType, BattlerTagLapseType.CUSTOM, turnCount, sourceMove, sourceId);
