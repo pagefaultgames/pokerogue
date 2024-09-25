@@ -2448,7 +2448,7 @@ export class ModifierTypeOption {
  */
 export function getPartyLuckValue(party: Pokemon[]): integer {
   if (party[0].scene.gameMode.isDaily) {
-    const DailyLuck = new Utils.IntegerHolder(0);
+    const DailyLuck = new Utils.NumberHolder(0);
     party[0].scene.executeWithSeedOffset(() => {
       DailyLuck.value = Utils.randSeedInt(15); // Random number between 0 and 14
     }, 0, party[0].scene.seed);
