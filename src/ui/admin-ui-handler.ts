@@ -7,16 +7,16 @@ import { Button } from "#app/enums/buttons";
 
 export default class AdminUiHandler extends FormModalUiHandler {
 
-  private adminMode: string;
-
-  private unlinkAction: Function;
+  private adminMode: AdminMode;
+  private readonly errorMessageName = "errorMessageLabel";
 
   constructor(scene: BattleScene, mode: Mode | null = null) {
     super(scene, mode);
   }
 
   setup(): void {
-
+    super.setup();
+    this.errorMessage.name = this.errorMessageName;
   }
 
   getModalTitle(config?: ModalConfig): string {
@@ -24,11 +24,18 @@ export default class AdminUiHandler extends FormModalUiHandler {
   }
 
   getFields(config?: ModalConfig): string[] {
-    return this.adminMode === "link" ? ["Username", "Discord ID"] : ["Test", "Hello"];
+    switch (this.adminMode) {
+    case AdminMode.LINK:
+      return ["Username", "Discord ID"];
+    case AdminMode.UNLINK:
+      return ["Username", "Discord ID"];
+    default:
+      return [""];
+    }
   }
 
   getWidth(config?: ModalConfig): number {
-    return 220;
+    return 160;
   }
 
   getMargin(config?: ModalConfig): [number, number, number, number] {
@@ -36,7 +43,14 @@ export default class AdminUiHandler extends FormModalUiHandler {
   }
 
   getButtonLabels(config?: ModalConfig): string[] {
-    return ["Link account", "Cancel"];
+    switch (this.adminMode) {
+    case AdminMode.LINK:
+      return ["Link account", "Cancel"];
+    case AdminMode.UNLINK:
+      return ["Unlink account", "Cancel"];
+    default:
+      return ["Activate ADMIN", "Cancel"];
+    }
   }
 
   processInput(button: Button): boolean {
@@ -49,40 +63,49 @@ export default class AdminUiHandler extends FormModalUiHandler {
   }
 
   show(args: any[]): boolean {
-    this.adminMode = args[args.length - 1];
-    super.setup();
+    this.modalContainer.list = this.modalContainer.list.filter(mC => mC.type !== "Text" || mC.text === "" || mC.text === this.getModalTitle() || mC.name === this.errorMessageName);
 
-    if (super.show(args.slice(0, -1))) {
+    this.adminMode = args[args.length - 1] as AdminMode;
+
+    const fields = this.getFields();
+    const hasTitle = !!this.getModalTitle();
+    this.updateFields(fields, hasTitle);
+    this.updateContainer(args[0]);
+
+    const labels = this.getButtonLabels();
+    for (let i = 0; i < labels.length; i++) {
+      this.buttonLabels[i].setText(labels[i]);
+    }
+
+    this.errorMessage.setPosition(10, (hasTitle ? 31 : 5) + 20 * (fields.length - 1) + 16 + this.getButtonTopMargin());
+
+    if (super.show(args)) {
       const config = args[0] as ModalConfig;
       const originalSubmitAction = this.submitAction;
-      let originAction: number = 0; // this is used to keep track of which button has been pressed
-      /*  This code is here because currently the form-modal-ui-handler is hardcoded to only have a single action button and a cancel button
-       *  This code below adds interactivity and a specific action to the unlink account button. This also sets up the originalAction variable
-       *  from above, which lets us figure out if we're linking or unlinking, which makes this.submitAction do post different API calls
-       */
-      for (let i = 0; i < this.buttonBgs.length - 1; i++) {
-        this.buttonBgs[i].off("pointerdown");
-        this.buttonBgs[i].on("pointerdown", () => {
-          originAction = i;
-          if (this.submitAction) {
-            this.submitAction();
-          }
-        });
-      }
       this.submitAction = (_) => {
         this.submitAction = originalSubmitAction;
         this.scene.ui.setMode(Mode.LOADING, { buttonActions: [] });
         const onFail = error => {
-          this.scene.ui.setMode(Mode.ADMIN, Object.assign(config, { errorMessage: error?.trim() }));
+          this.scene.ui.setMode(Mode.ADMIN, Object.assign(config, { errorMessage: error?.trim() }), this.adminMode);
           this.scene.ui.playError();
         };
         if (!this.inputs[0].text) {
-          return onFail("Username is required");
+          if (this.adminMode === AdminMode.LINK) {
+            return onFail("Username is required");
+          }
+          if (this.adminMode === AdminMode.UNLINK && !this.inputs[1].text) {
+            return onFail("Either username or discord Id is required");
+          }
         }
         if (!this.inputs[1].text) {
-          return onFail("Discord Id is required");
+          if (this.adminMode === AdminMode.LINK) {
+            return onFail("Discord Id is required");
+          }
+          if (this.adminMode === AdminMode.UNLINK && !this.inputs[0].text) {
+            return onFail("Either username or discord is required");
+          }
         }
-        if (originAction === 0) {
+        if (this.adminMode === AdminMode.LINK) {
           Utils.apiPost("admin/account/discord-link", `username=${encodeURIComponent(this.inputs[0].text)}&discordId=${encodeURIComponent(this.inputs[1].text)}`, "application/x-www-form-urlencoded", true)
             .then(response => {
               if (!response.ok) {
@@ -91,13 +114,14 @@ export default class AdminUiHandler extends FormModalUiHandler {
               this.inputs[0].setText("");
               this.inputs[1].setText("");
               this.scene.ui.revertMode();
+              this.scene.ui.revertMode();
             })
             .catch((err) => {
               console.error(err);
               this.scene.ui.revertMode();
+              this.scene.ui.revertMode();
             });
-          return false;
-        } else if (originAction === 1) {
+        } else if (this.adminMode === AdminMode.UNLINK) {
           Utils.apiPost("admin/account/discord-unlink", `username=${encodeURIComponent(this.inputs[0].text)}&discordId=${encodeURIComponent(this.inputs[1].text)}`, "application/x-www-form-urlencoded", true)
             .then(response => {
               if (!response.ok) {
@@ -106,13 +130,16 @@ export default class AdminUiHandler extends FormModalUiHandler {
               this.inputs[0].setText("");
               this.inputs[1].setText("");
               this.scene.ui.revertMode();
+              this.scene.ui.revertMode();
             })
             .catch((err) => {
               console.error(err);
               this.scene.ui.revertMode();
+              this.scene.ui.revertMode();
             });
-          return false;
         }
+
+        return false;
       };
       return true;
     }
@@ -122,5 +149,22 @@ export default class AdminUiHandler extends FormModalUiHandler {
 
   clear(): void {
     super.clear();
+  }
+}
+
+export enum AdminMode {
+  LINK,
+  UNLINK
+}
+
+
+export function getAdminModeName(adminMode: AdminMode): string {
+  switch (adminMode) {
+  case AdminMode.LINK:
+    return "Link";
+  case AdminMode.UNLINK:
+    return "Unlink";
+  default:
+    return "";
   }
 }

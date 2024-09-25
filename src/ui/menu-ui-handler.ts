@@ -13,6 +13,7 @@ import { GameDataType } from "#enums/game-data-type";
 import BgmBar from "#app/ui/bgm-bar";
 import AwaitableUiHandler from "./awaitable-ui-handler";
 import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
+import { AdminMode, getAdminModeName } from "./admin-ui-handler";
 
 enum MenuOptions {
   GAME_SETTINGS,
@@ -384,24 +385,76 @@ export default class MenuUiHandler extends MessageUiHandler {
       communityOptions.push({
         label: "Admin",
         handler: () => {
-          ui.playSelect();
-          ui.setOverlayMode(Mode.ADMIN, {
-            buttonActions: [
-              () => {
-                ui.revertMode();
-              },
-              () => {
-                ui.revertMode();
-              },
-              () => {
-                ui.revertMode();
+
+          const options: OptionSelectItem[] = [];
+          //for (let i = 0; i < Object.values(AdminMode).filter((v) => !isNaN(Number(v))).length; i++) {
+          //fields.forEach((field, f) => {
+          Object.values(AdminMode).filter((v) => !isNaN(Number(v))).forEach((mode) => {
+            options.push({
+              label: getAdminModeName(mode),
+              handler: () => {
+                ui.playSelect();
+                ui.setOverlayMode(Mode.ADMIN, {
+                  buttonActions: [
+                    () => {
+                      ui.revertMode();
+                      ui.revertMode();
+                    },
+                    () => {
+                      ui.revertMode();
+                      ui.revertMode();
+                    }
+                  ]
+                }, mode);
+                return true;
               }
-            ]
-          }, "link");
+            });
+          });
+          options.push({
+            label: "Cancel",
+            handler: () => {
+              ui.revertMode();
+              return true;
+            }
+          });
+          this.scene.ui.setOverlayMode(Mode.OPTION_SELECT, {
+            options: options,
+            delay: 0
+          });
+
+          //ui.playSelect();
+          //ui.setOverlayMode(Mode.ADMIN, {
+          //  buttonActions: [
+          //    () => {
+          //      ui.revertMode();
+          //    },
+          //    () => {
+          //      ui.revertMode();
+          //    }
+          //  ]
+          //}, AdminMode.LINK);
           return true;
         },
         keepOpen: true
       });
+      //communityOptions.push({
+      //  label: "Admin2",
+      //  handler: () => {
+      //    ui.playSelect();
+      //    ui.setOverlayMode(Mode.ADMIN, {
+      //      buttonActions: [
+      //        () => {
+      //          ui.revertMode();
+      //        },
+      //        () => {
+      //          ui.revertMode();
+      //        }
+      //      ]
+      //    }, AdminMode.UNLINK);
+      //    return true;
+      //  },
+      //  keepOpen: true
+      //});
     }
     communityOptions.push({
       label: i18next.t("menuUiHandler:cancel"),

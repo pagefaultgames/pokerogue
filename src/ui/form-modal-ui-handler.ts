@@ -19,6 +19,7 @@ export abstract class FormModalUiHandler extends ModalUiHandler {
   protected errorMessage: Phaser.GameObjects.Text;
   protected submitAction: Function | null;
   protected tween: Phaser.Tweens.Tween;
+  protected formLabels: Phaser.GameObjects.Text[];
 
   constructor(scene: BattleScene, mode: Mode | null = null) {
     super(scene, mode);
@@ -26,6 +27,7 @@ export abstract class FormModalUiHandler extends ModalUiHandler {
     this.editing = false;
     this.inputContainers = [];
     this.inputs = [];
+    this.formLabels = [];
   }
 
   abstract getFields(): string[];
@@ -49,10 +51,26 @@ export abstract class FormModalUiHandler extends ModalUiHandler {
 
     const hasTitle = !!this.getModalTitle();
 
+    if (fields.length > 1 && fields[0]!=="") {
+      this.updateFields(fields, hasTitle);
+    }
+
+    this.errorMessage = addTextObject(this.scene, 10, (hasTitle ? 31 : 5) + 20 * (fields.length - 1) + 16 + this.getButtonTopMargin(), "", TextStyle.TOOLTIP_CONTENT);
+    this.errorMessage.setColor(this.getTextColor(TextStyle.SUMMARY_PINK));
+    this.errorMessage.setShadowColor(this.getTextColor(TextStyle.SUMMARY_PINK, true));
+    this.errorMessage.setVisible(false);
+    this.modalContainer.add(this.errorMessage);
+  }
+
+  updateFields(fields: string[], hasTitle: boolean) {
+    this.inputContainers = [];
+    this.inputs = [];
+    this.formLabels= [];
     fields.forEach((field, f) => {
       const label = addTextObject(this.scene, 10, (hasTitle ? 31 : 5) + 20 * f, field, TextStyle.TOOLTIP_CONTENT);
 
-      this.modalContainer.add(label);
+      this.formLabels.push(label);
+      this.modalContainer.add(this.formLabels[this.formLabels.length - 1]);
 
       const inputContainer = this.scene.add.container(70, (hasTitle ? 28 : 2) + 20 * f);
       inputContainer.setVisible(false);
@@ -65,17 +83,12 @@ export abstract class FormModalUiHandler extends ModalUiHandler {
 
       inputContainer.add(inputBg);
       inputContainer.add(input);
-      this.modalContainer.add(inputContainer);
 
       this.inputContainers.push(inputContainer);
+      this.modalContainer.add(this.inputContainers[this.inputContainers.length - 1]);
+
       this.inputs.push(input);
     });
-
-    this.errorMessage = addTextObject(this.scene, 10, (hasTitle ? 31 : 5) + 20 * (fields.length - 1) + 16 + this.getButtonTopMargin(), "", TextStyle.TOOLTIP_CONTENT);
-    this.errorMessage.setColor(this.getTextColor(TextStyle.SUMMARY_PINK));
-    this.errorMessage.setShadowColor(this.getTextColor(TextStyle.SUMMARY_PINK, true));
-    this.errorMessage.setVisible(false);
-    this.modalContainer.add(this.errorMessage);
   }
 
   show(args: any[]): boolean {
