@@ -165,4 +165,22 @@ describe("Abilities - Sap Sipper", () => {
     expect(initialEnemyHp - enemyPokemon.hp).toBe(0);
     expect(enemyPokemon.getStatStage(Stat.ATK)).toBe(1);
   });
+
+  it("still activates regardless of accuracy check", async () => {
+    game.override.moveset(Moves.LEAF_BLADE);
+    game.override.enemyMoveset(Moves.SPLASH);
+    game.override.enemySpecies(Species.MAGIKARP);
+    game.override.enemyAbility(Abilities.SAP_SIPPER);
+
+    await game.classicMode.startBattle();
+
+    const enemyPokemon = game.scene.getEnemyPokemon()!;
+
+    game.move.select(Moves.LEAF_BLADE);
+    await game.phaseInterceptor.to("MoveEffectPhase");
+
+    await game.move.forceMiss();
+    await game.phaseInterceptor.to("BerryPhase", false);
+    expect(enemyPokemon.getStatStage(Stat.ATK)).toBe(1);
+  });
 });

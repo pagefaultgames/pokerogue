@@ -1,0 +1,33 @@
+{
+  "intro": "Você encontrou algumas\nferramentas e suprimentos de treinamento.",
+  "title": "Sessão de Treinamento",
+  "description": "Esses suprimentos parecem que poderiam ser usados para treinar um membro do seu time! Há algumas maneiras de treinar seu Pokémon, batalhando contra ele com o resto do seu time.",
+  "query": "Como você deve treinar?",
+  "invalid_selection": "O Pokémon precisa estar saudável o suficiente.",
+  "option": {
+    "1": {
+      "label": "Treinamento Leve",
+      "tooltip": "(-) Batalha Leve\n(+) Melhorar 2 IVs Aleatórios do Pokémon",
+      "finished": "{{selectedPokemon}} retorna, sentindo-se\ncansado, mas realizado!$Seus IVs de {{stat1}} e {{stat2}} foram melhorados!"
+    },
+    "2": {
+      "label": "Treinamento Moderado",
+      "tooltip": "(-) Batalha Moderada\n(+) Mudar a Natureza do Pokémon",
+      "select_prompt": "Selecione uma nova natureza\npara treinar seu Pokémon.",
+      "finished": "{{selectedPokemon}} retorna, sentindo-se\ncansado, mas realizado!$Sua natureza foi alterada para {{nature}}!"
+    },
+    "3": {
+      "label": "Treinamento Intenso",
+      "tooltip": "(-) Batalha Rigorosa\n(+) Mudar a Habilidade do Pokémon",
+      "select_prompt": "Selecione uma nova habilidade\npara treinar seu Pokémon.",
+      "finished": "{{selectedPokemon}} retorna, sentindo-se\ncansado, mas realizado!$Sua habilidade foi alterada para {{ability}}!"
+    },
+    "4": {
+      "label": "Sair",
+      "tooltip": "(-) Sem Recompensas",
+      "selected": "Você não tem tempo para treinar.\nHora de seguir em frente."
+    },
+    "selected": "{{selectedPokemon}} atravessa\na clareira para te enfrentar..."
+  },
+  "outro": "Essa foi uma sessão de treinamento bem-sucedida!"
+}

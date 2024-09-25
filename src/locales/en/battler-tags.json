@@ -73,5 +73,6 @@
   "tarShotOnAdd": "{{pokemonNameWithAffix}} became weaker to fire!",
   "substituteOnAdd": "{{pokemonNameWithAffix}} put in a substitute!",
   "substituteOnHit": "The substitute took damage for {{pokemonNameWithAffix}}!",
-  "substituteOnRemove": "{{pokemonNameWithAffix}}'s substitute faded!"
+  "substituteOnRemove": "{{pokemonNameWithAffix}}'s substitute faded!",
+  "autotomizeOnAdd": "{{pokemonNameWithAffix}} became nimble!"
 }

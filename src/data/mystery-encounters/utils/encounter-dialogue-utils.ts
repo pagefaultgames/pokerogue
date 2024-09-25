@@ -17,7 +17,7 @@ export function getEncounterText(scene: BattleScene, keyOrString?: string, prima
     return null;
   }
 
-  let textString: string | null = getTextWithDialogueTokens(scene, keyOrString!);
+  let textString: string | null = getTextWithDialogueTokens(scene, keyOrString);
 
   // Can only color the text if a Primary Style is defined
   // primaryStyle is applied to all text that does not have its own specified style
