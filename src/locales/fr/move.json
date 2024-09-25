@@ -3129,7 +3129,7 @@
   },
   "auraWheel": {
     "name": "Roue Libre",
-    "effect": "Inflige et change en type Ténèbres"
+    "effect": "Le Pokémon libère l’énergie stockée dans ses joues pour attaquer et augmenter sa Vitesse. Le type de cette capacité change en fonction de la forme du lanceur."
   },
   "breakingSwipe": {
     "name": "Abattage",

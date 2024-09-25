@@ -8,5 +8,7 @@
   "lockRaritiesDesc": "Bloquea las rarezas de los objetos al actualizar (afecta el costo de actualización).",
   "checkTeamDesc": "Revisa tu equipo o usa un objeto que cambia de forma.",
   "rerollCost": "{{formattedMoney}} ₽",
-  "itemCost": "{{formattedMoney}} ₽"
+  "itemCost": "{{formattedMoney}} ₽",
+  "continueNextWaveButton": "Continuar",
+  "continueNextWaveDescription": "Continuar a la siguiente ronda"
 }

@@ -1,0 +1,47 @@
+{
+  "intro": "Quelqu’un à l’air très balèze s’apporche de vous…",
+  "buck": {
+    "intro_dialogue": "Oh, salut toi, je suis Cornil !$J’ai une bonne affaire à proposer\npour quelqu’un d’aussi costaud que toi !$J’ai deux Œufs de Pokémon sur moi,\net j’aimerais que quelqu’un prenne soin d’un.$Si t’arrives à me prouver que t’en est digne,\nje te donne l’Œuf le plus rare !",
+    "accept": "Hé, hé hé ! Tu mets le feu !",
+	"decline": "Hé ! Ton équipe\nn’a pas l’air au meilleur de sa forme.$Attends, laisse-moi t’aider."
+  },
+  "cheryl": {
+    "intro_dialogue": "Bonjour, mon nom est Sara.$J’ai une requête un peu particulière à proposer,\nà quelqu’un de plutôt fort comme toi.$Je porte avec moi deux Œufs de Pokémon,\nmais j’aimerais que quelqu’un prenne soin d’un.$Si tu parviens à me démontrer toute ta force,\nje te donne l’Œuf le plus rare !",
+    "accept": "On y va ?",
+    "decline": "Je peux comprendre. Il semblerait que\nton équipe ne soit pas très en forme là.$Laisse-moi m’en occuper."
+  },
+  "marley": {
+    "intro_dialogue": "Je…@d{64} je m’appelle Viviane.$Je peux te demander un truc ?…$J’ai deux Œufs de Pokémon sur moi,\net j’aimerais que quelqu’un prenne soin d’un.$Si t’arrives à me battre,\nje te donne le plus rare…",
+    "accept": "… D’accord.",
+    "decline": "… D’accord.$Tes Pokémon on l’air blessés…\nLaisse-moi les aider."
+  },
+  "mira": {
+    "intro_dialogue": "Salut ! Moi, c’est Maïté!$J’ai quelque chose\nà demander à quelqu’un de fortiche comme toi !$J’ai deux Œufs de Pokémon sur moi,\net j’aimerais que quelqu’un prenne soin d’un d’eux !$Si t’acceptes de me prouver ta force,\nje te donnerai le plus rare !",
+    "accept": "Un combat, pour de vrai ?\nOuiiiii !",
+    "decline": "Oh, pas de combat ?\nPas grave !$Je vais quand même soigner ton équipe !"
+  },
+  "riley": {
+    "intro_dialogue": "Enchanté, je m’appelle Armand.$J’ai une proposition un peu étrange\npour une personne de ton calibre.$Je porte deux Œufs de Pokémon avec moi\nmais j’aimerais en donner un à quelqu’un d’autre.$Si tu prouves en être digne,\nje te donnerai le plus rare !",
+    "accept": "Ce regard…\nBattons-nous.",
+    "decline": "Je comprends, ton équipe m’a l’air lessivée.$Laisse-moi t’aider."
+  },
+  "title": "Prouver sa valeur",
+  "description": "Cette personne semble déterminée à vous donner un Œuf, qu’importe votre décision. Cependant, si vous parvenez à la battre, vous recevrez l’Œuf le plus rare.",
+  "query": "Que voulez-vous faire ?",
+  "option": {
+    "1": {
+      "label": "Accepter le défi",
+      "tooltip": "(-) Combat difficile\n(+) Gain d’un @[TOOLTIP_TITLE]{Œuf très rare}"
+    },
+    "2": {
+      "label": "Décliner le défi",
+      "tooltip": "(+) Équipe soignée \n(+) Gain d’un @[TOOLTIP_TITLE]{Œuf}"
+    }
+  },
+  "eggTypes": {
+    "rare": "Œuf Rare",
+    "epic": "Œuf Épique",
+    "legendary": "Œuf Légendaire"
+  },
+  "outro": "{{statTrainerName}} vous donne un {{eggType}} !"
+}

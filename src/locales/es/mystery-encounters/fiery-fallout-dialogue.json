@@ -1,0 +1,26 @@
+{
+  "intro": "¡Te encuentras con una tormenta abrasadora de humo y ceniza!",
+  "title": "¡Pasión Ardiente!",
+  "description": "La ceniza y las brasas han reducido la visibilidad a casi cero. Parece que podría haber alguna… fuente que esté causando estas condiciones. Pero, ¿qué podría estar detrás de un fenómeno de esta magnitud?",
+  "query": "¿Qué harás?",
+  "option": {
+    "1": {
+      "label": "Encontrar la causa",
+      "tooltip": "(?) Encunetra la causa\n(-) Batalla Difícil",
+      "selected": "¡Empujas a través de la tormenta y encuentras a dos {{volcaronaName}}s en medio de una danza de apareamiento!$¡No toman bien la interrupción y atacan!"
+    },
+    "2": {
+      "label": "Refugiarse",
+      "tooltip": "(-) Sufre los efectos del clima",
+      "selected": "Los efectos del clima causan un daño significativo mientras luchas por encontrar refugio. ¡Tu grupo pierde el 20% de su HP máximo!",
+      "target_burned": "¡Tu {{burnedPokemon}} también acabo quemándose!"
+    },
+    "3": {
+      "label": "Tus tipos de fuego ayudan",
+      "tooltip": "(+) Paras las condiciones del clima\n(+) Obtén un Carbón",
+      "disabled_tooltip": "Necesitas al menos 2 Pokémon de tipo Fuego para elegir esto",
+      "selected": "Tus {{option3PrimaryName}} y {{option3SecondaryName}} te guían hasta donde dos {{volcaronaName}}s están en medio de una danza de apareamiento.$Afortunadamente, tus Pokémon logran calmarlos y se van sin problemas."
+    }
+  },
+  "found_charcoal": "Después de que el clima se despeja,\ntu {{leadPokemon}} ve algo en el suelo. $¡@s{item_fanfare}{{leadPokemon}} obtuvo un Carbón!"
+}

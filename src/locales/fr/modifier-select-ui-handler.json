@@ -8,5 +8,7 @@
   "lockRaritiesDesc": "Assure la relance de proposer des objets gratuits de rareté égale ou supérieure. Affecte le cout de relance.",
   "checkTeamDesc": "Consulter votre équipe ou utiliser un objet\nde changement de forme.",
   "rerollCost": "{{formattedMoney}} ₽",
-  "itemCost": "{{formattedMoney}} ₽"
+  "itemCost": "{{formattedMoney}} ₽",
+  "continueNextWaveButton": "Continuer",
+  "continueNextWaveDescription": "Continuer vers la prochaine vague"
 }

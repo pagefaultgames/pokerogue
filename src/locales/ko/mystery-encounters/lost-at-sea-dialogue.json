@@ -1,0 +1,28 @@
+{
+  "intro": "정처 없이 바다를 헤메었지만,\n당신은 아무런 성과도 거두지 못했습니다.",
+  "title": "바다 위의 표류",
+  "description": "이 지역의 바다는 꽤 사나운 편입니다.\n게다가 당신의 기력은 점점 떨어지고 있습니다.\n난감한 상황입니다.\n이 상황을 벗어날 수 있는 방법이 있을까요?",
+  "query": "어떻게 하시겠습니까?",
+  "option": {
+    "1": {
+      "label": "{{option1PrimaryName}}의 도움",
+      "label_disabled": "{{option1RequiredMove}} 사용 불가",
+      "tooltip": "(+) {{option1PrimaryName}}[[가]] 당신을 구함\n(+) {{option1PrimaryName}} 경험치 획득",
+      "tooltip_disabled": "{{option1RequiredMove}}[[를]] 사용할 수 있는 포켓몬이 없다.",
+      "selected": "{{option1PrimaryName}}[[가]] 앞장서 헤엄치며, 돌아가는 길을 안내했다.${{option1PrimaryName}} 역시 이번 기회로 더 강해진 것 같다!"
+    },
+    "2": {
+      "label": "{{option2PrimaryName}}의 도움",
+      "label_disabled": "{{option2RequiredMove}} 사용 불가",
+      "tooltip": "(+) {{option2PrimaryName}}[[가]] 당신을 구함\n(+) {{option2PrimaryName}} 경험치 획득",
+      "tooltip_disabled": "{{option2RequiredMove}}[[를]] 사용할 수 있는 포켓몬이 없다.",
+      "selected": "{{option2PrimaryName}}[[가]] 보트 앞에서 날아가며, 돌아가는 길을 안내했다.${{option2PrimaryName}} 역시 이번 기회로 더 강해진 것 같다!"
+    },
+    "3": {
+      "label": "정처 없이 방황한다",
+      "tooltip": "(-) 모든 포켓몬 HP {{damagePercentage}}% 감소",
+      "selected": "마침내 기억하는 곳에 다다를 때까지\n정처 없이 배를 타고 떠돌아다닌다.$길고 긴 표류에 포켓몬과 당신 모두 지쳐버렸다."
+    }
+  },
+  "outro": "다시 여정으로 돌아왔다."
+}
