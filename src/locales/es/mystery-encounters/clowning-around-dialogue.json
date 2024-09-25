@@ -13,7 +13,7 @@
       "apply_ability_dialogue": "¡Una exhibición sensacional! ¡Tu astucia es digna de una habilidad especial como recompensa!",
       "apply_ability_message": "¡El payaso está ofreciendo intercambiar permanentemente la habilidad de uno de tus Pokémon por {{ability}}!",
       "ability_prompt": "¿Te gustaría enseñar permanentemente a un Pokémon la habilidad {{ability}}?",
-      "ability_gained": "¡@s{level_up_fanfare}{{chosenPokemon}} obtenió la habilidad {{ability}}!"
+      "ability_gained": "¡@s{level_up_fanfare}{{chosenPokemon}} obtuvo la habilidad {{ability}}!"
     },
     "2": {
       "label": "No involucrarse",
