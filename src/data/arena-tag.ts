@@ -928,7 +928,7 @@ class SafeguardTag extends ArenaTag {
 class ImprisonTag extends ArenaTrapTag {
   private source: Pokemon;
 
-  constructor(sourceId: integer, side: ArenaTagSide) {
+  constructor(sourceId: number, side: ArenaTagSide) {
     super(ArenaTagType.IMPRISON, Moves.IMPRISON, sourceId, side, 1);
   }
 
