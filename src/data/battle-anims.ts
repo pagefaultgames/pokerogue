@@ -430,7 +430,7 @@ class AnimTimedAddBgEvent extends AnimTimedBgEvent {
     scene.field.add(moveAnim.bgSprite);
     const fieldPokemon = scene.getNonSwitchedEnemyPokemon() || scene.getNonSwitchedPlayerPokemon();
     if (!isNullOrUndefined(priority)) {
-      scene.field.moveTo(moveAnim.bgSprite as Phaser.GameObjects.GameObject, priority!);
+      scene.field.moveTo(moveAnim.bgSprite as Phaser.GameObjects.GameObject, priority);
     } else if (fieldPokemon?.isOnField()) {
       scene.field.moveBelow(moveAnim.bgSprite as Phaser.GameObjects.GameObject, fieldPokemon);
     }

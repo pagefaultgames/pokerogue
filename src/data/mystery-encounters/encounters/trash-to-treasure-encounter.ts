@@ -16,13 +16,15 @@ import { getPokemonSpecies } from "#app/data/pokemon-species";
 import { Moves } from "#enums/moves";
 import { BattlerIndex } from "#app/battle";
 import { PokemonMove } from "#app/field/pokemon";
-import { ModifierRewardPhase } from "#app/phases/modifier-reward-phase";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
 
 /** the i18n namespace for this encounter */
 const namespace = "mysteryEncounter:trashToTreasure";
 
 const SOUND_EFFECT_WAIT_TIME = 700;
+
+// Items will cost 2.5x as much for remainder of the run
+const SHOP_ITEM_COST_MULTIPLIER = 2.5;
 
 /**
  * Trash to Treasure encounter.
@@ -79,6 +81,8 @@ export const TrashToTreasureEncounter: MysteryEncounter =
       scene.loadSe("PRSFX- Dig2", "battle_anims", "PRSFX- Dig2.wav");
       scene.loadSe("PRSFX- Venom Drench", "battle_anims", "PRSFX- Venom Drench.wav");
 
+      encounter.setDialogueToken("costMultiplier", SHOP_ITEM_COST_MULTIPLIER.toString());
+
       return true;
     })
     .withOption(
@@ -102,8 +106,14 @@ export const TrashToTreasureEncounter: MysteryEncounter =
           transitionMysteryEncounterIntroVisuals(scene);
           await tryApplyDigRewardItems(scene);
 
-          // Give the player the Black Sludge curse
-          scene.unshiftPhase(new ModifierRewardPhase(scene, modifierTypes.MYSTERY_ENCOUNTER_BLACK_SLUDGE));
+          const blackSludge = generateModifierType(scene, modifierTypes.MYSTERY_ENCOUNTER_BLACK_SLUDGE, [SHOP_ITEM_COST_MULTIPLIER]);
+          const modifier = blackSludge?.newModifier();
+          if (modifier) {
+            await scene.addModifier(modifier, false, false, false, true);
+            scene.playSound("battle_anims/PRSFX- Venom Drench", { volume: 2 });
+            await showEncounterText(scene, i18next.t("battle:rewardGain", { modifierName: modifier.type.name }), null, undefined, true);
+          }
+
           leaveEncounterWithoutBattle(scene, true);
         })
         .build()
@@ -180,7 +190,7 @@ async function tryApplyDigRewardItems(scene: BattleScene) {
   }
 
   scene.playSound("item_fanfare");
-  await showEncounterText(scene, i18next.t("battle:rewardGain", { modifierName: "2 " + leftovers.name }), null, undefined, true);
+  await showEncounterText(scene, i18next.t("battle:rewardGain", { modifierName: "2x " + leftovers.name }), null, undefined, true);
 
   // First Shell bell
   for (const pokemon of party) {
@@ -207,7 +217,7 @@ async function tryApplyDigRewardItems(scene: BattleScene) {
   }
 
   scene.playSound("item_fanfare");
-  await showEncounterText(scene, i18next.t("battle:rewardGain", { modifierName: "2 " + shellBell.name }), null, undefined, true);
+  await showEncounterText(scene, i18next.t("battle:rewardGain", { modifierName: "2x " + shellBell.name }), null, undefined, true);
 }
 
 async function doGarbageDig(scene: BattleScene) {
