@@ -10,10 +10,10 @@ import { SwitchSummonPhase } from "./switch-summon-phase";
  * for the player (if a switch would be valid for the current battle state).
  */
 export class SwitchPhase extends BattlePhase {
-  protected fieldIndex: integer;
-  private switchType: SwitchType;
-  private isModal: boolean;
-  private doReturn: boolean;
+  protected readonly fieldIndex: integer;
+  private readonly switchType: SwitchType;
+  private readonly isModal: boolean;
+  private readonly doReturn: boolean;
 
   /**
      * Creates a new SwitchPhase

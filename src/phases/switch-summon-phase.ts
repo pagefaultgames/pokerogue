@@ -15,9 +15,9 @@ import { SubstituteTag } from "#app/data/battler-tags";
 import { SwitchType } from "#enums/switch-type";
 
 export class SwitchSummonPhase extends SummonPhase {
-  private switchType: SwitchType;
-  private slotIndex: integer;
-  private doReturn: boolean;
+  private readonly switchType: SwitchType;
+  private readonly slotIndex: integer;
+  private readonly doReturn: boolean;
 
   private lastPokemon: Pokemon;
 
