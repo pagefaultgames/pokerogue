@@ -5,7 +5,6 @@ import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import { SPLASH_ONLY } from "#test/utils/testUtils";
 import { TurnInitPhase } from "#app/phases/turn-init-phase";
 
 describe("Moves - Haze", () => {
@@ -28,7 +27,7 @@ describe("Moves - Haze", () => {
 
       game.override.enemySpecies(Species.RATTATA);
       game.override.enemyLevel(100);
-      game.override.enemyMoveset(SPLASH_ONLY);
+      game.override.enemyMoveset(Moves.SPLASH);
       game.override.enemyAbility(Abilities.NONE);
 
       game.override.startingLevel(100);
@@ -36,7 +35,7 @@ describe("Moves - Haze", () => {
       game.override.ability(Abilities.NONE);
     });
 
-    it("should reset all stat changes of all Pokemon on field", { timeout: 10000 }, async () => {
+    it("should reset all stat changes of all Pokemon on field", async () => {
       await game.startBattle([Species.RATTATA]);
       const user = game.scene.getPlayerPokemon()!;
       const enemy = game.scene.getEnemyPokemon()!;

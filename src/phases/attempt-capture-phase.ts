@@ -15,6 +15,7 @@ import { Mode } from "#app/ui/ui";
 import i18next from "i18next";
 import { PokemonPhase } from "./pokemon-phase";
 import { VictoryPhase } from "./victory-phase";
+import { SubstituteTag } from "#app/data/battler-tags";
 
 export class AttemptCapturePhase extends PokemonPhase {
   private pokeballType: PokeballType;
@@ -34,6 +35,11 @@ export class AttemptCapturePhase extends PokemonPhase {
 
     if (!pokemon?.hp) {
       return this.end();
+    }
+
+    const substitute = pokemon.getTag(SubstituteTag);
+    if (substitute) {
+      substitute.sprite.setVisible(false);
     }
 
     this.scene.pokeballCounts[this.pokeballType]--;
@@ -165,6 +171,11 @@ export class AttemptCapturePhase extends PokemonPhase {
     pokemon.setVisible(true);
     pokemon.untint(250, "Sine.easeOut");
 
+    const substitute = pokemon.getTag(SubstituteTag);
+    if (substitute) {
+      substitute.sprite.setVisible(true);
+    }
+
     const pokeballAtlasKey = getPokeballAtlasKey(this.pokeballType);
     this.pokeball.setTexture("pb", `${pokeballAtlasKey}_opening`);
     this.scene.time.delayedCall(17, () => this.pokeball.setTexture("pb", `${pokeballAtlasKey}_open`));
@@ -221,8 +232,8 @@ export class AttemptCapturePhase extends PokemonPhase {
         this.scene.clearEnemyHeldItemModifiers();
         this.scene.field.remove(pokemon, true);
       };
-      const addToParty = () => {
-        const newPokemon = pokemon.addToParty(this.pokeballType);
+      const addToParty = (slotIndex?: number) => {
+        const newPokemon = pokemon.addToParty(this.pokeballType, slotIndex);
         const modifiers = this.scene.findModifiers(m => m instanceof PokemonHeldItemModifier, false);
         if (this.scene.getParty().filter(p => p.isShiny()).length === 6) {
           this.scene.validateAchv(achvs.SHINY_PARTY);
@@ -253,7 +264,7 @@ export class AttemptCapturePhase extends PokemonPhase {
                 this.scene.ui.setMode(Mode.PARTY, PartyUiMode.RELEASE, this.fieldIndex, (slotIndex: integer, _option: PartyOption) => {
                   this.scene.ui.setMode(Mode.MESSAGE).then(() => {
                     if (slotIndex < 6) {
-                      addToParty();
+                      addToParty(slotIndex);
                     } else {
                       promptRelease();
                     }

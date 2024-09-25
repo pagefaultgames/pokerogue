@@ -837,11 +837,15 @@ export const trainerTypeDialogue: TrainerTypeDialogue = {
         "dialogue:macro_grunt.encounter.1",
         "dialogue:macro_grunt.encounter.2",
         "dialogue:macro_grunt.encounter.3",
+        "dialogue:macro_grunt.encounter.4",
+        "dialogue:macro_grunt.encounter.5",
       ],
       victory: [
         "dialogue:macro_grunt.victory.1",
         "dialogue:macro_grunt.victory.2",
         "dialogue:macro_grunt.victory.3",
+        "dialogue:macro_grunt.victory.4",
+        "dialogue:macro_grunt.victory.5",
       ]
     }
   ],
@@ -856,6 +860,84 @@ export const trainerTypeDialogue: TrainerTypeDialogue = {
         "dialogue:oleana.victory.1",
         "dialogue:oleana.victory.2",
         "dialogue:oleana.victory.3",
+      ]
+    }
+  ],
+  [TrainerType.STAR_GRUNT]: [
+    {
+      encounter: [
+        "dialogue:star_grunt.encounter.1",
+        "dialogue:star_grunt.encounter.2",
+        "dialogue:star_grunt.encounter.3",
+        "dialogue:star_grunt.encounter.4",
+        "dialogue:star_grunt.encounter.5",
+      ],
+      victory: [
+        "dialogue:star_grunt.victory.1",
+        "dialogue:star_grunt.victory.2",
+        "dialogue:star_grunt.victory.3",
+        "dialogue:star_grunt.victory.4",
+        "dialogue:star_grunt.victory.5",
+      ]
+    }
+  ],
+  [TrainerType.GIACOMO]: [
+    {
+      encounter: [
+        "dialogue:giacomo.encounter.1",
+        "dialogue:giacomo.encounter.2",
+      ],
+      victory: [
+        "dialogue:giacomo.victory.1",
+        "dialogue:giacomo.victory.2",
+      ]
+    }
+  ],
+  [TrainerType.MELA]: [
+    {
+      encounter: [
+        "dialogue:mela.encounter.1",
+        "dialogue:mela.encounter.2",
+      ],
+      victory: [
+        "dialogue:mela.victory.1",
+        "dialogue:mela.victory.2",
+      ]
+    }
+  ],
+  [TrainerType.ATTICUS]: [
+    {
+      encounter: [
+        "dialogue:atticus.encounter.1",
+        "dialogue:atticus.encounter.2",
+      ],
+      victory: [
+        "dialogue:atticus.victory.1",
+        "dialogue:atticus.victory.2",
+      ]
+    }
+  ],
+  [TrainerType.ORTEGA]: [
+    {
+      encounter: [
+        "dialogue:ortega.encounter.1",
+        "dialogue:ortega.encounter.2",
+      ],
+      victory: [
+        "dialogue:ortega.victory.1",
+        "dialogue:ortega.victory.2",
+      ]
+    }
+  ],
+  [TrainerType.ERI]: [
+    {
+      encounter: [
+        "dialogue:eri.encounter.1",
+        "dialogue:eri.encounter.2",
+      ],
+      victory: [
+        "dialogue:eri.victory.1",
+        "dialogue:eri.victory.2",
       ]
     }
   ],
@@ -1091,6 +1173,162 @@ export const trainerTypeDialogue: TrainerTypeDialogue = {
       defeat: [
         "dialogue:macro_boss_rose_2.defeat.1"
       ]
+    }
+  ],
+  [TrainerType.PENNY]: [
+    {
+      encounter: [
+        "dialogue:star_boss_penny_1.encounter.1"
+      ],
+      victory: [
+        "dialogue:star_boss_penny_1.victory.1"
+      ],
+      defeat: [
+        "dialogue:star_boss_penny_1.defeat.1"
+      ]
+    }
+  ],
+  [TrainerType.PENNY_2]: [
+    {
+      encounter: [
+        "dialogue:star_boss_penny_2.encounter.1"
+      ],
+      victory: [
+        "dialogue:star_boss_penny_2.victory.1"
+      ],
+      defeat: [
+        "dialogue:star_boss_penny_2.defeat.1"
+      ]
+    }
+  ],
+  [TrainerType.BUCK]: [
+    {
+      encounter: [
+        "dialogue:stat_trainer_buck.encounter.1",
+        "dialogue:stat_trainer_buck.encounter.2"
+      ],
+      victory: [
+        "dialogue:stat_trainer_buck.victory.1",
+        "dialogue:stat_trainer_buck.victory.2"
+      ],
+      defeat: [
+        "dialogue:stat_trainer_buck.defeat.1",
+        "dialogue:stat_trainer_buck.defeat.2"
+      ]
+    }
+  ],
+  [TrainerType.CHERYL]: [
+    {
+      encounter: [
+        "dialogue:stat_trainer_cheryl.encounter.1",
+        "dialogue:stat_trainer_cheryl.encounter.2"
+      ],
+      victory: [
+        "dialogue:stat_trainer_cheryl.victory.1",
+        "dialogue:stat_trainer_cheryl.victory.2"
+      ],
+      defeat: [
+        "dialogue:stat_trainer_cheryl.defeat.1",
+        "dialogue:stat_trainer_cheryl.defeat.2"
+      ]
+    }
+  ],
+  [TrainerType.MARLEY]: [
+    {
+      encounter: [
+        "dialogue:stat_trainer_marley.encounter.1",
+        "dialogue:stat_trainer_marley.encounter.2"
+      ],
+      victory: [
+        "dialogue:stat_trainer_marley.victory.1",
+        "dialogue:stat_trainer_marley.victory.2"
+      ],
+      defeat: [
+        "dialogue:stat_trainer_marley.defeat.1",
+        "dialogue:stat_trainer_marley.defeat.2"
+      ]
+    }
+  ],
+  [TrainerType.MIRA]: [
+    {
+      encounter: [
+        "dialogue:stat_trainer_mira.encounter.1",
+        "dialogue:stat_trainer_mira.encounter.2"
+      ],
+      victory: [
+        "dialogue:stat_trainer_mira.victory.1",
+        "dialogue:stat_trainer_mira.victory.2"
+      ],
+      defeat: [
+        "dialogue:stat_trainer_mira.defeat.1",
+        "dialogue:stat_trainer_mira.defeat.2"
+      ]
+    }
+  ],
+  [TrainerType.RILEY]: [
+    {
+      encounter: [
+        "dialogue:stat_trainer_riley.encounter.1",
+        "dialogue:stat_trainer_riley.encounter.2"
+      ],
+      victory: [
+        "dialogue:stat_trainer_riley.victory.1",
+        "dialogue:stat_trainer_riley.victory.2"
+      ],
+      defeat: [
+        "dialogue:stat_trainer_riley.defeat.1",
+        "dialogue:stat_trainer_riley.defeat.2"
+      ]
+    }
+  ],
+  [TrainerType.VICTOR]: [
+    {
+      encounter: [
+        "dialogue:winstrates_victor.encounter.1",
+      ],
+      victory: [
+        "dialogue:winstrates_victor.victory.1"
+      ],
+    }
+  ],
+  [TrainerType.VICTORIA]: [
+    {
+      encounter: [
+        "dialogue:winstrates_victoria.encounter.1",
+      ],
+      victory: [
+        "dialogue:winstrates_victoria.victory.1"
+      ],
+    }
+  ],
+  [TrainerType.VIVI]: [
+    {
+      encounter: [
+        "dialogue:winstrates_vivi.encounter.1",
+      ],
+      victory: [
+        "dialogue:winstrates_vivi.victory.1"
+      ],
+    }
+  ],
+  [TrainerType.VICKY]: [
+    {
+      encounter: [
+        "dialogue:winstrates_vicky.encounter.1",
+      ],
+      victory: [
+        "dialogue:winstrates_vicky.victory.1"
+      ],
+    }
+  ],
+  [TrainerType.VITO]: [
+    {
+      encounter: [
+        "dialogue:winstrates_vito.encounter.1",
+      ],
+      victory: [
+        "dialogue:winstrates_vito.victory.1"
+      ],
     }
   ],
   [TrainerType.BROCK]: {
@@ -1569,8 +1807,7 @@ export const trainerTypeDialogue: TrainerTypeDialogue = {
       "dialogue:roark.victory.1",
       "dialogue:roark.victory.2",
       "dialogue:roark.victory.3",
-      "dialogue:roark.victory.4",
-      "dialogue:roark.victory.5"
+      "dialogue:roark.victory.4"
     ],
     defeat: [
       "dialogue:roark.defeat.1",

@@ -6,9 +6,8 @@ import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/utils/gameManager";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import { SPLASH_ONLY } from "../utils/testUtils";
 
-const TIMEOUT = 20 * 1000;
+
 
 describe("Abilities - ZERO TO HERO", () => {
   let phaserGame: Phaser.Game;
@@ -30,8 +29,8 @@ describe("Abilities - ZERO TO HERO", () => {
     game = new GameManager(phaserGame);
     game.override
       .battleType("single")
-      .moveset(SPLASH_ONLY)
-      .enemyMoveset(SPLASH_ONLY)
+      .moveset(Moves.SPLASH)
+      .enemyMoveset(Moves.SPLASH)
       .enemyAbility(Abilities.BALL_FETCH);
   });
 
@@ -60,7 +59,7 @@ describe("Abilities - ZERO TO HERO", () => {
 
     expect(palafin1.formIndex).toBe(baseForm);
     expect(palafin2.formIndex).toBe(baseForm);
-  }, TIMEOUT);
+  });
 
   it("should swap to Hero form when switching out during a battle", async () => {
     await game.startBattle([Species.PALAFIN, Species.FEEBAS]);
@@ -71,7 +70,7 @@ describe("Abilities - ZERO TO HERO", () => {
     game.doSwitchPokemon(1);
     await game.phaseInterceptor.to(QuietFormChangePhase);
     expect(palafin.formIndex).toBe(heroForm);
-  }, TIMEOUT);
+  });
 
   it("should not swap to Hero form if switching due to faint", async () => {
     await game.startBattle([Species.PALAFIN, Species.FEEBAS]);
@@ -84,7 +83,7 @@ describe("Abilities - ZERO TO HERO", () => {
     game.doSelectPartyPokemon(1);
     await game.toNextTurn();
     expect(palafin.formIndex).toBe(baseForm);
-  }, TIMEOUT);
+  });
 
   it("should stay hero form if fainted and then revived", async () => {
     game.override.starterForms({
@@ -106,5 +105,5 @@ describe("Abilities - ZERO TO HERO", () => {
     await game.toNextTurn();
 
     expect(palafin.formIndex).toBe(heroForm);
-  }, TIMEOUT);
+  });
 });

@@ -4,7 +4,7 @@
   "trainerAppearedDouble": "{{trainerName}}が\n勝負を しかけてきた！",
   "trainerSendOut": "{{trainerName}}は\n{{pokemonName}}を　繰り出した！",
   "singleWildAppeared": "あっ！　野生の　{{pokemonName}}が　飛び出してきた！",
-  "multiWildAppeared": "あっ！　野生の {{pokemonName1}}と\n{{pokemonName2}}が 飛び出してきた！",
+  "multiWildAppeared": "あっ！　野生の {{pokemonName1}}と\n{{pokemonName2}}が　飛び出してきた！",
   "playerComeBack": "{{pokemonName}}!　戻れ！",
   "trainerComeBack": "{{trainerName}}は\n{{pokemonName}}を 引っ込めた！",
   "playerGo": "ゆけっ！ {{pokemonName}}！",
@@ -51,7 +51,7 @@
   "noPokeballStrong": "相手の　ポケモンが　強すぎて　捕まえられない！\nまずは　弱めよう！",
   "noEscapeForce": "見えない　力の　せいで\n逃げることが できない！",
   "noEscapeTrainer": "ダメだ！　勝負の最中に\n相手に　背中を　見せられない！",
-  "noEscapePokemon": "{{pokemonName}}の　{{moveName}}で　{{escapeVerb}}!",
+  "noEscapePokemon": "{{pokemonName}}の　{{moveName}}で\n{{escapeVerb}}!",
   "runAwaySuccess": " うまく　逃げ切れた！",
   "runAwayCannotEscape": "逃げることが　できない！",
   "escapeVerbSwitch": "入れ替えることが　できない",
@@ -62,6 +62,7 @@
   "skipItemQuestion": "本当に　アイテムを　取らずに　進みますか？",
   "itemStackFull": "{{fullItemName}}の　スタックが　いっぱいです。\n代わりに　{{itemName}}を　取得します。",
   "eggHatching": "おや？",
+  "eggSkipPrompt": "タマゴは　ふかします！\nタマゴまとめに　飛ばしますか？",										  
   "ivScannerUseQuestion": "{{pokemonName}}を\n個体値スキャナーで　操作しますか?",
   "wildPokemonWithAffix": "野生の　{{pokemonName}}",
   "foePokemonWithAffix": "相手の　{{pokemonName}}",
@@ -95,5 +96,6 @@
   "unlockedSomething": "{{unlockedThing}}\nを　アンロックした！",
   "congratulations": "おめでとうございます！！",
   "beatModeFirstTime": "初めて　{{speciesName}}が　{{gameMode}}モードを　クリアした!\n{{newModifier}}を　手に入れた!",
-  "ppReduced": "{{targetName}}の　{{moveName}}を　{{reduction}}削った!"
+  "ppReduced": "{{targetName}}の　{{moveName}}を　{{reduction}}削った!",
+  "mysteryEncounterAppeared": "あれ？"
 }

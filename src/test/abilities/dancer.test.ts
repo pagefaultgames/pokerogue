@@ -7,7 +7,7 @@ import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
-const TIMEOUT = 20 * 1000;
+
 
 describe("Abilities - Dancer", () => {
   let phaserGame: Phaser.Game;
@@ -30,7 +30,7 @@ describe("Abilities - Dancer", () => {
       .moveset([Moves.SWORDS_DANCE, Moves.SPLASH])
       .enemySpecies(Species.MAGIKARP)
       .enemyAbility(Abilities.DANCER)
-      .enemyMoveset(Array(4).fill(Moves.VICTORY_DANCE));
+      .enemyMoveset([Moves.VICTORY_DANCE]);
   });
 
   // Reference Link: https://bulbapedia.bulbagarden.net/wiki/Dancer_(Ability)
@@ -60,5 +60,5 @@ describe("Abilities - Dancer", () => {
 
     // doesn't use PP if copied move is also in moveset
     expect(oricorio.moveset[0]?.ppUsed).toBe(0);
-  }, TIMEOUT);
+  });
 });

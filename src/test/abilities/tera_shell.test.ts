@@ -6,8 +6,6 @@ import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
-const TIMEOUT = 10 * 1000; // 10 second timeout
-
 describe("Abilities - Tera Shell", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
@@ -30,7 +28,7 @@ describe("Abilities - Tera Shell", () => {
       .moveset([Moves.SPLASH])
       .enemySpecies(Species.SNORLAX)
       .enemyAbility(Abilities.INSOMNIA)
-      .enemyMoveset(Array(4).fill(Moves.MACH_PUNCH))
+      .enemyMoveset([Moves.MACH_PUNCH])
       .startingLevel(100)
       .enemyLevel(100);
   });
@@ -54,13 +52,13 @@ describe("Abilities - Tera Shell", () => {
 
       await game.phaseInterceptor.to("MoveEndPhase");
       expect(playerPokemon.getMoveEffectiveness).toHaveLastReturnedWith(2);
-    }, TIMEOUT
+    }
   );
 
   it(
     "should not override type immunities",
     async () => {
-      game.override.enemyMoveset(Array(4).fill(Moves.SHADOW_SNEAK));
+      game.override.enemyMoveset([Moves.SHADOW_SNEAK]);
 
       await game.classicMode.startBattle([Species.SNORLAX]);
 
@@ -71,13 +69,13 @@ describe("Abilities - Tera Shell", () => {
 
       await game.phaseInterceptor.to("MoveEndPhase");
       expect(playerPokemon.getMoveEffectiveness).toHaveLastReturnedWith(0);
-    }, TIMEOUT
+    }
   );
 
   it(
     "should not override type multipliers less than 0.5x",
     async () => {
-      game.override.enemyMoveset(Array(4).fill(Moves.QUICK_ATTACK));
+      game.override.enemyMoveset([Moves.QUICK_ATTACK]);
 
       await game.classicMode.startBattle([Species.AGGRON]);
 
@@ -88,13 +86,13 @@ describe("Abilities - Tera Shell", () => {
 
       await game.phaseInterceptor.to("MoveEndPhase");
       expect(playerPokemon.getMoveEffectiveness).toHaveLastReturnedWith(0.25);
-    }, TIMEOUT
+    }
   );
 
   it(
     "should not affect the effectiveness of fixed-damage moves",
     async () => {
-      game.override.enemyMoveset(Array(4).fill(Moves.DRAGON_RAGE));
+      game.override.enemyMoveset([Moves.DRAGON_RAGE]);
 
       await game.classicMode.startBattle([Species.CHARIZARD]);
 
@@ -106,6 +104,6 @@ describe("Abilities - Tera Shell", () => {
       await game.phaseInterceptor.to("BerryPhase", false);
       expect(playerPokemon.apply).toHaveLastReturnedWith(HitResult.EFFECTIVE);
       expect(playerPokemon.hp).toBe(playerPokemon.getMaxHp() - 40);
-    }, TIMEOUT
+    }
   );
 });

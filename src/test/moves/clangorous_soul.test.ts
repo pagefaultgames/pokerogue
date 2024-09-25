@@ -5,9 +5,8 @@ import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import { Stat } from "#enums/stat";
-import { SPLASH_ONLY } from "#test/utils/testUtils";
 
-const TIMEOUT = 20 * 1000;
+
 /** HP Cost of Move */
 const RATIO = 3;
 /** Amount of extra HP lost */
@@ -34,7 +33,7 @@ describe("Moves - Clangorous Soul", () => {
     game.override.startingLevel(100);
     game.override.enemyLevel(100);
     game.override.moveset([Moves.CLANGOROUS_SOUL]);
-    game.override.enemyMoveset(SPLASH_ONLY);
+    game.override.enemyMoveset(Moves.SPLASH);
   });
 
   //Bulbapedia Reference: https://bulbapedia.bulbagarden.net/wiki/Clangorous_Soul_(move)
@@ -55,7 +54,7 @@ describe("Moves - Clangorous Soul", () => {
       expect(leadPokemon.getStatStage(Stat.SPATK)).toBe(1);
       expect(leadPokemon.getStatStage(Stat.SPDEF)).toBe(1);
       expect(leadPokemon.getStatStage(Stat.SPD)).toBe(1);
-    }, TIMEOUT
+    }
   );
 
   it("will still take effect if one or more of the involved stat stages are not at max",
@@ -80,7 +79,7 @@ describe("Moves - Clangorous Soul", () => {
       expect(leadPokemon.getStatStage(Stat.SPATK)).toBe(6);
       expect(leadPokemon.getStatStage(Stat.SPDEF)).toBe(5);
       expect(leadPokemon.getStatStage(Stat.SPD)).toBe(1);
-    }, TIMEOUT
+    }
   );
 
   it("fails if all stat stages involved are at max",
@@ -104,7 +103,7 @@ describe("Moves - Clangorous Soul", () => {
       expect(leadPokemon.getStatStage(Stat.SPATK)).toBe(6);
       expect(leadPokemon.getStatStage(Stat.SPDEF)).toBe(6);
       expect(leadPokemon.getStatStage(Stat.SPD)).toBe(6);
-    }, TIMEOUT
+    }
   );
 
   it("fails if the user's health is less than 1/3",
@@ -124,6 +123,6 @@ describe("Moves - Clangorous Soul", () => {
       expect(leadPokemon.getStatStage(Stat.SPATK)).toBe(0);
       expect(leadPokemon.getStatStage(Stat.SPDEF)).toBe(0);
       expect(leadPokemon.getStatStage(Stat.SPD)).toBe(0);
-    }, TIMEOUT
+    }
   );
 });

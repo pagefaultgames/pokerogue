@@ -1,5 +1,5 @@
 {
-  "battlesWon": "Batalhas Ganhas!",
+  "battlesWon": "{{count, number}} Batalhas Ganhas!",
   "joinTheDiscord": "Junte-se ao Discord!",
   "infiniteLevels": "Níveis Infinitos!",
   "everythingStacks": "Tudo Acumula!",
@@ -32,5 +32,5 @@
   "alsoTryRadicalRed": "Também Jogue Radical Red!",
   "eeveeExpo": "Eevee Expo!",
   "ynoproject": "YNOproject!",
-  "breedersInSpace": "Criadores Pokémon no Espaço!"
+  "breedersInSpace": "Criadores de Pokémon no Espaço!"
 }

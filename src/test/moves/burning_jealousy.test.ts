@@ -7,9 +7,8 @@ import { Species } from "#enums/species";
 import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import { SPLASH_ONLY } from "../utils/testUtils";
 
-const TIMEOUT = 20 * 1000;
+
 
 describe("Moves - Burning Jealousy", () => {
   let phaserGame: Phaser.Game;
@@ -32,7 +31,7 @@ describe("Moves - Burning Jealousy", () => {
       .disableCrits()
       .enemySpecies(Species.MAGIKARP)
       .enemyAbility(Abilities.ICE_SCALES)
-      .enemyMoveset(Array(4).fill(Moves.HOWL))
+      .enemyMoveset([Moves.HOWL])
       .startingLevel(10)
       .enemyLevel(10)
       .starterSpecies(Species.FEEBAS)
@@ -51,7 +50,7 @@ describe("Moves - Burning Jealousy", () => {
     await game.phaseInterceptor.to("BerryPhase");
 
     expect(enemy.status?.effect).toBe(StatusEffect.BURN);
-  }, TIMEOUT);
+  });
 
   it("should still burn the opponent if their stat stages were both raised and lowered in the same turn", async () => {
     game.override
@@ -67,13 +66,13 @@ describe("Moves - Burning Jealousy", () => {
     await game.phaseInterceptor.to("BerryPhase");
 
     expect(enemy.status?.effect).toBe(StatusEffect.BURN);
-  }, TIMEOUT);
+  });
 
   it("should ignore stat stages raised by IMPOSTER", async () => {
     game.override
       .enemySpecies(Species.DITTO)
       .enemyAbility(Abilities.IMPOSTER)
-      .enemyMoveset(SPLASH_ONLY);
+      .enemyMoveset(Moves.SPLASH);
     await game.classicMode.startBattle();
 
     const enemy = game.scene.getEnemyPokemon()!;
@@ -82,16 +81,16 @@ describe("Moves - Burning Jealousy", () => {
     await game.phaseInterceptor.to("BerryPhase");
 
     expect(enemy.status?.effect).toBeUndefined();
-  }, TIMEOUT);
+  });
 
   it.skip("should ignore weakness policy", async () => { // TODO: Make this test if WP is implemented
     await game.classicMode.startBattle();
-  }, TIMEOUT);
+  });
 
   it("should be boosted by Sheer Force even if opponent didn't raise stat stages", async () => {
     game.override
       .ability(Abilities.SHEER_FORCE)
-      .enemyMoveset(SPLASH_ONLY);
+      .enemyMoveset(Moves.SPLASH);
     vi.spyOn(allMoves[Moves.BURNING_JEALOUSY], "calculateBattlePower");
     await game.classicMode.startBattle();
 
@@ -99,5 +98,5 @@ describe("Moves - Burning Jealousy", () => {
     await game.phaseInterceptor.to("BerryPhase");
 
     expect(allMoves[Moves.BURNING_JEALOUSY].calculateBattlePower).toHaveReturnedWith(allMoves[Moves.BURNING_JEALOUSY].power * 5461 / 4096);
-  }, TIMEOUT);
+  });
 });

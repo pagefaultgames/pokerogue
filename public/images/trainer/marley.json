@@ -1,0 +1,83 @@
+{ "frames": [
+   {
+    "filename": "0000.png",
+    "frame": { "x": 0, "y": 0, "w": 31, "h": 77 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 26, "y": 2, "w": 31, "h": 77 },
+    "sourceSize": { "w": 80, "h": 80 },
+    "duration": 100
+   },
+   {
+    "filename": "0001.png",
+    "frame": { "x": 0, "y": 0, "w": 31, "h": 77 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 26, "y": 2, "w": 31, "h": 77 },
+    "sourceSize": { "w": 80, "h": 80 },
+    "duration": 100
+   },
+   {
+    "filename": "0002.png",
+    "frame": { "x": 0, "y": 0, "w": 31, "h": 77 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 26, "y": 2, "w": 31, "h": 77 },
+    "sourceSize": { "w": 80, "h": 80 },
+    "duration": 100
+   },
+   {
+    "filename": "0003.png",
+    "frame": { "x": 0, "y": 0, "w": 31, "h": 77 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 26, "y": 2, "w": 31, "h": 77 },
+    "sourceSize": { "w": 80, "h": 80 },
+    "duration": 100
+   },
+   {
+    "filename": "0004.png",
+    "frame": { "x": 32, "y": 0, "w": 28, "h": 78 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 28, "y": 1, "w": 28, "h": 78 },
+    "sourceSize": { "w": 80, "h": 80 },
+    "duration": 100
+   },
+   {
+    "filename": "0005.png",
+    "frame": { "x": 32, "y": 0, "w": 28, "h": 78 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 28, "y": 1, "w": 28, "h": 78 },
+    "sourceSize": { "w": 80, "h": 80 },
+    "duration": 100
+   },
+   {
+    "filename": "0006.png",
+    "frame": { "x": 0, "y": 78, "w": 31, "h": 77 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 28, "y": 2, "w": 31, "h": 77 },
+    "sourceSize": { "w": 80, "h": 80 },
+    "duration": 100
+   },
+   {
+    "filename": "0007.png",
+    "frame": { "x": 0, "y": 78, "w": 31, "h": 77 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 28, "y": 2, "w": 31, "h": 77 },
+    "sourceSize": { "w": 80, "h": 80 },
+    "duration": 100
+   }
+ ],
+ "meta": {
+  "app": "https://www.pngprite.org/",
+  "version": "1.3.7-x64",
+  "image": "marley.png",
+  "format": "I8",
+  "size": { "w": 60, "h": 155 },
+  "scale": "1"
+ }
+}

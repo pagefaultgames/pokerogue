@@ -8,10 +8,9 @@ import { Species } from "#enums/species";
 import { StatusEffect } from "#enums/status-effect";
 import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
-import { SPLASH_ONLY } from "#test/utils/testUtils";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
-const TIMEOUT = 20 * 1000;
+
 
 describe("Inverse Battle", () => {
   let phaserGame: Phaser.Game;
@@ -38,7 +37,7 @@ describe("Inverse Battle", () => {
       .ability(Abilities.BALL_FETCH)
       .enemySpecies(Species.MAGIKARP)
       .enemyAbility(Abilities.BALL_FETCH)
-      .enemyMoveset(SPLASH_ONLY);
+      .enemyMoveset(Moves.SPLASH);
   });
 
   it("Immune types are 2x effective - Thunderbolt against Ground Type", async () => {
@@ -57,7 +56,7 @@ describe("Inverse Battle", () => {
     await game.phaseInterceptor.to("MoveEffectPhase");
 
     expect(enemy.getMoveEffectiveness).toHaveLastReturnedWith(2);
-  }, TIMEOUT);
+  });
 
   it("2x effective types are 0.5x effective - Thunderbolt against Flying Type", async () => {
     game.override
@@ -74,7 +73,7 @@ describe("Inverse Battle", () => {
     await game.phaseInterceptor.to("MoveEffectPhase");
 
     expect(enemy.getMoveEffectiveness).toHaveLastReturnedWith(0.5);
-  }, TIMEOUT);
+  });
 
   it("0.5x effective types are 2x effective - Thunderbolt against Electric Type", async () => {
     game.override
@@ -91,7 +90,7 @@ describe("Inverse Battle", () => {
     await game.phaseInterceptor.to("MoveEffectPhase");
 
     expect(enemy.getMoveEffectiveness).toHaveLastReturnedWith(2);
-  }, TIMEOUT);
+  });
 
   it("Stealth Rock follows the inverse matchups - Stealth Rock against Charizard deals 1/32 of max HP", async () => {
     game.scene.arena.addTag(ArenaTagType.STEALTH_ROCK, 1, Moves.STEALTH_ROCK, 0);
@@ -111,7 +110,7 @@ describe("Inverse Battle", () => {
 
     console.log("Charizard's max HP: " + maxHp, "Damage: " + damage_prediction, "Current HP: " + currentHp, "Expected HP: " + expectedHP);
     expect(currentHp).toBeGreaterThan(maxHp * 31 / 32 - 1);
-  }, TIMEOUT);
+  });
 
   it("Freeze Dry is 2x effective against Water Type like other Ice type Move - Freeze Dry against Squirtle", async () => {
     game.override
@@ -128,7 +127,7 @@ describe("Inverse Battle", () => {
     await game.phaseInterceptor.to("MoveEffectPhase");
 
     expect(enemy.getMoveEffectiveness).toHaveLastReturnedWith(2);
-  }, TIMEOUT);
+  });
 
   it("Water Absorb should heal against water moves - Water Absorb against Water gun", async () => {
     game.override
@@ -144,7 +143,7 @@ describe("Inverse Battle", () => {
     await game.phaseInterceptor.to("MoveEndPhase");
 
     expect(enemy.hp).toBe(enemy.getMaxHp());
-  }, TIMEOUT);
+  });
 
   it("Fire type does not get burned - Will-O-Wisp against Charmander", async () => {
     game.override
@@ -161,7 +160,7 @@ describe("Inverse Battle", () => {
     await game.phaseInterceptor.to("MoveEndPhase");
 
     expect(enemy.status?.effect).not.toBe(StatusEffect.BURN);
-  }, TIMEOUT);
+  });
 
   it("Electric type does not get paralyzed - Nuzzle against Pikachu", async () => {
     game.override
@@ -178,7 +177,7 @@ describe("Inverse Battle", () => {
     await game.phaseInterceptor.to("MoveEndPhase");
 
     expect(enemy.status?.effect).not.toBe(StatusEffect.PARALYSIS);
-  }, TIMEOUT);
+  });
 
   it("Ground type is not immune to Thunder Wave - Thunder Wave against Sandshrew", async () => {
     game.override
@@ -195,7 +194,7 @@ describe("Inverse Battle", () => {
     await game.phaseInterceptor.to("MoveEndPhase");
 
     expect(enemy.status?.effect).toBe(StatusEffect.PARALYSIS);
-  }, TIMEOUT);
+  });
 
 
   it("Anticipation should trigger on 2x effective moves - Anticipation against Thunderbolt", async () => {
@@ -207,7 +206,7 @@ describe("Inverse Battle", () => {
     await game.challengeMode.startBattle();
 
     expect(game.scene.getEnemyPokemon()?.summonData.abilitiesApplied[0]).toBe(Abilities.ANTICIPATION);
-  }, TIMEOUT);
+  });
 
   it("Conversion 2 should change the type to the resistive type - Conversion 2 against Dragonite", async () => {
     game.override
@@ -224,7 +223,7 @@ describe("Inverse Battle", () => {
     await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(player.getTypes()[0]).toBe(Type.DRAGON);
-  }, TIMEOUT);
+  });
 
   it("Flying Press should be 0.25x effective against Grass + Dark Type - Flying Press against Meowscarada", async () => {
     game.override
@@ -241,7 +240,7 @@ describe("Inverse Battle", () => {
     await game.phaseInterceptor.to("MoveEffectPhase");
 
     expect(enemy.getMoveEffectiveness).toHaveLastReturnedWith(0.25);
-  }, TIMEOUT);
+  });
 
   it("Scrappy ability has no effect - Tackle against Ghost Type still 2x effective with Scrappy", async () => {
     game.override
@@ -259,7 +258,7 @@ describe("Inverse Battle", () => {
     await game.phaseInterceptor.to("MoveEffectPhase");
 
     expect(enemy.getMoveEffectiveness).toHaveLastReturnedWith(2);
-  }, TIMEOUT);
+  });
 
   it("FORESIGHT has no effect - Tackle against Ghost Type still 2x effective with Foresight", async () => {
     game.override
@@ -280,5 +279,5 @@ describe("Inverse Battle", () => {
     await game.phaseInterceptor.to("MoveEffectPhase");
 
     expect(enemy.getMoveEffectiveness).toHaveLastReturnedWith(2);
-  }, TIMEOUT);
+  });
 });

@@ -54,8 +54,8 @@
       "3": "J’espère que j’aurai ma revanche un jour.",
       "4": "C’était super amusant ! Mais ce combat m’a épuisée…",
       "5": "Tu m’as appris une belle leçon ! T’es vraiment incroyable !",
-      "6": "Vraiment ? J’ai perdu… ? C’est des choses qui arrivent, ça me déprime mais tu es vraiment très cool.",
-      "6_female": "Vraiment ? J’ai perdu… ? C’est des choses qui arrivent, ça me déprime mais t’es vraiment très cool.",
+      "6": "Vraiment ? J’ai perdu… ? Bon, ça arrive, mais c’était cool quand même.",
+      "6_female": "Vraiment ? J’ai perdu… ? Bon, ça arrive, mais c’était cool quand même.",
       "7": "J’ai pas besoin de ce genre de souvenirs.\n*Suppression de mémoire en cours…*",
       "8": "Hé ! Je t’avais dit d’y aller doucement avec moi ! Mais t’es vraiment si cool quand tu te bats sérieusement…",
       "9": "J’en ai marre des combats Pokémon…\nJe vais chercher d’autres trucs à faire…"
@@ -314,8 +314,8 @@
       "3": "On est juste des gars et des meufs normaux, on voit un Pokémon on le prend !",
       "4": "Pourquoi tu te la joue comme ça ? C'est avec tes dents que t’vas jouer frérot.",
       "4_female": "Pourquoi tu te la joue comme ça ? C'est avec tes dents que t’vas jouer ma reus.",
-      "5": "Cousin, écoute-nous bien ! ♪\nSe taper dessus, ça sert à rien ! ♪\n$Tu t’incrustes chez nous, ça s’fait pas ! ♪\n$Mais on est sympa, on a un plan pour toi ! ♪",
-      "5_female": "Cousine, écoute-nous bien ! ♪\nSe taper dessus, ça sert à rien ! ♪\n$Tu t’incrustes chez nous, ça s’fait pas ! ♪\n$Mais on est sympa, on a un plan pour toi ! ♪"
+      "5": "Cousin, écoute-nous bien ! ♪\nSe taper dessus, ça sert à rien ! ♪\n$Tu t’incrustes chez nous, ça s’fait pas ! ♪\nMais on est sympa, on a un plan pour toi ! ♪",
+      "5_female": "Cousine, écoute-nous bien ! ♪\nSe taper dessus, ça sert à rien ! ♪\n$Tu t’incrustes chez nous, ça s’fait pas ! ♪\nMais on est sympa, on a un plan pour toi ! ♪"
     },
     "victory": {
       "1": "Hein ? C’est déjà terminé ?",
@@ -344,12 +344,17 @@
       "1": "Hop hop hop ! Terminus !",
       "2": "T’es un Dresseur n’est-ce pas ?\n$J’ai bien peur ce que ne soit pas une excuse suffisante pour nous interrompre dans notre travail.",
       "2_female": "T’es une Dresseuse n’est-ce pas ?\n$J’ai bien peur ce que ne soit pas une excuse suffisante pour nous interrompre dans notre travail.",
-      "3": "Je travaille à Macro Cosmos Assurances !\nBesoin d’une assurance-vie ?"
+      "3": "Je travaille à Macro Cosmos Assurances !\nBesoin d’une assurance-vie ?",
+      "4": "Trouvé !\nPetit interlude combat !",
+      "4_female": "Trouvée !\nPetit interlude combat !",
+      "5": "Une soufflante de la part de madame Liv est la pire chose qui puisse arriver !"
     },
     "victory": {
       "1": "Je n’ai d’autre choix que respectueusement me retirer.",
       "2": "Mon argent de poche…\nPlus qu’à manger des pâtes pour la fin du mois…",
-      "3": "Chez Macro Cosmos, rien n’est comparable à notre dévotion au travail !"
+      "3": "Chez Macro Cosmos, rien n’est comparable à notre dévotion au travail !",
+      "4": "J’ai même pensé à chager de Pokémon en combat…",
+      "5": "Combattre ne sert à rien…\nPlus qu’à me barrer !"
     }
   },
   "oleana": {
@@ -363,6 +368,77 @@
       "2": "Ah ! Quelle erreur… Je n’aurais pas dû sous-estimer un Dresseur de ton calibre…",
       "2_female": "Ah ! Quelle erreur… Je n’aurais pas dû sous-estimer une Dresseuse de ton calibre…",
       "3": "*soupir* Je suis fatiguée parton…"
+    }
+  },
+  "star_grunt": {
+    "encounter": {
+      "1": "Ouais, un peu de respect, tu veux ?\n Tu sais à qui t’as affaire ?",
+      "2": "Notre comité d’accueil va pas te faire de cadeau ! Hasta la vistaaar ! ★",
+      "3": "Tu peux aller voir ailleurs si j’y suis ?\n$Si tu refuses, je m’autorise à faire valoir mes droits de légitime défense, je te préviens !",
+      "4": "Désolé, mais si tu refuses de partir, on sera obligés de t’y forcer, et ça sera pas joli joli.",
+      "4_female": "Désolé, mais si tu refuses de partir, on sera obligés de t’y forcer, et ça sera pas joli joli.",
+      "5": "Quoi ? Toi aussi, t’es venu me casser les pieds ? C’est vraiment pas ma journée…",
+      "5_female": "Quoi ? Toi aussi, t’es venue me casser les pieds ? C’est vraiment pas ma journée…"
+    },
+    "victory": {
+      "1": "Comment c'est ça peut être moi qui voit les étoiles ?!",
+      "2": "T’en as dans le ventre.\n$T’as peut-être ce qu’il faut pour te faire une place dans la constellation de la Team Star.",
+      "3": "Ma défense était pourtant bonne…\nMais c’était pas assez visiblement !",
+      "4": "Ha… hasta la vistar… ☆",
+      "5": "J’aurais jamais cru qu’être Sbire de la Team Star serait un tel fadeau…"
+    }
+  },
+  "giacomo": {
+    "encounter": {
+      "1": "Tu dois vraiment pas tenir à ta life pour défier la Team Star comme ça !",
+      "2": "Tends un peu l’oreille… Tu l’entends ?\nC’est ton requiem !"
+    },
+    "victory": {
+      "1": "Pfff, quelle ironie, franchement…",
+      "2": "J’pensais pas jouer le refrain de ma défaite…"
+    }
+  },
+  "mela": {
+    "encounter": {
+      "1": "Alors, c’est toi le guedin qu’ose nous défier ?\nSois prêt pour ta raclée.",
+      "1_female": "Alors, c’est toi la guedin qu’ose nous défier ?\nSois prête pour ta raclée.",
+      "2": "Y a pas à dire, t’es bien une tête brûlée !\nMais fais gaffe, j’en ai aussi sous l’capot !"
+    },
+    "victory": {
+      "1": "Quoi, c’est comme ça qu’ça finit ?\nPfff… J’ai la haine…",
+      "2": "J’voulais tout bruler… Mais j’me suis juste consumée.\nY reste plus rien."
+    }
+  },
+  "atticus": {
+    "encounter": {
+      "1": "T’as vraiment du cran de venir provoquer la Team Star.\nDestinée fatale - Au poison succombera - L’ennemi juré.",
+      "1_female": "T’as vraiment du cran de venir provoquer la Team Star.\nDestinée fatale - Au poison succombera - L’ennemie jurée.",
+      "2": "Vive expectative - Respect et adversité - Combat au sommet."
+    },
+    "victory": {
+      "1": "Pardon, mes amis…",
+      "2": "Ta victoire n’évoque en moi ni rancune ni douleur.\nMon âme est en paix et j’accepte ma défaite."
+    }
+  },
+  "ortega": {
+    "encounter": {
+      "1": "J’vais bien m’occuper de toi, alors viens pas pleurer si tu perds.",
+      "2": "T’as beau avoir l’air sûr de toi, aujourd’hui, c’est moi qui vais gagner. Je te le garantis !",
+      "2_female": "T’as beau avoir l’air sûr de toi, aujourd’hui, c’est moi qui vais gagner. Je te le garantis !"
+    },
+    "victory": {
+      "1": "Hein ? J’ai perdu ? Mais pourquoi ?!\nPourquoi, pourquoi, pourquoi, POURQUOI ?!",
+      "2": "Mais pourquoi ça fonctionne pas ?!"
+    }
+  },
+  "eri": {
+    "encounter": {
+      "1": "J’ignore tes intentions, mais mon rôle est d’anéantir quiconque s’attaque à la Team Star !",
+      "2": "Si on m’attaque, je riposte ! Nous verrons bien qui de nous deux restera debout à la fin !"
+    },
+    "victory": {
+      "1": "Les amis…\nJe suis désolée…",
+      "2": "J’ai donné mon maximum… et pourtant…\nÇa n’a pas suffi… J’ai échoué…"
     }
   },
   "rocket_boss_giovanni_1": {
@@ -497,6 +573,138 @@
     },
     "defeat": {
       "1": "Les ignorants sans aucune vision n’auront donc de cesse de souiller ce monde."
+    }
+  },
+  "star_boss_penny_1": {
+    "encounter": {
+      "1": "Je suis la Big Boss de la Team Star, Cassiopée…\n$Incline-toi devant la toute-puissance de la Big Boss !!!"
+    },
+    "victory": {
+      "1": "… … …"
+    },
+    "defeat": {
+      "1": "Hé…"
+    }
+  },
+  "star_boss_penny_2": {
+    "encounter": {
+      "1": "Le code d’honneur de la Team Star exige que nous donnions le maximum en combat !\n$Par le pouvoir de l’Évolition, on va te réduire en poussière d’étoiles !"
+    },
+    "victory": {
+      "1": "… Tout est fini"
+    },
+    "defeat": {
+      "1": "Tu es redoutable.\nPas étonnant que les boss de la Team aient perdu contre toi."
+    }
+  },
+  "stat_trainer_buck": {
+    "encounter": {
+      "1": "Je te préviens… Je suis sacrément coriace ! Fais comme si tu ne t’y attendais pas !",
+      "2": "Je sens mes Pokémon gigoter dans leurs Poké Balls !"
+    },
+    "victory": {
+      "1": "Hé, hé, hé !\nTu mets le feu !",
+      "2": "Hé, hé, hé !\nTu mets le feu !"
+    },
+    "defeat": {
+      "1": "Oh ?\nEn panne de carburant je suppose ?",
+      "2": "Oh ?\nEn panne de carburant je suppose ?"
+    }
+  },
+  "stat_trainer_cheryl": {
+    "encounter": {
+      "1": "Mes Pokémon meurent d’envie de se battre.",
+      "2": "Je dois te prévenir que mes Pokémon peuvent se montrer un peu exubérants."
+    },
+    "victory": {
+      "1": "Trouver le bon équilibre en attaque et défense…\nCe n’est pas la chose la plus aisée.",
+      "2": "Trouver le bon équilibre en attaque et défense…\nCe n’est pas la chose la plus aisée."
+    },
+    "defeat": {
+      "1": "T’as besoin que je soigne ton équipe ?",
+      "2": "T’as besoin que je soigne ton équipe ?"
+    }
+  },
+  "stat_trainer_marley": {
+    "encounter": {
+      "1": "OK…\nJe ferai de mon mieux.",
+      "2": "OK…\nJe… Je peux le faire… !"
+    },
+    "victory": {
+      "1": "Argh…",
+      "2": "Argh…"
+    },
+    "defeat": {
+      "1": "Au revoir…",
+      "2": "Au revoir…"
+    }
+  },
+  "stat_trainer_mira": {
+    "encounter": {
+      "1": "Maïté va t’éblouir !",
+      "2": "Je vais te prouver que je ne me mélange plus les pédales !"
+    },
+    "victory": {
+      "1": "Hum… Je me demande si je suis à la hauteur de ici…",
+      "2": "Hum… Je me demande si je suis à la hauteur de ici…"
+    },
+    "defeat": {
+      "1": "Maïté savait qu’elle t’éblouirait !",
+      "2": "Maïté savait qu’elle t’éblouirait !"
+    }
+  },
+  "stat_trainer_riley": {
+    "encounter": {
+      "1": "Le combat, c’est une façon de se saluer pour nous !",
+      "2": "On va mettre le paquet pour venir à bout de ton équipe."
+    },
+    "victory": {
+      "1": "Parfois, on fait équipe…\nEt parfois, on s’affronte…$La vie des Dresseurs est pleine de rebondissements.",
+      "2": "Parfois, on fait équipe…\nEt parfois, on s’affronte…$La vie des Dresseurs est pleine de rebondissements.."
+    },
+    "defeat": {
+      "1": "Tu t’en tire bien.\nTu feras mieux la prochaine fois.",
+      "2": "Tu t’en tire bien.\nTu feras mieux la prochaine fois."
+    }
+  },
+  "winstrates_victor": {
+    "encounter": {
+      "1": "Bon esprit !\nJ’aime ça !"
+    },
+    "victory": {
+      "1": "Mince !\nTu as un meilleur niveau que je ne le pensais !"
+    }
+  },
+  "winstrates_victoria": {
+    "encounter": {
+      "1": "Oh, ciel !\nCe que tu es jeune !$Mais si tu as battu mon mari,\nc’est que tu sais t’y prendre.$À nous deux, maintenant !"
+    },
+    "victory": {
+      "1": "Ciel ! Cette force !\nJ’en suis toute retournée !"
+    }
+  },
+  "winstrates_vivi": {
+    "encounter": {
+      "1": "Tu as un meilleur niveau que maman ?\nWaouh!$Mais moi aussi, je suis forte !\nVraiment ! Honnêtement !"
+    },
+    "victory": {
+      "1": "Quoi ?\nNe me dis pas que j’ai perdu !"
+    }
+  },
+  "winstrates_vicky": {
+    "encounter": {
+      "1": "Comment oses-tu faire pleurer\nmon adorable petite-fille !$Tu vas me le payer !\nTes Pokémon vont mordre la poussière !"
+    },
+    "victory": {
+      "1": "Ouh! Quelle puissance…\nMa petite-fille avait raison…"
+    }
+  },
+  "winstrates_vito": {
+    "encounter": {
+      "1": "On s’entraine tous ensemble,\navec les membres de ma famille !$Je ne perds contre personne !"
+    },
+    "victory": {
+      "1": "J’ai toujours été le meilleur de la famille.\nJe n’avais encore jamais perdu…"
     }
   },
   "brock": {
@@ -687,7 +895,7 @@
   },
   "rival_6": {
     "encounter": {
-      "1": "@c{smile_eclosed}Nous y revoilà.\n$@c{neutral}J’ai eu du temps pour réfléchir à tout ça.\nIl y a une raison à pourquoi tout semble étrange.\n$@c{neutral_eclosed}Ton rêve, ma volonté de te battre…\nFont partie de quelque chose de plus grand.\n$@c{serious}C’est même pas à propos de moi, ni de toi… Mais du monde, @c{serious_mhalf_fists}et te repousser dans tes limites est ma mission.\n$@c{neutral_eclosed}J’ignore si je serai capable de l’accomplir, mais je ferai tout ce qui est en mon pouvoir.\n$@c{neutral}Cet endroit est terrifiant… Et pourtant il m’a l’air familier, comme si j’y avais déjà mis les pieds.\n$@c{serious_mhalf_fists}Tu ressens la même chose, pas vrai ?\n$@c{serious}… et c’est comme si quelque chose ici me parlait.\n$Comme si c’était tout ce que ce monde avait toujours connu.\n$Ces précieux moments ensemble semblent si proches ne sont rien de plus qu’un lointain souvenir.\n$@c{neutral_eclosed}D’ailleurs, qui peut dire aujourd’hui qu’ils ont pu être réels ?\n$@c{serious_mopen_fists}Il faut que tu persévères. Si tu t’arrêtes, ça n’aura jamais de fin et t’es la seule à en être capable.\n$@c{serious_smile_fists}Difficile de comprendre le sens de tout ça, je sais juste que c’est la réalité.\n$@c{serious_mopen_fists}Si tu ne parviens pas à me battre ici et maintenant, tu n’as aucune chance."
+      "1": "@c{smile_eclosed}Nous y revoilà.\n$@c{neutral}J’ai eu du temps pour réfléchir à tout ça.\nIl y a une raison à pourquoi tout semble étrange.\n$@c{neutral_eclosed}Ton rêve, ma volonté de te battre…\nFont partie de quelque chose de plus grand.\n$@c{serious}C’est même pas à propos de moi, ni de toi… Mais du monde, @c{serious_mhalf_fists}et te repousser dans tes limites est ma mission.\n$@c{neutral_eclosed}J’ignore si je serai capable de l’accomplir, mais je ferai tout ce qui est en mon pouvoir.\n$@c{neutral}Cet endroit est terrifiant… Et pourtant il m’a l’air familier, comme si j’y avais déjà mis les pieds.\n$@c{serious_mhalf_fists}Tu ressens la même chose, pas vrai ?\n$@c{serious}… et c’est comme si quelque chose ici me parlait.\n$Comme si c’était tout ce que ce monde avait toujours connu.\n$Ces précieux moments ensemble qui semblent si proches ne sont rien de plus qu’un lointain souvenir.\n$@c{neutral_eclosed}D’ailleurs, qui peut dire aujourd’hui qu’ils ont pu être réels ?\n$@c{serious_mopen_fists}Il faut que tu persévères. Si tu t’arrêtes, ça n’aura jamais de fin et t’es la seule à en être capable.\n$@c{serious_smile_fists}Difficile de comprendre le sens de tout ça, je sais juste que c’est la réalité.\n$@c{serious_mopen_fists}Si tu ne parviens pas à me battre ici et maintenant, tu n’as aucune chance."
     },
     "victory": {
       "1": "@c{smile_eclosed}J’ai fait ce que j’avais à faire.\n$Promets-moi juste une chose.\n@c{smile}Après avoir réparé ce monde… Rentre à la maison."

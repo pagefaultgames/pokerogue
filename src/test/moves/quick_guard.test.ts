@@ -8,7 +8,7 @@ import { Stat } from "#enums/stat";
 import { BattlerIndex } from "#app/battle";
 import { MoveResult } from "#app/field/pokemon";
 
-const TIMEOUT = 20 * 1000;
+
 
 describe("Moves - Quick Guard", () => {
   let phaserGame: Phaser.Game;
@@ -32,7 +32,7 @@ describe("Moves - Quick Guard", () => {
     game.override.moveset([Moves.QUICK_GUARD, Moves.SPLASH, Moves.FOLLOW_ME]);
 
     game.override.enemySpecies(Species.SNORLAX);
-    game.override.enemyMoveset(Array(4).fill(Moves.QUICK_ATTACK));
+    game.override.enemyMoveset([Moves.QUICK_ATTACK]);
     game.override.enemyAbility(Abilities.INSOMNIA);
 
     game.override.startingLevel(100);
@@ -52,14 +52,14 @@ describe("Moves - Quick Guard", () => {
       await game.phaseInterceptor.to("BerryPhase", false);
 
       playerPokemon.forEach(p => expect(p.hp).toBe(p.getMaxHp()));
-    }, TIMEOUT
+    }
   );
 
   test(
     "should protect the user and allies from Prankster-boosted moves",
     async () => {
       game.override.enemyAbility(Abilities.PRANKSTER);
-      game.override.enemyMoveset(Array(4).fill(Moves.GROWL));
+      game.override.enemyMoveset([Moves.GROWL]);
 
       await game.classicMode.startBattle([Species.CHARIZARD, Species.BLASTOISE]);
 
@@ -71,13 +71,13 @@ describe("Moves - Quick Guard", () => {
       await game.phaseInterceptor.to("BerryPhase", false);
 
       playerPokemon.forEach(p => expect(p.getStatStage(Stat.ATK)).toBe(0));
-    }, TIMEOUT
+    }
   );
 
   test(
     "should stop subsequent hits of a multi-hit priority move",
     async () => {
-      game.override.enemyMoveset(Array(4).fill(Moves.WATER_SHURIKEN));
+      game.override.enemyMoveset([Moves.WATER_SHURIKEN]);
 
       await game.classicMode.startBattle([Species.CHARIZARD, Species.BLASTOISE]);
 
@@ -98,7 +98,7 @@ describe("Moves - Quick Guard", () => {
     "should fail if the user is the last to move in the turn",
     async () => {
       game.override.battleType("single");
-      game.override.enemyMoveset(Array(4).fill(Moves.QUICK_GUARD));
+      game.override.enemyMoveset([Moves.QUICK_GUARD]);
 
       await game.classicMode.startBattle([Species.CHARIZARD]);
 
@@ -113,6 +113,6 @@ describe("Moves - Quick Guard", () => {
 
       expect(enemyPokemon.getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);
       expect(playerPokemon.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
-    }, TIMEOUT
+    }
   );
 });

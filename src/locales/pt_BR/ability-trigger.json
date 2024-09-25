@@ -12,6 +12,7 @@
   "blockItemTheft": "{{abilityName}} de {{pokemonNameWithAffix}}\nprevine o roubo de itens!",
   "typeImmunityHeal": "{{abilityName}} de {{pokemonNameWithAffix}}\nrestaurou um pouco de PS!",
   "nonSuperEffectiveImmunity": "{{pokemonNameWithAffix}} evitou dano\ncom {{abilityName}}!",
+  "fullHpResistType": "{{pokemonNameWithAffix}} fez seu casco brilhar!\nEstá distorcendo o confronte de tipos!",
   "moveImmunity": "Isso não afeta {{pokemonNameWithAffix}}!",
   "reverseDrain": "{{pokemonNameWithAffix}} absorveu a gosma líquida!",
   "postDefendTypeChange": "{{abilityName}} de {{pokemonNameWithAffix}}\ntransformou-o no tipo {{typeName}}!",
