@@ -32,7 +32,7 @@
   "attackMissed": "{{pokemonNameWithAffix}}\névite l’attaque !",
   "attackHitsCount": "Touché {{count}} fois !",
   "rewardGain": "Vous recevez\n{{modifierName}} !",
-  "rewardGainCount": "Vous recevez\n{{count}} $t(modifierName, {\"count\": {{count}} }) !",
+  "rewardGainCount": "Vous recevez\n{{count}} {{modifierName}} !",
   "expGain": "{{pokemonName}} gagne\n{{exp}} Points d’Exp !",
   "levelUp": "{{pokemonName}} monte au\nN. {{level}} !",
   "learnMove": "{{pokemonName}} apprend\n{{moveName}} !",
