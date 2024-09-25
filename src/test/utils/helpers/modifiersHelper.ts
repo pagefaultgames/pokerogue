@@ -15,13 +15,6 @@ export class ModifierHelper extends GameManagerHelper {
     return this;
   }
 
-  checkHasRun(modifier: ModifierTypeKeys): boolean {
-    if (itemPoolChecks.get(modifier) === undefined) {
-      return false;
-    }
-    return true;
-  }
-
   /**
    * `get`s a value from the `itemPoolChecks` map.
    *
