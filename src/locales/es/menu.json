@@ -51,5 +51,7 @@
   "renamePokemon": "Renombrar Pokémon.",
   "rename": "Renombrar",
   "nickname": "Apodo",
-  "errorServerDown": "¡Ups! Ha habido un problema al contactar con el servidor.\n\nPuedes mantener esta ventana abierta, el juego se reconectará automáticamente."
+  "errorServerDown": "¡Ups! Ha habido un problema al contactar con el servidor.\n\nPuedes mantener esta ventana abierta,\nel juego se reconectará automáticamente.",
+  "noSaves": "No tienes ninguna partida guardada registrada!",
+  "tooManySaves": "¡Tienes demasiadas partidas guardadas registradas!"
 }

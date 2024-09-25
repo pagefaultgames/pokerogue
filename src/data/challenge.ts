@@ -1,18 +1,18 @@
 import * as Utils from "../utils";
 import i18next from "i18next";
-import { defaultStarterSpecies, DexAttrProps, GameData } from "#app/system/game-data.js";
+import { defaultStarterSpecies, DexAttrProps, GameData } from "#app/system/game-data";
 import PokemonSpecies, { getPokemonSpecies, getPokemonSpeciesForm, speciesStarters } from "./pokemon-species";
-import Pokemon, { PokemonMove } from "#app/field/pokemon.js";
-import { BattleType, FixedBattleConfig } from "#app/battle.js";
-import Trainer, { TrainerVariant } from "#app/field/trainer.js";
-import { GameMode } from "#app/game-mode.js";
+import Pokemon, { PokemonMove } from "#app/field/pokemon";
+import { BattleType, FixedBattleConfig } from "#app/battle";
+import Trainer, { TrainerVariant } from "#app/field/trainer";
+import { GameMode } from "#app/game-mode";
 import { Type } from "./type";
 import { Challenges } from "#enums/challenges";
 import { Species } from "#enums/species";
 import { TrainerType } from "#enums/trainer-type";
 import { Nature } from "./nature";
-import { Moves } from "#app/enums/moves.js";
-import { TypeColor, TypeShadow } from "#app/enums/color.js";
+import { Moves } from "#app/enums/moves";
+import { TypeColor, TypeShadow } from "#app/enums/color";
 import { pokemonEvolutions } from "./pokemon-evolutions";
 import { pokemonFormChanges } from "./pokemon-forms";
 
@@ -172,11 +172,9 @@ export abstract class Challenge {
    * @param overrideValue {@link integer} The value to check for. If undefined, gets the current value.
    * @returns {@link string} The localised name for the current value.
    */
-  getValue(overrideValue?: integer): string {
-    if (overrideValue === undefined) {
-      overrideValue = this.value;
-    }
-    return i18next.t(`challenges:${this.geti18nKey()}.value.${this.value}`);
+  getValue(overrideValue?: number): string {
+    const value = overrideValue ?? this.value;
+    return i18next.t(`challenges:${this.geti18nKey()}.value.${value}`);
   }
 
   /**
@@ -184,11 +182,9 @@ export abstract class Challenge {
    * @param overrideValue {@link integer} The value to check for. If undefined, gets the current value.
    * @returns {@link string} The localised description for the current value.
    */
-  getDescription(overrideValue?: integer): string {
-    if (overrideValue === undefined) {
-      overrideValue = this.value;
-    }
-    return `${i18next.t([`challenges:${this.geti18nKey()}.desc.${this.value}`, `challenges:${this.geti18nKey()}.desc`])}`;
+  getDescription(overrideValue?: number): string {
+    const value = overrideValue ?? this.value;
+    return `${i18next.t([`challenges:${this.geti18nKey()}.desc.${value}`, `challenges:${this.geti18nKey()}.desc`])}`;
   }
 
   /**
@@ -487,14 +483,12 @@ export class SingleGenerationChallenge extends Challenge {
    * @param {value} overrideValue The value to check for. If undefined, gets the current value.
    * @returns {string} The localised name for the current value.
    */
-  getValue(overrideValue?: integer): string {
-    if (overrideValue === undefined) {
-      overrideValue = this.value;
-    }
-    if (this.value === 0) {
+  getValue(overrideValue?: number): string {
+    const value = overrideValue ?? this.value;
+    if (value === 0) {
       return i18next.t("settings:off");
     }
-    return i18next.t(`starterSelectUiHandler:gen${this.value}`);
+    return i18next.t(`starterSelectUiHandler:gen${value}`);
   }
 
   /**
@@ -502,14 +496,12 @@ export class SingleGenerationChallenge extends Challenge {
    * @param {value} overrideValue The value to check for. If undefined, gets the current value.
    * @returns {string} The localised description for the current value.
    */
-  getDescription(overrideValue?: integer): string {
-    if (overrideValue === undefined) {
-      overrideValue = this.value;
-    }
-    if (this.value === 0) {
+  getDescription(overrideValue?: number): string {
+    const value = overrideValue ?? this.value;
+    if (value === 0) {
       return i18next.t("challenges:singleGeneration.desc_default");
     }
-    return i18next.t("challenges:singleGeneration.desc", { gen: i18next.t(`challenges:singleGeneration.gen_${this.value}`) });
+    return i18next.t("challenges:singleGeneration.desc", { gen: i18next.t(`challenges:singleGeneration.gen_${value}`) });
   }
 
 

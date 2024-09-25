@@ -1,0 +1,46 @@
+{
+  "intro": "C’est un Parc Safari !",
+  "title": "Le Parc Safari",
+  "description": "Toutes sortes de Pokémon rares et particuliers peuvent y être rencontrés !\nSi vous décidez d’y entrer, vous aurez une limite de @[TOOLTIP_TITLE]{{{numEncounters}} Pokémon sauvages} à rencontrer que vous pourrez essayer de capturer.\n\nMais attention, ces Pokémon peuvent prendre la fuite avant que vous n’ayez pu les capturer !",
+  "query": "Voulez-vous y entrer ?",
+  "option": {
+    "1": {
+      "label": "Entrer",
+      "tooltip": "(-) Payer {{option1Money, money}}\n@[SUMMARY_GREEN]{(?) Parc Safari}",
+      "selected": "Vous tentez votre chance !"
+    },
+    "2": {
+      "label": "Partir",
+      "tooltip": "(-) Aucune récompense",
+      "selected": "Vous tracez votre chemin,\navec un léger sentiment de regret."
+    }
+  },
+  "safari": {
+    "1": {
+      "label": "Lancer une Poké Ball",
+      "tooltip": "(+) Lancer une Poké Ball",
+      "selected": "Vous lancez une Poké Ball !"
+    },
+    "2": {
+      "label": "Lancer un appât",
+      "tooltip": "(+) Augmente le taux de capture\n(-) Augmente le risque de fuite",
+      "selected": "Vous lancez quelques appâts !"
+    },
+    "3": {
+      "label": "Lancer de la boue",
+      "tooltip": "(+) Diminue le risque de fuite\n(-) Diminue le taux de capture",
+      "selected": "Vous lancez un peu de boue !"
+    },
+    "4": {
+      "label": "Fuite",
+      "tooltip": "(?) Fuir ce Pokémon"
+    },
+    "watching": "{{pokemonName}} vous observe\nattentivement.",
+    "eating": "{{pokemonName}} est en train\nde manger.",
+    "busy_eating": "{{pokemonName}} se concentre\nsur sa nourriture.",
+    "angry": "{{pokemonName}} se fâche !",
+    "beside_itself_angry": "{{pokemonName}} laisse\nexploser sa colère !",
+    "remaining_count": "Il reste {{remainingCount}} Pokémon !"
+  },
+  "outro": "Cette excursion était fun !"
+}

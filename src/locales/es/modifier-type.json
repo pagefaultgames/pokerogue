@@ -47,10 +47,14 @@
       "description": "Cambia la naturaleza de un Pokémon a {{natureName}} y desbloquea permanentemente dicha naturaleza para el inicial."
     },
     "DoubleBattleChanceBoosterModifierType": {
-      "description": "Duplica la posibilidad de que un encuentro sea una combate doble durante {{battleCount}} combates."
+      "description": "Cuadruplica la posibilidad de que un encuentro sea una combate doble durante {{battleCount}} combates."
     },
     "TempStatStageBoosterModifierType": {
-      "description": "Aumenta la est. {{stat}} de todos los miembros del equipo en 1 nivel durante 5 combates."
+      "description": "Aumenta la est. {{stat}} de todos los miembros del equipo en {{amount}} durante 5 combates.",
+      "extra": {
+        "stage": "1 nivel",
+        "percentage": "30%"
+      }
     },
     "AttackTypeBoosterModifierType": {
       "description": "Aumenta la potencia de los movimientos de tipo {{moveType}} de un Pokémon en un 20%."
@@ -63,6 +67,20 @@
     },
     "BaseStatBoosterModifierType": {
       "description": "Aumenta la est. {{stat}} base del portador en un 10%.\nCuanto mayores sean tus IVs, mayor será el límite de acumulación."
+    },
+    "PokemonBaseStatTotalModifierType": {
+      "name": "Zumo de Shuckle",
+      "description": "{{increaseDecrease}} todas las estadísticas base del portador en {{statValue}}. Fuiste {{blessCurse}} por el Shuckle.",
+      "extra": {
+        "increase": "Aumenta",
+        "decrease": "Disminuye",
+        "blessed": "bendecido",
+        "cursed": "maldecido"
+      }
+    },
+    "PokemonBaseStatFlatModifierType": {
+      "name": "Tarta Vieja",
+      "description": "Aumenta las estadísticas base de {{stats}} del portador en {{statValue}}. Encontrado después de un sueño extraño."
     },
     "AllPokemonFullHpRestoreModifierType": {
       "description": "Restaura el 100% de los PS de todos los Pokémon."
@@ -397,7 +415,13 @@
     "ENEMY_FUSED_CHANCE": {
       "name": "Ficha fusión",
       "description": "Agrega un 1% de probabilidad de que un Pokémon salvaje sea una fusión."
-    }
+   },
+
+   "MYSTERY_ENCOUNTER_SHUCKLE_JUICE": { "name": "Jugo de Shuckle" },
+   "MYSTERY_ENCOUNTER_BLACK_SLUDGE": { "name": "Lodo Negro", "description": "El hedor es tan poderoso que las tiendas solo te venderán artículos a un coste mucho más alto" },
+   "MYSTERY_ENCOUNTER_MACHO_BRACE": { "name": "Brazal Firme", "description": "Derrotar a un Pokémon otorga al poseedor una pila de Brazal Firme. Cada pila aumenta ligeramente las estadísticas, con un bono extra al alcanzar el máximo de pilas." },
+   "MYSTERY_ENCOUNTER_OLD_GATEAU": { "name": "Tarta Vieja", "description": "Aumenta las estadísticas de {{stats}} del portador en {{statValue}}." },
+   "MYSTERY_ENCOUNTER_GOLDEN_BUG_NET": { "name": "Cazamariposas Dorado", "description": "Imbuye al dueño con suerte para encontrar Pokémon de tipo Bicho más a menudo. Tiene un peso extraño." }
   },
   "SpeciesBoosterItem": {
     "LIGHT_BALL": {

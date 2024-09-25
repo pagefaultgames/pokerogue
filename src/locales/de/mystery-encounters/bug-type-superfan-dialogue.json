@@ -1,0 +1,40 @@
+{
+  "intro": "Ein ungewöhnlicher Trainer mit allerlei Käfer-Schnickschnack versperrt dir den Weg!",
+  "intro_dialogue": "Hey, Trainer! Ich bin auf einer Mission, um die seltensten Käfer-Pokémon zu finden!$Du musst Käfer-Pokémon auch lieben, oder? Jeder liebt Käfer-Pokémon!",
+  "title": "Der Käfersammler-Superfan",
+  "speaker": "Käfersammler-Superfan",
+  "description": "Der Trainer plappert drauf los, ohne auf eine Antwort zu warten...\nEs scheint, als gäbe es nur einen Weg, um aus dieser Situation herauszukommen... Die Aufmerksamkeit des Trainers zu erregen!",
+  "query": "Was wirst du tun?",
+  "option": {
+    "1": {
+      "label": "Pokémon-Kampf",
+      "tooltip": "(-) Herausfordernder Kampf\n(+) Einem Pokémon eine Käfer-Attacke beibringen",
+      "selected": "Ein Pokémon-Kampf? Meine Käfer-Pokémon sind mehr als bereit für dich!"
+    },
+    "2": {
+      "label": "Käfer-Pokémon zeigen",
+      "tooltip": "(+) Erhalte ein Geschenk",
+      "disabled_tooltip": "Du brauchst mindestens 1 Käfer-Pokémon in deinem Team, um das auszuwählen.",
+      "selected": "Du zeigst dem Trainer all deine Käfer-Pokémon...",
+      "selected_0_to_1": "Huh? Du hast nur {{numBugTypes}} Käfer-Pokémon...$Ich verschwende hier meine Zeit...",
+      "selected_2_to_3": "Hey, du hast {{numBugTypes}}! Nicht schlecht.$Hier, das könnte dir auf deiner Reise helfen, mehr zu fangen!",
+      "selected_4_to_5": "Was? Du hast {{numBugTypes}}? Nicht schlecht!$Du bist noch nicht ganz auf meinem Level, aber ich kann mich in dir erkennen! $Nimm das, mein junger Padawan!",
+      "selected_6": "Wow! {{numBugTypes}}!$Du musst Käfer-Pokémon fast so sehr lieben wie ich!$Hier, nimm das als Zeichen unserer Kameradschaft!"
+    },
+    "3": {
+      "label": "Verschenke ein Käfer-Item",
+      "tooltip": "(-) Du gibst dem Trainer ein {{requiredBugItems}}\n(+) Erhalte ein Geschenk",
+      "disabled_tooltip": "Du brauchst ein {{requiredBugItems}}, um das auszuwählen.",
+      "select_prompt": "Wählen Sie ein Item aus, um es zu verschenken.",
+      "invalid_selection": "Das Pokémon hat kein solches Item.",
+      "selected": "Du gibst {{selectedItem}} an dem Trainer .",
+      "selected_dialogue": "Wow! {{selectedItem}}, für mich? Du bist nicht so schlecht, Junge!$Als Zeichen meiner Anerkennung möchte ich, dass du dieses besondere Geschenk bekommst!$Es wurde in meiner Familie weitergegeben, und jetzt möchte ich, dass du es hast!"
+    }
+  },
+  "battle_won": "Dein Wissen und Können waren perfekt, um unsere Schwächen auszunutzen!$Als Gegenleistung für die wertvolle Lektion, erlaube mir, einem deiner Pokémon eine Käfer-Attacke beizubringen!",
+  "teach_move_prompt": "Wähle eine Attacke aus die du deinem Pokémon beibringen möchtest.",
+  "confirm_no_teach": "Bist du sicher, dass du keine dieser großartigen Attacken lernen möchtest?",
+  "outro": "Ich sehe großartige Käfer-Pokémon in deiner Zukunft! Mögen sich unsere Wege wieder kreuzen!$Mach's gut!",
+  "numBugTypes_one": "{{count}} Käfer-Pokémon",
+  "numBugTypes_other": "{{count}} Käfer-Pokémon"
+}

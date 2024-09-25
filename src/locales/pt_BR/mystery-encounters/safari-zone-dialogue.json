@@ -1,0 +1,46 @@
+{
+  "intro": "É uma zona de safári!",
+  "title": "A Zona de Safári",
+  "description": "Há todos os tipos de Pokémon raros e especiais que podem ser encontrados aqui!\nSe você escolher entrar, terá um limite de tempo de @[TOOLTIP_TITLE]{{{numEncounters}} encontros selvagens} onde poderá tentar capturar esses Pokémon especiais.\n\nCuidado, no entanto. Esses Pokémon podem fugir antes que você consiga capturá-los!",
+  "query": "Você gostaria de entrar?",
+  "option": {
+    "1": {
+      "label": "Entrar",
+      "tooltip": "(-) Pagar {{option1Money, money}}\n@[SUMMARY_GREEN]{(?) Zona de Safári}",
+      "selected": "Hora de testar sua sorte!"
+    },
+    "2": {
+      "label": "Sair",
+      "tooltip": "(-) Sem Recompensas",
+      "selected": "Você segue seu caminho apressadamente,\ncom uma leve sensação de arrependimento."
+    }
+  },
+  "safari": {
+    "1": {
+      "label": "Jogar uma Pokébola",
+      "tooltip": "(+) Jogar uma Pokébola",
+      "selected": "Você joga uma Pokébola!"
+    },
+    "2": {
+      "label": "Jogar Isca",
+      "tooltip": "(+) Aumenta a Taxa de Captura\n(-) Chance de Aumentar a Taxa de Fuga",
+      "selected": "Você joga um pouco de isca!"
+    },
+    "3": {
+      "label": "Jogar Lama",
+      "tooltip": "(+) Diminui a Taxa de Fuga\n(-) Chance de Diminuir a Taxa de Captura",
+      "selected": "Você joga um pouco de lama!"
+    },
+    "4": {
+      "label": "Fugir",
+      "tooltip": "(?) Fugir deste Pokémon"
+    },
+    "watching": "{{pokemonName}} está observando cuidadosamente!",
+    "eating": "{{pokemonName}} está comendo!",
+    "busy_eating": "{{pokemonName}} está ocupado comendo!",
+    "angry": "{{pokemonName}} está com raiva!",
+    "beside_itself_angry": "{{pokemonName}} está fora de si de tanta raiva!",
+    "remaining_count": "{{remainingCount}} Pokémon restantes!"
+  },
+  "outro": "Essa foi uma pequena excursão divertida!"
+}

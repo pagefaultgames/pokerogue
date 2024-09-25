@@ -1,0 +1,24 @@
+
+
+{
+  "intro": "Un hombre extraño con un abrigo andrajoso se interpone en tu camino...",
+  "speaker": "Tipo sombrío",
+  "intro_dialogue": "¡Oye, tú!$He estado trabajando en un nuevo dispositivo\npara sacar el poder latente de un Pokémon!$Reorganiza completamente los átomos del Pokémon\na nivel molecular en una forma mucho más poderosa.$Jeje…@d{64} Solo necesito algunos sac-@d{32}\nEh, sujetos de prueba, para demostrar que funciona.",
+  "title": "Pacto Oscuro",
+  "description": "El tipo inquietante sostiene unas Pokéballs.\n\"¡Te lo compensaré! Puedes tener estas Pokéballs fuertes como pago. ¡Todo lo que necesito es un Pokémon de tu equipo! Jeje...",
+  "query": "¿Qué harás?",
+  "option": {
+    "1": {
+      "label": "Acceptar",
+      "tooltip": "(+) 5 Rogue Balls\n(?) Mejora un Pokémon aleatorio",
+      "selected_dialogue": "Veamos, ¡Ese {{pokeName}} servirá muy bien!$Recuerda, no soy responsable\nsi algo malo sucede!@d{32} Jeje...",
+      "selected_message": "El hombre te entrega 5 Rogue Balls.${{pokeName}} entra dentro de la máquina...$¡Luces intermitentes y ruidos extraños\ncomienzan a salir de la máquina!$...@d{96} Algo emerge\ndel dispositivo, ¡furiosamente!"
+    },
+    "2": {
+      "label": "Rechazar",
+      "tooltip": "(-) Ninguna Recompensa",
+      "selected": "¿No vas a ayudar a un pobre hombre?\n¡Bah!"
+    }
+  },
+  "outro": "Después del encuentro angustioso, te recuperas y te marchas."
+}

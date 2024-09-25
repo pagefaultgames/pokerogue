@@ -83,12 +83,7 @@ export default class BattleMessageUiHandler extends MessageUiHandler {
     this.nameBoxContainer.add(this.nameText);
     messageContainer.add(this.nameBoxContainer);
 
-    const prompt = this.scene.add.sprite(0, 0, "prompt");
-    prompt.setVisible(false);
-    prompt.setOrigin(0, 0);
-    messageContainer.add(prompt);
-
-    this.prompt = prompt;
+    this.initPromptSprite(messageContainer);
 
     const levelUpStatsContainer = this.scene.add.container(0, 0);
     levelUpStatsContainer.setVisible(false);
@@ -97,6 +92,7 @@ export default class BattleMessageUiHandler extends MessageUiHandler {
     this.levelUpStatsContainer = levelUpStatsContainer;
 
     const levelUpStatsLabelsContent = addTextObject(this.scene, (this.scene.game.canvas.width / 6) - 73, -94, "", TextStyle.WINDOW, { maxLines: 6 });
+    levelUpStatsLabelsContent.setLineSpacing(i18next.resolvedLanguage === "ja" ? 25 : 5);
     let levelUpStatsLabelText = "";
 
     for (const s of PERMANENT_STATS) {
@@ -112,11 +108,13 @@ export default class BattleMessageUiHandler extends MessageUiHandler {
     levelUpStatsContainer.add(levelUpStatsLabelsContent);
 
     const levelUpStatsIncrContent = addTextObject(this.scene, (this.scene.game.canvas.width / 6) - 50, -94, "+\n+\n+\n+\n+\n+", TextStyle.WINDOW, { maxLines: 6 });
+    levelUpStatsIncrContent.setLineSpacing(i18next.resolvedLanguage === "ja" ? 25 : 5);
     levelUpStatsContainer.add(levelUpStatsIncrContent);
 
     this.levelUpStatsIncrContent = levelUpStatsIncrContent;
 
     const levelUpStatsValuesContent = addBBCodeTextObject(this.scene, (this.scene.game.canvas.width / 6) - 7, -94, "", TextStyle.WINDOW, { maxLines: 6, lineSpacing: 5});
+    levelUpStatsValuesContent.setLineSpacing(i18next.resolvedLanguage === "ja" ? 25 : 5);
     levelUpStatsValuesContent.setOrigin(1, 0);
     levelUpStatsValuesContent.setAlign("right");
     levelUpStatsContainer.add(levelUpStatsValuesContent);

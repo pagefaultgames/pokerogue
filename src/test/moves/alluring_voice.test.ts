@@ -8,7 +8,7 @@ import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
-const TIMEOUT = 20 * 1000;
+
 
 describe("Moves - Alluring Voice", () => {
   let phaserGame: Phaser.Game;
@@ -31,7 +31,7 @@ describe("Moves - Alluring Voice", () => {
       .disableCrits()
       .enemySpecies(Species.MAGIKARP)
       .enemyAbility(Abilities.ICE_SCALES)
-      .enemyMoveset(Array(4).fill(Moves.HOWL))
+      .enemyMoveset([Moves.HOWL])
       .startingLevel(10)
       .enemyLevel(10)
       .starterSpecies(Species.FEEBAS)
@@ -50,5 +50,5 @@ describe("Moves - Alluring Voice", () => {
     await game.phaseInterceptor.to(BerryPhase);
 
     expect(enemy.getTag(BattlerTagType.CONFUSED)?.tagType).toBe("CONFUSED");
-  }, TIMEOUT);
+  });
 });

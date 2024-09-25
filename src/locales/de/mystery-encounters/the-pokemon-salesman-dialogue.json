@@ -1,0 +1,23 @@
+{
+  "intro": "Ein fröhlicher älterer Mann kommt auf dich zu.",
+  "speaker": "Reicher Mann",
+  "intro_dialogue": "Hallo! Ich habe ein Angebot, das du nicht ablehnen kannst!",
+  "title": "Der Pokémon-Verkäufer",
+  "description": "Dieses {{purchasePokemon}} ist extrem einzigartig und @[TOOLTIP_TITLE]{hat eine Fähigkeit, die normalerweise nicht bei seiner Art zu finden ist}! Ich lasse dich dieses tolle {{purchasePokemon}} für gerade einmal {{price, money}} haben!\"\n\"Was sagst du dazu?\"",
+  "description_shiny": "Dieses {{purchasePokemon}} ist extrem einzigartig und @[TOOLTIP_TITLE]{hat eine Farbe, die normalerweise nicht bei seiner Art zu finden ist}! Ich lasse dich dieses tolle {{purchasePokemon}} für gerade einmal {{price, money}} haben!\"\n\"Was sagst du dazu?\"",
+  "query": "Was wirst du tun?",
+  "option": {
+    "1": {
+      "label": "Akzeptieren",
+      "tooltip": "(-) Bezahlen {{price, money}}\n(+) Erhalte ein {{purchasePokemon}} mit seiner versteckten Fähigkeit",
+      "tooltip_shiny": "(-) Bezahlen {{price, money}}\n(+) Erhalte ein schillerndes {{purchasePokemon}}",
+      "selected_message": "Du bezahlst einen unverschämten Betrag und kaufst das {{purchasePokemon}}.",
+      "selected_dialogue": "Ausgezeichnete Wahl!$Ich sehe, dass du ein gutes Auge für Geschäfte hast.$Oh, ja...@d{64} Rückgaben werden nicht akzeptiert, hast du das verstanden?"
+    },
+    "2": {
+      "label": "Ablehnen",
+      "tooltip": "(-) Keine Belohnung",
+      "selected": "Nein?@d{32} Du sagst nein?$Ich mache das nur als Gefallen für dich!"
+    }
+  }
+}

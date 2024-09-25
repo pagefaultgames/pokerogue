@@ -9,11 +9,10 @@ import { Biome } from "#enums/biome";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/utils/gameManager";
-import { SPLASH_ONLY } from "#test/utils/testUtils";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
-const TIMEOUT = 20 * 1000;
+
 
 describe("Abilities - Libero", () => {
   let phaserGame: Phaser.Game;
@@ -53,7 +52,6 @@ describe("Abilities - Libero", () => {
 
       testPokemonTypeMatchesDefaultMoveType(leadPokemon, Moves.SPLASH);
     },
-    TIMEOUT,
   );
 
   test.skip(
@@ -93,7 +91,6 @@ describe("Abilities - Libero", () => {
 
       testPokemonTypeMatchesDefaultMoveType(leadPokemon, Moves.SPLASH);
     },
-    TIMEOUT,
   );
 
   test(
@@ -116,7 +113,6 @@ describe("Abilities - Libero", () => {
         moveType = Type[Type.FIRE];
       expect(leadPokemonType).toBe(moveType);
     },
-    TIMEOUT,
   );
 
   test(
@@ -139,7 +135,6 @@ describe("Abilities - Libero", () => {
         moveType = Type[Type.ICE];
       expect(leadPokemonType).toBe(moveType);
     },
-    TIMEOUT,
   );
 
   test(
@@ -158,7 +153,6 @@ describe("Abilities - Libero", () => {
 
       testPokemonTypeMatchesDefaultMoveType(leadPokemon, Moves.AIR_SLASH);
     },
-    TIMEOUT,
   );
 
   test(
@@ -176,14 +170,13 @@ describe("Abilities - Libero", () => {
 
       testPokemonTypeMatchesDefaultMoveType(leadPokemon, Moves.DIG);
     },
-    TIMEOUT,
   );
 
   test(
     "ability applies correctly even if the pokemon's move misses",
     async () => {
       game.override.moveset([Moves.TACKLE]);
-      game.override.enemyMoveset(SPLASH_ONLY);
+      game.override.enemyMoveset(Moves.SPLASH);
 
       await game.startBattle([Species.MAGIKARP]);
 
@@ -198,7 +191,6 @@ describe("Abilities - Libero", () => {
       expect(enemyPokemon.isFullHp()).toBe(true);
       testPokemonTypeMatchesDefaultMoveType(leadPokemon, Moves.TACKLE);
     },
-    TIMEOUT,
   );
 
   test(
@@ -217,7 +209,6 @@ describe("Abilities - Libero", () => {
 
       testPokemonTypeMatchesDefaultMoveType(leadPokemon, Moves.TACKLE);
     },
-    TIMEOUT,
   );
 
   test(
@@ -236,7 +227,6 @@ describe("Abilities - Libero", () => {
 
       testPokemonTypeMatchesDefaultMoveType(leadPokemon, Moves.TACKLE);
     },
-    TIMEOUT,
   );
 
   test(
@@ -255,7 +245,6 @@ describe("Abilities - Libero", () => {
 
       expect(leadPokemon.summonData.abilitiesApplied).not.toContain(Abilities.LIBERO);
     },
-    TIMEOUT,
   );
 
   test(
@@ -275,7 +264,6 @@ describe("Abilities - Libero", () => {
 
       expect(leadPokemon.summonData.abilitiesApplied).not.toContain(Abilities.LIBERO);
     },
-    TIMEOUT,
   );
 
   test(
@@ -293,7 +281,6 @@ describe("Abilities - Libero", () => {
 
       expect(leadPokemon.summonData.abilitiesApplied).not.toContain(Abilities.LIBERO);
     },
-    TIMEOUT,
   );
 
   test(
@@ -311,7 +298,6 @@ describe("Abilities - Libero", () => {
 
       expect(leadPokemon.summonData.abilitiesApplied).not.toContain(Abilities.LIBERO);
     },
-    TIMEOUT,
   );
 
   test(
@@ -330,7 +316,6 @@ describe("Abilities - Libero", () => {
 
       testPokemonTypeMatchesDefaultMoveType(leadPokemon, Moves.TRICK_OR_TREAT);
     },
-    TIMEOUT,
   );
 
   test(
@@ -349,7 +334,6 @@ describe("Abilities - Libero", () => {
       testPokemonTypeMatchesDefaultMoveType(leadPokemon, Moves.CURSE);
       expect(leadPokemon.getTag(BattlerTagType.CURSED)).not.toBe(undefined);
     },
-    TIMEOUT,
   );
 });
 

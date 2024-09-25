@@ -1,12 +1,6 @@
 {
   "none": {
-    "name": "Nenhum",
-    "description": "",
-    "obtain": "",
-    "obtainSource": "",
-    "activation": "",
-    "overlap": "",
-    "heal": ""
+    "name": "Nenhum"
   },
   "poison": {
     "name": "Envenenamento",

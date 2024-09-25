@@ -1,0 +1,26 @@
+{
+  "intro": "お金持ちっぽいな　男の子が　道を　さえぎる……",
+  "speaker": "お坊っちゃま",
+  "intro_dialogue": "こんにちは！$まるで　素敵滅法な　{{strongestPokemon}}を　飼っている　ことに　気づかず　にはいられません！$ずーっと　そのような　ポケモンを　飼いたかったんです！$ね、　気前よく　支払って、\nサービスで　この古くて　安かった石を　あげて　いかがですか？",
+  "title": "断れない申し出",
+  "description": "お坊っちゃまは　{{strongestPokemon}}の代わりに　@[TOOLTIP_TITLE]{Shiny Charm}と　{{price, money}}を　申し出ています。\n交換として　結構　すごいですが、　本当に　こんな　強い仲間と　別れるのを　耐えられますか？",
+  "query": "どうしますか",
+  "option": {
+    "1": {
+      "label": "申し出を受け取る",
+      "tooltip": "(-) {{strongestPokemon}}を失う\n(+) @[TOOLTIP_TITLE]{Shiny Charm}をもらう\n(+) {{price, money}}をもらう",
+      "selected": "素晴らしい！@d{32} {{strongestPokemon}}　こっち　こっち！$ヨットクラブの　みんなに　おまえを　自慢するぞ！$きっと　ヤキモチを　焼くね……　ふへへへ"
+    },
+    "2": {
+      "label": "ガキを恐喝",
+      "tooltip": "(+) {{option2PrimaryName}}は{{moveOrAbility}}を使う\n(+) {{price, money}}を貰う",
+      "tooltip_disabled": "選ぶには　手持ちポケモンが　特定な　技や　特性が　必要",
+      "selected": "いやあ！　{{liepardName}}　泥棒だ！$お父さんの　弁護士は　キサマを　連絡するぞ！！"
+    },
+    "3": {
+      "label": "立ち去る",
+      "tooltip": "(-) ご褒美なし",
+      "selected": "フン　今日は　最低だ……$まあね　ヨットクラブへ　戻ろう、　{{liepardName}}"
+    }
+  }
+}

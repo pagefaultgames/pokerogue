@@ -1,0 +1,21 @@
+{
+  "intro": "É um enorme {{shuckleName}} e o que parece ser\na grande reserva de... suco?",
+  "title": "O Suco Forte",
+  "description": "O {{shuckleName}} que bloqueia seu caminho parece formidável. Enquanto isso, o suco ao lado dele emana algum tipo de poder.\n\nO {{shuckleName}} estende seus tentáculos na sua direção. Parece que ele quer fazer algo...",
+  "query": "O que você vai fazer?",
+  "option": {
+    "1": {
+      "label": "Aproximar-se do {{shuckleName}}",
+      "tooltip": "(?) Algo terrível ou incrível pode acontecer",
+      "selected": "Você desmaia.",
+      "selected_2": "@f{150}Quando você desperta, o {{shuckleName}} se foi\ne a reserva de suco está completamente drenada.${{highBstPokemon1}} e {{highBstPokemon2}}\nsentem uma terrível letargia!$Os atributos base deles foram reduzidas em {{reductionValue}}!$Seus outros Pokémon, no entanto, sentem um vigor incrível!\nOs atributos base deles aumentaram em {{increaseValue}}!"
+    },
+    "2": {
+      "label": "Batalhar com o {{shuckleName}}",
+      "tooltip": "(-) Batalha Difícil\n(+) Recompensas Especiais",
+      "selected": "Enfurecido, o {{shuckleName}} bebe um pouco do seu suco e ataca!",
+      "stat_boost": "O suco do {{shuckleName}} aumenta suas estatísticas!"
+    }
+  },
+  "outro": "Que reviravolta bizarra de eventos."
+}

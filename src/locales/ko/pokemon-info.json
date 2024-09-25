@@ -13,8 +13,7 @@
     "SPD": "스피드",
     "SPDshortened": "스피드",
     "ACC": "명중률",
-    "EVA": "회피율",
-    "HPStat": "HP"
+    "EVA": "회피율"
   },
   "Type": {
     "UNKNOWN": "Unknown",
