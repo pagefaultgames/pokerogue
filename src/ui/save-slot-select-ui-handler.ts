@@ -10,6 +10,7 @@ import MessageUiHandler from "./message-ui-handler";
 import { TextStyle, addTextObject } from "./text";
 import { Mode } from "./ui";
 import { addWindow } from "./ui-theme";
+import { RunDisplayMode } from "#app/ui/run-info-ui-handler";
 
 const sessionSlotCount = 5;
 
@@ -162,6 +163,10 @@ export default class SaveSlotSelectUiHandler extends MessageUiHandler {
           success = this.setScrollCursor(this.scrollCursor + 1);
         }
         break;
+      case Button.RIGHT:
+        if (this.sessionSlots[this.cursor].hasData) {
+          this.scene.ui.setOverlayMode(Mode.RUN_INFO, this.sessionSlots[this.cursor].saveData, RunDisplayMode.SAVE_PREVIEW);
+        }
       }
     }
 
@@ -253,6 +258,7 @@ class SessionSlot extends Phaser.GameObjects.Container {
   public slotId: integer;
   public hasData: boolean;
   private loadingLabel: Phaser.GameObjects.Text;
+  public saveData: SessionSaveData;
 
   constructor(scene: BattleScene, slotId: integer) {
     super(scene, 0, slotId * 56);
@@ -337,6 +343,7 @@ class SessionSlot extends Phaser.GameObjects.Container {
           return;
         }
         this.hasData = true;
+        this.saveData = sessionData;
         await this.setupWithData(sessionData);
         resolve(true);
       });

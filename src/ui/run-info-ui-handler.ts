@@ -22,6 +22,7 @@ import * as Modifier from "../modifier/modifier";
 import { Species } from "#enums/species";
 import { PlayerGender } from "#enums/player-gender";
 import { SettingKeyboard } from "#app/system/settings/settings-keyboard";
+import { getBiomeName } from "#app/data/biomes";
 
 /**
  * RunInfoUiMode indicates possible overlays of RunInfoUiHandler.
@@ -34,6 +35,11 @@ enum RunInfoUiMode {
   ENDING_ART
 }
 
+export enum RunDisplayMode {
+  RUN_HISTORY,
+  SAVE_PREVIEW
+}
+
 /**
  * Some variables are protected because this UI class will most likely be extended in the future to display more information.
  * These variables will most likely be shared across 'classes' aka pages.
@@ -41,6 +47,7 @@ enum RunInfoUiMode {
  * For now, I leave as is.
  */
 export default class RunInfoUiHandler extends UiHandler {
+  protected runDisplayMode: RunDisplayMode;
   protected runInfo: SessionSaveData;
   protected isVictory: boolean;
   protected pageMode: RunInfoUiMode;
@@ -87,9 +94,15 @@ export default class RunInfoUiHandler extends UiHandler {
     this.runContainer.add(gameStatsBg);
 
     const run = args[0];
+    this.runDisplayMode = args[1];
+    if (this.runDisplayMode === RunDisplayMode.RUN_HISTORY) {
+      this.runInfo = this.scene.gameData.parseSessionData(JSON.stringify(run.entry));
+      this.isVictory = run.isVictory ?? false;
+    } else if (this.runDisplayMode === RunDisplayMode.SAVE_PREVIEW) {
+      this.runInfo = args[0];
+    }
     // Assigning information necessary for the UI's creation
-    this.runInfo = this.scene.gameData.parseSessionData(JSON.stringify(run.entry));
-    this.isVictory = run.isVictory;
+
     this.pageMode = RunInfoUiMode.MAIN;
 
     // Creates Header and adds to this.runContainer
@@ -102,7 +115,11 @@ export default class RunInfoUiHandler extends UiHandler {
     const runResultWindow = addWindow(this.scene, 0, 0, this.statsBgWidth-11, 65);
     runResultWindow.setOrigin(0, 0);
     this.runResultContainer.add(runResultWindow);
-    this.parseRunResult();
+    if (this.runDisplayMode === RunDisplayMode.RUN_HISTORY) {
+      this.parseRunResult();
+    } else if (this.runDisplayMode === RunDisplayMode.SAVE_PREVIEW) {
+      this.parseRunStatus();
+    }
 
     // Creates Run Info Container
     this.runInfoContainer = this.scene.add.container(0, 89);
@@ -226,6 +243,31 @@ export default class RunInfoUiHandler extends UiHandler {
     this.runContainer.add(this.runResultContainer);
   }
 
+  private parseRunStatus() {
+    console.log(this.runInfo);
+    const runStatusText = addTextObject(this.scene, 6, 5, `${i18next.t("saveSlotSelectUiHandler:wave")} ${this.runInfo.waveIndex} - ${getBiomeName(this.runInfo.arena.biome)}`, TextStyle.WINDOW, {fontSize : "65px", lineSpacing: 0.1});
+    this.runResultContainer.add(runStatusText);
+
+    const enemyContainer = this.scene.add.container(0, 0);
+    // Wild - Single and Doubles
+    if (this.runInfo.battleType === BattleType.WILD || (this.runInfo.battleType === BattleType.MYSTERY_ENCOUNTER && !this.runInfo.trainer)) {
+      switch (this.runInfo.enemyParty.length) {
+      case 1:
+      // Wild - Singles
+        this.parseWildSingleDefeat(enemyContainer);
+        break;
+      case 2:
+      //Wild - Doubles
+        this.parseWildDoubleDefeat(enemyContainer);
+        break;
+      }
+    } else if (this.runInfo.battleType === BattleType.TRAINER || (this.runInfo.battleType === BattleType.MYSTERY_ENCOUNTER && this.runInfo.trainer)) {
+      this.loadTrainerSprites(enemyContainer);
+    }
+    this.runResultContainer.add(enemyContainer);
+    this.runContainer.add(this.runResultContainer);
+  }
+
   /**
    * This function is called to edit an enemyContainer to represent a loss from a defeat by a wild single Pokemon battle.
    * @param enemyContainer - container holding enemy visual and level information
@@ -277,15 +319,7 @@ export default class RunInfoUiHandler extends UiHandler {
     enemyContainer.setPosition(8, 14);
   }
 
-  /**
-   * This edits a container to represent a loss from a defeat by a trainer battle.
-   * @param enemyContainer - container holding enemy visuals and level information
-   * The trainers are placed to the left of their party.
-   * Depending on the trainer icon, there may be overlap between the edges of the box or their party. (Capes...)
-   *
-   * Party Pokemon have their icons, terastalization status, and level shown.
-   */
-  private parseTrainerDefeat(enemyContainer: Phaser.GameObjects.Container) {
+  private loadTrainerSprites(enemyContainer: Phaser.GameObjects.Container) {
     // Creating the trainer sprite and adding it to enemyContainer
     const tObj = this.runInfo.trainer.toTrainer(this.scene);
 
@@ -299,19 +333,40 @@ export default class RunInfoUiHandler extends UiHandler {
         const tObjPartnerSpriteKey = tObj.config.getSpriteKey(true, true);
         const tObjPartnerSprite = this.scene.add.sprite(5, -3, tObjPartnerSpriteKey);
         // Double Trainers have smaller sprites than Single Trainers
-        tObjPartnerSprite.setScale(0.20);
-        tObjSprite.setScale(0.20);
-        doubleContainer.add(tObjSprite);
-        doubleContainer.add(tObjPartnerSprite);
-        doubleContainer.setPosition(12, 38);
+        if (this.runDisplayMode === RunDisplayMode.RUN_HISTORY) {
+          tObjPartnerSprite.setScale(0.20);
+          tObjSprite.setScale(0.20);
+          doubleContainer.add(tObjSprite);
+          doubleContainer.add(tObjPartnerSprite);
+          doubleContainer.setPosition(12, 38);
+        } else {
+          tObjSprite.setScale(0.75);
+          tObjPartnerSprite.setScale(0.75);
+          doubleContainer.add([tObjSprite, tObjPartnerSprite]);
+          doubleContainer.setPosition(8, 14);
+        }
         enemyContainer.add(doubleContainer);
       } else {
-        tObjSprite.setScale(0.35, 0.35);
-        tObjSprite.setPosition(12, 28);
+        const scale = (this.runDisplayMode === RunDisplayMode.RUN_HISTORY) ? 0.35 : 1;
+        const position = (this.runDisplayMode === RunDisplayMode.RUN_HISTORY) ? [12, 28] : [28, 12];
+        tObjSprite.setScale(scale, scale);
+        tObjSprite.setPosition(position[0], position[1]);
         enemyContainer.add(tObjSprite);
       }
     });
+  }
 
+  /**
+   * This edits a container to represent a loss from a defeat by a trainer battle.
+   * @param enemyContainer - container holding enemy visuals and level information
+   * The trainers are placed to the left of their party.
+   * Depending on the trainer icon, there may be overlap between the edges of the box or their party. (Capes...)
+   *
+   * Party Pokemon have their icons, terastalization status, and level shown.
+   */
+  private parseTrainerDefeat(enemyContainer: Phaser.GameObjects.Container) {
+    // Load trainer sprites
+    this.loadTrainerSprites(enemyContainer);
     // Determining which Terastallize Modifier belongs to which Pokemon
     // Creates a dictionary {PokemonId: TeraShardType}
     const teraPokemon = {};
