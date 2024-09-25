@@ -1,1 +1,23 @@
-{}
+{
+  "intro": "ご機嫌な　おじいさんは　近寄ります！",
+  "speaker": "ジェントルマン",
+  "intro_dialogue": "ハローゼアー！　どこにも　見つけない　ディールが　あります！",
+  "title": "ポケモンのセールスマン",
+  "description": "「この　{{purchasePokemon}}は　とても　ユニークで　種類の　中で　@[TOOLTIP_TITLE]{滅多に　見られない　特性が　あります}！　{{price, money}}だけで　この　アメイジングな　{{purchasePokemon}}を　もらいますよ！」\n\n　「いかがですか？」",
+  "description_shiny": "「この　{{purchasePokemon}}は　とても　ユニークで　種類の　中で　@[TOOLTIP_TITLE]{滅多に　見られない　カラーが　あります}！　{{price, money}}だけで　この　アメイジングな　{{purchasePokemon}}を　もらいますよ！」\n\n　「いかがですか？」",
+  "query": "どうします？",
+  "option": {
+    "1": {
+      "label": "受け取る",
+      "tooltip": "(-) {{price, money}}を払う\n(+) 隠れ特性の ある {{purchasePokemon}}を もらう",
+      "tooltip_shiny": "(-) {{price, money}}を払う\n(+) 色違いの {{purchasePokemon}}を もらう",
+      "selected_message": "とんでもない　価格を　払って　{{purchasePokemon}}を　買いました。",
+      "selected_dialogue": "エクセレント・チョイス！$あなたは　ビジネス上手　なんでしょうね。$あ、そうでね……@d{64} 返品が　受け入れない。　分かった？"
+    },
+    "2": {
+      "label": "断る",
+      "tooltip": "(-) ご褒美なし",
+      "selected": "ノー？@d{32} ノーって言ってる！？$これは　恩恵ですよ！　チッ……"
+    }
+  }
+}

@@ -31,7 +31,7 @@
   "option": {
     "1": {
       "label": "Accepter le défi",
-      "tooltip": "(-) Combat difficile\n(+) Gain d’un @[TOOLTIP_TITLE]{Œuf très rare}"
+      "tooltip": "(-) Combat extrême\n(+) Gain d’un @[TOOLTIP_TITLE]{Œuf très rare}"
     },
     "2": {
       "label": "Décliner le défi",
