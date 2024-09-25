@@ -4899,7 +4899,7 @@ export class EnemyPokemon extends Pokemon {
 
   /**
    * Add a new pokemon to the player's party (at `slotIndex` if set).
-   * If the first slot is replaced, the new pokemons visibility will be set to `false`.
+   * If the first slot is replaced, the new pokemon's visibility will be set to `false`.
    * @param pokeballType the type of pokeball the pokemon was caught with
    * @param slotIndex an optional index to place the pokemon in the party
    * @returns the pokemon that was added or null if the pokemon could not be added
