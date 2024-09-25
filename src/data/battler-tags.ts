@@ -2536,7 +2536,7 @@ export class TauntTag extends MoveRestrictionBattlerTag {
  * The tag is only removed when the source-user is removed from the field.
  */
 export class ImprisonTag extends MoveRestrictionBattlerTag {
-  private source: Pokemon;
+  private source: Pokemon | null;
 
   constructor(sourceId: number) {
     super(BattlerTagType.IMPRISON, [BattlerTagLapseType.PRE_MOVE, BattlerTagLapseType.AFTER_MOVE], 1, Moves.IMPRISON, sourceId);
@@ -2544,7 +2544,7 @@ export class ImprisonTag extends MoveRestrictionBattlerTag {
 
   override onAdd(pokemon: Pokemon) {
     if (this.sourceId) {
-      this.source = pokemon.scene.getPokemonById(this.sourceId)!;
+      this.source = pokemon.scene.getPokemonById(this.sourceId);
     }
   }
 
@@ -2555,7 +2555,7 @@ export class ImprisonTag extends MoveRestrictionBattlerTag {
    * @returns `true` if the source is still active
    */
   override lapse(_pokemon: Pokemon, _lapseType: BattlerTagLapseType): boolean {
-    return this.source.isActive(true);
+    return this.source?.isActive(true) ?? false;
   }
 
   /**
@@ -2564,8 +2564,11 @@ export class ImprisonTag extends MoveRestrictionBattlerTag {
    * @returns `false` if either condition is not met
    */
   override isMoveRestricted(move: Moves): boolean {
-    const sourceMoveset = this.source.getMoveset().map(m => m!.moveId);
-    return sourceMoveset.includes(move) && this.source.isActive(true);
+    if (this.source) {
+      const sourceMoveset = this.source.getMoveset().map(m => m!.moveId);
+      return sourceMoveset?.includes(move) && this.source.isActive(true);
+    }
+    return false;
   }
 
   override selectionDeniedText(_pokemon: Pokemon, move: Moves): string {
