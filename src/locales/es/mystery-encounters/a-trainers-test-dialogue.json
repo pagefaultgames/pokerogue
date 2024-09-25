@@ -31,7 +31,7 @@
   "option": {
     "1": {
       "label": "Aceptar el Desafío",
-      "tooltip": "(-) Batalla Ardua\n(+) Obtén un @[TOOLTIP_TITLE]{Huevo muy raro}"
+      "tooltip": "(-) Batalla extremadamente Ardua\n(+) Obtén un @[TOOLTIP_TITLE]{Huevo muy raro}"
     },
     "2": {
       "label": "Rechazar el Desafío",
