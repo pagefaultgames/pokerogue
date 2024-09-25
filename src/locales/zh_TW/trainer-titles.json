@@ -16,6 +16,10 @@
   "galactic_boss": "銀河隊老大",
   "plasma_boss": "等離子隊老大",
   "flare_boss": "閃焰隊老大",
+  "aether_boss": "Aether President",
+  "skull_boss": "Team Skull Boss",
+  "macro_boss": "Macro Cosmos President",
+  "star_boss": "Team Star Leader",
   
   "rocket_admin": "火箭隊幹部",
   "rocket_admin_female": "火箭隊幹部",
@@ -28,5 +32,11 @@
   "plasma_sage": "等離子隊賢人",
   "plasma_admin": "等離子隊幹部",
   "flare_admin": "閃焰隊幹部",
-  "flare_admin_female": "閃焰隊幹部"
+  "flare_admin_female": "閃焰隊幹部",
+  "aether_admin": "Aether Foundation Admin",
+  "skull_admin": "Team Skull Admin",
+  "macro_admin": "Macro Cosmos",
+  "star_admin": "Team Star Squad Boss",
+
+  "the_winstrates": "The Winstrates'"
 }

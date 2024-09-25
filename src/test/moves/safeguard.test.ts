@@ -8,7 +8,7 @@ import { Species } from "#enums/species";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
-const TIMEOUT = 20 * 1000;
+
 
 describe("Moves - Safeguard", () => {
   let phaserGame: Phaser.Game;
@@ -46,7 +46,7 @@ describe("Moves - Safeguard", () => {
     await game.toNextTurn();
 
     expect(enemy.status).toBeUndefined();
-  }, TIMEOUT);
+  });
 
   it("protects from status moves", async () => {
     await game.classicMode.startBattle();
@@ -57,7 +57,7 @@ describe("Moves - Safeguard", () => {
     await game.toNextTurn();
 
     expect(enemyPokemon.status).toBeUndefined();
-  }, TIMEOUT);
+  });
 
   it("protects from confusion", async () => {
     game.override.moveset([Moves.CONFUSE_RAY]);
@@ -69,7 +69,7 @@ describe("Moves - Safeguard", () => {
     await game.toNextTurn();
 
     expect(enemyPokemon.summonData.tags).toEqual([]);
-  }, TIMEOUT);
+  });
 
   it("protects ally from status", async () => {
     game.override.battleType("double");
@@ -87,7 +87,7 @@ describe("Moves - Safeguard", () => {
 
     expect(enemyPokemon[0].status).toBeUndefined();
     expect(enemyPokemon[1].status).toBeUndefined();
-  }, TIMEOUT);
+  });
 
   it("protects from Yawn", async () => {
     await game.classicMode.startBattle();
@@ -98,7 +98,7 @@ describe("Moves - Safeguard", () => {
     await game.toNextTurn();
 
     expect(enemyPokemon.summonData.tags).toEqual([]);
-  }, TIMEOUT);
+  });
 
   it("doesn't protect from already existing Yawn", async () => {
     await game.classicMode.startBattle();
@@ -112,7 +112,7 @@ describe("Moves - Safeguard", () => {
     await game.toNextTurn();
 
     expect(enemyPokemon.status?.effect).toEqual(StatusEffect.SLEEP);
-  }, TIMEOUT);
+  });
 
   it("doesn't protect from self-inflicted via Rest or Flame Orb", async () => {
     game.override.enemyHeldItems([{name: "FLAME_ORB"}]);
@@ -135,7 +135,7 @@ describe("Moves - Safeguard", () => {
     await game.toNextTurn();
 
     expect(enemyPokemon.status?.effect).toEqual(StatusEffect.SLEEP);
-  }, TIMEOUT);
+  });
 
   it("protects from ability-inflicted status", async () => {
     game.override.ability(Abilities.STATIC);
@@ -151,5 +151,5 @@ describe("Moves - Safeguard", () => {
     await game.toNextTurn();
 
     expect(enemyPokemon.status).toBeUndefined();
-  }, TIMEOUT);
+  });
 });

@@ -9,7 +9,7 @@
   },
   "doubleSlap": {
     "name": "Doble Bofetón",
-    "effect": "Abofetea de dos a cinco veces seguidas."
+    "effect": "El objetivo recibe bofetadas repetidamente, de ida y vuelta, de dos a cinco veces seguidas."
   },
   "cometPunch": {
     "name": "Puño Cometa",
@@ -53,7 +53,7 @@
   },
   "swordsDance": {
     "name": "Danza Espada",
-    "effect": "Baile frenético que aumenta mucho el Ataque."
+    "effect": "Baile frenético que aumenta mucho el ataque."
   },
   "cut": {
     "name": "Corte",
@@ -77,7 +77,7 @@
   },
   "bind": {
     "name": "Atadura",
-    "effect": "Ata y oprime de cuatro a cinco turnos."
+    "effect": "Usa el cuerpo o las extremidades para atar y oprimir\nal objetivo e infligirle daño de cuatro a cinco turnos."
   },
   "slam": {
     "name": "Atizar",
@@ -109,7 +109,7 @@
   },
   "sandAttack": {
     "name": "Ataque Arena",
-    "effect": "Arroja arena a la cara y baja la Precisión."
+    "effect": "Arroja arena a la cara y baja la precisión."
   },
   "headbutt": {
     "name": "Golpe Cabeza",
@@ -153,14 +153,14 @@
   },
   "tailWhip": {
     "name": "Látigo",
-    "effect": "Agita la cola para bajar la Defensa del equipo rival."
+    "effect": "Agita la cola para bajar la defensa del equipo rival."
   },
   "poisonSting": {
     "name": "Picotazo Veneno",
     "effect": "Lanza un aguijón tóxico que puede envenenar al objetivo."
   },
   "twineedle": {
-    "name": "Doble Ataque",
+    "name": "Doble ataque",
     "effect": "Pincha dos veces con dos espinas. Puede envenenar."
   },
   "pinMissile": {
@@ -169,7 +169,7 @@
   },
   "leer": {
     "name": "Malicioso",
-    "effect": "Intimida a los rivales para bajar su Defensa."
+    "effect": "Intimida a los rivales para bajar su defensa."
   },
   "bite": {
     "name": "Mordisco",
@@ -177,11 +177,11 @@
   },
   "growl": {
     "name": "Gruñido",
-    "effect": "Dulce gruñido que distrae al objetivo para que baje la guardia y reduce su Ataque."
+    "effect": "Dulce gruñido que distrae al objetivo para que baje la guardia y reduce su ataque."
   },
   "roar": {
     "name": "Rugido",
-    "effect": "Se lleva al objetivo, que es cambiado por otro Pokémon. Si es un Pokémon salvaje, acaba el combate."
+    "effect": "El objetivo se asusta y otro Pokémon es sacado a la batalla. En batalla contra un solo pokémon salvaje, esto termina la batalla."
   },
   "sing": {
     "name": "Canto",
@@ -201,7 +201,7 @@
   },
   "acid": {
     "name": "Ácido",
-    "effect": "Rocía al objetivo con un ácido corrosivo. Puede reducir la Defensa Especial."
+    "effect": "Rocía al objetivo con un ácido corrosivo. Puede reducir la defensa especial."
   },
   "ember": {
     "name": "Ascuas",
@@ -241,11 +241,11 @@
   },
   "bubbleBeam": {
     "name": "Rayo Burbuja",
-    "effect": "Ráfaga de burbujas que puede reducir la Velocidad."
+    "effect": "Ráfaga de burbujas que puede reducir la velocidad."
   },
   "auroraBeam": {
     "name": "Rayo Aurora",
-    "effect": "Rayo multicolor que puede reducir el Ataque."
+    "effect": "Rayo multicolor que puede reducir el ataque."
   },
   "hyperBeam": {
     "name": "Hiperrayo",
@@ -293,7 +293,7 @@
   },
   "growth": {
     "name": "Desarrollo",
-    "effect": "Hace que su cuerpo crezca a marchas forzadas con lo que aumenta su Ataque y Ataque Especial."
+    "effect": "Hace que su cuerpo crezca a marchas forzadas con lo que aumenta su ataque y ataque especial."
   },
   "razorLeaf": {
     "name": "Hoja Afilada",
@@ -321,7 +321,7 @@
   },
   "stringShot": {
     "name": "Disparo Demora",
-    "effect": "Lanza seda a los rivales y reduce mucho su Velocidad."
+    "effect": "Lanza seda a los rivales y reduce mucho su velocidad."
   },
   "dragonRage": {
     "name": "Furia Dragón",
@@ -373,7 +373,7 @@
   },
   "psychic": {
     "name": "Psíquico",
-    "effect": "Fuerte ataque telequinético que puede bajar la Defensa Especial del objetivo."
+    "effect": "Fuerte ataque telequinético que puede bajar la defensa especial del objetivo."
   },
   "hypnosis": {
     "name": "Hipnosis",
@@ -381,11 +381,11 @@
   },
   "meditate": {
     "name": "Meditación",
-    "effect": "El usuario reposa y medita para potenciar el Ataque."
+    "effect": "El usuario reposa y medita para potenciar el ataque."
   },
   "agility": {
     "name": "Agilidad",
-    "effect": "Relaja el cuerpo para ganar mucha Velocidad."
+    "effect": "Relaja el cuerpo para ganar mucha velocidad."
   },
   "quickAttack": {
     "name": "Ataque Rápido",
@@ -393,7 +393,7 @@
   },
   "rage": {
     "name": "Furia",
-    "effect": "Al usarse, aumenta el Ataque del usuario cada vez que es golpeado."
+    "effect": "Al usarse, aumenta el ataque del usuario cada vez que es golpeado."
   },
   "teleport": {
     "name": "Teletransporte",
@@ -409,11 +409,11 @@
   },
   "screech": {
     "name": "Chirrido",
-    "effect": "Alarido agudo que reduce mucho la Defensa del objetivo."
+    "effect": "Alarido agudo que reduce mucho la defensa del objetivo."
   },
   "doubleTeam": {
     "name": "Doble Equipo",
-    "effect": "Crea copias de sí mismo para mejorar la Evasión."
+    "effect": "Crea copias de sí mismo para mejorar la evasión."
   },
   "recover": {
     "name": "Recuperación",
@@ -421,15 +421,15 @@
   },
   "harden": {
     "name": "Fortaleza",
-    "effect": "Tensa la musculatura del usuario para aumentar la Defensa."
+    "effect": "Tensa la musculatura del usuario para aumentar la defensa."
   },
   "minimize": {
     "name": "Reducción",
-    "effect": "El usuario mengua para aumentar mucho la Evasión."
+    "effect": "El usuario mengua para aumentar mucho la evasión."
   },
   "smokescreen": {
     "name": "Pantalla de Humo",
-    "effect": "Reduce la Precisión del objetivo con una nube de humo o tinta."
+    "effect": "Reduce la precisión del objetivo con una nube de humo o tinta."
   },
   "confuseRay": {
     "name": "Rayo Confuso",
@@ -437,15 +437,15 @@
   },
   "withdraw": {
     "name": "Refugio",
-    "effect": "El usuario se resguarda en su coraza, por lo que le sube la Defensa."
+    "effect": "El usuario se resguarda en su coraza, por lo que le sube la defensa."
   },
   "defenseCurl": {
-    "name": "Rizo Defensa",
-    "effect": "Se enrosca para ocultar sus puntos débiles y aumentar la Defensa."
+    "name": "Rizo defensa",
+    "effect": "Se enrosca para ocultar sus puntos débiles y aumentar la defensa."
   },
   "barrier": {
     "name": "Barrera",
-    "effect": "Crea una barrera que aumenta mucho la Defensa."
+    "effect": "Crea una barrera que aumenta mucho la defensa."
   },
   "lightScreen": {
     "name": "Pantalla de Luz",
@@ -477,7 +477,7 @@
   },
   "selfDestruct": {
     "name": "Autodestrucción",
-    "effect": "El atacante explota y hiere a los Pokémon adyacentes. El usuario se debilita de inmediato."
+    "effect": "El usuario explota y hiere a los Pokémon adyacentes. El usuario se debilita de inmediato."
   },
   "eggBomb": {
     "name": "Bomba Huevo",
@@ -517,7 +517,7 @@
   },
   "skullBash": {
     "name": "Cabezazo",
-    "effect": "El usuario se prepara y sube su Defensa en el primer turno y en el segundo arremete con un cabezazo."
+    "effect": "El usuario se prepara y sube su defensa en el primer turno y en el segundo arremete con un cabezazo."
   },
   "spikeCannon": {
     "name": "Clavo Cañón",
@@ -525,15 +525,15 @@
   },
   "constrict": {
     "name": "Restricción",
-    "effect": "Ataca con largos tentáculos o zarcillos que pueden bajar la Velocidad."
+    "effect": "Ataca con largos tentáculos o zarcillos que pueden bajar la velocidad."
   },
   "amnesia": {
     "name": "Amnesia",
-    "effect": "El usuario olvida sus preocupaciones y aumenta mucho la Defensa Especial."
+    "effect": "El usuario olvida sus preocupaciones y aumenta mucho la defensa especial."
   },
   "kinesis": {
     "name": "Kinético",
-    "effect": "Dobla una cuchara para distraer al objetivo y reducir su Precisión."
+    "effect": "Dobla una cuchara para distraer al objetivo y reducir su precisión."
   },
   "softBoiled": {
     "name": "Ovocuración",
@@ -577,7 +577,7 @@
   },
   "bubble": {
     "name": "Burbuja",
-    "effect": "Lanza burbujas a los contrincantes y puede reducir su Velocidad."
+    "effect": "Lanza burbujas a los contrincantes y puede reducir su velocidad."
   },
   "dizzyPunch": {
     "name": "Puño Mareo",
@@ -589,7 +589,7 @@
   },
   "flash": {
     "name": "Destello",
-    "effect": "Luz cegadora que baja la Precisión del objetivo."
+    "effect": "Luz cegadora que baja la precisión del objetivo."
   },
   "psywave": {
     "name": "Psicoonda",
@@ -601,7 +601,7 @@
   },
   "acidArmor": {
     "name": "Armadura Ácida",
-    "effect": "Transforma la estructura celular para hacerse líquido y aumenta mucho la Defensa."
+    "effect": "Transforma la estructura celular para hacerse líquido y aumenta mucho la defensa."
   },
   "crabhammer": {
     "name": "Martillazo",
@@ -609,7 +609,7 @@
   },
   "explosion": {
     "name": "Explosión",
-    "effect": "El atacante causa una grandísima explosión y hiere a los Pokémon adyacentes. El usuario se debilita de inmediato."
+    "effect": "El usuario causa una grandísima explosión y hiere a los Pokémon adyacentes. El usuario se debilita de inmediato."
   },
   "furySwipes": {
     "name": "Golpes Furia",
@@ -633,7 +633,7 @@
   },
   "sharpen": {
     "name": "Afilar",
-    "effect": "El perfil del usuario se hace más afilado y su Ataque mejora."
+    "effect": "El perfil del usuario se hace más afilado y su ataque mejora."
   },
   "conversion": {
     "name": "Conversión",
@@ -657,7 +657,7 @@
   },
   "struggle": {
     "name": "Forcejeo",
-    "effect": "Solo se usa como último recurso al acabarse los PP. Hiere un poco al agresor."
+    "effect": "Solo se usa como último recurso al acabarse los PP. Hiere un poco al usuario."
   },
   "sketch": {
     "name": "Esquema",
@@ -697,7 +697,7 @@
   },
   "flail": {
     "name": "Azote",
-    "effect": "Ataque frenético. Cuantos menos PS tenga el usuario, más daño producirá."
+    "effect": "Ataca de forma frenética. Cuantos menos PS tenga el usuario, más daño producirá."
   },
   "conversion2": {
     "name": "Conversión2",
@@ -709,7 +709,7 @@
   },
   "cottonSpore": {
     "name": "Esporagodón",
-    "effect": "Adhiere esporas a los rivales para reducir mucho su Velocidad."
+    "effect": "Adhiere esporas a los rivales para reducir mucho su velocidad."
   },
   "reversal": {
     "name": "Inversión",
@@ -733,7 +733,7 @@
   },
   "scaryFace": {
     "name": "Cara Susto",
-    "effect": "Asusta al objetivo para reducir mucho su Velocidad."
+    "effect": "Asusta al objetivo para reducir mucho su velocidad."
   },
   "feintAttack": {
     "name": "Finta",
@@ -745,7 +745,7 @@
   },
   "bellyDrum": {
     "name": "Tambor",
-    "effect": "Reduce la mitad de los PS máximos para mejorar al máximo el Ataque."
+    "effect": "Reduce la mitad de los PS máximos para mejorar al máximo el ataque."
   },
   "sludgeBomb": {
     "name": "Bomba Lodo",
@@ -753,11 +753,11 @@
   },
   "mudSlap": {
     "name": "Bofetón Lodo",
-    "effect": "Echa lodo en la cara del objetivo para infligirle daño y reducir su Precisión."
+    "effect": "Echa lodo en la cara del objetivo para infligirle daño y reducir su precisión."
   },
   "octazooka": {
     "name": "Pulpocañón",
-    "effect": "Dispara tinta a la cara. Puede bajar la Precisión."
+    "effect": "Dispara tinta a la cara. Puede bajar la precisión."
   },
   "spikes": {
     "name": "Púas",
@@ -781,7 +781,7 @@
   },
   "icyWind": {
     "name": "Viento Hielo",
-    "effect": "Ataque con aire helado que reduce la Velocidad del objetivo."
+    "effect": "Ataque con aire helado que reduce la velocidad del objetivo."
   },
   "detect": {
     "name": "Detección",
@@ -801,7 +801,7 @@
   },
   "sandstorm": {
     "name": "Tormenta Arena",
-    "effect": "Tormenta de arena que dura cinco turnos y hiere a todos, excepto a los de tipo Roca, Tierra y Acero, y aumenta la Defensa Especial de los de tipo Roca."
+    "effect": "Tormenta de arena que dura cinco turnos y hiere a todos, excepto a los de tipo Roca, Tierra y Acero, y aumenta la defensa especial de los de tipo Roca."
   },
   "gigaDrain": {
     "name": "Gigadrenado",
@@ -813,7 +813,7 @@
   },
   "charm": {
     "name": "Encanto",
-    "effect": "Engatusa al objetivo y reduce mucho su Ataque."
+    "effect": "Engatusa al objetivo y reduce mucho su ataque."
   },
   "rollout": {
     "name": "Rodar",
@@ -825,7 +825,7 @@
   },
   "swagger": {
     "name": "Contoneo",
-    "effect": "Provoca confusión en el objetivo, pero también sube mucho su Ataque."
+    "effect": "Provoca confusión en el objetivo, pero también sube mucho su ataque."
   },
   "milkDrink": {
     "name": "Batido",
@@ -841,7 +841,7 @@
   },
   "steelWing": {
     "name": "Ala de Acero",
-    "effect": "Alas macizas que golpean al objetivo y pueden subir la Defensa del usuario."
+    "effect": "Alas macizas que golpean al objetivo y pueden subir la defensa del usuario."
   },
   "meanLook": {
     "name": "Mal de Ojo",
@@ -913,19 +913,19 @@
   },
   "rapidSpin": {
     "name": "Giro Rápido",
-    "effect": "Ataque giratorio que puede eliminar movimientos como Atadura, Constricción y Drenadoras. También aumenta la Velocidad del usuario."
+    "effect": "Ataque giratorio que puede eliminar movimientos como Atadura, Constricción y Drenadoras. También aumenta la velocidad del usuario."
   },
   "sweetScent": {
     "name": "Dulce Aroma",
-    "effect": "Un dulce aroma engatusa al objetivo, por lo que se reduce mucho su Evasión."
+    "effect": "Un dulce aroma engatusa al objetivo, por lo que se reduce mucho su evasión."
   },
   "ironTail": {
     "name": "Cola Férrea",
-    "effect": "Ataca con una cola férrea y puede reducir la Defensa del objetivo."
+    "effect": "Ataca con una cola férrea y puede reducir la defensa del objetivo."
   },
   "metalClaw": {
     "name": "Garra Metal",
-    "effect": "Ataque con garras de acero que puede aumentar el Ataque del usuario."
+    "effect": "Ataque con garras de acero que puede aumentar el ataque del usuario."
   },
   "vitalThrow": {
     "name": "Llave Vital",
@@ -965,7 +965,7 @@
   },
   "crunch": {
     "name": "Triturar",
-    "effect": "Tritura con afilados colmillos y puede reducir la Defensa del objetivo."
+    "effect": "Tritura con afilados colmillos y puede reducir la defensa del objetivo."
   },
   "mirrorCoat": {
     "name": "Manto Espejo",
@@ -985,7 +985,7 @@
   },
   "shadowBall": {
     "name": "Bola Sombra",
-    "effect": "Lanza una bola oscura que puede bajar la Defensa Especial del objetivo."
+    "effect": "Lanza una bola oscura que puede bajar la defensa especial del objetivo."
   },
   "futureSight": {
     "name": "Premonición",
@@ -993,11 +993,11 @@
   },
   "rockSmash": {
     "name": "Golpe Roca",
-    "effect": "Propina un gran puñetazo que puede reducir la Defensa del objetivo."
+    "effect": "Propina un gran puñetazo que puede reducir la defensa del objetivo."
   },
   "whirlpool": {
     "name": "Torbellino",
-    "effect": "Una tromba de agua atrapa al objetivo durante cuatro o cinco turnos."
+    "effect": "El usuario atrapa al objetivo en un violento remolino durante cuatro o cinco turnos."
   },
   "beatUp": {
     "name": "Paliza",
@@ -1013,7 +1013,7 @@
   },
   "stockpile": {
     "name": "Reserva",
-    "effect": "Acumula energía y sube la Defensa y la Defensa Especial. Puede utilizarse hasta tres veces."
+    "effect": "Acumula energía y sube la defensa y la defensa especial. Puede utilizarse hasta tres veces."
   },
   "spitUp": {
     "name": "Escupir",
@@ -1037,7 +1037,7 @@
   },
   "flatter": {
     "name": "Camelo",
-    "effect": "Halaga al objetivo y lo confunde, pero también sube su Ataque Especial."
+    "effect": "Halaga al objetivo y lo confunde, pero también sube su ataque especial."
   },
   "willOWisp": {
     "name": "Fuego Fatuo",
@@ -1045,7 +1045,7 @@
   },
   "memento": {
     "name": "Legado",
-    "effect": "El usuario se debilita, pero baja mucho tanto el Ataque como el Ataque Especial del objetivo."
+    "effect": "El usuario se debilita, pero baja mucho tanto el ataque como el ataque especial del objetivo."
   },
   "facade": {
     "name": "Imagen",
@@ -1069,7 +1069,7 @@
   },
   "charge": {
     "name": "Carga",
-    "effect": "Recarga energía para potenciar el siguiente movimiento de tipo Eléctrico. También sube la Defensa Especial."
+    "effect": "Recarga energía para potenciar el siguiente movimiento de tipo Eléctrico. También sube la defensa especial."
   },
   "taunt": {
     "name": "Mofa",
@@ -1101,7 +1101,7 @@
   },
   "superpower": {
     "name": "Fuerza Bruta",
-    "effect": "Ataque de gran potencia, pero que reduce el Ataque y la Defensa del agresor."
+    "effect": "Ataque de gran potencia, pero que reduce el ataque y la defensa del agresor."
   },
   "magicCoat": {
     "name": "Capa Mágica",
@@ -1133,7 +1133,7 @@
   },
   "eruption": {
     "name": "Estallido",
-    "effect": "Furia explosiva. Cuanto menor sea el número de PS del usuario, menos potencia tendrá el movimiento."
+    "effect": "El usuario ataca al Pokémon rival con una furia explosiva. Cuanto menor sea el HP del usuario, menor será la potencia del movimiento."
   },
   "skillSwap": {
     "name": "Intercambio",
@@ -1173,19 +1173,19 @@
   },
   "tailGlow": {
     "name": "Luminicola",
-    "effect": "Se concentra en una ráfaga de luz que sube muchísimo el Ataque Especial."
+    "effect": "Se concentra en una ráfaga de luz que sube muchísimo el ataque especial."
   },
   "lusterPurge": {
     "name": "Resplandor",
-    "effect": "Fogonazo de luz que inflige daño al objetivo y puede reducir su Defensa Especial."
+    "effect": "Fogonazo de luz que inflige daño al objetivo y puede reducir su defensa especial."
   },
   "mistBall": {
     "name": "Bola Neblina",
-    "effect": "Bola de plumas neblinosas que inflige daño al objetivo y puede reducir su Ataque Especial."
+    "effect": "Bola de plumas neblinosas que inflige daño al objetivo y puede reducir su ataque especial."
   },
   "featherDance": {
     "name": "Danza Pluma",
-    "effect": "Envuelve al objetivo con un manto de plumas para reducir mucho su Ataque."
+    "effect": "Envuelve al objetivo con un manto de plumas para reducir mucho su ataque."
   },
   "teeterDance": {
     "name": "Danza Caos",
@@ -1201,7 +1201,7 @@
   },
   "iceBall": {
     "name": "Bola Hielo",
-    "effect": "El atacante rueda contra el objetivo durante cinco turnos, cada vez con mayor fuerza."
+    "effect": "El usuario rueda contra el objetivo durante cinco turnos, cada vez con mayor fuerza."
   },
   "needleArm": {
     "name": "Brazo Pincho",
@@ -1221,7 +1221,7 @@
   },
   "crushClaw": {
     "name": "Garra Brutal",
-    "effect": "Hace trizas al objetivo con garras afiladas y puede reducir su Defensa."
+    "effect": "Hace trizas al objetivo con garras afiladas y puede reducir su defensa."
   },
   "blastBurn": {
     "name": "Anillo Ígneo",
@@ -1233,7 +1233,7 @@
   },
   "meteorMash": {
     "name": "Puño Meteoro",
-    "effect": "Puñetazo que impacta como un meteorito y puede subir el Ataque del agresor."
+    "effect": "Puñetazo que impacta como un meteorito y puede subir el ataque del agresor."
   },
   "astonish": {
     "name": "Impresionar",
@@ -1249,15 +1249,15 @@
   },
   "fakeTears": {
     "name": "Llanto Falso",
-    "effect": "Lágrimas de cocodrilo que bajan mucho la Defensa Especial del objetivo."
+    "effect": "Lágrimas de cocodrilo que bajan mucho la defensa especial del objetivo."
   },
   "airCutter": {
     "name": "Aire Afilado",
-    "effect": "Viento cortante que azota. Suele ser un golpe crítico."
+    "effect": "Viento cortante que azota a los Pokémon oponentes. Suele ser un golpe crítico."
   },
   "overheat": {
     "name": "Sofoco",
-    "effect": "Ataque en toda regla que baja mucho el Ataque Especial de quien lo usa."
+    "effect": "Ataque en toda regla que baja mucho el ataque especial de quien lo usa."
   },
   "odorSleuth": {
     "name": "Rastreo",
@@ -1265,15 +1265,15 @@
   },
   "rockTomb": {
     "name": "Tumba Rocas",
-    "effect": "Tira rocas que detienen al objetivo y bajan su Velocidad."
+    "effect": "Tira rocas que detienen al objetivo y bajan su velocidad."
   },
   "silverWind": {
     "name": "Viento Plata",
-    "effect": "Fuerte viento con polvo de escamas. Puede subir todas las características de quien lo usa."
+    "effect": "El objetivo es atacado con escamas en polvo que arrastra el viento. Esto también puede aumentar todas las estadísticas del usuario."
   },
   "metalSound": {
     "name": "Eco Metálico",
-    "effect": "Horrible chirrido metálico que reduce mucho la Defensa Especial del objetivo."
+    "effect": "Horrible chirrido metálico que reduce mucho la defensa especial del objetivo."
   },
   "grassWhistle": {
     "name": "Silbato",
@@ -1281,11 +1281,11 @@
   },
   "tickle": {
     "name": "Cosquillas",
-    "effect": "Hace reír al objetivo para bajar su Ataque y Defensa."
+    "effect": "El usuario hace cosquillas al objetivo para que se ría, lo que reduce sus estadísticas de ataque y defensa."
   },
   "cosmicPower": {
     "name": "Masa Cósmica",
-    "effect": "Sube la Defensa y la Defensa Especial propias con energía mística."
+    "effect": "Sube la defensa y la defensa especial propias con energía mística."
   },
   "waterSpout": {
     "name": "Salpicar",
@@ -1317,7 +1317,7 @@
   },
   "muddyWater": {
     "name": "Agua Lodosa",
-    "effect": "Ataque con agua lodosa que puede reducir la Precisión del objetivo."
+    "effect": "Ataque con agua lodosa que puede reducir la precisión del objetivo."
   },
   "bulletSeed": {
     "name": "Semilladora",
@@ -1333,7 +1333,7 @@
   },
   "ironDefense": {
     "name": "Defensa Férrea",
-    "effect": "Fortalece el cuerpo como si fuera de hierro y sube mucho la Defensa."
+    "effect": "Fortalece el cuerpo como si fuera de hierro y sube mucho la defensa."
   },
   "block": {
     "name": "Bloqueo",
@@ -1341,7 +1341,7 @@
   },
   "howl": {
     "name": "Aullido",
-    "effect": "Aullido que sube el ánimo y aumenta el Ataque del equipo."
+    "effect": "Aullido que sube el ánimo y aumenta el ataque del equipo."
   },
   "dragonClaw": {
     "name": "Garra Dragón",
@@ -1353,7 +1353,7 @@
   },
   "bulkUp": {
     "name": "Corpulencia",
-    "effect": "Robustece el cuerpo para subir el Ataque y la Defensa."
+    "effect": "Robustece el cuerpo para subir el ataque y la defensa."
   },
   "bounce": {
     "name": "Bote",
@@ -1361,7 +1361,7 @@
   },
   "mudShot": {
     "name": "Disparo Lodo",
-    "effect": "El usuario ataca lanzando una bola de lodo al objetivo que también reduce su Velocidad."
+    "effect": "El usuario ataca lanzando una bola de lodo al objetivo que también reduce su velocidad."
   },
   "poisonTail": {
     "name": "Cola Veneno",
@@ -1369,11 +1369,11 @@
   },
   "covet": {
     "name": "Antojo",
-    "effect": "Se acerca con ternura al objetivo y tiene un 30% de posibilidades de robar el objeto que lleve."
+    "effect": "Se acerca con ternura al objetivo y tiene un 30% de posibilidades de robar un objeto que lleve."
   },
   "voltTackle": {
     "name": "Placaje Eléc",
-    "effect": "Quien lo usa electrifica su cuerpo para luego atacar. Se hiere mucho a sí mismo, pero puede paralizar al objetivo."
+    "effect": "El usuario electrifica su cuerpo para luego atacar. Se hiere mucho a sí mismo, pero puede paralizar al objetivo."
   },
   "magicalLeaf": {
     "name": "Hoja Mágica",
@@ -1385,7 +1385,7 @@
   },
   "calmMind": {
     "name": "Paz Mental",
-    "effect": "Aumenta la concentración y calma el espíritu para subir el Ataque Especial y la Defensa Especial."
+    "effect": "Aumenta la concentración y calma el espíritu para subir el ataque especial y la defensa especial."
   },
   "leafBlade": {
     "name": "Hoja Aguda",
@@ -1393,7 +1393,7 @@
   },
   "dragonDance": {
     "name": "Danza Dragón",
-    "effect": "Danza mística que sube el Ataque y la Velocidad."
+    "effect": "Danza mística que sube el ataque y la velocidad."
   },
   "rockBlast": {
     "name": "Pedrada",
@@ -1413,7 +1413,7 @@
   },
   "psychoBoost": {
     "name": "Psicoataque",
-    "effect": "Ataque en toda regla que baja mucho el Ataque Especial de quien lo usa."
+    "effect": "Ataque en toda regla que baja mucho el ataque especial de quien lo usa."
   },
   "roost": {
     "name": "Respiro",
@@ -1433,7 +1433,7 @@
   },
   "hammerArm": {
     "name": "Machada",
-    "effect": "Un terrible puño golpea al contrincante, pero la Velocidad del usuario se ve reducida."
+    "effect": "El usuario golpea con un puño pesado al contrincante, pero baja la velocidad del usuario."
   },
   "gyroBall": {
     "name": "Giro Bola",
@@ -1461,7 +1461,7 @@
   },
   "tailwind": {
     "name": "Viento Afín",
-    "effect": "Crea un fuerte remolino que aumenta la Velocidad de los Pokémon de tu equipo durante cuatro turnos."
+    "effect": "Crea un fuerte remolino que aumenta la velocidad de los Pokémon de tu equipo durante cuatro turnos."
   },
   "acupressure": {
     "name": "Acupresión",
@@ -1477,7 +1477,7 @@
   },
   "closeCombat": {
     "name": "A Bocajarro",
-    "effect": "Lucha abiertamente contra el objetivo sin protegerse. También reduce la Defensa y la Defensa Especial del usuario."
+    "effect": "Lucha abiertamente contra el objetivo sin protegerse. También reduce la defensa y la defensa especial del usuario."
   },
   "payback": {
     "name": "Vendetta",
@@ -1489,7 +1489,7 @@
   },
   "embargo": {
     "name": "Embargo",
-    "effect": "Impide al objetivo usar el objeto que lleva durante cinco turnos. Su Entrenador tampoco puede usar objetos con él."
+    "effect": "Impide al objetivo usar objetos que lleva durante cinco turnos."
   },
   "fling": {
     "name": "Lanzamiento",
@@ -1513,7 +1513,7 @@
   },
   "powerTrick": {
     "name": "Truco Fuerza",
-    "effect": "El usuario emplea su poder mental para intercambiar su Ataque y su Defensa."
+    "effect": "El usuario emplea su poder mental para intercambiar su ataque y su defensa."
   },
   "gastroAcid": {
     "name": "Bilis",
@@ -1521,7 +1521,7 @@
   },
   "luckyChant": {
     "name": "Conjuro",
-    "effect": "Lanza al cielo un conjuro que protege a todo su equipo de golpes críticos."
+    "effect": "Lanza al cielo un conjuro que protege a todo su equipo de golpes críticos durante 5 turnos."
   },
   "meFirst": {
     "name": "Yo Primero",
@@ -1533,11 +1533,11 @@
   },
   "powerSwap": {
     "name": "Cambiafuerza",
-    "effect": "El usuario emplea su poder mental para intercambiar los cambios en el Ataque y el Ataque Especial con el objetivo."
+    "effect": "El usuario emplea su poder mental para intercambiar los cambios en el ataque y el ataque especial con el objetivo."
   },
   "guardSwap": {
     "name": "Cambiadefensa",
-    "effect": "El usuario emplea su poder mental para intercambiar los cambios en la Defensa y la Defensa Especial con el objetivo."
+    "effect": "El usuario emplea su poder mental para intercambiar los cambios en la defensa y la defensa especial con el objetivo."
   },
   "punishment": {
     "name": "Castigo",
@@ -1557,7 +1557,7 @@
   },
   "toxicSpikes": {
     "name": "Púas Tóxicas",
-    "effect": "Lanza una trampa de púas tóxicas a los pies del objetivo que envenena a los rivales que entran en combate."
+    "effect": "Lanza una trampa de púas tóxicas a los pies del lado oponente cuyo envenena a los Pokémon que entran en combate."
   },
   "heartSwap": {
     "name": "Cambiaalmas",
@@ -1573,7 +1573,7 @@
   },
   "flareBlitz": {
     "name": "Envite Ígneo",
-    "effect": "El Pokémon se cubre de llamas y carga contra el objetivo, aunque él también recibe daño. Puede quemar."
+    "effect": "El usuario se cubre de llamas y carga contra el objetivo, aunque él también recibe daño. Puede quemar."
   },
   "forcePalm": {
     "name": "Palmeo",
@@ -1585,7 +1585,7 @@
   },
   "rockPolish": {
     "name": "Pulimento",
-    "effect": "Reduce la resistencia puliendo su cuerpo. Aumenta mucho la Velocidad."
+    "effect": "Reduce la resistencia puliendo su cuerpo. Aumenta mucho la velocidad."
   },
   "poisonJab": {
     "name": "Puya Nociva",
@@ -1617,7 +1617,7 @@
   },
   "bugBuzz": {
     "name": "Zumbido",
-    "effect": "El usuario crea una onda sónica dañina moviendo su cuerpo que también puede disminuir la Defensa Especial del objetivo."
+    "effect": "El usuario crea una onda sónica dañina moviendo su cuerpo que también puede disminuir la defensa especial del objetivo."
   },
   "dragonPulse": {
     "name": "Pulso Dragón",
@@ -1641,11 +1641,11 @@
   },
   "focusBlast": {
     "name": "Onda Certera",
-    "effect": "Agudiza la concentración mental y libera su poder. Puede reducir la Defensa Especial del objetivo."
+    "effect": "Agudiza la concentración mental y libera su poder. Puede reducir la defensa especial del objetivo."
   },
   "energyBall": {
     "name": "Energibola",
-    "effect": "Aúna fuerzas de la naturaleza y libera su ataque. Puede reducir la Defensa Especial del objetivo."
+    "effect": "El usuario reúne fuerzas de la naturaleza y libera su ataque. Puede reducir la defensa especial del objetivo."
   },
   "braveBird": {
     "name": "Pájaro Osado",
@@ -1653,7 +1653,7 @@
   },
   "earthPower": {
     "name": "Tierra Viva",
-    "effect": "La tierra a los pies del objetivo erupciona violentamente. Puede reducir la Defensa Especial del objetivo."
+    "effect": "La tierra a los pies del objetivo erupciona violentamente. Puede reducir la defensa especial del objetivo."
   },
   "switcheroo": {
     "name": "Trapicheo",
@@ -1665,7 +1665,7 @@
   },
   "nastyPlot": {
     "name": "Maquinación",
-    "effect": "Estimula su cerebro pensando en cosas malas. Aumenta mucho el Ataque Especial."
+    "effect": "Estimula su cerebro pensando en cosas malas. Aumenta mucho el ataque especial."
   },
   "bulletPunch": {
     "name": "Puño Bala",
@@ -1701,7 +1701,7 @@
   },
   "mudBomb": {
     "name": "Bomba Fango",
-    "effect": "Ataca lanzando una compacta bola de fango. Puede bajar la Precisión del objetivo."
+    "effect": "Ataca lanzando una compacta bola de fango. Puede bajar la precisión del objetivo."
   },
   "psychoCut": {
     "name": "Psicocorte",
@@ -1713,11 +1713,11 @@
   },
   "mirrorShot": {
     "name": "Disparo Espejo",
-    "effect": "El usuario libera un haz de energía desde su pulido cuerpo. Puede bajar la Precisión."
+    "effect": "El usuario libera un haz de energía desde su pulido cuerpo. Puede bajar la precisión."
   },
   "flashCannon": {
     "name": "Foco Resplandor",
-    "effect": "El usuario concentra toda la luz del cuerpo y la libera. Puede bajar la Defensa Especial del objetivo."
+    "effect": "El usuario concentra toda la luz del cuerpo y la libera. Puede bajar la defensa especial del objetivo."
   },
   "rockClimb": {
     "name": "Treparrocas",
@@ -1725,7 +1725,7 @@
   },
   "defog": {
     "name": "Despejar",
-    "effect": "Potente viento que barre los efectos de movimientos como Reflejo o Pantalla de Luz usados por el objetivo. También reduce su Evasión."
+    "effect": "Potente viento que barre los efectos de movimientos como Reflejo o Pantalla de Luz usados por el objetivo. También reduce su evasión."
   },
   "trickRoom": {
     "name": "Espacio Raro",
@@ -1733,7 +1733,7 @@
   },
   "dracoMeteor": {
     "name": "Cometa Draco",
-    "effect": "Hace que grandes cometas caigan del cielo sobre el objetivo. Baja mucho el Ataque Especial del que lo usa."
+    "effect": "Hace que grandes cometas caigan del cielo sobre el objetivo. Baja mucho el ataque especial del que lo usa."
   },
   "discharge": {
     "name": "Chispazo",
@@ -1745,7 +1745,7 @@
   },
   "leafStorm": {
     "name": "Lluevehojas",
-    "effect": "Envuelve al objetivo con una lluvia de hojas afiladas, pero reduce mucho su Ataque Especial."
+    "effect": "Envuelve al objetivo con una lluvia de hojas afiladas, pero reduce mucho su ataque especial."
   },
   "powerWhip": {
     "name": "Latigazo",
@@ -1777,7 +1777,7 @@
   },
   "captivate": {
     "name": "Seducción",
-    "effect": "Si el objetivo es del sexo opuesto, queda embelesado y baja mucho su Ataque Especial."
+    "effect": "Si el objetivo es del sexo opuesto, queda embelesado y baja mucho su ataque especial."
   },
   "stealthRock": {
     "name": "Trampa Rocas",
@@ -1801,7 +1801,7 @@
   },
   "chargeBeam": {
     "name": "Rayo Carga",
-    "effect": "Lanza un rayo eléctrico contra el objetivo. Puede subir el Ataque Especial de quien lo usa."
+    "effect": "Lanza un rayo eléctrico contra el objetivo. Puede subir el ataque especial de quien lo usa."
   },
   "woodHammer": {
     "name": "Mazazo",
@@ -1812,12 +1812,12 @@
     "effect": "Ataque de una rapidez espeluznante. Este movimiento tiene prioridad alta."
   },
   "attackOrder": {
-    "name": "Al Ataque",
+    "name": "Al ataque",
     "effect": "El usuario llama a sus súbditos para que ataquen al objetivo. Suele ser crítico."
   },
   "defendOrder": {
     "name": "A Defender",
-    "effect": "El usuario llama a sus súbditos para que formen un escudo viviente. Sube la Defensa y la Defensa Especial."
+    "effect": "El usuario llama a sus súbditos para que formen un escudo viviente. Sube la defensa y la defensa especial."
   },
   "healOrder": {
     "name": "Auxilio",
@@ -1857,7 +1857,7 @@
   },
   "seedFlare": {
     "name": "Fulgor Semilla",
-    "effect": "Una onda de choque se libera del cuerpo. Puede bajar mucho la Defensa Especial del objetivo."
+    "effect": "Una onda de choque se libera del cuerpo. Puede bajar mucho la defensa especial del objetivo."
   },
   "ominousWind": {
     "name": "Viento Aciago",
@@ -1869,7 +1869,7 @@
   },
   "honeClaws": {
     "name": "Afilagarras",
-    "effect": "El usuario se afila las garras para aumentar su Ataque y su Precisión."
+    "effect": "El usuario se afila las garras para aumentar su ataque y su precisión."
   },
   "wideGuard": {
     "name": "Vasta Guardia",
@@ -1877,15 +1877,15 @@
   },
   "guardSplit": {
     "name": "Isoguardia",
-    "effect": "El usuario emplea sus poderes para hacer la media de su Defensa y su Defensa Especial con las del objetivo y compartirlas."
+    "effect": "El usuario emplea sus poderes para hacer la media de su defensa y su defensa especial con las del objetivo y compartirlas."
   },
   "powerSplit": {
     "name": "Isofuerza",
-    "effect": "El usuario emplea sus poderes para hacer la media de su Ataque y su Ataque Especial con los del objetivo y compartirlos."
+    "effect": "El usuario emplea sus poderes para hacer la media de su ataque y su ataque especial con los del objetivo y compartirlos."
   },
   "wonderRoom": {
     "name": "Zona Extraña",
-    "effect": "Crea un espacio misterioso donde se intercambian la Defensa y la Defensa Especial de todos los Pokémon durante cinco turnos."
+    "effect": "Crea un espacio misterioso donde se intercambian la defensa y la defensa especial de todos los Pokémon durante cinco turnos."
   },
   "psyshock": {
     "name": "Psicocarga",
@@ -1897,7 +1897,7 @@
   },
   "autotomize": {
     "name": "Aligerar",
-    "effect": "El usuario se desprende de partes prescindibles de su cuerpo para hacerse más ligero y aumentar mucho su Velocidad."
+    "effect": "El usuario se desprende de partes prescindibles de su cuerpo para hacerse más ligero y aumentar mucho su velocidad."
   },
   "ragePowder": {
     "name": "Polvo Ira",
@@ -1929,7 +1929,7 @@
   },
   "quiverDance": {
     "name": "Danza Aleteo",
-    "effect": "Danza mística que aumenta el Ataque Especial, la Defensa Especial y la Velocidad."
+    "effect": "Danza mística que aumenta el ataque especial, la defensa especial y la velocidad."
   },
   "heavySlam": {
     "name": "Cuerpo Pesado",
@@ -1941,31 +1941,31 @@
   },
   "electroBall": {
     "name": "Bola Voltio",
-    "effect": "Lanza una bola eléctrica. Cuanto mayor sea la Velocidad del usuario en comparación con la del objetivo, mayor será la potencia del movimiento."
+    "effect": "Lanza una bola eléctrica. Cuanto mayor sea la velocidad del usuario en comparación con la del objetivo, mayor será la potencia del movimiento."
   },
   "soak": {
     "name": "Empapar",
-    "effect": "Potente lluvia que transforma al objetivo en un Pokémon de tipo Agua."
+    "effect": "El usuario dispara un torrente de agua al objetivo y cambia el tipo del objetivo a Agua."
   },
   "flameCharge": {
     "name": "Nitrocarga",
-    "effect": "Llamas que golpean al objetivo y aumentan la Velocidad del atacante."
+    "effect": "Llamas que golpean al objetivo y aumentan la velocidad del atacante."
   },
   "coil": {
     "name": "Enrosque",
-    "effect": "El usuario se concentra, lo que le permite aumentar su Ataque, Defensa y Precisión."
+    "effect": "El usuario se enrosca y se concentra. Esto aumenta sus estadísticas de ataque y defensa, así como su precisión."
   },
   "lowSweep": {
     "name": "Puntapié",
-    "effect": "Ataque rápido dirigido a los pies del objetivo que le hace perder Velocidad."
+    "effect": "Ataque rápido dirigido a los pies del objetivo que le hace perder velocidad."
   },
   "acidSpray": {
     "name": "Bomba Ácida",
-    "effect": "Ataca con un líquido corrosivo que reduce mucho la Defensa Especial del objetivo."
+    "effect": "Ataca con un líquido corrosivo que reduce mucho la defensa especial del objetivo."
   },
   "foulPlay": {
     "name": "Juego Sucio",
-    "effect": "El usuario emplea la fuerza del objetivo para atacarlo. Cuanto mayor es el Ataque del objetivo, más daño provoca."
+    "effect": "El usuario emplea la fuerza del objetivo para atacarlo. Cuanto mayor es el ataque del objetivo, más daño provoca."
   },
   "simpleBeam": {
     "name": "Onda Simple",
@@ -2013,7 +2013,7 @@
   },
   "shellSmash": {
     "name": "Rompecoraza",
-    "effect": "El usuario rompe su coraza y baja su Defensa y Defensa Especial, pero aumenta mucho su Ataque, Ataque Especial y Velocidad."
+    "effect": "El usuario rompe su coraza y baja su defensa y defensa especial, pero aumenta mucho su ataque, ataque especial y velocidad."
   },
   "healPulse": {
     "name": "Pulso Cura",
@@ -2029,7 +2029,7 @@
   },
   "shiftGear": {
     "name": "Cambio de Marcha",
-    "effect": "Al hacer girar los engranajes, el usuario mejora su Ataque y aumenta mucho su Velocidad."
+    "effect": "Al hacer girar los engranajes, el usuario mejora su ataque y aumenta mucho su velocidad."
   },
   "circleThrow": {
     "name": "Llave Giro",
@@ -2053,7 +2053,7 @@
   },
   "retaliate": {
     "name": "Represalia",
-    "effect": "Venga a los amigos caídos. Si en el turno anterior han derrotado a alguno, la potencia del ataque aumentará."
+    "effect": "El usuario se venga de un aliado desmayado. Si un aliado se desmayó en el turno anterior, el poder de este movimiento aumenta."
   },
   "finalGambit": {
     "name": "Sacrificio",
@@ -2085,11 +2085,11 @@
   },
   "struggleBug": {
     "name": "Estoicismo",
-    "effect": "El usuario opone resistencia y ataca a los oponentes. También reduce su Ataque Especial."
+    "effect": "El usuario opone resistencia y ataca a los oponentes. También reduce su ataque especial."
   },
   "bulldoze": {
     "name": "Terratemblor",
-    "effect": "Sacudida sísmica que afecta a los Pokémon adyacentes y también reduce su Velocidad."
+    "effect": "Sacudida sísmica que afecta a los Pokémon adyacentes y también reduce su velocidad."
   },
   "frostBreath": {
     "name": "Vaho Gélido",
@@ -2097,15 +2097,15 @@
   },
   "dragonTail": {
     "name": "Cola Dragón",
-    "effect": "Ataca al objetivo y lo obliga a cambiarse por otro Pokémon. Si es uno salvaje, acaba el combate."
+    "effect": "El objetivo es derribado y otro Pokémon es arrastrado hacia al combate. En combates contra un solo Pokémon salvaje termina la batalla."
   },
   "workUp": {
     "name": "Avivar",
-    "effect": "Quien lo usa se concentra y potencia su Ataque y su Ataque Especial."
+    "effect": "Quien lo usa se concentra y potencia su ataque y su ataque especial."
   },
   "electroweb": {
     "name": "Electrotela",
-    "effect": "Atrapa y ataca a los objetivos con una telaraña eléctrica. También reduce su Velocidad."
+    "effect": "Atrapa y ataca a los objetivos con una telaraña eléctrica. También reduce su velocidad."
   },
   "wildCharge": {
     "name": "Voltio Cruel",
@@ -2133,7 +2133,7 @@
   },
   "razorShell": {
     "name": "Concha Filo",
-    "effect": "Una afilada vieira ataca al objetivo. También puede hacer disminuir su Defensa."
+    "effect": "Una afilada vieira ataca al objetivo. También puede hacer disminuir su defensa."
   },
   "heatCrash": {
     "name": "Golpe Calor",
@@ -2141,7 +2141,7 @@
   },
   "leafTornado": {
     "name": "Ciclón de Hojas",
-    "effect": "Tritura con afiladas hojas y puede bajar la Precisión del objetivo."
+    "effect": "Tritura con afiladas hojas y puede bajar la precisión del objetivo."
   },
   "steamroller": {
     "name": "Rodillo de Púas",
@@ -2149,11 +2149,11 @@
   },
   "cottonGuard": {
     "name": "Rizo Algodón",
-    "effect": "Cubre al Pokémon con una madeja protectora. Aumenta muchísimo la Defensa."
+    "effect": "Cubre al Pokémon con una madeja protectora. Aumenta muchísimo la defensa."
   },
   "nightDaze": {
     "name": "Pulso Noche",
-    "effect": "Ataca al objetivo con una onda siniestra. Puede bajar su Precisión."
+    "effect": "Ataca al objetivo con una onda siniestra. Puede bajar su precisión."
   },
   "psystrike": {
     "name": "Onda Mental",
@@ -2193,7 +2193,7 @@
   },
   "glaciate": {
     "name": "Mundo Gélido",
-    "effect": "Ataque con aire helado que baja la Velocidad del objetivo."
+    "effect": "Ataque con aire helado que baja la velocidad del objetivo."
   },
   "boltStrike": {
     "name": "Ataque Fulgor",
@@ -2205,7 +2205,7 @@
   },
   "fieryDance": {
     "name": "Danza Llama",
-    "effect": "Envuelve en llamas y daña al objetivo. Puede aumentar el Ataque Especial de quien lo usa."
+    "effect": "Envuelve en llamas y daña al objetivo. Puede aumentar el ataque especial de quien lo usa."
   },
   "freezeShock": {
     "name": "Rayo Gélido",
@@ -2217,7 +2217,7 @@
   },
   "snarl": {
     "name": "Alarido",
-    "effect": "Chillido desagradable que reduce el Ataque Especial del objetivo."
+    "effect": "Chillido desagradable que reduce el ataque especial del objetivo."
   },
   "icicleCrash": {
     "name": "Chuzos",
@@ -2225,7 +2225,7 @@
   },
   "vCreate": {
     "name": "V de Fuego",
-    "effect": "Golpea con una V de llamas al objetivo. Baja la Defensa, la Defensa Especial y la Velocidad de quien lo usa."
+    "effect": "Golpea con una V de llamas al objetivo. Baja la defensa, la defensa especial y la velocidad de quien lo usa."
   },
   "fusionFlare": {
     "name": "Llama Fusión",
@@ -2249,15 +2249,15 @@
   },
   "rototiller": {
     "name": "Fertilizante",
-    "effect": "Labra la tierra haciendo que sea más fácil cultivarla y consigue que aumente el Ataque y el Ataque Especial de los Pokémon de tipo Planta."
+    "effect": "Labra la tierra haciendo que sea más fácil cultivarla y consigue que aumente el ataque y el ataque especial de los Pokémon de tipo Planta."
   },
   "stickyWeb": {
     "name": "Red Viscosa",
-    "effect": "Coloca una red pegajosa alrededor del objetivo que reduce la Velocidad de los rivales que entran en combate."
+    "effect": "Coloca una red pegajosa alrededor del objetivo que reduce la velocidad de los rivales que entran en combate."
   },
   "fellStinger": {
     "name": "Aguijón Letal",
-    "effect": "Si se derrota al objetivo utilizando este movimiento, aumenta muchísimo el Ataque del usuario."
+    "effect": "Si se derrota al objetivo utilizando este movimiento, aumenta muchísimo el ataque del usuario."
   },
   "phantomForce": {
     "name": "Golpe Fantasma",
@@ -2269,7 +2269,7 @@
   },
   "nobleRoar": {
     "name": "Rugido de Guerra",
-    "effect": "Intimida a su oponente con un rugido de guerra, lo que hace que disminuyan tanto su Ataque como su Ataque Especial."
+    "effect": "Al emitir un rugido noble, el usuario intimida al objetivo y reduce sus estadísticas de ataque y ataque especial."
   },
   "ionDeluge": {
     "name": "Cortina Plasma",
@@ -2297,7 +2297,7 @@
   },
   "partingShot": {
     "name": "Última Palabra",
-    "effect": "El usuario se cambia por otro Pokémon de su equipo, pero antes amedrenta a su oponente y hace que disminuyan su Ataque y Ataque Especial."
+    "effect": "Con una amenaza de despedida, el usuario reduce ataque y ataque especial del objetivo. Luego, lo cambia por un otro Pokémon."
   },
   "topsyTurvy": {
     "name": "Reversión",
@@ -2305,15 +2305,15 @@
   },
   "drainingKiss": {
     "name": "Beso Drenaje",
-    "effect": "El usuario absorbe PS del objetivo con un beso y restaura su propia energía en una cantidad igual o superior a la mitad del daño infligido."
+    "effect": "El usuario roba los HP del objetivo con un beso. Los HP del usuario se recuperan con más de la mitad del daño recibido por el objetivo."
   },
   "craftyShield": {
-    "name": "Truco Defensa",
+    "name": "Truco defensa",
     "effect": "Usa unos misteriosos poderes para protegerse a sí mismo y a sus aliados de movimientos de estado, pero no de otro tipo de ataques."
   },
   "flowerShield": {
     "name": "Defensa Floral",
-    "effect": "Aumenta la Defensa de todos los Pokémon de tipo Planta que hay en el combate usando unos misteriosos poderes."
+    "effect": "Aumenta la defensa de todos los Pokémon de tipo Planta que hay en el combate usando unos misteriosos poderes."
   },
   "grassyTerrain": {
     "name": "Campo de Hierba",
@@ -2329,7 +2329,7 @@
   },
   "playRough": {
     "name": "Carantoña",
-    "effect": "El Pokémon que lo usa le hace cucamonas al objetivo y lo ataca. Puede disminuir el Ataque del objetivo."
+    "effect": "El Pokémon que lo usa le hace cucamonas al objetivo y lo ataca. Puede disminuir el ataque del objetivo."
   },
   "fairyWind": {
     "name": "Viento Feérico",
@@ -2337,7 +2337,7 @@
   },
   "moonblast": {
     "name": "Fuerza Lunar",
-    "effect": "Invoca el poder de la luna para atacar al objetivo. Puede reducir su Ataque Especial."
+    "effect": "Invoca el poder de la luna para atacar al objetivo. Puede reducir su ataque especial."
   },
   "boomburst": {
     "name": "Estruendo",
@@ -2349,19 +2349,19 @@
   },
   "kingsShield": {
     "name": "Escudo Real",
-    "effect": "El usuario adopta una postura defensiva y se protege de cualquier daño. Reduce el Ataque de cualquier Pokémon con el que entre en contacto."
+    "effect": "El usuario adopta una postura defensiva y se protege de cualquier daño. Reduce el ataque de cualquier Pokémon con el que entre en contacto."
   },
   "playNice": {
     "name": "Camaradería",
-    "effect": "Se hace amigo de su objetivo y consigue que a este se le quiten las ganas de combatir, lo que reduce su Ataque."
+    "effect": "Se hace amigo de su objetivo y consigue que a este se le quiten las ganas de combatir, lo que reduce su ataque."
   },
   "confide": {
     "name": "Confidencia",
-    "effect": "Hace que el objetivo pierda la concentración contándole un secreto y reduce su Ataque Especial."
+    "effect": "Hace que el objetivo pierda la concentración contándole un secreto y reduce su ataque especial."
   },
   "diamondStorm": {
     "name": "Torm. Diamantes",
-    "effect": "Desata un devastador vendaval de diamantes para dañar a los oponentes. Puede aumentar mucho la Defensa del usuario."
+    "effect": "Desata un devastador vendaval de diamantes para dañar a los oponentes. Puede aumentar mucho la defensa del usuario."
   },
   "steamEruption": {
     "name": "Chorro de Vapor",
@@ -2373,11 +2373,11 @@
   },
   "waterShuriken": {
     "name": "Shuriken de Agua",
-    "effect": "Golpea al objetivo de dos a cinco veces seguidas con estrellas arrojadizas hechas de mucosidad. Este movimiento tiene prioridad alta."
+    "effect": "El usuario golpea el objetivo con estrellas ninja de dos a cinco veces seguidas. Este movimiento es de prioridad alta."
   },
   "mysticalFire": {
     "name": "Llama Embrujada",
-    "effect": "El usuario lanza por la boca una singular llama a gran temperatura con la que ataca a su objetivo y reduce su Ataque Especial."
+    "effect": "El usuario lanza por la boca una singular llama a gran temperatura con la que ataca a su objetivo y reduce su ataque especial."
   },
   "spikyShield": {
     "name": "Barrera Espinosa",
@@ -2385,15 +2385,15 @@
   },
   "aromaticMist": {
     "name": "Niebla Aromática",
-    "effect": "Consigue aumentar la Defensa Especial de un Pokémon de su equipo con una fragancia misteriosa."
+    "effect": "Consigue aumentar la defensa especial de un Pokémon de su equipo con una fragancia misteriosa."
   },
   "eerieImpulse": {
     "name": "Onda Anómala",
-    "effect": "El usuario irradia unas raras ondas que, al alcanzar al objetivo, reducen mucho su Ataque Especial."
+    "effect": "El usuario irradia unas raras ondas que, al alcanzar al objetivo, reducen mucho su ataque especial."
   },
   "venomDrench": {
     "name": "Trampa Venenosa",
-    "effect": "Impregna a su objetivo con un líquido venenoso que disminuye el Ataque, el Ataque Especial y la Velocidad. Solo afecta a Pokémon ya envenenados."
+    "effect": "Impregna a su objetivo con un líquido venenoso que disminuye el ataque, el ataque especial y la velocidad. Solo afecta a Pokémon ya envenenados."
   },
   "powder": {
     "name": "Polvo Explosivo",
@@ -2401,11 +2401,11 @@
   },
   "geomancy": {
     "name": "Geocontrol",
-    "effect": "Concentra energía durante el primer turno, de forma que su Velocidad, Ataque Especial y Defensa Especial aumenten mucho en el segundo."
+    "effect": "Concentra energía durante el primer turno, de forma que su velocidad, ataque especial y defensa especial aumenten mucho en el segundo."
   },
   "magneticFlux": {
     "name": "Aura Magnética",
-    "effect": "Manipula el campo magnético y logra aumentar la Defensa y la Defensa Especial de los Pokémon aliados que cuenten con las habilidades Más y Menos."
+    "effect": "Manipula el campo magnético y logra aumentar la defensa y la defensa especial de los Pokémon aliados que cuenten con las habilidades Más y Menos."
   },
   "happyHour": {
     "name": "Paga Extra",
@@ -2429,7 +2429,7 @@
   },
   "babyDollEyes": {
     "name": "Ojitos Tiernos",
-    "effect": "Lanza una mirada al objetivo con ojos acaramelados, con lo que logra que su Ataque se reduzca. Este movimiento tiene prioridad alta."
+    "effect": "Lanza una mirada al objetivo con ojos acaramelados, con lo que logra que su ataque se reduzca. Este movimiento tiene prioridad alta."
   },
   "nuzzle": {
     "name": "Moflete Estático",
@@ -2445,7 +2445,7 @@
   },
   "powerUpPunch": {
     "name": "Puño Incremento",
-    "effect": "Cada vez que golpea a un oponente se endurecen sus puños. Si acierta al objetivo, el Ataque del usuario aumenta."
+    "effect": "Cada vez que golpea a un oponente se endurecen sus puños. Si acierta al objetivo, el ataque del usuario aumenta."
   },
   "oblivionWing": {
     "name": "Ala Mortífera",
@@ -2477,11 +2477,11 @@
   },
   "dragonAscent": {
     "name": "Ascenso Draco",
-    "effect": "El usuario se precipita desde el cielo a una velocidad de vértigo para atacar al objetivo, pero hace que bajen la Defensa y la Defensa Especial del usuario."
+    "effect": "El usuario se precipita desde el cielo a una velocidad de vértigo para atacar al objetivo, pero hace que bajen la defensa y la defensa especial del usuario."
   },
   "hyperspaceFury": {
     "name": "Cerco Dimensión",
-    "effect": "Ataca al objetivo con una ráfaga de golpes que pasan por alto los efectos de movimientos como Protección o Detección. Baja la Defensa del usuario."
+    "effect": "Ataca al objetivo con una ráfaga de golpes que pasan por alto los efectos de movimientos como Protección o Detección. Baja la defensa del usuario."
   },
   "breakneckBlitzPhysical": {
     "name": "Carrera Arrolladora",
@@ -2657,7 +2657,7 @@
   },
   "iceHammer": {
     "name": "Martillo Hielo",
-    "effect": "Un terrible puño golpea al contrincante, pero la Velocidad del usuario se ve reducida."
+    "effect": "Un terrible puño golpea al contrincante, pero la velocidad del usuario se ve reducida."
   },
   "floralHealing": {
     "name": "Cura Floral",
@@ -2669,7 +2669,7 @@
   },
   "strengthSap": {
     "name": "Absorbefuerza",
-    "effect": "Restaura una cantidad de PS equivalente al valor de Ataque del rival, que además verá reducida esta característica."
+    "effect": "Restaura una cantidad de PS equivalente al valor de ataque del rival, que además verá reducida esta característica."
   },
   "solarBlade": {
     "name": "Cuchilla Solar",
@@ -2685,7 +2685,7 @@
   },
   "toxicThread": {
     "name": "Hilo Venenoso",
-    "effect": "Ataca al objetivo con hilillos venenosos que reducen su Velocidad y lo envenenan."
+    "effect": "Ataca al objetivo con hilillos venenosos que reducen su velocidad y lo envenenan."
   },
   "laserFocus": {
     "name": "Aguzar",
@@ -2693,7 +2693,7 @@
   },
   "gearUp": {
     "name": "Piñón Auxiliar",
-    "effect": "Cambia de marcha y logra aumentar el Ataque y el Ataque Especial de los Pokémon aliados que cuenten con las habilidades Más y Menos."
+    "effect": "Cambia de marcha y logra aumentar el ataque y el ataque especial de los Pokémon aliados que cuenten con las habilidades Más y Menos."
   },
   "throatChop": {
     "name": "Golpe Mordaza",
@@ -2713,11 +2713,11 @@
   },
   "lunge": {
     "name": "Plancha",
-    "effect": "Ataca al objetivo abalanzándose sobre él con todas sus fuerzas y reduce su Ataque."
+    "effect": "Ataca al objetivo abalanzándose sobre él con todas sus fuerzas y reduce su ataque."
   },
   "fireLash": {
     "name": "Látigo Ígneo",
-    "effect": "Golpea al objetivo con un látigo incandescente y reduce su Defensa."
+    "effect": "Golpea al objetivo con un látigo incandescente y reduce su defensa."
   },
   "powerTrip": {
     "name": "Chulería",
@@ -2729,7 +2729,7 @@
   },
   "speedSwap": {
     "name": "Cambiavelocidad",
-    "effect": "Intercambia su Velocidad por la del objetivo."
+    "effect": "Intercambia su velocidad por la del objetivo."
   },
   "smartStrike": {
     "name": "Cuerno Certero",
@@ -2749,7 +2749,7 @@
   },
   "tropKick": {
     "name": "Patada Tropical",
-    "effect": "Lanza una patada con la fuerza del trópico que golpea al objetivo y reduce su Ataque."
+    "effect": "Lanza una patada con la fuerza del trópico que golpea al objetivo y reduce su ataque."
   },
   "instruct": {
     "name": "Mandato",
@@ -2761,7 +2761,7 @@
   },
   "clangingScales": {
     "name": "Fragor Escamas",
-    "effect": "Frota todas las escamas de su cuerpo para crear un fuerte sonido con el que ataca. Cuando el ataque termina, su Defensa se ve reducida."
+    "effect": "Frota todas las escamas de su cuerpo para crear un fuerte sonido con el que ataca. Cuando el ataque termina, su defensa se ve reducida."
   },
   "dragonHammer": {
     "name": "Martillo Dragón",
@@ -2817,7 +2817,7 @@
   },
   "fleurCannon": {
     "name": "Cañón Floral",
-    "effect": "El usuario emite un potente rayo, pero su Ataque Especial se reduce mucho."
+    "effect": "El usuario emite un potente rayo, pero su ataque especial se reduce mucho."
   },
   "psychicFangs": {
     "name": "Psicocolmillo",
@@ -2829,7 +2829,7 @@
   },
   "shadowBone": {
     "name": "Hueso Sombrío",
-    "effect": "Ataca golpeando con un hueso poseído por un espíritu. Puede reducir la Defensa del objetivo."
+    "effect": "Ataca golpeando con un hueso poseído por un espíritu. Puede reducir la defensa del objetivo."
   },
   "accelerock": {
     "name": "Roca Veloz",
@@ -2837,7 +2837,7 @@
   },
   "liquidation": {
     "name": "Hidroariete",
-    "effect": "Ataca golpeando gracias a la fuerza del agua. También puede reducir la Defensa del objetivo."
+    "effect": "Ataca golpeando gracias a la fuerza del agua. También puede reducir la defensa del objetivo."
   },
   "prismaticLaser": {
     "name": "Láser Prisma",
@@ -2857,7 +2857,7 @@
   },
   "tearfulLook": {
     "name": "Ojos Llorosos",
-    "effect": "Mira al objetivo con ojos llorosos para hacerle perder su espíritu combativo y reduce su Ataque y Ataque Especial."
+    "effect": "Mira al objetivo con ojos llorosos para hacerle perder su espíritu combativo y reduce su ataque y ataque especial."
   },
   "zingZap": {
     "name": "Electropunzada",
@@ -2885,11 +2885,11 @@
   },
   "photonGeyser": {
     "name": "Géiser Fotónico",
-    "effect": "El usuario ataca con una gran columna de luz. Compara sus valores de Ataque y Ataque Especial para infligir daño con el más alto de los dos."
+    "effect": "El usuario ataca con una gran columna de luz. Compara sus valores de ataque y ataque especial para infligir daño con el más alto de los dos."
   },
   "lightThatBurnsTheSky": {
     "name": "Fotodestrucción Apocalíptica",
-    "effect": "Necrozma escoge la característica que tenga el valor más alto entre el Ataque y el Ataque Especial para infligir daño, ignorando la habilidad del objetivo."
+    "effect": "Necrozma escoge la característica que tenga el valor más alto entre el ataque y el ataque especial para infligir daño, ignorando la habilidad del objetivo."
   },
   "searingSunrazeSmash": {
     "name": "Embestida Solar",
@@ -2913,7 +2913,7 @@
   },
   "zippyZap": {
     "name": "Pikaturbo",
-    "effect": "The user attacks the target with bursts of electricity at high speed. This move always goes first and raises the user's evasiveness."
+    "effect": "Ataque eléctrico a la velocidad del rayo. Este movimiento tiene prioridad alta y propina golpes críticos."
   },
   "splishySplash": {
     "name": "Salpikasurf",
@@ -2985,7 +2985,7 @@
   },
   "stuffCheeks": {
     "name": "Atiborramiento",
-    "effect": "El usuario ingiere la baya que lleva equipada para aumentar mucho su Defensa."
+    "effect": "El usuario ingiere la baya que lleva equipada para aumentar mucho su defensa."
   },
   "noRetreat": {
     "name": "Bastión Final",
@@ -2993,7 +2993,7 @@
   },
   "tarShot": {
     "name": "Alquitranazo",
-    "effect": "Cubre al objetivo de un alquitrán pegajoso que reduce su Velocidad y lo vuelve débil contra el fuego."
+    "effect": "Cubre al objetivo de un alquitrán pegajoso que reduce su velocidad y lo vuelve débil contra el fuego."
   },
   "magicPowder": {
     "name": "Polvo Mágico",
@@ -3001,7 +3001,7 @@
   },
   "dragonDarts": {
     "name": "Dracoflechas",
-    "effect": "El usuario ataca propulsando a ambos Dreepy. En caso de haber dos adversarios, cada Dreepy golpea a su propio objetivo por separado."
+    "effect": "El usuario ataca propulsando proyectiles como escamas u otros pokémon ectera. En caso de haber dos adversarios, cada proyectil golpea a su propio objetivo por separado."
   },
   "teatime": {
     "name": "Hora del Té",
@@ -3009,7 +3009,7 @@
   },
   "octolock": {
     "name": "Octopresa",
-    "effect": "Retiene al objetivo e impide que pueda huir o ser cambiado por otro, a la vez que reduce su Defensa y su Defensa Especial cada turno."
+    "effect": "Retiene al objetivo e impide que pueda huir o ser cambiado por otro, a la vez que reduce su defensa y su defensa especial cada turno."
   },
   "boltBeak": {
     "name": "Electropico",
@@ -3029,7 +3029,7 @@
   },
   "maxFlutterby": {
     "name": "Maxinsecto",
-    "effect": "Ataque de tipo Bicho ejecutado por un Pokémon Dinamax. Reduce el Ataque Especial del objetivo."
+    "effect": "Ataque de tipo Bicho ejecutado por un Pokémon Dinamax. Reduce el ataque especial del objetivo."
   },
   "maxLightning": {
     "name": "Maxitormenta",
@@ -3037,15 +3037,15 @@
   },
   "maxStrike": {
     "name": "Maxiataque",
-    "effect": "Ataque de tipo Normal ejecutado por un Pokémon Dinamax. Reduce la Velocidad del objetivo."
+    "effect": "Ataque de tipo Normal ejecutado por un Pokémon Dinamax. Reduce la velocidad del objetivo."
   },
   "maxKnuckle": {
     "name": "Maxipuño",
-    "effect": "Ataque de tipo Lucha ejecutado por un Pokémon Dinamax. Aumenta el Ataque de tu bando."
+    "effect": "Ataque de tipo Lucha ejecutado por un Pokémon Dinamax. Aumenta el ataque de tu bando."
   },
   "maxPhantasm": {
     "name": "Maxiespectro",
-    "effect": "Ataque de tipo Fantasma ejecutado por un Pokémon Dinamax. Reduce la Defensa del objetivo."
+    "effect": "Ataque de tipo Fantasma ejecutado por un Pokémon Dinamax. Reduce la defensa del objetivo."
   },
   "maxHailstorm": {
     "name": "Maxihelada",
@@ -3053,7 +3053,7 @@
   },
   "maxOoze": {
     "name": "Maxiácido",
-    "effect": "Ataque de tipo Veneno ejecutado por un Pokémon Dinamax. Aumenta el Ataque Especial de tu bando."
+    "effect": "Ataque de tipo Veneno ejecutado por un Pokémon Dinamax. Aumenta el ataque especial de tu bando."
   },
   "maxGeyser": {
     "name": "Maxichorro",
@@ -3061,7 +3061,7 @@
   },
   "maxAirstream": {
     "name": "Maxiciclón",
-    "effect": "Ataque de tipo Volador ejecutado por un Pokémon Dinamax. Aumenta la Velocidad de tu bando."
+    "effect": "Ataque de tipo Volador ejecutado por un Pokémon Dinamax. Aumenta la velocidad de tu bando."
   },
   "maxStarfall": {
     "name": "Maxiestela",
@@ -3069,7 +3069,7 @@
   },
   "maxWyrmwind": {
     "name": "Maxidraco",
-    "effect": "Ataque de tipo Dragón ejecutado por un Pokémon Dinamax. Reduce el Ataque del objetivo."
+    "effect": "Ataque de tipo Dragón ejecutado por un Pokémon Dinamax. Reduce el ataque del objetivo."
   },
   "maxMindstorm": {
     "name": "Maxionda",
@@ -3081,11 +3081,11 @@
   },
   "maxQuake": {
     "name": "Maxitemblor",
-    "effect": "Ataque de tipo Tierra ejecutado por un Pokémon Dinamax. Aumenta la Defensa Especial de tu bando."
+    "effect": "Ataque de tipo Tierra ejecutado por un Pokémon Dinamax. Aumenta la defensa especial de tu bando."
   },
   "maxDarkness": {
     "name": "Maxisombra",
-    "effect": "Ataque de tipo Siniestro ejecutado por un Pokémon Dinamax. Reduce la Defensa Especial del objetivo."
+    "effect": "Ataque de tipo Siniestro ejecutado por un Pokémon Dinamax. Reduce la defensa especial del objetivo."
   },
   "maxOvergrowth": {
     "name": "Maxiflora",
@@ -3093,7 +3093,7 @@
   },
   "maxSteelspike": {
     "name": "Maximetal",
-    "effect": "Ataque de tipo Acero ejecutado por un Pokémon Dinamax. Aumenta la Defensa de tu bando."
+    "effect": "Ataque de tipo Acero ejecutado por un Pokémon Dinamax. Aumenta la defensa de tu bando."
   },
   "clangorousSoul": {
     "name": "Estruendo Escama",
@@ -3101,15 +3101,15 @@
   },
   "bodyPress": {
     "name": "Plancha Corporal",
-    "effect": "El usuario usa el cuerpo para lanzar su ataque e infligir un daño directamente proporcional a su Defensa."
+    "effect": "El usuario usa el cuerpo para lanzar su ataque e infligir un daño directamente proporcional a su defensa."
   },
   "decorate": {
     "name": "Decoración",
-    "effect": "Aumenta mucho el Ataque y el Ataque Especial del objetivo al decorarlo."
+    "effect": "Aumenta mucho el ataque y el ataque especial del objetivo al decorarlo."
   },
   "drumBeating": {
     "name": "Batería Asalto",
-    "effect": "El usuario controla un tocón mediante la percusión y al atacar reduce la Velocidad del objetivo."
+    "effect": "El usuario controla un tocón mediante la percusión y al atacar reduce la velocidad del objetivo."
   },
   "snapTrap": {
     "name": "Cepo",
@@ -3129,11 +3129,11 @@
   },
   "auraWheel": {
     "name": "Rueda Aural",
-    "effect": "La energía que acumula en las mejillas le sirve para atacar y aumentar su Velocidad. Este movimiento cambia de tipo según la forma que adopte Morpeko."
+    "effect": "La energía que acumula en las mejillas le sirve para atacar y aumentar su velocidad. Si es utilizado por Morpeko, este movimiento cambia de tipo según la forma que adopte."
   },
   "breakingSwipe": {
     "name": "Vasto Impacto",
-    "effect": "El usuario sacude violentamente su enorme cola para golpear al objetivo y reducir su Ataque a la par."
+    "effect": "El usuario sacude violentamente su enorme cola para golpear al objetivo y reducir su ataque a la par."
   },
   "branchPoke": {
     "name": "Punzada Rama",
@@ -3145,15 +3145,15 @@
   },
   "appleAcid": {
     "name": "Ácido Málico",
-    "effect": "Ataca al objetivo con el fluido corrosivo que desprende una manzana ácida, lo que también reduce la Defensa Especial de este."
+    "effect": "Ataca al objetivo con el fluido corrosivo que desprende una manzana ácida, lo que también reduce la defensa especial de este."
   },
   "gravApple": {
     "name": "Fuerza G",
-    "effect": "El usuario ataca haciendo caer una manzana desde gran altura. Reduce la Defensa del objetivo."
+    "effect": "El usuario ataca haciendo caer una manzana desde gran altura. Reduce la defensa del objetivo."
   },
   "spiritBreak": {
     "name": "Choque Anímico",
-    "effect": "El usuario ataca al objetivo con tal ímpetu que acaba minando su moral y, en consecuencia, reduce su Ataque Especial."
+    "effect": "El usuario ataca al objetivo con tal ímpetu que acaba minando su moral y, en consecuencia, reduce su ataque especial."
   },
   "strangeSteam": {
     "name": "Cautivapor",
@@ -3165,7 +3165,7 @@
   },
   "obstruct": {
     "name": "Obstrucción",
-    "effect": "Frena todos los ataques, pero puede fallar si se usa repetidamente. Reduce mucho la Defensa de quien ejecute un movimiento de contacto contra el usuario."
+    "effect": "Frena todos los ataques, pero puede fallar si se usa repetidamente. Reduce mucho la defensa de quien ejecute un movimiento de contacto contra el usuario."
   },
   "falseSurrender": {
     "name": "Irreverencia",
@@ -3193,11 +3193,11 @@
   },
   "scaleShot": {
     "name": "Ráfaga Escamas",
-    "effect": "Lanza escamas al objetivo de dos a cinco veces seguidas. Aumenta la Velocidad del usuario, pero reduce su Defensa."
+    "effect": "Lanza escamas al objetivo de dos a cinco veces seguidas. Aumenta la velocidad del usuario, pero reduce su defensa."
   },
   "meteorBeam": {
     "name": "Rayo Meteórico",
-    "effect": "El usuario dedica el primer turno a aumentar su Ataque Especial acumulando energía cósmica y lanza su ofensiva contra el objetivo en el segundo."
+    "effect": "El usuario dedica el primer turno a aumentar su ataque especial acumulando energía cósmica y lanza su ofensiva contra el objetivo en el segundo."
   },
   "shellSideArm": {
     "name": "Moluscañón",
@@ -3221,7 +3221,7 @@
   },
   "skitterSmack": {
     "name": "Golpe Rastrero",
-    "effect": "Ataca al objetivo por la espalda de forma subrepticia y, además, reduce su Ataque Especial."
+    "effect": "Ataca al objetivo por la espalda de forma subrepticia y, además, reduce su ataque especial."
   },
   "burningJealousy": {
     "name": "Envidia Ardiente",
@@ -3241,7 +3241,7 @@
   },
   "coaching": {
     "name": "Motivación",
-    "effect": "El usuario imparte indicaciones precisas a sus aliados, que ven aumentados su Ataque y su Defensa."
+    "effect": "El usuario imparte indicaciones precisas a sus aliados, que ven aumentados su ataque y su defensa."
   },
   "flipTurn": {
     "name": "Viraje",
@@ -3289,7 +3289,7 @@
   },
   "thunderousKick": {
     "name": "Patada Relámpago",
-    "effect": "El usuario desconcierta al objetivo con movimientos centelleantes y le propina una patada que, además, reduce su Defensa."
+    "effect": "El usuario desconcierta al objetivo con movimientos centelleantes y le propina una patada que, además, reduce su defensa."
   },
   "glacialLance": {
     "name": "Lanza Glacial",
@@ -3309,11 +3309,11 @@
   },
   "psyshieldBash": {
     "name": "Asalto Barrera",
-    "effect": "El usuario ataca envuelto en una energía psíquica que además aumenta su Defensa."
+    "effect": "El usuario ataca envuelto en una energía psíquica que además aumenta su defensa."
   },
   "powerShift": {
     "name": "Cambiapoder",
-    "effect": "Intercambia su Ataque por su Defensa."
+    "effect": "Intercambia su ataque por su defensa."
   },
   "stoneAxe": {
     "name": "Hachazo Pétreo",
@@ -3321,11 +3321,11 @@
   },
   "springtideStorm": {
     "name": "Ciclón Primavera",
-    "effect": "Desata una tormenta de amor y odio con la que envuelve y ataca al objetivo. También puede reducir su Ataque."
+    "effect": "Desata una tormenta de amor y odio con la que envuelve y ataca al objetivo. También puede reducir su ataque."
   },
   "mysticalPower": {
     "name": "Poder Místico",
-    "effect": "Ataca desatando un misterioso poder, que también aumenta su Ataque Especial."
+    "effect": "Ataca desatando un misterioso poder, que también aumenta su ataque especial."
   },
   "ragingFury": {
     "name": "Erupción de Ira",
@@ -3345,11 +3345,11 @@
   },
   "victoryDance": {
     "name": "Danza Triunfal",
-    "effect": "Ejecuta una danza frenética que invoca la victoria y aumenta el Ataque, la Defensa y la Velocidad."
+    "effect": "Ejecuta una danza frenética que invoca la victoria y aumenta el ataque, la defensa y la velocidad."
   },
   "headlongRush": {
     "name": "Arremetida",
-    "effect": "El usuario arremete con todas sus fuerzas, pero se reducen su Defensa y su Defensa Especial."
+    "effect": "El usuario arremete con todas sus fuerzas, pero se reducen su defensa y su defensa especial."
   },
   "barbBarrage": {
     "name": "Mil Púas Tóxicas",
@@ -3357,19 +3357,19 @@
   },
   "esperWing": {
     "name": "Ala Aural",
-    "effect": "Corta con unas alas imbuidas de aura. Suele asestar un golpe crítico y aumenta la Velocidad del usuario."
+    "effect": "Corta con unas alas imbuidas de aura. Suele asestar un golpe crítico y aumenta la velocidad del usuario."
   },
   "bitterMalice": {
     "name": "Rencor Reprimido",
-    "effect": "Ataca al objetivo sometiéndolo a su frío rencor y reduce su Ataque."
+    "effect": "Ataca al objetivo sometiéndolo a su frío rencor y reduce su ataque."
   },
   "shelter": {
     "name": "Retracción",
-    "effect": "La piel del usuario se vuelve dura como un escudo de acero, lo que aumenta mucho su Defensa."
+    "effect": "La piel del usuario se vuelve dura como un escudo de acero, lo que aumenta mucho su defensa."
   },
   "tripleArrows": {
     "name": "Triple Flecha",
-    "effect": "Propina un talonazo y lanza tres flechas. Suele asestar un golpe crítico y puede reducir la Defensa del objetivo o amedrentarlo."
+    "effect": "Propina un talonazo y lanza tres flechas. Suele asestar un golpe crítico y puede reducir la defensa del objetivo o amedrentarlo."
   },
   "infernalParade": {
     "name": "Marcha Espectral",
@@ -3381,7 +3381,7 @@
   },
   "bleakwindStorm": {
     "name": "Vendaval Gélido",
-    "effect": "Ataca con un viento muy frío que estremece el cuerpo y la mente y que, además, puede reducir la Velocidad del objetivo."
+    "effect": "Ataca con un viento muy frío que estremece el cuerpo y la mente y que, además, puede reducir la velocidad del objetivo."
   },
   "wildboltStorm": {
     "name": "Electormenta",
@@ -3397,7 +3397,7 @@
   },
   "takeHeart": {
     "name": "Bálsamo Osado",
-    "effect": "El usuario se envalentona y se cura de los problemas de estado. Además, aumenta su Ataque Especial y su Defensa Especial."
+    "effect": "El usuario se envalentona y se cura de los problemas de estado. Además, aumenta su ataque especial y su defensa especial."
   },
   "gMaxWildfire": {
     "name": "Gigallamarada",
@@ -3477,7 +3477,7 @@
   },
   "gMaxTartness": {
     "name": "Gigacorrosión",
-    "effect": "Ataque de tipo Planta ejecutado por un Flapple Gigamax. Reduce la Evasión del objetivo."
+    "effect": "Ataque de tipo Planta ejecutado por un Flapple Gigamax. Reduce la evasión del objetivo."
   },
   "gMaxSweetness": {
     "name": "Giganéctar",
@@ -3497,7 +3497,7 @@
   },
   "gMaxFoamBurst": {
     "name": "Gigaespuma",
-    "effect": "Ataque de tipo Agua ejecutado por un Kingler Gigamax. Reduce mucho la Velocidad del objetivo."
+    "effect": "Ataque de tipo Agua ejecutado por un Kingler Gigamax. Reduce mucho la velocidad del objetivo."
   },
   "gMaxCentiferno": {
     "name": "Gigacienfuegos",
@@ -3533,11 +3533,11 @@
   },
   "teraBlast": {
     "name": "Teraexplosión",
-    "effect": "Si el usuario se ha teracristalizado, ataca con la energía de su teratipo. Compara sus valores de Ataque y Ataque Especial para infligir daño con el más alto de los dos."
+    "effect": "Si el usuario se ha teracristalizado, ataca con la energía de su teratipo. Compara sus valores de ataque y ataque especial para infligir daño con el más alto de los dos."
   },
   "silkTrap": {
     "name": "Telatrampa",
-    "effect": "Tiende una trampa sedosa que protege al usuario de los ataques al tiempo que reduce la Velocidad de cualquier Pokémon con el que entre en contacto."
+    "effect": "Tiende una trampa sedosa que protege al usuario de los ataques al tiempo que reduce la velocidad de cualquier Pokémon con el que entre en contacto."
   },
   "axeKick": {
     "name": "Patada Hacha",
@@ -3549,7 +3549,7 @@
   },
   "luminaCrash": {
     "name": "Fotocolisión",
-    "effect": "Ataca proyectando una extraña luz que afecta a la mente. Reduce mucho la Defensa Especial del objetivo."
+    "effect": "Ataca proyectando una extraña luz que afecta a la mente. Reduce mucho la defensa especial del objetivo."
   },
   "orderUp": {
     "name": "Oído Cocina",
@@ -3561,11 +3561,11 @@
   },
   "spicyExtract": {
     "name": "Extracto Picante",
-    "effect": "Libera un extracto extraordinariamente picante que aumenta mucho el Ataque del objetivo, pero también reduce mucho su Defensa."
+    "effect": "Libera un extracto extraordinariamente picante que aumenta mucho el ataque del objetivo, pero también reduce mucho su defensa."
   },
   "spinOut": {
     "name": "Quemarrueda",
-    "effect": "Inflige daño al objetivo ejerciendo presión sobre sus extremidades y girando violentamente sobre sí. Reduce mucho la Velocidad del usuario."
+    "effect": "Inflige daño al objetivo ejerciendo presión sobre sus extremidades y girando violentamente sobre sí. Reduce mucho la velocidad del usuario."
   },
   "populationBomb": {
     "name": "Proliferación",
@@ -3601,7 +3601,7 @@
   },
   "filletAway": {
     "name": "Deslome",
-    "effect": "Aumenta mucho el Ataque, el Ataque Especial y la Velocidad del usuario a costa de parte de sus PS."
+    "effect": "Aumenta mucho el ataque, el ataque especial y la velocidad del usuario a costa de parte de sus PS."
   },
   "kowtowCleave": {
     "name": "Genufendiente",
@@ -3613,11 +3613,11 @@
   },
   "torchSong": {
     "name": "Canto Ardiente",
-    "effect": "Expele tórridas llamaradas como si entonara una canción y abrasa al objetivo con ellas. Aumenta el Ataque Especial del usuario."
+    "effect": "Expele tórridas llamaradas como si entonara una canción y abrasa al objetivo con ellas. Aumenta el ataque especial del usuario."
   },
   "aquaStep": {
     "name": "Danza Acuática",
-    "effect": "Juguetea con el objetivo mientras ejecuta una elegante y fluida danza y le inflige daño. Aumenta la Velocidad del usuario."
+    "effect": "Juguetea con el objetivo mientras ejecuta una elegante y fluida danza y le inflige daño. Aumenta la velocidad del usuario."
   },
   "ragingBull": {
     "name": "Furia Taurina",
@@ -3625,7 +3625,7 @@
   },
   "makeItRain": {
     "name": "Fiebre Dorada",
-    "effect": "El usuario ataca arrojando una generosa cantidad de monedas, pero su Ataque Especial se ve reducido. Al finalizar el combate, las recupera en forma de ganancias."
+    "effect": "El usuario ataca arrojando una generosa cantidad de monedas, pero su ataque especial se ve reducido. Al finalizar el combate, las recupera en forma de ganancias."
   },
   "psyblade": {
     "name": "Psicohojas",
@@ -3657,23 +3657,23 @@
   },
   "tidyUp": {
     "name": "Limpieza General",
-    "effect": "Efectúa una limpieza a fondo que anula los efectos de Púas, Trampa Rocas, Red Viscosa, Púas Tóxicas y Sustituto. Aumenta el Ataque y la Velocidad del usuario."
+    "effect": "Efectúa una limpieza a fondo que anula los efectos de Púas, Trampa Rocas, Red Viscosa, Púas Tóxicas y Sustituto. Aumenta el ataque y la velocidad del usuario."
   },
   "snowscape": {
     "name": "Paisaje Nevado",
-    "effect": "Desata una nevada que dura cinco turnos y aumenta la Defensa de los Pokémon de tipo Hielo."
+    "effect": "Desata una nevada que dura cinco turnos y aumenta la defensa de los Pokémon de tipo Hielo."
   },
   "pounce": {
     "name": "Brinco",
-    "effect": "Ataca abalanzándose sobre el objetivo y le reduce la Velocidad."
+    "effect": "Ataca abalanzándose sobre el objetivo y le reduce la velocidad."
   },
   "trailblaze": {
     "name": "Abrecaminos",
-    "effect": "Ataca de pronto como si saltara desde la hierba alta. El usuario se mueve con gran agilidad y aumenta su Velocidad."
+    "effect": "Ataca de pronto como si saltara desde la hierba alta. El usuario se mueve con gran agilidad y aumenta su velocidad."
   },
   "chillingWater": {
     "name": "Agua Fría",
-    "effect": "Ataca al objetivo rociándolo con un agua gélida y desalentadora que reduce su Ataque."
+    "effect": "Ataca al objetivo rociándolo con un agua gélida y desalentadora que reduce su ataque."
   },
   "hyperDrill": {
     "name": "Hipertaladro",
@@ -3689,7 +3689,7 @@
   },
   "armorCannon": {
     "name": "Cañón Armadura",
-    "effect": "Se deshace de su armadura y arroja las partes al objetivo cuales proyectiles ardientes. Reduce la Defensa y la Defensa Especial del usuario."
+    "effect": "Se deshace de su armadura y arroja las partes al objetivo cuales proyectiles ardientes. Reduce la defensa y la defensa especial del usuario."
   },
   "bitterBlade": {
     "name": "Espada Lamento",
@@ -3741,7 +3741,7 @@
   },
   "syrupBomb": {
     "name": "Bomba Caramelo",
-    "effect": "Impregna al objetivo con una explosión de su viscoso néctar y lo carameliza, lo que hace que su Velocidad se reduzca progresivamente durante tres turnos."
+    "effect": "Impregna al objetivo con una explosión de su viscoso néctar y lo carameliza, lo que hace que su velocidad se reduzca progresivamente durante tres turnos."
   },
   "ivyCudgel": {
     "name": "Garrote Liana",
@@ -3749,7 +3749,7 @@
   },
   "electroShot": {
     "name": "Electrorrayo",
-    "effect": "Acumula electricidad y aumenta su Ataque Especial en el primer turno y dispara una descarga de alto voltaje en el segundo. Si llueve, puede atacar en el primer turno."
+    "effect": "Acumula electricidad y aumenta su ataque especial en el primer turno y dispara una descarga de alto voltaje en el segundo. Si llueve, puede atacar en el primer turno."
   },
   "teraStarstorm": {
     "name": "Teraclúster",

@@ -1,0 +1,41 @@
+{
+	"textures": [
+		{
+			"image": "fun_and_games_game.png",
+			"format": "RGBA8888",
+			"size": {
+				"w": 38,
+				"h": 82
+			},
+			"scale": 1,
+			"frames": [
+				{
+					"filename": "0001.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 38,
+						"h": 82
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 38,
+						"h": 82
+					},
+					"frame": {
+						"x": 0,
+						"y": 0,
+						"w": 38,
+						"h": 82
+					}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "https://www.codeandweb.com/texturepacker",
+		"version": "3.0",
+		"smartupdate": "$TexturePacker:SmartUpdate:d40b6742392c2fe8ca0735b3f561e319:5dcda5410b12f0aa75eb0dd1fbcbe4f9:d171fb17d3017d1f655cd8dd14c252b7$"
+	}
+}

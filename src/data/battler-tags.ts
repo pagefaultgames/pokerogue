@@ -3,9 +3,9 @@ import { getPokemonNameWithAffix } from "../messages";
 import Pokemon, { MoveResult, HitResult } from "../field/pokemon";
 import { StatusEffect } from "./status-effect";
 import * as Utils from "../utils";
-import { ChargeAttr, MoveFlags, allMoves } from "./move";
+import { ChargeAttr, MoveFlags, allMoves, MoveCategory, applyMoveAttrs, StatusCategoryOnAllyAttr, HealOnAllyAttr } from "./move";
 import { Type } from "./type";
-import { BlockNonDirectDamageAbAttr, FlinchEffectAbAttr, ReverseDrainAbAttr, applyAbAttrs } from "./ability";
+import { BlockNonDirectDamageAbAttr, FlinchEffectAbAttr, ReverseDrainAbAttr, applyAbAttrs, ProtectStatAbAttr } from "./ability";
 import { TerrainType } from "./terrain";
 import { WeatherType } from "./weather";
 import { allAbilities } from "./ability";
@@ -140,6 +140,18 @@ export abstract class MoveRestrictionBattlerTag extends BattlerTag {
    * @returns {boolean} `true` if the move is restricted by this tag, otherwise `false`.
    */
   abstract isMoveRestricted(move: Moves): boolean;
+
+  /**
+   * Checks if this tag is restricting a move based on a user's decisions during the target selection phase
+   *
+   * @param {Moves} move {@linkcode Moves} move ID to check restriction for
+   * @param {Pokemon} user {@linkcode Pokemon} the user of the above move
+   * @param {Pokemon} target {@linkcode Pokemon} the target of the above move
+   * @returns {boolean} `false` unless overridden by the child tag
+   */
+  isMoveTargetRestricted(move: Moves, user: Pokemon, target: Pokemon): boolean {
+    return false;
+  }
 
   /**
    * Gets the text to display when the player attempts to select a move that is restricted by this tag.
@@ -524,10 +536,6 @@ export class FlinchedTag extends BattlerTag {
     applyAbAttrs(FlinchEffectAbAttr, pokemon, null);
   }
 
-  canAdd(pokemon: Pokemon): boolean {
-    return !pokemon.isMax();
-  }
-
   /**
    * Cancels the Pokemon's next Move on the turn this tag is applied
    * @param pokemon The {@linkcode Pokemon} with this tag
@@ -878,10 +886,6 @@ export class EncoreTag extends BattlerTag {
   }
 
   canAdd(pokemon: Pokemon): boolean {
-    if (pokemon.isMax()) {
-      return false;
-    }
-
     const lastMoves = pokemon.getLastXMoves(1);
     if (!lastMoves.length) {
       return false;
@@ -1060,19 +1064,11 @@ export class MinimizeTag extends BattlerTag {
     super(BattlerTagType.MINIMIZED, BattlerTagLapseType.TURN_END, 1, Moves.MINIMIZE);
   }
 
-  canAdd(pokemon: Pokemon): boolean {
-    return !pokemon.isMax();
-  }
-
   onAdd(pokemon: Pokemon): void {
     super.onAdd(pokemon);
   }
 
   lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
-    //If a pokemon dynamaxes they lose minimized status
-    if (pokemon.isMax()) {
-      return false;
-    }
     return lapseType !== BattlerTagLapseType.CUSTOM || super.lapse(pokemon, lapseType);
   }
 
@@ -2195,6 +2191,74 @@ export class ExposedTag extends BattlerTag {
 }
 
 /**
+ * Tag that prevents HP recovery from held items and move effects. It also blocks the usage of recovery moves.
+ * Applied by moves:  {@linkcode Moves.HEAL_BLOCK | Heal Block (5 turns)}, {@linkcode Moves.PSYCHIC_NOISE | Psychic Noise (2 turns)}
+ *
+ * @extends MoveRestrictionBattlerTag
+ */
+export class HealBlockTag extends MoveRestrictionBattlerTag {
+  constructor(turnCount: number, sourceMove: Moves) {
+    super(BattlerTagType.HEAL_BLOCK, [ BattlerTagLapseType.PRE_MOVE, BattlerTagLapseType.TURN_END ], turnCount, sourceMove);
+  }
+
+  onActivation(pokemon: Pokemon): string {
+    return i18next.t("battle:battlerTagsHealBlock", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) });
+  }
+
+  /**
+   * Checks if a move is disabled under Heal Block
+   * @param {Moves} move {@linkcode Moves} the move ID
+   * @returns `true` if the move has a TRIAGE_MOVE flag and is a status move
+   */
+  override isMoveRestricted(move: Moves): boolean {
+    if (allMoves[move].hasFlag(MoveFlags.TRIAGE_MOVE) && allMoves[move].category === MoveCategory.STATUS) {
+      return true;
+    }
+    return false;
+  }
+
+  /**
+   * Checks if a move is disabled under Heal Block because of its choice of target
+   * Implemented b/c of Pollen Puff
+   * @param {Moves} move {@linkcode Moves} the move ID
+   * @param {Pokemon} user {@linkcode Pokemon} the move user
+   * @param {Pokemon} target {@linkcode Pokemon} the target of the move
+   * @returns `true` if the move cannot be used because the target is an ally
+   */
+  override isMoveTargetRestricted(move: Moves, user: Pokemon, target: Pokemon) {
+    const moveCategory = new Utils.IntegerHolder(allMoves[move].category);
+    applyMoveAttrs(StatusCategoryOnAllyAttr, user, target, allMoves[move], moveCategory);
+    if (allMoves[move].hasAttr(HealOnAllyAttr) && moveCategory.value === MoveCategory.STATUS ) {
+      return true;
+    }
+    return false;
+  }
+
+  /**
+   * Uses DisabledTag's selectionDeniedText() message
+   */
+  override selectionDeniedText(pokemon: Pokemon, move: Moves): string {
+    return i18next.t("battle:moveDisabled", { moveName: allMoves[move].name });
+  }
+
+  /**
+   * @override
+   * @param {Pokemon} pokemon {@linkcode Pokemon} attempting to use the restricted move
+   * @param {Moves} move {@linkcode Moves} ID of the move being interrupted
+   * @returns {string} text to display when the move is interrupted
+   */
+  override interruptedText(pokemon: Pokemon, move: Moves): string {
+    return i18next.t("battle:disableInterruptedMove", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), moveName: allMoves[move].name });
+  }
+
+  override onRemove(pokemon: Pokemon): void {
+    super.onRemove(pokemon);
+
+    pokemon.scene.queueMessage(i18next.t("battle:battlerTagsHealBlockOnRemove", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }), null, false, null);
+  }
+}
+
+/**
  * Tag that doubles the type effectiveness of Fire-type moves.
  * @extends BattlerTag
  */
@@ -2214,6 +2278,36 @@ export class TarShotTag extends BattlerTag {
 
   override onAdd(pokemon: Pokemon): void {
     pokemon.scene.queueMessage(i18next.t("battlerTags:tarShotOnAdd", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }));
+  }
+}
+
+/**
+ * Battler Tag that keeps track of how many times the user has Autotomized
+ * Each count of Autotomization reduces the weight by 100kg
+ */
+export class AutotomizedTag extends BattlerTag {
+  public autotomizeCount: number = 0;
+  constructor(sourceMove: Moves = Moves.AUTOTOMIZE) {
+    super(BattlerTagType.AUTOTOMIZED, BattlerTagLapseType.CUSTOM, 1, sourceMove);
+  }
+
+  /**
+   * Adds an autotomize count to the Pokemon. Each stack reduces weight by 100kg
+   * If the Pokemon is over 0.1kg it also displays a message.
+   * @param pokemon The Pokemon that is being autotomized
+   */
+  onAdd(pokemon: Pokemon): void {
+    const minWeight = 0.1;
+    if (pokemon.getWeight() > minWeight) {
+      pokemon.scene.queueMessage(i18next.t("battlerTags:autotomizeOnAdd", {
+        pokemonNameWithAffix: getPokemonNameWithAffix(pokemon)
+      }));
+    }
+    this.autotomizeCount += 1;
+  }
+
+  onOverlap(pokemon: Pokemon): void {
+    this.onAdd(pokemon);
   }
 }
 
@@ -2238,8 +2332,8 @@ export class SubstituteTag extends BattlerTag {
     pokemon.scene.triggerPokemonBattleAnim(pokemon, PokemonAnimType.SUBSTITUTE_ADD);
     pokemon.scene.queueMessage(i18next.t("battlerTags:substituteOnAdd", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }), 1500);
 
-    // Remove any trapping effects from the user
-    pokemon.findAndRemoveTags(tag => tag instanceof TrappedTag);
+    // Remove any binding effects from the user
+    pokemon.findAndRemoveTags(tag => tag instanceof DamagingTrapTag);
   }
 
   /** Queues an on-remove battle animation that removes the Substitute's sprite. */
@@ -2301,6 +2395,45 @@ export class SubstituteTag extends BattlerTag {
   loadTag(source: BattlerTag | any): void {
     super.loadTag(source);
     this.hp = source.hp;
+  }
+}
+
+/**
+ * Tag that adds extra post-summon effects to a battle for a specific Pokemon.
+ * These post-summon effects are performed through {@linkcode Pokemon.mysteryEncounterBattleEffects},
+ * and can be used to unshift special phases, etc.
+ * Currently used only in MysteryEncounters to provide start of fight stat buffs.
+ */
+export class MysteryEncounterPostSummonTag extends BattlerTag {
+  constructor() {
+    super(BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON, BattlerTagLapseType.CUSTOM, 1);
+  }
+
+  /** Event when tag is added */
+  onAdd(pokemon: Pokemon): void {
+    super.onAdd(pokemon);
+  }
+
+  /** Performs post-summon effects through {@linkcode Pokemon.mysteryEncounterBattleEffects} */
+  lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
+    const ret = super.lapse(pokemon, lapseType);
+
+    if (lapseType === BattlerTagLapseType.CUSTOM) {
+      const cancelled = new Utils.BooleanHolder(false);
+      applyAbAttrs(ProtectStatAbAttr, pokemon, cancelled);
+      if (!cancelled.value) {
+        if (pokemon.mysteryEncounterBattleEffects) {
+          pokemon.mysteryEncounterBattleEffects(pokemon);
+        }
+      }
+    }
+
+    return ret;
+  }
+
+  /** Event when tag is removed */
+  onRemove(pokemon: Pokemon): void {
+    super.onRemove(pokemon);
   }
 }
 
@@ -2465,6 +2598,12 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: number, source
     return new GorillaTacticsTag();
   case BattlerTagType.SUBSTITUTE:
     return new SubstituteTag(sourceMove, sourceId);
+  case BattlerTagType.AUTOTOMIZED:
+    return new AutotomizedTag();
+  case BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON:
+    return new MysteryEncounterPostSummonTag();
+  case BattlerTagType.HEAL_BLOCK:
+    return new HealBlockTag(turnCount, sourceMove);
   case BattlerTagType.NONE:
   default:
     return new BattlerTag(tagType, BattlerTagLapseType.CUSTOM, turnCount, sourceMove, sourceId);

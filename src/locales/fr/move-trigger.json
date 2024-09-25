@@ -7,6 +7,7 @@
   "switchedStat": "{{pokemonName}} et sa cible échangent leur {{stat}} !",
   "sharedGuard": "{{pokemonName}} additionne sa garde à celle de sa cible et redistribue le tout équitablement !",
   "sharedPower": "{{pokemonName}} additionne sa force à celle de sa cible et redistribue le tout équitablement !",
+  "shiftedStats": "{{pokemonName}} échange {{statToSwitch}} et {{statToSwitchWith}} !",
   "goingAllOutForAttack": "{{pokemonName}} a pris\ncette capacité au sérieux !",
   "regainedHealth": "{{pokemonName}}\nrécupère des PV !",
   "keptGoingAndCrashed": "{{pokemonName}}\ns’écrase au sol !",
@@ -65,7 +66,10 @@
   "suppressAbilities": "Le talent de {{pokemonName}}\na été rendu inactif !",
   "revivalBlessing": "{{pokemonName}} a repris connaissance\net est prêt à se battre de nouveau !",
   "swapArenaTags": "Les effets affectant chaque côté du terrain\nont été échangés par {{pokemonName}} !",
+  "chillyReception": "{{pokemonName}} s’apprête\nà faire un mauvais jeu de mots…",
   "exposedMove": "{{targetPokemonName}} est identifié\npar {{pokemonName}} !",
   "safeguard": "{{targetName}} est protégé\npar la capacité Rune Protect !",
+  "substituteOnOverlap": "{{pokemonName}} a déjà\nun clone !",
+  "substituteNotEnoughHp": "Mais il est trop faible\npour créer un clone !",
   "afterYou": "{{pokemonName}} accepte\navec joie !"
 }
