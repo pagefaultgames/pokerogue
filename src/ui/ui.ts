@@ -54,7 +54,6 @@ import TestDialogueUiHandler from "#app/ui/test-dialogue-ui-handler";
 import AutoCompleteUiHandler from "./autocomplete-ui-handler";
 import { Device } from "#enums/devices";
 import MysteryEncounterUiHandler from "./mystery-encounter-ui-handler";
-import ConfirmPreviewUiHandler from "./confirm-preview-ui-handler";
 
 export enum Mode {
   MESSAGE,
@@ -72,7 +71,6 @@ export enum Mode {
   EGG_HATCH_SCENE,
   EGG_HATCH_SUMMARY,
   CONFIRM,
-  CONFIRM_PREVIEW,
   OPTION_SELECT,
   MENU,
   MENU_OPTION_SELECT,
@@ -119,7 +117,6 @@ const transitionModes = [
 const noTransitionModes = [
   Mode.TITLE,
   Mode.CONFIRM,
-  Mode.CONFIRM_PREVIEW,
   Mode.OPTION_SELECT,
   Mode.MENU,
   Mode.MENU_OPTION_SELECT,
@@ -183,7 +180,6 @@ export default class UI extends Phaser.GameObjects.Container {
       new EggHatchSceneHandler(scene),
       new EggSummaryUiHandler(scene),
       new ConfirmUiHandler(scene),
-      new ConfirmPreviewUiHandler(scene),
       new OptionSelectUiHandler(scene),
       new MenuUiHandler(scene),
       new OptionSelectUiHandler(scene, Mode.MENU_OPTION_SELECT),
