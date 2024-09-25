@@ -33,7 +33,7 @@
   },
   "battle_won": "¡Tu conocimiento y habilidad fueron perfectos para explotar nuestras debilidades!$A cambio de la valiosa lección, permíteme enseñarle a uno de tus Pokémon un movimiento de tipo Bicho.",
   "teach_move_prompt": "Selecciona un movimiento para enseñar a un Pokémon.",
-  "confirm_no_teach": "¿Estás seguro de que no quieres aprender uno de estos excellentes movimientos?",
+  "confirm_no_teach": "¿Estás seguro de que no quieres aprender uno de estos excelentes movimientos?",
   "outro": "¡Veo grandes Pokémon de tipo Bicho en tu futuro! ¡Que nuestros caminos se crucen de nuevo! ¡Bicho fuera!",
   "numBugTypes_one": "{{count}} Pokémon de tipo Bicho",
   "numBugTypes_other": "{{count}} Pokémon de tipo Bicho"
