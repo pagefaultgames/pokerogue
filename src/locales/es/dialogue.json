@@ -1,4 +1,26 @@
 {
+  "snow_worker": {
+    "encounter": {
+      "1": "¡Cuando hace frío, hay que abrigarse!\n$¡Sabiduría popular!"
+    },
+    "victory": {
+      "1": "De donde no hay, no se puede sacar.\nEso también es sabiduría popular, creo."
+    },
+    "defeat": {
+      "1": "¡Voy a compartir mi sabiduría! Si congelan a un Pokémon de tu equipo,\n$usa con él un movimiento de tipo Fuego ¡y podrás derretir el hielo!"
+    } 
+  }, 
+"snow_worker_double": {   
+    "encounter": {
+      "1": "...\n$¡Co-combate!"
+    },
+    "victory": {
+      "1": "...\n$¡Qué-qué frío!"
+    },
+    "defeat": {
+      "1": "¿Sabes?\nAquí hace mucho frío."
+    } 
+  },
   "aether_grunt": {
     "encounter": {
       "1": "¡Lucharé con toda mi fuerza para detenerte!",
