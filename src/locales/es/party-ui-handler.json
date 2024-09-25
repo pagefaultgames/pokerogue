@@ -17,7 +17,7 @@
   "RENAME": "Rename",
   "SELECT": "Select",
   "choosePokemon": "Elige a un Pokémon.",
-  "doWhatWithThisPokemon": "¿Que quieres hacer con este Pokémon?",
+  "doWhatWithThisPokemon": "¿Qué quieres hacer con este Pokémon?",
   "noEnergy": "¡A {{pokemonName}} no le\nquedan fuerzas para luchar!",
   "hasEnergy": "¡A {{pokemonName}} le\nquedan fuerzas para luchar!",
   "cantBeUsed": "¡{{pokemonName}} no puede usarse en este desafío!",
