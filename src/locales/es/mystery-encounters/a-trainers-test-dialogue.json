@@ -31,7 +31,7 @@
   "option": {
     "1": {
       "label": "Aceptar el Desafío",
-      "tooltip": "(-) Batalla Ardua\n(+) Obtén un @[TOOLTIP_TITLE]{Huevo muy raro}"
+      "tooltip": "(-) Batalla extremadamente Ardua\n(+) Obtén un @[TOOLTIP_TITLE]{Huevo muy raro}"
     },
     "2": {
       "label": "Rechazar el Desafío",
@@ -39,9 +39,10 @@
     }
   },
   "eggTypes": {
-    "rare": "un huevo Raro",
-    "epic": "un huavo Épico",
-    "legendary": "un huevo Legendario "
+    "rare": "un Huevo Raro",
+    "epic": "un Huevo Épico",
+    "legendary": "un Huevo Legendario "
   },
   "outro": "{{statTrainerName}} te dio {{eggType}}!"
 }
+
