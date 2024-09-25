@@ -8,7 +8,7 @@
   "option": {
     "1": {
       "label": "Proponerle luchar",
-      "tooltip": "(-) Batalla Desafiante\n(+) Enseña un movimiento de tipo Bicho a un Pokémon",
+      "tooltip": "(-) Batalla Desafiante\n(+) Enseña un movimiento de tipo Bicho a cualquier Pokémon",
       "selected": "¿Un desafío, eh?\n¡Mis Pokémon Bicho están más que preparados para ti!"
     },
     "2": {
