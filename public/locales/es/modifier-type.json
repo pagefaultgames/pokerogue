@@ -69,7 +69,7 @@
       "description": "Aumenta la est. {{stat}} base del portador en un 10%.\nCuanto mayores sean tus IVs, mayor será el límite de acumulación."
     },
     "PokemonBaseStatTotalModifierType": {
-      "name": "Jugo de Shuckle",
+      "name": "Zumo de Shuckle",
       "description": "{{increaseDecrease}} todas las estadísticas base del portador en {{statValue}}. Fuiste {{blessCurse}} por el Shuckle.",
       "extra": {
         "increase": "Aumenta",

@@ -6,7 +6,7 @@
   "option": {
     "1": {
       "label": "Nach Wertsachen suchen",
-      "tooltip": "(-) Heilitems kosten ab jetzt das Dreifache\n(+) Erhalte tolle Items",
+      "tooltip": "(-) Heilitems kosten ab jetzt {{costMultiplier}} mal so viel\n(+) Erhalte tolle Items",
       "selected": "Du arbeitest dich durch den Müllhaufen und wirst von Dreck überzogen.$Kein respektabler Ladenbesitzer wird dir in deinem schmutzigen Zustand etwas verkaufen!$Aber es gibt ja auch andere... weniger respektable.$Natürlich verlangen sie höhere Preise.$Aber du hast einige unglaubliche Items im Müll gefunden!"
 
     },
