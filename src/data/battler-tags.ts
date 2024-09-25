@@ -2484,7 +2484,7 @@ export class TormentTag extends MoveRestrictionBattlerTag {
     // This checks for locking / momentum moves like Rollout and Hydro Cannon + if the user is under the influence of BattlerTagType.FRENZY
     // Because Uproar's unique behavior is not implemented, it does not check for Uproar. Torment has been marked as partial in moves.ts
     const moveObj = allMoves[lastMove.move];
-    const isUnaffected = moveObj.hasAttr(ConsecutiveUseDoublePowerAttr) || this.target.hasTag(BattlerTagType.FRENZY) || moveObj.hasAttr(ChargeAttr);
+    const isUnaffected = moveObj.hasAttr(ConsecutiveUseDoublePowerAttr) || this.target.getTag(BattlerTagType.FRENZY) || moveObj.hasAttr(ChargeAttr);
     const validLastMoveResult = (lastMove.result === MoveResult.SUCCESS) || (lastMove.result === MoveResult.MISS);
     if (lastMove.move === move && validLastMoveResult && lastMove.move !== Moves.STRUGGLE && !isUnaffected) {
       return true;
