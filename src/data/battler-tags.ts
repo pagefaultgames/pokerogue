@@ -2126,7 +2126,7 @@ export class GulpMissileTag extends BattlerTag {
     super(tagType, BattlerTagLapseType.HIT, 0, sourceMove);
   }
 
-  lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
+  override lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
     if (pokemon.getTag(BattlerTagType.UNDERWATER)) {
       return true;
     }
