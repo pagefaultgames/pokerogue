@@ -34,6 +34,8 @@ const useMaxWeightForOutput = false;
 
 type Modifier = Modifiers.Modifier;
 
+const doModifierLogging: boolean = false;
+
 export enum ModifierPoolType {
   PLAYER,
   WILD,
@@ -1035,7 +1037,7 @@ class AttackTypeBoosterModifierTypeGenerator extends ModifierTypeGenerator {
         return new AttackTypeBoosterModifierType(pregenArgs[0] as Type, 20);
       }
 
-      console.log("Generating item: Attack Type Booster")
+      if (doModifierLogging) console.log("Generating item: Attack Type Booster")
 
       const attackMoveTypes = party.map(p => p.getMoveset().map(m => m?.getMove()).filter(m => m instanceof AttackMove).map(m => m.type)).flat();
       if (!attackMoveTypes.length) {
@@ -1063,7 +1065,7 @@ class AttackTypeBoosterModifierTypeGenerator extends ModifierTypeGenerator {
 
       let type: Type;
 
-      const randInt = Utils.randSeedInt(totalWeight, undefined, "Generating a move type booster");
+      const randInt = Utils.randSeedInt(totalWeight, undefined, doModifierLogging ? "Generating a move type booster" : "%HIDE");
       let weight = 0;
 
       var fullweights: integer[] = []
@@ -1104,7 +1106,7 @@ class BaseStatBoosterModifierTypeGenerator extends ModifierTypeGenerator {
       if (pregenArgs) {
         return new BaseStatBoosterModifierType(pregenArgs[0]);
       }
-      const randStat: PermanentStat = Utils.randSeedInt(Stat.SPD + 1, undefined, "Randomly generating a Vitamin");
+      const randStat: PermanentStat = Utils.randSeedInt(Stat.SPD + 1, undefined, doModifierLogging ? "Randomly generating a Vitamin" : "%HIDE");
       return new BaseStatBoosterModifierType(randStat);
     });
   }
@@ -1125,7 +1127,7 @@ class TempStatStageBoosterModifierTypeGenerator extends ModifierTypeGenerator {
       if (pregenArgs && (pregenArgs.length === 1) && TEMP_BATTLE_STATS.includes(pregenArgs[0])) {
         return new TempStatStageBoosterModifierType(pregenArgs[0]);
       }
-      const randStat: TempBattleStat = Utils.randSeedInt(Stat.ACC, Stat.ATK, "Randomly choosing an X item");
+      const randStat: TempBattleStat = Utils.randSeedInt(Stat.ACC, Stat.ATK, doModifierLogging ? "Randomly choosing an X item" : "%HIDE");
       return new TempStatStageBoosterModifierType(randStat);
     });
   }
@@ -1190,7 +1192,7 @@ class SpeciesStatBoosterModifierTypeGenerator extends ModifierTypeGenerator {
       }
 
       if (totalWeight !== 0) {
-        const randInt = Utils.randSeedInt(totalWeight, 1, "Randomly choosing a species booster");
+        const randInt = Utils.randSeedInt(totalWeight, 1, doModifierLogging ? "Randomly choosing a species booster" : "HIDE");
         let weight = 0;
 
         var fullweights: integer[] = []
@@ -1225,7 +1227,7 @@ class TmModifierTypeGenerator extends ModifierTypeGenerator {
         return new TmModifierType(pregenArgs[0] as Moves, tier);
       }
 
-      console.log("Generating item: TM (Tier: " + Utils.getEnumKeys(ModifierTier)[tier].toLowerCase() + ")")
+      if (doModifierLogging) console.log("Generating item: TM (Tier: " + Utils.getEnumKeys(ModifierTier)[tier].toLowerCase() + ")")
 
       const partyMemberCompatibleTms = party.map(p => (p as PlayerPokemon).compatibleTms.filter(tm => !p.moveset.find(m => m?.moveId === tm)));
       const tierUniqueCompatibleTms = partyMemberCompatibleTms.flat().filter(tm => tmPoolTiers[tm] === tier).filter(tm => !allMoves[tm].name.endsWith(" (N)")).filter((tm, i, array) => array.indexOf(tm) === i);
@@ -1233,7 +1235,7 @@ class TmModifierTypeGenerator extends ModifierTypeGenerator {
         return null;
       }
       //console.log(tierUniqueCompatibleTms.map((v, i) => i == randTmIndex ? `> ${Utils.getEnumKeys(Moves)[v].toUpperCase() + Utils.getEnumKeys(Moves)[v].substring(1).toLowerCase()} <` : `${Utils.getEnumKeys(Moves)[v].toUpperCase() + Utils.getEnumKeys(Moves)[v].substring(1).toLowerCase()}`))
-      const randTmIndex = Utils.randSeedInt(tierUniqueCompatibleTms.length, undefined, "Choosing a TM to give");
+      const randTmIndex = Utils.randSeedInt(tierUniqueCompatibleTms.length, undefined, doModifierLogging ? "Choosing a TM to give" : "%HIDE");
       return new TmModifierType(tierUniqueCompatibleTms[randTmIndex], tier);
     });
   }
@@ -1246,7 +1248,7 @@ class EvolutionItemModifierTypeGenerator extends ModifierTypeGenerator {
         return new EvolutionItemModifierType(pregenArgs[0] as EvolutionItem);
       }
 
-      console.log("Generating item: Evolution Item")
+      if (doModifierLogging) console.log("Generating item: Evolution Item")
 
       const evolutionItemPool = [
         party.filter(p => pokemonEvolutions.hasOwnProperty(p.species.speciesId)).map(p => {
@@ -1263,7 +1265,7 @@ class EvolutionItemModifierTypeGenerator extends ModifierTypeGenerator {
         return null;
       }
 
-      return new EvolutionItemModifierType(evolutionItemPool[Utils.randSeedInt(evolutionItemPool.length, undefined, "Choosing an evolution item")]!); // TODO: is the bang correct?
+      return new EvolutionItemModifierType(evolutionItemPool[Utils.randSeedInt(evolutionItemPool.length, undefined, doModifierLogging ? "Choosing an evolution item" : "%HIDE")]!); // TODO: is the bang correct?
     });
   }
 }
@@ -1275,7 +1277,7 @@ class FormChangeItemModifierTypeGenerator extends ModifierTypeGenerator {
         return new FormChangeItemModifierType(pregenArgs[0] as FormChangeItem);
       }
 
-      console.log("Generating item: Form Change Item")
+      if (doModifierLogging) console.log("Generating item: Form Change Item")
 
       const formChangeItemPool = [...new Set(party.filter(p => pokemonFormChanges.hasOwnProperty(p.species.speciesId)).map(p => {
         const formChanges = pokemonFormChanges[p.species.speciesId];
@@ -1319,7 +1321,7 @@ class FormChangeItemModifierTypeGenerator extends ModifierTypeGenerator {
         return null;
       }
 
-      return new FormChangeItemModifierType(formChangeItemPool[Utils.randSeedInt(formChangeItemPool.length, undefined, "Choosing a form change item")]);
+      return new FormChangeItemModifierType(formChangeItemPool[Utils.randSeedInt(formChangeItemPool.length, undefined, doModifierLogging ? "Choosing a form change item" : "%HIDE")]);
     });
   }
 }
@@ -2580,6 +2582,12 @@ export function getPlayerModifierTypeOptions(count: integer, party: PlayerPokemo
     let r = 0;
     const aT = candidate?.alternates
     const aT2 = candidate?.advancedAlternates
+    const retryPool: string[] = []
+    if (candidate) {
+      retryPool.push(candidate!.type.name)
+    } else {
+      retryPool.push("undefined")
+    }
     while (options.length && ++r < retryCount && options.filter(o => o.type?.name === candidate?.type?.name || o.type?.group === candidate?.type?.group).length) {
       //if (options.filter(o => o.type?.name === candidate?.type?.name))
         //console.error(options.filter(o => o.type?.name === candidate?.type?.name).map((v, q) => v.type.name + " (" + v.type.group + ") - conflicting name").join("\n"))
@@ -2587,17 +2595,23 @@ export function getPlayerModifierTypeOptions(count: integer, party: PlayerPokemo
         //console.error(options.filter(o => o.type?.group === candidate?.type?.group).map((v, q) => v.type.name + " (" + v.type.group + ") - conflicting group").join("\n"))
       candidate = getNewModifierTypeOption(party, ModifierPoolType.PLAYER, candidate?.type?.tier, candidate?.upgradeCount, undefined, scene, shutUpBro, generateAltTiers, advanced);
       //console.log("    Retrying - attempt " + r, candidate?.type.name)
+      if (candidate) {
+        retryPool.push(candidate!.type.name)
+      } else {
+        retryPool.push("undefined")
+      }
     }
     if (options.length && options.filter(o => o.type?.name === candidate?.type?.name || o.type?.group === candidate?.type?.group).length) {
-      console.log("  Item " + (i+1) + "/" + count + " (+" + r + ")", candidate?.type.name, "(Out of retries)")
+      console.log("  Item " + (i+1) + "/" + count + " (" + r + " attempts or more)", candidate?.type.name, retryPool)
     } else {
-      console.log("  Item " + (i+1) + "/" + count + " (+" + r + ")", candidate?.type.name)
+      console.log("  Item " + (i+1) + "/" + count + " (" + r + " attempt" + (r == 1 ? "" : "s") + ")", candidate?.type.name, retryPool)
     }
     if (candidate && candidate.alternates == undefined) {
       candidate.alternates = aT
       candidate.advancedAlternates = aT2
     }
     if (candidate) {
+      candidate.retriesList = retryPool;
       options.push(candidate);
     }
   });
@@ -2890,7 +2904,7 @@ function getNewModifierTypeOption(party: Pokemon[], poolType: ModifierPoolType, 
 
   const tierThresholds = Object.keys(thresholds[tier]);
   const totalWeight = parseInt(tierThresholds[tierThresholds.length - 1]);
-  const value = Utils.randSeedInt(totalWeight, undefined, "Weighted modifier selection (total " + totalWeight + ")");
+  const value = Utils.randSeedInt(totalWeight, undefined, doModifierLogging ? "Weighted modifier selection (total " + totalWeight + ")" : "%HIDE");
   let index: integer | undefined;
   for (const t of tierThresholds) {
     const threshold = parseInt(t);
@@ -2906,7 +2920,7 @@ function getNewModifierTypeOption(party: Pokemon[], poolType: ModifierPoolType, 
 
   if (player) {
     if (!shutUpBro) {
-      console.log(index, ignoredPoolIndexes[tier].filter(i => i <= index).length, ignoredPoolIndexes[tier].filter(i => i <= index).length)
+      //console.log(index, ignoredPoolIndexes[tier].filter(i => i <= index).length, ignoredPoolIndexes[tier].filter(i => i <= index).length)
       //console.log("Index ", index);
       //console.log("# of ignored items for this tier", ignoredPoolIndexes[tier].filter(i => i <= index).length)
       //console.log("Ignored items for this tier", ignoredPoolIndexes[tier].map((v, i) => [ignoredPoolNames[i], v]).flat())
@@ -2922,7 +2936,7 @@ function getNewModifierTypeOption(party: Pokemon[], poolType: ModifierPoolType, 
       //console.error("Null Modifier - regenerating")
       return getNewModifierTypeOption(party, poolType, tier, upgradeCount, ++retryCount, scene, shutUpBro, generateAltTiers);
     } else {
-      console.log("Generated type", modifierType)
+      if (doModifierLogging) console.log("Generated type", modifierType)
     }
   }
 
@@ -2998,6 +3012,7 @@ export class ModifierTypeOption {
   public alternates?: integer[];
   public netprice: integer;
   public advancedAlternates?: string[];
+  public retriesList: string[];
 
   constructor(type: ModifierType, upgradeCount: integer, cost: number = 0) {
     this.type = type;
