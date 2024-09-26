@@ -5441,9 +5441,7 @@ export class CallMoveAttr extends OverrideMoveEffectAttr {
     }
     const targets = moveTargets.multiple || moveTargets.targets.length === 1
       ? moveTargets.targets
-      : moveTargets.targets.indexOf(target.getBattlerIndex()) > -1
-        ? [ target.getBattlerIndex() ]
-        : [ moveTargets.targets[user.randSeedInt(moveTargets.targets.length)] ];
+      : [ moveTargets.targets[user.randSeedInt(moveTargets.targets.length)] ];
     user.getMoveQueue().push({ move: move.id, targets: targets, virtual: true, ignorePP: true });
     user.scene.unshiftPhase(new MovePhase(user.scene, user, targets, new PokemonMove(move.id, 0, 0, true), true, true));
 
@@ -5766,6 +5764,52 @@ const invalidSleepTalkMoves: Moves[] = [
   Moves.UPROAR,
 ];
 
+const invalidCopycatMoves = [
+  Moves.ASSIST,
+  Moves.BANEFUL_BUNKER,
+  Moves.BEAK_BLAST,
+  Moves.BEHEMOTH_BASH,
+  Moves.BEHEMOTH_BLADE,
+  Moves.BESTOW,
+  Moves.CELEBRATE,
+  Moves.CHATTER,
+  Moves.CIRCLE_THROW,
+  Moves.COPYCAT,
+  Moves.COUNTER,
+  Moves.COVET,
+  Moves.DESTINY_BOND,
+  Moves.DETECT,
+  Moves.DRAGON_TAIL,
+  Moves.ENDURE,
+  Moves.FEINT,
+  Moves.FOCUS_PUNCH,
+  Moves.FOLLOW_ME,
+  Moves.HELPING_HAND,
+  Moves.HOLD_HANDS,
+  Moves.KINGS_SHIELD,
+  Moves.MAT_BLOCK,
+  Moves.ME_FIRST,
+  Moves.METRONOME,
+  Moves.MIMIC,
+  Moves.MIRROR_COAT,
+  Moves.MIRROR_MOVE,
+  Moves.PROTECT,
+  Moves.RAGE_POWDER,
+  Moves.ROAR,
+  Moves.SHELL_TRAP,
+  Moves.SKETCH,
+  Moves.SLEEP_TALK,
+  Moves.SNATCH,
+  Moves.SPIKY_SHIELD,
+  Moves.SPOTLIGHT,
+  Moves.STRUGGLE,
+  Moves.SWITCHEROO,
+  Moves.THIEF,
+  Moves.TRANSFORM,
+  Moves.TRICK,
+  Moves.WHIRLWIND,
+];
+
 export class NaturePowerAttr extends OverrideMoveEffectAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): Promise<boolean> {
     return new Promise(resolve => {
@@ -5909,30 +5953,31 @@ export class NaturePowerAttr extends OverrideMoveEffectAttr {
   }
 }
 
-const lastMoveCopiableCondition: MoveConditionFunc = (user, target, move) => {
-  const copiableMove = user.scene.currentBattle.lastMove;
-
-  if (!copiableMove) {
-    return false;
-  }
-
-  if (allMoves[copiableMove].hasAttr(ChargeAttr)) {
-    return false;
-  }
-
-  // TODO: Add last turn of Bide
-
-  return true;
-};
-
 export class CopyMoveAttr extends CallMoveAttr {
+  private mirrorMove: boolean;
+  constructor(mirrorMove: boolean, invalidMoves: Moves[] = []) {
+    super();
+    this.mirrorMove = mirrorMove;
+    this.invalidMoves = invalidMoves;
+  }
+
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): Promise<boolean> {
-    const lastMove = user.scene.currentBattle.lastMove;
+    const lastMove = this.mirrorMove ? user.turnData.attacksReceived[0]?.move : user.scene.currentBattle.lastMove;
     return super.apply(user, target, allMoves[lastMove], args);
   }
 
   getCondition(): MoveConditionFunc {
-    return lastMoveCopiableCondition;
+    return (user, target, move) => {
+      if (this.mirrorMove) {
+        if (user.turnData.attacksReceived.length === 0) {
+          return false;
+        }
+      } else if (user.scene.currentBattle.lastMove === undefined) {
+        return false;
+      }
+      const lastMove = this.mirrorMove ? user.turnData.attacksReceived[0]?.move : user.scene.currentBattle.lastMove;
+      return !this.invalidMoves.includes(lastMove);
+    };
   }
 }
 
@@ -7281,8 +7326,8 @@ export function initMoves() {
       .unimplemented(),
     new SelfStatusMove(Moves.METRONOME, Type.NORMAL, -1, 10, -1, 0, 1)
       .attr(RandomMoveAttr, invalidMetronomeMoves),
-    new StatusMove(Moves.MIRROR_MOVE, Type.FLYING, -1, 20, -1, 0, 1)
-      .attr(CopyMoveAttr),
+    new SelfStatusMove(Moves.MIRROR_MOVE, Type.FLYING, -1, 20, -1, 0, 1)
+      .attr(CopyMoveAttr, true),
     new AttackMove(Moves.SELF_DESTRUCT, Type.NORMAL, MoveCategory.PHYSICAL, 200, 100, 5, -1, 0, 1)
       .attr(SacrificialAttr)
       .makesContact(false)
@@ -8065,7 +8110,7 @@ export function initMoves() {
       .target(MoveTarget.NEAR_ENEMY)
       .unimplemented(),
     new SelfStatusMove(Moves.COPYCAT, Type.NORMAL, -1, 20, -1, 0, 4)
-      .attr(CopyMoveAttr),
+      .attr(CopyMoveAttr, false, invalidCopycatMoves),
     new StatusMove(Moves.POWER_SWAP, Type.PSYCHIC, -1, 10, 100, 0, 4)
       .attr(SwapStatStagesAttr, [ Stat.ATK, Stat.SPATK ])
       .ignoresSubstitute(),
