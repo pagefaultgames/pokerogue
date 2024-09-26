@@ -1669,7 +1669,11 @@ export default class BattleScene extends SceneBase {
     this.scoreText.setVisible(this.gameMode.isDaily);
   }
 
-  updateAndShowText(duration: integer): void {
+  /**
+   * Displays the current luck value.
+   * @param duration The time for this label to fade in, if it is not already visible.
+   */
+  updateAndShowText(duration: number): void {
     const labels = [ this.luckLabelText, this.luckText ];
     labels.forEach(t => t.setAlpha(0));
     const luckValue = getPartyLuckValue(this.getParty());

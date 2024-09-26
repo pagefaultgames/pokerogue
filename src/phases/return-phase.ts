@@ -1,10 +1,11 @@
 import BattleScene from "#app/battle-scene";
 import { SpeciesFormChangeActiveTrigger } from "#app/data/pokemon-forms";
+import { SwitchType } from "#enums/switch-type";
 import { SwitchSummonPhase } from "./switch-summon-phase";
 
 export class ReturnPhase extends SwitchSummonPhase {
   constructor(scene: BattleScene, fieldIndex: integer) {
-    super(scene, fieldIndex, -1, true, false);
+    super(scene, SwitchType.SWITCH, fieldIndex, -1, true);
   }
 
   switchAndSummon(): void {
