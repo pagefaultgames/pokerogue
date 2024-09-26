@@ -933,7 +933,7 @@ class ImprisonTag extends ArenaTrapTag {
   }
 
   /**
-   * Helper function that retrieves the Pokemon effected
+   * Helper function that retrieves the Pokemon affected
    * @param {BattleScene} scene medium to retrieve the involved Pokemon
    * @returns list of PlayerPokemon or EnemyPokemon on the field
    */
