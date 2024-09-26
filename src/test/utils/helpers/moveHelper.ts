@@ -52,7 +52,7 @@ export class MoveHelper extends GameManagerHelper {
       this.game.scene.ui.setMode(Mode.FIGHT, (this.game.scene.getCurrentPhase() as CommandPhase).getFieldIndex());
     });
     this.game.onNextPrompt("CommandPhase", Mode.FIGHT, () => {
-      (this.game.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, movePosition, false);
+      (this.game.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, false, movePosition, false);
     });
 
     if (targetIndex !== null) {

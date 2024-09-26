@@ -17,21 +17,18 @@ export class SelectModifierPhase extends BattlePhase {
   private rerollCount: integer;
   private modifierTiers?: ModifierTier[];
   private customModifierSettings?: CustomModifierSettings;
-  private modifierPredictions: ModifierTypeOption[][] = [];
+  private modifierPredictions?: ModifierTypeOption[][] = [];
   private predictionCost: integer = 0;
   private costTiers: integer[] = [];
 
-  constructor(scene: BattleScene, rerollCount: integer = 0, modifierTiers?: ModifierTier[], customModifierSettings?: CustomModifierSettings) {
+  constructor(scene: BattleScene, rerollCount: integer = 0, modifierTiers?: ModifierTier[], customModifierSettings?: CustomModifierSettings, predictionCost: integer = 0, modifierPredictions?: ModifierTypeOption[][]) {
     super(scene);
 
     this.rerollCount = rerollCount;
     this.modifierTiers = modifierTiers;
     this.customModifierSettings = customModifierSettings;
-    this.modifierPredictions = []
-    if (modifierPredictions != undefined) {
-      this.modifierPredictions = modifierPredictions;
-    }
-    this.predictionCost = 0
+    this.modifierPredictions = modifierPredictions;
+    this.predictionCost = predictionCost
     this.costTiers = []
   }
 
@@ -46,7 +43,7 @@ export class SelectModifierPhase extends BattlePhase {
       this.scene.applyModifiers(ExtraModifierModifier, true, modifierCount);
     }
     if (modifierOverride) {
-      //modifierCount.value = modifierOverride
+      modifierCount.value = modifierOverride
     }
     const typeOptions: ModifierTypeOption[] = this.getModifierTypeOptions(modifierCount.value);
     typeOptions.forEach((option, idx) => {
@@ -63,9 +60,11 @@ export class SelectModifierPhase extends BattlePhase {
       //console.log(option.type.name)
     })
     //console.log("====================")
-    this.modifierPredictions[rerollOverride] = typeOptions
-    this.costTiers.push(this.predictionCost)
-    this.predictionCost += this.getRerollCost(typeOptions, false, rerollOverride)
+    if (this.modifierPredictions != undefined) {
+      this.modifierPredictions[rerollOverride] = typeOptions
+      this.costTiers.push(this.predictionCost)
+      this.predictionCost += this.getRerollCost(typeOptions, false, rerollOverride)
+    }
     //Phaser.Math.RND.state(STATE) // Restore RNG state like nothing happened
   }
 
@@ -296,7 +295,9 @@ export class SelectModifierPhase extends BattlePhase {
       return !cost!;// TODO: is the bang correct?
     };
     if (this.rerollCount == 0) {
-      if (true) {
+      if (this.modifierPredictions == undefined) {
+        // Do nothing
+      } else if (true) {
         this.modifierPredictions.forEach((mp, r) => {
           // costTiers
           console.log("Rerolls: " + r + (this.costTiers[r] != 0 ? " - ₽" + this.costTiers[r] : ""))
@@ -305,72 +306,7 @@ export class SelectModifierPhase extends BattlePhase {
             if (m.eviolite) {
               console.log("    With Eviolite unlocked: " + m.eviolite.name)
             }
-            if (m.alternates) {
-              //console.log(m.alternates)
-              let showedLuckFlag = false
-              for (var j = 0, currentTier = m.type!.tier; j < m.alternates.length; j++) {
-                if (m.alternates[j] > currentTier) {
-                  currentTier = m.alternates[j]
-                  if (m.advancedAlternates) {
-                    if (!showedLuckFlag) {
-                      showedLuckFlag = true
-                      console.log("    Your luck: " + getPartyLuckValue(party) + " (" + getLuckString(getPartyLuckValue(party)) + ")")
-                    }
-                    console.log("    At " + j + " luck (" + getLuckString(j) + "): " + m.advancedAlternates[j])
-                  } else {
-                    if (!showedLuckFlag) {
-                      showedLuckFlag = true
-                      console.log("    Your luck: " + getPartyLuckValue(party) + " (" + getLuckString(getPartyLuckValue(party)) + ")")
-                    }
-                    console.log("    At " + j + " luck (" + getLuckString(j) + "): " + LoggerTools.tierNames[currentTier] + "-tier item")// (failed to generate item)
-                  }
-                }
-              }
-            } else {
-              //console.log("    No alt-luck data")
-            }
           })
-        })
-      } else {
-        let modifierList: string[] = []
-        this.modifierPredictions.forEach((mp, r) => {
-          //console.log("Rerolls: " + r)
-          mp.forEach((m, i) => {
-            modifierList.push(m.type!.name + (r > 0 ? " (x" + r + ")" : ""))
-            //console.log("  " + m.type!.name)
-            if (m.eviolite) {
-              modifierList.push(m.type!.name + (r > 0 ? " (x" + r + " with eviolite unlocked)" : " (With eviolite unlocked)"))
-              //console.log("    With Eviolite unlocked: " + m.eviolite.name)
-            }
-            if (m.alternates) {
-              //console.log(m.alternates)
-              let showedLuckFlag = false
-              for (var j = 0, currentTier = m.type!.tier; j < m.alternates.length; j++) {
-                if (m.alternates[j] > currentTier) {
-                  currentTier = m.alternates[j]
-                  if (m.advancedAlternates) {
-                    if (!showedLuckFlag) {
-                      showedLuckFlag = true
-                      console.log("    Your luck: " + getPartyLuckValue(party) + " (" + getLuckString(getPartyLuckValue(party)) + ")")
-                    }
-                    console.log("    At " + j + " luck (" + getLuckString(j) + "): " + m.advancedAlternates[j])
-                  } else {
-                    if (!showedLuckFlag) {
-                      showedLuckFlag = true
-                      console.log("    Your luck: " + getPartyLuckValue(party) + " (" + getLuckString(getPartyLuckValue(party)) + ")")
-                    }
-                    console.log("    At " + j + " luck (" + getLuckString(j) + "): " + LoggerTools.tierNames[currentTier] + "-tier item (failed to generate item)")
-                  }
-                }
-              }
-            } else {
-              //console.log("    No alt-luck data")
-            }
-          })
-        })
-        modifierList.sort()
-        modifierList.forEach(v => {
-          console.log(v)
         })
       }
     }

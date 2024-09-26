@@ -1075,7 +1075,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
     }
     this.currentEffectiveness = effectiveness;
 
-    if (!(this.scene as BattleScene).typeHints || effectiveness === undefined || this.flyoutMenu?.flyoutVisible) {
+    if (effectiveness == "" || effectiveness === undefined || this.flyoutMenu?.flyoutVisible) {
       this.effectivenessContainer.setVisible(false);
       return;
     }

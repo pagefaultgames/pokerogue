@@ -73,6 +73,7 @@ export class CheckSwitchPhase extends BattlePhase {
 
     this.scene.ui.showText(i18next.t("battle:switchQuestion", { pokemonName: this.useName ? getPokemonNameWithAffix(pokemon) : i18next.t("battle:pokemon") }), null, () => {
       this.scene.ui.setMode(Mode.CONFIRM, () => {
+        // Yes, I want to Pre-Switch
         this.scene.ui.setMode(Mode.MESSAGE);
         LoggerTools.isPreSwitch.value = true
         this.scene.tryRemovePhase(p => p instanceof PostSummonPhase && p.player && p.fieldIndex === this.fieldIndex);
@@ -89,6 +90,7 @@ export class CheckSwitchPhase extends BattlePhase {
         //this.scene.pokemonInfoContainer.hide()
         this.end();
       }, () => {
+        // No, I want to leave my Pokémon as is
         this.scene.ui.setMode(Mode.MESSAGE);
         for (var i = 0; i < this.scene.getEnemyField().length; i++) {
           this.scene.getEnemyField()[i].getBattleInfo().flyoutMenu.toggleFlyout(false)

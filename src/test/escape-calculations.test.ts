@@ -41,7 +41,7 @@ describe("Escape chance calculations", () => {
     vi.spyOn(enemyField[0], "stats", "get").mockReturnValue([20, 20, 20, 20, 20, enemySpeed]);
 
     const commandPhase = game.scene.getCurrentPhase() as CommandPhase;
-    commandPhase.handleCommand(Command.RUN, 0);
+    commandPhase.handleCommand(Command.RUN, false, 0);
 
     await game.phaseInterceptor.to(AttemptRunPhase, false);
     const phase = game.scene.getCurrentPhase() as AttemptRunPhase;
@@ -103,7 +103,7 @@ describe("Escape chance calculations", () => {
     vi.spyOn(enemyField[1], "stats", "get").mockReturnValue([20, 20, 20, 20, 20, enemyBSpeed]);
 
     const commandPhase = game.scene.getCurrentPhase() as CommandPhase;
-    commandPhase.handleCommand(Command.RUN, 0);
+    commandPhase.handleCommand(Command.RUN, false, 0);
 
     await game.phaseInterceptor.to(AttemptRunPhase, false);
     const phase = game.scene.getCurrentPhase() as AttemptRunPhase;
@@ -163,7 +163,7 @@ describe("Escape chance calculations", () => {
     vi.spyOn(enemyField[0], "stats", "get").mockReturnValue([20, 20, 20, 20, 20, enemySpeed]);
 
     const commandPhase = game.scene.getCurrentPhase() as CommandPhase;
-    commandPhase.handleCommand(Command.RUN, 0);
+    commandPhase.handleCommand(Command.RUN, false, 0);
 
     await game.phaseInterceptor.to(AttemptRunPhase, false);
     const phase = game.scene.getCurrentPhase() as AttemptRunPhase;
@@ -240,7 +240,7 @@ describe("Escape chance calculations", () => {
     vi.spyOn(enemyField[1], "stats", "get").mockReturnValue([20, 20, 20, 20, 20, enemyBSpeed]);
 
     const commandPhase = game.scene.getCurrentPhase() as CommandPhase;
-    commandPhase.handleCommand(Command.RUN, 0);
+    commandPhase.handleCommand(Command.RUN, false, 0);
 
     await game.phaseInterceptor.to(AttemptRunPhase, false);
     const phase = game.scene.getCurrentPhase() as AttemptRunPhase;

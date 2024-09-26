@@ -33,26 +33,8 @@ export class TurnStartPhase extends FieldPhase {
       console.log(turnCommand.targets, turnCommand.move!.targets)
       if (turnCommand.args && turnCommand.args[1] && turnCommand.args[1].isContinuing != undefined) {
         console.log(mv.getName(), targets)
-      } else {
-        LoggerTools.Actions[pokemon.getBattlerIndex()] = mv.getName()
-        if (this.scene.currentBattle.double) {
-          var targIDs = ["Self", "Self", "Ally", "L", "R"]
-          if (pokemon.getBattlerIndex() == 1) targIDs = ["Self", "Ally", "Self", "L", "R"]
-          LoggerTools.Actions[pokemon.getBattlerIndex()] += " → " + targets.map(v => targIDs[v+1])
-        } else {
-          var targIDs = ["Self", "", "", "", ""]
-          var myField = this.scene.getField()
-          if (myField[0])
-            targIDs[1] = myField[0].name
-          if (myField[1])
-            targIDs[2] = myField[1].name
-          var eField = this.scene.getEnemyField()
-          if (eField[0])
-            targIDs[3] = eField[0].name
-          if (eField[1])
-            targIDs[4] = eField[1].name
-          LoggerTools.Actions[pokemon.getBattlerIndex()] += " → " + targets.map(v => targIDs[v+1])
-        }
+      } else if (LoggerTools.Actions[pokemon.getBattlerIndex()].substring(0, 5) == "[???]") {
+        LoggerTools.Actions[pokemon.getBattlerIndex()] = mv.getName() + LoggerTools.Actions[pokemon.getBattlerIndex()].substring(5)
         console.log(mv.getName(), targets)
       }
     }
@@ -215,6 +197,7 @@ export class TurnStartPhase extends FieldPhase {
         break;
       case Command.POKEMON:
         const switchType = turnCommand.args?.[0] ? SwitchType.BATON_PASS : SwitchType.SWITCH;
+        LoggerTools.Actions.push(`${switchType == SwitchType.SWITCH ? "Switch" : "Baton-Pass"} to ${this.scene.getParty()[turnCommand.cursor!].name}`)
         this.scene.unshiftPhase(new SwitchSummonPhase(this.scene, switchType, pokemon.getFieldIndex(), turnCommand.cursor!, true, pokemon.isPlayer()));
         break;
       case Command.RUN:
@@ -257,10 +240,12 @@ export class TurnStartPhase extends FieldPhase {
     if (LoggerTools.Actions.length > 1 && !this.scene.currentBattle.double) {
       LoggerTools.Actions.pop() // If this is a single battle, but we somehow have two actions, delete the second
     }
-    if (LoggerTools.Actions.length > 1 && (LoggerTools.Actions[0] == "" || LoggerTools.Actions[0] == undefined || LoggerTools.Actions[0] == null))
+    if (LoggerTools.Actions.length > 1 && (LoggerTools.Actions[0] == "" || LoggerTools.Actions[0] == "%SKIP" || LoggerTools.Actions[0] == undefined || LoggerTools.Actions[0] == null))
       LoggerTools.Actions.shift() // If the left slot isn't doing anything, delete its entry
-    if (LoggerTools.Actions.length > 1 && (LoggerTools.Actions[1] == "" || LoggerTools.Actions[1] == undefined || LoggerTools.Actions[1] == null))
-      LoggerTools.Actions.pop() // If the right slot isn't doing anything, delete its entry
+    if (LoggerTools.Actions.length > 1 && (LoggerTools.Actions[1] == "" || LoggerTools.Actions[0] == "%SKIP" || LoggerTools.Actions[1] == undefined || LoggerTools.Actions[1] == null))
+      LoggerTools.Actions.pop()  // If the right slot isn't doing anything, delete its entry
+    
+    // Log the player's actions
     LoggerTools.logActions(this.scene, this.scene.currentBattle.waveIndex, LoggerTools.Actions.join(" & "))
 
     /**

@@ -66,7 +66,7 @@ export class SwitchSummonPhase extends SummonPhase {
 
     const pokemon = this.getPokemon();
 
-    if (this.switchType === SwitchType.SWITCH) {
+    if (this.switchType === SwitchType.SWITCH || this.switchType === SwitchType.MID_TURN_SWITCH) {
       (this.player ? this.scene.getEnemyField() : this.scene.getPlayerField()).forEach(enemyPokemon => enemyPokemon.removeTagsBySourceId(pokemon.id));
       const substitute = pokemon.getTag(SubstituteTag);
       if (substitute) {
@@ -107,7 +107,7 @@ export class SwitchSummonPhase extends SummonPhase {
     const switchedInPokemon = party[this.slotIndex];
     this.lastPokemon = this.getPokemon();
     applyPreSwitchOutAbAttrs(PreSwitchOutAbAttr, this.lastPokemon);
-    if (this.switchType === SwitchType.BATON_PASS && switchedInPokemon) {
+    if ((this.switchType === SwitchType.BATON_PASS || this.switchType === SwitchType.MID_TURN_BATON_PASS) && switchedInPokemon) {
       (this.player ? this.scene.getEnemyField() : this.scene.getPlayerField()).forEach(enemyPokemon => enemyPokemon.transferTagsBySourceId(this.lastPokemon.id, switchedInPokemon.id));
       if (!this.scene.findModifier(m => m instanceof SwitchEffectTransferModifier && (m as SwitchEffectTransferModifier).pokemonId === switchedInPokemon.id)) {
         const batonPassModifier = this.scene.findModifier(m => m instanceof SwitchEffectTransferModifier
@@ -132,7 +132,7 @@ export class SwitchSummonPhase extends SummonPhase {
          * If this switch is passing a Substitute, make the switched Pokemon match the returned Pokemon's state as it left.
          * Otherwise, clear any persisting tags on the returned Pokemon.
          */
-        if (this.switchType === SwitchType.BATON_PASS || this.switchType === SwitchType.SHED_TAIL) {
+        if (this.switchType === SwitchType.BATON_PASS || this.switchType === SwitchType.MID_TURN_BATON_PASS || this.switchType === SwitchType.SHED_TAIL) {
           const substitute = this.lastPokemon.getTag(SubstituteTag);
           if (substitute) {
             switchedInPokemon.x += this.lastPokemon.getSubstituteOffset()[0];
@@ -176,7 +176,7 @@ export class SwitchSummonPhase extends SummonPhase {
       pokemon.battleSummonData.turnCount--;
     }
 
-    if (this.switchType === SwitchType.BATON_PASS && pokemon) {
+    if ((this.switchType === SwitchType.BATON_PASS || this.switchType === SwitchType.MID_TURN_BATON_PASS) && pokemon) {
       pokemon.transferSummon(this.lastPokemon);
     } else if (this.switchType === SwitchType.SHED_TAIL && pokemon) {
       const subTag = this.lastPokemon.getTag(SubstituteTag);

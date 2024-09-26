@@ -139,7 +139,7 @@ export default class FightUiHandler extends UiHandler implements InfoToggle {
 
     if (button === Button.CANCEL || button === Button.ACTION) {
       if (button === Button.ACTION) {
-        if ((this.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, cursor, false)) {
+        if ((this.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, true, cursor, false)) {
           success = true;
         } else {
           ui.playError();
@@ -288,8 +288,14 @@ export default class FightUiHandler extends UiHandler implements InfoToggle {
   }
 
   /**
-   * Gets multiplier text for a pokemon's move against a specific opponent
-   * Returns undefined if it's a status move
+   * Gets multiplier text for a pokemon's move against a specific opponent.
+   * Returns undefined if it's a status move.
+   * 
+   * If Type Hints is enabled, shows the move's type effectiveness.
+   * 
+   * If Damage Calculation is enabled, shows the move's expected damage range.
+   * 
+   * If Type Hints and Damage Calculation are both off, the type effectiveness multiplier is hidden.
    */
   private getEffectivenessText(pokemon: Pokemon, opponent: Pokemon, pokemonMove: PokemonMove): string | undefined {
     const effectiveness = opponent.getMoveEffectiveness(pokemon, pokemonMove.getMove(), !opponent.battleData?.abilityRevealed);
@@ -297,9 +303,13 @@ export default class FightUiHandler extends UiHandler implements InfoToggle {
       return undefined;
     }
 
-    return this.calcDamage(pokemon as PlayerPokemon, opponent, pokemonMove)
-
-    return `${effectiveness}x`;
+    var calc = this.calcDamage(pokemon as PlayerPokemon, opponent, pokemonMove);
+    if (calc != "") {
+      if (this.scene.typeHints) return `${effectiveness}x - ${calc}`;
+      return calc;
+    }
+    if (this.scene.typeHints) return `${effectiveness}x`;
+    return "";
   }
 
   displayMoves() {
@@ -379,36 +389,32 @@ export default class FightUiHandler extends UiHandler implements InfoToggle {
   }
 
   calcDamage(user: PlayerPokemon, target: Pokemon, move: PokemonMove) {
-    var dmgHigh = 0
-    var dmgLow = 0
     var crit = target.tryCriticalHit(user, move.getMove(), true)
     var out = target.getAttackDamage(user, move.getMove(), false, false, crit, true)
     //console.log(out)
+    var dmgHigh = out.damageHigh
+    var dmgLow = out.damageLow
     var minHits = 1
-    var maxHits = -1
+    var maxHits = -1 // If nothing changes this value, it is set to minHits
     var mh = move.getMove().getAttrs(MoveData.MultiHitAttr)
     for (var i = 0; i < mh.length; i++) {
       var mh2 = mh[i] as MoveData.MultiHitAttr
       switch (mh2.multiHitType) {
         case MoveData.MultiHitType._2:
           minHits = 2;
-          //maxHits = 2;
         case MoveData.MultiHitType._2_TO_5:
           minHits = 2;
-          //maxHits = 5;
+          maxHits = 5;
         case MoveData.MultiHitType._3:
           minHits = 3;
-          //maxHits = 3;
         case MoveData.MultiHitType._10:
           minHits = 10;
-          //maxHits = 10;
         case MoveData.MultiHitType.BEAT_UP:
           const party = user.isPlayer() ? user.scene.getParty() : user.scene.getEnemyParty();
           // No status means the ally pokemon can contribute to Beat Up
           minHits = party.reduce((total, pokemon) => {
             return total + (pokemon.id === user.id ? 1 : pokemon?.status && pokemon.status.effect !== StatusEffect.NONE ? 0 : 1);
           }, 0);
-          //maxHits = minHits
       }
     }
     if (maxHits == -1) {
@@ -417,45 +423,43 @@ export default class FightUiHandler extends UiHandler implements InfoToggle {
     var h = user.getHeldItems()
     for (var i = 0; i < h.length; i++) {
       if (h[i].type instanceof PokemonMultiHitModifierType) {
-        minHits += h[i].getStackCount()
-        maxHits += h[i].getStackCount()
+        minHits *= h[i].getStackCount()
+        maxHits *= h[i].getStackCount()
       }
     }
-    dmgLow = dmgLow * minHits
-    dmgHigh = dmgHigh * maxHits
+    if (false) {
+      dmgLow = dmgLow * minHits
+      dmgHigh = dmgHigh * maxHits
+    }
     var qSuffix = ""
     if (target.isBoss()) {
-      var bossSegs = (target as EnemyPokemon).bossSegments
-      //dmgLow /= bossSegs
-      //dmgHigh /= bossSegs
-      //qSuffix = "?"
+      var shieldsBrokenLow = (target as EnemyPokemon).calculateBossClearedShields(dmgLow)
+      var shieldsBrokenHigh = (target as EnemyPokemon).calculateBossClearedShields(dmgHigh)
+      qSuffix = ` (${shieldsBrokenLow}-${shieldsBrokenHigh})`
+      if (shieldsBrokenLow == shieldsBrokenHigh) {
+        qSuffix = ` (${shieldsBrokenLow})`
+      }
+      dmgLow = (target as EnemyPokemon).calculateBossDamage(dmgLow);
+      dmgHigh = (target as EnemyPokemon).calculateBossDamage(dmgHigh);
     }
     var dmgLowP = Math.round((dmgLow)/target.getMaxHp() * 100)
     var dmgHighP = Math.round((dmgHigh)/target.getMaxHp() * 100)
-    /*
-    if (user.hasAbility(Abilities.PARENTAL_BOND)) {
-      // Second hit deals 0.25x damage
-      dmgLow *= 1.25
-      dmgHigh *= 1.25
-    }
-    */
     var koText = ""
     if (Math.floor(dmgLow) >= target.hp) {
-      koText = " (KO)"
+      koText = " KO"
     } else if (Math.ceil(dmgHigh) >= target.hp) {
       var percentChance = Utils.rangemap(target.hp, dmgLow, dmgHigh, 0, 1)
-      koText = " (" + Math.round(percentChance * 100) + "% KO)"
+      koText = " " + Math.round(percentChance * 100) + "% KO"
     }
     //console.log(target.getMoveEffectiveness(user, move.getMove(), false, true) + "x - " + ((dmgLowP == dmgHighP) ? (dmgLowP + "%" + qSuffix) : (dmgLowP + "%-" + dmgHighP + "%" + qSuffix)) + koText)
     if (target.getMoveEffectiveness(user, move.getMove(), false, true) == undefined) {
-      return "---"
+      return ""
     }
     if (this.scene.damageDisplay == "Percent")
-      return target.getMoveEffectiveness(user, move.getMove(), false, true) + "x - " + (dmgLowP == dmgHighP ? dmgLowP + "%" + qSuffix : dmgLowP + "%-" + dmgHighP + "%" + qSuffix) + koText
+      return (dmgLowP == dmgHighP ? dmgLowP + "%" + qSuffix : dmgLowP + "%-" + dmgHighP + "%" + qSuffix) + koText
     if (this.scene.damageDisplay == "Value")
-      return target.getMoveEffectiveness(user, move.getMove(), false, true) + "x - " + (dmgLowP == dmgHighP ? dmgLowP + "%" + qSuffix : dmgLowP + "%-" + dmgHighP + "%" + qSuffix) + koText
+      return (dmgLow == dmgHigh ? dmgLow + qSuffix : dmgLow + "-" + dmgHigh + qSuffix) + koText
       //return target.getMoveEffectiveness(user, move.getMove(), false, true) + "x" + ((Math.floor(dmgLow) >= target.hp) ? " (KO)" : "")
-    if (this.scene.damageDisplay == "Off")
-      return target.getMoveEffectiveness(user, move.getMove(), false, true) + "x" + ((Math.floor(dmgLow) >= target.hp) ? " (KO)" : "")
+    return "";
   }
 }

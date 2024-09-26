@@ -48,7 +48,7 @@ export class VictoryPhase extends PokemonPhase {
           this.scene.pushPhase(new ModifierRewardPhase(this.scene, modifierTypes.LOCK_CAPSULE));
         }
         if (this.scene.currentBattle.waveIndex % 10) {
-          this.scene.pushPhase(new SelectModifierPhase(this.scene, undefined, undefined, undefined, undefined, this.getFixedBattleCustomModifiers()));
+          this.scene.pushPhase(new SelectModifierPhase(this.scene, undefined, undefined, this.getFixedBattleCustomModifiers()));
         } else if (this.scene.gameMode.isDaily) {
           LoggerTools.logShop(this.scene, this.scene.currentBattle.waveIndex, "")
           this.scene.pushPhase(new ModifierRewardPhase(this.scene, modifierTypes.EXP_CHARM));

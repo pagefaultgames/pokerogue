@@ -242,7 +242,7 @@ export class MysteryEncounterBattleStartCleanupPhase extends Phase {
     const playerField = this.scene.getPlayerField();
     playerField.forEach((pokemon, i) => {
       if (!pokemon.isAllowedInBattle() && legalPlayerPartyPokemon.length > i) {
-        this.scene.unshiftPhase(new SwitchPhase(this.scene, SwitchType.SWITCH, i, true, false));
+        this.scene.unshiftPhase(new SwitchPhase(this.scene, SwitchType.MID_TURN_SWITCH, i, true, false));
       }
     });
 

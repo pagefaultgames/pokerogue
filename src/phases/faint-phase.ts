@@ -109,14 +109,14 @@ export class FaintPhase extends PokemonPhase {
          * push a phase that prompts the player to summon a Pokemon from their party.
          */
         LoggerTools.isFaintSwitch.value = true;
-        this.scene.pushPhase(new SwitchPhase(this.scene, SwitchType.SWITCH, this.fieldIndex, true, false));
+        this.scene.pushPhase(new SwitchPhase(this.scene, SwitchType.MID_TURN_SWITCH, this.fieldIndex, true, false));
       }
     } else {
       this.scene.unshiftPhase(new VictoryPhase(this.scene, this.battlerIndex));
       if ([BattleType.TRAINER, BattleType.MYSTERY_ENCOUNTER].includes(this.scene.currentBattle.battleType)) {
         const hasReservePartyMember = !!this.scene.getEnemyParty().filter(p => p.isActive() && !p.isOnField() && p.trainerSlot === (pokemon as EnemyPokemon).trainerSlot).length;
         if (hasReservePartyMember) {
-          this.scene.pushPhase(new SwitchSummonPhase(this.scene, SwitchType.SWITCH, this.fieldIndex, -1, false, false));
+          this.scene.pushPhase(new SwitchSummonPhase(this.scene, SwitchType.MID_TURN_SWITCH, this.fieldIndex, -1, false, false));
         }
       }
     }

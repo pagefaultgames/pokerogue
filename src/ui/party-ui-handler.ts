@@ -461,7 +461,7 @@ export default class PartyUiHandler extends MessageUiHandler {
                   this.scene.triggerPokemonFormChange(pokemon, SpeciesFormChangeItemTrigger, false, true);
                 }
               } else if (this.cursor) {
-                (this.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.POKEMON, this.cursor, option === PartyOption.PASS_BATON);
+                (this.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.POKEMON, false, this.cursor, option === PartyOption.PASS_BATON);
               }
             }
             if (this.partyUiMode !== PartyUiMode.MODIFIER && this.partyUiMode !== PartyUiMode.TM_MODIFIER && this.partyUiMode !== PartyUiMode.MOVE_MODIFIER) {
