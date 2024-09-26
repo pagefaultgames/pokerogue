@@ -210,10 +210,10 @@ export function getRandomSpeciesByStarterTier(starterTiers: number | [number, nu
     .map(s => [parseInt(s) as Species, speciesStarters[s] as number])
     .filter(s => {
       const pokemonSpecies = getPokemonSpecies(s[0]);
-      return pokemonSpecies && (!excludedSpecies || !excludedSpecies.includes(s[0])
+      return pokemonSpecies && (!excludedSpecies || !excludedSpecies.includes(s[0]))
         && (allowSubLegendary || !pokemonSpecies.subLegendary)
         && (allowLegendary || !pokemonSpecies.legendary)
-        && (allowMythical || !pokemonSpecies.mythical));
+        && (allowMythical || !pokemonSpecies.mythical);
     })
     .map(s => [getPokemonSpecies(s[0]), s[1]]);
 

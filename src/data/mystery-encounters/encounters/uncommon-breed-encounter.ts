@@ -60,16 +60,17 @@ export const UncommonBreedEncounter: MysteryEncounter =
         const eggMoveIndex = randSeedInt(4);
         const randomEggMove: Moves = eggMoves[eggMoveIndex];
         encounter.misc = {
-          eggMove: randomEggMove
+          eggMove: randomEggMove,
+          pokemon: pokemon
         };
         if (pokemon.moveset.length < 4) {
           pokemon.moveset.push(new PokemonMove(randomEggMove));
         } else {
           pokemon.moveset[0] = new PokemonMove(randomEggMove);
         }
+      } else {
+        encounter.misc.pokemon = pokemon;
       }
-
-      encounter.misc.pokemon = pokemon;
 
       // Defense/Spd buffs below wave 50, +1 to all stats otherwise
       const statChangesForBattle: (Stat.ATK | Stat.DEF | Stat.SPATK | Stat.SPDEF | Stat.SPD | Stat.ACC | Stat.EVA)[] = scene.currentBattle.waveIndex < 50 ?
