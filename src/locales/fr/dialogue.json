@@ -175,6 +175,28 @@
       "1": "Mon élégance demeure inébranlable !"
     }
   },
+  "snow_worker": {
+    "encounter": {
+      "1": "Quand il fait froid, on se couvre !\nTout le monde sait ça !"
+    },
+    "victory": {
+      "1": "Il faut se rebeller jusqu’au bout !\nTout le monde sait ça aussi…"
+    },
+    "defeat": {
+      "1": "Je vais t’apprendre une bonne chose. Si un Pokémon est gelé, utilise une capacité Feu pour faire fondre la glace !"
+    } 
+  }, 
+  "snow_worker_double": {   
+    "encounter": {
+      "1": "…\n… En-en-en garde !"
+    },
+    "victory": {
+      "1": "…\n… Je-je-je tremble…"
+    },
+    "defeat": {
+      "1": "…\n… Tu-tu-tu sais quoi ?\n… Il fait su-super froid i-ici."
+    } 
+  },
   "rocket_grunt": {
     "encounter": {
       "1": "Nous sommes de retour !",

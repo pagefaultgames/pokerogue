@@ -3,8 +3,8 @@
   "speaker": "Reicher Mann",
   "intro_dialogue": "Hallo! Ich habe ein Angebot, das du nicht ablehnen kannst!",
   "title": "Der Pokémon-Verkäufer",
-  "description": "Dieses {{purchasePokemon}} ist extrem einzigartig und hat eine Fähigkeit, die normalerweise nicht bei seiner Art zu finden ist! Ich lasse dich dieses tolle {{purchasePokemon}} für gerade einmal {{price, money}} haben!\"\n\"Was sagst du dazu?\"",
-  "description_shiny": "Dieses {{purchasePokemon}} ist extrem einzigartig und hat eine Farbe, die normalerweise nicht bei seiner Art zu finden ist! Ich lasse dich dieses tolle {{purchasePokemon}} für gerade einmal {{price, money}} haben!\"\n\"Was sagst du dazu?\"",
+  "description": "Dieses {{purchasePokemon}} ist extrem einzigartig und @[TOOLTIP_TITLE]{hat eine Fähigkeit, die normalerweise nicht bei seiner Art zu finden ist}! Ich lasse dich dieses tolle {{purchasePokemon}} für gerade einmal {{price, money}} haben!\"\n\"Was sagst du dazu?\"",
+  "description_shiny": "Dieses {{purchasePokemon}} ist extrem einzigartig und @[TOOLTIP_TITLE]{hat eine Farbe, die normalerweise nicht bei seiner Art zu finden ist}! Ich lasse dich dieses tolle {{purchasePokemon}} für gerade einmal {{price, money}} haben!\"\n\"Was sagst du dazu?\"",
   "query": "Was wirst du tun?",
   "option": {
     "1": {

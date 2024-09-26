@@ -1,7 +1,7 @@
 {
   "intro": "相手が　いなくて　寂しそうな　{{oricorioName}}は　悲しく　踊ってます。",
   "title": "フリフリ振り付け",
-  "description": "{{oricorioName}}は　攻撃的　じゃなさそう……　むしろ、　悲しい　顔を　しています。\n\n誰かと　踊りたいだけ　かもしれません……",
+  "description": "{{oricorioName}}は　攻撃的　じゃなさそう……　むしろ、　しょんぼり　している　ようです。\n\n誰かと　踊りたいだけ　かもしれません……",
   "query": "どうしますか？",
   "option": {
     "1": {
@@ -12,7 +12,7 @@
     },
     "2": {
       "label": "踊りを覚える",
-      "tooltip": "(+) ポケモンにめざめるダンスを教える",
+      "tooltip": "(+) 何の 手持ち ポケモンにも めざめるダンス を 教える",
       "selected": "{{oricorioName}}の　踊りを　よく 調べます……$@s{level_up_fanfare}{{selectedPokemon}}が　{{oricorioName}}から　技を　覚えました!"
     },
     "3": {

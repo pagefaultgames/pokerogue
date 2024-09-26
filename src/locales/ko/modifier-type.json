@@ -50,9 +50,9 @@
       "description": "{{battleCount}}번의 배틀 동안 더블 배틀이 등장할 확률이 4배가 된다."
     },
     "TempStatStageBoosterModifierType": {
-      "description": "자신의 모든 포켓몬이 5번의 배틀 동안 {{stat}}[[가]] {{amount}}단계 증가한다.",
+      "description": "자신의 모든 포켓몬이 5번의 배틀 동안 {{stat}}[[가]] {{amount}} 증가한다.",
       "extra": {
-        "stage": "1 스테이지",
+        "stage": "1단계",
         "percentage": "30%"
       }
     },

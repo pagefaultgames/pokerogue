@@ -1,7 +1,7 @@
 {
   "intro": "Um {{oricorioName}} dança tristemente sozinho, sem um parceiro.",
   "title": "Aulas de Dança",
-  "description": "O {{oricorioName}} não parece agressivo, na verdade parece triste.\n\nTalvez ele só queira alguém para dançar junto...",
+  "description": "O {{oricorioName}} não parece agressivo, na verdade parece desanimado.\n\nTalvez ele só queira alguém para dançar junto...",
   "query": "O que você vai fazer?",
   "option": {
     "1": {
@@ -12,7 +12,7 @@
     },
     "2": {
       "label": "Aprender Sua Dança",
-      "tooltip": "(+) Ensinar Revelation Dance a um Pokémon",
+      "tooltip": "(+) Ensinar Revelation Dance a qualquer Pokémon",
       "selected": "Você observa o {{oricorioName}} de perto enquanto ele realiza sua dança...$@s{level_up_fanfare}Seu {{selectedPokemon}} aprendeu com o {{oricorioName}}!"
     },
     "3": {
