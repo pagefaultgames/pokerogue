@@ -4587,6 +4587,30 @@ export class AddBattlerTagAttr extends MoveEffectAttr {
 }
 
 /**
+ * Adds a {@link https://bulbapedia.bulbagarden.net/wiki/Seeding | Seeding} effect to the target
+ * as seen with Leech Seed and Sappy Seed.
+ * @extends AddBattlerTagAttr
+ */
+export class LeechSeedAttr extends AddBattlerTagAttr {
+  constructor() {
+    super(BattlerTagType.SEEDED);
+  }
+
+  /**
+   * Adds a Seeding effect to the target if the target does not have an active Substitute.
+   * @param user the {@linkcode Pokemon} using the move
+   * @param target the {@linkcode Pokemon} targeted by the move
+   * @param move the {@linkcode Move} invoking this effect
+   * @param args n/a
+   * @returns `true` if the effect successfully applies; `false` otherwise
+   */
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    return !move.hitsSubstitute(user, target)
+      && super.apply(user, target, move, args);
+  }
+}
+
+/**
  * Adds the appropriate battler tag for Gulp Missile when Surf or Dive is used.
  * @extends MoveEffectAttr
  */
@@ -6937,7 +6961,7 @@ export function initMoves() {
       .attr(HitHealAttr)
       .triageMove(),
     new StatusMove(Moves.LEECH_SEED, Type.GRASS, 90, 10, -1, 0, 1)
-      .attr(AddBattlerTagAttr, BattlerTagType.SEEDED)
+      .attr(LeechSeedAttr)
       .condition((user, target, move) => !target.getTag(BattlerTagType.SEEDED) && !target.isOfType(Type.GRASS)),
     new SelfStatusMove(Moves.GROWTH, Type.NORMAL, -1, 20, -1, 0, 1)
       .attr(GrowthStatStageChangeAttr),
@@ -8921,8 +8945,8 @@ export function initMoves() {
     new AttackMove(Moves.BADDY_BAD, Type.DARK, MoveCategory.SPECIAL, 80, 95, 15, -1, 0, 7)
       .attr(AddArenaTagAttr, ArenaTagType.REFLECT, 5, false, true),
     new AttackMove(Moves.SAPPY_SEED, Type.GRASS, MoveCategory.PHYSICAL, 100, 90, 10, 100, 0, 7)
-      .makesContact(false)
-      .attr(AddBattlerTagAttr, BattlerTagType.SEEDED),
+      .attr(LeechSeedAttr)
+      .makesContact(false),
     new AttackMove(Moves.FREEZY_FROST, Type.ICE, MoveCategory.SPECIAL, 100, 90, 10, -1, 0, 7)
       .attr(ResetStatsAttr, true),
     new AttackMove(Moves.SPARKLY_SWIRL, Type.FAIRY, MoveCategory.SPECIAL, 120, 85, 5, -1, 0, 7)
