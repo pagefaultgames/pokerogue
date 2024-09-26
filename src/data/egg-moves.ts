@@ -347,7 +347,7 @@ export const speciesEggMoves = {
   [Species.FURFROU]: [ Moves.TIDY_UP, Moves.SLACK_OFF, Moves.COMBAT_TORQUE, Moves.MULTI_ATTACK ],
   [Species.ESPURR]: [ Moves.LUSTER_PURGE, Moves.MOONBLAST, Moves.AURA_SPHERE, Moves.DARK_VOID ],
   [Species.HONEDGE]: [ Moves.TACHYON_CUTTER, Moves.SHADOW_BONE, Moves.BITTER_BLADE, Moves.BEHEMOTH_BLADE ],
-  [Species.SPRITZEE]: [ Moves.SPEED_SWAP, Moves.FIERY_DANCE, Moves.ROOST, Moves.REVIVAL_BLESSING ],
+  [Species.SPRITZEE]: [ Moves.SPEED_SWAP, Moves.TORCH_SONG, Moves.ROOST, Moves.REVIVAL_BLESSING ],
   [Species.SWIRLIX]: [ Moves.BELLY_DRUM, Moves.HEADLONG_RUSH, Moves.MAGICAL_TORQUE, Moves.REVIVAL_BLESSING ],
   [Species.INKAY]: [ Moves.POWER_TRIP, Moves.SPIN_OUT, Moves.RECOVER, Moves.PSYCHO_BOOST ],
   [Species.BINACLE]: [ Moves.TRIPLE_AXEL, Moves.CRABHAMMER, Moves.DIRE_CLAW, Moves.MIGHTY_CLEAVE ],
