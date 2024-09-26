@@ -24,6 +24,7 @@ import { NewBattlePhase } from "#app/phases/new-battle-phase";
 import { GameOverPhase } from "#app/phases/game-over-phase";
 import { SwitchPhase } from "#app/phases/switch-phase";
 import { SeenEncounterData } from "#app/data/mystery-encounters/mystery-encounter-save-data";
+import { SwitchType } from "#enums/switch-type";
 
 /**
  * Will handle (in order):
@@ -241,7 +242,7 @@ export class MysteryEncounterBattleStartCleanupPhase extends Phase {
     const playerField = this.scene.getPlayerField();
     playerField.forEach((pokemon, i) => {
       if (!pokemon.isAllowedInBattle() && legalPlayerPartyPokemon.length > i) {
-        this.scene.unshiftPhase(new SwitchPhase(this.scene, i, true, false));
+        this.scene.unshiftPhase(new SwitchPhase(this.scene, SwitchType.SWITCH, i, true, false));
       }
     });
 

@@ -1,7 +1,7 @@
 {
   "intro": "宝可梦附近的地上\n有闪闪发光的东西！",
   "title": "战逃反应",
-  "description": "似乎有强大的宝可梦守护着这一道具。\n战斗是最直接的方法，但是它的实力似乎不容小觑。\n如果你有合适的宝可梦，似乎也可以直接偷走它。",
+  "description": "似乎有强大的宝可梦守护着这一道具。\n战斗是最直接的方法，但是\n它的实力似乎不容小觑。\n如果你有合适的宝可梦，\n似乎也可以直接偷走它。",
   "query": "你要怎么做？",
   "option": {
     "1": {
@@ -12,7 +12,7 @@
     },
     "2": {
       "label": "窃取物品",
-      "disabled_tooltip": "你的宝可梦需要习得特定的招式来选择。",
+      "disabled_tooltip": "你的宝可梦需要习得\n特定的招式来选择。",
       "tooltip": "(+){{option2PrimaryName}}使用{{option2PrimaryMove}}",
       "selected": ".@d{32}.@d{32}.@d{32}$你的{{option2PrimaryName}}愿意帮忙，并使用了{{option2PrimaryMove}}！$你偷走了道具！"
     },

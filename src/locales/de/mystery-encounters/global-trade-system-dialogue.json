@@ -11,13 +11,13 @@
     },
     "2": {
       "label": "Zaubertausch",
-      "tooltip": "(+) Seine eine deiner Pokémon an die GTS und erhalte ein zufälliges Pokémon im Austausch"
+      "tooltip": "(+) Seine eine deiner Pokémon an die GTS und erhalte ein zufälliges besonderes Pokémon im Austausch"
     },
     "3": {
       "label": "Tausche ein Item",
       "trade_options_prompt": "Wähle ein Item aus, das du senden möchtest.",
       "invalid_selection": "Dieses Pokémon hat keine Items die getauscht werden können.",
-      "tooltip": "(+) Sende eines deiner Items an die GTS und erhalte ein zufälliges Item im Austausch"
+      "tooltip": "(+) Sende eines deiner Items an die GTS und erhalte ein zufälliges verbessertes Item im Austausch"
     },
     "4": {
       "label": "Weggehen",
