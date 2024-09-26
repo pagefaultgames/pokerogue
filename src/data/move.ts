@@ -5290,7 +5290,7 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
           return false;
         }
 
-        if (!player && user.scene.currentBattle.battleType === BattleType.MYSTERY_ENCOUNTER && !user.scene.currentBattle.mysteryEncounter?.fleeAllowed) {
+        if (!player && user.scene.currentBattle.isBattleMysteryEncounter() && !user.scene.currentBattle.mysteryEncounter?.fleeAllowed) {
           // Don't allow wild opponents to be force switched during MEs with flee disabled
           return false;
         }

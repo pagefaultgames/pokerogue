@@ -290,7 +290,7 @@ class RunEntryContainer extends Phaser.GameObjects.Container {
       const genderIndex = this.scene.gameData.gender ?? PlayerGender.UNSET;
       const genderStr = PlayerGender[genderIndex].toLowerCase();
       // Defeats from wild Pokemon battles will show the Pokemon responsible by the text of the run result.
-      if (data.battleType === BattleType.WILD || (data.battleType === BattleType.MYSTERY_ENCOUNTER && !data.trainer)) {
+      if (data.battleType === BattleType.WILD || (data.isBattleMysteryEncounter() && !data.trainer)) {
         const enemyContainer = this.scene.add.container(8, 5);
         const gameOutcomeLabel = addTextObject(this.scene, 0, 0, `${i18next.t("runHistory:defeatedWild", { context: genderStr })}`, TextStyle.WINDOW);
         enemyContainer.add(gameOutcomeLabel);
@@ -311,7 +311,7 @@ class RunEntryContainer extends Phaser.GameObjects.Container {
           enemy.destroy();
         });
         this.add(enemyContainer);
-      } else if (data.battleType === BattleType.TRAINER || (data.battleType === BattleType.MYSTERY_ENCOUNTER && data.trainer)) { // Defeats from Trainers show the trainer's title and name
+      } else if (data.battleType === BattleType.TRAINER || (data.isBattleMysteryEncounter() && data.trainer)) { // Defeats from Trainers show the trainer's title and name
         const tObj = data.trainer.toTrainer(this.scene);
         // Because of the interesting mechanics behind rival names, the rival name and title have to be retrieved differently
         const RIVAL_TRAINER_ID_THRESHOLD = 375;
