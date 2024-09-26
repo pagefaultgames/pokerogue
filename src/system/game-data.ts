@@ -372,6 +372,18 @@ export class GameData {
     };
   }
 
+  /**
+   * Checks if an `Unlockable` has been unlocked.
+   * @param unlockable The Unlockable to check
+   * @returns `true` if the player has unlocked this `Unlockable` or an override has enabled it
+   */
+  public isUnlocked(unlockable: Unlockables): boolean {
+    if (Overrides.ITEM_UNLOCK_OVERRIDE.includes(unlockable)) {
+      return true;
+    }
+    return this.unlocks[unlockable];
+  }
+
   public saveSystem(): Promise<boolean> {
     return new Promise<boolean>(resolve => {
       this.scene.ui.savingIcon.show();

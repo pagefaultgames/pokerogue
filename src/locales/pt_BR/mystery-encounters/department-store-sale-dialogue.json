@@ -1,0 +1,27 @@
+{
+  "intro": "É uma senhora com um monte de sacolas de compras.",
+  "speaker": "Compradora",
+  "intro_dialogue": "Olá! Você também está aqui\npelas vendas incríveis?$Há um cupom especial que você pode\nresgatar por um item grátis durante a venda!$Eu tenho um extra. Aqui está!",
+  "title": "Venda na Loja de Departamentos",
+  "description": "Há mercadorias em todas as direções! Parece que há 4 balcões onde você pode resgatar o cupom por vários itens. As possibilidades são infinitas!",
+  "query": "Em qual balcão você vai?",
+  "option": {
+    "1": {
+      "label": "Balcão de TMs",
+      "tooltip": "(+) Loja de TMs"
+    },
+    "2": {
+      "label": "Balcão de Vitaminas",
+      "tooltip": "(+) Loja de Vitaminas"
+    },
+    "3": {
+      "label": "Balcão de Itens de Batalha",
+      "tooltip": "(+) Loja de Itens X"
+    },
+    "4": {
+      "label": "Balcão de Pokébolas",
+      "tooltip": "(+) Loja de Pokébolas"
+    }
+  },
+  "outro": "Que barganha! Você deveria comprar lá mais vezes."
+}

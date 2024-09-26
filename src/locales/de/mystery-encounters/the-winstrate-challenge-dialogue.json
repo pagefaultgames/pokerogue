@@ -1,0 +1,22 @@
+{
+  "intro":  "Eine Familie steht vor ihrem Haus!",
+  "speaker": "Die Sihgers",
+  "intro_dialogue": "Wir sind die Sihgers!$Wie wäre es, wenn du gegen unsere Familie in einer Reihe von Pokémon-Kämpfen antrittst?",
+  "title": "Die Sihgers-Herausforderung",
+  "description": "Die Sihgers sind eine Familie von @[TOOLTIP_TITLE]{5 Trainern}, und sie wollen kämpfen! Wenn du sie alle hintereinander besiegst, bekommst du einen grandiosen Preis. Aber kannst du die Hitze aushalten?",
+  "query": "Was wirst du tun?",
+  "option": {
+    "1": {
+      "label": "Die Herausforderung annehmen",
+      "tooltip": "(-) Brutaler Kampf gegen 5 Trainer\n(+) Spezielle Belohnung",
+      "selected": "Lass die Herausforderung beginnen!"
+    },
+    "2": {
+      "label": "Die Herausforderung ablehnen",
+      "tooltip": "(+) Team wird geheilt\n(+) Erhalte ein Supersondererbonbon",
+      "selected": "Das ist zu schade. Dein Team sieht ziemlich mitgenommen aus, warum ruhst du dich nicht eine Weile aus?"
+    }
+  },
+  "victory": "Glückwunsch, du hast unsere Herausforderung gemeistert!$Zuerst möchten wir dir diesen Gutschein geben.",
+  "victory_2": "Außerdem benutzt unsere Familie diese Machoschiene, um unsere Pokémon effektiver zu tranieren.$Du brauchst es vielleicht nicht, da du uns alle geschlagen hast, aber wir hoffen, dass du es trotzdem annimmst!"
+}

@@ -62,7 +62,13 @@ export class EncounterPhase extends BattlePhase {
 
     const battle = this.scene.currentBattle;
 
-    // Init Mystery Encounter if there is one
+    // Generate and Init Mystery Encounter
+    if (battle.battleType === BattleType.MYSTERY_ENCOUNTER && !battle.mysteryEncounter) {
+      this.scene.executeWithSeedOffset(() => {
+        const currentSessionEncounterType = battle.mysteryEncounterType;
+        battle.mysteryEncounter = this.scene.getMysteryEncounter(currentSessionEncounterType);
+      }, battle.waveIndex << 4);
+    }
     const mysteryEncounter = battle.mysteryEncounter;
     if (mysteryEncounter) {
       // If ME has an onInit() function, call it
@@ -141,7 +147,7 @@ export class EncounterPhase extends BattlePhase {
 
       loadEnemyAssets.push(enemyPokemon.loadAssets());
 
-      console.log(getPokemonNameWithAffix(enemyPokemon), enemyPokemon.species.speciesId, enemyPokemon.stats);
+      console.log(`Pokemon: ${getPokemonNameWithAffix(enemyPokemon)}`, `Species ID: ${enemyPokemon.species.speciesId}`, `Stats: ${enemyPokemon.stats}`, `Ability: ${enemyPokemon.getAbility().name}`, `Passive Ability: ${enemyPokemon.getPassiveAbility().name}`);
       return true;
     });
 
@@ -152,13 +158,10 @@ export class EncounterPhase extends BattlePhase {
     if (battle.battleType === BattleType.TRAINER) {
       loadEnemyAssets.push(battle.trainer?.loadAssets().then(() => battle.trainer?.initSprite())!); // TODO: is this bang correct?
     } else if (battle.battleType === BattleType.MYSTERY_ENCOUNTER) {
-      if (!battle.mysteryEncounter) {
-        battle.mysteryEncounter = this.scene.getMysteryEncounter(mysteryEncounter?.encounterType);
-      }
-      if (battle.mysteryEncounter.introVisuals) {
+      if (battle.mysteryEncounter?.introVisuals) {
         loadEnemyAssets.push(battle.mysteryEncounter.introVisuals.loadAssets().then(() => battle.mysteryEncounter!.introVisuals!.initSprite()));
       }
-      if (battle.mysteryEncounter.loadAssets.length > 0) {
+      if (battle.mysteryEncounter?.loadAssets && battle.mysteryEncounter.loadAssets.length > 0) {
         loadEnemyAssets.push(...battle.mysteryEncounter.loadAssets);
       }
       // Load Mystery Encounter Exclamation bubble and sfx

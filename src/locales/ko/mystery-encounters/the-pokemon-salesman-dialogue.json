@@ -1,0 +1,23 @@
+{
+  "intro": "쾌활한 노신사가 다가왔다.",
+  "speaker": "신사",
+  "intro_dialogue": "거기, 안녕하신가!\n자네에게 좋은 거래를 제안하지!",
+  "title": "포켓몬 상인",
+  "description": "\"이 {{purchasePokemon}}[[는]] 다른 평범한 {{purchasePokemon}}에서는 찾을 수 없는 @[TOOLTIP_TITLE]{매우 희귀한 특성}을 갖고 있다네!\n내가 이 멋진 {{purchasePokemon}}[[를]] 자네에게 {{price, money}}에 주고 싶은데!\"\n\n\"어떻게 생각하는가?\"",
+  "description_shiny": "\"이 {{purchasePokemon}}[[는]] 다른 평범한 {{purchasePokemon}}에서는 볼 수 없는 @[TOOLTIP_TITLE]{매우 희귀한 색깔}이라네!\n내가 이 멋진 {{purchasePokemon}}[[를]] 자네에게 {{price, money}}에 주고 싶은데!\"\n\n\"어떻게 생각하는가?\"",
+  "query": "어떻게 하시겠습니까?",
+  "option": {
+    "1": {
+      "label": "승낙한다",
+      "tooltip": "(-) {{price, money}} 지불\n(+) 숨겨진 특성을 가진 {{purchasePokemon}}[[를]] 얻음",
+      "tooltip_shiny": "(-) {{price, money}} 지불\n(+) 특별한 색을 가진 {{purchasePokemon}}[[를]] 얻음",
+      "selected_message": "터무니없는 금액을 내고\n{{purchasePokemon}}[[를]] 데려왔다.",
+      "selected_dialogue": "탁월한 선택이로군!$자네는 비즈니스에 안목이 있구먼.$아차차…@d{64} 반품은 안 된다네. 알고 있겠지?"
+    },
+    "2": {
+      "label": "거절한다",
+      "tooltip": "(-) 보상 없음",
+      "selected": "아니?@d{32} 거절하겠다고?$요즘 젊은이들은\n호의를 베풀어도 모른다니까!"
+    }
+  }
+}

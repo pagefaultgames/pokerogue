@@ -1,0 +1,21 @@
+{
+  "intro": "C’est un {{shuckleName}} absolument énorme et\nce qui semble être un énorme bol de… jus ?",
+  "title": "Un breuvage qui arrache",
+  "description": "Ce {{shuckleName}} qui bloque la route semble redoutable.\nLe jus qui l’accompagne semble émaner une étrange forme de puissance.\n\nIl tend une patte dans votre direction, l’air de vouloir quelque chose…",
+  "query": "Que voulez-vous faire ?",
+  "option": {
+    "1": {
+      "label": "Approcher {{shuckleName}}",
+      "tooltip": "(?) Quelque chose de terrible ou d’incroyable peut se produire",
+      "selected": "Vous perdez subitement connaissance.",
+      "selected_2": "@f{150}À votre réveil, le {{shuckleName}} est parti et\nle bol de jus est complètement vide.${{highBstPokemon1}} et {{highBstPokemon2}}\nsont victimes d’une forte léthargie !$Leurs stats de base sont baissées de {{reductionValue}} !$Mais par contre, vos autres Pokémon sont envahis\nd’une vigueur encore jamais vue !$Leurs stats de base sont augmentées de {{increaseValue}} !"
+    },
+    "2": {
+      "label": "Affronter {{shuckleName}}",
+      "tooltip": "(-) Combat difficile\n(+) Récompense spéciale",
+      "selected": "Le {{shuckleName}} s’énerve, boit un peu de jus et attaque !",
+      "stat_boost": "Le jus de {{shuckleName}} augmente ses stats !"
+    }
+  },
+  "outro": "Quelle étrange tournure des évènements…"
+}

@@ -1,0 +1,33 @@
+{
+  "intro": "Du stolperst über einige Trainingsutensilien und Vorräte.",
+  "title": "Traningssitzung",
+  "description": "Diese Vorräte sehen so aus, als könnten sie verwendet werden, um ein Mitglied deines Teams zu trainieren! Es gibt ein paar Möglichkeiten, wie du dein Pokémon trainieren könntest, indem du gegen es mit dem Rest deines Teams @[TOOLTIP_TITLE]{kämpfst und es besiegst}.",
+  "query": "Wie möchtest du trainieren?",
+  "invalid_selection": "Pokémon muss genügend KP haben.",
+  "option": {
+    "1": {
+      "label": "Leichtes Training",
+      "tooltip": "(-) Leichter Kampf\n(+) Verbessere 2 zufällige IS-Werte des Pokémon",
+      "finished": "{{selectedPokemon}} kommt zurück, fühlt sich erschöpft aber zufrieden!$Seine {{stat1}} und {{stat2}} IS-Werte wurden verbessert!"
+    },
+    "2": {
+      "label": "Moderates Training",
+      "tooltip": "(-) Moderater Kampf\n(+) Ändere das Wesen des Pokémon",
+      "select_prompt": "Wähle ein neues Wesen aus, um dein Pokémon zu trainieren.",
+      "finished": "{{selectedPokemon}} kehrt zurück, fühlt sich erschöpft aber zufrieden!$Es hat nun ein neues Wesen: {{nature}}!"
+    },
+    "3": {
+      "label": "Schweres Training",
+      "tooltip": "(-) Harter Kampf\n(+) Ändere die Fähigkeit des Pokémon",
+      "select_prompt": "Wähle eine neue Fähigkeit aus, um dein Pokémon zu trainieren.",
+      "finished": "{{selectedPokemon}} kehrt zurück, fühlt sich erschöpft aber zufrieden!$Seine Fähigkeit wurde zu {{ability}} geändert!"
+    },
+    "4": {
+      "label": "Weggehen",
+      "tooltip": "(-) Keine Belohnung",
+      "selected": "Du hast keine Zeit für Training und gehst weiter."
+    },
+    "selected": "{{selectedPokemon}} bewegt sich über die Lichtung, um dir gegenüberzutreten..."
+  },
+  "outro": "Das war eine erfolgreiche Trainingssitzung!"
+}

@@ -37,7 +37,7 @@
     "name_female": "ワンパンウーマン"
   },
   "HealAchv": {
-    "description": "一つの　技や　特性や　持たせたアイテムで\n{{HP}}{{healAmount}}を　一気に　回復する"
+    "description": "１つの　技や　特性や　持たせたアイテムで\n{{HP}}{{healAmount}}を　一気に　回復する"
   },
   "250_HEAL": {
     "name": "回復発見者"
@@ -52,7 +52,7 @@
     "name": "ジョーイさん"
   },
   "LevelAchv": {
-    "description": "一つの　ポケモンを　Lv.{{level}}まで　上げる"
+    "description": "１匹の　ポケモンを　Lv.{{level}}まで　上げる"
   },
   "LV_100": {
     "name": "まだまだだよ"
@@ -83,27 +83,27 @@
   },
   "TRANSFER_MAX_STAT_STAGE": {
     "name": "連係プレー",
-    "description": "少なくとも　一つの　能力を　最大まで　あげて\n他の　手持ちポケモンに　バトンタッチする"
+    "description": "少なくとも　１つの　能力を　最大まで　あげて\n他の　手持ちポケモンに　バトンタッチする"
   },
   "MAX_FRIENDSHIP": {
     "name": "マブ達",
-    "description": "一つの　手持ちポケモンの　仲良し度を　最大に　上げる"
+    "description": "１匹の　手持ちポケモンの　仲良し度を　最大に　上げる"
   },
   "MEGA_EVOLVE": {
     "name": "ザ・アブソリュート",
-    "description": "一つの　手持ちポケモンを　メガシンカさせる"
+    "description": "１匹の　手持ちポケモンを　メガシンカさせる"
   },
   "GIGANTAMAX": {
     "name": "太ーくて堪らない",
-    "description": "一つの　手持ちポケモンを　キョダイマックスさせる"
+    "description": "１匹の　手持ちポケモンを　キョダイマックスさせる"
   },
   "TERASTALLIZE": {
     "name": "一致好き",
-    "description": "一つの　手持ちポケモンを　テラスタルさせる"
+    "description": "１匹の　手持ちポケモンを　テラスタルさせる"
   },
   "STELLAR_TERASTALLIZE": {
     "name": "隠れたタイプ",
-    "description": "一つの　手持ちポケモンを　ステラ・テラスタルさせる"
+    "description": "１匹の　手持ちポケモンを　ステラ・テラスタルさせる"
   },
   "SPLICE": {
     "name": "インフィニット・フュージョン",
@@ -155,7 +155,7 @@
   },
   "PERFECT_IVS": {
     "name": "個体値の賞状",
-    "description": "一つの　ポケモンの　個体値を　すべて　最大に　する"
+    "description": "１匹の　ポケモンの　個体値を　すべて　最大に　する"
   },
   "CLASSIC_VICTORY": {
     "name": "無双",
@@ -163,7 +163,7 @@
   },
   "UNEVOLVED_CLASSIC_VICTORY": {
     "name": "はじめてのおつかい",
-    "description": "少なくとも　一つの　進化していない　手持ちポケモンで\nクラシックモードを　クリアする"
+    "description": "少なくとも　１匹の　進化していない　手持ちポケモンで\nクラシックモードを　クリアする"
   },
   "MONO_GEN_ONE": {
     "name": "原始",
@@ -265,5 +265,9 @@
   "INVERSE_BATTLE": {
     "name": "カガミよミガカ",
     "description": "反転バトルチャレンジを　クリアする\nるすアリク　をジンレャチルトバ転反"
+  },
+  "BREEDERS_IN_SPACE": {
+    "name": "宇宙のブリーダー！",
+    "description": "宇宙バイオームで　エキスパートブリーダーを　倒す"
   }
 }

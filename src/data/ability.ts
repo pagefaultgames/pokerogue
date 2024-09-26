@@ -366,6 +366,10 @@ export class TypeImmunityAbAttr extends PreDefendAbAttr {
     return false;
   }
 
+  getImmuneType(): Type | null {
+    return this.immuneType;
+  }
+
   override getCondition(): AbAttrCondition | null {
     return this.condition;
   }
@@ -2022,6 +2026,7 @@ export class PostSummonAbAttr extends AbAttr {
     return false;
   }
 }
+
 /**
  * Removes specified arena tags when a Pokemon is summoned.
  */
@@ -2848,17 +2853,17 @@ export class PreApplyBattlerTagAbAttr extends AbAttr {
  * Provides immunity to BattlerTags {@linkcode BattlerTag} to specified targets.
  */
 export class PreApplyBattlerTagImmunityAbAttr extends PreApplyBattlerTagAbAttr {
-  private immuneTagType: BattlerTagType;
+  private immuneTagTypes: BattlerTagType[];
   private battlerTag: BattlerTag;
 
-  constructor(immuneTagType: BattlerTagType) {
+  constructor(immuneTagTypes: BattlerTagType | BattlerTagType[]) {
     super();
 
-    this.immuneTagType = immuneTagType;
+    this.immuneTagTypes = Array.isArray(immuneTagTypes) ? immuneTagTypes : [immuneTagTypes];
   }
 
   applyPreApplyBattlerTag(pokemon: Pokemon, passive: boolean, simulated: boolean, tag: BattlerTag, cancelled: Utils.BooleanHolder, args: any[]): boolean {
-    if (tag.tagType === this.immuneTagType) {
+    if (this.immuneTagTypes.includes(tag.tagType)) {
       cancelled.value = true;
       if (!simulated) {
         this.battlerTag = tag;
@@ -4912,7 +4917,7 @@ export function initAbilities() {
       .attr(TypeImmunityHealAbAttr, Type.WATER)
       .ignorable(),
     new Ability(Abilities.OBLIVIOUS, 3)
-      .attr(BattlerTagImmunityAbAttr, BattlerTagType.INFATUATED)
+      .attr(BattlerTagImmunityAbAttr, [BattlerTagType.INFATUATED, BattlerTagType.TAUNT])
       .attr(IntimidateImmunityAbAttr)
       .ignorable(),
     new Ability(Abilities.CLOUD_NINE, 3)
@@ -5398,8 +5403,7 @@ export function initAbilities() {
       .attr(PostSummonMessageAbAttr, (pokemon: Pokemon) => i18next.t("abilityTriggers:postSummonTeravolt", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }))
       .attr(MoveAbilityBypassAbAttr),
     new Ability(Abilities.AROMA_VEIL, 6)
-      .ignorable()
-      .unimplemented(),
+      .attr(UserFieldBattlerTagImmunityAbAttr, [BattlerTagType.INFATUATED, BattlerTagType.TAUNT, BattlerTagType.DISABLED, BattlerTagType.TORMENT, BattlerTagType.HEAL_BLOCK]),
     new Ability(Abilities.FLOWER_VEIL, 6)
       .ignorable()
       .unimplemented(),
@@ -5881,7 +5885,6 @@ export function initAbilities() {
       .ignorable(),
     new Ability(Abilities.EARTH_EATER, 9)
       .attr(TypeImmunityHealAbAttr, Type.GROUND)
-      .partial() // Healing not blocked by Heal Block
       .ignorable(),
     new Ability(Abilities.MYCELIUM_MIGHT, 9)
       .attr(ChangeMovePriorityAbAttr, (pokemon, move) => move.category === MoveCategory.STATUS, -0.2)
@@ -5896,8 +5899,7 @@ export function initAbilities() {
       .attr(PostSummonStatStageChangeAbAttr, [ Stat.EVA ], -1)
       .condition(getOncePerBattleCondition(Abilities.SUPERSWEET_SYRUP)),
     new Ability(Abilities.HOSPITALITY, 9)
-      .attr(PostSummonAllyHealAbAttr, 4, true)
-      .partial(), // Healing not blocked by Heal Block
+      .attr(PostSummonAllyHealAbAttr, 4, true),
     new Ability(Abilities.TOXIC_CHAIN, 9)
       .attr(PostAttackApplyStatusEffectAbAttr, false, 30, StatusEffect.TOXIC),
     new Ability(Abilities.EMBODY_ASPECT_TEAL, 9)

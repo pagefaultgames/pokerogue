@@ -1,0 +1,34 @@
+{
+  "intro": "Mais c’est…@d{64} un clown ?",
+  "speaker": "Clown",
+  "intro_dialogue": "Eh toi, tu m’as l’air clownesque !\nPrépare-toi pour un combat magistral !$Je vais te montrer ce que sont les arts de la rue !",
+  "title": "Bouffonneries",
+  "description": "Quelque chose semble louche. Ce Clown a l’air très motivé de vous provoquer en combat, mais dans quel but ?\n\nSon {{blacephalonName}} est très étrange, comme s’il possédait @[TOOLTIP_TITLE]{des types et un talent inhabituels.}",
+  "query": "Que voulez-vous faire ?",
+  "option": {
+    "1": {
+      "label": "Affronter le Clown",
+      "tooltip": "(-) Combat étrange\n(?) Affecte le talent d’un Pokémon",
+      "selected": "Vos Pokémon sont prêts pour cette performance pathétique !",
+      "apply_ability_dialogue": "Un spectacle sensationnel !\nVotre savoir-faire est en harmonie avec vos compétences !",
+      "apply_ability_message": "Le Clown vous propose d’Échanger définitivement le talent d’un de vos Pokémon contre {{ability}} !",
+      "ability_prompt": "Voulez-vous définitivement donner le talent {{ability}} à un Pokémon ?",
+      "ability_gained": "@s{level_up_fanfare}{{chosenPokemon}} obtient le talent {{ability}} !"
+    },
+    "2": {
+      "label": "Rester de marbre",
+      "tooltip": "(?) Affecte les objets d’un Pokémon",
+      "selected": "Ça se défile lâchement d’un duel exceptionnel ?\nDans ce cas, tâte à ma colère !",
+      "selected_2": "Le {{blacephalonName}} du Clown utilise\nTour de Magie !$Tous les objets de {{switchPokemon}}\nsont échangés au hasard !",
+      "selected_3": "Sombre imbécile, tombe dans mon piège !"
+    },
+    "3": {
+      "label": "Retourner les insultes",
+      "tooltip": "(?) Affecte les types de vos Pokémon",
+      "selected": "Ça se défile lâchement d’un duel exceptionnel ?\nDans ce cas, tâte à ma colère !",
+      "selected_2": "Le {{blacephalonName}} du Clown utilise\nune étrange capacité !$Tous les types de votre équipe\nsont échangés au hasard !",
+      "selected_3": "Sombre imbécile, tombe dans mon piège !"
+    }
+  },
+  "outro": "Le Clown et sa bande disparaissent\ndans un nuage de fumée."
+}
