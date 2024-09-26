@@ -1579,10 +1579,10 @@ export class GameData {
     // If incrementCount === false (not a catch scenario), only update the pokemon's dex data if the Pokemon has already been marked as caught in dex
     // Prevents form changes, nature changes, etc. from unintentionally updating the dex data of a "rental" pokemon
     const speciesRootForm = pokemon.species.getRootSpeciesId();
-    if (this.scene.gameData.dexData[speciesRootForm].caughtAttr) {
-      return this.setPokemonSpeciesCaught(pokemon, pokemon.species, incrementCount, fromEgg, showMessage);
-    } else {
+    if (!incrementCount && !this.scene.gameData.dexData[speciesRootForm].caughtAttr) {
       return Promise.resolve(false);
+    } else {
+      return this.setPokemonSpeciesCaught(pokemon, pokemon.species, incrementCount, fromEgg, showMessage);
     }
   }
 
