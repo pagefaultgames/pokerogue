@@ -39,7 +39,7 @@ describe("Weather - Hail", () => {
     await game.phaseInterceptor.to("TurnEndPhase");
 
     game.scene.getField(true).forEach(pokemon => {
-      expect(pokemon.hp).toBeLessThan(pokemon.getMaxHp() - Math.floor(pokemon.getMaxHp() / 16));
+      expect(pokemon.hp).toBe(pokemon.getMaxHp() - Math.max(Math.floor(pokemon.getMaxHp() / 16), 1));
     });
   });
 
@@ -56,6 +56,6 @@ describe("Weather - Hail", () => {
     const enemyPokemon = game.scene.getEnemyPokemon()!;
 
     expect(playerPokemon.hp).toBe(playerPokemon.getMaxHp());
-    expect(enemyPokemon.hp).toBeLessThan(enemyPokemon.getMaxHp() - Math.floor(enemyPokemon.getMaxHp() / 16));
+    expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp() - Math.max(Math.floor(enemyPokemon.getMaxHp() / 16), 1));
   });
 });
