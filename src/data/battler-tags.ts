@@ -2477,7 +2477,7 @@ export class TormentTag extends MoveRestrictionBattlerTag {
    * @returns `true` if still present | `false` if not
    */
   override lapse(pokemon: Pokemon, _tagType: BattlerTagLapseType): boolean {
-    return !pokemon.isActive(true);
+    return pokemon.isActive(true);
   }
 
   /**

@@ -1,3 +1,4 @@
+import { BattlerIndex } from "#app/battle";
 import { SubstituteTag, TrappedTag } from "#app/data/battler-tags";
 import { allMoves, StealHeldItemChanceAttr } from "#app/data/move";
 import { StatusEffect } from "#app/data/status-effect";
@@ -61,7 +62,7 @@ describe("Moves - Substitute", () => {
   it(
     "should redirect enemy attack damage to the Substitute doll",
     async () => {
-      game.override.enemyMoveset(Array(4).fill(Moves.TACKLE));
+      game.override.enemyMoveset(Moves.TACKLE);
 
       await game.classicMode.startBattle([Species.SKARMORY]);
 
@@ -86,7 +87,7 @@ describe("Moves - Substitute", () => {
     "should fade after redirecting more damage than its remaining HP",
     async () => {
       // Giga Impact OHKOs Magikarp if substitute isn't up
-      game.override.enemyMoveset(Array(4).fill(Moves.GIGA_IMPACT));
+      game.override.enemyMoveset(Moves.GIGA_IMPACT);
       vi.spyOn(allMoves[Moves.GIGA_IMPACT], "accuracy", "get").mockReturnValue(100);
 
       await game.classicMode.startBattle([Species.MAGIKARP]);
@@ -111,7 +112,7 @@ describe("Moves - Substitute", () => {
   it(
     "should block stat changes from status moves",
     async () => {
-      game.override.enemyMoveset(Array(4).fill(Moves.CHARM));
+      game.override.enemyMoveset(Moves.CHARM);
 
       await game.classicMode.startBattle([Species.MAGIKARP]);
 
@@ -129,7 +130,7 @@ describe("Moves - Substitute", () => {
   it(
     "should be bypassed by sound-based moves",
     async () => {
-      game.override.enemyMoveset(Array(4).fill(Moves.ECHOED_VOICE));
+      game.override.enemyMoveset(Moves.ECHOED_VOICE);
 
       await game.classicMode.startBattle([Species.BLASTOISE]);
 
@@ -152,7 +153,7 @@ describe("Moves - Substitute", () => {
   it(
     "should be bypassed by attackers with Infiltrator",
     async () => {
-      game.override.enemyMoveset(Array(4).fill(Moves.TACKLE));
+      game.override.enemyMoveset(Moves.TACKLE);
       game.override.enemyAbility(Abilities.INFILTRATOR);
 
       await game.classicMode.startBattle([Species.BLASTOISE]);
@@ -196,7 +197,7 @@ describe("Moves - Substitute", () => {
   it(
     "should protect the user from flinching",
     async () => {
-      game.override.enemyMoveset(Array(4).fill(Moves.FAKE_OUT));
+      game.override.enemyMoveset(Moves.FAKE_OUT);
       game.override.startingLevel(1); // Ensures the Substitute will break
 
       await game.classicMode.startBattle([Species.BLASTOISE]);
@@ -218,7 +219,7 @@ describe("Moves - Substitute", () => {
     "should protect the user from being trapped",
     async () => {
       vi.spyOn(allMoves[Moves.SAND_TOMB], "accuracy", "get").mockReturnValue(100);
-      game.override.enemyMoveset(Array(4).fill(Moves.SAND_TOMB));
+      game.override.enemyMoveset(Moves.SAND_TOMB);
 
       await game.classicMode.startBattle([Species.BLASTOISE]);
 
@@ -238,7 +239,7 @@ describe("Moves - Substitute", () => {
     "should prevent the user's stats from being lowered",
     async () => {
       vi.spyOn(allMoves[Moves.LIQUIDATION], "chance", "get").mockReturnValue(100);
-      game.override.enemyMoveset(Array(4).fill(Moves.LIQUIDATION));
+      game.override.enemyMoveset(Moves.LIQUIDATION);
 
       await game.classicMode.startBattle([Species.BLASTOISE]);
 
@@ -257,7 +258,7 @@ describe("Moves - Substitute", () => {
   it(
     "should protect the user from being afflicted with status effects",
     async () => {
-      game.override.enemyMoveset(Array(4).fill(Moves.NUZZLE));
+      game.override.enemyMoveset(Moves.NUZZLE);
 
       await game.classicMode.startBattle([Species.BLASTOISE]);
 
@@ -276,7 +277,7 @@ describe("Moves - Substitute", () => {
   it(
     "should prevent the user's items from being stolen",
     async () => {
-      game.override.enemyMoveset(Array(4).fill(Moves.THIEF));
+      game.override.enemyMoveset(Moves.THIEF);
       vi.spyOn(allMoves[Moves.THIEF], "attrs", "get").mockReturnValue([new StealHeldItemChanceAttr(1.0)]); // give Thief 100% steal rate
       game.override.startingHeldItems([{name: "BERRY", type: BerryType.SITRUS}]);
 
@@ -318,7 +319,7 @@ describe("Moves - Substitute", () => {
   it(
     "move effect should prevent the user's berries from being stolen and eaten",
     async () => {
-      game.override.enemyMoveset(Array(4).fill(Moves.BUG_BITE));
+      game.override.enemyMoveset(Moves.BUG_BITE);
       game.override.startingHeldItems([{name: "BERRY", type: BerryType.SITRUS}]);
 
       await game.classicMode.startBattle([Species.BLASTOISE]);
@@ -343,7 +344,7 @@ describe("Moves - Substitute", () => {
   it(
     "should prevent the user's stats from being reset by Clear Smog",
     async () => {
-      game.override.enemyMoveset(Array(4).fill(Moves.CLEAR_SMOG));
+      game.override.enemyMoveset(Moves.CLEAR_SMOG);
 
       await game.classicMode.startBattle([Species.BLASTOISE]);
 
@@ -362,7 +363,7 @@ describe("Moves - Substitute", () => {
   it(
     "should prevent the user from becoming confused",
     async () => {
-      game.override.enemyMoveset(Array(4).fill(Moves.MAGICAL_TORQUE));
+      game.override.enemyMoveset(Moves.MAGICAL_TORQUE);
       vi.spyOn(allMoves[Moves.MAGICAL_TORQUE], "chance", "get").mockReturnValue(100);
 
       await game.classicMode.startBattle([Species.BLASTOISE]);
@@ -408,7 +409,7 @@ describe("Moves - Substitute", () => {
   it(
     "should prevent the source's Rough Skin from activating when hit",
     async () => {
-      game.override.enemyMoveset(Array(4).fill(Moves.TACKLE));
+      game.override.enemyMoveset(Moves.TACKLE);
       game.override.ability(Abilities.ROUGH_SKIN);
 
       await game.classicMode.startBattle([Species.BLASTOISE]);
@@ -426,7 +427,7 @@ describe("Moves - Substitute", () => {
   it(
     "should prevent the source's Focus Punch from failing when hit",
     async () => {
-      game.override.enemyMoveset(Array(4).fill(Moves.TACKLE));
+      game.override.enemyMoveset(Moves.TACKLE);
       game.override.moveset([Moves.FOCUS_PUNCH]);
 
       // Make Focus Punch 40 power to avoid a KO
@@ -451,7 +452,7 @@ describe("Moves - Substitute", () => {
   it(
     "should not allow Shell Trap to activate when attacked",
     async () => {
-      game.override.enemyMoveset(Array(4).fill(Moves.TACKLE));
+      game.override.enemyMoveset(Moves.TACKLE);
       game.override.moveset([Moves.SHELL_TRAP]);
 
       await game.classicMode.startBattle([Species.BLASTOISE]);
@@ -471,7 +472,7 @@ describe("Moves - Substitute", () => {
   it(
     "should not allow Beak Blast to burn opponents when hit",
     async () => {
-      game.override.enemyMoveset(Array(4).fill(Moves.TACKLE));
+      game.override.enemyMoveset(Moves.TACKLE);
       game.override.moveset([Moves.BEAK_BLAST]);
 
       await game.classicMode.startBattle([Species.BLASTOISE]);
@@ -491,8 +492,8 @@ describe("Moves - Substitute", () => {
 
   it(
     "should cause incoming attacks to not activate Counter",
-    async() => {
-      game.override.enemyMoveset(Array(4).fill(Moves.TACKLE));
+    async () => {
+      game.override.enemyMoveset(Moves.TACKLE);
       game.override.moveset([Moves.COUNTER]);
 
       await game.classicMode.startBattle([Species.BLASTOISE]);
@@ -508,6 +509,27 @@ describe("Moves - Substitute", () => {
 
       expect(playerPokemon.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
       expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp());
+    }
+  );
+
+  it(
+    "should prevent Sappy Seed from applying its Leech Seed effect to the user",
+    async () => {
+      game.override.enemyMoveset(Moves.SAPPY_SEED);
+
+      await game.classicMode.startBattle([Species.CHARIZARD]);
+
+      const playerPokemon = game.scene.getPlayerPokemon()!;
+
+      playerPokemon.addTag(BattlerTagType.SUBSTITUTE, 0, Moves.NONE, playerPokemon.id);
+
+      game.move.select(Moves.SPLASH);
+
+      await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]); // enemy uses Sappy Seed first
+      await game.move.forceHit(); // forces Sappy Seed to hit
+      await game.phaseInterceptor.to("MoveEndPhase");
+
+      expect(playerPokemon.getTag(BattlerTagType.SEEDED)).toBeUndefined();
     }
   );
 });
