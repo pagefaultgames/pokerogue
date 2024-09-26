@@ -48,6 +48,7 @@ import { RUN_HISTORY_LIMIT } from "#app/ui/run-history-ui-handler";
 import { applySessionDataPatches, applySettingsDataPatches, applySystemDataPatches } from "./version-converter";
 import { MysteryEncounterSaveData } from "../data/mystery-encounters/mystery-encounter-save-data";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
+import { PokerogueApiClearSessionData } from "#app/@types/pokerogue-api";
 
 export const defaultStarterSpecies: Species[] = [
   Species.BULBASAUR, Species.CHARMANDER, Species.SQUIRTLE,
@@ -1186,44 +1187,43 @@ export class GameData {
     });
   }
 
+
   /**
    * Attempt to clear session data. After session data is removed, attempt to update user info so the menu updates
    */
-  tryClearSession(scene: BattleScene, slotId: integer): Promise<[success: boolean, newClear: boolean]> {
-    return new Promise<[boolean, boolean]>(resolve => {
-      if (bypassLogin) {
-        localStorage.removeItem(`sessionData${slotId ? slotId : ""}_${loggedInUser?.username}`);
-        return resolve([true, true]);
-      }
+  async tryClearSession(scene: BattleScene, slotId: integer): Promise<[success: boolean, newClear: boolean]> {
+    let result: [boolean, boolean] = [false, false];
 
+    if (bypassLogin) {
+      localStorage.removeItem(`sessionData${slotId ? slotId : ""}_${loggedInUser?.username}`);
+      result = [true, true];
+    } else {
       const sessionData = this.getSessionSaveData(scene);
-      Utils.apiPost(`savedata/session/clear?slot=${slotId}&trainerId=${this.trainerId}&secretId=${this.secretId}&clientSessionId=${clientSessionId}`, JSON.stringify(sessionData), undefined, true).then(response => {
-        if (response.ok) {
+      const response = await Utils.apiPost(`savedata/session/clear?slot=${slotId}&trainerId=${this.trainerId}&secretId=${this.secretId}&clientSessionId=${clientSessionId}`, JSON.stringify(sessionData), undefined, true);
+
+      if (response.ok) {
           loggedInUser!.lastSessionSlot = -1; // TODO: is the bang correct?
           localStorage.removeItem(`sessionData${this.scene.sessionSlotId ? this.scene.sessionSlotId : ""}_${loggedInUser?.username}`);
-        }
-        return response.json();
-      }).then(jsonResponse => {
-        if (!jsonResponse.error) {
-          return resolve([true, jsonResponse.success as boolean]);
-        }
-        if (jsonResponse && jsonResponse.error.startsWith("session out of date")) {
+      }
+
+      const jsonResponse: PokerogueApiClearSessionData = await response.json();
+
+      if (!jsonResponse.error) {
+        result = [true, jsonResponse.success ?? false];
+      } else {
+        if (jsonResponse && jsonResponse.error?.startsWith("session out of date")) {
           this.scene.clearPhaseQueue();
           this.scene.unshiftPhase(new ReloadSessionPhase(this.scene));
         }
+
         console.error(jsonResponse);
-        resolve([false, false]);
-      });
-    }).then(result => {
-      updateUserInfo().then(success => {
-        if (success !== null && !success) {
-          return new Promise<[boolean, boolean]>(resolve => {
-            return resolve([false, false]);
-          });
-        }
-      });
-      return result;
-    });
+        result = [false, false];
+      }
+    }
+
+    await updateUserInfo();
+
+    return result;
   }
 
   parseSessionData(dataStr: string): SessionSaveData {
