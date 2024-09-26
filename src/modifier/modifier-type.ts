@@ -1614,7 +1614,7 @@ export const modifierTypes = {
     } else if (rand < 6) {
       randBerryType = BerryType.LEPPA;
     } else {
-      randBerryType = berryTypes[Utils.randSeedInt(berryTypes.length - 3, undefined, "Choosing a berry") + 2];
+      randBerryType = berryTypes[Utils.randSeedInt(berryTypes.length - 3, undefined, "Choosing a random berry type") + 2];
     }
     return new BerryModifierType(randBerryType);
   }),
@@ -2589,9 +2589,9 @@ export function getPlayerModifierTypeOptions(count: integer, party: PlayerPokemo
       //console.log("    Retrying - attempt " + r, candidate?.type.name)
     }
     if (options.length && options.filter(o => o.type?.name === candidate?.type?.name || o.type?.group === candidate?.type?.group).length) {
-      //console.log("  Item " + (i+1) + "/" + count + " (+" + r + ")", candidate?.type.name, "(Out of retries)")
+      console.log("  Item " + (i+1) + "/" + count + " (+" + r + ")", candidate?.type.name, "(Out of retries)")
     } else {
-      //console.log("  Item " + (i+1) + "/" + count + " (+" + r + ")", candidate?.type.name)
+      console.log("  Item " + (i+1) + "/" + count + " (+" + r + ")", candidate?.type.name)
     }
     if (candidate && candidate.alternates == undefined) {
       candidate.alternates = aT
@@ -2765,7 +2765,7 @@ function getNewModifierTypeOption(party: Pokemon[], poolType: ModifierPoolType, 
     if (generateAltTiers) {
       for (var luck = 0; luck <= 14; luck++) {
         var state = Phaser.Math.RND.state()
-        var tierValueTemp = Utils.randSeedInt(1024);
+        var tierValueTemp = Utils.randSeedInt(1024, undefined, "%HIDE");
         var upgradeCountTemp = 0;
         var tierTemp: ModifierTier;
         if (upgradeCount) {
@@ -2776,7 +2776,7 @@ function getNewModifierTypeOption(party: Pokemon[], poolType: ModifierPoolType, 
           const upgradeOddsTemp = Math.floor(128 / ((partyLuckValue + 4) / 4));
           let upgraded = false;
           do {
-            upgraded = Utils.randSeedInt(upgradeOddsTemp) < 4;
+            upgraded = Utils.randSeedInt(upgradeOddsTemp, undefined, "%HIDE") < 4;
             if (upgraded) {
               upgradeCountTemp++;
             }
@@ -2858,7 +2858,7 @@ function getNewModifierTypeOption(party: Pokemon[], poolType: ModifierPoolType, 
           var upgradeOddsTemp = Math.floor(32 / ((luck + 2) / 2));
           var upgradeCountTemp = 0;
           while (modifierPool.hasOwnProperty(tier + upgradeCountTemp + 1) && modifierPool[tier + upgradeCountTemp + 1].length) {
-            if (!Utils.randSeedInt(upgradeOddsTemp)) {
+            if (!Utils.randSeedInt(upgradeOddsTemp, undefined, "%HIDE")) {
               upgradeCountTemp++;
             } else {
               break;
@@ -2890,7 +2890,7 @@ function getNewModifierTypeOption(party: Pokemon[], poolType: ModifierPoolType, 
 
   const tierThresholds = Object.keys(thresholds[tier]);
   const totalWeight = parseInt(tierThresholds[tierThresholds.length - 1]);
-  const value = Utils.randSeedInt(totalWeight, undefined, "Choosing item to give");
+  const value = Utils.randSeedInt(totalWeight, undefined, "Weighted modifier selection (total " + totalWeight + ")");
   let index: integer | undefined;
   for (const t of tierThresholds) {
     const threshold = parseInt(t);
@@ -2919,7 +2919,7 @@ function getNewModifierTypeOption(party: Pokemon[], poolType: ModifierPoolType, 
       if (player) {
         if (!shutUpBro) console.log(ModifierTier[tier], upgradeCount);
       }
-      console.error("Null Modifier - regenerating")
+      //console.error("Null Modifier - regenerating")
       return getNewModifierTypeOption(party, poolType, tier, upgradeCount, ++retryCount, scene, shutUpBro, generateAltTiers);
     } else {
       console.log("Generated type", modifierType)
@@ -2951,7 +2951,7 @@ function getNewModifierTypeOption(party: Pokemon[], poolType: ModifierPoolType, 
 function getItemIndex(thresholds, tier) {
   const tierThresholds = Object.keys(thresholds[tier]);
   const totalWeight = parseInt(tierThresholds[tierThresholds.length - 1]);
-  const value = Utils.randSeedInt(totalWeight);
+  const value = Utils.randSeedInt(totalWeight, undefined, "%HIDE");
   let index: integer;
   for (const t of tierThresholds) {
     const threshold = parseInt(t);
