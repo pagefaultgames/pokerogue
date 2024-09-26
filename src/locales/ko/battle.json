@@ -14,6 +14,10 @@
   "moneyWon": "상금으로\n₽{{moneyAmount}}을 손에 넣었다!",
   "moneyPickedUp": "₽{{moneyAmount}}을 주웠다!",
   "pokemonCaught": "신난다-!\n{{pokemonName}}[[를]] 잡았다!",
+  "pokemonObtained": "{{pokemonName}}[[를]] 손에 넣었다!",
+  "pokemonBrokeFree": "안 돼!\n포켓몬이 볼에서 나와 버렸다!",
+  "pokemonFled": "야생 {{pokemonName}}[[는]]\n도망쳤다!",
+  "playerFled": "{{pokemonName}}[[로]]부터 도망쳤다!",
   "addedAsAStarter": "{{pokemonName}}[[가]]\n스타팅 포켓몬에 추가되었다!",
   "partyFull": "지닌 포켓몬이 가득 찼습니다. {{pokemonName}}[[를]]\n대신해 포켓몬을 놓아주시겠습니까?",
   "pokemon": "포켓몬",
@@ -28,6 +32,7 @@
   "attackMissed": "{{pokemonNameWithAffix}}에게는\n맞지 않았다!",
   "attackHitsCount": "{{count}}번 맞았다!",
   "rewardGain": "{{modifierName}}[[를]] 받았다!",
+  "rewardGainCount": "{{modifierName}}[[를]]\n{{count}}개 손에 넣었다!",
   "expGain": "{{pokemonName}}[[는]]\n{{exp}} 경험치를 얻었다!",
   "levelUp": "{{pokemonName}}[[는]]\n레벨 {{level}}[[로]] 올랐다!",
   "learnMove": "{{pokemonName}}[[는]] 새로\n{{moveName}}[[를]] 배웠다!",
@@ -52,6 +57,7 @@
   "noPokeballTrainer": "다른 트레이너의 포켓몬은 잡을 수 없다!",
   "noPokeballMulti": "안돼! 2마리 있어서\n목표를 정할 수가 없어…!",
   "noPokeballStrong": "너무 강해서 잡을 수가 없다!\n먼저 약화시켜야 한다!",
+  "noPokeballMysteryEncounter": "이 포켓몬은 잡을 수 없습니다!",
   "noEscapeForce": "본 적 없는 힘이\n도망칠 수 없게 한다.",
   "noEscapeTrainer": "안돼! 승부 도중에\n상대에게 등을 보일 순 없어!",
   "noEscapePokemon": "{{pokemonName}}의 {{moveName}}때문에\n{{escapeVerb}} 수 없다!",
@@ -63,7 +69,7 @@
   "turnEndHpRestore": "{{pokemonName}}의\n체력이 회복되었다!",
   "hpIsFull": "그러나 {{pokemonName}}의\n체력이 가득 찬 상태다!",
   "skipItemQuestion": "아이템을 받지 않고 넘어가시겠습니까?",
-  "itemStackFull": "{{fullItemName}}의 소지 한도에 도달했습니다.\n{{itemname}}[[를]] 대신 받습니다.",
+  "itemStackFull": "{{fullItemName}}의 소지 한도에 도달했습니다.\n{{itemName}}[[를]] 대신 받습니다.",
   "eggHatching": "어라…?",
   "eggSkipPrompt": "알 부화 요약 화면으로 바로 넘어가시겠습니까?",
   "ivScannerUseQuestion": "{{pokemonName}}에게 개체값탐지기를 사용하시겠습니까?",
@@ -99,5 +105,6 @@
   "unlockedSomething": "{{unlockedThing}}[[가]]\n해금되었다.",
   "congratulations": "축하합니다!",
   "beatModeFirstTime": "{{speciesName}}[[가]] {{gameMode}} 모드를 처음으로 클리어했다!\n{{newModifier}}[[를]] 손에 넣었다!",
-  "ppReduced": "{{targetName}}의\n{{moveName}}[[를]] {{reduction}} 깎았다!"
+  "ppReduced": "{{targetName}}의\n{{moveName}}[[를]] {{reduction}} 깎았다!",
+  "mysteryEncounterAppeared": "어라?"
 }

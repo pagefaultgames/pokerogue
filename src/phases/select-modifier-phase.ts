@@ -252,13 +252,13 @@ export class SelectModifierPhase extends BattlePhase {
 
     let multiplier = 1;
     if (!isNullOrUndefined(this.customModifierSettings?.rerollMultiplier)) {
-      if (this.customModifierSettings!.rerollMultiplier! < 0) {
+      if (this.customModifierSettings.rerollMultiplier < 0) {
         // Completely overrides reroll cost to -1 and early exits
         return -1;
       }
 
       // Otherwise, continue with custom multiplier
-      multiplier = this.customModifierSettings!.rerollMultiplier!;
+      multiplier = this.customModifierSettings.rerollMultiplier;
     }
     return Math.min(Math.ceil(this.scene.currentBattle.waveIndex / 10) * baseValue * Math.pow(2, this.rerollCount) * multiplier, Number.MAX_SAFE_INTEGER);
   }

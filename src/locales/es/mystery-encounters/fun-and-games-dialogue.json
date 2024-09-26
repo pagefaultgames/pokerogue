@@ -1,0 +1,30 @@
+{
+  "intro_dialogue": "¡Pasen y vean, amigos! Prueben su suerte en el nuevo {{wobbuffetName}} Golpe-o-matic!",
+  "speaker": "El Feriante",
+  "title": "Juegos y diversión",
+  "description": "¡Te has encontrado con una feria ambulante con un juego de premios! Tendrás @[TOOLTIP_TITLE]{3 turnos} para dejar al {{wobbuffetName}} lo más cerca posible de @[TOOLTIP_TITLE]{1 PS} @[TOOLTIP_TITLE]{sin debilitarlo} para que pueda cargar un gran Contraataque en la máquina de golpear la campana. ¡Pero ten cuidado! Si debilitas al {{wobbuffetName}}, tendrás que pagar el coste de revivirlo.",
+  "query": "¿Te gustaría jugar?",
+  "option": {
+    "1": {
+      "label": "Jugar",
+      "tooltip": "(-) Paga {{option1Money, money}}\n(+) Juega al {{wobbuffetName}} Golpe-o-matic",
+      "selected": "¡Es hora de probar tu suerte!"
+    },
+    "2": {
+      "label": "Irse",
+      "tooltip": "(-) Ninguna Recompensa",
+      "selected": "Te apresuras en irte, con una ligera sensación de arrepentimiento."
+    }
+  },
+  "ko": "¡Oh no! ¡El {{wobbuffetName}} se debilitó!$Pierdes el juego y\ntienes que pagar el coste de revivirlo...",
+  "charging_continue": "¡El Wobbuffet sigue cargando su contraataque!",
+  "turn_remaining_3": "¡Quedan tres turnos!",
+  "turn_remaining_2": "¡Quedan dos turnos!",
+  "turn_remaining_1": "¡Queda un turno!",
+  "end_game": "¡Se acabó el tiempo!$El {{wobbuffetName}} se prepara para el contraataque y@d{16}.@d{16}.@d{16}.",
+  "best_result": "¡El {{wobbuffetName}} golpea el botón con tanta fuerza\nque la campana se rompe!$¡Ganas el gran premio!",
+  "great_result": "¡El {{wobbuffetName}} golpea el botón, casi alcanzando la campana!$¡Que pena!\n¡Ganas el  segundo premio!",
+  "good_result": "¡El {{wobbuffetName}} golpea el botón con suficiente fuerza para llegar a la mitad de la escala!$¡Ganas el tercer premio!",
+  "bad_result": "El {{wobbuffetName}} apenas toca el botón y no pasa nada…$¡Oh no!\nNo ganas nada.",
+  "outro": "¡Eso estuvo muy divertido!"
+}

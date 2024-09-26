@@ -1,0 +1,19 @@
+{
+  "intro": "É uma pilha enorme de lixo!\nDe onde isso veio?",
+  "title": "Do Lixo ao Luxo",
+  "description": "A pilha de lixo se ergue sobre você, e você pode ver alguns itens de valor enterrados no meio dos detritos. Você tem certeza de que quer se cobrir de sujeira para pegá-los?",
+  "query": "O que você vai fazer?",
+  "option": {
+    "1": {
+      "label": "Cavar em Busca de Objetos de Valor",
+      "tooltip": "(-) Itens na Loja Custarão {{costMultiplier}}x Mais\n(+) Ganhe Itens Incríveis",
+      "selected": "Você vasculha a pilha de lixo, ficando preso na sujeira.$Não há como os lojistas respeitáveis\nvenderem algo para você nesse estado imundo!$Você terá que se virar sem itens de cura nas lojas.$No entanto, você encontrou alguns itens incríveis no lixo!"
+    },
+    "2": {
+      "label": "Investigar Mais",
+      "tooltip": "(?) Encontrar a Fonte do Lixo",
+      "selected": "Você vagueia ao redor da pilha, procurando qualquer indicação de como isso apareceu aqui...",
+      "selected_2": "De repente, o lixo se move! Não era apenas lixo, era um Pokémon!"
+    }
+  }
+}

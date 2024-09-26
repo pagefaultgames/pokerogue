@@ -71,6 +71,7 @@
   "disabledOnAdd": "¡Se ha anulado el movimiento {{moveName}}\nde {{pokemonNameWithAffix}}!",
   "disabledLapse": "¡El movimiento {{moveName}} de {{pokemonNameWithAffix}} ya no está anulado!",
   "tarShotOnAdd": "¡{{pokemonNameWithAffix}} se ha vuelto débil ante el fuego!",
+  "shedTailOnAdd": "{{pokemonNameWithAffix}} se desprende\nde un segmento de su cuerpo y lo usa comoseñuelo!",
   "substituteOnAdd": "¡{{pokemonNameWithAffix}} creó un sustituto!",
   "substituteOnHit": "¡El sustituto recibe daño en lugar del {{pokemonNameWithAffix}}!",
   "substituteOnRemove": "¡El sustituto del {{pokemonNameWithAffix}} se debilitó!"

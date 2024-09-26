@@ -11,13 +11,13 @@
     },
     "2": {
       "label": "Wonder Trade",
-      "tooltip": "(+) Send one of your Pokémon to the GTS and get a random Pokémon in return"
+      "tooltip": "(+) Send one of your Pokémon to the GTS and get a random special Pokémon in return"
     },
     "3": {
       "label": "Trade an Item",
       "trade_options_prompt": "Select an item to send.",
       "invalid_selection": "This Pokémon doesn't have legal items to trade.",
-      "tooltip": "(+) Send one of your Items to the GTS and get a random new Item"
+      "tooltip": "(+) Send one of your Items to the GTS and get a random improved Item"
     },
     "4": {
       "label": "Leave",

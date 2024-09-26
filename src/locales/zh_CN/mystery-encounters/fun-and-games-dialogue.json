@@ -1,0 +1,30 @@
+{
+  "intro_dialogue": "来看看吧，大伙！\n在这全新的{{wobbuffetName}}捶捶乐上试试运气！\n",
+  "speaker": "艺人",
+  "title": "快乐游戏！",
+  "description": "你遇到了一个有奖游戏活动！\n你有 @[TOOLTIP_TITLE]{3 回合}的时间来在\n@[TOOLTIP_TITLE]{不打倒}{{wobbuffetName}}的情况下将它尽可能的打到@[TOOLTIP_TITLE]{1血}\n这样，它就能通过反作用力\n在敲钟器上打出超高数字！\n但要小心！如果你不小心打倒了{{wobbuffetName}}，\n你就得付医疗费！",
+  "query": "要试试么？",
+  "option": {
+    "1": {
+      "label": "游玩游戏",
+      "tooltip": "(-)支付{{option1Money, money}}\n(+)玩{{wobbuffetName}}重拳出击！",
+      "selected": "该试试你的运气了"
+    },
+    "2": {
+      "label": "离开",
+      "tooltip": "(-)无奖励",
+      "selected": "你匆匆上路，心里却有一丝遗憾。"
+    }
+  },
+  "ko": "哦不！{{wobbuffetName}}被打倒了！\n你不仅输了，还要赔医疗费…",
+  "charging_continue": "果然翁正在准备反击！",
+  "turn_remaining_3": "还有3个回合！",
+  "turn_remaining_2": "还有2个回合！",
+  "turn_remaining_1": "还有1个回合！",
+  "end_game": "时间到！{{wobbuffetName}}使出了双倍奉还！\n然后…@d{16}…@d{16}…@d{16}",
+  "best_result": "{{wobbuffetName}}猛击了按钮，打穿了进度条！\n你赢得了大奖！",
+  "great_result": "{{wobbuffetName}}猛击了按钮，就快碰到到钟了！\n就差一点！你获得了二等奖！",
+  "good_result": "{{wobbuffetName}}猛击了按钮，填满了一半进度条！\n你获得了三等奖！",
+  "bad_result": "{{wobbuffetName}}软绵绵的打向按钮，几乎没什么动静…\n你什么奖都没有！",
+  "outro": "真是有趣的小游戏！"
+}

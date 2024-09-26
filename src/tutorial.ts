@@ -74,11 +74,11 @@ const tutorialHandlers = {
  * @returns a promise with result `true` if the tutorial was run and finished, `false` otherwise
  */
 export async function handleTutorial(scene: BattleScene, tutorial: Tutorial): Promise<boolean> {
-  if (!scene.enableTutorials && !Overrides.BYPASS_TUTORIAL_SKIP) {
+  if (!scene.enableTutorials && !Overrides.BYPASS_TUTORIAL_SKIP_OVERRIDE) {
     return false;
   }
 
-  if (scene.gameData.getTutorialFlags()[tutorial] && !Overrides.BYPASS_TUTORIAL_SKIP) {
+  if (scene.gameData.getTutorialFlags()[tutorial] && !Overrides.BYPASS_TUTORIAL_SKIP_OVERRIDE) {
     return false;
   }
 

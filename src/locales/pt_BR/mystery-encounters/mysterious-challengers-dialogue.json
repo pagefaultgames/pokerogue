@@ -1,0 +1,22 @@
+{
+  "intro": "Desafiantes misteriosos apareceram!",
+  "title": "Desafiantes Misteriosos",
+  "description": "Se você derrotar um desafiante, pode impressioná-los o suficiente para receber uma recompensa. Mas alguns parecem fortes, você está à altura do desafio?",
+  "query": "Quem você vai enfrentar?",
+  "option": {
+    "1": {
+      "label": "Um Oponente Astuto e Atento",
+      "tooltip": "(-) Batalha Padrão\n(+) Recompensas de Itens de Movimento"
+    },
+    "2": {
+      "label": "Um Oponente Forte",
+      "tooltip": "(-) Batalha Difícil\n(+) Boas Recompensas"
+    },
+    "3": {
+      "label": "O Oponente Mais Poderoso",
+      "tooltip": "(-) Batalha Brutal\n(+) Grandes Recompensas"
+    },
+    "selected": "O treinador dá um passo à frente..."
+  },
+  "outro": "O desafiante misterioso foi derrotado!"
+}

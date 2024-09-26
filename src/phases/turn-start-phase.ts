@@ -19,6 +19,7 @@ import { TurnEndPhase } from "./turn-end-phase";
 import { WeatherEffectPhase } from "./weather-effect-phase";
 import { BattlerIndex } from "#app/battle";
 import { TrickRoomTag } from "#app/data/arena-tag";
+import { SwitchType } from "#enums/switch-type";
 
 export class TurnStartPhase extends FieldPhase {
   constructor(scene: BattleScene) {
@@ -179,7 +180,8 @@ export class TurnStartPhase extends FieldPhase {
         this.scene.unshiftPhase(new AttemptCapturePhase(this.scene, turnCommand.targets![0] % 2, turnCommand.cursor!));//TODO: is the bang correct here?
         break;
       case Command.POKEMON:
-        this.scene.unshiftPhase(new SwitchSummonPhase(this.scene, pokemon.getFieldIndex(), turnCommand.cursor!, true, turnCommand.args![0] as boolean, pokemon.isPlayer()));//TODO: is the bang correct here?
+        const switchType = turnCommand.args?.[0] ? SwitchType.BATON_PASS : SwitchType.SWITCH;
+        this.scene.unshiftPhase(new SwitchSummonPhase(this.scene, switchType, pokemon.getFieldIndex(), turnCommand.cursor!, true, pokemon.isPlayer()));
         break;
       case Command.RUN:
         let runningPokemon = pokemon;
