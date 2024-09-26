@@ -13,14 +13,16 @@
     "name_female": "Besserverdienerin"
   },
   "100K_MONEY": {
-    "name": "Reich"
+    "name": "Reich",
+    "name_female": "Reich"
   },
   "1M_MONEY": {
     "name": "Millionär",
     "name_female": "Millionärin"
   },
   "10M_MONEY": {
-    "name": "Einprozenter"
+    "name": "Einprozenter",
+    "name_female": "Einprozenter"
   },
   "DamageAchv": {
     "description": "Füge mit einem Treffer {{damageAmount}} Schaden zu."
@@ -29,10 +31,12 @@
     "name": "Harte Treffer"
   },
   "1000_DMG": {
-    "name": "Härtere Treffer"
+    "name": "Härtere Treffer",
+    "name_female": "Härtere Treffer"
   },
   "2500_DMG": {
-    "name": "Das ist ne Menge Schaden!"
+    "name": "Das ist ne Menge Schaden!",
+    "name_female": "Das ist ne Menge Schaden!"
   },
   "10000_DMG": {
     "name": "One Punch Man",
@@ -46,7 +50,8 @@
     "name_female": "Anfänger-Heilerin"
   },
   "1000_HEAL": {
-    "name": "Gesundheitsprofi"
+    "name": "Gesundheitsprofi",
+    "name_female": "Gesundheitsprofi"
   },
   "2500_HEAL": {
     "name": "Kleriker",
@@ -63,7 +68,8 @@
     "name": "Warte, es gibt mehr!"
   },
   "LV_250": {
-    "name": "Elite"
+    "name": "Elite",
+    "name_female": "Elite"
   },
   "LV_1000": {
     "name": "Geh noch höher hinaus!"
@@ -72,7 +78,8 @@
     "description": "Sammle insgesamt {{ribbonAmount}} Bänder."
   },
   "10_RIBBONS": {
-    "name": "Champion der Pokémon Liga"
+    "name": "Champion der Pokémon Liga",
+    "name_female": "Champion der Pokémon Liga"
   },
   "25_RIBBONS": {
     "name": "Bänder-Sammler",
@@ -83,7 +90,8 @@
     "name_female": "Bänder-Expertin"
   },
   "75_RIBBONS": {
-    "name": "Bänder-Guru"
+    "name": "Bänder-Guru",
+    "name_female": "Bänder-Guru"
   },
   "100_RIBBONS": {
     "name": "Bänder-Meister",
@@ -139,6 +147,7 @@
   },
   "SHINY_PARTY": {
     "name": "Das ist Hingabe",
+    "name_female": "Das ist Hingabe",
     "description": "Habe ein Team aus schillernden Pokémon."
   },
   "HATCH_MYTHICAL": {
@@ -167,6 +176,7 @@
   },
   "CLASSIC_VICTORY": {
     "name": "Ungeschlagen",
+    "name_female": "Ungeschlagen",
     "description": "Beende den klassischen Modus erfolgreich."
   },
   "UNEVOLVED_CLASSIC_VICTORY": {

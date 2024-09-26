@@ -24,6 +24,7 @@ import { BerryType } from "#enums/berry-type";
 import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
 import { Stat } from "#enums/stat";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
+import i18next from "i18next";
 
 /** the i18n namespace for this encounter */
 const namespace = "mysteryEncounter:absoluteAvarice";
@@ -38,6 +39,7 @@ export const AbsoluteAvariceEncounter: MysteryEncounter =
     .withEncounterTier(MysteryEncounterTier.GREAT)
     .withSceneWaveRangeRequirement(...CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES)
     .withSceneRequirement(new PersistentModifierRequirement("BerryModifier", 4)) // Must have at least 4 berries to spawn
+    .withFleeAllowed(false)
     .withIntroSpriteConfigs([
       {
         // This sprite has the shadow
@@ -262,15 +264,13 @@ export const AbsoluteAvariceEncounter: MysteryEncounter =
 
           // Provides 1x Reviver Seed to each party member at end of battle
           const revSeed = generateModifierType(scene, modifierTypes.REVIVER_SEED);
+          encounter.setDialogueToken("foodReward", revSeed?.name ?? i18next.t("modifierType:ModifierType.REVIVER_SEED.name"));
           const givePartyPokemonReviverSeeds = () => {
             const party = scene.getParty();
             party.forEach(p => {
               const heldItems = p.getHeldItems();
               if (revSeed && !heldItems.some(item => item instanceof PokemonInstantReviveModifier)) {
                 const seedModifier = revSeed.newModifier(p);
-                if (seedModifier) {
-                  encounter.setDialogueToken("foodReward", seedModifier.type.name);
-                }
                 scene.addModifier(seedModifier, false, false, false, true);
               }
             });
