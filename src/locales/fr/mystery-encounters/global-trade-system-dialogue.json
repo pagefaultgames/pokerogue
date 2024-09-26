@@ -11,13 +11,13 @@
     },
     "2": {
       "label": "Échange Miracle",
-      "tooltip": "(+) Envoyer un de vos Pokémon à la GTS et en recevoir un au hasard"
+      "tooltip": "(+) Envoyer un de vos Pokémon à la GTS et en recevoir un spécial au hasard"
     },
     "3": {
       "label": "Échanger un objet",
       "trade_options_prompt": "Choisissez l’objet à envoyer.",
       "invalid_selection": "Ce Pokémon n’a aucun objet légal à échanger.",
-      "tooltip": "(+) Envoyer un de vos objets à la GTS et en recevoir un au hasard"
+      "tooltip": "(+) Envoyer un de vos objets à la GTS et en recevoir un amélioré au hasard"
     },
     "4": {
       "label": "Partir",

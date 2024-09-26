@@ -11,13 +11,13 @@
     },
     "2": {
       "label": "Troca Surpresa",
-      "tooltip": "(+) Envie um dos seus Pokémon para o GTS e receba um Pokémon aleatório em troca"
+      "tooltip": "(+) Envie um dos seus Pokémon para o GTS e receba um Pokémon especial aleatório em troca"
     },
     "3": {
       "label": "Trocar um Item",
       "trade_options_prompt": "Selecione um item para enviar.",
       "invalid_selection": "Este Pokémon não possui itens válidos para troca.",
-      "tooltip": "(+) Envie um dos seus Itens para o GTS e receba um novo Item aleatório"
+      "tooltip": "(+) Envie um dos seus Itens para o GTS e receba um Item melhorado aleatório"
     },
     "4": {
       "label": "Sair",
