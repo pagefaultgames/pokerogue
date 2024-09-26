@@ -3069,7 +3069,7 @@ export const speciesStarters = {
   [Species.LANDORUS]: 7,
   [Species.KYUREM]: 8,
   [Species.KELDEO]: 6,
-  [Species.MELOETTA]: 6,
+  [Species.MELOETTA]: 7,
   [Species.GENESECT]: 6,
 
   [Species.CHESPIN]: 3,
@@ -3417,7 +3417,7 @@ export const starterPassiveAbilities = {
   [Species.GASTLY]: Abilities.SHADOW_SHIELD,
   [Species.ONIX]: Abilities.ROCKY_PAYLOAD,
   [Species.DROWZEE]: Abilities.MAGICIAN,
-  [Species.KRABBY]: Abilities.UNBURDEN,
+  [Species.KRABBY]: Abilities.THERMAL_EXCHANGE,
   [Species.VOLTORB]: Abilities.TRANSISTOR,
   [Species.EXEGGCUTE]: Abilities.RIPEN,
   [Species.CUBONE]: Abilities.PARENTAL_BOND,
