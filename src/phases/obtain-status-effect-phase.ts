@@ -10,29 +10,29 @@ import { PostTurnStatusEffectPhase } from "./post-turn-status-effect-phase";
 import * as LoggerTools from "../logger";
 
 export class ObtainStatusEffectPhase extends PokemonPhase {
-  private statusEffect: StatusEffect | undefined;
-  private cureTurn: integer | null;
-  private sourceText: string | null;
-  private sourcePokemon: Pokemon | null;
+  private statusEffect?: StatusEffect | undefined;
+  private cureTurn?: integer | null;
+  private sourceText?: string | null;
+  private sourcePokemon?: Pokemon | null;
 
-  constructor(scene: BattleScene, battlerIndex: BattlerIndex, statusEffect?: StatusEffect, cureTurn?: integer | null, sourceText?: string, sourcePokemon?: Pokemon) {
+  constructor(scene: BattleScene, battlerIndex: BattlerIndex, statusEffect?: StatusEffect, cureTurn?: integer | null, sourceText?: string | null, sourcePokemon?: Pokemon | null) {
     super(scene, battlerIndex);
 
     this.statusEffect = statusEffect;
-    this.cureTurn = cureTurn!; // TODO: is this bang correct?
-    this.sourceText = sourceText!; // TODO: is this bang correct?
-    this.sourcePokemon = sourcePokemon!; // For tracking which Pokemon caused the status effect // TODO: is this bang correct?
+    this.cureTurn = cureTurn;
+    this.sourceText = sourceText;
+    this.sourcePokemon = sourcePokemon; // For tracking which Pokemon caused the status effect
   }
 
   start() {
     const pokemon = this.getPokemon();
-    if (!pokemon?.status) {
-      if (pokemon?.trySetStatus(this.statusEffect, false, this.sourcePokemon)) {
+    if (pokemon && !pokemon.status) {
+      if (pokemon.trySetStatus(this.statusEffect, false, this.sourcePokemon)) {
         if (this.cureTurn) {
           pokemon.status!.cureTurn = this.cureTurn; // TODO: is this bang correct?
         }
         pokemon.updateInfo(true);
-        new CommonBattleAnim(CommonAnim.POISON + (this.statusEffect! - 1), pokemon).play(this.scene, () => {
+        new CommonBattleAnim(CommonAnim.POISON + (this.statusEffect! - 1), pokemon).play(this.scene, false, () => {
           this.scene.queueMessage(getStatusEffectObtainText(this.statusEffect, getPokemonNameWithAffix(pokemon), this.sourceText ?? undefined));
           if (pokemon.status?.isPostTurn()) {
             this.scene.pushPhase(new PostTurnStatusEffectPhase(this.scene, this.battlerIndex));
@@ -41,8 +41,8 @@ export class ObtainStatusEffectPhase extends PokemonPhase {
         });
         return;
       }
-    } else if (pokemon.status.effect === this.statusEffect) {
-      this.scene.queueMessage(getStatusEffectOverlapText(this.statusEffect, getPokemonNameWithAffix(pokemon)));
+    } else if (pokemon.status?.effect === this.statusEffect) {
+      this.scene.queueMessage(getStatusEffectOverlapText(this.statusEffect ?? StatusEffect.NONE, getPokemonNameWithAffix(pokemon)));
     }
     this.end();
   }

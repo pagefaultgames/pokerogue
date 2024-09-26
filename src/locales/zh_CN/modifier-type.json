@@ -64,6 +64,20 @@
     "BaseStatBoosterModifierType": {
       "description": "增加10%持有者的{{stat}}，\n个体值越高堆叠上限越高。"
     },
+    "PokemonBaseStatTotalModifierType": {
+      "name": "Shuckle Juice",
+      "description": "{{increaseDecrease}} all of the holder's base stats by {{statValue}}. You were {{blessCurse}} by the Shuckle.",
+      "extra": {
+        "increase": "Increases",
+        "decrease": "Decreases",
+        "blessed": "blessed",
+        "cursed": "cursed"
+      }
+    },
+    "PokemonBaseStatFlatModifierType": {
+      "name": "Old Gateau",
+      "description": "Increases the holder's {{stats}} base stats by {{statValue}}. Found after a strange dream."
+    },
     "AllPokemonFullHpRestoreModifierType": {
       "description": "所有宝可梦完全回复HP。"
     },
@@ -91,7 +105,7 @@
       "description": "招式命中率增加{{accuracyAmount}}(最大100)。"
     },
     "PokemonMultiHitModifierType": {
-      "description": "攻击以40/25/12.5%的伤害造成2/3/4次伤害"
+      "description": "攻击以60/75/82.5%的伤害造成2/3/4次伤害。"
     },
     "TmModifierType": {
       "name": "招式学习器\n{{moveId}} - {{moveName}}",
@@ -310,19 +324,19 @@
     },
     "BERRY_POUCH": {
       "name": "树果袋",
-      "description": "使用树果时有30%的几率不会消耗树果。"
+      "description": "使用树果时增加30%的几率不会消耗树果。"
     },
     "FOCUS_BAND": {
       "name": "气势头带",
-      "description": "携带该道具的宝可梦有10%几率在受到攻击\n而将陷入濒死状态时，保留1点HP不陷入濒死状态。"
+      "description": "携带该道具的宝可梦增加10%几率在受到攻击\n而将陷入濒死状态时，保留1点HP不陷入濒死状态。"
     },
     "QUICK_CLAW": {
       "name": "先制之爪",
-      "description": "有10%的几率无视速度优先使出招式\n(先制技能优先)。"
+      "description": "增加10%的几率无视速度优先使出招式\n(先制技能优先)。"
     },
     "KINGS_ROCK": {
       "name": "王者之证",
-      "description": "使用任意原本不会造成畏缩状态的攻击，\n有10%几率使目标陷入畏缩状态。"
+      "description": "使用任意原本不会造成畏缩状态的攻击，\n增加10%几率使目标陷入畏缩状态。"
     },
     "LEFTOVERS": {
       "name": "吃剩的东西",
@@ -397,7 +411,13 @@
     "ENEMY_FUSED_CHANCE": {
       "name": "融合硬币",
       "description": "增加1%野生融合宝可梦出现概率。"
-    }
+    },
+
+    "MYSTERY_ENCOUNTER_SHUCKLE_JUICE": { "name": "Shuckle Juice" },
+    "MYSTERY_ENCOUNTER_BLACK_SLUDGE": { "name": "Black Sludge", "description": "The stench is so powerful that shops will only sell you items at a steep cost increase." },
+    "MYSTERY_ENCOUNTER_MACHO_BRACE": { "name": "Macho Brace", "description": "Defeating a Pokémon grants the holder a Macho Brace stack. Each stack slightly boosts stats, with an extra bonus at max stacks." },
+    "MYSTERY_ENCOUNTER_OLD_GATEAU": { "name": "Old Gateau", "description": "Increases the holder's {{stats}} stats by {{statValue}}." },
+    "MYSTERY_ENCOUNTER_GOLDEN_BUG_NET": { "name": "Golden Bug Net", "description": "Imbues the owner with luck to find Bug Type Pokémon more often. Has a strange heft to it." }
   },
   "SpeciesBoosterItem": {
     "LIGHT_BALL": {

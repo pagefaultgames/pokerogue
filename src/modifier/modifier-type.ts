@@ -1,6 +1,7 @@
 import * as Modifiers from "./modifier";
-import { AttackMove, allMoves, selfStatLowerMoves } from "../data/move";
-import { MAX_PER_TYPE_POKEBALLS, PokeballType, getPokeballCatchMultiplier, getPokeballName } from "../data/pokeball";
+import { MoneyMultiplierModifier } from "./modifier";
+import { allMoves, AttackMove, selfStatLowerMoves } from "../data/move";
+import { getPokeballCatchMultiplier, getPokeballName, MAX_PER_TYPE_POKEBALLS, PokeballType } from "../data/pokeball";
 import Pokemon, { EnemyPokemon, PlayerPokemon, PokemonMove } from "../field/pokemon";
 import { EvolutionItem, pokemonEvolutions } from "../data/pokemon-evolutions";
 import { tmPoolTiers, tmSpecies } from "../data/tms";
@@ -9,17 +10,16 @@ import PartyUiHandler, { PokemonMoveSelectFilter, PokemonSelectFilter } from "..
 import * as Utils from "../utils";
 import { getBerryEffectDescription, getBerryName } from "../data/berry";
 import { Unlockables } from "../system/unlockables";
-import { StatusEffect, getStatusEffectDescriptor } from "../data/status-effect";
+import { getStatusEffectDescriptor, StatusEffect } from "../data/status-effect";
 import { SpeciesFormKey } from "../data/pokemon-species";
 import BattleScene from "../battle-scene";
-import { VoucherType, getVoucherTypeIcon, getVoucherTypeName } from "../system/voucher";
-import { FormChangeItem, SpeciesFormChangeCondition, SpeciesFormChangeItemTrigger, pokemonFormChanges } from "../data/pokemon-forms";
+import { getVoucherTypeIcon, getVoucherTypeName, VoucherType } from "../system/voucher";
+import { FormChangeItem, pokemonFormChanges, SpeciesFormChangeCondition, SpeciesFormChangeItemTrigger } from "../data/pokemon-forms";
 import { ModifierTier } from "./modifier-tier";
-import { Nature, getNatureName, getNatureStatMultiplier } from "#app/data/nature";
+import { getNatureName, getNatureStatMultiplier, Nature } from "#app/data/nature";
 import i18next from "i18next";
 import { getModifierTierTextTint } from "#app/ui/text";
 import Overrides from "#app/overrides";
-import { MoneyMultiplierModifier } from "./modifier";
 import { Abilities } from "#enums/abilities";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { BerryType } from "#enums/berry-type";
@@ -116,28 +116,31 @@ export class ModifierType {
     return null;
   }
 
+  /**
+   * Populates item id for ModifierType instance
+   * @param func
+   */
   withIdFromFunc(func: ModifierTypeFunc): ModifierType {
     this.id = Object.keys(modifierTypes).find(k => modifierTypes[k] === func)!; // TODO: is this bang correct?
     return this;
   }
 
   /**
-   * Populates the tier field by performing a reverse lookup on the modifier pool specified by {@linkcode poolType} using the
-   * {@linkcode ModifierType}'s id.
-   * @param poolType the {@linkcode ModifierPoolType} to look into to derive the item's tier; defaults to {@linkcode ModifierPoolType.PLAYER}
+   * Populates item tier for ModifierType instance
+   * Tier is a necessary field for items that appear in player shop (determines the Pokeball visual they use)
+   * To find the tier, this function performs a reverse lookup of the item type in modifier pools
+   * @param poolType Default 'ModifierPoolType.PLAYER'. Which pool to lookup item tier from
    */
   withTierFromPool(poolType: ModifierPoolType = ModifierPoolType.PLAYER): ModifierType {
     for (const tier of Object.values(getModifierPoolForType(poolType))) {
       for (const modifier of tier) {
         if (this.id === modifier.modifierType.id) {
           this.tier = modifier.modifierType.tier;
-          break;
+          return this;
         }
       }
-      if (this.tier) {
-        break;
-      }
     }
+
     return this;
   }
 
@@ -742,6 +745,55 @@ export class BaseStatBoosterModifierType extends PokemonHeldItemModifierType imp
   }
 }
 
+/**
+ * Shuckle Juice item
+ */
+export class PokemonBaseStatTotalModifierType extends PokemonHeldItemModifierType implements GeneratedPersistentModifierType {
+  private readonly statModifier: integer;
+
+  constructor(statModifier: integer) {
+    super("modifierType:ModifierType.MYSTERY_ENCOUNTER_SHUCKLE_JUICE", "berry_juice", (_type, args) => new Modifiers.PokemonBaseStatTotalModifier(this, (args[0] as Pokemon).id, this.statModifier));
+    this.statModifier = statModifier;
+  }
+
+  override getDescription(scene: BattleScene): string {
+    return i18next.t("modifierType:ModifierType.PokemonBaseStatTotalModifierType.description", {
+      increaseDecrease: i18next.t(this.statModifier >= 0 ? "modifierType:ModifierType.PokemonBaseStatTotalModifierType.extra.increase" : "modifierType:ModifierType.PokemonBaseStatTotalModifierType.extra.decrease"),
+      blessCurse: i18next.t(this.statModifier >= 0 ? "modifierType:ModifierType.PokemonBaseStatTotalModifierType.extra.blessed" : "modifierType:ModifierType.PokemonBaseStatTotalModifierType.extra.cursed"),
+      statValue: this.statModifier,
+    });
+  }
+
+  public getPregenArgs(): any[] {
+    return [ this.statModifier ];
+  }
+}
+
+/**
+ * Old Gateau item
+ */
+export class PokemonBaseStatFlatModifierType extends PokemonHeldItemModifierType implements GeneratedPersistentModifierType {
+  private readonly statModifier: integer;
+  private readonly stats: Stat[];
+
+  constructor(statModifier: integer, stats: Stat[]) {
+    super("modifierType:ModifierType.MYSTERY_ENCOUNTER_OLD_GATEAU", "old_gateau", (_type, args) => new Modifiers.PokemonBaseStatFlatModifier(this, (args[0] as Pokemon).id, this.statModifier, this.stats));
+    this.statModifier = statModifier;
+    this.stats = stats;
+  }
+
+  override getDescription(scene: BattleScene): string {
+    return i18next.t("modifierType:ModifierType.PokemonBaseStatFlatModifierType.description", {
+      stats: this.stats.map(stat => i18next.t(getStatKey(stat))).join("/"),
+      statValue: this.statModifier,
+    });
+  }
+
+  public getPregenArgs(): any[] {
+    return [ this.statModifier, this.stats ];
+  }
+}
+
 class AllPokemonFullHpRestoreModifierType extends ModifierType {
   private descriptionKey: string;
 
@@ -1251,11 +1303,11 @@ class EvolutionItemModifierTypeGenerator extends ModifierTypeGenerator {
       if (doModifierLogging) console.log("Generating item: Evolution Item")
 
       const evolutionItemPool = [
-        party.filter(p => pokemonEvolutions.hasOwnProperty(p.species.speciesId)).map(p => {
+        party.filter(p => pokemonEvolutions.hasOwnProperty(p.species.speciesId) && (!p.pauseEvolutions || p.species.speciesId === Species.SLOWPOKE || p.species.speciesId === Species.EEVEE)).map(p => {
           const evolutions = pokemonEvolutions[p.species.speciesId];
           return evolutions.filter(e => e.item !== EvolutionItem.NONE && (e.evoFormKey === null || (e.preFormKey || "") === p.getFormKey()) && (!e.condition || e.condition.predicate(p)));
         }).flat(),
-        party.filter(p => p.isFusion() && p.fusionSpecies && pokemonEvolutions.hasOwnProperty(p.fusionSpecies.speciesId)).map(p => {
+        party.filter(p => p.isFusion() && p.fusionSpecies && pokemonEvolutions.hasOwnProperty(p.fusionSpecies.speciesId) && (!p.pauseEvolutions || p.fusionSpecies.speciesId === Species.SLOWPOKE || p.fusionSpecies.speciesId === Species.EEVEE)).map(p => {
           const evolutions = pokemonEvolutions[p.fusionSpecies!.speciesId];
           return evolutions.filter(e => e.item !== EvolutionItem.NONE && (e.evoFormKey === null || (e.preFormKey || "") === p.getFusionFormKey()) && (!e.condition || e.condition.predicate(p)));
         }).flat()
@@ -1436,6 +1488,21 @@ function skipInClassicAfterWave(wave: integer, defaultWeight: integer): Weighted
 function skipInLastClassicWaveOrDefault(defaultWeight: integer) : WeightedModifierTypeWeightFunc {
   return skipInClassicAfterWave(199, defaultWeight);
 }
+
+/**
+ * High order function that returns a WeightedModifierTypeWeightFunc to ensure Lures don't spawn on Classic 199
+ * or if the lure still has over 60% of its duration left
+ * @param maxBattles The max battles the lure type in question lasts. 10 for green, 15 for Super, 30 for Max
+ * @param weight The desired weight for the lure when it does spawn
+ * @returns A WeightedModifierTypeWeightFunc
+ */
+function lureWeightFunc(maxBattles: number, weight: number): WeightedModifierTypeWeightFunc {
+  return (party: Pokemon[]) => {
+    const lures = party[0].scene.getModifiers(Modifiers.DoubleBattleChanceBoosterModifier);
+    return !(party[0].scene.gameMode.isClassic && party[0].scene.currentBattle.waveIndex === 199) && (lures.length === 0 || lures.filter(m => m.getMaxBattles() === maxBattles && m.getBattleCount() >= maxBattles * 0.6).length === 0) ? weight : 0;
+  };
+}
+
 class WeightedModifierType {
   public modifierType: ModifierType;
   public weight: integer | WeightedModifierTypeWeightFunc;
@@ -1521,6 +1588,8 @@ export const modifierTypes = {
   RARE_FORM_CHANGE_ITEM: () => new FormChangeItemModifierTypeGenerator(true),
   FORCE_EVOLVE_ITEM: () => new EvolutionItemModifierType(EvolutionItem.SUPER_EVO_ITEM),
   FORCE_FUSE_EVOLVE_ITEM: () => new EvolutionItemModifierType(EvolutionItem.SUPER_EVO_ITEM_FUSION),
+
+  EVOLUTION_TRACKER_GIMMIGHOUL: () => new PokemonHeldItemModifierType("modifierType:ModifierType.EVOLUTION_TRACKER_GIMMIGHOUL", "relic_gold", (type, _args) => new Modifiers.EvoTrackerModifier(type, (_args[0] as Pokemon).id, Species.GIMMIGHOUL, 10)),
 
   MEGA_BRACELET: () => new ModifierType("modifierType:ModifierType.MEGA_BRACELET", "mega_bracelet", (type, _args) => new Modifiers.MegaEvolutionAccessModifier(type)),
   DYNAMAX_BAND: () => new ModifierType("modifierType:ModifierType.DYNAMAX_BAND", "dynamax_band", (type, _args) => new Modifiers.GigantamaxAccessModifier(type)),
@@ -1707,6 +1776,27 @@ export const modifierTypes = {
   ENEMY_STATUS_EFFECT_HEAL_CHANCE: () => new ModifierType("modifierType:ModifierType.ENEMY_STATUS_EFFECT_HEAL_CHANCE", "wl_full_heal", (type, _args) => new Modifiers.EnemyStatusEffectHealChanceModifier(type, 2.5, 10)),
   ENEMY_ENDURE_CHANCE: () => new EnemyEndureChanceModifierType("modifierType:ModifierType.ENEMY_ENDURE_CHANCE", "wl_reset_urge", 2),
   ENEMY_FUSED_CHANCE: () => new ModifierType("modifierType:ModifierType.ENEMY_FUSED_CHANCE", "wl_custom_spliced", (type, _args) => new Modifiers.EnemyFusionChanceModifier(type, 1)),
+
+  MYSTERY_ENCOUNTER_SHUCKLE_JUICE: () => new ModifierTypeGenerator((party: Pokemon[], pregenArgs?: any[]) => {
+    if (pregenArgs) {
+      return new PokemonBaseStatTotalModifierType(pregenArgs[0] as number);
+    }
+    return new PokemonBaseStatTotalModifierType(Utils.randSeedInt(20));
+  }),
+  MYSTERY_ENCOUNTER_OLD_GATEAU: () => new ModifierTypeGenerator((party: Pokemon[], pregenArgs?: any[]) => {
+    if (pregenArgs) {
+      return new PokemonBaseStatFlatModifierType(pregenArgs[0] as number, pregenArgs[1] as Stat[]);
+    }
+    return new PokemonBaseStatFlatModifierType(Utils.randSeedInt(20), [Stat.HP, Stat.ATK, Stat.DEF]);
+  }),
+  MYSTERY_ENCOUNTER_BLACK_SLUDGE: () => new ModifierTypeGenerator((party: Pokemon[], pregenArgs?: any[]) => {
+    if (pregenArgs) {
+      return new ModifierType("modifierType:ModifierType.MYSTERY_ENCOUNTER_BLACK_SLUDGE", "black_sludge", (type, _args) => new Modifiers.HealShopCostModifier(type, pregenArgs[0] as number));
+    }
+    return new ModifierType("modifierType:ModifierType.MYSTERY_ENCOUNTER_BLACK_SLUDGE", "black_sludge", (type, _args) => new Modifiers.HealShopCostModifier(type, 2.5));
+  }),
+  MYSTERY_ENCOUNTER_MACHO_BRACE: () => new PokemonHeldItemModifierType("modifierType:ModifierType.MYSTERY_ENCOUNTER_MACHO_BRACE", "macho_brace", (type, args) => new Modifiers.PokemonIncrementingStatModifier(type, (args[0] as Pokemon).id)),
+  MYSTERY_ENCOUNTER_GOLDEN_BUG_NET: () => new ModifierType("modifierType:ModifierType.MYSTERY_ENCOUNTER_GOLDEN_BUG_NET", "golden_net", (type, _args) => new Modifiers.BoostBugSpawnModifier(type)),
 };
 
 interface ModifierPool {
@@ -2105,7 +2195,7 @@ const modifierPool: ModifierPool = {
       const thresholdPartyMemberCount = Math.min(party.filter(p => p.hp && p.getMoveset().filter(m => m?.ppUsed && (m.getMovePp() - m.ppUsed) <= 5 && m.ppUsed >= Math.floor(m.getMovePp() / 2)).length).length, 3);
       return thresholdPartyMemberCount;
     }, 3),
-    new WeightedModifierType(modifierTypes.LURE, skipInLastClassicWaveOrDefault(2)),
+    new WeightedModifierType(modifierTypes.LURE, lureWeightFunc(10, 2)),
     new WeightedModifierType(modifierTypes.TEMP_STAT_STAGE_BOOSTER, 4),
     new WeightedModifierType(modifierTypes.BERRY, 2),
     new WeightedModifierType(modifierTypes.TM_COMMON, 2),
@@ -2162,7 +2252,7 @@ const modifierPool: ModifierPool = {
       return thresholdPartyMemberCount;
     }, 3),
     new WeightedModifierType(modifierTypes.DIRE_HIT, 4),
-    new WeightedModifierType(modifierTypes.SUPER_LURE, skipInLastClassicWaveOrDefault(4)),
+    new WeightedModifierType(modifierTypes.SUPER_LURE, lureWeightFunc(15, 4)),
     new WeightedModifierType(modifierTypes.NUGGET, skipInLastClassicWaveOrDefault(5)),
     new WeightedModifierType(modifierTypes.EVOLUTION_ITEM, (party: Pokemon[]) => {
       return Math.min(Math.ceil(party[0].scene.currentBattle.waveIndex / 15), 8);
@@ -2185,7 +2275,7 @@ const modifierPool: ModifierPool = {
   }),
   [ModifierTier.ULTRA]: [
     new WeightedModifierType(modifierTypes.ULTRA_BALL, (party: Pokemon[]) => (hasMaximumBalls(party, PokeballType.ULTRA_BALL)) ? 0 : 15, 15),
-    new WeightedModifierType(modifierTypes.MAX_LURE, skipInLastClassicWaveOrDefault(4)),
+    new WeightedModifierType(modifierTypes.MAX_LURE, lureWeightFunc(30, 4)),
     new WeightedModifierType(modifierTypes.BIG_NUGGET, skipInLastClassicWaveOrDefault(12)),
     new WeightedModifierType(modifierTypes.PP_MAX, 3),
     new WeightedModifierType(modifierTypes.MINT, 4),
@@ -2193,8 +2283,10 @@ const modifierPool: ModifierPool = {
     new WeightedModifierType(modifierTypes.FORM_CHANGE_ITEM, (party: Pokemon[]) => Math.min(Math.ceil(party[0].scene.currentBattle.waveIndex / 50), 4) * 6, 24),
     new WeightedModifierType(modifierTypes.AMULET_COIN, skipInLastClassicWaveOrDefault(3)),
     new WeightedModifierType(modifierTypes.EVIOLITE, (party: Pokemon[]) => {
-      if (evioliteOverride == "on" || (evioliteOverride != "off" && (!party[0].scene.gameMode.isFreshStartChallenge() && party[0].scene.gameData.unlocks[Unlockables.EVIOLITE]))) {
-        return party.some(p => ((p.getSpeciesForm(true).speciesId in pokemonEvolutions) || (p.isFusion() && (p.getFusionSpeciesForm(true).speciesId in pokemonEvolutions))) && !p.getHeldItems().some(i => i instanceof Modifiers.EvolutionStatBoosterModifier)) ? 10 : 0;
+      const { gameMode, gameData } = party[0].scene;
+      if (evioliteOverride == "on" || (evioliteOverride != "off" && gameMode.isDaily || (!gameMode.isFreshStartChallenge() && gameData.isUnlocked(Unlockables.EVIOLITE)))) {
+        return party.some(p => ((p.getSpeciesForm(true).speciesId in pokemonEvolutions) || (p.isFusion() && (p.getFusionSpeciesForm(true).speciesId in pokemonEvolutions)))
+          && !p.getHeldItems().some(i => i instanceof Modifiers.EvolutionStatBoosterModifier) && !p.isMax()) ? 10 : 0;
       }
       return 0;
     }),
@@ -2202,19 +2294,24 @@ const modifierPool: ModifierPool = {
     new WeightedModifierType(modifierTypes.LEEK, (party: Pokemon[]) => {
       const checkedSpecies = [ Species.FARFETCHD, Species.GALAR_FARFETCHD, Species.SIRFETCHD ];
       // If a party member doesn't already have a Leek and is one of the relevant species, Leek can appear
-      return party.some(p => !p.getHeldItems().some(i => i instanceof Modifiers.SpeciesCritBoosterModifier) && (checkedSpecies.includes(p.getSpeciesForm(true).speciesId) || (p.isFusion() && checkedSpecies.includes(p.getFusionSpeciesForm(true).speciesId)))) ? 12 : 0;
+      return party.some(p => !p.getHeldItems().some(i => i instanceof Modifiers.SpeciesCritBoosterModifier)
+        && (checkedSpecies.includes(p.getSpeciesForm(true).speciesId)
+        || (p.isFusion() && checkedSpecies.includes(p.getFusionSpeciesForm(true).speciesId)))) ? 12 : 0;
     }, 12),
     new WeightedModifierType(modifierTypes.TOXIC_ORB, (party: Pokemon[]) => {
       const checkedAbilities = [Abilities.QUICK_FEET, Abilities.GUTS, Abilities.MARVEL_SCALE, Abilities.TOXIC_BOOST, Abilities.POISON_HEAL, Abilities.MAGIC_GUARD];
       const checkedMoves = [Moves.FACADE, Moves.TRICK, Moves.FLING, Moves.SWITCHEROO, Moves.PSYCHO_SHIFT];
       // If a party member doesn't already have one of these two orbs and has one of the above moves or abilities, the orb can appear
-      return party.some(p => !p.getHeldItems().some(i => i instanceof Modifiers.TurnStatusEffectModifier) && (checkedAbilities.some(a => p.hasAbility(a, false, true)) || p.getMoveset(true).some(m => m && checkedMoves.includes(m.moveId)))) ? 10 : 0;
+      return party.some(p => !p.getHeldItems().some(i => i instanceof Modifiers.TurnStatusEffectModifier)
+        && (checkedAbilities.some(a => p.hasAbility(a, false, true))
+        || p.getMoveset(true).some(m => m && checkedMoves.includes(m.moveId)))) ? 10 : 0;
     }, 10),
     new WeightedModifierType(modifierTypes.FLAME_ORB, (party: Pokemon[]) => {
       const checkedAbilities = [Abilities.QUICK_FEET, Abilities.GUTS, Abilities.MARVEL_SCALE, Abilities.FLARE_BOOST, Abilities.MAGIC_GUARD];
       const checkedMoves = [Moves.FACADE, Moves.TRICK, Moves.FLING, Moves.SWITCHEROO, Moves.PSYCHO_SHIFT];
       // If a party member doesn't already have one of these two orbs and has one of the above moves or abilities, the orb can appear
-      return party.some(p => !p.getHeldItems().some(i => i instanceof Modifiers.TurnStatusEffectModifier) && (checkedAbilities.some(a => p.hasAbility(a, false, true)) || p.getMoveset(true).some(m => m && checkedMoves.includes(m.moveId)))) ? 10 : 0;
+      return party.some(p => !p.getHeldItems().some(i => i instanceof Modifiers.TurnStatusEffectModifier)
+        && (checkedAbilities.some(a => p.hasAbility(a, false, true)) || p.getMoveset(true).some(m => m && checkedMoves.includes(m.moveId)))) ? 10 : 0;
     }, 10),
     new WeightedModifierType(modifierTypes.WHITE_HERB, (party: Pokemon[]) => {
       const checkedAbilities = [Abilities.WEAK_ARMOR, Abilities.CONTRARY, Abilities.MOODY, Abilities.ANGER_SHELL, Abilities.COMPETITIVE, Abilities.DEFIANT];
@@ -2255,7 +2352,7 @@ const modifierPool: ModifierPool = {
     new WeightedModifierType(modifierTypes.ABILITY_CHARM, skipInClassicAfterWave(189, 6)),
     new WeightedModifierType(modifierTypes.FOCUS_BAND, 5),
     new WeightedModifierType(modifierTypes.KINGS_ROCK, 3),
-    new WeightedModifierType(modifierTypes.LOCK_CAPSULE, skipInLastClassicWaveOrDefault(3)),
+    new WeightedModifierType(modifierTypes.LOCK_CAPSULE, (party: Pokemon[]) => party[0].scene.gameMode.isClassic ? 0 : 3),
     new WeightedModifierType(modifierTypes.SUPER_EXP_CHARM, skipInLastClassicWaveOrDefault(8)),
     new WeightedModifierType(modifierTypes.RARE_FORM_CHANGE_ITEM, (party: Pokemon[]) => Math.min(Math.ceil(party[0].scene.currentBattle.waveIndex / 50), 4) * 6, 24),
     new WeightedModifierType(modifierTypes.MEGA_BRACELET, (party: Pokemon[]) => Math.min(Math.ceil(party[0].scene.currentBattle.waveIndex / 50), 4) * 9, 36),
@@ -2269,9 +2366,10 @@ const modifierPool: ModifierPool = {
     new WeightedModifierType(modifierTypes.SHINY_CHARM, 14),
     new WeightedModifierType(modifierTypes.HEALING_CHARM, 18),
     new WeightedModifierType(modifierTypes.MULTI_LENS, 18),
-    new WeightedModifierType(modifierTypes.VOUCHER_PREMIUM, (party: Pokemon[], rerollCount: integer) => !party[0].scene.gameMode.isDaily && !party[0].scene.gameMode.isEndless && !party[0].scene.gameMode.isSplicedOnly ? Math.max(5 - rerollCount * 2, 0) : 0, 5),
+    new WeightedModifierType(modifierTypes.VOUCHER_PREMIUM, (party: Pokemon[], rerollCount: integer) =>
+      !party[0].scene.gameMode.isDaily && !party[0].scene.gameMode.isEndless && !party[0].scene.gameMode.isSplicedOnly ? Math.max(5 - rerollCount * 2, 0) : 0, 5),
     new WeightedModifierType(modifierTypes.DNA_SPLICERS, (party: Pokemon[]) => !party[0].scene.gameMode.isSplicedOnly && party.filter(p => !p.fusionSpecies).length > 1 ? 24 : 0, 24),
-    new WeightedModifierType(modifierTypes.MINI_BLACK_HOLE, (party: Pokemon[]) => (!party[0].scene.gameMode.isFreshStartChallenge() && party[0].scene.gameData.unlocks[Unlockables.MINI_BLACK_HOLE]) ? 1 : 0, 1),
+    new WeightedModifierType(modifierTypes.MINI_BLACK_HOLE, (party: Pokemon[]) => (party[0].scene.gameMode.isDaily || (!party[0].scene.gameMode.isFreshStartChallenge() && party[0].scene.gameData.isUnlocked(Unlockables.MINI_BLACK_HOLE))) ? 1 : 0, 1),
   ].map(m => {
     m.setTier(ModifierTier.MASTER); return m;
   })
@@ -2464,10 +2562,17 @@ export function getModifierPoolForType(poolType: ModifierPoolType): ModifierPool
 }
 
 const tierWeights = [ 768 / 1024, 195 / 1024, 48 / 1024, 12 / 1024, 1 / 1024 ];
+/**
+ * Allows a unit test to check if an item exists in the Modifier Pool. Checks the pool directly, rather than attempting to reroll for the item.
+ */
+export const itemPoolChecks: Map<ModifierTypeKeys, boolean | undefined> = new Map();
 
 export function regenerateModifierPoolThresholds(party: Pokemon[], poolType: ModifierPoolType, rerollCount: integer = 0) {
   console.log("Regenerating item pool")
   const pool = getModifierPoolForType(poolType);
+  itemPoolChecks.forEach((v, k) => {
+    itemPoolChecks.set(k, false);
+  });
 
   const ignoredIndexes = {};
   const ignoredNames: string[][] = [];
@@ -2533,6 +2638,9 @@ export function regenerateModifierPoolThresholds(party: Pokemon[], poolType: Mod
         //console.warn("Ignored " + weightedModifierType.modifierType.id)
         return total;
       }
+      if (itemPoolChecks.has(modifierType.modifierType.id as ModifierTypeKeys)) {
+        itemPoolChecks.set(modifierType.modifierType.id as ModifierTypeKeys, true);
+      }
       thresholds.set(total, i++);
       return total;
     }, 0);
@@ -2570,55 +2678,105 @@ export function regenerateModifierPoolThresholds(party: Pokemon[], poolType: Mod
   ignoredPoolNames = ignoredNames;
 }
 
+export interface CustomModifierSettings {
+  guaranteedModifierTiers?: ModifierTier[];
+  guaranteedModifierTypeOptions?: ModifierTypeOption[];
+  guaranteedModifierTypeFuncs?: ModifierTypeFunc[];
+  fillRemaining?: boolean;
+  /** Set to negative value to disable rerolls completely in shop */
+  rerollMultiplier?: number;
+  allowLuckUpgrades?: boolean;
+}
+
 export function getModifierTypeFuncById(id: string): ModifierTypeFunc {
   return modifierTypes[id];
 }
 
-export function getPlayerModifierTypeOptions(count: integer, party: PlayerPokemon[], modifierTiers?: ModifierTier[], scene?: BattleScene, shutUpBro?: boolean, generateAltTiers?: boolean, advanced?: boolean): ModifierTypeOption[] {
+/**
+ * Generates modifier options for a {@linkcode SelectModifierPhase}
+ * @param count Determines the number of items to generate
+ * @param party Party is required for generating proper modifier pools
+ * @param modifierTiers (Optional) If specified, rolls items in the specified tiers. Commonly used for tier-locking with Lock Capsule.
+ * @param customModifierSettings (Optional) If specified, can customize the item shop rewards further.
+ *  - `guaranteedModifierTypeOptions?: ModifierTypeOption[]` If specified, will override the first X items to be specific modifier options (these should be pre-genned).
+ *  - `guaranteedModifierTypeFuncs?: ModifierTypeFunc[]` If specified, will override the next X items to be auto-generated from specific modifier functions (these don't have to be pre-genned).
+ *  - `guaranteedModifierTiers?: ModifierTier[]` If specified, will override the next X items to be the specified tier. These can upgrade with luck.
+ *  - `fillRemaining?: boolean` Default 'false'. If set to true, will fill the remainder of shop items that were not overridden by the 3 options above, up to the 'count' param value.
+ *    - Example: `count = 4`, `customModifierSettings = { guaranteedModifierTiers: [ModifierTier.GREAT], fillRemaining: true }`,
+ *    - The first item in the shop will be `GREAT` tier, and the remaining 3 items will be generated normally.
+ *    - If `fillRemaining = false` in the same scenario, only 1 `GREAT` tier item will appear in the shop (regardless of `count` value).
+ *  - `rerollMultiplier?: number` If specified, can adjust the amount of money required for a shop reroll. If set to a negative value, the shop will not allow rerolls at all.
+ *  - `allowLuckUpgrades?: boolean` Default `true`, if `false` will prevent set item tiers from upgrading via luck
+ */
+export function getPlayerModifierTypeOptions(count: integer, party: PlayerPokemon[], modifierTiers?: ModifierTier[], customModifierSettings?: CustomModifierSettings): ModifierTypeOption[] {
   const options: ModifierTypeOption[] = [];
   const retryCount = Math.min(count * 5, 50);
-  new Array(count).fill(0).map((_, i) => {
-    let candidate = getNewModifierTypeOption(party, ModifierPoolType.PLAYER, modifierTiers && modifierTiers.length > i ? modifierTiers[i] : undefined, undefined, undefined, scene, shutUpBro, generateAltTiers, advanced);
-    let r = 0;
-    const aT = candidate?.alternates
-    const aT2 = candidate?.advancedAlternates
-    const retryPool: string[] = []
-    if (candidate) {
-      retryPool.push(candidate!.type.name)
-    } else {
-      retryPool.push("undefined")
+  if (!customModifierSettings) {
+    new Array(count).fill(0).map((_, i) => {
+      options.push(getModifierTypeOptionWithRetry(options, retryCount, party, modifierTiers && modifierTiers.length > i ? modifierTiers[i] : undefined));
+    });
+  } else {
+    // Guaranteed mod options first
+    if (customModifierSettings?.guaranteedModifierTypeOptions && customModifierSettings.guaranteedModifierTypeOptions.length > 0) {
+      options.push(...customModifierSettings.guaranteedModifierTypeOptions!);
     }
-    while (options.length && ++r < retryCount && options.filter(o => o.type?.name === candidate?.type?.name || o.type?.group === candidate?.type?.group).length) {
-      //if (options.filter(o => o.type?.name === candidate?.type?.name))
-        //console.error(options.filter(o => o.type?.name === candidate?.type?.name).map((v, q) => v.type.name + " (" + v.type.group + ") - conflicting name").join("\n"))
-      //if (options.filter(o => o.type?.group === candidate?.type?.group))
-        //console.error(options.filter(o => o.type?.group === candidate?.type?.group).map((v, q) => v.type.name + " (" + v.type.group + ") - conflicting group").join("\n"))
-      candidate = getNewModifierTypeOption(party, ModifierPoolType.PLAYER, candidate?.type?.tier, candidate?.upgradeCount, undefined, scene, shutUpBro, generateAltTiers, advanced);
-      //console.log("    Retrying - attempt " + r, candidate?.type.name)
-      if (candidate) {
-        retryPool.push(candidate!.type.name)
-      } else {
-        retryPool.push("undefined")
+
+    // Guaranteed mod functions second
+    if (customModifierSettings.guaranteedModifierTypeFuncs && customModifierSettings.guaranteedModifierTypeFuncs.length > 0) {
+      customModifierSettings.guaranteedModifierTypeFuncs!.forEach((mod, i) => {
+        const modifierId = Object.keys(modifierTypes).find(k => modifierTypes[k] === mod) as string;
+        let guaranteedMod: ModifierType = modifierTypes[modifierId]?.();
+
+        // Populates item id and tier
+        guaranteedMod = guaranteedMod
+          .withIdFromFunc(modifierTypes[modifierId])
+          .withTierFromPool();
+
+        const modType = guaranteedMod instanceof ModifierTypeGenerator ? guaranteedMod.generateType(party) : guaranteedMod;
+        if (modType) {
+          const option = new ModifierTypeOption(modType, 0);
+          options.push(option);
+        }
+      });
+    }
+
+    // Guaranteed tiers third
+    if (customModifierSettings.guaranteedModifierTiers && customModifierSettings.guaranteedModifierTiers.length > 0) {
+      const allowLuckUpgrades = customModifierSettings.allowLuckUpgrades ?? true;
+      customModifierSettings.guaranteedModifierTiers.forEach((tier) => {
+        options.push(getModifierTypeOptionWithRetry(options, retryCount, party, tier, allowLuckUpgrades));
+      });
+    }
+
+    // Fill remaining
+    if (options.length < count && customModifierSettings.fillRemaining) {
+      while (options.length < count) {
+        options.push(getModifierTypeOptionWithRetry(options, retryCount, party, undefined));
       }
     }
-    if (options.length && options.filter(o => o.type?.name === candidate?.type?.name || o.type?.group === candidate?.type?.group).length) {
-      console.log("  Item " + (i+1) + "/" + count + " (" + r + " attempts or more)", candidate?.type.name, retryPool)
-    } else {
-      console.log("  Item " + (i+1) + "/" + count + " (" + r + " attempt" + (r == 1 ? "" : "s") + ")", candidate?.type.name, retryPool)
-    }
-    if (candidate && candidate.alternates == undefined) {
-      candidate.alternates = aT
-      candidate.advancedAlternates = aT2
-    }
-    if (candidate) {
-      candidate.retriesList = retryPool;
-      options.push(candidate);
-    }
-  });
+  }
 
   overridePlayerModifierTypeOptions(options, party);
 
   return options;
+}
+
+/**
+ * Will generate a {@linkcode ModifierType} from the {@linkcode ModifierPoolType.PLAYER} pool, attempting to retry duplicated items up to retryCount
+ * @param existingOptions Currently generated options
+ * @param retryCount How many times to retry before allowing a dupe item
+ * @param party Current player party, used to calculate items in the pool
+ * @param tier If specified will generate item of tier
+ * @param allowLuckUpgrades `true` to allow items to upgrade tiers (the little animation that plays and is affected by luck)
+ */
+function getModifierTypeOptionWithRetry(existingOptions: ModifierTypeOption[], retryCount: integer, party: PlayerPokemon[], tier?: ModifierTier, allowLuckUpgrades?: boolean): ModifierTypeOption {
+  allowLuckUpgrades = allowLuckUpgrades ?? true;
+  let candidate = getNewModifierTypeOption(party, ModifierPoolType.PLAYER, tier, undefined, 0, allowLuckUpgrades);
+  let r = 0;
+  while (existingOptions.length && ++r < retryCount && existingOptions.filter(o => o.type.name === candidate?.type.name || o.type.group === candidate?.type.group).length) {
+    candidate = getNewModifierTypeOption(party, ModifierPoolType.PLAYER, candidate?.type.tier ?? tier, candidate?.upgradeCount, 0, allowLuckUpgrades);
+  }
+  return candidate!;
 }
 
 /**
@@ -2698,13 +2856,13 @@ export function getEnemyBuffModifierForWave(tier: ModifierTier, enemyModifiers: 
   }
 
   const retryCount = 50;
-  let candidate = getNewModifierTypeOption(scene.getEnemyParty(), ModifierPoolType.ENEMY_BUFF, tier, undefined, undefined, scene);
+  let candidate = getNewModifierTypeOption(scene.getEnemyParty(), ModifierPoolType.ENEMY_BUFF, tier);
   let r = 0;
   const aT = candidate?.alternates
   const aT2 = candidate?.advancedAlternates
   let matchingModifier: Modifiers.PersistentModifier;
   while (++r < retryCount && (matchingModifier = enemyModifiers.find(m => m.type.id === candidate?.type?.id)!) && matchingModifier.getMaxStackCount(scene) < matchingModifier.stackCount + (r < 10 ? tierStackCount : 1)) {
-    candidate = getNewModifierTypeOption(scene.getEnemyParty(), ModifierPoolType.ENEMY_BUFF, tier, undefined, undefined, scene);
+    candidate = getNewModifierTypeOption(scene.getEnemyParty(), ModifierPoolType.ENEMY_BUFF, tier);
   }
   if (candidate && candidate.alternates == undefined) {
     candidate.alternates = aT
@@ -2718,7 +2876,7 @@ export function getEnemyBuffModifierForWave(tier: ModifierTier, enemyModifiers: 
 }
 
 export function getEnemyModifierTypesForWave(waveIndex: integer, count: integer, party: EnemyPokemon[], poolType: ModifierPoolType.WILD | ModifierPoolType.TRAINER, upgradeChance: integer = 0, scene?: BattleScene): PokemonHeldItemModifierType[] {
-  const ret = new Array(count).fill(0).map(() => getNewModifierTypeOption(party, poolType, undefined, upgradeChance && !Utils.randSeedInt(upgradeChance, undefined, "Chance to upgrade an opponent's item") ? 1 : 0)?.type as PokemonHeldItemModifierType, scene);
+  const ret = new Array(count).fill(0).map(() => getNewModifierTypeOption(party, poolType, undefined, upgradeChance && !Utils.randSeedInt(upgradeChance, undefined, "Chance to upgrade an opponent's item") ? 1 : 0)?.type as PokemonHeldItemModifierType);
   if (!(waveIndex % 1000)) {
     ret.push(getModifierType(modifierTypes.MINI_BLACK_HOLE) as PokemonHeldItemModifierType);
   }
@@ -2744,7 +2902,7 @@ export function getDailyRunStarterModifiers(party: PlayerPokemon[], scene?: Batt
         tier = ModifierTier.MASTER;
       }
 
-      const modifier = getNewModifierTypeOption(party, ModifierPoolType.DAILY_STARTER, tier, undefined, undefined, scene)?.type?.newModifier(p) as Modifiers.PokemonHeldItemModifier;
+      const modifier = getNewModifierTypeOption(party, ModifierPoolType.DAILY_STARTER, tier)?.type?.newModifier(p) as Modifiers.PokemonHeldItemModifier;
       ret.push(modifier);
     }
   }
@@ -2752,7 +2910,16 @@ export function getDailyRunStarterModifiers(party: PlayerPokemon[], scene?: Batt
   return ret;
 }
 
-function getNewModifierTypeOption(party: Pokemon[], poolType: ModifierPoolType, tier?: ModifierTier, upgradeCount?: integer, retryCount: integer = 0, scene?: BattleScene, shutUpBro?: boolean, generateAltTiers?: boolean, advanced?: boolean): ModifierTypeOption | null {
+/**
+ * Generates a ModifierType from the specified pool
+ * @param party party of the trainer using the item
+ * @param poolType PLAYER/WILD/TRAINER
+ * @param tier If specified, will override the initial tier of an item (can still upgrade with luck)
+ * @param upgradeCount If defined, means that this is a new ModifierType being generated to override another via luck upgrade. Used for recursive logic
+ * @param retryCount Max allowed tries before the next tier down is checked for a valid ModifierType
+ * @param allowLuckUpgrades Default true. If false, will not allow ModifierType to randomly upgrade to next tier
+ */
+function getNewModifierTypeOption(party: Pokemon[], poolType: ModifierPoolType, tier?: ModifierTier, upgradeCount?: integer, retryCount: integer = 0, allowLuckUpgrades: boolean = true): ModifierTypeOption | null {
   const player = !poolType;
   const pool = getModifierPoolForType(poolType);
   let thresholds: object;
@@ -2776,58 +2943,12 @@ function getNewModifierTypeOption(party: Pokemon[], poolType: ModifierPoolType, 
   var alternateTiers: ModifierTier[] = []
   var alternateTierContents: string[] = []
   if (tier === undefined) {
-    if (generateAltTiers) {
-      for (var luck = 0; luck <= 14; luck++) {
-        var state = Phaser.Math.RND.state()
-        var tierValueTemp = Utils.randSeedInt(1024, undefined, "%HIDE");
-        var upgradeCountTemp = 0;
-        var tierTemp: ModifierTier;
-        if (upgradeCount) {
-          upgradeCountTemp = upgradeCount;
-        }
-        if (player && tierValueTemp) {
-          var partyLuckValue = luck
-          const upgradeOddsTemp = Math.floor(128 / ((partyLuckValue + 4) / 4));
-          let upgraded = false;
-          do {
-            upgraded = Utils.randSeedInt(upgradeOddsTemp, undefined, "%HIDE") < 4;
-            if (upgraded) {
-              upgradeCountTemp++;
-            }
-          } while (upgraded);
-        }
-        tierTemp = tierValueTemp > 255 ? ModifierTier.COMMON : tierValueTemp > 60 ? ModifierTier.GREAT : tierValueTemp > 12 ? ModifierTier.ULTRA : tierValueTemp ? ModifierTier.ROGUE : ModifierTier.MASTER;
-        // Does this actually do anything?
-        if (!upgradeCountTemp) {
-          upgradeCountTemp = Math.min(upgradeCountTemp, ModifierTier.MASTER - tierTemp);
-        }
-        tierTemp += upgradeCountTemp;
-        while (tierTemp && (!modifierPool.hasOwnProperty(tierTemp) || !modifierPool[tierTemp].length)) {
-          tierTemp--;
-          if (upgradeCountTemp) {
-            upgradeCountTemp--;
-          }
-        }
-        alternateTiers[luck] = tierTemp
-        if (advanced) {
-          var itemIndex = getItemIndex(thresholds, tierTemp)
-          var itemName = getModifierTypeSimulated(pool, tierTemp, itemIndex, party)
-          alternateTierContents[luck] = itemName
-        }
-        Phaser.Math.RND.state(state)
-      }
-    }
     const tierValue = Utils.randSeedInt(1024, undefined, "Choosing a modifier tier");
     if (!upgradeCount) {
       upgradeCount = 0;
     }
-    if (player && tierValue) {
-      var partyLuckValue = getPartyLuckValue(party);
-      if (scene) {
-        if (scene.gameMode.modeId == GameModes.DAILY && scene.disableDailyShinies) {
-          partyLuckValue = 0
-        }
-      }
+    if (player && tierValue && allowLuckUpgrades) {
+      const partyLuckValue = getPartyLuckValue(party);
       const upgradeOdds = Math.floor(128 / ((partyLuckValue + 4) / 4));
       let upgraded = false;
       do {
@@ -2859,34 +2980,8 @@ function getNewModifierTypeOption(party: Pokemon[], poolType: ModifierPoolType, 
     }
   } else if (upgradeCount === undefined && player) {
     upgradeCount = 0;
-    if (tier < ModifierTier.MASTER) {
-      var partyShinyCount = party.filter(p => p.isShiny() && !p.isFainted() && (!this.scene.disableDailyShinies || p.species.luckOverride != 0)).length;
-      if (scene) {
-        if (scene.gameMode.modeId == GameModes.DAILY && scene.disableDailyShinies) {
-          partyShinyCount = 0
-        }
-      }
-      if (generateAltTiers) {
-        for (var luck = 0; luck <= 14; luck++) {
-          var state = Phaser.Math.RND.state()
-          var upgradeOddsTemp = Math.floor(32 / ((luck + 2) / 2));
-          var upgradeCountTemp = 0;
-          while (modifierPool.hasOwnProperty(tier + upgradeCountTemp + 1) && modifierPool[tier + upgradeCountTemp + 1].length) {
-            if (!Utils.randSeedInt(upgradeOddsTemp, undefined, "%HIDE")) {
-              upgradeCountTemp++;
-            } else {
-              break;
-            }
-          }
-          alternateTiers[luck] = tier + upgradeCountTemp
-          if (advanced) {
-            var itemIndex = getItemIndex(thresholds, tier + upgradeCountTemp)
-            var itemName = getModifierTypeSimulated(pool, tier + upgradeCountTemp, itemIndex, party)
-            alternateTierContents[luck] = itemName
-          }
-          Phaser.Math.RND.state(state)
-        }
-      }
+    if (tier < ModifierTier.MASTER && allowLuckUpgrades) {
+      const partyShinyCount = party.filter(p => p.isShiny() && !p.isFainted()).length;
       const upgradeOdds = Math.floor(32 / ((partyShinyCount + 2) / 2));
       while (modifierPool.hasOwnProperty(tier + upgradeCount + 1) && modifierPool[tier + upgradeCount + 1].length) {
         if (!Utils.randSeedInt(upgradeOdds, undefined, "Upgrade chance 2")) {
@@ -2919,28 +3014,23 @@ function getNewModifierTypeOption(party: Pokemon[], poolType: ModifierPoolType, 
   }
 
   if (player) {
-    if (!shutUpBro) {
-      //console.log(index, ignoredPoolIndexes[tier].filter(i => i <= index).length, ignoredPoolIndexes[tier].filter(i => i <= index).length)
-      //console.log("Index ", index);
-      //console.log("# of ignored items for this tier", ignoredPoolIndexes[tier].filter(i => i <= index).length)
-      //console.log("Ignored items for this tier", ignoredPoolIndexes[tier].map((v, i) => [ignoredPoolNames[i], v]).flat())
-    }
+    //console.log(index, ignoredPoolIndexes[tier].filter(i => i <= index).length, ignoredPoolIndexes[tier].filter(i => i <= index).length)
   }
   let modifierType: ModifierType | null = (pool[tier][index]).modifierType;
   if (modifierType instanceof ModifierTypeGenerator) {
     modifierType = (modifierType as ModifierTypeGenerator).generateType(party);
     if (modifierType === null) {
       if (player) {
-        if (!shutUpBro) console.log(ModifierTier[tier], upgradeCount);
+        //console.log(ModifierTier[tier], upgradeCount);
       }
       //console.error("Null Modifier - regenerating")
-      return getNewModifierTypeOption(party, poolType, tier, upgradeCount, ++retryCount, scene, shutUpBro, generateAltTiers);
+      return getNewModifierTypeOption(party, poolType, tier, upgradeCount, ++retryCount, allowLuckUpgrades);
     } else {
       if (doModifierLogging) console.log("Generated type", modifierType)
     }
   }
 
-  if (!shutUpBro) console.log(modifierType, !player ? "(enemy)" : "");
+  //console.log(modifierType, !player ? "(enemy)" : "");
 
   var Option = new ModifierTypeOption(modifierType as ModifierType, upgradeCount!);
   if (alternateTiers.length > 0) {
@@ -2950,9 +3040,6 @@ function getNewModifierTypeOption(party: Pokemon[], poolType: ModifierPoolType, 
   if (alternateTierContents.length > 0) {
     //console.log(Option.type.name, alternateTiers)
     Option.advancedAlternates = alternateTierContents
-  }
-  if (!generateAltTiers) {
-    //Option.alternates = [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1]
   }
   return Option;
 }
@@ -3021,10 +3108,22 @@ export class ModifierTypeOption {
   }
 }
 
+/**
+ * Calculates the team's luck value.
+ * @param party The player's party.
+ * @returns A number between 0 and 14 based on the party's total luck value, or a random number between 0 and 14 if the player is in Daily Run mode.
+ */
 export function getPartyLuckValue(party: Pokemon[]): integer {
+  if (party[0].scene.gameMode.isDaily) {
+    const DailyLuck = new Utils.NumberHolder(0);
+    party[0].scene.executeWithSeedOffset(() => {
+      DailyLuck.value = Utils.randSeedInt(15); // Random number between 0 and 14
+    }, 0, party[0].scene.seed);
+    return DailyLuck.value;
+  }
   const luck = Phaser.Math.Clamp(party.map(p => p.isAllowedInBattle() ? p.getLuck() : 0)
     .reduce((total: integer, value: integer) => total += value, 0), 0, 14);
-  return luck || 0;
+  return luck ?? 0;
 }
 
 export function getLuckString(luckValue: integer): string {

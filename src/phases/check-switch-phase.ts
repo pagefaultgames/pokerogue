@@ -8,8 +8,9 @@ import { BattlePhase } from "./battle-phase";
 import { PostSummonPhase } from "./post-summon-phase";
 import { SummonMissingPhase } from "./summon-missing-phase";
 import { SwitchPhase } from "./switch-phase";
-import { getNatureName } from "#app/data/nature.js";
+import { getNatureName } from "#app/data/nature";
 import * as LoggerTools from "../logger";
+import { SwitchType } from "#enums/switch-type";
 
 export class CheckSwitchPhase extends BattlePhase {
   protected fieldIndex: integer;
@@ -57,78 +58,16 @@ export class CheckSwitchPhase extends BattlePhase {
       if (ivDesc == "") {
         ivDesc = "No Max IVs"
       } else {
-        ivDesc = "31: " + ivDesc
+        ivDesc = "31iv: " + ivDesc
       }
       pk.getBattleInfo().flyoutMenu.toggleFlyout(true)
       pk.getBattleInfo().flyoutMenu.flyoutText[0].text = getNatureName(pk.nature)
       pk.getBattleInfo().flyoutMenu.flyoutText[1].text = ivDesc
       pk.getBattleInfo().flyoutMenu.flyoutText[2].text = pk.getAbility().name
       pk.getBattleInfo().flyoutMenu.flyoutText[3].text = pk.getPassiveAbility().name
-      if (pk.hasAbility(pk.species.abilityHidden, true, true)) {
+      if (pk.getAbility().id == pk.getSpeciesForm().abilityHidden) {
         pk.getBattleInfo().flyoutMenu.flyoutText[2].setColor("#e8e8a8")
-      }
-    }
-    if (false) {
-      this.scene.pokemonInfoContainer.show(this.scene.getEnemyField()[0], false, 1, true);
-      if (this.scene.getEnemyField()[1] != undefined) {
-        this.scene.tweens.add({
-          targets: this.scene.pokemonInfoContainer,
-          alpha: 1,
-          duration: 5000,
-          onComplete: () => {
-            this.scene.pokemonInfoContainer.hide(1.3)
-            this.scene.tweens.add({
-              targets: this.scene.pokemonInfoContainer,
-              alpha: 1,
-              duration: 1000,
-              onComplete: () => {
-                this.scene.pokemonInfoContainer.show(this.scene.getEnemyField()[1], false, 1, true);
-              }
-            })
-          }
-        })
-      }
-    }
-
-    for (var i = 0; i < this.scene.getEnemyField().length; i++) {
-      var pk = this.scene.getEnemyField()[i]
-      var maxIVs: string[] = []
-      var ivnames = ["HP", "Atk", "Def", "Sp.Atk", "Sp.Def", "Speed"]
-      pk.ivs.forEach((iv, j) => {if (iv == 31) maxIVs.push(ivnames[j])})
-      var ivDesc = maxIVs.join(",")
-      if (ivDesc == "") {
-        ivDesc = "No Max IVs"
-      } else {
-        ivDesc = "31: " + ivDesc
-      }
-      pk.getBattleInfo().flyoutMenu.toggleFlyout(true)
-      pk.getBattleInfo().flyoutMenu.flyoutText[0].text = getNatureName(pk.nature)
-      pk.getBattleInfo().flyoutMenu.flyoutText[1].text = ivDesc
-      pk.getBattleInfo().flyoutMenu.flyoutText[2].text = pk.getAbility().name
-      pk.getBattleInfo().flyoutMenu.flyoutText[3].text = pk.getPassiveAbility().name
-      if (pk.hasAbility(pk.species.abilityHidden, true, true)) {
-        pk.getBattleInfo().flyoutMenu.flyoutText[2].setColor("#e8e8a8")
-      }
-    }
-    if (false) {
-      this.scene.pokemonInfoContainer.show(this.scene.getEnemyField()[0], false, 1, true);
-      if (this.scene.getEnemyField()[1] != undefined) {
-        this.scene.tweens.add({
-          targets: this.scene.pokemonInfoContainer,
-          alpha: 1,
-          duration: 5000,
-          onComplete: () => {
-            this.scene.pokemonInfoContainer.hide(1.3)
-            this.scene.tweens.add({
-              targets: this.scene.pokemonInfoContainer,
-              alpha: 1,
-              duration: 1000,
-              onComplete: () => {
-                this.scene.pokemonInfoContainer.show(this.scene.getEnemyField()[1], false, 1, true);
-              }
-            })
-          }
-        })
+        pk.getBattleInfo().flyoutMenu.flyoutText[2].text += " (HA)"
       }
     }
 
@@ -137,7 +76,7 @@ export class CheckSwitchPhase extends BattlePhase {
         this.scene.ui.setMode(Mode.MESSAGE);
         LoggerTools.isPreSwitch.value = true
         this.scene.tryRemovePhase(p => p instanceof PostSummonPhase && p.player && p.fieldIndex === this.fieldIndex);
-        this.scene.unshiftPhase(new SwitchPhase(this.scene, this.fieldIndex, false, true));
+        this.scene.unshiftPhase(new SwitchPhase(this.scene, SwitchType.PRE_SWITCH, this.fieldIndex, false, true));
         for (var i = 0; i < this.scene.getEnemyField().length; i++) {
           this.scene.getEnemyField()[i].getBattleInfo().flyoutMenu.toggleFlyout(false)
           this.scene.getEnemyField()[i].getBattleInfo().flyoutMenu.flyoutText[0].text = "???"

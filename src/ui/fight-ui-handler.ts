@@ -1,4 +1,4 @@
-import BattleScene from "../battle-scene";
+import BattleScene, { InfoToggle } from "../battle-scene";
 import { addTextObject, TextStyle } from "./text";
 import { getTypeDamageMultiplierColor, Type } from "../data/type";
 import { Command } from "./command-ui-handler";
@@ -10,10 +10,12 @@ import i18next from "i18next";
 import {Button} from "#enums/buttons";
 import Pokemon, { AttackData, EnemyPokemon, PlayerPokemon, PokemonMove } from "#app/field/pokemon";
 import { CommandPhase } from "#app/phases/command-phase";
-import { PokemonMultiHitModifierType } from "#app/modifier/modifier-type.js";
-import { StatusEffect } from "#app/enums/status-effect.js";
+import { PokemonMultiHitModifierType } from "#app/modifier/modifier-type";
+import { StatusEffect } from "#app/enums/status-effect";
+import MoveInfoOverlay from "./move-info-overlay";
+import { BattleType } from "#app/battle";
 
-export default class FightUiHandler extends UiHandler {
+export default class FightUiHandler extends UiHandler implements InfoToggle {
   public static readonly MOVES_CONTAINER_NAME = "moves";
 
   private movesContainer: Phaser.GameObjects.Container;
@@ -27,6 +29,7 @@ export default class FightUiHandler extends UiHandler {
   private accuracyText: Phaser.GameObjects.Text;
   private cursorObj: Phaser.GameObjects.Image | null;
   private moveCategoryIcon: Phaser.GameObjects.Sprite;
+  private moveInfoOverlay : MoveInfoOverlay;
 
   protected fieldIndex: integer = 0;
   protected cursor2: integer = 0;
@@ -86,6 +89,24 @@ export default class FightUiHandler extends UiHandler {
     this.accuracyText.setOrigin(1, 0.5);
     this.accuracyText.setVisible(false);
     this.moveInfoContainer.add(this.accuracyText);
+
+    // prepare move overlay
+    const overlayScale = 1;
+    this.moveInfoOverlay = new MoveInfoOverlay(this.scene, {
+      delayVisibility: true,
+      scale: overlayScale,
+      onSide: true,
+      right: true,
+      x: 0,
+      y: -MoveInfoOverlay.getHeight(overlayScale, true),
+      width: (this.scene.game.canvas.width / 6) + 4,
+      hideEffectBox: true,
+      hideBg: true
+    });
+    ui.add(this.moveInfoOverlay);
+    // register the overlay to receive toggle events
+    this.scene.addInfoToggle(this.moveInfoOverlay);
+    this.scene.addInfoToggle(this);
   }
 
   show(args: any[]): boolean {
@@ -104,6 +125,8 @@ export default class FightUiHandler extends UiHandler {
       this.setCursor(this.getCursor());
     }
     this.displayMoves();
+    this.toggleInfo(false); // in case cancel was pressed while info toggle is active
+    this.active = true;
     return true;
   }
 
@@ -122,8 +145,12 @@ export default class FightUiHandler extends UiHandler {
           ui.playError();
         }
       } else {
-        ui.setMode(Mode.COMMAND, this.fieldIndex);
-        success = true;
+        // Cannot back out of fight menu if skipToFightInput is enabled
+        const { battleType, mysteryEncounter } = this.scene.currentBattle;
+        if (battleType !== BattleType.MYSTERY_ENCOUNTER || !mysteryEncounter?.skipToFightInput) {
+          ui.setMode(Mode.COMMAND, this.fieldIndex);
+          success = true;
+        }
       }
     } else {
       switch (button) {
@@ -157,6 +184,27 @@ export default class FightUiHandler extends UiHandler {
     return success;
   }
 
+  toggleInfo(visible: boolean): void {
+    if (visible) {
+      this.movesContainer.setVisible(false);
+      this.cursorObj?.setVisible(false);
+    }
+    this.scene.tweens.add({
+      targets: [this.movesContainer, this.cursorObj],
+      duration: Utils.fixedInt(125),
+      ease: "Sine.easeInOut",
+      alpha: visible ? 0 : 1
+    });
+    if (!visible) {
+      this.movesContainer.setVisible(true);
+      this.cursorObj?.setVisible(true);
+    }
+  }
+
+  isActive(): boolean {
+    return this.active;
+  }
+
   getCursor(): integer {
     return !this.fieldIndex ? this.cursor : this.cursor2;
   }
@@ -164,6 +212,7 @@ export default class FightUiHandler extends UiHandler {
   setCursor(cursor: integer): boolean {
     const ui = this.getUi();
 
+    this.moveInfoOverlay.clear();
     const changed = this.getCursor() !== cursor;
     if (changed) {
       if (!this.fieldIndex) {
@@ -217,6 +266,7 @@ export default class FightUiHandler extends UiHandler {
       //** Changes the text color and shadow according to the determined TextStyle */
       this.ppText.setColor(this.getTextColor(ppColorStyle, false));
       this.ppText.setShadowColor(this.getTextColor(ppColorStyle, true));
+      this.moveInfoOverlay.show(pokemonMove.getMove());
 
       pokemon.getOpponents().forEach((opponent) => {
         opponent.updateEffectiveness(this.getEffectivenessText(pokemon, opponent, pokemonMove));
@@ -306,8 +356,10 @@ export default class FightUiHandler extends UiHandler {
     this.accuracyLabel.setVisible(false);
     this.accuracyText.setVisible(false);
     this.moveCategoryIcon.setVisible(false);
+    this.moveInfoOverlay.clear();
     messageHandler.bg.setVisible(true);
     this.eraseCursor();
+    this.active = false;
   }
 
   clearMoves() {
@@ -327,12 +379,11 @@ export default class FightUiHandler extends UiHandler {
   }
 
   calcDamage(user: PlayerPokemon, target: Pokemon, move: PokemonMove) {
-    var dmgHigh = 0;
-    var dmgLow = 0;
-    var out = target.apply(user, move.getMove(), true) as AttackData
+    var dmgHigh = 0
+    var dmgLow = 0
+    var crit = target.tryCriticalHit(user, move.getMove(), true)
+    var out = target.getAttackDamage(user, move.getMove(), false, false, crit, true)
     //console.log(out)
-    dmgHigh = out.damageHigh;
-    dmgLow = out.damageLow;
     var minHits = 1
     var maxHits = -1
     var mh = move.getMove().getAttrs(MoveData.MultiHitAttr)

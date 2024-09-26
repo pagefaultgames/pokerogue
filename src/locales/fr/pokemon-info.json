@@ -17,7 +17,7 @@
     "HPStat": "PV"
   },
   "Type": {
-    "UNKNOWN": "Inconnu",
+    "UNKNOWN": "???",
     "NORMAL": "Normal",
     "FIGHTING": "Combat",
     "FLYING": "Vol",

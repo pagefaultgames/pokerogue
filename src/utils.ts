@@ -1,5 +1,6 @@
 import { MoneyFormat } from "#enums/money-format";
 import * as LoggerTools from "./logger"
+import { Moves } from "#enums/moves";
 import i18next from "i18next";
 
 export const MissingTextureKey = "__MISSING";
@@ -610,8 +611,16 @@ export function capitalizeString(str: string, sep: string, lowerFirstChar: boole
  * Returns if an object is null or undefined
  * @param object
  */
-export function isNullOrUndefined(object: any): boolean {
+export function isNullOrUndefined(object: any): object is undefined | null {
   return null === object || undefined === object;
+}
+
+/**
+ * Capitalizes the first letter of a string
+ * @param str
+ */
+export function capitalizeFirstLetter(str: string) {
+  return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
 /**
@@ -646,4 +655,13 @@ export function getLocalizedSpriteKey(baseKey: string) {
  */
 export function isBetween(num: number, min: number, max: number): boolean {
   return num >= min && num <= max;
+}
+
+/**
+ * Helper method to return the animation filename for a given move
+ *
+ * @param move the move for which the animation filename is needed
+ */
+export function animationFileName(move: Moves): string {
+  return Moves[move].toLowerCase().replace(/\_/g, "-");
 }

@@ -3,19 +3,31 @@ import { LapsingPersistentModifier, LapsingPokemonHeldItemModifier } from "#app/
 import { BattlePhase } from "./battle-phase";
 import { GameOverPhase } from "./game-over-phase";
 import * as LoggerTools from "../logger";
+import BattleScene from "#app/battle-scene";
 
 export class BattleEndPhase extends BattlePhase {
+  /** If true, will increment battles won */
+  isVictory: boolean;
+
+  constructor(scene: BattleScene, isVictory: boolean = true) {
+    super(scene);
+
+    this.isVictory = isVictory;
+  }
+
   start() {
     super.start();
 
-    this.scene.currentBattle.addBattleScore(this.scene);
+    if (this.isVictory) {
+      this.scene.currentBattle.addBattleScore(this.scene);
 
-    this.scene.gameData.gameStats.battles++;
-    if (this.scene.currentBattle.trainer) {
-      this.scene.gameData.gameStats.trainersDefeated++;
-    }
-    if (this.scene.gameMode.isEndless && this.scene.currentBattle.waveIndex + 1 > this.scene.gameData.gameStats.highestEndlessWave) {
-      this.scene.gameData.gameStats.highestEndlessWave = this.scene.currentBattle.waveIndex + 1;
+      this.scene.gameData.gameStats.battles++;
+      if (this.scene.currentBattle.trainer) {
+        this.scene.gameData.gameStats.trainersDefeated++;
+      }
+      if (this.scene.gameMode.isEndless && this.scene.currentBattle.waveIndex + 1 > this.scene.gameData.gameStats.highestEndlessWave) {
+        this.scene.gameData.gameStats.highestEndlessWave = this.scene.currentBattle.waveIndex + 1;
+      }
     }
 
     // Endless graceful end

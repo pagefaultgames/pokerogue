@@ -58,7 +58,7 @@ export class DamagePhase extends PokemonPhase {
       this.scene.damageNumberHandler.add(this.getPokemon(), this.amount, this.damageResult, this.critical);
     }
 
-    if (this.damageResult !== HitResult.OTHER) {
+    if (this.damageResult !== HitResult.OTHER && this.amount > 0) {
       const flashTimer = this.scene.time.addEvent({
         delay: 100,
         repeat: 5,

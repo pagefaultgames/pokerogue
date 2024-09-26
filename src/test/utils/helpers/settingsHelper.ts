@@ -1,6 +1,7 @@
 import { PlayerGender } from "#app/enums/player-gender";
 import { BattleStyle } from "#app/enums/battle-style";
 import { GameManagerHelper } from "./gameManagerHelper";
+import { ExpGainsSpeed } from "#app/enums/exp-gains-speed";
 
 /**
  * Helper to handle settings for tests
@@ -36,6 +37,15 @@ export class SettingsHelper extends GameManagerHelper {
   playerGender(gender: PlayerGender) {
     this.game.scene.gameData.gender = gender;
     this.log(`Gender set to: ${PlayerGender[gender]} (=${gender})` );
+  }
+
+  /**
+   * Change the exp gains speed
+   * @param speed the {@linkcode ExpGainsSpeed} to set
+   */
+  expGainsSpeed(speed: ExpGainsSpeed) {
+    this.game.scene.expGainsSpeed = speed;
+    this.log(`Exp Gains Speed set to: ${ExpGainsSpeed[speed]} (=${speed})` );
   }
 
   private log(...params: any[]) {

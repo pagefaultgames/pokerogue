@@ -3,11 +3,14 @@ import OptionSelectUiHandler from "./settings/option-select-ui-handler";
 import { Mode } from "./ui";
 import * as Utils from "../utils";
 import { TextStyle, addTextObject, getTextStyleOptions } from "./text";
-import { getBattleCountSplashMessage, getSplashMessages } from "../data/splash-messages";
+import { getSplashMessages } from "../data/splash-messages";
 import i18next from "i18next";
 import { TimedEventDisplay } from "#app/timed-event-manager";
 
 export default class TitleUiHandler extends OptionSelectUiHandler {
+  /** If the stats can not be retrieved, use this fallback value */
+  private static readonly BATTLES_WON_FALLBACK: number = -99999999;
+
   private titleContainer: Phaser.GameObjects.Container;
   private playerCountLabel: Phaser.GameObjects.Text;
   private splashMessage: string;
@@ -72,8 +75,8 @@ export default class TitleUiHandler extends OptionSelectUiHandler {
       .then(request => request.json())
       .then(stats => {
         this.playerCountLabel.setText(`${stats.playerCount} ${i18next.t("menu:playersOnline")}`);
-        if (this.splashMessage === getBattleCountSplashMessage()) {
-          this.splashMessageText.setText(getBattleCountSplashMessage().replace("{COUNT}", stats.battleCount.toLocaleString("en-US")));
+        if (this.splashMessage === "splashMessages:battlesWon") {
+          this.splashMessageText.setText(i18next.t(this.splashMessage, { count: stats.battleCount }));
         }
       })
       .catch(err => {
@@ -85,7 +88,7 @@ export default class TitleUiHandler extends OptionSelectUiHandler {
     const ret = super.show(args);
 
     if (ret) {
-      this.splashMessage = Utils.randItem(getSplashMessages(), "Splash Message selection");
+      this.splashMessage = Utils.randItem(getSplashMessages());
       this.splashMessageText.setText(this.splashMessage.replace("{COUNT}", "?"));
 
       const ui = this.getUi();

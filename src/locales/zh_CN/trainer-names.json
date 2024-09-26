@@ -30,10 +30,6 @@
   "crasher_wake": "吉宪",
   "fantina": "梅丽莎",
   "byron": "东瓜",
-  "faba": "扎奥博",
-  "plumeria": "布尔美丽",
-  "oleana": "奥莉薇",
-
   "candice": "小菘",
   "volkner": "电次",
   "cilan": "天桐",
@@ -142,6 +138,15 @@
   "rood": "罗德",
   "xerosic": "库瑟洛斯奇",
   "bryony": "芭菈",
+  "faba": "扎奥博",
+  "plumeria": "布尔美丽",
+  "oleana": "奥莉薇",
+  "giacomo": "皮拿",
+  "mela": "梅洛可",
+  "atticus": "秋明",
+  "ortega": "奥尔迪加",
+  "eri": "枇琶",
+  
   "maxie": "赤焰松",
   "archie": "水梧桐",
   "cyrus": "赤日",
@@ -150,6 +155,7 @@
   "lusamine": "露莎米奈",
   "guzma": "古兹马",
   "rose": "洛兹",
+  "cassiopeia": "牡丹",
 
   "blue_red_double": "青绿 & 赤红",
   "red_blue_double": "赤红 & 青绿",
@@ -160,5 +166,18 @@
   "alder_iris_double": "阿戴克 & 艾莉丝",
   "iris_alder_double": "艾莉丝 & 阿戴克",
   "marnie_piers_double": "玛俐 & 聂梓",
-  "piers_marnie_double": "聂梓 & 玛俐"
+  "piers_marnie_double": "聂梓 & 玛俐",
+
+  "buck": "麦可",
+  "cheryl": "芽米",
+  "marley": "米依",
+  "mira": "麦儿",
+  "riley": "亚玄",
+  "victor": "晴彦",
+  "victoria": "安江",
+  "vivi": "小秋",
+  "vicky": "光代",
+  "vito": "良平",
+  "bug_type_superfan": "超级虫系粉丝",
+  "expert_pokemon_breeder": "专业宝可梦饲养员"
 }

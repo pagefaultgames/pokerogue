@@ -64,6 +64,20 @@
     "BaseStatBoosterModifierType": {
       "description": "Erhöht den {{stat}} Basiswert des Trägers um 10%. Das Stapellimit erhöht sich, je höher dein IS-Wert ist."
     },
+    "PokemonBaseStatTotalModifierType": {
+      "name": "Pottrottsaft",
+      "description": "{{increaseDecrease}} alle Basiswerte des Trägers um {{statValue}}. Du wurdest von Pottrott {{blessCurse}}.",
+      "extra": {
+        "increase": "Erhöht",
+        "decrease": "Verringert",
+        "blessed": "gesegnet",
+        "cursed": "verflucht"
+      }
+    },
+    "PokemonBaseStatFlatModifierType": {
+      "name": "Spezialität",
+      "description": "Erhöht den {{stats}}-Wert des Trägers um {{statValue}}. Nach einem komischen Traum gefunden."
+    },
     "AllPokemonFullHpRestoreModifierType": {
       "description": "Stellt 100% der KP aller Pokémon her."
     },
@@ -340,6 +354,10 @@
       "name": "Heiß-Orb",
       "description": "Dieser bizarre Orb fügt seinem Träger im Kampf Verbrennungen zu."
     },
+    "EVOLUTION_TRACKER_GIMMIGHOUL": {
+      "name": "Schätze",
+      "description": "Dieses Pokémon liebt Schätze! Sammle weiter Schätze und vielleicht passiert etwas!"
+    },
     "BATON": {
       "name": "Stab",
       "description": "Ermöglicht das Weitergeben von Effekten beim Wechseln von Pokémon, wodurch auch Fallen umgangen werden."
@@ -397,6 +415,25 @@
     "ENEMY_FUSED_CHANCE": {
       "name": "Fusionsmarke",
       "description": "Fügt eine 1%ige Chance hinzu, dass ein wildes Pokémon eine Fusion ist."
+    },
+    "MYSTERY_ENCOUNTER_SHUCKLE_JUICE": {
+      "name": "Pottrottsaft"
+    },
+    "MYSTERY_ENCOUNTER_BLACK_SLUDGE": {
+      "name": "Giftschleim",
+      "description": "Der Geruch ist so stark, dass die Geschäfte ihre Items nur zu einem stark erhöhten Preis verkaufen."
+    },
+    "MYSTERY_ENCOUNTER_MACHO_BRACE": {
+      "name": "Machoschiene",
+      "description": "Das Besiegen eines Pokémon gewährt dem Besitzer einen Machoschiene-Stapel. Jeder Stapel steigert die Werte leicht, mit einem zusätzlichen Bonus bei maximalen Stapeln."
+    },
+    "MYSTERY_ENCOUNTER_OLD_GATEAU": {
+      "name": "Spezialität",
+      "description": "Erhöht den {{stats}}-Wert des Trägers um {{statValue}}."
+    },
+    "MYSTERY_ENCOUNTER_GOLDEN_BUG_NET": {
+      "name": "Goldenes Käfersammlernetz",
+      "description": "Erhöht die Chance, dass der Besitzer mehr Pokémon vom Typ Käfer findet. Hat ein seltsames Gewicht."
     }
   },
   "SpeciesBoosterItem": {
@@ -471,6 +508,21 @@
     "TART_APPLE": "Saurer Apfel",
     "STRAWBERRY_SWEET": "Zucker-Erdbeere",
     "UNREMARKABLE_TEACUP": "Simple Teeschale",
+    "UPGRADE": "Upgrade",
+    "DUBIOUS_DISC": "Dubiosdisc",
+    "DRAGON_SCALE": "Drachenschuppe",
+    "PRISM_SCALE": "Schönschuppe",
+    "RAZOR_CLAW": "Scharfklaue",
+    "RAZOR_FANG": "Scharfzahn",
+    "REAPER_CLOTH": "Düsterumhang",
+    "ELECTIRIZER": "Stromisierer",
+    "MAGMARIZER": "Magmaisierer",
+    "PROTECTOR": "Schützer",
+    "SACHET": "Duftbeutel",
+    "WHIPPED_DREAM": "Sahnehäubchen",
+    "LEADERS_CREST": "Anführersymbol",
+    "SUN_FLUTE": "Sonnenflöte",
+    "MOON_FLUTE": "Mondflöte",
     "CHIPPED_POT": "Löchrige Kanne",
     "BLACK_AUGURITE": "Schwarzaugit",
     "GALARICA_CUFF": "Galarnuss-Reif",

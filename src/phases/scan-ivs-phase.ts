@@ -54,7 +54,7 @@ export class ScanIvsPhase extends PokemonPhase {
         this.scene.ui.setMode(Mode.CONFIRM, () => {
           this.scene.ui.setMode(Mode.MESSAGE);
           this.scene.ui.clearText();
-          new CommonBattleAnim(CommonAnim.LOCK_ON, pokemon, pokemon).play(this.scene, () => {
+          new CommonBattleAnim(CommonAnim.LOCK_ON, pokemon, pokemon).play(this.scene, false, () => {
             this.scene.ui.getMessageHandler().promptIvs(pokemon.id, pokemon.ivs, this.shownIvs).then(() => this.end());
           });
         }, () => {

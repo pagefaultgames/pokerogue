@@ -1,5 +1,4 @@
 import { GachaType } from "./enums/gacha-types";
-import { trainerConfigs } from "./data/trainer-config";
 import { getBiomeHasProps } from "./field/arena";
 import CacheBustedLoaderPlugin from "./plugins/cache-busted-loader-plugin";
 import { SceneBase } from "./scene-base";
@@ -21,7 +20,7 @@ import i18next from "i18next";
 import { initStatsKeys } from "./ui/game-stats-ui-handler";
 import { initVouchers } from "./system/voucher";
 import { Biome } from "#enums/biome";
-import { TrainerType } from "#enums/trainer-type";
+import {initMysteryEncounters} from "#app/data/mystery-encounters/mystery-encounters";
 
 export const biomePanelIDs: string[] = [
   "town",
@@ -336,14 +335,6 @@ export class LoadingScene extends SceneBase {
     this.loadAtlas("trainer_f_back", "trainer");
     this.loadAtlas("trainer_f_back_pb", "trainer");
 
-    Utils.getEnumValues(TrainerType).map(tt => {
-      const config = trainerConfigs[tt];
-      this.loadAtlas(config.getSpriteKey(), "trainer");
-      if (config.doubleOnly || config.hasDouble) {
-        this.loadAtlas(config.getSpriteKey(true), "trainer");
-      }
-    });
-
     // Load character sprites
     this.loadAtlas("c_rival_m", "character", "rival_m");
     this.loadAtlas("c_rival_f", "character", "rival_f");
@@ -369,12 +360,15 @@ export class LoadingScene extends SceneBase {
     const lang = i18next.resolvedLanguage;
     if (lang !== "en") {
       if (Utils.verifyLang(lang)) {
+        this.loadAtlas(`statuses_${lang}`, "");
         this.loadAtlas(`types_${lang}`, "");
       } else {
         // Fallback to English
+        this.loadAtlas("statuses", "");
         this.loadAtlas("types", "");
       }
     } else {
+      this.loadAtlas("statuses", "");
       this.loadAtlas("types", "");
     }
     const availableLangs = ["en", "de", "it", "fr", "ja", "ko", "es", "pt-BR", "zh-CN"];
@@ -414,6 +408,9 @@ export class LoadingScene extends SceneBase {
         this.loadAtlas(`pokemon_icons_${i}v`, "");
       }
     }
+
+    // Load Mystery Encounter dex progress icon
+    this.loadImage("encounter_radar", "mystery-encounters");
 
     this.loadAtlas("dualshock", "inputs");
     this.loadAtlas("xbox", "inputs");
@@ -491,6 +488,7 @@ export class LoadingScene extends SceneBase {
     initMoves();
     initAbilities();
     initChallenges();
+    initMysteryEncounters();
   }
 
   loadLoadingScreen() {

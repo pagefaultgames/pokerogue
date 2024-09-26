@@ -11,6 +11,8 @@ import i18next from "i18next";
 import * as Utils from "#app/utils";
 import { CommonAnimPhase } from "./common-anim-phase";
 import * as LoggerTools from "../logger";
+import { BattlerTagType } from "#app/enums/battler-tag-type";
+import { HealBlockTag } from "#app/data/battler-tags";
 
 export class PokemonHealPhase extends CommonAnimPhase {
   private hpHealed: integer;
@@ -51,9 +53,14 @@ export class PokemonHealPhase extends CommonAnimPhase {
 
     const hasMessage = !!this.message;
     const healOrDamage = (!pokemon.isFullHp() || this.hpHealed < 0);
+    const healBlock = pokemon.getTag(BattlerTagType.HEAL_BLOCK) as HealBlockTag;
     let lastStatusEffect = StatusEffect.NONE;
 
-    if (healOrDamage) {
+    if (healBlock && this.hpHealed > 0) {
+      this.scene.queueMessage(healBlock.onActivation(pokemon));
+      this.message = null;
+      super.end();
+    } else if (healOrDamage) {
       const hpRestoreMultiplier = new Utils.IntegerHolder(1);
       if (!this.revive) {
         this.scene.applyModifiers(HealingBoosterModifier, this.player, hpRestoreMultiplier);

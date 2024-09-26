@@ -3,6 +3,7 @@ import { SemiInvulnerableTag } from "#app/data/battler-tags";
 import { SpeciesFormChange, getSpeciesFormChangeMessage } from "#app/data/pokemon-forms";
 import { getTypeRgb } from "#app/data/type";
 import { BattleSpec } from "#app/enums/battle-spec";
+import { BattlerTagType } from "#app/enums/battler-tag-type";
 import Pokemon, { EnemyPokemon } from "#app/field/pokemon";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { BattlePhase } from "./battle-phase";
@@ -66,7 +67,7 @@ export class QuietFormChangePhase extends BattlePhase {
     pokemonFormTintSprite.setVisible(false);
     pokemonFormTintSprite.setTintFill(0xFFFFFF);
 
-    this.scene.playSound("PRSFX- Transform");
+    this.scene.playSound("battle_anims/PRSFX- Transform");
 
     this.scene.tweens.add({
       targets: pokemonTintSprite,
@@ -114,6 +115,7 @@ export class QuietFormChangePhase extends BattlePhase {
   }
 
   end(): void {
+    this.pokemon.findAndRemoveTags(t => t.tagType === BattlerTagType.AUTOTOMIZED);
     if (this.pokemon.scene?.currentBattle.battleSpec === BattleSpec.FINAL_BOSS && this.pokemon instanceof EnemyPokemon) {
       this.scene.playBgm();
       this.scene.unshiftPhase(new PokemonHealPhase(this.scene, this.pokemon.getBattlerIndex(), this.pokemon.getMaxHp(), null, false, false, false, true));

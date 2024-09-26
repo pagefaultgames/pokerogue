@@ -1,7 +1,7 @@
 import BattleScene from "#app/battle-scene";
 import { ModifierTier } from "#app/modifier/modifier-tier";
-import { regenerateModifierPoolThresholds, ModifierTypeOption, ModifierType, getPlayerShopModifierTypeOptionsForWave, PokemonModifierType, FusePokemonModifierType, PokemonMoveModifierType, TmModifierType, RememberMoveModifierType, PokemonPpRestoreModifierType, PokemonPpUpModifierType, ModifierPoolType, getPlayerModifierTypeOptions, getPartyLuckValue, getLuckString, setEvioliteOverride, calculateItemConditions } from "#app/modifier/modifier-type";
-import { ExtraModifierModifier, Modifier, PokemonHeldItemModifier } from "#app/modifier/modifier";
+import { regenerateModifierPoolThresholds, ModifierTypeOption, ModifierType, getPlayerShopModifierTypeOptionsForWave, PokemonModifierType, FusePokemonModifierType, PokemonMoveModifierType, TmModifierType, RememberMoveModifierType, PokemonPpRestoreModifierType, PokemonPpUpModifierType, ModifierPoolType, getPlayerModifierTypeOptions, getPartyLuckValue, getLuckString } from "#app/modifier/modifier-type";
+import { ExtraModifierModifier, HealShopCostModifier, Modifier, PokemonHeldItemModifier } from "#app/modifier/modifier";
 import ModifierSelectUiHandler, { SHOP_OPTIONS_ROW_LIMIT } from "#app/ui/modifier-select-ui-handler";
 import PartyUiHandler, { PartyUiMode, PartyOption } from "#app/ui/party-ui-handler";
 import { Mode } from "#app/ui/ui";
@@ -10,19 +10,23 @@ import * as Utils from "#app/utils";
 import { BattlePhase } from "./battle-phase";
 import Overrides from "#app/overrides";
 import * as LoggerTools from "../logger";
+import { CustomModifierSettings } from "#app/modifier/modifier-type";
+import { isNullOrUndefined, NumberHolder } from "#app/utils";
 
 export class SelectModifierPhase extends BattlePhase {
   private rerollCount: integer;
-  private modifierTiers: ModifierTier[] = [];
-  private modifierPredictions: ModifierTypeOption[][] = []
+  private modifierTiers?: ModifierTier[];
+  private customModifierSettings?: CustomModifierSettings;
+  private modifierPredictions: ModifierTypeOption[][] = [];
   private predictionCost: integer = 0;
   private costTiers: integer[] = [];
 
-  constructor(scene: BattleScene, rerollCount: integer = 0, modifierTiers?: ModifierTier[], predictionCost?: integer, modifierPredictions?: ModifierTypeOption[][]) {
+  constructor(scene: BattleScene, rerollCount: integer = 0, modifierTiers?: ModifierTier[], customModifierSettings?: CustomModifierSettings) {
     super(scene);
 
     this.rerollCount = rerollCount;
-    this.modifierTiers = modifierTiers!; // TODO: is this bang correct?
+    this.modifierTiers = modifierTiers;
+    this.customModifierSettings = customModifierSettings;
     this.modifierPredictions = []
     if (modifierPredictions != undefined) {
       this.modifierPredictions = modifierPredictions;
@@ -31,16 +35,11 @@ export class SelectModifierPhase extends BattlePhase {
     this.costTiers = []
   }
 
-  generateSelection(rerollOverride: integer, modifierOverride?: integer, eviolite?: boolean) {
+  generateSelection(rerollOverride: integer, modifierOverride?: integer) {
     //const STATE = Phaser.Math.RND.state() // Store RNG state
     //console.log("====================")
     //console.log("  Reroll Prediction: " + rerollOverride)
     const party = this.scene.getParty();
-    if (eviolite) {
-      setEvioliteOverride("on")
-    } else {
-      setEvioliteOverride("off")
-    }
     regenerateModifierPoolThresholds(party, this.getPoolType(), rerollOverride);
     const modifierCount = new Utils.IntegerHolder(3);
     if (this.isPlayer()) {
@@ -49,8 +48,7 @@ export class SelectModifierPhase extends BattlePhase {
     if (modifierOverride) {
       //modifierCount.value = modifierOverride
     }
-    const typeOptions: ModifierTypeOption[] = this.getModifierTypeOptions(modifierCount.value, true, true);
-    setEvioliteOverride("")
+    const typeOptions: ModifierTypeOption[] = this.getModifierTypeOptions(modifierCount.value);
     typeOptions.forEach((option, idx) => {
       option.netprice = this.predictionCost
       if (option.type.name == "Nugget") {
@@ -65,15 +63,7 @@ export class SelectModifierPhase extends BattlePhase {
       //console.log(option.type.name)
     })
     //console.log("====================")
-    if (eviolite) {
-      this.modifierPredictions[rerollOverride].forEach((m, i) => {
-        if (m.type.name != typeOptions[i].type.name) {
-          m.eviolite = typeOptions[i].type
-        }
-      })
-    } else {
-      this.modifierPredictions[rerollOverride] = typeOptions
-    }
+    this.modifierPredictions[rerollOverride] = typeOptions
     this.costTiers.push(this.predictionCost)
     this.predictionCost += this.getRerollCost(typeOptions, false, rerollOverride)
     //Phaser.Math.RND.state(STATE) // Restore RNG state like nothing happened
@@ -84,19 +74,11 @@ export class SelectModifierPhase extends BattlePhase {
 
     if (!this.rerollCount) {
       this.updateSeed();
-      console.log(calculateItemConditions(this.scene.getParty(), false, true))
-      console.log("\n\nPerforming reroll prediction (Eviolite OFF)\n\n\n")
+      console.log("\n\nReroll Prediction\n\n\n")
       this.predictionCost = 0
       this.costTiers = []
       for (var idx = 0; idx < 10 && this.predictionCost < this.scene.money; idx++) {
-        this.generateSelection(idx, undefined, false)
-      }
-      this.updateSeed();
-      console.log("\n\nPerforming reroll prediction (Eviolite ON)\n\n\n")
-      this.predictionCost = 0
-      this.costTiers = []
-      for (var idx = 0; idx < 10 && this.predictionCost < this.scene.money; idx++) {
-        this.generateSelection(idx, undefined, true)
+        this.generateSelection(idx, undefined)
       }
       this.updateSeed();
     } else {
@@ -109,6 +91,20 @@ export class SelectModifierPhase extends BattlePhase {
     if (this.isPlayer()) {
       this.scene.applyModifiers(ExtraModifierModifier, true, modifierCount);
     }
+
+    // If custom modifiers are specified, overrides default item count
+    if (!!this.customModifierSettings) {
+      const newItemCount = (this.customModifierSettings.guaranteedModifierTiers?.length || 0) +
+        (this.customModifierSettings.guaranteedModifierTypeOptions?.length || 0) +
+        (this.customModifierSettings.guaranteedModifierTypeFuncs?.length || 0);
+      if (this.customModifierSettings.fillRemaining) {
+        const originalCount = modifierCount.value;
+        modifierCount.value = originalCount > newItemCount ? originalCount : newItemCount;
+      } else {
+        modifierCount.value = newItemCount;
+      }
+    }
+
     const typeOptions: ModifierTypeOption[] = this.getModifierTypeOptions(modifierCount.value);
 
     const modifierSelectCallback = (rowCursor: integer, cursor: integer) => {
@@ -125,68 +121,32 @@ export class SelectModifierPhase extends BattlePhase {
       }
       let modifierType: ModifierType;
       let cost: integer;
+      const rerollCost = this.getRerollCost(typeOptions, this.scene.lockModifierTiers);
       switch (rowCursor) {
       case 0:
         switch (cursor) {
-          case 0:
-            const rerollCost1 = this.getRerollCost(typeOptions, this.scene.lockModifierTiers);
-            if (this.scene.money < rerollCost1) {
-              this.scene.ui.playError();
-              return false;
-            } else {
-              this.scene.reroll = true;
-              LoggerTools.logActions(this.scene, this.scene.currentBattle.waveIndex, "Reroll" + (this.scene.lockModifierTiers ? " (Locked)" : ""))
-              this.scene.unshiftPhase(new SelectModifierPhase(this.scene, this.rerollCount + 1, typeOptions.map(o => o.type?.tier).filter(t => t !== undefined) as ModifierTier[], this.predictionCost, this.modifierPredictions));
-              this.scene.ui.clearText();
-              this.scene.ui.setMode(Mode.MESSAGE).then(() => super.end());
-              if (!Overrides.WAIVE_ROLL_FEE_OVERRIDE) {
-                this.scene.money -= rerollCost1;
-                this.scene.updateMoneyText();
-                this.scene.animateMoneyChanged(false);
-                this.scene.playSound("se/buy");
-              }
+        case 0:
+          if (rerollCost < 0 || this.scene.money < rerollCost) {
+            this.scene.ui.playError();
+            return false;
+          } else {
+            this.scene.reroll = true;
+            LoggerTools.logActions(this.scene, this.scene.currentBattle.waveIndex, "Reroll" + (this.scene.lockModifierTiers ? " (Lock Capsule)" : ""));
+            this.scene.unshiftPhase(new SelectModifierPhase(this.scene, this.rerollCount + 1, typeOptions.map(o => o.type?.tier).filter(t => t !== undefined) as ModifierTier[]));
+            this.scene.ui.clearText();
+            this.scene.ui.setMode(Mode.MESSAGE).then(() => super.end());
+            if (!Overrides.WAIVE_ROLL_FEE_OVERRIDE) {
+              this.scene.money -= rerollCost;
+              this.scene.updateMoneyText();
+              this.scene.animateMoneyChanged(false);
             }
             break;
-          case 0.1:
-            const rerollCost2 = this.getRerollCost(this.modifierPredictions[this.rerollCount], false);
-            if (this.scene.money < rerollCost2) {
-              this.scene.ui.playError();
-              return false;
-            } else {
-              this.scene.reroll = true;
-              LoggerTools.logActions(this.scene, this.scene.currentBattle.waveIndex, "+1 Reroll")
-              this.scene.unshiftPhase(new SelectModifierPhase(this.scene, this.rerollCount + 1, typeOptions.map(o => o.type!.tier), this.predictionCost, this.modifierPredictions));
-              this.scene.ui.clearText();
-              this.scene.ui.setMode(Mode.MESSAGE).then(() => super.end());
-              if (!Overrides.WAIVE_ROLL_FEE_OVERRIDE) {
-                this.scene.money -= rerollCost2;
-                this.scene.updateMoneyText();
-                this.scene.animateMoneyChanged(false);
-                this.scene.playSound("se/buy");
-              }
-            }
-            break;
-          case 0.2:
-            const rerollCost3 = this.getRerollCost(this.modifierPredictions[this.rerollCount + 1], false);
-            {
-              this.scene.reroll = true;
-              LoggerTools.logActions(this.scene, this.scene.currentBattle.waveIndex, "-1 Reroll")
-              this.scene.unshiftPhase(new SelectModifierPhase(this.scene, this.rerollCount - 1, typeOptions.map(o => o.type!.tier), this.predictionCost, this.modifierPredictions));
-              this.scene.ui.clearText();
-              this.scene.ui.setMode(Mode.MESSAGE).then(() => super.end());
-              if (!Overrides.WAIVE_ROLL_FEE_OVERRIDE) {
-                this.scene.money -= rerollCost3;
-                this.scene.updateMoneyText();
-                this.scene.animateMoneyChanged(false);
-                this.scene.playSound("se/buy");
-              }
-            }
-            break;
+          }
         case 1:
           this.scene.ui.setModeWithoutClear(Mode.PARTY, PartyUiMode.MODIFIER_TRANSFER, -1, (fromSlotIndex: integer, itemIndex: integer, itemQuantity: integer, toSlotIndex: integer, isAll: boolean, isFirst: boolean) => {
             if (toSlotIndex !== undefined && fromSlotIndex < 6 && toSlotIndex < 6 && fromSlotIndex !== toSlotIndex && itemIndex > -1) {
               const itemModifiers = this.scene.findModifiers(m => m instanceof PokemonHeldItemModifier
-                    && m.isTransferrable && m.pokemonId === party[fromSlotIndex].id) as PokemonHeldItemModifier[];
+                      && m.isTransferable && m.pokemonId === party[fromSlotIndex].id) as PokemonHeldItemModifier[];
               const itemModifier = itemModifiers[itemIndex];
               if (isAll) {
                 if (isFirst)
@@ -206,6 +166,11 @@ export class SelectModifierPhase extends BattlePhase {
           });
           break;
         case 3:
+          if (rerollCost < 0) {
+            // Reroll lock button is also disabled when reroll is disabled
+            this.scene.ui.playError();
+            return false;
+          }
           this.scene.lockModifierTiers = !this.scene.lockModifierTiers;
           const uiHandler = this.scene.ui.getHandler() as ModifierSelectUiHandler;
           uiHandler.setRerollCost(this.getRerollCost(typeOptions, this.scene.lockModifierTiers));
@@ -215,6 +180,12 @@ export class SelectModifierPhase extends BattlePhase {
         }
         return true;
       case 1:
+        if (typeOptions.length === 0) {
+          this.scene.ui.clearText();
+          this.scene.ui.setMode(Mode.MESSAGE);
+          super.end();
+          return true;
+        }
         if (typeOptions[cursor].type) {
           modifierType = typeOptions[cursor].type;
         }
@@ -225,7 +196,10 @@ export class SelectModifierPhase extends BattlePhase {
         if (shopOption.type) {
           modifierType = shopOption.type;
         }
-        cost = shopOption.cost;
+        // Apply Black Sludge to healing item cost
+        const healingItemCost = new NumberHolder(shopOption.cost);
+        this.scene.applyModifier(HealShopCostModifier, true, healingItemCost);
+        cost = healingItemCost.value;
         break;
       }
 
@@ -423,15 +397,26 @@ export class SelectModifierPhase extends BattlePhase {
     } else {
       baseValue = 250;
     }
-    return Math.min(Math.ceil(this.scene.currentBattle.waveIndex / 10) * baseValue * Math.pow(2, (rerollOverride != undefined ? rerollOverride : this.rerollCount)), Number.MAX_SAFE_INTEGER);
+
+    let multiplier = 1;
+    if (!isNullOrUndefined(this.customModifierSettings?.rerollMultiplier)) {
+      if (this.customModifierSettings.rerollMultiplier < 0) {
+        // Completely overrides reroll cost to -1 and early exits
+        return -1;
+      }
+
+      // Otherwise, continue with custom multiplier
+      multiplier = this.customModifierSettings.rerollMultiplier;
+    }
+    return Math.min(Math.ceil(this.scene.currentBattle.waveIndex / 10) * baseValue * Math.pow(2, (rerollOverride != undefined ? rerollOverride : this.rerollCount)) * multiplier, Number.MAX_SAFE_INTEGER);
   }
 
   getPoolType(): ModifierPoolType {
     return ModifierPoolType.PLAYER;
   }
 
-  getModifierTypeOptions(modifierCount: integer, shutUpBro?: boolean, calcAllLuck?: boolean, advanced?: boolean): ModifierTypeOption[] {
-    return getPlayerModifierTypeOptions(modifierCount, this.scene.getParty(), this.scene.lockModifierTiers ? this.modifierTiers : undefined, this.scene, shutUpBro, calcAllLuck, advanced);
+  getModifierTypeOptions(modifierCount: integer): ModifierTypeOption[] {
+    return getPlayerModifierTypeOptions(modifierCount, this.scene.getParty(), this.scene.lockModifierTiers ? this.modifierTiers : undefined, this.customModifierSettings);
   }
 
   addModifier(modifier: Modifier): Promise<boolean> {

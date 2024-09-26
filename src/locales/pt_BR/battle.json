@@ -14,6 +14,10 @@
   "moneyWon": "Você ganhou\n₽{{moneyAmount}} por vencer!",
   "moneyPickedUp": "Você pegou ₽{{moneyAmount}} do chão!",
   "pokemonCaught": "{{pokemonName}} foi capturado!",
+  "pokemonObtained": "Você recebeu um {{pokemonName}}!",
+  "pokemonBrokeFree": "Não!\nO Pokémon escapou!",
+  "pokemonFled": "{{pokemonName}} selvagem fugiu!",
+  "playerFled": "Você fugiu de {{pokemonName}}!",
   "addedAsAStarter": "{{pokemonName}} foi adicionado\naos seus iniciais!",
   "partyFull": "Sua equipe está cheia.\nSolte um Pokémon para ter espaço para {{pokemonName}}?",
   "pokemon": "Pokémon",
@@ -28,6 +32,7 @@
   "attackMissed": "{{pokemonNameWithAffix}} desviou do ataque!",
   "attackHitsCount": "Acertou {{count}} vezes.",
   "rewardGain": "Você recebeu\n{{modifierName}}!",
+  "rewardGainCount": "Você recebeu\n{{count}} {{modifierName}}!",
   "expGain": "{{pokemonName}} ganhou\n{{exp}} pontos de experiência.",
   "levelUp": "{{pokemonName}} subiu para \nNv. {{level}}!",
   "learnMove": "{{pokemonName}} aprendeu {{moveName}}!",
@@ -49,6 +54,7 @@
   "noPokeballTrainer": "Não se pode capturar\nPokémon dos outros!",
   "noPokeballMulti": "Não se pode lançar Poké Bolas\nquando há mais de um Pokémon!",
   "noPokeballStrong": "Este Pokémon é forte demais para ser capturado!\nÉ preciso enfraquecê-lo primeiro!",
+  "noPokeballMysteryEncounter": "Você não pode capturar\nesse Pokémon!",
   "noEscapeForce": "Uma força misteriosa\nte impede de fugir.",
   "noEscapeTrainer": "Não se pode fugir de\nbatalhas contra treinadores!",
   "noEscapePokemon": "O movimento {{moveName}} de {{pokemonName}} te impede de fugir!",
@@ -96,5 +102,8 @@
   "retryBattle": "Você gostaria de tentar novamente desde o início da batalha?",
   "unlockedSomething": "{{unlockedThing}}\nfoi desbloqueado.",
   "congratulations": "Parabéns!",
-  "beatModeFirstTime": "{{speciesName}} venceu o Modo {{gameMode}} pela primeira vez!\nVocê recebeu {{newModifier}}!"
+  "beatModeFirstTime": "{{speciesName}} venceu o Modo {{gameMode}} pela primeira vez!\nVocê recebeu {{newModifier}}!",
+  "mysteryEncounterAppeared": "O que é isso?",
+  "battlerTagsHealBlock": "{{pokemonNameWithAffix}} não pode restaurar seus PS!",
+  "battlerTagsHealBlockOnRemove": "{{pokemonNameWithAffix}} pode restaurar seus PS novamente!"
 }

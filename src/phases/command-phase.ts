@@ -16,6 +16,8 @@ import i18next from "i18next";
 import { FieldPhase } from "./field-phase";
 import { SelectTargetPhase } from "./select-target-phase";
 import * as LoggerTools from "../logger";
+import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
+import { isNullOrUndefined } from "#app/utils";
 
 export class CommandPhase extends FieldPhase {
   protected fieldIndex: integer;
@@ -69,7 +71,12 @@ export class CommandPhase extends FieldPhase {
         }
       }
     } else {
-      this.scene.ui.setMode(Mode.COMMAND, this.fieldIndex);
+      if (this.scene.currentBattle.battleType === BattleType.MYSTERY_ENCOUNTER && this.scene.currentBattle.mysteryEncounter?.skipToFightInput) {
+        this.scene.ui.clearText();
+        this.scene.ui.setMode(Mode.FIGHT, this.fieldIndex);
+      } else {
+        this.scene.ui.setMode(Mode.COMMAND, this.fieldIndex);
+      }
     }
   }
 
@@ -135,6 +142,13 @@ export class CommandPhase extends FieldPhase {
           this.scene.ui.showText("", 0);
           this.scene.ui.setMode(Mode.COMMAND, this.fieldIndex);
         }, null, true);
+      } else if (this.scene.currentBattle.battleType === BattleType.MYSTERY_ENCOUNTER && !this.scene.currentBattle.mysteryEncounter!.catchAllowed) {
+        this.scene.ui.setMode(Mode.COMMAND, this.fieldIndex);
+        this.scene.ui.setMode(Mode.MESSAGE);
+        this.scene.ui.showText(i18next.t("battle:noPokeballMysteryEncounter"), null, () => {
+          this.scene.ui.showText("", 0);
+          this.scene.ui.setMode(Mode.COMMAND, this.fieldIndex);
+        }, null, true);
       } else {
         const targets = this.scene.getEnemyField().filter(p => p.isActive(true)).map(p => p.getBattlerIndex());
         if (targets.length > 1) {
@@ -167,14 +181,16 @@ export class CommandPhase extends FieldPhase {
     case Command.POKEMON:
     case Command.RUN:
       const isSwitch = command === Command.POKEMON;
-      if (!isSwitch && this.scene.arena.biomeType === Biome.END) {
+      const { currentBattle, arena } = this.scene;
+      const mysteryEncounterFleeAllowed = currentBattle.mysteryEncounter?.fleeAllowed;
+      if (!isSwitch && (arena.biomeType === Biome.END || (!isNullOrUndefined(mysteryEncounterFleeAllowed) && !mysteryEncounterFleeAllowed))) {
         this.scene.ui.setMode(Mode.COMMAND, this.fieldIndex);
         this.scene.ui.setMode(Mode.MESSAGE);
         this.scene.ui.showText(i18next.t("battle:noEscapeForce"), null, () => {
           this.scene.ui.showText("", 0);
           this.scene.ui.setMode(Mode.COMMAND, this.fieldIndex);
         }, null, true);
-      } else if (!isSwitch && this.scene.currentBattle.battleType === BattleType.TRAINER) {
+      } else if (!isSwitch && (currentBattle.battleType === BattleType.TRAINER || currentBattle.mysteryEncounter?.encounterMode === MysteryEncounterMode.TRAINER_BATTLE)) {
         this.scene.ui.setMode(Mode.COMMAND, this.fieldIndex);
         this.scene.ui.setMode(Mode.MESSAGE);
         this.scene.ui.showText(i18next.t("battle:noEscapeTrainer"), null, () => {
@@ -185,12 +201,12 @@ export class CommandPhase extends FieldPhase {
         const batonPass = isSwitch && args[0] as boolean;
         const trappedAbMessages: string[] = [];
         if (batonPass || !playerPokemon.isTrapped(trappedAbMessages)) {
-          this.scene.currentBattle.turnCommands[this.fieldIndex] = isSwitch
+          currentBattle.turnCommands[this.fieldIndex] = isSwitch
             ? { command: Command.POKEMON, cursor: cursor, args: args }
             : { command: Command.RUN };
           success = true;
           if (!isSwitch && this.fieldIndex) {
-            this.scene.currentBattle.turnCommands[this.fieldIndex - 1]!.skip = true;
+            currentBattle.turnCommands[this.fieldIndex - 1]!.skip = true;
           }
         } else if (trappedAbMessages.length > 0) {
           if (!isSwitch) {
@@ -207,7 +223,7 @@ export class CommandPhase extends FieldPhase {
 
           // trapTag should be defined at this point, but just in case...
           if (!trapTag) {
-            this.scene.currentBattle.turnCommands[this.fieldIndex] = isSwitch
+            currentBattle.turnCommands[this.fieldIndex] = isSwitch
               ? { command: Command.POKEMON, cursor: cursor, args: args }
               : { command: Command.RUN };
             break;

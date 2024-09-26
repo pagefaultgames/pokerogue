@@ -28,6 +28,7 @@
   "attackMissed": "{{pokemonNameWithAffix}}には　当たらなかった！",
   "attackHitsCount": "{{count}}かい 当たった！",
   "rewardGain": "{{modifierName}}を　手に入れた!",
+  "rewardGainCount": "{{modifierName}}を　{{count}}個　手に入れた!",
   "expGain": "{{pokemonName}}は\n{{exp}}経験値を　もらった！",
   "levelUp": "{{pokemonName}}は\nレベル{{level}}に　上がった！",
   "learnMove": "{{pokemonName}}は　新しく\n{{moveName}}を　覚えた！",
@@ -95,5 +96,6 @@
   "unlockedSomething": "{{unlockedThing}}\nを　アンロックした！",
   "congratulations": "おめでとうございます！！",
   "beatModeFirstTime": "初めて　{{speciesName}}が　{{gameMode}}モードを　クリアした!\n{{newModifier}}を　手に入れた!",
-  "ppReduced": "{{targetName}}の　{{moveName}}を　{{reduction}}削った!"
+  "ppReduced": "{{targetName}}の　{{moveName}}を　{{reduction}}削った!",
+  "mysteryEncounterAppeared": "あれ？"
 }

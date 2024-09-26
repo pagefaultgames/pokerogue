@@ -16,11 +16,15 @@ import { EnemyPokemon, PokemonMove } from "#app/field/pokemon.js";
  */
 export class EnemyCommandPhase extends FieldPhase {
   protected fieldIndex: integer;
+  protected skipTurn: boolean = false;
 
   constructor(scene: BattleScene, fieldIndex: integer) {
     super(scene);
 
     this.fieldIndex = fieldIndex;
+    if (this.scene.currentBattle.mysteryEncounter?.skipEnemyBattleTurns) {
+      this.skipTurn = true;
+    }
   }
 
   start() {
@@ -60,8 +64,8 @@ export class EnemyCommandPhase extends FieldPhase {
             const index = trainer.getNextSummonIndex(enemyPokemon.trainerSlot, partyMemberScores);
 
             battle.turnCommands[this.fieldIndex + BattlerIndex.ENEMY] =
-              { command: Command.POKEMON, cursor: index, args: [false] };
-            console.log(enemyPokemon.name + " selects:", "Switch to " + this.scene.getEnemyParty()[index].name)
+                { command: Command.POKEMON, cursor: index, args: [false], skip: this.skipTurn };
+            console.log(enemyPokemon.name + " selects:", "Switch to " + this.scene.getEnemyParty()[index].name);
             battle.enemySwitchCounter++;
 
             LoggerTools.enemyPlan[this.fieldIndex*2] = "Switching out"
@@ -82,7 +86,7 @@ export class EnemyCommandPhase extends FieldPhase {
     const mv = new PokemonMove(nextMove.move)
 
     this.scene.currentBattle.turnCommands[this.fieldIndex + BattlerIndex.ENEMY] =
-      { command: Command.FIGHT, move: nextMove };
+      { command: Command.FIGHT, move: nextMove, skip: this.skipTurn };
     const targetLabels = ["Counter", "[PLAYER L]", "[PLAYER R]", "[ENEMY L]", "[ENEMY R]"]
     this.scene.getParty().forEach((v, i, a) => {
       if (v.isActive() && v.name) {

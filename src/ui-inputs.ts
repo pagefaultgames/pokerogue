@@ -175,12 +175,14 @@ export class UiInputs {
     }
     switch (this.scene.ui?.getMode()) {
     case Mode.MESSAGE:
-      if (!(this.scene.ui.getHandler() as MessageUiHandler).pendingPrompt) {
+      const messageHandler = this.scene.ui.getHandler<MessageUiHandler>();
+      if (!messageHandler.pendingPrompt || messageHandler.isTextAnimationInProgress()) {
         return;
       }
     case Mode.TITLE:
     case Mode.COMMAND:
     case Mode.MODIFIER_SELECT:
+    case Mode.MYSTERY_ENCOUNTER:
       this.scene.ui.setOverlayMode(Mode.MENU);
       break;
     case Mode.STARTER_SELECT:

@@ -20,6 +20,7 @@ import { WeatherEffectPhase } from "./weather-effect-phase";
 import { BattlerIndex, TurnCommand } from "#app/battle";
 import { TrickRoomTag } from "#app/data/arena-tag";
 import * as LoggerTools from "../logger";
+import { SwitchType } from "#enums/switch-type";
 
 export class TurnStartPhase extends FieldPhase {
   constructor(scene: BattleScene) {
@@ -192,7 +193,6 @@ export class TurnStartPhase extends FieldPhase {
         if (!queuedMove) {
           continue;
         }
-        LoggerTools.Actions[pokemon.getBattlerIndex()] = `[[ ${new PokemonMove(queuedMove.move).getName()} unknown target ]]`
         const move = pokemon.getMoveset().find(m => m?.moveId === queuedMove.move) || new PokemonMove(queuedMove.move);
         if (move.getMove().hasAttr(MoveHeaderAttr)) {
           this.scene.unshiftPhase(new MoveHeaderPhase(this.scene, pokemon, move));
@@ -214,14 +214,10 @@ export class TurnStartPhase extends FieldPhase {
         this.scene.unshiftPhase(new AttemptCapturePhase(this.scene, turnCommand.targets![0] % 2, turnCommand.cursor!));//TODO: is the bang correct here?
         break;
       case Command.POKEMON:
-        this.scene.unshiftPhase(new SwitchSummonPhase(this.scene, pokemon.getFieldIndex(), turnCommand.cursor!, true, turnCommand.args![0] as boolean, pokemon.isPlayer()));//TODO: is the bang correct here?
-        if (pokemon.isPlayer()) {
-          //  " " + LoggerTools.playerPokeName(this.scene, pokemon) + 
-          LoggerTools.Actions[pokemon.getBattlerIndex()] = ((turnCommand.args![0] as boolean) ? "Baton" : "Switch") + " to " + LoggerTools.playerPokeName(this.scene, turnCommand.cursor!)
-        }
+        const switchType = turnCommand.args?.[0] ? SwitchType.BATON_PASS : SwitchType.SWITCH;
+        this.scene.unshiftPhase(new SwitchSummonPhase(this.scene, switchType, pokemon.getFieldIndex(), turnCommand.cursor!, true, pokemon.isPlayer()));
         break;
       case Command.RUN:
-        LoggerTools.Actions[pokemon.getBattlerIndex()] = "Run from battle"
         let runningPokemon = pokemon;
         if (this.scene.currentBattle.double) {
           const playerActivePokemon = field.filter(pokemon => {
@@ -263,6 +259,8 @@ export class TurnStartPhase extends FieldPhase {
     }
     if (LoggerTools.Actions.length > 1 && (LoggerTools.Actions[0] == "" || LoggerTools.Actions[0] == undefined || LoggerTools.Actions[0] == null))
       LoggerTools.Actions.shift() // If the left slot isn't doing anything, delete its entry
+    if (LoggerTools.Actions.length > 1 && (LoggerTools.Actions[1] == "" || LoggerTools.Actions[1] == undefined || LoggerTools.Actions[1] == null))
+      LoggerTools.Actions.pop() // If the right slot isn't doing anything, delete its entry
     LoggerTools.logActions(this.scene, this.scene.currentBattle.waveIndex, LoggerTools.Actions.join(" & "))
 
     /**

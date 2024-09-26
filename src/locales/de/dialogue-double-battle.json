@@ -57,13 +57,14 @@
   },
   "iris_alder_double": {
     "encounter": {
-      "1": "Lilia: Willkommen Herausforderer! Ich bin DER Champion von Einall!\n$Lauro: Lilia, bist du nicht etwas zu aufgeregt?"
+      "1": "Lilia: Willkommen Herausforderer! Ich bin DER Champion von Einall!\n$Lauro: Lilia, bist du nicht etwas zu aufgeregt?",
+      "1_female": "Lilia: Willkommen Herausforderer! Ich bin DER Champion von Einall!\n$Lauro: Lilia, bist du nicht etwas zu aufgeregt?"
     },
     "victory": {
       "1": "Lilia: Eine solche Niederlage ist nicht einfach zu verkraften...\n$Lauro: Aber wir wachsen an unseren Niederlagen und werden immer besser!"
     }
   },
-  "marnie_piers_double": {
+  "piers_marnie_double": {
     "encounter": {
       "1": "Mary: Bruder, lass uns ihnen die Kraft von Spikeford zeigen!\n$Nezz: Wir bringen die Dunkelheit!"
     },
@@ -71,9 +72,10 @@
       "1": "Mary: Du hast Licht in unsere Dunkelheit gebracht!\n$Piers: Es ist viel zu hell..."
     }
   },
-  "piers_marnie_double": {
+  "marnie_piers_double": {
     "encounter": {
-      "1": "Nezz: Bereit für ein Konzert?\n$Mary: Bruder...Sie sind hier um zu kämpfen, nicht um zu singen..."
+      "1": "Nezz: Bereit für ein Konzert?\n$Mary: Bruder...Sie sind hier um zu kämpfen, nicht um zu singen...",
+      "1_female": "Nezz: Bereit für ein Konzert?\n$Mary: Bruder...Sie sind hier um zu kämpfen, nicht um zu singen..."
     },
     "victory": {
       "1": "Nezz: Das war mal ein großartiges Konzert!\n$Marnie: Bruder..."

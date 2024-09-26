@@ -10,6 +10,7 @@ import { EnemyCommandPhase } from "./enemy-command-phase";
 import { GameOverPhase } from "./game-over-phase";
 import { TurnStartPhase } from "./turn-start-phase";
 import * as LoggerTools from "../logger";
+import { handleMysteryEncounterBattleStartEffects, handleMysteryEncounterTurnStartEffects } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 
 export class TurnInitPhase extends FieldPhase {
   constructor(scene: BattleScene) {
@@ -35,7 +36,7 @@ export class TurnInitPhase extends FieldPhase {
           this.scene.unshiftPhase(new GameOverPhase(this.scene));
         } else if (allowedPokemon.length >= this.scene.currentBattle.getBattlerCount() || (this.scene.currentBattle.double && !allowedPokemon[0].isActive(true))) {
           // If there is at least one pokemon in the back that is legal to switch in, force a switch.
-          p.switchOut(false);
+          p.switchOut();
         } else {
           // If there are no pokemon in the back but we're not game overing, just hide the pokemon.
           // This should only happen in double battles.
@@ -50,10 +51,22 @@ export class TurnInitPhase extends FieldPhase {
     //this.scene.pushPhase(new MoveAnimTestPhase(this.scene));
     this.scene.eventTarget.dispatchEvent(new TurnInitEvent());
 
+    // Add new blank actions
+    LoggerTools.Actions[0] = ""
+    LoggerTools.Actions[1] = ""
+
     LoggerTools.enemyPlan[0] = ""
     LoggerTools.enemyPlan[1] = ""
     LoggerTools.enemyPlan[2] = ""
     LoggerTools.enemyPlan[3] = ""
+    
+    handleMysteryEncounterBattleStartEffects(this.scene);
+
+    // If true, will skip remainder of current phase (and not queue CommandPhases etc.)
+    if (handleMysteryEncounterTurnStartEffects(this.scene)) {
+      this.end();
+      return;
+    }
 
     if (false) {
       this.scene.getField().forEach((pokemon, i) => {

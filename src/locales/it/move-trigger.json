@@ -66,5 +66,7 @@
   "revivalBlessing": "{{pokemonName}} torna in forze!",
   "swapArenaTags": "{{pokemonName}} ha invertito gli effetti attivi\nnelle due metà del campo!",
   "exposedMove": "{{pokemonName}} ha identificato\n{{targetPokemonName}}!",
-  "safeguard": "Salvaguardia protegge {{targetName}}!"
+  "chillyReception": "{{pokemonName}} sta per fare una battuta!",
+  "safeguard": "Salvaguardia protegge {{targetName}}!",
+  "afterYou": "{{pokemonName}} approfitta della cortesia!"
 }
