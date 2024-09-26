@@ -36,6 +36,7 @@ import { doTrainerExclamation } from "#app/data/mystery-encounters/utils/encount
 import { getEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
 import { MysteryEncounterPhase } from "#app/phases/mystery-encounter-phases";
 import { getGoldenBugNetSpecies } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
+import { Biome } from "#enums/biome";
 
 export class EncounterPhase extends BattlePhase {
   private loaded: boolean;
@@ -65,7 +66,7 @@ export class EncounterPhase extends BattlePhase {
     const battle = this.scene.currentBattle;
 
     // Generate and Init Mystery Encounter
-    if (battle.battleType === BattleType.MYSTERY_ENCOUNTER && !battle.mysteryEncounter) {
+    if (battle.isBattleMysteryEncounter() && !battle.mysteryEncounter) {
       this.scene.executeWithSeedOffset(() => {
         const currentSessionEncounterType = battle.mysteryEncounterType;
         battle.mysteryEncounter = this.scene.getMysteryEncounter(currentSessionEncounterType);
@@ -81,7 +82,7 @@ export class EncounterPhase extends BattlePhase {
           mysteryEncounter.onInit(this.scene);
         }
         mysteryEncounter.populateDialogueTokensFromRequirements(this.scene);
-      }, this.scene.currentBattle.waveIndex);
+      }, battle.waveIndex);
 
       // Add any special encounter animations to load
       if (mysteryEncounter.encounterAnimations && mysteryEncounter.encounterAnimations.length > 0) {
@@ -101,7 +102,7 @@ export class EncounterPhase extends BattlePhase {
     LoggerTools.rarityslot[0] = 0
     //console.log(this.scene.gameMode.getDailyOverride())
     battle.enemyLevels?.every((level, e) => {
-      if (battle.battleType === BattleType.MYSTERY_ENCOUNTER) {
+      if (battle.isBattleMysteryEncounter()) {
         // Skip enemy loading for MEs, those are loaded elsewhere
         return false;
       }
@@ -111,9 +112,12 @@ export class EncounterPhase extends BattlePhase {
         } else {
           LoggerTools.rarityslot[0] = e
           let enemySpecies = this.scene.randomSpecies(battle.waveIndex, level, true);
-          // If player has golden bug net, rolls 10% chance to replace with species from the golden bug net bug pool
-          if (this.scene.findModifier(m => m instanceof BoostBugSpawnModifier) && randSeedInt(10) === 0) {
-            enemySpecies = getGoldenBugNetSpecies();
+          // If player has golden bug net, rolls 10% chance to replace non-boss wave wild species from the golden bug net bug pool
+          if (this.scene.findModifier(m => m instanceof BoostBugSpawnModifier)
+            && !this.scene.gameMode.isBoss(battle.waveIndex)
+            && this.scene.arena.biomeType !== Biome.END
+            && randSeedInt(10) === 0) {
+            enemySpecies = getGoldenBugNetSpecies(level);
           }
           battle.enemyParty[e] = this.scene.addEnemyPokemon(enemySpecies, level, TrainerSlot.NONE, !!this.scene.getEncounterBossSegments(battle.waveIndex, level, enemySpecies));
           if (this.scene.currentBattle.battleSpec === BattleSpec.FINAL_BOSS) {
@@ -166,7 +170,7 @@ export class EncounterPhase extends BattlePhase {
 
     if (battle.battleType === BattleType.TRAINER) {
       loadEnemyAssets.push(battle.trainer?.loadAssets().then(() => battle.trainer?.initSprite())!); // TODO: is this bang correct?
-    } else if (battle.battleType === BattleType.MYSTERY_ENCOUNTER) {
+    } else if (battle.isBattleMysteryEncounter()) {
       if (battle.mysteryEncounter?.introVisuals) {
         loadEnemyAssets.push(battle.mysteryEncounter.introVisuals.loadAssets().then(() => battle.mysteryEncounter!.introVisuals!.initSprite()));
       }
@@ -198,7 +202,7 @@ export class EncounterPhase extends BattlePhase {
 
     Promise.all(loadEnemyAssets).then(() => {
       battle.enemyParty.every((enemyPokemon, e) => {
-        if (battle.battleType === BattleType.MYSTERY_ENCOUNTER) {
+        if (battle.isBattleMysteryEncounter()) {
           return false;
         }
         if (e < (battle.double ? 2 : 1)) {
@@ -396,7 +400,7 @@ export class EncounterPhase extends BattlePhase {
           showDialogueAndSummon();
         }
       }
-    } else if (this.scene.currentBattle.battleType === BattleType.MYSTERY_ENCOUNTER && this.scene.currentBattle.mysteryEncounter) {
+    } else if (this.scene.currentBattle.isBattleMysteryEncounter() && this.scene.currentBattle.mysteryEncounter) {
       const encounter = this.scene.currentBattle.mysteryEncounter;
       const introVisuals = encounter.introVisuals;
       introVisuals?.playAnim();

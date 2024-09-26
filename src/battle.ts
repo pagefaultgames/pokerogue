@@ -213,7 +213,7 @@ export default class Battle {
 
   getBgmOverride(scene: BattleScene): string | null {
     const battlers = this.enemyParty.slice(0, this.getBattlerCount());
-    if (this.battleType === BattleType.MYSTERY_ENCOUNTER && this.mysteryEncounter?.encounterMode === MysteryEncounterMode.DEFAULT) {
+    if (this.isBattleMysteryEncounter() && this.mysteryEncounter?.encounterMode === MysteryEncounterMode.DEFAULT) {
       // Music is overridden for MEs during ME onInit()
       // Should not use any BGM overrides before swapping from DEFAULT mode
       return null;
@@ -436,6 +436,13 @@ export default class Battle {
     scene.rngCounter = tempRngCounter;
     scene.rngSeedOverride = tempSeedOverride;
     return ret;
+  }
+
+  /**
+   * Returns if the battle is of type {@linkcode BattleType.MYSTERY_ENCOUNTER}
+   */
+  isBattleMysteryEncounter(): boolean {
+    return this.battleType === BattleType.MYSTERY_ENCOUNTER;
   }
 }
 
