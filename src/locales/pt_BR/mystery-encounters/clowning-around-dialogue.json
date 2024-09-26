@@ -8,23 +8,23 @@
   "option": {
     "1": {
       "label": "Batalhar com o Palhaço",
-      "tooltip": "(-) Batalha Estranha\n(?) Afeta Habilidades dos Pokémon",
+      "tooltip": "(-) Batalha Estranha\n(?) Afeta a Habilidade de um Pokémon",
       "selected": "Seus Pokémon patéticos estão preparados para uma performance patética!",
-      "apply_ability_dialogue": "Um espetáculo sensacional!\nSeu conhecimento garante uma habilidade sensacional como recompensa!",
+      "apply_ability_dialogue": "Um espetáculo sensacional!\nSeu conhecimento garante uma habilidade especial como recompensa!",
       "apply_ability_message": "O palhaço está oferecendo para trocar permanentemente a habilidade de um dos seus Pokémon por {{ability}}!",
       "ability_prompt": "Você gostaria de ensinar permanentemente a habilidade {{ability}} a um Pokémon?",
       "ability_gained": "@s{level_up_fanfare}{{chosenPokemon}} adquiriu a habilidade {{ability}}!"
     },
     "2": {
-      "label": "Não Se Provocar",
-      "tooltip": "(-) Irrita o Palhaço\n(?) Afeta os Itens dos Pokémon",
+      "label": "Não Ligar",
+      "tooltip": "(?) Afeta os Itens de um Pokémon",
       "selected": "Covarde dissimulado, você nega um duelo delicioso?\nSinta minha fúria!",
       "selected_2": "O {{blacephalonName}} do palhaço usa Trick!\nTodos os itens de {{switchPokemon}} foram trocados aleatoriamente!",
       "selected_3": "Tolo frustrado, caia na minha enganação impecável!"
     },
     "3": {
       "label": "Retrucar os Insultos",
-      "tooltip": "(-) Irrita o Palhaço\n(?) Afeta os Tipos dos Pokémon",
+      "tooltip": "(?) Afeta os Tipos dos seus Pokémon",
       "selected": "Covarde dissimulado, você nega um duelo delicioso?\nSinta minha fúria!",
       "selected_2": "O {{blacephalonName}} do palhaço usa um movimento estranho!\nTodos os tipos da sua equipe foram trocados aleatoriamente!",
       "selected_3": "Tolo frustrado, caia na minha enganação impecável!"
