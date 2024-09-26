@@ -6,7 +6,7 @@ import { BattlerTagType } from "#enums/battler-tag-type";
 import { Stat } from "#enums/stat";
 import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Moves - SYRUP BOMB", () => {
   let phaserGame: Phaser.Game;
@@ -36,8 +36,8 @@ describe("Moves - SYRUP BOMB", () => {
 
   //Bulbapedia Reference: https://bulbapedia.bulbagarden.net/wiki/syrup_bomb_(move)
 
-  test("decreases the target Pokemon's speed stat once per turn for 3 turns",
-    async() => {
+  it("decreases the target Pokemon's speed stat once per turn for 3 turns",
+    async () => {
       await game.startBattle([Species.MAGIKARP]);
 
       const targetPokemon = game.scene.getEnemyPokemon()!;
@@ -60,8 +60,8 @@ describe("Moves - SYRUP BOMB", () => {
     }
   );
 
-  test("does not affect Pokemon with the ability Bulletproof",
-    async() => {
+  it("does not affect Pokemon with the ability Bulletproof",
+    async () => {
       game.override.enemyAbility(Abilities.BULLETPROOF);
       await game.startBattle([Species.MAGIKARP]);
 
@@ -69,7 +69,7 @@ describe("Moves - SYRUP BOMB", () => {
 
       game.move.select(Moves.SYRUP_BOMB);
       await game.toNextTurn();
-      expect(targetPokemon.getMaxHp()).toBe(targetPokemon.hp);
+      expect(targetPokemon.isFullHp()).toBe(true);
       expect(targetPokemon.getTag(BattlerTagType.SYRUP_BOMB)).toBeUndefined();
       expect(targetPokemon.getStatStage(Stat.SPD)).toBe(0);
     }

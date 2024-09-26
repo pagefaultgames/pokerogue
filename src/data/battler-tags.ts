@@ -2590,7 +2590,7 @@ export class ImprisonTag extends MoveRestrictionBattlerTag {
 }
 
 /**
- * Battler Tag that applies the effects of Syrup Bomb to the target Pokemon
+ * Battler Tag that applies the effects of Syrup Bomb to the target Pokemon.
  * For three turns, starting from the turn of hit, at the end of each turn, the target Pokemon's speed will decrease by 1.
  * The tag can also expire by taking the target Pokemon off the field.
  */
@@ -2600,7 +2600,7 @@ export class SyrupBombTag extends BattlerTag {
   }
 
   /**
-   * Adds the Syrup Bomb battler tag to the target Pokemon
+   * Adds the Syrup Bomb battler tag to the target Pokemon.
    * In addition, this also contains a check for a pre-existing Syrup Bomb tag on the target Pokemon to determine whether the tag should be applied or not
    * @param {Pokemon} pokemon the target Pokemon
    */
