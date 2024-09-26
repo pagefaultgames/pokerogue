@@ -1188,16 +1188,23 @@ export class GameData {
 
   tryClearSession(scene: BattleScene, slotId: integer): Promise<[success: boolean, newClear: boolean]> {
     return new Promise<[boolean, boolean]>(resolve => {
-      // if (bypassLogin) {
-      //   localStorage.removeItem(`sessionData${slotId ? slotId : ""}_${loggedInUser?.username}`);
-      //   return resolve([true, true]);
-      // }
+      if (bypassLogin) {
+        localStorage.removeItem(`sessionData${slotId ? slotId : ""}_${loggedInUser?.username}`);
+        return resolve([true, true]);
+      }
 
       updateUserInfo().then(success => {
         if (success !== null && !success) {
           return resolve([false, false]);
         }
         const sessionData = this.getSessionSaveData(scene);
+
+        // Filter out any "rental" Pokemon from the player's team that were used for the run
+        sessionData.party = sessionData.party.filter(p => {
+          const speciesRootForm = getPokemonSpecies(p.species).getRootSpeciesId();
+          return !!this.scene.gameData.dexData[speciesRootForm].caughtAttr;
+        });
+
         Utils.apiPost(`savedata/session/clear?slot=${slotId}&trainerId=${this.trainerId}&secretId=${this.secretId}&clientSessionId=${clientSessionId}`, JSON.stringify(sessionData), undefined, true).then(response => {
           if (response.ok) {
             loggedInUser!.lastSessionSlot = -1; // TODO: is the bang correct?
@@ -1718,7 +1725,7 @@ export class GameData {
    * @param count
    */
   addStarterCandy(species: PokemonSpecies, count: integer): void {
-    // Only gain candies if the Pokemon has already been marked as caught in dex (ignore "rental" pokemon
+    // Only gain candies if the Pokemon has already been marked as caught in dex (ignore "rental" pokemon)
     const speciesRootForm = species.getRootSpeciesId();
     if (!!this.scene.gameData.dexData[speciesRootForm].caughtAttr) {
       this.scene.candyBar.showStarterSpeciesCandy(species.speciesId, count);
