@@ -1,0 +1,27 @@
+{
+  "intro": "Um {{oricorioName}} dança tristemente sozinho, sem um parceiro.",
+  "title": "Aulas de Dança",
+  "description": "O {{oricorioName}} não parece agressivo, na verdade parece desanimado.\n\nTalvez ele só queira alguém para dançar junto...",
+  "query": "O que você vai fazer?",
+  "option": {
+    "1": {
+      "label": "Batalhar",
+      "tooltip": "(-) Batalha Difícil\n(+) Ganhar um Bastão",
+      "selected": "O {{oricorioName}} está angustiado e se move para se defender!",
+      "boss_enraged": "O medo do {{oricorioName}} aumentou suas atributos!"
+    },
+    "2": {
+      "label": "Aprender Sua Dança",
+      "tooltip": "(+) Ensinar Revelation Dance a qualquer Pokémon",
+      "selected": "Você observa o {{oricorioName}} de perto enquanto ele realiza sua dança...$@s{level_up_fanfare}Seu {{selectedPokemon}} aprendeu com o {{oricorioName}}!"
+    },
+    "3": {
+      "label": "Mostrar uma Dança",
+      "tooltip": "(-) Ensinar um Movimento de Dança ao {{oricorioName}}\n(+) O {{oricorioName}} Vai Gostar de Você",
+      "disabled_tooltip": "Seus Pokémon precisam conhecer um movimento de Dança para isso.",
+      "select_prompt": "Selecione um movimento de tipo Dança para usar.",
+      "selected": "O {{oricorioName}} observa fascinado enquanto\n{{selectedPokemon}} exibe {{selectedMove}}!$Ele adora a apresentação!$@s{level_up_fanfare}O {{oricorioName}} quer se juntar ao seu time!"
+    }
+  },
+  "invalid_selection": "Este Pokémon não conhece um movimento de Dança"
+}

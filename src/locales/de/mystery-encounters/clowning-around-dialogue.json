@@ -1,0 +1,35 @@
+{
+  "intro": "Es ist...@d{64} ein Clown?",
+  "speaker": "Clown",
+  "intro_dialogue": "Du tollpatschiger Trottel, bereite dich auf einen brillanten Kampf vor!\nDu wirst von diesem prügelnden Straßenmusikanten besiegt!",
+  "title":  "Rumgeblödel",
+  "description": "Irgendwas stimmt nicht mit dieser Begegnung. Der Clown scheint darauf aus zu sein, dich zu einem Kampf zu provozieren, aber zu welchem Zweck?\n\nDas {{blacephalonName}} ist besonders seltsam, als hätte es  @[TOOLTIP_TITLE]{seltsame Typen} und eine @[TOOLTIP_TITLE]{Fähigkeit.}",
+  "query": "Was wirst du tun?",
+  "option": {
+    "1": {
+      "label": "Kampf beginnen",
+      "tooltip": "(-) Komischer Kampf\n(?) Beeinflusst die Fähigkeit eines Pokémon",
+      "selected": "Deine erbärmlichen Pokémon sind bereit für eine erbärmliche Vorstellung!",
+      "apply_ability_dialogue": "Eine sensationelle Vorstellung! Dein Können passt zu einer besonderen Fähigkeit als Beute!",
+      "apply_ability_message": "Der Clown bietet an, die Fähigkeit eines deiner Pokémon dauerhaft auf {{ability}} zu wechseln!",
+      "ability_prompt": "Soll eines deiner Pokémon die Fähigkeit {{ability}} dauerhaft erlangen?",
+      "ability_gained": "@s{level_up_fanfare}{{chosenPokemon}} hat die Fähigkeit {{ability}} erhalten!"
+    },
+    "2": {
+      "label": "Nicht provozieren lassen",
+      "tooltip": "(?) Beeinflusst die Items eines Pokémons",
+      "selected":  "Du erbärmlicher Feigling, du verweigerst einen wunderbaren Kampf? Fühle meinen Zorn!",
+      "selected_2": "Das {{blacephalonName}} des Clowns verwendet Trickbetrug! Alle Items deines {{switchPokemon}} wurden zufällig vertauscht!",
+      "selected_3": "Meine perfekte List hat dich in die Irre geführt!"
+    },
+    "3": {
+      "label": "Die Beleidigungen erwidern",
+      "tooltip": "(?) Beeinflusst die Typen deiner  Pokémon",
+      "selected": "Du erbärmlicher Feigling verweigerst einen wunderbaren Kampf? Fühle meinen Zorn!",
+      "selected_2": "Das {{blacephalonName}} des Clowns verwendet eine seltsame Attacke! Alle Typen deines Teams wurden zufällig vertauscht!",
+      "selected_3": "Meine perfekte List hat dich in die Irre geführt!"
+    }
+
+  },
+  "outro": "Der Clown und seine Kumpanen verschwinden in einer Rauchwolke."
+}

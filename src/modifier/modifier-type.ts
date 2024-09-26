@@ -1577,17 +1577,22 @@ export const modifierTypes = {
 
   MYSTERY_ENCOUNTER_SHUCKLE_JUICE: () => new ModifierTypeGenerator((party: Pokemon[], pregenArgs?: any[]) => {
     if (pregenArgs) {
-      return new PokemonBaseStatTotalModifierType(pregenArgs[0] as integer);
+      return new PokemonBaseStatTotalModifierType(pregenArgs[0] as number);
     }
     return new PokemonBaseStatTotalModifierType(Utils.randSeedInt(20));
   }),
   MYSTERY_ENCOUNTER_OLD_GATEAU: () => new ModifierTypeGenerator((party: Pokemon[], pregenArgs?: any[]) => {
     if (pregenArgs) {
-      return new PokemonBaseStatFlatModifierType(pregenArgs[0] as integer, pregenArgs[1] as Stat[]);
+      return new PokemonBaseStatFlatModifierType(pregenArgs[0] as number, pregenArgs[1] as Stat[]);
     }
     return new PokemonBaseStatFlatModifierType(Utils.randSeedInt(20), [Stat.HP, Stat.ATK, Stat.DEF]);
   }),
-  MYSTERY_ENCOUNTER_BLACK_SLUDGE: () => new ModifierType("modifierType:ModifierType.MYSTERY_ENCOUNTER_BLACK_SLUDGE", "black_sludge", (type, _args) => new Modifiers.HealShopCostModifier(type)),
+  MYSTERY_ENCOUNTER_BLACK_SLUDGE: () => new ModifierTypeGenerator((party: Pokemon[], pregenArgs?: any[]) => {
+    if (pregenArgs) {
+      return new ModifierType("modifierType:ModifierType.MYSTERY_ENCOUNTER_BLACK_SLUDGE", "black_sludge", (type, _args) => new Modifiers.HealShopCostModifier(type, pregenArgs[0] as number));
+    }
+    return new ModifierType("modifierType:ModifierType.MYSTERY_ENCOUNTER_BLACK_SLUDGE", "black_sludge", (type, _args) => new Modifiers.HealShopCostModifier(type, 2.5));
+  }),
   MYSTERY_ENCOUNTER_MACHO_BRACE: () => new PokemonHeldItemModifierType("modifierType:ModifierType.MYSTERY_ENCOUNTER_MACHO_BRACE", "macho_brace", (type, args) => new Modifiers.PokemonIncrementingStatModifier(type, (args[0] as Pokemon).id)),
   MYSTERY_ENCOUNTER_GOLDEN_BUG_NET: () => new ModifierType("modifierType:ModifierType.MYSTERY_ENCOUNTER_GOLDEN_BUG_NET", "golden_net", (type, _args) => new Modifiers.BoostBugSpawnModifier(type)),
 };
@@ -1714,8 +1719,10 @@ const modifierPool: ModifierPool = {
     new WeightedModifierType(modifierTypes.FORM_CHANGE_ITEM, (party: Pokemon[]) => Math.min(Math.ceil(party[0].scene.currentBattle.waveIndex / 50), 4) * 6, 24),
     new WeightedModifierType(modifierTypes.AMULET_COIN, skipInLastClassicWaveOrDefault(3)),
     new WeightedModifierType(modifierTypes.EVIOLITE, (party: Pokemon[]) => {
-      if (!party[0].scene.gameMode.isFreshStartChallenge() && party[0].scene.gameData.unlocks[Unlockables.EVIOLITE]) {
-        return party.some(p => ((p.getSpeciesForm(true).speciesId in pokemonEvolutions) || (p.isFusion() && (p.getFusionSpeciesForm(true).speciesId in pokemonEvolutions))) && !p.getHeldItems().some(i => i instanceof Modifiers.EvolutionStatBoosterModifier)) ? 10 : 0;
+      const { gameMode, gameData } = party[0].scene;
+      if (gameMode.isDaily || (!gameMode.isFreshStartChallenge() && gameData.isUnlocked(Unlockables.EVIOLITE))) {
+        return party.some(p => ((p.getSpeciesForm(true).speciesId in pokemonEvolutions) || (p.isFusion() && (p.getFusionSpeciesForm(true).speciesId in pokemonEvolutions)))
+          && !p.getHeldItems().some(i => i instanceof Modifiers.EvolutionStatBoosterModifier) && !p.isMax()) ? 10 : 0;
       }
       return 0;
     }),
@@ -1723,19 +1730,24 @@ const modifierPool: ModifierPool = {
     new WeightedModifierType(modifierTypes.LEEK, (party: Pokemon[]) => {
       const checkedSpecies = [ Species.FARFETCHD, Species.GALAR_FARFETCHD, Species.SIRFETCHD ];
       // If a party member doesn't already have a Leek and is one of the relevant species, Leek can appear
-      return party.some(p => !p.getHeldItems().some(i => i instanceof Modifiers.SpeciesCritBoosterModifier) && (checkedSpecies.includes(p.getSpeciesForm(true).speciesId) || (p.isFusion() && checkedSpecies.includes(p.getFusionSpeciesForm(true).speciesId)))) ? 12 : 0;
+      return party.some(p => !p.getHeldItems().some(i => i instanceof Modifiers.SpeciesCritBoosterModifier)
+        && (checkedSpecies.includes(p.getSpeciesForm(true).speciesId)
+        || (p.isFusion() && checkedSpecies.includes(p.getFusionSpeciesForm(true).speciesId)))) ? 12 : 0;
     }, 12),
     new WeightedModifierType(modifierTypes.TOXIC_ORB, (party: Pokemon[]) => {
       const checkedAbilities = [Abilities.QUICK_FEET, Abilities.GUTS, Abilities.MARVEL_SCALE, Abilities.TOXIC_BOOST, Abilities.POISON_HEAL, Abilities.MAGIC_GUARD];
       const checkedMoves = [Moves.FACADE, Moves.TRICK, Moves.FLING, Moves.SWITCHEROO, Moves.PSYCHO_SHIFT];
       // If a party member doesn't already have one of these two orbs and has one of the above moves or abilities, the orb can appear
-      return party.some(p => !p.getHeldItems().some(i => i instanceof Modifiers.TurnStatusEffectModifier) && (checkedAbilities.some(a => p.hasAbility(a, false, true)) || p.getMoveset(true).some(m => m && checkedMoves.includes(m.moveId)))) ? 10 : 0;
+      return party.some(p => !p.getHeldItems().some(i => i instanceof Modifiers.TurnStatusEffectModifier)
+        && (checkedAbilities.some(a => p.hasAbility(a, false, true))
+        || p.getMoveset(true).some(m => m && checkedMoves.includes(m.moveId)))) ? 10 : 0;
     }, 10),
     new WeightedModifierType(modifierTypes.FLAME_ORB, (party: Pokemon[]) => {
       const checkedAbilities = [Abilities.QUICK_FEET, Abilities.GUTS, Abilities.MARVEL_SCALE, Abilities.FLARE_BOOST, Abilities.MAGIC_GUARD];
       const checkedMoves = [Moves.FACADE, Moves.TRICK, Moves.FLING, Moves.SWITCHEROO, Moves.PSYCHO_SHIFT];
       // If a party member doesn't already have one of these two orbs and has one of the above moves or abilities, the orb can appear
-      return party.some(p => !p.getHeldItems().some(i => i instanceof Modifiers.TurnStatusEffectModifier) && (checkedAbilities.some(a => p.hasAbility(a, false, true)) || p.getMoveset(true).some(m => m && checkedMoves.includes(m.moveId)))) ? 10 : 0;
+      return party.some(p => !p.getHeldItems().some(i => i instanceof Modifiers.TurnStatusEffectModifier)
+        && (checkedAbilities.some(a => p.hasAbility(a, false, true)) || p.getMoveset(true).some(m => m && checkedMoves.includes(m.moveId)))) ? 10 : 0;
     }, 10),
     new WeightedModifierType(modifierTypes.WHITE_HERB, (party: Pokemon[]) => {
       const checkedAbilities = [Abilities.WEAK_ARMOR, Abilities.CONTRARY, Abilities.MOODY, Abilities.ANGER_SHELL, Abilities.COMPETITIVE, Abilities.DEFIANT];
@@ -1790,9 +1802,10 @@ const modifierPool: ModifierPool = {
     new WeightedModifierType(modifierTypes.SHINY_CHARM, 14),
     new WeightedModifierType(modifierTypes.HEALING_CHARM, 18),
     new WeightedModifierType(modifierTypes.MULTI_LENS, 18),
-    new WeightedModifierType(modifierTypes.VOUCHER_PREMIUM, (party: Pokemon[], rerollCount: integer) => !party[0].scene.gameMode.isDaily && !party[0].scene.gameMode.isEndless && !party[0].scene.gameMode.isSplicedOnly ? Math.max(5 - rerollCount * 2, 0) : 0, 5),
+    new WeightedModifierType(modifierTypes.VOUCHER_PREMIUM, (party: Pokemon[], rerollCount: integer) =>
+      !party[0].scene.gameMode.isDaily && !party[0].scene.gameMode.isEndless && !party[0].scene.gameMode.isSplicedOnly ? Math.max(5 - rerollCount * 2, 0) : 0, 5),
     new WeightedModifierType(modifierTypes.DNA_SPLICERS, (party: Pokemon[]) => !party[0].scene.gameMode.isSplicedOnly && party.filter(p => !p.fusionSpecies).length > 1 ? 24 : 0, 24),
-    new WeightedModifierType(modifierTypes.MINI_BLACK_HOLE, (party: Pokemon[]) => (!party[0].scene.gameMode.isFreshStartChallenge() && party[0].scene.gameData.unlocks[Unlockables.MINI_BLACK_HOLE]) ? 1 : 0, 1),
+    new WeightedModifierType(modifierTypes.MINI_BLACK_HOLE, (party: Pokemon[]) => (party[0].scene.gameMode.isDaily || (!party[0].scene.gameMode.isFreshStartChallenge() && party[0].scene.gameData.isUnlocked(Unlockables.MINI_BLACK_HOLE))) ? 1 : 0, 1),
   ].map(m => {
     m.setTier(ModifierTier.MASTER); return m;
   })
@@ -1984,9 +1997,16 @@ export function getModifierPoolForType(poolType: ModifierPoolType): ModifierPool
 }
 
 const tierWeights = [ 768 / 1024, 195 / 1024, 48 / 1024, 12 / 1024, 1 / 1024 ];
+/**
+ * Allows a unit test to check if an item exists in the Modifier Pool. Checks the pool directly, rather than attempting to reroll for the item.
+ */
+export const itemPoolChecks: Map<ModifierTypeKeys, boolean | undefined> = new Map();
 
 export function regenerateModifierPoolThresholds(party: Pokemon[], poolType: ModifierPoolType, rerollCount: integer = 0) {
   const pool = getModifierPoolForType(poolType);
+  itemPoolChecks.forEach((v, k) => {
+    itemPoolChecks.set(k, false);
+  });
 
   const ignoredIndexes = {};
   const modifierTableData = {};
@@ -2022,6 +2042,9 @@ export function regenerateModifierPoolThresholds(party: Pokemon[], poolType: Mod
       } else {
         ignoredIndexes[t].push(i++);
         return total;
+      }
+      if (itemPoolChecks.has(modifierType.modifierType.id as ModifierTypeKeys)) {
+        itemPoolChecks.set(modifierType.modifierType.id as ModifierTypeKeys, true);
       }
       thresholds.set(total, i++);
       return total;
@@ -2425,10 +2448,22 @@ export class ModifierTypeOption {
   }
 }
 
+/**
+ * Calculates the team's luck value.
+ * @param party The player's party.
+ * @returns A number between 0 and 14 based on the party's total luck value, or a random number between 0 and 14 if the player is in Daily Run mode.
+ */
 export function getPartyLuckValue(party: Pokemon[]): integer {
+  if (party[0].scene.gameMode.isDaily) {
+    const DailyLuck = new Utils.NumberHolder(0);
+    party[0].scene.executeWithSeedOffset(() => {
+      DailyLuck.value = Utils.randSeedInt(15); // Random number between 0 and 14
+    }, 0, party[0].scene.seed);
+    return DailyLuck.value;
+  }
   const luck = Phaser.Math.Clamp(party.map(p => p.isAllowedInBattle() ? p.getLuck() : 0)
     .reduce((total: integer, value: integer) => total += value, 0), 0, 14);
-  return luck || 0;
+  return luck ?? 0;
 }
 
 export function getLuckString(luckValue: integer): string {

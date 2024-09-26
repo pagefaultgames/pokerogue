@@ -86,7 +86,7 @@ export default class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Con
       };
 
       if (!isNullOrUndefined(result.species)) {
-        const keys = getSpriteKeysFromSpecies(result.species!);
+        const keys = getSpriteKeysFromSpecies(result.species);
         result.spriteKey = keys.spriteKey;
         result.fileRoot = keys.fileRoot;
         result.isPokemon = true;

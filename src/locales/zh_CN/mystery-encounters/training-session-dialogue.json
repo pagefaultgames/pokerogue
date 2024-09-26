@@ -1,0 +1,33 @@
+{
+  "intro": "你遇到了一些\n训练工具和用品。",
+  "title": "集训",
+  "description": "这些物品似乎可以\n用来训练你的队伍！\n有数种方式可以进行训练：\n让你队伍中的其他宝可梦与其进行对战。",
+  "query": "要怎么训练？",
+  "invalid_selection": "宝可梦必须足够健康",
+  "option": {
+    "1": {
+      "label": "轻量训练",
+      "tooltip": "(-)轻松战斗\n(+)提升随机2只\n宝可梦的个体",
+      "finished": "{{selectedPokemon}}回来了，感觉\n虽然疲惫不堪，但很有成就！$它的{{stat1}}和{{stat2}}的个体得到了改善！"
+    },
+    "2": {
+      "label": "适度训练",
+      "tooltip": "(-)适中的战斗\n(+)改变宝可梦的性格",
+      "select_prompt": "选择一种想要的性格\n来训练你的神奇宝贝。",
+      "finished": "{{selectedPokemon}}回来了，感觉\n虽然疲惫不堪，但很有成就！$它的性格变成了{{nature}}！"
+    },
+    "3": {
+      "label": "重磅训练",
+      "tooltip": "(-)艰苦的战斗\n(+)改变宝可梦的特性",
+      "select_prompt": "选择一种想要的特性\n来训练你的神奇宝贝。",
+      "finished": "{{selectedPokemon}}回来了，感觉\n虽然疲惫不堪，但很有成就！$它的特性变成了{{nature}}！"
+    },
+    "4": {
+      "label": "离开",
+      "tooltip": "(-)无奖励",
+      "selected": "你无暇训练\n该动身了。"
+    },
+    "selected": "{{selected Pokemon}}穿过空地来到你面前……"
+  },
+  "outro": "这次训练成果不错！"
+}

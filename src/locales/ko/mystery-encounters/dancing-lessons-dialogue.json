@@ -1,0 +1,27 @@
+{
+  "intro": "{{oricorioName}}[[가]] 외로이 혼자 춤을 추고 있다.\n주변에 파트너도 없는 것 같다!",
+  "title": "댄스 레슨",
+  "description": "{{oricorioName}}[[는]] 공격적이진 않아 보입니다.\n오히려 의기소침해 보이네요.\n\n아마도 함께 춤출 누군가를\n원하고 있는지도 모릅니다….",
+  "query": "어떻게 하시겠습니까?",
+  "option": {
+    "1": {
+      "label": "싸운다",
+      "tooltip": "(-) 어려운 배틀\n(+) 배턴 획득",
+      "selected": "{{oricorioName}}[[는]] 혼란스러워하며 방어 태세를 갖췄다!",
+      "boss_enraged": "{{oricorioName}}[[는]] 겁에 질려 능력치가 상승했다!"
+    },
+    "2": {
+      "label": "춤을 배운다",
+      "tooltip": "(+) 잠재댄스 기술을 배움",
+      "selected": "{{oricorioName}}가 춤을 추는 모습을 주의 깊게 지켜보았다….$@s{level_up_fanfare}{{selectedPokemon}}[[는]] {{oricorioName}}에게서 춤을 배웠다!"
+    },
+    "3": {
+      "label": "춤을 보여준다",
+      "tooltip": "(-) {{oricorioName}}에게 춤을 가르침\n(+) {{oricorioName}}[[가]] 매우 기뻐함",
+      "disabled_tooltip": "포켓몬이 춤 기술을 알고 있어야 한다.",
+      "select_prompt": "사용할 춤 기술을 선택한다.",
+      "selected": "{{oricorioName}}[[가]] {{selectedPokemon}}[[를]] 선보이는 모습을\n흥미진진하게 지켜본다!$마음에 들어하는 것 같다!$@s{level_up_fanfare}{{oricorioName}}[[가]] 동료가 되고 싶어 하는 것 같다!"
+    }
+  },
+  "invalid_selection": "이 포켓몬은 춤 기술을 모른다!"
+}

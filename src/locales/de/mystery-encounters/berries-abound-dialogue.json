@@ -1,0 +1,26 @@
+{
+  "intro": "Da ist ein riesiger Beerenstrauch in der Nähe dieses Pokémons!",
+  "title": "Überall Beeren",
+  "description": "Es scheint, als ob ein starkes Pokémon einen Beerenstrauch bewacht. Ein Kampf wäre der direkte Weg, aber es sieht stark aus. Vielleicht könnte ein schnelles Pokémon ein paar Beeren schnappen, ohne erwischt zu werden?",
+  "query": "Was wirst du tun?",
+  "berries": "Berren",
+  "option": {
+    "1": {
+      "label": "Kampf beginnen",
+      "tooltip": "(-) Schwerer Kampf\n(+) Beeren erhalten",
+      "selected": "Du trittst dem Pokémon ohne Furcht entgegen."
+    },
+    "2": {
+      "label": "Zum Strauch rennen",
+      "tooltip": "(-) {{fastestPokemon}} nutzt seine Geschwindigkeit\n(+) Beeren erhalten",
+      "selected": "Dein {{fastestPokemon}} rennt zum Strauch!$Es schafft es, {{numBerries}} zu schnappen, bevor das {{enemyPokemon}} reagieren kann!$Du ziehst dich schnell mit deiner neuen Beute zurück.",
+      "selected_bad": "Dein {{fastestPokemon}} rennt zum Strauch!$Oh nein! Das {{enemyPokemon}} war schneller und hat den Weg blockiert!",
+      "boss_enraged": "Das gegnerische {{enemyPokemon}} ist wütend geworden!"
+    },
+    "3": {
+      "label": "Verlassen",
+      "tooltip": "(-) Keine Belohnung",
+      "selected": "Du lässt das starke Pokémon mit seinem Item zurück und gehst weiter."
+    }
+  }
+}
