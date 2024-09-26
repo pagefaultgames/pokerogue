@@ -31,8 +31,8 @@ import { Variant } from "#app/data/variant";
 import {setSettingGamepad, SettingGamepad, settingGamepadDefaults} from "./settings/settings-gamepad";
 import {setSettingKeyboard, SettingKeyboard} from "#app/system/settings/settings-keyboard";
 import { TerrainChangedEvent, WeatherChangedEvent } from "#app/events/arena";
-import * as Modifier from "../modifier/modifier";
 import { StatusEffect } from "#app/data/status-effect";
+import { EnemyAttackStatusEffectChanceModifier } from "../modifier/modifier";
 import ChallengeData from "./challenge-data";
 import { Device } from "#enums/devices";
 import { GameDataType } from "#enums/game-data-type";
@@ -327,8 +327,8 @@ export class GameData {
     this.loadSettings();
     this.loadGamepadSettings();
     this.loadMappingConfigs();
-    this.trainerId = Utils.randInt(65536);
-    this.secretId = Utils.randInt(65536);
+    this.trainerId = Utils.randInt(65536, undefined, "Trainer ID");
+    this.secretId = Utils.randInt(65536, undefined, "Secret ID");
     this.starterData = {};
     this.gameStats = new GameStats();
     this.runHistory = {};
@@ -1085,8 +1085,10 @@ export class GameData {
           // TODO
           //scene.arena.tags = sessionData.arena.tags;
 
+          const modifiersModule = await import("../modifier/modifier");
+
           for (const modifierData of sessionData.modifiers) {
-            const modifier = modifierData.toModifier(scene, Modifier[modifierData.className]);
+            const modifier = modifierData.toModifier(scene, modifiersModule[modifierData.className]);
             if (modifier) {
               scene.addModifier(modifier, true);
             }
@@ -1095,7 +1097,7 @@ export class GameData {
           scene.updateModifiers(true);
 
           for (const enemyModifierData of sessionData.enemyModifiers) {
-            const modifier = enemyModifierData.toModifier(scene, Modifier[enemyModifierData.className]);
+            const modifier = enemyModifierData.toModifier(scene, modifiersModule[enemyModifierData.className]);
             if (modifier) {
               scene.addEnemyModifier(modifier, true);
             }
@@ -1251,7 +1253,7 @@ export class GameData {
           if (md?.className === "ExpBalanceModifier") { // Temporarily limit EXP Balance until it gets reworked
             md.stackCount = Math.min(md.stackCount, 4);
           }
-          if (md instanceof Modifier.EnemyAttackStatusEffectChanceModifier && md.effect === StatusEffect.FREEZE || md.effect === StatusEffect.SLEEP) {
+          if (md instanceof EnemyAttackStatusEffectChanceModifier && md.effect === StatusEffect.FREEZE || md.effect === StatusEffect.SLEEP) {
             continue;
           }
           ret.push(new PersistentModifierData(md, player));
@@ -1507,7 +1509,7 @@ export class GameData {
     this.scene.executeWithSeedOffset(() => {
       const neutralNatures = [ Nature.HARDY, Nature.DOCILE, Nature.SERIOUS, Nature.BASHFUL, Nature.QUIRKY ];
       for (let s = 0; s < defaultStarterSpecies.length; s++) {
-        defaultStarterNatures.push(Utils.randSeedItem(neutralNatures));
+        defaultStarterNatures.push(Utils.randSeedItem(neutralNatures, "Random neutral nature"));
       }
     }, 0, "default");
 
@@ -1862,7 +1864,7 @@ export class GameData {
         entry.hatchedCount = 0;
       }
       if (!entry.hasOwnProperty("natureAttr") || (entry.caughtAttr && !entry.natureAttr)) {
-        entry.natureAttr = this.defaultDexData?.[k].natureAttr || (1 << Utils.randInt(25, 1));
+        entry.natureAttr = this.defaultDexData?.[k].natureAttr || (1 << Utils.randInt(25, 1, "Random bit shift"));
       }
     }
   }

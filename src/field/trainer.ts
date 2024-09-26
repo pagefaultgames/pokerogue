@@ -45,7 +45,7 @@ export default class Trainer extends Phaser.GameObjects.Container {
       this.config.partyTemplates.length - 1);
     if (trainerNamePools.hasOwnProperty(trainerType)) {
       const namePool = trainerNamePools[trainerType];
-      this.name = name || Utils.randSeedItem(Array.isArray(namePool[0]) ? namePool[variant === TrainerVariant.FEMALE ? 1 : 0] : namePool);
+      this.name = name || Utils.randSeedItem(Array.isArray(namePool[0]) ? namePool[variant === TrainerVariant.FEMALE ? 1 : 0] : namePool, "Trainer name 1");
       if (variant === TrainerVariant.DOUBLE) {
         if (this.config.doubleOnly) {
           if (partnerName) {
@@ -54,7 +54,7 @@ export default class Trainer extends Phaser.GameObjects.Container {
             [this.name, this.partnerName] = this.name.split(" & ");
           }
         } else {
-          this.partnerName = partnerName || Utils.randSeedItem(Array.isArray(namePool[0]) ? namePool[1] : namePool);
+          this.partnerName = partnerName || Utils.randSeedItem(Array.isArray(namePool[0]) ? namePool[1] : namePool, "Trainer name 2");
         }
       }
     }
@@ -236,7 +236,7 @@ export default class Trainer extends Phaser.GameObjects.Container {
       title = i18next.t(`trainerClasses:${name.toLowerCase().replace(/\s/g, "_")}`);
       console.log("Localized grunt name: " + title);
       // Since grunts are not named we can just return the title
-      return title;
+      //return title;
     }
 
     // If the trainer has a name (not null or undefined).
@@ -487,7 +487,7 @@ export default class Trainer extends Phaser.GameObjects.Container {
 
     let species: PokemonSpecies;
     if (this.config.speciesPools) {
-      const tierValue = Utils.randSeedInt(512);
+      const tierValue = Utils.randSeedInt(512, undefined, "Randomly selecting species for trainer party");
       let tier = tierValue >= 156 ? TrainerPoolTier.COMMON : tierValue >= 32 ? TrainerPoolTier.UNCOMMON : tierValue >= 6 ? TrainerPoolTier.RARE : tierValue >= 1 ? TrainerPoolTier.SUPER_RARE : TrainerPoolTier.ULTRA_RARE;
       console.log(TrainerPoolTier[tier]);
       while (!this.config.speciesPools.hasOwnProperty(tier) || !this.config.speciesPools[tier].length) {
@@ -495,7 +495,7 @@ export default class Trainer extends Phaser.GameObjects.Container {
         tier--;
       }
       const tierPool = this.config.speciesPools[tier];
-      species = getPokemonSpecies(Utils.randSeedItem(tierPool));
+      species = getPokemonSpecies(Utils.randSeedItem(tierPool, "Random party member species"));
     } else {
       species = this.scene.randomSpecies(battle.waveIndex, level, false, this.config.speciesFilter);
     }
@@ -587,7 +587,7 @@ export default class Trainer extends Phaser.GameObjects.Container {
 
     if (maxScorePartyMemberIndexes.length > 1) {
       let rand: integer;
-      this.scene.executeWithSeedOffset(() => rand = Utils.randSeedInt(maxScorePartyMemberIndexes.length), this.scene.currentBattle.turn << 2);
+      this.scene.executeWithSeedOffset(() => rand = Utils.randSeedInt(maxScorePartyMemberIndexes.length, undefined, "Randomly selecting who to send out next"), this.scene.currentBattle.turn << 2);
       return maxScorePartyMemberIndexes[rand!];
     }
 

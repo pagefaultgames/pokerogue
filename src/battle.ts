@@ -387,7 +387,7 @@ export default class Battle {
    * @param min The minimum integer to pick, default `0`
    * @returns A random integer between {@linkcode min} and ({@linkcode min} + {@linkcode range} - 1)
    */
-  randSeedInt(scene: BattleScene, range: number, min: number = 0, reason: string = "Unlabeled randSeedInt"): number {
+  randSeedInt(scene: BattleScene, range: number, min: number = 0, reason?: string): number {
     if (range <= 1) {
       return min;
     }
@@ -402,8 +402,7 @@ export default class Battle {
     }
     scene.rngCounter = this.rngCounter++;
     scene.rngSeedOverride = this.battleSeed;
-    const ret = Utils.randSeedInt(range, min);
-    console.log("[RNG] " + reason, ret)
+    const ret = Utils.randSeedInt(range, min, reason);
     this.battleSeedState = Phaser.Math.RND.state();
     Phaser.Math.RND.state(state);
     //scene.setScoreText("RNG: " + tempRngCounter + " (Last sim: " + this.rngCounter + ")")
@@ -474,7 +473,7 @@ function getRandomTrainerFunc(trainerPool: (TrainerType | TrainerType[])[], rand
     scene.executeWithSeedOffset(() => {
       for (const trainerPoolEntry of trainerPool) {
         const trainerType = Array.isArray(trainerPoolEntry)
-          ? Utils.randSeedItem(trainerPoolEntry)
+          ? Utils.randSeedItem(trainerPoolEntry, "Random trainer helper function")
           : trainerPoolEntry;
         trainerTypes.push(trainerType);
       }
@@ -482,7 +481,7 @@ function getRandomTrainerFunc(trainerPool: (TrainerType | TrainerType[])[], rand
 
     let trainerGender = TrainerVariant.DEFAULT;
     if (randomGender) {
-      trainerGender = (Utils.randInt(2) === 0) ? TrainerVariant.FEMALE : TrainerVariant.DEFAULT;
+      trainerGender = (Utils.randInt(2, undefined, "Random trainer helper function") === 0) ? TrainerVariant.FEMALE : TrainerVariant.DEFAULT;
     }
 
     /* 1/3 chance for evil team grunts to be double battles */
@@ -490,7 +489,7 @@ function getRandomTrainerFunc(trainerPool: (TrainerType | TrainerType[])[], rand
     const isEvilTeamGrunt = evilTeamGrunts.includes(trainerTypes[rand]);
 
     if (trainerConfigs[trainerTypes[rand]].hasDouble && isEvilTeamGrunt) {
-      return new Trainer(scene, trainerTypes[rand], (Utils.randInt(3) === 0) ? TrainerVariant.DOUBLE : trainerGender);
+      return new Trainer(scene, trainerTypes[rand], (Utils.randInt(3, undefined, "Evil grunt selection") === 0) ? TrainerVariant.DOUBLE : trainerGender);
     }
 
     return new Trainer(scene, trainerTypes[rand], trainerGender);
@@ -511,7 +510,7 @@ export interface FixedBattleConfigs {
  */
 export const classicFixedBattles: FixedBattleConfigs = {
   [5]: new FixedBattleConfig().setBattleType(BattleType.TRAINER)
-    .setGetTrainerFunc(scene => new Trainer(scene, TrainerType.YOUNGSTER, Utils.randSeedInt(2) ? TrainerVariant.FEMALE : TrainerVariant.DEFAULT)),
+    .setGetTrainerFunc(scene => new Trainer(scene, TrainerType.YOUNGSTER, Utils.randSeedInt(2, undefined, "Youngster gender") ? TrainerVariant.FEMALE : TrainerVariant.DEFAULT)),
   [8]: new FixedBattleConfig().setBattleType(BattleType.TRAINER)
     .setGetTrainerFunc(scene => new Trainer(scene, TrainerType.RIVAL, scene.gameData.gender === PlayerGender.MALE ? TrainerVariant.FEMALE : TrainerVariant.DEFAULT)),
   [25]: new FixedBattleConfig().setBattleType(BattleType.TRAINER)

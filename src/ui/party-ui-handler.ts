@@ -1073,7 +1073,7 @@ export default class PartyUiHandler extends MessageUiHandler {
   }
 
   getReleaseMessage(pokemonName: string): string {
-    const rand = Utils.randInt(128);
+    const rand = Utils.randInt(128, undefined, "Random release message");
     if (rand < 20) {
       return i18next.t("partyUiHandler:goodbye", { pokemonName: pokemonName });
     } else if (rand < 40) {

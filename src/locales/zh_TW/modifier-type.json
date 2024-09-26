@@ -47,14 +47,10 @@
       "description": "將一隻寶可夢的性格改爲{{natureName}}併爲該寶可\n夢永久解鎖該性格。"
     },
     "DoubleBattleChanceBoosterModifierType": {
-      "description": "遭遇雙打機率提升四倍，持續{{battleCount}}場戰鬥。"
+      "description": "接下來的{{battleCount}}場戰鬥是雙打的概率翻倍。"
     },
     "TempStatStageBoosterModifierType": {
-      "description": "提升全隊的{{stat}}{{amount}}級，持續5場戰鬥。",
-      "extra": {
-        "stage": "1階",
-        "percentage": "30%"
-      }
+      "description": "爲所有成員寶可夢提升一級{{stat}}，持續5場戰鬥。"
     },
     "AttackTypeBoosterModifierType": {
       "description": "一隻寶可夢的{{moveType}}系招式威力提升20%。"

@@ -67,7 +67,5 @@
   "saltCuredLapse": "¡{{moveName}} ha herido a {{pokemonNameWithAffix}}!",
   "cursedOnAdd": "¡{{pokemonNameWithAffix}} sacrifica algunos PS y maldice a {{pokemonName}}!",
   "cursedLapse": "¡{{pokemonNameWithAffix}} es víctima de una maldición!",
-  "stockpilingOnAdd": "¡{{pokemonNameWithAffix}} ha reservado energía por {{stockpiledCount}}ª vez!",
-  "disabledOnAdd": "¡Se ha anulado el movimiento {{moveName}}\nde {{pokemonNameWithAffix}}!",
-  "disabledLapse": "¡El movimiento {{moveName}} de {{pokemonNameWithAffix}} \n ya no está anulado!"
+  "stockpilingOnAdd": "¡{{pokemonNameWithAffix}} ha reservado energía por {{stockpiledCount}}ª vez!"
 }

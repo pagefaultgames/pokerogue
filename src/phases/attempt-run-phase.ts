@@ -29,7 +29,7 @@ export class AttemptRunPhase extends PokemonPhase {
 
     applyAbAttrs(RunSuccessAbAttr, playerPokemon, null, false, escapeChance);
 
-    if (playerPokemon.randSeedInt(100, undefined, "Run attempt") < escapeChance.value) {
+    if (playerPokemon.randSeedInt(100, undefined, "Run away chance") < escapeChance.value) {
       this.scene.playSound("se/flee");
       LoggerTools.logShop(this.scene, this.scene.currentBattle.waveIndex, "Fled")
       this.scene.queueMessage(i18next.t("battle:runAwaySuccess"), null, true, 500);

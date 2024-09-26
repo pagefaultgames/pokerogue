@@ -327,7 +327,7 @@ export class SelectModifierPhase extends BattlePhase {
           // costTiers
           console.log("Rerolls: " + r + (this.costTiers[r] != 0 ? " - ₽" + this.costTiers[r] : ""))
           mp.forEach((m, i) => {
-            console.log("  " + m.type!.name + (m.netprice != this.costTiers[r] ? " - ₽" + m.netprice : ""))
+            console.log("  " + m.type!.name + (m.netprice != this.costTiers[r] ? " - ₽" + m.netprice : "") + " (" + (m.retriesList.length) + " tr" + (m.retriesList.length == 1 ? "y" : "ies") + ")")
             if (m.eviolite) {
               console.log("    With Eviolite unlocked: " + m.eviolite.name)
             }
@@ -348,7 +348,7 @@ export class SelectModifierPhase extends BattlePhase {
                       showedLuckFlag = true
                       console.log("    Your luck: " + getPartyLuckValue(party) + " (" + getLuckString(getPartyLuckValue(party)) + ")")
                     }
-                    console.log("    At " + j + " luck (" + getLuckString(j) + "): " + LoggerTools.tierNames[currentTier] + "-tier item (failed to generate item)")
+                    console.log("    At " + j + " luck (" + getLuckString(j) + "): " + LoggerTools.tierNames[currentTier] + "-tier item")// (failed to generate item)
                   }
                 }
               }

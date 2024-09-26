@@ -47,14 +47,10 @@
       "description": "Muda a natureza do Pokémon para {{natureName}} e a desbloqueia permanentemente."
     },
     "DoubleBattleChanceBoosterModifierType": {
-      "description": "Quadruplica as chances de encontrar uma batalha em dupla por {{battleCount}} batalhas."
+      "description": "Dobra as chances de encontrar uma batalha em dupla por {{battleCount}} batalhas."
     },
     "TempStatStageBoosterModifierType": {
-      "description": "Aumenta o atributo de {{stat}} para todos os membros da equipe em {{amount}} por 5 batalhas.",
-      "extra": {
-        "stage": "um nível",
-        "percentage": "30%"
-      }
+      "description": "Aumenta o atributo de {{stat}} para todos os membros da equipe por 5 batalhas."
     },
     "AttackTypeBoosterModifierType": {
       "description": "Aumenta o poder dos ataques do tipo {{moveType}} de um Pokémon em 20%."

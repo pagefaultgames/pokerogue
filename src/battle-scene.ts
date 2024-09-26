@@ -301,8 +301,6 @@ export default class BattleScene extends SceneBase {
 
   public eventManager: TimedEventManager;
 
-  public biomeChangeMode: boolean = false;
-
   /**
    * Allows subscribers to listen for events
    *
@@ -850,9 +848,9 @@ export default class BattleScene extends SceneBase {
     return activeOnly ? this.infoToggles.filter(t => t?.isActive()) : this.infoToggles;
   }
 
-  getPokemonById(pokemonId: integer): Pokemon | undefined {
+  getPokemonById(pokemonId: integer): Pokemon | null {
     const findInParty = (party: Pokemon[]) => party.find(p => p.id === pokemonId);
-    return (findInParty(this.getParty()) || findInParty(this.getEnemyParty())) || undefined;
+    return (findInParty(this.getParty()) || findInParty(this.getEnemyParty())) ?? null;
   }
 
   addPlayerPokemon(species: PokemonSpecies, level: integer, abilityIndex?: integer, formIndex?: integer, gender?: Gender, shiny?: boolean, variant?: Variant, ivs?: integer[], nature?: Nature, dataSource?: Pokemon | PokemonData, postProcess?: (playerPokemon: PlayerPokemon) => void): PlayerPokemon {
@@ -879,7 +877,7 @@ export default class BattleScene extends SceneBase {
     overrideModifiers(this, false);
     overrideHeldItems(this, pokemon, false);
     if (boss && !dataSource) {
-      const secondaryIvs = Utils.getIvsFromId(Utils.randSeedInt(4294967296));
+      const secondaryIvs = Utils.getIvsFromId(Utils.randSeedInt(4294967296, undefined, "IVs"));
 
       for (let s = 0; s < pokemon.ivs.length; s++) {
         pokemon.ivs[s] = Math.round(Phaser.Math.Linear(Math.min(pokemon.ivs[s], secondaryIvs[s]), Math.max(pokemon.ivs[s], secondaryIvs[s]), 0.75));
@@ -1007,7 +1005,6 @@ export default class BattleScene extends SceneBase {
   setSeed(seed: string): void {
     this.seed = seed;
     this.rngCounter = 0;
-    //this.setScoreText("RNG: 0")
     this.waveCycleOffset = this.getGeneratedWaveCycleOffset();
     this.offsetGym = this.gameMode.isClassic && this.getGeneratedOffsetGym();
   }
@@ -1196,12 +1193,12 @@ export default class BattleScene extends SceneBase {
     this.setScoreText(txt.join(" / "))
   }
 
-  newBattle(waveIndex?: integer, battleType?: BattleType, trainerData?: TrainerData, double?: boolean): Battle {
+  newBattle(waveIndex?: integer, battleType?: BattleType, trainerData?: TrainerData, double?: boolean): Battle | null {
     const _startingWave = Overrides.STARTING_WAVE_OVERRIDE || startingWave;
     const newWaveIndex = waveIndex || ((this.currentBattle?.waveIndex || (_startingWave - 1)) + 1);
-    var newDouble;
-    var newBattleType;
-    var newTrainer;
+    let newDouble: boolean | undefined;
+    let newBattleType: BattleType;
+    let newTrainer: Trainer | undefined;
 
     let battleConfig: FixedBattleConfig | null = null;
 
@@ -1237,13 +1234,13 @@ export default class BattleScene extends SceneBase {
           const doubleChance = new Utils.IntegerHolder(newWaveIndex % 10 === 0 ? 32 : 8);
           this.applyModifiers(DoubleBattleChanceBoosterModifier, true, doubleChance);
           playerField.forEach(p => applyAbAttrs(DoubleBattleChanceAbAttr, p, null, false, doubleChance));
-          doubleTrainer = !Utils.randSeedInt(doubleChance.value);
+          doubleTrainer = !Utils.randSeedInt(doubleChance.value, undefined, "Double battle roll");
           // Add a check that special trainers can't be double except for tate and liza - they should use the normal double chance
           if (trainerConfigs[trainerType].trainerTypeDouble && ![ TrainerType.TATE, TrainerType.LIZA ].includes(trainerType)) {
             doubleTrainer = false;
           }
         }
-        const variant = doubleTrainer ? TrainerVariant.DOUBLE : (Utils.randSeedInt(2) ? TrainerVariant.FEMALE : TrainerVariant.DEFAULT);
+        const variant = doubleTrainer ? TrainerVariant.DOUBLE : (Utils.randSeedInt(2, undefined, "Trainer gender") ? TrainerVariant.FEMALE : TrainerVariant.DEFAULT);
         newTrainer = trainerData !== undefined ? trainerData.toTrainer(this) : new Trainer(this, trainerType, variant);
         this.field.add(newTrainer);
       }
@@ -1254,9 +1251,9 @@ export default class BattleScene extends SceneBase {
         const doubleChance = new Utils.IntegerHolder(newWaveIndex % 10 === 0 ? 32 : 8);
         this.applyModifiers(DoubleBattleChanceBoosterModifier, true, doubleChance);
         playerField.forEach(p => applyAbAttrs(DoubleBattleChanceAbAttr, p, null, false, doubleChance));
-        newDouble = !Utils.randSeedInt(doubleChance.value);
+        newDouble = !Utils.randSeedInt(doubleChance.value, undefined, "Double battle roll");
       } else if (newBattleType === BattleType.TRAINER) {
-        newDouble = newTrainer.variant === TrainerVariant.DOUBLE;
+        newDouble = newTrainer?.variant === TrainerVariant.DOUBLE;
       }
     } else if (!battleConfig) {
       newDouble = !!double;
@@ -1408,19 +1405,19 @@ export default class BattleScene extends SceneBase {
     case Species.TATSUGIRI:
     case Species.GIMMIGHOUL:
     case Species.PALDEA_TAUROS:
-      return Utils.randSeedInt(species.forms.length);
+      return Utils.randSeedInt(species.forms.length, undefined, "General form selection");
     case Species.PIKACHU:
-      return Utils.randSeedInt(8);
+      return Utils.randSeedInt(8, undefined, "Pikachu form selection");
     case Species.EEVEE:
-      return Utils.randSeedInt(2);
+      return Utils.randSeedInt(2, undefined, "Eevee form selection");
     case Species.GRENINJA:
-      return Utils.randSeedInt(2);
+      return Utils.randSeedInt(2, undefined, "Greninja form selection");
     case Species.ZYGARDE:
-      return Utils.randSeedInt(3);
+      return Utils.randSeedInt(3, undefined, "Zygarde form selection");
     case Species.MINIOR:
-      return Utils.randSeedInt(6);
+      return Utils.randSeedInt(6, undefined, "Minior color selection");
     case Species.ALCREMIE:
-      return Utils.randSeedInt(9);
+      return Utils.randSeedInt(9, undefined, "Alcremie form selection");
     case Species.MEOWSTIC:
     case Species.INDEEDEE:
     case Species.BASCULEGION:
@@ -1440,7 +1437,7 @@ export default class BattleScene extends SceneBase {
       case Species.WORMADAM:
       case Species.ROTOM:
       case Species.LYCANROC:
-        return Utils.randSeedInt(species.forms.length);
+        return Utils.randSeedInt(species.forms.length, undefined, "Non-area-specific form selection");
       }
       return 0;
     }
@@ -1451,7 +1448,7 @@ export default class BattleScene extends SceneBase {
   private getGeneratedOffsetGym(): boolean {
     let ret = false;
     this.executeWithSeedOffset(() => {
-      ret = !Utils.randSeedInt(2);
+      ret = !Utils.randSeedInt(2, undefined, "Random gym offset");
     }, 0, this.seed.toString());
     return ret;
   }
@@ -1459,7 +1456,7 @@ export default class BattleScene extends SceneBase {
   private getGeneratedWaveCycleOffset(): integer {
     let ret = 0;
     this.executeWithSeedOffset(() => {
-      ret = Utils.randSeedInt(8) * 5;
+      ret = Utils.randSeedInt(8, undefined, "Random day/night cycle offset  5 x") * 5;
     }, 0, this.seed.toString());
     return ret;
   }
@@ -1481,7 +1478,7 @@ export default class BattleScene extends SceneBase {
       isBoss = true;
     } else {
       this.executeWithSeedOffset(() => {
-        isBoss = waveIndex % 10 === 0 || (this.gameMode.hasRandomBosses && Utils.randSeedInt(100) < Math.min(Math.max(Math.ceil((waveIndex - 250) / 50), 0) * 2, 30));
+        isBoss = waveIndex % 10 === 0 || (this.gameMode.hasRandomBosses && Utils.randSeedInt(100, undefined, "Boss HP segments") < Math.min(Math.max(Math.ceil((waveIndex - 250) / 50), 0) * 2, 30));
       }, waveIndex << 2);
     }
     if (!isBoss) {
@@ -1508,7 +1505,7 @@ export default class BattleScene extends SceneBase {
     const infectedIndexes: integer[] = [];
     const spread = (index: number, spreadTo: number) => {
       const partyMember = party[index + spreadTo];
-      if (!partyMember.pokerus && !Utils.randSeedInt(10)) {
+      if (!partyMember.pokerus && !Utils.randSeedInt(10, undefined, "Pokerus spread chance")) {
         partyMember.pokerus = true;
         infectedIndexes.push(index + spreadTo);
       }
@@ -1556,7 +1553,6 @@ export default class BattleScene extends SceneBase {
     this.rngCounter = 0;
     this.battleRNGState = Phaser.Math.RND.state()
     this.battleBaseRNGState = Phaser.Math.RND.state()
-    //this.setScoreText("RNG: 0")
   }
 
   executeWithSeedOffset(func: Function, offset: integer, seedOverride?: string): void {
@@ -1573,7 +1569,6 @@ export default class BattleScene extends SceneBase {
     this.rngSeedOverride = seedOverride || "";
     func();
     Phaser.Math.RND.state(state);
-    //this.setScoreText("RNG: " + tempRngCounter + " (Last sim: " + this.rngCounter + ")")
     this.rngCounter = tempRngCounter;
     this.rngOffset = tempRngOffset;
     this.rngSeedOverride = tempRngSeedOverride;
@@ -1819,7 +1814,7 @@ export default class BattleScene extends SceneBase {
       }
       return s;
     }))] : allSpecies.filter(s => s.isCatchable());
-    return filteredSpecies[Utils.randSeedInt(filteredSpecies.length)];
+    return filteredSpecies[Utils.randSeedInt(filteredSpecies.length, undefined, "Random Species")];
   }
 
   generateRandomBiome(waveIndex: integer): Biome {
@@ -1835,7 +1830,7 @@ export default class BattleScene extends SceneBase {
       biomeThresholds.push(totalWeight);
     }
 
-    const randInt = Utils.randSeedInt(totalWeight);
+    const randInt = Utils.randSeedInt(totalWeight, undefined, "Random biome");
 
     for (const biome of biomes) {
       if (randInt < biomeThresholds[biome]) {
@@ -1843,7 +1838,7 @@ export default class BattleScene extends SceneBase {
       }
     }
 
-    return biomes[Utils.randSeedInt(biomes.length)];
+    return biomes[Utils.randSeedInt(biomes.length, undefined, "Random biome (initial roll failed)")];
   }
 
   isBgmPlaying(): boolean {
@@ -2671,7 +2666,7 @@ export default class BattleScene extends SceneBase {
           pokemonModifierChance = Math.ceil(pokemonModifierChance * this.currentBattle.trainer.getPartyMemberModifierChanceMultiplier(i)); // eslint-disable-line
         let count = 0;
         for (let c = 0; c < chances; c++) {
-          if (!Utils.randSeedInt(modifierChance)) {
+          if (!Utils.randSeedInt(modifierChance, undefined, "Modifier roll")) {
             count++;
           }
         }
@@ -2796,7 +2791,7 @@ export default class BattleScene extends SceneBase {
         if (mods.length < 1) {
           return mods;
         }
-        const rand = Utils.randSeedInt(mods.length);
+        const rand = Utils.randSeedInt(mods.length, undefined, "Apply shuffled modifiers");
         return [mods[rand], ...shuffleModifiers(mods.filter((_, i) => i !== rand))];
       };
       modifiers = shuffleModifiers(modifiers);
@@ -2928,20 +2923,20 @@ export default class BattleScene extends SceneBase {
     const keys: string[] = [];
     const playerParty = this.getParty();
     playerParty.forEach(p => {
-      keys.push("pkmn__" + p.species.getSpriteId(p.gender === Gender.FEMALE, p.species.formIndex, p.shiny, p.variant));
-      keys.push("pkmn__" + p.species.getSpriteId(p.gender === Gender.FEMALE, p.species.formIndex, p.shiny, p.variant, true));
-      keys.push("cry/" + p.species.getCryKey(p.species.formIndex));
-      if (p.fusionSpecies && p.getSpeciesForm() !== p.getFusionSpeciesForm()) {
-        keys.push("cry/"+p.getFusionSpeciesForm().getCryKey(p.fusionSpecies.formIndex));
+      keys.push(p.getSpriteKey(true));
+      keys.push(p.getBattleSpriteKey(true, true));
+      keys.push("cry/" + p.species.getCryKey(p.formIndex));
+      if (p.fusionSpecies) {
+        keys.push("cry/"+p.fusionSpecies.getCryKey(p.fusionFormIndex));
       }
     });
     // enemyParty has to be operated on separately from playerParty because playerPokemon =/= enemyPokemon
     const enemyParty = this.getEnemyParty();
     enemyParty.forEach(p => {
-      keys.push(p.species.getSpriteKey(p.gender === Gender.FEMALE, p.species.formIndex, p.shiny, p.variant));
-      keys.push("cry/" + p.species.getCryKey(p.species.formIndex));
-      if (p.fusionSpecies && p.getSpeciesForm() !== p.getFusionSpeciesForm()) {
-        keys.push("cry/"+p.getFusionSpeciesForm().getCryKey(p.fusionSpecies.formIndex));
+      keys.push(p.getSpriteKey(true));
+      keys.push("cry/" + p.species.getCryKey(p.formIndex));
+      if (p.fusionSpecies) {
+        keys.push("cry/"+p.fusionSpecies.getCryKey(p.fusionFormIndex));
       }
     });
     return keys;

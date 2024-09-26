@@ -1157,7 +1157,7 @@ export const pokemonEvolutions: PokemonEvolutions = {
   [Species.TANDEMAUS]: [
     new SpeciesFormEvolution(Species.MAUSHOLD, "", "three", 25, null, new SpeciesEvolutionCondition(p => {
       let ret = false;
-      p.scene.executeWithSeedOffset(() => ret = !Utils.randSeedInt(4), p.id);
+      p.scene.executeWithSeedOffset(() => ret = !Utils.randSeedInt(4, undefined, "Tandemaus form selection"), p.id);
       return ret;
     })),
     new SpeciesEvolution(Species.MAUSHOLD, 25, null, null)
@@ -1325,7 +1325,7 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesFormEvolution(Species.DUDUNSPARCE, "", "three-segment", 32, null, new SpeciesEvolutionCondition(p => {
       let ret = false;
       if (p.moveset.filter(m => m?.moveId === Moves.HYPER_DRILL).length > 0) {
-        p.scene.executeWithSeedOffset(() => ret = !Utils.randSeedInt(4), p.id);
+        p.scene.executeWithSeedOffset(() => ret = !Utils.randSeedInt(4, undefined, "Dudunsparce form selection"), p.id);
       }
       return ret;
     }), SpeciesWildEvolutionDelay.LONG),

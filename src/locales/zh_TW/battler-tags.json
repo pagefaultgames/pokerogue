@@ -66,7 +66,5 @@
   "saltCuredOnAdd": "{{pokemonNameWithAffix}} 陷入了鹽腌狀態！",
   "saltCuredLapse": "{{pokemonNameWithAffix}} 受到了{{moveName}}的傷害！",
   "cursedOnAdd": "{{pokemonNameWithAffix}}削減了自己的體力，並詛咒了{{pokemonName}}！",
-  "cursedLapse": "{{pokemonNameWithAffix}}正受到詛咒！",
-  "disabledOnAdd": "封住了{{pokemonNameWithAffix}}的\n{moveName}}！",
-  "disabledLapse": "{{pokemonNameWithAffix}}的\n定身法解除了！"
+  "cursedLapse": "{{pokemonNameWithAffix}}正受到詛咒！"
 }

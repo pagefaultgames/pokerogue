@@ -371,6 +371,10 @@ export abstract class LapsingPersistentModifier extends PersistentModifier {
     return container;
   }
 
+  getIconStackText(_scene: BattleScene, _virtual?: boolean): Phaser.GameObjects.BitmapText | null {
+    return null;
+  }
+
   getBattleCount(): number {
     return this.battleCount;
   }
@@ -388,7 +392,8 @@ export abstract class LapsingPersistentModifier extends PersistentModifier {
   }
 
   getMaxStackCount(_scene: BattleScene, _forThreshold?: boolean): number {
-    return 1;
+    // Must be an abitrary number greater than 1
+    return 2;
   }
 }
 
@@ -1489,7 +1494,7 @@ export class PreserveBerryModifier extends PersistentModifier {
 
   apply(args: any[]): boolean {
     if (!(args[1] as Utils.BooleanHolder).value) {
-      (args[1] as Utils.BooleanHolder).value = (args[0] as Pokemon).randSeedInt(10, undefined, "Chance to save a berry") < this.getStackCount() * 3;
+      (args[1] as Utils.BooleanHolder).value = (args[0] as Pokemon).randSeedInt(10, undefined, "Chance to preserve berry") < this.getStackCount() * 3;
     }
 
     return true;
@@ -2423,7 +2428,7 @@ export abstract class HeldItemTransferModifier extends PokemonHeldItemModifier {
       return false;
     }
 
-    const targetPokemon = opponents[pokemon.randSeedInt(opponents.length, undefined, "Chance to steal/transfer an item")];
+    const targetPokemon = opponents[pokemon.randSeedInt(opponents.length, undefined, "Chance to steal item")];
 
     const transferredItemCount = this.getTransferredItemCount();
     if (!transferredItemCount) {

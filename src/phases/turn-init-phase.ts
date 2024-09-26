@@ -124,7 +124,7 @@ export class TurnInitPhase extends FieldPhase {
             pokemon.getBattleInfo().displayParty((this.scene.currentBattle.double ? Pt1 : Pt))
           }
         }
-    })
+    });
 
     this.scene.pushPhase(new TurnStartPhase(this.scene));
 

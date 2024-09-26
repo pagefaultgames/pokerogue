@@ -38,7 +38,7 @@ export class TrainerVictoryPhase extends BattlePhase {
     this.scene.ui.showText(i18next.t("battle:trainerDefeated", { trainerName: this.scene.currentBattle.trainer?.getName(TrainerSlot.NONE, true) }), null, () => {
       const victoryMessages = this.scene.currentBattle.trainer?.getVictoryMessages()!; // TODO: is this bang correct?
       let message: string;
-      this.scene.executeWithSeedOffset(() => message = Utils.randSeedItem(victoryMessages), this.scene.currentBattle.waveIndex);
+      this.scene.executeWithSeedOffset(() => message = Utils.randSeedItem(victoryMessages, "Victory message"), this.scene.currentBattle.waveIndex);
       message = message!; // tell TS compiler it's defined now
 
       const showMessage = () => {

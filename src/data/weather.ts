@@ -88,12 +88,14 @@ export class Weather {
     return 1;
   }
 
-  isMoveWeatherCancelled(move: Move): boolean {
+  isMoveWeatherCancelled(user: Pokemon, move: Move): boolean {
+    const moveType = user.getMoveType(move);
+
     switch (this.weatherType) {
     case WeatherType.HARSH_SUN:
-      return move instanceof AttackMove && move.type === Type.WATER;
+      return move instanceof AttackMove && moveType === Type.WATER;
     case WeatherType.HEAVY_RAIN:
-      return move instanceof AttackMove && move.type === Type.FIRE;
+      return move instanceof AttackMove && moveType === Type.FIRE;
     }
 
     return false;
@@ -376,7 +378,7 @@ export function getRandomWeatherType(arena: any /* Importing from arena causes a
     let totalWeight = 0;
     weatherPool.forEach(w => totalWeight += w.weight);
 
-    const rand = Utils.randSeedInt(totalWeight);
+    const rand = Utils.randSeedInt(totalWeight, undefined, "Weather selection");
     let w = 0;
     for (const weather of weatherPool) {
       w += weather.weight;

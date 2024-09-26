@@ -1980,6 +1980,13 @@ export class StatusEffectAttr extends MoveEffectAttr {
           return false;
         }
       }
+
+      if (user !== target && target.scene.arena.getTagOnSide(ArenaTagType.SAFEGUARD, target.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY)) {
+        if (move.category === MoveCategory.STATUS) {
+          user.scene.queueMessage(i18next.t("moveTriggers:safeguard", { targetName: getPokemonNameWithAffix(target)}));
+        }
+        return false;
+      }
       if ((!pokemon.status || (pokemon.status.effect === this.effect && moveChance < 0))
         && pokemon.trySetStatus(this.effect, true, user, this.cureTurn)) {
         applyPostAttackAbAttrs(ConfusionOnStatusEffectAbAttr, user, target, move, null, false, this.effect);
@@ -2004,7 +2011,7 @@ export class MultiStatusEffectAttr extends StatusEffectAttr {
   }
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    this.effect = Utils.randSeedItem(this.effects);
+    this.effect = Utils.randSeedItem(this.effects,  "Selecting status effect to apply");
     const result = super.apply(user, target, move, args);
     return result;
   }
@@ -2080,6 +2087,7 @@ export class StealHeldItemChanceAttr extends MoveEffectAttr {
       }
       //*/
 
+      console.log("realInRange direct call @ StealHeldItemChanceAttr: " + rand)
       if (rand >= this.chance) {
         return resolve(false);
       }
@@ -2632,7 +2640,7 @@ export class StatStageChangeAttr extends MoveEffectAttr {
     }
 
     const moveChance = this.getMoveChance(user, target, move, this.selfTarget, true);
-    if (moveChance < 0 || moveChance === 100 || user.randSeedInt(100, undefined, "Chance to apply status condition") < moveChance) {
+    if (moveChance < 0 || moveChance === 100 || user.randSeedInt(100, undefined, "Random chance to raise stat") < moveChance) {
       const stages = this.getLevels(user);
       user.scene.unshiftPhase(new StatStageChangePhase(user.scene, (this.selfTarget ? user : target).getBattlerIndex(), this.selfTarget, this.stats, stages, this.showMessage));
       return true;
@@ -2718,7 +2726,7 @@ export class AcupressureStatStageChangeAttr extends MoveEffectAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean | Promise<boolean> {
     const randStats = BATTLE_STATS.filter(s => target.getStatStage(s) < 6);
     if (randStats.length > 0) {
-      const boostStat = [randStats[user.randSeedInt(randStats.length)]];
+      const boostStat = [randStats[user.randSeedInt(randStats.length, undefined, "Choosing stat to raise")]];
       user.scene.unshiftPhase(new StatStageChangePhase(user.scene, target.getBattlerIndex(), this.selfTarget, boostStat, 2));
       return true;
     }
@@ -3051,7 +3059,7 @@ export class BeatUpAttr extends VariablePowerAttr {
 const doublePowerChanceMessageFunc = (user: Pokemon, target: Pokemon, move: Move) => {
   let message: string = "";
   user.scene.executeWithSeedOffset(() => {
-    const rand = Utils.randSeedInt(100);
+    const rand = Utils.randSeedInt(100, undefined, "Doubled power chance (applying message)");
     if (rand < move.chance) {
       message = i18next.t("moveTriggers:goingAllOutForAttack", {pokemonName: getPokemonNameWithAffix(user)});
     }
@@ -3062,7 +3070,7 @@ const doublePowerChanceMessageFunc = (user: Pokemon, target: Pokemon, move: Move
 export class DoublePowerChanceAttr extends VariablePowerAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     let rand: integer;
-    user.scene.executeWithSeedOffset(() => rand = Utils.randSeedInt(100), user.scene.currentBattle.turn << 6, user.scene.waveSeed);
+    user.scene.executeWithSeedOffset(() => rand = Utils.randSeedInt(100, undefined, "Doubled power chance (applying move)"), user.scene.currentBattle.turn << 6, user.scene.waveSeed);
     if (rand! < move.chance) {
       const power = args[0] as Utils.NumberHolder;
       power.value *= 2;
@@ -3323,7 +3331,7 @@ const magnitudeMessageFunc = (user: Pokemon, target: Pokemon, move: Move) => {
   user.scene.executeWithSeedOffset(() => {
     const magnitudeThresholds = [ 5, 15, 35, 65, 75, 95 ];
 
-    const rand = Utils.randSeedInt(100);
+    const rand = Utils.randSeedInt(100, undefined, "Magnitude selection (message)");
 
     let m = 0;
     for (; m < magnitudeThresholds.length; m++) {
@@ -3346,7 +3354,7 @@ export class MagnitudePowerAttr extends VariablePowerAttr {
 
     let rand: integer;
 
-    user.scene.executeWithSeedOffset(() => rand = Utils.randSeedInt(100), user.scene.currentBattle.turn << 6, user.scene.waveSeed);
+    user.scene.executeWithSeedOffset(() => rand = Utils.randSeedInt(100, undefined, "Magnitude selection (move)"), user.scene.currentBattle.turn << 6, user.scene.waveSeed);
 
     let m = 0;
     for (; m < magnitudeThresholds.length; m++) {
@@ -3471,7 +3479,7 @@ export class PresentPowerAttr extends VariablePowerAttr {
      */
     const firstHit = (user.turnData.hitCount === user.turnData.hitsLeft);
 
-    const powerSeed = Utils.randSeedInt(firstHit ? 100 : 80);
+    const powerSeed = Utils.randSeedInt(firstHit ? 100 : 80, undefined, "Present healing chance");
     if (powerSeed <= 40) {
       (args[0] as Utils.NumberHolder).value = 40;
     } else if (40 < powerSeed && powerSeed <= 70) {
@@ -3919,7 +3927,7 @@ export class ShellSideArmCategoryAttr extends VariableMoveCategoryAttr {
     } else if (atkRatio === specialRatio && args[1] == "SIM") {
       category.value = MoveCategory.PHYSICAL;
       return true;
-    } else if (atkRatio === specialRatio && user.randSeedInt(2, undefined, "Randomly selecting an attack type for Shell Side Arm") === 0) {
+    } else if (atkRatio === specialRatio && user.randSeedInt(2, undefined, "Random category for Shell Side Arm") === 0) {
       category.value = MoveCategory.PHYSICAL;
       return true;
     }
@@ -4394,7 +4402,7 @@ export class FrenzyAttr extends MoveEffectAttr {
     }
 
     if (!user.getTag(BattlerTagType.FRENZY) && !user.getMoveQueue().length) {
-      const turnCount = user.randSeedIntRange(1, 2, "Frenzy targeting");
+      const turnCount = user.randSeedIntRange(1, 2, "Frenzy duration");
       new Array(turnCount).fill(null).map(() => user.getMoveQueue().push({ move: move.id, targets: [ target.getBattlerIndex() ], ignorePP: true }));
       user.addTag(BattlerTagType.FRENZY, turnCount, move.id, user.id);
     } else {
@@ -4446,8 +4454,8 @@ export class AddBattlerTagAttr extends MoveEffectAttr {
     }
 
     const moveChance = this.getMoveChance(user, target, move, this.selfTarget, true);
-    if (moveChance < 0 || moveChance === 100 || user.randSeedInt(100, undefined, "Chance to apply battler tag") < moveChance) {
-      return (this.selfTarget ? user : target).addTag(this.tagType,  user.randSeedIntRange(this.turnCountMin, this.turnCountMax, "Duration of effect"), move.id, user.id);
+    if (moveChance < 0 || moveChance === 100 || user.randSeedInt(100, undefined, "Chance to add Battler Tag") < moveChance) {
+      return (this.selfTarget ? user : target).addTag(this.tagType,  user.randSeedIntRange(this.turnCountMin, this.turnCountMax, "Battler Tag duration"), move.id, user.id);
     }
 
     return false;
@@ -4572,7 +4580,7 @@ export class JawLockAttr extends AddBattlerTagAttr {
     }
 
     const moveChance = this.getMoveChance(user, target, move, this.selfTarget);
-    if (moveChance < 0 || moveChance === 100 || user.randSeedInt(100) < moveChance) {
+    if (moveChance < 0 || moveChance === 100 || user.randSeedInt(100, undefined, "Chance to apply Trap tag (Jaw Lock)") < moveChance) {
       /**
        * Add the tag to both the user and the target.
        * The target's tag source is considered to be the user and vice versa
@@ -4666,6 +4674,17 @@ export class ConfuseAttr extends AddBattlerTagAttr {
   constructor(selfTarget?: boolean) {
     super(BattlerTagType.CONFUSED, selfTarget, false, 2, 5);
   }
+
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    if (!this.selfTarget && target.scene.arena.getTagOnSide(ArenaTagType.SAFEGUARD, target.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY)) {
+      if (move.category === MoveCategory.STATUS) {
+        user.scene.queueMessage(i18next.t("moveTriggers:safeguard", { targetName: getPokemonNameWithAffix(target)}));
+      }
+      return false;
+    }
+
+    return super.apply(user, target, move, args);
+  }
 }
 
 export class RechargeAttr extends AddBattlerTagAttr {
@@ -4699,7 +4718,7 @@ export class ProtectAttr extends AddBattlerTagAttr {
         timesUsed++;
       }
       if (timesUsed) {
-        return !user.randSeedInt(Math.pow(3, timesUsed), undefined, "Chance for Protect-like move to fail");
+        return !user.randSeedInt(Math.pow(3, timesUsed), undefined, "Chance for Protection move to succeed");
       }
       return true;
     });
@@ -4855,7 +4874,7 @@ export class AddArenaTrapTagHitAttr extends AddArenaTagAttr {
     const moveChance = this.getMoveChance(user, target, move, this.selfTarget, true);
     const side = (this.selfSideTarget ? user : target).isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY;
     const tag = user.scene.arena.getTagOnSide(this.tagType, side) as ArenaTrapTag;
-    if ((moveChance < 0 || moveChance === 100 || user.randSeedInt(100, undefined, "Chance to apply trap") < moveChance) && user.getLastXMoves(1)[0].result === MoveResult.SUCCESS) {
+    if ((moveChance < 0 || moveChance === 100 || user.randSeedInt(100, undefined, "Chance to add arena tag on hit") < moveChance) && user.getLastXMoves(1)[0].result === MoveResult.SUCCESS) {
       user.scene.arena.addTag(this.tagType, 0, move.id, user.id, side);
       if (!tag) {
         return true;
@@ -5009,7 +5028,7 @@ export class RevivalBlessingAttr extends MoveEffectAttr {
         && user.scene.getEnemyParty().findIndex(p => p.isFainted() && !p.isBoss()) > -1) {
         // Selects a random fainted pokemon
         const faintedPokemon = user.scene.getEnemyParty().filter(p => p.isFainted() && !p.isBoss());
-        const pokemon = faintedPokemon[user.randSeedInt(faintedPokemon.length, undefined, "Randomly selecting a Pokemon to revive")];
+        const pokemon = faintedPokemon[user.randSeedInt(faintedPokemon.length, undefined, "Choosing Pokemon to revive")];
         const slotIndex = user.scene.getEnemyParty().findIndex(p => pokemon.id === p.id);
         pokemon.resetStatus();
         pokemon.heal(Math.min(Utils.toDmgValue(0.5 * pokemon.getMaxHp()), pokemon.getMaxHp()));
@@ -5319,7 +5338,7 @@ export class RandomMovesetMoveAttr extends OverrideMoveEffectAttr {
     const moveset = (!this.enemyMoveset ? user : target).getMoveset();
     const moves = moveset.filter(m => !m?.getMove().hasFlag(MoveFlags.IGNORE_VIRTUAL));
     if (moves.length) {
-      const move = moves[user.randSeedInt(moves.length, undefined, "Randomly selecting a known move")];
+      const move = moves[user.randSeedInt(moves.length, undefined, "Choosing random move from moveset")];
       const moveIndex = moveset.findIndex(m => m?.moveId === move?.moveId);
       const moveTargets = getMoveTargets(user, move?.moveId!); // TODO: is this bang correct?
       if (!moveTargets.targets.length) {
@@ -6458,7 +6477,7 @@ export class ResistLastMoveTypeAttr extends MoveEffectAttr {
     if (!validTypes.length) {
       return false;
     }
-    const type = validTypes[user.randSeedInt(validTypes.length, undefined, "Randomly selecting a type for Conversion2 that resists Type." + Utils.getEnumKeys(Type)[moveData.type])];
+    const type = validTypes[user.randSeedInt(validTypes.length, undefined, "Choosing type to transform into (Conversion2)")];
     user.summonData.types = [ type ];
     user.scene.queueMessage(i18next.t("battle:transformedIntoType", {pokemonName: getPokemonNameWithAffix(user), type: Utils.toReadableString(Type[type])}));
     user.updateInfo();
@@ -7211,7 +7230,7 @@ export function initMoves() {
       .attr(FriendshipPowerAttr, true),
     new StatusMove(Moves.SAFEGUARD, Type.NORMAL, -1, 25, -1, 0, 2)
       .target(MoveTarget.USER_SIDE)
-      .unimplemented(),
+      .attr(AddArenaTagAttr, ArenaTagType.SAFEGUARD, 5, true, true),
     new StatusMove(Moves.PAIN_SPLIT, Type.NORMAL, -1, 20, -1, 0, 2)
       .attr(HpSplitAttr)
       .condition(failOnBossCondition),
@@ -7400,7 +7419,7 @@ export function initMoves() {
       .attr(RemoveScreensAttr),
     new StatusMove(Moves.YAWN, Type.NORMAL, -1, 10, -1, 0, 3)
       .attr(AddBattlerTagAttr, BattlerTagType.DROWSY, false, true)
-      .condition((user, target, move) => !target.status),
+      .condition((user, target, move) => !target.status && !target.scene.arena.getTagOnSide(ArenaTagType.SAFEGUARD, target.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY)),
     new AttackMove(Moves.KNOCK_OFF, Type.DARK, MoveCategory.PHYSICAL, 65, 100, 20, -1, 0, 3)
       .attr(MovePowerMultiplierAttr, (user, target, move) => target.getHeldItems().filter(i => i.isTransferrable).length > 0 ? 1.5 : 1)
       .attr(RemoveHeldItemAttr, false),
@@ -8954,8 +8973,8 @@ export function initMoves() {
     new AttackMove(Moves.SKITTER_SMACK, Type.BUG, MoveCategory.PHYSICAL, 70, 90, 10, 100, 0, 8)
       .attr(StatStageChangeAttr, [ Stat.SPATK ], -1),
     new AttackMove(Moves.BURNING_JEALOUSY, Type.FIRE, MoveCategory.SPECIAL, 70, 100, 5, 100, 0, 8)
-      .target(MoveTarget.ALL_NEAR_ENEMIES)
-      .partial(),
+      .attr(StatusIfBoostedAttr, StatusEffect.BURN)
+      .target(MoveTarget.ALL_NEAR_ENEMIES),
     new AttackMove(Moves.LASH_OUT, Type.DARK, MoveCategory.PHYSICAL, 75, 100, 5, -1, 0, 8)
       .attr(MovePowerMultiplierAttr, (user, _target, _move) => user.turnData.statStagesDecreased ? 2 : 1),
     new AttackMove(Moves.POLTERGEIST, Type.GHOST, MoveCategory.PHYSICAL, 110, 90, 5, -1, 0, 8)
@@ -9405,12 +9424,11 @@ export function initMoves() {
     new AttackMove(Moves.HARD_PRESS, Type.STEEL, MoveCategory.PHYSICAL, -1, 100, 10, -1, 0, 9)
       .attr(OpponentHighHpPowerAttr, 100),
     new StatusMove(Moves.DRAGON_CHEER, Type.DRAGON, -1, 15, -1, 0, 9)
-      .attr(AddBattlerTagAttr, BattlerTagType.CRIT_BOOST, false, true)
-      .target(MoveTarget.NEAR_ALLY)
-      .partial(),
+      .attr(AddBattlerTagAttr, BattlerTagType.DRAGON_CHEER, false, true)
+      .target(MoveTarget.NEAR_ALLY),
     new AttackMove(Moves.ALLURING_VOICE, Type.FAIRY, MoveCategory.SPECIAL, 80, 100, 10, -1, 0, 9)
-      .soundBased()
-      .partial(),
+      .attr(AddBattlerTagIfBoostedAttr, BattlerTagType.CONFUSED)
+      .soundBased(),
     new AttackMove(Moves.TEMPER_FLARE, Type.FIRE, MoveCategory.PHYSICAL, 75, 100, 10, -1, 0, 9)
       .attr(MovePowerMultiplierAttr, (user, target, move) => user.getLastXMoves(2)[1]?.result === MoveResult.MISS || user.getLastXMoves(2)[1]?.result === MoveResult.FAIL ? 2 : 1),
     new AttackMove(Moves.SUPERCELL_SLAM, Type.ELECTRIC, MoveCategory.PHYSICAL, 100, 95, 15, -1, 0, 9)

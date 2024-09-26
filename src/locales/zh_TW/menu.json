@@ -40,7 +40,5 @@
   "loading": "加載中…",
   "playersOnline": "在線玩家",
   "yes": "是",
-  "no": "否",
-  "noSaves": "你沒有任何記錄檔！",
-  "tooManySaves": "你的記錄檔太多了！"
+  "no": "否"
 }

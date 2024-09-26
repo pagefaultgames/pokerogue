@@ -1,6 +1,6 @@
 import BattleScene from "#app/battle-scene";
 import { BattlerIndex } from "#app/battle";
-import { getPokeballCatchMultiplier, getPokeballAtlasKey, getPokeballTintColor, doPokeballBounceAnim } from "#app/data/pokeball";
+import { getPokeballCatchMultiplier, getPokeballAtlasKey, getPokeballTintColor, doPokeballBounceAnim, getPokeballName } from "#app/data/pokeball";
 import { getStatusEffectCatchRateMultiplier } from "#app/data/status-effect";
 import { PokeballType } from "#app/enums/pokeball";
 import { StatusEffect } from "#app/enums/status-effect";
@@ -63,7 +63,7 @@ export class AttemptCapturePhase extends PokemonPhase {
     const y = Math.round(65536 / Math.sqrt(Math.sqrt(255 / x)));
     const fpOffset = pokemon.getFieldPositionOffset();
 
-    LoggerTools.logActions(this.scene, this.scene.currentBattle.waveIndex, "Poké Ball Throw")
+    LoggerTools.logActions(this.scene, this.scene.currentBattle.waveIndex, getPokeballName(this.pokeballType))
 
     const pokeballAtlasKey = getPokeballAtlasKey(this.pokeballType);
     this.pokeball = this.scene.addFieldSprite(16, 80, "pb", pokeballAtlasKey);
@@ -124,7 +124,7 @@ export class AttemptCapturePhase extends PokemonPhase {
                     shakeCounter.stop();
                     this.failCatch(shakeCount);
                   } else if (shakeCount++ < 3) {
-                    if (pokeballMultiplier === -1 || this.roll(y) < y) {
+                    if (pokeballMultiplier === -1 || pokemon.randSeedInt(65536, undefined, "Capture roll") < y) {
                       this.scene.playSound("se/pb_move");
                     } else {
                       shakeCounter.stop();

@@ -34,6 +34,8 @@ const useMaxWeightForOutput = false;
 
 type Modifier = Modifiers.Modifier;
 
+const doModifierLogging: boolean = false;
+
 export enum ModifierPoolType {
   PLAYER,
   WILD,
@@ -1035,7 +1037,7 @@ class AttackTypeBoosterModifierTypeGenerator extends ModifierTypeGenerator {
         return new AttackTypeBoosterModifierType(pregenArgs[0] as Type, 20);
       }
 
-      console.log("Generating item: Attack Type Booster")
+      if (doModifierLogging) console.log("Generating item: Attack Type Booster")
 
       const attackMoveTypes = party.map(p => p.getMoveset().map(m => m?.getMove()).filter(m => m instanceof AttackMove).map(m => m.type)).flat();
       if (!attackMoveTypes.length) {
@@ -1063,7 +1065,7 @@ class AttackTypeBoosterModifierTypeGenerator extends ModifierTypeGenerator {
 
       let type: Type;
 
-      const randInt = Utils.randSeedInt(totalWeight);
+      const randInt = Utils.randSeedInt(totalWeight, undefined, doModifierLogging ? "Generating a move type booster" : "%HIDE");
       let weight = 0;
 
       var fullweights: integer[] = []
@@ -1104,7 +1106,7 @@ class BaseStatBoosterModifierTypeGenerator extends ModifierTypeGenerator {
       if (pregenArgs) {
         return new BaseStatBoosterModifierType(pregenArgs[0]);
       }
-      const randStat: PermanentStat = Utils.randSeedInt(Stat.SPD + 1);
+      const randStat: PermanentStat = Utils.randSeedInt(Stat.SPD + 1, undefined, doModifierLogging ? "Randomly generating a Vitamin" : "%HIDE");
       return new BaseStatBoosterModifierType(randStat);
     });
   }
@@ -1125,7 +1127,7 @@ class TempStatStageBoosterModifierTypeGenerator extends ModifierTypeGenerator {
       if (pregenArgs && (pregenArgs.length === 1) && TEMP_BATTLE_STATS.includes(pregenArgs[0])) {
         return new TempStatStageBoosterModifierType(pregenArgs[0]);
       }
-      const randStat: TempBattleStat = Utils.randSeedInt(Stat.ACC, Stat.ATK);
+      const randStat: TempBattleStat = Utils.randSeedInt(Stat.ACC, Stat.ATK, doModifierLogging ? "Randomly choosing an X item" : "%HIDE");
       return new TempStatStageBoosterModifierType(randStat);
     });
   }
@@ -1190,7 +1192,7 @@ class SpeciesStatBoosterModifierTypeGenerator extends ModifierTypeGenerator {
       }
 
       if (totalWeight !== 0) {
-        const randInt = Utils.randSeedInt(totalWeight, 1);
+        const randInt = Utils.randSeedInt(totalWeight, 1, doModifierLogging ? "Randomly choosing a species booster" : "HIDE");
         let weight = 0;
 
         var fullweights: integer[] = []
@@ -1225,15 +1227,15 @@ class TmModifierTypeGenerator extends ModifierTypeGenerator {
         return new TmModifierType(pregenArgs[0] as Moves, tier);
       }
 
-      console.log("Generating item: TM (Tier: " + Utils.getEnumKeys(ModifierTier)[tier].toLowerCase() + ")")
+      if (doModifierLogging) console.log("Generating item: TM (Tier: " + Utils.getEnumKeys(ModifierTier)[tier].toLowerCase() + ")")
 
       const partyMemberCompatibleTms = party.map(p => (p as PlayerPokemon).compatibleTms.filter(tm => !p.moveset.find(m => m?.moveId === tm)));
       const tierUniqueCompatibleTms = partyMemberCompatibleTms.flat().filter(tm => tmPoolTiers[tm] === tier).filter(tm => !allMoves[tm].name.endsWith(" (N)")).filter((tm, i, array) => array.indexOf(tm) === i);
       if (!tierUniqueCompatibleTms.length) {
         return null;
       }
-      const randTmIndex = Utils.randSeedInt(tierUniqueCompatibleTms.length);
       //console.log(tierUniqueCompatibleTms.map((v, i) => i == randTmIndex ? `> ${Utils.getEnumKeys(Moves)[v].toUpperCase() + Utils.getEnumKeys(Moves)[v].substring(1).toLowerCase()} <` : `${Utils.getEnumKeys(Moves)[v].toUpperCase() + Utils.getEnumKeys(Moves)[v].substring(1).toLowerCase()}`))
+      const randTmIndex = Utils.randSeedInt(tierUniqueCompatibleTms.length, undefined, doModifierLogging ? "Choosing a TM to give" : "%HIDE");
       return new TmModifierType(tierUniqueCompatibleTms[randTmIndex], tier);
     });
   }
@@ -1246,7 +1248,7 @@ class EvolutionItemModifierTypeGenerator extends ModifierTypeGenerator {
         return new EvolutionItemModifierType(pregenArgs[0] as EvolutionItem);
       }
 
-      console.log("Generating item: Evolution Item")
+      if (doModifierLogging) console.log("Generating item: Evolution Item")
 
       const evolutionItemPool = [
         party.filter(p => pokemonEvolutions.hasOwnProperty(p.species.speciesId)).map(p => {
@@ -1263,9 +1265,7 @@ class EvolutionItemModifierTypeGenerator extends ModifierTypeGenerator {
         return null;
       }
 
-      const idx = Utils.randSeedInt(evolutionItemPool.length)
-      // console.log(evolutionItemPool.map((v, i) => i == idx ? `> ${Utils.getEnumKeys(EvolutionItem)[v!]} <` : Utils.getEnumKeys(EvolutionItem)[v!]))
-      return new EvolutionItemModifierType(evolutionItemPool[idx]!); // TODO: is the bang correct?
+      return new EvolutionItemModifierType(evolutionItemPool[Utils.randSeedInt(evolutionItemPool.length, undefined, doModifierLogging ? "Choosing an evolution item" : "%HIDE")]!); // TODO: is the bang correct?
     });
   }
 }
@@ -1277,7 +1277,7 @@ class FormChangeItemModifierTypeGenerator extends ModifierTypeGenerator {
         return new FormChangeItemModifierType(pregenArgs[0] as FormChangeItem);
       }
 
-      console.log("Generating item: Form Change Item")
+      if (doModifierLogging) console.log("Generating item: Form Change Item")
 
       const formChangeItemPool = [...new Set(party.filter(p => pokemonFormChanges.hasOwnProperty(p.species.speciesId)).map(p => {
         const formChanges = pokemonFormChanges[p.species.speciesId];
@@ -1321,9 +1321,7 @@ class FormChangeItemModifierTypeGenerator extends ModifierTypeGenerator {
         return null;
       }
 
-      const idx = Utils.randSeedInt(formChangeItemPool.length)
-      // console.log(formChangeItemPool.map((v, i) => i == idx ? `> ${Utils.getEnumKeys(FormChangeItem)[v!]} <` : Utils.getEnumKeys(FormChangeItem)[v!]))
-      return new FormChangeItemModifierType(formChangeItemPool[idx]!);
+      return new FormChangeItemModifierType(formChangeItemPool[Utils.randSeedInt(formChangeItemPool.length, undefined, doModifierLogging ? "Choosing a form change item" : "%HIDE")]);
     });
   }
 }
@@ -1584,7 +1582,7 @@ export const modifierTypes = {
     if (pregenArgs && (pregenArgs.length === 1) && (pregenArgs[0] in Nature)) {
       return new PokemonNatureChangeModifierType(pregenArgs[0] as Nature);
     }
-    return new PokemonNatureChangeModifierType(Utils.randSeedInt(Utils.getEnumValues(Nature).length) as Nature);
+    return new PokemonNatureChangeModifierType(Utils.randSeedInt(Utils.getEnumValues(Nature).length, undefined, "Choosing a Mint") as Nature);
   }),
 
   TERA_SHARD: () => new ModifierTypeGenerator((party: Pokemon[], pregenArgs?: any[]) => {
@@ -1595,11 +1593,11 @@ export const modifierTypes = {
       return null;
     }
     let type: Type;
-    if (!Utils.randSeedInt(3)) {
+    if (!Utils.randSeedInt(3, undefined, "Choosing whether to give a type from your party")) {
       const partyMemberTypes = party.map(p => p.getTypes(false, false, true)).flat();
-      type = Utils.randSeedItem(partyMemberTypes);
+      type = Utils.randSeedItem(partyMemberTypes, "Choosing a Tera Shard type to give");
     } else {
-      type = Utils.randSeedInt(64) ? Utils.randSeedInt(18) as Type : Type.STELLAR;
+      type = Utils.randSeedInt(64, undefined, "Choosing whether to give a Stellar Shard") ? Utils.randSeedInt(18, undefined, "Choosing a type (man I have no patience)") as Type : Type.STELLAR;
     }
     return new TerastallizeModifierType(type);
   }),
@@ -1610,7 +1608,7 @@ export const modifierTypes = {
     }
     const berryTypes = Utils.getEnumValues(BerryType);
     let randBerryType: BerryType;
-    const rand = Utils.randSeedInt(12);
+    const rand = Utils.randSeedInt(12, undefined, "Choosing a Berry");
     if (rand < 2) {
       randBerryType = BerryType.SITRUS;
     } else if (rand < 4) {
@@ -1618,7 +1616,7 @@ export const modifierTypes = {
     } else if (rand < 6) {
       randBerryType = BerryType.LEPPA;
     } else {
-      randBerryType = berryTypes[Utils.randSeedInt(berryTypes.length - 3) + 2];
+      randBerryType = berryTypes[Utils.randSeedInt(berryTypes.length - 3, undefined, "Choosing a random berry type") + 2];
     }
     return new BerryModifierType(randBerryType);
   }),
@@ -2584,6 +2582,12 @@ export function getPlayerModifierTypeOptions(count: integer, party: PlayerPokemo
     let r = 0;
     const aT = candidate?.alternates
     const aT2 = candidate?.advancedAlternates
+    const retryPool: string[] = []
+    if (candidate) {
+      retryPool.push(candidate!.type.name)
+    } else {
+      retryPool.push("undefined")
+    }
     while (options.length && ++r < retryCount && options.filter(o => o.type?.name === candidate?.type?.name || o.type?.group === candidate?.type?.group).length) {
       //if (options.filter(o => o.type?.name === candidate?.type?.name))
         //console.error(options.filter(o => o.type?.name === candidate?.type?.name).map((v, q) => v.type.name + " (" + v.type.group + ") - conflicting name").join("\n"))
@@ -2591,17 +2595,23 @@ export function getPlayerModifierTypeOptions(count: integer, party: PlayerPokemo
         //console.error(options.filter(o => o.type?.group === candidate?.type?.group).map((v, q) => v.type.name + " (" + v.type.group + ") - conflicting group").join("\n"))
       candidate = getNewModifierTypeOption(party, ModifierPoolType.PLAYER, candidate?.type?.tier, candidate?.upgradeCount, undefined, scene, shutUpBro, generateAltTiers, advanced);
       //console.log("    Retrying - attempt " + r, candidate?.type.name)
+      if (candidate) {
+        retryPool.push(candidate!.type.name)
+      } else {
+        retryPool.push("undefined")
+      }
     }
     if (options.length && options.filter(o => o.type?.name === candidate?.type?.name || o.type?.group === candidate?.type?.group).length) {
-      //console.log("  Item " + (i+1) + "/" + count + " (+" + r + ")", candidate?.type.name, "(Out of retries)")
+      console.log("  Item " + (i+1) + "/" + count + " (" + r + " attempts or more)", candidate?.type.name, retryPool)
     } else {
-      //console.log("  Item " + (i+1) + "/" + count + " (+" + r + ")", candidate?.type.name)
+      console.log("  Item " + (i+1) + "/" + count + " (" + r + " attempt" + (r == 1 ? "" : "s") + ")", candidate?.type.name, retryPool)
     }
     if (candidate && candidate.alternates == undefined) {
       candidate.alternates = aT
       candidate.advancedAlternates = aT2
     }
     if (candidate) {
+      candidate.retriesList = retryPool;
       options.push(candidate);
     }
   });
@@ -2708,7 +2718,7 @@ export function getEnemyBuffModifierForWave(tier: ModifierTier, enemyModifiers: 
 }
 
 export function getEnemyModifierTypesForWave(waveIndex: integer, count: integer, party: EnemyPokemon[], poolType: ModifierPoolType.WILD | ModifierPoolType.TRAINER, upgradeChance: integer = 0, scene?: BattleScene): PokemonHeldItemModifierType[] {
-  const ret = new Array(count).fill(0).map(() => getNewModifierTypeOption(party, poolType, undefined, upgradeChance && !Utils.randSeedInt(upgradeChance) ? 1 : 0, undefined, scene)?.type as PokemonHeldItemModifierType);
+  const ret = new Array(count).fill(0).map(() => getNewModifierTypeOption(party, poolType, undefined, upgradeChance && !Utils.randSeedInt(upgradeChance, undefined, "Chance to upgrade an opponent's item") ? 1 : 0)?.type as PokemonHeldItemModifierType, scene);
   if (!(waveIndex % 1000)) {
     ret.push(getModifierType(modifierTypes.MINI_BLACK_HOLE) as PokemonHeldItemModifierType);
   }
@@ -2719,7 +2729,7 @@ export function getDailyRunStarterModifiers(party: PlayerPokemon[], scene?: Batt
   const ret: Modifiers.PokemonHeldItemModifier[] = [];
   for (const p of party) {
     for (let m = 0; m < 3; m++) {
-      const tierValue = Utils.randSeedInt(64);
+      const tierValue = Utils.randSeedInt(64, undefined, "Choosing modifier tier for daily items");
 
       let tier: ModifierTier;
       if (tierValue > 25) {
@@ -2769,7 +2779,7 @@ function getNewModifierTypeOption(party: Pokemon[], poolType: ModifierPoolType, 
     if (generateAltTiers) {
       for (var luck = 0; luck <= 14; luck++) {
         var state = Phaser.Math.RND.state()
-        var tierValueTemp = Utils.randSeedInt(1024);
+        var tierValueTemp = Utils.randSeedInt(1024, undefined, "%HIDE");
         var upgradeCountTemp = 0;
         var tierTemp: ModifierTier;
         if (upgradeCount) {
@@ -2780,7 +2790,7 @@ function getNewModifierTypeOption(party: Pokemon[], poolType: ModifierPoolType, 
           const upgradeOddsTemp = Math.floor(128 / ((partyLuckValue + 4) / 4));
           let upgraded = false;
           do {
-            upgraded = Utils.randSeedInt(upgradeOddsTemp) < 4;
+            upgraded = Utils.randSeedInt(upgradeOddsTemp, undefined, "%HIDE") < 4;
             if (upgraded) {
               upgradeCountTemp++;
             }
@@ -2807,7 +2817,7 @@ function getNewModifierTypeOption(party: Pokemon[], poolType: ModifierPoolType, 
         Phaser.Math.RND.state(state)
       }
     }
-    const tierValue = Utils.randSeedInt(1024);
+    const tierValue = Utils.randSeedInt(1024, undefined, "Choosing a modifier tier");
     if (!upgradeCount) {
       upgradeCount = 0;
     }
@@ -2821,7 +2831,7 @@ function getNewModifierTypeOption(party: Pokemon[], poolType: ModifierPoolType, 
       const upgradeOdds = Math.floor(128 / ((partyLuckValue + 4) / 4));
       let upgraded = false;
       do {
-        upgraded = Utils.randSeedInt(upgradeOdds) < 4;
+        upgraded = Utils.randSeedInt(upgradeOdds, undefined, "Upgrade chance") < 4;
         if (upgraded) {
           upgradeCount++;
         }
@@ -2862,7 +2872,7 @@ function getNewModifierTypeOption(party: Pokemon[], poolType: ModifierPoolType, 
           var upgradeOddsTemp = Math.floor(32 / ((luck + 2) / 2));
           var upgradeCountTemp = 0;
           while (modifierPool.hasOwnProperty(tier + upgradeCountTemp + 1) && modifierPool[tier + upgradeCountTemp + 1].length) {
-            if (!Utils.randSeedInt(upgradeOddsTemp)) {
+            if (!Utils.randSeedInt(upgradeOddsTemp, undefined, "%HIDE")) {
               upgradeCountTemp++;
             } else {
               break;
@@ -2879,7 +2889,7 @@ function getNewModifierTypeOption(party: Pokemon[], poolType: ModifierPoolType, 
       }
       const upgradeOdds = Math.floor(32 / ((partyShinyCount + 2) / 2));
       while (modifierPool.hasOwnProperty(tier + upgradeCount + 1) && modifierPool[tier + upgradeCount + 1].length) {
-        if (!Utils.randSeedInt(upgradeOdds)) {
+        if (!Utils.randSeedInt(upgradeOdds, undefined, "Upgrade chance 2")) {
           upgradeCount++;
         } else {
           break;
@@ -2892,7 +2902,17 @@ function getNewModifierTypeOption(party: Pokemon[], poolType: ModifierPoolType, 
     tier--;
   }
 
-  let index = getItemIndex(thresholds, tier);
+  const tierThresholds = Object.keys(thresholds[tier]);
+  const totalWeight = parseInt(tierThresholds[tierThresholds.length - 1]);
+  const value = Utils.randSeedInt(totalWeight, undefined, doModifierLogging ? "Weighted modifier selection (total " + totalWeight + ")" : "%HIDE");
+  let index: integer | undefined;
+  for (const t of tierThresholds) {
+    const threshold = parseInt(t);
+    if (value < threshold) {
+      index = thresholds[tier][threshold];
+      break;
+    }
+  }
 
   if (index === undefined) {
     return null;
@@ -2900,23 +2920,23 @@ function getNewModifierTypeOption(party: Pokemon[], poolType: ModifierPoolType, 
 
   if (player) {
     if (!shutUpBro) {
-      console.log(index, ignoredPoolIndexes[tier].filter(i => i <= index).length, ignoredPoolIndexes[tier].filter(i => i <= index).length)
+      //console.log(index, ignoredPoolIndexes[tier].filter(i => i <= index).length, ignoredPoolIndexes[tier].filter(i => i <= index).length)
       //console.log("Index ", index);
       //console.log("# of ignored items for this tier", ignoredPoolIndexes[tier].filter(i => i <= index).length)
       //console.log("Ignored items for this tier", ignoredPoolIndexes[tier].map((v, i) => [ignoredPoolNames[i], v]).flat())
     }
   }
-  let modifierType: ModifierType = (pool[tier][index]).modifierType;
+  let modifierType: ModifierType | null = (pool[tier][index]).modifierType;
   if (modifierType instanceof ModifierTypeGenerator) {
-    modifierType = (modifierType as ModifierTypeGenerator).generateType(party)!;
+    modifierType = (modifierType as ModifierTypeGenerator).generateType(party);
     if (modifierType === null) {
       if (player) {
         if (!shutUpBro) console.log(ModifierTier[tier], upgradeCount);
       }
-      console.error("Null Modifier - regenerating")
+      //console.error("Null Modifier - regenerating")
       return getNewModifierTypeOption(party, poolType, tier, upgradeCount, ++retryCount, scene, shutUpBro, generateAltTiers);
     } else {
-      console.log("Generated type", modifierType)
+      if (doModifierLogging) console.log("Generated type", modifierType)
     }
   }
 
@@ -2945,7 +2965,7 @@ function getNewModifierTypeOption(party: Pokemon[], poolType: ModifierPoolType, 
 function getItemIndex(thresholds, tier) {
   const tierThresholds = Object.keys(thresholds[tier]);
   const totalWeight = parseInt(tierThresholds[tierThresholds.length - 1]);
-  const value = Utils.randSeedInt(totalWeight);
+  const value = Utils.randSeedInt(totalWeight, undefined, "%HIDE");
   let index: integer;
   for (const t of tierThresholds) {
     const threshold = parseInt(t);
@@ -2992,6 +3012,7 @@ export class ModifierTypeOption {
   public alternates?: integer[];
   public netprice: integer;
   public advancedAlternates?: string[];
+  public retriesList: string[];
 
   constructor(type: ModifierType, upgradeCount: integer, cost: number = 0) {
     this.type = type;

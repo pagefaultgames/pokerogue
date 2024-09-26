@@ -205,7 +205,7 @@ export class MovePhase extends BattlePhase {
       let success = this.move.getMove().applyConditions(this.pokemon, targets[0], this.move.getMove());
       const cancelled = new Utils.BooleanHolder(false);
       let failedText = this.move.getMove().getFailedText(this.pokemon, targets[0], this.move.getMove(), cancelled);
-      if (success && this.scene.arena.isMoveWeatherCancelled(this.move.getMove())) {
+      if (success && this.scene.arena.isMoveWeatherCancelled(this.pokemon, this.move.getMove())) {
         success = false;
       } else if (success && this.scene.arena.isMoveTerrainCancelled(this.pokemon, this.targets, this.move.getMove())) {
         success = false;
@@ -251,7 +251,7 @@ export class MovePhase extends BattlePhase {
 
       switch (this.pokemon.status.effect) {
       case StatusEffect.PARALYSIS:
-        if (!this.pokemon.randSeedInt(4, undefined, "Paralysis chance")) {
+        if (!this.pokemon.randSeedInt(4, undefined, "Chance to be immobilized by Paralysis")) {
           activated = true;
           this.cancelled = true;
         }
