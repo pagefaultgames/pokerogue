@@ -500,7 +500,7 @@ function generateItemsOfTier(scene: BattleScene, pokemon: PlayerPokemon, numItem
     }
     const randIndex = randSeedInt(pool.length);
     const newItemType = pool[randIndex];
-    let newMod;
+    let newMod: PokemonHeldItemModifierType;
     if (tier === "Berries") {
       newMod = generateModifierType(scene, modifierTypes.BERRY, [newItemType[0]]) as PokemonHeldItemModifierType;
     } else {

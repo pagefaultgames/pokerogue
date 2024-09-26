@@ -1198,13 +1198,6 @@ export class GameData {
           return resolve([false, false]);
         }
         const sessionData = this.getSessionSaveData(scene);
-
-        // Filter out any "rental" Pokemon from the player's team that were used for the run
-        sessionData.party = sessionData.party.filter(p => {
-          const speciesRootForm = getPokemonSpecies(p.species).getRootSpeciesId();
-          return !!this.scene.gameData.dexData[speciesRootForm].caughtAttr;
-        });
-
         Utils.apiPost(`savedata/session/clear?slot=${slotId}&trainerId=${this.trainerId}&secretId=${this.secretId}&clientSessionId=${clientSessionId}`, JSON.stringify(sessionData), undefined, true).then(response => {
           if (response.ok) {
             loggedInUser!.lastSessionSlot = -1; // TODO: is the bang correct?
@@ -1586,10 +1579,10 @@ export class GameData {
     // If incrementCount === false (not a catch scenario), only update the pokemon's dex data if the Pokemon has already been marked as caught in dex
     // Prevents form changes, nature changes, etc. from unintentionally updating the dex data of a "rental" pokemon
     const speciesRootForm = pokemon.species.getRootSpeciesId();
-    if (!!this.scene.gameData.dexData[speciesRootForm].caughtAttr) {
+    if (this.scene.gameData.dexData[speciesRootForm].caughtAttr) {
       return this.setPokemonSpeciesCaught(pokemon, pokemon.species, incrementCount, fromEgg, showMessage);
     } else {
-      return new Promise(resolve => resolve(false));
+      return Promise.resolve(false);
     }
   }
 
@@ -1727,7 +1720,7 @@ export class GameData {
   addStarterCandy(species: PokemonSpecies, count: integer): void {
     // Only gain candies if the Pokemon has already been marked as caught in dex (ignore "rental" pokemon)
     const speciesRootForm = species.getRootSpeciesId();
-    if (!!this.scene.gameData.dexData[speciesRootForm].caughtAttr) {
+    if (this.scene.gameData.dexData[speciesRootForm].caughtAttr) {
       this.scene.candyBar.showStarterSpeciesCandy(species.speciesId, count);
       this.starterData[species.speciesId].candyCount += count;
     }

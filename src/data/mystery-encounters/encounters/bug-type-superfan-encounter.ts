@@ -178,6 +178,9 @@ const MISC_TUTOR_MOVES = [
   Moves.U_TURN
 ];
 
+/**
+ * Wave breakpoints that determine how strong to make the Bug-Type Superfan's team
+ */
 const WAVE_LEVEL_BREAKPOINTS = [30, 50, 70, 100, 120, 140, 160];
 
 /**
@@ -219,11 +222,12 @@ export const BugTypeSuperfanEncounter: MysteryEncounter =
         female: true,
       });
 
-      let beedrillKeys, butterfreeKeys;
+      let beedrillKeys: { spriteKey: string, fileRoot: string }, butterfreeKeys: { spriteKey: string, fileRoot: string };
       if (scene.currentBattle.waveIndex < WAVE_LEVEL_BREAKPOINTS[3]) {
         beedrillKeys = getSpriteKeysFromSpecies(Species.BEEDRILL, false);
         butterfreeKeys = getSpriteKeysFromSpecies(Species.BUTTERFREE, false);
       } else {
+        // Mega Beedrill/Gmax Butterfree
         beedrillKeys = getSpriteKeysFromSpecies(Species.BEEDRILL, false, 1);
         butterfreeKeys = getSpriteKeysFromSpecies(Species.BUTTERFREE, false, 1);
       }

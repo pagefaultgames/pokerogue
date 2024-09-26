@@ -13,7 +13,7 @@ import * as Utils from "../utils";
 import { getBerryEffectFunc, getBerryPredicate } from "../data/berry";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { BerryType } from "#enums/berry-type";
-import { getStatusEffectHealText, StatusEffect } from "../data/status-effect";
+import { getStatusEffectHealText, StatusEffect } from "#app/data/status-effect";
 import { achvs } from "../system/achv";
 import { VoucherType } from "../system/voucher";
 import { FormChangeItem, SpeciesFormChangeItemTrigger, SpeciesFormChangeLapseTeraTrigger, SpeciesFormChangeTeraTrigger } from "../data/pokemon-forms";
