@@ -251,9 +251,9 @@ export class MoveEffectPhase extends PokemonPhase {
 
             if (hitResult !== HitResult.NO_EFFECT) {
               promiseChain
-                .then(this.applyPostApplyEffects(user, target,firstHit,lastHit))
-                .then(this.applyHeldItemFlinchCheck(user,target,hitResult))
-                .then(this.applySuccessfulAttkEffects(user, target,firstHit,lastHit, !!isProtected,hitResult,firstTarget,chargeEffect))
+                .then(this.applyPostApplyEffects(user, target, firstHit, lastHit))
+                .then(this.applyHeldItemFlinchCheck(user, target, dealsDamage))
+                .then(this.applySuccessfulAttkEffects(user, target, firstHit, lastHit, !!isProtected, hitResult, firstTarget, chargeEffect))
                 .then(() => resolve());
             } else {
               promiseChain
@@ -379,23 +379,25 @@ export class MoveEffectPhase extends PokemonPhase {
     return Utils.executeIf(!target.isFainted() || target.canApplyAbility(), () =>
       applyPostDefendAbAttrs(PostDefendAbAttr, target, user, this.move.getMove(), hitResult)
         .then(() => {
-          //TODO Add onGetHit BattlerTag lapse type
-          target.lapseTag(BattlerTagType.BEAK_BLAST_CHARGING);
 
-          if (this.move.getMove().category === MoveCategory.PHYSICAL && user.isPlayer() !== target.isPlayer()) {
-            target.lapseTag(BattlerTagType.SHELL_TRAP);
+          if (!this.move.getMove().hitsSubstitute(user, target)) {
+            if (!user.isPlayer() && this.move.getMove() instanceof AttackMove) {
+              user.scene.applyShuffledModifiers(this.scene, EnemyAttackStatusEffectChanceModifier, false, target);
+            }
+
+            target.lapseTag(BattlerTagType.BEAK_BLAST_CHARGING);
+            if (this.move.getMove().category === MoveCategory.PHYSICAL && user.isPlayer() !== target.isPlayer()) {
+              target.lapseTag(BattlerTagType.SHELL_TRAP);
+            }
           }
 
-          if (!user.isPlayer() && this.move.getMove() instanceof AttackMove) {
-            user.scene.applyShuffledModifiers(this.scene, EnemyAttackStatusEffectChanceModifier, false, target);
-          }
         })
     );
   }
 
   /**
    * Applies all effects and attributes that require a move to connect with a target,
-   * namely reactive effects like Weak Armor, on-hit effects like that of Power-Up Punch, and item stealing effects)
+   * namely reactive effects like Weak Armor, on-hit effects like that of Power-Up Punch, and item stealing effects
    * @param user {@linkcode Pokemon} the Pokemon using this phase's invoked move
    * @param target {@linkcode Pokemon} the current target of this phase's invoked move
    * @param firstHit {@linkcode boolean} whether or not this is the first hit in a multi-hit attack
@@ -423,12 +425,12 @@ export class MoveEffectPhase extends PokemonPhase {
    * Handles checking for and applying Flinches
    * @param user {@linkcode Pokemon} the Pokemon using this phases invoked move
    * @param target {@linkcode Pokemon} the current target of this phases invoked move
-   * @param hitResult {@linkcode HitResult} the result of the attempted move
+   * @param dealsDamage {@linkcode boolean} if the attempted move successfully dealt damage
    * @returns a function to be passed into a then() call
    */
-  applyHeldItemFlinchCheck(user: Pokemon, target: Pokemon, hitResult: HitResult) : () => void {
+  applyHeldItemFlinchCheck(user: Pokemon, target: Pokemon, dealsDamage: boolean) : () => void {
     return () => {
-      if (hitResult < HitResult.NO_EFFECT && !target.hasAbilityWithAttr(IgnoreMoveEffectsAbAttr)) {
+      if (dealsDamage && !target.hasAbilityWithAttr(IgnoreMoveEffectsAbAttr) && !this.move.getMove().hitsSubstitute(user, target)) {
         const flinched = new Utils.BooleanHolder(false);
         user.scene.applyModifiers(FlinchChanceModifier, user.isPlayer(), user, flinched);
         if (flinched.value) {
