@@ -410,8 +410,11 @@ export default class Battle {
     return ret;
   }
 
+  /**
+   * Returns if the battle is of type {@linkcode BattleType.MYSTERY_ENCOUNTER}
+   */
   isBattleMysteryEncounter(): boolean {
-    return this.isBattleMysteryEncounter();
+    return this.battleType === BattleType.MYSTERY_ENCOUNTER;
   }
 }
 
