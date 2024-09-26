@@ -1,4 +1,3 @@
-import { BerryPhase } from "#app/phases/berry-phase";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/utils/gameManager";
@@ -36,7 +35,7 @@ describe("Moves - Toxic", () => {
     await game.classicMode.startBattle([Species.TOXAPEX]);
 
     game.move.select(Moves.TOXIC);
-    await game.phaseInterceptor.to(BerryPhase, false);
+    await game.phaseInterceptor.to("BerryPhase", false);
 
     expect(game.scene.getEnemyPokemon()!.status?.effect).toBe(StatusEffect.TOXIC);
   });
@@ -46,7 +45,7 @@ describe("Moves - Toxic", () => {
     await game.classicMode.startBattle([Species.UMBREON]);
 
     game.move.select(Moves.TOXIC);
-    await game.phaseInterceptor.to(BerryPhase, false);
+    await game.phaseInterceptor.to("BerryPhase", false);
 
     expect(game.scene.getEnemyPokemon()!.status).toBeUndefined();
   });
@@ -70,7 +69,7 @@ describe("Moves - Toxic", () => {
 
     game.move.select(Moves.TOXIC);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
-    await game.phaseInterceptor.to(BerryPhase, false);
+    await game.phaseInterceptor.to("BerryPhase", false);
 
     expect(game.scene.getEnemyPokemon()!.status).toBeUndefined();
   });
