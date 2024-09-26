@@ -2605,10 +2605,8 @@ export class SyrupBombTag extends BattlerTag {
    * @param {Pokemon} pokemon the target Pokemon
    */
   override onAdd(pokemon: Pokemon) {
-    if (Utils.isNullOrUndefined(pokemon.getTag(BattlerTagType.SYRUP_BOMB))) {
-      super.onAdd(pokemon);
-      pokemon.scene.queueMessage(i18next.t("battlerTags:syrupBombOnAdd", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }));
-    }
+    super.onAdd(pokemon);
+    pokemon.scene.queueMessage(i18next.t("battlerTags:syrupBombOnAdd", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }));
   }
 
   /**
