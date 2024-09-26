@@ -1508,6 +1508,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     applyMoveAttrs(VariableMoveTypeAttr, this, null, move, moveTypeHolder);
     applyPreAttackAbAttrs(MoveTypeChangeAbAttr, this, null, move, simulated, moveTypeHolder);
 
+    this.scene.arena.applyTags(ArenaTagType.PLASMA_FISTS, moveTypeHolder);
+
     return moveTypeHolder.value as Type;
   }
 
