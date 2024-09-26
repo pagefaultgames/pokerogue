@@ -1,7 +1,7 @@
 {
   "intro": "É uma zona de safári!",
   "title": "A Zona de Safári",
-  "description": "Há todos os tipos de Pokémon raros e especiais que podem ser encontrados aqui!\nSe você escolher entrar, terá um limite de tempo de 3 encontros selvagens onde poderá tentar capturar esses Pokémon especiais.\n\nCuidado, no entanto. Esses Pokémon podem fugir antes que você consiga capturá-los!",
+  "description": "Há todos os tipos de Pokémon raros e especiais que podem ser encontrados aqui!\nSe você escolher entrar, terá um limite de tempo de @[TOOLTIP_TITLE]{{{numEncounters}} encontros selvagens} onde poderá tentar capturar esses Pokémon especiais.\n\nCuidado, no entanto. Esses Pokémon podem fugir antes que você consiga capturá-los!",
   "query": "Você gostaria de entrar?",
   "option": {
     "1": {

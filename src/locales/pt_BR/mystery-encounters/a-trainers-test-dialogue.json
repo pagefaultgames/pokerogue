@@ -31,7 +31,7 @@
   "option": {
     "1": {
       "label": "Aceitar o Desafio",
-      "tooltip": "(-) Batalha Difícil\n(+) Ganhe um @[TOOLTIP_TITLE]{Ovo Muito Raro}"
+      "tooltip": "(-) Batalha Extremamente Difícil\n(+) Ganhe um @[TOOLTIP_TITLE]{Ovo Muito Raro}"
     },
     "2": {
       "label": "Recusar o Desafio",
