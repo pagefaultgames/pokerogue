@@ -2589,11 +2589,21 @@ export class ImprisonTag extends MoveRestrictionBattlerTag {
   }
 }
 
+/**
+ * Battler Tag that applies the effects of Syrup Bomb to the target Pokemon
+ * For three turns, starting from the turn of hit, at the end of each turn, the target Pokemon's speed will decrease by 1.
+ * The tag can also expire by taking the target Pokemon off the field.
+ */
 export class SyrupBombTag extends BattlerTag {
   constructor() {
     super(BattlerTagType.SYRUP_BOMB, BattlerTagLapseType.TURN_END, 3, Moves.SYRUP_BOMB);
   }
 
+  /**
+   * Adds the Syrup Bomb battler tag to the target Pokemon
+   * In addition, this also contains a check for a pre-existing Syrup Bomb tag on the target Pokemon to determine whether the tag should be applied or not
+   * @param {Pokemon} pokemon the target Pokemon
+   */
   override onAdd(pokemon: Pokemon) {
     if (Utils.isNullOrUndefined(pokemon.getTag(BattlerTagType.SYRUP_BOMB))) {
       super.onAdd(pokemon);
@@ -2601,6 +2611,12 @@ export class SyrupBombTag extends BattlerTag {
     }
   }
 
+  /**
+   * Applies the single-stage speed down to the target Pokemon and decrements the tag's turn count
+   * @param {Pokemon} pokemon the target Pokemon
+   * @param {BattlerTagLapseType} _lapseType
+   * @returns `true` if the turnCount is still greater than 0 | `false` if the turnCount is 0 or the target Pokemon has been removed from the field
+   */
   override lapse(pokemon: Pokemon, _lapseType: BattlerTagLapseType): boolean {
     if (!pokemon.isActive(true)) {
       return false;
