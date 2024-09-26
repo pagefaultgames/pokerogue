@@ -71,6 +71,7 @@
   "disabledOnAdd": "La capacité {{moveName}}\nde {{pokemonNameWithAffix}} est mise sous entrave !",
   "disabledLapse": "La capacité {{moveName}}\nde {{pokemonNameWithAffix}} n’est plus sous entrave !",
   "tarShotOnAdd": "{{pokemonNameWithAffix}} est maintenant\nvulnérable au feu !",
+  "shedTailOnAdd": "{{pokemonNameWithAffix}} détache\nsa queue pour créer un leurre !",
   "substituteOnAdd": "{{pokemonNameWithAffix}}\ncrée un clone !",
   "substituteOnHit": "Le clone subit les dégâts à la place\nde {{pokemonNameWithAffix}} !",
   "substituteOnRemove": "Le clone de {{pokemonNameWithAffix}}\ndisparait…"
