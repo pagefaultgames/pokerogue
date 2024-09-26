@@ -1,7 +1,7 @@
 {
   "intro": "你遭遇了一场烟灰风暴！",
   "title": "炽热余波",
-  "description": "呼啸的火山灰和余烬使能见度几乎为零。\n看来可能有什么…东西造成了这种状况。\n但到底会是什么呢？",
+  "description": "呼啸的火山灰和余烬\n使能见度几乎为零。\n看来可能有什么…东西\n造成了这种状况。\n但到底会是什么呢？",
   "query": "你要怎么做？",
   "option": {
     "1": {
@@ -18,7 +18,7 @@
     "3": {
       "label": "让火系宝可梦帮忙",
       "tooltip": "(+)解决困境\n(+)获得木炭",
-      "disabled_tooltip": "你至少需要两只火系宝可梦来选择",
+      "disabled_tooltip": "你至少需要两只\n火系宝可梦来选择",
       "selected": "你的{{option3PrimaryName}}和{{option3SecondaryName}}引导你发现了两只{{volcaronaName}}正在求偶起舞的地方！$幸运的是，你的宝可梦能够让它们平静下来，\n然后它们就平安离开了。"
     }
   },
