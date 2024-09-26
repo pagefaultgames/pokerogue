@@ -1,5 +1,5 @@
 {
-  "battlesWon": "Batalhas Ganhas!",
+  "battlesWon": "{{count, number}} Batalhas Ganhas!",
   "joinTheDiscord": "Junte-se ao Discord!",
   "infiniteLevels": "Níveis Infinitos!",
   "everythingIsStackable": "Tudo Pode Ser Acumulado*!",
