@@ -38,6 +38,7 @@ export const AbsoluteAvariceEncounter: MysteryEncounter =
     .withEncounterTier(MysteryEncounterTier.GREAT)
     .withSceneWaveRangeRequirement(...CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES)
     .withSceneRequirement(new PersistentModifierRequirement("BerryModifier", 4)) // Must have at least 4 berries to spawn
+    .withFleeAllowed(false)
     .withIntroSpriteConfigs([
       {
         // This sprite has the shadow
@@ -262,15 +263,13 @@ export const AbsoluteAvariceEncounter: MysteryEncounter =
 
           // Provides 1x Reviver Seed to each party member at end of battle
           const revSeed = generateModifierType(scene, modifierTypes.REVIVER_SEED);
+          encounter.setDialogueToken("foodReward", revSeed?.name ?? "Reviver Seed");
           const givePartyPokemonReviverSeeds = () => {
             const party = scene.getParty();
             party.forEach(p => {
               const heldItems = p.getHeldItems();
               if (revSeed && !heldItems.some(item => item instanceof PokemonInstantReviveModifier)) {
                 const seedModifier = revSeed.newModifier(p);
-                if (seedModifier) {
-                  encounter.setDialogueToken("foodReward", seedModifier.type.name);
-                }
                 scene.addModifier(seedModifier, false, false, false, true);
               }
             });

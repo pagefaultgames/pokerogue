@@ -1,5 +1,5 @@
 import i18next from "i18next";
-import BattleScene, { PokeballCounts, bypassLogin } from "../battle-scene";
+import BattleScene, { bypassLogin, PokeballCounts } from "../battle-scene";
 import Pokemon, { EnemyPokemon, PlayerPokemon } from "../field/pokemon";
 import { pokemonPrevolutions } from "../data/pokemon-evolutions";
 import PokemonSpecies, { allSpecies, getPokemonSpecies, noStarterFormKeys, speciesStarters } from "../data/pokemon-species";
@@ -13,11 +13,11 @@ import { GameModes, getGameMode } from "../game-mode";
 import { BattleType } from "../battle";
 import TrainerData from "./trainer-data";
 import { trainerConfigs } from "../data/trainer-config";
-import { SettingKeys, resetSettings, setSetting } from "./settings/settings";
+import { resetSettings, setSetting, SettingKeys } from "./settings/settings";
 import { achvs } from "./achv";
 import EggData from "./egg-data";
 import { Egg } from "../data/egg";
-import { VoucherType, vouchers } from "./voucher";
+import { vouchers, VoucherType } from "./voucher";
 import { AES, enc } from "crypto-js";
 import { Mode } from "../ui/ui";
 import { clientSessionId, loggedInUser, updateUserInfo } from "../account";
@@ -28,8 +28,8 @@ import { speciesEggMoves } from "../data/egg-moves";
 import { allMoves } from "../data/move";
 import { TrainerVariant } from "../field/trainer";
 import { Variant } from "#app/data/variant";
-import {setSettingGamepad, SettingGamepad, settingGamepadDefaults} from "./settings/settings-gamepad";
-import {setSettingKeyboard, SettingKeyboard} from "#app/system/settings/settings-keyboard";
+import { setSettingGamepad, SettingGamepad, settingGamepadDefaults } from "./settings/settings-gamepad";
+import { setSettingKeyboard, SettingKeyboard } from "#app/system/settings/settings-keyboard";
 import { TerrainChangedEvent, WeatherChangedEvent } from "#app/events/arena";
 import * as Modifier from "../modifier/modifier";
 import { StatusEffect } from "#app/data/status-effect";
@@ -1188,10 +1188,10 @@ export class GameData {
 
   tryClearSession(scene: BattleScene, slotId: integer): Promise<[success: boolean, newClear: boolean]> {
     return new Promise<[boolean, boolean]>(resolve => {
-      if (bypassLogin) {
-        localStorage.removeItem(`sessionData${slotId ? slotId : ""}_${loggedInUser?.username}`);
-        return resolve([true, true]);
-      }
+      // if (bypassLogin) {
+      //   localStorage.removeItem(`sessionData${slotId ? slotId : ""}_${loggedInUser?.username}`);
+      //   return resolve([true, true]);
+      // }
 
       updateUserInfo().then(success => {
         if (success !== null && !success) {
@@ -1576,12 +1576,20 @@ export class GameData {
    * @returns `true` if Pokemon catch unlocked a new starter, `false` if Pokemon catch did not unlock a starter
    */
   setPokemonCaught(pokemon: Pokemon, incrementCount: boolean = true, fromEgg: boolean = false, showMessage: boolean = true): Promise<boolean> {
-    return this.setPokemonSpeciesCaught(pokemon, pokemon.species, incrementCount, fromEgg, showMessage);
+    // If incrementCount === false (not a catch scenario), only update the pokemon's dex data if the Pokemon has already been marked as caught in dex
+    // Prevents form changes, nature changes, etc. from unintentionally updating the dex data of a "rental" pokemon
+    const speciesRootForm = pokemon.species.getRootSpeciesId();
+    if (!!this.scene.gameData.dexData[speciesRootForm].caughtAttr) {
+      return this.setPokemonSpeciesCaught(pokemon, pokemon.species, incrementCount, fromEgg, showMessage);
+    } else {
+      return new Promise(resolve => resolve(false));
+    }
   }
 
   /**
    *
    * @param pokemon
+   * @param species
    * @param incrementCount
    * @param fromEgg
    * @param showMessage
@@ -1597,12 +1605,18 @@ export class GameData {
       }
       const dexAttr = pokemon.getDexAttr();
       pokemon.formIndex = formIndex;
+
+      // Mark as caught
       dexEntry.caughtAttr |= dexAttr;
+
+      // Unlock ability
       if (speciesStarters.hasOwnProperty(species.speciesId)) {
         this.starterData[species.speciesId].abilityAttr |= pokemon.abilityIndex !== 1 || pokemon.species.ability2
           ? 1 << pokemon.abilityIndex
           : AbilityAttr.ABILITY_HIDDEN;
       }
+
+      // Unlock nature
       dexEntry.natureAttr |= 1 << (pokemon.nature + 1);
 
       const hasPrevolution = pokemonPrevolutions.hasOwnProperty(species.speciesId);
@@ -1697,9 +1711,19 @@ export class GameData {
     return ++this.starterData[speciesIdToIncrement].classicWinCount;
   }
 
+  /**
+   * Adds a candy to the player's game data for a given {@linkcode PokemonSpecies}.
+   * Will do nothing if the player does not have the Pokemon owned in their system save data.
+   * @param species
+   * @param count
+   */
   addStarterCandy(species: PokemonSpecies, count: integer): void {
-    this.scene.candyBar.showStarterSpeciesCandy(species.speciesId, count);
-    this.starterData[species.speciesId].candyCount += count;
+    // Only gain candies if the Pokemon has already been marked as caught in dex (ignore "rental" pokemon
+    const speciesRootForm = species.getRootSpeciesId();
+    if (!!this.scene.gameData.dexData[speciesRootForm].caughtAttr) {
+      this.scene.candyBar.showStarterSpeciesCandy(species.speciesId, count);
+      this.starterData[species.speciesId].candyCount += count;
+    }
   }
 
   /**

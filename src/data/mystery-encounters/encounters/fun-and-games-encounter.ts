@@ -23,6 +23,7 @@ import { modifierTypes } from "#app/modifier/modifier-type";
 import { Nature } from "#enums/nature";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
 import { isPokemonValidForEncounterOptionSelection } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
+import { Abilities } from "#enums/abilities";
 
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounter:funAndGames";
@@ -201,6 +202,8 @@ async function summonPlayerPokemon(scene: BattleScene) {
     wobbuffet.setAlpha(0);
     wobbuffet.setVisible(false);
     wobbuffet.calculateStats();
+    // Workaround to Roar/Dragon Tail/etc.
+    wobbuffet.mysteryEncounterPokemonData.passive = Abilities.SUCTION_CUPS;
     scene.currentBattle.enemyParty[0] = wobbuffet;
     scene.gameData.setPokemonSeen(wobbuffet, true);
     await wobbuffet.loadAssets();

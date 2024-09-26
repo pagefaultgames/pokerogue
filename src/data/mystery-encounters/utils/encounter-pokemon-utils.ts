@@ -757,9 +757,10 @@ const GOLDEN_BUG_NET_SPECIES_POOL: [Species, number][] = [
 ];
 
 /**
- * Will randomly return one of the species from GOLDEN_BUG_NET_SPECIES_POOL, based on their weights
+ * Will randomly return one of the species from GOLDEN_BUG_NET_SPECIES_POOL, based on their weights.
+ * Will also check for and evolve pokemon based on level.
  */
-export function getGoldenBugNetSpecies(): PokemonSpecies {
+export function getGoldenBugNetSpecies(level: number): PokemonSpecies {
   const totalWeight = GOLDEN_BUG_NET_SPECIES_POOL.reduce((a, b) => a + b[1], 0);
   const roll = randSeedInt(totalWeight);
 
@@ -767,7 +768,8 @@ export function getGoldenBugNetSpecies(): PokemonSpecies {
   for (const speciesWeightPair of GOLDEN_BUG_NET_SPECIES_POOL) {
     w += speciesWeightPair[1];
     if (roll < w) {
-      return getPokemonSpecies(speciesWeightPair[0]);
+      const initialSpecies = getPokemonSpecies(speciesWeightPair[0]);
+      return getPokemonSpecies(initialSpecies.getSpeciesForLevel(level, true));
     }
   }
 

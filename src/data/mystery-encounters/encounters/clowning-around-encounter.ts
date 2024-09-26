@@ -336,8 +336,8 @@ export const ClowningAroundEncounter: MysteryEncounter =
               .filter(move => move && !originalTypes.includes(move.getMove().type) && move.getMove().category !== MoveCategory.STATUS)
               .map(move => move!.getMove().type);
             if (priorityTypes?.length > 0) {
-              priorityTypes = [...new Set(priorityTypes)];
-              randSeedShuffle(priorityTypes);
+              priorityTypes = [...new Set(priorityTypes)].sort();
+              priorityTypes = randSeedShuffle(priorityTypes);
             }
 
             const newTypes = [originalTypes[0]];
@@ -494,6 +494,10 @@ function generateItemsOfTier(scene: BattleScene, pokemon: PlayerPokemon, numItem
   }
 
   for (let i = 0; i < numItems; i++) {
+    if (pool.length === 0) {
+      // Stop generating new items if somehow runs out of items to spawn
+      return;
+    }
     const randIndex = randSeedInt(pool.length);
     const newItemType = pool[randIndex];
     let newMod;
