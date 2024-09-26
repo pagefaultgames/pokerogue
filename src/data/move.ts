@@ -8080,7 +8080,7 @@ export function initMoves() {
       .makesContact(false),
     new SelfStatusMove(Moves.DEFEND_ORDER, Type.BUG, -1, 10, -1, 0, 4)
       .attr(StatStageChangeAttr, [ Stat.DEF, Stat.SPDEF ], 1, true),
-    new SelfStatusMove(Moves.HEAL_ORDER, Type.BUG, -1, 10, -1, 0, 4)
+    new SelfStatusMove(Moves.HEAL_ORDER, Type.BUG, -1, 5, -1, 0, 4)
       .attr(HealAttr, 0.5)
       .triageMove(),
     new AttackMove(Moves.HEAD_SMASH, Type.ROCK, MoveCategory.PHYSICAL, 150, 80, 5, -1, 0, 4)
