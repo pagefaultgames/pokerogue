@@ -3,7 +3,7 @@
 {
   "intro": "一伙{{delibirdName}}出现了！",
   "title": "信使鸟快递",
-  "description": "{{delibirdName}}满怀期待地看着你，它们好像想要什么东西。\\n也许给它们一件道具或一些钱能让它们满意？",
+  "description": "{{delibirdName}}满怀期待地看着你，\n它们好像想要什么东西。\n\n也许给它们一件道具或一些钱能让它们满意？",
   "query": "你要给它们什么？",
   "invalid_selection": "宝可梦身上并没有那种道具。",
   "option": {
@@ -14,7 +14,7 @@
     },
     "2": {
       "label": "给吃的",
-      "tooltip": "(-)给予{{delibirdName}}们树果或复活之种\n(+)获得一件礼物",
+      "tooltip": "(-)给予{{delibirdName}}们\n树果或复活之种\n(+)获得一件礼物",
       "select_prompt": "选择要给予的道具",
       "selected": "你向{{delibirdName}}们扔了点{{chosenItem}}，\n它们兴奋地互相嚷嚷着。$信使鸟们转向你并高兴地给你一份礼物！"
     },

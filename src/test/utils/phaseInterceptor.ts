@@ -43,6 +43,7 @@ import { UnavailablePhase } from "#app/phases/unavailable-phase";
 import { VictoryPhase } from "#app/phases/victory-phase";
 import { PartyHealPhase } from "#app/phases/party-heal-phase";
 import UI, { Mode } from "#app/ui/ui";
+import { SelectBiomePhase } from "#app/phases/select-biome-phase";
 import {
   MysteryEncounterBattlePhase,
   MysteryEncounterOptionSelectedPhase,
@@ -122,6 +123,7 @@ export default class PhaseInterceptor {
     [EndEvolutionPhase, this.startPhase],
     [LevelCapPhase, this.startPhase],
     [AttemptRunPhase, this.startPhase],
+    [SelectBiomePhase, this.startPhase],
     [MysteryEncounterPhase, this.startPhase],
     [MysteryEncounterOptionSelectedPhase, this.startPhase],
     [MysteryEncounterBattlePhase, this.startPhase],
@@ -346,7 +348,8 @@ export default class PhaseInterceptor {
     console.log("setMode", `${Mode[mode]} (=${mode})`, args);
     const ret = this.originalSetMode.apply(instance, [mode, ...args]);
     if (!this.phases[currentPhase.constructor.name]) {
-      throw new Error(`missing ${currentPhase.constructor.name} in phaseInterceptor PHASES list`);
+      throw new Error(`missing ${currentPhase.constructor.name} in phaseInterceptor PHASES list  ---  Add it to PHASES inside of /test/utils/phaseInterceptor.ts`);
+
     }
     if (this.phases[currentPhase.constructor.name].endBySetMode) {
       this.inProgress?.callback();

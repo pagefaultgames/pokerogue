@@ -12,7 +12,7 @@
     "2": {
       "label": "宝可梦帮忙",
       "tooltip": "(-){{option2PrimaryName}}帮忙\n(+){{option2PrimaryName}}获得经验\n(?)传送至随机地图",
-      "disabled_tooltip": "你需要一只钢系或电系宝可梦来选择此项",
+      "disabled_tooltip": "你需要一只钢系或\n电系宝可梦来选择此项",
       "selected": "{{option2PrimaryName}}的类型允许你绕过机器的付费装置！$胶囊打开，你走进去……"
     },
     "3": {
