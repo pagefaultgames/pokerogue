@@ -1727,7 +1727,7 @@ export class GameData {
   addStarterCandy(species: PokemonSpecies, count: integer): void {
     // Only gain candies if the Pokemon has already been marked as caught in dex (ignore "rental" pokemon)
     const speciesRootForm = species.getRootSpeciesId();
-    if (!!this.scene.gameData.dexData[speciesRootForm].caughtAttr) {
+    if (this.scene.gameData.dexData[speciesRootForm].caughtAttr) {
       this.scene.candyBar.showStarterSpeciesCandy(species.speciesId, count);
       this.starterData[species.speciesId].candyCount += count;
     }
