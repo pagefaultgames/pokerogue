@@ -31,7 +31,7 @@
   "option": {
     "1": {
       "label": "Die Herausforderung annehmen",
-      "tooltip": "(-) Schwerer Kampf\n(+) Erhalte ein @[TOOLTIP_TITLE]{Sehr seltenes Ei}"
+      "tooltip": "(-) Sehr schwerer Kampf\n(+) Erhalte ein @[TOOLTIP_TITLE]{Sehr seltenes Ei}"
     },
     "2": {
       "label": "Die Herausforderung ablehnen",
