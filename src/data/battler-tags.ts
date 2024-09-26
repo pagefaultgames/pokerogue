@@ -2311,6 +2311,11 @@ export class AutotomizedTag extends BattlerTag {
   }
 }
 
+/**
+ * Tag implementing the {@link https://bulbapedia.bulbagarden.net/wiki/Substitute_(doll)#Effect | Substitute Doll} effect,
+ * for use with the moves Substitute and Shed Tail. Pokemon with this tag deflect most forms of received attack damage
+ * onto the tag. This tag also grants immunity to most Status moves and several move effects.
+ */
 export class SubstituteTag extends BattlerTag {
   /** The substitute's remaining HP. If HP is depleted, the Substitute fades. */
   public hp: number;
@@ -2330,7 +2335,11 @@ export class SubstituteTag extends BattlerTag {
 
     // Queue battle animation and message
     pokemon.scene.triggerPokemonBattleAnim(pokemon, PokemonAnimType.SUBSTITUTE_ADD);
-    pokemon.scene.queueMessage(i18next.t("battlerTags:substituteOnAdd", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }), 1500);
+    if (this.sourceMove === Moves.SHED_TAIL) {
+      pokemon.scene.queueMessage(i18next.t("battlerTags:shedTailOnAdd", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }), 1500);
+    } else {
+      pokemon.scene.queueMessage(i18next.t("battlerTags:substituteOnAdd", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }), 1500);
+    }
 
     // Remove any binding effects from the user
     pokemon.findAndRemoveTags(tag => tag instanceof DamagingTrapTag);
