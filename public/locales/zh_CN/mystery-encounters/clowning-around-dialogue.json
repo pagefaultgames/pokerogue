@@ -3,13 +3,13 @@
   "speaker": "小丑",
   "intro_dialogue": "小丑踩高跷，战斗要来到！\n吵吵闹闹，将你打倒！",
   "title": "小丑闹剧",
-  "description": "有点不对劲，这小丑想要挑衅你，\n目的是什么呢？\n尤其是那{{blacephalonName}}看起来非常奇怪，就好像它有着@[TOOLTIP_TITLE]{与众不同的属性和特性。}",
+  "description": "有点不对劲，这小丑想要挑衅你，\n目的是什么呢？\n尤其是那{{blacephalonName}}看起来非常奇怪，\n就好像它有着\n@[TOOLTIP_TITLE]{与众不同的属性和特性。}",
   "query": "你要怎么做？",
   "option": {
     "1": {
       "label": "与小丑战斗",
       "tooltip": "(-)奇妙的战斗\n(?)影响宝可梦特性",
-      "selected": "你可怜的宝可梦正准备进行可悲的表演！",
+      "selected": "你可怜的宝可梦正准备上演可悲的马戏！",
       "apply_ability_dialogue": "精彩的演出！\n出色的指挥与夺目的招式相得益彰！",
       "apply_ability_message": "小丑将永久地将你的一只宝可梦的特性交换为{{ability}}！",
       "ability_prompt": "你想永久地教会一只宝可梦{{ability}}吗？",
