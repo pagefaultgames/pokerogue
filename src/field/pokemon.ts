@@ -17,10 +17,10 @@ import { initMoveAnim, loadMoveAnimAssets } from "../data/battle-anims";
 import { Status, StatusEffect, getRandomStatus } from "../data/status-effect";
 import { pokemonEvolutions, pokemonPrevolutions, SpeciesFormEvolution, SpeciesEvolutionCondition, FusionSpeciesFormEvolution } from "../data/pokemon-evolutions";
 import { reverseCompatibleTms, tmSpecies, tmPoolTiers } from "../data/tms";
-import { BattlerTag, BattlerTagLapseType, EncoreTag, GroundedTag, HighestStatBoostTag, SubstituteTag, TypeImmuneTag, getBattlerTag, SemiInvulnerableTag, TypeBoostTag, MoveRestrictionBattlerTag, ExposedTag, DragonCheerTag, CritBoostTag, TrappedTag, TarShotTag } from "../data/battler-tags";
+import { BattlerTag, BattlerTagLapseType, EncoreTag, GroundedTag, HighestStatBoostTag, SubstituteTag, TypeImmuneTag, getBattlerTag, SemiInvulnerableTag, TypeBoostTag, MoveRestrictionBattlerTag, ExposedTag, DragonCheerTag, CritBoostTag, TrappedTag, TarShotTag, AutotomizedTag } from "../data/battler-tags";
 import { WeatherType } from "../data/weather";
 import { ArenaTagSide, NoCritTag, WeakenMoveScreenTag } from "../data/arena-tag";
-import { Ability, AbAttr, StatMultiplierAbAttr, BlockCritAbAttr, BonusCritAbAttr, BypassBurnDamageReductionAbAttr, FieldPriorityMoveImmunityAbAttr, IgnoreOpponentStatStagesAbAttr, MoveImmunityAbAttr, PreDefendFullHpEndureAbAttr, ReceivedMoveDamageMultiplierAbAttr, ReduceStatusEffectDurationAbAttr, StabBoostAbAttr, StatusEffectImmunityAbAttr, TypeImmunityAbAttr, WeightMultiplierAbAttr, allAbilities, applyAbAttrs, applyStatMultiplierAbAttrs, applyPreApplyBattlerTagAbAttrs, applyPreAttackAbAttrs, applyPreDefendAbAttrs, applyPreSetStatusAbAttrs, UnsuppressableAbilityAbAttr, SuppressFieldAbilitiesAbAttr, NoFusionAbilityAbAttr, MultCritAbAttr, IgnoreTypeImmunityAbAttr, DamageBoostAbAttr, IgnoreTypeStatusEffectImmunityAbAttr, ConditionalCritAbAttr, applyFieldStatMultiplierAbAttrs, FieldMultiplyStatAbAttr, AddSecondStrikeAbAttr, UserFieldStatusEffectImmunityAbAttr, UserFieldBattlerTagImmunityAbAttr, BattlerTagImmunityAbAttr, MoveTypeChangeAbAttr, FullHpResistTypeAbAttr, applyCheckTrappedAbAttrs, CheckTrappedAbAttr } from "../data/ability";
+import { Ability, AbAttr, StatMultiplierAbAttr, BlockCritAbAttr, BonusCritAbAttr, BypassBurnDamageReductionAbAttr, FieldPriorityMoveImmunityAbAttr, IgnoreOpponentStatStagesAbAttr, MoveImmunityAbAttr, PreDefendFullHpEndureAbAttr, ReceivedMoveDamageMultiplierAbAttr, ReduceStatusEffectDurationAbAttr, StabBoostAbAttr, StatusEffectImmunityAbAttr, TypeImmunityAbAttr, WeightMultiplierAbAttr, allAbilities, applyAbAttrs, applyStatMultiplierAbAttrs, applyPreApplyBattlerTagAbAttrs, applyPreAttackAbAttrs, applyPreDefendAbAttrs, applyPreSetStatusAbAttrs, UnsuppressableAbilityAbAttr, SuppressFieldAbilitiesAbAttr, NoFusionAbilityAbAttr, MultCritAbAttr, IgnoreTypeImmunityAbAttr, DamageBoostAbAttr, IgnoreTypeStatusEffectImmunityAbAttr, ConditionalCritAbAttr, applyFieldStatMultiplierAbAttrs, FieldMultiplyStatAbAttr, AddSecondStrikeAbAttr, UserFieldStatusEffectImmunityAbAttr, UserFieldBattlerTagImmunityAbAttr, BattlerTagImmunityAbAttr, MoveTypeChangeAbAttr, FullHpResistTypeAbAttr, applyCheckTrappedAbAttrs, CheckTrappedAbAttr, PostSetStatusAbAttr, applyPostSetStatusAbAttrs } from "../data/ability";
 import PokemonData from "../system/pokemon-data";
 import { BattlerIndex } from "../battle";
 import { Mode } from "../ui/ui";
@@ -61,6 +61,7 @@ import { Challenges } from "#enums/challenges";
 import { PokemonAnimType } from "#app/enums/pokemon-anim-type";
 import { PLAYER_PARTY_MAX_SIZE } from "#app/constants";
 import { MysteryEncounterPokemonData } from "#app/data/mystery-encounters/mystery-encounter-pokemon-data";
+import { SwitchType } from "#enums/switch-type";
 
 export enum FieldPosition {
   CENTER,
@@ -1258,8 +1259,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       return allAbilities[Overrides.OPP_ABILITY_OVERRIDE];
     }
     if (this.isFusion()) {
-      if (!isNullOrUndefined(this.fusionMysteryEncounterPokemonData?.ability) && this.fusionMysteryEncounterPokemonData!.ability !== -1) {
-        return allAbilities[this.fusionMysteryEncounterPokemonData!.ability];
+      if (!isNullOrUndefined(this.fusionMysteryEncounterPokemonData?.ability) && this.fusionMysteryEncounterPokemonData.ability !== -1) {
+        return allAbilities[this.fusionMysteryEncounterPokemonData.ability];
       } else {
         return allAbilities[this.getFusionSpeciesForm(ignoreOverride).getAbility(this.fusionAbilityIndex)];
       }
@@ -1364,7 +1365,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     if (this.isFusion() && ability.hasAttr(NoFusionAbilityAbAttr)) {
       return false;
     }
-    if (this.scene?.arena.ignoreAbilities && ability.isIgnorable) {
+    const arena = this.scene?.arena;
+    if (arena.ignoreAbilities && arena.ignoringEffectSource !== this.getBattlerIndex() && ability.isIgnorable) {
       return false;
     }
     if (this.summonData?.abilitySuppressed && !ability.hasAttr(UnsuppressableAbilityAbAttr)) {
@@ -1426,11 +1428,23 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return false;
   }
 
+  /**
+   * Gets the weight of the Pokemon with subtractive modifiers (Autotomize) happening first
+   * and then multiplicative modifiers happening after (Heavy Metal and Light Metal)
+   * @returns the kg of the Pokemon (minimum of 0.1)
+   */
   getWeight(): number {
-    const weight = new Utils.NumberHolder(this.species.weight);
+    const autotomizedTag = this.getTag(AutotomizedTag);
+    let weightRemoved = 0;
+    if (!Utils.isNullOrUndefined(autotomizedTag)) {
+      weightRemoved = 100 * autotomizedTag!.autotomizeCount;
+    }
+    const minWeight = 0.1;
+    const weight = new Utils.NumberHolder(this.species.weight - weightRemoved);
+
     // This will trigger the ability overlay so only call this function when necessary
     applyAbAttrs(WeightMultiplierAbAttr, this, null, false, weight);
-    return weight.value;
+    return Math.max(minWeight, weight.value);
   }
 
   /**
@@ -1786,8 +1800,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    *
    * @returns list of egg moves
    */
-  getEggMoves() : Moves[] {
-    return speciesEggMoves[this.species.speciesId];
+  getEggMoves() : Moves[] | undefined {
+    return speciesEggMoves[this.getSpeciesForm().getRootSpeciesId(true)];
   }
 
   setMove(moveIndex: integer, moveId: Moves): void {
@@ -3365,7 +3379,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     }
 
     if (asPhase) {
-      this.scene.unshiftPhase(new ObtainStatusEffectPhase(this.scene, this.getBattlerIndex(), effect, cureTurn, sourceText!, sourcePokemon!)); // TODO: are these bangs correct?
+      this.scene.unshiftPhase(new ObtainStatusEffectPhase(this.scene, this.getBattlerIndex(), effect, cureTurn, sourceText, sourcePokemon));
       return true;
     }
 
@@ -3399,6 +3413,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
     if (effect !== StatusEffect.FAINT) {
       this.scene.triggerPokemonFormChange(this, SpeciesFormChangeStatusEffectTrigger, true);
+      applyPostSetStatusAbAttrs(PostSetStatusAbAttr, this, effect, sourcePokemon);
     }
 
     return true;
@@ -3989,16 +4004,17 @@ export class PlayerPokemon extends Pokemon {
   /**
    * Causes this mon to leave the field (via {@linkcode leaveField}) and then
    * opens the party switcher UI to switch a new mon in
-   * @param batonPass Indicates if this switch was caused by a baton pass (and
-   * thus should maintain active mon effects)
+   * @param switchType the {@linkcode SwitchType} for this switch-out. If this is
+   * `BATON_PASS` or `SHED_TAIL`, this Pokemon's effects are not cleared upon leaving
+   * the field.
    */
-  switchOut(batonPass: boolean): Promise<void> {
+  switchOut(switchType: SwitchType = SwitchType.SWITCH): Promise<void> {
     return new Promise(resolve => {
-      this.leaveField(!batonPass);
+      this.leaveField(switchType === SwitchType.SWITCH);
 
       this.scene.ui.setMode(Mode.PARTY, PartyUiMode.FAINT_SWITCH, this.getFieldIndex(), (slotIndex: integer, option: PartyOption) => {
         if (slotIndex >= this.scene.currentBattle.getBattlerCount() && slotIndex < 6) {
-          this.scene.prependToPhase(new SwitchSummonPhase(this.scene, this.getFieldIndex(), slotIndex, false, batonPass), MoveEndPhase);
+          this.scene.prependToPhase(new SwitchSummonPhase(this.scene, switchType, this.getFieldIndex(), slotIndex, false), MoveEndPhase);
         }
         this.scene.ui.setMode(Mode.MESSAGE).then(resolve);
       }, PartyUiHandler.FilterNonFainted);
@@ -4060,11 +4076,11 @@ export class PlayerPokemon extends Pokemon {
             const allyPokemon = this.getAlly();
             if (slotIndex<=1) {
               // Revived ally pokemon
-              this.scene.unshiftPhase(new SwitchSummonPhase(this.scene, pokemon.getFieldIndex(), slotIndex, false, false, true));
+              this.scene.unshiftPhase(new SwitchSummonPhase(this.scene, SwitchType.SWITCH, pokemon.getFieldIndex(), slotIndex, false, true));
               this.scene.unshiftPhase(new ToggleDoublePositionPhase(this.scene, true));
             } else if (allyPokemon.isFainted()) {
               // Revived party pokemon, and ally pokemon is fainted
-              this.scene.unshiftPhase(new SwitchSummonPhase(this.scene, allyPokemon.getFieldIndex(), slotIndex, false, false, true));
+              this.scene.unshiftPhase(new SwitchSummonPhase(this.scene, SwitchType.SWITCH, allyPokemon.getFieldIndex(), slotIndex, false, true));
               this.scene.unshiftPhase(new ToggleDoublePositionPhase(this.scene, true));
             }
           }

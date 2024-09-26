@@ -1,0 +1,34 @@
+{
+  "intro": "¿Es un...@d{64} payaso?",
+  "speaker": "Payaso",
+  "intro_dialogue": "¡Bufón inútil, prepárate para una batalla brillante! ¡Serás derrotado por este trovador luchador!",
+  "title": "Payaseando",
+  "description": "Algo no esta bien en este encuentro. El payaso parece ansioso por provocarte a pelear...pero, ¿con qué fin? El {{blacephalonName}} es especialmente extraño, como si tuviera @[TOOLTIP_TITLE]{tipos y habilidades raros.}",
+  "query": "¿Qué harás?",
+  "option": {
+    "1": {
+      "label": "Enfrentarse al Payaso",
+      "tooltip": "(-) Batalla extraña\n(?) Afecta la habilidad de un Pokémon",
+      "selected": "¡Tus patéticos Pokémon están listos para una actuación patética!",
+      "apply_ability_dialogue": "¡Una exhibición sensacional! ¡Tu astucia es digna de una habilidad especial como recompensa!",
+      "apply_ability_message": "¡El payaso está ofreciendo intercambiar permanentemente la habilidad de uno de tus Pokémon por {{ability}}!",
+      "ability_prompt": "¿Te gustaría enseñar permanentemente a un Pokémon la habilidad {{ability}}?",
+      "ability_gained": "¡@s{level_up_fanfare}{{chosenPokemon}} obtuvo la habilidad {{ability}}!"
+    },
+    "2": {
+      "label": "No involucrarse",
+      "tooltip": "(?) Afecta los items de un Pokémon",
+      "selected": "¡Cobarde desdichado, niegas un exquisito duelo?\n ¡Siente mi furia!",
+      "selected_2": "¡El {{blacephalonName}} del payaso usa Truco! ¡Todos los objetos de tu {{switchPokemon}} fueron intercambiados al azar!",
+      "selected_3": "¡Necio incompetente, serás víctima de mi trampa perfecta!"
+    },
+    "3": {
+      "label": "Devolver los insultos",
+      "tooltip": "(?) Afecta los tipos de tus Pokémon",
+      "selected": "¡Cobarde desdichado, niegas un exquisito duelo?\n ¡Siente mi furia!",
+      "selected_2": "¡El {{blacephalonName}} del payaso usa un movimiento extraño! ¡Todos los tipos de tu equipo fueron intercambiados al azar!",
+      "selected_3": "¡Tonto desconcertado, cae en mi engaño impecable!"
+    }
+  },
+  "outro": "El payaso y sus secuaces\ndesaparecen en una nube de humo."
+}

@@ -1,0 +1,32 @@
+{
+  "intro": "É uma interface para o Sistema de Troca Global!",
+  "title": "O GTS",
+  "description": "Ah, o GTS! Uma maravilha tecnológica, você pode se conectar com qualquer pessoa ao redor do mundo para trocar Pokémon com ela! Será que a sorte vai sorrir para sua troca hoje?",
+  "query": "O que você vai fazer?",
+  "option": {
+    "1": {
+      "label": "Ver Ofertas de Troca",
+      "tooltip": "(+) Selecionar uma oferta de troca para um dos seus Pokémon",
+      "trade_options_prompt": "Selecione um Pokémon para receber através da troca."
+    },
+    "2": {
+      "label": "Troca Surpresa",
+      "tooltip": "(+) Envie um dos seus Pokémon para o GTS e receba um Pokémon especial aleatório em troca"
+    },
+    "3": {
+      "label": "Trocar um Item",
+      "trade_options_prompt": "Selecione um item para enviar.",
+      "invalid_selection": "Este Pokémon não possui itens válidos para troca.",
+      "tooltip": "(+) Envie um dos seus Itens para o GTS e receba um Item melhorado aleatório"
+    },
+    "4": {
+      "label": "Sair",
+      "tooltip": "(-) Sem Recompensas",
+      "selected": "Sem tempo para trocas hoje!\nVocê segue em frente."
+    }
+  },
+  "pokemon_trade_selected": "{{tradedPokemon}} será enviado para {{tradeTrainerName}}.",
+  "pokemon_trade_goodbye": "Adeus, {{tradedPokemon}}!",
+  "item_trade_selected": "{{chosenItem}} será enviado para {{tradeTrainerName}}.$.@d{64}.@d{64}.@d{64}\n@s{level_up_fanfare}Troca concluída!$Você recebeu um {{itemName}} de {{tradeTrainerName}}!",
+  "trade_received": "@s{evolution_fanfare}{{tradeTrainerName}} enviou um {{received}}!"
+}

@@ -1,0 +1,25 @@
+{
+  "intro": "¡Un {{greedentName}} te embosca y roba las bayas de tu equipo!",
+  "title": "Avaricia Absoluta",
+  "description": "¡Un {{greedentName}} te ha tomado completamente por sorpresa y ahora todas tus bayas han desaparecido! El {{greedentName}} parece que está a punto de comérselas cuando se detiene para mirarte, interesado.",
+  "query": "¿Qué harás?",
+  "option": {
+    "1": {
+      "label": "Combatir",
+      "tooltip": "(-) Batalla Ardua\n(+) Recompensas de su Alijo de Bayas",
+      "selected": "El {{greedentName}} llena sus mejillas y se prepara para la batalla!",
+      "boss_enraged": "¡El feroz amor de {{greedentName}} por la comida lo tiene enfurecido!",
+      "food_stash": "¡Parece que el {{greedentName}} estaba protegiendo un enorme alijo de comida!$@s{item_fanfare}¡Cada Pokémon en tu grupo obtiene una {{foodReward}}!"
+    },
+    "2": {
+      "label": "Razona con él",
+      "tooltip": "(+) Recupera algunas bayas perdidas",
+      "selected": "Tus súplicas conmueven al {{greedentName}}.$No te devuelve todas tus bayas, pero aún así te lanza algunas en tu dirección."
+    },
+    "3": {
+      "label": "Dejarle quedarse con la comida",
+      "tooltip": "(-) Perder todas las bayas\n(?) Le gustarás al {{greedentName}}",
+      "selected": "El {{greedentName}} devora todas sus bayas en un instante!$Acariciando su estómago, te mira con aprecio.$Quizás podrías darle más bayas en tu aventura....$@s{level_up_fanfare}El {{greedentName}} quiere unirse a tu equipo!"
+    }
+  }
+}
