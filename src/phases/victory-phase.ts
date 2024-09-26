@@ -30,7 +30,7 @@ export class VictoryPhase extends PokemonPhase {
     const expValue = this.getPokemon().getExpValue();
     this.scene.applyPartyExp(expValue, true);
 
-    if (this.scene.currentBattle.battleType === BattleType.MYSTERY_ENCOUNTER) {
+    if (this.scene.currentBattle.isBattleMysteryEncounter()) {
       handleMysteryEncounterVictory(this.scene, false, this.isExpOnly);
       return this.end();
     }

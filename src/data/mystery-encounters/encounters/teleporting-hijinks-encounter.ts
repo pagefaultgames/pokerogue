@@ -42,6 +42,7 @@ export const TeleportingHijinksEncounter: MysteryEncounter =
     .withSceneRequirement(new MoneyRequirement(0, MONEY_COST_MULTIPLIER)) // Must be able to pay teleport cost
     .withAutoHideIntroVisuals(false)
     .withCatchAllowed(true)
+    .withFleeAllowed(false)
     .withIntroSpriteConfigs([
       {
         spriteKey: "teleporting_hijinks_teleporter",

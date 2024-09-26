@@ -36,6 +36,7 @@ export const TrashToTreasureEncounter: MysteryEncounter =
     .withEncounterTier(MysteryEncounterTier.ULTRA)
     .withSceneWaveRangeRequirement(60, CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES[1])
     .withMaxAllowedEncounters(1)
+    .withFleeAllowed(false)
     .withIntroSpriteConfigs([
       {
         spriteKey: Species.GARBODOR.toString() + "-gigantamax",
