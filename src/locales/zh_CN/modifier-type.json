@@ -359,8 +359,8 @@
       "description": "触碰后会放出热量的神奇宝珠。\n携带后，在战斗时会变成灼伤状态。"
     },
     "EVOLUTION_TRACKER_GIMMIGHOUL": {
-      "name": "宝物",
-      "description": "This Pokémon loves treasure! Keep collecting treasure and something might happen!"
+      "name": "金子宝物",
+      "description": "这个小精靈爱金子! 继续挑金子然后谁知道什么会发生!"
     },
     "BATON": {
       "name": "接力棒",
