@@ -44,7 +44,7 @@ import { WeatherType } from "#app/enums/weather-type";
 import { TerrainType } from "#app/data/terrain";
 import { ReloadSessionPhase } from "#app/phases/reload-session-phase";
 import { RUN_HISTORY_LIMIT } from "#app/ui/run-history-ui-handler";
-import { applySessionDataPatches, applySettingsDataPatches, applySystemDataPatches } from "./version-converter";
+import { SessionVersionConverter, SettingsVersionConverter, SystemVersionConverter } from "./version_migration/version_converter";
 import { MysteryEncounterSaveData } from "../data/mystery-encounters/mystery-encounter-save-data";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 
@@ -463,7 +463,7 @@ export class GameData {
           localStorage.setItem(lsItemKey, "");
         }
 
-        applySystemDataPatches(systemData);
+        new SystemVersionConverter(systemData, systemData.gameVersion);
 
         this.trainerId = systemData.trainerId;
         this.secretId = systemData.secretId;
@@ -838,7 +838,7 @@ export class GameData {
 
     const settings = JSON.parse(localStorage.getItem("settings")!); // TODO: is this bang correct?
 
-    applySettingsDataPatches(settings);
+    new SettingsVersionConverter(settings);
 
     for (const setting of Object.keys(settings)) {
       setSetting(this.scene, setting, settings[setting]);
@@ -1270,7 +1270,7 @@ export class GameData {
       return v;
     }) as SessionSaveData;
 
-    applySessionDataPatches(sessionData);
+    new SessionVersionConverter(sessionData, sessionData.gameVersion);
 
     return sessionData;
   }
