@@ -11,7 +11,6 @@ import { Biome } from "#enums/biome";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import { TimeOfDay } from "#enums/time-of-day";
-import { DamageMoneyRewardModifier, ExtraModifierModifier, MoneyMultiplierModifier } from "#app/modifier/modifier";
 
 export enum SpeciesWildEvolutionDelay {
   NONE,
@@ -1648,8 +1647,8 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(Species.FROSMOTH, 1, null, new SpeciesFriendshipEvolutionCondition(90, p => p.scene.arena.getTimeOfDay() === TimeOfDay.DUSK || p.scene.arena.getTimeOfDay() === TimeOfDay.NIGHT), SpeciesWildEvolutionDelay.MEDIUM)
   ],
   [Species.GIMMIGHOUL]: [
-    new SpeciesFormEvolution(Species.GHOLDENGO, "chest", "", 1, null, new SpeciesEvolutionCondition( p => p.evoCounter > 9 - p.getHeldItems().filter(m => m instanceof DamageMoneyRewardModifier).length - p.scene.findModifiers(m => m instanceof MoneyMultiplierModifier || m instanceof ExtraModifierModifier).length ), SpeciesWildEvolutionDelay.VERY_LONG),
-    new SpeciesFormEvolution(Species.GHOLDENGO, "roaming", "", 1, null, new SpeciesEvolutionCondition( p => p.evoCounter > 9 - p.getHeldItems().filter(m => m instanceof DamageMoneyRewardModifier).length - p.scene.findModifiers(m => m instanceof MoneyMultiplierModifier || m instanceof ExtraModifierModifier).length ), SpeciesWildEvolutionDelay.VERY_LONG)
+    new SpeciesFormEvolution(Species.GHOLDENGO, "chest", "", 1, null, new SpeciesEvolutionCondition( p => p.evoCounter > 9 ), SpeciesWildEvolutionDelay.VERY_LONG),
+    new SpeciesFormEvolution(Species.GHOLDENGO, "roaming", "", 1, null, new SpeciesEvolutionCondition( p => p.evoCounter > 9 ), SpeciesWildEvolutionDelay.VERY_LONG)
   ]
 };
 
