@@ -358,6 +358,10 @@
       "name": "Fiammosfera",
       "description": "Sfera bizzarra che procura una scottatura a chi l’ha con sé in una lotta."
     },
+    "EVOLUTION_TRACKER_GIMMIGHOUL": {
+      "name": "Treasures",
+      "description": "This Pokémon loves treasure! Keep collecting treasure and something might happen!"
+    },
     "BATON": {
       "name": "Staffetta",
       "description": "Permette di trasmettere gli effetti quando si cambia Pokémon, aggirando anche le trappole."
