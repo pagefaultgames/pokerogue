@@ -358,6 +358,10 @@
       "name": "火焰寶珠",
       "description": "觸碰後會放出熱量的神奇寶珠。\n攜帶後，在戰鬥時會變成灼傷狀態。"
     },
+    "EVOLUTION_TRACKER_GIMMIGHOUL": {
+      "name": "Treasures",
+      "description": "This Pokémon loves treasure! Keep collecting treasure and something might happen!"
+    },
     "BATON": {
       "name": "接力棒",
       "description": "允許在切換寶可夢時保留能力變化, 對陷阱\n同樣生效。"
