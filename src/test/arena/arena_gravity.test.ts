@@ -8,7 +8,6 @@ import { Species } from "#enums/species";
 import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import { SPLASH_ONLY } from "../utils/testUtils";
 
 describe("Arena - Gravity", () => {
   let phaserGame: Phaser.Game;
@@ -32,7 +31,7 @@ describe("Arena - Gravity", () => {
       .ability(Abilities.UNNERVE)
       .enemyAbility(Abilities.BALL_FETCH)
       .enemySpecies(Species.SHUCKLE)
-      .enemyMoveset(SPLASH_ONLY);
+      .enemyMoveset(Moves.SPLASH);
   });
 
   // Reference: https://bulbapedia.bulbagarden.net/wiki/Gravity_(move)

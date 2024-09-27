@@ -1,10 +1,9 @@
-import { BattlerIndex } from "#app/battle.js";
+import { BattlerIndex } from "#app/battle";
 import GameManager from "#app/test/utils/gameManager";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import { SPLASH_ONLY } from "../utils/testUtils";
 
 describe("Moves - Gigaton Hammer", () => {
   let phaserGame: Phaser.Game;
@@ -29,7 +28,7 @@ describe("Moves - Gigaton Hammer", () => {
       .moveset([Moves.GIGATON_HAMMER])
       .startingLevel(10)
       .enemyLevel(100)
-      .enemyMoveset(SPLASH_ONLY)
+      .enemyMoveset(Moves.SPLASH)
       .disableCrits();
   });
 

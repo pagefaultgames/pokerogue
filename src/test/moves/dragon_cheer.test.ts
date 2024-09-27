@@ -4,15 +4,12 @@ import { Moves } from "#app/enums/moves";
 import { Species } from "#app/enums/species";
 import { Abilities } from "#enums/abilities";
 import GameManager from "#test/utils/gameManager";
-import { SPLASH_ONLY } from "#test/utils/testUtils";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Moves - Dragon Cheer", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
-  const TIMEOUT = 20 * 1000;
-
   beforeAll(() => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
@@ -28,7 +25,7 @@ describe("Moves - Dragon Cheer", () => {
     game.override
       .battleType("double")
       .enemyAbility(Abilities.BALL_FETCH)
-      .enemyMoveset(SPLASH_ONLY)
+      .enemyMoveset(Moves.SPLASH)
       .enemyLevel(20)
       .moveset([Moves.DRAGON_CHEER, Moves.TACKLE, Moves.SPLASH]);
   });
@@ -48,7 +45,7 @@ describe("Moves - Dragon Cheer", () => {
     // After Tackle
     await game.phaseInterceptor.to("TurnEndPhase");
     expect(enemy.getCritStage).toHaveReturnedWith(1); // getCritStage is called on defender
-  }, TIMEOUT);
+  });
 
   it("increases the user's Dragon-type allies' critical hit ratio by two stages", async () => {
     await game.classicMode.startBattle([Species.MAGIKARP, Species.DRAGONAIR]);
@@ -65,7 +62,7 @@ describe("Moves - Dragon Cheer", () => {
     // After Tackle
     await game.phaseInterceptor.to("TurnEndPhase");
     expect(enemy.getCritStage).toHaveReturnedWith(2); // getCritStage is called on defender
-  }, TIMEOUT);
+  });
 
   it("applies the effect based on the allies' type upon use of the move, and do not change if the allies' type changes later in battle", async () => {
     await game.classicMode.startBattle([Species.DRAGONAIR, Species.MAGIKARP]);
@@ -97,5 +94,5 @@ describe("Moves - Dragon Cheer", () => {
 
     await game.phaseInterceptor.to("MoveEndPhase");
     expect(enemy.getCritStage).toHaveReturnedWith(1); // getCritStage is called on defender
-  }, TIMEOUT);
+  });
 });

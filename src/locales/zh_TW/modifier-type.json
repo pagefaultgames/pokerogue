@@ -47,22 +47,40 @@
       "description": "將一隻寶可夢的性格改爲{{natureName}}併爲該寶可\n夢永久解鎖該性格。"
     },
     "DoubleBattleChanceBoosterModifierType": {
-      "description": "接下來的{{battleCount}}場戰鬥是雙打的概率翻倍。"
+      "description": "遭遇雙打機率提升四倍，持續{{battleCount}}場戰鬥。"
     },
     "TempStatStageBoosterModifierType": {
-      "description": "爲所有成員寶可夢提升一級{{stat}}，持續5場戰鬥。"
+      "description": "提升全隊的{{stat}}{{amount}}級，持續5場戰鬥。",
+      "extra": {
+        "stage": "1階",
+        "percentage": "30%"
+      }
     },
     "AttackTypeBoosterModifierType": {
       "description": "一隻寶可夢的{{moveType}}系招式威力提升20%。"
     },
     "PokemonLevelIncrementModifierType": {
-      "description": "Increases a Pokémon's level by {{levels}}."
+      "description": "使一只寶可夢的等級提升{{levels}}級。"
     },
     "AllPokemonLevelIncrementModifierType": {
-      "description": "Increases all party members' level by {{levels}}."
+      "description": "使一只寶可夢的等級提升{{levels}}級。"
     },
     "BaseStatBoosterModifierType": {
       "description": "增加持有者的{{stat}}10%，個體值越高堆疊\n上限越高。"
+    },
+    "PokemonBaseStatTotalModifierType": {
+      "name": "Shuckle Juice",
+      "description": "{{increaseDecrease}} all of the holder's base stats by {{statValue}}. You were {{blessCurse}} by the Shuckle.",
+      "extra": {
+        "increase": "Increases",
+        "decrease": "Decreases",
+        "blessed": "blessed",
+        "cursed": "cursed"
+      }
+    },
+    "PokemonBaseStatFlatModifierType": {
+      "name": "Old Gateau",
+      "description": "Increases the holder's {{stats}} base stats by {{statValue}}. Found after a strange dream."
     },
     "AllPokemonFullHpRestoreModifierType": {
       "description": "所有寶可夢完全恢復HP。"
@@ -91,15 +109,15 @@
       "description": "招式命中率增加{{accuracyAmount}} (最大100)。"
     },
     "PokemonMultiHitModifierType": {
-      "description": "攻擊造成一次額外傷害，每次堆疊額外傷害\n分別衰減60/75/82.5%。"
+      "description": "攻擊以60/75/82.5%的傷害造成2/3/4次傷害。"
     },
     "TmModifierType": {
       "name": "招式學習器 {{moveId}} - {{moveName}}",
       "description": "教會一隻寶可夢{{moveName}}。"
     },
     "TmModifierTypeWithInfo": {
-      "name": "TM{{moveId}} - {{moveName}}",
-      "description": "教會一隻寶可夢{{moveName}}\n(Hold C or Shift for more info)。"
+      "name": "招式學習器{{moveId}} - {{moveName}}",
+      "description": "教會一隻寶可夢{{moveName}}\n(按住C或者Shift查看更多信息)"
     },
     "EvolutionItemModifierType": {
       "description": "使某些寶可夢進化。"
@@ -178,6 +196,10 @@
     "REVIVER_SEED": {
       "name": "復活種子",
       "description": "受到技能攻擊傷害瀕死時，\n恢復該瀕死寶可夢的HP至1/2。"
+    },
+    "WHITE_HERB": {
+      "name": "白色香草",
+      "description": "當攜帶它的寶可夢能力降低時，\n僅能回到之前的狀態１次。"
     },
     "ETHER": {
       "name": "PP單項小補劑"
@@ -306,19 +328,19 @@
     },
     "BERRY_POUCH": {
       "name": "樹果袋",
-      "description": "使用樹果時有30%的幾率不會消耗樹果。"
+      "description": "使用樹果時增加30%的幾率不會消耗樹果。"
     },
     "FOCUS_BAND": {
       "name": "氣勢頭帶",
-      "description": "攜帶該道具的寶可夢有10%幾率在受到\n攻擊而將陷入瀕死狀態時，保留1點HP不陷入瀕死狀態。"
+      "description": "攜帶該道具的寶可夢增加10%幾率在受到\n攻擊而將陷入瀕死狀態時，保留1點HP不陷入瀕死狀態。"
     },
     "QUICK_CLAW": {
       "name": "先制之爪",
-      "description": "有10%的幾率無視速度優先使出招式\n(先制技能優先)。"
+      "description": "增加10%的幾率無視速度優先使出招式\n(先制技能優先)。"
     },
     "KINGS_ROCK": {
       "name": "王者之證",
-      "description": "攜帶該道具的寶可夢使用任意原本不會造成\n畏縮狀態的攻擊招式並造成傷害時，有\n10%幾率使目標陷入畏縮狀態。"
+      "description": "攜帶該道具的寶可夢使用任意原本不會造成\n畏縮狀態的攻擊招式並造成傷害時，增加\n10%幾率使目標陷入畏縮狀態。"
     },
     "LEFTOVERS": {
       "name": "喫剩的東西",
@@ -335,6 +357,10 @@
     "FLAME_ORB": {
       "name": "火焰寶珠",
       "description": "觸碰後會放出熱量的神奇寶珠。\n攜帶後，在戰鬥時會變成灼傷狀態。"
+    },
+    "EVOLUTION_TRACKER_GIMMIGHOUL": {
+      "name": "金子寶物",
+      "description": "這個小精靈愛金子! 繼續挑金子然後誰知道什麼會發生!"
     },
     "BATON": {
       "name": "接力棒",
@@ -393,7 +419,13 @@
     "ENEMY_FUSED_CHANCE": {
       "name": "融合硬幣",
       "description": "增加1%野生融合寶可夢出現概率。"
-    }
+    },
+
+    "MYSTERY_ENCOUNTER_SHUCKLE_JUICE": { "name": "Shuckle Juice" },
+    "MYSTERY_ENCOUNTER_BLACK_SLUDGE": { "name": "Black Sludge", "description": "The stench is so powerful that shops will only sell you items at a steep cost increase." },
+    "MYSTERY_ENCOUNTER_MACHO_BRACE": { "name": "Macho Brace", "description": "Defeating a Pokémon grants the holder a Macho Brace stack. Each stack slightly boosts stats, with an extra bonus at max stacks." },
+    "MYSTERY_ENCOUNTER_OLD_GATEAU": { "name": "Old Gateau", "description": "Increases the holder's {{stats}} stats by {{statValue}}." },
+    "MYSTERY_ENCOUNTER_GOLDEN_BUG_NET": { "name": "Golden Bug Net", "description": "Imbues the owner with luck to find Bug Type Pokémon more often. Has a strange heft to it." }
   },
   "SpeciesBoosterItem": {
     "LIGHT_BALL": {
@@ -467,6 +499,22 @@
     "TART_APPLE": "酸酸蘋果",
     "STRAWBERRY_SWEET": "草莓糖飾",
     "UNREMARKABLE_TEACUP": "凡作茶碗",
+    "UPGRADE": "升級資料",
+    "DUBIOUS_DISC": "可疑修正檔",
+    "DRAGON_SCALE": "龍之鱗片",
+    "PRISM_SCALE": "美麗鱗片",
+    "RAZOR_CLAW": "銳利之爪",
+    "RAZOR_FANG": "銳利之牙",
+    "REAPER_CLOTH": "靈界之布",
+    "ELECTIRIZER": "電力增幅器",
+    "MAGMARIZER": "熔岩增幅器",
+    "PROTECTOR": "護具",
+    "SACHET": "香袋",
+    "WHIPPED_DREAM": "泡沫奶油",
+    "LEADERS_CREST": "頭領憑證",
+    "SUN_FLUTE": "太陽之笛",
+    "MOON_FLUTE": "月亮之笛",
+    
     "CHIPPED_POT": "缺損的茶壺",
     "BLACK_AUGURITE": "黑奇石",
     "GALARICA_CUFF": "伽勒豆蔻手環",

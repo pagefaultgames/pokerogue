@@ -10,7 +10,7 @@ import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
-const TIMEOUT = 20 * 1000;
+
 
 describe("Moves - Beak Blast", () => {
   let phaserGame: Phaser.Game;
@@ -34,7 +34,7 @@ describe("Moves - Beak Blast", () => {
       .moveset([Moves.BEAK_BLAST])
       .enemySpecies(Species.SNORLAX)
       .enemyAbility(Abilities.INSOMNIA)
-      .enemyMoveset(Array(4).fill(Moves.TACKLE))
+      .enemyMoveset([Moves.TACKLE])
       .startingLevel(100)
       .enemyLevel(100);
   });
@@ -54,7 +54,7 @@ describe("Moves - Beak Blast", () => {
 
       await game.phaseInterceptor.to(BerryPhase, false);
       expect(enemyPokemon.status?.effect).toBe(StatusEffect.BURN);
-    }, TIMEOUT
+    }
   );
 
   it(
@@ -74,13 +74,13 @@ describe("Moves - Beak Blast", () => {
 
       await game.phaseInterceptor.to(BerryPhase, false);
       expect(enemyPokemon.status?.effect).toBe(StatusEffect.BURN);
-    }, TIMEOUT
+    }
   );
 
   it(
     "should not burn attackers that don't make contact",
     async () => {
-      game.override.enemyMoveset(Array(4).fill(Moves.WATER_GUN));
+      game.override.enemyMoveset([Moves.WATER_GUN]);
 
       await game.startBattle([Species.BLASTOISE]);
 
@@ -94,7 +94,7 @@ describe("Moves - Beak Blast", () => {
 
       await game.phaseInterceptor.to(BerryPhase, false);
       expect(enemyPokemon.status?.effect).not.toBe(StatusEffect.BURN);
-    }, TIMEOUT
+    }
   );
 
   it(
@@ -110,13 +110,13 @@ describe("Moves - Beak Blast", () => {
 
       await game.phaseInterceptor.to(BerryPhase, false);
       expect(leadPokemon.turnData.hitCount).toBe(2);
-    }, TIMEOUT
+    }
   );
 
   it(
     "should be blocked by Protect",
     async () => {
-      game.override.enemyMoveset(Array(4).fill(Moves.PROTECT));
+      game.override.enemyMoveset([Moves.PROTECT]);
 
       await game.startBattle([Species.BLASTOISE]);
 
@@ -131,6 +131,6 @@ describe("Moves - Beak Blast", () => {
       await game.phaseInterceptor.to(TurnEndPhase);
       expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp());
       expect(leadPokemon.getTag(BattlerTagType.BEAK_BLAST_CHARGING)).toBeUndefined();
-    }, TIMEOUT
+    }
   );
 });

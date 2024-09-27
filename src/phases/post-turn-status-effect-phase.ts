@@ -1,12 +1,12 @@
-import BattleScene from "#app/battle-scene.js";
-import { BattlerIndex } from "#app/battle.js";
-import { applyAbAttrs, BlockNonDirectDamageAbAttr, BlockStatusDamageAbAttr, ReduceBurnDamageAbAttr } from "#app/data/ability.js";
-import { CommonBattleAnim, CommonAnim } from "#app/data/battle-anims.js";
-import { getStatusEffectActivationText } from "#app/data/status-effect.js";
-import { BattleSpec } from "#app/enums/battle-spec.js";
-import { StatusEffect } from "#app/enums/status-effect.js";
-import { getPokemonNameWithAffix } from "#app/messages.js";
-import * as Utils from "#app/utils.js";
+import BattleScene from "#app/battle-scene";
+import { BattlerIndex } from "#app/battle";
+import { applyAbAttrs, BlockNonDirectDamageAbAttr, BlockStatusDamageAbAttr, ReduceBurnDamageAbAttr } from "#app/data/ability";
+import { CommonBattleAnim, CommonAnim } from "#app/data/battle-anims";
+import { getStatusEffectActivationText } from "#app/data/status-effect";
+import { BattleSpec } from "#app/enums/battle-spec";
+import { StatusEffect } from "#app/enums/status-effect";
+import { getPokemonNameWithAffix } from "#app/messages";
+import * as Utils from "#app/utils";
 import { PokemonPhase } from "./pokemon-phase";
 
 export class PostTurnStatusEffectPhase extends PokemonPhase {
@@ -42,7 +42,7 @@ export class PostTurnStatusEffectPhase extends PokemonPhase {
           this.scene.damageNumberHandler.add(this.getPokemon(), pokemon.damage(damage.value, false, true));
           pokemon.updateInfo();
         }
-        new CommonBattleAnim(CommonAnim.POISON + (pokemon.status.effect - 1), pokemon).play(this.scene, () => this.end());
+        new CommonBattleAnim(CommonAnim.POISON + (pokemon.status.effect - 1), pokemon).play(this.scene, false, () => this.end());
       } else {
         this.end();
       }

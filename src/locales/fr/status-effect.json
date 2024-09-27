@@ -1,12 +1,6 @@
 {
   "none": {
-    "name": "Aucun",
-    "description": "",
-    "obtain": "",
-    "obtainSource": "",
-    "activation": "",
-    "overlap": "",
-    "heal": ""
+    "name": "Aucun"
   },
   "poison": {
     "name": "Empoisonnement",
@@ -33,7 +27,7 @@
     "obtainSource": "{{pokemonNameWithAffix}} est paralysé\npar {{sourceText}} ! Il aura du mal à attaquer !",
     "activation": "{{pokemonNameWithAffix}} est paralysé !\nIl n’a pas pu attaquer !",
     "overlap": "{{pokemonNameWithAffix}} est\ndéjà paralysé.",
-    "heal": "{{pokemonNameWithAffix}} n’est\nplus paralysé !"
+    "heal": "{{pokemonNameWithAffix}} n’est\nplus paralysé !"
   },
   "sleep": {
     "name": "Sommeil",

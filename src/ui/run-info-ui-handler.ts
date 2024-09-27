@@ -18,10 +18,10 @@ import { Type, getTypeRgb } from "../data/type";
 import { TypeColor, TypeShadow } from "#app/enums/color";
 import { getNatureStatMultiplier, getNatureName } from "../data/nature";
 import { getVariantTint } from "#app/data/variant";
-import { PokemonHeldItemModifier, TerastallizeModifier } from "../modifier/modifier";
-import {modifierSortFunc} from "../modifier/modifier";
+import * as Modifier from "../modifier/modifier";
 import { Species } from "#enums/species";
 import { PlayerGender } from "#enums/player-gender";
+import { SettingKeyboard } from "#app/system/settings/settings-keyboard";
 
 /**
  * RunInfoUiMode indicates possible overlays of RunInfoUiHandler.
@@ -49,15 +49,11 @@ export default class RunInfoUiHandler extends UiHandler {
   private runResultContainer: Phaser.GameObjects.Container;
   private runInfoContainer: Phaser.GameObjects.Container;
   private partyContainer: Phaser.GameObjects.Container;
-  private partyHeldItemsContainer: Phaser.GameObjects.Container;
   private statsBgWidth: integer;
-  private partyContainerHeight: integer;
-  private partyContainerWidth: integer;
 
   private hallofFameContainer: Phaser.GameObjects.Container;
   private endCardContainer: Phaser.GameObjects.Container;
 
-  private partyInfo: Phaser.GameObjects.Container[];
   private partyVisibility: Boolean;
   private modifiersModule: any;
 
@@ -68,7 +64,7 @@ export default class RunInfoUiHandler extends UiHandler {
   override async setup() {
  		this.runContainer = this.scene.add.container(1, -(this.scene.game.canvas.height / 6) + 1);
     // The import of the modifiersModule is loaded here to sidestep async/await issues.
-    this.modifiersModule = await import("../modifier/modifier");
+    this.modifiersModule = Modifier;
     this.runContainer.setVisible(false);
  	}
 
@@ -152,7 +148,13 @@ export default class RunInfoUiHandler extends UiHandler {
       const headerBgCoords = headerBg.getTopRight();
       const abilityButtonContainer = this.scene.add.container(0, 0);
       const abilityButtonText = addTextObject(this.scene, 8, 0, i18next.t("runHistory:viewHeldItems"), TextStyle.WINDOW, {fontSize:"34px"});
-      const abilityButtonElement = new Phaser.GameObjects.Sprite(this.scene, 0, 2, "keyboard", "E.png");
+      const gamepadType = this.getUi().getGamepadType();
+      let abilityButtonElement: Phaser.GameObjects.Sprite;
+      if (gamepadType === "touch") {
+        abilityButtonElement = new Phaser.GameObjects.Sprite(this.scene, 0, 2, "keyboard", "E.png");
+      } else {
+        abilityButtonElement = new Phaser.GameObjects.Sprite(this.scene, 0, 2, gamepadType, this.scene.inputController?.getIconForLatestInputRecorded(SettingKeyboard.Button_Cycle_Ability));
+      }
       abilityButtonContainer.add([abilityButtonText, abilityButtonElement]);
       abilityButtonContainer.setPosition(headerBgCoords.x - abilityButtonText.displayWidth - abilityButtonElement.displayWidth - 8, 10);
       this.runContainer.add(abilityButtonContainer);
@@ -174,18 +176,26 @@ export default class RunInfoUiHandler extends UiHandler {
   private async parseRunResult() {
     const genderIndex = this.scene.gameData.gender ?? PlayerGender.UNSET;
     const genderStr = PlayerGender[genderIndex];
-    const runResultTextStyle = this.isVictory ? TextStyle.SUMMARY : TextStyle.SUMMARY_RED;
+    const runResultTextStyle = this.isVictory ? TextStyle.PERFECT_IV : TextStyle.SUMMARY_RED;
     const runResultTitle = this.isVictory ? i18next.t("runHistory:victory") : i18next.t("runHistory:defeated", { context: genderStr });
-    const runResultText = addBBCodeTextObject(this.scene, 6, 5, `${runResultTitle} - ${i18next.t("saveSlotSelectUiHandler:wave")} ${this.runInfo.waveIndex}`, runResultTextStyle, {fontSize : "65px", lineSpacing: 0.1});
+    const runResultText = addTextObject(this.scene, 6, 5, `${runResultTitle} - ${i18next.t("saveSlotSelectUiHandler:wave")} ${this.runInfo.waveIndex}`, runResultTextStyle, {fontSize : "65px", lineSpacing: 0.1});
 
     if (this.isVictory) {
       const hallofFameInstructionContainer = this.scene.add.container(0, 0);
       const shinyButtonText = addTextObject(this.scene, 8, 0, i18next.t("runHistory:viewHallOfFame"), TextStyle.WINDOW, {fontSize:"65px"});
-      const shinyButtonElement = new Phaser.GameObjects.Sprite(this.scene, 0, 4, "keyboard", "R.png");
+      const formButtonText = addTextObject(this.scene, 8, 12, i18next.t("runHistory:viewEndingSplash"), TextStyle.WINDOW, {fontSize:"65px"});
+      const gamepadType = this.getUi().getGamepadType();
+      let shinyButtonElement: Phaser.GameObjects.Sprite;
+      let formButtonElement: Phaser.GameObjects.Sprite;
+      if (gamepadType === "touch") {
+        shinyButtonElement = new Phaser.GameObjects.Sprite(this.scene, 0, 4, "keyboard", "R.png");
+        formButtonElement = new Phaser.GameObjects.Sprite(this.scene, 0, 16, "keyboard", "F.png");
+      } else {
+        shinyButtonElement = new Phaser.GameObjects.Sprite(this.scene, 0, 4, gamepadType, this.scene.inputController?.getIconForLatestInputRecorded(SettingKeyboard.Button_Cycle_Shiny));
+        formButtonElement = new Phaser.GameObjects.Sprite(this.scene, 0, 16, gamepadType, this.scene.inputController?.getIconForLatestInputRecorded(SettingKeyboard.Button_Cycle_Form));
+      }
       hallofFameInstructionContainer.add([shinyButtonText, shinyButtonElement]);
 
-      const formButtonText = addTextObject(this.scene, 8, 12, i18next.t("runHistory:viewEndingSplash"), TextStyle.WINDOW, {fontSize:"65px"});
-      const formButtonElement = new Phaser.GameObjects.Sprite(this.scene, 0, 16, "keyboard", "F.png");
       hallofFameInstructionContainer.add([formButtonText, formButtonElement]);
 
       hallofFameInstructionContainer.setPosition(12, 25);
@@ -197,7 +207,7 @@ export default class RunInfoUiHandler extends UiHandler {
     if (!this.isVictory) {
       const enemyContainer = this.scene.add.container(0, 0);
       // Wild - Single and Doubles
-      if (this.runInfo.battleType === BattleType.WILD) {
+      if (this.runInfo.battleType === BattleType.WILD || (this.runInfo.battleType === BattleType.MYSTERY_ENCOUNTER && !this.runInfo.trainer)) {
         switch (this.runInfo.enemyParty.length) {
         case 1:
           // Wild - Singles
@@ -208,7 +218,7 @@ export default class RunInfoUiHandler extends UiHandler {
           this.parseWildDoubleDefeat(enemyContainer);
           break;
         }
-      } else if (this.runInfo.battleType === BattleType.TRAINER) {
+      } else if (this.runInfo.battleType === BattleType.TRAINER || (this.runInfo.battleType === BattleType.MYSTERY_ENCOUNTER && this.runInfo.trainer)) {
         this.parseTrainerDefeat(enemyContainer);
       }
       this.runResultContainer.add(enemyContainer);
@@ -278,32 +288,36 @@ export default class RunInfoUiHandler extends UiHandler {
   private parseTrainerDefeat(enemyContainer: Phaser.GameObjects.Container) {
     // Creating the trainer sprite and adding it to enemyContainer
     const tObj = this.runInfo.trainer.toTrainer(this.scene);
-    const tObjSpriteKey = tObj.config.getSpriteKey(this.runInfo.trainer.variant === TrainerVariant.FEMALE, false);
-    const tObjSprite = this.scene.add.sprite(0, 5, tObjSpriteKey);
-    if (this.runInfo.trainer.variant === TrainerVariant.DOUBLE) {
-      const doubleContainer = this.scene.add.container(5, 8);
-      tObjSprite.setPosition(-3, -3);
-      const tObjPartnerSpriteKey = tObj.config.getSpriteKey(true, true);
-      const tObjPartnerSprite = this.scene.add.sprite(5, -3, tObjPartnerSpriteKey);
-      // Double Trainers have smaller sprites than Single Trainers
-      tObjPartnerSprite.setScale(0.20);
-      tObjSprite.setScale(0.20);
-      doubleContainer.add(tObjSprite);
-      doubleContainer.add(tObjPartnerSprite);
-      doubleContainer.setPosition(12, 38);
-      enemyContainer.add(doubleContainer);
-    } else {
-      tObjSprite.setScale(0.35, 0.35);
-      tObjSprite.setPosition(12, 28);
-      enemyContainer.add(tObjSprite);
-    }
+
+    // Loads trainer assets on demand, as they are not loaded by default in the scene
+    tObj.config.loadAssets(this.scene, this.runInfo.trainer.variant).then(() => {
+      const tObjSpriteKey = tObj.config.getSpriteKey(this.runInfo.trainer.variant === TrainerVariant.FEMALE, false);
+      const tObjSprite = this.scene.add.sprite(0, 5, tObjSpriteKey);
+      if (this.runInfo.trainer.variant === TrainerVariant.DOUBLE) {
+        const doubleContainer = this.scene.add.container(5, 8);
+        tObjSprite.setPosition(-3, -3);
+        const tObjPartnerSpriteKey = tObj.config.getSpriteKey(true, true);
+        const tObjPartnerSprite = this.scene.add.sprite(5, -3, tObjPartnerSpriteKey);
+        // Double Trainers have smaller sprites than Single Trainers
+        tObjPartnerSprite.setScale(0.20);
+        tObjSprite.setScale(0.20);
+        doubleContainer.add(tObjSprite);
+        doubleContainer.add(tObjPartnerSprite);
+        doubleContainer.setPosition(12, 38);
+        enemyContainer.add(doubleContainer);
+      } else {
+        tObjSprite.setScale(0.35, 0.35);
+        tObjSprite.setPosition(12, 28);
+        enemyContainer.add(tObjSprite);
+      }
+    });
 
     // Determining which Terastallize Modifier belongs to which Pokemon
     // Creates a dictionary {PokemonId: TeraShardType}
     const teraPokemon = {};
     this.runInfo.enemyModifiers.forEach((m) => {
       const modifier = m.toModifier(this.scene, this.modifiersModule[m.className]);
-      if (modifier instanceof TerastallizeModifier) {
+      if (modifier instanceof Modifier.TerastallizeModifier) {
         const teraDetails = modifier?.getArgs();
         const pkmnId = teraDetails[0];
         teraPokemon[pkmnId] = teraDetails[1];
@@ -367,10 +381,6 @@ export default class RunInfoUiHandler extends UiHandler {
       break;
     case GameModes.SPLICED_ENDLESS:
       modeText.appendText(`${i18next.t("gameMode:endlessSpliced")}`, false);
-      if (this.runInfo.waveIndex === this.scene.gameData.gameStats.highestEndlessWave) {
-        modeText.appendText(` [${i18next.t("runHistory:personalBest")}]`, false);
-        modeText.setTint(0xffef5c, 0x47ff69, 0x6b6bff, 0xff6969);
-      }
       break;
     case GameModes.CHALLENGE:
       modeText.appendText(`${i18next.t("gameMode:challenge")}`, false);
@@ -389,15 +399,16 @@ export default class RunInfoUiHandler extends UiHandler {
       break;
     case GameModes.ENDLESS:
       modeText.appendText(`${i18next.t("gameMode:endless")}`, false);
-      // If the player achieves a personal best in Endless, the mode text will be tinted similarly to SSS luck to celebrate their achievement.
-      if (this.runInfo.waveIndex === this.scene.gameData.gameStats.highestEndlessWave) {
-        modeText.appendText(` [${i18next.t("runHistory:personalBest")}]`, false);
-        modeText.setTint(0xffef5c, 0x47ff69, 0x6b6bff, 0xff6969);
-      }
       break;
     case GameModes.CLASSIC:
       modeText.appendText(`${i18next.t("gameMode:classic")}`, false);
       break;
+    }
+
+    // If the player achieves a personal best in Endless, the mode text will be tinted similarly to SSS luck to celebrate their achievement.
+    if ((this.runInfo.gameMode === GameModes.ENDLESS || this.runInfo.gameMode === GameModes.SPLICED_ENDLESS) && this.runInfo.waveIndex === this.scene.gameData.gameStats.highestEndlessWave) {
+      modeText.appendText(` [${i18next.t("runHistory:personalBest")}]`);
+      modeText.setTint(0xffef5c, 0x47ff69, 0x6b6bff, 0xff6969);
     }
 
     // Duration + Money
@@ -434,7 +445,7 @@ export default class RunInfoUiHandler extends UiHandler {
       modifierIconsContainer.setScale(0.45);
       for (const m of this.runInfo.modifiers) {
         const modifier = m.toModifier(this.scene, this.modifiersModule[m.className]);
-        if (modifier instanceof PokemonHeldItemModifier) {
+        if (modifier instanceof Modifier.PokemonHeldItemModifier) {
           continue;
         }
         const icon = modifier?.getIcon(this.scene, false);
@@ -527,7 +538,9 @@ export default class RunInfoUiHandler extends UiHandler {
       // Contains Name, Level + Nature, Ability, Passive
       const pokeInfoTextContainer = this.scene.add.container(-85, 3.5);
       const textContainerFontSize = "34px";
-      const pNature = getNatureName(pokemon.nature);
+      // This checks if the Pokemon's nature has been overwritten during the run and displays the change accurately
+      const pNature = pokemon.getNature();
+      const pNatureName = getNatureName(pNature);
       const pName = pokemon.getNameToRender();
       //With the exception of Korean/Traditional Chinese/Simplified Chinese, the code shortens the terms for ability and passive to their first letter.
       //These languages are exempted because they are already short enough.
@@ -543,7 +556,7 @@ export default class RunInfoUiHandler extends UiHandler {
       // Japanese is set to a greater line spacing of 35px in addBBCodeTextObject() if lineSpacing < 12.
       const lineSpacing = (i18next.resolvedLanguage === "ja") ? 12 : 3;
       const pokeInfoText = addBBCodeTextObject(this.scene, 0, 0, pName, TextStyle.SUMMARY, {fontSize: textContainerFontSize, lineSpacing: lineSpacing});
-      pokeInfoText.appendText(`${i18next.t("saveSlotSelectUiHandler:lv")}${Utils.formatFancyLargeNumber(pokemon.level, 1)} - ${pNature}`);
+      pokeInfoText.appendText(`${i18next.t("saveSlotSelectUiHandler:lv")}${Utils.formatFancyLargeNumber(pokemon.level, 1)} - ${pNatureName}`);
       pokeInfoText.appendText(pAbilityInfo);
       pokeInfoText.appendText(pPassiveInfo);
       pokeInfoTextContainer.add(pokeInfoText);
@@ -554,7 +567,7 @@ export default class RunInfoUiHandler extends UiHandler {
       const pStats : string[]= [];
       pokemon.stats.forEach((element) => pStats.push(Utils.formatFancyLargeNumber(element, 1)));
       for (let i = 0; i < pStats.length; i++) {
-        const isMult = getNatureStatMultiplier(pokemon.nature, i);
+        const isMult = getNatureStatMultiplier(pNature, i);
         pStats[i] = (isMult < 1) ? pStats[i] + "[color=#40c8f8]↓[/color]" : pStats[i];
         pStats[i] = (isMult > 1) ? pStats[i] + "[color=#f89890]↑[/color]" : pStats[i];
       }
@@ -635,17 +648,17 @@ export default class RunInfoUiHandler extends UiHandler {
       // Endless/Endless Spliced have a different scale because Pokemon tend to accumulate more items in these runs.
       const heldItemsScale = (this.runInfo.gameMode === GameModes.SPLICED_ENDLESS || this.runInfo.gameMode === GameModes.ENDLESS) ? 0.25 : 0.5;
       const heldItemsContainer = this.scene.add.container(-82, 2);
-      const heldItemsList : PokemonHeldItemModifier[] = [];
+      const heldItemsList : Modifier.PokemonHeldItemModifier[] = [];
       if (this.runInfo.modifiers.length) {
         for (const m of this.runInfo.modifiers) {
           const modifier = m.toModifier(this.scene, this.modifiersModule[m.className]);
-          if (modifier instanceof PokemonHeldItemModifier && modifier.pokemonId === pokemon.id) {
+          if (modifier instanceof Modifier.PokemonHeldItemModifier && modifier.pokemonId === pokemon.id) {
             modifier.stackCount = m["stackCount"];
             heldItemsList.push(modifier);
           }
         }
         if (heldItemsList.length > 0) {
-          (heldItemsList as PokemonHeldItemModifier[]).sort(modifierSortFunc);
+          (heldItemsList as Modifier.PokemonHeldItemModifier[]).sort(Modifier.modifierSortFunc);
           let row = 0;
           for (const [index, item] of heldItemsList.entries()) {
             if ( index > 36 ) {
@@ -850,7 +863,7 @@ export default class RunInfoUiHandler extends UiHandler {
   private buttonCycleOption(button: Button) {
     switch (button) {
     case Button.CYCLE_FORM:
-      if (this.isVictory) {
+      if (this.isVictory && this.pageMode !== RunInfoUiMode.HALL_OF_FAME) {
         if (!this.endCardContainer || !this.endCardContainer.visible) {
           this.createVictorySplash();
           this.endCardContainer.setVisible(true);
@@ -864,7 +877,7 @@ export default class RunInfoUiHandler extends UiHandler {
       }
       break;
     case Button.CYCLE_SHINY:
-      if (this.isVictory) {
+      if (this.isVictory && this.pageMode !== RunInfoUiMode.ENDING_ART) {
         if (!this.hallofFameContainer.visible) {
           this.hallofFameContainer.setVisible(true);
           this.pageMode = RunInfoUiMode.HALL_OF_FAME;
@@ -875,10 +888,12 @@ export default class RunInfoUiHandler extends UiHandler {
       }
       break;
     case Button.CYCLE_ABILITY:
-      if (this.partyVisibility) {
-        this.showParty(false);
-      } else {
-        this.showParty(true);
+      if (this.runInfo.modifiers.length !== 0 && this.pageMode === RunInfoUiMode.MAIN) {
+        if (this.partyVisibility) {
+          this.showParty(false);
+        } else {
+          this.showParty(true);
+        }
       }
       break;
     }

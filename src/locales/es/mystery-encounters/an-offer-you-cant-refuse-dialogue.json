@@ -1,0 +1,26 @@
+{
+  "intro": "Te detiene un chico con pinta de rico.",
+  "speaker": "Niño Bien",
+  "intro_dialogue": "¡Hola!$¡No puedo evitar notar que tu\n{{strongestPokemon}} se ve absolutamente divino!$Siempre he querido tener un Pokémon así, osea ¡me encanta!$¡Te pagaría generosamente,\n también te daría este viejo abalorio!",
+  "title": "Una oferta que no puedes rechazar",
+  "description": "Te están ofreciendo @[TOOLTIP_TITLE]{Amuleto Iris} y {{price, money}} por tu {{strongestPokemon}}!¡Es un trato extremadamente bueno, pero ¿realmente puedes soportar separarte de un miembro tan fuerte de tu equipo?",
+  "query": "¿Qué harás?",
+  "option": {
+    "1": {
+      "label": "Aceptar el trato",
+      "tooltip": "(-) Pierdes a {{strongestPokemon}}\n(+) Obtén un @[TOOLTIP_TITLE]{Amuleto Iris}\n(+) Obtén {{price, money}}",
+      "selected": "¡Maravilloso!@d{32} ¡Ven, John!, {{strongestPokemon}}!$¡Es hora de mostrarte a todos en el club náutico!$¡Estarán tan celosos!"
+    },
+    "2": {
+      "label": "Extorsionar al niño",
+      "tooltip": "(+) {{option2PrimaryName}} usa {{moveOrAbility}}\n(+) Obtén {{price, money}}",
+      "tooltip_disabled": "Tus Pokémon necesitan tener ciertos movimientos o habilidades para elegir esto",
+      "selected": "¡Por Dios, nos están robando, {{liepardName}}!$¡Oirás de mis abogados por esto!"
+    },
+    "3": {
+      "label": "Irse",
+      "tooltip": "(-) Ninguna Recompensa",
+      "selected": "Qué día más horrible…$Bueno, volvamos al club náutico entonces, {{liepardName}}."
+    }
+  }
+}

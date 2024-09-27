@@ -1,0 +1,47 @@
+{
+  "intro": "Un entrenador extremadamente fuerte se te acerca...",
+  "buck": {
+    "intro_dialogue": "¡Hola, entrenador! Me llamo Bulgur.$Tengo una propuesta súper genial para un entrenador fuerte como tú.$Llevo conmigo dos Huevos Pokémon raros, pero me gustaría que alguien más cuidara uno.$Si puedes demostrarme tu fuerza como entrenador, ¡te daré el Huevo más raro!",
+    "accept": "¡Guau!¡Este combate promete!",
+    "decline": "Vaya, parece que tu equipo no está en condiciones óptimas.$Venga, déjame ayudarte con eso."
+  },
+  "cheryl": {
+    "intro_dialogue": "Hola, me llamo Malta.$Tengo una petición particularmente interesante para un entrenador fuerte como tú.$Llevo conmigo dos Huevos Pokémon raros, pero me gustaría que alguien más cuidara uno.$Si puedes demostrarme tu fuerza como entrenador, ¡te daré el Huevo más raro!",
+    "accept": "¡Espero que estés listo!",
+    "decline": "Entiendo, parece que tu equipo no está en las mejores condiciones en este momento.$Déjame ayudar con eso."
+  },
+  "marley": {
+    "intro_dialogue": "...@d{64} Soy Sémola.$Tengo una oferta para ti...$Llevo conmigo dos Huevos Pokémon, pero me gustaría que alguien más cuidara uno.$Si eres más fuerte que yo, te daré el Huevo más raro.",
+    "accept": "... Ya veo.",
+    "decline": "... Ya veo.$Tus Pokémon parecen heridos… Déjame ayudarte."
+  },
+  "mira": {
+    "intro_dialogue": "¡Hola! Soy Maiza. Maiza tiene una petición para un entrenador fuerte como tú. Maiza tiene dos Huevos Pokémon raros, pero quiere que alguien más se quede con uno. Si le demuestras a Maiza que eres fuerte,¡Maiza te dará el Huevo más raro!",
+    "accept": "¿Vas a luchar contra Maiza?\n¡Genial!",
+    "decline": "Vaya, ¿no hay batalla? ¡Está bien! Maiza curará a tu equipo."
+  },
+  "riley": {
+    "intro_dialogue": "Soy Quinoa.$Tengo una propuesta extraña para un entrenador fuerte como tú.$Llevo conmigo dos Huevos Pokémon raros, pero me gustaría darle uno a otro entrenador.$Si puedes demostrarme tu fuerza, te daré el Huevo más raro.",
+    "accept": "Esa mirada que tienes...\nhagamos esto..",
+    "decline": "Entiendo, tu equipo parece agotado.$A ver, déjame ayudarte con eso."
+  },
+  "title": "Una Prueba de Entrenador",
+  "description": "Parece que este entrenador está dispuesto a darte un Huevo sin importar tu decisión. Sin embargo, si logras derrotar a este entrenador fuerte, recibirás un Huevo mucho más raro.",
+  "query": "¿Qué harás?",
+  "option": {
+    "1": {
+      "label": "Aceptar el Desafío",
+      "tooltip": "(-) Batalla extremadamente Ardua\n(+) Obtén un @[TOOLTIP_TITLE]{Huevo muy raro}"
+    },
+    "2": {
+      "label": "Rechazar el Desafío",
+      "tooltip": "(+) Equipo Curado\n(+) Obtén un @[TOOLTIP_TITLE]{Huevo}"
+    }
+  },
+  "eggTypes": {
+    "rare": "un Huevo Raro",
+    "epic": "un Huevo Épico",
+    "legendary": "un Huevo Legendario "
+  },
+  "outro": "{{statTrainerName}} te dio {{eggType}}!"
+}

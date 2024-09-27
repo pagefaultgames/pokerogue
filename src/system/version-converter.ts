@@ -1,4 +1,4 @@
-import { allSpecies } from "#app/data/pokemon-species.js";
+import { allSpecies } from "#app/data/pokemon-species";
 import { AbilityAttr, defaultStarterSpecies, DexAttr, SessionSaveData, SystemSaveData } from "./game-data";
 import { SettingKeys } from "./settings/settings";
 

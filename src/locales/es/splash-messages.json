@@ -1,10 +1,9 @@
 {
-  "battlesWon": "¡Batallas ganadas!",
+  "battlesWon": "¡{{count, number}} Batallas ganadas!",
   "joinTheDiscord": "¡Únete al Discord!",
   "infiniteLevels": "¡Niveles infinitos!",
-  "everythingStacks": "¡Todo se acumula!",
   "optionalSaveScumming": "¡Trampas de guardado opcionales!",
-  "biomes": "¡35 biomas!",
+  "biomes": "¡38 biomas!",
   "openSource": "¡Código abierto!",
   "playWithSpeed": "¡Juega a velocidad 5x!",
   "liveBugTesting": "¡Testeo de bugs en directo!",
@@ -14,9 +13,7 @@
   "infiniteFusionAtHome": "¡Infinite Fusion en casa!",
   "brokenEggMoves": "¡Movimientos Huevo rotos!",
   "magnificent": "¡Magnífico!",
-  "mubstitute": "¡Mubstituto!",
   "thatsCrazy": "¡De locos!",
-  "oranceJuice": "¡Zumo de narancia!",
   "questionableBalancing": "¡Cambios en balance cuestionables!",
   "coolShaders": "¡Shaders impresionantes!",
   "aiFree": "¡Libre de IA!",
@@ -25,12 +22,8 @@
   "moreAddictiveThanIntended": "¡Más adictivo de lo previsto!",
   "mostlyConsistentSeeds": "¡Semillas CASI consistentes!",
   "achievementPointsDontDoAnything": "¡Los Puntos de Logro no hacen nada!",
-  "youDoNotStartAtLevel": "¡No empiezas al nivel 2000!",
-  "dontTalkAboutTheManaphyEggIncident": "¡No se habla del Incidente Manaphy!",
   "alsoTryPokengine": "¡Prueba también Pokéngine!",
   "alsoTryEmeraldRogue": "¡Prueba también Emerald Rogue!",
   "alsoTryRadicalRed": "¡Prueba también Radical Red!",
-  "eeveeExpo": "¡Eevee Expo!",
-  "ynoproject": "¡YNOproject!",
-  "breedersInSpace": "Criadores... ¡EN EL ESPACIO!"
+  "eeveeExpo": "¡Eevee Expo!"
 }

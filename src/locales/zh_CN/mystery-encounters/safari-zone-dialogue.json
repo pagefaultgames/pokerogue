@@ -1,0 +1,46 @@
+{
+  "intro": "到狩猎地带了！",
+  "title": "狩猎地带",
+  "description": "这里有各种稀有和特殊的宝可梦！\n如果选择进入，你将有3次机会\n遇到野生宝可梦，供你捕获。\n但注意了，它们可能会在你捕捉到之前逃走！",
+  "query": "要进去试试吗？",
+  "option": {
+    "1": {
+      "label": "进入",
+      "tooltip": "(-)支付{{option1Money, money}}\n@[SUMMARY_GREEN]{(?)狩猎地带}",
+      "selected": "该试试运气了！"
+    },
+    "2": {
+      "label": "离开",
+      "tooltip": "(-)无奖励",
+      "selected": "你匆匆上路，心里却有一丝遗憾。"
+    }
+  },
+  "safari": {
+    "1": {
+      "label": "投掷精灵球",
+      "tooltip": "(+)投掷一颗精灵球",
+      "selected": "你扔出了精灵球！"
+    },
+    "2": {
+      "label": "投掷诱饵",
+      "tooltip": "(+)增加捕获率\n(-)有概率增加逃跑率",
+      "selected": "你扔了些诱饵！"
+    },
+    "3": {
+      "label": "投掷泥巴",
+      "tooltip": "(+)降低逃跑率\n(-)有概率降低逃跑率",
+      "selected": "你扔了些泥巴！"
+    },
+    "4": {
+      "label": "逃跑",
+      "tooltip": "(?)逃离宝可梦"
+    },
+    "watching": "{{pokemonName}}正在凝视你！",
+    "eating": "{{pokemonName}}正在进食！",
+    "busy_eating": "{{pokemonName}}忙着进食！",
+    "angry": "{{pokemonName}}发怒了！",
+    "beside_itself_angry": "{{pokemonName}}愤怒至极！",
+    "remaining_count": "还有{{remainingCount}}只宝可梦！"
+  },
+  "outro": "真是有趣的经历！"
+}

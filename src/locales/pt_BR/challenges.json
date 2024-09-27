@@ -1,6 +1,7 @@
 {
   "title": "Desafios",
   "illegalEvolution": "{{pokemon}} não pode ser escolhido\nnesse desafio!",
+  "noneSelected": "Nada Selecionado",
   "singleGeneration": {
     "name": "Geração Única",
     "desc": "Você só pode user Pokémon da {{gen}} geração.",

@@ -1,0 +1,22 @@
+{
+  "intro": "Eine schemenhafte Frau versperrt dir den Weg. Irgendetwas an ihr ist beunruhigend...",
+  "speaker": "Frau",
+  "intro_dialogue": "Ich habe deine Zukünfte gesehen, deine Vergangenheiten...$Siehst du sie auch?",
+  "title": "???",
+  "description": "Die Worte der Frau hallen in deinem Kopf wider. Es war nicht nur eine einzelne Stimme, sondern eine unendliche Vielzahl aus allen Zeiten und Realitäten. Dir wird schwindelig, die Frage bleibt in deinem Kopf hängen...\n@[TOOLTIP_TITLE]{\"Ich habe deine Zukünfte gesehen, deine Vergangenheiten...Siehst du sie auch?\"}",
+  "query": "Was wirst du tun?",
+  "option": {
+    "1": {
+      "label": "\"Ich sehe sie\"",
+      "tooltip": "@[SUMMARY_GREEN]{(?) Beeinflusst deine Pokémon}",
+      "selected": "Ihre Hand berührt dich und alles wird schwarz.$Dann...@d{64} Du siehst alles. Jede Zeitlinie, all deine verschiedenen Ichs, Vergangenheit und Zukunft.$Alles, was dich ausmacht, alles, was du sein wirst...@d{64}",
+      "cutscene": "Du siehst deine Pokémon,@d{32} wie sie sich aus jeder Realität vereinen, um etwas Neues zu werden...@d{64}",
+      "dream_complete": "Als du erwachst, ist die Frau - war es eine Frau oder ein Geist? - verschwunden...$.@d{32}.@d{32}.@d{32}$Dein Pokémon-Team hat sich verändert... Oder ist es das gleiche Team, das du schon immer hattest?"
+    },
+    "2": {
+      "label": "Schnell wegrennen",
+      "tooltip": "(-) Beeinflusst deine Pokémon",
+      "selected": "Du reißt deinen Geist aus einem betäubenden Griff und fliehst hastig.$Als du schließlich anhältst, um dich zu sammeln, überprüfst du die Pokémon in deinem Team.$Aus irgendeinem Grund hat sich das Level aller Pokémon verringert!"
+    }
+  }
+}

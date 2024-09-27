@@ -1,13 +1,14 @@
-import BattleScene from "#app/battle-scene.js";
-import { BattleStyle } from "#app/enums/battle-style.js";
-import { BattlerTagType } from "#app/enums/battler-tag-type.js";
-import { getPokemonNameWithAffix } from "#app/messages.js";
-import { Mode } from "#app/ui/ui.js";
+import BattleScene from "#app/battle-scene";
+import { BattleStyle } from "#app/enums/battle-style";
+import { BattlerTagType } from "#app/enums/battler-tag-type";
+import { getPokemonNameWithAffix } from "#app/messages";
+import { Mode } from "#app/ui/ui";
 import i18next from "i18next";
 import { BattlePhase } from "./battle-phase";
 import { PostSummonPhase } from "./post-summon-phase";
 import { SummonMissingPhase } from "./summon-missing-phase";
 import { SwitchPhase } from "./switch-phase";
+import { SwitchType } from "#enums/switch-type";
 
 export class CheckSwitchPhase extends BattlePhase {
   protected fieldIndex: integer;
@@ -50,7 +51,7 @@ export class CheckSwitchPhase extends BattlePhase {
       this.scene.ui.setMode(Mode.CONFIRM, () => {
         this.scene.ui.setMode(Mode.MESSAGE);
         this.scene.tryRemovePhase(p => p instanceof PostSummonPhase && p.player && p.fieldIndex === this.fieldIndex);
-        this.scene.unshiftPhase(new SwitchPhase(this.scene, this.fieldIndex, false, true));
+        this.scene.unshiftPhase(new SwitchPhase(this.scene, SwitchType.SWITCH, this.fieldIndex, false, true));
         this.end();
       }, () => {
         this.scene.ui.setMode(Mode.MESSAGE);

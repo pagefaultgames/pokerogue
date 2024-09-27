@@ -9,9 +9,8 @@ import { BerryPhase } from "#app/phases/berry-phase";
 import { FaintPhase } from "#app/phases/faint-phase";
 import { MessagePhase } from "#app/phases/message-phase";
 import { TurnInitPhase } from "#app/phases/turn-init-phase";
-import { SPLASH_ONLY } from "../utils/testUtils";
 
-const TIMEOUT = 20 * 1000;
+
 
 describe("Moves - Parting Shot", () => {
   let phaserGame: Phaser.Game;
@@ -31,7 +30,7 @@ describe("Moves - Parting Shot", () => {
     game = new GameManager(phaserGame);
     game.override.battleType("single");
     game.override.moveset([Moves.PARTING_SHOT, Moves.SPLASH]);
-    game.override.enemyMoveset(SPLASH_ONLY);
+    game.override.enemyMoveset(Moves.SPLASH);
     game.override.startingLevel(5);
     game.override.enemyLevel(5);
 
@@ -54,7 +53,7 @@ describe("Moves - Parting Shot", () => {
       expect(enemyPokemon.getStatStage(Stat.ATK)).toBe(0);
       expect(enemyPokemon.getStatStage(Stat.SPATK)).toBe(0);
       expect(game.scene.getPlayerField()[0].species.speciesId).toBe(Species.MURKROW);
-    }, TIMEOUT
+    }
   );
 
   test(
@@ -74,7 +73,7 @@ describe("Moves - Parting Shot", () => {
       expect(enemyPokemon.getStatStage(Stat.ATK)).toBe(0);
       expect(enemyPokemon.getStatStage(Stat.SPATK)).toBe(0);
       expect(game.scene.getPlayerField()[0].species.speciesId).toBe(Species.MURKROW);
-    }, TIMEOUT
+    }
   );
 
   it.skip( // TODO: fix this bug to pass the test!
@@ -116,7 +115,7 @@ describe("Moves - Parting Shot", () => {
       expect(enemyPokemon.getStatStage(Stat.ATK)).toBe(-6);
       expect(enemyPokemon.getStatStage(Stat.SPATK)).toBe(-6);
       expect(game.scene.getPlayerField()[0].species.speciesId).toBe(Species.MURKROW);
-    }, TIMEOUT
+    }
   );
 
   it.skip( // TODO: fix this bug to pass the test!
@@ -125,7 +124,7 @@ describe("Moves - Parting Shot", () => {
       game.override
         .enemySpecies(Species.ALTARIA)
         .enemyAbility(Abilities.NONE)
-        .enemyMoveset(Array(4).fill(Moves.MIST));
+        .enemyMoveset([Moves.MIST]);
       await game.startBattle([Species.SNORLAX, Species.MEOWTH]);
 
       const enemyPokemon = game.scene.getEnemyPokemon()!;
@@ -137,7 +136,7 @@ describe("Moves - Parting Shot", () => {
       expect(enemyPokemon.getStatStage(Stat.ATK)).toBe(0);
       expect(enemyPokemon.getStatStage(Stat.SPATK)).toBe(0);
       expect(game.scene.getPlayerField()[0].species.speciesId).toBe(Species.MURKROW);
-    }, TIMEOUT
+    }
   );
 
   it.skip( // TODO: fix this bug to pass the test!
@@ -157,7 +156,7 @@ describe("Moves - Parting Shot", () => {
       expect(enemyPokemon.getStatStage(Stat.ATK)).toBe(0);
       expect(enemyPokemon.getStatStage(Stat.SPATK)).toBe(0);
       expect(game.scene.getPlayerField()[0].species.speciesId).toBe(Species.MURKROW);
-    }, TIMEOUT
+    }
   );
 
   it.skip( // TODO: fix this bug to pass the test!
@@ -174,7 +173,7 @@ describe("Moves - Parting Shot", () => {
       expect(enemyPokemon.getStatStage(Stat.ATK)).toBe(-1);
       expect(enemyPokemon.getStatStage(Stat.SPATK)).toBe(-1);
       expect(game.scene.getPlayerField()[0].species.speciesId).toBe(Species.MURKROW);
-    }, TIMEOUT
+    }
   );
 
   it.skip( // TODO: fix this bug to pass the test!
@@ -197,6 +196,6 @@ describe("Moves - Parting Shot", () => {
       expect(enemyPokemon.getStatStage(Stat.ATK)).toBe(0);
       expect(enemyPokemon.getStatStage(Stat.SPATK)).toBe(0);
       expect(game.scene.getPlayerField()[0].species.speciesId).toBe(Species.MEOWTH);
-    }, TIMEOUT
+    }
   );
 });
