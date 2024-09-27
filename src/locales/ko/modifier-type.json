@@ -359,8 +359,8 @@
       "description": "이 도구를 지닌 포켓몬은 턴이 끝나는 시점에 상태이상에 걸리지 않았다면 화상 상태가 된다."
     },
     "EVOLUTION_TRACKER_GIMMIGHOUL": {
-      "name": "Treasures",
-      "description": "This Pokémon loves treasure! Keep collecting treasure and something might happen!"
+      "name": "보물",
+      "description": "이 포켓몬은 보물을 좋아한다. 보물을 모으다 보면 어떤 일이 일어날 지도 모른다!"
     },
     "BATON": {
       "name": "배턴",
