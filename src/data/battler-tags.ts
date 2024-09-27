@@ -2601,7 +2601,6 @@ export class SyrupBombTag extends BattlerTag {
 
   /**
    * Adds the Syrup Bomb battler tag to the target Pokemon.
-   * In addition, this also contains a check for a pre-existing Syrup Bomb tag on the target Pokemon to determine whether the tag should be applied or not
    * @param {Pokemon} pokemon the target Pokemon
    */
   override onAdd(pokemon: Pokemon) {
