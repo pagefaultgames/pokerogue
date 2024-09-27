@@ -47,7 +47,7 @@ export function migrateModifiers(data: SessionSaveData) {
       }
 
       // From [ battlesLeft ] to [ maxBattles, battleCount ]
-      m.args = [ maxBattles, m.args[0] ];
+      m.args = [ maxBattles, Math.min(m.args[0], maxBattles) ];
     }
   });
 

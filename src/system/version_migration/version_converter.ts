@@ -12,7 +12,7 @@ export abstract class VersionConverter {
   constructor(data: any, gameVersion: string) {
     const curVersion = gameVersion.split(".").map(value => parseInt(value));
     if (!curVersion.every((value, index) => value === LATEST_VERSION[index])) {
-      this.applyPatches(data, curVersion);
+      this.applyMigration(data, curVersion);
     }
   }
 
@@ -23,7 +23,7 @@ export abstract class VersionConverter {
     }
   }
 
-    abstract applyPatches(data: any, curVersion: number[]): void;
+  abstract applyMigration(data: any, curVersion: number[]): void;
 }
 
 export class SessionVersionConverter extends VersionConverter {
@@ -31,7 +31,7 @@ export class SessionVersionConverter extends VersionConverter {
     super(data, gameVersion);
   }
 
-  applyPatches(data: SessionSaveData, curVersion: number[]): void {
+  applyMigration(data: SessionSaveData, curVersion: number[]): void {
     const [ curMajor, curMinor, curPatch ] = curVersion;
 
     switch (curMajor) {
@@ -55,7 +55,7 @@ export class SystemVersionConverter extends VersionConverter {
     super(data, gameVersion);
   }
 
-  applyPatches(data: SystemSaveData, curVersion: number[]): void {
+  applyMigration(data: SystemSaveData, curVersion: number[]): void {
     const [ curMajor, curMinor, curPatch ] = curVersion;
 
     switch (curMajor) {
@@ -80,7 +80,7 @@ export class SettingsVersionConverter extends VersionConverter {
     super(data, gameVersion);
   }
 
-  applyPatches(data: Object, curVersion: number[]): void {
+  applyMigration(data: Object, curVersion: number[]): void {
     const [ curMajor, curMinor, curPatch ] = curVersion;
 
     switch (curMajor) {
