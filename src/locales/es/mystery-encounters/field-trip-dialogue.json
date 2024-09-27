@@ -1,7 +1,7 @@
 {
-  "intro": "¡Es un profesor y alugnos estudiantes parvulitos",
-  "speaker": "Profesor",
-  "intro_dialogue": "¡Hola! ¿Podrías dedicar un minuto a mis alumnos?$Les estoy enseñando sobre los movimientos de Pokémon\ny me encantaría mostrarles una demostración.$¿Te importaría mostrarnos uno de los movimientos\nque puede usar tu Pokémon?",
+  "intro": "¡Es una profesora y algunos estudiantes de parvulitos",
+  "speaker": "Profesora",
+  "intro_dialogue": "¡Hola! ¿Podrías dedicarles un minuto a mis alumnos?$Les estoy enseñando sobre los movimientos de Pokémon\ny me encantaría hacerles una demonstración. Te importaría enseñarnos uno de los movimientos\nque puede usar tu Pokémon?",
   "title": "Excursión",
   "description": "Una profesora está solicitando una demostración de un movimiento de un Pokémon. Dependiendo del movimiento que elijas, podría tener algo útil para ti a cambio.",
   "query": "¿Qué categoría de movimiento mostrarás?",

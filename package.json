@@ -36,6 +36,7 @@
 		"inquirer": "^11.0.2",
 		"jsdom": "^24.0.0",
 		"lefthook": "^1.6.12",
+		"msw": "^2.4.9",
 		"phaser3spectorjs": "^0.0.8",
 		"typedoc": "^0.26.4",
 		"typescript": "^5.5.3",

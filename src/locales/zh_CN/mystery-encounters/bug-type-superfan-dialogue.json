@@ -14,7 +14,7 @@
     "2": {
       "label": "展示虫宝可梦",
       "tooltip": "(+)获得一件道具",
-      "disabled_tooltip": "你需要至少携带一只虫系宝可梦",
+      "disabled_tooltip": "你需要至少携带\n一只虫系宝可梦",
       "selected": "你向训练师展示了你所有的虫系宝可梦",
       "selected_0_to_1": "哈？你才有{{numBugTypes}}。$你对我来说真是浪费时间。",
       "selected_2_to_3": "嘿，你有{{numBugTypes}}！\n不错。$来，这能帮你多抓点虫虫。",
@@ -24,7 +24,7 @@
     "3": {
       "label": "赠送虫系道具",
       "tooltip": "(-)给予训练师{{requiredBugItems}}\n(+)得到一件礼物",
-      "disabled_tooltip": "你需要一件{{requiredBugItems}}才能选择",
+      "disabled_tooltip": "你需要一件{{requiredBugItems}}\n才能选择",
       "select_prompt": "选择一件道具",
       "invalid_selection": "宝可梦未持有该类道具",
       "selected": "你递交了{{selectedItem}}.",

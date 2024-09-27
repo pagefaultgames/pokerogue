@@ -3,7 +3,7 @@
   "title": "Frutas em Abundância",
   "description": "Parece que há um Pokémon forte guardando um arbusto de frutas. Batalhar é a abordagem mais direta, mas ele parece ser forte. Talvez um Pokémon rápido consiga pegar algumas frutas sem ser pego?",
   "query": "O que você vai fazer?",
-  "berries": "Frutas!",
+  "berries": "Frutas",
   "option": {
     "1": {
       "label": "Batalhar com o Pokémon",
