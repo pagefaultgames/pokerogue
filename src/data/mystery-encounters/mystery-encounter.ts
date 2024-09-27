@@ -13,7 +13,7 @@ import { BattlerIndex } from "#app/battle";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
-import { GameModes } from "#app/game-mode";
+import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES, GameModes } from "#app/game-mode";
 import { EncounterAnim } from "#enums/encounter-anims";
 import { Challenges } from "#enums/challenges";
 
