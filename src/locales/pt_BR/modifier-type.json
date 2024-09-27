@@ -358,6 +358,10 @@
       "name": "Esfera da Chama",
       "description": "Uma esfera estranha que aquece quando tocada e queima quem a segurar."
     },
+    "EVOLUTION_TRACKER_GIMMIGHOUL": {
+      "name": "Treasures",
+      "description": "This Pokémon loves treasure! Keep collecting treasure and something might happen!"
+    },
     "BATON": {
       "name": "Bastão",
       "description": "Permite passar mudanças de atributo ao trocar Pokémon, ignorando armadilhas."
