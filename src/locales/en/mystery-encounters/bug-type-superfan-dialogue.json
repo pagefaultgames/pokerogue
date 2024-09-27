@@ -8,7 +8,7 @@
   "option": {
     "1": {
       "label": "Offer to Battle",
-      "tooltip": "(-) Challenging Battle\n(+) Teach a Pokémon a Bug Type Move",
+      "tooltip": "(-) Challenging Battle\n(+) Teach any Pokémon a Bug Type Move",
       "selected": "A challenge, eh?\nMy bugs are more than ready for you!"
     },
     "2": {

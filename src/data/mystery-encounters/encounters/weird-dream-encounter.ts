@@ -12,7 +12,6 @@ import { IntegerHolder, isNullOrUndefined, randSeedInt, randSeedShuffle } from "
 import PokemonSpecies, { allSpecies, getPokemonSpecies } from "#app/data/pokemon-species";
 import { HiddenAbilityRateBoosterModifier, PokemonFormChangeItemModifier, PokemonHeldItemModifier } from "#app/modifier/modifier";
 import { achvs } from "#app/system/achv";
-import { speciesEggMoves } from "#app/data/egg-moves";
 import { MysteryEncounterPokemonData } from "#app/data/mystery-encounters/mystery-encounter-pokemon-data";
 import { showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
 import { modifierTypes } from "#app/modifier/modifier-type";
@@ -105,7 +104,7 @@ const STANDARD_BST_TRANSFORM_BASE_VALUES: [number, number] = [40, 50];
 export const WeirdDreamEncounter: MysteryEncounter =
   MysteryEncounterBuilder.withEncounterType(MysteryEncounterType.WEIRD_DREAM)
     .withEncounterTier(MysteryEncounterTier.ROGUE)
-    .withDisallowedChallenges(Challenges.SINGLE_TYPE)
+    .withDisallowedChallenges(Challenges.SINGLE_TYPE, Challenges.SINGLE_GENERATION)
     .withSceneWaveRangeRequirement(...CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES)
     .withIntroSpriteConfigs([
       {
@@ -216,7 +215,7 @@ export const WeirdDreamEncounter: MysteryEncounter =
           pokemon.levelExp = 0;
 
           pokemon.calculateStats();
-          pokemon.updateInfo();
+          await pokemon.updateInfo();
         }
 
         leaveEncounterWithoutBattle(scene, true);
@@ -346,6 +345,9 @@ async function doNewTeamPostProcess(scene: BattleScene, transformations: Pokemon
     // If the previous pokemon had pokerus, transfer to new pokemon
     newPokemon.pokerus = previousPokemon.pokerus;
 
+    // Transfer previous Pokemon's luck value
+    newPokemon.luck = previousPokemon.getLuck();
+
     // If the previous pokemon had higher IVs, override to those (after updating dex IVs > prevents perfect 31s on a new unlock)
     newPokemon.ivs = newPokemon.ivs.map((iv, index) => {
       return previousPokemon.ivs[index] > iv ? previousPokemon.ivs[index] : iv;
@@ -358,44 +360,15 @@ async function doNewTeamPostProcess(scene: BattleScene, transformations: Pokemon
 
     // Set the moveset of the new pokemon to be the same as previous, but with 1 egg move and 1 (attempted) STAB move of the new species
     newPokemon.generateAndPopulateMoveset();
-
-    // Try to find a favored STAB move
-    let favoredMove;
-    for (const move of newPokemon.moveset) {
-      // Needs to match first type, second type will be replaced
-      if (move?.getMove().type === newPokemon.getTypes()[0]) {
-        favoredMove = move;
-        break;
-      }
-    }
-    // If was unable to find a move, uses first move in moveset (typically a high power STAB move)
-    favoredMove = favoredMove ?? newPokemon.moveset[0];
+    // Store a copy of a "standard" generated moveset for the new pokemon, will be used later for finding a favored move
+    const newPokemonGeneratedMoveset = newPokemon.moveset;
 
     newPokemon.moveset = previousPokemon.moveset;
-    let eggMoveIndex: null | number = null;
-    if (speciesEggMoves.hasOwnProperty(speciesRootForm)) {
-      const eggMoves = speciesEggMoves[speciesRootForm];
-      const randomEggMoveIndex = randSeedInt(4);
-      const randomEggMove = eggMoves[randomEggMoveIndex];
-      if (newPokemon.moveset.length < 4) {
-        newPokemon.moveset.push(new PokemonMove(randomEggMove));
-      } else {
-        eggMoveIndex = randSeedInt(4);
-        newPokemon.moveset[eggMoveIndex] = new PokemonMove(randomEggMove);
-      }
-      // For pokemon that the player owns (including ones just caught), unlock the egg move
-      if (!!scene.gameData.dexData[speciesRootForm].caughtAttr) {
-        await scene.gameData.setEggMoveUnlocked(getPokemonSpecies(speciesRootForm), randomEggMoveIndex, true);
-      }
-    }
-    if (favoredMove) {
-      let favoredMoveIndex = randSeedInt(4);
-      while (favoredMoveIndex === eggMoveIndex) {
-        favoredMoveIndex = randSeedInt(4);
-      }
 
-      newPokemon.moveset[favoredMoveIndex] = favoredMove;
-    }
+    const newEggMoveIndex = await addEggMoveToNewPokemonMoveset(scene, newPokemon, speciesRootForm);
+
+    // Try to add a favored STAB move (might fail if Pokemon already knows a bunch of moves from newPokemonGeneratedMoveset)
+    addFavoredMoveToNewPokemonMoveset(newPokemon, newPokemonGeneratedMoveset, newEggMoveIndex);
 
     // Randomize the second type of the pokemon
     // If the pokemon does not normally have a second type, it will gain 1
@@ -412,7 +385,7 @@ async function doNewTeamPostProcess(scene: BattleScene, transformations: Pokemon
 
     for (const item of transformation.heldItems) {
       item.pokemonId = newPokemon.id;
-      scene.addModifier(item, false, false, false, true);
+      await scene.addModifier(item, false, false, false, true);
     }
 
     // Any pokemon that is at or below 450 BST gets +20 permanent BST to 3 stats:  HP (halved, +10), lowest of Atk/SpAtk, and lowest of Def/SpDef
@@ -423,11 +396,12 @@ async function doNewTeamPostProcess(scene: BattleScene, transformations: Pokemon
       stats.push(baseStats[Stat.ATK] < baseStats[Stat.SPATK] ? Stat.ATK : Stat.SPATK);
       // Def or SpDef
       stats.push(baseStats[Stat.DEF] < baseStats[Stat.SPDEF] ? Stat.DEF : Stat.SPDEF);
-      // const mod = modifierTypes.MYSTERY_ENCOUNTER_OLD_GATEAU().newModifier(newPokemon, 20, stats);
-      const modType = modifierTypes.MYSTERY_ENCOUNTER_OLD_GATEAU().generateType(scene.getParty(), [20, stats]);
+      const modType = modifierTypes.MYSTERY_ENCOUNTER_OLD_GATEAU()
+        .generateType(scene.getParty(), [20, stats])
+        ?.withIdFromFunc(modifierTypes.MYSTERY_ENCOUNTER_OLD_GATEAU);
       const modifier = modType?.newModifier(newPokemon);
       if (modifier) {
-        scene.addModifier(modifier);
+        await scene.addModifier(modifier, false, false, false, true);
       }
     }
 
@@ -435,13 +409,15 @@ async function doNewTeamPostProcess(scene: BattleScene, transformations: Pokemon
     newPokemon.passive = previousPokemon.passive;
 
     newPokemon.calculateStats();
-    newPokemon.initBattleInfo();
+    await newPokemon.updateInfo();
   }
 
   // One random pokemon will get its passive unlocked
   const passiveDisabledPokemon = scene.getParty().filter(p => !p.passive);
   if (passiveDisabledPokemon?.length > 0) {
-    passiveDisabledPokemon[randSeedInt(passiveDisabledPokemon.length)].passive = true;
+    const enablePassiveMon = passiveDisabledPokemon[randSeedInt(passiveDisabledPokemon.length)];
+    enablePassiveMon.passive = true;
+    await enablePassiveMon.updateInfo(true);
   }
 
   // If at least one new starter was unlocked, play 1 fanfare
@@ -471,7 +447,7 @@ function getTransformedSpecies(originalBst: number, bstSearchRange: [number, num
     if (validSpecies?.length > 20) {
       validSpecies = randSeedShuffle(validSpecies);
       newSpecies = validSpecies.pop();
-      while (isNullOrUndefined(newSpecies) || alreadyUsedSpecies.includes(newSpecies!)) {
+      while (isNullOrUndefined(newSpecies) || alreadyUsedSpecies.includes(newSpecies)) {
         newSpecies = validSpecies.pop();
       }
     } else {
@@ -481,7 +457,7 @@ function getTransformedSpecies(originalBst: number, bstSearchRange: [number, num
     }
   }
 
-  return newSpecies!;
+  return newSpecies;
 }
 
 function doShowDreamBackground(scene: BattleScene) {
@@ -565,4 +541,86 @@ function doSideBySideTransformations(scene: BattleScene, transformations: Pokemo
       }
     }
   });
+}
+
+/**
+ * Returns index of the new egg move within the Pokemon's moveset (not the index of the move in `speciesEggMoves`)
+ * @param scene
+ * @param newPokemon
+ * @param speciesRootForm
+ */
+async function addEggMoveToNewPokemonMoveset(scene: BattleScene, newPokemon: PlayerPokemon, speciesRootForm: Species): Promise<number | null> {
+  let eggMoveIndex: null | number = null;
+  const eggMoves = newPokemon.getEggMoves()?.slice(0);
+  if (eggMoves) {
+    const eggMoveIndices = randSeedShuffle([0, 1, 2, 3]);
+    let randomEggMoveIndex = eggMoveIndices.pop();
+    let randomEggMove = !isNullOrUndefined(randomEggMoveIndex) ? eggMoves[randomEggMoveIndex] : null;
+    let retries = 0;
+    while (retries < 3 && (!randomEggMove || newPokemon.moveset.some(m => m?.moveId === randomEggMove))) {
+      // If Pokemon already knows this move, roll for another egg move
+      randomEggMoveIndex = eggMoveIndices.pop();
+      randomEggMove = !isNullOrUndefined(randomEggMoveIndex) ? eggMoves[randomEggMoveIndex] : null;
+      retries++;
+    }
+
+    if (randomEggMove) {
+      if (!newPokemon.moveset.some(m => m?.moveId === randomEggMove)) {
+        if (newPokemon.moveset.length < 4) {
+          newPokemon.moveset.push(new PokemonMove(randomEggMove));
+        } else {
+          eggMoveIndex = randSeedInt(4);
+          newPokemon.moveset[eggMoveIndex] = new PokemonMove(randomEggMove);
+        }
+      }
+
+      // For pokemon that the player owns (including ones just caught), unlock the egg move
+      if (!isNullOrUndefined(randomEggMoveIndex) && !!scene.gameData.dexData[speciesRootForm].caughtAttr) {
+        await scene.gameData.setEggMoveUnlocked(getPokemonSpecies(speciesRootForm), randomEggMoveIndex, true);
+      }
+    }
+  }
+
+  return eggMoveIndex;
+}
+
+/**
+ * Returns index of the new egg move within the Pokemon's moveset (not the index of the move in `speciesEggMoves`)
+ * @param newPokemon
+ * @param newPokemonGeneratedMoveset
+ * @param newEggMoveIndex
+ */
+function addFavoredMoveToNewPokemonMoveset(newPokemon: PlayerPokemon, newPokemonGeneratedMoveset: (PokemonMove | null)[], newEggMoveIndex: number | null) {
+  let favoredMove: PokemonMove | null = null;
+  for (const move of newPokemonGeneratedMoveset) {
+    // Needs to match first type, second type will be replaced
+    if (move?.getMove().type === newPokemon.getTypes()[0] && !newPokemon.moveset.some(m => m?.moveId === move?.moveId)) {
+      favoredMove = move;
+      break;
+    }
+  }
+  // If was unable to find a favored move, uses first move in moveset that isn't already known (typically a high power STAB move)
+  // Otherwise, it gains no favored move
+  if (!favoredMove) {
+    for (const move of newPokemonGeneratedMoveset) {
+      // Needs to match first type, second type will be replaced
+      if (!newPokemon.moveset.some(m => m?.moveId === move?.moveId)) {
+        favoredMove = move;
+        break;
+      }
+    }
+  }
+  // Finally, assign favored move to random index that isn't the new egg move index
+  if (favoredMove) {
+    if (newPokemon.moveset.length < 4) {
+      newPokemon.moveset.push(favoredMove);
+    } else {
+      let favoredMoveIndex = randSeedInt(4);
+      while (newEggMoveIndex !== null && favoredMoveIndex === newEggMoveIndex) {
+        favoredMoveIndex = randSeedInt(4);
+      }
+
+      newPokemon.moveset[favoredMoveIndex] = favoredMove;
+    }
+  }
 }

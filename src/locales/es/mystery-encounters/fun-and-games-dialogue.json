@@ -6,7 +6,7 @@
   "query": "¿Te gustaría jugar?",
   "option": {
     "1": {
-      "label": "Jugar el juego",
+      "label": "Jugar",
       "tooltip": "(-) Paga {{option1Money, money}}\n(+) Juega al {{wobbuffetName}} Golpe-o-matic",
       "selected": "¡Es hora de probar tu suerte!"
     },
@@ -23,8 +23,8 @@
   "turn_remaining_1": "¡Queda un turno!",
   "end_game": "¡Se acabó el tiempo!$El {{wobbuffetName}} se prepara para el contraataque y@d{16}.@d{16}.@d{16}.",
   "best_result": "¡El {{wobbuffetName}} golpea el botón con tanta fuerza\nque la campana se rompe!$¡Ganas el gran premio!",
-  "great_result": "¡El {{wobbuffetName}} golpea el botón, casi alcanzando la campana!$¡Tan cerca!\n¡Ganas el  segundo premio!",
+  "great_result": "¡El {{wobbuffetName}} golpea el botón, casi alcanzando la campana!$¡Que pena!\n¡Ganas el  segundo premio!",
   "good_result": "¡El {{wobbuffetName}} golpea el botón con suficiente fuerza para llegar a la mitad de la escala!$¡Ganas el tercer premio!",
   "bad_result": "El {{wobbuffetName}} apenas toca el botón y no pasa nada…$¡Oh no!\nNo ganas nada.",
-  "outro": "¡Ese fue un juego muy divertido!"
+  "outro": "¡Eso estuvo muy divertido!"
 }
