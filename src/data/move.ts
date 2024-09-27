@@ -5449,11 +5449,23 @@ export class AddTypeAttr extends MoveEffectAttr {
   }
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    const types = target.getTypes().slice(0, 2).filter(t => t !== Type.UNKNOWN); // TODO: Figure out some way to actually check if another version of this effect is already applied
-    if (this.type !== Type.UNKNOWN) {
-      types.push(this.type);
+    const targetSpecies = target.getSpeciesForm();
+    const originalTypes : Type[] = [targetSpecies.type1];
+    if (targetSpecies.type2) {
+      originalTypes.push(targetSpecies.type2);
     }
-    target.summonData.types = types;
+    // the way we know that the types have been changed is if the original types conflicts with the current types
+    const currentTypes = target.getTypes(); // TODO: Figure out some way to actually check if another version of this effect is already applied
+    const addedTypeIndex = currentTypes.findIndex((t, i) => t !== originalTypes[i] && i >= 0);
+    if (this.type !== Type.UNKNOWN) {
+      if (originalTypes.length === currentTypes.length && addedTypeIndex <= 0) {
+        currentTypes.push(this.type);
+      } else {
+        const addedTypeIndex = currentTypes.findIndex((t, i) => t !== originalTypes[i]);
+        currentTypes[addedTypeIndex] = this.type;
+      }
+    }
+    target.summonData.types = currentTypes;
     target.updateInfo();
 
     user.scene.queueMessage(i18next.t("moveTriggers:addType", {typeName: i18next.t(`pokemonInfo:Type.${Type[this.type]}`), pokemonName: getPokemonNameWithAffix(target)}));
