@@ -2412,14 +2412,14 @@ export class MoneyRewardModifier extends ConsumableModifier {
 
     scene.addMoney(moneyAmount.value);
 
-    scene.getParty().map(p => {
-      if (p.species?.speciesId === Species.GIMMIGHOUL || p.fusionSpecies?.speciesId === Species.GIMMIGHOUL) {
-        p.evoCounter++;
-        const modifierType: ModifierType = modifierTypes.EVOLUTION_TRACKER_GIMMIGHOUL();
-        const modifier = modifierType!.newModifier(p);
-        scene.addModifier(modifier);
-      }
-    });
+    // scene.getParty().map(p => {
+    //   if (p.species?.speciesId === Species.GIMMIGHOUL || p.fusionSpecies?.speciesId === Species.GIMMIGHOUL) {
+    //     p.evoCounter++;
+    //     const modifierType: ModifierType = modifierTypes.EVOLUTION_TRACKER_GIMMIGHOUL();
+    //     const modifier = modifierType!.newModifier(p);
+    //     scene.addModifier(modifier);
+    //   }
+    // });
 
     return true;
   }
