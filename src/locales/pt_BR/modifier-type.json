@@ -358,6 +358,10 @@
       "name": "Esfera da Chama",
       "description": "Uma esfera estranha que aquece quando tocada e queima quem a segurar."
     },
+    "EVOLUTION_TRACKER_GIMMIGHOUL": {
+      "name": "Treasures",
+      "description": "This Pokémon loves treasure! Keep collecting treasure and something might happen!"
+    },
     "BATON": {
       "name": "Bastão",
       "description": "Permite passar mudanças de atributo ao trocar Pokémon, ignorando armadilhas."
@@ -507,6 +511,22 @@
     "TART_APPLE": "Maçã Azeda",
     "STRAWBERRY_SWEET": "Doce de Morango",
     "UNREMARKABLE_TEACUP": "Xícara Comum",
+    "UPGRADE": "Melhora",
+    "DUBIOUS_DISC": "Dubious Disc",
+    "DRAGON_SCALE": "Escama de Dragão",
+    "PRISM_SCALE": "Prism Scale",
+    "RAZOR_CLAW": "Garra de Navalha",
+    "RAZOR_FANG": "Presa Afiada",
+    "REAPER_CLOTH": "Capa do Ceifador",
+    "ELECTIRIZER": "Electirizer",
+    "MAGMARIZER": "Magmarizer",
+    "PROTECTOR": "Protector",
+    "SACHET": "Sachet",
+    "WHIPPED_DREAM": "Whipped Dream",
+    "LEADERS_CREST": "Leader's Crest",
+    "SUN_FLUTE": "Sun Flute",
+    "MOON_FLUTE": "Moon Flute",
+    
     "CHIPPED_POT": "Pote Lascado",
     "BLACK_AUGURITE": "Mineral Negro",
     "GALARICA_CUFF": "Bracelete de Galar",
