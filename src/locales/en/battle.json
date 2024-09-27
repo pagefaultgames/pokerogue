@@ -32,6 +32,7 @@
   "attackMissed": "{{pokemonNameWithAffix}} avoided the attack!",
   "attackHitsCount": "Hit {{count}} time(s)!",
   "rewardGain": "You received\n{{modifierName}}!",
+  "rewardGainCount": "You received\n{{count}} {{modifierName}}!",
   "expGain": "{{pokemonName}} gained\n{{exp}} EXP. Points!",
   "levelUp": "{{pokemonName}} grew to\nLv. {{level}}!",
   "learnMove": "{{pokemonName}} learned\n{{moveName}}!",
@@ -105,5 +106,7 @@
   "congratulations": "Congratulations!",
   "beatModeFirstTime": "{{speciesName}} beat {{gameMode}} Mode for the first time!\nYou received {{newModifier}}!",
   "ppReduced": "It reduced the PP of {{targetName}}'s\n{{moveName}} by {{reduction}}!",
-  "mysteryEncounterAppeared": "What's this?"
+  "mysteryEncounterAppeared": "What's this?",
+  "battlerTagsHealBlock": "{{pokemonNameWithAffix}} can't restore its HP!",
+  "battlerTagsHealBlockOnRemove": "{{pokemonNameWithAffix}} can restore its HP again!"
 }

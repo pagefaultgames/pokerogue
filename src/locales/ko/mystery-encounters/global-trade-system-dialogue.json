@@ -1,0 +1,32 @@
+{
+  "intro": "GTS 단말기가 있다!",
+  "title": "GTS",
+  "description": "오, GTS! 세상 참 좋아졌네요.\n이렇게 전세계 사람들과 연결해서 포켓몬을 교환 할 수 있으니 말이에요!\n오늘은 어떤 흥미로운 교환이 이루어질까요?",
+  "query": "어떻게 하시겠습니까?",
+  "option": {
+    "1": {
+      "label": "교환 제안을 확인한다",
+      "tooltip": "(+) 포켓몬 1마리와 제안을 골라 교환",
+      "trade_options_prompt": "교환을 통해 받을 포켓몬을 선택하세요."
+    },
+    "2": {
+      "label": "미라클 교환을 한다",
+      "tooltip": "(+) 포켓몬 중 하나를 GTS에 보내는 대신 특별한 포켓몬을 랜덤하게 받는다"
+    },
+    "3": {
+      "label": "아이템을 교환한다",
+      "trade_options_prompt": "교환할 아이템을 선택하세요.",
+      "invalid_selection": "이 포켓몬은 교환할 아이템이 없습니다.",
+      "tooltip": "(+) 아이템 하나를 GTS에 보내는 대신 더 좋은 아이템을 랜덤하게 받는다"
+    },
+    "4": {
+      "label": "떠난다",
+      "tooltip": "(-) 보상 없음",
+      "selected": "교환할 시간이 없다!\n서둘러 떠났다."
+    }
+  },
+  "pokemon_trade_selected": "{{tradedPokemon}}[[를]] {{tradeTrainerName}}에게 보냅니다.",
+  "pokemon_trade_goodbye": "바이바이 {{tradedPokemon}}!",
+  "item_trade_selected": "{{chosenItem}}[[를]] {{tradeTrainerName}}에게 보냅니다.$.@d{64}.@d{64}.@d{64}\n@s{level_up_fanfare}전송 완료!${{tradeTrainerName}}[[로]]부터 {{itemName}}[[가]] 전송됐다!",
+  "trade_received": "@s{evolution_fanfare}{{tradeTrainerName}}[[로]]부터 {{received}}[[가]] 전송됐다!${{received}}[[를]] 귀여워해 줘!"
+}

@@ -8,5 +8,7 @@
   "lockRaritiesDesc": "在刷新时锁定道具稀有度(影响刷新费用)",
   "checkTeamDesc": "检查队伍或使用形态改变道具",
   "rerollCost": "₽{{formattedMoney}}",
-  "itemCost": "₽{{formattedMoney}}"
+  "itemCost": "₽{{formattedMoney}}",
+  "continueNextWaveButton": "继续",
+  "continueNextWaveDescription": "继续至下一层"
 }

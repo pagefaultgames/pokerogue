@@ -165,14 +165,27 @@ export class BlockRecoilDamageAttr extends AbAttr {
   }
 }
 
+/**
+ * Attribute for abilities that increase the chance of a double battle
+ * occurring.
+ * @see apply
+ */
 export class DoubleBattleChanceAbAttr extends AbAttr {
   constructor() {
     super(false);
   }
 
-  apply(pokemon: Pokemon, passive: boolean, simulated: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean {
-    const doubleChance = (args[0] as Utils.IntegerHolder);
-    doubleChance.value = Math.max(doubleChance.value / 2, 1);
+  /**
+   * Increases the chance of a double battle occurring
+   * @param args [0] {@linkcode Utils.NumberHolder} for double battle chance
+   * @returns true if the ability was applied
+   */
+  apply(_pokemon: Pokemon, _passive: boolean, _simulated: boolean, _cancelled: Utils.BooleanHolder, args: any[]): boolean {
+    const doubleBattleChance = args[0] as Utils.NumberHolder;
+    // This is divided because the chance is generated as a number from 0 to doubleBattleChance.value using Utils.randSeedInt
+    // A double battle will initiate if the generated number is 0
+    doubleBattleChance.value = doubleBattleChance.value / 4;
+
     return true;
   }
 }
@@ -351,6 +364,10 @@ export class TypeImmunityAbAttr extends PreDefendAbAttr {
       return true;
     }
     return false;
+  }
+
+  getImmuneType(): Type | null {
+    return this.immuneType;
   }
 
   override getCondition(): AbAttrCondition | null {
@@ -1785,6 +1802,61 @@ export class PostDefendStealHeldItemAbAttr extends PostDefendAbAttr {
   }
 }
 
+/**
+ * Base class for defining all {@linkcode Ability} Attributes after a status effect has been set.
+ * @see {@linkcode applyPostSetStatus()}.
+ */
+export class PostSetStatusAbAttr extends AbAttr {
+  /**
+   * Does nothing after a status condition is set.
+   * @param pokemon {@linkcode Pokemon} that status condition was set on.
+   * @param sourcePokemon {@linkcode Pokemon} that that set the status condition. Is `null` if status was not set by a Pokemon.
+   * @param passive Whether this ability is a passive.
+   * @param effect {@linkcode StatusEffect} that was set.
+   * @param args Set of unique arguments needed by this attribute.
+   * @returns `true` if application of the ability succeeds.
+   */
+  applyPostSetStatus(pokemon: Pokemon, sourcePokemon: Pokemon | null = null, passive: boolean, effect: StatusEffect, simulated: boolean, args: any[]) : boolean | Promise<boolean> {
+    return false;
+  }
+}
+
+/**
+ * If another Pokemon burns, paralyzes, poisons, or badly poisons this Pokemon,
+ * that Pokemon receives the same non-volatile status condition as part of this
+ * ability attribute. For Synchronize ability.
+ */
+export class SynchronizeStatusAbAttr extends PostSetStatusAbAttr {
+  /**
+   * If the `StatusEffect` that was set is Burn, Paralysis, Poison, or Toxic, and the status
+   * was set by a source Pokemon, set the source Pokemon's status to the same `StatusEffect`.
+   * @param pokemon {@linkcode Pokemon} that status condition was set on.
+   * @param sourcePokemon {@linkcode Pokemon} that that set the status condition. Is null if status was not set by a Pokemon.
+   * @param passive Whether this ability is a passive.
+   * @param effect {@linkcode StatusEffect} that was set.
+   * @param args Set of unique arguments needed by this attribute.
+   * @returns `true` if application of the ability succeeds.
+   */
+  override applyPostSetStatus(pokemon: Pokemon, sourcePokemon: Pokemon | null = null, passive: boolean, effect: StatusEffect, simulated: boolean, args: any[]): boolean {
+    /** Synchronizable statuses */
+    const syncStatuses = new Set<StatusEffect>([
+      StatusEffect.BURN,
+      StatusEffect.PARALYSIS,
+      StatusEffect.POISON,
+      StatusEffect.TOXIC
+    ]);
+
+    if (sourcePokemon && syncStatuses.has(effect)) {
+      if (!simulated) {
+        sourcePokemon.trySetStatus(effect, true, pokemon);
+      }
+      return true;
+    }
+
+    return false;
+  }
+}
+
 export class PostVictoryAbAttr extends AbAttr {
   applyPostVictory(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean | Promise<boolean> {
     return false;
@@ -1954,6 +2026,7 @@ export class PostSummonAbAttr extends AbAttr {
     return false;
   }
 }
+
 /**
  * Removes specified arena tags when a Pokemon is summoned.
  */
@@ -2780,17 +2853,17 @@ export class PreApplyBattlerTagAbAttr extends AbAttr {
  * Provides immunity to BattlerTags {@linkcode BattlerTag} to specified targets.
  */
 export class PreApplyBattlerTagImmunityAbAttr extends PreApplyBattlerTagAbAttr {
-  private immuneTagType: BattlerTagType;
+  private immuneTagTypes: BattlerTagType[];
   private battlerTag: BattlerTag;
 
-  constructor(immuneTagType: BattlerTagType) {
+  constructor(immuneTagTypes: BattlerTagType | BattlerTagType[]) {
     super();
 
-    this.immuneTagType = immuneTagType;
+    this.immuneTagTypes = Array.isArray(immuneTagTypes) ? immuneTagTypes : [immuneTagTypes];
   }
 
   applyPreApplyBattlerTag(pokemon: Pokemon, passive: boolean, simulated: boolean, tag: BattlerTag, cancelled: Utils.BooleanHolder, args: any[]): boolean {
-    if (tag.tagType === this.immuneTagType) {
+    if (this.immuneTagTypes.includes(tag.tagType)) {
       cancelled.value = true;
       if (!simulated) {
         this.battlerTag = tag;
@@ -4228,6 +4301,10 @@ export class ReduceBerryUseThresholdAbAttr extends AbAttr {
   }
 }
 
+/**
+ * Ability attribute used for abilites that change the ability owner's weight
+ * Used for Heavy Metal (doubling weight) and Light Metal (halving weight)
+ */
 export class WeightMultiplierAbAttr extends AbAttr {
   private multiplier: integer;
 
@@ -4664,6 +4741,10 @@ export function applyStatMultiplierAbAttrs(attrType: Constructor<StatMultiplierA
   pokemon: Pokemon, stat: BattleStat, statValue: Utils.NumberHolder, simulated: boolean = false, ...args: any[]): Promise<void> {
   return applyAbAttrsInternal<StatMultiplierAbAttr>(attrType, pokemon, (attr, passive) => attr.applyStatStage(pokemon, passive, simulated, stat, statValue, args), args);
 }
+export function applyPostSetStatusAbAttrs(attrType: Constructor<PostSetStatusAbAttr>,
+  pokemon: Pokemon, effect: StatusEffect, sourcePokemon?: Pokemon | null, simulated: boolean = false, ...args: any[]): Promise<void> {
+  return applyAbAttrsInternal<PostSetStatusAbAttr>(attrType, pokemon, (attr, passive) => attr.applyPostSetStatus(pokemon, sourcePokemon, passive, effect, simulated, args), args, false, simulated);
+}
 
 /**
  * Applies a field Stat multiplier attribute
@@ -4831,14 +4912,12 @@ export function initAbilities() {
       .bypassFaint(),
     new Ability(Abilities.VOLT_ABSORB, 3)
       .attr(TypeImmunityHealAbAttr, Type.ELECTRIC)
-      .partial() // Healing not blocked by Heal Block
       .ignorable(),
     new Ability(Abilities.WATER_ABSORB, 3)
       .attr(TypeImmunityHealAbAttr, Type.WATER)
-      .partial() // Healing not blocked by Heal Block
       .ignorable(),
     new Ability(Abilities.OBLIVIOUS, 3)
-      .attr(BattlerTagImmunityAbAttr, BattlerTagType.INFATUATED)
+      .attr(BattlerTagImmunityAbAttr, [BattlerTagType.INFATUATED, BattlerTagType.TAUNT])
       .attr(IntimidateImmunityAbAttr)
       .ignorable(),
     new Ability(Abilities.CLOUD_NINE, 3)
@@ -4896,7 +4975,8 @@ export function initAbilities() {
       .attr(EffectSporeAbAttr),
     new Ability(Abilities.SYNCHRONIZE, 3)
       .attr(SyncEncounterNatureAbAttr)
-      .unimplemented(),
+      .attr(SynchronizeStatusAbAttr)
+      .partial(), // interaction with psycho shift needs work, keeping to old Gen interaction for now
     new Ability(Abilities.CLEAR_BODY, 3)
       .attr(ProtectStatAbAttr)
       .ignorable(),
@@ -4948,8 +5028,7 @@ export function initAbilities() {
       .attr(MoveImmunityAbAttr, (pokemon, attacker, move) => pokemon !== attacker && move.hasFlag(MoveFlags.SOUND_BASED))
       .ignorable(),
     new Ability(Abilities.RAIN_DISH, 3)
-      .attr(PostWeatherLapseHealAbAttr, 1, WeatherType.RAIN, WeatherType.HEAVY_RAIN)
-      .partial(), // Healing not blocked by Heal Block
+      .attr(PostWeatherLapseHealAbAttr, 1, WeatherType.RAIN, WeatherType.HEAVY_RAIN),
     new Ability(Abilities.SAND_STREAM, 3)
       .attr(PostSummonWeatherChangeAbAttr, WeatherType.SANDSTORM)
       .attr(PostBiomeChangeWeatherChangeAbAttr, WeatherType.SANDSTORM),
@@ -5080,7 +5159,6 @@ export function initAbilities() {
       .attr(PostWeatherLapseHealAbAttr, 2, WeatherType.RAIN, WeatherType.HEAVY_RAIN)
       .attr(ReceivedTypeDamageMultiplierAbAttr, Type.FIRE, 1.25)
       .attr(TypeImmunityHealAbAttr, Type.WATER)
-      .partial() // Healing not blocked by Heal Block
       .ignorable(),
     new Ability(Abilities.DOWNLOAD, 4)
       .attr(DownloadAbAttr),
@@ -5161,8 +5239,7 @@ export function initAbilities() {
       .ignorable(),
     new Ability(Abilities.ICE_BODY, 4)
       .attr(BlockWeatherDamageAttr, WeatherType.HAIL)
-      .attr(PostWeatherLapseHealAbAttr, 1, WeatherType.HAIL, WeatherType.SNOW)
-      .partial(), // Healing not blocked by Heal Block
+      .attr(PostWeatherLapseHealAbAttr, 1, WeatherType.HAIL, WeatherType.SNOW),
     new Ability(Abilities.SOLID_ROCK, 4)
       .attr(ReceivedMoveDamageMultiplierAbAttr, (target, user, move) => target.getMoveEffectiveness(user, move) >= 2, 0.75)
       .ignorable(),
@@ -5326,14 +5403,12 @@ export function initAbilities() {
       .attr(PostSummonMessageAbAttr, (pokemon: Pokemon) => i18next.t("abilityTriggers:postSummonTeravolt", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }))
       .attr(MoveAbilityBypassAbAttr),
     new Ability(Abilities.AROMA_VEIL, 6)
-      .ignorable()
-      .unimplemented(),
+      .attr(UserFieldBattlerTagImmunityAbAttr, [BattlerTagType.INFATUATED, BattlerTagType.TAUNT, BattlerTagType.DISABLED, BattlerTagType.TORMENT, BattlerTagType.HEAL_BLOCK]),
     new Ability(Abilities.FLOWER_VEIL, 6)
       .ignorable()
       .unimplemented(),
     new Ability(Abilities.CHEEK_POUCH, 6)
-      .attr(HealFromBerryUseAbAttr, 1/3)
-      .partial(), // Healing not blocked by Heal Block
+      .attr(HealFromBerryUseAbAttr, 1/3),
     new Ability(Abilities.PROTEAN, 6)
       .attr(PokemonTypeChangeAbAttr),
     //.condition((p) => !p.summonData?.abilitiesApplied.includes(Abilities.PROTEAN)), //Gen 9 Implementation
@@ -5810,7 +5885,6 @@ export function initAbilities() {
       .ignorable(),
     new Ability(Abilities.EARTH_EATER, 9)
       .attr(TypeImmunityHealAbAttr, Type.GROUND)
-      .partial() // Healing not blocked by Heal Block
       .ignorable(),
     new Ability(Abilities.MYCELIUM_MIGHT, 9)
       .attr(ChangeMovePriorityAbAttr, (pokemon, move) => move.category === MoveCategory.STATUS, -0.2)
@@ -5825,8 +5899,7 @@ export function initAbilities() {
       .attr(PostSummonStatStageChangeAbAttr, [ Stat.EVA ], -1)
       .condition(getOncePerBattleCondition(Abilities.SUPERSWEET_SYRUP)),
     new Ability(Abilities.HOSPITALITY, 9)
-      .attr(PostSummonAllyHealAbAttr, 4, true)
-      .partial(), // Healing not blocked by Heal Block
+      .attr(PostSummonAllyHealAbAttr, 4, true),
     new Ability(Abilities.TOXIC_CHAIN, 9)
       .attr(PostAttackApplyStatusEffectAbAttr, false, 30, StatusEffect.TOXIC),
     new Ability(Abilities.EMBODY_ASPECT_TEAL, 9)
@@ -5872,6 +5945,6 @@ export function initAbilities() {
     new Ability(Abilities.POISON_PUPPETEER, 9)
       .attr(UncopiableAbilityAbAttr)
       .attr(UnswappableAbilityAbAttr)
-      .conditionalAttr(pokemon => pokemon.species.speciesId===Species.PECHARUNT, ConfusionOnStatusEffectAbAttr, StatusEffect.POISON, StatusEffect.TOXIC)
+      .attr(ConfusionOnStatusEffectAbAttr, StatusEffect.POISON, StatusEffect.TOXIC)
   );
 }

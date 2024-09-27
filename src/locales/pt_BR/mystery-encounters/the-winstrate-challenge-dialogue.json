@@ -1,0 +1,22 @@
+{
+  "intro": "É uma família parada do lado de fora da casa deles!",
+  "speaker": "Os Winstrates",
+  "intro_dialogue": "Nós somos os Winstrates!$Que tal enfrentar nossa família em uma série de batalhas Pokémon?",
+  "title": "O Desafio Winstrate",
+  "description": "Os Winstrates são uma família de @[TOOLTIP_TITLE]{5 treinadores}, e eles querem batalhar! Se você derrotar todos eles em sequência, receberá um grande prêmio. Mas será que você aguenta o desafio?",
+  "query": "O que você vai fazer?",
+  "option": {
+    "1": {
+      "label": "Aceitar o Desafio",
+      "tooltip": "(-) Batalha Brutal Contra 5 Treinadores\n(+) Recompensa Especial de Item",
+      "selected": "Que comece o desafio!"
+    },
+    "2": {
+      "label": "Recusar o Desafio",
+      "tooltip": "(+) Curar Todo o Time\n(+) Ganhar um Doce Raro",
+      "selected": "Que pena. Diga, seu time parece exausto, por que não fica um pouco e descansa?"
+    }
+  },
+  "victory": "Parabéns por vencer nosso desafio!$Primeiro de tudo, queremos te dar este Voucher.",
+  "victory_2": "Além disso, nossa família usa este Bracelete Macho para fortalecer\nnossos Pokémon mais efetivamente durante o treinamento.$Você pode não precisar, já que derrotou todos nós, mas esperamos que aceite assim mesmo!"
+}

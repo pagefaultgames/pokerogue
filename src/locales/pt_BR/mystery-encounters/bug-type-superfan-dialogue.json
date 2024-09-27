@@ -1,0 +1,40 @@
+{
+  "intro": "Um treinador incomum com todo tipo de parafernália de Pokémon Inseto bloqueia seu caminho!",
+  "intro_dialogue": "Ei, treinador! Estou em uma missão para encontrar o Pokémon Inseto mais raro que existe!$Você deve amar Pokémon Inseto também, certo?\nTodo mundo ama Pokémon Inseto!",
+  "title": "O Superfã dos Pokémon Inseto",
+  "speaker": "Superfã de Pokémon Inseto",
+  "description": "O treinador tagarela, nem sequer esperando uma resposta...\n\nParece que a única maneira de sair dessa situação é chamar a atenção do treinador!",
+  "query": "O que você vai fazer?",
+  "option": {
+    "1": {
+      "label": "Oferecer uma Batalha",
+      "tooltip": "(-) Batalha Desafiadora\n(+) Ensinar um Movimento de Tipo Inseto a qualquer Pokémon",
+      "selected": "Um desafio, hein?\nMeus insetos estão mais do que prontos para você!"
+    },
+    "2": {
+      "label": "Mostrar Seus Tipos Inseto",
+      "tooltip": "(+) Receber um Item de Presente",
+      "disabled_tooltip": "Você precisa de pelo menos 1 Pokémon do Tipo Inseto no seu time para selecionar isso.",
+      "selected": "Você mostra todos os seus Pokémon do Tipo Inseto ao treinador...",
+      "selected_0_to_1": "Hã? Você só tem {{numBugTypes}}...$Acho que estou perdendo meu tempo com alguém como você...",
+      "selected_2_to_3": "Ei, você tem {{numBugTypes}}!\nNada mal.$Aqui, isso pode te ajudar na sua jornada para capturar mais!",
+      "selected_4_to_5": "O quê? Você tem {{numBugTypes}}?\nLegal!$Você ainda não está no meu nível, mas consigo ver uma sombra de mim mesmo em você!\n$Leve isso, meu jovem aprendiz!",
+      "selected_6": "Uau! {{numBugTypes}}!\n$Você deve amar Pokémon do Tipo Inseto quase tanto quanto eu!$Aqui, leve isso como um símbolo de nossa camaradagem!"
+    },
+    "3": {
+      "label": "Presentear com um Item de Inseto",
+      "tooltip": "(-) Dar ao treinador um {{requiredBugItems}}\n(+) Receber um Item de Presente",
+      "disabled_tooltip": "Você precisa ter um {{requiredBugItems}} para selecionar isso.",
+      "select_prompt": "Selecione um item para dar.",
+      "invalid_selection": "Esse Pokémon não possui esse tipo de item.",
+      "selected": "Você entrega ao treinador um {{selectedItem}}.",
+      "selected_dialogue": "Uau! Um {{selectedItem}}, para mim?\nVocê não é tão ruim, garoto!$Como símbolo do meu apreço,\nquero que você receba este presente especial!$Ele foi passado por toda a minha família, e agora eu quero que você o tenha!"
+    }
+  },
+  "battle_won": "Seu conhecimento e habilidade foram perfeitos para explorar nossas fraquezas!$Em troca pela valiosa lição,\ndeixe-me ensinar a um dos seus Pokémon um Movimento de Tipo Inseto!",
+  "teach_move_prompt": "Selecione um movimento para ensinar a um Pokémon.",
+  "confirm_no_teach": "Tem certeza de que não quer aprender um desses ótimos movimentos?",
+  "outro": "Vejo grandes Pokémon Inseto no seu futuro!\nQue nossos caminhos se cruzem novamente!$Saia zunindo!",
+  "numBugTypes_one": "{{count}} Tipo Inseto",
+  "numBugTypes_other": "{{count}} Tipos Inseto"
+}

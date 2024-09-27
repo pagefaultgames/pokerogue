@@ -1,0 +1,29 @@
+
+
+{
+  "intro": "Ein Schwarm {{delibirdName}} ist aufgetaucht!",
+  "title": "Botogel-Bande",
+  "description": "Die {{delibirdName}} schauen dich erwartungsvoll an, als ob sie etwas wollen. Vielleicht würde es sie zufriedenstellen, wenn du ihnen ein Item oder etwas Geld gibst?",
+  "query": "Was möchtest du ihnen geben?",
+  "invalid_selection": "Das Pokémon hat kein solches Item.",
+  "option": {
+    "1": {
+      "label": "Geld geben",
+      "tooltip": "(-) Den {{delibirdName}} {{money, money}} geben\n(+) Erhalte ein Geschenk",
+      "selected": "Du wirfst das Geld zu den {{delibirdName}}, die aufgeregt miteinander schnattern.$Sie drehen sich zu dir um und geben dir glücklich ein Geschenk!"
+    },
+    "2": {
+      "label": "Futter geben",
+      "tooltip": "(-) Gib den {{delibirdName}} eine Beere oder einen Belebersamen\n(+) Erhalte ein Geschenk",
+      "select_prompt": "Wähle ein Item aus.",
+      "selected": "Du wirfst {{chosenItem}} zu den {{delibirdName}}, die aufgeregt miteinander schnattern.$Sie drehen sich zu dir um und geben dir glücklich ein Geschenk!"
+    },
+    "3": {
+      "label": "Ein Item geben",
+      "tooltip": "(-) Gebe den {{delibirdName}} ein Item\n(+) Erhalte ein Geschenk",
+      "select_prompt": "Wähle ein Item aus.",
+      "selected": "Du wirfst {{chosenItem}} zu den {{delibirdName}}, die aufgeregt miteinander schnattern.$Sie drehen sich zu dir um und geben dir glücklich ein Geschenk!"
+    }
+  },
+  "outro": "Die {{delibirdName}} watscheln glücklich davon.$Was für ein seltsamer kleiner Austausch!"
+}

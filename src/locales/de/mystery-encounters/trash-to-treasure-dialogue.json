@@ -1,0 +1,20 @@
+{
+  "intro":"Ein riesieger Haufen Müll. Wo kommt der auf einmal her?",
+  "title": "Vom Müllhaufen zum Schatzhaufen",
+  "description": "Der Müllberg ragt über dir auf und du kannst einige wertvolle Gegenstände im Müll entdecken. Bist du sicher, dass du dich in den Dreck wälzen willst, um sie zu bekommen?",
+  "query": "Was willst du tun?",
+  "option": {
+    "1": {
+      "label": "Nach Wertsachen suchen",
+      "tooltip": "(-) Heilitems kosten ab jetzt {{costMultiplier}} mal so viel\n(+) Erhalte tolle Items",
+      "selected": "Du arbeitest dich durch den Müllhaufen und wirst von Dreck überzogen.$Kein respektabler Ladenbesitzer wird dir in deinem schmutzigen Zustand etwas verkaufen!$Aber es gibt ja auch andere... weniger respektable.$Natürlich verlangen sie höhere Preise.$Aber du hast einige unglaubliche Items im Müll gefunden!"
+
+    },
+    "2": {
+      "label": "Genauer untersuchen",
+      "tooltip":  "(?) Finde die Quelle des Mülls",
+      "selected": "Du wanderst um den Müllhaufen herum und suchst nach Hinweisen, wie dieser hier gelandet sein könnte...",
+      "selected_2": "Der Müll bewegt sich! Es war nicht nur Müll, es war ein Pokémon!"
+    }
+  }
+}
