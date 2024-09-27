@@ -33,7 +33,7 @@ const namespace = "mysteryEncounter:trainingSession";
 export const TrainingSessionEncounter: MysteryEncounter =
   MysteryEncounterBuilder.withEncounterType(MysteryEncounterType.TRAINING_SESSION)
     .withEncounterTier(MysteryEncounterTier.ULTRA)
-    .withSceneWaveRangeRequirement(...CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES)
+    .withSceneWaveRangeRequirement(-1, -1)
     .withScenePartySizeRequirement(2, 6, true) // Must have at least 2 unfainted pokemon in party
     .withFleeAllowed(false)
     .withHideWildIntroMessage(true)

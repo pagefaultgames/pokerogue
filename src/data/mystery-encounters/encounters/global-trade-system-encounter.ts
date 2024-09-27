@@ -78,7 +78,7 @@ const EXCLUDED_TRADE_SPECIES = [
 export const GlobalTradeSystemEncounter: MysteryEncounter =
   MysteryEncounterBuilder.withEncounterType(MysteryEncounterType.GLOBAL_TRADE_SYSTEM)
     .withEncounterTier(MysteryEncounterTier.COMMON)
-    .withSceneWaveRangeRequirement(...CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES)
+    .withSceneWaveRangeRequirement(-1, -1)
     .withAutoHideIntroVisuals(false)
     .withIntroSpriteConfigs([
       {

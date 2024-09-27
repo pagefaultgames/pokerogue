@@ -25,7 +25,7 @@ const namespace = "mysteryEncounter:partTimer";
 export const PartTimerEncounter: MysteryEncounter =
   MysteryEncounterBuilder.withEncounterType(MysteryEncounterType.PART_TIMER)
     .withEncounterTier(MysteryEncounterTier.COMMON)
-    .withSceneWaveRangeRequirement(...CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES)
+    .withSceneWaveRangeRequirement(-1, -1)
     .withIntroSpriteConfigs([
       {
         spriteKey: "part_timer_crate",

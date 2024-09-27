@@ -198,7 +198,7 @@ export const BugTypeSuperfanEncounter: MysteryEncounter =
       new TypeRequirement(Type.BUG, false, 1)
     ))
     .withMaxAllowedEncounters(1)
-    .withSceneWaveRangeRequirement(...CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES)
+    .withSceneWaveRangeRequirement(-1, -1)
     .withIntroSpriteConfigs([]) // These are set in onInit()
     .withAutoHideIntroVisuals(false)
     .withIntroDialogue([

@@ -754,7 +754,11 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
    * @param max optional max wave. If not given, defaults to min => exact wave
    * @returns
    */
-  withSceneWaveRangeRequirement(min: number, max?: number): this & Required<Pick<IMysteryEncounter, "requirements">> {
+  withSceneWaveRangeRequirement(min?: number, max?: number): this & Required<Pick<IMysteryEncounter, "requirements">> {
+    if (!min) min = CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES[0];
+    if (!max) max = (max ?? min)!
+    if (min < 0) min = CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES[0];
+    if (max < 0) max = CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES[1];
     return this.withSceneRequirement(new WaveRangeRequirement([min, max ?? min]));
   }
 

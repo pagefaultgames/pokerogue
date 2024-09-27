@@ -30,7 +30,7 @@ const namespace = "mysteryEncounter:lostAtSea";
  */
 export const LostAtSeaEncounter: MysteryEncounter = MysteryEncounterBuilder.withEncounterType(MysteryEncounterType.LOST_AT_SEA)
   .withEncounterTier(MysteryEncounterTier.COMMON)
-  .withSceneWaveRangeRequirement(...CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES)
+  .withSceneWaveRangeRequirement(-1, -1)
   .withIntroSpriteConfigs([
     {
       spriteKey: "lost_at_sea_buoy",

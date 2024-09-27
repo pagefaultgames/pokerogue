@@ -41,7 +41,7 @@ const namespace = "mysteryEncounter:fightOrFlight";
 export const FightOrFlightEncounter: MysteryEncounter =
   MysteryEncounterBuilder.withEncounterType(MysteryEncounterType.FIGHT_OR_FLIGHT)
     .withEncounterTier(MysteryEncounterTier.COMMON)
-    .withSceneWaveRangeRequirement(...CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES)
+    .withSceneWaveRangeRequirement(-1, -1)
     .withCatchAllowed(true)
     .withHideWildIntroMessage(true)
     .withFleeAllowed(false)

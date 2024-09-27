@@ -33,7 +33,7 @@ const MONEY_MAXIMUM_MULTIPLIER = 30;
 export const AnOfferYouCantRefuseEncounter: MysteryEncounter =
   MysteryEncounterBuilder.withEncounterType(MysteryEncounterType.AN_OFFER_YOU_CANT_REFUSE)
     .withEncounterTier(MysteryEncounterTier.GREAT)
-    .withSceneWaveRangeRequirement(...CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES)
+    .withSceneWaveRangeRequirement(-1, -1)
     .withScenePartySizeRequirement(2, 6, true) // Must have at least 2 pokemon in party
     .withIntroSpriteConfigs([
       {

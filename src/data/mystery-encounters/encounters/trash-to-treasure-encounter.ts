@@ -34,7 +34,7 @@ const SHOP_ITEM_COST_MULTIPLIER = 2.5;
 export const TrashToTreasureEncounter: MysteryEncounter =
   MysteryEncounterBuilder.withEncounterType(MysteryEncounterType.TRASH_TO_TREASURE)
     .withEncounterTier(MysteryEncounterTier.ULTRA)
-    .withSceneWaveRangeRequirement(60, CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES[1])
+    .withSceneWaveRangeRequirement(60, -1)
     .withMaxAllowedEncounters(1)
     .withFleeAllowed(false)
     .withIntroSpriteConfigs([

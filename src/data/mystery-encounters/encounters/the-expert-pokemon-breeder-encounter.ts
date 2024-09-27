@@ -80,7 +80,7 @@ const POOL_2_POKEMON: (Species | BreederSpeciesEvolution)[][] = [
 export const TheExpertPokemonBreederEncounter: MysteryEncounter =
   MysteryEncounterBuilder.withEncounterType(MysteryEncounterType.THE_EXPERT_POKEMON_BREEDER)
     .withEncounterTier(MysteryEncounterTier.ULTRA)
-    .withSceneWaveRangeRequirement(...CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES)
+    .withSceneWaveRangeRequirement(-1, -1)
     .withScenePartySizeRequirement(4, 6, true) // Must have at least 4 legal pokemon in party
     .withIntroSpriteConfigs([]) // These are set in onInit()
     .withIntroDialogue([

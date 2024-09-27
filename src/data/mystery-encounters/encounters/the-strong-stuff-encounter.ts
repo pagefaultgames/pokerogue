@@ -34,7 +34,7 @@ const BST_INCREASE_VALUE = 10;
 export const TheStrongStuffEncounter: MysteryEncounter =
   MysteryEncounterBuilder.withEncounterType(MysteryEncounterType.THE_STRONG_STUFF)
     .withEncounterTier(MysteryEncounterTier.COMMON)
-    .withSceneWaveRangeRequirement(...CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES)
+    .withSceneWaveRangeRequirement(-1, -1)
     .withScenePartySizeRequirement(3, 6) // Must have at least 3 pokemon in party
     .withMaxAllowedEncounters(1)
     .withHideWildIntroMessage(true)

@@ -35,7 +35,7 @@ const namespace = "mysteryEncounter:funAndGames";
 export const FunAndGamesEncounter: MysteryEncounter =
   MysteryEncounterBuilder.withEncounterType(MysteryEncounterType.FUN_AND_GAMES)
     .withEncounterTier(MysteryEncounterTier.GREAT)
-    .withSceneWaveRangeRequirement(...CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES)
+    .withSceneWaveRangeRequirement(-1, -1)
     .withSceneRequirement(new MoneyRequirement(0, 1.5)) // Cost equal to 1 Max Potion to play
     .withAutoHideIntroVisuals(false)
     // Allows using move without a visible enemy pokemon

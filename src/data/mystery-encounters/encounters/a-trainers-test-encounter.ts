@@ -28,7 +28,7 @@ const namespace = "mysteryEncounter:aTrainersTest";
 export const ATrainersTestEncounter: MysteryEncounter =
   MysteryEncounterBuilder.withEncounterType(MysteryEncounterType.A_TRAINERS_TEST)
     .withEncounterTier(MysteryEncounterTier.ROGUE)
-    .withSceneWaveRangeRequirement(100, CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES[1])
+    .withSceneWaveRangeRequirement(100, -1)
     .withIntroSpriteConfigs([]) // These are set in onInit()
     .withIntroDialogue([
       {

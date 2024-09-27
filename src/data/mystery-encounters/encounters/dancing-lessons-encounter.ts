@@ -84,7 +84,7 @@ const SENSU_STYLE_BIOMES = [
 export const DancingLessonsEncounter: MysteryEncounter =
   MysteryEncounterBuilder.withEncounterType(MysteryEncounterType.DANCING_LESSONS)
     .withEncounterTier(MysteryEncounterTier.GREAT)
-    .withSceneWaveRangeRequirement(...CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES)
+    .withSceneWaveRangeRequirement(-1, -1)
     .withIntroSpriteConfigs([]) // Uses a real Pokemon sprite instead of ME Intro Visuals
     .withAnimations(EncounterAnim.DANCE)
     .withHideWildIntroMessage(true)

@@ -33,7 +33,7 @@ const MASTER_REWARDS_PERCENT = 5;
 export const MysteriousChestEncounter: MysteryEncounter =
   MysteryEncounterBuilder.withEncounterType(MysteryEncounterType.MYSTERIOUS_CHEST)
     .withEncounterTier(MysteryEncounterTier.COMMON)
-    .withSceneWaveRangeRequirement(...CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES)
+    .withSceneWaveRangeRequirement(-1, -1)
     .withAutoHideIntroVisuals(false)
     .withCatchAllowed(true)
     .withIntroSpriteConfigs([
