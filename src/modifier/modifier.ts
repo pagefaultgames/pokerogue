@@ -871,8 +871,8 @@ export class EvoTrackerModifier extends PokemonHeldItemModifier {
   }
 
   getMaxHeldItemCount(pokemon: Pokemon): integer {
-    this.stackCount = pokemon.evoCounter ?? this.stackCount;
-    return 1000 ;
+    this.stackCount = pokemon.evoCounter + pokemon.getHeldItems().filter(m => m instanceof DamageMoneyRewardModifier).length + pokemon.scene.findModifiers(m => m instanceof MoneyMultiplierModifier || m instanceof ExtraModifierModifier).length;
+    return 1000;
   }
 }
 
