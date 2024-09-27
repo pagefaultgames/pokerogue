@@ -2,9 +2,7 @@ import { SessionSaveData, SystemSaveData } from "../game-data";
 import { version } from "../../../package.json";
 
 // --- v1.0.4 (and below) PATCHES --- //
-import * as v1_0_4SessionData from "./v1_0_4/session_migrators";
-import * as v1_0_4SystemData from "./v1_0_4/system_migrators";
-import * as v1_0_4SettingsData from "./v1_0_4/settings_migrators";
+import * as v1_0_4 from "./versions/v1_0_4";
 
 const LATEST_VERSION = version.split(".").map(value => parseInt(value));
 
@@ -16,9 +14,8 @@ export abstract class VersionConverter {
     }
   }
 
-  callMigrators(data: any, migrationObject: Object) {
-    const migrators = Object.values(migrationObject);
-    for (const migrate of migrators) {
+  callMigrators(data: any, migrationArr: readonly any[]) {
+    for (const migrate of migrationArr) {
       migrate(data);
     }
   }
@@ -40,7 +37,7 @@ export class SessionVersionConverter extends VersionConverter {
       case 0:
         if (curPatch <= 4) {
           console.log("Applying v1.0.4 session data migration!");
-          this.callMigrators(data, v1_0_4SessionData);
+          this.callMigrators(data, v1_0_4.sessionMigrators);
         }
       default:
       }
@@ -64,7 +61,7 @@ export class SystemVersionConverter extends VersionConverter {
       case 0:
         if (curPatch <= 4) {
           console.log("Applying v1.0.4 system data migraton!");
-          this.callMigrators(data, v1_0_4SystemData);
+          this.callMigrators(data, v1_0_4.systemMigrators);
         }
       default:
       }
@@ -89,7 +86,7 @@ export class SettingsVersionConverter extends VersionConverter {
       case 0:
         if (curPatch <= 4) {
           console.log("Applying v1.0.4 settings data migraton!");
-          this.callMigrators(data, v1_0_4SettingsData);
+          this.callMigrators(data, v1_0_4.sessionMigrators);
         }
       default:
       }
