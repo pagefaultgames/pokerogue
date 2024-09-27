@@ -859,7 +859,7 @@ export class EvoTrackerModifier extends PokemonHeldItemModifier {
   }
 
   clone(): PersistentModifier {
-    return new EvoTrackerModifier(this.type, this.pokemonId, this.species, this.stackCount);
+    return new EvoTrackerModifier(this.type, this.pokemonId, this.species, this.required, this.stackCount);
   }
 
   getArgs(): any[] {
@@ -870,8 +870,9 @@ export class EvoTrackerModifier extends PokemonHeldItemModifier {
     return true;
   }
 
-  getMaxHeldItemCount(_pokemon: Pokemon): integer {
-    return this.required;
+  getMaxHeldItemCount(pokemon: Pokemon): integer {
+    this.stackCount = pokemon.evoCounter ?? this.stackCount;
+    return 1000 ;
   }
 }
 
