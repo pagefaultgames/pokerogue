@@ -20,7 +20,7 @@
       "label": "Devenir amis",
       "disabled_tooltip": "Votre Pokémon doit connaitre certaines capacités pour choisir cette option",
       "tooltip": "(+) {{option3PrimaryName}} utilise {{option3PrimaryMove}}\n(+) Le {{enemyPokemon}} vous apprécie",
-      "selected": "Votre {{option3PrimaryName}} utilise {{option3PrimaryMove}} pour charmer le {{enemyPokemon}} !$The {{enemyPokemon}} veut se joindre\nà votre équipe !"
+      "selected": "Votre {{option3PrimaryName}} utilise {{option3PrimaryMove}} pour charmer le {{enemyPokemon}} !$Le {{enemyPokemon}} veut se joindre\nà votre équipe !"
     }
   }
 }
