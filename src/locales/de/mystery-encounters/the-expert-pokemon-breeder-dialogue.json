@@ -25,7 +25,7 @@
   "outro": "Schau wie glücklich dein {{chosenPokemon}} nun ist!$Hier, diese Pokémon-Eier kannst du auch haben.",
   "outro_failed": "Wie enttäuschend...$Es sieht so aus, als hättest du noch einen langen Weg vor dir, um das Vertrauen deines Pokémon zu gewinnen!",
   "gained_eggs": "@s{item_fanfare}Du erhählst {{numEggs}}!",
-  "eggs_tooltip": "\n(+) Erhalte {{eggs}}",
+  "eggs_tooltip": "\n(+) Erhalte @[TOOLTIP_TITLE]{{{eggs}}}",
   "numEggs_one": "{{count}} Ei der Stufe {{rarity}}",
   "numEggs_other": "{{count}} Eier der Stufe {{rarity}}"
 }

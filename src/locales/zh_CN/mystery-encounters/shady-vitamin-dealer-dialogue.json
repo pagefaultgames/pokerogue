@@ -3,17 +3,17 @@
   "speaker": "可疑的销售",
   "intro_dialogue": ".@d{16}.@d{16}.@d{16}\n我有货，要来点么？\n当然，你的宝可梦得顶得住。",
   "title": "营养饮料商人",
-  "description": "男子打开外套，露出一些宝可梦营养饮料。\n他报出的数字非常划算。有点太划算了…\n他提供两种套餐供你选择。",
+  "description": "男子打开外套，\n露出一些宝可梦营养饮料。\n他报出的数字非常划算。\n有点太划算了…\n他还提供两种套餐供你选择。",
   "query": "你要选哪一种？",
   "invalid_selection": "宝可梦必须足够健康",
   "option": {
     "1": {
       "label": "经济套餐",
-      "tooltip": "(-)支付{{option1Money, money}}\n(-)副作用？\n(+)选择的宝可梦获得两份随机努力药"
+      "tooltip": "(-)支付{{option1Money, money}}\n(-)副作用？\n(+)选择的宝可梦获得\n两份随机努力药"
     },
     "2": {
       "label": "高级套餐",
-      "tooltip": "(-)支付{{option2Money, money}}\n(+)选择的宝可梦获得两份随机努力药"
+      "tooltip": "(-)支付{{option2Money, money}}\n(+)选择的宝可梦获得\n两份随机努力药"
     },
     "3": {
       "label": "离开",
