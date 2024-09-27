@@ -762,6 +762,13 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
         }
       }
 
+      //TODO: Adjust templates and delays so we don't have to hardcode it
+      /* TEMPORARY! (Most) Trainers shouldn't be using unevolved Pokemon by the third gym leader / wave 80. Exceptions to this include Breeders, whose large teams are balanced by the use of weaker pokemon */
+      if (currentWave >= 80 && forTrainer && strength > PartyMemberStrength.WEAKER) {
+        evolutionChance = 1;
+        noEvolutionChance = 0;
+      }
+
       if (evolutionChance > 0) {
         if (isRegionalEvolution) {
           evolutionChance /= (evolutionSpecies.isRareRegional() ? 16 : 4);
