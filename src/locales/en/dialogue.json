@@ -316,6 +316,28 @@
       "1": "How strange… How could this be… I shouldn't have been outmuscled."
     }
   },
+  "snow_worker": {
+    "encounter": {
+      "1": "When it's cold, wear a lot of clothes!\n$Only humans could come up with something so clever!"
+    },
+    "victory": {
+      "1": "How we struggle in vain at the end also shows how clever humans are!"
+    },
+    "defeat": {
+      "1": "I'll tell you something clever. If you use a Fire-type move on a Pokémon that is frozen solid, the ice will melt!"
+    } 
+  }, 
+  "snow_worker_double": {   
+    "encounter": {
+      "1": "...\n$...R-ready to b-battle?"
+    },
+    "victory": {
+      "1": "...\n$...I'm sh-shivering!"
+    },
+    "defeat": {
+      "1": "...\n$...Kn-know what?\n...Th-this place is cold."
+    }
+  },
   "hex_maniac": {
     "encounter": {
       "1": "I normally only ever listen to classical music, but if I lose, I think I shall try a bit of new age!",

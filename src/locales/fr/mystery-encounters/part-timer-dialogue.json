@@ -25,7 +25,7 @@
     }
   },
   "job_complete_good": "Merci pour votre aide !\nVotre {{selectedPokemon}} nous a été d’un grand renfort !$Voici votre salaire.",
-  "job_complete_bad": "Votre {{selectedPokemon}} nous a plutot bien aidé !$Voici votre salaire.",
-  "pokemon_tired": "Votre {{selectedPokemon}} est épuisé !\nLes PP de toutes ses capacités baissent de 2 !",
+  "job_complete_bad": "Votre {{selectedPokemon}} nous a plutôt bien aidé !$Voici votre salaire.",
+  "pokemon_tired": "Votre {{selectedPokemon}} est épuisé !\nLes PP de toutes ses capacités baissent à 2 !",
   "outro": "Reviens nous aider à l’occasion !"
 }

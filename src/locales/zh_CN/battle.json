@@ -32,6 +32,7 @@
   "attackMissed": "没有命中{{pokemonNameWithAffix}}！",
   "attackHitsCount": "击中{{count}}次！",
   "rewardGain": "你获得了\n{{modifierName}}！",
+  "rewardGainCount": "你获得了\n{{count}}个{{modifierName}}!",
   "expGain": "{{pokemonName}}获得了{{exp}} 点经验值！",
   "levelUp": "{{pokemonName}}升级到Lv.{{level}}！",
   "learnMove": "{{pokemonName}}学会了{{moveName}}！",

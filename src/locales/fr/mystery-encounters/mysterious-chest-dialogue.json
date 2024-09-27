@@ -1,12 +1,12 @@
 {
   "intro": "Vous tombez sur…@d{32} un coffre ?",
   "title": "Un étrange coffre",
-  "description": "Un mangifique coffre orné est posé en travers du chemin.\nIl doit forcément contenir quelque chose… pas vrai ?",
+  "description": "Un magnifique coffre orné est posé en travers du chemin.\nIl doit forcément contenir quelque chose… pas vrai ?",
   "query": "Voulez-vous ouvrir le coffre ?",
   "option": {
     "1": {
       "label": "Ouvrir",
-      "tooltip": "@[SUMMARY_BLUE]{({{trapPercent}}%) Un truc terrible}\n@[SUMMARY_GREEN]{({{commonPercent}}%) Petites récompenses }\n@[SUMMARY_GREEN]{({{ultraPercent}}%) Bonnes récompenses}\n@[SUMMARY_GREEN]{({{roguePercent}}%) Super récompenses}\n@[SUMMARY_GREEN]{({{masterPercent}}%) Incroyables récompenses}",
+      "tooltip": "@[SUMMARY_BLUE]{({{trapPercent}}%) Un truc terrible}\n@[SUMMARY_GREEN]{({{commonPercent}}%) Petites récompenses}\n@[SUMMARY_GREEN]{({{ultraPercent}}%) Bonnes récompenses}\n@[SUMMARY_GREEN]{({{roguePercent}}%) Super récompenses}\n@[SUMMARY_GREEN]{({{masterPercent}}%) Incroyables récompenses}",
       "selected": "Vous décidez d’ouvrir le coffre et y trouvez…",
       "normal": "De simples outils et objets banaux.",
       "good": "Quelques bons outils et objets.",
