@@ -240,7 +240,10 @@
     "TOXIC_ORB": { "name": "どくどくだま", "description": "触ると　毒をだす　不思議な玉。\n持たせると　戦闘中に　猛毒の状態に　なる" },
     "FLAME_ORB": { "name": "かえんだま", "description": "触ると　熱をだす　不思議な玉。\n持たせると　戦闘中に　やけどの状態に　なる。" },
 
-    "EVOLUTION_TRACKER_GIMMIGHOUL": { "name": "Treasures", "description": "This Pokémon loves treasure! Keep collecting treasure and something might happen!"},
+    "EVOLUTION_TRACKER_GIMMIGHOUL": {
+      "name": "宝物",
+      "description": "このポケモンは　宝物が　大好き！　宝物を　集め続けると　良いことが　起こる　かもしれません！"
+    },
 
     "BATON": { "name": "バトン", "description": "持たせると　入れ替えるとき　控えのポケモンが\n能力変化を　受けつげる　（逃げられなくする　技や　特性も　回避する）" },
 
