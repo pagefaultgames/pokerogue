@@ -7,7 +7,7 @@ import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
-describe("Abilities - Competitive", () => {
+describe("Abilities - Defiant", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
 
@@ -29,22 +29,21 @@ describe("Abilities - Competitive", () => {
       .enemyMoveset(Moves.TICKLE)
       .startingLevel(1)
       .moveset([Moves.SPLASH, Moves.CLOSE_COMBAT])
-      .ability(Abilities.COMPETITIVE);
+      .ability(Abilities.DEFIANT);
   });
 
-  it("lower atk and def by 1 via tickle, then increase spatk by 4 via competitive", async () => {
+  it("lower atk and def by 1 via tickle, then increase atk by 4 via defiant", async () => {
     await game.classicMode.startBattle([ Species.FLYGON ]);
 
     const playerPokemon = game.scene.getPlayerPokemon()!;
     game.move.select(Moves.SPLASH);
     await game.phaseInterceptor.to(TurnInitPhase);
 
-    expect(playerPokemon.getStatStage(Stat.ATK)).toBe(-1);
+    expect(playerPokemon.getStatStage(Stat.ATK)).toBe(3);
     expect(playerPokemon.getStatStage(Stat.DEF)).toBe(-1);
-    expect(playerPokemon.getStatStage(Stat.SPATK)).toBe(4);
   });
 
-  it("lowering your own stats should not trigger competitive", async () => {
+  it("lowering your own stats should not trigger defiant", async () => {
     game.override.enemyMoveset(Moves.SPLASH);
     await game.classicMode.startBattle([ Species.FLYGON ]);
 
@@ -54,7 +53,7 @@ describe("Abilities - Competitive", () => {
 
     expect(playerPokemon.getStatStage(Stat.SPDEF)).toBe(-1);
     expect(playerPokemon.getStatStage(Stat.DEF)).toBe(-1);
-    expect(playerPokemon.getStatStage(Stat.SPATK)).toBe(0);
+    expect(playerPokemon.getStatStage(Stat.ATK)).toBe(0);
   });
   it("white herb should remove only the negative effects", async () => {
     game.override.startingHeldItems([{ name: "WHITE_HERB"}]);
@@ -64,8 +63,7 @@ describe("Abilities - Competitive", () => {
     game.move.select(Moves.SPLASH);
     await game.phaseInterceptor.to(TurnInitPhase);
 
-    expect(playerPokemon.getStatStage(Stat.ATK)).toBe(0);
     expect(playerPokemon.getStatStage(Stat.DEF)).toBe(0);
-    expect(playerPokemon.getStatStage(Stat.SPATK)).toBe(4);
+    expect(playerPokemon.getStatStage(Stat.ATK)).toBe(3);
   });
 });
