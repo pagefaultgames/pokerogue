@@ -15,11 +15,14 @@ import { TeleportingHijinksEncounter } from "#app/data/mystery-encounters/encoun
 import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
 import { Mode } from "#app/ui/ui";
 import ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
+import { Abilities } from "#app/enums/abilities";
 
 const namespace = "mysteryEncounter:teleportingHijinks";
 const defaultParty = [Species.LAPRAS, Species.GENGAR, Species.ABRA];
 const defaultBiome = Biome.CAVE;
 const defaultWave = 45;
+
+const TRANSPORT_BIOMES = [Biome.SPACE, Biome.ISLAND, Biome.LABORATORY, Biome.FAIRY_CAVE, Biome.WASTELAND, Biome.DOJO];
 
 describe("Teleporting Hijinks - Mystery Encounter", () => {
   let phaserGame: Phaser.Game;
@@ -34,10 +37,13 @@ describe("Teleporting Hijinks - Mystery Encounter", () => {
     game = new GameManager(phaserGame);
     scene = game.scene;
     scene.money = 20000;
-    game.override.mysteryEncounterChance(100);
-    game.override.startingWave(defaultWave);
-    game.override.startingBiome(defaultBiome);
-    game.override.disableTrainerWaves();
+    game.override
+      .mysteryEncounterChance(100)
+      .startingWave(defaultWave)
+      .startingBiome(defaultBiome)
+      .disableTrainerWaves()
+      .enemyAbility(Abilities.BALL_FETCH)
+      .enemyPassiveAbility(Abilities.BALL_FETCH);
 
     vi.spyOn(MysteryEncounters, "mysteryEncountersByBiome", "get").mockReturnValue(
       new Map<Biome, MysteryEncounterType[]>([
@@ -63,22 +69,6 @@ describe("Teleporting Hijinks - Mystery Encounter", () => {
     expect(TeleportingHijinksEncounter.dialogue.encounterOptionsDialogue?.description).toBe(`${namespace}.description`);
     expect(TeleportingHijinksEncounter.dialogue.encounterOptionsDialogue?.query).toBe(`${namespace}.query`);
     expect(TeleportingHijinksEncounter.options.length).toBe(3);
-  });
-
-  it("should not run below wave 10", async () => {
-    game.override.startingWave(9);
-
-    await game.runToMysteryEncounter();
-
-    expect(scene.currentBattle?.mysteryEncounter?.encounterType).not.toBe(MysteryEncounterType.TELEPORTING_HIJINKS);
-  });
-
-  it("should not run above wave 179", async () => {
-    game.override.startingWave(181);
-
-    await game.runToMysteryEncounter();
-
-    expect(scene.currentBattle.mysteryEncounter).toBeUndefined();
   });
 
   it("should run in waves that are X1", async () => {
@@ -183,10 +173,19 @@ describe("Teleporting Hijinks - Mystery Encounter", () => {
       await runMysteryEncounterToEnd(game, 1, undefined, true);
 
       expect(previousBiome).not.toBe(scene.arena.biomeType);
-      expect([Biome.SPACE, Biome.ISLAND, Biome.LABORATORY, Biome.FAIRY_CAVE]).toContain(scene.arena.biomeType);
+      expect(TRANSPORT_BIOMES).toContain(scene.arena.biomeType);
     });
 
-    it("should start a battle against an enraged boss", { retry: 5 }, async () => {
+    it("should start a battle against an enraged boss below wave 50", { retry: 5 }, async () => {
+      await game.runToMysteryEncounter(MysteryEncounterType.TELEPORTING_HIJINKS, defaultParty);
+      await runMysteryEncounterToEnd(game, 1, undefined, true);
+      const enemyField = scene.getEnemyField();
+      expect(enemyField[0].summonData.statStages).toEqual([0, 1, 0, 1, 1, 0, 0]);
+      expect(enemyField[0].isBoss()).toBe(true);
+    });
+
+    it("should start a battle against an extra enraged boss above wave 50", { retry: 5 }, async () => {
+      game.override.startingWave(56);
       await game.runToMysteryEncounter(MysteryEncounterType.TELEPORTING_HIJINKS, defaultParty);
       await runMysteryEncounterToEnd(game, 1, undefined, true);
       const enemyField = scene.getEnemyField();
@@ -246,10 +245,19 @@ describe("Teleporting Hijinks - Mystery Encounter", () => {
       await runMysteryEncounterToEnd(game, 2, undefined, true);
 
       expect(previousBiome).not.toBe(scene.arena.biomeType);
-      expect([Biome.SPACE, Biome.ISLAND, Biome.LABORATORY, Biome.FAIRY_CAVE]).toContain(scene.arena.biomeType);
+      expect(TRANSPORT_BIOMES).toContain(scene.arena.biomeType);
     });
 
-    it("should start a battle against an enraged boss", async () => {
+    it("should start a battle against an enraged boss below wave 50", async () => {
+      await game.runToMysteryEncounter(MysteryEncounterType.TELEPORTING_HIJINKS, [Species.PIKACHU]);
+      await runMysteryEncounterToEnd(game, 2, undefined, true);
+      const enemyField = scene.getEnemyField();
+      expect(enemyField[0].summonData.statStages).toEqual([0, 1, 0, 1, 1, 0, 0]);
+      expect(enemyField[0].isBoss()).toBe(true);
+    });
+
+    it("should start a battle against an extra enraged boss above wave 50", { retry: 5 }, async () => {
+      game.override.startingWave(56);
       await game.runToMysteryEncounter(MysteryEncounterType.TELEPORTING_HIJINKS, [Species.PIKACHU]);
       await runMysteryEncounterToEnd(game, 2, undefined, true);
       const enemyField = scene.getEnemyField();

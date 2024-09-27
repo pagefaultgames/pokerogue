@@ -1,0 +1,34 @@
+{
+  "intro": "É...@d{64} um palhaço?",
+  "speaker": "Palhaço",
+  "intro_dialogue": "Pateta trapalhão, prepare-se para uma batalha brilhante!\nVocê será derrotado por este artista de rua brigão!",
+  "title": "Brincando de Palhaço",
+  "description": "Algo está estranho nesse encontro. O palhaço parece ansioso para provocá-lo a entrar em uma batalha, mas com que objetivo?\n\nO {{blacephalonName}} é especialmente estranho, como se tivesse @[TOOLTIP_TITLE]{tipos e habilidade esquisitos.}",
+  "query": "O que você vai fazer?",
+  "option": {
+    "1": {
+      "label": "Batalhar com o Palhaço",
+      "tooltip": "(-) Batalha Estranha\n(?) Afeta a Habilidade de um Pokémon",
+      "selected": "Seus Pokémon patéticos estão preparados para uma performance patética!",
+      "apply_ability_dialogue": "Um espetáculo sensacional!\nSeu conhecimento garante uma habilidade especial como recompensa!",
+      "apply_ability_message": "O palhaço está oferecendo para trocar permanentemente a habilidade de um dos seus Pokémon por {{ability}}!",
+      "ability_prompt": "Você gostaria de ensinar permanentemente a habilidade {{ability}} a um Pokémon?",
+      "ability_gained": "@s{level_up_fanfare}{{chosenPokemon}} adquiriu a habilidade {{ability}}!"
+    },
+    "2": {
+      "label": "Não Ligar",
+      "tooltip": "(?) Afeta os Itens de um Pokémon",
+      "selected": "Covarde dissimulado, você nega um duelo delicioso?\nSinta minha fúria!",
+      "selected_2": "O {{blacephalonName}} do palhaço usa Trick!\nTodos os itens de {{switchPokemon}} foram trocados aleatoriamente!",
+      "selected_3": "Tolo frustrado, caia na minha enganação impecável!"
+    },
+    "3": {
+      "label": "Retrucar os Insultos",
+      "tooltip": "(?) Afeta os Tipos dos seus Pokémon",
+      "selected": "Covarde dissimulado, você nega um duelo delicioso?\nSinta minha fúria!",
+      "selected_2": "O {{blacephalonName}} do palhaço usa um movimento estranho!\nTodos os tipos da sua equipe foram trocados aleatoriamente!",
+      "selected_3": "Tolo frustrado, caia na minha enganação impecável!"
+    }
+  },
+  "outro": "O palhaço e seus companheiros\ndesaparecem em uma nuvem de fumaça."
+}

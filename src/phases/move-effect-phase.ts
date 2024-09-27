@@ -1,6 +1,6 @@
 import BattleScene from "#app/battle-scene";
 import { BattlerIndex } from "#app/battle";
-import { applyPreAttackAbAttrs, AddSecondStrikeAbAttr, IgnoreMoveEffectsAbAttr, applyPostDefendAbAttrs, PostDefendAbAttr, applyPostAttackAbAttrs, PostAttackAbAttr, MaxMultiHitAbAttr, AlwaysHitAbAttr } from "#app/data/ability";
+import { applyPreAttackAbAttrs, AddSecondStrikeAbAttr, IgnoreMoveEffectsAbAttr, applyPostDefendAbAttrs, PostDefendAbAttr, applyPostAttackAbAttrs, PostAttackAbAttr, MaxMultiHitAbAttr, AlwaysHitAbAttr, TypeImmunityAbAttr } from "#app/data/ability";
 import { ArenaTagSide, ConditionalProtectTag } from "#app/data/arena-tag";
 import { MoveAnim } from "#app/data/battle-anims";
 import { BattlerTagLapseType, DamageProtectedTag, ProtectedTag, SemiInvulnerableTag, SubstituteTag } from "#app/data/battler-tags";
@@ -97,12 +97,17 @@ export class MoveEffectPhase extends PokemonPhase {
          */
       const targetHitChecks = Object.fromEntries(targets.map(p => [p.getBattlerIndex(), this.hitCheck(p)]));
       const hasActiveTargets = targets.some(t => t.isActive(true));
+
+      /** Check if the target is immune via ability to the attacking move */
+      const isImmune = targets[0].hasAbilityWithAttr(TypeImmunityAbAttr) && (targets[0].getAbility()?.getAttrs(TypeImmunityAbAttr)?.[0]?.getImmuneType() === user.getMoveType(move));
+
       /**
          * If no targets are left for the move to hit (FAIL), or the invoked move is single-target
          * (and not random target) and failed the hit check against its target (MISS), log the move
          * as FAILed or MISSed (depending on the conditions above) and end this phase.
          */
-      if (!hasActiveTargets || (!move.hasAttr(VariableTargetAttr) && !move.isMultiTarget() && !targetHitChecks[this.targets[0]])) {
+
+      if (!hasActiveTargets || (!move.hasAttr(VariableTargetAttr) && !move.isMultiTarget() && !targetHitChecks[this.targets[0]] && !targets[0].getTag(ProtectedTag) && !isImmune)) {
         this.stopMultiHit();
         if (hasActiveTargets) {
           this.scene.queueMessage(i18next.t("battle:attackMissed", { pokemonNameWithAffix: this.getTarget()? getPokemonNameWithAffix(this.getTarget()!) : "" }));
@@ -125,11 +130,31 @@ export class MoveEffectPhase extends PokemonPhase {
         /** Has the move successfully hit a target (for damage) yet? */
         let hasHit: boolean = false;
         for (const target of targets) {
+
+          /** The {@linkcode ArenaTagSide} to which the target belongs */
+          const targetSide = target.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY;
+          /** Has the invoked move been cancelled by conditional protection (e.g Quick Guard)? */
+          const hasConditionalProtectApplied = new Utils.BooleanHolder(false);
+          /** Does the applied conditional protection bypass Protect-ignoring effects? */
+          const bypassIgnoreProtect = new Utils.BooleanHolder(false);
+          /** If the move is not targeting a Pokemon on the user's side, try to apply conditional protection effects */
+          if (!this.move.getMove().isAllyTarget()) {
+            this.scene.arena.applyTagsForSide(ConditionalProtectTag, targetSide, hasConditionalProtectApplied, user, target, move.id, bypassIgnoreProtect);
+          }
+
+          /** Is the target protected by Protect, etc. or a relevant conditional protection effect? */
+          const isProtected = (bypassIgnoreProtect.value || !this.move.getMove().checkFlag(MoveFlags.IGNORE_PROTECT, user, target))
+              && (hasConditionalProtectApplied.value || (!target.findTags(t => t instanceof DamageProtectedTag).length && target.findTags(t => t instanceof ProtectedTag).find(t => target.lapseTag(t.tagType)))
+              || (this.move.getMove().category !== MoveCategory.STATUS && target.findTags(t => t instanceof DamageProtectedTag).find(t => target.lapseTag(t.tagType))));
+
+          /** Is the pokemon immune due to an ablility?  */
+          const isImmune = target.hasAbilityWithAttr(TypeImmunityAbAttr) && (target.getAbility()?.getAttrs(TypeImmunityAbAttr)?.[0]?.getImmuneType() === user.getMoveType(move));
+
           /**
              * If the move missed a target, stop all future hits against that target
              * and move on to the next target (if there is one).
              */
-          if (!targetHitChecks[target.getBattlerIndex()]) {
+          if (!isImmune && !isProtected && !targetHitChecks[target.getBattlerIndex()]) {
             this.stopMultiHit(target);
             this.scene.queueMessage(i18next.t("battle:attackMissed", { pokemonNameWithAffix: getPokemonNameWithAffix(target) }));
             if (moveHistoryEntry.result === MoveResult.PENDING) {
@@ -139,22 +164,6 @@ export class MoveEffectPhase extends PokemonPhase {
             applyMoveAttrs(MissEffectAttr, user, null, move);
             continue;
           }
-
-          /** The {@linkcode ArenaTagSide} to which the target belongs */
-          const targetSide = target.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY;
-          /** Has the invoked move been cancelled by conditional protection (e.g Quick Guard)? */
-          const hasConditionalProtectApplied = new Utils.BooleanHolder(false);
-          /** Does the applied conditional protection bypass Protect-ignoring effects? */
-          const bypassIgnoreProtect = new Utils.BooleanHolder(false);
-          // If the move is not targeting a Pokemon on the user's side, try to apply conditional protection effects
-          if (!this.move.getMove().isAllyTarget()) {
-            this.scene.arena.applyTagsForSide(ConditionalProtectTag, targetSide, hasConditionalProtectApplied, user, target, move.id, bypassIgnoreProtect);
-          }
-
-          /** Is the target protected by Protect, etc. or a relevant conditional protection effect? */
-          const isProtected = (bypassIgnoreProtect.value || !this.move.getMove().checkFlag(MoveFlags.IGNORE_PROTECT, user, target))
-              && (hasConditionalProtectApplied.value || (!target.findTags(t => t instanceof DamageProtectedTag).length && target.findTags(t => t instanceof ProtectedTag).find(t => target.lapseTag(t.tagType)))
-              || (this.move.getMove().category !== MoveCategory.STATUS && target.findTags(t => t instanceof DamageProtectedTag).find(t => target.lapseTag(t.tagType))));
 
           /** Does this phase represent the invoked move's first strike? */
           const firstHit = (user.turnData.hitsLeft === user.turnData.hitCount);

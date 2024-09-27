@@ -7,6 +7,7 @@
   "switchedStat": "{{pokemonName}} tauscht seinen {{stat}}-Wert mit dem des Zieles!",
   "sharedGuard": "{{pokemonName}} addiert seine Schutzkräfte mit jenen des Zieles und teilt sie gerecht auf!",
   "sharedPower": "{{pokemonName}} addiert seine Kräfte mit jenen des Zieles und teilt sie gerecht auf!",
+  "shiftedStats": "{{pokemonName}} tauscht den Wert seines {{statToSwitch}}-Werts mit seinem {{statToSwitchWith}}-Werts!",
   "goingAllOutForAttack": "{{pokemonName}} legt sich ins Zeug!",
   "regainedHealth": "{{pokemonName}} erholt sich!",
   "keptGoingAndCrashed": "{{pokemonName}} springt daneben und verletzt sich!",
@@ -65,7 +66,10 @@
   "suppressAbilities": "Die Fähigkeit von {{pokemonName}} wirkt nicht mehr!",
   "revivalBlessing": "{{pokemonName}} ist wieder fit und kampfbereit!",
   "swapArenaTags": "{{pokemonName}} hat die Effekte, die auf den beiden Seiten des Kampffeldes wirken, miteinander getauscht!",
+  "chillyReception": "{{pokemonName}} erzählt einen schlechten Witz, der nicht besonders gut ankommt...",
   "exposedMove": "{{pokemonName}} erkennt {{targetPokemonName}}!",
   "safeguard": "{{targetName}} wird durch Bodyguard geschützt!",
+  "substituteOnOverlap": "{{pokemonName}} hat bereits einen Delegator!",
+  "substituteNotEnoughHp": "Es ist zu schwach, um einen Delegator einzusetzen!",
   "afterYou": "{{targetName}} lässt sich auf Galanterie ein!"
 }

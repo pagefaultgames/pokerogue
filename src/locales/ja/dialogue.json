@@ -40,839 +40,910 @@
   },
   "lass": {
     "encounter": {
-      "1": "Let's have a battle, shall we?",
-      "2": "You look like a new trainer. Let's have a battle!",
-      "2_female": "You look like a new trainer. Let's have a battle!",
-      "3": "I don't recognize you. How about a battle?",
-      "4": "Let's have a fun Pokémon battle!",
-      "5": "I'll show you the ropes of how to really use Pokémon!",
-      "6": "A serious battle starts from a serious beginning! Are you sure you're ready?",
-      "6_female": "A serious battle starts from a serious beginning! Are you sure you're ready?",
-      "7": "You're only young once. And you only get one shot at a given battle. Soon, you'll be nothing but a memory.",
-      "8": "You'd better go easy on me, OK? Though I'll be seriously fighting!",
-      "9": "School is boring. I've got nothing to do. Yawn. I'm only battling to kill the time."
+      "1": "勝負しない？",
+      "2": "新人　トレーナーだろう？　勝負しよう！",
+      "2_female": "新しい　トレーナーだろう？　勝負しよう！",
+      "3": "初めて　見る　顔ね！ 勝負しない？",
+      "4": "ドッキドキで　ワックワクな\nポケモン勝負に　しよう！",
+      "5": "手取り　足取り　教えて　あげる！\nホントの　ポケモンの　使いかた！",
+      "6": "マジの　勝負　マジ始めっからー\n準備とか　覚悟とか　オーケー？",
+      "6_female": "マジの　勝負　マジ始めっからー\n準備とか　覚悟とか　オーケー？",
+      "7": "青春も　バトルも　一度きり！！\nあなたを　思い出に　させて！！",
+      "8": "あんた　ちょっとは　手加減してよ…\nあたしは　本気で　いくけど！", 
+      "9": "学校　タルいし　やることないし\nヒマだけあるから　バトルしてんの。"
     },
     "victory": {
-      "1": "That was impressive! I've got a lot to learn.",
-      "2": "I didn't think you'd beat me that bad…",
-      "2_female": "I didn't think you'd beat me that bad…",
-      "3": "I hope we get to have a rematch some day.",
-      "4": "That was pretty amazingly fun! You've totally exhausted me…",
-      "5": "You actually taught me a lesson! You're pretty amazing!",
-      "6": "Seriously, I lost. That is, like, seriously depressing, but you were seriously cool.",
-      "6_female": "Seriously, I lost. That is, like, seriously depressing, but you were seriously cool.",
-      "7": "I don't need memories like this. Deleting memory…",
-      "8": "Hey! I told you to go easy on me! Still, you're pretty cool when you're serious.",
-      "8_female": "Hey! I told you to go easy on me! Still, you're pretty cool when you're serious.",
-      "9": "I'm actually getting tired of battling… There's gotta be something new to do…"
+      "1": "すごい！ 覚えること　いっぱいね。",
+      "2": "新人に　こんなに　ぶっ壊されて　なんて……",
+      "2_female": "新人に　こんなに　ぶっ壊されて　なんて……",
+      "3": "またいつか　勝負を　できると　いいね！",
+      "4": "キミに　ドッキ　ドキドキ\n私は　ボッロ　ボロボロ……",
+      "5": "逆に　教えられちゃった！\nキミって　結構　スゴいんだ！",
+      "6": "マジ負けてる　マジ凹む　マジ辛い\nでも　アンタは　マジで　イケてるかも。",
+      "6_female": "マジ負けてる　マジ凹む　マジ辛い\nでも　アンタは　マジで　イケてるかも。",
+      "7": "こんな　思い出　いらないし\n記憶から　消しちゃおっと…",
+      "8": "ぷんぷん！　手加減してよね！！\n……本気の　あんたも　いいけどさ。",
+      "8_female": "ぷんぷん！　手加減してよね！！\n……本気の　あんたも　いいけどさ。",
+      "9": "バトルも　そろそろ　あきたわ　実際…\n何か　新しいこと　とか　ない？"
     }
   },
   "breeder": {
     "encounter": {
-      "1": "Obedient Pokémon, selfish Pokémon… Pokémon have unique characteristics.",
-      "2": "Even though my upbringing and behavior are poor, I've raised my Pokémon well.",
-      "3": "Hmm, do you discipline your Pokémon? Pampering them too much is no good."
+      "1": "素直なヤツに　ワガママなヤツ……\nポケモンにも　個性が　あるんだよな。",
+      "2": "育ちも　素行も　悪い　オレが\n育てた割に　いい　ポケモン　だぜ！",
+      "3": "きみは　ポケモンを　しつけてるか？\n甘やかすだけじゃ　ダメなんだぜ！"
     },
     "victory": {
-      "1": "It is important to nurture and train each Pokémon's characteristics.",
-      "2": "Unlike my diabolical self, these are some good Pokémon.",
-      "3": "Too much praise can spoil both Pokémon and people."
+      "1": "ポケモンの　持っている　個性を\n活かして　育てることが　大切だ。",
+      "2": "極悪非道の　オレと　違って\nこいつらは　いいポケモン　だよ！",
+      "3": "褒めてばっかりだと　ポケモンも\n人も　ダメに　なっちゃうよな…"
     },
     "defeat": {
-      "1": "You should not get angry at your Pokémon, even if you lose a battle.",
-      "2": "Right? Pretty good Pokémon, huh? I'm suited to raising things.",
-      "3": "No matter how much you love your Pokémon, you still have to discipline them when they misbehave."
+      "1": "負けたからって　むやみに　ポケモンを\n怒ったりしては　ダメなんだぞ。",
+      "2": "な？　なかなか　いいポケモン　だろ？\n育てるってのが　向いてるんだな　オレ。",
+      "3": "可愛くて　大好きなポケモンでも\n悪いこと　したら　叱らないとな！"
     }
   },
   "breeder_female": {
     "encounter": {
-      "1": "Pokémon never betray you. They return all the love you give them.",
-      "2": "Shall I give you a tip for training good Pokémon?",
-      "3": "I have raised these very special Pokémon using a special method."
+      "1": "ポケモンは　裏切らないからね、\nささげた　愛情は　返ってくる。",
+      "2": "いいポケモンを　育てるコツを\nキミに　教えてあげようかな？",
+      "3": "秘密の　方法で　育てあげた\nとっても　スペシャルな　ポケモンだ。"
     },
     "victory": {
-      "1": "Ugh… It wasn't supposed to be like this. Did I administer the wrong blend?",
-      "2": "How could that happen to my Pokémon… What are you feeding your Pokémon?",
-      "3": "If I lose, that tells you I was just killing time. It doesn't damage my ego at all."
+      "1": "うーん……　こんな　はずでは……\nエキスの　配合を　間違えたか？",
+      "2": "ワイの　育てた　ポケモンが　そんな……\nキミは　ポケモンに　なに　あげとるんや？",
+      "3": "負けたところで　ただのヒマつぶし\n心に　ダメージ　ございません…"
     },
     "defeat": {
-      "1": "This proves my Pokémon have accepted my love.",
-      "2": "The real trick behind training good Pokémon is catching good Pokémon.",
-      "3": "Pokémon will be strong or weak depending on how you raise them."
+      "1": "私の　愛情が　ポケモンに\n届いてる　証拠　だわね。",
+      "2": "いいポケモンを　育てるコツは\nいいポケモンを　捕まえることだ。",
+      "3": "育てかた　次第で　ポケモンは\n強くも　弱くも　なるのだ。"
     }
   },
   "fisherman": {
     "encounter": {
-      "1": "Aack! You made me lose a bite!\nWhat are you going to do about it?",
-      "2": "Go away! You're scaring the Pokémon!",
-      "3": "Let's see if you can reel in a victory!"
+      "1": "釣り糸が　絡まって　イライラするーっ！\nええいっ　勝負だっ！",
+      "2": "海釣りと　川釣り　キミは　どっちが　好き？",
+      "3": "よーし！　ポケモン好きと　釣り好きの　対決だ！"
     },
     "victory": {
-      "1": "Just forget about it.",
-      "2": "Next time, I'll be reelin' in the triumph!",
-      "3": "Guess I underestimated the currents this time."
+      "1": "負けたっ！　余計に　イライラするぞーっ！",
+      "2": "まるで　海釣りの　ように　豪快に　負けたぞーっ！",
+      "3": "わあ！　糸が　絡まった！　まさに　後の祭り…"
     }
   },
   "fisherman_female": {
     "encounter": {
-      "1": "Woah! I've hooked a big one!",
-      "2": "Line's in, ready to reel in success!",
-      "3": "Ready to make waves!"
+      "1": "でっかいの　釣れたっ　でっかいの！",
+      "2": "うちは　常に　大物ねらい！\n雑魚だったら　引っ込んで　おくれよ！",
+      "3": "釣りたて　ピチピチの\nポケモンで　勝負してあげよう！!"
     },
     "victory": {
-      "1": "I'll be back with a stronger hook.",
-      "2": "I'll reel in victory next time.",
-      "3": "I'm just sharpening my hooks for the comeback!"
+      "1": "あれー　大きさで　負けたかな…",
+      "2": "なかなかの　引きな　キミ！\nナイス　ファイトだった！",
+      "3": "釣りあげられたのは……\nこの　私だったか！"
     }
   },
   "swimmer": {
     "encounter": {
-      "1": "Time to dive in!",
-      "2": "Let's ride the waves of victory!",
-      "3": "Ready to make a splash!"
+      "1": "全力で　飛び込むよ！",
+      "2": "勝利の　大波に　乗っていくよ！",
+      "3": "完全に　浸しちゃうよ！"
     },
     "victory": {
-      "1": "Drenched in defeat!",
-      "2": "A wave of defeat!",
-      "3": "Back to shore, I guess."
+      "1": "失敗で　ぐしゃぐしゃ！",
+      "2": "敗北の　小波だった……",
+      "3": "そろそろ　漂って帰ろう……"
     }
   },
   "backpacker": {
     "encounter": {
-      "1": "Pack up, game on!",
-      "2": "Let's see if you can keep pace!",
-      "3": "Gear up, challenger!",
-      "4": "I've spent 20 years trying to find myself… But where am I?"
+      "1": "旅する　バックパッカー\n同じく　旅のトレーナーに　会う…",
+      "2": "私と　旅しているのは　人気の\nガイドブックで お薦めの　ポケモン　です！",
+      "3": "旅をしても　していなくても\n私は　発見したいのです！",
+      "4": "旅を　続け　幾年月、\n知らない　国は　ないくらい。"
     },
     "victory": {
-      "1": "Tripped up this time!",
-      "2": "Oh, I think I'm lost.",
-      "3": "Dead end!",
-      "4": "Wait up a second! Hey! Don't you know who I am?"
+      "1": "きみと　出会うため\n旅していたのかも？　なんて",
+      "2": "ガイドブックに　勝ち方は\n載っていないのよね…",
+      "3": "あっ！　あなたの　いいところ\n発見しちゃったかも！",
+      "4": "本当は　ただ　「お帰り」　って\n言ってくれる　ダーリンが　欲しい…"
     }
   },
   "ace_trainer": {
     "encounter": {
-      "1": "You seem quite confident.",
-      "1_female": "You seem quite confident.",
-      "2": "Your Pokémon… Show them to me…",
-      "3": "Because I'm an Ace Trainer, people think I'm strong.",
-      "4": "Are you aware of what it takes to be an Ace Trainer?"
+      "1": "自信満々って　感じ　ですな…",
+      "1_female": "自信満々って　感じ　だね…",
+      "2": "君の　ポケモン…… 私に　見せてごらんよ……",
+      "3": "エリートトレーナーなんて　やってるから\n強い　人って　思われるんだ。",
+      "4": "エリートトレーナーたる　資格　って\nあなたは　ご存じ　かしら？"
     },
     "victory": {
-      "1": "Yes… You have good Pokémon…",
-      "2": "What?! But I'm a battling genius!",
-      "3": "Of course, you are the main character!",
-      "3_female": "Of course, you are the main character!",
-      "4": "OK! OK! You could be an Ace Trainer!",
-      "4_female": "OK! OK! You could be an Ace Trainer!"
+      "1": "うん……　いいポケモンだね……",
+      "2": "勝負の　天才　いわれる\n私も　負けるこつの　あっけんか！",
+      "3": "やはり　あなたこそ　主人公だ！",
+      "3_female": "やはり　あなたこそ　主人公だ！",
+      "4": "戦う　姿が　なじんでるのね\nエリートトレーナーに　なれるよ　キミ！",
+      "4_female": "戦う　姿が　なじんでるのね\nエリートトレーナーに　なれるよ　キミ！"
     },
     "defeat": {
-      "1": "I am devoting my body and soul to Pokémon battles!",
-      "2": "All within my expectations… Nothing to be surprised about…",
-      "3": "I thought I'd grow up to be a frail person who looked like they would break if you squeezed them too hard.",
-      "4": "Of course I'm strong and don't lose. It's important that I win gracefully."
+      "1": "私はな　ポケモン勝負に\n魂　かけてんだよォ！",
+      "2": "すべて　予想の　はんちゅう……\n何の　驚きもないね……",
+      "3": "弱くて　抱きしめたら　折れそうな\n人に　なるはずだったのにな。",
+      "4": "強いこと　負けないことは　当たり前……\nいかに　優雅に　勝つかが　重要　なの。"
     }
   },
   "parasol_lady": {
     "encounter": {
-      "1": "Time to grace the battlefield with elegance and poise!"
+      "1": "傘が　ないと　パラソルおねえさんって\n言えないからさ　仕方なく　差してんの。"
     },
     "victory": {
-      "1": "My elegance remains unbroken!"
+      "1": "傘がっ　傘が　折れちゃったっ！\nただの　おねえさんに　なっちゃう！"
     }
   },
   "twins": {
     "encounter": {
-      "1": "Get ready, because when we team up, it's double the trouble!",
-      "2": "Two hearts, one strategy – let's see if you can keep up with our twin power!",
-      "3": "Hope you're ready for double trouble, because we're about to bring the heat!",
-      "3_female": "Hope you're ready for double trouble, because we're about to bring the heat!"
+      "1": "準備してね！　あたしたちが　力を　組み合うと Ｗトラブルでちゅ！",
+      "2": "心は二つ、　作戦は一つ！\nツインパワーを　見せるなだ！",
+      "3": "二倍の　力で　熱いバトルを　しましょうよ！",
+      "3_female": "二倍の　力で　熱いバトルを　しましょうよ！"
     },
     "victory": {
-      "1": "We may have lost this round, but our bond remains unbreakable!",
-      "2": "Our twin spirit won't be dimmed for long.",
-      "3": "We'll come back stronger as a dynamic duo!"
+      "1": "バトル　負けたけど、　絆　壊れないんでちゅ！",
+      "2": "何が起こっても　ツイン魂が　あせてはしないよ！",
+      "3": "二倍、　いや、　四倍の　力で　戻って来るよ！"
     },
     "defeat": {
-      "1": "Twin power reigns supreme!",
-      "2": "Two hearts, one triumph!",
-      "3": "Double the smiles, double the victory dance!"
+      "1": "ツインパワーに　誰も　勝てない！",
+      "2": "心は二つ、　勝利は一つ！",
+      "3": "笑顔も　勝利の舞も　二倍！"
     }
   },
   "cyclist": {
     "encounter": {
-      "1": "Get ready to eat my dust!",
-      "2": "Gear up, challenger! I'm about to leave you in the dust!",
-      "3": "Pedal to the metal, let's see if you can keep pace!"
+      "1": "両足　砕けようとも　漕ぐ、\nこれ サイクリング 極意なり…",
+      "2": "やー　悪いねー　ついつい　パートナー\n連れてきちゃったわ　ラブラブだからさ！",
+      "3": "もうダメェ！　物足りないのォ！\n自転車じゃ　物足りないよォ！"
     },
     "victory": {
-      "1": "Spokes may be still, but determination pedals on.",
-      "2": "Outpaced!",
-      "3": "The road to victory has many twists and turns yet to explore."
+      "1": "我が サイクリングは　無限\nいずれまた　貴様に 挑む…",
+      "2": "冷たいボディに　ふんわりサドル\nコイツは　最高の　パートナーだぜ…",
+      "3": "自転車じゃ　満足できないのォ！\n暴走族に　入れてもらうのォ！"
     }
   },
   "black_belt": {
     "encounter": {
-      "1": "I praise your courage in challenging me! For I am the one with the strongest kick!",
-      "2": "Oh, I see. Would you like to be cut to pieces? Or do you prefer the role of punching bag?",
-      "2_female": "Oh, I see. Would you like to be cut to pieces? Or do you prefer the role of punching bag?"
+      "1": "宇宙一の　キックを　持つ\nわしに　挑むとは　褒めてやろう！",
+      "2": "んー　そうだね、　ズタズタ　されたい？\nそれとも　ボロボロが　好み　かな？",
+      "2_female": "んー　そうだね、　ズタズタ　されたい？\nそれとも　ボロボロが　好み　かな？"
     },
     "victory": {
-      "1": "Oh. The Pokémon did the fighting. My strong kick didn't help a bit.",
-      "2": "Hmmm… If I was going to lose anyway, I was hoping to get totally messed up in the process."
+      "1": "あ　戦うのは　ポケモンだっけ\nわしの　キックは　関係ないわ。",
+      "2": "んー……　どうせ　負けるなら\nボクは　メチャクチャに　されたかったんだけどね。"
     }
   },
   "battle_girl": {
     "encounter": {
-      "1": "You don't have to try to impress me. You can lose against me."
+      "1": "いいのよ、　見栄　張らなくても\n私には　負けてもいいのよ。"
     },
     "victory": {
-      "1": "It's hard to say good-bye, but we are running out of time…"
+      "1": "さようならするのは　つらいけれど\nもう　時間が　ないわね……"
     }
   },
   "hiker": {
     "encounter": {
-      "1": "My middle-age spread has given me as much gravitas as the mountains I hike!",
-      "2": "I inherited this big-boned body from my parents… I'm like a living mountain range…"
+      "1": "中年太りの　このボディ\n山の　ごとき　貫禄で　ゴワス！",
+      "2": "親　から　もらった　メタボな　ボディ……\n生ける　山脈とは　オレの　こと……"
     },
     "victory": {
-      "1": "At least I cannot lose when it comes to BMI!",
-      "2": "It's not enough… It's never enough. My bad cholesterol isn't high enough…"
+      "1": "皮下脂肪　だったら\n負けないのにで　ゴワス！",
+      "2": "足りぬ……　足りぬぞ……\n悪玉コレステロールが　足りぬぞ……"
     }
   },
   "ranger": {
     "encounter": {
-      "1": "When I am surrounded by nature, most other things cease to matter.",
-      "2": "When I'm living without nature in my life, sometimes I'll suddenly feel an anxiety attack coming on."
+      "1": "自然に　囲まれ　暮らしているとな\n大抵の　ことが　どうでも良くなる……",
+      "2": "自然から　離れ　暮らしているとな\n時々　急に　苦しくなるのさ。"
     },
     "victory": {
-      "1": "It doesn't matter to the vastness of nature whether I win or lose…",
-      "2": "Something like this is pretty trivial compared to the stifling feelings of city life."
+      "1": "ぼくが　負けたって　大自然に\nとっては　どうだって　いいことさ……",
+      "2": "都会の　息苦しさに　比べれば\nこんなこと　へ　でも　ないさ……"
     },
     "defeat": {
-      "1": "I won the battle. But victory is nothing compared to the vastness of nature…",
-      "2": "I'm sure how you feel is not so bad if you compare it to my anxiety attacks…"
+      "1": "ぼくが　勝ったことも　大自然に\n比べたら　どうだっていいのさ……",
+      "2": "僕の　不安に　比べれば\n大したこと　ないさ　きっと……"
     }
   },
   "scientist": {
     "encounter": {
-      "1": "My research will lead this world to peace and joy."
+      "1": "ボクノ　研究ガ　世界ヲ\n平和ト　幸セニ　導クノデス。"
     },
     "victory": {
-      "1": "I am a genius… I am not supposed to lose against someone like you…"
+      "1": "ボクハ　天才　ナンダ……\nコンナ　相手ニ　負ケルハズ……"
     }
   },
   "school_kid": {
     "encounter": {
-      "1": "…Heehee. I'm confident in my calculations and analysis.",
-      "2": "I'm gaining as much experience as I can because I want to be a Gym Leader someday."
+      "1": "……グフフ　計算と　分析には\n自信が　ありますからね　僕！",
+      "2": "ここで　いっぱい　経験　積んで\nいつかは　ジムリーダーを　目指すんだ！"
     },
     "victory": {
-      "1": "Ohhhh… Calculation and analysis are perhaps no match for chance…",
-      "2": "Even difficult, trying experiences have their purpose, I suppose."
+      "1": "ムググ……　計算も　分析も\n偶然には　敵わないか……",
+      "2": "辛く　悲しい　経験も\nいつかは　役に　立つはずです……"
     }
   },
   "artist": {
     "encounter": {
-      "1": "I used to be popular, but now I am all washed up."
+      "1": "かつては　おれも　売れっ子だったが\n今では　だれにも　相手にされん……"
     },
     "victory": {
-      "1": "As times change, values also change. I realized that too late."
+      "1": "時代が　変われば　価値も　移ろう\nそれに　気がつくのが　遅かったのだ……"
     }
   },
   "guitarist": {
     "encounter": {
-      "1": "Get ready to feel the rhythm of defeat as I strum my way to victory!"
+      "1": "ロックン　ロールッ！\n戦いは　リズムッ！"
     },
     "victory": {
-      "1": "Silenced for now, but my melody of resilience will play on."
+      "1": "ぎゅぎゅーん……\n悲しい　メロディ　だぜ……"
     }
   },
   "worker": {
     "encounter": {
-      "1": "It bothers me that people always misunderstand me. I'm a lot more pure than everyone thinks."
+      "1": "作業員　ってのは　命がけ\nだけど　やりがいは　十分よ！"
     },
     "victory": {
-      "1": "I really don't want my skin to burn, so I want to stay in the shade while I work."
+      "1": "１００年　残る　ビルや　橋を\n建てるなんて　ロマン　だろう？"
     }
   },
   "worker_female": {
     "encounter": {
-      "1": "It bothers me that people always misunderstand me.\n$I'm a lot more pure than everyone thinks."
+      "1": "よく　勘違い　されて　困るんだけど\nみんなが　思うよりも　ナイーブ　なのね。"
     },
     "victory": {
-      "1": "I really don't want my skin to burn, so I want to stay in the shade while I work."
+      "1": "本当は　お肌　焼きたくない　から\n日陰　でしか　作業　したくないのね……"
     },
     "defeat": {
-      "1": "My body and mind aren't necessarily always in sync."
+      "1": "心と体は　必ずしも\n一致するわけでは　ないのね……"
     }
   },
   "worker_double": {
     "encounter": {
-      "1": "I'll show you we can break you. We've been training in the field!"
+      "1": "現場で　鍛えた　ワシらの　力\n今　見せちゃるけえのぉ！"
     },
     "victory": {
-      "1": "How strange… How could this be… I shouldn't have been outmuscled."
+      "1": "おかしいのぉ　なんでかのぉ\n力で　負けるはず　ないんじゃが……"
     }
   },
   "hex_maniac": {
     "encounter": {
-      "1": "I normally only ever listen to classical music, but if I lose, I think I shall try a bit of new age!",
-      "2": "I grow stronger with each tear I cry."
+      "1": "普段　クラシックしか　聴きませんが　負けたら　ラップを　してみます！",
+      "2": "涙の　数だけ　強くなれるの　だって\nわたし　女の子　だもん。"
     },
     "victory": {
-      "1": "Is this the dawning of the age of Aquarius?",
-      "2": "Now I can get even stronger. I grow with every grudge."
+      "1": "アタイの　想いは　アイツに　重い！\n呪いと　願いは　大体　同じッ！",
+      "2": "これで　わたしは　また　強くなれる\n恨んだ数だけ　成長　するの。"
     },
     "defeat": {
-      "1": "New age simply refers to twentieth century classical composers, right?",
-      "2": "Don't get hung up on sadness or frustration. You can use your grudges to motivate yourself.",
-      "2_female": "Don't get hung up on sadness or frustration. You can use your grudges to motivate yourself."
+      "1": "ラッパーって　ラップ現象を\n起こすのが　仕事なんですよね？",
+      "2": "辛いことや　悲しいことを　バネにせず\nそのまま　恨みの　力に　変えるんだ。",
+      "2_female": "辛いことや　悲しいことを　バネにせず\nそのまま　恨みの　力に　変えるんだ。"
     }
   },
   "psychic": {
     "encounter": {
-      "1": "Hi! Focus!"
+      "1": "ハイッ！！　集中ッ！！"
     },
     "victory": {
-      "1": "Eeeeek!"
+      "1": "フギャンッ！！"
     }
   },
   "officer": {
     "encounter": {
-      "1": "Brace yourself, because justice is about to be served!",
-      "2": "Ready to uphold the law and serve justice on the battlefield!"
+      "1": "ボクは　お巡り　なんだよ！！\nつまり　ボクは　ジャスティスだよ！",
+      "2": "さぼってないのでー　ありますっ！\nパトロールなのでー　ありますっ！"
     },
     "victory": {
-      "1": "The weight of justice feels heavier than ever…",
-      "2": "The shadows of defeat linger in the precinct."
+      "1": "ボクはっ　ボクは　お巡りだぞぉ！！\nジャスティス　なのにーっ！！",
+      "2": "キミ　要注意でー　ありますっ！\nマークしちゃうでー　ありますっ！"
     }
   },
   "beauty": {
     "encounter": {
-      "1": "My last ever battle… That's the way I'd like us to view this match…"
+      "1": "これが　最後の　勝負……\nそう　思って　相手するわね。"
     },
     "victory": {
-      "1": "It's been fun… Let's have another last battle again someday…"
+      "1": "楽しかった……\nまた 最後の　勝負を　したいものね。"
     }
   },
   "baker": {
     "encounter": {
-      "1": "Hope you're ready to taste defeat!",
-      "1_female": "Hope you're ready to taste defeat!"
+      "1": "きみは　もうすぐ\n敗北を　味わっちゃうわ！",
+      "1_female": "君は　もうすぐ\n敗北を　味わっちゃうわ！"
     },
     "victory": {
-      "1": "I'll bake a comeback."
+      "1": "諦める　べーき　かもね……"
     }
   },
   "biker": {
     "encounter": {
-      "1": "Time to rev up and leave you in the dust!"
+      "1": "おんしゃー　覚悟は　できとるんか？\n暴走族　なめたら　いかんぜよ！"
     },
     "victory": {
-      "1": "I'll tune up for the next race."
+      "1": "ボクらぁー　ほんまは　真面目です！\nちっくとも　悪いことは　せんです！！"
     }
   },
   "firebreather": {
     "encounter": {
-      "1": "My flames shall devour you!",
-      "2": "My soul is on fire. I'll show you how hot it burns!",
-      "3": "Step right up and take a look!"
+      "1": "やけたとうで　火を　吹く　練習をした！\n良い子は　真似　すんなよ！",
+      "2": "俺たち　火吹きやろうは　誰よりも　火の　こわさを 知ってるのさ！",
+      "3": "よってらっしゃい　みてらっしゃい！"
     },
     "victory": {
-      "1": "I burned down to ashes...",
-      "2": "Yow! That's hot!",
-      "3": "Ow! I scorched the tip of my nose!"
+      "1": "おっと　誤解　しないでくれ！\nあのとうが　燃えたのは　俺のせいじゃ　ないんだ！",
+      "2": "アツい　勝負を　ありがとう！",
+      "3": "あちちち　鼻の　先っぽ　焦げちゃった！"
     }
   },
   "sailor": {
     "encounter": {
-      "1": "Matey, you're walking the plank if you lose!",
-      "2": "Come on then! My sailor's pride is at stake!",
-      "3": "Ahoy there! Are you seasick?",
-      "3_female": "Ahoy there! Are you seasick?"
+      "1": "うっしゃー！　負けたら　海に　落とすぞー！",
+      "2": "そら　来い！　船乗り　魂に　かけて　勝つ！",
+      "3": "おい　あんた！　乗ってて　船酔い　しないか？",
+      "3_female": "おい　あんた！　乗ってて　船酔い　しないか？"
     },
     "victory": {
-      "1": "Argh! Beaten by a kid!",
-      "2": "Your spirit sank me!",
-      "3": "I think it's me that's seasick..."
+      "1": "くー　やられた！",
+      "2": "船乗り　魂も　お前には　負けた！",
+      "3": "船酔いしてるのが　俺か……"
     }
   },
   "archer": {
     "encounter": {
-      "1": "Before you go any further, let's see how you fare against us, Team Rocket!",
-      "2": "I have received reports that your skills are not insignificant. Let's see if they are true.",
-      "3": "I am Archer, an Admin of Team Rocket. And I do not go easy on enemies of our organization."
+      "1": "先に進む　前に　我々　ロケット団と　戦って　もらおうか？",
+      "2": "あなたも　相当の腕だと　報告が　来ています。　確認しましょう。",
+      "3": "私は　ロケット団幹部の　アポロ。\n私達の　敵に　手加減　しませんよ！"
     },
     "victory": {
-      "1": "What a blunder!",
-      "2": "With my current skills, I was not up to the task after all.",
-      "3": "F-forgive me, Giovanni... For me to be defeated by a mere trainer..."
+      "1": "……なんという　失態！",
+      "2": "今の腕で　やはり　私では　無理　でしたか……",
+      "3": "さ　サカキ様　お許しください\n私とも　あろう　ものが……"
     }
   },
   "ariana": {
     "encounter": {
-      "1": "Hold it right there! We can't someone on the loose.\n$It's harmful to Team Rocket's pride, you see.",
-      "2": "I don't know or care if what I'm doing is right or wrong...\n$I just put my faith in Giovanni and do as I am told",
-      "3": "Your trip ends here. I'm going to take you down!"
+      "1": "そこまでよーーーっ！！\n$あなたみたいな　ヤツを　いつまでも　のさばらせて　おいたら\nロケット団の　プライドは　キズついて　キズついて　キズだらけに　なっちゃうのよー！",
+      "2": "私たちの　している　ことが\n正しいかどうか　なんて　どうでもいい…\n$私は　サカキ様を　信じて　ただ　付いてきた　のよ！",
+      "3": "ここは　通さないよ。\nだって　私が　勝つんだから！"
     },
     "victory": {
-      "1": "Tch, you really are strong. It's too bad.\n$If you were to join Team Rocket, you could become an Executive.",
-      "1_female": "Tch, you really are strong. It's too bad.\n$If you were to join Team Rocket, you could become an Executive.",
-      "2": "I... I'm shattered...",
-      "3": "Aaaieeeee! This can't be happening! I fought hard, but I still lost…"
+      "1": "あら　強いのね　残念ね\nあなたなら　ロケット団に　くれば　幹部に　だって　なれるかもよ。",
+      "1_female": "あら　強いのね　残念ね\nあなたなら　ロケット団に　くれば　幹部に　だって　なれるかもよ。",
+      "2": "ま　まけたわ……",
+      "3": "くききききーっ！　全力で　戦ったのに……\nこれでも　勝てない　なんて！"
     }
   },
   "proton": {
     "encounter": {
-      "1": "What do you want? If you interrupt our work, don't expect any mercy!",
-      "2": "What do we have here? I am often labeled as the scariest and cruelest guy in Team Rocket…\n$I strongly urge you not to interfere with our business!",
-      "3": "I am Proton, an Admin of Team Rocket. I am here to put an end to your meddling!"
+      "1": "まちな！　ロケット団の　砦と言われた　この私！\nこれ以上　先には　行かせません！",
+      "2": "なんですか？　私は　ロケット団で　もっとも　冷酷と　呼ばれた　男……\n$私達の　仕事の　ジャマなど　させはしませんよ！",
+      "3": "私は　ロケット団幹部の　ランス。\nこれ以上　仕事の　ジャマは　させませんよ！"
     },
     "victory": {
-      "1": "The fortress came down!",
-      "2": "You may have won this time… But all you did was make Team Rocket's wrath grow…",
-      "3": "I am defeated… But I will not forget this!"
+      "1": "砦が　崩れました……",
+      "2": "私に　勝った　ところで\n所詮は　ロケット団の　怒りを　強めた　だけですよ……",
+      "3": "くっ！　なかなか　やりますね。\nしかし、　次からは　そうは　行きません！"
     }
   },
   "petrel": {
     "encounter": {
-      "1": "Muhahaha, we've been waiting for you. Me? You don't know who I am? It is me, Giovanni.\n$The majestic Giovanni himself! Wahahaha! …Huh? I don't sound anything like Giovanni?\n$I don't even look like Giovanni? How come? I've worked so hard to mimic him!",
-      "2": "I am Petrel, an Admin of Team Rocket. I will not allow you to interfere with our plans!",
-      "3": "Rocket Executive Petrel will deal with this intruder!"
+      "1": "ぐっふっふっ　よくきたな…\nおや？　私が　誰か　分からんかね？\n$サカキだよ　サカキ様　だよ！\nぐわぁーっはっはーっ！\n$……あれ？　全然　似てない？　サカキ様に　見えない？\nくっそー　一生懸命　練習したのに！",
+      "2": "私は　ロケット団幹部の　ラムダ。\n計画を　邪魔するのは　許さない！",
+      "3": "侵入者には 　ロケット団幹部の　ラムダが　対処するぞ！"
     },
     "victory": {
-      "1": "OK, OK. I'll tell you where he is.",
-      "2": "I… I couldn't do a thing… Giovanni, please forgive me…",
-      "3": "No, I can't let this affect me. I have to inform the others…"
+      "1": "わ　分かった……　局長の　居場所　教える……",
+      "2": "ぐうう……　まったく　歯が立たない……\nサカキ様　お許し　ください……",
+      "3": "いかん　負けて　落ち込んでる　場合じゃない\n仲間に　知らせなくては……"
     }
   },
   "tabitha": {
     "encounter": {
-      "1": "Hehehe! So you've come all the way here! But you're too late!",
-      "2": "Hehehe... Got here already, did you? We underestimated you! But this is it! \n$I'm a cut above the Grunts you've seen so far. I'm not stalling for time.\n$I'm going to pulverize you!",
-      "3": "I'm going to give you a little taste of pain! Resign yourself to it!"
+      "1": "ウヒョヒョ！　お前　ここまで　来たのか！　だけど 遅かったぜ！",
+      "2": "ウヒョヒョ……　もう　ここまで　来たのか！\n思っていたより　やるな！　だが　ここまでだ！\n$俺は　これまでの　下っ端ども　とは　一味違う！\n時間稼ぎなんか　しねえで　コテンパンしてやるぜ！",
+      "3": "ウヒョヒョ！　痛みを　味わわせて　あげますよ！　身を　委ねろ！"
     },
     "victory": {
-      "1": "Hehehe! You might have beaten me, but you don't stand a chance against the boss!\n$If you get lost now, you won't have to face a sound whipping!",
-      "2": "Hehehe... So, I lost, too...",
-      "3": "Ahya! How could this be? For an Admin like me to lose to some random trainer...",
-      "3_female": "Ahya! How could this be? For an Admin like me to lose to some random trainer..."
+      "1": "「ウヒョヒョ‥‥！　俺に　勝てても　リーダーには　勝てないぜ！\n$さっさと　帰ったほうが　痛い　思い しなくて　済むぜ！",
+      "2": "ウヒョヒョ……　負けちまったか……",
+      "3": "うっひょーん……！　なんたる事だろうか……！\nサブリーダーの　ホムラさんが　こんな　デタラメなヤツ　なぞに……",
+      "3_female": "うっひょーん……！　なんたる事だろうか……！\nサブリーダーの　ホムラさんが　こんな　デタラメなヤツ　なぞに……"
     }
   },
   "courtney": {
     "encounter": {
-      "1": "Don't. Get. In. My. Way.",
-      "2": "You... ...I want to...analyze. Ahahaha",
-      "3": "... Well then...Deleting..."
+      "1": "………ジャっ…マ……ッ\nするなあああああッッッッ！！！！！！",
+      "2": "キミを …………アナライズ\n…………したい …………ァハハハッ♪",
+      "3": "…………………じゃあ\n…………………デリートします"
     },
     "victory": {
-      "1": "Hah hah... Uhn...hah hah...",
-      "2": "As anticipated. Unanticipated. You. Target lock...completed.\n$Commencing...experiment. You. Forever. Aha... ♪",
-      "3": "That's unanticipated. ...I knew it. You...are interesting! ...Haha. ♪"
+      "1": "…………はぁはぁ……\n………んぅ…はぁはぁ………",
+      "2": "…………予想内 …………予想外\n…………キミ　…………ターゲットロック …………したから\n$…………エクスペリメント …………するから\n…………キミを …………ずっと …………ァハッ……♪",
+      "3": "…………また　…………予想外\n…………やっぱり …………キミ……オモチロイ……！ ……ァハハッ……♪"
     }
   },
   "shelly": {
     "encounter": {
-      "1": "Ahahahaha! You're going to meddle in Team Aqua's affairs?\n$You're either absolutely fearless, simply ignorant, or both!\n$You're so cute, you're disgusting! I'll put you down",
-      "2": "What's this? Who's this spoiled brat?",
-      "3": "Cool your jets. Be patient. I'll crush you shortly.",
-      "3_female": "Cool your jets. Be patient. I'll crush you shortly."
+      "1": "オーッホッホ！　我々　アクア団の\n邪魔を　しようと　言うの！？\n$もう　怖いもの知らず　と言おうか\nただの　愚か者　と言おうか……\n$かわいすぎて　憎らしく　なっちゃう！\nやっつけて　あげるわね！",
+      "2": "ああん？　なんだい？\nこの　クソ生意気な　オコチャマは……？",
+      "3": "熱くなってん　じゃないよ、　少しは　頭を　冷やしな。\nすぐ　ぶっ壊すから。",
+      "3_female": "熱くなってん　じゃないよ、　少しは　頭を　冷やしな。\nすぐ　ぶっ壊すから。"
     },
     "victory": {
-      "1": "Ahahahaha! We got meddled with unexpectedly! We're out of options.\n$We'll have to pull out. But this isn't the last you'll see of Team Aqua!\n$We have other plans! Don't you forget it!",
-      "2": "Ahhh?! Did I go too easy on you?!",
-      "3": "Uh. Are you telling me you've upped your game even more during the fight?\n$You're a brat with a bright future… My Pokémon and I don't have any strength left to fight…\n$Go on… Go and be destroyed by Archie.",
-      "3_female": "Uh. Are you telling me you've upped your game even more during the fight?\n$You're a brat with a bright future… My Pokémon and I don't have any strength left to fight…\n$Go on… Go and be destroyed by Archie."
+      "1": "オーッホッホ！　思わぬ　邪魔が　入っちゃったわ！\n仕方ないわね！\n$ここは　一度　引き上げちゃう！　でもね　アクア団の\n活動は　まだまだ　続くんだから　覚えておきなさーい！",
+      "2": "くううっ……！？\n手を　抜きすぎちゃった かしら……！",
+      "3": "……うぅ　……この間　よりも\n更に　ウデを上げてる　ですって……！？\n$末恐ろしい　オコチャマだわ……\n……アタシと　ポケモンたちに　もう　戦うチカラは　残っちゃいない\n$……行きなさいよ　行って\nアオギリ様に　粛清されるが　いいわ。",
+      "3_female": "……うぅ　……この間　よりも\n更に　ウデを上げてる　ですって……！？\n$末恐ろしい　オコチャマだわ……\n……アタシと　ポケモンたちに　もう　戦うチカラは　残っちゃいない\n$……行きなさいよ　行って\nアオギリ様に　粛清されるが　いいわ。"
     }
   },
   "matt": {
     "encounter": {
-      "1": "All right then, until the boss has time for you, I'll be your opponent!",
-      "2": "Hooah! Full on! I'm burning up! Well! Welll! Wellllll! Let's battle it out until we've got nothing left!",
-      "3": "Hoo hah! I'm gonna smash you up!"
+      "1": "……ってな　ワケでヨォ　あにィが　ジカンが開くマデ\nオレッちの　相手を　してもらうゼぃ！",
+      "2": "フウハアッ！！ マックスッ！！\nタギってッ！！ きたゼェェェェッ！！！！！\n$サアッ！　サアッ！　サアアアッ！！！\nチカラ　尽きハテるまで　ヤリあおうゼッッ！！！",
+      "3": "UPAAAAA！！！\nモミツブシテ　ヤルゼェェェ！！"
     },
     "victory": {
-      "1": "Muwuhahaha! That battle was fun even though I lost!",
-      "2": "I can feel it! I can feel it, all right! The strength coming offa you!\n$More! I still want more! But looks like we're outta time...",
-      "3": "Oho! That's a loss I can be proud of!",
-      "3_female": "Oho! That's a loss I can be proud of!"
+      "1": "フゥーハッハッハァァァ！！！\nマケても　タノしい　ショウブ　だったゼ！",
+      "2": "ビンビン　かんじるゼェ！！　オメェの　ツヨサ！\n$モミつぶせる　ときを　タノシミに　してるゼィ！",
+      "3": "オウホウッ！　タカぶる　ハイボク　だぜっ！",
+      "3_female": "オウホウッ！　タカぶる　ハイボク　だぜっ！"
     }
   },
   "mars": {
     "encounter": {
-      "1": "I'm Mars, one of Team Galactic's top Commanders.",
-      "2": "Team Galactic's vision for the future is unwavering. Opposition will be crushed without mercy!",
-      "3": "Feeling nervous? You should be!",
-      "3_female": "Feeling nervous? You should be!"
+      "1": "あたしは　ギンガ団幹部の　マーズ！\n強くて　美しいの！",
+      "2": "ギンガ団は　生み出そうと　しているのは　新しい　世界。\nジャマは　許さないわ！",
+      "3": "ボスの　ジャマは　させないわよ！\nこの先に　進みたいなら　あたしが　相手するわ！",
+      "3_female": "ボスの　ジャマは　させないわよ！\nこの先に　進みたいなら　あたしが　相手するわ！"
     },
     "victory": {
-      "1": "This can't be happening! How did I lose?!",
-      "2": "You have some skill, I'll give you that.",
-      "3": "Defeated... This was a costly mistake."
+      "1": "負けた……！　ギンガ団の　幹部　として……\nこんなことって　ありえない！！",
+      "2": "何なのよッ！　あたしのこと　嫌いなの！？",
+      "3": "まさか！　負けるだなんて！？\n生意気な　ヤツね！！"
     }
   },
   "jupiter": {
     "encounter": {
-      "1": "Jupiter, Commander of Team Galactic, at your service.",
-      "2": "Resistance is futile. Team Galactic will prevail!",
-      "3": "You're trembling... scared already?"
+      "1": "いいわ！\nこの　ジュピターが　相手　してあげましょう！",
+      "2": "反対なんて　虚しい！\nギンガ団は　勝利するわ！",
+      "3": "どうしたの？　もしかして　震えているのかしら？"
     },
     "victory": {
-      "1": "No way... I lost?!",
-      "2": "Impressive, you've got guts!",
-      "3": "Losing like this... How embarrassing."
+      "1": "フン！　相変わらずの　強さ　ちっとも　かわいくないわね！",
+      "2": "フン！　なかなか　やるじゃない！",
+      "3": "フン！　次は　泣かして　あげるんだから！"
     }
   },
   "saturn": {
     "encounter": {
-      "1": "I am Saturn, Commander of Team Galactic.",
-      "2": "Our mission is absolute. Any hindrance will be obliterated!",
-      "3": "Is that fear I see in your eyes?"
+      "1": "ミッションは　順調！\nボスも　満足　なさるだろう。\n$全ては　みんなの　ために\nそして　ギンガ団の　ために！",
+      "2": "ギンガ団の　使命を　ジャマするなら\nどんな　可能性でも　潰す!",
+      "3": "わたしたち　ギンガ団は　必要な　ものを　独占し\n要らない　ものは　捨てるだけ！"
     },
     "victory": {
-      "1": "Impossible... Defeated by you?!",
-      "2": "You have proven yourself a worthy adversary.",
-      "3": "Bestowed in defeat... This is unacceptable."
+      "1": "強い！　だが　哀れだな。",
+      "2": "……なるほど　強い！\nギンガ団に　歯向かう　わけだ。",
+      "3": "くっ！　この　わたしが！\n時間稼ぎにしか　ならないだと…\n$まあ　いい！　おまえが　何をしても\n流れる　時間は　止められない！"
     }
   },
   "zinzolin": {
     "encounter": {
-      "1": "You could become a threat to Team Plasma, so we will eliminate you here and now!",
-      "1_female": "You could become a threat to Team Plasma, so we will eliminate you here and now!",
-      "2": "You don't have the sense to know when to quit, it seems. It's an act of mercy on my part to bring an end to this now!",
-      "3": "You're an impressive Trainer to have made it this far. But it ends here.",
-      "3_female": "You're an impressive Trainer to have made it this far. But it ends here."
+      "1": "さて……　おまえは　プラズマ団に　とって\n不安要素に　なりかねない。\n$ここで　排除するのだ！",
+      "1_female": "さて……　おまえは　プラズマ団に　とって\n不安要素に　なりかねない。\n$ここで　排除するのだ！",
+      "2": "諦めきれぬか？　なら　引導を　渡すのが\nワタシなりの　優しさ　なのだ！",
+      "3": "ここまで　来るとは　大した　トレーナー　だが、\n今は　終わりだ。",
+      "3_female": "ここまで　来るとは　大した　トレーナー　が、\n今は　終わりだ。"
     },
     "victory": {
-      "1": "Ghetsis... I have failed you...",
-      "2": "It's bitter cold. I'm shivering. I'm suffering. Yet, we will stand victorious.",
-      "3": "Hmph. You're a smarter Trainer than I expected, but not smart enough.",
-      "3_female": "Hmph. You're a smarter Trainer than I expected, but not smart enough."
+      "1": "ゲーチス様……　失望させました……",
+      "2": "寒い。　ワタシは　震えている。\n苦しいが　いつか　ワタシたちは　成功する。",
+      "3": "ふむう。　存外　さとい　トレーナーだ。",
+      "3_female": "ふむう。　存外　さとい　トレーナーだ。"
     }
   },
   "rood": {
     "encounter": {
-      "1": "You are a threat to Team Plasma. We cannot let you walk away from here and now!",
-      "1_female": "You are a threat to Team Plasma. We cannot let you walk away from here and now!",
-      "2": "It seems you don't know when to give up. I'll make sure no one interferes with our plans!",
-      "3": "You are a remarkable Trainer to have made it this far. But this is where it ends.",
-      "3_female": "You are a remarkable Trainer to have made it this far. But this is where it ends."
+      "1": "おまえ　という　トレーナーが\nどんな　人物か　見せてもらいたい…\n$そう、　ポケモン勝負　でな。",
+      "1_female": "おまえ　という　トレーナーが\nどんな　人物か　見せてもらいたい…\n$そう、　ポケモン勝負　でな。",
+      "2": "見限らぬようだ。　だれにも　ジャマは　させぬよ。",
+      "3": "……これが　おまえの\n望みと　あらば",
+      "3_female": "……これが　おまえの\n望みと　あらば"
     },
     "victory": {
-      "1": "Ghetsis... I have failed my mission...",
-      "2": "The cold is piercing. I'm shivering. I'm suffering. Yet, we will stand triumphant.",
-      "3": "Hm. You are a talented Trainer, but unfortunately not talented enough."
+      "1": "ほう！　ポケモンと　心が\n通じているような　戦い方……",
+      "2": "失敗しました……\nそぞろに　潮の　匂いが　恋しくなる……",
+      "3": "正直言って……　ゲーチス様の　なにが　真実で\nなにが　虚構か　わからないがね……"
     }
   },
-  "xerosic": {
+"xerosic": {
     "encounter": {
-      "1": "Ah ha ha! It would be my pleasure. Come on, little Trainer! Let's see what you've got!",
-      "1_female": "Ah ha ha! It would be my pleasure. Come on, little Trainer! Let's see what you've got!",
-      "2": "Hmm... You're more powerful than you look. I wonder how much energy there is inside you.",
-      "2_female": "Hmm... You're more powerful than you look. I wonder how much energy there is inside you.",
-      "3": "I've been waiting for you! I need to do a little research on you! Come, let us begin!"
+      "1": "オマエを　倒せば　ワタシの　科学力の\nすごさを　証明できるゾ！　よし　いくのだ！",
+      "1_female": "オマエを　倒せば　ワタシの　科学力の\nすごさを　証明できるゾ！　よし　いくのだ！",
+      "2": "なるほど　ジャマを　したのは　オマエだったのか！\nわかったゾ！　よーし！　オマエで　実験だゾ！",
+      "2_female": "なるほど　ジャマを　したのは　オマエだったのか！\nわかったゾ！　よーし！　オマエで　実験だゾ！",
+      "3": "おおー　ウワサの　オマエか　待っていたゾ！\nオマエを　調べる　ほら　始めるゾ！"
     },
     "victory": {
-      "1": "Ah, you're quite strong. Oh yes—very strong, indeed.",
-      "2": "Ding-ding-ding! You did it! To the victor go the spoils!",
-      "2_female": "Ding-ding-ding! You did it! To the victor go the spoils!",
-      "3": "Wonderful! Amazing! You have tremendous skill and bravery!"
+      "1": "グヌウウ……　なぜだ……\nなぜ　こんなことが　起こるのだ……？",
+      "2": "なんだと！　オマエ　すごいゾ！\nオマエの　ポケモン　すごいゾ！",
+      "2_female": "なんだと！　オマエ　すごいゾ！\nオマエの　ポケモン　すごいゾ！",
+      "3": "すごいな　オマエ！　すごいぞ　オマエ！\nワタシは　オマエを　認める　イコール 金を あげる！"
     }
   },
   "bryony": {
     "encounter": {
-      "1": "I am Bryony, and it would be my pleasure to battle you. Show me what you've got.",
-      "2": "Impressive... You're more powerful than you appear. Let's see the true extent of your energy.",
-      "2_female": "Impressive... You're more powerful than you appear. Let's see the true extent of your energy.",
-      "3": "I've anticipated your arrival. It's time for a little test. Shall we begin?"
+      "1": "一人で　やっつける。\n勝てる　確率を　あげる　必要ない。",
+      "2": "どこかで　見た　顔？\nわかんないけど　フレア団　じゃないし　やっつけようよ…",
+      "2_female": "どこかで　見た　顔？\nわかんないけど　フレア団　じゃないし　やっつけようよ…",
+      "3": "あら？　あら？"
     },
     "victory": {
-      "1": "You're quite strong. Oh yes—very strong, indeed.",
-      "2": "Ding-ding-ding! You've done well. Victory is yours.",
-      "3": "Wonderful! Remarkable! Your skill and bravery are commendable."
+      "1": "確率は　あくまでも　確率。\n絶対では　ないのよね……",
+      "2": "確率を　無視する　トレーナー\nあなたの　パワーの　源は？",
+      "3": "あらま！　こいつめ！\nわたしが　かわいそうでしょ！"
     }
   },
   "rocket_grunt": {
     "encounter": {
-      "1": "Prepare for trouble!",
-      "2": "We're pulling a big job here! Get lost, kid!",
-      "2_female": "We're pulling a big job here! Get lost, kid!",
-      "3": "Hand over your Pokémon, or face the wrath of Team Rocket!",
-      "4": "You're about to experience the true terror of Team Rocket!",
-      "5": "Hey, kid! Me am a Team Rocket member kind of guy!",
-      "5_female": "Hey, kid! Me am a Team Rocket member kind of guy!"
+      "1": "なんだかんだと　聞かれたら\n答えてあげるのが　世の情け！",
+      "2": "おれ達は　大事な　仕事を　してるんだ！　お家へ　帰りな！",
+      "2_female": "おれ達は　大事な　仕事を　してるんだ！　お家へ　帰りな！",
+      "3": "ロケット団の　恐ろしさを　知りたくないなら\nおまえの　ポケモンを　よこせ！",
+      "4": "ロケット団の　本当の　恐ろしさ\nおまえに　教えて　差しあげよう！",
+      "5": "ロケット団に　ガイコクジン\nワタシ　オンリーワン　だけど……\n$しかーし！　そんなコト　ノー　カンケー！",
+      "5_female": "ロケット団に　ガイコクジン\nワタシ　オンリーワン　だけど……\n$しかーし！　そんなコト　ノー　カンケー！"
     },
     "victory": {
-      "1": "Team Rocket blasting off again!",
-      "2": "Oh no! I dropped the Lift Key!",
-      "3": "I blew it!",
-      "4": "My associates won't stand for this!",
-      "5": "You say what? Team Rocket bye-bye a go-go? Broken it is says you?"
+      "1": "やな感じ~！",
+      "2": "しまった…！ せっかく　隠して置いた　エレベータの　カギが…！",
+      "3": "しくじったか！",
+      "4": "くそ！　仲間が　黙っちゃ　いねえぞ！",
+      "5": "オー　ノー！　キャント　ビリーブ！\nユーは　ブルーベリー　ストロベリー！\n$……ソーリー　ミステイク！\nユーは　ベリー　ストロング！\n$ティース　キャント　スタンダップ！\n歯が　立ちませーん！"
     }
   },
   "magma_grunt": {
     "encounter": {
-      "1": "If you get in the way of Team Magma, don’t expect any mercy!",
-      "2": "You'd better not interfere with our plans! We're making the world a better place!",
-      "3": "You're in the way! Team Magma has no time for kids like you!",
-      "4": "I hope you brought marshmallows because things are about to heat up!",
-      "5": "We're going to use the power of a volcano! It's gonna be... explosive! Get it? Heh heh!"
+      "1": "おれたち　マグマ団の　邪魔を　するなら\n容赦は　しないぜ！",
+      "2": "すべての　人々の　ために\n我々　マグマ団は　あるのよ！",
+      "3": "邪魔だ！　マグマ団は　お前の　ような　ヤツに\n用が　ねーんだ！ ほら　さっさと　帰れよ！",
+      "4": "マシュマロ　持ってきた？\nすぐ　炎は　燃え上がっちゃう　からー！！",
+      "5": "燃料の　力を　利用して　火山を　噴火させて　やるのさ！　ズドドーン　とな！"
     },
     "victory": {
-      "1": "Huh? I lost?!",
-      "2": "I can't believe I lost! I even skipped lunch for this",
-      "3": "No way! You're just a kid!",
-      "3_female": "No way! You're just a kid!",
-      "4": "Urrrgh... I should've ducked into our hideout right away...",
-      "5": "You beat me... Do you think the boss will dock my pay for this?"
+      "1": "ぬぬぬー　敗北　するなどー！？",
+      "2": "負けちゃった！　せっかくの　昼ご飯を　抜いたのにー",
+      "3": "ガキの　くせに　この　強さ　だと！？",
+      "3_female": "ガキの　くせに　この　強さ　だと！？",
+      "4": "うぐぐ‥‥　早く　アジトに　逃げ込めば　良かった……",
+      "5": "負けた…　そんなことじゃ　ボーナスが　減るぜ？"
     }
   },
   "aqua_grunt": {
     "encounter": {
-      "1": "No one who crosses Team Aqua gets any mercy, not even kids!",
-      "2": "Grrr... You've got some nerve meddling with Team Aqua!",
-      "3": "You're about to get soaked! And not just from my water Pokémon!",
-      "4": "We, Team Aqua, exist for the good of all!",
-      "5": "Prepare to be washed away by the tides of my... uh, Pokémon! Yeah, my Pokémon!"
+      "1": "おれら　アクア団の　ジャマするつもりかい？\nガキでも　容赦せーへんで！",
+      "2": "うむむ…… アクア団に　逆らうと　いい度胸　だろ！",
+      "3": "おれの　みずポケモンが　おまれを　ずぶ濡れに　しちゃうぞ！",
+      "4": "活動を　邪魔する　つもりなら　ぶっ壊す！\nこの世界を　より良い　場所に　してるぞ！",
+      "5": "俺の　ポケモンの　水の　に　押し流されちゃうぞ！"
     },
     "victory": {
-      "1": "You're kidding me!",
-      "2": "Arrgh, I didn't count on being meddled with by some meddling kid!",
-      "3": "I lost?! Guess I'll have to swim back to the hideout now...",
-      "4": "Oh, man, what a disaster... The boss is going to be furious...",
-      "5": "You beat me... Do you think the boss will make me walk the plank for this?"
+      "1": "冗談じゃねえ？！",
+      "2": "うむ‥‥　まさか　ヤツに　邪魔　されるなんて\nこれっぽっちも　おもってなかったぜ!",
+      "3": "チクショウ…　アジトへ　泳ぎ帰らなくちゃ……",
+      "4": "……やばい！　このまま　じゃあ\nリーダーに　怒られちまうぞ……",
+      "5": "倒された…　板歩きの刑に　なっちゃうかも……"
     }
   },
   "galactic_grunt": {
     "encounter": {
-      "1": "Don't mess with Team Galactic!",
-      "2": "Witness the power of our technology and the future we envision!",
-      "3": "In the name of Team Galactic, I'll eliminate anyone who stands in our way!",
-      "4": "Get ready to lose!",
-      "5": "Hope you're ready for a cosmic beatdown!",
-      "5_female": "Hope you're ready for a cosmic beatdown!"
+      "1": "ギンガ団に　逆らうな！",
+      "2": "我らの　技術の　力と\n目論む　未来　を目に当たりに　しちゃえ！",
+      "3": "ギンガ団にかわって　邪魔する　誰もを　排除するぞ！",
+      "4": "負ける　準備　いいかい！？",
+      "5": "コスミックに　破壊しちゃうぞ！\n覚悟せよ！",
+      "5_female": "コスミックに　破壊しちゃうぞ！\n覚悟せよ！"
     },
     "victory": {
-      "1": "Shut down...",
-      "2": "This setback means nothing in the grand scheme.",
-      "3": "Our plans are bigger than this defeat.",
-      "4": "How?!",
-      "5": "Note to self: practice Pokémon battling, ASAP."
+      "1": "墜落……",
+      "2": "この負けは　次のカケで\n取り返せば　いいさ！",
+      "3": "かまわない！\n我らの　目的の方は　この負けより　大きい！",
+      "4": "ホワイ？！　なぜ？！",
+      "5": "自分への覚え書き:\nポケモン勝負練習  なる早"
     }
   },
   "plasma_grunt": {
     "encounter": {
-      "1": "We won't tolerate people who have different ideas!",
-      "2": "If I win against you, release your Pokémon!",
-      "3": "If you get in the way of Team Plasma, I'll take care of you!",
-      "4": "Team Plasma will liberate Pokémon from selfish humans like you!",
-      "5": "Our hairstyles are out of this world... but our battling skills? You'll find out soon enough."
+      "1": "あたしたちと　違う\n考えの　持ち主は　許さない！",
+      "2": "オレが　勝てば\nおまえの　ポケモンを　解き放て！",
+      "3": "プラズマ団の　ジャマをするなら\nアタシが　やっつけてやる！！",
+      "4": "プラズマ団は　お前のような　身勝手な\n人間から　開放する！",
+      "5": "おまえの　ような　トレーナーが\nポケモンを　苦しめているのだ！"
     },
     "victory": {
-      "1": "Plasmaaaaaaaaa!",
-      "2": "How could I lose...",
-      "3": "...What a weak Pokémon, I'll just have to go steal some better ones!",
-      "4": "Great plans are always interrupted.",
-      "5": "This is bad... Badbadbadbadbadbadbad! Bad for Team Plasma! Or Plasbad, for short!"
+      "1": "プラズマーーーーー！！！",
+      "2": "なんてこと……！　おれが　負けるなど！",
+      "3": "……弱い　ポケモンね\n別の　ポケモンを　奪わなきゃ！!",
+      "4": "すばらしい　計画に\nジャマは　付き物　ね！",
+      "5": "マズイ……\nマズイマズイマズイマズイマズイマズイ\n$プラズマ団と　して　マズイ\n縮めて　プラズマズイ！"
     }
   },
   "flare_grunt": {
     "encounter": {
-      "1": "Your Pokémon are no match for the elegance of Team Flare.",
-      "2": "Hope you brought your sunglasses, because things are about to get bright!",
-      "2_female": "Hope you brought your sunglasses, because things are about to get bright!",
-      "3": "Team Flare will cleanse the world of imperfection!",
-      "4": "Prepare to face the brilliance of Team Flare!",
-      "5": "Fashion is most important to us!"
+      "1": "お前の　ポケモンが　フレア団の　優美さには　敵わない！",
+      "2": "この　サングラス　いいだろう？\n羨ましいだろ？　でも　あげない！",
+      "2_female": "この　サングラス　いいだろう？\n羨ましいだろ？　でも　あげない！",
+      "3": "無風流は　許さない　フレア団が　お前を　打ち倒す！",
+      "4": "フレア団の　眩しさは　お前を　圧倒するぞ！",
+      "5": "おれら　泣く子も　黙る\nオシャレチーム　フレア団！"
     },
     "victory": {
-      "1": "The future doesn't look bright for me.",
-      "2": "Perhaps there's more to battling than I thought. Back to the drawing board.",
-      "3": "Gahh?! I lost?!",
-      "4": "Even in defeat, Team Flare's elegance shines through.",
-      "5": "You may have beaten me, but when I lose, I go out in style!"
+      "1": "敗北でも　フレア団が　優美さが　華やかに　輝く！",
+      "2": "目の前が　真っ暗……\nあっ　サングラス　だからか？",
+      "3": "ぐあああ！　負けた！　シャレにならない！",
+      "4": "やっぱり　バトルには\nオシャレより　大事なことが　あるかも…",
+      "5": "ちっ！　フレア団　御用達の\nオシャレスーツが　汚れたぜ！"
     }
   },
   "aether_grunt": {
     "encounter": {
-      "1": "I'll fight you with all I have to wipe you out!",
-      "2": "I don't care if you're a kid or what. I'll send you flying if you threaten us!",
-      "2_female": "I don't care if you're a kid or what. I'll send you flying if you threaten us!",
-      "3": "I was told to turn away Trainers, whomever they might be!",
-      "4": "I'll show you the power of Aether Paradise!",
-      "5": "Now that you've learned of the darkness at the heart of Aether Paradise, we'll need you to conveniently disappear!"
+      "1": "侵入者　発見！\nシークレットラボを　守ります！",
+      "2": "大事な　研究なのよ！\n子供とはいえ　ぶっとばすわよ！",
+      "2_female": "大事な　研究なのよ！\n子供とはいえ　ぶっとばすわよ！",
+      "3": "どんな　トレーナーだろうと\n追い返すよう　いわれてるのよ！",
+      "4": "エーテルパラダイスの\n開発力を　みせてやろう！",
+      "5": "エーテルパラダイスの　闇を　知った\nおまえには　消えてもらうぜ！"
     },
     "victory": {
-      "1": "Hmph! You seem to have a lot of skill.",
-      "2": "What does this mean? What does this mean!",
-      "3": "Hey! You're so strong that there's no way I can turn you away!",
-      "4": "Hmm... It seems as though I may have lost.",
-      "5": "Here's an impression for you: Aiyee!"
+      "1": "ふむう……　どうやら\nわたしは　負けたようですな。",
+      "2": "どういう　ことだ……！\nどういう　ことだ……？",
+      "3": "ちょっと！　強すぎて\n追い返すなんて　ムリムリ！",
+      "4": "ポケモン勝負に　関する\n発見は　してなかった！",
+      "5": "真似して　ぎゃひーん！"
     }
   },
   "faba": {
     "encounter": {
-      "1": "I, Branch Chief Faba, shall show you the harshness of the real world!",
-      "2": "The man who is called Aether Paradise's last line of defense is to battle a mere child?",
-      "2_female": "The man who is called Aether Paradise's last line of defense is to battle a mere child?",
-      "3": "I, Faba, am the Aether Branch Chief. The only one in the world, I'm irreplaceable."
+      "1": "支部長　ザオボーは　あなたに　現実を　みせて　さしあげますよ！",
+      "2": "ザオボー　人呼んで　エーテルパラダイス\n最後の　最後の　最後の　砦は　あなたを　壊します！",
+      "2_female": "ザオボー　人呼んで　エーテルパラダイス\n最後の　最後の　最後の　砦は　あなたを　壊します！",
+      "3": "エーテル財団の　支部長　といえば\n世界に　ただ一人……　この　ザオボーだけで　ございます。"
     },
     "victory": {
-      "1": "Aiyee!",
-      "2": "H-h-how can this be?! How could this child...",
-      "2_female": "H-h-how can this be?! How could this child...",
-      "3": "This is why... This is why I can't bring myself to like children."
+      "1": "ぎゃひーん！！!",
+      "2": "な　ななな　なんということでしょう？\nこの　わたしが　お子さま相手に……",
+      "2_female": "な　ななな　なんということでしょう？\nこの　わたしが　お子さま相手に……",
+      "3": "なんということでしょう！？"
     }
   },
   "skull_grunt": {
     "encounter": {
-      "1": "We're not bad-we're just hard!",
-      "2": "You want some? That's how we say hello! Nice knowing you, punks!",
-      "2_female": "You want some? That's how we say hello! Nice knowing you, punks!",
-      "3": "We're just a bunch of guys and gals with a great interest in other people's Pokémon!",
-      "4": "Why you trying to act hard when we're already hard as bones out here, homie?",
-      "4_female": "Why you trying to act hard when we're already hard as bones out here, homie?",
-      "5": "Team Skull represent! We can't pay the rent! Had a lot of fun, but our youth was misspent!",
-      "5_female": "Team Skull represent! We can't pay the rent! Had a lot of fun, but our youth was misspent!"
+      "1": "まじめが　キライでよ！\n$スカル団　やっているのに\nまじめに　下っ端　してるぜ？",
+      "2": "なんだ　とは　ご挨拶　ジャン！\nこいつら　まとめて　しめちゃおうよ！",
+      "2_female": "なんだ　とは　ご挨拶　ジャン！\nこいつら　まとめて　しめちゃおうよ！",
+      "3": "オレが　ポケモンを　使いこなす\nすごいとこ　みせてやりまスカ！",
+      "4": "あんたが　ホネ身を　惜しまないかを　確かめたいから　バトルッスカ！",
+      "4_female": "あんたが　ホネ身を　惜しまないかを　確かめたいから　バトルッスカ！",
+      "5": "だからＹｏ♪　きけＹｏ♪\n侵入者さんＹｏ♪\n$オレら　レペゼン　サボる♪　スカル♪\nすこぶる♪　そそる♪　話するＹｏ♪",
+      "5_female": "だからＹｏ♪　きけＹｏ♪\n侵入者さんＹｏ♪\n$オレら　レペゼン　サボる♪　スカル♪\nすこぶる♪　そそる♪　話するＹｏ♪"
     },
     "victory": {
-      "1": "Huh? Is it over already?",
-      "2": "Time for us to break out, yo! Gotta tell y'all peace out, yo!",
-      "3": "We don't need your wack Pokémon anyway!",
-      "4": "Wha-?! This kid's way too strong-no bones about it!",
-      "5": "So, what? I'm lower than a Pokémon?! I already got self-esteem issues, man."
+      "1": "ちっ！　まじめ　だから\n……応援してやるよ\n$ヨーヨー　止まるなよ\n負けてもいいから　止まるなよ！",
+      "2": "しめるなよ！ 袋叩き　するなよ！",
+      "3": "オマエが　ポケモンを　使いこなす\nすごいとこ　みせられたのでスカ！？",
+      "4": "あんたらの　ハート　ホネ身に　しみちゃう……！",
+      "5": "そーかＹｏ♪\n後悔すんじゃねーＹｏ♪"
     }
   },
   "plumeria": {
     "encounter": {
-      "1": " ...Hmph. You don't look like anything special to me.",
-      "1_female": " ...Hmph. You don't look like anything special to me.",
-      "2": "It takes these dumb Grunts way too long to deal with you kids...",
-      "3": "Mess with anyone in Team Skull, and I'll show you how serious I can get."
+      "1": "あんたね……　さっき　聞いたの\n$……なんにも　感じない\nふつーのコに　みえるけどねえ",
+      "1_female": " .あんたね……　さっき　聞いたの\n$……なんにも　感じない\nふつーのコに　みえるけどねえ",
+      "2": "下っ端　あんたのような\n雑魚相手に　モタモタ　してるからさ",
+      "3": "スカル団を　束ねている……\n言うなれば　あねごって　ところ。\n$かわいい　あいつらを\nいじめる　あんたが　ジャマなのよ！"
     },
     "victory": {
-      "1": "Hmmph! You're pretty strong. I'll give you that.",
-      "1_female": "Hmmph! You're pretty strong. I'll give you that.",
-      "2": "Hmmph. Guess you are pretty tough. Now I understand why my Grunts waste so much time battling kids.",
-      "3": "Hmmph! I guess I just have to hold that loss."
+      "1": "ハンッ！　たいした　もんだよ\nただし　次　ジャマしたら　本気で　やっちまうから",
+      "1_female": "ハンッ！　たいした　もんだよ\nただし　次　ジャマしたら　本気で　やっちまうから",
+      "2": "あんた　たいした　もんだよ\nま　雑魚相手に　手間取るのも　わかる　強さか。",
+      "3": "……チッ"
     }
   },
   "macro_grunt": {
     "encounter": {
-      "1": "It looks like this is the end of the line for you!",
-      "2": "You are a trainer aren't you? I'm afraid that doesn't give you the right to interfere in our work.",
-      "2_female": "You are a trainer aren't you? I'm afraid that doesn't give you the right to interfere in our work.",
-      "3": "I'm from Macro Cosmos Insurance! Do you have a life insurance policy?"
+      "1": "不審者を　追い払って\nたんまり　ボーナス　いただくぜ！",
+      "2": "ジャマは　許しません！\n$マクロコスモスの　さまざまな\n関連会社を　守るためにも　追い返します！",
+      "2_female": "ジャマは　許しません！\n$マクロコスモスの　さまざまな\n関連会社を　守るためにも　追い返します！",
+      "3": "マクロコスモス生命です！\n保険に　入っていますか？",
+      "4": "見つけた！　では　勝負だ！",
+      "5": "オリーヴさまに　怒られたくないから　あきらめない！"
     },
     "victory": {
-      "1": "I have little choice but to respectfully retreat.",
-      "2": "Having to give up my pocket money... Losing means I'm back in the red...",
-      "3": "Nobody can beat Macro Cosmos when it comes to our dedication to our work!"
+      "1": "ボーナスが……\n夢の　マイホームが……",
+      "2": "負けたからには\n素直に　引き下がりましょう。\n$だが　ローズ委員長の\nジャマは　しないでくださいよ。",
+      "3": "マクロコスモス生命の　仕事なら\n誰にも　負けないのに…",
+      "4": "ポケモンを　入れ替えたのに……",
+      "5": "かくれんぼも　ダメ！\n勝負も　ダメ！　逃げるしかない！"
     }
   },
   "oleana": {
     "encounter": {
-      "1": "I won't let anyone interfere with Mr. Rose's plan!",
-      "2": "So, you got through all of the special staff that I had ordered to stop you. I would expect nothing less.",
-      "3": "For the chairman! I won't lose!"
+      "1": "ローズ様の　ジャマ　だなんて\nわたくし　絶対に　許せません！",
+      "2": "わたくしの　オーダーを　こなす　特別な\nスタッフ達を　ものともせずに　やってくるなんて……",
+      "3": "あなたを　ボコボコに　すれば\n委員長の　計画が　すらっと　進めます！"
     },
     "victory": {
-      "1": "*sigh* I wasn't able to win... Oleana...you really are a hopeless woman.",
-      "2": "Arghhh! This is inexcusable... What was I thinking... Any trainer who's made it this far would be no pushover..",
-      "2_female": "Arghhh! This is inexcusable... What was I thinking... Any trainer who's made it this far would be no pushover..",
-      "3": "*sigh* I am one tired Oleana..."
+      "1": "はあああぁ　勝てないなんて……\nオリーヴ……　ほんとに　ダメな子",
+      "2": "はああ……！　なんてこと……\n$勝ちあがった　トレーナーの\n実力を　みくびっていました……",
+      "2_female": "はああ……！　なんてこと……\n$勝ちあがった　トレーナーの\n実力を　みくびっていました……",
+      "3": "まあ　生意気！\nオリーヴの　パートナーを　キズつけるなんて！"
+    }
+  },
+  "star_grunt": {
+    "encounter": {
+      "1": "We're Team Star, kid. We burn so bright, it hurts to look at us!",
+      "2": "We'll come at you full force - Hasta la vistaaar! ★",
+      "3": "If you don't clear out real quick-like, I'll hafta come at you in self-defense. You get me?",
+      "4": "Sorry, but if you don't turn yourself around here, amigo, we'll have to send you packing!",
+      "4_female": "Sorry, but if you don't turn yourself around here, amiga, we'll have to send you packing!",
+      "5": "Oh great. Here comes another rando to ruin my day."
+    },
+    "victory": {
+      "1": "How come I'M the one seeing stars?!",
+      "2": "You're scary, kid. If you joined Team Star, you'd be looking down from the top in no time!",
+      "3": "I defended myself all right... But it wasn't enough!",
+      "4": "H-hasta la vistar... ★",
+      "5": "I didn't think grunt work for Team Star newbies would be this much of a chore..."
+    }
+  },
+  "giacomo": {
+    "encounter": {
+      "1": "You don't really think things through, do ya? Declarin' war on Team Star is a real bad move.",
+      "2": "I'll play you a sick requiem as you crash and burn. Let's get this party staaarteeed!"
+    },
+    "victory": {
+      "1": "Guess that's that...",
+      "2": "You turned my melody into a threnody..."
+    }
+  },
+  "mela": {
+    "encounter": {
+      "1": "So you're the dope who picked a fight with Team Star... Prepare to get messed up.",
+      "2": "All riiight, BRING IT! I'll blow everythin' sky high!"
+    },
+    "victory": {
+      "1": "Ugh. Is this really how it's gonna end? What a hassle...",
+      "2": "I burned through everythin' I had...and now I've sputtered out."
+    }
+  },
+  "atticus": {
+    "encounter": {
+      "1": "You have some nerve baring your fangs at Team Star. Come, then, villainous wretch!",
+      "2": "Be warned—I shall spare thee no mercy! En garde!"
+    },
+    "victory": {
+      "1": "Forgive me, my friends...",
+      "2": "You have utterly bested me. But thy victory stir'd no bitterness within me—such was its brilliance."
+    }
+  },
+  "ortega": {
+    "encounter": {
+      "1": "I promise I'll play nice, so don't blame me when this battle sends you blubbering back home!",
+      "2": "I'll wipe that smug look off your face for sure! You're going down!"
+    },
+    "victory": {
+      "1": "Ugh! How could I LOSE! What the HECK!",
+      "2": "Arrrrgggh! That strength of yours is SO. NOT. FAIR."
+    }
+  },
+  "eri": {
+    "encounter": {
+      "1": "Doesn't matter who you are. I'll bury anyone who tries to take down Team Star!",
+      "2": "I give as good as I get—that's a promise! We'll see who's left standing in the end!"
+    },
+    "victory": {
+      "1": "I'm so sorry, everyone...",
+      "2": "I gave it my all, but it wasn't enough—I wasn't enough..."
     }
   },
   "rocket_boss_giovanni_1": {
     "encounter": {
-      "1": "So! I must say, I am impressed you got here!"
+      "1": "こんな所　まで　よく来た…"
     },
     "victory": {
-      "1": "WHAT! This cannot be!"
+      "1": "ぐ　ぐーッ！ そんな　ばかなーッ！"
     },
     "defeat": {
-      "1": "Mark my words. Not being able to measure your own strength shows that you are still a child.",
-      "1_female": "Mark my words. Not being able to measure your own strength shows that you are still a child."
+      "1": "自分の　力を　把握できない　内は\nまだ　子供　ということだ……　覚えておくがいい……",
+      "1_female": "自分の　力を　把握できない　内は\nまだ　子供　ということだ……　覚えておくがいい……"
     }
   },
   "rocket_boss_giovanni_2": {
     "encounter": {
-      "1": "My old associates need me... Are you going to get in my way?"
+      "1": "かつての　仲間たちが　私を　必要としてる……　先の　失敗は　もう　二度と　繰り返さない！　"
     },
     "victory": {
-      "1": "How is this possible...? The precious dream of Team Rocket has become little more than an illusion..."
+      "1": "なっ　なぜだ……！\nロケット団　最高の　夢が　幻となって　消えていく……"
     },
     "defeat": {
-      "1": "Team Rocket will be reborn again, and I will rule the world!"
+      "1": "ロケット団は 生まれ変わり\n世界を　我が物に　するのだ！"
     }
   },
   "magma_boss_maxie_1": {
     "encounter": {
-      "1": "I will bury you by my own hand. I hope you appreciate this honor!"
+      "1": "私　自らの　手で　葬ってやる……\n光栄に　思うが　よい！"
     },
     "victory": {
-      "1": "Ugh! You are... quite capable...\nI fell behind, but only by an inch..."
+      "1": "グッ……　やりおる……！\nわずか　１ミリ　及ばぬか……！"
     },
     "defeat": {
-      "1": "Team Magma will prevail!"
+      "1": "マグマ団の　活動を　止めることなど　誰にも　できぬ！"
     }
   },
   "magma_boss_maxie_2": {
     "encounter": {
-      "1": "You are the final obstacle remaining between me and my goals.\n$Brace yourself for my ultimate attack! Fuhahaha!"
+      "1": "……キサマは　私が　図った日を\n迎えるための　最後の　カベ―――\n$この　マツブサが　治めし　すべての　チカラを　もって　排除してやろう……！"
     },
     "victory": {
-      "1": "This... This is not.. Ngh..."
+      "1": "こん…な……"
     },
     "defeat": {
-      "1": "And now... I will transform this planet to a land ideal for humanity."
+      "1": "そして……\n$この世界は　人類にとって　理想の……"
     }
   },
   "aqua_boss_archie_1": {
     "encounter": {
-      "1": "I'm the leader of Team Aqua, so I'm afraid it's the rope's end for you."
+      "1": "アクア団　リーダーとして　テメエの　ポケモン\nもろとも　バッキバキに　揉み潰して　やるよ！"
     },
     "victory": {
-      "1": "Let's meet again somewhere. I'll be sure to remember that face."
+      "1": "んじゃあ　またな\n……そのツラ　忘れねえぜ"
     },
     "defeat": {
-      "1": "Brilliant! My team won't hold back now!"
+      "1": "おもしれえッ！\n今は　アクア団が　全開を！"
     }
   },
   "aqua_boss_archie_2": {
     "encounter": {
-      "1": "I've been waiting so long for this day to come.\nThis is the true power of my team!"
+      "1": "前回の勝負 じゃあ　見せられなかった\nポケモン達と　オレの　全開パワー……\n$たーんと　食らわせてやるぜえああああッ！"
     },
     "victory": {
-      "1": "Like I figured..."
+      "1": "……流石…だな…ッ！"
     },
     "defeat": {
-      "1": "I'll return everything in this world to its original, pure state!!"
+      "1": "オレは　この日が　来るのを　長い間　待っていた‥‥\n今は　この世界を　あるがままの　姿にッ！"
     }
   },
   "galactic_boss_cyrus_1": {
     "encounter": {
-      "1": "You were compelled to come here by such vacuous sentimentality.\n$I will make you regret paying heed to your heart!",
-      "1_female": "You were compelled to come here by such vacuous sentimentality.\n$I will make you regret paying heed to your heart!"
+      "1": "心いう　不完全なものが　感じる\n哀れみや　優しさ……\n$そんな　曖昧なものに　突き動かされ　\nここに来たことを　わたしが　公開させてあげよう。",
+      "1_female": "心いう　不完全なものが　感じる\n哀れみや　優しさ……\n$そんな　曖昧なものに　突き動かされ　\nここに来たことを　わたしが　公開させてあげよう"
     },
     "victory": {
-      "1": "Interesting. And quite curious."
+      "1": "面白い\nそして　興味深い"
     },
     "defeat": {
-      "1": "I will create my new world..."
+      "1": "まさに　新しい　ギンガの！　宇宙の　誕生だ！"
     }
   },
   "galactic_boss_cyrus_2": {
     "encounter": {
-      "1": "So we meet again. It seems our fates have become intertwined.\n$But here and now, I will finally break that bond!"
+      "1": "またキミか。\n$キミとは　ほとほと　縁が　あるね…\n$腐れ縁　といっても　いいが\n今　ここで　断ち切ろう！"
     },
     "victory": {
-      "1": "How? How? HOW?!"
+      "1": "まさか　まさか　まさかッ！"
     },
     "defeat": {
-      "1": "Farewell."
+      "1": "さらばだ。"
     }
   },
   "plasma_boss_ghetsis_1": {
@@ -983,6 +1054,138 @@
     },
     "defeat": {
       "1": "I suppose it must seem that I am doing something terrible. I don't expect you to understand.\n$But I must provide the Galar region with limitless energy to ensure everlasting prosperity."
+    }
+  },
+  "star_boss_penny_1": {
+    "encounter": {
+      "1": "I'm the big boss of Team Star. The name's Cassiopeia. \n$Now, bow down before the overwhelming might of Team Star's founder!"
+    },
+    "victory": {
+      "1": "... ... .."
+    },
+    "defeat": {
+      "1": "Heh..."
+    }
+  },
+  "star_boss_penny_2": {
+    "encounter": {
+      "1": "I won't hold back in this battle! I'll stay true to Team Star's code! \n$My Veevee power will crush you into stardust!"
+    },
+    "victory": {
+      "1": "...It's all over now."
+    },
+    "defeat": {
+      "1": "I can't fault you on your battle skills at all... Considering how the bosses fell at your hands."
+    }
+  },
+  "stat_trainer_buck": {
+    "encounter": {
+      "1": "……言っとくけど　オレ　強いからな！　驚けよ！",
+      "2": "モンスターボールの　中で　オレの　ポケモン達　震えてる！\nこれ　武者震いって　やつだな！"
+    },
+    "victory": {
+      "1": "イヒヒ！\nあっちーな 　おまえ！！",
+      "2": "イヒヒ！\nあっちーな　 おまえ！！"
+    },
+    "defeat": {
+      "1": "おっと！　元気切れか",
+      "2": "おっと！　元気切れか"
+    }
+  },
+  "stat_trainer_cheryl": {
+    "encounter": {
+      "1": "あたしの　ポケモンたち　戦いたくて　ウズウズしてるよ",
+      "2": "あたしの　ポケモン達　結構　ヤンチャですわよ"
+    },
+    "victory": {
+      "1": "攻めること　守ること　その　バランスは　大変ですね…",
+      "2": "攻めること　守ること　その　バランスは　大変ですね…"
+    },
+    "defeat": {
+      "1": "早く　ポケモンを　回復してくださいね",
+      "2": "早く　ポケモンを　回復してくださいね?"
+    }
+  },
+  "stat_trainer_marley": {
+    "encounter": {
+      "1": "……わかった\nできるだけ　がんばるから",
+      "2": "……わかった\nあたし……　負けないから……！"
+    },
+    "victory": {
+      "1": "……もう",
+      "2": "……もう"
+    },
+    "defeat": {
+      "1": "…… サヨナラ.",
+      "2": "…… サヨナラ"
+    }
+  },
+  "stat_trainer_mira": {
+    "encounter": {
+      "1": "ミル　ビックリしちゃいますよ！",
+      "2": "もう　迷ったりしない　ってところ\nトレーナーさんに　見せるからね!"
+    },
+    "victory": {
+      "1": "これだと　この地方で\nミル　活躍　できないかな…",
+      "2": "これだと　この地方で\nミル　活躍　できないかな…"
+    },
+    "defeat": {
+      "1": "やった！　ミル　最強！",
+      "2": "やった！　ミル　最強！"
+    }
+  },
+  "stat_trainer_riley": {
+    "encounter": {
+      "1": "ポケモン勝負　こそが　私達の　挨拶さ！",
+      "2": "全力を出して　君の　ポケモンを　倒して見せるよ"
+    },
+    "victory": {
+      "1": "戦ったり　組んでみたり……$トレーナー同士って　いいよね",
+      "2": "戦ったり　組んでみたり……$トレーナー同士って　いいよね"
+    },
+    "defeat": {
+      "1": "よく　頑張ってた…\n次が　あるよ",
+      "2": "よく　頑張ってた…\n次が　あるよ"
+    }
+  },
+  "winstrates_victor": {
+    "encounter": {
+      "1": "いい　度胸だ！　気に入ったぞ！"
+    },
+    "victory": {
+      "1": "たはーっ！　思っていたより　強いんだね　きみは！"
+    }
+  },
+  "winstrates_victoria": {
+    "encounter": {
+      "1": "あれま！　意外に　若いのね！$うちの　主人に　勝ってしまうとは　なんと　凄腕の　トレーナー　なの！$じゃあ　こんどは　私と　勝負よ！"
+    },
+    "victory": {
+      "1": "んまーっ！　あなたって　なんて　強いのかしら！"
+    }
+  },
+  "winstrates_vivi": {
+    "encounter": {
+      "1": "ママより　強いなんて　すごーい！$でも　あたし　だって　強いんだから！\nほんと　なんだってば！"
+    },
+    "victory": {
+      "1": "悔しい……\n……ぐっすん！　おばあちゃーん！！"
+    }
+  },
+  "winstrates_vicky": {
+    "encounter": {
+      "1": "こらーっ！　わしの　かわいい　孫に　何すんじゃ！$こうなったら　わしが　おまえさんの\nポケモンを　こらしめちゃるから　覚悟せぇ！"
+    },
+    "victory": {
+      "1": "フガッ！　強いのう……\n孫の　いうことは　本当　じゃった"
+    }
+  },
+  "winstrates_vito": {
+    "encounter": {
+      "1": "家族　全員で\nポケモンの　修行を　してたんだ！$誰にも　負けないぜ！"
+    },
+    "victory": {
+      "1": "家族の　誰よりも　つよかった　おれ……\n今まで　誰にも　負けなかった　おれ……"
     }
   },
   "brock": {
@@ -2718,7 +2921,7 @@
   },
   "rival": {
     "encounter": {
-      "1": "@c{smile}あっ、ここに　いたんだ！　旅に　出る前に　「じゃ　またね！」って　くらい　聞きたかったよ……$@c{smile_eclosed}やっぱり　夢を　追ってこうと　しているんだ？　信じられない　ほどね……$@c{serious_smile_fists}じゃあ、　ここまで　来たから　バトルしよっか？　覚悟してるかを　確かめたい　から！$@c{serious_mopen_fists}遠慮せずに　全力で　かかってこいぜ！"
+      "1": "@c{smile}あっ、ここに　いたんだ！　旅に　出る前に\n「じゃ　またね！」って　くらい　聞きたかったよ……$@c{smile_eclosed}やっぱり　夢を　追ってこうと　しているんだ？\n信じられない　ほどね……$@c{serious_smile_fists}じゃあ、　ここまで　来たから　バトルしよっか？\n覚悟してるかを　確かめたい　から！$@c{serious_mopen_fists}遠慮せずに　全力で　かかってこいぜ！"
     },
     "victory": {
       "1": "@c{shock}ウワッ、カンゼンに　ぶっ壊したぜ。\n初心者だとは　思えないほど……$@c{smile}たぶん　運が良っかった　だけが……\n最後まで　行ける素質が　あるかもな！$こっちの　アイテムを　あげよう、　博士に そう言いつけたから。　結構　スゴそうな　もんだ！$@c{serious_smile_fists}ここからも　ガンバレ！"
@@ -2734,7 +2937,7 @@
   },
   "rival_2": {
     "encounter": {
-      "1": "@c{smile}おや、なんと　グウゼン。\n@c{smile_eclosed}今までも　パーフェクトに　勝った　ようだな……\n$@c{serious_mopen_fists}なんか　忍び寄った　みたいだとは　分かるけど、　そんなことない…　ほとんどはな。\n$@c{serious_smile_fists}ぶっちゃけ言うと、　オレが　負けた時から　再戦したくて　ウズウズしてたぜ。\n$張り切って　特訓したから　今は　ちゃんと　勢い　見せるんだ。\n$@c{serious_mopen_fists}今回も　遠慮しな！\n行こうぜ！"
+      "1": "@c{smile}おや、なんと　グウゼン。\n@c{smile_eclosed}今までも　パーフェクトに　勝った　ようだな……\n$@c{serious_mopen_fists}なんか　忍び寄った　みたいだとは　分かるけど、　そんなことない…　ほとんどはな。\n$@c{serious_smile_fists}ぶっちゃけ言うと、　おれが　負けた時から　再戦したくて　ウズウズしてたぜ。\n$張り切って　特訓したから　今は　ちゃんと　勢い　見せるんだ。\n$@c{serious_mopen_fists}今回も　遠慮しな！\n行こうぜ！"
     },
     "victory": {
       "1": "@c{neutral_eclosed}あ。　自信過剰かも。\n$@c{smile}いいけどさ、　こうなるのを　見込んだから。\n@c{serious_mopen_fists}次回まで　もっと頑張らなくちゃ　ってことだよな！\n\n$@c{smile}きっと　助け　要らないんだが、　もう一つの　アイテムが　欲しいかと　思ったから　あげるぜ。\n\n$@c{serious_smile_fists}でも　これで　ラストだ！\n相手に　利点を　あげ続けると　行けないんだろう！"
@@ -2753,10 +2956,10 @@
   },
   "rival_3": {
     "encounter": {
-      "1": "@c{smile}Hey, look who it is! It's been a while.\n@c{neutral}You're… still undefeated? Huh.\n$@c{neutral_eclosed}Things have been kind of… strange.\nIt's not the same back home without you.\n$@c{serious}I know it's selfish, but I need to get this off my chest.\n@c{neutral_eclosed}I think you're in over your head here.\n$@c{serious}Never losing once is just unrealistic.\nWe need to lose sometimes in order to grow.\n$@c{neutral_eclosed}You've had a great run but there's still so much ahead, and it only gets harder. @c{neutral}Are you prepared for that?\n$@c{serious_mopen_fists}If so, prove it to me."
+      "1": "@c{smile}おお　誰かと思ったら　な！　久しぶり！\n@c{neutral}もう…　倒されなかった　か？　フン\n$@c{neutral_eclosed}最近　なんか…　変な　気分だな。\nキミが　いないと　ふるさとは　同じ場所　じゃない。\n$@c{serious}わがまま　かもしれないが、本音　明かさなくちゃ。\n@c{neutral_eclosed}このままで　すぐ　キミの　手に　負えなくなる。\n$@c{serious}一回も　負けないこと　って　むちゃくちゃだろう。\nみんなは　時々　失敗しなくちゃ。　そうでなけりゃ　成長できない。\n$@c{neutral_eclosed}ここまで　よく　やって来たが、\nまだまだ　先が　辛いこと　ばかり。@c{neutral}覚悟してるか？\n$@c{serious_mopen_fists}それなら、見せてくれ。"
     },
     "victory": {
-      "1": "@c{angry_mhalf}This is ridiculous… I've hardly stopped training…\nHow are we still so far apart?"
+      "1": "@c{angry_mhalf}こりゃ　むっちゃ　だろ…　訓練しか　してないよ…\nなぜ　力が　もう　こんなに　違うなだ？"
     }
   },
   "rival_3_female": {
@@ -2772,10 +2975,10 @@
   },
   "rival_4": {
     "encounter": {
-      "1": "@c{neutral}Hey.\n$I won't mince words or pleasantries with you.\n@c{neutral_eclosed}I'm here to win, plain and simple.\n$@c{serious_mhalf_fists}I've learned to maximize my potential by putting all my time into training.\n$@c{smile}You get a lot of extra time when you cut out the unnecessary sleep and social interaction.\n$@c{serious_mopen_fists}None of that matters anymore, not until I win.\n$@c{neutral_eclosed}I've even reached the point where I don't lose anymore.\n@c{smile_eclosed}I suppose your philosophy wasn't so wrong after all.\n$@c{angry_mhalf}Losing is for the weak, and I'm not weak anymore.\n$@c{serious_mopen_fists}Prepare yourself."
+      "1": "@c{neutral}よっ。\n$歯に　衣着せない。\n@c{neutral_eclosed}キミに　勝つために　ここに　来た、それだけ。\n$@c{serious_mhalf_fists}地力を　最大限に　引き出す　ために\n全労力を　費やして　訓練していた。\n$@c{smile}不要な　睡眠や　人間関係なんか　抜くと\n訓練の　時間は　割と　増えるね。\n$@c{serious_mopen_fists}そんなことは　勝てるときまで　全然　どうでもない。\n$@c{neutral_eclosed}今　負けられないとこまで　やって来た。\n@c{smile_eclosed}キミの　考え方は　違いない　ようだね。\n$@c{angry_mhalf}負けるのは　弱き者。　おれは　もう　弱くない。\n$@c{serious_mopen_fists}覚悟せよ。"
     },
     "victory": {
-      "1": "@c{neutral}What…@d{64} What are you?"
+      "1": "@c{neutral}一体…@d{64} 何モノか……？"
     }
   },
   "rival_4_female": {
@@ -2783,7 +2986,7 @@
       "1": "@c{neutral}アタシよ！　また　忘れちゃった…　のね？\n$@c{smile}こんな　遠くまで　来たのは　鼻が高いことだよ！　おめでと～\nしかし、　ここは　終着点だね。\n$@c{smile_eclosed}アタシの　中にある　全然　知らなかった　部分を　目覚めたよ。\n今は、　トレーニングしか　してないみたい。\n$@c{smile_ehalf}食べたり　寝たりも　しなくて　朝から晩まで　ポケモンを　育って、　毎日　昨日より　強くなってる。\n$@c{neutral}実は…　もう　自分　認識できない。\n$結局、　峠を越して　まるで　カミに　なった。\n今は　誰にも　アタシを　倒せないと　思う。\n$ねえ、分かる？　全ては　アンタの　お陰で。\n@c{smile_ehalf}お礼を言うか　アンタのこと嫌いか　どうしたらいいの　分からない。\n$@c{angry_mopen}覚悟しなさい。"
     },
     "victory": {
-      "1": "@c{neutral}一体…@d{64} 何モノか…？"
+      "1": "@c{neutral}一体…@d{64} 何モノか……？"
     },
     "defeat": {
       "1": "$@c{smile}ここまで　頑張ってたのを　誇りに思ってね。"
@@ -2810,10 +3013,10 @@
   },
   "rival_6": {
     "encounter": {
-      "1": "@c{smile_eclosed}We meet again.\n$@c{neutral}I've had some time to reflect on all this.\nThere's a reason this all seems so strange.\n$@c{neutral_eclosed}Your dream, my drive to beat you…\nIt's all a part of something greater.\n$@c{serious}This isn't about me, or about you… This is about the world, @c{serious_mhalf_fists}and it's my purpose to push you to your limits.\n$@c{neutral_eclosed}Whether I've fulfilled that purpose I can't say, but I've done everything in my power.\n$@c{neutral}This place we ended up in is terrifying… Yet somehow I feel unphased, like I've been here before.\n$@c{serious_mhalf_fists}You feel the same, don't you?\n$@c{serious}…and it's like something here is speaking to me.\nThis is all the world's known for a long time now.\n$Those times we cherished together that seem so recent are nothing but a distant memory.\n$@c{neutral_eclosed}Who can say whether they were ever even real in the first place.\n$@c{serious_mopen_fists}You need to keep pushing, because if you don't, it will never end. You're the only one who can do this.\n$@c{serious_smile_fists}I hardly know what any of this means, I just know that it's true.\n$@c{serious_mopen_fists}If you can't defeat me here and now, you won't stand a chance."
+      "1": "@c{smile_eclosed}また　会ったね。\n$@c{neutral}今までの　ことを　振り返る　時間があった。\n全てが　変に感じる　訳が　あるよ。\n$@c{neutral_eclosed}キミの夢、おれが　キミに　倒したい熱心……\nより大きい　何かの　部分だけだ。\n$@c{serious}おれや　キミの　物語じゃない。これは　全世界の物語だ。\n@c{serious_mhalf_fists}この物語で、　おれの「役割」　っていうのは　キミを　限界まで　押すこと。\n$@c{neutral_eclosed}その役割を　果たしたのかは　言えないが、　全力を尽くした。\n$@c{neutral}最後に行き着いた　この場所って　恐ろしいが……\n以前　ここに来た　ことがある　ような　気がして、　怯えもしない。\n$@c{serious_mhalf_fists}キミも　同じ　気がするん　だろう？\n$@c{serious}……何かが　おれに　話してるようだ。\n昔から　これだけしかは　この世界こそ　そのもの。\n$大事にしてた　最近だと思ってた　一緒にいた日々、\n今は　もう　遠い記憶　だけだ。\n$@c{neutral_eclosed}そもそも　現実だったかは　もう　言えなくなったな。\n$@c{serious_mopen_fists}キミは　頑張り続かないと、\n決して　終わらない。　キミしか　できやしない。\n$@c{serious_smile_fists}全ての意味、　全然　分からない。\nしかし、　真実だと　知ってるな。\n$@c{serious_mopen_fists}今ここで　おれを　倒せなきゃ、　最後に　勝ち目が　ナイ。"
     },
     "victory": {
-      "1": "@c{smile_eclosed}It looks like my work is done here.\n$I want you to promise me one thing.\n@c{smile}After you heal the world, please come home."
+      "1": "@c{smile_eclosed}おれの　仕事が　終わったようだな。\n$一つだけの　ことを　約束してほしい。\n@c{smile}この世界を　癒やした後、　お願い……　帰ってくれ。"
     }
   },
   "rival_6_female": {

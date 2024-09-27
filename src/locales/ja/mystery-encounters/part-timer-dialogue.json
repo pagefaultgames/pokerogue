@@ -1,0 +1,31 @@
+{
+  "intro": "忙しそうな　作業員に　呼び止められます。",
+  "speaker": "作業員",
+  "intro_dialogue": "たくさんの　有能な　ポケモンを　持っている　ようですね！$ バイトを　受け取って　手伝ってくれる　なら　会社は　支払いますよ！",
+  "title": "バリバリバイト",
+  "description": "やらなければ　ならない　仕事が　たくさん　あります。　手持ちポケモンが　仕事に　どれだけ　適しているかに　よって　稼げる　お金は　増えたり　減ったり　する　ようです。",
+  "query": "どの仕事を選びますか？",
+  "invalid_selection": "ポケモンは　十分に　元気　でなければ　ならない",
+  "option": {
+    "1": {
+      "label": "配達員",
+      "tooltip": "(-) ポケモンが 素早さを 使う\n(+) @[MONEY]{Money}を 稼ぐ",
+      "selected": "Your {{selectedPokemon}} works a shift delivering orders to customers."
+    },
+    "2": {
+      "label": "倉庫作業員",
+      "tooltip": "(-) ポケモンが 強さと 持久力を 使う\n(+) @[MONEY]{Money}を稼ぐ",
+      "selected": "{{selectedPokemon}}は　倉庫内で　アイテムを　移動する　シフトで　働きました。"
+    },
+    "3": {
+      "label": "店員",
+      "tooltip": "(-) {{option3PrimaryName}}は {{option3PrimaryMove}}を 使う\n(+)  @[MONEY]{Money}を稼ぐ",
+      "disabled_tooltip": "この仕事を　選ぶには　特定な　技が　必要",
+      "selected": "一日中に　{{option3PrimaryName}}は　{{option3PrimaryMove}}を　使って　顧客を　引きつけます！"
+    }
+  },
+  "job_complete_good": "助けてくれて　ありがとう　ございました！\n{{selectedPokemon}}は　すごく　役に　立ちましたよ！$今日の　給料、　どうぞ！",
+  "job_complete_bad": "{{selectedPokemon}} が　ちょっと　手伝ってくれました　ね！$今日の　給料、　どうぞ！",
+  "pokemon_tired": "{{selectedPokemon}}は　疲れ果てました！\n 技の　PPが　全て　2まで　減りました！",
+  "outro": "また　いつか　手伝いに来て　くださいね！"
+}
