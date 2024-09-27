@@ -34,6 +34,8 @@ import { doTrainerExclamation } from "#app/data/mystery-encounters/utils/encount
 import { getEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
 import { MysteryEncounterPhase } from "#app/phases/mystery-encounter-phases";
 import { getGoldenBugNetSpecies } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
+import { applyChallenges, ChallengeType } from "#app/data/challenge";
+import { ArenaTagType } from "#app/enums/arena-tag-type";
 
 export class EncounterPhase extends BattlePhase {
   private loaded: boolean;
@@ -421,6 +423,7 @@ export class EncounterPhase extends BattlePhase {
         });
       }
     }
+    applyChallenges(this.scene.gameMode, ChallengeType.ARENA_TAG, this.scene.arena, ArenaTagType.TRICK_ROOM, Number.POSITIVE_INFINITY);
   }
 
   end() {
