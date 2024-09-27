@@ -358,6 +358,10 @@
       "name": "Llamasfera",
       "description": "Extraña esfera que causa quemaduras a quien la usa en combate."
     },
+    "EVOLUTION_TRACKER_GIMMIGHOUL": { 
+      "name": "Treasures", 
+      "description": "This Pokémon loves treasure! Keep collecting treasure and something might happen!"
+    },
     "BATON": {
       "name": "Testigo",
       "description": "Permite pasar los efectos al cambiar de Pokémon, también evita las trampas."
