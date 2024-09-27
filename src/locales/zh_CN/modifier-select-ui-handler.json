@@ -9,6 +9,6 @@
   "checkTeamDesc": "检查队伍或使用形态改变道具",
   "rerollCost": "₽{{formattedMoney}}",
   "itemCost": "₽{{formattedMoney}}",
-  "continueNextWaveButton": "Continue",
-  "continueNextWaveDescription": "Continue to the next wave"
+  "continueNextWaveButton": "继续",
+  "continueNextWaveDescription": "继续至下一层"
 }

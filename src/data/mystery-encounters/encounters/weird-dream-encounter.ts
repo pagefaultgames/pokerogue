@@ -368,7 +368,7 @@ async function doNewTeamPostProcess(scene: BattleScene, transformations: Pokemon
     const newEggMoveIndex = await addEggMoveToNewPokemonMoveset(scene, newPokemon, speciesRootForm);
 
     // Try to add a favored STAB move (might fail if Pokemon already knows a bunch of moves from newPokemonGeneratedMoveset)
-    addFavoredMoveToNewPokemonMoveset(scene, newPokemon, newPokemonGeneratedMoveset, newEggMoveIndex);
+    addFavoredMoveToNewPokemonMoveset(newPokemon, newPokemonGeneratedMoveset, newEggMoveIndex);
 
     // Randomize the second type of the pokemon
     // If the pokemon does not normally have a second type, it will gain 1
@@ -553,8 +553,7 @@ async function addEggMoveToNewPokemonMoveset(scene: BattleScene, newPokemon: Pla
   let eggMoveIndex: null | number = null;
   const eggMoves = newPokemon.getEggMoves()?.slice(0);
   if (eggMoves) {
-    const eggMoveIndices = [0, 1, 2, 3];
-    randSeedShuffle(eggMoveIndices);
+    const eggMoveIndices = randSeedShuffle([0, 1, 2, 3]);
     let randomEggMoveIndex = eggMoveIndices.pop();
     let randomEggMove = !isNullOrUndefined(randomEggMoveIndex) ? eggMoves[randomEggMoveIndex] : null;
     let retries = 0;
@@ -587,12 +586,11 @@ async function addEggMoveToNewPokemonMoveset(scene: BattleScene, newPokemon: Pla
 
 /**
  * Returns index of the new egg move within the Pokemon's moveset (not the index of the move in `speciesEggMoves`)
- * @param scene
  * @param newPokemon
  * @param newPokemonGeneratedMoveset
  * @param newEggMoveIndex
  */
-function addFavoredMoveToNewPokemonMoveset(scene: BattleScene, newPokemon: PlayerPokemon, newPokemonGeneratedMoveset: (PokemonMove | null)[], newEggMoveIndex: number | null) {
+function addFavoredMoveToNewPokemonMoveset(newPokemon: PlayerPokemon, newPokemonGeneratedMoveset: (PokemonMove | null)[], newEggMoveIndex: number | null) {
   let favoredMove: PokemonMove | null = null;
   for (const move of newPokemonGeneratedMoveset) {
     // Needs to match first type, second type will be replaced
@@ -614,11 +612,15 @@ function addFavoredMoveToNewPokemonMoveset(scene: BattleScene, newPokemon: Playe
   }
   // Finally, assign favored move to random index that isn't the new egg move index
   if (favoredMove) {
-    let favoredMoveIndex = randSeedInt(4);
-    while (newEggMoveIndex !== null && favoredMoveIndex === newEggMoveIndex) {
-      favoredMoveIndex = randSeedInt(4);
-    }
+    if (newPokemon.moveset.length < 4) {
+      newPokemon.moveset.push(favoredMove);
+    } else {
+      let favoredMoveIndex = randSeedInt(4);
+      while (newEggMoveIndex !== null && favoredMoveIndex === newEggMoveIndex) {
+        favoredMoveIndex = randSeedInt(4);
+      }
 
-    newPokemon.moveset[favoredMoveIndex] = favoredMove;
+      newPokemon.moveset[favoredMoveIndex] = favoredMove;
+    }
   }
 }

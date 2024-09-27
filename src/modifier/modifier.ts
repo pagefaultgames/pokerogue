@@ -1,4 +1,5 @@
 import * as ModifierTypes from "./modifier-type";
+import { ModifierType, modifierTypes } from "./modifier-type";
 import BattleScene from "../battle-scene";
 import { getLevelTotalExp } from "../data/exp";
 import { MAX_PER_TYPE_POKEBALLS, PokeballType } from "../data/pokeball";
@@ -12,16 +13,15 @@ import * as Utils from "../utils";
 import { getBerryEffectFunc, getBerryPredicate } from "../data/berry";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { BerryType } from "#enums/berry-type";
-import { StatusEffect, getStatusEffectHealText } from "../data/status-effect";
+import { getStatusEffectHealText, StatusEffect } from "#app/data/status-effect";
 import { achvs } from "../system/achv";
 import { VoucherType } from "../system/voucher";
 import { FormChangeItem, SpeciesFormChangeItemTrigger, SpeciesFormChangeLapseTeraTrigger, SpeciesFormChangeTeraTrigger } from "../data/pokemon-forms";
 import { Nature } from "#app/data/nature";
 import Overrides from "#app/overrides";
-import { ModifierType, modifierTypes } from "./modifier-type";
 import { Command } from "#app/ui/command-ui-handler";
 import { Species } from "#enums/species";
-import { Stat, type PermanentStat, type TempBattleStat, BATTLE_STATS, TEMP_BATTLE_STATS } from "#app/enums/stat";
+import { BATTLE_STATS, type PermanentStat, Stat, TEMP_BATTLE_STATS, type TempBattleStat } from "#app/enums/stat";
 import i18next from "i18next";
 
 import { allMoves } from "#app/data/move";
@@ -882,7 +882,7 @@ export class PokemonBaseStatTotalModifier extends PokemonHeldItemModifier {
   private statModifier: integer;
   public isTransferable: boolean = false;
 
-  constructor(type: ModifierTypes.PokemonBaseStatTotalModifierType, pokemonId: integer, statModifier: integer, stackCount?: integer) {
+  constructor(type: ModifierTypes.PokemonBaseStatTotalModifierType, pokemonId: number, statModifier: number, stackCount?: integer) {
     super(type, pokemonId, stackCount);
     this.statModifier = statModifier;
   }
@@ -927,11 +927,11 @@ export class PokemonBaseStatTotalModifier extends PokemonHeldItemModifier {
  * Currently used by Old Gateau item
  */
 export class PokemonBaseStatFlatModifier extends PokemonHeldItemModifier {
-  private statModifier: integer;
+  private statModifier: number;
   private stats: Stat[];
   public isTransferable: boolean = false;
 
-  constructor (type: ModifierType, pokemonId: integer, statModifier: integer, stats: Stat[], stackCount?: integer) {
+  constructor (type: ModifierType, pokemonId: number, statModifier: number, stats: Stat[], stackCount?: number) {
     super(type, pokemonId, stackCount);
 
     this.statModifier = statModifier;
@@ -947,7 +947,7 @@ export class PokemonBaseStatFlatModifier extends PokemonHeldItemModifier {
   }
 
   override getArgs(): any[] {
-    return super.getArgs().concat(this.statModifier, this.stats);
+    return [ ...super.getArgs(), this.statModifier, this.stats ];
   }
 
   override shouldApply(args: any[]): boolean {
@@ -989,8 +989,8 @@ export class PokemonIncrementingStatModifier extends PokemonHeldItemModifier {
     return modifier instanceof PokemonIncrementingStatModifier;
   }
 
-  clone(): PersistentModifier {
-    return new PokemonIncrementingStatModifier(this.type, this.pokemonId);
+  clone(): PokemonIncrementingStatModifier {
+    return new PokemonIncrementingStatModifier(this.type, this.pokemonId, this.stackCount);
   }
 
   getArgs(): any[] {
@@ -998,21 +998,26 @@ export class PokemonIncrementingStatModifier extends PokemonHeldItemModifier {
   }
 
   shouldApply(args: any[]): boolean {
-    return super.shouldApply(args) && args.length === 2 && args[1] instanceof Array;
+    return super.shouldApply(args) && args.length === 3 && args[2] instanceof Utils.IntegerHolder;
   }
 
   apply(args: any[]): boolean {
-    // Modifies the passed in stats[] array by +1 per stack for HP, +2 per stack for other stats
+    // Modifies the passed in stat integer holder by +1 per stack for HP, +2 per stack for other stats
     // If the Macho Brace is at max stacks (50), adds additional 5% to total HP and 10% to other stats
-    args[1].forEach((v, i) => {
-      const isHp = i === 0;
-      let mult = 1;
+    const isHp = args[1] === Stat.HP;
+    const statHolder = args[2] as Utils.IntegerHolder;
+
+    if (isHp) {
+      statHolder.value += this.stackCount;
       if (this.stackCount === this.getMaxHeldItemCount()) {
-        mult = isHp ? 1.05 : 1.1;
+        statHolder.value = Math.floor(statHolder.value * 1.05);
       }
-      const newVal = Math.floor((v + this.stackCount * (isHp ? 1 : 2)) * mult);
-      args[1][i] = Math.min(Math.max(newVal, 1), 999999);
-    });
+    } else {
+      statHolder.value += 2 * this.stackCount;
+      if (this.stackCount === this.getMaxHeldItemCount()) {
+        statHolder.value = Math.floor(statHolder.value * 1.1);
+      }
+    }
 
     return true;
   }
