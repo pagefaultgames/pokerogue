@@ -272,7 +272,6 @@ export class MoveEffectPhase extends PokemonPhase {
                           if (move.hitsSubstitute(user, target)) {
                             return resolve();
                           }
-
                           // If the invoked move is an enemy attack, apply the enemy's status effect-inflicting tokens
                           if (!user.isPlayer() && this.move.getMove() instanceof AttackMove) {
                             user.scene.applyShuffledModifiers(this.scene, EnemyAttackStatusEffectChanceModifier, false, target);

@@ -1,6 +1,6 @@
 import { BattlerIndex } from "#app/battle";
 import BattleScene from "#app/battle-scene";
-import { applyAbAttrs, applyPostStatStageChangeAbAttrs, applyPreStatStageChangeAbAttrs, PostStatStageChangeAbAttr, ProtectStatAbAttr, StatStageChangeCopyAbAttr, StatStageChangeMultiplierAbAttr } from "#app/data/ability";
+import { applyAbAttrs, applyPostStatStageChangeAbAttrs, applyPreStatStageChangeAbAttrs, PostStatStageChangeAbAttr, PostStatStageChangeStatStageChangeAbAttr, ProtectStatAbAttr, StatStageChangeCopyAbAttr, StatStageChangeMultiplierAbAttr } from "#app/data/ability";
 import { ArenaTagSide, MistTag } from "#app/data/arena-tag";
 import Pokemon from "#app/field/pokemon";
 import { getPokemonNameWithAffix } from "#app/messages";
@@ -106,7 +106,15 @@ export class StatStageChangePhase extends PokemonPhase {
         }
       }
 
-      applyPostStatStageChangeAbAttrs(PostStatStageChangeAbAttr, pokemon, filteredStats, this.stages, this.selfTarget);
+      // If a pokemon has defiant or competitive which activates for each stat lowered, loop over each stat lowered
+      const defiantOrCompetitive = pokemon.getAbilityAttrs(PostStatStageChangeStatStageChangeAbAttr);
+      if (defiantOrCompetitive?.length > 0) {
+        for (let _ = 0; _ < filteredStats.length; _++) {
+          applyPostStatStageChangeAbAttrs(PostStatStageChangeAbAttr, pokemon, filteredStats, this.stages, this.selfTarget);
+        }
+      } else {
+        applyPostStatStageChangeAbAttrs(PostStatStageChangeAbAttr, pokemon, filteredStats, this.stages, this.selfTarget);
+      }
 
       // Look for any other stat change phases; if this is the last one, do White Herb check
       const existingPhase = this.scene.findPhase(p => p instanceof StatStageChangePhase && p.battlerIndex === this.battlerIndex);
