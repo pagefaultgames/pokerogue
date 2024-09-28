@@ -271,6 +271,19 @@ export default class RunInfoUiHandler extends UiHandler {
         pokeball.setPosition(52 + ((i % row_limit) * 8), (i <= 2) ? 25 : 32);
         enemyContainer.add(pokeball);
       });
+      const trainerObj = this.runInfo.trainer.toTrainer(this.scene);
+      const RIVAL_TRAINER_ID_THRESHOLD = 375;
+      let trainerName = "";
+      if (this.runInfo.trainer.trainerType >= RIVAL_TRAINER_ID_THRESHOLD) {
+        trainerName = (trainerObj.variant === TrainerVariant.FEMALE) ? i18next.t("trainerNames:rival_female") : i18next.t("trainerNames:rival");
+      } else {
+        trainerName = trainerObj.getName(0, true);
+      }
+      const boxString = i18next.t(trainerObj.variant !== TrainerVariant.DOUBLE ? "battle:trainerAppeared" : "battle:trainerAppearedDouble", { trainerName: trainerName }).replace(/\n/g, " ");
+      const descContainer = this.scene.add.container(0, 0);
+      this.provideDesc(descContainer, boxString);
+      descContainer.setPosition(52, 38);
+      this.runResultContainer.add(descContainer);
     } else if (this.runInfo.battleType === BattleType.MYSTERY_ENCOUNTER) {
       console.log(this.runInfo.mysteryEncounterType);
     }
@@ -427,6 +440,12 @@ export default class RunInfoUiHandler extends UiHandler {
     });
     enemyPartyContainer.setPosition(25, 15);
     enemyContainer.add(enemyPartyContainer);
+  }
+
+  provideDesc(descContainer: Phaser.GameObjects.Container, desc: string) {
+    const textBox = addTextObject(this.scene, 0, 0, desc, TextStyle.MESSAGE, { fontSize : "35px", wordWrap: {width: 150} });
+    console.log(textBox.width);
+    descContainer.add(textBox);
   }
 
   /**

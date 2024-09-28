@@ -37,6 +37,7 @@ import { GameOverPhase } from "#app/phases/game-over-phase";
 import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
 import { PartyExpPhase } from "#app/phases/party-exp-phase";
 import { Variant } from "#app/data/variant";
+import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 
 /**
  * Animates exclamation sprite over trainer's head at start of encounter
