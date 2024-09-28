@@ -1,0 +1,25 @@
+{
+  "intro": "Etwas Glänzendes liegt auf dem Boden in der Nähe dieses Pokémons!",
+  "title": "Kampf oder Flucht",
+  "description": "Es scheint, als würde ein starkes Pokémon ein Item bewachen. Ein Kampf wäre der direkte Weg, aber es sieht stark aus. Vielleicht könntest du das Item stehlen, wenn du das richtige Pokémon für den Job hast.",
+  "query": "Was wirst du tun?",
+  "option": {
+    "1": {
+      "label": "Kampf beginnen",
+      "tooltip": "(-) Schwerer Kampf\n(+) Neues Item",
+      "selected": "Du trittst dem Pokémon ohne Furcht entgegen.",
+      "stat_boost": "Die Stärke von {{enemyPokemon}} erhöht einen seiner Werte!"
+    },
+    "2": {
+      "label": "Das Item stehlen",
+      "disabled_tooltip": "Dein Pokémon muss eine bestimmte Attacken beherrschen, um diese Option zu wählen.",
+      "tooltip": "(+) {{option2PrimaryName}} setzt {{option2PrimaryMove}} ein",
+      "selected": ".@d{32}.@d{32}.@d{32}$Dein {{option2PrimaryName}} hilft dir und setzt {{option2PrimaryMove}} ein!$Du hast das Item gestohlen!"
+    },
+    "3": {
+      "label": "Verlassen",
+      "tooltip": "(-) Keine Belohnung",
+      "selected": "Du lässt das starke Pokémon mit seinem Item zurück und gehst weiter."
+    }
+  }
+}

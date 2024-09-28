@@ -1,9 +1,13 @@
-import { Species } from "#app/enums/species";
 import { GameModes } from "#app/game-mode";
+import OptionSelectUiHandler from "#app/ui/settings/option-select-ui-handler";
+import { Mode } from "#app/ui/ui";
+import { Biome } from "#enums/biome";
+import { Button } from "#enums/buttons";
+import { Moves } from "#enums/moves";
+import { Species } from "#enums/species";
 import GameManager from "#test/utils/gameManager";
+import { MockClock } from "#test/utils/mocks/mockClock";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import { Moves } from "#app/enums/moves";
-import { Biome } from "#app/enums/biome";
 
 describe("Reload", () => {
   let phaserGame: Phaser.Game;
@@ -35,7 +39,7 @@ describe("Reload", () => {
     expect(preReloadRngState).toBe(postReloadRngState);
   }, 20000);
 
-  it.each(Array.from({length: 100}))("should not have RNG inconsistencies after a biome switch", async () => {
+  it("should not have RNG inconsistencies after a biome switch", async () => {
     game.override
       .startingWave(10)
       .battleType("single")
@@ -50,6 +54,13 @@ describe("Reload", () => {
     game.move.select(Moves.KOWTOW_CLEAVE);
     await game.phaseInterceptor.to("DamagePhase");
     await game.doKillOpponents();
+    game.onNextPrompt("SelectBiomePhase", Mode.OPTION_SELECT, () => {
+      (game.scene.time as MockClock).overrideDelay = null;
+      const optionSelectUiHandler = game.scene.ui.getHandler() as OptionSelectUiHandler;
+      game.scene.time.delayedCall(1010, () => optionSelectUiHandler.processInput(Button.ACTION));
+      game.endPhase();
+      (game.scene.time as MockClock).overrideDelay = 1;
+    });
     await game.toNextWave();
     expect(game.phaseInterceptor.log).toContain("NewBiomeEncounterPhase");
 

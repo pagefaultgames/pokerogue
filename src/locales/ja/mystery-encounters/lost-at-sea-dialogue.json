@@ -1,0 +1,28 @@
+{
+  "intro": "海を　あてもなく　さまよっていて　結局　どこにも　たどり着けない　ようです……",
+  "title": "海で迷子",
+  "description": "海は　荒れていて　元気が　尽きています。\nこれは　マズい…… この状況から　抜け出す　方法は　ないでしょうか？",
+  "query": "どうしますか？",
+  "option": {
+    "1": {
+      "label": "{{option1PrimaryName}}が 役に立つ かも",
+      "label_disabled": "{{option1RequiredMove}}できない",
+      "tooltip": "(+) {{option1PrimaryName}} に 助けられる\n(+) {{option1PrimaryName}} が 経験値を 得る",
+      "tooltip_disabled": "{{option1RequiredMove}} できる　ポケモンが　いない",
+      "selected": "{{option1PrimaryName}}が　先に　泳いで　導いてくれます。${{option1PrimaryName}}は　この困難な　時期に　さらに　強くなった　ようです!"
+    },
+    "2": {
+      "label": "{{option2PrimaryName}}が 役に立つ かも",
+      "label_disabled": "{{option2RequiredMove}}ことが できない",
+      "tooltip": "(+) {{option2PrimaryName}}に 助けられる\n(+) {{option2PrimaryName}}が 経験値を 得る",
+      "tooltip_disabled": "{{option2RequiredMove}}ことが できる　ポケモンが　いない",
+      "selected": "{{option2PrimaryName}}が　船の　前を　飛んで　正しい　航路に　戻します。${{option2PrimaryName}}は　この困難な　時期に　さらに　強くなった　ようです!"
+    },
+    "3": {
+      "label": "あてもなくさまよう",
+      "tooltip": "(-) 手持ちポケモン 全員が HP {{damagePercentage}}% 失う",
+      "selected": "船で　漂いていて　方向なく　操縦を　続け　ついに　覚えている　目印を　見つけます。$手持ちポケモンは　この試練の　せいで　疲れ果てています……"
+    }
+  },
+  "outro": "正しい　航路に　戻りました。"
+}

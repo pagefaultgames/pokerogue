@@ -70,7 +70,7 @@ export class CommandPhase extends FieldPhase {
         }
       }
     } else {
-      if (this.scene.currentBattle.battleType === BattleType.MYSTERY_ENCOUNTER && this.scene.currentBattle.mysteryEncounter?.skipToFightInput) {
+      if (this.scene.currentBattle.isBattleMysteryEncounter() && this.scene.currentBattle.mysteryEncounter?.skipToFightInput) {
         this.scene.ui.clearText();
         this.scene.ui.setMode(Mode.FIGHT, this.fieldIndex);
       } else {
@@ -141,7 +141,7 @@ export class CommandPhase extends FieldPhase {
           this.scene.ui.showText("", 0);
           this.scene.ui.setMode(Mode.COMMAND, this.fieldIndex);
         }, null, true);
-      } else if (this.scene.currentBattle.battleType === BattleType.MYSTERY_ENCOUNTER && !this.scene.currentBattle.mysteryEncounter!.catchAllowed) {
+      } else if (this.scene.currentBattle.isBattleMysteryEncounter() && !this.scene.currentBattle.mysteryEncounter!.catchAllowed) {
         this.scene.ui.setMode(Mode.COMMAND, this.fieldIndex);
         this.scene.ui.setMode(Mode.MESSAGE);
         this.scene.ui.showText(i18next.t("battle:noPokeballMysteryEncounter"), null, () => {

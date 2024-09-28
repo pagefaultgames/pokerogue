@@ -174,5 +174,9 @@
   "INVERSE_BATTLE": {
     "name": "Espejo ojepsE",
     "description": "Completa el reto de Combate Inverso.\n.osrevnI etabmoC ed oter le atelpmoC"
+  },
+  "BREEDERS_IN_SPACE": {
+    "name": "¡Criapokémon en el Espacio!",
+    "description": "Derrota al Criapokémon Experto en el Bioma Espacial."
   }
 }

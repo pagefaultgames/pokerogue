@@ -1,0 +1,29 @@
+
+
+{
+  "intro": "Une horde de {{delibirdName}} apparait !",
+  "title": "Cas d’oiseaux",
+  "description": "Les {{delibirdName}} vous scrutent avec curiosité, comme s’ils attendaient quelque chose. Peut-être que leur donner un objet ou un peu d’argent pourrait les satisfaire ?",
+  "query": "Que voulez-vous faire ?",
+  "invalid_selection": "Ce Pokémon ne porte pas ce genre d’objet.",
+  "option": {
+    "1": {
+      "label": "Donner de l’argent",
+      "tooltip": "(-) Donner {{money, money}} aux {{delibirdName}}\n(+) Recevez un objet",
+      "selected": "Vous lancez de l’argent aux {{delibirdName}},\nqui se lancent dans une grande délibération.$Ils reviennent ravis vers vous avec un cadeau !"
+    },
+    "2": {
+      "label": "Donner de la nourriture",
+      "tooltip": "(-) Donner une Baie ou une Résugraine aux {{delibirdName}}\n(+) Recevez un objet",
+      "select_prompt": "Sélectionnez un objet à donner.",
+      "selected": "Vous lancez la {{chosenItem}} aux {{delibirdName}},\nqui se lancent dans une grande délibération.$Ils reviennent ravis vers vous avec un cadeau !"
+    },
+    "3": {
+      "label": "Donner un objet",
+      "tooltip": "(-) Donner un objet tenu aux {{delibirdName}}\n(+) Recevez un objet",
+      "select_prompt": "Sélectionnez un objet à donner.",
+      "selected": "Vous lancez l’objet {{chosenItem}} aux {{delibirdName}},\nqui se lancent dans une grande délibération.$Ils reviennent ravis vers vous avec un cadeau !"
+    }
+  },
+  "outro": "La horde de {{delibirdName}} repartent dans la joie.$Un bien curieux échange !"
+}

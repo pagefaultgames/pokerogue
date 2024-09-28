@@ -68,6 +68,20 @@
     "BaseStatBoosterModifierType": {
       "description": "Augmente de 10% {{stat}} de base de son porteur. Plus les IV sont hauts, plus il peut en porter."
     },
+    "PokemonBaseStatTotalModifierType": {
+      "name": "Jus de Caratroc",
+      "description": "{{increaseDecrease}} toutes les stats de son porteur de {{statValue}} cran. Caratroc vous a {{blessCurse}}.",
+      "extra": {
+        "increase": "Augmente",
+        "decrease": "Baisse",
+        "blessed": "accordé sa bénédiction",
+        "cursed": "jeté une malédiction"
+      }
+    },
+    "PokemonBaseStatFlatModifierType": {
+      "name": "Vieux Gâteau",
+      "description": "Augmente de {{statValue}} {{stats}} de base du porteur. Trouvé après un étrange rêve."
+    },
     "AllPokemonFullHpRestoreModifierType": {
       "description": "Restaure tous les PV de toute l’équipe."
     },
@@ -226,7 +240,9 @@
     "TOXIC_ORB": { "name": "Orbe Toxique", "description": "Empoisonne gravement son porteur à la fin du tour s’il n’a pas déjà de problème de statut." },
     "FLAME_ORB": { "name": "Orbe Flamme", "description": "Brule son porteur à la fin du tour s’il n’a pas déjà de problème de statut." },
 
-    "BATON": { "name": "Bâton", "description": "Permet de transmettre les effets en cas de changement de Pokémon. Ignore les pièges." },
+    "EVOLUTION_TRACKER_GIMMIGHOUL": { "name": "Trésors", "description": "Ce Pokémon adore les trésors ! Ramassez-en le plus possible et voyez ce qu’il se passe !"},
+
+    "BATON": { "name": "Témoin", "description": "Permet de transmettre les effets en cas de changement de Pokémon. Ignore les pièges." },
 
     "SHINY_CHARM": { "name": "Charme Chroma", "description": "Augmente énormément les chances de rencontrer un Pokémon sauvage chromatique." },
     "ABILITY_CHARM": { "name": "Charme Talent", "description": "Augmente énormément les chances de rencontrer un Pokémon sauvage avec un talent caché." },
@@ -247,7 +263,13 @@
     "ENEMY_ATTACK_BURN_CHANCE": { "name": "Jeton Brulure" },
     "ENEMY_STATUS_EFFECT_HEAL_CHANCE": { "name": "Jeton Total Soin", "description": "Ajoute 2,5% de chances à chaque tour de se soigner d’un problème de statut." },
     "ENEMY_ENDURE_CHANCE": { "name": "Jeton Ténacité" },
-    "ENEMY_FUSED_CHANCE": { "name": "Jeton Fusion", "description": "Ajoute 1% de chances qu’un Pokémon sauvage soit une fusion." }
+    "ENEMY_FUSED_CHANCE": { "name": "Jeton Fusion", "description": "Ajoute 1% de chances qu’un Pokémon sauvage soit une fusion." },
+
+    "MYSTERY_ENCOUNTER_SHUCKLE_JUICE": { "name": "Jus de Caratroc" },
+    "MYSTERY_ENCOUNTER_BLACK_SLUDGE": { "name": "Boue Noire", "description": "Sa puenteur est telle que la boutique ne vous vendra que des objets aux prix fortement augmentés." },
+    "MYSTERY_ENCOUNTER_MACHO_BRACE": { "name": "Bracelet Macho", "description": "Battre un Pokémon donnera à son porteur un lot de Bracelet Macho. Chacun augmentant légèrement les stats, avec un bonus au max de lots." },
+    "MYSTERY_ENCOUNTER_OLD_GATEAU": { "name": "Vieux Gâteau", "description": "Augmente de {{statValue}} {{stats}} de base du porteur." },
+    "MYSTERY_ENCOUNTER_GOLDEN_BUG_NET": { "name": "Filet Doré", "description": "Impreigne son propriétaire d’une chance qui attire les Pokémon Insecte. Sa prise en main est étrange." }
   },
   "SpeciesBoosterItem": {
     "LIGHT_BALL": { "name": "Balle Lumière", "description": "À faire tenir à Pikachu. Un orbe énigmatique qui double son Attaque et son Atq. Spé. ." },
@@ -310,6 +332,21 @@
     "TART_APPLE": "Pomme Acidulée",
     "STRAWBERRY_SWEET": "Fraise en Sucre",
     "UNREMARKABLE_TEACUP": "Bol Médiocre",
+    "UPGRADE": "Améliorator",
+    "DUBIOUS_DISC": "CD Douteux",
+    "DRAGON_SCALE": "Écaille Draco",
+    "PRISM_SCALE": "Bel’Écaille",
+    "RAZOR_CLAW": "Griffe Rasoir",
+    "RAZOR_FANG": "Croc Rasoir",
+    "REAPER_CLOTH": "Tissu Fauche",
+    "ELECTIRIZER": "Électriseur",
+    "MAGMARIZER": "Magmariseur",
+    "PROTECTOR": "Protecteur",
+    "SACHET": "Sachet Senteur",
+    "WHIPPED_DREAM": "Chantibonbon",
+    "LEADERS_CREST": "Emblème du Général",
+    "SUN_FLUTE": "Flute du Soleil",
+    "MOON_FLUTE": "Flute de la Lune",
 
     "CHIPPED_POT": "Théière Ébréchée",
     "BLACK_AUGURITE": "Obsidienne",
