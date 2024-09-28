@@ -13,7 +13,7 @@
       "label": "干等",
       "tooltip": "(-)漫长的等待\n(+)回复队伍",
       "selected": ".@d{32}.@d{32}.@d{32}$您等待了好一段时间，但是\n{{snorlaxName}}的哈欠让你的队伍昏昏欲睡…………",
-      "rest_result": "当你们醒来时，{{snorlax Name}}已无处可寻。\n但你所有的宝可梦都痊愈了！"
+      "rest_result": "当你们醒来时，{{snorlaxName}}已无处可寻。\n但你所有的宝可梦都痊愈了！"
     },
     "3": {
       "label": "偷摸",

@@ -354,6 +354,10 @@
       "name": "Fiammosfera",
       "description": "Sfera bizzarra che procura una scottatura a chi l’ha con sé in una lotta."
     },
+    "EVOLUTION_TRACKER_GIMMIGHOUL": {
+      "name": "Tesori",
+      "description": "Questo Pokémon adora i tesori! Continua a collezionare i tesori e potrebbe accadere qualcosa!"
+    },
     "BATON": {
       "name": "Staffetta",
       "description": "Permette di trasmettere gli effetti quando si cambia Pokémon, aggirando anche le trappole."
@@ -491,6 +495,22 @@
     "TART_APPLE": "Aspropomo",
     "STRAWBERRY_SWEET": "Bonbonfragola",
     "UNREMARKABLE_TEACUP": "Tazza dozzinale",
+    "UPGRADE": "Upgrade",
+    "DUBIOUS_DISC": "Dubbiodisco",
+    "DRAGON_SCALE": "Squama drago",
+    "PRISM_SCALE": "Squama bella",
+    "RAZOR_CLAW": "Affilartiglio",
+    "RAZOR_FANG": "Affilodente",
+    "REAPER_CLOTH": "Terrorpanno",
+    "ELECTIRIZER": "Elettritore",
+    "MAGMARIZER": "Magmatore",
+    "PROTECTOR": "Copertura",
+    "SACHET": "Bustina aromi",
+    "WHIPPED_DREAM": "Dolcespuma",
+    "LEADERS_CREST": "Simbolo del capo",
+    "SUN_FLUTE": "Flauto solare",
+    "MOON_FLUTE": "Flauto lunare",
+    
     "CHIPPED_POT": "Teiera crepata",
     "BLACK_AUGURITE": "Augite nera",
     "GALARICA_CUFF": "Fascia Galarnoce",

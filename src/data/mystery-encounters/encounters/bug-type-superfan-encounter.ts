@@ -595,6 +595,8 @@ function getTrainerConfigForWave(waveIndex: number) {
       }))
       .setPartyMemberFunc(4, getRandomPartyMemberFunc(POOL_4_POKEMON, TrainerSlot.TRAINER, true));
   } else {
+    pool3Copy = randSeedShuffle(pool3Copy);
+    const pool3Mon2 = pool3Copy.pop()!;
     config
       .setPartyTemplates(new TrainerPartyCompoundTemplate(new TrainerPartyTemplate(4, PartyMemberStrength.AVERAGE), new TrainerPartyTemplate(1, PartyMemberStrength.STRONG)))
       .setPartyMemberFunc(0, getRandomPartyMemberFunc([ Species.BEEDRILL ], TrainerSlot.TRAINER, true, p => {
@@ -616,9 +618,9 @@ function getTrainerConfigForWave(waveIndex: number) {
           p.generateName();
         }
       }))
-      .setPartyMemberFunc(3, getRandomPartyMemberFunc([pool3Mon.species], TrainerSlot.TRAINER, true, p => {
-        if (!isNullOrUndefined(pool3Mon.formIndex)) {
-          p.formIndex = pool3Mon.formIndex;
+      .setPartyMemberFunc(3, getRandomPartyMemberFunc([pool3Mon2.species], TrainerSlot.TRAINER, true, p => {
+        if (!isNullOrUndefined(pool3Mon2.formIndex)) {
+          p.formIndex = pool3Mon2.formIndex;
           p.generateAndPopulateMoveset();
           p.generateName();
         }

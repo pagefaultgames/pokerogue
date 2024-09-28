@@ -354,6 +354,10 @@
       "name": "火焰寶珠",
       "description": "觸碰後會放出熱量的神奇寶珠。\n攜帶後，在戰鬥時會變成灼傷狀態。"
     },
+    "EVOLUTION_TRACKER_GIMMIGHOUL": {
+      "name": "金子寶物",
+      "description": "這個小精靈愛金子! 繼續挑金子然後誰知道什麼會發生!"
+    },
     "BATON": {
       "name": "接力棒",
       "description": "允許在切換寶可夢時保留能力變化, 對陷阱\n同樣生效。"
@@ -491,6 +495,22 @@
     "TART_APPLE": "酸酸蘋果",
     "STRAWBERRY_SWEET": "草莓糖飾",
     "UNREMARKABLE_TEACUP": "凡作茶碗",
+    "UPGRADE": "升級資料",
+    "DUBIOUS_DISC": "可疑修正檔",
+    "DRAGON_SCALE": "龍之鱗片",
+    "PRISM_SCALE": "美麗鱗片",
+    "RAZOR_CLAW": "銳利之爪",
+    "RAZOR_FANG": "銳利之牙",
+    "REAPER_CLOTH": "靈界之布",
+    "ELECTIRIZER": "電力增幅器",
+    "MAGMARIZER": "熔岩增幅器",
+    "PROTECTOR": "護具",
+    "SACHET": "香袋",
+    "WHIPPED_DREAM": "泡沫奶油",
+    "LEADERS_CREST": "頭領憑證",
+    "SUN_FLUTE": "太陽之笛",
+    "MOON_FLUTE": "月亮之笛",
+    
     "CHIPPED_POT": "缺損的茶壺",
     "BLACK_AUGURITE": "黑奇石",
     "GALARICA_CUFF": "伽勒豆蔻手環",
