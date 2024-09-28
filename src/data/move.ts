@@ -5226,6 +5226,9 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
      */
     const switchOutTarget = this.selfSwitch ? user : target;
     if (switchOutTarget instanceof PlayerPokemon) {
+      if (switchOutTarget.scene.getParty().filter((p) => p.isAllowedInBattle() && !p.isOnField()).length < 1) {
+        return false;
+      }
       switchOutTarget.leaveField(this.switchType === SwitchType.SWITCH);
 
       if (switchOutTarget.hp > 0) {
@@ -5234,6 +5237,9 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
       }
       return false;
     } else if (user.scene.currentBattle.battleType !== BattleType.WILD) {
+      if (switchOutTarget.scene.getEnemyParty().filter((p) => p.isAllowedInBattle() && !p.isOnField()).length < 1) {
+        return false;
+      }
       // Switch out logic for trainer battles
       switchOutTarget.leaveField(this.switchType === SwitchType.SWITCH);
 
@@ -5244,6 +5250,9 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
           false, false), MoveEndPhase);
       }
     } else {
+      if (switchOutTarget.isBoss()) {
+        return false;
+      }
       // Switch out logic for everything else (eg: WILD battles)
       switchOutTarget.leaveField(false);
 
