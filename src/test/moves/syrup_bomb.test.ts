@@ -6,6 +6,7 @@ import { BattlerTagType } from "#enums/battler-tag-type";
 import { Stat } from "#enums/stat";
 import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
+import { BattlerIndex } from "#app/battle";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Moves - SYRUP BOMB", () => {
@@ -44,6 +45,8 @@ describe("Moves - SYRUP BOMB", () => {
       expect(targetPokemon.getStatStage(Stat.SPD)).toBe(0);
 
       game.move.select(Moves.SYRUP_BOMB);
+      await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+      await game.move.forceHit();
       await game.toNextTurn();
       expect(targetPokemon.getTag(BattlerTagType.SYRUP_BOMB)).toBeDefined();
       expect(targetPokemon.getStatStage(Stat.SPD)).toBe(-1);
@@ -68,6 +71,8 @@ describe("Moves - SYRUP BOMB", () => {
       const targetPokemon = game.scene.getEnemyPokemon()!;
 
       game.move.select(Moves.SYRUP_BOMB);
+      await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+      await game.move.forceHit();
       await game.toNextTurn();
       expect(targetPokemon.isFullHp()).toBe(true);
       expect(targetPokemon.getTag(BattlerTagType.SYRUP_BOMB)).toBeUndefined();
