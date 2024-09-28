@@ -219,11 +219,14 @@ export class MysteryEncounterBattleStartCleanupPhase extends Phase {
   start() {
     super.start();
 
-    // Lapse any residual flinches but ignore all other turn-end battle tags
+    // Lapse any residual flinches/endures but ignore all other turn-end battle tags
+    const includedLapseTags = [BattlerTagType.FLINCHED, BattlerTagType.ENDURING];
     const field = this.scene.getField(true).filter(p => p.summonData);
     field.forEach(pokemon => {
       const tags = pokemon.summonData.tags;
-      tags.filter(t => t.tagType === BattlerTagType.FLINCHED && !(t.lapse(pokemon, BattlerTagLapseType.TURN_END))).forEach(t => {
+      tags.filter(t => includedLapseTags.includes(t.tagType)
+        && t.lapseTypes.includes(BattlerTagLapseType.TURN_END)
+        && !(t.lapse(pokemon, BattlerTagLapseType.TURN_END))).forEach(t => {
         t.onRemove(pokemon);
         tags.splice(tags.indexOf(t), 1);
       });
