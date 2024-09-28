@@ -5250,7 +5250,7 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
           false, false), MoveEndPhase);
       }
     } else {
-      if (switchOutTarget.isBoss()) {
+      if (user.scene.currentBattle.waveIndex % 10 === 0) {
         return false;
       }
       // Switch out logic for everything else (eg: WILD battles)
