@@ -5210,8 +5210,7 @@ export function initAbilities() {
       .attr(PostSummonMessageAbAttr, (pokemon: Pokemon) => i18next.t("abilityTriggers:postSummonMoldBreaker", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }))
       .attr(MoveAbilityBypassAbAttr),
     new Ability(Abilities.SUPER_LUCK, 4)
-      .attr(BonusCritAbAttr)
-      .partial(),
+      .attr(BonusCritAbAttr),
     new Ability(Abilities.AFTERMATH, 4)
       .attr(PostFaintContactDamageAbAttr, 4)
       .bypassFaint(),
