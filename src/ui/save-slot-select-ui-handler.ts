@@ -34,7 +34,7 @@ export default class SaveSlotSelectUiHandler extends MessageUiHandler {
 
   private scrollCursor: integer = 0;
 
-  private cursorObj: Phaser.GameObjects.NineSlice | null;
+  private cursorObj: Phaser.GameObjects.Container | null;
 
   private sessionSlotsContainerInitialY: number;
 
@@ -151,21 +151,25 @@ export default class SaveSlotSelectUiHandler extends MessageUiHandler {
       switch (button) {
       case Button.UP:
         if (this.cursor) {
+          this.revertSessionSlot(this.cursor);
           success = this.setCursor(this.cursor - 1);
         } else if (this.scrollCursor) {
+          this.revertSessionSlot(this.scrollCursor + this.cursor + 1);
           success = this.setScrollCursor(this.scrollCursor - 1);
         }
         break;
       case Button.DOWN:
         if (this.cursor < 2) {
+          this.revertSessionSlot(this.cursor);
           success = this.setCursor(this.cursor + 1);
         } else if (this.scrollCursor < sessionSlotCount - 3) {
+          this.revertSessionSlot(this.scrollCursor + this.cursor);
           success = this.setScrollCursor(this.scrollCursor + 1);
         }
         break;
       case Button.RIGHT:
         if (this.sessionSlots[this.cursor].hasData) {
-          this.scene.ui.setOverlayMode(Mode.RUN_INFO, this.sessionSlots[this.cursor].saveData, RunDisplayMode.SAVE_PREVIEW);
+          this.scene.ui.setOverlayMode(Mode.RUN_INFO, this.sessionSlots[this.cursor+this.scrollCursor].saveData, RunDisplayMode.SAVE_PREVIEW);
         }
       }
     }
@@ -203,15 +207,28 @@ export default class SaveSlotSelectUiHandler extends MessageUiHandler {
     this.saveSlotSelectMessageBoxContainer.setVisible(!!text?.length);
   }
 
+  revertSessionSlot(cursor: integer): void {
+    const sessionSlot = this.sessionSlots[cursor];
+    if (sessionSlot) {
+      sessionSlot.setPosition(0, cursor * 56);
+    }
+  }
+
   setCursor(cursor: integer): boolean {
     const changed = super.setCursor(cursor);
+    console.log(cursor);
 
     if (!this.cursorObj) {
-      this.cursorObj = this.scene.add.nineslice(0, 0, "select_cursor_highlight_thick", undefined, 296, 44, 6, 6, 6, 6);
-      this.cursorObj.setOrigin(0, 0);
+      this.cursorObj = this.scene.add.container(0, 0);
+      const cursorBox = this.scene.add.nineslice(0, 0, "select_cursor_highlight_thick", undefined, 296, 44, 6, 6, 6, 6);
+      const rightArrow = this.scene.add.image(0, 0, "cursor");
+      rightArrow.setPosition(160, 0);
+      this.cursorObj.add([cursorBox, rightArrow]);
       this.sessionSlotsContainer.add(this.cursorObj);
     }
-    this.cursorObj.setPosition(4, 4 + (cursor + this.scrollCursor) * 56);
+    const cursorPosition = cursor + this.scrollCursor;
+    this.cursorObj.setPosition(145, 26 + (cursorPosition) * 56);
+    this.sessionSlots[cursorPosition].setPosition(-6, (cursor + this.scrollCursor) * 56);
 
     return changed;
   }
@@ -258,6 +275,7 @@ class SessionSlot extends Phaser.GameObjects.Container {
   public slotId: integer;
   public hasData: boolean;
   private loadingLabel: Phaser.GameObjects.Text;
+
   public saveData: SessionSaveData;
 
   constructor(scene: BattleScene, slotId: integer) {
