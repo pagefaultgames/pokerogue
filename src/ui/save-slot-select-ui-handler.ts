@@ -216,7 +216,6 @@ export default class SaveSlotSelectUiHandler extends MessageUiHandler {
 
   setCursor(cursor: integer): boolean {
     const changed = super.setCursor(cursor);
-    console.log(cursor);
 
     if (!this.cursorObj) {
       this.cursorObj = this.scene.add.container(0, 0);
