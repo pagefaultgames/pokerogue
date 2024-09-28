@@ -110,7 +110,7 @@ export interface EnemyPartyConfig {
   countAsSeen?: boolean;
 }
 
-export function getMysteryEncounterKey(encounter: MysteryEncounterType): string {
+export function getMysteryEncounterKey(encounter: MysteryEncounterType | -1): string {
   const key = "mysteryEncounter:";
   switch (encounter) {
   case MysteryEncounterType.MYSTERIOUS_CHALLENGERS:

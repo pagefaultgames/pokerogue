@@ -24,6 +24,7 @@ import { Species } from "#enums/species";
 import { PlayerGender } from "#enums/player-gender";
 import { SettingKeyboard } from "#app/system/settings/settings-keyboard";
 import { getBiomeName } from "#app/data/biomes";
+import { getMysteryEncounterKey } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 
 /**
  * RunInfoUiMode indicates possible overlays of RunInfoUiHandler.
@@ -74,6 +75,7 @@ export default class RunInfoUiHandler extends UiHandler {
     // The import of the modifiersModule is loaded here to sidestep async/await issues.
     this.modifiersModule = Modifier;
     this.runContainer.setVisible(false);
+    this.scene.loadImage("encounter_exclaim", "mystery-encounters");
  	}
 
   /**
@@ -250,7 +252,7 @@ export default class RunInfoUiHandler extends UiHandler {
 
     const enemyContainer = this.scene.add.container(0, 0);
     // Wild - Single and Doubles
-    if (this.runInfo.battleType === BattleType.WILD || (this.runInfo.battleType === BattleType.MYSTERY_ENCOUNTER && !this.runInfo.trainer)) {
+    if (this.runInfo.battleType === BattleType.WILD) {
       switch (this.runInfo.enemyParty.length) {
       case 1:
       // Wild - Singles
@@ -261,7 +263,7 @@ export default class RunInfoUiHandler extends UiHandler {
         this.parseWildDoubleDefeat(enemyContainer);
         break;
       }
-    } else if (this.runInfo.battleType === BattleType.TRAINER || (this.runInfo.battleType === BattleType.MYSTERY_ENCOUNTER && this.runInfo.trainer)) {
+    } else if (this.runInfo.battleType === BattleType.TRAINER) {
       this.loadTrainerSprites(enemyContainer);
       const row_limit = 3;
       this.runInfo.enemyParty.forEach((p, i) => {
@@ -281,11 +283,25 @@ export default class RunInfoUiHandler extends UiHandler {
       }
       const boxString = i18next.t(trainerObj.variant !== TrainerVariant.DOUBLE ? "battle:trainerAppeared" : "battle:trainerAppearedDouble", { trainerName: trainerName }).replace(/\n/g, " ");
       const descContainer = this.scene.add.container(0, 0);
-      this.provideDesc(descContainer, boxString);
+      const textBox = addTextObject(this.scene, 0, 0, boxString, TextStyle.WINDOW, { fontSize : "35px", wordWrap: {width: 150} });
+      descContainer.add(textBox);
       descContainer.setPosition(52, 38);
       this.runResultContainer.add(descContainer);
     } else if (this.runInfo.battleType === BattleType.MYSTERY_ENCOUNTER) {
-      console.log(this.runInfo.mysteryEncounterType);
+      const encounterExclaim = this.scene.add.sprite(0, 0, "encounter_exclaim");
+      encounterExclaim.setPosition(34, 26);
+      encounterExclaim.setScale(0.65);
+      const subSprite = this.scene.add.sprite(56, -106, "pkmn__sub");
+      subSprite.setScale(0.65);
+      subSprite.setPosition(34, 46);
+      this.runResultContainer.add([encounterExclaim, subSprite]);
+      const mysteryEncounterTitle = i18next.t(getMysteryEncounterKey(this.runInfo.mysteryEncounterType)+".title");
+      console.log(mysteryEncounterTitle);
+      const descContainer = this.scene.add.container(0, 0);
+      const textBox = addTextObject(this.scene, 0, 0, mysteryEncounterTitle, TextStyle.WINDOW, { fontSize : "45px", wordWrap: {width: 150} });
+      descContainer.add(textBox);
+      descContainer.setPosition(47, 36);
+      this.runResultContainer.add([encounterExclaim, subSprite, descContainer]);
     }
     this.runResultContainer.add(enemyContainer);
     this.runResultContainer.add(runStatusText);
@@ -440,12 +456,6 @@ export default class RunInfoUiHandler extends UiHandler {
     });
     enemyPartyContainer.setPosition(25, 15);
     enemyContainer.add(enemyPartyContainer);
-  }
-
-  provideDesc(descContainer: Phaser.GameObjects.Container, desc: string) {
-    const textBox = addTextObject(this.scene, 0, 0, desc, TextStyle.MESSAGE, { fontSize : "35px", wordWrap: {width: 150} });
-    console.log(textBox.width);
-    descContainer.add(textBox);
   }
 
   /**
