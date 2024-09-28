@@ -870,9 +870,30 @@ export class EvoTrackerModifier extends PokemonHeldItemModifier {
     return true;
   }
 
+  getIconStackText(scene: BattleScene, virtual?: boolean): Phaser.GameObjects.BitmapText | null {
+    if (this.getMaxStackCount(scene) === 1 || (virtual && !this.virtualStackCount)) {
+      return null;
+    }
+
+    const pokemon = scene.getPokemonById(this.pokemonId);
+
+    this.stackCount = pokemon
+      ? pokemon.evoCounter + pokemon.getHeldItems().filter(m => m instanceof DamageMoneyRewardModifier).length + pokemon.scene.findModifiers(m => m instanceof MoneyMultiplierModifier || m instanceof ExtraModifierModifier).length
+      : this.stackCount;
+
+    const text = scene.add.bitmapText(10, 15, "item-count", this.stackCount.toString(), 11);
+    text.letterSpacing = -0.5;
+    if (this.getStackCount() >= this.required) {
+      text.setTint(0xf89890);
+    }
+    text.setOrigin(0, 0);
+
+    return text;
+  }
+
   getMaxHeldItemCount(pokemon: Pokemon): integer {
     this.stackCount = pokemon.evoCounter + pokemon.getHeldItems().filter(m => m instanceof DamageMoneyRewardModifier).length + pokemon.scene.findModifiers(m => m instanceof MoneyMultiplierModifier || m instanceof ExtraModifierModifier).length;
-    return 1000;
+    return 999;
   }
 }
 
@@ -2415,7 +2436,7 @@ export class MoneyRewardModifier extends ConsumableModifier {
 
     scene.getParty().map(p => {
       if (p.species?.speciesId === Species.GIMMIGHOUL || p.fusionSpecies?.speciesId === Species.GIMMIGHOUL) {
-        p.evoCounter++;
+        p.evoCounter ? p.evoCounter++ : p.evoCounter = 1;
         const modifierType: ModifierType = modifierTypes.EVOLUTION_TRACKER_GIMMIGHOUL();
         const modifier = modifierType!.newModifier(p);
         scene.addModifier(modifier);
