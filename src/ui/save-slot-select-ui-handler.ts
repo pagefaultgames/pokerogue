@@ -150,11 +150,19 @@ export default class SaveSlotSelectUiHandler extends MessageUiHandler {
     } else {
       switch (button) {
       case Button.UP:
-        if (this.cursor) {
+        if (this.cursor < 2) {
           this.revertSessionSlot(this.cursor);
-          success = this.setCursor(this.cursor - 1);
-        } else if (this.scrollCursor) {
-          this.revertSessionSlot(this.scrollCursor + this.cursor + 1);
+          if (this.cursor === 0) {
+            success = this.setCursor(this.cursor);
+          } else {
+            success = this.setCursor(this.cursor - 1);
+          }
+        } else if (this.scrollCursor === 0 && this.cursor === 2) {
+          this.revertSessionSlot(this.cursor);
+          success = this.setScrollCursor(this.scrollCursor);
+          success = this.setCursor(this.cursor-1);
+        } else if (this.scrollCursor > 0) {
+          this.revertSessionSlot(this.scrollCursor + this.cursor);
           success = this.setScrollCursor(this.scrollCursor - 1);
         }
         break;
