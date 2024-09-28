@@ -957,7 +957,7 @@ export class GameData {
       enemyModifiers: scene.findModifiers(() => true, false).map(m => new PersistentModifierData(m, false)),
       arena: new ArenaData(scene.arena),
       pokeballCounts: scene.pokeballCounts,
-      money: scene.money,
+      money: Math.floor(scene.money),
       score: scene.score,
       waveIndex: scene.currentBattle.waveIndex,
       battleType: scene.currentBattle.battleType,
@@ -1047,7 +1047,7 @@ export class GameData {
             scene.pokeballCounts = Overrides.POKEBALL_OVERRIDE.pokeballs;
           }
 
-          scene.money = sessionData.money || 0;
+          scene.money = Math.floor(sessionData.money) || 0;
           scene.updateMoneyText();
 
           if (scene.money > this.gameStats.highestMoney) {
