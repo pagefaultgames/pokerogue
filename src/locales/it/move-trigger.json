@@ -68,5 +68,5 @@
   "exposedMove": "{{pokemonName}} ha identificato\n{{targetPokemonName}}!",
   "chillyReception": "{{pokemonName}} sta per fare una battuta!",
   "safeguard": "Salvaguardia protegge {{targetName}}!",
-  "afterYou": "{{pokemonName}} approfitta della cortesia!"
+  "afterYou": "{{targetName}} approfitta della cortesia!"
 }
