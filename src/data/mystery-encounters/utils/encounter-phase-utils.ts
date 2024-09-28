@@ -109,6 +109,76 @@ export interface EnemyPartyConfig {
   countAsSeen?: boolean;
 }
 
+export function getMysteryEncounterKey(encounter: MysteryEncounterType): string {
+  const key = "mysteryEncounter:";
+  switch (encounter) {
+  case MysteryEncounterType.MYSTERIOUS_CHALLENGERS:
+    return key + "mysteriousChallengers";
+  case MysteryEncounterType.MYSTERIOUS_CHEST:
+    return key + "mysteriousChest";
+  case MysteryEncounterType.DARK_DEAL:
+    return key + "darkDeal";
+  case MysteryEncounterType.FIGHT_OR_FLIGHT:
+    return key + "fightOrFlight";
+  case MysteryEncounterType.SLUMBERING_SNORLAX:
+    return key + "slumberingSnorlax";
+  case MysteryEncounterType.TRAINING_SESSION:
+    return key + "trainingSession";
+  case MysteryEncounterType.DEPARTMENT_STORE_SALE:
+    return key + "departmentStoreSale";
+  case MysteryEncounterType.SHADY_VITAMIN_DEALER:
+    return key + "shadyVitaminDealer";
+  case MysteryEncounterType.FIELD_TRIP:
+    return key + "fieldTrip";
+  case MysteryEncounterType.FIERY_FALLOUT:
+    return key + "fieryFallout";
+  case MysteryEncounterType.LOST_AT_SEA:
+    return key + "lostAtSea";
+  case MysteryEncounterType.SAFARI_ZONE:
+    return key + "safariZone";
+  case MysteryEncounterType.THE_STRONG_STUFF:
+    return key + "theStrongStuff";
+  case MysteryEncounterType.THE_POKEMON_SALESMAN:
+    return key + "pokemonSalesman";
+  case MysteryEncounterType.AN_OFFER_YOU_CANT_REFUSE:
+    return key + "offerYouCantRefuse";
+  case MysteryEncounterType.DELIBIRDY:
+    return key + "delibirdy";
+  case MysteryEncounterType.ABSOLUTE_AVARICE:
+    return key + "absoluteAvarice";
+  case MysteryEncounterType.A_TRAINERS_TEST:
+    return key + "aTrainersTest";
+  case MysteryEncounterType.TRASH_TO_TREASURE:
+    return key + "trashToTreasure";
+  case MysteryEncounterType.BERRIES_ABOUND:
+    return key + "berriesAbound";
+  case MysteryEncounterType.CLOWNING_AROUND:
+    return key + "clowningAround";
+  case MysteryEncounterType.PART_TIMER:
+    return key + "partTimer";
+  case MysteryEncounterType.DANCING_LESSONS:
+    return key + "dancingLessons";
+  case MysteryEncounterType.WEIRD_DREAM:
+    return key + "weirdDream";
+  case MysteryEncounterType.THE_WINSTRATE_CHALLENGE:
+    return key + "theWinstrateChallenge";
+  case MysteryEncounterType.TELEPORTING_HIJINKS:
+    return key + "teleportingHijinks";
+  case MysteryEncounterType.BUG_TYPE_SUPERFAN:
+    return key + "bugTypeSuperfan";
+  case MysteryEncounterType.FUN_AND_GAMES:
+    return key + "funAndGames";
+  case MysteryEncounterType.UNCOMMON_BREED:
+    return key + "uncommonBreed";
+  case MysteryEncounterType.GLOBAL_TRADE_SYSTEM:
+    return key + "globalTradeSystem";
+  case MysteryEncounterType.THE_EXPERT_POKEMON_BREEDER:
+    return key + "expertPokemonBreeder";
+  default:
+    return key;
+  }
+}
+
 /**
  * Generates an enemy party for a mystery encounter battle
  * This will override and replace any standard encounter generation logic

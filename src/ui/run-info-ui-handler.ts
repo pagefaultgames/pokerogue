@@ -5,6 +5,7 @@ import { SessionSaveData } from "../system/game-data";
 import { TextStyle, addTextObject, addBBCodeTextObject, getTextColor } from "./text";
 import { Mode } from "./ui";
 import { addWindow } from "./ui-theme";
+import { getPokeballAtlasKey } from "../data/pokeball";
 import * as Utils from "../utils";
 import PokemonData from "../system/pokemon-data";
 import i18next from "i18next";
@@ -246,7 +247,6 @@ export default class RunInfoUiHandler extends UiHandler {
   private parseRunStatus() {
     console.log(this.runInfo);
     const runStatusText = addTextObject(this.scene, 6, 5, `${i18next.t("saveSlotSelectUiHandler:wave")} ${this.runInfo.waveIndex} - ${getBiomeName(this.runInfo.arena.biome)}`, TextStyle.WINDOW, {fontSize : "65px", lineSpacing: 0.1});
-    this.runResultContainer.add(runStatusText);
 
     const enemyContainer = this.scene.add.container(0, 0);
     // Wild - Single and Doubles
@@ -263,8 +263,19 @@ export default class RunInfoUiHandler extends UiHandler {
       }
     } else if (this.runInfo.battleType === BattleType.TRAINER || (this.runInfo.battleType === BattleType.MYSTERY_ENCOUNTER && this.runInfo.trainer)) {
       this.loadTrainerSprites(enemyContainer);
+      const row_limit = 3;
+      this.runInfo.enemyParty.forEach((p, i) => {
+        const pokeball = this.scene.add.sprite(0, 0, "pb");
+        pokeball.setFrame(getPokeballAtlasKey(p.pokeball));
+        pokeball.setScale(0.5);
+        pokeball.setPosition(52 + ((i % row_limit) * 8), (i <= 2) ? 25 : 32);
+        enemyContainer.add(pokeball);
+      });
+    } else if (this.runInfo.battleType === BattleType.MYSTERY_ENCOUNTER) {
+      console.log(this.runInfo.mysteryEncounterType);
     }
     this.runResultContainer.add(enemyContainer);
+    this.runResultContainer.add(runStatusText);
     this.runContainer.add(this.runResultContainer);
   }
 
@@ -347,8 +358,8 @@ export default class RunInfoUiHandler extends UiHandler {
         }
         enemyContainer.add(doubleContainer);
       } else {
-        const scale = (this.runDisplayMode === RunDisplayMode.RUN_HISTORY) ? 0.35 : 1;
-        const position = (this.runDisplayMode === RunDisplayMode.RUN_HISTORY) ? [12, 28] : [28, 12];
+        const scale = (this.runDisplayMode === RunDisplayMode.RUN_HISTORY) ? 0.35 : 0.65;
+        const position = (this.runDisplayMode === RunDisplayMode.RUN_HISTORY) ? [12, 28] : [35, 36];
         tObjSprite.setScale(scale, scale);
         tObjSprite.setPosition(position[0], position[1]);
         enemyContainer.add(tObjSprite);
