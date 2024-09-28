@@ -14,12 +14,27 @@ export abstract class VersionConverter {
     }
   }
 
+  /**
+   * Iterates through an array of designated migration functions that are each
+   * called one by one to transform the data.
+   * @param data The data to be operated on
+   * @param migrationArr An array of functions that will transform the incoming data
+   */
   callMigrators(data: any, migrationArr: readonly any[]) {
     for (const migrate of migrationArr) {
       migrate(data);
     }
   }
 
+  /**
+   * Uses the current version the incoming data to determine the starting point
+   * of the migration which will cascade up to the latest version, calling the
+   * necessary migration functions in the process.
+   * @param data The data to be operated on
+   * @param curVersion [0] Current major version
+   *                   [1] Current minor version
+   *                   [2] Current patch version
+   */
   abstract applyMigration(data: any, curVersion: number[]): void;
 }
 
@@ -28,7 +43,7 @@ export class SessionVersionConverter extends VersionConverter {
     super(data, gameVersion);
   }
 
-  applyMigration(data: SessionSaveData, curVersion: number[]): void {
+  override applyMigration(data: SessionSaveData, curVersion: number[]): void {
     const [ curMajor, curMinor, curPatch ] = curVersion;
 
     switch (curMajor) {
@@ -52,7 +67,7 @@ export class SystemVersionConverter extends VersionConverter {
     super(data, gameVersion);
   }
 
-  applyMigration(data: SystemSaveData, curVersion: number[]): void {
+  override applyMigration(data: SystemSaveData, curVersion: number[]): void {
     const [ curMajor, curMinor, curPatch ] = curVersion;
 
     switch (curMajor) {
@@ -77,7 +92,7 @@ export class SettingsVersionConverter extends VersionConverter {
     super(data, gameVersion);
   }
 
-  applyMigration(data: Object, curVersion: number[]): void {
+  override applyMigration(data: Object, curVersion: number[]): void {
     const [ curMajor, curMinor, curPatch ] = curVersion;
 
     switch (curMajor) {

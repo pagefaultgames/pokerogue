@@ -2,15 +2,13 @@ import { SettingKeys } from "../../settings/settings";
 import { AbilityAttr, defaultStarterSpecies, DexAttr, SystemSaveData, SessionSaveData  } from "../../game-data";
 import { allSpecies } from "../../../data/pokemon-species";
 
-
 export const systemMigrators = [
   /**
-   * Migrate ability starter data if empty for caught species
+   * Migrate ability starter data if empty for caught species.
    * @param data {@linkcode SystemSaveData}
    */
   function migrateAbilityData(data: SystemSaveData) {
     if (data.starterData && data.dexData) {
-      // Migrate ability starter data if empty for caught species
       Object.keys(data.starterData).forEach(sd => {
         if (data.dexData[sd]?.caughtAttr && (data.starterData[sd] && !data.starterData[sd].abilityAttr)) {
           data.starterData[sd].abilityAttr = 1;
@@ -20,7 +18,7 @@ export const systemMigrators = [
   },
 
   /**
-   * Populate legendary Pokémon statistics if they are missing
+   * Populate legendary Pokémon statistics if they are missing.
    * @param data {@linkcode SystemSaveData}
    */
   function fixLegendaryStats(data: SystemSaveData) {
@@ -44,7 +42,7 @@ export const systemMigrators = [
   },
 
   /**
-   * Unlock all starters' first ability and female gender option
+   * Unlock all starters' first ability and female gender option.
    * @param data {@linkcode SystemSaveData}
    */
   function fixStarterData(data: SystemSaveData) {
