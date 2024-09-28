@@ -1047,7 +1047,7 @@ export class GameData {
             scene.pokeballCounts = Overrides.POKEBALL_OVERRIDE.pokeballs;
           }
 
-          scene.money = Math.floor(sessionData.money) || 0;
+          scene.money = Math.floor(sessionData.money || 0);
           scene.updateMoneyText();
 
           if (scene.money > this.gameStats.highestMoney) {
