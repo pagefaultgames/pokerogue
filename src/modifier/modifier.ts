@@ -1,5 +1,5 @@
 import * as ModifierTypes from "./modifier-type";
-import { ModifierType, modifierTypes } from "./modifier-type";
+import { getModifierType, ModifierType, modifierTypes } from "./modifier-type";
 import BattleScene from "../battle-scene";
 import { getLevelTotalExp } from "../data/exp";
 import { MAX_PER_TYPE_POKEBALLS, PokeballType } from "../data/pokeball";
@@ -852,10 +852,7 @@ export class EvoTrackerModifier extends PokemonHeldItemModifier {
   }
 
   matchType(modifier: Modifier): boolean {
-    if (modifier instanceof EvoTrackerModifier) {
-      return (modifier as EvoTrackerModifier).species === this.species;
-    }
-    return false;
+    return modifier instanceof EvoTrackerModifier && modifier.species === this.species && modifier.required === this.required;
   }
 
   clone(): PersistentModifier {
@@ -863,7 +860,7 @@ export class EvoTrackerModifier extends PokemonHeldItemModifier {
   }
 
   getArgs(): any[] {
-    return super.getArgs().concat(this.species);
+    return super.getArgs().concat([this.species, this.required]);
   }
 
   apply(args: any[]): boolean {
@@ -2437,8 +2434,7 @@ export class MoneyRewardModifier extends ConsumableModifier {
     scene.getParty().map(p => {
       if (p.species?.speciesId === Species.GIMMIGHOUL || p.fusionSpecies?.speciesId === Species.GIMMIGHOUL) {
         p.evoCounter ? p.evoCounter++ : p.evoCounter = 1;
-        const modifierType: ModifierType = modifierTypes.EVOLUTION_TRACKER_GIMMIGHOUL();
-        const modifier = modifierType!.newModifier(p);
+        const modifier = getModifierType(modifierTypes.EVOLUTION_TRACKER_GIMMIGHOUL).newModifier(p) as EvoTrackerModifier;
         scene.addModifier(modifier);
       }
     });
