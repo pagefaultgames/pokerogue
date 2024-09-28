@@ -2598,7 +2598,8 @@ export class HealShopCostModifier extends PersistentModifier {
   }
 
   apply(args: any[]): boolean {
-    (args[0] as Utils.IntegerHolder).value *= this.shopMultiplier;
+    const moneyCost = args[0] as Utils.IntegerHolder;
+    moneyCost.value = Math.floor(moneyCost.value * this.shopMultiplier);
 
     return true;
   }
