@@ -283,7 +283,7 @@ export default class RunInfoUiHandler extends UiHandler {
       }
       const boxString = i18next.t(trainerObj.variant !== TrainerVariant.DOUBLE ? "battle:trainerAppeared" : "battle:trainerAppearedDouble", { trainerName: trainerName }).replace(/\n/g, " ");
       const descContainer = this.scene.add.container(0, 0);
-      const textBox = addTextObject(this.scene, 0, 0, boxString, TextStyle.WINDOW, { fontSize : "35px", wordWrap: {width: 150} });
+      const textBox = addTextObject(this.scene, 0, 0, boxString, TextStyle.WINDOW, { fontSize : "35px", wordWrap: {width: 170} });
       descContainer.add(textBox);
       descContainer.setPosition(52, 38);
       this.runResultContainer.add(descContainer);
@@ -388,7 +388,7 @@ export default class RunInfoUiHandler extends UiHandler {
         enemyContainer.add(doubleContainer);
       } else {
         const scale = (this.runDisplayMode === RunDisplayMode.RUN_HISTORY) ? 0.35 : 0.65;
-        const position = (this.runDisplayMode === RunDisplayMode.RUN_HISTORY) ? [12, 28] : [35, 36];
+        const position = (this.runDisplayMode === RunDisplayMode.RUN_HISTORY) ? [12, 28] : [32, 36];
         tObjSprite.setScale(scale, scale);
         tObjSprite.setPosition(position[0], position[1]);
         enemyContainer.add(tObjSprite);
