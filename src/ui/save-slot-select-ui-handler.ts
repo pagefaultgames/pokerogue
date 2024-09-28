@@ -177,7 +177,7 @@ export default class SaveSlotSelectUiHandler extends MessageUiHandler {
         break;
       case Button.RIGHT:
         if (this.sessionSlots[this.cursor].hasData) {
-          this.scene.ui.setOverlayMode(Mode.RUN_INFO, this.sessionSlots[this.cursor+this.scrollCursor].saveData, RunDisplayMode.SAVE_PREVIEW);
+          this.scene.ui.setOverlayMode(Mode.RUN_INFO, this.sessionSlots[this.cursor+this.scrollCursor].saveData, RunDisplayMode.SESSION_PREVIEW);
         }
       }
     }

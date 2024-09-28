@@ -39,7 +39,7 @@ enum RunInfoUiMode {
 
 export enum RunDisplayMode {
   RUN_HISTORY,
-  SAVE_PREVIEW
+  SESSION_PREVIEW
 }
 
 /**
@@ -101,7 +101,7 @@ export default class RunInfoUiHandler extends UiHandler {
     if (this.runDisplayMode === RunDisplayMode.RUN_HISTORY) {
       this.runInfo = this.scene.gameData.parseSessionData(JSON.stringify(run.entry));
       this.isVictory = run.isVictory ?? false;
-    } else if (this.runDisplayMode === RunDisplayMode.SAVE_PREVIEW) {
+    } else if (this.runDisplayMode === RunDisplayMode.SESSION_PREVIEW) {
       this.runInfo = args[0];
     }
     // Assigning information necessary for the UI's creation
@@ -120,7 +120,7 @@ export default class RunInfoUiHandler extends UiHandler {
     this.runResultContainer.add(runResultWindow);
     if (this.runDisplayMode === RunDisplayMode.RUN_HISTORY) {
       this.parseRunResult();
-    } else if (this.runDisplayMode === RunDisplayMode.SAVE_PREVIEW) {
+    } else if (this.runDisplayMode === RunDisplayMode.SESSION_PREVIEW) {
       this.parseRunStatus();
     }
 
@@ -246,8 +246,13 @@ export default class RunInfoUiHandler extends UiHandler {
     this.runContainer.add(this.runResultContainer);
   }
 
+  /**
+   * This function is used when the Run Info UI is used to preview a Session
+   * It edits runResultContainer, but most importantly - does not display the negative results of a Mystery Encounter or any details of a trainer's party
+   * Trainer Parties are replaced with their sprites, names, and their party size.
+   * Mystery Encounters contain sprites associated with MEs + the title of the specific ME.
+   */
   private parseRunStatus() {
-    console.log(this.runInfo);
     const runStatusText = addTextObject(this.scene, 6, 5, `${i18next.t("saveSlotSelectUiHandler:wave")} ${this.runInfo.waveIndex} - ${getBiomeName(this.runInfo.arena.biome)}`, TextStyle.WINDOW, {fontSize : "65px", lineSpacing: 0.1});
 
     const enemyContainer = this.scene.add.container(0, 0);
@@ -270,7 +275,7 @@ export default class RunInfoUiHandler extends UiHandler {
         const pokeball = this.scene.add.sprite(0, 0, "pb");
         pokeball.setFrame(getPokeballAtlasKey(p.pokeball));
         pokeball.setScale(0.5);
-        pokeball.setPosition(52 + ((i % row_limit) * 8), (i <= 2) ? 25 : 32);
+        pokeball.setPosition(52 + ((i % row_limit) * 8), (i <= 2) ? 18 : 25);
         enemyContainer.add(pokeball);
       });
       const trainerObj = this.runInfo.trainer.toTrainer(this.scene);
@@ -283,9 +288,9 @@ export default class RunInfoUiHandler extends UiHandler {
       }
       const boxString = i18next.t(trainerObj.variant !== TrainerVariant.DOUBLE ? "battle:trainerAppeared" : "battle:trainerAppearedDouble", { trainerName: trainerName }).replace(/\n/g, " ");
       const descContainer = this.scene.add.container(0, 0);
-      const textBox = addTextObject(this.scene, 0, 0, boxString, TextStyle.WINDOW, { fontSize : "35px", wordWrap: {width: 170} });
+      const textBox = addTextObject(this.scene, 0, 0, boxString, TextStyle.WINDOW, { fontSize : "35px", wordWrap: {width: 200} });
       descContainer.add(textBox);
-      descContainer.setPosition(52, 38);
+      descContainer.setPosition(52, 29);
       this.runResultContainer.add(descContainer);
     } else if (this.runInfo.battleType === BattleType.MYSTERY_ENCOUNTER) {
       const encounterExclaim = this.scene.add.sprite(0, 0, "encounter_exclaim");
@@ -294,13 +299,11 @@ export default class RunInfoUiHandler extends UiHandler {
       const subSprite = this.scene.add.sprite(56, -106, "pkmn__sub");
       subSprite.setScale(0.65);
       subSprite.setPosition(34, 46);
-      this.runResultContainer.add([encounterExclaim, subSprite]);
       const mysteryEncounterTitle = i18next.t(getMysteryEncounterKey(this.runInfo.mysteryEncounterType)+".title");
-      console.log(mysteryEncounterTitle);
       const descContainer = this.scene.add.container(0, 0);
-      const textBox = addTextObject(this.scene, 0, 0, mysteryEncounterTitle, TextStyle.WINDOW, { fontSize : "45px", wordWrap: {width: 150} });
+      const textBox = addTextObject(this.scene, 0, 0, mysteryEncounterTitle, TextStyle.WINDOW, { fontSize : "45px", wordWrap: {width: 160} });
       descContainer.add(textBox);
-      descContainer.setPosition(47, 36);
+      descContainer.setPosition(47, 37);
       this.runResultContainer.add([encounterExclaim, subSprite, descContainer]);
     }
     this.runResultContainer.add(enemyContainer);
@@ -359,10 +362,14 @@ export default class RunInfoUiHandler extends UiHandler {
     enemyContainer.setPosition(8, 14);
   }
 
+  /**
+   * This loads the enemy sprites, positions, and scales them according to the current display mode of the RunInfo UI and then adds them to the container parameter.
+   * Used by parseRunStatus and parseTrainerDefeat
+   * @param {Phaser.GameObjects.Container} enemyContainer a Phaser Container that should hold enemy sprites
+   */
   private loadTrainerSprites(enemyContainer: Phaser.GameObjects.Container) {
     // Creating the trainer sprite and adding it to enemyContainer
     const tObj = this.runInfo.trainer.toTrainer(this.scene);
-
     // Loads trainer assets on demand, as they are not loaded by default in the scene
     tObj.config.loadAssets(this.scene, this.runInfo.trainer.variant).then(() => {
       const tObjSpriteKey = tObj.config.getSpriteKey(this.runInfo.trainer.variant === TrainerVariant.FEMALE, false);
@@ -380,10 +387,11 @@ export default class RunInfoUiHandler extends UiHandler {
           doubleContainer.add(tObjPartnerSprite);
           doubleContainer.setPosition(12, 38);
         } else {
-          tObjSprite.setScale(0.75);
-          tObjPartnerSprite.setScale(0.75);
+          tObjSprite.setScale(0.55);
+          tObjSprite.setPosition(-9, -3);
+          tObjPartnerSprite.setScale(0.55);
           doubleContainer.add([tObjSprite, tObjPartnerSprite]);
-          doubleContainer.setPosition(8, 14);
+          doubleContainer.setPosition(28, 40);
         }
         enemyContainer.add(doubleContainer);
       } else {
