@@ -1017,26 +1017,26 @@ export class PokemonIncrementingStatModifier extends PokemonHeldItemModifier {
   }
 
   shouldApply(args: any[]): boolean {
-    return super.shouldApply(args) && args.length === 2 && args[1] instanceof Array;
+    return super.shouldApply(args) && args.length === 3 && args[2] instanceof Utils.IntegerHolder;
   }
 
   apply(args: any[]): boolean {
-    // Modifies the passed in stats[] array by +1 per stack for HP, +2 per stack for other stats
+    // Modifies the passed in stat integer holder by +1 per stack for HP, +2 per stack for other stats
     // If the Macho Brace is at max stacks (50), adds additional 5% to total HP and 10% to other stats
-    const targetToApply = args[0] as Pokemon;
+    const isHp = args[1] === Stat.HP;
+    const statHolder = args[2] as Utils.IntegerHolder;
 
-    args[1].forEach((v, i) => {
-      const isHp = i === 0;
-      // Doesn't modify HP if holder has Wonder Guard
-      if (!isHp || !targetToApply.hasAbility(Abilities.WONDER_GUARD)) {
-        let mult = 1;
-        if (this.stackCount === this.getMaxHeldItemCount()) {
-          mult = isHp ? 1.05 : 1.1;
-        }
-        const newVal = Math.floor((v + this.stackCount * (isHp ? 1 : 2)) * mult);
-        args[1][i] = Math.min(Math.max(newVal, 1), 999999);
+    if (isHp) {
+      statHolder.value += this.stackCount;
+      if (this.stackCount === this.getMaxHeldItemCount()) {
+        statHolder.value = Math.floor(statHolder.value * 1.05);
       }
-    });
+    } else {
+      statHolder.value += 2 * this.stackCount;
+      if (this.stackCount === this.getMaxHeldItemCount()) {
+        statHolder.value = Math.floor(statHolder.value * 1.1);
+      }
+    }
 
     return true;
   }
@@ -2604,7 +2604,7 @@ export class HealShopCostModifier extends PersistentModifier {
   constructor(type: ModifierType, shopMultiplier: number, stackCount?: integer) {
     super(type, stackCount);
 
-    this.shopMultiplier = shopMultiplier;
+    this.shopMultiplier = shopMultiplier ?? 2.5;
   }
 
   match(modifier: Modifier): boolean {
@@ -2616,9 +2616,14 @@ export class HealShopCostModifier extends PersistentModifier {
   }
 
   apply(args: any[]): boolean {
-    (args[0] as Utils.IntegerHolder).value *= this.shopMultiplier;
+    const moneyCost = args[0] as Utils.NumberHolder;
+    moneyCost.value = Math.floor(moneyCost.value * this.shopMultiplier);
 
     return true;
+  }
+
+  getArgs(): any[] {
+    return super.getArgs().concat(this.shopMultiplier);
   }
 
   getMaxStackCount(scene: BattleScene): integer {

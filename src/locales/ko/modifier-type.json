@@ -358,9 +358,13 @@
       "name": "화염구슬",
       "description": "이 도구를 지닌 포켓몬은 턴이 끝나는 시점에 상태이상에 걸리지 않았다면 화상 상태가 된다."
     },
+    "EVOLUTION_TRACKER_GIMMIGHOUL": {
+      "name": "보물",
+      "description": "이 포켓몬은 보물을 좋아한다. 보물을 모으다 보면 어떤 일이 일어날 지도 모른다!"
+    },
     "BATON": {
       "name": "배턴",
-      "description": "포켓몬을 교체할 때 효과를 넘겨줄 수 있으며, 함정의 영향을 받지 않게 함"
+      "description": "포켓몬을 교체할 때 효과를 넘겨줄 수 있으며, 함정의 영향을 받지 않게 한다."
     },
     "SHINY_CHARM": {
       "name": "빛나는부적",
@@ -495,6 +499,22 @@
     "TART_APPLE": "새콤한사과",
     "STRAWBERRY_SWEET": "딸기사탕공예",
     "UNREMARKABLE_TEACUP": "범작찻잔",
+    "UPGRADE": "업그레이드",
+    "DUBIOUS_DISC": "괴상한패치",
+    "DRAGON_SCALE": "용의비늘",
+    "PRISM_SCALE": "고운비늘",
+    "RAZOR_CLAW": "예리한손톱",
+    "RAZOR_FANG": "예리한이빨",
+    "REAPER_CLOTH": "영계의천",
+    "ELECTIRIZER": "에레키부스터",
+    "MAGMARIZER": "마그마부스터",
+    "PROTECTOR": "프로텍터",
+    "SACHET": "향기주머니",
+    "WHIPPED_DREAM": "휘핑크림",
+    "LEADERS_CREST": "대장의징표",
+    "SUN_FLUTE": "태양의피리",
+    "MOON_FLUTE": "달의피리",
+    
     "CHIPPED_POT": "이빠진포트",
     "BLACK_AUGURITE": "검은휘석",
     "GALARICA_CUFF": "가라두구팔찌",
