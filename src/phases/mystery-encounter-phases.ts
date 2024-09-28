@@ -25,6 +25,7 @@ import { GameOverPhase } from "#app/phases/game-over-phase";
 import { SwitchPhase } from "#app/phases/switch-phase";
 import { SeenEncounterData } from "#app/data/mystery-encounters/mystery-encounter-save-data";
 import { SwitchType } from "#enums/switch-type";
+import { BattlerTagType } from "#enums/battler-tag-type";
 
 /**
  * Will handle (in order):
@@ -218,9 +219,14 @@ export class MysteryEncounterBattleStartCleanupPhase extends Phase {
   start() {
     super.start();
 
+    // Lapse any residual flinches but ignore all other turn-end battle tags
     const field = this.scene.getField(true).filter(p => p.summonData);
     field.forEach(pokemon => {
-      pokemon.lapseTags(BattlerTagLapseType.TURN_END);
+      const tags = pokemon.summonData.tags;
+      tags.filter(t => t.tagType === BattlerTagType.FLINCHED && !(t.lapse(pokemon, BattlerTagLapseType.TURN_END))).forEach(t => {
+        t.onRemove(pokemon);
+        tags.splice(tags.indexOf(t), 1);
+      });
     });
 
     // Remove any status tick phases
