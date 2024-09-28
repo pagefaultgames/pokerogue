@@ -5244,6 +5244,9 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
           false, false), MoveEndPhase);
       }
     } else {
+      if (switchOutTarget.isBoss()) {
+        return false;
+      }
       // Switch out logic for everything else (eg: WILD battles)
       switchOutTarget.leaveField(false);
 
