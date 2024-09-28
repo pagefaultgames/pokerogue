@@ -749,12 +749,16 @@
     "encounter": {
       "1": "Parece que aqui é o fim da linha para você!",
       "2": "Você é um treinador, não é? Temo que isso não lhe dê o direito de interferir em nosso trabalho.",
-      "3": "Sou da Macro Cosmos Seguros! Já tem um seguro de vida?"
+      "3": "Sou da Macro Cosmos Seguros! Já tem um seguro de vida?",
+      "4": "Te encontrei! Nesse caso, é hora de uma batalha Pokémon!",
+      "5": "Ouvir uma bronca da Srta. Oleana é bem pior do que qualquer coisa que você possa fazer!"
     },
     "victory": {
       "1": "Eu não tenho muita escolha a não ser recuar respeitosamente.",
       "2": "Ter que desistir do meu dinheiro... Perder significa que estou de volta no vermelho...",
-      "3": "Ninguém pode vencer a Macro Cosmos quando se trata de nossa dedicação ao trabalho!"
+      "3": "Ninguém pode vencer a Macro Cosmos quando se trata de nossa dedicação ao trabalho!",
+      "4": "Eu até troquei meu Pokémon...",
+      "5": "As batalhas não funcionaram... A única coisa a fazer agora é fugir!"
     }
   },
   "oleana": {
@@ -767,6 +771,73 @@
       "1": "*suspiro* Eu não consegui vencer... Oleana... você realmente é uma mulher sem esperança.",
       "2": "Aff! Isso é inaceitável... O que eu estava pensando... Qualquer treinador que chega tão longe não seria um fracote...",
       "3": "*suspiro* Eu sou uma Oleana cansada..."
+    }
+  },
+  "star_grunt": {
+    "encounter": {
+      "1": "Nós somos a Equipe Estrela, garoto. Brilhamos tão forte que dói olhar pra nós!",
+      "2": "Vamos com tudo pra cima de você - Hasta la vistaaar! ★",
+      "3": "Se você não sair rapidinho, vou ter que me defender. Entendeu?",
+      "4": "Desculpe, mas se você não der meia-volta, amigo, vamos ter que te despachar!",
+      "4_female": "Desculpe, mas se você não der meia-volta, amiga, vamos ter que te despachar!",
+      "5": "Ótimo. Lá vem mais um qualquer para estragar o meu dia."
+    },
+    "victory": {
+      "1": "Como é que EU estou vendo estrelas?!",
+      "2": "Você é assustador, garoto. Se você se juntasse à Equipe Estrela, estaria no topo rapidinho!",
+      "3": "Me defendi bem... Mas não foi o suficiente!",
+      "4": "H-hasta la vistar... ★",
+      "5": "Eu não achei que o trabalho de recruta da Equipe Estrela seria uma tarefa tão pesada..."
+    }
+  },
+  "giacomo": {
+    "encounter": {
+      "1": "Você realmente não pensa muito, né? Declarar guerra contra a Equipe Estrela é uma jogada muito ruim.",
+      "2": "Vou tocar uma sinfonia do seu fracasso enquanto você cai e queima. Vamos começar a festa!"
+    },
+    "victory": {
+      "1": "Acho que é isso...",
+      "2": "Você transformou minha melodia em um lamento..."
+    }
+  },
+  "mela": {
+    "encounter": {
+      "1": "Então você é o idiota que arrumou briga com a Equipe Estrela... Prepare-se para ser destruído.",
+      "2": "Tudo bem, VAMOS LÁ! Vou explodir tudo!"
+    },
+    "victory": {
+      "1": "Ugh. É assim que isso vai acabar? Que problema...",
+      "2": "Usei tudo o que eu tinha... e agora apaguei."
+    }
+  },
+  "atticus": {
+    "encounter": {
+      "1": "Você tem coragem de mostrar suas garras para a Equipe Estrela. Venha, então, vil criatura!",
+      "2": "Esteja avisado—não te darei misericórdia! Em guarda!"
+    },
+    "victory": {
+      "1": "Perdoem-me, meus amigos...",
+      "2": "Você me venceu completamente. Mas sua vitória não me trouxe amargura—tamanha foi sua brilhante execução."
+    }
+  },
+  "ortega": {
+    "encounter": {
+      "1": "Prometo que serei gentil, então não me culpe quando essa batalha te mandar chorando de volta para casa!",
+      "2": "Vou apagar esse sorriso convencido do seu rosto com certeza! Você vai perder!"
+    },
+    "victory": {
+      "1": "Ugh! Como eu pude PERDER! Que RAIVA!",
+      "2": "Arrrrgggh! Essa sua força é tão INJUSTA."
+    }
+  },
+  "eri": {
+    "encounter": {
+      "1": "Não importa quem você é. Vou derrubar qualquer um que tente destruir a Equipe Estrela!",
+      "2": "Eu dou tudo de mim, e isso é uma promessa! Vamos ver quem fica de pé no final!"
+    },
+    "victory": {
+      "1": "Me desculpem, pessoal...",
+      "2": "Dei tudo de mim, mas não foi o suficiente—eu não fui o suficiente..."
     }
   },
   "rocket_boss_giovanni_1": {
@@ -966,6 +1037,141 @@
     },
     "defeat": {
       "1": "Eu suponho que deve parecer que estou fazendo algo terrível. Eu não espero que você entenda.\n$Mas eu devo fornecer à região de Galar energia ilimitada para garantir prosperidade eterna."
+    }
+  },
+  "star_boss_penny_1": {
+    "encounter": {
+      "1": "Eu sou a grande chefe da Equipe Estrela. Meu nome é Cassiopeia. \n$Agora, ajoelhe-se diante do poder esmagador da fundadora da Equipe Estrela!"
+    },
+    "victory": {
+      "1": "... ... .."
+    },
+    "defeat": {
+      "1": "Heh..."
+    }
+  },
+  "star_boss_penny_2": {
+    "encounter": {
+      "1": "Não vou me segurar nesta batalha! Vou permanecer fiel ao código da Equipe Estrela! \n$Meu poder Veevee vai te reduzir a pó estelar!"
+    },
+    "victory": {
+      "1": "...Agora acabou tudo."
+    },
+    "defeat": {
+      "1": "Não posso te culpar por suas habilidades de batalha... Considerando como os chefes caíram diante de você."
+    }
+  },
+  "stat_trainer_buck": {
+    "encounter": {
+      "1": "...Estou te falando agora. Eu sou muito durão. Finge surpresa!",
+      "2": "Posso sentir meus Pokémon tremendo dentro de suas Pokébolas!"
+    },
+    "victory": {
+      "1": "Hehehe!\nVocê é uma máquina!",
+      "2": "Hehehe!\nVocê é uma máquina!"
+    },
+    "defeat": {
+      "1": "Uau! Acho que vocês estão sem gás.",
+      "2": "Uau! Acho que vocês estão sem gás."
+    }
+  },
+  "stat_trainer_cheryl": {
+    "encounter": {
+      "1": "Meus Pokémon estavam ansiosos por uma batalha.",
+      "2": "Devo avisá-lo, meus Pokémon podem ser bastante agitados.",
+      "2_female": "Devo avisá-la, meus Pokémon podem ser bastante agitados."
+    },
+    "victory": {
+      "1": "Acertar o equilíbrio certo entre ataque e defesa... Não é fácil de fazer.",
+      "2": "Acertar o equilíbrio certo entre ataque e defesa... Não é fácil de fazer."
+    },
+    "defeat": {
+      "1": "Seus Pokémon precisam de cura?",
+      "2": "Seus Pokémon precisam de cura?"
+    }
+  },
+  "stat_trainer_marley": {
+    "encounter": {
+      "1": "... Tá.\nVou dar o meu melhor.",
+      "2": "... Tá.\nEu... não vou perder...!"
+    },
+    "victory": {
+      "1": "... Awww.",
+      "2": "... Awww."
+    },
+    "defeat": {
+      "1": "... Adeus.",
+      "2": "... Adeus."
+    }
+  },
+  "stat_trainer_mira": {
+    "encounter": {
+      "1": "Você ficará surpreso com a Mira!",
+      "1_female": "Você ficará surpresa com a Mira!",
+      "2": "Mira vai te mostrar que ela não se perde mais!"
+    },
+    "victory": {
+      "1": "Mira se pergunta se conseguirá ir longe nessa terra.",
+      "2": "Mira se pergunta se conseguirá ir longe nessa terra."
+    },
+    "defeat": {
+      "1": "Mira sabia que venceria!",
+      "2": "Mira sabia que venceria!"
+    }
+  },
+  "stat_trainer_riley": {
+    "encounter": {
+      "1": "Lutar é nossa forma de saudação!",
+      "2": "Estamos fazendo de tudo para derrubar seus Pokémon."
+    },
+    "victory": {
+      "1": "Às vezes, lutamos e, às vezes, nos unimos...$É ótimo como Treinadores podem interagir.",
+      "2": "Às vezes, lutamos e, às vezes, nos unimos...$É ótimo como Treinadores podem interagir."
+    },
+    "defeat": {
+      "1": "Você fez uma bela exibição.\nMelhor sorte na próxima vez.",
+      "2": "Você fez uma bela exibição.\nMelhor sorte na próxima vez."
+    }
+  },
+  "winstrates_victor": {
+    "encounter": {
+      "1": "Esse é o espírito! Gosto de você!"
+    },
+    "victory": {
+      "1": "A-ha! Você é mais forte do que eu pensei!"
+    }
+  },
+  "winstrates_victoria": {
+    "encounter": {
+      "1": "Meu Deus! Você não é jovem?$Deve ser um grande Treinador para derrotar meu marido.$Acho que agora é a minha vez de lutar!",
+      "1_female": "Meu Deus! Você não é jovem?$Deve ser uma grande Treinadora para derrotar meu marido.$Acho que agora é a minha vez de lutar!"
+    },
+    "victory": {
+      "1": "Uwah! Quão forte você é?!"
+    }
+  },
+  "winstrates_vivi": {
+    "encounter": {
+      "1": "Você é mais forte que a Mamãe? Uau!$Mas eu também sou forte!\nDe verdade! Falando sério!"
+    },
+    "victory": {
+      "1": "Ahn? Eu perdi mesmo?\nSnif... Vovóóó!"
+    }
+  },
+  "winstrates_vicky": {
+    "encounter": {
+      "1": "Como ousa fazer minha preciosa\nneta chorar!$Vejo que preciso lhe dar uma lição.\nPrepare-se para sentir o ferrão da derrota!"
+    },
+    "victory": {
+      "1": "Uau! Tão forte!\nMinha neta não estava mentindo."
+    }
+  },
+  "winstrates_vito": {
+    "encounter": {
+      "1": "Treinei com toda a minha família,\ncada um de nós!$Não vou perder para para ninguém!"
+    },
+    "victory": {
+      "1": "Eu era melhor do que todos em minha família.\nEu nunca perdi antes..."
     }
   },
   "brock": {

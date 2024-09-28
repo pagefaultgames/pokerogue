@@ -68,6 +68,20 @@
     "BaseStatBoosterModifierType": {
       "description": "增加10%持有者的{{stat}}，\n个体值越高堆叠上限越高。"
     },
+    "PokemonBaseStatTotalModifierType": {
+      "name": "Shuckle Juice",
+      "description": "{{increaseDecrease}} all of the holder's base stats by {{statValue}}. You were {{blessCurse}} by the Shuckle.",
+      "extra": {
+        "increase": "Increases",
+        "decrease": "Decreases",
+        "blessed": "blessed",
+        "cursed": "cursed"
+      }
+    },
+    "PokemonBaseStatFlatModifierType": {
+      "name": "Old Gateau",
+      "description": "Increases the holder's {{stats}} base stats by {{statValue}}. Found after a strange dream."
+    },
     "AllPokemonFullHpRestoreModifierType": {
       "description": "所有宝可梦完全回复HP。"
     },
@@ -344,6 +358,10 @@
       "name": "火焰宝珠",
       "description": "触碰后会放出热量的神奇宝珠。\n携带后，在战斗时会变成灼伤状态。"
     },
+    "EVOLUTION_TRACKER_GIMMIGHOUL": {
+      "name": "金子宝物",
+      "description": "这个小精靈爱金子! 继续挑金子然后谁知道什么会发生!"
+    },
     "BATON": {
       "name": "接力棒",
       "description": "允许在切换宝可梦时保留能力变化, 对陷阱\n同样生效。"
@@ -401,7 +419,13 @@
     "ENEMY_FUSED_CHANCE": {
       "name": "融合硬币",
       "description": "增加1%野生融合宝可梦出现概率。"
-    }
+    },
+
+    "MYSTERY_ENCOUNTER_SHUCKLE_JUICE": { "name": "Shuckle Juice" },
+    "MYSTERY_ENCOUNTER_BLACK_SLUDGE": { "name": "Black Sludge", "description": "The stench is so powerful that shops will only sell you items at a steep cost increase." },
+    "MYSTERY_ENCOUNTER_MACHO_BRACE": { "name": "Macho Brace", "description": "Defeating a Pokémon grants the holder a Macho Brace stack. Each stack slightly boosts stats, with an extra bonus at max stacks." },
+    "MYSTERY_ENCOUNTER_OLD_GATEAU": { "name": "Old Gateau", "description": "Increases the holder's {{stats}} stats by {{statValue}}." },
+    "MYSTERY_ENCOUNTER_GOLDEN_BUG_NET": { "name": "Golden Bug Net", "description": "Imbues the owner with luck to find Bug Type Pokémon more often. Has a strange heft to it." }
   },
   "SpeciesBoosterItem": {
     "LIGHT_BALL": {
@@ -475,6 +499,22 @@
     "TART_APPLE": "酸酸苹果",
     "STRAWBERRY_SWEET": "草莓糖饰",
     "UNREMARKABLE_TEACUP": "凡作茶碗",
+    "UPGRADE": "升级数据",
+    "DUBIOUS_DISC": "可疑补丁",
+    "DRAGON_SCALE": "龙之鳞片",
+    "PRISM_SCALE": "美丽鳞片",
+    "RAZOR_CLAW": "锐利之爪",
+    "RAZOR_FANG": "锐利之牙",
+    "REAPER_CLOTH": "灵界之布",
+    "ELECTIRIZER": "电力增幅器",
+    "MAGMARIZER": "熔岩增幅器",
+    "PROTECTOR": "护具",
+    "SACHET": "香袋",
+    "WHIPPED_DREAM": "泡沫奶油",
+    "LEADERS_CREST": "头领凭证",
+    "SUN_FLUTE": "太阳之笛",
+    "MOON_FLUTE": "月亮之笛",
+    
     "CHIPPED_POT": "缺损的茶壶",
     "BLACK_AUGURITE": "黑奇石",
     "GALARICA_CUFF": "伽勒豆蔻手环",

@@ -46,6 +46,7 @@ export const BerriesAboundEncounter: MysteryEncounter =
     .withSceneWaveRangeRequirement(...CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES)
     .withCatchAllowed(true)
     .withHideWildIntroMessage(true)
+    .withFleeAllowed(false)
     .withIntroSpriteConfigs([]) // Set in onInit()
     .withIntroDialogue([
       {
@@ -82,7 +83,7 @@ export const BerriesAboundEncounter: MysteryEncounter =
       const { spriteKey, fileRoot } = getSpriteKeysFromPokemon(bossPokemon);
       encounter.spriteConfigs = [
         {
-          spriteKey: "berry_bush",
+          spriteKey: "berries_abound_bush",
           fileRoot: "mystery-encounters",
           x: 25,
           y: -6,
@@ -102,7 +103,7 @@ export const BerriesAboundEncounter: MysteryEncounter =
       ];
 
       // Get fastest party pokemon for option 2
-      const fastestPokemon = getHighestStatPlayerPokemon(scene, PERMANENT_STATS[Stat.SPD], true);
+      const fastestPokemon = getHighestStatPlayerPokemon(scene, PERMANENT_STATS[Stat.SPD], true, false);
       encounter.misc.fastestPokemon = fastestPokemon;
       encounter.misc.enemySpeed = bossPokemon.getStat(Stat.SPD);
       encounter.setDialogueToken("fastestPokemon", fastestPokemon.getNameToRender());
@@ -127,15 +128,15 @@ export const BerriesAboundEncounter: MysteryEncounter =
         const encounter = scene.currentBattle.mysteryEncounter!;
         const numBerries = encounter.misc.numBerries;
 
-        const doBerryRewards = async () => {
-          const berryText = numBerries + " " + i18next.t(`${namespace}.berries`);
+        const doBerryRewards = () => {
+          const berryText = i18next.t(`${namespace}.berries`);
 
           scene.playSound("item_fanfare");
-          queueEncounterMessage(scene, i18next.t("battle:rewardGain", { modifierName: berryText }));
+          queueEncounterMessage(scene, i18next.t("battle:rewardGainCount", { modifierName: berryText, count: numBerries }));
 
           // Generate a random berry and give it to the first Pokemon with room for it
           for (let i = 0; i < numBerries; i++) {
-            await tryGiveBerry(scene);
+            tryGiveBerry(scene);
           }
         };
 
@@ -178,23 +179,28 @@ export const BerriesAboundEncounter: MysteryEncounter =
 
           if (speedDiff < 1) {
             // Caught and attacked by boss, gets +1 to all stats at start of fight
-            const doBerryRewards = async () => {
-              const berryText = numBerries + " " + i18next.t(`${namespace}.berries`);
+            const doBerryRewards = () => {
+              const berryText = i18next.t(`${namespace}.berries`);
 
               scene.playSound("item_fanfare");
-              queueEncounterMessage(scene, i18next.t("battle:rewardGain", { modifierName: berryText }));
+              queueEncounterMessage(scene, i18next.t("battle:rewardGainCount", { modifierName: berryText, count: numBerries }));
 
               // Generate a random berry and give it to the first Pokemon with room for it
               for (let i = 0; i < numBerries; i++) {
-                await tryGiveBerry(scene);
+                tryGiveBerry(scene);
               }
             };
+
+            // Defense/Spd buffs below wave 50, +1 to all stats otherwise
+            const statChangesForBattle: (Stat.ATK | Stat.DEF | Stat.SPATK | Stat.SPDEF | Stat.SPD | Stat.ACC | Stat.EVA)[] = scene.currentBattle.waveIndex < 50 ?
+              [Stat.DEF, Stat.SPDEF, Stat.SPD] :
+              [Stat.ATK, Stat.DEF, Stat.SPATK, Stat.SPDEF, Stat.SPD];
 
             const config = scene.currentBattle.mysteryEncounter!.enemyPartyConfigs[0];
             config.pokemonConfigs![0].tags = [BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON];
             config.pokemonConfigs![0].mysteryEncounterBattleEffects = (pokemon: Pokemon) => {
               queueEncounterMessage(pokemon.scene, `${namespace}.option.2.boss_enraged`);
-              pokemon.scene.unshiftPhase(new StatStageChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [Stat.ATK, Stat.DEF, Stat.SPATK, Stat.SPDEF, Stat.SPD], 1));
+              pokemon.scene.unshiftPhase(new StatStageChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, statChangesForBattle, 1));
             };
             setEncounterRewards(scene, { guaranteedModifierTypeOptions: shopOptions, fillRemaining: false }, undefined, doBerryRewards);
             await showEncounterText(scene, `${namespace}.option.2.selected_bad`);
@@ -204,15 +210,15 @@ export const BerriesAboundEncounter: MysteryEncounter =
             // Gains 1 berry for every 10% faster the player's pokemon is than the enemy, up to a max of numBerries, minimum of 2
             const numBerriesGrabbed = Math.max(Math.min(Math.round((speedDiff - 1)/0.08), numBerries), 2);
             encounter.setDialogueToken("numBerries", String(numBerriesGrabbed));
-            const doFasterBerryRewards = async () => {
-              const berryText = numBerriesGrabbed + " " + i18next.t(`${namespace}.berries`);
+            const doFasterBerryRewards = () => {
+              const berryText = i18next.t(`${namespace}.berries`);
 
               scene.playSound("item_fanfare");
-              queueEncounterMessage(scene, i18next.t("battle:rewardGain", { modifierName: berryText }));
+              queueEncounterMessage(scene, i18next.t("battle:rewardGainCount", { modifierName: berryText, count: numBerriesGrabbed }));
 
               // Generate a random berry and give it to the first Pokemon with room for it (trying to give to fastest first)
               for (let i = 0; i < numBerriesGrabbed; i++) {
-                await tryGiveBerry(scene, fastestPokemon);
+                tryGiveBerry(scene, fastestPokemon);
               }
             };
 
@@ -242,7 +248,7 @@ export const BerriesAboundEncounter: MysteryEncounter =
     )
     .build();
 
-async function tryGiveBerry(scene: BattleScene, prioritizedPokemon?: PlayerPokemon) {
+function tryGiveBerry(scene: BattleScene, prioritizedPokemon?: PlayerPokemon) {
   const berryType = randSeedInt(Object.keys(BerryType).filter(s => !isNaN(Number(s))).length) as BerryType;
   const berry = generateModifierType(scene, modifierTypes.BERRY, [berryType]) as BerryModifierType;
 
@@ -254,7 +260,7 @@ async function tryGiveBerry(scene: BattleScene, prioritizedPokemon?: PlayerPokem
       && m.pokemonId === prioritizedPokemon.id && (m as BerryModifier).berryType === berryType, true) as BerryModifier;
 
     if (!heldBerriesOfType || heldBerriesOfType.getStackCount() < heldBerriesOfType.getMaxStackCount(scene)) {
-      await applyModifierTypeToPlayerPokemon(scene, prioritizedPokemon, berry);
+      applyModifierTypeToPlayerPokemon(scene, prioritizedPokemon, berry);
       return;
     }
   }
@@ -265,7 +271,7 @@ async function tryGiveBerry(scene: BattleScene, prioritizedPokemon?: PlayerPokem
       && m.pokemonId === pokemon.id && (m as BerryModifier).berryType === berryType, true) as BerryModifier;
 
     if (!heldBerriesOfType || heldBerriesOfType.getStackCount() < heldBerriesOfType.getMaxStackCount(scene)) {
-      await applyModifierTypeToPlayerPokemon(scene, pokemon, berry);
+      applyModifierTypeToPlayerPokemon(scene, pokemon, berry);
       return;
     }
   }

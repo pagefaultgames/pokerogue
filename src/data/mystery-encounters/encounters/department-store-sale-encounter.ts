@@ -27,7 +27,7 @@ export const DepartmentStoreSaleEncounter: MysteryEncounter =
     .withSceneWaveRangeRequirement(CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES[0], 100)
     .withIntroSpriteConfigs([
       {
-        spriteKey: "b2w2_lady",
+        spriteKey: "department_store_sale_lady",
         fileRoot: "mystery-encounters",
         hasShadow: true,
         x: -20,
@@ -63,7 +63,7 @@ export const DepartmentStoreSaleEncounter: MysteryEncounter =
         // Choose TMs
         const modifiers: ModifierTypeFunc[] = [];
         let i = 0;
-        while (i < 4) {
+        while (i < 5) {
           // 2/2/1 weight on TM rarity
           const roll = randSeedInt(5);
           if (roll < 2) {

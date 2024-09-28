@@ -1,0 +1,32 @@
+{
+  "intro": "C’est une interface d’accès à la GTS !",
+  "title": "La GTS",
+  "description": "Ah, la GTS ! Une révolution technologique permettant de connecter le monde au travers des échanges de Pokémon !\n\nLa chance va-t-elle vous sourire aujourd’hui ?",
+  "query": "Que voulez-vous faire ?",
+  "option": {
+    "1": {
+      "label": "Consulter les offres",
+      "tooltip": "(+) Sélectionner une offre d’échange pour un de vos Pokémon",
+      "trade_options_prompt": "Choisissez un Pokémon à recevoir en échange."
+    },
+    "2": {
+      "label": "Échange Miracle",
+      "tooltip": "(+) Envoyer un de vos Pokémon à la GTS et en recevoir un spécial au hasard"
+    },
+    "3": {
+      "label": "Échanger un objet",
+      "trade_options_prompt": "Choisissez l’objet à envoyer.",
+      "invalid_selection": "Ce Pokémon n’a aucun objet légal à échanger.",
+      "tooltip": "(+) Envoyer un de vos objets à la GTS et en recevoir un amélioré au hasard"
+    },
+    "4": {
+      "label": "Partir",
+      "tooltip": "(-) Aucune récompense",
+      "selected": "Pas le temps pour ça aujourd’hui !\nVous reprenez votre chemin."
+    }
+  },
+  "pokemon_trade_selected": "{{tradedPokemon}} est envoyé\nà {{tradeTrainerName}}.",
+  "pokemon_trade_goodbye": "Au revoir, {{tradedPokemon}}!",
+  "item_trade_selected": "{{chosenItem}} est envoyé à\n{{tradeTrainerName}}.$.@d{64}.@d{64}.@d{64}\n@s{level_up_fanfare}Échangé terminé !$Vous recevez l’objet {{itemName}}\nde {{tradeTrainerName}} !",
+  "trade_received": "@s{evolution_fanfare}{{tradeTrainerName}} a envoyé {{received}} !"
+}

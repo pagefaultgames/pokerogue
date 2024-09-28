@@ -29,8 +29,9 @@ import { Moves } from "#enums/moves";
 import { EncounterBattleAnim } from "#app/data/battle-anims";
 import { MoveCategory } from "#app/data/move";
 import { MysteryEncounterPokemonData } from "#app/data/mystery-encounters/mystery-encounter-pokemon-data";
-import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES, GameModes } from "#app/game-mode";
+import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
 import { EncounterAnim } from "#enums/encounter-anims";
+import { Challenges } from "#enums/challenges";
 
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounter:clowningAround";
@@ -61,7 +62,7 @@ const RANDOM_ABILITY_POOL = [
 export const ClowningAroundEncounter: MysteryEncounter =
   MysteryEncounterBuilder.withEncounterType(MysteryEncounterType.CLOWNING_AROUND)
     .withEncounterTier(MysteryEncounterTier.ULTRA)
-    .withDisabledGameModes(GameModes.CHALLENGE)
+    .withDisallowedChallenges(Challenges.SINGLE_TYPE)
     .withSceneWaveRangeRequirement(80, CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES[1])
     .withAnimations(EncounterAnim.SMOKESCREEN)
     .withAutoHideIntroVisuals(false)
@@ -335,8 +336,8 @@ export const ClowningAroundEncounter: MysteryEncounter =
               .filter(move => move && !originalTypes.includes(move.getMove().type) && move.getMove().category !== MoveCategory.STATUS)
               .map(move => move!.getMove().type);
             if (priorityTypes?.length > 0) {
-              priorityTypes = [...new Set(priorityTypes)];
-              randSeedShuffle(priorityTypes);
+              priorityTypes = [...new Set(priorityTypes)].sort();
+              priorityTypes = randSeedShuffle(priorityTypes);
             }
 
             const newTypes = [originalTypes[0]];
@@ -349,10 +350,18 @@ export const ClowningAroundEncounter: MysteryEncounter =
               }
             }
             newTypes.push(secondType);
+
+            // Apply the type changes (to both base and fusion, if pokemon is fused)
             if (!pokemon.mysteryEncounterPokemonData) {
               pokemon.mysteryEncounterPokemonData = new MysteryEncounterPokemonData();
             }
             pokemon.mysteryEncounterPokemonData.types = newTypes;
+            if (pokemon.isFusion()) {
+              if (!pokemon.fusionMysteryEncounterPokemonData) {
+                pokemon.fusionMysteryEncounterPokemonData = new MysteryEncounterPokemonData();
+              }
+              pokemon.fusionMysteryEncounterPokemonData.types = newTypes;
+            }
           }
         })
         .withOptionPhase(async (scene: BattleScene) => {
@@ -415,10 +424,17 @@ function onYesAbilitySwap(scene: BattleScene, resolve) {
   const onPokemonSelected = (pokemon: PlayerPokemon) => {
     // Do ability swap
     const encounter = scene.currentBattle.mysteryEncounter!;
-    if (!pokemon.mysteryEncounterPokemonData) {
-      pokemon.mysteryEncounterPokemonData = new MysteryEncounterPokemonData();
+    if (pokemon.isFusion()) {
+      if (!pokemon.fusionMysteryEncounterPokemonData) {
+        pokemon.fusionMysteryEncounterPokemonData = new MysteryEncounterPokemonData();
+      }
+      pokemon.fusionMysteryEncounterPokemonData.ability = encounter.misc.ability;
+    } else {
+      if (!pokemon.mysteryEncounterPokemonData) {
+        pokemon.mysteryEncounterPokemonData = new MysteryEncounterPokemonData();
+      }
+      pokemon.mysteryEncounterPokemonData.ability = encounter.misc.ability;
     }
-    pokemon.mysteryEncounterPokemonData.ability = encounter.misc.ability;
     encounter.setDialogueToken("chosenPokemon", pokemon.getNameToRender());
     scene.ui.setMode(Mode.MESSAGE).then(() => resolve(true));
   };
@@ -478,9 +494,13 @@ function generateItemsOfTier(scene: BattleScene, pokemon: PlayerPokemon, numItem
   }
 
   for (let i = 0; i < numItems; i++) {
+    if (pool.length === 0) {
+      // Stop generating new items if somehow runs out of items to spawn
+      return;
+    }
     const randIndex = randSeedInt(pool.length);
     const newItemType = pool[randIndex];
-    let newMod;
+    let newMod: PokemonHeldItemModifierType;
     if (tier === "Berries") {
       newMod = generateModifierType(scene, modifierTypes.BERRY, [newItemType[0]]) as PokemonHeldItemModifierType;
     } else {

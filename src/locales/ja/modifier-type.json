@@ -68,6 +68,20 @@
     "BaseStatBoosterModifierType": {
       "description": "ポケモンの　基本の{{stat}}を　10%　あげる。\n個体値が　高けば高いほど　持てる限界が　上がる"
     },
+    "PokemonBaseStatTotalModifierType": {
+      "name": "ツボツボジュース",
+      "description": "持たせると　基本能力が　{{statValue}}　{{increaseDecrease}}。ツボツボに　{{blessCurse}}。",
+      "extra": {
+        "increase": "上がる",
+        "decrease": "下がる",
+        "blessed": "恵まれた",
+        "cursed": "呪われた"
+      }
+    },
+    "PokemonBaseStatFlatModifierType": {
+      "name": "もりのヨウカン",
+      "description": "持たせると　基本能力が　{{statValue}}　上がる。　謎の夢で　見つけた　お菓子。"
+    },
     "AllPokemonFullHpRestoreModifierType": {
       "description": "手持ちポケモン　全員の　HPを　すべて　回復する"
     },
@@ -226,6 +240,11 @@
     "TOXIC_ORB": { "name": "どくどくだま", "description": "触ると　毒をだす　不思議な玉。\n持たせると　戦闘中に　猛毒の状態に　なる" },
     "FLAME_ORB": { "name": "かえんだま", "description": "触ると　熱をだす　不思議な玉。\n持たせると　戦闘中に　やけどの状態に　なる。" },
 
+    "EVOLUTION_TRACKER_GIMMIGHOUL": {
+      "name": "宝物",
+      "description": "このポケモンは　宝物が　大好き！　宝物を　集め続けると　良いことが　起こる　かもしれません！"
+    },
+
     "BATON": { "name": "バトン", "description": "持たせると　入れ替えるとき　控えのポケモンが\n能力変化を　受けつげる　（逃げられなくする　技や　特性も　回避する）" },
 
     "SHINY_CHARM": { "name": "ひかるおまもり", "description": "色違いの　ポケモンと　大きく　出会いやすくなる" },
@@ -247,7 +266,13 @@
     "ENEMY_ATTACK_BURN_CHANCE": { "name": "やけどトークン" },
     "ENEMY_STATUS_EFFECT_HEAL_CHANCE": { "name": "なんでもなおしトークン", "description": "毎ターン　状態異常を　治せる　2.5%の可能性を　加える" }, 
     "ENEMY_ENDURE_CHANCE": { "name": "こらえるトークン" },
-    "ENEMY_FUSED_CHANCE": { "name": "がったいトークン", "description": "野生ポケモンは　吸収合体している　1%の可能性を　加える" }	   
+    "ENEMY_FUSED_CHANCE": { "name": "がったいトークン", "description": "野生ポケモンは　吸収合体している　1%の可能性を　加える" },
+
+    "MYSTERY_ENCOUNTER_SHUCKLE_JUICE": { "name": "ツボツボジュース" },
+    "MYSTERY_ENCOUNTER_BLACK_SLUDGE": { "name": "くろいヘドロ", "description": "ムゴい　悪臭を放つから　ショップが　アイテムの　価格を　ぐんと　上げる" },
+    "MYSTERY_ENCOUNTER_MACHO_BRACE": { "name": "きょうせいギプス", "description": "持たせると　相手を倒すとき　もう1つの　ギプスを　もらう。　ギプス当たり　能力が　少し　上がる。　最多で　さらに　上がる" },
+    "MYSTERY_ENCOUNTER_OLD_GATEAU": { "name": "もりのヨウカン", "description": "持たせると　基本能力が　{{statValue}}　上がる" },
+    "MYSTERY_ENCOUNTER_GOLDEN_BUG_NET": { "name": "きんのむしとりあみ", "description": "むしタイプの　ポケモンが　見つけやすく　なる運に　注ぎ込まれた　妙に重い　虫取り網" }
   },
   "SpeciesBoosterItem": {
     "LIGHT_BALL": { "name": "でんきだま", "description": "ピカチュウに　持たせると　攻撃と　特攻が　あがる　不思議な玉" },
@@ -310,6 +335,21 @@
     "TART_APPLE": "すっぱいりんご",
     "STRAWBERRY_SWEET": "いちごアメざいく",
     "UNREMARKABLE_TEACUP": "ボンサクのちゃわん",
+    "UPGRADE": "アップグレード",
+    "DUBIOUS_DISC": "あやしいパッチ",
+    "DRAGON_SCALE": "りゅうのウロコ",
+    "PRISM_SCALE": "きれいなウロコ",
+    "RAZOR_CLAW": "するどいツメ",
+    "RAZOR_FANG": "するどいキバ",
+    "REAPER_CLOTH": "れいかいのぬの",
+    "ELECTIRIZER": "エレキブースター",
+    "MAGMARIZER": "マグマブースター",
+    "PROTECTOR": "プロテクター",
+    "SACHET": "においぶくろ",
+    "WHIPPED_DREAM": "ホイップポップ",
+    "LEADERS_CREST": "かしらのしるし",
+    "SUN_FLUTE": "たいようのふえ",
+    "MOON_FLUTE": "つきのふえ",
 
     "CHIPPED_POT": "かけたポット",
     "BLACK_AUGURITE": "くろのきせき",

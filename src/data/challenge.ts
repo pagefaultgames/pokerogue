@@ -172,11 +172,9 @@ export abstract class Challenge {
    * @param overrideValue {@link integer} The value to check for. If undefined, gets the current value.
    * @returns {@link string} The localised name for the current value.
    */
-  getValue(overrideValue?: integer): string {
-    if (overrideValue === undefined) {
-      overrideValue = this.value;
-    }
-    return i18next.t(`challenges:${this.geti18nKey()}.value.${this.value}`);
+  getValue(overrideValue?: number): string {
+    const value = overrideValue ?? this.value;
+    return i18next.t(`challenges:${this.geti18nKey()}.value.${value}`);
   }
 
   /**
@@ -184,11 +182,9 @@ export abstract class Challenge {
    * @param overrideValue {@link integer} The value to check for. If undefined, gets the current value.
    * @returns {@link string} The localised description for the current value.
    */
-  getDescription(overrideValue?: integer): string {
-    if (overrideValue === undefined) {
-      overrideValue = this.value;
-    }
-    return `${i18next.t([`challenges:${this.geti18nKey()}.desc.${this.value}`, `challenges:${this.geti18nKey()}.desc`])}`;
+  getDescription(overrideValue?: number): string {
+    const value = overrideValue ?? this.value;
+    return `${i18next.t([`challenges:${this.geti18nKey()}.desc.${value}`, `challenges:${this.geti18nKey()}.desc`])}`;
   }
 
   /**
@@ -511,14 +507,12 @@ export class SingleGenerationChallenge extends Challenge {
    * @param {value} overrideValue The value to check for. If undefined, gets the current value.
    * @returns {string} The localised name for the current value.
    */
-  getValue(overrideValue?: integer): string {
-    if (overrideValue === undefined) {
-      overrideValue = this.value;
-    }
-    if (this.value === 0) {
+  getValue(overrideValue?: number): string {
+    const value = overrideValue ?? this.value;
+    if (value === 0) {
       return i18next.t("settings:off");
     }
-    return i18next.t(`starterSelectUiHandler:gen${this.value}`);
+    return i18next.t(`starterSelectUiHandler:gen${value}`);
   }
 
   /**
@@ -526,14 +520,12 @@ export class SingleGenerationChallenge extends Challenge {
    * @param {value} overrideValue The value to check for. If undefined, gets the current value.
    * @returns {string} The localised description for the current value.
    */
-  getDescription(overrideValue?: integer): string {
-    if (overrideValue === undefined) {
-      overrideValue = this.value;
-    }
-    if (this.value === 0) {
+  getDescription(overrideValue?: number): string {
+    const value = overrideValue ?? this.value;
+    if (value === 0) {
       return i18next.t("challenges:singleGeneration.desc_default");
     }
-    return i18next.t("challenges:singleGeneration.desc", { gen: i18next.t(`challenges:singleGeneration.gen_${this.value}`) });
+    return i18next.t("challenges:singleGeneration.desc", { gen: i18next.t(`challenges:singleGeneration.gen_${value}`) });
   }
 
 
@@ -559,18 +551,19 @@ interface monotypeOverride {
  */
 export class SingleTypeChallenge extends Challenge {
   private static TYPE_OVERRIDES: monotypeOverride[] = [
-    {species: Species.MELOETTA, type: Type.PSYCHIC, fusion: true},
     {species: Species.CASTFORM, type: Type.NORMAL, fusion: false},
   ];
+  // TODO: Find a solution for all Pokemon with this ssui issue, including Basculin and Burmy
+  private static SPECIES_OVERRIDES: Species[] = [Species.MELOETTA];
 
   constructor() {
     super(Challenges.SINGLE_TYPE, 18);
   }
 
-  applyStarterChoice(pokemon: PokemonSpecies, valid: Utils.BooleanHolder, dexAttr: DexAttrProps, soft: boolean = false): boolean {
+  override applyStarterChoice(pokemon: PokemonSpecies, valid: Utils.BooleanHolder, dexAttr: DexAttrProps, soft: boolean = false): boolean {
     const speciesForm = getPokemonSpeciesForm(pokemon.speciesId, dexAttr.formIndex);
     const types = [speciesForm.type1, speciesForm.type2];
-    if (soft) {
+    if (soft && !SingleTypeChallenge.SPECIES_OVERRIDES.includes(pokemon.speciesId)) {
       const speciesToCheck = [pokemon.speciesId];
       while (speciesToCheck.length) {
         const checking = speciesToCheck.pop();

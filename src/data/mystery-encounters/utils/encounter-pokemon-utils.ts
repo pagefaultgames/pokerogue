@@ -13,7 +13,7 @@ import { PartyOption, PartyUiMode } from "#app/ui/party-ui-handler";
 import { Species } from "#enums/species";
 import { Type } from "#app/data/type";
 import PokemonSpecies, { getPokemonSpecies, speciesStarters } from "#app/data/pokemon-species";
-import { queueEncounterMessage, showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
+import { getEncounterText, queueEncounterMessage, showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { modifierTypes, PokemonHeldItemModifierType } from "#app/modifier/modifier-type";
 import { Gender } from "#app/data/gender";
@@ -50,28 +50,39 @@ export function getSpriteKeysFromPokemon(pokemon: Pokemon): { spriteKey: string,
 }
 
 /**
- *
  * Will never remove the player's last non-fainted Pokemon (if they only have 1)
  * Otherwise, picks a Pokemon completely at random and removes from the party
  * @param scene
- * @param isAllowedInBattle Default false. If true, only picks from unfainted mons. If there is only 1 unfainted mon left and doNotReturnLastAbleMon is also true, will return fainted mon
- * @param doNotReturnLastAbleMon Default false. If true, will never return the last unfainted pokemon in the party. Useful when this function is being used to determine what Pokemon to remove from the party (Don't want to remove last unfainted)
+ * @param isAllowed Default false. If true, only picks from legal mons. If no legal mons are found (or there is 1, with `doNotReturnLastAllowedMon = true), will return a mon that is not allowed.
+ * @param isFainted Default false. If true, includes fainted mons.
+ * @param doNotReturnLastAllowedMon Default false. If true, will never return the last unfainted pokemon in the party. Useful when this function is being used to determine what Pokemon to remove from the party (Don't want to remove last unfainted)
  * @returns
  */
-export function getRandomPlayerPokemon(scene: BattleScene, isAllowedInBattle: boolean = false, doNotReturnLastAbleMon: boolean = false): PlayerPokemon {
+export function getRandomPlayerPokemon(scene: BattleScene, isAllowed: boolean = false, isFainted: boolean = false, doNotReturnLastAllowedMon: boolean = false): PlayerPokemon {
   const party = scene.getParty();
   let chosenIndex: number;
-  let chosenPokemon: PlayerPokemon;
-  const unfaintedMons = party.filter(p => p.isAllowedInBattle());
-  const faintedMons = party.filter(p => !p.isAllowedInBattle());
+  let chosenPokemon: PlayerPokemon | null = null;
+  const fullyLegalMons = party.filter(p => (!isAllowed || p.isAllowed()) && (isFainted || !p.isFainted()));
+  const allowedOnlyMons = party.filter(p => p.isAllowed());
 
-  if (doNotReturnLastAbleMon && unfaintedMons.length === 1) {
-    chosenIndex = randSeedInt(faintedMons.length);
-    chosenPokemon = faintedMons[chosenIndex];
-  } else if (isAllowedInBattle) {
-    chosenIndex = randSeedInt(unfaintedMons.length);
-    chosenPokemon = unfaintedMons[chosenIndex];
-  } else {
+  if (doNotReturnLastAllowedMon && fullyLegalMons.length === 1) {
+    // If there is only 1 legal/unfainted mon left, select from fainted legal mons
+    const faintedLegalMons = party.filter(p => (!isAllowed || p.isAllowed()) && p.isFainted());
+    if (faintedLegalMons.length > 0) {
+      chosenIndex = randSeedInt(faintedLegalMons.length);
+      chosenPokemon = faintedLegalMons[chosenIndex];
+    }
+  }
+  if (!chosenPokemon && fullyLegalMons.length > 0) {
+    chosenIndex = randSeedInt(fullyLegalMons.length);
+    chosenPokemon = fullyLegalMons[chosenIndex];
+  }
+  if (!chosenPokemon && isAllowed && allowedOnlyMons.length > 0) {
+    chosenIndex = randSeedInt(allowedOnlyMons.length);
+    chosenPokemon = allowedOnlyMons[chosenIndex];
+  }
+  if (!chosenPokemon) {
+    // If no other options worked, returns fully random
     chosenIndex = randSeedInt(party.length);
     chosenPokemon = party[chosenIndex];
   }
@@ -82,15 +93,19 @@ export function getRandomPlayerPokemon(scene: BattleScene, isAllowedInBattle: bo
 /**
  * Ties are broken by whatever mon is closer to the front of the party
  * @param scene
- * @param unfainted Default false. If true, only picks from unfainted mons.
+ * @param isAllowed Default false. If true, only picks from legal mons.
+ * @param isFainted Default false. If true, includes fainted mons.
  * @returns
  */
-export function getHighestLevelPlayerPokemon(scene: BattleScene, unfainted: boolean = false): PlayerPokemon {
+export function getHighestLevelPlayerPokemon(scene: BattleScene, isAllowed: boolean = false, isFainted: boolean = false): PlayerPokemon {
   const party = scene.getParty();
   let pokemon: PlayerPokemon | null = null;
 
   for (const p of party) {
-    if (unfainted && p.isFainted()) {
+    if (isAllowed && !p.isAllowed()) {
+      continue;
+    }
+    if (!isFainted && p.isFainted()) {
       continue;
     }
 
@@ -104,15 +119,19 @@ export function getHighestLevelPlayerPokemon(scene: BattleScene, unfainted: bool
  * Ties are broken by whatever mon is closer to the front of the party
  * @param scene
  * @param stat Stat to search for
- * @param unfainted Default false. If true, only picks from unfainted mons.
+ * @param isAllowed Default false. If true, only picks from legal mons.
+ * @param isFainted Default false. If true, includes fainted mons.
  * @returns
  */
-export function getHighestStatPlayerPokemon(scene: BattleScene, stat: PermanentStat, unfainted: boolean = false): PlayerPokemon {
+export function getHighestStatPlayerPokemon(scene: BattleScene, stat: PermanentStat, isAllowed: boolean = false, isFainted: boolean = false): PlayerPokemon {
   const party = scene.getParty();
   let pokemon: PlayerPokemon | null = null;
 
   for (const p of party) {
-    if (unfainted && p.isFainted()) {
+    if (isAllowed && !p.isAllowed()) {
+      continue;
+    }
+    if (!isFainted && p.isFainted()) {
       continue;
     }
 
@@ -125,15 +144,19 @@ export function getHighestStatPlayerPokemon(scene: BattleScene, stat: PermanentS
 /**
  * Ties are broken by whatever mon is closer to the front of the party
  * @param scene
- * @param unfainted - default false. If true, only picks from unfainted mons.
+ * @param isAllowed Default false. If true, only picks from legal mons.
+ * @param isFainted Default false. If true, includes fainted mons.
  * @returns
  */
-export function getLowestLevelPlayerPokemon(scene: BattleScene, unfainted: boolean = false): PlayerPokemon {
+export function getLowestLevelPlayerPokemon(scene: BattleScene, isAllowed: boolean = false, isFainted: boolean = false): PlayerPokemon {
   const party = scene.getParty();
   let pokemon: PlayerPokemon | null = null;
 
   for (const p of party) {
-    if (unfainted && p.isFainted()) {
+    if (isAllowed && !p.isAllowed()) {
+      continue;
+    }
+    if (!isFainted && p.isFainted()) {
       continue;
     }
 
@@ -146,15 +169,19 @@ export function getLowestLevelPlayerPokemon(scene: BattleScene, unfainted: boole
 /**
  * Ties are broken by whatever mon is closer to the front of the party
  * @param scene
- * @param unfainted - default false. If true, only picks from unfainted mons.
+ * @param isAllowed Default false. If true, only picks from legal mons.
+ * @param isFainted Default false. If true, includes fainted mons.
  * @returns
  */
-export function getHighestStatTotalPlayerPokemon(scene: BattleScene, unfainted: boolean = false): PlayerPokemon {
+export function getHighestStatTotalPlayerPokemon(scene: BattleScene, isAllowed: boolean = false, isFainted: boolean = false): PlayerPokemon {
   const party = scene.getParty();
   let pokemon: PlayerPokemon | null = null;
 
   for (const p of party) {
-    if (unfainted && p.isFainted()) {
+    if (isAllowed && !p.isAllowed()) {
+      continue;
+    }
+    if (!isFainted && p.isFainted()) {
       continue;
     }
 
@@ -170,19 +197,28 @@ export function getHighestStatTotalPlayerPokemon(scene: BattleScene, unfainted: 
  * @param starterTiers
  * @param excludedSpecies
  * @param types
+ * @param allowSubLegendary
+ * @param allowLegendary
+ * @param allowMythical
  * @returns
  */
-export function getRandomSpeciesByStarterTier(starterTiers: number | [number, number], excludedSpecies?: Species[], types?: Type[]): Species {
+export function getRandomSpeciesByStarterTier(starterTiers: number | [number, number], excludedSpecies?: Species[], types?: Type[], allowSubLegendary: boolean = true, allowLegendary: boolean = true, allowMythical: boolean = true): Species {
   let min = Array.isArray(starterTiers) ? starterTiers[0] : starterTiers;
   let max = Array.isArray(starterTiers) ? starterTiers[1] : starterTiers;
 
   let filteredSpecies: [PokemonSpecies, number][] = Object.keys(speciesStarters)
     .map(s => [parseInt(s) as Species, speciesStarters[s] as number])
-    .filter(s => getPokemonSpecies(s[0]) && (!excludedSpecies || !excludedSpecies.includes(s[0])))
+    .filter(s => {
+      const pokemonSpecies = getPokemonSpecies(s[0]);
+      return pokemonSpecies && (!excludedSpecies || !excludedSpecies.includes(s[0]))
+        && (allowSubLegendary || !pokemonSpecies.subLegendary)
+        && (allowLegendary || !pokemonSpecies.legendary)
+        && (allowMythical || !pokemonSpecies.mythical);
+    })
     .map(s => [getPokemonSpecies(s[0]), s[1]]);
 
   if (types && types.length > 0) {
-    filteredSpecies = filteredSpecies.filter(s => types.includes(s[0].type1) || (!isNullOrUndefined(s[0].type2) && types.includes(s[0].type2!)));
+    filteredSpecies = filteredSpecies.filter(s => types.includes(s[0].type1) || (!isNullOrUndefined(s[0].type2) && types.includes(s[0].type2)));
   }
 
   // If no filtered mons exist at specified starter tiers, will expand starter search range until there are
@@ -275,7 +311,9 @@ export function applyHealToPokemon(scene: BattleScene, pokemon: PlayerPokemon, h
  * @param value
  */
 export async function modifyPlayerPokemonBST(pokemon: PlayerPokemon, value: number) {
-  const modType = modifierTypes.MYSTERY_ENCOUNTER_SHUCKLE_JUICE().generateType(pokemon.scene.getParty(), [value]);
+  const modType = modifierTypes.MYSTERY_ENCOUNTER_SHUCKLE_JUICE()
+    .generateType(pokemon.scene.getParty(), [value])
+    ?.withIdFromFunc(modifierTypes.MYSTERY_ENCOUNTER_SHUCKLE_JUICE);
   const modifier = modType?.newModifier(pokemon);
   if (modifier) {
     await pokemon.scene.addModifier(modifier, false, false, false, true);
@@ -719,9 +757,10 @@ const GOLDEN_BUG_NET_SPECIES_POOL: [Species, number][] = [
 ];
 
 /**
- * Will randomly return one of the species from GOLDEN_BUG_NET_SPECIES_POOL, based on their weights
+ * Will randomly return one of the species from GOLDEN_BUG_NET_SPECIES_POOL, based on their weights.
+ * Will also check for and evolve pokemon based on level.
  */
-export function getGoldenBugNetSpecies(): PokemonSpecies {
+export function getGoldenBugNetSpecies(level: number): PokemonSpecies {
   const totalWeight = GOLDEN_BUG_NET_SPECIES_POOL.reduce((a, b) => a + b[1], 0);
   const roll = randSeedInt(totalWeight);
 
@@ -729,7 +768,8 @@ export function getGoldenBugNetSpecies(): PokemonSpecies {
   for (const speciesWeightPair of GOLDEN_BUG_NET_SPECIES_POOL) {
     w += speciesWeightPair[1];
     if (roll < w) {
-      return getPokemonSpecies(speciesWeightPair[0]);
+      const initialSpecies = getPokemonSpecies(speciesWeightPair[0]);
+      return getPokemonSpecies(initialSpecies.getSpeciesForLevel(level, true));
     }
   }
 
@@ -744,8 +784,7 @@ export function getGoldenBugNetSpecies(): PokemonSpecies {
  */
 export function getEncounterPokemonLevelForWave(scene: BattleScene, levelAdditiveModifier: number = 0) {
   const currentBattle = scene.currentBattle;
-  // Default to use the first generated level from enemyLevels, or generate a new one if it DNE
-  const baseLevel = currentBattle.enemyLevels && currentBattle.enemyLevels?.length > 0 ? currentBattle.enemyLevels[0] : currentBattle.getLevelForWave();
+  const baseLevel = currentBattle.getLevelForWave();
 
   // Add a level scaling modifier that is (+1 level per 10 waves) * levelAdditiveModifier
   return baseLevel + Math.max(Math.round((currentBattle.waveIndex / 10) * levelAdditiveModifier), 0);
@@ -772,4 +811,24 @@ export async function addPokemonDataToDexAndValidateAchievements(scene: BattleSc
 
   scene.gameData.updateSpeciesDexIvs(pokemon.species.getRootSpeciesId(true), pokemon.ivs);
   return scene.gameData.setPokemonCaught(pokemon, true, false, false);
+}
+
+/**
+ * Checks if a Pokemon is allowed under a challenge, and allowed in battle.
+ * If both are true, returns `null`.
+ * If one of them is not true, returns message content that the Pokemon is invalid.
+ * Typically used for cheecking whether a Pokemon can be selected for a {@linkcode MysteryEncounterOption}
+ * @param pokemon
+ * @param scene
+ * @param invalidSelectionKey
+ */
+export function isPokemonValidForEncounterOptionSelection(pokemon: Pokemon, scene: BattleScene, invalidSelectionKey: string): string | null {
+  if (!pokemon.isAllowed()) {
+    return i18next.t("partyUiHandler:cantBeUsed", { pokemonName: pokemon.getNameToRender() }) ?? null;
+  }
+  if (!pokemon.isAllowedInBattle()) {
+    return getEncounterText(scene, invalidSelectionKey) ?? null;
+  }
+
+  return null;
 }
