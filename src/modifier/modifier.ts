@@ -2586,7 +2586,7 @@ export class HealShopCostModifier extends PersistentModifier {
   constructor(type: ModifierType, shopMultiplier: number, stackCount?: integer) {
     super(type, stackCount);
 
-    this.shopMultiplier = shopMultiplier;
+    this.shopMultiplier = shopMultiplier ?? 2.5;
   }
 
   match(modifier: Modifier): boolean {
@@ -2602,6 +2602,10 @@ export class HealShopCostModifier extends PersistentModifier {
     moneyCost.value = Math.floor(moneyCost.value * this.shopMultiplier);
 
     return true;
+  }
+
+  getArgs(): any[] {
+    return super.getArgs().concat(this.shopMultiplier);
   }
 
   getMaxStackCount(scene: BattleScene): integer {
