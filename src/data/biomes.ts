@@ -1,6 +1,6 @@
 import { Type } from "./type";
 import * as Utils from "../utils";
-import { pokemonEvolutions, SpeciesFormEvolution } from "./pokemon-evolutions";
+import { pokemonEvolutions, SpeciesFormEvolution } from "./balance/pokemon-evolutions";
 import i18next from "i18next";
 import { Biome } from "#enums/biome";
 import { Species } from "#enums/species";
