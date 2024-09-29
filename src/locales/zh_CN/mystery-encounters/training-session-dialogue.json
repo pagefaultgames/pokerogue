@@ -27,7 +27,7 @@
       "tooltip": "(-)无奖励",
       "selected": "你无暇训练\n该动身了。"
     },
-    "selected": "{{selected Pokemon}}穿过空地来到你面前……"
+    "selected": "{{selectedPokemon}}穿过空地来到你面前……"
   },
   "outro": "这次训练成果不错！"
 }
