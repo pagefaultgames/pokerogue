@@ -1,5 +1,6 @@
 import { SemiInvulnerableTag } from "#app/data/battler-tags";
 import { Abilities } from "#app/enums/abilities";
+import { Stat } from "#app/enums/stat";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/utils/gameManager";
@@ -23,9 +24,10 @@ describe("Moves - Metronome", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([Moves.METRONOME])
+      .moveset([Moves.METRONOME, Moves.SPLASH])
       .battleType("single")
       .startingLevel(100)
+      .starterSpecies(Species.REGIELEKI)
       .enemyLevel(100)
       .enemySpecies(Species.SHUCKLE)
       .enemyMoveset(Moves.SPLASH)
@@ -33,7 +35,7 @@ describe("Moves - Metronome", () => {
   });
 
   it("should have one semi-invulnerable turn and deal damage on the second turn when a semi-invulnerable move is called", async () => {
-    await game.classicMode.startBattle([Species.REGIELEKI]);
+    await game.classicMode.startBattle();
     const player = game.scene.getPlayerPokemon()!;
     const enemy = game.scene.getEnemyPokemon()!;
     vi.spyOn(player, "randSeedInt").mockReturnValue(Moves.DIVE);
@@ -51,7 +53,7 @@ describe("Moves - Metronome", () => {
 
   // THESE FAIL UNTIL KEV'S MOVE PHASE REFACTOR IS PUT IN
   // it("should apply secondary effects of a move", async () => {
-  //   await game.classicMode.startBattle([Species.REGIELEKI]);
+  //   await game.classicMode.startBattle();
   //   const player = game.scene.getPlayerPokemon()!;
   //   vi.spyOn(player, "randSeedInt").mockReturnValue(Moves.WOOD_HAMMER);
 
@@ -64,7 +66,7 @@ describe("Moves - Metronome", () => {
   // });
 
   // it("should recharge after using recharge move", async () => {
-  //   await game.classicMode.startBattle([Species.REGIELEKI]);
+  //   await game.classicMode.startBattle();
   //   const player = game.scene.getPlayerPokemon()!;
   //   vi.spyOn(player, "randSeedInt").mockReturnValue(Moves.HYPER_BEAM);
 
@@ -75,4 +77,22 @@ describe("Moves - Metronome", () => {
 
   //   expect(player.getTag(RechargingTag)).toBeTruthy();
   // })
+
+  it("should only target ally for Aromatic Mist", async () => {
+    game.override.battleType("double");
+    await game.classicMode.startBattle([Species.REGIELEKI, Species.RATTATA]);
+    const [ leftPlayer, rightPlayer ] = game.scene.getPlayerField();
+    const [ leftOpp, rightOpp ] = game.scene.getEnemyField();
+    vi.spyOn(leftPlayer, "randSeedInt").mockReturnValue(Moves.AROMATIC_MIST);
+
+    game.move.select(Moves.METRONOME);
+    game.move.select(Moves.SPLASH, 1);
+    await game.phaseInterceptor.to("MoveEffectPhase");
+    await game.move.forceHit();
+    await game.toNextTurn();
+
+    expect(rightPlayer.getStatStage(Stat.SPDEF)).toBe(1);
+    expect(leftOpp.getStatStage(Stat.SPDEF)).toBe(0);
+    expect(rightOpp.getStatStage(Stat.SPDEF)).toBe(0);
+  });
 });
