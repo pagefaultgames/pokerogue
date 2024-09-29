@@ -914,7 +914,7 @@ export class TrainerConfig {
     });
 
     // Set species filter to only include species with a base total of 470 or higher.
-    this.setSpeciesFilter(p => p.baseTotal >= 470);
+    this.setSpeciesFilter(p => p.baseTotal >= 508);
 
     // Localize the trainer's name by converting it to lowercase and replacing spaces with underscores.
     const nameForCall = this.name.toLowerCase().replace(/\s/g, "_");
