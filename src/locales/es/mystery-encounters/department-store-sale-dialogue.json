@@ -1,7 +1,7 @@
 {
   "intro": "Es una señora con un montón de bolsas de compras.",
   "speaker": "Compradora",
-  "intro_dialogue": "¡Hola! ¿También estás aquí por las increíbles rebajas? Hay un cupón especial que puedes canjear por un artículo gratis durante la venta. ¡Tengo uno extra. ¡Aquí tienes!",
+  "intro_dialogue": "¡Hola! ¿También estás aquí por las increíbles rebajas?$Hay un cupón especial que puedes canjear por un artículo gratis durante la venta. ¡Tengo uno extra. ¡Aquí tienes!",
   "title": "¡Rebajas en el Centro Comercial!",
   "description": "¡Hay mercancía en todas direcciones! Parece que hay 4 mostradores donde puedes canjear el cupón por varios artículos. ¡Las posibilidades son infinitas!",
   "query": "¿A qué mostrador irás?",

@@ -36,6 +36,7 @@ export const TrashToTreasureEncounter: MysteryEncounter =
     .withEncounterTier(MysteryEncounterTier.ULTRA)
     .withSceneWaveRangeRequirement(60, CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES[1])
     .withMaxAllowedEncounters(1)
+    .withFleeAllowed(false)
     .withIntroSpriteConfigs([
       {
         spriteKey: Species.GARBODOR.toString() + "-gigantamax",
@@ -190,7 +191,7 @@ async function tryApplyDigRewardItems(scene: BattleScene) {
   }
 
   scene.playSound("item_fanfare");
-  await showEncounterText(scene, i18next.t("battle:rewardGain", { modifierName: "2x " + leftovers.name }), null, undefined, true);
+  await showEncounterText(scene, i18next.t("battle:rewardGainCount", { modifierName: leftovers.name, count: 2 }), null, undefined, true);
 
   // First Shell bell
   for (const pokemon of party) {
@@ -217,7 +218,7 @@ async function tryApplyDigRewardItems(scene: BattleScene) {
   }
 
   scene.playSound("item_fanfare");
-  await showEncounterText(scene, i18next.t("battle:rewardGain", { modifierName: "2x " + shellBell.name }), null, undefined, true);
+  await showEncounterText(scene, i18next.t("battle:rewardGainCount", { modifierName: shellBell.name, count: 2 }), null, undefined, true);
 }
 
 async function doGarbageDig(scene: BattleScene) {

@@ -1,1 +1,23 @@
-{}
+{
+  "intro": "あれは……@d{32} 宝箱？",
+  "title": "謎の宝箱",
+  "description": "美しく　飾られた　宝箱が　地面に　あります。　中には　何か　良いものが　あるはず…… でしょう？",
+  "query": "開けますか？",
+  "option": {
+    "1": {
+      "label": "開ける",
+      "tooltip": "@[SUMMARY_BLUE]{({{trapPercent}}%) 何かヒドい事}\n@[SUMMARY_GREEN]{({{commonPercent}}%) まあいいご褒美}\n@[SUMMARY_GREEN]{({{ultraPercent}}%) 良いご褒美}\n@[SUMMARY_GREEN]{({{roguePercent}}%) すごいご褒美}\n@[SUMMARY_GREEN]{({{masterPercent}}%) 素晴らしいご褒美}",
+      "selected": "宝箱を　開けると　見つけるのは……",
+      "normal": "普通の　道具や　アイテム　だけです…… ",
+      "good": "結構　良い道具や　アイテム　です。",
+      "great": "すごい　道具や　アイテム　ですね！",
+      "amazing": "わあ！　何と　素晴らしい　アイテム！",
+      "bad": "ああ、　だめだ！@d{32}\n宝箱は　実に　{{gimmighoulName}}の　変装でした！${{pokeName}}は守ろうとして　飛び込んで　来ますが、\nその結果　倒れてしまいます！"
+    },
+    "2": {
+      "label": "危なそうで立ち去る",
+      "tooltip": "(-) ご褒美なし",
+      "selected": "僅かな　後悔の　気持ちで\nさっさと　先を　進みます。"
+    }
+  }
+}

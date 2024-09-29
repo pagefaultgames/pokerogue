@@ -1,7 +1,7 @@
 {
   "intro": "C’est un Parc Safari !",
   "title": "Le Parc Safari",
-  "description": "Toutes sortes de Pokémon rares et particuliers peuvent y être rencontrés !\nSi vous décidez d’y entrer, vous aurez une limite de 3 Pokémon sauvages à rencontrer que vous pourrez essayer de capturer.\n\nMais attention, ces Pokémon peuvent prendre la fuite avant que vous n’ayez pu les capturer !",
+  "description": "Toutes sortes de Pokémon rares et particuliers peuvent y être rencontrés !\nSi vous décidez d’y entrer, vous aurez une limite de @[TOOLTIP_TITLE]{{{numEncounters}} Pokémon sauvages} à rencontrer que vous pourrez essayer de capturer.\n\nMais attention, ces Pokémon peuvent prendre la fuite avant que vous n’ayez pu les capturer !",
   "query": "Voulez-vous y entrer ?",
   "option": {
     "1": {

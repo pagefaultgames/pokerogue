@@ -1,7 +1,7 @@
 {
   "intro": "Es ist die Safari-Zone!",
   "title": "Die Safari-Zone",
-  "description": "Es gibt alle Arten von seltenen und besonderen Pokémon, die hier gefunden werden können!\nWenn du dich entscheidest, einzutreten, hast du kannst du in den nächsten 3 Wellen versuchen, besondere Pokémon zu fangen.\nAber sei gewarnt, diese Pokémon können fliehen, bevor du sie fangen kannst!",
+  "description": "Es gibt alle Arten von seltenen und besonderen Pokémon, die hier gefunden werden können!\nWenn du dich entscheidest, einzutreten, hast du kannst du in den nächsten @[TOOLTIP_TITLE]{{{numEncounters}} Wellen} versuchen, besondere Pokémon zu fangen.\nAber sei gewarnt, diese Pokémon können fliehen, bevor du sie fangen kannst!",
   "query": "Willst du eintreten?",
   "option": {
     "1": {

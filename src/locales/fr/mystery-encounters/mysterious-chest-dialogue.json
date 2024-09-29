@@ -6,7 +6,7 @@
   "option": {
     "1": {
       "label": "Ouvrir",
-      "tooltip": "@[SUMMARY_BLUE]{({{trapPercent}}%) Un truc terrible}\n@[SUMMARY_GREEN]{({{commonPercent}}%) Petites récompenses }\n@[SUMMARY_GREEN]{({{ultraPercent}}%) Bonnes récompenses}\n@[SUMMARY_GREEN]{({{roguePercent}}%) Super récompenses}\n@[SUMMARY_GREEN]{({{masterPercent}}%) Incroyables récompenses}",
+      "tooltip": "@[SUMMARY_BLUE]{({{trapPercent}}%) Un truc terrible}\n@[SUMMARY_GREEN]{({{commonPercent}}%) Petites récompenses}\n@[SUMMARY_GREEN]{({{ultraPercent}}%) Bonnes récompenses}\n@[SUMMARY_GREEN]{({{roguePercent}}%) Super récompenses}\n@[SUMMARY_GREEN]{({{masterPercent}}%) Incroyables récompenses}",
       "selected": "Vous décidez d’ouvrir le coffre et y trouvez…",
       "normal": "De simples outils et objets banaux.",
       "good": "Quelques bons outils et objets.",
