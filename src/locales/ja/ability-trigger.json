@@ -6,7 +6,7 @@
   "perishBody": "{{pokemonName}}の {{abilityName}}で\nおたがいは　3ターン後に　ほろびいてしまう！",
   "poisonHeal": "{{pokemonName}}は　{{abilityName}}で　回復した！",
   "trace": "{{pokemonName}}は　相手の　{{targetName}}の\n{{abilityName}}を　トレースした！",
-  "windPowerCharged": "{{pokemonNameWithAffix}} は\n{{moveName}}を　受けて　じゅうでんした！",
+  "windPowerCharged": "{{pokemonName}} は\n{{moveName}}を　受けて　じゅうでんした！",
   "quickDraw": "{{pokemonName}}は　クイックドロウで\n行動が　はやくなった！",
   "disguiseAvoidedDamage": "{{pokemonNameWithAffix}}の\nばけのかわが　はがれた！",
   "blockItemTheft": "{{pokemonNameWithAffix}}の　{{abilityName}}で\n道具を　うばわれない！",
