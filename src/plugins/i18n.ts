@@ -11,7 +11,7 @@ import { itConfig } from "#app/locales/it/config";
 import { koConfig } from "#app/locales/ko/config";
 import { jaConfig } from "#app/locales/ja/config";
 import { ptBrConfig } from "#app/locales/pt_BR/config";
-import { trConfig } from "#app/locales/he/config";
+import { trConfig } from "#app/locales/tr/config";
 import { zhCnConfig } from "#app/locales/zh_CN/config";
 import { zhTwConfig } from "#app/locales/zh_TW/config";
 
