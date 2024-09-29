@@ -1,5 +1,5 @@
 import * as ModifierTypes from "./modifier-type";
-import { ModifierType, modifierTypes } from "./modifier-type";
+import { getModifierType, ModifierType, modifierTypes } from "./modifier-type";
 import BattleScene from "../battle-scene";
 import { getLevelTotalExp } from "../data/exp";
 import { MAX_PER_TYPE_POKEBALLS, PokeballType } from "../data/pokeball";
@@ -852,26 +852,47 @@ export class EvoTrackerModifier extends PokemonHeldItemModifier {
   }
 
   matchType(modifier: Modifier): boolean {
-    if (modifier instanceof EvoTrackerModifier) {
-      return (modifier as EvoTrackerModifier).species === this.species;
-    }
-    return false;
+    return modifier instanceof EvoTrackerModifier && modifier.species === this.species && modifier.required === this.required;
   }
 
   clone(): PersistentModifier {
-    return new EvoTrackerModifier(this.type, this.pokemonId, this.species, this.stackCount);
+    return new EvoTrackerModifier(this.type, this.pokemonId, this.species, this.required, this.stackCount);
   }
 
   getArgs(): any[] {
-    return super.getArgs().concat(this.species);
+    return super.getArgs().concat([this.species, this.required]);
   }
 
   apply(args: any[]): boolean {
     return true;
   }
 
-  getMaxHeldItemCount(_pokemon: Pokemon): integer {
-    return this.required;
+  getIconStackText(scene: BattleScene, virtual?: boolean): Phaser.GameObjects.BitmapText | null {
+    if (this.getMaxStackCount(scene) === 1 || (virtual && !this.virtualStackCount)) {
+      return null;
+    }
+
+    const pokemon = scene.getPokemonById(this.pokemonId);
+
+    this.stackCount = pokemon
+      ? pokemon.evoCounter + pokemon.getHeldItems().filter(m => m instanceof DamageMoneyRewardModifier).length
+        + pokemon.scene.findModifiers(m => m instanceof MoneyMultiplierModifier || m instanceof ExtraModifierModifier).length
+      : this.stackCount;
+
+    const text = scene.add.bitmapText(10, 15, "item-count", this.stackCount.toString(), 11);
+    text.letterSpacing = -0.5;
+    if (this.getStackCount() >= this.required) {
+      text.setTint(0xf89890);
+    }
+    text.setOrigin(0, 0);
+
+    return text;
+  }
+
+  getMaxHeldItemCount(pokemon: Pokemon): integer {
+    this.stackCount = pokemon.evoCounter + pokemon.getHeldItems().filter(m => m instanceof DamageMoneyRewardModifier).length
+      + pokemon.scene.findModifiers(m => m instanceof MoneyMultiplierModifier || m instanceof ExtraModifierModifier).length;
+    return 999;
   }
 }
 
@@ -2414,9 +2435,8 @@ export class MoneyRewardModifier extends ConsumableModifier {
 
     scene.getParty().map(p => {
       if (p.species?.speciesId === Species.GIMMIGHOUL || p.fusionSpecies?.speciesId === Species.GIMMIGHOUL) {
-        p.evoCounter++;
-        const modifierType: ModifierType = modifierTypes.EVOLUTION_TRACKER_GIMMIGHOUL();
-        const modifier = modifierType!.newModifier(p);
+        p.evoCounter ? p.evoCounter++ : p.evoCounter = 1;
+        const modifier = getModifierType(modifierTypes.EVOLUTION_TRACKER_GIMMIGHOUL).newModifier(p) as EvoTrackerModifier;
         scene.addModifier(modifier);
       }
     });
