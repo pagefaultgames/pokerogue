@@ -92,8 +92,8 @@ export default class SettingsDisplayUiHandler extends AbstractSettingsUiHandler 
         break;
       case "he":
         this.settings[languageIndex].options[0] = {
-          value: "עִבְרִית",
-          label: "עִבְרִית",
+          value: "עברית",
+          label: "עברית",
         };
         break;
       default:
