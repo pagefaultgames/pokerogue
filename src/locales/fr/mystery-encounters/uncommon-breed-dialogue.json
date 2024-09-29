@@ -14,13 +14,13 @@
       "label": "Le nourrir",
       "disabled_tooltip": "Vous avez besoin de 4 Baies pour choisir cette option",
       "tooltip": "(-) Donner 4 Baies\n(+) Le {{enemyPokemon}} vous apprécie",
-      "selected": "Vous lancer quelques Baies\nau {{enemyPokemon}} !$Il les engloutit avec joie !$Le {{enemyPokemon}} veut se joindre\nà votre équipe !"
+      "selected": "Vous lancez quelques Baies\nau {{enemyPokemon}} !$Il les engloutit avec joie !$Le {{enemyPokemon}} veut se joindre\nà votre équipe !"
     },
     "3": {
       "label": "Devenir amis",
       "disabled_tooltip": "Votre Pokémon doit connaitre certaines capacités pour choisir cette option",
       "tooltip": "(+) {{option3PrimaryName}} utilise {{option3PrimaryMove}}\n(+) Le {{enemyPokemon}} vous apprécie",
-      "selected": "Votre {{option3PrimaryName}} utilise {{option3PrimaryMove}} pour charmer le {{enemyPokemon}} !$The {{enemyPokemon}} veut se joindre\nà votre équipe !"
+      "selected": "Votre {{option3PrimaryName}} utilise {{option3PrimaryMove}} pour charmer le {{enemyPokemon}} !$Le {{enemyPokemon}} veut se joindre\nà votre équipe !"
     }
   }
 }
