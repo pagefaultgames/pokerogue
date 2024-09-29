@@ -6,6 +6,7 @@ import { TextStyle, addTextObject, getTextStyleOptions } from "./text";
 import { getSplashMessages } from "../data/splash-messages";
 import i18next from "i18next";
 import { TimedEventDisplay } from "#app/timed-event-manager";
+import {loggedInUser} from "#app/account";
 
 export default class TitleUiHandler extends OptionSelectUiHandler {
   /** If the stats can not be retrieved, use this fallback value */
@@ -15,6 +16,7 @@ export default class TitleUiHandler extends OptionSelectUiHandler {
   private playerCountLabel: Phaser.GameObjects.Text;
   private splashMessage: string;
   private splashMessageText: Phaser.GameObjects.Text;
+  private usernameText: Phaser.GameObjects.Text;
   private eventDisplay: TimedEventDisplay;
 
   private titleStatsTimer: NodeJS.Timeout | null;
@@ -43,18 +45,35 @@ export default class TitleUiHandler extends OptionSelectUiHandler {
       this.titleContainer.add(this.eventDisplay);
     }
 
+    this.usernameText = addTextObject(
+      this.scene,
+      (this.scene.game.canvas.width / 6) - 2,
+      (this.scene.game.canvas.height / 7) - 576 * getTextStyleOptions(TextStyle.WINDOW, this.scene.uiTheme).scale,
+      loggedInUser?.username || "Guest",
+      TextStyle.PARTY_RED,
+      {fontSize: "54px"}
+    );
+    this.usernameText.setOrigin(1, 0);
+    this.titleContainer.add(this.usernameText);
+
+    this.scene.events.on("sessionUpdate", () => {
+      this.scene.enableHideUsername
+        ? this.usernameText.setText("")
+        : this.usernameText.setText(loggedInUser?.username || "Guest");
+    });
+
     this.playerCountLabel = addTextObject(
       this.scene,
       (this.scene.game.canvas.width / 6) - 2,
       (this.scene.game.canvas.height / 6) - 13 - 576 * getTextStyleOptions(TextStyle.WINDOW, this.scene.uiTheme).scale,
       `? ${i18next.t("menu:playersOnline")}`,
       TextStyle.MESSAGE,
-      { fontSize: "54px" }
+      {fontSize: "54px"}
     );
     this.playerCountLabel.setOrigin(1, 0);
     this.titleContainer.add(this.playerCountLabel);
 
-    this.splashMessageText = addTextObject(this.scene, logo.x + 64, logo.y + logo.displayHeight - 8, "", TextStyle.MONEY, { fontSize: "54px" });
+    this.splashMessageText = addTextObject(this.scene, logo.x + 64, logo.y + logo.displayHeight - 8, "", TextStyle.MONEY, {fontSize: "54px"});
     this.splashMessageText.setOrigin(0.5, 0.5);
     this.splashMessageText.setAngle(-20);
     this.titleContainer.add(this.splashMessageText);

@@ -54,6 +54,8 @@ export class TitlePhase extends Phase {
       console.error(err);
       this.showOptions();
     });
+
+    this.scene.events.emit("sessionUpdate");
   }
 
   showOptions(): void {

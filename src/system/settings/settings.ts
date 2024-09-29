@@ -160,7 +160,8 @@ export const SettingKeys = {
   Music_Preference: "MUSIC_PREFERENCE",
   Show_BGM_Bar: "SHOW_BGM_BAR",
   Move_Touch_Controls: "MOVE_TOUCH_CONTROLS",
-  Shop_Overlay_Opacity: "SHOP_OVERLAY_OPACITY"
+  Shop_Overlay_Opacity: "SHOP_OVERLAY_OPACITY",
+  Hide_Username: "HIDE_USERNAME"
 };
 
 /**
@@ -666,6 +667,14 @@ export const Setting: Array<Setting> = [
     default: 7,
     type: SettingType.DISPLAY,
     requireReload: false
+  },
+  {
+    key: SettingKeys.Hide_Username,
+    label: i18next.t("settings:hiddenUsername"),
+    options: OFF_ON,
+    default: 0,
+    type: SettingType.GENERAL,
+    requireReload: false
   }
 ];
 
@@ -756,6 +765,10 @@ export function setSetting(scene: BattleScene, setting: string, value: integer):
     break;
   case SettingKeys.Show_BGM_Bar:
     scene.showBgmBar = Setting[index].options[value].value === "On";
+    break;
+  case SettingKeys.Hide_Username:
+    scene.enableHideUsername = Setting[index].options[value].value === "On";
+    scene.events.emit("sessionUpdate");
     break;
   case SettingKeys.Candy_Upgrade_Notification:
     if (scene.candyUpgradeNotification === value) {
