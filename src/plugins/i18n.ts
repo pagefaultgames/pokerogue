@@ -4,7 +4,7 @@ import processor, { KoreanPostpositionProcessor } from "i18next-korean-postposit
 
 import { caEsConfig} from "#app/locales/ca_ES/config";
 import { deConfig } from "#app/locales/de/config";
-import { dkConfig } from "#app/locales/he/config";
+import { dkConfig } from "#app/locales/dk/config";
 import { enConfig } from "#app/locales/en/config";
 import { esConfig } from "#app/locales/es/config";
 import { frConfig } from "#app/locales/fr/config";
