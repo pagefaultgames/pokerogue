@@ -6,6 +6,10 @@ const LATEST_VERSION = "1.0.5";
 
 export function applySessionDataPatches(data: SessionSaveData) {
   const curVersion = data.gameVersion;
+
+  // Always sanitize money as a safeguard
+  data.money = Math.floor(data.money);
+
   if (curVersion !== LATEST_VERSION) {
     switch (curVersion) {
     case "1.0.0":
