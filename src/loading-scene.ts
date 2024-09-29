@@ -46,6 +46,8 @@ export class LoadingScene extends SceneBase {
     this.loadAtlas("prompt", "ui");
     this.loadImage("candy", "ui");
     this.loadImage("candy_overlay", "ui");
+    this.loadImage("friendship", "ui");
+    this.loadImage("friendship_overlay", "ui");
     this.loadImage("cursor", "ui");
     this.loadImage("cursor_reverse", "ui");
     for (const wv of Utils.getEnumValues(WindowVariant)) {

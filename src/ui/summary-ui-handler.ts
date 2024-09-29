@@ -191,15 +191,15 @@ export default class SummaryUiHandler extends UiHandler {
     this.candyCountText.setOrigin(0, 0);
     this.summaryContainer.add(this.candyCountText);
 
-    this.friendshipIcon = this.scene.add.sprite(13, -60, "candy");
+    this.friendshipIcon = this.scene.add.sprite(13, -60, "friendship");
     this.friendshipIcon.setScale(0.8);
     this.summaryContainer.add(this.friendshipIcon);
 
-    this.friendshipOverlay = this.scene.add.sprite(13, -60, "candy_overlay");
+    this.friendshipOverlay = this.scene.add.sprite(13, -60, "friendship_overlay");
     this.friendshipOverlay.setScale(0.8);
     this.summaryContainer.add(this.friendshipOverlay);
 
-    this.friendshipShadow = this.scene.add.sprite(13, -60, "candy");
+    this.friendshipShadow = this.scene.add.sprite(13, -60, "friendship");
     this.friendshipShadow.setTint(0x000000);
     this.friendshipShadow.setAlpha(0.50);
     this.friendshipShadow.setScale(0.8);
