@@ -1,5 +1,5 @@
 import BattleScene from "../battle-scene";
-import { biomePokemonPools, BiomePoolTier, BiomeTierTrainerPools, biomeTrainerPools, PokemonPools } from "../data/biomes";
+import { biomePokemonPools, BiomePoolTier, BiomeTierTrainerPools, biomeTrainerPools, PokemonPools } from "../data/balance/biomes";
 import { Constructor } from "#app/utils";
 import * as Utils from "../utils";
 import PokemonSpecies, { getPokemonSpecies } from "../data/pokemon-species";

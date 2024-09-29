@@ -7,7 +7,7 @@ import { isMobile } from "./touch-controls";
 import * as Utils from "./utils";
 import { initI18n } from "./plugins/i18n";
 import { initPokemonPrevolutions } from "#app/data/balance/pokemon-evolutions";
-import { initBiomes } from "#app/data/biomes";
+import { initBiomes } from "#app/data/balance/biomes";
 import { initEggMoves } from "#app/data/balance/egg-moves";
 import { initPokemonForms } from "#app/data/pokemon-forms";
 import { initSpecies } from "#app/data/pokemon-species";

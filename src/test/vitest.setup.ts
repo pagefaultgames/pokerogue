@@ -2,7 +2,7 @@ import "vitest-canvas-mock";
 
 import { initLoggedInUser } from "#app/account";
 import { initAbilities } from "#app/data/ability";
-import { initBiomes } from "#app/data/biomes";
+import { initBiomes } from "#app/data/balance/biomes";
 import { initEggMoves } from "#app/data/balance/egg-moves";
 import { initMoves } from "#app/data/move";
 import { initPokemonPrevolutions } from "#app/data/balance/pokemon-evolutions";

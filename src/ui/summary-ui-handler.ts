@@ -13,7 +13,7 @@ import { getGenderColor, getGenderSymbol } from "../data/gender";
 import { getLevelRelExp, getLevelTotalExp } from "../data/exp";
 import { PokemonHeldItemModifier } from "../modifier/modifier";
 import { StatusEffect } from "../data/status-effect";
-import { getBiomeName } from "../data/biomes";
+import { getBiomeName } from "../data/balance/biomes";
 import { Nature, getNatureName, getNatureStatMultiplier } from "../data/nature";
 import { loggedInUser } from "../account";
 import { Variant, getVariantTint } from "#app/data/variant";

@@ -8,7 +8,7 @@ import BattleScene, { AnySound } from "../battle-scene";
 import { GameMode } from "../game-mode";
 import { StarterMoveset } from "../system/game-data";
 import * as Utils from "../utils";
-import { uncatchableSpecies } from "./biomes";
+import { uncatchableSpecies } from "./balance/biomes";
 import { speciesEggMoves } from "./balance/egg-moves";
 import { GrowthRate } from "./exp";
 import { EvolutionLevel, SpeciesWildEvolutionDelay, pokemonEvolutions, pokemonPrevolutions } from "./balance/pokemon-evolutions";
