@@ -913,7 +913,7 @@ export class TrainerConfig {
       this.setPartyMemberFunc(-(s + 1), getRandomPartyMemberFunc(speciesPool));
     });
 
-    // Set species filter to only include species with a base total of 470 or higher.
+    // Set species filter to only include species with a base total of 508 or higher.
     this.setSpeciesFilter(p => p.baseTotal >= 508);
 
     // Localize the trainer's name by converting it to lowercase and replacing spaces with underscores.
