@@ -2618,6 +2618,7 @@ export class SyrupBombTag extends BattlerTag {
     if (!pokemon.isActive(true)) {
       return false;
     }
+    pokemon.scene.queueMessage(i18next.t("battlerTags:syrupBombLapse", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) })); // Custom message in lieu of an animation in mainline
     pokemon.scene.unshiftPhase(new StatStageChangePhase(
       pokemon.scene, pokemon.getBattlerIndex(), true,
       [Stat.SPD], -1, true, false, true
