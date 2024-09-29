@@ -3091,11 +3091,6 @@ export default class BattleScene extends SceneBase {
   private isWaveMysteryEncounter(newBattleType: BattleType, waveIndex: number, sessionDataEncounterType?: MysteryEncounterType): boolean {
     const [lowestMysteryEncounterWave, highestMysteryEncounterWave] = this.gameMode.getMysteryEncounterLegalWaves();
     if (this.gameMode.hasMysteryEncounters && newBattleType === BattleType.WILD && !this.gameMode.isBoss(waveIndex) && waveIndex < highestMysteryEncounterWave && waveIndex > lowestMysteryEncounterWave) {
-      // If ME type is already defined in session data, no need to roll RNG check
-      if (!isNullOrUndefined(sessionDataEncounterType)) {
-        return true;
-      }
-
       // Base spawn weight is BASE_MYSTERY_ENCOUNTER_SPAWN_WEIGHT/256, and increases by WEIGHT_INCREMENT_ON_SPAWN_MISS/256 for each missed attempt at spawning an encounter on a valid floor
       const sessionEncounterRate = this.mysteryEncounterSaveData.encounterSpawnChance;
       const encounteredEvents = this.mysteryEncounterSaveData.encounteredEvents;

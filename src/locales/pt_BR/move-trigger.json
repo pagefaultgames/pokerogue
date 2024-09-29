@@ -64,5 +64,5 @@
   "chillyReception": "{{pokemonName}} está prestes a contar uma piada gelada!",
   "exposedMove": "{{pokemonName}} identificou\n{{targetPokemonName}}!",
   "safeguard": "{{targetName}} está protegido por Safeguard!",
-  "afterYou": "{{pokemonName}} aceitou a gentil oferta!"
+  "afterYou": "{{targetName}} aceitou a gentil oferta!"
 }

@@ -238,7 +238,7 @@ export class GameOverPhase extends BattlePhase {
       enemyModifiers: this.scene.findModifiers(() => true, false).map(m => new PersistentModifierData(m, false)),
       arena: new ArenaData(this.scene.arena),
       pokeballCounts: this.scene.pokeballCounts,
-      money: this.scene.money,
+      money: Math.floor(this.scene.money),
       score: this.scene.score,
       waveIndex: this.scene.currentBattle.waveIndex,
       battleType: this.scene.currentBattle.battleType,
