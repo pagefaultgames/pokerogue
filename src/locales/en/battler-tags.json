@@ -67,5 +67,16 @@
   "saltCuredLapse": "{{pokemonNameWithAffix}} is hurt by {{moveName}}!",
   "cursedOnAdd": "{{pokemonNameWithAffix}} cut its own HP and put a curse on the {{pokemonName}}!",
   "cursedLapse": "{{pokemonNameWithAffix}} is afflicted by the Curse!",
-  "stockpilingOnAdd": "{{pokemonNameWithAffix}} stockpiled {{stockpiledCount}}!"
+  "stockpilingOnAdd": "{{pokemonNameWithAffix}} stockpiled {{stockpiledCount}}!",
+  "disabledOnAdd": "{{pokemonNameWithAffix}}'s {{moveName}}\nwas disabled!",
+  "disabledLapse": "{{pokemonNameWithAffix}}'s {{moveName}}\nis no longer disabled.",
+  "tarShotOnAdd": "{{pokemonNameWithAffix}} became weaker to fire!",
+  "shedTailOnAdd": "{{pokemonNameWithAffix}} shed its tail to create a decoy!",
+  "substituteOnAdd": "{{pokemonNameWithAffix}} put in a substitute!",
+  "substituteOnHit": "The substitute took damage for {{pokemonNameWithAffix}}!",
+  "substituteOnRemove": "{{pokemonNameWithAffix}}'s substitute faded!",
+  "tormentOnAdd": "{{pokemonNameWithAffix}} was subjected to torment!",
+  "tauntOnAdd": "{{pokemonNameWithAffix}} fell for the taunt!",
+  "imprisonOnAdd": "{{pokemonNameWithAffix}} sealed the opponents move(s)!",
+  "autotomizeOnAdd": "{{pokemonNameWithAffix}} became nimble!"
 }

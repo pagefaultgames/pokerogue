@@ -1,23 +1,24 @@
-import { Arena } from "../field/arena";
-import { Type } from "./type";
-import * as Utils from "../utils";
-import { MoveCategory, allMoves, MoveTarget, IncrementMovePriorityAttr, applyMoveAttrs } from "./move";
-import { getPokemonNameWithAffix } from "../messages";
-import Pokemon, { HitResult, PokemonMove } from "../field/pokemon";
-import { StatusEffect } from "./status-effect";
-import { BattlerIndex } from "../battle";
-import { BlockNonDirectDamageAbAttr, ChangeMovePriorityAbAttr, ProtectStatAbAttr, applyAbAttrs } from "./ability";
-import { BattleStat } from "./battle-stat";
-import { CommonAnim, CommonBattleAnim } from "./battle-anims";
+import { Arena } from "#app/field/arena";
+import BattleScene from "#app/battle-scene";
+import { Type } from "#app/data/type";
+import * as Utils from "#app/utils";
+import { MoveCategory, allMoves, MoveTarget, IncrementMovePriorityAttr, applyMoveAttrs } from "#app/data/move";
+import { getPokemonNameWithAffix } from "#app/messages";
+import Pokemon, { HitResult, PlayerPokemon, PokemonMove, EnemyPokemon } from "#app/field/pokemon";
+import { StatusEffect } from "#app/data/status-effect";
+import { BattlerIndex } from "#app/battle";
+import { BlockNonDirectDamageAbAttr, ChangeMovePriorityAbAttr, ProtectStatAbAttr, applyAbAttrs } from "#app/data/ability";
+import { Stat } from "#enums/stat";
+import { CommonAnim, CommonBattleAnim } from "#app/data/battle-anims";
 import i18next from "i18next";
 import { Abilities } from "#enums/abilities";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { Moves } from "#enums/moves";
-import { MoveEffectPhase } from "#app/phases/move-effect-phase.js";
-import { PokemonHealPhase } from "#app/phases/pokemon-heal-phase.js";
-import { ShowAbilityPhase } from "#app/phases/show-ability-phase.js";
-import { StatChangePhase } from "#app/phases/stat-change-phase.js";
+import { MoveEffectPhase } from "#app/phases/move-effect-phase";
+import { PokemonHealPhase } from "#app/phases/pokemon-heal-phase";
+import { ShowAbilityPhase } from "#app/phases/show-ability-phase";
+import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
 
 export enum ArenaTagSide {
   BOTH,
@@ -786,8 +787,8 @@ class StickyWebTag extends ArenaTrapTag {
       applyAbAttrs(ProtectStatAbAttr, pokemon, cancelled);
       if (!cancelled.value) {
         pokemon.scene.queueMessage(i18next.t("arenaTag:stickyWebActivateTrap", { pokemonName: pokemon.getNameToRender() }));
-        const statLevels = new Utils.NumberHolder(-1);
-        pokemon.scene.unshiftPhase(new StatChangePhase(pokemon.scene, pokemon.getBattlerIndex(), false, [BattleStat.SPD], statLevels.value));
+        const stages = new Utils.NumberHolder(-1);
+        pokemon.scene.unshiftPhase(new StatStageChangePhase(pokemon.scene, pokemon.getBattlerIndex(), false, [ Stat.SPD ], stages.value));
       }
     }
 
@@ -875,7 +876,7 @@ class TailwindTag extends ArenaTag {
       // Raise attack by one stage if party member has WIND_RIDER ability
       if (pokemon.hasAbility(Abilities.WIND_RIDER)) {
         pokemon.scene.unshiftPhase(new ShowAbilityPhase(pokemon.scene, pokemon.getBattlerIndex()));
-        pokemon.scene.unshiftPhase(new StatChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [BattleStat.ATK], 1, true));
+        pokemon.scene.unshiftPhase(new StatStageChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [ Stat.ATK ], 1, true));
       }
     }
   }
@@ -902,6 +903,92 @@ class HappyHourTag extends ArenaTag {
 
   onRemove(arena: Arena): void {
     arena.scene.queueMessage(i18next.t("arenaTag:happyHourOnRemove"));
+  }
+}
+
+class SafeguardTag extends ArenaTag {
+  constructor(turnCount: integer, sourceId: integer, side: ArenaTagSide) {
+    super(ArenaTagType.SAFEGUARD, turnCount, Moves.SAFEGUARD, sourceId, side);
+  }
+
+  onAdd(arena: Arena): void {
+    arena.scene.queueMessage(i18next.t(`arenaTag:safeguardOnAdd${this.side === ArenaTagSide.PLAYER ? "Player" : this.side === ArenaTagSide.ENEMY ? "Enemy" : ""}`));
+  }
+
+  onRemove(arena: Arena): void {
+    arena.scene.queueMessage(i18next.t(`arenaTag:safeguardOnRemove${this.side === ArenaTagSide.PLAYER ? "Player" : this.side === ArenaTagSide.ENEMY ? "Enemy" : ""}`));
+  }
+}
+
+/**
+ * This arena tag facilitates the application of the move Imprison
+ * Imprison remains in effect as long as the source Pokemon is active and present on the field.
+ * Imprison will apply to any opposing Pokemon that switch onto the field as well.
+ */
+class ImprisonTag extends ArenaTrapTag {
+  private source: Pokemon;
+
+  constructor(sourceId: number, side: ArenaTagSide) {
+    super(ArenaTagType.IMPRISON, Moves.IMPRISON, sourceId, side, 1);
+  }
+
+  /**
+   * Helper function that retrieves the Pokemon affected
+   * @param {BattleScene} scene medium to retrieve the involved Pokemon
+   * @returns list of PlayerPokemon or EnemyPokemon on the field
+   */
+  private retrieveField(scene: BattleScene): PlayerPokemon[] | EnemyPokemon[] {
+    if (!this.source.isPlayer()) {
+      return scene.getPlayerField() ?? [];
+    }
+    return scene.getEnemyField() ?? [];
+  }
+
+  /**
+   * This function applies the effects of Imprison to the opposing Pokemon already present on the field.
+   * @param arena
+   */
+  override onAdd({ scene }: Arena) {
+    this.source = scene.getPokemonById(this.sourceId!)!;
+    if (this.source) {
+      const party = this.retrieveField(scene);
+      party?.forEach((p: PlayerPokemon | EnemyPokemon ) => {
+        p.addTag(BattlerTagType.IMPRISON, 1, Moves.IMPRISON, this.sourceId);
+      });
+      scene.queueMessage(i18next.t("battlerTags:imprisonOnAdd", {pokemonNameWithAffix: getPokemonNameWithAffix(this.source)}));
+    }
+  }
+
+  /**
+   * Checks if the source Pokemon is still active on the field
+   * @param _arena
+   * @returns `true` if the source of the tag is still active on the field | `false` if not
+   */
+  override lapse(_arena: Arena): boolean {
+    return this.source.isActive(true);
+  }
+
+  /**
+   * This applies the effects of Imprison to any opposing Pokemon that switch into the field while the source Pokemon is still active
+   * @param {Pokemon} pokemon the Pokemon Imprison is applied to
+   * @returns `true`
+   */
+  override activateTrap(pokemon: Pokemon): boolean {
+    if (this.source.isActive(true)) {
+      pokemon.addTag(BattlerTagType.IMPRISON, 1, Moves.IMPRISON, this.sourceId);
+    }
+    return true;
+  }
+
+  /**
+   * When the arena tag is removed, it also attempts to remove any related Battler Tags if they haven't already been removed from the affected Pokemon
+   * @param arena
+   */
+  override onRemove({ scene }: Arena): void {
+    const party = this.retrieveField(scene);
+    party?.forEach((p: PlayerPokemon | EnemyPokemon) => {
+      p.removeTag(BattlerTagType.IMPRISON);
+    });
   }
 }
 
@@ -950,6 +1037,10 @@ export function getArenaTag(tagType: ArenaTagType, turnCount: integer, sourceMov
     return new TailwindTag(turnCount, sourceId, side);
   case ArenaTagType.HAPPY_HOUR:
     return new HappyHourTag(turnCount, sourceId, side);
+  case ArenaTagType.SAFEGUARD:
+    return new SafeguardTag(turnCount, sourceId, side);
+  case ArenaTagType.IMPRISON:
+    return new ImprisonTag(sourceId, side);
   default:
     return null;
   }

@@ -2913,7 +2913,7 @@
   },
   "zippyZap": {
     "name": "電電加速",
-    "effect": "The user attacks the target with bursts of electricity at high speed. This move always goes first and raises the user's evasiveness."
+    "effect": "迅猛無比的電擊。必定能夠先制攻擊，\n並且提高自己的閃避率"
   },
   "splishySplash": {
     "name": "滔滔衝浪",
@@ -3129,7 +3129,7 @@
   },
   "auraWheel": {
     "name": "氣場輪",
-    "effect": "用儲存在頰囊裏的能量進行\n攻擊，並提高自己的速度。\n其屬性會隨着莫魯貝可的樣\n子而改變"
+    "effect": "用儲存在頰囊裏的能量進行\n攻擊，並提高自己的速度。\n如果由莫魯貝可使用，\n其屬性會隨着它的樣子而改變"
   },
   "breakingSwipe": {
     "name": "廣域破壞",

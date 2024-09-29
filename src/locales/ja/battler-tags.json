@@ -1,4 +1,12 @@
 {
+  "trappedDesc": "捕らわれること",
+  "flinchedDesc": "ひるむこと",
+  "confusedDesc": "混乱",
+  "infatuatedDesc": "メロメロ",
+  "seedDesc": "種を植えつくこと",
+  "nightmareDesc": "あくむ",
+  "ingrainDesc": "根",
+  "drowsyDesc": "ねむけ",
   "rechargingLapse": "{{pokemonNameWithAffix}}は　攻撃の　反動で　動けない！",
   "trappedOnAdd": "{{pokemonNameWithAffix}}は　もう　逃げられない！",
   "trappedOnRemove": "{{pokemonNameWithAffix}}は\n{{moveName}}の　効果が　解けた!",
@@ -13,9 +21,9 @@
   "infatuatedOnAdd": "{{pokemonNameWithAffix}}は　{{sourcePokemonName}}に　メロメロに　なった!",
   "infatuatedOnOverlap": "{{pokemonNameWithAffix}}は　すでに　メロメロだ!",
   "infatuatedLapse": "{{pokemonNameWithAffix}}は　{{sourcePokemonName}}に　メロメロだ!",
-  "infatuatedLapseImmobilize": "{{pokemonNameWithAffix}}は\nメロメロで　わざが　出せなかった！",
+  "infatuatedLapseImmobilize": "{{pokemonNameWithAffix}}は　メロメロで　技が出せなかった！",
   "infatuatedOnRemove": "{{pokemonNameWithAffix}}は　メロメロ状態が　治った！",
-  "seededOnAdd": "{{pokemonNameWithAffix}}に　種を　植（う）えつけた！",
+  "seededOnAdd": "{{pokemonNameWithAffix}}に　種を　植えつけた！",
   "seededLapse": "やどりぎが　{{pokemonNameWithAffix}}の　体力を　うばう！",
   "seededLapseShed": "{{pokemonNameWithAffix}}は　ヘドロえきを　吸い取った！",
   "nightmareOnAdd": "{{pokemonNameWithAffix}}は　あくむを　見始めた！",
@@ -59,5 +67,9 @@
   "saltCuredLapse": "{{pokemonNameWithAffix}}は　{{moveName}}の\n　ダメージを　受けている",
   "cursedOnAdd": "{{pokemonNameWithAffix}}は　自分の　体力を　削って\n{{pokemonName}}に　のろいを　かけた!",
   "cursedLapse": "{{pokemonNameWithAffix}}は　のろわれている！",
-  "stockpilingOnAdd": "{{pokemonNameWithAffix}}は　{{stockpiledCount}}つ　たくわえた!"
+  "stockpilingOnAdd": "{{pokemonNameWithAffix}}は　{{stockpiledCount}}つ　たくわえた!",
+  "disabledOnAdd": "{{pokemonNameWithAffix}}の\n{{moveName}}\nを　封じこめた！",
+  "disabledLapse": "{{pokemonNameWithAffix}}の\nかなしばりが　解けた！",
+  "tarShotOnAdd": "{{pokemonNameWithAffix}}は　ほのおに　弱くなった！",
+  "shedTailOnAdd": "{{pokemonNameWithAffix}}は\nしっぽを　切って　みがわりにした！"
 }

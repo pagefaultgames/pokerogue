@@ -1,0 +1,27 @@
+{
+  "intro": "Es ist eine seltsame Maschine, die laut summt...",
+  "title": "Teleportierende Streiche",
+  "description": "Die Maschine hat ein Schild, auf dem steht:\n\"Geld einwerfen und in die Kapsel steigen.\"\nVielleicht kann sie dich irgendwohin transportieren...",
+  "query": "Was wirst du tun?",
+  "option": {
+    "1": {
+      "label": "Geld einwerfen",
+      "tooltip": "(-) Bezahle {{price, money}}\n(?) Teleportiere dich in ein neues Biom",
+      "selected": "Du wirfst etwas Geld ein, und die Kapsel öffnet sich.\nDu steigst ein..."
+    },
+    "2": {
+      "label": "Ein Pokémon hilft",
+      "tooltip": "(-) {{option2PrimaryName}} hilft\n(+) {{option2PrimaryName}} erhält EXP\n(?) Teleportiere dich in ein neues Biom",
+      "disabled_tooltip": "Du brauchst ein Stahl- oder Elektro-Pokémon, um diese Option zu wählen.",
+      "selected": "Der Typ von {{option2PrimaryName}} ermöglicht es ihm, die Bezahlschranke der Maschine zu umgehen!$Die Kapsel öffnet sich, und du steigst ein..."
+    },
+    "3": {
+      "label": "Maschine inspizieren",
+      "tooltip": "(-) Pokémon-Kampf",
+      "selected": "Du wirst von den blinkenden Lichtern und den seltsamen Geräuschen der Maschine angezogen...$Du bemerkst nicht einmal, wie ein wildes Pokémon sich anschleicht und dich überfällt!"
+    }
+  },
+  "transport": "Die Maschine zittert heftig und macht seltsame Geräusche!$Kaum hat es begonnen, wird es wieder ruhig.",
+  "attacked": "Du trittst in eine völlig neue Gegend und erschreckst ein wildes Pokémon!$Das wilde Pokémon greift an!",
+  "boss_enraged": "Das wilde {{enemyPokemon}} ist wütend geworden!"
+}

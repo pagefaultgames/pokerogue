@@ -47,10 +47,14 @@
       "description": "Muda a natureza do Pokémon para {{natureName}} e a desbloqueia permanentemente."
     },
     "DoubleBattleChanceBoosterModifierType": {
-      "description": "Dobra as chances de encontrar uma batalha em dupla por {{battleCount}} batalhas."
+      "description": "Quadruplica as chances de encontrar uma batalha em dupla por {{battleCount}} batalhas."
     },
-    "TempBattleStatBoosterModifierType": {
-      "description": "Aumenta o atributo de {{tempBattleStatName}} para todos os membros da equipe por 5 batalhas."
+    "TempStatStageBoosterModifierType": {
+      "description": "Aumenta o atributo de {{stat}} para todos os membros da equipe em {{amount}} por 5 batalhas.",
+      "extra": {
+        "stage": "um nível",
+        "percentage": "30%"
+      }
     },
     "AttackTypeBoosterModifierType": {
       "description": "Aumenta o poder dos ataques do tipo {{moveType}} de um Pokémon em 20%."
@@ -61,8 +65,22 @@
     "AllPokemonLevelIncrementModifierType": {
       "description": "Aumenta em {{levels}} o nível de todos os membros da equipe."
     },
-    "PokemonBaseStatBoosterModifierType": {
-      "description": "Aumenta o atributo base de {{statName}} em 10%. Quanto maior os IVs, maior o limite de aumento."
+    "BaseStatBoosterModifierType": {
+      "description": "Aumenta o atributo base de {{stat}} em 10%. Quanto maior os IVs, maior o limite de aumento."
+    },
+    "PokemonBaseStatTotalModifierType": {
+      "name": "Suco Shuckle",
+      "description": "{{increaseDecrease}} todos os atributos base de quem o segurar por {{statValue}}. Você foi {{blessCurse}} por Shuckle.",
+      "extra": {
+        "increase": "Aumenta",
+        "decrease": "Diminui",
+        "blessed": "abençoado",
+        "cursed": "amaldiçoado"
+      }
+    },
+    "PokemonBaseStatFlatModifierType": {
+      "name": "Doce Antigo",
+      "description": "Aumenta os atributos base de {{stats}} de quem o segurar por {{statValue}}. Encontrado depois de um sonho estranho."
     },
     "AllPokemonFullHpRestoreModifierType": {
       "description": "Restaura totalmente os PS de todos os Pokémon."
@@ -248,6 +266,12 @@
       "name": "Lentes de Mira",
       "description": "Estas lentes facilitam o foco em pontos fracos. Aumenta a chance de acerto crítico de quem a segurar."
     },
+    "DIRE_HIT": {
+      "name": "Direto",
+      "extra": {
+        "raises": "Chance de Acerto Crítico"
+      }
+    },
     "LEEK": {
       "name": "Alho-poró",
       "description": "Esse talo de alho-poró muito longo e rígido aumenta a taxa de acerto crítico dos movimentos do Farfetch'd."
@@ -334,6 +358,10 @@
       "name": "Esfera da Chama",
       "description": "Uma esfera estranha que aquece quando tocada e queima quem a segurar."
     },
+    "EVOLUTION_TRACKER_GIMMIGHOUL": {
+      "name": "Treasures",
+      "description": "This Pokémon loves treasure! Keep collecting treasure and something might happen!"
+    },
     "BATON": {
       "name": "Bastão",
       "description": "Permite passar mudanças de atributo ao trocar Pokémon, ignorando armadilhas."
@@ -391,6 +419,24 @@
     "ENEMY_FUSED_CHANCE": {
       "name": "Token de Fusão",
       "description": "Adiciona uma chance de 1% de que um Pokémon selvagem seja uma fusão."
+    },
+
+    "MYSTERY_ENCOUNTER_SHUCKLE_JUICE": { "name": "Suco Shuckle" },
+    "MYSTERY_ENCOUNTER_BLACK_SLUDGE": {
+      "name": "Lodo Escuro",
+      "description": "O fedor é tão forte que as lojas só venderão itens com um grande aumento de custo."
+    },
+    "MYSTERY_ENCOUNTER_MACHO_BRACE": {
+      "name": "Pulseira Macho",
+      "description": "Derrotar um Pokémon concede a quem segura uma pilha de Pulseira Macho. Cada pilha aumenta ligeiramente os atributos, com um bônus extra no máximo de pilhas."
+    },
+    "MYSTERY_ENCOUNTER_OLD_GATEAU": {
+      "name": "Doce Antigo",
+      "description_pt": "Aumenta os atributos de {{stats}} de quem o segurar por {{statValue}}."
+    },
+    "MYSTERY_ENCOUNTER_GOLDEN_BUG_NET": {
+      "name": "Rede de Insetos Dourada",
+      "description": "Concede ao dono sorte para encontrar Pokémon do tipo Inseto com mais frequência. Tem um peso estranho."
     }
   },
   "SpeciesBoosterItem": {
@@ -411,25 +457,13 @@
       "description": "Extremamente fino, porém duro, este pó estranho aumenta o atributo de Velocidade de Ditto."
     }
   },
-  "TempBattleStatBoosterItem": {
+  "TempStatStageBoosterItem": {
     "x_attack": "Ataque X",
     "x_defense": "Defesa X",
     "x_sp_atk": "Ataque Esp. X",
     "x_sp_def": "Defesa Esp. X",
     "x_speed": "Velocidade X",
-    "x_accuracy": "Precisão X",
-    "dire_hit": "Direto"
-  },
-  "TempBattleStatBoosterStatName": {
-    "ATK": "Ataque",
-    "DEF": "Defesa",
-    "SPATK": "Ataque Esp.",
-    "SPDEF": "Defesa Esp.",
-    "SPD": "Velocidade",
-    "ACC": "Precisão",
-    "CRIT": "Chance de Acerto Crítico",
-    "EVA": "Evasão",
-    "DEFAULT": "???"
+    "x_accuracy": "Precisão X"
   },
   "AttackTypeBoosterItem": {
     "silk_scarf": "Lenço de Seda",
@@ -477,6 +511,22 @@
     "TART_APPLE": "Maçã Azeda",
     "STRAWBERRY_SWEET": "Doce de Morango",
     "UNREMARKABLE_TEACUP": "Xícara Comum",
+    "UPGRADE": "Melhora",
+    "DUBIOUS_DISC": "Dubious Disc",
+    "DRAGON_SCALE": "Escama de Dragão",
+    "PRISM_SCALE": "Prism Scale",
+    "RAZOR_CLAW": "Garra de Navalha",
+    "RAZOR_FANG": "Presa Afiada",
+    "REAPER_CLOTH": "Capa do Ceifador",
+    "ELECTIRIZER": "Electirizer",
+    "MAGMARIZER": "Magmarizer",
+    "PROTECTOR": "Protector",
+    "SACHET": "Sachet",
+    "WHIPPED_DREAM": "Whipped Dream",
+    "LEADERS_CREST": "Leader's Crest",
+    "SUN_FLUTE": "Sun Flute",
+    "MOON_FLUTE": "Moon Flute",
+    
     "CHIPPED_POT": "Pote Lascado",
     "BLACK_AUGURITE": "Mineral Negro",
     "GALARICA_CUFF": "Bracelete de Galar",
@@ -604,6 +654,6 @@
     "DRAGON_MEMORY": "Memória do Dragão",
     "DARK_MEMORY": "Memória Sombria",
     "FAIRY_MEMORY": "Memória de Fada",
-    "BLANK_MEMORY": "Memória Vazia"
+    "NORMAL_MEMORY": "Memória Normal"
   }
 }

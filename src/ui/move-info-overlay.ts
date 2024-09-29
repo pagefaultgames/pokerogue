@@ -15,12 +15,16 @@ export interface MoveInfoOverlaySettings {
     //location and width of the component; unaffected by scaling
     x?: number;
     y?: number;
-    width?: number; // default is always half the screen, regardless of scale
+    /** Default is always half the screen, regardless of scale */
+    width?: number;
+    /** Determines whether to display the small secondary box */
+    hideEffectBox?: boolean;
+    hideBg?: boolean;
 }
 
-const EFF_HEIGHT = 46;
+const EFF_HEIGHT = 48;
 const EFF_WIDTH = 82;
-const DESC_HEIGHT = 46;
+const DESC_HEIGHT = 48;
 const BORDER = 8;
 const GLOBAL_SCALE = 6;
 
@@ -38,6 +42,7 @@ export default class MoveInfoOverlay extends Phaser.GameObjects.Container implem
   private acc: Phaser.GameObjects.Text;
   private typ: Phaser.GameObjects.Sprite;
   private cat: Phaser.GameObjects.Sprite;
+  private descBg: Phaser.GameObjects.NineSlice;
 
   private options : MoveInfoOverlaySettings;
 
@@ -52,12 +57,13 @@ export default class MoveInfoOverlay extends Phaser.GameObjects.Container implem
 
     // prepare the description box
     const width = (options?.width || MoveInfoOverlay.getWidth(scale, scene)) / scale; // divide by scale as we always want this to be half a window wide
-    const descBg = addWindow(scene,  (options?.onSide && !options?.right ? EFF_WIDTH : 0), options?.top ? EFF_HEIGHT : 0, width - (options?.onSide ? EFF_WIDTH : 0), DESC_HEIGHT);
-    descBg.setOrigin(0, 0);
-    this.add(descBg);
+    this.descBg = addWindow(scene,  (options?.onSide && !options?.right ? EFF_WIDTH : 0), options?.top ? EFF_HEIGHT : 0, width - (options?.onSide ? EFF_WIDTH : 0), DESC_HEIGHT);
+    this.descBg.setOrigin(0, 0);
+    this.add(this.descBg);
 
     // set up the description; wordWrap uses true pixels, unaffected by any scaling, while other values are affected
     this.desc = addTextObject(scene, (options?.onSide && !options?.right ? EFF_WIDTH : 0) + BORDER, (options?.top ? EFF_HEIGHT : 0) + BORDER - 2, "", TextStyle.BATTLE_INFO, { wordWrap: { width: (width - (BORDER - 2) * 2 - (options?.onSide ? EFF_WIDTH : 0)) * GLOBAL_SCALE } });
+    this.desc.setLineSpacing(i18next.resolvedLanguage === "ja" ? 25 : 5);
 
     // limit the text rendering, required for scrolling later on
     const maskPointOrigin = {
@@ -90,7 +96,7 @@ export default class MoveInfoOverlay extends Phaser.GameObjects.Container implem
     valuesBg.setOrigin(0, 0);
     this.val.add(valuesBg);
 
-    this.typ = this.scene.add.sprite(25, EFF_HEIGHT - 35, `types${Utils.verifyLang(i18next.language) ? `_${i18next.language}` : ""}`, "unknown");
+    this.typ = this.scene.add.sprite(25, EFF_HEIGHT - 35, Utils.getLocalizedSpriteKey("types"), "unknown");
     this.typ.setScale(0.8);
     this.val.add(this.typ);
 
@@ -124,6 +130,14 @@ export default class MoveInfoOverlay extends Phaser.GameObjects.Container implem
     this.acc.setOrigin(1, 0.5);
     this.val.add(this.acc);
 
+    if (options?.hideEffectBox) {
+      this.val.setVisible(false);
+    }
+
+    if (options?.hideBg) {
+      this.descBg.setVisible(false);
+    }
+
     // hide this component for now
     this.setVisible(false);
   }
@@ -137,7 +151,7 @@ export default class MoveInfoOverlay extends Phaser.GameObjects.Container implem
     this.pow.setText(move.power >= 0 ? move.power.toString() : "---");
     this.acc.setText(move.accuracy >= 0 ? move.accuracy.toString() : "---");
     this.pp.setText(move.pp >= 0 ? move.pp.toString() : "---");
-    this.typ.setTexture(`types${Utils.verifyLang(i18next.language) ? `_${i18next.language}` : ""}`, Type[move.type].toLowerCase());
+    this.typ.setTexture(Utils.getLocalizedSpriteKey("types"), Type[move.type].toLowerCase());
     this.cat.setFrame(MoveCategory[move.category].toLowerCase());
 
     this.desc.setText(move?.effect || "");
@@ -175,8 +189,19 @@ export default class MoveInfoOverlay extends Phaser.GameObjects.Container implem
     this.active = false;
   }
 
-  toggleInfo(force?: boolean): void {
-    this.setVisible(force ?? !this.visible);
+  toggleInfo(visible: boolean): void {
+    if (visible) {
+      this.setVisible(true);
+    }
+    this.scene.tweens.add({
+      targets: this.desc,
+      duration: Utils.fixedInt(125),
+      ease: "Sine.easeInOut",
+      alpha: visible ? 1 : 0
+    });
+    if (!visible) {
+      this.setVisible(false);
+    }
   }
 
   isActive(): boolean {

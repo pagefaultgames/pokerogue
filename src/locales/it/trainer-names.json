@@ -139,6 +139,13 @@
   "xerosic": "Xante",
   "bryony": "Bromelia",
   "faba": "Vicio",
+  "plumeria": "Plumeria",
+  "oleana": "Olive",
+  "giacomo": "Romelio",
+  "mela": "Pruna",
+  "atticus": "Henzo",
+  "ortega": "Ortiz",
+  "eri": "Nespera",
 
   "maxie": "Max",
   "archie": "Ivan",
@@ -147,6 +154,9 @@
   "lysandre": "Elisio",
   "lusamine": "Samina",
   "guzma": "Guzman",
+  "rose": "Rose",
+  "cassiopeia": "Penny",
+  
   "blue_red_double": "Blu & Rosso",
   "red_blue_double": "Rosso & Blu",
   "tate_liza_double": "Tell & Pat",
@@ -156,5 +166,19 @@
   "alder_iris_double": "Nardo & Iris",
   "iris_alder_double": "Iris & Nardo",
   "marnie_piers_double": "Mary & Ginepro",
-  "piers_marnie_double": "Ginepro & Mary"
+  "piers_marnie_double": "Ginepro & Mary",
+
+  "buck": "Chicco",
+  "cheryl": "Demetra",
+  "marley": "Risetta",
+  "mira": "Matilde",
+  "riley": "Fabiolo",
+  "victor": "Vincenzo",
+  "victoria": "Vittoria",
+  "vivi": "Viviana",
+  "vicky": "Vicky",
+  "vito": "Enrico",
+  
+  "bug_type_superfan": "Fan n.1 dei tipi Coleottero",
+  "expert_pokemon_breeder": "Allevapokémon Esperte"
 }

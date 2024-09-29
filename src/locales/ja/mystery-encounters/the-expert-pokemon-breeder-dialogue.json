@@ -1,0 +1,31 @@
+{
+  "intro": "タマゴを　たくさん　運んでいる　トレーナー　です！",
+  "intro_dialogue": "チーッス　トレーナーちゃん！$手持ちポケモンの　１匹、　なんか　落ち込んでる　みたいね……$あたしと　元気が出る　バトル　しない？",
+  "title": "ブリーダー名人",
+  "description": "@[TOOLTIP_TITLE]{１匹のポケモン　しか　使えない}　バトルに　挑まれました。　たぶん　キツく　なりますが、　きっと　選んだ　ポケモンと　よっぽど　仲良く　なれます！\n勝ったら　ブリーダー名人が　数個の　@[TOOLTIP_TITLE]{ポケモンタマゴ}を　くれます。",
+  "query": "どのポケモンとバトルしますか？",
+  "cleffa_1_nickname": "エース",
+  "cleffa_2_nickname": "トッピクシー",
+  "cleffa_3_nickname": "華麗なる{{speciesName}}",
+  "option": {
+    "1": {
+      "label": "{{pokemon1Name}}",
+      "tooltip_base": "(-) 勝負がキツい\n(+) {{pokemon1Name}}と仲良くなる"
+    },
+    "2": {
+      "label": "{{pokemon2Name}}",
+      "tooltip_base": "(-) 勝負がキツい\n(+) {{pokemon2Name}}と仲良くなる"
+    },
+    "3": {
+      "label": "{{pokemon3Name}}",
+      "tooltip_base": "(-) 勝負がキツい\n(+) {{pokemon3Name}}と仲良くなる"
+    },
+    "selected": "レッツゴー！"
+  },
+  "outro": "ねえ、　{{chosenPokemon}}　すごく　嬉しくなったわ！$そして、　これらも　どうぞ！",
+  "outro_failed": "なんか　ガッカリ　ね……$手持ち　ポケモンの　信用を　得るまで\nまだまだ　みたいんだわ！",
+  "gained_eggs": "@s{item_fanfare}{{numEggs}}を　もらいました！",
+  "eggs_tooltip": "\n(+) @[TOOLTIP_TITLE]{{{eggs}}}を得る",
+  "numEggs_one": "{{count}}　{{rarity}}　タマゴ",
+  "numEggs_other": "{{count}}　{{rarity}}　タマゴ"
+}

@@ -3,6 +3,10 @@
   "cutHpPowerUpMove": "{{pokemonName}} riduce i suoi PS per potenziare la sua mossa!",
   "absorbedElectricity": "{{pokemonName}} assorbe elettricità!",
   "switchedStatChanges": "{{pokemonName}} scambia con il bersaglio le modifiche alle statistiche!",
+  "switchedTwoStatChanges": "{{pokemonName}} scambia con il bersaglio le modifiche a {{firstStat}} e {{secondStat}}!",
+  "switchedStat": "{{pokemonName}} scambia la sua {{stat}} con quella del bersaglio!",
+  "sharedGuard": "{{pokemonName}} somma le sue capacità difensive con quelle del bersaglio e le ripartisce equamente!",
+  "sharedPower": "{{pokemonName}} somma le sue capacità offensive con quelle del bersaglio e le ripartisce equamente!",
   "goingAllOutForAttack": "{{pokemonName}} fa sul serio!",
   "regainedHealth": "{{pokemonName}} s'è\nripreso!",
   "keptGoingAndCrashed": "{{pokemonName}} si sbilancia e\nsi schianta!",
@@ -61,5 +65,8 @@
   "suppressAbilities": "L’abilità di {{pokemonName}}\nperde ogni efficacia!",
   "revivalBlessing": "{{pokemonName}} torna in forze!",
   "swapArenaTags": "{{pokemonName}} ha invertito gli effetti attivi\nnelle due metà del campo!",
-  "exposedMove": "{{pokemonName}} ha identificato\n{{targetPokemonName}}!"
+  "exposedMove": "{{pokemonName}} ha identificato\n{{targetPokemonName}}!",
+  "chillyReception": "{{pokemonName}} sta per fare una battuta!",
+  "safeguard": "Salvaguardia protegge {{targetName}}!",
+  "afterYou": "{{pokemonName}} approfitta della cortesia!"
 }

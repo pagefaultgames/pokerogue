@@ -6,11 +6,10 @@ import { Moves } from "#app/enums/moves";
 import { Species } from "#app/enums/species";
 import { HitResult } from "#app/field/pokemon";
 import GameManager from "#test/utils/gameManager";
-import { SPLASH_ONLY } from "#test/utils/testUtils";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
-const TIMEOUT = 20 * 1000;
+
 
 describe("Abilities - Galvanize", () => {
   let phaserGame: Phaser.Game;
@@ -36,7 +35,7 @@ describe("Abilities - Galvanize", () => {
       .moveset([Moves.TACKLE, Moves.REVELATION_DANCE, Moves.FURY_SWIPES])
       .enemySpecies(Species.DUSCLOPS)
       .enemyAbility(Abilities.BALL_FETCH)
-      .enemyMoveset(SPLASH_ONLY)
+      .enemyMoveset(Moves.SPLASH)
       .enemyLevel(100);
   });
 
@@ -60,7 +59,7 @@ describe("Abilities - Galvanize", () => {
     expect(enemyPokemon.apply).toHaveReturnedWith(HitResult.EFFECTIVE);
     expect(move.calculateBattlePower).toHaveReturnedWith(48);
     expect(enemyPokemon.hp).toBeLessThan(enemyPokemon.getMaxHp());
-  }, TIMEOUT);
+  });
 
   it("should cause Normal-type attacks to activate Volt Absorb", async () => {
     game.override.enemyAbility(Abilities.VOLT_ABSORB);
@@ -82,7 +81,7 @@ describe("Abilities - Galvanize", () => {
     expect(playerPokemon.getMoveType).toHaveLastReturnedWith(Type.ELECTRIC);
     expect(enemyPokemon.apply).toHaveReturnedWith(HitResult.NO_EFFECT);
     expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp());
-  }, TIMEOUT);
+  });
 
   it("should not change the type of variable-type moves", async () => {
     game.override.enemySpecies(Species.MIGHTYENA);
@@ -101,7 +100,7 @@ describe("Abilities - Galvanize", () => {
     expect(playerPokemon.getMoveType).not.toHaveLastReturnedWith(Type.ELECTRIC);
     expect(enemyPokemon.apply).toHaveReturnedWith(HitResult.NO_EFFECT);
     expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp());
-  }, TIMEOUT);
+  });
 
   it("should affect all hits of a Normal-type multi-hit move", async () => {
     await game.startBattle();
@@ -129,5 +128,5 @@ describe("Abilities - Galvanize", () => {
     }
 
     expect(enemyPokemon.apply).not.toHaveReturnedWith(HitResult.NO_EFFECT);
-  }, TIMEOUT);
+  });
 });

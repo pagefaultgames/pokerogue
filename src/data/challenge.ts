@@ -1,19 +1,18 @@
 import * as Utils from "../utils";
 import i18next from "i18next";
-import { defaultStarterSpecies, DexAttrProps, GameData } from "#app/system/game-data.js";
+import { defaultStarterSpecies, DexAttrProps, GameData } from "#app/system/game-data";
 import PokemonSpecies, { getPokemonSpecies, getPokemonSpeciesForm, speciesStarters } from "./pokemon-species";
-import Pokemon, { PokemonMove } from "#app/field/pokemon.js";
-import { BattleType, FixedBattleConfig } from "#app/battle.js";
-import Trainer, { TrainerVariant } from "#app/field/trainer.js";
-import { GameMode } from "#app/game-mode.js";
+import Pokemon, { PokemonMove } from "#app/field/pokemon";
+import { BattleType, FixedBattleConfig } from "#app/battle";
+import Trainer, { TrainerVariant } from "#app/field/trainer";
+import { GameMode } from "#app/game-mode";
 import { Type } from "./type";
 import { Challenges } from "#enums/challenges";
 import { Species } from "#enums/species";
 import { TrainerType } from "#enums/trainer-type";
 import { Nature } from "./nature";
-import { Moves } from "#app/enums/moves.js";
-import { TypeColor, TypeShadow } from "#app/enums/color.js";
-import { Gender } from "./gender";
+import { Moves } from "#app/enums/moves";
+import { TypeColor, TypeShadow } from "#app/enums/color";
 import { pokemonEvolutions } from "./pokemon-evolutions";
 import { pokemonFormChanges } from "./pokemon-forms";
 
@@ -55,6 +54,11 @@ export enum ChallengeType {
    * @see {@link Challenge.applyFixedBattle}
   */
   FIXED_BATTLES,
+  /**
+   * Modifies the effectiveness of Type matchups in battle
+   * @see {@linkcode Challenge.applyTypeEffectiveness}
+  */
+  TYPE_EFFECTIVENESS,
   /**
    * Modifies what level the AI pokemon are. UNIMPLEMENTED.
    */
@@ -168,11 +172,9 @@ export abstract class Challenge {
    * @param overrideValue {@link integer} The value to check for. If undefined, gets the current value.
    * @returns {@link string} The localised name for the current value.
    */
-  getValue(overrideValue?: integer): string {
-    if (overrideValue === undefined) {
-      overrideValue = this.value;
-    }
-    return i18next.t(`challenges:${this.geti18nKey()}.value.${this.value}`);
+  getValue(overrideValue?: number): string {
+    const value = overrideValue ?? this.value;
+    return i18next.t(`challenges:${this.geti18nKey()}.value.${value}`);
   }
 
   /**
@@ -180,11 +182,9 @@ export abstract class Challenge {
    * @param overrideValue {@link integer} The value to check for. If undefined, gets the current value.
    * @returns {@link string} The localised description for the current value.
    */
-  getDescription(overrideValue?: integer): string {
-    if (overrideValue === undefined) {
-      overrideValue = this.value;
-    }
-    return `${i18next.t([`challenges:${this.geti18nKey()}.desc.${this.value}`, `challenges:${this.geti18nKey()}.desc`])}`;
+  getDescription(overrideValue?: number): string {
+    const value = overrideValue ?? this.value;
+    return `${i18next.t([`challenges:${this.geti18nKey()}.desc.${value}`, `challenges:${this.geti18nKey()}.desc`])}`;
   }
 
   /**
@@ -324,6 +324,15 @@ export abstract class Challenge {
    * @returns {@link boolean} Whether this function did anything.
    */
   applyFixedBattle(waveIndex: Number, battleConfig: FixedBattleConfig): boolean {
+    return false;
+  }
+
+  /**
+   * An apply function for TYPE_EFFECTIVENESS challenges. Derived classes should alter this.
+   * @param effectiveness {@linkcode Utils.NumberHolder} The current effectiveness of the move.
+   * @returns Whether this function did anything.
+   */
+  applyTypeEffectiveness(effectiveness: Utils.NumberHolder): boolean {
     return false;
   }
 
@@ -474,14 +483,12 @@ export class SingleGenerationChallenge extends Challenge {
    * @param {value} overrideValue The value to check for. If undefined, gets the current value.
    * @returns {string} The localised name for the current value.
    */
-  getValue(overrideValue?: integer): string {
-    if (overrideValue === undefined) {
-      overrideValue = this.value;
-    }
-    if (this.value === 0) {
+  getValue(overrideValue?: number): string {
+    const value = overrideValue ?? this.value;
+    if (value === 0) {
       return i18next.t("settings:off");
     }
-    return i18next.t(`starterSelectUiHandler:gen${this.value}`);
+    return i18next.t(`starterSelectUiHandler:gen${value}`);
   }
 
   /**
@@ -489,14 +496,12 @@ export class SingleGenerationChallenge extends Challenge {
    * @param {value} overrideValue The value to check for. If undefined, gets the current value.
    * @returns {string} The localised description for the current value.
    */
-  getDescription(overrideValue?: integer): string {
-    if (overrideValue === undefined) {
-      overrideValue = this.value;
-    }
-    if (this.value === 0) {
+  getDescription(overrideValue?: number): string {
+    const value = overrideValue ?? this.value;
+    if (value === 0) {
       return i18next.t("challenges:singleGeneration.desc_default");
     }
-    return i18next.t("challenges:singleGeneration.desc", { gen: i18next.t(`challenges:singleGeneration.gen_${this.value}`) });
+    return i18next.t("challenges:singleGeneration.desc", { gen: i18next.t(`challenges:singleGeneration.gen_${value}`) });
   }
 
 
@@ -522,18 +527,19 @@ interface monotypeOverride {
  */
 export class SingleTypeChallenge extends Challenge {
   private static TYPE_OVERRIDES: monotypeOverride[] = [
-    {species: Species.MELOETTA, type: Type.PSYCHIC, fusion: true},
     {species: Species.CASTFORM, type: Type.NORMAL, fusion: false},
   ];
+  // TODO: Find a solution for all Pokemon with this ssui issue, including Basculin and Burmy
+  private static SPECIES_OVERRIDES: Species[] = [Species.MELOETTA];
 
   constructor() {
     super(Challenges.SINGLE_TYPE, 18);
   }
 
-  applyStarterChoice(pokemon: PokemonSpecies, valid: Utils.BooleanHolder, dexAttr: DexAttrProps, soft: boolean = false): boolean {
+  override applyStarterChoice(pokemon: PokemonSpecies, valid: Utils.BooleanHolder, dexAttr: DexAttrProps, soft: boolean = false): boolean {
     const speciesForm = getPokemonSpeciesForm(pokemon.speciesId, dexAttr.formIndex);
     const types = [speciesForm.type1, speciesForm.type2];
-    if (soft) {
+    if (soft && !SingleTypeChallenge.SPECIES_OVERRIDES.includes(pokemon.speciesId)) {
       const speciesToCheck = [pokemon.speciesId];
       while (speciesToCheck.length) {
         const checking = speciesToCheck.pop();
@@ -645,16 +651,12 @@ export class FreshStartChallenge extends Challenge {
     pokemon.luck = 0; // No luck
     pokemon.shiny = false; // Not shiny
     pokemon.variant = 0; // Not shiny
-    pokemon.gender = Gender.MALE; // Starters default to male
     pokemon.formIndex = 0; // Froakie should be base form
     pokemon.ivs = [10, 10, 10, 10, 10, 10]; // Default IVs of 10 for all stats
     return true;
   }
 
-  /**
-   * @overrides
-   */
-  getDifficulty(): number {
+  override getDifficulty(): number {
     return 0;
   }
 
@@ -663,6 +665,38 @@ export class FreshStartChallenge extends Challenge {
     newChallenge.value = source.value;
     newChallenge.severity = source.severity;
     return newChallenge;
+  }
+}
+
+/**
+ * Implements an inverse battle challenge.
+ */
+export class InverseBattleChallenge extends Challenge {
+  constructor() {
+    super(Challenges.INVERSE_BATTLE, 1);
+  }
+
+  static loadChallenge(source: InverseBattleChallenge | any): InverseBattleChallenge {
+    const newChallenge = new InverseBattleChallenge();
+    newChallenge.value = source.value;
+    newChallenge.severity = source.severity;
+    return newChallenge;
+  }
+
+  override getDifficulty(): number {
+    return 0;
+  }
+
+  applyTypeEffectiveness(effectiveness: Utils.NumberHolder): boolean {
+    if (effectiveness.value < 1) {
+      effectiveness.value = 2;
+      return true;
+    } else if (effectiveness.value > 1) {
+      effectiveness.value = 0.5;
+      return true;
+    }
+
+    return false;
   }
 }
 
@@ -786,6 +820,14 @@ export function applyChallenges(gameMode: GameMode, challengeType: ChallengeType
  */
 export function applyChallenges(gameMode: GameMode, challengeType: ChallengeType.FIXED_BATTLES, waveIndex: Number, battleConfig: FixedBattleConfig): boolean;
 /**
+ * Apply all challenges that modify type effectiveness.
+ * @param gameMode {@linkcode GameMode} The current gameMode
+ * @param challengeType {@linkcode ChallengeType} ChallengeType.TYPE_EFFECTIVENESS
+ * @param effectiveness {@linkcode Utils.NumberHolder} The current effectiveness of the move.
+ * @returns True if any challenge was successfully applied.
+ */
+export function applyChallenges(gameMode: GameMode, challengeType: ChallengeType.TYPE_EFFECTIVENESS, effectiveness: Utils.NumberHolder): boolean;
+/**
  * Apply all challenges that modify what level AI are.
  * @param gameMode {@link GameMode} The current gameMode
  * @param challengeType {@link ChallengeType} ChallengeType.AI_LEVEL
@@ -866,6 +908,9 @@ export function applyChallenges(gameMode: GameMode, challengeType: ChallengeType
       case ChallengeType.FIXED_BATTLES:
         ret ||= c.applyFixedBattle(args[0], args[1]);
         break;
+      case ChallengeType.TYPE_EFFECTIVENESS:
+        ret ||= c.applyTypeEffectiveness(args[0]);
+        break;
       case ChallengeType.AI_LEVEL:
         ret ||= c.applyLevelChange(args[0], args[1], args[2], args[3]);
         break;
@@ -907,6 +952,8 @@ export function copyChallenge(source: Challenge | any): Challenge {
     return LowerStarterPointsChallenge.loadChallenge(source);
   case Challenges.FRESH_START:
     return FreshStartChallenge.loadChallenge(source);
+  case Challenges.INVERSE_BATTLE:
+    return InverseBattleChallenge.loadChallenge(source);
   }
   throw new Error("Unknown challenge copied");
 }
@@ -918,5 +965,6 @@ export function initChallenges() {
     new SingleGenerationChallenge(),
     new SingleTypeChallenge(),
     new FreshStartChallenge(),
+    new InverseBattleChallenge(),
   );
 }

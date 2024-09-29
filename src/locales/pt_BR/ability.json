@@ -421,7 +421,7 @@
   },
   "aftermath": {
     "name": "Aftermath",
-    "description": "Caso o Pokémon seja derrotado em decorrência de um movimento de contato, o atacante recebe dano."
+    "description": "Causa dano ao atacante se ele entrar em contato com o Pokémon com um golpe final."
   },
   "anticipation": {
     "name": "Anticipation",
@@ -1237,6 +1237,6 @@
   },
   "poisonPuppeteer": {
     "name": "Poison Puppeteer",
-    "description": "Pokémon envenenados pelos movimentos de Pecharunt também ficarão confusos."
+    "description": "Pokémon envenenados pelos movimentos deste Pokémon também ficarão confusos."
   }
 }
