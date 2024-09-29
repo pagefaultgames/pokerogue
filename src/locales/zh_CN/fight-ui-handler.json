@@ -1,0 +1,8 @@
+{
+  "pp": "PP",
+  "power": "威力",
+  "accuracy": "命中",
+  "abilityFlyInText": " {{pokemonName}} 的\n{{passive}}{{abilityName}}",
+  "passive": "被动 ",
+  "teraHover": "{{type}}太晶化"
+}

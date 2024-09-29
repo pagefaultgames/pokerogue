@@ -1,83 +1,105 @@
-import { BattleStat } from "#app/data/battle-stat";
-import GameManager from "#test/utils/gameManager";
-import { getMovePosition } from "#test/utils/gameManagerUtils";
+import { Stat } from "#enums/stat";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
+import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import { SPLASH_ONLY } from "#test/utils/testUtils";
-import { allMoves } from "#app/data/move.js";
-import { MoveEndPhase } from "#app/phases/move-end-phase.js";
-import { TurnInitPhase } from "#app/phases/turn-init-phase.js";
+import { allMoves } from "#app/data/move";
+import { CommandPhase } from "#app/phases/command-phase";
 
 describe("Moves - Freezy Frost", () => {
-  describe("integration tests", () => {
-    let phaserGame: Phaser.Game;
-    let game: GameManager;
+  let phaserGame: Phaser.Game;
+  let game: GameManager;
 
-    beforeAll(() => {
-      phaserGame = new Phaser.Game({ type: Phaser.HEADLESS });
-    });
+  beforeAll(() => {
+    phaserGame = new Phaser.Game({ type: Phaser.HEADLESS });
+  });
 
-    afterEach(() => {
-      game.phaseInterceptor.restoreOg();
-    });
+  afterEach(() => {
+    game.phaseInterceptor.restoreOg();
+  });
 
-    beforeEach(() => {
-      game = new GameManager(phaserGame);
+  beforeEach(() => {
+    game = new GameManager(phaserGame);
 
-      game.override.battleType("single");
+    game.override
+      .battleType("single")
+      .enemySpecies(Species.RATTATA)
+      .enemyLevel(100)
+      .enemyMoveset([ Moves.HOWL, Moves.HOWL, Moves.HOWL, Moves.HOWL ])
+      .enemyAbility(Abilities.BALL_FETCH)
+      .startingLevel(100)
+      .moveset([ Moves.FREEZY_FROST, Moves.HOWL, Moves.SPLASH ])
+      .ability(Abilities.BALL_FETCH);
 
-      game.override.enemySpecies(Species.RATTATA);
-      game.override.enemyLevel(100);
-      game.override.enemyMoveset(SPLASH_ONLY);
-      game.override.enemyAbility(Abilities.NONE);
+    vi.spyOn(allMoves[ Moves.FREEZY_FROST ], "accuracy", "get").mockReturnValue(100);
+  });
 
-      game.override.startingLevel(100);
-      game.override.moveset([Moves.FREEZY_FROST, Moves.SWORDS_DANCE, Moves.CHARM, Moves.SPLASH]);
-      vi.spyOn(allMoves[Moves.FREEZY_FROST], "accuracy", "get").mockReturnValue(100);
-      game.override.ability(Abilities.NONE);
-    });
-
-    it("Uses Swords Dance to raise own ATK by 2, Charm to lower enemy ATK by 2, player uses Freezy Frost to clear all stat changes", { timeout: 10000 }, async () => {
-      await game.startBattle([Species.RATTATA]);
+  it(
+    "should clear stat changes of user and opponent",
+    async () => {
+      await game.classicMode.startBattle([ Species.SHUCKLE ]);
       const user = game.scene.getPlayerPokemon()!;
       const enemy = game.scene.getEnemyPokemon()!;
-      expect(user.summonData.battleStats[BattleStat.ATK]).toBe(0);
-      expect(enemy.summonData.battleStats[BattleStat.ATK]).toBe(0);
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.SWORDS_DANCE));
-      await game.phaseInterceptor.to(TurnInitPhase);
+      game.move.select(Moves.HOWL);
+      await game.toNextTurn();
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.CHARM));
-      await game.phaseInterceptor.to(TurnInitPhase);
-      const userAtkBefore = user.summonData.battleStats[BattleStat.ATK];
-      const enemyAtkBefore = enemy.summonData.battleStats[BattleStat.ATK];
-      expect(userAtkBefore).toBe(2);
-      expect(enemyAtkBefore).toBe(-2);
+      expect(user.getStatStage(Stat.ATK)).toBe(1);
+      expect(enemy.getStatStage(Stat.ATK)).toBe(1);
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.FREEZY_FROST));
-      await game.phaseInterceptor.to(TurnInitPhase);
-      expect(user.summonData.battleStats[BattleStat.ATK]).toBe(0);
-      expect(enemy.summonData.battleStats[BattleStat.ATK]).toBe(0);
+      game.move.select(Moves.FREEZY_FROST);
+      await game.toNextTurn();
+
+      expect(user.getStatStage(Stat.ATK)).toBe(0);
+      expect(enemy.getStatStage(Stat.ATK)).toBe(0);
     });
 
-    it("Uses Swords Dance to raise own ATK by 2, Charm to lower enemy ATK by 2, enemy uses Freezy Frost to clear all stat changes", { timeout: 10000 }, async () => {
-      game.override.enemyMoveset([Moves.FREEZY_FROST, Moves.FREEZY_FROST, Moves.FREEZY_FROST, Moves.FREEZY_FROST]);
-      await game.startBattle([Species.SHUCKLE]); // Shuckle for slower Swords Dance on first turn so Freezy Frost doesn't affect it.
+  it(
+    "should clear all stat changes even when enemy uses the move",
+    async () => {
+      game.override.enemyMoveset([ Moves.FREEZY_FROST, Moves.FREEZY_FROST, Moves.FREEZY_FROST, Moves.FREEZY_FROST ]);
+      await game.classicMode.startBattle([ Species.SHUCKLE ]); // Shuckle for slower Howl on first turn so Freezy Frost doesn't affect it.
       const user = game.scene.getPlayerPokemon()!;
-      expect(user.summonData.battleStats[BattleStat.ATK]).toBe(0);
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.SWORDS_DANCE));
-      await game.phaseInterceptor.to(TurnInitPhase);
+      game.move.select(Moves.HOWL);
+      await game.toNextTurn();
 
-      const userAtkBefore = user.summonData.battleStats[BattleStat.ATK];
-      expect(userAtkBefore).toBe(2);
+      const userAtkBefore = user.getStatStage(Stat.ATK);
+      expect(userAtkBefore).toBe(1);
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
-      await game.phaseInterceptor.to(MoveEndPhase);
-      expect(user.summonData.battleStats[BattleStat.ATK]).toBe(0);
+      game.move.select(Moves.SPLASH);
+      await game.toNextTurn();
+      expect(user.getStatStage(Stat.ATK)).toBe(0);
     });
-  });
+
+  it(
+    "should clear all stat changes in double battle",
+    async () => {
+      game.override.battleType("double");
+      await game.classicMode.startBattle([ Species.SHUCKLE, Species.RATTATA ]);
+      const [ leftPlayer, rightPlayer ] = game.scene.getPlayerField();
+      const [ leftOpp, rightOpp ] = game.scene.getEnemyField();
+
+      game.move.select(Moves.HOWL, 0);
+      await game.phaseInterceptor.to(CommandPhase);
+      game.move.select(Moves.SPLASH, 1);
+      await game.toNextTurn();
+
+      expect(leftPlayer.getStatStage(Stat.ATK)).toBe(1);
+      expect(rightPlayer.getStatStage(Stat.ATK)).toBe(1);
+      expect(leftOpp.getStatStage(Stat.ATK)).toBe(2); // Both enemies use Howl
+      expect(rightOpp.getStatStage(Stat.ATK)).toBe(2);
+
+      game.move.select(Moves.FREEZY_FROST, 0, leftOpp.getBattlerIndex());
+      await game.phaseInterceptor.to(CommandPhase);
+      game.move.select(Moves.SPLASH, 1);
+      await game.toNextTurn();
+
+      expect(leftPlayer.getStatStage(Stat.ATK)).toBe(0);
+      expect(rightPlayer.getStatStage(Stat.ATK)).toBe(0);
+      expect(leftOpp.getStatStage(Stat.ATK)).toBe(0);
+      expect(rightOpp.getStatStage(Stat.ATK)).toBe(0);
+    });
 });

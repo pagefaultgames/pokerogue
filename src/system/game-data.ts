@@ -1,7 +1,7 @@
 import i18next from "i18next";
-import BattleScene, { PokeballCounts, bypassLogin } from "../battle-scene";
+import BattleScene, { bypassLogin, PokeballCounts } from "../battle-scene";
 import Pokemon, { EnemyPokemon, PlayerPokemon } from "../field/pokemon";
-import { pokemonEvolutions, pokemonPrevolutions } from "../data/pokemon-evolutions";
+import { pokemonPrevolutions } from "../data/pokemon-evolutions";
 import PokemonSpecies, { allSpecies, getPokemonSpecies, noStarterFormKeys, speciesStarters } from "../data/pokemon-species";
 import * as Utils from "../utils";
 import Overrides from "#app/overrides";
@@ -13,11 +13,11 @@ import { GameModes, getGameMode } from "../game-mode";
 import { BattleType } from "../battle";
 import TrainerData from "./trainer-data";
 import { trainerConfigs } from "../data/trainer-config";
-import { SettingKeys, resetSettings, setSetting } from "./settings/settings";
+import { resetSettings, setSetting, SettingKeys } from "./settings/settings";
 import { achvs } from "./achv";
 import EggData from "./egg-data";
 import { Egg } from "../data/egg";
-import { VoucherType, vouchers } from "./voucher";
+import { vouchers, VoucherType } from "./voucher";
 import { AES, enc } from "crypto-js";
 import { Mode } from "../ui/ui";
 import { clientSessionId, loggedInUser, updateUserInfo } from "../account";
@@ -27,23 +27,28 @@ import { Tutorial } from "../tutorial";
 import { speciesEggMoves } from "../data/egg-moves";
 import { allMoves } from "../data/move";
 import { TrainerVariant } from "../field/trainer";
-import { Variant, variantData } from "#app/data/variant";
-import {setSettingGamepad, SettingGamepad, settingGamepadDefaults} from "./settings/settings-gamepad";
-import {setSettingKeyboard, SettingKeyboard} from "#app/system/settings/settings-keyboard";
-import { TerrainChangedEvent, WeatherChangedEvent } from "#app/events/arena.js";
-import { EnemyAttackStatusEffectChanceModifier } from "../modifier/modifier";
-import { StatusEffect } from "#app/data/status-effect.js";
+import { Variant } from "#app/data/variant";
+import { setSettingGamepad, SettingGamepad, settingGamepadDefaults } from "./settings/settings-gamepad";
+import { setSettingKeyboard, SettingKeyboard } from "#app/system/settings/settings-keyboard";
+import { TerrainChangedEvent, WeatherChangedEvent } from "#app/events/arena";
+import * as Modifier from "../modifier/modifier";
+import { StatusEffect } from "#app/data/status-effect";
 import ChallengeData from "./challenge-data";
 import { Device } from "#enums/devices";
 import { GameDataType } from "#enums/game-data-type";
 import { Moves } from "#enums/moves";
 import { PlayerGender } from "#enums/player-gender";
 import { Species } from "#enums/species";
-import { applyChallenges, ChallengeType } from "#app/data/challenge.js";
-import { WeatherType } from "#app/enums/weather-type.js";
-import { TerrainType } from "#app/data/terrain.js";
-import { OutdatedPhase } from "#app/phases/outdated-phase.js";
-import { ReloadSessionPhase } from "#app/phases/reload-session-phase.js";
+import { applyChallenges, ChallengeType } from "#app/data/challenge";
+import { WeatherType } from "#app/enums/weather-type";
+import { TerrainType } from "#app/data/terrain";
+import { OutdatedPhase } from "#app/phases/outdated-phase";
+import { ReloadSessionPhase } from "#app/phases/reload-session-phase";
+import { RUN_HISTORY_LIMIT } from "#app/ui/run-history-ui-handler";
+import { applySessionDataPatches, applySettingsDataPatches, applySystemDataPatches } from "./version-converter";
+import { MysteryEncounterSaveData } from "../data/mystery-encounters/mystery-encounter-save-data";
+import { MysteryEncounterType } from "#enums/mystery-encounter-type";
+import { PokerogueApiClearSessionData } from "#app/@types/pokerogue-api";
 
 export const defaultStarterSpecies: Species[] = [
   Species.BULBASAUR, Species.CHARMANDER, Species.SQUIRTLE,
@@ -75,6 +80,8 @@ export function getDataTypeKey(dataType: GameDataType, slotId: integer = 0): str
     return "tutorials";
   case GameDataType.SEEN_DIALOGUES:
     return "seenDialogues";
+  case GameDataType.RUN_HISTORY:
+    return "runHistoryData";
   }
 }
 
@@ -90,7 +97,7 @@ export function decrypt(data: string, bypassLogin: boolean): string {
     : (data: string) => AES.decrypt(data, saveKey).toString(enc.Utf8))(data);
 }
 
-interface SystemSaveData {
+export interface SystemSaveData {
   trainerId: integer;
   secretId: integer;
   gender: PlayerGender;
@@ -126,6 +133,8 @@ export interface SessionSaveData {
   gameVersion: string;
   timestamp: integer;
   challenges: ChallengeData[];
+  mysteryEncounterType: MysteryEncounterType | -1; // Only defined when current wave is ME,
+  mysteryEncounterSaveData: MysteryEncounterSaveData;
 }
 
 interface Unlocks {
@@ -182,6 +191,15 @@ export const AbilityAttr = {
   ABILITY_HIDDEN: 4
 };
 
+export type RunHistoryData = Record<number, RunEntry>;
+
+export interface RunEntry {
+  entry: SessionSaveData;
+  isVictory: boolean;
+  /*Automatically set to false at the moment - implementation TBD*/
+  isFavorite: boolean;
+}
+
 export type StarterMoveset = [ Moves ] | [ Moves, Moves ] | [ Moves, Moves, Moves ] | [ Moves, Moves, Moves, Moves ];
 
 export interface StarterFormMoveData {
@@ -231,6 +249,8 @@ export class StarterPrefs {
     if (pStr !== StarterPrefers_private_latest) {
       // something changed, store the update
       localStorage.setItem(`starterPrefs_${loggedInUser?.username}`, pStr);
+      // update the latest prefs
+      StarterPrefers_private_latest = pStr;
     }
   }
 }
@@ -262,7 +282,7 @@ const systemShortKeys = {
   seenAttr: "$sa",
   caughtAttr: "$ca",
   natureAttr: "$na",
-  seenCount: "$s" ,
+  seenCount: "$s",
   caughtCount: "$c",
   hatchedCount: "$hc",
   ivs: "$i",
@@ -290,6 +310,7 @@ export class GameData {
   public starterData: StarterData;
 
   public gameStats: GameStats;
+  public runHistory: RunHistoryData;
 
   public unlocks: Unlocks;
 
@@ -310,6 +331,7 @@ export class GameData {
     this.secretId = Utils.randInt(65536);
     this.starterData = {};
     this.gameStats = new GameStats();
+    this.runHistory = {};
     this.unlocks = {
       [Unlockables.ENDLESS_MODE]: false,
       [Unlockables.MINI_BLACK_HOLE]: false,
@@ -349,6 +371,18 @@ export class GameData {
       eggPity: this.eggPity.slice(0),
       unlockPity: this.unlockPity.slice(0)
     };
+  }
+
+  /**
+   * Checks if an `Unlockable` has been unlocked.
+   * @param unlockable The Unlockable to check
+   * @returns `true` if the player has unlocked this `Unlockable` or an override has enabled it
+   */
+  public isUnlocked(unlockable: Unlockables): boolean {
+    if (Overrides.ITEM_UNLOCK_OVERRIDE.includes(unlockable)) {
+      return true;
+    }
+    return this.unlocks[unlockable];
   }
 
   public saveSystem(): Promise<boolean> {
@@ -440,11 +474,13 @@ export class GameData {
 
         localStorage.setItem(`data_${loggedInUser?.username}`, encrypt(systemDataStr, bypassLogin));
 
-        /*const versions = [ this.scene.game.config.gameVersion, data.gameVersion || '0.0.0' ];
+        const lsItemKey = `runHistoryData_${loggedInUser?.username}`;
+        const lsItem = localStorage.getItem(lsItemKey);
+        if (!lsItem) {
+          localStorage.setItem(lsItemKey, "");
+        }
 
-        if (versions[0] !== versions[1]) {
-          const [ versionNumbers, oldVersionNumbers ] = versions.map(ver => ver.split('.').map(v => parseInt(v)));
-        }*/
+        applySystemDataPatches(systemData);
 
         this.trainerId = systemData.trainerId;
         this.secretId = systemData.secretId;
@@ -453,9 +489,7 @@ export class GameData {
 
         this.saveSetting(SettingKeys.Player_Gender, systemData.gender === PlayerGender.FEMALE ? 1 : 0);
 
-        const initStarterData = !systemData.starterData;
-
-        if (initStarterData) {
+        if (!systemData.starterData) {
           this.initStarterData();
 
           if (systemData["starterMoveData"]) {
@@ -473,25 +507,20 @@ export class GameData {
           }
 
           this.migrateStarterAbilities(systemData, this.starterData);
-        } else {
-          if ([ "1.0.0", "1.0.1" ].includes(systemData.gameVersion)) {
-            this.migrateStarterAbilities(systemData);
-          }
-          //this.fixVariantData(systemData);
-          this.fixStarterData(systemData);
-          // Migrate ability starter data if empty for caught species
-          Object.keys(systemData.starterData).forEach(sd => {
-            if (systemData.dexData[sd].caughtAttr && !systemData.starterData[sd].abilityAttr) {
-              systemData.starterData[sd].abilityAttr = 1;
+
+          const starterIds = Object.keys(this.starterData).map(s => parseInt(s) as Species);
+          for (const s of starterIds) {
+            this.starterData[s].candyCount += this.dexData[s].caughtCount;
+            this.starterData[s].candyCount += this.dexData[s].hatchedCount * 2;
+            if (this.dexData[s].caughtAttr & DexAttr.SHINY) {
+              this.starterData[s].candyCount += 4;
             }
-          });
+          }
+        } else {
           this.starterData = systemData.starterData;
         }
 
         if (systemData.gameStats) {
-          if (systemData.gameStats.legendaryPokemonCaught !== undefined && systemData.gameStats.subLegendaryPokemonCaught === undefined) {
-            this.fixLegendaryStats(systemData);
-          }
           this.gameStats = systemData.gameStats;
         }
 
@@ -537,23 +566,104 @@ export class GameData {
         this.consolidateDexData(this.dexData);
         this.defaultDexData = null;
 
-        if (initStarterData) {
-          const starterIds = Object.keys(this.starterData).map(s => parseInt(s) as Species);
-          for (const s of starterIds) {
-            this.starterData[s].candyCount += this.dexData[s].caughtCount;
-            this.starterData[s].candyCount += this.dexData[s].hatchedCount * 2;
-            if (this.dexData[s].caughtAttr & DexAttr.SHINY) {
-              this.starterData[s].candyCount += 4;
-            }
-          }
-        }
-
         resolve(true);
       } catch (err) {
         console.error(err);
         resolve(false);
       }
     });
+  }
+
+  /**
+   * Retrieves current run history data, organized by time stamp.
+   * At the moment, only retrievable from locale cache
+   */
+  async getRunHistoryData(scene: BattleScene): Promise<RunHistoryData> {
+    if (!Utils.isLocal) {
+      /**
+       * Networking Code DO NOT DELETE!
+       *
+      const response = await Utils.apiFetch("savedata/runHistory", true);
+      const data = await response.json();
+      */
+      const lsItemKey = `runHistoryData_${loggedInUser?.username}`;
+      const lsItem = localStorage.getItem(lsItemKey);
+      if (lsItem) {
+        const cachedResponse  = lsItem;
+        if (cachedResponse) {
+          const runHistory = JSON.parse(decrypt(cachedResponse, bypassLogin));
+          return runHistory;
+        }
+        return {};
+        // check to see whether cachedData or serverData is more up-to-date
+        /**
+       * Networking Code DO NOT DELETE!
+       *
+        if ( Object.keys(cachedRHData).length >= Object.keys(data).length ) {
+          return cachedRHData;
+        }
+        */
+      } else {
+        localStorage.setItem(`runHistoryData_${loggedInUser?.username}`, "");
+        return {};
+      }
+    } else {
+      const lsItemKey = `runHistoryData_${loggedInUser?.username}`;
+      const lsItem = localStorage.getItem(lsItemKey);
+      if (lsItem) {
+        const cachedResponse = lsItem;
+        if (cachedResponse) {
+          const runHistory : RunHistoryData = JSON.parse(decrypt(cachedResponse, bypassLogin));
+          return runHistory;
+        }
+        return {};
+      } else {
+        localStorage.setItem(`runHistoryData_${loggedInUser?.username}`, "");
+        return {};
+      }
+    }
+  }
+
+  /**
+   * Saves a new entry to Run History
+   * @param scene: BattleScene object
+   * @param runEntry: most recent SessionSaveData of the run
+   * @param isVictory: result of the run
+   * Arbitrary limit of 25 runs per player - Will delete runs, starting with the oldest one, if needed
+   */
+  async saveRunHistory(scene: BattleScene, runEntry : SessionSaveData, isVictory: boolean): Promise<boolean> {
+    const runHistoryData = await this.getRunHistoryData(scene);
+    // runHistoryData should always return run history or {} empty object
+    let timestamps = Object.keys(runHistoryData).map(Number);
+
+    // Arbitrary limit of 25 entries per user --> Can increase or decrease
+    while (timestamps.length >= RUN_HISTORY_LIMIT ) {
+      const oldestTimestamp = (Math.min.apply(Math, timestamps)).toString();
+      delete runHistoryData[oldestTimestamp];
+      timestamps = Object.keys(runHistoryData).map(Number);
+    }
+
+    const timestamp = (runEntry.timestamp).toString();
+    runHistoryData[timestamp] = {
+      entry: runEntry,
+      isVictory: isVictory,
+      isFavorite: false,
+    };
+    localStorage.setItem(`runHistoryData_${loggedInUser?.username}`, encrypt(JSON.stringify(runHistoryData), bypassLogin));
+    /**
+     * Networking Code DO NOT DELETE
+     *
+    if (!Utils.isLocal) {
+      try {
+        await Utils.apiPost("savedata/runHistory", JSON.stringify(runHistoryData), undefined, true);
+        return true;
+      } catch (err) {
+        console.log("savedata/runHistory POST failed : ", err);
+        return false;
+      }
+    }
+    */
+    return true;
   }
 
   parseSystemData(dataStr: string): SystemSaveData {
@@ -634,6 +744,7 @@ export class GameData {
     setSetting(this.scene, setting, valueIndex);
 
     settings[setting] = valueIndex;
+    settings["gameVersion"] = this.scene.game.config.gameVersion;
 
     localStorage.setItem("settings", JSON.stringify(settings));
 
@@ -744,6 +855,8 @@ export class GameData {
 
     const settings = JSON.parse(localStorage.getItem("settings")!); // TODO: is this bang correct?
 
+    applySettingsDataPatches(settings);
+
     for (const setting of Object.keys(settings)) {
       setSetting(this.scene, setting, settings[setting]);
     }
@@ -833,7 +946,7 @@ export class GameData {
     return ret;
   }
 
-  private getSessionSaveData(scene: BattleScene): SessionSaveData {
+  public getSessionSaveData(scene: BattleScene): SessionSaveData {
     return {
       seed: scene.seed,
       playTime: scene.sessionPlayTime,
@@ -851,7 +964,9 @@ export class GameData {
       trainer: scene.currentBattle.battleType === BattleType.TRAINER ? new TrainerData(scene.currentBattle.trainer) : null,
       gameVersion: scene.game.config.gameVersion,
       timestamp: new Date().getTime(),
-      challenges: scene.gameMode.challenges.map(c => new ChallengeData(c))
+      challenges: scene.gameMode.challenges.map(c => new ChallengeData(c)),
+      mysteryEncounterType: scene.currentBattle.mysteryEncounter?.encounterType ?? -1,
+      mysteryEncounterSaveData: scene.mysteryEncounterSaveData
     } as SessionSaveData;
   }
 
@@ -942,11 +1057,14 @@ export class GameData {
           scene.score = sessionData.score;
           scene.updateScoreText();
 
+          scene.mysteryEncounterSaveData = new MysteryEncounterSaveData(sessionData.mysteryEncounterSaveData);
+
           scene.newArena(sessionData.arena.biome);
 
           const battleType = sessionData.battleType || 0;
           const trainerConfig = sessionData.trainer ? trainerConfigs[sessionData.trainer.trainerType] : null;
-          const battle = scene.newBattle(sessionData.waveIndex, battleType, sessionData.trainer, battleType === BattleType.TRAINER ? trainerConfig?.doubleOnly || sessionData.trainer?.variant === TrainerVariant.DOUBLE : sessionData.enemyParty.length > 1)!; // TODO: is this bang correct?
+          const mysteryEncounterType = sessionData.mysteryEncounterType !== -1 ? sessionData.mysteryEncounterType : undefined;
+          const battle = scene.newBattle(sessionData.waveIndex, battleType, sessionData.trainer, battleType === BattleType.TRAINER ? trainerConfig?.doubleOnly || sessionData.trainer?.variant === TrainerVariant.DOUBLE : sessionData.enemyParty.length > 1, mysteryEncounterType)!; // TODO: is this bang correct?
           battle.enemyLevels = sessionData.enemyParty.map(p => p.level);
 
           scene.arena.init();
@@ -969,10 +1087,8 @@ export class GameData {
           // TODO
           //scene.arena.tags = sessionData.arena.tags;
 
-          const modifiersModule = await import("../modifier/modifier");
-
           for (const modifierData of sessionData.modifiers) {
-            const modifier = modifierData.toModifier(scene, modifiersModule[modifierData.className]);
+            const modifier = modifierData.toModifier(scene, Modifier[modifierData.className]);
             if (modifier) {
               scene.addModifier(modifier, true);
             }
@@ -981,7 +1097,7 @@ export class GameData {
           scene.updateModifiers(true);
 
           for (const enemyModifierData of sessionData.enemyModifiers) {
-            const modifier = enemyModifierData.toModifier(scene, modifiersModule[enemyModifierData.className]);
+            const modifier = enemyModifierData.toModifier(scene, Modifier[enemyModifierData.className]);
             if (modifier) {
               scene.addEnemyModifier(modifier, true);
             }
@@ -1071,41 +1187,47 @@ export class GameData {
     });
   }
 
-  tryClearSession(scene: BattleScene, slotId: integer): Promise<[success: boolean, newClear: boolean]> {
-    return new Promise<[boolean, boolean]>(resolve => {
-      if (bypassLogin) {
-        localStorage.removeItem(`sessionData${slotId ? slotId : ""}_${loggedInUser?.username}`);
-        return resolve([true, true]);
+
+  /**
+   * Attempt to clear session data. After session data is removed, attempt to update user info so the menu updates
+   */
+  async tryClearSession(scene: BattleScene, slotId: integer): Promise<[success: boolean, newClear: boolean]> {
+    let result: [boolean, boolean] = [false, false];
+
+    if (bypassLogin) {
+      localStorage.removeItem(`sessionData${slotId ? slotId : ""}_${loggedInUser?.username}`);
+      result = [true, true];
+    } else {
+      const sessionData = this.getSessionSaveData(scene);
+      const response = await Utils.apiPost(`savedata/session/clear?slot=${slotId}&trainerId=${this.trainerId}&secretId=${this.secretId}&clientSessionId=${clientSessionId}`, JSON.stringify(sessionData), undefined, true);
+
+      if (response.ok) {
+          loggedInUser!.lastSessionSlot = -1; // TODO: is the bang correct?
+          localStorage.removeItem(`sessionData${this.scene.sessionSlotId ? this.scene.sessionSlotId : ""}_${loggedInUser?.username}`);
       }
 
-      updateUserInfo().then(success => {
-        if (success !== null && !success) {
-          return resolve([false, false]);
+      const jsonResponse: PokerogueApiClearSessionData = await response.json();
+
+      if (!jsonResponse.error) {
+        result = [true, jsonResponse.success ?? false];
+      } else {
+        if (jsonResponse && jsonResponse.error?.startsWith("session out of date")) {
+          this.scene.clearPhaseQueue();
+          this.scene.unshiftPhase(new ReloadSessionPhase(this.scene));
         }
-        const sessionData = this.getSessionSaveData(scene);
-        Utils.apiPost(`savedata/session/clear?slot=${slotId}&trainerId=${this.trainerId}&secretId=${this.secretId}&clientSessionId=${clientSessionId}`, JSON.stringify(sessionData), undefined, true).then(response => {
-          if (response.ok) {
-            loggedInUser!.lastSessionSlot = -1; // TODO: is the bang correct?
-            localStorage.removeItem(`sessionData${this.scene.sessionSlotId ? this.scene.sessionSlotId : ""}_${loggedInUser?.username}`);
-          }
-          return response.json();
-        }).then(jsonResponse => {
-          if (!jsonResponse.error) {
-            return resolve([true, jsonResponse.success as boolean]);
-          }
-          if (jsonResponse && jsonResponse.error.startsWith("session out of date")) {
-            this.scene.clearPhaseQueue();
-            this.scene.unshiftPhase(new ReloadSessionPhase(this.scene));
-          }
-          console.error(jsonResponse);
-          resolve([false, false]);
-        });
-      });
-    });
+
+        console.error(jsonResponse);
+        result = [false, false];
+      }
+    }
+
+    await updateUserInfo();
+
+    return result;
   }
 
   parseSessionData(dataStr: string): SessionSaveData {
-    return JSON.parse(dataStr, (k: string, v: any) => {
+    const sessionData = JSON.parse(dataStr, (k: string, v: any) => {
       /*const versions = [ scene.game.config.gameVersion, sessionData.gameVersion || '0.0.0' ];
 
       if (versions[0] !== versions[1]) {
@@ -1137,7 +1259,7 @@ export class GameData {
           if (md?.className === "ExpBalanceModifier") { // Temporarily limit EXP Balance until it gets reworked
             md.stackCount = Math.min(md.stackCount, 4);
           }
-          if (md instanceof EnemyAttackStatusEffectChanceModifier && md.effect === StatusEffect.FREEZE || md.effect === StatusEffect.SLEEP) {
+          if (md instanceof Modifier.EnemyAttackStatusEffectChanceModifier && md.effect === StatusEffect.FREEZE || md.effect === StatusEffect.SLEEP) {
             continue;
           }
           ret.push(new PersistentModifierData(md, player));
@@ -1160,8 +1282,20 @@ export class GameData {
         return ret;
       }
 
+      if (k === "mysteryEncounterType") {
+        return v as MysteryEncounterType;
+      }
+
+      if (k === "mysteryEncounterSaveData") {
+        return new MysteryEncounterSaveData(v);
+      }
+
       return v;
     }) as SessionSaveData;
+
+    applySessionDataPatches(sessionData);
+
+    return sessionData;
   }
 
   saveAll(scene: BattleScene, skipVerification: boolean = false, sync: boolean = false, useCachedSession: boolean = false, useCachedSystem: boolean = false): Promise<boolean> {
@@ -1296,6 +1430,15 @@ export class GameData {
                 const sessionData = this.parseSessionData(dataStr);
                 valid = !!sessionData.party && !!sessionData.enemyParty && !!sessionData.timestamp;
                 break;
+              case GameDataType.RUN_HISTORY:
+                const data = JSON.parse(dataStr);
+                const keys = Object.keys(data);
+                dataName = i18next.t("menuUiHandler:RUN_HISTORY").toLowerCase();
+                keys.forEach((key) => {
+                  const entryKeys = Object.keys(data[key]);
+                  valid = ["isFavorite", "isVictory", "entry"].every(v => entryKeys.includes(v)) && entryKeys.length === 3;
+                });
+                break;
               case GameDataType.SETTINGS:
               case GameDataType.TUTORIALS:
                 valid = true;
@@ -1366,7 +1509,7 @@ export class GameData {
       };
     }
 
-    const defaultStarterAttr = DexAttr.NON_SHINY | DexAttr.MALE | DexAttr.DEFAULT_VARIANT | DexAttr.DEFAULT_FORM;
+    const defaultStarterAttr = DexAttr.NON_SHINY | DexAttr.MALE | DexAttr.FEMALE | DexAttr.DEFAULT_VARIANT | DexAttr.DEFAULT_FORM;
 
     const defaultStarterNatures: Nature[] = [];
 
@@ -1431,12 +1574,36 @@ export class GameData {
     }
   }
 
-  setPokemonCaught(pokemon: Pokemon, incrementCount: boolean = true, fromEgg: boolean = false): Promise<void> {
-    return this.setPokemonSpeciesCaught(pokemon, pokemon.species, incrementCount, fromEgg);
+  /**
+   *
+   * @param pokemon
+   * @param incrementCount
+   * @param fromEgg
+   * @param showMessage
+   * @returns `true` if Pokemon catch unlocked a new starter, `false` if Pokemon catch did not unlock a starter
+   */
+  setPokemonCaught(pokemon: Pokemon, incrementCount: boolean = true, fromEgg: boolean = false, showMessage: boolean = true): Promise<boolean> {
+    // If incrementCount === false (not a catch scenario), only update the pokemon's dex data if the Pokemon has already been marked as caught in dex
+    // Prevents form changes, nature changes, etc. from unintentionally updating the dex data of a "rental" pokemon
+    const speciesRootForm = pokemon.species.getRootSpeciesId();
+    if (!incrementCount && !this.scene.gameData.dexData[speciesRootForm].caughtAttr) {
+      return Promise.resolve(false);
+    } else {
+      return this.setPokemonSpeciesCaught(pokemon, pokemon.species, incrementCount, fromEgg, showMessage);
+    }
   }
 
-  setPokemonSpeciesCaught(pokemon: Pokemon, species: PokemonSpecies, incrementCount: boolean = true, fromEgg: boolean = false): Promise<void> {
-    return new Promise<void>(resolve => {
+  /**
+   *
+   * @param pokemon
+   * @param species
+   * @param incrementCount
+   * @param fromEgg
+   * @param showMessage
+   * @returns `true` if Pokemon catch unlocked a new starter, `false` if Pokemon catch did not unlock a starter
+   */
+  setPokemonSpeciesCaught(pokemon: Pokemon, species: PokemonSpecies, incrementCount: boolean = true, fromEgg: boolean = false, showMessage: boolean = true): Promise<boolean> {
+    return new Promise<boolean>(resolve => {
       const dexEntry = this.dexData[species.speciesId];
       const caughtAttr = dexEntry.caughtAttr;
       const formIndex = pokemon.formIndex;
@@ -1445,12 +1612,18 @@ export class GameData {
       }
       const dexAttr = pokemon.getDexAttr();
       pokemon.formIndex = formIndex;
+
+      // Mark as caught
       dexEntry.caughtAttr |= dexAttr;
+
+      // Unlock ability
       if (speciesStarters.hasOwnProperty(species.speciesId)) {
         this.starterData[species.speciesId].abilityAttr |= pokemon.abilityIndex !== 1 || pokemon.species.ability2
           ? 1 << pokemon.abilityIndex
           : AbilityAttr.ABILITY_HIDDEN;
       }
+
+      // Unlock nature
       dexEntry.natureAttr |= 1 << (pokemon.nature + 1);
 
       const hasPrevolution = pokemonPrevolutions.hasOwnProperty(species.speciesId);
@@ -1491,20 +1664,24 @@ export class GameData {
         }
       }
 
-      const checkPrevolution = () => {
+      const checkPrevolution = (newStarter: boolean) => {
         if (hasPrevolution) {
           const prevolutionSpecies = pokemonPrevolutions[species.speciesId];
-          return this.setPokemonSpeciesCaught(pokemon, getPokemonSpecies(prevolutionSpecies), incrementCount, fromEgg).then(() => resolve());
+          this.setPokemonSpeciesCaught(pokemon, getPokemonSpecies(prevolutionSpecies), incrementCount, fromEgg, showMessage).then(result => resolve(result));
         } else {
-          resolve();
+          resolve(newStarter);
         }
       };
 
       if (newCatch && speciesStarters.hasOwnProperty(species.speciesId)) {
+        if (!showMessage) {
+          resolve(true);
+          return;
+        }
         this.scene.playSound("level_up_fanfare");
-        this.scene.ui.showText(i18next.t("battle:addedAsAStarter", { pokemonName: species.name }), null, () => checkPrevolution(), null, true);
+        this.scene.ui.showText(i18next.t("battle:addedAsAStarter", { pokemonName: species.name }), null, () => checkPrevolution(true), null, true);
       } else {
-        checkPrevolution();
+        checkPrevolution(false);
       }
     });
   }
@@ -1541,12 +1718,29 @@ export class GameData {
     return ++this.starterData[speciesIdToIncrement].classicWinCount;
   }
 
+  /**
+   * Adds a candy to the player's game data for a given {@linkcode PokemonSpecies}.
+   * Will do nothing if the player does not have the Pokemon owned in their system save data.
+   * @param species
+   * @param count
+   */
   addStarterCandy(species: PokemonSpecies, count: integer): void {
-    this.scene.candyBar.showStarterSpeciesCandy(species.speciesId, count);
-    this.starterData[species.speciesId].candyCount += count;
+    // Only gain candies if the Pokemon has already been marked as caught in dex (ignore "rental" pokemon)
+    const speciesRootForm = species.getRootSpeciesId();
+    if (this.scene.gameData.dexData[speciesRootForm].caughtAttr) {
+      this.scene.candyBar.showStarterSpeciesCandy(species.speciesId, count);
+      this.starterData[species.speciesId].candyCount += count;
+    }
   }
 
-  setEggMoveUnlocked(species: PokemonSpecies, eggMoveIndex: integer): Promise<boolean> {
+  /**
+   *
+   * @param species
+   * @param eggMoveIndex
+   * @param showMessage Default true. If true, will display message for unlocked egg move
+   * @param prependSpeciesToMessage Default false. If true, will change message from "X Egg Move Unlocked!" to "Bulbasaur X Egg Move Unlocked!"
+   */
+  setEggMoveUnlocked(species: PokemonSpecies, eggMoveIndex: integer, showMessage: boolean = true, prependSpeciesToMessage: boolean = false): Promise<boolean> {
     return new Promise<boolean>(resolve => {
       const speciesId = species.speciesId;
       if (!speciesEggMoves.hasOwnProperty(speciesId) || !speciesEggMoves[speciesId][eggMoveIndex]) {
@@ -1566,11 +1760,16 @@ export class GameData {
       }
 
       this.starterData[speciesId].eggMoves |= value;
-
+      if (!showMessage) {
+        resolve(true);
+        return;
+      }
       this.scene.playSound("level_up_fanfare");
-
       const moveName = allMoves[speciesEggMoves[speciesId][eggMoveIndex]].name;
-      this.scene.ui.showText(eggMoveIndex === 3 ? i18next.t("egg:rareEggMoveUnlock", { moveName: moveName }) : i18next.t("egg:eggMoveUnlock", { moveName: moveName }), null, () => resolve(true), null, true);
+      let message = prependSpeciesToMessage ? species.getName() + " " : "";
+      message += eggMoveIndex === 3 ? i18next.t("egg:rareEggMoveUnlock", { moveName: moveName }) : i18next.t("egg:eggMoveUnlock", { moveName: moveName });
+
+      this.scene.ui.showText(message, null, () => resolve(true), null, true);
     });
   }
 
@@ -1746,75 +1945,5 @@ export class GameData {
         }
       }
     }
-  }
-
-  fixVariantData(systemData: SystemSaveData): void {
-    const starterIds = Object.keys(this.starterData).map(s => parseInt(s) as Species);
-    const starterData = systemData.starterData;
-    const dexData = systemData.dexData;
-    if (starterIds.find(id => (dexData[id].caughtAttr & DexAttr.VARIANT_2 || dexData[id].caughtAttr & DexAttr.VARIANT_3) && !variantData[id])) {
-      for (const s of starterIds) {
-        const species = getPokemonSpecies(s);
-        if (variantData[s]) {
-          const tempCaughtAttr = dexData[s].caughtAttr;
-          let seenVariant2 = false;
-          let seenVariant3 = false;
-          const checkEvoSpecies = (es: Species) => {
-            seenVariant2 ||= !!(dexData[es].seenAttr & DexAttr.VARIANT_2);
-            seenVariant3 ||= !!(dexData[es].seenAttr & DexAttr.VARIANT_3);
-            if (pokemonEvolutions.hasOwnProperty(es)) {
-              for (const pe of pokemonEvolutions[es]) {
-                checkEvoSpecies(pe.speciesId);
-              }
-            }
-          };
-          checkEvoSpecies(s);
-          if (dexData[s].caughtAttr & DexAttr.VARIANT_2 && !seenVariant2) {
-            dexData[s].caughtAttr ^= DexAttr.VARIANT_2;
-          }
-          if (dexData[s].caughtAttr & DexAttr.VARIANT_3 && !seenVariant3) {
-            dexData[s].caughtAttr ^= DexAttr.VARIANT_3;
-          }
-          starterData[s].abilityAttr = (tempCaughtAttr & DexAttr.DEFAULT_VARIANT ? AbilityAttr.ABILITY_1 : 0)
-            | (tempCaughtAttr & DexAttr.VARIANT_2 && species.ability2 ? AbilityAttr.ABILITY_2 : 0)
-            | (tempCaughtAttr & DexAttr.VARIANT_3 && species.abilityHidden ? AbilityAttr.ABILITY_HIDDEN : 0);
-        } else {
-          const tempCaughtAttr = dexData[s].caughtAttr;
-          if (dexData[s].caughtAttr & DexAttr.VARIANT_2) {
-            dexData[s].caughtAttr ^= DexAttr.VARIANT_2;
-          }
-          if (dexData[s].caughtAttr & DexAttr.VARIANT_3) {
-            dexData[s].caughtAttr ^= DexAttr.VARIANT_3;
-          }
-          starterData[s].abilityAttr = (tempCaughtAttr & DexAttr.DEFAULT_VARIANT ? AbilityAttr.ABILITY_1 : 0)
-            | (tempCaughtAttr & DexAttr.VARIANT_2 && species.ability2 ? AbilityAttr.ABILITY_2 : 0)
-            | (tempCaughtAttr & DexAttr.VARIANT_3 && species.abilityHidden ? AbilityAttr.ABILITY_HIDDEN : 0);
-        }
-      }
-    }
-  }
-
-  fixStarterData(systemData: SystemSaveData): void {
-    for (const starterId of defaultStarterSpecies) {
-      systemData.starterData[starterId].abilityAttr |= AbilityAttr.ABILITY_1;
-    }
-  }
-
-  fixLegendaryStats(systemData: SystemSaveData): void {
-    systemData.gameStats.subLegendaryPokemonSeen = 0;
-    systemData.gameStats.subLegendaryPokemonCaught = 0;
-    systemData.gameStats.subLegendaryPokemonHatched = 0;
-    allSpecies.filter(s => s.subLegendary).forEach(s => {
-      const dexEntry = systemData.dexData[s.speciesId];
-      systemData.gameStats.subLegendaryPokemonSeen += dexEntry.seenCount;
-      systemData.gameStats.legendaryPokemonSeen = Math.max(systemData.gameStats.legendaryPokemonSeen - dexEntry.seenCount, 0);
-      systemData.gameStats.subLegendaryPokemonCaught += dexEntry.caughtCount;
-      systemData.gameStats.legendaryPokemonCaught = Math.max(systemData.gameStats.legendaryPokemonCaught - dexEntry.caughtCount, 0);
-      systemData.gameStats.subLegendaryPokemonHatched += dexEntry.hatchedCount;
-      systemData.gameStats.legendaryPokemonHatched = Math.max(systemData.gameStats.legendaryPokemonHatched - dexEntry.hatchedCount, 0);
-    });
-    systemData.gameStats.subLegendaryPokemonSeen = Math.max(systemData.gameStats.subLegendaryPokemonSeen, systemData.gameStats.subLegendaryPokemonCaught);
-    systemData.gameStats.legendaryPokemonSeen = Math.max(systemData.gameStats.legendaryPokemonSeen, systemData.gameStats.legendaryPokemonCaught);
-    systemData.gameStats.mythicalPokemonSeen = Math.max(systemData.gameStats.mythicalPokemonSeen, systemData.gameStats.mythicalPokemonCaught);
   }
 }

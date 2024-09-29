@@ -1,14 +1,12 @@
-import { BattlerIndex } from "#app/battle.js";
-import { Abilities } from "#app/enums/abilities.js";
-import { Moves } from "#app/enums/moves.js";
-import { Species } from "#app/enums/species.js";
-import { MoveResult } from "#app/field/pokemon.js";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { BattlerIndex } from "#app/battle";
+import { Abilities } from "#app/enums/abilities";
+import { Moves } from "#app/enums/moves";
+import { Species } from "#app/enums/species";
+import { MoveResult } from "#app/field/pokemon";
 import GameManager from "#test/utils/gameManager";
-import { getMovePosition } from "#test/utils/gameManagerUtils";
-import { SPLASH_ONLY } from "#test/utils/testUtils";
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
-const TIMEOUT = 20 * 1000;
+
 
 describe("Moves - Gastro Acid", () => {
   let phaserGame: Phaser.Game;
@@ -32,7 +30,7 @@ describe("Moves - Gastro Acid", () => {
     game.override.ability(Abilities.NONE);
     game.override.moveset([Moves.GASTRO_ACID, Moves.WATER_GUN, Moves.SPLASH, Moves.CORE_ENFORCER]);
     game.override.enemySpecies(Species.BIDOOF);
-    game.override.enemyMoveset(SPLASH_ONLY);
+    game.override.enemyMoveset(Moves.SPLASH);
     game.override.enemyAbility(Abilities.WATER_ABSORB);
   });
 
@@ -46,10 +44,8 @@ describe("Moves - Gastro Acid", () => {
 
     await game.startBattle();
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.GASTRO_ACID));
-    game.doSelectTarget(BattlerIndex.ENEMY);
-    game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
-    game.doSelectTarget(BattlerIndex.PLAYER_2);
+    game.move.select(Moves.GASTRO_ACID, 0, BattlerIndex.ENEMY);
+    game.move.select(Moves.SPLASH, 1);
 
     await game.phaseInterceptor.to("TurnInitPhase");
 
@@ -57,32 +53,30 @@ describe("Moves - Gastro Acid", () => {
     expect(enemyField[0].summonData.abilitySuppressed).toBe(true);
     expect(enemyField[1].summonData.abilitySuppressed).toBe(false);
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.WATER_GUN));
-    game.doSelectTarget(BattlerIndex.ENEMY);
-    game.doAttack(getMovePosition(game.scene, 0, Moves.WATER_GUN));
-    game.doSelectTarget(BattlerIndex.ENEMY_2);
+    game.move.select(Moves.WATER_GUN, 0, BattlerIndex.ENEMY);
+    game.move.select(Moves.WATER_GUN, 1, BattlerIndex.ENEMY_2);
 
     await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(enemyField[0].hp).toBeLessThan(enemyField[0].getMaxHp());
     expect(enemyField[1].isFullHp()).toBe(true);
-  }, TIMEOUT);
+  });
 
   it("fails if used on an enemy with an already-suppressed ability", async () => {
     game.override.battleType(null);
 
     await game.startBattle();
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.CORE_ENFORCER));
+    game.move.select(Moves.CORE_ENFORCER);
     // Force player to be slower to enable Core Enforcer to proc its suppression effect
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
 
     await game.phaseInterceptor.to("TurnInitPhase");
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.GASTRO_ACID));
+    game.move.select(Moves.GASTRO_ACID);
 
     await game.phaseInterceptor.to("TurnInitPhase");
 
     expect(game.scene.getPlayerPokemon()!.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
-  }, TIMEOUT);
+  });
 });

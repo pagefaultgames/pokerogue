@@ -1,14 +1,13 @@
-import { Status, StatusEffect } from "#app/data/status-effect.js";
-import { QuietFormChangePhase } from "#app/phases/quiet-form-change-phase.js";
-import { TurnEndPhase } from "#app/phases/turn-end-phase.js";
+import { Status, StatusEffect } from "#app/data/status-effect";
+import { QuietFormChangePhase } from "#app/phases/quiet-form-change-phase";
+import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/utils/gameManager";
-import { getMovePosition } from "#test/utils/gameManagerUtils";
 import { afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest";
 
-const TIMEOUT = 20 * 1000;
+
 
 describe("Abilities - SCHOOLING", () => {
   let phaserGame: Phaser.Game;
@@ -53,7 +52,7 @@ describe("Abilities - SCHOOLING", () => {
       wishiwashi.status = new Status(StatusEffect.FAINT);
       expect(wishiwashi.isFainted()).toBe(true);
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
+      game.move.select(Moves.SPLASH);
       await game.doKillOpponents();
       await game.phaseInterceptor.to(TurnEndPhase);
       game.doSelectModifier();
@@ -61,6 +60,5 @@ describe("Abilities - SCHOOLING", () => {
 
       expect(wishiwashi.formIndex).toBe(soloForm);
     },
-    TIMEOUT
   );
 });

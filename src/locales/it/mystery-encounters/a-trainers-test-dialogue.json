@@ -1,0 +1,47 @@
+{
+  "intro": "Un allenatore davvero forte ti si avvicina...",
+  "buck": {
+    "intro_dialogue": "Yo, allenatore! Sono Chicco.$Ho una proposta super fantastica\nper allenatori forti come te!$Ho qui con me due uova Pokémon rare,\nma vorrei affidarne una a qualcuno.$Se mi darai prova delle tue doti di allenatore,\nti darò quella più rara!",
+    "accept": "Whoooo, comincio a scaldarmi!",
+    "decline": "Accidenti, pare che la tua\nsquadra non se la passi bene.$Lascia che ti aiuti."
+  },
+  "cheryl": {
+    "intro_dialogue": "Ciao, mi chiamo Demetra.$Ho una particolare richiesta,\nmirata ad allenatori come te.$Ho qui con me due uova Pokémon rare,\nma vorrei affidarne una a qualcuno.$Se mi darai prova delle tue doti di allenatore,\nti darò quella più rara!",
+    "accept": "Spero tu sia pronto/a!",
+    "decline": "Capisco, mi sa che i tuoi Pokémon\nnon stanno benissimo al momento.$Ti do una mano."
+  },
+  "marley": {
+    "intro_dialogue": "...@d{64} Sono Risetta.$Ho da farti un'offerta...$Ho con me due uova Pokémon rare,\nma voglio regalarne una.$Se ti dimostri più forte di me,\nti darò la più rara tra le due.",
+    "accept": "... capisco.",
+    "decline": "...capisco.$I tuoi Pokémon hanno una brutta cera...\nLasciami aiutare."
+  },
+  "mira": {
+    "intro_dialogue": "Ciaoo! Sono Matilde!$Mira ha una richiesta\nper un allenatore forte come te!$Mira ha due uova Pokémon rare,\nma Mira vuole darne via una delle due!$Se dimostri a Mira che te la cavi,\nMira ti da la più rara!",
+    "accept": "Affronterai Mira?\nYuppi!",
+    "decline": "Aww, niente lotta?\nVa bene!$Ecco, ora Mira cura la tua squadra!"
+  },
+  "riley": {
+    "intro_dialogue": "Sono Marisio.$Ho una strana proposta\nper gli allenatori forti.$Ho qui due uova Pokémon rare,\nma vorrei darne via una.$Dimostrami quanto vali,\ne ti darò la più rara!",
+    "accept": "Lo sguardo nei tuoi occhi...\nDiamoci dentro.",
+    "decline": "Capisco, la tua squadra non se la passa bene.$Lasciami rimediare."
+  },
+  "title": "La prova di un allenatore",
+  "description": "Pare che questo allenatore ti darà un uovo a prescindere dalla tua volontà. Tuttavia, sconfiggendolo, potrai riceverne uno nettamente più raro.",
+  "query": "Che cosa farai?",
+  "option": {
+    "1": {
+      "label": "Accetta la sfida",
+      "tooltip": "(-) Estrema lotta\n(+) Ottieni un @[TOOLTIP_TITLE]{Very Rare Egg}"
+    },
+    "2": {
+      "label": "Rifiuta la sfida",
+      "tooltip": "(+) Squadra completamente curata\n(+) Ottieni un @[TOOLTIP_TITLE]{Egg}"
+    }
+  },
+  "eggTypes": {
+    "rare": "un uovo raro",
+    "epic": "un uovo epico",
+    "legendary": "un uovo leggendario"
+  },
+  "outro": "{{statTrainerName}} ti dona {{eggType}}!"
+}

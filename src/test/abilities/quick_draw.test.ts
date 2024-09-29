@@ -1,12 +1,11 @@
 import { allAbilities, BypassSpeedChanceAbAttr } from "#app/data/ability";
-import GameManager from "#test/utils/gameManager";
-import { getMovePosition } from "#test/utils/gameManagerUtils";
+import { FaintPhase } from "#app/phases/faint-phase";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
+import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
-import { FaintPhase } from "#app/phases/faint-phase.js";
 
 describe("Abilities - Quick Draw", () => {
   let phaserGame: Phaser.Game;
@@ -33,7 +32,7 @@ describe("Abilities - Quick Draw", () => {
     game.override.enemyLevel(100);
     game.override.enemySpecies(Species.MAGIKARP);
     game.override.enemyAbility(Abilities.BALL_FETCH);
-    game.override.enemyMoveset(Array(4).fill(Moves.TACKLE));
+    game.override.enemyMoveset([Moves.TACKLE]);
 
     vi.spyOn(allAbilities[Abilities.QUICK_DRAW].getAttrs(BypassSpeedChanceAbAttr)[0], "chance", "get").mockReturnValue(100);
   });
@@ -47,7 +46,7 @@ describe("Abilities - Quick Draw", () => {
     pokemon.hp = 1;
     enemy.hp = 1;
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.TACKLE));
+    game.move.select(Moves.TACKLE);
     await game.phaseInterceptor.to(FaintPhase, false);
 
     expect(pokemon.isFainted()).toBe(false);
@@ -56,7 +55,6 @@ describe("Abilities - Quick Draw", () => {
   }, 20000);
 
   test("does not triggered by non damage moves", {
-    timeout: 20000,
     retry: 5
   }, async () => {
     await game.startBattle();
@@ -67,7 +65,7 @@ describe("Abilities - Quick Draw", () => {
     pokemon.hp = 1;
     enemy.hp = 1;
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.TAIL_WHIP));
+    game.move.select(Moves.TAIL_WHIP);
     await game.phaseInterceptor.to(FaintPhase, false);
 
     expect(pokemon.isFainted()).toBe(true);
@@ -77,7 +75,7 @@ describe("Abilities - Quick Draw", () => {
   );
 
   test("does not increase priority", async () => {
-    game.override.enemyMoveset(Array(4).fill(Moves.EXTREME_SPEED));
+    game.override.enemyMoveset([Moves.EXTREME_SPEED]);
 
     await game.startBattle();
 
@@ -87,7 +85,7 @@ describe("Abilities - Quick Draw", () => {
     pokemon.hp = 1;
     enemy.hp = 1;
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.TACKLE));
+    game.move.select(Moves.TACKLE);
     await game.phaseInterceptor.to(FaintPhase, false);
 
     expect(pokemon.isFainted()).toBe(true);

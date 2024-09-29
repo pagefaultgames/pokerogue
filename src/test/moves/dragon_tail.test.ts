@@ -1,18 +1,11 @@
-import { allMoves } from "#app/data/move.js";
-import { SPLASH_ONLY } from "../utils/testUtils";
+import { BattlerIndex } from "#app/battle";
+import { allMoves } from "#app/data/move";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
+import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
-import GameManager from "../utils/gameManager";
-import { getMovePosition } from "../utils/gameManagerUtils";
-import { BattlerIndex } from "#app/battle.js";
-import { BattleEndPhase } from "#app/phases/battle-end-phase.js";
-import { BerryPhase } from "#app/phases/berry-phase.js";
-import { TurnEndPhase } from "#app/phases/turn-end-phase.js";
-
-const TIMEOUT = 20 * 1000;
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Moves - Dragon Tail", () => {
   let phaserGame: Phaser.Game;
@@ -31,138 +24,119 @@ describe("Moves - Dragon Tail", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override.battleType("single")
-      .moveset([Moves.DRAGON_TAIL, Moves.SPLASH])
+      .moveset([Moves.DRAGON_TAIL, Moves.SPLASH, Moves.FLAMETHROWER])
       .enemySpecies(Species.WAILORD)
-      .enemyMoveset(SPLASH_ONLY)
+      .enemyMoveset(Moves.SPLASH)
       .startingLevel(5)
       .enemyLevel(5);
 
     vi.spyOn(allMoves[Moves.DRAGON_TAIL], "accuracy", "get").mockReturnValue(100);
   });
 
-  test(
-    "Single battle should cause opponent to flee, and not crash",
-    async () => {
-      await game.startBattle([Species.DRATINI]);
+  it("should cause opponent to flee, and not crash", async () => {
+    await game.classicMode.startBattle([Species.DRATINI]);
 
-      const enemyPokemon = game.scene.getEnemyPokemon()!;
-      expect(enemyPokemon).toBeDefined();
+    const enemyPokemon = game.scene.getEnemyPokemon()!;
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.DRAGON_TAIL));
+    game.move.select(Moves.DRAGON_TAIL);
 
-      await game.phaseInterceptor.to(BerryPhase);
+    await game.phaseInterceptor.to("BerryPhase");
 
-      const isVisible = enemyPokemon.visible;
-      const hasFled = enemyPokemon.wildFlee;
-      expect(!isVisible && hasFled).toBe(true);
+    const isVisible = enemyPokemon.visible;
+    const hasFled = enemyPokemon.switchOutStatus;
+    expect(!isVisible && hasFled).toBe(true);
 
-      // simply want to test that the game makes it this far without crashing
-      await game.phaseInterceptor.to(BattleEndPhase);
-    }, TIMEOUT
-  );
+    // simply want to test that the game makes it this far without crashing
+    await game.phaseInterceptor.to("BattleEndPhase");
+  });
 
-  test(
-    "Single battle should cause opponent to flee, display ability, and not crash",
-    async () => {
-      game.override.enemyAbility(Abilities.ROUGH_SKIN);
-      await game.startBattle([Species.DRATINI]);
+  it("should cause opponent to flee, display ability, and not crash", async () => {
+    game.override.enemyAbility(Abilities.ROUGH_SKIN);
+    await game.classicMode.startBattle([Species.DRATINI]);
 
-      const leadPokemon = game.scene.getPlayerPokemon()!;
-      expect(leadPokemon).toBeDefined();
+    const leadPokemon = game.scene.getPlayerPokemon()!;
+    const enemyPokemon = game.scene.getEnemyPokemon()!;
 
-      const enemyPokemon = game.scene.getEnemyPokemon()!;
-      expect(enemyPokemon).toBeDefined();
+    game.move.select(Moves.DRAGON_TAIL);
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.DRAGON_TAIL));
+    await game.phaseInterceptor.to("BerryPhase");
 
-      await game.phaseInterceptor.to(BerryPhase);
+    const isVisible = enemyPokemon.visible;
+    const hasFled = enemyPokemon.switchOutStatus;
+    expect(!isVisible && hasFled).toBe(true);
+    expect(leadPokemon.hp).toBeLessThan(leadPokemon.getMaxHp());
+  });
 
-      const isVisible = enemyPokemon.visible;
-      const hasFled = enemyPokemon.wildFlee;
-      expect(!isVisible && hasFled).toBe(true);
-      expect(leadPokemon.hp).toBeLessThan(leadPokemon.getMaxHp());
-    }, TIMEOUT
-  );
+  it("should proceed without crashing in a double battle", async () => {
+    game.override
+      .battleType("double").enemyMoveset(Moves.SPLASH)
+      .enemyAbility(Abilities.ROUGH_SKIN);
+    await game.classicMode.startBattle([Species.DRATINI, Species.DRATINI, Species.WAILORD, Species.WAILORD]);
 
-  test(
-    "Double battles should proceed without crashing" ,
-    async () => {
-      game.override.battleType("double").enemyMoveset(SPLASH_ONLY);
-      game.override.moveset([Moves.DRAGON_TAIL, Moves.SPLASH, Moves.FLAMETHROWER])
-        .enemyAbility(Abilities.ROUGH_SKIN);
-      await game.startBattle([Species.DRATINI, Species.DRATINI, Species.WAILORD, Species.WAILORD]);
+    const leadPokemon = game.scene.getParty()[0]!;
 
-      const leadPokemon = game.scene.getParty()[0]!;
-      const secPokemon = game.scene.getParty()[1]!;
-      expect(leadPokemon).toBeDefined();
-      expect(secPokemon).toBeDefined();
+    const enemyLeadPokemon = game.scene.getEnemyParty()[0]!;
+    const enemySecPokemon = game.scene.getEnemyParty()[1]!;
 
-      const enemyLeadPokemon = game.scene.currentBattle.enemyParty[0]!;
-      const enemySecPokemon = game.scene.currentBattle.enemyParty[1]!;
-      expect(enemyLeadPokemon).toBeDefined();
-      expect(enemySecPokemon).toBeDefined();
+    game.move.select(Moves.DRAGON_TAIL, 0, BattlerIndex.ENEMY);
+    game.move.select(Moves.SPLASH, 1);
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.DRAGON_TAIL));
-      game.doSelectTarget(BattlerIndex.ENEMY);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
-      game.doAttack(getMovePosition(game.scene, 1, Moves.SPLASH));
+    const isVisibleLead = enemyLeadPokemon.visible;
+    const hasFledLead = enemyLeadPokemon.switchOutStatus;
+    const isVisibleSec = enemySecPokemon.visible;
+    const hasFledSec = enemySecPokemon.switchOutStatus;
+    expect(!isVisibleLead && hasFledLead && isVisibleSec && !hasFledSec).toBe(true);
+    expect(leadPokemon.hp).toBeLessThan(leadPokemon.getMaxHp());
 
-      await game.phaseInterceptor.to(TurnEndPhase);
+    // second turn
+    game.move.select(Moves.FLAMETHROWER, 0, BattlerIndex.ENEMY_2);
+    game.move.select(Moves.SPLASH, 1);
 
-      const isVisibleLead = enemyLeadPokemon.visible;
-      const hasFledLead = enemyLeadPokemon.wildFlee;
-      const isVisibleSec = enemySecPokemon.visible;
-      const hasFledSec = enemySecPokemon.wildFlee;
-      expect(!isVisibleLead && hasFledLead && isVisibleSec && !hasFledSec).toBe(true);
-      expect(leadPokemon.hp).toBeLessThan(leadPokemon.getMaxHp());
+    await game.phaseInterceptor.to("BerryPhase");
+    expect(enemySecPokemon.hp).toBeLessThan(enemySecPokemon.getMaxHp());
+  });
 
-      // second turn
+  it("should redirect targets upon opponent flee", async () => {
+    game.override
+      .battleType("double")
+      .enemyMoveset(Moves.SPLASH)
+      .enemyAbility(Abilities.ROUGH_SKIN);
+    await game.classicMode.startBattle([Species.DRATINI, Species.DRATINI, Species.WAILORD, Species.WAILORD]);
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.FLAMETHROWER));
-      game.doSelectTarget(BattlerIndex.ENEMY_2);
-      game.doAttack(getMovePosition(game.scene, 1, Moves.SPLASH));
+    const leadPokemon = game.scene.getParty()[0]!;
+    const secPokemon = game.scene.getParty()[1]!;
 
-      await game.phaseInterceptor.to(BerryPhase);
-      expect(enemySecPokemon.hp).toBeLessThan(enemySecPokemon.getMaxHp());
-    }, TIMEOUT
-  );
+    const enemyLeadPokemon = game.scene.getEnemyParty()[0]!;
+    const enemySecPokemon = game.scene.getEnemyParty()[1]!;
 
-  test(
-    "Flee move redirection works" ,
-    async () => {
-      game.override.battleType("double").enemyMoveset(SPLASH_ONLY);
-      game.override.moveset([Moves.DRAGON_TAIL, Moves.SPLASH, Moves.FLAMETHROWER]);
-      game.override.enemyAbility(Abilities.ROUGH_SKIN);
-      await game.startBattle([Species.DRATINI, Species.DRATINI, Species.WAILORD, Species.WAILORD]);
+    game.move.select(Moves.DRAGON_TAIL, 0, BattlerIndex.ENEMY);
+    // target the same pokemon, second move should be redirected after first flees
+    game.move.select(Moves.DRAGON_TAIL, 1, BattlerIndex.ENEMY);
 
-      const leadPokemon = game.scene.getParty()[0]!;
-      const secPokemon = game.scene.getParty()[1]!;
-      expect(leadPokemon).toBeDefined();
-      expect(secPokemon).toBeDefined();
+    await game.phaseInterceptor.to("BerryPhase");
 
-      const enemyLeadPokemon = game.scene.currentBattle.enemyParty[0]!;
-      const enemySecPokemon = game.scene.currentBattle.enemyParty[1]!;
-      expect(enemyLeadPokemon).toBeDefined();
-      expect(enemySecPokemon).toBeDefined();
+    const isVisibleLead = enemyLeadPokemon.visible;
+    const hasFledLead = enemyLeadPokemon.switchOutStatus;
+    const isVisibleSec = enemySecPokemon.visible;
+    const hasFledSec = enemySecPokemon.switchOutStatus;
+    expect(!isVisibleLead && hasFledLead && !isVisibleSec && hasFledSec).toBe(true);
+    expect(leadPokemon.hp).toBeLessThan(leadPokemon.getMaxHp());
+    expect(secPokemon.hp).toBeLessThan(secPokemon.getMaxHp());
+    expect(enemyLeadPokemon.hp).toBeLessThan(enemyLeadPokemon.getMaxHp());
+    expect(enemySecPokemon.hp).toBeLessThan(enemySecPokemon.getMaxHp());
+  });
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.DRAGON_TAIL));
-      game.doSelectTarget(BattlerIndex.ENEMY);
+  it("doesn't switch out if the target has suction cups", async () => {
+    game.override.enemyAbility(Abilities.SUCTION_CUPS);
+    await game.classicMode.startBattle([Species.REGIELEKI]);
 
-      // target the same pokemon, second move should be redirected after first flees
-      game.doAttack(getMovePosition(game.scene, 0, Moves.DRAGON_TAIL));
-      game.doSelectTarget(BattlerIndex.ENEMY);
+    const enemy = game.scene.getEnemyPokemon()!;
 
-      await game.phaseInterceptor.to(BerryPhase);
+    game.move.select(Moves.DRAGON_TAIL);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
-      const isVisibleLead = enemyLeadPokemon.visible;
-      const hasFledLead = enemyLeadPokemon.wildFlee;
-      const isVisibleSec = enemySecPokemon.visible;
-      const hasFledSec = enemySecPokemon.wildFlee;
-      expect(!isVisibleLead && hasFledLead && !isVisibleSec && hasFledSec).toBe(true);
-      expect(leadPokemon.hp).toBeLessThan(leadPokemon.getMaxHp());
-      expect(secPokemon.hp).toBeLessThan(secPokemon.getMaxHp());
-      expect(enemyLeadPokemon.hp).toBeLessThan(enemyLeadPokemon.getMaxHp());
-      expect(enemySecPokemon.hp).toBeLessThan(enemySecPokemon.getMaxHp());
-    }, TIMEOUT
-  );
+    expect(enemy.isFullHp()).toBe(false);
+  });
 });

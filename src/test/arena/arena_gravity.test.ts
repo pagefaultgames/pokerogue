@@ -6,10 +6,8 @@ import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/utils/gameManager";
-import { getMovePosition } from "#test/utils/gameManagerUtils";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import { SPLASH_ONLY } from "../utils/testUtils";
 
 describe("Arena - Gravity", () => {
   let phaserGame: Phaser.Game;
@@ -33,7 +31,7 @@ describe("Arena - Gravity", () => {
       .ability(Abilities.UNNERVE)
       .enemyAbility(Abilities.BALL_FETCH)
       .enemySpecies(Species.SHUCKLE)
-      .enemyMoveset(SPLASH_ONLY);
+      .enemyMoveset(Moves.SPLASH);
   });
 
   // Reference: https://bulbapedia.bulbagarden.net/wiki/Gravity_(move)
@@ -45,14 +43,14 @@ describe("Arena - Gravity", () => {
 
     // Setup Gravity on first turn
     await game.startBattle([Species.PIKACHU]);
-    game.doAttack(getMovePosition(game.scene, 0, Moves.GRAVITY));
+    game.move.select(Moves.GRAVITY);
     await game.phaseInterceptor.to(TurnEndPhase);
 
     expect(game.scene.arena.getTag(ArenaTagType.GRAVITY)).toBeDefined();
 
     // Use non-OHKO move on second turn
     await game.toNextTurn();
-    game.doAttack(getMovePosition(game.scene, 0, Moves.TACKLE));
+    game.move.select(Moves.TACKLE);
     await game.phaseInterceptor.to(MoveEffectPhase);
 
     expect(moveToCheck.calculateBattleAccuracy).toHaveReturnedWith(100 * 1.67);
@@ -69,14 +67,14 @@ describe("Arena - Gravity", () => {
 
     // Setup Gravity on first turn
     await game.startBattle([Species.PIKACHU]);
-    game.doAttack(getMovePosition(game.scene, 0, Moves.GRAVITY));
+    game.move.select(Moves.GRAVITY);
     await game.phaseInterceptor.to(TurnEndPhase);
 
     expect(game.scene.arena.getTag(ArenaTagType.GRAVITY)).toBeDefined();
 
     // Use OHKO move on second turn
     await game.toNextTurn();
-    game.doAttack(getMovePosition(game.scene, 0, Moves.FISSURE));
+    game.move.select(Moves.FISSURE);
     await game.phaseInterceptor.to(MoveEffectPhase);
 
     expect(moveToCheck.calculateBattleAccuracy).toHaveReturnedWith(30);
@@ -96,21 +94,21 @@ describe("Arena - Gravity", () => {
       vi.spyOn(pidgeot, "getAttackTypeEffectiveness");
 
       // Try earthquake on 1st turn (fails!);
-      game.doAttack(getMovePosition(game.scene, 0, Moves.EARTHQUAKE));
+      game.move.select(Moves.EARTHQUAKE);
       await game.phaseInterceptor.to(TurnEndPhase);
 
       expect(pidgeot.getAttackTypeEffectiveness).toHaveReturnedWith(0);
 
       // Setup Gravity on 2nd turn
       await game.toNextTurn();
-      game.doAttack(getMovePosition(game.scene, 0, Moves.GRAVITY));
+      game.move.select(Moves.GRAVITY);
       await game.phaseInterceptor.to(TurnEndPhase);
 
       expect(game.scene.arena.getTag(ArenaTagType.GRAVITY)).toBeDefined();
 
       // Use ground move on 3rd turn
       await game.toNextTurn();
-      game.doAttack(getMovePosition(game.scene, 0, Moves.EARTHQUAKE));
+      game.move.select(Moves.EARTHQUAKE);
       await game.phaseInterceptor.to(TurnEndPhase);
 
       expect(pidgeot.getAttackTypeEffectiveness).toHaveReturnedWith(1);
@@ -129,14 +127,14 @@ describe("Arena - Gravity", () => {
       vi.spyOn(pidgeot, "getAttackTypeEffectiveness");
 
       // Setup Gravity on 1st turn
-      game.doAttack(getMovePosition(game.scene, 0, Moves.GRAVITY));
+      game.move.select(Moves.GRAVITY);
       await game.phaseInterceptor.to(TurnEndPhase);
 
       expect(game.scene.arena.getTag(ArenaTagType.GRAVITY)).toBeDefined();
 
       // Use electric move on 2nd turn
       await game.toNextTurn();
-      game.doAttack(getMovePosition(game.scene, 0, Moves.THUNDERBOLT));
+      game.move.select(Moves.THUNDERBOLT);
       await game.phaseInterceptor.to(TurnEndPhase);
 
       expect(pidgeot.getAttackTypeEffectiveness).toHaveReturnedWith(2);

@@ -8,6 +8,7 @@ import {Button} from "#enums/buttons";
 import { Moves } from "#enums/moves";
 import Pokemon from "#app/field/pokemon";
 import { ModifierBar } from "#app/modifier/modifier";
+import { SubstituteTag } from "#app/data/battler-tags";
 
 export type TargetSelectCallback = (targets: BattlerIndex[]) => void;
 
@@ -111,14 +112,14 @@ export default class TargetSelectUiHandler extends UiHandler {
     if (this.targetFlashTween) {
       this.targetFlashTween.stop();
       for (const pokemon of multipleTargets) {
-        pokemon.setAlpha(1);
+        pokemon.setAlpha(!!pokemon.getTag(SubstituteTag) ? 0.5 : 1);
         this.highlightItems(pokemon.id, 1);
       }
     }
 
     this.targetFlashTween = this.scene.tweens.add({
       targets: this.targetsHighlighted,
-      key: { start: 0.55, to: 1 },
+      key: { start: 1, to: 0.25 },
       loop: -1,
       loopDelay: 150,
       duration: Utils.fixedInt(450),
@@ -162,7 +163,7 @@ export default class TargetSelectUiHandler extends UiHandler {
     }
 
     for (const pokemon of this.targetsHighlighted) {
-      pokemon.setAlpha(1);
+      pokemon.setAlpha(!!pokemon.getTag(SubstituteTag) ? 0.5 : 1);
       this.highlightItems(pokemon.id, 1);
     }
 

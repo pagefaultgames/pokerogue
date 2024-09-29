@@ -1,0 +1,59 @@
+{
+  "none": {
+    "name": "無"
+  },
+  "poison": {
+    "name": "中毒",
+    "description": "中毒",
+    "obtain": "{{pokemonNameWithAffix}}中毒了！",
+    "obtainSource": "{{pokemonNameWithAffix}}因{{sourceText}}中毒了！",
+    "activation": "{{pokemonNameWithAffix}}受到了毒的傷害！",
+    "overlap": "{{pokemonNameWithAffix}}已經中毒了！",
+    "heal": "{{pokemonNameWithAffix}}中的毒徹底清除了！"
+  },
+  "toxic": {
+    "name": "劇毒",
+    "description": "中毒",
+    "obtain": "{{pokemonNameWithAffix}}中了劇毒！",
+    "obtainSource": "{{pokemonNameWithAffix}}因{{sourceText}}中了劇毒！",
+    "activation": "{{pokemonNameWithAffix}}受到了毒的傷害！",
+    "overlap": "{{pokemonNameWithAffix}}已經中毒了！",
+    "heal": "{{pokemonNameWithAffix}}中的毒徹底清除了！"
+  },
+  "paralysis": {
+    "name": "麻痹",
+    "description": "麻痹",
+    "obtain": "{{pokemonNameWithAffix}}麻痹了，很難使出招式！",
+    "obtainSource": "{{pokemonNameWithAffix}}被{{sourceText}}麻痹了，很難使出招式！",
+    "activation": "{{pokemonNameWithAffix}}因身體麻痹而無法行動！",
+    "overlap": "{{pokemonNameWithAffix}}已經麻痹了！",
+    "heal": "{{pokemonNameWithAffix}}的麻痹治愈了！"
+  },
+  "sleep": {
+    "name": "睡眠",
+    "description": "睡眠",
+    "obtain": "{{pokemonNameWithAffix}}睡著了！",
+    "obtainSource": "{{pokemonNameWithAffix}}因{{sourceText}}睡著了！",
+    "activation": "{{pokemonNameWithAffix}}正在呼呼大睡。",
+    "overlap": "{{pokemonNameWithAffix}}已經睡著了！",
+    "heal": "{{pokemonNameWithAffix}}醒了！"
+  },
+  "freeze": {
+    "name": "冰凍",
+    "description": "冰凍",
+    "obtain": "{{pokemonNameWithAffix}}凍住了！",
+    "obtainSource": "{{pokemonNameWithAffix}}因{{sourceText}}凍住了！",
+    "activation": "{{pokemonNameWithAffix}}因凍住了而無法行動！",
+    "overlap": "{{pokemonNameWithAffix}}已經凍住了！",
+    "heal": "{{pokemonNameWithAffix}}治愈了冰凍狀態！"
+  },
+  "burn": {
+    "name": "灼傷",
+    "description": "灼傷",
+    "obtain": "{{pokemonNameWithAffix}}被灼傷了！",
+    "obtainSource": "{{pokemonNameWithAffix}}因{{sourceText}}被灼傷了！",
+    "activation": "{{pokemonNameWithAffix}}受到了灼傷的傷害！",
+    "overlap": "{{pokemonNameWithAffix}}已經被灼傷了！",
+    "heal": "{{pokemonNameWithAffix}}的灼傷治愈了！"
+  }
+}

@@ -1,15 +1,13 @@
-import { Status, StatusEffect } from "#app/data/status-effect.js";
-import { QuietFormChangePhase } from "#app/phases/quiet-form-change-phase.js";
-import { TurnEndPhase } from "#app/phases/turn-end-phase.js";
+import { Status, StatusEffect } from "#app/data/status-effect";
+import { QuietFormChangePhase } from "#app/phases/quiet-form-change-phase";
+import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/utils/gameManager";
-import { getMovePosition } from "#test/utils/gameManagerUtils";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import { SPLASH_ONLY } from "../utils/testUtils";
 
-const TIMEOUT = 20 * 1000;
+
 
 describe("Abilities - ZERO TO HERO", () => {
   let phaserGame: Phaser.Game;
@@ -31,8 +29,8 @@ describe("Abilities - ZERO TO HERO", () => {
     game = new GameManager(phaserGame);
     game.override
       .battleType("single")
-      .moveset(SPLASH_ONLY)
-      .enemyMoveset(SPLASH_ONLY)
+      .moveset(Moves.SPLASH)
+      .enemyMoveset(Moves.SPLASH)
       .enemyAbility(Abilities.BALL_FETCH);
   });
 
@@ -52,7 +50,7 @@ describe("Abilities - ZERO TO HERO", () => {
     palafin2.status = new Status(StatusEffect.FAINT);
     expect(palafin2.isFainted()).toBe(true);
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
+    game.move.select(Moves.SPLASH);
     await game.doKillOpponents();
     await game.phaseInterceptor.to(TurnEndPhase);
     game.doSelectModifier();
@@ -61,7 +59,7 @@ describe("Abilities - ZERO TO HERO", () => {
 
     expect(palafin1.formIndex).toBe(baseForm);
     expect(palafin2.formIndex).toBe(baseForm);
-  }, TIMEOUT);
+  });
 
   it("should swap to Hero form when switching out during a battle", async () => {
     await game.startBattle([Species.PALAFIN, Species.FEEBAS]);
@@ -72,7 +70,7 @@ describe("Abilities - ZERO TO HERO", () => {
     game.doSwitchPokemon(1);
     await game.phaseInterceptor.to(QuietFormChangePhase);
     expect(palafin.formIndex).toBe(heroForm);
-  }, TIMEOUT);
+  });
 
   it("should not swap to Hero form if switching due to faint", async () => {
     await game.startBattle([Species.PALAFIN, Species.FEEBAS]);
@@ -80,12 +78,12 @@ describe("Abilities - ZERO TO HERO", () => {
     const palafin = game.scene.getPlayerPokemon()!;
     expect(palafin.formIndex).toBe(baseForm);
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
+    game.move.select(Moves.SPLASH);
     await game.killPokemon(palafin);
     game.doSelectPartyPokemon(1);
     await game.toNextTurn();
     expect(palafin.formIndex).toBe(baseForm);
-  }, TIMEOUT);
+  });
 
   it("should stay hero form if fainted and then revived", async () => {
     game.override.starterForms({
@@ -97,7 +95,7 @@ describe("Abilities - ZERO TO HERO", () => {
     const palafin = game.scene.getPlayerPokemon()!;
     expect(palafin.formIndex).toBe(heroForm);
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
+    game.move.select(Moves.SPLASH);
     await game.killPokemon(palafin);
     game.doSelectPartyPokemon(1);
     await game.toNextTurn();
@@ -107,5 +105,5 @@ describe("Abilities - ZERO TO HERO", () => {
     await game.toNextTurn();
 
     expect(palafin.formIndex).toBe(heroForm);
-  }, TIMEOUT);
+  });
 });

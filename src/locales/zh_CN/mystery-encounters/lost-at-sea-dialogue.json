@@ -1,0 +1,28 @@
+{
+  "intro": "在大海中漫无目的地游荡，无处可循。",
+  "title": "迷失大海",
+  "description": "这片海域波涛汹涌，\n你的体力即将耗尽。\n太糟了，有什么办法么？",
+  "query": "你要怎么做？",
+  "option": {
+    "1": {
+      "label": "{{option1PrimaryName}}可以帮忙",
+      "label_disabled": "无法{{option1RequiredMove}}",
+      "tooltip": "(+){{option1PrimaryName}}帮助你\n(+){{option1PrimaryName}}获得经验值",
+      "tooltip_disabled": "你没有宝可梦\n能够{{option1RequiredMove}}",
+      "selected": "{{option1PrimaryName}}游在前面，引导你回到正轨。${{option1PrimaryName}}似乎也在这次需要它的时候变得更强大了！"
+    },
+    "2": {
+      "label": "{{option2PrimaryName}}可以帮忙",
+      "label_disabled": "无法{{option2RequiredMove}}",
+      "tooltip": "(+){{option2PrimaryName}}帮助你\n(+){{option2PrimaryName}}获得经验值",
+      "tooltip_disabled": "你没有宝可梦\n能够{{option2RequiredMove}}",
+      "selected": "{{option2PrimaryName}}飞在你的船前面，引导你回到正轨。在这次需要它的时候，${{option2PrimaryName}}似乎也变得更强大了！"
+    },
+    "3": {
+      "label": "漫无目的地漂流",
+      "tooltip": "(-)每一只宝可梦\n损失{{damagePercentage}}%的HP",
+      "selected": "你在船上漂浮，漫无目的地航行，直到最后发现了一个你记得的地标。$你和你的宝可梦因整个经历而疲惫不堪。"
+    }
+  },
+  "outro": "一切又回到正轨了。"
+}

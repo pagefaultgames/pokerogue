@@ -2,17 +2,17 @@ import i18next from "i18next";
 import LanguageDetector from "i18next-browser-languagedetector";
 import processor, { KoreanPostpositionProcessor } from "i18next-korean-postposition-processor";
 
-import { caESConfig} from "#app/locales/ca_ES/config.js";
-import { deConfig } from "#app/locales/de/config.js";
-import { enConfig } from "#app/locales/en/config.js";
-import { esConfig } from "#app/locales/es/config.js";
-import { frConfig } from "#app/locales/fr/config.js";
-import { itConfig } from "#app/locales/it/config.js";
-import { koConfig } from "#app/locales/ko/config.js";
-import { jaConfig } from "#app/locales/ja/config.js";
-import { ptBrConfig } from "#app/locales/pt_BR/config.js";
-import { zhCnConfig } from "#app/locales/zh_CN/config.js";
-import { zhTwConfig } from "#app/locales/zh_TW/config.js";
+import { caEsConfig} from "#app/locales/ca_ES/config";
+import { deConfig } from "#app/locales/de/config";
+import { enConfig } from "#app/locales/en/config";
+import { esConfig } from "#app/locales/es/config";
+import { frConfig } from "#app/locales/fr/config";
+import { itConfig } from "#app/locales/it/config";
+import { koConfig } from "#app/locales/ko/config";
+import { jaConfig } from "#app/locales/ja/config";
+import { ptBrConfig } from "#app/locales/pt_BR/config";
+import { zhCnConfig } from "#app/locales/zh_CN/config";
+import { zhTwConfig } from "#app/locales/zh_TW/config";
 
 interface LoadingFontFaceProperty {
   face: FontFace,
@@ -161,10 +161,29 @@ export async function initI18n(): Promise<void> {
         ...jaConfig
       },
       "ca-ES": {
-        ...caESConfig
+        ...caEsConfig
       }
     },
     postProcess: ["korean-postposition"],
+  });
+
+  // Input: {{myMoneyValue, money}}
+  // Output: @[MONEY]{₽100,000,000} (useful for BBCode coloring of text)
+  // If you don't want the BBCode tag applied, just use 'number' formatter
+  i18next.services.formatter?.add("money", (value, lng, options) => {
+    const numberFormattedString = Intl.NumberFormat(lng, options).format(value);
+    switch (lng) {
+    case "ja":
+      return `@[MONEY]{${numberFormattedString}}円`;
+    case "de":
+    case "es":
+    case "fr":
+    case "it":
+      return `@[MONEY]{${numberFormattedString} ₽}`;
+    default:
+      // English and other languages that use same format
+      return `@[MONEY]{₽${numberFormattedString}}`;
+    }
   });
 
   await initFonts(localStorage.getItem("prLang") ?? undefined);

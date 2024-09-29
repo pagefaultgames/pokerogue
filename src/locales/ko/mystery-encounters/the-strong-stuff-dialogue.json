@@ -1,0 +1,21 @@
+{
+  "intro": "커다란 {{shuckleName}}를 만났다!\n옆에 한가득 차 있는 저건 주스…?",
+  "title": "강력한 물질",
+  "description": "당신을 막아선 {{shuckleName}}[[는]] 엄청나게 강해보입니다. 게다가 그 옆에 있는 주스에서는 무언가 강한 기운이 뿜어져 나오는 것 같네요.\n\n{{shuckleName}}가 당신 쪽으로 다리를 내밉니다.\n무언가 하려는 모양입니다…",
+  "query": "어떻게 하시겠습니까?",
+  "option": {
+    "1": {
+      "label": "{{shuckleName}}에게 다가간다",
+      "tooltip": "(?) 끔찍하거나 놀라운 일",
+      "selected": "당신은 기절해버렸다……….",
+      "selected_2": "@f{150}정신을 차리고 나니, {{shuckleName}}[[는]] 사라지고\n주스도 완전히 비었다.${{highBstPokemon1}}[[과]] {{highBstPokemon2}}[[는]]\n굉장히 무기력해졌다!$두 포켓몬의 종족치가 각각 {{reductionValue}}만큼 감소했다!$하지만 다른 포켓몬들은 놀라울만큼 활력이 넘친다!\n다른 포켓몬들의 종족치가 각각 {{increaseValue}}만큼 증가했다!"
+    },
+    "2": {
+      "label": "{{shuckleName}}[[과]] 싸운다",
+      "tooltip": "(-) 어려운 배틀\n(+) 특별한 보상",
+      "selected": "화가 난 {{shuckleName}}[[가]] 주스를 마시고 공격해 왔다!",
+      "stat_boost": "주스를 마신 {{shuckleName}}의 능력치가 올라갔다!"
+    }
+  },
+  "outro": "기묘한 일을 겪은 것 같다…."
+}

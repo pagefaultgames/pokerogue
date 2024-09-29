@@ -1,0 +1,31 @@
+{
+  "intro": "Eine Lehrerin und ein paar Schulkinder stehen auf einmal vor dir!",
+  "speaker": "Lehrerin",
+  "intro_dialogue": "Hallo! Könntest du eine Minute für meine Schüler erübrigen?$Ich bringe ihnen gerade bei, wie Pokémon-Attacken funktionieren und würde ihnen gerne$eine Demonstration zeigen.$Würdest du uns eine Attacke deines Pokémon vorführen?",
+  "title": "Exkursion",
+  "description": "Eine Lehrerin fragt nach einer Attackenvorführung eines Pokémon. Je nachdem, welche Attacke du wählst, hat sie vielleicht etwas Nützliches für dich als Belohnung.",
+  "query": "Welchen Attacken-Typ wählst du?",
+  "option": {
+    "1": {
+      "label": "Physische Attacke",
+      "tooltip": "(+) Physische Item-Belohnungen"
+    },
+    "2": {
+      "label": "Spezielle Attacke",
+      "tooltip": "(+) Spezielle Item-Belohnungen"
+    },
+    "3": {
+      "label": "Status-Attacke",
+      "tooltip": "(+) Status Item-Belohnungen"
+    },
+    "selected": "{{pokeName}} zeigt eine beeindruckende Vorführung von {{move}}!"
+  },
+  "second_option_prompt": "Wähle eine Attacke die dein Pokémon einsetzen soll.",
+  "incorrect": "...$Das ist keine {{moveCategory}}Attacke!\nEs tut mir leid, aber ich kann dir nichts geben.$Kommt Kinder, wir suchen uns woanders einen besseren Trainer.",
+  "incorrect_exp": "Es scheint, als hättest du eine wertvolle Lektion gelernt?$Dein Pokémon hat auch etwas Erfahrung gesammelt.",
+  "correct": "Ich dank dir vielmals für deine Freundlichkeit!$Ich hoffe, diese Items sind nützlich für dich.",
+  "correct_exp": "{{pokeName}} hat auch etwas wertvolle Erfahrung gesammelt!",
+  "status": "Status-",
+  "physical": "physische ",
+  "special": "spezielle "
+}

@@ -5,7 +5,7 @@ import BBCodeText from "phaser3-rex-plugins/plugins/gameobjects/tagtext/bbcodete
 import InputText from "phaser3-rex-plugins/plugins/inputtext";
 import BattleScene from "../battle-scene";
 import { ModifierTier } from "../modifier/modifier-tier";
-import i18next from "#app/plugins/i18n.js";
+import i18next from "#app/plugins/i18n";
 
 export enum TextStyle {
   MESSAGE,
@@ -226,7 +226,36 @@ export function getBBCodeFrag(content: string, textStyle: TextStyle, uiTheme: Ui
   return `[color=${getTextColor(textStyle, false, uiTheme)}][shadow=${getTextColor(textStyle, true, uiTheme)}]${content}`;
 }
 
+/**
+ * Should only be used with BBCodeText (see {@linkcode addBBCodeTextObject()})
+ * This does NOT work with UI showText() or showDialogue() methods.
+ * Method will do pattern match/replace and apply BBCode color/shadow styling to substrings within the content:
+ * @[<TextStyle>]{<text to color>}
+ *
+ * Example: passing a content string of "@[SUMMARY_BLUE]{blue text} primaryStyle text @[SUMMARY_RED]{red text}" will result in:
+ * - "blue text" with TextStyle.SUMMARY_BLUE applied
+ * - " primaryStyle text " with primaryStyle TextStyle applied
+ * - "red text" with TextStyle.SUMMARY_RED applied
+ * @param content string with styling that need to be applied for BBCodeTextObject
+ * @param primaryStyle Primary style is required in order to escape BBCode styling properly.
+ * @param uiTheme
+ */
+export function getTextWithColors(content: string, primaryStyle: TextStyle, uiTheme: UiTheme = UiTheme.DEFAULT): string {
+  // Apply primary styling before anything else
+  let text = getBBCodeFrag(content, primaryStyle, uiTheme) + "[/color][/shadow]";
+  const primaryStyleString = [...text.match(new RegExp(/\[color=[^\[]*\]\[shadow=[^\[]*\]/i))!][0];
+
+  // Set custom colors
+  text = text.replace(/@\[([^{]*)\]{([^}]*)}/gi, (substring, textStyle: string, textToColor: string) => {
+    return "[/color][/shadow]" + getBBCodeFrag(textToColor, TextStyle[textStyle], uiTheme) + "[/color][/shadow]" + primaryStyleString;
+  });
+
+  // Remove extra style block at the end
+  return text.replace(/\[color=[^\[]*\]\[shadow=[^\[]*\]\[\/color\]\[\/shadow\]/gi, "");
+}
+
 export function getTextColor(textStyle: TextStyle, shadow?: boolean, uiTheme: UiTheme = UiTheme.DEFAULT): string {
+  const isLegacyTheme = uiTheme === UiTheme.LEGACY;
   switch (textStyle) {
   case TextStyle.MESSAGE:
     return !shadow ? "#f8f8f8" : "#6b5a73";
@@ -235,29 +264,29 @@ export function getTextColor(textStyle: TextStyle, shadow?: boolean, uiTheme: Ui
   case TextStyle.MOVE_PP_FULL:
   case TextStyle.TOOLTIP_CONTENT:
   case TextStyle.SETTINGS_VALUE:
-    if (uiTheme) {
+    if (isLegacyTheme) {
       return !shadow ? "#484848" : "#d0d0c8";
     }
     return !shadow ? "#f8f8f8" : "#6b5a73";
   case TextStyle.MOVE_PP_HALF_FULL:
-    if (uiTheme) {
+    if (isLegacyTheme) {
       return !shadow ? "#a68e17" : "#ebd773";
     }
     return !shadow ? "#ccbe00" : "#6e672c";
   case TextStyle.MOVE_PP_NEAR_EMPTY:
-    if (uiTheme) {
+    if (isLegacyTheme) {
       return !shadow ? "#d64b00" : "#f7b18b";
     }
     return !shadow ? "#d64b00" : "#69402a";
   case TextStyle.MOVE_PP_EMPTY:
-    if (uiTheme) {
+    if (isLegacyTheme) {
       return !shadow ? "#e13d3d" : "#fca2a2";
     }
     return !shadow ? "#e13d3d" : "#632929";
   case TextStyle.WINDOW_ALT:
     return !shadow ? "#484848" : "#d0d0c8";
   case TextStyle.BATTLE_INFO:
-    if (uiTheme) {
+    if (isLegacyTheme) {
       return !shadow ? "#404040" : "#ded6b5";
     }
     return !shadow ? "#f8f8f8" : "#6b5a73";
@@ -268,7 +297,7 @@ export function getTextColor(textStyle: TextStyle, shadow?: boolean, uiTheme: Ui
   case TextStyle.SUMMARY:
     return !shadow ? "#f8f8f8" : "#636363";
   case TextStyle.SUMMARY_ALT:
-    if (uiTheme) {
+    if (isLegacyTheme) {
       return !shadow ? "#f8f8f8" : "#636363";
     }
     return !shadow ? "#484848" : "#d0d0c8";
@@ -288,6 +317,9 @@ export function getTextColor(textStyle: TextStyle, shadow?: boolean, uiTheme: Ui
   case TextStyle.STATS_LABEL:
     return !shadow ? "#f8b050" : "#c07800";
   case TextStyle.STATS_VALUE:
+    if (isLegacyTheme) {
+      return !shadow ? "#484848" : "#d0d0c8";
+    }
     return !shadow ? "#f8f8f8" : "#6b5a73";
   case TextStyle.SUMMARY_GREEN:
     return !shadow ? "#78c850" : "#306850";

@@ -1,17 +1,16 @@
-import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import GameManager from "#test/utils/gameManager";
-import { Species } from "#enums/species";
+import { BattlerTagType } from "#app/enums/battler-tag-type";
+import { StatusEffect } from "#app/enums/status-effect";
+import { BerryPhase } from "#app/phases/berry-phase";
+import { MovePhase } from "#app/phases/move-phase";
+import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
-import { getMovePosition } from "#test/utils/gameManagerUtils";
-import { BattlerTagType } from "#app/enums/battler-tag-type.js";
-import { StatusEffect } from "#app/enums/status-effect.js";
-import { BerryPhase } from "#app/phases/berry-phase.js";
-import { MovePhase } from "#app/phases/move-phase.js";
-import { TurnEndPhase } from "#app/phases/turn-end-phase.js";
+import { Species } from "#enums/species";
+import GameManager from "#test/utils/gameManager";
+import Phaser from "phaser";
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
-const TIMEOUT = 20 * 1000;
+
 
 describe("Moves - Beak Blast", () => {
   let phaserGame: Phaser.Game;
@@ -35,7 +34,7 @@ describe("Moves - Beak Blast", () => {
       .moveset([Moves.BEAK_BLAST])
       .enemySpecies(Species.SNORLAX)
       .enemyAbility(Abilities.INSOMNIA)
-      .enemyMoveset(Array(4).fill(Moves.TACKLE))
+      .enemyMoveset([Moves.TACKLE])
       .startingLevel(100)
       .enemyLevel(100);
   });
@@ -48,14 +47,14 @@ describe("Moves - Beak Blast", () => {
       const leadPokemon = game.scene.getPlayerPokemon()!;
       const enemyPokemon = game.scene.getEnemyPokemon()!;
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.BEAK_BLAST));
+      game.move.select(Moves.BEAK_BLAST);
 
       await game.phaseInterceptor.to(MovePhase, false);
       expect(leadPokemon.getTag(BattlerTagType.BEAK_BLAST_CHARGING)).toBeDefined();
 
       await game.phaseInterceptor.to(BerryPhase, false);
       expect(enemyPokemon.status?.effect).toBe(StatusEffect.BURN);
-    }, TIMEOUT
+    }
   );
 
   it(
@@ -68,63 +67,63 @@ describe("Moves - Beak Blast", () => {
       const leadPokemon = game.scene.getPlayerPokemon()!;
       const enemyPokemon = game.scene.getEnemyPokemon()!;
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.BEAK_BLAST));
+      game.move.select(Moves.BEAK_BLAST);
 
       await game.phaseInterceptor.to(MovePhase, false);
       expect(leadPokemon.getTag(BattlerTagType.BEAK_BLAST_CHARGING)).toBeDefined();
 
       await game.phaseInterceptor.to(BerryPhase, false);
       expect(enemyPokemon.status?.effect).toBe(StatusEffect.BURN);
-    }, TIMEOUT
+    }
   );
 
   it(
     "should not burn attackers that don't make contact",
     async () => {
-      game.override.enemyMoveset(Array(4).fill(Moves.WATER_GUN));
+      game.override.enemyMoveset([Moves.WATER_GUN]);
 
       await game.startBattle([Species.BLASTOISE]);
 
       const leadPokemon = game.scene.getPlayerPokemon()!;
       const enemyPokemon = game.scene.getEnemyPokemon()!;
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.BEAK_BLAST));
+      game.move.select(Moves.BEAK_BLAST);
 
       await game.phaseInterceptor.to(MovePhase, false);
       expect(leadPokemon.getTag(BattlerTagType.BEAK_BLAST_CHARGING)).toBeDefined();
 
       await game.phaseInterceptor.to(BerryPhase, false);
       expect(enemyPokemon.status?.effect).not.toBe(StatusEffect.BURN);
-    }, TIMEOUT
+    }
   );
 
   it(
     "should only hit twice with Multi-Lens",
     async () => {
-      game.override.startingHeldItems([{name: "MULTI_LENS", count: 1}]);
+      game.override.startingHeldItems([{ name: "MULTI_LENS", count: 1 }]);
 
       await game.startBattle([Species.BLASTOISE]);
 
       const leadPokemon = game.scene.getPlayerPokemon()!;
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.BEAK_BLAST));
+      game.move.select(Moves.BEAK_BLAST);
 
       await game.phaseInterceptor.to(BerryPhase, false);
       expect(leadPokemon.turnData.hitCount).toBe(2);
-    }, TIMEOUT
+    }
   );
 
   it(
     "should be blocked by Protect",
     async () => {
-      game.override.enemyMoveset(Array(4).fill(Moves.PROTECT));
+      game.override.enemyMoveset([Moves.PROTECT]);
 
       await game.startBattle([Species.BLASTOISE]);
 
       const leadPokemon = game.scene.getPlayerPokemon()!;
       const enemyPokemon = game.scene.getEnemyPokemon()!;
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.BEAK_BLAST));
+      game.move.select(Moves.BEAK_BLAST);
 
       await game.phaseInterceptor.to(MovePhase, false);
       expect(leadPokemon.getTag(BattlerTagType.BEAK_BLAST_CHARGING)).toBeDefined();
@@ -132,6 +131,6 @@ describe("Moves - Beak Blast", () => {
       await game.phaseInterceptor.to(TurnEndPhase);
       expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp());
       expect(leadPokemon.getTag(BattlerTagType.BEAK_BLAST_CHARGING)).toBeUndefined();
-    }, TIMEOUT
+    }
   );
 });

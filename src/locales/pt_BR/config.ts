@@ -1,118 +1,191 @@
-import { ability } from "./ability";
-import { abilityTriggers } from "./ability-trigger";
-import { PGFachv, PGMachv } from "./achv";
-import { arenaFlyout } from "./arena-flyout";
-import { arenaTag } from "./arena-tag";
-import { battle } from "./battle";
-import { battleScene } from "./battle-scene";
-import { battleInfo } from "./battle-info";
-import { battleMessageUiHandler } from "./battle-message-ui-handler";
-import { battlerTags } from "./battler-tags";
-import { berry } from "./berry";
-import { bgmName } from "./bgm-name";
-import { biome } from "./biome";
-import { challenges } from "./challenges";
-import { commandUiHandler } from "./command-ui-handler";
-import { common } from "./common.js";
-import {
-  PGFbattleSpecDialogue,
-  PGFdialogue,
-  PGFdoubleBattleDialogue,
-  PGFmiscDialogue,
-  PGMbattleSpecDialogue,
-  PGMdialogue,
-  PGMdoubleBattleDialogue,
-  PGMmiscDialogue
-} from "./dialogue";
-import { egg } from "./egg";
-import { fightUiHandler } from "./fight-ui-handler";
-import { filterBar } from "./filter-bar";
-import { gameMode } from "./game-mode";
-import { gameStatsUiHandler } from "./game-stats-ui-handler";
-import { growth } from "./growth";
-import { menu } from "./menu";
-import { menuUiHandler } from "./menu-ui-handler";
-import { modifier } from "./modifier";
-import { modifierSelectUiHandler } from "./modifier-select-ui-handler";
-import { modifierType } from "./modifier-type";
-import { move } from "./move";
-import { moveTriggers } from "./move-trigger";
-import { nature } from "./nature";
-import { partyUiHandler } from "./party-ui-handler";
-import { pokeball } from "./pokeball";
-import { pokemon } from "./pokemon";
-import { battlePokemonForm, pokemonForm } from "./pokemon-form";
-import { pokemonInfo } from "./pokemon-info";
-import { pokemonInfoContainer } from "./pokemon-info-container";
-import { pokemonSummary } from "./pokemon-summary";
-import { saveSlotSelectUiHandler } from "./save-slot-select-ui-handler";
-import { settings } from "./settings.js";
-import { splashMessages } from "./splash-messages";
-import { starterSelectUiHandler } from "./starter-select-ui-handler";
-import { statusEffect } from "./status-effect";
-import { titles, trainerClasses, trainerNames } from "./trainers";
-import { tutorial } from "./tutorial";
-import { voucher } from "./voucher";
-import { terrain, weather } from "./weather";
+import abilityTriggers from "./ability-trigger.json";
+import ability from "./ability.json";
+import achv from "./achv.json";
+import arenaFlyout from "./arena-flyout.json";
+import arenaTag from "./arena-tag.json";
+import battleInfo from "./battle-info.json";
+import battleMessageUiHandler from "./battle-message-ui-handler.json";
+import battleScene from "./battle-scene.json";
+import battle from "./battle.json";
+import battlerTags from "./battler-tags.json";
+import berry from "./berry.json";
+import bgmName from "./bgm-name.json";
+import biome from "./biome.json";
+import challenges from "./challenges.json";
+import commandUiHandler from "./command-ui-handler.json";
+import common from "./common.json";
+import doubleBattleDialogue from "./dialogue-double-battle.json";
+import battleSpecDialogue from "./dialogue-final-boss.json";
+import miscDialogue from "./dialogue-misc.json";
+import dialogue from "./dialogue.json";
+import egg from "./egg.json";
+import fightUiHandler from "./fight-ui-handler.json";
+import filterBar from "./filter-bar.json";
+import gameMode from "./game-mode.json";
+import gameStatsUiHandler from "./game-stats-ui-handler.json";
+import growth from "./growth.json";
+import menuUiHandler from "./menu-ui-handler.json";
+import menu from "./menu.json";
+import modifierSelectUiHandler from "./modifier-select-ui-handler.json";
+import modifierType from "./modifier-type.json";
+import modifier from "./modifier.json";
+import moveTriggers from "./move-trigger.json";
+import move from "./move.json";
+import mysteryEncounterMessages from "./mystery-encounter-messages.json";
+import aTrainersTest from "./mystery-encounters/a-trainers-test-dialogue.json";
+import absoluteAvarice from "./mystery-encounters/absolute-avarice-dialogue.json";
+import offerYouCantRefuse from "./mystery-encounters/an-offer-you-cant-refuse-dialogue.json";
+import berriesAbound from "./mystery-encounters/berries-abound-dialogue.json";
+import bugTypeSuperfan from "./mystery-encounters/bug-type-superfan-dialogue.json";
+import clowningAround from "./mystery-encounters/clowning-around-dialogue.json";
+import dancingLessons from "./mystery-encounters/dancing-lessons-dialogue.json";
+import darkDeal from "./mystery-encounters/dark-deal-dialogue.json";
+import delibirdy from "./mystery-encounters/delibirdy-dialogue.json";
+import departmentStoreSale from "./mystery-encounters/department-store-sale-dialogue.json";
+import fieldTrip from "./mystery-encounters/field-trip-dialogue.json";
+import fieryFallout from "./mystery-encounters/fiery-fallout-dialogue.json";
+import fightOrFlight from "./mystery-encounters/fight-or-flight-dialogue.json";
+import funAndGames from "./mystery-encounters/fun-and-games-dialogue.json";
+import globalTradeSystem from "./mystery-encounters/global-trade-system-dialogue.json";
+import lostAtSea from "./mystery-encounters/lost-at-sea-dialogue.json";
+import mysteriousChallengers from "./mystery-encounters/mysterious-challengers-dialogue.json";
+import mysteriousChest from "./mystery-encounters/mysterious-chest-dialogue.json";
+import partTimer from "./mystery-encounters/part-timer-dialogue.json";
+import safariZone from "./mystery-encounters/safari-zone-dialogue.json";
+import shadyVitaminDealer from "./mystery-encounters/shady-vitamin-dealer-dialogue.json";
+import slumberingSnorlax from "./mystery-encounters/slumbering-snorlax-dialogue.json";
+import teleportingHijinks from "./mystery-encounters/teleporting-hijinks-dialogue.json";
+import pokemonSalesman from "./mystery-encounters/the-pokemon-salesman-dialogue.json";
+import theStrongStuff from "./mystery-encounters/the-strong-stuff-dialogue.json";
+import theWinstrateChallenge from "./mystery-encounters/the-winstrate-challenge-dialogue.json";
+import trainingSession from "./mystery-encounters/training-session-dialogue.json";
+import trashToTreasure from "./mystery-encounters/trash-to-treasure-dialogue.json";
+import uncommonBreed from "./mystery-encounters/uncommon-breed-dialogue.json";
+import weirdDream from "./mystery-encounters/weird-dream-dialogue.json";
+import expertPokemonBreeder from "./mystery-encounters/the-expert-pokemon-breeder-dialogue.json";
+import nature from "./nature.json";
+import partyUiHandler from "./party-ui-handler.json";
+import pokeball from "./pokeball.json";
+import battlePokemonForm from "./pokemon-form-battle.json";
+import pokemonForm from "./pokemon-form.json";
+import pokemonInfoContainer from "./pokemon-info-container.json";
+import pokemonInfo from "./pokemon-info.json";
+import pokemonSummary from "./pokemon-summary.json";
+import pokemon from "./pokemon.json";
+import runHistory from "./run-history.json";
+import saveSlotSelectUiHandler from "./save-slot-select-ui-handler.json";
+import settings from "./settings.json";
+import splashMessages from "./splash-messages.json";
+import starterSelectUiHandler from "./starter-select-ui-handler.json";
+import statusEffect from "./status-effect.json";
+import terrain from "./terrain.json";
+import trainerClasses from "./trainer-classes.json";
+import trainerNames from "./trainer-names.json";
+import trainerTitles from "./trainer-titles.json";
+import tutorial from "./tutorial.json";
+import voucher from "./voucher.json";
+import weather from "./weather.json";
 
+/**
+ * Dialogue/Text token injection patterns that can be used:
+ * - `$` will be treated as a new line for Message and Dialogue strings.
+ * - `@d{<number>}` will add a time delay to text animation for Message and Dialogue strings.
+ * - `@s{<sound_effect_key>}` will play a specified sound effect for Message and Dialogue strings.
+ * - `@f{<number>}` will fade the screen to black for the given duration, then fade back in for Message and Dialogue strings.
+ * - `{{<token>}}` (MYSTERY ENCOUNTERS ONLY) will auto-inject the matching dialogue token value that is stored in {@link IMysteryEncounter.dialogueTokens}.
+ *   - (see [i18next interpolations](https://www.i18next.com/translation-function/interpolation)) for more details.
+ * - `@[<TextStyle>]{<text>}` (STATIC TEXT ONLY, NOT USEABLE WITH {@link UI.showText()} OR {@link UI.showDialogue()}) will auto-color the given text to a specified {@link TextStyle} (e.g. `TextStyle.SUMMARY_GREEN`).
+ */
 export const ptBrConfig = {
-  ability: ability,
-  abilityTriggers: abilityTriggers,
-  arenaFlyout: arenaFlyout,
-  arenaTag: arenaTag,
-  battle: battle,
-  battleScene: battleScene,
-  battleInfo: battleInfo,
-  battleMessageUiHandler: battleMessageUiHandler,
-  battlePokemonForm: battlePokemonForm,
-  battlerTags: battlerTags,
-  berry: berry,
-  bgmName: bgmName,
-  biome: biome,
-  challenges: challenges,
-  commandUiHandler: commandUiHandler,
-  common: common,
-  PGMachv: PGMachv,
-  PGFachv: PGFachv,
-  PGMdialogue: PGMdialogue,
-  PGFdialogue: PGFdialogue,
-  PGMbattleSpecDialogue: PGMbattleSpecDialogue,
-  PGFbattleSpecDialogue: PGFbattleSpecDialogue,
-  PGMmiscDialogue: PGMmiscDialogue,
-  PGFmiscDialogue: PGFmiscDialogue,
-  PGMdoubleBattleDialogue: PGMdoubleBattleDialogue,
-  PGFdoubleBattleDialogue: PGFdoubleBattleDialogue,
-  egg: egg,
-  fightUiHandler: fightUiHandler,
-  filterBar: filterBar,
-  gameMode: gameMode,
-  gameStatsUiHandler: gameStatsUiHandler,
-  growth: growth,
-  menu: menu,
-  menuUiHandler: menuUiHandler,
-  modifier: modifier,
-  modifierSelectUiHandler: modifierSelectUiHandler,
-  modifierType: modifierType,
-  move: move,
-  moveTriggers: moveTriggers,
-  nature: nature,
-  partyUiHandler: partyUiHandler,
-  pokeball: pokeball,
-  pokemon: pokemon,
-  pokemonForm: pokemonForm,
-  pokemonInfo: pokemonInfo,
-  pokemonInfoContainer: pokemonInfoContainer,
-  pokemonSummary: pokemonSummary,
-  saveSlotSelectUiHandler: saveSlotSelectUiHandler,
-  statusEffect: statusEffect,
-  terrain: terrain,
-  settings: settings,
-  splashMessages: splashMessages,
-  starterSelectUiHandler: starterSelectUiHandler,
-  titles: titles,
-  trainerClasses: trainerClasses,
-  trainerNames: trainerNames,
-  tutorial: tutorial,
-  voucher: voucher,
-  weather: weather
+  ability,
+  abilityTriggers,
+  arenaFlyout,
+  arenaTag,
+  battle,
+  battleScene,
+  battleInfo,
+  battleMessageUiHandler,
+  battlePokemonForm,
+  battlerTags,
+  berry,
+  bgmName,
+  biome,
+  challenges,
+  commandUiHandler,
+  common,
+  achv,
+  dialogue,
+  battleSpecDialogue,
+  miscDialogue,
+  doubleBattleDialogue,
+  egg,
+  fightUiHandler,
+  filterBar,
+  gameMode,
+  gameStatsUiHandler,
+  growth,
+  menu,
+  menuUiHandler,
+  modifier,
+  modifierType,
+  move,
+  nature,
+  pokeball,
+  pokemon,
+  pokemonForm,
+  pokemonInfo,
+  pokemonInfoContainer,
+  pokemonSummary,
+  saveSlotSelectUiHandler,
+  settings,
+  splashMessages,
+  starterSelectUiHandler,
+  statusEffect,
+  terrain,
+  titles: trainerTitles,
+  trainerClasses,
+  trainerNames,
+  tutorial,
+  voucher,
+  weather,
+  partyUiHandler,
+  modifierSelectUiHandler,
+  moveTriggers,
+  runHistory: runHistory,
+  mysteryEncounter: {
+    // DO NOT REMOVE
+    "unit_test_dialogue": "{{test}}{{test}} {{test{{test}}}} {{test1}} {{test\}} {{test\\}} {{test\\\}} {test}}",
+    mysteriousChallengers,
+    mysteriousChest,
+    darkDeal,
+    fightOrFlight,
+    slumberingSnorlax,
+    trainingSession,
+    departmentStoreSale,
+    shadyVitaminDealer,
+    fieldTrip,
+    safariZone,
+    lostAtSea,
+    fieryFallout,
+    theStrongStuff,
+    pokemonSalesman,
+    offerYouCantRefuse,
+    delibirdy,
+    absoluteAvarice,
+    aTrainersTest,
+    trashToTreasure,
+    berriesAbound,
+    clowningAround,
+    partTimer,
+    dancingLessons,
+    weirdDream,
+    theWinstrateChallenge,
+    teleportingHijinks,
+    bugTypeSuperfan,
+    funAndGames,
+    uncommonBreed,
+    globalTradeSystem,
+    expertPokemonBreeder
+  },
+  mysteryEncounterMessages
 };

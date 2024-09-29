@@ -1,15 +1,14 @@
-import { Status, StatusEffect } from "#app/data/status-effect.js";
-import { EnemyPokemon, PlayerPokemon } from "#app/field/pokemon.js";
-import GameManager from "#test/utils/gameManager";
-import { getMovePosition } from "#test/utils/gameManagerUtils";
+import { BattlerIndex } from "#app/battle";
+import { Status, StatusEffect } from "#app/data/status-effect";
+import { EnemyPokemon, PlayerPokemon } from "#app/field/pokemon";
+import { MoveEndPhase } from "#app/phases/move-end-phase";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
+import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest";
-import { BattlerIndex } from "#app/battle.js";
-import { MoveEndPhase } from "#app/phases/move-end-phase.js";
 
-const TIMEOUT = 20 * 1000;
+
 
 describe("Moves - Purify", () => {
   let phaserGame: Phaser.Game;
@@ -49,14 +48,13 @@ describe("Moves - Purify", () => {
       playerPokemon.hp = playerPokemon.getMaxHp() - 1;
       enemyPokemon.status = new Status(StatusEffect.BURN);
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.PURIFY));
+      game.move.select(Moves.PURIFY);
       await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
       await game.phaseInterceptor.to(MoveEndPhase);
 
       expect(enemyPokemon.status).toBeNull();
       expect(playerPokemon.isFullHp()).toBe(true);
     },
-    TIMEOUT
   );
 
   test(
@@ -69,13 +67,12 @@ describe("Moves - Purify", () => {
       playerPokemon.hp = playerPokemon.getMaxHp() - 1;
       const playerInitialHp = playerPokemon.hp;
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.PURIFY));
+      game.move.select(Moves.PURIFY);
       await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
       await game.phaseInterceptor.to(MoveEndPhase);
 
       expect(playerPokemon.hp).toBe(playerInitialHp);
     },
-    TIMEOUT
   );
 
 });
