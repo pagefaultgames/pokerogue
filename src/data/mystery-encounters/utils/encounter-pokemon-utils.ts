@@ -224,7 +224,7 @@ export function getRandomSpeciesByStarterTier(starterTiers: number | [number, nu
   // If no filtered mons exist at specified starter tiers, will expand starter search range until there are
   // Starts by decrementing starter tier min until it is 0, then increments tier max up to 10
   let tryFilterStarterTiers: [PokemonSpecies, number][] = filteredSpecies.filter(s => (s[1] >= min && s[1] <= max));
-  while (tryFilterStarterTiers.length === 0 && (min !== 0 && max !== 10)) {
+  while (tryFilterStarterTiers.length === 0 && !(min === 0 && max === 10)) {
     if (min > 0) {
       min--;
     } else {
