@@ -13,7 +13,7 @@ import { TrainerType } from "#enums/trainer-type";
 import { Nature } from "./nature";
 import { Moves } from "#app/enums/moves";
 import { TypeColor, TypeShadow } from "#app/enums/color";
-import { pokemonEvolutions } from "./pokemon-evolutions";
+import { pokemonEvolutions } from "./balance/pokemon-evolutions";
 import { pokemonFormChanges } from "./pokemon-forms";
 
 /** A constant for the default max cost of the starting party before a run */

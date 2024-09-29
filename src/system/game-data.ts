@@ -1,7 +1,7 @@
 import i18next from "i18next";
 import BattleScene, { bypassLogin, PokeballCounts } from "../battle-scene";
 import Pokemon, { EnemyPokemon, PlayerPokemon } from "../field/pokemon";
-import { pokemonPrevolutions } from "../data/pokemon-evolutions";
+import { pokemonPrevolutions } from "../data/balance/pokemon-evolutions";
 import PokemonSpecies, { allSpecies, getPokemonSpecies, noStarterFormKeys, speciesStarters } from "../data/pokemon-species";
 import * as Utils from "../utils";
 import Overrides from "#app/overrides";
@@ -24,7 +24,7 @@ import { clientSessionId, loggedInUser, updateUserInfo } from "../account";
 import { Nature } from "../data/nature";
 import { GameStats } from "./game-stats";
 import { Tutorial } from "../tutorial";
-import { speciesEggMoves } from "../data/egg-moves";
+import { speciesEggMoves } from "../data/balance/egg-moves";
 import { allMoves } from "../data/move";
 import { TrainerVariant } from "../field/trainer";
 import { Variant } from "#app/data/variant";

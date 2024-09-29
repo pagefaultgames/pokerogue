@@ -4,7 +4,7 @@ import { Gender } from "../data/gender";
 import { Type } from "../data/type";
 import * as Utils from "../utils";
 import { TextStyle, addTextObject } from "./text";
-import { speciesEggMoves } from "#app/data/egg-moves";
+import { speciesEggMoves } from "#app/data/balance/egg-moves";
 import { allMoves } from "#app/data/move";
 import { Species } from "#app/enums/species";
 import { getEggTierForSpecies } from "#app/data/egg";

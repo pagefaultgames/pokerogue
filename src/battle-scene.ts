@@ -25,7 +25,7 @@ import { trainerConfigs, TrainerSlot } from "./data/trainer-config";
 import Trainer, { TrainerVariant } from "./field/trainer";
 import TrainerData from "./system/trainer-data";
 import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
-import { pokemonPrevolutions } from "./data/pokemon-evolutions";
+import { pokemonPrevolutions } from "./data/balance/pokemon-evolutions";
 import PokeballTray from "./ui/pokeball-tray";
 import InvertPostFX from "./pipelines/invert";
 import { Achv, achvs, ModifierAchv, MoneyAchv } from "./system/achv";

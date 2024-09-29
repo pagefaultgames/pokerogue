@@ -1,5 +1,5 @@
 import BattleScene from "../battle-scene";
-import {pokemonPrevolutions} from "../data/pokemon-evolutions";
+import {pokemonPrevolutions} from "../data/balance/pokemon-evolutions";
 import PokemonSpecies, {getPokemonSpecies} from "../data/pokemon-species";
 import {
   TrainerConfig,

@@ -1,18 +1,18 @@
 import { BattleSceneEventType, CandyUpgradeNotificationChangedEvent } from "../events/battle-scene";
-import { pokemonPrevolutions } from "#app/data/pokemon-evolutions";
+import { pokemonPrevolutions } from "#app/data/balance/pokemon-evolutions";
 import { Variant, getVariantTint, getVariantIcon } from "#app/data/variant";
 import { argbFromRgba } from "@material/material-color-utilities";
 import i18next from "i18next";
 import BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
 import BattleScene, { starterColors } from "../battle-scene";
 import { allAbilities } from "../data/ability";
-import { speciesEggMoves } from "../data/egg-moves";
+import { speciesEggMoves } from "../data/balance/egg-moves";
 import { GrowthRate, getGrowthRateColor } from "../data/exp";
 import { Gender, getGenderColor, getGenderSymbol } from "../data/gender";
 import { allMoves } from "../data/move";
 import { Nature, getNatureName } from "../data/nature";
 import { pokemonFormChanges } from "../data/pokemon-forms";
-import { LevelMoves, pokemonFormLevelMoves, pokemonSpeciesLevelMoves } from "../data/pokemon-level-moves";
+import { LevelMoves, pokemonFormLevelMoves, pokemonSpeciesLevelMoves } from "../data/balance/pokemon-level-moves";
 import PokemonSpecies, { allSpecies, getPokemonSpeciesForm, getStarterValueFriendshipCap, speciesStarters, starterPassiveAbilities, POKERUS_STARTER_COUNT, getPokerusStarters } from "../data/pokemon-species";
 import { Type } from "../data/type";
 import { GameModes } from "../game-mode";
@@ -46,6 +46,7 @@ import { ScrollBar } from "./scroll-bar";
 import { SelectChallengePhase } from "#app/phases/select-challenge-phase";
 import { TitlePhase } from "#app/phases/title-phase";
 import { Abilities } from "#app/enums/abilities";
+import { getPassiveCandyCount, getValueReductionCandyCounts, getSameSpeciesEggCandyCounts } from "../data/balance/starter-candy";
 
 export type StarterSelectCallback = (starters: Starter[]) => void;
 
@@ -119,19 +120,6 @@ const languageSettings: { [key: string]: LanguageSetting } = {
   },
 };
 
-const starterCandyCosts: { passive: integer, costReduction: [integer, integer], egg: integer }[] = [
-  { passive: 40, costReduction: [25, 60], egg: 30 }, // 1 Cost
-  { passive: 40, costReduction: [25, 60], egg: 30 }, // 2 Cost
-  { passive: 35, costReduction: [20, 50], egg: 25 }, // 3 Cost
-  { passive: 30, costReduction: [15, 40], egg: 20 }, // 4 Cost
-  { passive: 25, costReduction: [12, 35], egg: 18 }, // 5 Cost
-  { passive: 20, costReduction: [10, 30], egg: 15 }, // 6 Cost
-  { passive: 15, costReduction: [8, 20], egg: 12 },  // 7 Cost
-  { passive: 10, costReduction: [5, 15], egg: 10 },  // 8 Cost
-  { passive: 10, costReduction: [5, 15], egg: 10 },  // 9 Cost
-  { passive: 10, costReduction: [5, 15], egg: 10 },  // 10 Cost
-];
-
 const valueReductionMax = 2;
 
 // Position of UI elements
@@ -141,18 +129,6 @@ const teamWindowX = 285; // if team on the RIGHT: 285 / if on the LEFT: 109
 const teamWindowY = 18;
 const teamWindowWidth = 34;
 const teamWindowHeight = 132;
-
-function getPassiveCandyCount(baseValue: integer): integer {
-  return starterCandyCosts[baseValue - 1].passive;
-}
-
-function getValueReductionCandyCounts(baseValue: integer): [integer, integer] {
-  return starterCandyCosts[baseValue - 1].costReduction;
-}
-
-function getSameSpeciesEggCandyCounts(baseValue: integer): integer {
-  return starterCandyCosts[baseValue - 1].egg;
-}
 
 /**
  * Calculates the starter position for a Pokemon of a given UI index

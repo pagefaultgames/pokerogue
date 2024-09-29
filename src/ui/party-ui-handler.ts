@@ -10,7 +10,7 @@ import { allMoves, ForceSwitchOutAttr } from "../data/move";
 import { getGenderColor, getGenderSymbol } from "../data/gender";
 import { StatusEffect } from "../data/status-effect";
 import PokemonIconAnimHandler, { PokemonIconAnimMode } from "./pokemon-icon-anim-handler";
-import { pokemonEvolutions } from "../data/pokemon-evolutions";
+import { pokemonEvolutions } from "../data/balance/pokemon-evolutions";
 import { addWindow } from "./ui-theme";
 import { SpeciesFormChangeItemTrigger, FormChangeItem } from "../data/pokemon-forms";
 import { getVariantTint } from "#app/data/variant";

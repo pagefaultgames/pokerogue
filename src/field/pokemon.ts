@@ -15,8 +15,8 @@ import { PokeballType } from "../data/pokeball";
 import { Gender } from "../data/gender";
 import { initMoveAnim, loadMoveAnimAssets } from "../data/battle-anims";
 import { Status, StatusEffect, getRandomStatus } from "../data/status-effect";
-import { pokemonEvolutions, pokemonPrevolutions, SpeciesFormEvolution, SpeciesEvolutionCondition, FusionSpeciesFormEvolution } from "../data/pokemon-evolutions";
-import { reverseCompatibleTms, tmSpecies, tmPoolTiers } from "../data/tms";
+import { pokemonEvolutions, pokemonPrevolutions, SpeciesFormEvolution, SpeciesEvolutionCondition, FusionSpeciesFormEvolution } from "../data/balance/pokemon-evolutions";
+import { reverseCompatibleTms, tmSpecies, tmPoolTiers } from "../data/balance/tms";
 import { BattlerTag, BattlerTagLapseType, EncoreTag, GroundedTag, HighestStatBoostTag, SubstituteTag, TypeImmuneTag, getBattlerTag, SemiInvulnerableTag, TypeBoostTag, MoveRestrictionBattlerTag, ExposedTag, DragonCheerTag, CritBoostTag, TrappedTag, TarShotTag, AutotomizedTag } from "../data/battler-tags";
 import { WeatherType } from "../data/weather";
 import { ArenaTagSide, NoCritTag, WeakenMoveScreenTag } from "../data/arena-tag";
@@ -26,7 +26,7 @@ import { BattlerIndex } from "../battle";
 import { Mode } from "../ui/ui";
 import PartyUiHandler, { PartyOption, PartyUiMode } from "../ui/party-ui-handler";
 import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
-import { LevelMoves } from "../data/pokemon-level-moves";
+import { LevelMoves } from "../data/balance/pokemon-level-moves";
 import { DamageAchv, achvs } from "../system/achv";
 import { DexAttr, StarterDataEntry, StarterMoveset } from "../system/game-data";
 import { QuantizerCelebi, argbFromRgba, rgbaFromArgb } from "@material/material-color-utilities";
@@ -36,7 +36,7 @@ import { TerrainType } from "../data/terrain";
 import { TrainerSlot } from "../data/trainer-config";
 import Overrides from "#app/overrides";
 import i18next from "i18next";
-import { speciesEggMoves } from "../data/egg-moves";
+import { speciesEggMoves } from "../data/balance/egg-moves";
 import { ModifierTier } from "../modifier/modifier-tier";
 import { applyChallenges, ChallengeType } from "#app/data/challenge";
 import { Abilities } from "#enums/abilities";
@@ -62,6 +62,7 @@ import { PokemonAnimType } from "#app/enums/pokemon-anim-type";
 import { PLAYER_PARTY_MAX_SIZE } from "#app/constants";
 import { MysteryEncounterPokemonData } from "#app/data/mystery-encounters/mystery-encounter-pokemon-data";
 import { SwitchType } from "#enums/switch-type";
+import { BASE_HIDDEN_ABILITY_CHANCE, BASE_SHINY_CHANCE } from "#app/data/balance/rates";
 
 export enum FieldPosition {
   CENTER,
@@ -139,7 +140,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       throw `Cannot create a player Pokemon for species '${species.getName(formIndex)}'`;
     }
 
-    const hiddenAbilityChance = new Utils.IntegerHolder(256);
+    const hiddenAbilityChance = new Utils.IntegerHolder(BASE_HIDDEN_ABILITY_CHANCE);
     if (!this.hasTrainer()) {
       this.scene.applyModifiers(HiddenAbilityRateBoosterModifier, true, hiddenAbilityChance);
     }
@@ -1822,7 +1823,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * The exact mechanic is that it calculates E as the XOR of the player's trainer ID and secret ID.
    * F is calculated as the XOR of the first 16 bits of the Pokemon's ID with the last 16 bits.
    * The XOR of E and F are then compared to the {@linkcode shinyThreshold} (or {@linkcode thresholdOverride} if set) to see whether or not to generate a shiny.
-   * The base shiny odds are {@linkcode baseShinyChance} / 65536
+   * The base shiny odds are {@linkcode BASE_SHINY_CHANCE} / 65536
    * @param thresholdOverride number that is divided by 2^16 (65536) to get the shiny chance, overrides {@linkcode shinyThreshold} if set (bypassing shiny rate modifiers such as Shiny Charm)
    * @returns true if the Pokemon has been set as a shiny, false otherwise
    */
@@ -1838,9 +1839,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     const E = this.scene.gameData.trainerId ^ this.scene.gameData.secretId;
     const F = rand1 ^ rand2;
 
-    /** `64/65536 -> 1/1024` */
-    const baseShinyChance = 64;
-    const shinyThreshold = new Utils.IntegerHolder(baseShinyChance);
+    const shinyThreshold = new Utils.IntegerHolder(BASE_SHINY_CHANCE);
     if (thresholdOverride === undefined) {
       if (this.scene.eventManager.isEventActive()) {
         shinyThreshold.value *= this.scene.eventManager.getShinyMultiplier();
@@ -1865,15 +1864,13 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * Function that tries to set a Pokemon shiny based on seed.
    * For manual use only, usually to roll a Pokemon's shiny chance a second time.
    *
-   * The base shiny odds are {@linkcode baseShinyChance} / 65536
+   * The base shiny odds are {@linkcode BASE_SHINY_CHANCE} / 65536
    * @param thresholdOverride number that is divided by 2^16 (65536) to get the shiny chance, overrides {@linkcode shinyThreshold} if set (bypassing shiny rate modifiers such as Shiny Charm)
    * @param applyModifiersToOverride If {@linkcode thresholdOverride} is set and this is true, will apply Shiny Charm and event modifiers to {@linkcode thresholdOverride}
    * @returns true if the Pokemon has been set as a shiny, false otherwise
    */
   trySetShinySeed(thresholdOverride?: integer, applyModifiersToOverride?: boolean): boolean {
-    /** `64/65536 -> 1/1024` */
-    const baseShinyChance = 64;
-    const shinyThreshold = new Utils.IntegerHolder(baseShinyChance);
+    const shinyThreshold = new Utils.IntegerHolder(BASE_SHINY_CHANCE);
     if (thresholdOverride === undefined || applyModifiersToOverride) {
       if (thresholdOverride !== undefined && applyModifiersToOverride) {
         shinyThreshold.value = thresholdOverride;
@@ -1931,7 +1928,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   generateFusionSpecies(forStarter?: boolean): void {
-    const hiddenAbilityChance = new Utils.IntegerHolder(256);
+    const hiddenAbilityChance = new Utils.IntegerHolder(BASE_HIDDEN_ABILITY_CHANCE);
     if (!this.hasTrainer()) {
       this.scene.applyModifiers(HiddenAbilityRateBoosterModifier, true, hiddenAbilityChance);
     }

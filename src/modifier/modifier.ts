@@ -7,7 +7,7 @@ import Pokemon, { PlayerPokemon } from "../field/pokemon";
 import { addTextObject, TextStyle } from "../ui/text";
 import { Type } from "../data/type";
 import { EvolutionPhase } from "../phases/evolution-phase";
-import { FusionSpeciesFormEvolution, pokemonEvolutions, pokemonPrevolutions } from "../data/pokemon-evolutions";
+import { FusionSpeciesFormEvolution, pokemonEvolutions, pokemonPrevolutions } from "../data/balance/pokemon-evolutions";
 import { getPokemonNameWithAffix } from "../messages";
 import * as Utils from "../utils";
 import { getBerryEffectFunc, getBerryPredicate } from "../data/berry";

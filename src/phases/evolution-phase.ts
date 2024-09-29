@@ -1,7 +1,7 @@
 import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
 import { Phase } from "../phase";
 import BattleScene from "../battle-scene";
-import { SpeciesFormEvolution } from "../data/pokemon-evolutions";
+import { SpeciesFormEvolution } from "../data/balance/pokemon-evolutions";
 import EvolutionSceneHandler from "../ui/evolution-scene-handler";
 import * as Utils from "../utils";
 import { Mode } from "../ui/ui";

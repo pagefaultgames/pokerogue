@@ -9,11 +9,11 @@ import { GameMode } from "../game-mode";
 import { StarterMoveset } from "../system/game-data";
 import * as Utils from "../utils";
 import { uncatchableSpecies } from "./biomes";
-import { speciesEggMoves } from "./egg-moves";
+import { speciesEggMoves } from "./balance/egg-moves";
 import { GrowthRate } from "./exp";
-import { EvolutionLevel, SpeciesWildEvolutionDelay, pokemonEvolutions, pokemonPrevolutions } from "./pokemon-evolutions";
+import { EvolutionLevel, SpeciesWildEvolutionDelay, pokemonEvolutions, pokemonPrevolutions } from "./balance/pokemon-evolutions";
 import { Type } from "./type";
-import { LevelMoves, pokemonFormLevelMoves, pokemonFormLevelMoves as pokemonSpeciesFormLevelMoves, pokemonSpeciesLevelMoves } from "./pokemon-level-moves";
+import { LevelMoves, pokemonFormLevelMoves, pokemonFormLevelMoves as pokemonSpeciesFormLevelMoves, pokemonSpeciesLevelMoves } from "./balance/pokemon-level-moves";
 import { Stat } from "#enums/stat";
 import { Variant, VariantSet, variantColorCache, variantData } from "./variant";
 

@@ -3,27 +3,15 @@ import PokemonSpecies, { getPokemonSpecies, speciesStarters } from "./pokemon-sp
 import { VariantTier } from "../enums/variant-tier";
 import * as Utils from "../utils";
 import Overrides from "#app/overrides";
-import { pokemonPrevolutions } from "./pokemon-evolutions";
+import { pokemonPrevolutions } from "./balance/pokemon-evolutions";
 import { PlayerPokemon } from "#app/field/pokemon";
 import i18next from "i18next";
 import { EggTier } from "#enums/egg-type";
 import { Species } from "#enums/species";
 import { EggSourceType } from "#app/enums/egg-source-types";
+import { MANAPHY_EGG_MANAPHY_RATE, SAME_SPECIES_EGG_HA_RATE, GACHA_EGG_HA_RATE, GACHA_DEFAULT_RARE_EGGMOVE_RATE, SAME_SPECIES_EGG_RARE_EGGMOVE_RATE, GACHA_MOVE_UP_RARE_EGGMOVE_RATE, GACHA_DEFAULT_SHINY_RATE, GACHA_SHINY_UP_SHINY_RATE, SAME_SPECIES_EGG_SHINY_RATE } from "./balance/rates";
 
 export const EGG_SEED = 1073741824;
-
-// Rates for specific random properties in 1/x
-const DEFAULT_SHINY_RATE = 128;
-const GACHA_SHINY_UP_SHINY_RATE = 64;
-const SAME_SPECIES_EGG_SHINY_RATE = 12;
-const SAME_SPECIES_EGG_HA_RATE = 8;
-const MANAPHY_EGG_MANAPHY_RATE = 8;
-const GACHA_EGG_HA_RATE = 192;
-
-// 1/x for legendary eggs, 1/x*2 for epic eggs, 1/x*4 for rare eggs, and 1/x*8 for common eggs
-const DEFAULT_RARE_EGGMOVE_RATE = 6;
-const SAME_SPECIES_EGG_RARE_EGGMOVE_RATE = 3;
-const GACHA_MOVE_UP_RARE_EGGMOVE_RATE = 3;
 
 /** Egg options to override egg properties */
 export interface IEggOptions {
@@ -323,7 +311,7 @@ export class Egg {
   ////
 
   private rollEggMoveIndex() {
-    let baseChance = DEFAULT_RARE_EGGMOVE_RATE;
+    let baseChance = GACHA_DEFAULT_RARE_EGGMOVE_RATE;
     switch (this._sourceType) {
     case EggSourceType.SAME_SPECIES_EGG:
       baseChance = SAME_SPECIES_EGG_RARE_EGGMOVE_RATE;
@@ -475,7 +463,7 @@ export class Egg {
   * @returns True if the egg is shiny
   **/
   private rollShiny(): boolean {
-    let shinyChance = DEFAULT_SHINY_RATE;
+    let shinyChance = GACHA_DEFAULT_SHINY_RATE;
     switch (this._sourceType) {
     case EggSourceType.GACHA_SHINY:
       shinyChance = GACHA_SHINY_UP_SHINY_RATE;
