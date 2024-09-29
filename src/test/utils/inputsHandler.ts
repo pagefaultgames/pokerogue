@@ -48,9 +48,9 @@ export default class InputsHandler {
     });
   }
 
-  pressKeyboardKey(key: integer, duration: integer): Promise<void> {
+  pressKeyboardKey(key: integer, duration: integer, isMetaPressed: boolean = false): Promise<void> {
     return new Promise(async (resolve) => {
-      this.scene.input.keyboard?.emit("keydown", {keyCode: key});
+      this.scene.input.keyboard?.emit("keydown", {keyCode: key, metaKey: isMetaPressed});
       await holdOn(duration);
       this.scene.input.keyboard?.emit("keyup", {keyCode: key});
       resolve();
