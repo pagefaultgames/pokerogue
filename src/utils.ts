@@ -498,6 +498,7 @@ export function verifyLang(lang?: string): boolean {
   case "pt-BR":
   case "ko":
   case "ja":
+  case "tr":
     return true;
   default:
     return false;
