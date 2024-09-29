@@ -863,7 +863,7 @@ export class TrainerConfig {
       this.setSpeciesFilter(p => specialtyTypes.some(t => p.isOfType(t)) && p.baseTotal >= 450);
       this.setSpecialtyTypes(...specialtyTypes);
     } else {
-      this.setSpeciesFilter(p => p.baseTotal >= 450);
+      this.setSpeciesFilter(p => p.baseTotal >= 460);
     }
 
     // Localize the trainer's name by converting it to lowercase and replacing spaces with underscores.
