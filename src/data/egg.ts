@@ -1,5 +1,6 @@
 import BattleScene from "../battle-scene";
-import PokemonSpecies, { getPokemonSpecies, speciesStarters } from "./pokemon-species";
+import PokemonSpecies, { getPokemonSpecies } from "./pokemon-species";
+import { speciesStarters } from "./balance/starters";
 import { VariantTier } from "../enums/variant-tier";
 import * as Utils from "../utils";
 import Overrides from "#app/overrides";

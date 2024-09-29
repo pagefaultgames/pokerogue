@@ -3,7 +3,7 @@ import { Mode } from "./ui";
 import UiHandler from "./ui-handler";
 import * as Utils from "../utils";
 import { PlayerPokemon, PokemonMove } from "../field/pokemon";
-import { getStarterValueFriendshipCap, speciesStarters } from "../data/pokemon-species";
+import { getStarterValueFriendshipCap, speciesStarters } from "#app/data/balance/starters";
 import { argbFromRgba } from "@material/material-color-utilities";
 import { Type, getTypeRgb } from "../data/type";
 import { TextStyle, addBBCodeTextObject, addTextObject, getBBCodeFrag } from "./text";

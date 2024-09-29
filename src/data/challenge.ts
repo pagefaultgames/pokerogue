@@ -1,7 +1,8 @@
 import * as Utils from "../utils";
 import i18next from "i18next";
 import { defaultStarterSpecies, DexAttrProps, GameData } from "#app/system/game-data";
-import PokemonSpecies, { getPokemonSpecies, getPokemonSpeciesForm, speciesStarters } from "./pokemon-species";
+import PokemonSpecies, { getPokemonSpecies, getPokemonSpeciesForm } from "./pokemon-species";
+import { speciesStarters } from "./balance/starters";
 import Pokemon, { PokemonMove } from "#app/field/pokemon";
 import { BattleType, FixedBattleConfig } from "#app/battle";
 import Trainer, { TrainerVariant } from "#app/field/trainer";

@@ -2,7 +2,7 @@ import BattleScene from "#app/battle-scene";
 import { TurnCommand, BattleType } from "#app/battle";
 import { TrappedTag, EncoreTag } from "#app/data/battler-tags";
 import { MoveTargetSet, getMoveTargets } from "#app/data/move";
-import { speciesStarters } from "#app/data/pokemon-species";
+import { speciesStarters } from "#app/data/balance/starters";
 import { Abilities } from "#app/enums/abilities";
 import { BattlerTagType } from "#app/enums/battler-tag-type";
 import { Biome } from "#app/enums/biome";
