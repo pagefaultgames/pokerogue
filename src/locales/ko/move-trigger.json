@@ -69,5 +69,5 @@
   "chillyReception": "{{pokemonName}}[[는]] 썰렁한 개그를 선보였다!",
   "exposedMove": "{{pokemonName}}[[는]]\n{{targetPokemonName}}의 정체를 꿰뚫어 보았다!",
   "safeguard": "{{targetName}}[[는]] 신비의 베일이 지켜 주고 있다!",
-  "afterYou": "{{pokemonName}}[[는]]\n배려를 받아들이기로 했다!"
+  "afterYou": "{{targetName}}[[는]]\n배려를 받아들이기로 했다!"
 }
