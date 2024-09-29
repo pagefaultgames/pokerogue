@@ -11,6 +11,7 @@ import { itConfig } from "#app/locales/it/config";
 import { koConfig } from "#app/locales/ko/config";
 import { jaConfig } from "#app/locales/ja/config";
 import { ptBrConfig } from "#app/locales/pt_BR/config";
+import { trConfig } from "#app/locales/he/config";
 import { zhCnConfig } from "#app/locales/zh_CN/config";
 import { zhTwConfig } from "#app/locales/zh_TW/config";
 
@@ -55,12 +56,12 @@ const fonts: Array<LoadingFontFaceProperty> = [
   {
     face: new FontFace("emerald", "url(./fonts/unifont-15.1.05.subset.woff2)", { unicodeRange: rangesByLanguage.chinese }),
     extraOptions: { sizeAdjust: "70%", format: "woff2" },
-    only: [ "en", "es", "fr", "it", "de", "zh", "pt", "ko", "ca" ],
+    only: [ "en", "es", "fr", "it", "de", "zh", "pt", "ko", "ca", "tr" ],
   },
   {
     face: new FontFace("pkmnems", "url(./fonts/unifont-15.1.05.subset.woff2)", { unicodeRange: rangesByLanguage.chinese }),
     extraOptions: { format: "woff2" },
-    only: [ "en", "es", "fr", "it", "de", "zh", "pt", "ko", "ca" ],
+    only: [ "en", "es", "fr", "it", "de", "zh", "pt", "ko", "ca", "tr" ],
   },
   // japanese
   {
@@ -119,7 +120,7 @@ export async function initI18n(): Promise<void> {
   await i18next.init({
     nonExplicitSupportedLngs: true,
     fallbackLng: "en",
-    supportedLngs: ["en", "es", "fr", "it", "de", "zh", "pt", "ko", "ja", "ca"],
+    supportedLngs: ["en", "es", "fr", "it", "de", "zh", "pt", "ko", "ja", "ca", "tr"],
     defaultNS: "menu",
     ns: Object.keys(enConfig),
     detection: {
@@ -162,6 +163,9 @@ export async function initI18n(): Promise<void> {
       },
       "ca-ES": {
         ...caEsConfig
+      },
+      "tr": {
+        ...trConfig
       }
     },
     postProcess: ["korean-postposition"],
