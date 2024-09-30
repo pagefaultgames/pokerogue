@@ -1,5 +1,6 @@
 import BattleScene from "#app/battle-scene";
 import { TextStyle, addTextObject } from "#app/ui/text";
+import { nil } from "#app/utils";
 import i18next from "i18next";
 
 export enum EventType {
@@ -64,19 +65,19 @@ export class TimedEventManager {
     let multiplier = 1;
     const shinyEvents = timedEvents.filter((te) => te.eventType === EventType.SHINY && this.isActive(te));
     shinyEvents.forEach((se) => {
-      multiplier *= se.shinyMultiplier!; // TODO: is this bang correct?
+      multiplier *= se.shinyMultiplier ?? 1;
     });
 
     return multiplier;
   }
 
   getEventBannerFilename(): string {
-    return timedEvents.find((te: TimedEvent) => this.isActive(te))?.bannerKey!; // TODO: is this bang correct?
+    return timedEvents.find((te: TimedEvent) => this.isActive(te))?.bannerKey ?? "";
   }
 }
 
 export class TimedEventDisplay extends Phaser.GameObjects.Container {
-  private event: TimedEvent | null;
+  private event: TimedEvent | nil;
   private eventTimerText: Phaser.GameObjects.Text;
   private banner: Phaser.GameObjects.Image;
   private bannerShadow: Phaser.GameObjects.Rectangle;
@@ -84,7 +85,7 @@ export class TimedEventDisplay extends Phaser.GameObjects.Container {
 
   constructor(scene: BattleScene, x: number, y: number, event?: TimedEvent) {
     super(scene, x, y);
-    this.event = event!; // TODO: is this bang correct?
+    this.event = event;
     this.setVisible(false);
   }
 

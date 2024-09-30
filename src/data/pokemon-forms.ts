@@ -4,7 +4,7 @@ import { SpeciesFormKey } from "./pokemon-species";
 import { StatusEffect } from "./status-effect";
 import { MoveCategory, allMoves } from "./move";
 import { Type } from "./type";
-import { Constructor } from "#app/utils";
+import { Constructor, nil } from "#app/utils";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
@@ -185,7 +185,7 @@ export class SpeciesFormChange {
     return true;
   }
 
-  findTrigger(triggerType: Constructor<SpeciesFormChangeTrigger>): SpeciesFormChangeTrigger | null {
+  findTrigger(triggerType: Constructor<SpeciesFormChangeTrigger>): SpeciesFormChangeTrigger | nil {
     if (!this.trigger.hasTriggerType(triggerType)) {
       return null;
     }
@@ -193,7 +193,7 @@ export class SpeciesFormChange {
     const trigger = this.trigger;
 
     if (trigger instanceof SpeciesFormChangeCompoundTrigger) {
-      return trigger.triggers.find(t => t.hasTriggerType(triggerType))!; // TODO: is this bang correct?
+      return trigger.triggers.find(t => t.hasTriggerType(triggerType));
     }
 
     return trigger;
@@ -202,11 +202,11 @@ export class SpeciesFormChange {
 
 export class SpeciesFormChangeCondition {
   public predicate: SpeciesFormChangeConditionPredicate;
-  public enforceFunc: SpeciesFormChangeConditionEnforceFunc | null;
+  public enforceFunc: SpeciesFormChangeConditionEnforceFunc | nil;
 
   constructor(predicate: SpeciesFormChangeConditionPredicate, enforceFunc?: SpeciesFormChangeConditionEnforceFunc) {
     this.predicate = predicate;
-    this.enforceFunc = enforceFunc!; // TODO: is this bang correct?
+    this.enforceFunc = enforceFunc;
   }
 }
 

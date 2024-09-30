@@ -28,7 +28,7 @@
       "select_prompt": "Choisissez un objet à donner.",
       "invalid_selection": "Ce Pokémon ne porte pas ce genre d’objet.",
       "selected": "Vous remettez l’objet {{selectedItem}} au Dresseur.",
-      "selected_dialogue": "Sérieux ? {{selectedItem}}, comme ça en cadeau ?\nC’est très générieux !$En guise de ma reconnaissance, laisse-moi\nte faire un cadeau un peu spécial !$Il est dans ma famille depusi des générations, et ça me ferait plaisir de te l’offrir !"
+      "selected_dialogue": "Sérieux ? {{selectedItem}}, comme ça en cadeau ?\nC’est très générieux !$En guise de ma reconnaissance, laisse-moi\nte faire un cadeau un peu spécial !$Il est dans ma famille depuis des générations, et ça me ferait plaisir de te l’offrir !"
     }
   },
   "battle_won": "Tes connaissances et tes capacités ont totalement exploité nos faiblesses !$En remerciement de cette leçon, permets-moi\nd’apprendre une capacité Insecte à un de tes Pokémon !",

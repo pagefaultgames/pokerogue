@@ -378,9 +378,9 @@ export default class SummaryUiHandler extends UiHandler {
       this.friendshipShadow.on("pointerout", () => (this.scene as BattleScene).ui.hideTooltip());
     }
 
-    this.friendshipText.setText(` ${this.pokemon?.friendship||"0"}/255`);
+    this.friendshipText.setText(`${this.pokemon?.friendship || "0"} / 255`);
 
-    this.friendshipShadow.setCrop(0, 0, 16, 16 - (16 * ((this.pokemon?.friendship||0) / 255)));
+    this.friendshipShadow.setCrop(0, 0, 16, 16 - (16 * ((this.pokemon?.friendship || 0) / 255)));
 
     const doubleShiny = isFusion && this.pokemon.shiny && this.pokemon.fusionShiny;
     const baseVariant = !doubleShiny ? this.pokemon.getVariant() : this.pokemon.variant;
