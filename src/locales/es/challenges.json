@@ -32,5 +32,12 @@
     "desc": "Las relaciones entre tipos son invertidas y ningún tipo es inmune a otro.\nDesactiva el resto de desafíos.",
     "value.0": "Desact.",
     "value.1": "Activo"
+  },
+  "trickRoom": {
+    "name": "Trick Room",
+    "shortName": "Trick Room",
+    "desc": "All battles are under the effect of Trick Room, where slower Pokémon move sooner and faster Pokémon move later.\nDisables other challenges' achievements.",
+    "value.0": "Off",
+    "value.1": "On"
   }
 }
