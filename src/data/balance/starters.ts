@@ -1,5 +1,5 @@
-import { Abilities } from "#app/enums/abilities";
-import { Species } from "#app/enums/species";
+import { Abilities } from "#enums/abilities";
+import { Species } from "#enums/species";
 
 export const POKERUS_STARTER_COUNT = 5;
 

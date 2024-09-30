@@ -1,22 +1,22 @@
-import BattleScene, { startingWave } from "../battle-scene";
-import { ModifierTypeFunc, modifierTypes } from "../modifier/modifier-type";
-import { EnemyPokemon, PokemonMove } from "../field/pokemon";
-import * as Utils from "../utils";
-import { PokeballType } from "./pokeball";
-import { pokemonEvolutions, pokemonPrevolutions } from "./balance/pokemon-evolutions";
-import PokemonSpecies, { getPokemonSpecies, PokemonSpeciesFilter } from "./pokemon-species";
-import { tmSpecies } from "./balance/tms";
-import { Type } from "./type";
-import { doubleBattleDialogue } from "./dialogue";
-import { PersistentModifier } from "../modifier/modifier";
-import { TrainerVariant } from "../field/trainer";
+import BattleScene, { startingWave } from "#app/battle-scene";
+import { ModifierTypeFunc, modifierTypes } from "#app/modifier/modifier-type";
+import { EnemyPokemon, PokemonMove } from "#app/field/pokemon";
+import * as Utils from "#app/utils";
+import { PokeballType } from "#app/data/pokeball";
+import { pokemonEvolutions, pokemonPrevolutions } from "#app/data/balance/pokemon-evolutions";
+import PokemonSpecies, { getPokemonSpecies, PokemonSpeciesFilter } from "#app/data/pokemon-species";
+import { tmSpecies } from "#app/data/balance/tms";
+import { Type } from "#app/data/type";
+import { doubleBattleDialogue } from "#app/data/dialogue";
+import { PersistentModifier } from "#app/modifier/modifier";
+import { TrainerVariant } from "#app/field/trainer";
 import { getIsInitialized, initI18n } from "#app/plugins/i18n";
 import i18next from "i18next";
-import {Moves} from "#enums/moves";
-import {PartyMemberStrength} from "#enums/party-member-strength";
-import {Species} from "#enums/species";
-import {TrainerType} from "#enums/trainer-type";
-import {Gender} from "./gender";
+import { Moves } from "#enums/moves";
+import { PartyMemberStrength } from "#enums/party-member-strength";
+import { Species } from "#enums/species";
+import { TrainerType } from "#enums/trainer-type";
+import { Gender } from "#app/data/gender";
 
 export enum TrainerPoolTier {
     COMMON,

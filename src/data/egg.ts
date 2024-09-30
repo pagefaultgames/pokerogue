@@ -1,16 +1,16 @@
-import BattleScene from "../battle-scene";
-import PokemonSpecies, { getPokemonSpecies } from "./pokemon-species";
-import { speciesStarters } from "./balance/starters";
-import { VariantTier } from "../enums/variant-tier";
-import * as Utils from "../utils";
+import BattleScene from "#app/battle-scene";
+import PokemonSpecies, { getPokemonSpecies } from "#app/data/pokemon-species";
+import { speciesStarters } from "#app/data/balance/starters";
+import { VariantTier } from "#enums/variant-tier";
+import * as Utils from "#app/utils";
 import Overrides from "#app/overrides";
-import { pokemonPrevolutions } from "./balance/pokemon-evolutions";
+import { pokemonPrevolutions } from "#app/data/balance/pokemon-evolutions";
 import { PlayerPokemon } from "#app/field/pokemon";
 import i18next from "i18next";
 import { EggTier } from "#enums/egg-type";
 import { Species } from "#enums/species";
-import { EggSourceType } from "#app/enums/egg-source-types";
-import { MANAPHY_EGG_MANAPHY_RATE, SAME_SPECIES_EGG_HA_RATE, GACHA_EGG_HA_RATE, GACHA_DEFAULT_RARE_EGGMOVE_RATE, SAME_SPECIES_EGG_RARE_EGGMOVE_RATE, GACHA_MOVE_UP_RARE_EGGMOVE_RATE, GACHA_DEFAULT_SHINY_RATE, GACHA_SHINY_UP_SHINY_RATE, SAME_SPECIES_EGG_SHINY_RATE } from "./balance/rates";
+import { EggSourceType } from "#enums/egg-source-types";
+import { MANAPHY_EGG_MANAPHY_RATE, SAME_SPECIES_EGG_HA_RATE, GACHA_EGG_HA_RATE, GACHA_DEFAULT_RARE_EGGMOVE_RATE, SAME_SPECIES_EGG_RARE_EGGMOVE_RATE, GACHA_MOVE_UP_RARE_EGGMOVE_RATE, GACHA_DEFAULT_SHINY_RATE, GACHA_SHINY_UP_SHINY_RATE, SAME_SPECIES_EGG_SHINY_RATE } from "#app/data/balance/rates";
 
 export const EGG_SEED = 1073741824;
 
