@@ -3,8 +3,8 @@ import { Species } from "#enums/species";
 
 export const POKERUS_STARTER_COUNT = 5;
 
-export function getStarterValueFriendshipCap(value: integer): integer {
-  switch (value) {
+export function getStarterValueFriendshipCap(starterCost: number): number {
+  switch (starterCost) {
   case 1:
     return 20;
   case 2:
@@ -1197,7 +1197,7 @@ export const starterPassiveAbilities = {
   [Species.BLOODMOON_URSALUNA]: Abilities.BERSERK
 };
 
-const starterCandyCosts: { passive: integer; costReduction: [integer, integer]; egg: integer; }[] = [
+const starterCandyCosts: { passive: number; costReduction: [number, number]; egg: number; }[] = [
   { passive: 40, costReduction: [25, 60], egg: 30 }, // 1 Cost
   { passive: 40, costReduction: [25, 60], egg: 30 }, // 2 Cost
   { passive: 35, costReduction: [20, 50], egg: 25 }, // 3 Cost
@@ -1210,15 +1210,15 @@ const starterCandyCosts: { passive: integer; costReduction: [integer, integer]; 
   { passive: 10, costReduction: [5, 15], egg: 10 }, // 10 Cost
 ];
 
-export function getPassiveCandyCount(baseValue: integer): integer {
-  return starterCandyCosts[baseValue - 1].passive;
+export function getPassiveCandyCount(starterCost: number): number {
+  return starterCandyCosts[starterCost - 1].passive;
 }
 
-export function getValueReductionCandyCounts(baseValue: integer): [integer, integer] {
-  return starterCandyCosts[baseValue - 1].costReduction;
+export function getValueReductionCandyCounts(starterCost: number): [number, number] {
+  return starterCandyCosts[starterCost - 1].costReduction;
 }
 
-export function getSameSpeciesEggCandyCounts(baseValue: integer): integer {
-  return starterCandyCosts[baseValue - 1].egg;
+export function getSameSpeciesEggCandyCounts(starterCost: number): number {
+  return starterCandyCosts[starterCost - 1].egg;
 }
 

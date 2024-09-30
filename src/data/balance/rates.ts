@@ -4,14 +4,14 @@
  * RATE is defined as 1/x
  */
 
-/** Encounterable properties */
+// #region Encounterable properties
 /** `64/65536 -> 1/1024` */
 export const BASE_SHINY_CHANCE = 64;
 
 /** `256/65536 -> 1/256` */
 export const BASE_HIDDEN_ABILITY_CHANCE = 256;
 
-/** Egg properties */
+// #region Egg properties
 // Rates for specific random properties in 1/x
 export const GACHA_DEFAULT_SHINY_RATE = 128;
 export const GACHA_SHINY_UP_SHINY_RATE = 64;
