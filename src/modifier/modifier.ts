@@ -142,7 +142,7 @@ export abstract class Modifier {
   }
 
   /**
-   * Checks if {@linkcode Modifier} should applied
+   * Checks if {@linkcode Modifier} should be applied
    * @param _args parameters passed to {@linkcode Modifier#apply}
    * @returns always `true` by default
    */
@@ -485,7 +485,7 @@ export class TempStatStageBoosterModifier extends LapsingPersistentModifier {
    * @param statLevel {@linkcode Utils.NumberHolder} that holds the resulting value of the stat stage multiplier
    * @returns `true` if the modifier can be applied, false otherwise
    */
-  override shouldApply(tempBattleStat?: TempBattleStat, statLevel?: Utils.IntegerHolder): boolean {
+  override shouldApply(tempBattleStat?: TempBattleStat, statLevel?: Utils.NumberHolder): boolean {
     return !!tempBattleStat && !!statLevel && TEMP_BATTLE_STATS.includes(tempBattleStat) && (tempBattleStat === this.stat) && (statLevel instanceof Utils.NumberHolder);
   }
 
@@ -494,7 +494,7 @@ export class TempStatStageBoosterModifier extends LapsingPersistentModifier {
    * @param _tempBattleStat {@linkcode TempBattleStat} N/A
    * @param statLevel {@linkcode Utils.NumberHolder} that holds the resulting value of the stat stage multiplier
    */
-  override apply(_tempBattleStat: TempBattleStat, statLevel: Utils.IntegerHolder): boolean {
+  override apply(_tempBattleStat: TempBattleStat, statLevel: Utils.NumberHolder): boolean {
     statLevel.value += this.boost;
     return true;
   }
@@ -524,16 +524,16 @@ export class TempCritBoosterModifier extends LapsingPersistentModifier {
    * @param critLevel {@linkcode Utils.NumberHolder} N/A
    * @returns `true` if the critical-hit stage boost applies successfully
    */
-  override shouldApply(critLevel?: Utils.IntegerHolder): boolean {
+  override shouldApply(critLevel?: Utils.NumberHolder): boolean {
     return !!critLevel && (critLevel instanceof Utils.NumberHolder);
   }
 
   /**
    * Increases the current critical-hit stage value by 1.
-   * @param critLevel {@linkcode Utils.IntegerHolder} that holds the resulting critical-hit level
+   * @param critLevel {@linkcode Utils.NumberHolder} that holds the resulting critical-hit level
    * @returns `true` if the critical-hit stage boost applies successfully
    */
-  override apply(critLevel: Utils.IntegerHolder): boolean {
+  override apply(critLevel: Utils.NumberHolder): boolean {
     critLevel.value++;
     return true;
   }
@@ -566,11 +566,6 @@ export class MegaEvolutionAccessModifier extends PersistentModifier {
     return new MegaEvolutionAccessModifier(this.type, this.stackCount);
   }
 
-  /**
-   * Apply {@linkcode MegaEvolutionAccessModifier}
-   * @param _args N/A
-   * @returns always `true`
-   */
   override apply(..._args: unknown[]): boolean {
     return true;
   }
