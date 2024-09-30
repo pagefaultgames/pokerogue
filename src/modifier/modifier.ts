@@ -1109,7 +1109,7 @@ export class PokemonIncrementingStatModifier extends PokemonHeldItemModifier {
    * @param statHolder The {@linkcode Utils.NumberHolder} that holds the stat
    * @returns `true` if the {@linkcode PokemonBaseStatFlatModifier} should be applied
    */
-  override shouldApply(pokemon?: Pokemon, stat?: Stat, statHolder: Utils.NumberHolder): boolean {
+  override shouldApply(pokemon?: Pokemon, stat?: Stat, statHolder?: Utils.NumberHolder): boolean {
     return super.shouldApply(pokemon, stat, statHolder) && statHolder instanceof Utils.IntegerHolder;
   }
 
