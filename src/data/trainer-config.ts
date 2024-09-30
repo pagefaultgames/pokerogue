@@ -18,6 +18,11 @@ import { Species } from "#enums/species";
 import { TrainerType } from "#enums/trainer-type";
 import { Gender } from "#app/data/gender";
 
+/** Minimum BST for Pokemon generated onto the Elite Four's teams */
+const ELITE_FOUR_MINIMUM_BST = 460;
+/** Minimum BST for Pokemon generated onto the E4 Champion's team */
+const CHAMPION_MINIMUM_BST = 508;
+
 export enum TrainerPoolTier {
     COMMON,
     UNCOMMON,
@@ -860,10 +865,10 @@ export class TrainerConfig {
 
     // Set species filter and specialty types if provided, otherwise filter by base total.
     if (specialtyTypes.length) {
-      this.setSpeciesFilter(p => specialtyTypes.some(t => p.isOfType(t)) && p.baseTotal >= 450);
+      this.setSpeciesFilter(p => specialtyTypes.some(t => p.isOfType(t)) && p.baseTotal >= ELITE_FOUR_MINIMUM_BST);
       this.setSpecialtyTypes(...specialtyTypes);
     } else {
-      this.setSpeciesFilter(p => p.baseTotal >= 450);
+      this.setSpeciesFilter(p => p.baseTotal >= ELITE_FOUR_MINIMUM_BST);
     }
 
     // Localize the trainer's name by converting it to lowercase and replacing spaces with underscores.
@@ -913,8 +918,7 @@ export class TrainerConfig {
       this.setPartyMemberFunc(-(s + 1), getRandomPartyMemberFunc(speciesPool));
     });
 
-    // Set species filter to only include species with a base total of 470 or higher.
-    this.setSpeciesFilter(p => p.baseTotal >= 470);
+    this.setSpeciesFilter(p => p.baseTotal >= CHAMPION_MINIMUM_BST);
 
     // Localize the trainer's name by converting it to lowercase and replacing spaces with underscores.
     const nameForCall = this.name.toLowerCase().replace(/\s/g, "_");
