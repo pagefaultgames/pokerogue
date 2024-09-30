@@ -260,11 +260,11 @@ export default class RunInfoUiHandler extends UiHandler {
     if (this.runInfo.battleType === BattleType.WILD) {
       switch (this.runInfo.enemyParty.length) {
       case 1:
-      // Wild - Singles
+        // Wild - Singles
         this.parseWildSingleDefeat(enemyContainer);
         break;
       case 2:
-      //Wild - Doubles
+        // Wild - Doubles
         this.parseWildDoubleDefeat(enemyContainer);
         break;
       }
