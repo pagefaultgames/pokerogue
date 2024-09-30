@@ -75,6 +75,6 @@
   "substituteOnAdd": "{{pokemonNameWithAffix}}的\n替身出现了！",
   "substituteOnHit": "替身代替{{pokemonNameWithAffix}}\n承受了攻击！",
   "substituteOnRemove": "{{pokemonNameWithAffix}}的\n替身消失了……",
-  "syrupBombOnAdd": "{{pokemonNameWithAffix}} got covered in sticky, candy syrup!",
-  "syrupBombLapse": "The sticky syrup slowed down {{pokemonNameWithAffix}}!"
+  "syrupBombOnAdd": "{{pokemonNameWithAffix}}陷入了\n满身糖状态！",
+  "syrupBombLapse": "满身糖让{{pokemonNameWithAffix}}\n变慢了！"
 }
