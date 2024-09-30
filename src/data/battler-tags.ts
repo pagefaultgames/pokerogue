@@ -2589,6 +2589,43 @@ export class ImprisonTag extends MoveRestrictionBattlerTag {
   }
 }
 
+/**
+ * Battler Tag that applies the effects of Syrup Bomb to the target Pokemon.
+ * For three turns, starting from the turn of hit, at the end of each turn, the target Pokemon's speed will decrease by 1.
+ * The tag can also expire by taking the target Pokemon off the field.
+ */
+export class SyrupBombTag extends BattlerTag {
+  constructor() {
+    super(BattlerTagType.SYRUP_BOMB, BattlerTagLapseType.TURN_END, 3, Moves.SYRUP_BOMB);
+  }
+
+  /**
+   * Adds the Syrup Bomb battler tag to the target Pokemon.
+   * @param {Pokemon} pokemon the target Pokemon
+   */
+  override onAdd(pokemon: Pokemon) {
+    super.onAdd(pokemon);
+    pokemon.scene.queueMessage(i18next.t("battlerTags:syrupBombOnAdd", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }));
+  }
+
+  /**
+   * Applies the single-stage speed down to the target Pokemon and decrements the tag's turn count
+   * @param {Pokemon} pokemon the target Pokemon
+   * @param {BattlerTagLapseType} _lapseType
+   * @returns `true` if the turnCount is still greater than 0 | `false` if the turnCount is 0 or the target Pokemon has been removed from the field
+   */
+  override lapse(pokemon: Pokemon, _lapseType: BattlerTagLapseType): boolean {
+    if (!pokemon.isActive(true)) {
+      return false;
+    }
+    pokemon.scene.queueMessage(i18next.t("battlerTags:syrupBombLapse", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) })); // Custom message in lieu of an animation in mainline
+    pokemon.scene.unshiftPhase(new StatStageChangePhase(
+      pokemon.scene, pokemon.getBattlerIndex(), true,
+      [Stat.SPD], -1, true, false, true
+    ));
+    return --this.turnCount > 0;
+  }
+}
 
 /**
  * Retrieves a {@linkcode BattlerTag} based on the provided tag type, turn count, source move, and source ID.
@@ -2763,6 +2800,8 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: number, source
     return new TauntTag();
   case BattlerTagType.IMPRISON:
     return new ImprisonTag(sourceId);
+  case BattlerTagType.SYRUP_BOMB:
+    return new SyrupBombTag();
   case BattlerTagType.NONE:
   default:
     return new BattlerTag(tagType, BattlerTagLapseType.CUSTOM, turnCount, sourceMove, sourceId);
