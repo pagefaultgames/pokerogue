@@ -18,7 +18,9 @@ import {Species} from "#enums/species";
 import {TrainerType} from "#enums/trainer-type";
 import {Gender} from "./gender";
 
+/** Minimum BST for Pokemon generated onto the Elite Four's teams */
 const ELITE_FOUR_MINIMUM_BST = 460;
+/** Minimum BST for Pokemon generated onto the E4 Champion's team */
 const CHAMPION_MINIMUM_BST = 508;
 
 export enum TrainerPoolTier {
@@ -916,7 +918,6 @@ export class TrainerConfig {
       this.setPartyMemberFunc(-(s + 1), getRandomPartyMemberFunc(speciesPool));
     });
 
-    // Set species filter to only include species with a base total of 508 or higher.
     this.setSpeciesFilter(p => p.baseTotal >= CHAMPION_MINIMUM_BST);
 
     // Localize the trainer's name by converting it to lowercase and replacing spaces with underscores.
