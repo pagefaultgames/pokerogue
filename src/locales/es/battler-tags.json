@@ -74,5 +74,9 @@
   "shedTailOnAdd": "{{pokemonNameWithAffix}} se desprende\nde un segmento de su cuerpo y lo usa comoseñuelo!",
   "substituteOnAdd": "¡{{pokemonNameWithAffix}} creó un sustituto!",
   "substituteOnHit": "¡El sustituto recibe daño en lugar del {{pokemonNameWithAffix}}!",
-  "substituteOnRemove": "¡El sustituto del {{pokemonNameWithAffix}} se debilitó!"
+  "substituteOnRemove": "¡El sustituto del {{pokemonNameWithAffix}} se debilitó!",
+  "tormentOnAdd": "{{pokemonNameWithAffix}} was subjected to torment!",
+  "tauntOnAdd": "{{pokemonNameWithAffix}} fell for the taunt!",
+  "imprisonOnAdd": "{{pokemonNameWithAffix}} sealed the opponents move(s)!",
+  "autotomizeOnAdd": "{{pokemonNameWithAffix}} became nimble!"
 }
