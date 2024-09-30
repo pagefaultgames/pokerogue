@@ -72,6 +72,6 @@
   "substituteOnOverlap": "{{pokemonName}} hat bereits einen Delegator!",
   "substituteNotEnoughHp": "Es ist zu schwach, um einen Delegator einzusetzen!",
   "afterYou": "{{targetName}} lässt sich auf Galanterie ein!",
-  "combiningPledge": "The two moves have become one!\nIt's a combined move!",
+  "combiningPledge": "Zwei Attacken bilden zusammen eine Kombi-Attacke!",
   "awaitingPledge": "{{userPokemonName}} is waiting for {{allyPokemonName}}'s move..."
 }
