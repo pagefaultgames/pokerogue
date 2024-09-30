@@ -5895,7 +5895,8 @@ export function initAbilities() {
       .attr(FullHpResistTypeAbAttr)
       .attr(UncopiableAbilityAbAttr)
       .attr(UnswappableAbilityAbAttr)
-      .ignorable(),
+      .ignorable()
+      .partial(), // it doesn't interact properly with multihits it should be reducing the entire move, it is not multiscale where it's only the part that breaks full health - Damo, 2024-09-30
     new Ability(Abilities.TERAFORM_ZERO, 9)
       .attr(UncopiableAbilityAbAttr)
       .attr(UnswappableAbilityAbAttr)
