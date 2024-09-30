@@ -48,6 +48,14 @@ export class GameOverPhase extends BattlePhase {
       this.victory = true;
     }
 
+    // Handle Mystery Encounter special Game Over cases
+    // Situations such as when player lost a battle, but it isn't treated as full Game Over
+    if (!this.victory && this.scene.currentBattle.mysteryEncounter?.onGameOver && !this.scene.currentBattle.mysteryEncounter.onGameOver(this.scene)) {
+      // Do not end the game
+      return this.end();
+    }
+    // Otherwise, continue standard Game Over logic
+
     if (this.victory && this.scene.gameMode.isEndless) {
       const genderIndex = this.scene.gameData.gender ?? PlayerGender.UNSET;
       const genderStr = PlayerGender[genderIndex].toLowerCase();
@@ -230,14 +238,16 @@ export class GameOverPhase extends BattlePhase {
       enemyModifiers: this.scene.findModifiers(() => true, false).map(m => new PersistentModifierData(m, false)),
       arena: new ArenaData(this.scene.arena),
       pokeballCounts: this.scene.pokeballCounts,
-      money: this.scene.money,
+      money: Math.floor(this.scene.money),
       score: this.scene.score,
       waveIndex: this.scene.currentBattle.waveIndex,
       battleType: this.scene.currentBattle.battleType,
       trainer: this.scene.currentBattle.battleType === BattleType.TRAINER ? new TrainerData(this.scene.currentBattle.trainer) : null,
       gameVersion: this.scene.game.config.gameVersion,
       timestamp: new Date().getTime(),
-      challenges: this.scene.gameMode.challenges.map(c => new ChallengeData(c))
+      challenges: this.scene.gameMode.challenges.map(c => new ChallengeData(c)),
+      mysteryEncounterType: this.scene.currentBattle.mysteryEncounter?.encounterType ?? -1,
+      mysteryEncounterSaveData: this.scene.mysteryEncounterSaveData
     } as SessionSaveData;
   }
 }

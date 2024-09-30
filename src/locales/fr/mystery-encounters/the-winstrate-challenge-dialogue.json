@@ -1,0 +1,22 @@
+{
+  "intro": "C’est une famille dans la cour de leur maison !",
+  "speaker": "La Famille Stratège",
+  "intro_dialogue": "Nous sommes les Stratège !$Ça te dirait d’affronter la famille dans une série\nde combats ?",
+  "title": "Le défi de la Famille Stratège",
+  "description": "Les Stratège sont une famille de @[TOOLTIP_TITLE]{5 Dresseurs}, et ne demandent qu’à se battre ! Si vous parvenez à tous les battre à la suite, ils vous remettront une grosse récompense. Vous sentez-vous d’encaisser ce défi ?",
+  "query": "Que voulez-vous faire ?",
+  "option": {
+    "1": {
+      "label": "Accepter le défi",
+      "tooltip": "(-) Combat brutal contre 5 Dresseurs\n(+) Récompense d’un objet spécial",
+      "selected": "Que le défi commence !"
+    },
+    "2": {
+      "label": "Décliner le défi",
+      "tooltip": "(+) Équipe soignée\n(+) Gain d’un Hyper Bonbon",
+      "selected": "C’est bien dommage. Hé, ton équipe a quand même l’air bien au bout, ça te dirait de rester te reposer un peu ?"
+    }
+  },
+  "victory": "Félicitations pour avoir relevé notre défi !$Tout d’abord, nous aimerions t’offrir ce Coupon.",
+  "victory_2": "Mais aussi, notre famille utilise ce Bracelet Macho\npour entrainer plus efficacement nos Pokémon.$Il ne te sera peut-être d’aucune utilité vu que tu nous as tous battus, mais on serait ravis que tu l’accepte !"
+}

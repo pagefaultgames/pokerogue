@@ -4,6 +4,7 @@ import { defaultConfig } from "./vite.config";
 export default defineProject(({ mode }) => ({
   ...defaultConfig,
   test: {
+    testTimeout: 20000,
     setupFiles: ["./src/test/fontFace.setup.ts", "./src/test/vitest.setup.ts"],
     server: {
       deps: {

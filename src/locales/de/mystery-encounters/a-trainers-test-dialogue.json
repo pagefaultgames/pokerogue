@@ -1,0 +1,47 @@
+{
+  "intro": "Ein sehr starker Trainer kommt auf dich zu...",
+  "buck": {
+    "intro_dialogue": "Yo, Trainer! Mein Name ist Avenaro.$Ich habe ein super Angebot für einen starken Trainer wie dich!$Ich trage zwei seltene Pokémon-Eier bei mir, aber ich möchte, dass sich jemand anderes um eines kümmert.$Wenn du mir beweisen kannst, dass du ein starker Trainer bist, werde ich dir das seltenere Ei geben!",
+    "accept": "Wohooo! Ich bin Feuer und Flamme!",
+    "decline": "Manno, es sieht so aus, als wäre dein Team nicht in Bestform.$Hier, lass mich dir helfen."
+  },
+  "cheryl": {
+    "intro_dialogue": "Hallo mein Name ist Raissa, ich habe eine besondere Bitte an dich, einen starken Trainer.$Ich trage zwei seltene Pokémon-Eier bei mir, aber ich möchte, dass sich jemand anderes um eines kümmert.$Wenn du mir beweisen kannst, dass du ein starker Trainer bist, werde ich dir das seltenere Ei geben!",
+    "accept": "Ich hoffe, du bist bereit!",
+    "decline": "Ich verstehe, es sieht so aus, als wäre dein Team nicht in der besten Verfassung.$Hier, lass mich dir helfen."
+  },
+  "marley": {
+    "intro_dialogue": "...@d{64} Ich bin Charlie.$Ich habe ein Angebot für dich...$Ich trage zwei Pokémon-Eier bei mir, aber ich möchte, dass sich jemand anderes um eines kümmert.$Wenn du stärker bist als ich, werde ich dir das seltenere Ei geben.",
+    "accept": "...So ist das also.",
+    "decline": "...Deine Pokémon sehen verletzt aus...Lass mich helfen."
+  },
+  "mira": {
+    "intro_dialogue": "Hi, ich bin Orisa!$Ich habe eine Bitte an dich, einen starken Trainer.$Ich trage zwei seltene Pokémon-Eier bei mir, aber ich möchte, dass sich jemand anderes um eines kümmert.$Wenn du mir beweisen kannst, dass du ein starker Trainer bist, werde ich dir das seltenere Ei geben!",
+    "accept": "Du wirst Orisa herausfordern? Juhu!",
+    "decline": "Aww, kein Kampf? Das ist okay!$Hier, Orisa wird dein Team heilen!"
+  },
+  "riley": {
+    "intro_dialogue": "Ich Urs, ich habe eine Bitte an dich, einen starken Trainer.$Ich trage zwei seltene Pokémon-Eier bei mir, aber ich möchte, dass sich jemand anderes um eines kümmert.$Wenn du mir beweisen kannst, dass du ein starker Trainer bist, werde ich dir das seltenere Ei geben!",
+    "accept":  "Dieser Blick...Lass uns das machen.",
+    "decline": "Ich verstehe, dein Team sieht geschlagen aus.$Hier, lass mich dir helfen."
+  },
+  "title":  "Ein Trainer-Test",
+  "description": "Es scheint als würde dieser Trainer dir ein Ei geben, egal wie du dich entscheidest. Wenn du es jedoch schaffst, diesen starken Trainer zu besiegen, wirst du ein viel selteneres Ei erhalten.",
+  "query": "Was wirst du tun?",
+  "option": {
+    "1": {
+      "label": "Die Herausforderung annehmen",
+      "tooltip": "(-) Sehr schwerer Kampf\n(+) Erhalte ein @[TOOLTIP_TITLE]{Sehr seltenes Ei}"
+    },
+    "2": {
+      "label": "Die Herausforderung ablehnen",
+      "tooltip":  "(+) Team wird geheilt\n(+) Erhalte ein @[TOOLTIP_TITLE]{Ei}"
+    }
+  },
+  "eggTypes": {
+    "rare": "seltenes Ei",
+    "epic": "episches Ei",
+    "legendary": "legendäres Ei"
+  },
+  "outro": "{{statTrainerName}} gibt dir ein {{eggType}}!"
+}

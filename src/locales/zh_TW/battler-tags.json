@@ -70,5 +70,9 @@
   "stockpilingOnAdd": "{{pokemonNameWithAffix}}蓄力了{{stockpiledCount}}次！",
   "disabledOnAdd": "封住了{{pokemonNameWithAffix}}的\n{moveName}}！",
   "disabledLapse": "{{pokemonNameWithAffix}}的\n定身法解除了！",
-  "tarShotOnAdd": "{{pokemonNameWithAffix}}\n變得怕火了！"
+  "tarShotOnAdd": "{{pokemonNameWithAffix}}\n變得怕火了！",
+  "shedTailOnAdd": "{{pokemonNameWithAffix}}\n截斷尾巴，把它做成了替身！",
+  "substituteOnAdd": "{{pokemonNameWithAffix}}的\n替身出現了！",
+  "substituteOnHit": "替身代替{{pokemonNameWithAffix}}承受了攻擊！",
+  "substituteOnRemove": "{{pokemonNameWithAffix}}的\n替身消失了……"
 }

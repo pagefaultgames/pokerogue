@@ -74,7 +74,7 @@ export class MovePhase extends BattlePhase {
 
     if (!this.followUp) {
       if (this.move.getMove().checkFlag(MoveFlags.IGNORE_ABILITIES, this.pokemon, null)) {
-        this.scene.arena.setIgnoreAbilities();
+        this.scene.arena.setIgnoreAbilities(true, this.pokemon.getBattlerIndex());
       }
     } else {
       this.pokemon.turnData.hitsLeft = 0; // TODO: is `0` correct?
@@ -167,6 +167,7 @@ export class MovePhase extends BattlePhase {
         this.pokemon.pushMoveHistory({ move: Moves.NONE, result: MoveResult.FAIL });
 
         this.pokemon.lapseTags(BattlerTagLapseType.MOVE_EFFECT); // Remove any tags from moves like Fly/Dive/etc.
+        this.pokemon.lapseTags(BattlerTagLapseType.AFTER_MOVE);
         moveQueue.shift(); // Remove the second turn of charge moves
         return this.end();
       }
@@ -186,6 +187,7 @@ export class MovePhase extends BattlePhase {
         this.pokemon.pushMoveHistory({ move: Moves.NONE, result: MoveResult.FAIL });
 
         this.pokemon.lapseTags(BattlerTagLapseType.MOVE_EFFECT); // Remove any tags from moves like Fly/Dive/etc.
+        this.pokemon.lapseTags(BattlerTagLapseType.AFTER_MOVE);
 
         moveQueue.shift();
         return this.end();

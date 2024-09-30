@@ -28,6 +28,7 @@
   "mudSportOnRemove": "どろあそびの　効果が　なくなった！",
   "waterSportOnAdd": "炎の威力が　弱まった！",
   "waterSportOnRemove": "みずあそびの　効果が　なくなった！",
+  "plasmaFistsOnAdd": "電子のシャワーが　降りそそいだ！",
   "spikesOnAdd": "{{opponentDesc}}の　足下に\n{{moveName}}が　散らばった！",
   "spikesActivateTrap": "{{pokemonNameWithAffix}}は\nまきびしの　ダメージを　受けた！",
   "toxicSpikesOnAdd": "{{opponentDesc}}の　足下に\n{{moveName}}が　散らばった！",
