@@ -265,6 +265,10 @@
     "name": "상성 전문가(였던 것)",
     "description": "거꾸로 배틀 챌린지 모드 클리어."
   },
+  "TRICK_ROOM": {
+    "name": "You're Too Fast!",
+    "description": "Complete the Trick Room challenge."
+  },
   "BREEDERS_IN_SPACE": {
     "name": "충격!우주에 브리더 진짜 계심ㄷㄷ",
     "description": "우주 바이옴에서 포켓몬 전문 브리더에게 승리."
