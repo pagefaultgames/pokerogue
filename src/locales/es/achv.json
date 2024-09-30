@@ -175,6 +175,10 @@
     "name": "Espejo ojepsE",
     "description": "Completa el reto de Combate Inverso.\n.osrevnI etabmoC ed oter le atelpmoC"
   },
+  "TRICK_ROOM": {
+    "name": "You're Too Fast!",
+    "description": "Complete the Trick Room challenge."
+  },
   "BREEDERS_IN_SPACE": {
     "name": "¡Criapokémon en el Espacio!",
     "description": "Derrota al Criapokémon Experto en el Bioma Espacial."
