@@ -96,8 +96,6 @@ export default class SaveSlotSelectUiHandler extends MessageUiHandler {
   processInput(button: Button): boolean {
     const ui = this.getUi();
 
-
-
     let success = false;
     let error = false;
 
@@ -250,6 +248,10 @@ export default class SaveSlotSelectUiHandler extends MessageUiHandler {
     return changed;
   }
 
+  /**
+   * Helper function that checks if the session slot involved holds data or not
+   * @param hasData `true` if session slot contains data | 'false' if not
+   */
   setArrowVisibility(hasData: boolean) {
     if (this.cursorObj) {
       const rightArrow = this.cursorObj?.getByName("rightArrow") as Phaser.GameObjects.Image;
