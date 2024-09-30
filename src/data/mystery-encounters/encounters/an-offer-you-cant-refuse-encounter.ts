@@ -9,7 +9,7 @@ import { AbilityRequirement, CombinationPokemonRequirement, MoveRequirement } fr
 import { getHighestStatTotalPlayerPokemon } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
 import { EXTORTION_ABILITIES, EXTORTION_MOVES } from "#app/data/mystery-encounters/requirements/requirement-groups";
 import { getPokemonSpecies } from "#app/data/pokemon-species";
-import { speciesStarters } from "#app/data/balance/starters";
+import { speciesStarterCosts } from "#app/data/balance/starters";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { ModifierRewardPhase } from "#app/phases/modifier-reward-phase";
@@ -72,7 +72,7 @@ export const AnOfferYouCantRefuseEncounter: MysteryEncounter =
       const pokemon = getHighestStatTotalPlayerPokemon(scene, true, true);
 
       const baseSpecies = pokemon.getSpeciesForm().getRootSpeciesId();
-      const starterValue: number = speciesStarters[baseSpecies] ?? 1;
+      const starterValue: number = speciesStarterCosts[baseSpecies] ?? 1;
       const multiplier = Math.max(MONEY_MAXIMUM_MULTIPLIER / 10 * starterValue, MONEY_MINIMUM_MULTIPLIER);
       const price = scene.getWaveMoneyAmount(multiplier);
 

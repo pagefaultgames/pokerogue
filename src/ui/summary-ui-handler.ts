@@ -3,7 +3,7 @@ import { Mode } from "#app/ui/ui";
 import UiHandler from "#app/ui/ui-handler";
 import * as Utils from "#app/utils";
 import { PlayerPokemon, PokemonMove } from "#app/field/pokemon";
-import { getStarterValueFriendshipCap, speciesStarters } from "#app/data/balance/starters";
+import { getStarterValueFriendshipCap, speciesStarterCosts } from "#app/data/balance/starters";
 import { argbFromRgba } from "@material/material-color-utilities";
 import { Type, getTypeRgb } from "#app/data/type";
 import { TextStyle, addBBCodeTextObject, addTextObject, getBBCodeFrag } from "#app/ui/text";
@@ -333,7 +333,7 @@ export default class SummaryUiHandler extends UiHandler {
       currentFriendship = 0;
     }
 
-    const friendshipCap = getStarterValueFriendshipCap(speciesStarters[this.pokemon.species.getRootSpeciesId()]);
+    const friendshipCap = getStarterValueFriendshipCap(speciesStarterCosts[this.pokemon.species.getRootSpeciesId()]);
     const candyCropY = 16 - (16 * (currentFriendship / friendshipCap));
 
     if (this.candyShadow.visible) {

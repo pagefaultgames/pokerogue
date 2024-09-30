@@ -2,7 +2,7 @@ import * as Utils from "#app/utils";
 import i18next from "i18next";
 import { defaultStarterSpecies, DexAttrProps, GameData } from "#app/system/game-data";
 import PokemonSpecies, { getPokemonSpecies, getPokemonSpeciesForm } from "#app/data/pokemon-species";
-import { speciesStarters } from "#app/data/balance/starters";
+import { speciesStarterCosts } from "#app/data/balance/starters";
 import Pokemon, { PokemonMove } from "#app/field/pokemon";
 import { BattleType, FixedBattleConfig } from "#app/battle";
 import Trainer, { TrainerVariant } from "#app/field/trainer";
@@ -638,7 +638,7 @@ export class FreshStartChallenge extends Challenge {
 
   applyStarterCost(species: Species, cost: Utils.NumberHolder): boolean {
     if (defaultStarterSpecies.includes(species)) {
-      cost.value = speciesStarters[species];
+      cost.value = speciesStarterCosts[species];
       return true;
     }
     return false;
@@ -720,7 +720,7 @@ export class LowerStarterMaxCostChallenge extends Challenge {
   }
 
   applyStarterChoice(pokemon: PokemonSpecies, valid: Utils.BooleanHolder): boolean {
-    if (speciesStarters[pokemon.speciesId] > DEFAULT_PARTY_MAX_COST - this.value) {
+    if (speciesStarterCosts[pokemon.speciesId] > DEFAULT_PARTY_MAX_COST - this.value) {
       valid.value = false;
       return true;
     }

@@ -16,7 +16,7 @@ import { Type } from "#app/data/type";
 import { LevelMoves, pokemonFormLevelMoves, pokemonFormLevelMoves as pokemonSpeciesFormLevelMoves, pokemonSpeciesLevelMoves } from "#app/data/balance/pokemon-level-moves";
 import { Stat } from "#enums/stat";
 import { Variant, VariantSet, variantColorCache, variantData } from "#app/data/variant";
-import { speciesStarters, POKERUS_STARTER_COUNT } from "#app/data/balance/starters";
+import { speciesStarterCosts, POKERUS_STARTER_COUNT } from "#app/data/balance/starters";
 
 export enum Region {
   NORMAL,
@@ -173,7 +173,7 @@ export abstract class PokemonSpeciesForm {
    */
   getRootSpeciesId(forStarter: boolean = false): Species {
     let ret = this.speciesId;
-    while (pokemonPrevolutions.hasOwnProperty(ret) && (!forStarter || !speciesStarters.hasOwnProperty(ret))) {
+    while (pokemonPrevolutions.hasOwnProperty(ret) && (!forStarter || !speciesStarterCosts.hasOwnProperty(ret))) {
       ret = pokemonPrevolutions[ret];
     }
     return ret;
@@ -967,7 +967,7 @@ export function getPokerusStarters(scene: BattleScene): PokemonSpecies[] {
   date.setUTCHours(0, 0, 0, 0);
   scene.executeWithSeedOffset(() => {
     while (pokerusStarters.length < POKERUS_STARTER_COUNT) {
-      const randomSpeciesId = parseInt(Utils.randSeedItem(Object.keys(speciesStarters)), 10);
+      const randomSpeciesId = parseInt(Utils.randSeedItem(Object.keys(speciesStarterCosts)), 10);
       const species = getPokemonSpecies(randomSpeciesId);
       if (!pokerusStarters.includes(species)) {
         pokerusStarters.push(species);

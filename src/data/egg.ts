@@ -1,6 +1,6 @@
 import BattleScene from "#app/battle-scene";
 import PokemonSpecies, { getPokemonSpecies } from "#app/data/pokemon-species";
-import { speciesStarters } from "#app/data/balance/starters";
+import { speciesStarterCosts } from "#app/data/balance/starters";
 import { VariantTier } from "#enums/variant-tier";
 import * as Utils from "#app/utils";
 import Overrides from "#app/overrides";
@@ -398,8 +398,8 @@ export class Egg {
 
     const ignoredSpecies = [Species.PHIONE, Species.MANAPHY, Species.ETERNATUS];
 
-    let speciesPool = Object.keys(speciesStarters)
-      .filter(s => speciesStarters[s] >= minStarterValue && speciesStarters[s] <= maxStarterValue)
+    let speciesPool = Object.keys(speciesStarterCosts)
+      .filter(s => speciesStarterCosts[s] >= minStarterValue && speciesStarterCosts[s] <= maxStarterValue)
       .map(s => parseInt(s) as Species)
       .filter(s => !pokemonPrevolutions.hasOwnProperty(s) && getPokemonSpecies(s).isObtainable() && ignoredSpecies.indexOf(s) === -1);
 
@@ -430,7 +430,7 @@ export class Egg {
     let totalWeight = 0;
     const speciesWeights : number[] = [];
     for (const speciesId of speciesPool) {
-      let weight = Math.floor((((maxStarterValue - speciesStarters[speciesId]) / ((maxStarterValue - minStarterValue) + 1)) * 1.5 + 1) * 100);
+      let weight = Math.floor((((maxStarterValue - speciesStarterCosts[speciesId]) / ((maxStarterValue - minStarterValue) + 1)) * 1.5 + 1) * 100);
       const species = getPokemonSpecies(speciesId);
       if (species.isRegional()) {
         weight = Math.floor(weight / 2);
@@ -533,7 +533,7 @@ export class Egg {
   }
 
   private getEggTierFromSpeciesStarterValue(): EggTier {
-    const speciesStartValue = speciesStarters[this.species];
+    const speciesStartValue = speciesStarterCosts[this.species];
     if (speciesStartValue >= 1 && speciesStartValue <= 3) {
       return EggTier.COMMON;
     }
@@ -556,7 +556,7 @@ export class Egg {
 }
 
 export function getLegendaryGachaSpeciesForTimestamp(scene: BattleScene, timestamp: number): Species {
-  const legendarySpecies = Object.entries(speciesStarters)
+  const legendarySpecies = Object.entries(speciesStarterCosts)
     .filter(s => s[1] >= 8 && s[1] <= 9)
     .map(s => parseInt(s[0]))
     .filter(s => getPokemonSpecies(s).isObtainable());
@@ -583,7 +583,7 @@ export function getLegendaryGachaSpeciesForTimestamp(scene: BattleScene, timesta
  * @returns The egg tier of a given pokemon species
  */
 export function getEggTierForSpecies(pokemonSpecies :PokemonSpecies): EggTier {
-  const speciesBaseValue = speciesStarters[pokemonSpecies.getRootSpeciesId()];
+  const speciesBaseValue = speciesStarterCosts[pokemonSpecies.getRootSpeciesId()];
   if (speciesBaseValue <= 3) {
     return EggTier.COMMON;
   } else if (speciesBaseValue <= 5) {

@@ -6,7 +6,7 @@ import MysteryEncounter, { MysteryEncounterBuilder } from "#app/data/mystery-enc
 import { MoneyRequirement } from "#app/data/mystery-encounters/mystery-encounter-requirements";
 import { catchPokemon, getRandomSpeciesByStarterTier, getSpriteKeysFromPokemon } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
 import { getPokemonSpecies } from "#app/data/pokemon-species";
-import { speciesStarters } from "#app/data/balance/starters";
+import { speciesStarterCosts } from "#app/data/balance/starters";
 import { Species } from "#enums/species";
 import { PokeballType } from "#app/data/pokeball";
 import { EnemyPokemon, PlayerPokemon } from "#app/field/pokemon";
@@ -89,7 +89,7 @@ export const ThePokemonSalesmanEncounter: MysteryEncounter =
         isPokemon: true
       });
 
-      const starterTier = speciesStarters[species.speciesId];
+      const starterTier = speciesStarterCosts[species.speciesId];
       // Prices decrease by starter tier less than 5, but only reduces cost by half at max
       let priceMultiplier = MAX_POKEMON_PRICE_MULTIPLIER * (Math.max(starterTier, 2.5) / 5);
       if (pokemon.shiny) {

@@ -3,7 +3,7 @@ import BattleScene, { bypassLogin, PokeballCounts } from "#app/battle-scene";
 import Pokemon, { EnemyPokemon, PlayerPokemon } from "#app/field/pokemon";
 import { pokemonPrevolutions } from "#app/data/balance/pokemon-evolutions";
 import PokemonSpecies, { allSpecies, getPokemonSpecies, noStarterFormKeys } from "#app/data/pokemon-species";
-import { speciesStarters } from "#app/data/balance/starters";
+import { speciesStarterCosts } from "#app/data/balance/starters";
 import * as Utils from "#app/utils";
 import Overrides from "#app/overrides";
 import PokemonData from "#app/system/pokemon-data";
@@ -1538,7 +1538,7 @@ export class GameData {
   private initStarterData(): void {
     const starterData: StarterData = {};
 
-    const starterSpeciesIds = Object.keys(speciesStarters).map(k => parseInt(k) as Species);
+    const starterSpeciesIds = Object.keys(speciesStarterCosts).map(k => parseInt(k) as Species);
 
     for (const speciesId of starterSpeciesIds) {
       starterData[speciesId] = {
@@ -1618,7 +1618,7 @@ export class GameData {
       dexEntry.caughtAttr |= dexAttr;
 
       // Unlock ability
-      if (speciesStarters.hasOwnProperty(species.speciesId)) {
+      if (speciesStarterCosts.hasOwnProperty(species.speciesId)) {
         this.starterData[species.speciesId].abilityAttr |= pokemon.abilityIndex !== 1 || pokemon.species.ability2
           ? 1 << pokemon.abilityIndex
           : AbilityAttr.ABILITY_HIDDEN;
@@ -1674,7 +1674,7 @@ export class GameData {
         }
       };
 
-      if (newCatch && speciesStarters.hasOwnProperty(species.speciesId)) {
+      if (newCatch && speciesStarterCosts.hasOwnProperty(species.speciesId)) {
         if (!showMessage) {
           resolve(true);
           return;
@@ -1802,7 +1802,7 @@ export class GameData {
   }
 
   getStarterCount(dexEntryPredicate: (entry: DexEntry) => boolean): integer {
-    const starterKeys = Object.keys(speciesStarters);
+    const starterKeys = Object.keys(speciesStarterCosts);
     let starterCount = 0;
     for (const s of starterKeys) {
       const starterDexEntry = this.dexData[s];
@@ -1876,7 +1876,7 @@ export class GameData {
   }
 
   getSpeciesStarterValue(speciesId: Species): number {
-    const baseValue = speciesStarters[speciesId];
+    const baseValue = speciesStarterCosts[speciesId];
     let value = baseValue;
 
     const decrementValue = (value: number) => {
