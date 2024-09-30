@@ -68,5 +68,7 @@
   "chillyReception": "{{pokemonName}}\n說了冷笑話！",
   "exposedMove": "{{pokemonName}}識破了\n{{targetPokemonName}}的原形！",
   "safeguard": "{{targetName}}\n正受到神秘之幕的保護！",
-  "afterYou": "{{targetName}}\n接受了對手的好意！"
+  "afterYou": "{{targetName}}\n接受了對手的好意！",
+  "combiningPledge": "The two moves have become one!\nIt's a combined move!",
+  "awaitingPledge": "{{userPokemonName}} is waiting for {{allyPokemonName}}'s move..."
 }
