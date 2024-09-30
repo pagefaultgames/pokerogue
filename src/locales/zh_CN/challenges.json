@@ -32,5 +32,12 @@
     "desc": "属性相克关系被反转，且没有任何属性对其他属性免疫。\n禁用其他挑战的成就。",
     "value.0": "关闭",
     "value.1": "开启"
+  },
+  "trickRoom": {
+    "name": "Trick Room",
+    "shortName": "Trick Room",
+    "desc": "All battles are under the effect of Trick Room, where slower Pokémon move sooner and faster Pokémon move later.\nDisables other challenges' achievements.",
+    "value.0": "Off",
+    "value.1": "On"
   }
 }
