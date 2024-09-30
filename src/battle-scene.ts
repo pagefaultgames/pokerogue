@@ -1040,10 +1040,6 @@ export default class BattleScene extends SceneBase {
 
     this.gameMode = getGameMode(GameModes.CLASSIC);
 
-    this.setSeed(Overrides.SEED_OVERRIDE || Utils.randomString(24));
-    console.log("Seed:", this.seed);
-    this.resetSeed(); // Properly resets RNG after saving and quitting a session
-
     this.disableMenu = false;
 
     this.score = 0;
@@ -1077,6 +1073,12 @@ export default class BattleScene extends SceneBase {
 
     //@ts-ignore  - allowing `null` for currentBattle causes a lot of trouble
     this.currentBattle = null; // TODO: resolve ts-ignore
+
+    // Reset RNG after end of game or save & quit.
+    // This needs to happen after clearing this.currentBattle or the seed will be affected by the last wave played
+    this.setSeed(Overrides.SEED_OVERRIDE || Utils.randomString(24));
+    console.log("Seed:", this.seed);
+    this.resetSeed();
 
     this.biomeWaveText.setText(startingWave.toString());
     this.biomeWaveText.setVisible(false);

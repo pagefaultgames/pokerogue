@@ -28,6 +28,7 @@
   "mudSportOnRemove": "玩泥巴的效果消失了！",
   "waterSportOnAdd": "火焰的威力減弱了！",
   "waterSportOnRemove": "玩水的效果消失了！",
+  "plasmaFistsOnAdd": "等離子雨傾盆而下！",
   "spikesOnAdd": "{{opponentDesc}}腳下\n散落著{{moveName}}！",
   "spikesActivateTrap": "{{pokemonNameWithAffix}}\n受到了撒菱的傷害！",
   "toxicSpikesOnAdd": "{{opponentDesc}}腳下\n散落著{{moveName}}！",

@@ -43,20 +43,17 @@ export class TurnStartPhase extends FieldPhase {
       orderedTargets = Utils.randSeedShuffle(orderedTargets);
     }, this.scene.currentBattle.turn, this.scene.waveSeed);
 
-    orderedTargets.sort((a: Pokemon, b: Pokemon) => {
-      const aSpeed = a?.getEffectiveStat(Stat.SPD) || 0;
-      const bSpeed = b?.getEffectiveStat(Stat.SPD) || 0;
-
-      return bSpeed - aSpeed;
-    });
-
-    // Next, a check for Trick Room is applied. If Trick Room is present, the order is reversed.
+    // Next, a check for Trick Room is applied to determine sort order.
     const speedReversed = new Utils.BooleanHolder(false);
     this.scene.arena.applyTags(TrickRoomTag, speedReversed);
 
-    if (speedReversed.value) {
-      orderedTargets = orderedTargets.reverse();
-    }
+    // Adjust the sort function based on whether Trick Room is active.
+    orderedTargets.sort((a: Pokemon, b: Pokemon) => {
+      const aSpeed = a?.getEffectiveStat(Stat.SPD) ?? 0;
+      const bSpeed = b?.getEffectiveStat(Stat.SPD) ?? 0;
+
+      return speedReversed.value ? aSpeed - bSpeed : bSpeed - aSpeed;
+    });
 
     return orderedTargets.map(t => t.getFieldIndex() + (!t.isPlayer() ? BattlerIndex.ENEMY : BattlerIndex.PLAYER));
   }

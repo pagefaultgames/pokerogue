@@ -4544,6 +4544,7 @@ export class AddBattlerTagAttr extends MoveEffectAttr {
     case BattlerTagType.DROWSY:
     case BattlerTagType.DISABLED:
     case BattlerTagType.HEAL_BLOCK:
+    case BattlerTagType.RECEIVE_DOUBLE_DAMAGE:
       return -5;
     case BattlerTagType.SEEDED:
     case BattlerTagType.SALT_CURED:
@@ -4564,6 +4565,7 @@ export class AddBattlerTagAttr extends MoveEffectAttr {
     case BattlerTagType.ENCORE:
       return -2;
     case BattlerTagType.MINIMIZED:
+    case BattlerTagType.ALWAYS_GET_HIT:
       return 0;
     case BattlerTagType.INGRAIN:
     case BattlerTagType.IGNORE_ACCURACY:
@@ -6589,7 +6591,7 @@ export class MoveCondition {
 
 export class FirstMoveCondition extends MoveCondition {
   constructor() {
-    super((user, target, move) => user.battleSummonData?.turnCount === 1);
+    super((user, target, move) => user.battleSummonData?.waveTurnCount === 1);
   }
 
   getUserBenefitScore(user: Pokemon, target: Pokemon, move: Move): integer {
@@ -8906,8 +8908,8 @@ export function initMoves() {
       .attr(HalfSacrificialAttr)
       .target(MoveTarget.ALL_NEAR_OTHERS),
     new AttackMove(Moves.PLASMA_FISTS, Type.ELECTRIC, MoveCategory.PHYSICAL, 100, 100, 15, -1, 0, 7)
-      .punchingMove()
-      .partial(),
+      .attr(AddArenaTagAttr, ArenaTagType.PLASMA_FISTS, 1)
+      .punchingMove(),
     new AttackMove(Moves.PHOTON_GEYSER, Type.PSYCHIC, MoveCategory.SPECIAL, 100, 100, 5, -1, 0, 7)
       .attr(PhotonGeyserCategoryAttr)
       .ignoresAbilities()
@@ -8937,7 +8939,7 @@ export function initMoves() {
       .partial()
       .ignoresVirtual(),
     /* End Unused */
-    new AttackMove(Moves.ZIPPY_ZAP, Type.ELECTRIC, MoveCategory.PHYSICAL, 50, 100, 15, 100, 2, 7) //LGPE Implementation
+    new AttackMove(Moves.ZIPPY_ZAP, Type.ELECTRIC, MoveCategory.PHYSICAL, 50, 100, 15, -1, 2, 7) //LGPE Implementation
       .attr(CritOnlyAttr),
     new AttackMove(Moves.SPLISHY_SPLASH, Type.WATER, MoveCategory.SPECIAL, 90, 100, 15, 30, 0, 7)
       .attr(StatusEffectAttr, StatusEffect.PARALYSIS)
@@ -9622,9 +9624,8 @@ export function initMoves() {
       .target(MoveTarget.ALL_NEAR_ENEMIES)
       .triageMove(),
     new AttackMove(Moves.SYRUP_BOMB, Type.GRASS, MoveCategory.SPECIAL, 60, 85, 10, -1, 0, 9)
-      .attr(StatStageChangeAttr, [ Stat.SPD ], -1) //Temporary
-      .ballBombMove()
-      .partial(),
+      .attr(AddBattlerTagAttr, BattlerTagType.SYRUP_BOMB, false, false, 3)
+      .ballBombMove(),
     new AttackMove(Moves.IVY_CUDGEL, Type.GRASS, MoveCategory.PHYSICAL, 100, 100, 10, -1, 0, 9)
       .attr(IvyCudgelTypeAttr)
       .attr(HighCritAttr)

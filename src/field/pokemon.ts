@@ -65,6 +65,12 @@ import { MysteryEncounterPokemonData } from "#app/data/mystery-encounters/myster
 import { SwitchType } from "#enums/switch-type";
 import { BASE_HIDDEN_ABILITY_CHANCE, BASE_SHINY_CHANCE } from "#app/data/balance/rates";
 
+/** `64/65536 -> 1/1024` */
+const BASE_SHINY_CHANCE = 64;
+
+/** `1/256` */
+const BASE_HIDDEN_ABILITY_CHANCE = 256;
+
 export enum FieldPosition {
   CENTER,
   LEFT,
@@ -1513,6 +1519,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
     applyMoveAttrs(VariableMoveTypeAttr, this, null, move, moveTypeHolder);
     applyPreAttackAbAttrs(MoveTypeChangeAbAttr, this, null, move, simulated, moveTypeHolder);
+
+    this.scene.arena.applyTags(ArenaTagType.PLASMA_FISTS, moveTypeHolder);
 
     return moveTypeHolder.value as Type;
   }
@@ -3977,7 +3985,8 @@ export class PlayerPokemon extends Pokemon {
       let compatible = false;
       for (const p of tmSpecies[tm]) {
         if (Array.isArray(p)) {
-          if (p[0] === this.species.speciesId || (this.fusionSpecies && p[0] === this.fusionSpecies.speciesId) && p.slice(1).indexOf(this.species.forms[this.formIndex]) > -1) {
+          const [pkm, form] = p;
+          if ((pkm === this.species.speciesId || this.fusionSpecies && pkm === this.fusionSpecies.speciesId) && form === this.getFormKey()) {
             compatible = true;
             break;
           }
@@ -4993,6 +5002,8 @@ export class PokemonBattleData {
 export class PokemonBattleSummonData {
   /** The number of turns the pokemon has passed since entering the battle */
   public turnCount: number = 1;
+  /** The number of turns the pokemon has passed since the start of the wave */
+  public waveTurnCount: number = 1;
   /** The list of moves the pokemon has used since entering the battle */
   public moveHistory: TurnMove[] = [];
 }

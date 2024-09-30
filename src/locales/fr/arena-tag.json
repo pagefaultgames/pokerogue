@@ -28,6 +28,7 @@
   "mudSportOnRemove": "L’effet de Lance-Boue se dissipe !",
   "waterSportOnAdd": "La puissance des capacités\nde type Feu diminue !",
   "waterSportOnRemove": "L’effet de Tourniquet se dissipe !",
+  "plasmaFistsOnAdd": "Un déluge de plasma s’abat sur le terrain !",
   "spikesOnAdd": "Des {{moveName}} s’éparpillent autour de {{opponentDesc}} !",
   "spikesActivateTrap": "{{pokemonNameWithAffix}} est blessé\npar les picots !",
   "toxicSpikesOnAdd": "Des {{moveName}} s’éparpillent autour de {{opponentDesc}} !",
