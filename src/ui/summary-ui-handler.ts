@@ -317,7 +317,6 @@ export default class SummaryUiHandler extends UiHandler {
     this.candyIcon.setTint(argbFromRgba(Utils.rgbHexToRgba(colorScheme[0])));
     this.candyOverlay.setTint(argbFromRgba(Utils.rgbHexToRgba(colorScheme[1])));
 
-    this.friendshipIcon.setTint(argbFromRgba(Utils.rgbHexToRgba(colorScheme[0])));
     this.friendshipOverlay.setTint(argbFromRgba(Utils.rgbHexToRgba(colorScheme[1])));
 
     this.numberText.setText(Utils.padInt(this.pokemon.species.speciesId, 4));
