@@ -58,4 +58,18 @@ describe("Weather - Hail", () => {
     expect(playerPokemon.hp).toBe(playerPokemon.getMaxHp());
     expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp() - Math.max(Math.floor(enemyPokemon.getMaxHp() / 16), 1));
   });
+
+  it("does not inflict damage to Ice type Pokemon", async () => {
+    await game.classicMode.startBattle([Species.CLOYSTER]);
+
+    game.move.select(Moves.SPLASH);
+
+    await game.phaseInterceptor.to("TurnEndPhase");
+
+    const playerPokemon = game.scene.getPlayerPokemon()!;
+    const enemyPokemon = game.scene.getEnemyPokemon()!;
+
+    expect(playerPokemon.hp).toBe(playerPokemon.getMaxHp());
+    expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp() - Math.max(Math.floor(enemyPokemon.getMaxHp() / 16), 1));
+  });
 });
