@@ -34,10 +34,10 @@
     "value.1": "オン"
   },
   "trickRoom": {
-    "name": "Trick Room",
-    "shortName": "Trick Room",
-    "desc": "All battles are under the effect of Trick Room, where slower Pokémon move sooner and faster Pokémon move later.\nDisables other challenges' achievements.",
-    "value.0": "Off",
-    "value.1": "On"
+    "name": "トリックルーム",
+    "shortName": "トリルー",
+    "desc": "バトルは 全て トリックルームの 影響が あるから、 すばやさの 低い順に 行動できる ように なる\n他の チャレンジの 実績が 無効に されます",
+    "value.0": "オフ",
+    "value.1": "オン"
   }
 }
