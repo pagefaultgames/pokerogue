@@ -5,5 +5,15 @@
   "safeguardOnAddEnemy": "Un velo mistico ricopre la squadra avversaria!",
   "safeguardOnRemove": "Il campo non è più protetto da Salvaguardia!",
   "safeguardOnRemovePlayer": "La tua squadra non è più protetta da Salvaguardia!",
-  "safeguardOnRemoveEnemy": "La squadra avversaria non è più protetta da Salvaguardia!"
+  "safeguardOnRemoveEnemy": "La squadra avversaria non è più protetta da Salvaguardia!",
+  "fireGrassPledgeOnAdd": "A sea of fire enveloped the field!",
+  "fireGrassPledgeOnAddPlayer": "A sea of fire enveloped your team!",
+  "fireGrassPledgeOnAddEnemy": "A sea of fire enveloped the opposing team!",
+  "fireGrassPledgeLapse": "{{pokemonNameWithAffix}} was hurt by the sea of fire!",
+  "waterFirePledgeOnAdd": "A rainbow appeared in the sky!",
+  "waterFirePledgeOnAddPlayer": "A rainbow appeared in the sky on your team's side!",
+  "waterFirePledgeOnAddEnemy": "A rainbow appeared in the sky on the opposing team's side!",
+  "grassWaterPledgeOnAdd": "A swamp enveloped the field!",
+  "grassWaterPledgeOnAddPlayer": "A swamp enveloped your team!",
+  "grassWaterPledgeOnAddEnemy": "A swamp enveloped the opposing team!"
 }
