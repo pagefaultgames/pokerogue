@@ -68,5 +68,7 @@
   "exposedMove": "{{pokemonName}} ha identificato\n{{targetPokemonName}}!",
   "chillyReception": "{{pokemonName}} sta per fare una battuta!",
   "safeguard": "Salvaguardia protegge {{targetName}}!",
-  "afterYou": "{{targetName}} approfitta della cortesia!"
+  "afterYou": "{{targetName}} approfitta della cortesia!",
+  "combiningPledge": "The two moves have become one!\nIt's a combined move!",
+  "awaitingPledge": "{{userPokemonName}} is waiting for {{allyPokemonName}}'s move..."
 }
