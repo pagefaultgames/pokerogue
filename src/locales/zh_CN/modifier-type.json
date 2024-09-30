@@ -50,7 +50,7 @@
       "description": "遭遇双打概率提升四倍，持续{{battleCount}}场战斗。"
     },
     "TempStatStageBoosterModifierType": {
-      "description": "提升全队的{{stat}}{{amount}}级，持续5场战斗。",
+      "description": "提升全队的{{stat}}{{amount}}，持续5场战斗。",
       "extra": {
         "stage": "1阶",
         "percentage": "30%"
@@ -63,7 +63,7 @@
       "description": "使一只宝可梦的等级提升{{levels}}级。"
     },
     "AllPokemonLevelIncrementModifierType": {
-      "description": "使一只寶可夢的等級提升{{levels}}級。"
+      "description": "使所有宝可梦的等级提升{{levels}}级。"
     },
     "BaseStatBoosterModifierType": {
       "description": "增加10%持有者的{{stat}}，\n个体值越高堆叠上限越高。"
