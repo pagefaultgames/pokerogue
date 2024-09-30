@@ -54,5 +54,15 @@
   "safeguardOnAddEnemy": "Un voile mystérieux recouvre\nl’équipe ennemie !",
   "safeguardOnRemove": "Le terrain n’est plus protégé\npar le voile mystérieux !",
   "safeguardOnRemovePlayer": "Votre équipe n’est plus protégée\npar le voile mystérieux !",
-  "safeguardOnRemoveEnemy": "L’équipe ennemie n’est plus protégée\npar le voile mystérieux !"
+  "safeguardOnRemoveEnemy": "L’équipe ennemie n’est plus protégée\npar le voile mystérieux !",
+  "fireGrassPledgeOnAdd": "Le terrain est cerné par une mer de feu !",
+  "fireGrassPledgeOnAddPlayer": "Votre équipe est cernée par une mer de feu !",
+  "fireGrassPledgeOnAddEnemy": "L’équipe ennemie est cernée par une mer de feu !",
+  "fireGrassPledgeLapse": "{{pokemonNameWithAffix}} est plongé\ndans un océan de feu !",
+  "waterFirePledgeOnAdd": "Un arc-en-ciel apparait au-dessus\ndu terrain !",
+  "waterFirePledgeOnAddPlayer": "Un arc-en-ciel apparait au-dessus\nde votre équipe !",
+  "waterFirePledgeOnAddEnemy": "Un arc-en-ciel apparait au-dessus\nde l’équipe ennemie !",
+  "grassWaterPledgeOnAdd": "Le terrain est cerné par un marécage !",
+  "grassWaterPledgeOnAddPlayer": "Votre équipe est cernée par un marécage !",
+  "grassWaterPledgeOnAddEnemy": "L’équipe ennemie est cernée par un marécage !"
 }
