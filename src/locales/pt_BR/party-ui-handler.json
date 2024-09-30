@@ -24,7 +24,7 @@
   "tooManyItems": "{{pokemonName}} já tem\nmuitos desse item!",
   "anyEffect": "Isso não terá nenhum efeito.",
   "unpausedEvolutions": "Evoluções foram despausadas para {{pokemonName}}.",
-  "unspliceConfirmation": "Você realmente deseja desfazer a fusão de {{fusionName}}\ncom {{pokemonName}}? {{fusionName}} será perdido.",
+  "unspliceConfirmation": "Você realmente deseja desfazer a fusão de\n{{fusionName}} com {{pokemonName}}? {{fusionName}} será perdido.",
   "wasReverted": "{{fusionName}} foi revertido para {{pokemonName}}.",
   "releaseConfirmation": "Você realmente deseja soltar {{pokemonName}}?",
   "releaseInBattle": "Você não pode soltar um Pokémon que está em batalha!",

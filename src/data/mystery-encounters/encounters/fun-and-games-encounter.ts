@@ -44,6 +44,7 @@ export const FunAndGamesEncounter: MysteryEncounter =
     .withSkipEnemyBattleTurns(true)
     // Will skip COMMAND selection menu and go straight to FIGHT (move select) menu
     .withSkipToFightInput(true)
+    .withFleeAllowed(false)
     .withIntroSpriteConfigs([
       {
         spriteKey: "fun_and_games_game",
