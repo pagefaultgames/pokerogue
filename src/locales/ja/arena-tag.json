@@ -54,5 +54,15 @@
   "safeguardOnAddEnemy": "相手は　神秘のベールに　包まれた！",
   "safeguardOnRemove": "場の全体を　包んでいた\n神秘のベールが　なくなった！",
   "safeguardOnRemovePlayer": "味方を　包んでいた\n神秘のベールが　なくなった！",
-  "safeguardOnRemoveEnemy": "相手を　包んでいた\n神秘のベールが　なくなった！"
+  "safeguardOnRemoveEnemy": "相手を　包んでいた\n神秘のベールが　なくなった！",
+  "fireGrassPledgeOnAdd": "A sea of fire enveloped the field!",
+  "fireGrassPledgeOnAddPlayer": "A sea of fire enveloped your team!",
+  "fireGrassPledgeOnAddEnemy": "A sea of fire enveloped the opposing team!",
+  "fireGrassPledgeLapse": "{{pokemonNameWithAffix}} was hurt by the sea of fire!",
+  "waterFirePledgeOnAdd": "A rainbow appeared in the sky!",
+  "waterFirePledgeOnAddPlayer": "A rainbow appeared in the sky on your team's side!",
+  "waterFirePledgeOnAddEnemy": "A rainbow appeared in the sky on the opposing team's side!",
+  "grassWaterPledgeOnAdd": "A swamp enveloped the field!",
+  "grassWaterPledgeOnAddPlayer": "A swamp enveloped your team!",
+  "grassWaterPledgeOnAddEnemy": "A swamp enveloped the opposing team!"
 }
