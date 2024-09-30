@@ -64,5 +64,7 @@
   "chillyReception": "{{pokemonName}} está prestes a contar uma piada gelada!",
   "exposedMove": "{{pokemonName}} identificou\n{{targetPokemonName}}!",
   "safeguard": "{{targetName}} está protegido por Safeguard!",
-  "afterYou": "{{targetName}} aceitou a gentil oferta!"
+  "afterYou": "{{targetName}} aceitou a gentil oferta!",
+  "combiningPledge": "The two moves have become one!\nIt's a combined move!",
+  "awaitingPledge": "{{userPokemonName}} is waiting for {{allyPokemonName}}'s move..."
 }
