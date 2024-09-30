@@ -75,6 +75,6 @@
   "substituteOnAdd": "¡{{pokemonNameWithAffix}} creó un sustituto!",
   "substituteOnHit": "¡El sustituto recibe daño en lugar del {{pokemonNameWithAffix}}!",
   "substituteOnRemove": "¡El sustituto del {{pokemonNameWithAffix}} se debilitó!",
-  "syrupBombOnAdd": "{{pokemonNameWithAffix}} got covered in sticky candy syrup!",
-  "syrupBombLapse": "The sticky syrup slowed down {{pokemonNameWithAffix}}!"
+  "syrupBombOnAdd": "¡{{pokemonNameWithAffix}} está caramelizado!",
+  "syrupBombLapse": "¡El caramelo pegajoso disminuyó la Velocidad\nde {{pokemonNameWithAffix}}!"
 }
