@@ -54,5 +54,15 @@
   "safeguardOnAddEnemy": "对手被\n神秘之幕包围了！",
   "safeguardOnRemove": "包围整个场地的\n神秘之幕消失了！",
   "safeguardOnRemovePlayer": "包围我方的\n神秘之幕消失了！",
-  "safeguardOnRemoveEnemy": "包围对手的\n神秘之幕消失了！"
+  "safeguardOnRemoveEnemy": "包围对手的\n神秘之幕消失了！",
+  "fireGrassPledgeOnAdd": "A sea of fire enveloped the field!",
+  "fireGrassPledgeOnAddPlayer": "A sea of fire enveloped your team!",
+  "fireGrassPledgeOnAddEnemy": "A sea of fire enveloped the opposing team!",
+  "fireGrassPledgeLapse": "{{pokemonNameWithAffix}} was hurt by the sea of fire!",
+  "waterFirePledgeOnAdd": "A rainbow appeared in the sky!",
+  "waterFirePledgeOnAddPlayer": "A rainbow appeared in the sky on your team's side!",
+  "waterFirePledgeOnAddEnemy": "A rainbow appeared in the sky on the opposing team's side!",
+  "grassWaterPledgeOnAdd": "A swamp enveloped the field!",
+  "grassWaterPledgeOnAddPlayer": "A swamp enveloped your team!",
+  "grassWaterPledgeOnAddEnemy": "A swamp enveloped the opposing team!"
 }
