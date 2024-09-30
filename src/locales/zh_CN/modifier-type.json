@@ -2,7 +2,7 @@
   "ModifierType": {
     "AddPokeballModifierType": {
       "name": "{{modifierCount}}x {{pokeballName}}",
-      "description": "获得 {{pokeballName}} x{{modifierCount}} (已有：{{pokeballAmount}}) \n捕捉倍率：{{catchRate}}。"
+      "description": "获得 {{pokeballName}}x {{modifierCount}} (已有：{{pokeballAmount}}) \n捕捉倍率：{{catchRate}}。"
     },
     "AddVoucherModifierType": {
       "name": "{{modifierCount}}x {{voucherTypeName}}",
@@ -69,18 +69,18 @@
       "description": "增加10%持有者的{{stat}}，\n个体值越高堆叠上限越高。"
     },
     "PokemonBaseStatTotalModifierType": {
-      "name": "Shuckle Juice",
-      "description": "{{increaseDecrease}} all of the holder's base stats by {{statValue}}. You were {{blessCurse}} by the Shuckle.",
+      "name": "壶壶果汁",
+      "description": "{{increaseDecrease}}持有者的所有基础属性{{statValue}}级。你被壶壶{{blessCurse}}了。",
       "extra": {
-        "increase": "Increases",
-        "decrease": "Decreases",
-        "blessed": "blessed",
-        "cursed": "cursed"
+        "increase": "提升",
+        "decrease": "降低",
+        "blessed": "强化",
+        "cursed": "诅咒"
       }
     },
     "PokemonBaseStatFlatModifierType": {
-      "name": "Old Gateau",
-      "description": "Increases the holder's {{stats}} base stats by {{statValue}}. Found after a strange dream."
+      "name": "森之羊羹",
+      "description": "增加持有者{{stats}}的基础属性{{statValue}}，来自于一场怪梦。"
     },
     "AllPokemonFullHpRestoreModifierType": {
       "description": "所有宝可梦完全回复HP。"
@@ -109,7 +109,7 @@
       "description": "招式命中率增加{{accuracyAmount}}(最大100)。"
     },
     "PokemonMultiHitModifierType": {
-      "description": "攻击以60/75/82.5%的伤害造成2/3/4次伤害。"
+      "description": "伤害降低60/75/82.5%的同时造成2/3/4次伤害。"
     },
     "TmModifierType": {
       "name": "招式学习器\n{{moveId}} - {{moveName}}",
@@ -126,7 +126,7 @@
       "description": "使某些宝可梦更改形态。"
     },
     "FusePokemonModifierType": {
-      "description": "融合两只宝可梦 (改变特性, 平分基础点数\n和属性, 共享招式池)。"
+      "description": "融合两只宝可梦（改变特性, 平分基础点数\n和属性, 共享招式池）。"
     },
     "TerastallizeModifierType": {
       "name": "{{teraType}}太晶碎块",
@@ -359,7 +359,7 @@
       "description": "触碰后会放出热量的神奇宝珠。\n携带后，在战斗时会变成灼伤状态。"
     },
     "EVOLUTION_TRACKER_GIMMIGHOUL": {
-      "name": "金子宝物",
+      "name": "宝藏金币",
       "description": "这个宝可梦最爱金币！多收集点金币的话会发生什么呢？"
     },
     "BATON": {
@@ -421,11 +421,11 @@
       "description": "增加1%野生融合宝可梦出现概率。"
     },
 
-    "MYSTERY_ENCOUNTER_SHUCKLE_JUICE": { "name": "Shuckle Juice" },
-    "MYSTERY_ENCOUNTER_BLACK_SLUDGE": { "name": "Black Sludge", "description": "The stench is so powerful that shops will only sell you items at a steep cost increase." },
-    "MYSTERY_ENCOUNTER_MACHO_BRACE": { "name": "Macho Brace", "description": "Defeating a Pokémon grants the holder a Macho Brace stack. Each stack slightly boosts stats, with an extra bonus at max stacks." },
-    "MYSTERY_ENCOUNTER_OLD_GATEAU": { "name": "Old Gateau", "description": "Increases the holder's {{stats}} stats by {{statValue}}." },
-    "MYSTERY_ENCOUNTER_GOLDEN_BUG_NET": { "name": "Golden Bug Net", "description": "Imbues the owner with luck to find Bug Type Pokémon more often. Has a strange heft to it." }
+    "MYSTERY_ENCOUNTER_SHUCKLE_JUICE": { "name": "壶壶果汁" },
+    "MYSTERY_ENCOUNTER_BLACK_SLUDGE": { "name": "黑色污泥", "description": "由于恶臭扑鼻，商店会以非常高昂的价格向您出售商品。" },
+    "MYSTERY_ENCOUNTER_MACHO_BRACE": { "name": "强制锻炼器", "description": "击败对手后获得一层锻炼等级。每层会略微提升属性，\n达到最大层数时还会获得额外奖励。" },
+    "MYSTERY_ENCOUNTER_OLD_GATEAU": { "name": "森之羊羔", "description": "提升持有者的{{stats}}的{{statValue}}。" },
+    "MYSTERY_ENCOUNTER_GOLDEN_BUG_NET": { "name": "金捕虫网", "description": "赋予主人好运，使其更容易\n找到虫属性宝可梦，手感很奇妙。" }
   },
   "SpeciesBoosterItem": {
     "LIGHT_BALL": {
