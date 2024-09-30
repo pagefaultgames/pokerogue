@@ -74,6 +74,6 @@
   "substituteOnAdd": "{{pokemonNameWithAffix}} colocou um substituto!",
   "substituteOnHit": "O substituto tomou o dano pelo {{pokemonNameWithAffix}}!",
   "substituteOnRemove": "O substituto de {{pokemonNameWithAffix}} desbotou!",
-  "syrupBombOnAdd": "{{pokemonNameWithAffix}} got covered in sticky, candy syrup!",
-  "syrupBombLapse": "The sticky syrup slowed down {{pokemonNameWithAffix}}!"
+  "syrupBombOnAdd": "{{pokemonNameWithAffix}} foi coberto por um xarope doce e pegajoso!",
+  "syrupBombLapse": "O xarope pegajoso desacelerou {{pokemonNameWithAffix}}!"
 }
