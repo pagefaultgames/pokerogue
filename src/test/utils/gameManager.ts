@@ -47,6 +47,7 @@ import { MoveHelper } from "./helpers/moveHelper";
 import { OverridesHelper } from "./helpers/overridesHelper";
 import { SettingsHelper } from "./helpers/settingsHelper";
 import { ReloadHelper } from "./helpers/reloadHelper";
+import { ModifierHelper } from "./helpers/modifiersHelper";
 import { CheckSwitchPhase } from "#app/phases/check-switch-phase";
 import BattleMessageUiHandler from "#app/ui/battle-message-ui-handler";
 import { MysteryEncounterPhase } from "#app/phases/mystery-encounter-phases";
@@ -71,6 +72,7 @@ export default class GameManager {
   public readonly challengeMode: ChallengeModeHelper;
   public readonly settings: SettingsHelper;
   public readonly reload: ReloadHelper;
+  public readonly modifiers: ModifierHelper;
 
   /**
    * Creates an instance of GameManager.
@@ -93,6 +95,7 @@ export default class GameManager {
     this.challengeMode = new ChallengeModeHelper(this);
     this.settings = new SettingsHelper(this);
     this.reload = new ReloadHelper(this);
+    this.modifiers = new ModifierHelper(this);
 
     // Disables Mystery Encounters on all tests (can be overridden at test level)
     this.override.mysteryEncounterChance(0);
@@ -195,7 +198,7 @@ export default class GameManager {
   async runToMysteryEncounter(encounterType?: MysteryEncounterType, species?: Species[]) {
     if (!isNullOrUndefined(encounterType)) {
       this.override.disableTrainerWaves();
-      this.override.mysteryEncounter(encounterType!);
+      this.override.mysteryEncounter(encounterType);
     }
 
     await this.runToTitle();
@@ -300,7 +303,7 @@ export default class GameManager {
 
     vi.spyOn(enemy, "getNextMove").mockReturnValueOnce({
       move: moveId,
-      targets: (target && !legalTargets.multiple && legalTargets.targets.includes(target))
+      targets: (target !== undefined && !legalTargets.multiple && legalTargets.targets.includes(target))
         ? [target]
         : enemy.getNextTargets(moveId)
     });

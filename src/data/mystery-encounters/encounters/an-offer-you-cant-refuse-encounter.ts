@@ -8,7 +8,7 @@ import { MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/myst
 import { AbilityRequirement, CombinationPokemonRequirement, MoveRequirement } from "#app/data/mystery-encounters/mystery-encounter-requirements";
 import { getHighestStatTotalPlayerPokemon } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
 import { EXTORTION_ABILITIES, EXTORTION_MOVES } from "#app/data/mystery-encounters/requirements/requirement-groups";
-import { getPokemonSpecies } from "#app/data/pokemon-species";
+import { getPokemonSpecies, speciesStarters } from "#app/data/pokemon-species";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { ModifierRewardPhase } from "#app/phases/modifier-reward-phase";
@@ -16,6 +16,14 @@ import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
 
 /** the i18n namespace for this encounter */
 const namespace = "mysteryEncounter:offerYouCantRefuse";
+
+/**
+ * Money offered starts at base value of Relic Gold, increasing linearly up to 3x Relic Gold based on the starter tier of the Pokemon being purchased
+ * Starter value 1-3 -> Relic Gold
+ * Starter value 10 -> 3 * Relic Gold
+ */
+const MONEY_MINIMUM_MULTIPLIER = 10;
+const MONEY_MAXIMUM_MULTIPLIER = 30;
 
 /**
  * An Offer You Can't Refuse encounter.
@@ -61,7 +69,11 @@ export const AnOfferYouCantRefuseEncounter: MysteryEncounter =
     .withOnInit((scene: BattleScene) => {
       const encounter = scene.currentBattle.mysteryEncounter!;
       const pokemon = getHighestStatTotalPlayerPokemon(scene, true, true);
-      const price = scene.getWaveMoneyAmount(10);
+
+      const baseSpecies = pokemon.getSpeciesForm().getRootSpeciesId();
+      const starterValue: number = speciesStarters[baseSpecies] ?? 1;
+      const multiplier = Math.max(MONEY_MAXIMUM_MULTIPLIER / 10 * starterValue, MONEY_MINIMUM_MULTIPLIER);
+      const price = scene.getWaveMoneyAmount(multiplier);
 
       encounter.setDialogueToken("strongestPokemon", pokemon.getNameToRender());
       encounter.setDialogueToken("price", price.toString());

@@ -1,0 +1,23 @@
+{
+  "intro": "이건…@d{32} 뭐지?",
+  "title": "수수께끼 상자",
+  "description": "아름답게 장식된 상자가 바닥에 놓여 있습니다. 보통 이럴 땐, 안에 뭔가 좋은 게 들었다고 생각하는 것이 인지상정…\n그렇지 않을까요?",
+  "query": "열어보시겠습니까?",
+  "option": {
+    "1": {
+      "label": "열어본다",
+      "tooltip": "@[SUMMARY_BLUE]{({{trapPercent}}%) 끔찍한 무언가}\n@[SUMMARY_GREEN]{({{commonPercent}}%) 평범한 보상}\n@[SUMMARY_GREEN]{({{ultraPercent}}%) 좋은 보상}\n@[SUMMARY_GREEN]{({{roguePercent}}%) 훌륭한 보상}\n@[SUMMARY_GREEN]{({{masterPercent}}%) 대단한 보상}",
+      "selected": "당신이 상자안에서 찾은 것은…",
+      "normal": "평범한 도구와 아이템이다.",
+      "good": "꽤 좋은 도구와 아이템이다.",
+      "great": "훌륭한 도구와 아이템이다!",
+      "amazing": "앗! 대단한 아이템!",
+      "bad": "으악!@d{32}\n상자는 사실 변장한 {{gimmighoulName}}이었다!${{pokeName}}[[가]] 앞으로 뛰어들어 막았지만\n기절해버렸다!"
+    },
+    "2": {
+      "label": "위험할 수 있으니 떠난다",
+      "tooltip": "(-) 보상 없음",
+      "selected": "아쉬움을 뒤로 하고,\n당신은 서둘러 떠났다."
+    }
+  }
+}
