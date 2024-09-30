@@ -28,6 +28,7 @@
   "mudSportOnRemove": "Os efeitos de Mud Sport\nsumiram.",
   "waterSportOnAdd": "O poder de movimentos de fogo foi enfraquecido!",
   "waterSportOnRemove": "Os efeitos de Water Sport\nsumiram.",
+  "plasmaFistsOnAdd": "Um dilúvio de íons chove sobre o campo de batalha!",
   "spikesOnAdd": "{{moveName}} foram espalhados\nno chão ao redor de {{opponentDesc}}!",
   "spikesActivateTrap": "{{pokemonNameWithAffix}} foi ferido\npelos espinhos!",
   "toxicSpikesOnAdd": "{{moveName}} foram espalhados\nno chão ao redor de {{opponentDesc}}!",

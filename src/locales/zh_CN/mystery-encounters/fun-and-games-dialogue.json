@@ -2,7 +2,7 @@
   "intro_dialogue": "来看看吧，大伙！\n在这全新的{{wobbuffetName}}捶捶乐上试试运气！\n",
   "speaker": "艺人",
   "title": "快乐游戏！",
-  "description": "你遇到了一个有奖游戏活动！\n你有 @[TOOLTIP_TITLE]{3 回合}的时间来在\n@[TOOLTIP_TITLE]{不打倒}{{wobbuffetName}}的情况下将它尽可能的打到@[TOOLTIP_TITLE]{1血}\n这样，它就能通过反作用力在敲钟器上打出超高数字！\n但要小心！如果你不小心打倒了{{wobbuffetName}}，你就得付医疗费！",
+  "description": "你遇到了一个有奖游戏活动！\n你有 @[TOOLTIP_TITLE]{3 回合}的时间来在\n@[TOOLTIP_TITLE]{不打倒}{{wobbuffetName}}的情况下将它尽可能的打到@[TOOLTIP_TITLE]{1血}\n这样，它就能通过反作用力\n在敲钟器上打出超高数字！\n但要小心！如果你不小心打倒了{{wobbuffetName}}，\n你就得付医疗费！",
   "query": "要试试么？",
   "option": {
     "1": {

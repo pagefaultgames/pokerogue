@@ -437,8 +437,7 @@ function getPartyConfig(scene: BattleScene): EnemyPartyConfig {
 }
 
 function getSpeciesFromPool(speciesPool: (Species | BreederSpeciesEvolution)[][], waveIndex: number): Species {
-  const poolCopy = speciesPool.slice(0);
-  randSeedShuffle(poolCopy);
+  const poolCopy = randSeedShuffle(speciesPool.slice(0));
   const speciesEvolutions = poolCopy.pop()!.slice(0);
   let speciesObject = speciesEvolutions.pop()!;
   while (speciesObject instanceof BreederSpeciesEvolution && speciesObject.evolution > waveIndex) {
@@ -452,7 +451,7 @@ function calculateEggRewardsForPokemon(pokemon: PlayerPokemon): [number, number]
   // 1 point for every 20 points below 680 BST the pokemon is, (max 18, min 1)
   const pointsFromBst = Math.min(Math.max(Math.floor((680 - bst) / 20), 1), 18);
 
-  const rootSpecies = pokemon.species.getRootSpeciesId(true);
+  const rootSpecies = pokemon.species.getRootSpeciesId();
   let pointsFromStarterTier = 0;
   // 2 points for every 1 below 7 that the pokemon's starter tier is (max 12, min 0)
   if (speciesStarters.hasOwnProperty(rootSpecies)) {
@@ -558,6 +557,10 @@ function onGameOver(scene: BattleScene) {
 
   // Revert BGM
   scene.playBgm(scene.arena.bgm);
+
+  // Clear any leftover battle phases
+  scene.clearPhaseQueue();
+  scene.clearPhaseQueueSplice();
 
   // Return enemy Pokemon
   const pokemon = scene.getEnemyPokemon();

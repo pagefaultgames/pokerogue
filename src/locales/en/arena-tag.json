@@ -28,6 +28,7 @@
   "mudSportOnRemove": "The effects of Mud Sport\nhave faded.",
   "waterSportOnAdd": "Fire's power was weakened!",
   "waterSportOnRemove": "The effects of Water Sport\nhave faded.",
+  "plasmaFistsOnAdd": "A deluge of ions showers the battlefield!",
   "spikesOnAdd": "{{moveName}} were scattered\nall around {{opponentDesc}}'s feet!",
   "spikesActivateTrap": "{{pokemonNameWithAffix}} is hurt\nby the spikes!",
   "toxicSpikesOnAdd": "{{moveName}} were scattered\nall around {{opponentDesc}}'s feet!",

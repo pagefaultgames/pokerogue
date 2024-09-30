@@ -28,6 +28,7 @@
   "mudSportOnRemove": "Lehmsuhler hört auf zu wirken!",
   "waterSportOnAdd": "Die Stärke aller Feuer-Attacken wurde reduziert!",
   "waterSportOnRemove": "Nassmacher hört auf zu wirken!",
+  "plasmaFistsOnAdd": "Ein elektrisch geladener Niederschlag regnet auf das Kampffeld herab!",
   "spikesOnAdd": "Die {{opponentDesc}} sind von Stacheln umgeben!",
   "spikesActivateTrap": "Die {{pokemonNameWithAffix}} wurde durch Stachler verletzt!!",
   "toxicSpikesOnAdd": "Die {{opponentDesc}} sind überall von giftigen Stacheln umgeben",
