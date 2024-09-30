@@ -1,15 +1,15 @@
 import Phaser from "phaser";
-import BattleScene from "../battle-scene";
-import { TextStyle, addTextObject } from "./text";
-import { Mode } from "./ui";
-import UiHandler from "./ui-handler";
-import { addWindow } from "./ui-theme";
-import * as Utils from "../utils";
-import { DexAttr, GameData } from "../system/game-data";
+import BattleScene from "#app/battle-scene";
+import { TextStyle, addTextObject } from "#app/ui/text";
+import { Mode } from "#app/ui/ui";
+import UiHandler from "#app/ui/ui-handler";
+import { addWindow } from "#app/ui/ui-theme";
+import * as Utils from "#app/utils";
+import { DexAttr, GameData } from "#app/system/game-data";
 import { speciesStarters } from "#app/data/balance/starters";
-import {Button} from "#enums/buttons";
+import { Button } from "#enums/buttons";
 import i18next from "i18next";
-import { UiTheme } from "#app/enums/ui-theme";
+import { UiTheme } from "#enums/ui-theme";
 
 interface DisplayStat {
   label_key?: string;

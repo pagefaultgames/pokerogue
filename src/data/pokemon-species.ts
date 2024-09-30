@@ -4,19 +4,19 @@ import { PartyMemberStrength } from "#enums/party-member-strength";
 import { Species } from "#enums/species";
 import { QuantizerCelebi, argbFromRgba, rgbaFromArgb } from "@material/material-color-utilities";
 import i18next from "i18next";
-import BattleScene, { AnySound } from "../battle-scene";
-import { GameMode } from "../game-mode";
-import { StarterMoveset } from "../system/game-data";
-import * as Utils from "../utils";
-import { uncatchableSpecies } from "./balance/biomes";
-import { speciesEggMoves } from "./balance/egg-moves";
-import { GrowthRate } from "./exp";
-import { EvolutionLevel, SpeciesWildEvolutionDelay, pokemonEvolutions, pokemonPrevolutions } from "./balance/pokemon-evolutions";
-import { Type } from "./type";
-import { LevelMoves, pokemonFormLevelMoves, pokemonFormLevelMoves as pokemonSpeciesFormLevelMoves, pokemonSpeciesLevelMoves } from "./balance/pokemon-level-moves";
+import BattleScene, { AnySound } from "#app/battle-scene";
+import { GameMode } from "#app/game-mode";
+import { StarterMoveset } from "#app/system/game-data";
+import * as Utils from "#app/utils";
+import { uncatchableSpecies } from "#app/data/balance/biomes";
+import { speciesEggMoves } from "#app/data/balance/egg-moves";
+import { GrowthRate } from "#app/data/exp";
+import { EvolutionLevel, SpeciesWildEvolutionDelay, pokemonEvolutions, pokemonPrevolutions } from "#app/data/balance/pokemon-evolutions";
+import { Type } from "#app/data/type";
+import { LevelMoves, pokemonFormLevelMoves, pokemonFormLevelMoves as pokemonSpeciesFormLevelMoves, pokemonSpeciesLevelMoves } from "#app/data/balance/pokemon-level-moves";
 import { Stat } from "#enums/stat";
-import { Variant, VariantSet, variantColorCache, variantData } from "./variant";
-import { speciesStarters, POKERUS_STARTER_COUNT } from "./balance/starters";
+import { Variant, VariantSet, variantColorCache, variantData } from "#app/data/variant";
+import { speciesStarters, POKERUS_STARTER_COUNT } from "#app/data/balance/starters";
 
 export enum Region {
   NORMAL,
