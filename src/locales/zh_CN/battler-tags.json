@@ -74,5 +74,7 @@
   "shedTailOnAdd": "{{pokemonNameWithAffix}}\n断掉尾巴并将其作为替身了！",
   "substituteOnAdd": "{{pokemonNameWithAffix}}的\n替身出现了！",
   "substituteOnHit": "替身代替{{pokemonNameWithAffix}}\n承受了攻击！",
-  "substituteOnRemove": "{{pokemonNameWithAffix}}的\n替身消失了……"
+  "substituteOnRemove": "{{pokemonNameWithAffix}}的\n替身消失了……",
+  "syrupBombOnAdd": "{{pokemonNameWithAffix}} got covered in sticky, candy syrup!",
+  "syrupBombLapse": "The sticky syrup slowed down {{pokemonNameWithAffix}}!"
 }
