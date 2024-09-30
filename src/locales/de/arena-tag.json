@@ -56,13 +56,13 @@
   "safeguardOnRemovePlayer": "Der mystische Schleier, der dein Team umgab, hat sich gelüftet!",
   "safeguardOnRemoveEnemy": "Der mystische Schleier, der das gegnerische Team umgab, hat sich gelüftet!",
   "fireGrassPledgeOnAdd": "A sea of fire enveloped the field!",
-  "fireGrassPledgeOnAddPlayer": "A sea of fire enveloped your team!",
-  "fireGrassPledgeOnAddEnemy": "A sea of fire enveloped the opposing team!",
-  "fireGrassPledgeLapse": "{{pokemonNameWithAffix}} was hurt by the sea of fire!",
-  "waterFirePledgeOnAdd": "A rainbow appeared in the sky!",
-  "waterFirePledgeOnAddPlayer": "A rainbow appeared in the sky on your team's side!",
-  "waterFirePledgeOnAddEnemy": "A rainbow appeared in the sky on the opposing team's side!",
-  "grassWaterPledgeOnAdd": "A swamp enveloped the field!",
-  "grassWaterPledgeOnAddPlayer": "A swamp enveloped your team!",
-  "grassWaterPledgeOnAddEnemy": "A swamp enveloped the opposing team!"
+  "fireGrassPledgeOnAddPlayer": "Um die Pokémon auf deiner Seite erstreckt sich ein Meer aus Feuer!",
+  "fireGrassPledgeOnAddEnemy": "Um die Pokémon auf der gegnerischen Seite erstreckt sich ein Meer aus Feuer!",
+  "fireGrassPledgeLapse": "{{pokemonNameWithAffix}} nimmt Schaden durch das Meer aus Feuer!",
+  "waterFirePledgeOnAdd": "Ein Regenbogen erscheint am Himmel!",
+  "waterFirePledgeOnAddPlayer": "Ein Regenbogen erscheint am Himmel über den Pokémon auf deiner Seite!",
+  "waterFirePledgeOnAddEnemy": "Ein Regenbogen erscheint am Himmel über den Pokémon auf der gegnerischen Seite!",
+  "grassWaterPledgeOnAdd": "Ein Sumpf tut sich auf!",
+  "grassWaterPledgeOnAddPlayer": "Ein Sumpf tut sich um die Pokémon auf deiner Seite auf!",
+  "grassWaterPledgeOnAddEnemy": "Ein Sumpf tut sich um die Pokémon auf der gegnerischen Seite auf!"
 }
