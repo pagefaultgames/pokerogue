@@ -65,6 +65,6 @@
   "exposedMove": "{{pokemonName}} identificou\n{{targetPokemonName}}!",
   "safeguard": "{{targetName}} está protegido por Safeguard!",
   "afterYou": "{{targetName}} aceitou a gentil oferta!",
-  "combiningPledge": "The two moves have become one!\nIt's a combined move!",
-  "awaitingPledge": "{{userPokemonName}} is waiting for {{allyPokemonName}}'s move..."
+  "combiningPledge": "Os dois movimentos se juntaram!\nÉ um ataque combinado!",
+  "awaitingPledge": "{{userPokemonName}} está esperando pelo movimento de {{allyPokemonName}}..."
 }

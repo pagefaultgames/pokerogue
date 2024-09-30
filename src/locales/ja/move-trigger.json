@@ -69,6 +69,6 @@
   "swapArenaTags": "{{pokemonName}}は\nお互いの　場の　効果を　入れ替えた！",
   "exposedMove": "{{pokemonName}}は {{targetPokemonName}}の\n正体を　見破った！",
   "afterYou": "{{targetName}}は\nお言葉に　甘えることにした！",
-  "combiningPledge": "The two moves have become one!\nIt's a combined move!",
-  "awaitingPledge": "{{userPokemonName}} is waiting for {{allyPokemonName}}'s move..."
+  "combiningPledge": "２つの技が　１つになった！\nコンビネーション技だ！！",
+  "awaitingPledge": "{{userPokemonName}}は　{{allyPokemonName}}を　待っている…"
 }
