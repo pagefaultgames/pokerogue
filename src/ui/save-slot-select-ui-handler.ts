@@ -150,27 +150,26 @@ export default class SaveSlotSelectUiHandler extends MessageUiHandler {
         success = true;
       }
     } else {
+      const cursorPosition = this.cursor + this.scrollCursor;
       switch (button) {
       case Button.UP:
-        if (this.scrollCursor === 0 && this.cursor === 2) {
-          success = this.setScrollCursor(this.scrollCursor, this.cursor);
-          success = this.setCursor(this.cursor-1);
-        } else if (this.cursor < 2) {
-          success = (this.cursor === 0) ? this.setCursor(this.cursor) : this.setCursor(this.cursor - 1, this.cursor);
+        if (this.cursor) {
+          // Check to prevent cursor from accessing a negative index
+          success = (this.cursor === 0) ? this.setCursor(this.cursor) : this.setCursor(this.cursor - 1, cursorPosition);
         } else if (this.scrollCursor) {
-          success = this.setScrollCursor(this.scrollCursor - 1, this.scrollCursor + this.cursor);
+          success = this.setScrollCursor(this.scrollCursor - 1, cursorPosition);
         }
         break;
       case Button.DOWN:
         if (this.cursor < 2) {
           success = this.setCursor(this.cursor + 1, this.cursor);
         } else if (this.scrollCursor < sessionSlotCount - 3) {
-          success = this.setScrollCursor(this.scrollCursor + 1, this.scrollCursor + this.cursor);
+          success = this.setScrollCursor(this.scrollCursor + 1, cursorPosition);
         }
         break;
       case Button.RIGHT:
         if (this.sessionSlots[this.cursor].hasData) {
-          this.scene.ui.setOverlayMode(Mode.RUN_INFO, this.sessionSlots[this.cursor+this.scrollCursor].saveData, RunDisplayMode.SESSION_PREVIEW);
+          this.scene.ui.setOverlayMode(Mode.RUN_INFO, this.sessionSlots[cursorPosition].saveData, RunDisplayMode.SESSION_PREVIEW);
         }
       }
     }
