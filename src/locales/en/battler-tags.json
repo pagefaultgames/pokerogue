@@ -80,5 +80,6 @@
   "imprisonOnAdd": "{{pokemonNameWithAffix}} sealed the opponents move(s)!",
   "autotomizeOnAdd": "{{pokemonNameWithAffix}} became nimble!",
   "syrupBombOnAdd": "{{pokemonNameWithAffix}} got covered in sticky, candy syrup!",
-  "syrupBombLapse": "The sticky syrup slowed down {{pokemonNameWithAffix}}!"
+  "syrupBombLapse": "The sticky syrup slowed down {{pokemonNameWithAffix}}!",
+  "telekinesisOnAdd": "{{pokemonNameWithAffix}} was hurled into the air!"
 }

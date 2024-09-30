@@ -2656,6 +2656,12 @@ export class SyrupBombTag extends BattlerTag {
   }
 }
 
+export class TelekinesisTag extends BattlerTag {
+  constructor() {
+    super(BattlerTagType.TELEKINESIS, BattlerTagLapseType.PRE_MOVE, 3, undefined, undefined, true);
+  }
+}
+
 /**
  * Retrieves a {@linkcode BattlerTag} based on the provided tag type, turn count, source move, and source ID.
  *
