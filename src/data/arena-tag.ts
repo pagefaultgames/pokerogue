@@ -513,6 +513,39 @@ class WaterSportTag extends WeakenMoveTypeTag {
 }
 
 /**
+ * Arena Tag class for the secondary effect of {@link https://bulbapedia.bulbagarden.net/wiki/Plasma_Fists_(move) | Plasma Fists}.
+ * Converts Normal-type moves to Electric type for the rest of the turn.
+ */
+export class PlasmaFistsTag extends ArenaTag {
+  constructor() {
+    super(ArenaTagType.PLASMA_FISTS, 1, Moves.PLASMA_FISTS);
+  }
+
+  /** Queues Plasma Fists' on-add message */
+  onAdd(arena: Arena): void {
+    arena.scene.queueMessage(i18next.t("arenaTag:plasmaFistsOnAdd"));
+  }
+
+  onRemove(arena: Arena): void { } // Removes default on-remove message
+
+  /**
+   * Converts Normal-type moves to Electric type
+   * @param arena n/a
+   * @param args
+   * - `[0]` {@linkcode Utils.NumberHolder} A container with a move's {@linkcode Type}
+   * @returns `true` if the given move type changed; `false` otherwise.
+   */
+  apply(arena: Arena, args: any[]): boolean {
+    const moveType = args[0];
+    if (moveType instanceof Utils.NumberHolder && moveType.value === Type.NORMAL) {
+      moveType.value = Type.ELECTRIC;
+      return true;
+    }
+    return false;
+  }
+}
+
+/**
  * Abstract class to implement arena traps.
  */
 export class ArenaTrapTag extends ArenaTag {
@@ -1086,6 +1119,8 @@ export function getArenaTag(tagType: ArenaTagType, turnCount: integer, sourceMov
     return new MudSportTag(turnCount, sourceId);
   case ArenaTagType.WATER_SPORT:
     return new WaterSportTag(turnCount, sourceId);
+  case ArenaTagType.PLASMA_FISTS:
+    return new PlasmaFistsTag();
   case ArenaTagType.SPIKES:
     return new SpikesTag(sourceId, side);
   case ArenaTagType.TOXIC_SPIKES:
