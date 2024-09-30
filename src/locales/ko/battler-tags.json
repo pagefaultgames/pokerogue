@@ -74,5 +74,9 @@
   "shedTailOnAdd": "{{pokemonNameWithAffix}}[[는]] 꼬리를 잘라 대타로 삼았다!",
   "substituteOnAdd": "{{pokemonNameWithAffix}}의\n대타가 나타났다!",
   "substituteOnHit": "{{pokemonNameWithAffix}}[[를]] 대신하여\n대타가 공격을 받았다!",
-  "substituteOnRemove": "{{pokemonNameWithAffix}}의\n대타는 사라져 버렸다..."
+  "substituteOnRemove": "{{pokemonNameWithAffix}}의\n대타는 사라져 버렸다...",
+  "tormentOnAdd": "{{pokemonNameWithAffix}} was subjected to torment!",
+  "tauntOnAdd": "{{pokemonNameWithAffix}} fell for the taunt!",
+  "imprisonOnAdd": "{{pokemonNameWithAffix}} sealed the opponents move(s)!",
+  "autotomizeOnAdd": "{{pokemonNameWithAffix}} became nimble!"
 }
