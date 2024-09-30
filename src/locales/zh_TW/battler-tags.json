@@ -74,5 +74,9 @@
   "shedTailOnAdd": "{{pokemonNameWithAffix}}\n截斷尾巴，把它做成了替身！",
   "substituteOnAdd": "{{pokemonNameWithAffix}}的\n替身出現了！",
   "substituteOnHit": "替身代替{{pokemonNameWithAffix}}承受了攻擊！",
-  "substituteOnRemove": "{{pokemonNameWithAffix}}的\n替身消失了……"
+  "substituteOnRemove": "{{pokemonNameWithAffix}}的\n替身消失了……",
+  "tormentOnAdd": "{{pokemonNameWithAffix}} was subjected to torment!",
+  "tauntOnAdd": "{{pokemonNameWithAffix}} fell for the taunt!",
+  "imprisonOnAdd": "{{pokemonNameWithAffix}} sealed the opponents move(s)!",
+  "autotomizeOnAdd": "{{pokemonNameWithAffix}} became nimble!"
 }
