@@ -76,6 +76,6 @@
   "substituteOnHit": "Der Delegator steckt den Schlag für {{pokemonNameWithAffix}} ein!",
   "substituteOnRemove": "Der Delegator von {{pokemonNameWithAffix}} hört auf zu wirken!",
   "autotomizeOnAdd": "{{pokemonNameWithAffix}} ist leichter geworden!",
-  "syrupBombOnAdd": "{{pokemonNameWithAffix}} got covered in sticky, candy syrup!",
+  "syrupBombOnAdd": "{{pokemonNameWithAffix}} got covered in sticky candy syrup!",
   "syrupBombLapse": "The sticky syrup slowed down {{pokemonNameWithAffix}}!"
 }
