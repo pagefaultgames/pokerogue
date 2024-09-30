@@ -76,5 +76,5 @@
   "substituteOnHit": "Le clone subit les dégâts à la place\nde {{pokemonNameWithAffix}} !",
   "substituteOnRemove": "Le clone de {{pokemonNameWithAffix}}\ndisparait…",
   "syrupBombOnAdd": "{{pokemonNameWithAffix}} est recouvert\nde sirop !",
-  "syrupBombLapse": "Le sirop baisse la vitesse\nde {{pokemonNameWithAffix}} !"
+  "syrupBombLapse": "Le sirop baisse la Vitesse\nde {{pokemonNameWithAffix}} !"
 }
