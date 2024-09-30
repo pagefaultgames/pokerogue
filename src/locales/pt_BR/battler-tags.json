@@ -73,5 +73,9 @@
   "tarShotOnAdd": "{{pokemonNameWithAffix}} tornou-se mais fraco ao fogo!",
   "substituteOnAdd": "{{pokemonNameWithAffix}} colocou um substituto!",
   "substituteOnHit": "O substituto tomou o dano pelo {{pokemonNameWithAffix}}!",
-  "substituteOnRemove": "O substituto de {{pokemonNameWithAffix}} desbotou!"
+  "substituteOnRemove": "O substituto de {{pokemonNameWithAffix}} desbotou!",
+  "tormentOnAdd": "{{pokemonNameWithAffix}} was subjected to torment!",
+  "tauntOnAdd": "{{pokemonNameWithAffix}} fell for the taunt!",
+  "imprisonOnAdd": "{{pokemonNameWithAffix}} sealed the opponents move(s)!",
+  "autotomizeOnAdd": "{{pokemonNameWithAffix}} became nimble!"
 }
