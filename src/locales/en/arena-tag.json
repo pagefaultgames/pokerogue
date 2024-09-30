@@ -53,5 +53,8 @@
   "safeguardOnAddEnemy": "The opposing team cloaked itself in a mystical veil!",
   "safeguardOnRemove": "The field is no longer protected by Safeguard!",
   "safeguardOnRemovePlayer": "Your team is no longer protected by Safeguard!",
-  "safeguardOnRemoveEnemy": "The opposing team is no longer protected by Safeguard!"
+  "safeguardOnRemoveEnemy": "The opposing team is no longer protected by Safeguard!",
+  "fireGrassPledgeOnAddPlayer": "A sea of fire enveloped your team!",
+  "fireGrassPledgeOnAddEnemy": "A sea of fire enveloped the opposing team!",
+  "fireGrassPledgeLapse": "{{pokemonNameWithAffix}} was hurt by the sea of fire!"
 }

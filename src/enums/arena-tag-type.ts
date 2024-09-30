@@ -25,4 +25,5 @@ export enum ArenaTagType {
   SAFEGUARD = "SAFEGUARD",
   NO_CRIT = "NO_CRIT",
   IMPRISON = "IMPRISON",
+  FIRE_GRASS_PLEDGE = "FIRE_GRASS_PLEDGE",
 }

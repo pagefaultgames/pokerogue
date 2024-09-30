@@ -19,6 +19,7 @@ import { MoveEffectPhase } from "#app/phases/move-effect-phase";
 import { PokemonHealPhase } from "#app/phases/pokemon-heal-phase";
 import { ShowAbilityPhase } from "#app/phases/show-ability-phase";
 import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
+import { CommonAnimPhase } from "#app/phases/common-anim-phase";
 
 export enum ArenaTagSide {
   BOTH,
@@ -992,6 +993,40 @@ class ImprisonTag extends ArenaTrapTag {
   }
 }
 
+/**
+ * Arena Tag implementing the "sea of fire" effect from the combination
+ * of {@link https://bulbapedia.bulbagarden.net/wiki/Fire_Pledge_(move) | Fire Pledge}
+ * and {@link https://bulbapedia.bulbagarden.net/wiki/Grass_Pledge_(move) | Grass Pledge}.
+ * Damages all non-Fire-type Pokemon on the given side of the field at the end
+ * of each turn for 4 turns.
+ */
+class FireGrassPledgeTag extends ArenaTag {
+  constructor(sourceId: number, side: ArenaTagSide) {
+    super(ArenaTagType.FIRE_GRASS_PLEDGE, 4, Moves.FIRE_PLEDGE, sourceId, side);
+  }
+
+  override onAdd(arena: Arena): void {
+    // "A sea of fire enveloped your/the opposing team!"
+    arena.scene.queueMessage(i18next.t(`arenaTag:fireGrassPledgeOnAdd${this.side === ArenaTagSide.PLAYER ? "Player" : this.side === ArenaTagSide.ENEMY ? "Enemy" : ""}`));
+  }
+
+  override lapse(arena: Arena): boolean {
+    const field: Pokemon[] = (this.side === ArenaTagSide.PLAYER)
+      ? arena.scene.getPlayerField()
+      : arena.scene.getEnemyField();
+
+    field.filter(pokemon => !pokemon.isOfType(Type.FIRE)).forEach(pokemon => {
+      // "{pokemonNameWithAffix} was hurt by the sea of fire!"
+      pokemon.scene.queueMessage(i18next.t("arenaTag:fireGrassPledgeLapse", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }));
+      // TODO: Replace this with a proper animation
+      pokemon.scene.unshiftPhase(new CommonAnimPhase(pokemon.scene, pokemon.getBattlerIndex(), pokemon.getBattlerIndex(), CommonAnim.MAGMA_STORM));
+      pokemon.damageAndUpdate(Utils.toDmgValue(pokemon.getMaxHp() / 8));
+    });
+
+    return super.lapse(arena);
+  }
+}
+
 export function getArenaTag(tagType: ArenaTagType, turnCount: integer, sourceMove: Moves | undefined, sourceId: integer, targetIndex?: BattlerIndex, side: ArenaTagSide = ArenaTagSide.BOTH): ArenaTag | null {
   switch (tagType) {
   case ArenaTagType.MIST:
@@ -1041,6 +1076,8 @@ export function getArenaTag(tagType: ArenaTagType, turnCount: integer, sourceMov
     return new SafeguardTag(turnCount, sourceId, side);
   case ArenaTagType.IMPRISON:
     return new ImprisonTag(sourceId, side);
+  case ArenaTagType.FIRE_GRASS_PLEDGE:
+    return new FireGrassPledgeTag(sourceId, side);
   default:
     return null;
   }

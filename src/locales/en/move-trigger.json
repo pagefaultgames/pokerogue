@@ -71,5 +71,7 @@
   "safeguard": "{{targetName}} is protected by Safeguard!",
   "substituteOnOverlap": "{{pokemonName}} already\nhas a substitute!",
   "substituteNotEnoughHp": "But it does not have enough HP\nleft to make a substitute!",
-  "afterYou": "{{pokemonName}} took the kind offer!"
+  "afterYou": "{{pokemonName}} took the kind offer!",
+  "combiningPledge": "The two moves have become one!\nIt's a combined move!",
+  "awaitingPledge": "{{userPokemonName}} is waiting for {{allyPokemonName}}'s move..."
 }
