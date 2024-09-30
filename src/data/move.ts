@@ -341,7 +341,8 @@ export default class Move implements Localizable {
    * @returns `true` if the move can bypass the target's Substitute; `false` otherwise.
    */
   hitsSubstitute(user: Pokemon, target: Pokemon | null): boolean {
-    if (this.moveTarget === MoveTarget.USER || !target?.getTag(BattlerTagType.SUBSTITUTE)) {
+    if ([MoveTarget.USER, MoveTarget.USER_SIDE, MoveTarget.ENEMY_SIDE, MoveTarget.BOTH_SIDES].includes(this.moveTarget)
+        || !target?.getTag(BattlerTagType.SUBSTITUTE)) {
       return false;
     }
 
