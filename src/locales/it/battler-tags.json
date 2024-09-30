@@ -74,5 +74,7 @@
   "shedTailOnAdd": "{{pokemonNameWithAffix}} si taglia\nla coda e ne fa un sostituto!",
   "substituteOnAdd": "Appare un sostituto di {{pokemonNameWithAffix}}!",
   "substituteOnHit": "Il sostituto viene colpito al posto di {{pokemonNameWithAffix}}!",
-  "substituteOnRemove": "Il sostituto di {{pokemonNameWithAffix}} svanisce!"
+  "substituteOnRemove": "Il sostituto di {{pokemonNameWithAffix}} svanisce!",
+  "syrupBombOnAdd": "{{pokemonNameWithAffix}} got covered in sticky, candy syrup!",
+  "syrupBombLapse": "The sticky syrup slowed down {{pokemonNameWithAffix}}!"
 }
