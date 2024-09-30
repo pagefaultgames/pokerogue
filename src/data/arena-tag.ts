@@ -1027,6 +1027,47 @@ class FireGrassPledgeTag extends ArenaTag {
   }
 }
 
+/**
+ * Arena Tag implementing the "rainbow" effect from the combination
+ * of {@link https://bulbapedia.bulbagarden.net/wiki/Water_Pledge_(move) | Water Pledge}
+ * and {@link https://bulbapedia.bulbagarden.net/wiki/Fire_Pledge_(move) | Fire Pledge}.
+ * Doubles the secondary effect chance of moves from Pokemon on the
+ * given side of the field for 4 turns.
+ */
+class WaterFirePledgeTag extends ArenaTag {
+  constructor(sourceId: number, side: ArenaTagSide) {
+    super(ArenaTagType.WATER_FIRE_PLEDGE, 4, Moves.WATER_PLEDGE, sourceId, side);
+  }
+
+  override onAdd(arena: Arena): void {
+    // "A rainbow appeared in the sky on your/the opposing team's side!"
+    arena.scene.queueMessage(i18next.t(`arenaTag:waterFirePledgeOnAdd${this.side === ArenaTagSide.PLAYER ? "Player" : this.side === ArenaTagSide.ENEMY ? "Enemy" : ""}`));
+  }
+
+  override apply(arena: Arena, args: any[]): boolean {
+    const moveChance = args[0] as Utils.NumberHolder;
+    moveChance.value *= 2;
+    return true;
+  }
+}
+
+/**
+ * Arena Tag implementing the "swamp" effect from the combination
+ * of {@link https://bulbapedia.bulbagarden.net/wiki/Grass_Pledge_(move) | Grass Pledge}
+ * and {@link https://bulbapedia.bulbagarden.net/wiki/Water_Pledge_(move) | Water Pledge}.
+ * Quarters the Speed of Pokemon on the given side of the field for 4 turns.
+ */
+class GrassWaterPledgeTag extends ArenaTag {
+  constructor(sourceId: number, side: ArenaTagSide) {
+    super(ArenaTagType.GRASS_WATER_PLEDGE, 4, Moves.GRASS_PLEDGE, sourceId, side);
+  }
+
+  override onAdd(arena: Arena): void {
+    // "A swamp enveloped your/the opposing team!"
+    arena.scene.queueMessage(i18next.t(`arenaTag:grassWaterPledgeOnAdd${this.side === ArenaTagSide.PLAYER ? "Player" : this.side === ArenaTagSide.ENEMY ? "Enemy" : ""}`));
+  }
+}
+
 export function getArenaTag(tagType: ArenaTagType, turnCount: integer, sourceMove: Moves | undefined, sourceId: integer, targetIndex?: BattlerIndex, side: ArenaTagSide = ArenaTagSide.BOTH): ArenaTag | null {
   switch (tagType) {
   case ArenaTagType.MIST:
@@ -1078,6 +1119,10 @@ export function getArenaTag(tagType: ArenaTagType, turnCount: integer, sourceMov
     return new ImprisonTag(sourceId, side);
   case ArenaTagType.FIRE_GRASS_PLEDGE:
     return new FireGrassPledgeTag(sourceId, side);
+  case ArenaTagType.WATER_FIRE_PLEDGE:
+    return new WaterFirePledgeTag(sourceId, side);
+  case ArenaTagType.GRASS_WATER_PLEDGE:
+    return new GrassWaterPledgeTag(sourceId, side);
   default:
     return null;
   }
