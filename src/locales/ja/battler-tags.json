@@ -71,5 +71,7 @@
   "disabledOnAdd": "{{pokemonNameWithAffix}}の\n{{moveName}}\nを　封じこめた！",
   "disabledLapse": "{{pokemonNameWithAffix}}の\nかなしばりが　解けた！",
   "tarShotOnAdd": "{{pokemonNameWithAffix}}は　ほのおに　弱くなった！",
-  "shedTailOnAdd": "{{pokemonNameWithAffix}}は\nしっぽを　切って　みがわりにした！"
+  "shedTailOnAdd": "{{pokemonNameWithAffix}}は\nしっぽを　切って　みがわりにした！",
+  "syrupBombOnAdd": "{{pokemonNameWithAffix}} got covered in sticky, candy syrup!",
+  "syrupBombLapse": "The sticky syrup slowed down {{pokemonNameWithAffix}}!"
 }
