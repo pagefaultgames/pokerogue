@@ -73,5 +73,5 @@
   "substituteNotEnoughHp": "Es ist zu schwach, um einen Delegator einzusetzen!",
   "afterYou": "{{targetName}} lässt sich auf Galanterie ein!",
   "combiningPledge": "Zwei Attacken bilden zusammen eine Kombi-Attacke!",
-  "awaitingPledge": "{{userPokemonName}} is waiting for {{allyPokemonName}}'s move..."
+  "awaitingPledge": "{{userPokemonName}} wartet auf {{allyPokemonName}}..."
 }
