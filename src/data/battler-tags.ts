@@ -2123,7 +2123,36 @@ export class StockpilingTag extends BattlerTag {
  */
 export class GulpMissileTag extends BattlerTag {
   constructor(tagType: BattlerTagType, sourceMove: Moves) {
-    super(tagType, BattlerTagLapseType.CUSTOM, 0, sourceMove);
+    super(tagType, BattlerTagLapseType.HIT, 0, sourceMove);
+  }
+
+  override lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
+    if (pokemon.getTag(BattlerTagType.UNDERWATER)) {
+      return true;
+    }
+
+    const moveEffectPhase = pokemon.scene.getCurrentPhase();
+    if (moveEffectPhase instanceof MoveEffectPhase) {
+      const attacker = moveEffectPhase.getUserPokemon();
+
+      if (!attacker) {
+        return false;
+      }
+
+      const cancelled = new Utils.BooleanHolder(false);
+      applyAbAttrs(BlockNonDirectDamageAbAttr, attacker, cancelled);
+
+      if (!cancelled.value) {
+        attacker.damageAndUpdate(Math.max(1, Math.floor(attacker.getMaxHp() / 4)), HitResult.OTHER);
+      }
+
+      if (this.tagType === BattlerTagType.GULP_MISSILE_ARROKUDA) {
+        pokemon.scene.unshiftPhase(new StatStageChangePhase(pokemon.scene, attacker.getBattlerIndex(), false, [ Stat.DEF ], -1));
+      } else {
+        attacker.trySetStatus(StatusEffect.PARALYSIS, true, pokemon);
+      }
+    }
+    return false;
   }
 
   /**
