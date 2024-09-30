@@ -28,6 +28,7 @@
   "mudSportOnRemove": "흙놀이의 효과가\n없어졌다!",
   "waterSportOnAdd": "불꽃의 위력이 약해졌다!",
   "waterSportOnRemove": "물놀이의 효과가\n없어졌다!",
+  "plasmaFistsOnAdd": "전기 입자가 쏟아졌다!",
   "spikesOnAdd": "{{opponentDesc}}의 발밑에\n압정이 뿌려졌다!",
   "spikesActivateTrap": "{{pokemonNameWithAffix}}[[는]]\n압정뿌리기의 데미지를 입었다!",
   "toxicSpikesOnAdd": "{{opponentDesc}}의 발밑에\n독압정이 뿌려졌다!",

@@ -303,7 +303,7 @@ export default class GameManager {
 
     vi.spyOn(enemy, "getNextMove").mockReturnValueOnce({
       move: moveId,
-      targets: (target && !legalTargets.multiple && legalTargets.targets.includes(target))
+      targets: (target !== undefined && !legalTargets.multiple && legalTargets.targets.includes(target))
         ? [target]
         : enemy.getNextTargets(moveId)
     });

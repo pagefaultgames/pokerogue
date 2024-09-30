@@ -3,7 +3,7 @@
 {
   "intro": "一伙{{delibirdName}}出现了！",
   "title": "信使鸟快递",
-  "description": "{{delibirdName}}满怀期待地看着你，\n它们好像想要什么东西。\n\n也许给它们一件道具或一些钱能让它们满意？",
+  "description": "{{delibirdName}}满怀期待地看着你，\n它们好像想要什么东西。\n\n给它们一件道具或一些钱的话\n会不会让它们满意呢？",
   "query": "你要给它们什么？",
   "invalid_selection": "宝可梦身上并没有那种道具。",
   "option": {
