@@ -269,7 +269,7 @@ export default class RunInfoUiHandler extends UiHandler {
         break;
       }
     } else if (this.runInfo.battleType === BattleType.TRAINER) {
-      this.loadTrainerSprites(enemyContainer);
+      this.showTrainerSprites(enemyContainer);
       const row_limit = 3;
       this.runInfo.enemyParty.forEach((p, i) => {
         const pokeball = this.scene.add.sprite(0, 0, "pb");
@@ -367,7 +367,7 @@ export default class RunInfoUiHandler extends UiHandler {
    * Used by parseRunStatus and parseTrainerDefeat
    * @param {Phaser.GameObjects.Container} enemyContainer a Phaser Container that should hold enemy sprites
    */
-  private loadTrainerSprites(enemyContainer: Phaser.GameObjects.Container) {
+  private showTrainerSprites(enemyContainer: Phaser.GameObjects.Container) {
     // Creating the trainer sprite and adding it to enemyContainer
     const tObj = this.runInfo.trainer.toTrainer(this.scene);
     // Loads trainer assets on demand, as they are not loaded by default in the scene
@@ -413,8 +413,8 @@ export default class RunInfoUiHandler extends UiHandler {
    * Party Pokemon have their icons, terastalization status, and level shown.
    */
   private parseTrainerDefeat(enemyContainer: Phaser.GameObjects.Container) {
-    // Load trainer sprites
-    this.loadTrainerSprites(enemyContainer);
+    // Loads and adds trainer sprites to the UI
+    this.showTrainerSprites(enemyContainer);
     // Determining which Terastallize Modifier belongs to which Pokemon
     // Creates a dictionary {PokemonId: TeraShardType}
     const teraPokemon = {};

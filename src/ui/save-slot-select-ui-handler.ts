@@ -153,24 +153,19 @@ export default class SaveSlotSelectUiHandler extends MessageUiHandler {
       switch (button) {
       case Button.UP:
         if (this.scrollCursor === 0 && this.cursor === 2) {
-          this.revertSessionSlot(this.cursor);
-          success = this.setScrollCursor(this.scrollCursor);
+          success = this.setScrollCursor(this.scrollCursor, this.cursor);
           success = this.setCursor(this.cursor-1);
         } else if (this.cursor < 2) {
-          this.revertSessionSlot(this.cursor);
-          success = (this.cursor === 0) ? this.setCursor(this.cursor) : this.setCursor(this.cursor - 1);
+          success = (this.cursor === 0) ? this.setCursor(this.cursor) : this.setCursor(this.cursor - 1, this.cursor);
         } else if (this.scrollCursor) {
-          this.revertSessionSlot(this.scrollCursor + this.cursor);
-          success = this.setScrollCursor(this.scrollCursor - 1);
+          success = this.setScrollCursor(this.scrollCursor - 1, this.scrollCursor + this.cursor);
         }
         break;
       case Button.DOWN:
         if (this.cursor < 2) {
-          this.revertSessionSlot(this.cursor);
-          success = this.setCursor(this.cursor + 1);
+          success = this.setCursor(this.cursor + 1, this.cursor);
         } else if (this.scrollCursor < sessionSlotCount - 3) {
-          this.revertSessionSlot(this.scrollCursor + this.cursor);
-          success = this.setScrollCursor(this.scrollCursor + 1);
+          success = this.setScrollCursor(this.scrollCursor + 1, this.scrollCursor + this.cursor);
         }
         break;
       case Button.RIGHT:
@@ -213,14 +208,13 @@ export default class SaveSlotSelectUiHandler extends MessageUiHandler {
     this.saveSlotSelectMessageBoxContainer.setVisible(!!text?.length);
   }
 
-  revertSessionSlot(cursor: integer): void {
-    const sessionSlot = this.sessionSlots[cursor];
-    if (sessionSlot) {
-      sessionSlot.setPosition(0, cursor * 56);
-    }
-  }
-
-  setCursor(cursor: integer): boolean {
+  /**
+   * setCursor takes user navigation as an input and positions the cursor accordingly
+   * @param cursor the index provided to the cursor
+   * @param prevCursor the previous index occupied by the cursor - optional
+   * @returns `true` if the cursor position has changed | `false` if it has not
+   */
+  override setCursor(cursor: integer, prevCursor?: integer): boolean {
     const changed = super.setCursor(cursor);
 
     if (!this.cursorObj) {
@@ -236,6 +230,8 @@ export default class SaveSlotSelectUiHandler extends MessageUiHandler {
     const cursorIncrement = cursorPosition * 56;
     if (this.sessionSlots[cursorPosition] && this.cursorObj) {
       const hasData = this.sessionSlots[cursorPosition].hasData;
+      // If the session slot lacks session data, it does not move from its default, central position.
+      // Only session slots with session data will move leftwards and have a visible arrow.
       if (!hasData) {
         this.cursorObj.setPosition(151, 26 + cursorIncrement);
         this.sessionSlots[cursorPosition].setPosition(0, cursorIncrement);
@@ -245,26 +241,41 @@ export default class SaveSlotSelectUiHandler extends MessageUiHandler {
       }
       this.setArrowVisibility(hasData);
     }
+    if (!Utils.isNullOrUndefined(prevCursor)) {
+      this.revertSessionSlot(prevCursor);
+    }
+
     return changed;
+  }
+
+  /**
+   * Helper function that resets the session slot position to its default central position
+   * @param prevCursor the previous location of the cursor
+   */
+  revertSessionSlot(prevCursor: integer): void {
+    const sessionSlot = this.sessionSlots[prevCursor];
+    if (sessionSlot) {
+      sessionSlot.setPosition(0, prevCursor * 56);
+    }
   }
 
   /**
    * Helper function that checks if the session slot involved holds data or not
    * @param hasData `true` if session slot contains data | 'false' if not
    */
-  setArrowVisibility(hasData: boolean) {
+  setArrowVisibility(hasData: boolean): void {
     if (this.cursorObj) {
       const rightArrow = this.cursorObj?.getByName("rightArrow") as Phaser.GameObjects.Image;
       rightArrow.setVisible(hasData);
     }
   }
 
-  setScrollCursor(scrollCursor: integer): boolean {
+  setScrollCursor(scrollCursor: integer, priorCursor?: integer): boolean {
     const changed = scrollCursor !== this.scrollCursor;
 
     if (changed) {
       this.scrollCursor = scrollCursor;
-      this.setCursor(this.cursor);
+      this.setCursor(this.cursor, priorCursor);
       this.scene.tweens.add({
         targets: this.sessionSlotsContainer,
         y: this.sessionSlotsContainerInitialY - 56 * scrollCursor,
