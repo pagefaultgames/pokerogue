@@ -84,15 +84,19 @@ export default class SaveSlotSelectUiHandler extends MessageUiHandler {
     this.saveSlotSelectCallback = args[1] as SaveSlotSelectCallback;
 
     this.saveSlotSelectContainer.setVisible(true);
-    this.populateSessionSlots();
-    this.setScrollCursor(0);
-    this.setCursor(0);
+    this.populateSessionSlots()
+      .then(() => {
+        this.setScrollCursor(0);
+        this.setCursor(0);
+      });
 
     return true;
   }
 
   processInput(button: Button): boolean {
     const ui = this.getUi();
+
+
 
     let success = false;
     let error = false;
@@ -150,18 +154,14 @@ export default class SaveSlotSelectUiHandler extends MessageUiHandler {
     } else {
       switch (button) {
       case Button.UP:
-        if (this.cursor < 2) {
-          this.revertSessionSlot(this.cursor);
-          if (this.cursor === 0) {
-            success = this.setCursor(this.cursor);
-          } else {
-            success = this.setCursor(this.cursor - 1);
-          }
-        } else if (this.scrollCursor === 0 && this.cursor === 2) {
+        if (this.scrollCursor === 0 && this.cursor === 2) {
           this.revertSessionSlot(this.cursor);
           success = this.setScrollCursor(this.scrollCursor);
           success = this.setCursor(this.cursor-1);
-        } else if (this.scrollCursor > 0) {
+        } else if (this.cursor < 2) {
+          this.revertSessionSlot(this.cursor);
+          success = (this.cursor === 0) ? this.setCursor(this.cursor) : this.setCursor(this.cursor - 1);
+        } else if (this.scrollCursor) {
           this.revertSessionSlot(this.scrollCursor + this.cursor);
           success = this.setScrollCursor(this.scrollCursor - 1);
         }
@@ -191,10 +191,10 @@ export default class SaveSlotSelectUiHandler extends MessageUiHandler {
     return success || error;
   }
 
-  populateSessionSlots() {
+  async populateSessionSlots() {
     for (let s = 0; s < sessionSlotCount; s++) {
       const sessionSlot = new SessionSlot(this.scene, s);
-      sessionSlot.load();
+      await sessionSlot.load();
       this.scene.add.existing(sessionSlot);
       this.sessionSlotsContainer.add(sessionSlot);
       this.sessionSlots.push(sessionSlot);
@@ -230,14 +230,31 @@ export default class SaveSlotSelectUiHandler extends MessageUiHandler {
       const cursorBox = this.scene.add.nineslice(0, 0, "select_cursor_highlight_thick", undefined, 296, 44, 6, 6, 6, 6);
       const rightArrow = this.scene.add.image(0, 0, "cursor");
       rightArrow.setPosition(160, 0);
+      rightArrow.setName("rightArrow");
       this.cursorObj.add([cursorBox, rightArrow]);
       this.sessionSlotsContainer.add(this.cursorObj);
     }
     const cursorPosition = cursor + this.scrollCursor;
-    this.cursorObj.setPosition(145, 26 + (cursorPosition) * 56);
-    this.sessionSlots[cursorPosition].setPosition(-6, (cursor + this.scrollCursor) * 56);
-
+    const cursorIncrement = cursorPosition * 56;
+    if (this.sessionSlots[cursorPosition] && this.cursorObj) {
+      const hasData = this.sessionSlots[cursorPosition].hasData;
+      if (!hasData) {
+        this.cursorObj.setPosition(151, 26 + cursorIncrement);
+        this.sessionSlots[cursorPosition].setPosition(0, cursorIncrement);
+      } else {
+        this.cursorObj.setPosition(145, 26 + cursorIncrement);
+        this.sessionSlots[cursorPosition].setPosition(-6, cursorIncrement);
+      }
+      this.setArrowVisibility(hasData);
+    }
     return changed;
+  }
+
+  setArrowVisibility(hasData: boolean) {
+    if (this.cursorObj) {
+      const rightArrow = this.cursorObj?.getByName("rightArrow") as Phaser.GameObjects.Image;
+      rightArrow.setVisible(hasData);
+    }
   }
 
   setScrollCursor(scrollCursor: integer): boolean {
