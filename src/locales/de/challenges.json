@@ -33,5 +33,12 @@
     "desc": "Die Typen-Effektivität wird umgekehrt, und kein Typ ist gegen einen anderen Typ immun.\nDeaktiviert die Erfolge anderer Herausforderungen.",
     "value.0": "Aus",
     "value.1": "An"
+  },
+  "trickRoom": {
+    "name": "Trick Room",
+    "shortName": "Trick Room",
+    "desc": "All battles are under the effect of Trick Room, where slower Pokémon move sooner and faster Pokémon move later.\nDisables other challenges' achievements.",
+    "value.0": "Off",
+    "value.1": "On"
   }
 }
