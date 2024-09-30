@@ -34,10 +34,10 @@
     "value.1": "开启"
   },
   "trickRoom": {
-    "name": "Trick Room",
-    "shortName": "Trick Room",
-    "desc": "All battles are under the effect of Trick Room, where slower Pokémon move sooner and faster Pokémon move later.\nDisables other challenges' achievements.",
-    "value.0": "Off",
-    "value.1": "On"
+    "name": "戏法空间",
+    "shortName": "戏法空间",
+    "desc": "所有战斗受到戏法空间影响\n速度更慢的宝可梦会先行动\n使其他的挑战无效。",
+    "value.0": "开启",
+    "value.1": "关闭"
   }
 }
