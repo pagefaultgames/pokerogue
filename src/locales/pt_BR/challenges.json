@@ -35,10 +35,10 @@
     "value.1": "Ligado"
   },
   "trickRoom": {
-    "name": "Trick Room",
-    "shortName": "Trick Room",
-    "desc": "All battles are under the effect of Trick Room, where slower Pokémon move sooner and faster Pokémon move later.\nDisables other challenges' achievements.",
-    "value.0": "Off",
-    "value.1": "On"
+    "name": "Sala de Truques",
+    "shortName": "Sala de Truques",
+    "desc": "Todas as batalhas estão sob o efeito de Trick Room, onde Pokémon mais lentos atacam primeiro e Pokémon mais rápidos atacam depois.\nDesativa as conquistas de outros desafios.",
+    "value.0": "Desligado",
+    "value.1": "Ligado"
   }
 }
