@@ -931,7 +931,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         ret *= 2;
       }
       if (this.scene.arena.getTagOnSide(ArenaTagType.GRASS_WATER_PLEDGE, side)) {
-        ret /= 4;
+        ret >>= 2;
       }
 
       if (this.getTag(BattlerTagType.SLOW_START)) {
