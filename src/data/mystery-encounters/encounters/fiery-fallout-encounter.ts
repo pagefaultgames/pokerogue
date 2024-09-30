@@ -46,6 +46,7 @@ export const FieryFalloutEncounter: MysteryEncounter =
     .withIntroSpriteConfigs([]) // Set in onInit()
     .withAnimations(EncounterAnim.MAGMA_BG, EncounterAnim.MAGMA_SPOUT)
     .withAutoHideIntroVisuals(false)
+    .withFleeAllowed(false)
     .withIntroDialogue([
       {
         text: `${namespace}:intro`,

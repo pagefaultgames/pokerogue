@@ -70,7 +70,7 @@ export const AnOfferYouCantRefuseEncounter: MysteryEncounter =
       const encounter = scene.currentBattle.mysteryEncounter!;
       const pokemon = getHighestStatTotalPlayerPokemon(scene, true, true);
 
-      const baseSpecies = pokemon.getSpeciesForm().getRootSpeciesId(true);
+      const baseSpecies = pokemon.getSpeciesForm().getRootSpeciesId();
       const starterValue: number = speciesStarters[baseSpecies] ?? 1;
       const multiplier = Math.max(MONEY_MAXIMUM_MULTIPLIER / 10 * starterValue, MONEY_MINIMUM_MULTIPLIER);
       const price = scene.getWaveMoneyAmount(multiplier);

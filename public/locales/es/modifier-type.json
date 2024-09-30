@@ -358,6 +358,10 @@
       "name": "Llamasfera",
       "description": "Extraña esfera que causa quemaduras a quien la usa en combate."
     },
+    "EVOLUTION_TRACKER_GIMMIGHOUL": {
+      "name": "Tesoros",
+      "description": "¡A este Pokémon le encantan los tesoros! ¡Sigue coleccionandólos y tal vez pase algo!"
+    },
     "BATON": {
       "name": "Testigo",
       "description": "Permite pasar los efectos al cambiar de Pokémon, también evita las trampas."
@@ -495,6 +499,22 @@
     "TART_APPLE": "Manzana ácida",
     "STRAWBERRY_SWEET": "Confite fresa",
     "UNREMARKABLE_TEACUP": "Cuenco mediocre",
+    "UPGRADE": "Mejora",
+    "DUBIOUS_DISC": "Disco Extraño",
+    "DRAGON_SCALE": "Escama Dragón",
+    "PRISM_SCALE": "Escama Bella",
+    "RAZOR_CLAW": "Garra Afilada",
+    "RAZOR_FANG": "Colmillo Agudo",
+    "REAPER_CLOTH": "Tela Terrible",
+    "ELECTIRIZER": "Electrizador",
+    "MAGMARIZER": "Magmatizador",
+    "PROTECTOR": "Protector",
+    "SACHET": "Saquito Fragante",
+    "WHIPPED_DREAM": "Dulce de Nata",
+    "LEADERS_CREST": "Distintivo de Líder",
+    "SUN_FLUTE": "Flauta Solar",
+    "MOON_FLUTE": "Flauta Lunar",
+
     "CHIPPED_POT": "Tetera rota",
     "BLACK_AUGURITE": "Mineral negro",
     "GALARICA_CUFF": "Brazal galanuez",

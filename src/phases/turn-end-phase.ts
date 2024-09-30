@@ -44,6 +44,7 @@ export class TurnEndPhase extends FieldPhase {
       this.scene.applyModifiers(TurnHeldItemTransferModifier, pokemon.isPlayer(), pokemon);
 
       pokemon.battleSummonData.turnCount++;
+      pokemon.battleSummonData.waveTurnCount++;
     };
 
     this.executeForAll(handlePokemon);

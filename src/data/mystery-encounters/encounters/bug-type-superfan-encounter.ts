@@ -49,6 +49,7 @@ import MoveInfoOverlay from "#app/ui/move-info-overlay";
 import { allMoves } from "#app/data/move";
 import { ModifierTier } from "#app/modifier/modifier-tier";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
+import { getSpriteKeysFromSpecies } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
 
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounters/bugTypeSuperfan";
@@ -178,8 +179,13 @@ const MISC_TUTOR_MOVES = [
 ];
 
 /**
+ * Wave breakpoints that determine how strong to make the Bug-Type Superfan's team
+ */
+const WAVE_LEVEL_BREAKPOINTS = [30, 50, 70, 100, 120, 140, 160];
+
+/**
  * Bug Type Superfan encounter.
- * @see {@link https://github.com/pagefaultgames/pokerogue/issues/3810 | GitHub Issue #3810}
+ * @see {@link https://github.com/pagefaultgames/pokerogue/issues/3820 | GitHub Issue #3820}
  * @see For biome requirements check {@linkcode mysteryEncountersByBiome}
  */
 export const BugTypeSuperfanEncounter: MysteryEncounter =
@@ -216,11 +222,46 @@ export const BugTypeSuperfanEncounter: MysteryEncounter =
         female: true,
       });
 
+      let beedrillKeys: { spriteKey: string, fileRoot: string }, butterfreeKeys: { spriteKey: string, fileRoot: string };
+      if (scene.currentBattle.waveIndex < WAVE_LEVEL_BREAKPOINTS[3]) {
+        beedrillKeys = getSpriteKeysFromSpecies(Species.BEEDRILL, false);
+        butterfreeKeys = getSpriteKeysFromSpecies(Species.BUTTERFREE, false);
+      } else {
+        // Mega Beedrill/Gmax Butterfree
+        beedrillKeys = getSpriteKeysFromSpecies(Species.BEEDRILL, false, 1);
+        butterfreeKeys = getSpriteKeysFromSpecies(Species.BUTTERFREE, false, 1);
+      }
+
       encounter.spriteConfigs = [
+        {
+          spriteKey: beedrillKeys.spriteKey,
+          fileRoot: beedrillKeys.fileRoot,
+          hasShadow: true,
+          repeat: true,
+          isPokemon: true,
+          x: -30,
+          tint: 0.15,
+          y: -4,
+          yShadow: -4
+        },
+        {
+          spriteKey: butterfreeKeys.spriteKey,
+          fileRoot: butterfreeKeys.fileRoot,
+          hasShadow: true,
+          repeat: true,
+          isPokemon: true,
+          x: 30,
+          tint: 0.15,
+          y: -4,
+          yShadow: -4
+        },
         {
           spriteKey: spriteKey,
           fileRoot: "trainer",
           hasShadow: true,
+          x: 4,
+          y: 7,
+          yShadow: 7
         },
       ];
 
@@ -329,6 +370,10 @@ export const BugTypeSuperfanEncounter: MysteryEncounter =
           const formChangeModifier = generateModifierTypeOption(scene, modifierTypes.FORM_CHANGE_ITEM);
           if (formChangeModifier) {
             specialOptions.push(formChangeModifier);
+          }
+          const rareFormChangeModifier = generateModifierTypeOption(scene, modifierTypes.RARE_FORM_CHANGE_ITEM);
+          if (rareFormChangeModifier) {
+            specialOptions.push(rareFormChangeModifier);
           }
           if (specialOptions.length > 0) {
             modifierOptions.push(specialOptions[randSeedInt(specialOptions.length)]);
@@ -445,29 +490,29 @@ function getTrainerConfigForWave(waveIndex: number) {
   const config = trainerConfigs[TrainerType.BUG_TYPE_SUPERFAN].clone();
   config.name = i18next.t("trainerNames:bug_type_superfan");
 
-  const pool3Copy = POOL_3_POKEMON.slice(0);
-  randSeedShuffle(pool3Copy);
+  let pool3Copy = POOL_3_POKEMON.slice(0);
+  pool3Copy = randSeedShuffle(pool3Copy);
   const pool3Mon = pool3Copy.pop()!;
 
-  if (waveIndex < 30) {
+  if (waveIndex < WAVE_LEVEL_BREAKPOINTS[0]) {
     // Use default template (2 AVG)
     config
       .setPartyMemberFunc(0, getRandomPartyMemberFunc([ Species.BEEDRILL ], TrainerSlot.TRAINER, true))
       .setPartyMemberFunc(1, getRandomPartyMemberFunc([ Species.BUTTERFREE ], TrainerSlot.TRAINER, true));
-  } else if (waveIndex < 50) {
+  } else if (waveIndex < WAVE_LEVEL_BREAKPOINTS[1]) {
     config
       .setPartyTemplates(new TrainerPartyTemplate(3, PartyMemberStrength.AVERAGE))
       .setPartyMemberFunc(0, getRandomPartyMemberFunc([ Species.BEEDRILL ], TrainerSlot.TRAINER, true))
       .setPartyMemberFunc(1, getRandomPartyMemberFunc([ Species.BUTTERFREE ], TrainerSlot.TRAINER, true))
       .setPartyMemberFunc(2, getRandomPartyMemberFunc(POOL_1_POKEMON, TrainerSlot.TRAINER, true));
-  } else if (waveIndex < 70) {
+  } else if (waveIndex < WAVE_LEVEL_BREAKPOINTS[2]) {
     config
       .setPartyTemplates(new TrainerPartyTemplate(4, PartyMemberStrength.AVERAGE))
       .setPartyMemberFunc(0, getRandomPartyMemberFunc([ Species.BEEDRILL ], TrainerSlot.TRAINER, true))
       .setPartyMemberFunc(1, getRandomPartyMemberFunc([ Species.BUTTERFREE ], TrainerSlot.TRAINER, true))
       .setPartyMemberFunc(2, getRandomPartyMemberFunc(POOL_1_POKEMON, TrainerSlot.TRAINER, true))
       .setPartyMemberFunc(3, getRandomPartyMemberFunc(POOL_2_POKEMON, TrainerSlot.TRAINER, true));
-  } else if (waveIndex < 100) {
+  } else if (waveIndex < WAVE_LEVEL_BREAKPOINTS[3]) {
     config
       .setPartyTemplates(new TrainerPartyTemplate(5, PartyMemberStrength.AVERAGE))
       .setPartyMemberFunc(0, getRandomPartyMemberFunc([ Species.BEEDRILL ], TrainerSlot.TRAINER, true))
@@ -475,7 +520,7 @@ function getTrainerConfigForWave(waveIndex: number) {
       .setPartyMemberFunc(2, getRandomPartyMemberFunc(POOL_1_POKEMON, TrainerSlot.TRAINER, true))
       .setPartyMemberFunc(3, getRandomPartyMemberFunc(POOL_2_POKEMON, TrainerSlot.TRAINER, true))
       .setPartyMemberFunc(4, getRandomPartyMemberFunc(POOL_2_POKEMON, TrainerSlot.TRAINER, true));
-  } else if (waveIndex < 120) {
+  } else if (waveIndex < WAVE_LEVEL_BREAKPOINTS[4]) {
     config
       .setPartyTemplates(new TrainerPartyTemplate(5, PartyMemberStrength.AVERAGE))
       .setPartyMemberFunc(0, getRandomPartyMemberFunc([ Species.BEEDRILL ], TrainerSlot.TRAINER, true, p => {
@@ -497,8 +542,8 @@ function getTrainerConfigForWave(waveIndex: number) {
           p.generateName();
         }
       }));
-  } else if (waveIndex < 140) {
-    randSeedShuffle(pool3Copy);
+  } else if (waveIndex < WAVE_LEVEL_BREAKPOINTS[5]) {
+    pool3Copy = randSeedShuffle(pool3Copy);
     const pool3Mon2 = pool3Copy.pop()!;
     config
       .setPartyTemplates(new TrainerPartyTemplate(5, PartyMemberStrength.AVERAGE))
@@ -527,7 +572,7 @@ function getTrainerConfigForWave(waveIndex: number) {
           p.generateName();
         }
       }));
-  } else if (waveIndex < 160) {
+  } else if (waveIndex < WAVE_LEVEL_BREAKPOINTS[6]) {
     config
       .setPartyTemplates(new TrainerPartyCompoundTemplate(new TrainerPartyTemplate(4, PartyMemberStrength.AVERAGE), new TrainerPartyTemplate(1, PartyMemberStrength.STRONG)))
       .setPartyMemberFunc(0, getRandomPartyMemberFunc([ Species.BEEDRILL ], TrainerSlot.TRAINER, true, p => {
@@ -550,6 +595,8 @@ function getTrainerConfigForWave(waveIndex: number) {
       }))
       .setPartyMemberFunc(4, getRandomPartyMemberFunc(POOL_4_POKEMON, TrainerSlot.TRAINER, true));
   } else {
+    pool3Copy = randSeedShuffle(pool3Copy);
+    const pool3Mon2 = pool3Copy.pop()!;
     config
       .setPartyTemplates(new TrainerPartyCompoundTemplate(new TrainerPartyTemplate(4, PartyMemberStrength.AVERAGE), new TrainerPartyTemplate(1, PartyMemberStrength.STRONG)))
       .setPartyMemberFunc(0, getRandomPartyMemberFunc([ Species.BEEDRILL ], TrainerSlot.TRAINER, true, p => {
@@ -571,9 +618,9 @@ function getTrainerConfigForWave(waveIndex: number) {
           p.generateName();
         }
       }))
-      .setPartyMemberFunc(3, getRandomPartyMemberFunc([pool3Mon.species], TrainerSlot.TRAINER, true, p => {
-        if (!isNullOrUndefined(pool3Mon.formIndex)) {
-          p.formIndex = pool3Mon.formIndex;
+      .setPartyMemberFunc(3, getRandomPartyMemberFunc([pool3Mon2.species], TrainerSlot.TRAINER, true, p => {
+        if (!isNullOrUndefined(pool3Mon2.formIndex)) {
+          p.formIndex = pool3Mon2.formIndex;
           p.generateAndPopulateMoveset();
           p.generateName();
         }
@@ -629,27 +676,7 @@ function doBugTypeMoveTutor(scene: BattleScene): Promise<void> {
       moveInfoOverlay.setVisible(false);
     }
 
-    // TODO: add menu to confirm player doesn't want to teach a move
-    // while (!result && !forceExit) {
-    //   // Didn't teach a move, ask the player to confirm they don't want to teach a move
-    //   await showEncounterDialogue(scene, `${namespace}:confirm_no_teach`, `${namespace}:speaker`);
-    //   const confirm = await new Promise<boolean>(confirmResolve => {
-    //     scene.ui.setMode(Mode.CONFIRM, () => confirmResolve(true), () => confirmResolve(false));
-    //   });
-    //   scene.ui.clearText();
-    //   await scene.ui.setMode(Mode.MESSAGE);
-    //   if (confirm) {
-    //     // No teach, break out of loop
-    //     forceExit = true;
-    //   } else {
-    //     // Re-show learn menu
-    //     result = await selectOptionThenPokemon(scene, optionSelectItems, `${namespace}:teach_move_prompt`, undefined, onHoverOverCancel);
-    //     if (!result) {
-    //       moveInfoOverlay.active = false;
-    //       moveInfoOverlay.setVisible(false);
-    //     }
-    //   }
-    // }
+    // TODO: add menu to confirm player doesn't want to teach a move?
 
     // Option select complete, handle if they are learning a move
     if (result && result.selectedOptionIndex < moveOptions.length) {

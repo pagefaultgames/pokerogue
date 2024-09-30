@@ -4,7 +4,7 @@ import { Constructor } from "#app/utils";
 import * as Utils from "../utils";
 import { getPokemonNameWithAffix } from "../messages";
 import { Weather, WeatherType } from "./weather";
-import { BattlerTag, GroundedTag, GulpMissileTag, SemiInvulnerableTag } from "./battler-tags";
+import { BattlerTag, GroundedTag } from "./battler-tags";
 import { StatusEffect, getNonVolatileStatusEffects, getStatusEffectDescriptor, getStatusEffectHealText } from "./status-effect";
 import { Gender } from "./gender";
 import Move, { AttackMove, MoveCategory, MoveFlags, MoveTarget, FlinchAttr, OneHitKOAttr, HitHealAttr, allMoves, StatusMove, SelfStatusMove, VariablePowerAttr, applyMoveAttrs, IncrementMovePriorityAttr, VariableMoveTypeAttr, RandomMovesetMoveAttr, RandomMoveAttr, NaturePowerAttr, CopyMoveAttr, MoveAttr, MultiHitAttr, ChargeAttr, SacrificialAttr, SacrificialAttrOnHit, NeutralDamageAgainstFlyingTypeMultiplierAttr, FixedDamageAttr } from "./move";
@@ -123,6 +123,7 @@ export class Ability implements Localizable {
 type AbAttrApplyFunc<TAttr extends AbAttr> = (attr: TAttr, passive: boolean) => boolean | Promise<boolean>;
 type AbAttrCondition = (pokemon: Pokemon) => boolean;
 
+// TODO: Can this be improved?
 type PokemonAttackCondition = (user: Pokemon | null, target: Pokemon | null, move: Move) => boolean;
 type PokemonDefendCondition = (target: Pokemon, user: Pokemon, move: Move) => boolean;
 type PokemonStatStageChangeCondition = (target: Pokemon, statsChanged: BattleStat[], stages: number) => boolean;
@@ -533,53 +534,6 @@ export class FullHpResistTypeAbAttr extends PreDefendAbAttr {
 export class PostDefendAbAttr extends AbAttr {
   applyPostDefend(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker: Pokemon, move: Move, hitResult: HitResult | null, args: any[]): boolean | Promise<boolean> {
     return false;
-  }
-}
-
-/**
- * Applies the effects of Gulp Missile when the user is hit by an attack.
- * @extends PostDefendAbAttr
- */
-export class PostDefendGulpMissileAbAttr extends PostDefendAbAttr {
-  constructor() {
-    super(true);
-  }
-
-  /**
-   * Damages the attacker and triggers the secondary effect based on the form or the BattlerTagType.
-   * @param {Pokemon} pokemon - The defending Pokemon.
-   * @param passive - n/a
-   * @param {Pokemon} attacker - The attacking Pokemon.
-   * @param {Move} move - The move being used.
-   * @param {HitResult} hitResult - n/a
-   * @param {any[]} args - n/a
-   * @returns Whether the effects of the ability are applied.
-   */
-  applyPostDefend(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker: Pokemon, move: Move, hitResult: HitResult, args: any[]): boolean | Promise<boolean> {
-    const battlerTag = pokemon.getTag(GulpMissileTag);
-    if (!battlerTag || move.category === MoveCategory.STATUS || pokemon.getTag(SemiInvulnerableTag)) {
-      return false;
-    }
-
-    if (simulated) {
-      return true;
-    }
-
-    const cancelled = new Utils.BooleanHolder(false);
-    applyAbAttrs(BlockNonDirectDamageAbAttr, attacker, cancelled);
-
-    if (!cancelled.value) {
-      attacker.damageAndUpdate(Math.max(1, Math.floor(attacker.getMaxHp() / 4)), HitResult.OTHER);
-    }
-
-    if (battlerTag.tagType === BattlerTagType.GULP_MISSILE_ARROKUDA) {
-      pokemon.scene.unshiftPhase(new StatStageChangePhase(pokemon.scene, attacker.getBattlerIndex(), false, [ Stat.DEF ], -1));
-    } else {
-      attacker.trySetStatus(StatusEffect.PARALYSIS, true, pokemon);
-    }
-
-    pokemon.removeTag(battlerTag.tagType);
-    return true;
   }
 }
 
@@ -2479,7 +2433,7 @@ export class PostSummonTransformAbAttr extends PostSummonAbAttr {
       pokemon.setStatStage(s, target.getStatStage(s));
     }
 
-    pokemon.summonData.moveset = target.getMoveset().map(m => new PokemonMove(m!.moveId, m!.ppUsed, m!.ppUp)); // TODO: are those bangs correct?
+    pokemon.summonData.moveset = target.getMoveset().map(m => new PokemonMove(m?.moveId ?? Moves.NONE, m?.ppUsed, m?.ppUp));
     pokemon.summonData.types = target.getTypes();
 
 
@@ -3199,12 +3153,12 @@ export class ForewarnAbAttr extends PostSummonAbAttr {
         } else if (move?.getMove().power === -1) {
           movePower = 80;
         } else {
-          movePower = move!.getMove().power; // TODO: is this bang correct?
+          movePower = move?.getMove().power ?? 0;
         }
 
         if (movePower > maxPowerSeen) {
           maxPowerSeen = movePower;
-          maxMove = move!.getName(); // TODO: is this bang correct?
+          maxMove = move?.getName() ?? "";
         }
       }
     }
@@ -5210,8 +5164,7 @@ export function initAbilities() {
       .attr(PostSummonMessageAbAttr, (pokemon: Pokemon) => i18next.t("abilityTriggers:postSummonMoldBreaker", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }))
       .attr(MoveAbilityBypassAbAttr),
     new Ability(Abilities.SUPER_LUCK, 4)
-      .attr(BonusCritAbAttr)
-      .partial(),
+      .attr(BonusCritAbAttr),
     new Ability(Abilities.AFTERMATH, 4)
       .attr(PostFaintContactDamageAbAttr, 4)
       .bypassFaint(),
@@ -5223,8 +5176,7 @@ export function initAbilities() {
       .attr(IgnoreOpponentStatStagesAbAttr)
       .ignorable(),
     new Ability(Abilities.TINTED_LENS, 4)
-      //@ts-ignore
-      .attr(DamageBoostAbAttr, 2, (user, target, move) => target?.getMoveEffectiveness(user, move) <= 0.5), // TODO: fix TS issues
+      .attr(DamageBoostAbAttr, 2, (user, target, move) => (target?.getMoveEffectiveness(user!, move) ?? 1) <= 0.5),
     new Ability(Abilities.FILTER, 4)
       .attr(ReceivedMoveDamageMultiplierAbAttr, (target, user, move) => target.getMoveEffectiveness(user, move) >= 2, 0.75)
       .ignorable(),
@@ -5342,8 +5294,9 @@ export function initAbilities() {
       .attr(WonderSkinAbAttr)
       .ignorable(),
     new Ability(Abilities.ANALYTIC, 5)
-    //@ts-ignore
-      .attr(MovePowerBoostAbAttr, (user, target, move) => !!target?.getLastXMoves(1).find(m => m.turn === target?.scene.currentBattle.turn) || user.scene.currentBattle.turnCommands[target.getBattlerIndex()].command !== Command.FIGHT, 1.3), // TODO fix TS issues
+      .attr(MovePowerBoostAbAttr, (user, target, move) =>
+        !!target?.getLastXMoves(1).find(m => m.turn === target?.scene.currentBattle.turn)
+        || user?.scene.currentBattle.turnCommands[target?.getBattlerIndex() ?? BattlerIndex.ATTACKER]?.command !== Command.FIGHT, 1.3),
     new Ability(Abilities.ILLUSION, 5)
       .attr(UncopiableAbilityAbAttr)
       .attr(UnswappableAbilityAbAttr)
@@ -5508,8 +5461,7 @@ export function initAbilities() {
       .bypassFaint()
       .partial(),
     new Ability(Abilities.STAKEOUT, 7)
-      //@ts-ignore
-      .attr(MovePowerBoostAbAttr, (user, target, move) => user.scene.currentBattle.turnCommands[target.getBattlerIndex()].command === Command.POKEMON, 2), // TODO: fix TS issues
+      .attr(MovePowerBoostAbAttr, (user, target, move) => user?.scene.currentBattle.turnCommands[target?.getBattlerIndex() ?? BattlerIndex.ATTACKER]?.command === Command.POKEMON, 2),
     new Ability(Abilities.WATER_BUBBLE, 7)
       .attr(ReceivedTypeDamageMultiplierAbAttr, Type.FIRE, 0.5)
       .attr(MoveTypePowerBoostAbAttr, Type.WATER, 2)
@@ -5647,8 +5599,7 @@ export function initAbilities() {
     new Ability(Abilities.PRISM_ARMOR, 7)
       .attr(ReceivedMoveDamageMultiplierAbAttr, (target, user, move) => target.getMoveEffectiveness(user, move) >= 2, 0.75),
     new Ability(Abilities.NEUROFORCE, 7)
-      //@ts-ignore
-      .attr(MovePowerBoostAbAttr, (user, target, move) => target?.getMoveEffectiveness(user, move) >= 2, 1.25), // TODO: fix TS issues
+      .attr(MovePowerBoostAbAttr, (user, target, move) => (target?.getMoveEffectiveness(user!, move) ?? 1) >= 2, 1.25),
     new Ability(Abilities.INTREPID_SWORD, 8)
       .attr(PostSummonStatStageChangeAbAttr, [ Stat.ATK ], 1, true)
       .condition(getOncePerBattleCondition(Abilities.INTREPID_SWORD)),
@@ -5669,13 +5620,19 @@ export function initAbilities() {
     new Ability(Abilities.MIRROR_ARMOR, 8)
       .ignorable()
       .unimplemented(),
+    /**
+     * Right now, the logic is attached to Surf and Dive moves. Ideally, the post-defend/hit should be an
+     * ability attribute but the current implementation of move effects for BattlerTag does not support this- in the case
+     * where Cramorant is fainted.
+     * @see {@linkcode GulpMissileTagAttr} and {@linkcode GulpMissileTag} for Gulp Missile implementation
+     */
     new Ability(Abilities.GULP_MISSILE, 8)
       .attr(UnsuppressableAbilityAbAttr)
       .attr(NoTransformAbilityAbAttr)
       .attr(NoFusionAbilityAbAttr)
       .attr(UncopiableAbilityAbAttr)
       .attr(UnswappableAbilityAbAttr)
-      .attr(PostDefendGulpMissileAbAttr),
+      .bypassFaint(),
     new Ability(Abilities.STALWART, 8)
       .attr(BlockRedirectAbAttr),
     new Ability(Abilities.STEAM_ENGINE, 8)
@@ -5740,10 +5697,8 @@ export function initAbilities() {
       .attr(UserFieldStatusEffectImmunityAbAttr, StatusEffect.POISON, StatusEffect.TOXIC)
       .ignorable(),
     new Ability(Abilities.HUNGER_SWITCH, 8)
-      //@ts-ignore
-      .attr(PostTurnFormChangeAbAttr, p => p.getFormKey ? 0 : 1) // TODO: fix ts-ignore
-      //@ts-ignore
-      .attr(PostTurnFormChangeAbAttr, p => p.getFormKey ? 1 : 0) // TODO: fix ts-ignore
+      .attr(PostTurnFormChangeAbAttr, p => p.getFormKey() ? 0 : 1)
+      .attr(PostTurnFormChangeAbAttr, p => p.getFormKey() ? 1 : 0)
       .attr(UncopiableAbilityAbAttr)
       .attr(UnswappableAbilityAbAttr)
       .attr(NoTransformAbilityAbAttr)

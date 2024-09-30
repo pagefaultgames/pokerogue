@@ -28,6 +28,7 @@
   "mudSportOnRemove": "Chapoteo Lodo ha dejado de surtir efecto.",
   "waterSportOnAdd": "¡Se han debilitado los ataques\nde tipo Fuego!",
   "waterSportOnRemove": "Hidrochorro ha dejado de surtir efecto.",
+  "plasmaFistsOnAdd": "¡Una lluvia de electrones cae sobre\nel terreno de combate!",
   "spikesOnAdd": "¡El equipo de {{opponentDesc}} ha sido rodeado por {{moveName}}!",
   "spikesActivateTrap": "¡Las púas han herido a {{pokemonNameWithAffix}}!",
   "toxicSpikesOnAdd": "¡El equipo de {{opponentDesc}} ha sido rodeado por {{moveName}}!",

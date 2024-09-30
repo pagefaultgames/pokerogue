@@ -90,6 +90,7 @@ export const DancingLessonsEncounter: MysteryEncounter =
     .withHideWildIntroMessage(true)
     .withAutoHideIntroVisuals(false)
     .withCatchAllowed(true)
+    .withFleeAllowed(false)
     .withOnVisualsStart((scene: BattleScene) => {
       const danceAnim = new EncounterBattleAnim(EncounterAnim.DANCE, scene.getEnemyPokemon()!, scene.getParty()[0]);
       danceAnim.play(scene);

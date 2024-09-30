@@ -39,6 +39,7 @@ export const TheStrongStuffEncounter: MysteryEncounter =
     .withMaxAllowedEncounters(1)
     .withHideWildIntroMessage(true)
     .withAutoHideIntroVisuals(false)
+    .withFleeAllowed(false)
     .withIntroSpriteConfigs([
       {
         spriteKey: "berry_juice",

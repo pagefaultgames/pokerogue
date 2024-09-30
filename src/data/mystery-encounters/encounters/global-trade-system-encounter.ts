@@ -159,7 +159,7 @@ export const GlobalTradeSystemEncounter: MysteryEncounter =
                   return true;
                 },
                 onHover: () => {
-                  const formName = tradePokemon.species.forms && tradePokemon.species.forms.length > tradePokemon.formIndex ? tradePokemon.species.forms[pokemon.formIndex].formName : null;
+                  const formName = tradePokemon.species.forms && tradePokemon.species.forms.length > tradePokemon.formIndex ? tradePokemon.species.forms[tradePokemon.formIndex].formName : null;
                   const line1 = i18next.t("pokemonInfoContainer:ability") + " " + tradePokemon.getAbility().name + (tradePokemon.getGender() !== Gender.GENDERLESS ? "     |     " + i18next.t("pokemonInfoContainer:gender") + " " + getGenderSymbol(tradePokemon.getGender()) : "");
                   const line2 = i18next.t("pokemonInfoContainer:nature") + " " + getNatureName(tradePokemon.getNature()) + (formName ? "     |     " + i18next.t("pokemonInfoContainer:form") + " " + formName : "");
                   showEncounterText(scene, `${line1}\n${line2}`, 0, 0, false);

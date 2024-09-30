@@ -46,6 +46,7 @@ export const BerriesAboundEncounter: MysteryEncounter =
     .withSceneWaveRangeRequirement(...CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES)
     .withCatchAllowed(true)
     .withHideWildIntroMessage(true)
+    .withFleeAllowed(false)
     .withIntroSpriteConfigs([]) // Set in onInit()
     .withIntroDialogue([
       {
