@@ -266,6 +266,10 @@
     "name": "カガミよミガカ",
     "description": "反転バトルチャレンジを　クリアする\nるすアリク　をジンレャチルトバ転反"
   },
+  "TRICK_ROOM": {
+    "name": "You're Too Fast!",
+    "description": "Complete the Trick Room challenge."
+  },
   "BREEDERS_IN_SPACE": {
     "name": "宇宙のブリーダー！",
     "description": "宇宙バイオームで　エキスパートブリーダーを　倒す"
