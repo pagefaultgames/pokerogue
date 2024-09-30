@@ -74,5 +74,7 @@
   "shedTailOnAdd": "{{pokemonNameWithAffix}} se desprende\nde un segmento de su cuerpo y lo usa comoseñuelo!",
   "substituteOnAdd": "¡{{pokemonNameWithAffix}} creó un sustituto!",
   "substituteOnHit": "¡El sustituto recibe daño en lugar del {{pokemonNameWithAffix}}!",
-  "substituteOnRemove": "¡El sustituto del {{pokemonNameWithAffix}} se debilitó!"
+  "substituteOnRemove": "¡El sustituto del {{pokemonNameWithAffix}} se debilitó!",
+  "syrupBombOnAdd": "{{pokemonNameWithAffix}} got covered in sticky, candy syrup!",
+  "syrupBombLapse": "The sticky syrup slowed down {{pokemonNameWithAffix}}!"
 }
