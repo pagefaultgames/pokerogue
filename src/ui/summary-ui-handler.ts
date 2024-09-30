@@ -315,7 +315,6 @@ export default class SummaryUiHandler extends UiHandler {
     this.candyIcon.setTint(argbFromRgba(Utils.rgbHexToRgba(colorScheme[0])));
     this.candyOverlay.setTint(argbFromRgba(Utils.rgbHexToRgba(colorScheme[1])));
 
-    this.friendshipOverlay.setTint(argbFromRgba(Utils.rgbHexToRgba(colorScheme[1])));
 
     this.numberText.setText(Utils.padInt(this.pokemon.species.speciesId, 4));
     this.numberText.setColor(this.getTextColor(!this.pokemon.isShiny() ? TextStyle.SUMMARY : TextStyle.SUMMARY_GOLD));
@@ -371,8 +370,8 @@ export default class SummaryUiHandler extends UiHandler {
     this.candyShadow.setCrop(0, 0, 16, candyCropY);
 
     if (this.friendshipShadow.visible) {
-      this.friendshipShadow.on("pointerover", () => (this.scene as BattleScene).ui.showTooltip("", `${i18next.t("pokemonSummary:friendship")}`, true));
-      this.friendshipShadow.on("pointerout", () => (this.scene as BattleScene).ui.hideTooltip());
+      this.friendshipShadow.on("pointerover", () => this.scene.ui.showTooltip("", `${i18next.t("pokemonSummary:friendship")}`, true));
+      this.friendshipShadow.on("pointerout", () => this.scene.ui.hideTooltip());
     }
 
     this.friendshipText.setText(`${this.pokemon?.friendship || "0"} / 255`);
