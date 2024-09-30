@@ -34,10 +34,10 @@
     "value.1": "Activo"
   },
   "trickRoom": {
-    "name": "Trick Room",
-    "shortName": "Trick Room",
-    "desc": "All battles are under the effect of Trick Room, where slower Pokémon move sooner and faster Pokémon move later.\nDisables other challenges' achievements.",
-    "value.0": "Off",
-    "value.1": "On"
+    "name": "Espacio Raro",
+    "shortName": "Espacio Raro",
+    "desc": "Todas las batallas están bajo el effecto de Espacio Raro, en el que los Pokémon más lentos irán primero y los Pokémon más rápidos, más tarde.\nDesactiva los logros de los otros desafíos.",
+    "value.0": "Desact.",
+    "value.1": "Activo"
   }
 }
