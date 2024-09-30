@@ -68,5 +68,5 @@
   "chillyReception": "{{pokemonName}}は\n寒い　ギャグを　かました！",
   "swapArenaTags": "{{pokemonName}}は\nお互いの　場の　効果を　入れ替えた！",
   "exposedMove": "{{pokemonName}}は {{targetPokemonName}}の\n正体を　見破った！",
-  "afterYou": "{{pokemonName}}は\nお言葉に　甘えることにした！"
+  "afterYou": "{{targetName}}は\nお言葉に　甘えることにした！"
 }
