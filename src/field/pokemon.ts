@@ -65,12 +65,6 @@ import { MysteryEncounterPokemonData } from "#app/data/mystery-encounters/myster
 import { SwitchType } from "#enums/switch-type";
 import { BASE_HIDDEN_ABILITY_CHANCE, BASE_SHINY_CHANCE } from "#app/data/balance/rates";
 
-/** `64/65536 -> 1/1024` */
-const BASE_SHINY_CHANCE = 64;
-
-/** `1/256` */
-const BASE_HIDDEN_ABILITY_CHANCE = 256;
-
 export enum FieldPosition {
   CENTER,
   LEFT,
