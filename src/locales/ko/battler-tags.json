@@ -75,6 +75,6 @@
   "substituteOnAdd": "{{pokemonNameWithAffix}}의\n대타가 나타났다!",
   "substituteOnHit": "{{pokemonNameWithAffix}}[[를]] 대신하여\n대타가 공격을 받았다!",
   "substituteOnRemove": "{{pokemonNameWithAffix}}의\n대타는 사라져 버렸다...",
-  "syrupBombOnAdd": "{{pokemonNameWithAffix}} got covered in sticky, candy syrup!",
-  "syrupBombLapse": "The sticky syrup slowed down {{pokemonNameWithAffix}}!"
+  "syrupBombOnAdd": "{{pokemonNameWithAffix}}\n물엿범벅이 되었다!",
+  "syrupBombLapse": "물엿범벅 때문에\n{{pokemonNameWithAffix}}의 스피드가 떨어졌다!"
 }
