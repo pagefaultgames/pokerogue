@@ -84,7 +84,7 @@ export class ModifierBar extends Phaser.GameObjects.Container {
 
     const thisArg = this;
 
-    sortedVisibleIconModifiers.forEach((modifier: PersistentModifier, i: integer) => {
+    sortedVisibleIconModifiers.forEach((modifier: PersistentModifier, i: number) => {
       const icon = modifier.getIcon(this.scene as BattleScene);
       if (i >= iconOverflowIndex) {
         icon.setVisible(false);
@@ -120,8 +120,8 @@ export class ModifierBar extends Phaser.GameObjects.Container {
     }
   }
 
-  setModifierIconPosition(icon: Phaser.GameObjects.Container, modifierCount: integer) {
-    const rowIcons: integer = 12 + 6 * Math.max((Math.ceil(Math.min(modifierCount, 24) / 12) - 2), 0);
+  setModifierIconPosition(icon: Phaser.GameObjects.Container, modifierCount: number) {
+    const rowIcons: number = 12 + 6 * Math.max((Math.ceil(Math.min(modifierCount, 24) / 12) - 2), 0);
 
     const x = (this.getIndex(icon) % rowIcons) * 26 / (rowIcons / 12);
     const y = Math.floor(this.getIndex(icon) / rowIcons) * 20;
@@ -158,10 +158,10 @@ export abstract class Modifier {
 }
 
 export abstract class PersistentModifier extends Modifier {
-  public stackCount: integer;
-  public virtualStackCount: integer;
+  public stackCount: number;
+  public virtualStackCount: number;
 
-  constructor(type: ModifierType, stackCount?: integer) {
+  constructor(type: ModifierType, stackCount?: number) {
     super(type);
     this.stackCount = stackCount === undefined ? 1 : stackCount;
     this.virtualStackCount = 0;
@@ -188,7 +188,7 @@ export abstract class PersistentModifier extends Modifier {
     return [];
   }
 
-  incrementStack(scene: BattleScene, amount: integer, virtual: boolean): boolean {
+  incrementStack(scene: BattleScene, amount: number, virtual: boolean): boolean {
     if (this.getStackCount() + amount <= this.getMaxStackCount(scene)) {
       if (!virtual) {
         this.stackCount += amount;
@@ -201,11 +201,11 @@ export abstract class PersistentModifier extends Modifier {
     return false;
   }
 
-  getStackCount(): integer {
+  getStackCount(): number {
     return this.stackCount + this.virtualStackCount;
   }
 
-  abstract getMaxStackCount(scene: BattleScene, forThreshold?: boolean): integer;
+  abstract getMaxStackCount(scene: BattleScene, forThreshold?: boolean): number;
 
   isIconVisible(scene: BattleScene): boolean {
     return true;
@@ -260,9 +260,9 @@ export abstract class ConsumableModifier extends Modifier {
 
 export class AddPokeballModifier extends ConsumableModifier {
   private pokeballType: PokeballType;
-  private count: integer;
+  private count: number;
 
-  constructor(type: ModifierType, pokeballType: PokeballType, count: integer) {
+  constructor(type: ModifierType, pokeballType: PokeballType, count: number) {
     super(type);
 
     this.pokeballType = pokeballType;
@@ -284,9 +284,9 @@ export class AddPokeballModifier extends ConsumableModifier {
 
 export class AddVoucherModifier extends ConsumableModifier {
   private voucherType: VoucherType;
-  private count: integer;
+  private count: number;
 
-  constructor(type: ModifierType, voucherType: VoucherType, count: integer) {
+  constructor(type: ModifierType, voucherType: VoucherType, count: number) {
     super(type);
 
     this.voucherType = voucherType;
@@ -323,7 +323,7 @@ export abstract class LapsingPersistentModifier extends PersistentModifier {
   /** The current amount of battles the modifier will exist for */
   private battleCount: number;
 
-  constructor(type: ModifierTypes.ModifierType, maxBattles: number, battleCount?: number, stackCount?: integer) {
+  constructor(type: ModifierTypes.ModifierType, maxBattles: number, battleCount?: number, stackCount?: number) {
     super(type, stackCount);
 
     this.maxBattles = maxBattles;
@@ -414,7 +414,7 @@ export abstract class LapsingPersistentModifier extends PersistentModifier {
  * @see {@linkcode apply}
  */
 export class DoubleBattleChanceBoosterModifier extends LapsingPersistentModifier {
-  constructor(type: ModifierType, maxBattles:number, battleCount?: number, stackCount?: integer) {
+  constructor(type: ModifierType, maxBattles:number, battleCount?: number, stackCount?: number) {
     super(type, maxBattles, battleCount, stackCount);
   }
 
@@ -540,7 +540,7 @@ export class TempCritBoosterModifier extends LapsingPersistentModifier {
 }
 
 export class MapModifier extends PersistentModifier {
-  constructor(type: ModifierType, stackCount?: integer) {
+  constructor(type: ModifierType, stackCount?: number) {
     super(type, stackCount);
   }
 
@@ -552,13 +552,13 @@ export class MapModifier extends PersistentModifier {
     return true;
   }
 
-  getMaxStackCount(scene: BattleScene): integer {
+  getMaxStackCount(scene: BattleScene): number {
     return 1;
   }
 }
 
 export class MegaEvolutionAccessModifier extends PersistentModifier {
-  constructor(type: ModifierType, stackCount?: integer) {
+  constructor(type: ModifierType, stackCount?: number) {
     super(type, stackCount);
   }
 
@@ -570,13 +570,13 @@ export class MegaEvolutionAccessModifier extends PersistentModifier {
     return true;
   }
 
-  getMaxStackCount(scene: BattleScene): integer {
+  getMaxStackCount(scene: BattleScene): number {
     return 1;
   }
 }
 
 export class GigantamaxAccessModifier extends PersistentModifier {
-  constructor(type: ModifierType, stackCount?: integer) {
+  constructor(type: ModifierType, stackCount?: number) {
     super(type, stackCount);
   }
 
@@ -593,13 +593,13 @@ export class GigantamaxAccessModifier extends PersistentModifier {
     return true;
   }
 
-  getMaxStackCount(scene: BattleScene): integer {
+  getMaxStackCount(scene: BattleScene): number {
     return 1;
   }
 }
 
 export class TerastallizeAccessModifier extends PersistentModifier {
-  constructor(type: ModifierType, stackCount?: integer) {
+  constructor(type: ModifierType, stackCount?: number) {
     super(type, stackCount);
   }
 
@@ -616,16 +616,16 @@ export class TerastallizeAccessModifier extends PersistentModifier {
     return true;
   }
 
-  getMaxStackCount(scene: BattleScene): integer {
+  getMaxStackCount(scene: BattleScene): number {
     return 1;
   }
 }
 
 export abstract class PokemonHeldItemModifier extends PersistentModifier {
-  public pokemonId: integer;
+  public pokemonId: number;
   public isTransferable: boolean = true;
 
-  constructor(type: ModifierType, pokemonId: integer, stackCount?: integer) {
+  constructor(type: ModifierType, pokemonId: number, stackCount?: number) {
     super(type, stackCount);
 
     this.pokemonId = pokemonId;
@@ -704,7 +704,7 @@ export abstract class PokemonHeldItemModifier extends PersistentModifier {
   }
 
   //Applies to items with chance of activating secondary effects ie Kings Rock
-  getSecondaryChanceMultiplier(pokemon: Pokemon): integer {
+  getSecondaryChanceMultiplier(pokemon: Pokemon): number {
     // Temporary quickfix to stop game from freezing when the opponet uses u-turn while holding on to king's rock
     if (!pokemon.getLastXMoves(0)[0]) {
       return 1;
@@ -719,25 +719,25 @@ export abstract class PokemonHeldItemModifier extends PersistentModifier {
     return 1;
   }
 
-  getMaxStackCount(scene: BattleScene, forThreshold?: boolean): integer {
+  getMaxStackCount(scene: BattleScene, forThreshold?: boolean): number {
     const pokemon = this.getPokemon(scene);
     if (!pokemon) {
       return 0;
     }
     if (pokemon.isPlayer() && forThreshold) {
-      return scene.getParty().map(p => this.getMaxHeldItemCount(p)).reduce((stackCount: integer, maxStackCount: integer) => Math.max(stackCount, maxStackCount), 0);
+      return scene.getParty().map(p => this.getMaxHeldItemCount(p)).reduce((stackCount: number, maxStackCount: number) => Math.max(stackCount, maxStackCount), 0);
     }
     return this.getMaxHeldItemCount(pokemon);
   }
 
-  abstract getMaxHeldItemCount(pokemon?: Pokemon): integer;
+  abstract getMaxHeldItemCount(pokemon?: Pokemon): number;
 }
 
 export abstract class LapsingPokemonHeldItemModifier extends PokemonHeldItemModifier {
-  protected battlesLeft: integer;
+  protected battlesLeft: number;
   public isTransferable: boolean = false;
 
-  constructor(type: ModifierTypes.ModifierType, pokemonId: integer, battlesLeft?: integer, stackCount?: integer) {
+  constructor(type: ModifierTypes.ModifierType, pokemonId: number, battlesLeft?: number, stackCount?: number) {
     super(type, pokemonId, stackCount);
 
     this.battlesLeft = battlesLeft!; // TODO: is this bang correct?
@@ -761,7 +761,7 @@ export abstract class LapsingPokemonHeldItemModifier extends PokemonHeldItemModi
     return container;
   }
 
-  getBattlesLeft(): integer {
+  getBattlesLeft(): number {
     return this.battlesLeft;
   }
 
@@ -774,7 +774,7 @@ export class TerastallizeModifier extends LapsingPokemonHeldItemModifier {
   public teraType: Type;
   public isTransferable: boolean = false;
 
-  constructor(type: ModifierTypes.TerastallizeModifierType, pokemonId: integer, teraType: Type, battlesLeft?: integer, stackCount?: integer) {
+  constructor(type: ModifierTypes.TerastallizeModifierType, pokemonId: number, teraType: Type, battlesLeft?: number, stackCount?: number) {
     super(type, pokemonId, battlesLeft || 10, stackCount);
 
     this.teraType = teraType;
@@ -826,7 +826,7 @@ export class TerastallizeModifier extends LapsingPokemonHeldItemModifier {
     return 1.25;
   }
 
-  getMaxHeldItemCount(pokemon: Pokemon): integer {
+  getMaxHeldItemCount(pokemon: Pokemon): number {
     return 1;
   }
 }
@@ -841,7 +841,7 @@ export class BaseStatModifier extends PokemonHeldItemModifier {
   protected stat: PermanentStat;
   public isTransferable: boolean = false;
 
-  constructor(type: ModifierType, pokemonId: integer, stat: PermanentStat, stackCount?: integer) {
+  constructor(type: ModifierType, pokemonId: number, stat: PermanentStat, stackCount?: number) {
     super(type, pokemonId, stackCount);
     this.stat = stat;
   }
@@ -886,17 +886,17 @@ export class BaseStatModifier extends PokemonHeldItemModifier {
     return 1.1;
   }
 
-  getMaxHeldItemCount(pokemon: Pokemon): integer {
+  getMaxHeldItemCount(pokemon: Pokemon): number {
     return pokemon.ivs[this.stat];
   }
 }
 
 export class EvoTrackerModifier extends PokemonHeldItemModifier {
   protected species: Species;
-  protected required: integer;
+  protected required: number;
   public isTransferable: boolean = false;
 
-  constructor(type: ModifierType, pokemonId: integer, species: Species, required: integer, stackCount?: integer) {
+  constructor(type: ModifierType, pokemonId: number, species: Species, required: number, stackCount?: number) {
     super(type, pokemonId, stackCount);
     this.species = species;
     this.required = required;
@@ -944,7 +944,7 @@ export class EvoTrackerModifier extends PokemonHeldItemModifier {
     return text;
   }
 
-  getMaxHeldItemCount(pokemon: Pokemon): integer {
+  getMaxHeldItemCount(pokemon: Pokemon): number {
     this.stackCount = pokemon.evoCounter + pokemon.getHeldItems().filter(m => m instanceof DamageMoneyRewardModifier).length
       + pokemon.scene.findModifiers(m => m instanceof MoneyMultiplierModifier || m instanceof ExtraModifierModifier).length;
     return 999;
@@ -955,10 +955,10 @@ export class EvoTrackerModifier extends PokemonHeldItemModifier {
  * Currently used by Shuckle Juice item
  */
 export class PokemonBaseStatTotalModifier extends PokemonHeldItemModifier {
-  private statModifier: integer;
+  private statModifier: number;
   public isTransferable: boolean = false;
 
-  constructor(type: ModifierTypes.PokemonBaseStatTotalModifierType, pokemonId: number, statModifier: number, stackCount?: integer) {
+  constructor(type: ModifierTypes.PokemonBaseStatTotalModifierType, pokemonId: number, statModifier: number, stackCount?: number) {
     super(type, pokemonId, stackCount);
     this.statModifier = statModifier;
   }
@@ -1006,7 +1006,7 @@ export class PokemonBaseStatTotalModifier extends PokemonHeldItemModifier {
     return 1.2;
   }
 
-  override getMaxHeldItemCount(pokemon: Pokemon): integer {
+  override getMaxHeldItemCount(pokemon: Pokemon): number {
     return 2;
   }
 }
@@ -1070,7 +1070,7 @@ export class PokemonBaseStatFlatModifier extends PokemonHeldItemModifier {
     return 1.1;
   }
 
-  override getMaxHeldItemCount(pokemon: Pokemon): integer {
+  override getMaxHeldItemCount(pokemon: Pokemon): number {
     return 1;
   }
 }
@@ -1081,7 +1081,7 @@ export class PokemonBaseStatFlatModifier extends PokemonHeldItemModifier {
 export class PokemonIncrementingStatModifier extends PokemonHeldItemModifier {
   public isTransferable: boolean = false;
 
-  constructor (type: ModifierType, pokemonId: integer, stackCount?: integer) {
+  constructor (type: ModifierType, pokemonId: number, stackCount?: number) {
     super(type, pokemonId, stackCount);
   }
 
@@ -1105,7 +1105,7 @@ export class PokemonIncrementingStatModifier extends PokemonHeldItemModifier {
    * @returns `true` if the {@linkcode PokemonBaseStatFlatModifier} should be applied
    */
   override shouldApply(pokemon?: Pokemon, stat?: Stat, statHolder?: Utils.NumberHolder): boolean {
-    return super.shouldApply(pokemon, stat, statHolder) && statHolder instanceof Utils.IntegerHolder;
+    return super.shouldApply(pokemon, stat, statHolder) && statHolder instanceof Utils.NumberHolder;
   }
 
   /**
@@ -1116,7 +1116,7 @@ export class PokemonIncrementingStatModifier extends PokemonHeldItemModifier {
    * @returns always `true`
    */
   override apply(_pokemon: Pokemon, stat: Stat, statHolder: Utils.NumberHolder): boolean {
-    // Modifies the passed in stat integer holder by +1 per stack for HP, +2 per stack for other stats
+    // Modifies the passed in stat number holder by +1 per stack for HP, +2 per stack for other stats
     // If the Macho Brace is at max stacks (50), adds additional 5% to total HP and 10% to other stats
     const isHp = stat === Stat.HP;
 
@@ -1139,7 +1139,7 @@ export class PokemonIncrementingStatModifier extends PokemonHeldItemModifier {
     return 1.2;
   }
 
-  getMaxHeldItemCount(pokemon?: Pokemon): integer {
+  getMaxHeldItemCount(pokemon?: Pokemon): number {
     return 50;
   }
 }
@@ -1156,7 +1156,7 @@ export class StatBoosterModifier extends PokemonHeldItemModifier {
   /** The multiplier used to increase the relevant stat(s) */
   protected multiplier: number;
 
-  constructor(type: ModifierType, pokemonId: integer, stats: Stat[], multiplier: number, stackCount?: integer) {
+  constructor(type: ModifierType, pokemonId: number, stats: Stat[], multiplier: number, stackCount?: number) {
     super(type, pokemonId, stackCount);
 
     this.stats = stats;
@@ -1277,7 +1277,7 @@ export class SpeciesStatBoosterModifier extends StatBoosterModifier {
   /** The species that the held item's stat boost(s) apply to */
   private species: Species[];
 
-  constructor(type: ModifierType, pokemonId: integer, stats: Stat[], multiplier: number, species: Species[], stackCount?: integer) {
+  constructor(type: ModifierType, pokemonId: number, stats: Stat[], multiplier: number, species: Species[], stackCount?: number) {
     super(type, pokemonId, stats, multiplier, stackCount);
 
     this.species = species;
@@ -1334,7 +1334,7 @@ export class CritBoosterModifier extends PokemonHeldItemModifier {
   /** The amount of stages by which the held item increases the current critical-hit stage value */
   protected stageIncrement: number;
 
-  constructor(type: ModifierType, pokemonId: integer, stageIncrement: number, stackCount?: integer) {
+  constructor(type: ModifierType, pokemonId: number, stageIncrement: number, stackCount?: number) {
     super(type, pokemonId, stackCount);
 
     this.stageIncrement = stageIncrement;
@@ -1359,7 +1359,7 @@ export class CritBoosterModifier extends PokemonHeldItemModifier {
   /**
    * Increases the current critical-hit stage value by {@linkcode stageIncrement}.
    * @param _pokemon {@linkcode Pokemon} N/A
-   * @param critStage {@linkcode Utils.IntegerHolder} that holds the resulting critical-hit level
+   * @param critStage {@linkcode Utils.NumberHolder} that holds the resulting critical-hit level
    * @returns always `true`
    */
   override apply(_pokemon: Pokemon, critStage: Utils.NumberHolder): boolean {
@@ -1382,7 +1382,7 @@ export class SpeciesCritBoosterModifier extends CritBoosterModifier {
   /** The species that the held item's critical-hit stage boost applies to */
   private species: Species[];
 
-  constructor(type: ModifierType, pokemonId: integer, stageIncrement: number, species: Species[], stackCount?: integer) {
+  constructor(type: ModifierType, pokemonId: number, stageIncrement: number, species: Species[], stackCount?: number) {
     super(type, pokemonId, stageIncrement, stackCount);
 
     this.species = species;
@@ -1404,7 +1404,7 @@ export class SpeciesCritBoosterModifier extends CritBoosterModifier {
    * Checks if the holder's {@linkcode Species} (or its fused species) is listed
    * in {@linkcode species}.
    * @param pokemon {@linkcode Pokemon} that holds the held item
-   * @param critStage {@linkcode Utils.IntegerHolder} that holds the resulting critical-hit level
+   * @param critStage {@linkcode Utils.NumberHolder} that holds the resulting critical-hit level
    * @returns `true` if the critical-hit level can be incremented, false otherwise
    */
   override shouldApply(pokemon: Pokemon, critStage: Utils.NumberHolder): boolean {
@@ -1419,7 +1419,7 @@ export class AttackTypeBoosterModifier extends PokemonHeldItemModifier {
   public moveType: Type;
   private boostMultiplier: number;
 
-  constructor(type: ModifierType, pokemonId: integer, moveType: Type, boostPercent: number, stackCount?: integer) {
+  constructor(type: ModifierType, pokemonId: number, moveType: Type, boostPercent: number, stackCount?: number) {
     super(type, pokemonId, stackCount);
 
     this.moveType = moveType;
@@ -1474,13 +1474,13 @@ export class AttackTypeBoosterModifier extends PokemonHeldItemModifier {
     return 1.2;
   }
 
-  getMaxHeldItemCount(pokemon: Pokemon): integer {
+  getMaxHeldItemCount(pokemon: Pokemon): number {
     return 99;
   }
 }
 
 export class SurviveDamageModifier extends PokemonHeldItemModifier {
-  constructor(type: ModifierType, pokemonId: integer, stackCount?: integer) {
+  constructor(type: ModifierType, pokemonId: number, stackCount?: number) {
     super(type, pokemonId, stackCount);
   }
 
@@ -1519,13 +1519,13 @@ export class SurviveDamageModifier extends PokemonHeldItemModifier {
     return false;
   }
 
-  getMaxHeldItemCount(pokemon: Pokemon): integer {
+  getMaxHeldItemCount(pokemon: Pokemon): number {
     return 5;
   }
 }
 
 export class BypassSpeedChanceModifier extends PokemonHeldItemModifier {
-  constructor(type: ModifierType, pokemonId: integer, stackCount?: integer) {
+  constructor(type: ModifierType, pokemonId: number, stackCount?: number) {
     super(type, pokemonId, stackCount);
   }
 
@@ -1568,13 +1568,13 @@ export class BypassSpeedChanceModifier extends PokemonHeldItemModifier {
     return false;
   }
 
-  getMaxHeldItemCount(pokemon: Pokemon): integer {
+  getMaxHeldItemCount(pokemon: Pokemon): number {
     return 3;
   }
 }
 
 export class FlinchChanceModifier extends PokemonHeldItemModifier {
-  constructor(type: ModifierType, pokemonId: integer, stackCount?: integer) {
+  constructor(type: ModifierType, pokemonId: number, stackCount?: number) {
     super(type, pokemonId, stackCount);
   }
 
@@ -1611,13 +1611,13 @@ export class FlinchChanceModifier extends PokemonHeldItemModifier {
     return false;
   }
 
-  getMaxHeldItemCount(pokemon: Pokemon): integer {
+  getMaxHeldItemCount(pokemon: Pokemon): number {
     return 3;
   }
 }
 
 export class TurnHealModifier extends PokemonHeldItemModifier {
-  constructor(type: ModifierType, pokemonId: integer, stackCount?: integer) {
+  constructor(type: ModifierType, pokemonId: number, stackCount?: number) {
     super(type, pokemonId, stackCount);
   }
 
@@ -1645,7 +1645,7 @@ export class TurnHealModifier extends PokemonHeldItemModifier {
     return false;
   }
 
-  getMaxHeldItemCount(pokemon: Pokemon): integer {
+  getMaxHeldItemCount(pokemon: Pokemon): number {
     return 4;
   }
 }
@@ -1660,7 +1660,7 @@ export class TurnStatusEffectModifier extends PokemonHeldItemModifier {
   /** The status effect to be applied by the held item */
   private effect: StatusEffect;
 
-  constructor (type: ModifierType, pokemonId: integer, stackCount?: integer) {
+  constructor (type: ModifierType, pokemonId: number, stackCount?: number) {
     super(type, pokemonId, stackCount);
 
     switch (type.id) {
@@ -1700,7 +1700,7 @@ export class TurnStatusEffectModifier extends PokemonHeldItemModifier {
     return pokemon.trySetStatus(this.effect, true, undefined, undefined, this.type.name);
   }
 
-  getMaxHeldItemCount(pokemon: Pokemon): integer {
+  getMaxHeldItemCount(pokemon: Pokemon): number {
     return 1;
   }
 
@@ -1710,7 +1710,7 @@ export class TurnStatusEffectModifier extends PokemonHeldItemModifier {
 }
 
 export class HitHealModifier extends PokemonHeldItemModifier {
-  constructor(type: ModifierType, pokemonId: integer, stackCount?: integer) {
+  constructor(type: ModifierType, pokemonId: number, stackCount?: number) {
     super(type, pokemonId, stackCount);
   }
 
@@ -1737,13 +1737,13 @@ export class HitHealModifier extends PokemonHeldItemModifier {
     return true;
   }
 
-  getMaxHeldItemCount(pokemon: Pokemon): integer {
+  getMaxHeldItemCount(pokemon: Pokemon): number {
     return 4;
   }
 }
 
 export class LevelIncrementBoosterModifier extends PersistentModifier {
-  constructor(type: ModifierType, stackCount?: integer) {
+  constructor(type: ModifierType, stackCount?: number) {
     super(type, stackCount);
   }
 
@@ -1757,19 +1757,19 @@ export class LevelIncrementBoosterModifier extends PersistentModifier {
 
   /**
    * Checks if {@linkcode LevelIncrementBoosterModifier} should be applied
-   * @param count {@linkcode Utils.IntegerHolder} holding the level increment count
+   * @param count {@linkcode Utils.NumberHolder} holding the level increment count
    * @returns `true` if {@linkcode LevelIncrementBoosterModifier} should be applied
    */
-  override shouldApply(count: Utils.IntegerHolder): boolean {
-    return count instanceof Utils.IntegerHolder;
+  override shouldApply(count: Utils.NumberHolder): boolean {
+    return count instanceof Utils.NumberHolder;
   }
 
   /**
    * Applies {@linkcode LevelIncrementBoosterModifier}
-   * @param count {@linkcode Utils.IntegerHolder} holding the level increment count
+   * @param count {@linkcode Utils.NumberHolder} holding the level increment count
    * @returns always `true`
    */
-  override apply(count: Utils.IntegerHolder): boolean {
+  override apply(count: Utils.NumberHolder): boolean {
     count.value += this.getStackCount();
 
     return true;
@@ -1784,7 +1784,7 @@ export class BerryModifier extends PokemonHeldItemModifier {
   public berryType: BerryType;
   public consumed: boolean;
 
-  constructor(type: ModifierType, pokemonId: integer, berryType: BerryType, stackCount?: integer) {
+  constructor(type: ModifierType, pokemonId: number, berryType: BerryType, stackCount?: number) {
     super(type, pokemonId, stackCount);
 
     this.berryType = berryType;
@@ -1829,7 +1829,7 @@ export class BerryModifier extends PokemonHeldItemModifier {
     return true;
   }
 
-  getMaxHeldItemCount(pokemon: Pokemon): integer {
+  getMaxHeldItemCount(pokemon: Pokemon): number {
     if ([BerryType.LUM, BerryType.LEPPA, BerryType.SITRUS, BerryType.ENIGMA].includes(this.berryType)) {
       return 2;
     }
@@ -1838,7 +1838,7 @@ export class BerryModifier extends PokemonHeldItemModifier {
 }
 
 export class PreserveBerryModifier extends PersistentModifier {
-  constructor(type: ModifierType, stackCount?: integer) {
+  constructor(type: ModifierType, stackCount?: number) {
     super(type, stackCount);
   }
 
@@ -1874,13 +1874,13 @@ export class PreserveBerryModifier extends PersistentModifier {
     return true;
   }
 
-  getMaxStackCount(scene: BattleScene): integer {
+  getMaxStackCount(scene: BattleScene): number {
     return 3;
   }
 }
 
 export class PokemonInstantReviveModifier extends PokemonHeldItemModifier {
-  constructor(type: ModifierType, pokemonId: integer, stackCount?: integer) {
+  constructor(type: ModifierType, pokemonId: number, stackCount?: number) {
     super(type, pokemonId, stackCount);
   }
 
@@ -1905,7 +1905,7 @@ export class PokemonInstantReviveModifier extends PokemonHeldItemModifier {
     return true;
   }
 
-  getMaxHeldItemCount(pokemon: Pokemon): integer {
+  getMaxHeldItemCount(pokemon: Pokemon): number {
     return 1;
   }
 }
@@ -1917,7 +1917,7 @@ export class PokemonInstantReviveModifier extends PokemonHeldItemModifier {
  * @see {@linkcode apply}
  */
 export class ResetNegativeStatStageModifier extends PokemonHeldItemModifier {
-  constructor(type: ModifierType, pokemonId: integer, stackCount?: integer) {
+  constructor(type: ModifierType, pokemonId: number, stackCount?: number) {
     super(type, pokemonId, stackCount);
   }
 
@@ -1951,15 +1951,15 @@ export class ResetNegativeStatStageModifier extends PokemonHeldItemModifier {
     return statRestored;
   }
 
-  getMaxHeldItemCount(_pokemon: Pokemon): integer {
+  getMaxHeldItemCount(_pokemon: Pokemon): number {
     return 2;
   }
 }
 
 export abstract class ConsumablePokemonModifier extends ConsumableModifier {
-  public pokemonId: integer;
+  public pokemonId: number;
 
-  constructor(type: ModifierType, pokemonId: integer) {
+  constructor(type: ModifierType, pokemonId: number) {
     super(type);
 
     this.pokemonId = pokemonId;
@@ -1988,12 +1988,12 @@ export abstract class ConsumablePokemonModifier extends ConsumableModifier {
 }
 
 export class PokemonHpRestoreModifier extends ConsumablePokemonModifier {
-  private restorePoints: integer;
+  private restorePoints: number;
   private restorePercent: number;
   private healStatus: boolean;
   public fainted: boolean;
 
-  constructor(type: ModifierType, pokemonId: integer, restorePoints: integer, restorePercent: number, healStatus: boolean, fainted?: boolean) {
+  constructor(type: ModifierType, pokemonId: number, restorePoints: number, restorePercent: number, healStatus: boolean, fainted?: boolean) {
     super(type, pokemonId);
 
     this.restorePoints = restorePoints;
@@ -2035,7 +2035,7 @@ export class PokemonHpRestoreModifier extends ConsumablePokemonModifier {
 }
 
 export class PokemonStatusHealModifier extends ConsumablePokemonModifier {
-  constructor(type: ModifierType, pokemonId: integer) {
+  constructor(type: ModifierType, pokemonId: number) {
     super(type, pokemonId);
   }
 
@@ -2051,9 +2051,9 @@ export class PokemonStatusHealModifier extends ConsumablePokemonModifier {
 }
 
 export abstract class ConsumablePokemonMoveModifier extends ConsumablePokemonModifier {
-  public moveIndex: integer;
+  public moveIndex: number;
 
-  constructor(type: ModifierType, pokemonId: integer, moveIndex: integer) {
+  constructor(type: ModifierType, pokemonId: number, moveIndex: number) {
     super(type, pokemonId);
 
     this.moveIndex = moveIndex;
@@ -2061,9 +2061,9 @@ export abstract class ConsumablePokemonMoveModifier extends ConsumablePokemonMod
 }
 
 export class PokemonPpRestoreModifier extends ConsumablePokemonMoveModifier {
-  private restorePoints: integer;
+  private restorePoints: number;
 
-  constructor(type: ModifierType, pokemonId: integer, moveIndex: integer, restorePoints: integer) {
+  constructor(type: ModifierType, pokemonId: number, moveIndex: number, restorePoints: number) {
     super(type, pokemonId, moveIndex);
 
     this.restorePoints = restorePoints;
@@ -2086,9 +2086,9 @@ export class PokemonPpRestoreModifier extends ConsumablePokemonMoveModifier {
 }
 
 export class PokemonAllMovePpRestoreModifier extends ConsumablePokemonModifier {
-  private restorePoints: integer;
+  private restorePoints: number;
 
-  constructor(type: ModifierType, pokemonId: integer, restorePoints: integer) {
+  constructor(type: ModifierType, pokemonId: number, restorePoints: number) {
     super(type, pokemonId);
 
     this.restorePoints = restorePoints;
@@ -2111,9 +2111,9 @@ export class PokemonAllMovePpRestoreModifier extends ConsumablePokemonModifier {
 }
 
 export class PokemonPpUpModifier extends ConsumablePokemonMoveModifier {
-  private upPoints: integer;
+  private upPoints: number;
 
-  constructor(type: ModifierType, pokemonId: integer, moveIndex: integer, upPoints: integer) {
+  constructor(type: ModifierType, pokemonId: number, moveIndex: number, upPoints: number) {
     super(type, pokemonId, moveIndex);
 
     this.upPoints = upPoints;
@@ -2138,7 +2138,7 @@ export class PokemonPpUpModifier extends ConsumablePokemonMoveModifier {
 export class PokemonNatureChangeModifier extends ConsumablePokemonModifier {
   public nature: Nature;
 
-  constructor(type: ModifierType, pokemonId: integer, nature: Nature) {
+  constructor(type: ModifierType, pokemonId: number, nature: Nature) {
     super(type, pokemonId);
 
     this.nature = nature;
@@ -2164,7 +2164,7 @@ export class PokemonNatureChangeModifier extends ConsumablePokemonModifier {
 }
 
 export class PokemonLevelIncrementModifier extends ConsumablePokemonModifier {
-  constructor(type: ModifierType, pokemonId: integer) {
+  constructor(type: ModifierType, pokemonId: number) {
     super(type, pokemonId);
   }
 
@@ -2174,7 +2174,7 @@ export class PokemonLevelIncrementModifier extends ConsumablePokemonModifier {
    * @param levelCount The amount of levels to increment
    * @returns always `true`
    */
-  override apply(playerPokemon: PlayerPokemon, levelCount: Utils.IntegerHolder): boolean {
+  override apply(playerPokemon: PlayerPokemon, levelCount: Utils.NumberHolder): boolean {
     playerPokemon.scene.applyModifiers(LevelIncrementBoosterModifier, true, levelCount);
 
     playerPokemon.level += levelCount.value;
@@ -2192,7 +2192,7 @@ export class PokemonLevelIncrementModifier extends ConsumablePokemonModifier {
 }
 
 export class TmModifier extends ConsumablePokemonModifier {
-  constructor(type: ModifierTypes.TmModifierType, pokemonId: integer) {
+  constructor(type: ModifierTypes.TmModifierType, pokemonId: number) {
     super(type, pokemonId);
   }
 
@@ -2210,9 +2210,9 @@ export class TmModifier extends ConsumablePokemonModifier {
 }
 
 export class RememberMoveModifier extends ConsumablePokemonModifier {
-  public levelMoveIndex: integer;
+  public levelMoveIndex: number;
 
-  constructor(type: ModifierTypes.ModifierType, pokemonId: integer, levelMoveIndex: integer) {
+  constructor(type: ModifierTypes.ModifierType, pokemonId: number, levelMoveIndex: number) {
     super(type, pokemonId);
 
     this.levelMoveIndex = levelMoveIndex;
@@ -2231,7 +2231,7 @@ export class RememberMoveModifier extends ConsumablePokemonModifier {
 }
 
 export class EvolutionItemModifier extends ConsumablePokemonModifier {
-  constructor(type: ModifierTypes.EvolutionItemModifierType, pokemonId: integer) {
+  constructor(type: ModifierTypes.EvolutionItemModifierType, pokemonId: number) {
     super(type, pokemonId);
   }
 
@@ -2266,9 +2266,9 @@ export class EvolutionItemModifier extends ConsumablePokemonModifier {
 }
 
 export class FusePokemonModifier extends ConsumablePokemonModifier {
-  public fusePokemonId: integer;
+  public fusePokemonId: number;
 
-  constructor(type: ModifierType, pokemonId: integer, fusePokemonId: integer) {
+  constructor(type: ModifierType, pokemonId: number, fusePokemonId: number) {
     super(type, pokemonId);
 
     this.fusePokemonId = fusePokemonId;
@@ -2297,7 +2297,7 @@ export class FusePokemonModifier extends ConsumablePokemonModifier {
 }
 
 export class MultipleParticipantExpBonusModifier extends PersistentModifier {
-  constructor(type: ModifierType, stackCount?: integer) {
+  constructor(type: ModifierType, stackCount?: number) {
     super(type, stackCount);
   }
 
@@ -2317,7 +2317,7 @@ export class MultipleParticipantExpBonusModifier extends PersistentModifier {
     return new MultipleParticipantExpBonusModifier(this.type, this.stackCount);
   }
 
-  getMaxStackCount(scene: BattleScene): integer {
+  getMaxStackCount(scene: BattleScene): number {
     return 5;
   }
 }
@@ -2325,7 +2325,7 @@ export class MultipleParticipantExpBonusModifier extends PersistentModifier {
 export class HealingBoosterModifier extends PersistentModifier {
   private multiplier: number;
 
-  constructor(type: ModifierType, multiplier: number, stackCount?: integer) {
+  constructor(type: ModifierType, multiplier: number, stackCount?: number) {
     super(type, stackCount);
 
     this.multiplier = multiplier;
@@ -2348,21 +2348,21 @@ export class HealingBoosterModifier extends PersistentModifier {
    * @param healingMultiplier the multiplier to apply to the healing
    * @returns always `true`
    */
-  override apply(healingMultiplier: Utils.IntegerHolder): boolean {
+  override apply(healingMultiplier: Utils.NumberHolder): boolean {
     healingMultiplier.value *= 1 + ((this.multiplier - 1) * this.getStackCount());
 
     return true;
   }
 
-  getMaxStackCount(scene: BattleScene): integer {
+  getMaxStackCount(scene: BattleScene): number {
     return 5;
   }
 }
 
 export class ExpBoosterModifier extends PersistentModifier {
-  private boostMultiplier: integer;
+  private boostMultiplier: number;
 
-  constructor(type: ModifierType, boostPercent: number, stackCount?: integer) {
+  constructor(type: ModifierType, boostPercent: number, stackCount?: number) {
     super(type, stackCount);
 
     this.boostMultiplier = boostPercent * 0.01;
@@ -2395,15 +2395,15 @@ export class ExpBoosterModifier extends PersistentModifier {
     return true;
   }
 
-  getMaxStackCount(scene: BattleScene, forThreshold?: boolean): integer {
+  getMaxStackCount(scene: BattleScene, forThreshold?: boolean): number {
     return this.boostMultiplier < 1 ? this.boostMultiplier < 0.6 ? 99 : 30 : 10;
   }
 }
 
 export class PokemonExpBoosterModifier extends PokemonHeldItemModifier {
-  private boostMultiplier: integer;
+  private boostMultiplier: number;
 
-  constructor(type: ModifierTypes.PokemonExpBoosterModifierType, pokemonId: integer, boostPercent: number, stackCount?: integer) {
+  constructor(type: ModifierTypes.PokemonExpBoosterModifierType, pokemonId: number, boostPercent: number, stackCount?: number) {
     super(type, pokemonId, stackCount);
     this.boostMultiplier = boostPercent * 0.01;
   }
@@ -2446,13 +2446,13 @@ export class PokemonExpBoosterModifier extends PokemonHeldItemModifier {
     return true;
   }
 
-  getMaxHeldItemCount(pokemon: Pokemon): integer {
+  getMaxHeldItemCount(pokemon: Pokemon): number {
     return 99;
   }
 }
 
 export class ExpShareModifier extends PersistentModifier {
-  constructor(type: ModifierType, stackCount?: integer) {
+  constructor(type: ModifierType, stackCount?: number) {
     super(type, stackCount);
   }
 
@@ -2472,13 +2472,13 @@ export class ExpShareModifier extends PersistentModifier {
     return true;
   }
 
-  getMaxStackCount(scene: BattleScene): integer {
+  getMaxStackCount(scene: BattleScene): number {
     return 5;
   }
 }
 
 export class ExpBalanceModifier extends PersistentModifier {
-  constructor(type: ModifierType, stackCount?: integer) {
+  constructor(type: ModifierType, stackCount?: number) {
     super(type, stackCount);
   }
 
@@ -2498,13 +2498,13 @@ export class ExpBalanceModifier extends PersistentModifier {
     return true;
   }
 
-  getMaxStackCount(scene: BattleScene): integer {
+  getMaxStackCount(scene: BattleScene): number {
     return 4;
   }
 }
 
 export class PokemonFriendshipBoosterModifier extends PokemonHeldItemModifier {
-  constructor(type: ModifierTypes.PokemonFriendshipBoosterModifierType, pokemonId: integer, stackCount?: integer) {
+  constructor(type: ModifierTypes.PokemonFriendshipBoosterModifierType, pokemonId: number, stackCount?: number) {
     super(type, pokemonId, stackCount);
   }
 
@@ -2519,22 +2519,22 @@ export class PokemonFriendshipBoosterModifier extends PokemonHeldItemModifier {
   /**
    * Applies {@linkcode PokemonFriendshipBoosterModifier}
    * @param _pokemon The {@linkcode Pokemon} to apply the friendship boost to
-   * @param friendship {@linkcode Utils.IntegerHolder} holding the friendship boost value
+   * @param friendship {@linkcode Utils.NumberHolder} holding the friendship boost value
    * @returns always `true`
    */
-  override apply(_pokemon: Pokemon, friendship: Utils.IntegerHolder): boolean {
+  override apply(_pokemon: Pokemon, friendship: Utils.NumberHolder): boolean {
     friendship.value = Math.floor(friendship.value * (1 + 0.5 * this.getStackCount()));
 
     return true;
   }
 
-  getMaxHeldItemCount(pokemon: Pokemon): integer {
+  getMaxHeldItemCount(pokemon: Pokemon): number {
     return 3;
   }
 }
 
 export class PokemonNatureWeightModifier extends PokemonHeldItemModifier {
-  constructor(type: ModifierTypes.ModifierType, pokemonId: integer, stackCount?: integer) {
+  constructor(type: ModifierTypes.ModifierType, pokemonId: number, stackCount?: number) {
     super(type, pokemonId, stackCount);
   }
 
@@ -2549,10 +2549,10 @@ export class PokemonNatureWeightModifier extends PokemonHeldItemModifier {
   /**
    * Applies {@linkcode PokemonNatureWeightModifier}
    * @param _pokemon The {@linkcode Pokemon} to apply the nature weight to
-   * @param multiplier {@linkcode Utils.IntegerHolder} holding the nature weight
+   * @param multiplier {@linkcode Utils.NumberHolder} holding the nature weight
    * @returns `true` if multiplier was applied
    */
-  override apply(_pokemon: Pokemon, multiplier: Utils.IntegerHolder): boolean {
+  override apply(_pokemon: Pokemon, multiplier: Utils.NumberHolder): boolean {
     if (multiplier.value !== 1) {
       multiplier.value += 0.1 * this.getStackCount() * (multiplier.value > 1 ? 1 : -1);
       return true;
@@ -2561,15 +2561,15 @@ export class PokemonNatureWeightModifier extends PokemonHeldItemModifier {
     return false;
   }
 
-  getMaxHeldItemCount(pokemon: Pokemon): integer {
+  getMaxHeldItemCount(pokemon: Pokemon): number {
     return 10;
   }
 }
 
 export class PokemonMoveAccuracyBoosterModifier extends PokemonHeldItemModifier {
-  private accuracyAmount: integer;
+  private accuracyAmount: number;
 
-  constructor(type: ModifierTypes.PokemonMoveAccuracyBoosterModifierType, pokemonId: integer, accuracy: integer, stackCount?: integer) {
+  constructor(type: ModifierTypes.PokemonMoveAccuracyBoosterModifierType, pokemonId: number, accuracy: number, stackCount?: number) {
     super(type, pokemonId, stackCount);
     this.accuracyAmount = accuracy;
   }
@@ -2593,32 +2593,32 @@ export class PokemonMoveAccuracyBoosterModifier extends PokemonHeldItemModifier 
   /**
    * Checks if {@linkcode PokemonMoveAccuracyBoosterModifier} should be applied
    * @param pokemon The {@linkcode Pokemon} to apply the move accuracy boost to
-   * @param moveAccuracy {@linkcode Utils.IntegerHolder} holding the move accuracy boost
+   * @param moveAccuracy {@linkcode Utils.NumberHolder} holding the move accuracy boost
    * @returns `true` if {@linkcode PokemonMoveAccuracyBoosterModifier} should be applied
    */
-  override shouldApply(pokemon?: Pokemon, moveAccuracy?: Utils.IntegerHolder): boolean {
+  override shouldApply(pokemon?: Pokemon, moveAccuracy?: Utils.NumberHolder): boolean {
     return super.shouldApply(pokemon, moveAccuracy) && moveAccuracy instanceof Utils.NumberHolder;
   }
 
   /**
    * Applies {@linkcode PokemonMoveAccuracyBoosterModifier}
    * @param _pokemon The {@linkcode Pokemon} to apply the move accuracy boost to
-   * @param moveAccuracy {@linkcode Utils.IntegerHolder} holding the move accuracy boost
+   * @param moveAccuracy {@linkcode Utils.NumberHolder} holding the move accuracy boost
    * @returns always `true`
    */
-  override apply(_pokemon: Pokemon, moveAccuracy: Utils.IntegerHolder): boolean {
+  override apply(_pokemon: Pokemon, moveAccuracy: Utils.NumberHolder): boolean {
     moveAccuracy.value = Math.min(moveAccuracy.value + this.accuracyAmount * this.getStackCount(), 100);
 
     return true;
   }
 
-  getMaxHeldItemCount(pokemon: Pokemon): integer {
+  getMaxHeldItemCount(pokemon: Pokemon): number {
     return 3;
   }
 }
 
 export class PokemonMultiHitModifier extends PokemonHeldItemModifier {
-  constructor(type: ModifierTypes.PokemonMultiHitModifierType, pokemonId: integer, stackCount?: integer) {
+  constructor(type: ModifierTypes.PokemonMultiHitModifierType, pokemonId: number, stackCount?: number) {
     super(type, pokemonId, stackCount);
   }
 
@@ -2634,10 +2634,10 @@ export class PokemonMultiHitModifier extends PokemonHeldItemModifier {
    * Applies {@linkcode PokemonMultiHitModifier}
    * @param _pokemon The {@linkcode Pokemon} using the move
    * @param count {@linkcode Utils.NumberHolder} holding the number of items
-   * @param power {@linkcode Utils.IntegerHolder} holding the power of the move
+   * @param power {@linkcode Utils.NumberHolder} holding the power of the move
    * @returns always `true`
    */
-  override apply(_pokemon: Pokemon, count: Utils.NumberHolder, power: Utils.IntegerHolder): boolean {
+  override apply(_pokemon: Pokemon, count: Utils.NumberHolder, power: Utils.NumberHolder): boolean {
     count.value *= (this.getStackCount() + 1);
 
     switch (this.getStackCount()) {
@@ -2655,7 +2655,7 @@ export class PokemonMultiHitModifier extends PokemonHeldItemModifier {
     return true;
   }
 
-  getMaxHeldItemCount(pokemon: Pokemon): integer {
+  getMaxHeldItemCount(pokemon: Pokemon): number {
     return 3;
   }
 }
@@ -2665,7 +2665,7 @@ export class PokemonFormChangeItemModifier extends PokemonHeldItemModifier {
   public active: boolean;
   public isTransferable: boolean = false;
 
-  constructor(type: ModifierTypes.FormChangeItemModifierType, pokemonId: integer, formChangeItem: FormChangeItem, active: boolean, stackCount?: integer) {
+  constructor(type: ModifierTypes.FormChangeItemModifierType, pokemonId: number, formChangeItem: FormChangeItem, active: boolean, stackCount?: number) {
     super(type, pokemonId, stackCount);
     this.formChangeItem = formChangeItem;
     this.active = active;
@@ -2705,7 +2705,7 @@ export class PokemonFormChangeItemModifier extends PokemonHeldItemModifier {
     return ret;
   }
 
-  getMaxHeldItemCount(pokemon: Pokemon): integer {
+  getMaxHeldItemCount(pokemon: Pokemon): number {
     return 1;
   }
 }
@@ -2725,7 +2725,7 @@ export class MoneyRewardModifier extends ConsumableModifier {
    * @returns always `true`
    */
   override apply(battleScene: BattleScene): boolean {
-    const moneyAmount = new Utils.IntegerHolder(battleScene.getWaveMoneyAmount(this.moneyMultiplier));
+    const moneyAmount = new Utils.NumberHolder(battleScene.getWaveMoneyAmount(this.moneyMultiplier));
 
     battleScene.applyModifiers(MoneyMultiplierModifier, true, moneyAmount);
 
@@ -2744,7 +2744,7 @@ export class MoneyRewardModifier extends ConsumableModifier {
 }
 
 export class MoneyMultiplierModifier extends PersistentModifier {
-  constructor(type: ModifierType, stackCount?: integer) {
+  constructor(type: ModifierType, stackCount?: number) {
     super(type, stackCount);
   }
 
@@ -2758,22 +2758,22 @@ export class MoneyMultiplierModifier extends PersistentModifier {
 
   /**
    * Applies {@linkcode MoneyMultiplierModifier}
-   * @param multiplier {@linkcode Utils.IntegerHolder} holding the money multiplier value
+   * @param multiplier {@linkcode Utils.NumberHolder} holding the money multiplier value
    * @returns always `true`
    */
-  override apply(multiplier: Utils.IntegerHolder): boolean {
+  override apply(multiplier: Utils.NumberHolder): boolean {
     multiplier.value += Math.floor(multiplier.value * 0.2 * this.getStackCount());
 
     return true;
   }
 
-  getMaxStackCount(scene: BattleScene): integer {
+  getMaxStackCount(scene: BattleScene): number {
     return 5;
   }
 }
 
 export class DamageMoneyRewardModifier extends PokemonHeldItemModifier {
-  constructor(type: ModifierType, pokemonId: integer, stackCount?: integer) {
+  constructor(type: ModifierType, pokemonId: number, stackCount?: number) {
     super(type, pokemonId, stackCount);
   }
 
@@ -2788,25 +2788,25 @@ export class DamageMoneyRewardModifier extends PokemonHeldItemModifier {
   /**
    * Applies {@linkcode DamageMoneyRewardModifier}
    * @param pokemon The {@linkcode Pokemon} attacking
-   * @param multiplier {@linkcode Utils.IntegerHolder} holding the multiplier value
+   * @param multiplier {@linkcode Utils.NumberHolder} holding the multiplier value
    * @returns always `true`
    */
-  override apply(pokemon: Pokemon, multiplier: Utils.IntegerHolder): boolean {
+  override apply(pokemon: Pokemon, multiplier: Utils.NumberHolder): boolean {
     const battleScene = pokemon.scene;
-    const moneyAmount = new Utils.IntegerHolder(Math.floor(multiplier.value * (0.5 * this.getStackCount())));
+    const moneyAmount = new Utils.NumberHolder(Math.floor(multiplier.value * (0.5 * this.getStackCount())));
     battleScene.applyModifiers(MoneyMultiplierModifier, true, moneyAmount);
     battleScene.addMoney(moneyAmount.value);
 
     return true;
   }
 
-  getMaxHeldItemCount(pokemon: Pokemon): integer {
+  getMaxHeldItemCount(pokemon: Pokemon): number {
     return 5;
   }
 }
 
 export class MoneyInterestModifier extends PersistentModifier {
-  constructor(type: ModifierType, stackCount?: integer) {
+  constructor(type: ModifierType, stackCount?: number) {
     super(type, stackCount);
   }
 
@@ -2835,13 +2835,13 @@ export class MoneyInterestModifier extends PersistentModifier {
     return new MoneyInterestModifier(this.type, this.stackCount);
   }
 
-  getMaxStackCount(scene: BattleScene): integer {
+  getMaxStackCount(scene: BattleScene): number {
     return 5;
   }
 }
 
 export class HiddenAbilityRateBoosterModifier extends PersistentModifier {
-  constructor(type: ModifierType, stackCount?: integer) {
+  constructor(type: ModifierType, stackCount?: number) {
     super(type, stackCount);
   }
 
@@ -2855,22 +2855,22 @@ export class HiddenAbilityRateBoosterModifier extends PersistentModifier {
 
   /**
    * Applies {@linkcode HiddenAbilityRateBoosterModifier}
-   * @param boost {@linkcode Utils.IntegerHolder} holding the boost value
+   * @param boost {@linkcode Utils.NumberHolder} holding the boost value
    * @returns always `true`
    */
-  override apply(boost: Utils.IntegerHolder): boolean {
+  override apply(boost: Utils.NumberHolder): boolean {
     boost.value *= Math.pow(2, -1 - this.getStackCount());
 
     return true;
   }
 
-  getMaxStackCount(scene: BattleScene): integer {
+  getMaxStackCount(scene: BattleScene): number {
     return 4;
   }
 }
 
 export class ShinyRateBoosterModifier extends PersistentModifier {
-  constructor(type: ModifierType, stackCount?: integer) {
+  constructor(type: ModifierType, stackCount?: number) {
     super(type, stackCount);
   }
 
@@ -2884,22 +2884,22 @@ export class ShinyRateBoosterModifier extends PersistentModifier {
 
   /**
    * Applies {@linkcode ShinyRateBoosterModifier}
-   * @param boost {@linkcode Utils.IntegerHolder} holding the boost value
+   * @param boost {@linkcode Utils.NumberHolder} holding the boost value
    * @returns always `true`
    */
-  override apply(boost: Utils.IntegerHolder): boolean {
+  override apply(boost: Utils.NumberHolder): boolean {
     boost.value *= Math.pow(2, 1 + this.getStackCount());
 
     return true;
   }
 
-  getMaxStackCount(scene: BattleScene): integer {
+  getMaxStackCount(scene: BattleScene): number {
     return 4;
   }
 }
 
 export class LockModifierTiersModifier extends PersistentModifier {
-  constructor(type: ModifierType, stackCount?: integer) {
+  constructor(type: ModifierType, stackCount?: number) {
     super(type, stackCount);
   }
 
@@ -2919,7 +2919,7 @@ export class LockModifierTiersModifier extends PersistentModifier {
     return new LockModifierTiersModifier(this.type, this.stackCount);
   }
 
-  getMaxStackCount(scene: BattleScene): integer {
+  getMaxStackCount(scene: BattleScene): number {
     return 1;
   }
 }
@@ -2930,7 +2930,7 @@ export class LockModifierTiersModifier extends PersistentModifier {
 export class HealShopCostModifier extends PersistentModifier {
   public readonly shopMultiplier: number;
 
-  constructor(type: ModifierType, shopMultiplier: number, stackCount?: integer) {
+  constructor(type: ModifierType, shopMultiplier: number, stackCount?: number) {
     super(type, stackCount);
 
     this.shopMultiplier = shopMultiplier ?? 2.5;
@@ -2959,13 +2959,13 @@ export class HealShopCostModifier extends PersistentModifier {
     return super.getArgs().concat(this.shopMultiplier);
   }
 
-  getMaxStackCount(scene: BattleScene): integer {
+  getMaxStackCount(scene: BattleScene): number {
     return 1;
   }
 }
 
 export class BoostBugSpawnModifier extends PersistentModifier {
-  constructor(type: ModifierType, stackCount?: integer) {
+  constructor(type: ModifierType, stackCount?: number) {
     super(type, stackCount);
   }
 
@@ -2985,13 +2985,13 @@ export class BoostBugSpawnModifier extends PersistentModifier {
     return true;
   }
 
-  getMaxStackCount(scene: BattleScene): integer {
+  getMaxStackCount(scene: BattleScene): number {
     return 1;
   }
 }
 
 export class SwitchEffectTransferModifier extends PokemonHeldItemModifier {
-  constructor(type: ModifierType, pokemonId: integer, stackCount?: integer) {
+  constructor(type: ModifierType, pokemonId: number, stackCount?: number) {
     super(type, pokemonId, stackCount);
   }
 
@@ -3011,7 +3011,7 @@ export class SwitchEffectTransferModifier extends PokemonHeldItemModifier {
     return true;
   }
 
-  getMaxHeldItemCount(pokemon: Pokemon): integer {
+  getMaxHeldItemCount(pokemon: Pokemon): number {
     return 1;
   }
 }
@@ -3022,7 +3022,7 @@ export class SwitchEffectTransferModifier extends PokemonHeldItemModifier {
  * @see {@linkcode ContactHeldItemTransferChanceModifier}
  */
 export abstract class HeldItemTransferModifier extends PokemonHeldItemModifier {
-  constructor(type: ModifierType, pokemonId: integer, stackCount?: integer) {
+  constructor(type: ModifierType, pokemonId: number, stackCount?: number) {
     super(type, pokemonId, stackCount);
   }
 
@@ -3097,7 +3097,7 @@ export abstract class HeldItemTransferModifier extends PokemonHeldItemModifier {
     return !!transferredModifierTypes.length;
   }
 
-  abstract getTransferredItemCount(): integer;
+  abstract getTransferredItemCount(): number;
 
   abstract getTransferMessage(pokemon: Pokemon, targetPokemon: Pokemon, item: ModifierTypes.ModifierType): string;
 }
@@ -3109,7 +3109,7 @@ export abstract class HeldItemTransferModifier extends PokemonHeldItemModifier {
  */
 export class TurnHeldItemTransferModifier extends HeldItemTransferModifier {
   isTransferable: boolean = true;
-  constructor(type: ModifierType, pokemonId: integer, stackCount?: integer) {
+  constructor(type: ModifierType, pokemonId: number, stackCount?: number) {
     super(type, pokemonId, stackCount);
   }
 
@@ -3121,7 +3121,7 @@ export class TurnHeldItemTransferModifier extends HeldItemTransferModifier {
     return new TurnHeldItemTransferModifier(this.type, this.pokemonId, this.stackCount);
   }
 
-  getTransferredItemCount(): integer {
+  getTransferredItemCount(): number {
     return this.getStackCount();
   }
 
@@ -3129,7 +3129,7 @@ export class TurnHeldItemTransferModifier extends HeldItemTransferModifier {
     return i18next.t("modifier:turnHeldItemTransferApply", { pokemonNameWithAffix: getPokemonNameWithAffix(targetPokemon), itemName: item.name, pokemonName: pokemon.getNameToRender(), typeName: this.type.name });
   }
 
-  getMaxHeldItemCount(pokemon: Pokemon): integer {
+  getMaxHeldItemCount(pokemon: Pokemon): number {
     return 1;
   }
 
@@ -3147,7 +3147,7 @@ export class TurnHeldItemTransferModifier extends HeldItemTransferModifier {
 export class ContactHeldItemTransferChanceModifier extends HeldItemTransferModifier {
   private chance: number;
 
-  constructor(type: ModifierType, pokemonId: integer, chancePercent: number, stackCount?: integer) {
+  constructor(type: ModifierType, pokemonId: number, chancePercent: number, stackCount?: number) {
     super(type, pokemonId, stackCount);
 
     this.chance = chancePercent / 100;
@@ -3177,7 +3177,7 @@ export class ContactHeldItemTransferChanceModifier extends HeldItemTransferModif
     return super.getArgs().concat(this.chance * 100);
   }
 
-  getTransferredItemCount(): integer {
+  getTransferredItemCount(): number {
     return Phaser.Math.RND.realInRange(0, 1) < (this.chance * this.getStackCount()) ? 1 : 0;
   }
 
@@ -3185,13 +3185,13 @@ export class ContactHeldItemTransferChanceModifier extends HeldItemTransferModif
     return i18next.t("modifier:contactHeldItemTransferApply", { pokemonNameWithAffix: getPokemonNameWithAffix(targetPokemon), itemName: item.name, pokemonName: getPokemonNameWithAffix(pokemon), typeName: this.type.name });
   }
 
-  getMaxHeldItemCount(pokemon: Pokemon): integer {
+  getMaxHeldItemCount(pokemon: Pokemon): number {
     return 5;
   }
 }
 
 export class IvScannerModifier extends PersistentModifier {
-  constructor(type: ModifierType, stackCount?: integer) {
+  constructor(type: ModifierType, stackCount?: number) {
     super(type, stackCount);
   }
 
@@ -3211,13 +3211,13 @@ export class IvScannerModifier extends PersistentModifier {
     return true;
   }
 
-  getMaxStackCount(scene: BattleScene): integer {
+  getMaxStackCount(scene: BattleScene): number {
     return 3;
   }
 }
 
 export class ExtraModifierModifier extends PersistentModifier {
-  constructor(type: ModifierType, stackCount?: integer) {
+  constructor(type: ModifierType, stackCount?: number) {
     super(type, stackCount);
   }
 
@@ -3231,26 +3231,26 @@ export class ExtraModifierModifier extends PersistentModifier {
 
   /**
    * Applies {@linkcode ExtraModifierModifier}
-   * @param count {Utils.IntegerHolder} holding the count value
+   * @param count {Utils.NumberHolder} holding the count value
    * @returns always `true`
    */
-  override apply(count: Utils.IntegerHolder): boolean {
+  override apply(count: Utils.NumberHolder): boolean {
     count.value += this.getStackCount();
 
     return true;
   }
 
-  getMaxStackCount(scene: BattleScene): integer {
+  getMaxStackCount(scene: BattleScene): number {
     return 3;
   }
 }
 
 export abstract class EnemyPersistentModifier extends PersistentModifier {
-  constructor(type: ModifierType, stackCount?: integer) {
+  constructor(type: ModifierType, stackCount?: number) {
     super(type, stackCount);
   }
 
-  getMaxStackCount(scene: BattleScene): integer {
+  getMaxStackCount(scene: BattleScene): number {
     return 5;
   }
 }
@@ -3258,7 +3258,7 @@ export abstract class EnemyPersistentModifier extends PersistentModifier {
 abstract class EnemyDamageMultiplierModifier extends EnemyPersistentModifier {
   protected damageMultiplier: number;
 
-  constructor(type: ModifierType, damageMultiplier: number, stackCount?: integer) {
+  constructor(type: ModifierType, damageMultiplier: number, stackCount?: number) {
     super(type, stackCount);
 
     this.damageMultiplier = damageMultiplier;
@@ -3275,13 +3275,13 @@ abstract class EnemyDamageMultiplierModifier extends EnemyPersistentModifier {
     return true;
   }
 
-  getMaxStackCount(scene: BattleScene): integer {
+  getMaxStackCount(scene: BattleScene): number {
     return 99;
   }
 }
 
 export class EnemyDamageBoosterModifier extends EnemyDamageMultiplierModifier {
-  constructor(type: ModifierType, boostPercent: number, stackCount?: integer) {
+  constructor(type: ModifierType, boostPercent: number, stackCount?: number) {
     //super(type, 1 + ((boostPercent || 10) * 0.01), stackCount);
     super(type, 1.05, stackCount); // Hardcode multiplier temporarily
   }
@@ -3298,13 +3298,13 @@ export class EnemyDamageBoosterModifier extends EnemyDamageMultiplierModifier {
     return [ (this.damageMultiplier - 1) * 100 ];
   }
 
-  getMaxStackCount(scene: BattleScene): integer {
+  getMaxStackCount(scene: BattleScene): number {
     return 999;
   }
 }
 
 export class EnemyDamageReducerModifier extends EnemyDamageMultiplierModifier {
-  constructor(type: ModifierType, reductionPercent: number, stackCount?: integer) {
+  constructor(type: ModifierType, reductionPercent: number, stackCount?: number) {
     //super(type, 1 - ((reductionPercent || 5) * 0.01), stackCount);
     super(type, 0.975, stackCount); // Hardcode multiplier temporarily
   }
@@ -3321,7 +3321,7 @@ export class EnemyDamageReducerModifier extends EnemyDamageMultiplierModifier {
     return [ (1 - this.damageMultiplier) * 100 ];
   }
 
-  getMaxStackCount(scene: BattleScene): integer {
+  getMaxStackCount(scene: BattleScene): number {
     return scene.currentBattle.waveIndex < 2000 ? super.getMaxStackCount(scene) : 999;
   }
 }
@@ -3329,7 +3329,7 @@ export class EnemyDamageReducerModifier extends EnemyDamageMultiplierModifier {
 export class EnemyTurnHealModifier extends EnemyPersistentModifier {
   public healPercent: number;
 
-  constructor(type: ModifierType, healPercent: number, stackCount?: integer) {
+  constructor(type: ModifierType, healPercent: number, stackCount?: number) {
     super(type, stackCount);
 
     // Hardcode temporarily
@@ -3364,7 +3364,7 @@ export class EnemyTurnHealModifier extends EnemyPersistentModifier {
     return false;
   }
 
-  getMaxStackCount(scene: BattleScene): integer {
+  getMaxStackCount(scene: BattleScene): number {
     return 10;
   }
 }
@@ -3373,7 +3373,7 @@ export class EnemyAttackStatusEffectChanceModifier extends EnemyPersistentModifi
   public effect: StatusEffect;
   public chance: number;
 
-  constructor(type: ModifierType, effect: StatusEffect, chancePercent: number, stackCount?: integer) {
+  constructor(type: ModifierType, effect: StatusEffect, chancePercent: number, stackCount?: number) {
     super(type, stackCount);
 
     this.effect = effect;
@@ -3406,7 +3406,7 @@ export class EnemyAttackStatusEffectChanceModifier extends EnemyPersistentModifi
     return false;
   }
 
-  getMaxStackCount(scene: BattleScene): integer {
+  getMaxStackCount(scene: BattleScene): number {
     return 10;
   }
 }
@@ -3414,7 +3414,7 @@ export class EnemyAttackStatusEffectChanceModifier extends EnemyPersistentModifi
 export class EnemyStatusEffectHealChanceModifier extends EnemyPersistentModifier {
   public chance: number;
 
-  constructor(type: ModifierType, chancePercent: number, stackCount?: integer) {
+  constructor(type: ModifierType, chancePercent: number, stackCount?: number) {
     super(type, stackCount);
 
     //Hardcode temporarily
@@ -3449,7 +3449,7 @@ export class EnemyStatusEffectHealChanceModifier extends EnemyPersistentModifier
     return false;
   }
 
-  getMaxStackCount(scene: BattleScene): integer {
+  getMaxStackCount(scene: BattleScene): number {
     return 10;
   }
 }
@@ -3457,7 +3457,7 @@ export class EnemyStatusEffectHealChanceModifier extends EnemyPersistentModifier
 export class EnemyEndureChanceModifier extends EnemyPersistentModifier {
   public chance: number;
 
-  constructor(type: ModifierType, chancePercent?: number, stackCount?: integer) {
+  constructor(type: ModifierType, chancePercent?: number, stackCount?: number) {
     super(type, stackCount || 10);
 
     //Hardcode temporarily
@@ -3493,7 +3493,7 @@ export class EnemyEndureChanceModifier extends EnemyPersistentModifier {
     return true;
   }
 
-  getMaxStackCount(scene: BattleScene): integer {
+  getMaxStackCount(scene: BattleScene): number {
     return 10;
   }
 }
@@ -3501,7 +3501,7 @@ export class EnemyEndureChanceModifier extends EnemyPersistentModifier {
 export class EnemyFusionChanceModifier extends EnemyPersistentModifier {
   private chance: number;
 
-  constructor(type: ModifierType, chancePercent: number, stackCount?: integer) {
+  constructor(type: ModifierType, chancePercent: number, stackCount?: number) {
     super(type, stackCount);
 
     this.chance = chancePercent / 100;
@@ -3534,7 +3534,7 @@ export class EnemyFusionChanceModifier extends EnemyPersistentModifier {
     return true;
   }
 
-  getMaxStackCount(scene: BattleScene): integer {
+  getMaxStackCount(scene: BattleScene): number {
     return 10;
   }
 }
