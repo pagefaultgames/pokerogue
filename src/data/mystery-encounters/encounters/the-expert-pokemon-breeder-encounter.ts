@@ -558,6 +558,10 @@ function onGameOver(scene: BattleScene) {
   // Revert BGM
   scene.playBgm(scene.arena.bgm);
 
+  // Clear any leftover battle phases
+  scene.clearPhaseQueue();
+  scene.clearPhaseQueueSplice();
+
   // Return enemy Pokemon
   const pokemon = scene.getEnemyPokemon();
   if (pokemon) {

@@ -5226,6 +5226,9 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
      */
     const switchOutTarget = this.selfSwitch ? user : target;
     if (switchOutTarget instanceof PlayerPokemon) {
+      if (switchOutTarget.scene.getParty().filter((p) => p.isAllowedInBattle() && !p.isOnField()).length < 1) {
+        return false;
+      }
       switchOutTarget.leaveField(this.switchType === SwitchType.SWITCH);
 
       if (switchOutTarget.hp > 0) {
@@ -5234,6 +5237,9 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
       }
       return false;
     } else if (user.scene.currentBattle.battleType !== BattleType.WILD) {
+      if (switchOutTarget.scene.getEnemyParty().filter((p) => p.isAllowedInBattle() && !p.isOnField()).length < 1) {
+        return false;
+      }
       // Switch out logic for trainer battles
       switchOutTarget.leaveField(this.switchType === SwitchType.SWITCH);
 
@@ -5244,6 +5250,9 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
           false, false), MoveEndPhase);
       }
     } else {
+      if (user.scene.currentBattle.waveIndex % 10 === 0) {
+        return false;
+      }
       // Switch out logic for everything else (eg: WILD battles)
       switchOutTarget.leaveField(false);
 
@@ -8900,8 +8909,8 @@ export function initMoves() {
       .attr(HalfSacrificialAttr)
       .target(MoveTarget.ALL_NEAR_OTHERS),
     new AttackMove(Moves.PLASMA_FISTS, Type.ELECTRIC, MoveCategory.PHYSICAL, 100, 100, 15, -1, 0, 7)
-      .punchingMove()
-      .partial(),
+      .attr(AddArenaTagAttr, ArenaTagType.PLASMA_FISTS, 1)
+      .punchingMove(),
     new AttackMove(Moves.PHOTON_GEYSER, Type.PSYCHIC, MoveCategory.SPECIAL, 100, 100, 5, -1, 0, 7)
       .attr(PhotonGeyserCategoryAttr)
       .ignoresAbilities()
@@ -8931,7 +8940,7 @@ export function initMoves() {
       .partial()
       .ignoresVirtual(),
     /* End Unused */
-    new AttackMove(Moves.ZIPPY_ZAP, Type.ELECTRIC, MoveCategory.PHYSICAL, 50, 100, 15, 100, 2, 7) //LGPE Implementation
+    new AttackMove(Moves.ZIPPY_ZAP, Type.ELECTRIC, MoveCategory.PHYSICAL, 50, 100, 15, -1, 2, 7) //LGPE Implementation
       .attr(CritOnlyAttr),
     new AttackMove(Moves.SPLISHY_SPLASH, Type.WATER, MoveCategory.SPECIAL, 90, 100, 15, 30, 0, 7)
       .attr(StatusEffectAttr, StatusEffect.PARALYSIS)
@@ -9616,9 +9625,8 @@ export function initMoves() {
       .target(MoveTarget.ALL_NEAR_ENEMIES)
       .triageMove(),
     new AttackMove(Moves.SYRUP_BOMB, Type.GRASS, MoveCategory.SPECIAL, 60, 85, 10, -1, 0, 9)
-      .attr(StatStageChangeAttr, [ Stat.SPD ], -1) //Temporary
-      .ballBombMove()
-      .partial(),
+      .attr(AddBattlerTagAttr, BattlerTagType.SYRUP_BOMB, false, false, 3)
+      .ballBombMove(),
     new AttackMove(Moves.IVY_CUDGEL, Type.GRASS, MoveCategory.PHYSICAL, 100, 100, 10, -1, 0, 9)
       .attr(IvyCudgelTypeAttr)
       .attr(HighCritAttr)

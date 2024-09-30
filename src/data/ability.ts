@@ -4,7 +4,7 @@ import { Constructor } from "#app/utils";
 import * as Utils from "../utils";
 import { getPokemonNameWithAffix } from "../messages";
 import { Weather, WeatherType } from "./weather";
-import { BattlerTag, GroundedTag, GulpMissileTag, SemiInvulnerableTag } from "./battler-tags";
+import { BattlerTag, GroundedTag } from "./battler-tags";
 import { StatusEffect, getNonVolatileStatusEffects, getStatusEffectDescriptor, getStatusEffectHealText } from "./status-effect";
 import { Gender } from "./gender";
 import Move, { AttackMove, MoveCategory, MoveFlags, MoveTarget, FlinchAttr, OneHitKOAttr, HitHealAttr, allMoves, StatusMove, SelfStatusMove, VariablePowerAttr, applyMoveAttrs, IncrementMovePriorityAttr, VariableMoveTypeAttr, RandomMovesetMoveAttr, RandomMoveAttr, NaturePowerAttr, CopyMoveAttr, MoveAttr, MultiHitAttr, ChargeAttr, SacrificialAttr, SacrificialAttrOnHit, NeutralDamageAgainstFlyingTypeMultiplierAttr, FixedDamageAttr } from "./move";
@@ -533,53 +533,6 @@ export class FullHpResistTypeAbAttr extends PreDefendAbAttr {
 export class PostDefendAbAttr extends AbAttr {
   applyPostDefend(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker: Pokemon, move: Move, hitResult: HitResult | null, args: any[]): boolean | Promise<boolean> {
     return false;
-  }
-}
-
-/**
- * Applies the effects of Gulp Missile when the user is hit by an attack.
- * @extends PostDefendAbAttr
- */
-export class PostDefendGulpMissileAbAttr extends PostDefendAbAttr {
-  constructor() {
-    super(true);
-  }
-
-  /**
-   * Damages the attacker and triggers the secondary effect based on the form or the BattlerTagType.
-   * @param {Pokemon} pokemon - The defending Pokemon.
-   * @param passive - n/a
-   * @param {Pokemon} attacker - The attacking Pokemon.
-   * @param {Move} move - The move being used.
-   * @param {HitResult} hitResult - n/a
-   * @param {any[]} args - n/a
-   * @returns Whether the effects of the ability are applied.
-   */
-  applyPostDefend(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker: Pokemon, move: Move, hitResult: HitResult, args: any[]): boolean | Promise<boolean> {
-    const battlerTag = pokemon.getTag(GulpMissileTag);
-    if (!battlerTag || move.category === MoveCategory.STATUS || pokemon.getTag(SemiInvulnerableTag)) {
-      return false;
-    }
-
-    if (simulated) {
-      return true;
-    }
-
-    const cancelled = new Utils.BooleanHolder(false);
-    applyAbAttrs(BlockNonDirectDamageAbAttr, attacker, cancelled);
-
-    if (!cancelled.value) {
-      attacker.damageAndUpdate(Math.max(1, Math.floor(attacker.getMaxHp() / 4)), HitResult.OTHER);
-    }
-
-    if (battlerTag.tagType === BattlerTagType.GULP_MISSILE_ARROKUDA) {
-      pokemon.scene.unshiftPhase(new StatStageChangePhase(pokemon.scene, attacker.getBattlerIndex(), false, [ Stat.DEF ], -1));
-    } else {
-      attacker.trySetStatus(StatusEffect.PARALYSIS, true, pokemon);
-    }
-
-    pokemon.removeTag(battlerTag.tagType);
-    return true;
   }
 }
 
@@ -5210,8 +5163,7 @@ export function initAbilities() {
       .attr(PostSummonMessageAbAttr, (pokemon: Pokemon) => i18next.t("abilityTriggers:postSummonMoldBreaker", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }))
       .attr(MoveAbilityBypassAbAttr),
     new Ability(Abilities.SUPER_LUCK, 4)
-      .attr(BonusCritAbAttr)
-      .partial(),
+      .attr(BonusCritAbAttr),
     new Ability(Abilities.AFTERMATH, 4)
       .attr(PostFaintContactDamageAbAttr, 4)
       .bypassFaint(),
@@ -5669,13 +5621,19 @@ export function initAbilities() {
     new Ability(Abilities.MIRROR_ARMOR, 8)
       .ignorable()
       .unimplemented(),
+    /**
+     * Right now, the logic is attached to Surf and Dive moves. Ideally, the post-defend/hit should be an
+     * ability attribute but the current implementation of move effects for BattlerTag does not support this- in the case
+     * where Cramorant is fainted.
+     * @see {@linkcode GulpMissileTagAttr} and {@linkcode GulpMissileTag} for Gulp Missile implementation
+     */
     new Ability(Abilities.GULP_MISSILE, 8)
       .attr(UnsuppressableAbilityAbAttr)
       .attr(NoTransformAbilityAbAttr)
       .attr(NoFusionAbilityAbAttr)
       .attr(UncopiableAbilityAbAttr)
       .attr(UnswappableAbilityAbAttr)
-      .attr(PostDefendGulpMissileAbAttr),
+      .bypassFaint(),
     new Ability(Abilities.STALWART, 8)
       .attr(BlockRedirectAbAttr),
     new Ability(Abilities.STEAM_ENGINE, 8)

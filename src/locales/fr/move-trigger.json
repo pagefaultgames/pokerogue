@@ -71,5 +71,5 @@
   "safeguard": "{{targetName}} est protégé\npar la capacité Rune Protect !",
   "substituteOnOverlap": "{{pokemonName}} a déjà\nun clone !",
   "substituteNotEnoughHp": "Mais il est trop faible\npour créer un clone !",
-  "afterYou": "{{pokemonName}} accepte\navec joie !"
+  "afterYou": "{{targetName}} accepte\navec joie !"
 }
