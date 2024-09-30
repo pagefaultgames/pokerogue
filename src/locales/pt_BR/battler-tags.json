@@ -73,5 +73,7 @@
   "tarShotOnAdd": "{{pokemonNameWithAffix}} tornou-se mais fraco ao fogo!",
   "substituteOnAdd": "{{pokemonNameWithAffix}} colocou um substituto!",
   "substituteOnHit": "O substituto tomou o dano pelo {{pokemonNameWithAffix}}!",
-  "substituteOnRemove": "O substituto de {{pokemonNameWithAffix}} desbotou!"
+  "substituteOnRemove": "O substituto de {{pokemonNameWithAffix}} desbotou!",
+  "syrupBombOnAdd": "{{pokemonNameWithAffix}} got covered in sticky, candy syrup!",
+  "syrupBombLapse": "The sticky syrup slowed down {{pokemonNameWithAffix}}!"
 }
