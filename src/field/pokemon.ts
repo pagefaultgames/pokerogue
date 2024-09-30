@@ -64,7 +64,7 @@ import { PokemonAnimType } from "#enums/pokemon-anim-type";
 import { PLAYER_PARTY_MAX_SIZE } from "#app/constants";
 import { MysteryEncounterPokemonData } from "#app/data/mystery-encounters/mystery-encounter-pokemon-data";
 import { SwitchType } from "#enums/switch-type";
-import { BASE_HIDDEN_ABILITY_CHANCE, BASE_SHINY_CHANCE } from "#app/data/balance/rates";
+import { BASE_HIDDEN_ABILITY_CHANCE, BASE_SHINY_CHANCE, SHINY_EPIC_CHANCE, SHINY_VARIANT_CHANCE } from "#app/data/balance/rates";
 
 export enum FieldPosition {
   CENTER,
@@ -1922,9 +1922,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     this.scene.executeWithSeedOffset(() => {
       rand.value = Utils.randSeedInt(10);
     }, this.id, this.scene.waveSeed);
-    if (rand.value >= 4) {
+    if (rand.value >= SHINY_VARIANT_CHANCE) {
       return 0;             // 6/10
-    } else if (rand.value >= 1) {
+    } else if (rand.value >= SHINY_EPIC_CHANCE) {
       return 1;             // 3/10
     } else {
       return 2;             // 1/10

@@ -10,7 +10,7 @@ import i18next from "i18next";
 import { EggTier } from "#enums/egg-type";
 import { Species } from "#enums/species";
 import { EggSourceType } from "#enums/egg-source-types";
-import { MANAPHY_EGG_MANAPHY_RATE, SAME_SPECIES_EGG_HA_RATE, GACHA_EGG_HA_RATE, GACHA_DEFAULT_RARE_EGGMOVE_RATE, SAME_SPECIES_EGG_RARE_EGGMOVE_RATE, GACHA_MOVE_UP_RARE_EGGMOVE_RATE, GACHA_DEFAULT_SHINY_RATE, GACHA_SHINY_UP_SHINY_RATE, SAME_SPECIES_EGG_SHINY_RATE } from "#app/data/balance/rates";
+import { MANAPHY_EGG_MANAPHY_RATE, SAME_SPECIES_EGG_HA_RATE, GACHA_EGG_HA_RATE, GACHA_DEFAULT_RARE_EGGMOVE_RATE, SAME_SPECIES_EGG_RARE_EGGMOVE_RATE, GACHA_MOVE_UP_RARE_EGGMOVE_RATE, GACHA_DEFAULT_SHINY_RATE, GACHA_SHINY_UP_SHINY_RATE, SAME_SPECIES_EGG_SHINY_RATE, EGG_PITY_LEGENDARY_THRESHOLD, EGG_PITY_EPIC_THRESHOLD, EGG_PITY_RARE_THRESHOLD, SHINY_VARIANT_CHANCE, SHINY_EPIC_CHANCE, GACHA_DEFAULT_COMMON_EGG_THRESHOLD, GACHA_DEFAULT_RARE_EGG_THRESHOLD, GACHA_DEFAULT_EPIC_EGG_THRESHOLD, GACHA_LEGENDARY_UP_THRESHOLD_OFFSET, HATCH_WAVES_MANAPHY_EGG, HATCH_WAVES_COMMON_EGG, HATCH_WAVES_RARE_EGG, HATCH_WAVES_EPIC_EGG, HATCH_WAVES_LEGENDARY_EGG } from "#app/data/balance/rates";
 
 export const EGG_SEED = 1073741824;
 
@@ -330,24 +330,24 @@ export class Egg {
 
   private getEggTierDefaultHatchWaves(eggTier?: EggTier): number {
     if (this._species === Species.PHIONE || this._species === Species.MANAPHY) {
-      return 50;
+      return HATCH_WAVES_MANAPHY_EGG;
     }
 
     switch (eggTier ?? this._tier) {
     case EggTier.COMMON:
-      return 10;
+      return HATCH_WAVES_COMMON_EGG;
     case EggTier.GREAT:
-      return 25;
+      return HATCH_WAVES_RARE_EGG;
     case EggTier.ULTRA:
-      return 50;
+      return HATCH_WAVES_EPIC_EGG;
     }
-    return 100;
+    return HATCH_WAVES_LEGENDARY_EGG;
   }
 
   private rollEggTier(): EggTier {
-    const tierValueOffset = this._sourceType === EggSourceType.GACHA_LEGENDARY ? 1 : 0;
+    const tierValueOffset = this._sourceType === EggSourceType.GACHA_LEGENDARY ? GACHA_LEGENDARY_UP_THRESHOLD_OFFSET : 0;
     const tierValue = Utils.randInt(256);
-    return tierValue >= 52 + tierValueOffset ? EggTier.COMMON : tierValue >= 8 + tierValueOffset ? EggTier.GREAT : tierValue >= 1 + tierValueOffset ? EggTier.ULTRA : EggTier.MASTER;
+    return tierValue >= GACHA_DEFAULT_COMMON_EGG_THRESHOLD + tierValueOffset ? EggTier.COMMON : tierValue >= GACHA_DEFAULT_RARE_EGG_THRESHOLD + tierValueOffset ? EggTier.GREAT : tierValue >= GACHA_DEFAULT_EPIC_EGG_THRESHOLD + tierValueOffset ? EggTier.ULTRA : EggTier.MASTER;
   }
 
   private rollSpecies(scene: BattleScene): Species | null {
@@ -487,9 +487,9 @@ export class Egg {
     }
 
     const rand = Utils.randSeedInt(10);
-    if (rand >= 4) {
+    if (rand >= SHINY_VARIANT_CHANCE) {
       return VariantTier.STANDARD; // 6/10
-    } else if (rand >= 1) {
+    } else if (rand >= SHINY_EPIC_CHANCE) {
       return VariantTier.RARE;   // 3/10
     } else {
       return VariantTier.EPIC;   // 1/10
@@ -497,16 +497,16 @@ export class Egg {
   }
 
   private checkForPityTierOverrides(scene: BattleScene): void {
-    const tierValueOffset = this._sourceType === EggSourceType.GACHA_LEGENDARY ? 1 : 0;
+    const tierValueOffset = this._sourceType === EggSourceType.GACHA_LEGENDARY ? GACHA_LEGENDARY_UP_THRESHOLD_OFFSET : 0;
     scene.gameData.eggPity[EggTier.GREAT] += 1;
     scene.gameData.eggPity[EggTier.ULTRA] += 1;
     scene.gameData.eggPity[EggTier.MASTER] += 1 + tierValueOffset;
     // These numbers are roughly the 80% mark. That is, 80% of the time you'll get an egg before this gets triggered.
-    if (scene.gameData.eggPity[EggTier.MASTER] >= 412 && this._tier === EggTier.COMMON) {
+    if (scene.gameData.eggPity[EggTier.MASTER] >= EGG_PITY_LEGENDARY_THRESHOLD && this._tier === EggTier.COMMON) {
       this._tier = EggTier.MASTER;
-    } else if (scene.gameData.eggPity[EggTier.ULTRA] >= 59 && this._tier === EggTier.COMMON) {
+    } else if (scene.gameData.eggPity[EggTier.ULTRA] >= EGG_PITY_EPIC_THRESHOLD && this._tier === EggTier.COMMON) {
       this._tier = EggTier.ULTRA;
-    } else if (scene.gameData.eggPity[EggTier.GREAT] >= 9 && this._tier === EggTier.COMMON) {
+    } else if (scene.gameData.eggPity[EggTier.GREAT] >= EGG_PITY_RARE_THRESHOLD && this._tier === EggTier.COMMON) {
       this._tier = EggTier.GREAT;
     }
     scene.gameData.eggPity[this._tier] = 0;
