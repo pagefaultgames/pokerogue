@@ -2267,7 +2267,7 @@ export class HealBlockTag extends MoveRestrictionBattlerTag {
    * Uses DisabledTag's selectionDeniedText() message
    */
   override selectionDeniedText(pokemon: Pokemon, move: Moves): string {
-    return i18next.t("battle:moveDisabled", { moveName: allMoves[move].name });
+    return i18next.t("battle:moveDisabledHealBlock", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), moveName: allMoves[move].name, healBlockName: allMoves[Moves.HEAL_BLOCK].name });
   }
 
   /**
@@ -2277,7 +2277,7 @@ export class HealBlockTag extends MoveRestrictionBattlerTag {
    * @returns {string} text to display when the move is interrupted
    */
   override interruptedText(pokemon: Pokemon, move: Moves): string {
-    return i18next.t("battle:disableInterruptedMove", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), moveName: allMoves[move].name });
+    return i18next.t("battle:moveDisabledHealBlock", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), moveName: allMoves[move].name, healBlockName: allMoves[Moves.HEAL_BLOCK].name });
   }
 
   override onRemove(pokemon: Pokemon): void {
@@ -2530,8 +2530,8 @@ export class TormentTag extends MoveRestrictionBattlerTag {
     return false;
   }
 
-  override selectionDeniedText(_pokemon: Pokemon, move: Moves): string {
-    return i18next.t("battle:moveCannotBeSelected", { moveName: allMoves[move].name });
+  override selectionDeniedText(pokemon: Pokemon, _move: Moves): string {
+    return i18next.t("battle:moveDisabledTorment", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) });
   }
 }
 
@@ -2559,12 +2559,12 @@ export class TauntTag extends MoveRestrictionBattlerTag {
     return allMoves[move].category === MoveCategory.STATUS;
   }
 
-  override selectionDeniedText(_pokemon: Pokemon, move: Moves): string {
-    return i18next.t("battle:moveCannotBeSelected", { moveName: allMoves[move].name });
+  override selectionDeniedText(pokemon: Pokemon, move: Moves): string {
+    return i18next.t("battle:moveDisabledTaunt", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), moveName: allMoves[move].name });
   }
 
   override interruptedText(pokemon: Pokemon, move: Moves): string {
-    return i18next.t("battle:disableInterruptedMove", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), moveName: allMoves[move].name });
+    return i18next.t("battle:moveDisabledTaunt", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), moveName: allMoves[move].name });
   }
 }
 
@@ -2609,12 +2609,12 @@ export class ImprisonTag extends MoveRestrictionBattlerTag {
     return false;
   }
 
-  override selectionDeniedText(_pokemon: Pokemon, move: Moves): string {
-    return i18next.t("battle:moveCannotBeSelected", { moveName: allMoves[move].name });
+  override selectionDeniedText(pokemon: Pokemon, move: Moves): string {
+    return i18next.t("battle:moveDisabledImprison", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), moveName: allMoves[move].name });
   }
 
   override interruptedText(pokemon: Pokemon, move: Moves): string {
-    return i18next.t("battle:disableInterruptedMove", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), moveName: allMoves[move].name });
+    return i18next.t("battle:moveDisabledImprison", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), moveName: allMoves[move].name });
   }
 }
 
