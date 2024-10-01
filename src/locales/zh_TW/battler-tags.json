@@ -75,8 +75,8 @@
   "substituteOnAdd": "{{pokemonNameWithAffix}}的\n替身出現了！",
   "substituteOnHit": "替身代替{{pokemonNameWithAffix}}承受了攻擊！",
   "substituteOnRemove": "{{pokemonNameWithAffix}}的\n替身消失了……",
-  "tormentOnAdd": "{{pokemonNameWithAffix}} was subjected to torment!",
-  "tauntOnAdd": "{{pokemonNameWithAffix}} fell for the taunt!",
-  "imprisonOnAdd": "{{pokemonNameWithAffix}} sealed the opponents move(s)!",
-  "autotomizeOnAdd": "{{pokemonNameWithAffix}} became nimble!"
+  "tormentOnAdd": "{{pokemonNameWithAffix}}遭到了無理取鬧！",
+  "tauntOnAdd": "{{pokemonNameWithAffix}}中了挑釁！",
+  "imprisonOnAdd": "{{pokemonNameWithAffix}}封印了對手的招式！",
+  "autotomizeOnAdd": "{{pokemonNameWithAffix}}變得身輕如燕了！"
 }
