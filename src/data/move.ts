@@ -2733,6 +2733,13 @@ export class AwaitCombinedPledgeAttr extends OverrideMoveEffectAttr {
           allyPokemonName: getPokemonNameWithAffix(user.getAlly())
         }));
 
+        // Move the ally's MovePhase (if needed) so that the ally moves next
+        const allyMovePhaseIndex = user.scene.phaseQueue.indexOf(allyMovePhase);
+        const firstMovePhaseIndex = user.scene.phaseQueue.findIndex(phase => phase instanceof MovePhase);
+        if (allyMovePhaseIndex !== firstMovePhaseIndex) {
+          user.scene.prependToPhase(user.scene.phaseQueue.splice(allyMovePhaseIndex, 1)[0], MovePhase);
+        }
+
         overridden.value = true;
         return true;
       }

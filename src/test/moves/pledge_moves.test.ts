@@ -1,6 +1,6 @@
 import { BattlerIndex } from "#app/battle";
 import { ArenaTagSide } from "#app/data/arena-tag";
-import { allMoves } from "#app/data/move";
+import { allMoves, FlinchAttr } from "#app/data/move";
 import { Type } from "#app/data/type";
 import { ArenaTagType } from "#app/enums/arena-tag-type";
 import { Stat } from "#app/enums/stat";
@@ -219,6 +219,54 @@ describe("Moves - Pledge Moves", () => {
 
       expect(game.scene.arena.getTagOnSide(ArenaTagType.GRASS_WATER_PLEDGE, ArenaTagSide.ENEMY)).toBeDefined();
       enemyPokemon.forEach((p, i) => expect(p.getEffectiveStat(Stat.SPD)).toBe(Math.floor(enemyStartingSpd[i] / 4)));
+    }
+  );
+
+  it(
+    "Pledge Moves - should alter turn order when used in combination",
+    async () => {
+      await game.classicMode.startBattle([Species.CHARIZARD, Species.BLASTOISE]);
+
+      const enemyPokemon = game.scene.getEnemyField();
+
+      game.move.select(Moves.WATER_PLEDGE, 0, BattlerIndex.ENEMY);
+      game.move.select(Moves.FIRE_PLEDGE, 1, BattlerIndex.ENEMY_2);
+
+      await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2, BattlerIndex.PLAYER_2]);
+      // PLAYER_2 should act with a combined move immediately after PLAYER as the second move in the turn
+      for (let i = 0; i < 2; i++) {
+        await game.phaseInterceptor.to("MoveEndPhase");
+      }
+      expect(enemyPokemon[0].hp).toBe(enemyPokemon[0].getMaxHp());
+      expect(enemyPokemon[1].hp).toBeLessThan(enemyPokemon[1].getMaxHp());
+    }
+  );
+
+  it(
+    "Pledge Moves - 'rainbow' effect should not stack with Serene Grace when applied to flinching moves",
+    async () => {
+      game.override
+        .ability(Abilities.SERENE_GRACE)
+        .moveset([Moves.FIRE_PLEDGE, Moves.WATER_PLEDGE, Moves.IRON_HEAD, Moves.SPLASH]);
+
+      await game.classicMode.startBattle([Species.BLASTOISE, Species.CHARIZARD]);
+
+      const ironHeadFlinchAttr = allMoves[Moves.IRON_HEAD].getAttrs(FlinchAttr)[0];
+      vi.spyOn(ironHeadFlinchAttr, "getMoveChance");
+
+      game.move.select(Moves.WATER_PLEDGE, 0, BattlerIndex.ENEMY);
+      game.move.select(Moves.FIRE_PLEDGE, 1, BattlerIndex.ENEMY_2);
+
+      await game.phaseInterceptor.to("TurnEndPhase");
+
+      expect(game.scene.arena.getTagOnSide(ArenaTagType.WATER_FIRE_PLEDGE, ArenaTagSide.PLAYER)).toBeDefined();
+
+      game.move.select(Moves.IRON_HEAD, 0, BattlerIndex.ENEMY);
+      game.move.select(Moves.SPLASH, 1);
+
+      await game.phaseInterceptor.to("BerryPhase", false);
+
+      expect(ironHeadFlinchAttr.getMoveChance).toHaveLastReturnedWith(60);
     }
   );
 });
