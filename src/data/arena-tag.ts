@@ -959,22 +959,29 @@ class SafeguardTag extends ArenaTag {
  * Imprison will apply to any opposing Pokemon that switch onto the field as well.
  */
 class ImprisonTag extends ArenaTrapTag {
-  private source: Pokemon;
-
   constructor(sourceId: number, side: ArenaTagSide) {
     super(ArenaTagType.IMPRISON, Moves.IMPRISON, sourceId, side, 1);
   }
 
   /**
+   * Helper function that retrieves the source Pokemon
+   * @param {BattleScene} scene medium to retrieve the source Pokemon
+   * @returns {Pokemon} pokemon or undefined
+   */
+  private retrieveSource(scene: BattleScene): Pokemon | undefined {
+    if (this.sourceId) {
+      return scene.getPokemonById(this.sourceId) ?? undefined;
+    }
+    return undefined;
+  }
+
+  /**
    * Helper function that retrieves the Pokemon affected
    * @param {BattleScene} scene medium to retrieve the involved Pokemon
-   * @returns list of PlayerPokemon or EnemyPokemon on the field
+   * @returns list of opposing Pokemon on the field
    */
   private retrieveField(scene: BattleScene): PlayerPokemon[] | EnemyPokemon[] {
-    if (!this.source.isPlayer()) {
-      return scene.getPlayerField() ?? [];
-    }
-    return scene.getEnemyField() ?? [];
+    return (this.side === ArenaTagSide.PLAYER) ? scene.getPlayerField() : scene.getEnemyField();
   }
 
   /**
@@ -982,13 +989,13 @@ class ImprisonTag extends ArenaTrapTag {
    * @param arena
    */
   override onAdd({ scene }: Arena) {
-    this.source = scene.getPokemonById(this.sourceId!)!;
-    if (this.source) {
+    const source = this.retrieveSource(scene);
+    if (source) {
       const party = this.retrieveField(scene);
       party?.forEach((p: PlayerPokemon | EnemyPokemon ) => {
         p.addTag(BattlerTagType.IMPRISON, 1, Moves.IMPRISON, this.sourceId);
       });
-      scene.queueMessage(i18next.t("battlerTags:imprisonOnAdd", {pokemonNameWithAffix: getPokemonNameWithAffix(this.source)}));
+      scene.queueMessage(i18next.t("battlerTags:imprisonOnAdd", {pokemonNameWithAffix: getPokemonNameWithAffix(source)}));
     }
   }
 
@@ -997,8 +1004,9 @@ class ImprisonTag extends ArenaTrapTag {
    * @param _arena
    * @returns `true` if the source of the tag is still active on the field | `false` if not
    */
-  override lapse(_arena: Arena): boolean {
-    return this.source.isActive(true);
+  override lapse({ scene }: Arena): boolean {
+    const source = this.retrieveSource(scene);
+    return source ? source.isActive(true) : false;
   }
 
   /**
@@ -1007,7 +1015,8 @@ class ImprisonTag extends ArenaTrapTag {
    * @returns `true`
    */
   override activateTrap(pokemon: Pokemon): boolean {
-    if (this.source.isActive(true)) {
+    const source = this.retrieveSource(pokemon.scene);
+    if (source && source.isActive(true)) {
       pokemon.addTag(BattlerTagType.IMPRISON, 1, Moves.IMPRISON, this.sourceId);
     }
     return true;

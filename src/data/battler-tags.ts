@@ -23,6 +23,7 @@ import { PokemonHealPhase } from "#app/phases/pokemon-heal-phase";
 import { ShowAbilityPhase } from "#app/phases/show-ability-phase";
 import { StatStageChangePhase, StatStageChangeCallback } from "#app/phases/stat-stage-change-phase";
 import { PokemonAnimType } from "#app/enums/pokemon-anim-type";
+import { BattleScene } from "#app/battle-scene";
 
 export enum BattlerTagLapseType {
   FAINT,
@@ -137,9 +138,10 @@ export abstract class MoveRestrictionBattlerTag extends BattlerTag {
    * Gets whether this tag is restricting a move.
    *
    * @param {Moves} move {@linkcode Moves} ID to check restriction for.
+   * @param {Pokemon} user {@linkcode Pokemon} the Pokemon involved
    * @returns {boolean} `true` if the move is restricted by this tag, otherwise `false`.
    */
-  abstract isMoveRestricted(move: Moves): boolean;
+  abstract isMoveRestricted(move: Moves, user?: Pokemon): boolean;
 
   /**
    * Checks if this tag is restricting a move based on a user's decisions during the target selection phase
@@ -327,6 +329,11 @@ export class GorillaTacticsTag extends MoveRestrictionBattlerTag {
     pokemon.setStat(Stat.ATK, pokemon.getStat(Stat.ATK, false) * 1.5, false);
   }
 
+  /**
+   * Loads the Gorilla Tactics Battler Tag along with its unique class variable moveId
+   * @override
+   * @param source {@linkcode BattlerTag} Gorilla Tactic's Battler Tag information
+   */
   override loadTag(source: BattlerTag | any): void {
     super.loadTag(source);
     this.moveId = source.moveId;
@@ -2487,8 +2494,6 @@ export class MysteryEncounterPostSummonTag extends BattlerTag {
  * Torment does not interrupt the move if the move is performed consecutively in the same turn and right after Torment is applied
  */
 export class TormentTag extends MoveRestrictionBattlerTag {
-  private target: Pokemon;
-
   constructor(sourceId: number) {
     super(BattlerTagType.TORMENT, BattlerTagLapseType.AFTER_MOVE, 1, Moves.TORMENT, sourceId);
   }
@@ -2500,13 +2505,7 @@ export class TormentTag extends MoveRestrictionBattlerTag {
    */
   override onAdd(pokemon: Pokemon) {
     super.onAdd(pokemon);
-    this.target = pokemon;
     pokemon.scene.queueMessage(i18next.t("battlerTags:tormentOnAdd", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }), 1500);
-  }
-
-  override loadTag(source: BattlerTag | any): void {
-    super.loadTag(source);
-    this.target = source.target.toPokemon();
   }
 
   /**
@@ -2524,8 +2523,8 @@ export class TormentTag extends MoveRestrictionBattlerTag {
    * @param {Moves} move the move under investigation
    * @returns `true` if there is valid consecutive usage | `false` if the moves are different from each other
    */
-  override isMoveRestricted(move: Moves): boolean {
-    const lastMove = this.target.getLastXMoves(1)[0];
+  override isMoveRestricted(move: Moves, user: Pokemon): boolean {
+    const lastMove = user.getLastXMoves(1)[0];
     if ( !lastMove ) {
       return false;
     }
@@ -2584,16 +2583,8 @@ export class TauntTag extends MoveRestrictionBattlerTag {
  * The tag is only removed when the source-user is removed from the field.
  */
 export class ImprisonTag extends MoveRestrictionBattlerTag {
-  private source: Pokemon | null;
-
   constructor(sourceId: number) {
     super(BattlerTagType.IMPRISON, [BattlerTagLapseType.PRE_MOVE, BattlerTagLapseType.AFTER_MOVE], 1, Moves.IMPRISON, sourceId);
-  }
-
-  override onAdd(pokemon: Pokemon) {
-    if (this.sourceId) {
-      this.source = pokemon.scene.getPokemonById(this.sourceId);
-    }
   }
 
   /**
@@ -2602,8 +2593,12 @@ export class ImprisonTag extends MoveRestrictionBattlerTag {
    * @param _lapseType
    * @returns `true` if the source is still active
    */
-  override lapse(_pokemon: Pokemon, _lapseType: BattlerTagLapseType): boolean {
-    return this.source?.isActive(true) ?? false;
+  override lapse(pokemon: Pokemon, _lapseType: BattlerTagLapseType): boolean {
+    const source = this.retrieveSource(pokemon.scene);
+    if (source) {
+      return source.isActive(true) ?? false;
+    }
+    return false;
   }
 
   /**
@@ -2611,17 +2606,12 @@ export class ImprisonTag extends MoveRestrictionBattlerTag {
    * @param {Moves} move the move under investigation
    * @returns `false` if either condition is not met
    */
-  override isMoveRestricted(move: Moves): boolean {
-    if (this.source) {
-      const sourceMoveset = this.source.getMoveset().map(m => m!.moveId);
-      return sourceMoveset?.includes(move) && this.source.isActive(true);
+  override isMoveRestricted(move: Moves, user: Pokemon): boolean {
+    const source = this.retrieveSource(user.scene);
+    if (source) {
+      return source?.isActive(true) ?? false;
     }
     return false;
-  }
-
-  override loadTag(source: BattlerTag | any): void {
-    super.loadTag(source);
-    this.source = source.source.toPokemon();
   }
 
   override selectionDeniedText(_pokemon: Pokemon, move: Moves): string {
@@ -2630,6 +2620,15 @@ export class ImprisonTag extends MoveRestrictionBattlerTag {
 
   override interruptedText(pokemon: Pokemon, move: Moves): string {
     return i18next.t("battle:disableInterruptedMove", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), moveName: allMoves[move].name });
+  }
+
+  /**
+   * Helper function that retrieves the source Pokemon object
+   * @param scene medium to retrieve the source Pokemon
+   * @returns source pokemon {@linkcode Pokemon} or undefined
+   */
+  private retrieveSource(scene: BattleScene): Pokemon | undefined {
+    return scene.getPokemonById(this.sourceId);
   }
 }
 
