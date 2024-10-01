@@ -137,9 +137,10 @@ export abstract class MoveRestrictionBattlerTag extends BattlerTag {
    * Gets whether this tag is restricting a move.
    *
    * @param {Moves} move {@linkcode Moves} ID to check restriction for.
+   * @param {Pokemon} user {@linkcode Pokemon} optional parameter for move user
    * @returns {boolean} `true` if the move is restricted by this tag, otherwise `false`.
    */
-  abstract isMoveRestricted(move: Moves): boolean;
+  abstract isMoveRestricted(move: Moves, user?: Pokemon): boolean;
 
   /**
    * Checks if this tag is restricting a move based on a user's decisions during the target selection phase
@@ -297,7 +298,15 @@ export class GorillaTacticsTag extends MoveRestrictionBattlerTag {
   }
 
   /** @override */
-  override isMoveRestricted(move: Moves): boolean {
+  override isMoveRestricted(move: Moves, user: Pokemon): boolean {
+    if (this.moveId === Moves.NONE) {
+      const validMove = this.getLastValidMove(user);
+      if (validMove) {
+        this.moveId = validMove;
+      } else {
+        return true;
+      }
+    }
     return move !== this.moveId;
   }
 
@@ -2482,7 +2491,6 @@ export class MysteryEncounterPostSummonTag extends BattlerTag {
  * Torment does not interrupt the move if the move is performed consecutively in the same turn and right after Torment is applied
  */
 export class TormentTag extends MoveRestrictionBattlerTag {
-  private target: Pokemon;
 
   constructor(sourceId: number) {
     super(BattlerTagType.TORMENT, BattlerTagLapseType.AFTER_MOVE, 1, Moves.TORMENT, sourceId);
@@ -2495,7 +2503,6 @@ export class TormentTag extends MoveRestrictionBattlerTag {
    */
   override onAdd(pokemon: Pokemon) {
     super.onAdd(pokemon);
-    this.target = pokemon;
     pokemon.scene.queueMessage(i18next.t("battlerTags:tormentOnAdd", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }), 1500);
   }
 
@@ -2514,15 +2521,15 @@ export class TormentTag extends MoveRestrictionBattlerTag {
    * @param {Moves} move the move under investigation
    * @returns `true` if there is valid consecutive usage | `false` if the moves are different from each other
    */
-  override isMoveRestricted(move: Moves): boolean {
-    const lastMove = this.target.getLastXMoves(1)[0];
+  override isMoveRestricted(move: Moves, user: Pokemon): boolean {
+    const lastMove = user.getLastXMoves(1)[0];
     if ( !lastMove ) {
       return false;
     }
     // This checks for locking / momentum moves like Rollout and Hydro Cannon + if the user is under the influence of BattlerTagType.FRENZY
     // Because Uproar's unique behavior is not implemented, it does not check for Uproar. Torment has been marked as partial in moves.ts
     const moveObj = allMoves[lastMove.move];
-    const isUnaffected = moveObj.hasAttr(ConsecutiveUseDoublePowerAttr) || this.target.getTag(BattlerTagType.FRENZY) || moveObj.hasAttr(ChargeAttr);
+    const isUnaffected = moveObj.hasAttr(ConsecutiveUseDoublePowerAttr) || user.getTag(BattlerTagType.FRENZY) || moveObj.hasAttr(ChargeAttr);
     const validLastMoveResult = (lastMove.result === MoveResult.SUCCESS) || (lastMove.result === MoveResult.MISS);
     if (lastMove.move === move && validLastMoveResult && lastMove.move !== Moves.STRUGGLE && !isUnaffected) {
       return true;
@@ -2601,7 +2608,10 @@ export class ImprisonTag extends MoveRestrictionBattlerTag {
    * @param {Moves} move the move under investigation
    * @returns `false` if either condition is not met
    */
-  override isMoveRestricted(move: Moves): boolean {
+  override isMoveRestricted(move: Moves, user: Pokemon): boolean {
+    if (!this.source && this.sourceId) {
+      this.source = user.scene.getPokemonById(this.sourceId);
+    }
     if (this.source) {
       const sourceMoveset = this.source.getMoveset().map(m => m!.moveId);
       return sourceMoveset?.includes(move) && this.source.isActive(true);
