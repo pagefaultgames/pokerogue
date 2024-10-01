@@ -75,8 +75,8 @@
   "substituteOnAdd": "¡{{pokemonNameWithAffix}} creó un sustituto!",
   "substituteOnHit": "¡El sustituto recibe daño en lugar del {{pokemonNameWithAffix}}!",
   "substituteOnRemove": "¡El sustituto del {{pokemonNameWithAffix}} se debilitó!",
-  "tormentOnAdd": "{{pokemonNameWithAffix}} was subjected to torment!",
-  "tauntOnAdd": "{{pokemonNameWithAffix}} fell for the taunt!",
-  "imprisonOnAdd": "{{pokemonNameWithAffix}} sealed the opponents move(s)!",
-  "autotomizeOnAdd": "{{pokemonNameWithAffix}} became nimble!"
+  "tormentOnAdd": "¡{{pokemonNameWithAffix}} está\natormentado!",
+  "tauntOnAdd": "¡{{pokemonNameWithAffix}} se ha dejado\nengañar por una mofa!",
+  "imprisonOnAdd": "¡{{pokemonNameWithAffix}} selló\nmovimientos del oponente!",
+  "autotomizeOnAdd": "¡{{pokemonNameWithAffix}} es ahora\nmás ligero!"
 }
