@@ -4,7 +4,7 @@ import { Variant, VariantSet, variantColorCache } from "#app/data/variant";
 import { variantData } from "#app/data/variant";
 import BattleInfo, { PlayerBattleInfo, EnemyBattleInfo } from "../ui/battle-info";
 import Move, { HighCritAttr, HitsTagAttr, applyMoveAttrs, FixedDamageAttr, VariableAtkAttr, allMoves, MoveCategory, TypelessAttr, CritOnlyAttr, getMoveTargets, OneHitKOAttr, VariableMoveTypeAttr, VariableDefAttr, AttackMove, ModifiedDamageAttr, VariableMoveTypeMultiplierAttr, IgnoreOpponentStatStagesAttr, SacrificialAttr, VariableMoveCategoryAttr, CounterDamageAttr, StatStageChangeAttr, RechargeAttr, ChargeAttr, IgnoreWeatherTypeDebuffAttr, BypassBurnDamageReductionAttr, SacrificialAttrOnHit, OneHitKOAccuracyAttr, RespectAttackTypeImmunityAttr, MoveTarget } from "../data/move";
-import { default as PokemonSpecies, PokemonSpeciesForm, SpeciesFormKey, getFusedSpeciesName, getPokemonSpecies, getPokemonSpeciesForm, getStarterValueFriendshipCap, speciesStarters, starterPassiveAbilities } from "../data/pokemon-species";
+import { default as PokemonSpecies, PokemonSpeciesForm, getFusedSpeciesName, getPokemonSpecies, getPokemonSpeciesForm, getStarterValueFriendshipCap, speciesStarters, starterPassiveAbilities } from "../data/pokemon-species";
 import { Constructor, isNullOrUndefined, randSeedInt } from "#app/utils";
 import * as Utils from "../utils";
 import { Type, TypeDamageMultiplier, getTypeDamageMultiplier, getTypeRgb } from "../data/type";
@@ -62,6 +62,7 @@ import { PokemonAnimType } from "#app/enums/pokemon-anim-type";
 import { PLAYER_PARTY_MAX_SIZE } from "#app/constants";
 import { MysteryEncounterPokemonData } from "#app/data/mystery-encounters/mystery-encounter-pokemon-data";
 import { SwitchType } from "#enums/switch-type";
+import { SpeciesFormKey } from "#app/enums/species-form-key";
 
 /** `64/65536 -> 1/1024` */
 const BASE_SHINY_CHANCE = 64;

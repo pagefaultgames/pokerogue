@@ -1,6 +1,5 @@
 import { PokemonFormChangeItemModifier, TerastallizeModifier } from "../modifier/modifier";
 import Pokemon from "../field/pokemon";
-import { SpeciesFormKey } from "./pokemon-species";
 import { StatusEffect } from "./status-effect";
 import { MoveCategory, allMoves } from "./move";
 import { Type } from "./type";
@@ -13,6 +12,7 @@ import { getPokemonNameWithAffix } from "#app/messages";
 import i18next from "i18next";
 import { WeatherType } from "./weather";
 import { Challenges } from "#app/enums/challenges";
+import { SpeciesFormKey } from "#app/enums/species-form-key";
 
 export enum FormChangeItem {
   NONE,
