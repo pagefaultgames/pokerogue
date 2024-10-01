@@ -284,6 +284,10 @@
     "name": "Mirror rorriM",
     "description": "Complete the Inverse Battle challenge.\n.egnellahc elttaB esrevnI eht etelpmoC"
   },
+  "TRICK_ROOM": {
+    "name": "You're Too Fast!",
+    "description": "Complete the Trick Room challenge."
+  },
   "BREEDERS_IN_SPACE": {
     "name": "Breeders in Space!",
     "description": "Beat the Expert Pokémon Breeder in the Space Biome."

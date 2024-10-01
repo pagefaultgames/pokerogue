@@ -15,6 +15,8 @@ import { Moves } from "#app/enums/moves";
 import { TypeColor, TypeShadow } from "#app/enums/color";
 import { pokemonEvolutions } from "./pokemon-evolutions";
 import { pokemonFormChanges } from "./pokemon-forms";
+import { Arena } from "#app/field/arena";
+import { ArenaTagType } from "#enums/arena-tag-type";
 
 /** A constant for the default max cost of the starting party before a run */
 const DEFAULT_PARTY_MAX_COST = 10;
@@ -59,6 +61,11 @@ export enum ChallengeType {
    * @see {@linkcode Challenge.applyTypeEffectiveness}
   */
   TYPE_EFFECTIVENESS,
+  /**
+   * Modifies the Arena Tags when a encounter starts
+   * @see {@linkcode Challenge.applyArenaTag}
+   */
+  ARENA_TAG,
   /**
    * Modifies what level the AI pokemon are. UNIMPLEMENTED.
    */
@@ -333,6 +340,15 @@ export abstract class Challenge {
    * @returns Whether this function did anything.
    */
   applyTypeEffectiveness(effectiveness: Utils.NumberHolder): boolean {
+    return false;
+  }
+
+  /**
+   * An apply function for ARENA_TAG challenges. Derived classes should alter this.
+   * @param arena {@link Arena} The arena to apply the tag to.
+   * @returns {@link boolean} Whether this function did anything.
+   */
+  applyArenaTag(arena: Arena): boolean {
     return false;
   }
 
@@ -701,6 +717,34 @@ export class InverseBattleChallenge extends Challenge {
 }
 
 /**
+ * Challenge that enables Trick Room in a run
+ */
+export class TrickRoomChallenge extends Challenge {
+  constructor() {
+    super(Challenges.TRICK_ROOM, 1);
+  }
+
+  static loadChallenge(source: TrickRoomChallenge | any): TrickRoomChallenge {
+    const newChallenge = new TrickRoomChallenge();
+    newChallenge.value = source.value;
+    newChallenge.severity = source.severity;
+    return newChallenge;
+  }
+  /**
+   * @override
+   * this challenge enables Trick Room arena tag when encounter starts
+   * @see {@link https://bulbapedia.bulbagarden.net/wiki/Trick_Room_(move)}
+   *
+   * @param arena {@link Arena} The arena to apply the tag to.
+   * @returns `true` if any challenge was successfully applied.
+   */
+  override applyArenaTag(arena: Arena): boolean {
+    arena.addTag(ArenaTagType.TRICK_ROOM, Number.POSITIVE_INFINITY, undefined, -1);
+    return true;
+  }
+}
+
+/**
  * Lowers the amount of starter points available.
  */
 export class LowerStarterMaxCostChallenge extends Challenge {
@@ -828,6 +872,14 @@ export function applyChallenges(gameMode: GameMode, challengeType: ChallengeType
  */
 export function applyChallenges(gameMode: GameMode, challengeType: ChallengeType.TYPE_EFFECTIVENESS, effectiveness: Utils.NumberHolder): boolean;
 /**
+ * Apply all challenges that modify an arena tag when a encounter starts.
+ * @param gameMode The current {@linkcode GameMode}
+ * @param challengeType {@linkcode ChallengeType.ARENA_TAG}
+ * @param arena {@linkcode Arena} The arena to apply the tag to.
+ * @returns `true` if any challenge was successfully applied.
+ */
+export function applyChallenges(gameMode: GameMode, challengeType: ChallengeType.ARENA_TAG, arena: Arena): boolean;
+/**
  * Apply all challenges that modify what level AI are.
  * @param gameMode {@link GameMode} The current gameMode
  * @param challengeType {@link ChallengeType} ChallengeType.AI_LEVEL
@@ -911,6 +963,9 @@ export function applyChallenges(gameMode: GameMode, challengeType: ChallengeType
       case ChallengeType.TYPE_EFFECTIVENESS:
         ret ||= c.applyTypeEffectiveness(args[0]);
         break;
+      case ChallengeType.ARENA_TAG:
+        ret ||= c.applyArenaTag(args[0]);
+        break;
       case ChallengeType.AI_LEVEL:
         ret ||= c.applyLevelChange(args[0], args[1], args[2], args[3]);
         break;
@@ -954,6 +1009,8 @@ export function copyChallenge(source: Challenge | any): Challenge {
     return FreshStartChallenge.loadChallenge(source);
   case Challenges.INVERSE_BATTLE:
     return InverseBattleChallenge.loadChallenge(source);
+  case Challenges.TRICK_ROOM:
+    return TrickRoomChallenge.loadChallenge(source);
   }
   throw new Error("Unknown challenge copied");
 }
@@ -966,5 +1023,6 @@ export function initChallenges() {
     new SingleTypeChallenge(),
     new FreshStartChallenge(),
     new InverseBattleChallenge(),
+    new TrickRoomChallenge(),
   );
 }
