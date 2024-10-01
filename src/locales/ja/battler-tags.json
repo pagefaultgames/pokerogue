@@ -73,5 +73,5 @@
   "tarShotOnAdd": "{{pokemonNameWithAffix}}は　ほのおに　弱くなった！",
   "shedTailOnAdd": "{{pokemonNameWithAffix}}は\nしっぽを　切って　みがわりにした！",
   "syrupBombOnAdd": "{{pokemonNameWithAffix}} got covered in sticky candy syrup!",
-  "syrupBombLapse": "The sticky syrup slowed down {{pokemonNameWithAffix}}!"
+  "syrupBombLapse": "{{pokemonNameWithAffix}}は　あめまみれで　素早さが　下がった！"
 }
