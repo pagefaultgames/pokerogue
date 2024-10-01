@@ -1,34 +1,28 @@
 import { clientSessionId } from "#app/account";
-import BattleScene from "#app/battle-scene";
 import { BattleType } from "#app/battle";
+import BattleScene from "#app/battle-scene";
 import { getCharVariantFromDialogue } from "#app/data/dialogue";
 import { pokemonEvolutions } from "#app/data/pokemon-evolutions";
 import PokemonSpecies, { getPokemonSpecies } from "#app/data/pokemon-species";
 import { trainerConfigs } from "#app/data/trainer-config";
-import { PlayerGender } from "#app/enums/player-gender";
-import { TrainerType } from "#app/enums/trainer-type";
 import Pokemon from "#app/field/pokemon";
 import { modifierTypes } from "#app/modifier/modifier-type";
+import { BattlePhase } from "#app/phases/battle-phase";
+import { CheckSwitchPhase } from "#app/phases/check-switch-phase";
+import { EncounterPhase } from "#app/phases/encounter-phase";
+import { EndCardPhase } from "#app/phases/end-card-phase";
+import { GameOverModifierRewardPhase } from "#app/phases/game-over-modifier-reward-phase";
+import { PostGameOverPhase } from "#app/phases/post-game-over-phase";
+import { RibbonModifierRewardPhase } from "#app/phases/ribbon-modifier-reward-phase";
+import { SummonPhase } from "#app/phases/summon-phase";
+import { UnlockPhase } from "#app/phases/unlock-phase";
 import { achvs, ChallengeAchv } from "#app/system/achv";
 import { Unlockables } from "#app/system/unlockables";
 import { Mode } from "#app/ui/ui";
-import i18next from "i18next";
 import * as Utils from "#app/utils";
-import { BattlePhase } from "./battle-phase";
-import { CheckSwitchPhase } from "./check-switch-phase";
-import { EncounterPhase } from "./encounter-phase";
-import { GameOverModifierRewardPhase } from "./game-over-modifier-reward-phase";
-import { RibbonModifierRewardPhase } from "./ribbon-modifier-reward-phase";
-import { SummonPhase } from "./summon-phase";
-import { EndCardPhase } from "./end-card-phase";
-import { PostGameOverPhase } from "./post-game-over-phase";
-import { UnlockPhase } from "./unlock-phase";
-import { SessionSaveData } from "../system/game-data";
-import TrainerData from "../system/trainer-data";
-import PokemonData from "../system/pokemon-data";
-import PersistentModifierData from "../system/modifier-data";
-import ChallengeData from "../system/challenge-data";
-import ArenaData from "../system/arena-data";
+import { PlayerGender } from "#enums/player-gender";
+import { TrainerType } from "#enums/trainer-type";
+import i18next from "i18next";
 
 export class GameOverPhase extends BattlePhase {
   private victory: boolean;
@@ -114,7 +108,7 @@ export class GameOverPhase extends BattlePhase {
             this.scene.gameData.gameStats.dailyRunSessionsWon++;
           }
         }
-        this.scene.gameData.saveRunHistory(this.scene, this.getFinalSessionData(), this.victory);
+        this.scene.gameData.saveRunHistory(this.scene, this.scene.gameData.getSessionSaveData(this.scene), this.victory);
         const fadeDuration = this.victory ? 10000 : 5000;
         this.scene.fadeOutBgm(fadeDuration, true);
         const activeBattlers = this.scene.getField().filter(p => p?.isActive(true));
@@ -220,35 +214,6 @@ export class GameOverPhase extends BattlePhase {
     if (speciesRibbonCount === 1) {
       this.firstRibbons.push(getPokemonSpecies(pokemon.species.getRootSpeciesId(forStarter)));
     }
-  }
-
-  /**
-   * This function mirrors game-data.ts' getSessionSaveData() to update the session data to reflect any changes that occurred within the last wave
-   * This means that level ups, item usage, evolutions, etc. will all be accurately reflected.
-   * @returns {@linkCode SessionSaveData} an updated version of the wave's SessionSaveData that accurately reflects the events of the wave
-   */
-  private getFinalSessionData(): SessionSaveData {
-    return {
-      seed: this.scene.seed,
-      playTime: this.scene.sessionPlayTime,
-      gameMode: this.scene.gameMode.modeId,
-      party: this.scene.getParty().map(p => new PokemonData(p)),
-      enemyParty: this.scene.getEnemyParty().map(p => new PokemonData(p)),
-      modifiers: this.scene.findModifiers(() => true).map(m => new PersistentModifierData(m, true)),
-      enemyModifiers: this.scene.findModifiers(() => true, false).map(m => new PersistentModifierData(m, false)),
-      arena: new ArenaData(this.scene.arena),
-      pokeballCounts: this.scene.pokeballCounts,
-      money: Math.floor(this.scene.money),
-      score: this.scene.score,
-      waveIndex: this.scene.currentBattle.waveIndex,
-      battleType: this.scene.currentBattle.battleType,
-      trainer: this.scene.currentBattle.battleType === BattleType.TRAINER ? new TrainerData(this.scene.currentBattle.trainer) : null,
-      gameVersion: this.scene.game.config.gameVersion,
-      timestamp: new Date().getTime(),
-      challenges: this.scene.gameMode.challenges.map(c => new ChallengeData(c)),
-      mysteryEncounterType: this.scene.currentBattle.mysteryEncounter?.encounterType ?? -1,
-      mysteryEncounterSaveData: this.scene.mysteryEncounterSaveData
-    } as SessionSaveData;
   }
 }
 
