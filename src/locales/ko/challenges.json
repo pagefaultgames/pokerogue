@@ -35,10 +35,10 @@
     "value.1": "설정"
   },
   "trickRoom": {
-    "name": "Trick Room",
-    "shortName": "Trick Room",
-    "desc": "All battles are under the effect of Trick Room, where slower Pokémon move sooner and faster Pokémon move later.\nDisables other challenges' achievements.",
-    "value.0": "Off",
-    "value.1": "On"
+    "name": "트릭룸",
+    "shortName": "트릭룸",
+    "desc": "모든 배틀은 트릭룸 상태로 진행됩니다. 더 빠른 포켓몬은 나중에, 더 느린 포켓몬이 먼저 행동합니다.\n설정 시 다른 챌린지 업적은 달성할 수 없습니다.",
+    "value.0": "해제",
+    "value.1": "설정"
   }
 }
