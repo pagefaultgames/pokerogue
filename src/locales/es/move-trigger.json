@@ -68,6 +68,6 @@
   "exposedMove": "¡{{pokemonName}} ha identificado\n{{targetPokemonName}}!",
   "safeguard": "¡{{targetName}} está protegido por Velo Sagrado!",
   "afterYou": "¡{{targetName}} ha decidido aprovechar la oportunidad!",
-  "combiningPledge": "¡Los dos movimientos se han unido!\n¡Es un movimiento combinado!",
-  "awaitingPledge": "{{userPokemonName}} está esperando\na {{allyPokemonName}}..."
+  "combiningPledge": "The two moves have become one!\nIt's a combined move!",
+  "awaitingPledge": "{{userPokemonName}} is waiting for {{allyPokemonName}}'s move..."
 }
