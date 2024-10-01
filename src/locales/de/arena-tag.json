@@ -55,7 +55,7 @@
   "safeguardOnRemove": "Der mystische Schleier, der das ganze Feld umgab, hat sich gelüftet!",
   "safeguardOnRemovePlayer": "Der mystische Schleier, der dein Team umgab, hat sich gelüftet!",
   "safeguardOnRemoveEnemy": "Der mystische Schleier, der das gegnerische Team umgab, hat sich gelüftet!",
-  "fireGrassPledgeOnAdd": "A sea of fire enveloped the field!",
+  "fireGrassPledgeOnAdd": "Es erstreckt sich ein Meer aus Feuer!",
   "fireGrassPledgeOnAddPlayer": "Um die Pokémon auf deiner Seite erstreckt sich ein Meer aus Feuer!",
   "fireGrassPledgeOnAddEnemy": "Um die Pokémon auf der gegnerischen Seite erstreckt sich ein Meer aus Feuer!",
   "fireGrassPledgeLapse": "{{pokemonNameWithAffix}} nimmt Schaden durch das Meer aus Feuer!",
