@@ -24,6 +24,9 @@ We're using ESLint as our common linter and formatter. It will run automatically
 **How do I test a new _______?**
 - In the `src/overrides.ts` file there are overrides for most values you'll need to change for testing
 
+**How do I retrieve the translations?**
+- The translations were moved to the [dedicated translation repository](https://github.com/pagefaultgames/pokerogue-locales) and are now applied as a submodule in this project.
+- The command to retrieve the translations is `git submodule update --init --recursive`. If you still struggle to get it working, please reach out to #dev-corner channel in Discord.
 
 ## 🪧 To Do
 Check out [Github Issues](https://github.com/pagefaultgames/pokerogue/issues) to see how can you help us!
