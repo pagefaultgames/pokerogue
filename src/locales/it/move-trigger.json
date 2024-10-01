@@ -69,6 +69,6 @@
   "chillyReception": "{{pokemonName}} sta per fare una battuta!",
   "safeguard": "Salvaguardia protegge {{targetName}}!",
   "afterYou": "{{targetName}} approfitta della cortesia!",
-  "combiningPledge": "The two moves have become one!\nIt's a combined move!",
-  "awaitingPledge": "{{userPokemonName}} is waiting for {{allyPokemonName}}'s move..."
+  "combiningPledge": "Formidabile! Due mosse che diventano una!\nÈ una mossa combinata!",
+  "awaitingPledge": "{{userPokemonName}} attende\n{{allyPokemonName}}..."
 }
