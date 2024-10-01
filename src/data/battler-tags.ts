@@ -327,6 +327,11 @@ export class GorillaTacticsTag extends MoveRestrictionBattlerTag {
     pokemon.setStat(Stat.ATK, pokemon.getStat(Stat.ATK, false) * 1.5, false);
   }
 
+  override loadTag(source: BattlerTag | any): void {
+    super.loadTag(source);
+    this.moveId = source.moveId;
+  }
+
   /**
    *
    * @override
@@ -2499,6 +2504,11 @@ export class TormentTag extends MoveRestrictionBattlerTag {
     pokemon.scene.queueMessage(i18next.t("battlerTags:tormentOnAdd", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }), 1500);
   }
 
+  override loadTag(source: BattlerTag | any): void {
+    super.loadTag(source);
+    this.target = source.target.toPokemon();
+  }
+
   /**
    * Torment only ends when the affected Pokemon leaves the battle field
    * @param {Pokemon} pokemon the Pokemon under the effects of Torment
@@ -2607,6 +2617,11 @@ export class ImprisonTag extends MoveRestrictionBattlerTag {
       return sourceMoveset?.includes(move) && this.source.isActive(true);
     }
     return false;
+  }
+
+  override loadTag(source: BattlerTag | any): void {
+    super.loadTag(source);
+    this.source = source.source.toPokemon();
   }
 
   override selectionDeniedText(_pokemon: Pokemon, move: Moves): string {
