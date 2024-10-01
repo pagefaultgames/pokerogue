@@ -14,12 +14,12 @@ If you have the motivation and experience with Typescript/Javascript (or are wil
 #### Local Setup
 1. Clone the repo including submodules:
     ```shell
-    git clone --recurse-submodules --remote-submodules https://github.com/flx-sta/pokerogue-locales.git
+    git clone --recurse-submodules --remote-submodules https://github.com/pagefaultgames/pokerogue.git
     ```
     <sub>Use SSH if preferred</sub>
 2. Change into the root project directory
     ```shell
-    git clone --recurse-submodules --remote-submodules https://github.com/flx-sta/pokerogue-locales.git
+    cd pokerogue
     ```
 3. Install all npm modules:
     ```shell
