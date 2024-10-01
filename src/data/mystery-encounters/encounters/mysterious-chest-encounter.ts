@@ -173,7 +173,7 @@ export const MysteriousChestEncounter: MysteryEncounter =
             koPlayerPokemon(scene, highestLevelPokemon);
 
             encounter.setDialogueToken("pokeName", highestLevelPokemon.getNameToRender());
-            await showEncounterText(scene, `${namespace}.option.1.bad`);
+            await showEncounterText(scene, `${namespace}:option.1.bad`);
 
             // Handle game over edge case
             const allowedPokemon = scene.getParty().filter(p => p.isAllowedInBattle());

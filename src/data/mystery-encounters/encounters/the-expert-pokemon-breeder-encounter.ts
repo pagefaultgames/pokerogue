@@ -540,7 +540,7 @@ function onGameOver(scene: BattleScene) {
   encounter.dialogue.outro = [
     {
       speaker: trainerNameKey,
-      text: `${namespace}.outro_failed`,
+      text: `${namespace}:outro_failed`,
     },
   ];
 
