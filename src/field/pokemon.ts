@@ -3025,7 +3025,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    *
    * @see {@linkcode MoveRestrictionBattlerTag}
    */
-  isMoveRestricted(moveId: Moves, pokemon: Pokemon): boolean {
+  isMoveRestricted(moveId: Moves, pokemon?: Pokemon): boolean {
     return this.getRestrictingTag(moveId, pokemon) !== null;
   }
 
