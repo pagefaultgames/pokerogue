@@ -69,6 +69,6 @@
   "exposedMove": "{{pokemonName}}识破了\n{{targetPokemonName}}的原型！",
   "safeguard": "{{targetName}}\n正受到神秘之幕的保护！",
   "afterYou": "{{targetName}}\n接受了对手的好意！",
-  "combiningPledge": "The two moves have become one!\nIt's a combined move!",
-  "awaitingPledge": "{{userPokemonName}} is waiting for {{allyPokemonName}}'s move..."
+  "combiningPledge": "两个招式合二为一！\n这是合体招式！！",
+  "awaitingPledge": "{{userPokemonName}}正在等待\n{{allyPokemonName}}的招式"
 }
