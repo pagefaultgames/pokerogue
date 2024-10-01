@@ -360,6 +360,8 @@ export class MoveEffectPhase extends PokemonPhase {
           this.scene.queueMessage(i18next.t("battle:attackHitsCount", { count: hitsTotal }));
         }
         this.scene.applyModifiers(HitHealModifier, this.player, user);
+        // Clear all cached move effectiveness values among targets
+        this.getTargets().forEach((target) => target.turnData.moveEffectiveness = null);
       }
     }
 
