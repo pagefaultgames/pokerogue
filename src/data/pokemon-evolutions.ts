@@ -11,6 +11,7 @@ import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import { TimeOfDay } from "#enums/time-of-day";
 import { DamageMoneyRewardModifier, ExtraModifierModifier, MoneyMultiplierModifier } from "#app/modifier/modifier";
+import { SpeciesFormKey } from "#enums/species-form-key";
 
 
 export enum SpeciesWildEvolutionDelay {
