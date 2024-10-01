@@ -16,7 +16,7 @@ import { Type } from "./type";
 import { LevelMoves, pokemonFormLevelMoves, pokemonFormLevelMoves as pokemonSpeciesFormLevelMoves, pokemonSpeciesLevelMoves } from "./pokemon-level-moves";
 import { Stat } from "#enums/stat";
 import { Variant, VariantSet, variantColorCache, variantData } from "./variant";
-import { SpeciesFormKey } from "#app/enums/species-form-key";
+import { SpeciesFormKey } from "#enums/species-form-key";
 
 export enum Region {
   NORMAL,

@@ -14,7 +14,7 @@ import { WeatherType } from "../weather";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { AttackTypeBoosterModifier } from "#app/modifier/modifier";
 import { AttackTypeBoosterModifierType } from "#app/modifier/modifier-type";
-import { SpeciesFormKey } from "#app/enums/species-form-key";
+import { SpeciesFormKey } from "#enums/species-form-key";
 
 export interface EncounterRequirement {
   meetsRequirement(scene: BattleScene): boolean; // Boolean to see if a requirement is met

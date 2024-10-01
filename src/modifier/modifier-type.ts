@@ -26,7 +26,7 @@ import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { PermanentStat, TEMP_BATTLE_STATS, TempBattleStat, Stat, getStatKey } from "#app/enums/stat";
-import { SpeciesFormKey } from "#app/enums/species-form-key";
+import { SpeciesFormKey } from "#enums/species-form-key";
 
 const outputModifierData = false;
 const useMaxWeightForOutput = false;

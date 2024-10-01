@@ -12,7 +12,7 @@ import { getPokemonNameWithAffix } from "#app/messages";
 import i18next from "i18next";
 import { WeatherType } from "./weather";
 import { Challenges } from "#app/enums/challenges";
-import { SpeciesFormKey } from "#app/enums/species-form-key";
+import { SpeciesFormKey } from "#enums/species-form-key";
 
 export enum FormChangeItem {
   NONE,

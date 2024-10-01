@@ -62,7 +62,7 @@ import { PokemonAnimType } from "#app/enums/pokemon-anim-type";
 import { PLAYER_PARTY_MAX_SIZE } from "#app/constants";
 import { MysteryEncounterPokemonData } from "#app/data/mystery-encounters/mystery-encounter-pokemon-data";
 import { SwitchType } from "#enums/switch-type";
-import { SpeciesFormKey } from "#app/enums/species-form-key";
+import { SpeciesFormKey } from "#enums/species-form-key";
 
 /** `64/65536 -> 1/1024` */
 const BASE_SHINY_CHANCE = 64;
