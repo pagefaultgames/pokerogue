@@ -75,8 +75,8 @@
   "substituteOnAdd": "Ein Delegator von {{pokemonNameWithAffix}} ist erschienen!",
   "substituteOnHit": "Der Delegator steckt den Schlag für {{pokemonNameWithAffix}} ein!",
   "substituteOnRemove": "Der Delegator von {{pokemonNameWithAffix}} hört auf zu wirken!",
-  "tormentOnAdd": "{{pokemonNameWithAffix}} was subjected to torment!",
-  "tauntOnAdd": "{{pokemonNameWithAffix}} fell for the taunt!",
-  "imprisonOnAdd": "{{pokemonNameWithAffix}} sealed the opponents move(s)!",
+  "tormentOnAdd": "{{pokemonNameWithAffix}} wird der Attacke Folterknecht unterworfen!",
+  "tauntOnAdd": "{{pokemonNameWithAffix}} fällt auf Verhöhner herein!",
+  "imprisonOnAdd": "{{pokemonNameWithAffix}} versiegelt jene gegnerischen Attacken, die es selbst auch beherrscht!",
   "autotomizeOnAdd": "{{pokemonNameWithAffix}} ist leichter geworden!"
 }
