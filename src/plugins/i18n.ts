@@ -104,7 +104,6 @@ async function initFonts(language: string | undefined) {
 
 /**
  * Initialize i18n with fonts
- * @returns {Promise<void>}
  */
 export async function initI18n(): Promise<void> {
   // Prevent reinitialization
@@ -240,7 +239,6 @@ export async function initI18n(): Promise<void> {
       "mysteryEncounters/globalTradeSystem",
       "mysteryEncounters/theExpertPokemonBreeder",
       "mysteryEncounterMessages",
-
     ],
     detection: {
       lookupLocalStorage: "prLang"
