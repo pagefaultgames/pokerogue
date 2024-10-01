@@ -17,7 +17,6 @@ import { pokemonEvolutions } from "./pokemon-evolutions";
 import { pokemonFormChanges } from "./pokemon-forms";
 import { Arena } from "#app/field/arena";
 import { ArenaTagType } from "#enums/arena-tag-type";
-import { ArenaTagSide } from "./arena-tag";
 
 /** A constant for the default max cost of the starting party before a run */
 const DEFAULT_PARTY_MAX_COST = 10;
@@ -347,12 +346,9 @@ export abstract class Challenge {
   /**
    * An apply function for ARENA_TAG challenges. Derived classes should alter this.
    * @param arena {@link Arena} The arena to apply the tag to.
-   * @param arenaTag {@link ArenaTagType} The arena tag to apply.
-   * @param turnCount {@link Number} The amount of turns the tag should last.
-   * @param side {@link ArenaTagSide} The side to apply the tag to. (optional)
    * @returns {@link boolean} Whether this function did anything.
    */
-  applyArenaTag(arena: Arena, arenaTag: ArenaTagType, turnCount: Number, side?: ArenaTagSide): boolean {
+  applyArenaTag(arena: Arena): boolean {
     return false;
   }
 
@@ -740,16 +736,11 @@ export class TrickRoomChallenge extends Challenge {
    * @see {@link https://bulbapedia.bulbagarden.net/wiki/Trick_Room_(move)}
    *
    * @param arena {@link Arena} The arena to apply the tag to.
-   * @param arenaTag {@link ArenaTagType} The arena tag to apply.
-   * @param turnCount {@link Number} The amount of turns the tag should last.
    * @returns `true` if any challenge was successfully applied.
    */
-  override applyArenaTag(arena: Arena, arenaTag: ArenaTagType, turnCount: Number): boolean {
-    if (arenaTag === ArenaTagType.TRICK_ROOM) {
-      arena.addTag(ArenaTagType.TRICK_ROOM, turnCount.valueOf(), undefined, -1);
-      return true;
-    }
-    return false;
+  override applyArenaTag(arena: Arena): boolean {
+    arena.addTag(ArenaTagType.TRICK_ROOM, Number.POSITIVE_INFINITY, undefined, -1);
+    return true;
   }
 }
 
@@ -885,12 +876,9 @@ export function applyChallenges(gameMode: GameMode, challengeType: ChallengeType
  * @param gameMode The current {@linkcode GameMode}
  * @param challengeType {@linkcode ChallengeType.ARENA_TAG}
  * @param arena {@linkcode Arena} The arena to apply the tag to.
- * @param arenaTag {@linkcode ArenaTagType} The arena tag to apply.
- * @param turnCount {@linkcode Number} The amount of turns the tag should last.
- * @param side {@linkcode ArenaTagSide} The side to apply the tag to. (optional)
  * @returns `true` if any challenge was successfully applied.
  */
-export function applyChallenges(gameMode: GameMode, challengeType: ChallengeType.ARENA_TAG, arena: Arena, arenaTag: ArenaTagType, turnCount: Number, side?: ArenaTagSide): boolean;
+export function applyChallenges(gameMode: GameMode, challengeType: ChallengeType.ARENA_TAG, arena: Arena): boolean;
 /**
  * Apply all challenges that modify what level AI are.
  * @param gameMode {@link GameMode} The current gameMode
@@ -976,7 +964,7 @@ export function applyChallenges(gameMode: GameMode, challengeType: ChallengeType
         ret ||= c.applyTypeEffectiveness(args[0]);
         break;
       case ChallengeType.ARENA_TAG:
-        ret ||= c.applyArenaTag(args[0], args[1], args[2], args[3]);
+        ret ||= c.applyArenaTag(args[0]);
         break;
       case ChallengeType.AI_LEVEL:
         ret ||= c.applyLevelChange(args[0], args[1], args[2], args[3]);
