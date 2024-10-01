@@ -32,5 +32,12 @@
     "desc": "Las relaciones entre tipos son invertidas y ningún tipo es inmune a otro.\nDesactiva el resto de desafíos.",
     "value.0": "Desact.",
     "value.1": "Activo"
+  },
+  "trickRoom": {
+    "name": "Espacio Raro",
+    "shortName": "Espacio Raro",
+    "desc": "Todas las batallas están bajo el effecto de Espacio Raro, en el que los Pokémon más lentos irán primero y los Pokémon más rápidos, más tarde.\nDesactiva los logros de los otros desafíos.",
+    "value.0": "Desact.",
+    "value.1": "Activo"
   }
 }

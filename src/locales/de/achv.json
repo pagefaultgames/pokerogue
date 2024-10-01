@@ -284,6 +284,10 @@
     "name": "Spieglein, Spieglein an der Wand",
     "description": "Schließe die 'Umkehrkampf' Herausforderung ab"
   },
+  "TRICK_ROOM": {
+    "name": "Halt Stop!",
+    "description": "Schließe die 'Bizarroraum' Herausforderung ab."
+  },
   "BREEDERS_IN_SPACE": {
     "name": "Züchter im Weltall!",
     "description": "Besiege die Pokémon-Züchter-Expertin im Stratosphären Biome."

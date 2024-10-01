@@ -279,6 +279,10 @@
     "name": "La teuté à verlan",
     "description": "Terminer un challenge en Combat Inversé.\nMineter un lenjcha en Ba-con Versin."
   },
+  "TRICK_ROOM": {
+    "name": "Trop rapide !",
+    "description": "Terminer un challenge « Distortion »."
+  },
   "BREEDERS_IN_SPACE": {
     "name": "Éleveurs de l'espace !",
     "description": "Vaincre l'Éleveuse Experte dans le biome Espace."

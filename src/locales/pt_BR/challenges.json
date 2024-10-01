@@ -33,5 +33,12 @@
     "desc": "Fraquezas e resistências de tipos são invertidas e nenhum tipo é imune a outro tipo.\nDesativa as conquistas de outros desafios.",
     "value.0": "Desligado",
     "value.1": "Ligado"
+  },
+  "trickRoom": {
+    "name": "Sala de Truques",
+    "shortName": "Sala de Truques",
+    "desc": "Todas as batalhas estão sob o efeito de Trick Room, onde Pokémon mais lentos atacam primeiro e Pokémon mais rápidos atacam depois.\nDesativa as conquistas de outros desafios.",
+    "value.0": "Desligado",
+    "value.1": "Ligado"
   }
 }

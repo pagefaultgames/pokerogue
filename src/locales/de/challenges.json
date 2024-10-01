@@ -33,5 +33,12 @@
     "desc": "Die Typen-Effektivität wird umgekehrt, und kein Typ ist gegen einen anderen Typ immun.\nDeaktiviert die Erfolge anderer Herausforderungen.",
     "value.0": "Aus",
     "value.1": "An"
+  },
+  "trickRoom": {
+    "name": "Bizarroraum",
+    "shortName": "Bizarroraum",
+    "desc": "Dreht die Reihenfolge in der Pokémon angreifen können auf den Kopf. Alle Kämpfe finden unter dem Einfluss von Bizarroraum statt.\nDeaktiviert die Erfolge anderer Herausforderungen.",
+    "value.0": "Aus",
+    "value.1": "An"
   }
 }
