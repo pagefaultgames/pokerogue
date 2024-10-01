@@ -2721,11 +2721,11 @@ export class AwaitCombinedPledgeAttr extends OverrideMoveEffectAttr {
 
     const overridden = args[0] as Utils.BooleanHolder;
 
-    const allyMovePhase = user.scene.findPhase<MovePhase>(phase => phase instanceof MovePhase && phase.pokemon.isPlayer() === user.isPlayer());
+    const allyMovePhase = user.scene.findPhase<MovePhase>((phase) => phase instanceof MovePhase && phase.pokemon.isPlayer() === user.isPlayer());
     if (allyMovePhase) {
       const allyMove = allyMovePhase.move.getMove();
       if (allyMove !== move && allyMove.hasAttr(AwaitCombinedPledgeAttr)) {
-        [user, allyMovePhase.pokemon].forEach(p => p.turnData.combiningPledge = move.id);
+        [user, allyMovePhase.pokemon].forEach((p) => p.turnData.combiningPledge = move.id);
 
         // "{userPokemonName} is waiting for {allyPokemonName}'s move..."
         user.scene.queueMessage(i18next.t("moveTriggers:awaitingPledge", {
@@ -2735,7 +2735,7 @@ export class AwaitCombinedPledgeAttr extends OverrideMoveEffectAttr {
 
         // Move the ally's MovePhase (if needed) so that the ally moves next
         const allyMovePhaseIndex = user.scene.phaseQueue.indexOf(allyMovePhase);
-        const firstMovePhaseIndex = user.scene.phaseQueue.findIndex(phase => phase instanceof MovePhase);
+        const firstMovePhaseIndex = user.scene.phaseQueue.findIndex((phase) => phase instanceof MovePhase);
         if (allyMovePhaseIndex !== firstMovePhaseIndex) {
           user.scene.prependToPhase(user.scene.phaseQueue.splice(allyMovePhaseIndex, 1)[0], MovePhase);
         }
