@@ -23,7 +23,7 @@ import { PokemonHealPhase } from "#app/phases/pokemon-heal-phase";
 import { ShowAbilityPhase } from "#app/phases/show-ability-phase";
 import { StatStageChangePhase, StatStageChangeCallback } from "#app/phases/stat-stage-change-phase";
 import { PokemonAnimType } from "#app/enums/pokemon-anim-type";
-import { BattleScene } from "#app/battle-scene";
+import BattleScene from "#app/battle-scene";
 
 export enum BattlerTagLapseType {
   FAINT,
@@ -2524,6 +2524,9 @@ export class TormentTag extends MoveRestrictionBattlerTag {
    * @returns `true` if there is valid consecutive usage | `false` if the moves are different from each other
    */
   override isMoveRestricted(move: Moves, user: Pokemon): boolean {
+    if (!user) {
+      return false;
+    }
     const lastMove = user.getLastXMoves(1)[0];
     if ( !lastMove ) {
       return false;
