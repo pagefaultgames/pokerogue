@@ -1,0 +1,33 @@
+{
+  "intro": "这是一位携带大量神奇宝贝蛋的训练师！",
+  "intro_dialogue": "嘿，训练师！$看起来你的一些\n宝可梦感觉有点沮丧。$为什么不和我打一场\n来让它们兴奋一下呢？",
+  "title": "专业饲养员",
+  "description": "你被发起了一场\n@[TOOLTIP_TITLE]{只能使用一只宝可梦}的挑战。\n这可能很难，但它肯定会\n加深你与所选宝可梦之间的牵绊！\n如果你赢了，饲养员还会\n给你一些@[TOOLTIP_TITLE]{蛋}！",
+  "query": "Who will you battle with?",
+  "cleffa_1_nickname": "超级王牌",
+  "cleffa_2_nickname": "皮氪稀",
+  "cleffa_3_nickname": "帝王{{speciesName}}",
+  "option": {
+    "1": {
+      "label": "{{pokemon1Name}}",
+      "tooltip_base": "(-)艰难的战斗\n(+)获得与{{pokemon1Name}}的友谊"
+    },
+    "2": {
+      "label": "{{pokemon2Name}}",
+      "tooltip_base": "(-)艰难的战斗\n(+)获得与{{pokemon2Name}}的友谊"
+    },
+    "3": {
+      "label": "{{pokemon3Name}}",
+      "tooltip_base": "(-)艰难的战斗\n(+)获得与{{pokemon3Name}}的友谊"
+    },
+    "selected": "我们开始吧！"
+  },
+  "outro": "看看你的 {{chosenPokemon}}现在有多开心！$给，这些你也拿着。",
+  "outro_failed": "太可惜了……$看起来要让你的宝可梦信任你\n你的路还长着呢。",
+
+  "gained_eggs": "@s{item_fanfare}你获得了{{numEggs}}！",
+  "eggs_tooltip": "\n(+)获得{{eggs}}",
+  "numEggs_one": "{{count}}个{{rarity}}蛋",
+  "numEggs_other": "{{count}}个{{rarity}}蛋"
+
+}

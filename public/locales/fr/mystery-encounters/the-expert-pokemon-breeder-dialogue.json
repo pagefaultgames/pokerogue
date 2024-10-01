@@ -1,0 +1,31 @@
+{
+  "intro": "C’est une Dresseuse avec une quantité astronomique d’Œufs !",
+  "intro_dialogue": "Hé, toi !$Certains de tes Pokémon m’ont l’air\nun peu à plat.$Ça te dirait un p’tit combat pour\nleur redonner un peu de peps ?",
+  "title": "L’experte en élevage",
+  "description": "Une Éleveuse vous propose un combat où @[TOOLTIP_TITLE]{vous ne pouvez utiliser qu’un seul Pokémon}. Ça s’annonce un peu compliqué, mais devrait certainement approfondir vos liens avec le Pokémon choisi !\nL’Éleveuse devrait vous faire don de quelques @[TOOLTIP_TITLE]{Œufs} si vous gagnez !",
+  "query": "Avec qui voulez-vous combattre ?",
+  "cleffa_1_nickname": "As",
+  "cleffa_2_nickname": "Méloïssime",
+  "cleffa_3_nickname": "{{speciesName}} le Grand",
+  "option": {
+    "1": {
+      "label": "{{pokemon1Name}}",
+      "tooltip_base": "(-) Combat difficile\n(+) Augmente le bonheur de {{pokemon1Name}}"
+    },
+    "2": {
+      "label": "{{pokemon2Name}}",
+      "tooltip_base": "(-) Combat difficile\n(+) Augmente le bonheur de {{pokemon2Name}}"
+    },
+    "3": {
+      "label": "{{pokemon3Name}}",
+      "tooltip_base": "(-) Combat difficile\n(+) Augmente le bonheur de {{pokemon3Name}}"
+    },
+    "selected": "D’accord, faisons ça !"
+  },
+  "outro": "Ton {{chosenPokemon}} et toi avez\nl’air très heureux !$Tiens, prends ça aussi.",
+  "outro_failed": "Voilà qui est bien décevant…$T’as encore visiblement bien du chemin à faire\npour acquérir la confiance de tes Pokémon !",
+  "gained_eggs": "@s{item_fanfare}Vous recevez\n{{numEggs}} !",
+  "eggs_tooltip": "\n(+) Recevez {{eggs}}",
+  "numEggs_one": "{{count}} Œuf {{rarity}}",
+  "numEggs_other": "{{count}} Œufs {{rarity}}s"
+}
