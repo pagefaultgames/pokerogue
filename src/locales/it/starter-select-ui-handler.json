@@ -2,6 +2,7 @@
   "confirmStartTeam": "Vuoi iniziare con questi Pokémon?",
   "confirmExit": "Vuoi tornare alla schermata principale?",
   "invalidParty": "Questo squadra iniziale non è valida!",
+  "emptyParty": "Premi Spazio o Z per aggiungere un Pokémon alla squadra.\nPremi Invio o Start per iniziare la run.",
   "gen1": "1ª",
   "gen2": "2ª",
   "gen3": "3ª",

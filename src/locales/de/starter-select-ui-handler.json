@@ -2,6 +2,7 @@
   "confirmStartTeam": "Mit diesen Pokémon losziehen?",
   "confirmExit": "Willst du zurück?",
   "invalidParty": "Das ist kein gültiges Team!",
+  "emptyParty": "Drücke die Leertaste oder Z, um Pokémon zu deinem Team hinzuzufügen. Drücke ENTER oder Start, um den Lauf zu beginnen.",
   "gen1": "I",
   "gen2": "II",
   "gen3": "III",

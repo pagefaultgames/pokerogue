@@ -2,6 +2,7 @@
   "confirmStartTeam": "使用這些寶可夢開始嗎？",
   "confirmExit": "確定要退出嗎？",
   "invalidParty": "此為無效隊伍！",
+  "emptyParty": "按空格或Z來添加寶可夢。\n按回車鍵或開始鍵來開始遊戲。",
   "gen1": "I",
   "gen2": "II",
   "gen3": "III",
