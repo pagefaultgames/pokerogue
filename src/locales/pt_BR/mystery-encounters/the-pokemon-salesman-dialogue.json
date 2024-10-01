@@ -1,0 +1,23 @@
+{
+  "intro": "Um idoso animado se aproxima de você.",
+  "speaker": "Cavalheiro",
+  "intro_dialogue": "Olá! Tenho um negócio especialmente para VOCÊ!",
+  "title": "O Vendedor de Pokémon",
+  "description": "\"Este {{purchasePokemon}} é extremamente único e @[TOOLTIP_TITLE]{possui uma habilidade que normalmente não é encontrada em sua espécie}! Vou deixar você levar este ótimo {{purchasePokemon}} por apenas {{price, money}}!\"\n\n\"O que me diz?\"",
+  "description_shiny": "\"Este {{purchasePokemon}} é extremamente único e @[TOOLTIP_TITLE]{possui uma pigmentação que normalmente não é encontrada em sua espécie}! Vou deixar você levar este ótimo {{purchasePokemon}} por apenas {{price, money}}!\"\n\n\"O que me diz?\"",
+  "query": "O que você vai fazer?",
+  "option": {
+    "1": {
+      "label": "Aceitar",
+      "tooltip": "(-) Pagar {{price, money}}\n(+) Ganhar um {{purchasePokemon}} com sua Habilidade Oculta",
+      "tooltip_shiny": "(-) Pagar {{price, money}}\n(+) Ganhar um {{purchasePokemon}} brilhante",
+      "selected_message": "Você pagou uma quantia exorbitante e comprou o {{purchasePokemon}}.",
+      "selected_dialogue": "Excelente escolha!$Posso ver que você tem um olho afiado para negócios.$Ah, sim...@d{64} Devoluções não são aceitas, entendeu?"
+    },
+    "2": {
+      "label": "Recusar",
+      "tooltip": "(-) Sem Recompensas",
+      "selected": "Não?@d{32} Você disse não?$Estou fazendo isso como um favor para você!"
+    }
+  }
+}

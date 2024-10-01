@@ -83,7 +83,7 @@ const languageSettings: { [key: string]: LanguageSetting } = {
   },
   "fr":{
     starterInfoTextSize: "54px",
-    instructionTextSize: "35px",
+    instructionTextSize: "38px",
   },
   "it":{
     starterInfoTextSize: "56px",
@@ -260,6 +260,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
   private pokemonCandyCountText: Phaser.GameObjects.Text;
   private pokemonCaughtHatchedContainer: Phaser.GameObjects.Container;
   private pokemonCaughtCountText: Phaser.GameObjects.Text;
+  private pokemonFormText: Phaser.GameObjects.Text;
   private pokemonHatchedIcon : Phaser.GameObjects.Sprite;
   private pokemonHatchedCountText: Phaser.GameObjects.Text;
   private pokemonShinyIcon: Phaser.GameObjects.Sprite;
@@ -287,7 +288,6 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
   private starterSelectMessageBox: Phaser.GameObjects.NineSlice;
   private starterSelectMessageBoxContainer: Phaser.GameObjects.Container;
   private statsContainer: StatsContainer;
-  private pokemonFormText: Phaser.GameObjects.Text;
   private moveInfoOverlay : MoveInfoOverlay;
 
   private statsMode: boolean;
@@ -627,7 +627,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
     const starterBoxContainer = this.scene.add.container(speciesContainerX + 6, 9); //115
 
-    this.starterSelectScrollBar = new ScrollBar(this.scene, 161, 12, 0);
+    this.starterSelectScrollBar = new ScrollBar(this.scene, 161, 12, 5, starterContainerWindow.height - 6, 9);
 
     starterBoxContainer.add(this.starterSelectScrollBar);
 
@@ -2288,6 +2288,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       this.filterInstructionRowX += 50;
     }
   }
+
   updateInstructions(): void {
     this.instructionRowX = 0;
     this.instructionRowY = 0;
@@ -2540,8 +2541,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       }
     });
 
-    this.starterSelectScrollBar.setPages(Math.max(Math.ceil(this.filteredStarterContainers.length / 9), 1));
-    this.starterSelectScrollBar.setPage(0);
+    this.starterSelectScrollBar.setTotalRows(Math.max(Math.ceil(this.filteredStarterContainers.length / 9), 1));
+    this.starterSelectScrollBar.setScrollCursor(0);
 
     // sort
     const sort = this.filterBar.getVals(DropDownColumn.SORT)[0];
@@ -2576,7 +2577,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     const onScreenFirstIndex = this.scrollCursor * maxColumns;
     const onScreenLastIndex = Math.min(this.filteredStarterContainers.length - 1, onScreenFirstIndex + maxRows * maxColumns -1);
 
-    this.starterSelectScrollBar.setPage(this.scrollCursor);
+    this.starterSelectScrollBar.setScrollCursor(this.scrollCursor);
 
     let pokerusCursorIndex = 0;
     this.filteredStarterContainers.forEach((container, i) => {
@@ -2826,6 +2827,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         this.pokemonShinyIcon.setTint(tint);
         this.pokemonShinyIcon.setVisible(defaultProps.shiny);
         this.pokemonCaughtHatchedContainer.setVisible(true);
+        this.pokemonFormText.setVisible(true);
+
         if (pokemonPrevolutions.hasOwnProperty(species.speciesId)) {
           this.pokemonCaughtHatchedContainer.setY(16);
           this.pokemonShinyIcon.setY(135);
@@ -2849,7 +2852,6 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           this.pokemonCandyDarknessOverlay.setVisible(true);
           this.pokemonCandyCountText.setText(`x${this.scene.gameData.starterData[species.speciesId].candyCount}`);
           this.pokemonCandyCountText.setVisible(true);
-          this.pokemonFormText.setVisible(true);
           this.pokemonFormText.setY(42);
           this.pokemonHatchedIcon.setVisible(true);
           this.pokemonHatchedCountText.setVisible(true);

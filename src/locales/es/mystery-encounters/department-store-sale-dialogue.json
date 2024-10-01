@@ -1,0 +1,27 @@
+{
+  "intro": "Es una señora con un montón de bolsas de compras.",
+  "speaker": "Compradora",
+  "intro_dialogue": "¡Hola! ¿También estás aquí por las increíbles rebajas?$Hay un cupón especial que puedes canjear por un artículo gratis durante la venta. ¡Tengo uno extra. ¡Aquí tienes!",
+  "title": "¡Rebajas en el Centro Comercial!",
+  "description": "¡Hay mercancía en todas direcciones! Parece que hay 4 mostradores donde puedes canjear el cupón por varios artículos. ¡Las posibilidades son infinitas!",
+  "query": "¿A qué mostrador irás?",
+  "option": {
+    "1": {
+      "label": "Mostrador de MTs",
+      "tooltip": "(+) Tienda de MTs"
+    },
+    "2": {
+      "label": "Mostrador de Vitaminas",
+      "tooltip": "(+) Tienda de vitaminas"
+    },
+    "3": {
+      "label": "Mostrador de objetos de batalla",
+      "tooltip": "(+) Tienda de objetos X"
+    },
+    "4": {
+      "label": "Mostrador de Pokéballs ",
+      "tooltip": "(+) Tienda de Pokéballs"
+    }
+  },
+  "outro": "¡Qué chollo! Deberías comprar allí más a menudo."
+}

@@ -1,14 +1,15 @@
-import { Arena } from "../field/arena";
-import { Type } from "./type";
-import * as Utils from "../utils";
-import { MoveCategory, allMoves, MoveTarget, IncrementMovePriorityAttr, applyMoveAttrs } from "./move";
-import { getPokemonNameWithAffix } from "../messages";
-import Pokemon, { HitResult, PokemonMove } from "../field/pokemon";
-import { StatusEffect } from "./status-effect";
-import { BattlerIndex } from "../battle";
-import { BlockNonDirectDamageAbAttr, ChangeMovePriorityAbAttr, ProtectStatAbAttr, applyAbAttrs } from "./ability";
+import { Arena } from "#app/field/arena";
+import BattleScene from "#app/battle-scene";
+import { Type } from "#app/data/type";
+import * as Utils from "#app/utils";
+import { MoveCategory, allMoves, MoveTarget, IncrementMovePriorityAttr, applyMoveAttrs } from "#app/data/move";
+import { getPokemonNameWithAffix } from "#app/messages";
+import Pokemon, { HitResult, PlayerPokemon, PokemonMove, EnemyPokemon } from "#app/field/pokemon";
+import { StatusEffect } from "#app/data/status-effect";
+import { BattlerIndex } from "#app/battle";
+import { BlockNonDirectDamageAbAttr, ChangeMovePriorityAbAttr, ProtectStatAbAttr, applyAbAttrs } from "#app/data/ability";
 import { Stat } from "#enums/stat";
-import { CommonAnim, CommonBattleAnim } from "./battle-anims";
+import { CommonAnim, CommonBattleAnim } from "#app/data/battle-anims";
 import i18next from "i18next";
 import { Abilities } from "#enums/abilities";
 import { ArenaTagType } from "#enums/arena-tag-type";
@@ -511,6 +512,39 @@ class WaterSportTag extends WeakenMoveTypeTag {
 }
 
 /**
+ * Arena Tag class for the secondary effect of {@link https://bulbapedia.bulbagarden.net/wiki/Plasma_Fists_(move) | Plasma Fists}.
+ * Converts Normal-type moves to Electric type for the rest of the turn.
+ */
+export class PlasmaFistsTag extends ArenaTag {
+  constructor() {
+    super(ArenaTagType.PLASMA_FISTS, 1, Moves.PLASMA_FISTS);
+  }
+
+  /** Queues Plasma Fists' on-add message */
+  onAdd(arena: Arena): void {
+    arena.scene.queueMessage(i18next.t("arenaTag:plasmaFistsOnAdd"));
+  }
+
+  onRemove(arena: Arena): void { } // Removes default on-remove message
+
+  /**
+   * Converts Normal-type moves to Electric type
+   * @param arena n/a
+   * @param args
+   * - `[0]` {@linkcode Utils.NumberHolder} A container with a move's {@linkcode Type}
+   * @returns `true` if the given move type changed; `false` otherwise.
+   */
+  apply(arena: Arena, args: any[]): boolean {
+    const moveType = args[0];
+    if (moveType instanceof Utils.NumberHolder && moveType.value === Type.NORMAL) {
+      moveType.value = Type.ELECTRIC;
+      return true;
+    }
+    return false;
+  }
+}
+
+/**
  * Abstract class to implement arena traps.
  */
 export class ArenaTrapTag extends ArenaTag {
@@ -919,6 +953,77 @@ class SafeguardTag extends ArenaTag {
   }
 }
 
+/**
+ * This arena tag facilitates the application of the move Imprison
+ * Imprison remains in effect as long as the source Pokemon is active and present on the field.
+ * Imprison will apply to any opposing Pokemon that switch onto the field as well.
+ */
+class ImprisonTag extends ArenaTrapTag {
+  private source: Pokemon;
+
+  constructor(sourceId: number, side: ArenaTagSide) {
+    super(ArenaTagType.IMPRISON, Moves.IMPRISON, sourceId, side, 1);
+  }
+
+  /**
+   * Helper function that retrieves the Pokemon affected
+   * @param {BattleScene} scene medium to retrieve the involved Pokemon
+   * @returns list of PlayerPokemon or EnemyPokemon on the field
+   */
+  private retrieveField(scene: BattleScene): PlayerPokemon[] | EnemyPokemon[] {
+    if (!this.source.isPlayer()) {
+      return scene.getPlayerField() ?? [];
+    }
+    return scene.getEnemyField() ?? [];
+  }
+
+  /**
+   * This function applies the effects of Imprison to the opposing Pokemon already present on the field.
+   * @param arena
+   */
+  override onAdd({ scene }: Arena) {
+    this.source = scene.getPokemonById(this.sourceId!)!;
+    if (this.source) {
+      const party = this.retrieveField(scene);
+      party?.forEach((p: PlayerPokemon | EnemyPokemon ) => {
+        p.addTag(BattlerTagType.IMPRISON, 1, Moves.IMPRISON, this.sourceId);
+      });
+      scene.queueMessage(i18next.t("battlerTags:imprisonOnAdd", {pokemonNameWithAffix: getPokemonNameWithAffix(this.source)}));
+    }
+  }
+
+  /**
+   * Checks if the source Pokemon is still active on the field
+   * @param _arena
+   * @returns `true` if the source of the tag is still active on the field | `false` if not
+   */
+  override lapse(_arena: Arena): boolean {
+    return this.source.isActive(true);
+  }
+
+  /**
+   * This applies the effects of Imprison to any opposing Pokemon that switch into the field while the source Pokemon is still active
+   * @param {Pokemon} pokemon the Pokemon Imprison is applied to
+   * @returns `true`
+   */
+  override activateTrap(pokemon: Pokemon): boolean {
+    if (this.source.isActive(true)) {
+      pokemon.addTag(BattlerTagType.IMPRISON, 1, Moves.IMPRISON, this.sourceId);
+    }
+    return true;
+  }
+
+  /**
+   * When the arena tag is removed, it also attempts to remove any related Battler Tags if they haven't already been removed from the affected Pokemon
+   * @param arena
+   */
+  override onRemove({ scene }: Arena): void {
+    const party = this.retrieveField(scene);
+    party?.forEach((p: PlayerPokemon | EnemyPokemon) => {
+      p.removeTag(BattlerTagType.IMPRISON);
+    });
+  }
+}
 
 export function getArenaTag(tagType: ArenaTagType, turnCount: integer, sourceMove: Moves | undefined, sourceId: integer, targetIndex?: BattlerIndex, side: ArenaTagSide = ArenaTagSide.BOTH): ArenaTag | null {
   switch (tagType) {
@@ -938,6 +1043,8 @@ export function getArenaTag(tagType: ArenaTagType, turnCount: integer, sourceMov
     return new MudSportTag(turnCount, sourceId);
   case ArenaTagType.WATER_SPORT:
     return new WaterSportTag(turnCount, sourceId);
+  case ArenaTagType.PLASMA_FISTS:
+    return new PlasmaFistsTag();
   case ArenaTagType.SPIKES:
     return new SpikesTag(sourceId, side);
   case ArenaTagType.TOXIC_SPIKES:
@@ -967,6 +1074,8 @@ export function getArenaTag(tagType: ArenaTagType, turnCount: integer, sourceMov
     return new HappyHourTag(turnCount, sourceId, side);
   case ArenaTagType.SAFEGUARD:
     return new SafeguardTag(turnCount, sourceId, side);
+  case ArenaTagType.IMPRISON:
+    return new ImprisonTag(sourceId, side);
   default:
     return null;
   }

@@ -1,0 +1,33 @@
+{
+  "intro": "훈련에 쓸 만한 물건들을 발견했다.",
+  "title": "트레이닝 시간",
+  "description": "발견한 기구들은 포켓몬들을 훈련시키는 데 쓸 수 있을 것 같습니다!\n@[TOOLTIP_TITLE]{당신의 포켓몬 1마리를 상대로 하여, 나머지 포켓몬으로 배틀하고 쓰러뜨리며} 훈련해 보면 어떨까요?",
+  "query": "어떻게 훈련할까요?",
+  "invalid_selection": "포켓몬이 힘들어 보인다.",
+  "option": {
+    "1": {
+      "label": "가벼운 트레이닝",
+      "tooltip": "(-) 선택한 포켓몬과 쉬운 배틀 \n(+) 선택 포켓몬 무작위 개체치 2가지 영구 향상",
+      "finished": "훈련을 마친 {{selectedPokemon}}[[는]] 조금 지쳤지만 뿌듯해 보인다!${{selectedPokemon}}의 {{stat1}}[[과]] {{stat2}}[[가]] 상승했다!"
+    },
+    "2": {
+      "label": "일반적인 트레이닝",
+      "tooltip": "(-) 선택한 포켓몬과 평범한 배틀\n(+) 선택 포켓몬 성격 영구 변경",
+      "select_prompt": "포켓몬과 훈련할\n새로운 성격을 선택하세요.",
+      "finished": "훈련을 마친 {{selectedPokemon}}[[는]] 조금 지쳤지만 뿌듯해 보인다!${{selectedPokemon}}의 성격이 {{nature}}[[로]] 바뀌었다!"
+    },
+    "3": {
+      "label": "고강도 트레이닝",
+      "tooltip": "(-) 선택한 포켓몬과 힘든 배틀\n(+) 선택 포켓몬 특성 영구 변경",
+      "select_prompt": "포켓몬과 훈련할\n새로운 특성을 선택을 선택하세요.",
+      "finished": "훈련을 마친 {{selectedPokemon}}[[는]] 조금 지쳤지만 뿌듯해 보인다!${{selectedPokemon}}의 특성이 {{ability}}[[로]] 바뀌었다!"
+    },
+    "4": {
+      "label": "떠난다",
+      "tooltip": "(-) 보상 없음",
+      "selected": "훈련할 시간은 없다.\n바로 길을 떠났다."
+    },
+    "selected": "{{selectedPokemon}}[[가]] 공터를 가로질러\n이쪽을 보고 마주섰다…"
+  },
+  "outro": "성공적인 트레이닝 시간이었다!"
+}

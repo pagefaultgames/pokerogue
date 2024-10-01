@@ -5,8 +5,8 @@ import { ModifierTier } from "#app/modifier/modifier-tier";
 import { randSeedInt } from "#app/utils";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import BattleScene from "#app/battle-scene";
-import MysteryEncounter, { MysteryEncounterBuilder } from "../mystery-encounter";
-import { MysteryEncounterOptionBuilder } from "../mystery-encounter-option";
+import MysteryEncounter, { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-encounter";
+import { MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/mystery-encounter-option";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { getPokemonSpecies } from "#app/data/pokemon-species";
@@ -19,10 +19,11 @@ import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
 const namespace = "mysteryEncounter:mysteriousChest";
 
 const RAND_LENGTH = 100;
-const COMMON_REWARDS_WEIGHT = 20; // 20%
-const ULTRA_REWARDS_WEIGHT = 50; // 30%
-const ROGUE_REWARDS_WEIGHT = 60; // 10%
-const MASTER_REWARDS_WEIGHT = 65; // 5%
+const TRAP_PERCENT = 35;
+const COMMON_REWARDS_PERCENT = 20;
+const ULTRA_REWARDS_PERCENT = 30;
+const ROGUE_REWARDS_PERCENT = 10;
+const MASTER_REWARDS_PERCENT = 5;
 
 /**
  * Mysterious Chest encounter.
@@ -37,7 +38,7 @@ export const MysteriousChestEncounter: MysteryEncounter =
     .withCatchAllowed(true)
     .withIntroSpriteConfigs([
       {
-        spriteKey: "chest_blue",
+        spriteKey: "mysterious_chest_blue",
         fileRoot: "mystery-encounters",
         hasShadow: true,
         y: 8,
@@ -46,7 +47,7 @@ export const MysteriousChestEncounter: MysteryEncounter =
         disableAnimation: true, // Re-enabled after option select
       },
       {
-        spriteKey: "chest_red",
+        spriteKey: "mysterious_chest_red",
         fileRoot: "mystery-encounters",
         hasShadow: false,
         y: 8,
@@ -68,7 +69,7 @@ export const MysteriousChestEncounter: MysteryEncounter =
 
       // Calculate boss mon
       const config: EnemyPartyConfig = {
-        levelAdditiveMultiplier: 0.5,
+        levelAdditiveModifier: 0.5,
         disableSwitch: true,
         pokemonConfigs: [
           {
@@ -83,6 +84,11 @@ export const MysteriousChestEncounter: MysteryEncounter =
       encounter.enemyPartyConfigs = [config];
 
       encounter.setDialogueToken("gimmighoulName", getPokemonSpecies(Species.GIMMIGHOUL).getName());
+      encounter.setDialogueToken("trapPercent", TRAP_PERCENT.toString());
+      encounter.setDialogueToken("commonPercent", COMMON_REWARDS_PERCENT.toString());
+      encounter.setDialogueToken("ultraPercent", ULTRA_REWARDS_PERCENT.toString());
+      encounter.setDialogueToken("roguePercent", ROGUE_REWARDS_PERCENT.toString());
+      encounter.setDialogueToken("masterPercent", MASTER_REWARDS_PERCENT.toString());
 
       return true;
     })
@@ -109,7 +115,7 @@ export const MysteriousChestEncounter: MysteryEncounter =
             roll
           };
 
-          if (roll >= MASTER_REWARDS_WEIGHT) {
+          if (roll < TRAP_PERCENT) {
             // Chest is springing trap, change to red chest sprite
             const blueChestSprites = introVisuals.getSpriteAtIndex(0);
             const redChestSprites = introVisuals.getSpriteAtIndex(1);
@@ -124,7 +130,7 @@ export const MysteriousChestEncounter: MysteryEncounter =
           // Open the chest
           const encounter = scene.currentBattle.mysteryEncounter!;
           const roll = encounter.misc.roll;
-          if (roll < COMMON_REWARDS_WEIGHT) {
+          if (roll >= RAND_LENGTH - COMMON_REWARDS_PERCENT) {
             // Choose between 2 COMMON / 2 GREAT tier items (20%)
             setEncounterRewards(scene, {
               guaranteedModifierTiers: [
@@ -137,7 +143,7 @@ export const MysteriousChestEncounter: MysteryEncounter =
             // Display result message then proceed to rewards
             queueEncounterMessage(scene, `${namespace}.option.1.normal`);
             leaveEncounterWithoutBattle(scene);
-          } else if (roll < ULTRA_REWARDS_WEIGHT) {
+          } else if (roll >= RAND_LENGTH - COMMON_REWARDS_PERCENT - ULTRA_REWARDS_PERCENT) {
             // Choose between 3 ULTRA tier items (30%)
             setEncounterRewards(scene, {
               guaranteedModifierTiers: [
@@ -149,13 +155,13 @@ export const MysteriousChestEncounter: MysteryEncounter =
             // Display result message then proceed to rewards
             queueEncounterMessage(scene, `${namespace}.option.1.good`);
             leaveEncounterWithoutBattle(scene);
-          } else if (roll < ROGUE_REWARDS_WEIGHT) {
+          } else if (roll >= RAND_LENGTH - COMMON_REWARDS_PERCENT - ULTRA_REWARDS_PERCENT - ROGUE_REWARDS_PERCENT) {
             // Choose between 2 ROGUE tier items (10%)
             setEncounterRewards(scene, { guaranteedModifierTiers: [ModifierTier.ROGUE, ModifierTier.ROGUE] });
             // Display result message then proceed to rewards
             queueEncounterMessage(scene, `${namespace}.option.1.great`);
             leaveEncounterWithoutBattle(scene);
-          } else if (roll < MASTER_REWARDS_WEIGHT) {
+          } else if (roll >= RAND_LENGTH - COMMON_REWARDS_PERCENT - ULTRA_REWARDS_PERCENT - ROGUE_REWARDS_PERCENT - MASTER_REWARDS_PERCENT) {
             // Choose 1 MASTER tier item (5%)
             setEncounterRewards(scene, { guaranteedModifierTiers: [ModifierTier.MASTER] });
             // Display result message then proceed to rewards
@@ -163,11 +169,12 @@ export const MysteriousChestEncounter: MysteryEncounter =
             leaveEncounterWithoutBattle(scene);
           } else {
             // Your highest level unfainted Pokemon gets OHKO. Start battle against a Gimmighoul (35%)
-            const highestLevelPokemon = getHighestLevelPlayerPokemon(
-              scene,
-              true
-            );
+            const highestLevelPokemon = getHighestLevelPlayerPokemon(scene, true, false);
             koPlayerPokemon(scene, highestLevelPokemon);
+
+            encounter.setDialogueToken("pokeName", highestLevelPokemon.getNameToRender());
+            await showEncounterText(scene, `${namespace}.option.1.bad`);
+
             // Handle game over edge case
             const allowedPokemon = scene.getParty().filter(p => p.isAllowedInBattle());
             if (allowedPokemon.length === 0) {
@@ -176,9 +183,8 @@ export const MysteriousChestEncounter: MysteryEncounter =
               scene.unshiftPhase(new GameOverPhase(scene));
             } else {
               // Show which Pokemon was KOed, then start battle against Gimmighoul
-              encounter.setDialogueToken("pokeName", highestLevelPokemon.getNameToRender());
-              await showEncounterText(scene, `${namespace}.option.1.bad`);
               transitionMysteryEncounterIntroVisuals(scene, true, true, 500);
+              setEncounterRewards(scene, { fillRemaining: true });
               await initBattleWithEnemyConfig(scene, encounter.enemyPartyConfigs[0]);
             }
           }

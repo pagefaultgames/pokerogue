@@ -1,10 +1,10 @@
 {
-  "encounter": "It appears the time has finally come once again.\nYou know why you have come here, do you not?\n$You were drawn here, because you have been here before.\nCountless times.\n$Though, perhaps it can be counted.\nTo be precise, this is in fact your {{cycleCount}} cycle.\n$Each cycle your mind reverts to its former state.\nEven so, somehow, remnants of your former selves remain.\n$Until now you have yet to succeed, but I sense a different presence in you this time.\n\n$You are the only one here, though it is as if there is… another.\n$Will you finally prove a formidable challenge to me?\nThe challenge I have longed after for millennia?\n$We begin.",
-  "encounter_female": "It appears the time has finally come once again.\nYou know why you have come here, do you not?\n$You were drawn here, because you have been here before.\nCountless times.\n$Though, perhaps it can be counted.\nTo be precise, this is in fact your {{cycleCount}} cycle.\n$Each cycle your mind reverts to its former state.\nEven so, somehow, remnants of your former selves remain.\n$Until now you have yet to succeed, but I sense a different presence in you this time.\n\n$You are the only one here, though it is as if there is… another.\n$Will you finally prove a formidable challenge to me?\nThe challenge I have longed after for millennia?\n$We begin.",
-  "firstStageWin": "I see. The presence I felt was indeed real.\nIt appears I no longer need to hold back.\n$Do not disappoint me.",
-  "secondStageWin": "…Magnificent.",
-  "key_ordinal_one": "st",
-  "key_ordinal_two": "nd",
-  "key_ordinal_few": "rd",
-  "key_ordinal_other": "th"
+  "encounter": "又しても　時が満ちた　様　である。\nこちらへ　至る　理由は　存知するな。\n$汝は　この場所へ　引かれた……\nこの何度となく　至った場所。\n$けれども　数えられぬとも　限らぬ……\n正確に宣ふ（のたまう）と　現在の　循環は　{{cycleCount}}回目　である。\n$各循環に　心…　意識…　両方も　元の有様に　戻る。\nなれども　故吾の　残影は　汝の　中に　存する。\n$未だに　成功せぬ　ままでも\n異なる　存在を　感ずる。\n$御座在る者は　一人。\nなれども　感ずるは…　もう　他人。\n$到頭　汝から　いかめしい　挑戦は　我が目にかかるか？\n千歳　万歳　相まってた挑戦……\n$始もう。",
+  "encounter_female": "又しても　時が満ちた　様　である。\nこちらへ　至る　理由は　存知するな。\n$汝は　この場所へ　引かれた……\nこの何度となく　至った場所。\n$けれども　数えられぬとも　限らぬ……\n正確に宣ふ（のたまう）と　現在の　循環は　{{cycleCount}}回目　である。\n$各循環に　心…　意識…　両方も　元の有様に　戻る。\nなれども　故吾の　残影は　汝の　中に　存する。\n$未だに　成功せぬ　ままでも\n異なる　存在を　感ずる。\n$御座在る者は　一人。\nなれども　感ずるは…　もう　他人。\n$到頭　汝から　いかめしい　挑戦は　我が目にかかるか？\n千歳　万歳　相まってた挑戦……\n$始もう。",
+  "firstStageWin": "成る程。　感じた　存在は　正身（むざね）　であった。\n自分を括る　必要　有らぬ　様である。\n$失望させぬが良い。",
+  "secondStageWin": "……お見事でございます。",
+  "key_ordinal_one": "",
+  "key_ordinal_two": "",
+  "key_ordinal_few": "",
+  "key_ordinal_other": ""
 }

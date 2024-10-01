@@ -1,0 +1,32 @@
+{
+  "intro": "是GTS系统的交互面板！",
+  "title": "全球交换系统（GTS）",
+  "description": "啊，GTS！科学的奇迹，\n你可以与世界各地的任何人联系，\n并与他们交换宝可梦！\n今天你的交换运会如何呢？",
+  "query": "你要怎么做？",
+  "option": {
+    "1": {
+      "label": "查找交换请求",
+      "tooltip": "(+)为一只宝可梦\n选择交换",
+      "trade_options_prompt": "选择一只要通过交换接收的神奇宝贝。"
+    },
+    "2": {
+      "label": "奇迹交换",
+      "tooltip": "(+)发送一只宝可梦，\n并获得一只随机宝可梦"
+    },
+    "3": {
+      "label": "道具交换",
+      "trade_options_prompt": "选择要发送的道具",
+      "invalid_selection": "这只宝可梦没有合法道具\n可以被交换。",
+      "tooltip": "(+)发送一件道具\n并获得一件随机新道具"
+    },
+    "4": {
+      "label": "离开",
+      "tooltip": "(-)无奖励",
+      "selected": "今日不宜交换！\n你上路了。"
+    }
+  },
+  "pokemon_trade_selected": "{{tradedPokemon}}将发送给{{tradeTrainerName}}。",
+  "pokemon_trade_goodbye": "再见，{{tradedPokemon}}！",
+  "item_trade_selected": "{{chosenItem}}将发送给{{tradeTrainerName}}.$.@d{64}.@d{64}.@d{64}\\n@s{level_up_fanfare}交易成功！$你从{{tradeTrainerName}}那得到了{{itemName}}！",
+  "trade_received": "@s{evolution_fanfare}{{tradeTrainerName}}已发送{{received}}！"
+}

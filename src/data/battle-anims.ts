@@ -428,9 +428,9 @@ class AnimTimedAddBgEvent extends AnimTimedBgEvent {
     moveAnim.bgSprite.setScale(1.25);
     moveAnim.bgSprite.setAlpha(this.opacity / 255);
     scene.field.add(moveAnim.bgSprite);
-    const fieldPokemon = scene.getEnemyPokemon() || scene.getPlayerPokemon();
+    const fieldPokemon = scene.getNonSwitchedEnemyPokemon() || scene.getNonSwitchedPlayerPokemon();
     if (!isNullOrUndefined(priority)) {
-      scene.field.moveTo(moveAnim.bgSprite as Phaser.GameObjects.GameObject, priority!);
+      scene.field.moveTo(moveAnim.bgSprite as Phaser.GameObjects.GameObject, priority);
     } else if (fieldPokemon?.isOnField()) {
       scene.field.moveBelow(moveAnim.bgSprite as Phaser.GameObjects.GameObject, fieldPokemon);
     }
@@ -488,14 +488,14 @@ export function initMoveAnim(scene: BattleScene, move: Moves): Promise<void> {
     } else {
       moveAnims.set(move, null);
       const defaultMoveAnim = allMoves[move] instanceof AttackMove ? Moves.TACKLE : allMoves[move] instanceof SelfStatusMove ? Moves.FOCUS_ENERGY : Moves.TAIL_WHIP;
-      const moveName = Moves[move].toLowerCase().replace(/\_/g, "-");
+
       const fetchAnimAndResolve = (move: Moves) => {
-        scene.cachedFetch(`./battle-anims/${moveName}.json`)
+        scene.cachedFetch(`./battle-anims/${Utils.animationFileName(move)}.json`)
           .then(response => {
             const contentType = response.headers.get("content-type");
             if (!response.ok || contentType?.indexOf("application/json") === -1) {
-              console.error(`Could not load animation file for move '${moveName}'`, response.status, response.statusText);
-              populateMoveAnim(move, moveAnims.get(defaultMoveAnim));
+              useDefaultAnim(move, defaultMoveAnim);
+              logMissingMoveAnim(move, response.status, response.statusText);
               return resolve();
             }
             return response.json();
@@ -515,11 +515,39 @@ export function initMoveAnim(scene: BattleScene, move: Moves): Promise<void> {
             } else {
               resolve();
             }
+          })
+          .catch(error => {
+            useDefaultAnim(move, defaultMoveAnim);
+            logMissingMoveAnim(move, error);
+            return resolve();
           });
       };
       fetchAnimAndResolve(move);
     }
   });
+}
+
+/**
+ * Populates the default animation for the given move.
+ *
+ * @param move the move to populate an animation for
+ * @param defaultMoveAnim the move to use as the default animation
+ */
+function useDefaultAnim(move: Moves, defaultMoveAnim: Moves) {
+  populateMoveAnim(move, moveAnims.get(defaultMoveAnim));
+}
+
+/**
+ * Helper method for printing a warning to the console when a move animation is missing.
+ *
+ * @param move the move to populate an animation for
+ * @param optionalParams parameters to add to the error logging
+ *
+ * @remarks use {@linkcode useDefaultAnim} to use a default animation
+ */
+function logMissingMoveAnim(move: Moves, ...optionalParams: any[]) {
+  const moveName = Utils.animationFileName(move);
+  console.warn(`Could not load animation file for move '${moveName}'`, ...optionalParams);
 }
 
 /**
@@ -715,16 +743,21 @@ export abstract class BattleAnim {
   public target: Pokemon | null;
   public sprites: Phaser.GameObjects.Sprite[];
   public bgSprite: Phaser.GameObjects.TileSprite | Phaser.GameObjects.Rectangle;
-  public playOnEmptyField: boolean;
+  /**
+   * Will attempt to play as much of an animation as possible, even if not all targets are on the field.
+   * Will also play the animation, even if the user has selected "Move Animations" OFF in Settings.
+   * Exclusively used by MEs atm, for visual animations at the start of an encounter.
+   */
+  public playRegardlessOfIssues: boolean;
 
   private srcLine: number[];
   private dstLine: number[];
 
-  constructor(user?: Pokemon, target?: Pokemon, playOnEmptyField: boolean = false) {
+  constructor(user?: Pokemon, target?: Pokemon, playRegardlessOfIssues: boolean = false) {
     this.user = user ?? null;
     this.target = target ?? null;
     this.sprites = [];
-    this.playOnEmptyField = playOnEmptyField;
+    this.playRegardlessOfIssues = playRegardlessOfIssues;
   }
 
     abstract getAnim(): AnimConfig | null;
@@ -801,7 +834,7 @@ export abstract class BattleAnim {
       const user = !isOppAnim ? this.user! : this.target!; // TODO: are those bangs correct?
       const target = !isOppAnim ? this.target! : this.user!;
 
-      if (!target?.isOnField() && !this.playOnEmptyField) {
+      if (!target?.isOnField() && !this.playRegardlessOfIssues) {
         if (callback) {
           callback();
         }
@@ -868,7 +901,7 @@ export abstract class BattleAnim {
         }
       };
 
-      if (!scene.moveAnimations) {
+      if (!scene.moveAnimations && !this.playRegardlessOfIssues) {
         return cleanUpAndComplete();
       }
 
@@ -882,12 +915,12 @@ export abstract class BattleAnim {
       this.srcLine = [ userFocusX, userFocusY, targetFocusX, targetFocusY ];
       this.dstLine = [ userInitialX, userInitialY, targetInitialX, targetInitialY ];
 
-      let r = anim!.frames.length; // TODO: is this bang correct?
+      let r = anim?.frames.length ?? 0;
       let f = 0;
 
       scene.tweens.addCounter({
         duration: Utils.getFrameMs(3),
-        repeat: anim!.frames.length, // TODO: is this bang correct?
+        repeat: anim?.frames.length ?? 0,
         onRepeat: () => {
           if (!f) {
             userSprite.setVisible(false);
@@ -904,7 +937,7 @@ export abstract class BattleAnim {
               const isUser = frame.target === AnimFrameTarget.USER;
               if (isUser && target === user) {
                 continue;
-              } else if (this.playOnEmptyField && frame.target === AnimFrameTarget.TARGET && !target.isOnField()) {
+              } else if (this.playRegardlessOfIssues && frame.target === AnimFrameTarget.TARGET && !target.isOnField()) {
                 continue;
               }
               const sprites = spriteCache[isUser ? AnimFrameTarget.USER : AnimFrameTarget.TARGET];
@@ -961,7 +994,7 @@ export abstract class BattleAnim {
                 const setSpritePriority = (priority: integer) => {
                   switch (priority) {
                   case 0:
-                    scene.field.moveBelow(moveSprite as Phaser.GameObjects.GameObject, scene.getEnemyPokemon() || scene.getPlayerPokemon()!); // TODO: is this bang correct?
+                    scene.field.moveBelow(moveSprite as Phaser.GameObjects.GameObject, scene.getNonSwitchedEnemyPokemon() || scene.getNonSwitchedPlayerPokemon()!); // This bang assumes that if (the EnemyPokemon is undefined, then the PlayerPokemon function must return an object), correct assumption?
                     break;
                   case 1:
                     scene.field.moveTo(moveSprite, scene.field.getAll().length - 1);
@@ -1117,7 +1150,7 @@ export abstract class BattleAnim {
         }
       };
 
-      if (!scene.moveAnimations) {
+      if (!scene.moveAnimations && !this.playRegardlessOfIssues) {
         return cleanUpAndComplete();
       }
 
@@ -1231,7 +1264,7 @@ export class CommonBattleAnim extends BattleAnim {
   }
 
   getAnim(): AnimConfig | null {
-    return this.commonAnim ? commonAnims.get(this.commonAnim)! : null; // TODO: is this bang correct?
+    return this.commonAnim ? commonAnims.get(this.commonAnim) ?? null : null;
   }
 
   isOppAnim(): boolean {
@@ -1251,7 +1284,7 @@ export class MoveAnim extends BattleAnim {
   getAnim(): AnimConfig {
     return moveAnims.get(this.move) instanceof AnimConfig
       ? moveAnims.get(this.move) as AnimConfig
-      : moveAnims.get(this.move)![this.user?.isPlayer() ? 0 : 1] as AnimConfig; // TODO: is this bang correct?
+      : moveAnims.get(this.move)?.[this.user?.isPlayer() ? 0 : 1] as AnimConfig;
   }
 
   isOppAnim(): boolean {
@@ -1283,7 +1316,7 @@ export class MoveChargeAnim extends MoveAnim {
   getAnim(): AnimConfig {
     return chargeAnims.get(this.chargeAnim) instanceof AnimConfig
       ? chargeAnims.get(this.chargeAnim) as AnimConfig
-      : chargeAnims.get(this.chargeAnim)![this.user?.isPlayer() ? 0 : 1] as AnimConfig; // TODO: is this bang correct?
+      : chargeAnims.get(this.chargeAnim)?.[this.user?.isPlayer() ? 0 : 1] as AnimConfig;
   }
 }
 

@@ -1,7 +1,7 @@
 import BattleScene from "#app/battle-scene";
 import { ModifierTier } from "#app/modifier/modifier-tier";
 import { regenerateModifierPoolThresholds, ModifierTypeOption, ModifierType, getPlayerShopModifierTypeOptionsForWave, PokemonModifierType, FusePokemonModifierType, PokemonMoveModifierType, TmModifierType, RememberMoveModifierType, PokemonPpRestoreModifierType, PokemonPpUpModifierType, ModifierPoolType, getPlayerModifierTypeOptions } from "#app/modifier/modifier-type";
-import { ExtraModifierModifier, Modifier, PokemonHeldItemModifier } from "#app/modifier/modifier";
+import { ExtraModifierModifier, HealShopCostModifier, Modifier, PokemonHeldItemModifier } from "#app/modifier/modifier";
 import ModifierSelectUiHandler, { SHOP_OPTIONS_ROW_LIMIT } from "#app/ui/modifier-select-ui-handler";
 import PartyUiHandler, { PartyUiMode, PartyOption } from "#app/ui/party-ui-handler";
 import { Mode } from "#app/ui/ui";
@@ -10,7 +10,7 @@ import * as Utils from "#app/utils";
 import { BattlePhase } from "./battle-phase";
 import Overrides from "#app/overrides";
 import { CustomModifierSettings } from "#app/modifier/modifier-type";
-import { isNullOrUndefined } from "#app/utils";
+import { isNullOrUndefined, NumberHolder } from "#app/utils";
 
 export class SelectModifierPhase extends BattlePhase {
   private rerollCount: integer;
@@ -69,11 +69,11 @@ export class SelectModifierPhase extends BattlePhase {
       }
       let modifierType: ModifierType;
       let cost: integer;
+      const rerollCost = this.getRerollCost(typeOptions, this.scene.lockModifierTiers);
       switch (rowCursor) {
       case 0:
         switch (cursor) {
         case 0:
-          const rerollCost = this.getRerollCost(typeOptions, this.scene.lockModifierTiers);
           if (rerollCost < 0 || this.scene.money < rerollCost) {
             this.scene.ui.playError();
             return false;
@@ -94,7 +94,7 @@ export class SelectModifierPhase extends BattlePhase {
           this.scene.ui.setModeWithoutClear(Mode.PARTY, PartyUiMode.MODIFIER_TRANSFER, -1, (fromSlotIndex: integer, itemIndex: integer, itemQuantity: integer, toSlotIndex: integer) => {
             if (toSlotIndex !== undefined && fromSlotIndex < 6 && toSlotIndex < 6 && fromSlotIndex !== toSlotIndex && itemIndex > -1) {
               const itemModifiers = this.scene.findModifiers(m => m instanceof PokemonHeldItemModifier
-                      && m.isTransferrable && m.pokemonId === party[fromSlotIndex].id) as PokemonHeldItemModifier[];
+                      && m.isTransferable && m.pokemonId === party[fromSlotIndex].id) as PokemonHeldItemModifier[];
               const itemModifier = itemModifiers[itemIndex];
               this.scene.tryTransferHeldItemModifier(itemModifier, party[toSlotIndex], true, itemQuantity);
             } else {
@@ -108,6 +108,11 @@ export class SelectModifierPhase extends BattlePhase {
           });
           break;
         case 3:
+          if (rerollCost < 0) {
+            // Reroll lock button is also disabled when reroll is disabled
+            this.scene.ui.playError();
+            return false;
+          }
           this.scene.lockModifierTiers = !this.scene.lockModifierTiers;
           const uiHandler = this.scene.ui.getHandler() as ModifierSelectUiHandler;
           uiHandler.setRerollCost(this.getRerollCost(typeOptions, this.scene.lockModifierTiers));
@@ -133,7 +138,10 @@ export class SelectModifierPhase extends BattlePhase {
         if (shopOption.type) {
           modifierType = shopOption.type;
         }
-        cost = shopOption.cost;
+        // Apply Black Sludge to healing item cost
+        const healingItemCost = new NumberHolder(shopOption.cost);
+        this.scene.applyModifier(HealShopCostModifier, true, healingItemCost);
+        cost = healingItemCost.value;
         break;
       }
 
@@ -244,13 +252,13 @@ export class SelectModifierPhase extends BattlePhase {
 
     let multiplier = 1;
     if (!isNullOrUndefined(this.customModifierSettings?.rerollMultiplier)) {
-      if (this.customModifierSettings!.rerollMultiplier! < 0) {
+      if (this.customModifierSettings.rerollMultiplier < 0) {
         // Completely overrides reroll cost to -1 and early exits
         return -1;
       }
 
       // Otherwise, continue with custom multiplier
-      multiplier = this.customModifierSettings!.rerollMultiplier!;
+      multiplier = this.customModifierSettings.rerollMultiplier;
     }
     return Math.min(Math.ceil(this.scene.currentBattle.waveIndex / 10) * baseValue * Math.pow(2, this.rerollCount) * multiplier, Number.MAX_SAFE_INTEGER);
   }

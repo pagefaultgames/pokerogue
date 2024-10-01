@@ -66,9 +66,10 @@
   "suppressAbilities": "Le talent de {{pokemonName}}\na été rendu inactif !",
   "revivalBlessing": "{{pokemonName}} a repris connaissance\net est prêt à se battre de nouveau !",
   "swapArenaTags": "Les effets affectant chaque côté du terrain\nont été échangés par {{pokemonName}} !",
+  "chillyReception": "{{pokemonName}} s’apprête\nà faire un mauvais jeu de mots…",
   "exposedMove": "{{targetPokemonName}} est identifié\npar {{pokemonName}} !",
   "safeguard": "{{targetName}} est protégé\npar la capacité Rune Protect !",
   "substituteOnOverlap": "{{pokemonName}} a déjà\nun clone !",
   "substituteNotEnoughHp": "Mais il est trop faible\npour créer un clone !",
-  "afterYou": "{{pokemonName}} accepte\navec joie !"
+  "afterYou": "{{targetName}} accepte\navec joie !"
 }

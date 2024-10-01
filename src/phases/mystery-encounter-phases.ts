@@ -3,7 +3,7 @@ import BattleScene from "../battle-scene";
 import { Phase } from "../phase";
 import { Mode } from "../ui/ui";
 import { transitionMysteryEncounterIntroVisuals, OptionSelectSettings } from "../data/mystery-encounters/utils/encounter-phase-utils";
-import MysteryEncounterOption, { OptionPhaseCallback } from "../data/mystery-encounters/mystery-encounter-option";
+import MysteryEncounterOption, { OptionPhaseCallback } from "#app/data/mystery-encounters/mystery-encounter-option";
 import { getCharVariantFromDialogue } from "../data/dialogue";
 import { TrainerSlot } from "../data/trainer-config";
 import { BattleSpec } from "#enums/battle-spec";
@@ -24,6 +24,8 @@ import { NewBattlePhase } from "#app/phases/new-battle-phase";
 import { GameOverPhase } from "#app/phases/game-over-phase";
 import { SwitchPhase } from "#app/phases/switch-phase";
 import { SeenEncounterData } from "#app/data/mystery-encounters/mystery-encounter-save-data";
+import { SwitchType } from "#enums/switch-type";
+import { BattlerTagType } from "#enums/battler-tag-type";
 
 /**
  * Will handle (in order):
@@ -217,9 +219,17 @@ export class MysteryEncounterBattleStartCleanupPhase extends Phase {
   start() {
     super.start();
 
+    // Lapse any residual flinches/endures but ignore all other turn-end battle tags
+    const includedLapseTags = [BattlerTagType.FLINCHED, BattlerTagType.ENDURING];
     const field = this.scene.getField(true).filter(p => p.summonData);
     field.forEach(pokemon => {
-      pokemon.lapseTags(BattlerTagLapseType.TURN_END);
+      const tags = pokemon.summonData.tags;
+      tags.filter(t => includedLapseTags.includes(t.tagType)
+        && t.lapseTypes.includes(BattlerTagLapseType.TURN_END)
+        && !(t.lapse(pokemon, BattlerTagLapseType.TURN_END))).forEach(t => {
+        t.onRemove(pokemon);
+        tags.splice(tags.indexOf(t), 1);
+      });
     });
 
     // Remove any status tick phases
@@ -241,7 +251,7 @@ export class MysteryEncounterBattleStartCleanupPhase extends Phase {
     const playerField = this.scene.getPlayerField();
     playerField.forEach((pokemon, i) => {
       if (!pokemon.isAllowedInBattle() && legalPlayerPartyPokemon.length > i) {
-        this.scene.unshiftPhase(new SwitchPhase(this.scene, i, true, false));
+        this.scene.unshiftPhase(new SwitchPhase(this.scene, SwitchType.SWITCH, i, true, false));
       }
     });
 

@@ -1,0 +1,46 @@
+{
+  "intro": "사파리존이다!",
+  "title": "사파리존",
+  "description": "여기에는 오만 가지 희귀하고 특별한 포켓몬들이 살고 있습니다! 특별한 포켓몬을 최대 @[TOOLTIP_TITLE]{{{numEncounters}}마리}까지 만나고 잡을 기회가 있답니다.\n\n하지만 조심하세요! 잡기도 전에 포켓몬이 도망칠 수도 있으니까요!",
+  "query": "들어가시겠습니까?",
+  "option": {
+    "1": {
+      "label": "들어간다",
+      "tooltip": "(-) {{option1Money, money}} 지불\n@[SUMMARY_GREEN]{(?) 사파리존 입장}",
+      "selected": "행운을 시험할 시간입니다!"
+    },
+    "2": {
+      "label": "떠난다",
+      "tooltip": "(-) 보상 없음",
+      "selected": "약간의 아쉬움을 남기고, 서둘러 길을 떠났다"
+    }
+  },
+  "safari": {
+    "1": {
+      "label": "몬스터볼을 던진다",
+      "tooltip": "(+) 몬스터볼을 던짐",
+      "selected": "몬스터볼을 던졌다!"
+    },
+    "2": {
+      "label": "먹이를 던진다",
+      "tooltip": "(+) 포획률 상승\n(-) 도망칠 확률 상승",
+      "selected": "먹이를 던졌다!"
+    },
+    "3": {
+      "label": "진흙을 던진다",
+      "tooltip": "(+) 도망칠 확률 감소\n(-) 포획률 감소",
+      "selected": "진흙을 던졌다!"
+    },
+    "4": {
+      "label": "도망친다",
+      "tooltip": "(?) 이 포켓몬에게서 도망친다"
+    },
+    "watching": "{{pokemonName}}[[는]] 조심스럽게 바라보고 있다!",
+    "eating": "{{pokemonName}}[[가]] 먹이를 먹고 있다!",
+    "busy_eating": "{{pokemonName}}[[가]] 먹이를 먹기 바쁘다!",
+    "angry": "{{pokemonName}}[[가]] 화가 난 것 같다!",
+    "beside_itself_angry": "{{pokemonName}}[[가]] 머리 끝까지 화가 난 것 같다!",
+    "remaining_count": "포켓몬이 {{remainingCount}}마리 남았다!"
+  },
+  "outro": "재미있는 사파리 체험이었다!"
+}

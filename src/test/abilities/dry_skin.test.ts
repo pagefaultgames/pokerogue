@@ -141,4 +141,18 @@ describe("Abilities - Dry Skin", () => {
 
     expect(healthGainedFromWaterShuriken).toBe(healthGainedFromWaterGun);
   });
+
+  it("opposing water moves still heal regardless of accuracy check", async () => {
+    await game.classicMode.startBattle();
+
+    const enemy = game.scene.getEnemyPokemon()!;
+
+    game.move.select(Moves.WATER_GUN);
+    enemy.hp = enemy.hp - 1;
+    await game.phaseInterceptor.to("MoveEffectPhase");
+
+    await game.move.forceMiss();
+    await game.phaseInterceptor.to("BerryPhase", false);
+    expect(enemy.hp).toBe(enemy.getMaxHp());
+  });
 });

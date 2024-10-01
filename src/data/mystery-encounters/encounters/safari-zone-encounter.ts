@@ -1,7 +1,7 @@
 import { initSubsequentOptionSelect, leaveEncounterWithoutBattle, transitionMysteryEncounterIntroVisuals, updatePlayerMoney, } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import BattleScene from "#app/battle-scene";
-import MysteryEncounter, { MysteryEncounterBuilder } from "../mystery-encounter";
+import MysteryEncounter, { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-encounter";
 import MysteryEncounterOption, { MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/mystery-encounter-option";
 import { TrainerSlot } from "#app/data/trainer-config";
 import { HiddenAbilityRateBoosterModifier, IvScannerModifier } from "#app/modifier/modifier";
@@ -25,7 +25,9 @@ const namespace = "mysteryEncounter:safariZone";
 
 const TRAINER_THROW_ANIMATION_TIMES = [512, 184, 768];
 
-const SAFARI_MONEY_MULTIPLIER = 2.75;
+const SAFARI_MONEY_MULTIPLIER = 2;
+
+const NUM_SAFARI_ENCOUNTERS = 3;
 
 /**
  * Safari Zone encounter.
@@ -55,6 +57,10 @@ export const SafariZoneEncounter: MysteryEncounter =
     .withTitle(`${namespace}.title`)
     .withDescription(`${namespace}.description`)
     .withQuery(`${namespace}.query`)
+    .withOnInit((scene: BattleScene) => {
+      scene.currentBattle.mysteryEncounter?.setDialogueToken("numEncounters", NUM_SAFARI_ENCOUNTERS.toString());
+      return true;
+    })
     .withOption(MysteryEncounterOptionBuilder
       .newOptionWithMode(MysteryEncounterOptionMode.DISABLED_OR_DEFAULT)
       .withSceneRequirement(new MoneyRequirement(0, SAFARI_MONEY_MULTIPLIER)) // Cost equal to 1 Max Revive
@@ -72,15 +78,15 @@ export const SafariZoneEncounter: MysteryEncounter =
         const encounter = scene.currentBattle.mysteryEncounter!;
         encounter.continuousEncounter = true;
         encounter.misc = {
-          safariPokemonRemaining: 3
+          safariPokemonRemaining: NUM_SAFARI_ENCOUNTERS
         };
         updatePlayerMoney(scene, -(encounter.options[0].requirements[0] as MoneyRequirement).requiredMoney);
         // Load bait/mud assets
         scene.loadSe("PRSFX- Bug Bite", "battle_anims", "PRSFX- Bug Bite.wav");
         scene.loadSe("PRSFX- Sludge Bomb2", "battle_anims", "PRSFX- Sludge Bomb2.wav");
         scene.loadSe("PRSFX- Taunt2", "battle_anims", "PRSFX- Taunt2.wav");
-        scene.loadAtlas("bait", "mystery-encounters");
-        scene.loadAtlas("mud", "mystery-encounters");
+        scene.loadAtlas("safari_zone_bait", "mystery-encounters");
+        scene.loadAtlas("safari_zone_mud", "mystery-encounters");
         // Clear enemy party
         scene.currentBattle.enemyParty = [];
         await transitionMysteryEncounterIntroVisuals(scene);
@@ -254,7 +260,7 @@ async function summonSafariPokemon(scene: BattleScene) {
   let enemySpecies;
   let pokemon;
   scene.executeWithSeedOffset(() => {
-    enemySpecies = getPokemonSpecies(getRandomSpeciesByStarterTier([0, 5]));
+    enemySpecies = getPokemonSpecies(getRandomSpeciesByStarterTier([0, 5], undefined, undefined, false, false, false));
     const level = scene.currentBattle.getLevelForWave();
     enemySpecies = getPokemonSpecies(enemySpecies.getWildSpeciesForLevel(level, true, false, scene.gameMode));
     pokemon = scene.addEnemyPokemon(enemySpecies, level, TrainerSlot.NONE, false);
@@ -282,7 +288,7 @@ async function summonSafariPokemon(scene: BattleScene) {
     pokemon.calculateStats();
 
     scene.currentBattle.enemyParty.unshift(pokemon);
-  }, scene.currentBattle.waveIndex * 1000 + encounter.misc.safariPokemonRemaining);
+  }, scene.currentBattle.waveIndex * 1000 * encounter.misc.safariPokemonRemaining);
 
   scene.gameData.setPokemonSeen(pokemon, true);
   await pokemon.loadAssets();
@@ -322,7 +328,7 @@ async function throwBait(scene: BattleScene, pokemon: EnemyPokemon): Promise<boo
   const originalY: number = pokemon.y;
 
   const fpOffset = pokemon.getFieldPositionOffset();
-  const bait: Phaser.GameObjects.Sprite = scene.addFieldSprite(16 + 75, 80 + 25, "bait", "0001.png");
+  const bait: Phaser.GameObjects.Sprite = scene.addFieldSprite(16 + 75, 80 + 25, "safari_zone_bait", "0001.png");
   bait.setOrigin(0.5, 0.625);
   scene.field.add(bait);
 
@@ -388,7 +394,7 @@ async function throwMud(scene: BattleScene, pokemon: EnemyPokemon): Promise<bool
   const originalY: number = pokemon.y;
 
   const fpOffset = pokemon.getFieldPositionOffset();
-  const mud: Phaser.GameObjects.Sprite = scene.addFieldSprite(16 + 75, 80 + 35, "mud", "0001.png");
+  const mud: Phaser.GameObjects.Sprite = scene.addFieldSprite(16 + 75, 80 + 35, "safari_zone_mud", "0001.png");
   mud.setOrigin(0.5, 0.625);
   scene.field.add(mud);
 

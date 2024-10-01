@@ -2,7 +2,7 @@ import { EnemyPartyConfig, initBattleWithEnemyConfig, leaveEncounterWithoutBattl
 import { trainerConfigs, } from "#app/data/trainer-config";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import BattleScene from "#app/battle-scene";
-import MysteryEncounter, { MysteryEncounterBuilder } from "../mystery-encounter";
+import MysteryEncounter, { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-encounter";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { TrainerType } from "#enums/trainer-type";
 import { Species } from "#enums/species";
@@ -15,6 +15,7 @@ import { EggTier } from "#enums/egg-type";
 import { PartyHealPhase } from "#app/phases/party-heal-phase";
 import { ModifierTier } from "#app/modifier/modifier-tier";
 import { modifierTypes } from "#app/modifier/modifier-type";
+import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
 
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounter:aTrainersTest";
@@ -27,7 +28,7 @@ const namespace = "mysteryEncounter:aTrainersTest";
 export const ATrainersTestEncounter: MysteryEncounter =
   MysteryEncounterBuilder.withEncounterType(MysteryEncounterType.A_TRAINERS_TEST)
     .withEncounterTier(MysteryEncounterTier.ROGUE)
-    .withSceneWaveRangeRequirement(100, 180)
+    .withSceneWaveRangeRequirement(100, CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES[1])
     .withIntroSpriteConfigs([]) // These are set in onInit()
     .withIntroDialogue([
       {
@@ -99,7 +100,7 @@ export const ATrainersTestEncounter: MysteryEncounter =
       const trainerConfig = trainerConfigs[trainerType].clone();
       const trainerSpriteKey = trainerConfig.getSpriteKey();
       encounter.enemyPartyConfigs.push({
-        levelAdditiveMultiplier: 1,
+        levelAdditiveModifier: 1,
         trainerConfig: trainerConfig
       });
 
@@ -152,7 +153,6 @@ export const ATrainersTestEncounter: MysteryEncounter =
         };
         encounter.setDialogueToken("eggType", i18next.t(`${namespace}.eggTypes.epic`));
         setEncounterRewards(scene, { guaranteedModifierTypeFuncs: [modifierTypes.SACRED_ASH], guaranteedModifierTiers: [ModifierTier.ROGUE, ModifierTier.ULTRA], fillRemaining: true }, [eggOptions]);
-
         return initBattleWithEnemyConfig(scene, config);
       }
     )
@@ -180,7 +180,7 @@ export const ATrainersTestEncounter: MysteryEncounter =
     )
     .withOutroDialogue([
       {
-        text: `${namespace}.outro`,
-      },
+        text: `${namespace}.outro`
+      }
     ])
     .build();

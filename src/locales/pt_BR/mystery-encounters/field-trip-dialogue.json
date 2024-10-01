@@ -1,0 +1,31 @@
+{
+  "intro": "É uma professora e algumas crianças da escola!",
+  "speaker": "Professora",
+  "intro_dialogue": "Olá! Você poderia\nnos dar um minutinho para meus alunos?$Estou ensinando a eles sobre movimentos de Pokémon\ne adoraria mostrar uma demonstração.$Você se importaria de nos mostrar um\ndos movimentos que seu Pokémon pode usar?",
+  "title": "Excursão",
+  "description": "Uma professora está pedindo uma demonstração de movimentos de um Pokémon. Dependendo do movimento que você escolher, ela pode ter algo útil para te dar em troca.",
+  "query": "Qual categoria de movimento você vai mostrar?",
+  "option": {
+    "1": {
+      "label": "Um Movimento Físico",
+      "tooltip": "(+) Recompensas de Itens Físicos"
+    },
+    "2": {
+      "label": "Um Movimento Especial",
+      "tooltip": "(+) Recompensas de Itens Especiais"
+    },
+    "3": {
+      "label": "Um Movimento de Status",
+      "tooltip": "(+) Recompensas de Itens de Status"
+    },
+    "selected": "{{pokeName}} faz uma exibição incrível de {{move}}!"
+  },
+  "second_option_prompt": "Escolha um movimento para seu Pokémon usar.",
+  "incorrect": "...$Esse não é um movimento de {{moveCategory}}!\nSinto muito, mas não posso te dar nada.$Vamos, crianças, encontraremos\numa demonstração melhor em outro lugar.",
+  "incorrect_exp": "Parece que você aprendeu uma lição valiosa?$Seu Pokémon também ganhou um pouco de experiência.",
+  "correct": "Muito obrigada pela sua gentileza!\nEspero que esses itens sejam úteis para você!",
+  "correct_exp": "{{pokeName}} também ganhou uma valiosa experiência!",
+  "status": "Status",
+  "physical": "Físico",
+  "special": "Especial"
+}

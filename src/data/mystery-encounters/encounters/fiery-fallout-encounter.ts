@@ -3,8 +3,8 @@ import { EnemyPartyConfig, initBattleWithEnemyConfig, loadCustomMovesForEncounte
 import { AttackTypeBoosterModifierType, modifierTypes, } from "#app/modifier/modifier-type";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import BattleScene from "#app/battle-scene";
-import MysteryEncounter, { MysteryEncounterBuilder } from "../mystery-encounter";
-import { TypeRequirement } from "../mystery-encounter-requirements";
+import MysteryEncounter, { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-encounter";
+import { TypeRequirement } from "#app/data/mystery-encounters/mystery-encounter-requirements";
 import { Species } from "#enums/species";
 import { getPokemonSpecies } from "#app/data/pokemon-species";
 import { Gender } from "#app/data/gender";
@@ -46,6 +46,7 @@ export const FieryFalloutEncounter: MysteryEncounter =
     .withIntroSpriteConfigs([]) // Set in onInit()
     .withAnimations(EncounterAnim.MAGMA_BG, EncounterAnim.MAGMA_SPOUT)
     .withAutoHideIntroVisuals(false)
+    .withFleeAllowed(false)
     .withIntroDialogue([
       {
         text: `${namespace}.intro`,
@@ -189,7 +190,7 @@ export const FieryFalloutEncounter: MysteryEncounter =
         }
 
         // Burn random member
-        const burnable = nonFireTypes.filter(p => isNullOrUndefined(p.status) || isNullOrUndefined(p.status!.effect) || p.status?.effect === StatusEffect.BURN);
+        const burnable = nonFireTypes.filter(p => isNullOrUndefined(p.status) || isNullOrUndefined(p.status.effect) || p.status.effect === StatusEffect.NONE);
         if (burnable?.length > 0) {
           const roll = randSeedInt(burnable.length);
           const chosenPokemon = burnable[roll];
