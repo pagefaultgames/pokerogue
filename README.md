@@ -8,13 +8,41 @@ If you have the motivation and experience with Typescript/Javascript (or are wil
 
 ### 💻 Environment Setup
 #### Prerequisites
-- node: 20.13.1
-- npm: [how to install](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm)
+- node 20.13.1+
+- npm <sub>[how to install](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm)</sub>
+
+#### Local Setup
+1. Clone the repo including submodules:
+    ```shell
+    git clone --recurse-submodules --remote-submodules https://github.com/flx-sta/pokerogue-locales.git
+    ```
+    <sub>Use SSH if preferred</sub>
+2. Change into the root project directory
+    ```shell
+    git clone --recurse-submodules --remote-submodules https://github.com/flx-sta/pokerogue-locales.git
+    ```
+3. Install all npm modules:
+    ```shell
+    npm i
+    # or
+    npm install
+    ```
+    - *if you run into any errors, reach out in the **#dev-corner** channel in discord*
+
+
+> [!TIP]
+> If your submodules did not initialize properly try running:
+> ```shell
+> git submodule update --init --recursive
+> ```
 
 #### Running Locally
-1. Clone the repo and in the root directory run `npm install`
-    - *if you run into any errors, reach out in the **#dev-corner** channel in discord*
-2. Run `npm run start:dev` to locally run the project in `localhost:8000`
+
+Simply Run:
+```shell
+npm run start
+```
+to locally run the project on [localhost:8000](http://localhost:8000)
 
 #### Linting
 We're using ESLint as our common linter and formatter. It will run automatically during the pre-commit hook but if you would like to manually run it, use the `npm run eslint` script.
