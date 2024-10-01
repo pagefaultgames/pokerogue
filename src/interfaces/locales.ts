@@ -9,6 +9,16 @@ export interface SimpleTranslationEntries {
     [key: string]: string
   }
 
+export interface FusionTranslationEntries {
+  shouldReverse?: string,
+  [key: string]: FusionTranslationEntry | string | undefined,
+  }
+
+export interface FusionTranslationEntry {
+    fusionPrefix: string,
+    fusionSuffix: string,
+    }
+
 export interface MoveTranslationEntry {
     name: string,
     effect: string

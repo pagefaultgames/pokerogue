@@ -53,6 +53,7 @@ import terrain from "./terrain.json";
 import modifierSelectUiHandler from "./modifier-select-ui-handler.json";
 import moveTriggers from "./move-trigger.json";
 import runHistory from "./run-history.json";
+import fusionAffixes from "./pokemon-fusion-affixes.json";
 import mysteryEncounterMessages from "./mystery-encounter-messages.json";
 import lostAtSea from "./mystery-encounters/lost-at-sea-dialogue.json";
 import mysteriousChest from "./mystery-encounters/mysterious-chest-dialogue.json";
@@ -133,6 +134,7 @@ export const esConfig = {
   pokeball,
   pokemon,
   pokemonForm,
+  fusionAffixes,
   pokemonInfo,
   pokemonInfoContainer,
   pokemonSummary,

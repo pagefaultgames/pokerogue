@@ -381,7 +381,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       this.name = this.species.getName(this.formIndex);
       return;
     }
-    this.name = getFusedSpeciesName(this.species.getName(this.formIndex), this.fusionSpecies.getName(this.fusionFormIndex));
+    this.name = getFusedSpeciesName(this.species, this.fusionSpecies);
     if (this.battleInfo) {
       this.updateInfo(true);
     }

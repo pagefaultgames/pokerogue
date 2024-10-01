@@ -85,6 +85,7 @@ import trainerTitles from "./trainer-titles.json";
 import tutorial from "./tutorial.json";
 import voucher from "./voucher.json";
 import weather from "./weather.json";
+import fusionAffixes from "./pokemon-fusion-affixes.json";
 
 /**
  * Dialogue/Text token injection patterns that can be used:
@@ -133,6 +134,7 @@ export const ptBrConfig = {
   pokeball,
   pokemon,
   pokemonForm,
+  fusionAffixes,
   pokemonInfo,
   pokemonInfoContainer,
   pokemonSummary,
