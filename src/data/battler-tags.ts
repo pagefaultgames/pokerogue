@@ -2631,7 +2631,10 @@ export class ImprisonTag extends MoveRestrictionBattlerTag {
    * @returns source pokemon {@linkcode Pokemon} or undefined
    */
   private retrieveSource(scene: BattleScene): Pokemon | undefined {
-    return scene.getPokemonById(this.sourceId);
+    if (this.sourceId) {
+      return scene.getPokemonById(this.sourceId) ?? undefined;
+    }
+    return undefined;
   }
 }
 
