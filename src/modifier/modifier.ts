@@ -481,12 +481,12 @@ export class TempStatStageBoosterModifier extends LapsingPersistentModifier {
   /**
    * Checks if {@linkcode args} contains the necessary elements and if the
    * incoming stat is matches {@linkcode stat}.
-   * @param tempBattleStat {@linkcode TempBattleStat} N/A
+   * @param tempBattleStat {@linkcode TempBattleStat} being affected
    * @param statLevel {@linkcode Utils.NumberHolder} that holds the resulting value of the stat stage multiplier
    * @returns `true` if the modifier can be applied, false otherwise
    */
   override shouldApply(tempBattleStat?: TempBattleStat, statLevel?: Utils.NumberHolder): boolean {
-    return !!tempBattleStat && !!statLevel && TEMP_BATTLE_STATS.includes(tempBattleStat) && (tempBattleStat === this.stat) && (statLevel instanceof Utils.NumberHolder);
+    return !!tempBattleStat && !!statLevel && TEMP_BATTLE_STATS.includes(tempBattleStat) && (tempBattleStat === this.stat);
   }
 
   /**
@@ -521,11 +521,11 @@ export class TempCritBoosterModifier extends LapsingPersistentModifier {
 
   /**
    * Checks if {@linkcode args} contains the necessary elements.
-   * @param critLevel {@linkcode Utils.NumberHolder} N/A
+   * @param critLevel {@linkcode Utils.NumberHolder} that holds the resulting critical-hit level
    * @returns `true` if the critical-hit stage boost applies successfully
    */
   override shouldApply(critLevel?: Utils.NumberHolder): boolean {
-    return !!critLevel && (critLevel instanceof Utils.NumberHolder);
+    return !!critLevel;
   }
 
   /**
