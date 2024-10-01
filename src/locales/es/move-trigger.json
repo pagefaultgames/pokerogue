@@ -67,5 +67,5 @@
   "swapArenaTags": "¡{{pokemonName}} ha intercambiado los efectos del terreno de combate!",
   "exposedMove": "¡{{pokemonName}} ha identificado\n{{targetPokemonName}}!",
   "safeguard": "¡{{targetName}} está protegido por Velo Sagrado!",
-  "afterYou": "¡{{pokemonName}} ha decidido aprovechar la oportunidad!"
+  "afterYou": "¡{{targetName}} ha decidido aprovechar la oportunidad!"
 }

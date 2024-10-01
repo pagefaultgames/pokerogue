@@ -1,7 +1,7 @@
 {
   "intro": "Vous tombez sur du matériel d’entrainement.",
   "title": "Session d’entrainement",
-  "description": "Ce matériel semble pouvoir être utilisé pour entrainer un membre de votre équipe ! Il existe plusieurs moyens avec lesquels vous pourriez entrainer un Pokémon, comme @[TOOLTIP_TITLE]{en le faisant combattre et vaincre le reste de votre équipe}.",
+  "description": "Ce matériel semble pouvoir être utilisé pour entrainer un membre de votre équipe ! Il existe plusieurs moyens avec lesquels vous pourriez entrainer un Pokémon, comme @[TOOLTIP_TITLE]{en le combattant et le vainquant avec le reste de votre équipe}.",
   "query": "Quel entrainement choisir ?",
   "invalid_selection": "Le Pokémon doit être en bonne santé.",
   "option": {

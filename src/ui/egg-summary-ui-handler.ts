@@ -99,8 +99,9 @@ export default class EggSummaryUiHandler extends MessageUiHandler {
 
   clear() {
     super.clear();
-    this.cursor = -1;
     this.scrollGridHandler.reset();
+    this.cursor = -1;
+
     this.summaryContainer.setVisible(false);
     this.pokemonIconsContainer.removeAll(true);
     this.pokemonContainers = [];
@@ -164,8 +165,8 @@ export default class EggSummaryUiHandler extends MessageUiHandler {
 
     this.scrollGridHandler.setTotalElements(this.eggHatchData.length);
     this.updatePokemonIcons();
-
     this.setCursor(0);
+
     this.scene.playSoundWithoutBgm("evolution_fanfare");
     return true;
   }
