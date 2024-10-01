@@ -2719,6 +2719,7 @@ export abstract class HeldItemTransferModifier extends PokemonHeldItemModifier {
       const randItem = itemModifiers[randItemIndex];
       heldItemTransferPromises.push(pokemon.scene.tryTransferHeldItemModifier(randItem, pokemon, false).then(success => {
         if (success) {
+          targetPokemon.turnData.itemsLost += 1;
           transferredModifierTypes.push(randItem.type);
           itemModifiers.splice(randItemIndex, 1);
         }

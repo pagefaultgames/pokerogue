@@ -1692,6 +1692,7 @@ export class PostAttackStealHeldItemAbAttr extends PostAttackAbAttr {
           const stolenItem = heldItems[pokemon.randSeedInt(heldItems.length)];
           pokemon.scene.tryTransferHeldItemModifier(stolenItem, pokemon, false).then(success => {
             if (success) {
+              defender.turnData.itemsLost += 1;
               pokemon.scene.queueMessage(i18next.t("abilityTriggers:postAttackStealHeldItem", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), defenderName: defender.name, stolenItemType: stolenItem.type.name }));
             }
             resolve(success);
@@ -1785,6 +1786,7 @@ export class PostDefendStealHeldItemAbAttr extends PostDefendAbAttr {
           const stolenItem = heldItems[pokemon.randSeedInt(heldItems.length)];
           pokemon.scene.tryTransferHeldItemModifier(stolenItem, pokemon, false).then(success => {
             if (success) {
+              attacker.turnData.itemsLost += 1;
               pokemon.scene.queueMessage(i18next.t("abilityTriggers:postDefendStealHeldItem", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), attackerName: attacker.name, stolenItemType: stolenItem.type.name }));
             }
             resolve(success);
@@ -3835,6 +3837,92 @@ export class PostDancingMoveAbAttr extends PostMoveUsedAbAttr {
   }
 }
 
+export class UnburdenBerryAbAttr extends PostTurnAbAttr {
+  private stats: BattleStat[];
+  private stages: number;
+
+  constructor(stats: BattleStat[], stages: number) {
+    super(true);
+
+    this.stats = Array.isArray(stats)
+      ? stats
+      : [ stats ];
+    this.stages = stages;
+  }
+
+  applyPostTurn(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
+    const multipleItems = pokemon.battleData.berriesEaten.length * this.stages;
+    if (multipleItems > 6) {
+      this.stages = 6;
+    } else {
+      this.stages = multipleItems;
+    }
+    if (!simulated) {
+      pokemon.scene.unshiftPhase(new StatStageChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, this.stats, this.stages));
+    }
+    return true;
+  }
+
+  getCondition(): AbAttrCondition {
+    return (pokemon: Pokemon) => pokemon.battleData.berriesEaten.length !== 0;
+  }
+
+}
+
+export class UnburdenDefStolenAbAttr extends PostDefendAbAttr {
+  private stats: BattleStat[];
+  private stages: number;
+
+  constructor(stats: BattleStat[], stages: number) {
+    super(true);
+
+    this.stats = Array.isArray(stats)
+      ? stats
+      : [ stats ];
+    this.stages = stages;
+  }
+
+  applyPostDefend(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker: Pokemon, move: Move, hitResult: HitResult, args: any[]): boolean {
+    if (!simulated) {
+      pokemon.scene.unshiftPhase(new StatStageChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, this.stats, this.stages));
+      pokemon.turnData.itemsLost -= 1;
+    }
+    return true;
+  }
+
+  getCondition(): AbAttrCondition {
+    return (pokemon: Pokemon) => pokemon.turnData.itemsLost > 0;
+  }
+
+}
+
+export class UnburdenAtkStolenAbAttr extends PostAttackAbAttr {
+  private stats: BattleStat[];
+  private stages: number;
+
+  constructor(stats: BattleStat[], stages: number) {
+    super();
+
+    this.stats = Array.isArray(stats)
+      ? stats
+      : [ stats ];
+    this.stages = stages;
+  }
+
+  applyPostAttackAfterMoveTypeCheck(pokemon: Pokemon, passive: boolean, simulated: boolean, defender: Pokemon, move: Move, hitResult: HitResult, args: any[]): boolean {
+    if (!simulated) {
+      pokemon.scene.unshiftPhase(new StatStageChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, this.stats, this.stages));
+      pokemon.turnData.itemsLost -= 1;
+    }
+    return true;
+  }
+
+  getCondition(): AbAttrCondition {
+    return (pokemon: Pokemon) => pokemon.turnData.itemsLost > 0;
+  }
+
+}
+
 export class StatStageChangeMultiplierAbAttr extends AbAttr {
   private multiplier: integer;
 
@@ -5146,7 +5234,9 @@ export function initAbilities() {
     new Ability(Abilities.ANGER_POINT, 4)
       .attr(PostDefendCritStatStageChangeAbAttr, Stat.ATK, 6),
     new Ability(Abilities.UNBURDEN, 4)
-      .unimplemented(),
+      .attr(UnburdenBerryAbAttr, [ Stat.SPD ], 2)
+      .attr(UnburdenAtkStolenAbAttr, [ Stat.SPD ], 2)
+      .attr(UnburdenDefStolenAbAttr, [ Stat.SPD ], 2),
     new Ability(Abilities.HEATPROOF, 4)
       .attr(ReceivedTypeDamageMultiplierAbAttr, Type.FIRE, 0.5)
       .attr(ReduceBurnDamageAbAttr, 0.5)

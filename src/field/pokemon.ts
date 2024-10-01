@@ -5011,6 +5011,7 @@ export class PokemonTurnData {
   public order: number;
   public statStagesIncreased: boolean = false;
   public statStagesDecreased: boolean = false;
+  public itemsLost: number = 0;
 }
 
 export enum AiType {
