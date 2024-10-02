@@ -970,13 +970,16 @@ export class MoveEffectAttr extends MoveAttr {
   public lastHitOnly: boolean;
   /** Should this effect only apply on the first target hit? */
   public firstTargetOnly: boolean;
+  /** Overrides the secondary effect chance for this attr if set. */
+  public effectChanceOverride?: number;
 
-  constructor(selfTarget?: boolean, trigger?: MoveEffectTrigger, firstHitOnly: boolean = false, lastHitOnly: boolean = false, firstTargetOnly: boolean = false) {
+  constructor(selfTarget?: boolean, trigger?: MoveEffectTrigger, firstHitOnly: boolean = false, lastHitOnly: boolean = false, firstTargetOnly: boolean = false, effectChanceOverride?: number) {
     super(selfTarget);
-    this.trigger = trigger !== undefined ? trigger : MoveEffectTrigger.POST_APPLY;
+    this.trigger = trigger ?? MoveEffectTrigger.POST_APPLY;
     this.firstHitOnly = firstHitOnly;
     this.lastHitOnly = lastHitOnly;
     this.firstTargetOnly = firstTargetOnly;
+    this.effectChanceOverride = effectChanceOverride;
   }
 
   /**
@@ -1001,15 +1004,15 @@ export class MoveEffectAttr extends MoveAttr {
 
   /**
    * Gets the used move's additional effect chance.
-   * If user's ability has MoveEffectChanceMultiplierAbAttr or IgnoreMoveEffectsAbAttr modifies the base chance.
+   * Chance is modified by {@linkcode MoveEffectChanceMultiplierAbAttr} and {@linkcode IgnoreMoveEffectsAbAttr}.
    * @param user {@linkcode Pokemon} using this move
-   * @param target {@linkcode Pokemon} target of this move
+   * @param target {@linkcode Pokemon | Target} of this move
    * @param move {@linkcode Move} being used
-   * @param selfEffect {@linkcode Boolean} if move targets user.
-   * @returns Move chance value.
+   * @param selfEffect `true` if move targets user.
+   * @returns Move effect chance value.
    */
-  getMoveChance(user: Pokemon, target: Pokemon, move: Move, selfEffect?: Boolean, showAbility?: Boolean): integer {
-    const moveChance = new Utils.NumberHolder(move.chance);
+  getMoveChance(user: Pokemon, target: Pokemon, move: Move, selfEffect?: boolean, showAbility?: boolean): number {
+    const moveChance = new Utils.NumberHolder(this.effectChanceOverride ?? move.chance);
     applyAbAttrs(MoveEffectChanceMultiplierAbAttr, user, null, false, moveChance, move, target, selfEffect, showAbility);
     if (!selfEffect) {
       applyPreDefendAbAttrs(IgnoreMoveEffectsAbAttr, target, user, null, null, false, moveChance);
@@ -2674,8 +2677,8 @@ export class StatStageChangeAttr extends MoveEffectAttr {
   private condition: MoveConditionFunc | null;
   private showMessage: boolean;
 
-  constructor(stats: BattleStat[], stages: integer, selfTarget?: boolean, condition?: MoveConditionFunc | null, showMessage: boolean = true, firstHitOnly: boolean = false, moveEffectTrigger: MoveEffectTrigger = MoveEffectTrigger.HIT, firstTargetOnly: boolean = false) {
-    super(selfTarget, moveEffectTrigger, firstHitOnly, false, firstTargetOnly);
+  constructor(stats: BattleStat[], stages: integer, selfTarget?: boolean, condition?: MoveConditionFunc | null, showMessage: boolean = true, firstHitOnly: boolean = false, moveEffectTrigger: MoveEffectTrigger = MoveEffectTrigger.HIT, firstTargetOnly: boolean = false, effectChanceOverride?: number) {
+    super(selfTarget, moveEffectTrigger, firstHitOnly, false, firstTargetOnly, effectChanceOverride);
     this.stats = stats;
     this.stages = stages;
     this.condition = condition!; // TODO: is this bang correct?
@@ -9290,9 +9293,8 @@ export function initMoves() {
     new AttackMove(Moves.TRIPLE_ARROWS, Type.FIGHTING, MoveCategory.PHYSICAL, 90, 100, 10, 30, 0, 8)
       .makesContact(false)
       .attr(HighCritAttr)
-      .attr(StatStageChangeAttr, [ Stat.DEF ], -1)
-      .attr(FlinchAttr)
-      .partial(),
+      .attr(StatStageChangeAttr, [ Stat.DEF ], -1, undefined, undefined, undefined, undefined, undefined, undefined, 50)
+      .attr(FlinchAttr),
     new AttackMove(Moves.INFERNAL_PARADE, Type.GHOST, MoveCategory.SPECIAL, 60, 100, 15, 30, 0, 8)
       .attr(StatusEffectAttr, StatusEffect.BURN)
       .attr(MovePowerMultiplierAttr, (user, target, move) => target.status ? 2 : 1),
