@@ -3390,10 +3390,10 @@ export class EnemyTurnHealModifier extends EnemyPersistentModifier {
 
   /**
    * Applies {@linkcode EnemyTurnHealModifier}
-   * @param enemyPokemon The {@linkcode EnemyPokemon} to heal
-   * @returns `true` if the {@linkcode EnemyPokemon} was healed
+   * @param enemyPokemon The {@linkcode Pokemon} to heal
+   * @returns `true` if the {@linkcode Pokemon} was healed
    */
-  override apply(enemyPokemon: EnemyPokemon): boolean {
+  override apply(enemyPokemon: Pokemon): boolean {
     if (!enemyPokemon.isFullHp()) {
       const scene = enemyPokemon.scene;
       scene.unshiftPhase(new PokemonHealPhase(scene, enemyPokemon.getBattlerIndex(),
