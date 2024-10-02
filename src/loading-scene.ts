@@ -5,7 +5,6 @@ import { SceneBase } from "./scene-base";
 import { WindowVariant, getWindowVariantSuffix } from "./ui/ui-theme";
 import { isMobile } from "./touch-controls";
 import * as Utils from "./utils";
-import { initI18n } from "./plugins/i18n";
 import { initPokemonPrevolutions } from "#app/data/pokemon-evolutions";
 import { initBiomes } from "#app/data/biomes";
 import { initEggMoves } from "#app/data/egg-moves";
@@ -31,7 +30,6 @@ export class LoadingScene extends SceneBase {
     super(LoadingScene.KEY);
 
     Phaser.Plugins.PluginCache.register("Loader", CacheBustedLoaderPlugin, "load");
-    initI18n();
   }
 
   preload() {
