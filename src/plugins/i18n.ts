@@ -100,6 +100,22 @@ async function initFonts(language: string | undefined) {
   }
 }
 
+/**
+ * I18n money formatter with. (useful for BBCode coloring of text)\
+ * *If you don't want the BBCode tag applied, just use 'number' formatter*
+ * @example Input: `{{myMoneyValue, money}}`
+ *          Output: `@[MONEY]{₽100,000,000}`
+ * @param amount the money amount
+ * @returns a money formatted string
+ */
+function i18nMoneyFormatter(amount: any): string {
+  if (typeof amount !== "number") {
+    console.warn(`i18nMoneyFormatter: value "${amount}" is not a number!`);
+  }
+
+  return `@[MONEY]{${i18next.t("common:money", { amount })}}`;
+}
+
 //#region Exports
 
 /**
@@ -249,24 +265,10 @@ export async function initI18n(): Promise<void> {
     postProcess: ["korean-postposition"],
   });
 
-  // Input: {{myMoneyValue, money}}
-  // Output: @[MONEY]{₽100,000,000} (useful for BBCode coloring of text)
-  // If you don't want the BBCode tag applied, just use 'number' formatter
-  i18next.services.formatter?.add("money", (value, lng, options) => {
-    const numberFormattedString = Intl.NumberFormat(lng, options).format(value);
-    switch (lng) {
-    case "ja":
-      return `@[MONEY]{${numberFormattedString}}円`;
-    case "de":
-    case "es":
-    case "fr":
-    case "it":
-      return `@[MONEY]{${numberFormattedString} ₽}`;
-    default:
-      // English and other languages that use same format
-      return `@[MONEY]{₽${numberFormattedString}}`;
-    }
-  });
+
+  if (i18next.services.formatter) {
+    i18next.services.formatter.add("money", i18nMoneyFormatter);
+  }
 
   await initFonts(localStorage.getItem("prLang") ?? undefined);
 }
