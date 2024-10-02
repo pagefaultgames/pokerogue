@@ -123,6 +123,7 @@ export class Ability implements Localizable {
 type AbAttrApplyFunc<TAttr extends AbAttr> = (attr: TAttr, passive: boolean) => boolean | Promise<boolean>;
 type AbAttrCondition = (pokemon: Pokemon) => boolean;
 
+// TODO: Can this be improved?
 type PokemonAttackCondition = (user: Pokemon | null, target: Pokemon | null, move: Move) => boolean;
 type PokemonDefendCondition = (target: Pokemon, user: Pokemon, move: Move) => boolean;
 type PokemonStatStageChangeCondition = (target: Pokemon, statsChanged: BattleStat[], stages: number) => boolean;
@@ -518,6 +519,7 @@ export class FullHpResistTypeAbAttr extends PreDefendAbAttr {
 
     if (pokemon.isFullHp() && typeMultiplier.value > 0.5) {
       typeMultiplier.value = 0.5;
+      pokemon.turnData.moveEffectiveness = 0.5;
       return true;
     }
     return false;
@@ -2432,7 +2434,7 @@ export class PostSummonTransformAbAttr extends PostSummonAbAttr {
       pokemon.setStatStage(s, target.getStatStage(s));
     }
 
-    pokemon.summonData.moveset = target.getMoveset().map(m => new PokemonMove(m!.moveId, m!.ppUsed, m!.ppUp)); // TODO: are those bangs correct?
+    pokemon.summonData.moveset = target.getMoveset().map(m => new PokemonMove(m?.moveId ?? Moves.NONE, m?.ppUsed, m?.ppUp));
     pokemon.summonData.types = target.getTypes();
 
 
@@ -3152,12 +3154,12 @@ export class ForewarnAbAttr extends PostSummonAbAttr {
         } else if (move?.getMove().power === -1) {
           movePower = 80;
         } else {
-          movePower = move!.getMove().power; // TODO: is this bang correct?
+          movePower = move?.getMove().power ?? 0;
         }
 
         if (movePower > maxPowerSeen) {
           maxPowerSeen = movePower;
-          maxMove = move!.getName(); // TODO: is this bang correct?
+          maxMove = move?.getName() ?? "";
         }
       }
     }
@@ -5175,8 +5177,7 @@ export function initAbilities() {
       .attr(IgnoreOpponentStatStagesAbAttr)
       .ignorable(),
     new Ability(Abilities.TINTED_LENS, 4)
-      //@ts-ignore
-      .attr(DamageBoostAbAttr, 2, (user, target, move) => target?.getMoveEffectiveness(user, move) <= 0.5), // TODO: fix TS issues
+      .attr(DamageBoostAbAttr, 2, (user, target, move) => (target?.getMoveEffectiveness(user!, move) ?? 1) <= 0.5),
     new Ability(Abilities.FILTER, 4)
       .attr(ReceivedMoveDamageMultiplierAbAttr, (target, user, move) => target.getMoveEffectiveness(user, move) >= 2, 0.75)
       .ignorable(),
@@ -5294,8 +5295,9 @@ export function initAbilities() {
       .attr(WonderSkinAbAttr)
       .ignorable(),
     new Ability(Abilities.ANALYTIC, 5)
-    //@ts-ignore
-      .attr(MovePowerBoostAbAttr, (user, target, move) => !!target?.getLastXMoves(1).find(m => m.turn === target?.scene.currentBattle.turn) || user.scene.currentBattle.turnCommands[target.getBattlerIndex()].command !== Command.FIGHT, 1.3), // TODO fix TS issues
+      .attr(MovePowerBoostAbAttr, (user, target, move) =>
+        !!target?.getLastXMoves(1).find(m => m.turn === target?.scene.currentBattle.turn)
+        || user?.scene.currentBattle.turnCommands[target?.getBattlerIndex() ?? BattlerIndex.ATTACKER]?.command !== Command.FIGHT, 1.3),
     new Ability(Abilities.ILLUSION, 5)
       .attr(UncopiableAbilityAbAttr)
       .attr(UnswappableAbilityAbAttr)
@@ -5460,8 +5462,7 @@ export function initAbilities() {
       .bypassFaint()
       .partial(),
     new Ability(Abilities.STAKEOUT, 7)
-      //@ts-ignore
-      .attr(MovePowerBoostAbAttr, (user, target, move) => user.scene.currentBattle.turnCommands[target.getBattlerIndex()].command === Command.POKEMON, 2), // TODO: fix TS issues
+      .attr(MovePowerBoostAbAttr, (user, target, move) => user?.scene.currentBattle.turnCommands[target?.getBattlerIndex() ?? BattlerIndex.ATTACKER]?.command === Command.POKEMON, 2),
     new Ability(Abilities.WATER_BUBBLE, 7)
       .attr(ReceivedTypeDamageMultiplierAbAttr, Type.FIRE, 0.5)
       .attr(MoveTypePowerBoostAbAttr, Type.WATER, 2)
@@ -5599,8 +5600,7 @@ export function initAbilities() {
     new Ability(Abilities.PRISM_ARMOR, 7)
       .attr(ReceivedMoveDamageMultiplierAbAttr, (target, user, move) => target.getMoveEffectiveness(user, move) >= 2, 0.75),
     new Ability(Abilities.NEUROFORCE, 7)
-      //@ts-ignore
-      .attr(MovePowerBoostAbAttr, (user, target, move) => target?.getMoveEffectiveness(user, move) >= 2, 1.25), // TODO: fix TS issues
+      .attr(MovePowerBoostAbAttr, (user, target, move) => (target?.getMoveEffectiveness(user!, move) ?? 1) >= 2, 1.25),
     new Ability(Abilities.INTREPID_SWORD, 8)
       .attr(PostSummonStatStageChangeAbAttr, [ Stat.ATK ], 1, true)
       .condition(getOncePerBattleCondition(Abilities.INTREPID_SWORD)),
@@ -5698,10 +5698,8 @@ export function initAbilities() {
       .attr(UserFieldStatusEffectImmunityAbAttr, StatusEffect.POISON, StatusEffect.TOXIC)
       .ignorable(),
     new Ability(Abilities.HUNGER_SWITCH, 8)
-      //@ts-ignore
-      .attr(PostTurnFormChangeAbAttr, p => p.getFormKey ? 0 : 1) // TODO: fix ts-ignore
-      //@ts-ignore
-      .attr(PostTurnFormChangeAbAttr, p => p.getFormKey ? 1 : 0) // TODO: fix ts-ignore
+      .attr(PostTurnFormChangeAbAttr, p => p.getFormKey() ? 0 : 1)
+      .attr(PostTurnFormChangeAbAttr, p => p.getFormKey() ? 1 : 0)
       .attr(UncopiableAbilityAbAttr)
       .attr(UnswappableAbilityAbAttr)
       .attr(NoTransformAbilityAbAttr)

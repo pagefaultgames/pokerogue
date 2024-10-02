@@ -16,6 +16,7 @@ import { Type } from "./type";
 import { LevelMoves, pokemonFormLevelMoves, pokemonFormLevelMoves as pokemonSpeciesFormLevelMoves, pokemonSpeciesLevelMoves } from "./pokemon-level-moves";
 import { Stat } from "#enums/stat";
 import { Variant, VariantSet, variantColorCache, variantData } from "./variant";
+import { SpeciesFormKey } from "#enums/species-form-key";
 
 export enum Region {
   NORMAL,
@@ -926,20 +927,6 @@ export class PokemonForm extends PokemonSpeciesForm {
   getFormSpriteKey(_formIndex?: integer) {
     return this.formSpriteKey !== null ? this.formSpriteKey : this.formKey;
   }
-}
-
-export enum SpeciesFormKey {
-  MEGA = "mega",
-  MEGA_X = "mega-x",
-  MEGA_Y = "mega-y",
-  PRIMAL = "primal",
-  ORIGIN = "origin",
-  INCARNATE = "incarnate",
-  THERIAN = "therian",
-  GIGANTAMAX = "gigantamax",
-  GIGANTAMAX_SINGLE = "gigantamax-single",
-  GIGANTAMAX_RAPID = "gigantamax-rapid",
-  ETERNAMAX = "eternamax"
 }
 
 export const allSpecies: PokemonSpecies[] = [];

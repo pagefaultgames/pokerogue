@@ -20,7 +20,7 @@ import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
 
 /** the i18n namespace for the encounter */
-const namespace = "mysteryEncounter:theStrongStuff";
+const namespace = "mysteryEncounters/theStrongStuff";
 
 // Halved for HP stat
 const HIGH_BST_REDUCTION_VALUE = 15;
@@ -64,7 +64,7 @@ export const TheStrongStuffEncounter: MysteryEncounter =
     ]) // Set in onInit()
     .withIntroDialogue([
       {
-        text: `${namespace}.intro`,
+        text: `${namespace}:intro`,
       },
     ])
     .withOnInit((scene: BattleScene) => {
@@ -102,7 +102,7 @@ export const TheStrongStuffEncounter: MysteryEncounter =
             ],
             tags: [BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON],
             mysteryEncounterBattleEffects: (pokemon: Pokemon) => {
-              queueEncounterMessage(pokemon.scene, `${namespace}.option.2.stat_boost`);
+              queueEncounterMessage(pokemon.scene, `${namespace}:option.2.stat_boost`);
               pokemon.scene.unshiftPhase(new StatStageChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [Stat.DEF, Stat.SPDEF], 2));
             }
           }
@@ -117,16 +117,16 @@ export const TheStrongStuffEncounter: MysteryEncounter =
 
       return true;
     })
-    .withTitle(`${namespace}.title`)
-    .withDescription(`${namespace}.description`)
-    .withQuery(`${namespace}.query`)
+    .withTitle(`${namespace}:title`)
+    .withDescription(`${namespace}:description`)
+    .withQuery(`${namespace}:query`)
     .withSimpleOption(
       {
-        buttonLabel: `${namespace}.option.1.label`,
-        buttonTooltip: `${namespace}.option.1.tooltip`,
+        buttonLabel: `${namespace}:option.1.label`,
+        buttonTooltip: `${namespace}:option.1.tooltip`,
         selected: [
           {
-            text: `${namespace}.option.1.selected`
+            text: `${namespace}:option.1.selected`
           }
         ]
       },
@@ -159,11 +159,11 @@ export const TheStrongStuffEncounter: MysteryEncounter =
 
         encounter.setDialogueToken("reductionValue", HIGH_BST_REDUCTION_VALUE.toString());
         encounter.setDialogueToken("increaseValue", BST_INCREASE_VALUE.toString());
-        await showEncounterText(scene, `${namespace}.option.1.selected_2`, null, undefined, true);
+        await showEncounterText(scene, `${namespace}:option.1.selected_2`, null, undefined, true);
 
         encounter.dialogue.outro = [
           {
-            text: `${namespace}.outro`,
+            text: `${namespace}:outro`,
           }
         ];
         setEncounterRewards(scene, { fillRemaining: true });
@@ -173,11 +173,11 @@ export const TheStrongStuffEncounter: MysteryEncounter =
     )
     .withSimpleOption(
       {
-        buttonLabel: `${namespace}.option.2.label`,
-        buttonTooltip: `${namespace}.option.2.tooltip`,
+        buttonLabel: `${namespace}:option.2.label`,
+        buttonTooltip: `${namespace}:option.2.tooltip`,
         selected: [
           {
-            text: `${namespace}.option.2.selected`,
+            text: `${namespace}:option.2.selected`,
           },
         ],
       },
