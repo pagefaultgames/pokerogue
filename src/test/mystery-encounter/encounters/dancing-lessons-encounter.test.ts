@@ -20,7 +20,7 @@ import { MovePhase } from "#app/phases/move-phase";
 import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
 import { LearnMovePhase } from "#app/phases/learn-move-phase";
 
-const namespace = "mysteryEncounter:dancingLessons";
+const namespace = "mysteryEncounters/dancingLessons";
 const defaultParty = [Species.LAPRAS, Species.GENGAR, Species.ABRA];
 const defaultBiome = Biome.PLAINS;
 const defaultWave = 45;
@@ -62,10 +62,10 @@ describe("Dancing Lessons - Mystery Encounter", () => {
     expect(DancingLessonsEncounter.encounterType).toBe(MysteryEncounterType.DANCING_LESSONS);
     expect(DancingLessonsEncounter.encounterTier).toBe(MysteryEncounterTier.GREAT);
     expect(DancingLessonsEncounter.dialogue).toBeDefined();
-    expect(DancingLessonsEncounter.dialogue.intro).toStrictEqual([{ text: `${namespace}.intro` }]);
-    expect(DancingLessonsEncounter.dialogue.encounterOptionsDialogue?.title).toBe(`${namespace}.title`);
-    expect(DancingLessonsEncounter.dialogue.encounterOptionsDialogue?.description).toBe(`${namespace}.description`);
-    expect(DancingLessonsEncounter.dialogue.encounterOptionsDialogue?.query).toBe(`${namespace}.query`);
+    expect(DancingLessonsEncounter.dialogue.intro).toStrictEqual([{ text: `${namespace}:intro` }]);
+    expect(DancingLessonsEncounter.dialogue.encounterOptionsDialogue?.title).toBe(`${namespace}:title`);
+    expect(DancingLessonsEncounter.dialogue.encounterOptionsDialogue?.description).toBe(`${namespace}:description`);
+    expect(DancingLessonsEncounter.dialogue.encounterOptionsDialogue?.query).toBe(`${namespace}:query`);
     expect(DancingLessonsEncounter.options.length).toBe(3);
   });
 
@@ -83,11 +83,11 @@ describe("Dancing Lessons - Mystery Encounter", () => {
       expect(option1.optionMode).toBe(MysteryEncounterOptionMode.DEFAULT);
       expect(option1.dialogue).toBeDefined();
       expect(option1.dialogue).toStrictEqual({
-        buttonLabel: `${namespace}.option.1.label`,
-        buttonTooltip: `${namespace}.option.1.tooltip`,
+        buttonLabel: `${namespace}:option.1.label`,
+        buttonTooltip: `${namespace}:option.1.tooltip`,
         selected: [
           {
-            text: `${namespace}.option.1.selected`,
+            text: `${namespace}:option.1.selected`,
           },
         ],
       });
@@ -143,11 +143,11 @@ describe("Dancing Lessons - Mystery Encounter", () => {
       expect(option.optionMode).toBe(MysteryEncounterOptionMode.DEFAULT);
       expect(option.dialogue).toBeDefined();
       expect(option.dialogue).toStrictEqual({
-        buttonLabel: `${namespace}.option.2.label`,
-        buttonTooltip: `${namespace}.option.2.tooltip`,
+        buttonLabel: `${namespace}:option.2.label`,
+        buttonTooltip: `${namespace}:option.2.tooltip`,
         selected: [
           {
-            text: `${namespace}.option.2.selected`,
+            text: `${namespace}:option.2.selected`,
           },
         ],
       });
@@ -182,13 +182,13 @@ describe("Dancing Lessons - Mystery Encounter", () => {
       expect(option.optionMode).toBe(MysteryEncounterOptionMode.DISABLED_OR_SPECIAL);
       expect(option.dialogue).toBeDefined();
       expect(option.dialogue).toStrictEqual({
-        buttonLabel: `${namespace}.option.3.label`,
-        buttonTooltip: `${namespace}.option.3.tooltip`,
-        disabledButtonTooltip: `${namespace}.option.3.disabled_tooltip`,
-        secondOptionPrompt: `${namespace}.option.3.select_prompt`,
+        buttonLabel: `${namespace}:option.3.label`,
+        buttonTooltip: `${namespace}:option.3.tooltip`,
+        disabledButtonTooltip: `${namespace}:option.3.disabled_tooltip`,
+        secondOptionPrompt: `${namespace}:option.3.select_prompt`,
         selected: [
           {
-            text: `${namespace}.option.3.selected`,
+            text: `${namespace}:option.3.selected`,
           },
         ],
       });

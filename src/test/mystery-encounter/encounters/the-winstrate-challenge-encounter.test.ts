@@ -26,7 +26,7 @@ import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
 import { PartyHealPhase } from "#app/phases/party-heal-phase";
 import { VictoryPhase } from "#app/phases/victory-phase";
 
-const namespace = "mysteryEncounter:theWinstrateChallenge";
+const namespace = "mysteryEncounters/theWinstrateChallenge";
 const defaultParty = [Species.LAPRAS, Species.GENGAR, Species.ABRA];
 const defaultBiome = Biome.CAVE;
 const defaultWave = 45;
@@ -70,15 +70,15 @@ describe("The Winstrate Challenge - Mystery Encounter", () => {
     expect(TheWinstrateChallengeEncounter.encounterTier).toBe(MysteryEncounterTier.ROGUE);
     expect(TheWinstrateChallengeEncounter.dialogue).toBeDefined();
     expect(TheWinstrateChallengeEncounter.dialogue.intro).toStrictEqual([
-      { text: `${namespace}.intro` },
+      { text: `${namespace}:intro` },
       {
-        speaker: `${namespace}.speaker`,
-        text: `${namespace}.intro_dialogue`,
+        speaker: `${namespace}:speaker`,
+        text: `${namespace}:intro_dialogue`,
       }
     ]);
-    expect(TheWinstrateChallengeEncounter.dialogue.encounterOptionsDialogue?.title).toBe(`${namespace}.title`);
-    expect(TheWinstrateChallengeEncounter.dialogue.encounterOptionsDialogue?.description).toBe(`${namespace}.description`);
-    expect(TheWinstrateChallengeEncounter.dialogue.encounterOptionsDialogue?.query).toBe(`${namespace}.query`);
+    expect(TheWinstrateChallengeEncounter.dialogue.encounterOptionsDialogue?.title).toBe(`${namespace}:title`);
+    expect(TheWinstrateChallengeEncounter.dialogue.encounterOptionsDialogue?.description).toBe(`${namespace}:description`);
+    expect(TheWinstrateChallengeEncounter.dialogue.encounterOptionsDialogue?.query).toBe(`${namespace}:query`);
     expect(TheWinstrateChallengeEncounter.options.length).toBe(2);
   });
 
@@ -247,12 +247,12 @@ describe("The Winstrate Challenge - Mystery Encounter", () => {
       expect(option.optionMode).toBe(MysteryEncounterOptionMode.DEFAULT);
       expect(option.dialogue).toBeDefined();
       expect(option.dialogue).toStrictEqual({
-        buttonLabel: `${namespace}.option.1.label`,
-        buttonTooltip: `${namespace}.option.1.tooltip`,
+        buttonLabel: `${namespace}:option.1.label`,
+        buttonTooltip: `${namespace}:option.1.tooltip`,
         selected: [
           {
-            speaker: `${namespace}.speaker`,
-            text: `${namespace}.option.1.selected`,
+            speaker: `${namespace}:speaker`,
+            text: `${namespace}:option.1.selected`,
           },
         ],
       });
@@ -311,12 +311,12 @@ describe("The Winstrate Challenge - Mystery Encounter", () => {
       expect(option.optionMode).toBe(MysteryEncounterOptionMode.DEFAULT);
       expect(option.dialogue).toBeDefined();
       expect(option.dialogue).toStrictEqual({
-        buttonLabel: `${namespace}.option.2.label`,
-        buttonTooltip: `${namespace}.option.2.tooltip`,
+        buttonLabel: `${namespace}:option.2.label`,
+        buttonTooltip: `${namespace}:option.2.tooltip`,
         selected: [
           {
-            speaker: `${namespace}.speaker`,
-            text: `${namespace}.option.2.selected`,
+            speaker: `${namespace}:speaker`,
+            text: `${namespace}:option.2.selected`,
           },
         ],
       });

@@ -1,13 +1,15 @@
 import { BattlerIndex } from "#app/battle";
+import { ArenaTagSide } from "#app/data/arena-tag";
 import { SubstituteTag, TrappedTag } from "#app/data/battler-tags";
 import { allMoves, StealHeldItemChanceAttr } from "#app/data/move";
 import { StatusEffect } from "#app/data/status-effect";
-import { Abilities } from "#app/enums/abilities";
-import { BattlerTagType } from "#app/enums/battler-tag-type";
-import { BerryType } from "#app/enums/berry-type";
-import { Moves } from "#app/enums/moves";
-import { Species } from "#app/enums/species";
-import { Stat } from "#app/enums/stat";
+import { Abilities } from "#enums/abilities";
+import { ArenaTagType } from "#enums/arena-tag-type";
+import { BattlerTagType } from "#enums/battler-tag-type";
+import { BerryType } from "#enums/berry-type";
+import { Moves } from "#enums/moves";
+import { Species } from "#enums/species";
+import { Stat } from "#enums/stat";
 import { MoveResult } from "#app/field/pokemon";
 import { CommandPhase } from "#app/phases/command-phase";
 import GameManager from "#app/test/utils/gameManager";
@@ -191,6 +193,71 @@ describe("Moves - Substitute", () => {
       await game.phaseInterceptor.to("MoveEndPhase", false);
 
       expect(leadPokemon.getStatStage(Stat.ATK)).toBe(2);
+    }
+  );
+
+  it(
+    "shouldn't block moves that target the user's side of the field",
+    async () => {
+      game.override.moveset(Moves.LIGHT_SCREEN);
+
+      await game.classicMode.startBattle([Species.BLASTOISE]);
+
+      const leadPokemon = game.scene.getPlayerPokemon()!;
+      vi.spyOn(leadPokemon, "getMoveEffectiveness");
+
+      leadPokemon.addTag(BattlerTagType.SUBSTITUTE, 0, Moves.NONE, leadPokemon.id);
+
+      game.move.select(Moves.LIGHT_SCREEN);
+
+      await game.toNextTurn();
+
+      expect(leadPokemon.getMoveEffectiveness).not.toHaveReturnedWith(0);
+      expect(game.scene.arena.getTagOnSide(ArenaTagType.LIGHT_SCREEN, ArenaTagSide.PLAYER)).toBeDefined();
+    }
+  );
+
+  it(
+    "shouldn't block the opponent from setting hazards",
+    async () => {
+      game.override.enemyMoveset(Moves.STEALTH_ROCK);
+
+      await game.classicMode.startBattle([Species.BLASTOISE]);
+
+      const leadPokemon = game.scene.getPlayerPokemon()!;
+      vi.spyOn(leadPokemon, "getMoveEffectiveness");
+
+      game.move.select(Moves.SUBSTITUTE);
+
+      await game.toNextTurn();
+
+      expect(leadPokemon.getMoveEffectiveness).not.toHaveReturnedWith(0);
+      expect(game.scene.arena.getTagOnSide(ArenaTagType.STEALTH_ROCK, ArenaTagSide.PLAYER)).toBeDefined();
+    }
+  );
+
+  it(
+    "shouldn't block moves that target both sides of the field",
+    async () => {
+      game.override
+        .moveset(Moves.TRICK_ROOM)
+        .enemyMoveset(Moves.GRAVITY);
+
+      await game.classicMode.startBattle([Species.BLASTOISE]);
+
+      const pokemon = game.scene.getField(true);
+      pokemon.forEach(p => {
+        vi.spyOn(p, "getMoveEffectiveness");
+        p.addTag(BattlerTagType.SUBSTITUTE, 0, Moves.NONE, p.id);
+      });
+
+      game.move.select(Moves.TRICK_ROOM);
+
+      await game.toNextTurn();
+
+      pokemon.forEach(p => expect(p.getMoveEffectiveness).not.toHaveReturnedWith(0));
+      expect(game.scene.arena.getTag(ArenaTagType.TRICK_ROOM)).toBeDefined();
+      expect(game.scene.arena.getTag(ArenaTagType.GRAVITY)).toBeDefined();
     }
   );
 
