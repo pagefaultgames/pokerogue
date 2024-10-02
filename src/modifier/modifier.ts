@@ -3435,10 +3435,10 @@ export class EnemyAttackStatusEffectChanceModifier extends EnemyPersistentModifi
 
   /**
    * Applies {@linkcode EnemyAttackStatusEffectChanceModifier}
-   * @param enemyPokemon {@linkcode EnemyPokemon} to apply the status effect to
-   * @returns `true` if the {@linkcode EnemyPokemon} was affected
+   * @param enemyPokemon {@linkcode Pokemon} to apply the status effect to
+   * @returns `true` if the {@linkcode Pokemon} was affected
    */
-  override apply(enemyPokemon: EnemyPokemon): boolean {
+  override apply(enemyPokemon: Pokemon): boolean {
     if (Phaser.Math.RND.realInRange(0, 1) < (this.chance * this.getStackCount())) {
       return enemyPokemon.trySetStatus(this.effect, true);
     }
