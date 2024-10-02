@@ -2674,8 +2674,8 @@ export class StatStageChangeAttr extends MoveEffectAttr {
   private condition: MoveConditionFunc | null;
   private showMessage: boolean;
 
-  constructor(stats: BattleStat[], stages: integer, selfTarget?: boolean, condition?: MoveConditionFunc | null, showMessage: boolean = true, firstHitOnly: boolean = false, moveEffectTrigger: MoveEffectTrigger = MoveEffectTrigger.HIT, firstTargetOnly: boolean = false) {
-    super(selfTarget, moveEffectTrigger, firstHitOnly, false, firstTargetOnly);
+  constructor(stats: BattleStat[], stages: integer, selfTarget?: boolean, condition?: MoveConditionFunc | null, showMessage: boolean = true, firstHitOnly: boolean = false, moveEffectTrigger: MoveEffectTrigger = MoveEffectTrigger.HIT, firstTargetOnly: boolean = false, lastHitOnly: boolean = false) {
+    super(selfTarget, moveEffectTrigger, firstHitOnly, lastHitOnly, firstTargetOnly);
     this.stats = stats;
     this.stages = stages;
     this.condition = condition!; // TODO: is this bang correct?
@@ -9154,11 +9154,10 @@ export function initMoves() {
       .attr(ClearTerrainAttr)
       .condition((user, target, move) => !!user.scene.arena.terrain),
     new AttackMove(Moves.SCALE_SHOT, Type.DRAGON, MoveCategory.PHYSICAL, 25, 90, 20, -1, 0, 8)
-      //.attr(StatStageChangeAttr, Stat.SPD, 1, true) // TODO: Have boosts only apply at end of move, not after every hit
-      //.attr(StatStageChangeAttr, Stat.DEF, -1, true)
+      .attr(StatStageChangeAttr, [Stat.SPD], 1, true, null, true, false, MoveEffectTrigger.HIT, false, true)
+      .attr(StatStageChangeAttr, [Stat.DEF], -1, true, null, true, false, MoveEffectTrigger.HIT, false, true)
       .attr(MultiHitAttr)
-      .makesContact(false)
-      .partial(),
+      .makesContact(false),
     new AttackMove(Moves.METEOR_BEAM, Type.ROCK, MoveCategory.SPECIAL, 120, 90, 10, 100, 0, 8)
       .attr(ChargeAttr, ChargeAnim.METEOR_BEAM_CHARGING, i18next.t("moveTriggers:isOverflowingWithSpacePower", {pokemonName: "{USER}"}), null, true)
       .attr(StatStageChangeAttr, [ Stat.SPATK ], 1, true)
