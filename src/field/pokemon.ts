@@ -1538,6 +1538,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * @returns The type damage multiplier, indicating the effectiveness of the move
    */
   getMoveEffectiveness(source: Pokemon, move: Move, ignoreAbility: boolean = false, simulated: boolean = true, cancelled?: Utils.BooleanHolder): TypeDamageMultiplier {
+    if (!Utils.isNullOrUndefined(this.turnData?.moveEffectiveness)) {
+      return this.turnData?.moveEffectiveness;
+    }
+
     if (move.hasAttr(TypelessAttr)) {
       return 1;
     }
@@ -5019,6 +5023,7 @@ export class PokemonTurnData {
   public order: number;
   public statStagesIncreased: boolean = false;
   public statStagesDecreased: boolean = false;
+  public moveEffectiveness: TypeDamageMultiplier | null = null;
 }
 
 export enum AiType {
