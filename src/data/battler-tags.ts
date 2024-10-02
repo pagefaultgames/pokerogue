@@ -2612,7 +2612,8 @@ export class ImprisonTag extends MoveRestrictionBattlerTag {
   override isMoveRestricted(move: Moves, user: Pokemon): boolean {
     const source = this.retrieveSource(user.scene);
     if (source) {
-      return source?.isActive(true) ?? false;
+      const sourceMoveset = source.getMoveset().map(m => m!.moveId);
+      return sourceMoveset?.includes(move) && source.isActive(true);
     }
     return false;
   }
