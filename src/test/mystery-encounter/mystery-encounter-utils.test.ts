@@ -6,7 +6,8 @@ import { Species } from "#enums/species";
 import BattleScene from "#app/battle-scene";
 import { StatusEffect } from "#app/data/status-effect";
 import MysteryEncounter from "#app/data/mystery-encounters/mystery-encounter";
-import { getPokemonSpecies, speciesStarters } from "#app/data/pokemon-species";
+import { getPokemonSpecies } from "#app/data/pokemon-species";
+import { speciesStarterCosts } from "#app/data/balance/starters";
 import { Type } from "#app/data/type";
 import { getHighestLevelPlayerPokemon, getLowestLevelPlayerPokemon, getRandomPlayerPokemon, getRandomSpeciesByStarterTier, koPlayerPokemon } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
 import { getEncounterText, queueEncounterMessage, showEncounterDialogue, showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
@@ -209,7 +210,7 @@ describe("Mystery Encounter Utils", () => {
       const pokeSpecies = getPokemonSpecies(result);
 
       expect(pokeSpecies.speciesId).toBe(result);
-      expect(speciesStarters[result]).toBe(5);
+      expect(speciesStarterCosts[result]).toBe(5);
     });
 
     it("gets species for a starter tier range", () => {
@@ -217,8 +218,8 @@ describe("Mystery Encounter Utils", () => {
       const pokeSpecies = getPokemonSpecies(result);
 
       expect(pokeSpecies.speciesId).toBe(result);
-      expect(speciesStarters[result]).toBeGreaterThanOrEqual(5);
-      expect(speciesStarters[result]).toBeLessThanOrEqual(8);
+      expect(speciesStarterCosts[result]).toBeGreaterThanOrEqual(5);
+      expect(speciesStarterCosts[result]).toBeLessThanOrEqual(8);
     });
 
     it("excludes species from search", () => {

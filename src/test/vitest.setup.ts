@@ -2,11 +2,11 @@ import "vitest-canvas-mock";
 
 import { initLoggedInUser } from "#app/account";
 import { initAbilities } from "#app/data/ability";
-import { initBiomes } from "#app/data/biomes";
-import { initEggMoves } from "#app/data/egg-moves";
+import { initBiomes } from "#app/data/balance/biomes";
+import { initEggMoves } from "#app/data/balance/egg-moves";
 import { initMoves } from "#app/data/move";
 import { initMysteryEncounters } from "#app/data/mystery-encounters/mystery-encounters";
-import { initPokemonPrevolutions } from "#app/data/pokemon-evolutions";
+import { initPokemonPrevolutions } from "#app/data/balance/pokemon-evolutions";
 import { initPokemonForms } from "#app/data/pokemon-forms";
 import { initSpecies } from "#app/data/pokemon-species";
 import { initAchievements } from "#app/system/achv";

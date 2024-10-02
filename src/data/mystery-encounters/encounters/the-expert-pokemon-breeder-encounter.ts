@@ -10,7 +10,8 @@ import { Biome } from "#enums/biome";
 import { TrainerType } from "#enums/trainer-type";
 import i18next from "i18next";
 import { Species } from "#enums/species";
-import { getPokemonSpecies, speciesStarters } from "#app/data/pokemon-species";
+import { getPokemonSpecies } from "#app/data/pokemon-species";
+import { speciesStarterCosts } from "#app/data/balance/starters";
 import { Nature } from "#enums/nature";
 import { Moves } from "#enums/moves";
 import { PlayerPokemon } from "#app/field/pokemon";
@@ -454,8 +455,8 @@ function calculateEggRewardsForPokemon(pokemon: PlayerPokemon): [number, number]
   const rootSpecies = pokemon.species.getRootSpeciesId();
   let pointsFromStarterTier = 0;
   // 2 points for every 1 below 7 that the pokemon's starter tier is (max 12, min 0)
-  if (speciesStarters.hasOwnProperty(rootSpecies)) {
-    const starterTier = speciesStarters[rootSpecies];
+  if (speciesStarterCosts.hasOwnProperty(rootSpecies)) {
+    const starterTier = speciesStarterCosts[rootSpecies];
     pointsFromStarterTier = Math.min(Math.max(Math.floor(7 - starterTier) * 2, 0), 12);
   }
 
