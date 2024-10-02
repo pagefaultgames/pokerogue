@@ -117,7 +117,7 @@ const languageSettings: { [key: string]: LanguageSetting } = {
     starterInfoTextSize: "56px",
     instructionTextSize: "38px",
   },
-  "dk":{
+  "da":{
     starterInfoTextSize: "56px",
     instructionTextSize: "38px",
   },

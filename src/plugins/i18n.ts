@@ -56,12 +56,12 @@ const fonts: Array<LoadingFontFaceProperty> = [
   {
     face: new FontFace("emerald", "url(./fonts/unifont-15.1.05.subset.woff2)", { unicodeRange: rangesByLanguage.chinese }),
     extraOptions: { sizeAdjust: "70%", format: "woff2" },
-    only: [ "en", "es", "fr", "it", "de", "zh", "pt", "ko", "ca", "dk" ],
+    only: [ "en", "es", "fr", "it", "de", "zh", "pt", "ko", "ca", "da" ],
   },
   {
     face: new FontFace("pkmnems", "url(./fonts/unifont-15.1.05.subset.woff2)", { unicodeRange: rangesByLanguage.chinese }),
     extraOptions: { format: "woff2" },
-    only: [ "en", "es", "fr", "it", "de", "zh", "pt", "ko", "ca", "dk" ],
+    only: [ "en", "es", "fr", "it", "de", "zh", "pt", "ko", "ca", "da" ],
   },
   // japanese
   {
@@ -120,7 +120,7 @@ export async function initI18n(): Promise<void> {
   await i18next.init({
     nonExplicitSupportedLngs: true,
     fallbackLng: "en",
-    supportedLngs: ["en", "es", "fr", "it", "de", "zh", "pt", "ko", "ja", "ca", "dk"],
+    supportedLngs: ["en", "es", "fr", "it", "de", "zh", "pt", "ko", "ja", "ca", "da"],
     defaultNS: "menu",
     ns: Object.keys(enConfig),
     detection: {
@@ -164,7 +164,7 @@ export async function initI18n(): Promise<void> {
       "ca-ES": {
         ...caEsConfig
       },
-      "dk": {
+      "da": {
         ...dkConfig
       }
     },

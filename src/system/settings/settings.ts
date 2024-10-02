@@ -907,7 +907,7 @@ export function setSetting(scene: BattleScene, setting: string, value: integer):
             // },
             {
               label: "Dansk",
-              handler: () => changeLocaleHandler("dk")
+              handler: () => changeLocaleHandler("da")
             },
             {
               label: i18next.t("settings:back"),
