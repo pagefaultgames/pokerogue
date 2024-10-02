@@ -1,5 +1,5 @@
 import Battle, { BattlerIndex, BattleType } from "#app/battle";
-import { biomeLinks, BiomePoolTier } from "#app/data/biomes";
+import { biomeLinks, BiomePoolTier } from "#app/data/balance/biomes";
 import MysteryEncounterOption from "#app/data/mystery-encounters/mystery-encounter-option";
 import { AVERAGE_ENCOUNTERS_PER_RUN_TARGET, WEIGHT_INCREMENT_ON_SPAWN_MISS } from "#app/data/mystery-encounters/mystery-encounters";
 import { showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
