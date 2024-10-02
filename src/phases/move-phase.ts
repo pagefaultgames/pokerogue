@@ -3,7 +3,7 @@ import { BattlerIndex } from "#app/battle";
 import { applyAbAttrs, applyPostMoveUsedAbAttrs, applyPreAttackAbAttrs, BlockRedirectAbAttr, IncreasePpAbAttr, PokemonTypeChangeAbAttr, PostMoveUsedAbAttr, RedirectMoveAbAttr } from "#app/data/ability";
 import { CommonAnim } from "#app/data/battle-anims";
 import { BattlerTagLapseType, CenterOfAttentionTag } from "#app/data/battler-tags";
-import { allMoves, applyMoveAttrs, BypassRedirectAttr, BypassSleepAttr, ChargeAttr, CopyMoveAttr, HealStatusEffectAttr, MoveFlags, PreMoveMessageAttr } from "#app/data/move";
+import { allMoves, applyMoveAttrs, BypassRedirectAttr, BypassSleepAttr, ChargeAttr, CopyMoveAttr, DelayedAttackAttr, HealStatusEffectAttr, MoveFlags, PreMoveMessageAttr } from "#app/data/move";
 import { SpeciesFormChangePreMoveTrigger } from "#app/data/pokemon-forms";
 import { getStatusEffectActivationText, getStatusEffectHealText } from "#app/data/status-effect";
 import { Type } from "#app/data/type";
@@ -22,6 +22,8 @@ import { CommonAnimPhase } from "./common-anim-phase";
 import { MoveEffectPhase } from "./move-effect-phase";
 import { MoveEndPhase } from "./move-end-phase";
 import { ShowAbilityPhase } from "./show-ability-phase";
+import { ArenaTagType } from "#enums/arena-tag-type";
+import { DelayedAttackTag } from "#app/data/arena-tag";
 
 export class MovePhase extends BattlePhase {
   public pokemon: Pokemon;
@@ -173,6 +175,32 @@ export class MovePhase extends BattlePhase {
       }
 
       this.scene.triggerPokemonFormChange(this.pokemon, SpeciesFormChangePreMoveTrigger);
+
+      const isDelayedAttack = this.move.getMove().hasAttr(DelayedAttackAttr);
+      if (isDelayedAttack) {
+        // Check the player side arena if future sight is active
+        const futureSightTags = this.scene.arena.findTags(t => t.tagType ===  ArenaTagType.FUTURE_SIGHT);
+        const doomDesireTags = this.scene.arena.findTags(t => t.tagType === ArenaTagType.DOOM_DESIRE);
+        let fail = false;
+        const currentTargetIndex = targets[0].getBattlerIndex();
+        for (const tag of futureSightTags) {
+          if ((tag as DelayedAttackTag).targetIndex === currentTargetIndex) {
+            fail = true;
+            break;
+          }
+        }
+        for (const tag of doomDesireTags) {
+          if ((tag as DelayedAttackTag).targetIndex === currentTargetIndex) {
+            fail = true;
+            break;
+          }
+        }
+        if (fail) {
+          this.showMoveText();
+          this.showFailedText();
+          return this.end();
+        }
+      }
 
       if (this.move.moveId) {
         this.showMoveText();
