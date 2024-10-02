@@ -50,29 +50,32 @@ describe("Abilities - Unburden", () => {
     await game.classicMode.startBattle();
     const playerPokemon = game.scene.getPlayerPokemon()!;
     const playerHeldItems = playerPokemon.getHeldItems().length;
+    const initialPlayerSpeed = playerPokemon.getStat(Stat.SPD);
     game.move.select(Moves.FALSE_SWIPE);
     await game.toNextTurn();
     expect(playerPokemon.getHeldItems().length).toBeLessThan(playerHeldItems);
-    expect(playerPokemon.getStatStage(Stat.SPD)).toBe(4);
+    expect(playerPokemon.getStat(Stat.SPD, false)).toBeCloseTo(initialPlayerSpeed * 2);
 
   });
   it("should activate when a berry is stolen", async () => {
     await game.classicMode.startBattle();
     const enemyPokemon = game.scene.getEnemyPokemon()!;
     const enemyHeldItemCt = enemyPokemon.getHeldItems().length;
+    const initialEnemySpeed = enemyPokemon.getStat(Stat.SPD);
     game.move.select(Moves.PLUCK);
     await game.toNextTurn();
     expect(enemyPokemon.getHeldItems().length).toBeLessThan(enemyHeldItemCt);
-    expect(enemyPokemon.getStatStage(Stat.SPD)).toBe(2);
+    expect(enemyPokemon.getStat(Stat.SPD, false)).toBeCloseTo(initialEnemySpeed * 2);
   });
   it("should activate when an item is knocked off", async () => {
     await game.classicMode.startBattle();
     const enemyPokemon = game.scene.getEnemyPokemon()!;
     const enemyHeldItemCt = enemyPokemon.getHeldItems().length;
+    const initialEnemySpeed = enemyPokemon.getStat(Stat.SPD);
     game.move.select(Moves.KNOCK_OFF);
     await game.toNextTurn();
     expect(enemyPokemon.getHeldItems().length).toBeLessThan(enemyHeldItemCt);
-    expect(enemyPokemon.getStatStage(Stat.SPD)).toBe(2);
+    expect(enemyPokemon.getStat(Stat.SPD, false)).toBeCloseTo(initialEnemySpeed * 2);
   });
   it("should activate when an item is stolen via attacking ability", async () => {
     game.override
@@ -84,10 +87,11 @@ describe("Abilities - Unburden", () => {
     vi.spyOn(allMoves[Moves.POPULATION_BOMB], "accuracy", "get").mockReturnValue(100);
     const enemyPokemon = game.scene.getEnemyPokemon()!;
     const enemyHeldItemCt = enemyPokemon.getHeldItems().length;
+    const initialEnemySpeed = enemyPokemon.getStat(Stat.SPD);
     game.move.select(Moves.POPULATION_BOMB);
     await game.toNextTurn();
     expect(enemyPokemon.getHeldItems().length).toBeLessThan(enemyHeldItemCt);
-    expect(enemyPokemon.getStatStage(Stat.SPD)).toBe(4);
+    expect(enemyPokemon.getStat(Stat.SPD, false)).toBeCloseTo(initialEnemySpeed * 2);
   });
   it("should activate when an item is stolen via defending ability", async () => {
     game.override
@@ -101,10 +105,11 @@ describe("Abilities - Unburden", () => {
     vi.spyOn(allMoves[Moves.POPULATION_BOMB], "accuracy", "get").mockReturnValue(100);
     const playerPokemon = game.scene.getPlayerPokemon()!;
     const playerHeldItems = playerPokemon.getHeldItems().length;
+    const initialPlayerSpeed = playerPokemon.getStat(Stat.SPD);
     game.move.select(Moves.POPULATION_BOMB);
     await game.toNextTurn();
     expect(playerPokemon.getHeldItems().length).toBeLessThan(playerHeldItems);
-    expect(playerPokemon.getStatStage(Stat.SPD)).toBe(6);
+    expect(playerPokemon.getStat(Stat.SPD, false)).toBeCloseTo(initialPlayerSpeed * 2);
   });
   it("should activate when an item is stolen via move", async () => {
     vi.spyOn(allMoves[Moves.THIEF], "attrs", "get").mockReturnValue([new StealHeldItemChanceAttr(1.0)]); // give Thief 100% steal rate
@@ -114,10 +119,11 @@ describe("Abilities - Unburden", () => {
     await game.classicMode.startBattle();
     const enemyPokemon = game.scene.getEnemyPokemon()!;
     const enemyHeldItemCt = enemyPokemon.getHeldItems().length;
+    const initialEnemySpeed = enemyPokemon.getStat(Stat.SPD);
     game.move.select(Moves.THIEF);
     await game.toNextTurn();
     expect(enemyPokemon.getHeldItems().length).toBeLessThan(enemyHeldItemCt);
-    expect(enemyPokemon.getStatStage(Stat.SPD)).toBe(4);
+    expect(enemyPokemon.getStat(Stat.SPD, false)).toBeCloseTo(initialEnemySpeed * 2);
   });
   it("should activate when an item is stolen via grip claw", async () => {
     game.override.startingHeldItems([
@@ -128,9 +134,10 @@ describe("Abilities - Unburden", () => {
     vi.spyOn(allMoves[Moves.POPULATION_BOMB], "accuracy", "get").mockReturnValue(100);
     const enemyPokemon = game.scene.getEnemyPokemon()!;
     const enemyHeldItemCt = enemyPokemon.getHeldItems().length;
+    const initialEnemySpeed = enemyPokemon.getStat(Stat.SPD);
     game.move.select(Moves.POPULATION_BOMB);
     await game.toNextTurn();
     expect(enemyPokemon.getHeldItems().length).toBeLessThan(enemyHeldItemCt);
-    expect(enemyPokemon.getStatStage(Stat.SPD)).toBe(4);
+    expect(enemyPokemon.getStat(Stat.SPD, false)).toBeCloseTo(initialEnemySpeed * 2);
   });
 });

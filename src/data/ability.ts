@@ -3792,28 +3792,16 @@ export class PostDancingMoveAbAttr extends PostMoveUsedAbAttr {
 }
 
 export class UnburdenBerryAbAttr extends PostTurnAbAttr {
-  private stats: BattleStat[];
-  private stages: number;
-
-  constructor(stats: BattleStat[], stages: number) {
-    super(true);
-
-    this.stats = Array.isArray(stats)
-      ? stats
-      : [ stats ];
-    this.stages = stages;
-  }
-
   applyPostTurn(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
-    const multipleItems = pokemon.battleData.berriesEaten.length * this.stages;
-    if (multipleItems > 6) {
-      this.stages = 6;
-    } else {
-      this.stages = multipleItems;
+    if (simulated) {
+      return simulated;
     }
-    if (!simulated) {
-      pokemon.scene.unshiftPhase(new StatStageChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, this.stats, this.stages));
+
+    if (pokemon.getTag(BattlerTagType.UNBURDEN)) {
+      return false;
     }
+
+    pokemon.addTag(BattlerTagType.UNBURDEN);
     return true;
   }
 
@@ -3824,23 +3812,16 @@ export class UnburdenBerryAbAttr extends PostTurnAbAttr {
 }
 
 export class UnburdenDefStolenAbAttr extends PostDefendAbAttr {
-  private stats: BattleStat[];
-  private stages: number;
-
-  constructor(stats: BattleStat[], stages: number) {
-    super(true);
-
-    this.stats = Array.isArray(stats)
-      ? stats
-      : [ stats ];
-    this.stages = stages;
-  }
-
   applyPostDefend(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker: Pokemon, move: Move, hitResult: HitResult, args: any[]): boolean {
-    if (!simulated) {
-      pokemon.scene.unshiftPhase(new StatStageChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, this.stats, this.stages));
-      pokemon.turnData.itemsLost -= 1;
+    if (simulated) {
+      return simulated;
     }
+
+    if (pokemon.getTag(BattlerTagType.UNBURDEN)) {
+      return false;
+    }
+
+    pokemon.addTag(BattlerTagType.UNBURDEN);
     return true;
   }
 
@@ -3851,23 +3832,16 @@ export class UnburdenDefStolenAbAttr extends PostDefendAbAttr {
 }
 
 export class UnburdenAtkStolenAbAttr extends PostAttackAbAttr {
-  private stats: BattleStat[];
-  private stages: number;
-
-  constructor(stats: BattleStat[], stages: number) {
-    super();
-
-    this.stats = Array.isArray(stats)
-      ? stats
-      : [ stats ];
-    this.stages = stages;
-  }
-
   applyPostAttackAfterMoveTypeCheck(pokemon: Pokemon, passive: boolean, simulated: boolean, defender: Pokemon, move: Move, hitResult: HitResult, args: any[]): boolean {
-    if (!simulated) {
-      pokemon.scene.unshiftPhase(new StatStageChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, this.stats, this.stages));
-      pokemon.turnData.itemsLost -= 1;
+    if (simulated) {
+      return simulated;
     }
+
+    if (pokemon.getTag(BattlerTagType.UNBURDEN)) {
+      return false;
+    }
+
+    pokemon.addTag(BattlerTagType.UNBURDEN);
     return true;
   }
 
@@ -5188,9 +5162,9 @@ export function initAbilities() {
     new Ability(Abilities.ANGER_POINT, 4)
       .attr(PostDefendCritStatStageChangeAbAttr, Stat.ATK, 6),
     new Ability(Abilities.UNBURDEN, 4)
-      .attr(UnburdenBerryAbAttr, [ Stat.SPD ], 2)
-      .attr(UnburdenAtkStolenAbAttr, [ Stat.SPD ], 2)
-      .attr(UnburdenDefStolenAbAttr, [ Stat.SPD ], 2),
+      .attr(UnburdenBerryAbAttr)
+      .attr(UnburdenAtkStolenAbAttr)
+      .attr(UnburdenDefStolenAbAttr),
     new Ability(Abilities.HEATPROOF, 4)
       .attr(ReceivedTypeDamageMultiplierAbAttr, Type.FIRE, 0.5)
       .attr(ReduceBurnDamageAbAttr, 0.5)

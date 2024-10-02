@@ -1537,6 +1537,19 @@ export class AbilityBattlerTag extends BattlerTag {
   }
 }
 
+/**
+ * Tag used by Unburden to double speed
+ * @extends AbilityBattlerTag
+ */
+export class UnburdenTag extends AbilityBattlerTag {
+  constructor() {
+    super(BattlerTagType.UNBURDEN, Abilities.UNBURDEN, BattlerTagLapseType.CUSTOM, 1);
+  }
+  onAdd(pokemon: Pokemon): void {
+    pokemon.setStat(Stat.SPD, pokemon.getStat(Stat.SPD, false) * 2, false);
+  }
+}
+
 export class TruantTag extends AbilityBattlerTag {
   constructor() {
     super(BattlerTagType.TRUANT, Abilities.TRUANT, BattlerTagLapseType.MOVE, 1);
@@ -2815,6 +2828,8 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: number, source
     return new ThroatChoppedTag();
   case BattlerTagType.GORILLA_TACTICS:
     return new GorillaTacticsTag();
+  case BattlerTagType.UNBURDEN:
+    return new UnburdenTag();
   case BattlerTagType.SUBSTITUTE:
     return new SubstituteTag(sourceMove, sourceId);
   case BattlerTagType.AUTOTOMIZED:
