@@ -8,13 +8,13 @@ import { TimeOfDay } from "#enums/time-of-day";
 import { Nature } from "#app/data/nature";
 import { EvolutionItem, pokemonEvolutions } from "#app/data/balance/pokemon-evolutions";
 import { FormChangeItem, pokemonFormChanges, SpeciesFormChangeItemTrigger } from "#app/data/pokemon-forms";
-import { SpeciesFormKey } from "#app/data/pokemon-species";
 import { StatusEffect } from "#app/data/status-effect";
 import { Type } from "#app/data/type";
 import { WeatherType } from "#app/data/weather";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { AttackTypeBoosterModifier } from "#app/modifier/modifier";
 import { AttackTypeBoosterModifierType } from "#app/modifier/modifier-type";
+import { SpeciesFormKey } from "#enums/species-form-key";
 
 export interface EncounterRequirement {
   meetsRequirement(scene: BattleScene): boolean; // Boolean to see if a requirement is met

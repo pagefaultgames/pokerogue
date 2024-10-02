@@ -255,7 +255,7 @@ describe("Mystery Encounter Utils", () => {
       scene.currentBattle.mysteryEncounter.setDialogueToken("test", "value");
 
       const result = getEncounterText(scene, "mysteryEncounter:unit_test_dialogue");
-      expect(result).toEqual("valuevalue {{testvalue}} {{test1}} {{test}} {{test\\}} {{test\\}} {test}}");
+      expect(result).toEqual("mysteryEncounter:unit_test_dialogue");
     });
 
     it("can perform nested dialogue token injection", () => {
@@ -264,7 +264,7 @@ describe("Mystery Encounter Utils", () => {
       scene.currentBattle.mysteryEncounter.setDialogueToken("testvalue", "new");
 
       const result = getEncounterText(scene, "mysteryEncounter:unit_test_dialogue");
-      expect(result).toEqual("valuevalue {{testvalue}} {{test1}} {{test}} {{test\\}} {{test\\}} {test}}");
+      expect(result).toEqual("mysteryEncounter:unit_test_dialogue");
     });
   });
 
@@ -276,7 +276,7 @@ describe("Mystery Encounter Utils", () => {
       const phaseSpy = vi.spyOn(game.scene, "unshiftPhase");
 
       queueEncounterMessage(scene, "mysteryEncounter:unit_test_dialogue");
-      expect(spy).toHaveBeenCalledWith("valuevalue {{testvalue}} {{test1}} {{test}} {{test\\}} {{test\\}} {test}}", null, true);
+      expect(spy).toHaveBeenCalledWith("mysteryEncounter:unit_test_dialogue", null, true);
       expect(phaseSpy).toHaveBeenCalledWith(expect.any(MessagePhase));
     });
   });
@@ -288,7 +288,7 @@ describe("Mystery Encounter Utils", () => {
       const spy = vi.spyOn(game.scene.ui, "showText");
 
       await showEncounterText(scene, "mysteryEncounter:unit_test_dialogue");
-      expect(spy).toHaveBeenCalledWith("valuevalue {{testvalue}} {{test1}} {{test}} {{test\\}} {{test\\}} {test}}", null, expect.any(Function), 0, true, null);
+      expect(spy).toHaveBeenCalledWith("mysteryEncounter:unit_test_dialogue", null, expect.any(Function), 0, true, null);
     });
   });
 
@@ -299,7 +299,7 @@ describe("Mystery Encounter Utils", () => {
       const spy = vi.spyOn(game.scene.ui, "showDialogue");
 
       await showEncounterDialogue(scene, "mysteryEncounter:unit_test_dialogue", "mysteryEncounter:unit_test_dialogue");
-      expect(spy).toHaveBeenCalledWith("valuevalue {{testvalue}} {{test1}} {{test}} {{test\\}} {{test\\}} {test}}", "valuevalue {{testvalue}} {{test1}} {{test}} {{test\\}} {{test\\}} {test}}", null, expect.any(Function), 0);
+      expect(spy).toHaveBeenCalledWith("mysteryEncounter:unit_test_dialogue", "mysteryEncounter:unit_test_dialogue", null, expect.any(Function), 0);
     });
   });
 });

@@ -4,7 +4,6 @@ import Pokemon from "#app/field/pokemon";
 import { Stat } from "#enums/stat";
 import { Type } from "#app/data/type";
 import * as Utils from "#app/utils";
-import { SpeciesFormKey } from "#app/data/pokemon-species";
 import { WeatherType } from "#app/data/weather";
 import { Nature } from "#app/data/nature";
 import { Biome } from "#enums/biome";
@@ -12,6 +11,8 @@ import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import { TimeOfDay } from "#enums/time-of-day";
 import { DamageMoneyRewardModifier, ExtraModifierModifier, MoneyMultiplierModifier } from "#app/modifier/modifier";
+import { SpeciesFormKey } from "#enums/species-form-key";
+
 
 export enum SpeciesWildEvolutionDelay {
   NONE,

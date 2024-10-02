@@ -11,7 +11,6 @@ import * as Utils from "#app/utils";
 import { getBerryEffectDescription, getBerryName } from "#app/data/berry";
 import { Unlockables } from "#app/system/unlockables";
 import { getStatusEffectDescriptor, StatusEffect } from "#app/data/status-effect";
-import { SpeciesFormKey } from "#app/data/pokemon-species";
 import BattleScene from "#app/battle-scene";
 import { getVoucherTypeIcon, getVoucherTypeName, VoucherType } from "#app/system/voucher";
 import { FormChangeItem, pokemonFormChanges, SpeciesFormChangeCondition, SpeciesFormChangeItemTrigger } from "#app/data/pokemon-forms";
@@ -27,6 +26,7 @@ import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { PermanentStat, TEMP_BATTLE_STATS, TempBattleStat, Stat, getStatKey } from "#enums/stat";
+import { SpeciesFormKey } from "#enums/species-form-key";
 
 const outputModifierData = false;
 const useMaxWeightForOutput = false;

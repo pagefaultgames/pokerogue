@@ -17,7 +17,7 @@ import { Mode } from "#app/ui/ui";
 import ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
 import { Abilities } from "#app/enums/abilities";
 
-const namespace = "mysteryEncounter:teleportingHijinks";
+const namespace = "mysteryEncounters/teleportingHijinks";
 const defaultParty = [Species.LAPRAS, Species.GENGAR, Species.ABRA];
 const defaultBiome = Biome.CAVE;
 const defaultWave = 45;
@@ -64,10 +64,10 @@ describe("Teleporting Hijinks - Mystery Encounter", () => {
     expect(TeleportingHijinksEncounter.encounterType).toBe(MysteryEncounterType.TELEPORTING_HIJINKS);
     expect(TeleportingHijinksEncounter.encounterTier).toBe(MysteryEncounterTier.COMMON);
     expect(TeleportingHijinksEncounter.dialogue).toBeDefined();
-    expect(TeleportingHijinksEncounter.dialogue.intro).toStrictEqual([{ text: `${namespace}.intro` }]);
-    expect(TeleportingHijinksEncounter.dialogue.encounterOptionsDialogue?.title).toBe(`${namespace}.title`);
-    expect(TeleportingHijinksEncounter.dialogue.encounterOptionsDialogue?.description).toBe(`${namespace}.description`);
-    expect(TeleportingHijinksEncounter.dialogue.encounterOptionsDialogue?.query).toBe(`${namespace}.query`);
+    expect(TeleportingHijinksEncounter.dialogue.intro).toStrictEqual([{ text: `${namespace}:intro` }]);
+    expect(TeleportingHijinksEncounter.dialogue.encounterOptionsDialogue?.title).toBe(`${namespace}:title`);
+    expect(TeleportingHijinksEncounter.dialogue.encounterOptionsDialogue?.description).toBe(`${namespace}:description`);
+    expect(TeleportingHijinksEncounter.dialogue.encounterOptionsDialogue?.query).toBe(`${namespace}:query`);
     expect(TeleportingHijinksEncounter.options.length).toBe(3);
   });
 
@@ -128,11 +128,11 @@ describe("Teleporting Hijinks - Mystery Encounter", () => {
       expect(option.optionMode).toBe(MysteryEncounterOptionMode.DISABLED_OR_DEFAULT);
       expect(option.dialogue).toBeDefined();
       expect(option.dialogue).toStrictEqual({
-        buttonLabel: `${namespace}.option.1.label`,
-        buttonTooltip: `${namespace}.option.1.tooltip`,
+        buttonLabel: `${namespace}:option.1.label`,
+        buttonTooltip: `${namespace}:option.1.tooltip`,
         selected: [
           {
-            text: `${namespace}.option.1.selected`,
+            text: `${namespace}:option.1.selected`,
           },
         ],
       });
@@ -200,12 +200,12 @@ describe("Teleporting Hijinks - Mystery Encounter", () => {
       expect(option.optionMode).toBe(MysteryEncounterOptionMode.DISABLED_OR_SPECIAL);
       expect(option.dialogue).toBeDefined();
       expect(option.dialogue).toStrictEqual({
-        buttonLabel: `${namespace}.option.2.label`,
-        buttonTooltip: `${namespace}.option.2.tooltip`,
-        disabledButtonTooltip: `${namespace}.option.2.disabled_tooltip`,
+        buttonLabel: `${namespace}:option.2.label`,
+        buttonTooltip: `${namespace}:option.2.tooltip`,
+        disabledButtonTooltip: `${namespace}:option.2.disabled_tooltip`,
         selected: [
           {
-            text: `${namespace}.option.2.selected`,
+            text: `${namespace}:option.2.selected`,
           }
         ],
       });
@@ -272,11 +272,11 @@ describe("Teleporting Hijinks - Mystery Encounter", () => {
       expect(option.optionMode).toBe(MysteryEncounterOptionMode.DEFAULT);
       expect(option.dialogue).toBeDefined();
       expect(option.dialogue).toStrictEqual({
-        buttonLabel: `${namespace}.option.3.label`,
-        buttonTooltip: `${namespace}.option.3.tooltip`,
+        buttonLabel: `${namespace}:option.3.label`,
+        buttonTooltip: `${namespace}:option.3.tooltip`,
         selected: [
           {
-            text: `${namespace}.option.3.selected`,
+            text: `${namespace}:option.3.selected`,
           },
         ],
       });
@@ -300,8 +300,8 @@ describe("Teleporting Hijinks - Mystery Encounter", () => {
 
       expect(scene.ui.getMode()).to.equal(Mode.MODIFIER_SELECT);
       const modifierSelectHandler = scene.ui.handlers.find(h => h instanceof ModifierSelectUiHandler) as ModifierSelectUiHandler;
-      expect(modifierSelectHandler.options.some(opt => opt.modifierTypeOption.type.name === "Metal Coat")).toBe(true);
-      expect(modifierSelectHandler.options.some(opt => opt.modifierTypeOption.type.name === "Magnet")).toBe(true);
+      expect(modifierSelectHandler.options.some(opt => opt.modifierTypeOption.type.name === "modifierType:AttackTypeBoosterItem.metal_coat")).toBe(true);
+      expect(modifierSelectHandler.options.some(opt => opt.modifierTypeOption.type.name === "modifierType:AttackTypeBoosterItem.magnet")).toBe(true);
     });
   });
 });
