@@ -2602,7 +2602,7 @@ export class ImprisonTag extends MoveRestrictionBattlerTag {
       if (lapseType === BattlerTagLapseType.PRE_MOVE) {
         return super.lapse(pokemon, lapseType) && source.isActive(true);
       } else {
-        return source.isActive(true) ?? false;
+        return source.isActive(true);
       }
     }
     return false;
