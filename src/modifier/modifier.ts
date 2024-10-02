@@ -7,7 +7,7 @@ import { MAX_PER_TYPE_POKEBALLS } from "#app/data/pokeball";
 import { type FormChangeItem, SpeciesFormChangeItemTrigger, SpeciesFormChangeLapseTeraTrigger, SpeciesFormChangeTeraTrigger } from "#app/data/pokemon-forms";
 import { getStatusEffectHealText } from "#app/data/status-effect";
 import { Type } from "#app/data/type";
-import Pokemon, { type EnemyPokemon, type PlayerPokemon } from "#app/field/pokemon";
+import Pokemon, { type PlayerPokemon } from "#app/field/pokemon";
 import { getPokemonNameWithAffix } from "#app/messages";
 import Overrides from "#app/overrides";
 import { EvolutionPhase } from "#app/phases/evolution-phase";
@@ -3475,10 +3475,10 @@ export class EnemyStatusEffectHealChanceModifier extends EnemyPersistentModifier
 
   /**
    * Applies {@linkcode EnemyStatusEffectHealChanceModifier}
-   * @param enemyPokemon The {@linkcode EnemyPokemon} to heal
-   * @returns `true` if the {@linkcode EnemyPokemon} was healed
+   * @param enemyPokemon The {@linkcode Pokemon} to heal
+   * @returns `true` if the {@linkcode Pokemon} was healed
    */
-  override apply(enemyPokemon: EnemyPokemon): boolean {
+  override apply(enemyPokemon: Pokemon): boolean {
     if (enemyPokemon.status && Phaser.Math.RND.realInRange(0, 1) < (this.chance * this.getStackCount())) {
       enemyPokemon.scene.queueMessage(getStatusEffectHealText(enemyPokemon.status.effect, getPokemonNameWithAffix(enemyPokemon)));
       enemyPokemon.resetStatus();
