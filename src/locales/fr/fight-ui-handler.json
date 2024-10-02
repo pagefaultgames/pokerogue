@@ -1,8 +1,0 @@
-{
-  "pp": "PP",
-  "power": "Puissance",
-  "accuracy": "Précision",
-  "abilityFlyInText": " {{passive}}{{abilityName}}\nde {{pokemonName}}",
-  "passive": "Passif ",
-  "teraHover": "Téracristal {{type}}"
-}

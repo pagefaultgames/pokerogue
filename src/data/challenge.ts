@@ -1,20 +1,21 @@
-import * as Utils from "../utils";
+import * as Utils from "#app/utils";
 import i18next from "i18next";
 import { defaultStarterSpecies, DexAttrProps, GameData } from "#app/system/game-data";
-import PokemonSpecies, { getPokemonSpecies, getPokemonSpeciesForm, speciesStarters } from "./pokemon-species";
+import PokemonSpecies, { getPokemonSpecies, getPokemonSpeciesForm } from "#app/data/pokemon-species";
+import { speciesStarterCosts } from "#app/data/balance/starters";
 import Pokemon, { PokemonMove } from "#app/field/pokemon";
 import { BattleType, FixedBattleConfig } from "#app/battle";
 import Trainer, { TrainerVariant } from "#app/field/trainer";
 import { GameMode } from "#app/game-mode";
-import { Type } from "./type";
+import { Type } from "#app/data/type";
 import { Challenges } from "#enums/challenges";
 import { Species } from "#enums/species";
 import { TrainerType } from "#enums/trainer-type";
-import { Nature } from "./nature";
-import { Moves } from "#app/enums/moves";
-import { TypeColor, TypeShadow } from "#app/enums/color";
-import { pokemonEvolutions } from "./pokemon-evolutions";
-import { pokemonFormChanges } from "./pokemon-forms";
+import { Nature } from "#app/data/nature";
+import { Moves } from "#enums/moves";
+import { TypeColor, TypeShadow } from "#enums/color";
+import { pokemonEvolutions } from "#app/data/balance/pokemon-evolutions";
+import { pokemonFormChanges } from "#app/data/pokemon-forms";
 
 /** A constant for the default max cost of the starting party before a run */
 const DEFAULT_PARTY_MAX_COST = 10;
@@ -637,7 +638,7 @@ export class FreshStartChallenge extends Challenge {
 
   applyStarterCost(species: Species, cost: Utils.NumberHolder): boolean {
     if (defaultStarterSpecies.includes(species)) {
-      cost.value = speciesStarters[species];
+      cost.value = speciesStarterCosts[species];
       return true;
     }
     return false;
@@ -719,7 +720,7 @@ export class LowerStarterMaxCostChallenge extends Challenge {
   }
 
   applyStarterChoice(pokemon: PokemonSpecies, valid: Utils.BooleanHolder): boolean {
-    if (speciesStarters[pokemon.speciesId] > DEFAULT_PARTY_MAX_COST - this.value) {
+    if (speciesStarterCosts[pokemon.speciesId] > DEFAULT_PARTY_MAX_COST - this.value) {
       valid.value = false;
       return true;
     }
