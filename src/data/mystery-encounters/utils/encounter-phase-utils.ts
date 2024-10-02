@@ -110,6 +110,11 @@ export interface EnemyPartyConfig {
   countAsSeen?: boolean;
 }
 
+/**
+ * TEMPORARY FUNCTION - will be removed once locales settles down and be replaced with a class-variable of the mystery encounter instead
+ * @param encounter
+ * @returns
+ */
 export function getMysteryEncounterKey(encounter: MysteryEncounterType | -1): string {
   const key = "mysteryEncounter:";
   switch (encounter) {
