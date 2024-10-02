@@ -2668,6 +2668,20 @@ export class DelayedAttackAttr extends OverrideMoveEffectAttr {
   }
 }
 
+/**
+ * Attribute used for moves that change stat stages
+ * @param stats {@linkcode BattleStat} array of stats to be changed
+ * @param stages stages by which to change the stats, from -6 to 6
+ * @param selfTarget whether the changes are applied to the user (true) or the target (false)
+ * @param condition {@linkcode MoveConditionFunc} optional condition to trigger the stat change
+ * @param firstHitOnly whether the stat change only applies on the first hit of a multi hit move
+ * @param moveEffectTrigger {@linkcode MoveEffectTrigger} the trigger for the effect to take place
+ * @param firstTargetOnly whether, if this is a multi target move, to only apply the effect after the first target is hit, rather than once for each target
+ * @param lastHitOnly whether the effect should only apply after the last hit of a multi hit move
+ *
+ * @extends MoveEffectAttr
+ * @see {@linkcode apply}
+ */
 export class StatStageChangeAttr extends MoveEffectAttr {
   public stats: BattleStat[];
   public stages: integer;
@@ -2682,6 +2696,14 @@ export class StatStageChangeAttr extends MoveEffectAttr {
     this.showMessage = showMessage;
   }
 
+  /**
+   * Attempts to change stats of the user or target (depending on value of selfTarget) if conditions are met
+   * @param user {@linkcode Pokemon} the user of the move
+   * @param target {@linkcode Pokemon} the target of the move
+   * @param move {@linkcode Move} the move
+   * @param args unused
+   * @returns whether stat stages were changed
+   */
   apply(user: Pokemon, target: Pokemon, move: Move, args?: any[]): boolean | Promise<boolean> {
     if (!super.apply(user, target, move, args) || (this.condition && !this.condition(user, target, move))) {
       return false;
