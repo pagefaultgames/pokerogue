@@ -72,8 +72,8 @@
   "disabledLapse": "{{pokemonNameWithAffix}}の\nかなしばりが　解けた！",
   "tarShotOnAdd": "{{pokemonNameWithAffix}}は　ほのおに　弱くなった！",
   "shedTailOnAdd": "{{pokemonNameWithAffix}}は\nしっぽを　切って　みがわりにした！",
-  "tormentOnAdd": "{{pokemonNameWithAffix}} は　いちゃもんを　つけられた！",
-  "tauntOnAdd": "{{pokemonNameWithAffix}} は　挑発に　乗ってしまった！",
-  "imprisonOnAdd": "{{pokemonNameWithAffix}} は　相手の技を　封印した！",
-  "autotomizeOnAdd": "{{pokemonNameWithAffix}} は　身軽になった！"
+  "tormentOnAdd": "{{pokemonNameWithAffix}}は　いちゃもんを　つけられた！",
+  "tauntOnAdd": "{{pokemonNameWithAffix}}は　挑発に　乗ってしまった！",
+  "imprisonOnAdd": "{{pokemonNameWithAffix}}は　相手の　技を　封印した！",
+  "autotomizeOnAdd": "{{pokemonNameWithAffix}}は　身軽に　なった！"
 }
