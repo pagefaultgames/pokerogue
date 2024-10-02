@@ -1,7 +1,7 @@
 {
 	"textures": [
 		{
-			"image": "statuses_dk.png",
+			"image": "statuses_da.png",
 			"format": "RGBA8888",
 			"size": {
 				"w": 22,
