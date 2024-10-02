@@ -3518,10 +3518,10 @@ export class EnemyEndureChanceModifier extends EnemyPersistentModifier {
 
   /**
    * Applies {@linkcode EnemyEndureChanceModifier}
-   * @param target {@linkcode EnemyPokemon} to apply the {@linkcode BattlerTagType.ENDURING} chance to
-   * @returns `true` if {@linkcode EnemyPokemon} endured
+   * @param target {@linkcode Pokemon} to apply the {@linkcode BattlerTagType.ENDURING} chance to
+   * @returns `true` if {@linkcode Pokemon} endured
    */
-  override apply(target: EnemyPokemon): boolean {
+  override apply(target: Pokemon): boolean {
     if (target.battleData.endured || Phaser.Math.RND.realInRange(0, 1) >= (this.chance * this.getStackCount())) {
       return false;
     }
