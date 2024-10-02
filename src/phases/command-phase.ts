@@ -1,7 +1,8 @@
+import { BattleType, TurnCommand } from "#app/battle";
 import BattleScene from "#app/battle-scene";
-import { TurnCommand, BattleType } from "#app/battle";
-import { TrappedTag, EncoreTag } from "#app/data/battler-tags";
-import { MoveTargetSet, getMoveTargets } from "#app/data/move";
+import { EncoreTag, TrappedTag } from "#app/data/battler-tags";
+import { applyChallenges, ChallengeType } from "#app/data/challenge";
+import { getMoveTargets, MoveTargetSet } from "#app/data/move";
 import { speciesStarters } from "#app/data/pokemon-species";
 import { Abilities } from "#app/enums/abilities";
 import { BattlerTagType } from "#app/enums/battler-tag-type";
@@ -12,10 +13,11 @@ import { FieldPosition, PlayerPokemon } from "#app/field/pokemon";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { Command } from "#app/ui/command-ui-handler";
 import { Mode } from "#app/ui/ui";
+import { BooleanHolder } from "#app/utils";
+import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
 import i18next from "i18next";
 import { FieldPhase } from "./field-phase";
 import { SelectTargetPhase } from "./select-target-phase";
-import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
 import { isNullOrUndefined } from "#app/utils";
 
 export class CommandPhase extends FieldPhase {
@@ -85,6 +87,18 @@ export class CommandPhase extends FieldPhase {
 
     switch (command) {
     case Command.FIGHT:
+      // Check if move can be used in challenge
+      const isValidForChallenge = new BooleanHolder(true);
+      applyChallenges(this.scene.gameMode, ChallengeType.MOVE_BLACKLIST, playerPokemon.getMoveset()[cursor]!, isValidForChallenge);
+      if (!isValidForChallenge.value) {
+        const moveName = playerPokemon.getMoveset()[cursor]?.getName();
+        this.scene.ui.setMode(Mode.MESSAGE);
+        this.scene.ui.showText(i18next.t("challenges:illegalMove", { moveName: moveName }), null, () => {
+          this.scene.ui.clearText();
+          this.scene.ui.setMode(Mode.FIGHT, this.fieldIndex);
+        }, null, true);
+        break;
+      }
       let useStruggle = false;
       if (cursor === -1 ||
             playerPokemon.trySelectMove(cursor, args[0] as boolean) ||

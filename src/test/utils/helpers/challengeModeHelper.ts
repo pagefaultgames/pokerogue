@@ -1,16 +1,15 @@
-import { BattleStyle } from "#app/enums/battle-style";
-import { Species } from "#app/enums/species";
+import { Challenge, copyChallenge } from "#app/data/challenge";
 import overrides from "#app/overrides";
+import { CommandPhase } from "#app/phases/command-phase";
 import { EncounterPhase } from "#app/phases/encounter-phase";
 import { SelectStarterPhase } from "#app/phases/select-starter-phase";
-import { Mode } from "#app/ui/ui";
-import { generateStarter } from "../gameManagerUtils";
-import { GameManagerHelper } from "./gameManagerHelper";
-import { Challenge } from "#app/data/challenge";
-import { CommandPhase } from "#app/phases/command-phase";
 import { TurnInitPhase } from "#app/phases/turn-init-phase";
+import { Mode } from "#app/ui/ui";
+import { BattleStyle } from "#enums/battle-style";
 import { Challenges } from "#enums/challenges";
-import { copyChallenge } from "data/challenge";
+import { Species } from "#enums/species";
+import { generateStarter } from "#test/utils/gameManagerUtils";
+import { GameManagerHelper } from "#test/utils/helpers/gameManagerHelper";
 
 /**
  * Helper to handle Challenge mode specifics
@@ -25,7 +24,7 @@ export class ChallengeModeHelper extends GameManagerHelper {
    * @param value - The challenge value.
    * @param severity - The challenge severity.
    */
-  addChallenge(id: Challenges, value: number, severity: number) {
+  addChallenge(id: Challenges, value: number = 1, severity: number = 1) {
     const challenge = copyChallenge({ id, value, severity });
     this.challenges.push(challenge);
   }
