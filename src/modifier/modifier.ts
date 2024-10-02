@@ -1,31 +1,30 @@
-import * as ModifierTypes from "./modifier-type";
-import { ModifierType, modifierTypes } from "./modifier-type";
-import BattleScene from "../battle-scene";
-import { getLevelTotalExp } from "../data/exp";
-import { MAX_PER_TYPE_POKEBALLS, PokeballType } from "../data/pokeball";
-import Pokemon, { PlayerPokemon } from "../field/pokemon";
-import { addTextObject, TextStyle } from "../ui/text";
-import { Type } from "../data/type";
-import { EvolutionPhase } from "../phases/evolution-phase";
-import { FusionSpeciesFormEvolution, pokemonEvolutions, pokemonPrevolutions } from "../data/pokemon-evolutions";
-import { getPokemonNameWithAffix } from "../messages";
-import * as Utils from "../utils";
-import { getBerryEffectFunc, getBerryPredicate } from "../data/berry";
+import * as ModifierTypes from "#app/modifier/modifier-type";
+import { getModifierType, ModifierType, modifierTypes } from "#app/modifier/modifier-type";
+import BattleScene from "#app/battle-scene";
+import { getLevelTotalExp } from "#app/data/exp";
+import { MAX_PER_TYPE_POKEBALLS, PokeballType } from "#app/data/pokeball";
+import Pokemon, { PlayerPokemon } from "#app/field/pokemon";
+import { addTextObject, TextStyle } from "#app/ui/text";
+import { Type } from "#app/data/type";
+import { EvolutionPhase } from "#app/phases/evolution-phase";
+import { FusionSpeciesFormEvolution, pokemonEvolutions, pokemonPrevolutions } from "#app/data/balance/pokemon-evolutions";
+import { getPokemonNameWithAffix } from "#app/messages";
+import * as Utils from "#app/utils";
+import { getBerryEffectFunc, getBerryPredicate } from "#app/data/berry";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { BerryType } from "#enums/berry-type";
 import { getStatusEffectHealText, StatusEffect } from "#app/data/status-effect";
-import { achvs } from "../system/achv";
-import { VoucherType } from "../system/voucher";
-import { FormChangeItem, SpeciesFormChangeItemTrigger, SpeciesFormChangeLapseTeraTrigger, SpeciesFormChangeTeraTrigger } from "../data/pokemon-forms";
+import { achvs } from "#app/system/achv";
+import { VoucherType } from "#app/system/voucher";
+import { FormChangeItem, SpeciesFormChangeItemTrigger, SpeciesFormChangeLapseTeraTrigger, SpeciesFormChangeTeraTrigger } from "#app/data/pokemon-forms";
 import { Nature } from "#app/data/nature";
 import Overrides from "#app/overrides";
 import { Command } from "#app/ui/command-ui-handler";
 import { Species } from "#enums/species";
-import { BATTLE_STATS, type PermanentStat, Stat, TEMP_BATTLE_STATS, type TempBattleStat } from "#app/enums/stat";
+import { BATTLE_STATS, type PermanentStat, Stat, TEMP_BATTLE_STATS, type TempBattleStat } from "#enums/stat";
 import i18next from "i18next";
-
 import { allMoves } from "#app/data/move";
-import { Abilities } from "#app/enums/abilities";
+import { Abilities } from "#enums/abilities";
 import { LearnMovePhase } from "#app/phases/learn-move-phase";
 import { LevelUpPhase } from "#app/phases/level-up-phase";
 import { PokemonHealPhase } from "#app/phases/pokemon-heal-phase";
@@ -852,26 +851,47 @@ export class EvoTrackerModifier extends PokemonHeldItemModifier {
   }
 
   matchType(modifier: Modifier): boolean {
-    if (modifier instanceof EvoTrackerModifier) {
-      return (modifier as EvoTrackerModifier).species === this.species;
-    }
-    return false;
+    return modifier instanceof EvoTrackerModifier && modifier.species === this.species && modifier.required === this.required;
   }
 
   clone(): PersistentModifier {
-    return new EvoTrackerModifier(this.type, this.pokemonId, this.species, this.stackCount);
+    return new EvoTrackerModifier(this.type, this.pokemonId, this.species, this.required, this.stackCount);
   }
 
   getArgs(): any[] {
-    return super.getArgs().concat(this.species);
+    return super.getArgs().concat([this.species, this.required]);
   }
 
   apply(args: any[]): boolean {
     return true;
   }
 
-  getMaxHeldItemCount(_pokemon: Pokemon): integer {
-    return this.required;
+  getIconStackText(scene: BattleScene, virtual?: boolean): Phaser.GameObjects.BitmapText | null {
+    if (this.getMaxStackCount(scene) === 1 || (virtual && !this.virtualStackCount)) {
+      return null;
+    }
+
+    const pokemon = scene.getPokemonById(this.pokemonId);
+
+    this.stackCount = pokemon
+      ? pokemon.evoCounter + pokemon.getHeldItems().filter(m => m instanceof DamageMoneyRewardModifier).length
+        + pokemon.scene.findModifiers(m => m instanceof MoneyMultiplierModifier || m instanceof ExtraModifierModifier).length
+      : this.stackCount;
+
+    const text = scene.add.bitmapText(10, 15, "item-count", this.stackCount.toString(), 11);
+    text.letterSpacing = -0.5;
+    if (this.getStackCount() >= this.required) {
+      text.setTint(0xf89890);
+    }
+    text.setOrigin(0, 0);
+
+    return text;
+  }
+
+  getMaxHeldItemCount(pokemon: Pokemon): integer {
+    this.stackCount = pokemon.evoCounter + pokemon.getHeldItems().filter(m => m instanceof DamageMoneyRewardModifier).length
+      + pokemon.scene.findModifiers(m => m instanceof MoneyMultiplierModifier || m instanceof ExtraModifierModifier).length;
+    return 999;
   }
 }
 
@@ -2414,9 +2434,8 @@ export class MoneyRewardModifier extends ConsumableModifier {
 
     scene.getParty().map(p => {
       if (p.species?.speciesId === Species.GIMMIGHOUL || p.fusionSpecies?.speciesId === Species.GIMMIGHOUL) {
-        p.evoCounter++;
-        const modifierType: ModifierType = modifierTypes.EVOLUTION_TRACKER_GIMMIGHOUL();
-        const modifier = modifierType!.newModifier(p);
+        p.evoCounter ? p.evoCounter++ : p.evoCounter = 1;
+        const modifier = getModifierType(modifierTypes.EVOLUTION_TRACKER_GIMMIGHOUL).newModifier(p) as EvoTrackerModifier;
         scene.addModifier(modifier);
       }
     });
@@ -2586,7 +2605,7 @@ export class HealShopCostModifier extends PersistentModifier {
   constructor(type: ModifierType, shopMultiplier: number, stackCount?: integer) {
     super(type, stackCount);
 
-    this.shopMultiplier = shopMultiplier;
+    this.shopMultiplier = shopMultiplier ?? 2.5;
   }
 
   match(modifier: Modifier): boolean {
@@ -2598,9 +2617,14 @@ export class HealShopCostModifier extends PersistentModifier {
   }
 
   apply(args: any[]): boolean {
-    (args[0] as Utils.IntegerHolder).value *= this.shopMultiplier;
+    const moneyCost = args[0] as Utils.NumberHolder;
+    moneyCost.value = Math.floor(moneyCost.value * this.shopMultiplier);
 
     return true;
+  }
+
+  getArgs(): any[] {
+    return super.getArgs().concat(this.shopMultiplier);
   }
 
   getMaxStackCount(scene: BattleScene): integer {
