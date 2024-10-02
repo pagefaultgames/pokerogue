@@ -1001,7 +1001,7 @@ class ImprisonTag extends ArenaTrapTag {
    * @param _arena
    * @returns `true` if the source of the tag is still active on the field | `false` if not
    */
-  override lapse({ scene }: BattleScene): boolean {
+  override lapse({ scene }: Arena): boolean {
     const source = this.retrieveSource(scene);
     return source ? source.isActive(true) : false;
   }
