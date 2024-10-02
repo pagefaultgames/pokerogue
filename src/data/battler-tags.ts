@@ -121,7 +121,7 @@ export abstract class MoveRestrictionBattlerTag extends BattlerTag {
       const phase = pokemon.scene.getCurrentPhase() as MovePhase;
       const move = phase.move;
 
-      if (this.isMoveRestricted(move.moveId)) {
+      if (this.isMoveRestricted(move.moveId, pokemon)) {
         if (this.interruptedText(pokemon, move.moveId)) {
           pokemon.scene.queueMessage(this.interruptedText(pokemon, move.moveId));
         }
@@ -2596,10 +2596,14 @@ export class ImprisonTag extends MoveRestrictionBattlerTag {
    * @param _lapseType
    * @returns `true` if the source is still active
    */
-  override lapse(pokemon: Pokemon, _lapseType: BattlerTagLapseType): boolean {
+  override lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
     const source = this.retrieveSource(pokemon.scene);
     if (source) {
-      return source.isActive(true) ?? false;
+      if (lapseType === BattlerTagLapseType.PRE_MOVE) {
+        return super.lapse(pokemon, lapseType) && source.isActive(true);
+      } else {
+        return source.isActive(true) ?? false;
+      }
     }
     return false;
   }
