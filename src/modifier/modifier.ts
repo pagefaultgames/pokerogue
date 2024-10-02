@@ -29,7 +29,7 @@ import { type PermanentStat, type TempBattleStat, BATTLE_STATS, Stat, TEMP_BATTL
 import { StatusEffect } from "#enums/status-effect";
 import i18next from "i18next";
 import { type DoubleBattleChanceBoosterModifierType, type EvolutionItemModifierType, type FormChangeItemModifierType, type ModifierOverride, type ModifierType, type PokemonBaseStatTotalModifierType, type PokemonExpBoosterModifierType, type PokemonFriendshipBoosterModifierType, type PokemonMoveAccuracyBoosterModifierType, type PokemonMultiHitModifierType, type TerastallizeModifierType, type TmModifierType, getModifierType, ModifierPoolType, ModifierTypeGenerator, modifierTypes, PokemonHeldItemModifierType } from "./modifier-type";
-import { ShadowColor } from "#app/enums/color";
+import { Color, ShadowColor } from "#enums/color";
 
 export type ModifierPredicate = (modifier: Modifier) => boolean;
 
@@ -145,7 +145,7 @@ export abstract class Modifier {
 
   /**
    * Checks if {@linkcode Modifier} should be applied
-   * @param _args parameters passed to {@linkcode Modifier#apply}
+   * @param _args parameters passed to {@linkcode Modifier.apply}
    * @returns always `true` by default
    */
   shouldApply(..._args: Parameters<this["apply"]>): boolean {
@@ -774,7 +774,7 @@ export abstract class LapsingPokemonHeldItemModifier extends PokemonHeldItemModi
     const container = super.getIcon(scene, forSummary);
 
     if (this.getPokemon(scene)?.isPlayer()) {
-      const battleCountText = addTextObject(scene, 27, 0, this.battlesLeft.toString(), TextStyle.PARTY, { fontSize: "66px", color: "#f89890" });
+      const battleCountText = addTextObject(scene, 27, 0, this.battlesLeft.toString(), TextStyle.PARTY, { fontSize: "66px", color: Color.PINK });
       battleCountText.setShadow(0, 0);
       battleCountText.setStroke(ShadowColor.RED, 16);
       battleCountText.setOrigin(1, 0);
@@ -1270,7 +1270,7 @@ export class EvolutionStatBoosterModifier extends StatBoosterModifier {
   }
 
   /**
-   * Boosts the incoming stat value by a {@linkcode EvolutionStatBoosterModifier#multiplier} if the holder
+   * Boosts the incoming stat value by a {@linkcode EvolutionStatBoosterModifier.multiplier} if the holder
    * can evolve. Note that, if the holder is a fusion, they will receive
    * only half of the boost if either of the fused members are fully
    * evolved. However, if they are both unevolved, the full boost
@@ -2008,7 +2008,7 @@ export abstract class ConsumablePokemonModifier extends ConsumableModifier {
   /**
    * Applies {@linkcode ConsumablePokemonModifier}
    * @param playerPokemon The {@linkcode PlayerPokemon} that consumes the item
-   * @param args Additional arguments passed to {@linkcode ConsumablePokemonModifier#apply}
+   * @param args Additional arguments passed to {@linkcode ConsumablePokemonModifier.apply}
    */
   abstract override apply(playerPokemon: PlayerPokemon, ...args: unknown[]): boolean | Promise<boolean>;
 
