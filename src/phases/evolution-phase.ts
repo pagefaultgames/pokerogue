@@ -1,17 +1,17 @@
 import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
-import { Phase } from "../phase";
-import BattleScene from "../battle-scene";
-import { SpeciesFormEvolution } from "../data/pokemon-evolutions";
-import EvolutionSceneHandler from "../ui/evolution-scene-handler";
-import * as Utils from "../utils";
-import { Mode } from "../ui/ui";
-import { cos, sin } from "../field/anims";
-import { PlayerPokemon } from "../field/pokemon";
-import { getTypeRgb } from "../data/type";
+import { Phase } from "#app/phase";
+import BattleScene from "#app/battle-scene";
+import { SpeciesFormEvolution } from "#app/data/balance/pokemon-evolutions";
+import EvolutionSceneHandler from "#app/ui/evolution-scene-handler";
+import * as Utils from "#app/utils";
+import { Mode } from "#app/ui/ui";
+import { cos, sin } from "#app/field/anims";
+import { PlayerPokemon } from "#app/field/pokemon";
+import { getTypeRgb } from "#app/data/type";
 import i18next from "i18next";
-import { getPokemonNameWithAffix } from "../messages";
-import { LearnMovePhase } from "./learn-move-phase";
-import { EndEvolutionPhase } from "./end-evolution-phase";
+import { getPokemonNameWithAffix } from "#app/messages";
+import { LearnMovePhase } from "#app/phases/learn-move-phase";
+import { EndEvolutionPhase } from "#app/phases/end-evolution-phase";
 
 export class EvolutionPhase extends Phase {
   protected pokemon: PlayerPokemon;
