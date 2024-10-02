@@ -1,122 +1,212 @@
-import { Species } from "./data/enums/species";
-import { Abilities } from "./data/enums/abilities";
-import { Biome } from "./data/enums/biome";
-import { Moves } from "./data/enums/moves";
-import { WeatherType } from "./data/weather";
-import { Variant } from "./data/variant";
-import { BerryType } from "./data/enums/berry-type";
-import { TempBattleStat } from "./data/temp-battle-stat";
-import { Nature } from "./data/nature";
-import { Type } from "./data/type";
-import { Stat } from "./data/pokemon-stat";
-import { PokeballCounts } from "./battle-scene";
-import { PokeballType } from "./data/pokeball";
-import {TimeOfDay} from "#app/data/enums/time-of-day";
+import { Abilities } from "#enums/abilities";
+import { Biome } from "#enums/biome";
+import { EggTier } from "#enums/egg-type";
+import { Moves } from "#enums/moves";
+import { PokeballType } from "#enums/pokeball";
+import { Species } from "#enums/species";
+import { StatusEffect } from "#enums/status-effect";
+import { TimeOfDay } from "#enums/time-of-day";
+import { VariantTier } from "#enums/variant-tier";
+import { WeatherType } from "#enums/weather-type";
+import { type PokeballCounts } from "./battle-scene";
 import { Gender } from "./data/gender";
-import { StatusEffect } from "./data/status-effect";
-import { modifierTypes } from "./modifier/modifier-type";
+import { Variant } from "./data/variant";
+import { type ModifierOverride } from "./modifier/modifier-type";
+import { Unlockables } from "./system/unlockables";
+import { MysteryEncounterType } from "#enums/mystery-encounter-type";
+import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 
 /**
- * Overrides for testing different in game situations
- * if an override name starts with "STARTING", it will apply when a new run begins
- */
-
-/**
- * OVERALL OVERRIDES
- */
-
-// a specific seed (default: a random string of 24 characters)
-export const SEED_OVERRIDE: string = "";
-export const WEATHER_OVERRIDE: WeatherType = WeatherType.NONE;
-export const DOUBLE_BATTLE_OVERRIDE: boolean = false;
-export const SINGLE_BATTLE_OVERRIDE: boolean = false;
-export const STARTING_WAVE_OVERRIDE: integer = 0;
-export const STARTING_BIOME_OVERRIDE: Biome = Biome.TOWN;
-export const ARENA_TINT_OVERRIDE: TimeOfDay = null;
-// Multiplies XP gained by this value including 0. Set to null to ignore the override
-export const XP_MULTIPLIER_OVERRIDE: number = null;
-export const IMMEDIATE_HATCH_EGGS_OVERRIDE: boolean = false;
-// default 1000
-export const STARTING_MONEY_OVERRIDE: integer = 0;
-export const POKEBALL_OVERRIDE: { active: boolean, pokeballs: PokeballCounts } = {
-  active: false,
-  pokeballs: {
-    [PokeballType.POKEBALL]: 5,
-    [PokeballType.GREAT_BALL]: 0,
-    [PokeballType.ULTRA_BALL]: 0,
-    [PokeballType.ROGUE_BALL]: 0,
-    [PokeballType.MASTER_BALL]: 0,
-  }
-};
-
-/**
- * PLAYER OVERRIDES
- */
-
-// forms can be found in pokemon-species.ts
-export const STARTER_FORM_OVERRIDE: integer = 0;
-// default 5 or 20 for Daily
-export const STARTING_LEVEL_OVERRIDE: integer = 0;
-/**
- * SPECIES OVERRIDE
- * will only apply to the first starter in your party or each enemy pokemon
- * default is 0 to not override
- * @example SPECIES_OVERRIDE = Species.Bulbasaur;
- */
-export const STARTER_SPECIES_OVERRIDE: Species | integer = 0;
-export const ABILITY_OVERRIDE: Abilities = Abilities.NONE;
-export const PASSIVE_ABILITY_OVERRIDE: Abilities = Abilities.NONE;
-export const STATUS_OVERRIDE: StatusEffect = StatusEffect.NONE;
-export const GENDER_OVERRIDE: Gender = null;
-export const MOVESET_OVERRIDE: Array<Moves> = [];
-export const SHINY_OVERRIDE: boolean = false;
-export const VARIANT_OVERRIDE: Variant = 0;
-
-/**
- * OPPONENT / ENEMY OVERRIDES
- */
-
-export const OPP_SPECIES_OVERRIDE: Species | integer = 0;
-export const OPP_LEVEL_OVERRIDE: number = 0;
-export const OPP_ABILITY_OVERRIDE: Abilities = Abilities.NONE;
-export const OPP_PASSIVE_ABILITY_OVERRIDE = Abilities.NONE;
-export const OPP_STATUS_OVERRIDE: StatusEffect = StatusEffect.NONE;
-export const OPP_GENDER_OVERRIDE: Gender = null;
-export const OPP_MOVESET_OVERRIDE: Array<Moves> = [];
-export const OPP_SHINY_OVERRIDE: boolean = false;
-export const OPP_VARIANT_OVERRIDE: Variant = 0;
-
-/**
- * MODIFIER / ITEM OVERRIDES
- * if count is not provided, it will default to 1
- * @example Modifier Override [{name: "EXP_SHARE", count: 2}]
- * @example Held Item Override [{name: "LUCKY_EGG"}]
+ * Overrides that are using when testing different in game situations
  *
- * Some items are generated based on a sub-type (i.e. berries), to override those:
- * @example [{name: "BERRY", count: 5, type: BerryType.SITRUS}]
- * types are listed in interface below
- * - TempBattleStat is for TEMP_STAT_BOOSTER / X Items (Dire hit is separate)
- * - Stat is for BASE_STAT_BOOSTER / Vitamin
- * - Nature is for MINT
- * - Type is for TERA_SHARD or ATTACK_TYPE_BOOSTER (type boosting items i.e Silk Scarf)
- * - BerryType is for BERRY
+ * Any override added here will be used instead of the value in {@linkcode DefaultOverrides}
+ *
+ * If an override name starts with "STARTING", it will apply when a new run begins
+ *
+ * @example
+ * ```
+ * const overrides = {
+ *   ABILITY_OVERRIDE: Abilities.PROTEAN,
+ *   PASSIVE_ABILITY_OVERRIDE: Abilities.PIXILATE,
+ * }
+ * ```
  */
-interface ModifierOverride {
-    name: keyof typeof modifierTypes & string,
-    count?: integer
-    type?: TempBattleStat|Stat|Nature|Type|BerryType
-}
-export const STARTING_MODIFIER_OVERRIDE: Array<ModifierOverride> = [];
-export const OPP_MODIFIER_OVERRIDE: Array<ModifierOverride> = [];
-
-export const STARTING_HELD_ITEMS_OVERRIDE: Array<ModifierOverride> = [];
-export const OPP_HELD_ITEMS_OVERRIDE: Array<ModifierOverride> = [];
-export const NEVER_CRIT_OVERRIDE: boolean = false;
+const overrides = {} satisfies Partial<InstanceType<typeof DefaultOverrides>>;
 
 /**
- * An array of items by keys as defined in the "modifierTypes" object in the "modifier/modifier-type.ts" file.
- * Items listed will replace the normal rolls.
- * If less items are listed than rolled, only some items will be replaced
- * If more items are listed than rolled, only the first X items will be shown, where X is the number of items rolled.
+ * If you need to add Overrides values for local testing do that inside {@linkcode overrides}
+ * ---
+ * Defaults for Overrides that are used when testing different in game situations
+ *
+ * If an override name starts with "STARTING", it will apply when a new run begins
  */
-export const ITEM_REWARD_OVERRIDE: Array<String> = [];
+class DefaultOverrides {
+  // -----------------
+  // OVERALL OVERRIDES
+  // -----------------
+  /** a specific seed (default: a random string of 24 characters) */
+  readonly SEED_OVERRIDE: string = "";
+  readonly WEATHER_OVERRIDE: WeatherType = WeatherType.NONE;
+  readonly BATTLE_TYPE_OVERRIDE: "double" | "single" | null = null;
+  readonly STARTING_WAVE_OVERRIDE: number = 0;
+  readonly STARTING_BIOME_OVERRIDE: Biome = Biome.TOWN;
+  readonly ARENA_TINT_OVERRIDE: TimeOfDay | null = null;
+  /** Multiplies XP gained by this value including 0. Set to null to ignore the override */
+  readonly XP_MULTIPLIER_OVERRIDE: number | null = null;
+  readonly NEVER_CRIT_OVERRIDE: boolean = false;
+  /** default 1000 */
+  readonly STARTING_MONEY_OVERRIDE: number = 0;
+  /** Sets all shop item prices to 0 */
+  readonly WAIVE_SHOP_FEES_OVERRIDE: boolean = false;
+  /** Sets reroll price to 0 */
+  readonly WAIVE_ROLL_FEE_OVERRIDE: boolean = false;
+  readonly FREE_CANDY_UPGRADE_OVERRIDE: boolean = false;
+  readonly POKEBALL_OVERRIDE: { active: boolean; pokeballs: PokeballCounts } = {
+    active: false,
+    pokeballs: {
+      [PokeballType.POKEBALL]: 5,
+      [PokeballType.GREAT_BALL]: 0,
+      [PokeballType.ULTRA_BALL]: 0,
+      [PokeballType.ROGUE_BALL]: 0,
+      [PokeballType.MASTER_BALL]: 0,
+    },
+  };
+  /** Forces an item to be UNLOCKED */
+  readonly ITEM_UNLOCK_OVERRIDE: Unlockables[] = [];
+  /** Set to `true` to show all tutorials */
+  readonly BYPASS_TUTORIAL_SKIP_OVERRIDE: boolean = false;
+
+  // ----------------
+  // PLAYER OVERRIDES
+  // ----------------
+  /**
+   * Set the form index of any starter in the party whose `speciesId` is inside this override
+   * @see {@link allSpecies} in `src/data/pokemon-species.ts` for form indexes
+   * @example
+   * ```
+   * const STARTER_FORM_OVERRIDES = {
+   *   [Species.DARMANITAN]: 1
+   * }
+   * ```
+   */
+  readonly STARTER_FORM_OVERRIDES: Partial<Record<Species, number>> = {};
+
+  /** default 5 or 20 for Daily */
+  readonly STARTING_LEVEL_OVERRIDE: number = 0;
+  /**
+   * SPECIES OVERRIDE
+   * will only apply to the first starter in your party or each enemy pokemon
+   * default is 0 to not override
+   * @example SPECIES_OVERRIDE = Species.Bulbasaur;
+   */
+  readonly STARTER_SPECIES_OVERRIDE: Species | number = 0;
+  readonly ABILITY_OVERRIDE: Abilities = Abilities.NONE;
+  readonly PASSIVE_ABILITY_OVERRIDE: Abilities = Abilities.NONE;
+  readonly STATUS_OVERRIDE: StatusEffect = StatusEffect.NONE;
+  readonly GENDER_OVERRIDE: Gender | null = null;
+  readonly MOVESET_OVERRIDE: Moves | Array<Moves> = [];
+  readonly SHINY_OVERRIDE: boolean = false;
+  readonly VARIANT_OVERRIDE: Variant = 0;
+
+  // --------------------------
+  // OPPONENT / ENEMY OVERRIDES
+  // --------------------------
+  readonly OPP_SPECIES_OVERRIDE: Species | number = 0;
+  readonly OPP_LEVEL_OVERRIDE: number = 0;
+  readonly OPP_ABILITY_OVERRIDE: Abilities = Abilities.NONE;
+  readonly OPP_PASSIVE_ABILITY_OVERRIDE: Abilities = Abilities.NONE;
+  readonly OPP_STATUS_OVERRIDE: StatusEffect = StatusEffect.NONE;
+  readonly OPP_GENDER_OVERRIDE: Gender | null = null;
+  readonly OPP_MOVESET_OVERRIDE: Moves | Array<Moves> = [];
+  readonly OPP_SHINY_OVERRIDE: boolean = false;
+  readonly OPP_VARIANT_OVERRIDE: Variant = 0;
+  readonly OPP_IVS_OVERRIDE: number | number[] = [];
+  readonly OPP_FORM_OVERRIDES: Partial<Record<Species, number>> = {};
+  /**
+   * Override to give the enemy Pokemon a given amount of health segments
+   *
+   * 0 (default): the health segments will be handled normally based on wave, level and species
+   * 1: the Pokemon will have a single health segment and therefore will not be a boss
+   * 2+: the Pokemon will be a boss with the given number of health segments
+   */
+  readonly OPP_HEALTH_SEGMENTS_OVERRIDE: number = 0;
+
+  // -------------
+  // EGG OVERRIDES
+  // -------------
+  readonly EGG_IMMEDIATE_HATCH_OVERRIDE: boolean = false;
+  readonly EGG_TIER_OVERRIDE: EggTier | null = null;
+  readonly EGG_SHINY_OVERRIDE: boolean = false;
+  readonly EGG_VARIANT_OVERRIDE: VariantTier | null = null;
+  readonly EGG_FREE_GACHA_PULLS_OVERRIDE: boolean = false;
+  readonly EGG_GACHA_PULL_COUNT_OVERRIDE: number = 0;
+
+  // -------------------------
+  // MYSTERY ENCOUNTER OVERRIDES
+  // -------------------------
+
+  /** 1 to 256, set to null to ignore */
+  readonly MYSTERY_ENCOUNTER_RATE_OVERRIDE: number | null = null;
+  readonly MYSTERY_ENCOUNTER_TIER_OVERRIDE: MysteryEncounterTier | null = null;
+  readonly MYSTERY_ENCOUNTER_OVERRIDE: MysteryEncounterType | null = null;
+
+  // -------------------------
+  // MODIFIER / ITEM OVERRIDES
+  // -------------------------
+  /**
+   * Overrides labeled `MODIFIER` deal with any modifier so long as it doesn't require a party
+   * member to hold it (typically this is, extends, or generates a {@linkcode ModifierType}),
+   * like `EXP_SHARE`, `CANDY_JAR`, etc.
+   *
+   * Overrides labeled `HELD_ITEM` specifically pertain to any entry in {@linkcode modifierTypes} that
+   * extends, or generates a {@linkcode PokemonHeldItemModifierType}, like `SOUL_DEW`, `TOXIC_ORB`, etc.
+   *
+   * Note that, if count is not provided, it will default to 1.
+   *
+   * Additionally, note that some held items and modifiers are grouped together via
+   * a {@linkcode ModifierTypeGenerator} and require pre-generation arguments to get
+   * a specific item from that group. If a type is not set, the generator will either
+   * use the party to weight item choice or randomly pick an item.
+   *
+   * @example
+   * ```
+   * // Will have a quantity of 2 in-game
+   * STARTING_MODIFIER_OVERRIDE = [{name: "EXP_SHARE", count: 2}]
+   * // Will have a quantity of 1 in-game
+   * STARTING_HELD_ITEM_OVERRIDE = [{name: "LUCKY_EGG"}]
+   * // Type must be given to get a specific berry
+   * STARTING_HELD_ITEM_OVERRIDE = [{name: "BERRY", type: BerryType.SITRUS}]
+   * // A random berry will be generated at runtime
+   * STARTING_HELD_ITEM_OVERRIDE = [{name: "BERRY"}]
+   * ```
+   */
+  readonly STARTING_MODIFIER_OVERRIDE: ModifierOverride[] = [];
+  /**
+   * Override array of {@linkcode ModifierOverride}s used to provide modifiers to enemies.
+   *
+   * Note that any previous modifiers are cleared.
+   */
+  readonly OPP_MODIFIER_OVERRIDE: ModifierOverride[] = [];
+
+  /** Override array of {@linkcode ModifierOverride}s used to provide held items to first party member when starting a new game. */
+  readonly STARTING_HELD_ITEMS_OVERRIDE: ModifierOverride[] = [];
+  /** Override array of {@linkcode ModifierOverride}s used to provide held items to enemies on spawn. */
+  readonly OPP_HELD_ITEMS_OVERRIDE: ModifierOverride[] = [];
+
+  /**
+   * Override array of {@linkcode ModifierOverride}s used to replace the generated item rolls after a wave.
+   *
+   * If less entries are listed than rolled, only those entries will be used to replace the corresponding items while the rest randomly generated.
+   * If more entries are listed than rolled, only the first X entries will be used, where X is the number of items rolled.
+   *
+   * Note that, for all items in the array, `count` is not used.
+   */
+  readonly ITEM_REWARD_OVERRIDE: ModifierOverride[] = [];
+}
+
+export const defaultOverrides = new DefaultOverrides();
+
+export default {
+  ...defaultOverrides,
+  ...overrides
+} satisfies InstanceType<typeof DefaultOverrides>;

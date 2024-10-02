@@ -1,137 +1,116 @@
+import { camelCaseToKebabCase, } from "#app/utils";
 import i18next from "i18next";
 import LanguageDetector from "i18next-browser-languagedetector";
+import HttpBackend from "i18next-http-backend";
 import processor, { KoreanPostpositionProcessor } from "i18next-korean-postposition-processor";
+import pkg from "../../package.json";
 
-import { deConfig } from "#app/locales/de/config.js";
-import { enConfig } from "#app/locales/en/config.js";
-import { esConfig } from "#app/locales/es/config.js";
-import { frConfig } from "#app/locales/fr/config.js";
-import { itConfig } from "#app/locales/it/config.js";
-import { koConfig } from "#app/locales/ko/config.js";
-import { ptBrConfig } from "#app/locales/pt_BR/config.js";
-import { zhCnConfig } from "#app/locales/zh_CN/config.js";
-import { zhTwConfig } from "#app/locales/zh_TW/config.js";
+//#region Interfaces/Types
 
-export interface SimpleTranslationEntries {
-  [key: string]: string
+interface LoadingFontFaceProperty {
+  face: FontFace,
+  extraOptions?: { [key:string]: any },
+  only?: Array<string>
 }
 
-export interface MoveTranslationEntry {
-  name: string,
-  effect: string
-}
+//#region Constants
 
-export interface MoveTranslationEntries {
-  [key: string]: MoveTranslationEntry
-}
+let isInitialized = false;
 
-export interface AbilityTranslationEntry {
-  name: string,
-  description: string
-}
-
-export interface AbilityTranslationEntries {
-  [key: string]: AbilityTranslationEntry
-}
-
-export interface ModifierTypeTranslationEntry {
-  name?: string,
-  description?: string,
-  extra?: SimpleTranslationEntries
-}
-
-export interface ModifierTypeTranslationEntries {
-  ModifierType: { [key: string]: ModifierTypeTranslationEntry },
-  AttackTypeBoosterItem: SimpleTranslationEntries,
-  TempBattleStatBoosterItem: SimpleTranslationEntries,
-  BaseStatBoosterItem: SimpleTranslationEntries,
-  EvolutionItem: SimpleTranslationEntries,
-  FormChangeItem: SimpleTranslationEntries,
-}
-export interface PokemonInfoTranslationEntries {
-  Stat: SimpleTranslationEntries,
-  Type: SimpleTranslationEntries,
-}
-
-export interface BerryTranslationEntry {
-  name: string,
-  effect: string,
-}
-
-export interface BerryTranslationEntries {
-  [key: string]: BerryTranslationEntry
-}
-
-export interface AchievementTranslationEntry {
-  name?: string,
-  description?: string,
-}
-
-export interface AchievementTranslationEntries {
-  [key: string]: AchievementTranslationEntry;
-}
-
-export interface DialogueTranslationEntry {
-  [key: number]: string;
-}
-
-export interface DialogueTranslationCategory {
-  [category: string]: DialogueTranslationEntry;
-}
-
-export interface DialogueTranslationEntries {
-  [trainertype: string]: DialogueTranslationCategory;
-}
-
-
-export interface Localizable {
-  localize(): void;
-}
-
-const alternativeFonts = {
-  "ko": [
-    new FontFace("emerald", "url(./fonts/PokePT_Wansung.ttf)"),
-  ],
+const unicodeRanges = {
+  fullwidth: "U+FF00-FFEF",
+  hangul: "U+1100-11FF,U+3130-318F,U+A960-A97F,U+AC00-D7AF,U+D7B0-D7FF",
+  kana: "U+3040-30FF",
+  CJKCommon: "U+2E80-2EFF,U+3000-303F,U+31C0-31EF,U+3200-32FF,U+3400-4DBF,U+F900-FAFF,U+FE30-FE4F",
+  CJKIdeograph: "U+4E00-9FFF",
+  specialCharacters: "U+266A,U+2605,U+2665,U+2663" //♪.★,♥,♣
 };
 
-function loadFont(language: string) {
-  if (!alternativeFonts[language]) {
-    language = language.split(/[-_/]/)[0];
-  }
-  if (alternativeFonts[language]) {
-    alternativeFonts[language].forEach((fontFace: FontFace) => {
-      document.fonts.add(fontFace);
-    });
+const rangesByLanguage = {
+  korean: [unicodeRanges.CJKCommon, unicodeRanges.hangul].join(","),
+  chinese: [unicodeRanges.CJKCommon, unicodeRanges.fullwidth, unicodeRanges.CJKIdeograph].join(","),
+  japanese: [unicodeRanges.CJKCommon, unicodeRanges.fullwidth, unicodeRanges.kana, unicodeRanges.CJKIdeograph].join(",")
+};
 
-    const altFontLanguages = Object.keys(alternativeFonts);
-    altFontLanguages.splice(altFontLanguages.indexOf(language), 0);
-  }
+const fonts: Array<LoadingFontFaceProperty> = [
+  // unicode (special character from PokePT)
+  {
+    face: new FontFace("emerald", "url(./fonts/PokePT_Wansung.woff2)", { unicodeRange: unicodeRanges.specialCharacters }),
+  },
+  {
+    face: new FontFace("pkmnems", "url(./fonts/PokePT_Wansung.woff2)", { unicodeRange: unicodeRanges.specialCharacters }),
+    extraOptions: { sizeAdjust: "133%" },
+  },
+  // unicode (korean)
+  {
+    face: new FontFace("emerald", "url(./fonts/PokePT_Wansung.woff2)", { unicodeRange: rangesByLanguage.korean }),
+  },
+  {
+    face: new FontFace("pkmnems", "url(./fonts/PokePT_Wansung.woff2)", { unicodeRange: rangesByLanguage.korean }),
+    extraOptions: { sizeAdjust: "133%" },
+  },
+  // unicode (chinese)
+  {
+    face: new FontFace("emerald", "url(./fonts/unifont-15.1.05.subset.woff2)", { unicodeRange: rangesByLanguage.chinese }),
+    extraOptions: { sizeAdjust: "70%", format: "woff2" },
+    only: [ "en", "es", "fr", "it", "de", "zh", "pt", "ko", "ca" ],
+  },
+  {
+    face: new FontFace("pkmnems", "url(./fonts/unifont-15.1.05.subset.woff2)", { unicodeRange: rangesByLanguage.chinese }),
+    extraOptions: { format: "woff2" },
+    only: [ "en", "es", "fr", "it", "de", "zh", "pt", "ko", "ca" ],
+  },
+  // japanese
+  {
+    face: new FontFace("emerald", "url(./fonts/Galmuri11.subset.woff2)", { unicodeRange: rangesByLanguage.japanese }),
+    extraOptions: { sizeAdjust: "66%" },
+    only: [ "ja" ],
+  },
+  {
+    face: new FontFace("pkmnems", "url(./fonts/Galmuri9.subset.woff2)", { unicodeRange: rangesByLanguage.japanese }),
+    only: [ "ja" ],
+  },
+];
 
-  (Object.values(alternativeFonts)).forEach(fontFaces => {
-    fontFaces.forEach(fontFace => {
-      if (fontFace && fontFace.status === "loaded") {
-        document.fonts.delete(fontFace);
-      }
-    });
-  });
+/** maps namespaces that deviate from the file-name */
+const namespaceMap = {
+  titles: "trainer-titles",
+  moveTriggers: "move-trigger",
+  abilityTriggers: "ability-trigger",
+  battlePokemonForm: "pokemon-form-battle",
+  miscDialogue: "dialogue-misc",
+  battleSpecDialogue: "dialogue-final-boss",
+  doubleBattleDialogue: "dialogue-double-battle",
+};
+
+//#region Functions
+
+async function initFonts(language: string | undefined) {
+  const results = await Promise.allSettled(
+    fonts
+      .filter(font => !font.only || font.only.some(exclude => language?.indexOf(exclude) === 0))
+      .map(font => Object.assign(font.face, font.extraOptions ?? {}).load())
+  );
+  for (const result of results) {
+    if (result.status === "fulfilled") {
+      document.fonts?.add(result.value);
+    } else {
+      console.error(result.reason);
+    }
+  }
 }
 
-export function initI18n(): void {
+//#region Exports
+
+/**
+ * Initialize i18n with fonts
+ */
+export async function initI18n(): Promise<void> {
   // Prevent reinitialization
   if (isInitialized) {
     return;
   }
   isInitialized = true;
-  let lang = "";
-
-  if (localStorage.getItem("prLang")) {
-    lang = localStorage.getItem("prLang");
-  }
-
-  loadFont(lang);
-  i18next.on("languageChanged", lng=> {
-    loadFont(lng);
-  });
 
   /**
    * i18next is a localization library for maintaining and using translation resources.
@@ -143,108 +122,159 @@ export function initI18n(): void {
    *
    * Q: How do I add a new namespace?
    * A: To add a new namespace, create a new file in each language folder with the translations.
-   *    Then update the `resources` field in the init() call and the CustomTypeOptions interface.
+   *    Then update the config file for that language in its locale directory
+   *    and the CustomTypeOptions interface in the @types/i18next.d.ts file.
    *
    * Q: How do I make a language selectable in the settings?
    * A: In src/system/settings.ts, add a new case to the Setting.Language switch statement.
    */
 
-  i18next.use(LanguageDetector).use(processor).use(new KoreanPostpositionProcessor()).init({
-    lng: lang,
-    nonExplicitSupportedLngs: true,
+  i18next.use(HttpBackend);
+  i18next.use(LanguageDetector);
+  i18next.use(processor);
+  i18next.use(new KoreanPostpositionProcessor());
+  await i18next.init({
     fallbackLng: "en",
-    supportedLngs: ["en", "es", "fr", "it", "de", "zh", "pt", "ko"],
-    debug: true,
+    supportedLngs: ["en", "es", "fr", "it", "de", "zh-CN", "zh-TW", "pt-BR", "ko", "ja", "ca-ES"],
+    backend: {
+      loadPath(lng: string, [ ns ]: string[]) {
+        let fileName: string;
+        if (namespaceMap[ns]) {
+          fileName = namespaceMap[ns];
+        } else if (ns.startsWith("mysteryEncounters/")) {
+          fileName = camelCaseToKebabCase(ns + "Dialogue");
+        } else {
+          fileName = camelCaseToKebabCase(ns);
+        }
+        return `/locales/${lng}/${fileName}.json?v=${pkg.version}`;
+      },
+    },
+    defaultNS: "menu",
+    ns: [
+      "ability",
+      "abilityTriggers",
+      "arenaFlyout",
+      "arenaTag",
+      "battle",
+      "battleScene",
+      "battleInfo",
+      "battleMessageUiHandler",
+      "battlePokemonForm",
+      "battlerTags",
+      "berry",
+      "bgmName",
+      "biome",
+      "challenges",
+      "commandUiHandler",
+      "common",
+      "achv",
+      "dialogue",
+      "battleSpecDialogue",
+      "miscDialogue",
+      "doubleBattleDialogue",
+      "egg",
+      "fightUiHandler",
+      "filterBar",
+      "gameMode",
+      "gameStatsUiHandler",
+      "growth",
+      "menu",
+      "menuUiHandler",
+      "modifier",
+      "modifierType",
+      "move",
+      "nature",
+      "pokeball",
+      "pokemon",
+      "pokemonForm",
+      "pokemonInfo",
+      "pokemonInfoContainer",
+      "pokemonSummary",
+      "saveSlotSelectUiHandler",
+      "settings",
+      "splashMessages",
+      "starterSelectUiHandler",
+      "statusEffect",
+      "terrain",
+      "titles",
+      "trainerClasses",
+      "trainerNames",
+      "tutorial",
+      "voucher",
+      "weather",
+      "partyUiHandler",
+      "modifierSelectUiHandler",
+      "moveTriggers",
+      "runHistory",
+      "mysteryEncounters/mysteriousChallengers",
+      "mysteryEncounters/mysteriousChest",
+      "mysteryEncounters/darkDeal",
+      "mysteryEncounters/fightOrFlight",
+      "mysteryEncounters/slumberingSnorlax",
+      "mysteryEncounters/trainingSession",
+      "mysteryEncounters/departmentStoreSale",
+      "mysteryEncounters/shadyVitaminDealer",
+      "mysteryEncounters/fieldTrip",
+      "mysteryEncounters/safariZone",
+      "mysteryEncounters/lostAtSea",
+      "mysteryEncounters/fieryFallout",
+      "mysteryEncounters/theStrongStuff",
+      "mysteryEncounters/thePokemonSalesman",
+      "mysteryEncounters/anOfferYouCantRefuse",
+      "mysteryEncounters/delibirdy",
+      "mysteryEncounters/absoluteAvarice",
+      "mysteryEncounters/aTrainersTest",
+      "mysteryEncounters/trashToTreasure",
+      "mysteryEncounters/berriesAbound",
+      "mysteryEncounters/clowningAround",
+      "mysteryEncounters/partTimer",
+      "mysteryEncounters/dancingLessons",
+      "mysteryEncounters/weirdDream",
+      "mysteryEncounters/theWinstrateChallenge",
+      "mysteryEncounters/teleportingHijinks",
+      "mysteryEncounters/bugTypeSuperfan",
+      "mysteryEncounters/funAndGames",
+      "mysteryEncounters/uncommonBreed",
+      "mysteryEncounters/globalTradeSystem",
+      "mysteryEncounters/theExpertPokemonBreeder",
+      "mysteryEncounterMessages",
+    ],
+    detection: {
+      lookupLocalStorage: "prLang"
+    },
+    debug: Number(import.meta.env.VITE_I18N_DEBUG) === 1,
     interpolation: {
       escapeValue: false,
     },
-    resources: {
-      en: {
-        ...enConfig
-      },
-      es: {
-        ...esConfig
-      },
-      fr: {
-        ...frConfig
-      },
-      it: {
-        ...itConfig
-      },
-      de: {
-        ...deConfig
-      },
-      "pt-BR": {
-        ...ptBrConfig
-      },
-      "zh-CN": {
-        ...zhCnConfig
-      },
-      "zh-TW": {
-        ...zhTwConfig
-      },
-      ko: {
-        ...koConfig
-      },
-    },
     postProcess: ["korean-postposition"],
   });
-}
 
-// Module declared to make referencing keys in the localization files type-safe.
-declare module "i18next" {
-  interface CustomTypeOptions {
-    defaultNS: "menu"; // Even if we don't use it, i18next requires a valid default namespace
-    resources: {
-      ability: AbilityTranslationEntries;
-      abilityTriggers: SimpleTranslationEntries;
-      achv: AchievementTranslationEntries;
-      battle: SimpleTranslationEntries;
-      battleMessageUiHandler: SimpleTranslationEntries;
-      berry: BerryTranslationEntries;
-      biome: SimpleTranslationEntries;
-      challenges: SimpleTranslationEntries;
-      commandUiHandler: SimpleTranslationEntries;
-      PGMdialogue: DialogueTranslationEntries;
-      PGMbattleSpecDialogue: SimpleTranslationEntries;
-      PGMmiscDialogue: SimpleTranslationEntries;
-      PGMdoubleBattleDialogue: DialogueTranslationEntries;
-      PGFdialogue: DialogueTranslationEntries;
-      PGFbattleSpecDialogue: SimpleTranslationEntries;
-      PGFmiscDialogue: SimpleTranslationEntries;
-      PGFdoubleBattleDialogue: DialogueTranslationEntries;
-      egg: SimpleTranslationEntries;
-      fightUiHandler: SimpleTranslationEntries;
-      gameMode: SimpleTranslationEntries;
-      gameStatsUiHandler: SimpleTranslationEntries;
-      growth: SimpleTranslationEntries;
-      menu: SimpleTranslationEntries;
-      menuUiHandler: SimpleTranslationEntries;
-      modifierType: ModifierTypeTranslationEntries;
-      move: MoveTranslationEntries;
-      nature: SimpleTranslationEntries;
-      partyUiHandler: SimpleTranslationEntries;
-      pokeball: SimpleTranslationEntries;
-      pokemon: SimpleTranslationEntries;
-      pokemonInfo: PokemonInfoTranslationEntries;
-      pokemonInfoContainer: SimpleTranslationEntries;
-      saveSlotSelectUiHandler: SimpleTranslationEntries;
-      splashMessages: SimpleTranslationEntries;
-      starterSelectUiHandler: SimpleTranslationEntries;
-      titles: SimpleTranslationEntries;
-      trainerClasses: SimpleTranslationEntries;
-      trainerNames: SimpleTranslationEntries;
-      tutorial: SimpleTranslationEntries;
-      voucher: SimpleTranslationEntries;
-      weather: SimpleTranslationEntries;
-    };
-  }
-}
+  // Input: {{myMoneyValue, money}}
+  // Output: @[MONEY]{₽100,000,000} (useful for BBCode coloring of text)
+  // If you don't want the BBCode tag applied, just use 'number' formatter
+  i18next.services.formatter?.add("money", (value, lng, options) => {
+    const numberFormattedString = Intl.NumberFormat(lng, options).format(value);
+    switch (lng) {
+    case "ja":
+      return `@[MONEY]{${numberFormattedString}}円`;
+    case "de":
+    case "es":
+    case "fr":
+    case "it":
+      return `@[MONEY]{${numberFormattedString} ₽}`;
+    default:
+      // English and other languages that use same format
+      return `@[MONEY]{₽${numberFormattedString}}`;
+    }
+  });
 
-export default i18next;
+  await initFonts(localStorage.getItem("prLang") ?? undefined);
+}
 
 export function getIsInitialized(): boolean {
   return isInitialized;
 }
 
-let isInitialized = false;
+export default i18next;
+
+//#endregion

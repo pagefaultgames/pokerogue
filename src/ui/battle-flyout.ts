@@ -1,12 +1,13 @@
 import { default as Pokemon } from "../field/pokemon";
 import { addTextObject, TextStyle } from "./text";
 import * as Utils from "../utils";
-import BattleScene from "#app/battle-scene.js";
-import { UiTheme } from "#app/enums/ui-theme.js";
-import Move from "#app/data/move.js";
-import { BattleSceneEventType, BerryUsedEvent, MoveUsedEvent } from "#app/battle-scene-events.js";
-import { BerryType } from "#app/data/enums/berry-type.js";
-import { Moves } from "#app/data/enums/moves.js";
+import BattleScene from "#app/battle-scene";
+import Move from "#app/data/move";
+import { BattleSceneEventType, BerryUsedEvent, MoveUsedEvent } from "../events/battle-scene";
+import { BerryType } from "#enums/berry-type";
+import { Moves } from "#enums/moves";
+import { UiTheme } from "#enums/ui-theme";
+import { getPokemonNameWithAffix } from "#app/messages";
 
 /** Container for info about a {@linkcode Move} */
 interface MoveInfo {
@@ -54,6 +55,9 @@ export default class BattleFlyout extends Phaser.GameObjects.Container {
   private flyoutText: Phaser.GameObjects.Text[] = new Array(4);
   /** The array of {@linkcode MoveInfo} used to track moves for the {@linkcode Pokemon} linked to the flyout */
   private moveInfo: MoveInfo[] = new Array();
+
+  /** Current state of the flyout's visibility */
+  public flyoutVisible: boolean = false;
 
   // Stores callbacks in a variable so they can be unsubscribed from when destroyed
   private readonly onMoveUsedEvent = (event: Event) => this.onMoveUsed(event);
@@ -110,8 +114,8 @@ export default class BattleFlyout extends Phaser.GameObjects.Container {
   initInfo(pokemon: Pokemon) {
     this.pokemon = pokemon;
 
-    this.name = `Flyout ${this.pokemon.name}`;
-    this.flyoutParent.name = `Flyout Parent ${this.pokemon.name}`;
+    this.name = `Flyout ${getPokemonNameWithAffix(this.pokemon)}`;
+    this.flyoutParent.name = `Flyout Parent ${getPokemonNameWithAffix(this.pokemon)}`;
 
     this.battleScene.eventTarget.addEventListener(BattleSceneEventType.MOVE_USED, this.onMoveUsedEvent);
     this.battleScene.eventTarget.addEventListener(BattleSceneEventType.BERRY_USED, this.onBerryUsedEvent);
@@ -143,7 +147,7 @@ export default class BattleFlyout extends Phaser.GameObjects.Container {
 
     const foundInfo = this.moveInfo.find(x => x?.move.id === moveUsedEvent.move.id);
     if (foundInfo) {
-      foundInfo.ppUsed = Math.min(foundInfo.ppUsed + moveUsedEvent.ppUsed, foundInfo.maxPp);
+      foundInfo.ppUsed = moveUsedEvent.ppUsed;
     } else {
       this.moveInfo.push({move: moveUsedEvent.move, maxPp: moveUsedEvent.move.pp, ppUsed: moveUsedEvent.ppUsed});
     }
@@ -170,6 +174,8 @@ export default class BattleFlyout extends Phaser.GameObjects.Container {
 
   /** Animates the flyout to either show or hide it by applying a fade and translation */
   toggleFlyout(visible: boolean): void {
+    this.flyoutVisible = visible;
+
     this.scene.tweens.add({
       targets: this.flyoutParent,
       x: visible ? this.anchorX : this.anchorX - this.translationX,

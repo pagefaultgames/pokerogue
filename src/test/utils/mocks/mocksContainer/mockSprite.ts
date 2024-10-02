@@ -1,9 +1,10 @@
+import Phaser from "phaser";
+import { MockGameObject } from "../mockGameObject";
 import Sprite = Phaser.GameObjects.Sprite;
 import Frame = Phaser.Textures.Frame;
-import Phaser from "phaser";
 
 
-export default class MockSprite {
+export default class MockSprite implements MockGameObject {
   private phaserSprite;
   public pipelineData;
   public texture;
@@ -12,10 +13,12 @@ export default class MockSprite {
   public textureManager;
   public scene;
   public anims;
-  public list = [];
+  public list: MockGameObject[] = [];
+  public name: string;
   constructor(textureManager, x, y, texture) {
     this.textureManager = textureManager;
     this.scene = textureManager.scene;
+    // @ts-ignore
     Phaser.GameObjects.Sprite.prototype.setInteractive = this.setInteractive;
     // @ts-ignore
     Phaser.GameObjects.Sprite.prototype.setTexture = this.setTexture;
@@ -31,6 +34,7 @@ export default class MockSprite {
     };
     this.anims = {
       pause: () => null,
+      stop: () => null,
     };
   }
 
@@ -90,13 +94,15 @@ export default class MockSprite {
     return this.phaserSprite.setPosition(x, y);
   }
 
+  setRotation(radians) {
+    return this.phaserSprite.setRotation(radians);
+  }
+
   stop() {
     return this.phaserSprite.stop();
   }
 
-  setInteractive(hitArea, hitAreaCallback, dropZone) {
-    return null;
-  }
+  setInteractive = () => null;
 
   on(event, callback, source) {
     return this.phaserSprite.on(event, callback, source);
@@ -122,6 +128,10 @@ export default class MockSprite {
     return this.phaserSprite.setPositionRelative(source, x, y);
   }
 
+  setY(y) {
+    return this.phaserSprite.setY(y);
+  }
+
   setCrop(x, y, width, height) {
     // Sets the crop size of this Game Object.
     return this.phaserSprite.setCrop(x, y, width, height);
@@ -143,6 +153,7 @@ export default class MockSprite {
 
   play() {
     // return this.phaserSprite.play();
+    return this;
   }
 
   setPipelineData(key, value) {

@@ -1,12 +1,11 @@
 import Phaser from "phaser";
-import BattleScene from "./battle-scene";
 import InvertPostFX from "./pipelines/invert";
 import { version } from "../package.json";
 import UIPlugin from "phaser3-rex-plugins/templates/ui/ui-plugin";
 import BBCodeTextPlugin from "phaser3-rex-plugins/plugins/bbcodetext-plugin";
-import InputTextPlugin from "phaser3-rex-plugins/plugins/inputtext-plugin.js";
-import TransitionImagePackPlugin from "phaser3-rex-plugins/templates/transitionimagepack/transitionimagepack-plugin.js";
-import { LoadingScene } from "./loading-scene";
+import InputTextPlugin from "phaser3-rex-plugins/plugins/inputtext-plugin";
+import TransitionImagePackPlugin from "phaser3-rex-plugins/templates/transitionimagepack/transitionimagepack-plugin";
+import { initI18n } from "./plugins/i18n";
 
 
 // Catch global errors and display them in an alert so users can report the issue.
@@ -25,122 +24,14 @@ window.addEventListener("unhandledrejection", (event) => {
   //alert(errorString);
 });
 
-const config: Phaser.Types.Core.GameConfig = {
-  type: Phaser.WEBGL,
-  parent: "app",
-  scale: {
-    width: 1920,
-    height: 1080,
-    mode: Phaser.Scale.FIT
-  },
-  plugins: {
-    global: [{
-      key: "rexInputTextPlugin",
-      plugin: InputTextPlugin,
-      start: true
-    }, {
-      key: "rexBBCodeTextPlugin",
-      plugin: BBCodeTextPlugin,
-      start: true
-    }, {
-      key: "rexTransitionImagePackPlugin",
-      plugin: TransitionImagePackPlugin,
-      start: true
-    }],
-    scene: [{
-      key: "rexUI",
-      plugin: UIPlugin,
-      mapping: "rexUI"
-    }]
-  },
-  input: {
-    mouse: {
-      target: "app"
-    },
-    touch: {
-      target: "app"
-    },
-    gamepad: true
-  },
-  dom: {
-    createContainer: true
-  },
-  pixelArt: true,
-  pipeline: [ InvertPostFX ] as unknown as Phaser.Types.Core.PipelineConfig,
-  scene: [ LoadingScene, BattleScene ],
-  version: version
-};
-
 /**
  * Sets this object's position relative to another object with a given offset
- * @param guideObject {@linkcode Phaser.GameObjects.GameObject} to base the position off of
- * @param x The relative x position
- * @param y The relative y position
  */
-const setPositionRelative = function (guideObject: any, x: number, y: number) {
+const setPositionRelative = function (guideObject: Phaser.GameObjects.GameObject, x: number, y: number) {
   const offsetX = guideObject.width * (-0.5 + (0.5 - guideObject.originX));
   const offsetY = guideObject.height * (-0.5 + (0.5 - guideObject.originY));
   this.setPosition(guideObject.x + offsetX + x, guideObject.y + offsetY + y);
 };
-
-declare module "phaser" {
-	namespace GameObjects {
-		interface Container {
-      /**
-       * Sets this object's position relative to another object with a given offset
-       * @param guideObject {@linkcode Phaser.GameObjects.GameObject} to base the position off of
-       * @param x The relative x position
-       * @param y The relative y position
-       */
-			setPositionRelative(guideObject: any, x: number, y: number): void;
-		}
-		interface Sprite {
-      /**
-       * Sets this object's position relative to another object with a given offset
-       * @param guideObject {@linkcode Phaser.GameObjects.GameObject} to base the position off of
-       * @param x The relative x position
-       * @param y The relative y position
-       */
-			setPositionRelative(guideObject: any, x: number, y: number): void;
-		}
-		interface Image {
-      /**
-       * Sets this object's position relative to another object with a given offset
-       * @param guideObject {@linkcode Phaser.GameObjects.GameObject} to base the position off of
-       * @param x The relative x position
-       * @param y The relative y position
-       */
-			setPositionRelative(guideObject: any, x: number, y: number): void;
-		}
-		interface NineSlice {
-      /**
-       * Sets this object's position relative to another object with a given offset
-       * @param guideObject {@linkcode Phaser.GameObjects.GameObject} to base the position off of
-       * @param x The relative x position
-       * @param y The relative y position
-       */
-			setPositionRelative(guideObject: any, x: number, y: number): void;
-		}
-		interface Text {
-      /**
-       * Sets this object's position relative to another object with a given offset
-       * @param guideObject {@linkcode Phaser.GameObjects.GameObject} to base the position off of
-       * @param x The relative x position
-       * @param y The relative y position
-       */
-			setPositionRelative(guideObject: any, x: number, y: number): void;
-		}
-		interface Rectangle {
-      /**
-       * Sets this object's position relative to another object with a given offset
-       * @param guideObject {@linkcode Phaser.GameObjects.GameObject} to base the position off of
-       * @param x The relative x position
-       * @param y The relative y position
-       */
-			setPositionRelative(guideObject: any, x: number, y: number): void;
-		}
-	}
-}
 
 Phaser.GameObjects.Container.prototype.setPositionRelative = setPositionRelative;
 Phaser.GameObjects.Sprite.prototype.setPositionRelative = setPositionRelative;
@@ -153,8 +44,55 @@ document.fonts.load("16px emerald").then(() => document.fonts.load("10px pkmnems
 
 let game;
 
-const startGame = () => {
-  game = new Phaser.Game(config);
+const startGame = async () => {
+  await initI18n();
+  const LoadingScene = (await import("./loading-scene")).LoadingScene;
+  const BattleScene = (await import("./battle-scene")).default;
+  game = new Phaser.Game({
+    type: Phaser.WEBGL,
+    parent: "app",
+    scale: {
+      width: 1920,
+      height: 1080,
+      mode: Phaser.Scale.FIT
+    },
+    plugins: {
+      global: [{
+        key: "rexInputTextPlugin",
+        plugin: InputTextPlugin,
+        start: true
+      }, {
+        key: "rexBBCodeTextPlugin",
+        plugin: BBCodeTextPlugin,
+        start: true
+      }, {
+        key: "rexTransitionImagePackPlugin",
+        plugin: TransitionImagePackPlugin,
+        start: true
+      }],
+      scene: [{
+        key: "rexUI",
+        plugin: UIPlugin,
+        mapping: "rexUI"
+      }]
+    },
+    input: {
+      mouse: {
+        target: "app"
+      },
+      touch: {
+        target: "app"
+      },
+      gamepad: true
+    },
+    dom: {
+      createContainer: true
+    },
+    pixelArt: true,
+    pipeline: [ InvertPostFX ] as unknown as Phaser.Types.Core.PipelineConfig,
+    scene: [ LoadingScene, BattleScene ],
+    version: version
+  });
   game.sound.pauseOnBlur = false;
 };
 

@@ -1,16 +1,8 @@
+/* Global */
 :root {
   --color-base: hsl(0, 0%, 55%);
   --color-light: hsl(0, 0%, 90%);
   --color-dark: hsl(0, 0%, 10%);
-  --controls-size: 10vh;
-  --text-shadow-size: 0.65vh;
-}
-
-@media (orientation: landscape) {
-  :root {
-    --controls-size: 20vh;
-    --text-shadow-size: 1.3vh;
-  }
 }
 
 html {
@@ -19,40 +11,228 @@ html {
 
 body {
   margin: 0;
+  display:flex;
+  flex-direction: column;
+  align-items: center;
   background: #484050;
+}
+
+@media (display-mode: fullscreen) {
+  body {
+    background: #000000;
+  }
 }
 
 #app {
   display: flex;
   justify-content: center;
+  align-items: center;
 }
 
 #app > div:first-child {
-  transform-origin: top !important;
+  transform-origin: center !important;
+}
+
+/*
+  Supports automatic vertical centering as suggested in PR#1114, but only via CSS
+
+  Condition factorized to deduce CSS rules:
+  true if (isLandscape && !isMobile() && !hasTouchscreen() || (hasTouchscreen() && !isTouchControlsEnabled))
+*/
+
+/* isLandscape && !isMobile() && !hasTouchscreen() */
+@media (orientation: landscape) and (pointer: fine) {
+  #app {
+    align-items: center;
+  }
+}
+
+@media (pointer: coarse) {
+  /* hasTouchscreen() && !isTouchControlsEnabled */
+  body:has(> #touchControls[class=visible]) #app {
+    align-items: start;
+  }
+
+  body:has(> #touchControls[class=visible]) #app > div:first-child {
+    transform-origin: top !important;
+  }
+}
+
+#layout:fullscreen #dpad, #layout:fullscreen {
+  bottom: 6rem;
+}
+
+input:-internal-autofill-selected {
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+
+/* Need adjust input font-size */
+input {
+  font-size: 3.2rem;
+}
+
+.hidden {
+  display: none !important;
+}
+
+
+input:-internal-autofill-selected {
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+
+/* Touch Controls: */
+
+#touchControls {
+  --text-shadow-size: 0.65vh;
+  --controls-size: 10vh;
+  --touch-control-opacity: 0.6;
+
+  --controls-padding: 1rem;
+
+  --controls-size-with-padding: calc(var(--controls-size) + var(--controls-padding));
+  --controls-size-with-wide-padding: calc(var(--controls-size) *1.2 + var(--controls-padding));
+  --control-group-extra-size: calc(var(--controls-size) * 0.8);
+  --control-group-extra-wide-size: calc(var(--controls-size) * 1.2);
+
+  --control-group-extra-2-offset: calc(var(--controls-size-with-padding) + (var(--controls-size) - var(--control-group-extra-size)) / 2);
+  --control-group-extra-1-offset: calc(var(--controls-padding) + (var(--controls-size) - var(--control-group-extra-size)) / 2);
+
+  --small-control-size: calc(var(--controls-size) / 3);
+  --rect-control-size: calc(var(--controls-size) * 0.74);
+
+  font-family: 'emerald';
+  font-size: var(--controls-size);
+  text-shadow: var(--color-dark) var(--text-shadow-size) var(--text-shadow-size);
+  color: var(--color-light);
+}
+
+@media (orientation: landscape) {
+  #touchControls {
+    --controls-size: 20vh;
+    --text-shadow-size: 1.3vh;
+    --small-button-offset: 4vh;
+  }
 }
 
 #touchControls:not(.visible) {
   display: none;
 }
 
-#dpad, #apad {
+#touchControls .active {
+  opacity: var(--touch-control-opacity);
+}
+
+.control-group {
   position: fixed;
-  bottom: 1rem;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  align-items: center;
+  width: var(--controls-size);
+}
+
+.control-group-dpad {
+  width: calc(2 * var(--controls-size));
+  height: calc(2 * var(--controls-size));
+}
+
+.control-group-extra {
+  width: var(--control-group-extra-size);
+  height: var(--control-group-extra-size);
+}
+
+/* Hide buttons on specific UIs */
+
+/* Show #apadPreviousTab and #apadNextTab only in settings, except in touch configuration panel */
+#touchControls:not([data-ui-mode^='SETTINGS']) #apadPreviousTab,
+#touchControls:not([data-ui-mode^='SETTINGS']) #apadNextTab,
+#touchControls:is(.config-mode) #apadPreviousTab,
+#touchControls:is(.config-mode) #apadNextTab {
+  display: none;
+}
+
+/* Show #apadInfo only in battle */
+#touchControls:not([data-ui-mode='COMMAND']):not([data-ui-mode='FIGHT']):not([data-ui-mode='BALL']):not([data-ui-mode='TARGET_SELECT']) #apadInfo {
+  display: none;
+}
+
+/* Show #apadStats only in battle and shop */
+#touchControls:not([data-ui-mode='COMMAND']):not([data-ui-mode='FIGHT']):not([data-ui-mode='BALL']):not([data-ui-mode='TARGET_SELECT']):not([data-ui-mode='MODIFIER_SELECT']) #apadStats {
+  display: none;
+}
+
+/* Show cycle buttons only on STARTER_SELECT and on touch configuration panel */
+#touchControls:not(.config-mode):not([data-ui-mode='STARTER_SELECT']) #apadOpenFilters,
+#touchControls:not(.config-mode):not([data-ui-mode='STARTER_SELECT'], [data-ui-mode='RUN_INFO']) #apadCycleForm,
+#touchControls:not(.config-mode):not([data-ui-mode='STARTER_SELECT'], [data-ui-mode='RUN_INFO']) #apadCycleShiny,
+#touchControls:not(.config-mode):not([data-ui-mode='STARTER_SELECT']) #apadCycleNature,
+#touchControls:not(.config-mode):not([data-ui-mode='STARTER_SELECT'], [data-ui-mode='RUN_INFO']) #apadCycleAbility,
+#touchControls:not(.config-mode):not([data-ui-mode='STARTER_SELECT']) #apadCycleGender,
+#touchControls:not(.config-mode):not([data-ui-mode='STARTER_SELECT']) #apadCycleVariant {
+ display: none;
+}
+
+/* Configuration toolbar */
+
+#configToolbar {
+  width: 100%;
+  position: fixed;
+  top: 1rem;
+  left: 0;
+  z-index: 9;
+  user-select: none;
+}
+
+#configToolbar .column {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10%;
+  padding: 0 var(--controls-padding);
+}
+
+#configToolbar .button-row {
+  display: flex;
+  justify-content: space-evenly;
+  width: 100%;
+}
+
+#configToolbar .info-row {
+  display: flex;
+  justify-content: flex-start;
+  width: 100%;
+}
+
+#configToolbar .button {
   z-index: 3;
+  background-color: var(--color-base);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  border-radius: 10%;
+  height: var(--small-control-size);
+  font-size: var(--small-control-size);
+  border-radius: 8px;
+  padding: 2px 8px;
+  text-shadow: var(--color-dark) calc(var(--text-shadow-size) / 3) calc(var(--text-shadow-size) / 3);
 }
 
-@media (orientation: portrait) {
-  #dpad, #apad {
-    bottom: calc(1rem + env(safe-area-inset-bottom));
-  }
+#configToolbar .button:active {
+  opacity: var(--touch-control-opacity)
 }
 
+#configToolbar .orientation-label {
+  font-size: var(--small-control-size);
+  text-shadow: var(--color-dark) calc(var(--text-shadow-size) / 3) calc(var(--text-shadow-size) / 3);
+}
+
+/* dpad */
 #dpad {
-  left: 1rem;
-}
-
-#apad {
-  right: 1rem;
+  z-index: 3;
+  opacity: 0.8;
 }
 
 #dpad svg {
@@ -61,114 +241,84 @@ body {
   fill: var(--color-base);
 }
 
-#dpad svg rect {
-  opacity: 0.6;
-}
+/* apad buttons */
 
-#apad > * {
-  width: var(--controls-size);
-  height: var(--controls-size);
-}
-
-#apad .apadBtn {
-  width: var(--controls-size);
-  height: var(--controls-size);
+.apad-button {
   background-color: var(--color-base);
   border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  right: 0;
+  bottom: 0;
+  width: var(--controls-size);
+  height: var(--controls-size);
+  opacity: 0.8;
+  border-radius: 8px;
 }
 
-#apad .apadLabel {
-  font-family: 'emerald';
-  font-size: var(--controls-size);
-  text-shadow: var(--color-dark) var(--text-shadow-size) var(--text-shadow-size);
-  color: var(--color-light);
+.apad-small {
+  width: var(--small-control-size);
+  height: var(--small-control-size);
+}
+
+.apad-label {
   user-select: none;
+  height: 100%;
+  margin-right: -2px;
 }
 
-#apad .apadLabelSmall {
-  font-size: calc(var(--controls-size) / 3);
+.apad-small > .apad-label {
+  font-size: var(--small-control-size);
   text-shadow: var(--color-dark) calc(var(--text-shadow-size) / 3) calc(var(--text-shadow-size) / 3);
 }
 
-#apad #apadLabelAction, #apad #apadLabelCancel {
-  margin-left: calc(var(--controls-size) / 3);
-  line-height: 0.9;
-}
-
-#apad > :nth-child(2) {
-  position: relative;
-  right: var(--controls-size);
-}
-
-#apad .apadRectBtn {
-  position: relative;
+.apad-rectangle {
   text-align: center;
-  padding-right: 10%;
-  border-radius: 10%;
-  bottom: calc(var(--controls-size) * 0.05);
-  width: calc(var(--controls-size) * 0.6);
-  height: calc(var(--controls-size) * 0.3);
+  width: var(--rect-control-size);
+  height: var(--small-control-size);
 }
 
-#apad .apadSqBtn {
-  border-radius: 10%;
-  width: calc(var(--controls-size) * 0.3);
-  height: calc(var(--controls-size) * 0.3);
+.apad-square {
+  width: var(--small-control-size);
+  height: var(--small-control-size);
 }
 
-#apad .apadBtnContainer {
-  position: relative;
-  display: flex;
+.apad-circle {
+  width: var(--controls-size);
+  height: var(--controls-size);
+  border-radius: 50%;
 }
 
-#apad .apadRectBtnContainer {
-  flex-wrap: wrap;
-  margin-top: calc(var(--controls-size) * -0.8);
-  left: calc(var(--controls-size) * 0.175);
-  height: calc(var(--controls-size) * 0.8);
+/* Defaults:*/
+
+#control-group-dpad {
+  left: var(--controls-padding);
+  bottom: var(--controls-padding);
 }
 
-#apad .apadSqBtnContainer {
-  flex-wrap: wrap;
-  justify-content: space-evenly;
-  align-items: center;
-  margin-bottom: calc(var(--controls-size) * -0.8);
-  top: calc(var(--controls-size) * -0.9);
-  width: calc(var(--controls-size) * 0.8);
-  height: calc(var(--controls-size) * 0.8);
+#control-group-action {
+  right: var(--controls-padding);
+  bottom: var(--controls-size-with-padding);
 }
 
-#apad .apadRectBtnContainer > #apadMenu {
-  align-self: flex-end;
+#control-group-cancel {
+  right: var(--controls-size-with-wide-padding);
+  bottom: var(--controls-padding);
 }
 
-#apad .apadRectBtnContainer > .apadSqBtn:not(:first-child) {
-  margin-left: 10%;
+#control-group-extra-1 {
+  right: var(--control-group-extra-1-offset);
+  bottom: var(--control-group-extra-1-offset);
 }
 
-#touchControls:not([data-ui-mode='STARTER_SELECT']):not([data-ui-mode='SETTINGS']):not([data-ui-mode='SETTINGS_DISPLAY']):not([data-ui-mode='SETTINGS_AUDIO']):not([data-ui-mode='SETTINGS_GAMEPAD']):not([data-ui-mode='SETTINGS_KEYBOARD']) #apad .apadRectBtnContainer > .apadSqBtn:not(.apadBattle),
-#touchControls:not([data-ui-mode='STARTER_SELECT']):not([data-ui-mode='SETTINGS']):not([data-ui-mode='SETTINGS_DISPLAY']):not([data-ui-mode='SETTINGS_AUDIO']):not([data-ui-mode='SETTINGS_GAMEPAD']):not([data-ui-mode='SETTINGS_KEYBOARD']) #apad .apadSqBtnContainer > .apadSqBtn:not(.apadBattle)
-{
-  display: none;
+#control-group-extra-2 {
+  width: var(--control-group-extra-wide-size);
+  right: var(--control-group-extra-2-offset);
+  bottom: var(--control-group-extra-2-offset);
 }
 
-#touchControls:not([data-ui-mode='COMMAND']):not([data-ui-mode='FIGHT']):not([data-ui-mode='BALL']):not([data-ui-mode='TARGET_SELECT']):not([data-ui-mode='MODIFIER_SELECT']) #apad .apadBattle {
-  display: none;
-}
-
-#apad .apadRectBtnContainer + .apadSqBtnContainer {
-  top: calc(var(--controls-size) * -1.9);
-  left: calc(var(--controls-size) * -0.9);
-}
-
-#apad .apadBtnContainer .apadLabel {
-  margin-left: calc(var(--controls-size) / 12);
-  line-height: 0.8;
-}
-
-#dpad path:not(.active), #apad .apadBtn:not(.active) {
-  opacity: 0.6;
-}
+/* Layout */
 
 #layout:fullscreen #dpad, #layout:fullscreen #apad {
   bottom: 6rem;
@@ -188,6 +338,17 @@ input:-internal-autofill-selected {
   & > img {
     opacity: 50%;
   }
+}
+
+#tnc-links {
+  font-size: xx-small;
+  position: relative;
+}
+
+a {
+  color: #328cea;
+  margin-right: 4px;
+  margin-left: 4px;
 }
 
 /* Firefox old*/

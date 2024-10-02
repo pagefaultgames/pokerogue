@@ -1,13 +1,15 @@
-import BattleScene from "../../battle-scene";
-import { hasTouchscreen, isMobile } from "../../touch-controls";
-import { TextStyle, addTextObject } from "../text";
-import { Mode } from "../ui";
-import UiHandler from "../ui-handler";
-import { addWindow } from "../ui-theme";
-import {Button} from "../../enums/buttons";
-import {InputsIcons} from "#app/ui/settings/abstract-control-settings-ui-handler.js";
-import NavigationMenu, {NavigationManager} from "#app/ui/settings/navigationMenu";
-import { Setting, SettingKeys } from "#app/system/settings/settings";
+import BattleScene from "#app/battle-scene";
+import { hasTouchscreen, isMobile } from "#app/touch-controls";
+import { TextStyle, addTextObject } from "#app/ui/text";
+import { Mode } from "#app/ui/ui";
+import UiHandler from "#app/ui/ui-handler";
+import { addWindow } from "#app/ui/ui-theme";
+import { ScrollBar } from "#app/ui/scroll-bar";
+import { Button } from "#enums/buttons";
+import { InputsIcons } from "#app/ui/settings/abstract-control-settings-ui-handler";
+import NavigationMenu, { NavigationManager } from "#app/ui/settings/navigationMenu";
+import { Setting, SettingKeys, SettingType } from "#app/system/settings/settings";
+import i18next from "i18next";
 
 
 /**
@@ -18,30 +20,31 @@ export default class AbstractSettingsUiHandler extends UiHandler {
   private optionsContainer: Phaser.GameObjects.Container;
   private navigationContainer: NavigationMenu;
 
-  private scrollCursor: integer;
+  private scrollCursor: number;
+  private scrollBar: ScrollBar;
 
   private optionsBg: Phaser.GameObjects.NineSlice;
 
-  private optionCursors: integer[];
+  private optionCursors: number[];
 
   private settingLabels: Phaser.GameObjects.Text[];
   private optionValueLabels: Phaser.GameObjects.Text[][];
 
   protected navigationIcons: InputsIcons;
 
-  private cursorObj: Phaser.GameObjects.NineSlice;
+  private cursorObj: Phaser.GameObjects.NineSlice | null;
 
   private reloadSettings: Array<Setting>;
   private reloadRequired: boolean;
-  private rowsToDisplay: number;
 
+  protected rowsToDisplay: number;
   protected title: string;
   protected settings: Array<Setting>;
   protected localStorageKey: string;
 
-  constructor(scene: BattleScene, mode?: Mode) {
+  constructor(scene: BattleScene, type: SettingType, mode: Mode | null = null) {
     super(scene, mode);
-
+    this.settings = Setting.filter(s => s.type === type && !s?.isHidden?.());
     this.reloadRequired = false;
     this.rowsToDisplay = 8;
   }
@@ -53,7 +56,7 @@ export default class AbstractSettingsUiHandler extends UiHandler {
     const ui = this.getUi();
 
     this.settingsContainer = this.scene.add.container(1, -(this.scene.game.canvas.height / 6) + 1);
-
+    this.settingsContainer.setName(`settings-${this.title}`);
     this.settingsContainer.setInteractive(new Phaser.Geom.Rectangle(0, 0, this.scene.game.canvas.width / 6, this.scene.game.canvas.height / 6 - 20), Phaser.Geom.Rectangle.Contains);
 
     this.navigationIcons = {};
@@ -61,6 +64,7 @@ export default class AbstractSettingsUiHandler extends UiHandler {
     this.navigationContainer = new NavigationMenu(this.scene, 0, 0);
 
     this.optionsBg = addWindow(this.scene, 0, this.navigationContainer.height, (this.scene.game.canvas.width / 6) - 2, (this.scene.game.canvas.height / 6) - 16 - this.navigationContainer.height - 2);
+    this.optionsBg.setName("window-options-bg");
     this.optionsBg.setOrigin(0, 0);
 
     const actionsBg = addWindow(this.scene, 0, (this.scene.game.canvas.height / 6) - this.navigationContainer.height, (this.scene.game.canvas.width / 6) - 2, 22);
@@ -71,7 +75,7 @@ export default class AbstractSettingsUiHandler extends UiHandler {
     iconAction.setPositionRelative(actionsBg, this.navigationContainer.width - 32, 4);
     this.navigationIcons["BUTTON_ACTION"] = iconAction;
 
-    const actionText = addTextObject(this.scene, 0, 0, "Action", TextStyle.SETTINGS_LABEL);
+    const actionText = addTextObject(this.scene, 0, 0, i18next.t("settings:action"), TextStyle.SETTINGS_LABEL);
     actionText.setOrigin(0, 0.15);
     actionText.setPositionRelative(iconAction, -actionText.width/6-2, 0);
 
@@ -80,7 +84,7 @@ export default class AbstractSettingsUiHandler extends UiHandler {
     iconCancel.setPositionRelative(actionsBg, this.navigationContainer.width - 100, 4);
     this.navigationIcons["BUTTON_CANCEL"] = iconCancel;
 
-    const cancelText = addTextObject(this.scene, 0, 0, "Cancel", TextStyle.SETTINGS_LABEL);
+    const cancelText = addTextObject(this.scene, 0, 0, i18next.t("settings:back"), TextStyle.SETTINGS_LABEL);
     cancelText.setOrigin(0, 0.15);
     cancelText.setPositionRelative(iconCancel, -cancelText.width/6-2, 0);
 
@@ -95,7 +99,7 @@ export default class AbstractSettingsUiHandler extends UiHandler {
       .forEach((setting, s) => {
         let settingName = setting.label;
         if (setting?.requireReload) {
-          settingName += " (Requires Reload)";
+          settingName += ` (${i18next.t("settings:requireReload")})`;
         }
 
         this.settingLabels[s] = addTextObject(this.scene, 8, 28 + s * 16, settingName, TextStyle.SETTINGS_LABEL);
@@ -103,7 +107,7 @@ export default class AbstractSettingsUiHandler extends UiHandler {
 
         this.optionsContainer.add(this.settingLabels[s]);
         this.optionValueLabels.push(setting.options.map((option, o) => {
-          const valueLabel = addTextObject(this.scene, 0, 0, option, setting.default === o ? TextStyle.SETTINGS_SELECTED : TextStyle.WINDOW);
+          const valueLabel = addTextObject(this.scene, 0, 0, option.label, setting.default === o ? TextStyle.SETTINGS_SELECTED : TextStyle.SETTINGS_VALUE);
           valueLabel.setOrigin(0, 0);
 
           this.optionsContainer.add(valueLabel);
@@ -115,7 +119,7 @@ export default class AbstractSettingsUiHandler extends UiHandler {
 
         const labelWidth =  Math.max(78, this.settingLabels[s].displayWidth + 8);
 
-        const totalSpace = (300 - labelWidth) - totalWidth / 6;
+        const totalSpace = (297 - labelWidth) - totalWidth / 6;
         const optionSpacing = Math.floor(totalSpace / (this.optionValueLabels[s].length - 1));
 
         let xOffset = 0;
@@ -128,7 +132,11 @@ export default class AbstractSettingsUiHandler extends UiHandler {
 
     this.optionCursors = this.settings.map(setting => setting.default);
 
+    this.scrollBar = new ScrollBar(this.scene, this.optionsBg.width - 9, this.optionsBg.y + 5, 4, this.optionsBg.height - 11, this.rowsToDisplay);
+    this.scrollBar.setTotalRows(this.settings.length);
+
     this.settingsContainer.add(this.optionsBg);
+    this.settingsContainer.add(this.scrollBar);
     this.settingsContainer.add(this.navigationContainer);
     this.settingsContainer.add(actionsBg);
     this.settingsContainer.add(this.optionsContainer);
@@ -178,12 +186,13 @@ export default class AbstractSettingsUiHandler extends UiHandler {
     super.show(args);
     this.updateBindings();
 
-    const settings: object = localStorage.hasOwnProperty(this.localStorageKey) ? JSON.parse(localStorage.getItem(this.localStorageKey)) : {};
+    const settings: object = localStorage.hasOwnProperty(this.localStorageKey) ? JSON.parse(localStorage.getItem(this.localStorageKey)!) : {}; // TODO: is this bang correct?
 
     this.settings.forEach((setting, s) => this.setOptionCursor(s, settings.hasOwnProperty(setting.key) ? settings[setting.key] : this.settings[s].default));
 
     this.settingsContainer.setVisible(true);
     this.setCursor(0);
+    this.setScrollCursor(0);
 
     this.getUi().moveTo(this.settingsContainer, this.getUi().length - 1);
 
@@ -262,6 +271,12 @@ export default class AbstractSettingsUiHandler extends UiHandler {
       case Button.CYCLE_SHINY:
         success = this.navigationContainer.navigate(button);
         break;
+      case Button.ACTION:
+        const setting: Setting = this.settings[cursor];
+        if (setting?.activatable) {
+          success = this.activateSetting(setting);
+        }
+        break;
       }
     }
 
@@ -274,16 +289,31 @@ export default class AbstractSettingsUiHandler extends UiHandler {
   }
 
   /**
+   * Activate the specified setting if it is activatable.
+   * @param setting The setting to activate.
+   * @returns Whether the setting was successfully activated.
+   */
+  activateSetting(setting: Setting): boolean {
+    switch (setting.key) {
+    case SettingKeys.Move_Touch_Controls:
+      this.scene.inputController.moveTouchControlsHandler.enableConfigurationMode(this.getUi(), this.scene);
+      return true;
+    }
+    return false;
+  }
+
+  /**
    * Set the cursor to the specified position.
    *
    * @param cursor - The cursor position to set.
    * @returns `true` if the cursor was set successfully.
    */
-  setCursor(cursor: integer): boolean {
+  setCursor(cursor: number): boolean {
     const ret = super.setCursor(cursor);
 
     if (!this.cursorObj) {
-      this.cursorObj = this.scene.add.nineslice(0, 0, "summary_moves_cursor", null, (this.scene.game.canvas.width / 6) - 10, 16, 1, 1, 1, 1);
+      const cursorWidth = (this.scene.game.canvas.width / 6) - (this.scrollBar.visible? 16 : 10);
+      this.cursorObj = this.scene.add.nineslice(0, 0, "summary_moves_cursor", undefined, cursorWidth, 16, 1, 1, 1, 1);
       this.cursorObj.setOrigin(0, 0);
       this.optionsContainer.add(this.cursorObj);
     }
@@ -301,7 +331,7 @@ export default class AbstractSettingsUiHandler extends UiHandler {
    * @param save - Whether to save the setting to local storage.
    * @returns `true` if the option cursor was set successfully.
    */
-  setOptionCursor(settingIndex: integer, cursor: integer, save?: boolean): boolean {
+  setOptionCursor(settingIndex: number, cursor: number, save?: boolean): boolean {
     const setting = this.settings[settingIndex];
 
     if (setting.key === SettingKeys.Touch_Controls && cursor && hasTouchscreen() && isMobile()) {
@@ -312,8 +342,8 @@ export default class AbstractSettingsUiHandler extends UiHandler {
     const lastCursor = this.optionCursors[settingIndex];
 
     const lastValueLabel = this.optionValueLabels[settingIndex][lastCursor];
-    lastValueLabel.setColor(this.getTextColor(TextStyle.WINDOW));
-    lastValueLabel.setShadowColor(this.getTextColor(TextStyle.WINDOW, true));
+    lastValueLabel.setColor(this.getTextColor(TextStyle.SETTINGS_VALUE));
+    lastValueLabel.setShadowColor(this.getTextColor(TextStyle.SETTINGS_VALUE, true));
 
     this.optionCursors[settingIndex] = cursor;
 
@@ -337,12 +367,13 @@ export default class AbstractSettingsUiHandler extends UiHandler {
    * @param scrollCursor - The scroll cursor position to set.
    * @returns `true` if the scroll cursor was set successfully.
    */
-  setScrollCursor(scrollCursor: integer): boolean {
+  setScrollCursor(scrollCursor: number): boolean {
     if (scrollCursor === this.scrollCursor) {
       return false;
     }
 
     this.scrollCursor = scrollCursor;
+    this.scrollBar.setScrollCursor(this.scrollCursor);
 
     this.updateSettingsScroll();
 
@@ -372,7 +403,9 @@ export default class AbstractSettingsUiHandler extends UiHandler {
   clear() {
     super.clear();
     this.settingsContainer.setVisible(false);
+    this.setScrollCursor(0);
     this.eraseCursor();
+    this.getUi().bgmBar.toggleBgmBar(this.scene.showBgmBar);
     if (this.reloadRequired) {
       this.reloadRequired = false;
       this.scene.reset(true, false, true);

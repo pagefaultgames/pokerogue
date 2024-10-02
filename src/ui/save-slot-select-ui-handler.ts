@@ -1,8 +1,8 @@
 import i18next from "i18next";
 import BattleScene from "../battle-scene";
-import { Button } from "../enums/buttons";
+import { Button } from "#enums/buttons";
 import { GameMode } from "../game-mode";
-import { PokemonHeldItemModifier } from "../modifier/modifier";
+import * as Modifier from "../modifier/modifier";
 import { SessionSaveData } from "../system/game-data";
 import PokemonData from "../system/pokemon-data";
 import * as Utils from "../utils";
@@ -29,11 +29,11 @@ export default class SaveSlotSelectUiHandler extends MessageUiHandler {
   private sessionSlots: SessionSlot[];
 
   private uiMode: SaveSlotUiMode;
-  private saveSlotSelectCallback: SaveSlotSelectCallback;
+  private saveSlotSelectCallback: SaveSlotSelectCallback | null;
 
   private scrollCursor: integer = 0;
 
-  private cursorObj: Phaser.GameObjects.NineSlice;
+  private cursorObj: Phaser.GameObjects.NineSlice | null;
 
   private sessionSlotsContainerInitialY: number;
 
@@ -106,22 +106,30 @@ export default class SaveSlotSelectUiHandler extends MessageUiHandler {
           switch (this.uiMode) {
           case SaveSlotUiMode.LOAD:
             this.saveSlotSelectCallback = null;
-            originalCallback(cursor);
+            originalCallback && originalCallback(cursor);
             break;
           case SaveSlotUiMode.SAVE:
             const saveAndCallback = () => {
               const originalCallback = this.saveSlotSelectCallback;
               this.saveSlotSelectCallback = null;
               ui.revertMode();
-              ui.showText(null, 0);
+              ui.showText("", 0);
               ui.setMode(Mode.MESSAGE);
-              originalCallback(cursor);
+              originalCallback && originalCallback(cursor);
             };
             if (this.sessionSlots[cursor].hasData) {
               ui.showText(i18next.t("saveSlotSelectUiHandler:overwriteData"), null, () => {
-                ui.setOverlayMode(Mode.CONFIRM, () => saveAndCallback(), () => {
+                ui.setOverlayMode(Mode.CONFIRM, () => {
+                  this.scene.gameData.deleteSession(cursor).then(response => {
+                    if (response === false) {
+                      this.scene.reset(true);
+                    } else {
+                      saveAndCallback();
+                    }
+                  });
+                }, () => {
                   ui.revertMode();
-                  ui.showText(null, 0);
+                  ui.showText("", 0);
                 }, false, 0, 19, 2000);
               });
             } else if (this.sessionSlots[cursor].hasData === false) {
@@ -135,7 +143,7 @@ export default class SaveSlotSelectUiHandler extends MessageUiHandler {
         }
       } else {
         this.saveSlotSelectCallback = null;
-        originalCallback(-1);
+        originalCallback && originalCallback(-1);
         success = true;
       }
     } else {
@@ -194,7 +202,7 @@ export default class SaveSlotSelectUiHandler extends MessageUiHandler {
     const changed = super.setCursor(cursor);
 
     if (!this.cursorObj) {
-      this.cursorObj = this.scene.add.nineslice(0, 0, "select_cursor_highlight_thick", null, 296, 44, 6, 6, 6, 6);
+      this.cursorObj = this.scene.add.nineslice(0, 0, "select_cursor_highlight_thick", undefined, 296, 44, 6, 6, 6, 6);
       this.cursorObj.setOrigin(0, 0);
       this.sessionSlotsContainer.add(this.cursorObj);
     }
@@ -284,7 +292,7 @@ class SessionSlot extends Phaser.GameObjects.Container {
       const icon = this.scene.addPokemonIcon(pokemon, 0, 0, 0, 0);
 
       const text = addTextObject(this.scene, 32, 20, `${i18next.t("saveSlotSelectUiHandler:lv")}${Utils.formatLargeNumber(pokemon.level, 1000)}`, TextStyle.PARTY, { fontSize: "54px", color: "#f8f8f8" });
-      text.setShadow(0, 0, null);
+      text.setShadow(0, 0, undefined);
       text.setStroke("#424242", 14);
       text.setOrigin(1, 0);
 
@@ -298,19 +306,19 @@ class SessionSlot extends Phaser.GameObjects.Container {
 
     this.add(pokemonIconsContainer);
 
-    const modifiersModule = await import("../modifier/modifier");
-
     const modifierIconsContainer = this.scene.add.container(148, 30);
     modifierIconsContainer.setScale(0.5);
     let visibleModifierIndex = 0;
     for (const m of data.modifiers) {
-      const modifier = m.toModifier(this.scene, modifiersModule[m.className]);
-      if (modifier instanceof PokemonHeldItemModifier) {
+      const modifier = m.toModifier(this.scene, Modifier[m.className]);
+      if (modifier instanceof Modifier.PokemonHeldItemModifier) {
         continue;
       }
-      const icon = modifier.getIcon(this.scene, false);
-      icon.setPosition(24 * visibleModifierIndex, 0);
-      modifierIconsContainer.add(icon);
+      const icon = modifier?.getIcon(this.scene, false);
+      if (icon) {
+        icon.setPosition(24 * visibleModifierIndex, 0);
+        modifierIconsContainer.add(icon);
+      }
       if (++visibleModifierIndex === 12) {
         break;
       }

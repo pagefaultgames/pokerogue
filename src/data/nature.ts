@@ -1,36 +1,11 @@
-import { Stat, getStatName } from "./pokemon-stat";
 import * as Utils from "../utils";
 import { TextStyle, getBBCodeFrag } from "../ui/text";
-import { UiTheme } from "#app/enums/ui-theme";
+import { Nature } from "#enums/nature";
+import { UiTheme } from "#enums/ui-theme";
 import i18next from "i18next";
+import { Stat, EFFECTIVE_STATS, getShortenedStatKey } from "#app/enums/stat";
 
-export enum Nature {
-  HARDY,
-  LONELY,
-  BRAVE,
-  ADAMANT,
-  NAUGHTY,
-  BOLD,
-  DOCILE,
-  RELAXED,
-  IMPISH,
-  LAX,
-  TIMID,
-  HASTY,
-  SERIOUS,
-  JOLLY,
-  NAIVE,
-  MODEST,
-  MILD,
-  QUIET,
-  BASHFUL,
-  RASH,
-  CALM,
-  GENTLE,
-  SASSY,
-  CAREFUL,
-  QUIRKY
-}
+export { Nature };
 
 export function getNatureName(nature: Nature, includeStatEffects: boolean = false, forStarterSelect: boolean = false, ignoreBBCode: boolean = false, uiTheme: UiTheme = UiTheme.DEFAULT): string {
   let ret = Utils.toReadableString(Nature[nature]);
@@ -39,10 +14,9 @@ export function getNatureName(nature: Nature, includeStatEffects: boolean = fals
     ret = i18next.t("nature:" + ret as any);
   }
   if (includeStatEffects) {
-    const stats = Utils.getEnumValues(Stat).slice(1);
-    let increasedStat: Stat = null;
-    let decreasedStat: Stat = null;
-    for (const stat of stats) {
+    let increasedStat: Stat | null = null;
+    let decreasedStat: Stat | null = null;
+    for (const stat of EFFECTIVE_STATS) {
       const multiplier = getNatureStatMultiplier(nature, stat);
       if (multiplier > 1) {
         increasedStat = stat;
@@ -53,7 +27,7 @@ export function getNatureName(nature: Nature, includeStatEffects: boolean = fals
     const textStyle = forStarterSelect ? TextStyle.SUMMARY_ALT : TextStyle.WINDOW;
     const getTextFrag = !ignoreBBCode ? (text: string, style: TextStyle) => getBBCodeFrag(text, style, uiTheme) : (text: string, style: TextStyle) => text;
     if (increasedStat && decreasedStat) {
-      ret = `${getTextFrag(`${ret}${!forStarterSelect ? "\n" : " "}(`, textStyle)}${getTextFrag(`+${getStatName(increasedStat, true)}`, TextStyle.SUMMARY_PINK)}${getTextFrag("/", textStyle)}${getTextFrag(`-${getStatName(decreasedStat, true)}`, TextStyle.SUMMARY_BLUE)}${getTextFrag(")", textStyle)}`;
+      ret = `${getTextFrag(`${ret}${!forStarterSelect ? "\n" : " "}(`, textStyle)}${getTextFrag(`+${i18next.t(getShortenedStatKey(increasedStat))}`, TextStyle.SUMMARY_PINK)}${getTextFrag("/", textStyle)}${getTextFrag(`-${i18next.t(getShortenedStatKey(decreasedStat))}`, TextStyle.SUMMARY_BLUE)}${getTextFrag(")", textStyle)}`;
     } else {
       ret = getTextFrag(`${ret}${!forStarterSelect ? "\n" : " "}(-)`, textStyle);
     }

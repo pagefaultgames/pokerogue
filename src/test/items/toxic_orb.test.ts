@@ -1,20 +1,14 @@
-import {afterEach, beforeAll, beforeEach, describe, expect, it, vi} from "vitest";
+import { StatusEffect } from "#app/data/status-effect";
+import { EnemyCommandPhase } from "#app/phases/enemy-command-phase";
+import { MessagePhase } from "#app/phases/message-phase";
+import { TurnEndPhase } from "#app/phases/turn-end-phase";
+import i18next, { initI18n } from "#app/plugins/i18n";
+import { Abilities } from "#enums/abilities";
+import { Moves } from "#enums/moves";
+import { Species } from "#enums/species";
+import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
-import GameManager from "#app/test/utils/gameManager";
-import * as overrides from "#app/overrides";
-import {Abilities} from "#app/data/enums/abilities";
-import {Species} from "#app/data/enums/species";
-import {
-  CommandPhase,
-  EnemyCommandPhase,
-  MessagePhase,
-  TurnEndPhase,
-} from "#app/phases";
-import {Mode} from "#app/ui/ui";
-import {Moves} from "#app/data/enums/moves";
-import {getMovePosition} from "#app/test/utils/gameManagerUtils";
-import {Command} from "#app/ui/command-ui-handler";
-import {StatusEffect} from "#app/data/status-effect";
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 
 describe("Items - Toxic orb", () => {
@@ -35,19 +29,21 @@ describe("Items - Toxic orb", () => {
     game = new GameManager(phaserGame);
     const moveToUse = Moves.GROWTH;
     const oppMoveToUse = Moves.TACKLE;
-    vi.spyOn(overrides, "SINGLE_BATTLE_OVERRIDE", "get").mockReturnValue(true);
-    vi.spyOn(overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.RATTATA);
-    vi.spyOn(overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.INSOMNIA);
-    vi.spyOn(overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.INSOMNIA);
-    vi.spyOn(overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(2000);
-    vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([moveToUse]);
-    vi.spyOn(overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([oppMoveToUse, oppMoveToUse, oppMoveToUse, oppMoveToUse]);
-    vi.spyOn(overrides, "STARTING_HELD_ITEMS_OVERRIDE", "get").mockReturnValue([{
+    game.override.battleType("single");
+    game.override.enemySpecies(Species.RATTATA);
+    game.override.ability(Abilities.INSOMNIA);
+    game.override.enemyAbility(Abilities.INSOMNIA);
+    game.override.startingLevel(2000);
+    game.override.moveset([moveToUse]);
+    game.override.enemyMoveset([oppMoveToUse, oppMoveToUse, oppMoveToUse, oppMoveToUse]);
+    game.override.startingHeldItems([{
       name: "TOXIC_ORB",
     }]);
   });
 
-  it("TOXIC ORB", async() => {
+  it("TOXIC ORB", async () => {
+    initI18n();
+    i18next.changeLanguage("en");
     const moveToUse = Moves.GROWTH;
     await game.startBattle([
       Species.MIGHTYENA,
@@ -55,26 +51,17 @@ describe("Items - Toxic orb", () => {
     ]);
     expect(game.scene.modifiers[0].type.id).toBe("TOXIC_ORB");
 
-    game.onNextPrompt("CommandPhase", Mode.COMMAND, () => {
-      // Select Attack
-      game.scene.ui.setMode(Mode.FIGHT, (game.scene.getCurrentPhase() as CommandPhase).getFieldIndex());
-    });
-    game.onNextPrompt("CommandPhase", Mode.FIGHT, () => {
-      // Select Move Growth
-      const movePosition = getMovePosition(game.scene, 0, moveToUse);
-      (game.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, movePosition, false);
-    });
+    game.move.select(moveToUse);
 
     // will run the 13 phase from enemyCommandPhase to TurnEndPhase
     await game.phaseInterceptor.runFrom(EnemyCommandPhase).to(TurnEndPhase);
     // Toxic orb should trigger here
     await game.phaseInterceptor.run(MessagePhase);
     const message = game.textInterceptor.getLatestMessage();
-    expect(message).toContain("was badly poisoned by Toxic Orb");
+    expect(message).toContain("statusEffect:toxic.obtainSource");
     await game.phaseInterceptor.run(MessagePhase);
     const message2 = game.textInterceptor.getLatestMessage();
-    expect(message2).toContain("is hurt");
-    expect(message2).toContain("by poison");
-    expect(game.scene.getParty()[0].status.effect).toBe(StatusEffect.TOXIC);
+    expect(message2).toBe("statusEffect:toxic.activation");
+    expect(game.scene.getParty()[0].status!.effect).toBe(StatusEffect.TOXIC);
   }, 20000);
 });

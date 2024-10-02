@@ -1,27 +1,16 @@
-import { Biome } from "./enums/biome";
-import { getPokemonMessage, getPokemonNameWithAffix } from "../messages";
+import { Biome } from "#enums/biome";
+import { WeatherType } from "#enums/weather-type";
+import { getPokemonNameWithAffix } from "../messages";
 import Pokemon from "../field/pokemon";
 import { Type } from "./type";
 import Move, { AttackMove } from "./move";
 import * as Utils from "../utils";
 import BattleScene from "../battle-scene";
 import { SuppressWeatherEffectAbAttr } from "./ability";
-import { TerrainType } from "./terrain";
+import { TerrainType, getTerrainName } from "./terrain";
 import i18next from "i18next";
 
-export enum WeatherType {
-  NONE,
-  SUNNY,
-  RAIN,
-  SANDSTORM,
-  HAIL,
-  SNOW,
-  FOG,
-  HEAVY_RAIN,
-  HARSH_SUN,
-  STRONG_WINDS
-}
-
+export { WeatherType };
 export class Weather {
   public weatherType: WeatherType;
   public turnsLeft: integer;
@@ -99,12 +88,14 @@ export class Weather {
     return 1;
   }
 
-  isMoveWeatherCancelled(move: Move): boolean {
+  isMoveWeatherCancelled(user: Pokemon, move: Move): boolean {
+    const moveType = user.getMoveType(move);
+
     switch (this.weatherType) {
     case WeatherType.HARSH_SUN:
-      return move instanceof AttackMove && move.type === Type.WATER;
+      return move instanceof AttackMove && moveType === Type.WATER;
     case WeatherType.HEAVY_RAIN:
-      return move instanceof AttackMove && move.type === Type.FIRE;
+      return move instanceof AttackMove && moveType === Type.FIRE;
     }
 
     return false;
@@ -114,7 +105,7 @@ export class Weather {
     const field = scene.getField(true);
 
     for (const pokemon of field) {
-      let suppressWeatherEffectAbAttr = pokemon.getAbility().getAttrs(SuppressWeatherEffectAbAttr)[0];
+      let suppressWeatherEffectAbAttr: SuppressWeatherEffectAbAttr | null  = pokemon.getAbility().getAttrs(SuppressWeatherEffectAbAttr)[0];
       if (!suppressWeatherEffectAbAttr) {
         suppressWeatherEffectAbAttr = pokemon.hasPassive() ? pokemon.getPassiveAbility().getAttrs(SuppressWeatherEffectAbAttr)[0] : null;
       }
@@ -127,7 +118,7 @@ export class Weather {
   }
 }
 
-export function getWeatherStartMessage(weatherType: WeatherType): string {
+export function getWeatherStartMessage(weatherType: WeatherType): string | null {
   switch (weatherType) {
   case WeatherType.SUNNY:
     return i18next.t("weather:sunnyStartMessage");
@@ -152,7 +143,7 @@ export function getWeatherStartMessage(weatherType: WeatherType): string {
   return null;
 }
 
-export function getWeatherLapseMessage(weatherType: WeatherType): string {
+export function getWeatherLapseMessage(weatherType: WeatherType): string | null {
   switch (weatherType) {
   case WeatherType.SUNNY:
     return i18next.t("weather:sunnyLapseMessage");
@@ -177,7 +168,7 @@ export function getWeatherLapseMessage(weatherType: WeatherType): string {
   return null;
 }
 
-export function getWeatherDamageMessage(weatherType: WeatherType, pokemon: Pokemon): string {
+export function getWeatherDamageMessage(weatherType: WeatherType, pokemon: Pokemon): string | null {
   switch (weatherType) {
   case WeatherType.SANDSTORM:
     return i18next.t("weather:sandstormDamageMessage", {pokemonNameWithAffix: getPokemonNameWithAffix(pokemon)});
@@ -188,7 +179,7 @@ export function getWeatherDamageMessage(weatherType: WeatherType, pokemon: Pokem
   return null;
 }
 
-export function getWeatherClearMessage(weatherType: WeatherType): string {
+export function getWeatherClearMessage(weatherType: WeatherType): string | null {
   switch (weatherType) {
   case WeatherType.SUNNY:
     return i18next.t("weather:sunnyClearMessage");
@@ -213,37 +204,43 @@ export function getWeatherClearMessage(weatherType: WeatherType): string {
   return null;
 }
 
-export function getTerrainStartMessage(terrainType: TerrainType): string {
+export function getTerrainStartMessage(terrainType: TerrainType): string | null {
   switch (terrainType) {
   case TerrainType.MISTY:
-    return "Mist swirled around the battlefield!";
+    return i18next.t("terrain:mistyStartMessage");
   case TerrainType.ELECTRIC:
-    return "An electric current ran across the battlefield!";
+    return i18next.t("terrain:electricStartMessage");
   case TerrainType.GRASSY:
-    return "Grass grew to cover the battlefield!";
+    return i18next.t("terrain:grassyStartMessage");
   case TerrainType.PSYCHIC:
-    return "The battlefield got weird!";
+    return i18next.t("terrain:psychicStartMessage");
+  default:
+    console.warn("getTerrainStartMessage not defined. Using default null");
+    return null;
   }
 }
 
-export function getTerrainClearMessage(terrainType: TerrainType): string {
+export function getTerrainClearMessage(terrainType: TerrainType): string | null {
   switch (terrainType) {
   case TerrainType.MISTY:
-    return "The mist disappeared from the battlefield.";
+    return i18next.t("terrain:mistyClearMessage");
   case TerrainType.ELECTRIC:
-    return "The electricity disappeared from the battlefield.";
+    return i18next.t("terrain:electricClearMessage");
   case TerrainType.GRASSY:
-    return "The grass disappeared from the battlefield.";
+    return i18next.t("terrain:grassyClearMessage");
   case TerrainType.PSYCHIC:
-    return "The weirdness disappeared from the battlefield!";
+    return i18next.t("terrain:psychicClearMessage");
+  default:
+    console.warn("getTerrainClearMessage not defined. Using default null");
+    return null;
   }
 }
 
 export function getTerrainBlockMessage(pokemon: Pokemon, terrainType: TerrainType): string {
   if (terrainType === TerrainType.MISTY) {
-    return getPokemonMessage(pokemon, " surrounds itself with a protective mist!");
+    return i18next.t("terrain:mistyBlockMessage", {pokemonNameWithAffix: getPokemonNameWithAffix(pokemon)});
   }
-  return getPokemonMessage(pokemon, ` is protected by the ${Utils.toReadableString(TerrainType[terrainType])} Terrain!`);
+  return i18next.t("terrain:defaultBlockMessage", {pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), terrainName: getTerrainName(terrainType)});
 }
 
 interface WeatherPoolEntry {

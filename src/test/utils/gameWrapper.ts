@@ -1,29 +1,28 @@
 /* eslint-disable */
 // @ts-nocheck
-import * as main from "#app/main";
+import BattleScene, * as battleScene from "#app/battle-scene";
+import { MoveAnim } from "#app/data/battle-anims";
+import Pokemon from "#app/field/pokemon";
+import * as Utils from "#app/utils";
+import { blobToString } from "#test/utils/gameManagerUtils";
+import { MockClock } from "#test/utils/mocks/mockClock";
+import mockConsoleLog from "#test/utils/mocks/mockConsoleLog";
+import { MockFetch } from "#test/utils/mocks/mockFetch";
+import MockLoader from "#test/utils/mocks/mockLoader";
+import mockLocalStorage from "#test/utils/mocks/mockLocalStorage";
+import MockImage from "#test/utils/mocks/mocksContainer/mockImage";
+import MockTextureManager from "#test/utils/mocks/mockTextureManager";
 import fs from "fs";
+import Phaser from "phaser";
+import InputText from "phaser3-rex-plugins/plugins/inputtext";
+import { vi } from "vitest";
+import { MockGameObjectCreator } from "./mocks/mockGameObjectCreator";
 import InputManager = Phaser.Input.InputManager;
 import KeyboardManager = Phaser.Input.Keyboard.KeyboardManager;
 import KeyboardPlugin = Phaser.Input.Keyboard.KeyboardPlugin;
 import GamepadPlugin = Phaser.Input.Gamepad.GamepadPlugin;
 import EventEmitter = Phaser.Events.EventEmitter;
 import UpdateList = Phaser.GameObjects.UpdateList;
-import MockGraphics from "#app/test/utils/mocks/mocksContainer/mockGraphics";
-import MockTextureManager from "#app/test/utils/mocks/mockTextureManager";
-import Phaser from "phaser";
-import {blobToString} from "#app/test/utils/gameManagerUtils";
-import {vi} from "vitest";
-import mockLocalStorage from "#app/test/utils/mocks/mockLocalStorage";
-import mockConsoleLog from "#app/test/utils/mocks/mockConsoleLog";
-import MockLoader from "#app/test/utils/mocks/mockLoader";
-import {MockFetch} from "#app/test/utils/mocks/mockFetch";
-import * as Utils from "#app/utils";
-import InputText from "phaser3-rex-plugins/plugins/inputtext";
-import {MockClock} from "#app/test/utils/mocks/mockClock";
-import BattleScene from "#app/battle-scene.js";
-import {MoveAnim} from "#app/data/battle-anims";
-import Pokemon from "#app/field/pokemon";
-import * as battleScene from "#app/battle-scene";
 
 Object.defineProperty(window, "localStorage", {
   value: mockLocalStorage(),
@@ -35,13 +34,14 @@ Object.defineProperty(window, "console", {
 
 InputText.prototype.setElement = () => null;
 InputText.prototype.resize = () => null;
+Phaser.GameObjects.Image = MockImage;
 window.URL.createObjectURL = (blob: Blob) => {
   blobToString(blob).then((data: string) => {
     localStorage.setItem("toExport", data);
-  })
+  });
   return null;
 };
-navigator.getGamepads = vi.fn().mockReturnValue([]);
+navigator.getGamepads = () => [];
 global.fetch = vi.fn(MockFetch);
 Utils.setCookie(Utils.sessionIdKey, 'fake_token');
 
@@ -86,7 +86,9 @@ export default class GameWrapper {
       frames: {},
     });
     Pokemon.prototype.enableMask = () => null;
-    localStorage.clear();
+    Pokemon.prototype.updateFusionPalette = () => null;
+    Pokemon.prototype.cry = () => null;
+    Pokemon.prototype.faintCry = (cb) => { if (cb) cb(); };
   }
 
   setScene(scene: BattleScene) {
@@ -99,7 +101,7 @@ export default class GameWrapper {
   injectMandatory() {
     this.game.config = {
       seed: ["test"],
-    }
+    };
     this.scene.game = this.game;
     this.game.renderer = {
       maxTextures: -1,
@@ -121,15 +123,24 @@ export default class GameWrapper {
       pause: () => null,
       setRate: () => null,
       add: () => this.scene.sound,
-      get: () => this.scene.sound,
+      get: () => ({...this.scene.sound, totalDuration: 0}),
       getAllPlaying: () => [],
       manager: {
         game: this.game,
       },
+      destroy: () => null,
       setVolume: () => null,
+      stop: () => null,
       stopByKey: () => null,
       on: (evt, callback) => callback(),
       key: "",
+    };
+
+    this.scene.cameras = {
+      main: {
+        setPostPipeline: () => null,
+        removePostPipeline: () => null,
+      },
     };
 
     this.scene.tweens = {
@@ -193,6 +204,7 @@ export default class GameWrapper {
     };
     const mockTextureManager = new MockTextureManager(this.scene);
     this.scene.add = mockTextureManager.add;
+    this.scene.textures = mockTextureManager;
     this.scene.sys.displayList =  this.scene.add.displayList;
     this.scene.sys.updateList = new UpdateList(this.scene);
     this.scene.systems = this.scene.sys;
@@ -215,13 +227,9 @@ export default class GameWrapper {
         return resolve(response);
       });
     };
-    this.scene.make = {
-      graphics: (config) => new MockGraphics(mockTextureManager, config),
-      rexTransitionImagePack: () => ({
-        transit: () => null,
-      }),
-    };
+    this.scene.make = new MockGameObjectCreator(mockTextureManager);
     this.scene.time = new MockClock(this.scene);
+    this.scene.remove = vi.fn(); // TODO: this should be stubbed differently
   }
 }
 
@@ -237,6 +245,7 @@ function createFetchResponse(data) {
   return {
     ok: true,
     status: 200,
+    headers: new Headers(),
     json: () => Promise.resolve(data),
     text: () => Promise.resolve(JSON.stringify(data)),
   };
@@ -246,6 +255,7 @@ function createFetchBadResponse(data) {
   return {
     ok: false,
     status: 404,
+    headers: new Headers(),
     json: () => Promise.resolve(data),
     text: () => Promise.resolve(JSON.stringify(data)),
   };

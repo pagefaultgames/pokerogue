@@ -5,8 +5,8 @@ import { TextStyle, addTextInputObject, addTextObject } from "./text";
 import { WindowVariant, addWindow } from "./ui-theme";
 import InputText from "phaser3-rex-plugins/plugins/inputtext";
 import * as Utils from "../utils";
-import i18next from "../plugins/i18n";
-import {Button} from "../enums/buttons";
+import i18next from "i18next";
+import { Button } from "#enums/buttons";
 
 export interface FormModalConfig extends ModalConfig {
   errorMessage?: string;
@@ -17,9 +17,10 @@ export abstract class FormModalUiHandler extends ModalUiHandler {
   protected inputContainers: Phaser.GameObjects.Container[];
   protected inputs: InputText[];
   protected errorMessage: Phaser.GameObjects.Text;
-  protected submitAction: Function;
+  protected submitAction: Function | null;
+  protected tween: Phaser.Tweens.Tween;
 
-  constructor(scene: BattleScene, mode?: Mode) {
+  constructor(scene: BattleScene, mode: Mode | null = null) {
     super(scene, mode);
 
     this.editing = false;
@@ -59,7 +60,7 @@ export abstract class FormModalUiHandler extends ModalUiHandler {
       const inputBg = addWindow(this.scene, 0, 0, 80, 16, false, false, 0, 0, WindowVariant.XTHIN);
 
       const isPassword = field.includes(i18next.t("menu:password")) || field.includes(i18next.t("menu:confirmPassword"));
-      const input = addTextInputObject(this.scene, 4, -2, 440, 116, TextStyle.TOOLTIP_CONTENT, { type: isPassword ? "password" : "text", maxLength: isPassword ? 64 : 16 });
+      const input = addTextInputObject(this.scene, 4, -2, 440, 116, TextStyle.TOOLTIP_CONTENT, { type: isPassword ? "password" : "text", maxLength: isPassword ? 64 : 20 });
       input.setOrigin(0, 0);
 
       inputContainer.add(inputBg);
@@ -99,7 +100,7 @@ export abstract class FormModalUiHandler extends ModalUiHandler {
       this.modalContainer.y += 24;
       this.modalContainer.setAlpha(0);
 
-      this.scene.tweens.add({
+      this.tween = this.scene.tweens.add({
         targets: this.modalContainer,
         duration: Utils.fixedInt(1000),
         ease: "Sine.easeInOut",
@@ -142,5 +143,9 @@ export abstract class FormModalUiHandler extends ModalUiHandler {
     this.inputContainers.map(ic => ic.setVisible(false));
 
     this.submitAction = null;
+
+    if (this.tween) {
+      this.tween.remove();
+    }
   }
 }

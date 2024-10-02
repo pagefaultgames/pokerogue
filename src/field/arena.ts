@@ -1,34 +1,39 @@
 import BattleScene from "../battle-scene";
-import { BiomePoolTier, PokemonPools, BiomeTierTrainerPools, biomePokemonPools, biomeTrainerPools } from "../data/biomes";
-import { Biome } from "../data/enums/biome";
+import { biomePokemonPools, BiomePoolTier, BiomeTierTrainerPools, biomeTrainerPools, PokemonPools } from "../data/biomes";
+import { Constructor } from "#app/utils";
 import * as Utils from "../utils";
 import PokemonSpecies, { getPokemonSpecies } from "../data/pokemon-species";
-import { Species } from "../data/enums/species";
-import { Weather, WeatherType, getTerrainClearMessage, getTerrainStartMessage, getWeatherClearMessage, getWeatherStartMessage } from "../data/weather";
-import { CommonAnimPhase } from "../phases";
+import { getTerrainClearMessage, getTerrainStartMessage, getWeatherClearMessage, getWeatherStartMessage, Weather, WeatherType } from "../data/weather";
 import { CommonAnim } from "../data/battle-anims";
 import { Type } from "../data/type";
 import Move from "../data/move";
-import { ArenaTag, ArenaTagSide, getArenaTag } from "../data/arena-tag";
-import { ArenaTagType } from "../data/enums/arena-tag-type";
-import { TrainerType } from "../data/enums/trainer-type";
+import { ArenaTag, ArenaTagSide, ArenaTrapTag, getArenaTag } from "../data/arena-tag";
 import { BattlerIndex } from "../battle";
-import { Moves } from "../data/enums/moves";
-import { TimeOfDay } from "../data/enums/time-of-day";
 import { Terrain, TerrainType } from "../data/terrain";
-import { PostTerrainChangeAbAttr, PostWeatherChangeAbAttr, applyPostTerrainChangeAbAttrs, applyPostWeatherChangeAbAttrs } from "../data/ability";
+import { applyPostTerrainChangeAbAttrs, applyPostWeatherChangeAbAttrs, PostTerrainChangeAbAttr, PostWeatherChangeAbAttr } from "../data/ability";
 import Pokemon from "./pokemon";
-import * as Overrides from "../overrides";
-import { WeatherChangedEvent, TerrainChangedEvent, TagAddedEvent, TagRemovedEvent } from "./arena-events";
+import Overrides from "#app/overrides";
+import { TagAddedEvent, TagRemovedEvent, TerrainChangedEvent, WeatherChangedEvent } from "../events/arena";
+import { ArenaTagType } from "#enums/arena-tag-type";
+import { Biome } from "#enums/biome";
+import { Moves } from "#enums/moves";
+import { Species } from "#enums/species";
+import { TimeOfDay } from "#enums/time-of-day";
+import { TrainerType } from "#enums/trainer-type";
+import { Abilities } from "#app/enums/abilities";
+import { SpeciesFormChangeRevertWeatherFormTrigger, SpeciesFormChangeWeatherTrigger } from "#app/data/pokemon-forms";
+import { CommonAnimPhase } from "#app/phases/common-anim-phase";
+import { ShowAbilityPhase } from "#app/phases/show-ability-phase";
 
 export class Arena {
   public scene: BattleScene;
   public biomeType: Biome;
-  public weather: Weather;
-  public terrain: Terrain;
+  public weather: Weather | null;
+  public terrain: Terrain | null;
   public tags: ArenaTag[];
   public bgm: string;
   public ignoreAbilities: boolean;
+  public ignoringEffectSource: BattlerIndex | null;
 
   private lastTimeOfDay: TimeOfDay;
 
@@ -55,6 +60,10 @@ export class Arena {
     this.scene.arenaNextEnemy.setBiome(this.biomeType);
     this.scene.arenaBg.setTexture(`${biomeKey}_bg`);
     this.scene.arenaBgTransition.setTexture(`${biomeKey}_bg`);
+
+    // Redo this on initialize because during save/load the current wave isn't always
+    // set correctly during construction
+    this.updatePoolsForTimeOfDay();
   }
 
   updatePoolsForTimeOfDay(): void {
@@ -68,21 +77,21 @@ export class Arena {
     }
   }
 
-  randomSpecies(waveIndex: integer, level: integer, attempt?: integer, luckValue?: integer): PokemonSpecies {
+  randomSpecies(waveIndex: integer, level: integer, attempt?: integer, luckValue?: integer, isBoss?: boolean): PokemonSpecies {
     const overrideSpecies = this.scene.gameMode.getOverrideSpecies(waveIndex);
     if (overrideSpecies) {
       return overrideSpecies;
     }
-    const isBoss = !!this.scene.getEncounterBossSegments(waveIndex, level) && !!this.pokemonPool[BiomePoolTier.BOSS].length
+    const isBossSpecies = !!this.scene.getEncounterBossSegments(waveIndex, level) && !!this.pokemonPool[BiomePoolTier.BOSS].length
       && (this.biomeType !== Biome.END || this.scene.gameMode.isClassic || this.scene.gameMode.isWaveFinal(waveIndex));
-    const randVal = isBoss ? 64 : 512;
+    const randVal = isBossSpecies ? 64 : 512;
     // luck influences encounter rarity
     let luckModifier = 0;
     if (typeof luckValue !== "undefined") {
-      luckModifier = luckValue * (isBoss ? 0.5 : 2);
+      luckModifier = luckValue * (isBossSpecies ? 0.5 : 2);
     }
     const tierValue = Utils.randSeedInt(randVal - luckModifier);
-    let tier = !isBoss
+    let tier = !isBossSpecies
       ? tierValue >= 156 ? BiomePoolTier.COMMON : tierValue >= 32 ? BiomePoolTier.UNCOMMON : tierValue >= 6 ? BiomePoolTier.RARE : tierValue >= 1 ? BiomePoolTier.SUPER_RARE : BiomePoolTier.ULTRA_RARE
       : tierValue >= 20 ? BiomePoolTier.BOSS : tierValue >= 6 ? BiomePoolTier.BOSS_RARE : tierValue >= 1 ? BiomePoolTier.BOSS_SUPER_RARE : BiomePoolTier.BOSS_ULTRA_RARE;
     console.log(BiomePoolTier[tier]);
@@ -116,7 +125,7 @@ export class Arena {
         }
       }
 
-      ret = getPokemonSpecies(species);
+      ret = getPokemonSpecies(species!);
 
       if (ret.subLegendary || ret.legendary || ret.mythical) {
         switch (true) {
@@ -141,7 +150,7 @@ export class Arena {
       return this.randomSpecies(waveIndex, level, (attempt || 0) + 1);
     }
 
-    const newSpeciesId = ret.getWildSpeciesForLevel(level, true, isBoss, this.scene.gameMode);
+    const newSpeciesId = ret.getWildSpeciesForLevel(level, true, isBoss ?? isBossSpecies, this.scene.gameMode);
     if (newSpeciesId !== ret.speciesId) {
       console.log("Replaced", Species[ret.speciesId], "with", Species[newSpeciesId]);
       ret = getPokemonSpecies(newSpeciesId);
@@ -149,12 +158,12 @@ export class Arena {
     return ret;
   }
 
-  randomTrainerType(waveIndex: integer): TrainerType {
-    const isBoss = !!this.trainerPool[BiomePoolTier.BOSS].length
-      && this.scene.gameMode.isTrainerBoss(waveIndex, this.biomeType, this.scene.offsetGym);
+  randomTrainerType(waveIndex: integer, isBoss: boolean = false): TrainerType {
+    const isTrainerBoss = !!this.trainerPool[BiomePoolTier.BOSS].length
+      && (this.scene.gameMode.isTrainerBoss(waveIndex, this.biomeType, this.scene.offsetGym) || isBoss);
     console.log(isBoss, this.trainerPool);
-    const tierValue = Utils.randSeedInt(!isBoss ? 512 : 64);
-    let tier = !isBoss
+    const tierValue = Utils.randSeedInt(!isTrainerBoss ? 512 : 64);
+    let tier = !isTrainerBoss
       ? tierValue >= 156 ? BiomePoolTier.COMMON : tierValue >= 32 ? BiomePoolTier.UNCOMMON : tierValue >= 6 ? BiomePoolTier.RARE : tierValue >= 1 ? BiomePoolTier.SUPER_RARE : BiomePoolTier.ULTRA_RARE
       : tierValue >= 20 ? BiomePoolTier.BOSS : tierValue >= 6 ? BiomePoolTier.BOSS_RARE : tierValue >= 1 ? BiomePoolTier.BOSS_SUPER_RARE : BiomePoolTier.BOSS_ULTRA_RARE;
     console.log(BiomePoolTier[tier]);
@@ -281,20 +290,20 @@ export class Arena {
 
   /**
    * Sets weather to the override specified in overrides.ts
-   * @param weather new weather to set of type WeatherType
+   * @param weather new {@linkcode WeatherType} to set
    * @returns true to force trySetWeather to return true
    */
   trySetWeatherOverride(weather: WeatherType): boolean {
     this.weather = new Weather(weather, 0);
     this.scene.unshiftPhase(new CommonAnimPhase(this.scene, undefined, undefined, CommonAnim.SUNNY + (weather - 1)));
-    this.scene.queueMessage(getWeatherStartMessage(weather));
+    this.scene.queueMessage(getWeatherStartMessage(weather)!); // TODO: is this bang correct?
     return true;
   }
 
   /**
    * Attempts to set a new weather to the battle
-   * @param weather new weather to set of type WeatherType
-   * @param hasPokemonSource is the new weather from a pokemon
+   * @param weather {@linkcode WeatherType} new {@linkcode WeatherType} to set
+   * @param hasPokemonSource boolean if the new weather is from a pokemon
    * @returns true if new weather set, false if no weather provided or attempting to set the same weather as currently in use
    */
   trySetWeather(weather: WeatherType, hasPokemonSource: boolean): boolean {
@@ -309,13 +318,13 @@ export class Arena {
     const oldWeatherType = this.weather?.weatherType || WeatherType.NONE;
 
     this.weather = weather ? new Weather(weather, hasPokemonSource ? 5 : 0) : null;
-    this.eventTarget.dispatchEvent(new WeatherChangedEvent(oldWeatherType, this.weather?.weatherType, this.weather?.turnsLeft));
+    this.eventTarget.dispatchEvent(new WeatherChangedEvent(oldWeatherType, this.weather?.weatherType!, this.weather?.turnsLeft!)); // TODO: is this bang correct?
 
     if (this.weather) {
-      this.scene.unshiftPhase(new CommonAnimPhase(this.scene, undefined, undefined, CommonAnim.SUNNY + (weather - 1)));
-      this.scene.queueMessage(getWeatherStartMessage(weather));
+      this.scene.unshiftPhase(new CommonAnimPhase(this.scene, undefined, undefined, CommonAnim.SUNNY + (weather - 1), true));
+      this.scene.queueMessage(getWeatherStartMessage(weather)!); // TODO: is this bang correct?
     } else {
-      this.scene.queueMessage(getWeatherClearMessage(oldWeatherType));
+      this.scene.queueMessage(getWeatherClearMessage(oldWeatherType)!); // TODO: is this bang correct?
     }
 
     this.scene.getField(true).filter(p => p.isOnField()).map(pokemon => {
@@ -326,6 +335,36 @@ export class Arena {
     return true;
   }
 
+  /**
+   * Function to trigger all weather based form changes
+   */
+  triggerWeatherBasedFormChanges(): void {
+    this.scene.getField(true).forEach( p => {
+      const isCastformWithForecast = (p.hasAbility(Abilities.FORECAST) && p.species.speciesId === Species.CASTFORM);
+      const isCherrimWithFlowerGift = (p.hasAbility(Abilities.FLOWER_GIFT) && p.species.speciesId === Species.CHERRIM);
+
+      if (isCastformWithForecast || isCherrimWithFlowerGift) {
+        new ShowAbilityPhase(this.scene, p.getBattlerIndex());
+        this.scene.triggerPokemonFormChange(p, SpeciesFormChangeWeatherTrigger);
+      }
+    });
+  }
+
+  /**
+   * Function to trigger all weather based form changes back into their normal forms
+   */
+  triggerWeatherBasedFormChangesToNormal(): void {
+    this.scene.getField(true).forEach( p => {
+      const isCastformWithForecast = (p.hasAbility(Abilities.FORECAST, false, true) && p.species.speciesId === Species.CASTFORM);
+      const isCherrimWithFlowerGift = (p.hasAbility(Abilities.FLOWER_GIFT, false, true) && p.species.speciesId === Species.CHERRIM);
+
+      if (isCastformWithForecast || isCherrimWithFlowerGift) {
+        new ShowAbilityPhase(this.scene, p.getBattlerIndex());
+        return this.scene.triggerPokemonFormChange(p, SpeciesFormChangeRevertWeatherFormTrigger);
+      }
+    });
+  }
+
   trySetTerrain(terrain: TerrainType, hasPokemonSource: boolean, ignoreAnim: boolean = false): boolean {
     if (this.terrain?.terrainType === (terrain || undefined)) {
       return false;
@@ -334,15 +373,15 @@ export class Arena {
     const oldTerrainType = this.terrain?.terrainType || TerrainType.NONE;
 
     this.terrain = terrain ? new Terrain(terrain, hasPokemonSource ? 5 : 0) : null;
-    this.eventTarget.dispatchEvent(new TerrainChangedEvent(oldTerrainType,this.terrain?.terrainType, this.terrain?.turnsLeft));
+    this.eventTarget.dispatchEvent(new TerrainChangedEvent(oldTerrainType, this.terrain?.terrainType!, this.terrain?.turnsLeft!)); // TODO: are those bangs correct?
 
     if (this.terrain) {
       if (!ignoreAnim) {
         this.scene.unshiftPhase(new CommonAnimPhase(this.scene, undefined, undefined, CommonAnim.MISTY_TERRAIN + (terrain - 1)));
       }
-      this.scene.queueMessage(getTerrainStartMessage(terrain));
+      this.scene.queueMessage(getTerrainStartMessage(terrain)!); // TODO: is this bang correct?
     } else {
-      this.scene.queueMessage(getTerrainClearMessage(oldTerrainType));
+      this.scene.queueMessage(getTerrainClearMessage(oldTerrainType)!); // TODO: is this bang correct?
     }
 
     this.scene.getField(true).filter(p => p.isOnField()).map(pokemon => {
@@ -353,8 +392,8 @@ export class Arena {
     return true;
   }
 
-  isMoveWeatherCancelled(move: Move) {
-    return this.weather && !this.weather.isEffectSuppressed(this.scene) && this.weather.isMoveWeatherCancelled(move);
+  isMoveWeatherCancelled(user: Pokemon, move: Move) {
+    return this.weather && !this.weather.isEffectSuppressed(this.scene) && this.weather.isMoveWeatherCancelled(user, move);
   }
 
   isMoveTerrainCancelled(user: Pokemon, targets: BattlerIndex[], move: Move) {
@@ -379,6 +418,10 @@ export class Arena {
     return weatherMultiplier * terrainMultiplier;
   }
 
+  /**
+   * Gets the denominator for the chance for a trainer spawn
+   * @returns n where 1/n is the chance of a trainer battle
+   */
   getTrainerChance(): integer {
     switch (this.biomeType) {
     case Biome.METROPOLIS:
@@ -527,11 +570,18 @@ export class Arena {
     }
   }
 
-  setIgnoreAbilities(ignoreAbilities: boolean = true): void {
+  setIgnoreAbilities(ignoreAbilities: boolean, ignoringEffectSource: BattlerIndex | null = null): void {
     this.ignoreAbilities = ignoreAbilities;
+    this.ignoringEffectSource = ignoreAbilities ? ignoringEffectSource : null;
   }
 
-  applyTagsForSide(tagType: ArenaTagType | { new(...args: any[]): ArenaTag }, side: ArenaTagSide, ...args: any[]): void {
+  /**
+   * Applies each `ArenaTag` in this Arena, based on which side (self, enemy, or both) is passed in as a parameter
+   * @param tagType Either an {@linkcode ArenaTagType} string, or an actual {@linkcode ArenaTag} class to filter which ones to apply
+   * @param side {@linkcode ArenaTagSide} which side's arena tags to apply
+   * @param args array of parameters that the called upon tags may need
+   */
+  applyTagsForSide(tagType: ArenaTagType | Constructor<ArenaTag>, side: ArenaTagSide, ...args: unknown[]): void {
     let tags = typeof tagType === "string"
       ? this.tags.filter(t => t.tagType === tagType)
       : this.tags.filter(t => t instanceof tagType);
@@ -541,40 +591,96 @@ export class Arena {
     tags.forEach(t => t.apply(this, args));
   }
 
-  applyTags(tagType: ArenaTagType | { new(...args: any[]): ArenaTag }, ...args: any[]): void {
+  /**
+   * Applies the specified tag to both sides (ie: both user and trainer's tag that match the Tag specified)
+   * by calling {@linkcode applyTagsForSide()}
+   * @param tagType Either an {@linkcode ArenaTagType} string, or an actual {@linkcode ArenaTag} class to filter which ones to apply
+   * @param args array of parameters that the called upon tags may need
+   */
+  applyTags(tagType: ArenaTagType | Constructor<ArenaTag>, ...args: unknown[]): void {
     this.applyTagsForSide(tagType, ArenaTagSide.BOTH, ...args);
   }
 
-  addTag(tagType: ArenaTagType, turnCount: integer, sourceMove: Moves, sourceId: integer, side: ArenaTagSide = ArenaTagSide.BOTH, quiet: boolean = false, targetIndex?: BattlerIndex): boolean {
+  /**
+   * Adds a new tag to the arena
+   * @param tagType {@linkcode ArenaTagType} the tag being added
+   * @param turnCount How many turns the tag lasts
+   * @param sourceMove {@linkcode Moves} the move the tag came from, or `undefined` if not from a move
+   * @param sourceId The ID of the pokemon in play the tag came from (see {@linkcode BattleScene.getPokemonById})
+   * @param side {@linkcode ArenaTagSide} which side(s) the tag applies to
+   * @param quiet If a message should be queued on screen to announce the tag being added
+   * @param targetIndex The {@linkcode BattlerIndex} of the target pokemon
+   * @returns `false` if there already exists a tag of this type in the Arena
+   */
+  addTag(tagType: ArenaTagType, turnCount: number, sourceMove: Moves | undefined, sourceId: number, side: ArenaTagSide = ArenaTagSide.BOTH, quiet: boolean = false, targetIndex?: BattlerIndex): boolean {
     const existingTag = this.getTagOnSide(tagType, side);
     if (existingTag) {
       existingTag.onOverlap(this);
+
+      if (existingTag instanceof ArenaTrapTag) {
+        const { tagType, side, turnCount, layers, maxLayers } = existingTag as ArenaTrapTag;
+        this.eventTarget.dispatchEvent(new TagAddedEvent(tagType, side, turnCount, layers, maxLayers));
+      }
+
       return false;
     }
 
+    // creates a new tag object
     const newTag = getArenaTag(tagType, turnCount || 0, sourceMove, sourceId, targetIndex, side);
-    this.tags.push(newTag);
-    newTag.onAdd(this, quiet);
+    if (newTag) {
+      this.tags.push(newTag);
+      newTag.onAdd(this, quiet);
 
-    this.eventTarget.dispatchEvent(new TagAddedEvent(newTag.tagType, newTag.side, newTag.turnCount));
+      const { layers = 0, maxLayers = 0 } = newTag instanceof ArenaTrapTag ? newTag : {};
+
+      this.eventTarget.dispatchEvent(new TagAddedEvent(newTag.tagType, newTag.side, newTag.turnCount, layers, maxLayers));
+    }
 
     return true;
   }
 
-  getTag(tagType: ArenaTagType | { new(...args: any[]): ArenaTag }): ArenaTag {
+  /**
+   * Attempts to get a tag from the Arena via {@linkcode getTagOnSide} that applies to both sides
+   * @param tagType The {@linkcode ArenaTagType} or {@linkcode ArenaTag} to get
+   * @returns either the {@linkcode ArenaTag}, or `undefined` if it isn't there
+   */
+  getTag(tagType: ArenaTagType | Constructor<ArenaTag>): ArenaTag | undefined {
     return this.getTagOnSide(tagType, ArenaTagSide.BOTH);
   }
 
-  getTagOnSide(tagType: ArenaTagType | { new(...args: any[]): ArenaTag }, side: ArenaTagSide): ArenaTag {
+  hasTag(tagType: ArenaTagType) : boolean {
+    return !!this.getTag(tagType);
+  }
+
+  /**
+   * Attempts to get a tag from the Arena from a specific side (the tag passed in has to either apply to both sides, or the specific side only)
+   *
+   * eg: `MIST` only applies to the user's side, while `MUD_SPORT` applies to both user and enemy side
+   * @param tagType The {@linkcode ArenaTagType} or {@linkcode ArenaTag} to get
+   * @param side The {@linkcode ArenaTagSide} to look at
+   * @returns either the {@linkcode ArenaTag}, or `undefined` if it isn't there
+   */
+  getTagOnSide(tagType: ArenaTagType | Constructor<ArenaTag>, side: ArenaTagSide): ArenaTag | undefined {
     return typeof(tagType) === "string"
       ? this.tags.find(t => t.tagType === tagType && (side === ArenaTagSide.BOTH || t.side === ArenaTagSide.BOTH || t.side === side))
       : this.tags.find(t => t instanceof tagType && (side === ArenaTagSide.BOTH || t.side === ArenaTagSide.BOTH || t.side === side));
   }
 
+  /**
+   * Uses {@linkcode findTagsOnSide} to filter (using the parameter function) for specific tags that apply to both sides
+   * @param tagPredicate a function mapping {@linkcode ArenaTag}s to `boolean`s
+   * @returns array of {@linkcode ArenaTag}s from which the Arena's tags return true and apply to both sides
+   */
   findTags(tagPredicate: (t: ArenaTag) => boolean): ArenaTag[] {
     return this.findTagsOnSide(tagPredicate, ArenaTagSide.BOTH);
   }
 
+  /**
+   * Returns specific tags from the arena that pass the `tagPredicate` function passed in as a parameter, and apply to the given side
+   * @param tagPredicate a function mapping {@linkcode ArenaTag}s to `boolean`s
+   * @param side The {@linkcode ArenaTagSide} to look at
+   * @returns array of {@linkcode ArenaTag}s from which the Arena's tags return `true` and apply to the given side
+   */
   findTagsOnSide(tagPredicate: (t: ArenaTag) => boolean, side: ArenaTagSide): ArenaTag[] {
     return this.tags.filter(t => tagPredicate(t) && (side === ArenaTagSide.BOTH || t.side === ArenaTagSide.BOTH || t.side === side));
   }
@@ -621,6 +727,18 @@ export class Arena {
     }
   }
 
+  /**
+   * Clears weather, terrain and arena tags when entering new biome or trainer battle.
+   */
+  resetArenaEffects(): void {
+    // Don't reset weather if a Biome's permanent weather is active
+    if (this.weather?.turnsLeft !== 0) {
+      this.trySetWeather(WeatherType.NONE, false);
+    }
+    this.trySetTerrain(TerrainType.NONE, false, true);
+    this.removeAllTags();
+  }
+
   preloadBgm(): void {
     this.scene.loadBgm(this.bgm);
   }
@@ -630,7 +748,7 @@ export class Arena {
     case Biome.TOWN:
       return 7.288;
     case Biome.PLAINS:
-      return 7.693;
+      return 17.485;
     case Biome.GRASS:
       return 1.995;
     case Biome.TALL_GRASS:
@@ -640,15 +758,15 @@ export class Arena {
     case Biome.FOREST:
       return 4.294;
     case Biome.SEA:
-      return 1.672;
+      return 0.024;
     case Biome.SWAMP:
       return 4.461;
     case Biome.BEACH:
       return 3.462;
     case Biome.LAKE:
-      return 5.350;
+      return 7.215;
     case Biome.SEABED:
-      return 2.629;
+      return 2.600;
     case Biome.MOUNTAIN:
       return 4.018;
     case Biome.BADLANDS:
@@ -658,13 +776,13 @@ export class Arena {
     case Biome.DESERT:
       return 1.143;
     case Biome.ICE_CAVE:
-      return 15.010;
+      return 0.000;
     case Biome.MEADOW:
       return 3.891;
     case Biome.POWER_PLANT:
-      return 2.810;
+      return 9.447;
     case Biome.VOLCANO:
-      return 5.116;
+      return 17.637;
     case Biome.GRAVEYARD:
       return 3.232;
     case Biome.DOJO:
@@ -672,13 +790,13 @@ export class Arena {
     case Biome.FACTORY:
       return 4.985;
     case Biome.RUINS:
-      return 2.270;
+      return 0.000;
     case Biome.WASTELAND:
       return 6.336;
     case Biome.ABYSS:
       return 5.130;
     case Biome.SPACE:
-      return 21.347;
+      return 20.036;
     case Biome.CONSTRUCTION_SITE:
       return 1.222;
     case Biome.JUNGLE:
@@ -692,9 +810,12 @@ export class Arena {
     case Biome.LABORATORY:
       return 114.862;
     case Biome.SLUM:
-      return 1.221;
+      return 0.000;
     case Biome.SNOWY_FOREST:
       return 3.047;
+    default:
+      console.warn(`missing bgm loop-point for biome "${Biome[this.biomeType]}" (=${this.biomeType})`);
+      return 0;
     }
   }
 }
@@ -748,12 +869,12 @@ export class ArenaBase extends Phaser.GameObjects.Container {
 
     this.player = player;
 
-    this.base = scene.addFieldSprite(0, 0, "plains_a", null, 1);
+    this.base = scene.addFieldSprite(0, 0, "plains_a", undefined, 1);
     this.base.setOrigin(0, 0);
 
     this.props = !player ?
       new Array(3).fill(null).map(() => {
-        const ret = scene.addFieldSprite(0, 0, "plains_b", null, 1);
+        const ret = scene.addFieldSprite(0, 0, "plains_b", undefined, 1);
         ret.setOrigin(0, 0);
         ret.setVisible(false);
         return ret;

@@ -1,50 +1,46 @@
-import { GachaType } from "./data/egg";
-import { Biome } from "./data/enums/biome";
-import { TrainerType } from "./data/enums/trainer-type";
-import { trainerConfigs } from "./data/trainer-config";
+import { GachaType } from "./enums/gacha-types";
 import { getBiomeHasProps } from "./field/arena";
 import CacheBustedLoaderPlugin from "./plugins/cache-busted-loader-plugin";
 import { SceneBase } from "./scene-base";
 import { WindowVariant, getWindowVariantSuffix } from "./ui/ui-theme";
 import { isMobile } from "./touch-controls";
 import * as Utils from "./utils";
-import { initI18n } from "./plugins/i18n";
-import {initPokemonPrevolutions} from "#app/data/pokemon-evolutions";
-import {initBiomes} from "#app/data/biomes";
-import {initEggMoves} from "#app/data/egg-moves";
-import {initPokemonForms} from "#app/data/pokemon-forms";
-import {initSpecies} from "#app/data/pokemon-species";
-import {initMoves} from "#app/data/move";
-import {initAbilities} from "#app/data/ability";
-import {initAchievements} from "#app/system/achv";
-import {initTrainerTypeDialogue} from "#app/data/dialogue";
+import { initPokemonPrevolutions } from "#app/data/pokemon-evolutions";
+import { initBiomes } from "#app/data/biomes";
+import { initEggMoves } from "#app/data/egg-moves";
+import { initPokemonForms } from "#app/data/pokemon-forms";
+import { initSpecies } from "#app/data/pokemon-species";
+import { initMoves } from "#app/data/move";
+import { initAbilities } from "#app/data/ability";
+import { initAchievements } from "#app/system/achv";
+import { initTrainerTypeDialogue } from "#app/data/dialogue";
 import { initChallenges } from "./data/challenge";
 import i18next from "i18next";
 import { initStatsKeys } from "./ui/game-stats-ui-handler";
 import { initVouchers } from "./system/voucher";
+import { Biome } from "#enums/biome";
+import {initMysteryEncounters} from "#app/data/mystery-encounters/mystery-encounters";
 
 export class LoadingScene extends SceneBase {
+  public static readonly KEY = "loading";
+
+  readonly LOAD_EVENTS = Phaser.Loader.Events;
+
   constructor() {
-    super("loading");
+    super(LoadingScene.KEY);
 
     Phaser.Plugins.PluginCache.register("Loader", CacheBustedLoaderPlugin, "load");
-    initI18n();
   }
 
   preload() {
     Utils.localPing();
     this.load["manifest"] = this.game["manifest"];
 
-    if (!isMobile()) {
-      this.load.video("intro_dark", "images/intro_dark.mp4", true);
-    }
-
     this.loadImage("loading_bg", "arenas");
     this.loadImage("logo", "");
 
     // Load menu images
     this.loadAtlas("bg", "ui");
-    this.loadImage("command_fight_labels", "ui");
     this.loadAtlas("prompt", "ui");
     this.loadImage("candy", "ui");
     this.loadImage("candy_overlay", "ui");
@@ -79,7 +75,9 @@ export class LoadingScene extends SceneBase {
     this.loadAtlas("overlay_hp_boss", "ui");
     this.loadImage("overlay_exp", "ui");
     this.loadImage("icon_owned", "ui");
+    this.loadImage("icon_egg_move", "ui");
     this.loadImage("ability_bar_left", "ui");
+    this.loadImage("bgm_bar", "ui");
     this.loadImage("party_exp_bar", "ui");
     this.loadImage("achv_bar", "ui");
     this.loadImage("achv_bar_2", "ui");
@@ -92,9 +90,14 @@ export class LoadingScene extends SceneBase {
     this.loadImage("shiny_star_small", "ui", "shiny_small.png");
     this.loadImage("shiny_star_small_1", "ui", "shiny_small_1.png");
     this.loadImage("shiny_star_small_2", "ui", "shiny_small_2.png");
+    this.loadImage("favorite", "ui", "favorite.png");
+    this.loadImage("passive_bg", "ui", "passive_bg.png");
+    this.loadAtlas("shiny_icons", "ui");
     this.loadImage("ha_capsule", "ui", "ha_capsule.png");
     this.loadImage("champion_ribbon", "ui", "champion_ribbon.png");
     this.loadImage("icon_spliced", "ui");
+    this.loadImage("icon_lock", "ui", "icon_lock.png");
+    this.loadImage("icon_stop", "ui", "icon_stop.png");
     this.loadImage("icon_tera", "ui");
     this.loadImage("type_tera", "ui");
     this.loadAtlas("type_bgs", "ui");
@@ -145,6 +148,9 @@ export class LoadingScene extends SceneBase {
       this.loadImage(`summary_tabs_${t}`, "ui");
     }
 
+    this.loadImage("scroll_bar", "ui");
+    this.loadImage("scroll_bar_handle", "ui");
+    this.loadImage("starter_container_bg", "ui");
     this.loadImage("starter_select_bg", "ui");
     this.loadImage("select_cursor", "ui");
     this.loadImage("select_cursor_highlight", "ui");
@@ -154,6 +160,9 @@ export class LoadingScene extends SceneBase {
     this.loadImage("select_gen_cursor_highlight", "ui");
 
     this.loadImage("saving_icon", "ui");
+    this.loadImage("discord", "ui");
+    this.loadImage("google", "ui");
+    this.loadImage("settings_icon", "ui");
 
     this.loadImage("default_bg", "arenas");
     // Load arena images
@@ -195,14 +204,6 @@ export class LoadingScene extends SceneBase {
     this.loadAtlas("trainer_f_back", "trainer");
     this.loadAtlas("trainer_f_back_pb", "trainer");
 
-    Utils.getEnumValues(TrainerType).map(tt => {
-      const config = trainerConfigs[tt];
-      this.loadAtlas(config.getSpriteKey(), "trainer");
-      if (config.doubleOnly || config.hasDouble) {
-        this.loadAtlas(config.getSpriteKey(true), "trainer");
-      }
-    });
-
     // Load character sprites
     this.loadAtlas("c_rival_m", "character", "rival_m");
     this.loadAtlas("c_rival_f", "character", "rival_f");
@@ -228,15 +229,23 @@ export class LoadingScene extends SceneBase {
     const lang = i18next.resolvedLanguage;
     if (lang !== "en") {
       if (Utils.verifyLang(lang)) {
+        this.loadAtlas(`statuses_${lang}`, "");
         this.loadAtlas(`types_${lang}`, "");
       } else {
         // Fallback to English
+        this.loadAtlas("statuses", "");
         this.loadAtlas("types", "");
       }
     } else {
+      this.loadAtlas("statuses", "");
       this.loadAtlas("types", "");
     }
-
+    const availableLangs = ["en", "de", "it", "fr", "ja", "ko", "es", "pt-BR", "zh-CN"];
+    if (lang && availableLangs.includes(lang)) {
+      this.loadImage("egg-update_"+lang, "events");
+    } else {
+      this.loadImage("egg-update_en", "events");
+    }
 
     this.loadAtlas("statuses", "");
     this.loadAtlas("categories", "");
@@ -257,6 +266,7 @@ export class LoadingScene extends SceneBase {
     this.loadImage("gacha_knob", "egg");
 
     this.loadImage("egg_list_bg", "ui");
+    this.loadImage("egg_summary_bg", "ui");
 
     this.loadImage("end_m", "cg");
     this.loadImage("end_f", "cg");
@@ -268,12 +278,16 @@ export class LoadingScene extends SceneBase {
       }
     }
 
+    // Load Mystery Encounter dex progress icon
+    this.loadImage("encounter_radar", "mystery-encounters");
+
     this.loadAtlas("dualshock", "inputs");
     this.loadAtlas("xbox", "inputs");
     this.loadAtlas("keyboard", "inputs");
 
-    this.loadSe("select");
-    this.loadSe("menu_open");
+    this.loadSe("select", "ui");
+    this.loadSe("menu_open", "ui");
+    this.loadSe("error", "ui");
     this.loadSe("hit");
     this.loadSe("hit_strong");
     this.loadSe("hit_weak");
@@ -293,7 +307,6 @@ export class LoadingScene extends SceneBase {
     this.loadSe("upgrade");
     this.loadSe("buy");
     this.loadSe("achv");
-    this.loadSe("error");
 
     this.loadSe("pb_rel");
     this.loadSe("pb_throw");
@@ -322,6 +335,7 @@ export class LoadingScene extends SceneBase {
     this.loadBgm("minor_fanfare", "bw/minor_fanfare.mp3");
     this.loadBgm("heal", "bw/heal.mp3");
     this.loadBgm("victory_trainer", "bw/victory_trainer.mp3");
+    this.loadBgm("victory_team_plasma", "bw/victory_team_plasma.mp3");
     this.loadBgm("victory_gym", "bw/victory_gym.mp3");
     this.loadBgm("victory_champion", "bw/victory_champion.mp3");
     this.loadBgm("evolution", "bw/evolution.mp3");
@@ -331,8 +345,8 @@ export class LoadingScene extends SceneBase {
 
     this.loadLoadingScreen();
 
-    initVouchers();
     initAchievements();
+    initVouchers();
     initStatsKeys();
     initPokemonPrevolutions();
     initBiomes();
@@ -343,6 +357,7 @@ export class LoadingScene extends SceneBase {
     initMoves();
     initAbilities();
     initChallenges();
+    initMysteryEncounters();
   }
 
   loadLoadingScreen() {
@@ -420,58 +435,46 @@ export class LoadingScene extends SceneBase {
     });
     disclaimerDescriptionText.setOrigin(0.5, 0.5);
 
-    disclaimerText.setVisible(false);
-    disclaimerDescriptionText.setVisible(false);
-
-    const intro = this.add.video(0, 0);
-    intro.setOrigin(0, 0);
-    intro.setScale(3);
-
-    this.load.on("progress", (value: string) => {
-      const parsedValue = parseFloat(value);
-      percentText.setText(`${Math.floor(parsedValue * 100)}%`);
-      progressBar.clear();
-      progressBar.fillStyle(0xffffff, 0.8);
-      progressBar.fillRect(midWidth - 320, 360, 640 * parsedValue, 64);
-    });
-
-    this.load.on("fileprogress", file => {
-      assetText.setText(`Loading asset: ${file.key}`);
-    });
-
-    loadingGraphics.push(bg, graphics, progressBar, progressBox, logo, percentText, assetText);
+    loadingGraphics.push(bg, graphics, progressBar, progressBox, logo, percentText, assetText, disclaimerText, disclaimerDescriptionText);
 
     if (!mobile) {
       loadingGraphics.map(g => g.setVisible(false));
     }
 
-    const destroyLoadingAssets = () => {
-      intro.destroy();
-      bg.destroy();
-      logo.destroy();
-      progressBar.destroy();
-      progressBox.destroy();
-      percentText.destroy();
-      assetText.destroy();
-    };
+    const intro = this.add.video(0, 0);
+    intro.once(Phaser.GameObjects.Events.VIDEO_COMPLETE, (video: Phaser.GameObjects.Video) => {
+      this.tweens.add({
+        targets: intro,
+        duration: 500,
+        alpha: 0,
+        ease: "Sine.easeIn",
+        onComplete: () => video.destroy(),
+      });
+      loadingGraphics.forEach(g => g.setVisible(true));
+    });
+    intro.setOrigin(0, 0);
+    intro.setScale(3);
 
-    this.load.on("filecomplete", key => {
+    this.load.once(this.LOAD_EVENTS.START, () => {
+      // videos do not need to be preloaded
+      intro.loadURL("images/intro_dark.mp4", true);
+      if (mobile) {
+        intro.video?.setAttribute("webkit-playsinline", "webkit-playsinline");
+        intro.video?.setAttribute("playsinline", "playsinline");
+      }
+      intro.play();
+    });
+
+    this.load.on(this.LOAD_EVENTS.PROGRESS, (progress: number) => {
+      percentText.setText(`${Math.floor(progress * 100)}%`);
+      progressBar.clear();
+      progressBar.fillStyle(0xffffff, 0.8);
+      progressBar.fillRect(midWidth - 320, 360, 640 * progress, 64);
+    });
+
+    this.load.on(this.LOAD_EVENTS.FILE_COMPLETE, (key: string) => {
+      assetText.setText(i18next.t("menu:loadingAsset", { assetName: key }));
       switch (key) {
-      case "intro_dark":
-        intro.load("intro_dark");
-        intro.on("complete", () => {
-          this.tweens.add({
-            targets: intro,
-            duration: 500,
-            alpha: 0,
-            ease: "Sine.easeIn"
-          });
-          loadingGraphics.map(g => g.setVisible(true));
-          disclaimerText.setVisible(true);
-          disclaimerDescriptionText.setVisible(true);
-        });
-        intro.play();
-        break;
       case "loading_bg":
         bg.setTexture("loading_bg");
         if (mobile) {
@@ -487,7 +490,10 @@ export class LoadingScene extends SceneBase {
       }
     });
 
-    this.load.on("complete", () => destroyLoadingAssets());
+    this.load.on(this.LOAD_EVENTS.COMPLETE, () => {
+      loadingGraphics.forEach(go => go.destroy());
+      intro.destroy();
+    });
   }
 
   get gameHeight() {
@@ -499,6 +505,17 @@ export class LoadingScene extends SceneBase {
   }
 
   async create() {
+    this.events.once(Phaser.Scenes.Events.DESTROY, () => this.handleDestroy());
     this.scene.start("battle");
+  }
+
+  handleDestroy() {
+    console.debug(`Destroying ${LoadingScene.KEY} scene`);
+    this.load.off(this.LOAD_EVENTS.PROGRESS);
+    this.load.off(this.LOAD_EVENTS.FILE_COMPLETE);
+    this.load.off(this.LOAD_EVENTS.COMPLETE);
+    // this.textures.remove("loading_bg"); is removed in BattleScene.launchBattle()
+    this.children.removeAll(true);
+    console.debug(`Destroyed ${LoadingScene.KEY} scene`);
   }
 }

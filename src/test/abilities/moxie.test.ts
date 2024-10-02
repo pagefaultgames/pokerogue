@@ -1,21 +1,14 @@
-import {afterEach, beforeAll, beforeEach, describe, expect, it, vi} from "vitest";
+import { Stat } from "#enums/stat";
+import GameManager from "#test/utils/gameManager";
+import { Abilities } from "#enums/abilities";
+import { Moves } from "#enums/moves";
+import { Species } from "#enums/species";
 import Phaser from "phaser";
-import GameManager from "#app/test/utils/gameManager";
-import * as overrides from "#app/overrides";
-import {Abilities} from "#app/data/enums/abilities";
-import {Species} from "#app/data/enums/species";
-import {
-  CommandPhase,
-  EnemyCommandPhase,
-  VictoryPhase
-} from "#app/phases";
-import {Mode} from "#app/ui/ui";
-import {Stat} from "#app/data/pokemon-stat";
-import {Moves} from "#app/data/enums/moves";
-import {getMovePosition} from "#app/test/utils/gameManagerUtils";
-import {Command} from "#app/ui/command-ui-handler";
-import {BattleStat} from "#app/data/battle-stat";
-
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { BattlerIndex } from "#app/battle";
+import { EnemyCommandPhase } from "#app/phases/enemy-command-phase";
+import { VictoryPhase } from "#app/phases/victory-phase";
+import { TurnEndPhase } from "#app/phases/turn-end-phase";
 
 describe("Abilities - Moxie", () => {
   let phaserGame: Phaser.Game;
@@ -34,34 +27,52 @@ describe("Abilities - Moxie", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     const moveToUse = Moves.AERIAL_ACE;
-    vi.spyOn(overrides, "SINGLE_BATTLE_OVERRIDE", "get").mockReturnValue(true);
-    vi.spyOn(overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.RATTATA);
-    vi.spyOn(overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.MOXIE);
-    vi.spyOn(overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.MOXIE);
-    vi.spyOn(overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(2000);
-    vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([moveToUse]);
-    vi.spyOn(overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.TACKLE,Moves.TACKLE,Moves.TACKLE,Moves.TACKLE]);
+    game.override.battleType("single");
+    game.override.enemySpecies(Species.RATTATA);
+    game.override.enemyAbility(Abilities.MOXIE);
+    game.override.ability(Abilities.MOXIE);
+    game.override.startingLevel(2000);
+    game.override.moveset([ moveToUse ]);
+    game.override.enemyMoveset(Moves.SPLASH);
   });
 
-  it("MOXIE", async() => {
+  it("should raise ATK stat stage by 1 when winning a battle", async() => {
     const moveToUse = Moves.AERIAL_ACE;
     await game.startBattle([
       Species.MIGHTYENA,
       Species.MIGHTYENA,
     ]);
 
-    let battleStatsPokemon = game.scene.getParty()[0].summonData.battleStats;
-    expect(battleStatsPokemon[Stat.ATK]).toBe(0);
+    const playerPokemon = game.scene.getPlayerPokemon()!;
 
-    game.onNextPrompt("CommandPhase", Mode.COMMAND, () => {
-      game.scene.ui.setMode(Mode.FIGHT, (game.scene.getCurrentPhase() as CommandPhase).getFieldIndex());
-    });
-    game.onNextPrompt("CommandPhase", Mode.FIGHT, () => {
-      const movePosition = getMovePosition(game.scene, 0, moveToUse);
-      (game.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, movePosition, false);
-    });
+    expect(playerPokemon.getStatStage(Stat.ATK)).toBe(0);
+
+    game.move.select(moveToUse);
     await game.phaseInterceptor.runFrom(EnemyCommandPhase).to(VictoryPhase);
-    battleStatsPokemon = game.scene.getParty()[0].summonData.battleStats;
-    expect(battleStatsPokemon[BattleStat.ATK]).toBe(1);
+
+    expect(playerPokemon.getStatStage(Stat.ATK)).toBe(1);
+  }, 20000);
+
+  // TODO: Activate this test when MOXIE is corrected to work on faint and not on battle victory
+  it.todo("should raise ATK stat stage by 1 when defeating an ally Pokemon", async() => {
+    game.override.battleType("double");
+    const moveToUse = Moves.AERIAL_ACE;
+    await game.startBattle([
+      Species.MIGHTYENA,
+      Species.MIGHTYENA,
+    ]);
+
+    const [ firstPokemon, secondPokemon ] = game.scene.getPlayerField();
+
+    expect(firstPokemon.getStatStage(Stat.ATK)).toBe(0);
+
+    secondPokemon.hp = 1;
+
+    game.move.select(moveToUse);
+    game.selectTarget(BattlerIndex.PLAYER_2);
+
+    await game.phaseInterceptor.to(TurnEndPhase);
+
+    expect(firstPokemon.getStatStage(Stat.ATK)).toBe(1);
   }, 20000);
 });

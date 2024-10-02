@@ -5,12 +5,13 @@ import MessageUiHandler from "./ui/message-ui-handler";
 import StarterSelectUiHandler from "./ui/starter-select-ui-handler";
 import {Setting, SettingKeys, settingIndex} from "./system/settings/settings";
 import SettingsUiHandler from "./ui/settings/settings-ui-handler";
-import {Button} from "./enums/buttons";
+import {Button} from "#enums/buttons";
 import SettingsGamepadUiHandler from "./ui/settings/settings-gamepad-ui-handler";
 import SettingsKeyboardUiHandler from "#app/ui/settings/settings-keyboard-ui-handler";
 import BattleScene from "./battle-scene";
 import SettingsDisplayUiHandler from "./ui/settings/settings-display-ui-handler";
 import SettingsAudioUiHandler from "./ui/settings/settings-audio-ui-handler";
+import RunInfoUiHandler from "./ui/run-info-ui-handler";
 
 type ActionKeys = Record<Button, () => void>;
 
@@ -30,8 +31,23 @@ export class UiInputs {
     this.listenInputs();
   }
 
+  detectInputMethod(evt): void {
+    if (evt.controller_type === "keyboard") {
+      //if the touch property is present and defined, then this is a simulated keyboard event from the touch screen
+      if (evt.hasOwnProperty("isTouch") && evt.isTouch) {
+        this.scene.inputMethod = "touch";
+      } else {
+        this.scene.inputMethod = "keyboard";
+      }
+    } else if (evt.controller_type === "gamepad") {
+      this.scene.inputMethod = "gamepad";
+    }
+  }
+
   listenInputs(): void {
     this.events.on("input_down", (event) => {
+      this.detectInputMethod(event);
+
       const actions = this.getActionsKeyDown();
       if (!actions.hasOwnProperty(event.button)) {
         return;
@@ -64,7 +80,7 @@ export class UiInputs {
       [Button.ACTION]:          () => this.buttonAb(Button.ACTION),
       [Button.CANCEL]:          () => this.buttonAb(Button.CANCEL),
       [Button.MENU]:            () => this.buttonMenu(),
-      [Button.STATS]:           () => this.buttonStats(true),
+      [Button.STATS]:           () => this.buttonGoToFilter(Button.STATS),
       [Button.CYCLE_SHINY]:     () => this.buttonCycleOption(Button.CYCLE_SHINY),
       [Button.CYCLE_FORM]:      () => this.buttonCycleOption(Button.CYCLE_FORM),
       [Button.CYCLE_GENDER]:    () => this.buttonCycleOption(Button.CYCLE_GENDER),
@@ -124,6 +140,17 @@ export class UiInputs {
       p.toggleStats(pressed);
     }
   }
+
+  buttonGoToFilter(button: Button): void {
+    const whitelist = [StarterSelectUiHandler];
+    const uiHandler = this.scene.ui?.getHandler();
+    if (whitelist.some(handler => uiHandler instanceof handler)) {
+      this.scene.ui.processInput(button);
+    } else {
+      this.buttonStats(true);
+    }
+  }
+
   buttonInfo(pressed: boolean = true): void {
     if (this.scene.showMovesetFlyout ) {
       for (const p of this.scene.getField().filter(p => p?.isActive(true))) {
@@ -142,27 +169,22 @@ export class UiInputs {
     }
     switch (this.scene.ui?.getMode()) {
     case Mode.MESSAGE:
-      if (!(this.scene.ui.getHandler() as MessageUiHandler).pendingPrompt) {
+      const messageHandler = this.scene.ui.getHandler<MessageUiHandler>();
+      if (!messageHandler.pendingPrompt || messageHandler.isTextAnimationInProgress()) {
         return;
       }
     case Mode.TITLE:
     case Mode.COMMAND:
-    case Mode.FIGHT:
-    case Mode.BALL:
-    case Mode.TARGET_SELECT:
-    case Mode.SAVE_SLOT:
-    case Mode.PARTY:
-    case Mode.SUMMARY:
-    case Mode.STARTER_SELECT:
-    case Mode.OPTION_SELECT:
+    case Mode.MODIFIER_SELECT:
+    case Mode.MYSTERY_ENCOUNTER:
       this.scene.ui.setOverlayMode(Mode.MENU);
       break;
-    case Mode.CONFIRM:
+    case Mode.STARTER_SELECT:
+      this.buttonTouch();
+      break;
     case Mode.MENU:
-    case Mode.SETTINGS:
-    case Mode.ACHIEVEMENTS:
       this.scene.ui.revertMode();
-      this.scene.playSound("select");
+      this.scene.playSound("ui/select");
       break;
     default:
       return;
@@ -170,7 +192,7 @@ export class UiInputs {
   }
 
   buttonCycleOption(button: Button): void {
-    const whitelist = [StarterSelectUiHandler, SettingsUiHandler, SettingsDisplayUiHandler, SettingsAudioUiHandler, SettingsGamepadUiHandler, SettingsKeyboardUiHandler];
+    const whitelist = [StarterSelectUiHandler, SettingsUiHandler, RunInfoUiHandler, SettingsDisplayUiHandler, SettingsAudioUiHandler, SettingsGamepadUiHandler, SettingsKeyboardUiHandler];
     const uiHandler = this.scene.ui?.getHandler();
     if (whitelist.some(handler => uiHandler instanceof handler)) {
       this.scene.ui.processInput(button);
@@ -182,12 +204,12 @@ export class UiInputs {
   buttonSpeedChange(up = true): void {
     const settingGameSpeed = settingIndex(SettingKeys.Game_Speed);
     if (up && this.scene.gameSpeed < 5) {
-      this.scene.gameData.saveSetting(SettingKeys.Game_Speed, Setting[settingGameSpeed].options.indexOf(`${this.scene.gameSpeed}x`) + 1);
+      this.scene.gameData.saveSetting(SettingKeys.Game_Speed, Setting[settingGameSpeed].options.findIndex((item) => item.label === `${this.scene.gameSpeed}x`) + 1);
       if (this.scene.ui?.getMode() === Mode.SETTINGS) {
         (this.scene.ui.getHandler() as SettingsUiHandler).show([]);
       }
     } else if (!up && this.scene.gameSpeed > 1) {
-      this.scene.gameData.saveSetting(SettingKeys.Game_Speed, Math.max(Setting[settingGameSpeed].options.indexOf(`${this.scene.gameSpeed}x`) - 1, 0));
+      this.scene.gameData.saveSetting(SettingKeys.Game_Speed, Math.max(Setting[settingGameSpeed].options.findIndex((item) => item.label === `${this.scene.gameSpeed}x`) - 1, 0));
       if (this.scene.ui?.getMode() === Mode.SETTINGS) {
         (this.scene.ui.getHandler() as SettingsUiHandler).show([]);
       }

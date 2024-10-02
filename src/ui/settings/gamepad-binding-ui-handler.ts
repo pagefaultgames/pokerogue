@@ -1,16 +1,16 @@
 import BattleScene from "../../battle-scene";
 import AbstractBindingUiHandler from "./abstract-binding-ui-handler";
 import {Mode} from "../ui";
-import {Device} from "#app/enums/devices";
+import {Device} from "#enums/devices";
 import {getIconWithSettingName, getKeyWithKeycode} from "#app/configs/inputs/configHandler";
 import {addTextObject, TextStyle} from "#app/ui/text";
 
 
 export default class GamepadBindingUiHandler extends AbstractBindingUiHandler {
 
-  constructor(scene: BattleScene, mode?: Mode) {
+  constructor(scene: BattleScene, mode: Mode | null = null) {
     super(scene, mode);
-    this.scene.input.gamepad.on("down", this.gamepadButtonDown, this);
+    this.scene.input.gamepad?.on("down", this.gamepadButtonDown, this);
   }
   setup() {
     super.setup();

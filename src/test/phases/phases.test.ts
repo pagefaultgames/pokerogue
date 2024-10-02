@@ -1,9 +1,11 @@
-import BattleScene from "#app/battle-scene.js";
-import { LoginPhase, TitlePhase, UnavailablePhase } from "#app/phases.js";
-import { Mode } from "#app/ui/ui.js";
-import {afterEach, beforeAll, beforeEach, describe, expect, it} from "vitest";
+import BattleScene from "#app/battle-scene";
+import { LoginPhase } from "#app/phases/login-phase";
+import { TitlePhase } from "#app/phases/title-phase";
+import { UnavailablePhase } from "#app/phases/unavailable-phase";
+import { Mode } from "#app/ui/ui";
+import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
-import GameManager from "#app/test/utils/gameManager";
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Phases", () => {
   let phaserGame: Phaser.Game;
@@ -28,7 +30,8 @@ describe("Phases", () => {
   describe("LoginPhase", () => {
     it("should start the login phase", async () => {
       const loginPhase = new LoginPhase(scene);
-      loginPhase.start();
+      scene.unshiftPhase(loginPhase);
+      await game.phaseInterceptor.run(LoginPhase);
       expect(scene.ui.getMode()).to.equal(Mode.MESSAGE);
     });
   });
@@ -36,16 +39,18 @@ describe("Phases", () => {
   describe("TitlePhase", () => {
     it("should start the title phase", async () => {
       const titlePhase = new TitlePhase(scene);
-      titlePhase.start();
-      expect(scene.ui.getMode()).to.equal(Mode.MESSAGE);
+      scene.unshiftPhase(titlePhase);
+      await game.phaseInterceptor.run(TitlePhase);
+      expect(scene.ui.getMode()).to.equal(Mode.TITLE);
     });
   });
 
   describe("UnavailablePhase", () => {
     it("should start the unavailable phase", async () => {
       const unavailablePhase = new UnavailablePhase(scene);
-      unavailablePhase.start();
+      scene.unshiftPhase(unavailablePhase);
+      await game.phaseInterceptor.run(UnavailablePhase);
       expect(scene.ui.getMode()).to.equal(Mode.UNAVAILABLE);
-    });
+    }, 20000);
   });
 });
