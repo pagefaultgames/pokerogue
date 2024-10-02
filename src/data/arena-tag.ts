@@ -965,19 +965,16 @@ class ImprisonTag extends ArenaTrapTag {
 
   /**
    * Helper function that retrieves the source Pokemon
-   * @param {BattleScene} scene medium to retrieve the source Pokemon
-   * @returns {Pokemon} pokemon or undefined
+   * @param scene medium to retrieve the source Pokemon
+   * @returns The source {@linkcode Pokemon} or `null` if none is found
    */
-  private retrieveSource(scene: BattleScene): Pokemon | undefined {
-    if (this.sourceId) {
-      return scene.getPokemonById(this.sourceId) ?? undefined;
-    }
-    return undefined;
+  private retrieveSource(scene: BattleScene): Pokemon | null {
+    return this.sourceId ? scene.getPokemonById(this.sourceId) : null;
   }
 
   /**
    * Helper function that retrieves the Pokemon affected
-   * @param {BattleScene} scene medium to retrieve the involved Pokemon
+   * @param scene medium to retrieve the involved Pokemon
    * @returns list of opposing Pokemon on the field
    */
   private retrieveField(scene: BattleScene): PlayerPokemon[] | EnemyPokemon[] {
@@ -1004,7 +1001,7 @@ class ImprisonTag extends ArenaTrapTag {
    * @param _arena
    * @returns `true` if the source of the tag is still active on the field | `false` if not
    */
-  override lapse({ scene }: Arena): boolean {
+  override lapse({ scene }: BattleScene): boolean {
     const source = this.retrieveSource(scene);
     return source ? source.isActive(true) : false;
   }

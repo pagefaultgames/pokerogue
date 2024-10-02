@@ -332,7 +332,7 @@ export class GorillaTacticsTag extends MoveRestrictionBattlerTag {
   /**
    * Loads the Gorilla Tactics Battler Tag along with its unique class variable moveId
    * @override
-   * @param source {@linkcode BattlerTag} Gorilla Tactic's Battler Tag information
+   * @param source Gorilla Tactics' {@linkcode BattlerTag} information
    */
   override loadTag(source: BattlerTag | any): void {
     super.loadTag(source);
@@ -2633,13 +2633,10 @@ export class ImprisonTag extends MoveRestrictionBattlerTag {
   /**
    * Helper function that retrieves the source Pokemon object
    * @param scene medium to retrieve the source Pokemon
-   * @returns source pokemon {@linkcode Pokemon} or undefined
+   * @returns The source {@linkcode Pokemon} or `null` if none is found
    */
-  private retrieveSource(scene: BattleScene): Pokemon | undefined {
-    if (this.sourceId) {
-      return scene.getPokemonById(this.sourceId) ?? undefined;
-    }
-    return undefined;
+  private retrieveSource(scene: BattleScene): Pokemon | null {
+    return this.sourceId ? scene.getPokemonById(this.sourceId) : null;
   }
 }
 
