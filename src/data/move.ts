@@ -3990,7 +3990,19 @@ export class VariableMoveTypeAttr extends MoveAttr {
   }
 }
 
+/**
+ * Attribute used for Tera Starstorm that changes the move type to Stellar
+ * @extends VariableMoveTypeAttr
+ */
 export class TeraStarstormTypeAttr extends VariableMoveTypeAttr {
+  /**
+   *
+   * @param user the {@linkcode Pokemon} using the move
+   * @param target n/a
+   * @param move n/a
+   * @param args[0] {@linkcode Utils.NumberHolder} the move type
+   * @returns `true` if the move type is changed to {@linkcode Type.STELLAR}, `false` otherwise
+   */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     if (user.isTerastallized() && user.species.speciesId === Species.TERAPAGOS) {
       const moveType = args[0] as Utils.NumberHolder;
