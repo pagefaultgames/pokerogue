@@ -363,6 +363,7 @@ export function initMysteryEncounters() {
   });
 
   // Add ANY biome encounters to biome map
+  // eslint-disable-next-line
   let encounterBiomeTableLog = "";
   mysteryEncountersByBiome.forEach((biomeEncounters, biome) => {
     anyBiomeEncounters.forEach(encounter => {
@@ -374,5 +375,5 @@ export function initMysteryEncounters() {
     encounterBiomeTableLog += `${getBiomeName(biome).toUpperCase()}: [${biomeEncounters.map(type => MysteryEncounterType[type].toString().toLowerCase()).sort().join(", ")}]\n`;
   });
 
-  console.debug("All Mystery Encounters by Biome:\n" + encounterBiomeTableLog);
+  //console.debug("All Mystery Encounters by Biome:\n" + encounterBiomeTableLog);
 }
