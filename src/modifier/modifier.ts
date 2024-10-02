@@ -29,6 +29,7 @@ import { type PermanentStat, type TempBattleStat, BATTLE_STATS, Stat, TEMP_BATTL
 import { StatusEffect } from "#enums/status-effect";
 import i18next from "i18next";
 import { type DoubleBattleChanceBoosterModifierType, type EvolutionItemModifierType, type FormChangeItemModifierType, type ModifierOverride, type ModifierType, type PokemonBaseStatTotalModifierType, type PokemonExpBoosterModifierType, type PokemonFriendshipBoosterModifierType, type PokemonMoveAccuracyBoosterModifierType, type PokemonMultiHitModifierType, type TerastallizeModifierType, type TmModifierType, getModifierType, ModifierPoolType, ModifierTypeGenerator, modifierTypes, PokemonHeldItemModifierType } from "./modifier-type";
+import { ShadowColor } from "#app/enums/color";
 
 export type ModifierPredicate = (modifier: Modifier) => boolean;
 
@@ -358,7 +359,12 @@ export abstract class LapsingPersistentModifier extends PersistentModifier {
     return true;
   }
 
-  lapse(_args: any[]): boolean {
+  /**
+   * Lapses the {@linkcode battleCount} by 1.
+   * @param _args passed arguments (not in use here)
+   * @returns `true` if the {@linkcode battleCount} is greater than 0
+   */
+  public lapse(..._args: unknown[]): boolean {
     this.battleCount--;
     return this.battleCount > 0;
   }
@@ -370,10 +376,13 @@ export abstract class LapsingPersistentModifier extends PersistentModifier {
     const hue = Math.floor(120 * (this.battleCount / this.maxBattles) + 5);
 
     // Generates the color hex code with a constant saturation and lightness but varying hue
-    const typeHex = hslToHex(hue, 0.50, 0.90);
-    const strokeHex = hslToHex(hue, 0.70, 0.30);
+    const typeHex = hslToHex(hue, 0.5, 0.9);
+    const strokeHex = hslToHex(hue, 0.7, 0.3);
 
-    const battleCountText = addTextObject(scene, 27, 0, this.battleCount.toString(), TextStyle.PARTY, { fontSize: "66px", color: typeHex });
+    const battleCountText = addTextObject(scene, 27, 0, this.battleCount.toString(), TextStyle.PARTY, {
+      fontSize: "66px",
+      color: typeHex,
+    });
     battleCountText.setShadow(0, 0);
     battleCountText.setStroke(strokeHex, 16);
     battleCountText.setOrigin(1, 0);
@@ -399,7 +408,7 @@ export abstract class LapsingPersistentModifier extends PersistentModifier {
   }
 
   getArgs(): any[] {
-    return [ this.maxBattles, this.battleCount ];
+    return [this.maxBattles, this.battleCount];
   }
 
   getMaxStackCount(_scene: BattleScene, _forThreshold?: boolean): number {
@@ -415,6 +424,8 @@ export abstract class LapsingPersistentModifier extends PersistentModifier {
  * @see {@linkcode apply}
  */
 export class DoubleBattleChanceBoosterModifier extends LapsingPersistentModifier {
+  public override type: DoubleBattleChanceBoosterModifierType;
+
   constructor(type: ModifierType, maxBattles:number, battleCount?: number, stackCount?: number) {
     super(type, maxBattles, battleCount, stackCount);
   }
@@ -424,7 +435,7 @@ export class DoubleBattleChanceBoosterModifier extends LapsingPersistentModifier
   }
 
   clone(): DoubleBattleChanceBoosterModifier {
-    return new DoubleBattleChanceBoosterModifier(this.type as DoubleBattleChanceBoosterModifierType, this.getMaxBattles(), this.getBattleCount(), this.stackCount);
+    return new DoubleBattleChanceBoosterModifier(this.type, this.getMaxBattles(), this.getBattleCount(), this.stackCount);
   }
 
   /**
@@ -744,17 +755,28 @@ export abstract class LapsingPokemonHeldItemModifier extends PokemonHeldItemModi
     this.battlesLeft = battlesLeft!; // TODO: is this bang correct?
   }
 
-  lapse(args: any[]): boolean {
+  /**
+   * Lapse the {@linkcode battlesLeft} counter (reduce it by 1)
+   * @param _args arguments passed (not used here)
+   * @returns `true` if {@linkcode battlesLeft} is not null
+   */
+  public lapse(..._args: unknown[]): boolean {
     return !!--this.battlesLeft;
   }
 
-  getIcon(scene: BattleScene, forSummary?: boolean): Phaser.GameObjects.Container {
+  /**
+   * Retrieve the {@linkcode Modifier | Modifiers} icon as a {@linkcode Phaser.GameObjects.Container | Container}
+   * @param scene The {@linkcode BattleScene}
+   * @param forSummary `true` if the icon is for the summary screen
+   * @returns the icon as a {@linkcode Phaser.GameObjects.Container | Container}
+   */
+  public getIcon(scene: BattleScene, forSummary?: boolean): Phaser.GameObjects.Container {
     const container = super.getIcon(scene, forSummary);
 
     if (this.getPokemon(scene)?.isPlayer()) {
       const battleCountText = addTextObject(scene, 27, 0, this.battlesLeft.toString(), TextStyle.PARTY, { fontSize: "66px", color: "#f89890" });
       battleCountText.setShadow(0, 0);
-      battleCountText.setStroke("#984038", 16);
+      battleCountText.setStroke(ShadowColor.RED, 16);
       battleCountText.setOrigin(1, 0);
       container.add(battleCountText);
     }
@@ -772,6 +794,7 @@ export abstract class LapsingPokemonHeldItemModifier extends PokemonHeldItemModi
 }
 
 export class TerastallizeModifier extends LapsingPokemonHeldItemModifier {
+  public override type: TerastallizeModifierType;
   public teraType: Type;
   public isTransferable: boolean = false;
 
@@ -789,7 +812,7 @@ export class TerastallizeModifier extends LapsingPokemonHeldItemModifier {
   }
 
   clone(): TerastallizeModifier {
-    return new TerastallizeModifier(this.type as TerastallizeModifierType, this.pokemonId, this.teraType, this.battlesLeft, this.stackCount);
+    return new TerastallizeModifier(this.type, this.pokemonId, this.teraType, this.battlesLeft, this.stackCount);
   }
 
   getArgs(): any[] {
@@ -813,10 +836,14 @@ export class TerastallizeModifier extends LapsingPokemonHeldItemModifier {
     return true;
   }
 
-  lapse(args: any[]): boolean {
-    const ret = super.lapse(args);
+  /**
+   * Triggers {@linkcode LapsingPokemonHeldItemModifier.lapse} and if it returns `0` a form change is triggered.
+   * @param pokemon THe {@linkcode Pokemon} to be terastallized
+   * @returns the result of {@linkcode LapsingPokemonHeldItemModifier.lapse}
+   */
+  public override lapse(pokemon: Pokemon): boolean {
+    const ret = super.lapse(pokemon);
     if (!ret) {
-      const pokemon = args[0] as Pokemon;
       pokemon.scene.triggerPokemonFormChange(pokemon, SpeciesFormChangeLapseTeraTrigger);
       pokemon.updateSpritePipelineData();
     }
@@ -956,8 +983,10 @@ export class EvoTrackerModifier extends PokemonHeldItemModifier {
  * Currently used by Shuckle Juice item
  */
 export class PokemonBaseStatTotalModifier extends PokemonHeldItemModifier {
-  private statModifier: number;
+  public override type: PokemonBaseStatTotalModifierType;
   public isTransferable: boolean = false;
+
+  private statModifier: number;
 
   constructor(type: PokemonBaseStatTotalModifierType, pokemonId: number, statModifier: number, stackCount?: number) {
     super(type, pokemonId, stackCount);
@@ -969,7 +998,7 @@ export class PokemonBaseStatTotalModifier extends PokemonHeldItemModifier {
   }
 
   override clone(): PersistentModifier {
-    return new PokemonBaseStatTotalModifier(this.type as PokemonBaseStatTotalModifierType, this.pokemonId, this.statModifier, this.stackCount);
+    return new PokemonBaseStatTotalModifier(this.type, this.pokemonId, this.statModifier, this.stackCount);
   }
 
   override getArgs(): any[] {
@@ -2193,6 +2222,8 @@ export class PokemonLevelIncrementModifier extends ConsumablePokemonModifier {
 }
 
 export class TmModifier extends ConsumablePokemonModifier {
+  public override type: TmModifierType;
+
   constructor(type: TmModifierType, pokemonId: number) {
     super(type, pokemonId);
   }
@@ -2204,7 +2235,7 @@ export class TmModifier extends ConsumablePokemonModifier {
    */
   override apply(playerPokemon: PlayerPokemon): boolean {
 
-    playerPokemon.scene.unshiftPhase(new LearnMovePhase(playerPokemon.scene, playerPokemon.scene.getParty().indexOf(playerPokemon), (this.type as TmModifierType).moveId, true));
+    playerPokemon.scene.unshiftPhase(new LearnMovePhase(playerPokemon.scene, playerPokemon.scene.getParty().indexOf(playerPokemon), this.type.moveId, true));
 
     return true;
   }
@@ -2232,6 +2263,8 @@ export class RememberMoveModifier extends ConsumablePokemonModifier {
 }
 
 export class EvolutionItemModifier extends ConsumablePokemonModifier {
+  public override type: EvolutionItemModifierType;
+
   constructor(type: EvolutionItemModifierType, pokemonId: number) {
     super(type, pokemonId);
   }
@@ -2243,13 +2276,13 @@ export class EvolutionItemModifier extends ConsumablePokemonModifier {
    */
   override apply(playerPokemon: PlayerPokemon): boolean {
     let matchingEvolution = pokemonEvolutions.hasOwnProperty(playerPokemon.species.speciesId)
-      ? pokemonEvolutions[playerPokemon.species.speciesId].find(e => e.item === (this.type as EvolutionItemModifierType).evolutionItem
+      ? pokemonEvolutions[playerPokemon.species.speciesId].find(e => e.item === this.type.evolutionItem
         && (e.evoFormKey === null || (e.preFormKey || "") === playerPokemon.getFormKey())
         && (!e.condition || e.condition.predicate(playerPokemon)))
       : null;
 
     if (!matchingEvolution && playerPokemon.isFusion()) {
-      matchingEvolution = pokemonEvolutions[playerPokemon.fusionSpecies!.speciesId].find(e => e.item === (this.type as EvolutionItemModifierType).evolutionItem // TODO: is the bang correct?
+      matchingEvolution = pokemonEvolutions[playerPokemon.fusionSpecies!.speciesId].find(e => e.item === this.type.evolutionItem // TODO: is the bang correct?
         && (e.evoFormKey === null || (e.preFormKey || "") === playerPokemon.getFusionFormKey())
         && (!e.condition || e.condition.predicate(playerPokemon)));
       if (matchingEvolution) {
@@ -2402,6 +2435,8 @@ export class ExpBoosterModifier extends PersistentModifier {
 }
 
 export class PokemonExpBoosterModifier extends PokemonHeldItemModifier {
+  public override type: PokemonExpBoosterModifierType;
+
   private boostMultiplier: number;
 
   constructor(type: PokemonExpBoosterModifierType, pokemonId: number, boostPercent: number, stackCount?: number) {
@@ -2418,7 +2453,7 @@ export class PokemonExpBoosterModifier extends PokemonHeldItemModifier {
   }
 
   clone(): PersistentModifier {
-    return new PokemonExpBoosterModifier(this.type as PokemonExpBoosterModifierType, this.pokemonId, this.boostMultiplier * 100, this.stackCount);
+    return new PokemonExpBoosterModifier(this.type, this.pokemonId, this.boostMultiplier * 100, this.stackCount);
   }
 
   getArgs(): any[] {
@@ -2505,6 +2540,8 @@ export class ExpBalanceModifier extends PersistentModifier {
 }
 
 export class PokemonFriendshipBoosterModifier extends PokemonHeldItemModifier {
+  public override type: PokemonFriendshipBoosterModifierType;
+
   constructor(type: PokemonFriendshipBoosterModifierType, pokemonId: number, stackCount?: number) {
     super(type, pokemonId, stackCount);
   }
@@ -2514,7 +2551,7 @@ export class PokemonFriendshipBoosterModifier extends PokemonHeldItemModifier {
   }
 
   clone(): PersistentModifier {
-    return new PokemonFriendshipBoosterModifier(this.type as PokemonFriendshipBoosterModifierType, this.pokemonId, this.stackCount);
+    return new PokemonFriendshipBoosterModifier(this.type, this.pokemonId, this.stackCount);
   }
 
   /**
@@ -2568,6 +2605,7 @@ export class PokemonNatureWeightModifier extends PokemonHeldItemModifier {
 }
 
 export class PokemonMoveAccuracyBoosterModifier extends PokemonHeldItemModifier {
+  public override type: PokemonMoveAccuracyBoosterModifierType;
   private accuracyAmount: number;
 
   constructor(type: PokemonMoveAccuracyBoosterModifierType, pokemonId: number, accuracy: number, stackCount?: number) {
@@ -2584,7 +2622,7 @@ export class PokemonMoveAccuracyBoosterModifier extends PokemonHeldItemModifier 
   }
 
   clone(): PersistentModifier {
-    return new PokemonMoveAccuracyBoosterModifier(this.type as PokemonMoveAccuracyBoosterModifierType, this.pokemonId, this.accuracyAmount, this.stackCount);
+    return new PokemonMoveAccuracyBoosterModifier(this.type, this.pokemonId, this.accuracyAmount, this.stackCount);
   }
 
   getArgs(): any[] {
@@ -2619,6 +2657,8 @@ export class PokemonMoveAccuracyBoosterModifier extends PokemonHeldItemModifier 
 }
 
 export class PokemonMultiHitModifier extends PokemonHeldItemModifier {
+  public override type: PokemonMultiHitModifierType;
+
   constructor(type: PokemonMultiHitModifierType, pokemonId: number, stackCount?: number) {
     super(type, pokemonId, stackCount);
   }
@@ -2628,7 +2668,7 @@ export class PokemonMultiHitModifier extends PokemonHeldItemModifier {
   }
 
   clone(): PersistentModifier {
-    return new PokemonMultiHitModifier(this.type as PokemonMultiHitModifierType, this.pokemonId, this.stackCount);
+    return new PokemonMultiHitModifier(this.type, this.pokemonId, this.stackCount);
   }
 
   /**
@@ -2662,6 +2702,7 @@ export class PokemonMultiHitModifier extends PokemonHeldItemModifier {
 }
 
 export class PokemonFormChangeItemModifier extends PokemonHeldItemModifier {
+  public override type: FormChangeItemModifierType;
   public formChangeItem: FormChangeItem;
   public active: boolean;
   public isTransferable: boolean = false;
@@ -2677,7 +2718,7 @@ export class PokemonFormChangeItemModifier extends PokemonHeldItemModifier {
   }
 
   clone(): PersistentModifier {
-    return new PokemonFormChangeItemModifier(this.type as FormChangeItemModifierType, this.pokemonId, this.formChangeItem, this.active, this.stackCount);
+    return new PokemonFormChangeItemModifier(this.type, this.pokemonId, this.formChangeItem, this.active, this.stackCount);
   }
 
   getArgs(): any[] {
