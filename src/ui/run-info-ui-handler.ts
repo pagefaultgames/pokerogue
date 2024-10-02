@@ -49,15 +49,11 @@ export default class RunInfoUiHandler extends UiHandler {
   private runResultContainer: Phaser.GameObjects.Container;
   private runInfoContainer: Phaser.GameObjects.Container;
   private partyContainer: Phaser.GameObjects.Container;
-  private partyHeldItemsContainer: Phaser.GameObjects.Container;
   private statsBgWidth: integer;
-  private partyContainerHeight: integer;
-  private partyContainerWidth: integer;
 
   private hallofFameContainer: Phaser.GameObjects.Container;
   private endCardContainer: Phaser.GameObjects.Container;
 
-  private partyInfo: Phaser.GameObjects.Container[];
   private partyVisibility: Boolean;
   private modifiersModule: any;
 
@@ -211,7 +207,7 @@ export default class RunInfoUiHandler extends UiHandler {
     if (!this.isVictory) {
       const enemyContainer = this.scene.add.container(0, 0);
       // Wild - Single and Doubles
-      if (this.runInfo.battleType === BattleType.WILD) {
+      if (this.runInfo.battleType === BattleType.WILD || (this.runInfo.battleType === BattleType.MYSTERY_ENCOUNTER && !this.runInfo.trainer)) {
         switch (this.runInfo.enemyParty.length) {
         case 1:
           // Wild - Singles
@@ -222,7 +218,7 @@ export default class RunInfoUiHandler extends UiHandler {
           this.parseWildDoubleDefeat(enemyContainer);
           break;
         }
-      } else if (this.runInfo.battleType === BattleType.TRAINER) {
+      } else if (this.runInfo.battleType === BattleType.TRAINER || (this.runInfo.battleType === BattleType.MYSTERY_ENCOUNTER && this.runInfo.trainer)) {
         this.parseTrainerDefeat(enemyContainer);
       }
       this.runResultContainer.add(enemyContainer);
@@ -292,25 +288,29 @@ export default class RunInfoUiHandler extends UiHandler {
   private parseTrainerDefeat(enemyContainer: Phaser.GameObjects.Container) {
     // Creating the trainer sprite and adding it to enemyContainer
     const tObj = this.runInfo.trainer.toTrainer(this.scene);
-    const tObjSpriteKey = tObj.config.getSpriteKey(this.runInfo.trainer.variant === TrainerVariant.FEMALE, false);
-    const tObjSprite = this.scene.add.sprite(0, 5, tObjSpriteKey);
-    if (this.runInfo.trainer.variant === TrainerVariant.DOUBLE) {
-      const doubleContainer = this.scene.add.container(5, 8);
-      tObjSprite.setPosition(-3, -3);
-      const tObjPartnerSpriteKey = tObj.config.getSpriteKey(true, true);
-      const tObjPartnerSprite = this.scene.add.sprite(5, -3, tObjPartnerSpriteKey);
-      // Double Trainers have smaller sprites than Single Trainers
-      tObjPartnerSprite.setScale(0.20);
-      tObjSprite.setScale(0.20);
-      doubleContainer.add(tObjSprite);
-      doubleContainer.add(tObjPartnerSprite);
-      doubleContainer.setPosition(12, 38);
-      enemyContainer.add(doubleContainer);
-    } else {
-      tObjSprite.setScale(0.35, 0.35);
-      tObjSprite.setPosition(12, 28);
-      enemyContainer.add(tObjSprite);
-    }
+
+    // Loads trainer assets on demand, as they are not loaded by default in the scene
+    tObj.config.loadAssets(this.scene, this.runInfo.trainer.variant).then(() => {
+      const tObjSpriteKey = tObj.config.getSpriteKey(this.runInfo.trainer.variant === TrainerVariant.FEMALE, false);
+      const tObjSprite = this.scene.add.sprite(0, 5, tObjSpriteKey);
+      if (this.runInfo.trainer.variant === TrainerVariant.DOUBLE) {
+        const doubleContainer = this.scene.add.container(5, 8);
+        tObjSprite.setPosition(-3, -3);
+        const tObjPartnerSpriteKey = tObj.config.getSpriteKey(true, true);
+        const tObjPartnerSprite = this.scene.add.sprite(5, -3, tObjPartnerSpriteKey);
+        // Double Trainers have smaller sprites than Single Trainers
+        tObjPartnerSprite.setScale(0.20);
+        tObjSprite.setScale(0.20);
+        doubleContainer.add(tObjSprite);
+        doubleContainer.add(tObjPartnerSprite);
+        doubleContainer.setPosition(12, 38);
+        enemyContainer.add(doubleContainer);
+      } else {
+        tObjSprite.setScale(0.35, 0.35);
+        tObjSprite.setPosition(12, 28);
+        enemyContainer.add(tObjSprite);
+      }
+    });
 
     // Determining which Terastallize Modifier belongs to which Pokemon
     // Creates a dictionary {PokemonId: TeraShardType}
@@ -381,10 +381,6 @@ export default class RunInfoUiHandler extends UiHandler {
       break;
     case GameModes.SPLICED_ENDLESS:
       modeText.appendText(`${i18next.t("gameMode:endlessSpliced")}`, false);
-      if (this.runInfo.waveIndex === this.scene.gameData.gameStats.highestEndlessWave) {
-        modeText.appendText(` [${i18next.t("runHistory:personalBest")}]`, false);
-        modeText.setTint(0xffef5c, 0x47ff69, 0x6b6bff, 0xff6969);
-      }
       break;
     case GameModes.CHALLENGE:
       modeText.appendText(`${i18next.t("gameMode:challenge")}`, false);
@@ -403,15 +399,16 @@ export default class RunInfoUiHandler extends UiHandler {
       break;
     case GameModes.ENDLESS:
       modeText.appendText(`${i18next.t("gameMode:endless")}`, false);
-      // If the player achieves a personal best in Endless, the mode text will be tinted similarly to SSS luck to celebrate their achievement.
-      if (this.runInfo.waveIndex === this.scene.gameData.gameStats.highestEndlessWave) {
-        modeText.appendText(` [${i18next.t("runHistory:personalBest")}]`, false);
-        modeText.setTint(0xffef5c, 0x47ff69, 0x6b6bff, 0xff6969);
-      }
       break;
     case GameModes.CLASSIC:
       modeText.appendText(`${i18next.t("gameMode:classic")}`, false);
       break;
+    }
+
+    // If the player achieves a personal best in Endless, the mode text will be tinted similarly to SSS luck to celebrate their achievement.
+    if ((this.runInfo.gameMode === GameModes.ENDLESS || this.runInfo.gameMode === GameModes.SPLICED_ENDLESS) && this.runInfo.waveIndex === this.scene.gameData.gameStats.highestEndlessWave) {
+      modeText.appendText(` [${i18next.t("runHistory:personalBest")}]`);
+      modeText.setTint(0xffef5c, 0x47ff69, 0x6b6bff, 0xff6969);
     }
 
     // Duration + Money
@@ -866,7 +863,7 @@ export default class RunInfoUiHandler extends UiHandler {
   private buttonCycleOption(button: Button) {
     switch (button) {
     case Button.CYCLE_FORM:
-      if (this.isVictory) {
+      if (this.isVictory && this.pageMode !== RunInfoUiMode.HALL_OF_FAME) {
         if (!this.endCardContainer || !this.endCardContainer.visible) {
           this.createVictorySplash();
           this.endCardContainer.setVisible(true);
@@ -880,7 +877,7 @@ export default class RunInfoUiHandler extends UiHandler {
       }
       break;
     case Button.CYCLE_SHINY:
-      if (this.isVictory) {
+      if (this.isVictory && this.pageMode !== RunInfoUiMode.ENDING_ART) {
         if (!this.hallofFameContainer.visible) {
           this.hallofFameContainer.setVisible(true);
           this.pageMode = RunInfoUiMode.HALL_OF_FAME;
@@ -891,7 +888,7 @@ export default class RunInfoUiHandler extends UiHandler {
       }
       break;
     case Button.CYCLE_ABILITY:
-      if (this.runInfo.modifiers.length !== 0) {
+      if (this.runInfo.modifiers.length !== 0 && this.pageMode === RunInfoUiMode.MAIN) {
         if (this.partyVisibility) {
           this.showParty(false);
         } else {

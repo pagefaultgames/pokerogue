@@ -32,7 +32,7 @@ export class TurnInitPhase extends FieldPhase {
           this.scene.unshiftPhase(new GameOverPhase(this.scene));
         } else if (allowedPokemon.length >= this.scene.currentBattle.getBattlerCount() || (this.scene.currentBattle.double && !allowedPokemon[0].isActive(true))) {
           // If there is at least one pokemon in the back that is legal to switch in, force a switch.
-          p.switchOut(false);
+          p.switchOut();
         } else {
           // If there are no pokemon in the back but we're not game overing, just hide the pokemon.
           // This should only happen in double battles.

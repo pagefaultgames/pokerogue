@@ -31,7 +31,6 @@ import TargetSelectUiHandler from "#app/ui/target-select-ui-handler";
 import { Mode } from "#app/ui/ui";
 import { Button } from "#enums/buttons";
 import { ExpNotification } from "#enums/exp-notification";
-import { GameDataType } from "#enums/game-data-type";
 import { PlayerGender } from "#enums/player-gender";
 import { Species } from "#enums/species";
 import { generateStarter, waitUntil } from "#test/utils/gameManagerUtils";
@@ -48,6 +47,7 @@ import { MoveHelper } from "./helpers/moveHelper";
 import { OverridesHelper } from "./helpers/overridesHelper";
 import { SettingsHelper } from "./helpers/settingsHelper";
 import { ReloadHelper } from "./helpers/reloadHelper";
+import { ModifierHelper } from "./helpers/modifiersHelper";
 import { CheckSwitchPhase } from "#app/phases/check-switch-phase";
 import BattleMessageUiHandler from "#app/ui/battle-message-ui-handler";
 import { MysteryEncounterPhase } from "#app/phases/mystery-encounter-phases";
@@ -72,6 +72,7 @@ export default class GameManager {
   public readonly challengeMode: ChallengeModeHelper;
   public readonly settings: SettingsHelper;
   public readonly reload: ReloadHelper;
+  public readonly modifiers: ModifierHelper;
 
   /**
    * Creates an instance of GameManager.
@@ -94,6 +95,7 @@ export default class GameManager {
     this.challengeMode = new ChallengeModeHelper(this);
     this.settings = new SettingsHelper(this);
     this.reload = new ReloadHelper(this);
+    this.modifiers = new ModifierHelper(this);
 
     // Disables Mystery Encounters on all tests (can be overridden at test level)
     this.override.mysteryEncounterChance(0);
@@ -196,7 +198,7 @@ export default class GameManager {
   async runToMysteryEncounter(encounterType?: MysteryEncounterType, species?: Species[]) {
     if (!isNullOrUndefined(encounterType)) {
       this.override.disableTrainerWaves();
-      this.override.mysteryEncounter(encounterType!);
+      this.override.mysteryEncounter(encounterType);
     }
 
     await this.runToTitle();
@@ -301,7 +303,7 @@ export default class GameManager {
 
     vi.spyOn(enemy, "getNextMove").mockReturnValueOnce({
       move: moveId,
-      targets: (target && !legalTargets.multiple && legalTargets.targets.includes(target))
+      targets: (target !== undefined && !legalTargets.multiple && legalTargets.targets.includes(target))
         ? [target]
         : enemy.getNextTargets(moveId)
     });
@@ -371,13 +373,11 @@ export default class GameManager {
    * @returns A promise that resolves with the exported save data.
    */
   exportSaveToTest(): Promise<string> {
+    const saveKey = "x0i2O7WRiANTqPmZ";
     return new Promise(async (resolve) => {
-      await this.scene.gameData.saveAll(this.scene, true, true, true, true);
-      this.scene.reset(true);
-      await waitUntil(() => this.scene.ui?.getMode() === Mode.TITLE);
-      await this.scene.gameData.tryExportData(GameDataType.SESSION, 0);
-      await waitUntil(() => localStorage.hasOwnProperty("toExport"));
-      return resolve(localStorage.getItem("toExport")!); // TODO: is this bang correct?;
+      const sessionSaveData = this.scene.gameData.getSessionSaveData(this.scene);
+      const encryptedSaveData = AES.encrypt(JSON.stringify(sessionSaveData), saveKey).toString();
+      resolve(encryptedSaveData);
     });
   }
 

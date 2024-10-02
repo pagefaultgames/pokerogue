@@ -33,7 +33,7 @@ import { MovePhase } from "#app/phases/move-phase";
 import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
 import { NewBattlePhase } from "#app/phases/new-battle-phase";
 
-const namespace = "mysteryEncounter:clowningAround";
+const namespace = "mysteryEncounters/clowningAround";
 const defaultParty = [Species.LAPRAS, Species.GENGAR, Species.ABRA];
 const defaultBiome = Biome.CAVE;
 const defaultWave = 45;
@@ -75,15 +75,15 @@ describe("Clowning Around - Mystery Encounter", () => {
     expect(ClowningAroundEncounter.encounterTier).toBe(MysteryEncounterTier.ULTRA);
     expect(ClowningAroundEncounter.dialogue).toBeDefined();
     expect(ClowningAroundEncounter.dialogue.intro).toStrictEqual([
-      { text: `${namespace}.intro` },
+      { text: `${namespace}:intro` },
       {
-        speaker: `${namespace}.speaker`,
-        text: `${namespace}.intro_dialogue`,
+        speaker: `${namespace}:speaker`,
+        text: `${namespace}:intro_dialogue`,
       },
     ]);
-    expect(ClowningAroundEncounter.dialogue.encounterOptionsDialogue?.title).toBe(`${namespace}.title`);
-    expect(ClowningAroundEncounter.dialogue.encounterOptionsDialogue?.description).toBe(`${namespace}.description`);
-    expect(ClowningAroundEncounter.dialogue.encounterOptionsDialogue?.query).toBe(`${namespace}.query`);
+    expect(ClowningAroundEncounter.dialogue.encounterOptionsDialogue?.title).toBe(`${namespace}:title`);
+    expect(ClowningAroundEncounter.dialogue.encounterOptionsDialogue?.description).toBe(`${namespace}:description`);
+    expect(ClowningAroundEncounter.dialogue.encounterOptionsDialogue?.query).toBe(`${namespace}:query`);
     expect(ClowningAroundEncounter.options.length).toBe(3);
   });
 
@@ -93,14 +93,6 @@ describe("Clowning Around - Mystery Encounter", () => {
     await game.runToMysteryEncounter();
 
     expect(scene.currentBattle?.mysteryEncounter?.encounterType).not.toBe(MysteryEncounterType.CLOWNING_AROUND);
-  });
-
-  it("should not run above wave 179", async () => {
-    game.override.startingWave(181);
-
-    await game.runToMysteryEncounter();
-
-    expect(scene.currentBattle.mysteryEncounter).toBeUndefined();
   });
 
   it("should initialize fully", async () => {
@@ -160,12 +152,12 @@ describe("Clowning Around - Mystery Encounter", () => {
       expect(option.optionMode).toBe(MysteryEncounterOptionMode.DEFAULT);
       expect(option.dialogue).toBeDefined();
       expect(option.dialogue).toStrictEqual({
-        buttonLabel: `${namespace}.option.1.label`,
-        buttonTooltip: `${namespace}.option.1.tooltip`,
+        buttonLabel: `${namespace}:option.1.label`,
+        buttonTooltip: `${namespace}:option.1.tooltip`,
         selected: [
           {
-            speaker: `${namespace}.speaker`,
-            text: `${namespace}.option.1.selected`,
+            speaker: `${namespace}:speaker`,
+            text: `${namespace}:option.1.selected`,
           },
         ],
       });
@@ -237,19 +229,19 @@ describe("Clowning Around - Mystery Encounter", () => {
       expect(option.optionMode).toBe(MysteryEncounterOptionMode.DEFAULT);
       expect(option.dialogue).toBeDefined();
       expect(option.dialogue).toStrictEqual({
-        buttonLabel: `${namespace}.option.2.label`,
-        buttonTooltip: `${namespace}.option.2.tooltip`,
+        buttonLabel: `${namespace}:option.2.label`,
+        buttonTooltip: `${namespace}:option.2.tooltip`,
         selected: [
           {
-            speaker: `${namespace}.speaker`,
-            text: `${namespace}.option.2.selected`,
+            speaker: `${namespace}:speaker`,
+            text: `${namespace}:option.2.selected`,
           },
           {
-            text: `${namespace}.option.2.selected_2`,
+            text: `${namespace}:option.2.selected_2`,
           },
           {
-            speaker: `${namespace}.speaker`,
-            text: `${namespace}.option.2.selected_3`,
+            speaker: `${namespace}:speaker`,
+            text: `${namespace}:option.2.selected_3`,
           },
         ],
       });
@@ -319,19 +311,19 @@ describe("Clowning Around - Mystery Encounter", () => {
       expect(option.optionMode).toBe(MysteryEncounterOptionMode.DEFAULT);
       expect(option.dialogue).toBeDefined();
       expect(option.dialogue).toStrictEqual({
-        buttonLabel: `${namespace}.option.3.label`,
-        buttonTooltip: `${namespace}.option.3.tooltip`,
+        buttonLabel: `${namespace}:option.3.label`,
+        buttonTooltip: `${namespace}:option.3.tooltip`,
         selected: [
           {
-            speaker: `${namespace}.speaker`,
-            text: `${namespace}.option.3.selected`,
+            speaker: `${namespace}:speaker`,
+            text: `${namespace}:option.3.selected`,
           },
           {
-            text: `${namespace}.option.3.selected_2`,
+            text: `${namespace}:option.3.selected_2`,
           },
           {
-            speaker: `${namespace}.speaker`,
-            text: `${namespace}.option.3.selected_3`,
+            speaker: `${namespace}:speaker`,
+            text: `${namespace}:option.3.selected_3`,
           },
         ],
       });

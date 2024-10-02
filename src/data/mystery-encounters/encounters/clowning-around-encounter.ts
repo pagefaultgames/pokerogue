@@ -5,7 +5,7 @@ import { modifierTypes, PokemonHeldItemModifierType } from "#app/modifier/modifi
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { PartyMemberStrength } from "#enums/party-member-strength";
 import BattleScene from "#app/battle-scene";
-import MysteryEncounter, { MysteryEncounterBuilder } from "../mystery-encounter";
+import MysteryEncounter, { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-encounter";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { Species } from "#enums/species";
 import { TrainerType } from "#enums/trainer-type";
@@ -29,11 +29,12 @@ import { Moves } from "#enums/moves";
 import { EncounterBattleAnim } from "#app/data/battle-anims";
 import { MoveCategory } from "#app/data/move";
 import { MysteryEncounterPokemonData } from "#app/data/mystery-encounters/mystery-encounter-pokemon-data";
-import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES, GameModes } from "#app/game-mode";
+import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
 import { EncounterAnim } from "#enums/encounter-anims";
+import { Challenges } from "#enums/challenges";
 
 /** the i18n namespace for the encounter */
-const namespace = "mysteryEncounter:clowningAround";
+const namespace = "mysteryEncounters/clowningAround";
 
 const RANDOM_ABILITY_POOL = [
   Abilities.STURDY,
@@ -61,7 +62,7 @@ const RANDOM_ABILITY_POOL = [
 export const ClowningAroundEncounter: MysteryEncounter =
   MysteryEncounterBuilder.withEncounterType(MysteryEncounterType.CLOWNING_AROUND)
     .withEncounterTier(MysteryEncounterTier.ULTRA)
-    .withDisabledGameModes(GameModes.CHALLENGE)
+    .withDisallowedChallenges(Challenges.SINGLE_TYPE)
     .withSceneWaveRangeRequirement(80, CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES[1])
     .withAnimations(EncounterAnim.SMOKESCREEN)
     .withAutoHideIntroVisuals(false)
@@ -97,11 +98,11 @@ export const ClowningAroundEncounter: MysteryEncounter =
     ])
     .withIntroDialogue([
       {
-        text: `${namespace}.intro`,
+        text: `${namespace}:intro`,
       },
       {
-        text: `${namespace}.intro_dialogue`,
-        speaker: `${namespace}.speaker`
+        text: `${namespace}:intro_dialogue`,
+        speaker: `${namespace}:speaker`
       },
     ])
     .withOnInit((scene: BattleScene) => {
@@ -147,19 +148,19 @@ export const ClowningAroundEncounter: MysteryEncounter =
 
       return true;
     })
-    .withTitle(`${namespace}.title`)
-    .withDescription(`${namespace}.description`)
-    .withQuery(`${namespace}.query`)
+    .withTitle(`${namespace}:title`)
+    .withDescription(`${namespace}:description`)
+    .withQuery(`${namespace}:query`)
     .withOption(
       MysteryEncounterOptionBuilder
         .newOptionWithMode(MysteryEncounterOptionMode.DEFAULT)
         .withDialogue({
-          buttonLabel: `${namespace}.option.1.label`,
-          buttonTooltip: `${namespace}.option.1.tooltip`,
+          buttonLabel: `${namespace}:option.1.label`,
+          buttonTooltip: `${namespace}:option.1.tooltip`,
           selected: [
             {
-              text: `${namespace}.option.1.selected`,
-              speaker: `${namespace}.speaker`
+              text: `${namespace}:option.1.selected`,
+              speaker: `${namespace}:speaker`
             },
           ],
         })
@@ -198,7 +199,7 @@ export const ClowningAroundEncounter: MysteryEncounter =
           // After the battle, offer the player the opportunity to permanently swap ability
           const abilityWasSwapped = await handleSwapAbility(scene);
           if (abilityWasSwapped) {
-            await showEncounterText(scene, `${namespace}.option.1.ability_gained`);
+            await showEncounterText(scene, `${namespace}:option.1.ability_gained`);
           }
 
           // Play animations once ability swap is complete
@@ -221,19 +222,19 @@ export const ClowningAroundEncounter: MysteryEncounter =
       MysteryEncounterOptionBuilder
         .newOptionWithMode(MysteryEncounterOptionMode.DEFAULT)
         .withDialogue({
-          buttonLabel: `${namespace}.option.2.label`,
-          buttonTooltip: `${namespace}.option.2.tooltip`,
+          buttonLabel: `${namespace}:option.2.label`,
+          buttonTooltip: `${namespace}:option.2.tooltip`,
           selected: [
             {
-              text: `${namespace}.option.2.selected`,
-              speaker: `${namespace}.speaker`
+              text: `${namespace}:option.2.selected`,
+              speaker: `${namespace}:speaker`
             },
             {
-              text: `${namespace}.option.2.selected_2`,
+              text: `${namespace}:option.2.selected_2`,
             },
             {
-              text: `${namespace}.option.2.selected_3`,
-              speaker: `${namespace}.speaker`
+              text: `${namespace}:option.2.selected_3`,
+              speaker: `${namespace}:speaker`
             },
           ],
         })
@@ -246,12 +247,12 @@ export const ClowningAroundEncounter: MysteryEncounter =
           const party = scene.getParty();
           let mostHeldItemsPokemon = party[0];
           let count = mostHeldItemsPokemon.getHeldItems()
-            .filter(m => m.isTransferrable && !(m instanceof BerryModifier))
+            .filter(m => m.isTransferable && !(m instanceof BerryModifier))
             .reduce((v, m) => v + m.stackCount, 0);
 
           party.forEach(pokemon => {
             const nextCount = pokemon.getHeldItems()
-              .filter(m => m.isTransferrable && !(m instanceof BerryModifier))
+              .filter(m => m.isTransferable && !(m instanceof BerryModifier))
               .reduce((v, m) => v + m.stackCount, 0);
             if (nextCount > count) {
               mostHeldItemsPokemon = pokemon;
@@ -276,7 +277,7 @@ export const ClowningAroundEncounter: MysteryEncounter =
           // Shuffle Transferable held items in the same tier (only shuffles Ultra and Rogue atm)
           let numUltra = 0;
           let numRogue = 0;
-          items.filter(m => m.isTransferrable && !(m instanceof BerryModifier))
+          items.filter(m => m.isTransferable && !(m instanceof BerryModifier))
             .forEach(m => {
               const type = m.type.withTierFromPool();
               const tier = type.tier ?? ModifierTier.ULTRA;
@@ -307,19 +308,19 @@ export const ClowningAroundEncounter: MysteryEncounter =
       MysteryEncounterOptionBuilder
         .newOptionWithMode(MysteryEncounterOptionMode.DEFAULT)
         .withDialogue({
-          buttonLabel: `${namespace}.option.3.label`,
-          buttonTooltip: `${namespace}.option.3.tooltip`,
+          buttonLabel: `${namespace}:option.3.label`,
+          buttonTooltip: `${namespace}:option.3.tooltip`,
           selected: [
             {
-              text: `${namespace}.option.3.selected`,
-              speaker: `${namespace}.speaker`
+              text: `${namespace}:option.3.selected`,
+              speaker: `${namespace}:speaker`
             },
             {
-              text: `${namespace}.option.3.selected_2`,
+              text: `${namespace}:option.3.selected_2`,
             },
             {
-              text: `${namespace}.option.3.selected_3`,
-              speaker: `${namespace}.speaker`
+              text: `${namespace}:option.3.selected_3`,
+              speaker: `${namespace}:speaker`
             },
           ],
         })
@@ -335,8 +336,8 @@ export const ClowningAroundEncounter: MysteryEncounter =
               .filter(move => move && !originalTypes.includes(move.getMove().type) && move.getMove().category !== MoveCategory.STATUS)
               .map(move => move!.getMove().type);
             if (priorityTypes?.length > 0) {
-              priorityTypes = [...new Set(priorityTypes)];
-              randSeedShuffle(priorityTypes);
+              priorityTypes = [...new Set(priorityTypes)].sort();
+              priorityTypes = randSeedShuffle(priorityTypes);
             }
 
             const newTypes = [originalTypes[0]];
@@ -349,10 +350,18 @@ export const ClowningAroundEncounter: MysteryEncounter =
               }
             }
             newTypes.push(secondType);
+
+            // Apply the type changes (to both base and fusion, if pokemon is fused)
             if (!pokemon.mysteryEncounterPokemonData) {
               pokemon.mysteryEncounterPokemonData = new MysteryEncounterPokemonData();
             }
             pokemon.mysteryEncounterPokemonData.types = newTypes;
+            if (pokemon.isFusion()) {
+              if (!pokemon.fusionMysteryEncounterPokemonData) {
+                pokemon.fusionMysteryEncounterPokemonData = new MysteryEncounterPokemonData();
+              }
+              pokemon.fusionMysteryEncounterPokemonData.types = newTypes;
+            }
           }
         })
         .withOptionPhase(async (scene: BattleScene) => {
@@ -368,15 +377,15 @@ export const ClowningAroundEncounter: MysteryEncounter =
     )
     .withOutroDialogue([
       {
-        text: `${namespace}.outro`,
+        text: `${namespace}:outro`,
       },
     ])
     .build();
 
 async function handleSwapAbility(scene: BattleScene) {
   return new Promise<boolean>(async resolve => {
-    await showEncounterDialogue(scene, `${namespace}.option.1.apply_ability_dialogue`, `${namespace}.speaker`);
-    await showEncounterText(scene, `${namespace}.option.1.apply_ability_message`);
+    await showEncounterDialogue(scene, `${namespace}:option.1.apply_ability_dialogue`, `${namespace}:speaker`);
+    await showEncounterText(scene, `${namespace}:option.1.apply_ability_message`);
 
     scene.ui.setMode(Mode.MESSAGE).then(() => {
       displayYesNoOptions(scene, resolve);
@@ -385,7 +394,7 @@ async function handleSwapAbility(scene: BattleScene) {
 }
 
 function displayYesNoOptions(scene: BattleScene, resolve) {
-  showEncounterText(scene, `${namespace}.option.1.ability_prompt`, null, 500, false);
+  showEncounterText(scene, `${namespace}:option.1.ability_prompt`, null, 500, false);
   const fullOptions = [
     {
       label: i18next.t("menu:yes"),
@@ -415,10 +424,17 @@ function onYesAbilitySwap(scene: BattleScene, resolve) {
   const onPokemonSelected = (pokemon: PlayerPokemon) => {
     // Do ability swap
     const encounter = scene.currentBattle.mysteryEncounter!;
-    if (!pokemon.mysteryEncounterPokemonData) {
-      pokemon.mysteryEncounterPokemonData = new MysteryEncounterPokemonData();
+    if (pokemon.isFusion()) {
+      if (!pokemon.fusionMysteryEncounterPokemonData) {
+        pokemon.fusionMysteryEncounterPokemonData = new MysteryEncounterPokemonData();
+      }
+      pokemon.fusionMysteryEncounterPokemonData.ability = encounter.misc.ability;
+    } else {
+      if (!pokemon.mysteryEncounterPokemonData) {
+        pokemon.mysteryEncounterPokemonData = new MysteryEncounterPokemonData();
+      }
+      pokemon.mysteryEncounterPokemonData.ability = encounter.misc.ability;
     }
-    pokemon.mysteryEncounterPokemonData.ability = encounter.misc.ability;
     encounter.setDialogueToken("chosenPokemon", pokemon.getNameToRender());
     scene.ui.setMode(Mode.MESSAGE).then(() => resolve(true));
   };
@@ -478,9 +494,13 @@ function generateItemsOfTier(scene: BattleScene, pokemon: PlayerPokemon, numItem
   }
 
   for (let i = 0; i < numItems; i++) {
+    if (pool.length === 0) {
+      // Stop generating new items if somehow runs out of items to spawn
+      return;
+    }
     const randIndex = randSeedInt(pool.length);
     const newItemType = pool[randIndex];
-    let newMod;
+    let newMod: PokemonHeldItemModifierType;
     if (tier === "Berries") {
       newMod = generateModifierType(scene, modifierTypes.BERRY, [newItemType[0]]) as PokemonHeldItemModifierType;
     } else {

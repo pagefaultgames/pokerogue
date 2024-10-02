@@ -1,7 +1,7 @@
 import { Modifier } from "typescript";
 import BattleScene from "../battle-scene";
 import { TurnHeldItemTransferModifier } from "../modifier/modifier";
-import { pokemonEvolutions } from "#app/data/pokemon-evolutions";
+import { pokemonEvolutions } from "#app/data/balance/pokemon-evolutions";
 import i18next from "i18next";
 import * as Utils from "../utils";
 import { PlayerGender } from "#enums/player-gender";
@@ -279,6 +279,8 @@ export function getAchievementDescription(localizationKey: string): string {
     return i18next.t("achv:FRESH_START.description", { context: genderStr });
   case "INVERSE_BATTLE":
     return i18next.t("achv:INVERSE_BATTLE.description", { context: genderStr });
+  case "BREEDERS_IN_SPACE":
+    return i18next.t("achv:BREEDERS_IN_SPACE.description", { context: genderStr });
   default:
     return "";
   }
@@ -356,6 +358,7 @@ export const achvs = {
   MONO_FAIRY: new ChallengeAchv("MONO_FAIRY", "", "MONO_FAIRY.description", "fairy_feather", 100, (c, scene) => c instanceof SingleTypeChallenge && c.value === 18 && !scene.gameMode.challenges.some(c => c.id === Challenges.INVERSE_BATTLE && c.value > 0)),
   FRESH_START: new ChallengeAchv("FRESH_START", "", "FRESH_START.description", "reviver_seed", 100, (c, scene) => c instanceof FreshStartChallenge && c.value > 0 && !scene.gameMode.challenges.some(c => c.id === Challenges.INVERSE_BATTLE && c.value > 0)),
   INVERSE_BATTLE: new ChallengeAchv("INVERSE_BATTLE", "", "INVERSE_BATTLE.description", "inverse", 100, c => c instanceof InverseBattleChallenge && c.value > 0),
+  BREEDERS_IN_SPACE: new Achv("BREEDERS_IN_SPACE", "", "BREEDERS_IN_SPACE.description", "moon_stone", 100).setSecret(),
 };
 
 export function initAchievements() {

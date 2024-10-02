@@ -1,15 +1,15 @@
 import Phaser from "phaser";
-import BattleScene from "../battle-scene";
-import { TextStyle, addTextObject } from "./text";
-import { Mode } from "./ui";
-import UiHandler from "./ui-handler";
-import { addWindow } from "./ui-theme";
-import * as Utils from "../utils";
-import { DexAttr, GameData } from "../system/game-data";
-import { speciesStarters } from "../data/pokemon-species";
-import {Button} from "#enums/buttons";
+import BattleScene from "#app/battle-scene";
+import { TextStyle, addTextObject } from "#app/ui/text";
+import { Mode } from "#app/ui/ui";
+import UiHandler from "#app/ui/ui-handler";
+import { addWindow } from "#app/ui/ui-theme";
+import * as Utils from "#app/utils";
+import { DexAttr, GameData } from "#app/system/game-data";
+import { speciesStarterCosts } from "#app/data/balance/starters";
+import { Button } from "#enums/buttons";
 import i18next from "i18next";
-import { UiTheme } from "#app/enums/ui-theme";
+import { UiTheme } from "#enums/ui-theme";
 
 interface DisplayStat {
   label_key?: string;
@@ -34,14 +34,14 @@ const displayStats: DisplayStats = {
     label_key: "starters",
     sourceFunc: gameData => {
       const starterCount = gameData.getStarterCount(d => !!d.caughtAttr);
-      return `${starterCount} (${Math.floor((starterCount / Object.keys(speciesStarters).length) * 1000) / 10}%)`;
+      return `${starterCount} (${Math.floor((starterCount / Object.keys(speciesStarterCosts).length) * 1000) / 10}%)`;
     }
   },
   shinyStartersUnlocked: {
     label_key: "shinyStarters",
     sourceFunc: gameData => {
       const starterCount = gameData.getStarterCount(d => !!(d.caughtAttr & DexAttr.SHINY));
-      return `${starterCount} (${Math.floor((starterCount / Object.keys(speciesStarters).length) * 1000) / 10}%)`;
+      return `${starterCount} (${Math.floor((starterCount / Object.keys(speciesStarterCosts).length) * 1000) / 10}%)`;
     }
   },
   dexSeen: {

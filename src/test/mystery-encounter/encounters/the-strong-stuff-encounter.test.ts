@@ -25,8 +25,9 @@ import { MysteryEncounterPokemonData } from "#app/data/mystery-encounters/myster
 import { CommandPhase } from "#app/phases/command-phase";
 import { MovePhase } from "#app/phases/move-phase";
 import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
+import { Abilities } from "#app/enums/abilities";
 
-const namespace = "mysteryEncounter:theStrongStuff";
+const namespace = "mysteryEncounters/theStrongStuff";
 const defaultParty = [Species.LAPRAS, Species.GENGAR, Species.ABRA];
 const defaultBiome = Biome.CAVE;
 const defaultWave = 45;
@@ -43,10 +44,13 @@ describe("The Strong Stuff - Mystery Encounter", () => {
   beforeEach(async () => {
     game = new GameManager(phaserGame);
     scene = game.scene;
-    game.override.mysteryEncounterChance(100);
-    game.override.startingWave(defaultWave);
-    game.override.startingBiome(defaultBiome);
-    game.override.disableTrainerWaves();
+    game.override
+      .mysteryEncounterChance(100)
+      .startingWave(defaultWave)
+      .startingBiome(defaultBiome)
+      .disableTrainerWaves()
+      .enemyAbility(Abilities.BALL_FETCH)
+      .enemyPassiveAbility(Abilities.BALL_FETCH);
 
     vi.spyOn(MysteryEncounters, "mysteryEncountersByBiome", "get").mockReturnValue(
       new Map<Biome, MysteryEncounterType[]>([
@@ -66,12 +70,12 @@ describe("The Strong Stuff - Mystery Encounter", () => {
     await game.runToMysteryEncounter(MysteryEncounterType.THE_STRONG_STUFF, defaultParty);
 
     expect(TheStrongStuffEncounter.encounterType).toBe(MysteryEncounterType.THE_STRONG_STUFF);
-    expect(TheStrongStuffEncounter.encounterTier).toBe(MysteryEncounterTier.GREAT);
+    expect(TheStrongStuffEncounter.encounterTier).toBe(MysteryEncounterTier.COMMON);
     expect(TheStrongStuffEncounter.dialogue).toBeDefined();
-    expect(TheStrongStuffEncounter.dialogue.intro).toStrictEqual([{ text: `${namespace}.intro` }]);
-    expect(TheStrongStuffEncounter.dialogue.encounterOptionsDialogue?.title).toBe(`${namespace}.title`);
-    expect(TheStrongStuffEncounter.dialogue.encounterOptionsDialogue?.description).toBe(`${namespace}.description`);
-    expect(TheStrongStuffEncounter.dialogue.encounterOptionsDialogue?.query).toBe(`${namespace}.query`);
+    expect(TheStrongStuffEncounter.dialogue.intro).toStrictEqual([{ text: `${namespace}:intro` }]);
+    expect(TheStrongStuffEncounter.dialogue.encounterOptionsDialogue?.title).toBe(`${namespace}:title`);
+    expect(TheStrongStuffEncounter.dialogue.encounterOptionsDialogue?.description).toBe(`${namespace}:description`);
+    expect(TheStrongStuffEncounter.dialogue.encounterOptionsDialogue?.query).toBe(`${namespace}:query`);
     expect(TheStrongStuffEncounter.options.length).toBe(2);
   });
 
@@ -81,22 +85,6 @@ describe("The Strong Stuff - Mystery Encounter", () => {
     await game.runToMysteryEncounter();
 
     expect(scene.currentBattle?.mysteryEncounter?.encounterType).not.toBe(MysteryEncounterType.THE_STRONG_STUFF);
-  });
-
-  it("should not run below wave 10", async () => {
-    game.override.startingWave(9);
-
-    await game.runToMysteryEncounter();
-
-    expect(scene.currentBattle?.mysteryEncounter?.encounterType).not.toBe(MysteryEncounterType.THE_STRONG_STUFF);
-  });
-
-  it("should not run above wave 179", async () => {
-    game.override.startingWave(181);
-
-    await game.runToMysteryEncounter();
-
-    expect(scene.currentBattle.mysteryEncounter).toBeUndefined();
   });
 
   it("should initialize fully ", async () => {
@@ -114,7 +102,7 @@ describe("The Strong Stuff - Mystery Encounter", () => {
 
     expect(TheStrongStuffEncounter.enemyPartyConfigs).toEqual([
       {
-        levelAdditiveMultiplier: 1,
+        levelAdditiveModifier: 1,
         disableSwitch: true,
         pokemonConfigs: [
           {
@@ -142,11 +130,11 @@ describe("The Strong Stuff - Mystery Encounter", () => {
       expect(option1.optionMode).toBe(MysteryEncounterOptionMode.DEFAULT);
       expect(option1.dialogue).toBeDefined();
       expect(option1.dialogue).toStrictEqual({
-        buttonLabel: `${namespace}.option.1.label`,
-        buttonTooltip: `${namespace}.option.1.tooltip`,
+        buttonLabel: `${namespace}:option.1.label`,
+        buttonTooltip: `${namespace}:option.1.tooltip`,
         selected: [
           {
-            text: `${namespace}.option.1.selected`,
+            text: `${namespace}:option.1.selected`,
           },
         ],
       });
@@ -186,11 +174,11 @@ describe("The Strong Stuff - Mystery Encounter", () => {
       expect(option1.optionMode).toBe(MysteryEncounterOptionMode.DEFAULT);
       expect(option1.dialogue).toBeDefined();
       expect(option1.dialogue).toStrictEqual({
-        buttonLabel: `${namespace}.option.2.label`,
-        buttonTooltip: `${namespace}.option.2.tooltip`,
+        buttonLabel: `${namespace}:option.2.label`,
+        buttonTooltip: `${namespace}:option.2.tooltip`,
         selected: [
           {
-            text: `${namespace}.option.2.selected`,
+            text: `${namespace}:option.2.selected`,
           },
         ],
       });

@@ -1,13 +1,13 @@
 import { leaveEncounterWithoutBattle, selectPokemonForOption, setEncounterRewards, transitionMysteryEncounterIntroVisuals, updatePlayerMoney, } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import BattleScene from "#app/battle-scene";
-import MysteryEncounter, { MysteryEncounterBuilder } from "../mystery-encounter";
+import MysteryEncounter, { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-encounter";
 import { MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/mystery-encounter-option";
 import { TrainerSlot } from "#app/data/trainer-config";
 import Pokemon, { FieldPosition, PlayerPokemon } from "#app/field/pokemon";
 import { getPokemonSpecies } from "#app/data/pokemon-species";
 import { MoneyRequirement } from "#app/data/mystery-encounters/mystery-encounter-requirements";
-import { getEncounterText, queueEncounterMessage, showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
+import { queueEncounterMessage, showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { Species } from "#enums/species";
@@ -22,9 +22,10 @@ import { PostSummonPhase } from "#app/phases/post-summon-phase";
 import { modifierTypes } from "#app/modifier/modifier-type";
 import { Nature } from "#enums/nature";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
+import { isPokemonValidForEncounterOptionSelection } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
 
 /** the i18n namespace for the encounter */
-const namespace = "mysteryEncounter:funAndGames";
+const namespace = "mysteryEncounters/funAndGames";
 
 /**
  * Fun and Games! encounter.
@@ -43,16 +44,17 @@ export const FunAndGamesEncounter: MysteryEncounter =
     .withSkipEnemyBattleTurns(true)
     // Will skip COMMAND selection menu and go straight to FIGHT (move select) menu
     .withSkipToFightInput(true)
+    .withFleeAllowed(false)
     .withIntroSpriteConfigs([
       {
-        spriteKey: "carnival_game",
+        spriteKey: "fun_and_games_game",
         fileRoot: "mystery-encounters",
         hasShadow: false,
         x: 0,
         y: 6,
       },
       {
-        spriteKey: "carnival_wobbuffet",
+        spriteKey: "fun_and_games_wobbuffet",
         fileRoot: "mystery-encounters",
         hasShadow: true,
         x: -28,
@@ -60,7 +62,7 @@ export const FunAndGamesEncounter: MysteryEncounter =
         yShadow: 6
       },
       {
-        spriteKey: "carnival_man",
+        spriteKey: "fun_and_games_man",
         fileRoot: "mystery-encounters",
         hasShadow: true,
         x: 40,
@@ -70,13 +72,13 @@ export const FunAndGamesEncounter: MysteryEncounter =
     ])
     .withIntroDialogue([
       {
-        speaker: `${namespace}.speaker`,
-        text: `${namespace}.intro_dialogue`,
+        speaker: `${namespace}:speaker`,
+        text: `${namespace}:intro_dialogue`,
       },
     ])
-    .withTitle(`${namespace}.title`)
-    .withDescription(`${namespace}.description`)
-    .withQuery(`${namespace}.query`)
+    .withTitle(`${namespace}:title`)
+    .withDescription(`${namespace}:description`)
+    .withQuery(`${namespace}:query`)
     .withOnInit((scene: BattleScene) => {
       const encounter = scene.currentBattle.mysteryEncounter!;
       scene.loadBgm("mystery_encounter_fun_and_games", "mystery_encounter_fun_and_games.mp3");
@@ -84,23 +86,18 @@ export const FunAndGamesEncounter: MysteryEncounter =
       return true;
     })
     .withOnVisualsStart((scene: BattleScene) => {
-      // Change the bgm
-      scene.fadeOutBgm(2000, false);
-      scene.time.delayedCall(2000, () => {
-        scene.playBgm("mystery_encounter_fun_and_games");
-      });
-
+      scene.fadeAndSwitchBgm("mystery_encounter_fun_and_games");
       return true;
     })
     .withOption(MysteryEncounterOptionBuilder
       .newOptionWithMode(MysteryEncounterOptionMode.DISABLED_OR_DEFAULT)
       .withSceneRequirement(new MoneyRequirement(0, 1.5)) // Cost equal to 1 Max Potion
       .withDialogue({
-        buttonLabel: `${namespace}.option.1.label`,
-        buttonTooltip: `${namespace}.option.1.tooltip`,
+        buttonLabel: `${namespace}:option.1.label`,
+        buttonTooltip: `${namespace}:option.1.tooltip`,
         selected: [
           {
-            text: `${namespace}.option.1.selected`,
+            text: `${namespace}:option.1.selected`,
           },
         ],
       })
@@ -115,12 +112,7 @@ export const FunAndGamesEncounter: MysteryEncounter =
 
         // Only Pokemon that are not KOed/legal can be selected
         const selectableFilter = (pokemon: Pokemon) => {
-          const meetsReqs = pokemon.isAllowedInBattle();
-          if (!meetsReqs) {
-            return getEncounterText(scene, `${namespace}.invalid_selection`) ?? null;
-          }
-
-          return null;
+          return isPokemonValidForEncounterOptionSelection(pokemon, scene, `${namespace}:invalid_selection`);
         };
 
         return selectPokemonForOption(scene, onPokemonSelected, undefined, selectableFilter);
@@ -149,11 +141,11 @@ export const FunAndGamesEncounter: MysteryEncounter =
     )
     .withSimpleOption(
       {
-        buttonLabel: `${namespace}.option.2.label`,
-        buttonTooltip: `${namespace}.option.2.tooltip`,
+        buttonLabel: `${namespace}:option.2.label`,
+        buttonTooltip: `${namespace}:option.2.tooltip`,
         selected: [
           {
-            text: `${namespace}.option.2.selected`,
+            text: `${namespace}:option.2.selected`,
           },
         ],
       },
@@ -175,7 +167,9 @@ async function summonPlayerPokemon(scene: BattleScene) {
     const party = scene.getParty();
     const chosenIndex = party.indexOf(playerPokemon);
     if (chosenIndex !== 0) {
-      [party[chosenIndex], party[0]] = [party[chosenIndex], party[chosenIndex]];
+      const leadPokemon = party[0];
+      party[0] = playerPokemon;
+      party[chosenIndex] = leadPokemon;
     }
 
     // Do trainer summon animation
@@ -237,7 +231,7 @@ function handleLoseMinigame(scene: BattleScene) {
       scene.currentBattle.enemyParty = [];
       scene.currentBattle.mysteryEncounter!.doContinueEncounter = undefined;
       leaveEncounterWithoutBattle(scene, true);
-      await showEncounterText(scene, `${namespace}.ko`);
+      await showEncounterText(scene, `${namespace}:ko`);
       const reviveCost = scene.getWaveMoneyAmount(1.5);
       updatePlayerMoney(scene, -reviveCost, true, false);
     }
@@ -263,19 +257,19 @@ function handleNextTurn(scene: BattleScene) {
     if (healthRatio < 0.03) {
       // Grand prize
       setEncounterRewards(scene, { guaranteedModifierTypeFuncs: [modifierTypes.MULTI_LENS], fillRemaining: false });
-      resultMessageKey = `${namespace}.best_result`;
+      resultMessageKey = `${namespace}:best_result`;
     } else if (healthRatio < 0.15) {
       // 2nd prize
       setEncounterRewards(scene, { guaranteedModifierTypeFuncs: [modifierTypes.SCOPE_LENS], fillRemaining: false });
-      resultMessageKey = `${namespace}.great_result`;
+      resultMessageKey = `${namespace}:great_result`;
     } else if (healthRatio < 0.33) {
       // 3rd prize
       setEncounterRewards(scene, { guaranteedModifierTypeFuncs: [modifierTypes.WIDE_LENS], fillRemaining: false });
-      resultMessageKey = `${namespace}.good_result`;
+      resultMessageKey = `${namespace}:good_result`;
     } else {
       // No prize
       isHealPhase = true;
-      resultMessageKey = `${namespace}.bad_result`;
+      resultMessageKey = `${namespace}:bad_result`;
     }
 
     // End the battle
@@ -285,7 +279,7 @@ function handleNextTurn(scene: BattleScene) {
     scene.currentBattle.mysteryEncounter!.doContinueEncounter = undefined;
     leaveEncounterWithoutBattle(scene, isHealPhase);
     // Must end the TurnInit phase prematurely so battle phases aren't added to queue
-    queueEncounterMessage(scene, `${namespace}.end_game`);
+    queueEncounterMessage(scene, `${namespace}:end_game`);
     queueEncounterMessage(scene, resultMessageKey);
 
     // Skip remainder of TurnInitPhase
@@ -293,9 +287,9 @@ function handleNextTurn(scene: BattleScene) {
   } else {
     if (encounter.misc.turnsRemaining < 3) {
       // Display charging messages on turns that aren't the initial turn
-      queueEncounterMessage(scene, `${namespace}.charging_continue`);
+      queueEncounterMessage(scene, `${namespace}:charging_continue`);
     }
-    queueEncounterMessage(scene, `${namespace}.turn_remaining_${encounter.misc.turnsRemaining}`);
+    queueEncounterMessage(scene, `${namespace}:turn_remaining_${encounter.misc.turnsRemaining}`);
     encounter.misc.turnsRemaining--;
   }
 

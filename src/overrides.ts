@@ -6,12 +6,13 @@ import { PokeballType } from "#enums/pokeball";
 import { Species } from "#enums/species";
 import { StatusEffect } from "#enums/status-effect";
 import { TimeOfDay } from "#enums/time-of-day";
-import { VariantTier } from "#enums/variant-tiers";
+import { VariantTier } from "#enums/variant-tier";
 import { WeatherType } from "#enums/weather-type";
 import { type PokeballCounts } from "./battle-scene";
 import { Gender } from "./data/gender";
 import { Variant } from "./data/variant";
 import { type ModifierOverride } from "./modifier/modifier-type";
+import { Unlockables } from "./system/unlockables";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 
@@ -70,6 +71,10 @@ class DefaultOverrides {
       [PokeballType.MASTER_BALL]: 0,
     },
   };
+  /** Forces an item to be UNLOCKED */
+  readonly ITEM_UNLOCK_OVERRIDE: Unlockables[] = [];
+  /** Set to `true` to show all tutorials */
+  readonly BYPASS_TUTORIAL_SKIP_OVERRIDE: boolean = false;
 
   // ----------------
   // PLAYER OVERRIDES

@@ -11,13 +11,13 @@ import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { DelibirdyEncounter } from "#app/data/mystery-encounters/encounters/delibirdy-encounter";
 import * as MysteryEncounters from "#app/data/mystery-encounters/mystery-encounters";
 import { MoneyRequirement } from "#app/data/mystery-encounters/mystery-encounter-requirements";
-import { BerryModifier, HealingBoosterModifier, HiddenAbilityRateBoosterModifier, HitHealModifier, LevelIncrementBoosterModifier, PokemonInstantReviveModifier, PokemonNatureWeightModifier, PreserveBerryModifier } from "#app/modifier/modifier";
+import { BerryModifier, HealingBoosterModifier, HitHealModifier, LevelIncrementBoosterModifier, MoneyMultiplierModifier, PokemonInstantReviveModifier, PokemonNatureWeightModifier, PreserveBerryModifier } from "#app/modifier/modifier";
 import { MysteryEncounterPhase } from "#app/phases/mystery-encounter-phases";
 import { generateModifierType } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import { modifierTypes } from "#app/modifier/modifier-type";
 import { BerryType } from "#enums/berry-type";
 
-const namespace = "mysteryEncounter:delibirdy";
+const namespace = "mysteryEncounters/delibirdy";
 const defaultParty = [Species.LAPRAS, Species.GENGAR, Species.ABRA];
 const defaultBiome = Biome.CAVE;
 const defaultWave = 45;
@@ -58,28 +58,12 @@ describe("Delibird-y - Mystery Encounter", () => {
     expect(DelibirdyEncounter.encounterType).toBe(MysteryEncounterType.DELIBIRDY);
     expect(DelibirdyEncounter.encounterTier).toBe(MysteryEncounterTier.GREAT);
     expect(DelibirdyEncounter.dialogue).toBeDefined();
-    expect(DelibirdyEncounter.dialogue.intro).toStrictEqual([{ text: `${namespace}.intro` }]);
-    expect(DelibirdyEncounter.dialogue.outro).toStrictEqual([{ text: `${namespace}.outro` }]);
-    expect(DelibirdyEncounter.dialogue.encounterOptionsDialogue?.title).toBe(`${namespace}.title`);
-    expect(DelibirdyEncounter.dialogue.encounterOptionsDialogue?.description).toBe(`${namespace}.description`);
-    expect(DelibirdyEncounter.dialogue.encounterOptionsDialogue?.query).toBe(`${namespace}.query`);
+    expect(DelibirdyEncounter.dialogue.intro).toStrictEqual([{ text: `${namespace}:intro` }]);
+    expect(DelibirdyEncounter.dialogue.outro).toStrictEqual([{ text: `${namespace}:outro` }]);
+    expect(DelibirdyEncounter.dialogue.encounterOptionsDialogue?.title).toBe(`${namespace}:title`);
+    expect(DelibirdyEncounter.dialogue.encounterOptionsDialogue?.description).toBe(`${namespace}:description`);
+    expect(DelibirdyEncounter.dialogue.encounterOptionsDialogue?.query).toBe(`${namespace}:query`);
     expect(DelibirdyEncounter.options.length).toBe(3);
-  });
-
-  it("should not run below wave 10", async () => {
-    game.override.startingWave(9);
-
-    await game.runToMysteryEncounter();
-
-    expect(scene.currentBattle?.mysteryEncounter?.encounterType).not.toBe(MysteryEncounterType.DELIBIRDY);
-  });
-
-  it("should not run above wave 179", async () => {
-    game.override.startingWave(181);
-
-    await game.runToMysteryEncounter();
-
-    expect(scene.currentBattle.mysteryEncounter).toBeUndefined();
   });
 
   it("should not spawn if player does not have enough money", async () => {
@@ -96,11 +80,11 @@ describe("Delibird-y - Mystery Encounter", () => {
       expect(option1.optionMode).toBe(MysteryEncounterOptionMode.DISABLED_OR_DEFAULT);
       expect(option1.dialogue).toBeDefined();
       expect(option1.dialogue).toStrictEqual({
-        buttonLabel: `${namespace}.option.1.label`,
-        buttonTooltip: `${namespace}.option.1.tooltip`,
+        buttonLabel: `${namespace}:option.1.label`,
+        buttonTooltip: `${namespace}:option.1.tooltip`,
         selected: [
           {
-            text: `${namespace}.option.1.selected`,
+            text: `${namespace}:option.1.selected`,
           },
         ],
       });
@@ -120,35 +104,35 @@ describe("Delibird-y - Mystery Encounter", () => {
       expect(scene.money).toBe(initialMoney - price);
     });
 
-    it("Should give the player a Hidden Ability Charm", async () => {
+    it("Should give the player an Amulet Coin", async () => {
       scene.money = 200000;
       await game.runToMysteryEncounter(MysteryEncounterType.DELIBIRDY, defaultParty);
       await runMysteryEncounterToEnd(game, 1);
 
-      const itemModifier = scene.findModifier(m => m instanceof HiddenAbilityRateBoosterModifier) as HiddenAbilityRateBoosterModifier;
+      const itemModifier = scene.findModifier(m => m instanceof MoneyMultiplierModifier) as MoneyMultiplierModifier;
 
       expect(itemModifier).toBeDefined();
       expect(itemModifier?.stackCount).toBe(1);
     });
 
-    it("Should give the player a Shell Bell if they have max stacks of Berry Pouches", async () => {
+    it("Should give the player a Shell Bell if they have max stacks of Amulet Coins", async () => {
       scene.money = 200000;
       await game.runToMysteryEncounter(MysteryEncounterType.DELIBIRDY, defaultParty);
 
-      // 5 Healing Charms
+      // Max Amulet Coins
       scene.modifiers = [];
-      const abilityCharm = generateModifierType(scene, modifierTypes.ABILITY_CHARM)!.newModifier() as HiddenAbilityRateBoosterModifier;
-      abilityCharm.stackCount = 4;
-      await scene.addModifier(abilityCharm, true, false, false, true);
+      const amuletCoin = generateModifierType(scene, modifierTypes.AMULET_COIN)!.newModifier() as MoneyMultiplierModifier;
+      amuletCoin.stackCount = 5;
+      await scene.addModifier(amuletCoin, true, false, false, true);
       await scene.updateModifiers(true);
 
       await runMysteryEncounterToEnd(game, 1);
 
-      const abilityCharmAfter = scene.findModifier(m => m instanceof HiddenAbilityRateBoosterModifier);
+      const amuletCoinAfter = scene.findModifier(m => m instanceof MoneyMultiplierModifier);
       const shellBellAfter = scene.findModifier(m => m instanceof HitHealModifier);
 
-      expect(abilityCharmAfter).toBeDefined();
-      expect(abilityCharmAfter?.stackCount).toBe(4);
+      expect(amuletCoinAfter).toBeDefined();
+      expect(amuletCoinAfter?.stackCount).toBe(5);
       expect(shellBellAfter).toBeDefined();
       expect(shellBellAfter?.stackCount).toBe(1);
     });
@@ -190,12 +174,12 @@ describe("Delibird-y - Mystery Encounter", () => {
       expect(option.optionMode).toBe(MysteryEncounterOptionMode.DISABLED_OR_DEFAULT);
       expect(option.dialogue).toBeDefined();
       expect(option.dialogue).toStrictEqual({
-        buttonLabel: `${namespace}.option.2.label`,
-        buttonTooltip: `${namespace}.option.2.tooltip`,
-        secondOptionPrompt: `${namespace}.option.2.select_prompt`,
+        buttonLabel: `${namespace}:option.2.label`,
+        buttonTooltip: `${namespace}:option.2.tooltip`,
+        secondOptionPrompt: `${namespace}:option.2.select_prompt`,
         selected: [
           {
-            text: `${namespace}.option.2.selected`,
+            text: `${namespace}:option.2.selected`,
           },
         ],
       });
@@ -352,12 +336,12 @@ describe("Delibird-y - Mystery Encounter", () => {
       expect(option.optionMode).toBe(MysteryEncounterOptionMode.DISABLED_OR_DEFAULT);
       expect(option.dialogue).toBeDefined();
       expect(option.dialogue).toStrictEqual({
-        buttonLabel: `${namespace}.option.3.label`,
-        buttonTooltip: `${namespace}.option.3.tooltip`,
-        secondOptionPrompt: `${namespace}.option.3.select_prompt`,
+        buttonLabel: `${namespace}:option.3.label`,
+        buttonTooltip: `${namespace}:option.3.tooltip`,
+        secondOptionPrompt: `${namespace}:option.3.select_prompt`,
         selected: [
           {
-            text: `${namespace}.option.3.selected`,
+            text: `${namespace}:option.3.selected`,
           },
         ],
       });

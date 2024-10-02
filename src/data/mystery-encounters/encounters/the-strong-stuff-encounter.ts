@@ -2,7 +2,7 @@ import { EnemyPartyConfig, initBattleWithEnemyConfig, loadCustomMovesForEncounte
 import { modifierTypes, PokemonHeldItemModifierType, } from "#app/modifier/modifier-type";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import BattleScene from "#app/battle-scene";
-import MysteryEncounter, { MysteryEncounterBuilder } from "../mystery-encounter";
+import MysteryEncounter, { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-encounter";
 import { getPokemonSpecies } from "#app/data/pokemon-species";
 import { Species } from "#enums/species";
 import { Nature } from "#app/data/nature";
@@ -20,7 +20,7 @@ import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
 
 /** the i18n namespace for the encounter */
-const namespace = "mysteryEncounter:theStrongStuff";
+const namespace = "mysteryEncounters/theStrongStuff";
 
 // Halved for HP stat
 const HIGH_BST_REDUCTION_VALUE = 15;
@@ -33,11 +33,13 @@ const BST_INCREASE_VALUE = 10;
  */
 export const TheStrongStuffEncounter: MysteryEncounter =
   MysteryEncounterBuilder.withEncounterType(MysteryEncounterType.THE_STRONG_STUFF)
-    .withEncounterTier(MysteryEncounterTier.GREAT)
+    .withEncounterTier(MysteryEncounterTier.COMMON)
     .withSceneWaveRangeRequirement(...CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES)
     .withScenePartySizeRequirement(3, 6) // Must have at least 3 pokemon in party
+    .withMaxAllowedEncounters(1)
     .withHideWildIntroMessage(true)
     .withAutoHideIntroVisuals(false)
+    .withFleeAllowed(false)
     .withIntroSpriteConfigs([
       {
         spriteKey: "berry_juice",
@@ -62,7 +64,7 @@ export const TheStrongStuffEncounter: MysteryEncounter =
     ]) // Set in onInit()
     .withIntroDialogue([
       {
-        text: `${namespace}.intro`,
+        text: `${namespace}:intro`,
       },
     ])
     .withOnInit((scene: BattleScene) => {
@@ -70,7 +72,7 @@ export const TheStrongStuffEncounter: MysteryEncounter =
 
       // Calculate boss mon
       const config: EnemyPartyConfig = {
-        levelAdditiveMultiplier: 1,
+        levelAdditiveModifier: 1,
         disableSwitch: true,
         pokemonConfigs: [
           {
@@ -100,7 +102,7 @@ export const TheStrongStuffEncounter: MysteryEncounter =
             ],
             tags: [BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON],
             mysteryEncounterBattleEffects: (pokemon: Pokemon) => {
-              queueEncounterMessage(pokemon.scene, `${namespace}.option.2.stat_boost`);
+              queueEncounterMessage(pokemon.scene, `${namespace}:option.2.stat_boost`);
               pokemon.scene.unshiftPhase(new StatStageChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [Stat.DEF, Stat.SPDEF], 2));
             }
           }
@@ -115,16 +117,16 @@ export const TheStrongStuffEncounter: MysteryEncounter =
 
       return true;
     })
-    .withTitle(`${namespace}.title`)
-    .withDescription(`${namespace}.description`)
-    .withQuery(`${namespace}.query`)
+    .withTitle(`${namespace}:title`)
+    .withDescription(`${namespace}:description`)
+    .withQuery(`${namespace}:query`)
     .withSimpleOption(
       {
-        buttonLabel: `${namespace}.option.1.label`,
-        buttonTooltip: `${namespace}.option.1.tooltip`,
+        buttonLabel: `${namespace}:option.1.label`,
+        buttonTooltip: `${namespace}:option.1.tooltip`,
         selected: [
           {
-            text: `${namespace}.option.1.selected`
+            text: `${namespace}:option.1.selected`
           }
         ]
       },
@@ -157,8 +159,13 @@ export const TheStrongStuffEncounter: MysteryEncounter =
 
         encounter.setDialogueToken("reductionValue", HIGH_BST_REDUCTION_VALUE.toString());
         encounter.setDialogueToken("increaseValue", BST_INCREASE_VALUE.toString());
-        await showEncounterText(scene, `${namespace}.option.1.selected_2`, null, undefined, true);
+        await showEncounterText(scene, `${namespace}:option.1.selected_2`, null, undefined, true);
 
+        encounter.dialogue.outro = [
+          {
+            text: `${namespace}:outro`,
+          }
+        ];
         setEncounterRewards(scene, { fillRemaining: true });
         leaveEncounterWithoutBattle(scene, true);
         return true;
@@ -166,11 +173,11 @@ export const TheStrongStuffEncounter: MysteryEncounter =
     )
     .withSimpleOption(
       {
-        buttonLabel: `${namespace}.option.2.label`,
-        buttonTooltip: `${namespace}.option.2.tooltip`,
+        buttonLabel: `${namespace}:option.2.label`,
+        buttonTooltip: `${namespace}:option.2.tooltip`,
         selected: [
           {
-            text: `${namespace}.option.2.selected`,
+            text: `${namespace}:option.2.selected`,
           },
         ],
       },
@@ -192,6 +199,7 @@ export const TheStrongStuffEncounter: MysteryEncounter =
             ignorePp: true
           });
 
+        encounter.dialogue.outro = [];
         transitionMysteryEncounterIntroVisuals(scene, true, true, 500);
         await initBattleWithEnemyConfig(scene, encounter.enemyPartyConfigs[0]);
       }

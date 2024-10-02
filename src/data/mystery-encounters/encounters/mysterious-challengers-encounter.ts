@@ -15,12 +15,12 @@ import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { PartyMemberStrength } from "#enums/party-member-strength";
 import BattleScene from "#app/battle-scene";
 import * as Utils from "#app/utils";
-import MysteryEncounter, { MysteryEncounterBuilder } from "../mystery-encounter";
+import MysteryEncounter, { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-encounter";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
 
 /** the i18n namespace for the encounter */
-const namespace = "mysteryEncounter:mysteriousChallengers";
+const namespace = "mysteryEncounters/mysteriousChallengers";
 
 /**
  * Mysterious Challengers encounter.
@@ -34,7 +34,7 @@ export const MysteriousChallengersEncounter: MysteryEncounter =
     .withIntroSpriteConfigs([]) // These are set in onInit()
     .withIntroDialogue([
       {
-        text: `${namespace}.intro`,
+        text: `${namespace}:intro`,
       },
     ])
     .withOnInit((scene: BattleScene) => {
@@ -75,7 +75,7 @@ export const MysteriousChallengersEncounter: MysteryEncounter =
       const hardSpriteKey = hardConfig.getSpriteKey(female, hardConfig.doubleOnly);
       encounter.enemyPartyConfigs.push({
         trainerConfig: hardConfig,
-        levelAdditiveMultiplier: 1,
+        levelAdditiveModifier: 1,
         female: female,
       });
 
@@ -98,7 +98,7 @@ export const MysteriousChallengersEncounter: MysteryEncounter =
       const brutalSpriteKey = brutalConfig.getSpriteKey(female, brutalConfig.doubleOnly);
       encounter.enemyPartyConfigs.push({
         trainerConfig: brutalConfig,
-        levelAdditiveMultiplier: 1.5,
+        levelAdditiveModifier: 1.5,
         female: female,
       });
 
@@ -125,16 +125,16 @@ export const MysteriousChallengersEncounter: MysteryEncounter =
 
       return true;
     })
-    .withTitle(`${namespace}.title`)
-    .withDescription(`${namespace}.description`)
-    .withQuery(`${namespace}.query`)
+    .withTitle(`${namespace}:title`)
+    .withDescription(`${namespace}:description`)
+    .withQuery(`${namespace}:query`)
     .withSimpleOption(
       {
-        buttonLabel: `${namespace}.option.1.label`,
-        buttonTooltip: `${namespace}.option.1.tooltip`,
+        buttonLabel: `${namespace}:option.1.label`,
+        buttonTooltip: `${namespace}:option.1.tooltip`,
         selected: [
           {
-            text: `${namespace}.option.selected`,
+            text: `${namespace}:option.selected`,
           },
         ],
       },
@@ -155,11 +155,11 @@ export const MysteriousChallengersEncounter: MysteryEncounter =
     )
     .withSimpleOption(
       {
-        buttonLabel: `${namespace}.option.2.label`,
-        buttonTooltip: `${namespace}.option.2.tooltip`,
+        buttonLabel: `${namespace}:option.2.label`,
+        buttonTooltip: `${namespace}:option.2.tooltip`,
         selected: [
           {
-            text: `${namespace}.option.selected`,
+            text: `${namespace}:option.selected`,
           },
         ],
       },
@@ -180,11 +180,11 @@ export const MysteriousChallengersEncounter: MysteryEncounter =
     )
     .withSimpleOption(
       {
-        buttonLabel: `${namespace}.option.3.label`,
-        buttonTooltip: `${namespace}.option.3.tooltip`,
+        buttonLabel: `${namespace}:option.3.label`,
+        buttonTooltip: `${namespace}:option.3.tooltip`,
         selected: [
           {
-            text: `${namespace}.option.selected`,
+            text: `${namespace}:option.selected`,
           },
         ],
       },
@@ -208,7 +208,7 @@ export const MysteriousChallengersEncounter: MysteryEncounter =
     )
     .withOutroDialogue([
       {
-        text: `${namespace}.outro`,
+        text: `${namespace}:outro`,
       },
     ])
     .build();

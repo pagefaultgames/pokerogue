@@ -1,10 +1,9 @@
 import { PokemonFormChangeItemModifier, TerastallizeModifier } from "../modifier/modifier";
 import Pokemon from "../field/pokemon";
-import { SpeciesFormKey } from "./pokemon-species";
 import { StatusEffect } from "./status-effect";
 import { MoveCategory, allMoves } from "./move";
 import { Type } from "./type";
-import { Constructor } from "#app/utils";
+import { Constructor, nil } from "#app/utils";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
@@ -13,6 +12,7 @@ import { getPokemonNameWithAffix } from "#app/messages";
 import i18next from "i18next";
 import { WeatherType } from "./weather";
 import { Challenges } from "#app/enums/challenges";
+import { SpeciesFormKey } from "#enums/species-form-key";
 
 export enum FormChangeItem {
   NONE,
@@ -185,7 +185,7 @@ export class SpeciesFormChange {
     return true;
   }
 
-  findTrigger(triggerType: Constructor<SpeciesFormChangeTrigger>): SpeciesFormChangeTrigger | null {
+  findTrigger(triggerType: Constructor<SpeciesFormChangeTrigger>): SpeciesFormChangeTrigger | nil {
     if (!this.trigger.hasTriggerType(triggerType)) {
       return null;
     }
@@ -193,7 +193,7 @@ export class SpeciesFormChange {
     const trigger = this.trigger;
 
     if (trigger instanceof SpeciesFormChangeCompoundTrigger) {
-      return trigger.triggers.find(t => t.hasTriggerType(triggerType))!; // TODO: is this bang correct?
+      return trigger.triggers.find(t => t.hasTriggerType(triggerType));
     }
 
     return trigger;
@@ -202,11 +202,11 @@ export class SpeciesFormChange {
 
 export class SpeciesFormChangeCondition {
   public predicate: SpeciesFormChangeConditionPredicate;
-  public enforceFunc: SpeciesFormChangeConditionEnforceFunc | null;
+  public enforceFunc: SpeciesFormChangeConditionEnforceFunc | nil;
 
   constructor(predicate: SpeciesFormChangeConditionPredicate, enforceFunc?: SpeciesFormChangeConditionEnforceFunc) {
     this.predicate = predicate;
-    this.enforceFunc = enforceFunc!; // TODO: is this bang correct?
+    this.enforceFunc = enforceFunc;
   }
 }
 
@@ -684,7 +684,7 @@ export const pokemonFormChanges: PokemonFormChanges = {
     new SpeciesFormChange(Species.GROUDON, "", SpeciesFormKey.PRIMAL, new SpeciesFormChangeItemTrigger(FormChangeItem.RED_ORB))
   ],
   [Species.RAYQUAZA]: [
-    new SpeciesFormChange(Species.RAYQUAZA, "", SpeciesFormKey.MEGA, new SpeciesFormChangeCompoundTrigger(new SpeciesFormChangeItemTrigger(FormChangeItem.RAYQUAZITE), new SpeciesFormChangeMoveLearnedTrigger(Moves.DRAGON_ASCENT)))
+    new SpeciesFormChange(Species.RAYQUAZA, "", SpeciesFormKey.MEGA, new SpeciesFormChangeItemTrigger(FormChangeItem.RAYQUAZITE))
   ],
   [Species.DEOXYS]: [
     new SpeciesFormChange(Species.DEOXYS, "normal", "attack", new SpeciesFormChangeItemTrigger(FormChangeItem.SHARP_METEORITE)),

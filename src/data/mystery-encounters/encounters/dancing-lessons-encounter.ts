@@ -3,8 +3,8 @@ import Pokemon, { EnemyPokemon, PlayerPokemon, PokemonMove } from "#app/field/po
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { Species } from "#enums/species";
 import BattleScene from "#app/battle-scene";
-import MysteryEncounter, { MysteryEncounterBuilder } from "../mystery-encounter";
-import { MysteryEncounterOptionBuilder } from "../mystery-encounter-option";
+import MysteryEncounter, { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-encounter";
+import { MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/mystery-encounter-option";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { getPokemonSpecies } from "#app/data/pokemon-species";
@@ -19,7 +19,7 @@ import { MoveRequirement } from "#app/data/mystery-encounters/mystery-encounter-
 import { DANCING_MOVES } from "#app/data/mystery-encounters/requirements/requirement-groups";
 import { OptionSelectItem } from "#app/ui/abstact-option-select-ui-handler";
 import { BattlerIndex } from "#app/battle";
-import { catchPokemon } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
+import { catchPokemon, getEncounterPokemonLevelForWave, STANDARD_ENCOUNTER_BOOSTED_LEVEL_MODIFIER } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
 import { PokeballType } from "#enums/pokeball";
 import { modifierTypes } from "#app/modifier/modifier-type";
 import { LearnMovePhase } from "#app/phases/learn-move-phase";
@@ -27,9 +27,10 @@ import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
 import { Stat } from "#enums/stat";
 import { EncounterAnim } from "#enums/encounter-anims";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
+import i18next from "i18next";
 
 /** the i18n namespace for this encounter */
-const namespace = "mysteryEncounter:dancingLessons";
+const namespace = "mysteryEncounters/dancingLessons";
 
 // Fire form
 const BAILE_STYLE_BIOMES = [
@@ -89,6 +90,7 @@ export const DancingLessonsEncounter: MysteryEncounter =
     .withHideWildIntroMessage(true)
     .withAutoHideIntroVisuals(false)
     .withCatchAllowed(true)
+    .withFleeAllowed(false)
     .withOnVisualsStart((scene: BattleScene) => {
       const danceAnim = new EncounterBattleAnim(EncounterAnim.DANCE, scene.getEnemyPokemon()!, scene.getParty()[0]);
       danceAnim.play(scene);
@@ -97,17 +99,17 @@ export const DancingLessonsEncounter: MysteryEncounter =
     })
     .withIntroDialogue([
       {
-        text: `${namespace}.intro`,
+        text: `${namespace}:intro`,
       }
     ])
-    .withTitle(`${namespace}.title`)
-    .withDescription(`${namespace}.description`)
-    .withQuery(`${namespace}.query`)
+    .withTitle(`${namespace}:title`)
+    .withDescription(`${namespace}:description`)
+    .withQuery(`${namespace}:query`)
     .withOnInit((scene: BattleScene) => {
       const encounter = scene.currentBattle.mysteryEncounter!;
 
       const species = getPokemonSpecies(Species.ORICORIO);
-      const level = (scene.currentBattle.enemyLevels?.[0] ?? scene.currentBattle.waveIndex) + Math.max(Math.round((scene.currentBattle.waveIndex / 10)), 0);
+      const level = getEncounterPokemonLevelForWave(scene, STANDARD_ENCOUNTER_BOOSTED_LEVEL_MODIFIER);
       const enemyPokemon = new EnemyPokemon(scene, species, level, TrainerSlot.NONE, false);
       if (!enemyPokemon.moveset.some(m => m && m.getMove().id === Moves.REVELATION_DANCE)) {
         if (enemyPokemon.moveset.length < 4) {
@@ -133,7 +135,7 @@ export const DancingLessonsEncounter: MysteryEncounter =
       }
 
       const oricorioData = new PokemonData(enemyPokemon);
-      const oricorio = scene.addEnemyPokemon(species, scene.currentBattle.enemyLevels![0], TrainerSlot.NONE, false, oricorioData);
+      const oricorio = scene.addEnemyPokemon(species, level, TrainerSlot.NONE, false, oricorioData);
 
       // Adds a real Pokemon sprite to the field (required for the animation)
       scene.getEnemyParty().forEach(enemyPokemon => {
@@ -146,7 +148,6 @@ export const DancingLessonsEncounter: MysteryEncounter =
       encounter.loadAssets.push(oricorio.loadAssets());
 
       const config: EnemyPartyConfig = {
-        levelAdditiveMultiplier: 1,
         pokemonConfigs: [{
           species: species,
           dataSource: oricorioData,
@@ -154,7 +155,7 @@ export const DancingLessonsEncounter: MysteryEncounter =
           // Gets +1 to all stats except SPD on battle start
           tags: [BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON],
           mysteryEncounterBattleEffects: (pokemon: Pokemon) => {
-            queueEncounterMessage(pokemon.scene, `${namespace}.option.1.boss_enraged`);
+            queueEncounterMessage(pokemon.scene, `${namespace}:option.1.boss_enraged`);
             pokemon.scene.unshiftPhase(new StatStageChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [Stat.ATK, Stat.DEF, Stat.SPATK, Stat.SPDEF], 1));
           }
         }],
@@ -172,11 +173,11 @@ export const DancingLessonsEncounter: MysteryEncounter =
       MysteryEncounterOptionBuilder
         .newOptionWithMode(MysteryEncounterOptionMode.DEFAULT)
         .withDialogue({
-          buttonLabel: `${namespace}.option.1.label`,
-          buttonTooltip: `${namespace}.option.1.tooltip`,
+          buttonLabel: `${namespace}:option.1.label`,
+          buttonTooltip: `${namespace}:option.1.tooltip`,
           selected: [
             {
-              text: `${namespace}.option.1.selected`,
+              text: `${namespace}:option.1.selected`,
             },
           ],
         })
@@ -201,11 +202,11 @@ export const DancingLessonsEncounter: MysteryEncounter =
       MysteryEncounterOptionBuilder
         .newOptionWithMode(MysteryEncounterOptionMode.DEFAULT)
         .withDialogue({
-          buttonLabel: `${namespace}.option.2.label`,
-          buttonTooltip: `${namespace}.option.2.tooltip`,
+          buttonLabel: `${namespace}:option.2.label`,
+          buttonTooltip: `${namespace}:option.2.tooltip`,
           selected: [
             {
-              text: `${namespace}.option.2.selected`,
+              text: `${namespace}:option.2.selected`,
             },
           ],
         })
@@ -236,13 +237,13 @@ export const DancingLessonsEncounter: MysteryEncounter =
         .newOptionWithMode(MysteryEncounterOptionMode.DISABLED_OR_SPECIAL)
         .withPrimaryPokemonRequirement(new MoveRequirement(DANCING_MOVES)) // Will set option3PrimaryName and option3PrimaryMove dialogue tokens automatically
         .withDialogue({
-          buttonLabel: `${namespace}.option.3.label`,
-          buttonTooltip: `${namespace}.option.3.tooltip`,
-          disabledButtonTooltip: `${namespace}.option.3.disabled_tooltip`,
-          secondOptionPrompt: `${namespace}.option.3.select_prompt`,
+          buttonLabel: `${namespace}:option.3.label`,
+          buttonTooltip: `${namespace}:option.3.tooltip`,
+          disabledButtonTooltip: `${namespace}:option.3.disabled_tooltip`,
+          secondOptionPrompt: `${namespace}:option.3.select_prompt`,
           selected: [
             {
-              text: `${namespace}.option.3.selected`,
+              text: `${namespace}:option.3.selected`,
             },
           ],
         })
@@ -269,12 +270,15 @@ export const DancingLessonsEncounter: MysteryEncounter =
               });
           };
 
-          // Only Pokemon that have a Dancing move can be selected
+          // Only challenge legal/unfainted Pokemon that have a Dancing move can be selected
           const selectableFilter = (pokemon: Pokemon) => {
             // If pokemon meets primary pokemon reqs, it can be selected
+            if (!pokemon.isAllowedInBattle()) {
+              return i18next.t("partyUiHandler:cantBeUsed", { pokemonName: pokemon.getNameToRender() }) ?? null;
+            }
             const meetsReqs = encounter.options[2].pokemonMeetsPrimaryRequirements(scene, pokemon);
             if (!meetsReqs) {
-              return getEncounterText(scene, `${namespace}.invalid_selection`) ?? null;
+              return getEncounterText(scene, `${namespace}:invalid_selection`) ?? null;
             }
 
             return null;

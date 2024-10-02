@@ -8,7 +8,7 @@ import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
-const TIMEOUT = 20 * 1000;
+
 
 describe("Moves - Thousand Arrows", () => {
   let phaserGame: Phaser.Game;
@@ -51,7 +51,7 @@ describe("Moves - Thousand Arrows", () => {
 
       expect(enemyPokemon.getTag(BattlerTagType.IGNORE_FLYING)).toBeDefined();
       expect(enemyPokemon.hp).toBeLessThan(enemyPokemon.getMaxHp());
-    }, TIMEOUT
+    }
   );
 
   it(
@@ -74,7 +74,7 @@ describe("Moves - Thousand Arrows", () => {
 
       expect(enemyPokemon.getTag(BattlerTagType.IGNORE_FLYING)).toBeDefined();
       expect(enemyPokemon.hp).toBeLessThan(enemyPokemon.getMaxHp());
-    }, TIMEOUT
+    }
   );
 
   it(

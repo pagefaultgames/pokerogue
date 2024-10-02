@@ -1,4 +1,4 @@
-import { pokemonEvolutions, SpeciesFormEvolution, SpeciesWildEvolutionDelay } from "#app/data/pokemon-evolutions";
+import { pokemonEvolutions, SpeciesFormEvolution, SpeciesWildEvolutionDelay } from "#app/data/balance/pokemon-evolutions";
 import { Abilities } from "#app/enums/abilities";
 import { Moves } from "#app/enums/moves";
 import { Species } from "#app/enums/species";
@@ -10,7 +10,6 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vite
 describe("Evolution", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
-  const TIMEOUT = 1000 * 20;
 
   beforeAll(() => {
     phaserGame = new Phaser.Game({
@@ -46,7 +45,7 @@ describe("Evolution", () => {
 
     trapinch.evolve(pokemonEvolutions[Species.TRAPINCH][0], trapinch.getSpeciesForm());
     expect(trapinch.abilityIndex).toBe(1);
-  }, TIMEOUT);
+  });
 
   it("should keep same ability slot after evolving", async () => {
     await game.classicMode.runToSummon([Species.BULBASAUR, Species.CHARMANDER]);
@@ -61,7 +60,7 @@ describe("Evolution", () => {
 
     charmander.evolve(pokemonEvolutions[Species.CHARMANDER][0], charmander.getSpeciesForm());
     expect(charmander.abilityIndex).toBe(1);
-  }, TIMEOUT);
+  });
 
   it("should handle illegal abilityIndex values", async () => {
     await game.classicMode.runToSummon([Species.SQUIRTLE]);
@@ -71,7 +70,7 @@ describe("Evolution", () => {
 
     squirtle.evolve(pokemonEvolutions[Species.SQUIRTLE][0], squirtle.getSpeciesForm());
     expect(squirtle.abilityIndex).toBe(0);
-  }, TIMEOUT);
+  });
 
   it("should handle nincada's unique evolution", async () => {
     await game.classicMode.runToSummon([Species.NINCADA]);
@@ -87,7 +86,7 @@ describe("Evolution", () => {
     expect(shedinja.abilityIndex).toBe(1);
     // Regression test for https://github.com/pagefaultgames/pokerogue/issues/3842
     expect(shedinja.metBiome).toBe(-1);
-  }, TIMEOUT);
+  });
 
   it("should set wild delay to NONE by default", () => {
     const speciesFormEvo = new SpeciesFormEvolution(Species.ABRA, null, null, 1000, null, null);
@@ -120,7 +119,7 @@ describe("Evolution", () => {
 
     expect(totodile.hp).toBe(totodile.getMaxHp());
     expect(totodile.hp).toBeGreaterThan(hpBefore);
-  }, TIMEOUT);
+  });
 
   it("should not fully heal HP when evolving", async () => {
     game.override.moveset([Moves.SURF])
@@ -150,7 +149,7 @@ describe("Evolution", () => {
     expect(cyndaquil.getMaxHp()).toBeGreaterThan(maxHpBefore);
     expect(cyndaquil.hp).toBeGreaterThan(hpBefore);
     expect(cyndaquil.hp).toBeLessThan(cyndaquil.getMaxHp());
-  }, TIMEOUT);
+  });
 
   it("should handle rng-based split evolution", async () => {
     /* this test checks to make sure that tandemaus will
@@ -174,5 +173,5 @@ describe("Evolution", () => {
       const fourForm = playerPokemon.getEvolution()!;
       expect(fourForm.evoFormKey).toBe(null); // meanwhile, according to the pokemon-forms, the evoFormKey for a 4 family maushold is null
     }
-  }, TIMEOUT);
+  });
 });

@@ -1,3 +1,4 @@
+import { BattlerIndex } from "#app/battle";
 import { Abilities } from "#app/enums/abilities";
 import { Moves } from "#app/enums/moves";
 import { Species } from "#app/enums/species";
@@ -5,8 +6,6 @@ import { HitResult } from "#app/field/pokemon";
 import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-
-const TIMEOUT = 10 * 1000; // 10 second timeout
 
 describe("Abilities - Tera Shell", () => {
   let phaserGame: Phaser.Game;
@@ -54,7 +53,7 @@ describe("Abilities - Tera Shell", () => {
 
       await game.phaseInterceptor.to("MoveEndPhase");
       expect(playerPokemon.getMoveEffectiveness).toHaveLastReturnedWith(2);
-    }, TIMEOUT
+    }
   );
 
   it(
@@ -71,7 +70,7 @@ describe("Abilities - Tera Shell", () => {
 
       await game.phaseInterceptor.to("MoveEndPhase");
       expect(playerPokemon.getMoveEffectiveness).toHaveLastReturnedWith(0);
-    }, TIMEOUT
+    }
   );
 
   it(
@@ -88,7 +87,7 @@ describe("Abilities - Tera Shell", () => {
 
       await game.phaseInterceptor.to("MoveEndPhase");
       expect(playerPokemon.getMoveEffectiveness).toHaveLastReturnedWith(0.25);
-    }, TIMEOUT
+    }
   );
 
   it(
@@ -106,6 +105,28 @@ describe("Abilities - Tera Shell", () => {
       await game.phaseInterceptor.to("BerryPhase", false);
       expect(playerPokemon.apply).toHaveLastReturnedWith(HitResult.EFFECTIVE);
       expect(playerPokemon.hp).toBe(playerPokemon.getMaxHp() - 40);
-    }, TIMEOUT
+    }
+  );
+
+  it(
+    "should change the effectiveness of all strikes of a multi-strike move",
+    async () => {
+      game.override.enemyMoveset([Moves.DOUBLE_HIT]);
+
+      await game.classicMode.startBattle([Species.SNORLAX]);
+
+      const playerPokemon = game.scene.getPlayerPokemon()!;
+      vi.spyOn(playerPokemon, "apply");
+
+      game.move.select(Moves.SPLASH);
+
+      await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+      await game.move.forceHit();
+      for (let i = 0; i < 2; i++) {
+        await game.phaseInterceptor.to("MoveEffectPhase");
+        expect(playerPokemon.apply).toHaveLastReturnedWith(HitResult.NOT_VERY_EFFECTIVE);
+      }
+      expect(playerPokemon.apply).toHaveReturnedTimes(2);
+    }
   );
 });

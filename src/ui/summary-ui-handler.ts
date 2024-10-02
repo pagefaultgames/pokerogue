@@ -1,28 +1,28 @@
-import BattleScene, { starterColors } from "../battle-scene";
-import { Mode } from "./ui";
-import UiHandler from "./ui-handler";
-import * as Utils from "../utils";
-import { PlayerPokemon, PokemonMove } from "../field/pokemon";
-import { getStarterValueFriendshipCap, speciesStarters } from "../data/pokemon-species";
+import BattleScene, { starterColors } from "#app/battle-scene";
+import { Mode } from "#app/ui/ui";
+import UiHandler from "#app/ui/ui-handler";
+import * as Utils from "#app/utils";
+import { PlayerPokemon, PokemonMove } from "#app/field/pokemon";
+import { getStarterValueFriendshipCap, speciesStarterCosts } from "#app/data/balance/starters";
 import { argbFromRgba } from "@material/material-color-utilities";
-import { Type, getTypeRgb } from "../data/type";
-import { TextStyle, addBBCodeTextObject, addTextObject, getBBCodeFrag } from "./text";
-import Move, { MoveCategory } from "../data/move";
-import { getPokeballAtlasKey } from "../data/pokeball";
-import { getGenderColor, getGenderSymbol } from "../data/gender";
-import { getLevelRelExp, getLevelTotalExp } from "../data/exp";
-import { PokemonHeldItemModifier } from "../modifier/modifier";
-import { StatusEffect } from "../data/status-effect";
-import { getBiomeName } from "../data/biomes";
-import { Nature, getNatureName, getNatureStatMultiplier } from "../data/nature";
-import { loggedInUser } from "../account";
+import { Type, getTypeRgb } from "#app/data/type";
+import { TextStyle, addBBCodeTextObject, addTextObject, getBBCodeFrag } from "#app/ui/text";
+import Move, { MoveCategory } from "#app/data/move";
+import { getPokeballAtlasKey } from "#app/data/pokeball";
+import { getGenderColor, getGenderSymbol } from "#app/data/gender";
+import { getLevelRelExp, getLevelTotalExp } from "#app/data/exp";
+import { PokemonHeldItemModifier } from "#app/modifier/modifier";
+import { StatusEffect } from "#app/data/status-effect";
+import { getBiomeName } from "#app/data/balance/biomes";
+import { Nature, getNatureName, getNatureStatMultiplier } from "#app/data/nature";
+import { loggedInUser } from "#app/account";
 import { Variant, getVariantTint } from "#app/data/variant";
-import {Button} from "#enums/buttons";
-import { Ability } from "../data/ability";
+import { Button } from "#enums/buttons";
+import { Ability } from "#app/data/ability";
 import i18next from "i18next";
-import {modifierSortFunc} from "../modifier/modifier";
+import { modifierSortFunc } from "#app/modifier/modifier";
 import { PlayerGender } from "#enums/player-gender";
-import { Stat, PERMANENT_STATS, getStatKey } from "#app/enums/stat";
+import { Stat, PERMANENT_STATS, getStatKey } from "#enums/stat";
 
 enum Page {
   PROFILE,
@@ -214,7 +214,7 @@ export default class SummaryUiHandler extends UiHandler {
 
     this.statusContainer.add(statusLabel);
 
-    this.status = this.scene.add.sprite(91, 4, "statuses");
+    this.status = this.scene.add.sprite(91, 4, Utils.getLocalizedSpriteKey("statuses"));
     this.status.setOrigin(0.5, 0);
 
     this.statusContainer.add(this.status);
@@ -333,7 +333,7 @@ export default class SummaryUiHandler extends UiHandler {
       currentFriendship = 0;
     }
 
-    const friendshipCap = getStarterValueFriendshipCap(speciesStarters[this.pokemon.species.getRootSpeciesId()]);
+    const friendshipCap = getStarterValueFriendshipCap(speciesStarterCosts[this.pokemon.species.getRootSpeciesId()]);
     const candyCropY = 16 - (16 * (currentFriendship / friendshipCap));
 
     if (this.candyShadow.visible) {
@@ -701,6 +701,7 @@ export default class SummaryUiHandler extends UiHandler {
       const profileContainer = this.scene.add.container(0, -pageBg.height);
       pageContainer.add(profileContainer);
 
+      // TODO: should add field for original trainer name to Pokemon object, to support gift/traded Pokemon from MEs
       const trainerText = addBBCodeTextObject(this.scene, 7, 12, `${i18next.t("pokemonSummary:ot")}/${getBBCodeFrag(loggedInUser?.username || i18next.t("pokemonSummary:unknown"), this.scene.gameData.gender === PlayerGender.FEMALE ? TextStyle.SUMMARY_PINK : TextStyle.SUMMARY_BLUE)}`, TextStyle.SUMMARY_ALT);
       trainerText.setOrigin(0, 0);
       profileContainer.add(trainerText);
@@ -824,6 +825,7 @@ export default class SummaryUiHandler extends UiHandler {
         metFragment: i18next.t(`pokemonSummary:metFragment.${this.pokemon?.metBiome === -1? "apparently": "normal"}`, {
           biome: `${getBBCodeFrag(getBiomeName(this.pokemon?.metBiome!), TextStyle.SUMMARY_RED)}${closeFragment}`, // TODO: is this bang correct?
           level: `${getBBCodeFrag(this.pokemon?.metLevel.toString()!, TextStyle.SUMMARY_RED)}${closeFragment}`, // TODO: is this bang correct?
+          wave: `${getBBCodeFrag((this.pokemon?.metWave ? this.pokemon.metWave.toString()! : i18next.t("pokemonSummary:unknownTrainer")), TextStyle.SUMMARY_RED)}${closeFragment}`,
         }),
         natureFragment: i18next.t(`pokemonSummary:natureFragment.${rawNature}`, { nature: nature })
       });

@@ -8,7 +8,7 @@ import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest";
 
-const TIMEOUT = 20 * 1000;
+
 
 describe("Abilities - COSTAR", () => {
   let phaserGame: Phaser.Game;
@@ -59,7 +59,6 @@ describe("Abilities - COSTAR", () => {
       expect(leftPokemon.getStatStage(Stat.SPATK)).toBe(2);
       expect(rightPokemon.getStatStage(Stat.SPATK)).toBe(2);
     },
-    TIMEOUT,
   );
 
   test(
@@ -83,6 +82,5 @@ describe("Abilities - COSTAR", () => {
       expect(leftPokemon.getStatStage(Stat.ATK)).toBe(-2);
       expect(rightPokemon.getStatStage(Stat.ATK)).toBe(-2);
     },
-    TIMEOUT,
   );
 });

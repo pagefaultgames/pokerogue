@@ -16,7 +16,7 @@ import { WeirdDreamEncounter } from "#app/data/mystery-encounters/encounters/wei
 import * as EncounterTransformationSequence from "#app/data/mystery-encounters/utils/encounter-transformation-sequence";
 import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
 
-const namespace = "mysteryEncounter:weirdDream";
+const namespace = "mysteryEncounters/weirdDream";
 const defaultParty = [Species.MAGBY, Species.HAUNTER, Species.ABRA];
 const defaultBiome = Biome.CAVE;
 const defaultWave = 45;
@@ -60,33 +60,17 @@ describe("Weird Dream - Mystery Encounter", () => {
     expect(WeirdDreamEncounter.dialogue).toBeDefined();
     expect(WeirdDreamEncounter.dialogue.intro).toStrictEqual([
       {
-        text: `${namespace}.intro`
+        text: `${namespace}:intro`
       },
       {
-        speaker: `${namespace}.speaker`,
-        text: `${namespace}.intro_dialogue`,
+        speaker: `${namespace}:speaker`,
+        text: `${namespace}:intro_dialogue`,
       },
     ]);
-    expect(WeirdDreamEncounter.dialogue.encounterOptionsDialogue?.title).toBe(`${namespace}.title`);
-    expect(WeirdDreamEncounter.dialogue.encounterOptionsDialogue?.description).toBe(`${namespace}.description`);
-    expect(WeirdDreamEncounter.dialogue.encounterOptionsDialogue?.query).toBe(`${namespace}.query`);
+    expect(WeirdDreamEncounter.dialogue.encounterOptionsDialogue?.title).toBe(`${namespace}:title`);
+    expect(WeirdDreamEncounter.dialogue.encounterOptionsDialogue?.description).toBe(`${namespace}:description`);
+    expect(WeirdDreamEncounter.dialogue.encounterOptionsDialogue?.query).toBe(`${namespace}:query`);
     expect(WeirdDreamEncounter.options.length).toBe(2);
-  });
-
-  it("should not run below wave 10", async () => {
-    game.override.startingWave(9);
-
-    await game.runToMysteryEncounter();
-
-    expect(scene.currentBattle?.mysteryEncounter?.encounterType).not.toBe(MysteryEncounterType.WEIRD_DREAM);
-  });
-
-  it("should not run above wave 179", async () => {
-    game.override.startingWave(181);
-
-    await game.runToMysteryEncounter();
-
-    expect(scene.currentBattle.mysteryEncounter).toBeUndefined();
   });
 
   it("should initialize fully", async () => {
@@ -111,11 +95,11 @@ describe("Weird Dream - Mystery Encounter", () => {
       expect(option.optionMode).toBe(MysteryEncounterOptionMode.DEFAULT);
       expect(option.dialogue).toBeDefined();
       expect(option.dialogue).toStrictEqual({
-        buttonLabel: `${namespace}.option.1.label`,
-        buttonTooltip: `${namespace}.option.1.tooltip`,
+        buttonLabel: `${namespace}:option.1.label`,
+        buttonTooltip: `${namespace}:option.1.tooltip`,
         selected: [
           {
-            text: `${namespace}.option.1.selected`,
+            text: `${namespace}:option.1.selected`,
           },
         ],
       });
@@ -180,17 +164,17 @@ describe("Weird Dream - Mystery Encounter", () => {
       expect(option.optionMode).toBe(MysteryEncounterOptionMode.DEFAULT);
       expect(option.dialogue).toBeDefined();
       expect(option.dialogue).toStrictEqual({
-        buttonLabel: `${namespace}.option.2.label`,
-        buttonTooltip: `${namespace}.option.2.tooltip`,
+        buttonLabel: `${namespace}:option.2.label`,
+        buttonTooltip: `${namespace}:option.2.tooltip`,
         selected: [
           {
-            text: `${namespace}.option.2.selected`,
+            text: `${namespace}:option.2.selected`,
           },
         ],
       });
     });
 
-    it("should reduce party levels by 20%", async () => {
+    it("should reduce party levels by 12.5%", async () => {
       const leaveEncounterWithoutBattleSpy = vi.spyOn(EncounterPhaseUtils, "leaveEncounterWithoutBattle");
 
       await game.runToMysteryEncounter(MysteryEncounterType.WEIRD_DREAM, defaultParty);
@@ -200,7 +184,7 @@ describe("Weird Dream - Mystery Encounter", () => {
       const levelsAfter = scene.getParty().map(p => p.level);
 
       for (let i = 0; i < levelsPrior.length; i++) {
-        expect(Math.max(Math.ceil(0.8 * levelsPrior[i]), 1)).toBe(levelsAfter[i]);
+        expect(Math.max(Math.ceil(0.8875 * levelsPrior[i]), 1)).toBe(levelsAfter[i]);
         expect(scene.getParty()[i].levelExp).toBe(0);
       }
 

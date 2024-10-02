@@ -2,7 +2,7 @@ import { EnemyPartyConfig, generateModifierType, generateModifierTypeOption, ini
 import { modifierTypes, PokemonHeldItemModifierType } from "#app/modifier/modifier-type";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import BattleScene from "#app/battle-scene";
-import MysteryEncounter, { MysteryEncounterBuilder } from "../mystery-encounter";
+import MysteryEncounter, { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-encounter";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { TrainerType } from "#enums/trainer-type";
 import { Species } from "#enums/species";
@@ -25,7 +25,7 @@ import { ModifierTier } from "#app/modifier/modifier-tier";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
 
 /** the i18n namespace for the encounter */
-const namespace = "mysteryEncounter:theWinstrateChallenge";
+const namespace = "mysteryEncounters/theWinstrateChallenge";
 
 /**
  * The Winstrate Challenge encounter.
@@ -74,11 +74,11 @@ export const TheWinstrateChallengeEncounter: MysteryEncounter =
     ])
     .withIntroDialogue([
       {
-        text: `${namespace}.intro`,
+        text: `${namespace}:intro`,
       },
       {
-        speaker: `${namespace}.speaker`,
-        text: `${namespace}.intro_dialogue`,
+        speaker: `${namespace}:speaker`,
+        text: `${namespace}:intro_dialogue`,
       },
     ])
     .withAutoHideIntroVisuals(false)
@@ -94,17 +94,17 @@ export const TheWinstrateChallengeEncounter: MysteryEncounter =
 
       return true;
     })
-    .withTitle(`${namespace}.title`)
-    .withDescription(`${namespace}.description`)
-    .withQuery(`${namespace}.query`)
+    .withTitle(`${namespace}:title`)
+    .withDescription(`${namespace}:description`)
+    .withQuery(`${namespace}:query`)
     .withSimpleOption(
       {
-        buttonLabel: `${namespace}.option.1.label`,
-        buttonTooltip: `${namespace}.option.1.tooltip`,
+        buttonLabel: `${namespace}:option.1.label`,
+        buttonTooltip: `${namespace}:option.1.tooltip`,
         selected: [
           {
-            speaker: `${namespace}.speaker`,
-            text: `${namespace}.option.1.selected`,
+            speaker: `${namespace}:speaker`,
+            text: `${namespace}:option.1.selected`,
           },
         ],
       },
@@ -119,12 +119,12 @@ export const TheWinstrateChallengeEncounter: MysteryEncounter =
     )
     .withSimpleOption(
       {
-        buttonLabel: `${namespace}.option.2.label`,
-        buttonTooltip: `${namespace}.option.2.tooltip`,
+        buttonLabel: `${namespace}:option.2.label`,
+        buttonTooltip: `${namespace}:option.2.tooltip`,
         selected: [
           {
-            speaker: `${namespace}.speaker`,
-            text: `${namespace}.option.2.selected`,
+            speaker: `${namespace}:speaker`,
+            text: `${namespace}:option.2.selected`,
           },
         ],
       },
@@ -142,15 +142,15 @@ async function spawnNextTrainerOrEndEncounter(scene: BattleScene) {
   const nextConfig = encounter.enemyPartyConfigs.pop();
   if (!nextConfig) {
     await transitionMysteryEncounterIntroVisuals(scene, false, false);
-    await showEncounterDialogue(scene, `${namespace}.victory`, `${namespace}.speaker`);
+    await showEncounterDialogue(scene, `${namespace}:victory`, `${namespace}:speaker`);
 
     // Give 10x Voucher
     const newModifier = modifierTypes.VOUCHER_PREMIUM().newModifier();
-    scene.addModifier(newModifier);
+    await scene.addModifier(newModifier);
     scene.playSound("item_fanfare");
     await showEncounterText(scene, i18next.t("battle:rewardGain", { modifierName: newModifier?.type.name }));
 
-    await showEncounterDialogue(scene, `${namespace}.victory_2`, `${namespace}.speaker`);
+    await showEncounterDialogue(scene, `${namespace}:victory_2`, `${namespace}:speaker`);
     scene.ui.clearText(); // Clears "Winstrate" title from screen as rewards get animated in
     const machoBrace = generateModifierTypeOption(scene, modifierTypes.MYSTERY_ENCOUNTER_MACHO_BRACE)!;
     machoBrace.type.tier = ModifierTier.MASTER;

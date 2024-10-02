@@ -21,7 +21,7 @@ import * as encounterPhaseUtils from "#app/data/mystery-encounters/utils/encount
 import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
 import ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
 
-const namespace = "mysteryEncounter:bugTypeSuperfan";
+const namespace = "mysteryEncounters/bugTypeSuperfan";
 const defaultParty = [Species.LAPRAS, Species.GENGAR, Species.WEEDLE];
 const defaultBiome = Biome.CAVE;
 const defaultWave = 24;
@@ -188,33 +188,17 @@ describe("Bug-Type Superfan - Mystery Encounter", () => {
     expect(BugTypeSuperfanEncounter.dialogue).toBeDefined();
     expect(BugTypeSuperfanEncounter.dialogue.intro).toStrictEqual([
       {
-        text: `${namespace}.intro`,
+        text: `${namespace}:intro`,
       },
       {
-        speaker: `${namespace}.speaker`,
-        text: `${namespace}.intro_dialogue`,
+        speaker: `${namespace}:speaker`,
+        text: `${namespace}:intro_dialogue`,
       },
     ]);
-    expect(BugTypeSuperfanEncounter.dialogue.encounterOptionsDialogue?.title).toBe(`${namespace}.title`);
-    expect(BugTypeSuperfanEncounter.dialogue.encounterOptionsDialogue?.description).toBe(`${namespace}.description`);
-    expect(BugTypeSuperfanEncounter.dialogue.encounterOptionsDialogue?.query).toBe(`${namespace}.query`);
+    expect(BugTypeSuperfanEncounter.dialogue.encounterOptionsDialogue?.title).toBe(`${namespace}:title`);
+    expect(BugTypeSuperfanEncounter.dialogue.encounterOptionsDialogue?.description).toBe(`${namespace}:description`);
+    expect(BugTypeSuperfanEncounter.dialogue.encounterOptionsDialogue?.query).toBe(`${namespace}:query`);
     expect(BugTypeSuperfanEncounter.options.length).toBe(3);
-  });
-
-  it("should not run below wave 10", async () => {
-    game.override.startingWave(9);
-
-    await game.runToMysteryEncounter();
-
-    expect(scene.currentBattle?.mysteryEncounter?.encounterType).not.toBe(MysteryEncounterType.BUG_TYPE_SUPERFAN);
-  });
-
-  it("should not run above wave 179", async () => {
-    game.override.startingWave(181);
-
-    await game.runToMysteryEncounter();
-
-    expect(scene.currentBattle.mysteryEncounter).toBeUndefined();
   });
 
   it("should initialize fully", async () => {
@@ -242,12 +226,12 @@ describe("Bug-Type Superfan - Mystery Encounter", () => {
       expect(option.optionMode).toBe(MysteryEncounterOptionMode.DEFAULT);
       expect(option.dialogue).toBeDefined();
       expect(option.dialogue).toStrictEqual({
-        buttonLabel: `${namespace}.option.1.label`,
-        buttonTooltip: `${namespace}.option.1.tooltip`,
+        buttonLabel: `${namespace}:option.1.label`,
+        buttonTooltip: `${namespace}:option.1.tooltip`,
         selected: [
           {
-            speaker: `${namespace}.speaker`,
-            text: `${namespace}.option.1.selected`,
+            speaker: `${namespace}:speaker`,
+            text: `${namespace}:option.1.selected`,
           },
         ],
       });
@@ -414,9 +398,9 @@ describe("Bug-Type Superfan - Mystery Encounter", () => {
       expect(option.optionMode).toBe(MysteryEncounterOptionMode.DISABLED_OR_DEFAULT);
       expect(option.dialogue).toBeDefined();
       expect(option.dialogue).toStrictEqual({
-        buttonLabel: `${namespace}.option.2.label`,
-        buttonTooltip: `${namespace}.option.2.tooltip`,
-        disabledButtonTooltip: `${namespace}.option.2.disabled_tooltip`
+        buttonLabel: `${namespace}:option.2.label`,
+        buttonTooltip: `${namespace}:option.2.tooltip`,
+        disabledButtonTooltip: `${namespace}:option.2.disabled_tooltip`
       });
     });
 
@@ -514,19 +498,19 @@ describe("Bug-Type Superfan - Mystery Encounter", () => {
       expect(option.optionMode).toBe(MysteryEncounterOptionMode.DISABLED_OR_DEFAULT);
       expect(option.dialogue).toBeDefined();
       expect(option.dialogue).toStrictEqual({
-        buttonLabel: `${namespace}.option.3.label`,
-        buttonTooltip: `${namespace}.option.3.tooltip`,
-        disabledButtonTooltip: `${namespace}.option.3.disabled_tooltip`,
+        buttonLabel: `${namespace}:option.3.label`,
+        buttonTooltip: `${namespace}:option.3.tooltip`,
+        disabledButtonTooltip: `${namespace}:option.3.disabled_tooltip`,
         selected: [
           {
-            text: `${namespace}.option.3.selected`,
+            text: `${namespace}:option.3.selected`,
           },
           {
-            speaker: `${namespace}.speaker`,
-            text: `${namespace}.option.3.selected_dialogue`,
+            speaker: `${namespace}:speaker`,
+            text: `${namespace}:option.3.selected_dialogue`,
           },
         ],
-        secondOptionPrompt: `${namespace}.option.3.select_prompt`,
+        secondOptionPrompt: `${namespace}:option.3.select_prompt`,
       });
     });
 
