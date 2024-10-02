@@ -32,7 +32,7 @@ import { FunAndGamesEncounter } from "#app/data/mystery-encounters/encounters/fu
 import { UncommonBreedEncounter } from "#app/data/mystery-encounters/encounters/uncommon-breed-encounter";
 import { GlobalTradeSystemEncounter } from "#app/data/mystery-encounters/encounters/global-trade-system-encounter";
 import { TheExpertPokemonBreederEncounter } from "#app/data/mystery-encounters/encounters/the-expert-pokemon-breeder-encounter";
-import { getBiomeName } from "#app/data/biomes";
+import { getBiomeName } from "#app/data/balance/biomes";
 
 /**
  * Spawn chance: (BASE_MYSTERY_ENCOUNTER_SPAWN_WEIGHT + WIGHT_INCREMENT_ON_SPAWN_MISS * <number of missed spawns>) / MYSTERY_ENCOUNTER_SPAWN_MAX_WEIGHT

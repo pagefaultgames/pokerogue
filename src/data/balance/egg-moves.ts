@@ -1,5 +1,5 @@
-import { allMoves } from "./move";
-import * as Utils from "../utils";
+import { allMoves } from "#app/data/move";
+import * as Utils from "#app/utils";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 
