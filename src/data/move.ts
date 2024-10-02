@@ -3901,7 +3901,7 @@ export class PhotonGeyserCategoryAttr extends VariableMoveCategoryAttr {
   }
 }
 
-export class TeraBlastCategoryAttr extends VariableMoveCategoryAttr {
+export class TeraMoveCategoryAttr extends VariableMoveCategoryAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     const category = (args[0] as Utils.NumberHolder);
 
@@ -3986,6 +3986,18 @@ export class ShellSideArmCategoryAttr extends VariableMoveCategoryAttr {
 
 export class VariableMoveTypeAttr extends MoveAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    return false;
+  }
+}
+
+export class TeraStarstormTypeAttr extends VariableMoveTypeAttr {
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    if (user.isTerastallized() && user.species.speciesId === Species.TERAPAGOS) {
+      const moveType = args[0] as Utils.NumberHolder;
+
+      moveType.value = Type.STELLAR;
+      return true;
+    }
     return false;
   }
 }
@@ -9149,7 +9161,7 @@ export function initMoves() {
       .attr(HalfSacrificialAttr),
     new AttackMove(Moves.EXPANDING_FORCE, Type.PSYCHIC, MoveCategory.SPECIAL, 80, 100, 10, -1, 0, 8)
       .attr(MovePowerMultiplierAttr, (user, target, move) => user.scene.arena.getTerrainType() === TerrainType.PSYCHIC && user.isGrounded() ? 1.5 : 1)
-      .attr(VariableTargetAttr, (user, target, move) => user.scene.arena.getTerrainType() === TerrainType.PSYCHIC && user.isGrounded() ? 6 : 3),
+      .attr(VariableTargetAttr, (user, target, move) => user.scene.arena.getTerrainType() === TerrainType.PSYCHIC && user.isGrounded() ? MoveTarget.ALL_NEAR_ENEMIES : MoveTarget.NEAR_OTHER),
     new AttackMove(Moves.STEEL_ROLLER, Type.STEEL, MoveCategory.PHYSICAL, 130, 100, 5, -1, 0, 8)
       .attr(ClearTerrainAttr)
       .condition((user, target, move) => !!user.scene.arena.terrain),
@@ -9424,7 +9436,7 @@ export function initMoves() {
       .unimplemented(),
     End Unused */
     new AttackMove(Moves.TERA_BLAST, Type.NORMAL, MoveCategory.SPECIAL, 80, 100, 10, -1, 0, 9)
-      .attr(TeraBlastCategoryAttr)
+      .attr(TeraMoveCategoryAttr)
       .attr(TeraBlastTypeAttr)
       .attr(TeraBlastPowerAttr)
       .attr(StatStageChangeAttr, [ Stat.ATK, Stat.SPATK ], -1, true, (user, target, move) => user.isTerastallized() && user.isOfType(Type.STELLAR)),
@@ -9617,8 +9629,9 @@ export function initMoves() {
       .attr(ElectroShotChargeAttr)
       .ignoresVirtual(),
     new AttackMove(Moves.TERA_STARSTORM, Type.NORMAL, MoveCategory.SPECIAL, 120, 100, 5, -1, 0, 9)
-      .attr(TeraBlastCategoryAttr)
-      .partial(),
+      .attr(TeraMoveCategoryAttr)
+      .attr(TeraStarstormTypeAttr)
+      .attr(VariableTargetAttr, (user, target, move) => user.species.speciesId === Species.TERAPAGOS && user.isTerastallized() ? MoveTarget.ALL_NEAR_ENEMIES : MoveTarget.NEAR_OTHER),
     new AttackMove(Moves.FICKLE_BEAM, Type.DRAGON, MoveCategory.SPECIAL, 80, 100, 5, 30, 0, 9)
       .attr(PreMoveMessageAttr, doublePowerChanceMessageFunc)
       .attr(DoublePowerChanceAttr),
