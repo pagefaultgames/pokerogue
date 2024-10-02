@@ -36,7 +36,7 @@
   },
   "trickRoom": {
     "name": "Distortion",
-    "shortName": "Distortion",
+    "shortName": "Disto",
     "desc": "Tous les combats sont sous l’effet d’une Disortion où les Pokémon les plus lents on la priorité et inversement.\nDésactive tous les succès des autres challenges.",
     "value.0": "Non",
     "value.1": "Oui"
