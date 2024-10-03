@@ -36,11 +36,12 @@ describe("Moves - Scale Shot", () => {
       .enemyAbility(Abilities.SHEER_FORCE)
       .enemyPassiveAbility(Abilities.STALL)
       .enemyMoveset(Moves.SKILL_SWAP)
-      .enemyLevel(5);
+      .enemyLevel(3);
   });
 
   it("applies stat changes after last hit", async () => {
-    await game.classicMode.startBattle([Species.FORRETRESS]);
+    game.override.enemySpecies(Species.FORRETRESS);
+    await game.classicMode.startBattle();
     const minccino = game.scene.getPlayerPokemon()!;
     game.move.select(Moves.SCALE_SHOT);
     await game.phaseInterceptor.to(MoveEffectPhase);
@@ -54,7 +55,8 @@ describe("Moves - Scale Shot", () => {
   });
 
   it("unaffected by sheer force", async () => {
-    await game.classicMode.startBattle([Species.WOBBUFFET]);
+    game.override.enemySpecies(Species.WOBBUFFET);
+    await game.classicMode.startBattle();
     const minccino = game.scene.getPlayerPokemon()!;
     const wobbuffet = game.scene.getEnemyPokemon()!;
     wobbuffet.setStat(Stat.HP, 100, true);
