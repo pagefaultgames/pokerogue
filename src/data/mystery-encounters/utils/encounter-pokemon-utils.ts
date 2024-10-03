@@ -12,7 +12,8 @@ import { Mode } from "#app/ui/ui";
 import { PartyOption, PartyUiMode } from "#app/ui/party-ui-handler";
 import { Species } from "#enums/species";
 import { Type } from "#app/data/type";
-import PokemonSpecies, { getPokemonSpecies, speciesStarters } from "#app/data/pokemon-species";
+import PokemonSpecies, { getPokemonSpecies } from "#app/data/pokemon-species";
+import { speciesStarterCosts } from "#app/data/balance/starters";
 import { getEncounterText, queueEncounterMessage, showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { modifierTypes, PokemonHeldItemModifierType } from "#app/modifier/modifier-type";
@@ -208,8 +209,8 @@ export function getRandomSpeciesByStarterTier(starterTiers: number | [number, nu
   let min = Array.isArray(starterTiers) ? starterTiers[0] : starterTiers;
   let max = Array.isArray(starterTiers) ? starterTiers[1] : starterTiers;
 
-  let filteredSpecies: [PokemonSpecies, number][] = Object.keys(speciesStarters)
-    .map(s => [parseInt(s) as Species, speciesStarters[s] as number])
+  let filteredSpecies: [PokemonSpecies, number][] = Object.keys(speciesStarterCosts)
+    .map(s => [parseInt(s) as Species, speciesStarterCosts[s] as number])
     .filter(s => {
       const pokemonSpecies = getPokemonSpecies(s[0]);
       return pokemonSpecies && (!excludedSpecies || !excludedSpecies.includes(s[0]))

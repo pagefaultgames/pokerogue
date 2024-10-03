@@ -1,11 +1,11 @@
-import { Gender } from "./gender";
-import { PokeballType } from "./pokeball";
-import Pokemon from "../field/pokemon";
+import { Gender } from "#app/data/gender";
+import { PokeballType } from "#app/data/pokeball";
+import Pokemon from "#app/field/pokemon";
 import { Stat } from "#enums/stat";
-import { Type } from "./type";
-import * as Utils from "../utils";
-import { WeatherType } from "./weather";
-import { Nature } from "./nature";
+import { Type } from "#app/data/type";
+import * as Utils from "#app/utils";
+import { WeatherType } from "#app/data/weather";
+import { Nature } from "#app/data/nature";
 import { Biome } from "#enums/biome";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
