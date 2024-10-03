@@ -16,7 +16,7 @@ import { PokemonFormChangeItemModifier, PokemonHeldItemModifier } from "#app/mod
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
 
 /** i18n namespace for encounter */
-const namespace = "mysteryEncounter:darkDeal";
+const namespace = "mysteryEncounters/darkDeal";
 
 /** Exclude Ultra Beasts (inludes Cosmog/Solgaleo/Lunala/Necrozma), Paradox (includes Miraidon/Koraidon), Eternatus, and Mythicals */
 const excludedBosses = [
@@ -107,32 +107,32 @@ export const DarkDealEncounter: MysteryEncounter =
     ])
     .withIntroDialogue([
       {
-        text: `${namespace}.intro`,
+        text: `${namespace}:intro`,
       },
       {
-        speaker: `${namespace}.speaker`,
-        text: `${namespace}.intro_dialogue`,
+        speaker: `${namespace}:speaker`,
+        text: `${namespace}:intro_dialogue`,
       },
     ])
     .withSceneWaveRangeRequirement(30, CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES[1])
     .withScenePartySizeRequirement(2, 6, true) // Must have at least 2 pokemon in party
     .withCatchAllowed(true)
-    .withTitle(`${namespace}.title`)
-    .withDescription(`${namespace}.description`)
-    .withQuery(`${namespace}.query`)
+    .withTitle(`${namespace}:title`)
+    .withDescription(`${namespace}:description`)
+    .withQuery(`${namespace}:query`)
     .withOption(
       MysteryEncounterOptionBuilder
         .newOptionWithMode(MysteryEncounterOptionMode.DEFAULT)
         .withDialogue({
-          buttonLabel: `${namespace}.option.1.label`,
-          buttonTooltip: `${namespace}.option.1.tooltip`,
+          buttonLabel: `${namespace}:option.1.label`,
+          buttonTooltip: `${namespace}:option.1.tooltip`,
           selected: [
             {
-              speaker: `${namespace}.speaker`,
-              text: `${namespace}.option.1.selected_dialogue`,
+              speaker: `${namespace}:speaker`,
+              text: `${namespace}:option.1.selected_dialogue`,
             },
             {
-              text: `${namespace}.option.1.selected_message`,
+              text: `${namespace}:option.1.selected_message`,
             },
           ],
         })
@@ -187,12 +187,12 @@ export const DarkDealEncounter: MysteryEncounter =
     )
     .withSimpleOption(
       {
-        buttonLabel: `${namespace}.option.2.label`,
-        buttonTooltip: `${namespace}.option.2.tooltip`,
+        buttonLabel: `${namespace}:option.2.label`,
+        buttonTooltip: `${namespace}:option.2.tooltip`,
         selected: [
           {
-            speaker: `${namespace}.speaker`,
-            text: `${namespace}.option.2.selected`,
+            speaker: `${namespace}:speaker`,
+            text: `${namespace}:option.2.selected`,
           },
         ],
       },
@@ -204,7 +204,7 @@ export const DarkDealEncounter: MysteryEncounter =
     )
     .withOutroDialogue([
       {
-        text: `${namespace}.outro`
+        text: `${namespace}:outro`
       }
     ])
     .build();
