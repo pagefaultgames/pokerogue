@@ -1595,7 +1595,12 @@ export class PartyStatusCureAttr extends MoveEffectAttr {
     return true;
   }
 
-  cureStatus(pokemon: Pokemon, userId: number) {
+  /**
+   * Tries to cure the status of the given {@linkcode Pokemon}
+   * @param pokemon The {@linkcode Pokemon} to cure.
+   * @param userId The ID of the (move) {@linkcode Pokemon | user}.
+   */
+  public cureStatus(pokemon: Pokemon, userId: number) {
     if (!pokemon.isOnField() || pokemon.id === userId) { // user always cures its own status, regardless of ability
       pokemon.resetStatus(false);
       pokemon.updateInfo();
