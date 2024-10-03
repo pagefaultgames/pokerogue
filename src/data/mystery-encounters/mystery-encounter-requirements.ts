@@ -5,16 +5,16 @@ import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import { TimeOfDay } from "#enums/time-of-day";
-import { Nature } from "../nature";
-import { EvolutionItem, pokemonEvolutions } from "../pokemon-evolutions";
-import { FormChangeItem, pokemonFormChanges, SpeciesFormChangeItemTrigger } from "../pokemon-forms";
-import { SpeciesFormKey } from "../pokemon-species";
-import { StatusEffect } from "../status-effect";
-import { Type } from "../type";
-import { WeatherType } from "../weather";
+import { Nature } from "#app/data/nature";
+import { EvolutionItem, pokemonEvolutions } from "#app/data/balance/pokemon-evolutions";
+import { FormChangeItem, pokemonFormChanges, SpeciesFormChangeItemTrigger } from "#app/data/pokemon-forms";
+import { StatusEffect } from "#app/data/status-effect";
+import { Type } from "#app/data/type";
+import { WeatherType } from "#app/data/weather";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { AttackTypeBoosterModifier } from "#app/modifier/modifier";
 import { AttackTypeBoosterModifierType } from "#app/modifier/modifier-type";
+import { SpeciesFormKey } from "#enums/species-form-key";
 
 export interface EncounterRequirement {
   meetsRequirement(scene: BattleScene): boolean; // Boolean to see if a requirement is met

@@ -1,28 +1,28 @@
-import BattleScene, { starterColors } from "../battle-scene";
-import { Mode } from "./ui";
-import UiHandler from "./ui-handler";
-import * as Utils from "../utils";
-import { PlayerPokemon, PokemonMove } from "../field/pokemon";
-import { getStarterValueFriendshipCap, speciesStarters } from "../data/pokemon-species";
+import BattleScene, { starterColors } from "#app/battle-scene";
+import { Mode } from "#app/ui/ui";
+import UiHandler from "#app/ui/ui-handler";
+import * as Utils from "#app/utils";
+import { PlayerPokemon, PokemonMove } from "#app/field/pokemon";
+import { getStarterValueFriendshipCap, speciesStarterCosts } from "#app/data/balance/starters";
 import { argbFromRgba } from "@material/material-color-utilities";
-import { Type, getTypeRgb } from "../data/type";
-import { TextStyle, addBBCodeTextObject, addTextObject, getBBCodeFrag } from "./text";
-import Move, { MoveCategory } from "../data/move";
-import { getPokeballAtlasKey } from "../data/pokeball";
-import { getGenderColor, getGenderSymbol } from "../data/gender";
-import { getLevelRelExp, getLevelTotalExp } from "../data/exp";
-import { PokemonHeldItemModifier } from "../modifier/modifier";
-import { StatusEffect } from "../data/status-effect";
-import { getBiomeName } from "../data/biomes";
-import { Nature, getNatureName, getNatureStatMultiplier } from "../data/nature";
-import { loggedInUser } from "../account";
+import { Type, getTypeRgb } from "#app/data/type";
+import { TextStyle, addBBCodeTextObject, addTextObject, getBBCodeFrag } from "#app/ui/text";
+import Move, { MoveCategory } from "#app/data/move";
+import { getPokeballAtlasKey } from "#app/data/pokeball";
+import { getGenderColor, getGenderSymbol } from "#app/data/gender";
+import { getLevelRelExp, getLevelTotalExp } from "#app/data/exp";
+import { PokemonHeldItemModifier } from "#app/modifier/modifier";
+import { StatusEffect } from "#app/data/status-effect";
+import { getBiomeName } from "#app/data/balance/biomes";
+import { Nature, getNatureName, getNatureStatMultiplier } from "#app/data/nature";
+import { loggedInUser } from "#app/account";
 import { Variant, getVariantTint } from "#app/data/variant";
-import {Button} from "#enums/buttons";
-import { Ability } from "../data/ability";
+import { Button } from "#enums/buttons";
+import { Ability } from "#app/data/ability";
 import i18next from "i18next";
-import {modifierSortFunc} from "../modifier/modifier";
+import { modifierSortFunc } from "#app/modifier/modifier";
 import { PlayerGender } from "#enums/player-gender";
-import { Stat, PERMANENT_STATS, getStatKey } from "#app/enums/stat";
+import { Stat, PERMANENT_STATS, getStatKey } from "#enums/stat";
 
 enum Page {
   PROFILE,
@@ -87,6 +87,10 @@ export default class SummaryUiHandler extends UiHandler {
   private moveAccuracyText: Phaser.GameObjects.Text;
   private moveCategoryIcon: Phaser.GameObjects.Sprite;
   private summaryPageTransitionContainer: Phaser.GameObjects.Container;
+  private friendshipShadow: Phaser.GameObjects.Sprite;
+  private friendshipText: Phaser.GameObjects.Text;
+  private friendshipIcon: Phaser.GameObjects.Sprite;
+  private friendshipOverlay: Phaser.GameObjects.Sprite;
 
   private descriptionScrollTween: Phaser.Tweens.Tween | null;
   private moveCursorBlinkTimer: Phaser.Time.TimerEvent | null;
@@ -186,6 +190,25 @@ export default class SummaryUiHandler extends UiHandler {
     this.candyCountText = addTextObject(this.scene, 20, -146, "x0", TextStyle.WINDOW_ALT, { fontSize: "76px" });
     this.candyCountText.setOrigin(0, 0);
     this.summaryContainer.add(this.candyCountText);
+
+    this.friendshipIcon = this.scene.add.sprite(13, -60, "friendship");
+    this.friendshipIcon.setScale(0.8);
+    this.summaryContainer.add(this.friendshipIcon);
+
+    this.friendshipOverlay = this.scene.add.sprite(13, -60, "friendship_overlay");
+    this.friendshipOverlay.setScale(0.8);
+    this.summaryContainer.add(this.friendshipOverlay);
+
+    this.friendshipShadow = this.scene.add.sprite(13, -60, "friendship");
+    this.friendshipShadow.setTint(0x000000);
+    this.friendshipShadow.setAlpha(0.50);
+    this.friendshipShadow.setScale(0.8);
+    this.friendshipShadow.setInteractive(new Phaser.Geom.Rectangle(0, 0, 16, 16), Phaser.Geom.Rectangle.Contains);
+    this.summaryContainer.add(this.friendshipShadow);
+
+    this.friendshipText = addTextObject(this.scene, 20, -66, "x0", TextStyle.WINDOW_ALT, { fontSize: "76px" });
+    this.friendshipText.setOrigin(0, 0);
+    this.summaryContainer.add(this.friendshipText);
 
     this.championRibbon = this.scene.add.image(88, -146, "champion_ribbon");
     this.championRibbon.setOrigin(0, 0);
@@ -292,6 +315,7 @@ export default class SummaryUiHandler extends UiHandler {
     this.candyIcon.setTint(argbFromRgba(Utils.rgbHexToRgba(colorScheme[0])));
     this.candyOverlay.setTint(argbFromRgba(Utils.rgbHexToRgba(colorScheme[1])));
 
+
     this.numberText.setText(Utils.padInt(this.pokemon.species.speciesId, 4));
     this.numberText.setColor(this.getTextColor(!this.pokemon.isShiny() ? TextStyle.SUMMARY : TextStyle.SUMMARY_GOLD));
     this.numberText.setShadowColor(this.getTextColor(!this.pokemon.isShiny() ? TextStyle.SUMMARY : TextStyle.SUMMARY_GOLD, true));
@@ -333,7 +357,7 @@ export default class SummaryUiHandler extends UiHandler {
       currentFriendship = 0;
     }
 
-    const friendshipCap = getStarterValueFriendshipCap(speciesStarters[this.pokemon.species.getRootSpeciesId()]);
+    const friendshipCap = getStarterValueFriendshipCap(speciesStarterCosts[this.pokemon.species.getRootSpeciesId()]);
     const candyCropY = 16 - (16 * (currentFriendship / friendshipCap));
 
     if (this.candyShadow.visible) {
@@ -344,6 +368,15 @@ export default class SummaryUiHandler extends UiHandler {
     this.candyCountText.setText(`x${this.scene.gameData.starterData[this.pokemon.species.getRootSpeciesId()].candyCount}`);
 
     this.candyShadow.setCrop(0, 0, 16, candyCropY);
+
+    if (this.friendshipShadow.visible) {
+      this.friendshipShadow.on("pointerover", () => this.scene.ui.showTooltip("", `${i18next.t("pokemonSummary:friendship")}`, true));
+      this.friendshipShadow.on("pointerout", () => this.scene.ui.hideTooltip());
+    }
+
+    this.friendshipText.setText(`${this.pokemon?.friendship || "0"} / 255`);
+
+    this.friendshipShadow.setCrop(0, 0, 16, 16 - (16 * ((this.pokemon?.friendship || 0) / 255)));
 
     const doubleShiny = isFusion && this.pokemon.shiny && this.pokemon.fusionShiny;
     const baseVariant = !doubleShiny ? this.pokemon.getVariant() : this.pokemon.variant;
