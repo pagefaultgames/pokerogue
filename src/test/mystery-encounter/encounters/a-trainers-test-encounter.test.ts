@@ -107,7 +107,6 @@ describe("A Trainer's Test - Mystery Encounter", () => {
       expect(scene.getCurrentPhase()?.constructor.name).toBe(CommandPhase.name);
       expect(enemyField.length).toBe(1);
       expect(scene.currentBattle.trainer).toBeDefined();
-      console.log(scene.currentBattle.trainer?.config.name);
       expect([i18next.t("trainerNames:buck"), i18next.t("trainerNames:cheryl"), i18next.t("trainerNames:marley"), i18next.t("trainerNames:mira"), i18next.t("trainerNames:riley")].map(name => name.toLowerCase()).includes(scene.currentBattle.trainer!.config.name)).toBeTruthy();
       expect(enemyField[0]).toBeDefined();
     });
