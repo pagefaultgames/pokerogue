@@ -52,6 +52,7 @@ export const FieldTripEncounter: MysteryEncounter =
       },
     ])
     .withAutoHideIntroVisuals(false)
+    .setLocalizationKey(`${namespace}`)
     .withTitle(`${namespace}:title`)
     .withDescription(`${namespace}:description`)
     .withQuery(`${namespace}:query`)

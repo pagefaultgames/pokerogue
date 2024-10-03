@@ -76,6 +76,7 @@ export const FunAndGamesEncounter: MysteryEncounter =
         text: `${namespace}:intro_dialogue`,
       },
     ])
+    .setLocalizationKey(`${namespace}`)
     .withTitle(`${namespace}:title`)
     .withDescription(`${namespace}:description`)
     .withQuery(`${namespace}:query`)

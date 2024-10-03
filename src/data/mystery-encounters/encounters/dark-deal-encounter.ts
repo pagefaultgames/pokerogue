@@ -117,6 +117,7 @@ export const DarkDealEncounter: MysteryEncounter =
     .withSceneWaveRangeRequirement(30, CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES[1])
     .withScenePartySizeRequirement(2, 6, true) // Must have at least 2 pokemon in party
     .withCatchAllowed(true)
+    .setLocalizationKey(`${namespace}`)
     .withTitle(`${namespace}:title`)
     .withDescription(`${namespace}:description`)
     .withQuery(`${namespace}:query`)

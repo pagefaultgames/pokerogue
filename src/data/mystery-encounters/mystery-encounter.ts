@@ -190,7 +190,10 @@ export default class MysteryEncounter implements IMysteryEncounter {
   secondaryPokemon?: PlayerPokemon[];
 
   // #region Post-construct / Auto-populated params
-
+  /**
+   * Localization Key
+   */
+  localizationKey: string;
   /**
    * Dialogue object containing all the dialogue, messages, tooltips, etc. for an encounter
    */
@@ -264,6 +267,7 @@ export default class MysteryEncounter implements IMysteryEncounter {
       Object.assign(this, encounter);
     }
     this.encounterTier = this.encounterTier ?? MysteryEncounterTier.COMMON;
+    this.localizationKey = this.localizationKey ?? "";
     this.dialogue = this.dialogue ?? {};
     this.spriteConfigs = this.spriteConfigs ? [...this.spriteConfigs] : [];
     // Default max is 1 for ROGUE encounters, 2 for others
@@ -528,6 +532,7 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
   options: [MysteryEncounterOption, MysteryEncounterOption, ...MysteryEncounterOption[]];
   enemyPartyConfigs: EnemyPartyConfig[] = [];
 
+  localizationKey: string = "";
   dialogue: MysteryEncounterDialogue = {};
   requirements: EncounterSceneRequirement[] = [];
   primaryPokemonRequirements: EncounterPokemonRequirement[] = [];
@@ -630,6 +635,16 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
 
   withIntro({spriteConfigs, dialogue} : {spriteConfigs: MysteryEncounterSpriteConfig[], dialogue?:  MysteryEncounterDialogue["intro"]}) {
     return this.withIntroSpriteConfigs(spriteConfigs).withIntroDialogue(dialogue);
+  }
+
+  /**
+   * Sets the localization key used by the encounter
+   * @param localizationKey the localizationKey used for the encounter
+   * @returns
+   */
+  setLocalizationKey(localizationKey: string): this {
+    this.localizationKey = localizationKey;
+    return this;
   }
 
   /**

@@ -24,7 +24,7 @@ import { Species } from "#enums/species";
 import { PlayerGender } from "#enums/player-gender";
 import { SettingKeyboard } from "#app/system/settings/settings-keyboard";
 import { getBiomeName } from "#app/data/balance/biomes";
-import { getMysteryEncounterKey } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
+import { MysteryEncounterType } from "#app/enums/mystery-encounter-type";
 
 /**
  * RunInfoUiMode indicates possible overlays of RunInfoUiHandler.
@@ -299,7 +299,7 @@ export default class RunInfoUiHandler extends UiHandler {
       const subSprite = this.scene.add.sprite(56, -106, "pkmn__sub");
       subSprite.setScale(0.65);
       subSprite.setPosition(34, 46);
-      const mysteryEncounterTitle = i18next.t(getMysteryEncounterKey(this.runInfo.mysteryEncounterType)+".title");
+      const mysteryEncounterTitle = i18next.t(this.scene.getMysteryEncounter(this.runInfo.mysteryEncounterType as MysteryEncounterType, true).localizationKey+":title");
       const descContainer = this.scene.add.container(0, 0);
       const textBox = addTextObject(this.scene, 0, 0, mysteryEncounterTitle, TextStyle.WINDOW, { fontSize : "45px", wordWrap: {width: 160} });
       descContainer.add(textBox);
