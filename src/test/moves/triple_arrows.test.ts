@@ -9,6 +9,9 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vite
 describe("Moves - Triple Arrows", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
+  const tripleArrows = allMoves[Moves.TRIPLE_ARROWS];
+  const flinchAttr = tripleArrows.getAttrs(FlinchAttr)[0];
+  const defDropAttr = tripleArrows.getAttrs(StatStageChangeAttr)[0];
 
   beforeAll(() => {
     phaserGame = new Phaser.Game({
@@ -27,16 +30,14 @@ describe("Moves - Triple Arrows", () => {
       .moveset([Moves.TRIPLE_ARROWS])
       .battleType("single")
       .enemySpecies(Species.MAGIKARP)
-      .enemyAbility(Abilities.BALL_FETCH)
+      .enemyAbility(Abilities.STURDY)
       .enemyMoveset(Moves.SPLASH);
+
+    vi.spyOn(flinchAttr, "getMoveChance");
+    vi.spyOn(defDropAttr, "getMoveChance");
   });
 
   it("has a 30% flinch chance and 50% defense drop chance", async () => {
-    const tripleArrows = allMoves[Moves.TRIPLE_ARROWS];
-    const flinchAttr = tripleArrows.getAttrs(FlinchAttr)[0];
-    const defDropAttr = tripleArrows.getAttrs(StatStageChangeAttr)[0];
-    vi.spyOn(flinchAttr, "getMoveChance");
-    vi.spyOn(defDropAttr, "getMoveChance");
     await game.classicMode.startBattle([Species.FEEBAS]);
 
     game.move.select(Moves.TRIPLE_ARROWS);
@@ -44,5 +45,16 @@ describe("Moves - Triple Arrows", () => {
 
     expect(flinchAttr.getMoveChance).toHaveReturnedWith(30);
     expect(defDropAttr.getMoveChance).toHaveReturnedWith(50);
+  });
+
+  it("is affected normally by Serene Grace", async () => {
+    game.override.ability(Abilities.SERENE_GRACE);
+    await game.classicMode.startBattle([Species.FEEBAS]);
+
+    game.move.select(Moves.TRIPLE_ARROWS);
+    await game.phaseInterceptor.to("BerryPhase");
+
+    expect(flinchAttr.getMoveChance).toHaveReturnedWith(60);
+    expect(defDropAttr.getMoveChance).toHaveReturnedWith(100);
   });
 });
