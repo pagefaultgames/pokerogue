@@ -23,7 +23,7 @@ import * as Modifier from "../modifier/modifier";
 import { Species } from "#enums/species";
 import { PlayerGender } from "#enums/player-gender";
 import { SettingKeyboard } from "#app/system/settings/settings-keyboard";
-import { getBiomeName } from "#app/data/biomes";
+import { getBiomeName } from "#app/data/balance/biomes";
 import { getMysteryEncounterKey } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 
 /**
