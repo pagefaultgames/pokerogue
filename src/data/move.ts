@@ -341,7 +341,8 @@ export default class Move implements Localizable {
    * @returns `true` if the move can bypass the target's Substitute; `false` otherwise.
    */
   hitsSubstitute(user: Pokemon, target: Pokemon | null): boolean {
-    if (this.moveTarget === MoveTarget.USER || !target?.getTag(BattlerTagType.SUBSTITUTE)) {
+    if ([MoveTarget.USER, MoveTarget.USER_SIDE, MoveTarget.ENEMY_SIDE, MoveTarget.BOTH_SIDES].includes(this.moveTarget)
+        || !target?.getTag(BattlerTagType.SUBSTITUTE)) {
       return false;
     }
 
@@ -398,220 +399,202 @@ export default class Move implements Localizable {
 
   /**
    * Sets the {@linkcode MoveFlags.MAKES_CONTACT} flag for the calling Move
-   * @param makesContact The value (boolean) to set the flag to
+   * @param setFlag Default `true`, set to `false` if the move doesn't make contact
+   * @see {@linkcode Abilities.STATIC}
    * @returns The {@linkcode Move} that called this function
    */
-  makesContact(makesContact: boolean = true): this {
-    this.setFlag(MoveFlags.MAKES_CONTACT, makesContact);
+  makesContact(setFlag: boolean = true): this {
+    this.setFlag(MoveFlags.MAKES_CONTACT, setFlag);
     return this;
   }
 
   /**
    * Sets the {@linkcode MoveFlags.IGNORE_PROTECT} flag for the calling Move
-   * @param ignoresProtect The value (boolean) to set the flag to
-   * example: @see {@linkcode Moves.CURSE}
+   * @see {@linkcode Moves.CURSE}
    * @returns The {@linkcode Move} that called this function
    */
-  ignoresProtect(ignoresProtect: boolean = true): this {
-    this.setFlag(MoveFlags.IGNORE_PROTECT, ignoresProtect);
+  ignoresProtect(): this {
+    this.setFlag(MoveFlags.IGNORE_PROTECT, true);
     return this;
   }
 
   /**
    * Sets the {@linkcode MoveFlags.IGNORE_VIRTUAL} flag for the calling Move
-   * @param ignoresVirtual The value (boolean) to set the flag to
-   * example: @see {@linkcode Moves.NATURE_POWER}
+   * @see {@linkcode Moves.NATURE_POWER}
    * @returns The {@linkcode Move} that called this function
    */
-  ignoresVirtual(ignoresVirtual: boolean = true): this {
-    this.setFlag(MoveFlags.IGNORE_VIRTUAL, ignoresVirtual);
+  ignoresVirtual(): this {
+    this.setFlag(MoveFlags.IGNORE_VIRTUAL, true);
     return this;
   }
 
   /**
    * Sets the {@linkcode MoveFlags.SOUND_BASED} flag for the calling Move
-   * @param soundBased The value (boolean) to set the flag to
-   * example: @see {@linkcode Moves.UPROAR}
+   * @see {@linkcode Moves.UPROAR}
    * @returns The {@linkcode Move} that called this function
    */
-  soundBased(soundBased: boolean = true): this {
-    this.setFlag(MoveFlags.SOUND_BASED, soundBased);
+  soundBased(): this {
+    this.setFlag(MoveFlags.SOUND_BASED, true);
     return this;
   }
 
   /**
    * Sets the {@linkcode MoveFlags.HIDE_USER} flag for the calling Move
-   * @param hidesUser The value (boolean) to set the flag to
-   * example: @see {@linkcode Moves.TELEPORT}
+   * @see {@linkcode Moves.TELEPORT}
    * @returns The {@linkcode Move} that called this function
    */
-  hidesUser(hidesUser: boolean = true): this {
-    this.setFlag(MoveFlags.HIDE_USER, hidesUser);
+  hidesUser(): this {
+    this.setFlag(MoveFlags.HIDE_USER, true);
     return this;
   }
 
   /**
    * Sets the {@linkcode MoveFlags.HIDE_TARGET} flag for the calling Move
-   * @param hidesTarget The value (boolean) to set the flag to
-   * example: @see {@linkcode Moves.WHIRLWIND}
+   * @see {@linkcode Moves.WHIRLWIND}
    * @returns The {@linkcode Move} that called this function
    */
-  hidesTarget(hidesTarget: boolean = true): this {
-    this.setFlag(MoveFlags.HIDE_TARGET, hidesTarget);
+  hidesTarget(): this {
+    this.setFlag(MoveFlags.HIDE_TARGET, true);
     return this;
   }
 
   /**
    * Sets the {@linkcode MoveFlags.BITING_MOVE} flag for the calling Move
-   * @param bitingMove The value (boolean) to set the flag to
-   * example: @see {@linkcode Moves.BITE}
+   * @see {@linkcode Moves.BITE}
    * @returns The {@linkcode Move} that called this function
    */
-  bitingMove(bitingMove: boolean = true): this {
-    this.setFlag(MoveFlags.BITING_MOVE, bitingMove);
+  bitingMove(): this {
+    this.setFlag(MoveFlags.BITING_MOVE, true);
     return this;
   }
 
   /**
    * Sets the {@linkcode MoveFlags.PULSE_MOVE} flag for the calling Move
-   * @param pulseMove The value (boolean) to set the flag to
-   * example: @see {@linkcode Moves.WATER_PULSE}
+   * @see {@linkcode Moves.WATER_PULSE}
    * @returns The {@linkcode Move} that called this function
    */
-  pulseMove(pulseMove: boolean = true): this {
-    this.setFlag(MoveFlags.PULSE_MOVE, pulseMove);
+  pulseMove(): this {
+    this.setFlag(MoveFlags.PULSE_MOVE, true);
     return this;
   }
 
   /**
    * Sets the {@linkcode MoveFlags.PUNCHING_MOVE} flag for the calling Move
-   * @param punchingMove The value (boolean) to set the flag to
-   * example: @see {@linkcode Moves.DRAIN_PUNCH}
+   * @see {@linkcode Moves.DRAIN_PUNCH}
    * @returns The {@linkcode Move} that called this function
    */
-  punchingMove(punchingMove: boolean = true): this {
-    this.setFlag(MoveFlags.PUNCHING_MOVE, punchingMove);
+  punchingMove(): this {
+    this.setFlag(MoveFlags.PUNCHING_MOVE, true);
     return this;
   }
 
   /**
    * Sets the {@linkcode MoveFlags.SLICING_MOVE} flag for the calling Move
-   * @param slicingMove The value (boolean) to set the flag to
-   * example: @see {@linkcode Moves.X_SCISSOR}
+   * @see {@linkcode Moves.X_SCISSOR}
    * @returns The {@linkcode Move} that called this function
    */
-  slicingMove(slicingMove: boolean = true): this {
-    this.setFlag(MoveFlags.SLICING_MOVE, slicingMove);
+  slicingMove(): this {
+    this.setFlag(MoveFlags.SLICING_MOVE, true);
     return this;
   }
 
   /**
    * Sets the {@linkcode MoveFlags.RECKLESS_MOVE} flag for the calling Move
    * @see {@linkcode Abilities.RECKLESS}
-   * @param recklessMove The value to set the flag to
    * @returns The {@linkcode Move} that called this function
    */
-  recklessMove(recklessMove: boolean = true): this {
-    this.setFlag(MoveFlags.RECKLESS_MOVE, recklessMove);
+  recklessMove(): this {
+    this.setFlag(MoveFlags.RECKLESS_MOVE, true);
     return this;
   }
 
   /**
    * Sets the {@linkcode MoveFlags.BALLBOMB_MOVE} flag for the calling Move
-   * @param ballBombMove The value (boolean) to set the flag to
-   * example: @see {@linkcode Moves.ELECTRO_BALL}
+   * @see {@linkcode Moves.ELECTRO_BALL}
    * @returns The {@linkcode Move} that called this function
    */
-  ballBombMove(ballBombMove: boolean = true): this {
-    this.setFlag(MoveFlags.BALLBOMB_MOVE, ballBombMove);
+  ballBombMove(): this {
+    this.setFlag(MoveFlags.BALLBOMB_MOVE, true);
     return this;
   }
 
   /**
    * Sets the {@linkcode MoveFlags.POWDER_MOVE} flag for the calling Move
-   * @param powderMove The value (boolean) to set the flag to
-   * example: @see {@linkcode Moves.STUN_SPORE}
+   * @see {@linkcode Moves.STUN_SPORE}
    * @returns The {@linkcode Move} that called this function
    */
-  powderMove(powderMove: boolean = true): this {
-    this.setFlag(MoveFlags.POWDER_MOVE, powderMove);
+  powderMove(): this {
+    this.setFlag(MoveFlags.POWDER_MOVE, true);
     return this;
   }
 
   /**
    * Sets the {@linkcode MoveFlags.DANCE_MOVE} flag for the calling Move
-   * @param danceMove The value (boolean) to set the flag to
-   * example: @see {@linkcode Moves.PETAL_DANCE}
+   * @see {@linkcode Moves.PETAL_DANCE}
    * @returns The {@linkcode Move} that called this function
    */
-  danceMove(danceMove: boolean = true): this {
-    this.setFlag(MoveFlags.DANCE_MOVE, danceMove);
+  danceMove(): this {
+    this.setFlag(MoveFlags.DANCE_MOVE, true);
     return this;
   }
 
   /**
    * Sets the {@linkcode MoveFlags.WIND_MOVE} flag for the calling Move
-   * @param windMove The value (boolean) to set the flag to
-   * example: @see {@linkcode Moves.HURRICANE}
+   * @see {@linkcode Moves.HURRICANE}
    * @returns The {@linkcode Move} that called this function
    */
-  windMove(windMove: boolean = true): this {
-    this.setFlag(MoveFlags.WIND_MOVE, windMove);
+  windMove(): this {
+    this.setFlag(MoveFlags.WIND_MOVE, true);
     return this;
   }
 
   /**
    * Sets the {@linkcode MoveFlags.TRIAGE_MOVE} flag for the calling Move
-   * @param triageMove The value (boolean) to set the flag to
-   * example: @see {@linkcode Moves.ABSORB}
+   * @see {@linkcode Moves.ABSORB}
    * @returns The {@linkcode Move} that called this function
    */
-  triageMove(triageMove: boolean = true): this {
-    this.setFlag(MoveFlags.TRIAGE_MOVE, triageMove);
+  triageMove(): this {
+    this.setFlag(MoveFlags.TRIAGE_MOVE, true);
     return this;
   }
 
   /**
    * Sets the {@linkcode MoveFlags.IGNORE_ABILITIES} flag for the calling Move
-   * @param ignoresAbilities sThe value (boolean) to set the flag to
-   * example: @see {@linkcode Moves.SUNSTEEL_STRIKE}
+   * @see {@linkcode Moves.SUNSTEEL_STRIKE}
    * @returns The {@linkcode Move} that called this function
    */
-  ignoresAbilities(ignoresAbilities: boolean = true): this {
-    this.setFlag(MoveFlags.IGNORE_ABILITIES, ignoresAbilities);
+  ignoresAbilities(): this {
+    this.setFlag(MoveFlags.IGNORE_ABILITIES, true);
     return this;
   }
 
   /**
    * Sets the {@linkcode MoveFlags.CHECK_ALL_HITS} flag for the calling Move
-   * @param checkAllHits The value (boolean) to set the flag to
-   * example: @see {@linkcode Moves.TRIPLE_AXEL}
+   * @see {@linkcode Moves.TRIPLE_AXEL}
    * @returns The {@linkcode Move} that called this function
    */
-  checkAllHits(checkAllHits: boolean = true): this {
-    this.setFlag(MoveFlags.CHECK_ALL_HITS, checkAllHits);
+  checkAllHits(): this {
+    this.setFlag(MoveFlags.CHECK_ALL_HITS, true);
     return this;
   }
 
   /**
    * Sets the {@linkcode MoveFlags.IGNORE_SUBSTITUTE} flag for the calling Move
-   * @param ignoresSubstitute The value (boolean) to set the flag to
-   * example: @see {@linkcode Moves.WHIRLWIND}
+   * @see {@linkcode Moves.WHIRLWIND}
    * @returns The {@linkcode Move} that called this function
    */
-  ignoresSubstitute(ignoresSubstitute: boolean = true): this {
-    this.setFlag(MoveFlags.IGNORE_SUBSTITUTE, ignoresSubstitute);
+  ignoresSubstitute(): this {
+    this.setFlag(MoveFlags.IGNORE_SUBSTITUTE, true);
     return this;
   }
 
   /**
    * Sets the {@linkcode MoveFlags.REDIRECT_COUNTER} flag for the calling Move
-   * @param redirectCounter The value (boolean) to set the flag to
-   * example: @see {@linkcode Moves.METAL_BURST}
+   * @see {@linkcode Moves.METAL_BURST}
    * @returns The {@linkcode Move} that called this function
    */
-  redirectCounter(redirectCounter: boolean = true): this {
-    this.setFlag(MoveFlags.REDIRECT_COUNTER, redirectCounter);
+  redirectCounter(): this {
+    this.setFlag(MoveFlags.REDIRECT_COUNTER, true);
     return this;
   }
 
@@ -4544,6 +4527,7 @@ export class AddBattlerTagAttr extends MoveEffectAttr {
     case BattlerTagType.DROWSY:
     case BattlerTagType.DISABLED:
     case BattlerTagType.HEAL_BLOCK:
+    case BattlerTagType.RECEIVE_DOUBLE_DAMAGE:
       return -5;
     case BattlerTagType.SEEDED:
     case BattlerTagType.SALT_CURED:
@@ -4564,6 +4548,7 @@ export class AddBattlerTagAttr extends MoveEffectAttr {
     case BattlerTagType.ENCORE:
       return -2;
     case BattlerTagType.MINIMIZED:
+    case BattlerTagType.ALWAYS_GET_HIT:
       return 0;
     case BattlerTagType.INGRAIN:
     case BattlerTagType.IGNORE_ACCURACY:
@@ -5348,7 +5333,7 @@ export class ChillyReceptionAttr extends ForceSwitchOutAttr {
 
   getCondition(): MoveConditionFunc {
     // chilly reception move will go through if the weather is change-able to snow, or the user can switch out, else move will fail
-    return (user, target, move) => user.scene.arena.trySetWeather(WeatherType.SNOW, true) || super.getSwitchOutCondition()(user, target, move);
+    return (user, target, move) => user.scene.arena.weather?.weatherType !== WeatherType.SNOW || super.getSwitchOutCondition()(user, target, move);
   }
 }
 export class RemoveTypeAttr extends MoveEffectAttr {
@@ -6589,7 +6574,7 @@ export class MoveCondition {
 
 export class FirstMoveCondition extends MoveCondition {
   constructor() {
-    super((user, target, move) => user.battleSummonData?.turnCount === 1);
+    super((user, target, move) => user.battleSummonData?.waveTurnCount === 1);
   }
 
   getUserBenefitScore(user: Pokemon, target: Pokemon, move: Move): integer {
@@ -7266,7 +7251,7 @@ export function initMoves() {
     new StatusMove(Moves.CURSE, Type.GHOST, -1, 10, -1, 0, 2)
       .attr(CurseAttr)
       .ignoresSubstitute()
-      .ignoresProtect(true)
+      .ignoresProtect()
       .target(MoveTarget.CURSE),
     new AttackMove(Moves.FLAIL, Type.NORMAL, MoveCategory.PHYSICAL, -1, 100, 15, -1, 0, 2)
       .attr(LowHpPowerAttr),
@@ -8906,8 +8891,8 @@ export function initMoves() {
       .attr(HalfSacrificialAttr)
       .target(MoveTarget.ALL_NEAR_OTHERS),
     new AttackMove(Moves.PLASMA_FISTS, Type.ELECTRIC, MoveCategory.PHYSICAL, 100, 100, 15, -1, 0, 7)
-      .punchingMove()
-      .partial(),
+      .attr(AddArenaTagAttr, ArenaTagType.PLASMA_FISTS, 1)
+      .punchingMove(),
     new AttackMove(Moves.PHOTON_GEYSER, Type.PSYCHIC, MoveCategory.SPECIAL, 100, 100, 5, -1, 0, 7)
       .attr(PhotonGeyserCategoryAttr)
       .ignoresAbilities()
@@ -8937,7 +8922,7 @@ export function initMoves() {
       .partial()
       .ignoresVirtual(),
     /* End Unused */
-    new AttackMove(Moves.ZIPPY_ZAP, Type.ELECTRIC, MoveCategory.PHYSICAL, 50, 100, 15, 100, 2, 7) //LGPE Implementation
+    new AttackMove(Moves.ZIPPY_ZAP, Type.ELECTRIC, MoveCategory.PHYSICAL, 50, 100, 15, -1, 2, 7) //LGPE Implementation
       .attr(CritOnlyAttr),
     new AttackMove(Moves.SPLISHY_SPLASH, Type.WATER, MoveCategory.SPECIAL, 90, 100, 15, 30, 0, 7)
       .attr(StatusEffectAttr, StatusEffect.PARALYSIS)
@@ -9622,9 +9607,8 @@ export function initMoves() {
       .target(MoveTarget.ALL_NEAR_ENEMIES)
       .triageMove(),
     new AttackMove(Moves.SYRUP_BOMB, Type.GRASS, MoveCategory.SPECIAL, 60, 85, 10, -1, 0, 9)
-      .attr(StatStageChangeAttr, [ Stat.SPD ], -1) //Temporary
-      .ballBombMove()
-      .partial(),
+      .attr(AddBattlerTagAttr, BattlerTagType.SYRUP_BOMB, false, false, 3)
+      .ballBombMove(),
     new AttackMove(Moves.IVY_CUDGEL, Type.GRASS, MoveCategory.PHYSICAL, 100, 100, 10, -1, 0, 9)
       .attr(IvyCudgelTypeAttr)
       .attr(HighCritAttr)

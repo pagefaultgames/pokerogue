@@ -32,7 +32,7 @@ import { FunAndGamesEncounter } from "#app/data/mystery-encounters/encounters/fu
 import { UncommonBreedEncounter } from "#app/data/mystery-encounters/encounters/uncommon-breed-encounter";
 import { GlobalTradeSystemEncounter } from "#app/data/mystery-encounters/encounters/global-trade-system-encounter";
 import { TheExpertPokemonBreederEncounter } from "#app/data/mystery-encounters/encounters/the-expert-pokemon-breeder-encounter";
-import { getBiomeName } from "#app/data/biomes";
+import { getBiomeName } from "#app/data/balance/biomes";
 
 /**
  * Spawn chance: (BASE_MYSTERY_ENCOUNTER_SPAWN_WEIGHT + WIGHT_INCREMENT_ON_SPAWN_MISS * <number of missed spawns>) / MYSTERY_ENCOUNTER_SPAWN_MAX_WEIGHT
@@ -363,6 +363,7 @@ export function initMysteryEncounters() {
   });
 
   // Add ANY biome encounters to biome map
+  // eslint-disable-next-line
   let encounterBiomeTableLog = "";
   mysteryEncountersByBiome.forEach((biomeEncounters, biome) => {
     anyBiomeEncounters.forEach(encounter => {
@@ -374,5 +375,5 @@ export function initMysteryEncounters() {
     encounterBiomeTableLog += `${getBiomeName(biome).toUpperCase()}: [${biomeEncounters.map(type => MysteryEncounterType[type].toString().toLowerCase()).sort().join(", ")}]\n`;
   });
 
-  console.debug("All Mystery Encounters by Biome:\n" + encounterBiomeTableLog);
+  //console.debug("All Mystery Encounters by Biome:\n" + encounterBiomeTableLog);
 }
