@@ -3942,6 +3942,13 @@ export class PhotonGeyserCategoryAttr extends VariableMoveCategoryAttr {
   }
 }
 
+/**
+ * Attribute used for tera moves that change category based on the user's Atk and SpAtk stats
+ * Note: Currently, `getEffectiveStat` does not ignore all abilities that affect stats except those
+ * with the attribute of `StatMultiplierAbAttr`
+ * TODO: Remove the `.partial()` tag from Tera Blast and Tera Starstorm when the above issue is resolved
+ * @extends VariableMoveCategoryAttr
+ */
 export class TeraMoveCategoryAttr extends VariableMoveCategoryAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     const category = (args[0] as Utils.NumberHolder);
@@ -4045,7 +4052,7 @@ export class TeraStarstormTypeAttr extends VariableMoveTypeAttr {
    * @returns `true` if the move type is changed to {@linkcode Type.STELLAR}, `false` otherwise
    */
   override apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    if (user.isTerastallized() && (user.fusionSpecies?.speciesId === Species.TERAPAGOS || user.species.speciesId === Species.TERAPAGOS)) {
+    if (user.isTerastallized() && (user.hasFusionSpecies(Species.TERAPAGOS) || user.species.speciesId === Species.TERAPAGOS)) {
       const moveType = args[0] as Utils.NumberHolder;
 
       moveType.value = Type.STELLAR;
@@ -9684,7 +9691,7 @@ export function initMoves() {
     new AttackMove(Moves.TERA_STARSTORM, Type.NORMAL, MoveCategory.SPECIAL, 120, 100, 5, -1, 0, 9)
       .attr(TeraMoveCategoryAttr)
       .attr(TeraStarstormTypeAttr)
-      .attr(VariableTargetAttr, (user, target, move) => (user.fusionSpecies?.speciesId === Species.TERAPAGOS || user.species.speciesId === Species.TERAPAGOS) && user.isTerastallized() ? MoveTarget.ALL_NEAR_ENEMIES : MoveTarget.NEAR_OTHER)
+      .attr(VariableTargetAttr, (user, target, move) => (user.hasFusionSpecies(Species.TERAPAGOS) || user.species.speciesId === Species.TERAPAGOS) && user.isTerastallized() ? MoveTarget.ALL_NEAR_ENEMIES : MoveTarget.NEAR_OTHER)
       .partial(), /** Does not ignore abilities that affect stats, relevant in determining the move's category {@see TeraMoveCategoryAttr} */
     new AttackMove(Moves.FICKLE_BEAM, Type.DRAGON, MoveCategory.SPECIAL, 80, 100, 5, 30, 0, 9)
       .attr(PreMoveMessageAttr, doublePowerChanceMessageFunc)
