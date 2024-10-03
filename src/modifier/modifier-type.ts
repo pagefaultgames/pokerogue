@@ -2226,12 +2226,12 @@ export function getPlayerShopModifierTypeOptionsForWave(waveIndex: integer, base
     ],
     [
       new ModifierTypeOption(modifierTypes.ELIXIR(), 0, baseCost),
-      new ModifierTypeOption(modifierTypes.MAX_ETHER(), 0, baseCost),
-      new ModifierTypeOption(modifierTypes.MEMORY_MUSHROOM(), 0, baseCost * 2)
+      new ModifierTypeOption(modifierTypes.MAX_ETHER(), 0, baseCost)
     ],
     [
       new ModifierTypeOption(modifierTypes.HYPER_POTION(), 0, baseCost * 0.8),
-      new ModifierTypeOption(modifierTypes.MAX_REVIVE(), 0, baseCost * 2.75)
+      new ModifierTypeOption(modifierTypes.MAX_REVIVE(), 0, baseCost * 2.75),
+      new ModifierTypeOption(modifierTypes.MEMORY_MUSHROOM(), 0, baseCost * 2)
     ],
     [
       new ModifierTypeOption(modifierTypes.MAX_POTION(), 0, baseCost * 1.5),
