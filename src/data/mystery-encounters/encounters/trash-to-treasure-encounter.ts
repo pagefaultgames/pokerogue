@@ -70,7 +70,7 @@ export const TrashToTreasureEncounter: MysteryEncounter =
         moveSet: [Moves.PAYBACK, Moves.GUNK_SHOT, Moves.STOMPING_TANTRUM, Moves.DRAIN_PUNCH]
       };
       const config: EnemyPartyConfig = {
-        levelAdditiveModifier: 1,
+        levelAdditiveModifier: 0.5,
         pokemonConfigs: [pokemonConfig],
         disableSwitch: true
       };

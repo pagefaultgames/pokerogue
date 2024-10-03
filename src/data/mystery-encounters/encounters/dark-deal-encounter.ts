@@ -14,6 +14,7 @@ import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode
 import { ModifierRewardPhase } from "#app/phases/modifier-reward-phase";
 import { PokemonFormChangeItemModifier, PokemonHeldItemModifier } from "#app/modifier/modifier";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
+import { Challenges } from "#enums/challenges";
 
 /** i18n namespace for encounter */
 const namespace = "mysteryEncounters/darkDeal";
@@ -140,6 +141,7 @@ export const DarkDealEncounter: MysteryEncounter =
           // Removes random pokemon (including fainted) from party and adds name to dialogue data tokens
           // Will never return last battle able mon and instead pick fainted/unable to battle
           const removedPokemon = getRandomPlayerPokemon(scene, true, false, true);
+
           // Get all the pokemon's held items
           const modifiers = removedPokemon.getHeldItems().filter(m => !(m instanceof PokemonFormChangeItemModifier));
           scene.removePokemonFromPlayerParty(removedPokemon);
@@ -159,7 +161,13 @@ export const DarkDealEncounter: MysteryEncounter =
           scene.unshiftPhase(new ModifierRewardPhase(scene, modifierTypes.ROGUE_BALL));
 
           // Start encounter with random legendary (7-10 starter strength) that has level additive
-          const bossTypes: Type[] = encounter.misc.removedTypes;
+          // If this is a mono-type challenge, always ensure the required type is filtered for
+          let bossTypes: Type[] = encounter.misc.removedTypes;
+          const singleTypeChallenges = scene.gameMode.challenges.filter(c => c.id === Challenges.SINGLE_TYPE);
+          if (scene.gameMode.isChallenge && singleTypeChallenges.length > 0) {
+            bossTypes = singleTypeChallenges.map(c => c.value as Type);
+          }
+
           const bossModifiers: PokemonHeldItemModifier[] = encounter.misc.modifiers;
           // Starter egg tier, 35/50/10/5 %odds for tiers 6/7/8/9+
           const roll = randSeedInt(100);

@@ -20,6 +20,8 @@ import { Gender } from "#app/data/gender";
 import { PermanentStat } from "#enums/stat";
 import { VictoryPhase } from "#app/phases/victory-phase";
 import { SummaryUiMode } from "#app/ui/summary-ui-handler";
+import { CustomPokemonData } from "#app/data/mystery-encounters/custom-pokemon-data";
+import { Abilities } from "#enums/abilities";
 
 /** Will give +1 level every 10 waves */
 export const STANDARD_ENCOUNTER_BOOSTED_LEVEL_MODIFIER = 1;
@@ -831,4 +833,24 @@ export function isPokemonValidForEncounterOptionSelection(pokemon: Pokemon, scen
   }
 
   return null;
+}
+
+/**
+ * Permanently overrides the ability (not passive) of a pokemon.
+ * If the pokemon is a fusion, instead overrides the fused pokemon's ability.
+ * @param pokemon
+ * @param ability
+ */
+export function applyAbilityOverrideToPokemon(pokemon: Pokemon, ability: Abilities) {
+  if (pokemon.isFusion()) {
+    if (!pokemon.fusionCustomPokemonData) {
+      pokemon.fusionCustomPokemonData = new CustomPokemonData();
+    }
+    pokemon.fusionCustomPokemonData.ability = ability;
+  } else {
+    if (!pokemon.customPokemonData) {
+      pokemon.customPokemonData = new CustomPokemonData();
+    }
+    pokemon.customPokemonData.ability = ability;
+  }
 }

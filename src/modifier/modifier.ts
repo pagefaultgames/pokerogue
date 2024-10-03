@@ -379,6 +379,15 @@ export abstract class LapsingPersistentModifier extends PersistentModifier {
     this.battleCount = this.maxBattles;
   }
 
+  /**
+   * Updates an existing modifier with a new `maxBattles` and `battleCount`.
+   * @param count
+   */
+  setNewBattleCount(count: number): void {
+    this.maxBattles = count;
+    this.battleCount = count;
+  }
+
   getMaxBattles(): number {
     return this.maxBattles;
   }
@@ -876,7 +885,7 @@ export class EvoTrackerModifier extends PokemonHeldItemModifier {
 
     this.stackCount = pokemon
       ? pokemon.evoCounter + pokemon.getHeldItems().filter(m => m instanceof DamageMoneyRewardModifier).length
-        + pokemon.scene.findModifiers(m => m instanceof MoneyMultiplierModifier || m instanceof ExtraModifierModifier).length
+        + pokemon.scene.findModifiers(m => m instanceof MoneyMultiplierModifier || m instanceof ExtraModifierModifier || m instanceof TempExtraModifierModifier).length
       : this.stackCount;
 
     const text = scene.add.bitmapText(10, 15, "item-count", this.stackCount.toString(), 11);
@@ -891,7 +900,7 @@ export class EvoTrackerModifier extends PokemonHeldItemModifier {
 
   getMaxHeldItemCount(pokemon: Pokemon): integer {
     this.stackCount = pokemon.evoCounter + pokemon.getHeldItems().filter(m => m instanceof DamageMoneyRewardModifier).length
-      + pokemon.scene.findModifiers(m => m instanceof MoneyMultiplierModifier || m instanceof ExtraModifierModifier).length;
+      + pokemon.scene.findModifiers(m => m instanceof MoneyMultiplierModifier || m instanceof ExtraModifierModifier || m instanceof TempExtraModifierModifier).length;
     return 999;
   }
 }
@@ -1944,7 +1953,7 @@ export class PokemonNatureChangeModifier extends ConsumablePokemonModifier {
 
   apply(args: any[]): boolean {
     const pokemon = args[0] as Pokemon;
-    pokemon.natureOverride = this.nature;
+    pokemon.customPokemonData.nature = this.nature;
     let speciesId = pokemon.species.speciesId;
     pokemon.scene.gameData.dexData[speciesId].natureAttr |= 1 << (this.nature + 1);
 
@@ -2897,6 +2906,69 @@ export class ExtraModifierModifier extends PersistentModifier {
 
   getMaxStackCount(scene: BattleScene): integer {
     return 3;
+  }
+}
+
+/**
+ * Modifier used for timed boosts to the player's shop item rewards.
+ * @extends LapsingPersistentModifier
+ * @see {@linkcode apply}
+ */
+export class TempExtraModifierModifier extends LapsingPersistentModifier {
+  constructor(type: ModifierType, maxBattles: number, battleCount?: number, stackCount?: number) {
+    super(type, maxBattles, battleCount, stackCount);
+  }
+
+  /**
+   * Goes through existing modifiers for any that match Silver Pokeball,
+   * which will then add the max count of the new item to the existing count of the current item.
+   * If no existing Silver Pokeballs are found, will add a new one.
+   * @param modifiers {@linkcode PersistentModifier} array of the player's modifiers
+   * @param _virtual N/A
+   * @param scene
+   * @returns true if the modifier was successfully added or applied, false otherwise
+   */
+  add(modifiers: PersistentModifier[], _virtual: boolean, scene: BattleScene): boolean {
+    for (const modifier of modifiers) {
+      if (this.match(modifier)) {
+        const modifierInstance = modifier as TempExtraModifierModifier;
+        const newBattleCount = this.getMaxBattles() + modifierInstance.getBattleCount();
+
+        modifierInstance.setNewBattleCount(newBattleCount);
+        scene.playSound("se/restore");
+        return true;
+      }
+    }
+
+    modifiers.push(this);
+    return true;
+  }
+
+  clone() {
+    return new TempExtraModifierModifier(this.type, this.getMaxBattles(), this.getBattleCount(), this.stackCount);
+  }
+
+  match(modifier: Modifier): boolean {
+    return (modifier instanceof TempExtraModifierModifier);
+  }
+
+  /**
+   * Checks if {@linkcode args} contains the necessary elements.
+   * @param args [1] {@linkcode Utils.NumberHolder} that holds the resulting shop item reward count
+   * @returns true if the shop reward number modifier applies successfully
+   */
+  shouldApply(args: any[]): boolean {
+    return args && (args.length === 1) && (args[0] instanceof Utils.NumberHolder);
+  }
+
+  /**
+   * Increases the current rewards in the battle by the stackCount.
+   * @param args [0] {@linkcode Utils.IntegerHolder} that holds the resulting shop item reward count
+   * @returns true if the shop reward number modifier applies successfully
+   */
+  apply(args: any[]): boolean {
+    (args[0] as Utils.IntegerHolder).value += this.getStackCount();
+    return true;
   }
 }
 

@@ -219,7 +219,7 @@ describe("Clowning Around - Mystery Encounter", () => {
       await game.phaseInterceptor.to(NewBattlePhase, false);
 
       const leadPokemon = scene.getParty()[0];
-      expect(leadPokemon.mysteryEncounterPokemonData?.ability).toBe(abilityToTrain);
+      expect(leadPokemon.customPokemonData?.ability).toBe(abilityToTrain);
     });
   });
 
@@ -340,9 +340,9 @@ describe("Clowning Around - Mystery Encounter", () => {
       scene.getParty()[2].moveset = [];
       await runMysteryEncounterToEnd(game, 3);
 
-      const leadTypesAfter = scene.getParty()[0].mysteryEncounterPokemonData?.types;
-      const secondaryTypesAfter = scene.getParty()[1].mysteryEncounterPokemonData?.types;
-      const thirdTypesAfter = scene.getParty()[2].mysteryEncounterPokemonData?.types;
+      const leadTypesAfter = scene.getParty()[0].customPokemonData?.types;
+      const secondaryTypesAfter = scene.getParty()[1].customPokemonData?.types;
+      const thirdTypesAfter = scene.getParty()[2].customPokemonData?.types;
 
       expect(leadTypesAfter.length).toBe(2);
       expect(leadTypesAfter[0]).toBe(Type.WATER);

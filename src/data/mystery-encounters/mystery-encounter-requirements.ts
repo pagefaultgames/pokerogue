@@ -577,10 +577,10 @@ export class AbilityRequirement extends EncounterPokemonRequirement {
 
   override queryParty(partyPokemon: PlayerPokemon[]): PlayerPokemon[] {
     if (!this.invertQuery) {
-      return partyPokemon.filter((pokemon) => this.requiredAbilities.some((ability) => pokemon.getAbility().id === ability));
+      return partyPokemon.filter((pokemon) => this.requiredAbilities.some((ability) => pokemon.getAbility().id === ability || pokemon.getPassiveAbility().id === ability));
     } else {
-      // for an inverted query, we only want to get the pokemon that don't have ANY of the listed abilitiess
-      return partyPokemon.filter((pokemon) => this.requiredAbilities.filter((ability) => pokemon.getAbility().id === ability).length === 0);
+      // for an inverted query, we only want to get the pokemon that don't have ANY of the listed abilities
+      return partyPokemon.filter((pokemon) => this.requiredAbilities.filter((ability) => pokemon.getAbility().id === ability || pokemon.getPassiveAbility().id === ability).length === 0);
     }
   }
 

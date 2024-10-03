@@ -1,4 +1,4 @@
-import { leaveEncounterWithoutBattle, setEncounterExp, updatePlayerMoney, } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
+import { generateModifierType, leaveEncounterWithoutBattle, setEncounterExp, updatePlayerMoney, } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import { modifierTypes } from "#app/modifier/modifier-type";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { Species } from "#enums/species";
@@ -13,6 +13,7 @@ import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { ModifierRewardPhase } from "#app/phases/modifier-reward-phase";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
+import i18next from "i18next";
 
 /** the i18n namespace for this encounter */
 const namespace = "mysteryEncounters/anOfferYouCantRefuse";
@@ -96,6 +97,8 @@ export const AnOfferYouCantRefuseEncounter: MysteryEncounter =
         }
       }
 
+      const silverPokeball = generateModifierType(scene, modifierTypes.SILVER_POKEBALL);
+      encounter.setDialogueToken("itemName", silverPokeball?.name ?? i18next.t("modifierType:ModifierType.SILVER_POKEBALL.name"));
       encounter.setDialogueToken("liepardName", getPokemonSpecies(Species.LIEPARD).getName());
 
       return true;
@@ -121,8 +124,8 @@ export const AnOfferYouCantRefuseEncounter: MysteryEncounter =
           return true;
         })
         .withOptionPhase(async (scene: BattleScene) => {
-          // Give the player a Shiny charm
-          scene.unshiftPhase(new ModifierRewardPhase(scene, modifierTypes.SHINY_CHARM));
+          // Give the player a Silver Pokeball
+          scene.unshiftPhase(new ModifierRewardPhase(scene, modifierTypes.SILVER_POKEBALL));
           leaveEncounterWithoutBattle(scene, true);
         })
         .build()

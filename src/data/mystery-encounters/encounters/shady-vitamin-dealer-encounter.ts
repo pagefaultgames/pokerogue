@@ -21,7 +21,7 @@ import i18next from "i18next";
 const namespace = "mysteryEncounters/shadyVitaminDealer";
 
 const VITAMIN_DEALER_CHEAP_PRICE_MULTIPLIER = 1.5;
-const VITAMIN_DEALER_EXPENSIVE_PRICE_MULTIPLIER = 3.5;
+const VITAMIN_DEALER_EXPENSIVE_PRICE_MULTIPLIER = 5;
 
 /**
  * Shady Vitamin Dealer encounter.

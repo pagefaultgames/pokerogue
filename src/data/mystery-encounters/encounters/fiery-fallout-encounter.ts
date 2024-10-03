@@ -4,24 +4,30 @@ import { AttackTypeBoosterModifierType, modifierTypes, } from "#app/modifier/mod
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import BattleScene from "#app/battle-scene";
 import MysteryEncounter, { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-encounter";
-import { TypeRequirement } from "#app/data/mystery-encounters/mystery-encounter-requirements";
+import { AbilityRequirement, CombinationPokemonRequirement, TypeRequirement } from "#app/data/mystery-encounters/mystery-encounter-requirements";
 import { Species } from "#enums/species";
 import { getPokemonSpecies } from "#app/data/pokemon-species";
 import { Gender } from "#app/data/gender";
 import { Type } from "#app/data/type";
 import { BattlerIndex } from "#app/battle";
-import { PokemonMove } from "#app/field/pokemon";
+import Pokemon, { PokemonMove } from "#app/field/pokemon";
 import { Moves } from "#enums/moves";
 import { EncounterBattleAnim } from "#app/data/battle-anims";
 import { WeatherType } from "#app/data/weather";
 import { isNullOrUndefined, randSeedInt } from "#app/utils";
 import { StatusEffect } from "#app/data/status-effect";
 import { queueEncounterMessage } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
-import { applyDamageToPokemon, applyModifierTypeToPlayerPokemon } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
+import { applyAbilityOverrideToPokemon, applyDamageToPokemon, applyModifierTypeToPlayerPokemon } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { EncounterAnim } from "#enums/encounter-anims";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
+import { Abilities } from "#enums/abilities";
+import { BattlerTagType } from "#enums/battler-tag-type";
+import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
+import { Stat } from "#enums/stat";
+import { Ability } from "#app/data/ability";
+import { FIRE_RESISTANT_ABILITIES } from "#app/data/mystery-encounters/requirements/requirement-groups";
 
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounters/fieryFallout";
@@ -62,16 +68,24 @@ export const FieryFalloutEncounter: MysteryEncounter =
           {
             species: volcaronaSpecies,
             isBoss: false,
-            gender: Gender.MALE
+            gender: Gender.MALE,
+            tags: [BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON],
+            mysteryEncounterBattleEffects: (pokemon: Pokemon) => {
+              pokemon.scene.unshiftPhase(new StatStageChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [Stat.SPDEF, Stat.SPD], 2));
+            }
           },
           {
             species: volcaronaSpecies,
             isBoss: false,
-            gender: Gender.FEMALE
+            gender: Gender.FEMALE,
+            tags: [BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON],
+            mysteryEncounterBattleEffects: (pokemon: Pokemon) => {
+              pokemon.scene.unshiftPhase(new StatStageChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [Stat.SPDEF, Stat.SPD], 2));
+            }
           }
         ],
         doubleBattle: true,
-        disableSwitch: true
+        disableSwitch: true,
       };
       encounter.enemyPartyConfigs = [config];
 
@@ -138,7 +152,7 @@ export const FieryFalloutEncounter: MysteryEncounter =
       async (scene: BattleScene) => {
         // Pick battle
         const encounter = scene.currentBattle.mysteryEncounter!;
-        setEncounterRewards(scene, { fillRemaining: true }, undefined, () => giveLeadPokemonCharcoal(scene));
+        setEncounterRewards(scene, { fillRemaining: true }, undefined, () => giveLeadPokemonAttackTypeBoostItem(scene));
 
         encounter.startOfBattleEffects.push(
           {
@@ -151,18 +165,6 @@ export const FieryFalloutEncounter: MysteryEncounter =
             sourceBattlerIndex: BattlerIndex.ENEMY_2,
             targets: [BattlerIndex.PLAYER_2],
             move: new PokemonMove(Moves.FIRE_SPIN),
-            ignorePp: true
-          },
-          {
-            sourceBattlerIndex: BattlerIndex.ENEMY,
-            targets: [BattlerIndex.ENEMY],
-            move: new PokemonMove(Moves.QUIVER_DANCE),
-            ignorePp: true
-          },
-          {
-            sourceBattlerIndex: BattlerIndex.ENEMY_2,
-            targets: [BattlerIndex.ENEMY_2],
-            move: new PokemonMove(Moves.QUIVER_DANCE),
             ignorePp: true
           });
         await initBattleWithEnemyConfig(scene, scene.currentBattle.mysteryEncounter!.enemyPartyConfigs[0]);
@@ -179,7 +181,7 @@ export const FieryFalloutEncounter: MysteryEncounter =
         ],
       },
       async (scene: BattleScene) => {
-        // Damage non-fire types and burn 1 random non-fire type member
+        // Damage non-fire types and burn 1 random non-fire type member + give it Heatproof
         const encounter = scene.currentBattle.mysteryEncounter!;
         const nonFireTypes = scene.getParty().filter((p) => p.isAllowedInBattle() && !p.getTypes().includes(Type.FIRE));
 
@@ -197,7 +199,11 @@ export const FieryFalloutEncounter: MysteryEncounter =
           if (chosenPokemon.trySetStatus(StatusEffect.BURN)) {
             // Burn applied
             encounter.setDialogueToken("burnedPokemon", chosenPokemon.getNameToRender());
+            encounter.setDialogueToken("abilityName", new Ability(Abilities.HEATPROOF, 3).name);
             queueEncounterMessage(scene, `${namespace}:option.2.target_burned`);
+
+            // Also permanently change the burned Pokemon's ability to Heatproof
+            applyAbilityOverrideToPokemon(chosenPokemon, Abilities.HEATPROOF);
           }
         }
 
@@ -208,8 +214,10 @@ export const FieryFalloutEncounter: MysteryEncounter =
     .withOption(
       MysteryEncounterOptionBuilder
         .newOptionWithMode(MysteryEncounterOptionMode.DISABLED_OR_SPECIAL)
-        .withPrimaryPokemonRequirement(new TypeRequirement(Type.FIRE, true, 1)) // Will set option3PrimaryName dialogue token automatically
-        .withSecondaryPokemonRequirement(new TypeRequirement(Type.FIRE, true, 1)) // Will set option3SecondaryName dialogue token automatically
+        .withPrimaryPokemonRequirement(new CombinationPokemonRequirement(
+          new TypeRequirement(Type.FIRE, true, 1),
+          new AbilityRequirement(FIRE_RESISTANT_ABILITIES)
+        )) // Will set option3PrimaryName dialogue token automatically
         .withDialogue({
           buttonLabel: `${namespace}:option.3.label`,
           buttonTooltip: `${namespace}:option.3.tooltip`,
@@ -231,26 +239,27 @@ export const FieryFalloutEncounter: MysteryEncounter =
             { fillRemaining: true },
             undefined,
             () => {
-              giveLeadPokemonCharcoal(scene);
+              giveLeadPokemonAttackTypeBoostItem(scene);
             });
 
           const primary = encounter.options[2].primaryPokemon!;
-          const secondary = encounter.options[2].secondaryPokemon![0];
 
-          setEncounterExp(scene, [primary.id, secondary.id], getPokemonSpecies(Species.VOLCARONA).baseExp * 2);
+          setEncounterExp(scene, [primary.id], getPokemonSpecies(Species.VOLCARONA).baseExp * 2);
           leaveEncounterWithoutBattle(scene);
         })
         .build()
     )
     .build();
 
-function giveLeadPokemonCharcoal(scene: BattleScene) {
-  // Give first party pokemon Charcoal for free at end of battle
+function giveLeadPokemonAttackTypeBoostItem(scene: BattleScene) {
+  // Give first party pokemon attack type boost item for free at end of battle
   const leadPokemon = scene.getParty()?.[0];
   if (leadPokemon) {
-    const charcoal = generateModifierType(scene, modifierTypes.ATTACK_TYPE_BOOSTER, [Type.FIRE]) as AttackTypeBoosterModifierType;
-    applyModifierTypeToPlayerPokemon(scene, leadPokemon, charcoal);
-    scene.currentBattle.mysteryEncounter!.setDialogueToken("leadPokemon", leadPokemon.getNameToRender());
-    queueEncounterMessage(scene, `${namespace}:found_charcoal`);
+    const encounter = scene.currentBattle.mysteryEncounter!;
+    const boosterModifierType = generateModifierType(scene, modifierTypes.ATTACK_TYPE_BOOSTER) as AttackTypeBoosterModifierType;
+    applyModifierTypeToPlayerPokemon(scene, leadPokemon, boosterModifierType);
+    encounter.setDialogueToken("itemName", boosterModifierType.name);
+    encounter.setDialogueToken("leadPokemon", leadPokemon.getNameToRender());
+    queueEncounterMessage(scene, `${namespace}:found_item`);
   }
 }
