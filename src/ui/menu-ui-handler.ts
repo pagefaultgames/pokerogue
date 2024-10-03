@@ -389,8 +389,9 @@ export default class MenuUiHandler extends MessageUiHandler {
         label: "Admin",
         handler: () => {
 
+          const skippedAdminModes: AdminMode[] = [AdminMode.ADMIN]; // this is here so that we can skip the menu populating enums that aren't meant for the menu, such as the AdminMode.ADMIN
           const options: OptionSelectItem[] = [];
-          Object.values(AdminMode).filter((v) => !isNaN(Number(v))).forEach((mode) => { // this gets all the enums in a way we can use
+          Object.values(AdminMode).filter((v) => !isNaN(Number(v)) && !skippedAdminModes.includes(v as AdminMode)).forEach((mode) => { // this gets all the enums in a way we can use
             options.push({
               label: getAdminModeName(mode as AdminMode),
               handler: () => {
