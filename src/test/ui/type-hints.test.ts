@@ -7,7 +7,7 @@ import { Mode } from "#app/ui/ui";
 import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import MockText from "../utils/mocks/mocksContainer/mockText";
+import MockText from "#test/utils/mocks/mocksContainer/mockText";
 import i18next from "i18next";
 
 describe("UI - Type Hints", () => {
