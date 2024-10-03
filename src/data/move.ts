@@ -2668,20 +2668,42 @@ export class DelayedAttackAttr extends OverrideMoveEffectAttr {
   }
 }
 
+/**
+ * Attribute used for moves that change stat stages
+ * @param stats {@linkcode BattleStat} array of stats to be changed
+ * @param stages stages by which to change the stats, from -6 to 6
+ * @param selfTarget whether the changes are applied to the user (true) or the target (false)
+ * @param condition {@linkcode MoveConditionFunc} optional condition to trigger the stat change
+ * @param firstHitOnly whether the stat change only applies on the first hit of a multi hit move
+ * @param moveEffectTrigger {@linkcode MoveEffectTrigger} the trigger for the effect to take place
+ * @param firstTargetOnly whether, if this is a multi target move, to only apply the effect after the first target is hit, rather than once for each target
+ * @param lastHitOnly whether the effect should only apply after the last hit of a multi hit move
+ *
+ * @extends MoveEffectAttr
+ * @see {@linkcode apply}
+ */
 export class StatStageChangeAttr extends MoveEffectAttr {
   public stats: BattleStat[];
   public stages: integer;
   private condition: MoveConditionFunc | null;
   private showMessage: boolean;
 
-  constructor(stats: BattleStat[], stages: integer, selfTarget?: boolean, condition?: MoveConditionFunc | null, showMessage: boolean = true, firstHitOnly: boolean = false, moveEffectTrigger: MoveEffectTrigger = MoveEffectTrigger.HIT, firstTargetOnly: boolean = false) {
-    super(selfTarget, moveEffectTrigger, firstHitOnly, false, firstTargetOnly);
+  constructor(stats: BattleStat[], stages: integer, selfTarget?: boolean, condition?: MoveConditionFunc | null, showMessage: boolean = true, firstHitOnly: boolean = false, moveEffectTrigger: MoveEffectTrigger = MoveEffectTrigger.HIT, firstTargetOnly: boolean = false, lastHitOnly: boolean = false) {
+    super(selfTarget, moveEffectTrigger, firstHitOnly, lastHitOnly, firstTargetOnly);
     this.stats = stats;
     this.stages = stages;
     this.condition = condition!; // TODO: is this bang correct?
     this.showMessage = showMessage;
   }
 
+  /**
+   * Attempts to change stats of the user or target (depending on value of selfTarget) if conditions are met
+   * @param user {@linkcode Pokemon} the user of the move
+   * @param target {@linkcode Pokemon} the target of the move
+   * @param move {@linkcode Move} the move
+   * @param args unused
+   * @returns whether stat stages were changed
+   */
   apply(user: Pokemon, target: Pokemon, move: Move, args?: any[]): boolean | Promise<boolean> {
     if (!super.apply(user, target, move, args) || (this.condition && !this.condition(user, target, move))) {
       return false;
@@ -9154,11 +9176,10 @@ export function initMoves() {
       .attr(ClearTerrainAttr)
       .condition((user, target, move) => !!user.scene.arena.terrain),
     new AttackMove(Moves.SCALE_SHOT, Type.DRAGON, MoveCategory.PHYSICAL, 25, 90, 20, -1, 0, 8)
-      //.attr(StatStageChangeAttr, Stat.SPD, 1, true) // TODO: Have boosts only apply at end of move, not after every hit
-      //.attr(StatStageChangeAttr, Stat.DEF, -1, true)
+      .attr(StatStageChangeAttr, [Stat.SPD], 1, true, null, true, false, MoveEffectTrigger.HIT, false, true)
+      .attr(StatStageChangeAttr, [Stat.DEF], -1, true, null, true, false, MoveEffectTrigger.HIT, false, true)
       .attr(MultiHitAttr)
-      .makesContact(false)
-      .partial(),
+      .makesContact(false),
     new AttackMove(Moves.METEOR_BEAM, Type.ROCK, MoveCategory.SPECIAL, 120, 90, 10, 100, 0, 8)
       .attr(ChargeAttr, ChargeAnim.METEOR_BEAM_CHARGING, i18next.t("moveTriggers:isOverflowingWithSpacePower", {pokemonName: "{USER}"}), null, true)
       .attr(StatStageChangeAttr, [ Stat.SPATK ], 1, true)
