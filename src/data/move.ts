@@ -3790,7 +3790,10 @@ export class LastMoveDoublePowerAttr extends VariablePowerAttr {
  */
 export class CombinedPledgePowerAttr extends VariablePowerAttr {
   override apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    const power = args[0] as Utils.NumberHolder;
+    const power = args[0];
+    if (!(power instanceof Utils.NumberHolder)) {
+      return false;
+    }
     const combinedPledgeMove = user.turnData.combiningPledge;
 
     if (combinedPledgeMove && combinedPledgeMove !== move.id) {
@@ -3806,7 +3809,10 @@ export class CombinedPledgePowerAttr extends VariablePowerAttr {
  */
 export class CombinedPledgeStabBoostAttr extends MoveAttr {
   override apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    const stabMultiplier = args[0] as Utils.NumberHolder;
+    const stabMultiplier = args[0];
+    if (!(stabMultiplier instanceof Utils.NumberHolder)) {
+      return false;
+    }
     const combinedPledgeMove = user.turnData.combiningPledge;
 
     if (combinedPledgeMove && combinedPledgeMove !== move.id) {
