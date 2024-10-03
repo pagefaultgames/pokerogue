@@ -15,12 +15,14 @@ export abstract class ModalUiHandler extends UiHandler {
   protected titleText: Phaser.GameObjects.Text;
   protected buttonContainers: Phaser.GameObjects.Container[];
   protected buttonBgs: Phaser.GameObjects.NineSlice[];
+  protected buttonLabels: Phaser.GameObjects.Text[];
 
   constructor(scene: BattleScene, mode: Mode | null = null) {
     super(scene, mode);
 
     this.buttonContainers = [];
     this.buttonBgs = [];
+    this.buttonLabels = [];
   }
 
   abstract getModalTitle(config?: ModalConfig): string;
@@ -75,6 +77,7 @@ export abstract class ModalUiHandler extends UiHandler {
 
     const buttonContainer = this.scene.add.container(0, buttonTopMargin);
 
+    this.buttonLabels.push(buttonLabel);
     this.buttonBgs.push(buttonBg);
     this.buttonContainers.push(buttonContainer);
 
