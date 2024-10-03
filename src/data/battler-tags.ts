@@ -1546,7 +1546,10 @@ export class UnburdenTag extends AbilityBattlerTag {
     super(BattlerTagType.UNBURDEN, Abilities.UNBURDEN, BattlerTagLapseType.CUSTOM, 1);
   }
   onAdd(pokemon: Pokemon): void {
-    pokemon.setStat(Stat.SPD, pokemon.getStat(Stat.SPD, false) * 2, false);
+    super.onAdd(pokemon);
+  }
+  onRemove(pokemon: Pokemon): void {
+    super.onRemove(pokemon);
   }
 }
 
