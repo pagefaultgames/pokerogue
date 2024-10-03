@@ -13,16 +13,25 @@ import { PlayerPartyMemberPokemonPhase } from "#app/phases/player-party-member-p
 import Pokemon from "#app/field/pokemon";
 import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
 
+export enum LearnMoveType {
+  /** For learning a move via level-up, evolution, or other non-item-based event */
+  LEARN_MOVE,
+  /** For learning a move via Memory Mushroom */
+  MEMORY,
+  /** For learning a move via TM */
+  TM
+}
+
 export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
   private moveId: Moves;
   private messageMode: Mode;
-  private fromTM: boolean;
+  private learnMoveType;
   private cost: number;
 
-  constructor(scene: BattleScene, partyMemberIndex: integer, moveId: Moves, fromTM?: boolean, cost: number = -1) {
+  constructor(scene: BattleScene, partyMemberIndex: integer, moveId: Moves, learnMoveType: LearnMoveType = LearnMoveType.LEARN_MOVE, cost: number = -1) {
     super(scene, partyMemberIndex);
     this.moveId = moveId;
-    this.fromTM = fromTM ?? false;
+    this.learnMoveType = learnMoveType;
     this.cost = cost;
   }
 
@@ -140,24 +149,25 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
    * @param Pokemon The Pokemon learning the move
    */
   async learnMove(index: number, move: Move, pokemon: Pokemon, textMessage?: string) {
-    if (this.fromTM) {
+    if (this.learnMoveType === LearnMoveType.TM) {
       if (!pokemon.usedTMs) {
         pokemon.usedTMs = [];
       }
       pokemon.usedTMs.push(this.moveId);
+      this.scene.tryRemovePhase((phase) => phase instanceof SelectModifierPhase);
+    } else if (this.learnMoveType === LearnMoveType.MEMORY) {
+      if (this.cost !== -1) {
+        if (!Overrides.WAIVE_ROLL_FEE_OVERRIDE) {
+          this.scene.money -= this.cost;
+          this.scene.updateMoneyText();
+          this.scene.animateMoneyChanged(false);
+        }
+        this.scene.playSound("se/buy");
+      } else {
+        this.scene.tryRemovePhase((phase) => phase instanceof SelectModifierPhase);
+      }
     }
     pokemon.setMove(index, this.moveId);
-    if (this.cost !== -1) {
-      if (!Overrides.WAIVE_ROLL_FEE_OVERRIDE) {
-        this.scene.money -= this.cost;
-        this.scene.updateMoneyText();
-        this.scene.animateMoneyChanged(false);
-      }
-      this.scene.playSound("se/buy");
-    } else if (this.fromTM) {
-      // NOTE: this assumes
-      this.scene.tryRemovePhase((phase) => phase instanceof SelectModifierPhase);
-    }
     initMoveAnim(this.scene, this.moveId).then(() => {
       loadMoveAnimAssets(this.scene, [this.moveId], true);
       this.scene.playSound("level_up_fanfare"); // Sound loaded into game as is
