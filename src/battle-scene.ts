@@ -2486,7 +2486,7 @@ export default class BattleScene extends SceneBase {
               }
             } else if (modifier instanceof FusePokemonModifier) {
               args.push(this.getPokemonById(modifier.fusePokemonId) as PlayerPokemon);
-            } else if (modifier instanceof RememberMoveModifier) {
+            } else if (modifier instanceof RememberMoveModifier && !Utils.isNullOrUndefined(cost)) {
               args.push(cost);
             }
 
