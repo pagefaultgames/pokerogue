@@ -1,7 +1,8 @@
 import { Abilities } from "#app/enums/abilities";
 import { Moves } from "#app/enums/moves";
-import { ModifierTypeOption, modifierTypes } from "#app/modifier/modifier-type";
+import { ModifierTier } from "#app/modifier/modifier-tier";
 import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
+import { Mode } from "#app/ui/ui";
 import GameManager from "#test/utils/gameManager";
 import Phase from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
@@ -32,15 +33,16 @@ describe("Items - Lock Capsule", () => {
   });
 
   it("doesn't set the cost of common tier items to 0", async () => {
-    await game.startBattle();
+    await game.classicMode.startBattle();
+    game.scene.overridePhase(new SelectModifierPhase(game.scene, 0, undefined, { guaranteedModifierTiers: [ModifierTier.COMMON, ModifierTier.COMMON, ModifierTier.COMMON], fillRemaining: false }));
 
-    game.move.select(Moves.SURF);
-    await game.phaseInterceptor.to(SelectModifierPhase, false);
+    game.onNextPrompt("SelectModifierPhase", Mode.MODIFIER_SELECT, () => {
+      const selectModifierPhase = game.scene.getCurrentPhase() as SelectModifierPhase;
+      const rerollCost = selectModifierPhase.getRerollCost(true);
+      expect(rerollCost).toBe(150);
+    });
 
-    const rewards = game.scene.getCurrentPhase() as SelectModifierPhase;
-    const potion = new ModifierTypeOption(modifierTypes.POTION(), 0, 40); // Common tier item
-    const rerollCost = rewards.getRerollCost([potion, potion, potion], true);
-
-    expect(rerollCost).toBe(150);
+    game.doSelectModifier();
+    await game.phaseInterceptor.to("SelectModifierPhase");
   }, 20000);
 });
