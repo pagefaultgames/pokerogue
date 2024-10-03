@@ -68,7 +68,7 @@ describe("Moves - Tera Starstorm", () => {
   });
 
   it("applies the effects when Terapagos in Stellar Form is fused with another Pokemon", async () => {
-    await game.classicMode.startBattle([Species.TERAPAGOS, Species.MAGIKARP, Species.CHARMANDER]);
+    await game.classicMode.startBattle([Species.TERAPAGOS, Species.CHARMANDER, Species.MAGIKARP]);
 
     const fusionedMon = game.scene.getParty()[0];
     const magikarp = game.scene.getParty()[2];
