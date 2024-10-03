@@ -141,7 +141,7 @@ export abstract class MoveRestrictionBattlerTag extends BattlerTag {
    * @param {Pokemon} user {@linkcode Pokemon} the Pokemon involved
    * @returns {boolean} `true` if the move is restricted by this tag, otherwise `false`.
    */
-  abstract isMoveRestricted(move: Moves, user?: Pokemon): boolean;
+  public abstract isMoveRestricted(move: Moves, user?: Pokemon): boolean;
 
   /**
    * Checks if this tag is restricting a move based on a user's decisions during the target selection phase
@@ -334,7 +334,7 @@ export class GorillaTacticsTag extends MoveRestrictionBattlerTag {
    * @override
    * @param source Gorilla Tactics' {@linkcode BattlerTag} information
    */
-  override loadTag(source: BattlerTag | any): void {
+  public override loadTag(source: BattlerTag | any): void {
     super.loadTag(source);
     this.moveId = source.moveId;
   }
@@ -2523,7 +2523,7 @@ export class TormentTag extends MoveRestrictionBattlerTag {
    * @param {Moves} move the move under investigation
    * @returns `true` if there is valid consecutive usage | `false` if the moves are different from each other
    */
-  override isMoveRestricted(move: Moves, user: Pokemon): boolean {
+  public override isMoveRestricted(move: Moves, user: Pokemon): boolean {
     if (!user) {
       return false;
     }
@@ -2592,11 +2592,12 @@ export class ImprisonTag extends MoveRestrictionBattlerTag {
 
   /**
    * Checks if the source of Imprison is still active
+   * @override
    * @param _pokemon
    * @param _lapseType
    * @returns `true` if the source is still active
    */
-  override lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
+  public override lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
     const source = this.retrieveSource(pokemon.scene);
     if (source) {
       if (lapseType === BattlerTagLapseType.PRE_MOVE) {
@@ -2610,10 +2611,11 @@ export class ImprisonTag extends MoveRestrictionBattlerTag {
 
   /**
    * Checks if the source of the tag has the parameter move in its moveset and that the source is still active
+   * @override
    * @param {Moves} move the move under investigation
    * @returns `false` if either condition is not met
    */
-  override isMoveRestricted(move: Moves, user: Pokemon): boolean {
+  public override isMoveRestricted(move: Moves, user: Pokemon): boolean {
     const source = this.retrieveSource(user.scene);
     if (source) {
       const sourceMoveset = source.getMoveset().map(m => m!.moveId);
