@@ -140,4 +140,16 @@ describe("Abilities - Unburden", () => {
     expect(enemyPokemon.getHeldItems().length).toBeLessThan(enemyHeldItemCt);
     expect(enemyPokemon.getStat(Stat.SPD, false)).toBeCloseTo(initialEnemySpeed * 2);
   });
+
+  it("should not activate when a neutralizing ability is present", async () => {
+    game.override.enemyAbility(Abilities.NEUTRALIZING_GAS);
+    await game.classicMode.startBattle();
+    const playerPokemon = game.scene.getPlayerPokemon()!;
+    const playerHeldItems = playerPokemon.getHeldItems().length;
+    const initialPlayerSpeed = playerPokemon.getStat(Stat.SPD);
+    game.move.select(Moves.FALSE_SWIPE);
+    await game.toNextTurn();
+    expect(playerPokemon.getHeldItems().length).toBeLessThan(playerHeldItems);
+    expect(playerPokemon.getStat(Stat.SPD, false)).toBe(initialPlayerSpeed);
+  });
 });

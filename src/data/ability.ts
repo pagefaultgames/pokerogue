@@ -3792,7 +3792,22 @@ export class PostDancingMoveAbAttr extends PostMoveUsedAbAttr {
   }
 }
 
-export class UnburdenBerryAbAttr extends PostTurnAbAttr {
+/**
+ * Ability attribute for Unburden, triggers upon berry consumption
+ * @extends PostTurnAbAttr
+ * @see {@linkcode applyPostTurn}
+ * @see {@linkcode getCondition}
+ */
+export class UnburdenBerryRemovedAbAttr extends PostTurnAbAttr {
+
+  /**
+   *
+   * @param {Pokemon} pokemon the {@linkcode Pokemon} with this ability
+   * @param passive n/a
+   * @param simulated whether the ability is being simulated
+   * @param args n/a
+   * @returns `true` if the ability is applied
+   */
   applyPostTurn(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
     if (simulated) {
       return simulated;
@@ -3812,7 +3827,25 @@ export class UnburdenBerryAbAttr extends PostTurnAbAttr {
 
 }
 
-export class UnburdenDefStolenAbAttr extends PostDefendAbAttr {
+/**
+ * Ability attribute for Unburden, triggers upon an item being lost while defending (Knock Off, Thief, Pluck)
+ * @extends PostDefendAbAttr
+ * @see {@linkcode applyPostDefend}
+ * @see {@linkcode getCondition}
+ */
+export class UnburdenDefendingItemRemovedAbAttr extends PostDefendAbAttr {
+
+  /**
+   *
+   * @param {Pokemon} pokemon the {@linkcode Pokemon} with this ability
+   * @param passive n/a
+   * @param simulated whether the ability is being simulated
+   * @param attacker n/a
+   * @param move n/a
+   * @param hitResult n/a
+   * @param args n/a
+   * @returns `true` if the ability is applied
+   */
   applyPostDefend(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker: Pokemon, move: Move, hitResult: HitResult, args: any[]): boolean {
     if (simulated) {
       return simulated;
@@ -3832,7 +3865,25 @@ export class UnburdenDefStolenAbAttr extends PostDefendAbAttr {
 
 }
 
-export class UnburdenAtkStolenAbAttr extends PostAttackAbAttr {
+/**
+ * Ability attribute for Unburden, triggers upon an item being lost while attacking (Pickpocket)
+ * @extends PostAttackAbAttr
+ * @see {@linkcode applyPostAttackAfterMoveTypeCheck}
+ * @see {@linkcode getCondition}
+ */
+export class UnburdenAttackingItemRemovedAbAttr extends PostAttackAbAttr {
+
+  /**
+   *
+   * @param {Pokemon} pokemon the {@linkcode Pokemon} with this ability
+   * @param passive n/a
+   * @param simulated whether the ability is being simulated
+   * @param defender n/a
+   * @param move n/a
+   * @param hitResult n/a
+   * @param args n/a
+   * @returns `true` if the ability is applied
+   */
   applyPostAttackAfterMoveTypeCheck(pokemon: Pokemon, passive: boolean, simulated: boolean, defender: Pokemon, move: Move, hitResult: HitResult, args: any[]): boolean {
     if (simulated) {
       return simulated;
@@ -5163,9 +5214,9 @@ export function initAbilities() {
     new Ability(Abilities.ANGER_POINT, 4)
       .attr(PostDefendCritStatStageChangeAbAttr, Stat.ATK, 6),
     new Ability(Abilities.UNBURDEN, 4)
-      .attr(UnburdenBerryAbAttr)
-      .attr(UnburdenAtkStolenAbAttr)
-      .attr(UnburdenDefStolenAbAttr),
+      .attr(UnburdenBerryRemovedAbAttr)
+      .attr(UnburdenAttackingItemRemovedAbAttr)
+      .attr(UnburdenDefendingItemRemovedAbAttr),
     new Ability(Abilities.HEATPROOF, 4)
       .attr(ReceivedTypeDamageMultiplierAbAttr, Type.FIRE, 0.5)
       .attr(ReduceBurnDamageAbAttr, 0.5)
