@@ -282,7 +282,7 @@ export class SelectModifierPhase extends BattlePhase {
   }
 
   copy(): SelectModifierPhase {
-    return new SelectModifierPhase(this.scene, this.rerollCount, this.modifierTiers, {guaranteedModifierTypeOptions: this.typeOptions});
+    return new SelectModifierPhase(this.scene, this.rerollCount, this.modifierTiers, { guaranteedModifierTypeOptions: this.typeOptions, allowLuckUpgrades: false });
   }
 
   addModifier(modifier: Modifier): Promise<boolean> {
