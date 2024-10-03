@@ -2671,17 +2671,29 @@ export class DelayedAttackAttr extends OverrideMoveEffectAttr {
   }
 }
 
+/**
+ * Attr used to modify stat stages of pokemon
+ * @param stats {@linkcode BattleStat BattleStat[]} The stat(s) to change
+ * @param stages How many stages to change the stat(s) by
+ * @param selfTarget `true` if the move is self-targetting
+ * @param condition {@linkcode MoveConditionFunc} Optional condition to be checked
+ * @param showMessage `true` to display a message; default `true`
+ * @param firstHitOnly `true` if only the first hit should cause a stat stage change; default `false`
+ * @param moveEffectTrigger {@linkcode MoveEffectTrigger} When the stat change should trigger; default {@linkcode MoveEffectTrigger.HIT}
+ * @param firstTargetOnly `true` if a move that hits multiple pokemon should only trigger the stat change if it hits at least one pokemon, rather than once per hit pokemon; default `false`
+ * @param effectChanceOverride Will override the move's normal secondary effect chance if specified
+ */
 export class StatStageChangeAttr extends MoveEffectAttr {
   public stats: BattleStat[];
   public stages: integer;
-  private condition: MoveConditionFunc | null;
+  private condition?: MoveConditionFunc | null;
   private showMessage: boolean;
 
   constructor(stats: BattleStat[], stages: integer, selfTarget?: boolean, condition?: MoveConditionFunc | null, showMessage: boolean = true, firstHitOnly: boolean = false, moveEffectTrigger: MoveEffectTrigger = MoveEffectTrigger.HIT, firstTargetOnly: boolean = false, effectChanceOverride?: number) {
     super(selfTarget, moveEffectTrigger, firstHitOnly, false, firstTargetOnly, effectChanceOverride);
     this.stats = stats;
     this.stages = stages;
-    this.condition = condition!; // TODO: is this bang correct?
+    this.condition = condition;
     this.showMessage = showMessage;
   }
 
