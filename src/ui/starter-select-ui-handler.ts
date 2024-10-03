@@ -308,13 +308,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
   private starterIconsCursorObj: Phaser.GameObjects.Image;
   private valueLimitLabel: Phaser.GameObjects.Text;
   private startCursorObj: Phaser.GameObjects.NineSlice;
-  // private starterValueLabels: Phaser.GameObjects.Text[];
-  // private shinyIcons: Phaser.GameObjects.Image[][];
-  // private hiddenAbilityIcons: Phaser.GameObjects.Image[];
-  // private classicWinIcons: Phaser.GameObjects.Image[];
-  // private candyUpgradeIcon: Phaser.GameObjects.Image[];
-  // private candyUpgradeOverlayIcon: Phaser.GameObjects.Image[];
-  //
+
   private iconAnimHandler: PokemonIconAnimHandler;
 
   //variables to keep track of the dynamically rendered list of instruction prompts for starter select
@@ -1316,12 +1310,12 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         }
         break;
       case Button.UP:
+        // UP from start button: go to pokemon in team if any, otherwise filter
         this.startCursorObj.setVisible(false);
         if (this.starterSpecies.length > 0) {
           this.starterIconsCursorIndex = this.starterSpecies.length - 1;
           this.moveStarterIconsCursor(this.starterIconsCursorIndex);
         } else {
-          // up from start button with no Pokemon in the team > go to filter
           this.startCursorObj.setVisible(false);
           this.filterBarCursor = Math.max(1, this.filterBar.numFilters - 1);
           this.setFilterMode(true);
@@ -1329,29 +1323,27 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         success = true;
         break;
       case Button.DOWN:
+        // DOWN from start button: Go to filters
         this.startCursorObj.setVisible(false);
-        if (this.starterSpecies.length > 0) {
-          this.starterIconsCursorIndex = 0;
-          this.moveStarterIconsCursor(this.starterIconsCursorIndex);
-        } else {
-          // down from start button with no Pokemon in the team > go to filter
-          this.startCursorObj.setVisible(false);
-          this.filterBarCursor = Math.max(1, this.filterBar.numFilters - 1);
-          this.setFilterMode(true);
-        }
+        this.filterBarCursor = Math.max(1, this.filterBar.numFilters - 1);
+        this.setFilterMode(true);
         success = true;
         break;
       case Button.LEFT:
-        this.startCursorObj.setVisible(false);
-        this.cursorObj.setVisible(true);
-        success = this.setCursor(onScreenFirstIndex + (onScreenNumberOfRows-1) * 9 + 8); // set last column
-        success = true;
+        if (numberOfStarters > 0) {
+          this.startCursorObj.setVisible(false);
+          this.cursorObj.setVisible(true);
+          this.setCursor(onScreenFirstIndex + (onScreenNumberOfRows-1) * 9 + 8); // set last column
+          success = true;
+        }
         break;
       case Button.RIGHT:
-        this.startCursorObj.setVisible(false);
-        this.cursorObj.setVisible(true);
-        success = this.setCursor(onScreenFirstIndex + (onScreenNumberOfRows-1) * 9); // set first column
-        success = true;
+        if (numberOfStarters > 0) {
+          this.startCursorObj.setVisible(false);
+          this.cursorObj.setVisible(true);
+          this.setCursor(onScreenFirstIndex + (onScreenNumberOfRows-1) * 9); // set first column
+          success = true;
+        }
         break;
       }
     } else if (this.filterMode) {
@@ -1373,7 +1365,12 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       case Button.UP:
         if (this.filterBar.openDropDown) {
           success = this.filterBar.decDropDownCursor();
-        // else if there is filtered starters
+        } else if (this.filterBarCursor === this.filterBar.numFilters - 1 && this.starterSpecies.length > 0) {
+          // UP from the last filter, move to start button
+          this.setFilterMode(false);
+          this.cursorObj.setVisible(false);
+          this.startCursorObj.setVisible(true);
+          success = true;
         } else if (numberOfStarters > 0) {
           // UP from filter bar to bottom of Pokemon list
           this.setFilterMode(false);
@@ -1392,6 +1389,13 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       case Button.DOWN:
         if (this.filterBar.openDropDown) {
           success = this.filterBar.incDropDownCursor();
+        } else if (this.filterBarCursor === this.filterBar.numFilters - 1 && this.starterSpecies.length > 0) {
+          // DOWN from the last filter, move to Pokemon in party if any
+          this.setFilterMode(false);
+          this.cursorObj.setVisible(false);
+          this.starterIconsCursorIndex = 0;
+          this.moveStarterIconsCursor(this.starterIconsCursorIndex);
+          success = true;
         } else if (numberOfStarters > 0) {
           // DOWN from filter bar to top of Pokemon list
           this.setFilterMode(false);
@@ -2656,9 +2660,6 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         this.pokemonShinyIcon.setTint(tint);
         this.setSpecies(species);
         this.updateInstructions();
-      } else {
-        console.warn("Species is undefined for cursor position", cursor);
-        this.setFilterMode(true);
       }
     }
 
@@ -3327,6 +3328,18 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         }
       }
       this.moveStarterIconsCursor(this.starterIconsCursorIndex);
+    } else if (this.startCursorObj.visible && this.starterSpecies.length === 0) {
+      // On the start button and no more Pokemon in party
+      this.startCursorObj.setVisible(false);
+      if (this.filteredStarterContainers.length > 0) {
+        // Back to the first Pokemon if there is one
+        this.cursorObj.setVisible(true);
+        this.setCursor(0 + this.scrollCursor * 9);
+      } else {
+        // Back to filters
+        this.filterBarCursor = Math.max(1, this.filterBar.numFilters - 1);
+        this.setFilterMode(true);
+      }
     }
 
     this.tryUpdateValue();
