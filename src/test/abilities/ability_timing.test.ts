@@ -47,6 +47,6 @@ describe("Ability Timing", () => {
 
     await game.phaseInterceptor.to("MessagePhase");
     const message = game.textInterceptor.getLatestMessage();
-    expect(message).toContain("Attack fell");
+    expect(message).toContain("battle:statFell");
   }, 5000);
 });

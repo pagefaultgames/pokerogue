@@ -5,7 +5,8 @@ import BattleScene from "#app/battle-scene";
 import MysteryEncounter, { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-encounter";
 import { MoneyRequirement } from "#app/data/mystery-encounters/mystery-encounter-requirements";
 import { catchPokemon, getRandomSpeciesByStarterTier, getSpriteKeysFromPokemon } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
-import { getPokemonSpecies, speciesStarters } from "#app/data/pokemon-species";
+import { getPokemonSpecies } from "#app/data/pokemon-species";
+import { speciesStarterCosts } from "#app/data/balance/starters";
 import { Species } from "#enums/species";
 import { PokeballType } from "#app/data/pokeball";
 import { EnemyPokemon, PlayerPokemon } from "#app/field/pokemon";
@@ -18,7 +19,7 @@ import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
 import { Abilities } from "#enums/abilities";
 
 /** the i18n namespace for this encounter */
-const namespace = "mysteryEncounter:pokemonSalesman";
+const namespace = "mysteryEncounters/thePokemonSalesman";
 
 const MAX_POKEMON_PRICE_MULTIPLIER = 4;
 
@@ -45,16 +46,16 @@ export const ThePokemonSalesmanEncounter: MysteryEncounter =
     ])
     .withIntroDialogue([
       {
-        text: `${namespace}.intro`,
+        text: `${namespace}:intro`,
       },
       {
-        text: `${namespace}.intro_dialogue`,
-        speaker: `${namespace}.speaker`,
+        text: `${namespace}:intro_dialogue`,
+        speaker: `${namespace}:speaker`,
       },
     ])
-    .withTitle(`${namespace}.title`)
-    .withDescription(`${namespace}.description`)
-    .withQuery(`${namespace}.query`)
+    .withTitle(`${namespace}:title`)
+    .withDescription(`${namespace}:description`)
+    .withQuery(`${namespace}:query`)
     .withOnInit((scene: BattleScene) => {
       const encounter = scene.currentBattle.mysteryEncounter!;
 
@@ -88,15 +89,15 @@ export const ThePokemonSalesmanEncounter: MysteryEncounter =
         isPokemon: true
       });
 
-      const starterTier = speciesStarters[species.speciesId];
+      const starterTier = speciesStarterCosts[species.speciesId];
       // Prices decrease by starter tier less than 5, but only reduces cost by half at max
       let priceMultiplier = MAX_POKEMON_PRICE_MULTIPLIER * (Math.max(starterTier, 2.5) / 5);
       if (pokemon.shiny) {
         // Always max price for shiny (flip HA back to normal), and add special messaging
         priceMultiplier = MAX_POKEMON_PRICE_MULTIPLIER;
         pokemon.abilityIndex = 0;
-        encounter.dialogue.encounterOptionsDialogue!.description = `${namespace}.description_shiny`;
-        encounter.options[0].dialogue!.buttonTooltip = `${namespace}.option.1.tooltip_shiny`;
+        encounter.dialogue.encounterOptionsDialogue!.description = `${namespace}:description_shiny`;
+        encounter.options[0].dialogue!.buttonTooltip = `${namespace}:option.1.tooltip_shiny`;
       }
       const price = scene.getWaveMoneyAmount(priceMultiplier);
       encounter.setDialogueToken("purchasePokemon", pokemon.getNameToRender());
@@ -116,11 +117,11 @@ export const ThePokemonSalesmanEncounter: MysteryEncounter =
         .withHasDexProgress(true)
         .withSceneMoneyRequirement(0, MAX_POKEMON_PRICE_MULTIPLIER) // Wave scaling money multiplier of 2
         .withDialogue({
-          buttonLabel: `${namespace}.option.1.label`,
-          buttonTooltip: `${namespace}.option.1.tooltip`,
+          buttonLabel: `${namespace}:option.1.label`,
+          buttonTooltip: `${namespace}:option.1.tooltip`,
           selected: [
             {
-              text: `${namespace}.option.1.selected_message`,
+              text: `${namespace}:option.1.selected_message`,
             }
           ],
         })
@@ -133,7 +134,7 @@ export const ThePokemonSalesmanEncounter: MysteryEncounter =
           updatePlayerMoney(scene, -price, true, false);
 
           // Show dialogue
-          await showEncounterDialogue(scene, `${namespace}.option.1.selected_dialogue`, `${namespace}.speaker`);
+          await showEncounterDialogue(scene, `${namespace}:option.1.selected_dialogue`, `${namespace}:speaker`);
           await transitionMysteryEncounterIntroVisuals(scene);
 
           // "Catch" purchased pokemon
@@ -147,11 +148,11 @@ export const ThePokemonSalesmanEncounter: MysteryEncounter =
     )
     .withSimpleOption(
       {
-        buttonLabel: `${namespace}.option.2.label`,
-        buttonTooltip: `${namespace}.option.2.tooltip`,
+        buttonLabel: `${namespace}:option.2.label`,
+        buttonTooltip: `${namespace}:option.2.tooltip`,
         selected: [
           {
-            text: `${namespace}.option.2.selected`,
+            text: `${namespace}:option.2.selected`,
           },
         ],
       },
