@@ -407,7 +407,7 @@ export class MoveEffectPhase extends PokemonPhase {
     const semiInvulnerableTag = target.getTag(SemiInvulnerableTag);
     if (semiInvulnerableTag
         && !this.move.getMove().getAttrs(HitsTagAttr).some(hta => hta.tagType === semiInvulnerableTag.tagType)
-        && !(this.move.getMove().getAttrs(ToxicAccuracyAttr) && user.isOfType(Type.POISON))
+        && !(this.move.getMove().hasAttr(ToxicAccuracyAttr) && user.isOfType(Type.POISON))
     ) {
       return false;
     }
