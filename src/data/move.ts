@@ -4003,7 +4003,7 @@ export class TeraStarstormTypeAttr extends VariableMoveTypeAttr {
    * @param args[0] {@linkcode Utils.NumberHolder} the move type
    * @returns `true` if the move type is changed to {@linkcode Type.STELLAR}, `false` otherwise
    */
-  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+  override apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     if (user.isTerastallized() && user.species.speciesId === Species.TERAPAGOS) {
       const moveType = args[0] as Utils.NumberHolder;
 
