@@ -50,6 +50,7 @@ import { applySessionDataPatches, applySettingsDataPatches, applySystemDataPatch
 import { MysteryEncounterSaveData } from "#app/data/mystery-encounters/mystery-encounter-save-data";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { PokerogueApiClearSessionData } from "#app/@types/pokerogue-api";
+import { api } from "#app/plugins/api/api";
 
 export const defaultStarterSpecies: Species[] = [
   Species.BULBASAUR, Species.CHARMANDER, Species.SQUIRTLE,
@@ -431,23 +432,22 @@ export class GameData {
       }
 
       if (!bypassLogin) {
-        Utils.apiFetch(`savedata/system/get?clientSessionId=${clientSessionId}`, true)
-          .then(response => response.text())
-          .then(response => {
-            if (!response.length || response[0] !== "{") {
-              if (response.startsWith("sql: no rows in result set")) {
+        api.getSystemSavedata(clientSessionId)
+          .then(saveDataOrErr => {
+            if (!saveDataOrErr || saveDataOrErr.length === 0 || saveDataOrErr[0] !== "{") {
+              if (saveDataOrErr?.startsWith("sql: no rows in result set")) {
                 this.scene.queueMessage("Save data could not be found. If this is a new account, you can safely ignore this message.", null, true);
                 return resolve(true);
-              } else if (response.indexOf("Too many connections") > -1) {
+              } else if (saveDataOrErr?.includes("Too many connections")) {
                 this.scene.queueMessage("Too many people are trying to connect and the server is overloaded. Please try again later.", null, true);
                 return resolve(false);
               }
-              console.error(response);
+              console.error(saveDataOrErr);
               return resolve(false);
             }
 
             const cachedSystem = localStorage.getItem(`data_${loggedInUser?.username}`);
-            this.initSystem(response, cachedSystem ? AES.decrypt(cachedSystem, saveKey).toString(enc.Utf8) : undefined).then(resolve);
+            this.initSystem(saveDataOrErr, cachedSystem ? AES.decrypt(cachedSystem, saveKey).toString(enc.Utf8) : undefined).then(resolve);
           });
       } else {
         this.initSystem(decrypt(localStorage.getItem(`data_${loggedInUser?.username}`)!, bypassLogin)).then(resolve); // TODO: is this bang correct?
@@ -707,12 +707,11 @@ export class GameData {
       return true;
     }
 
-    const response = await Utils.apiFetch(`savedata/system/verify?clientSessionId=${clientSessionId}`, true)
-      .then(response => response.json());
+    const systemData = api.verifySystemSavedata(clientSessionId);
 
-    if (!response.valid) {
+    if (systemData) {
       this.scene.clearPhaseQueue();
-      this.scene.unshiftPhase(new ReloadSessionPhase(this.scene, JSON.stringify(response.systemData)));
+      this.scene.unshiftPhase(new ReloadSessionPhase(this.scene, JSON.stringify(systemData)));
       this.clearLocalData();
       return false;
     }
@@ -987,10 +986,9 @@ export class GameData {
       };
 
       if (!bypassLogin && !localStorage.getItem(`sessionData${slotId ? slotId : ""}_${loggedInUser?.username}`)) {
-        Utils.apiFetch(`savedata/session/get?slot=${slotId}&clientSessionId=${clientSessionId}`, true)
-          .then(response => response.text())
+        api.getSessionSavedata(slotId, clientSessionId)
           .then(async response => {
-            if (!response.length || response[0] !== "{") {
+            if (!response && response?.length === 0 || response?.[0] !== "{") {
               console.error(response);
               return resolve(null);
             }
@@ -1136,14 +1134,7 @@ export class GameData {
         if (success !== null && !success) {
           return resolve(false);
         }
-        Utils.apiFetch(`savedata/session/delete?slot=${slotId}&clientSessionId=${clientSessionId}`, true).then(response => {
-          if (response.ok) {
-            loggedInUser!.lastSessionSlot = -1; // TODO: is the bang correct?
-            localStorage.removeItem(`sessionData${this.scene.sessionSlotId ? this.scene.sessionSlotId : ""}_${loggedInUser?.username}`);
-            resolve(true);
-          }
-          return response.text();
-        }).then(error => {
+        api.deleteSessionSavedata(slotId, clientSessionId).then(error => {
           if (error) {
             if (error.startsWith("session out of date")) {
               this.scene.clearPhaseQueue();

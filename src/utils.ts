@@ -1,6 +1,7 @@
 import { MoneyFormat } from "#enums/money-format";
 import { Moves } from "#enums/moves";
 import i18next from "i18next";
+import { api } from "./plugins/api/api";
 
 export type nil = null | undefined;
 
@@ -323,12 +324,10 @@ export function getCookie(cName: string): string {
  * with a GET request to verify if a server is running,
  * sets isLocalServerConnected based on results
  */
-export function localPing() {
+export async function localPing() {
   if (isLocal) {
-    apiFetch("game/titlestats")
-      .then(resolved => isLocalServerConnected = true,
-        rejected => isLocalServerConnected = false
-      );
+    const titleStats = await api.getGameTitleStats();
+    isLocalServerConnected = !!titleStats;
   }
 }
 

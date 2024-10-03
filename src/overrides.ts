@@ -31,7 +31,12 @@ import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
  * }
  * ```
  */
-const overrides = {} satisfies Partial<InstanceType<typeof DefaultOverrides>>;
+const overrides = {
+  STARTING_WAVE_OVERRIDE: 199,
+  STARTING_BIOME_OVERRIDE: Biome.END,
+  OPP_LEVEL_OVERRIDE: 1,
+  STARTING_LEVEL_OVERRIDE: 999,
+} satisfies Partial<InstanceType<typeof DefaultOverrides>>;
 
 /**
  * If you need to add Overrides values for local testing do that inside {@linkcode overrides}

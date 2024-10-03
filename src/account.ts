@@ -1,9 +1,10 @@
 import { bypassLogin } from "./battle-scene";
+import { api } from "./plugins/api/api";
 import * as Utils from "./utils";
 
 export interface UserInfo {
   username: string;
-  lastSessionSlot: integer;
+  lastSessionSlot: number;
   discordId: string;
   googleId: string;
   hasAdminRole: boolean;
@@ -43,15 +44,14 @@ export function updateUserInfo(): Promise<[boolean, integer]> {
       });
       return resolve([ true, 200 ]);
     }
-    Utils.apiFetch("account/info", true).then(response => {
-      if (!response.ok) {
-        resolve([ false, response.status ]);
+    api.getAccountInfo().then((accountInfoOrStatus) => {
+      if (typeof accountInfoOrStatus === "number") {
+        resolve([ false, accountInfoOrStatus ]);
         return;
+      } else {
+        loggedInUser = accountInfoOrStatus;
+        resolve([ true, 200 ]);
       }
-      return response.json();
-    }).then(jsonResponse => {
-      loggedInUser = jsonResponse;
-      resolve([ true, 200 ]);
     }).catch(err => {
       console.error(err);
       resolve([ false, 500 ]);

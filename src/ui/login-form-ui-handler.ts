@@ -7,6 +7,7 @@ import BattleScene from "#app/battle-scene";
 import { addTextObject, TextStyle } from "./text";
 import { addWindow } from "./ui-theme";
 import { OptionSelectItem } from "#app/ui/abstact-option-select-ui-handler";
+import { api } from "#app/plugins/api/api";
 
 interface BuildInteractableImageOpts {
   scale?: number;
@@ -132,21 +133,16 @@ export default class LoginFormUiHandler extends FormModalUiHandler {
         if (!this.inputs[0].text) {
           return onFail(i18next.t("menu:emptyUsername"));
         }
-        Utils.apiPost("account/login", `username=${encodeURIComponent(this.inputs[0].text)}&password=${encodeURIComponent(this.inputs[1].text)}`, "application/x-www-form-urlencoded")
-          .then(response => {
-            if (!response.ok) {
-              return response.text();
-            }
-            return response.json();
-          })
-          .then(response => {
-            if (response.hasOwnProperty("token")) {
-              Utils.setCookie(Utils.sessionIdKey, response.token);
-              originalLoginAction && originalLoginAction();
-            } else {
-              onFail(response);
-            }
-          });
+
+        const [usernameInput, passwordInput] = this.inputs;
+
+        api.login(usernameInput.text, passwordInput.text).then(isSuccess => {
+          if (isSuccess) {
+            originalLoginAction && originalLoginAction();
+          } else {
+            onFail("Invalid username or password"); // TODO: print actual server error here!
+          }
+        });
       };
 
       return true;
