@@ -53,6 +53,7 @@ import {
 } from "#app/phases/mystery-encounter-phases";
 import { ModifierRewardPhase } from "#app/phases/modifier-reward-phase";
 import { PartyExpPhase } from "#app/phases/party-exp-phase";
+import { ExpPhase } from "#app/phases/exp-phase";
 
 export interface PromptHandler {
   phaseTarget?: string;
@@ -61,7 +62,114 @@ export interface PromptHandler {
   expireFn?: () => void;
   awaitingActionInput?: boolean;
 }
-import { ExpPhase } from "#app/phases/exp-phase";
+
+type PhaseClass =
+  | typeof LoginPhase
+  | typeof TitlePhase
+  | typeof SelectGenderPhase
+  | typeof EncounterPhase
+  | typeof NewBiomeEncounterPhase
+  | typeof SelectStarterPhase
+  | typeof PostSummonPhase
+  | typeof SummonPhase
+  | typeof ToggleDoublePositionPhase
+  | typeof CheckSwitchPhase
+  | typeof ShowAbilityPhase
+  | typeof MessagePhase
+  | typeof TurnInitPhase
+  | typeof CommandPhase
+  | typeof EnemyCommandPhase
+  | typeof TurnStartPhase
+  | typeof MovePhase
+  | typeof MoveEffectPhase
+  | typeof DamagePhase
+  | typeof FaintPhase
+  | typeof BerryPhase
+  | typeof TurnEndPhase
+  | typeof BattleEndPhase
+  | typeof EggLapsePhase
+  | typeof SelectModifierPhase
+  | typeof NextEncounterPhase
+  | typeof NewBattlePhase
+  | typeof VictoryPhase
+  | typeof LearnMovePhase
+  | typeof MoveEndPhase
+  | typeof StatStageChangePhase
+  | typeof ShinySparklePhase
+  | typeof SelectTargetPhase
+  | typeof UnavailablePhase
+  | typeof QuietFormChangePhase
+  | typeof SwitchPhase
+  | typeof SwitchSummonPhase
+  | typeof PartyHealPhase
+  | typeof EvolutionPhase
+  | typeof EndEvolutionPhase
+  | typeof LevelCapPhase
+  | typeof AttemptRunPhase
+  | typeof SelectBiomePhase
+  | typeof MysteryEncounterPhase
+  | typeof MysteryEncounterOptionSelectedPhase
+  | typeof MysteryEncounterBattlePhase
+  | typeof MysteryEncounterRewardsPhase
+  | typeof PostMysteryEncounterPhase
+  | typeof ModifierRewardPhase
+  | typeof PartyExpPhase
+  | typeof ExpPhase;
+
+type PhaseString =
+  | "LoginPhase"
+  | "TitlePhase"
+  | "SelectGenderPhase"
+  | "EncounterPhase"
+  | "NewBiomeEncounterPhase"
+  | "SelectStarterPhase"
+  | "PostSummonPhase"
+  | "SummonPhase"
+  | "ToggleDoublePositionPhase"
+  | "CheckSwitchPhase"
+  | "ShowAbilityPhase"
+  | "MessagePhase"
+  | "TurnInitPhase"
+  | "CommandPhase"
+  | "EnemyCommandPhase"
+  | "TurnStartPhase"
+  | "MovePhase"
+  | "MoveEffectPhase"
+  | "DamagePhase"
+  | "FaintPhase"
+  | "BerryPhase"
+  | "TurnEndPhase"
+  | "BattleEndPhase"
+  | "EggLapsePhase"
+  | "SelectModifierPhase"
+  | "NextEncounterPhase"
+  | "NewBattlePhase"
+  | "VictoryPhase"
+  | "LearnMovePhase"
+  | "MoveEndPhase"
+  | "StatStageChangePhase"
+  | "ShinySparklePhase"
+  | "SelectTargetPhase"
+  | "UnavailablePhase"
+  | "QuietFormChangePhase"
+  | "SwitchPhase"
+  | "SwitchSummonPhase"
+  | "PartyHealPhase"
+  | "EvolutionPhase"
+  | "EndEvolutionPhase"
+  | "LevelCapPhase"
+  | "AttemptRunPhase"
+  | "SelectBiomePhase"
+  | "MysteryEncounterPhase"
+  | "MysteryEncounterOptionSelectedPhase"
+  | "MysteryEncounterBattlePhase"
+  | "MysteryEncounterRewardsPhase"
+  | "PostMysteryEncounterPhase"
+  | "ModifierRewardPhase"
+  | "PartyExpPhase"
+  | "ExpPhase";
+
+type PhaseInterceptorPhase = PhaseClass | PhaseString;
 
 export default class PhaseInterceptor {
   public scene;
@@ -172,7 +280,7 @@ export default class PhaseInterceptor {
    * @param phaseFrom - The phase to start from.
    * @returns The instance of the PhaseInterceptor.
    */
-  runFrom(phaseFrom) {
+  runFrom(phaseFrom: PhaseInterceptorPhase): PhaseInterceptor {
     this.phaseFrom = phaseFrom;
     return this;
   }
@@ -180,9 +288,10 @@ export default class PhaseInterceptor {
   /**
    * Method to transition to a target phase.
    * @param phaseTo - The phase to transition to.
+   * @param runTarget - Whether or not to run the target phase.
    * @returns A promise that resolves when the transition is complete.
    */
-  async to(phaseTo, runTarget: boolean = true): Promise<void> {
+  async to(phaseTo: PhaseInterceptorPhase, runTarget: boolean = true): Promise<void> {
     return new Promise(async (resolve, reject) => {
       ErrorInterceptor.getInstance().add(this);
       if (this.phaseFrom) {
@@ -219,7 +328,7 @@ export default class PhaseInterceptor {
    * @param skipFn - Optional skip function.
    * @returns A promise that resolves when the phase is run.
    */
-  run(phaseTarget, skipFn?): Promise<void> {
+  run(phaseTarget: PhaseInterceptorPhase, skipFn?): Promise<void> {
     const targetName = typeof phaseTarget === "string" ? phaseTarget : phaseTarget.name;
     this.scene.moveAnimations = null; // Mandatory to avoid crash
     return new Promise(async (resolve, reject) => {
@@ -253,7 +362,7 @@ export default class PhaseInterceptor {
     });
   }
 
-  whenAboutToRun(phaseTarget, skipFn?): Promise<void> {
+  whenAboutToRun(phaseTarget: PhaseInterceptorPhase, skipFn?): Promise<void> {
     const targetName = typeof phaseTarget === "string" ? phaseTarget : phaseTarget.name;
     this.scene.moveAnimations = null; // Mandatory to avoid crash
     return new Promise(async (resolve, reject) => {
@@ -311,7 +420,7 @@ export default class PhaseInterceptor {
    * Method to start a phase and log it.
    * @param phase - The phase to start.
    */
-  startPhase(phase) {
+  startPhase(phase: PhaseClass) {
     this.log.push(phase.name);
     const instance = this.scene.getCurrentPhase();
     this.onHold.push({
@@ -340,7 +449,8 @@ export default class PhaseInterceptor {
 
   /**
    * m2m to set mode.
-   * @param phase - The phase to start.
+   * @param mode - The {@linkcode Mode} to set.
+   * @param args - Additional arguments to pass to the original method.
    */
   setMode(mode: Mode, ...args: any[]): Promise<void> {
     const currentPhase = this.scene.getCurrentPhase();
