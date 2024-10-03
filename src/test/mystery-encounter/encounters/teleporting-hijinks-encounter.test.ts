@@ -1,10 +1,10 @@
 import BattleScene from "#app/battle-scene";
 import { TeleportingHijinksEncounter } from "#app/data/mystery-encounters/encounters/teleporting-hijinks-encounter";
 import * as MysteryEncounters from "#app/data/mystery-encounters/mystery-encounters";
-import { Abilities } from "#app/enums/abilities";
-import { Biome } from "#app/enums/biome";
-import { MysteryEncounterType } from "#app/enums/mystery-encounter-type";
-import { Species } from "#app/enums/species";
+import { Abilities } from "#enums/abilities";
+import { Biome } from "#enums/biome";
+import { MysteryEncounterType } from "#enums/mystery-encounter-type";
+import { Species } from "#enums/species";
 import { CommandPhase } from "#app/phases/command-phase";
 import { MysteryEncounterPhase } from "#app/phases/mystery-encounter-phases";
 import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
