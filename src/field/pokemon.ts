@@ -936,6 +936,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       if (this.status && this.status.effect === StatusEffect.PARALYSIS) {
         ret >>= 1;
       }
+      if (this.getTag(BattlerTagType.UNBURDEN)) {
+        ret *=2;
+      }
       break;
     }
 
