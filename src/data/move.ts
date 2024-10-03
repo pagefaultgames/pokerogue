@@ -4004,7 +4004,7 @@ export class TeraStarstormTypeAttr extends VariableMoveTypeAttr {
    * @returns `true` if the move type is changed to {@linkcode Type.STELLAR}, `false` otherwise
    */
   override apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    if (user.isTerastallized() && user.species.speciesId === Species.TERAPAGOS) {
+    if (user.isTerastallized() && (user.fusionSpecies?.speciesId === Species.TERAPAGOS || user.species.speciesId === Species.TERAPAGOS)) {
       const moveType = args[0] as Utils.NumberHolder;
 
       moveType.value = Type.STELLAR;
@@ -9643,7 +9643,8 @@ export function initMoves() {
     new AttackMove(Moves.TERA_STARSTORM, Type.NORMAL, MoveCategory.SPECIAL, 120, 100, 5, -1, 0, 9)
       .attr(TeraMoveCategoryAttr)
       .attr(TeraStarstormTypeAttr)
-      .attr(VariableTargetAttr, (user, target, move) => user.species.speciesId === Species.TERAPAGOS && user.isTerastallized() ? MoveTarget.ALL_NEAR_ENEMIES : MoveTarget.NEAR_OTHER),
+      .attr(VariableTargetAttr, (user, target, move) => (user.fusionSpecies?.speciesId === Species.TERAPAGOS || user.species.speciesId === Species.TERAPAGOS) && user.isTerastallized() ? MoveTarget.ALL_NEAR_ENEMIES : MoveTarget.NEAR_OTHER)
+      .partial(), // Does not ignore abilities that affect stats
     new AttackMove(Moves.FICKLE_BEAM, Type.DRAGON, MoveCategory.SPECIAL, 80, 100, 5, 30, 0, 9)
       .attr(PreMoveMessageAttr, doublePowerChanceMessageFunc)
       .attr(DoublePowerChanceAttr),

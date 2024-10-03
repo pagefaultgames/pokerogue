@@ -24,8 +24,8 @@ describe("Moves - Tera Starstorm", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([Moves.TERA_STARSTORM])
-      .battleType("single")
+      .moveset([Moves.TERA_STARSTORM, Moves.SPLASH])
+      .battleType("double")
       .enemyAbility(Abilities.BALL_FETCH)
       .enemyMoveset(Moves.SPLASH)
       .enemyLevel(30)
@@ -34,6 +34,7 @@ describe("Moves - Tera Starstorm", () => {
   });
 
   it("changes type to Stellar when used by Terapagos in its Stellar Form", async () => {
+    game.override.battleType("single");
     await game.classicMode.startBattle([Species.TERAPAGOS]);
 
     const terapagos = game.scene.getPlayerPokemon()!;
@@ -48,8 +49,6 @@ describe("Moves - Tera Starstorm", () => {
   });
 
   it("targets both opponents in a double battle when used by Terapagos in its Stellar Form", async () => {
-    game.override.battleType("double");
-
     await game.classicMode.startBattle([Species.MAGIKARP, Species.TERAPAGOS]);
 
     game.move.select(Moves.TERA_STARSTORM, 0, BattlerIndex.ENEMY);
@@ -66,5 +65,34 @@ describe("Moves - Tera Starstorm", () => {
     // Terapagos in Stellar Form should hit both targets
     await game.phaseInterceptor.to("MoveEndPhase");
     expect(enemyField.every(pokemon => pokemon.isFullHp())).toBe(false);
+  });
+
+  it("applies the effects when Terapagos in Stellar Form is fused with another Pokemon", async () => {
+    await game.classicMode.startBattle([Species.TERAPAGOS, Species.MAGIKARP, Species.CHARMANDER]);
+
+    const fusionedMon = game.scene.getParty()[0];
+    const magikarp = game.scene.getParty()[2];
+
+    // Fuse party members (taken from PlayerPokemon.fuse(...) function)
+    fusionedMon.fusionSpecies = magikarp.species;
+    fusionedMon.fusionFormIndex = magikarp.formIndex;
+    fusionedMon.fusionAbilityIndex = magikarp.abilityIndex;
+    fusionedMon.fusionShiny = magikarp.shiny;
+    fusionedMon.fusionVariant = magikarp.variant;
+    fusionedMon.fusionGender = magikarp.gender;
+    fusionedMon.fusionLuck = magikarp.luck;
+
+    vi.spyOn(fusionedMon, "getMoveType");
+
+    game.move.select(Moves.TERA_STARSTORM, 0);
+    game.move.select(Moves.SPLASH, 1);
+    await game.phaseInterceptor.to("TurnEndPhase");
+
+    // Fusion and terastallized
+    expect(fusionedMon.isFusion()).toBe(true);
+    expect(fusionedMon.isTerastallized()).toBe(true);
+    // Move effects should be applied
+    expect(fusionedMon.getMoveType).toHaveReturnedWith(Type.STELLAR);
+    expect(game.scene.getEnemyField().every(pokemon => pokemon.isFullHp())).toBe(false);
   });
 });
