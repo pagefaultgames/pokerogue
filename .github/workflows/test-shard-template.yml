@@ -20,6 +20,8 @@ jobs:
     steps:
       - name: Check out Git repository
         uses: actions/checkout@v4
+        with:
+          submodules: 'recursive'
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:

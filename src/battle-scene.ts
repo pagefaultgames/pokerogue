@@ -25,7 +25,7 @@ import { trainerConfigs, TrainerSlot } from "./data/trainer-config";
 import Trainer, { TrainerVariant } from "./field/trainer";
 import TrainerData from "./system/trainer-data";
 import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
-import { pokemonPrevolutions } from "./data/pokemon-evolutions";
+import { pokemonPrevolutions } from "./data/balance/pokemon-evolutions";
 import PokeballTray from "./ui/pokeball-tray";
 import InvertPostFX from "./pipelines/invert";
 import { Achv, achvs, ModifierAchv, MoneyAchv } from "./system/achv";
@@ -42,7 +42,7 @@ import PokemonSpriteSparkleHandler from "./field/pokemon-sprite-sparkle-handler"
 import CharSprite from "./ui/char-sprite";
 import DamageNumberHandler from "./field/damage-number-handler";
 import PokemonInfoContainer from "./ui/pokemon-info-container";
-import { biomeDepths, getBiomeName } from "./data/biomes";
+import { biomeDepths, getBiomeName } from "./data/balance/biomes";
 import { SceneBase } from "./scene-base";
 import CandyBar from "./ui/candy-bar";
 import { Variant, variantData } from "./data/variant";
@@ -1040,10 +1040,6 @@ export default class BattleScene extends SceneBase {
 
     this.gameMode = getGameMode(GameModes.CLASSIC);
 
-    this.setSeed(Overrides.SEED_OVERRIDE || Utils.randomString(24));
-    console.log("Seed:", this.seed);
-    this.resetSeed(); // Properly resets RNG after saving and quitting a session
-
     this.disableMenu = false;
 
     this.score = 0;
@@ -1077,6 +1073,12 @@ export default class BattleScene extends SceneBase {
 
     //@ts-ignore  - allowing `null` for currentBattle causes a lot of trouble
     this.currentBattle = null; // TODO: resolve ts-ignore
+
+    // Reset RNG after end of game or save & quit.
+    // This needs to happen after clearing this.currentBattle or the seed will be affected by the last wave played
+    this.setSeed(Overrides.SEED_OVERRIDE || Utils.randomString(24));
+    console.log("Seed:", this.seed);
+    this.resetSeed();
 
     this.biomeWaveText.setText(startingWave.toString());
     this.biomeWaveText.setVisible(false);
@@ -1201,7 +1203,7 @@ export default class BattleScene extends SceneBase {
 
       // Check for mystery encounter
       // Can only occur in place of a standard (non-boss) wild battle, waves 10-180
-      if (this.isWaveMysteryEncounter(newBattleType, newWaveIndex, mysteryEncounterType) || newBattleType === BattleType.MYSTERY_ENCOUNTER || !isNullOrUndefined(mysteryEncounterType)) {
+      if (this.isWaveMysteryEncounter(newBattleType, newWaveIndex, mysteryEncounterType) || newBattleType === BattleType.MYSTERY_ENCOUNTER) {
         newBattleType = BattleType.MYSTERY_ENCOUNTER;
         // Reset base spawn weight
         this.mysteryEncounterSaveData.encounterSpawnChance = BASE_MYSTERY_ENCOUNTER_SPAWN_WEIGHT;
@@ -1669,7 +1671,11 @@ export default class BattleScene extends SceneBase {
     this.scoreText.setVisible(this.gameMode.isDaily);
   }
 
-  updateAndShowText(duration: integer): void {
+  /**
+   * Displays the current luck value.
+   * @param duration The time for this label to fade in, if it is not already visible.
+   */
+  updateAndShowText(duration: number): void {
     const labels = [ this.luckLabelText, this.luckText ];
     labels.forEach(t => t.setAlpha(0));
     const luckValue = getPartyLuckValue(this.getParty());
@@ -2439,7 +2445,10 @@ export default class BattleScene extends SceneBase {
         }
         if ((modifier as PersistentModifier).add(this.modifiers, !!virtual, this)) {
           if (modifier instanceof PokemonFormChangeItemModifier || modifier instanceof TerastallizeModifier) {
-            success = modifier.apply([ this.getPokemonById(modifier.pokemonId), true ]);
+            const pokemon = this.getPokemonById(modifier.pokemonId);
+            if (pokemon) {
+              success = modifier.apply(pokemon, true);
+            }
           }
           if (playSound && !this.sound.get(soundName)) {
             this.playSound(soundName);
@@ -2466,7 +2475,7 @@ export default class BattleScene extends SceneBase {
           for (const p in this.party) {
             const pokemon = this.party[p];
 
-            const args: any[] = [ pokemon ];
+            const args: unknown[] = [];
             if (modifier instanceof PokemonHpRestoreModifier) {
               if (!(modifier as PokemonHpRestoreModifier).fainted) {
                 const hpRestoreMultiplier = new Utils.IntegerHolder(1);
@@ -2479,8 +2488,8 @@ export default class BattleScene extends SceneBase {
               args.push(this.getPokemonById(modifier.fusePokemonId) as PlayerPokemon);
             }
 
-            if (modifier.shouldApply(args)) {
-              const result = modifier.apply(args);
+            if (modifier.shouldApply(pokemon, ...args)) {
+              const result = modifier.apply(pokemon, ...args);
               if (result instanceof Promise) {
                 modifierPromises.push(result.then(s => success ||= s));
               } else {
@@ -2492,8 +2501,8 @@ export default class BattleScene extends SceneBase {
           return Promise.allSettled([this.party.map(p => p.updateInfo(instant)), ...modifierPromises]).then(() => resolve(success));
         } else {
           const args = [ this ];
-          if (modifier.shouldApply(args)) {
-            const result = modifier.apply(args);
+          if (modifier.shouldApply(...args)) {
+            const result = modifier.apply(...args);
             if (result instanceof Promise) {
               return result.then(success => resolve(success));
             } else {
@@ -2515,7 +2524,10 @@ export default class BattleScene extends SceneBase {
       }
       if ((modifier as PersistentModifier).add(this.enemyModifiers, false, this)) {
         if (modifier instanceof PokemonFormChangeItemModifier || modifier instanceof TerastallizeModifier) {
-          modifier.apply([ this.getPokemonById(modifier.pokemonId), true ]);
+          const pokemon = this.getPokemonById(modifier.pokemonId);
+          if (pokemon) {
+            modifier.apply(pokemon, true);
+          }
         }
         for (const rm of modifiersToRemove) {
           this.removeModifier(rm, true);
@@ -2749,7 +2761,10 @@ export default class BattleScene extends SceneBase {
     if (modifierIndex > -1) {
       modifiers.splice(modifierIndex, 1);
       if (modifier instanceof PokemonFormChangeItemModifier || modifier instanceof TerastallizeModifier) {
-        modifier.apply([ this.getPokemonById(modifier.pokemonId), false ]);
+        const pokemon = this.getPokemonById(modifier.pokemonId);
+        if (pokemon) {
+          modifier.apply(pokemon, false);
+        }
       }
       return true;
     }
@@ -2767,16 +2782,36 @@ export default class BattleScene extends SceneBase {
     return (player ? this.modifiers : this.enemyModifiers).filter((m): m is T => m instanceof modifierType);
   }
 
-  findModifiers(modifierFilter: ModifierPredicate, player: boolean = true): PersistentModifier[] {
-    return (player ? this.modifiers : this.enemyModifiers).filter(m => (modifierFilter as ModifierPredicate)(m));
+  /**
+   * Get all of the modifiers that pass the `modifierFilter` function
+   * @param modifierFilter The function used to filter a target's modifiers
+   * @param isPlayer Whether to search the player (`true`) or the enemy (`false`); Defaults to `true`
+   * @returns the list of all modifiers that passed the `modifierFilter` function
+   */
+  findModifiers(modifierFilter: ModifierPredicate, isPlayer: boolean = true): PersistentModifier[] {
+    return (isPlayer ? this.modifiers : this.enemyModifiers).filter(modifierFilter);
   }
 
+  /**
+   * Find the first modifier that pass the `modifierFilter` function
+   * @param modifierFilter The function used to filter a target's modifiers
+   * @param player Whether to search the player (`true`) or the enemy (`false`); Defaults to `true`
+   * @returns the first modifier that passed the `modifierFilter` function; `undefined` if none passed
+   */
   findModifier(modifierFilter: ModifierPredicate, player: boolean = true): PersistentModifier | undefined {
-    return (player ? this.modifiers : this.enemyModifiers).find(m => (modifierFilter as ModifierPredicate)(m));
+    return (player ? this.modifiers : this.enemyModifiers).find(modifierFilter);
   }
 
-  applyShuffledModifiers(scene: BattleScene, modifierType: Constructor<Modifier>, player: boolean = true, ...args: any[]): PersistentModifier[] {
-    let modifiers = (player ? this.modifiers : this.enemyModifiers).filter(m => m instanceof modifierType && m.shouldApply(args));
+  /**
+   * Apply all modifiers that match `modifierType` in a random order
+   * @param scene {@linkcode BattleScene} used to randomize the order of modifiers
+   * @param modifierType The type of modifier to apply; must extend {@linkcode PersistentModifier}
+   * @param player Whether to search the player (`true`) or the enemy (`false`); Defaults to `true`
+   * @param ...args The list of arguments needed to invoke `modifierType.apply`
+   * @returns the list of all modifiers that matched `modifierType` and were applied.
+   */
+  applyShuffledModifiers<T extends PersistentModifier>(scene: BattleScene, modifierType: Constructor<T>, player: boolean = true, ...args: Parameters<T["apply"]>): T[] {
+    let modifiers = (player ? this.modifiers : this.enemyModifiers).filter((m): m is T => m instanceof modifierType && m.shouldApply(...args));
     scene.executeWithSeedOffset(() => {
       const shuffleModifiers = mods => {
         if (mods.length < 1) {
@@ -2790,15 +2825,23 @@ export default class BattleScene extends SceneBase {
     return this.applyModifiersInternal(modifiers, player, args);
   }
 
-  applyModifiers(modifierType: Constructor<Modifier>, player: boolean = true, ...args: any[]): PersistentModifier[] {
-    const modifiers = (player ? this.modifiers : this.enemyModifiers).filter(m => m instanceof modifierType && m.shouldApply(args));
+  /**
+   * Apply all modifiers that match `modifierType`
+   * @param modifierType The type of modifier to apply; must extend {@linkcode PersistentModifier}
+   * @param player Whether to search the player (`true`) or the enemy (`false`); Defaults to `true`
+   * @param ...args The list of arguments needed to invoke `modifierType.apply`
+   * @returns the list of all modifiers that matched `modifierType` and were applied.
+   */
+  applyModifiers<T extends PersistentModifier>(modifierType: Constructor<T>, player: boolean = true, ...args: Parameters<T["apply"]>): T[] {
+    const modifiers = (player ? this.modifiers : this.enemyModifiers).filter((m): m is T => m instanceof modifierType && m.shouldApply(...args));
     return this.applyModifiersInternal(modifiers, player, args);
   }
 
-  applyModifiersInternal(modifiers: PersistentModifier[], player: boolean, args: any[]): PersistentModifier[] {
-    const appliedModifiers: PersistentModifier[] = [];
+  /** Helper function to apply all passed modifiers */
+  applyModifiersInternal<T extends PersistentModifier>(modifiers: T[], player: boolean, args: Parameters<T["apply"]>): T[] {
+    const appliedModifiers: T[] = [];
     for (const modifier of modifiers) {
-      if (modifier.apply(args)) {
+      if (modifier.apply(...args)) {
         console.log("Applied", modifier.type.name, !player ? "(enemy)" : "");
         appliedModifiers.push(modifier);
       }
@@ -2807,10 +2850,17 @@ export default class BattleScene extends SceneBase {
     return appliedModifiers;
   }
 
-  applyModifier(modifierType: Constructor<Modifier>, player: boolean = true, ...args: any[]): PersistentModifier | null {
-    const modifiers = (player ? this.modifiers : this.enemyModifiers).filter(m => m instanceof modifierType && m.shouldApply(args));
+  /**
+   * Apply the first modifier that matches `modifierType`
+   * @param modifierType The type of modifier to apply; must extend {@linkcode PersistentModifier}
+   * @param player Whether to search the player (`true`) or the enemy (`false`); Defaults to `true`
+   * @param ...args The list of arguments needed to invoke `modifierType.apply`
+   * @returns the first modifier that matches `modifierType` and was applied; return `null` if none matched
+   */
+  applyModifier<T extends PersistentModifier>(modifierType: Constructor<T>, player: boolean = true, ...args: Parameters<T["apply"]>): T | null {
+    const modifiers = (player ? this.modifiers : this.enemyModifiers).filter((m): m is T => m instanceof modifierType && m.shouldApply(...args));
     for (const modifier of modifiers) {
-      if (modifier.apply(args)) {
+      if (modifier.apply(...args)) {
         console.log("Applied", modifier.type.name, !player ? "(enemy)" : "");
         return modifier;
       }
@@ -2876,7 +2926,7 @@ export default class BattleScene extends SceneBase {
     }
   }
 
-  validateAchv(achv: Achv, args?: any[]): boolean {
+  validateAchv(achv: Achv, args?: unknown[]): boolean {
     if (!this.gameData.achvUnlocks.hasOwnProperty(achv.id) && achv.validate(this, args)) {
       this.gameData.achvUnlocks[achv.id] = new Date().getTime();
       this.ui.achvBar.showAchv(achv);
@@ -2889,7 +2939,7 @@ export default class BattleScene extends SceneBase {
     return false;
   }
 
-  validateVoucher(voucher: Voucher, args?: any[]): boolean {
+  validateVoucher(voucher: Voucher, args?: unknown[]): boolean {
     if (!this.gameData.voucherUnlocks.hasOwnProperty(voucher.id) && voucher.validate(this, args)) {
       this.gameData.voucherUnlocks[voucher.id] = new Date().getTime();
       this.ui.achvBar.showAchv(voucher);
@@ -2998,7 +3048,7 @@ export default class BattleScene extends SceneBase {
     if (participantIds.size > 0) {
       if (this.currentBattle.battleType === BattleType.TRAINER || this.currentBattle.mysteryEncounter?.encounterMode === MysteryEncounterMode.TRAINER_BATTLE) {
         expValue = Math.floor(expValue * 1.5);
-      } else if (this.currentBattle.battleType === BattleType.MYSTERY_ENCOUNTER && this.currentBattle.mysteryEncounter) {
+      } else if (this.currentBattle.isBattleMysteryEncounter() && this.currentBattle.mysteryEncounter) {
         expValue = Math.floor(expValue * this.currentBattle.mysteryEncounter.expMultiplier);
       }
       for (const partyMember of nonFaintedPartyMembers) {
@@ -3087,20 +3137,16 @@ export default class BattleScene extends SceneBase {
   private isWaveMysteryEncounter(newBattleType: BattleType, waveIndex: number, sessionDataEncounterType?: MysteryEncounterType): boolean {
     const [lowestMysteryEncounterWave, highestMysteryEncounterWave] = this.gameMode.getMysteryEncounterLegalWaves();
     if (this.gameMode.hasMysteryEncounters && newBattleType === BattleType.WILD && !this.gameMode.isBoss(waveIndex) && waveIndex < highestMysteryEncounterWave && waveIndex > lowestMysteryEncounterWave) {
-      // If ME type is already defined in session data, no need to roll RNG check
-      if (!isNullOrUndefined(sessionDataEncounterType)) {
-        return true;
-      }
-
       // Base spawn weight is BASE_MYSTERY_ENCOUNTER_SPAWN_WEIGHT/256, and increases by WEIGHT_INCREMENT_ON_SPAWN_MISS/256 for each missed attempt at spawning an encounter on a valid floor
       const sessionEncounterRate = this.mysteryEncounterSaveData.encounterSpawnChance;
       const encounteredEvents = this.mysteryEncounterSaveData.encounteredEvents;
 
       // If total number of encounters is lower than expected for the run, slightly favor a new encounter spawn (reverse as well)
       // Reduces occurrence of runs with total encounters significantly different from AVERAGE_ENCOUNTERS_PER_RUN_TARGET
+      // Favored rate changes can never exceed 50%. So if base rate is 15/256 and favored rate would add 200/256, result will be (15 + 128)/256
       const expectedEncountersByFloor = AVERAGE_ENCOUNTERS_PER_RUN_TARGET / (highestMysteryEncounterWave - lowestMysteryEncounterWave) * (waveIndex - lowestMysteryEncounterWave);
       const currentRunDiffFromAvg = expectedEncountersByFloor - encounteredEvents.length;
-      const favoredEncounterRate = sessionEncounterRate + currentRunDiffFromAvg * ANTI_VARIANCE_WEIGHT_MODIFIER;
+      const favoredEncounterRate = sessionEncounterRate + Math.min(currentRunDiffFromAvg * ANTI_VARIANCE_WEIGHT_MODIFIER, MYSTERY_ENCOUNTER_SPAWN_MAX_WEIGHT / 2);
 
       const successRate = isNullOrUndefined(Overrides.MYSTERY_ENCOUNTER_RATE_OVERRIDE) ? favoredEncounterRate : Overrides.MYSTERY_ENCOUNTER_RATE_OVERRIDE!;
 

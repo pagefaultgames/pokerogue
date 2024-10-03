@@ -10,6 +10,8 @@ import { ModifierOverride } from "#app/modifier/modifier-type";
 import Overrides from "#app/overrides";
 import { vi } from "vitest";
 import { GameManagerHelper } from "./gameManagerHelper";
+import { Unlockables } from "#app/system/unlockables";
+import { Variant } from "#app/data/variant";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 
@@ -301,6 +303,17 @@ export class OverridesHelper extends GameManagerHelper {
   }
 
   /**
+   * Gives the player access to an Unlockable.
+   * @param unlockable The Unlockable(s) to enable.
+   * @returns `this`
+   */
+  enableUnlockable(unlockable: Unlockables[]) {
+    vi.spyOn(Overrides, "ITEM_UNLOCK_OVERRIDE", "get").mockReturnValue(unlockable);
+    this.log("Temporarily unlocked the following content: ", unlockable);
+    return this;
+  }
+
+  /**
    * Override the items rolled at the end of a battle
    * @param items the items to be rolled
    * @returns this
@@ -308,6 +321,25 @@ export class OverridesHelper extends GameManagerHelper {
   itemRewards(items: ModifierOverride[]) {
     vi.spyOn(Overrides, "ITEM_REWARD_OVERRIDE", "get").mockReturnValue(items);
     this.log("Item rewards set to:", items);
+    return this;
+  }
+
+  /**
+   * Override player shininess
+   * @param shininess Whether the player's Pokemon should be shiny.
+   */
+  shinyLevel(shininess: boolean): this {
+    vi.spyOn(Overrides, "SHINY_OVERRIDE", "get").mockReturnValue(shininess);
+    this.log(`Set player Pokemon as ${shininess ? "" : "not "}shiny!`);
+    return this;
+  }
+  /**
+   * Override player shiny variant
+   * @param variant The player's shiny variant.
+   */
+  variantLevel(variant: Variant): this {
+    vi.spyOn(Overrides, "VARIANT_OVERRIDE", "get").mockReturnValue(variant);
+    this.log(`Set player Pokemon's shiny variant to ${variant}!`);
     return this;
   }
 

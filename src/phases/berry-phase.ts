@@ -15,7 +15,7 @@ export class BerryPhase extends FieldPhase {
 
     this.executeForAll((pokemon) => {
       const hasUsableBerry = !!this.scene.findModifier((m) => {
-        return m instanceof BerryModifier && m.shouldApply([pokemon]);
+        return m instanceof BerryModifier && m.shouldApply(pokemon);
       }, pokemon.isPlayer());
 
       if (hasUsableBerry) {
@@ -29,7 +29,7 @@ export class BerryPhase extends FieldPhase {
             new CommonAnimPhase(this.scene, pokemon.getBattlerIndex(), pokemon.getBattlerIndex(), CommonAnim.USE_ITEM)
           );
 
-          for (const berryModifier of this.scene.applyModifiers(BerryModifier, pokemon.isPlayer(), pokemon) as BerryModifier[]) {
+          for (const berryModifier of this.scene.applyModifiers(BerryModifier, pokemon.isPlayer(), pokemon)) {
             if (berryModifier.consumed) {
               if (!--berryModifier.stackCount) {
                 this.scene.removeModifier(berryModifier);
