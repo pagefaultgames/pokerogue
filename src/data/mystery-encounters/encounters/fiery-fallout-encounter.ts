@@ -24,7 +24,7 @@ import { EncounterAnim } from "#enums/encounter-anims";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
 
 /** the i18n namespace for the encounter */
-const namespace = "mysteryEncounter:fieryFallout";
+const namespace = "mysteryEncounters/fieryFallout";
 
 /**
  * Damage percentage taken when suffering the heat.
@@ -46,9 +46,10 @@ export const FieryFalloutEncounter: MysteryEncounter =
     .withIntroSpriteConfigs([]) // Set in onInit()
     .withAnimations(EncounterAnim.MAGMA_BG, EncounterAnim.MAGMA_SPOUT)
     .withAutoHideIntroVisuals(false)
+    .withFleeAllowed(false)
     .withIntroDialogue([
       {
-        text: `${namespace}.intro`,
+        text: `${namespace}:intro`,
       },
     ])
     .withOnInit((scene: BattleScene) => {
@@ -121,16 +122,16 @@ export const FieryFalloutEncounter: MysteryEncounter =
 
       return true;
     })
-    .withTitle(`${namespace}.title`)
-    .withDescription(`${namespace}.description`)
-    .withQuery(`${namespace}.query`)
+    .withTitle(`${namespace}:title`)
+    .withDescription(`${namespace}:description`)
+    .withQuery(`${namespace}:query`)
     .withSimpleOption(
       {
-        buttonLabel: `${namespace}.option.1.label`,
-        buttonTooltip: `${namespace}.option.1.tooltip`,
+        buttonLabel: `${namespace}:option.1.label`,
+        buttonTooltip: `${namespace}:option.1.tooltip`,
         selected: [
           {
-            text: `${namespace}.option.1.selected`,
+            text: `${namespace}:option.1.selected`,
           },
         ],
       },
@@ -169,11 +170,11 @@ export const FieryFalloutEncounter: MysteryEncounter =
     )
     .withSimpleOption(
       {
-        buttonLabel: `${namespace}.option.2.label`,
-        buttonTooltip: `${namespace}.option.2.tooltip`,
+        buttonLabel: `${namespace}:option.2.label`,
+        buttonTooltip: `${namespace}:option.2.tooltip`,
         selected: [
           {
-            text: `${namespace}.option.2.selected`,
+            text: `${namespace}:option.2.selected`,
           },
         ],
       },
@@ -196,7 +197,7 @@ export const FieryFalloutEncounter: MysteryEncounter =
           if (chosenPokemon.trySetStatus(StatusEffect.BURN)) {
             // Burn applied
             encounter.setDialogueToken("burnedPokemon", chosenPokemon.getNameToRender());
-            queueEncounterMessage(scene, `${namespace}.option.2.target_burned`);
+            queueEncounterMessage(scene, `${namespace}:option.2.target_burned`);
           }
         }
 
@@ -210,12 +211,12 @@ export const FieryFalloutEncounter: MysteryEncounter =
         .withPrimaryPokemonRequirement(new TypeRequirement(Type.FIRE, true, 1)) // Will set option3PrimaryName dialogue token automatically
         .withSecondaryPokemonRequirement(new TypeRequirement(Type.FIRE, true, 1)) // Will set option3SecondaryName dialogue token automatically
         .withDialogue({
-          buttonLabel: `${namespace}.option.3.label`,
-          buttonTooltip: `${namespace}.option.3.tooltip`,
-          disabledButtonTooltip: `${namespace}.option.3.disabled_tooltip`,
+          buttonLabel: `${namespace}:option.3.label`,
+          buttonTooltip: `${namespace}:option.3.tooltip`,
+          disabledButtonTooltip: `${namespace}:option.3.disabled_tooltip`,
           selected: [
             {
-              text: `${namespace}.option.3.selected`,
+              text: `${namespace}:option.3.selected`,
             },
           ],
         })
@@ -250,6 +251,6 @@ function giveLeadPokemonCharcoal(scene: BattleScene) {
     const charcoal = generateModifierType(scene, modifierTypes.ATTACK_TYPE_BOOSTER, [Type.FIRE]) as AttackTypeBoosterModifierType;
     applyModifierTypeToPlayerPokemon(scene, leadPokemon, charcoal);
     scene.currentBattle.mysteryEncounter!.setDialogueToken("leadPokemon", leadPokemon.getNameToRender());
-    queueEncounterMessage(scene, `${namespace}.found_charcoal`);
+    queueEncounterMessage(scene, `${namespace}:found_charcoal`);
   }
 }

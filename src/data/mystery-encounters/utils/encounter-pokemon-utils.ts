@@ -12,7 +12,8 @@ import { Mode } from "#app/ui/ui";
 import { PartyOption, PartyUiMode } from "#app/ui/party-ui-handler";
 import { Species } from "#enums/species";
 import { Type } from "#app/data/type";
-import PokemonSpecies, { getPokemonSpecies, speciesStarters } from "#app/data/pokemon-species";
+import PokemonSpecies, { getPokemonSpecies } from "#app/data/pokemon-species";
+import { speciesStarterCosts } from "#app/data/balance/starters";
 import { getEncounterText, queueEncounterMessage, showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { modifierTypes, PokemonHeldItemModifierType } from "#app/modifier/modifier-type";
@@ -206,14 +207,14 @@ export function getRandomSpeciesByStarterTier(starterTiers: number | [number, nu
   let min = Array.isArray(starterTiers) ? starterTiers[0] : starterTiers;
   let max = Array.isArray(starterTiers) ? starterTiers[1] : starterTiers;
 
-  let filteredSpecies: [PokemonSpecies, number][] = Object.keys(speciesStarters)
-    .map(s => [parseInt(s) as Species, speciesStarters[s] as number])
+  let filteredSpecies: [PokemonSpecies, number][] = Object.keys(speciesStarterCosts)
+    .map(s => [parseInt(s) as Species, speciesStarterCosts[s] as number])
     .filter(s => {
       const pokemonSpecies = getPokemonSpecies(s[0]);
-      return pokemonSpecies && (!excludedSpecies || !excludedSpecies.includes(s[0])
+      return pokemonSpecies && (!excludedSpecies || !excludedSpecies.includes(s[0]))
         && (allowSubLegendary || !pokemonSpecies.subLegendary)
         && (allowLegendary || !pokemonSpecies.legendary)
-        && (allowMythical || !pokemonSpecies.mythical));
+        && (allowMythical || !pokemonSpecies.mythical);
     })
     .map(s => [getPokemonSpecies(s[0]), s[1]]);
 
@@ -224,7 +225,7 @@ export function getRandomSpeciesByStarterTier(starterTiers: number | [number, nu
   // If no filtered mons exist at specified starter tiers, will expand starter search range until there are
   // Starts by decrementing starter tier min until it is 0, then increments tier max up to 10
   let tryFilterStarterTiers: [PokemonSpecies, number][] = filteredSpecies.filter(s => (s[1] >= min && s[1] <= max));
-  while (tryFilterStarterTiers.length === 0 && (min !== 0 && max !== 10)) {
+  while (tryFilterStarterTiers.length === 0 && !(min === 0 && max === 10)) {
     if (min > 0) {
       min--;
     } else {
@@ -757,9 +758,10 @@ const GOLDEN_BUG_NET_SPECIES_POOL: [Species, number][] = [
 ];
 
 /**
- * Will randomly return one of the species from GOLDEN_BUG_NET_SPECIES_POOL, based on their weights
+ * Will randomly return one of the species from GOLDEN_BUG_NET_SPECIES_POOL, based on their weights.
+ * Will also check for and evolve pokemon based on level.
  */
-export function getGoldenBugNetSpecies(): PokemonSpecies {
+export function getGoldenBugNetSpecies(level: number): PokemonSpecies {
   const totalWeight = GOLDEN_BUG_NET_SPECIES_POOL.reduce((a, b) => a + b[1], 0);
   const roll = randSeedInt(totalWeight);
 
@@ -767,7 +769,8 @@ export function getGoldenBugNetSpecies(): PokemonSpecies {
   for (const speciesWeightPair of GOLDEN_BUG_NET_SPECIES_POOL) {
     w += speciesWeightPair[1];
     if (roll < w) {
-      return getPokemonSpecies(speciesWeightPair[0]);
+      const initialSpecies = getPokemonSpecies(speciesWeightPair[0]);
+      return getPokemonSpecies(initialSpecies.getSpeciesForLevel(level, true));
     }
   }
 

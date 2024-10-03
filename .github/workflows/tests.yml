@@ -22,6 +22,7 @@ jobs:
       - name: Check out Git repository
         uses: actions/checkout@v4
         with:
+          submodules: 'recursive'
           path: tests-action
       - name: Set up Node.js
         uses: actions/setup-node@v4

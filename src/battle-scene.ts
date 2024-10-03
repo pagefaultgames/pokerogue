@@ -25,7 +25,7 @@ import { trainerConfigs, TrainerSlot } from "./data/trainer-config";
 import Trainer, { TrainerVariant } from "./field/trainer";
 import TrainerData from "./system/trainer-data";
 import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
-import { pokemonPrevolutions } from "./data/pokemon-evolutions";
+import { pokemonPrevolutions } from "./data/balance/pokemon-evolutions";
 import PokeballTray from "./ui/pokeball-tray";
 import InvertPostFX from "./pipelines/invert";
 import { Achv, achvs, ModifierAchv, MoneyAchv } from "./system/achv";
@@ -42,7 +42,7 @@ import PokemonSpriteSparkleHandler from "./field/pokemon-sprite-sparkle-handler"
 import CharSprite from "./ui/char-sprite";
 import DamageNumberHandler from "./field/damage-number-handler";
 import PokemonInfoContainer from "./ui/pokemon-info-container";
-import { biomeDepths, getBiomeName } from "./data/biomes";
+import { biomeDepths, getBiomeName } from "./data/balance/biomes";
 import { SceneBase } from "./scene-base";
 import CandyBar from "./ui/candy-bar";
 import { Variant, variantData } from "./data/variant";
@@ -1040,10 +1040,6 @@ export default class BattleScene extends SceneBase {
 
     this.gameMode = getGameMode(GameModes.CLASSIC);
 
-    this.setSeed(Overrides.SEED_OVERRIDE || Utils.randomString(24));
-    console.log("Seed:", this.seed);
-    this.resetSeed(); // Properly resets RNG after saving and quitting a session
-
     this.disableMenu = false;
 
     this.score = 0;
@@ -1077,6 +1073,12 @@ export default class BattleScene extends SceneBase {
 
     //@ts-ignore  - allowing `null` for currentBattle causes a lot of trouble
     this.currentBattle = null; // TODO: resolve ts-ignore
+
+    // Reset RNG after end of game or save & quit.
+    // This needs to happen after clearing this.currentBattle or the seed will be affected by the last wave played
+    this.setSeed(Overrides.SEED_OVERRIDE || Utils.randomString(24));
+    console.log("Seed:", this.seed);
+    this.resetSeed();
 
     this.biomeWaveText.setText(startingWave.toString());
     this.biomeWaveText.setVisible(false);
@@ -1201,7 +1203,7 @@ export default class BattleScene extends SceneBase {
 
       // Check for mystery encounter
       // Can only occur in place of a standard (non-boss) wild battle, waves 10-180
-      if (this.isWaveMysteryEncounter(newBattleType, newWaveIndex, mysteryEncounterType) || newBattleType === BattleType.MYSTERY_ENCOUNTER || !isNullOrUndefined(mysteryEncounterType)) {
+      if (this.isWaveMysteryEncounter(newBattleType, newWaveIndex, mysteryEncounterType) || newBattleType === BattleType.MYSTERY_ENCOUNTER) {
         newBattleType = BattleType.MYSTERY_ENCOUNTER;
         // Reset base spawn weight
         this.mysteryEncounterSaveData.encounterSpawnChance = BASE_MYSTERY_ENCOUNTER_SPAWN_WEIGHT;
@@ -3002,7 +3004,7 @@ export default class BattleScene extends SceneBase {
     if (participantIds.size > 0) {
       if (this.currentBattle.battleType === BattleType.TRAINER || this.currentBattle.mysteryEncounter?.encounterMode === MysteryEncounterMode.TRAINER_BATTLE) {
         expValue = Math.floor(expValue * 1.5);
-      } else if (this.currentBattle.battleType === BattleType.MYSTERY_ENCOUNTER && this.currentBattle.mysteryEncounter) {
+      } else if (this.currentBattle.isBattleMysteryEncounter() && this.currentBattle.mysteryEncounter) {
         expValue = Math.floor(expValue * this.currentBattle.mysteryEncounter.expMultiplier);
       }
       for (const partyMember of nonFaintedPartyMembers) {
@@ -3091,20 +3093,16 @@ export default class BattleScene extends SceneBase {
   private isWaveMysteryEncounter(newBattleType: BattleType, waveIndex: number, sessionDataEncounterType?: MysteryEncounterType): boolean {
     const [lowestMysteryEncounterWave, highestMysteryEncounterWave] = this.gameMode.getMysteryEncounterLegalWaves();
     if (this.gameMode.hasMysteryEncounters && newBattleType === BattleType.WILD && !this.gameMode.isBoss(waveIndex) && waveIndex < highestMysteryEncounterWave && waveIndex > lowestMysteryEncounterWave) {
-      // If ME type is already defined in session data, no need to roll RNG check
-      if (!isNullOrUndefined(sessionDataEncounterType)) {
-        return true;
-      }
-
       // Base spawn weight is BASE_MYSTERY_ENCOUNTER_SPAWN_WEIGHT/256, and increases by WEIGHT_INCREMENT_ON_SPAWN_MISS/256 for each missed attempt at spawning an encounter on a valid floor
       const sessionEncounterRate = this.mysteryEncounterSaveData.encounterSpawnChance;
       const encounteredEvents = this.mysteryEncounterSaveData.encounteredEvents;
 
       // If total number of encounters is lower than expected for the run, slightly favor a new encounter spawn (reverse as well)
       // Reduces occurrence of runs with total encounters significantly different from AVERAGE_ENCOUNTERS_PER_RUN_TARGET
+      // Favored rate changes can never exceed 50%. So if base rate is 15/256 and favored rate would add 200/256, result will be (15 + 128)/256
       const expectedEncountersByFloor = AVERAGE_ENCOUNTERS_PER_RUN_TARGET / (highestMysteryEncounterWave - lowestMysteryEncounterWave) * (waveIndex - lowestMysteryEncounterWave);
       const currentRunDiffFromAvg = expectedEncountersByFloor - encounteredEvents.length;
-      const favoredEncounterRate = sessionEncounterRate + currentRunDiffFromAvg * ANTI_VARIANCE_WEIGHT_MODIFIER;
+      const favoredEncounterRate = sessionEncounterRate + Math.min(currentRunDiffFromAvg * ANTI_VARIANCE_WEIGHT_MODIFIER, MYSTERY_ENCOUNTER_SPAWN_MAX_WEIGHT / 2);
 
       const successRate = isNullOrUndefined(Overrides.MYSTERY_ENCOUNTER_RATE_OVERRIDE) ? favoredEncounterRate : Overrides.MYSTERY_ENCOUNTER_RATE_OVERRIDE!;
 

@@ -1,5 +1,5 @@
 import Battle, { BattlerIndex, BattleType } from "#app/battle";
-import { biomeLinks, BiomePoolTier } from "#app/data/biomes";
+import { biomeLinks, BiomePoolTier } from "#app/data/balance/biomes";
 import MysteryEncounterOption from "#app/data/mystery-encounters/mystery-encounter-option";
 import { AVERAGE_ENCOUNTERS_PER_RUN_TARGET, WEIGHT_INCREMENT_ON_SPAWN_MISS } from "#app/data/mystery-encounters/mystery-encounters";
 import { showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
@@ -832,7 +832,7 @@ export function transitionMysteryEncounterIntroVisuals(scene: BattleScene, hide:
  */
 export function handleMysteryEncounterBattleStartEffects(scene: BattleScene) {
   const encounter = scene.currentBattle.mysteryEncounter;
-  if (scene.currentBattle.battleType === BattleType.MYSTERY_ENCOUNTER && encounter && encounter.encounterMode !== MysteryEncounterMode.NO_BATTLE && !encounter.startOfBattleEffectsComplete) {
+  if (scene.currentBattle.isBattleMysteryEncounter() && encounter && encounter.encounterMode !== MysteryEncounterMode.NO_BATTLE && !encounter.startOfBattleEffectsComplete) {
     const effects = encounter.startOfBattleEffects;
     effects.forEach(effect => {
       let source;
@@ -871,7 +871,7 @@ export function handleMysteryEncounterBattleStartEffects(scene: BattleScene) {
  */
 export function handleMysteryEncounterTurnStartEffects(scene: BattleScene): boolean {
   const encounter = scene.currentBattle.mysteryEncounter;
-  if (scene.currentBattle.battleType === BattleType.MYSTERY_ENCOUNTER && encounter && encounter.onTurnStart) {
+  if (scene.currentBattle.isBattleMysteryEncounter() && encounter && encounter.onTurnStart) {
     return encounter.onTurnStart(scene);
   }
 
