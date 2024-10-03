@@ -2,24 +2,28 @@ import BattleScene from "#app/battle-scene";
 import { initMoveAnim, loadMoveAnimAssets } from "#app/data/battle-anims";
 import Move, { allMoves } from "#app/data/move";
 import { SpeciesFormChangeMoveLearnedTrigger } from "#app/data/pokemon-forms";
-import { Moves } from "#app/enums/moves";
+import { Moves } from "#enums/moves";
 import { getPokemonNameWithAffix } from "#app/messages";
+import Overrides from "#app/overrides";
 import EvolutionSceneHandler from "#app/ui/evolution-scene-handler";
 import { SummaryUiMode } from "#app/ui/summary-ui-handler";
 import { Mode } from "#app/ui/ui";
 import i18next from "i18next";
-import { PlayerPartyMemberPokemonPhase } from "./player-party-member-pokemon-phase";
+import { PlayerPartyMemberPokemonPhase } from "#app/phases/player-party-member-pokemon-phase";
 import Pokemon from "#app/field/pokemon";
+import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
 
 export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
   private moveId: Moves;
   private messageMode: Mode;
   private fromTM: boolean;
+  private cost: number;
 
-  constructor(scene: BattleScene, partyMemberIndex: integer, moveId: Moves, fromTM?: boolean) {
+  constructor(scene: BattleScene, partyMemberIndex: integer, moveId: Moves, fromTM?: boolean, cost: number = -1) {
     super(scene, partyMemberIndex);
     this.moveId = moveId;
     this.fromTM = fromTM ?? false;
+    this.cost = cost;
   }
 
   start() {
@@ -143,6 +147,17 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
       pokemon.usedTMs.push(this.moveId);
     }
     pokemon.setMove(index, this.moveId);
+    if (this.cost !== -1) {
+      if (!Overrides.WAIVE_ROLL_FEE_OVERRIDE) {
+        this.scene.money -= this.cost;
+        this.scene.updateMoneyText();
+        this.scene.animateMoneyChanged(false);
+      }
+      this.scene.playSound("se/buy");
+    } else if (this.fromTM) {
+      // NOTE: this assumes
+      this.scene.tryRemovePhase((phase) => phase instanceof SelectModifierPhase);
+    }
     initMoveAnim(this.scene, this.moveId).then(() => {
       loadMoveAnimAssets(this.scene, [this.moveId], true);
       this.scene.playSound("level_up_fanfare"); // Sound loaded into game as is
