@@ -1,51 +1,54 @@
-import { BattleSceneEventType, CandyUpgradeNotificationChangedEvent } from "../events/battle-scene";
-import { pokemonPrevolutions } from "#app/data/pokemon-evolutions";
+import { BattleSceneEventType, CandyUpgradeNotificationChangedEvent } from "#app/events/battle-scene";
+import { pokemonPrevolutions } from "#app/data/balance/pokemon-evolutions";
 import { Variant, getVariantTint, getVariantIcon } from "#app/data/variant";
 import { argbFromRgba } from "@material/material-color-utilities";
 import i18next from "i18next";
 import BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
-import BattleScene, { starterColors } from "../battle-scene";
-import { allAbilities } from "../data/ability";
-import { speciesEggMoves } from "../data/egg-moves";
-import { GrowthRate, getGrowthRateColor } from "../data/exp";
-import { Gender, getGenderColor, getGenderSymbol } from "../data/gender";
-import { allMoves } from "../data/move";
-import { Nature, getNatureName } from "../data/nature";
-import { pokemonFormChanges } from "../data/pokemon-forms";
-import { LevelMoves, pokemonFormLevelMoves, pokemonSpeciesLevelMoves } from "../data/pokemon-level-moves";
-import PokemonSpecies, { allSpecies, getPokemonSpeciesForm, getStarterValueFriendshipCap, speciesStarters, starterPassiveAbilities, POKERUS_STARTER_COUNT, getPokerusStarters } from "../data/pokemon-species";
-import { Type } from "../data/type";
-import { GameModes } from "../game-mode";
-import { AbilityAttr, DexAttr, DexAttrProps, DexEntry, StarterMoveset, StarterAttributes, StarterPreferences, StarterPrefs } from "../system/game-data";
-import { Tutorial, handleTutorial } from "../tutorial";
-import * as Utils from "../utils";
-import { OptionSelectItem } from "./abstact-option-select-ui-handler";
-import MessageUiHandler from "./message-ui-handler";
-import PokemonIconAnimHandler, { PokemonIconAnimMode } from "./pokemon-icon-anim-handler";
-import { StatsContainer } from "./stats-container";
-import { TextStyle, addBBCodeTextObject, addTextObject } from "./text";
-import { Mode } from "./ui";
-import { addWindow } from "./ui-theme";
+import BattleScene, { starterColors } from "#app/battle-scene";
+import { allAbilities } from "#app/data/ability";
+import { speciesEggMoves } from "#app/data/balance/egg-moves";
+import { GrowthRate, getGrowthRateColor } from "#app/data/exp";
+import { Gender, getGenderColor, getGenderSymbol } from "#app/data/gender";
+import { allMoves } from "#app/data/move";
+import { Nature, getNatureName } from "#app/data/nature";
+import { pokemonFormChanges } from "#app/data/pokemon-forms";
+import { LevelMoves, pokemonFormLevelMoves, pokemonSpeciesLevelMoves } from "#app/data/balance/pokemon-level-moves";
+import PokemonSpecies, { allSpecies, getPokemonSpeciesForm, getPokerusStarters } from "#app/data/pokemon-species";
+import { getStarterValueFriendshipCap, speciesStarterCosts, POKERUS_STARTER_COUNT } from "#app/data/balance/starters";
+import { starterPassiveAbilities } from "#app/data/balance/passives";
+import { Type } from "#app/data/type";
+import { GameModes } from "#app/game-mode";
+import { AbilityAttr, DexAttr, DexAttrProps, DexEntry, StarterMoveset, StarterAttributes, StarterPreferences, StarterPrefs } from "#app/system/game-data";
+import { Tutorial, handleTutorial } from "#app/tutorial";
+import * as Utils from "#app/utils";
+import { OptionSelectItem } from "#app/ui/abstact-option-select-ui-handler";
+import MessageUiHandler from "#app/ui/message-ui-handler";
+import PokemonIconAnimHandler, { PokemonIconAnimMode } from "#app/ui/pokemon-icon-anim-handler";
+import { StatsContainer } from "#app/ui/stats-container";
+import { TextStyle, addBBCodeTextObject, addTextObject } from "#app/ui/text";
+import { Mode } from "#app/ui/ui";
+import { addWindow } from "#app/ui/ui-theme";
 import { Egg } from "#app/data/egg";
 import Overrides from "#app/overrides";
 import { SettingKeyboard } from "#app/system/settings/settings-keyboard";
 import { Passive as PassiveAttr } from "#enums/passive";
-import * as Challenge from "../data/challenge";
-import MoveInfoOverlay from "./move-info-overlay";
+import * as Challenge from "#app/data/challenge";
+import MoveInfoOverlay from "#app/ui/move-info-overlay";
 import { getEggTierForSpecies } from "#app/data/egg";
 import { Device } from "#enums/devices";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import { Button } from "#enums/buttons";
-import { EggSourceType } from "#app/enums/egg-source-types";
-import AwaitableUiHandler from "./awaitable-ui-handler";
-import { DropDown, DropDownLabel, DropDownOption, DropDownState, DropDownType, SortCriteria } from "./dropdown";
-import { StarterContainer } from "./starter-container";
-import { DropDownColumn, FilterBar } from "./filter-bar";
-import { ScrollBar } from "./scroll-bar";
+import { EggSourceType } from "#enums/egg-source-types";
+import AwaitableUiHandler from "#app/ui/awaitable-ui-handler";
+import { DropDown, DropDownLabel, DropDownOption, DropDownState, DropDownType, SortCriteria } from "#app/ui/dropdown";
+import { StarterContainer } from "#app/ui/starter-container";
+import { DropDownColumn, FilterBar } from "#app/ui/filter-bar";
+import { ScrollBar } from "#app/ui/scroll-bar";
 import { SelectChallengePhase } from "#app/phases/select-challenge-phase";
 import { TitlePhase } from "#app/phases/title-phase";
-import { Abilities } from "#app/enums/abilities";
+import { Abilities } from "#enums/abilities";
+import { getPassiveCandyCount, getValueReductionCandyCounts, getSameSpeciesEggCandyCounts } from "#app/data/balance/starters";
 
 export type StarterSelectCallback = (starters: Starter[]) => void;
 
@@ -123,19 +126,6 @@ const languageSettings: { [key: string]: LanguageSetting } = {
   },
 };
 
-const starterCandyCosts: { passive: integer, costReduction: [integer, integer], egg: integer }[] = [
-  { passive: 40, costReduction: [25, 60], egg: 30 }, // 1 Cost
-  { passive: 40, costReduction: [25, 60], egg: 30 }, // 2 Cost
-  { passive: 35, costReduction: [20, 50], egg: 25 }, // 3 Cost
-  { passive: 30, costReduction: [15, 40], egg: 20 }, // 4 Cost
-  { passive: 25, costReduction: [12, 35], egg: 18 }, // 5 Cost
-  { passive: 20, costReduction: [10, 30], egg: 15 }, // 6 Cost
-  { passive: 15, costReduction: [8, 20], egg: 12 },  // 7 Cost
-  { passive: 10, costReduction: [5, 15], egg: 10 },  // 8 Cost
-  { passive: 10, costReduction: [5, 15], egg: 10 },  // 9 Cost
-  { passive: 10, costReduction: [5, 15], egg: 10 },  // 10 Cost
-];
-
 const valueReductionMax = 2;
 
 // Position of UI elements
@@ -145,18 +135,6 @@ const teamWindowX = 285; // if team on the RIGHT: 285 / if on the LEFT: 109
 const teamWindowY = 18;
 const teamWindowWidth = 34;
 const teamWindowHeight = 132;
-
-function getPassiveCandyCount(baseValue: integer): integer {
-  return starterCandyCosts[baseValue - 1].passive;
-}
-
-function getValueReductionCandyCounts(baseValue: integer): [integer, integer] {
-  return starterCandyCosts[baseValue - 1].costReduction;
-}
-
-function getSameSpeciesEggCandyCounts(baseValue: integer): integer {
-  return starterCandyCosts[baseValue - 1].egg;
-}
 
 /**
  * Calculates the starter position for a Pokemon of a given UI index
@@ -362,8 +340,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
   setup() {
     const ui = this.getUi();
-    const currentLanguage = i18next.resolvedLanguage!; // TODO: is this bang correct?
-    const langSettingKey = Object.keys(languageSettings).find(lang => currentLanguage.includes(lang))!; // TODO: is this bang correct?
+    const currentLanguage = i18next.resolvedLanguage ?? "en";
+    const langSettingKey = Object.keys(languageSettings).find(lang => currentLanguage.includes(lang)) ?? "en";
     const textSettings = languageSettings[langSettingKey];
 
     this.starterSelectContainer = this.scene.add.container(0, -this.scene.game.canvas.height / 6);
@@ -662,7 +640,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     starterBoxContainer.add(this.cursorObj);
 
     for (const species of allSpecies) {
-      if (!speciesStarters.hasOwnProperty(species.speciesId) || !species.isObtainable()) {
+      if (!speciesStarterCosts.hasOwnProperty(species.speciesId) || !species.isObtainable()) {
         continue;
       }
 
@@ -1116,7 +1094,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     // Get this species ID's starter data
     const starterData = this.scene.gameData.starterData[speciesId];
 
-    return starterData.candyCount >= getPassiveCandyCount(speciesStarters[speciesId])
+    return starterData.candyCount >= getPassiveCandyCount(speciesStarterCosts[speciesId])
       && !(starterData.passiveAttr & PassiveAttr.UNLOCKED);
   }
 
@@ -1129,7 +1107,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     // Get this species ID's starter data
     const starterData = this.scene.gameData.starterData[speciesId];
 
-    return starterData.candyCount >= getValueReductionCandyCounts(speciesStarters[speciesId])[starterData.valueReduction]
+    return starterData.candyCount >= getValueReductionCandyCounts(speciesStarterCosts[speciesId])[starterData.valueReduction]
         && starterData.valueReduction < valueReductionMax;
   }
 
@@ -1142,7 +1120,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     // Get this species ID's starter data
     const starterData = this.scene.gameData.starterData[speciesId];
 
-    return starterData.candyCount >= getSameSpeciesEggCandyCounts(speciesStarters[speciesId]);
+    return starterData.candyCount >= getSameSpeciesEggCandyCounts(speciesStarterCosts[speciesId]);
   }
 
   /**
@@ -1736,7 +1714,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
             // Unlock passive option
             if (!(passiveAttr & PassiveAttr.UNLOCKED)) {
-              const passiveCost = getPassiveCandyCount(speciesStarters[this.lastSpecies.speciesId]);
+              const passiveCost = getPassiveCandyCount(speciesStarterCosts[this.lastSpecies.speciesId]);
               options.push({
                 label: `x${passiveCost} ${i18next.t("starterSelectUiHandler:unlockPassive")} (${allAbilities[starterPassiveAbilities[this.lastSpecies.speciesId]].name})`,
                 handler: () => {
@@ -1772,7 +1750,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
             // Reduce cost option
             const valueReduction = starterData.valueReduction;
             if (valueReduction < valueReductionMax) {
-              const reductionCost = getValueReductionCandyCounts(speciesStarters[this.lastSpecies.speciesId])[valueReduction];
+              const reductionCost = getValueReductionCandyCounts(speciesStarterCosts[this.lastSpecies.speciesId])[valueReduction];
               options.push({
                 label: `x${reductionCost} ${i18next.t("starterSelectUiHandler:reduceCost")}`,
                 handler: () => {
@@ -1806,7 +1784,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
             }
 
             // Same species egg menu option.
-            const sameSpeciesEggCost = getSameSpeciesEggCandyCounts(speciesStarters[this.lastSpecies.speciesId]);
+            const sameSpeciesEggCost = getSameSpeciesEggCandyCounts(speciesStarterCosts[this.lastSpecies.speciesId]);
             options.push({
               label: `x${sameSpeciesEggCost} ${i18next.t("starterSelectUiHandler:sameSpeciesEgg")}`,
               handler: () => {
@@ -2727,7 +2705,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       currentFriendship = 0;
     }
 
-    const friendshipCap = getStarterValueFriendshipCap(speciesStarters[speciesId]);
+    const friendshipCap = getStarterValueFriendshipCap(speciesStarterCosts[speciesId]);
 
     return { currentFriendship, friendshipCap };
   }
@@ -3360,7 +3338,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
   updateStarterValueLabel(starter: StarterContainer): void {
     const speciesId = starter.species.speciesId;
-    const baseStarterValue = speciesStarters[speciesId];
+    const baseStarterValue = speciesStarterCosts[speciesId];
     const starterValue = this.scene.gameData.getSpeciesStarterValue(speciesId);
     starter.cost = starterValue;
     let valueStr = starterValue.toString();

@@ -1,25 +1,21 @@
+import { camelCaseToKebabCase, } from "#app/utils";
 import i18next from "i18next";
 import LanguageDetector from "i18next-browser-languagedetector";
+import HttpBackend from "i18next-http-backend";
 import processor, { KoreanPostpositionProcessor } from "i18next-korean-postposition-processor";
+import pkg from "../../package.json";
 
-import { caEsConfig} from "#app/locales/ca_ES/config";
-import { deConfig } from "#app/locales/de/config";
-import { enConfig } from "#app/locales/en/config";
-import { esConfig } from "#app/locales/es/config";
-import { frConfig } from "#app/locales/fr/config";
-import { itConfig } from "#app/locales/it/config";
-import { koConfig } from "#app/locales/ko/config";
-import { jaConfig } from "#app/locales/ja/config";
-import { ptBrConfig } from "#app/locales/pt_BR/config";
-import { trConfig } from "#app/locales/tr/config";
-import { zhCnConfig } from "#app/locales/zh_CN/config";
-import { zhTwConfig } from "#app/locales/zh_TW/config";
+//#region Interfaces/Types
 
 interface LoadingFontFaceProperty {
   face: FontFace,
   extraOptions?: { [key:string]: any },
   only?: Array<string>
 }
+
+//#region Constants
+
+let isInitialized = false;
 
 const unicodeRanges = {
   fullwidth: "U+FF00-FFEF",
@@ -29,6 +25,7 @@ const unicodeRanges = {
   CJKIdeograph: "U+4E00-9FFF",
   specialCharacters: "U+266A,U+2605,U+2665,U+2663" //♪.★,♥,♣
 };
+
 const rangesByLanguage = {
   korean: [unicodeRanges.CJKCommon, unicodeRanges.hangul].join(","),
   chinese: [unicodeRanges.CJKCommon, unicodeRanges.fullwidth, unicodeRanges.CJKIdeograph].join(","),
@@ -75,6 +72,19 @@ const fonts: Array<LoadingFontFaceProperty> = [
   },
 ];
 
+/** maps namespaces that deviate from the file-name */
+const namespaceMap = {
+  titles: "trainer-titles",
+  moveTriggers: "move-trigger",
+  abilityTriggers: "ability-trigger",
+  battlePokemonForm: "pokemon-form-battle",
+  miscDialogue: "dialogue-misc",
+  battleSpecDialogue: "dialogue-final-boss",
+  doubleBattleDialogue: "dialogue-double-battle",
+};
+
+//#region Functions
+
 async function initFonts(language: string | undefined) {
   const results = await Promise.allSettled(
     fonts
@@ -90,6 +100,11 @@ async function initFonts(language: string | undefined) {
   }
 }
 
+//#region Exports
+
+/**
+ * Initialize i18n with fonts
+ */
 export async function initI18n(): Promise<void> {
   // Prevent reinitialization
   if (isInitialized) {
@@ -114,59 +129,122 @@ export async function initI18n(): Promise<void> {
    * A: In src/system/settings.ts, add a new case to the Setting.Language switch statement.
    */
 
+  i18next.use(HttpBackend);
   i18next.use(LanguageDetector);
   i18next.use(processor);
   i18next.use(new KoreanPostpositionProcessor());
   await i18next.init({
-    nonExplicitSupportedLngs: true,
     fallbackLng: "en",
-    supportedLngs: ["en", "es", "fr", "it", "de", "zh", "pt", "ko", "ja", "ca", "tr"],
+    supportedLngs: ["en", "es", "fr", "it", "de", "zh-CN", "zh-TW", "pt-BR", "ko", "ja", "ca-ES", "tr"],
+    backend: {
+      loadPath(lng: string, [ ns ]: string[]) {
+        let fileName: string;
+        if (namespaceMap[ns]) {
+          fileName = namespaceMap[ns];
+        } else if (ns.startsWith("mysteryEncounters/")) {
+          fileName = camelCaseToKebabCase(ns + "Dialogue");
+        } else {
+          fileName = camelCaseToKebabCase(ns);
+        }
+        return `/locales/${lng}/${fileName}.json?v=${pkg.version}`;
+      },
+    },
     defaultNS: "menu",
-    ns: Object.keys(enConfig),
+    ns: [
+      "ability",
+      "abilityTriggers",
+      "arenaFlyout",
+      "arenaTag",
+      "battle",
+      "battleScene",
+      "battleInfo",
+      "battleMessageUiHandler",
+      "battlePokemonForm",
+      "battlerTags",
+      "berry",
+      "bgmName",
+      "biome",
+      "challenges",
+      "commandUiHandler",
+      "common",
+      "achv",
+      "dialogue",
+      "battleSpecDialogue",
+      "miscDialogue",
+      "doubleBattleDialogue",
+      "egg",
+      "fightUiHandler",
+      "filterBar",
+      "gameMode",
+      "gameStatsUiHandler",
+      "growth",
+      "menu",
+      "menuUiHandler",
+      "modifier",
+      "modifierType",
+      "move",
+      "nature",
+      "pokeball",
+      "pokemon",
+      "pokemonForm",
+      "pokemonInfo",
+      "pokemonInfoContainer",
+      "pokemonSummary",
+      "saveSlotSelectUiHandler",
+      "settings",
+      "splashMessages",
+      "starterSelectUiHandler",
+      "statusEffect",
+      "terrain",
+      "titles",
+      "trainerClasses",
+      "trainerNames",
+      "tutorial",
+      "voucher",
+      "weather",
+      "partyUiHandler",
+      "modifierSelectUiHandler",
+      "moveTriggers",
+      "runHistory",
+      "mysteryEncounters/mysteriousChallengers",
+      "mysteryEncounters/mysteriousChest",
+      "mysteryEncounters/darkDeal",
+      "mysteryEncounters/fightOrFlight",
+      "mysteryEncounters/slumberingSnorlax",
+      "mysteryEncounters/trainingSession",
+      "mysteryEncounters/departmentStoreSale",
+      "mysteryEncounters/shadyVitaminDealer",
+      "mysteryEncounters/fieldTrip",
+      "mysteryEncounters/safariZone",
+      "mysteryEncounters/lostAtSea",
+      "mysteryEncounters/fieryFallout",
+      "mysteryEncounters/theStrongStuff",
+      "mysteryEncounters/thePokemonSalesman",
+      "mysteryEncounters/anOfferYouCantRefuse",
+      "mysteryEncounters/delibirdy",
+      "mysteryEncounters/absoluteAvarice",
+      "mysteryEncounters/aTrainersTest",
+      "mysteryEncounters/trashToTreasure",
+      "mysteryEncounters/berriesAbound",
+      "mysteryEncounters/clowningAround",
+      "mysteryEncounters/partTimer",
+      "mysteryEncounters/dancingLessons",
+      "mysteryEncounters/weirdDream",
+      "mysteryEncounters/theWinstrateChallenge",
+      "mysteryEncounters/teleportingHijinks",
+      "mysteryEncounters/bugTypeSuperfan",
+      "mysteryEncounters/funAndGames",
+      "mysteryEncounters/uncommonBreed",
+      "mysteryEncounters/globalTradeSystem",
+      "mysteryEncounters/theExpertPokemonBreeder",
+      "mysteryEncounterMessages",
+    ],
     detection: {
       lookupLocalStorage: "prLang"
     },
     debug: Number(import.meta.env.VITE_I18N_DEBUG) === 1,
     interpolation: {
       escapeValue: false,
-    },
-    resources: {
-      en: {
-        ...enConfig
-      },
-      es: {
-        ...esConfig
-      },
-      fr: {
-        ...frConfig
-      },
-      it: {
-        ...itConfig
-      },
-      de: {
-        ...deConfig
-      },
-      "pt-BR": {
-        ...ptBrConfig
-      },
-      "zh-CN": {
-        ...zhCnConfig
-      },
-      "zh-TW": {
-        ...zhTwConfig
-      },
-      ko: {
-        ...koConfig
-      },
-      ja: {
-        ...jaConfig
-      },
-      "ca-ES": {
-        ...caEsConfig
-      },
-      "tr": {
-        ...trConfig
-      }
     },
     postProcess: ["korean-postposition"],
   });
@@ -193,11 +271,10 @@ export async function initI18n(): Promise<void> {
   await initFonts(localStorage.getItem("prLang") ?? undefined);
 }
 
-export default i18next;
-
 export function getIsInitialized(): boolean {
   return isInitialized;
 }
 
-let isInitialized = false;
+export default i18next;
 
+//#endregion

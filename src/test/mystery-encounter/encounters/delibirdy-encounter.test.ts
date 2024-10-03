@@ -17,7 +17,7 @@ import { generateModifierType } from "#app/data/mystery-encounters/utils/encount
 import { modifierTypes } from "#app/modifier/modifier-type";
 import { BerryType } from "#enums/berry-type";
 
-const namespace = "mysteryEncounter:delibirdy";
+const namespace = "mysteryEncounters/delibirdy";
 const defaultParty = [Species.LAPRAS, Species.GENGAR, Species.ABRA];
 const defaultBiome = Biome.CAVE;
 const defaultWave = 45;
@@ -58,11 +58,11 @@ describe("Delibird-y - Mystery Encounter", () => {
     expect(DelibirdyEncounter.encounterType).toBe(MysteryEncounterType.DELIBIRDY);
     expect(DelibirdyEncounter.encounterTier).toBe(MysteryEncounterTier.GREAT);
     expect(DelibirdyEncounter.dialogue).toBeDefined();
-    expect(DelibirdyEncounter.dialogue.intro).toStrictEqual([{ text: `${namespace}.intro` }]);
-    expect(DelibirdyEncounter.dialogue.outro).toStrictEqual([{ text: `${namespace}.outro` }]);
-    expect(DelibirdyEncounter.dialogue.encounterOptionsDialogue?.title).toBe(`${namespace}.title`);
-    expect(DelibirdyEncounter.dialogue.encounterOptionsDialogue?.description).toBe(`${namespace}.description`);
-    expect(DelibirdyEncounter.dialogue.encounterOptionsDialogue?.query).toBe(`${namespace}.query`);
+    expect(DelibirdyEncounter.dialogue.intro).toStrictEqual([{ text: `${namespace}:intro` }]);
+    expect(DelibirdyEncounter.dialogue.outro).toStrictEqual([{ text: `${namespace}:outro` }]);
+    expect(DelibirdyEncounter.dialogue.encounterOptionsDialogue?.title).toBe(`${namespace}:title`);
+    expect(DelibirdyEncounter.dialogue.encounterOptionsDialogue?.description).toBe(`${namespace}:description`);
+    expect(DelibirdyEncounter.dialogue.encounterOptionsDialogue?.query).toBe(`${namespace}:query`);
     expect(DelibirdyEncounter.options.length).toBe(3);
   });
 
@@ -80,11 +80,11 @@ describe("Delibird-y - Mystery Encounter", () => {
       expect(option1.optionMode).toBe(MysteryEncounterOptionMode.DISABLED_OR_DEFAULT);
       expect(option1.dialogue).toBeDefined();
       expect(option1.dialogue).toStrictEqual({
-        buttonLabel: `${namespace}.option.1.label`,
-        buttonTooltip: `${namespace}.option.1.tooltip`,
+        buttonLabel: `${namespace}:option.1.label`,
+        buttonTooltip: `${namespace}:option.1.tooltip`,
         selected: [
           {
-            text: `${namespace}.option.1.selected`,
+            text: `${namespace}:option.1.selected`,
           },
         ],
       });
@@ -174,12 +174,12 @@ describe("Delibird-y - Mystery Encounter", () => {
       expect(option.optionMode).toBe(MysteryEncounterOptionMode.DISABLED_OR_DEFAULT);
       expect(option.dialogue).toBeDefined();
       expect(option.dialogue).toStrictEqual({
-        buttonLabel: `${namespace}.option.2.label`,
-        buttonTooltip: `${namespace}.option.2.tooltip`,
-        secondOptionPrompt: `${namespace}.option.2.select_prompt`,
+        buttonLabel: `${namespace}:option.2.label`,
+        buttonTooltip: `${namespace}:option.2.tooltip`,
+        secondOptionPrompt: `${namespace}:option.2.select_prompt`,
         selected: [
           {
-            text: `${namespace}.option.2.selected`,
+            text: `${namespace}:option.2.selected`,
           },
         ],
       });
@@ -336,12 +336,12 @@ describe("Delibird-y - Mystery Encounter", () => {
       expect(option.optionMode).toBe(MysteryEncounterOptionMode.DISABLED_OR_DEFAULT);
       expect(option.dialogue).toBeDefined();
       expect(option.dialogue).toStrictEqual({
-        buttonLabel: `${namespace}.option.3.label`,
-        buttonTooltip: `${namespace}.option.3.tooltip`,
-        secondOptionPrompt: `${namespace}.option.3.select_prompt`,
+        buttonLabel: `${namespace}:option.3.label`,
+        buttonTooltip: `${namespace}:option.3.tooltip`,
+        secondOptionPrompt: `${namespace}:option.3.select_prompt`,
         selected: [
           {
-            text: `${namespace}.option.3.selected`,
+            text: `${namespace}:option.3.selected`,
           },
         ],
       });

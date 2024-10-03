@@ -497,7 +497,7 @@ function getRandomTrainerFunc(trainerPool: (TrainerType | TrainerType[])[], rand
     }
 
     /* 1/3 chance for evil team grunts to be double battles */
-    const evilTeamGrunts = [TrainerType.ROCKET_GRUNT, TrainerType.MAGMA_GRUNT, TrainerType.AQUA_GRUNT, TrainerType.GALACTIC_GRUNT, TrainerType.PLASMA_GRUNT, TrainerType.FLARE_GRUNT];
+    const evilTeamGrunts = [TrainerType.ROCKET_GRUNT, TrainerType.MAGMA_GRUNT, TrainerType.AQUA_GRUNT, TrainerType.GALACTIC_GRUNT, TrainerType.PLASMA_GRUNT, TrainerType.FLARE_GRUNT, TrainerType.AETHER_GRUNT, TrainerType.SKULL_GRUNT, TrainerType.MACRO_GRUNT, TrainerType.STAR_GRUNT];
     const isEvilTeamGrunt = evilTeamGrunts.includes(trainerTypes[rand]);
 
     if (trainerConfigs[trainerTypes[rand]].hasDouble && isEvilTeamGrunt) {

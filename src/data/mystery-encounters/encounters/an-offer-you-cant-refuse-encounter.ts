@@ -8,14 +8,15 @@ import { MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/myst
 import { AbilityRequirement, CombinationPokemonRequirement, MoveRequirement } from "#app/data/mystery-encounters/mystery-encounter-requirements";
 import { getHighestStatTotalPlayerPokemon } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
 import { EXTORTION_ABILITIES, EXTORTION_MOVES } from "#app/data/mystery-encounters/requirements/requirement-groups";
-import { getPokemonSpecies, speciesStarters } from "#app/data/pokemon-species";
+import { getPokemonSpecies } from "#app/data/pokemon-species";
+import { speciesStarterCosts } from "#app/data/balance/starters";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { ModifierRewardPhase } from "#app/phases/modifier-reward-phase";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
 
 /** the i18n namespace for this encounter */
-const namespace = "mysteryEncounter:offerYouCantRefuse";
+const namespace = "mysteryEncounters/anOfferYouCantRefuse";
 
 /**
  * Money offered starts at base value of Relic Gold, increasing linearly up to 3x Relic Gold based on the starter tier of the Pokemon being purchased
@@ -56,22 +57,22 @@ export const AnOfferYouCantRefuseEncounter: MysteryEncounter =
     ])
     .withIntroDialogue([
       {
-        text: `${namespace}.intro`,
+        text: `${namespace}:intro`,
       },
       {
-        text: `${namespace}.intro_dialogue`,
-        speaker: `${namespace}.speaker`,
+        text: `${namespace}:intro_dialogue`,
+        speaker: `${namespace}:speaker`,
       },
     ])
-    .withTitle(`${namespace}.title`)
-    .withDescription(`${namespace}.description`)
-    .withQuery(`${namespace}.query`)
+    .withTitle(`${namespace}:title`)
+    .withDescription(`${namespace}:description`)
+    .withQuery(`${namespace}:query`)
     .withOnInit((scene: BattleScene) => {
       const encounter = scene.currentBattle.mysteryEncounter!;
       const pokemon = getHighestStatTotalPlayerPokemon(scene, true, true);
 
       const baseSpecies = pokemon.getSpeciesForm().getRootSpeciesId();
-      const starterValue: number = speciesStarters[baseSpecies] ?? 1;
+      const starterValue: number = speciesStarterCosts[baseSpecies] ?? 1;
       const multiplier = Math.max(MONEY_MAXIMUM_MULTIPLIER / 10 * starterValue, MONEY_MINIMUM_MULTIPLIER);
       const price = scene.getWaveMoneyAmount(multiplier);
 
@@ -104,12 +105,12 @@ export const AnOfferYouCantRefuseEncounter: MysteryEncounter =
       MysteryEncounterOptionBuilder
         .newOptionWithMode(MysteryEncounterOptionMode.DEFAULT)
         .withDialogue({
-          buttonLabel: `${namespace}.option.1.label`,
-          buttonTooltip: `${namespace}.option.1.tooltip`,
+          buttonLabel: `${namespace}:option.1.label`,
+          buttonTooltip: `${namespace}:option.1.tooltip`,
           selected: [
             {
-              text: `${namespace}.option.1.selected`,
-              speaker: `${namespace}.speaker`,
+              text: `${namespace}:option.1.selected`,
+              speaker: `${namespace}:speaker`,
             },
           ],
         })
@@ -135,13 +136,13 @@ export const AnOfferYouCantRefuseEncounter: MysteryEncounter =
           new AbilityRequirement(EXTORTION_ABILITIES))
         )
         .withDialogue({
-          buttonLabel: `${namespace}.option.2.label`,
-          buttonTooltip: `${namespace}.option.2.tooltip`,
-          disabledButtonTooltip: `${namespace}.option.2.tooltip_disabled`,
+          buttonLabel: `${namespace}:option.2.label`,
+          buttonTooltip: `${namespace}:option.2.tooltip`,
+          disabledButtonTooltip: `${namespace}:option.2.tooltip_disabled`,
           selected: [
             {
-              speaker: `${namespace}.speaker`,
-              text: `${namespace}.option.2.selected`,
+              speaker: `${namespace}:speaker`,
+              text: `${namespace}:option.2.selected`,
             },
           ],
         })
@@ -159,12 +160,12 @@ export const AnOfferYouCantRefuseEncounter: MysteryEncounter =
     )
     .withSimpleOption(
       {
-        buttonLabel: `${namespace}.option.3.label`,
-        buttonTooltip: `${namespace}.option.3.tooltip`,
+        buttonLabel: `${namespace}:option.3.label`,
+        buttonTooltip: `${namespace}:option.3.tooltip`,
         selected: [
           {
-            speaker: `${namespace}.speaker`,
-            text: `${namespace}.option.3.selected`,
+            speaker: `${namespace}:speaker`,
+            text: `${namespace}:option.3.selected`,
           },
         ],
       },

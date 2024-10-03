@@ -1,6 +1,6 @@
-import BattleScene from "../battle-scene";
-import {pokemonPrevolutions} from "../data/pokemon-evolutions";
-import PokemonSpecies, {getPokemonSpecies} from "../data/pokemon-species";
+import BattleScene from "#app/battle-scene";
+import {pokemonPrevolutions} from "#app/data/balance/pokemon-evolutions";
+import PokemonSpecies, {getPokemonSpecies} from "#app/data/pokemon-species";
 import {
   TrainerConfig,
   TrainerPartyCompoundTemplate,
@@ -10,13 +10,13 @@ import {
   trainerConfigs,
   trainerPartyTemplates,
   signatureSpecies
-} from "../data/trainer-config";
-import {EnemyPokemon} from "./pokemon";
-import * as Utils from "../utils";
-import {PersistentModifier} from "../modifier/modifier";
-import {trainerNamePools} from "../data/trainer-names";
-import {ArenaTagSide, ArenaTrapTag} from "#app/data/arena-tag";
-import {getIsInitialized, initI18n} from "#app/plugins/i18n";
+} from "#app/data/trainer-config";
+import {EnemyPokemon} from "#app/field/pokemon";
+import * as Utils from "#app/utils";
+import { PersistentModifier } from "#app/modifier/modifier";
+import { trainerNamePools } from "#app/data/trainer-names";
+import { ArenaTagSide, ArenaTrapTag } from "#app/data/arena-tag";
+import { getIsInitialized, initI18n } from "#app/plugins/i18n";
 import i18next from "i18next";
 import { PartyMemberStrength } from "#enums/party-member-strength";
 import { Species } from "#enums/species";
