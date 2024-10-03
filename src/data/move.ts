@@ -25,7 +25,6 @@ import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import { MoveUsedEvent } from "#app/events/battle-scene";
 import { BATTLE_STATS, type BattleStat, EFFECTIVE_STATS, type EffectiveStat, getStatKey, Stat } from "#app/enums/stat";
-import { PartyStatusCurePhase } from "#app/phases/party-status-cure-phase";
 import { BattleEndPhase } from "#app/phases/battle-end-phase";
 import { MoveEndPhase } from "#app/phases/move-end-phase";
 import { MovePhase } from "#app/phases/move-phase";
@@ -34,6 +33,7 @@ import { PokemonHealPhase } from "#app/phases/pokemon-heal-phase";
 import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
 import { SwitchPhase } from "#app/phases/switch-phase";
 import { SwitchSummonPhase } from "#app/phases/switch-summon-phase";
+import { ShowAbilityPhase } from "#app/phases/show-ability-phase";
 import { SpeciesFormChangeRevertWeatherFormTrigger } from "./pokemon-forms";
 import { GameMode } from "#app/game-mode";
 import { applyChallenges, ChallengeType } from "./challenge";
@@ -1585,12 +1585,31 @@ export class PartyStatusCureAttr extends MoveEffectAttr {
     if (!this.canApply(user, target, move, args)) {
       return false;
     }
-    this.addPartyCurePhase(user);
+    const partyPokemon = user.isPlayer() ? user.scene.getParty() : user.scene.getEnemyParty();
+    partyPokemon.forEach(p => this.cureStatus(p, user.id));
+
+    if (this.message) {
+      user.scene.queueMessage(this.message);
+    }
+
     return true;
   }
 
-  addPartyCurePhase(user: Pokemon) {
-    user.scene.unshiftPhase(new PartyStatusCurePhase(user.scene, user, this.message, this.abilityCondition));
+  /**
+   * Tries to cure the status of the given {@linkcode Pokemon}
+   * @param pokemon The {@linkcode Pokemon} to cure.
+   * @param userId The ID of the (move) {@linkcode Pokemon | user}.
+   */
+  public cureStatus(pokemon: Pokemon, userId: number) {
+    if (!pokemon.isOnField() || pokemon.id === userId) { // user always cures its own status, regardless of ability
+      pokemon.resetStatus(false);
+      pokemon.updateInfo();
+    } else if (!pokemon.hasAbility(this.abilityCondition)) {
+      pokemon.resetStatus();
+      pokemon.updateInfo();
+    } else {
+      pokemon.scene.unshiftPhase(new ShowAbilityPhase(pokemon.scene, pokemon.id, pokemon.getPassiveAbility()?.id === this.abilityCondition));
+    }
   }
 }
 
@@ -3923,7 +3942,14 @@ export class PhotonGeyserCategoryAttr extends VariableMoveCategoryAttr {
   }
 }
 
-export class TeraBlastCategoryAttr extends VariableMoveCategoryAttr {
+/**
+ * Attribute used for tera moves that change category based on the user's Atk and SpAtk stats
+ * Note: Currently, `getEffectiveStat` does not ignore all abilities that affect stats except those
+ * with the attribute of `StatMultiplierAbAttr`
+ * TODO: Remove the `.partial()` tag from Tera Blast and Tera Starstorm when the above issue is resolved
+ * @extends VariableMoveCategoryAttr
+ */
+export class TeraMoveCategoryAttr extends VariableMoveCategoryAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     const category = (args[0] as Utils.NumberHolder);
 
@@ -4008,6 +4034,30 @@ export class ShellSideArmCategoryAttr extends VariableMoveCategoryAttr {
 
 export class VariableMoveTypeAttr extends MoveAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    return false;
+  }
+}
+
+/**
+ * Attribute used for Tera Starstorm that changes the move type to Stellar
+ * @extends VariableMoveTypeAttr
+ */
+export class TeraStarstormTypeAttr extends VariableMoveTypeAttr {
+  /**
+   *
+   * @param user the {@linkcode Pokemon} using the move
+   * @param target n/a
+   * @param move n/a
+   * @param args[0] {@linkcode Utils.NumberHolder} the move type
+   * @returns `true` if the move type is changed to {@linkcode Type.STELLAR}, `false` otherwise
+   */
+  override apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    if (user.isTerastallized() && (user.hasFusionSpecies(Species.TERAPAGOS) || user.species.speciesId === Species.TERAPAGOS)) {
+      const moveType = args[0] as Utils.NumberHolder;
+
+      moveType.value = Type.STELLAR;
+      return true;
+    }
     return false;
   }
 }
@@ -9171,7 +9221,7 @@ export function initMoves() {
       .attr(HalfSacrificialAttr),
     new AttackMove(Moves.EXPANDING_FORCE, Type.PSYCHIC, MoveCategory.SPECIAL, 80, 100, 10, -1, 0, 8)
       .attr(MovePowerMultiplierAttr, (user, target, move) => user.scene.arena.getTerrainType() === TerrainType.PSYCHIC && user.isGrounded() ? 1.5 : 1)
-      .attr(VariableTargetAttr, (user, target, move) => user.scene.arena.getTerrainType() === TerrainType.PSYCHIC && user.isGrounded() ? 6 : 3),
+      .attr(VariableTargetAttr, (user, target, move) => user.scene.arena.getTerrainType() === TerrainType.PSYCHIC && user.isGrounded() ? MoveTarget.ALL_NEAR_ENEMIES : MoveTarget.NEAR_OTHER),
     new AttackMove(Moves.STEEL_ROLLER, Type.STEEL, MoveCategory.PHYSICAL, 130, 100, 5, -1, 0, 8)
       .attr(ClearTerrainAttr)
       .condition((user, target, move) => !!user.scene.arena.terrain),
@@ -9445,10 +9495,11 @@ export function initMoves() {
       .unimplemented(),
     End Unused */
     new AttackMove(Moves.TERA_BLAST, Type.NORMAL, MoveCategory.SPECIAL, 80, 100, 10, -1, 0, 9)
-      .attr(TeraBlastCategoryAttr)
+      .attr(TeraMoveCategoryAttr)
       .attr(TeraBlastTypeAttr)
       .attr(TeraBlastPowerAttr)
-      .attr(StatStageChangeAttr, [ Stat.ATK, Stat.SPATK ], -1, true, (user, target, move) => user.isTerastallized() && user.isOfType(Type.STELLAR)),
+      .attr(StatStageChangeAttr, [ Stat.ATK, Stat.SPATK ], -1, true, (user, target, move) => user.isTerastallized() && user.isOfType(Type.STELLAR))
+      .partial(), /** Does not ignore abilities that affect stats, relevant in determining the move's category {@see TeraMoveCategoryAttr} */
     new SelfStatusMove(Moves.SILK_TRAP, Type.BUG, -1, 10, -1, 4, 9)
       .attr(ProtectAttr, BattlerTagType.SILK_TRAP)
       .condition(failIfLastCondition),
@@ -9638,8 +9689,10 @@ export function initMoves() {
       .attr(ElectroShotChargeAttr)
       .ignoresVirtual(),
     new AttackMove(Moves.TERA_STARSTORM, Type.NORMAL, MoveCategory.SPECIAL, 120, 100, 5, -1, 0, 9)
-      .attr(TeraBlastCategoryAttr)
-      .partial(),
+      .attr(TeraMoveCategoryAttr)
+      .attr(TeraStarstormTypeAttr)
+      .attr(VariableTargetAttr, (user, target, move) => (user.hasFusionSpecies(Species.TERAPAGOS) || user.species.speciesId === Species.TERAPAGOS) && user.isTerastallized() ? MoveTarget.ALL_NEAR_ENEMIES : MoveTarget.NEAR_OTHER)
+      .partial(), /** Does not ignore abilities that affect stats, relevant in determining the move's category {@see TeraMoveCategoryAttr} */
     new AttackMove(Moves.FICKLE_BEAM, Type.DRAGON, MoveCategory.SPECIAL, 80, 100, 5, 30, 0, 9)
       .attr(PreMoveMessageAttr, doublePowerChanceMessageFunc)
       .attr(DoublePowerChanceAttr),
