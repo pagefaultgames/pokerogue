@@ -2204,7 +2204,7 @@ export class PokemonLevelIncrementModifier extends ConsumablePokemonModifier {
    * @param levelCount The amount of levels to increment
    * @returns always `true`
    */
-  override apply(playerPokemon: PlayerPokemon, levelCount: NumberHolder): boolean {
+  override apply(playerPokemon: PlayerPokemon, levelCount: NumberHolder = new NumberHolder(1)): boolean {
     playerPokemon.scene.applyModifiers(LevelIncrementBoosterModifier, true, levelCount);
 
     playerPokemon.level += levelCount.value;
