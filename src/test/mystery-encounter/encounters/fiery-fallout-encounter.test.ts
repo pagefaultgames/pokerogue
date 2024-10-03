@@ -22,6 +22,7 @@ import { initSceneWithoutEncounterPhase } from "#test/utils/gameManagerUtils";
 import { CommandPhase } from "#app/phases/command-phase";
 import { MovePhase } from "#app/phases/move-phase";
 import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
+import i18next from "i18next";
 
 const namespace = "mysteryEncounters/fieryFallout";
 /** Arcanine and Ninetails for 2 Fire types. Lapras, Gengar, Abra for burnable mon. */
@@ -205,7 +206,7 @@ describe("Fiery Fallout - Mystery Encounter", () => {
 
       const burnablePokemon = party.filter((pkm) => pkm.isAllowedInBattle() && !pkm.getTypes().includes(Type.FIRE));
       const notBurnablePokemon = party.filter((pkm) => !pkm.isAllowedInBattle() || pkm.getTypes().includes(Type.FIRE));
-      expect(scene.currentBattle.mysteryEncounter?.dialogueTokens["burnedPokemon"]).toBe("pokemon:gengar");
+      expect(scene.currentBattle.mysteryEncounter?.dialogueTokens["burnedPokemon"]).toBe(i18next.t("pokemon:gengar"));
       burnablePokemon.forEach((pkm) => {
         expect(pkm.hp, `${pkm.name} should have received 20% damage: ${pkm.hp} / ${pkm.getMaxHp()} HP`).toBe(pkm.getMaxHp() - Math.floor(pkm.getMaxHp() * 0.2));
       });

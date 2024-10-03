@@ -16,6 +16,7 @@ import { Moves } from "#enums/moves";
 import { CommandPhase } from "#app/phases/command-phase";
 import { MovePhase } from "#app/phases/move-phase";
 import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
+import i18next from "i18next";
 
 const namespace = "mysteryEncounters/absoluteAvarice";
 const defaultParty = [Species.LAPRAS, Species.GENGAR, Species.ABRA];
@@ -146,7 +147,7 @@ describe("Absolute Avarice - Mystery Encounter", () => {
         const pokemonId = partyPokemon.id;
         const pokemonItems = scene.findModifiers(m => m instanceof PokemonHeldItemModifier
           && (m as PokemonHeldItemModifier).pokemonId === pokemonId, true) as PokemonHeldItemModifier[];
-        const revSeed = pokemonItems.find(i => i.type.name === "modifierType:ModifierType.REVIVER_SEED.name");
+        const revSeed = pokemonItems.find(i => i.type.name === i18next.t("modifierType:ModifierType.REVIVER_SEED.name"));
         expect(revSeed).toBeDefined;
         expect(revSeed?.stackCount).toBe(1);
       }

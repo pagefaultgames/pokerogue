@@ -8,6 +8,7 @@ import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import MockText from "../utils/mocks/mocksContainer/mockText";
+import i18next from "i18next";
 
 describe("UI - Type Hints", () => {
   let phaserGame: Phaser.Game;
@@ -53,7 +54,7 @@ describe("UI - Type Hints", () => {
       const movesContainer = ui.getByName<Phaser.GameObjects.Container>(FightUiHandler.MOVES_CONTAINER_NAME);
       const dragonClawText = movesContainer
         .getAll<Phaser.GameObjects.Text>()
-        .find((text) => text.text === "move:dragonClaw.name")! as unknown as MockText;
+        .find((text) => text.text === i18next.t("move:dragonClaw.name"))! as unknown as MockText;
 
       expect.soft(dragonClawText.color).toBe("#929292");
       ui.getHandler().processInput(Button.ACTION);
@@ -78,7 +79,7 @@ describe("UI - Type Hints", () => {
       const movesContainer = ui.getByName<Phaser.GameObjects.Container>(FightUiHandler.MOVES_CONTAINER_NAME);
       const growlText = movesContainer
         .getAll<Phaser.GameObjects.Text>()
-        .find((text) => text.text === "move:growl.name")! as unknown as MockText;
+        .find((text) => text.text === i18next.t("move:growl.name"))! as unknown as MockText;
 
       expect.soft(growlText.color).toBe(undefined);
       ui.getHandler().processInput(Button.ACTION);

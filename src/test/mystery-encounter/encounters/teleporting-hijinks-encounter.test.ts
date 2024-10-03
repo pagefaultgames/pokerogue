@@ -1,21 +1,22 @@
+import BattleScene from "#app/battle-scene";
+import { TeleportingHijinksEncounter } from "#app/data/mystery-encounters/encounters/teleporting-hijinks-encounter";
 import * as MysteryEncounters from "#app/data/mystery-encounters/mystery-encounters";
+import { Abilities } from "#app/enums/abilities";
 import { Biome } from "#app/enums/biome";
 import { MysteryEncounterType } from "#app/enums/mystery-encounter-type";
 import { Species } from "#app/enums/species";
+import { CommandPhase } from "#app/phases/command-phase";
+import { MysteryEncounterPhase } from "#app/phases/mystery-encounter-phases";
+import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
 import GameManager from "#app/test/utils/gameManager";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import { runMysteryEncounterToEnd, runSelectMysteryEncounterOption, skipBattleRunMysteryEncounterRewardsPhase } from "#test/mystery-encounter/encounter-test-utils";
-import BattleScene from "#app/battle-scene";
+import ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
+import { Mode } from "#app/ui/ui";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
+import { runMysteryEncounterToEnd, runSelectMysteryEncounterOption, skipBattleRunMysteryEncounterRewardsPhase } from "#test/mystery-encounter/encounter-test-utils";
 import { initSceneWithoutEncounterPhase } from "#test/utils/gameManagerUtils";
-import { MysteryEncounterPhase } from "#app/phases/mystery-encounter-phases";
-import { CommandPhase } from "#app/phases/command-phase";
-import { TeleportingHijinksEncounter } from "#app/data/mystery-encounters/encounters/teleporting-hijinks-encounter";
-import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
-import { Mode } from "#app/ui/ui";
-import ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
-import { Abilities } from "#app/enums/abilities";
+import i18next from "i18next";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 const namespace = "mysteryEncounters/teleportingHijinks";
 const defaultParty = [Species.LAPRAS, Species.GENGAR, Species.ABRA];
@@ -300,8 +301,8 @@ describe("Teleporting Hijinks - Mystery Encounter", () => {
 
       expect(scene.ui.getMode()).to.equal(Mode.MODIFIER_SELECT);
       const modifierSelectHandler = scene.ui.handlers.find(h => h instanceof ModifierSelectUiHandler) as ModifierSelectUiHandler;
-      expect(modifierSelectHandler.options.some(opt => opt.modifierTypeOption.type.name === "modifierType:AttackTypeBoosterItem.metal_coat")).toBe(true);
-      expect(modifierSelectHandler.options.some(opt => opt.modifierTypeOption.type.name === "modifierType:AttackTypeBoosterItem.magnet")).toBe(true);
+      expect(modifierSelectHandler.options.some(opt => opt.modifierTypeOption.type.name === i18next.t("modifierType:AttackTypeBoosterItem.metal_coat"))).toBe(true);
+      expect(modifierSelectHandler.options.some(opt => opt.modifierTypeOption.type.name === i18next.t("modifierType:AttackTypeBoosterItem.magnet"))).toBe(true);
     });
   });
 });

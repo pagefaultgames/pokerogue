@@ -9,6 +9,7 @@ import MysteryEncounterUiHandler from "#app/ui/mystery-encounter-ui-handler";
 import {MysteryEncounterType} from "#enums/mystery-encounter-type";
 import MessageUiHandler from "#app/ui/message-ui-handler";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
+import i18next from "i18next";
 
 describe("Mystery Encounter Phases", () => {
   let phaserGame: Phaser.Game;
@@ -78,9 +79,9 @@ describe("Mystery Encounter Phases", () => {
       expect(ui.getMode()).toBe(Mode.MESSAGE);
       expect(ui.showDialogue).toHaveBeenCalledTimes(1);
       expect(ui.showText).toHaveBeenCalledTimes(2);
-      expect(ui.showDialogue).toHaveBeenCalledWith("battle:mysteryEncounterAppeared", "???", null, expect.any(Function));
-      expect(ui.showText).toHaveBeenCalledWith("mysteryEncounters/mysteriousChallengers:intro", null, expect.any(Function), 750, true);
-      expect(ui.showText).toHaveBeenCalledWith("mysteryEncounters/mysteriousChallengers:option.selected", null, expect.any(Function), 300, true);
+      expect(ui.showDialogue).toHaveBeenCalledWith(i18next.t("battle:mysteryEncounterAppeared"),  "???", null, expect.any(Function));
+      expect(ui.showText).toHaveBeenCalledWith(i18next.t("mysteryEncounters/mysteriousChallengers:intro"), null, expect.any(Function), 750, true);
+      expect(ui.showText).toHaveBeenCalledWith(i18next.t("mysteryEncounters/mysteriousChallengers:option.selected"), null, expect.any(Function), 300, true);
     });
   });
 
