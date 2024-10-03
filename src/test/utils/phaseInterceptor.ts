@@ -328,7 +328,7 @@ export default class PhaseInterceptor {
    * @param skipFn - Optional skip function.
    * @returns A promise that resolves when the phase is run.
    */
-  run(phaseTarget: PhaseInterceptorPhase, skipFn?): Promise<void> {
+  run(phaseTarget: PhaseInterceptorPhase, skipFn?: (className: PhaseClass) => boolean): Promise<void> {
     const targetName = typeof phaseTarget === "string" ? phaseTarget : phaseTarget.name;
     this.scene.moveAnimations = null; // Mandatory to avoid crash
     return new Promise(async (resolve, reject) => {
@@ -362,7 +362,7 @@ export default class PhaseInterceptor {
     });
   }
 
-  whenAboutToRun(phaseTarget: PhaseInterceptorPhase, skipFn?): Promise<void> {
+  whenAboutToRun(phaseTarget: PhaseInterceptorPhase, skipFn?: (className: PhaseClass) => boolean): Promise<void> {
     const targetName = typeof phaseTarget === "string" ? phaseTarget : phaseTarget.name;
     this.scene.moveAnimations = null; // Mandatory to avoid crash
     return new Promise(async (resolve, reject) => {
@@ -452,7 +452,7 @@ export default class PhaseInterceptor {
    * @param mode - The {@linkcode Mode} to set.
    * @param args - Additional arguments to pass to the original method.
    */
-  setMode(mode: Mode, ...args: any[]): Promise<void> {
+  setMode(mode: Mode, ...args: unknown[]): Promise<void> {
     const currentPhase = this.scene.getCurrentPhase();
     const instance = this.scene.ui;
     console.log("setMode", `${Mode[mode]} (=${mode})`, args);
