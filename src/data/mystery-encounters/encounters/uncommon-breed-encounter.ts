@@ -25,7 +25,7 @@ import { Stat } from "#enums/stat";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
 
 /** the i18n namespace for the encounter */
-const namespace = "mysteryEncounter:uncommonBreed";
+const namespace = "mysteryEncounters/uncommonBreed";
 
 /**
  * Uncommon Breed encounter.
@@ -42,7 +42,7 @@ export const UncommonBreedEncounter: MysteryEncounter =
     .withIntroSpriteConfigs([]) // Set in onInit()
     .withIntroDialogue([
       {
-        text: `${namespace}.intro`,
+        text: `${namespace}:intro`,
       },
     ])
     .withOnInit((scene: BattleScene) => {
@@ -85,7 +85,7 @@ export const UncommonBreedEncounter: MysteryEncounter =
           isBoss: false,
           tags: [BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON],
           mysteryEncounterBattleEffects: (pokemon: Pokemon) => {
-            queueEncounterMessage(pokemon.scene, `${namespace}.option.1.stat_boost`);
+            queueEncounterMessage(pokemon.scene, `${namespace}:option.1.stat_boost`);
             pokemon.scene.unshiftPhase(new StatStageChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, statChangesForBattle, 1));
           }
         }],
@@ -125,16 +125,16 @@ export const UncommonBreedEncounter: MysteryEncounter =
       scene.time.delayedCall(500, () => scene.playSound("battle_anims/PRSFX- Spotlight2"));
       return true;
     })
-    .withTitle(`${namespace}.title`)
-    .withDescription(`${namespace}.description`)
-    .withQuery(`${namespace}.query`)
+    .withTitle(`${namespace}:title`)
+    .withDescription(`${namespace}:description`)
+    .withQuery(`${namespace}:query`)
     .withSimpleOption(
       {
-        buttonLabel: `${namespace}.option.1.label`,
-        buttonTooltip: `${namespace}.option.1.tooltip`,
+        buttonLabel: `${namespace}:option.1.label`,
+        buttonTooltip: `${namespace}:option.1.tooltip`,
         selected: [
           {
-            text: `${namespace}.option.1.selected`,
+            text: `${namespace}:option.1.selected`,
           },
         ],
       },
@@ -167,12 +167,12 @@ export const UncommonBreedEncounter: MysteryEncounter =
         .newOptionWithMode(MysteryEncounterOptionMode.DISABLED_OR_SPECIAL)
         .withSceneRequirement(new PersistentModifierRequirement("BerryModifier", 4)) // Will set option2PrimaryName and option2PrimaryMove dialogue tokens automatically
         .withDialogue({
-          buttonLabel: `${namespace}.option.2.label`,
-          buttonTooltip: `${namespace}.option.2.tooltip`,
-          disabledButtonTooltip: `${namespace}.option.2.disabled_tooltip`,
+          buttonLabel: `${namespace}:option.2.label`,
+          buttonTooltip: `${namespace}:option.2.tooltip`,
+          disabledButtonTooltip: `${namespace}:option.2.disabled_tooltip`,
           selected: [
             {
-              text: `${namespace}.option.2.selected`
+              text: `${namespace}:option.2.selected`
             }
           ]
         })
@@ -211,12 +211,12 @@ export const UncommonBreedEncounter: MysteryEncounter =
         .newOptionWithMode(MysteryEncounterOptionMode.DISABLED_OR_SPECIAL)
         .withPrimaryPokemonRequirement(new MoveRequirement(CHARMING_MOVES)) // Will set option2PrimaryName and option2PrimaryMove dialogue tokens automatically
         .withDialogue({
-          buttonLabel: `${namespace}.option.3.label`,
-          buttonTooltip: `${namespace}.option.3.tooltip`,
-          disabledButtonTooltip: `${namespace}.option.3.disabled_tooltip`,
+          buttonLabel: `${namespace}:option.3.label`,
+          buttonTooltip: `${namespace}:option.3.tooltip`,
+          disabledButtonTooltip: `${namespace}:option.3.disabled_tooltip`,
           selected: [
             {
-              text: `${namespace}.option.3.selected`
+              text: `${namespace}:option.3.selected`
             }
           ]
         })
