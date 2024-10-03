@@ -14,7 +14,7 @@ import { BattlerIndex } from "#app/battle";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { BerryType } from "#enums/berry-type";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
-import { MysteryEncounterPokemonData } from "#app/data/mystery-encounters/mystery-encounter-pokemon-data";
+import { CustomPokemonData } from "#app/data/mystery-encounters/custom-pokemon-data";
 import { Stat } from "#enums/stat";
 import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
@@ -79,7 +79,7 @@ export const TheStrongStuffEncounter: MysteryEncounter =
             species: getPokemonSpecies(Species.SHUCKLE),
             isBoss: true,
             bossSegments: 5,
-            mysteryEncounterPokemonData: new MysteryEncounterPokemonData({ spriteScale: 1.25 }),
+            mysteryEncounterPokemonData: new CustomPokemonData({ spriteScale: 1.25 }),
             nature: Nature.BOLD,
             moveSet: [Moves.INFESTATION, Moves.SALT_CURE, Moves.GASTRO_ACID, Moves.HEAL_ORDER],
             modifierConfigs: [

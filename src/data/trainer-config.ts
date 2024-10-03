@@ -2471,6 +2471,22 @@ export const trainerConfigs: TrainerConfigs = {
   [TrainerType.BUG_TYPE_SUPERFAN]: new TrainerConfig(++t).setMoneyMultiplier(2.25).setEncounterBgm(TrainerType.ACE_TRAINER)
     .setPartyTemplates(new TrainerPartyTemplate(2, PartyMemberStrength.AVERAGE)),
   [TrainerType.EXPERT_POKEMON_BREEDER]: new TrainerConfig(++t).setMoneyMultiplier(3).setEncounterBgm(TrainerType.ACE_TRAINER).setLocalizedName("Expert Pokemon Breeder")
-    .setPartyTemplates(new TrainerPartyTemplate(3, PartyMemberStrength.STRONG))
+    .setPartyTemplates(new TrainerPartyTemplate(3, PartyMemberStrength.AVERAGE)),
+  [TrainerType.FUTURE_SELF_M]: new TrainerConfig(++t)
+    .setMoneyMultiplier(0)
+    .setEncounterBgm("mystery_encounter_weird_dream")
+    .setBattleBgm("mystery_encounter_weird_dream")
+    .setMixedBattleBgm("mystery_encounter_weird_dream")
+    .setVictoryBgm("mystery_encounter_weird_dream")
+    .setLocalizedName("Future Self M")
+    .setPartyTemplates(new TrainerPartyTemplate(6, PartyMemberStrength.STRONG)),
+  [TrainerType.FUTURE_SELF_F]: new TrainerConfig(++t)
+    .setMoneyMultiplier(0)
+    .setEncounterBgm("mystery_encounter_weird_dream")
+    .setBattleBgm("mystery_encounter_weird_dream")
+    .setMixedBattleBgm("mystery_encounter_weird_dream")
+    .setVictoryBgm("mystery_encounter_weird_dream")
+    .setLocalizedName("Future Self F")
+    .setPartyTemplates(new TrainerPartyTemplate(6, PartyMemberStrength.STRONG))
 };
 

@@ -211,7 +211,7 @@ export const DelibirdyEncounter: MysteryEncounter =
             }
           } else {
             // Check if the player has max stacks of that Healing Charm already
-            const existing = scene.findModifier(m => m instanceof HealingBoosterModifier) as HealingBoosterModifier;
+            const existing = scene.findModifier(m => m instanceof PreserveBerryModifier) as PreserveBerryModifier;
 
             if (existing && existing.getStackCount() >= existing.getMaxStackCount(scene)) {
               // At max stacks, give the first party pokemon a Shell Bell instead
@@ -220,7 +220,7 @@ export const DelibirdyEncounter: MysteryEncounter =
               scene.playSound("item_fanfare");
               await showEncounterText(scene, i18next.t("battle:rewardGain", { modifierName: shellBell.name }), null, undefined, true);
             } else {
-              scene.unshiftPhase(new ModifierRewardPhase(scene, modifierTypes.HEALING_CHARM));
+              scene.unshiftPhase(new ModifierRewardPhase(scene, modifierTypes.BERRY_POUCH));
             }
           }
 
@@ -289,8 +289,8 @@ export const DelibirdyEncounter: MysteryEncounter =
           const encounter = scene.currentBattle.mysteryEncounter!;
           const modifier = encounter.misc.chosenModifier;
 
-          // Check if the player has max stacks of Berry Pouch already
-          const existing = scene.findModifier(m => m instanceof PreserveBerryModifier) as PreserveBerryModifier;
+          // Check if the player has max stacks of Healing Charm already
+          const existing = scene.findModifier(m => m instanceof HealingBoosterModifier) as HealingBoosterModifier;
 
           if (existing && existing.getStackCount() >= existing.getMaxStackCount(scene)) {
             // At max stacks, give the first party pokemon a Shell Bell instead
@@ -299,7 +299,7 @@ export const DelibirdyEncounter: MysteryEncounter =
             scene.playSound("item_fanfare");
             await showEncounterText(scene, i18next.t("battle:rewardGain", { modifierName: shellBell.name }), null, undefined, true);
           } else {
-            scene.unshiftPhase(new ModifierRewardPhase(scene, modifierTypes.BERRY_POUCH));
+            scene.unshiftPhase(new ModifierRewardPhase(scene, modifierTypes.HEALING_CHARM));
           }
 
           // Remove the modifier if its stacks go to 0

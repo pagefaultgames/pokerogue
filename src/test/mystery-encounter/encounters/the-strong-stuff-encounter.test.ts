@@ -21,7 +21,7 @@ import { BerryModifier, PokemonBaseStatTotalModifier } from "#app/modifier/modif
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { initSceneWithoutEncounterPhase } from "#test/utils/gameManagerUtils";
-import { MysteryEncounterPokemonData } from "#app/data/mystery-encounters/mystery-encounter-pokemon-data";
+import { CustomPokemonData } from "#app/data/mystery-encounters/custom-pokemon-data";
 import { CommandPhase } from "#app/phases/command-phase";
 import { MovePhase } from "#app/phases/move-phase";
 import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
@@ -109,7 +109,7 @@ describe("The Strong Stuff - Mystery Encounter", () => {
             species: getPokemonSpecies(Species.SHUCKLE),
             isBoss: true,
             bossSegments: 5,
-            mysteryEncounterPokemonData: new MysteryEncounterPokemonData({ spriteScale: 1.25 }),
+            mysteryEncounterPokemonData: new CustomPokemonData({ spriteScale: 1.25 }),
             nature: Nature.BOLD,
             moveSet: [Moves.INFESTATION, Moves.SALT_CURE, Moves.GASTRO_ACID, Moves.HEAL_ORDER],
             modifierConfigs: expect.any(Array),

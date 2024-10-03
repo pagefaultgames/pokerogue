@@ -27,7 +27,7 @@ import { Status, StatusEffect } from "#app/data/status-effect";
 import { TrainerConfig, trainerConfigs, TrainerSlot } from "#app/data/trainer-config";
 import PokemonSpecies from "#app/data/pokemon-species";
 import { Egg, IEggOptions } from "#app/data/egg";
-import { MysteryEncounterPokemonData } from "#app/data/mystery-encounters/mystery-encounter-pokemon-data";
+import { CustomPokemonData } from "#app/data/mystery-encounters/custom-pokemon-data";
 import HeldModifierConfig from "#app/interfaces/held-modifier-config";
 import { MovePhase } from "#app/phases/move-phase";
 import { EggLapsePhase } from "#app/phases/egg-lapse-phase";
@@ -71,7 +71,7 @@ export interface EnemyPokemonConfig {
   nickname?: string;
   bossSegments?: number;
   bossSegmentModifier?: number; // Additive to the determined segment number
-  mysteryEncounterPokemonData?: MysteryEncounterPokemonData;
+  mysteryEncounterPokemonData?: CustomPokemonData;
   formIndex?: number;
   abilityIndex?: number;
   level?: number;
@@ -145,7 +145,7 @@ export async function initBattleWithEnemyConfig(scene: BattleScene, partyConfig:
     newTrainer.setVisible(false);
     scene.field.add(newTrainer);
     scene.currentBattle.trainer = newTrainer;
-    loadEnemyAssets.push(newTrainer.loadAssets());
+    loadEnemyAssets.push(newTrainer.loadAssets().then(() => newTrainer.initSprite()));
 
     battle.enemyLevels = scene.currentBattle.trainer.getPartyLevels(scene.currentBattle.waveIndex);
   } else {
@@ -251,7 +251,7 @@ export async function initBattleWithEnemyConfig(scene: BattleScene, partyConfig:
 
       // Set custom mystery encounter data fields (such as sprite scale, custom abilities, types, etc.)
       if (!isNullOrUndefined(config.mysteryEncounterPokemonData)) {
-        enemyPokemon.mysteryEncounterPokemonData = config.mysteryEncounterPokemonData;
+        enemyPokemon.customPokemonData = config.mysteryEncounterPokemonData;
       }
 
       // Set Boss

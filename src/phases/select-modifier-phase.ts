@@ -1,7 +1,7 @@
 import BattleScene from "#app/battle-scene";
 import { ModifierTier } from "#app/modifier/modifier-tier";
 import { regenerateModifierPoolThresholds, ModifierTypeOption, ModifierType, getPlayerShopModifierTypeOptionsForWave, PokemonModifierType, FusePokemonModifierType, PokemonMoveModifierType, TmModifierType, RememberMoveModifierType, PokemonPpRestoreModifierType, PokemonPpUpModifierType, ModifierPoolType, getPlayerModifierTypeOptions } from "#app/modifier/modifier-type";
-import { ExtraModifierModifier, HealShopCostModifier, Modifier, PokemonHeldItemModifier } from "#app/modifier/modifier";
+import { ExtraModifierModifier, HealShopCostModifier, Modifier, PokemonHeldItemModifier, TempExtraModifierModifier } from "#app/modifier/modifier";
 import ModifierSelectUiHandler, { SHOP_OPTIONS_ROW_LIMIT } from "#app/ui/modifier-select-ui-handler";
 import PartyUiHandler, { PartyUiMode, PartyOption } from "#app/ui/party-ui-handler";
 import { Mode } from "#app/ui/ui";
@@ -39,6 +39,7 @@ export class SelectModifierPhase extends BattlePhase {
     const modifierCount = new Utils.IntegerHolder(3);
     if (this.isPlayer()) {
       this.scene.applyModifiers(ExtraModifierModifier, true, modifierCount);
+      this.scene.applyModifiers(TempExtraModifierModifier, true, modifierCount);
     }
 
     // If custom modifiers are specified, overrides default item count
@@ -260,7 +261,13 @@ export class SelectModifierPhase extends BattlePhase {
       // Otherwise, continue with custom multiplier
       multiplier = this.customModifierSettings.rerollMultiplier;
     }
-    return Math.min(Math.ceil(this.scene.currentBattle.waveIndex / 10) * baseValue * Math.pow(2, this.rerollCount) * multiplier, Number.MAX_SAFE_INTEGER);
+
+    const baseMultiplier = Math.min(Math.ceil(this.scene.currentBattle.waveIndex / 10) * baseValue * Math.pow(2, this.rerollCount) * multiplier, Number.MAX_SAFE_INTEGER);
+
+    // Apply Black Sludge to reroll cost
+    const modifiedRerollCost = new NumberHolder(baseMultiplier);
+    this.scene.applyModifier(HealShopCostModifier, true, modifiedRerollCost);
+    return modifiedRerollCost.value;
   }
 
   getPoolType(): ModifierPoolType {
