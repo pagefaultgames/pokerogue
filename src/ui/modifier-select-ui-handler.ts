@@ -16,7 +16,7 @@ import { ShopCursorTarget } from "#app/enums/shop-cursor-target";
 import { IntegerHolder } from "./../utils";
 import Phaser from "phaser";
 
-export const SHOP_OPTIONS_ROW_LIMIT = 6;
+export const SHOP_OPTIONS_ROW_LIMIT = 7;
 
 export default class ModifierSelectUiHandler extends AwaitableUiHandler {
   private modifierContainer: Phaser.GameObjects.Container;
