@@ -25,7 +25,7 @@ import { trainerConfigs, TrainerSlot } from "#app/data/trainer-config";
 import Trainer, { TrainerVariant } from "#app/field/trainer";
 import TrainerData from "#app/system/trainer-data";
 import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
-import { pokemonPrevolutions } from "#app/data/pokemon-evolutions";
+import { pokemonPrevolutions } from "#app/data/balance/pokemon-evolutions";
 import PokeballTray from "#app/ui/pokeball-tray";
 import InvertPostFX from "#app/pipelines/invert";
 import { Achv, achvs, ModifierAchv, MoneyAchv } from "#app/system/achv";
@@ -42,7 +42,7 @@ import PokemonSpriteSparkleHandler from "#app/field/pokemon-sprite-sparkle-handl
 import CharSprite from "#app/ui/char-sprite";
 import DamageNumberHandler from "#app/field/damage-number-handler";
 import PokemonInfoContainer from "#app/ui/pokemon-info-container";
-import { biomeDepths, getBiomeName } from "#app/data/biomes";
+import { biomeDepths, getBiomeName } from "#app/data/balance/biomes";
 import { SceneBase } from "#app/scene-base";
 import CandyBar from "#app/ui/candy-bar";
 import { Variant, variantData } from "#app/data/variant";
