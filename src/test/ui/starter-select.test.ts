@@ -66,11 +66,11 @@ describe("UI - Starter select", () => {
         resolve();
       });
     });
-    expect(options.some(option => option.label === "Add to Party")).toBe(true);
-    expect(options.some(option => option.label === "Toggle IVs")).toBe(true);
-    expect(options.some(option => option.label === "Manage Moves")).toBe(true);
-    expect(options.some(option => option.label === "Use Candies")).toBe(true);
-    expect(options.some(option => option.label === "Cancel")).toBe(true);
+    expect(options.some(option => option.label === "starterSelectUiHandler:addToParty")).toBe(true);
+    expect(options.some(option => option.label === "starterSelectUiHandler:toggleIVs")).toBe(true);
+    expect(options.some(option => option.label === "starterSelectUiHandler:manageMoves")).toBe(true);
+    expect(options.some(option => option.label === "starterSelectUiHandler:useCandies")).toBe(true);
+    expect(options.some(option => option.label === "menu:cancel")).toBe(true);
     optionSelectUiHandler?.processInput(Button.ACTION);
 
     await new Promise<void>((resolve) => {
@@ -127,11 +127,11 @@ describe("UI - Starter select", () => {
         resolve();
       });
     });
-    expect(options.some(option => option.label === "Add to Party")).toBe(true);
-    expect(options.some(option => option.label === "Toggle IVs")).toBe(true);
-    expect(options.some(option => option.label === "Manage Moves")).toBe(true);
-    expect(options.some(option => option.label === "Use Candies")).toBe(true);
-    expect(options.some(option => option.label === "Cancel")).toBe(true);
+    expect(options.some(option => option.label === "starterSelectUiHandler:addToParty")).toBe(true);
+    expect(options.some(option => option.label === "starterSelectUiHandler:toggleIVs")).toBe(true);
+    expect(options.some(option => option.label === "starterSelectUiHandler:manageMoves")).toBe(true);
+    expect(options.some(option => option.label === "starterSelectUiHandler:useCandies")).toBe(true);
+    expect(options.some(option => option.label === "menu:cancel")).toBe(true);
     optionSelectUiHandler?.processInput(Button.ACTION);
 
     await new Promise<void>((resolve) => {
@@ -191,11 +191,11 @@ describe("UI - Starter select", () => {
         resolve();
       });
     });
-    expect(options.some(option => option.label === "Add to Party")).toBe(true);
-    expect(options.some(option => option.label === "Toggle IVs")).toBe(true);
-    expect(options.some(option => option.label === "Manage Moves")).toBe(true);
-    expect(options.some(option => option.label === "Use Candies")).toBe(true);
-    expect(options.some(option => option.label === "Cancel")).toBe(true);
+    expect(options.some(option => option.label === "starterSelectUiHandler:addToParty")).toBe(true);
+    expect(options.some(option => option.label === "starterSelectUiHandler:toggleIVs")).toBe(true);
+    expect(options.some(option => option.label === "starterSelectUiHandler:manageMoves")).toBe(true);
+    expect(options.some(option => option.label === "starterSelectUiHandler:useCandies")).toBe(true);
+    expect(options.some(option => option.label === "menu:cancel")).toBe(true);
     optionSelectUiHandler?.processInput(Button.ACTION);
 
     await new Promise<void>((resolve) => {
@@ -254,11 +254,11 @@ describe("UI - Starter select", () => {
         resolve();
       });
     });
-    expect(options.some(option => option.label === "Add to Party")).toBe(true);
-    expect(options.some(option => option.label === "Toggle IVs")).toBe(true);
-    expect(options.some(option => option.label === "Manage Moves")).toBe(true);
-    expect(options.some(option => option.label === "Use Candies")).toBe(true);
-    expect(options.some(option => option.label === "Cancel")).toBe(true);
+    expect(options.some(option => option.label === "starterSelectUiHandler:addToParty")).toBe(true);
+    expect(options.some(option => option.label === "starterSelectUiHandler:toggleIVs")).toBe(true);
+    expect(options.some(option => option.label === "starterSelectUiHandler:manageMoves")).toBe(true);
+    expect(options.some(option => option.label === "starterSelectUiHandler:useCandies")).toBe(true);
+    expect(options.some(option => option.label === "menu:cancel")).toBe(true);
     optionSelectUiHandler?.processInput(Button.ACTION);
 
     await new Promise<void>((resolve) => {
@@ -315,11 +315,11 @@ describe("UI - Starter select", () => {
         resolve();
       });
     });
-    expect(options.some(option => option.label === "Add to Party")).toBe(true);
-    expect(options.some(option => option.label === "Toggle IVs")).toBe(true);
-    expect(options.some(option => option.label === "Manage Moves")).toBe(true);
-    expect(options.some(option => option.label === "Use Candies")).toBe(true);
-    expect(options.some(option => option.label === "Cancel")).toBe(true);
+    expect(options.some(option => option.label === "starterSelectUiHandler:addToParty")).toBe(true);
+    expect(options.some(option => option.label === "starterSelectUiHandler:toggleIVs")).toBe(true);
+    expect(options.some(option => option.label === "starterSelectUiHandler:manageMoves")).toBe(true);
+    expect(options.some(option => option.label === "starterSelectUiHandler:useCandies")).toBe(true);
+    expect(options.some(option => option.label === "menu:cancel")).toBe(true);
     optionSelectUiHandler?.processInput(Button.ACTION);
 
     await new Promise<void>((resolve) => {
@@ -376,11 +376,11 @@ describe("UI - Starter select", () => {
         resolve();
       });
     });
-    expect(options.some(option => option.label === "Add to Party")).toBe(true);
-    expect(options.some(option => option.label === "Toggle IVs")).toBe(true);
-    expect(options.some(option => option.label === "Manage Moves")).toBe(true);
-    expect(options.some(option => option.label === "Use Candies")).toBe(true);
-    expect(options.some(option => option.label === "Cancel")).toBe(true);
+    expect(options.some(option => option.label === "starterSelectUiHandler:addToParty")).toBe(true);
+    expect(options.some(option => option.label === "starterSelectUiHandler:toggleIVs")).toBe(true);
+    expect(options.some(option => option.label === "starterSelectUiHandler:manageMoves")).toBe(true);
+    expect(options.some(option => option.label === "starterSelectUiHandler:useCandies")).toBe(true);
+    expect(options.some(option => option.label === "menu:cancel")).toBe(true);
     optionSelectUiHandler?.processInput(Button.ACTION);
 
     await new Promise<void>((resolve) => {
@@ -436,11 +436,11 @@ describe("UI - Starter select", () => {
         resolve();
       });
     });
-    expect(options.some(option => option.label === "Add to Party")).toBe(true);
-    expect(options.some(option => option.label === "Toggle IVs")).toBe(true);
-    expect(options.some(option => option.label === "Manage Moves")).toBe(true);
-    expect(options.some(option => option.label === "Use Candies")).toBe(true);
-    expect(options.some(option => option.label === "Cancel")).toBe(true);
+    expect(options.some(option => option.label === "starterSelectUiHandler:addToParty")).toBe(true);
+    expect(options.some(option => option.label === "starterSelectUiHandler:toggleIVs")).toBe(true);
+    expect(options.some(option => option.label === "starterSelectUiHandler:manageMoves")).toBe(true);
+    expect(options.some(option => option.label === "starterSelectUiHandler:useCandies")).toBe(true);
+    expect(options.some(option => option.label === "menu:cancel")).toBe(true);
     optionSelectUiHandler?.processInput(Button.ACTION);
 
     await new Promise<void>((resolve) => {
@@ -496,11 +496,11 @@ describe("UI - Starter select", () => {
         resolve();
       });
     });
-    expect(options.some(option => option.label === "Add to Party")).toBe(true);
-    expect(options.some(option => option.label === "Toggle IVs")).toBe(true);
-    expect(options.some(option => option.label === "Manage Moves")).toBe(true);
-    expect(options.some(option => option.label === "Use Candies")).toBe(true);
-    expect(options.some(option => option.label === "Cancel")).toBe(true);
+    expect(options.some(option => option.label === "starterSelectUiHandler:addToParty")).toBe(true);
+    expect(options.some(option => option.label === "starterSelectUiHandler:toggleIVs")).toBe(true);
+    expect(options.some(option => option.label === "starterSelectUiHandler:manageMoves")).toBe(true);
+    expect(options.some(option => option.label === "starterSelectUiHandler:useCandies")).toBe(true);
+    expect(options.some(option => option.label === "menu:cancel")).toBe(true);
     optionSelectUiHandler?.processInput(Button.ACTION);
 
     let starterSelectUiHandler: StarterSelectUiHandler;
@@ -561,11 +561,11 @@ describe("UI - Starter select", () => {
         resolve();
       });
     });
-    expect(options.some(option => option.label === "Add to Party")).toBe(true);
-    expect(options.some(option => option.label === "Toggle IVs")).toBe(true);
-    expect(options.some(option => option.label === "Manage Moves")).toBe(true);
-    expect(options.some(option => option.label === "Use Candies")).toBe(true);
-    expect(options.some(option => option.label === "Cancel")).toBe(true);
+    expect(options.some(option => option.label === "starterSelectUiHandler:addToParty")).toBe(true);
+    expect(options.some(option => option.label === "starterSelectUiHandler:toggleIVs")).toBe(true);
+    expect(options.some(option => option.label === "starterSelectUiHandler:manageMoves")).toBe(true);
+    expect(options.some(option => option.label === "starterSelectUiHandler:useCandies")).toBe(true);
+    expect(options.some(option => option.label === "menu:cancel")).toBe(true);
     optionSelectUiHandler?.processInput(Button.ACTION);
 
     let starterSelectUiHandler: StarterSelectUiHandler | undefined;

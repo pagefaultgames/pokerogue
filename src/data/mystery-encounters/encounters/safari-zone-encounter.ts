@@ -21,11 +21,13 @@ import { SummonPhase } from "#app/phases/summon-phase";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
 
 /** the i18n namespace for the encounter */
-const namespace = "mysteryEncounter:safariZone";
+const namespace = "mysteryEncounters/safariZone";
 
 const TRAINER_THROW_ANIMATION_TIMES = [512, 184, 768];
 
 const SAFARI_MONEY_MULTIPLIER = 2;
+
+const NUM_SAFARI_ENCOUNTERS = 3;
 
 /**
  * Safari Zone encounter.
@@ -49,21 +51,25 @@ export const SafariZoneEncounter: MysteryEncounter =
     ])
     .withIntroDialogue([
       {
-        text: `${namespace}.intro`,
+        text: `${namespace}:intro`,
       },
     ])
-    .withTitle(`${namespace}.title`)
-    .withDescription(`${namespace}.description`)
-    .withQuery(`${namespace}.query`)
+    .withTitle(`${namespace}:title`)
+    .withDescription(`${namespace}:description`)
+    .withQuery(`${namespace}:query`)
+    .withOnInit((scene: BattleScene) => {
+      scene.currentBattle.mysteryEncounter?.setDialogueToken("numEncounters", NUM_SAFARI_ENCOUNTERS.toString());
+      return true;
+    })
     .withOption(MysteryEncounterOptionBuilder
       .newOptionWithMode(MysteryEncounterOptionMode.DISABLED_OR_DEFAULT)
       .withSceneRequirement(new MoneyRequirement(0, SAFARI_MONEY_MULTIPLIER)) // Cost equal to 1 Max Revive
       .withDialogue({
-        buttonLabel: `${namespace}.option.1.label`,
-        buttonTooltip: `${namespace}.option.1.tooltip`,
+        buttonLabel: `${namespace}:option.1.label`,
+        buttonTooltip: `${namespace}:option.1.tooltip`,
         selected: [
           {
-            text: `${namespace}.option.1.selected`,
+            text: `${namespace}:option.1.selected`,
           },
         ],
       })
@@ -72,7 +78,7 @@ export const SafariZoneEncounter: MysteryEncounter =
         const encounter = scene.currentBattle.mysteryEncounter!;
         encounter.continuousEncounter = true;
         encounter.misc = {
-          safariPokemonRemaining: 3
+          safariPokemonRemaining: NUM_SAFARI_ENCOUNTERS
         };
         updatePlayerMoney(scene, -(encounter.options[0].requirements[0] as MoneyRequirement).requiredMoney);
         // Load bait/mud assets
@@ -92,11 +98,11 @@ export const SafariZoneEncounter: MysteryEncounter =
     )
     .withSimpleOption(
       {
-        buttonLabel: `${namespace}.option.2.label`,
-        buttonTooltip: `${namespace}.option.2.tooltip`,
+        buttonLabel: `${namespace}:option.2.label`,
+        buttonTooltip: `${namespace}:option.2.tooltip`,
         selected: [
           {
-            text: `${namespace}.option.2.selected`,
+            text: `${namespace}:option.2.selected`,
           },
         ],
       },
@@ -127,11 +133,11 @@ const safariZoneGameOptions: MysteryEncounterOption[] = [
   MysteryEncounterOptionBuilder
     .newOptionWithMode(MysteryEncounterOptionMode.DEFAULT)
     .withDialogue({
-      buttonLabel: `${namespace}.safari.1.label`,
-      buttonTooltip: `${namespace}.safari.1.tooltip`,
+      buttonLabel: `${namespace}:safari.1.label`,
+      buttonTooltip: `${namespace}:safari.1.tooltip`,
       selected: [
         {
-          text: `${namespace}.safari.1.selected`,
+          text: `${namespace}:safari.1.selected`,
         }
       ],
     })
@@ -162,11 +168,11 @@ const safariZoneGameOptions: MysteryEncounterOption[] = [
   MysteryEncounterOptionBuilder
     .newOptionWithMode(MysteryEncounterOptionMode.DEFAULT)
     .withDialogue({
-      buttonLabel: `${namespace}.safari.2.label`,
-      buttonTooltip: `${namespace}.safari.2.tooltip`,
+      buttonLabel: `${namespace}:safari.2.label`,
+      buttonTooltip: `${namespace}:safari.2.tooltip`,
       selected: [
         {
-          text: `${namespace}.safari.2.selected`,
+          text: `${namespace}:safari.2.selected`,
         },
       ],
     })
@@ -180,9 +186,9 @@ const safariZoneGameOptions: MysteryEncounterOption[] = [
       // 80% chance to increase flee stage +1
       const fleeChangeResult = tryChangeFleeStage(scene, 1, 8);
       if (!fleeChangeResult) {
-        await showEncounterText(scene, getEncounterText(scene, `${namespace}.safari.busy_eating`) ?? "", null, 1000, false );
+        await showEncounterText(scene, getEncounterText(scene, `${namespace}:safari.busy_eating`) ?? "", null, 1000, false );
       } else {
-        await showEncounterText(scene, getEncounterText(scene, `${namespace}.safari.eating`) ?? "", null, 1000, false);
+        await showEncounterText(scene, getEncounterText(scene, `${namespace}:safari.eating`) ?? "", null, 1000, false);
       }
 
       await doEndTurn(scene, 1);
@@ -192,11 +198,11 @@ const safariZoneGameOptions: MysteryEncounterOption[] = [
   MysteryEncounterOptionBuilder
     .newOptionWithMode(MysteryEncounterOptionMode.DEFAULT)
     .withDialogue({
-      buttonLabel: `${namespace}.safari.3.label`,
-      buttonTooltip: `${namespace}.safari.3.tooltip`,
+      buttonLabel: `${namespace}:safari.3.label`,
+      buttonTooltip: `${namespace}:safari.3.tooltip`,
       selected: [
         {
-          text: `${namespace}.safari.3.selected`,
+          text: `${namespace}:safari.3.selected`,
         },
       ],
     })
@@ -209,9 +215,9 @@ const safariZoneGameOptions: MysteryEncounterOption[] = [
       // 80% chance to decrease catch stage -1
       const catchChangeResult = tryChangeCatchStage(scene, -1, 8);
       if (!catchChangeResult) {
-        await showEncounterText(scene, getEncounterText(scene, `${namespace}.safari.beside_itself_angry`) ?? "", null, 1000, false );
+        await showEncounterText(scene, getEncounterText(scene, `${namespace}:safari.beside_itself_angry`) ?? "", null, 1000, false );
       } else {
-        await showEncounterText(scene, getEncounterText(scene, `${namespace}.safari.angry`) ?? "", null, 1000, false );
+        await showEncounterText(scene, getEncounterText(scene, `${namespace}:safari.angry`) ?? "", null, 1000, false );
       }
 
       await doEndTurn(scene, 2);
@@ -221,8 +227,8 @@ const safariZoneGameOptions: MysteryEncounterOption[] = [
   MysteryEncounterOptionBuilder
     .newOptionWithMode(MysteryEncounterOptionMode.DEFAULT)
     .withDialogue({
-      buttonLabel: `${namespace}.safari.4.label`,
-      buttonTooltip: `${namespace}.safari.4.tooltip`,
+      buttonLabel: `${namespace}:safari.4.label`,
+      buttonTooltip: `${namespace}:safari.4.tooltip`,
     })
     .withOptionPhase(async (scene: BattleScene) => {
       // Flee option
@@ -247,7 +253,7 @@ async function summonSafariPokemon(scene: BattleScene) {
   const encounter = scene.currentBattle.mysteryEncounter!;
   // Message pokemon remaining
   encounter.setDialogueToken("remainingCount", encounter.misc.safariPokemonRemaining);
-  scene.queueMessage(getEncounterText(scene, `${namespace}.safari.remaining_count`) ?? "", null, true);
+  scene.queueMessage(getEncounterText(scene, `${namespace}:safari.remaining_count`) ?? "", null, true);
 
   // Generate pokemon using safariPokemonRemaining so they are always the same pokemon no matter how many turns are taken
   // Safari pokemon roll twice on shiny and HA chances, but are otherwise normal
@@ -512,7 +518,7 @@ async function doEndTurn(scene: BattleScene, cursorIndex: number) {
       leaveEncounterWithoutBattle(scene, true);
     }
   } else {
-    scene.queueMessage(getEncounterText(scene, `${namespace}.safari.watching`) ?? "", 0, null, 1000);
+    scene.queueMessage(getEncounterText(scene, `${namespace}:safari.watching`) ?? "", 0, null, 1000);
     initSubsequentOptionSelect(scene, { overrideOptions: safariZoneGameOptions, startingCursorIndex: cursorIndex, hideDescription: true });
   }
 }

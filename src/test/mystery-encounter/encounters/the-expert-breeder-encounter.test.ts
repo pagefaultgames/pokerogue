@@ -19,7 +19,7 @@ import { TrainerType } from "#enums/trainer-type";
 import { EggTier } from "#enums/egg-type";
 import { PostMysteryEncounterPhase } from "#app/phases/mystery-encounter-phases";
 
-const namespace = "mysteryEncounter:expertPokemonBreeder";
+const namespace = "mysteryEncounters/theExpertPokemonBreeder";
 const defaultParty = [Species.LAPRAS, Species.GENGAR, Species.ABRA];
 const defaultBiome = Biome.CAVE;
 const defaultWave = 45;
@@ -64,16 +64,16 @@ describe("The Expert Pokémon Breeder - Mystery Encounter", () => {
     expect(TheExpertPokemonBreederEncounter.dialogue).toBeDefined();
     expect(TheExpertPokemonBreederEncounter.dialogue.intro).toStrictEqual([
       {
-        text: `${namespace}.intro`
+        text: `${namespace}:intro`
       },
       {
         speaker: "trainerNames:expert_pokemon_breeder",
-        text: `${namespace}.intro_dialogue`
+        text: `${namespace}:intro_dialogue`
       },
     ]);
-    expect(TheExpertPokemonBreederEncounter.dialogue.encounterOptionsDialogue?.title).toBe(`${namespace}.title`);
-    expect(TheExpertPokemonBreederEncounter.dialogue.encounterOptionsDialogue?.description).toBe(`${namespace}.description`);
-    expect(TheExpertPokemonBreederEncounter.dialogue.encounterOptionsDialogue?.query).toBe(`${namespace}.query`);
+    expect(TheExpertPokemonBreederEncounter.dialogue.encounterOptionsDialogue?.title).toBe(`${namespace}:title`);
+    expect(TheExpertPokemonBreederEncounter.dialogue.encounterOptionsDialogue?.description).toBe(`${namespace}:description`);
+    expect(TheExpertPokemonBreederEncounter.dialogue.encounterOptionsDialogue?.query).toBe(`${namespace}:query`);
     expect(TheExpertPokemonBreederEncounter.options.length).toBe(3);
   });
 
@@ -113,12 +113,12 @@ describe("The Expert Pokémon Breeder - Mystery Encounter", () => {
       expect(option.optionMode).toBe(MysteryEncounterOptionMode.DEFAULT);
       expect(option.dialogue).toBeDefined();
       expect(option.dialogue).toStrictEqual({
-        buttonLabel: `${namespace}.option.1.label`,
+        buttonLabel: `${namespace}:option.1.label`,
         buttonTooltip: expect.any(String), // Varies based on pokemon
         selected: [
           {
             speaker: "trainerNames:expert_pokemon_breeder",
-            text: `${namespace}.option.selected`,
+            text: `${namespace}:option.selected`,
           },
         ],
       });
@@ -171,12 +171,12 @@ describe("The Expert Pokémon Breeder - Mystery Encounter", () => {
       expect(option.optionMode).toBe(MysteryEncounterOptionMode.DEFAULT);
       expect(option.dialogue).toBeDefined();
       expect(option.dialogue).toStrictEqual({
-        buttonLabel: `${namespace}.option.2.label`,
+        buttonLabel: `${namespace}:option.2.label`,
         buttonTooltip: expect.any(String), // Varies based on pokemon
         selected: [
           {
             speaker: "trainerNames:expert_pokemon_breeder",
-            text: `${namespace}.option.selected`,
+            text: `${namespace}:option.selected`,
           },
         ],
       });
@@ -229,12 +229,12 @@ describe("The Expert Pokémon Breeder - Mystery Encounter", () => {
       expect(option.optionMode).toBe(MysteryEncounterOptionMode.DEFAULT);
       expect(option.dialogue).toBeDefined();
       expect(option.dialogue).toStrictEqual({
-        buttonLabel: `${namespace}.option.3.label`,
+        buttonLabel: `${namespace}:option.3.label`,
         buttonTooltip: expect.any(String), // Varies based on pokemon
         selected: [
           {
             speaker: "trainerNames:expert_pokemon_breeder",
-            text: `${namespace}.option.selected`,
+            text: `${namespace}:option.selected`,
           },
         ],
       });

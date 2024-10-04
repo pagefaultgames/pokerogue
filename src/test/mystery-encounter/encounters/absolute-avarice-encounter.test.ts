@@ -17,7 +17,7 @@ import { CommandPhase } from "#app/phases/command-phase";
 import { MovePhase } from "#app/phases/move-phase";
 import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
 
-const namespace = "mysteryEncounter:absoluteAvarice";
+const namespace = "mysteryEncounters/absoluteAvarice";
 const defaultParty = [Species.LAPRAS, Species.GENGAR, Species.ABRA];
 const defaultBiome = Biome.PLAINS;
 const defaultWave = 45;
@@ -59,10 +59,10 @@ describe("Absolute Avarice - Mystery Encounter", () => {
     expect(AbsoluteAvariceEncounter.encounterType).toBe(MysteryEncounterType.ABSOLUTE_AVARICE);
     expect(AbsoluteAvariceEncounter.encounterTier).toBe(MysteryEncounterTier.GREAT);
     expect(AbsoluteAvariceEncounter.dialogue).toBeDefined();
-    expect(AbsoluteAvariceEncounter.dialogue.intro).toStrictEqual([{ text: `${namespace}.intro` }]);
-    expect(AbsoluteAvariceEncounter.dialogue.encounterOptionsDialogue?.title).toBe(`${namespace}.title`);
-    expect(AbsoluteAvariceEncounter.dialogue.encounterOptionsDialogue?.description).toBe(`${namespace}.description`);
-    expect(AbsoluteAvariceEncounter.dialogue.encounterOptionsDialogue?.query).toBe(`${namespace}.query`);
+    expect(AbsoluteAvariceEncounter.dialogue.intro).toStrictEqual([{ text: `${namespace}:intro` }]);
+    expect(AbsoluteAvariceEncounter.dialogue.encounterOptionsDialogue?.title).toBe(`${namespace}:title`);
+    expect(AbsoluteAvariceEncounter.dialogue.encounterOptionsDialogue?.description).toBe(`${namespace}:description`);
+    expect(AbsoluteAvariceEncounter.dialogue.encounterOptionsDialogue?.query).toBe(`${namespace}:query`);
     expect(AbsoluteAvariceEncounter.options.length).toBe(3);
   });
 
@@ -106,11 +106,11 @@ describe("Absolute Avarice - Mystery Encounter", () => {
       expect(option1.optionMode).toBe(MysteryEncounterOptionMode.DEFAULT);
       expect(option1.dialogue).toBeDefined();
       expect(option1.dialogue).toStrictEqual({
-        buttonLabel: `${namespace}.option.1.label`,
-        buttonTooltip: `${namespace}.option.1.tooltip`,
+        buttonLabel: `${namespace}:option.1.label`,
+        buttonTooltip: `${namespace}:option.1.tooltip`,
         selected: [
           {
-            text: `${namespace}.option.1.selected`,
+            text: `${namespace}:option.1.selected`,
           },
         ],
       });
@@ -128,7 +128,7 @@ describe("Absolute Avarice - Mystery Encounter", () => {
       expect(enemyField[0].species.speciesId).toBe(Species.GREEDENT);
       const moveset = enemyField[0].moveset.map(m => m?.moveId);
       expect(moveset?.length).toBe(4);
-      expect(moveset).toEqual([Moves.THRASH, Moves.BODY_PRESS, Moves.STUFF_CHEEKS, Moves.SLACK_OFF]);
+      expect(moveset).toEqual([Moves.THRASH, Moves.BODY_PRESS, Moves.STUFF_CHEEKS, Moves.CRUNCH]);
 
       const movePhases = phaseSpy.mock.calls.filter(p => p[0] instanceof MovePhase).map(p => p[0]);
       expect(movePhases.length).toBe(1);
@@ -146,7 +146,7 @@ describe("Absolute Avarice - Mystery Encounter", () => {
         const pokemonId = partyPokemon.id;
         const pokemonItems = scene.findModifiers(m => m instanceof PokemonHeldItemModifier
           && (m as PokemonHeldItemModifier).pokemonId === pokemonId, true) as PokemonHeldItemModifier[];
-        const revSeed = pokemonItems.find(i => i.type.name === "Reviver Seed");
+        const revSeed = pokemonItems.find(i => i.type.name === "modifierType:ModifierType.REVIVER_SEED.name");
         expect(revSeed).toBeDefined;
         expect(revSeed?.stackCount).toBe(1);
       }
@@ -159,11 +159,11 @@ describe("Absolute Avarice - Mystery Encounter", () => {
       expect(option.optionMode).toBe(MysteryEncounterOptionMode.DEFAULT);
       expect(option.dialogue).toBeDefined();
       expect(option.dialogue).toStrictEqual({
-        buttonLabel: `${namespace}.option.2.label`,
-        buttonTooltip: `${namespace}.option.2.tooltip`,
+        buttonLabel: `${namespace}:option.2.label`,
+        buttonTooltip: `${namespace}:option.2.tooltip`,
         selected: [
           {
-            text: `${namespace}.option.2.selected`,
+            text: `${namespace}:option.2.selected`,
           },
         ],
       });
@@ -217,11 +217,11 @@ describe("Absolute Avarice - Mystery Encounter", () => {
       expect(option.optionMode).toBe(MysteryEncounterOptionMode.DEFAULT);
       expect(option.dialogue).toBeDefined();
       expect(option.dialogue).toStrictEqual({
-        buttonLabel: `${namespace}.option.3.label`,
-        buttonTooltip: `${namespace}.option.3.tooltip`,
+        buttonLabel: `${namespace}:option.3.label`,
+        buttonTooltip: `${namespace}:option.3.tooltip`,
         selected: [
           {
-            text: `${namespace}.option.3.selected`,
+            text: `${namespace}:option.3.selected`,
           },
         ],
       });

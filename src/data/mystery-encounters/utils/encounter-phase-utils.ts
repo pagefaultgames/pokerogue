@@ -1,5 +1,5 @@
 import Battle, { BattlerIndex, BattleType } from "#app/battle";
-import { biomeLinks, BiomePoolTier } from "#app/data/biomes";
+import { biomeLinks, BiomePoolTier } from "#app/data/balance/biomes";
 import MysteryEncounterOption from "#app/data/mystery-encounters/mystery-encounter-option";
 import { AVERAGE_ENCOUNTERS_PER_RUN_TARGET, WEIGHT_INCREMENT_ON_SPAWN_MISS } from "#app/data/mystery-encounters/mystery-encounters";
 import { showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
@@ -135,7 +135,7 @@ export async function initBattleWithEnemyConfig(scene: BattleScene, partyConfig:
       scene.currentBattle.trainer.destroy();
     }
 
-    trainerConfig = partyConfig?.trainerConfig ? partyConfig?.trainerConfig : trainerConfigs[trainerType!];
+    trainerConfig = partyTrainerConfig ? partyTrainerConfig : trainerConfigs[trainerType!];
 
     const doubleTrainer = trainerConfig.doubleOnly || (trainerConfig.hasDouble && !!partyConfig.doubleBattle);
     doubleBattle = doubleTrainer;
@@ -166,7 +166,7 @@ export async function initBattleWithEnemyConfig(scene: BattleScene, partyConfig:
   // This can be amplified or counteracted by setting levelAdditiveModifier in config
   // levelAdditiveModifier value of 0.5 will halve the modifier scaling, 2 will double it, etc.
   // Leaving null/undefined will disable level scaling
-  const mult: number = !isNullOrUndefined(partyConfig.levelAdditiveModifier) ? partyConfig.levelAdditiveModifier! : 0;
+  const mult: number = !isNullOrUndefined(partyConfig.levelAdditiveModifier) ? partyConfig.levelAdditiveModifier : 0;
   const additive = Math.max(Math.round((scene.currentBattle.waveIndex / 10) * mult), 0);
   battle.enemyLevels = battle.enemyLevels.map(level => level + additive);
 
@@ -226,7 +226,7 @@ export async function initBattleWithEnemyConfig(scene: BattleScene, partyConfig:
 
       // Set form
       if (!isNullOrUndefined(config.nickname)) {
-        enemyPokemon.nickname = btoa(unescape(encodeURIComponent(config.nickname!)));
+        enemyPokemon.nickname = btoa(unescape(encodeURIComponent(config.nickname)));
       }
 
       // Generate new id, reset status and HP in case using data source
@@ -236,29 +236,29 @@ export async function initBattleWithEnemyConfig(scene: BattleScene, partyConfig:
 
       // Set form
       if (!isNullOrUndefined(config.formIndex)) {
-        enemyPokemon.formIndex = config.formIndex!;
+        enemyPokemon.formIndex = config.formIndex;
       }
 
       // Set shiny
       if (!isNullOrUndefined(config.shiny)) {
-        enemyPokemon.shiny = config.shiny!;
+        enemyPokemon.shiny = config.shiny;
       }
 
       // Set Variant
       if (enemyPokemon.shiny && !isNullOrUndefined(config.variant)) {
-        enemyPokemon.variant = config.variant!;
+        enemyPokemon.variant = config.variant;
       }
 
       // Set custom mystery encounter data fields (such as sprite scale, custom abilities, types, etc.)
       if (!isNullOrUndefined(config.mysteryEncounterPokemonData)) {
-        enemyPokemon.mysteryEncounterPokemonData = config.mysteryEncounterPokemonData!;
+        enemyPokemon.mysteryEncounterPokemonData = config.mysteryEncounterPokemonData;
       }
 
       // Set Boss
       if (config.isBoss) {
         let segments = !isNullOrUndefined(config.bossSegments) ? config.bossSegments! : scene.getEncounterBossSegments(scene.currentBattle.waveIndex, level, enemySpecies, true);
         if (!isNullOrUndefined(config.bossSegmentModifier)) {
-          segments += config.bossSegmentModifier!;
+          segments += config.bossSegmentModifier;
         }
         enemyPokemon.setBoss(true, segments);
       }
@@ -294,18 +294,18 @@ export async function initBattleWithEnemyConfig(scene: BattleScene, partyConfig:
 
       // Set ability
       if (!isNullOrUndefined(config.abilityIndex)) {
-        enemyPokemon.abilityIndex = config.abilityIndex!;
+        enemyPokemon.abilityIndex = config.abilityIndex;
       }
 
       // Set gender
       if (!isNullOrUndefined(config.gender)) {
         enemyPokemon.gender = config.gender!;
-        enemyPokemon.summonData.gender = config.gender!;
+        enemyPokemon.summonData.gender = config.gender;
       }
 
       // Set AI type
       if (!isNullOrUndefined(config.aiType)) {
-        enemyPokemon.aiType = config.aiType!;
+        enemyPokemon.aiType = config.aiType;
       }
 
       // Set moves
@@ -339,7 +339,7 @@ export async function initBattleWithEnemyConfig(scene: BattleScene, partyConfig:
 
     loadEnemyAssets.push(enemyPokemon.loadAssets());
 
-    console.log(enemyPokemon.name, enemyPokemon.species.speciesId, enemyPokemon.stats);
+    console.log(`Pokemon: ${enemyPokemon.name}`, `Species ID: ${enemyPokemon.species.speciesId}`, `Stats: ${enemyPokemon.stats}`, `Ability: ${enemyPokemon.getAbility().name}`, `Passive Ability: ${enemyPokemon.getPassiveAbility().name}`);
   });
 
   scene.pushPhase(new MysteryEncounterBattlePhase(scene, partyConfig.disableSwitch));
@@ -832,7 +832,7 @@ export function transitionMysteryEncounterIntroVisuals(scene: BattleScene, hide:
  */
 export function handleMysteryEncounterBattleStartEffects(scene: BattleScene) {
   const encounter = scene.currentBattle.mysteryEncounter;
-  if (scene.currentBattle.battleType === BattleType.MYSTERY_ENCOUNTER && encounter && encounter.encounterMode !== MysteryEncounterMode.NO_BATTLE && !encounter.startOfBattleEffectsComplete) {
+  if (scene.currentBattle.isBattleMysteryEncounter() && encounter && encounter.encounterMode !== MysteryEncounterMode.NO_BATTLE && !encounter.startOfBattleEffectsComplete) {
     const effects = encounter.startOfBattleEffects;
     effects.forEach(effect => {
       let source;
@@ -871,7 +871,7 @@ export function handleMysteryEncounterBattleStartEffects(scene: BattleScene) {
  */
 export function handleMysteryEncounterTurnStartEffects(scene: BattleScene): boolean {
   const encounter = scene.currentBattle.mysteryEncounter;
-  if (scene.currentBattle.battleType === BattleType.MYSTERY_ENCOUNTER && encounter && encounter.onTurnStart) {
+  if (scene.currentBattle.isBattleMysteryEncounter() && encounter && encounter.onTurnStart) {
     return encounter.onTurnStart(scene);
   }
 

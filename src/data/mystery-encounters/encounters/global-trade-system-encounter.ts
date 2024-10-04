@@ -11,9 +11,10 @@ import PokemonSpecies, { allSpecies, getPokemonSpecies } from "#app/data/pokemon
 import { getTypeRgb } from "#app/data/type";
 import { MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/mystery-encounter-option";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
+import * as Utils from "#app/utils";
 import { IntegerHolder, isNullOrUndefined, randInt, randSeedInt, randSeedShuffle } from "#app/utils";
-import Pokemon, { EnemyPokemon, PlayerPokemon } from "#app/field/pokemon";
-import { HiddenAbilityRateBoosterModifier, PokemonFormChangeItemModifier, PokemonHeldItemModifier, SpeciesStatBoosterModifier } from "#app/modifier/modifier";
+import Pokemon, { EnemyPokemon, PlayerPokemon, PokemonMove } from "#app/field/pokemon";
+import { HiddenAbilityRateBoosterModifier, PokemonFormChangeItemModifier, PokemonHeldItemModifier, ShinyRateBoosterModifier, SpeciesStatBoosterModifier } from "#app/modifier/modifier";
 import { OptionSelectItem } from "#app/ui/abstact-option-select-ui-handler";
 import PokemonData from "#app/system/pokemon-data";
 import i18next from "i18next";
@@ -26,7 +27,12 @@ import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
 import { addPokemonDataToDexAndValidateAchievements } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
 
 /** the i18n namespace for the encounter */
-const namespace = "mysteryEncounter:globalTradeSystem";
+const namespace = "mysteryEncounters/globalTradeSystem";
+
+/** Base shiny chance of 512/65536 -> 1/128 odds, affected by events and Shiny Charms. Cannot exceed 1/16 odds. */
+const WONDER_TRADE_SHINY_CHANCE = 512;
+/** Max shiny chance of 4096/65536 -> 1/16 odds. */
+const MAX_WONDER_TRADE_SHINY_CHANCE = 4096;
 
 const LEGENDARY_TRADE_POOLS = {
   1: [Species.RATTATA, Species.PIDGEY, Species.WEEDLE],
@@ -87,12 +93,12 @@ export const GlobalTradeSystemEncounter: MysteryEncounter =
     ])
     .withIntroDialogue([
       {
-        text: `${namespace}.intro`,
+        text: `${namespace}:intro`,
       }
     ])
-    .withTitle(`${namespace}.title`)
-    .withDescription(`${namespace}.description`)
-    .withQuery(`${namespace}.query`)
+    .withTitle(`${namespace}:title`)
+    .withDescription(`${namespace}:description`)
+    .withQuery(`${namespace}:query`)
     .withOnInit((scene: BattleScene) => {
       const encounter = scene.currentBattle.mysteryEncounter!;
 
@@ -127,9 +133,9 @@ export const GlobalTradeSystemEncounter: MysteryEncounter =
         .newOptionWithMode(MysteryEncounterOptionMode.DEFAULT)
         .withHasDexProgress(true)
         .withDialogue({
-          buttonLabel: `${namespace}.option.1.label`,
-          buttonTooltip: `${namespace}.option.1.tooltip`,
-          secondOptionPrompt: `${namespace}.option.1.trade_options_prompt`,
+          buttonLabel: `${namespace}:option.1.label`,
+          buttonTooltip: `${namespace}:option.1.tooltip`,
+          secondOptionPrompt: `${namespace}:option.1.trade_options_prompt`,
         })
         .withPreOptionPhase(async (scene: BattleScene): Promise<boolean> => {
           const encounter = scene.currentBattle.mysteryEncounter!;
@@ -153,7 +159,7 @@ export const GlobalTradeSystemEncounter: MysteryEncounter =
                   return true;
                 },
                 onHover: () => {
-                  const formName = tradePokemon.species.forms?.[pokemon.formIndex]?.formName;
+                  const formName = tradePokemon.species.forms && tradePokemon.species.forms.length > tradePokemon.formIndex ? tradePokemon.species.forms[tradePokemon.formIndex].formName : null;
                   const line1 = i18next.t("pokemonInfoContainer:ability") + " " + tradePokemon.getAbility().name + (tradePokemon.getGender() !== Gender.GENDERLESS ? "     |     " + i18next.t("pokemonInfoContainer:gender") + " " + getGenderSymbol(tradePokemon.getGender()) : "");
                   const line2 = i18next.t("pokemonInfoContainer:nature") + " " + getNatureName(tradePokemon.getNature()) + (formName ? "     |     " + i18next.t("pokemonInfoContainer:form") + " " + formName : "");
                   showEncounterText(scene, `${line1}\n${line2}`, 0, 0, false);
@@ -195,7 +201,7 @@ export const GlobalTradeSystemEncounter: MysteryEncounter =
           // Show the trade animation
           await showTradeBackground(scene);
           await doPokemonTradeSequence(scene, tradedPokemon, newPlayerPokemon);
-          await showEncounterText(scene, `${namespace}.trade_received`, null, 0, true, 4000);
+          await showEncounterText(scene, `${namespace}:trade_received`, null, 0, true, 4000);
           scene.playBgm(encounter.misc.bgmKey);
           await addPokemonDataToDexAndValidateAchievements(scene, newPlayerPokemon);
           await hideTradeBackground(scene);
@@ -210,8 +216,8 @@ export const GlobalTradeSystemEncounter: MysteryEncounter =
         .newOptionWithMode(MysteryEncounterOptionMode.DEFAULT)
         .withHasDexProgress(true)
         .withDialogue({
-          buttonLabel: `${namespace}.option.2.label`,
-          buttonTooltip: `${namespace}.option.2.tooltip`,
+          buttonLabel: `${namespace}:option.2.label`,
+          buttonTooltip: `${namespace}:option.2.tooltip`,
         })
         .withPreOptionPhase(async (scene: BattleScene): Promise<boolean> => {
           const encounter = scene.currentBattle.mysteryEncounter!;
@@ -221,21 +227,47 @@ export const GlobalTradeSystemEncounter: MysteryEncounter =
             const tradePokemon = new EnemyPokemon(scene, randomTradeOption, pokemon.level, TrainerSlot.NONE, false);
             // Extra shiny roll at 1/128 odds (boosted by events and charms)
             if (!tradePokemon.shiny) {
-              // 512/65536 -> 1/128
-              tradePokemon.trySetShinySeed(512, true);
+              const shinyThreshold = new Utils.IntegerHolder(WONDER_TRADE_SHINY_CHANCE);
+              if (scene.eventManager.isEventActive()) {
+                shinyThreshold.value *= scene.eventManager.getShinyMultiplier();
+              }
+              scene.applyModifiers(ShinyRateBoosterModifier, true, shinyThreshold);
+
+              // Base shiny chance of 512/65536 -> 1/128, affected by events and Shiny Charms
+              // Maximum shiny chance of 4096/65536 -> 1/16, cannot improve further after that
+              const shinyChance = Math.min(shinyThreshold.value, MAX_WONDER_TRADE_SHINY_CHANCE);
+
+              tradePokemon.trySetShinySeed(shinyChance, false);
             }
 
             // Extra HA roll at base 1/64 odds (boosted by events and charms)
-            if (pokemon.species.abilityHidden) {
-              const hiddenIndex = pokemon.species.ability2 ? 2 : 1;
-              if (pokemon.abilityIndex < hiddenIndex) {
+            const hiddenIndex = tradePokemon.species.ability2 ? 2 : 1;
+            if (tradePokemon.species.abilityHidden) {
+              if (tradePokemon.abilityIndex < hiddenIndex) {
                 const hiddenAbilityChance = new IntegerHolder(64);
                 scene.applyModifiers(HiddenAbilityRateBoosterModifier, true, hiddenAbilityChance);
 
                 const hasHiddenAbility = !randSeedInt(hiddenAbilityChance.value);
 
                 if (hasHiddenAbility) {
-                  pokemon.abilityIndex = hiddenIndex;
+                  tradePokemon.abilityIndex = hiddenIndex;
+                }
+              }
+            }
+
+            // If Pokemon is still not shiny or with HA, give the Pokemon a random Common egg move in its moveset
+            if (!tradePokemon.shiny && (!tradePokemon.species.abilityHidden || tradePokemon.abilityIndex < hiddenIndex)) {
+              const eggMoves = tradePokemon.getEggMoves();
+              if (eggMoves) {
+                // Cannot gen the rare egg move, only 1 of the first 3 common moves
+                const eggMove = eggMoves[randSeedInt(3)];
+                if (!tradePokemon.moveset.some(m => m?.moveId === eggMove)) {
+                  if (tradePokemon.moveset.length < 4) {
+                    tradePokemon.moveset.push(new PokemonMove(eggMove));
+                  } else {
+                    const eggMoveIndex = randSeedInt(4);
+                    tradePokemon.moveset[eggMoveIndex] = new PokemonMove(eggMove);
+                  }
                 }
               }
             }
@@ -277,7 +309,7 @@ export const GlobalTradeSystemEncounter: MysteryEncounter =
           // Show the trade animation
           await showTradeBackground(scene);
           await doPokemonTradeSequence(scene, tradedPokemon, newPlayerPokemon);
-          await showEncounterText(scene, `${namespace}.trade_received`, null, 0, true, 4000);
+          await showEncounterText(scene, `${namespace}:trade_received`, null, 0, true, 4000);
           scene.playBgm(encounter.misc.bgmKey);
           await addPokemonDataToDexAndValidateAchievements(scene, newPlayerPokemon);
           await hideTradeBackground(scene);
@@ -291,9 +323,9 @@ export const GlobalTradeSystemEncounter: MysteryEncounter =
       MysteryEncounterOptionBuilder
         .newOptionWithMode(MysteryEncounterOptionMode.DEFAULT)
         .withDialogue({
-          buttonLabel: `${namespace}.option.3.label`,
-          buttonTooltip: `${namespace}.option.3.tooltip`,
-          secondOptionPrompt: `${namespace}.option.3.trade_options_prompt`,
+          buttonLabel: `${namespace}:option.3.label`,
+          buttonTooltip: `${namespace}:option.3.tooltip`,
+          secondOptionPrompt: `${namespace}:option.3.trade_options_prompt`,
         })
         .withPreOptionPhase(async (scene: BattleScene): Promise<boolean> => {
           const encounter = scene.currentBattle.mysteryEncounter!;
@@ -323,7 +355,7 @@ export const GlobalTradeSystemEncounter: MysteryEncounter =
               return it.isTransferable;
             }).length > 0;
             if (!meetsReqs) {
-              return getEncounterText(scene, `${namespace}.option.3.invalid_selection`) ?? null;
+              return getEncounterText(scene, `${namespace}:option.3.invalid_selection`) ?? null;
             }
 
             return null;
@@ -371,18 +403,18 @@ export const GlobalTradeSystemEncounter: MysteryEncounter =
           // Generate a trainer name
           const traderName = generateRandomTraderName();
           encounter.setDialogueToken("tradeTrainerName", traderName.trim());
-          await showEncounterText(scene, `${namespace}.item_trade_selected`);
+          await showEncounterText(scene, `${namespace}:item_trade_selected`);
           leaveEncounterWithoutBattle(scene);
         })
         .build()
     )
     .withSimpleOption(
       {
-        buttonLabel: `${namespace}.option.4.label`,
-        buttonTooltip: `${namespace}.option.4.tooltip`,
+        buttonLabel: `${namespace}:option.4.label`,
+        buttonTooltip: `${namespace}:option.4.tooltip`,
         selected: [
           {
-            text: `${namespace}.option.4.selected`,
+            text: `${namespace}:option.4.selected`,
           },
         ],
       },
@@ -450,7 +482,7 @@ function generateTradeOption(alreadyUsedSpecies: PokemonSpecies[], originalBst?:
     if (validSpecies?.length > 20) {
       validSpecies = randSeedShuffle(validSpecies);
       newSpecies = validSpecies.pop();
-      while (isNullOrUndefined(newSpecies) || alreadyUsedSpecies.includes(newSpecies!)) {
+      while (isNullOrUndefined(newSpecies) || alreadyUsedSpecies.includes(newSpecies)) {
         newSpecies = validSpecies.pop();
       }
     } else {
@@ -596,10 +628,10 @@ function doPokemonTradeSequence(scene: BattleScene, tradedPokemon: PlayerPokemon
       duration: 500,
       onComplete: async () => {
         scene.fadeOutBgm(1000, false);
-        await showEncounterText(scene, `${namespace}.pokemon_trade_selected`);
+        await showEncounterText(scene, `${namespace}:pokemon_trade_selected`);
         tradedPokemon.cry();
         scene.playBgm("evolution");
-        await showEncounterText(scene, `${namespace}.pokemon_trade_goodbye`);
+        await showEncounterText(scene, `${namespace}:pokemon_trade_goodbye`);
 
         tradedPokeball.setAlpha(0);
         tradedPokeball.setVisible(true);
