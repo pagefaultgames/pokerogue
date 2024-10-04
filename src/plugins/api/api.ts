@@ -8,6 +8,8 @@ import type { AccountInfoResponse } from "./models/AccountInfo";
 import type { AccountLoginRequest, AccountLoginResponse } from "./models/AccountLogin";
 import type { TitleStatsResponse } from "./models/TitleStats";
 import type { UpdateAllSavedataRequest } from "./models/UpdateAllSavedata";
+import type { UpdateSessionSavedataRequest } from "./models/UpdateSessionSavedata";
+import type { UpdateSystemSavedataRequest } from "./models/UpdateSystemSavedata";
 import type { VerifySavedataResponse } from "./models/VerifySavedata";
 
 type DataType = "json" | "form-urlencoded";
@@ -66,10 +68,7 @@ export class Api {
     try {
       const response = await this.doPost<AccountLoginRequest>(
         "/account/login",
-        {
-          username,
-          password,
-        },
+        { username, password },
         "form-urlencoded"
       );
 
@@ -186,17 +185,17 @@ export class Api {
 
   /**
    * Update a system savedata.
-   * @param clientSessionId The savedata session ID
+   * @param updateData The {@linkcode UpdateSystemSavedataRequest} to send
    * @param rawSystemData The raw {@linkcode SystemSaveData}
    * @returns an error message if something went wrong
    */
-  public async updateSystemSavedata(clientSessionId: string, rawSystemData: string) {
+  public async updateSystemSavedata(updateData: UpdateSystemSavedataRequest, rawSystemData: string) {
     try {
-      const params = new URLSearchParams();
-      params.append("clientSessionId", clientSessionId);
+      const updateArr = Object.entries(updateData).map(([key, value]) => [key, String(value)]);
+      const params = new URLSearchParams(updateArr);
       const response = await this.doPost<string>(`/savedata/system/update?${params}`, rawSystemData);
 
-      return (await response.json()) as string;
+      return await response.text();
     } catch (err) {
       console.warn("Could not update system savedata!", err);
     }
@@ -223,6 +222,27 @@ export class Api {
       console.warn("Could not get session savedata!", err);
       return null;
     }
+  }
+
+  /**
+   * Update a session savedata.
+   * @param updateData The {@linkcode UpdateSessionSavedataRequest} to send
+   * @param rawSavedata The raw savedata (as `string`)
+   * @returns an error message if something went wrong
+   */
+  public async updateSessionSavedata(updateData: UpdateSessionSavedataRequest, rawSavedata: string) {
+    try {
+      const updateArr = Object.entries(updateData).map(([key, value]) => [key, String(value)]);
+      const params = new URLSearchParams(updateArr);
+
+      const response = await this.doPost<string>(`/savedata/session/update?${params}`, rawSavedata);
+
+      return await response.text();
+    } catch (err) {
+      console.warn("Could not update session savedata!", err);
+    }
+
+    return null;
   }
 
   /**

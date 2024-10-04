@@ -397,7 +397,7 @@ export class GameData {
       localStorage.setItem(`data_${loggedInUser?.username}`, encrypt(systemData, bypassLogin));
 
       if (!bypassLogin) {
-        api.updateSystemSavedata(clientSessionId, systemData)
+        api.updateSystemSavedata({clientSessionId}, systemData)
           .then(error => {
             this.scene.ui.savingIcon.hide();
             if (error) {
@@ -1454,14 +1454,14 @@ export class GameData {
                     if (!success[0]) {
                       return displayError(`Could not contact the server. Your ${dataName} data could not be imported.`);
                     }
-                    let url: string;
+                    const { trainerId, secretId } = this;
+                    let updatePromise: Promise<string | null>;
                     if (dataType === GameDataType.SESSION) {
-                      url = `savedata/session/update?slot=${slotId}&trainerId=${this.trainerId}&secretId=${this.secretId}&clientSessionId=${clientSessionId}`;
+                      updatePromise = api.updateSessionSavedata({slot: slotId, trainerId, secretId, clientSessionId}, dataStr);
                     } else {
-                      url = `savedata/system/update?trainerId=${this.trainerId}&secretId=${this.secretId}&clientSessionId=${clientSessionId}`;
+                      updatePromise = api.updateSystemSavedata({trainerId, secretId, clientSessionId}, dataStr);
                     }
-                    Utils.apiPost(url, dataStr, undefined, true)
-                      .then(response => response.text())
+                    updatePromise
                       .then(error => {
                         if (error) {
                           console.error(error);
