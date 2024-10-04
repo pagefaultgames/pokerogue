@@ -1,4 +1,4 @@
-import { SemiInvulnerableTag } from "#app/data/battler-tags";
+import { RechargingTag, SemiInvulnerableTag } from "#app/data/battler-tags";
 import { Abilities } from "#app/enums/abilities";
 import { Stat } from "#app/enums/stat";
 import { Moves } from "#enums/moves";
@@ -51,32 +51,31 @@ describe("Moves - Metronome", () => {
     expect(enemy.isFullHp()).toBeFalsy();
   });
 
-  // THESE FAIL UNTIL KEV'S MOVE PHASE REFACTOR IS PUT IN
-  // it("should apply secondary effects of a move", async () => {
-  //   await game.classicMode.startBattle();
-  //   const player = game.scene.getPlayerPokemon()!;
-  //   vi.spyOn(player, "randSeedInt").mockReturnValue(Moves.WOOD_HAMMER);
+  it("should apply secondary effects of a move", async () => {
+    await game.classicMode.startBattle();
+    const player = game.scene.getPlayerPokemon()!;
+    vi.spyOn(player, "randSeedInt").mockReturnValue(Moves.WOOD_HAMMER);
 
-  //   game.move.select(Moves.METRONOME);
-  //   await game.phaseInterceptor.to("MoveEffectPhase"); // Metronome has its own MoveEffectPhase, followed by Wood Hammer's MoveEffectPhase
-  //   await game.move.forceHit(); // Calls forceHit on Wood Hammer's MoveEffectPhase, required due to randSeedInt mock making hitCheck return false every time.
-  //   await game.toNextTurn();
+    game.move.select(Moves.METRONOME);
+    await game.phaseInterceptor.to("MoveEffectPhase"); // Metronome has its own MoveEffectPhase, followed by Wood Hammer's MoveEffectPhase
+    await game.move.forceHit(); // Calls forceHit on Wood Hammer's MoveEffectPhase, required due to randSeedInt mock making hitCheck return false every time.
+    await game.toNextTurn();
 
-  //   expect(player.isFullHp()).toBeFalsy();
-  // });
+    expect(player.isFullHp()).toBeFalsy();
+  });
 
-  // it("should recharge after using recharge move", async () => {
-  //   await game.classicMode.startBattle();
-  //   const player = game.scene.getPlayerPokemon()!;
-  //   vi.spyOn(player, "randSeedInt").mockReturnValue(Moves.HYPER_BEAM);
+  it("should recharge after using recharge move", async () => {
+    await game.classicMode.startBattle();
+    const player = game.scene.getPlayerPokemon()!;
+    vi.spyOn(player, "randSeedInt").mockReturnValue(Moves.HYPER_BEAM);
 
-  //   game.move.select(Moves.METRONOME);
-  //   await game.phaseInterceptor.to("MoveEffectPhase");
-  //   await game.move.forceHit();
-  //   await game.toNextTurn();
+    game.move.select(Moves.METRONOME);
+    await game.phaseInterceptor.to("MoveEffectPhase");
+    await game.move.forceHit();
+    await game.toNextTurn();
 
-  //   expect(player.getTag(RechargingTag)).toBeTruthy();
-  // })
+    expect(player.getTag(RechargingTag)).toBeTruthy();
+  });
 
   it("should only target ally for Aromatic Mist", async () => {
     game.override.battleType("double");
