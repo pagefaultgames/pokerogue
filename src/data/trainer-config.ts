@@ -601,9 +601,9 @@ export class TrainerConfig {
     }
     case "flare": {
       return {
-        [TrainerPoolTier.COMMON]: [ Species.FLETCHLING, Species.LITLEO, Species.INKAY, Species.HELIOPTILE, Species.ELECTRIKE, Species.SKORUPI, Species.PURRLOIN, Species.CLAWITZER, Species.PANCHAM, Species.ESPURR, Species.BUNNELBY ],
+        [TrainerPoolTier.COMMON]: [ Species.FLETCHLING, Species.LITLEO, Species.FOONGUS, Species.HELIOPTILE, Species.ELECTRIKE, Species.SKORUPI, Species.PURRLOIN, Species.CLAWITZER, Species.PANCHAM, Species.ESPURR, Species.BUNNELBY ],
         [TrainerPoolTier.UNCOMMON]: [ Species.LITWICK, Species.SNEASEL, Species.PUMPKABOO, Species.PHANTUMP, Species.HONEDGE, Species.BINACLE, Species.HOUNDOUR, Species.SKRELP, Species.SLIGGOO ],
-        [TrainerPoolTier.RARE]: [ Species.NOIVERN, Species.HISUI_AVALUGG, Species.HISUI_SLIGGOO ]
+        [TrainerPoolTier.RARE]: [ Species.NOIBAT, Species.HISUI_AVALUGG, Species.HISUI_SLIGGOO ]
       };
     }
     case "aether": {
