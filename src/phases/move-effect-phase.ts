@@ -96,7 +96,7 @@ export class MoveEffectPhase extends PokemonPhase {
          * Stores results of hit checks of the invoked move against all targets, organized by battler index.
          * @see {@linkcode hitCheck}
          */
-      const targetHitChecks = Object.fromEntries(targets.map(p => [p.getBattlerIndex(), this.hitCheck(p)]));
+      const targetHitChecks = Object.fromEntries(targets.map(p => [ p.getBattlerIndex(), this.hitCheck(p) ]));
       const hasActiveTargets = targets.some(t => t.isActive(true));
 
       /** Check if the target is immune via ability to the attacking move */
@@ -111,7 +111,7 @@ export class MoveEffectPhase extends PokemonPhase {
       if (!hasActiveTargets || (!move.hasAttr(VariableTargetAttr) && !move.isMultiTarget() && !targetHitChecks[this.targets[0]] && !targets[0].getTag(ProtectedTag) && !isImmune)) {
         this.stopMultiHit();
         if (hasActiveTargets) {
-          this.scene.queueMessage(i18next.t("battle:attackMissed", { pokemonNameWithAffix: this.getTarget()? getPokemonNameWithAffix(this.getTarget()!) : "" }));
+          this.scene.queueMessage(i18next.t("battle:attackMissed", { pokemonNameWithAffix: this.getTarget() ? getPokemonNameWithAffix(this.getTarget()!) : "" }));
           moveHistoryEntry.result = MoveResult.MISS;
           applyMoveAttrs(MissEffectAttr, user, null, move);
         } else {
@@ -376,7 +376,7 @@ export class MoveEffectPhase extends PokemonPhase {
      */
   hitCheck(target: Pokemon): boolean {
     // Moves targeting the user and entry hazards can't miss
-    if ([MoveTarget.USER, MoveTarget.ENEMY_SIDE].includes(this.move.getMove().moveTarget)) {
+    if ([ MoveTarget.USER, MoveTarget.ENEMY_SIDE ].includes(this.move.getMove().moveTarget)) {
       return true;
     }
 
@@ -407,7 +407,7 @@ export class MoveEffectPhase extends PokemonPhase {
     const semiInvulnerableTag = target.getTag(SemiInvulnerableTag);
     if (semiInvulnerableTag
         && !this.move.getMove().getAttrs(HitsTagAttr).some(hta => hta.tagType === semiInvulnerableTag.tagType)
-        && !(this.move.getMove().getAttrs(ToxicAccuracyAttr) && user.isOfType(Type.POISON))
+        && !(this.move.getMove().hasAttr(ToxicAccuracyAttr) && user.isOfType(Type.POISON))
     ) {
       return false;
     }

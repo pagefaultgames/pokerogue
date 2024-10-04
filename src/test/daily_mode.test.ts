@@ -58,7 +58,7 @@ describe("Shop modifications", async () => {
       .battleType("single")
       .startingLevel(100) // Avoid levelling up
       .disableTrainerWaves()
-      .moveset([Moves.SPLASH])
+      .moveset([ Moves.SPLASH ])
       .enemyMoveset(Moves.SPLASH);
     game.modifiers
       .addCheck("EVIOLITE")
