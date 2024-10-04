@@ -3900,7 +3900,6 @@ export const tmSpecies: TmSpecies = {
     Species.YAMPER,
     Species.BOLTUND,
     Species.ZAMAZENTA,
-    Species.URSHIFU,
     Species.ZARUDE,
     Species.GLASTRIER,
     Species.WYRDEER,
@@ -3930,6 +3929,10 @@ export const tmSpecies: TmSpecies = {
     Species.ALOLA_NINETALES,
     Species.ALOLA_PERSIAN,
     Species.ALOLA_GOLEM,
+    [
+      Species.URSHIFU,
+      "single-strike",
+    ],
     Species.HISUI_GROWLITHE,
     Species.HISUI_ARCANINE,
     Species.HISUI_TYPHLOSION,
@@ -33308,7 +33311,6 @@ export const tmSpecies: TmSpecies = {
     Species.ARCTOVISH,
     Species.ZACIAN,
     Species.ZAMAZENTA,
-    Species.URSHIFU,
     Species.ZARUDE,
     Species.REGIDRAGO,
     Species.GLASTRIER,
@@ -33359,6 +33361,10 @@ export const tmSpecies: TmSpecies = {
     Species.ALOLA_MUK,
     Species.GALAR_MEOWTH,
     Species.GALAR_STUNFISK,
+    [
+      Species.URSHIFU,
+      "single-strike",
+    ],
     [
       Species.CALYREX,
       "ice",
@@ -62350,7 +62356,6 @@ export const tmSpecies: TmSpecies = {
     Species.SIRFETCHD,
     Species.FALINKS,
     Species.PINCURCHIN,
-    Species.URSHIFU,
     Species.ZARUDE,
     Species.GLASTRIER,
     Species.TAROUNTULA,
@@ -62380,6 +62385,10 @@ export const tmSpecies: TmSpecies = {
     Species.GALAR_ZAPDOS,
     Species.GALAR_CORSOLA,
     Species.GALAR_LINOONE,
+    [
+      Species.URSHIFU,
+      "single-strike",
+    ],
     [
       Species.CALYREX,
       "ice",
@@ -64483,7 +64492,6 @@ export const tmSpecies: TmSpecies = {
     Species.OBSTAGOON,
     Species.PERRSERKER,
     Species.MORPEKO,
-    Species.URSHIFU,
     Species.ZARUDE,
     Species.GLASTRIER,
     Species.SPECTRIER,
@@ -64531,6 +64539,10 @@ export const tmSpecies: TmSpecies = {
     Species.GALAR_LINOONE,
     Species.GALAR_DARMANITAN,
     Species.GALAR_STUNFISK,
+    [
+      Species.URSHIFU,
+      "single-strike",
+    ],
     [
       Species.CALYREX,
       "ice",
