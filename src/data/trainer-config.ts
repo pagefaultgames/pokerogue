@@ -1542,7 +1542,7 @@ export const trainerConfigs: TrainerConfigs = {
       [TrainerPoolTier.COMMON]: [ Species.FLETCHLING, Species.LITLEO, Species.PONYTA, Species.INKAY, Species.HOUNDOUR, Species.SKORUPI, Species.SCRAFTY, Species.CROAGUNK, Species.SCATTERBUG, Species.ESPURR ],
       [TrainerPoolTier.UNCOMMON]: [ Species.HELIOPTILE, Species.ELECTRIKE, Species.SKRELP, Species.PANCHAM, Species.PURRLOIN, Species.POOCHYENA, Species.BINACLE, Species.CLAUNCHER, Species.PUMPKABOO, Species.PHANTUMP, Species.FOONGUS ],
       [TrainerPoolTier.RARE]: [ Species.LITWICK, Species.SNEASEL, Species.PAWNIARD, Species.SLIGGOO ],
-      [TrainerPoolTier.SUPER_RARE]: [ Species.NOIVERN, Species.HISUI_SLIGGOO, Species.HISUI_AVALUGG ]
+      [TrainerPoolTier.SUPER_RARE]: [ Species.NOIBAT, Species.HISUI_SLIGGOO, Species.HISUI_AVALUGG ]
     }),
   [TrainerType.BRYONY]: new TrainerConfig(++t).setMoneyMultiplier(1.5).initForEvilTeamAdmin("flare_admin_female", "flare", [ Species.LIEPARD ]).setEncounterBgm(TrainerType.PLASMA_GRUNT).setBattleBgm("battle_plasma_grunt").setMixedBattleBgm("battle_flare_grunt").setVictoryBgm("victory_team_plasma").setPartyTemplateFunc(scene => getEvilGruntPartyTemplate(scene)),
   [TrainerType.XEROSIC]: new TrainerConfig(++t).setMoneyMultiplier(1.5).initForEvilTeamAdmin("flare_admin", "flare", [ Species.MALAMAR ]).setEncounterBgm(TrainerType.PLASMA_GRUNT).setBattleBgm("battle_plasma_grunt").setMixedBattleBgm("battle_flare_grunt").setVictoryBgm("victory_team_plasma").setPartyTemplateFunc(scene => getEvilGruntPartyTemplate(scene)),
