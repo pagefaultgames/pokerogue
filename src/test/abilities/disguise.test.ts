@@ -1,8 +1,9 @@
+import { BattlerIndex } from "#app/battle";
+import { StatusEffect } from "#app/data/status-effect";
 import { toDmgValue } from "#app/utils";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
-import { StatusEffect } from "#app/data/status-effect";
 import { Stat } from "#enums/stat";
 import GameManager from "#test/utils/gameManager";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
@@ -222,5 +223,18 @@ describe("Abilities - Disguise", () => {
 
     expect(mimikyu.formIndex).toBe(bustedForm);
     expect(mimikyu.hp).toBe(maxHp - disguiseDamage);
+  });
+
+  it("doesn't trigger if user is behind a substitute", async () => {
+    game.override
+      .enemyMoveset(Moves.SUBSTITUTE)
+      .moveset(Moves.POWER_TRIP);
+    await game.classicMode.startBattle();
+
+    game.move.select(Moves.POWER_TRIP);
+    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+    await game.toNextTurn();
+
+    expect(game.scene.getEnemyPokemon()!.formIndex).toBe(disguisedForm);
   });
 });

@@ -1,13 +1,14 @@
-import { BattlerTagType } from "#enums/battler-tag-type";
-import { StatusEffect } from "#enums/status-effect";
+import { BattlerIndex } from "#app/battle";
 import Pokemon from "#app/field/pokemon";
-import GameManager from "#test/utils/gameManager";
 import { Abilities } from "#enums/abilities";
+import { BattlerTagType } from "#enums/battler-tag-type";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
+import { Stat } from "#enums/stat";
+import { StatusEffect } from "#enums/status-effect";
+import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import { Stat } from "#enums/stat";
 
 describe("Abilities - Gulp Missile", () => {
   let phaserGame: Phaser.Game;
@@ -40,8 +41,9 @@ describe("Abilities - Gulp Missile", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
+      .disableCrits()
       .battleType("single")
-      .moveset([Moves.SURF, Moves.DIVE, Moves.SPLASH])
+      .moveset([Moves.SURF, Moves.DIVE, Moves.SPLASH, Moves.SUBSTITUTE])
       .enemySpecies(Species.SNORLAX)
       .enemyAbility(Abilities.BALL_FETCH)
       .enemyMoveset(Moves.SPLASH)
@@ -234,6 +236,25 @@ describe("Abilities - Gulp Missile", () => {
     expect(game.scene.getEnemyPokemon()!.getStatStage(Stat.DEF)).toBe(-1);
   });
 
+  it("doesn't trigger if user is behind a substitute", async () => {
+    game.override
+      .enemyAbility(Abilities.STURDY)
+      .enemyMoveset([Moves.SPLASH, Moves.POWER_TRIP]);
+    await game.classicMode.startBattle([Species.CRAMORANT]);
+
+    game.move.select(Moves.SURF);
+    await game.forceEnemyMove(Moves.SPLASH);
+    await game.toNextTurn();
+
+    expect(game.scene.getPlayerPokemon()!.formIndex).toBe(GULPING_FORM);
+
+    game.move.select(Moves.SUBSTITUTE);
+    await game.forceEnemyMove(Moves.POWER_TRIP);
+    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    await game.toNextTurn();
+
+    expect(game.scene.getPlayerPokemon()!.formIndex).toBe(GULPING_FORM);
+  });
 
   it("cannot be suppressed", async () => {
     game.override.enemyMoveset(Moves.GASTRO_ACID);
