@@ -27,9 +27,9 @@ const unicodeRanges = {
 };
 
 const rangesByLanguage = {
-  korean: [unicodeRanges.CJKCommon, unicodeRanges.hangul].join(","),
-  chinese: [unicodeRanges.CJKCommon, unicodeRanges.fullwidth, unicodeRanges.CJKIdeograph].join(","),
-  japanese: [unicodeRanges.CJKCommon, unicodeRanges.fullwidth, unicodeRanges.kana, unicodeRanges.CJKIdeograph].join(",")
+  korean: [ unicodeRanges.CJKCommon, unicodeRanges.hangul ].join(","),
+  chinese: [ unicodeRanges.CJKCommon, unicodeRanges.fullwidth, unicodeRanges.CJKIdeograph ].join(","),
+  japanese: [ unicodeRanges.CJKCommon, unicodeRanges.fullwidth, unicodeRanges.kana, unicodeRanges.CJKIdeograph ].join(",")
 };
 
 const fonts: Array<LoadingFontFaceProperty> = [
@@ -151,7 +151,7 @@ export async function initI18n(): Promise<void> {
   i18next.use(new KoreanPostpositionProcessor());
   await i18next.init({
     fallbackLng: "en",
-    supportedLngs: ["en", "es", "fr", "it", "de", "zh-CN", "zh-TW", "pt-BR", "ko", "ja", "ca-ES"],
+    supportedLngs: [ "en", "es", "fr", "it", "de", "zh-CN", "zh-TW", "pt-BR", "ko", "ja", "ca-ES" ],
     backend: {
       loadPath(lng: string, [ ns ]: string[]) {
         let fileName: string;
@@ -262,7 +262,7 @@ export async function initI18n(): Promise<void> {
     interpolation: {
       escapeValue: false,
     },
-    postProcess: ["korean-postposition"],
+    postProcess: [ "korean-postposition" ],
   });
 
 
