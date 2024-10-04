@@ -1528,6 +1528,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     applyPreAttackAbAttrs(MoveTypeChangeAbAttr, this, null, move, simulated, moveTypeHolder);
 
     this.scene.arena.applyTags(ArenaTagType.PLASMA_FISTS, moveTypeHolder);
+    if (this.getTag(BattlerTagType.ELECTRIFIED)) {
+      moveTypeHolder.value = Type.ELECTRIC;
+    }
 
     return moveTypeHolder.value as Type;
   }

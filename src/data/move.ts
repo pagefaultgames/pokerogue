@@ -8732,7 +8732,7 @@ export function initMoves() {
       .attr(TerrainChangeAttr, TerrainType.MISTY)
       .target(MoveTarget.BOTH_SIDES),
     new StatusMove(Moves.ELECTRIFY, Type.ELECTRIC, -1, 20, -1, 0, 6)
-      .unimplemented(),
+      .attr(AddBattlerTagAttr, BattlerTagType.ELECTRIFIED, false, true),
     new AttackMove(Moves.PLAY_ROUGH, Type.FAIRY, MoveCategory.PHYSICAL, 90, 90, 10, 10, 0, 6)
       .attr(StatStageChangeAttr, [ Stat.ATK ], -1),
     new AttackMove(Moves.FAIRY_WIND, Type.FAIRY, MoveCategory.SPECIAL, 40, 100, 30, -1, 0, 6)
