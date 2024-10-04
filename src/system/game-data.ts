@@ -707,7 +707,7 @@ export class GameData {
       return true;
     }
 
-    const systemData = pokerogueApi.savedata.system.verify({clientSessionId});
+    const systemData = await pokerogueApi.savedata.system.verify({clientSessionId});
 
     if (systemData) {
       this.scene.clearPhaseQueue();
