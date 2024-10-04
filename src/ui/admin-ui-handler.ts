@@ -100,7 +100,7 @@ export default class AdminUiHandler extends FormModalUiHandler {
           this.scene.ui.setMode(Mode.ADMIN, Object.assign(config, { errorMessage: message?.trim() }), this.adminMode, adminResult, isError);
           this.scene.ui.playError();
         };
-        let adminSearchResult: AdminSearchInfo = this.convertInputsToAdmin(); // this converts the input texts into a single object for use later
+        const adminSearchResult: AdminSearchInfo = this.convertInputsToAdmin(); // this converts the input texts into a single object for use later
         const validFields = this.areFieldsValid(this.adminMode);
         if (validFields.error) {
           this.scene.ui.setMode(Mode.LOADING, { buttonActions: [] }); // this is here to force a loading screen to allow the admin tool to reopen again if there's an error
@@ -112,27 +112,49 @@ export default class AdminUiHandler extends FormModalUiHandler {
           /*this.updateAdminPanelInfo(adminSearchResult, AdminMode.LINK);*/
           return showMessage("Username and discord successfully linked", adminSearchResult, false);
         } else if (this.adminMode === AdminMode.SEARCH) {
-          Utils.apiFetch(`admin/account/admin-search?username=${encodeURIComponent(adminSearchResult.username)}`, true)
+          const results = this.adminSearch(adminSearchResult)
             .then(response => {
-              if (!response.ok) { // error
-                console.error(response);
-              } else if (response.status === this.httpUserNotFoundErrorCode) { // username doesn't exist
-                return showMessage("Username not found in the database", adminSearchResult, true);
-              } else { // success
-                response.json().then(jsonResponse => {
-                  adminSearchResult = jsonResponse;
-                  // we double revert here and below to go back 2 layers of menus
-                  //this.scene.ui.revertMode();
-                  //this.scene.ui.revertMode();
-                  this.updateAdminPanelInfo(adminSearchResult);
-                });
-              }
-            })
-            .catch((err) => {
-              console.error(err);
-              this.scene.ui.revertMode();
-              this.scene.ui.revertMode();
+              console.log("RESONSE: " + response);
+              response?.adminSearchResult;
+              console.log("RESONSE.adminSearchResult: " + response?.adminSearchResult);
+              this.updateAdminPanelInfo(adminSearchResult);
             });
+          console.log(results);
+          //this.updateAdminPanelInfo(adminSearchResult);
+          //});
+          //response.then(value => {
+          //  adminResult = value;
+          //  console.log(adminResult);
+          //  this.updateAdminPanelInfo(adminResult);
+          //});
+
+          //.then(value => {
+          //  adminResult = value;
+          //  this.updateAdminPanelInfo(adminResult);
+          //});
+
+
+          //Utils.apiFetch(`admin/account/admin-search?username=${encodeURIComponent(adminSearchResult.username)}`, true)
+          //  .then(response => {
+          //    if (!response.ok) { // error
+          //      console.error(response);
+          //    } else if (response.status === this.httpUserNotFoundErrorCode) { // username doesn't exist
+          //      return showMessage("Username not found in the database", adminSearchResult, true);
+          //    } else { // success
+          //      response.json().then(jsonResponse => {
+          //        adminSearchResult = jsonResponse;
+          //        // we double revert here and below to go back 2 layers of menus
+          //        //this.scene.ui.revertMode();
+          //        //this.scene.ui.revertMode();
+          //        this.updateAdminPanelInfo(adminSearchResult);
+          //      });
+          //    }
+          //  })
+          //  .catch((err) => {
+          //    console.error(err);
+          //    this.scene.ui.revertMode();
+          //    this.scene.ui.revertMode();
+          //  });
         }
 
         return false;
@@ -216,6 +238,52 @@ export default class AdminUiHandler extends FormModalUiHandler {
       googleId: this.inputs[2]?.node ? this.inputs[2]?.text : "",
       lastLoggedIn: this.inputs[3]?.node ? this.inputs[3]?.text : ""
     };
+  }
+
+  async adminSearch(adminSearchResult: AdminSearchInfo): Promise<{ adminSearchResult?: AdminSearchInfo, error: boolean, errorType?: string }> {
+    try {
+      const response = await Utils.apiFetch(`admin/account/admin-search?username=${encodeURIComponent(adminSearchResult.username)}`, true);
+      if (!response.ok) { // error
+        console.error(response);
+        console.log(adminSearchResult);
+        return { adminSearchResult: adminSearchResult, error: true, errorType: "Error" };
+      } else if (response.status === this.httpUserNotFoundErrorCode) { // username doesn't exist
+        console.log(adminSearchResult);
+        return { adminSearchResult: adminSearchResult, error: true, errorType: "UsernameNotFound" };
+      }
+      response.json().then(jsonResponse => {
+        console.log(jsonResponse);
+        return { adminSearchResult: jsonResponse, error: false };
+      });
+    } catch (err) {
+      console.error(err);
+      return { error: true, errorType: err };
+    }
+    //Utils.apiFetch(`admin/account/admin-search?username=${encodeURIComponent(adminSearchResult.username)}`, true)
+    //  .then(response => {
+    //    if (!response.ok) { // error
+    //      console.error(response);
+    //      return { adminSearchResult: adminSearchResult, error: true, errorType: "Error" };
+    //    } else if (response.status === this.httpUserNotFoundErrorCode) { // username doesn't exist
+    //      //return showMessage("Username not found in the database", adminSearchResult, true);
+    //      return { adminSearchResult: adminSearchResult, error: true, errorType: "UsernameNotFound" };
+    //    } else { // success
+    //      response.json().then(jsonResponse => {
+    //        adminSearchResult = jsonResponse;
+    //        //this.updateAdminPanelInfo(adminSearchResult);
+    //        return { adminSearchResult: adminSearchResult, error: false };
+    //      });
+    //    }
+    //  })
+    //  //.then(adminSearchResult => {
+    //  //  return { adminSearchResult: adminSearchResult, error: true, errorType: "Weird spot" };
+    //  //})
+    //  .catch((err) => {
+    //    console.error(err);
+    //    this.scene.ui.revertMode();
+    //    this.scene.ui.revertMode();
+    //    return { adminSearchResult: adminSearchResult, error: true, errorType: err };
+    //  });
   }
 
   adminLinkUnlink(adminSearchResult: AdminSearchInfo, service: string, mode: string) {
