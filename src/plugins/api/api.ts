@@ -136,6 +136,10 @@ export class Api {
     }
   }
 
+  /**
+   * Get a system savedata.
+   * @param sessionId The savedata session ID
+   */
   public async getSystemSavedata(sessionId: string) {
     try {
       const params = new URLSearchParams();
@@ -172,6 +176,26 @@ export class Api {
       }
     } catch (err) {
       console.warn("Could not verify system savedata!", err);
+    }
+
+    return null;
+  }
+
+  /**
+   * Update a system savedata.
+   * @param clientSessionId The savedata session ID
+   * @param rawSystemData The raw {@linkcode SystemSaveData}
+   * @returns an error message if something went wrong
+   */
+  public async updateSystemSavedata(clientSessionId: string, rawSystemData: string) {
+    try {
+      const params = new URLSearchParams();
+      params.append("clientSessionId", clientSessionId);
+      const response = await this.doPost<string>(`/savedata/system/update?${params}`, rawSystemData);
+
+      return (await response.json()) as string;
+    } catch (err) {
+      console.warn("Could not update system savedata!", err);
     }
 
     return null;
@@ -285,15 +309,19 @@ export class Api {
    * @param bodyData The body-data to send.
    * @param dataType The data-type of the {@linkcode bodyData}.
    */
-  private async doPost<D extends Record<string, any>>(path: string, bodyData: D, dataType: DataType = "json") {
+  private async doPost<D>(path: string, bodyData: D, dataType: DataType = "json") {
     let body: string = "";
     const headers: HeadersInit = {};
 
     if (dataType === "json") {
-      body = JSON.stringify(bodyData);
+      body = typeof bodyData === "string" ? bodyData : JSON.stringify(bodyData);
       headers["Content-Type"] = "application/json";
     } else if (dataType === "form-urlencoded") {
-      body = new URLSearchParams(Object.entries<any>(bodyData).map(([k, v]) => [k, v.toString()])).toString();
+      if (bodyData instanceof Object) {
+        body = new URLSearchParams(Object.entries<any>(bodyData).map(([k, v]) => [k, v.toString()])).toString();
+      } else {
+        console.warn("Could not add body data to form-urlencoded!", bodyData);
+      }
       headers["Content-Type"] = "application/x-www-form-urlencoded";
     } else {
       console.warn(`Unsupported data type: ${dataType}`);
