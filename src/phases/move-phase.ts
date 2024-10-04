@@ -376,7 +376,7 @@ export class MovePhase extends BattlePhase {
         // account for metal burst and comeuppance hitting remaining targets in double battles
         // counterattack will redirect to remaining ally if original attacker faints
         if (this.scene.currentBattle.double && this.move.getMove().hasFlag(MoveFlags.REDIRECT_COUNTER)) {
-          if (this.scene.getField()[this.targets[0]].hp === 0) {
+          if (attacker?.isActive(true) && this.scene.getField()[this.targets[0]].hp === 0) {
             const opposingField = this.pokemon.isPlayer() ? this.scene.getEnemyField() : this.scene.getPlayerField();
             this.targets[0] = opposingField.find(p => p.hp > 0)?.getBattlerIndex() ?? BattlerIndex.ATTACKER;
           }
