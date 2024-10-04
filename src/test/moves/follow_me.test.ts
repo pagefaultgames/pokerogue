@@ -9,7 +9,6 @@ import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest";
 
 
-
 describe("Moves - Follow Me", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
@@ -32,14 +31,14 @@ describe("Moves - Follow Me", () => {
     game.override.enemySpecies(Species.SNORLAX);
     game.override.startingLevel(100);
     game.override.enemyLevel(100);
-    game.override.moveset([Moves.FOLLOW_ME, Moves.RAGE_POWDER, Moves.SPOTLIGHT, Moves.QUICK_ATTACK]);
-    game.override.enemyMoveset([Moves.TACKLE, Moves.FOLLOW_ME, Moves.SPLASH]);
+    game.override.moveset([ Moves.FOLLOW_ME, Moves.RAGE_POWDER, Moves.SPOTLIGHT, Moves.QUICK_ATTACK ]);
+    game.override.enemyMoveset([ Moves.TACKLE, Moves.FOLLOW_ME, Moves.SPLASH ]);
   });
 
   test(
     "move should redirect enemy attacks to the user",
     async () => {
-      await game.classicMode.startBattle([Species.AMOONGUSS, Species.CHARIZARD]);
+      await game.classicMode.startBattle([ Species.AMOONGUSS, Species.CHARIZARD ]);
 
       const playerPokemon = game.scene.getPlayerField();
 
@@ -60,7 +59,7 @@ describe("Moves - Follow Me", () => {
   test(
     "move should redirect enemy attacks to the first ally that uses it",
     async () => {
-      await game.classicMode.startBattle([Species.AMOONGUSS, Species.CHARIZARD]);
+      await game.classicMode.startBattle([ Species.AMOONGUSS, Species.CHARIZARD ]);
 
       const playerPokemon = game.scene.getPlayerField();
 
@@ -84,9 +83,9 @@ describe("Moves - Follow Me", () => {
     "move effect should be bypassed by Stalwart",
     async () => {
       game.override.ability(Abilities.STALWART);
-      game.override.moveset([Moves.QUICK_ATTACK]);
+      game.override.moveset([ Moves.QUICK_ATTACK ]);
 
-      await game.classicMode.startBattle([Species.AMOONGUSS, Species.CHARIZARD]);
+      await game.classicMode.startBattle([ Species.AMOONGUSS, Species.CHARIZARD ]);
 
       const enemyPokemon = game.scene.getEnemyField();
 
@@ -108,9 +107,9 @@ describe("Moves - Follow Me", () => {
   test(
     "move effect should be bypassed by Snipe Shot",
     async () => {
-      game.override.moveset([Moves.SNIPE_SHOT]);
+      game.override.moveset([ Moves.SNIPE_SHOT ]);
 
-      await game.classicMode.startBattle([Species.AMOONGUSS, Species.CHARIZARD]);
+      await game.classicMode.startBattle([ Species.AMOONGUSS, Species.CHARIZARD ]);
 
       const enemyPokemon = game.scene.getEnemyField();
 

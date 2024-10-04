@@ -25,7 +25,7 @@ describe("Abilities - Wonder Skin", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override.battleType("single");
-    game.override.moveset([Moves.TACKLE, Moves.CHARM]);
+    game.override.moveset([ Moves.TACKLE, Moves.CHARM ]);
     game.override.ability(Abilities.BALL_FETCH);
     game.override.enemySpecies(Species.SHUCKLE);
     game.override.enemyAbility(Abilities.WONDER_SKIN);
@@ -37,7 +37,7 @@ describe("Abilities - Wonder Skin", () => {
 
     vi.spyOn(moveToCheck, "calculateBattleAccuracy");
 
-    await game.startBattle([Species.PIKACHU]);
+    await game.startBattle([ Species.PIKACHU ]);
     game.move.select(Moves.CHARM);
     await game.phaseInterceptor.to(MoveEffectPhase);
 
@@ -49,14 +49,14 @@ describe("Abilities - Wonder Skin", () => {
 
     vi.spyOn(moveToCheck, "calculateBattleAccuracy");
 
-    await game.startBattle([Species.PIKACHU]);
+    await game.startBattle([ Species.PIKACHU ]);
     game.move.select(Moves.TACKLE);
     await game.phaseInterceptor.to(MoveEffectPhase);
 
     expect(moveToCheck.calculateBattleAccuracy).toHaveReturnedWith(100);
   });
 
-  const bypassAbilities = [Abilities.MOLD_BREAKER, Abilities.TERAVOLT, Abilities.TURBOBLAZE];
+  const bypassAbilities = [ Abilities.MOLD_BREAKER, Abilities.TERAVOLT, Abilities.TURBOBLAZE ];
 
   bypassAbilities.forEach(ability => {
     it(`does not affect pokemon with ${allAbilities[ability].name}`, async () => {
@@ -65,7 +65,7 @@ describe("Abilities - Wonder Skin", () => {
       game.override.ability(ability);
       vi.spyOn(moveToCheck, "calculateBattleAccuracy");
 
-      await game.startBattle([Species.PIKACHU]);
+      await game.startBattle([ Species.PIKACHU ]);
       game.move.select(Moves.CHARM);
       await game.phaseInterceptor.to(MoveEffectPhase);
 

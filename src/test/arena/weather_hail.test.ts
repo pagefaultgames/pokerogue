@@ -31,24 +31,24 @@ describe("Weather - Hail", () => {
   });
 
   it("inflicts damage equal to 1/16 of Pokemon's max HP at turn end", async () => {
-    await game.classicMode.startBattle([Species.MAGIKARP]);
+    await game.classicMode.startBattle([ Species.MAGIKARP ]);
 
     game.move.select(Moves.SPLASH);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+    await game.setTurnOrder([ BattlerIndex.ENEMY, BattlerIndex.PLAYER ]);
 
     await game.phaseInterceptor.to("TurnEndPhase");
 
     game.scene.getField(true).forEach(pokemon => {
-      expect(pokemon.hp).toBeLessThan(pokemon.getMaxHp() - Math.floor(pokemon.getMaxHp() / 16));
+      expect(pokemon.hp).toBe(pokemon.getMaxHp() - Math.max(Math.floor(pokemon.getMaxHp() / 16), 1));
     });
   });
 
   it("does not inflict damage to a Pokemon that is underwater (Dive) or underground (Dig)", async () => {
-    game.override.moveset([Moves.DIG]);
-    await game.classicMode.startBattle([Species.MAGIKARP]);
+    game.override.moveset([ Moves.DIG ]);
+    await game.classicMode.startBattle([ Species.MAGIKARP ]);
 
     game.move.select(Moves.DIG);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+    await game.setTurnOrder([ BattlerIndex.ENEMY, BattlerIndex.PLAYER ]);
 
     await game.phaseInterceptor.to("TurnEndPhase");
 
@@ -56,6 +56,20 @@ describe("Weather - Hail", () => {
     const enemyPokemon = game.scene.getEnemyPokemon()!;
 
     expect(playerPokemon.hp).toBe(playerPokemon.getMaxHp());
-    expect(enemyPokemon.hp).toBeLessThan(enemyPokemon.getMaxHp() - Math.floor(enemyPokemon.getMaxHp() / 16));
+    expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp() - Math.max(Math.floor(enemyPokemon.getMaxHp() / 16), 1));
+  });
+
+  it("does not inflict damage to Ice type Pokemon", async () => {
+    await game.classicMode.startBattle([ Species.CLOYSTER ]);
+
+    game.move.select(Moves.SPLASH);
+
+    await game.phaseInterceptor.to("TurnEndPhase");
+
+    const playerPokemon = game.scene.getPlayerPokemon()!;
+    const enemyPokemon = game.scene.getEnemyPokemon()!;
+
+    expect(playerPokemon.hp).toBe(playerPokemon.getMaxHp());
+    expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp() - Math.max(Math.floor(enemyPokemon.getMaxHp() / 16), 1));
   });
 });

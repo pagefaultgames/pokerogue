@@ -36,15 +36,15 @@ describe("Moves - Whirlwind", () => {
     { move: Moves.BOUNCE, name: "Bounce" },
     { move: Moves.SKY_DROP, name: "Sky Drop" },
   ])("should not hit a flying target: $name (=$move)", async ({ move }) => {
-    game.override.moveset([move]);
-    await game.classicMode.startBattle([Species.STARAPTOR]);
+    game.override.moveset([ move ]);
+    await game.classicMode.startBattle([ Species.STARAPTOR ]);
 
     const staraptor = game.scene.getPlayerPokemon()!;
     const whirlwind = allMoves[Moves.WHIRLWIND];
     vi.spyOn(whirlwind, "getFailedText");
 
     game.move.select(move);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY ]);
     await game.toNextTurn();
 
     expect(staraptor.findTag((t) => t.tagType === BattlerTagType.FLYING)).toBeDefined();
