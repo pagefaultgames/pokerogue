@@ -574,7 +574,7 @@ export class TrainerConfig {
     case "magma": {
       return {
         [TrainerPoolTier.COMMON]: [ Species.GROWLITHE, Species.SLUGMA, Species.SOLROCK, Species.HIPPOPOTAS, Species.BALTOY, Species.ROLYCOLY, Species.GLIGAR, Species.TORKOAL, Species.HOUNDOUR, Species.MAGBY ],
-        [TrainerPoolTier.UNCOMMON]: [ Species.TRAPINCH, Species.SILICOBRA, Species.RHYHORN, Species.ANORITH, Species.LILEEP, Species.HISUI_GROWLITHE, Species.TURTONATOR, Species.ARON, Species.BARBOACH ],
+        [TrainerPoolTier.UNCOMMON]: [ Species.TRAPINCH, Species.SILICOBRA, Species.RHYHORN, Species.ANORITH, Species.LILEEP, Species.HISUI_GROWLITHE, Species.TURTONATOR, Species.ARON, Species.TOEDSCOOL ],
         [TrainerPoolTier.RARE]: [ Species.CAPSAKID, Species.CHARCADET ]
       };
     }
