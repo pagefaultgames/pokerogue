@@ -4678,14 +4678,14 @@ export class GulpMissileTagAttr extends MoveEffectAttr {
 
   /**
    * Adds BattlerTagType from GulpMissileTag based on the Pokemon's HP ratio.
-   * @param {Pokemon} user The Pokemon using the move.
-   * @param {Pokemon} target The Pokemon being targeted by the move.
-   * @param {Move} move The move being used.
-   * @param {any[]} args Additional arguments, if any.
+   * @param user The Pokemon using the move.
+   * @param _target N/A
+   * @param move The move being used.
+   * @param _args N/A
    * @returns Whether the BattlerTag is applied.
    */
-  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean | Promise<boolean> {
-    if (!super.apply(user, target, move, args)) {
+  apply(user: Pokemon, _target: Pokemon, move: Move, _args: any[]): boolean {
+    if (!super.apply(user, _target, move, _args)) {
       return false;
     }
 
