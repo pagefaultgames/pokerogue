@@ -5027,8 +5027,12 @@ export class PokemonBattleSummonData {
 export class PokemonTurnData {
   public flinched: boolean = false;
   public acted: boolean = false;
-  public hitCount: number;
-  public hitsLeft: number;
+  public hitCount: number = 0;
+  /**
+   * - `-1` = Calculate how many hits are left
+   * - `0` = Move is finished
+   */
+  public hitsLeft: number = -1;
   public damageDealt: number = 0;
   public currDamageDealt: number = 0;
   public damageTaken: number = 0;
@@ -5114,7 +5118,7 @@ export class PokemonMove {
    * @param {boolean} ignoreRestrictionTags If `true`, skips the check for move restriction tags (see {@link MoveRestrictionBattlerTag})
    * @returns `true` if the move can be selected and used by the Pokemon, otherwise `false`.
    */
-  isUsable(pokemon: Pokemon, ignorePp?: boolean, ignoreRestrictionTags?: boolean): boolean {
+  isUsable(pokemon: Pokemon, ignorePp: boolean = false, ignoreRestrictionTags: boolean = false): boolean {
     if (this.moveId && !ignoreRestrictionTags && pokemon.isMoveRestricted(this.moveId)) {
       return false;
     }

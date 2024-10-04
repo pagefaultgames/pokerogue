@@ -1,12 +1,11 @@
-import { BattlerIndex } from "#app/battle";
-import { allMoves } from "#app/data/move";
 import { BattlerTagType } from "#app/enums/battler-tag-type";
+import { MoveResult } from "#app/field/pokemon";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, it, expect, vi } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Moves - Whirlwind", () => {
   let phaserGame: Phaser.Game;
@@ -40,14 +39,11 @@ describe("Moves - Whirlwind", () => {
     await game.classicMode.startBattle([ Species.STARAPTOR ]);
 
     const staraptor = game.scene.getPlayerPokemon()!;
-    const whirlwind = allMoves[Moves.WHIRLWIND];
-    vi.spyOn(whirlwind, "getFailedText");
 
     game.move.select(move);
-    await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY ]);
     await game.toNextTurn();
 
     expect(staraptor.findTag((t) => t.tagType === BattlerTagType.FLYING)).toBeDefined();
-    expect(whirlwind.getFailedText).toHaveBeenCalledOnce();
+    expect(game.scene.getEnemyPokemon()!.getLastXMoves(1)[0].result).toBe(MoveResult.MISS);
   });
 });
