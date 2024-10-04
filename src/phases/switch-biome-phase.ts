@@ -20,7 +20,7 @@ export class SwitchBiomePhase extends BattlePhase {
     }
 
     this.scene.tweens.add({
-      targets: [this.scene.arenaEnemy, this.scene.lastEnemyTrainer],
+      targets: [ this.scene.arenaEnemy, this.scene.lastEnemyTrainer ],
       x: "+=300",
       duration: 2000,
       onComplete: () => {
@@ -38,7 +38,7 @@ export class SwitchBiomePhase extends BattlePhase {
         this.scene.arenaPlayerTransition.setVisible(true);
 
         this.scene.tweens.add({
-          targets: [this.scene.arenaPlayer, this.scene.arenaBgTransition, this.scene.arenaPlayerTransition],
+          targets: [ this.scene.arenaPlayer, this.scene.arenaBgTransition, this.scene.arenaPlayerTransition ],
           duration: 1000,
           delay: 1000,
           ease: "Sine.easeInOut",

@@ -28,12 +28,12 @@ describe("Abilities - Synchronize", () => {
       .startingLevel(100)
       .enemySpecies(Species.MAGIKARP)
       .enemyAbility(Abilities.SYNCHRONIZE)
-      .moveset([Moves.SPLASH, Moves.THUNDER_WAVE, Moves.SPORE, Moves.PSYCHO_SHIFT])
+      .moveset([ Moves.SPLASH, Moves.THUNDER_WAVE, Moves.SPORE, Moves.PSYCHO_SHIFT ])
       .ability(Abilities.NO_GUARD);
   }, 20000);
 
   it("does not trigger when no status is applied by opponent Pokemon", async () => {
-    await game.classicMode.startBattle([Species.FEEBAS]);
+    await game.classicMode.startBattle([ Species.FEEBAS ]);
 
     game.move.select(Moves.SPLASH);
     await game.phaseInterceptor.to("BerryPhase");
@@ -43,7 +43,7 @@ describe("Abilities - Synchronize", () => {
   }, 20000);
 
   it("sets the status of the source pokemon to Paralysis when paralyzed by it", async () => {
-    await game.classicMode.startBattle([Species.FEEBAS]);
+    await game.classicMode.startBattle([ Species.FEEBAS ]);
 
     game.move.select(Moves.THUNDER_WAVE);
     await game.phaseInterceptor.to("BerryPhase");
@@ -71,7 +71,7 @@ describe("Abilities - Synchronize", () => {
       .enemyAbility(Abilities.BALL_FETCH)
       .enemyMoveset(Array(4).fill(Moves.TOXIC_SPIKES));
 
-    await game.classicMode.startBattle([Species.FEEBAS, Species.MILOTIC]);
+    await game.classicMode.startBattle([ Species.FEEBAS, Species.MILOTIC ]);
 
     game.move.select(Moves.SPLASH);
     await game.toNextTurn();
@@ -85,7 +85,7 @@ describe("Abilities - Synchronize", () => {
   }, 20000);
 
   it("shows ability even if it fails to set the status of the opponent Pokemon", async () => {
-    await game.classicMode.startBattle([Species.PIKACHU]);
+    await game.classicMode.startBattle([ Species.PIKACHU ]);
 
     game.move.select(Moves.THUNDER_WAVE);
     await game.phaseInterceptor.to("BerryPhase");

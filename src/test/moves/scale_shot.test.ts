@@ -29,7 +29,7 @@ describe("Moves - Scale Shot", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([Moves.SCALE_SHOT])
+      .moveset([ Moves.SCALE_SHOT ])
       .battleType("single")
       .disableCrits()
       .ability(Abilities.NO_GUARD)

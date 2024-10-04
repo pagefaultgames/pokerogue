@@ -31,7 +31,7 @@ describe("Mystery Encounter Utils", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     scene = game.scene;
-    initSceneWithoutEncounterPhase(game.scene, [Species.ARCEUS, Species.MANAPHY]);
+    initSceneWithoutEncounterPhase(game.scene, [ Species.ARCEUS, Species.MANAPHY ]);
   });
 
   describe("getRandomPlayerPokemon", () => {
@@ -214,7 +214,7 @@ describe("Mystery Encounter Utils", () => {
     });
 
     it("gets species for a starter tier range", () => {
-      const result = getRandomSpeciesByStarterTier([5, 8]);
+      const result = getRandomSpeciesByStarterTier([ 5, 8 ]);
       const pokeSpecies = getPokemonSpecies(result);
 
       expect(pokeSpecies.speciesId).toBe(result);
@@ -224,14 +224,14 @@ describe("Mystery Encounter Utils", () => {
 
     it("excludes species from search", () => {
       // Only 9 tiers are: Koraidon, Miraidon, Arceus, Rayquaza, Kyogre, Groudon, Zacian
-      const result = getRandomSpeciesByStarterTier(9, [Species.KORAIDON, Species.MIRAIDON, Species.ARCEUS, Species.RAYQUAZA, Species.KYOGRE, Species.GROUDON]);
+      const result = getRandomSpeciesByStarterTier(9, [ Species.KORAIDON, Species.MIRAIDON, Species.ARCEUS, Species.RAYQUAZA, Species.KYOGRE, Species.GROUDON ]);
       const pokeSpecies = getPokemonSpecies(result);
       expect(pokeSpecies.speciesId).toBe(Species.ZACIAN);
     });
 
     it("gets species of specified types", () => {
       // Only 9 tiers are: Koraidon, Miraidon, Arceus, Rayquaza, Kyogre, Groudon, Zacian
-      const result = getRandomSpeciesByStarterTier(9, undefined, [Type.GROUND]);
+      const result = getRandomSpeciesByStarterTier(9, undefined, [ Type.GROUND ]);
       const pokeSpecies = getPokemonSpecies(result);
       expect(pokeSpecies.speciesId).toBe(Species.GROUDON);
     });
