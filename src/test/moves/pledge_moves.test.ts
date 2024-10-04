@@ -269,4 +269,28 @@ describe("Moves - Pledge Moves", () => {
       expect(ironHeadFlinchAttr.getMoveChance).toHaveLastReturnedWith(60);
     }
   );
+
+  it(
+    "Pledge Moves - should have no effect when the second ally's move is cancelled",
+    async () => {
+      game.override
+        .enemyMoveset([Moves.SPLASH, Moves.SPORE]);
+
+      await game.classicMode.startBattle([Species.BLASTOISE, Species.CHARIZARD]);
+
+      const enemyPokemon = game.scene.getEnemyField();
+
+      game.move.select(Moves.FIRE_PLEDGE, 0, BattlerIndex.ENEMY);
+      game.move.select(Moves.GRASS_PLEDGE, 1, BattlerIndex.ENEMY_2);
+
+      await game.forceEnemyMove(Moves.SPORE, BattlerIndex.PLAYER_2);
+      await game.forceEnemyMove(Moves.SPLASH);
+
+      await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY_2]);
+
+      await game.phaseInterceptor.to("BerryPhase", false);
+
+      enemyPokemon.forEach((p) => expect(p.hp).toBe(p.getMaxHp()));
+    }
+  );
 });
