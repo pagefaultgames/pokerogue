@@ -24,7 +24,7 @@ describe("Moves - Diamond Storm", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([Moves.DIAMOND_STORM])
+      .moveset([ Moves.DIAMOND_STORM ])
       .battleType("single")
       .enemySpecies(Species.MAGIKARP)
       .enemyAbility(Abilities.BALL_FETCH)
