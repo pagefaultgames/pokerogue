@@ -230,7 +230,7 @@ describe("Abilities - Ice Face", () => {
     await game.classicMode.startBattle();
 
     game.move.select(Moves.POWER_TRIP);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+    await game.setTurnOrder([ BattlerIndex.ENEMY, BattlerIndex.PLAYER ]);
     await game.toNextTurn();
 
     expect(game.scene.getEnemyPokemon()!.formIndex).toBe(icefaceForm);

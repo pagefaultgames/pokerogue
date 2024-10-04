@@ -239,8 +239,8 @@ describe("Abilities - Gulp Missile", () => {
   it("doesn't trigger if user is behind a substitute", async () => {
     game.override
       .enemyAbility(Abilities.STURDY)
-      .enemyMoveset([Moves.SPLASH, Moves.POWER_TRIP]);
-    await game.classicMode.startBattle([Species.CRAMORANT]);
+      .enemyMoveset([ Moves.SPLASH, Moves.POWER_TRIP ]);
+    await game.classicMode.startBattle([ Species.CRAMORANT ]);
 
     game.move.select(Moves.SURF);
     await game.forceEnemyMove(Moves.SPLASH);
@@ -250,7 +250,7 @@ describe("Abilities - Gulp Missile", () => {
 
     game.move.select(Moves.SUBSTITUTE);
     await game.forceEnemyMove(Moves.POWER_TRIP);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY ]);
     await game.toNextTurn();
 
     expect(game.scene.getPlayerPokemon()!.formIndex).toBe(GULPING_FORM);
