@@ -1142,8 +1142,15 @@ export class GameData {
             }
             console.error(error);
             resolve(false);
+          } else {
+            if (loggedInUser) {
+              loggedInUser.lastSessionSlot = -1;
+            }
+
+            localStorage.removeItem(`sessionData${slotId > 0 ? slotId : ""}_${loggedInUser?.username}`);
+            resolve(true);
+
           }
-          resolve(true);
         });
       });
     });
@@ -1196,6 +1203,10 @@ export class GameData {
 
       if (!jsonResponse?.error) {
         result = [true, jsonResponse?.success ?? false];
+        if (loggedInUser) {
+          loggedInUser!.lastSessionSlot = -1;
+        }
+        localStorage.removeItem(`sessionData${slotId > 0 ? slotId : ""}_${loggedInUser?.username}`);
       } else {
         if (jsonResponse && jsonResponse.error?.startsWith("session out of date")) {
           this.scene.clearPhaseQueue();

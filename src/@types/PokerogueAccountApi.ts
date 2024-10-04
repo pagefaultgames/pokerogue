@@ -1,4 +1,4 @@
-import type { UserInfo } from "#app/account";
+import type { UserInfo } from "#app/@types/UserInfo";
 
 export interface AccountInfoResponse extends UserInfo {}
 

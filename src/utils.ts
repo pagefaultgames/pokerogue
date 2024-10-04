@@ -328,6 +328,7 @@ export async function localPing() {
   if (isLocal) {
     const titleStats = await pokerogueApi.getGameTitleStats();
     isLocalServerConnected = !!titleStats;
+    console.log("isLocalServerConnected:", isLocalServerConnected);
   }
 }
 

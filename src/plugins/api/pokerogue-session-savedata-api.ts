@@ -6,7 +6,6 @@ import type {
   NewClearSessionSavedataRequest,
   UpdateSessionSavedataRequest,
 } from "#app/@types/PokerogueSessionSavedataApi";
-import { loggedInUser } from "#app/account";
 import { ApiBase } from "#app/plugins/api/api-base";
 import type { SessionSaveData } from "#app/system/game-data";
 
@@ -74,7 +73,7 @@ export class PokerogueSessionSavedataApi extends ApiBase {
   /**
    * Delete a session savedata slot.
    * @param params The {@linkcode DeleteSessionSavedataRequest} to send
-   * @returns The session as `string`
+   * @returns An error message if something went wrong
    */
   public async delete(params: DeleteSessionSavedataRequest) {
     try {
@@ -82,11 +81,7 @@ export class PokerogueSessionSavedataApi extends ApiBase {
       const response = await this.doGet(`/savedata/session/delete?${urlSearchParams}`);
 
       if (response.ok) {
-        if (loggedInUser) {
-          loggedInUser.lastSessionSlot = -1;
-        }
-
-        localStorage.removeItem(`sessionData${params.slot > 0 ? params.slot : ""}_${loggedInUser?.username}`);
+        return null;
       } else {
         return await response.text();
       }
@@ -107,18 +102,14 @@ export class PokerogueSessionSavedataApi extends ApiBase {
       const urlSearchParams = this.toUrlSearchParams(params);
       const response = await this.doPost(`/savedata/session/clear?${urlSearchParams}`, sessionData);
 
-      if (response.ok) {
-        if (loggedInUser) {
-          loggedInUser!.lastSessionSlot = -1;
-        }
-        localStorage.removeItem(`sessionData${params.slot > 0 ? params.slot : ""}_${loggedInUser?.username}`);
-      }
-
       return (await response.json()) as ClearSessionSavedataResponse;
     } catch (err) {
       console.warn("Could not clear session savedata!", err);
     }
 
-    return null;
+    return {
+      error: "Unknown error",
+      success: false,
+    } as ClearSessionSavedataResponse;
   }
 }
