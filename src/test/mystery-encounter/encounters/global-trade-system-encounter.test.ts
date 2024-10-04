@@ -20,7 +20,7 @@ import ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
 import { ModifierTier } from "#app/modifier/modifier-tier";
 
 const namespace = "mysteryEncounters/globalTradeSystem";
-const defaultParty = [Species.LAPRAS, Species.GENGAR, Species.ABRA];
+const defaultParty = [ Species.LAPRAS, Species.GENGAR, Species.ABRA ];
 const defaultBiome = Biome.CAVE;
 const defaultWave = 45;
 
@@ -42,10 +42,10 @@ describe("Global Trade System - Mystery Encounter", () => {
     game.override.disableTrainerWaves();
 
     const biomeMap = new Map<Biome, MysteryEncounterType[]>([
-      [Biome.VOLCANO, [MysteryEncounterType.MYSTERIOUS_CHALLENGERS]],
+      [ Biome.VOLCANO, [ MysteryEncounterType.MYSTERIOUS_CHALLENGERS ]],
     ]);
     CIVILIZATION_ENCOUNTER_BIOMES.forEach(biome => {
-      biomeMap.set(biome, [MysteryEncounterType.GLOBAL_TRADE_SYSTEM]);
+      biomeMap.set(biome, [ MysteryEncounterType.GLOBAL_TRADE_SYSTEM ]);
     });
     vi.spyOn(MysteryEncounters, "mysteryEncountersByBiome", "get").mockReturnValue(biomeMap);
   });
@@ -70,7 +70,7 @@ describe("Global Trade System - Mystery Encounter", () => {
   });
 
   it("should not loop infinitely when generating trade options for extreme BST non-legendaries", async () => {
-    const extremeBstTeam = [Species.SLAKING, Species.WISHIWASHI, Species.SUNKERN];
+    const extremeBstTeam = [ Species.SLAKING, Species.WISHIWASHI, Species.SUNKERN ];
     await game.runToMysteryEncounter(MysteryEncounterType.GLOBAL_TRADE_SYSTEM, extremeBstTeam);
 
     expect(GlobalTradeSystemEncounter.encounterType).toBe(MysteryEncounterType.GLOBAL_TRADE_SYSTEM);
@@ -209,7 +209,7 @@ describe("Global Trade System - Mystery Encounter", () => {
       await scene.addModifier(modifier, true, false, false, true);
       await scene.updateModifiers(true);
 
-      await runMysteryEncounterToEnd(game, 3, { pokemonNo: 1, optionNo: 1});
+      await runMysteryEncounterToEnd(game, 3, { pokemonNo: 1, optionNo: 1 });
       expect(scene.getCurrentPhase()?.constructor.name).toBe(SelectModifierPhase.name);
       await game.phaseInterceptor.run(SelectModifierPhase);
 
@@ -234,7 +234,7 @@ describe("Global Trade System - Mystery Encounter", () => {
       await scene.addModifier(modifier, true, false, false, true);
       await scene.updateModifiers(true);
 
-      await runMysteryEncounterToEnd(game, 3, { pokemonNo: 1, optionNo: 1});
+      await runMysteryEncounterToEnd(game, 3, { pokemonNo: 1, optionNo: 1 });
 
       expect(leaveEncounterWithoutBattleSpy).toBeCalled();
     });
