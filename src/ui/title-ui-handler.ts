@@ -7,6 +7,7 @@ import { getSplashMessages } from "../data/splash-messages";
 import i18next from "i18next";
 import { TimedEventDisplay } from "#app/timed-event-manager";
 import { version } from "../../package.json";
+import { api } from "#app/plugins/api/api";
 
 export default class TitleUiHandler extends OptionSelectUiHandler {
   /** If the stats can not be retrieved, use this fallback value */
@@ -78,12 +79,13 @@ export default class TitleUiHandler extends OptionSelectUiHandler {
   }
 
   updateTitleStats(): void {
-    Utils.apiFetch("game/titlestats")
-      .then(request => request.json())
+    api.getGameTitleStats()
       .then(stats => {
-        this.playerCountLabel.setText(`${stats.playerCount} ${i18next.t("menu:playersOnline")}`);
-        if (this.splashMessage === "splashMessages:battlesWon") {
-          this.splashMessageText.setText(i18next.t(this.splashMessage, { count: stats.battleCount }));
+        if (stats) {
+          this.playerCountLabel.setText(`${stats.playerCount} ${i18next.t("menu:playersOnline")}`);
+          if (this.splashMessage === "splashMessages:battlesWon") {
+            this.splashMessageText.setText(i18next.t(this.splashMessage, { count: stats.battleCount }));
+          }
         }
       })
       .catch(err => {
