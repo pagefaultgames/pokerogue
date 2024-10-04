@@ -25,7 +25,7 @@ describe("Items - Leek", () => {
 
     game.override
       .enemySpecies(Species.MAGIKARP)
-      .enemyMoveset([Moves.SPLASH, Moves.SPLASH, Moves.SPLASH, Moves.SPLASH])
+      .enemyMoveset([ Moves.SPLASH, Moves.SPLASH, Moves.SPLASH, Moves.SPLASH ])
       .startingHeldItems([{ name: "LEEK" }])
       .moveset([ Moves.TACKLE ])
       .disableCrits()
@@ -82,7 +82,7 @@ describe("Items - Leek", () => {
 
   it("should raise CRIT stage by 2 when held by FARFETCHD line fused with Pokemon", async () => {
     // Randomly choose from the Farfetch'd line
-    const species = [Species.FARFETCHD, Species.GALAR_FARFETCHD, Species.SIRFETCHD];
+    const species = [ Species.FARFETCHD, Species.GALAR_FARFETCHD, Species.SIRFETCHD ];
 
     await game.startBattle([
       species[Utils.randInt(species.length)],
@@ -113,7 +113,7 @@ describe("Items - Leek", () => {
 
   it("should raise CRIT stage by 2 when held by Pokemon fused with FARFETCHD line", async () => {
     // Randomly choose from the Farfetch'd line
-    const species = [Species.FARFETCHD, Species.GALAR_FARFETCHD, Species.SIRFETCHD];
+    const species = [ Species.FARFETCHD, Species.GALAR_FARFETCHD, Species.SIRFETCHD ];
 
     await game.startBattle([
       Species.PIKACHU,

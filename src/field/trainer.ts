@@ -1,6 +1,6 @@
 import BattleScene from "#app/battle-scene";
-import {pokemonPrevolutions} from "#app/data/balance/pokemon-evolutions";
-import PokemonSpecies, {getPokemonSpecies} from "#app/data/pokemon-species";
+import { pokemonPrevolutions } from "#app/data/balance/pokemon-evolutions";
+import PokemonSpecies, { getPokemonSpecies } from "#app/data/pokemon-species";
 import {
   TrainerConfig,
   TrainerPartyCompoundTemplate,
@@ -11,7 +11,7 @@ import {
   trainerPartyTemplates,
   signatureSpecies
 } from "#app/data/trainer-config";
-import {EnemyPokemon} from "#app/field/pokemon";
+import { EnemyPokemon } from "#app/field/pokemon";
 import * as Utils from "#app/utils";
 import { PersistentModifier } from "#app/modifier/modifier";
 import { trainerNamePools } from "#app/data/trainer-names";
@@ -56,7 +56,7 @@ export default class Trainer extends Phaser.GameObjects.Container {
           if (partnerName) {
             this.partnerName = partnerName;
           } else {
-            [this.name, this.partnerName] = this.name.split(" & ");
+            [ this.name, this.partnerName ] = this.name.split(" & ");
           }
         } else {
           this.partnerName = partnerName || Utils.randSeedItem(Array.isArray(namePool[0]) ? namePool[1] : namePool);
@@ -82,7 +82,7 @@ export default class Trainer extends Phaser.GameObjects.Container {
     const getSprite = (hasShadow?: boolean, forceFemale?: boolean) => {
       const ret = this.scene.addFieldSprite(0, 0, this.config.getSpriteKey(variant === TrainerVariant.FEMALE || forceFemale, this.isDouble()));
       ret.setOrigin(0.5, 1);
-      ret.setPipeline(this.scene.spritePipeline, {tone: [0.0, 0.0, 0.0, 0.0], hasShadow: !!hasShadow});
+      ret.setPipeline(this.scene.spritePipeline, { tone: [ 0.0, 0.0, 0.0, 0.0 ], hasShadow: !!hasShadow });
       return ret;
     };
 
@@ -126,7 +126,7 @@ export default class Trainer extends Phaser.GameObjects.Container {
 
     // Determine the title to include based on the configuration and includeTitle flag.
     let title = includeTitle && this.config.title ? this.config.title : null;
-    const evilTeamTitles = ["grunt"];
+    const evilTeamTitles = [ "grunt" ];
     if (this.name === "" && evilTeamTitles.some(t => name.toLocaleLowerCase().includes(t))) {
       // This is a evil team grunt so we localize it by only using the "name" as the title
       title = i18next.t(`trainerClasses:${name.toLowerCase().replace(/\s/g, "_")}`);
@@ -336,9 +336,9 @@ export default class Trainer extends Phaser.GameObjects.Container {
         if (!(index % 2)) {
           // Since the only currently allowed double battle with named trainers is Tate & Liza, we need to make sure that Solrock is the first pokemon in the party for Tate and Lunatone for Liza
           if (index === 0 && (TrainerType[this.config.trainerType] === TrainerType[TrainerType.TATE])) {
-            newSpeciesPool = [Species.SOLROCK];
+            newSpeciesPool = [ Species.SOLROCK ];
           } else if (index === 0 && (TrainerType[this.config.trainerType] === TrainerType[TrainerType.LIZA])) {
-            newSpeciesPool = [Species.LUNATONE];
+            newSpeciesPool = [ Species.LUNATONE ];
           } else {
             newSpeciesPool = speciesPoolFiltered;
           }
@@ -346,9 +346,9 @@ export default class Trainer extends Phaser.GameObjects.Container {
           // If the index is odd, use the species pool for the partner trainer (that way he only uses his own pokemon in battle)
           // Since the only currently allowed double battle with named trainers is Tate & Liza, we need to make sure that Solrock is the first pokemon in the party for Tate and Lunatone for Liza
           if (index === 1 && (TrainerType[this.config.trainerTypeDouble] === TrainerType[TrainerType.TATE])) {
-            newSpeciesPool = [Species.SOLROCK];
+            newSpeciesPool = [ Species.SOLROCK ];
           } else if (index === 1 && (TrainerType[this.config.trainerTypeDouble] === TrainerType[TrainerType.LIZA])) {
-            newSpeciesPool = [Species.LUNATONE];
+            newSpeciesPool = [ Species.LUNATONE ];
           } else {
             newSpeciesPool = speciesPoolPartnerFiltered;
           }
@@ -475,7 +475,7 @@ export default class Trainer extends Phaser.GameObjects.Container {
         }
       }
 
-      return [party.indexOf(p), score];
+      return [ party.indexOf(p), score ];
     }) as [integer, integer][];
 
     return partyMemberScores;

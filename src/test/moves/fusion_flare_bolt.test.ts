@@ -30,11 +30,11 @@ describe("Moves - Fusion Flare and Fusion Bolt", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.moveset([fusionFlare.id, fusionBolt.id]);
+    game.override.moveset([ fusionFlare.id, fusionBolt.id ]);
     game.override.startingLevel(1);
 
     game.override.enemySpecies(Species.RESHIRAM);
-    game.override.enemyMoveset([Moves.REST, Moves.REST, Moves.REST, Moves.REST]);
+    game.override.enemyMoveset([ Moves.REST, Moves.REST, Moves.REST, Moves.REST ]);
 
     game.override.battleType("double");
     game.override.startingWave(97);
@@ -54,7 +54,7 @@ describe("Moves - Fusion Flare and Fusion Bolt", () => {
     game.move.select(fusionBolt.id, 1, BattlerIndex.ENEMY);
 
     // Force user party to act before enemy party
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
+    await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2 ]);
 
     await game.phaseInterceptor.to(MoveEffectPhase, false);
     expect((game.scene.getCurrentPhase() as MoveEffectPhase).move.moveId).toBe(fusionFlare.id);
@@ -77,7 +77,7 @@ describe("Moves - Fusion Flare and Fusion Bolt", () => {
     game.move.select(fusionFlare.id, 1, BattlerIndex.ENEMY);
 
     // Force user party to act before enemy party
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
+    await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2 ]);
 
     await game.phaseInterceptor.to(MoveEffectPhase, false);
     expect((game.scene.getCurrentPhase() as MoveEffectPhase).move.moveId).toBe(fusionBolt.id);
@@ -100,7 +100,7 @@ describe("Moves - Fusion Flare and Fusion Bolt", () => {
     game.move.select(fusionBolt.id, 1, BattlerIndex.PLAYER);
 
     // Force first enemy to act (and fail) in between party
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY_2, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY]);
+    await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY_2, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY ]);
 
     await game.phaseInterceptor.to(MoveEffectPhase, false);
     expect((game.scene.getCurrentPhase() as MoveEffectPhase).move.moveId).toBe(fusionFlare.id);
@@ -119,7 +119,7 @@ describe("Moves - Fusion Flare and Fusion Bolt", () => {
   }, 20000);
 
   it("FUSION_FLARE should not double power of subsequent FUSION_BOLT if a move succeeded in between", async () => {
-    game.override.enemyMoveset([Moves.SPLASH, Moves.SPLASH, Moves.SPLASH, Moves.SPLASH]);
+    game.override.enemyMoveset([ Moves.SPLASH, Moves.SPLASH, Moves.SPLASH, Moves.SPLASH ]);
     await game.startBattle([
       Species.ZEKROM,
       Species.ZEKROM
@@ -129,7 +129,7 @@ describe("Moves - Fusion Flare and Fusion Bolt", () => {
     game.move.select(fusionBolt.id, 1, BattlerIndex.ENEMY);
 
     // Force first enemy to act in between party
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY_2, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY]);
+    await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY_2, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY ]);
 
     await game.phaseInterceptor.to(MoveEffectPhase, false);
     expect((game.scene.getCurrentPhase() as MoveEffectPhase).move.moveId).toBe(fusionFlare.id);
@@ -156,7 +156,7 @@ describe("Moves - Fusion Flare and Fusion Bolt", () => {
     game.move.select(fusionFlare.id, 1, BattlerIndex.PLAYER);
 
     // Force user party to act before enemy party
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
+    await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2 ]);
 
     await game.phaseInterceptor.to(MoveEffectPhase, false);
     expect((game.scene.getCurrentPhase() as MoveEffectPhase).move.moveId).toBe(fusionBolt.id);
@@ -170,7 +170,7 @@ describe("Moves - Fusion Flare and Fusion Bolt", () => {
   }, 20000);
 
   it("FUSION_FLARE and FUSION_BOLT alternating throughout turn should double power of subsequent moves", async () => {
-    game.override.enemyMoveset([fusionFlare.id, fusionFlare.id, fusionFlare.id, fusionFlare.id]);
+    game.override.enemyMoveset([ fusionFlare.id, fusionFlare.id, fusionFlare.id, fusionFlare.id ]);
     await game.startBattle([
       Species.ZEKROM,
       Species.ZEKROM
@@ -186,12 +186,12 @@ describe("Moves - Fusion Flare and Fusion Bolt", () => {
     // Mock stats by replacing entries in copy with desired values for specific stats
     const stats = {
       enemy: [
-        [...enemyParty[0].stats],
-        [...enemyParty[1].stats],
+        [ ...enemyParty[0].stats ],
+        [ ...enemyParty[1].stats ],
       ],
       player: [
-        [...party[0].stats],
-        [...party[1].stats],
+        [ ...party[0].stats ],
+        [ ...party[1].stats ],
       ]
     };
 
@@ -205,7 +205,7 @@ describe("Moves - Fusion Flare and Fusion Bolt", () => {
     game.move.select(fusionBolt.id, 1, BattlerIndex.ENEMY);
 
     // Force first enemy to act in between party
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY_2, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY]);
+    await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY_2, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY ]);
 
     await game.phaseInterceptor.to(MoveEffectPhase, false);
     expect((game.scene.getCurrentPhase() as MoveEffectPhase).move.moveId).toBe(fusionBolt.id);
@@ -229,7 +229,7 @@ describe("Moves - Fusion Flare and Fusion Bolt", () => {
   }, 20000);
 
   it("FUSION_FLARE and FUSION_BOLT alternating throughout turn should double power of subsequent moves if moves are aimed at allies", async () => {
-    game.override.enemyMoveset([fusionFlare.id, fusionFlare.id, fusionFlare.id, fusionFlare.id]);
+    game.override.enemyMoveset([ fusionFlare.id, fusionFlare.id, fusionFlare.id, fusionFlare.id ]);
     await game.startBattle([
       Species.ZEKROM,
       Species.ZEKROM
@@ -245,12 +245,12 @@ describe("Moves - Fusion Flare and Fusion Bolt", () => {
     // Mock stats by replacing entries in copy with desired values for specific stats
     const stats = {
       enemy: [
-        [...enemyParty[0].stats],
-        [...enemyParty[1].stats],
+        [ ...enemyParty[0].stats ],
+        [ ...enemyParty[1].stats ],
       ],
       player: [
-        [...party[0].stats],
-        [...party[1].stats],
+        [ ...party[0].stats ],
+        [ ...party[1].stats ],
       ]
     };
 
@@ -264,7 +264,7 @@ describe("Moves - Fusion Flare and Fusion Bolt", () => {
     game.move.select(fusionBolt.id, 1, BattlerIndex.PLAYER);
 
     // Force first enemy to act in between party
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY_2, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY]);
+    await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY_2, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY ]);
 
     await game.phaseInterceptor.to(MoveEffectPhase, false);
     expect((game.scene.getCurrentPhase() as MoveEffectPhase).move.moveId).toBe(fusionBolt.id);
