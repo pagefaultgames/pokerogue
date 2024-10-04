@@ -41,6 +41,11 @@ export default [
             "keyword-spacing": ["error", { "before": true, "after": true }], // Enforces spacing before and after keywords
             "comma-spacing": ["error", { "before": false, "after": true }], // Enforces spacing after comma
             "import-x/extensions": ["error", "never", { "json": "always" }], // Enforces no extension for imports unless json
+            "array-bracket-spacing": ["error", "always", { "objectsInArrays": false, "arraysInArrays": false }], // Enforces consistent spacing inside array brackets
+            "object-curly-spacing": ["error", "always", { "arraysInObjects": false, "objectsInObjects": false }], // Enforces consistent spacing inside braces of object literals, destructuring assignments, and import/export specifiers
+            "computed-property-spacing": ["error", "never" ], // Enforces consistent spacing inside computed property brackets
+            "space-infix-ops": ["error", { "int32Hint": false }], // Enforces spacing around infix operators
+            "no-multiple-empty-lines": ["error", { "max": 2, "maxEOF": 1, "maxBOF": 0 }], // Disallows multiple empty lines
         }
     }
 ]
