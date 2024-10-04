@@ -9,7 +9,6 @@ import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 
-
 describe("Moves - Burning Jealousy", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
@@ -31,12 +30,12 @@ describe("Moves - Burning Jealousy", () => {
       .disableCrits()
       .enemySpecies(Species.MAGIKARP)
       .enemyAbility(Abilities.ICE_SCALES)
-      .enemyMoveset([Moves.HOWL])
+      .enemyMoveset([ Moves.HOWL ])
       .startingLevel(10)
       .enemyLevel(10)
       .starterSpecies(Species.FEEBAS)
       .ability(Abilities.BALL_FETCH)
-      .moveset([Moves.BURNING_JEALOUSY, Moves.GROWL]);
+      .moveset([ Moves.BURNING_JEALOUSY, Moves.GROWL ]);
 
   });
 
@@ -46,7 +45,7 @@ describe("Moves - Burning Jealousy", () => {
     const enemy = game.scene.getEnemyPokemon()!;
 
     game.move.select(Moves.BURNING_JEALOUSY);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+    await game.setTurnOrder([ BattlerIndex.ENEMY, BattlerIndex.PLAYER ]);
     await game.phaseInterceptor.to("BerryPhase");
 
     expect(enemy.status?.effect).toBe(StatusEffect.BURN);
@@ -56,13 +55,13 @@ describe("Moves - Burning Jealousy", () => {
     game.override
       .starterSpecies(0)
       .battleType("double");
-    await game.classicMode.startBattle([Species.FEEBAS, Species.ABRA]);
+    await game.classicMode.startBattle([ Species.FEEBAS, Species.ABRA ]);
 
     const enemy = game.scene.getEnemyPokemon()!;
 
     game.move.select(Moves.BURNING_JEALOUSY);
     game.move.select(Moves.GROWL, 1);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER_2, BattlerIndex.PLAYER, BattlerIndex.ENEMY_2]);
+    await game.setTurnOrder([ BattlerIndex.ENEMY, BattlerIndex.PLAYER_2, BattlerIndex.PLAYER, BattlerIndex.ENEMY_2 ]);
     await game.phaseInterceptor.to("BerryPhase");
 
     expect(enemy.status?.effect).toBe(StatusEffect.BURN);

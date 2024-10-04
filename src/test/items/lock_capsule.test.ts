@@ -27,14 +27,14 @@ describe("Items - Lock Capsule", () => {
     game.override
       .battleType("single")
       .startingLevel(200)
-      .moveset([Moves.SURF])
+      .moveset([ Moves.SURF ])
       .enemyAbility(Abilities.BALL_FETCH)
       .startingModifier([{ name: "LOCK_CAPSULE" }]);
   });
 
   it("doesn't set the cost of common tier items to 0", async () => {
     await game.classicMode.startBattle();
-    game.scene.overridePhase(new SelectModifierPhase(game.scene, 0, undefined, { guaranteedModifierTiers: [ModifierTier.COMMON, ModifierTier.COMMON, ModifierTier.COMMON], fillRemaining: false }));
+    game.scene.overridePhase(new SelectModifierPhase(game.scene, 0, undefined, { guaranteedModifierTiers: [ ModifierTier.COMMON, ModifierTier.COMMON, ModifierTier.COMMON ], fillRemaining: false }));
 
     game.onNextPrompt("SelectModifierPhase", Mode.MODIFIER_SELECT, () => {
       const selectModifierPhase = game.scene.getCurrentPhase() as SelectModifierPhase;

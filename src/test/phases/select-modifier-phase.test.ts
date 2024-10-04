@@ -28,7 +28,7 @@ describe("SelectModifierPhase", () => {
     game = new GameManager(phaserGame);
     scene = game.scene;
 
-    initSceneWithoutEncounterPhase(scene, [Species.ABRA, Species.VOLCARONA]);
+    initSceneWithoutEncounterPhase(scene, [ Species.ABRA, Species.VOLCARONA ]);
   });
 
   afterEach(() => {
@@ -81,7 +81,7 @@ describe("SelectModifierPhase", () => {
     expect(modifierSelectHandler.options.length).toEqual(3);
 
     // Simulate selecting reroll
-    selectModifierPhase = new SelectModifierPhase(scene, 1, [ModifierTier.COMMON, ModifierTier.COMMON, ModifierTier.COMMON]);
+    selectModifierPhase = new SelectModifierPhase(scene, 1, [ ModifierTier.COMMON, ModifierTier.COMMON, ModifierTier.COMMON ]);
     scene.unshiftPhase(selectModifierPhase);
     scene.ui.setMode(Mode.MESSAGE).then(() => game.endPhase());
     await game.phaseInterceptor.run(SelectModifierPhase);
@@ -94,7 +94,7 @@ describe("SelectModifierPhase", () => {
     // Just use fully random seed for this test
     vi.spyOn(scene, "resetSeed").mockImplementation(() => {
       scene.waveSeed = Utils.shiftCharCodes(scene.seed, 5);
-      Phaser.Math.RND.sow([scene.waveSeed]);
+      Phaser.Math.RND.sow([ scene.waveSeed ]);
       console.log("Wave Seed:", scene.waveSeed, 5);
       scene.rngCounter = 0;
     });
@@ -126,7 +126,7 @@ describe("SelectModifierPhase", () => {
 
   it("should generate custom modifiers", async () => {
     const customModifiers: CustomModifierSettings = {
-      guaranteedModifierTypeFuncs: [modifierTypes.MEMORY_MUSHROOM, modifierTypes.TM_ULTRA, modifierTypes.LEFTOVERS, modifierTypes.AMULET_COIN, modifierTypes.GOLDEN_PUNCH]
+      guaranteedModifierTypeFuncs: [ modifierTypes.MEMORY_MUSHROOM, modifierTypes.TM_ULTRA, modifierTypes.LEFTOVERS, modifierTypes.AMULET_COIN, modifierTypes.GOLDEN_PUNCH ]
     };
     const selectModifierPhase = new SelectModifierPhase(scene, 0, undefined, customModifiers);
     scene.pushPhase(selectModifierPhase);
@@ -145,7 +145,7 @@ describe("SelectModifierPhase", () => {
 
   it("should generate custom modifier tiers that can upgrade from luck", async () => {
     const customModifiers: CustomModifierSettings = {
-      guaranteedModifierTiers: [ModifierTier.COMMON, ModifierTier.GREAT, ModifierTier.ULTRA, ModifierTier.ROGUE, ModifierTier.MASTER]
+      guaranteedModifierTiers: [ ModifierTier.COMMON, ModifierTier.GREAT, ModifierTier.ULTRA, ModifierTier.ROGUE, ModifierTier.MASTER ]
     };
     const pokemon = new PlayerPokemon(scene, getPokemonSpecies(Species.BULBASAUR), 10, undefined, 0, undefined, true, 2, undefined, undefined, undefined);
 
@@ -172,8 +172,8 @@ describe("SelectModifierPhase", () => {
 
   it("should generate custom modifiers and modifier tiers together", async () => {
     const customModifiers: CustomModifierSettings = {
-      guaranteedModifierTypeFuncs: [modifierTypes.MEMORY_MUSHROOM, modifierTypes.TM_COMMON],
-      guaranteedModifierTiers: [ModifierTier.MASTER, ModifierTier.MASTER]
+      guaranteedModifierTypeFuncs: [ modifierTypes.MEMORY_MUSHROOM, modifierTypes.TM_COMMON ],
+      guaranteedModifierTiers: [ ModifierTier.MASTER, ModifierTier.MASTER ]
     };
     const selectModifierPhase = new SelectModifierPhase(scene, 0, undefined, customModifiers);
     scene.pushPhase(selectModifierPhase);
@@ -191,8 +191,8 @@ describe("SelectModifierPhase", () => {
 
   it("should fill remaining modifiers if fillRemaining is true with custom modifiers", async () => {
     const customModifiers: CustomModifierSettings = {
-      guaranteedModifierTypeFuncs: [modifierTypes.MEMORY_MUSHROOM],
-      guaranteedModifierTiers: [ModifierTier.MASTER],
+      guaranteedModifierTypeFuncs: [ modifierTypes.MEMORY_MUSHROOM ],
+      guaranteedModifierTiers: [ ModifierTier.MASTER ],
       fillRemaining: true
     };
     const selectModifierPhase = new SelectModifierPhase(scene, 0, undefined, customModifiers);
