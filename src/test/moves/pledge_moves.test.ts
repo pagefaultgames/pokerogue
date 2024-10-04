@@ -1,4 +1,5 @@
 import { BattlerIndex } from "#app/battle";
+import { allAbilities } from "#app/data/ability";
 import { ArenaTagSide } from "#app/data/arena-tag";
 import { allMoves, FlinchAttr } from "#app/data/move";
 import { Type } from "#app/data/type";
@@ -291,6 +292,46 @@ describe("Moves - Pledge Moves", () => {
       await game.phaseInterceptor.to("BerryPhase", false);
 
       enemyPokemon.forEach((p) => expect(p.hp).toBe(p.getMaxHp()));
+    }
+  );
+
+  it(
+    "Pledge Moves - should ignore redirection from another Pokemon's Storm Drain",
+    async () => {
+      await game.classicMode.startBattle([ Species.BLASTOISE, Species.CHARIZARD ]);
+
+      const enemyPokemon = game.scene.getEnemyField();
+      vi.spyOn(enemyPokemon[1], "getAbility").mockReturnValue(allAbilities[Abilities.STORM_DRAIN]);
+
+      game.move.select(Moves.WATER_PLEDGE, 0, BattlerIndex.ENEMY);
+      game.move.select(Moves.SPLASH, 1);
+
+      await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2 ]);
+
+      await game.phaseInterceptor.to("MoveEndPhase", false);
+
+      expect(enemyPokemon[0].hp).toBeLessThan(enemyPokemon[0].getMaxHp());
+      expect(enemyPokemon[1].getStatStage(Stat.SPATK)).toBe(0);
+    }
+  );
+
+  it(
+    "Pledge Moves - should not ignore redirection from another Pokemon's Follow Me",
+    async () => {
+      game.override.enemyMoveset([ Moves.FOLLOW_ME, Moves.SPLASH ]);
+      await game.classicMode.startBattle([ Species.BLASTOISE, Species.CHARIZARD ]);
+
+      game.move.select(Moves.WATER_PLEDGE, 0, BattlerIndex.ENEMY);
+      game.move.select(Moves.SPLASH, 1);
+
+      await game.forceEnemyMove(Moves.SPLASH);
+      await game.forceEnemyMove(Moves.FOLLOW_ME);
+
+      await game.phaseInterceptor.to("BerryPhase", false);
+
+      const enemyPokemon = game.scene.getEnemyField();
+      expect(enemyPokemon[0].hp).toBe(enemyPokemon[0].getMaxHp());
+      expect(enemyPokemon[1].hp).toBeLessThan(enemyPokemon[1].getMaxHp());
     }
   );
 });

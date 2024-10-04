@@ -4648,7 +4648,15 @@ export class TypelessAttr extends MoveAttr { }
 * Attribute used for moves which ignore redirection effects, and always target their original target, i.e. Snipe Shot
 * Bypasses Storm Drain, Follow Me, Ally Switch, and the like.
 */
-export class BypassRedirectAttr extends MoveAttr { }
+export class BypassRedirectAttr extends MoveAttr {
+  /** `true` if this move only bypasses redirection from Abilities */
+  public readonly abilitiesOnly: boolean;
+
+  constructor(abilitiesOnly: boolean = false) {
+    super();
+    this.abilitiesOnly = abilitiesOnly;
+  }
+}
 
 export class FrenzyAttr extends MoveEffectAttr {
   constructor() {
@@ -8516,7 +8524,7 @@ export function initMoves() {
       .attr(CombinedPledgeStabBoostAttr)
       .attr(AddPledgeEffectAttr, ArenaTagType.WATER_FIRE_PLEDGE, Moves.FIRE_PLEDGE, true)
       .attr(AddPledgeEffectAttr, ArenaTagType.GRASS_WATER_PLEDGE, Moves.GRASS_PLEDGE)
-      .attr(BypassRedirectAttr), // technically incorrect, should only bypass Storm Drain/Lightning Rod
+      .attr(BypassRedirectAttr, true),
     new AttackMove(Moves.FIRE_PLEDGE, Type.FIRE, MoveCategory.SPECIAL, 80, 100, 10, -1, 0, 5)
       .attr(AwaitCombinedPledgeAttr)
       .attr(CombinedPledgeTypeAttr)
@@ -8524,7 +8532,7 @@ export function initMoves() {
       .attr(CombinedPledgeStabBoostAttr)
       .attr(AddPledgeEffectAttr, ArenaTagType.FIRE_GRASS_PLEDGE, Moves.GRASS_PLEDGE)
       .attr(AddPledgeEffectAttr, ArenaTagType.WATER_FIRE_PLEDGE, Moves.WATER_PLEDGE, true)
-      .attr(BypassRedirectAttr), // technically incorrect, should only bypass Storm Drain/Lightning Rod
+      .attr(BypassRedirectAttr, true),
     new AttackMove(Moves.GRASS_PLEDGE, Type.GRASS, MoveCategory.SPECIAL, 80, 100, 10, -1, 0, 5)
       .attr(AwaitCombinedPledgeAttr)
       .attr(CombinedPledgeTypeAttr)
@@ -8532,7 +8540,7 @@ export function initMoves() {
       .attr(CombinedPledgeStabBoostAttr)
       .attr(AddPledgeEffectAttr, ArenaTagType.GRASS_WATER_PLEDGE, Moves.WATER_PLEDGE)
       .attr(AddPledgeEffectAttr, ArenaTagType.FIRE_GRASS_PLEDGE, Moves.FIRE_PLEDGE)
-      .attr(BypassRedirectAttr), // technically incorrect, should only bypass Storm Drain/Lightning Rod
+      .attr(BypassRedirectAttr, true),
     new AttackMove(Moves.VOLT_SWITCH, Type.ELECTRIC, MoveCategory.SPECIAL, 70, 100, 20, -1, 0, 5)
       .attr(ForceSwitchOutAttr, true),
     new AttackMove(Moves.STRUGGLE_BUG, Type.BUG, MoveCategory.SPECIAL, 50, 100, 20, 100, 0, 5)
