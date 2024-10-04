@@ -30,20 +30,20 @@ describe("UI - Battle Info", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([Moves.GUILLOTINE, Moves.SPLASH])
+      .moveset([ Moves.GUILLOTINE, Moves.SPLASH ])
       .battleType("single")
       .enemyAbility(Abilities.BALL_FETCH)
       .enemyMoveset(Moves.SPLASH)
       .enemySpecies(Species.CATERPIE);
   });
 
-  it.each([ExpGainsSpeed.FAST, ExpGainsSpeed.FASTER, ExpGainsSpeed.SKIP])(
+  it.each([ ExpGainsSpeed.FAST, ExpGainsSpeed.FASTER, ExpGainsSpeed.SKIP ])(
     "should increase exp gains animation by 2^%i",
     async (expGainsSpeed) => {
       game.settings.expGainsSpeed(expGainsSpeed);
       vi.spyOn(Math, "pow");
 
-      await game.classicMode.startBattle([Species.CHARIZARD]);
+      await game.classicMode.startBattle([ Species.CHARIZARD ]);
 
       game.move.select(Moves.SPLASH);
       await game.doKillOpponents();
