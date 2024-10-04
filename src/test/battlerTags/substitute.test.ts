@@ -122,8 +122,8 @@ describe("BattlerTag - SubstituteTag", () => {
         scene: new BattleScene(),
         hp: 101,
         id: 0,
-        turnData: {acted: true} as PokemonTurnData,
-        getLastXMoves: vi.fn().mockReturnValue([{move: Moves.TACKLE, result: MoveResult.SUCCESS} as TurnMove]) as Pokemon["getLastXMoves"],
+        turnData: { acted: true } as PokemonTurnData,
+        getLastXMoves: vi.fn().mockReturnValue([ { move: Moves.TACKLE, result: MoveResult.SUCCESS } as TurnMove ]) as Pokemon["getLastXMoves"],
       } as Pokemon;
 
       vi.spyOn(messages, "getPokemonNameWithAffix").mockReturnValue("");

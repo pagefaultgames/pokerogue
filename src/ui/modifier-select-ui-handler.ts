@@ -283,7 +283,7 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
       });
 
       this.scene.tweens.add({
-        targets: [this.rerollButtonContainer, this.lockRarityButtonContainer],
+        targets: [ this.rerollButtonContainer, this.lockRarityButtonContainer ],
         alpha: this.rerollCost < 0 ? 0.5 : 1,
         duration: 250
       });

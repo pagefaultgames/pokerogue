@@ -889,6 +889,9 @@ export default class BattleScene extends SceneBase {
     }
 
     const pokemon = new EnemyPokemon(this, species, level, trainerSlot, boss, dataSource);
+    if (Overrides.OPP_FUSION_OVERRIDE) {
+      pokemon.generateFusionSpecies();
+    }
 
     overrideModifiers(this, false);
     overrideHeldItems(this, pokemon, false);
@@ -1261,7 +1264,7 @@ export default class BattleScene extends SceneBase {
       const isEndlessFifthWave = this.gameMode.hasShortBiomes && (lastBattle.waveIndex % 5) === 0;
       const isWaveIndexMultipleOfFiftyMinusOne = (lastBattle.waveIndex % 50) === 49;
       const isNewBiome = isWaveIndexMultipleOfTen || isEndlessFifthWave || (isEndlessOrDaily && isWaveIndexMultipleOfFiftyMinusOne);
-      const resetArenaState = isNewBiome || [BattleType.TRAINER, BattleType.MYSTERY_ENCOUNTER].includes(this.currentBattle.battleType) || this.currentBattle.battleSpec === BattleSpec.FINAL_BOSS;
+      const resetArenaState = isNewBiome || [ BattleType.TRAINER, BattleType.MYSTERY_ENCOUNTER ].includes(this.currentBattle.battleType) || this.currentBattle.battleSpec === BattleSpec.FINAL_BOSS;
       this.getEnemyParty().forEach(enemyPokemon => enemyPokemon.destroy());
       this.trySpreadPokerus();
       if (!isNewBiome && (newWaveIndex % 10) === 5) {
@@ -1758,14 +1761,14 @@ export default class BattleScene extends SceneBase {
     if (fromArenaPool) {
       return this.arena.randomSpecies(waveIndex, level, undefined, getPartyLuckValue(this.party));
     }
-    const filteredSpecies = speciesFilter ? [...new Set(allSpecies.filter(s => s.isCatchable()).filter(speciesFilter).map(s => {
+    const filteredSpecies = speciesFilter ? [ ...new Set(allSpecies.filter(s => s.isCatchable()).filter(speciesFilter).map(s => {
       if (!filterAllEvolutions) {
         while (pokemonPrevolutions.hasOwnProperty(s.speciesId)) {
           s = getPokemonSpecies(pokemonPrevolutions[s.speciesId]);
         }
       }
       return s;
-    }))] : allSpecies.filter(s => s.isCatchable());
+    })) ] : allSpecies.filter(s => s.isCatchable());
     return filteredSpecies[Utils.randSeedInt(filteredSpecies.length)];
   }
 
@@ -1885,14 +1888,14 @@ export default class BattleScene extends SceneBase {
           case "battle_anims":
           case "cry":
             if (soundDetails[1].startsWith("PRSFX- ")) {
-              sound.setVolume(this.masterVolume*this.fieldVolume*0.5);
+              sound.setVolume(this.masterVolume * this.fieldVolume * 0.5);
             } else {
-              sound.setVolume(this.masterVolume*this.fieldVolume);
+              sound.setVolume(this.masterVolume * this.fieldVolume);
             }
             break;
           case "se":
           case "ui":
-            sound.setVolume(this.masterVolume*this.seVolume);
+            sound.setVolume(this.masterVolume * this.seVolume);
           }
         }
       }
@@ -2221,7 +2224,7 @@ export default class BattleScene extends SceneBase {
    *
    */
   pushConditionalPhase(phase: Phase, condition: () => boolean): void {
-    this.conditionalQueue.push([condition, phase]);
+    this.conditionalQueue.push([ condition, phase ]);
   }
 
   /**
@@ -2498,7 +2501,7 @@ export default class BattleScene extends SceneBase {
             }
           }
 
-          return Promise.allSettled([this.party.map(p => p.updateInfo(instant)), ...modifierPromises]).then(() => resolve(success));
+          return Promise.allSettled([ this.party.map(p => p.updateInfo(instant)), ...modifierPromises ]).then(() => resolve(success));
         } else {
           const args = [ this ];
           if (modifier.shouldApply(...args)) {
@@ -2818,7 +2821,7 @@ export default class BattleScene extends SceneBase {
           return mods;
         }
         const rand = Utils.randSeedInt(mods.length);
-        return [mods[rand], ...shuffleModifiers(mods.filter((_, i) => i !== rand))];
+        return [ mods[rand], ...shuffleModifiers(mods.filter((_, i) => i !== rand)) ];
       };
       modifiers = shuffleModifiers(modifiers);
     }, scene.currentBattle.turn << 4, scene.waveSeed);
@@ -2978,7 +2981,7 @@ export default class BattleScene extends SceneBase {
       keys.push(p.getBattleSpriteKey(true, true));
       keys.push("cry/" + p.species.getCryKey(p.formIndex));
       if (p.fusionSpecies) {
-        keys.push("cry/"+p.fusionSpecies.getCryKey(p.fusionFormIndex));
+        keys.push("cry/" + p.fusionSpecies.getCryKey(p.fusionFormIndex));
       }
     });
     // enemyParty has to be operated on separately from playerParty because playerPokemon =/= enemyPokemon
@@ -2987,7 +2990,7 @@ export default class BattleScene extends SceneBase {
       keys.push(p.getSpriteKey(true));
       keys.push("cry/" + p.species.getCryKey(p.formIndex));
       if (p.fusionSpecies) {
-        keys.push("cry/"+p.fusionSpecies.getCryKey(p.fusionFormIndex));
+        keys.push("cry/" + p.fusionSpecies.getCryKey(p.fusionFormIndex));
       }
     });
     return keys;
@@ -3135,7 +3138,7 @@ export default class BattleScene extends SceneBase {
    * @param sessionDataEncounterType
    */
   private isWaveMysteryEncounter(newBattleType: BattleType, waveIndex: number, sessionDataEncounterType?: MysteryEncounterType): boolean {
-    const [lowestMysteryEncounterWave, highestMysteryEncounterWave] = this.gameMode.getMysteryEncounterLegalWaves();
+    const [ lowestMysteryEncounterWave, highestMysteryEncounterWave ] = this.gameMode.getMysteryEncounterLegalWaves();
     if (this.gameMode.hasMysteryEncounters && newBattleType === BattleType.WILD && !this.gameMode.isBoss(waveIndex) && waveIndex < highestMysteryEncounterWave && waveIndex > lowestMysteryEncounterWave) {
       // Base spawn weight is BASE_MYSTERY_ENCOUNTER_SPAWN_WEIGHT/256, and increases by WEIGHT_INCREMENT_ON_SPAWN_MISS/256 for each missed attempt at spawning an encounter on a valid floor
       const sessionEncounterRate = this.mysteryEncounterSaveData.encounterSpawnChance;
@@ -3201,7 +3204,7 @@ export default class BattleScene extends SceneBase {
     }
 
     // See Enum values for base tier weights
-    const tierWeights = [MysteryEncounterTier.COMMON, MysteryEncounterTier.GREAT, MysteryEncounterTier.ULTRA, MysteryEncounterTier.ROGUE];
+    const tierWeights = [ MysteryEncounterTier.COMMON, MysteryEncounterTier.GREAT, MysteryEncounterTier.ULTRA, MysteryEncounterTier.ROGUE ];
 
     // Adjust tier weights by previously encountered events to lower odds of only Common/Great in run
     this.mysteryEncounterSaveData.encounteredEvents.forEach(seenEncounterData => {
