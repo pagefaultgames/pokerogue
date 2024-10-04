@@ -44,15 +44,13 @@ describe("Reload", () => {
       .startingWave(10)
       .battleType("single")
       .startingLevel(100) // Avoid levelling up
-      .enemyLevel(1000) // Avoid opponent dying before game.doKillOpponents()
       .disableTrainerWaves()
-      .moveset([Moves.KOWTOW_CLEAVE])
+      .moveset([Moves.SPLASH])
       .enemyMoveset(Moves.SPLASH);
     await game.dailyMode.startBattle();
 
     // Transition from Wave 10 to Wave 11 in order to trigger biome switch
-    game.move.select(Moves.KOWTOW_CLEAVE);
-    await game.phaseInterceptor.to("DamagePhase");
+    game.move.select(Moves.SPLASH);
     await game.doKillOpponents();
     game.onNextPrompt("SelectBiomePhase", Mode.OPTION_SELECT, () => {
       (game.scene.time as MockClock).overrideDelay = null;
@@ -79,15 +77,13 @@ describe("Reload", () => {
       .startingBiome(Biome.ICE_CAVE) // Will lead to Snowy Forest with randomly generated weather
       .battleType("single")
       .startingLevel(100) // Avoid levelling up
-      .enemyLevel(1000) // Avoid opponent dying before game.doKillOpponents()
       .disableTrainerWaves()
-      .moveset([Moves.KOWTOW_CLEAVE])
+      .moveset([Moves.SPLASH])
       .enemyMoveset(Moves.SPLASH);
     await game.classicMode.startBattle(); // Apparently daily mode would override the biome
 
     // Transition from Wave 10 to Wave 11 in order to trigger biome switch
-    game.move.select(Moves.KOWTOW_CLEAVE);
-    await game.phaseInterceptor.to("DamagePhase");
+    game.move.select(Moves.SPLASH);
     await game.doKillOpponents();
     await game.toNextWave();
     expect(game.phaseInterceptor.log).toContain("NewBiomeEncounterPhase");
