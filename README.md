@@ -17,7 +17,12 @@ If you have the motivation and experience with Typescript/Javascript (or are wil
 2. Run `npm run start:dev` to locally run the project in `localhost:8000`
 
 #### Linting
-We're using ESLint as our common linter and formatter. It will run automatically during the pre-commit hook but if you would like to manually run it, use the `npm run eslint` script.
+We're using ESLint as our common linter and formatter. It will run automatically during the pre-commit hook but if you would like to manually run it, use the `npm run eslint` script. To view the complete rules, check out the [eslint.config.js](./eslint.config.js) file.
+
+### 📚 Documentation
+You can find the auto-generated documentation [here](https://pagefaultgames.github.io/pokerogue/main/index.html).
+For information on enemy AI, check out the [enemy-ai.md](./docs/enemy-ai.md) file.
+For detailed guidelines on documenting your code, refer to the [comments.md](./docs/comments.md) file.
 
 ### ❔ FAQ
 
