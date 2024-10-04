@@ -15,8 +15,8 @@ import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { initSceneWithoutEncounterPhase } from "#test/utils/gameManagerUtils";
 import { MysteryEncounterPhase } from "#app/phases/mystery-encounter-phases";
 
-const namespace = "mysteryEncounter:pokemonSalesman";
-const defaultParty = [Species.LAPRAS, Species.GENGAR, Species.ABRA];
+const namespace = "mysteryEncounters/thePokemonSalesman";
+const defaultParty = [ Species.LAPRAS, Species.GENGAR, Species.ABRA ];
 const defaultBiome = Biome.CAVE;
 const defaultWave = 45;
 
@@ -38,10 +38,10 @@ describe("The Pokemon Salesman - Mystery Encounter", () => {
     game.override.disableTrainerWaves();
 
     const biomeMap = new Map<Biome, MysteryEncounterType[]>([
-      [Biome.VOLCANO, [MysteryEncounterType.MYSTERIOUS_CHALLENGERS]],
+      [ Biome.VOLCANO, [ MysteryEncounterType.MYSTERIOUS_CHALLENGERS ]],
     ]);
     HUMAN_TRANSITABLE_BIOMES.forEach(biome => {
-      biomeMap.set(biome, [MysteryEncounterType.THE_POKEMON_SALESMAN]);
+      biomeMap.set(biome, [ MysteryEncounterType.THE_POKEMON_SALESMAN ]);
     });
     vi.spyOn(MysteryEncounters, "mysteryEncountersByBiome", "get").mockReturnValue(biomeMap);
   });
@@ -61,13 +61,13 @@ describe("The Pokemon Salesman - Mystery Encounter", () => {
     expect(encounterTier).toBe(MysteryEncounterTier.ULTRA);
     expect(dialogue).toBeDefined();
     expect(dialogue.intro).toStrictEqual([
-      { text: `${namespace}.intro` },
-      { speaker: `${namespace}.speaker`, text: `${namespace}.intro_dialogue` }
+      { text: `${namespace}:intro` },
+      { speaker: `${namespace}:speaker`, text: `${namespace}:intro_dialogue` }
     ]);
     const { title, description, query } = dialogue.encounterOptionsDialogue!;
-    expect(title).toBe(`${namespace}.title`);
-    expect(description).toMatch(new RegExp(`^${namespace}\\.description(_shiny)?$`));
-    expect(query).toBe(`${namespace}.query`);
+    expect(title).toBe(`${namespace}:title`);
+    expect(description).toMatch(new RegExp(`^${namespace}\\:description(_shiny)?$`));
+    expect(query).toBe(`${namespace}:query`);
     expect(options.length).toBe(2);
   });
 
@@ -112,11 +112,11 @@ describe("The Pokemon Salesman - Mystery Encounter", () => {
       expect(optionMode).toBe(MysteryEncounterOptionMode.DISABLED_OR_DEFAULT);
       expect(dialogue).toBeDefined();
       expect(dialogue).toStrictEqual({
-        buttonLabel: `${namespace}.option.1.label`,
-        buttonTooltip: expect.stringMatching(new RegExp(`^${namespace}\\.option\\.1\\.tooltip(_shiny)?$`)),
+        buttonLabel: `${namespace}:option.1.label`,
+        buttonTooltip: expect.stringMatching(new RegExp(`^${namespace}\\:option\\.1\\.tooltip(_shiny)?$`)),
         selected: [
           {
-            text: `${namespace}.option.1.selected_message`,
+            text: `${namespace}:option.1.selected_message`,
           },
         ],
       });

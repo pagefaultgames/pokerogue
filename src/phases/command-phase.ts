@@ -2,7 +2,7 @@ import BattleScene from "#app/battle-scene";
 import { TurnCommand, BattleType } from "#app/battle";
 import { TrappedTag, EncoreTag } from "#app/data/battler-tags";
 import { MoveTargetSet, getMoveTargets } from "#app/data/move";
-import { speciesStarters } from "#app/data/pokemon-species";
+import { speciesStarterCosts } from "#app/data/balance/starters";
 import { Abilities } from "#app/enums/abilities";
 import { BattlerTagType } from "#app/enums/battler-tag-type";
 import { Biome } from "#app/enums/biome";
@@ -70,7 +70,7 @@ export class CommandPhase extends FieldPhase {
         }
       }
     } else {
-      if (this.scene.currentBattle.battleType === BattleType.MYSTERY_ENCOUNTER && this.scene.currentBattle.mysteryEncounter?.skipToFightInput) {
+      if (this.scene.currentBattle.isBattleMysteryEncounter() && this.scene.currentBattle.mysteryEncounter?.skipToFightInput) {
         this.scene.ui.clearText();
         this.scene.ui.setMode(Mode.FIGHT, this.fieldIndex);
       } else {
@@ -105,7 +105,7 @@ export class CommandPhase extends FieldPhase {
         const turnCommand: TurnCommand = { command: Command.FIGHT, cursor: cursor, move: { move: moveId, targets: [], ignorePP: args[0] }, args: args };
         const moveTargets: MoveTargetSet = turnMove === undefined ? getMoveTargets(playerPokemon, moveId) : { targets: turnMove.targets, multiple: turnMove.targets.length > 1 };
         if (!moveId) {
-          turnCommand.targets = [this.fieldIndex];
+          turnCommand.targets = [ this.fieldIndex ];
         }
         console.log(moveTargets, getPokemonNameWithAffix(playerPokemon));
         if (moveTargets.targets.length > 1 && moveTargets.multiple) {
@@ -138,7 +138,7 @@ export class CommandPhase extends FieldPhase {
       }
       break;
     case Command.BALL:
-      const notInDex = (this.scene.getEnemyField().filter(p => p.isActive(true)).some(p => !p.scene.gameData.dexData[p.species.speciesId].caughtAttr) && this.scene.gameData.getStarterCount(d => !!d.caughtAttr) < Object.keys(speciesStarters).length - 1);
+      const notInDex = (this.scene.getEnemyField().filter(p => p.isActive(true)).some(p => !p.scene.gameData.dexData[p.species.speciesId].caughtAttr) && this.scene.gameData.getStarterCount(d => !!d.caughtAttr) < Object.keys(speciesStarterCosts).length - 1);
       if (this.scene.arena.biomeType === Biome.END && (!this.scene.gameMode.isClassic || this.scene.gameMode.isFreshStartChallenge() || notInDex )) {
         this.scene.ui.setMode(Mode.COMMAND, this.fieldIndex);
         this.scene.ui.setMode(Mode.MESSAGE);
@@ -153,7 +153,7 @@ export class CommandPhase extends FieldPhase {
           this.scene.ui.showText("", 0);
           this.scene.ui.setMode(Mode.COMMAND, this.fieldIndex);
         }, null, true);
-      } else if (this.scene.currentBattle.battleType === BattleType.MYSTERY_ENCOUNTER && !this.scene.currentBattle.mysteryEncounter!.catchAllowed) {
+      } else if (this.scene.currentBattle.isBattleMysteryEncounter() && !this.scene.currentBattle.mysteryEncounter!.catchAllowed) {
         this.scene.ui.setMode(Mode.COMMAND, this.fieldIndex);
         this.scene.ui.setMode(Mode.MESSAGE);
         this.scene.ui.showText(i18next.t("battle:noPokeballMysteryEncounter"), null, () => {

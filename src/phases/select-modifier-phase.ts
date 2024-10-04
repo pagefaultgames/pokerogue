@@ -242,7 +242,7 @@ export class SelectModifierPhase extends BattlePhase {
     if (Overrides.WAIVE_ROLL_FEE_OVERRIDE) {
       return baseValue;
     } else if (lockRarities) {
-      const tierValues = [50, 125, 300, 750, 2000];
+      const tierValues = [ 50, 125, 300, 750, 2000 ];
       for (const opt of typeOptions) {
         baseValue += tierValues[opt.type.tier ?? 0];
       }
@@ -252,13 +252,13 @@ export class SelectModifierPhase extends BattlePhase {
 
     let multiplier = 1;
     if (!isNullOrUndefined(this.customModifierSettings?.rerollMultiplier)) {
-      if (this.customModifierSettings!.rerollMultiplier! < 0) {
+      if (this.customModifierSettings.rerollMultiplier < 0) {
         // Completely overrides reroll cost to -1 and early exits
         return -1;
       }
 
       // Otherwise, continue with custom multiplier
-      multiplier = this.customModifierSettings!.rerollMultiplier!;
+      multiplier = this.customModifierSettings.rerollMultiplier;
     }
     return Math.min(Math.ceil(this.scene.currentBattle.waveIndex / 10) * baseValue * Math.pow(2, this.rerollCount) * multiplier, Number.MAX_SAFE_INTEGER);
   }

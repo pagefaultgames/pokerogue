@@ -44,6 +44,10 @@ function getStatusEffectMessageKey(statusEffect: StatusEffect | undefined): stri
 }
 
 export function getStatusEffectObtainText(statusEffect: StatusEffect | undefined, pokemonNameWithAffix: string, sourceText?: string): string {
+  if (statusEffect === StatusEffect.NONE) {
+    return "";
+  }
+
   if (!sourceText) {
     const i18nKey = `${getStatusEffectMessageKey(statusEffect)}.obtain`as ParseKeys;
     return i18next.t(i18nKey, { pokemonNameWithAffix: pokemonNameWithAffix });
@@ -53,21 +57,33 @@ export function getStatusEffectObtainText(statusEffect: StatusEffect | undefined
 }
 
 export function getStatusEffectActivationText(statusEffect: StatusEffect, pokemonNameWithAffix: string): string {
+  if (statusEffect === StatusEffect.NONE) {
+    return "";
+  }
   const i18nKey = `${getStatusEffectMessageKey(statusEffect)}.activation` as ParseKeys;
   return i18next.t(i18nKey, { pokemonNameWithAffix: pokemonNameWithAffix });
 }
 
 export function getStatusEffectOverlapText(statusEffect: StatusEffect, pokemonNameWithAffix: string): string {
+  if (statusEffect === StatusEffect.NONE) {
+    return "";
+  }
   const i18nKey = `${getStatusEffectMessageKey(statusEffect)}.overlap` as ParseKeys;
   return i18next.t(i18nKey, { pokemonNameWithAffix: pokemonNameWithAffix });
 }
 
 export function getStatusEffectHealText(statusEffect: StatusEffect, pokemonNameWithAffix: string): string {
+  if (statusEffect === StatusEffect.NONE) {
+    return "";
+  }
   const i18nKey = `${getStatusEffectMessageKey(statusEffect)}.heal` as ParseKeys;
   return i18next.t(i18nKey, { pokemonNameWithAffix: pokemonNameWithAffix });
 }
 
 export function getStatusEffectDescriptor(statusEffect: StatusEffect): string {
+  if (statusEffect === StatusEffect.NONE) {
+    return "";
+  }
   const i18nKey = `${getStatusEffectMessageKey(statusEffect)}.description` as ParseKeys;
   return i18next.t(i18nKey);
 }

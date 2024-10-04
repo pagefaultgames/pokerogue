@@ -1,14 +1,14 @@
-import PokemonInfoContainer from "./pokemon-info-container";
-import BattleScene from "../battle-scene";
-import { Gender } from "../data/gender";
-import { Type } from "../data/type";
-import * as Utils from "../utils";
-import { TextStyle, addTextObject } from "./text";
-import { speciesEggMoves } from "#app/data/egg-moves";
+import PokemonInfoContainer from "#app/ui/pokemon-info-container";
+import BattleScene from "#app/battle-scene";
+import { Gender } from "#app/data/gender";
+import { Type } from "#app/data/type";
+import * as Utils from "#app/utils";
+import { TextStyle, addTextObject } from "#app/ui/text";
+import { speciesEggMoves } from "#app/data/balance/egg-moves";
 import { allMoves } from "#app/data/move";
-import { Species } from "#app/enums/species";
+import { Species } from "#enums/species";
 import { getEggTierForSpecies } from "#app/data/egg";
-import { starterColors } from "../battle-scene";
+import { starterColors } from "#app/battle-scene";
 import { argbFromRgba } from "@material/material-color-utilities";
 import { EggHatchData } from "#app/data/egg-hatch-data";
 import { PlayerPokemon } from "#app/field/pokemon";
@@ -47,11 +47,11 @@ export default class PokemonHatchInfoContainer extends PokemonInfoContainer {
     this.pokemonListContainer.add(this.currentPokemonSprite);
 
     // setup name and number
-    this.pokemonNumberText = addTextObject(this.scene, 80, 107.5, "0000", TextStyle.SUMMARY, {fontSize: 74});
+    this.pokemonNumberText = addTextObject(this.scene, 80, 107.5, "0000", TextStyle.SUMMARY, { fontSize: 74 });
     this.pokemonNumberText.setOrigin(0, 0);
     this.pokemonListContainer.add(this.pokemonNumberText);
 
-    this.pokemonNameText = addTextObject(this.scene, 7, 107.5, "", TextStyle.SUMMARY, {fontSize: 74});
+    this.pokemonNameText = addTextObject(this.scene, 7, 107.5, "", TextStyle.SUMMARY, { fontSize: 74 });
     this.pokemonNameText.setOrigin(0, 0);
     this.pokemonListContainer.add(this.pokemonNameText);
 
@@ -89,7 +89,7 @@ export default class PokemonHatchInfoContainer extends PokemonInfoContainer {
       const eggMoveBg = this.scene.add.nineslice(70, 0, "type_bgs", "unknown", 92, 14, 2, 2, 2, 2);
       eggMoveBg.setOrigin(1, 0);
 
-      const eggMoveLabel = addTextObject(this.scene, 70 -eggMoveBg.width / 2, 0, "???", TextStyle.PARTY);
+      const eggMoveLabel = addTextObject(this.scene, 70 - eggMoveBg.width / 2, 0, "???", TextStyle.PARTY);
       eggMoveLabel.setOrigin(0.5, 0);
 
       this.pokemonEggMoveBgs.push(eggMoveBg);

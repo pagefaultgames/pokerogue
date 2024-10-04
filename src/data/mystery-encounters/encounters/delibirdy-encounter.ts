@@ -10,7 +10,7 @@ import { CombinationPokemonRequirement, HeldItemRequirement, MoneyRequirement } 
 import { getEncounterText, showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
-import { HealingBoosterModifier, HiddenAbilityRateBoosterModifier, LevelIncrementBoosterModifier, PokemonHeldItemModifier, PreserveBerryModifier } from "#app/modifier/modifier";
+import { BerryModifier, HealingBoosterModifier, LevelIncrementBoosterModifier, MoneyMultiplierModifier, PokemonHeldItemModifier, PreserveBerryModifier } from "#app/modifier/modifier";
 import { OptionSelectItem } from "#app/ui/abstact-option-select-ui-handler";
 import { applyModifierTypeToPlayerPokemon } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
 import i18next from "#app/plugins/i18n";
@@ -19,10 +19,10 @@ import { getPokemonSpecies } from "#app/data/pokemon-species";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
 
 /** the i18n namespace for this encounter */
-const namespace = "mysteryEncounter:delibirdy";
+const namespace = "mysteryEncounters/delibirdy";
 
 /** Berries only */
-const OPTION_2_ALLOWED_MODIFIERS = ["BerryModifier", "PokemonInstantReviveModifier"];
+const OPTION_2_ALLOWED_MODIFIERS = [ "BerryModifier", "PokemonInstantReviveModifier" ];
 
 /** Disallowed items are berries, Reviver Seeds, and Vitamins (form change items and fusion items are not PokemonHeldItemModifiers) */
 const OPTION_3_DISALLOWED_MODIFIERS = [
@@ -33,7 +33,7 @@ const OPTION_3_DISALLOWED_MODIFIERS = [
   "PokemonBaseStatTotalModifier"
 ];
 
-const DELIBIRDY_MONEY_PRICE_MULTIPLIER = 1.5;
+const DELIBIRDY_MONEY_PRICE_MULTIPLIER = 2;
 
 /**
  * Delibird-y encounter.
@@ -81,15 +81,15 @@ export const DelibirdyEncounter: MysteryEncounter =
     ])
     .withIntroDialogue([
       {
-        text: `${namespace}.intro`,
+        text: `${namespace}:intro`,
       }
     ])
-    .withTitle(`${namespace}.title`)
-    .withDescription(`${namespace}.description`)
-    .withQuery(`${namespace}.query`)
+    .withTitle(`${namespace}:title`)
+    .withDescription(`${namespace}:description`)
+    .withQuery(`${namespace}:query`)
     .withOutroDialogue([
       {
-        text: `${namespace}.outro`,
+        text: `${namespace}:outro`,
       }
     ])
     .withOnInit((scene: BattleScene) => {
@@ -108,11 +108,11 @@ export const DelibirdyEncounter: MysteryEncounter =
         .newOptionWithMode(MysteryEncounterOptionMode.DISABLED_OR_DEFAULT)
         .withSceneMoneyRequirement(0, DELIBIRDY_MONEY_PRICE_MULTIPLIER) // Must have money to spawn
         .withDialogue({
-          buttonLabel: `${namespace}.option.1.label`,
-          buttonTooltip: `${namespace}.option.1.tooltip`,
+          buttonLabel: `${namespace}:option.1.label`,
+          buttonTooltip: `${namespace}:option.1.tooltip`,
           selected: [
             {
-              text: `${namespace}.option.1.selected`,
+              text: `${namespace}:option.1.selected`,
             },
           ],
         })
@@ -122,9 +122,9 @@ export const DelibirdyEncounter: MysteryEncounter =
           return true;
         })
         .withOptionPhase(async (scene: BattleScene) => {
-          // Give the player an Ability Charm
+          // Give the player an Amulet Coin
           // Check if the player has max stacks of that item already
-          const existing = scene.findModifier(m => m instanceof HiddenAbilityRateBoosterModifier) as HiddenAbilityRateBoosterModifier;
+          const existing = scene.findModifier(m => m instanceof MoneyMultiplierModifier) as MoneyMultiplierModifier;
 
           if (existing && existing.getStackCount() >= existing.getMaxStackCount(scene)) {
             // At max stacks, give the first party pokemon a Shell Bell instead
@@ -133,7 +133,7 @@ export const DelibirdyEncounter: MysteryEncounter =
             scene.playSound("item_fanfare");
             await showEncounterText(scene, i18next.t("battle:rewardGain", { modifierName: shellBell.name }), null, undefined, true);
           } else {
-            scene.unshiftPhase(new ModifierRewardPhase(scene, modifierTypes.ABILITY_CHARM));
+            scene.unshiftPhase(new ModifierRewardPhase(scene, modifierTypes.AMULET_COIN));
           }
 
           leaveEncounterWithoutBattle(scene, true);
@@ -145,12 +145,12 @@ export const DelibirdyEncounter: MysteryEncounter =
         .newOptionWithMode(MysteryEncounterOptionMode.DISABLED_OR_DEFAULT)
         .withPrimaryPokemonRequirement(new HeldItemRequirement(OPTION_2_ALLOWED_MODIFIERS))
         .withDialogue({
-          buttonLabel: `${namespace}.option.2.label`,
-          buttonTooltip: `${namespace}.option.2.tooltip`,
-          secondOptionPrompt: `${namespace}.option.2.select_prompt`,
+          buttonLabel: `${namespace}:option.2.label`,
+          buttonTooltip: `${namespace}:option.2.tooltip`,
+          secondOptionPrompt: `${namespace}:option.2.select_prompt`,
           selected: [
             {
-              text: `${namespace}.option.2.selected`,
+              text: `${namespace}:option.2.selected`,
             },
           ],
         })
@@ -159,7 +159,7 @@ export const DelibirdyEncounter: MysteryEncounter =
           const onPokemonSelected = (pokemon: PlayerPokemon) => {
             // Get Pokemon held items and filter for valid ones
             const validItems = pokemon.getHeldItems().filter((it) => {
-              return OPTION_2_ALLOWED_MODIFIERS.some(heldItem => it.constructor.name === heldItem);
+              return OPTION_2_ALLOWED_MODIFIERS.some(heldItem => it.constructor.name === heldItem) && it.isTransferable;
             });
 
             return validItems.map((modifier: PokemonHeldItemModifier) => {
@@ -179,12 +179,11 @@ export const DelibirdyEncounter: MysteryEncounter =
             });
           };
 
-          // Only Pokemon that can gain benefits are above 1/3rd HP with no status
           const selectableFilter = (pokemon: Pokemon) => {
-            // If pokemon meets primary pokemon reqs, it can be selected
+            // If pokemon has valid item, it can be selected
             const meetsReqs = encounter.options[1].pokemonMeetsPrimaryRequirements(scene, pokemon);
             if (!meetsReqs) {
-              return getEncounterText(scene, `${namespace}.invalid_selection`) ?? null;
+              return getEncounterText(scene, `${namespace}:invalid_selection`) ?? null;
             }
 
             return null;
@@ -194,10 +193,10 @@ export const DelibirdyEncounter: MysteryEncounter =
         })
         .withOptionPhase(async (scene: BattleScene) => {
           const encounter = scene.currentBattle.mysteryEncounter!;
-          const modifier = encounter.misc.chosenModifier;
+          const modifier: BerryModifier | HealingBoosterModifier = encounter.misc.chosenModifier;
 
           // Give the player a Candy Jar if they gave a Berry, and a Healing Charm for Reviver Seed
-          if (modifier.type.name.includes("Berry")) {
+          if (modifier instanceof BerryModifier) {
             // Check if the player has max stacks of that Candy Jar already
             const existing = scene.findModifier(m => m instanceof LevelIncrementBoosterModifier) as LevelIncrementBoosterModifier;
 
@@ -240,12 +239,12 @@ export const DelibirdyEncounter: MysteryEncounter =
         .newOptionWithMode(MysteryEncounterOptionMode.DISABLED_OR_DEFAULT)
         .withPrimaryPokemonRequirement(new HeldItemRequirement(OPTION_3_DISALLOWED_MODIFIERS, 1, true))
         .withDialogue({
-          buttonLabel: `${namespace}.option.3.label`,
-          buttonTooltip: `${namespace}.option.3.tooltip`,
-          secondOptionPrompt: `${namespace}.option.3.select_prompt`,
+          buttonLabel: `${namespace}:option.3.label`,
+          buttonTooltip: `${namespace}:option.3.tooltip`,
+          secondOptionPrompt: `${namespace}:option.3.select_prompt`,
           selected: [
             {
-              text: `${namespace}.option.3.selected`,
+              text: `${namespace}:option.3.selected`,
             },
           ],
         })
@@ -254,7 +253,7 @@ export const DelibirdyEncounter: MysteryEncounter =
           const onPokemonSelected = (pokemon: PlayerPokemon) => {
             // Get Pokemon held items and filter for valid ones
             const validItems = pokemon.getHeldItems().filter((it) => {
-              return !OPTION_3_DISALLOWED_MODIFIERS.some(heldItem => it.constructor.name === heldItem);
+              return !OPTION_3_DISALLOWED_MODIFIERS.some(heldItem => it.constructor.name === heldItem) && it.isTransferable;
             });
 
             return validItems.map((modifier: PokemonHeldItemModifier) => {
@@ -274,12 +273,11 @@ export const DelibirdyEncounter: MysteryEncounter =
             });
           };
 
-          // Only Pokemon that can gain benefits are above 1/3rd HP with no status
           const selectableFilter = (pokemon: Pokemon) => {
-            // If pokemon meets primary pokemon reqs, it can be selected
+            // If pokemon has valid item, it can be selected
             const meetsReqs = encounter.options[2].pokemonMeetsPrimaryRequirements(scene, pokemon);
             if (!meetsReqs) {
-              return getEncounterText(scene, `${namespace}.invalid_selection`) ?? null;
+              return getEncounterText(scene, `${namespace}:invalid_selection`) ?? null;
             }
 
             return null;

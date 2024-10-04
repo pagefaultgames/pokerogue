@@ -23,8 +23,8 @@ import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
 import { CommandPhase } from "#app/phases/command-phase";
 import { MovePhase } from "#app/phases/move-phase";
 
-const namespace = "mysteryEncounter:trashToTreasure";
-const defaultParty = [Species.LAPRAS, Species.GENGAR, Species.ABRA];
+const namespace = "mysteryEncounters/trashToTreasure";
+const defaultParty = [ Species.LAPRAS, Species.GENGAR, Species.ABRA ];
 const defaultBiome = Biome.CAVE;
 const defaultWave = 45;
 
@@ -47,7 +47,7 @@ describe("Trash to Treasure - Mystery Encounter", () => {
 
     vi.spyOn(MysteryEncounters, "mysteryEncountersByBiome", "get").mockReturnValue(
       new Map<Biome, MysteryEncounterType[]>([
-        [Biome.CAVE, [MysteryEncounterType.TRASH_TO_TREASURE]],
+        [ Biome.CAVE, [ MysteryEncounterType.TRASH_TO_TREASURE ]],
       ])
     );
   });
@@ -64,10 +64,10 @@ describe("Trash to Treasure - Mystery Encounter", () => {
     expect(TrashToTreasureEncounter.encounterType).toBe(MysteryEncounterType.TRASH_TO_TREASURE);
     expect(TrashToTreasureEncounter.encounterTier).toBe(MysteryEncounterTier.ULTRA);
     expect(TrashToTreasureEncounter.dialogue).toBeDefined();
-    expect(TrashToTreasureEncounter.dialogue.intro).toStrictEqual([{ text: `${namespace}.intro` }]);
-    expect(TrashToTreasureEncounter.dialogue.encounterOptionsDialogue?.title).toBe(`${namespace}.title`);
-    expect(TrashToTreasureEncounter.dialogue.encounterOptionsDialogue?.description).toBe(`${namespace}.description`);
-    expect(TrashToTreasureEncounter.dialogue.encounterOptionsDialogue?.query).toBe(`${namespace}.query`);
+    expect(TrashToTreasureEncounter.dialogue.intro).toStrictEqual([{ text: `${namespace}:intro` }]);
+    expect(TrashToTreasureEncounter.dialogue.encounterOptionsDialogue?.title).toBe(`${namespace}:title`);
+    expect(TrashToTreasureEncounter.dialogue.encounterOptionsDialogue?.description).toBe(`${namespace}:description`);
+    expect(TrashToTreasureEncounter.dialogue.encounterOptionsDialogue?.query).toBe(`${namespace}:query`);
     expect(TrashToTreasureEncounter.options.length).toBe(2);
   });
 
@@ -94,7 +94,7 @@ describe("Trash to Treasure - Mystery Encounter", () => {
             isBoss: true,
             formIndex: 1,
             bossSegmentModifier: 1,
-            moveSet: [Moves.PAYBACK, Moves.GUNK_SHOT, Moves.STOMPING_TANTRUM, Moves.DRAIN_PUNCH],
+            moveSet: [ Moves.PAYBACK, Moves.GUNK_SHOT, Moves.STOMPING_TANTRUM, Moves.DRAIN_PUNCH ],
           }
         ],
       }
@@ -110,11 +110,11 @@ describe("Trash to Treasure - Mystery Encounter", () => {
       expect(option1.optionMode).toBe(MysteryEncounterOptionMode.DEFAULT);
       expect(option1.dialogue).toBeDefined();
       expect(option1.dialogue).toStrictEqual({
-        buttonLabel: `${namespace}.option.1.label`,
-        buttonTooltip: `${namespace}.option.1.tooltip`,
+        buttonLabel: `${namespace}:option.1.label`,
+        buttonTooltip: `${namespace}:option.1.tooltip`,
         selected: [
           {
-            text: `${namespace}.option.1.selected`,
+            text: `${namespace}:option.1.selected`,
           },
         ],
       });
@@ -155,11 +155,11 @@ describe("Trash to Treasure - Mystery Encounter", () => {
       expect(option1.optionMode).toBe(MysteryEncounterOptionMode.DEFAULT);
       expect(option1.dialogue).toBeDefined();
       expect(option1.dialogue).toStrictEqual({
-        buttonLabel: `${namespace}.option.2.label`,
-        buttonTooltip: `${namespace}.option.2.tooltip`,
+        buttonLabel: `${namespace}:option.2.label`,
+        buttonTooltip: `${namespace}:option.2.tooltip`,
         selected: [
           {
-            text: `${namespace}.option.2.selected`,
+            text: `${namespace}:option.2.selected`,
           },
         ],
       });
@@ -175,7 +175,7 @@ describe("Trash to Treasure - Mystery Encounter", () => {
       expect(scene.getCurrentPhase()?.constructor.name).toBe(CommandPhase.name);
       expect(enemyField.length).toBe(1);
       expect(enemyField[0].species.speciesId).toBe(Species.GARBODOR);
-      expect(enemyField[0].moveset).toEqual([new PokemonMove(Moves.PAYBACK), new PokemonMove(Moves.GUNK_SHOT), new PokemonMove(Moves.STOMPING_TANTRUM), new PokemonMove(Moves.DRAIN_PUNCH)]);
+      expect(enemyField[0].moveset).toEqual([ new PokemonMove(Moves.PAYBACK), new PokemonMove(Moves.GUNK_SHOT), new PokemonMove(Moves.STOMPING_TANTRUM), new PokemonMove(Moves.DRAIN_PUNCH) ]);
 
       // Should have used moves pre-battle
       const movePhases = phaseSpy.mock.calls.filter(p => p[0] instanceof MovePhase).map(p => p[0]);
