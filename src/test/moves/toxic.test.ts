@@ -73,4 +73,17 @@ describe("Moves - Toxic", () => {
 
     expect(game.scene.getEnemyPokemon()!.status).toBeUndefined();
   });
+
+  it("moves other than Toxic should not hit semi-invulnerable targets even if user is Poison-type", async () => {
+    game.override.moveset(Moves.SWIFT);
+    game.override.enemyMoveset(Moves.FLY);
+    await game.classicMode.startBattle([Species.TOXAPEX]);
+
+    game.move.select(Moves.SWIFT);
+    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+    await game.phaseInterceptor.to("BerryPhase", false);
+
+    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp());
+  });
 });
