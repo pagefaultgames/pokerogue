@@ -1309,8 +1309,7 @@ export class GameData {
         console.debug("Session data saved");
 
         if (!bypassLogin && sync) {
-          Utils.apiPost("savedata/updateall", JSON.stringify(request, (k: any, v: any) => typeof v === "bigint" ? v <= maxIntAttrValue ? Number(v) : v.toString() : v), undefined, true)
-            .then(response => response.text())
+          api.updateAllSavedata(request)
             .then(error => {
               if (sync) {
                 this.scene.lastSavePlayTime = 0;

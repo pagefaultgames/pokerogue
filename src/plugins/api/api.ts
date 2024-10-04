@@ -1,12 +1,13 @@
 import type { PokerogueApiClearSessionData } from "#app/@types/pokerogue-api";
 import { loggedInUser } from "#app/account";
-import { SESSION_ID_COOKIE_NAME } from "#app/constants";
+import { MAX_INT_ATTR_VALUE, SESSION_ID_COOKIE_NAME } from "#app/constants";
 import type { SessionSaveData } from "#app/system/game-data";
 import type { RankingEntry, ScoreboardCategory } from "#app/ui/daily-run-scoreboard";
 import { getCookie, removeCookie, setCookie } from "#app/utils";
 import type { AccountInfoResponse } from "./models/AccountInfo";
 import type { AccountLoginRequest, AccountLoginResponse } from "./models/AccountLogin";
 import type { TitleStatsResponse } from "./models/TitleStats";
+import type { UpdateAllSavedataRequest } from "./models/UpdateAllSavedata";
 import type { VerifySavedataResponse } from "./models/VerifySavedata";
 
 type DataType = "json" | "form-urlencoded";
@@ -287,6 +288,24 @@ export class Api {
     }
 
     return null;
+  }
+
+  /**
+   * Update all savedata
+   * @param bodyData The {@linkcode UpdateAllSavedataRequest | request data} to send
+   * @returns an error message if something went wrong
+   */
+  public async updateAllSavedata(bodyData: UpdateAllSavedataRequest) {
+    try {
+      const rawBodyData = JSON.stringify(bodyData, (_k: any, v: any) =>
+        typeof v === "bigint" ? (v <= MAX_INT_ATTR_VALUE ? Number(v) : v.toString()) : v
+      );
+      const response = await this.doPost<string>("/savedata/updateall", rawBodyData);
+      return await response.text();
+    } catch (err) {
+      console.warn("Could not update all savedata!", err);
+      return null;
+    }
   }
 
   /**
