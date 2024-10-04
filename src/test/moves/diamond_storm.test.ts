@@ -36,7 +36,7 @@ describe("Moves - Diamond Storm", () => {
     const diamondStorm = allMoves[Moves.DIAMOND_STORM];
     vi.spyOn(diamondStorm, "chance", "get").mockReturnValue(100);
     vi.spyOn(diamondStorm, "accuracy", "get").mockReturnValue(100);
-    await game.classicMode.startBattle([Species.FEEBAS]);
+    await game.classicMode.startBattle([ Species.FEEBAS ]);
 
     game.move.select(Moves.DIAMOND_STORM);
     await game.phaseInterceptor.to("BerryPhase");
