@@ -5,7 +5,7 @@ import { Moves } from "#app/enums/moves";
 import { Biome } from "#app/enums/biome";
 import { Mode } from "#app/ui/ui";
 import ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
-import { Species } from "#app/enums/species";
+import { Species } from "#enums/species";
 
 //const TIMEOUT = 20 * 1000;
 
