@@ -331,21 +331,6 @@ export async function localPing() {
   }
 }
 
-export function apiFetch(path: string, authed: boolean = false): Promise<Response> {
-  return (isLocal && isLocalServerConnected) || !isLocal ? new Promise((resolve, reject) => {
-    const request = {};
-    if (authed) {
-      const sId = getCookie(sessionIdKey);
-      if (sId) {
-        request["headers"] = { "Authorization": sId };
-      }
-    }
-    fetch(`${apiUrl}/${path}`, request)
-      .then(response => resolve(response))
-      .catch(err => reject(err));
-  }) : new Promise(() => {});
-}
-
 export function apiPost(path: string, data?: any, contentType: string = "application/json", authed: boolean = false): Promise<Response> {
   return (isLocal && isLocalServerConnected) || !isLocal ? new Promise((resolve, reject) => {
     const headers = {
