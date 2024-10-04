@@ -28,7 +28,7 @@ describe("Abilities - Competitive", () => {
       .enemySpecies(Species.BEEDRILL)
       .enemyMoveset(Moves.TICKLE)
       .startingLevel(1)
-      .moveset([Moves.SPLASH, Moves.CLOSE_COMBAT])
+      .moveset([ Moves.SPLASH, Moves.CLOSE_COMBAT ])
       .ability(Abilities.COMPETITIVE);
   });
 
@@ -56,8 +56,9 @@ describe("Abilities - Competitive", () => {
     expect(playerPokemon.getStatStage(Stat.DEF)).toBe(-1);
     expect(playerPokemon.getStatStage(Stat.SPATK)).toBe(0);
   });
+  
   it("white herb should remove only the negative effects", async () => {
-    game.override.startingHeldItems([{ name: "WHITE_HERB"}]);
+    game.override.startingHeldItems([{ name: "WHITE_HERB" }]);
     await game.classicMode.startBattle([ Species.FLYGON ]);
 
     const playerPokemon = game.scene.getPlayerPokemon()!;

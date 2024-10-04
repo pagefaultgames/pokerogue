@@ -40,7 +40,7 @@ export class StatStageChangePhase extends PokemonPhase {
     // Check if multiple stats are being changed at the same time, then run SSCPhase for each of them
     if (this.stats.length > 1) {
       for (let i = 0; i < this.stats.length; i++) {
-        const stat = [this.stats[i]];
+        const stat = [ this.stats[i] ];
         this.scene.unshiftPhase(new StatStageChangePhase(this.scene, this.battlerIndex, this.selfTarget, stat, this.stages, this.showMessage, this.ignoreAbilities, this.canBeCopied, this.onChange));
       }
       return this.end();
