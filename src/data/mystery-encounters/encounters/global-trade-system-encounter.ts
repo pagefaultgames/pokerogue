@@ -35,15 +35,15 @@ const WONDER_TRADE_SHINY_CHANCE = 512;
 const MAX_WONDER_TRADE_SHINY_CHANCE = 4096;
 
 const LEGENDARY_TRADE_POOLS = {
-  1: [Species.RATTATA, Species.PIDGEY, Species.WEEDLE],
-  2: [Species.SENTRET, Species.HOOTHOOT, Species.LEDYBA],
-  3: [Species.POOCHYENA, Species.ZIGZAGOON, Species.TAILLOW],
-  4: [Species.BIDOOF, Species.STARLY, Species.KRICKETOT],
-  5: [Species.PATRAT, Species.PURRLOIN, Species.PIDOVE],
-  6: [Species.BUNNELBY, Species.LITLEO, Species.SCATTERBUG],
-  7: [Species.PIKIPEK, Species.YUNGOOS, Species.ROCKRUFF],
-  8: [Species.SKWOVET, Species.WOOLOO, Species.ROOKIDEE],
-  9: [Species.LECHONK, Species.FIDOUGH, Species.TAROUNTULA]
+  1: [ Species.RATTATA, Species.PIDGEY, Species.WEEDLE ],
+  2: [ Species.SENTRET, Species.HOOTHOOT, Species.LEDYBA ],
+  3: [ Species.POOCHYENA, Species.ZIGZAGOON, Species.TAILLOW ],
+  4: [ Species.BIDOOF, Species.STARLY, Species.KRICKETOT ],
+  5: [ Species.PATRAT, Species.PURRLOIN, Species.PIDOVE ],
+  6: [ Species.BUNNELBY, Species.LITLEO, Species.SCATTERBUG ],
+  7: [ Species.PIKIPEK, Species.YUNGOOS, Species.ROCKRUFF ],
+  8: [ Species.SKWOVET, Species.WOOLOO, Species.ROOKIDEE ],
+  9: [ Species.LECHONK, Species.FIDOUGH, Species.TAROUNTULA ]
 };
 
 /** Exclude Paradox mons as they aren't considered legendary/mythical */
@@ -387,11 +387,11 @@ export const GlobalTradeSystemEncounter: MysteryEncounter =
           let item: ModifierTypeOption | null = null;
           // TMs excluded from possible rewards
           while (!item || item.type.id.includes("TM_")) {
-            item = getPlayerModifierTypeOptions(1, scene.getParty(), [], { guaranteedModifierTiers: [tier], allowLuckUpgrades: false })[0];
+            item = getPlayerModifierTypeOptions(1, scene.getParty(), [], { guaranteedModifierTiers: [ tier ], allowLuckUpgrades: false })[0];
           }
 
           encounter.setDialogueToken("itemName", item.type.name);
-          setEncounterRewards(scene, { guaranteedModifierTypeOptions: [item], fillRemaining: false });
+          setEncounterRewards(scene, { guaranteedModifierTypeOptions: [ item ], fillRemaining: false });
 
           // Remove the chosen modifier if its stacks go to 0
           modifier.stackCount -= 1;
@@ -650,7 +650,7 @@ function doPokemonTradeSequence(scene: BattleScene, tradedPokemon: PlayerPokemon
             // addPokeballOpenParticles(scene, tradedPokemon.x, tradedPokemon.y, tradedPokemon.pokeball);
 
             scene.tweens.add({
-              targets: [tradedPokemonTintSprite, tradedPokemonSprite],
+              targets: [ tradedPokemonTintSprite, tradedPokemonSprite ],
               duration: 500,
               ease: "Sine.easeIn",
               scale: 0.25,
@@ -726,7 +726,7 @@ function doPokemonTradeFlyBySequence(scene: BattleScene, tradedPokemonSprite: Ph
       duration: FADE_DELAY,
       onComplete: () => {
         scene.tweens.add({
-          targets: [receivedPokemonSprite, tradedPokemonSprite],
+          targets: [ receivedPokemonSprite, tradedPokemonSprite ],
           y: tradeBaseBg.displayWidth / 2 - 100,
           ease: "Cubic.easeInOut",
           duration: BASE_ANIM_DURATION * 3,
