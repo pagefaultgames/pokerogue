@@ -27,7 +27,7 @@ describe("Moves - Triple Arrows", () => {
     game = new GameManager(phaserGame);
     game.override
       .ability(Abilities.BALL_FETCH)
-      .moveset([Moves.TRIPLE_ARROWS])
+      .moveset([ Moves.TRIPLE_ARROWS ])
       .battleType("single")
       .enemySpecies(Species.MAGIKARP)
       .enemyAbility(Abilities.STURDY)
@@ -38,7 +38,7 @@ describe("Moves - Triple Arrows", () => {
   });
 
   it("has a 30% flinch chance and 50% defense drop chance", async () => {
-    await game.classicMode.startBattle([Species.FEEBAS]);
+    await game.classicMode.startBattle([ Species.FEEBAS ]);
 
     game.move.select(Moves.TRIPLE_ARROWS);
     await game.phaseInterceptor.to("BerryPhase");
@@ -49,7 +49,7 @@ describe("Moves - Triple Arrows", () => {
 
   it("is affected normally by Serene Grace", async () => {
     game.override.ability(Abilities.SERENE_GRACE);
-    await game.classicMode.startBattle([Species.FEEBAS]);
+    await game.classicMode.startBattle([ Species.FEEBAS ]);
 
     game.move.select(Moves.TRIPLE_ARROWS);
     await game.phaseInterceptor.to("BerryPhase");
