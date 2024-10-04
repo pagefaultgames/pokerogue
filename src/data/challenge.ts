@@ -582,7 +582,7 @@ export class SingleGenerationChallenge extends Challenge {
       }
       break;
     case 115:
-      battleConfig.setSeedOffsetWave(35).setCustomModifierRewards({ guaranteedModifierTiers: [ModifierTier.ROGUE, ModifierTier.ROGUE, ModifierTier.ULTRA, ModifierTier.ULTRA, ModifierTier.ULTRA], allowLuckUpgrades: false });
+      battleConfig.setSeedOffsetWave(35).setCustomModifierRewards({ guaranteedModifierTiers: [ ModifierTier.ROGUE, ModifierTier.ROGUE, ModifierTier.ULTRA, ModifierTier.ULTRA, ModifierTier.ULTRA ], allowLuckUpgrades: false });
       trainerTypes = [ TrainerType.ROCKET_BOSS_GIOVANNI_1, TrainerType.ROCKET_BOSS_GIOVANNI_1, TrainerType.UNKNOWN, TrainerType.CYRUS, TrainerType.GHETSIS, TrainerType.LYSANDRE, TrainerType.UNKNOWN, TrainerType.ROSE, TrainerType.PENNY ];
       if (this.value === 3) {
         if (rand !== 2) {
@@ -604,7 +604,7 @@ export class SingleGenerationChallenge extends Challenge {
       }
       break;
     case 165:
-      battleConfig.setSeedOffsetWave(35).setCustomModifierRewards({ guaranteedModifierTiers: [ModifierTier.ROGUE, ModifierTier.ROGUE, ModifierTier.ULTRA, ModifierTier.ULTRA, ModifierTier.ULTRA, ModifierTier.ULTRA], allowLuckUpgrades: false });
+      battleConfig.setSeedOffsetWave(35).setCustomModifierRewards({ guaranteedModifierTiers: [ ModifierTier.ROGUE, ModifierTier.ROGUE, ModifierTier.ULTRA, ModifierTier.ULTRA, ModifierTier.ULTRA, ModifierTier.ULTRA ], allowLuckUpgrades: false });
       trainerTypes = [ TrainerType.ROCKET_BOSS_GIOVANNI_2, TrainerType.ROCKET_BOSS_GIOVANNI_2, TrainerType.UNKNOWN, TrainerType.CYRUS_2, TrainerType.GHETSIS_2, TrainerType.LYSANDRE_2, TrainerType.UNKNOWN, TrainerType.ROSE_2, TrainerType.PENNY_2 ];
       if (this.value === 3) {
         if (rand !== 2) {
