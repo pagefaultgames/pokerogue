@@ -52,7 +52,7 @@ import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
 import { getSpriteKeysFromSpecies } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
 
 /** the i18n namespace for the encounter */
-const namespace = "mysteryEncounter:bugTypeSuperfan";
+const namespace = "mysteryEncounters/bugTypeSuperfan";
 
 const POOL_1_POKEMON = [
   Species.PARASECT,
@@ -203,11 +203,11 @@ export const BugTypeSuperfanEncounter: MysteryEncounter =
     .withAutoHideIntroVisuals(false)
     .withIntroDialogue([
       {
-        text: `${namespace}.intro`,
+        text: `${namespace}:intro`,
       },
       {
-        speaker: `${namespace}.speaker`,
-        text: `${namespace}.intro_dialogue`,
+        speaker: `${namespace}:speaker`,
+        text: `${namespace}:intro_dialogue`,
       },
     ])
     .withOnInit((scene: BattleScene) => {
@@ -276,17 +276,17 @@ export const BugTypeSuperfanEncounter: MysteryEncounter =
 
       return true;
     })
-    .withTitle(`${namespace}.title`)
-    .withDescription(`${namespace}.description`)
-    .withQuery(`${namespace}.query`)
+    .withTitle(`${namespace}:title`)
+    .withDescription(`${namespace}:description`)
+    .withQuery(`${namespace}:query`)
     .withSimpleOption(
       {
-        buttonLabel: `${namespace}.option.1.label`,
-        buttonTooltip: `${namespace}.option.1.tooltip`,
+        buttonLabel: `${namespace}:option.1.label`,
+        buttonTooltip: `${namespace}:option.1.tooltip`,
         selected: [
           {
-            speaker: `${namespace}.speaker`,
-            text: `${namespace}.option.1.selected`,
+            speaker: `${namespace}:speaker`,
+            text: `${namespace}:option.1.selected`,
           },
         ],
       },
@@ -317,9 +317,9 @@ export const BugTypeSuperfanEncounter: MysteryEncounter =
       .newOptionWithMode(MysteryEncounterOptionMode.DISABLED_OR_DEFAULT)
       .withPrimaryPokemonRequirement(new TypeRequirement(Type.BUG, false, 1)) // Must have 1 Bug type on team
       .withDialogue({
-        buttonLabel: `${namespace}.option.2.label`,
-        buttonTooltip: `${namespace}.option.2.tooltip`,
-        disabledButtonTooltip: `${namespace}.option.2.disabled_tooltip`
+        buttonLabel: `${namespace}:option.2.label`,
+        buttonTooltip: `${namespace}:option.2.tooltip`,
+        disabledButtonTooltip: `${namespace}:option.2.disabled_tooltip`
       })
       .withPreOptionPhase(async (scene: BattleScene) => {
         // Player shows off their bug types
@@ -327,31 +327,31 @@ export const BugTypeSuperfanEncounter: MysteryEncounter =
 
         // Player gets different rewards depending on the number of bug types they have
         const numBugTypes = scene.getParty().filter(p => p.isOfType(Type.BUG, true)).length;
-        const numBugTypesText = i18next.t(`${namespace}.numBugTypes`, { count: numBugTypes });
+        const numBugTypesText = i18next.t(`${namespace}:numBugTypes`, { count: numBugTypes });
         encounter.setDialogueToken("numBugTypes", numBugTypesText);
 
         if (numBugTypes < 2) {
           setEncounterRewards(scene, { guaranteedModifierTypeFuncs: [modifierTypes.SUPER_LURE, modifierTypes.GREAT_BALL], fillRemaining: false });
           encounter.selectedOption!.dialogue!.selected = [
             {
-              speaker: `${namespace}.speaker`,
-              text: `${namespace}.option.2.selected_0_to_1`,
+              speaker: `${namespace}:speaker`,
+              text: `${namespace}:option.2.selected_0_to_1`,
             },
           ];
         } else if (numBugTypes < 4) {
           setEncounterRewards(scene, { guaranteedModifierTypeFuncs: [modifierTypes.QUICK_CLAW, modifierTypes.MAX_LURE, modifierTypes.ULTRA_BALL], fillRemaining: false });
           encounter.selectedOption!.dialogue!.selected = [
             {
-              speaker: `${namespace}.speaker`,
-              text: `${namespace}.option.2.selected_2_to_3`,
+              speaker: `${namespace}:speaker`,
+              text: `${namespace}:option.2.selected_2_to_3`,
             },
           ];
         } else if (numBugTypes < 6) {
           setEncounterRewards(scene, { guaranteedModifierTypeFuncs: [modifierTypes.GRIP_CLAW, modifierTypes.MAX_LURE, modifierTypes.ROGUE_BALL], fillRemaining: false });
           encounter.selectedOption!.dialogue!.selected = [
             {
-              speaker: `${namespace}.speaker`,
-              text: `${namespace}.option.2.selected_4_to_5`,
+              speaker: `${namespace}:speaker`,
+              text: `${namespace}:option.2.selected_4_to_5`,
             },
           ];
         } else {
@@ -382,8 +382,8 @@ export const BugTypeSuperfanEncounter: MysteryEncounter =
           setEncounterRewards(scene, { guaranteedModifierTypeOptions: modifierOptions, fillRemaining: false });
           encounter.selectedOption!.dialogue!.selected = [
             {
-              speaker: `${namespace}.speaker`,
-              text: `${namespace}.option.2.selected_6`,
+              speaker: `${namespace}:speaker`,
+              text: `${namespace}:option.2.selected_6`,
             },
           ];
         }
@@ -401,19 +401,19 @@ export const BugTypeSuperfanEncounter: MysteryEncounter =
         new AttackTypeBoosterHeldItemTypeRequirement(Type.BUG, 1)
       ))
       .withDialogue({
-        buttonLabel: `${namespace}.option.3.label`,
-        buttonTooltip: `${namespace}.option.3.tooltip`,
-        disabledButtonTooltip: `${namespace}.option.3.disabled_tooltip`,
+        buttonLabel: `${namespace}:option.3.label`,
+        buttonTooltip: `${namespace}:option.3.tooltip`,
+        disabledButtonTooltip: `${namespace}:option.3.disabled_tooltip`,
         selected: [
           {
-            text: `${namespace}.option.3.selected`,
+            text: `${namespace}:option.3.selected`,
           },
           {
-            speaker: `${namespace}.speaker`,
-            text: `${namespace}.option.3.selected_dialogue`,
+            speaker: `${namespace}:speaker`,
+            text: `${namespace}:option.3.selected_dialogue`,
           },
         ],
-        secondOptionPrompt: `${namespace}.option.3.select_prompt`,
+        secondOptionPrompt: `${namespace}:option.3.select_prompt`,
       })
       .withPreOptionPhase(async (scene: BattleScene): Promise<boolean> => {
         const encounter = scene.currentBattle.mysteryEncounter!;
@@ -452,7 +452,7 @@ export const BugTypeSuperfanEncounter: MysteryEncounter =
               (item instanceof AttackTypeBoosterModifier && (item.type as AttackTypeBoosterModifierType).moveType === Type.BUG);
           });
           if (!hasValidItem) {
-            return getEncounterText(scene, `${namespace}.option.3.invalid_selection`) ?? null;
+            return getEncounterText(scene, `${namespace}:option.3.invalid_selection`) ?? null;
           }
 
           return null;
@@ -480,7 +480,7 @@ export const BugTypeSuperfanEncounter: MysteryEncounter =
       .build())
     .withOutroDialogue([
       {
-        text: `${namespace}.outro`,
+        text: `${namespace}:outro`,
       },
     ])
     .build();
@@ -634,7 +634,7 @@ function getTrainerConfigForWave(waveIndex: number) {
 function doBugTypeMoveTutor(scene: BattleScene): Promise<void> {
   return new Promise<void>(async resolve => {
     const moveOptions = scene.currentBattle.mysteryEncounter!.misc.moveTutorOptions;
-    await showEncounterDialogue(scene, `${namespace}.battle_won`, `${namespace}.speaker`);
+    await showEncounterDialogue(scene, `${namespace}:battle_won`, `${namespace}:speaker`);
 
     const overlayScale = 1;
     const moveInfoOverlay = new MoveInfoOverlay(scene, {
@@ -669,7 +669,7 @@ function doBugTypeMoveTutor(scene: BattleScene): Promise<void> {
       moveInfoOverlay.setVisible(false);
     };
 
-    const result = await selectOptionThenPokemon(scene, optionSelectItems, `${namespace}.teach_move_prompt`, undefined, onHoverOverCancel);
+    const result = await selectOptionThenPokemon(scene, optionSelectItems, `${namespace}:teach_move_prompt`, undefined, onHoverOverCancel);
     // let forceExit = !!result;
     if (!result) {
       moveInfoOverlay.active = false;
