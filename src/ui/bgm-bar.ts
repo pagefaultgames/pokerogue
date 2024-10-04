@@ -1,5 +1,5 @@
 import BattleScene from "../battle-scene";
-import {addTextObject, TextStyle} from "./text";
+import { addTextObject, TextStyle } from "./text";
 import i18next from "i18next";
 import * as Utils from "#app/utils";
 
@@ -88,6 +88,6 @@ export default class BgmBar extends Phaser.GameObjects.Container {
   }
 
   getRealBgmName(bgmName: string): string {
-    return i18next.t([`bgmName:${bgmName}`, "bgmName:missing_entries"], {name: Utils.formatText(bgmName)});
+    return i18next.t([ `bgmName:${bgmName}`, "bgmName:missing_entries" ], { name: Utils.formatText(bgmName) });
   }
 }

@@ -9,7 +9,6 @@ import { MoveEndPhase } from "#app/phases/move-end-phase";
 import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
 
 
-
 describe("Moves - Make It Rain", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
@@ -27,7 +26,7 @@ describe("Moves - Make It Rain", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override.battleType("double");
-    game.override.moveset([Moves.MAKE_IT_RAIN, Moves.SPLASH]);
+    game.override.moveset([ Moves.MAKE_IT_RAIN, Moves.SPLASH ]);
     game.override.enemySpecies(Species.SNORLAX);
     game.override.enemyAbility(Abilities.INSOMNIA);
     game.override.enemyMoveset(Moves.SPLASH);
@@ -36,7 +35,7 @@ describe("Moves - Make It Rain", () => {
   });
 
   it("should only lower SPATK stat stage by 1 once in a double battle", async () => {
-    await game.startBattle([Species.CHARIZARD, Species.BLASTOISE]);
+    await game.startBattle([ Species.CHARIZARD, Species.BLASTOISE ]);
 
     const playerPokemon = game.scene.getPlayerPokemon()!;
 
@@ -52,7 +51,7 @@ describe("Moves - Make It Rain", () => {
     game.override.enemyLevel(1); // ensures the enemy will faint
     game.override.battleType("single");
 
-    await game.startBattle([Species.CHARIZARD]);
+    await game.startBattle([ Species.CHARIZARD ]);
 
     const playerPokemon = game.scene.getPlayerPokemon()!;
     const enemyPokemon = game.scene.getEnemyPokemon()!;
@@ -68,7 +67,7 @@ describe("Moves - Make It Rain", () => {
   it("should reduce Sp. Atk. once after KOing two enemies", async () => {
     game.override.enemyLevel(1); // ensures the enemy will faint
 
-    await game.startBattle([Species.CHARIZARD, Species.BLASTOISE]);
+    await game.startBattle([ Species.CHARIZARD, Species.BLASTOISE ]);
 
     const playerPokemon = game.scene.getPlayerPokemon()!;
     const enemyPokemon = game.scene.getEnemyField();
@@ -83,7 +82,7 @@ describe("Moves - Make It Rain", () => {
   });
 
   it("should lower SPATK stat stage by 1 if it only hits the second target", async () => {
-    await game.startBattle([Species.CHARIZARD, Species.BLASTOISE]);
+    await game.startBattle([ Species.CHARIZARD, Species.BLASTOISE ]);
 
     const playerPokemon = game.scene.getPlayerPokemon()!;
 

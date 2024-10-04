@@ -1,5 +1,5 @@
 import BattleScene from "../../battle-scene";
-import {Mode} from "../ui";
+import { Mode } from "../ui";
 import cfg_keyboard_qwerty from "#app/configs/inputs/cfg_keyboard_qwerty";
 import {
   setSettingKeyboard,
@@ -8,13 +8,13 @@ import {
   settingKeyboardDefaults,
   settingKeyboardOptions
 } from "#app/system/settings/settings-keyboard";
-import {reverseValueToKeySetting, truncateString} from "#app/utils";
+import { reverseValueToKeySetting, truncateString } from "#app/utils";
 import AbstractControlSettingsUiHandler from "#app/ui/settings/abstract-control-settings-ui-handler";
-import {InterfaceConfig} from "#app/inputs-controller";
-import {addTextObject, TextStyle} from "#app/ui/text";
-import {deleteBind} from "#app/configs/inputs/configHandler";
-import {Device} from "#enums/devices";
-import {NavigationManager} from "#app/ui/settings/navigationMenu";
+import { InterfaceConfig } from "#app/inputs-controller";
+import { addTextObject, TextStyle } from "#app/ui/text";
+import { deleteBind } from "#app/configs/inputs/configHandler";
+import { Device } from "#enums/devices";
+import { NavigationManager } from "#app/ui/settings/navigationMenu";
 import i18next from "i18next";
 
 /**
@@ -35,7 +35,7 @@ export default class SettingsKeyboardUiHandler extends AbstractControlSettingsUi
     this.setting = SettingKeyboard;
     this.settingDeviceDefaults = settingKeyboardDefaults;
     this.settingDeviceOptions = settingKeyboardOptions;
-    this.configs = [cfg_keyboard_qwerty];
+    this.configs = [ cfg_keyboard_qwerty ];
     this.commonSettingsCount = 0;
     this.textureOverride = "keyboard";
     this.localStoragePropertyName = "settingsKeyboard";
@@ -71,11 +71,10 @@ export default class SettingsKeyboardUiHandler extends AbstractControlSettingsUi
 
     const deleteText = addTextObject(this.scene, 0, 0, i18next.t("settings:delete"), TextStyle.SETTINGS_LABEL);
     deleteText.setOrigin(0, 0.15);
-    deleteText.setPositionRelative(iconDelete, -deleteText.width/6-2, 0);
+    deleteText.setPositionRelative(iconDelete, -deleteText.width / 6 - 2, 0);
 
     this.settingsContainer.add(iconDelete);
     this.settingsContainer.add(deleteText);
-
 
 
     // Map the 'noKeyboard' layout options for easy access.
@@ -87,7 +86,7 @@ export default class SettingsKeyboardUiHandler extends AbstractControlSettingsUi
      * Handle the home key press event.
      */
   onHomeDown(): void {
-    if (![Mode.SETTINGS_KEYBOARD, Mode.SETTINGS_GAMEPAD].includes(this.scene.ui.getMode())) {
+    if (![ Mode.SETTINGS_KEYBOARD, Mode.SETTINGS_GAMEPAD ].includes(this.scene.ui.getMode())) {
       return;
     }
     this.scene.gameData.resetMappingToFactory();
@@ -142,7 +141,7 @@ export default class SettingsKeyboardUiHandler extends AbstractControlSettingsUi
     this.updateBindings();
 
     // Iterate over the keys in the settingDevice enumeration.
-    for (const [index, key] of Object.keys(this.setting).entries()) {
+    for (const [ index, key ] of Object.keys(this.setting).entries()) {
       const setting = this.setting[key]; // Get the actual setting value using the key.
 
       // Check if the current setting corresponds to the layout setting.
