@@ -36,7 +36,7 @@ vi.mock("i18next", () => ({
     exists: () => true,
     getDataByLanguage:() => ({
       en: {
-        keys: ["foo"]
+        keys: [ "foo" ]
       },
     }),
     services: {

@@ -17,7 +17,7 @@ describe("account", () => {
     it("should set loggedInUser! to Guest if bypassLogin is true", async () => {
       vi.spyOn(battleScene, "bypassLogin", "get").mockReturnValue(true);
 
-      const [success, status] = await updateUserInfo();
+      const [ success, status ] = await updateUserInfo();
 
       expect(success).toBe(true);
       expect(status).toBe(200);
@@ -38,7 +38,7 @@ describe("account", () => {
         200,
       ]);
 
-      const [success, status] = await updateUserInfo();
+      const [ success, status ] = await updateUserInfo();
 
       expect(success).toBe(true);
       expect(status).toBe(200);
@@ -48,9 +48,9 @@ describe("account", () => {
 
     it("should handle resolved API errors", async () => {
       vi.spyOn(battleScene, "bypassLogin", "get").mockReturnValue(false);
-      vi.spyOn(pokerogueApi.account, "getInfo").mockResolvedValue([null, 401]);
+      vi.spyOn(pokerogueApi.account, "getInfo").mockResolvedValue([ null, 401 ]);
 
-      const [success, status] = await updateUserInfo();
+      const [ success, status ] = await updateUserInfo();
 
       expect(success).toBe(false);
       expect(status).toBe(401);
@@ -58,9 +58,9 @@ describe("account", () => {
 
     it("should handle 500 API errors", async () => {
       vi.spyOn(battleScene, "bypassLogin", "get").mockReturnValue(false);
-      vi.spyOn(pokerogueApi.account, "getInfo").mockResolvedValue([null, 500]);
+      vi.spyOn(pokerogueApi.account, "getInfo").mockResolvedValue([ null, 500 ]);
 
-      const [success, status] = await updateUserInfo();
+      const [ success, status ] = await updateUserInfo();
 
       expect(success).toBe(false);
       expect(status).toBe(500);

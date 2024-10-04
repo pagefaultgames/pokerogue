@@ -20,7 +20,7 @@ export default class AdminUiHandler extends FormModalUiHandler {
   }
 
   getFields(config?: ModalConfig): string[] {
-    return ["Username", "Discord ID"];
+    return [ "Username", "Discord ID" ];
   }
 
   getWidth(config?: ModalConfig): number {
@@ -28,11 +28,11 @@ export default class AdminUiHandler extends FormModalUiHandler {
   }
 
   getMargin(config?: ModalConfig): [number, number, number, number] {
-    return [0, 0, 48, 0];
+    return [ 0, 0, 48, 0 ];
   }
 
   getButtonLabels(config?: ModalConfig): string[] {
-    return ["Link account", "Cancel"];
+    return [ "Link account", "Cancel" ];
   }
 
   processInput(button: Button): boolean {
@@ -50,7 +50,7 @@ export default class AdminUiHandler extends FormModalUiHandler {
       const originalSubmitAction = this.submitAction;
       this.submitAction = (_) => {
         this.submitAction = originalSubmitAction;
-        this.scene.ui.setMode(Mode.LOADING, { buttonActions: [] });
+        this.scene.ui.setMode(Mode.LOADING, { buttonActions: []});
         const onFail = error => {
           this.scene.ui.setMode(Mode.ADMIN, Object.assign(config, { errorMessage: error?.trim() }));
           this.scene.ui.playError();

@@ -25,7 +25,7 @@ import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
 
 const namespace = "mysteryEncounters/fieryFallout";
 /** Arcanine and Ninetails for 2 Fire types. Lapras, Gengar, Abra for burnable mon. */
-const defaultParty = [Species.ARCANINE, Species.NINETALES, Species.LAPRAS, Species.GENGAR, Species.ABRA];
+const defaultParty = [ Species.ARCANINE, Species.NINETALES, Species.LAPRAS, Species.GENGAR, Species.ABRA ];
 const defaultBiome = Biome.VOLCANO;
 const defaultWave = 56;
 
@@ -48,8 +48,8 @@ describe("Fiery Fallout - Mystery Encounter", () => {
 
     vi.spyOn(MysteryEncounters, "mysteryEncountersByBiome", "get").mockReturnValue(
       new Map<Biome, MysteryEncounterType[]>([
-        [Biome.VOLCANO, [MysteryEncounterType.FIERY_FALLOUT]],
-        [Biome.MOUNTAIN, [MysteryEncounterType.MYSTERIOUS_CHALLENGERS]],
+        [ Biome.VOLCANO, [ MysteryEncounterType.FIERY_FALLOUT ]],
+        [ Biome.MOUNTAIN, [ MysteryEncounterType.MYSTERIOUS_CHALLENGERS ]],
       ])
     );
   });
@@ -263,7 +263,7 @@ describe("Fiery Fallout - Mystery Encounter", () => {
     });
 
     it("should be disabled if not enough FIRE types are in party", async () => {
-      await game.runToMysteryEncounter(MysteryEncounterType.FIERY_FALLOUT, [Species.MAGIKARP, Species.ARCANINE]);
+      await game.runToMysteryEncounter(MysteryEncounterType.FIERY_FALLOUT, [ Species.MAGIKARP, Species.ARCANINE ]);
       await game.phaseInterceptor.to(MysteryEncounterPhase, false);
 
       const encounterPhase = scene.getCurrentPhase();

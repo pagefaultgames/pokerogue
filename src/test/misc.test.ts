@@ -64,7 +64,7 @@ describe("Test misc", () => {
 
   it("testing wait phase queue", async () => {
     const fakeScene = {
-      phaseQueue: [1, 2, 3] // Initially not empty
+      phaseQueue: [ 1, 2, 3 ] // Initially not empty
     };
     setTimeout(() => {
       fakeScene.phaseQueue = [];

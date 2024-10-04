@@ -40,7 +40,7 @@ export abstract class ApiBase {
         headers["Content-Type"] = "application/json";
       } else if (dataType === "form-urlencoded") {
         if (bodyData instanceof Object) {
-          body = new URLSearchParams(Object.entries<any>(bodyData).map(([k, v]) => [k, v.toString()])).toString();
+          body = new URLSearchParams(Object.entries<any>(bodyData).map(([ k, v ]) => [ k, v.toString() ])).toString();
         } else {
           console.warn("Could not add body data to form-urlencoded!", bodyData);
         }
@@ -81,8 +81,8 @@ export abstract class ApiBase {
    */
   protected toUrlSearchParams<D extends Record<string, any>>(data: D) {
     const arr = Object.entries(data)
-      .map(([key, value]) => (value !== undefined ? [key, String(value)] : [key, ""]))
-      .filter(([, value]) => value !== "");
+      .map(([ key, value ]) => (value !== undefined ? [ key, String(value) ] : [ key, "" ]))
+      .filter(([ , value ]) => value !== "");
 
     return new URLSearchParams(arr);
   }

@@ -24,14 +24,14 @@ export class PokerogueAccountApi extends ApiBase {
 
       if (response.ok) {
         const resData = (await response.json()) as AccountInfoResponse;
-        return [resData, response.status];
+        return [ resData, response.status ];
       } else {
         console.warn("Could not get account info!", response.status, response.statusText);
-        return [null, response.status];
+        return [ null, response.status ];
       }
     } catch (err) {
       console.warn("Could not get account info!", err);
-      return [null, 500];
+      return [ null, 500 ];
     }
   }
 

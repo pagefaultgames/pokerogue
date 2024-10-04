@@ -348,8 +348,8 @@ export class GameData {
       [VoucherType.GOLDEN]: 0
     };
     this.eggs = [];
-    this.eggPity = [0, 0, 0, 0];
-    this.unlockPity = [0, 0, 0, 0];
+    this.eggPity = [ 0, 0, 0, 0 ];
+    this.unlockPity = [ 0, 0, 0, 0 ];
     this.initDexData();
     this.initStarterData();
   }
@@ -397,7 +397,7 @@ export class GameData {
       localStorage.setItem(`data_${loggedInUser?.username}`, encrypt(systemData, bypassLogin));
 
       if (!bypassLogin) {
-        pokerogueApi.savedata.system.update({clientSessionId}, systemData)
+        pokerogueApi.savedata.system.update({ clientSessionId }, systemData)
           .then(error => {
             this.scene.ui.savingIcon.hide();
             if (error) {
@@ -558,8 +558,8 @@ export class GameData {
           ? systemData.eggs.map(e => e.toEgg())
           : [];
 
-        this.eggPity = systemData.eggPity ? systemData.eggPity.slice(0) : [0, 0, 0, 0];
-        this.unlockPity = systemData.unlockPity ? systemData.unlockPity.slice(0) : [0, 0, 0, 0];
+        this.eggPity = systemData.eggPity ? systemData.eggPity.slice(0) : [ 0, 0, 0, 0 ];
+        this.unlockPity = systemData.unlockPity ? systemData.unlockPity.slice(0) : [ 0, 0, 0, 0 ];
 
         this.dexData = Object.assign(this.dexData, systemData.dexData);
         this.consolidateDexData(this.dexData);
@@ -707,7 +707,7 @@ export class GameData {
       return true;
     }
 
-    const systemData = await pokerogueApi.savedata.system.verify({clientSessionId});
+    const systemData = await pokerogueApi.savedata.system.verify({ clientSessionId });
 
     if (systemData) {
       this.scene.clearPhaseQueue();
@@ -986,7 +986,7 @@ export class GameData {
       };
 
       if (!bypassLogin && !localStorage.getItem(`sessionData${slotId ? slotId : ""}_${loggedInUser?.username}`)) {
-        pokerogueApi.savedata.session.get({slot: slotId, clientSessionId})
+        pokerogueApi.savedata.session.get({ slot: slotId, clientSessionId })
           .then(async response => {
             if (!response && response?.length === 0 || response?.[0] !== "{") {
               console.error(response);
@@ -1191,18 +1191,18 @@ export class GameData {
    * Attempt to clear session data. After session data is removed, attempt to update user info so the menu updates
    */
   async tryClearSession(scene: BattleScene, slotId: integer): Promise<[success: boolean, newClear: boolean]> {
-    let result: [boolean, boolean] = [false, false];
+    let result: [boolean, boolean] = [ false, false ];
 
     if (bypassLogin) {
       localStorage.removeItem(`sessionData${slotId ? slotId : ""}_${loggedInUser?.username}`);
-      result = [true, true];
+      result = [ true, true ];
     } else {
       const sessionData = this.getSessionSaveData(scene);
       const { trainerId } = this;
-      const jsonResponse = await pokerogueApi.savedata.session.clear({ slot: slotId, trainerId, clientSessionId}, sessionData);
+      const jsonResponse = await pokerogueApi.savedata.session.clear({ slot: slotId, trainerId, clientSessionId }, sessionData);
 
       if (!jsonResponse?.error) {
-        result = [true, jsonResponse?.success ?? false];
+        result = [ true, jsonResponse?.success ?? false ];
         if (loggedInUser) {
           loggedInUser!.lastSessionSlot = -1;
         }
@@ -1214,7 +1214,7 @@ export class GameData {
         }
 
         console.error(jsonResponse);
-        result = [false, false];
+        result = [ false, false ];
       }
     }
 
@@ -1362,7 +1362,7 @@ export class GameData {
           break;
         }
         const encryptedData = AES.encrypt(dataStr, saveKey);
-        const blob = new Blob([ encryptedData.toString() ], {type: "text/json"});
+        const blob = new Blob([ encryptedData.toString() ], { type: "text/json" });
         const link = document.createElement("a");
         link.href = window.URL.createObjectURL(blob);
         link.download = `${dataKey}.prsv`;
@@ -1440,7 +1440,7 @@ export class GameData {
                 dataName = i18next.t("menuUiHandler:RUN_HISTORY").toLowerCase();
                 keys.forEach((key) => {
                   const entryKeys = Object.keys(data[key]);
-                  valid = ["isFavorite", "isVictory", "entry"].every(v => entryKeys.includes(v)) && entryKeys.length === 3;
+                  valid = [ "isFavorite", "isVictory", "entry" ].every(v => entryKeys.includes(v)) && entryKeys.length === 3;
                 });
                 break;
               case GameDataType.SETTINGS:
@@ -1471,9 +1471,9 @@ export class GameData {
                     const { trainerId, secretId } = this;
                     let updatePromise: Promise<string | null>;
                     if (dataType === GameDataType.SESSION) {
-                      updatePromise = pokerogueApi.savedata.session.update({slot: slotId, trainerId, secretId, clientSessionId}, dataStr);
+                      updatePromise = pokerogueApi.savedata.session.update({ slot: slotId, trainerId, secretId, clientSessionId }, dataStr);
                     } else {
-                      updatePromise = pokerogueApi.savedata.system.update({trainerId, secretId, clientSessionId}, dataStr);
+                      updatePromise = pokerogueApi.savedata.system.update({ trainerId, secretId, clientSessionId }, dataStr);
                     }
                     updatePromise
                       .then(error => {

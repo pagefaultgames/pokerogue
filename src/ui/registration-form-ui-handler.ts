@@ -74,7 +74,7 @@ export default class RegistrationFormUiHandler extends FormModalUiHandler {
     });
 
     const warningMessageFontSize = languageSettings[i18next.resolvedLanguage!]?.warningMessageFontSize ?? "42px";
-    const label = addTextObject(this.scene, 10, 87, i18next.t("menu:registrationAgeWarning"), TextStyle.TOOLTIP_CONTENT, { fontSize: warningMessageFontSize});
+    const label = addTextObject(this.scene, 10, 87, i18next.t("menu:registrationAgeWarning"), TextStyle.TOOLTIP_CONTENT, { fontSize: warningMessageFontSize });
 
     this.modalContainer.add(label);
   }
@@ -88,7 +88,7 @@ export default class RegistrationFormUiHandler extends FormModalUiHandler {
         // Prevent overlapping overrides on action modification
         this.submitAction = originalRegistrationAction;
         this.sanitizeInputs();
-        this.scene.ui.setMode(Mode.LOADING, { buttonActions: [] });
+        this.scene.ui.setMode(Mode.LOADING, { buttonActions: []});
         const onFail = error => {
           this.scene.ui.setMode(Mode.REGISTRATION_FORM, Object.assign(config, { errorMessage: error?.trim() }));
           this.scene.ui.playError();
@@ -106,7 +106,7 @@ export default class RegistrationFormUiHandler extends FormModalUiHandler {
         if (this.inputs[1].text !== this.inputs[2].text) {
           return onFail(i18next.t("menu:passwordNotMatchingConfirmPassword"));
         }
-        const [usernameInput, passwordInput] = this.inputs;
+        const [ usernameInput, passwordInput ] = this.inputs;
         pokerogueApi.account.register({ username: usernameInput.text, password: passwordInput.text })
           .then(registerError => {
             if (!registerError) {
