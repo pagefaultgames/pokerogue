@@ -44,17 +44,14 @@ export function updateUserInfo(): Promise<[boolean, integer]> {
       });
       return resolve([ true, 200 ]);
     }
-    pokerogueApi.getAccountInfo().then((accountInfoOrStatus) => {
-      if (typeof accountInfoOrStatus === "number") {
-        resolve([ false, accountInfoOrStatus ]);
+    pokerogueApi.account.getInfo().then(([accountInfo, status]) => {
+      if (!accountInfo) {
+        resolve([ false, status ]);
         return;
       } else {
-        loggedInUser = accountInfoOrStatus;
+        loggedInUser = accountInfo;
         resolve([ true, 200 ]);
       }
-    }).catch(err => {
-      console.error(err);
-      resolve([ false, 500 ]);
     });
   });
 }

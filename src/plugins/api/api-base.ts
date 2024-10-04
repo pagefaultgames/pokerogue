@@ -3,7 +3,7 @@ import { getCookie } from "#app/utils";
 
 type DataType = "json" | "form-urlencoded";
 
-export abstract class Api {
+export abstract class ApiBase {
   //#region Fields
 
   protected readonly base: string;
@@ -70,5 +70,20 @@ export abstract class Api {
     console.log(`Sending ${config.method ?? "GET"} request to: `, this.base + path, config);
 
     return await fetch(this.base + path, config);
+  }
+
+  /**
+   * Helper to transform data to {@linkcode URLSearchParams}
+   * Any key with a value of `undefined` will be ignored.
+   * Any key with a value of `null` will be included.
+   * @param data the data to transform to {@linkcode URLSearchParams}
+   * @returns a {@linkcode URLSearchParams} representaton of {@linkcode data}
+   */
+  protected toUrlSearchParams<D extends Record<string, any>>(data: D) {
+    const arr = Object.entries(data)
+      .map(([key, value]) => (value !== undefined ? [key, String(value)] : [key, ""]))
+      .filter(([, value]) => value !== "");
+
+    return new URLSearchParams(arr);
   }
 }

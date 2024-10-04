@@ -77,7 +77,7 @@ export default class GameWrapper {
 
   constructor(phaserGame: Phaser.Game, bypassLogin: boolean) {
     Phaser.Math.RND.sow([ 'test' ]);
-    vi.spyOn(Utils, "apiFetch", "get").mockReturnValue(fetch);
+    // vi.spyOn(Utils, "apiFetch", "get").mockReturnValue(fetch);
     if (bypassLogin) {
       vi.spyOn(battleScene, "bypassLogin", "get").mockReturnValue(true);
     }

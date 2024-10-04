@@ -62,7 +62,7 @@ export default class AdminUiHandler extends FormModalUiHandler {
           return onFail("Discord Id is required");
         }
         const [ usernameInput, discordIdInput ] = this.inputs;
-        pokerogueApi.admin.linkAccountToDiscordId({ username: usernameInput.text, discordId: discordIdInput.text })
+        pokerogueApi.admin.linkAccountToDiscord({ username: usernameInput.text, discordId: discordIdInput.text })
           .then(isSuccess => {
             if (isSuccess) {
               usernameInput.setText("");

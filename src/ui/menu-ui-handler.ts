@@ -581,7 +581,7 @@ export default class MenuUiHandler extends MessageUiHandler {
         success = true;
         const doLogout = () => {
           ui.setMode(Mode.LOADING, {
-            buttonActions: [], fadeOut: () => pokerogueApi.logout().then(() => {
+            buttonActions: [], fadeOut: () => pokerogueApi.account.logout().then(() => {
               updateUserInfo().then(() => this.scene.reset(true, true));
             })
           });

@@ -15,9 +15,9 @@ export interface DailyRunConfig {
 
 export function fetchDailyRunSeed(): Promise<string | null> {
   return new Promise<string | null>((resolve, reject) => {
-    pokerogueApi.getDailySeed().then(dailySeed => {
+    pokerogueApi.daily.getSeed().then(dailySeed => {
       resolve(dailySeed);
-    }).catch(err => reject(err)); // TODO: does this ever reject with the api class?
+    });
   });
 }
 
