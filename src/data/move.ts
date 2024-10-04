@@ -2682,7 +2682,7 @@ export class DelayedAttackAttr extends OverrideMoveEffectAttr {
     if (!target) {
       return new Promise(resolve => resolve(true));
     }
-    const side = target.isPlayer() ? ArenaTagSide.PLAYER: ArenaTagSide.ENEMY;
+    const side = target.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY;
     return new Promise(resolve => {
       if (args.length < 2 || !args[1]) {
         new MoveChargeAnim(this.chargeAnim, move.id, user).play(user.scene, false, () => {
