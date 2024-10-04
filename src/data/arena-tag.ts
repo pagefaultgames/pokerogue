@@ -513,15 +513,16 @@ class WaterSportTag extends WeakenMoveTypeTag {
 }
 
 /**
- * Arena Tag class for the secondary effect of {@link https://bulbapedia.bulbagarden.net/wiki/Plasma_Fists_(move) | Plasma Fists}.
+ * Arena Tag class for {@link https://bulbapedia.bulbagarden.net/wiki/Ion_Deluge_(move) | Ion Deluge}
+ * and the secondary effect of {@link https://bulbapedia.bulbagarden.net/wiki/Plasma_Fists_(move) | Plasma Fists}.
  * Converts Normal-type moves to Electric type for the rest of the turn.
  */
-export class PlasmaFistsTag extends ArenaTag {
-  constructor() {
-    super(ArenaTagType.PLASMA_FISTS, 1, Moves.PLASMA_FISTS);
+export class IonDelugeTag extends ArenaTag {
+  constructor(sourceMove?: Moves) {
+    super(ArenaTagType.ION_DELUGE, 1, sourceMove);
   }
 
-  /** Queues Plasma Fists' on-add message */
+  /** Queues an on-add message */
   onAdd(arena: Arena): void {
     arena.scene.queueMessage(i18next.t("arenaTag:plasmaFistsOnAdd"));
   }
@@ -1119,8 +1120,8 @@ export function getArenaTag(tagType: ArenaTagType, turnCount: integer, sourceMov
     return new MudSportTag(turnCount, sourceId);
   case ArenaTagType.WATER_SPORT:
     return new WaterSportTag(turnCount, sourceId);
-  case ArenaTagType.PLASMA_FISTS:
-    return new PlasmaFistsTag();
+  case ArenaTagType.ION_DELUGE:
+    return new IonDelugeTag(sourceMove);
   case ArenaTagType.SPIKES:
     return new SpikesTag(sourceId, side);
   case ArenaTagType.TOXIC_SPIKES:
