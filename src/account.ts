@@ -1,5 +1,5 @@
 import { bypassLogin } from "./battle-scene";
-import { pokerogueApi } from "./plugins/api/pokerogue-api";
+import { pokerogueApi } from "#app/plugins/api/pokerogue-api";
 import * as Utils from "./utils";
 
 export interface UserInfo {

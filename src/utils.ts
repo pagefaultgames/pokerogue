@@ -1,7 +1,7 @@
 import { MoneyFormat } from "#enums/money-format";
 import { Moves } from "#enums/moves";
 import i18next from "i18next";
-import { pokerogueApi } from "./plugins/api/pokerogue-api";
+import { pokerogueApi } from "#app/plugins/api/pokerogue-api";
 
 export type nil = null | undefined;
 

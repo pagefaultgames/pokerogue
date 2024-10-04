@@ -1,9 +1,9 @@
 import BattleScene from "#app/battle-scene";
 import { ModalConfig } from "./modal-ui-handler";
 import { Mode } from "./ui";
-import * as Utils from "../utils";
 import { FormModalUiHandler } from "./form-modal-ui-handler";
 import { Button } from "#app/enums/buttons";
+import { pokerogueApi } from "#app/plugins/api/pokerogue-api";
 
 export default class AdminUiHandler extends FormModalUiHandler {
 
@@ -61,17 +61,14 @@ export default class AdminUiHandler extends FormModalUiHandler {
         if (!this.inputs[1].text) {
           return onFail("Discord Id is required");
         }
-        Utils.apiPost("admin/account/discord-link", `username=${encodeURIComponent(this.inputs[0].text)}&discordId=${encodeURIComponent(this.inputs[1].text)}`, "application/x-www-form-urlencoded", true)
-          .then(response => {
-            if (!response.ok) {
-              console.error(response);
+        const [ usernameInput, discordIdInput ] = this.inputs;
+        pokerogueApi.admin.linkAccountToDiscordId({ username: usernameInput.text, discordId: discordIdInput.text })
+          .then(isSuccess => {
+            if (isSuccess) {
+              usernameInput.setText("");
+              discordIdInput.setText("");
             }
-            this.inputs[0].setText("");
-            this.inputs[1].setText("");
-            this.scene.ui.revertMode();
-          })
-          .catch((err) => {
-            console.error(err);
+
             this.scene.ui.revertMode();
           });
         return false;

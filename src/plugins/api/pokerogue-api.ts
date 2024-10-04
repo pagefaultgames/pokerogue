@@ -1,28 +1,29 @@
 import type { PokerogueApiClearSessionData } from "#app/@types/pokerogue-api";
 import { loggedInUser } from "#app/account";
 import { MAX_INT_ATTR_VALUE, SESSION_ID_COOKIE_NAME } from "#app/constants";
+import { Api } from "#app/plugins/api/api";
+import type { AccountInfoResponse } from "#app/plugins/api/models/AccountInfo";
+import type { AccountLoginRequest, AccountLoginResponse } from "#app/plugins/api/models/AccountLogin";
+import type { TitleStatsResponse } from "#app/plugins/api/models/TitleStats";
+import type { UpdateAllSavedataRequest } from "#app/plugins/api/models/UpdateAllSavedata";
+import type { UpdateSessionSavedataRequest } from "#app/plugins/api/models/UpdateSessionSavedata";
+import type { UpdateSystemSavedataRequest } from "#app/plugins/api/models/UpdateSystemSavedata";
+import type { VerifySavedataResponse } from "#app/plugins/api/models/VerifySavedata";
 import type { SessionSaveData } from "#app/system/game-data";
 import type { RankingEntry, ScoreboardCategory } from "#app/ui/daily-run-scoreboard";
-import { getCookie, removeCookie, setCookie } from "#app/utils";
-import type { AccountInfoResponse } from "./models/AccountInfo";
-import type { AccountLoginRequest, AccountLoginResponse } from "./models/AccountLogin";
-import type { TitleStatsResponse } from "./models/TitleStats";
-import type { UpdateAllSavedataRequest } from "./models/UpdateAllSavedata";
-import type { UpdateSessionSavedataRequest } from "./models/UpdateSessionSavedata";
-import type { UpdateSystemSavedataRequest } from "./models/UpdateSystemSavedata";
-import type { VerifySavedataResponse } from "./models/VerifySavedata";
+import { removeCookie, setCookie } from "#app/utils";
+import { PokerogueAdminApi } from "#app/plugins/api/pokerogue-admin-api";
 
-type DataType = "json" | "form-urlencoded";
-
-export class PokerogueApi {
+export class PokerogueApi extends Api {
   //#region Fields
 
-  private readonly base: string;
+  public readonly admin: PokerogueAdminApi;
 
   //#region Public
 
   constructor(base: string) {
-    this.base = base;
+    super(base);
+    this.admin = new PokerogueAdminApi(base);
   }
 
   /**
@@ -370,61 +371,26 @@ export class PokerogueApi {
     }
   }
 
-  //#region Private
-
   /**
-   * Send a GET request.
-   * @param path The path to send the request to.
+   * Unlink the currently logged in user from Discord.
+   * @returns `true` if unlinking was successful, `false` if not
    */
-  private async doGet(path: string) {
-    return this.doFetch(path, { method: "GET" });
-  }
-
-  /**
-   * Send a POST request.
-   * @param path THe path to send the request to.
-   * @param bodyData The body-data to send.
-   * @param dataType The data-type of the {@linkcode bodyData}.
-   */
-  private async doPost<D>(path: string, bodyData: D, dataType: DataType = "json") {
-    let body: string = "";
-    const headers: HeadersInit = {};
-
-    if (dataType === "json") {
-      body = typeof bodyData === "string" ? bodyData : JSON.stringify(bodyData);
-      headers["Content-Type"] = "application/json";
-    } else if (dataType === "form-urlencoded") {
-      if (bodyData instanceof Object) {
-        body = new URLSearchParams(Object.entries<any>(bodyData).map(([k, v]) => [k, v.toString()])).toString();
+  public async unlinkDiscord() {
+    try {
+      const response = await this.doPost("/unlink/discord");
+      if (response.ok) {
+        return true;
       } else {
-        console.warn("Could not add body data to form-urlencoded!", bodyData);
+        console.warn(`Unlink failed (${response.status}: ${response.statusText})`);
       }
-      headers["Content-Type"] = "application/x-www-form-urlencoded";
-    } else {
-      console.warn(`Unsupported data type: ${dataType}`);
-      body = String(bodyData);
-      headers["Content-Type"] = "text/plain";
+    } catch (err) {
+      console.warn("Could not unlink discord!", err);
     }
 
-    return await this.doFetch(path, { method: "POST", body, headers });
+    return false;
   }
 
-  /**
-   * A generic request helper.
-   * @param path The path to send the request to.
-   * @param config The request {@linkcode RequestInit | Configuration}.
-   */
-  private async doFetch(path: string, config: RequestInit): Promise<Response> {
-    config.headers = {
-      ...config.headers,
-      Authorization: getCookie(SESSION_ID_COOKIE_NAME),
-      "Content-Type": config.headers?.["Content-Type"] ?? "application/json",
-    };
-
-    console.log(`Sending ${config.method ?? "GET"} request to: `, this.base + path, config);
-
-    return await fetch(this.base + path, config);
-  }
+  //#region Private
 
   private async isLocalMode(): Promise<boolean> {
     return (

@@ -514,10 +514,7 @@ export default class MenuUiHandler extends MessageUiHandler {
                   window.open(discordUrl, "_self");
                   return true;
                 } else {
-                  Utils.apiPost("/auth/discord/logout", undefined, undefined, true).then(res => {
-                    if (!res.ok) {
-                      console.error(`Unlink failed (${res.status}: ${res.statusText})`);
-                    }
+                  pokerogueApi.unlinkDiscord().then(_isSuccess => {
                     updateUserInfo().then(() => this.scene.reset(true, true));
                   });
                   return true;
