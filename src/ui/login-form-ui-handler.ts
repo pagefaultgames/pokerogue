@@ -136,11 +136,11 @@ export default class LoginFormUiHandler extends FormModalUiHandler {
 
         const [usernameInput, passwordInput] = this.inputs;
 
-        pokerogueApi.login(usernameInput.text, passwordInput.text).then(isSuccess => {
-          if (isSuccess) {
+        pokerogueApi.login({ username: usernameInput.text, password: passwordInput.text }).then(error => {
+          if (!error) {
             originalLoginAction && originalLoginAction();
           } else {
-            onFail("Invalid username or password"); // TODO: print actual server error here!
+            onFail(error);
           }
         });
       };

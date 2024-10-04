@@ -62,27 +62,26 @@ export class PokerogueApi extends Api {
   /**
    * Send a login request.
    * Sets the session cookie on success.
-   * @param username The account username.
-   * @param password The account password.
+   * @param loginData The {@linkcode AccountLoginRequest} to send
+   * @returns An error message if something went wrong
    */
-  public async login(username: string, password: string) {
+  public async login(loginData: AccountLoginRequest) {
     try {
-      const response = await this.doPost<AccountLoginRequest>(
-        "/account/login",
-        { username, password },
-        "form-urlencoded"
-      );
+      const response = await this.doPost("/account/login", loginData, "form-urlencoded");
 
       if (response.ok) {
         const loginResponse = (await response.json()) as AccountLoginResponse;
         setCookie(SESSION_ID_COOKIE_NAME, loginResponse.token);
-        return true;
+        return null;
+      } else {
+        console.warn("Login failed!", response.status, response.statusText);
+        return response.text();
       }
     } catch (err) {
-      console.warn("Could not login!", err);
+      console.warn("Login failed!", err);
     }
 
-    return false;
+    return "Unknown error!";
   }
 
   /**
@@ -188,13 +187,13 @@ export class PokerogueApi extends Api {
    * Update a system savedata.
    * @param updateData The {@linkcode UpdateSystemSavedataRequest} to send
    * @param rawSystemData The raw {@linkcode SystemSaveData}
-   * @returns an error message if something went wrong
+   * @returns An error message if something went wrong
    */
   public async updateSystemSavedata(updateData: UpdateSystemSavedataRequest, rawSystemData: string) {
     try {
       const updateArr = Object.entries(updateData).map(([key, value]) => [key, String(value)]);
       const params = new URLSearchParams(updateArr);
-      const response = await this.doPost<string>(`/savedata/system/update?${params}`, rawSystemData);
+      const response = await this.doPost(`/savedata/system/update?${params}`, rawSystemData);
 
       return await response.text();
     } catch (err) {
@@ -229,14 +228,14 @@ export class PokerogueApi extends Api {
    * Update a session savedata.
    * @param updateData The {@linkcode UpdateSessionSavedataRequest} to send
    * @param rawSavedata The raw savedata (as `string`)
-   * @returns an error message if something went wrong
+   * @returns An error message if something went wrong
    */
   public async updateSessionSavedata(updateData: UpdateSessionSavedataRequest, rawSavedata: string) {
     try {
       const updateArr = Object.entries(updateData).map(([key, value]) => [key, String(value)]);
       const params = new URLSearchParams(updateArr);
 
-      const response = await this.doPost<string>(`/savedata/session/update?${params}`, rawSavedata);
+      const response = await this.doPost(`/savedata/session/update?${params}`, rawSavedata);
 
       return await response.text();
     } catch (err) {
@@ -294,7 +293,7 @@ export class PokerogueApi extends Api {
       params.append("trainerId", String(trainerId));
       params.append("clientSessionId", sessionId);
 
-      const response = await this.doPost<SessionSaveData>(`/savedata/session/clear?${params}`, sessionData);
+      const response = await this.doPost(`/savedata/session/clear?${params}`, sessionData);
 
       if (response.ok) {
         if (loggedInUser) {
@@ -314,14 +313,14 @@ export class PokerogueApi extends Api {
   /**
    * Update all savedata
    * @param bodyData The {@linkcode UpdateAllSavedataRequest | request data} to send
-   * @returns an error message if something went wrong
+   * @returns An error message if something went wrong
    */
   public async updateAllSavedata(bodyData: UpdateAllSavedataRequest) {
     try {
       const rawBodyData = JSON.stringify(bodyData, (_k: any, v: any) =>
         typeof v === "bigint" ? (v <= MAX_INT_ATTR_VALUE ? Number(v) : v.toString()) : v
       );
-      const response = await this.doPost<string>("/savedata/updateall", rawBodyData);
+      const response = await this.doPost("/savedata/updateall", rawBodyData);
       return await response.text();
     } catch (err) {
       console.warn("Could not update all savedata!", err);
