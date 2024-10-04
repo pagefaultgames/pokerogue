@@ -11,7 +11,7 @@ import * as account from "../../account";
 
 const apiBase = import.meta.env.VITE_API_BASE_URL ?? "http://localhost:8001";
 
-/** We ned a custom server. For some reasons I can't extend the listeners of {@linkcode global.i18nServer} with {@linkcode global.i18nServer.use} */
+/** We need a custom server. For some reasons I can't extend the listeners of {@linkcode global.i18nServer} with {@linkcode global.i18nServer.use} */
 const server = setupServer();
 
 describe("System - Game Data", () => {
