@@ -331,24 +331,6 @@ export async function localPing() {
   }
 }
 
-export function apiPost(path: string, data?: any, contentType: string = "application/json", authed: boolean = false): Promise<Response> {
-  return (isLocal && isLocalServerConnected) || !isLocal ? new Promise((resolve, reject) => {
-    const headers = {
-      "Accept": contentType,
-      "Content-Type": contentType,
-    };
-    if (authed) {
-      const sId = getCookie(sessionIdKey);
-      if (sId) {
-        headers["Authorization"] = sId;
-      }
-    }
-    fetch(`${apiUrl}/${path}`, { method: "POST", headers: headers, body: data })
-      .then(response => resolve(response))
-      .catch(err => reject(err));
-  }) : new Promise(() => {});
-}
-
 /** Alias for the constructor of a class */
 export type Constructor<T> = new(...args: unknown[]) => T;
 
