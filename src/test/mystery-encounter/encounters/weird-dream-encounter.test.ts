@@ -17,7 +17,7 @@ import * as EncounterTransformationSequence from "#app/data/mystery-encounters/u
 import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
 
 const namespace = "mysteryEncounters/weirdDream";
-const defaultParty = [Species.MAGBY, Species.HAUNTER, Species.ABRA];
+const defaultParty = [ Species.MAGBY, Species.HAUNTER, Species.ABRA ];
 const defaultBiome = Biome.CAVE;
 const defaultWave = 45;
 
@@ -41,7 +41,7 @@ describe("Weird Dream - Mystery Encounter", () => {
 
     vi.spyOn(MysteryEncounters, "mysteryEncountersByBiome", "get").mockReturnValue(
       new Map<Biome, MysteryEncounterType[]>([
-        [Biome.CAVE, [MysteryEncounterType.WEIRD_DREAM]],
+        [ Biome.CAVE, [ MysteryEncounterType.WEIRD_DREAM ]],
       ])
     );
   });

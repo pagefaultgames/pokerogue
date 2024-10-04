@@ -4,7 +4,7 @@ import { applyPreAttackAbAttrs, AddSecondStrikeAbAttr, IgnoreMoveEffectsAbAttr, 
 import { ArenaTagSide, ConditionalProtectTag } from "#app/data/arena-tag";
 import { MoveAnim } from "#app/data/battle-anims";
 import { BattlerTagLapseType, DamageProtectedTag, ProtectedTag, SemiInvulnerableTag, SubstituteTag } from "#app/data/battler-tags";
-import { MoveTarget, applyMoveAttrs, OverrideMoveEffectAttr, MultiHitAttr, AttackMove, FixedDamageAttr, VariableTargetAttr, MissEffectAttr, MoveFlags, applyFilteredMoveAttrs, MoveAttr, MoveEffectAttr, MoveEffectTrigger, ChargeAttr, MoveCategory, NoEffectAttr, HitsTagAttr } from "#app/data/move";
+import { MoveTarget, applyMoveAttrs, OverrideMoveEffectAttr, MultiHitAttr, AttackMove, FixedDamageAttr, VariableTargetAttr, MissEffectAttr, MoveFlags, applyFilteredMoveAttrs, MoveAttr, MoveEffectAttr, MoveEffectTrigger, ChargeAttr, MoveCategory, NoEffectAttr, HitsTagAttr, ToxicAccuracyAttr } from "#app/data/move";
 import { SpeciesFormChangePostMoveTrigger } from "#app/data/pokemon-forms";
 import { BattlerTagType } from "#app/enums/battler-tag-type";
 import { Moves } from "#app/enums/moves";
@@ -14,6 +14,7 @@ import { PokemonMultiHitModifier, FlinchChanceModifier, EnemyAttackStatusEffectC
 import i18next from "i18next";
 import * as Utils from "#app/utils";
 import { PokemonPhase } from "./pokemon-phase";
+import { Type } from "#app/data/type";
 
 export class MoveEffectPhase extends PokemonPhase {
   public move: PokemonMove;
@@ -95,7 +96,7 @@ export class MoveEffectPhase extends PokemonPhase {
          * Stores results of hit checks of the invoked move against all targets, organized by battler index.
          * @see {@linkcode hitCheck}
          */
-      const targetHitChecks = Object.fromEntries(targets.map(p => [p.getBattlerIndex(), this.hitCheck(p)]));
+      const targetHitChecks = Object.fromEntries(targets.map(p => [ p.getBattlerIndex(), this.hitCheck(p) ]));
       const hasActiveTargets = targets.some(t => t.isActive(true));
 
       /** Check if the target is immune via ability to the attacking move */
@@ -110,7 +111,7 @@ export class MoveEffectPhase extends PokemonPhase {
       if (!hasActiveTargets || (!move.hasAttr(VariableTargetAttr) && !move.isMultiTarget() && !targetHitChecks[this.targets[0]] && !targets[0].getTag(ProtectedTag) && !isImmune)) {
         this.stopMultiHit();
         if (hasActiveTargets) {
-          this.scene.queueMessage(i18next.t("battle:attackMissed", { pokemonNameWithAffix: this.getTarget()? getPokemonNameWithAffix(this.getTarget()!) : "" }));
+          this.scene.queueMessage(i18next.t("battle:attackMissed", { pokemonNameWithAffix: this.getTarget() ? getPokemonNameWithAffix(this.getTarget()!) : "" }));
           moveHistoryEntry.result = MoveResult.MISS;
           applyMoveAttrs(MissEffectAttr, user, null, move);
         } else {
@@ -375,7 +376,7 @@ export class MoveEffectPhase extends PokemonPhase {
      */
   hitCheck(target: Pokemon): boolean {
     // Moves targeting the user and entry hazards can't miss
-    if ([MoveTarget.USER, MoveTarget.ENEMY_SIDE].includes(this.move.getMove().moveTarget)) {
+    if ([ MoveTarget.USER, MoveTarget.ENEMY_SIDE ].includes(this.move.getMove().moveTarget)) {
       return true;
     }
 
@@ -404,7 +405,10 @@ export class MoveEffectPhase extends PokemonPhase {
     }
 
     const semiInvulnerableTag = target.getTag(SemiInvulnerableTag);
-    if (semiInvulnerableTag && !this.move.getMove().getAttrs(HitsTagAttr).some(hta => hta.tagType === semiInvulnerableTag.tagType)) {
+    if (semiInvulnerableTag
+        && !this.move.getMove().getAttrs(HitsTagAttr).some(hta => hta.tagType === semiInvulnerableTag.tagType)
+        && !(this.move.getMove().hasAttr(ToxicAccuracyAttr) && user.isOfType(Type.POISON))
+    ) {
       return false;
     }
 

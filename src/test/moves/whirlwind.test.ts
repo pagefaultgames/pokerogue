@@ -35,8 +35,8 @@ describe("Moves - Whirlwind", () => {
     { move: Moves.BOUNCE, name: "Bounce" },
     { move: Moves.SKY_DROP, name: "Sky Drop" },
   ])("should not hit a flying target: $name (=$move)", async ({ move }) => {
-    game.override.moveset([move]);
-    await game.classicMode.startBattle([Species.STARAPTOR]);
+    game.override.moveset([ move ]);
+    await game.classicMode.startBattle([ Species.STARAPTOR ]);
 
     const staraptor = game.scene.getPlayerPokemon()!;
 
