@@ -34,7 +34,7 @@ describe("Moves - Electrify", () => {
   });
 
   it("should convert attacks to Electric type", async () => {
-    await game.classicMode.startBattle([Species.EXCADRILL]);
+    await game.classicMode.startBattle([ Species.EXCADRILL ]);
 
     const playerPokemon = game.scene.getPlayerPokemon()!;
     const enemyPokemon = game.scene.getEnemyPokemon()!;
@@ -42,7 +42,7 @@ describe("Moves - Electrify", () => {
 
     game.move.select(Moves.ELECTRIFY);
 
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY ]);
 
     await game.phaseInterceptor.to("BerryPhase", false);
     expect(enemyPokemon.getMoveType).toHaveLastReturnedWith(Type.ELECTRIC);
@@ -52,7 +52,7 @@ describe("Moves - Electrify", () => {
   it("should override type changes from abilities", async () => {
     game.override.enemyAbility(Abilities.PIXILATE);
 
-    await game.classicMode.startBattle([Species.EXCADRILL]);
+    await game.classicMode.startBattle([ Species.EXCADRILL ]);
 
     const playerPokemon = game.scene.getPlayerPokemon()!;
     const enemyPokemon = game.scene.getPlayerPokemon()!;
@@ -60,7 +60,7 @@ describe("Moves - Electrify", () => {
 
     game.move.select(Moves.ELECTRIFY);
 
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY ]);
 
     await game.phaseInterceptor.to("BerryPhase", false);
     expect(enemyPokemon.getMoveType).toHaveLastReturnedWith(Type.ELECTRIC);
