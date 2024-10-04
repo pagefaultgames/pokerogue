@@ -6,14 +6,35 @@ import * as v1_0_4 from "./versions/v1_0_4";
 
 const LATEST_VERSION = version.split(".").map(value => parseInt(value));
 
-export abstract class VersionConverter {
-  constructor(data: any, gameVersion: string) {
-    const curVersion = gameVersion.split(".").map(value => parseInt(value));
-    if (!curVersion.every((value, index) => value === LATEST_VERSION[index])) {
-      this.applyMigration(data, curVersion);
-    }
-  }
+export function applySystemVersionMigration(data: SystemSaveData) {
+  const curVersion = data.gameVersion.split(".").map(value => parseInt(value));
 
+  if (!curVersion.every((value, index) => value === LATEST_VERSION[index])) {
+    const converter = new SystemVersionConverter();
+    converter.applyMigration(data, curVersion);
+  }
+}
+
+export function applySessionVersionMigration(data: SessionSaveData) {
+  const curVersion = data.gameVersion.split(".").map(value => parseInt(value));
+
+  if (!curVersion.every((value, index) => value === LATEST_VERSION[index])) {
+    const converter = new SessionVersionConverter();
+    converter.applyMigration(data, curVersion);
+  }
+}
+
+export function applySettingsVersionMigration(data: Object) {
+  const gameVersion: string = data.hasOwnProperty("gameVersion") ? data["gameVersion"] : "1.0.0";
+  const curVersion = gameVersion.split(".").map(value => parseInt(value));
+
+  if (!curVersion.every((value, index) => value === LATEST_VERSION[index])) {
+    const converter = new SettingsVersionConverter();
+    converter.applyMigration(data, curVersion);
+  }
+}
+
+abstract class VersionConverter {
   /**
    * Iterates through an array of designated migration functions that are each
    * called one by one to transform the data.
@@ -38,75 +59,53 @@ export abstract class VersionConverter {
   abstract applyMigration(data: any, curVersion: number[]): void;
 }
 
-export class SessionVersionConverter extends VersionConverter {
-  constructor(data: SessionSaveData, gameVersion: string) {
-    super(data, gameVersion);
-  }
-
+class SessionVersionConverter extends VersionConverter {
   override applyMigration(data: SessionSaveData, curVersion: number[]): void {
     const [ curMajor, curMinor, curPatch ] = curVersion;
 
-    switch (curMajor) {
-    case 1:
-      switch (curMinor) {
-      case 0:
+    if (curMajor === 1) {
+      if (curMinor === 0) {
         if (curPatch <= 4) {
           console.log("Applying v1.0.4 session data migration!");
           this.callMigrators(data, v1_0_4.sessionMigrators);
         }
-      default:
       }
-    default:
     }
+
     console.log(`Session data successfully migrated to v${version}!`);
   }
 }
 
-export class SystemVersionConverter extends VersionConverter {
-  constructor(data: SystemSaveData, gameVersion: string) {
-    super(data, gameVersion);
-  }
-
+class SystemVersionConverter extends VersionConverter {
   override applyMigration(data: SystemSaveData, curVersion: number[]): void {
     const [ curMajor, curMinor, curPatch ] = curVersion;
 
-    switch (curMajor) {
-    case 1:
-      switch (curMinor) {
-      case 0:
+    if (curMajor === 1) {
+      if (curMinor === 0) {
         if (curPatch <= 4) {
           console.log("Applying v1.0.4 system data migraton!");
           this.callMigrators(data, v1_0_4.systemMigrators);
         }
-      default:
       }
-    default:
     }
+
     console.log(`System data successfully migrated to v${version}!`);
   }
 }
 
-export class SettingsVersionConverter extends VersionConverter {
-  constructor(data: SystemSaveData) {
-    const gameVersion = data.hasOwnProperty("gameVersion") ? data["gameVersion"] : "1.0.0";
-    super(data, gameVersion);
-  }
-
+class SettingsVersionConverter extends VersionConverter {
   override applyMigration(data: Object, curVersion: number[]): void {
     const [ curMajor, curMinor, curPatch ] = curVersion;
 
-    switch (curMajor) {
-    case 1:
-      switch (curMinor) {
-      case 0:
+    if (curMajor === 1) {
+      if (curMinor === 0) {
         if (curPatch <= 4) {
           console.log("Applying v1.0.4 settings data migraton!");
-          this.callMigrators(data, v1_0_4.sessionMigrators);
+          this.callMigrators(data, v1_0_4.settingsMigrators);
         }
-      default:
       }
-    default:
     }
+
     console.log(`System data successfully migrated to v${version}!`);
   }
 }
