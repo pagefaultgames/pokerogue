@@ -1,9 +1,9 @@
 import { FormModalUiHandler } from "./form-modal-ui-handler";
 import { ModalConfig } from "./modal-ui-handler";
-import * as Utils from "../utils";
 import { Mode } from "./ui";
 import { TextStyle, addTextObject } from "./text";
 import i18next from "i18next";
+import { pokerogueApi } from "#app/plugins/api/pokerogue-api";
 
 
 interface LanguageSetting {
@@ -106,27 +106,20 @@ export default class RegistrationFormUiHandler extends FormModalUiHandler {
         if (this.inputs[1].text !== this.inputs[2].text) {
           return onFail(i18next.t("menu:passwordNotMatchingConfirmPassword"));
         }
-        Utils.apiPost("account/register", `username=${encodeURIComponent(this.inputs[0].text)}&password=${encodeURIComponent(this.inputs[1].text)}`, "application/x-www-form-urlencoded")
-          .then(response => response.text())
-          .then(response => {
-            if (!response) {
-              Utils.apiPost("account/login", `username=${encodeURIComponent(this.inputs[0].text)}&password=${encodeURIComponent(this.inputs[1].text)}`, "application/x-www-form-urlencoded")
-                .then(response => {
-                  if (!response.ok) {
-                    return response.text();
-                  }
-                  return response.json();
-                })
-                .then(response => {
-                  if (response.hasOwnProperty("token")) {
-                    Utils.setCookie(Utils.sessionIdKey, response.token);
+        const [usernameInput, passwordInput] = this.inputs;
+        pokerogueApi.register({ username: usernameInput.text, password: passwordInput.text })
+          .then(registerError => {
+            if (!registerError) {
+              pokerogueApi.login({ username: usernameInput.text, password: passwordInput.text })
+                .then(loginError => {
+                  if (!loginError) {
                     originalRegistrationAction && originalRegistrationAction();
                   } else {
-                    onFail(response);
+                    onFail(loginError);
                   }
                 });
             } else {
-              onFail(response);
+              onFail(registerError);
             }
           });
       };

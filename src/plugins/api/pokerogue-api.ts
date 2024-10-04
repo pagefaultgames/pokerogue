@@ -13,6 +13,7 @@ import type { SessionSaveData } from "#app/system/game-data";
 import type { RankingEntry, ScoreboardCategory } from "#app/ui/daily-run-scoreboard";
 import { removeCookie, setCookie } from "#app/utils";
 import { PokerogueAdminApi } from "#app/plugins/api/pokerogue-admin-api";
+import type { AccountRegisterRequest } from "./models/AccountRegister";
 
 export class PokerogueApi extends Api {
   //#region Fields
@@ -79,6 +80,27 @@ export class PokerogueApi extends Api {
       }
     } catch (err) {
       console.warn("Login failed!", err);
+    }
+
+    return "Unknown error!";
+  }
+
+  /**
+   * Register a new account.
+   * @param registerData The {@linkcode AccountRegisterRequest} to send
+   * @returns An error message if something went wrong
+   */
+  public async register(registerData: AccountRegisterRequest) {
+    try {
+      const response = await this.doPost("/account/register", registerData, "form-urlencoded");
+
+      if (response.ok) {
+        return null;
+      } else {
+        return response.text();
+      }
+    } catch (err) {
+      console.warn("Register failed!", err);
     }
 
     return "Unknown error!";
