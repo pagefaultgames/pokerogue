@@ -25,7 +25,7 @@ describe("Moves - Gigaton Hammer", () => {
       .battleType("single")
       .enemySpecies(Species.MAGIKARP)
       .starterSpecies(Species.FEEBAS)
-      .moveset([Moves.GIGATON_HAMMER])
+      .moveset([ Moves.GIGATON_HAMMER ])
       .startingLevel(10)
       .enemyLevel(100)
       .enemyMoveset(Moves.SPLASH)
@@ -38,7 +38,7 @@ describe("Moves - Gigaton Hammer", () => {
     const enemy1 = game.scene.getEnemyPokemon()!;
 
     game.move.select(Moves.GIGATON_HAMMER);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY ]);
     await game.phaseInterceptor.to("MoveEndPhase");
 
     expect(enemy1.hp).toBeLessThan(enemy1.getMaxHp());
@@ -61,7 +61,7 @@ describe("Moves - Gigaton Hammer", () => {
     const enemy1 = game.scene.getEnemyPokemon()!;
 
     game.move.select(Moves.GIGATON_HAMMER);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY ]);
     await game.phaseInterceptor.to("MoveEndPhase");
 
     expect(enemy1.hp).toBeLessThan(enemy1.getMaxHp());

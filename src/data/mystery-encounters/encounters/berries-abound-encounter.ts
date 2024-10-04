@@ -69,7 +69,7 @@ export const BerriesAboundEncounter: MysteryEncounter =
           isBoss: true
         }],
       };
-      encounter.enemyPartyConfigs = [config];
+      encounter.enemyPartyConfigs = [ config ];
 
       // Calculate the number of extra berries that player receives
       // 10-40: 2, 40-120: 4, 120-160: 5, 160-180: 7
@@ -193,11 +193,11 @@ export const BerriesAboundEncounter: MysteryEncounter =
 
             // Defense/Spd buffs below wave 50, +1 to all stats otherwise
             const statChangesForBattle: (Stat.ATK | Stat.DEF | Stat.SPATK | Stat.SPDEF | Stat.SPD | Stat.ACC | Stat.EVA)[] = scene.currentBattle.waveIndex < 50 ?
-              [Stat.DEF, Stat.SPDEF, Stat.SPD] :
-              [Stat.ATK, Stat.DEF, Stat.SPATK, Stat.SPDEF, Stat.SPD];
+              [ Stat.DEF, Stat.SPDEF, Stat.SPD ] :
+              [ Stat.ATK, Stat.DEF, Stat.SPATK, Stat.SPDEF, Stat.SPD ];
 
             const config = scene.currentBattle.mysteryEncounter!.enemyPartyConfigs[0];
-            config.pokemonConfigs![0].tags = [BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON];
+            config.pokemonConfigs![0].tags = [ BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON ];
             config.pokemonConfigs![0].mysteryEncounterBattleEffects = (pokemon: Pokemon) => {
               queueEncounterMessage(pokemon.scene, `${namespace}:option.2.boss_enraged`);
               pokemon.scene.unshiftPhase(new StatStageChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, statChangesForBattle, 1));
@@ -208,7 +208,7 @@ export const BerriesAboundEncounter: MysteryEncounter =
             return;
           } else {
             // Gains 1 berry for every 10% faster the player's pokemon is than the enemy, up to a max of numBerries, minimum of 2
-            const numBerriesGrabbed = Math.max(Math.min(Math.round((speedDiff - 1)/0.08), numBerries), 2);
+            const numBerriesGrabbed = Math.max(Math.min(Math.round((speedDiff - 1) / 0.08), numBerries), 2);
             encounter.setDialogueToken("numBerries", String(numBerriesGrabbed));
             const doFasterBerryRewards = () => {
               const berryText = i18next.t(`${namespace}:berries`);
@@ -250,7 +250,7 @@ export const BerriesAboundEncounter: MysteryEncounter =
 
 function tryGiveBerry(scene: BattleScene, prioritizedPokemon?: PlayerPokemon) {
   const berryType = randSeedInt(Object.keys(BerryType).filter(s => !isNaN(Number(s))).length) as BerryType;
-  const berry = generateModifierType(scene, modifierTypes.BERRY, [berryType]) as BerryModifierType;
+  const berry = generateModifierType(scene, modifierTypes.BERRY, [ berryType ]) as BerryModifierType;
 
   const party = scene.getParty();
 
