@@ -18,7 +18,7 @@ import { modifierTypes } from "#app/modifier/modifier-type";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
 
 /** the i18n namespace for the encounter */
-const namespace = "mysteryEncounter:aTrainersTest";
+const namespace = "mysteryEncounters/aTrainersTest";
 
 /**
  * A Trainer's Test encounter.
@@ -32,7 +32,7 @@ export const ATrainersTestEncounter: MysteryEncounter =
     .withIntroSpriteConfigs([]) // These are set in onInit()
     .withIntroDialogue([
       {
-        text: `${namespace}.intro`,
+        text: `${namespace}:intro`,
       },
     ])
     .withAutoHideIntroVisuals(false)
@@ -76,24 +76,24 @@ export const ATrainersTestEncounter: MysteryEncounter =
       encounter.dialogue.intro = [
         {
           speaker: `trainerNames:${trainerNameKey}`,
-          text: `${namespace}.${trainerNameKey}.intro_dialogue`
+          text: `${namespace}:${trainerNameKey}.intro_dialogue`
         }
       ];
       encounter.options[0].dialogue!.selected = [
         {
           speaker: `trainerNames:${trainerNameKey}`,
-          text: `${namespace}.${trainerNameKey}.accept`
+          text: `${namespace}:${trainerNameKey}.accept`
         }
       ];
       encounter.options[1].dialogue!.selected = [
         {
           speaker: `trainerNames:${trainerNameKey}`,
-          text: `${namespace}.${trainerNameKey}.decline`
+          text: `${namespace}:${trainerNameKey}.decline`
         }
       ];
 
       encounter.setDialogueToken("statTrainerName", i18next.t(`trainerNames:${trainerNameKey}`));
-      const eggDescription = i18next.t(`${namespace}.title`) + ":\n" + i18next.t(`trainerNames:${trainerNameKey}`);
+      const eggDescription = i18next.t(`${namespace}:title`) + ":\n" + i18next.t(`trainerNames:${trainerNameKey}`);
       encounter.misc = { trainerType, trainerNameKey, trainerEggDescription: eggDescription };
 
       // Trainer config
@@ -128,14 +128,14 @@ export const ATrainersTestEncounter: MysteryEncounter =
 
       return true;
     })
-    .withTitle(`${namespace}.title`)
-    .withDescription(`${namespace}.description`)
-    .withQuery(`${namespace}.query`)
+    .withTitle(`${namespace}:title`)
+    .withDescription(`${namespace}:description`)
+    .withQuery(`${namespace}:query`)
     .withIntroDialogue()
     .withSimpleOption(
       {
-        buttonLabel: `${namespace}.option.1.label`,
-        buttonTooltip: `${namespace}.option.1.tooltip`
+        buttonLabel: `${namespace}:option.1.label`,
+        buttonTooltip: `${namespace}:option.1.tooltip`
       },
       async (scene: BattleScene) => {
         const encounter = scene.currentBattle.mysteryEncounter!;
@@ -151,15 +151,15 @@ export const ATrainersTestEncounter: MysteryEncounter =
           eggDescriptor: encounter.misc.trainerEggDescription,
           tier: EggTier.ULTRA
         };
-        encounter.setDialogueToken("eggType", i18next.t(`${namespace}.eggTypes.epic`));
-        setEncounterRewards(scene, { guaranteedModifierTypeFuncs: [modifierTypes.SACRED_ASH], guaranteedModifierTiers: [ModifierTier.ROGUE, ModifierTier.ULTRA], fillRemaining: true }, [eggOptions]);
+        encounter.setDialogueToken("eggType", i18next.t(`${namespace}:eggTypes.epic`));
+        setEncounterRewards(scene, { guaranteedModifierTypeFuncs: [ modifierTypes.SACRED_ASH ], guaranteedModifierTiers: [ ModifierTier.ROGUE, ModifierTier.ULTRA ], fillRemaining: true }, [ eggOptions ]);
         return initBattleWithEnemyConfig(scene, config);
       }
     )
     .withSimpleOption(
       {
-        buttonLabel: `${namespace}.option.2.label`,
-        buttonTooltip: `${namespace}.option.2.tooltip`
+        buttonLabel: `${namespace}:option.2.label`,
+        buttonTooltip: `${namespace}:option.2.tooltip`
       },
       async (scene: BattleScene) => {
         const encounter = scene.currentBattle.mysteryEncounter!;
@@ -173,14 +173,14 @@ export const ATrainersTestEncounter: MysteryEncounter =
           eggDescriptor: encounter.misc.trainerEggDescription,
           tier: EggTier.GREAT
         };
-        encounter.setDialogueToken("eggType", i18next.t(`${namespace}.eggTypes.rare`));
-        setEncounterRewards(scene, { fillRemaining: false, rerollMultiplier: -1 }, [eggOptions]);
+        encounter.setDialogueToken("eggType", i18next.t(`${namespace}:eggTypes.rare`));
+        setEncounterRewards(scene, { fillRemaining: false, rerollMultiplier: -1 }, [ eggOptions ]);
         leaveEncounterWithoutBattle(scene);
       }
     )
     .withOutroDialogue([
       {
-        text: `${namespace}.outro`
+        text: `${namespace}:outro`
       }
     ])
     .build();

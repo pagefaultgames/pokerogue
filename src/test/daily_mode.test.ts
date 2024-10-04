@@ -58,7 +58,7 @@ describe("Shop modifications", async () => {
       .startingLevel(100) // Avoid levelling up
       .enemyLevel(1000) // Avoid opponent dying before game.doKillOpponents()
       .disableTrainerWaves()
-      .moveset([Moves.KOWTOW_CLEAVE])
+      .moveset([ Moves.KOWTOW_CLEAVE ])
       .enemyMoveset(Moves.SPLASH);
     game.modifiers
       .addCheck("EVIOLITE")

@@ -1,9 +1,7 @@
 /**
- * This script creates a test boilerplate file for a move or ability.
- * @param {string} type - The type of test to create. Either "move", "ability",
- * or "item".
- * @param {string} fileName - The name of the file to create.
- * @example npm run create-test move tackle
+ * This script creates a test boilerplate file in the appropriate 
+ * directory based on the type selected.
+ * @example npm run create-test
  */
 
 import fs from "fs";
@@ -34,7 +32,7 @@ async function promptTestType() {
     console.log("Exiting...");
     return process.exit();
   } else if (!typeChoices.includes(typeAnswer.selectedOption)) {
-    console.error('Please provide a valid type ("move", "ability", or "item")!');
+    console.error(`Please provide a valid type (${typeChoices.join(", ")})!`);
     return await promptTestType();
   }
 
@@ -102,7 +100,7 @@ async function runInteractive() {
       description = `Mystery Encounter - ${formattedName}`;
       break;
     default:
-      console.error('Invalid type. Please use "move", "ability", or "item".');
+      console.error(`Invalid type. Please use one of the following: ${typeChoices.join(", ")}.`);
       process.exit(1);
   }
 

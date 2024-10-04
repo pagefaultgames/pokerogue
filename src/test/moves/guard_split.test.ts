@@ -55,7 +55,7 @@ describe("Moves - Guard Split", () => {
   }, 20000);
 
   it("should be idempotent", async () => {
-    game.override.enemyMoveset([Moves.GUARD_SPLIT]);
+    game.override.enemyMoveset([ Moves.GUARD_SPLIT ]);
     await game.startBattle([
       Species.INDEEDEE
     ]);

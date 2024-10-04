@@ -6,6 +6,7 @@ import { TextStyle, addTextObject, getTextStyleOptions } from "./text";
 import { getSplashMessages } from "../data/splash-messages";
 import i18next from "i18next";
 import { TimedEventDisplay } from "#app/timed-event-manager";
+import { version } from "../../package.json";
 
 export default class TitleUiHandler extends OptionSelectUiHandler {
   /** If the stats can not be retrieved, use this fallback value */
@@ -16,6 +17,7 @@ export default class TitleUiHandler extends OptionSelectUiHandler {
   private splashMessage: string;
   private splashMessageText: Phaser.GameObjects.Text;
   private eventDisplay: TimedEventDisplay;
+  private appVersionText: Phaser.GameObjects.Text;
 
   private titleStatsTimer: NodeJS.Timeout | null;
 
@@ -68,6 +70,11 @@ export default class TitleUiHandler extends OptionSelectUiHandler {
       loop: -1,
       yoyo: true,
     });
+
+    this.appVersionText = addTextObject(this.scene, logo.x - 60, logo.y + logo.displayHeight + 4, "", TextStyle.MONEY, { fontSize: "54px" });
+    this.appVersionText.setOrigin(0.5, 0.5);
+    this.appVersionText.setAngle(0);
+    this.titleContainer.add(this.appVersionText);
   }
 
   updateTitleStats(): void {
@@ -90,6 +97,8 @@ export default class TitleUiHandler extends OptionSelectUiHandler {
     if (ret) {
       this.splashMessage = Utils.randItem(getSplashMessages());
       this.splashMessageText.setText(i18next.t(this.splashMessage, { count: TitleUiHandler.BATTLES_WON_FALLBACK }));
+
+      this.appVersionText.setText("v" + version);
 
       const ui = this.getUi();
 

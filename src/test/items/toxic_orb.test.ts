@@ -34,8 +34,8 @@ describe("Items - Toxic orb", () => {
     game.override.ability(Abilities.INSOMNIA);
     game.override.enemyAbility(Abilities.INSOMNIA);
     game.override.startingLevel(2000);
-    game.override.moveset([moveToUse]);
-    game.override.enemyMoveset([oppMoveToUse, oppMoveToUse, oppMoveToUse, oppMoveToUse]);
+    game.override.moveset([ moveToUse ]);
+    game.override.enemyMoveset([ oppMoveToUse, oppMoveToUse, oppMoveToUse, oppMoveToUse ]);
     game.override.startingHeldItems([{
       name: "TOXIC_ORB",
     }]);
@@ -58,11 +58,10 @@ describe("Items - Toxic orb", () => {
     // Toxic orb should trigger here
     await game.phaseInterceptor.run(MessagePhase);
     const message = game.textInterceptor.getLatestMessage();
-    expect(message).toContain("was badly poisoned by the Toxic Orb");
+    expect(message).toContain("statusEffect:toxic.obtainSource");
     await game.phaseInterceptor.run(MessagePhase);
     const message2 = game.textInterceptor.getLatestMessage();
-    expect(message2).toContain("is hurt");
-    expect(message2).toContain("by poison");
+    expect(message2).toBe("statusEffect:toxic.activation");
     expect(game.scene.getParty()[0].status!.effect).toBe(StatusEffect.TOXIC);
   }, 20000);
 });

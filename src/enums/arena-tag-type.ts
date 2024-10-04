@@ -1,4 +1,3 @@
-
 export enum ArenaTagType {
   NONE = "NONE",
   MUD_SPORT = "MUD_SPORT",
@@ -25,4 +24,5 @@ export enum ArenaTagType {
   SAFEGUARD = "SAFEGUARD",
   NO_CRIT = "NO_CRIT",
   IMPRISON = "IMPRISON",
+  PLASMA_FISTS = "PLASMA_FISTS",
 }

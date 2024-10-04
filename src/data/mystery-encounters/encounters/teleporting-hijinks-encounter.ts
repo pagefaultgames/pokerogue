@@ -23,11 +23,11 @@ import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
 import { getEncounterPokemonLevelForWave, STANDARD_ENCOUNTER_BOOSTED_LEVEL_MODIFIER } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
 
 /** the i18n namespace for this encounter */
-const namespace = "mysteryEncounter:teleportingHijinks";
+const namespace = "mysteryEncounters/teleportingHijinks";
 
 const MONEY_COST_MULTIPLIER = 1.75;
-const BIOME_CANDIDATES = [Biome.SPACE, Biome.FAIRY_CAVE, Biome.LABORATORY, Biome.ISLAND, Biome.WASTELAND, Biome.DOJO];
-const MACHINE_INTERFACING_TYPES = [Type.ELECTRIC, Type.STEEL];
+const BIOME_CANDIDATES = [ Biome.SPACE, Biome.FAIRY_CAVE, Biome.LABORATORY, Biome.ISLAND, Biome.WASTELAND, Biome.DOJO ];
+const MACHINE_INTERFACING_TYPES = [ Type.ELECTRIC, Type.STEEL ];
 
 /**
  * Teleporting Hijinks encounter.
@@ -38,7 +38,7 @@ export const TeleportingHijinksEncounter: MysteryEncounter =
   MysteryEncounterBuilder.withEncounterType(MysteryEncounterType.TELEPORTING_HIJINKS)
     .withEncounterTier(MysteryEncounterTier.COMMON)
     .withSceneWaveRangeRequirement(...CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES)
-    .withSceneRequirement(new WaveModulusRequirement([1, 2, 3], 10)) // Must be in first 3 waves after boss wave
+    .withSceneRequirement(new WaveModulusRequirement([ 1, 2, 3 ], 10)) // Must be in first 3 waves after boss wave
     .withSceneRequirement(new MoneyRequirement(0, MONEY_COST_MULTIPLIER)) // Must be able to pay teleport cost
     .withAutoHideIntroVisuals(false)
     .withCatchAllowed(true)
@@ -55,12 +55,12 @@ export const TeleportingHijinksEncounter: MysteryEncounter =
     ])
     .withIntroDialogue([
       {
-        text: `${namespace}.intro`,
+        text: `${namespace}:intro`,
       }
     ])
-    .withTitle(`${namespace}.title`)
-    .withDescription(`${namespace}.description`)
-    .withQuery(`${namespace}.query`)
+    .withTitle(`${namespace}:title`)
+    .withDescription(`${namespace}:description`)
+    .withQuery(`${namespace}:query`)
     .withOnInit((scene: BattleScene) => {
       const encounter = scene.currentBattle.mysteryEncounter!;
       const price = scene.getWaveMoneyAmount(MONEY_COST_MULTIPLIER);
@@ -76,11 +76,11 @@ export const TeleportingHijinksEncounter: MysteryEncounter =
         .newOptionWithMode(MysteryEncounterOptionMode.DISABLED_OR_DEFAULT)
         .withSceneMoneyRequirement(0, MONEY_COST_MULTIPLIER) // Must be able to pay teleport cost
         .withDialogue({
-          buttonLabel: `${namespace}.option.1.label`,
-          buttonTooltip: `${namespace}.option.1.tooltip`,
+          buttonLabel: `${namespace}:option.1.label`,
+          buttonTooltip: `${namespace}:option.1.tooltip`,
           selected: [
             {
-              text: `${namespace}.option.1.selected`,
+              text: `${namespace}:option.1.selected`,
             }
           ],
         })
@@ -100,12 +100,12 @@ export const TeleportingHijinksEncounter: MysteryEncounter =
         .newOptionWithMode(MysteryEncounterOptionMode.DISABLED_OR_SPECIAL)
         .withPokemonTypeRequirement(MACHINE_INTERFACING_TYPES, true, 1) // Must have Steel or Electric type
         .withDialogue({
-          buttonLabel: `${namespace}.option.2.label`,
-          buttonTooltip: `${namespace}.option.2.tooltip`,
-          disabledButtonTooltip: `${namespace}.option.2.disabled_tooltip`,
+          buttonLabel: `${namespace}:option.2.label`,
+          buttonTooltip: `${namespace}:option.2.tooltip`,
+          disabledButtonTooltip: `${namespace}:option.2.disabled_tooltip`,
           selected: [
             {
-              text: `${namespace}.option.2.selected`,
+              text: `${namespace}:option.2.selected`,
             }
           ],
         })
@@ -119,11 +119,11 @@ export const TeleportingHijinksEncounter: MysteryEncounter =
     )
     .withSimpleOption(
       {
-        buttonLabel: `${namespace}.option.3.label`,
-        buttonTooltip: `${namespace}.option.3.tooltip`,
+        buttonLabel: `${namespace}:option.3.label`,
+        buttonTooltip: `${namespace}:option.3.tooltip`,
         selected: [
           {
-            text: `${namespace}.option.3.selected`,
+            text: `${namespace}:option.3.selected`,
           },
         ],
       },
@@ -145,9 +145,9 @@ export const TeleportingHijinksEncounter: MysteryEncounter =
           }],
         };
 
-        const magnet = generateModifierTypeOption(scene, modifierTypes.ATTACK_TYPE_BOOSTER, [Type.STEEL])!;
-        const metalCoat = generateModifierTypeOption(scene, modifierTypes.ATTACK_TYPE_BOOSTER, [Type.ELECTRIC])!;
-        setEncounterRewards(scene, { guaranteedModifierTypeOptions: [magnet, metalCoat], fillRemaining: true });
+        const magnet = generateModifierTypeOption(scene, modifierTypes.ATTACK_TYPE_BOOSTER, [ Type.STEEL ])!;
+        const metalCoat = generateModifierTypeOption(scene, modifierTypes.ATTACK_TYPE_BOOSTER, [ Type.ELECTRIC ])!;
+        setEncounterRewards(scene, { guaranteedModifierTypeOptions: [ magnet, metalCoat ], fillRemaining: true });
         transitionMysteryEncounterIntroVisuals(scene, true, true);
         await initBattleWithEnemyConfig(scene, config);
       }
@@ -162,10 +162,10 @@ async function doBiomeTransitionDialogueAndBattleInit(scene: BattleScene) {
   const newBiome = filteredBiomes[randSeedInt(filteredBiomes.length)];
 
   // Show dialogue and transition biome
-  await showEncounterText(scene, `${namespace}.transport`);
-  await Promise.all([animateBiomeChange(scene, newBiome), transitionMysteryEncounterIntroVisuals(scene)]);
+  await showEncounterText(scene, `${namespace}:transport`);
+  await Promise.all([ animateBiomeChange(scene, newBiome), transitionMysteryEncounterIntroVisuals(scene) ]);
   scene.playBgm();
-  await showEncounterText(scene, `${namespace}.attacked`);
+  await showEncounterText(scene, `${namespace}:attacked`);
 
   // Init enemy
   const level = getEncounterPokemonLevelForWave(scene, STANDARD_ENCOUNTER_BOOSTED_LEVEL_MODIFIER);
@@ -175,8 +175,8 @@ async function doBiomeTransitionDialogueAndBattleInit(scene: BattleScene) {
 
   // Defense/Spd buffs below wave 50, +1 to all stats otherwise
   const statChangesForBattle: (Stat.ATK | Stat.DEF | Stat.SPATK | Stat.SPDEF | Stat.SPD | Stat.ACC | Stat.EVA)[] = scene.currentBattle.waveIndex < 50 ?
-    [Stat.DEF, Stat.SPDEF, Stat.SPD] :
-    [Stat.ATK, Stat.DEF, Stat.SPATK, Stat.SPDEF, Stat.SPD];
+    [ Stat.DEF, Stat.SPDEF, Stat.SPD ] :
+    [ Stat.ATK, Stat.DEF, Stat.SPATK, Stat.SPDEF, Stat.SPD ];
 
   const config: EnemyPartyConfig = {
     pokemonConfigs: [{
@@ -184,9 +184,9 @@ async function doBiomeTransitionDialogueAndBattleInit(scene: BattleScene) {
       species: bossSpecies,
       dataSource: new PokemonData(bossPokemon),
       isBoss: true,
-      tags: [BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON],
+      tags: [ BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON ],
       mysteryEncounterBattleEffects: (pokemon: Pokemon) => {
-        queueEncounterMessage(pokemon.scene, `${namespace}.boss_enraged`);
+        queueEncounterMessage(pokemon.scene, `${namespace}:boss_enraged`);
         pokemon.scene.unshiftPhase(new StatStageChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, statChangesForBattle, 1));
       }
     }],
@@ -198,7 +198,7 @@ async function doBiomeTransitionDialogueAndBattleInit(scene: BattleScene) {
 async function animateBiomeChange(scene: BattleScene, nextBiome: Biome) {
   return new Promise<void>(resolve => {
     scene.tweens.add({
-      targets: [scene.arenaEnemy, scene.lastEnemyTrainer],
+      targets: [ scene.arenaEnemy, scene.lastEnemyTrainer ],
       x: "+=300",
       duration: 2000,
       onComplete: () => {
@@ -214,7 +214,7 @@ async function animateBiomeChange(scene: BattleScene, nextBiome: Biome) {
         scene.arenaPlayerTransition.setVisible(true);
 
         scene.tweens.add({
-          targets: [scene.arenaPlayer, scene.arenaBgTransition, scene.arenaPlayerTransition],
+          targets: [ scene.arenaPlayer, scene.arenaBgTransition, scene.arenaPlayerTransition ],
           duration: 1000,
           ease: "Sine.easeInOut",
           alpha: (target: any) => target === scene.arenaPlayer ? 0 : 1,

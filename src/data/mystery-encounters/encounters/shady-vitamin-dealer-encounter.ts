@@ -18,7 +18,7 @@ import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
 import i18next from "i18next";
 
 /** the i18n namespace for this encounter */
-const namespace = "mysteryEncounter:shadyVitaminDealer";
+const namespace = "mysteryEncounters/shadyVitaminDealer";
 
 const VITAMIN_DEALER_CHEAP_PRICE_MULTIPLIER = 1.5;
 const VITAMIN_DEALER_EXPENSIVE_PRICE_MULTIPLIER = 3.5;
@@ -33,7 +33,7 @@ export const ShadyVitaminDealerEncounter: MysteryEncounter =
     .withEncounterTier(MysteryEncounterTier.COMMON)
     .withSceneWaveRangeRequirement(...CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES)
     .withSceneRequirement(new MoneyRequirement(0, VITAMIN_DEALER_CHEAP_PRICE_MULTIPLIER)) // Must have the money for at least the cheap deal
-    .withPrimaryPokemonHealthRatioRequirement([0.51, 1]) // At least 1 Pokemon must have above half HP
+    .withPrimaryPokemonHealthRatioRequirement([ 0.51, 1 ]) // At least 1 Pokemon must have above half HP
     .withIntroSpriteConfigs([
       {
         spriteKey: Species.KROOKODILE.toString(),
@@ -55,26 +55,26 @@ export const ShadyVitaminDealerEncounter: MysteryEncounter =
     ])
     .withIntroDialogue([
       {
-        text: `${namespace}.intro`,
+        text: `${namespace}:intro`,
       },
       {
-        text: `${namespace}.intro_dialogue`,
-        speaker: `${namespace}.speaker`,
+        text: `${namespace}:intro_dialogue`,
+        speaker: `${namespace}:speaker`,
       },
     ])
-    .withTitle(`${namespace}.title`)
-    .withDescription(`${namespace}.description`)
-    .withQuery(`${namespace}.query`)
+    .withTitle(`${namespace}:title`)
+    .withDescription(`${namespace}:description`)
+    .withQuery(`${namespace}:query`)
     .withOption(
       MysteryEncounterOptionBuilder
         .newOptionWithMode(MysteryEncounterOptionMode.DISABLED_OR_DEFAULT)
         .withSceneMoneyRequirement(0, VITAMIN_DEALER_CHEAP_PRICE_MULTIPLIER)
         .withDialogue({
-          buttonLabel: `${namespace}.option.1.label`,
-          buttonTooltip: `${namespace}.option.1.tooltip`,
+          buttonLabel: `${namespace}:option.1.label`,
+          buttonTooltip: `${namespace}:option.1.tooltip`,
           selected: [
             {
-              text: `${namespace}.option.selected`,
+              text: `${namespace}:option.selected`,
             },
           ],
         })
@@ -103,7 +103,7 @@ export const ShadyVitaminDealerEncounter: MysteryEncounter =
               return i18next.t("partyUiHandler:cantBeUsed", { pokemonName: pokemon.getNameToRender() }) ?? null;
             }
             if (!encounter.pokemonMeetsPrimaryRequirements(scene, pokemon)) {
-              return getEncounterText(scene, `${namespace}.invalid_selection`) ?? null;
+              return getEncounterText(scene, `${namespace}:invalid_selection`) ?? null;
             }
 
             return null;
@@ -139,8 +139,8 @@ export const ShadyVitaminDealerEncounter: MysteryEncounter =
 
           chosenPokemon.nature = newNature;
           encounter.setDialogueToken("newNature", getNatureName(newNature));
-          queueEncounterMessage(scene, `${namespace}.cheap_side_effects`);
-          setEncounterExp(scene, [chosenPokemon.id], 100);
+          queueEncounterMessage(scene, `${namespace}:cheap_side_effects`);
+          setEncounterExp(scene, [ chosenPokemon.id ], 100);
           chosenPokemon.updateInfo();
         })
         .build()
@@ -150,11 +150,11 @@ export const ShadyVitaminDealerEncounter: MysteryEncounter =
         .newOptionWithMode(MysteryEncounterOptionMode.DISABLED_OR_DEFAULT)
         .withSceneMoneyRequirement(0, VITAMIN_DEALER_EXPENSIVE_PRICE_MULTIPLIER)
         .withDialogue({
-          buttonLabel: `${namespace}.option.2.label`,
-          buttonTooltip: `${namespace}.option.2.tooltip`,
+          buttonLabel: `${namespace}:option.2.label`,
+          buttonTooltip: `${namespace}:option.2.tooltip`,
           selected: [
             {
-              text: `${namespace}.option.selected`,
+              text: `${namespace}:option.selected`,
             },
           ],
         })
@@ -178,7 +178,7 @@ export const ShadyVitaminDealerEncounter: MysteryEncounter =
 
           // Only Pokemon that can gain benefits are unfainted
           const selectableFilter = (pokemon: Pokemon) => {
-            return isPokemonValidForEncounterOptionSelection(pokemon, scene, `${namespace}.invalid_selection`);
+            return isPokemonValidForEncounterOptionSelection(pokemon, scene, `${namespace}:invalid_selection`);
           };
 
           return selectPokemonForOption(scene, onPokemonSelected, undefined, selectableFilter);
@@ -200,8 +200,8 @@ export const ShadyVitaminDealerEncounter: MysteryEncounter =
           const encounter = scene.currentBattle.mysteryEncounter!;
           const chosenPokemon = encounter.misc.chosenPokemon;
 
-          queueEncounterMessage(scene, `${namespace}.no_bad_effects`);
-          setEncounterExp(scene, [chosenPokemon.id], 100);
+          queueEncounterMessage(scene, `${namespace}:no_bad_effects`);
+          setEncounterExp(scene, [ chosenPokemon.id ], 100);
 
           chosenPokemon.updateInfo();
         })
@@ -209,12 +209,12 @@ export const ShadyVitaminDealerEncounter: MysteryEncounter =
     )
     .withSimpleOption(
       {
-        buttonLabel: `${namespace}.option.3.label`,
-        buttonTooltip: `${namespace}.option.3.tooltip`,
+        buttonLabel: `${namespace}:option.3.label`,
+        buttonTooltip: `${namespace}:option.3.tooltip`,
         selected: [
           {
-            text: `${namespace}.option.3.selected`,
-            speaker: `${namespace}.speaker`
+            text: `${namespace}:option.3.selected`,
+            speaker: `${namespace}:speaker`
           }
         ]
       },
