@@ -96,15 +96,22 @@ describe("Moves - Metronome", () => {
     expect(rightOpp.getStatStage(Stat.SPDEF)).toBe(0);
   });
 
-  // it("should be able to target itself or its ally with Acupressure", { repeats: 20 }, async () => {
-  //   game.override.battleType("double");
-  //   await game.classicMode.startBattle([ Species.REGIELEKI, Species.RATTATA ]);
-  //   vi.spyOn(leftPlayer, "randSeedInt").mockReturnValue(Moves.ACUPRESSURE);
+  it("should cause opponent to flee, and not crash for Roar", async () => {
+    await game.classicMode.startBattle();
+    const player = game.scene.getPlayerPokemon()!;
+    vi.spyOn(player, "randSeedInt").mockReturnValue(Moves.ROAR);
 
-  //   // game.move.select(Moves.METRONOME);
-  //   // game.move.select(Moves.SPLASH, 1);
-  //   // await game.phaseInterceptor.to("MoveEffectPhase");
-  //   // await game.move.forceHit();
-  //   // await game.toNextTurn();
-  // });
+    const enemyPokemon = game.scene.getEnemyPokemon()!;
+
+    game.move.select(Moves.METRONOME);
+    await game.phaseInterceptor.to("MoveEffectPhase");
+    await game.move.forceHit();
+    await game.phaseInterceptor.to("BerryPhase");
+
+    const isVisible = enemyPokemon.visible;
+    const hasFled = enemyPokemon.switchOutStatus;
+    expect(!isVisible && hasFled).toBe(true);
+
+    await game.phaseInterceptor.to("BattleEndPhase");
+  });
 });
