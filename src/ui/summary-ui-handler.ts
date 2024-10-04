@@ -685,7 +685,7 @@ export default class SummaryUiHandler extends UiHandler {
             onComplete: () => {
               if (forward) {
                 this.populatePageContainer(this.summaryPageContainer);
-                if (this.cursor===Page.MOVES) {
+                if (this.cursor === Page.MOVES) {
                   this.moveCursorObj = null;
                   this.showMoveSelect();
                   this.showMoveEffect();
@@ -785,16 +785,16 @@ export default class SummaryUiHandler extends UiHandler {
         labelImage: this.scene.add.image(0, 0, "summary_profile_ability"),
         ability: this.pokemon?.getAbility(true)!, // TODO: is this bang correct?
         nameText: null,
-        descriptionText: null};
+        descriptionText: null };
 
-      const allAbilityInfo = [this.abilityContainer]; // Creates an array to iterate through
+      const allAbilityInfo = [ this.abilityContainer ]; // Creates an array to iterate through
       // Only add to the array and set up displaying a passive if it's unlocked
       if (this.pokemon?.hasPassive()) {
         this.passiveContainer = {
           labelImage: this.scene.add.image(0, 0, "summary_profile_passive"),
           ability: this.pokemon.getPassiveAbility(),
           nameText: null,
-          descriptionText: null};
+          descriptionText: null };
         allAbilityInfo.push(this.passiveContainer);
 
         // Sets up the pixel button prompt image
@@ -815,7 +815,7 @@ export default class SummaryUiHandler extends UiHandler {
         abilityInfo.nameText.setOrigin(0, 1);
         profileContainer.add(abilityInfo.nameText);
 
-        abilityInfo.descriptionText = addTextObject(this.scene, 7, 69, abilityInfo.ability?.description!, TextStyle.WINDOW_ALT, { wordWrap: { width: 1224 } }); // TODO: is this bang correct?
+        abilityInfo.descriptionText = addTextObject(this.scene, 7, 69, abilityInfo.ability?.description!, TextStyle.WINDOW_ALT, { wordWrap: { width: 1224 }}); // TODO: is this bang correct?
         abilityInfo.descriptionText.setOrigin(0, 0);
         profileContainer.add(abilityInfo.descriptionText);
 
@@ -855,7 +855,7 @@ export default class SummaryUiHandler extends UiHandler {
       const nature = `${getBBCodeFrag(Utils.toReadableString(getNatureName(this.pokemon?.getNature()!)), TextStyle.SUMMARY_RED)}${closeFragment}`; // TODO: is this bang correct?
 
       const memoString = i18next.t("pokemonSummary:memoString", {
-        metFragment: i18next.t(`pokemonSummary:metFragment.${this.pokemon?.metBiome === -1? "apparently": "normal"}`, {
+        metFragment: i18next.t(`pokemonSummary:metFragment.${this.pokemon?.metBiome === -1 ? "apparently" : "normal"}`, {
           biome: `${getBBCodeFrag(getBiomeName(this.pokemon?.metBiome!), TextStyle.SUMMARY_RED)}${closeFragment}`, // TODO: is this bang correct?
           level: `${getBBCodeFrag(this.pokemon?.metLevel.toString()!, TextStyle.SUMMARY_RED)}${closeFragment}`, // TODO: is this bang correct?
           wave: `${getBBCodeFrag((this.pokemon?.metWave ? this.pokemon.metWave.toString()! : i18next.t("pokemonSummary:unknownTrainer")), TextStyle.SUMMARY_RED)}${closeFragment}`,
@@ -1019,7 +1019,7 @@ export default class SummaryUiHandler extends UiHandler {
         moveRowContainer.add(ppText);
       }
 
-      this.moveDescriptionText = addTextObject(this.scene, 2, 84, "", TextStyle.WINDOW_ALT, { wordWrap: { width: 1212 } });
+      this.moveDescriptionText = addTextObject(this.scene, 2, 84, "", TextStyle.WINDOW_ALT, { wordWrap: { width: 1212 }});
       this.movesContainer.add(this.moveDescriptionText);
 
       const moveDescriptionTextMaskRect = this.scene.make.graphics({});
