@@ -31,7 +31,7 @@ import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
 
 /** the i18n namespace for the encounter */
-const namespace = "mysteryEncounter:fightOrFlight";
+const namespace = "mysteryEncounters/fightOrFlight";
 
 /**
  * Fight or Flight encounter.
@@ -48,7 +48,7 @@ export const FightOrFlightEncounter: MysteryEncounter =
     .withIntroSpriteConfigs([]) // Set in onInit()
     .withIntroDialogue([
       {
-        text: `${namespace}.intro`,
+        text: `${namespace}:intro`,
       },
     ])
     .withOnInit((scene: BattleScene) => {
@@ -65,16 +65,16 @@ export const FightOrFlightEncounter: MysteryEncounter =
           species: bossSpecies,
           dataSource: new PokemonData(bossPokemon),
           isBoss: true,
-          tags: [BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON],
+          tags: [ BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON ],
           mysteryEncounterBattleEffects: (pokemon: Pokemon) => {
-            queueEncounterMessage(pokemon.scene, `${namespace}.option.1.stat_boost`);
+            queueEncounterMessage(pokemon.scene, `${namespace}:option.1.stat_boost`);
             // Randomly boost 1 stat 2 stages
             // Cannot boost Spd, Acc, or Evasion
-            pokemon.scene.unshiftPhase(new StatStageChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [randSeedInt(4, 1)], 2));
+            pokemon.scene.unshiftPhase(new StatStageChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [ randSeedInt(4, 1) ], 2));
           }
         }],
       };
-      encounter.enemyPartyConfigs = [config];
+      encounter.enemyPartyConfigs = [ config ];
 
       // Calculate item
       // Waves 10-40 GREAT, 60-120 ULTRA, 120-160 ROGUE, 160-180 MASTER
@@ -90,7 +90,7 @@ export const FightOrFlightEncounter: MysteryEncounter =
       let item: ModifierTypeOption | null = null;
       // TMs and Candy Jar excluded from possible rewards as they're too swingy in value for a singular item reward
       while (!item || item.type.id.includes("TM_") || item.type.id === "CANDY_JAR") {
-        item = getPlayerModifierTypeOptions(1, scene.getParty(), [], { guaranteedModifierTiers: [tier], allowLuckUpgrades: false })[0];
+        item = getPlayerModifierTypeOptions(1, scene.getParty(), [], { guaranteedModifierTiers: [ tier ], allowLuckUpgrades: false })[0];
       }
       encounter.setDialogueToken("itemName", item.type.name);
       encounter.misc = item;
@@ -120,16 +120,16 @@ export const FightOrFlightEncounter: MysteryEncounter =
 
       return true;
     })
-    .withTitle(`${namespace}.title`)
-    .withDescription(`${namespace}.description`)
-    .withQuery(`${namespace}.query`)
+    .withTitle(`${namespace}:title`)
+    .withDescription(`${namespace}:description`)
+    .withQuery(`${namespace}:query`)
     .withSimpleOption(
       {
-        buttonLabel: `${namespace}.option.1.label`,
-        buttonTooltip: `${namespace}.option.1.tooltip`,
+        buttonLabel: `${namespace}:option.1.label`,
+        buttonTooltip: `${namespace}:option.1.tooltip`,
         selected: [
           {
-            text: `${namespace}.option.1.selected`,
+            text: `${namespace}:option.1.selected`,
           },
         ],
       },
@@ -137,7 +137,7 @@ export const FightOrFlightEncounter: MysteryEncounter =
         // Pick battle
         // Pokemon will randomly boost 1 stat by 2 stages
         const item = scene.currentBattle.mysteryEncounter!.misc as ModifierTypeOption;
-        setEncounterRewards(scene, { guaranteedModifierTypeOptions: [item], fillRemaining: false });
+        setEncounterRewards(scene, { guaranteedModifierTypeOptions: [ item ], fillRemaining: false });
         await initBattleWithEnemyConfig(scene, scene.currentBattle.mysteryEncounter!.enemyPartyConfigs[0]);
       }
     )
@@ -146,12 +146,12 @@ export const FightOrFlightEncounter: MysteryEncounter =
         .newOptionWithMode(MysteryEncounterOptionMode.DISABLED_OR_SPECIAL)
         .withPrimaryPokemonRequirement(new MoveRequirement(STEALING_MOVES)) // Will set option2PrimaryName and option2PrimaryMove dialogue tokens automatically
         .withDialogue({
-          buttonLabel: `${namespace}.option.2.label`,
-          buttonTooltip: `${namespace}.option.2.tooltip`,
-          disabledButtonTooltip: `${namespace}.option.2.disabled_tooltip`,
+          buttonLabel: `${namespace}:option.2.label`,
+          buttonTooltip: `${namespace}:option.2.tooltip`,
+          disabledButtonTooltip: `${namespace}:option.2.disabled_tooltip`,
           selected: [
             {
-              text: `${namespace}.option.2.selected`
+              text: `${namespace}:option.2.selected`
             }
           ]
         })
@@ -159,7 +159,7 @@ export const FightOrFlightEncounter: MysteryEncounter =
           // Pick steal
           const encounter = scene.currentBattle.mysteryEncounter!;
           const item = scene.currentBattle.mysteryEncounter!.misc as ModifierTypeOption;
-          setEncounterRewards(scene, { guaranteedModifierTypeOptions: [item], fillRemaining: false });
+          setEncounterRewards(scene, { guaranteedModifierTypeOptions: [ item ], fillRemaining: false });
 
           // Use primaryPokemon to execute the thievery
           const primaryPokemon = encounter.options[1].primaryPokemon!;
@@ -170,11 +170,11 @@ export const FightOrFlightEncounter: MysteryEncounter =
     )
     .withSimpleOption(
       {
-        buttonLabel: `${namespace}.option.3.label`,
-        buttonTooltip: `${namespace}.option.3.tooltip`,
+        buttonLabel: `${namespace}:option.3.label`,
+        buttonTooltip: `${namespace}:option.3.tooltip`,
         selected: [
           {
-            text: `${namespace}.option.3.selected`,
+            text: `${namespace}:option.3.selected`,
           },
         ],
       },

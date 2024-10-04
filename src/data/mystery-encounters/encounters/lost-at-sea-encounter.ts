@@ -10,7 +10,7 @@ import { applyDamageToPokemon } from "#app/data/mystery-encounters/utils/encount
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
-import {PokemonMove} from "#app/field/pokemon";
+import { PokemonMove } from "#app/field/pokemon";
 
 const OPTION_1_REQUIRED_MOVE = Moves.SURF;
 const OPTION_2_REQUIRED_MOVE = Moves.FLY;
@@ -21,7 +21,7 @@ const OPTION_2_REQUIRED_MOVE = Moves.FLY;
  */
 const DAMAGE_PERCENTAGE: number = 25;
 /** The i18n namespace for the encounter */
-const namespace = "mysteryEncounter:lostAtSea";
+const namespace = "mysteryEncounters/lostAtSea";
 
 /**
  * Lost at sea encounter.
@@ -40,7 +40,7 @@ export const LostAtSeaEncounter: MysteryEncounter = MysteryEncounterBuilder.with
       y: 3,
     },
   ])
-  .withIntroDialogue([{ text: `${namespace}.intro` }])
+  .withIntroDialogue([{ text: `${namespace}:intro` }])
   .withOnInit((scene: BattleScene) => {
     const encounter = scene.currentBattle.mysteryEncounter!;
 
@@ -50,22 +50,22 @@ export const LostAtSeaEncounter: MysteryEncounter = MysteryEncounterBuilder.with
 
     return true;
   })
-  .withTitle(`${namespace}.title`)
-  .withDescription(`${namespace}.description`)
-  .withQuery(`${namespace}.query`)
+  .withTitle(`${namespace}:title`)
+  .withDescription(`${namespace}:description`)
+  .withQuery(`${namespace}:query`)
   .withOption(
     // Option 1: Use a (non fainted) pokemon that can learn Surf to guide you back/
     MysteryEncounterOptionBuilder
       .newOptionWithMode(MysteryEncounterOptionMode.DISABLED_OR_DEFAULT)
       .withPokemonCanLearnMoveRequirement(OPTION_1_REQUIRED_MOVE)
       .withDialogue({
-        buttonLabel: `${namespace}.option.1.label`,
-        disabledButtonLabel: `${namespace}.option.1.label_disabled`,
-        buttonTooltip: `${namespace}.option.1.tooltip`,
-        disabledButtonTooltip: `${namespace}.option.1.tooltip_disabled`,
+        buttonLabel: `${namespace}:option.1.label`,
+        disabledButtonLabel: `${namespace}:option.1.label_disabled`,
+        buttonTooltip: `${namespace}:option.1.tooltip`,
+        disabledButtonTooltip: `${namespace}:option.1.tooltip_disabled`,
         selected: [
           {
-            text: `${namespace}.option.1.selected`,
+            text: `${namespace}:option.1.selected`,
           },
         ],
       })
@@ -78,13 +78,13 @@ export const LostAtSeaEncounter: MysteryEncounter = MysteryEncounterBuilder.with
       .newOptionWithMode(MysteryEncounterOptionMode.DISABLED_OR_DEFAULT)
       .withPokemonCanLearnMoveRequirement(OPTION_2_REQUIRED_MOVE)
       .withDialogue({
-        buttonLabel: `${namespace}.option.2.label`,
-        disabledButtonLabel: `${namespace}.option.2.label_disabled`,
-        buttonTooltip: `${namespace}.option.2.tooltip`,
-        disabledButtonTooltip: `${namespace}.option.2.tooltip_disabled`,
+        buttonLabel: `${namespace}:option.2.label`,
+        disabledButtonLabel: `${namespace}:option.2.label_disabled`,
+        buttonTooltip: `${namespace}:option.2.tooltip`,
+        disabledButtonTooltip: `${namespace}:option.2.tooltip_disabled`,
         selected: [
           {
-            text: `${namespace}.option.2.selected`,
+            text: `${namespace}:option.2.selected`,
           },
         ],
       })
@@ -94,11 +94,11 @@ export const LostAtSeaEncounter: MysteryEncounter = MysteryEncounterBuilder.with
   .withSimpleOption(
     // Option 3: Wander aimlessly
     {
-      buttonLabel: `${namespace}.option.3.label`,
-      buttonTooltip: `${namespace}.option.3.tooltip`,
+      buttonLabel: `${namespace}:option.3.label`,
+      buttonTooltip: `${namespace}:option.3.tooltip`,
       selected: [
         {
-          text: `${namespace}.option.3.selected`,
+          text: `${namespace}:option.3.selected`,
         },
       ],
     },
@@ -118,7 +118,7 @@ export const LostAtSeaEncounter: MysteryEncounter = MysteryEncounterBuilder.with
   )
   .withOutroDialogue([
     {
-      text: `${namespace}.outro`,
+      text: `${namespace}:outro`,
     },
   ])
   .build();

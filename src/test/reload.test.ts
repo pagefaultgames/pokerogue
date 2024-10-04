@@ -46,7 +46,7 @@ describe("Reload", () => {
       .startingLevel(100) // Avoid levelling up
       .enemyLevel(1000) // Avoid opponent dying before game.doKillOpponents()
       .disableTrainerWaves()
-      .moveset([Moves.KOWTOW_CLEAVE])
+      .moveset([ Moves.KOWTOW_CLEAVE ])
       .enemyMoveset(Moves.SPLASH);
     await game.dailyMode.startBattle();
 
@@ -81,7 +81,7 @@ describe("Reload", () => {
       .startingLevel(100) // Avoid levelling up
       .enemyLevel(1000) // Avoid opponent dying before game.doKillOpponents()
       .disableTrainerWaves()
-      .moveset([Moves.KOWTOW_CLEAVE])
+      .moveset([ Moves.KOWTOW_CLEAVE ])
       .enemyMoveset(Moves.SPLASH);
     await game.classicMode.startBattle(); // Apparently daily mode would override the biome
 
@@ -161,7 +161,7 @@ describe("Reload", () => {
     game.override
       .battleType("single")
       .startingWave(50);
-    await game.runToFinalBossEncounter([Species.BULBASAUR], GameModes.DAILY);
+    await game.runToFinalBossEncounter([ Species.BULBASAUR ], GameModes.DAILY);
 
     const preReloadRngState = Phaser.Math.RND.state();
 

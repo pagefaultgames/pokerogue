@@ -19,10 +19,10 @@ import { getPokemonSpecies } from "#app/data/pokemon-species";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
 
 /** the i18n namespace for this encounter */
-const namespace = "mysteryEncounter:delibirdy";
+const namespace = "mysteryEncounters/delibirdy";
 
 /** Berries only */
-const OPTION_2_ALLOWED_MODIFIERS = ["BerryModifier", "PokemonInstantReviveModifier"];
+const OPTION_2_ALLOWED_MODIFIERS = [ "BerryModifier", "PokemonInstantReviveModifier" ];
 
 /** Disallowed items are berries, Reviver Seeds, and Vitamins (form change items and fusion items are not PokemonHeldItemModifiers) */
 const OPTION_3_DISALLOWED_MODIFIERS = [
@@ -81,15 +81,15 @@ export const DelibirdyEncounter: MysteryEncounter =
     ])
     .withIntroDialogue([
       {
-        text: `${namespace}.intro`,
+        text: `${namespace}:intro`,
       }
     ])
-    .withTitle(`${namespace}.title`)
-    .withDescription(`${namespace}.description`)
-    .withQuery(`${namespace}.query`)
+    .withTitle(`${namespace}:title`)
+    .withDescription(`${namespace}:description`)
+    .withQuery(`${namespace}:query`)
     .withOutroDialogue([
       {
-        text: `${namespace}.outro`,
+        text: `${namespace}:outro`,
       }
     ])
     .withOnInit((scene: BattleScene) => {
@@ -108,11 +108,11 @@ export const DelibirdyEncounter: MysteryEncounter =
         .newOptionWithMode(MysteryEncounterOptionMode.DISABLED_OR_DEFAULT)
         .withSceneMoneyRequirement(0, DELIBIRDY_MONEY_PRICE_MULTIPLIER) // Must have money to spawn
         .withDialogue({
-          buttonLabel: `${namespace}.option.1.label`,
-          buttonTooltip: `${namespace}.option.1.tooltip`,
+          buttonLabel: `${namespace}:option.1.label`,
+          buttonTooltip: `${namespace}:option.1.tooltip`,
           selected: [
             {
-              text: `${namespace}.option.1.selected`,
+              text: `${namespace}:option.1.selected`,
             },
           ],
         })
@@ -145,12 +145,12 @@ export const DelibirdyEncounter: MysteryEncounter =
         .newOptionWithMode(MysteryEncounterOptionMode.DISABLED_OR_DEFAULT)
         .withPrimaryPokemonRequirement(new HeldItemRequirement(OPTION_2_ALLOWED_MODIFIERS))
         .withDialogue({
-          buttonLabel: `${namespace}.option.2.label`,
-          buttonTooltip: `${namespace}.option.2.tooltip`,
-          secondOptionPrompt: `${namespace}.option.2.select_prompt`,
+          buttonLabel: `${namespace}:option.2.label`,
+          buttonTooltip: `${namespace}:option.2.tooltip`,
+          secondOptionPrompt: `${namespace}:option.2.select_prompt`,
           selected: [
             {
-              text: `${namespace}.option.2.selected`,
+              text: `${namespace}:option.2.selected`,
             },
           ],
         })
@@ -183,7 +183,7 @@ export const DelibirdyEncounter: MysteryEncounter =
             // If pokemon has valid item, it can be selected
             const meetsReqs = encounter.options[1].pokemonMeetsPrimaryRequirements(scene, pokemon);
             if (!meetsReqs) {
-              return getEncounterText(scene, `${namespace}.invalid_selection`) ?? null;
+              return getEncounterText(scene, `${namespace}:invalid_selection`) ?? null;
             }
 
             return null;
@@ -193,7 +193,7 @@ export const DelibirdyEncounter: MysteryEncounter =
         })
         .withOptionPhase(async (scene: BattleScene) => {
           const encounter = scene.currentBattle.mysteryEncounter!;
-          const modifier = encounter.misc.chosenModifier;
+          const modifier: BerryModifier | HealingBoosterModifier = encounter.misc.chosenModifier;
 
           // Give the player a Candy Jar if they gave a Berry, and a Healing Charm for Reviver Seed
           if (modifier instanceof BerryModifier) {
@@ -239,12 +239,12 @@ export const DelibirdyEncounter: MysteryEncounter =
         .newOptionWithMode(MysteryEncounterOptionMode.DISABLED_OR_DEFAULT)
         .withPrimaryPokemonRequirement(new HeldItemRequirement(OPTION_3_DISALLOWED_MODIFIERS, 1, true))
         .withDialogue({
-          buttonLabel: `${namespace}.option.3.label`,
-          buttonTooltip: `${namespace}.option.3.tooltip`,
-          secondOptionPrompt: `${namespace}.option.3.select_prompt`,
+          buttonLabel: `${namespace}:option.3.label`,
+          buttonTooltip: `${namespace}:option.3.tooltip`,
+          secondOptionPrompt: `${namespace}:option.3.select_prompt`,
           selected: [
             {
-              text: `${namespace}.option.3.selected`,
+              text: `${namespace}:option.3.selected`,
             },
           ],
         })
@@ -277,7 +277,7 @@ export const DelibirdyEncounter: MysteryEncounter =
             // If pokemon has valid item, it can be selected
             const meetsReqs = encounter.options[2].pokemonMeetsPrimaryRequirements(scene, pokemon);
             if (!meetsReqs) {
-              return getEncounterText(scene, `${namespace}.invalid_selection`) ?? null;
+              return getEncounterText(scene, `${namespace}:invalid_selection`) ?? null;
             }
 
             return null;

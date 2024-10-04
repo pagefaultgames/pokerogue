@@ -33,7 +33,7 @@ import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
 
 /** the i18n namespace for the encounter */
-const namespace = "mysteryEncounter:berriesAbound";
+const namespace = "mysteryEncounters/berriesAbound";
 
 /**
  * Berries Abound encounter.
@@ -50,7 +50,7 @@ export const BerriesAboundEncounter: MysteryEncounter =
     .withIntroSpriteConfigs([]) // Set in onInit()
     .withIntroDialogue([
       {
-        text: `${namespace}.intro`,
+        text: `${namespace}:intro`,
       },
     ])
     .withOnInit((scene: BattleScene) => {
@@ -69,7 +69,7 @@ export const BerriesAboundEncounter: MysteryEncounter =
           isBoss: true
         }],
       };
-      encounter.enemyPartyConfigs = [config];
+      encounter.enemyPartyConfigs = [ config ];
 
       // Calculate the number of extra berries that player receives
       // 10-40: 2, 40-120: 4, 120-160: 5, 160-180: 7
@@ -110,16 +110,16 @@ export const BerriesAboundEncounter: MysteryEncounter =
 
       return true;
     })
-    .withTitle(`${namespace}.title`)
-    .withDescription(`${namespace}.description`)
-    .withQuery(`${namespace}.query`)
+    .withTitle(`${namespace}:title`)
+    .withDescription(`${namespace}:description`)
+    .withQuery(`${namespace}:query`)
     .withSimpleOption(
       {
-        buttonLabel: `${namespace}.option.1.label`,
-        buttonTooltip: `${namespace}.option.1.tooltip`,
+        buttonLabel: `${namespace}:option.1.label`,
+        buttonTooltip: `${namespace}:option.1.tooltip`,
         selected: [
           {
-            text: `${namespace}.option.1.selected`,
+            text: `${namespace}:option.1.selected`,
           },
         ],
       },
@@ -129,7 +129,7 @@ export const BerriesAboundEncounter: MysteryEncounter =
         const numBerries = encounter.misc.numBerries;
 
         const doBerryRewards = () => {
-          const berryText = i18next.t(`${namespace}.berries`);
+          const berryText = i18next.t(`${namespace}:berries`);
 
           scene.playSound("item_fanfare");
           queueEncounterMessage(scene, i18next.t("battle:rewardGainCount", { modifierName: berryText, count: numBerries }));
@@ -157,8 +157,8 @@ export const BerriesAboundEncounter: MysteryEncounter =
       MysteryEncounterOptionBuilder
         .newOptionWithMode(MysteryEncounterOptionMode.DEFAULT)
         .withDialogue({
-          buttonLabel: `${namespace}.option.2.label`,
-          buttonTooltip: `${namespace}.option.2.tooltip`
+          buttonLabel: `${namespace}:option.2.label`,
+          buttonTooltip: `${namespace}:option.2.tooltip`
         })
         .withOptionPhase(async (scene: BattleScene) => {
           // Pick race for berries
@@ -180,7 +180,7 @@ export const BerriesAboundEncounter: MysteryEncounter =
           if (speedDiff < 1) {
             // Caught and attacked by boss, gets +1 to all stats at start of fight
             const doBerryRewards = () => {
-              const berryText = i18next.t(`${namespace}.berries`);
+              const berryText = i18next.t(`${namespace}:berries`);
 
               scene.playSound("item_fanfare");
               queueEncounterMessage(scene, i18next.t("battle:rewardGainCount", { modifierName: berryText, count: numBerries }));
@@ -193,25 +193,25 @@ export const BerriesAboundEncounter: MysteryEncounter =
 
             // Defense/Spd buffs below wave 50, +1 to all stats otherwise
             const statChangesForBattle: (Stat.ATK | Stat.DEF | Stat.SPATK | Stat.SPDEF | Stat.SPD | Stat.ACC | Stat.EVA)[] = scene.currentBattle.waveIndex < 50 ?
-              [Stat.DEF, Stat.SPDEF, Stat.SPD] :
-              [Stat.ATK, Stat.DEF, Stat.SPATK, Stat.SPDEF, Stat.SPD];
+              [ Stat.DEF, Stat.SPDEF, Stat.SPD ] :
+              [ Stat.ATK, Stat.DEF, Stat.SPATK, Stat.SPDEF, Stat.SPD ];
 
             const config = scene.currentBattle.mysteryEncounter!.enemyPartyConfigs[0];
-            config.pokemonConfigs![0].tags = [BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON];
+            config.pokemonConfigs![0].tags = [ BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON ];
             config.pokemonConfigs![0].mysteryEncounterBattleEffects = (pokemon: Pokemon) => {
-              queueEncounterMessage(pokemon.scene, `${namespace}.option.2.boss_enraged`);
+              queueEncounterMessage(pokemon.scene, `${namespace}:option.2.boss_enraged`);
               pokemon.scene.unshiftPhase(new StatStageChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, statChangesForBattle, 1));
             };
             setEncounterRewards(scene, { guaranteedModifierTypeOptions: shopOptions, fillRemaining: false }, undefined, doBerryRewards);
-            await showEncounterText(scene, `${namespace}.option.2.selected_bad`);
+            await showEncounterText(scene, `${namespace}:option.2.selected_bad`);
             await initBattleWithEnemyConfig(scene, config);
             return;
           } else {
             // Gains 1 berry for every 10% faster the player's pokemon is than the enemy, up to a max of numBerries, minimum of 2
-            const numBerriesGrabbed = Math.max(Math.min(Math.round((speedDiff - 1)/0.08), numBerries), 2);
+            const numBerriesGrabbed = Math.max(Math.min(Math.round((speedDiff - 1) / 0.08), numBerries), 2);
             encounter.setDialogueToken("numBerries", String(numBerriesGrabbed));
             const doFasterBerryRewards = () => {
-              const berryText = i18next.t(`${namespace}.berries`);
+              const berryText = i18next.t(`${namespace}:berries`);
 
               scene.playSound("item_fanfare");
               queueEncounterMessage(scene, i18next.t("battle:rewardGainCount", { modifierName: berryText, count: numBerriesGrabbed }));
@@ -224,7 +224,7 @@ export const BerriesAboundEncounter: MysteryEncounter =
 
             setEncounterExp(scene, fastestPokemon.id, encounter.enemyPartyConfigs[0].pokemonConfigs![0].species.baseExp);
             setEncounterRewards(scene, { guaranteedModifierTypeOptions: shopOptions, fillRemaining: false }, undefined, doFasterBerryRewards);
-            await showEncounterText(scene, `${namespace}.option.2.selected`);
+            await showEncounterText(scene, `${namespace}:option.2.selected`);
             leaveEncounterWithoutBattle(scene);
           }
         })
@@ -232,11 +232,11 @@ export const BerriesAboundEncounter: MysteryEncounter =
     )
     .withSimpleOption(
       {
-        buttonLabel: `${namespace}.option.3.label`,
-        buttonTooltip: `${namespace}.option.3.tooltip`,
+        buttonLabel: `${namespace}:option.3.label`,
+        buttonTooltip: `${namespace}:option.3.tooltip`,
         selected: [
           {
-            text: `${namespace}.option.3.selected`,
+            text: `${namespace}:option.3.selected`,
           },
         ],
       },
@@ -250,7 +250,7 @@ export const BerriesAboundEncounter: MysteryEncounter =
 
 function tryGiveBerry(scene: BattleScene, prioritizedPokemon?: PlayerPokemon) {
   const berryType = randSeedInt(Object.keys(BerryType).filter(s => !isNaN(Number(s))).length) as BerryType;
-  const berry = generateModifierType(scene, modifierTypes.BERRY, [berryType]) as BerryModifierType;
+  const berry = generateModifierType(scene, modifierTypes.BERRY, [ berryType ]) as BerryModifierType;
 
   const party = scene.getParty();
 
