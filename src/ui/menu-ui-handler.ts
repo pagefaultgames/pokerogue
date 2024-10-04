@@ -532,10 +532,7 @@ export default class MenuUiHandler extends MessageUiHandler {
                   window.open(googleUrl, "_self");
                   return true;
                 } else {
-                  Utils.apiPost("/auth/google/logout", undefined, undefined, true).then(res => {
-                    if (!res.ok) {
-                      console.error(`Unlink failed (${res.status}: ${res.statusText})`);
-                    }
+                  pokerogueApi.unlinkGoogle().then(_isSuccess => {
                     updateUserInfo().then(() => this.scene.reset(true, true));
                   });
                   return true;

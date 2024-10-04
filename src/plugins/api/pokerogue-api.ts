@@ -377,14 +377,33 @@ export class PokerogueApi extends Api {
    */
   public async unlinkDiscord() {
     try {
-      const response = await this.doPost("/unlink/discord");
+      const response = await this.doPost("/auth/discord/logout");
       if (response.ok) {
         return true;
       } else {
-        console.warn(`Unlink failed (${response.status}: ${response.statusText})`);
+        console.warn(`Discord unlink failed (${response.status}: ${response.statusText})`);
       }
     } catch (err) {
-      console.warn("Could not unlink discord!", err);
+      console.warn("Could not unlink Discord!", err);
+    }
+
+    return false;
+  }
+
+  /**
+   * Unlink the currently logged in user from Google.
+   * @returns `true` if unlinking was successful, `false` if not
+   */
+  public async unlinkGoogle() {
+    try {
+      const response = await this.doPost("/auth/google/logout");
+      if (response.ok) {
+        return true;
+      } else {
+        console.warn(`Google Unlink failed (${response.status}: ${response.statusText})`);
+      }
+    } catch (err) {
+      console.warn("Could not unlink Google!", err);
     }
 
     return false;
