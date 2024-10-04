@@ -200,7 +200,7 @@ describe("Field Trip - Mystery Encounter", () => {
       expect(modifierSelectHandler.options.length).toEqual(5);
       expect(modifierSelectHandler.options[0].modifierTypeOption.type.name).toBe(i18next.t("modifierType:TempStatStageBoosterItem.x_accuracy"));
       expect(modifierSelectHandler.options[1].modifierTypeOption.type.name).toBe(i18next.t("modifierType:TempStatStageBoosterItem.x_speed"));
-      expect(modifierSelectHandler.options[2].modifierTypeOption.type.name).toBe(i18next.t("modifierType:ModifierType.AddPokeballModifierType.name", { modifierCount: 5, pokeballName: i18next.t("pokeball:greatBall")}));
+      expect(modifierSelectHandler.options[2].modifierTypeOption.type.name).toBe(i18next.t("modifierType:ModifierType.AddPokeballModifierType.name", { modifierCount: 5, pokeballName: i18next.t("pokeball:greatBall") }));
       expect(i18next.t).toHaveBeenCalledWith(("modifierType:ModifierType.AddPokeballModifierType.name"), expect.objectContaining({ modifierCount: 5 }));
       expect(modifierSelectHandler.options[3].modifierTypeOption.type.name).toBe(i18next.t("modifierType:ModifierType.IV_SCANNER.name"));
       expect(modifierSelectHandler.options[4].modifierTypeOption.type.name).toBe(i18next.t("modifierType:ModifierType.RARER_CANDY.name"));
