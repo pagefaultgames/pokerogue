@@ -1438,6 +1438,17 @@ export const trainerTypeDialogue: TrainerTypeDialogue = {
       "dialogue:janine.defeat.3",
     ]
   },
+  [TrainerType.KOGA_GYM]: {
+    encounter: [
+      "dialogue:koga_gym.encounter.1"
+    ],
+    victory: [
+      "dialogue:koga_gym.victory.1"
+    ],
+    defeat: [
+      "dialogue:koga_gym.defeat.1"
+    ]
+  },
   [TrainerType.SABRINA]: {
     encounter: [
       "dialogue:sabrina.encounter.1",

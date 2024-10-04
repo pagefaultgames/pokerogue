@@ -193,6 +193,7 @@ export class TrainerConfig {
   public isBoss: boolean = false;
   public hasStaticParty: boolean = false;
   public useSameSeedForAllMembers: boolean = false;
+  public forceTeraFirstSlot: boolean = false;
   public mixedBattleBgm: string;
   public battleBgm: string;
   public encounterBgm: string;
@@ -206,7 +207,7 @@ export class TrainerConfig {
   public partyMemberFuncs: PartyMemberFuncs = {};
   public speciesPools: TrainerTierPools;
   public speciesFilter: PokemonSpeciesFilter;
-  public specialtyTypes: Type[] = [];
+  public specialtyType: Type;
   public hasVoucher: boolean = false;
 
   public encounterMessages: string[] = [];
@@ -358,6 +359,9 @@ export class TrainerConfig {
     case TrainerType.RAIHAN_ELITE:
       trainerType = TrainerType.RAIHAN;
       break;
+    case TrainerType.KOGA_GYM:
+      trainerType = TrainerType.KOGA;
+      break;
     }
 
     return trainerType;
@@ -490,6 +494,11 @@ export class TrainerConfig {
     return this;
   }
 
+  setForceTeraFirstSlot(): TrainerConfig {
+    this.forceTeraFirstSlot = true;
+    return this;
+  }
+
   setMixedBattleBgm(mixedBattleBgm: string): TrainerConfig {
     this.mixedBattleBgm = mixedBattleBgm;
     return this;
@@ -536,8 +545,8 @@ export class TrainerConfig {
     return this;
   }
 
-  setSpecialtyTypes(...specialtyTypes: Type[]): TrainerConfig {
-    this.specialtyTypes = specialtyTypes;
+  setSpecialtyType(specialtyType: Type): TrainerConfig {
+    this.specialtyType = specialtyType;
     return this;
   }
 
@@ -672,10 +681,11 @@ export class TrainerConfig {
      * Initializes the trainer configuration for an evil team admin.
      * @param title The title of the evil team admin.
      * @param poolName The evil team the admin belongs to.
-     * @param {Species | Species[]} signatureSpecies The signature species for the evil team leader.
+     * @param {Species | Species[]} signatureSpecies The signature species for the evil team admin.
+     * @param {Type} specialtyType The specialty type for the evil team admin.
      * @returns {TrainerConfig} The updated TrainerConfig instance.
      * **/
-  initForEvilTeamAdmin(title: string, poolName: string, signatureSpecies: (Species | Species[])[],): TrainerConfig {
+  initForEvilTeamAdmin(title: string, poolName: string, signatureSpecies: (Species | Species[])[], specialtyType?: Type): TrainerConfig {
     if (!getIsInitialized()) {
       initI18n();
     }
@@ -690,6 +700,10 @@ export class TrainerConfig {
       }
       this.setPartyMemberFunc(-(s + 1), getRandomPartyMemberFunc(speciesPool));
     });
+    if (specialtyType) {
+      this.setSpeciesFilter(p => p.isOfType(specialtyType));
+      this.setSpecialtyType(specialtyType);
+    }
 
     const nameForCall = this.name.toLowerCase().replace(/\s/g, "_");
     this.name = i18next.t(`trainerNames:${nameForCall}`);
@@ -707,11 +721,11 @@ export class TrainerConfig {
   /**
    * Initializes the trainer configuration for a Stat Trainer, as part of the Trainer's Test Mystery Encounter.
    * @param {Species | Species[]} signatureSpecies The signature species for the Elite Four member.
-   * @param {Type[]} specialtyTypes The specialty types for the Stat Trainer.
+   * @param {Type} specialtyType The specialty type for the Stat Trainer.
    * @param isMale Whether the Elite Four Member is Male or Female (for localization of the title).
    * @returns {TrainerConfig} The updated TrainerConfig instance.
    **/
-  initForStatTrainer(signatureSpecies: (Species | Species[])[], isMale: boolean, ...specialtyTypes: Type[]): TrainerConfig {
+  initForStatTrainer(signatureSpecies: (Species | Species[])[], isMale: boolean, specialtyType?: Type): TrainerConfig {
     if (!getIsInitialized()) {
       initI18n();
     }
@@ -724,9 +738,9 @@ export class TrainerConfig {
       }
       this.setPartyMemberFunc(-(s + 1), getRandomPartyMemberFunc(speciesPool));
     });
-    if (specialtyTypes.length) {
-      this.setSpeciesFilter(p => specialtyTypes.find(t => p.isOfType(t)) !== undefined);
-      this.setSpecialtyTypes(...specialtyTypes);
+    if (specialtyType) {
+      this.setSpeciesFilter(p => p.isOfType(specialtyType));
+      this.setSpecialtyType(specialtyType);
     }
     const nameForCall = this.name.toLowerCase().replace(/\s/g, "_");
     this.name = i18next.t(`trainerNames:${nameForCall}`);
@@ -744,11 +758,11 @@ export class TrainerConfig {
   /**
      * Initializes the trainer configuration for an evil team leader. Temporarily hardcoding evil leader teams though.
      * @param {Species | Species[]} signatureSpecies The signature species for the evil team leader.
-     * @param {Type[]} specialtyTypes The specialty types for the evil team Leader.
+     * @param {Type} specialtyType The specialty type for the evil team Leader.
      * @param boolean Whether or not this is the rematch fight
      * @returns {TrainerConfig} The updated TrainerConfig instance.
      * **/
-  initForEvilTeamLeader(title: string, signatureSpecies: (Species | Species[])[], rematch: boolean = false, ...specialtyTypes: Type[]): TrainerConfig {
+  initForEvilTeamLeader(title: string, signatureSpecies: (Species | Species[])[], rematch: boolean = false, specialtyType?: Type): TrainerConfig {
     if (!getIsInitialized()) {
       initI18n();
     }
@@ -763,9 +777,9 @@ export class TrainerConfig {
       }
       this.setPartyMemberFunc(-(s + 1), getRandomPartyMemberFunc(speciesPool));
     });
-    if (specialtyTypes.length) {
-      this.setSpeciesFilter(p => specialtyTypes.find(t => p.isOfType(t)) !== undefined);
-      this.setSpecialtyTypes(...specialtyTypes);
+    if (specialtyType) {
+      this.setSpeciesFilter(p => p.isOfType(specialtyType));
+      this.setSpecialtyType(specialtyType);
     }
     const nameForCall = this.name.toLowerCase().replace(/\s/g, "_");
     this.name = i18next.t(`trainerNames:${nameForCall}`);
@@ -783,11 +797,11 @@ export class TrainerConfig {
   /**
      * Initializes the trainer configuration for a Gym Leader.
      * @param {Species | Species[]} signatureSpecies The signature species for the Gym Leader.
-     * @param {Type[]} specialtyTypes The specialty types for the Gym Leader.
+     * @param {Type} specialtyType The specialty type for the Gym Leader.
      * @param isMale Whether the Gym Leader is Male or Not (for localization of the title).
      * @returns {TrainerConfig} The updated TrainerConfig instance.
      * **/
-  initForGymLeader(signatureSpecies: (Species | Species[])[], isMale: boolean, ...specialtyTypes: Type[]): TrainerConfig {
+  initForGymLeader(signatureSpecies: (Species | Species[])[], isMale: boolean, specialtyType: Type): TrainerConfig {
     // Check if the internationalization (i18n) system is initialized.
     if (!getIsInitialized()) {
       initI18n();
@@ -806,10 +820,10 @@ export class TrainerConfig {
       this.setPartyMemberFunc(-(s + 1), getRandomPartyMemberFunc(speciesPool));
     });
 
-    // If specialty types are provided, set species filter and specialty types.
-    if (specialtyTypes.length) {
-      this.setSpeciesFilter(p => specialtyTypes.find(t => p.isOfType(t)) !== undefined);
-      this.setSpecialtyTypes(...specialtyTypes);
+    // If specialty type is provided, set species filter and specialty type.
+    if (specialtyType) {
+      this.setSpeciesFilter(p => p.isOfType(specialtyType));
+      this.setSpecialtyType(specialtyType);
     }
 
     // Localize the trainer's name by converting it to lowercase and replacing spaces with underscores.
@@ -831,7 +845,7 @@ export class TrainerConfig {
     this.setVictoryBgm("victory_gym");
     this.setGenModifiersFunc(party => {
       const waveIndex = party[0].scene.currentBattle.waveIndex;
-      return getRandomTeraModifiers(party, waveIndex >= 100 ? 1 : 0, specialtyTypes.length ? specialtyTypes : undefined);
+      return getRandomTeraModifiers(party, waveIndex >= 100 ? 1 : 0, specialtyType, this.forceTeraFirstSlot);
     });
 
     return this;
@@ -840,11 +854,11 @@ export class TrainerConfig {
   /**
      * Initializes the trainer configuration for an Elite Four member.
      * @param {Species | Species[]} signatureSpecies The signature species for the Elite Four member.
-     * @param {Type[]} specialtyTypes The specialty types for the Elite Four member.
+     * @param {Type} specialtyType The specialty type for the Elite Four member.
      * @param isMale Whether the Elite Four Member is Male or Female (for localization of the title).
      * @returns {TrainerConfig} The updated TrainerConfig instance.
      **/
-  initForEliteFour(signatureSpecies: (Species | Species[])[], isMale: boolean, ...specialtyTypes: Type[]): TrainerConfig {
+  initForEliteFour(signatureSpecies: (Species | Species[])[], isMale: boolean, specialtyType: Type): TrainerConfig {
     // Check if the internationalization (i18n) system is initialized.
     if (!getIsInitialized()) {
       initI18n();
@@ -863,10 +877,10 @@ export class TrainerConfig {
       this.setPartyMemberFunc(-(s + 1), getRandomPartyMemberFunc(speciesPool));
     });
 
-    // Set species filter and specialty types if provided, otherwise filter by base total.
-    if (specialtyTypes.length) {
-      this.setSpeciesFilter(p => specialtyTypes.some(t => p.isOfType(t)) && p.baseTotal >= ELITE_FOUR_MINIMUM_BST);
-      this.setSpecialtyTypes(...specialtyTypes);
+    // Set species filter and specialty type if provided, otherwise filter by base total.
+    if (specialtyType) {
+      this.setSpeciesFilter(p => p.isOfType(specialtyType) && p.baseTotal >= ELITE_FOUR_MINIMUM_BST);
+      this.setSpecialtyType(specialtyType);
     } else {
       this.setSpeciesFilter(p => p.baseTotal >= ELITE_FOUR_MINIMUM_BST);
     }
@@ -888,7 +902,7 @@ export class TrainerConfig {
     this.setHasVoucher(true);
     this.setBattleBgm("battle_unova_elite");
     this.setVictoryBgm("victory_gym");
-    this.setGenModifiersFunc(party => getRandomTeraModifiers(party, 2, specialtyTypes.length ? specialtyTypes : undefined));
+    this.setGenModifiersFunc(party => getRandomTeraModifiers(party, 2, specialtyType, this.forceTeraFirstSlot));
 
     return this;
   }
@@ -1093,8 +1107,8 @@ export class TrainerConfig {
 
     clone = this.speciesPools ? clone.setSpeciesPools(this.speciesPools) : clone;
     clone = this.speciesFilter ? clone.setSpeciesFilter(this.speciesFilter) : clone;
-    if (this.specialtyTypes) {
-      clone.specialtyTypes = this.specialtyTypes.slice(0);
+    if (this.specialtyType) {
+      clone.specialtyType = this.specialtyType;
     }
 
     clone.encounterMessages = this.encounterMessages?.slice(0);
@@ -1174,13 +1188,30 @@ function getSpeciesFilterRandomPartyMemberFunc(speciesFilter: PokemonSpeciesFilt
   };
 }
 
-function getRandomTeraModifiers(party: EnemyPokemon[], count: integer, types?: Type[]): PersistentModifier[] {
+/**
+ * Function to get random Tera modifiers for enemy trainers
+ * @param party {@linkcode EnemyPokemon} enemy trainer party
+ * @param count {@linkcode integer} how many Teras you want the trainer to have
+ * @param type {@linkcode Type} desired Tera type
+ * @param forceTeraFirstSlot {@linkcode boolean} Whether Trainer should attempt to Terastalize the mon in the first slot of signature species
+ * @returns {@linkcode PersistentModifier} an array of Tera modifiers for the enemy party
+ */
+function getRandomTeraModifiers(party: EnemyPokemon[], count: integer, type?: Type, forceTeraFirstSlot?: boolean): PersistentModifier[] {
   const ret: PersistentModifier[] = [];
   const partyMemberIndexes = new Array(party.length).fill(null).map((_, i) => i);
-  for (let t = 0; t < Math.min(count, party.length); t++) {
+  let t = 0; // Move this out of the for loop in case there's a forced tera slot
+  if (type && forceTeraFirstSlot) { // If there's a designated tera slot, essentially do an iteration of the for loop below with a set index and without checking count
+    const forcedTeraSlot = party.length - 1;
+    if (forcedTeraSlot && forcedTeraSlot >= 0) {
+      partyMemberIndexes.splice(partyMemberIndexes.indexOf(forcedTeraSlot), 1);
+      ret.push(modifierTypes.TERA_SHARD().generateType([], [type])!.withIdFromFunc(modifierTypes.TERA_SHARD).newModifier(party[forcedTeraSlot]) as PersistentModifier); // TODO: is the bang correct?
+      t++;
+    }
+  }
+  for (; t < Math.min(count, party.length); t++) {
     const randomIndex = Utils.randSeedItem(partyMemberIndexes);
     partyMemberIndexes.splice(partyMemberIndexes.indexOf(randomIndex), 1);
-    ret.push(modifierTypes.TERA_SHARD().generateType([], [Utils.randSeedItem(types ? types : party[randomIndex].getTypes())])!.withIdFromFunc(modifierTypes.TERA_SHARD).newModifier(party[randomIndex]) as PersistentModifier); // TODO: is the bang correct?
+    ret.push(modifierTypes.TERA_SHARD().generateType([], [Utils.randSeedItem(type ? [type] : party[randomIndex].getTypes())])!.withIdFromFunc(modifierTypes.TERA_SHARD).newModifier(party[randomIndex]) as PersistentModifier); // TODO: is the bang correct?
   }
   return ret;
 }
@@ -1200,43 +1231,44 @@ export const signatureSpecies: SignatureSpecies = {
   LT_SURGE: [Species.VOLTORB, Species.PIKACHU, Species.ELECTABUZZ],
   ERIKA: [Species.ODDISH, Species.BELLSPROUT, Species.TANGELA, Species.HOPPIP],
   JANINE: [Species.VENONAT, Species.SPINARAK, Species.ZUBAT],
+  KOGA_GYM: [Species.KOFFING, Species.GRIMER, Species.VENONAT],
   SABRINA: [Species.ABRA, Species.MR_MIME, Species.ESPEON],
   BLAINE: [Species.GROWLITHE, Species.PONYTA, Species.MAGMAR],
-  GIOVANNI: [Species.SANDILE, Species.MURKROW, Species.NIDORAN_M, Species.NIDORAN_F],
+  GIOVANNI: [Species.DIGLETT, Species.NIDORAN_M, Species.NIDORAN_F, Species.RHYHORN],
   FALKNER: [Species.PIDGEY, Species.HOOTHOOT, Species.DODUO],
-  BUGSY: [Species.SCYTHER, Species.HERACROSS, Species.SHUCKLE, Species.PINSIR],
-  WHITNEY: [Species.GIRAFARIG, Species.MILTANK],
+  BUGSY: [Species.SCYTHER, Species.YANMA, Species.PINECO],
+  WHITNEY: [Species.CLEFAIRY, Species.MILTANK],
   MORTY: [Species.GASTLY, Species.MISDREAVUS, Species.SABLEYE],
-  CHUCK: [Species.POLIWRATH, Species.MANKEY],
-  JASMINE: [Species.MAGNEMITE, Species.STEELIX],
+  CHUCK: [Species.POLIWRATH, Species.MANKEY, Species.HITMONTOP],
+  JASMINE: [Species.SKARMORY, Species.MAGNEMITE, Species.STEELIX],
   PRYCE: [Species.SEEL, Species.SWINUB],
   CLAIR: [Species.DRATINI, Species.HORSEA, Species.GYARADOS],
   ROXANNE: [Species.GEODUDE, Species.NOSEPASS],
-  BRAWLY: [Species.MACHOP, Species.MAKUHITA],
+  BRAWLY: [Species.MACHOP, Species.MEDITITE, Species.MAKUHITA],
   WATTSON: [Species.MAGNEMITE, Species.VOLTORB, Species.ELECTRIKE],
   FLANNERY: [Species.SLUGMA, Species.TORKOAL, Species.NUMEL],
-  NORMAN: [Species.SLAKOTH, Species.SPINDA, Species.CHANSEY, Species.KANGASKHAN],
+  NORMAN: [Species.SLAKOTH, Species.KECLEON, Species.KANGASKHAN],
   WINONA: [Species.SWABLU, Species.WINGULL, Species.TROPIUS, Species.SKARMORY],
   TATE: [Species.SOLROCK, Species.NATU, Species.CHIMECHO, Species.GALLADE],
   LIZA: [Species.LUNATONE, Species.SPOINK, Species.BALTOY, Species.GARDEVOIR],
-  JUAN: [Species.HORSEA, Species.BARBOACH, Species.SPHEAL, Species.RELICANTH],
+  JUAN: [Species.HORSEA, Species.BARBOACH, Species.SPHEAL, Species.CORPHISH],
   ROARK: [Species.CRANIDOS, Species.LARVITAR, Species.GEODUDE],
-  GARDENIA: [Species.ROSELIA, Species.TANGELA, Species.TURTWIG],
-  MAYLENE: [Species.LUCARIO, Species.MEDITITE, Species.CHIMCHAR],
-  CRASHER_WAKE: [Species.BUIZEL, Species.MAGIKARP, Species.PIPLUP],
-  FANTINA: [Species.MISDREAVUS, Species.DRIFLOON, Species.SPIRITOMB],
-  BYRON: [Species.SHIELDON, Species.BRONZOR, Species.AGGRON],
+  GARDENIA: [Species.ROSELIA, Species.CHERUBI, Species.TURTWIG],
+  MAYLENE: [Species.LUCARIO, Species.MEDITITE, Species.CROAGUNK],
+  CRASHER_WAKE: [Species.BUIZEL, Species.MAGIKARP, Species.WOOPER],
+  FANTINA: [Species.MISDREAVUS, Species.DRIFLOON, Species.DUSKULL],
+  BYRON: [Species.SHIELDON, Species.BRONZOR, Species.ARON],
   CANDICE: [Species.SNEASEL, Species.SNOVER, Species.SNORUNT],
-  VOLKNER: [Species.SHINX, Species.CHINCHOU, Species.ROTOM],
-  CILAN: [Species.PANSAGE, Species.COTTONEE, Species.PETILIL],
+  VOLKNER: [Species.SHINX, Species.JOLTEON, Species.ELECTABUZZ],
+  CILAN: [Species.PANSAGE, Species.FOONGUS, Species.MARACTUS],
   CHILI: [Species.PANSEAR, Species.DARUMAKA, Species.HEATMOR],
-  CRESS: [Species.PANPOUR, Species.BASCULIN, Species.TYMPOLE],
-  CHEREN: [Species.LILLIPUP, Species.MINCCINO, Species.PATRAT],
-  LENORA: [Species.KANGASKHAN, Species.DEERLING, Species.AUDINO],
-  ROXIE: [Species.VENIPEDE, Species.TRUBBISH, Species.SKORUPI],
-  BURGH: [Species.SEWADDLE, Species.SHELMET, Species.KARRABLAST],
+  CRESS: [Species.PANPOUR, Species.SLOWPOKE, Species.BASCULIN],
+  CHEREN: [Species.LILLIPUP, Species.MINCCINO, Species.PIDOVE],
+  LENORA: [Species.PATRAT, Species.DEERLING, Species.AUDINO],
+  ROXIE: [Species.VENIPEDE, Species.TRUBBISH, Species.KOFFING],
+  BURGH: [Species.SEWADDLE, Species.DWEBBLE, Species.SHELMET, Species.KARRABLAST],
   ELESA: [Species.EMOLGA, Species.BLITZLE, Species.JOLTIK],
-  CLAY: [Species.DRILBUR, Species.SANDILE, Species.GOLETT],
+  CLAY: [Species.DRILBUR, Species.SANDILE, Species.TYMPOLE],
   SKYLA: [Species.DUCKLETT, Species.WOOBAT, Species.RUFFLET],
   BRYCEN: [Species.CRYOGONAL, Species.VANILLITE, Species.CUBCHOO],
   DRAYDEN: [Species.DRUDDIGON, Species.AXEW, Species.DEINO],
@@ -1245,36 +1277,36 @@ export const signatureSpecies: SignatureSpecies = {
   GRANT: [Species.AMAURA, Species.TYRUNT],
   KORRINA: [Species.HAWLUCHA, Species.LUCARIO, Species.MIENFOO],
   RAMOS: [Species.SKIDDO, Species.HOPPIP, Species.BELLSPROUT],
-  CLEMONT: [Species.HELIOPTILE, Species.MAGNEMITE, Species.EMOLGA],
+  CLEMONT: [Species.HELIOPTILE, Species.MAGNEMITE, Species.ROTOM],
   VALERIE: [Species.SYLVEON, Species.MAWILE, Species.MR_MIME],
   OLYMPIA: [Species.ESPURR, Species.SIGILYPH, Species.SLOWKING],
   WULFRIC: [Species.BERGMITE, Species.SNOVER, Species.CRYOGONAL],
   MILO: [Species.GOSSIFLEUR, Species.APPLIN, Species.BOUNSWEET],
   NESSA: [Species.CHEWTLE, Species.ARROKUDA, Species.WIMPOD],
-  KABU: [Species.SIZZLIPEDE, Species.VULPIX, Species.TORKOAL],
-  BEA: [Species.GALAR_FARFETCHD, Species.MACHOP, Species.CLOBBOPUS],
-  ALLISTER: [Species.GALAR_YAMASK, Species.GALAR_CORSOLA, Species.GASTLY],
+  KABU: [Species.SIZZLIPEDE, Species.GROWLITHE, Species.TORKOAL],
+  BEA: [Species.GALAR_FARFETCHD, Species.FALINKS, Species.CLOBBOPUS, Species.MACHOP],
+  ALLISTER: [Species.GALAR_YAMASK, Species.GALAR_CORSOLA, Species.SINISTEA, Species.GASTLY],
   OPAL: [Species.MILCERY, Species.TOGETIC, Species.GALAR_WEEZING],
   BEDE: [Species.HATENNA, Species.GALAR_PONYTA, Species.GARDEVOIR],
   GORDIE: [Species.ROLYCOLY, Species.STONJOURNER, Species.BINACLE],
-  MELONY: [Species.SNOM, Species.GALAR_DARUMAKA, Species.GALAR_MR_MIME],
+  MELONY: [Species.SNOM, Species.GALAR_DARUMAKA, Species.GALAR_MR_MIME, Species.LAPRAS],
   PIERS: [Species.GALAR_ZIGZAGOON, Species.SCRAGGY, Species.INKAY],
   MARNIE: [Species.IMPIDIMP, Species.PURRLOIN, Species.MORPEKO],
-  RAIHAN: [Species.DURALUDON, Species.TURTONATOR, Species.GOOMY],
-  KATY: [Species.NYMBLE, Species.TAROUNTULA, Species.HERACROSS],
-  BRASSIUS: [Species.SMOLIV, Species.SHROOMISH, Species.ODDISH],
-  IONO: [Species.TADBULB, Species.WATTREL, Species.VOLTORB],
-  KOFU: [Species.VELUZA, Species.WIGLETT, Species.WINGULL],
-  LARRY: [Species.STARLY, Species.DUNSPARCE, Species.KOMALA],
-  RYME: [Species.GREAVARD, Species.SHUPPET, Species.MIMIKYU],
-  TULIP: [Species.GIRAFARIG, Species.FLITTLE, Species.RALTS],
-  GRUSHA: [Species.CETODDLE, Species.ALOLA_VULPIX, Species.CUBCHOO],
+  RAIHAN: [Species.DURALUDON, Species.TRAPINCH, Species.TURTONATOR],
+  KATY: [Species.TEDDIURSA, Species.NYMBLE, Species.TAROUNTULA],
+  BRASSIUS: [Species.SUDOWOODO, Species.SMOLIV, Species.BRAMBLIN],
+  IONO: [Species.MISDREAVUS, Species.TADBULB, Species.WATTREL],
+  KOFU: [Species.CRABRAWLER, Species.VELUZA, Species.WIGLETT],
+  LARRY: [Species.DUNSPARCE, Species.STARLY, Species.KOMALA],
+  RYME: [Species.TOXEL, Species.GREAVARD, Species.SHUPPET, Species.MIMIKYU],
+  TULIP: [Species.FLABEBE, Species.GIRAFARIG, Species.FLITTLE, Species.RALTS],
+  GRUSHA: [Species.SWABLU, Species.CETODDLE, Species.ALOLA_VULPIX, Species.CUBCHOO],
   LORELEI: [Species.JYNX, [Species.SLOWBRO, Species.GALAR_SLOWBRO], Species.LAPRAS, [Species.ALOLA_SANDSLASH, Species.CLOYSTER]],
   BRUNO: [Species.MACHAMP, Species.HITMONCHAN, Species.HITMONLEE, [Species.ALOLA_GOLEM, Species.GOLEM]],
   AGATHA: [Species.GENGAR, [Species.ARBOK, Species.WEEZING], Species.CROBAT, Species.ALOLA_MAROWAK],
   LANCE: [Species.DRAGONITE, Species.GYARADOS, Species.AERODACTYL, Species.ALOLA_EXEGGUTOR],
   WILL: [Species.XATU, Species.JYNX, [Species.SLOWBRO, Species.SLOWKING], Species.EXEGGUTOR],
-  KOGA: [[Species.WEEZING, Species.MUK], [Species.VENOMOTH, Species.ARIADOS], Species.CROBAT, Species.TENTACRUEL],
+  KOGA: [Species.MUK, Species.VENOMOTH, [Species.ARIADOS, Species.FORRETRESS], Species.CROBAT],
   KAREN: [Species.UMBREON, Species.HONCHKROW, Species.HOUNDOOM, Species.WEAVILE],
   SIDNEY: [[Species.SHIFTRY, Species.CACTURNE], [Species.SHARPEDO, Species.CRAWDAUNT], Species.ABSOL, Species.MIGHTYENA],
   PHOEBE: [Species.SABLEYE, Species.DUSKNOIR, Species.BANETTE, [Species.MISMAGIUS, Species.DRIFBLIM]],
@@ -1299,9 +1331,9 @@ export const signatureSpecies: SignatureSpecies = {
   KAHILI: [[Species.BRAVIARY, Species.MANDIBUZZ], Species.HAWLUCHA, Species.ORICORIO, Species.TOUCANNON],
   MARNIE_ELITE: [Species.MORPEKO, Species.LIEPARD, [Species.TOXICROAK, Species.SCRAFTY], Species.GRIMMSNARL],
   NESSA_ELITE: [Species.GOLISOPOD, [Species.PELIPPER, Species.QUAGSIRE], Species.TOXAPEX, Species.DREDNAW],
-  BEA_ELITE: [Species.HAWLUCHA, [Species.GRAPPLOCT, Species.SIRFETCHD], Species.FALINKS, Species.MACHAMP],
-  ALLISTER_ELITE: [Species.DUSKNOIR, [Species.POLTEAGEIST, Species.RUNERIGUS], Species.CURSOLA, Species.GENGAR],
-  RAIHAN_ELITE: [Species.GOODRA, [Species.TORKOAL, Species.TURTONATOR], Species.FLYGON, Species.ARCHALUDON],
+  BEA_ELITE: [[Species.HAWLUCHA, Species.MACHAMP], Species.GRAPPLOCT, Species.SIRFETCHD, Species.FALINKS],
+  ALLISTER_ELITE:[[Species.DUSKNOIR, Species.GENGAR], Species.POLTEAGEIST, Species.RUNERIGUS, Species.CURSOLA],
+  RAIHAN_ELITE: [[Species.GOODRA, Species.HISUI_GOODRA], [Species.GIGALITH, Species.TURTONATOR], Species.FLYGON, Species.ARCHALUDON],
   RIKA: [Species.WHISCASH, [Species.DONPHAN, Species.DUGTRIO], Species.CAMERUPT, Species.CLODSIRE],
   POPPY: [Species.COPPERAJAH, Species.BRONZONG, Species.CORVIKNIGHT, Species.TINKATON],
   LARRY_ELITE: [Species.STARAPTOR, Species.FLAMIGO, Species.ALTARIA, Species.TROPIUS],
@@ -1344,7 +1376,7 @@ export const trainerConfigs: TrainerConfigs = {
   [TrainerType.BAKER]: new TrainerConfig(++t).setEncounterBgm(TrainerType.CLERK).setMoneyMultiplier(1.35).setSpeciesFilter(s => s.isOfType(Type.GRASS) || s.isOfType(Type.FIRE)),
   [TrainerType.BEAUTY]: new TrainerConfig(++t).setMoneyMultiplier(1.55).setEncounterBgm(TrainerType.PARASOL_LADY),
   [TrainerType.BIKER]: new TrainerConfig(++t).setMoneyMultiplier(1.4).setEncounterBgm(TrainerType.ROUGHNECK).setSpeciesFilter(s => s.isOfType(Type.POISON)),
-  [TrainerType.BLACK_BELT]: new TrainerConfig(++t).setHasGenders("Battle Girl", TrainerType.PSYCHIC).setHasDouble("Crush Kin").setEncounterBgm(TrainerType.ROUGHNECK).setSpecialtyTypes(Type.FIGHTING)
+  [TrainerType.BLACK_BELT]: new TrainerConfig(++t).setHasGenders("Battle Girl", TrainerType.PSYCHIC).setHasDouble("Crush Kin").setEncounterBgm(TrainerType.ROUGHNECK).setSpecialtyType(Type.FIGHTING)
     .setPartyTemplates(trainerPartyTemplates.TWO_WEAK_ONE_AVG, trainerPartyTemplates.TWO_WEAK_ONE_AVG, trainerPartyTemplates.TWO_AVG, trainerPartyTemplates.TWO_AVG, trainerPartyTemplates.TWO_WEAK_ONE_STRONG, trainerPartyTemplates.THREE_AVG, trainerPartyTemplates.TWO_AVG_ONE_STRONG)
     .setSpeciesPools({
       [TrainerPoolTier.COMMON]: [Species.NIDORAN_F, Species.NIDORAN_M, Species.MACHOP, Species.MAKUHITA, Species.MEDITITE, Species.CROAGUNK, Species.TIMBURR],
@@ -1384,7 +1416,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setSpeciesFilter(s => !!s.getLevelMoves().find(plm => plm[1] === Moves.HEAL_PULSE)),
   [TrainerType.FIREBREATHER]: new TrainerConfig(++t).setMoneyMultiplier(1.4).setEncounterBgm(TrainerType.ROUGHNECK)
     .setSpeciesFilter(s => !!s.getLevelMoves().find(plm => plm[1] === Moves.SMOG) || s.isOfType(Type.FIRE)),
-  [TrainerType.FISHERMAN]: new TrainerConfig(++t).setMoneyMultiplier(1.25).setEncounterBgm(TrainerType.BACKPACKER).setSpecialtyTypes(Type.WATER)
+  [TrainerType.FISHERMAN]: new TrainerConfig(++t).setMoneyMultiplier(1.25).setEncounterBgm(TrainerType.BACKPACKER).setSpecialtyType(Type.WATER)
     .setPartyTemplates(trainerPartyTemplates.TWO_WEAK_SAME_ONE_AVG, trainerPartyTemplates.ONE_AVG, trainerPartyTemplates.THREE_WEAK_SAME, trainerPartyTemplates.ONE_STRONG, trainerPartyTemplates.SIX_WEAKER)
     .setSpeciesPools({
       [TrainerPoolTier.COMMON]: [Species.TENTACOOL, Species.MAGIKARP, Species.GOLDEEN, Species.STARYU, Species.REMORAID, Species.SKRELP, Species.CLAUNCHER, Species.ARROKUDA],
@@ -1392,7 +1424,7 @@ export const trainerConfigs: TrainerConfigs = {
       [TrainerPoolTier.RARE]: [Species.CHINCHOU, Species.CORSOLA, Species.WAILMER, Species.BARBOACH, Species.CLAMPERL, Species.LUVDISC, Species.MANTYKE, Species.ALOMOMOLA, Species.TATSUGIRI, Species.VELUZA],
       [TrainerPoolTier.SUPER_RARE]: [Species.LAPRAS, Species.FEEBAS, Species.RELICANTH, Species.DONDOZO]
     }),
-  [TrainerType.GUITARIST]: new TrainerConfig(++t).setMoneyMultiplier(1.2).setEncounterBgm(TrainerType.ROUGHNECK).setSpecialtyTypes(Type.ELECTRIC).setSpeciesFilter(s => s.isOfType(Type.ELECTRIC)),
+  [TrainerType.GUITARIST]: new TrainerConfig(++t).setMoneyMultiplier(1.2).setEncounterBgm(TrainerType.ROUGHNECK).setSpecialtyType(Type.ELECTRIC).setSpeciesFilter(s => s.isOfType(Type.ELECTRIC)),
   [TrainerType.HARLEQUIN]: new TrainerConfig(++t).setEncounterBgm(TrainerType.PSYCHIC).setSpeciesFilter(s => tmSpecies[Moves.TRICK_ROOM].indexOf(s.speciesId) > -1),
   [TrainerType.HIKER]: new TrainerConfig(++t).setEncounterBgm(TrainerType.BACKPACKER)
     .setPartyTemplates(trainerPartyTemplates.TWO_AVG_SAME_ONE_AVG, trainerPartyTemplates.TWO_AVG_SAME_ONE_STRONG, trainerPartyTemplates.TWO_AVG, trainerPartyTemplates.FOUR_WEAK, trainerPartyTemplates.ONE_STRONG)
@@ -1471,7 +1503,7 @@ export const trainerConfigs: TrainerConfigs = {
       [TrainerPoolTier.RARE]: [Species.TANGELA, Species.EEVEE, Species.YANMA],
       [TrainerPoolTier.SUPER_RARE]: [Species.TADBULB]
     }),
-  [TrainerType.SWIMMER]: new TrainerConfig(++t).setMoneyMultiplier(1.3).setEncounterBgm(TrainerType.PARASOL_LADY).setHasGenders("Swimmer Female").setHasDouble("Swimmers").setSpecialtyTypes(Type.WATER).setSpeciesFilter(s => s.isOfType(Type.WATER)),
+  [TrainerType.SWIMMER]: new TrainerConfig(++t).setMoneyMultiplier(1.3).setEncounterBgm(TrainerType.PARASOL_LADY).setHasGenders("Swimmer Female").setHasDouble("Swimmers").setSpecialtyType(Type.WATER).setSpeciesFilter(s => s.isOfType(Type.WATER)),
   [TrainerType.TWINS]: new TrainerConfig(++t).setDoubleOnly().setMoneyMultiplier(0.65).setUseSameSeedForAllMembers()
     .setPartyTemplateFunc(scene => getWavePartyTemplate(scene, trainerPartyTemplates.TWO_WEAK, trainerPartyTemplates.TWO_AVG, trainerPartyTemplates.TWO_STRONG))
     .setPartyMemberFunc(0, getRandomPartyMemberFunc([Species.PLUSLE, Species.VOLBEAT, Species.PACHIRISU, Species.SILCOON, Species.METAPOD, Species.IGGLYBUFF, Species.PETILIL, Species.EEVEE]))
@@ -1608,9 +1640,10 @@ export const trainerConfigs: TrainerConfigs = {
   [TrainerType.LT_SURGE]: new TrainerConfig(++t).initForGymLeader(signatureSpecies["LT_SURGE"], true, Type.ELECTRIC).setBattleBgm("battle_kanto_gym").setMixedBattleBgm("battle_kanto_gym"),
   [TrainerType.ERIKA]: new TrainerConfig(++t).initForGymLeader(signatureSpecies["ERIKA"], false, Type.GRASS).setBattleBgm("battle_kanto_gym").setMixedBattleBgm("battle_kanto_gym"),
   [TrainerType.JANINE]: new TrainerConfig(++t).initForGymLeader(signatureSpecies["JANINE"], false, Type.POISON).setBattleBgm("battle_kanto_gym").setMixedBattleBgm("battle_kanto_gym"),
+  [TrainerType.KOGA_GYM]: new TrainerConfig(++t).initForGymLeader(signatureSpecies["KOGA_GYM"], false, Type.POISON).setBattleBgm("battle_kanto_gym").setMixedBattleBgm("battle_kanto_gym"),
   [TrainerType.SABRINA]: new TrainerConfig(++t).initForGymLeader(signatureSpecies["SABRINA"], false, Type.PSYCHIC).setBattleBgm("battle_kanto_gym").setMixedBattleBgm("battle_kanto_gym"),
   [TrainerType.BLAINE]: new TrainerConfig(++t).initForGymLeader(signatureSpecies["BLAINE"], true, Type.FIRE).setBattleBgm("battle_kanto_gym").setMixedBattleBgm("battle_kanto_gym"),
-  [TrainerType.GIOVANNI]: new TrainerConfig(++t).initForGymLeader(signatureSpecies["GIOVANNI"], true, Type.DARK).setBattleBgm("battle_kanto_gym").setMixedBattleBgm("battle_kanto_gym"),
+  [TrainerType.GIOVANNI]: new TrainerConfig(++t).initForGymLeader(signatureSpecies["GIOVANNI"], true, Type.GROUND).setBattleBgm("battle_kanto_gym").setMixedBattleBgm("battle_kanto_gym"),
   [TrainerType.FALKNER]: new TrainerConfig(++t).initForGymLeader(signatureSpecies["FALKNER"], true, Type.FLYING).setBattleBgm("battle_johto_gym").setMixedBattleBgm("battle_johto_gym"),
   [TrainerType.BUGSY]: new TrainerConfig(++t).initForGymLeader(signatureSpecies["BUGSY"], true, Type.BUG).setBattleBgm("battle_johto_gym").setMixedBattleBgm("battle_johto_gym"),
   [TrainerType.WHITNEY]: new TrainerConfig(++t).initForGymLeader(signatureSpecies["WHITNEY"], false, Type.NORMAL).setBattleBgm("battle_johto_gym").setMixedBattleBgm("battle_johto_gym"),
@@ -1669,14 +1702,14 @@ export const trainerConfigs: TrainerConfigs = {
   [TrainerType.PIERS]: new TrainerConfig(++t).initForGymLeader(signatureSpecies["PIERS"], true, Type.DARK).setHasDouble("piers_marnie_double").setDoubleTrainerType(TrainerType.MARNIE).setDoubleTitle("gym_leader_double").setMixedBattleBgm("battle_galar_gym"),
   [TrainerType.MARNIE]: new TrainerConfig(++t).setName("Marnie").initForGymLeader(signatureSpecies["MARNIE"], false, Type.DARK).setHasDouble("marnie_piers_double").setDoubleTrainerType(TrainerType.PIERS).setDoubleTitle("gym_leader_double").setMixedBattleBgm("battle_galar_gym"),
   [TrainerType.RAIHAN]: new TrainerConfig(++t).setName("Raihan").initForGymLeader(signatureSpecies["RAIHAN"], true, Type.DRAGON).setMixedBattleBgm("battle_galar_gym"),
-  [TrainerType.KATY]: new TrainerConfig(++t).initForGymLeader(signatureSpecies["KATY"], false, Type.BUG).setMixedBattleBgm("battle_paldea_gym"),
-  [TrainerType.BRASSIUS]: new TrainerConfig(++t).initForGymLeader(signatureSpecies["BRASSIUS"], true, Type.GRASS).setMixedBattleBgm("battle_paldea_gym"),
-  [TrainerType.IONO]: new TrainerConfig(++t).initForGymLeader(signatureSpecies["IONO"], false, Type.ELECTRIC).setMixedBattleBgm("battle_paldea_gym"),
-  [TrainerType.KOFU]: new TrainerConfig(++t).initForGymLeader(signatureSpecies["KOFU"], true, Type.WATER).setMixedBattleBgm("battle_paldea_gym"),
-  [TrainerType.LARRY]: new TrainerConfig(++t).setName("Larry").initForGymLeader(signatureSpecies["LARRY"], true, Type.NORMAL).setMixedBattleBgm("battle_paldea_gym"),
-  [TrainerType.RYME]: new TrainerConfig(++t).initForGymLeader(signatureSpecies["RYME"], false, Type.GHOST).setMixedBattleBgm("battle_paldea_gym"),
-  [TrainerType.TULIP]: new TrainerConfig(++t).initForGymLeader(signatureSpecies["TULIP"], false, Type.PSYCHIC).setMixedBattleBgm("battle_paldea_gym"),
-  [TrainerType.GRUSHA]: new TrainerConfig(++t).initForGymLeader(signatureSpecies["GRUSHA"], true, Type.ICE).setMixedBattleBgm("battle_paldea_gym"),
+  [TrainerType.KATY]: new TrainerConfig(++t).initForGymLeader(signatureSpecies["KATY"], false, Type.BUG).setMixedBattleBgm("battle_paldea_gym").setForceTeraFirstSlot(),
+  [TrainerType.BRASSIUS]: new TrainerConfig(++t).initForGymLeader(signatureSpecies["BRASSIUS"], true, Type.GRASS).setMixedBattleBgm("battle_paldea_gym").setForceTeraFirstSlot(),
+  [TrainerType.IONO]: new TrainerConfig(++t).initForGymLeader(signatureSpecies["IONO"], false, Type.ELECTRIC).setMixedBattleBgm("battle_paldea_gym").setForceTeraFirstSlot(),
+  [TrainerType.KOFU]: new TrainerConfig(++t).initForGymLeader(signatureSpecies["KOFU"], true, Type.WATER).setMixedBattleBgm("battle_paldea_gym").setForceTeraFirstSlot(),
+  [TrainerType.LARRY]: new TrainerConfig(++t).setName("Larry").initForGymLeader(signatureSpecies["LARRY"], true, Type.NORMAL).setMixedBattleBgm("battle_paldea_gym").setForceTeraFirstSlot(),
+  [TrainerType.RYME]: new TrainerConfig(++t).initForGymLeader(signatureSpecies["RYME"], false, Type.GHOST).setMixedBattleBgm("battle_paldea_gym").setForceTeraFirstSlot(),
+  [TrainerType.TULIP]: new TrainerConfig(++t).initForGymLeader(signatureSpecies["TULIP"], false, Type.PSYCHIC).setMixedBattleBgm("battle_paldea_gym").setForceTeraFirstSlot(),
+  [TrainerType.GRUSHA]: new TrainerConfig(++t).initForGymLeader(signatureSpecies["GRUSHA"], true, Type.ICE).setMixedBattleBgm("battle_paldea_gym").setForceTeraFirstSlot(),
 
   [TrainerType.LORELEI]: new TrainerConfig((t = TrainerType.LORELEI)).initForEliteFour(signatureSpecies["LORELEI"], false, Type.ICE).setBattleBgm("battle_kanto_gym").setMixedBattleBgm("battle_kanto_gym"),
   [TrainerType.BRUNO]: new TrainerConfig(++t).initForEliteFour(signatureSpecies["BRUNO"], true, Type.FIGHTING).setBattleBgm("battle_kanto_gym").setMixedBattleBgm("battle_kanto_gym"),
@@ -1713,11 +1746,11 @@ export const trainerConfigs: TrainerConfigs = {
   [TrainerType.RAIHAN_ELITE]: new TrainerConfig(++t).setName("Raihan").initForEliteFour(signatureSpecies["RAIHAN_ELITE"], true, Type.DRAGON).setMixedBattleBgm("battle_galar_elite"),
   [TrainerType.RIKA]: new TrainerConfig(++t).initForEliteFour(signatureSpecies["RIKA"], false, Type.GROUND).setMixedBattleBgm("battle_paldea_elite"),
   [TrainerType.POPPY]: new TrainerConfig(++t).initForEliteFour(signatureSpecies["POPPY"], false, Type.STEEL).setMixedBattleBgm("battle_paldea_elite"),
-  [TrainerType.LARRY_ELITE]: new TrainerConfig(++t).setName("Larry").initForEliteFour(signatureSpecies["LARRY_ELITE"], true, Type.NORMAL, Type.FLYING).setMixedBattleBgm("battle_paldea_elite"),
+  [TrainerType.LARRY_ELITE]: new TrainerConfig(++t).setName("Larry").initForEliteFour(signatureSpecies["LARRY_ELITE"], true, Type.FLYING).setMixedBattleBgm("battle_paldea_elite"),
   [TrainerType.HASSEL]: new TrainerConfig(++t).initForEliteFour(signatureSpecies["HASSEL"], true, Type.DRAGON).setMixedBattleBgm("battle_paldea_elite"),
   [TrainerType.CRISPIN]: new TrainerConfig(++t).initForEliteFour(signatureSpecies["CRISPIN"], true, Type.FIRE).setMixedBattleBgm("battle_bb_elite"),
   [TrainerType.AMARYS]: new TrainerConfig(++t).initForEliteFour(signatureSpecies["AMARYS"], false, Type.STEEL).setMixedBattleBgm("battle_bb_elite"),
-  [TrainerType.LACEY]: new TrainerConfig(++t).initForEliteFour(signatureSpecies["LACEY"], false, Type.FAIRY).setMixedBattleBgm("battle_bb_elite"),
+  [TrainerType.LACEY]: new TrainerConfig(++t).initForEliteFour(signatureSpecies["LACEY"], false, Type.FAIRY).setMixedBattleBgm("battle_bb_elite").setForceTeraFirstSlot(),
   [TrainerType.DRAYTON]: new TrainerConfig(++t).initForEliteFour(signatureSpecies["DRAYTON"], true, Type.DRAGON).setMixedBattleBgm("battle_bb_elite"),
 
   [TrainerType.BLUE]: new TrainerConfig((t = TrainerType.BLUE)).initForChampion(signatureSpecies["BLUE"], true).setBattleBgm("battle_kanto_champion").setMixedBattleBgm("battle_kanto_champion").setHasDouble("blue_red_double").setDoubleTrainerType(TrainerType.RED).setDoubleTitle("champion_double")
