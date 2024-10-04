@@ -31,7 +31,7 @@ describe("Moves - Pledge Moves", () => {
     game.override
       .battleType("double")
       .startingLevel(100)
-      .moveset([Moves.FIRE_PLEDGE, Moves.GRASS_PLEDGE, Moves.WATER_PLEDGE, Moves.SPLASH])
+      .moveset([ Moves.FIRE_PLEDGE, Moves.GRASS_PLEDGE, Moves.WATER_PLEDGE, Moves.SPLASH ])
       .enemySpecies(Species.SNORLAX)
       .enemyLevel(100)
       .enemyAbility(Abilities.BALL_FETCH)
@@ -41,7 +41,7 @@ describe("Moves - Pledge Moves", () => {
   it(
     "Fire Pledge - should be an 80-power Fire-type attack outside of combination",
     async () => {
-      await game.classicMode.startBattle([Species.BLASTOISE, Species.CHARIZARD]);
+      await game.classicMode.startBattle([ Species.BLASTOISE, Species.CHARIZARD ]);
 
       const firePledge = allMoves[Moves.FIRE_PLEDGE];
       vi.spyOn(firePledge, "calculateBattlePower");
@@ -52,7 +52,7 @@ describe("Moves - Pledge Moves", () => {
       game.move.select(Moves.FIRE_PLEDGE, 0, BattlerIndex.ENEMY);
       game.move.select(Moves.SPLASH, 1);
 
-      await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
+      await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2 ]);
       await game.phaseInterceptor.to("MoveEndPhase", false);
 
       expect(firePledge.calculateBattlePower).toHaveLastReturnedWith(80);
@@ -63,7 +63,7 @@ describe("Moves - Pledge Moves", () => {
   it(
     "Fire Pledge - should not combine with an ally using Fire Pledge",
     async () => {
-      await game.classicMode.startBattle([Species.BLASTOISE, Species.CHARIZARD]);
+      await game.classicMode.startBattle([ Species.BLASTOISE, Species.CHARIZARD ]);
 
       const firePledge = allMoves[Moves.FIRE_PLEDGE];
       vi.spyOn(firePledge, "calculateBattlePower");

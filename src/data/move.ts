@@ -2727,7 +2727,7 @@ export class AwaitCombinedPledgeAttr extends OverrideMoveEffectAttr {
     if (allyMovePhase) {
       const allyMove = allyMovePhase.move.getMove();
       if (allyMove !== move && allyMove.hasAttr(AwaitCombinedPledgeAttr)) {
-        [user, allyMovePhase.pokemon].forEach((p) => p.turnData.combiningPledge = move.id);
+        [ user, allyMovePhase.pokemon ].forEach((p) => p.turnData.combiningPledge = move.id);
 
         // "{userPokemonName} is waiting for {allyPokemonName}'s move..."
         user.scene.queueMessage(i18next.t("moveTriggers:awaitingPledge", {
@@ -3838,7 +3838,7 @@ export class CombinedPledgePowerAttr extends VariablePowerAttr {
     const combinedPledgeMove = user.turnData.combiningPledge;
 
     if (combinedPledgeMove && combinedPledgeMove !== move.id) {
-      power.value *= 150/80;
+      power.value *= 150 / 80;
       return true;
     }
     return false;
