@@ -55,7 +55,7 @@ describe("Abilities - Defiant", () => {
     expect(playerPokemon.getStatStage(Stat.DEF)).toBe(-1);
     expect(playerPokemon.getStatStage(Stat.ATK)).toBe(0);
   });
-  
+
   it("white herb should remove only the negative effects", async () => {
     game.override.startingHeldItems([{ name: "WHITE_HERB" }]);
     await game.classicMode.startBattle([ Species.FLYGON ]);
