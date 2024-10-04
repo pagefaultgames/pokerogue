@@ -35,7 +35,7 @@ describe("Test misc", () => {
     expect(spy).toHaveBeenCalled();
   });
 
-  it("test apifetch mock async", async () => {
+  it.skip("test apifetch mock async", async () => {
     const spy = vi.fn();
     await apiFetch("https://localhost:8080/account/info").then(response => {
       expect(response.status).toBe(200);

@@ -1,5 +1,6 @@
 import { loggedInUser } from "#app/account";
 import { SESSION_ID_COOKIE_NAME } from "#app/constants";
+import type { RankingEntry, ScoreboardCategory } from "#app/ui/daily-run-scoreboard";
 import { getCookie, removeCookie, setCookie } from "#app/utils";
 import type { AccountInfoResponse } from "./models/AccountInfo";
 import type { AccountLoginRequest, AccountLoginResponse } from "./models/AccountLogin";
@@ -220,10 +221,51 @@ export class Api {
       } else {
         return await response.text();
       }
-
     } catch (err) {
       console.warn("Could not get session savedata!", err);
       return "Unknown error";
+    }
+  }
+
+  /**
+   * Get the daily rankings for a {@linkcode ScoreboardCategory}.
+   * @param category The {@linkcode ScoreboardCategory} to fetch.
+   * @param page The page number to fetch.
+   */
+  public async getDailyRankings(category: ScoreboardCategory, page?: number) {
+    try {
+      const params = new URLSearchParams();
+      params.append("category", String(category));
+
+      if (page) {
+        params.append("page", String(page));
+      }
+
+      const response = await this.doGet(`/daily/rankings?${params}`);
+
+      return (await response.json()) as RankingEntry[];
+    } catch (err) {
+      console.warn("Could not get daily rankings!", err);
+      return null;
+    }
+  }
+
+  /**
+   * Get the page count of the daily rankings for a {@linkcode ScoreboardCategory}.
+   * @param category The {@linkcode ScoreboardCategory} to fetch.
+   */
+  public async getDailyRankingsPageCount(category: ScoreboardCategory) {
+    try {
+      const params = new URLSearchParams();
+      params.append("category", String(category));
+
+      const response = await this.doGet(`/daily/rankingpagecount?${params}`);
+      const json = await response.json();
+
+      return Number(json);
+    } catch (err) {
+      console.warn("Could not get daily rankings page count!", err);
+      return 1;
     }
   }
 
