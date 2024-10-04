@@ -28,7 +28,7 @@ export class CanLearnMoveRequirement extends EncounterPokemonRequirement {
 
   constructor(requiredMoves: Moves | Moves[], options: CanLearnMoveRequirementOptions = {}) {
     super();
-    this.requiredMoves = Array.isArray(requiredMoves) ? requiredMoves : [requiredMoves];
+    this.requiredMoves = Array.isArray(requiredMoves) ? requiredMoves : [ requiredMoves ];
 
     this.excludeLevelMoves = options.excludeLevelMoves ?? false;
     this.excludeTmMoves = options.excludeTmMoves ?? false;
@@ -64,11 +64,11 @@ export class CanLearnMoveRequirement extends EncounterPokemonRequirement {
   }
 
   override getDialogueToken(_scene: BattleScene, _pokemon?: PlayerPokemon): [string, string] {
-    return ["requiredMoves", this.requiredMoves.map(m => new PokemonMove(m).getName()).join(", ")];
+    return [ "requiredMoves", this.requiredMoves.map(m => new PokemonMove(m).getName()).join(", ") ];
   }
 
   private getPokemonLevelMoves(pkm: PlayerPokemon): Moves[] {
-    return pkm.getLevelMoves().map(([_level, move]) => move);
+    return pkm.getLevelMoves().map(([ _level, move ]) => move);
   }
 
   private getAllPokemonMoves(pkm: PlayerPokemon): Moves[] {

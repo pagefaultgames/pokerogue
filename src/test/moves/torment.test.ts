@@ -26,15 +26,15 @@ describe("Moves - Torment", () => {
     game.override
       .battleType("single")
       .enemyAbility(Abilities.BALL_FETCH)
-      .enemyMoveset([Moves.TORMENT, Moves.SPLASH])
+      .enemyMoveset([ Moves.TORMENT, Moves.SPLASH ])
       .enemySpecies(Species.SHUCKLE)
       .enemyLevel(30)
-      .moveset([Moves.TACKLE])
+      .moveset([ Moves.TACKLE ])
       .ability(Abilities.BALL_FETCH);
   });
 
   it("Pokemon should not be able to use the same move consecutively", async () => {
-    await game.classicMode.startBattle([Species.CHANSEY]);
+    await game.classicMode.startBattle([ Species.CHANSEY ]);
 
     const playerPokemon = game.scene.getPlayerPokemon()!;
 
