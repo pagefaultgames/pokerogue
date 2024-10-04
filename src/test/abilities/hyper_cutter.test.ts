@@ -24,7 +24,7 @@ describe("Abilities - Hyper Cutter", () => {
     game = new GameManager(phaserGame);
     game.override
       .battleType("single")
-      .moveset([Moves.SAND_ATTACK, Moves.NOBLE_ROAR, Moves.DEFOG, Moves.OCTOLOCK])
+      .moveset([ Moves.SAND_ATTACK, Moves.NOBLE_ROAR, Moves.DEFOG, Moves.OCTOLOCK ])
       .ability(Abilities.BALL_FETCH)
       .enemySpecies(Species.SHUCKLE)
       .enemyAbility(Abilities.HYPER_CUTTER)
@@ -46,11 +46,11 @@ describe("Abilities - Hyper Cutter", () => {
     await game.toNextTurn();
     game.move.select(Moves.SAND_ATTACK);
     await game.toNextTurn();
-    game.override.moveset([Moves.STRING_SHOT]);
+    game.override.moveset([ Moves.STRING_SHOT ]);
     game.move.select(Moves.STRING_SHOT);
     await game.toNextTurn();
 
     expect(enemy.getStatStage(Stat.ATK)).toEqual(0);
-    [Stat.ACC, Stat.DEF, Stat.EVA, Stat.SPATK, Stat.SPDEF, Stat.SPD].forEach((stat: number) => expect(enemy.getStatStage(stat)).toBeLessThan(0));
+    [ Stat.ACC, Stat.DEF, Stat.EVA, Stat.SPATK, Stat.SPDEF, Stat.SPD ].forEach((stat: number) => expect(enemy.getStatStage(stat)).toBeLessThan(0));
   });
 });

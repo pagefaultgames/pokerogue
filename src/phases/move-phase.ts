@@ -220,7 +220,7 @@ export class MovePhase extends BattlePhase {
          * Will still change the user's type when using Roar, Whirlwind, Trick-or-Treat, and Forest's Curse,
          * regardless of whether the move successfully executes or not.
          */
-      if (success || [Moves.ROAR, Moves.WHIRLWIND, Moves.TRICK_OR_TREAT, Moves.FORESTS_CURSE].includes(this.move.moveId)) {
+      if (success || [ Moves.ROAR, Moves.WHIRLWIND, Moves.TRICK_OR_TREAT, Moves.FORESTS_CURSE ].includes(this.move.moveId)) {
         applyPreAttackAbAttrs(PokemonTypeChangeAbAttr, this.pokemon, null, this.move.getMove());
       }
 

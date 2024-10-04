@@ -77,7 +77,7 @@ export default class AbstractSettingsUiHandler extends UiHandler {
 
     const actionText = addTextObject(this.scene, 0, 0, i18next.t("settings:action"), TextStyle.SETTINGS_LABEL);
     actionText.setOrigin(0, 0.15);
-    actionText.setPositionRelative(iconAction, -actionText.width/6-2, 0);
+    actionText.setPositionRelative(iconAction, -actionText.width / 6 - 2, 0);
 
     const iconCancel = this.scene.add.sprite(0, 0, "keyboard");
     iconCancel.setOrigin(0, -0.1);
@@ -86,7 +86,7 @@ export default class AbstractSettingsUiHandler extends UiHandler {
 
     const cancelText = addTextObject(this.scene, 0, 0, i18next.t("settings:back"), TextStyle.SETTINGS_LABEL);
     cancelText.setOrigin(0, 0.15);
-    cancelText.setPositionRelative(iconCancel, -cancelText.width/6-2, 0);
+    cancelText.setPositionRelative(iconCancel, -cancelText.width / 6 - 2, 0);
 
     this.optionsContainer = this.scene.add.container(0, 0);
 
@@ -312,7 +312,7 @@ export default class AbstractSettingsUiHandler extends UiHandler {
     const ret = super.setCursor(cursor);
 
     if (!this.cursorObj) {
-      const cursorWidth = (this.scene.game.canvas.width / 6) - (this.scrollBar.visible? 16 : 10);
+      const cursorWidth = (this.scene.game.canvas.width / 6) - (this.scrollBar.visible ? 16 : 10);
       this.cursorObj = this.scene.add.nineslice(0, 0, "summary_moves_cursor", undefined, cursorWidth, 16, 1, 1, 1, 1);
       this.cursorObj.setOrigin(0, 0);
       this.optionsContainer.add(this.cursorObj);
