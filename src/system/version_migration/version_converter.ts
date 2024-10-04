@@ -72,8 +72,8 @@ abstract class VersionConverter {
 
 class SessionVersionConverter extends VersionConverter {
   override applyStaticPreprocessors(data: SessionSaveData): void {
-      // Always sanitize money as a safeguard
-      data.money = Math.floor(data.money);
+    // Always sanitize money as a safeguard
+    data.money = Math.floor(data.money);
   }
 
   override applyMigration(data: SessionSaveData, curVersion: number[]): void {

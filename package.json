@@ -1,7 +1,7 @@
 {
 	"name": "pokemon-rogue-battle",
 	"private": true,
-	"version": "1.1.0",
+	"version": "1.6.0",
 	"type": "module",
 	"scripts": {
 		"start": "vite",
@@ -20,7 +20,7 @@
 		"depcruise": "depcruise src",
 		"depcruise:graph": "depcruise src --output-type dot | node dependency-graph.js > dependency-graph.svg",
 		"create-test": "node ./create-test-boilerplate.js",
-		"postinstall": "npx lefthook install && npx lefthook run post-merge" 
+		"postinstall": "npx lefthook install && npx lefthook run post-merge"
 	},
 	"devDependencies": {
 		"@eslint/js": "^9.3.0",
