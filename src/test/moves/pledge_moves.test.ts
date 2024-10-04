@@ -76,7 +76,7 @@ describe("Moves - Pledge Moves", () => {
       game.move.select(Moves.FIRE_PLEDGE, 0, BattlerIndex.ENEMY);
       game.move.select(Moves.FIRE_PLEDGE, 0, BattlerIndex.ENEMY_2);
 
-      await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
+      await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2 ]);
 
       await game.phaseInterceptor.to("MoveEndPhase");
       expect(firePledge.calculateBattlePower).toHaveLastReturnedWith(80);
@@ -97,7 +97,7 @@ describe("Moves - Pledge Moves", () => {
         .battleType("single")
         .enemyMoveset(Moves.GRASS_PLEDGE);
 
-      await game.classicMode.startBattle([Species.CHARIZARD]);
+      await game.classicMode.startBattle([ Species.CHARIZARD ]);
 
       const playerPokemon = game.scene.getPlayerPokemon()!;
       const enemyPokemon = game.scene.getEnemyPokemon()!;
@@ -117,7 +117,7 @@ describe("Moves - Pledge Moves", () => {
   it(
     "Grass Pledge - should combine with Fire Pledge to form a 150-power Fire-type attack that creates a 'sea of fire'",
     async () => {
-      await game.classicMode.startBattle([Species.CHARIZARD, Species.BLASTOISE]);
+      await game.classicMode.startBattle([ Species.CHARIZARD, Species.BLASTOISE ]);
 
       const grassPledge = allMoves[Moves.GRASS_PLEDGE];
       vi.spyOn(grassPledge, "calculateBattlePower");
@@ -131,7 +131,7 @@ describe("Moves - Pledge Moves", () => {
       game.move.select(Moves.FIRE_PLEDGE, 0, BattlerIndex.ENEMY_2);
       game.move.select(Moves.GRASS_PLEDGE, 1, BattlerIndex.ENEMY);
 
-      await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
+      await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2 ]);
       // advance to the end of PLAYER_2's move this turn
       for (let i = 0; i < 2; i++) {
         await game.phaseInterceptor.to("MoveEndPhase");
@@ -153,9 +153,9 @@ describe("Moves - Pledge Moves", () => {
   it(
     "Fire Pledge - should combine with Water Pledge to form a 150-power Water-type attack that creates a 'rainbow'",
     async () => {
-      game.override.moveset([Moves.FIRE_PLEDGE, Moves.WATER_PLEDGE, Moves.FIERY_DANCE, Moves.SPLASH]);
+      game.override.moveset([ Moves.FIRE_PLEDGE, Moves.WATER_PLEDGE, Moves.FIERY_DANCE, Moves.SPLASH ]);
 
-      await game.classicMode.startBattle([Species.BLASTOISE, Species.VENUSAUR]);
+      await game.classicMode.startBattle([ Species.BLASTOISE, Species.VENUSAUR ]);
 
       const firePledge = allMoves[Moves.FIRE_PLEDGE];
       vi.spyOn(firePledge, "calculateBattlePower");
@@ -168,7 +168,7 @@ describe("Moves - Pledge Moves", () => {
       game.move.select(Moves.WATER_PLEDGE, 0, BattlerIndex.ENEMY_2);
       game.move.select(Moves.FIRE_PLEDGE, 1, BattlerIndex.ENEMY);
 
-      await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
+      await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2 ]);
       // advance to the end of PLAYER_2's move this turn
       for (let i = 0; i < 2; i++) {
         await game.phaseInterceptor.to("MoveEndPhase");
@@ -182,7 +182,7 @@ describe("Moves - Pledge Moves", () => {
 
       game.move.select(Moves.FIERY_DANCE, 0, BattlerIndex.ENEMY_2);
       game.move.select(Moves.SPLASH, 1);
-      await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
+      await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2 ]);
       await game.phaseInterceptor.to("MoveEndPhase");
 
       // Rainbow effect should increase Fiery Dance's chance of raising Sp. Atk to 100%
@@ -193,7 +193,7 @@ describe("Moves - Pledge Moves", () => {
   it(
     "Water Pledge - should combine with Grass Pledge to form a 150-power Grass-type attack that creates a 'swamp'",
     async () => {
-      await game.classicMode.startBattle([Species.BLASTOISE, Species.CHARIZARD]);
+      await game.classicMode.startBattle([ Species.BLASTOISE, Species.CHARIZARD ]);
 
       const waterPledge = allMoves[Moves.WATER_PLEDGE];
       vi.spyOn(waterPledge, "calculateBattlePower");
@@ -207,7 +207,7 @@ describe("Moves - Pledge Moves", () => {
       game.move.select(Moves.GRASS_PLEDGE, 0, BattlerIndex.ENEMY_2);
       game.move.select(Moves.WATER_PLEDGE, 1, BattlerIndex.ENEMY);
 
-      await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
+      await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2 ]);
       // advance to the end of PLAYER_2's move this turn
       for (let i = 0; i < 2; i++) {
         await game.phaseInterceptor.to("MoveEndPhase");
@@ -225,14 +225,14 @@ describe("Moves - Pledge Moves", () => {
   it(
     "Pledge Moves - should alter turn order when used in combination",
     async () => {
-      await game.classicMode.startBattle([Species.CHARIZARD, Species.BLASTOISE]);
+      await game.classicMode.startBattle([ Species.CHARIZARD, Species.BLASTOISE ]);
 
       const enemyPokemon = game.scene.getEnemyField();
 
       game.move.select(Moves.WATER_PLEDGE, 0, BattlerIndex.ENEMY);
       game.move.select(Moves.FIRE_PLEDGE, 1, BattlerIndex.ENEMY_2);
 
-      await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2, BattlerIndex.PLAYER_2]);
+      await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2, BattlerIndex.PLAYER_2 ]);
       // PLAYER_2 should act with a combined move immediately after PLAYER as the second move in the turn
       for (let i = 0; i < 2; i++) {
         await game.phaseInterceptor.to("MoveEndPhase");
@@ -247,9 +247,9 @@ describe("Moves - Pledge Moves", () => {
     async () => {
       game.override
         .ability(Abilities.SERENE_GRACE)
-        .moveset([Moves.FIRE_PLEDGE, Moves.WATER_PLEDGE, Moves.IRON_HEAD, Moves.SPLASH]);
+        .moveset([ Moves.FIRE_PLEDGE, Moves.WATER_PLEDGE, Moves.IRON_HEAD, Moves.SPLASH ]);
 
-      await game.classicMode.startBattle([Species.BLASTOISE, Species.CHARIZARD]);
+      await game.classicMode.startBattle([ Species.BLASTOISE, Species.CHARIZARD ]);
 
       const ironHeadFlinchAttr = allMoves[Moves.IRON_HEAD].getAttrs(FlinchAttr)[0];
       vi.spyOn(ironHeadFlinchAttr, "getMoveChance");
@@ -274,9 +274,9 @@ describe("Moves - Pledge Moves", () => {
     "Pledge Moves - should have no effect when the second ally's move is cancelled",
     async () => {
       game.override
-        .enemyMoveset([Moves.SPLASH, Moves.SPORE]);
+        .enemyMoveset([ Moves.SPLASH, Moves.SPORE ]);
 
-      await game.classicMode.startBattle([Species.BLASTOISE, Species.CHARIZARD]);
+      await game.classicMode.startBattle([ Species.BLASTOISE, Species.CHARIZARD ]);
 
       const enemyPokemon = game.scene.getEnemyField();
 
@@ -286,7 +286,7 @@ describe("Moves - Pledge Moves", () => {
       await game.forceEnemyMove(Moves.SPORE, BattlerIndex.PLAYER_2);
       await game.forceEnemyMove(Moves.SPLASH);
 
-      await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY_2]);
+      await game.setTurnOrder([ BattlerIndex.ENEMY, BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY_2 ]);
 
       await game.phaseInterceptor.to("BerryPhase", false);
 
