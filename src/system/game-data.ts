@@ -49,7 +49,6 @@ import { RUN_HISTORY_LIMIT } from "#app/ui/run-history-ui-handler";
 import { applySessionDataPatches, applySettingsDataPatches, applySystemDataPatches } from "#app/system/version-converter";
 import { MysteryEncounterSaveData } from "#app/data/mystery-encounters/mystery-encounter-save-data";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
-import { PokerogueApiClearSessionData } from "#app/@types/pokerogue-api";
 import { api } from "#app/plugins/api/api";
 
 export const defaultStarterSpecies: Species[] = [
@@ -1190,17 +1189,10 @@ export class GameData {
       result = [true, true];
     } else {
       const sessionData = this.getSessionSaveData(scene);
-      const response = await Utils.apiPost(`savedata/session/clear?slot=${slotId}&trainerId=${this.trainerId}&secretId=${this.secretId}&clientSessionId=${clientSessionId}`, JSON.stringify(sessionData), undefined, true);
+      const jsonResponse = await api.clearSessionSavedata(slotId, this.trainerId, clientSessionId, sessionData);
 
-      if (response.ok) {
-          loggedInUser!.lastSessionSlot = -1; // TODO: is the bang correct?
-          localStorage.removeItem(`sessionData${this.scene.sessionSlotId ? this.scene.sessionSlotId : ""}_${loggedInUser?.username}`);
-      }
-
-      const jsonResponse: PokerogueApiClearSessionData = await response.json();
-
-      if (!jsonResponse.error) {
-        result = [true, jsonResponse.success ?? false];
+      if (!jsonResponse?.error) {
+        result = [true, jsonResponse?.success ?? false];
       } else {
         if (jsonResponse && jsonResponse.error?.startsWith("session out of date")) {
           this.scene.clearPhaseQueue();

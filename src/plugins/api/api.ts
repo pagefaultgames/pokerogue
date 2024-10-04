@@ -1,5 +1,7 @@
+import type { PokerogueApiClearSessionData } from "#app/@types/pokerogue-api";
 import { loggedInUser } from "#app/account";
 import { SESSION_ID_COOKIE_NAME } from "#app/constants";
+import type { SessionSaveData } from "#app/system/game-data";
 import type { RankingEntry, ScoreboardCategory } from "#app/ui/daily-run-scoreboard";
 import { getCookie, removeCookie, setCookie } from "#app/utils";
 import type { AccountInfoResponse } from "./models/AccountInfo";
@@ -249,6 +251,42 @@ export class Api {
       console.warn("Could not get session savedata!", err);
       return "Unknown error";
     }
+  }
+
+  /**
+   * Clears the session savedata of the given slot.
+   * @param slotId The slot ID
+   * @param trainerId The trainer ID
+   * @param sessionId The session ID
+   * @param sessionData The {@linkcode SessionSaveData} object
+   */
+  public async clearSessionSavedata(
+    slotId: number,
+    trainerId: number,
+    sessionId: string,
+    sessionData: SessionSaveData
+  ) {
+    try {
+      const params = new URLSearchParams();
+      params.append("slot", String(slotId));
+      params.append("trainerId", String(trainerId));
+      params.append("clientSessionId", sessionId);
+
+      const response = await this.doPost<SessionSaveData>(`/savedata/session/clear?${params}`, sessionData);
+
+      if (response.ok) {
+        if (loggedInUser) {
+          loggedInUser!.lastSessionSlot = -1;
+        }
+        localStorage.removeItem(`sessionData${slotId > 0 ? slotId : ""}_${loggedInUser?.username}`);
+      }
+
+      return (await response.json()) as PokerogueApiClearSessionData;
+    } catch (err) {
+      console.warn("Could not clear session savedata!", err);
+    }
+
+    return null;
   }
 
   /**
