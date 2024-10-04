@@ -1,4 +1,3 @@
-
 export enum ArenaTagType {
   NONE = "NONE",
   MUD_SPORT = "MUD_SPORT",

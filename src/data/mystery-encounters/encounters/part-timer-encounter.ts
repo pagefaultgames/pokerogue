@@ -94,7 +94,7 @@ export const PartTimerEncounter: MysteryEncounter =
           // Calculation from Pokemon.calculateStats
           const baselineValue = Math.floor(((2 * 90 + 16) * pokemon.level) * 0.01) + 5;
           const percentDiff = (pokemon.getStat(Stat.SPD) - baselineValue) / baselineValue;
-          const moneyMultiplier = Math.min(Math.max(2.5 * (1+ percentDiff), 1), 4);
+          const moneyMultiplier = Math.min(Math.max(2.5 * (1 + percentDiff), 1), 4);
 
           encounter.misc = {
             moneyMultiplier

@@ -27,7 +27,7 @@ describe("Abilities - Power Spot", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override.battleType("double");
-    game.override.moveset([Moves.TACKLE, Moves.BREAKING_SWIPE, Moves.SPLASH, Moves.DAZZLING_GLEAM]);
+    game.override.moveset([ Moves.TACKLE, Moves.BREAKING_SWIPE, Moves.SPLASH, Moves.DAZZLING_GLEAM ]);
     game.override.enemyMoveset(Moves.SPLASH);
     game.override.enemySpecies(Species.SHUCKLE);
     game.override.enemyAbility(Abilities.BALL_FETCH);
@@ -39,7 +39,7 @@ describe("Abilities - Power Spot", () => {
 
     vi.spyOn(moveToCheck, "calculateBattlePower");
 
-    await game.startBattle([Species.REGIELEKI, Species.STONJOURNER]);
+    await game.startBattle([ Species.REGIELEKI, Species.STONJOURNER ]);
     game.move.select(Moves.DAZZLING_GLEAM);
     game.move.select(Moves.SPLASH, 1);
     await game.phaseInterceptor.to(MoveEffectPhase);
@@ -53,7 +53,7 @@ describe("Abilities - Power Spot", () => {
 
     vi.spyOn(moveToCheck, "calculateBattlePower");
 
-    await game.startBattle([Species.REGIELEKI, Species.STONJOURNER]);
+    await game.startBattle([ Species.REGIELEKI, Species.STONJOURNER ]);
     game.move.select(Moves.BREAKING_SWIPE);
     game.move.select(Moves.SPLASH, 1);
     await game.phaseInterceptor.to(MoveEffectPhase);
@@ -67,7 +67,7 @@ describe("Abilities - Power Spot", () => {
 
     vi.spyOn(moveToCheck, "calculateBattlePower");
 
-    await game.startBattle([Species.STONJOURNER, Species.REGIELEKI]);
+    await game.startBattle([ Species.STONJOURNER, Species.REGIELEKI ]);
     game.move.select(Moves.BREAKING_SWIPE);
     game.move.select(Moves.SPLASH, 1);
     await game.phaseInterceptor.to(TurnEndPhase);

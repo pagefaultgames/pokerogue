@@ -98,7 +98,7 @@ export default class TitleUiHandler extends OptionSelectUiHandler {
       this.splashMessage = Utils.randItem(getSplashMessages());
       this.splashMessageText.setText(i18next.t(this.splashMessage, { count: TitleUiHandler.BATTLES_WON_FALLBACK }));
 
-      this.appVersionText.setText("v"+version);
+      this.appVersionText.setText("v" + version);
 
       const ui = this.getUi();
 

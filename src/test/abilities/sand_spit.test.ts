@@ -31,11 +31,11 @@ describe("Abilities - Sand Spit", () => {
 
     game.override.starterSpecies(Species.SILICOBRA);
     game.override.ability(Abilities.SAND_SPIT);
-    game.override.moveset([Moves.SPLASH, Moves.COIL]);
+    game.override.moveset([ Moves.SPLASH, Moves.COIL ]);
   });
 
   it("should trigger when hit with damaging move", async () => {
-    game.override.enemyMoveset([Moves.TACKLE]);
+    game.override.enemyMoveset([ Moves.TACKLE ]);
     await game.startBattle();
 
     game.move.select(Moves.SPLASH);
@@ -45,7 +45,7 @@ describe("Abilities - Sand Spit", () => {
   }, 20000);
 
   it("should not trigger when targetted with status moves", async () => {
-    game.override.enemyMoveset([Moves.GROWL]);
+    game.override.enemyMoveset([ Moves.GROWL ]);
     await game.startBattle();
 
     game.move.select(Moves.COIL);

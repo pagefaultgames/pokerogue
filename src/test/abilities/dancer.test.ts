@@ -8,7 +8,6 @@ import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 
-
 describe("Abilities - Dancer", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
@@ -27,22 +26,22 @@ describe("Abilities - Dancer", () => {
     game = new GameManager(phaserGame);
     game.override
       .battleType("double")
-      .moveset([Moves.SWORDS_DANCE, Moves.SPLASH])
+      .moveset([ Moves.SWORDS_DANCE, Moves.SPLASH ])
       .enemySpecies(Species.MAGIKARP)
       .enemyAbility(Abilities.DANCER)
-      .enemyMoveset([Moves.VICTORY_DANCE]);
+      .enemyMoveset([ Moves.VICTORY_DANCE ]);
   });
 
   // Reference Link: https://bulbapedia.bulbagarden.net/wiki/Dancer_(Ability)
 
   it("triggers when dance moves are used, doesn't consume extra PP", async () => {
-    await game.classicMode.startBattle([Species.ORICORIO, Species.FEEBAS]);
+    await game.classicMode.startBattle([ Species.ORICORIO, Species.FEEBAS ]);
 
-    const [oricorio] = game.scene.getPlayerField();
+    const [ oricorio ] = game.scene.getPlayerField();
 
     game.move.select(Moves.SPLASH);
     game.move.select(Moves.SWORDS_DANCE, 1);
-    await game.setTurnOrder([BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.PLAYER, BattlerIndex.ENEMY_2]);
+    await game.setTurnOrder([ BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.PLAYER, BattlerIndex.ENEMY_2 ]);
     await game.phaseInterceptor.to("MovePhase");
     // immediately copies ally move
     await game.phaseInterceptor.to("MovePhase", false);

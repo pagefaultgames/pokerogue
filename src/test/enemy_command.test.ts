@@ -23,7 +23,7 @@ function getEnemyMoveChoices(pokemon: EnemyPokemon, moveChoices: MoveChoiceSet):
     moveChoices[queuedMove.move]++;
   }
 
-  for (const [moveId, count] of Object.entries(moveChoices)) {
+  for (const [ moveId, count ] of Object.entries(moveChoices)) {
     console.log(`Move: ${allMoves[moveId].name}   Count: ${count} (${count / NUM_TRIALS * 100}%)`);
   }
 }
@@ -55,11 +55,11 @@ describe("Enemy Commands - Move Selection", () => {
     async () => {
       game.override
         .enemySpecies(Species.ETERNATUS)
-        .enemyMoveset([Moves.ETERNABEAM, Moves.SLUDGE_BOMB, Moves.DRAGON_DANCE, Moves.COSMIC_POWER])
+        .enemyMoveset([ Moves.ETERNABEAM, Moves.SLUDGE_BOMB, Moves.DRAGON_DANCE, Moves.COSMIC_POWER ])
         .startingLevel(1)
         .enemyLevel(100);
 
-      await game.classicMode.startBattle([Species.MAGIKARP]);
+      await game.classicMode.startBattle([ Species.MAGIKARP ]);
 
       const enemyPokemon = game.scene.getEnemyPokemon()!;
       enemyPokemon.aiType = AiType.SMART_RANDOM;
@@ -82,11 +82,11 @@ describe("Enemy Commands - Move Selection", () => {
     async () => {
       game.override
         .enemySpecies(Species.KANGASKHAN)
-        .enemyMoveset([Moves.LAST_RESORT, Moves.GIGA_IMPACT, Moves.SPLASH, Moves.SWORDS_DANCE])
+        .enemyMoveset([ Moves.LAST_RESORT, Moves.GIGA_IMPACT, Moves.SPLASH, Moves.SWORDS_DANCE ])
         .startingLevel(1)
         .enemyLevel(100);
 
-      await game.classicMode.startBattle([Species.MAGIKARP]);
+      await game.classicMode.startBattle([ Species.MAGIKARP ]);
 
       const enemyPokemon = game.scene.getEnemyPokemon()!;
       enemyPokemon.aiType = AiType.SMART_RANDOM;

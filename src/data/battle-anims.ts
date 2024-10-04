@@ -556,7 +556,7 @@ function logMissingMoveAnim(move: Moves, ...optionalParams: any[]) {
  * @param encounterAnim one or more animations to fetch
  */
 export async function initEncounterAnims(scene: BattleScene, encounterAnim: EncounterAnim | EncounterAnim[]): Promise<void> {
-  const anims = Array.isArray(encounterAnim) ? encounterAnim : [encounterAnim];
+  const anims = Array.isArray(encounterAnim) ? encounterAnim : [ encounterAnim ];
   const encounterAnimNames = Utils.getEnumKeys(EncounterAnim);
   const encounterAnimFetches: Promise<Map<EncounterAnim, AnimConfig>>[] = [];
   for (const anim of anims) {
@@ -774,9 +774,9 @@ export abstract class BattleAnim {
 
     private getGraphicFrameData(scene: BattleScene, frames: AnimFrame[], onSubstitute?: boolean): Map<integer, Map<AnimFrameTarget, GraphicFrameData>> {
       const ret: Map<integer, Map<AnimFrameTarget, GraphicFrameData>> = new Map([
-        [AnimFrameTarget.GRAPHIC, new Map<AnimFrameTarget, GraphicFrameData>() ],
-        [AnimFrameTarget.USER, new Map<AnimFrameTarget, GraphicFrameData>() ],
-        [AnimFrameTarget.TARGET, new Map<AnimFrameTarget, GraphicFrameData>() ]
+        [ AnimFrameTarget.GRAPHIC, new Map<AnimFrameTarget, GraphicFrameData>() ],
+        [ AnimFrameTarget.USER, new Map<AnimFrameTarget, GraphicFrameData>() ],
+        [ AnimFrameTarget.TARGET, new Map<AnimFrameTarget, GraphicFrameData>() ]
       ]);
 
       const isOppAnim = this.isOppAnim();
@@ -1093,9 +1093,9 @@ export abstract class BattleAnim {
 
     private getGraphicFrameDataWithoutTarget(frames: AnimFrame[], targetInitialX: number, targetInitialY: number): Map<integer, Map<AnimFrameTarget, GraphicFrameData>> {
       const ret: Map<integer, Map<AnimFrameTarget, GraphicFrameData>> = new Map([
-        [AnimFrameTarget.GRAPHIC, new Map<AnimFrameTarget, GraphicFrameData>() ],
-        [AnimFrameTarget.USER, new Map<AnimFrameTarget, GraphicFrameData>() ],
-        [AnimFrameTarget.TARGET, new Map<AnimFrameTarget, GraphicFrameData>() ]
+        [ AnimFrameTarget.GRAPHIC, new Map<AnimFrameTarget, GraphicFrameData>() ],
+        [ AnimFrameTarget.USER, new Map<AnimFrameTarget, GraphicFrameData>() ],
+        [ AnimFrameTarget.TARGET, new Map<AnimFrameTarget, GraphicFrameData>() ]
       ]);
 
       let g = 0;

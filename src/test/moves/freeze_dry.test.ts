@@ -28,7 +28,7 @@ describe("Moves - Freeze-Dry", () => {
       .enemyMoveset(Moves.SPLASH)
       .starterSpecies(Species.FEEBAS)
       .ability(Abilities.BALL_FETCH)
-      .moveset([Moves.FREEZE_DRY]);
+      .moveset([ Moves.FREEZE_DRY ]);
   });
 
   it("should deal 2x damage to pure water types", async () => {
@@ -38,7 +38,7 @@ describe("Moves - Freeze-Dry", () => {
     vi.spyOn(enemy, "getMoveEffectiveness");
 
     game.move.select(Moves.FREEZE_DRY);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY ]);
     await game.phaseInterceptor.to("MoveEffectPhase");
 
     expect(enemy.getMoveEffectiveness).toHaveReturnedWith(2);
@@ -52,7 +52,7 @@ describe("Moves - Freeze-Dry", () => {
     vi.spyOn(enemy, "getMoveEffectiveness");
 
     game.move.select(Moves.FREEZE_DRY);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY ]);
     await game.phaseInterceptor.to("MoveEffectPhase");
 
     expect(enemy.getMoveEffectiveness).toHaveReturnedWith(4);
@@ -66,7 +66,7 @@ describe("Moves - Freeze-Dry", () => {
     vi.spyOn(enemy, "getMoveEffectiveness");
 
     game.move.select(Moves.FREEZE_DRY);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY ]);
     await game.phaseInterceptor.to("MoveEffectPhase");
 
     expect(enemy.getMoveEffectiveness).toHaveReturnedWith(1);
@@ -81,7 +81,7 @@ describe("Moves - Freeze-Dry", () => {
     vi.spyOn(enemy, "getMoveEffectiveness");
 
     game.move.select(Moves.FREEZE_DRY);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY ]);
     await game.phaseInterceptor.to("MoveEffectPhase");
 
     expect(enemy.getMoveEffectiveness).toHaveReturnedWith(2);
@@ -89,14 +89,14 @@ describe("Moves - Freeze-Dry", () => {
 
   // enable once Electrify is implemented (and the interaction is fixed, as above)
   it.todo("should deal 2x damage to water types under Electrify", async () => {
-    game.override.enemyMoveset([Moves.ELECTRIFY]);
+    game.override.enemyMoveset([ Moves.ELECTRIFY ]);
     await game.classicMode.startBattle();
 
     const enemy = game.scene.getEnemyPokemon()!;
     vi.spyOn(enemy, "getMoveEffectiveness");
 
     game.move.select(Moves.FREEZE_DRY);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+    await game.setTurnOrder([ BattlerIndex.ENEMY, BattlerIndex.PLAYER ]);
     await game.phaseInterceptor.to("BerryPhase");
 
     expect(enemy.getMoveEffectiveness).toHaveReturnedWith(2);

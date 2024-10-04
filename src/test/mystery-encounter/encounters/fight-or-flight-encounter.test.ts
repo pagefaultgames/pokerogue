@@ -20,7 +20,7 @@ import { CommandPhase } from "#app/phases/command-phase";
 import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
 
 const namespace = "mysteryEncounters/fightOrFlight";
-const defaultParty = [Species.LAPRAS, Species.GENGAR, Species.ABRA];
+const defaultParty = [ Species.LAPRAS, Species.GENGAR, Species.ABRA ];
 const defaultBiome = Biome.CAVE;
 const defaultWave = 45;
 
@@ -43,7 +43,7 @@ describe("Fight or Flight - Mystery Encounter", () => {
 
     vi.spyOn(MysteryEncounters, "mysteryEncountersByBiome", "get").mockReturnValue(
       new Map<Biome, MysteryEncounterType[]>([
-        [Biome.CAVE, [MysteryEncounterType.FIGHT_OR_FLIGHT]],
+        [ Biome.CAVE, [ MysteryEncounterType.FIGHT_OR_FLIGHT ]],
       ])
     );
   });
@@ -175,7 +175,7 @@ describe("Fight or Flight - Mystery Encounter", () => {
       await game.runToMysteryEncounter(MysteryEncounterType.FIGHT_OR_FLIGHT, defaultParty);
 
       // Mock moveset
-      scene.getParty()[0].moveset = [new PokemonMove(Moves.KNOCK_OFF)];
+      scene.getParty()[0].moveset = [ new PokemonMove(Moves.KNOCK_OFF) ];
       const item = game.scene.currentBattle.mysteryEncounter!.misc;
 
       await runMysteryEncounterToEnd(game, 2);

@@ -18,7 +18,7 @@ import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
 import { PartyHealPhase } from "#app/phases/party-heal-phase";
 
 const namespace = "mysteryEncounters/aTrainersTest";
-const defaultParty = [Species.LAPRAS, Species.GENGAR, Species.ABRA];
+const defaultParty = [ Species.LAPRAS, Species.GENGAR, Species.ABRA ];
 const defaultBiome = Biome.CAVE;
 const defaultWave = 45;
 
@@ -40,10 +40,10 @@ describe("A Trainer's Test - Mystery Encounter", () => {
     game.override.disableTrainerWaves();
 
     const biomeMap = new Map<Biome, MysteryEncounterType[]>([
-      [Biome.VOLCANO, [MysteryEncounterType.MYSTERIOUS_CHALLENGERS]],
+      [ Biome.VOLCANO, [ MysteryEncounterType.MYSTERIOUS_CHALLENGERS ]],
     ]);
     HUMAN_TRANSITABLE_BIOMES.forEach(biome => {
-      biomeMap.set(biome, [MysteryEncounterType.A_TRAINERS_TEST]);
+      biomeMap.set(biome, [ MysteryEncounterType.A_TRAINERS_TEST ]);
     });
     vi.spyOn(MysteryEncounters, "mysteryEncountersByBiome", "get").mockReturnValue(biomeMap);
   });
@@ -106,7 +106,7 @@ describe("A Trainer's Test - Mystery Encounter", () => {
       expect(scene.getCurrentPhase()?.constructor.name).toBe(CommandPhase.name);
       expect(enemyField.length).toBe(1);
       expect(scene.currentBattle.trainer).toBeDefined();
-      expect(["trainerNames:buck", "trainerNames:cheryl", "trainerNames:marley", "trainerNames:mira", "trainerNames:riley"].includes(scene.currentBattle.trainer!.config.name)).toBeTruthy();
+      expect([ "trainerNames:buck", "trainerNames:cheryl", "trainerNames:marley", "trainerNames:mira", "trainerNames:riley" ].includes(scene.currentBattle.trainer!.config.name)).toBeTruthy();
       expect(enemyField[0]).toBeDefined();
     });
 

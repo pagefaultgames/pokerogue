@@ -28,13 +28,13 @@ describe("Moves - Lunar Blessing", () => {
     game.override.enemyMoveset(Moves.SPLASH);
     game.override.enemyAbility(Abilities.BALL_FETCH);
 
-    game.override.moveset([Moves.LUNAR_BLESSING, Moves.SPLASH]);
+    game.override.moveset([ Moves.LUNAR_BLESSING, Moves.SPLASH ]);
     game.override.ability(Abilities.BALL_FETCH);
   });
 
   it("should restore 25% HP of the user and its ally", async () => {
-    await game.startBattle([Species.RATTATA, Species.RATTATA]);
-    const [leftPlayer, rightPlayer] = game.scene.getPlayerField();
+    await game.startBattle([ Species.RATTATA, Species.RATTATA ]);
+    const [ leftPlayer, rightPlayer ] = game.scene.getPlayerField();
 
     vi.spyOn(leftPlayer, "getMaxHp").mockReturnValue(100);
     vi.spyOn(rightPlayer, "getMaxHp").mockReturnValue(100);
@@ -62,8 +62,8 @@ describe("Moves - Lunar Blessing", () => {
 
   it("should cure status effect of the user and its ally", async () => {
     game.override.statusEffect(StatusEffect.BURN);
-    await game.startBattle([Species.RATTATA, Species.RATTATA]);
-    const [leftPlayer, rightPlayer] = game.scene.getPlayerField();
+    await game.startBattle([ Species.RATTATA, Species.RATTATA ]);
+    const [ leftPlayer, rightPlayer ] = game.scene.getPlayerField();
 
     vi.spyOn(leftPlayer, "resetStatus");
     vi.spyOn(rightPlayer, "resetStatus");

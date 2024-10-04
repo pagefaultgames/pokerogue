@@ -25,12 +25,12 @@ describe("Moves - Steamroller", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.moveset([Moves.STEAMROLLER]).battleType("single").enemyAbility(Abilities.BALL_FETCH);
+    game.override.moveset([ Moves.STEAMROLLER ]).battleType("single").enemyAbility(Abilities.BALL_FETCH);
   });
 
   it("should always hit a minimzed target with double damage", async () => {
     game.override.enemySpecies(Species.DITTO).enemyMoveset(Moves.MINIMIZE);
-    await game.classicMode.startBattle([Species.IRON_BOULDER]);
+    await game.classicMode.startBattle([ Species.IRON_BOULDER ]);
 
     const ditto = game.scene.getEnemyPokemon()!;
     vi.spyOn(ditto, "getAttackDamage");
@@ -41,13 +41,13 @@ describe("Moves - Steamroller", () => {
     vi.spyOn(ironBoulder, "getAccuracyMultiplier");
     // Turn 1
     game.move.select(Moves.STEAMROLLER);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY ]);
     await game.toNextTurn();
     // Turn 2
     game.move.select(Moves.STEAMROLLER);
     await game.toNextTurn();
 
-    const [dmgCalcTurn1, dmgCalcTurn2]: DamageCalculationResult[] = vi
+    const [ dmgCalcTurn1, dmgCalcTurn2 ]: DamageCalculationResult[] = vi
       .mocked(ditto.getAttackDamage)
       .mock.results.map((r) => r.value);
 

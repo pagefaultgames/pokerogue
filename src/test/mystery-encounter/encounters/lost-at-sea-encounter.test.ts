@@ -18,7 +18,7 @@ import { PartyExpPhase } from "#app/phases/party-exp-phase";
 
 const namespace = "mysteryEncounters/lostAtSea";
 /** Blastoise for surf. Pidgeot for fly. Abra for none. */
-const defaultParty = [Species.BLASTOISE, Species.PIDGEOT, Species.ABRA];
+const defaultParty = [ Species.BLASTOISE, Species.PIDGEOT, Species.ABRA ];
 const defaultBiome = Biome.SEA;
 const defaultWave = 33;
 
@@ -41,8 +41,8 @@ describe("Lost at Sea - Mystery Encounter", () => {
 
     vi.spyOn(MysteryEncounters, "mysteryEncountersByBiome", "get").mockReturnValue(
       new Map<Biome, MysteryEncounterType[]>([
-        [Biome.SEA, [MysteryEncounterType.LOST_AT_SEA]],
-        [Biome.MOUNTAIN, [MysteryEncounterType.MYSTERIOUS_CHALLENGERS]],
+        [ Biome.SEA, [ MysteryEncounterType.LOST_AT_SEA ]],
+        [ Biome.MOUNTAIN, [ MysteryEncounterType.MYSTERIOUS_CHALLENGERS ]],
       ])
     );
   });
@@ -134,7 +134,7 @@ describe("Lost at Sea - Mystery Encounter", () => {
     });
 
     it("should be disabled if no surfable PKM is in party", async () => {
-      await game.runToMysteryEncounter(MysteryEncounterType.LOST_AT_SEA, [Species.ARCANINE]);
+      await game.runToMysteryEncounter(MysteryEncounterType.LOST_AT_SEA, [ Species.ARCANINE ]);
       await game.phaseInterceptor.to(MysteryEncounterPhase, false);
 
       const encounterPhase = scene.getCurrentPhase();
@@ -199,7 +199,7 @@ describe("Lost at Sea - Mystery Encounter", () => {
     });
 
     it("should be disabled if no flyable PKM is in party", async () => {
-      await game.runToMysteryEncounter(MysteryEncounterType.LOST_AT_SEA, [Species.ARCANINE]);
+      await game.runToMysteryEncounter(MysteryEncounterType.LOST_AT_SEA, [ Species.ARCANINE ]);
       await game.phaseInterceptor.to(MysteryEncounterPhase, false);
 
       const encounterPhase = scene.getCurrentPhase();

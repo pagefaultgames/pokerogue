@@ -10,7 +10,6 @@ import { BerryPhase } from "#app/phases/berry-phase";
 import { CommandPhase } from "#app/phases/command-phase";
 
 
-
 describe("Moves - Crafty Shield", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
@@ -30,10 +29,10 @@ describe("Moves - Crafty Shield", () => {
 
     game.override.battleType("double");
 
-    game.override.moveset([Moves.CRAFTY_SHIELD, Moves.SPLASH, Moves.SWORDS_DANCE]);
+    game.override.moveset([ Moves.CRAFTY_SHIELD, Moves.SPLASH, Moves.SWORDS_DANCE ]);
 
     game.override.enemySpecies(Species.SNORLAX);
-    game.override.enemyMoveset([Moves.GROWL]);
+    game.override.enemyMoveset([ Moves.GROWL ]);
     game.override.enemyAbility(Abilities.INSOMNIA);
 
     game.override.startingLevel(100);
@@ -43,7 +42,7 @@ describe("Moves - Crafty Shield", () => {
   test(
     "should protect the user and allies from status moves",
     async () => {
-      await game.startBattle([Species.CHARIZARD, Species.BLASTOISE]);
+      await game.startBattle([ Species.CHARIZARD, Species.BLASTOISE ]);
 
       const leadPokemon = game.scene.getPlayerField();
 
@@ -62,9 +61,9 @@ describe("Moves - Crafty Shield", () => {
   test(
     "should not protect the user and allies from attack moves",
     async () => {
-      game.override.enemyMoveset([Moves.TACKLE]);
+      game.override.enemyMoveset([ Moves.TACKLE ]);
 
-      await game.startBattle([Species.CHARIZARD, Species.BLASTOISE]);
+      await game.startBattle([ Species.CHARIZARD, Species.BLASTOISE ]);
 
       const leadPokemon = game.scene.getPlayerField();
 
@@ -84,9 +83,9 @@ describe("Moves - Crafty Shield", () => {
     "should protect the user and allies from moves that ignore other protection",
     async () => {
       game.override.enemySpecies(Species.DUSCLOPS);
-      game.override.enemyMoveset([Moves.CURSE]);
+      game.override.enemyMoveset([ Moves.CURSE ]);
 
-      await game.startBattle([Species.CHARIZARD, Species.BLASTOISE]);
+      await game.startBattle([ Species.CHARIZARD, Species.BLASTOISE ]);
 
       const leadPokemon = game.scene.getPlayerField();
 
@@ -105,7 +104,7 @@ describe("Moves - Crafty Shield", () => {
   test(
     "should not block allies' self-targeted moves",
     async () => {
-      await game.startBattle([Species.CHARIZARD, Species.BLASTOISE]);
+      await game.startBattle([ Species.CHARIZARD, Species.BLASTOISE ]);
 
       const leadPokemon = game.scene.getPlayerField();
 

@@ -106,7 +106,7 @@ export default class EggGachaUiHandler extends MessageUiHandler {
       let pokemonIconX = -20;
       let pokemonIconY = 6;
 
-      if (["de", "es", "fr", "ko", "pt-BR"].includes(currentLanguage)) {
+      if ([ "de", "es", "fr", "ko", "pt-BR" ].includes(currentLanguage)) {
         gachaTextStyle = TextStyle.SMALLER_WINDOW_ALT;
         gachaX = 2;
         gachaY = 2;
@@ -114,7 +114,7 @@ export default class EggGachaUiHandler extends MessageUiHandler {
 
       let legendaryLabelX = gachaX;
       let legendaryLabelY = gachaY;
-      if (["de", "es"].includes(currentLanguage)) {
+      if ([ "de", "es" ].includes(currentLanguage)) {
         pokemonIconX = -25;
         pokemonIconY = 10;
         legendaryLabelX = -6;
@@ -127,11 +127,11 @@ export default class EggGachaUiHandler extends MessageUiHandler {
 
       switch (gachaType as GachaType) {
       case GachaType.LEGENDARY:
-        if (["de", "es"].includes(currentLanguage)) {
+        if ([ "de", "es" ].includes(currentLanguage)) {
           gachaUpLabel.setAlign("center");
           gachaUpLabel.setY(0);
         }
-        if (["pt-BR"].includes(currentLanguage)) {
+        if ([ "pt-BR" ].includes(currentLanguage)) {
           gachaUpLabel.setX(legendaryLabelX - 2);
         } else {
           gachaUpLabel.setX(legendaryLabelX);
@@ -139,7 +139,7 @@ export default class EggGachaUiHandler extends MessageUiHandler {
         gachaUpLabel.setY(legendaryLabelY);
 
         const pokemonIcon = this.scene.add.sprite(pokemonIconX, pokemonIconY, "pokemon_icons_0");
-        if (["pt-BR"].includes(currentLanguage)) {
+        if ([ "pt-BR" ].includes(currentLanguage)) {
           pokemonIcon.setX(pokemonIconX - 2);
         }
         pokemonIcon.setScale(0.5);
@@ -148,7 +148,7 @@ export default class EggGachaUiHandler extends MessageUiHandler {
         gachaInfoContainer.add(pokemonIcon);
         break;
       case GachaType.MOVE:
-        if (["de", "es", "fr", "pt-BR"].includes(currentLanguage)) {
+        if ([ "de", "es", "fr", "pt-BR" ].includes(currentLanguage)) {
           gachaUpLabel.setAlign("center");
           gachaUpLabel.setY(0);
         }
@@ -158,7 +158,7 @@ export default class EggGachaUiHandler extends MessageUiHandler {
         gachaUpLabel.setOrigin(0.5, 0);
         break;
       case GachaType.SHINY:
-        if (["de", "fr", "ko"].includes(currentLanguage)) {
+        if ([ "de", "fr", "ko" ].includes(currentLanguage)) {
           gachaUpLabel.setAlign("center");
           gachaUpLabel.setY(0);
         }
@@ -221,7 +221,7 @@ export default class EggGachaUiHandler extends MessageUiHandler {
     const pullOptionsText = pullOptions.map(option =>{
       const desc = option.description.split(" ");
       if (desc[0].length < 2) {
-        desc[0] += ["zh", "ko"].includes(resolvedLanguage.substring(0, 2)) ? " " : "  ";
+        desc[0] += [ "zh", "ko" ].includes(resolvedLanguage.substring(0, 2)) ? " " : "  ";
       }
       if (option.multiplier === multiplierOne) {
         desc[0] = " " + desc[0];

@@ -1,12 +1,12 @@
 import Phaser from "phaser";
 import * as Utils from "./utils";
-import {deepCopy} from "./utils";
+import { deepCopy } from "./utils";
 import pad_generic from "./configs/inputs/pad_generic";
 import pad_unlicensedSNES from "./configs/inputs/pad_unlicensedSNES";
 import pad_xbox360 from "./configs/inputs/pad_xbox360";
 import pad_dualshock from "./configs/inputs/pad_dualshock";
 import pad_procon from "./configs/inputs/pad_procon";
-import {Mode} from "./ui/ui";
+import { Mode } from "./ui/ui";
 import SettingsGamepadUiHandler from "./ui/settings/settings-gamepad-ui-handler";
 import SettingsKeyboardUiHandler from "./ui/settings/settings-keyboard-ui-handler";
 import cfg_keyboard_qwerty from "./configs/inputs/cfg_keyboard_qwerty";
@@ -16,8 +16,8 @@ import {
   getIconForLatestInput, swap,
 } from "#app/configs/inputs/configHandler";
 import BattleScene from "./battle-scene";
-import {SettingGamepad} from "#app/system/settings/settings-gamepad";
-import {SettingKeyboard} from "#app/system/settings/settings-keyboard";
+import { SettingGamepad } from "#app/system/settings/settings-gamepad";
+import { SettingKeyboard } from "#app/system/settings/settings-keyboard";
 import TouchControl from "#app/touch-controls";
 import { Button } from "#enums/buttons";
 import { Device } from "#enums/devices";
@@ -294,7 +294,7 @@ export class InputsController {
         this.setChosenGamepad(gamepadID);
       }
       const config = deepCopy(this.getConfig(gamepadID)) as InterfaceConfig;
-      config.custom = this.configs[gamepadID]?.custom || {...config.default};
+      config.custom = this.configs[gamepadID]?.custom || { ...config.default };
       this.configs[gamepadID] = config;
       this.scene.gameData?.saveMappingConfigs(gamepadID, this.configs[gamepadID]);
     }
@@ -307,9 +307,9 @@ export class InputsController {
      * Initializes or updates configurations for connected keyboards.
      */
   setupKeyboard(): void {
-    for (const layout of ["default"]) {
+    for (const layout of [ "default" ]) {
       const config = deepCopy(this.getConfigKeyboard(layout)) as InterfaceConfig;
-      config.custom = this.configs[layout]?.custom || {...config.default};
+      config.custom = this.configs[layout]?.custom || { ...config.default };
       this.configs[layout] = config;
       this.scene.gameData?.saveMappingConfigs(this.selectedDevice[Device.KEYBOARD], this.configs[layout]);
     }
@@ -330,7 +330,7 @@ export class InputsController {
       return el !== null;
     }) ?? [];
 
-    for (const [index, thisGamepad] of this.gamepads.entries()) {
+    for (const [ index, thisGamepad ] of this.gamepads.entries()) {
       thisGamepad.index = index; // Overwrite the gamepad index, in case we had undefined gamepads earlier
     }
   }

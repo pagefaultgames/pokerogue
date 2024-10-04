@@ -33,7 +33,7 @@ export class AttemptRunPhase extends PokemonPhase {
       this.scene.queueMessage(i18next.t("battle:runAwaySuccess"), null, true, 500);
 
       this.scene.tweens.add({
-        targets: [this.scene.arenaEnemy, enemyField].flat(),
+        targets: [ this.scene.arenaEnemy, enemyField ].flat(),
         alpha: 0,
         duration: 250,
         ease: "Sine.easeIn",

@@ -72,7 +72,7 @@ export class MenuManip {
     const icon = getIconWithKeycode(this.config, this.keycode);
     const key = getKeyWithKeycode(this.config, this.keycode)!; // TODO: is this bang correct?
     const _keys = key.toLowerCase().split("_");
-    const iconIdentifier = _keys[_keys.length-1];
+    const iconIdentifier = _keys[_keys.length - 1];
     expect(icon.toLowerCase().includes(iconIdentifier)).toEqual(true);
     return this;
   }

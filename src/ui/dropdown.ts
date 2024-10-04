@@ -64,7 +64,7 @@ export class DropDownOption extends Phaser.GameObjects.Container {
     if (Array.isArray(labels)) {
       this.labels = labels;
     } else {
-      this.labels = labels? [ labels ] : [ new DropDownLabel("") ];
+      this.labels = labels ? [ labels ] : [ new DropDownLabel("") ];
     }
     this.currentLabelIndex = 0;
     const currentLabel = this.labels[this.currentLabelIndex];
@@ -75,12 +75,12 @@ export class DropDownOption extends Phaser.GameObjects.Container {
     this.add(this.text);
 
     // Add to container the sprite for each label if there is one
-    for (let i=0; i < this.labels.length; i++) {
+    for (let i = 0; i < this.labels.length; i++) {
       const sprite = this.labels[i].sprite;
       if (sprite) {
         this.add(sprite);
         sprite.setOrigin(0, 0.5);
-        if (i!== this.currentLabelIndex) {
+        if (i !== this.currentLabelIndex) {
           sprite.setVisible(false);
         }
       }
@@ -215,7 +215,7 @@ export class DropDownOption extends Phaser.GameObjects.Container {
    */
   setLabelPosition(x: number, y: number) {
     let textX = x;
-    for (let i=0; i < this.labels.length; i++) {
+    for (let i = 0; i < this.labels.length; i++) {
       const label = this.labels[i];
       if (label.sprite) {
         label.sprite.x = x;
@@ -261,7 +261,7 @@ export class DropDownOption extends Phaser.GameObjects.Container {
     const currentText = this.text.text;
     for (const label of this.labels) {
       this.text.setText(label.text);
-      const spriteWidth = label.sprite? label.sprite.displayWidth + 2 : 0;
+      const spriteWidth = label.sprite ? label.sprite.displayWidth + 2 : 0;
       w = Math.max(w, this.text.displayWidth + spriteWidth);
     }
     this.text.setText(currentText);
@@ -334,7 +334,7 @@ export class DropDown extends Phaser.GameObjects.Container {
   }
 
   getWidth(): number {
-    return this.window? this.window.width : this.width;
+    return this.window ? this.window.width : this.width;
   }
 
   toggleVisibility(): void {
@@ -460,7 +460,7 @@ export class DropDown extends Phaser.GameObjects.Container {
         return this.options.filter((_, i) => i > 0).map(option => option.val);
       }
       // if nothing is selected and a single option is hovered, return that one
-      return [this.options[this.cursor].val];
+      return [ this.options[this.cursor].val ];
     } else if (this.dropDownType === DropDownType.RADIAL) {
       return this.options.map((option) => {
         return { val: option.val, state: option.state };
@@ -502,13 +502,13 @@ export class DropDown extends Phaser.GameObjects.Container {
     switch (this.dropDownType) {
     case DropDownType.MULTI:
     case DropDownType.RADIAL:
-      return compareValues(["val", "state"]);
+      return compareValues([ "val", "state" ]);
 
     case DropDownType.HYBRID:
-      return compareValues(["val", "state", "cursor"]);
+      return compareValues([ "val", "state", "cursor" ]);
 
     case DropDownType.SINGLE:
-      return compareValues(["val", "state", "dir"]);
+      return compareValues([ "val", "state", "dir" ]);
 
     default:
       return false;

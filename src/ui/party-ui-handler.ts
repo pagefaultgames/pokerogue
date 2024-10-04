@@ -1,22 +1,22 @@
-import BattleScene from "../battle-scene";
-import Pokemon, { MoveResult, PlayerPokemon, PokemonMove } from "../field/pokemon";
-import { addBBCodeTextObject, addTextObject, getTextColor, TextStyle } from "./text";
-import { Command } from "./command-ui-handler";
-import MessageUiHandler from "./message-ui-handler";
-import { Mode } from "./ui";
-import * as Utils from "../utils";
-import { PokemonFormChangeItemModifier, PokemonHeldItemModifier, SwitchEffectTransferModifier } from "../modifier/modifier";
-import { allMoves, ForceSwitchOutAttr } from "../data/move";
-import { getGenderColor, getGenderSymbol } from "../data/gender";
-import { StatusEffect } from "../data/status-effect";
-import PokemonIconAnimHandler, { PokemonIconAnimMode } from "./pokemon-icon-anim-handler";
-import { pokemonEvolutions } from "../data/pokemon-evolutions";
-import { addWindow } from "./ui-theme";
-import { SpeciesFormChangeItemTrigger, FormChangeItem } from "../data/pokemon-forms";
+import BattleScene from "#app/battle-scene";
+import Pokemon, { MoveResult, PlayerPokemon, PokemonMove } from "#app/field/pokemon";
+import { addBBCodeTextObject, addTextObject, getTextColor, TextStyle } from "#app/ui/text";
+import { Command } from "#app/ui/command-ui-handler";
+import MessageUiHandler from "#app/ui/message-ui-handler";
+import { Mode } from "#app/ui/ui";
+import * as Utils from "#app/utils";
+import { PokemonFormChangeItemModifier, PokemonHeldItemModifier, SwitchEffectTransferModifier } from "#app/modifier/modifier";
+import { allMoves, ForceSwitchOutAttr } from "#app/data/move";
+import { getGenderColor, getGenderSymbol } from "#app/data/gender";
+import { StatusEffect } from "#app/data/status-effect";
+import PokemonIconAnimHandler, { PokemonIconAnimMode } from "#app/ui/pokemon-icon-anim-handler";
+import { pokemonEvolutions } from "#app/data/balance/pokemon-evolutions";
+import { addWindow } from "#app/ui/ui-theme";
+import { SpeciesFormChangeItemTrigger, FormChangeItem } from "#app/data/pokemon-forms";
 import { getVariantTint } from "#app/data/variant";
-import {Button} from "#enums/buttons";
+import { Button } from "#enums/buttons";
 import { applyChallenges, ChallengeType } from "#app/data/challenge";
-import MoveInfoOverlay from "./move-info-overlay";
+import MoveInfoOverlay from "#app/ui/move-info-overlay";
 import i18next from "i18next";
 import BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
 import { Moves } from "#enums/moves";
@@ -216,7 +216,7 @@ export default class PartyUiHandler extends MessageUiHandler {
 
   public static NoEffectMessage = i18next.t("partyUiHandler:anyEffect");
 
-  private localizedOptions = [PartyOption.SEND_OUT, PartyOption.SUMMARY, PartyOption.CANCEL, PartyOption.APPLY, PartyOption.RELEASE, PartyOption.TEACH, PartyOption.SPLICE, PartyOption.UNSPLICE, PartyOption.REVIVE, PartyOption.TRANSFER, PartyOption.UNPAUSE_EVOLUTION, PartyOption.PASS_BATON, PartyOption.RENAME, PartyOption.SELECT];
+  private localizedOptions = [ PartyOption.SEND_OUT, PartyOption.SUMMARY, PartyOption.CANCEL, PartyOption.APPLY, PartyOption.RELEASE, PartyOption.TEACH, PartyOption.SPLICE, PartyOption.UNSPLICE, PartyOption.REVIVE, PartyOption.TRANSFER, PartyOption.UNPAUSE_EVOLUTION, PartyOption.PASS_BATON, PartyOption.RENAME, PartyOption.SELECT ];
 
   constructor(scene: BattleScene) {
     super(scene, Mode.PARTY);
@@ -468,7 +468,7 @@ export default class PartyUiHandler extends MessageUiHandler {
           this.clearOptions();
           ui.playSelect();
           pokemon.pauseEvolutions = !pokemon.pauseEvolutions;
-          this.showText(i18next.t(pokemon.pauseEvolutions? "partyUiHandler:pausedEvolutions" : "partyUiHandler:unpausedEvolutions", { pokemonName: getPokemonNameWithAffix(pokemon) }), undefined, () => this.showText("", 0), null, true);
+          this.showText(i18next.t(pokemon.pauseEvolutions ? "partyUiHandler:pausedEvolutions" : "partyUiHandler:unpausedEvolutions", { pokemonName: getPokemonNameWithAffix(pokemon) }), undefined, () => this.showText("", 0), null, true);
         } else if (option === PartyOption.UNSPLICE) {
           this.clearOptions();
           ui.playSelect();
@@ -1240,7 +1240,7 @@ class PartySlot extends Phaser.GameObjects.Container {
     slotLevelText.setPositionRelative(slotLevelLabel, 9, 0);
     slotLevelText.setOrigin(0, 0.25);
 
-    slotInfoContainer.add([this.slotName, slotLevelLabel, slotLevelText ]);
+    slotInfoContainer.add([ this.slotName, slotLevelLabel, slotLevelText ]);
 
     const genderSymbol = getGenderSymbol(this.pokemon.getGender(true));
 
@@ -1323,7 +1323,7 @@ class PartySlot extends Phaser.GameObjects.Container {
     this.slotDescriptionLabel.setOrigin(0, 1);
     this.slotDescriptionLabel.setVisible(false);
 
-    slotInfoContainer.add([this.slotHpBar, this.slotHpOverlay, this.slotHpText, this.slotDescriptionLabel]);
+    slotInfoContainer.add([ this.slotHpBar, this.slotHpOverlay, this.slotHpText, this.slotDescriptionLabel ]);
 
     if (partyUiMode !== PartyUiMode.TM_MODIFIER) {
       this.slotDescriptionLabel.setVisible(false);

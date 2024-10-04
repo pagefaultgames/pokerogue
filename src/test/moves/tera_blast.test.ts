@@ -32,7 +32,7 @@ describe("Moves - Tera Blast", () => {
       .battleType("single")
       .disableCrits()
       .starterSpecies(Species.FEEBAS)
-      .moveset([Moves.TERA_BLAST])
+      .moveset([ Moves.TERA_BLAST ])
       .ability(Abilities.BALL_FETCH)
       .startingHeldItems([{ name: "TERA_SHARD", type: Type.FIRE }])
       .enemySpecies(Species.MAGIKARP)
@@ -52,7 +52,7 @@ describe("Moves - Tera Blast", () => {
     vi.spyOn(enemyPokemon, "apply");
 
     game.move.select(Moves.TERA_BLAST);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY ]);
     await game.phaseInterceptor.to("MoveEffectPhase");
 
     expect(enemyPokemon.apply).toHaveReturnedWith(HitResult.SUPER_EFFECTIVE);
@@ -64,7 +64,7 @@ describe("Moves - Tera Blast", () => {
     await game.startBattle();
 
     game.move.select(Moves.TERA_BLAST);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY ]);
     await game.phaseInterceptor.to("MoveEffectPhase");
 
     expect(moveToCheck.calculateBattlePower).toHaveReturnedWith(100);
@@ -80,7 +80,7 @@ describe("Moves - Tera Blast", () => {
     vi.spyOn(enemyPokemon, "isTerastallized").mockReturnValue(true);
 
     game.move.select(Moves.TERA_BLAST);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY ]);
     await game.phaseInterceptor.to("MoveEffectPhase");
 
     expect(enemyPokemon.apply).toHaveReturnedWith(HitResult.SUPER_EFFECTIVE);
@@ -107,7 +107,7 @@ describe("Moves - Tera Blast", () => {
     const playerPokemon = game.scene.getPlayerPokemon()!;
 
     game.move.select(Moves.TERA_BLAST);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY ]);
     await game.phaseInterceptor.to("MoveEndPhase");
 
     expect(playerPokemon.getStatStage(Stat.SPATK)).toBe(-1);

@@ -1,7 +1,7 @@
 import { Ability, allAbilities } from "#app/data/ability";
 import { EnemyPartyConfig, initBattleWithEnemyConfig, leaveEncounterWithoutBattle, selectPokemonForOption, setEncounterRewards, } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import { getNatureName, Nature } from "#app/data/nature";
-import { speciesStarters } from "#app/data/pokemon-species";
+import { speciesStarterCosts } from "#app/data/balance/starters";
 import Pokemon, { PlayerPokemon } from "#app/field/pokemon";
 import { PokemonHeldItemModifier } from "#app/modifier/modifier";
 import { AbilityAttr } from "#app/system/game-data";
@@ -326,7 +326,7 @@ export const TrainingSessionEncounter: MysteryEncounter =
               // Only update the fusion's dex data if the Pokemon is already caught in dex (ignore rentals)
               const rootFusionSpecies = playerPokemon.fusionSpecies?.getRootSpeciesId();
               if (!isNullOrUndefined(rootFusionSpecies)
-                && speciesStarters.hasOwnProperty(rootFusionSpecies)
+                && speciesStarterCosts.hasOwnProperty(rootFusionSpecies)
                 && !!scene.gameData.dexData[rootFusionSpecies].caughtAttr) {
                 scene.gameData.starterData[rootFusionSpecies].abilityAttr |= playerPokemon.fusionAbilityIndex !== 1 || playerPokemon.fusionSpecies?.ability2
                   ? 1 << playerPokemon.fusionAbilityIndex

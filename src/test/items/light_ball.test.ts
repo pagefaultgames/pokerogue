@@ -83,7 +83,7 @@ describe("Items - Light Ball", () => {
     expect(spAtkValue.value / spAtkStat).toBe(1);
 
     // Giving Eviolite to party member and testing if it applies
-    partyMember.scene.addModifier(modifierTypes.SPECIES_STAT_BOOSTER().generateType([], ["LIGHT_BALL"])!.newModifier(partyMember), true);
+    partyMember.scene.addModifier(modifierTypes.SPECIES_STAT_BOOSTER().generateType([], [ "LIGHT_BALL" ])!.newModifier(partyMember), true);
     partyMember.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.ATK, atkValue);
     partyMember.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.SPATK, spAtkValue);
 
@@ -122,7 +122,7 @@ describe("Items - Light Ball", () => {
     expect(spAtkValue.value / spAtkStat).toBe(1);
 
     // Giving Eviolite to party member and testing if it applies
-    partyMember.scene.addModifier(modifierTypes.SPECIES_STAT_BOOSTER().generateType([], ["LIGHT_BALL"])!.newModifier(partyMember), true);
+    partyMember.scene.addModifier(modifierTypes.SPECIES_STAT_BOOSTER().generateType([], [ "LIGHT_BALL" ])!.newModifier(partyMember), true);
     partyMember.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.ATK, atkValue);
     partyMember.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.SPATK, spAtkValue);
 
@@ -161,7 +161,7 @@ describe("Items - Light Ball", () => {
     expect(spAtkValue.value / spAtkStat).toBe(1);
 
     // Giving Eviolite to party member and testing if it applies
-    partyMember.scene.addModifier(modifierTypes.SPECIES_STAT_BOOSTER().generateType([], ["LIGHT_BALL"])!.newModifier(partyMember), true);
+    partyMember.scene.addModifier(modifierTypes.SPECIES_STAT_BOOSTER().generateType([], [ "LIGHT_BALL" ])!.newModifier(partyMember), true);
     partyMember.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.ATK, atkValue);
     partyMember.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.SPATK, spAtkValue);
 
@@ -189,7 +189,7 @@ describe("Items - Light Ball", () => {
     expect(spAtkValue.value / spAtkStat).toBe(1);
 
     // Giving Eviolite to party member and testing if it applies
-    partyMember.scene.addModifier(modifierTypes.SPECIES_STAT_BOOSTER().generateType([], ["LIGHT_BALL"])!.newModifier(partyMember), true);
+    partyMember.scene.addModifier(modifierTypes.SPECIES_STAT_BOOSTER().generateType([], [ "LIGHT_BALL" ])!.newModifier(partyMember), true);
     partyMember.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.ATK, atkValue);
     partyMember.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.SPATK, spAtkValue);
 

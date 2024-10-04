@@ -89,12 +89,12 @@ const PERCENT_LEVEL_LOSS_ON_REFUSE = 12.5;
  * Value ranges of the resulting species BST transformations after adding values to original species
  * 2 Pokemon in the party use this range
  */
-const HIGH_BST_TRANSFORM_BASE_VALUES: [number, number] = [90, 110];
+const HIGH_BST_TRANSFORM_BASE_VALUES: [number, number] = [ 90, 110 ];
 /**
  * Value ranges of the resulting species BST transformations after adding values to original species
  * All remaining Pokemon in the party use this range
  */
-const STANDARD_BST_TRANSFORM_BASE_VALUES: [number, number] = [40, 50];
+const STANDARD_BST_TRANSFORM_BASE_VALUES: [number, number] = [ 40, 50 ];
 
 /**
  * Weird Dream encounter.
@@ -192,7 +192,7 @@ export const WeirdDreamEncounter: MysteryEncounter =
           await showEncounterText(scene, `${namespace}:option.1.dream_complete`);
 
           await doNewTeamPostProcess(scene, transformations);
-          setEncounterRewards(scene, { guaranteedModifierTypeFuncs: [modifierTypes.MEMORY_MUSHROOM, modifierTypes.ROGUE_BALL, modifierTypes.MINT, modifierTypes.MINT]});
+          setEncounterRewards(scene, { guaranteedModifierTypeFuncs: [ modifierTypes.MEMORY_MUSHROOM, modifierTypes.ROGUE_BALL, modifierTypes.MINT, modifierTypes.MINT ]});
           leaveEncounterWithoutBattle(scene, true);
         })
         .build()
@@ -372,7 +372,7 @@ async function doNewTeamPostProcess(scene: BattleScene, transformations: Pokemon
 
     // Randomize the second type of the pokemon
     // If the pokemon does not normally have a second type, it will gain 1
-    const newTypes = [newPokemon.getTypes()[0]];
+    const newTypes = [ newPokemon.getTypes()[0] ];
     let newType = randSeedInt(18) as Type;
     while (newType === newTypes[0]) {
       newType = randSeedInt(18) as Type;
@@ -390,14 +390,14 @@ async function doNewTeamPostProcess(scene: BattleScene, transformations: Pokemon
 
     // Any pokemon that is at or below 450 BST gets +20 permanent BST to 3 stats:  HP (halved, +10), lowest of Atk/SpAtk, and lowest of Def/SpDef
     if (newPokemon.getSpeciesForm().getBaseStatTotal() <= GAIN_OLD_GATEAU_ITEM_BST_THRESHOLD) {
-      const stats: Stat[] = [Stat.HP];
+      const stats: Stat[] = [ Stat.HP ];
       const baseStats = newPokemon.getSpeciesForm().baseStats.slice(0);
       // Attack or SpAtk
       stats.push(baseStats[Stat.ATK] < baseStats[Stat.SPATK] ? Stat.ATK : Stat.SPATK);
       // Def or SpDef
       stats.push(baseStats[Stat.DEF] < baseStats[Stat.SPDEF] ? Stat.DEF : Stat.SPDEF);
       const modType = modifierTypes.MYSTERY_ENCOUNTER_OLD_GATEAU()
-        .generateType(scene.getParty(), [20, stats])
+        .generateType(scene.getParty(), [ 20, stats ])
         ?.withIdFromFunc(modifierTypes.MYSTERY_ENCOUNTER_OLD_GATEAU);
       const modifier = modType?.newModifier(newPokemon);
       if (modifier) {
@@ -553,7 +553,7 @@ async function addEggMoveToNewPokemonMoveset(scene: BattleScene, newPokemon: Pla
   let eggMoveIndex: null | number = null;
   const eggMoves = newPokemon.getEggMoves()?.slice(0);
   if (eggMoves) {
-    const eggMoveIndices = randSeedShuffle([0, 1, 2, 3]);
+    const eggMoveIndices = randSeedShuffle([ 0, 1, 2, 3 ]);
     let randomEggMoveIndex = eggMoveIndices.pop();
     let randomEggMove = !isNullOrUndefined(randomEggMoveIndex) ? eggMoves[randomEggMoveIndex] : null;
     let retries = 0;

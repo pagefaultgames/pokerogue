@@ -33,7 +33,7 @@ describe("Boss Pokemon / Shields", () => {
       .enemyMoveset(Moves.SPLASH)
       .enemyHeldItems([])
       .startingLevel(1000)
-      .moveset([Moves.FALSE_SWIPE, Moves.SUPER_FANG, Moves.SPLASH, Moves.PSYCHIC])
+      .moveset([ Moves.FALSE_SWIPE, Moves.SUPER_FANG, Moves.SPLASH, Moves.PSYCHIC ])
       .ability(Abilities.NO_GUARD);
   });
 
@@ -172,7 +172,7 @@ describe("Boss Pokemon / Shields", () => {
       game.move.select(Moves.SPLASH);
       await game.toNextTurn();
       // All broken shields give +1 stat boost, except the last two that gives +2
-      totalStatStages += i >= shieldsToBreak -1? 2 : 1;
+      totalStatStages += i >= shieldsToBreak - 1 ? 2 : 1;
       expect(getTotalStatStageBoosts(boss1)).toBe(totalStatStages);
     }
 

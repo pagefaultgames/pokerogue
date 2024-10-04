@@ -1,9 +1,9 @@
 import BattleScene from "#app/battle-scene";
-import {Mode} from "#app/ui/ui";
-import {InputsIcons} from "#app/ui/settings/abstract-control-settings-ui-handler";
-import {addTextObject, setTextStyle, TextStyle} from "#app/ui/text";
-import {addWindow} from "#app/ui/ui-theme";
-import {Button} from "#enums/buttons";
+import { Mode } from "#app/ui/ui";
+import { InputsIcons } from "#app/ui/settings/abstract-control-settings-ui-handler";
+import { addTextObject, setTextStyle, TextStyle } from "#app/ui/text";
+import { addWindow } from "#app/ui/ui-theme";
+import { Button } from "#enums/buttons";
 import i18next from "i18next";
 
 const LEFT = "LEFT";
@@ -33,7 +33,7 @@ export class NavigationManager {
       Mode.SETTINGS_GAMEPAD,
       Mode.SETTINGS_KEYBOARD,
     ];
-    this.labels = [i18next.t("settings:general"), i18next.t("settings:display"), i18next.t("settings:audio"), i18next.t("settings:gamepad"), i18next.t("settings:keyboard")];
+    this.labels = [ i18next.t("settings:general"), i18next.t("settings:display"), i18next.t("settings:audio"), i18next.t("settings:gamepad"), i18next.t("settings:keyboard") ];
   }
 
   public reset() {
@@ -134,11 +134,11 @@ export default class NavigationMenu extends Phaser.GameObjects.Container {
     this.navigationIcons["BUTTON_CYCLE_SHINY"] = iconNextTab;
 
     let relative: Phaser.GameObjects.Sprite | Phaser.GameObjects.Text = iconPreviousTab;
-    let relativeWidth: number = iconPreviousTab.width*6;
+    let relativeWidth: number = iconPreviousTab.width * 6;
     for (const label of navigationManager.labels) {
       const labelText = addTextObject(this.scene, 0, 0, label, TextStyle.SETTINGS_LABEL);
       labelText.setOrigin(0, 0);
-      labelText.setPositionRelative(relative, 6 + relativeWidth/6, 0);
+      labelText.setPositionRelative(relative, 6 + relativeWidth / 6, 0);
       this.add(labelText);
       this.headerTitles.push(labelText);
       relative = labelText;
@@ -158,7 +158,7 @@ export default class NavigationMenu extends Phaser.GameObjects.Container {
     const navigationManager = NavigationManager.getInstance();
     const posSelected = navigationManager.modes.indexOf(navigationManager.selectedMode);
 
-    for (const [index, title] of this.headerTitles.entries()) {
+    for (const [ index, title ] of this.headerTitles.entries()) {
       setTextStyle(title, this.scene, index === posSelected ? TextStyle.SETTINGS_SELECTED : TextStyle.SETTINGS_LABEL);
     }
   }

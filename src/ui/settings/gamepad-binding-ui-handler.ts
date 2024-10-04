@@ -1,9 +1,9 @@
 import BattleScene from "../../battle-scene";
 import AbstractBindingUiHandler from "./abstract-binding-ui-handler";
-import {Mode} from "../ui";
-import {Device} from "#enums/devices";
-import {getIconWithSettingName, getKeyWithKeycode} from "#app/configs/inputs/configHandler";
-import {addTextObject, TextStyle} from "#app/ui/text";
+import { Mode } from "../ui";
+import { Device } from "#enums/devices";
+import { getIconWithSettingName, getKeyWithKeycode } from "#app/configs/inputs/configHandler";
+import { addTextObject, TextStyle } from "#app/ui/text";
 
 
 export default class GamepadBindingUiHandler extends AbstractBindingUiHandler {
@@ -46,7 +46,7 @@ export default class GamepadBindingUiHandler extends AbstractBindingUiHandler {
   }
 
   gamepadButtonDown(pad: Phaser.Input.Gamepad.Gamepad, button: Phaser.Input.Gamepad.Button, value: number): void {
-    const blacklist = [12, 13, 14, 15]; // d-pad buttons are blacklisted.
+    const blacklist = [ 12, 13, 14, 15 ]; // d-pad buttons are blacklisted.
     // Check conditions before processing the button press.
     if (!this.listening || pad.id.toLowerCase() !== this.getSelectedDevice() || blacklist.includes(button.index) || this.buttonPressed !== null) {
       return;

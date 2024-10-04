@@ -12,7 +12,6 @@ import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
 
-
 describe("Moves - Astonish", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
@@ -30,10 +29,10 @@ describe("Moves - Astonish", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override.battleType("single");
-    game.override.moveset([Moves.ASTONISH, Moves.SPLASH]);
+    game.override.moveset([ Moves.ASTONISH, Moves.SPLASH ]);
     game.override.enemySpecies(Species.BLASTOISE);
     game.override.enemyAbility(Abilities.INSOMNIA);
-    game.override.enemyMoveset([Moves.TACKLE, Moves.TACKLE, Moves.TACKLE, Moves.TACKLE]);
+    game.override.enemyMoveset([ Moves.TACKLE, Moves.TACKLE, Moves.TACKLE, Moves.TACKLE ]);
     game.override.startingLevel(100);
     game.override.enemyLevel(100);
 
@@ -43,7 +42,7 @@ describe("Moves - Astonish", () => {
   test(
     "move effect should cancel the target's move on the turn it applies",
     async () => {
-      await game.startBattle([Species.MEOWSCARADA]);
+      await game.startBattle([ Species.MEOWSCARADA ]);
 
       const leadPokemon = game.scene.getPlayerPokemon()!;
 

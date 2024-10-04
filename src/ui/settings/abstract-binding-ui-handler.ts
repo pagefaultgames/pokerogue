@@ -1,10 +1,10 @@
 import UiHandler from "../ui-handler";
 import BattleScene from "../../battle-scene";
-import {Mode} from "../ui";
-import {addWindow} from "../ui-theme";
-import {addTextObject, TextStyle} from "../text";
-import {Button} from "#enums/buttons";
-import {NavigationManager} from "#app/ui/settings/navigationMenu";
+import { Mode } from "../ui";
+import { addWindow } from "../ui-theme";
+import { addTextObject, TextStyle } from "../text";
+import { Button } from "#enums/buttons";
+import { NavigationManager } from "#app/ui/settings/navigationMenu";
 import i18next from "i18next";
 
 type CancelFn = (succes?: boolean) => boolean;
@@ -88,7 +88,7 @@ export default abstract class AbstractBindingUiHandler extends UiHandler {
 
     this.timerText = addTextObject(this.scene, 0, 0, "(5)", TextStyle.WINDOW);
     this.timerText.setOrigin(0, 0);
-    this.timerText.setPositionRelative(this.unlockText, (this.unlockText.width/6) + 5, 0);
+    this.timerText.setPositionRelative(this.unlockText, (this.unlockText.width / 6) + 5, 0);
     this.optionSelectContainer.add(this.timerText);
 
     this.optionSelectBg = addWindow(this.scene, (this.scene.game.canvas.width / 6) - this.getWindowWidth(), -(this.scene.game.canvas.height / 6) + this.getWindowHeight() + 28, this.getWindowWidth(), this.getWindowHeight());

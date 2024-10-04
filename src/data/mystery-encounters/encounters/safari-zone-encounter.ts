@@ -23,7 +23,7 @@ import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounters/safariZone";
 
-const TRAINER_THROW_ANIMATION_TIMES = [512, 184, 768];
+const TRAINER_THROW_ANIMATION_TIMES = [ 512, 184, 768 ];
 
 const SAFARI_MONEY_MULTIPLIER = 2;
 
@@ -260,7 +260,7 @@ async function summonSafariPokemon(scene: BattleScene) {
   let enemySpecies;
   let pokemon;
   scene.executeWithSeedOffset(() => {
-    enemySpecies = getPokemonSpecies(getRandomSpeciesByStarterTier([0, 5], undefined, undefined, false, false, false));
+    enemySpecies = getPokemonSpecies(getRandomSpeciesByStarterTier([ 0, 5 ], undefined, undefined, false, false, false));
     const level = scene.currentBattle.getLevelForWave();
     enemySpecies = getPokemonSpecies(enemySpecies.getWildSpeciesForLevel(level, true, false, scene.gameMode));
     pokemon = scene.addEnemyPokemon(enemySpecies, level, TrainerSlot.NONE, false);

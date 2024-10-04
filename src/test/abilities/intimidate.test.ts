@@ -34,7 +34,7 @@ describe("Abilities - Intimidate", () => {
   });
 
   it("should lower ATK stat stage by 1 of enemy Pokemon on entry and player switch", async () => {
-    await game.classicMode.runToSummon([Species.MIGHTYENA, Species.POOCHYENA]);
+    await game.classicMode.runToSummon([ Species.MIGHTYENA, Species.POOCHYENA ]);
     game.onNextPrompt(
       "CheckSwitchPhase",
       Mode.CONFIRM,
@@ -66,7 +66,7 @@ describe("Abilities - Intimidate", () => {
   it("should lower ATK stat stage by 1 for every enemy Pokemon in a double battle on entry", async () => {
     game.override.battleType("double")
       .startingWave(3);
-    await game.classicMode.runToSummon([Species.MIGHTYENA, Species.POOCHYENA]);
+    await game.classicMode.runToSummon([ Species.MIGHTYENA, Species.POOCHYENA ]);
     game.onNextPrompt(
       "CheckSwitchPhase",
       Mode.CONFIRM,
@@ -89,7 +89,7 @@ describe("Abilities - Intimidate", () => {
 
   it("should not activate again if there is no switch or new entry", async () => {
     game.override.startingWave(2);
-    game.override.moveset([Moves.SPLASH]);
+    game.override.moveset([ Moves.SPLASH ]);
     await game.classicMode.startBattle([ Species.MIGHTYENA, Species.POOCHYENA ]);
 
     const playerPokemon = game.scene.getPlayerPokemon()!;
@@ -106,8 +106,8 @@ describe("Abilities - Intimidate", () => {
   }, 20000);
 
   it("should lower ATK stat stage by 1 for every switch", async () => {
-    game.override.moveset([Moves.SPLASH])
-      .enemyMoveset([Moves.VOLT_SWITCH])
+    game.override.moveset([ Moves.SPLASH ])
+      .enemyMoveset([ Moves.VOLT_SWITCH ])
       .startingWave(5);
     await game.classicMode.startBattle([ Species.MIGHTYENA, Species.POOCHYENA ]);
 

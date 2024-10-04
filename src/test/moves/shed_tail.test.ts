@@ -23,7 +23,7 @@ describe("Moves - Shed Tail", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([Moves.SHED_TAIL])
+      .moveset([ Moves.SHED_TAIL ])
       .battleType("single")
       .enemySpecies(Species.SNORLAX)
       .enemyAbility(Abilities.BALL_FETCH)
@@ -31,7 +31,7 @@ describe("Moves - Shed Tail", () => {
   });
 
   it("transfers a Substitute doll to the switched in Pokemon", async () => {
-    await game.classicMode.startBattle([Species.MAGIKARP, Species.FEEBAS]);
+    await game.classicMode.startBattle([ Species.MAGIKARP, Species.FEEBAS ]);
 
     const magikarp = game.scene.getPlayerPokemon()!;
 

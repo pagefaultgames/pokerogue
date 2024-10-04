@@ -2,7 +2,7 @@ import BattleScene from "#app/battle-scene";
 import { TurnCommand, BattleType } from "#app/battle";
 import { TrappedTag, EncoreTag } from "#app/data/battler-tags";
 import { MoveTargetSet, getMoveTargets } from "#app/data/move";
-import { speciesStarters } from "#app/data/pokemon-species";
+import { speciesStarterCosts } from "#app/data/balance/starters";
 import { Abilities } from "#app/enums/abilities";
 import { BattlerTagType } from "#app/enums/battler-tag-type";
 import { Biome } from "#app/enums/biome";
@@ -93,7 +93,7 @@ export class CommandPhase extends FieldPhase {
         const turnCommand: TurnCommand = { command: Command.FIGHT, cursor: cursor, move: { move: moveId, targets: [], ignorePP: args[0] }, args: args };
         const moveTargets: MoveTargetSet = args.length < 3 ? getMoveTargets(playerPokemon, moveId) : args[2];
         if (!moveId) {
-          turnCommand.targets = [this.fieldIndex];
+          turnCommand.targets = [ this.fieldIndex ];
         }
         console.log(moveTargets, getPokemonNameWithAffix(playerPokemon));
         if (moveTargets.targets.length > 1 && moveTargets.multiple) {
@@ -126,7 +126,7 @@ export class CommandPhase extends FieldPhase {
       }
       break;
     case Command.BALL:
-      const notInDex = (this.scene.getEnemyField().filter(p => p.isActive(true)).some(p => !p.scene.gameData.dexData[p.species.speciesId].caughtAttr) && this.scene.gameData.getStarterCount(d => !!d.caughtAttr) < Object.keys(speciesStarters).length - 1);
+      const notInDex = (this.scene.getEnemyField().filter(p => p.isActive(true)).some(p => !p.scene.gameData.dexData[p.species.speciesId].caughtAttr) && this.scene.gameData.getStarterCount(d => !!d.caughtAttr) < Object.keys(speciesStarterCosts).length - 1);
       if (this.scene.arena.biomeType === Biome.END && (!this.scene.gameMode.isClassic || this.scene.gameMode.isFreshStartChallenge() || notInDex )) {
         this.scene.ui.setMode(Mode.COMMAND, this.fieldIndex);
         this.scene.ui.setMode(Mode.MESSAGE);

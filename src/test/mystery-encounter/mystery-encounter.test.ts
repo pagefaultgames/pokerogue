@@ -29,7 +29,7 @@ describe("Mystery Encounters", () => {
   });
 
   it("Spawns a mystery encounter", async () => {
-    await game.runToMysteryEncounter(MysteryEncounterType.MYSTERIOUS_CHALLENGERS, [Species.CHARIZARD, Species.VOLCARONA]);
+    await game.runToMysteryEncounter(MysteryEncounterType.MYSTERIOUS_CHALLENGERS, [ Species.CHARIZARD, Species.VOLCARONA ]);
 
     await game.phaseInterceptor.to(MysteryEncounterPhase, false);
     expect(game.scene.getCurrentPhase()!.constructor.name).toBe(MysteryEncounterPhase.name);

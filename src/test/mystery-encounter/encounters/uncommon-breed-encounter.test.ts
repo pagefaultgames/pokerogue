@@ -17,7 +17,7 @@ import { MysteryEncounterPhase } from "#app/phases/mystery-encounter-phases";
 import { CommandPhase } from "#app/phases/command-phase";
 import { UncommonBreedEncounter } from "#app/data/mystery-encounters/encounters/uncommon-breed-encounter";
 import { MovePhase } from "#app/phases/move-phase";
-import { speciesEggMoves } from "#app/data/egg-moves";
+import { speciesEggMoves } from "#app/data/balance/egg-moves";
 import { getPokemonSpecies } from "#app/data/pokemon-species";
 import { BerryType } from "#enums/berry-type";
 import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
@@ -27,7 +27,7 @@ import { modifierTypes } from "#app/modifier/modifier-type";
 import { Abilities } from "#enums/abilities";
 
 const namespace = "mysteryEncounters/uncommonBreed";
-const defaultParty = [Species.LAPRAS, Species.GENGAR, Species.ABRA];
+const defaultParty = [ Species.LAPRAS, Species.GENGAR, Species.ABRA ];
 const defaultBiome = Biome.CAVE;
 const defaultWave = 45;
 
@@ -53,7 +53,7 @@ describe("Uncommon Breed - Mystery Encounter", () => {
 
     vi.spyOn(MysteryEncounters, "mysteryEncountersByBiome", "get").mockReturnValue(
       new Map<Biome, MysteryEncounterType[]>([
-        [Biome.CAVE, [MysteryEncounterType.UNCOMMON_BREED]],
+        [ Biome.CAVE, [ MysteryEncounterType.UNCOMMON_BREED ]],
       ])
     );
   });
@@ -126,7 +126,7 @@ describe("Uncommon Breed - Mystery Encounter", () => {
       expect(enemyField[0].species.speciesId).toBe(speciesToSpawn);
 
       const statStagePhases = unshiftPhaseSpy.mock.calls.filter(p => p[0] instanceof StatStageChangePhase)[0][0] as any;
-      expect(statStagePhases.stats).toEqual([Stat.ATK, Stat.DEF, Stat.SPATK, Stat.SPDEF, Stat.SPD]);
+      expect(statStagePhases.stats).toEqual([ Stat.ATK, Stat.DEF, Stat.SPATK, Stat.SPDEF, Stat.SPD ]);
 
       // Should have used its egg move pre-battle
       const movePhases = phaseSpy.mock.calls.filter(p => p[0] instanceof MovePhase).map(p => p[0]);
@@ -153,7 +153,7 @@ describe("Uncommon Breed - Mystery Encounter", () => {
       expect(enemyField[0].species.speciesId).toBe(speciesToSpawn);
 
       const statStagePhases = unshiftPhaseSpy.mock.calls.filter(p => p[0] instanceof StatStageChangePhase)[0][0] as any;
-      expect(statStagePhases.stats).toEqual([Stat.ATK, Stat.DEF, Stat.SPATK, Stat.SPDEF, Stat.SPD]);
+      expect(statStagePhases.stats).toEqual([ Stat.ATK, Stat.DEF, Stat.SPATK, Stat.SPDEF, Stat.SPD ]);
 
       // Should have used its egg move pre-battle
       const movePhases = phaseSpy.mock.calls.filter(p => p[0] instanceof MovePhase).map(p => p[0]);
@@ -213,11 +213,11 @@ describe("Uncommon Breed - Mystery Encounter", () => {
       await game.runToMysteryEncounter(MysteryEncounterType.UNCOMMON_BREED, defaultParty);
 
       // Berries on party lead
-      const sitrus = generateModifierType(scene, modifierTypes.BERRY, [BerryType.SITRUS])!;
+      const sitrus = generateModifierType(scene, modifierTypes.BERRY, [ BerryType.SITRUS ])!;
       const sitrusMod = sitrus.newModifier(scene.getParty()[0]) as BerryModifier;
       sitrusMod.stackCount = 2;
       await scene.addModifier(sitrusMod, true, false, false, true);
-      const ganlon = generateModifierType(scene, modifierTypes.BERRY, [BerryType.GANLON])!;
+      const ganlon = generateModifierType(scene, modifierTypes.BERRY, [ BerryType.GANLON ])!;
       const ganlonMod = ganlon.newModifier(scene.getParty()[0]) as BerryModifier;
       ganlonMod.stackCount = 3;
       await scene.addModifier(ganlonMod, true, false, false, true);
@@ -270,7 +270,7 @@ describe("Uncommon Breed - Mystery Encounter", () => {
       const leaveEncounterWithoutBattleSpy = vi.spyOn(EncounterPhaseUtils, "leaveEncounterWithoutBattle");
       await game.runToMysteryEncounter(MysteryEncounterType.UNCOMMON_BREED, defaultParty);
       // Mock moveset
-      scene.getParty()[0].moveset = [new PokemonMove(Moves.CHARM)];
+      scene.getParty()[0].moveset = [ new PokemonMove(Moves.CHARM) ];
       await runMysteryEncounterToEnd(game, 3);
 
       expect(leaveEncounterWithoutBattleSpy).toBeCalled();

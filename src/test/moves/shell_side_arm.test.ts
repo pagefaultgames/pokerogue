@@ -26,7 +26,7 @@ describe("Moves - Shell Side Arm", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([Moves.SHELL_SIDE_ARM])
+      .moveset([ Moves.SHELL_SIDE_ARM ])
       .battleType("single")
       .startingLevel(100)
       .enemyLevel(100)
@@ -37,7 +37,7 @@ describe("Moves - Shell Side Arm", () => {
   it("becomes a physical attack if forecasted to deal more damage as physical", async () => {
     game.override.enemySpecies(Species.SNORLAX);
 
-    await game.classicMode.startBattle([Species.RAMPARDOS]);
+    await game.classicMode.startBattle([ Species.RAMPARDOS ]);
 
     vi.spyOn(shellSideArmAttr, "apply");
 
@@ -50,7 +50,7 @@ describe("Moves - Shell Side Arm", () => {
   it("remains a special attack if forecasted to deal more damage as special", async () => {
     game.override.enemySpecies(Species.SLOWBRO);
 
-    await game.classicMode.startBattle([Species.XURKITREE]);
+    await game.classicMode.startBattle([ Species.XURKITREE ]);
 
     vi.spyOn(shellSideArmAttr, "apply");
 
@@ -65,12 +65,12 @@ describe("Moves - Shell Side Arm", () => {
       .enemySpecies(Species.SNORLAX)
       .enemyMoveset(Moves.COTTON_GUARD);
 
-    await game.classicMode.startBattle([Species.MANAPHY]);
+    await game.classicMode.startBattle([ Species.MANAPHY ]);
 
     vi.spyOn(shellSideArmAttr, "apply");
 
     game.move.select(Moves.SHELL_SIDE_ARM);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+    await game.setTurnOrder([ BattlerIndex.ENEMY, BattlerIndex.PLAYER ]);
     await game.phaseInterceptor.to("BerryPhase", false);
 
     expect(shellSideArmAttr.apply).toHaveLastReturnedWith(false);

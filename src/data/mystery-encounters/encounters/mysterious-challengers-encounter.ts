@@ -143,7 +143,7 @@ export const MysteriousChallengersEncounter: MysteryEncounter =
         // Spawn standard trainer battle with memory mushroom reward
         const config: EnemyPartyConfig = encounter.enemyPartyConfigs[0];
 
-        setEncounterRewards(scene, { guaranteedModifierTypeFuncs: [modifierTypes.TM_COMMON, modifierTypes.TM_GREAT, modifierTypes.MEMORY_MUSHROOM], fillRemaining: true });
+        setEncounterRewards(scene, { guaranteedModifierTypeFuncs: [ modifierTypes.TM_COMMON, modifierTypes.TM_GREAT, modifierTypes.MEMORY_MUSHROOM ], fillRemaining: true });
 
         // Seed offsets to remove possibility of different trainers having exact same teams
         let ret;
@@ -168,7 +168,7 @@ export const MysteriousChallengersEncounter: MysteryEncounter =
         // Spawn hard fight
         const config: EnemyPartyConfig = encounter.enemyPartyConfigs[1];
 
-        setEncounterRewards(scene, { guaranteedModifierTiers: [ModifierTier.ULTRA, ModifierTier.ULTRA, ModifierTier.GREAT, ModifierTier.GREAT], fillRemaining: true });
+        setEncounterRewards(scene, { guaranteedModifierTiers: [ ModifierTier.ULTRA, ModifierTier.ULTRA, ModifierTier.GREAT, ModifierTier.GREAT ], fillRemaining: true });
 
         // Seed offsets to remove possibility of different trainers having exact same teams
         let ret;
@@ -196,7 +196,7 @@ export const MysteriousChallengersEncounter: MysteryEncounter =
         // To avoid player level snowballing from picking this option
         encounter.expMultiplier = 0.9;
 
-        setEncounterRewards(scene, { guaranteedModifierTiers: [ModifierTier.ROGUE, ModifierTier.ROGUE, ModifierTier.ULTRA, ModifierTier.GREAT], fillRemaining: true });
+        setEncounterRewards(scene, { guaranteedModifierTiers: [ ModifierTier.ROGUE, ModifierTier.ROGUE, ModifierTier.ULTRA, ModifierTier.GREAT ], fillRemaining: true });
 
         // Seed offsets to remove possibility of different trainers having exact same teams
         let ret;

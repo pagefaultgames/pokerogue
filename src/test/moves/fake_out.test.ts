@@ -23,7 +23,7 @@ describe("Moves - Fake Out", () => {
     game.override
       .battleType("single")
       .enemySpecies(Species.CORVIKNIGHT)
-      .moveset([Moves.FAKE_OUT, Moves.SPLASH])
+      .moveset([ Moves.FAKE_OUT, Moves.SPLASH ])
       .enemyMoveset(Moves.SPLASH)
       .enemyLevel(10)
       .startingLevel(10) // prevent LevelUpPhase from happening
@@ -31,7 +31,7 @@ describe("Moves - Fake Out", () => {
   });
 
   it("can only be used on the first turn a pokemon is sent out in a battle", async() => {
-    await game.classicMode.startBattle([Species.FEEBAS]);
+    await game.classicMode.startBattle([ Species.FEEBAS ]);
 
     const enemy = game.scene.getEnemyPokemon()!;
 
@@ -49,7 +49,7 @@ describe("Moves - Fake Out", () => {
 
   // This is a PokeRogue buff to Fake Out
   it("can be used at the start of every wave even if the pokemon wasn't recalled", async() => {
-    await game.classicMode.startBattle([Species.FEEBAS]);
+    await game.classicMode.startBattle([ Species.FEEBAS ]);
 
     const enemy = game.scene.getEnemyPokemon()!;
     enemy.damageAndUpdate(enemy.getMaxHp() - 1);
@@ -65,7 +65,7 @@ describe("Moves - Fake Out", () => {
 
   it("can be used again if recalled and sent back out", async() => {
     game.override.startingWave(4);
-    await game.classicMode.startBattle([Species.FEEBAS, Species.MAGIKARP]);
+    await game.classicMode.startBattle([ Species.FEEBAS, Species.MAGIKARP ]);
 
     const enemy1 = game.scene.getEnemyPokemon()!;
 

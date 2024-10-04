@@ -27,7 +27,7 @@ describe("Moves - Dynamax Cannon", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
 
-    game.override.moveset([dynamaxCannon.id]);
+    game.override.moveset([ dynamaxCannon.id ]);
     game.override.startingLevel(200);
 
     // Note that, for Waves 1-10, the level cap is 10
@@ -36,7 +36,7 @@ describe("Moves - Dynamax Cannon", () => {
     game.override.disableCrits();
 
     game.override.enemySpecies(Species.MAGIKARP);
-    game.override.enemyMoveset([Moves.SPLASH, Moves.SPLASH, Moves.SPLASH, Moves.SPLASH]);
+    game.override.enemyMoveset([ Moves.SPLASH, Moves.SPLASH, Moves.SPLASH, Moves.SPLASH ]);
 
     vi.spyOn(dynamaxCannon, "calculateBattlePower");
   });
@@ -161,7 +161,7 @@ describe("Moves - Dynamax Cannon", () => {
     ]);
 
     game.move.select(dynamaxCannon.id);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY ]);
 
     await game.phaseInterceptor.to(MoveEffectPhase, false);
     expect((game.scene.getCurrentPhase() as MoveEffectPhase).move.moveId).toBe(dynamaxCannon.id);

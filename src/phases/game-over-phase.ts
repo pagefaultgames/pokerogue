@@ -2,7 +2,7 @@ import { clientSessionId } from "#app/account";
 import { BattleType } from "#app/battle";
 import BattleScene from "#app/battle-scene";
 import { getCharVariantFromDialogue } from "#app/data/dialogue";
-import { pokemonEvolutions } from "#app/data/pokemon-evolutions";
+import { pokemonEvolutions } from "#app/data/balance/pokemon-evolutions";
 import PokemonSpecies, { getPokemonSpecies } from "#app/data/pokemon-species";
 import { trainerConfigs } from "#app/data/trainer-config";
 import Pokemon from "#app/field/pokemon";

@@ -181,7 +181,7 @@ const MISC_TUTOR_MOVES = [
 /**
  * Wave breakpoints that determine how strong to make the Bug-Type Superfan's team
  */
-const WAVE_LEVEL_BREAKPOINTS = [30, 50, 70, 100, 120, 140, 160];
+const WAVE_LEVEL_BREAKPOINTS = [ 30, 50, 70, 100, 120, 140, 160 ];
 
 /**
  * Bug Type Superfan encounter.
@@ -193,7 +193,7 @@ export const BugTypeSuperfanEncounter: MysteryEncounter =
     .withEncounterTier(MysteryEncounterTier.GREAT)
     .withPrimaryPokemonRequirement(new CombinationPokemonRequirement(
       // Must have at least 1 Bug type on team, OR have a bug item somewhere on the team
-      new HeldItemRequirement(["BypassSpeedChanceModifier", "ContactHeldItemTransferChanceModifier"], 1),
+      new HeldItemRequirement([ "BypassSpeedChanceModifier", "ContactHeldItemTransferChanceModifier" ], 1),
       new AttackTypeBoosterHeldItemTypeRequirement(Type.BUG, 1),
       new TypeRequirement(Type.BUG, false, 1)
     ))
@@ -268,7 +268,7 @@ export const BugTypeSuperfanEncounter: MysteryEncounter =
       const requiredItems = [
         generateModifierType(scene, modifierTypes.QUICK_CLAW),
         generateModifierType(scene, modifierTypes.GRIP_CLAW),
-        generateModifierType(scene, modifierTypes.ATTACK_TYPE_BOOSTER, [Type.BUG]),
+        generateModifierType(scene, modifierTypes.ATTACK_TYPE_BOOSTER, [ Type.BUG ]),
       ];
 
       const requiredItemString = requiredItems.map(m => m?.name ?? "unknown").join("/");
@@ -331,7 +331,7 @@ export const BugTypeSuperfanEncounter: MysteryEncounter =
         encounter.setDialogueToken("numBugTypes", numBugTypesText);
 
         if (numBugTypes < 2) {
-          setEncounterRewards(scene, { guaranteedModifierTypeFuncs: [modifierTypes.SUPER_LURE, modifierTypes.GREAT_BALL], fillRemaining: false });
+          setEncounterRewards(scene, { guaranteedModifierTypeFuncs: [ modifierTypes.SUPER_LURE, modifierTypes.GREAT_BALL ], fillRemaining: false });
           encounter.selectedOption!.dialogue!.selected = [
             {
               speaker: `${namespace}:speaker`,
@@ -339,7 +339,7 @@ export const BugTypeSuperfanEncounter: MysteryEncounter =
             },
           ];
         } else if (numBugTypes < 4) {
-          setEncounterRewards(scene, { guaranteedModifierTypeFuncs: [modifierTypes.QUICK_CLAW, modifierTypes.MAX_LURE, modifierTypes.ULTRA_BALL], fillRemaining: false });
+          setEncounterRewards(scene, { guaranteedModifierTypeFuncs: [ modifierTypes.QUICK_CLAW, modifierTypes.MAX_LURE, modifierTypes.ULTRA_BALL ], fillRemaining: false });
           encounter.selectedOption!.dialogue!.selected = [
             {
               speaker: `${namespace}:speaker`,
@@ -347,7 +347,7 @@ export const BugTypeSuperfanEncounter: MysteryEncounter =
             },
           ];
         } else if (numBugTypes < 6) {
-          setEncounterRewards(scene, { guaranteedModifierTypeFuncs: [modifierTypes.GRIP_CLAW, modifierTypes.MAX_LURE, modifierTypes.ROGUE_BALL], fillRemaining: false });
+          setEncounterRewards(scene, { guaranteedModifierTypeFuncs: [ modifierTypes.GRIP_CLAW, modifierTypes.MAX_LURE, modifierTypes.ROGUE_BALL ], fillRemaining: false });
           encounter.selectedOption!.dialogue!.selected = [
             {
               speaker: `${namespace}:speaker`,
@@ -356,7 +356,7 @@ export const BugTypeSuperfanEncounter: MysteryEncounter =
           ];
         } else {
           // If player has any evolution/form change items that are valid for their party, will spawn one of those items in addition to a Master Ball
-          const modifierOptions: ModifierTypeOption[] = [generateModifierTypeOption(scene, modifierTypes.MASTER_BALL)!, generateModifierTypeOption(scene, modifierTypes.MAX_LURE)!];
+          const modifierOptions: ModifierTypeOption[] = [ generateModifierTypeOption(scene, modifierTypes.MASTER_BALL)!, generateModifierTypeOption(scene, modifierTypes.MAX_LURE)! ];
           const specialOptions: ModifierTypeOption[] = [];
 
           const nonRareEvolutionModifier = generateModifierTypeOption(scene, modifierTypes.EVOLUTION_ITEM);
@@ -397,7 +397,7 @@ export const BugTypeSuperfanEncounter: MysteryEncounter =
       .newOptionWithMode(MysteryEncounterOptionMode.DISABLED_OR_DEFAULT)
       .withPrimaryPokemonRequirement(new CombinationPokemonRequirement(
         // Meets one or both of the below reqs
-        new HeldItemRequirement(["BypassSpeedChanceModifier", "ContactHeldItemTransferChanceModifier"], 1),
+        new HeldItemRequirement([ "BypassSpeedChanceModifier", "ContactHeldItemTransferChanceModifier" ], 1),
         new AttackTypeBoosterHeldItemTypeRequirement(Type.BUG, 1)
       ))
       .withDialogue({
@@ -474,7 +474,7 @@ export const BugTypeSuperfanEncounter: MysteryEncounter =
         const bugNet = generateModifierTypeOption(scene, modifierTypes.MYSTERY_ENCOUNTER_GOLDEN_BUG_NET)!;
         bugNet.type.tier = ModifierTier.ROGUE;
 
-        setEncounterRewards(scene, { guaranteedModifierTypeOptions: [bugNet], guaranteedModifierTypeFuncs: [modifierTypes.REVIVER_SEED], fillRemaining: false });
+        setEncounterRewards(scene, { guaranteedModifierTypeOptions: [ bugNet ], guaranteedModifierTypeFuncs: [ modifierTypes.REVIVER_SEED ], fillRemaining: false });
         leaveEncounterWithoutBattle(scene, true);
       })
       .build())
@@ -535,7 +535,7 @@ function getTrainerConfigForWave(waveIndex: number) {
       }))
       .setPartyMemberFunc(2, getRandomPartyMemberFunc(POOL_2_POKEMON, TrainerSlot.TRAINER, true))
       .setPartyMemberFunc(3, getRandomPartyMemberFunc(POOL_2_POKEMON, TrainerSlot.TRAINER, true))
-      .setPartyMemberFunc(4, getRandomPartyMemberFunc([pool3Mon.species], TrainerSlot.TRAINER, true, p => {
+      .setPartyMemberFunc(4, getRandomPartyMemberFunc([ pool3Mon.species ], TrainerSlot.TRAINER, true, p => {
         if (!isNullOrUndefined(pool3Mon.formIndex)) {
           p.formIndex = pool3Mon.formIndex;
           p.generateAndPopulateMoveset();
@@ -558,14 +558,14 @@ function getTrainerConfigForWave(waveIndex: number) {
         p.generateName();
       }))
       .setPartyMemberFunc(2, getRandomPartyMemberFunc(POOL_2_POKEMON, TrainerSlot.TRAINER, true))
-      .setPartyMemberFunc(3, getRandomPartyMemberFunc([pool3Mon.species], TrainerSlot.TRAINER, true, p => {
+      .setPartyMemberFunc(3, getRandomPartyMemberFunc([ pool3Mon.species ], TrainerSlot.TRAINER, true, p => {
         if (!isNullOrUndefined(pool3Mon.formIndex)) {
           p.formIndex = pool3Mon.formIndex;
           p.generateAndPopulateMoveset();
           p.generateName();
         }
       }))
-      .setPartyMemberFunc(4, getRandomPartyMemberFunc([pool3Mon2.species], TrainerSlot.TRAINER, true, p => {
+      .setPartyMemberFunc(4, getRandomPartyMemberFunc([ pool3Mon2.species ], TrainerSlot.TRAINER, true, p => {
         if (!isNullOrUndefined(pool3Mon2.formIndex)) {
           p.formIndex = pool3Mon2.formIndex;
           p.generateAndPopulateMoveset();
@@ -586,7 +586,7 @@ function getTrainerConfigForWave(waveIndex: number) {
         p.generateName();
       }))
       .setPartyMemberFunc(2, getRandomPartyMemberFunc(POOL_2_POKEMON, TrainerSlot.TRAINER, true))
-      .setPartyMemberFunc(3, getRandomPartyMemberFunc([pool3Mon.species], TrainerSlot.TRAINER, true, p => {
+      .setPartyMemberFunc(3, getRandomPartyMemberFunc([ pool3Mon.species ], TrainerSlot.TRAINER, true, p => {
         if (!isNullOrUndefined(pool3Mon.formIndex)) {
           p.formIndex = pool3Mon.formIndex;
           p.generateAndPopulateMoveset();
@@ -611,14 +611,14 @@ function getTrainerConfigForWave(waveIndex: number) {
         p.generateAndPopulateMoveset();
         p.generateName();
       }))
-      .setPartyMemberFunc(2, getRandomPartyMemberFunc([pool3Mon.species], TrainerSlot.TRAINER, true, p => {
+      .setPartyMemberFunc(2, getRandomPartyMemberFunc([ pool3Mon.species ], TrainerSlot.TRAINER, true, p => {
         if (!isNullOrUndefined(pool3Mon.formIndex)) {
           p.formIndex = pool3Mon.formIndex;
           p.generateAndPopulateMoveset();
           p.generateName();
         }
       }))
-      .setPartyMemberFunc(3, getRandomPartyMemberFunc([pool3Mon2.species], TrainerSlot.TRAINER, true, p => {
+      .setPartyMemberFunc(3, getRandomPartyMemberFunc([ pool3Mon2.species ], TrainerSlot.TRAINER, true, p => {
         if (!isNullOrUndefined(pool3Mon2.formIndex)) {
           p.formIndex = pool3Mon2.formIndex;
           p.generateAndPopulateMoveset();

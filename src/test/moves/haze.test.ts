@@ -31,12 +31,12 @@ describe("Moves - Haze", () => {
       game.override.enemyAbility(Abilities.NONE);
 
       game.override.startingLevel(100);
-      game.override.moveset([Moves.HAZE, Moves.SWORDS_DANCE, Moves.CHARM, Moves.SPLASH]);
+      game.override.moveset([ Moves.HAZE, Moves.SWORDS_DANCE, Moves.CHARM, Moves.SPLASH ]);
       game.override.ability(Abilities.NONE);
     });
 
     it("should reset all stat changes of all Pokemon on field", async () => {
-      await game.startBattle([Species.RATTATA]);
+      await game.startBattle([ Species.RATTATA ]);
       const user = game.scene.getPlayerPokemon()!;
       const enemy = game.scene.getEnemyPokemon()!;
 

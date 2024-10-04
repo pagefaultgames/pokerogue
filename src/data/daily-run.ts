@@ -1,10 +1,11 @@
 import { PartyMemberStrength } from "#enums/party-member-strength";
 import { Species } from "#enums/species";
-import BattleScene from "../battle-scene";
-import { PlayerPokemon } from "../field/pokemon";
-import { Starter } from "../ui/starter-select-ui-handler";
-import * as Utils from "../utils";
-import PokemonSpecies, { PokemonSpeciesForm, getPokemonSpecies, getPokemonSpeciesForm, speciesStarters } from "./pokemon-species";
+import BattleScene from "#app/battle-scene";
+import { PlayerPokemon } from "#app/field/pokemon";
+import { Starter } from "#app/ui/starter-select-ui-handler";
+import * as Utils from "#app/utils";
+import PokemonSpecies, { PokemonSpeciesForm, getPokemonSpecies, getPokemonSpeciesForm } from "#app/data/pokemon-species";
+import { speciesStarterCosts } from "#app/data/balance/starters";
 
 export interface DailyRunConfig {
   seed: integer;
@@ -46,9 +47,9 @@ export function getDailyRunStarters(scene: BattleScene, seed: string): Starter[]
 
     for (let c = 0; c < starterCosts.length; c++) {
       const cost = starterCosts[c];
-      const costSpecies = Object.keys(speciesStarters)
+      const costSpecies = Object.keys(speciesStarterCosts)
         .map(s => parseInt(s) as Species)
-        .filter(s => speciesStarters[s] === cost);
+        .filter(s => speciesStarterCosts[s] === cost);
       const randPkmSpecies = getPokemonSpecies(Utils.randSeedItem(costSpecies));
       const starterSpecies = getPokemonSpecies(randPkmSpecies.getTrainerSpeciesForLevel(startingLevel, true, PartyMemberStrength.STRONGER));
       starters.push(getDailyRunStarter(scene, starterSpecies, startingLevel));

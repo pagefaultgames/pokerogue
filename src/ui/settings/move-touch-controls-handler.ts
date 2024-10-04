@@ -6,7 +6,6 @@ export const TOUCH_CONTROL_POSITIONS_LANDSCAPE = "touchControlPositionsLandscape
 export const TOUCH_CONTROL_POSITIONS_PORTRAIT = "touchControlPositionsPortrait";
 
 
-
 type ControlPosition = { id: string, x: number, y: number };
 
 type ConfigurationEventListeners = {
@@ -72,7 +71,7 @@ export default class MoveTouchControlsHandler {
     if (this.inConfigurationMode) {
       const orientation = document.querySelector("#touchControls #orientation");
       if (orientation) {
-        orientation.textContent = this.isLandscapeMode? "Landscape" : "Portrait";
+        orientation.textContent = this.isLandscapeMode ? "Landscape" : "Portrait";
       }
     }
     const positions = this.getSavedPositionsOfCurrentOrientation() ?? [];
@@ -288,7 +287,7 @@ export default class MoveTouchControlsHandler {
    * @returns All control groups of the touch controls.
    */
   private getControlGroupElements(): HTMLDivElement[] {
-    return [...document.querySelectorAll("#touchControls .control-group")] as HTMLDivElement[];
+    return [ ...document.querySelectorAll("#touchControls .control-group") ] as HTMLDivElement[];
   }
 
   /**

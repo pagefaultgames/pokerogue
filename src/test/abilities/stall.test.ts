@@ -26,8 +26,8 @@ describe("Abilities - Stall", () => {
     game.override.disableCrits();
     game.override.enemySpecies(Species.REGIELEKI);
     game.override.enemyAbility(Abilities.STALL);
-    game.override.enemyMoveset([Moves.QUICK_ATTACK, Moves.QUICK_ATTACK, Moves.QUICK_ATTACK, Moves.QUICK_ATTACK]);
-    game.override.moveset([Moves.QUICK_ATTACK, Moves.TACKLE]);
+    game.override.enemyMoveset([ Moves.QUICK_ATTACK, Moves.QUICK_ATTACK, Moves.QUICK_ATTACK, Moves.QUICK_ATTACK ]);
+    game.override.moveset([ Moves.QUICK_ATTACK, Moves.TACKLE ]);
   });
 
   /**
@@ -37,7 +37,7 @@ describe("Abilities - Stall", () => {
    **/
 
   it("Pokemon with Stall should move last in its priority bracket regardless of speed", async () => {
-    await game.startBattle([Species.SHUCKLE]);
+    await game.startBattle([ Species.SHUCKLE ]);
 
     const playerIndex = game.scene.getPlayerPokemon()!.getBattlerIndex();
     const enemyIndex = game.scene.getEnemyPokemon()!.getBattlerIndex();
@@ -50,12 +50,12 @@ describe("Abilities - Stall", () => {
     const commandOrder = phase.getCommandOrder();
     // The player Pokemon (without Stall) goes first despite having lower speed than the opponent.
     // The opponent Pokemon (with Stall) goes last despite having higher speed than the player Pokemon.
-    expect(speedOrder).toEqual([enemyIndex, playerIndex]);
-    expect(commandOrder).toEqual([playerIndex, enemyIndex]);
+    expect(speedOrder).toEqual([ enemyIndex, playerIndex ]);
+    expect(commandOrder).toEqual([ playerIndex, enemyIndex ]);
   }, 20000);
 
   it("Pokemon with Stall will go first if a move that is in a higher priority bracket than the opponent's move is used", async () => {
-    await game.startBattle([Species.SHUCKLE]);
+    await game.startBattle([ Species.SHUCKLE ]);
 
     const playerIndex = game.scene.getPlayerPokemon()!.getBattlerIndex();
     const enemyIndex = game.scene.getEnemyPokemon()!.getBattlerIndex();
@@ -68,13 +68,13 @@ describe("Abilities - Stall", () => {
     const commandOrder = phase.getCommandOrder();
     // The opponent Pokemon (with Stall) goes first because its move is still within a higher priority bracket than its opponent.
     // The player Pokemon goes second because its move is in a lower priority bracket.
-    expect(speedOrder).toEqual([enemyIndex, playerIndex]);
-    expect(commandOrder).toEqual([enemyIndex, playerIndex]);
+    expect(speedOrder).toEqual([ enemyIndex, playerIndex ]);
+    expect(commandOrder).toEqual([ enemyIndex, playerIndex ]);
   }, 20000);
 
   it("If both Pokemon have stall and use the same move, speed is used to determine who goes first.", async () => {
     game.override.ability(Abilities.STALL);
-    await game.startBattle([Species.SHUCKLE]);
+    await game.startBattle([ Species.SHUCKLE ]);
 
     const playerIndex = game.scene.getPlayerPokemon()!.getBattlerIndex();
     const enemyIndex = game.scene.getEnemyPokemon()!.getBattlerIndex();
@@ -88,7 +88,7 @@ describe("Abilities - Stall", () => {
 
     // The opponent Pokemon (with Stall) goes first because it has a higher speed.
     // The player Pokemon (with Stall) goes second because its speed is lower.
-    expect(speedOrder).toEqual([enemyIndex, playerIndex]);
-    expect(commandOrder).toEqual([enemyIndex, playerIndex]);
+    expect(speedOrder).toEqual([ enemyIndex, playerIndex ]);
+    expect(commandOrder).toEqual([ enemyIndex, playerIndex ]);
   }, 20000);
 });

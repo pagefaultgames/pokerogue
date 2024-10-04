@@ -149,7 +149,7 @@ export default class BattleFlyout extends Phaser.GameObjects.Container {
     if (foundInfo) {
       foundInfo.ppUsed = moveUsedEvent.ppUsed;
     } else {
-      this.moveInfo.push({move: moveUsedEvent.move, maxPp: moveUsedEvent.move.pp, ppUsed: moveUsedEvent.ppUsed});
+      this.moveInfo.push({ move: moveUsedEvent.move, maxPp: moveUsedEvent.move.pp, ppUsed: moveUsedEvent.ppUsed });
     }
 
     this.setText();

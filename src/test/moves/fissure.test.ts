@@ -32,7 +32,7 @@ describe("Moves - Fissure", () => {
     game.override.disableCrits();
 
     game.override.starterSpecies(Species.SNORLAX);
-    game.override.moveset([Moves.FISSURE]);
+    game.override.moveset([ Moves.FISSURE ]);
     game.override.passiveAbility(Abilities.BALL_FETCH);
     game.override.startingLevel(100);
 

@@ -1,4 +1,3 @@
-
 export enum BattlerTagType {
   NONE = "NONE",
   RECHARGING = "RECHARGING",

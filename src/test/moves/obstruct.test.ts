@@ -24,7 +24,7 @@ describe("Moves - Obstruct", () => {
       .battleType("single")
       .enemyAbility(Abilities.BALL_FETCH)
       .ability(Abilities.BALL_FETCH)
-      .moveset([Moves.OBSTRUCT]);
+      .moveset([ Moves.OBSTRUCT ]);
   });
 
   it("protects from contact damaging moves and lowers the opponent's defense by 2 stages", async () => {

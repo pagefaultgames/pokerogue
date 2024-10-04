@@ -22,7 +22,7 @@ export class NewBiomeEncounterPhase extends NextEncounterPhase {
     }
 
     const enemyField = this.scene.getEnemyField();
-    const moveTargets: any[]  = [this.scene.arenaEnemy, enemyField];
+    const moveTargets: any[]  = [ this.scene.arenaEnemy, enemyField ];
     const mysteryEncounter = this.scene.currentBattle?.mysteryEncounter?.introVisuals;
     if (mysteryEncounter) {
       moveTargets.push(mysteryEncounter);

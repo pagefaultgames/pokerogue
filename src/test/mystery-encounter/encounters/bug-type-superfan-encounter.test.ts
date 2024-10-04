@@ -22,7 +22,7 @@ import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
 import ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
 
 const namespace = "mysteryEncounters/bugTypeSuperfan";
-const defaultParty = [Species.LAPRAS, Species.GENGAR, Species.WEEDLE];
+const defaultParty = [ Species.LAPRAS, Species.GENGAR, Species.WEEDLE ];
 const defaultBiome = Biome.CAVE;
 const defaultWave = 24;
 
@@ -169,7 +169,7 @@ describe("Bug-Type Superfan - Mystery Encounter", () => {
 
     vi.spyOn(MysteryEncounters, "mysteryEncountersByBiome", "get").mockReturnValue(
       new Map<Biome, MysteryEncounterType[]>([
-        [Biome.CAVE, [MysteryEncounterType.BUG_TYPE_SUPERFAN]],
+        [ Biome.CAVE, [ MysteryEncounterType.BUG_TYPE_SUPERFAN ]],
       ])
     );
   });
@@ -405,7 +405,7 @@ describe("Bug-Type Superfan - Mystery Encounter", () => {
     });
 
     it("should NOT be selectable if the player doesn't have any Bug types", async () => {
-      await game.runToMysteryEncounter(MysteryEncounterType.BUG_TYPE_SUPERFAN, [Species.ABRA]);
+      await game.runToMysteryEncounter(MysteryEncounterType.BUG_TYPE_SUPERFAN, [ Species.ABRA ]);
       await game.phaseInterceptor.to(MysteryEncounterPhase, false);
 
       const encounterPhase = scene.getCurrentPhase();
@@ -438,7 +438,7 @@ describe("Bug-Type Superfan - Mystery Encounter", () => {
     });
 
     it("should proceed to rewards screen with 2-3 Bug Types reward options", async () => {
-      await game.runToMysteryEncounter(MysteryEncounterType.BUG_TYPE_SUPERFAN, [Species.BUTTERFREE, Species.BEEDRILL]);
+      await game.runToMysteryEncounter(MysteryEncounterType.BUG_TYPE_SUPERFAN, [ Species.BUTTERFREE, Species.BEEDRILL ]);
       await runMysteryEncounterToEnd(game, 2);
 
       expect(scene.getCurrentPhase()?.constructor.name).toBe(SelectModifierPhase.name);
@@ -453,7 +453,7 @@ describe("Bug-Type Superfan - Mystery Encounter", () => {
     });
 
     it("should proceed to rewards screen with 4-5 Bug Types reward options", async () => {
-      await game.runToMysteryEncounter(MysteryEncounterType.BUG_TYPE_SUPERFAN, [Species.BUTTERFREE, Species.BEEDRILL, Species.GALVANTULA, Species.VOLCARONA]);
+      await game.runToMysteryEncounter(MysteryEncounterType.BUG_TYPE_SUPERFAN, [ Species.BUTTERFREE, Species.BEEDRILL, Species.GALVANTULA, Species.VOLCARONA ]);
       await runMysteryEncounterToEnd(game, 2);
 
       expect(scene.getCurrentPhase()?.constructor.name).toBe(SelectModifierPhase.name);
@@ -468,7 +468,7 @@ describe("Bug-Type Superfan - Mystery Encounter", () => {
     });
 
     it("should proceed to rewards screen with 6 Bug Types reward options (including form change item)", async () => {
-      await game.runToMysteryEncounter(MysteryEncounterType.BUG_TYPE_SUPERFAN, [Species.BUTTERFREE, Species.BEEDRILL, Species.GALVANTULA, Species.VOLCARONA, Species.ANORITH, Species.GENESECT]);
+      await game.runToMysteryEncounter(MysteryEncounterType.BUG_TYPE_SUPERFAN, [ Species.BUTTERFREE, Species.BEEDRILL, Species.GALVANTULA, Species.VOLCARONA, Species.ANORITH, Species.GENESECT ]);
       await runMysteryEncounterToEnd(game, 2);
 
       expect(scene.getCurrentPhase()?.constructor.name).toBe(SelectModifierPhase.name);
@@ -536,8 +536,8 @@ describe("Bug-Type Superfan - Mystery Encounter", () => {
     });
 
     it("should remove the gifted item and proceed to rewards screen", async () => {
-      game.override.startingHeldItems([{name: "GRIP_CLAW", count: 1}]);
-      await game.runToMysteryEncounter(MysteryEncounterType.BUG_TYPE_SUPERFAN, [Species.BUTTERFREE]);
+      game.override.startingHeldItems([{ name: "GRIP_CLAW", count: 1 }]);
+      await game.runToMysteryEncounter(MysteryEncounterType.BUG_TYPE_SUPERFAN, [ Species.BUTTERFREE ]);
 
       const gripClawCountBefore = scene.findModifier(m => m instanceof ContactHeldItemTransferChanceModifier)?.stackCount ?? 0;
 
@@ -557,10 +557,10 @@ describe("Bug-Type Superfan - Mystery Encounter", () => {
     });
 
     it("should leave encounter without battle", async () => {
-      game.override.startingHeldItems([{name: "GRIP_CLAW", count: 1}]);
+      game.override.startingHeldItems([{ name: "GRIP_CLAW", count: 1 }]);
       const leaveEncounterWithoutBattleSpy = vi.spyOn(encounterPhaseUtils, "leaveEncounterWithoutBattle");
 
-      await game.runToMysteryEncounter(MysteryEncounterType.BUG_TYPE_SUPERFAN, [Species.BUTTERFREE]);
+      await game.runToMysteryEncounter(MysteryEncounterType.BUG_TYPE_SUPERFAN, [ Species.BUTTERFREE ]);
       await runMysteryEncounterToEnd(game, 3, { pokemonNo: 1, optionNo: 1 });
 
       expect(leaveEncounterWithoutBattleSpy).toBeCalled();

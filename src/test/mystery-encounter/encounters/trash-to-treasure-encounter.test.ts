@@ -24,7 +24,7 @@ import { CommandPhase } from "#app/phases/command-phase";
 import { MovePhase } from "#app/phases/move-phase";
 
 const namespace = "mysteryEncounters/trashToTreasure";
-const defaultParty = [Species.LAPRAS, Species.GENGAR, Species.ABRA];
+const defaultParty = [ Species.LAPRAS, Species.GENGAR, Species.ABRA ];
 const defaultBiome = Biome.CAVE;
 const defaultWave = 45;
 
@@ -47,7 +47,7 @@ describe("Trash to Treasure - Mystery Encounter", () => {
 
     vi.spyOn(MysteryEncounters, "mysteryEncountersByBiome", "get").mockReturnValue(
       new Map<Biome, MysteryEncounterType[]>([
-        [Biome.CAVE, [MysteryEncounterType.TRASH_TO_TREASURE]],
+        [ Biome.CAVE, [ MysteryEncounterType.TRASH_TO_TREASURE ]],
       ])
     );
   });
@@ -94,7 +94,7 @@ describe("Trash to Treasure - Mystery Encounter", () => {
             isBoss: true,
             formIndex: 1,
             bossSegmentModifier: 1,
-            moveSet: [Moves.PAYBACK, Moves.GUNK_SHOT, Moves.STOMPING_TANTRUM, Moves.DRAIN_PUNCH],
+            moveSet: [ Moves.PAYBACK, Moves.GUNK_SHOT, Moves.STOMPING_TANTRUM, Moves.DRAIN_PUNCH ],
           }
         ],
       }
@@ -175,7 +175,7 @@ describe("Trash to Treasure - Mystery Encounter", () => {
       expect(scene.getCurrentPhase()?.constructor.name).toBe(CommandPhase.name);
       expect(enemyField.length).toBe(1);
       expect(enemyField[0].species.speciesId).toBe(Species.GARBODOR);
-      expect(enemyField[0].moveset).toEqual([new PokemonMove(Moves.PAYBACK), new PokemonMove(Moves.GUNK_SHOT), new PokemonMove(Moves.STOMPING_TANTRUM), new PokemonMove(Moves.DRAIN_PUNCH)]);
+      expect(enemyField[0].moveset).toEqual([ new PokemonMove(Moves.PAYBACK), new PokemonMove(Moves.GUNK_SHOT), new PokemonMove(Moves.STOMPING_TANTRUM), new PokemonMove(Moves.DRAIN_PUNCH) ]);
 
       // Should have used moves pre-battle
       const movePhases = phaseSpy.mock.calls.filter(p => p[0] instanceof MovePhase).map(p => p[0]);

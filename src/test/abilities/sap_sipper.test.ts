@@ -148,8 +148,8 @@ describe("Abilities - Sap Sipper", () => {
     const moveToUse = Moves.METRONOME;
     const enemyAbility = Abilities.SAP_SIPPER;
 
-    game.override.moveset([moveToUse]);
-    game.override.enemyMoveset([Moves.SPLASH, Moves.NONE, Moves.NONE, Moves.NONE]);
+    game.override.moveset([ moveToUse ]);
+    game.override.enemyMoveset([ Moves.SPLASH, Moves.NONE, Moves.NONE, Moves.NONE ]);
     game.override.enemySpecies(Species.RATTATA);
     game.override.enemyAbility(enemyAbility);
 

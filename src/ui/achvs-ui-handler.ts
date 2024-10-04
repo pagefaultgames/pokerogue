@@ -79,7 +79,7 @@ export default class AchvsUiHandler extends MessageUiHandler {
     this.headerActionButton = new Phaser.GameObjects.Sprite(this.scene, 0, 0, "keyboard", "ACTION.png");
     this.headerActionButton.setOrigin(0, 0);
     this.headerActionButton.setPositionRelative(this.headerBg, 236, 6);
-    this.headerActionText = addTextObject(this.scene, 0, 0, "", TextStyle.WINDOW, {fontSize:"60px"});
+    this.headerActionText = addTextObject(this.scene, 0, 0, "", TextStyle.WINDOW, { fontSize:"60px" });
     this.headerActionText.setOrigin(0, 0);
     this.headerActionText.setPositionRelative(this.headerBg, 264, 8);
 
@@ -252,7 +252,7 @@ export default class AchvsUiHandler extends MessageUiHandler {
             // Wrap around to the last row
             success = this.setScrollCursor(Math.ceil(this.currentTotal / this.COLS) - this.ROWS);
             let newCursorIndex = this.cursor + (this.ROWS - 1) * this.COLS;
-            if (newCursorIndex > this.currentTotal - this.scrollCursor * this.COLS -1) {
+            if (newCursorIndex > this.currentTotal - this.scrollCursor * this.COLS - 1) {
               newCursorIndex -= this.COLS;
             }
             success = success && this.setCursor(newCursorIndex);

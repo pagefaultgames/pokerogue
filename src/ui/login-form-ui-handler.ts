@@ -88,7 +88,7 @@ export default class LoginFormUiHandler extends FormModalUiHandler {
   }
 
   override getButtonLabels(_config?: ModalConfig): string[] {
-    return [ i18next.t("menu:login"), i18next.t("menu:register")];
+    return [ i18next.t("menu:login"), i18next.t("menu:register") ];
   }
 
   override getReadableErrorMessage(error: string): string {
@@ -124,7 +124,7 @@ export default class LoginFormUiHandler extends FormModalUiHandler {
         // Prevent overlapping overrides on action modification
         this.submitAction = originalLoginAction;
         this.sanitizeInputs();
-        this.scene.ui.setMode(Mode.LOADING, { buttonActions: [] });
+        this.scene.ui.setMode(Mode.LOADING, { buttonActions: []});
         const onFail = error => {
           this.scene.ui.setMode(Mode.LOGIN_FORM, Object.assign(config, { errorMessage: error?.trim() }));
           this.scene.ui.playError();
@@ -161,19 +161,19 @@ export default class LoginFormUiHandler extends FormModalUiHandler {
     this.infoContainer.setVisible(false);
     this.setMouseCursorStyle("default"); //reset cursor
 
-    [this.discordImage, this.googleImage, this.usernameInfoImage].forEach((img) => img.off("pointerdown"));
+    [ this.discordImage, this.googleImage, this.usernameInfoImage ].forEach((img) => img.off("pointerdown"));
   }
 
   private processExternalProvider(config: ModalConfig) : void {
     this.externalPartyTitle.setText(i18next.t("menu:orUse") ?? "");
-    this.externalPartyTitle.setX(20+this.externalPartyTitle.text.length);
+    this.externalPartyTitle.setX(20 + this.externalPartyTitle.text.length);
     this.externalPartyTitle.setVisible(true);
     this.externalPartyContainer.setPositionRelative(this.modalContainer, 175, 0);
     this.externalPartyContainer.setVisible(true);
     this.externalPartyBg.setSize(this.externalPartyTitle.text.length + 50, this.modalBg.height);
     this.getUi().moveTo(this.externalPartyContainer, this.getUi().length - 1);
-    this.googleImage.setPosition(this.externalPartyBg.width/3.1, this.externalPartyBg.height-60);
-    this.discordImage.setPosition(this.externalPartyBg.width/3.1, this.externalPartyBg.height-40);
+    this.googleImage.setPosition(this.externalPartyBg.width / 3.1, this.externalPartyBg.height - 60);
+    this.discordImage.setPosition(this.externalPartyBg.width / 3.1, this.externalPartyBg.height - 40);
 
     this.infoContainer.setPosition(5, -76);
     this.infoContainer.setVisible(true);
@@ -195,7 +195,7 @@ export default class LoginFormUiHandler extends FormModalUiHandler {
     });
 
     const onFail = error => {
-      this.scene.ui.setMode(Mode.LOADING, { buttonActions: [] });
+      this.scene.ui.setMode(Mode.LOADING, { buttonActions: []});
       this.scene.ui.setModeForceTransition(Mode.LOGIN_FORM, Object.assign(config, { errorMessage: error?.trim() }));
       this.scene.ui.playError();
     };

@@ -9,7 +9,6 @@ import { BattlerTagType } from "#app/enums/battler-tag-type";
 import { BerryPhase } from "#app/phases/berry-phase";
 
 
-
 describe("Abilities - Unseen Fist", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
@@ -29,7 +28,7 @@ describe("Abilities - Unseen Fist", () => {
     game.override.battleType("single");
     game.override.starterSpecies(Species.URSHIFU);
     game.override.enemySpecies(Species.SNORLAX);
-    game.override.enemyMoveset([Moves.PROTECT, Moves.PROTECT, Moves.PROTECT, Moves.PROTECT]);
+    game.override.enemyMoveset([ Moves.PROTECT, Moves.PROTECT, Moves.PROTECT, Moves.PROTECT ]);
     game.override.startingLevel(100);
     game.override.enemyLevel(100);
   });
@@ -66,7 +65,7 @@ describe("Abilities - Unseen Fist", () => {
     "should cause a contact move to ignore Protect, but not Substitute",
     async () => {
       game.override.enemyLevel(1);
-      game.override.moveset([Moves.TACKLE]);
+      game.override.moveset([ Moves.TACKLE ]);
 
       await game.startBattle();
 
@@ -84,8 +83,8 @@ describe("Abilities - Unseen Fist", () => {
 });
 
 async function testUnseenFistHitResult(game: GameManager, attackMove: Moves, protectMove: Moves, shouldSucceed: boolean = true): Promise<void> {
-  game.override.moveset([attackMove]);
-  game.override.enemyMoveset([protectMove, protectMove, protectMove, protectMove]);
+  game.override.moveset([ attackMove ]);
+  game.override.enemyMoveset([ protectMove, protectMove, protectMove, protectMove ]);
 
   await game.startBattle();
 

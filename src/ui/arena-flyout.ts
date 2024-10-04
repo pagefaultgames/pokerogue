@@ -9,7 +9,7 @@ import { BattleSceneEventType, TurnEndEvent } from "../events/battle-scene";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import TimeOfDayWidget from "./time-of-day-widget";
 import * as Utils from "../utils";
-import i18next, {ParseKeys} from "i18next";
+import i18next, { ParseKeys } from "i18next";
 
 /** Enum used to differentiate {@linkcode Arena} effects */
 enum ArenaEffectType {
@@ -196,7 +196,6 @@ export class ArenaFlyout extends Phaser.GameObjects.Container {
   }
 
 
-
   /** Clears out the current string stored in all arena effect texts */
   private clearText() {
     this.flyoutTextPlayer.text = "";
@@ -316,9 +315,9 @@ export class ArenaFlyout extends Phaser.GameObjects.Container {
           ? ArenaEffectType.WEATHER
           : ArenaEffectType.TERRAIN,
         maxDuration: fieldEffectChangedEvent.duration,
-        duration: fieldEffectChangedEvent.duration};
+        duration: fieldEffectChangedEvent.duration };
 
-      foundIndex = this.fieldEffectInfo.findIndex(info => [newInfo.name, oldName].includes(info.name));
+      foundIndex = this.fieldEffectInfo.findIndex(info => [ newInfo.name, oldName ].includes(info.name));
       if (foundIndex === -1) {
         if (newInfo.name !== undefined) {
           this.fieldEffectInfo.push(newInfo); // Adds the info to the array if it doesn't already exist and is defined

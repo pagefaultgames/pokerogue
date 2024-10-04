@@ -237,7 +237,7 @@ describe("Egg Generation Tests", () => {
   });
   it("should increase egg pity", () => {
     const scene = game.scene;
-    const startPityValues = [...scene.gameData.eggPity];
+    const startPityValues = [ ...scene.gameData.eggPity ];
 
     new Egg({ scene, sourceType: EggSourceType.GACHA_MOVE, pulled: true, tier: EggTier.COMMON });
 
@@ -247,7 +247,7 @@ describe("Egg Generation Tests", () => {
   });
   it("should increase legendary egg pity by two", () => {
     const scene = game.scene;
-    const startPityValues = [...scene.gameData.eggPity];
+    const startPityValues = [ ...scene.gameData.eggPity ];
 
     new Egg({ scene, sourceType: EggSourceType.GACHA_LEGENDARY, pulled: true, tier: EggTier.COMMON });
 
@@ -323,7 +323,7 @@ describe("Egg Generation Tests", () => {
     scene.setSeed("ABCDEFGHIJKLMNOPQRSTUVWXYZ");
     scene.resetSeed();
 
-    const firstEgg = new Egg({scene, sourceType: EggSourceType.GACHA_SHINY, tier: EggTier.COMMON});
+    const firstEgg = new Egg({ scene, sourceType: EggSourceType.GACHA_SHINY, tier: EggTier.COMMON });
     const firstHatch = firstEgg.generatePlayerPokemon(scene);
     let diffEggMove = false;
     let diffSpecies = false;
@@ -334,7 +334,7 @@ describe("Egg Generation Tests", () => {
       scene.setSeed("ABCDEFGHIJKLMNOPQRSTUVWXYZ");
       scene.resetSeed(); // Make sure that eggs are unpredictable even if using same seed
 
-      const newEgg = new Egg({scene, sourceType: EggSourceType.GACHA_SHINY, tier: EggTier.COMMON});
+      const newEgg = new Egg({ scene, sourceType: EggSourceType.GACHA_SHINY, tier: EggTier.COMMON });
       const newHatch = newEgg.generatePlayerPokemon(scene);
       diffEggMove = diffEggMove || (newEgg.eggMoveIndex !== firstEgg.eggMoveIndex);
       diffSpecies = diffSpecies || (newHatch.species.speciesId !== firstHatch.species.speciesId);
@@ -353,7 +353,7 @@ describe("Egg Generation Tests", () => {
     scene.setSeed("ABCDEFGHIJKLMNOPQRSTUVWXYZ");
     scene.resetSeed();
 
-    const firstEgg = new Egg({scene, species: Species.BULBASAUR});
+    const firstEgg = new Egg({ scene, species: Species.BULBASAUR });
     const firstHatch = firstEgg.generatePlayerPokemon(scene);
     let diffEggMove = false;
     let diffSpecies = false;
@@ -363,7 +363,7 @@ describe("Egg Generation Tests", () => {
       scene.setSeed("ABCDEFGHIJKLMNOPQRSTUVWXYZ");
       scene.resetSeed(); // Make sure that eggs are unpredictable even if using same seed
 
-      const newEgg = new Egg({scene, species: Species.BULBASAUR});
+      const newEgg = new Egg({ scene, species: Species.BULBASAUR });
       const newHatch = newEgg.generatePlayerPokemon(scene);
       diffEggMove = diffEggMove || (newEgg.eggMoveIndex !== firstEgg.eggMoveIndex);
       diffSpecies = diffSpecies || (newHatch.species.speciesId !== firstHatch.species.speciesId);

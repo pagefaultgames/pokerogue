@@ -9,7 +9,6 @@ import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 
-
 describe("Moves - Thousand Arrows", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
@@ -30,14 +29,14 @@ describe("Moves - Thousand Arrows", () => {
     game.override.enemySpecies(Species.TOGETIC);
     game.override.startingLevel(100);
     game.override.enemyLevel(100);
-    game.override.moveset([Moves.THOUSAND_ARROWS]);
-    game.override.enemyMoveset([Moves.SPLASH, Moves.SPLASH, Moves.SPLASH, Moves.SPLASH]);
+    game.override.moveset([ Moves.THOUSAND_ARROWS ]);
+    game.override.enemyMoveset([ Moves.SPLASH, Moves.SPLASH, Moves.SPLASH, Moves.SPLASH ]);
   });
 
   it(
     "move should hit and ground Flying-type targets",
     async () => {
-      await game.startBattle([Species.ILLUMISE]);
+      await game.startBattle([ Species.ILLUMISE ]);
 
       const enemyPokemon = game.scene.getEnemyPokemon()!;
 
@@ -60,7 +59,7 @@ describe("Moves - Thousand Arrows", () => {
       game.override.enemySpecies(Species.SNORLAX);
       game.override.enemyAbility(Abilities.LEVITATE);
 
-      await game.startBattle([Species.ILLUMISE]);
+      await game.startBattle([ Species.ILLUMISE ]);
 
       const enemyPokemon = game.scene.getEnemyPokemon()!;
 
@@ -82,7 +81,7 @@ describe("Moves - Thousand Arrows", () => {
     async () => {
       game.override.enemySpecies(Species.SNORLAX);
 
-      await game.startBattle([Species.ILLUMISE]);
+      await game.startBattle([ Species.ILLUMISE ]);
 
       const enemyPokemon = game.scene.getEnemyPokemon()!;
 
