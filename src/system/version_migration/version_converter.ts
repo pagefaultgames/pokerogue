@@ -11,6 +11,7 @@ export function applySystemVersionMigration(data: SystemSaveData) {
 
   if (!curVersion.every((value, index) => value === LATEST_VERSION[index])) {
     const converter = new SystemVersionConverter();
+    converter.applyStaticPreprocessors(data);
     converter.applyMigration(data, curVersion);
   }
 }
@@ -20,6 +21,7 @@ export function applySessionVersionMigration(data: SessionSaveData) {
 
   if (!curVersion.every((value, index) => value === LATEST_VERSION[index])) {
     const converter = new SessionVersionConverter();
+    converter.applyStaticPreprocessors(data);
     converter.applyMigration(data, curVersion);
   }
 }
@@ -30,6 +32,7 @@ export function applySettingsVersionMigration(data: Object) {
 
   if (!curVersion.every((value, index) => value === LATEST_VERSION[index])) {
     const converter = new SettingsVersionConverter();
+    converter.applyStaticPreprocessors(data);
     converter.applyMigration(data, curVersion);
   }
 }
@@ -48,6 +51,14 @@ abstract class VersionConverter {
   }
 
   /**
+   * Applies any version-agnostic data sanitation as defined within the function
+   * body.
+   * @param data The data to be operated on
+   */
+  applyStaticPreprocessors(_data: any): void {
+  }
+
+  /**
    * Uses the current version the incoming data to determine the starting point
    * of the migration which will cascade up to the latest version, calling the
    * necessary migration functions in the process.
@@ -60,6 +71,11 @@ abstract class VersionConverter {
 }
 
 class SessionVersionConverter extends VersionConverter {
+  override applyStaticPreprocessors(data: SessionSaveData): void {
+      // Always sanitize money as a safeguard
+      data.money = Math.floor(data.money);
+  }
+
   override applyMigration(data: SessionSaveData, curVersion: number[]): void {
     const [ curMajor, curMinor, curPatch ] = curVersion;
 

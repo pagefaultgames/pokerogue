@@ -1,5 +1,5 @@
 import BattleScene from "#app/battle-scene";
-import { biomeLinks, getBiomeName } from "#app/data/biomes";
+import { biomeLinks, getBiomeName } from "#app/data/balance/biomes";
 import { Biome } from "#app/enums/biome";
 import { MoneyInterestModifier, MapModifier } from "#app/modifier/modifier";
 import { OptionSelectItem } from "#app/ui/abstact-option-select-ui-handler";
