@@ -7,7 +7,7 @@ import { getSplashMessages } from "../data/splash-messages";
 import i18next from "i18next";
 import { TimedEventDisplay } from "#app/timed-event-manager";
 import { version } from "../../package.json";
-import { api } from "#app/plugins/api/api";
+import { pokerogueApi } from "#app/plugins/api/pokerogue-api";
 
 export default class TitleUiHandler extends OptionSelectUiHandler {
   /** If the stats can not be retrieved, use this fallback value */
@@ -79,7 +79,7 @@ export default class TitleUiHandler extends OptionSelectUiHandler {
   }
 
   updateTitleStats(): void {
-    api.getGameTitleStats()
+    pokerogueApi.getGameTitleStats()
       .then(stats => {
         if (stats) {
           this.playerCountLabel.setText(`${stats.playerCount} ${i18next.t("menu:playersOnline")}`);

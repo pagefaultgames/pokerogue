@@ -49,7 +49,7 @@ import { RUN_HISTORY_LIMIT } from "#app/ui/run-history-ui-handler";
 import { applySessionDataPatches, applySettingsDataPatches, applySystemDataPatches } from "#app/system/version-converter";
 import { MysteryEncounterSaveData } from "#app/data/mystery-encounters/mystery-encounter-save-data";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
-import { api } from "#app/plugins/api/api";
+import { pokerogueApi } from "#app/plugins/api/pokerogue-api";
 
 export const defaultStarterSpecies: Species[] = [
   Species.BULBASAUR, Species.CHARMANDER, Species.SQUIRTLE,
@@ -397,7 +397,7 @@ export class GameData {
       localStorage.setItem(`data_${loggedInUser?.username}`, encrypt(systemData, bypassLogin));
 
       if (!bypassLogin) {
-        api.updateSystemSavedata({clientSessionId}, systemData)
+        pokerogueApi.updateSystemSavedata({clientSessionId}, systemData)
           .then(error => {
             this.scene.ui.savingIcon.hide();
             if (error) {
@@ -430,7 +430,7 @@ export class GameData {
       }
 
       if (!bypassLogin) {
-        api.getSystemSavedata(clientSessionId)
+        pokerogueApi.getSystemSavedata(clientSessionId)
           .then(saveDataOrErr => {
             if (!saveDataOrErr || saveDataOrErr.length === 0 || saveDataOrErr[0] !== "{") {
               if (saveDataOrErr?.startsWith("sql: no rows in result set")) {
@@ -705,7 +705,7 @@ export class GameData {
       return true;
     }
 
-    const systemData = api.verifySystemSavedata(clientSessionId);
+    const systemData = pokerogueApi.verifySystemSavedata(clientSessionId);
 
     if (systemData) {
       this.scene.clearPhaseQueue();
@@ -984,7 +984,7 @@ export class GameData {
       };
 
       if (!bypassLogin && !localStorage.getItem(`sessionData${slotId ? slotId : ""}_${loggedInUser?.username}`)) {
-        api.getSessionSavedata(slotId, clientSessionId)
+        pokerogueApi.getSessionSavedata(slotId, clientSessionId)
           .then(async response => {
             if (!response && response?.length === 0 || response?.[0] !== "{") {
               console.error(response);
@@ -1132,7 +1132,7 @@ export class GameData {
         if (success !== null && !success) {
           return resolve(false);
         }
-        api.deleteSessionSavedata(slotId, clientSessionId).then(error => {
+        pokerogueApi.deleteSessionSavedata(slotId, clientSessionId).then(error => {
           if (error) {
             if (error.startsWith("session out of date")) {
               this.scene.clearPhaseQueue();
@@ -1189,7 +1189,7 @@ export class GameData {
       result = [true, true];
     } else {
       const sessionData = this.getSessionSaveData(scene);
-      const jsonResponse = await api.clearSessionSavedata(slotId, this.trainerId, clientSessionId, sessionData);
+      const jsonResponse = await pokerogueApi.clearSessionSavedata(slotId, this.trainerId, clientSessionId, sessionData);
 
       if (!jsonResponse?.error) {
         result = [true, jsonResponse?.success ?? false];
@@ -1309,7 +1309,7 @@ export class GameData {
         console.debug("Session data saved");
 
         if (!bypassLogin && sync) {
-          api.updateAllSavedata(request)
+          pokerogueApi.updateAllSavedata(request)
             .then(error => {
               if (sync) {
                 this.scene.lastSavePlayTime = 0;
@@ -1359,9 +1359,9 @@ export class GameData {
         let promise: Promise<any> = Promise.resolve(null);
 
         if (dataType === GameDataType.SYSTEM) {
-          promise = api.getSystemSavedata(clientSessionId);
+          promise = pokerogueApi.getSystemSavedata(clientSessionId);
         } else if (dataType === GameDataType.SESSION) {
-          promise = api.getSessionSavedata(slotId, clientSessionId);
+          promise = pokerogueApi.getSessionSavedata(slotId, clientSessionId);
         }
 
         promise
@@ -1457,9 +1457,9 @@ export class GameData {
                     const { trainerId, secretId } = this;
                     let updatePromise: Promise<string | null>;
                     if (dataType === GameDataType.SESSION) {
-                      updatePromise = api.updateSessionSavedata({slot: slotId, trainerId, secretId, clientSessionId}, dataStr);
+                      updatePromise = pokerogueApi.updateSessionSavedata({slot: slotId, trainerId, secretId, clientSessionId}, dataStr);
                     } else {
-                      updatePromise = api.updateSystemSavedata({trainerId, secretId, clientSessionId}, dataStr);
+                      updatePromise = pokerogueApi.updateSystemSavedata({trainerId, secretId, clientSessionId}, dataStr);
                     }
                     updatePromise
                       .then(error => {

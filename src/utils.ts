@@ -1,7 +1,7 @@
 import { MoneyFormat } from "#enums/money-format";
 import { Moves } from "#enums/moves";
 import i18next from "i18next";
-import { api } from "./plugins/api/api";
+import { pokerogueApi } from "./plugins/api/pokerogue-api";
 
 export type nil = null | undefined;
 
@@ -326,7 +326,7 @@ export function getCookie(cName: string): string {
  */
 export async function localPing() {
   if (isLocal) {
-    const titleStats = await api.getGameTitleStats();
+    const titleStats = await pokerogueApi.getGameTitleStats();
     isLocalServerConnected = !!titleStats;
   }
 }

@@ -1,5 +1,5 @@
 import { bypassLogin } from "./battle-scene";
-import { api } from "./plugins/api/api";
+import { pokerogueApi } from "./plugins/api/pokerogue-api";
 import * as Utils from "./utils";
 
 export interface UserInfo {
@@ -44,7 +44,7 @@ export function updateUserInfo(): Promise<[boolean, integer]> {
       });
       return resolve([ true, 200 ]);
     }
-    api.getAccountInfo().then((accountInfoOrStatus) => {
+    pokerogueApi.getAccountInfo().then((accountInfoOrStatus) => {
       if (typeof accountInfoOrStatus === "number") {
         resolve([ false, accountInfoOrStatus ]);
         return;

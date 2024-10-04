@@ -7,7 +7,7 @@ import BattleScene from "#app/battle-scene";
 import { addTextObject, TextStyle } from "./text";
 import { addWindow } from "./ui-theme";
 import { OptionSelectItem } from "#app/ui/abstact-option-select-ui-handler";
-import { api } from "#app/plugins/api/api";
+import { pokerogueApi } from "#app/plugins/api/pokerogue-api";
 
 interface BuildInteractableImageOpts {
   scale?: number;
@@ -136,7 +136,7 @@ export default class LoginFormUiHandler extends FormModalUiHandler {
 
         const [usernameInput, passwordInput] = this.inputs;
 
-        api.login(usernameInput.text, passwordInput.text).then(isSuccess => {
+        pokerogueApi.login(usernameInput.text, passwordInput.text).then(isSuccess => {
           if (isSuccess) {
             originalLoginAction && originalLoginAction();
           } else {

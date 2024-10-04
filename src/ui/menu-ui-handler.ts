@@ -13,7 +13,7 @@ import { GameDataType } from "#enums/game-data-type";
 import BgmBar from "#app/ui/bgm-bar";
 import AwaitableUiHandler from "./awaitable-ui-handler";
 import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
-import { api } from "#app/plugins/api/api";
+import { pokerogueApi } from "#app/plugins/api/pokerogue-api";
 
 enum MenuOptions {
   GAME_SETTINGS,
@@ -587,7 +587,7 @@ export default class MenuUiHandler extends MessageUiHandler {
         success = true;
         const doLogout = () => {
           ui.setMode(Mode.LOADING, {
-            buttonActions: [], fadeOut: () => api.logout().then(() => {
+            buttonActions: [], fadeOut: () => pokerogueApi.logout().then(() => {
               updateUserInfo().then(() => this.scene.reset(true, true));
             })
           });

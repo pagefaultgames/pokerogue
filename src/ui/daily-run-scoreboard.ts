@@ -3,7 +3,7 @@ import BattleScene from "../battle-scene";
 import * as Utils from "../utils";
 import { TextStyle, addTextObject } from "./text";
 import { WindowVariant, addWindow } from "./ui-theme";
-import { api } from "#app/plugins/api/api";
+import { pokerogueApi } from "#app/plugins/api/pokerogue-api";
 
 export interface RankingEntry {
   rank: integer,
@@ -192,9 +192,9 @@ export class DailyRunScoreboard extends Phaser.GameObjects.Container {
     }
 
     Utils.executeIf(category !== this.category || this.pageCount === undefined,
-      () =>  api.getDailyRankingsPageCount(category).then(count => this.pageCount = count)
+      () =>  pokerogueApi.getDailyRankingsPageCount(category).then(count => this.pageCount = count)
     ).then(() => {
-      api.getDailyRankings(category, page)
+      pokerogueApi.getDailyRankings(category, page)
         .then(rankings => {
           this.page = page;
           this.category = category;

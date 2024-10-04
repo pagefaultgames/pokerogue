@@ -6,7 +6,7 @@ import { Starter } from "#app/ui/starter-select-ui-handler";
 import * as Utils from "#app/utils";
 import PokemonSpecies, { PokemonSpeciesForm, getPokemonSpecies, getPokemonSpeciesForm } from "#app/data/pokemon-species";
 import { speciesStarterCosts } from "#app/data/balance/starters";
-import { api } from "#app/plugins/api/api";
+import { pokerogueApi } from "#app/plugins/api/pokerogue-api";
 
 export interface DailyRunConfig {
   seed: integer;
@@ -15,7 +15,7 @@ export interface DailyRunConfig {
 
 export function fetchDailyRunSeed(): Promise<string | null> {
   return new Promise<string | null>((resolve, reject) => {
-    api.getDailySeed().then(dailySeed => {
+    pokerogueApi.getDailySeed().then(dailySeed => {
       resolve(dailySeed);
     }).catch(err => reject(err)); // TODO: does this ever reject with the api class?
   });

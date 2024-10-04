@@ -14,7 +14,7 @@ import type { VerifySavedataResponse } from "./models/VerifySavedata";
 
 type DataType = "json" | "form-urlencoded";
 
-export class Api {
+export class PokerogueApi {
   //#region Fields
 
   private readonly base: string;
@@ -161,7 +161,7 @@ export class Api {
    * Verify if the session is valid.
    * If not the {@linkcode SystemSaveData} is returned.
    * @param sessionId The savedata session ID
-   * @returns A {@linkcode SystemSaveData} if NOT valid, otherwise `null`.
+   * @returns A {@linkcode SystemSaveData} if **NOT** valid, otherwise `null`.
    */
   public async verifySystemSavedata(sessionId: string) {
     try {
@@ -261,7 +261,7 @@ export class Api {
 
       if (response.ok) {
         if (loggedInUser) {
-          loggedInUser.lastSessionSlot = -1; // TODO: is the bang correct?
+          loggedInUser.lastSessionSlot = -1;
         }
 
         localStorage.removeItem(`sessionData${slotId > 0 ? slotId : ""}_${loggedInUser?.username}`);
@@ -437,4 +437,4 @@ export class Api {
   //#endregion
 }
 
-export const api = new Api(import.meta.env.VITE_SERVER_URL ?? "http://localhost:80001");
+export const pokerogueApi = new PokerogueApi(import.meta.env.VITE_SERVER_URL ?? "http://localhost:80001");
