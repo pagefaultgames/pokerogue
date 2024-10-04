@@ -889,6 +889,9 @@ export default class BattleScene extends SceneBase {
     }
 
     const pokemon = new EnemyPokemon(this, species, level, trainerSlot, boss, dataSource);
+    if (Overrides.OPP_FUSION_OVERRIDE) {
+      pokemon.generateFusionSpecies();
+    }
 
     overrideModifiers(this, false);
     overrideHeldItems(this, pokemon, false);

@@ -80,7 +80,7 @@ export class SelectStarterPhase extends Phase {
         starterPokemon.nickname = starter.nickname;
       }
 
-      if (this.scene.gameMode.isSplicedOnly) {
+      if (this.scene.gameMode.isSplicedOnly || Overrides.STARTER_FUSION_OVERRIDE) {
         starterPokemon.generateFusionSpecies(true);
       }
       starterPokemon.setVisible(false);
