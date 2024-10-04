@@ -2577,7 +2577,7 @@ export class ChargeAttr extends OverrideMoveEffectAttr {
             applyMoveAttrs(MoveEffectAttr, user, target, move);
           }
           const isVirtual = args[1] as boolean;
-          user.pushMoveHistory({ move: move.id, targets: [ target.getBattlerIndex() ], result: MoveResult.OTHER});
+          user.pushMoveHistory({ move: move.id, targets: [ target.getBattlerIndex() ], result: MoveResult.OTHER });
           user.getMoveQueue().push({ move: move.id, targets: [ target.getBattlerIndex() ], virtual: isVirtual });
           user.addTag(BattlerTagType.CHARGING, 1, move.id, user.id);
           resolve(true);
@@ -5811,7 +5811,7 @@ export class RandomMovesetMoveAttr extends CallMoveAttr {
       if (this.includeParty) {
         allies = user.isPlayer() ? user.scene.getParty() : user.scene.getEnemyParty();
       } else {
-        allies = [user];
+        allies = [ user ];
       }
       const partyMoveset = allies.map(p => p.moveset).flat();
       const moves = partyMoveset.filter(m => !this.invalidMoves.includes(m!.moveId) && !m!.getMove().name.endsWith(" (N)"));

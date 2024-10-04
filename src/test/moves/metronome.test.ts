@@ -1,5 +1,4 @@
 import { SemiInvulnerableTag } from "#app/data/battler-tags";
-import { getMoveTargets } from "#app/data/move";
 import { Abilities } from "#app/enums/abilities";
 import { Stat } from "#app/enums/stat";
 import { Moves } from "#enums/moves";
@@ -25,7 +24,7 @@ describe("Moves - Metronome", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([Moves.METRONOME, Moves.SPLASH])
+      .moveset([ Moves.METRONOME, Moves.SPLASH ])
       .battleType("single")
       .startingLevel(100)
       .starterSpecies(Species.REGIELEKI)
@@ -81,7 +80,7 @@ describe("Moves - Metronome", () => {
 
   it("should only target ally for Aromatic Mist", async () => {
     game.override.battleType("double");
-    await game.classicMode.startBattle([Species.REGIELEKI, Species.RATTATA]);
+    await game.classicMode.startBattle([ Species.REGIELEKI, Species.RATTATA ]);
     const [ leftPlayer, rightPlayer ] = game.scene.getPlayerField();
     const [ leftOpp, rightOpp ] = game.scene.getEnemyField();
     vi.spyOn(leftPlayer, "randSeedInt").mockReturnValue(Moves.AROMATIC_MIST);
@@ -98,16 +97,15 @@ describe("Moves - Metronome", () => {
     expect(rightOpp.getStatStage(Stat.SPDEF)).toBe(0);
   });
 
-  it("should be able to target itself or its ally with Acupressure", {repeats: 20}, async () => {
-    game.override.battleType("double");
-    await game.classicMode.startBattle([Species.REGIELEKI, Species.RATTATA]);
-    const [ leftPlayer, rightPlayer ] = game.scene.getPlayerField();
-    vi.spyOn(leftPlayer, "randSeedInt").mockReturnValue(Moves.ACUPRESSURE);
+  // it("should be able to target itself or its ally with Acupressure", { repeats: 20 }, async () => {
+  //   game.override.battleType("double");
+  //   await game.classicMode.startBattle([ Species.REGIELEKI, Species.RATTATA ]);
+  //   vi.spyOn(leftPlayer, "randSeedInt").mockReturnValue(Moves.ACUPRESSURE);
 
-    // game.move.select(Moves.METRONOME);
-    // game.move.select(Moves.SPLASH, 1);
-    // await game.phaseInterceptor.to("MoveEffectPhase");
-    // await game.move.forceHit();
-    // await game.toNextTurn();
-  });
+  //   // game.move.select(Moves.METRONOME);
+  //   // game.move.select(Moves.SPLASH, 1);
+  //   // await game.phaseInterceptor.to("MoveEffectPhase");
+  //   // await game.move.forceHit();
+  //   // await game.toNextTurn();
+  // });
 });
