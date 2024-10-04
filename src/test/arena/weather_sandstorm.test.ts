@@ -32,7 +32,7 @@ describe("Weather - Sandstorm", () => {
   });
 
   it("inflicts damage equal to 1/16 of Pokemon's max HP at turn end", async () => {
-    await game.classicMode.startBattle([Species.MAGIKARP]);
+    await game.classicMode.startBattle([ Species.MAGIKARP ]);
 
     game.move.select(Moves.SPLASH);
 
@@ -44,8 +44,8 @@ describe("Weather - Sandstorm", () => {
   });
 
   it("does not inflict damage to a Pokemon that is underwater (Dive) or underground (Dig)", async () => {
-    game.override.moveset([Moves.DIVE]);
-    await game.classicMode.startBattle([Species.MAGIKARP]);
+    game.override.moveset([ Moves.DIVE ]);
+    await game.classicMode.startBattle([ Species.MAGIKARP ]);
 
     game.move.select(Moves.DIVE);
 
@@ -65,7 +65,7 @@ describe("Weather - Sandstorm", () => {
       .ability(Abilities.BALL_FETCH)
       .enemyAbility(Abilities.BALL_FETCH);
 
-    await game.classicMode.startBattle([Species.ROCKRUFF, Species.KLINK]);
+    await game.classicMode.startBattle([ Species.ROCKRUFF, Species.KLINK ]);
 
     game.move.select(Moves.SPLASH, 0);
     game.move.select(Moves.SPLASH, 1);
@@ -78,7 +78,7 @@ describe("Weather - Sandstorm", () => {
   });
 
   it("increases Rock type Pokemon Sp.Def by 50%", async () => {
-    await game.classicMode.startBattle([Species.ROCKRUFF]);
+    await game.classicMode.startBattle([ Species.ROCKRUFF ]);
 
     const playerPokemon = game.scene.getPlayerPokemon()!;
     const playerSpdef = playerPokemon.getStat(Stat.SPDEF);

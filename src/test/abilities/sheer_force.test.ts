@@ -27,12 +27,12 @@ describe("Abilities - Sheer Force", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    const movesToUse = [Moves.AIR_SLASH, Moves.BIND, Moves.CRUSH_CLAW, Moves.TACKLE];
+    const movesToUse = [ Moves.AIR_SLASH, Moves.BIND, Moves.CRUSH_CLAW, Moves.TACKLE ];
     game.override.battleType("single");
     game.override.enemySpecies(Species.ONIX);
     game.override.startingLevel(100);
     game.override.moveset(movesToUse);
-    game.override.enemyMoveset([Moves.TACKLE, Moves.TACKLE, Moves.TACKLE, Moves.TACKLE]);
+    game.override.enemyMoveset([ Moves.TACKLE, Moves.TACKLE, Moves.TACKLE, Moves.TACKLE ]);
   });
 
   it("Sheer Force", async () => {
@@ -48,7 +48,7 @@ describe("Abilities - Sheer Force", () => {
 
     game.move.select(moveToUse);
 
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY ]);
     await game.phaseInterceptor.to(MoveEffectPhase, false);
 
     const phase = game.scene.getCurrentPhase() as MoveEffectPhase;
@@ -81,7 +81,7 @@ describe("Abilities - Sheer Force", () => {
 
     game.move.select(moveToUse);
 
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY ]);
     await game.phaseInterceptor.to(MoveEffectPhase, false);
 
     const phase = game.scene.getCurrentPhase() as MoveEffectPhase;
@@ -114,7 +114,7 @@ describe("Abilities - Sheer Force", () => {
 
     game.move.select(moveToUse);
 
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY ]);
     await game.phaseInterceptor.to(MoveEffectPhase, false);
 
     const phase = game.scene.getCurrentPhase() as MoveEffectPhase;
@@ -149,7 +149,7 @@ describe("Abilities - Sheer Force", () => {
 
     game.move.select(moveToUse);
 
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY ]);
     await game.phaseInterceptor.to(MoveEffectPhase, false);
 
     const phase = game.scene.getCurrentPhase() as MoveEffectPhase;

@@ -27,7 +27,7 @@ describe("Moves - Scale Shot", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([Moves.SCALE_SHOT])
+      .moveset([ Moves.SCALE_SHOT ])
       .battleType("single")
       .disableCrits()
       .starterSpecies(Species.MINCCINO)
@@ -40,7 +40,7 @@ describe("Moves - Scale Shot", () => {
   });
 
   it("applies stat changes after last hit", async () => {
-    await game.classicMode.startBattle([Species.FORRETRESS]);
+    await game.classicMode.startBattle([ Species.FORRETRESS ]);
     const minccino = game.scene.getPlayerPokemon()!;
     game.move.select(Moves.SCALE_SHOT);
     await game.phaseInterceptor.to(MoveEffectPhase);
@@ -54,7 +54,7 @@ describe("Moves - Scale Shot", () => {
   });
 
   it("unaffected by sheer force", async () => {
-    await game.classicMode.startBattle([Species.WOBBUFFET]);
+    await game.classicMode.startBattle([ Species.WOBBUFFET ]);
     const minccino = game.scene.getPlayerPokemon()!;
     const wobbuffet = game.scene.getEnemyPokemon()!;
     wobbuffet.setStat(Stat.HP, 100, true);
