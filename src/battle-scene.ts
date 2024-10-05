@@ -1,57 +1,57 @@
 import Phaser from "phaser";
-import UI from "./ui/ui";
-import Pokemon, { EnemyPokemon, PlayerPokemon } from "./field/pokemon";
-import PokemonSpecies, { allSpecies, getPokemonSpecies, PokemonSpeciesFilter } from "./data/pokemon-species";
+import UI from "#app/ui/ui";
+import Pokemon, { EnemyPokemon, PlayerPokemon } from "#app/field/pokemon";
+import PokemonSpecies, { allSpecies, getPokemonSpecies, PokemonSpeciesFilter } from "#app/data/pokemon-species";
 import { Constructor, isNullOrUndefined, randSeedInt } from "#app/utils";
-import * as Utils from "./utils";
+import * as Utils from "#app/utils";
 import { ConsumableModifier, ConsumablePokemonModifier, DoubleBattleChanceBoosterModifier, ExpBalanceModifier, ExpShareModifier, FusePokemonModifier, HealingBoosterModifier, Modifier, ModifierBar, ModifierPredicate, MultipleParticipantExpBonusModifier, overrideHeldItems, overrideModifiers, PersistentModifier, PokemonExpBoosterModifier, PokemonFormChangeItemModifier, PokemonHeldItemModifier, PokemonHpRestoreModifier, PokemonIncrementingStatModifier, TerastallizeModifier, TurnHeldItemTransferModifier } from "./modifier/modifier";
-import { PokeballType } from "./data/pokeball";
-import { initCommonAnims, initMoveAnim, loadCommonAnimAssets, loadMoveAnimAssets, populateAnims } from "./data/battle-anims";
-import { Phase } from "./phase";
-import { initGameSpeed } from "./system/game-speed";
-import { Arena, ArenaBase } from "./field/arena";
-import { GameData } from "./system/game-data";
-import { addTextObject, getTextColor, TextStyle } from "./ui/text";
-import { allMoves } from "./data/move";
-import { getDefaultModifierTypeForTier, getEnemyModifierTypesForWave, getLuckString, getLuckTextTint, getModifierPoolForType, getModifierType, getPartyLuckValue, ModifierPoolType, modifierTypes, PokemonHeldItemModifierType } from "./modifier/modifier-type";
-import AbilityBar from "./ui/ability-bar";
-import { allAbilities, applyAbAttrs, applyPostBattleInitAbAttrs, BlockItemTheftAbAttr, ChangeMovePriorityAbAttr, DoubleBattleChanceAbAttr, PostBattleInitAbAttr } from "./data/ability";
-import Battle, { BattleType, FixedBattleConfig } from "./battle";
-import { GameMode, GameModes, getGameMode } from "./game-mode";
-import FieldSpritePipeline from "./pipelines/field-sprite";
-import SpritePipeline from "./pipelines/sprite";
-import PartyExpBar from "./ui/party-exp-bar";
-import { trainerConfigs, TrainerSlot } from "./data/trainer-config";
-import Trainer, { TrainerVariant } from "./field/trainer";
-import TrainerData from "./system/trainer-data";
+import { PokeballType } from "#app/data/pokeball";
+import { initCommonAnims, initMoveAnim, loadCommonAnimAssets, loadMoveAnimAssets, populateAnims } from "#app/data/battle-anims";
+import { Phase } from "#app/phase";
+import { initGameSpeed } from "#app/system/game-speed";
+import { Arena, ArenaBase } from "#app/field/arena";
+import { GameData } from "#app/system/game-data";
+import { addTextObject, getTextColor, TextStyle } from "#app/ui/text";
+import { allMoves } from "#app/data/move";
+import { getDefaultModifierTypeForTier, getEnemyModifierTypesForWave, getLuckString, getLuckTextTint, getModifierPoolForType, getModifierType, getPartyLuckValue, ModifierPoolType, modifierTypes, PokemonHeldItemModifierType } from "#app/modifier/modifier-type";
+import AbilityBar from "#app/ui/ability-bar";
+import { allAbilities, applyAbAttrs, applyPostBattleInitAbAttrs, BlockItemTheftAbAttr, DoubleBattleChanceAbAttr, PostBattleInitAbAttr } from "#app/data/ability";
+import Battle, { BattleType, FixedBattleConfig } from "#app/battle";
+import { GameMode, GameModes, getGameMode } from "#app/game-mode";
+import FieldSpritePipeline from "#app/pipelines/field-sprite";
+import SpritePipeline from "#app/pipelines/sprite";
+import PartyExpBar from "#app/ui/party-exp-bar";
+import { trainerConfigs, TrainerSlot } from "#app/data/trainer-config";
+import Trainer, { TrainerVariant } from "#app/field/trainer";
+import TrainerData from "#app/system/trainer-data";
 import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
-import { pokemonPrevolutions } from "./data/balance/pokemon-evolutions";
-import PokeballTray from "./ui/pokeball-tray";
-import InvertPostFX from "./pipelines/invert";
-import { Achv, achvs, ModifierAchv, MoneyAchv } from "./system/achv";
-import { Voucher, vouchers } from "./system/voucher";
-import { Gender } from "./data/gender";
+import { pokemonPrevolutions } from "#app/data/balance/pokemon-evolutions";
+import PokeballTray from "#app/ui/pokeball-tray";
+import InvertPostFX from "#app/pipelines/invert";
+import { Achv, achvs, ModifierAchv, MoneyAchv } from "#app/system/achv";
+import { Voucher, vouchers } from "#app/system/voucher";
+import { Gender } from "#app/data/gender";
 import UIPlugin from "phaser3-rex-plugins/templates/ui/ui-plugin";
-import { addUiThemeOverrides } from "./ui/ui-theme";
-import PokemonData from "./system/pokemon-data";
-import { Nature } from "./data/nature";
-import { FormChangeItem, pokemonFormChanges, SpeciesFormChange, SpeciesFormChangeManualTrigger, SpeciesFormChangeTimeOfDayTrigger, SpeciesFormChangeTrigger } from "./data/pokemon-forms";
-import { FormChangePhase } from "./phases/form-change-phase";
-import { getTypeRgb } from "./data/type";
-import PokemonSpriteSparkleHandler from "./field/pokemon-sprite-sparkle-handler";
-import CharSprite from "./ui/char-sprite";
-import DamageNumberHandler from "./field/damage-number-handler";
-import PokemonInfoContainer from "./ui/pokemon-info-container";
-import { biomeDepths, getBiomeName } from "./data/balance/biomes";
-import { SceneBase } from "./scene-base";
-import CandyBar from "./ui/candy-bar";
-import { Variant, variantData } from "./data/variant";
+import { addUiThemeOverrides } from "#app/ui/ui-theme";
+import PokemonData from "#app/system/pokemon-data";
+import { Nature } from "#app/data/nature";
+import { FormChangeItem, pokemonFormChanges, SpeciesFormChange, SpeciesFormChangeManualTrigger, SpeciesFormChangeTimeOfDayTrigger, SpeciesFormChangeTrigger } from "#app/data/pokemon-forms";
+import { FormChangePhase } from "#app/phases/form-change-phase";
+import { getTypeRgb } from "#app/data/type";
+import PokemonSpriteSparkleHandler from "#app/field/pokemon-sprite-sparkle-handler";
+import CharSprite from "#app/ui/char-sprite";
+import DamageNumberHandler from "#app/field/damage-number-handler";
+import PokemonInfoContainer from "#app/ui/pokemon-info-container";
+import { biomeDepths, getBiomeName } from "#app/data/balance/biomes";
+import { SceneBase } from "#app/scene-base";
+import CandyBar from "#app/ui/candy-bar";
+import { Variant, variantData } from "#app/data/variant";
 import { Localizable } from "#app/interfaces/locales";
 import Overrides from "#app/overrides";
-import { InputsController } from "./inputs-controller";
-import { UiInputs } from "./ui-inputs";
-import { NewArenaEvent } from "./events/battle-scene";
-import { ArenaFlyout } from "./ui/arena-flyout";
+import { InputsController } from "#app/inputs-controller";
+import { UiInputs } from "#app/ui-inputs";
+import { NewArenaEvent } from "#app/events/battle-scene";
+import { ArenaFlyout } from "#app/ui/arena-flyout";
 import { EaseType } from "#enums/ease-type";
 import { BattleSpec } from "#enums/battle-spec";
 import { BattleStyle } from "#enums/battle-style";
@@ -66,27 +66,27 @@ import { TimedEventManager } from "#app/timed-event-manager";
 import { PokemonAnimType } from "#enums/pokemon-anim-type";
 import i18next from "i18next";
 import { TrainerType } from "#enums/trainer-type";
-import { battleSpecDialogue } from "./data/dialogue";
-import { LoadingScene } from "./loading-scene";
-import { LevelCapPhase } from "./phases/level-cap-phase";
-import { LoginPhase } from "./phases/login-phase";
-import { MessagePhase } from "./phases/message-phase";
-import { MovePhase } from "./phases/move-phase";
-import { NewBiomeEncounterPhase } from "./phases/new-biome-encounter-phase";
-import { NextEncounterPhase } from "./phases/next-encounter-phase";
-import { PokemonAnimPhase } from "./phases/pokemon-anim-phase";
-import { QuietFormChangePhase } from "./phases/quiet-form-change-phase";
-import { ReturnPhase } from "./phases/return-phase";
-import { SelectBiomePhase } from "./phases/select-biome-phase";
-import { ShowTrainerPhase } from "./phases/show-trainer-phase";
-import { SummonPhase } from "./phases/summon-phase";
-import { SwitchPhase } from "./phases/switch-phase";
-import { TitlePhase } from "./phases/title-phase";
-import { ToggleDoublePositionPhase } from "./phases/toggle-double-position-phase";
-import { TurnInitPhase } from "./phases/turn-init-phase";
-import { ShopCursorTarget } from "./enums/shop-cursor-target";
-import MysteryEncounter from "./data/mystery-encounters/mystery-encounter";
-import { allMysteryEncounters, ANTI_VARIANCE_WEIGHT_MODIFIER, AVERAGE_ENCOUNTERS_PER_RUN_TARGET, BASE_MYSTERY_ENCOUNTER_SPAWN_WEIGHT, MYSTERY_ENCOUNTER_SPAWN_MAX_WEIGHT, mysteryEncountersByBiome, WEIGHT_INCREMENT_ON_SPAWN_MISS } from "./data/mystery-encounters/mystery-encounters";
+import { battleSpecDialogue } from "#app/data/dialogue";
+import { LoadingScene } from "#app/loading-scene";
+import { LevelCapPhase } from "#app/phases/level-cap-phase";
+import { LoginPhase } from "#app/phases/login-phase";
+import { MessagePhase } from "#app/phases/message-phase";
+import { MovePhase } from "#app/phases/move-phase";
+import { NewBiomeEncounterPhase } from "#app/phases/new-biome-encounter-phase";
+import { NextEncounterPhase } from "#app/phases/next-encounter-phase";
+import { PokemonAnimPhase } from "#app/phases/pokemon-anim-phase";
+import { QuietFormChangePhase } from "#app/phases/quiet-form-change-phase";
+import { ReturnPhase } from "#app/phases/return-phase";
+import { SelectBiomePhase } from "#app/phases/select-biome-phase";
+import { ShowTrainerPhase } from "#app/phases/show-trainer-phase";
+import { SummonPhase } from "#app/phases/summon-phase";
+import { SwitchPhase } from "#app/phases/switch-phase";
+import { TitlePhase } from "#app/phases/title-phase";
+import { ToggleDoublePositionPhase } from "#app/phases/toggle-double-position-phase";
+import { TurnInitPhase } from "#app/phases/turn-init-phase";
+import { ShopCursorTarget } from "#app/enums/shop-cursor-target";
+import MysteryEncounter from "#app/data/mystery-encounters/mystery-encounter";
+import { allMysteryEncounters, ANTI_VARIANCE_WEIGHT_MODIFIER, AVERAGE_ENCOUNTERS_PER_RUN_TARGET, BASE_MYSTERY_ENCOUNTER_SPAWN_WEIGHT, MYSTERY_ENCOUNTER_SPAWN_MAX_WEIGHT, mysteryEncountersByBiome, WEIGHT_INCREMENT_ON_SPAWN_MISS } from "#app/data/mystery-encounters/mystery-encounters";
 import { MysteryEncounterSaveData } from "#app/data/mystery-encounters/mystery-encounter-save-data";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
@@ -94,7 +94,7 @@ import HeldModifierConfig from "#app/interfaces/held-modifier-config";
 import { ExpPhase } from "#app/phases/exp-phase";
 import { ShowPartyExpBarPhase } from "#app/phases/show-party-exp-bar-phase";
 import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
-import { ExpGainsSpeed } from "./enums/exp-gains-speed";
+import { ExpGainsSpeed } from "#enums/exp-gains-speed";
 
 export const bypassLogin = import.meta.env.VITE_BYPASS_LOGIN === "1";
 
@@ -889,6 +889,9 @@ export default class BattleScene extends SceneBase {
     }
 
     const pokemon = new EnemyPokemon(this, species, level, trainerSlot, boss, dataSource);
+    if (Overrides.OPP_FUSION_OVERRIDE) {
+      pokemon.generateFusionSpecies();
+    }
 
     overrideModifiers(this, false);
     overrideHeldItems(this, pokemon, false);
@@ -1261,7 +1264,7 @@ export default class BattleScene extends SceneBase {
       const isEndlessFifthWave = this.gameMode.hasShortBiomes && (lastBattle.waveIndex % 5) === 0;
       const isWaveIndexMultipleOfFiftyMinusOne = (lastBattle.waveIndex % 50) === 49;
       const isNewBiome = isWaveIndexMultipleOfTen || isEndlessFifthWave || (isEndlessOrDaily && isWaveIndexMultipleOfFiftyMinusOne);
-      const resetArenaState = isNewBiome || [BattleType.TRAINER, BattleType.MYSTERY_ENCOUNTER].includes(this.currentBattle.battleType) || this.currentBattle.battleSpec === BattleSpec.FINAL_BOSS;
+      const resetArenaState = isNewBiome || [ BattleType.TRAINER, BattleType.MYSTERY_ENCOUNTER ].includes(this.currentBattle.battleType) || this.currentBattle.battleSpec === BattleSpec.FINAL_BOSS;
       this.getEnemyParty().forEach(enemyPokemon => enemyPokemon.destroy());
       this.trySpreadPokerus();
       if (!isNewBiome && (newWaveIndex % 10) === 5) {
@@ -1758,14 +1761,14 @@ export default class BattleScene extends SceneBase {
     if (fromArenaPool) {
       return this.arena.randomSpecies(waveIndex, level, undefined, getPartyLuckValue(this.party));
     }
-    const filteredSpecies = speciesFilter ? [...new Set(allSpecies.filter(s => s.isCatchable()).filter(speciesFilter).map(s => {
+    const filteredSpecies = speciesFilter ? [ ...new Set(allSpecies.filter(s => s.isCatchable()).filter(speciesFilter).map(s => {
       if (!filterAllEvolutions) {
         while (pokemonPrevolutions.hasOwnProperty(s.speciesId)) {
           s = getPokemonSpecies(pokemonPrevolutions[s.speciesId]);
         }
       }
       return s;
-    }))] : allSpecies.filter(s => s.isCatchable());
+    })) ] : allSpecies.filter(s => s.isCatchable());
     return filteredSpecies[Utils.randSeedInt(filteredSpecies.length)];
   }
 
@@ -1885,14 +1888,14 @@ export default class BattleScene extends SceneBase {
           case "battle_anims":
           case "cry":
             if (soundDetails[1].startsWith("PRSFX- ")) {
-              sound.setVolume(this.masterVolume*this.fieldVolume*0.5);
+              sound.setVolume(this.masterVolume * this.fieldVolume * 0.5);
             } else {
-              sound.setVolume(this.masterVolume*this.fieldVolume);
+              sound.setVolume(this.masterVolume * this.fieldVolume);
             }
             break;
           case "se":
           case "ui":
-            sound.setVolume(this.masterVolume*this.seVolume);
+            sound.setVolume(this.masterVolume * this.seVolume);
           }
         }
       }
@@ -2221,7 +2224,7 @@ export default class BattleScene extends SceneBase {
    *
    */
   pushConditionalPhase(phase: Phase, condition: () => boolean): void {
-    this.conditionalQueue.push([condition, phase]);
+    this.conditionalQueue.push([ condition, phase ]);
   }
 
   /**
@@ -2356,17 +2359,6 @@ export default class BattleScene extends SceneBase {
     return false;
   }
 
-  pushMovePhase(movePhase: MovePhase, priorityOverride?: integer): void {
-    const movePriority = new Utils.IntegerHolder(priorityOverride !== undefined ? priorityOverride : movePhase.move.getMove().priority);
-    applyAbAttrs(ChangeMovePriorityAbAttr, movePhase.pokemon, null, false, movePhase.move.getMove(), movePriority);
-    const lowerPriorityPhase = this.phaseQueue.find(p => p instanceof MovePhase && p.move.getMove().priority < movePriority.value);
-    if (lowerPriorityPhase) {
-      this.phaseQueue.splice(this.phaseQueue.indexOf(lowerPriorityPhase), 0, movePhase);
-    } else {
-      this.pushPhase(movePhase);
-    }
-  }
-
   /**
    * Tries to add the input phase to index before target phase in the phaseQueue, else simply calls unshiftPhase()
    * @param phase {@linkcode Phase} the phase to be added
@@ -2498,7 +2490,7 @@ export default class BattleScene extends SceneBase {
             }
           }
 
-          return Promise.allSettled([this.party.map(p => p.updateInfo(instant)), ...modifierPromises]).then(() => resolve(success));
+          return Promise.allSettled([ this.party.map(p => p.updateInfo(instant)), ...modifierPromises ]).then(() => resolve(success));
         } else {
           const args = [ this ];
           if (modifier.shouldApply(...args)) {
@@ -2818,7 +2810,7 @@ export default class BattleScene extends SceneBase {
           return mods;
         }
         const rand = Utils.randSeedInt(mods.length);
-        return [mods[rand], ...shuffleModifiers(mods.filter((_, i) => i !== rand))];
+        return [ mods[rand], ...shuffleModifiers(mods.filter((_, i) => i !== rand)) ];
       };
       modifiers = shuffleModifiers(modifiers);
     }, scene.currentBattle.turn << 4, scene.waveSeed);
@@ -2978,7 +2970,7 @@ export default class BattleScene extends SceneBase {
       keys.push(p.getBattleSpriteKey(true, true));
       keys.push("cry/" + p.species.getCryKey(p.formIndex));
       if (p.fusionSpecies) {
-        keys.push("cry/"+p.fusionSpecies.getCryKey(p.fusionFormIndex));
+        keys.push("cry/" + p.fusionSpecies.getCryKey(p.fusionFormIndex));
       }
     });
     // enemyParty has to be operated on separately from playerParty because playerPokemon =/= enemyPokemon
@@ -2987,7 +2979,7 @@ export default class BattleScene extends SceneBase {
       keys.push(p.getSpriteKey(true));
       keys.push("cry/" + p.species.getCryKey(p.formIndex));
       if (p.fusionSpecies) {
-        keys.push("cry/"+p.fusionSpecies.getCryKey(p.fusionFormIndex));
+        keys.push("cry/" + p.fusionSpecies.getCryKey(p.fusionFormIndex));
       }
     });
     return keys;
@@ -3135,7 +3127,7 @@ export default class BattleScene extends SceneBase {
    * @param sessionDataEncounterType
    */
   private isWaveMysteryEncounter(newBattleType: BattleType, waveIndex: number, sessionDataEncounterType?: MysteryEncounterType): boolean {
-    const [lowestMysteryEncounterWave, highestMysteryEncounterWave] = this.gameMode.getMysteryEncounterLegalWaves();
+    const [ lowestMysteryEncounterWave, highestMysteryEncounterWave ] = this.gameMode.getMysteryEncounterLegalWaves();
     if (this.gameMode.hasMysteryEncounters && newBattleType === BattleType.WILD && !this.gameMode.isBoss(waveIndex) && waveIndex < highestMysteryEncounterWave && waveIndex > lowestMysteryEncounterWave) {
       // Base spawn weight is BASE_MYSTERY_ENCOUNTER_SPAWN_WEIGHT/256, and increases by WEIGHT_INCREMENT_ON_SPAWN_MISS/256 for each missed attempt at spawning an encounter on a valid floor
       const sessionEncounterRate = this.mysteryEncounterSaveData.encounterSpawnChance;
@@ -3201,7 +3193,7 @@ export default class BattleScene extends SceneBase {
     }
 
     // See Enum values for base tier weights
-    const tierWeights = [MysteryEncounterTier.COMMON, MysteryEncounterTier.GREAT, MysteryEncounterTier.ULTRA, MysteryEncounterTier.ROGUE];
+    const tierWeights = [ MysteryEncounterTier.COMMON, MysteryEncounterTier.GREAT, MysteryEncounterTier.ULTRA, MysteryEncounterTier.ROGUE ];
 
     // Adjust tier weights by previously encountered events to lower odds of only Common/Great in run
     this.mysteryEncounterSaveData.encounteredEvents.forEach(seenEncounterData => {

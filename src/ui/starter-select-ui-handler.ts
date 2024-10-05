@@ -143,7 +143,7 @@ function calcStarterPosition(index: number, scrollCursor:number = 0): {x: number
   const x = (index % 9) * 18;
   const y = yOffset + (Math.floor(index / 9) - scrollCursor) * height;
 
-  return {x: x, y: y};
+  return { x: x, y: y };
 }
 
 /**
@@ -186,7 +186,7 @@ function findClosestStarterRow(index: number, numberOfRows: number) {
   const currentY = calcStarterIconY(index) - 13;
   let smallestDistance = teamWindowHeight;
   let closestRowIndex = 0;
-  for (let i=0; i < numberOfRows; i++) {
+  for (let i = 0; i < numberOfRows; i++) {
     const distance = Math.abs(currentY - calcStarterPosition(i * 9).y);
     if (distance < smallestDistance) {
       closestRowIndex = i;
@@ -308,13 +308,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
   private starterIconsCursorObj: Phaser.GameObjects.Image;
   private valueLimitLabel: Phaser.GameObjects.Text;
   private startCursorObj: Phaser.GameObjects.NineSlice;
-  // private starterValueLabels: Phaser.GameObjects.Text[];
-  // private shinyIcons: Phaser.GameObjects.Image[][];
-  // private hiddenAbilityIcons: Phaser.GameObjects.Image[];
-  // private classicWinIcons: Phaser.GameObjects.Image[];
-  // private candyUpgradeIcon: Phaser.GameObjects.Image[];
-  // private candyUpgradeOverlayIcon: Phaser.GameObjects.Image[];
-  //
+
   private iconAnimHandler: PokemonIconAnimHandler;
 
   //variables to keep track of the dynamically rendered list of instruction prompts for starter select
@@ -358,7 +352,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.starterSelectContainer.add(this.shinyOverlay);
 
     const starterContainerWindow = addWindow(this.scene, speciesContainerX, filterBarHeight + 1, 175, 161);
-    const starterContainerBg = this.scene.add.image(speciesContainerX+1, filterBarHeight + 2, "starter_container_bg");
+    const starterContainerBg = this.scene.add.image(speciesContainerX + 1, filterBarHeight + 2, "starter_container_bg");
     starterContainerBg.setOrigin(0, 0);
     this.starterSelectContainer.add(starterContainerBg);
 
@@ -588,15 +582,15 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.pokemonEggMoveBgs = [];
     this.pokemonEggMoveLabels = [];
 
-    this.valueLimitLabel = addTextObject(this.scene, teamWindowX+17, 150, "0/10", TextStyle.TOOLTIP_CONTENT);
+    this.valueLimitLabel = addTextObject(this.scene, teamWindowX + 17, 150, "0/10", TextStyle.TOOLTIP_CONTENT);
     this.valueLimitLabel.setOrigin(0.5, 0);
     this.starterSelectContainer.add(this.valueLimitLabel);
 
-    const startLabel = addTextObject(this.scene, teamWindowX+17, 162, i18next.t("common:start"), TextStyle.TOOLTIP_CONTENT);
+    const startLabel = addTextObject(this.scene, teamWindowX + 17, 162, i18next.t("common:start"), TextStyle.TOOLTIP_CONTENT);
     startLabel.setOrigin(0.5, 0);
     this.starterSelectContainer.add(startLabel);
 
-    this.startCursorObj = this.scene.add.nineslice(teamWindowX+4, 160, "select_cursor", undefined, 26, 15, 6, 6, 6, 6);
+    this.startCursorObj = this.scene.add.nineslice(teamWindowX + 4, 160, "select_cursor", undefined, 26, 15, 6, 6, 6, 6);
     this.startCursorObj.setVisible(false);
     this.startCursorObj.setOrigin(0, 0);
     this.starterSelectContainer.add(this.startCursorObj);
@@ -1155,7 +1149,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           ease: "Cubic.easeOut",
           yoyo: true
         }
-      ],};
+      ], };
 
     const isPassiveAvailable = this.isPassiveAvailable(species.speciesId);
     const isValueReductionAvailable = this.isValueReductionAvailable(species.speciesId);
@@ -1316,12 +1310,12 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         }
         break;
       case Button.UP:
+        // UP from start button: go to pokemon in team if any, otherwise filter
         this.startCursorObj.setVisible(false);
         if (this.starterSpecies.length > 0) {
           this.starterIconsCursorIndex = this.starterSpecies.length - 1;
           this.moveStarterIconsCursor(this.starterIconsCursorIndex);
         } else {
-          // up from start button with no Pokemon in the team > go to filter
           this.startCursorObj.setVisible(false);
           this.filterBarCursor = Math.max(1, this.filterBar.numFilters - 1);
           this.setFilterMode(true);
@@ -1329,29 +1323,27 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         success = true;
         break;
       case Button.DOWN:
+        // DOWN from start button: Go to filters
         this.startCursorObj.setVisible(false);
-        if (this.starterSpecies.length > 0) {
-          this.starterIconsCursorIndex = 0;
-          this.moveStarterIconsCursor(this.starterIconsCursorIndex);
-        } else {
-          // down from start button with no Pokemon in the team > go to filter
-          this.startCursorObj.setVisible(false);
-          this.filterBarCursor = Math.max(1, this.filterBar.numFilters - 1);
-          this.setFilterMode(true);
-        }
+        this.filterBarCursor = Math.max(1, this.filterBar.numFilters - 1);
+        this.setFilterMode(true);
         success = true;
         break;
       case Button.LEFT:
-        this.startCursorObj.setVisible(false);
-        this.cursorObj.setVisible(true);
-        success = this.setCursor(onScreenFirstIndex + (onScreenNumberOfRows-1) * 9 + 8); // set last column
-        success = true;
+        if (numberOfStarters > 0) {
+          this.startCursorObj.setVisible(false);
+          this.cursorObj.setVisible(true);
+          this.setCursor(onScreenFirstIndex + (onScreenNumberOfRows - 1) * 9 + 8); // set last column
+          success = true;
+        }
         break;
       case Button.RIGHT:
-        this.startCursorObj.setVisible(false);
-        this.cursorObj.setVisible(true);
-        success = this.setCursor(onScreenFirstIndex + (onScreenNumberOfRows-1) * 9); // set first column
-        success = true;
+        if (numberOfStarters > 0) {
+          this.startCursorObj.setVisible(false);
+          this.cursorObj.setVisible(true);
+          this.setCursor(onScreenFirstIndex + (onScreenNumberOfRows - 1) * 9); // set first column
+          success = true;
+        }
         break;
       }
     } else if (this.filterMode) {
@@ -1373,7 +1365,12 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       case Button.UP:
         if (this.filterBar.openDropDown) {
           success = this.filterBar.decDropDownCursor();
-        // else if there is filtered starters
+        } else if (this.filterBarCursor === this.filterBar.numFilters - 1 && this.starterSpecies.length > 0) {
+          // UP from the last filter, move to start button
+          this.setFilterMode(false);
+          this.cursorObj.setVisible(false);
+          this.startCursorObj.setVisible(true);
+          success = true;
         } else if (numberOfStarters > 0) {
           // UP from filter bar to bottom of Pokemon list
           this.setFilterMode(false);
@@ -1392,6 +1389,13 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       case Button.DOWN:
         if (this.filterBar.openDropDown) {
           success = this.filterBar.incDropDownCursor();
+        } else if (this.filterBarCursor === this.filterBar.numFilters - 1 && this.starterSpecies.length > 0) {
+          // DOWN from the last filter, move to Pokemon in party if any
+          this.setFilterMode(false);
+          this.cursorObj.setVisible(false);
+          this.starterIconsCursorIndex = 0;
+          this.moveStarterIconsCursor(this.starterIconsCursorIndex);
+          success = true;
         } else if (numberOfStarters > 0) {
           // DOWN from filter bar to top of Pokemon list
           this.setFilterMode(false);
@@ -1434,7 +1438,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           const ui = this.getUi();
           let options: any[] = []; // TODO: add proper type
 
-          const [isDupe, removeIndex]: [boolean, number] = this.isInParty(this.lastSpecies); // checks to see if the pokemon is a duplicate; if it is, returns the index that will be removed
+          const [ isDupe, removeIndex ]: [boolean, number] = this.isInParty(this.lastSpecies); // checks to see if the pokemon is a duplicate; if it is, returns the index that will be removed
 
           const isPartyValid = this.isPartyValid();
           const isValidForChallenge = new Utils.BooleanHolder(true);
@@ -1790,7 +1794,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
                   }
                   this.pokemonCandyCountText.setText(`x${starterData.candyCount}`);
 
-                  const egg = new Egg({scene: this.scene, species: this.lastSpecies.speciesId, sourceType: EggSourceType.SAME_SPECIES_EGG});
+                  const egg = new Egg({ scene: this.scene, species: this.lastSpecies.speciesId, sourceType: EggSourceType.SAME_SPECIES_EGG });
                   egg.addEggToGameData(this.scene);
 
                   this.scene.gameData.saveSystem().then(success => {
@@ -2126,7 +2130,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         break;
       }
     }
-    return [isDupe, removeIndex];
+    return [ isDupe, removeIndex ];
   }
 
   addToParty(species: PokemonSpecies, dexAttr: bigint, abilityIndex: integer, nature: Nature, moveset: StarterMoveset) {
@@ -2236,7 +2240,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     controlLabel.setPosition(this.instructionRowX + this.instructionRowTextOffset, this.instructionRowY);
     iconElement.setVisible(true);
     controlLabel.setVisible(true);
-    this.instructionsContainer.add([iconElement, controlLabel]);
+    this.instructionsContainer.add([ iconElement, controlLabel ]);
     this.instructionRowY += 8;
     if (this.instructionRowY >= 24) {
       this.instructionRowY = 0;
@@ -2259,7 +2263,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     controlLabel.setPosition(this.filterInstructionRowX + this.instructionRowTextOffset, this.filterInstructionRowY);
     iconElement.setVisible(true);
     controlLabel.setVisible(true);
-    this.filterInstructionsContainer.add([iconElement, controlLabel]);
+    this.filterInstructionsContainer.add([ iconElement, controlLabel ]);
     this.filterInstructionRowY += 8;
     if (this.filterInstructionRowY >= 24) {
       this.filterInstructionRowY = 0;
@@ -2553,7 +2557,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     const maxColumns = 9;
     const maxRows = 9;
     const onScreenFirstIndex = this.scrollCursor * maxColumns;
-    const onScreenLastIndex = Math.min(this.filteredStarterContainers.length - 1, onScreenFirstIndex + maxRows * maxColumns -1);
+    const onScreenLastIndex = Math.min(this.filteredStarterContainers.length - 1, onScreenFirstIndex + maxRows * maxColumns - 1);
 
     this.starterSelectScrollBar.setScrollCursor(this.scrollCursor);
 
@@ -2656,9 +2660,6 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         this.pokemonShinyIcon.setTint(tint);
         this.setSpecies(species);
         this.updateInstructions();
-      } else {
-        console.warn("Species is undefined for cursor position", cursor);
-        this.setFilterMode(true);
       }
     }
 
@@ -2719,7 +2720,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.pokemonAbilityText.off("pointerover");
     this.pokemonPassiveText.off("pointerover");
 
-    const starterAttributes : StarterAttributes | null = species ? {...this.starterPreferences[species.speciesId]} : null;
+    const starterAttributes : StarterAttributes | null = species ? { ...this.starterPreferences[species.speciesId] } : null;
 
     if (starterAttributes?.nature) {
       // load default nature from stater save data, if set
@@ -2778,7 +2779,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         let growthReadable = Utils.toReadableString(GrowthRate[species.growthRate]);
         const growthAux = growthReadable.replace(" ", "_");
         if (i18next.exists("growth:" + growthAux)) {
-          growthReadable = i18next.t("growth:"+ growthAux as any);
+          growthReadable = i18next.t("growth:" + growthAux as any);
         }
         this.pokemonGrowthRateText.setText(growthReadable);
 
@@ -2951,7 +2952,6 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
   }
 
 
-
   setSpeciesDetails(species: PokemonSpecies, shiny?: boolean, formIndex?: integer, female?: boolean, variant?: Variant, abilityIndex?: integer, natureIndex?: integer, forSeen: boolean = false): void {
     const oldProps = species ? this.scene.gameData.getSpeciesDexAttrProps(species, this.dexAttrCursor) : null;
     const oldAbilityIndex = this.abilityCursor > -1 ? this.abilityCursor : this.scene.gameData.getStarterSpeciesDefaultAbilityIndex(species);
@@ -2980,7 +2980,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       this.dexAttrCursor |= this.scene.gameData.getFormAttr(formIndex !== undefined ? formIndex : (formIndex = oldProps!.formIndex)); // TODO: is this bang correct?
       this.abilityCursor = abilityIndex !== undefined ? abilityIndex : (abilityIndex = oldAbilityIndex);
       this.natureCursor = natureIndex !== undefined ? natureIndex : (natureIndex = oldNatureIndex);
-      const [isInParty, partyIndex]: [boolean, number] = this.isInParty(species); // we use this to firstly check if the pokemon is in the party, and if so, to get the party index in order to update the icon image
+      const [ isInParty, partyIndex ]: [boolean, number] = this.isInParty(species); // we use this to firstly check if the pokemon is in the party, and if so, to get the party index in order to update the icon image
       if (isInParty) {
         this.updatePartyIcon(species, partyIndex);
       }
@@ -3077,7 +3077,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         const isVariant3Caught = isShinyCaught && !!(caughtAttr & DexAttr.VARIANT_3);
 
         this.canCycleShiny = isNonShinyCaught && isShinyCaught;
-        this.canCycleVariant = !!shiny && [ isVariant1Caught, isVariant2Caught, isVariant3Caught].filter(v => v).length > 1;
+        this.canCycleVariant = !!shiny && [ isVariant1Caught, isVariant2Caught, isVariant3Caught ].filter(v => v).length > 1;
 
         const isMaleCaught = !!(caughtAttr & DexAttr.MALE);
         const isFemaleCaught = !!(caughtAttr & DexAttr.FEMALE);
@@ -3327,6 +3327,18 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         }
       }
       this.moveStarterIconsCursor(this.starterIconsCursorIndex);
+    } else if (this.startCursorObj.visible && this.starterSpecies.length === 0) {
+      // On the start button and no more Pokemon in party
+      this.startCursorObj.setVisible(false);
+      if (this.filteredStarterContainers.length > 0) {
+        // Back to the first Pokemon if there is one
+        this.cursorObj.setVisible(true);
+        this.setCursor(0 + this.scrollCursor * 9);
+      } else {
+        // Back to filters
+        this.filterBarCursor = Math.max(1, this.filterBar.numFilters - 1);
+        this.setFilterMode(true);
+      }
     }
 
     this.tryUpdateValue();

@@ -1,9 +1,9 @@
 import BattleScene from "../../battle-scene";
 import SettingsGamepadUiHandler from "../../ui/settings/settings-gamepad-ui-handler";
-import {Mode} from "../../ui/ui";
-import {truncateString} from "../../utils";
-import {Button} from "#enums/buttons";
-import {SettingKeyboard} from "#app/system/settings/settings-keyboard";
+import { Mode } from "../../ui/ui";
+import { truncateString } from "../../utils";
+import { Button } from "#enums/buttons";
+import { SettingKeyboard } from "#app/system/settings/settings-keyboard";
 
 export enum SettingGamepad {
     Controller = "CONTROLLER",
@@ -30,25 +30,25 @@ export enum SettingGamepad {
 const pressAction = "Press action to assign";
 
 export const settingGamepadOptions = {
-  [SettingGamepad.Controller]: ["Default", "Change"],
-  [SettingGamepad.Gamepad_Support]: ["Auto", "Disabled"],
-  [SettingGamepad.Button_Up]: [`KEY ${Button.UP.toString()}`, pressAction],
-  [SettingGamepad.Button_Down]: [`KEY ${Button.DOWN.toString()}`, pressAction],
-  [SettingGamepad.Button_Left]: [`KEY ${Button.LEFT.toString()}`, pressAction],
-  [SettingGamepad.Button_Right]: [`KEY ${Button.RIGHT.toString()}`, pressAction],
-  [SettingGamepad.Button_Action]: [`KEY ${Button.ACTION.toString()}`, pressAction],
-  [SettingGamepad.Button_Cancel]: [`KEY ${Button.CANCEL.toString()}`, pressAction],
-  [SettingGamepad.Button_Menu]: [`KEY ${Button.MENU.toString()}`, pressAction],
-  [SettingGamepad.Button_Stats]: [`KEY ${Button.STATS.toString()}`, pressAction],
-  [SettingGamepad.Button_Cycle_Form]: [`KEY ${Button.CYCLE_FORM.toString()}`, pressAction],
-  [SettingGamepad.Button_Cycle_Shiny]: [`KEY ${Button.CYCLE_SHINY.toString()}`, pressAction],
-  [SettingGamepad.Button_Cycle_Gender]: [`KEY ${Button.CYCLE_GENDER.toString()}`, pressAction],
-  [SettingGamepad.Button_Cycle_Ability]: [`KEY ${Button.CYCLE_ABILITY.toString()}`, pressAction],
-  [SettingGamepad.Button_Cycle_Nature]: [`KEY ${Button.CYCLE_NATURE.toString()}`, pressAction],
-  [SettingGamepad.Button_Cycle_Variant]: [`KEY ${Button.V.toString()}`, pressAction],
-  [SettingGamepad.Button_Speed_Up]: [`KEY ${Button.SPEED_UP.toString()}`, pressAction],
-  [SettingGamepad.Button_Slow_Down]: [`KEY ${Button.SLOW_DOWN.toString()}`, pressAction],
-  [SettingGamepad.Button_Submit]: [`KEY ${Button.SUBMIT.toString()}`, pressAction],
+  [SettingGamepad.Controller]: [ "Default", "Change" ],
+  [SettingGamepad.Gamepad_Support]: [ "Auto", "Disabled" ],
+  [SettingGamepad.Button_Up]: [ `KEY ${Button.UP.toString()}`, pressAction ],
+  [SettingGamepad.Button_Down]: [ `KEY ${Button.DOWN.toString()}`, pressAction ],
+  [SettingGamepad.Button_Left]: [ `KEY ${Button.LEFT.toString()}`, pressAction ],
+  [SettingGamepad.Button_Right]: [ `KEY ${Button.RIGHT.toString()}`, pressAction ],
+  [SettingGamepad.Button_Action]: [ `KEY ${Button.ACTION.toString()}`, pressAction ],
+  [SettingGamepad.Button_Cancel]: [ `KEY ${Button.CANCEL.toString()}`, pressAction ],
+  [SettingGamepad.Button_Menu]: [ `KEY ${Button.MENU.toString()}`, pressAction ],
+  [SettingGamepad.Button_Stats]: [ `KEY ${Button.STATS.toString()}`, pressAction ],
+  [SettingGamepad.Button_Cycle_Form]: [ `KEY ${Button.CYCLE_FORM.toString()}`, pressAction ],
+  [SettingGamepad.Button_Cycle_Shiny]: [ `KEY ${Button.CYCLE_SHINY.toString()}`, pressAction ],
+  [SettingGamepad.Button_Cycle_Gender]: [ `KEY ${Button.CYCLE_GENDER.toString()}`, pressAction ],
+  [SettingGamepad.Button_Cycle_Ability]: [ `KEY ${Button.CYCLE_ABILITY.toString()}`, pressAction ],
+  [SettingGamepad.Button_Cycle_Nature]: [ `KEY ${Button.CYCLE_NATURE.toString()}`, pressAction ],
+  [SettingGamepad.Button_Cycle_Variant]: [ `KEY ${Button.V.toString()}`, pressAction ],
+  [SettingGamepad.Button_Speed_Up]: [ `KEY ${Button.SPEED_UP.toString()}`, pressAction ],
+  [SettingGamepad.Button_Slow_Down]: [ `KEY ${Button.SLOW_DOWN.toString()}`, pressAction ],
+  [SettingGamepad.Button_Submit]: [ `KEY ${Button.SUBMIT.toString()}`, pressAction ],
 };
 
 export const settingGamepadDefaults = {
@@ -130,7 +130,7 @@ export function setSettingGamepad(scene: BattleScene, setting: SettingGamepad, v
           return true;
         };
         scene.ui.setOverlayMode(Mode.OPTION_SELECT, {
-          options: [...gp.map((g: string) => ({
+          options: [ ...gp.map((g: string) => ({
             label: truncateString(g, 30), // Truncate the gamepad name for display
             handler: () => changeGamepadHandler(g)
           })), {

@@ -41,7 +41,7 @@ export function minifyJsonPlugin(basePath: string | string[], recursive?: boolea
     },
     async closeBundle() {
       console.log("Minifying JSON files...");
-      const basePathes = Array.isArray(basePath) ? basePath : [basePath];
+      const basePathes = Array.isArray(basePath) ? basePath : [ basePath ];
 
       basePathes.forEach((basePath) => {
         const baseDir = path.resolve(buildDir, basePath);
