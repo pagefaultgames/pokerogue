@@ -190,9 +190,6 @@ export default class MysteryEncounter implements IMysteryEncounter {
   secondaryPokemon?: PlayerPokemon[];
 
   // #region Post-construct / Auto-populated params
-  /**
-   * Localization Key
-   */
   localizationKey: string;
   /**
    * Dialogue object containing all the dialogue, messages, tooltips, etc. for an encounter
