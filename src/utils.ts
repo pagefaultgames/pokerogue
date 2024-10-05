@@ -38,7 +38,13 @@ export function shiftCharCodes(str: string, shiftCount: integer) {
   return newStr;
 }
 
-export function clampInt(value: integer, min: integer, max: integer): integer {
+/**
+ * Clamps a number
+ * @param value
+ * @param min
+ * @param max
+ */
+export function clampNumber(value: number, min: number, max: number): number {
   return Math.min(Math.max(value, min), max);
 }
 

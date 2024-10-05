@@ -593,7 +593,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
       };
 
       const updatePokemonHp = () => {
-        let duration = !instant ? Utils.clampInt(Math.abs((this.lastHp) - pokemon.hp) * 5, 250, 5000) : 0;
+        let duration = !instant ? Utils.clampNumber(Math.abs((this.lastHp) - pokemon.hp) * 5, 250, 5000) : 0;
         const speed = (this.scene as BattleScene).hpBarSpeed;
         if (speed) {
           duration = speed >= 3 ? 0 : duration / Math.pow(2, speed);
