@@ -1713,7 +1713,7 @@ export class TypeImmuneTag extends BattlerTag {
   }
 }
 
-export class MagnetRisenTag extends TypeImmuneTag {
+export class FloatingTag extends TypeImmuneTag {
   constructor(tagType: BattlerTagType, sourceMove: Moves) {
     super(tagType, sourceMove, Type.GROUND, 5);
   }
@@ -1721,13 +1721,17 @@ export class MagnetRisenTag extends TypeImmuneTag {
   onAdd(pokemon: Pokemon): void {
     super.onAdd(pokemon);
 
-    pokemon.scene.queueMessage(i18next.t("battlerTags:magnetRisenOnAdd", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }));
+    if (this.sourceMove === Moves.MAGNET_RISE) {
+      pokemon.scene.queueMessage(i18next.t("battlerTags:magnetRisenOnAdd", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }));
+    }
+
   }
 
   onRemove(pokemon: Pokemon): void {
     super.onRemove(pokemon);
-
-    pokemon.scene.queueMessage(i18next.t("battlerTags:magnetRisenOnRemove", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }));
+    if (this.sourceMove === Moves.MAGNET_RISE) {
+      pokemon.scene.queueMessage(i18next.t("battlerTags:magnetRisenOnRemove", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }));
+    }
   }
 }
 
@@ -2672,9 +2676,26 @@ export class SyrupBombTag extends BattlerTag {
 }
 
 export class TelekinesisTag extends BattlerTag {
-  constructor() {
-    super(BattlerTagType.TELEKINESIS, BattlerTagLapseType.PRE_MOVE, 3, undefined, undefined, true);
+  constructor(sourceMove: Moves) {
+    super(BattlerTagType.TELEKINESIS, [ BattlerTagLapseType.PRE_MOVE, BattlerTagLapseType.AFTER_MOVE ], 3, sourceMove, undefined, true);
   }
+
+  override onAdd(pokemon: Pokemon)  {
+    pokemon.scene.queueMessage(i18next.t("battlerTags:telekinesisOnAdd", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }));
+    pokemon.addTag(BattlerTagType.TELEKINESIS, 3, this.sourceMove);
+    pokemon.addTag(BattlerTagType.FLOATING, 3, this.sourceMove);
+  }
+
+  override lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
+    return --this.turnCount > 0;
+  }
+
+  override onRemove(pokemon: Pokemon) {
+    pokemon.removeTag(BattlerTagType.TELEKINESIS);
+    pokemon.removeTag(BattlerTagType.FLOATING);
+  }
+
+
 }
 
 /**
@@ -2807,8 +2828,8 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: number, source
     return new CursedTag(sourceId);
   case BattlerTagType.CHARGED:
     return new TypeBoostTag(tagType, sourceMove, Type.ELECTRIC, 2, true);
-  case BattlerTagType.MAGNET_RISEN:
-    return new MagnetRisenTag(tagType, sourceMove);
+  case BattlerTagType.FLOATING:
+    return new FloatingTag(tagType, sourceMove);
   case BattlerTagType.MINIMIZED:
     return new MinimizeTag();
   case BattlerTagType.DESTINY_BOND:
@@ -2854,6 +2875,8 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: number, source
     return new ImprisonTag(sourceId);
   case BattlerTagType.SYRUP_BOMB:
     return new SyrupBombTag();
+  case BattlerTagType.TELEKINESIS:
+    return new TelekinesisTag(sourceMove);
   case BattlerTagType.NONE:
   default:
     return new BattlerTag(tagType, BattlerTagLapseType.CUSTOM, turnCount, sourceMove, sourceId);
