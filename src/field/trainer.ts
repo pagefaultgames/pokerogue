@@ -446,7 +446,7 @@ export default class Trainer extends Phaser.GameObjects.Container {
    * @returns `true` if the species is already present in the party
    */
   checkDuplicateSpecies(species: PokemonSpecies, baseSpecies: PokemonSpecies): boolean {
-    const staticPartyPokemon = signatureSpecies[TrainerType[this.config.trainerType]].flat() ?? [];
+    const staticPartyPokemon = (signatureSpecies[TrainerType[this.config.trainerType]] ?? []).flat(1);
 
     const currentPartySpecies = this.scene.getEnemyParty().map(p => {
       return p.species.speciesId;
