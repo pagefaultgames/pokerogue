@@ -85,4 +85,5 @@ export enum BattlerTagType {
   TAUNT = "TAUNT",
   IMPRISON = "IMPRISON",
   SYRUP_BOMB = "SYRUP_BOMB",
+  ELECTRIFIED = "ELECTRIFIED",
 }
