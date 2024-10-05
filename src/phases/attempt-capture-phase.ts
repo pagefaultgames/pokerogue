@@ -15,6 +15,7 @@ import { Mode } from "#app/ui/ui";
 import i18next from "i18next";
 import { PokemonPhase } from "./pokemon-phase";
 import { VictoryPhase } from "./victory-phase";
+import { SubstituteTag } from "#app/data/battler-tags";
 
 export class AttemptCapturePhase extends PokemonPhase {
   private pokeballType: PokeballType;
@@ -34,6 +35,11 @@ export class AttemptCapturePhase extends PokemonPhase {
 
     if (!pokemon?.hp) {
       return this.end();
+    }
+
+    const substitute = pokemon.getTag(SubstituteTag);
+    if (substitute) {
+      substitute.sprite.setVisible(false);
     }
 
     this.scene.pokeballCounts[this.pokeballType]--;
@@ -165,6 +171,11 @@ export class AttemptCapturePhase extends PokemonPhase {
     pokemon.setVisible(true);
     pokemon.untint(250, "Sine.easeOut");
 
+    const substitute = pokemon.getTag(SubstituteTag);
+    if (substitute) {
+      substitute.sprite.setVisible(true);
+    }
+
     const pokeballAtlasKey = getPokeballAtlasKey(this.pokeballType);
     this.pokeball.setTexture("pb", `${pokeballAtlasKey}_opening`);
     this.scene.time.delayedCall(17, () => this.pokeball.setTexture("pb", `${pokeballAtlasKey}_open`));
@@ -237,7 +248,7 @@ export class AttemptCapturePhase extends PokemonPhase {
           }
         });
       };
-      Promise.all([pokemon.hideInfo(), this.scene.gameData.setPokemonCaught(pokemon)]).then(() => {
+      Promise.all([ pokemon.hideInfo(), this.scene.gameData.setPokemonCaught(pokemon) ]).then(() => {
         if (this.scene.getParty().length === 6) {
           const promptRelease = () => {
             this.scene.ui.showText(i18next.t("battle:partyFull", { pokemonName: pokemon.getNameToRender() }), null, () => {

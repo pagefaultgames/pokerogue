@@ -7,7 +7,6 @@ import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
-const TIMEOUT = 20 * 1000;
 
 describe("Moves - Lash Out", () => {
   let phaserGame: Phaser.Game;
@@ -30,12 +29,12 @@ describe("Moves - Lash Out", () => {
       .disableCrits()
       .enemySpecies(Species.MAGIKARP)
       .enemyAbility(Abilities.FUR_COAT)
-      .enemyMoveset([Moves.GROWL])
+      .enemyMoveset([ Moves.GROWL ])
       .startingLevel(10)
       .enemyLevel(10)
       .starterSpecies(Species.FEEBAS)
       .ability(Abilities.BALL_FETCH)
-      .moveset([Moves.LASH_OUT]);
+      .moveset([ Moves.LASH_OUT ]);
 
   });
 
@@ -44,9 +43,9 @@ describe("Moves - Lash Out", () => {
     await game.classicMode.startBattle();
 
     game.move.select(Moves.LASH_OUT);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+    await game.setTurnOrder([ BattlerIndex.ENEMY, BattlerIndex.PLAYER ]);
     await game.phaseInterceptor.to("BerryPhase");
 
     expect(allMoves[Moves.LASH_OUT].calculateBattlePower).toHaveReturnedWith(150);
-  }, TIMEOUT);
+  });
 });

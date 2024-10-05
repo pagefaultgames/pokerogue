@@ -43,11 +43,11 @@ describe("Moves - Spit Up", () => {
   });
 
   describe("consumes all stockpile stacks to deal damage (scaling with stacks)", () => {
-    it("1 stack -> 100 power", { timeout: 10000 }, async () => {
+    it("1 stack -> 100 power", async () => {
       const stacksToSetup = 1;
       const expectedPower = 100;
 
-      await game.startBattle([Species.ABOMASNOW]);
+      await game.startBattle([ Species.ABOMASNOW ]);
 
       const pokemon = game.scene.getPlayerPokemon()!;
       pokemon.addTag(BattlerTagType.STOCKPILING);
@@ -65,11 +65,11 @@ describe("Moves - Spit Up", () => {
       expect(pokemon.getTag(StockpilingTag)).toBeUndefined();
     });
 
-    it("2 stacks -> 200 power", { timeout: 10000 }, async () => {
+    it("2 stacks -> 200 power", async () => {
       const stacksToSetup = 2;
       const expectedPower = 200;
 
-      await game.startBattle([Species.ABOMASNOW]);
+      await game.startBattle([ Species.ABOMASNOW ]);
 
       const pokemon = game.scene.getPlayerPokemon()!;
       pokemon.addTag(BattlerTagType.STOCKPILING);
@@ -88,11 +88,11 @@ describe("Moves - Spit Up", () => {
       expect(pokemon.getTag(StockpilingTag)).toBeUndefined();
     });
 
-    it("3 stacks -> 300 power", { timeout: 10000 }, async () => {
+    it("3 stacks -> 300 power", async () => {
       const stacksToSetup = 3;
       const expectedPower = 300;
 
-      await game.startBattle([Species.ABOMASNOW]);
+      await game.startBattle([ Species.ABOMASNOW ]);
 
       const pokemon = game.scene.getPlayerPokemon()!;
       pokemon.addTag(BattlerTagType.STOCKPILING);
@@ -113,8 +113,8 @@ describe("Moves - Spit Up", () => {
     });
   });
 
-  it("fails without stacks", { timeout: 10000 }, async () => {
-    await game.startBattle([Species.ABOMASNOW]);
+  it("fails without stacks", async () => {
+    await game.startBattle([ Species.ABOMASNOW ]);
 
     const pokemon = game.scene.getPlayerPokemon()!;
 
@@ -130,8 +130,8 @@ describe("Moves - Spit Up", () => {
   });
 
   describe("restores stat boosts granted by stacks", () => {
-    it("decreases stats based on stored values (both boosts equal)", { timeout: 10000 }, async () => {
-      await game.startBattle([Species.ABOMASNOW]);
+    it("decreases stats based on stored values (both boosts equal)", async () => {
+      await game.startBattle([ Species.ABOMASNOW ]);
 
       const pokemon = game.scene.getPlayerPokemon()!;
       pokemon.addTag(BattlerTagType.STOCKPILING);
@@ -157,8 +157,8 @@ describe("Moves - Spit Up", () => {
       expect(pokemon.getTag(StockpilingTag)).toBeUndefined();
     });
 
-    it("decreases stats based on stored values (different boosts)", { timeout: 10000 }, async () => {
-      await game.startBattle([Species.ABOMASNOW]);
+    it("decreases stats based on stored values (different boosts)", async () => {
+      await game.startBattle([ Species.ABOMASNOW ]);
 
       const pokemon = game.scene.getPlayerPokemon()!;
       pokemon.addTag(BattlerTagType.STOCKPILING);

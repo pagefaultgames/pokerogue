@@ -18,6 +18,7 @@ import { GameOverPhase } from "./game-over-phase";
 import { SwitchPhase } from "./switch-phase";
 import { VictoryPhase } from "./victory-phase";
 import { SpeciesFormChangeActiveTrigger } from "#app/data/pokemon-forms";
+import { SwitchType } from "#enums/switch-type";
 
 export class FaintPhase extends PokemonPhase {
   private preventEndure: boolean;
@@ -55,8 +56,10 @@ export class FaintPhase extends PokemonPhase {
     // Track total times pokemon have been KO'd for supreme overlord/last respects
     if (pokemon.isPlayer()) {
       this.scene.currentBattle.playerFaints += 1;
+      this.scene.currentBattle.playerFaintsHistory.push({ pokemon: pokemon, turn: this.scene.currentBattle.turn });
     } else {
       this.scene.currentBattle.enemyFaints += 1;
+      this.scene.currentBattle.enemyFaintsHistory.push({ pokemon: pokemon, turn: this.scene.currentBattle.turn });
     }
 
     this.scene.queueMessage(i18next.t("battle:fainted", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }), null, true);
@@ -104,14 +107,14 @@ export class FaintPhase extends PokemonPhase {
          * If previous conditions weren't met, and the player has at least 1 legal Pokemon off the field,
          * push a phase that prompts the player to summon a Pokemon from their party.
          */
-        this.scene.pushPhase(new SwitchPhase(this.scene, this.fieldIndex, true, false));
+        this.scene.pushPhase(new SwitchPhase(this.scene, SwitchType.SWITCH, this.fieldIndex, true, false));
       }
     } else {
       this.scene.unshiftPhase(new VictoryPhase(this.scene, this.battlerIndex));
-      if (this.scene.currentBattle.battleType === BattleType.TRAINER) {
+      if ([ BattleType.TRAINER, BattleType.MYSTERY_ENCOUNTER ].includes(this.scene.currentBattle.battleType)) {
         const hasReservePartyMember = !!this.scene.getEnemyParty().filter(p => p.isActive() && !p.isOnField() && p.trainerSlot === (pokemon as EnemyPokemon).trainerSlot).length;
         if (hasReservePartyMember) {
-          this.scene.pushPhase(new SwitchSummonPhase(this.scene, this.fieldIndex, -1, false, false, false));
+          this.scene.pushPhase(new SwitchSummonPhase(this.scene, SwitchType.SWITCH, this.fieldIndex, -1, false, false));
         }
       }
     }
@@ -121,9 +124,6 @@ export class FaintPhase extends PokemonPhase {
       const allyPokemon = pokemon.getAlly();
       this.scene.redirectPokemonMoves(pokemon, allyPokemon);
     }
-
-    pokemon.lapseTags(BattlerTagLapseType.FAINT);
-    this.scene.getField(true).filter(p => p !== pokemon).forEach(p => p.removeTagsBySourceId(pokemon.id));
 
     pokemon.faintCry(() => {
       if (pokemon instanceof PlayerPokemon) {
@@ -137,7 +137,10 @@ export class FaintPhase extends PokemonPhase {
         y: pokemon.y + 150,
         ease: "Sine.easeIn",
         onComplete: () => {
-          pokemon.setVisible(false);
+          pokemon.resetSprite();
+          pokemon.lapseTags(BattlerTagLapseType.FAINT);
+          this.scene.getField(true).filter(p => p !== pokemon).forEach(p => p.removeTagsBySourceId(pokemon.id));
+
           pokemon.y -= 150;
           pokemon.trySetStatus(StatusEffect.FAINT);
           if (pokemon.isPlayer()) {

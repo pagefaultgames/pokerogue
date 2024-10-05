@@ -1,7 +1,0 @@
-{
-  "pp": "PP",
-  "power": "威力",
-  "accuracy": "命中率",
-  "abilityFlyInText": " {{pokemonName}} 的 {{passive}}{{abilityName}}",
-  "passive": "被動能力 "
-}

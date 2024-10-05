@@ -6,7 +6,7 @@ import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import { Stat } from "#enums/stat";
 
-const TIMEOUT = 20 * 1000;
+
 /** HP Cost of Move */
 const RATIO = 3;
 /** Amount of extra HP lost */
@@ -32,7 +32,7 @@ describe("Moves - Clangorous Soul", () => {
     game.override.enemySpecies(Species.SNORLAX);
     game.override.startingLevel(100);
     game.override.enemyLevel(100);
-    game.override.moveset([Moves.CLANGOROUS_SOUL]);
+    game.override.moveset([ Moves.CLANGOROUS_SOUL ]);
     game.override.enemyMoveset(Moves.SPLASH);
   });
 
@@ -40,7 +40,7 @@ describe("Moves - Clangorous Soul", () => {
 
   it("raises the user's ATK, DEF, SPATK, SPDEF, and SPD stat stages by 1 each at the cost of 1/3 of its maximum HP",
   	async() => {
-      await game.startBattle([Species.MAGIKARP]);
+      await game.startBattle([ Species.MAGIKARP ]);
 
       const leadPokemon = game.scene.getPlayerPokemon()!;
       const hpLost = Math.floor(leadPokemon.getMaxHp() / RATIO);
@@ -54,12 +54,12 @@ describe("Moves - Clangorous Soul", () => {
       expect(leadPokemon.getStatStage(Stat.SPATK)).toBe(1);
       expect(leadPokemon.getStatStage(Stat.SPDEF)).toBe(1);
       expect(leadPokemon.getStatStage(Stat.SPD)).toBe(1);
-    }, TIMEOUT
+    }
   );
 
   it("will still take effect if one or more of the involved stat stages are not at max",
     async() => {
-      await game.startBattle([Species.MAGIKARP]);
+      await game.startBattle([ Species.MAGIKARP ]);
 
       const leadPokemon = game.scene.getPlayerPokemon()!;
       const hpLost = Math.floor(leadPokemon.getMaxHp() / RATIO);
@@ -79,12 +79,12 @@ describe("Moves - Clangorous Soul", () => {
       expect(leadPokemon.getStatStage(Stat.SPATK)).toBe(6);
       expect(leadPokemon.getStatStage(Stat.SPDEF)).toBe(5);
       expect(leadPokemon.getStatStage(Stat.SPD)).toBe(1);
-    }, TIMEOUT
+    }
   );
 
   it("fails if all stat stages involved are at max",
     async() => {
-      await game.startBattle([Species.MAGIKARP]);
+      await game.startBattle([ Species.MAGIKARP ]);
 
       const leadPokemon = game.scene.getPlayerPokemon()!;
 
@@ -103,12 +103,12 @@ describe("Moves - Clangorous Soul", () => {
       expect(leadPokemon.getStatStage(Stat.SPATK)).toBe(6);
       expect(leadPokemon.getStatStage(Stat.SPDEF)).toBe(6);
       expect(leadPokemon.getStatStage(Stat.SPD)).toBe(6);
-    }, TIMEOUT
+    }
   );
 
   it("fails if the user's health is less than 1/3",
     async() => {
-      await game.startBattle([Species.MAGIKARP]);
+      await game.startBattle([ Species.MAGIKARP ]);
 
       const leadPokemon = game.scene.getPlayerPokemon()!;
       const hpLost = Math.floor(leadPokemon.getMaxHp() / RATIO);
@@ -123,6 +123,6 @@ describe("Moves - Clangorous Soul", () => {
       expect(leadPokemon.getStatStage(Stat.SPATK)).toBe(0);
       expect(leadPokemon.getStatStage(Stat.SPDEF)).toBe(0);
       expect(leadPokemon.getStatStage(Stat.SPD)).toBe(0);
-    }, TIMEOUT
+    }
   );
 });

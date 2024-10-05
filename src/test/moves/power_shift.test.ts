@@ -9,8 +9,6 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 describe("Moves - Power Shift", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
-  const TIMEOUT = 20 * 1000;
-
   beforeAll(() => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
@@ -24,7 +22,7 @@ describe("Moves - Power Shift", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([Moves.POWER_SHIFT, Moves.BULK_UP])
+      .moveset([ Moves.POWER_SHIFT, Moves.BULK_UP ])
       .battleType("single")
       .ability(Abilities.BALL_FETCH)
       .enemyAbility(Abilities.BALL_FETCH)
@@ -32,7 +30,7 @@ describe("Moves - Power Shift", () => {
   });
 
   it("switches the user's raw Attack stat with its raw Defense stat", async () => {
-    await game.classicMode.startBattle([Species.MAGIKARP]);
+    await game.classicMode.startBattle([ Species.MAGIKARP ]);
 
     const playerPokemon = game.scene.getPlayerPokemon()!;
 
@@ -59,5 +57,5 @@ describe("Moves - Power Shift", () => {
     // Raw stats are swapped
     expect(playerPokemon.getStat(Stat.ATK, false)).toBe(20);
     expect(playerPokemon.getStat(Stat.DEF, false)).toBe(10);
-  }, TIMEOUT);
+  });
 });

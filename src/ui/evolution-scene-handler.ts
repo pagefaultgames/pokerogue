@@ -2,7 +2,7 @@ import BattleScene from "../battle-scene";
 import MessageUiHandler from "./message-ui-handler";
 import { TextStyle, addTextObject } from "./text";
 import { Mode } from "./ui";
-import {Button} from "#enums/buttons";
+import { Button } from "#enums/buttons";
 
 export default class EvolutionSceneHandler extends MessageUiHandler {
   public evolutionContainer: Phaser.GameObjects.Container;
@@ -45,12 +45,7 @@ export default class EvolutionSceneHandler extends MessageUiHandler {
 
     this.message = message;
 
-    const prompt = this.scene.add.sprite(0, 0, "prompt");
-    prompt.setVisible(false);
-    prompt.setOrigin(0, 0);
-    this.messageContainer.add(prompt);
-
-    this.prompt = prompt;
+    this.initPromptSprite(this.messageContainer);
   }
 
   show(_args: any[]): boolean {

@@ -6,7 +6,6 @@ import { MoveResult } from "#app/field/pokemon";
 import GameManager from "#test/utils/gameManager";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
-const TIMEOUT = 20 * 1000;
 
 describe("Moves - Gastro Acid", () => {
   let phaserGame: Phaser.Game;
@@ -28,7 +27,7 @@ describe("Moves - Gastro Acid", () => {
     game.override.startingLevel(1);
     game.override.enemyLevel(100);
     game.override.ability(Abilities.NONE);
-    game.override.moveset([Moves.GASTRO_ACID, Moves.WATER_GUN, Moves.SPLASH, Moves.CORE_ENFORCER]);
+    game.override.moveset([ Moves.GASTRO_ACID, Moves.WATER_GUN, Moves.SPLASH, Moves.CORE_ENFORCER ]);
     game.override.enemySpecies(Species.BIDOOF);
     game.override.enemyMoveset(Moves.SPLASH);
     game.override.enemyAbility(Abilities.WATER_ABSORB);
@@ -60,7 +59,7 @@ describe("Moves - Gastro Acid", () => {
 
     expect(enemyField[0].hp).toBeLessThan(enemyField[0].getMaxHp());
     expect(enemyField[1].isFullHp()).toBe(true);
-  }, TIMEOUT);
+  });
 
   it("fails if used on an enemy with an already-suppressed ability", async () => {
     game.override.battleType(null);
@@ -69,7 +68,7 @@ describe("Moves - Gastro Acid", () => {
 
     game.move.select(Moves.CORE_ENFORCER);
     // Force player to be slower to enable Core Enforcer to proc its suppression effect
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+    await game.setTurnOrder([ BattlerIndex.ENEMY, BattlerIndex.PLAYER ]);
 
     await game.phaseInterceptor.to("TurnInitPhase");
 
@@ -78,5 +77,5 @@ describe("Moves - Gastro Acid", () => {
     await game.phaseInterceptor.to("TurnInitPhase");
 
     expect(game.scene.getPlayerPokemon()!.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
-  }, TIMEOUT);
+  });
 });

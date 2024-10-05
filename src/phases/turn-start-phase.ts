@@ -19,6 +19,7 @@ import { TurnEndPhase } from "./turn-end-phase";
 import { WeatherEffectPhase } from "./weather-effect-phase";
 import { BattlerIndex } from "#app/battle";
 import { TrickRoomTag } from "#app/data/arena-tag";
+import { SwitchType } from "#enums/switch-type";
 
 export class TurnStartPhase extends FieldPhase {
   constructor(scene: BattleScene) {
@@ -42,20 +43,17 @@ export class TurnStartPhase extends FieldPhase {
       orderedTargets = Utils.randSeedShuffle(orderedTargets);
     }, this.scene.currentBattle.turn, this.scene.waveSeed);
 
-    orderedTargets.sort((a: Pokemon, b: Pokemon) => {
-      const aSpeed = a?.getEffectiveStat(Stat.SPD) || 0;
-      const bSpeed = b?.getEffectiveStat(Stat.SPD) || 0;
-
-      return bSpeed - aSpeed;
-    });
-
-    // Next, a check for Trick Room is applied. If Trick Room is present, the order is reversed.
+    // Next, a check for Trick Room is applied to determine sort order.
     const speedReversed = new Utils.BooleanHolder(false);
     this.scene.arena.applyTags(TrickRoomTag, speedReversed);
 
-    if (speedReversed.value) {
-      orderedTargets = orderedTargets.reverse();
-    }
+    // Adjust the sort function based on whether Trick Room is active.
+    orderedTargets.sort((a: Pokemon, b: Pokemon) => {
+      const aSpeed = a?.getEffectiveStat(Stat.SPD) ?? 0;
+      const bSpeed = b?.getEffectiveStat(Stat.SPD) ?? 0;
+
+      return speedReversed.value ? aSpeed - bSpeed : bSpeed - aSpeed;
+    });
 
     return orderedTargets.map(t => t.getFieldIndex() + (!t.isPlayer() ? BattlerIndex.ENEMY : BattlerIndex.PLAYER));
   }
@@ -179,7 +177,8 @@ export class TurnStartPhase extends FieldPhase {
         this.scene.unshiftPhase(new AttemptCapturePhase(this.scene, turnCommand.targets![0] % 2, turnCommand.cursor!));//TODO: is the bang correct here?
         break;
       case Command.POKEMON:
-        this.scene.unshiftPhase(new SwitchSummonPhase(this.scene, pokemon.getFieldIndex(), turnCommand.cursor!, true, turnCommand.args![0] as boolean, pokemon.isPlayer()));//TODO: is the bang correct here?
+        const switchType = turnCommand.args?.[0] ? SwitchType.BATON_PASS : SwitchType.SWITCH;
+        this.scene.unshiftPhase(new SwitchSummonPhase(this.scene, switchType, pokemon.getFieldIndex(), turnCommand.cursor!, true, pokemon.isPlayer()));
         break;
       case Command.RUN:
         let runningPokemon = pokemon;

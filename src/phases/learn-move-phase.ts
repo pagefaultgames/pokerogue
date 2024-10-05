@@ -59,7 +59,7 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
     const learnMovePrompt = i18next.t("battle:learnMovePrompt", { pokemonName: getPokemonNameWithAffix(pokemon), moveName: move.name });
     const moveLimitReached = i18next.t("battle:learnMoveLimitReached", { pokemonName: getPokemonNameWithAffix(pokemon) });
     const shouldReplaceQ = i18next.t("battle:learnMoveReplaceQuestion", { moveName: move.name });
-    const preQText = [learnMovePrompt, moveLimitReached].join("$");
+    const preQText = [ learnMovePrompt, moveLimitReached ].join("$");
     await this.scene.ui.showTextPromise(preQText);
     await this.scene.ui.showTextPromise(shouldReplaceQ, undefined, false);
     await this.scene.ui.setModeWithoutClear(Mode.CONFIRM,
@@ -91,7 +91,7 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
         return;
       }
       const forgetSuccessText = i18next.t("battle:learnMoveForgetSuccess", { pokemonName: getPokemonNameWithAffix(pokemon), moveName: pokemon.moveset[moveIndex]!.getName() });
-      const fullText = [i18next.t("battle:countdownPoof"), forgetSuccessText, i18next.t("battle:learnMoveAnd")].join("$");
+      const fullText = [ i18next.t("battle:countdownPoof"), forgetSuccessText, i18next.t("battle:learnMoveAnd") ].join("$");
       this.scene.ui.setMode(this.messageMode).then(() => this.learnMove(moveIndex, move, pokemon, fullText));
     });
   }
@@ -137,16 +137,19 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
    */
   async learnMove(index: number, move: Move, pokemon: Pokemon, textMessage?: string) {
     if (this.fromTM) {
+      if (!pokemon.usedTMs) {
+        pokemon.usedTMs = [];
+      }
       pokemon.usedTMs.push(this.moveId);
     }
     pokemon.setMove(index, this.moveId);
     initMoveAnim(this.scene, this.moveId).then(() => {
-      loadMoveAnimAssets(this.scene, [this.moveId], true);
+      loadMoveAnimAssets(this.scene, [ this.moveId ], true);
       this.scene.playSound("level_up_fanfare"); // Sound loaded into game as is
     });
     this.scene.ui.setMode(this.messageMode);
     const learnMoveText = i18next.t("battle:learnMove", { pokemonName: getPokemonNameWithAffix(pokemon), moveName: move.name });
-    textMessage = textMessage ? textMessage+"$"+learnMoveText : learnMoveText;
+    textMessage = textMessage ? textMessage + "$" + learnMoveText : learnMoveText;
     await this.scene.ui.showTextPromise(textMessage, this.messageMode === Mode.EVOLUTION_SCENE ? 1000 : undefined, true);
     this.scene.triggerPokemonFormChange(pokemon, SpeciesFormChangeMoveLearnedTrigger, true);
     this.end();

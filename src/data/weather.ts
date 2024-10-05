@@ -88,12 +88,14 @@ export class Weather {
     return 1;
   }
 
-  isMoveWeatherCancelled(move: Move): boolean {
+  isMoveWeatherCancelled(user: Pokemon, move: Move): boolean {
+    const moveType = user.getMoveType(move);
+
     switch (this.weatherType) {
     case WeatherType.HARSH_SUN:
-      return move instanceof AttackMove && move.type === Type.WATER;
+      return move instanceof AttackMove && moveType === Type.WATER;
     case WeatherType.HEAVY_RAIN:
-      return move instanceof AttackMove && move.type === Type.FIRE;
+      return move instanceof AttackMove && moveType === Type.FIRE;
     }
 
     return false;
@@ -169,9 +171,9 @@ export function getWeatherLapseMessage(weatherType: WeatherType): string | null 
 export function getWeatherDamageMessage(weatherType: WeatherType, pokemon: Pokemon): string | null {
   switch (weatherType) {
   case WeatherType.SANDSTORM:
-    return i18next.t("weather:sandstormDamageMessage", {pokemonNameWithAffix: getPokemonNameWithAffix(pokemon)});
+    return i18next.t("weather:sandstormDamageMessage", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) });
   case WeatherType.HAIL:
-    return i18next.t("weather:hailDamageMessage", {pokemonNameWithAffix: getPokemonNameWithAffix(pokemon)});
+    return i18next.t("weather:hailDamageMessage", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) });
   }
 
   return null;
@@ -236,9 +238,9 @@ export function getTerrainClearMessage(terrainType: TerrainType): string | null 
 
 export function getTerrainBlockMessage(pokemon: Pokemon, terrainType: TerrainType): string {
   if (terrainType === TerrainType.MISTY) {
-    return i18next.t("terrain:mistyBlockMessage", {pokemonNameWithAffix: getPokemonNameWithAffix(pokemon)});
+    return i18next.t("terrain:mistyBlockMessage", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) });
   }
-  return i18next.t("terrain:defaultBlockMessage", {pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), terrainName: getTerrainName(terrainType)});
+  return i18next.t("terrain:defaultBlockMessage", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), terrainName: getTerrainName(terrainType) });
 }
 
 interface WeatherPoolEntry {

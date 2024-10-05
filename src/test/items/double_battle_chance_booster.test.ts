@@ -1,19 +1,17 @@
-import { Moves } from "#app/enums/moves.js";
-import { Species } from "#app/enums/species.js";
+import { Moves } from "#app/enums/moves";
+import { Species } from "#app/enums/species";
 import { DoubleBattleChanceBoosterModifier } from "#app/modifier/modifier";
 import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import { ShopCursorTarget } from "#app/enums/shop-cursor-target.js";
-import { Mode } from "#app/ui/ui.js";
-import ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler.js";
-import { Button } from "#app/enums/buttons.js";
+import { ShopCursorTarget } from "#app/enums/shop-cursor-target";
+import { Mode } from "#app/ui/ui";
+import ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
+import { Button } from "#app/enums/buttons";
 
 describe("Items - Double Battle Chance Boosters", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
-  const TIMEOUT = 20 * 1000;
-
   beforeAll(() => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
@@ -39,7 +37,7 @@ describe("Items - Double Battle Chance Boosters", () => {
     await game.classicMode.startBattle();
 
     expect(game.scene.getEnemyField().length).toBe(2);
-  }, TIMEOUT);
+  });
 
   it("should guarantee double boss battle with 3 unique tiers", async () => {
     game.override
@@ -57,7 +55,7 @@ describe("Items - Double Battle Chance Boosters", () => {
     expect(enemyField.length).toBe(2);
     expect(enemyField[0].isBoss()).toBe(true);
     expect(enemyField[1].isBoss()).toBe(true);
-  }, TIMEOUT);
+  });
 
   it("should renew how many battles are left of existing booster when picking up new booster of same tier", async() => {
     game.override
@@ -100,5 +98,5 @@ describe("Items - Double Battle Chance Boosters", () => {
       }
     }
     expect(count).toBe(1);
-  }, TIMEOUT);
+  });
 });

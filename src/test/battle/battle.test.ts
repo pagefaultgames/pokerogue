@@ -24,7 +24,8 @@ import { Moves } from "#enums/moves";
 import { PlayerGender } from "#enums/player-gender";
 import { Species } from "#enums/species";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { Biome } from "#app/enums/biome";
 
 describe("Test Battle Phase", () => {
   let phaserGame: Phaser.Game;
@@ -98,9 +99,9 @@ describe("Test Battle Phase", () => {
     game.override
       .startingWave(3)
       .battleType("single");
-    game.override.moveset([Moves.TACKLE]);
+    game.override.moveset([ Moves.TACKLE ]);
     game.override.enemyAbility(Abilities.HYDRATION);
-    game.override.enemyMoveset([Moves.TACKLE, Moves.TACKLE, Moves.TACKLE, Moves.TACKLE]);
+    game.override.enemyMoveset([ Moves.TACKLE, Moves.TACKLE, Moves.TACKLE, Moves.TACKLE ]);
     await game.startBattle();
     game.move.select(Moves.TACKLE);
     await game.phaseInterceptor.runFrom(EnemyCommandPhase).to(SelectModifierPhase, false);
@@ -111,9 +112,9 @@ describe("Test Battle Phase", () => {
     game.override.enemySpecies(Species.RATTATA);
     game.override.startingLevel(5);
     game.override.startingWave(3);
-    game.override.moveset([Moves.TACKLE]);
+    game.override.moveset([ Moves.TACKLE ]);
     game.override.enemyAbility(Abilities.HYDRATION);
-    game.override.enemyMoveset([Moves.TAIL_WHIP, Moves.TAIL_WHIP, Moves.TAIL_WHIP, Moves.TAIL_WHIP]);
+    game.override.enemyMoveset([ Moves.TAIL_WHIP, Moves.TAIL_WHIP, Moves.TAIL_WHIP, Moves.TAIL_WHIP ]);
     game.override.battleType("single");
     await game.startBattle();
     game.move.select(Moves.TACKLE);
@@ -258,8 +259,8 @@ describe("Test Battle Phase", () => {
     game.override.ability(Abilities.ZEN_MODE);
     game.override.startingLevel(2000);
     game.override.startingWave(3);
-    game.override.moveset([moveToUse]);
-    game.override.enemyMoveset([Moves.TACKLE, Moves.TACKLE, Moves.TACKLE, Moves.TACKLE]);
+    game.override.moveset([ moveToUse ]);
+    game.override.enemyMoveset([ Moves.TACKLE, Moves.TACKLE, Moves.TACKLE, Moves.TACKLE ]);
     await game.startBattle([
       Species.DARMANITAN,
       Species.CHARIZARD,
@@ -281,8 +282,8 @@ describe("Test Battle Phase", () => {
     game.override.ability(Abilities.ZEN_MODE);
     game.override.startingLevel(2000);
     game.override.startingWave(3);
-    game.override.moveset([moveToUse]);
-    game.override.enemyMoveset([Moves.TACKLE, Moves.TACKLE, Moves.TACKLE, Moves.TACKLE]);
+    game.override.moveset([ moveToUse ]);
+    game.override.enemyMoveset([ Moves.TACKLE, Moves.TACKLE, Moves.TACKLE, Moves.TACKLE ]);
     await game.startBattle();
     const turn = game.scene.currentBattle.turn;
     game.move.select(moveToUse);
@@ -290,22 +291,27 @@ describe("Test Battle Phase", () => {
     expect(game.scene.currentBattle.turn).toBeGreaterThan(turn);
   }, 20000);
 
-  it("to next wave with pokemon killed, single", async () => {
+  it("does not set new weather if staying in same biome", async () => {
     const moveToUse = Moves.SPLASH;
-    game.override.battleType("single");
-    game.override.starterSpecies(Species.MEWTWO);
-    game.override.enemySpecies(Species.RATTATA);
-    game.override.enemyAbility(Abilities.HYDRATION);
-    game.override.ability(Abilities.ZEN_MODE);
-    game.override.startingLevel(2000);
-    game.override.startingWave(3);
-    game.override.moveset([moveToUse]);
-    game.override.enemyMoveset([Moves.TACKLE, Moves.TACKLE, Moves.TACKLE, Moves.TACKLE]);
-    await game.startBattle();
+    game.override
+      .battleType("single")
+      .starterSpecies(Species.MEWTWO)
+      .enemySpecies(Species.RATTATA)
+      .enemyAbility(Abilities.HYDRATION)
+      .ability(Abilities.ZEN_MODE)
+      .startingLevel(2000)
+      .startingWave(3)
+      .startingBiome(Biome.LAKE)
+      .moveset([ moveToUse ]);
+    game.override.enemyMoveset([ Moves.TACKLE, Moves.TACKLE, Moves.TACKLE, Moves.TACKLE ]);
+    await game.classicMode.startBattle();
     const waveIndex = game.scene.currentBattle.waveIndex;
     game.move.select(moveToUse);
+
+    vi.spyOn(game.scene.arena, "trySetWeather");
     await game.doKillOpponents();
     await game.toNextWave();
+    expect(game.scene.arena.trySetWeather).not.toHaveBeenCalled();
     expect(game.scene.currentBattle.waveIndex).toBeGreaterThan(waveIndex);
   }, 20000);
 
@@ -317,7 +323,7 @@ describe("Test Battle Phase", () => {
       .enemySpecies(Species.RATTATA)
       .startingWave(1)
       .startingLevel(100)
-      .moveset([moveToUse])
+      .moveset([ moveToUse ])
       .enemyMoveset(Moves.SPLASH)
       .startingHeldItems([{ name: "TEMP_STAT_STAGE_BOOSTER", type: Stat.ACC }]);
 

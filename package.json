@@ -19,7 +19,8 @@
 		"docs": "typedoc",
 		"depcruise": "depcruise src",
 		"depcruise:graph": "depcruise src --output-type dot | node dependency-graph.js > dependency-graph.svg",
-		"create-test": "node ./create-test-boilerplate.js"
+		"create-test": "node ./create-test-boilerplate.js",
+		"postinstall": "npx lefthook install && npx lefthook run post-merge" 
 	},
 	"devDependencies": {
 		"@eslint/js": "^9.3.0",
@@ -32,13 +33,16 @@
 		"@vitest/coverage-istanbul": "^2.0.4",
 		"dependency-cruiser": "^16.3.10",
 		"eslint": "^9.7.0",
+		"eslint-plugin-import-x": "^4.2.1",
+		"inquirer": "^11.0.2",
 		"jsdom": "^24.0.0",
 		"lefthook": "^1.6.12",
+		"msw": "^2.4.9",
 		"phaser3spectorjs": "^0.0.8",
 		"typedoc": "^0.26.4",
 		"typescript": "^5.5.3",
 		"typescript-eslint": "^8.0.0-alpha.54",
-		"vite": "^5.3.5",
+		"vite": "^5.4.8",
 		"vite-tsconfig-paths": "^4.3.2",
 		"vitest": "^2.0.4",
 		"vitest-canvas-mock": "^0.3.3"
@@ -48,6 +52,7 @@
 		"crypto-js": "^4.2.0",
 		"i18next": "^23.11.1",
 		"i18next-browser-languagedetector": "^7.2.1",
+		"i18next-http-backend": "^2.6.1",
 		"i18next-korean-postposition-processor": "^1.0.0",
 		"json-stable-stringify": "^1.1.0",
 		"phaser": "^3.70.0",

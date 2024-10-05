@@ -1,0 +1,32 @@
+name: Test Template
+
+on:
+  workflow_call:
+    inputs:
+      project:
+        required: true
+        type: string
+      shard:
+        required: true
+        type: number
+      totalShards:
+        required: true
+        type: number
+
+jobs:
+  test:
+    name: Shard ${{ inputs.shard }} of ${{ inputs.totalShards }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v4
+        with:
+          submodules: 'recursive'
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Install Node.js dependencies
+        run: npm ci
+      - name: Run tests
+        run: npx vitest --project ${{ inputs.project }} --shard=${{ inputs.shard }}/${{ inputs.totalShards }} ${{ !runner.debug && '--silent' || '' }}

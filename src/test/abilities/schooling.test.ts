@@ -7,7 +7,6 @@ import { Species } from "#enums/species";
 import GameManager from "#test/utils/gameManager";
 import { afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest";
 
-const TIMEOUT = 20 * 1000;
 
 describe("Abilities - SCHOOLING", () => {
   let phaserGame: Phaser.Game;
@@ -28,8 +27,8 @@ describe("Abilities - SCHOOLING", () => {
     const moveToUse = Moves.SPLASH;
     game.override.battleType("single");
     game.override.ability(Abilities.SCHOOLING);
-    game.override.moveset([moveToUse]);
-    game.override.enemyMoveset([Moves.TACKLE, Moves.TACKLE, Moves.TACKLE, Moves.TACKLE]);
+    game.override.moveset([ moveToUse ]);
+    game.override.enemyMoveset([ Moves.TACKLE, Moves.TACKLE, Moves.TACKLE, Moves.TACKLE ]);
   });
 
   test(
@@ -42,7 +41,7 @@ describe("Abilities - SCHOOLING", () => {
         [Species.WISHIWASHI]: schoolForm,
       });
 
-      await game.startBattle([Species.MAGIKARP, Species.WISHIWASHI]);
+      await game.startBattle([ Species.MAGIKARP, Species.WISHIWASHI ]);
 
       const wishiwashi = game.scene.getParty().find((p) => p.species.speciesId === Species.WISHIWASHI)!;
       expect(wishiwashi).not.toBe(undefined);
@@ -60,6 +59,5 @@ describe("Abilities - SCHOOLING", () => {
 
       expect(wishiwashi.formIndex).toBe(soloForm);
     },
-    TIMEOUT
   );
 });

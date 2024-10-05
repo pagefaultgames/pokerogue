@@ -1,4 +1,4 @@
-import { allSpecies } from "#app/data/pokemon-species.js";
+import { allSpecies } from "#app/data/pokemon-species";
 import { AbilityAttr, defaultStarterSpecies, DexAttr, SessionSaveData, SystemSaveData } from "./game-data";
 import { SettingKeys } from "./settings/settings";
 
@@ -6,6 +6,10 @@ const LATEST_VERSION = "1.0.5";
 
 export function applySessionDataPatches(data: SessionSaveData) {
   const curVersion = data.gameVersion;
+
+  // Always sanitize money as a safeguard
+  data.money = Math.floor(data.money);
+
   if (curVersion !== LATEST_VERSION) {
     switch (curVersion) {
     case "1.0.0":
@@ -22,16 +26,26 @@ export function applySessionDataPatches(data: SessionSaveData) {
         } else if (m.className === "PokemonResetNegativeStatStageModifier") {
           m.className = "ResetNegativeStatStageModifier";
         } else if (m.className === "TempBattleStatBoosterModifier") {
-          m.className = "TempStatStageBoosterModifier";
-          m.typeId = "TEMP_STAT_STAGE_BOOSTER";
+          // Dire Hit no longer a part of the TempBattleStatBoosterModifierTypeGenerator
+          if (m.typeId !== "DIRE_HIT") {
+            m.className = "TempStatStageBoosterModifier";
+            m.typeId = "TEMP_STAT_STAGE_BOOSTER";
 
-          // Migration from TempBattleStat to Stat
-          const newStat = m.typePregenArgs[0] + 1;
-          m.typePregenArgs[0] = newStat;
+            // Migration from TempBattleStat to Stat
+            const newStat = m.typePregenArgs[0] + 1;
+            m.typePregenArgs[0] = newStat;
 
-          // From [ stat, battlesLeft ] to [ stat, maxBattles, battleCount ]
-          m.args = [ newStat, 5, m.args[1] ];
-        } else if (m.className === "DoubleBattleChanceBoosterModifier") {
+            // From [ stat, battlesLeft ] to [ stat, maxBattles, battleCount ]
+            m.args = [ newStat, 5, m.args[1] ];
+          } else {
+            m.className = "TempCritBoosterModifier";
+            m.typePregenArgs = [];
+
+            // From [ stat, battlesLeft ] to [ maxBattles, battleCount ]
+            m.args = [ 5, m.args[1] ];
+          }
+
+        } else if (m.className === "DoubleBattleChanceBoosterModifier" && m.args.length === 1) {
           let maxBattles: number;
           switch (m.typeId) {
           case "MAX_LURE":
@@ -53,6 +67,8 @@ export function applySessionDataPatches(data: SessionSaveData) {
       data.enemyModifiers.forEach((m) => {
         if (m.className === "PokemonBaseStatModifier") {
           m.className = "BaseStatModifier";
+        } else if (m.className === "PokemonResetNegativeStatStageModifier") {
+          m.className = "ResetNegativeStatStageModifier";
         }
       });
     }
@@ -71,10 +87,10 @@ export function applySystemDataPatches(data: SystemSaveData) {
     case "1.0.3":
     case "1.0.4":
       // --- LEGACY PATCHES ---
-      if (data.starterData) {
+      if (data.starterData && data.dexData) {
         // Migrate ability starter data if empty for caught species
         Object.keys(data.starterData).forEach(sd => {
-          if (data.dexData[sd].caughtAttr && !data.starterData[sd].abilityAttr) {
+          if (data.dexData[sd]?.caughtAttr && (data.starterData[sd] && !data.starterData[sd].abilityAttr)) {
             data.starterData[sd].abilityAttr = 1;
           }
         });
@@ -102,10 +118,14 @@ export function applySystemDataPatches(data: SystemSaveData) {
       // --- PATCHES ---
 
       // Fix Starter Data
-      if (data.gameVersion) {
+      if (data.starterData && data.dexData) {
         for (const starterId of defaultStarterSpecies) {
-          data.starterData[starterId].abilityAttr |= AbilityAttr.ABILITY_1;
-          data.dexData[starterId].caughtAttr |= DexAttr.FEMALE;
+          if (data.starterData[starterId]?.abilityAttr) {
+            data.starterData[starterId].abilityAttr |= AbilityAttr.ABILITY_1;
+          }
+          if (data.dexData[starterId]?.caughtAttr) {
+            data.dexData[starterId].caughtAttr |= DexAttr.FEMALE;
+          }
         }
       }
     }

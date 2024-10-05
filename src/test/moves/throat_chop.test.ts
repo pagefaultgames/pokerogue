@@ -10,8 +10,6 @@ import { afterEach, beforeAll, beforeEach, describe, it, expect } from "vitest";
 describe("Moves - Throat Chop", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
-  const TIMEOUT = 20 * 1000;
-
   beforeAll(() => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
@@ -34,12 +32,12 @@ describe("Moves - Throat Chop", () => {
   });
 
   it("prevents the target from using sound-based moves for two turns", async () => {
-    await game.classicMode.startBattle([Species.MAGIKARP]);
+    await game.classicMode.startBattle([ Species.MAGIKARP ]);
 
     const enemy = game.scene.getEnemyPokemon()!;
 
     game.move.select(Moves.GROWL);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+    await game.setTurnOrder([ BattlerIndex.ENEMY, BattlerIndex.PLAYER ]);
 
     // First turn, move is interrupted
     await game.phaseInterceptor.to("TurnEndPhase");
@@ -49,9 +47,9 @@ describe("Moves - Throat Chop", () => {
     await game.toNextTurn();
 
     game.move.select(Moves.GROWL);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY ]);
 
     await game.phaseInterceptor.to("MoveEndPhase");
     expect(enemy.isFullHp()).toBe(false);
-  }, TIMEOUT);
+  });
 });

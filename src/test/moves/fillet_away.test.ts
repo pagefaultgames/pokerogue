@@ -7,7 +7,7 @@ import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest";
 
-const TIMEOUT = 20 * 1000;
+
 /** HP Cost of Move */
 const RATIO = 2;
 /** Amount of extra HP lost */
@@ -33,7 +33,7 @@ describe("Moves - FILLET AWAY", () => {
     game.override.enemySpecies(Species.SNORLAX);
     game.override.startingLevel(100);
     game.override.enemyLevel(100);
-    game.override.moveset([Moves.FILLET_AWAY]);
+    game.override.moveset([ Moves.FILLET_AWAY ]);
     game.override.enemyMoveset(Moves.SPLASH);
   });
 
@@ -41,7 +41,7 @@ describe("Moves - FILLET AWAY", () => {
 
   test("raises the user's ATK, SPATK, and SPD stat stages by 2 each, at the cost of 1/2 of its maximum HP",
     async() => {
-      await game.startBattle([Species.MAGIKARP]);
+      await game.startBattle([ Species.MAGIKARP ]);
 
       const leadPokemon = game.scene.getPlayerPokemon()!;
       const hpLost = toDmgValue(leadPokemon.getMaxHp() / RATIO);
@@ -53,12 +53,12 @@ describe("Moves - FILLET AWAY", () => {
       expect(leadPokemon.getStatStage(Stat.ATK)).toBe(2);
       expect(leadPokemon.getStatStage(Stat.SPATK)).toBe(2);
       expect(leadPokemon.getStatStage(Stat.SPD)).toBe(2);
-    }, TIMEOUT
+    }
   );
 
   test("still takes effect if one or more of the involved stat stages are not at max",
     async() => {
-      await game.startBattle([Species.MAGIKARP]);
+      await game.startBattle([ Species.MAGIKARP ]);
 
       const leadPokemon = game.scene.getPlayerPokemon()!;
       const hpLost = toDmgValue(leadPokemon.getMaxHp() / RATIO);
@@ -74,12 +74,12 @@ describe("Moves - FILLET AWAY", () => {
       expect(leadPokemon.getStatStage(Stat.ATK)).toBe(6);
       expect(leadPokemon.getStatStage(Stat.SPATK)).toBe(5);
       expect(leadPokemon.getStatStage(Stat.SPD)).toBe(2);
-    }, TIMEOUT
+    }
   );
 
   test("fails if all stat stages involved are at max",
     async() => {
-      await game.startBattle([Species.MAGIKARP]);
+      await game.startBattle([ Species.MAGIKARP ]);
 
       const leadPokemon = game.scene.getPlayerPokemon()!;
 
@@ -94,12 +94,12 @@ describe("Moves - FILLET AWAY", () => {
       expect(leadPokemon.getStatStage(Stat.ATK)).toBe(6);
       expect(leadPokemon.getStatStage(Stat.SPATK)).toBe(6);
       expect(leadPokemon.getStatStage(Stat.SPD)).toBe(6);
-    }, TIMEOUT
+    }
   );
 
   test("fails if the user's health is less than 1/2",
     async() => {
-      await game.startBattle([Species.MAGIKARP]);
+      await game.startBattle([ Species.MAGIKARP ]);
 
       const leadPokemon = game.scene.getPlayerPokemon()!;
       const hpLost = toDmgValue(leadPokemon.getMaxHp() / RATIO);
@@ -112,6 +112,6 @@ describe("Moves - FILLET AWAY", () => {
       expect(leadPokemon.getStatStage(Stat.ATK)).toBe(0);
       expect(leadPokemon.getStatStage(Stat.SPATK)).toBe(0);
       expect(leadPokemon.getStatStage(Stat.SPD)).toBe(0);
-    }, TIMEOUT
+    }
   );
 });

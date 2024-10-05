@@ -4,12 +4,15 @@ import { TextStyle, addBBCodeTextObject, addTextObject, getTextColor } from "./t
 import { PERMANENT_STATS, getStatKey } from "#app/enums/stat";
 import i18next from "i18next";
 
+
 const ivChartSize = 24;
-const ivChartStatCoordMultipliers = [[0, -1], [0.825, -0.5], [0.825, 0.5], [-0.825, -0.5], [-0.825, 0.5], [0, 1]];
+const ivChartStatCoordMultipliers = [[ 0, -1 ], [ 0.825, -0.5 ], [ 0.825, 0.5 ], [ -0.825, -0.5 ], [ -0.825, 0.5 ], [ 0, 1 ]];
 const speedLabelOffset = -3;
 const sideLabelOffset = 1;
-const ivLabelOffset = [0, sideLabelOffset, -sideLabelOffset, sideLabelOffset, -sideLabelOffset, speedLabelOffset];
-const ivChartStatIndexes = [0, 1, 2, 5, 4, 3]; // swap special attack and speed
+const ivLabelOffset = [ 0, sideLabelOffset, -sideLabelOffset, sideLabelOffset, -sideLabelOffset, speedLabelOffset ];
+const ivChartLabelyOffset = [ 0, 5, 0, 5, 0, 0 ]; // doing this so attack does not overlap with (+N)
+const ivChartStatIndexes = [ 0, 1, 2, 5, 4, 3 ]; // swap special attack and speed
+
 const defaultIvChartData = new Array(12).fill(null).map(() => 0);
 
 export class StatsContainer extends Phaser.GameObjects.Container {
@@ -29,7 +32,6 @@ export class StatsContainer extends Phaser.GameObjects.Container {
   setup() {
     this.setName("stats");
     const ivChartBgData = new Array(6).fill(null).map((_, i: integer) => [ ivChartSize * ivChartStatCoordMultipliers[ivChartStatIndexes[i]][0], ivChartSize * ivChartStatCoordMultipliers[ivChartStatIndexes[i]][1] ] ).flat();
-
     const ivChartBg = this.scene.add.polygon(48, 44, ivChartBgData, 0xd8e0f0, 0.625);
     ivChartBg.setOrigin(0, 0);
 
@@ -37,7 +39,7 @@ export class StatsContainer extends Phaser.GameObjects.Container {
       .setStrokeStyle(1, 0x484050);
     ivChartBorder.setOrigin(0, 0);
 
-    const ivChartBgLines = [ [ 0, -1, 0, 1 ], [ -0.825, -0.5, 0.825, 0.5 ], [ 0.825, -0.5, -0.825, 0.5 ] ].map(coords => {
+    const ivChartBgLines = [[ 0, -1, 0, 1 ], [ -0.825, -0.5, 0.825, 0.5 ], [ 0.825, -0.5, -0.825, 0.5 ]].map(coords => {
       const line = new Phaser.GameObjects.Line(this.scene, ivChartBg.x, ivChartBg.y, ivChartSize * coords[0], ivChartSize * coords[1], ivChartSize * coords[2], ivChartSize * coords[3], 0xffffff)
         .setLineWidth(0.5);
       line.setOrigin(0, 0);
@@ -55,11 +57,18 @@ export class StatsContainer extends Phaser.GameObjects.Container {
     this.ivStatValueTexts = [];
 
     for (const s of PERMANENT_STATS) {
-      const statLabel = addTextObject(this.scene, ivChartBg.x + (ivChartSize) * ivChartStatCoordMultipliers[s][0] * 1.325, ivChartBg.y + (ivChartSize) * ivChartStatCoordMultipliers[s][1] * 1.325 - 4 + ivLabelOffset[s], i18next.t(getStatKey(s)), TextStyle.TOOLTIP_CONTENT);
+      const statLabel = addTextObject(
+        this.scene,
+        ivChartBg.x + (ivChartSize) * ivChartStatCoordMultipliers[s][0] * 1.325 + (this.showDiff ? 0 : ivLabelOffset[s]),
+        ivChartBg.y + (ivChartSize) * ivChartStatCoordMultipliers[s][1] * 1.325 - 4 + (this.showDiff ? 0 : ivChartLabelyOffset[s]),
+        i18next.t(getStatKey(s)),
+        TextStyle.TOOLTIP_CONTENT
+      );
       statLabel.setOrigin(0.5);
 
-      this.ivStatValueTexts[s] = addBBCodeTextObject(this.scene, statLabel.x, statLabel.y + 8, "0", TextStyle.TOOLTIP_CONTENT);
+      this.ivStatValueTexts[s] = addBBCodeTextObject(this.scene, statLabel.x - (this.showDiff ? 0 : ivLabelOffset[s]), statLabel.y + 8, "0", TextStyle.TOOLTIP_CONTENT);
       this.ivStatValueTexts[s].setOrigin(0.5);
+
 
       this.add(statLabel);
       this.add(this.ivStatValueTexts[s]);

@@ -1,5 +1,6 @@
 import BattleScene from "#app/battle-scene";
 import { TextStyle, addTextObject } from "#app/ui/text";
+import { nil } from "#app/utils";
 import i18next from "i18next";
 
 export enum EventType {
@@ -25,15 +26,15 @@ interface TimedEvent extends EventBanner {
 
 const timedEvents: TimedEvent[] = [
   {
-    name: "September Update",
+    name: "Egg Skip Update",
     eventType: EventType.GENERIC,
-    startDate: new Date(Date.UTC(2024, 7, 28, 0)),
-    endDate: new Date(Date.UTC(2024, 8, 15, 0)),
-    bannerKey: "september-update",
+    startDate: new Date(Date.UTC(2024, 8, 8, 0)),
+    endDate: new Date(Date.UTC(2024, 8, 12, 0)),
+    bannerKey: "egg-update",
     xPosition: 19,
-    yPosition: 115,
-    scale: 0.30,
-    availableLangs: ["en", "de", "it", "fr", "ja", "ko", "es", "pt-BR", "zh-CN"]
+    yPosition: 120,
+    scale: 0.21,
+    availableLangs: [ "en", "de", "it", "fr", "ja", "ko", "es", "pt-BR", "zh-CN" ]
   }
 ];
 
@@ -64,19 +65,19 @@ export class TimedEventManager {
     let multiplier = 1;
     const shinyEvents = timedEvents.filter((te) => te.eventType === EventType.SHINY && this.isActive(te));
     shinyEvents.forEach((se) => {
-      multiplier *= se.shinyMultiplier!; // TODO: is this bang correct?
+      multiplier *= se.shinyMultiplier ?? 1;
     });
 
     return multiplier;
   }
 
   getEventBannerFilename(): string {
-    return timedEvents.find((te: TimedEvent) => this.isActive(te))?.bannerKey!; // TODO: is this bang correct?
+    return timedEvents.find((te: TimedEvent) => this.isActive(te))?.bannerKey ?? "";
   }
 }
 
 export class TimedEventDisplay extends Phaser.GameObjects.Container {
-  private event: TimedEvent | null;
+  private event: TimedEvent | nil;
   private eventTimerText: Phaser.GameObjects.Text;
   private banner: Phaser.GameObjects.Image;
   private bannerShadow: Phaser.GameObjects.Rectangle;
@@ -84,7 +85,7 @@ export class TimedEventDisplay extends Phaser.GameObjects.Container {
 
   constructor(scene: BattleScene, x: number, y: number, event?: TimedEvent) {
     super(scene, x, y);
-    this.event = event!; // TODO: is this bang correct?
+    this.event = event;
     this.setVisible(false);
   }
 
@@ -94,9 +95,9 @@ export class TimedEventDisplay extends Phaser.GameObjects.Container {
       let key = this.event.bannerKey;
       if (lang && this.event.availableLangs && this.event.availableLangs.length > 0) {
         if (this.event.availableLangs.includes(lang)) {
-          key += "-"+lang;
+          key += "_" + lang;
         } else {
-          key += "-en";
+          key += "_en";
         }
       }
       console.log(this.event.bannerKey);
@@ -141,7 +142,7 @@ export class TimedEventDisplay extends Phaser.GameObjects.Container {
 
     // Utility to add leading zero
     function z(n) {
-      return (n < 10? "0" : "") + n;
+      return (n < 10 ? "0" : "") + n;
     }
     const now = new Date();
     let diff = Math.abs(date.getTime() - now.getTime());
@@ -150,13 +151,13 @@ export class TimedEventDisplay extends Phaser.GameObjects.Container {
     diff = Math.abs(diff);
 
     // Get time components
-    const days = diff/8.64e7 | 0;
-    const hours = diff%8.64e7 / 3.6e6 | 0;
-    const mins  = diff%3.6e6 / 6e4 | 0;
-    const secs  = Math.round(diff%6e4 / 1e3);
+    const days = diff / 8.64e7 | 0;
+    const hours = diff % 8.64e7 / 3.6e6 | 0;
+    const mins  = diff % 3.6e6 / 6e4 | 0;
+    const secs  = Math.round(diff % 6e4 / 1e3);
 
     // Return formatted string
-    return "Event Ends in : " + z(days) + "d " + z(hours) + "h " + z(mins) + "m " + z(secs)+ "s";
+    return "Event Ends in : " + z(days) + "d " + z(hours) + "h " + z(mins) + "m " + z(secs) + "s";
   }
 
   updateCountdown() {
