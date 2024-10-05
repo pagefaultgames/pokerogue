@@ -1439,7 +1439,7 @@ export class GameData {
                 break;
               case GameDataType.SETTINGS:
                 valid = Object.entries(JSON.parse(dataStr))
-                  .every(([k, v]: [string, number]) => {
+                  .every(([ k, v ]: [string, number]) => {
                     const index: number = settingIndex(k);
                     return index === -1 || Setting[index].options.length > v;
                   });
