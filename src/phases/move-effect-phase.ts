@@ -404,7 +404,7 @@ export class MoveEffectPhase extends PokemonPhase {
       return true;
     }
 
-    if (target.getTag(BattlerTagType.TELEKINESIS) && !this.move.getMove().hasAttr(OneHitKOAttr)) {
+    if (target.getTag(BattlerTagType.TELEKINESIS) && !target.getTag(SemiInvulnerableTag) && !this.move.getMove().hasAttr(OneHitKOAttr)) {
       return true;
     }
 
