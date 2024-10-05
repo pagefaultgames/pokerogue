@@ -48,29 +48,29 @@ class BreederSpeciesEvolution  {
 }
 
 const POOL_1_POKEMON: (Species | BreederSpeciesEvolution)[][] = [
-  [Species.MUNCHLAX, new BreederSpeciesEvolution(Species.SNORLAX, SECOND_STAGE_EVOLUTION_WAVE)],
-  [Species.HAPPINY, new BreederSpeciesEvolution(Species.CHANSEY, FIRST_STAGE_EVOLUTION_WAVE), new BreederSpeciesEvolution(Species.BLISSEY, FINAL_STAGE_EVOLUTION_WAVE)],
-  [Species.MAGBY, new BreederSpeciesEvolution(Species.MAGMAR, FIRST_STAGE_EVOLUTION_WAVE), new BreederSpeciesEvolution(Species.MAGMORTAR, FINAL_STAGE_EVOLUTION_WAVE)],
-  [Species.ELEKID, new BreederSpeciesEvolution(Species.ELECTABUZZ, FIRST_STAGE_EVOLUTION_WAVE), new BreederSpeciesEvolution(Species.ELECTIVIRE, FINAL_STAGE_EVOLUTION_WAVE)],
-  [Species.RIOLU, new BreederSpeciesEvolution(Species.LUCARIO, SECOND_STAGE_EVOLUTION_WAVE)],
-  [Species.BUDEW, new BreederSpeciesEvolution(Species.ROSELIA, FIRST_STAGE_EVOLUTION_WAVE), new BreederSpeciesEvolution(Species.ROSERADE, FINAL_STAGE_EVOLUTION_WAVE)],
-  [Species.TOXEL, new BreederSpeciesEvolution(Species.TOXTRICITY, SECOND_STAGE_EVOLUTION_WAVE)],
-  [Species.MIME_JR, new BreederSpeciesEvolution(Species.GALAR_MR_MIME, FIRST_STAGE_EVOLUTION_WAVE), new BreederSpeciesEvolution(Species.MR_RIME, FINAL_STAGE_EVOLUTION_WAVE)]
+  [ Species.MUNCHLAX, new BreederSpeciesEvolution(Species.SNORLAX, SECOND_STAGE_EVOLUTION_WAVE) ],
+  [ Species.HAPPINY, new BreederSpeciesEvolution(Species.CHANSEY, FIRST_STAGE_EVOLUTION_WAVE), new BreederSpeciesEvolution(Species.BLISSEY, FINAL_STAGE_EVOLUTION_WAVE) ],
+  [ Species.MAGBY, new BreederSpeciesEvolution(Species.MAGMAR, FIRST_STAGE_EVOLUTION_WAVE), new BreederSpeciesEvolution(Species.MAGMORTAR, FINAL_STAGE_EVOLUTION_WAVE) ],
+  [ Species.ELEKID, new BreederSpeciesEvolution(Species.ELECTABUZZ, FIRST_STAGE_EVOLUTION_WAVE), new BreederSpeciesEvolution(Species.ELECTIVIRE, FINAL_STAGE_EVOLUTION_WAVE) ],
+  [ Species.RIOLU, new BreederSpeciesEvolution(Species.LUCARIO, SECOND_STAGE_EVOLUTION_WAVE) ],
+  [ Species.BUDEW, new BreederSpeciesEvolution(Species.ROSELIA, FIRST_STAGE_EVOLUTION_WAVE), new BreederSpeciesEvolution(Species.ROSERADE, FINAL_STAGE_EVOLUTION_WAVE) ],
+  [ Species.TOXEL, new BreederSpeciesEvolution(Species.TOXTRICITY, SECOND_STAGE_EVOLUTION_WAVE) ],
+  [ Species.MIME_JR, new BreederSpeciesEvolution(Species.GALAR_MR_MIME, FIRST_STAGE_EVOLUTION_WAVE), new BreederSpeciesEvolution(Species.MR_RIME, FINAL_STAGE_EVOLUTION_WAVE) ]
 ];
 
 const POOL_2_POKEMON: (Species | BreederSpeciesEvolution)[][] = [
-  [Species.PICHU, new BreederSpeciesEvolution(Species.PIKACHU, FIRST_STAGE_EVOLUTION_WAVE), new BreederSpeciesEvolution(Species.RAICHU, FINAL_STAGE_EVOLUTION_WAVE)],
-  [Species.PICHU, new BreederSpeciesEvolution(Species.PIKACHU, FIRST_STAGE_EVOLUTION_WAVE), new BreederSpeciesEvolution(Species.ALOLA_RAICHU, FINAL_STAGE_EVOLUTION_WAVE)],
-  [Species.JYNX],
-  [Species.TYROGUE, new BreederSpeciesEvolution(Species.HITMONLEE, SECOND_STAGE_EVOLUTION_WAVE)],
-  [Species.TYROGUE, new BreederSpeciesEvolution(Species.HITMONCHAN, SECOND_STAGE_EVOLUTION_WAVE)],
-  [Species.TYROGUE, new BreederSpeciesEvolution(Species.HITMONTOP, SECOND_STAGE_EVOLUTION_WAVE)],
-  [Species.IGGLYBUFF, new BreederSpeciesEvolution(Species.JIGGLYPUFF, FIRST_STAGE_EVOLUTION_WAVE), new BreederSpeciesEvolution(Species.WIGGLYTUFF, FINAL_STAGE_EVOLUTION_WAVE)],
-  [Species.AZURILL, new BreederSpeciesEvolution(Species.MARILL, FIRST_STAGE_EVOLUTION_WAVE), new BreederSpeciesEvolution(Species.AZUMARILL, FINAL_STAGE_EVOLUTION_WAVE)],
-  [Species.WYNAUT, new BreederSpeciesEvolution(Species.WOBBUFFET, SECOND_STAGE_EVOLUTION_WAVE)],
-  [Species.CHINGLING, new BreederSpeciesEvolution(Species.CHIMECHO, SECOND_STAGE_EVOLUTION_WAVE)],
-  [Species.BONSLY, new BreederSpeciesEvolution(Species.SUDOWOODO, SECOND_STAGE_EVOLUTION_WAVE)],
-  [Species.MANTYKE, new BreederSpeciesEvolution(Species.MANTINE, SECOND_STAGE_EVOLUTION_WAVE)]
+  [ Species.PICHU, new BreederSpeciesEvolution(Species.PIKACHU, FIRST_STAGE_EVOLUTION_WAVE), new BreederSpeciesEvolution(Species.RAICHU, FINAL_STAGE_EVOLUTION_WAVE) ],
+  [ Species.PICHU, new BreederSpeciesEvolution(Species.PIKACHU, FIRST_STAGE_EVOLUTION_WAVE), new BreederSpeciesEvolution(Species.ALOLA_RAICHU, FINAL_STAGE_EVOLUTION_WAVE) ],
+  [ Species.JYNX ],
+  [ Species.TYROGUE, new BreederSpeciesEvolution(Species.HITMONLEE, SECOND_STAGE_EVOLUTION_WAVE) ],
+  [ Species.TYROGUE, new BreederSpeciesEvolution(Species.HITMONCHAN, SECOND_STAGE_EVOLUTION_WAVE) ],
+  [ Species.TYROGUE, new BreederSpeciesEvolution(Species.HITMONTOP, SECOND_STAGE_EVOLUTION_WAVE) ],
+  [ Species.IGGLYBUFF, new BreederSpeciesEvolution(Species.JIGGLYPUFF, FIRST_STAGE_EVOLUTION_WAVE), new BreederSpeciesEvolution(Species.WIGGLYTUFF, FINAL_STAGE_EVOLUTION_WAVE) ],
+  [ Species.AZURILL, new BreederSpeciesEvolution(Species.MARILL, FIRST_STAGE_EVOLUTION_WAVE), new BreederSpeciesEvolution(Species.AZUMARILL, FINAL_STAGE_EVOLUTION_WAVE) ],
+  [ Species.WYNAUT, new BreederSpeciesEvolution(Species.WOBBUFFET, SECOND_STAGE_EVOLUTION_WAVE) ],
+  [ Species.CHINGLING, new BreederSpeciesEvolution(Species.CHIMECHO, SECOND_STAGE_EVOLUTION_WAVE) ],
+  [ Species.BONSLY, new BreederSpeciesEvolution(Species.SUDOWOODO, SECOND_STAGE_EVOLUTION_WAVE) ],
+  [ Species.MANTYKE, new BreederSpeciesEvolution(Species.MANTINE, SECOND_STAGE_EVOLUTION_WAVE) ]
 ];
 
 /**
@@ -138,7 +138,7 @@ export const TheExpertPokemonBreederEncounter: MysteryEncounter =
       encounter.setDialogueToken("pokemon3Name", pokemon3.getNameToRender());
 
       // Dialogue and egg calcs for Pokemon 1
-      const [pokemon1CommonEggs, pokemon1RareEggs] = calculateEggRewardsForPokemon(pokemon1);
+      const [ pokemon1CommonEggs, pokemon1RareEggs ] = calculateEggRewardsForPokemon(pokemon1);
       let pokemon1Tooltip = getEncounterText(scene, `${namespace}:option.1.tooltip_base`)!;
       if (pokemon1RareEggs > 0) {
         const eggsText = i18next.t(`${namespace}:numEggs`, { count: pokemon1RareEggs, rarity: i18next.t("egg:greatTier") });
@@ -153,7 +153,7 @@ export const TheExpertPokemonBreederEncounter: MysteryEncounter =
       encounter.options[0].dialogue!.buttonTooltip = pokemon1Tooltip;
 
       // Dialogue and egg calcs for Pokemon 2
-      const [pokemon2CommonEggs, pokemon2RareEggs] = calculateEggRewardsForPokemon(pokemon2);
+      const [ pokemon2CommonEggs, pokemon2RareEggs ] = calculateEggRewardsForPokemon(pokemon2);
       let pokemon2Tooltip = getEncounterText(scene, `${namespace}:option.2.tooltip_base`)!;
       if (pokemon2RareEggs > 0) {
         const eggsText = i18next.t(`${namespace}:numEggs`, { count: pokemon2RareEggs, rarity: i18next.t("egg:greatTier") });
@@ -168,7 +168,7 @@ export const TheExpertPokemonBreederEncounter: MysteryEncounter =
       encounter.options[1].dialogue!.buttonTooltip = pokemon2Tooltip;
 
       // Dialogue and egg calcs for Pokemon 3
-      const [pokemon3CommonEggs, pokemon3RareEggs] = calculateEggRewardsForPokemon(pokemon3);
+      const [ pokemon3CommonEggs, pokemon3RareEggs ] = calculateEggRewardsForPokemon(pokemon3);
       let pokemon3Tooltip = getEncounterText(scene, `${namespace}:option.3.tooltip_base`)!;
       if (pokemon3RareEggs > 0) {
         const eggsText = i18next.t(`${namespace}:numEggs`, { count: pokemon3RareEggs, rarity: i18next.t("egg:greatTier") });
@@ -382,11 +382,11 @@ function getPartyConfig(scene: BattleScene): EnemyPartyConfig {
         abilityIndex: 1, // Magic Guard
         shiny: false,
         nature: Nature.ADAMANT,
-        moveSet: [Moves.METEOR_MASH, Moves.FIRE_PUNCH, Moves.ICE_PUNCH, Moves.THUNDER_PUNCH],
-        ivs: [31, 31, 31, 31, 31, 31],
+        moveSet: [ Moves.METEOR_MASH, Moves.FIRE_PUNCH, Moves.ICE_PUNCH, Moves.THUNDER_PUNCH ],
+        ivs: [ 31, 31, 31, 31, 31, 31 ],
         modifierConfigs: [
           {
-            modifier: generateModifierType(scene, modifierTypes.TERA_SHARD, [Type.STEEL]) as PokemonHeldItemModifierType,
+            modifier: generateModifierType(scene, modifierTypes.TERA_SHARD, [ Type.STEEL ]) as PokemonHeldItemModifierType,
           }
         ]
       }
@@ -403,8 +403,8 @@ function getPartyConfig(scene: BattleScene): EnemyPartyConfig {
       shiny: true,
       variant: 1,
       nature: Nature.MODEST,
-      moveSet: [Moves.MOONBLAST, Moves.MYSTICAL_FIRE, Moves.ICE_BEAM, Moves.THUNDERBOLT],
-      ivs: [31, 31, 31, 31, 31, 31]
+      moveSet: [ Moves.MOONBLAST, Moves.MYSTICAL_FIRE, Moves.ICE_BEAM, Moves.THUNDERBOLT ],
+      ivs: [ 31, 31, 31, 31, 31, 31 ]
     },
     {
       nickname: i18next.t(`${namespace}:cleffa_3_nickname`, { speciesName: getPokemonSpecies(cleffaSpecies).getName() }),
@@ -414,8 +414,8 @@ function getPartyConfig(scene: BattleScene): EnemyPartyConfig {
       shiny: true,
       variant: 2,
       nature: Nature.BOLD,
-      moveSet: [Moves.TRI_ATTACK, Moves.STORED_POWER, Moves.TAKE_HEART, Moves.MOONLIGHT],
-      ivs: [31, 31, 31, 31, 31, 31]
+      moveSet: [ Moves.TRI_ATTACK, Moves.STORED_POWER, Moves.TAKE_HEART, Moves.MOONLIGHT ],
+      ivs: [ 31, 31, 31, 31, 31, 31 ]
     });
   } else {
     // Second member from pool 1
@@ -426,12 +426,12 @@ function getPartyConfig(scene: BattleScene): EnemyPartyConfig {
     baseConfig.pokemonConfigs!.push({
       species: getPokemonSpecies(pool1Species),
       isBoss: false,
-      ivs: [31, 31, 31, 31, 31, 31]
+      ivs: [ 31, 31, 31, 31, 31, 31 ]
     },
     {
       species: getPokemonSpecies(pool2Species),
       isBoss: false,
-      ivs: [31, 31, 31, 31, 31, 31]
+      ivs: [ 31, 31, 31, 31, 31, 31 ]
     });
   }
 
@@ -469,7 +469,7 @@ function calculateEggRewardsForPokemon(pokemon: PlayerPokemon): [number, number]
   // 1 Common egg for every point leftover
   const numCommons = totalPoints % 6;
 
-  return [numCommons, numRares];
+  return [ numCommons, numRares ];
 }
 
 function getEggOptions(scene: BattleScene, commonEggs: number, rareEggs: number) {

@@ -73,7 +73,7 @@ export const FieryFalloutEncounter: MysteryEncounter =
         doubleBattle: true,
         disableSwitch: true
       };
-      encounter.enemyPartyConfigs = [config];
+      encounter.enemyPartyConfigs = [ config ];
 
       // Load hidden Volcarona sprites
       encounter.spriteConfigs = [
@@ -99,7 +99,7 @@ export const FieryFalloutEncounter: MysteryEncounter =
       ];
 
       // Load animations/sfx for Volcarona moves
-      loadCustomMovesForEncounter(scene, [Moves.FIRE_SPIN, Moves.QUIVER_DANCE]);
+      loadCustomMovesForEncounter(scene, [ Moves.FIRE_SPIN, Moves.QUIVER_DANCE ]);
 
       scene.arena.trySetWeather(WeatherType.SUNNY, true);
 
@@ -144,25 +144,25 @@ export const FieryFalloutEncounter: MysteryEncounter =
         encounter.startOfBattleEffects.push(
           {
             sourceBattlerIndex: BattlerIndex.ENEMY,
-            targets: [BattlerIndex.PLAYER],
+            targets: [ BattlerIndex.PLAYER ],
             move: new PokemonMove(Moves.FIRE_SPIN),
             ignorePp: true
           },
           {
             sourceBattlerIndex: BattlerIndex.ENEMY_2,
-            targets: [BattlerIndex.PLAYER_2],
+            targets: [ BattlerIndex.PLAYER_2 ],
             move: new PokemonMove(Moves.FIRE_SPIN),
             ignorePp: true
           },
           {
             sourceBattlerIndex: BattlerIndex.ENEMY,
-            targets: [BattlerIndex.ENEMY],
+            targets: [ BattlerIndex.ENEMY ],
             move: new PokemonMove(Moves.QUIVER_DANCE),
             ignorePp: true
           },
           {
             sourceBattlerIndex: BattlerIndex.ENEMY_2,
-            targets: [BattlerIndex.ENEMY_2],
+            targets: [ BattlerIndex.ENEMY_2 ],
             move: new PokemonMove(Moves.QUIVER_DANCE),
             ignorePp: true
           });
@@ -238,7 +238,7 @@ export const FieryFalloutEncounter: MysteryEncounter =
           const primary = encounter.options[2].primaryPokemon!;
           const secondary = encounter.options[2].secondaryPokemon![0];
 
-          setEncounterExp(scene, [primary.id, secondary.id], getPokemonSpecies(Species.VOLCARONA).baseExp * 2);
+          setEncounterExp(scene, [ primary.id, secondary.id ], getPokemonSpecies(Species.VOLCARONA).baseExp * 2);
           leaveEncounterWithoutBattle(scene);
         })
         .build()
@@ -249,7 +249,7 @@ function giveLeadPokemonCharcoal(scene: BattleScene) {
   // Give first party pokemon Charcoal for free at end of battle
   const leadPokemon = scene.getParty()?.[0];
   if (leadPokemon) {
-    const charcoal = generateModifierType(scene, modifierTypes.ATTACK_TYPE_BOOSTER, [Type.FIRE]) as AttackTypeBoosterModifierType;
+    const charcoal = generateModifierType(scene, modifierTypes.ATTACK_TYPE_BOOSTER, [ Type.FIRE ]) as AttackTypeBoosterModifierType;
     applyModifierTypeToPlayerPokemon(scene, leadPokemon, charcoal);
     scene.currentBattle.mysteryEncounter!.setDialogueToken("leadPokemon", leadPokemon.getNameToRender());
     queueEncounterMessage(scene, `${namespace}:found_charcoal`);

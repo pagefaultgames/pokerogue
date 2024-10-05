@@ -81,37 +81,37 @@ export const TheStrongStuffEncounter: MysteryEncounter =
             bossSegments: 5,
             mysteryEncounterPokemonData: new MysteryEncounterPokemonData({ spriteScale: 1.25 }),
             nature: Nature.BOLD,
-            moveSet: [Moves.INFESTATION, Moves.SALT_CURE, Moves.GASTRO_ACID, Moves.HEAL_ORDER],
+            moveSet: [ Moves.INFESTATION, Moves.SALT_CURE, Moves.GASTRO_ACID, Moves.HEAL_ORDER ],
             modifierConfigs: [
               {
-                modifier: generateModifierType(scene, modifierTypes.BERRY, [BerryType.SITRUS]) as PokemonHeldItemModifierType
+                modifier: generateModifierType(scene, modifierTypes.BERRY, [ BerryType.SITRUS ]) as PokemonHeldItemModifierType
               },
               {
-                modifier: generateModifierType(scene, modifierTypes.BERRY, [BerryType.ENIGMA]) as PokemonHeldItemModifierType
+                modifier: generateModifierType(scene, modifierTypes.BERRY, [ BerryType.ENIGMA ]) as PokemonHeldItemModifierType
               },
               {
-                modifier: generateModifierType(scene, modifierTypes.BERRY, [BerryType.APICOT]) as PokemonHeldItemModifierType
+                modifier: generateModifierType(scene, modifierTypes.BERRY, [ BerryType.APICOT ]) as PokemonHeldItemModifierType
               },
               {
-                modifier: generateModifierType(scene, modifierTypes.BERRY, [BerryType.GANLON]) as PokemonHeldItemModifierType
+                modifier: generateModifierType(scene, modifierTypes.BERRY, [ BerryType.GANLON ]) as PokemonHeldItemModifierType
               },
               {
-                modifier: generateModifierType(scene, modifierTypes.BERRY, [BerryType.LUM]) as PokemonHeldItemModifierType,
+                modifier: generateModifierType(scene, modifierTypes.BERRY, [ BerryType.LUM ]) as PokemonHeldItemModifierType,
                 stackCount: 2
               }
             ],
-            tags: [BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON],
+            tags: [ BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON ],
             mysteryEncounterBattleEffects: (pokemon: Pokemon) => {
               queueEncounterMessage(pokemon.scene, `${namespace}:option.2.stat_boost`);
-              pokemon.scene.unshiftPhase(new StatStageChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [Stat.DEF, Stat.SPDEF], 2));
+              pokemon.scene.unshiftPhase(new StatStageChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [ Stat.DEF, Stat.SPDEF ], 2));
             }
           }
         ],
       };
 
-      encounter.enemyPartyConfigs = [config];
+      encounter.enemyPartyConfigs = [ config ];
 
-      loadCustomMovesForEncounter(scene, [Moves.GASTRO_ACID, Moves.STEALTH_ROCK]);
+      loadCustomMovesForEncounter(scene, [ Moves.GASTRO_ACID, Moves.STEALTH_ROCK ]);
 
       encounter.setDialogueToken("shuckleName", getPokemonSpecies(Species.SHUCKLE).getName());
 
@@ -185,17 +185,17 @@ export const TheStrongStuffEncounter: MysteryEncounter =
       async (scene: BattleScene) => {
         // Pick battle
         const encounter = scene.currentBattle.mysteryEncounter!;
-        setEncounterRewards(scene, { guaranteedModifierTypeFuncs: [modifierTypes.SOUL_DEW], fillRemaining: true });
+        setEncounterRewards(scene, { guaranteedModifierTypeFuncs: [ modifierTypes.SOUL_DEW ], fillRemaining: true });
         encounter.startOfBattleEffects.push(
           {
             sourceBattlerIndex: BattlerIndex.ENEMY,
-            targets: [BattlerIndex.PLAYER],
+            targets: [ BattlerIndex.PLAYER ],
             move: new PokemonMove(Moves.GASTRO_ACID),
             ignorePp: true
           },
           {
             sourceBattlerIndex: BattlerIndex.ENEMY,
-            targets: [BattlerIndex.PLAYER],
+            targets: [ BattlerIndex.PLAYER ],
             move: new PokemonMove(Moves.STEALTH_ROCK),
             ignorePp: true
           });

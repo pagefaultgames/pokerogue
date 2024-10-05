@@ -142,7 +142,7 @@ export const DancingLessonsEncounter: MysteryEncounter =
       scene.getEnemyParty().forEach(enemyPokemon => {
         scene.field.remove(enemyPokemon, true);
       });
-      scene.currentBattle.enemyParty = [oricorio];
+      scene.currentBattle.enemyParty = [ oricorio ];
       scene.field.add(oricorio);
       // Spawns on offscreen field
       oricorio.x -= 300;
@@ -154,14 +154,14 @@ export const DancingLessonsEncounter: MysteryEncounter =
           dataSource: oricorioData,
           isBoss: true,
           // Gets +1 to all stats except SPD on battle start
-          tags: [BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON],
+          tags: [ BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON ],
           mysteryEncounterBattleEffects: (pokemon: Pokemon) => {
             queueEncounterMessage(pokemon.scene, `${namespace}:option.1.boss_enraged`);
-            pokemon.scene.unshiftPhase(new StatStageChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [Stat.ATK, Stat.DEF, Stat.SPATK, Stat.SPDEF], 1));
+            pokemon.scene.unshiftPhase(new StatStageChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [ Stat.ATK, Stat.DEF, Stat.SPATK, Stat.SPDEF ], 1));
           }
         }],
       };
-      encounter.enemyPartyConfigs = [config];
+      encounter.enemyPartyConfigs = [ config ];
       encounter.misc = {
         oricorioData
       };
@@ -188,13 +188,13 @@ export const DancingLessonsEncounter: MysteryEncounter =
 
           encounter.startOfBattleEffects.push({
             sourceBattlerIndex: BattlerIndex.ENEMY,
-            targets: [BattlerIndex.PLAYER],
+            targets: [ BattlerIndex.PLAYER ],
             move: new PokemonMove(Moves.REVELATION_DANCE),
             ignorePp: true
           });
 
           await hideOricorioPokemon(scene);
-          setEncounterRewards(scene, { guaranteedModifierTypeFuncs: [modifierTypes.BATON], fillRemaining: true });
+          setEncounterRewards(scene, { guaranteedModifierTypeFuncs: [ modifierTypes.BATON ], fillRemaining: true });
           await initBattleWithEnemyConfig(scene, encounter.enemyPartyConfigs[0]);
         })
         .build()

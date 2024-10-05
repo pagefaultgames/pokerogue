@@ -77,12 +77,12 @@ export const MysteriousChestEncounter: MysteryEncounter =
             species: getPokemonSpecies(Species.GIMMIGHOUL),
             formIndex: 0,
             isBoss: true,
-            moveSet: [Moves.NASTY_PLOT, Moves.SHADOW_BALL, Moves.POWER_GEM, Moves.THIEF]
+            moveSet: [ Moves.NASTY_PLOT, Moves.SHADOW_BALL, Moves.POWER_GEM, Moves.THIEF ]
           }
         ],
       };
 
-      encounter.enemyPartyConfigs = [config];
+      encounter.enemyPartyConfigs = [ config ];
 
       encounter.setDialogueToken("gimmighoulName", getPokemonSpecies(Species.GIMMIGHOUL).getName());
       encounter.setDialogueToken("trapPercent", TRAP_PERCENT.toString());
@@ -158,13 +158,13 @@ export const MysteriousChestEncounter: MysteryEncounter =
             leaveEncounterWithoutBattle(scene);
           } else if (roll >= RAND_LENGTH - COMMON_REWARDS_PERCENT - ULTRA_REWARDS_PERCENT - ROGUE_REWARDS_PERCENT) {
             // Choose between 2 ROGUE tier items (10%)
-            setEncounterRewards(scene, { guaranteedModifierTiers: [ModifierTier.ROGUE, ModifierTier.ROGUE] });
+            setEncounterRewards(scene, { guaranteedModifierTiers: [ ModifierTier.ROGUE, ModifierTier.ROGUE ]});
             // Display result message then proceed to rewards
             queueEncounterMessage(scene, `${namespace}:option.1.great`);
             leaveEncounterWithoutBattle(scene);
           } else if (roll >= RAND_LENGTH - COMMON_REWARDS_PERCENT - ULTRA_REWARDS_PERCENT - ROGUE_REWARDS_PERCENT - MASTER_REWARDS_PERCENT) {
             // Choose 1 MASTER tier item (5%)
-            setEncounterRewards(scene, { guaranteedModifierTiers: [ModifierTier.MASTER] });
+            setEncounterRewards(scene, { guaranteedModifierTiers: [ ModifierTier.MASTER ]});
             // Display result message then proceed to rewards
             queueEncounterMessage(scene, `${namespace}:option.1.amazing`);
             leaveEncounterWithoutBattle(scene);
