@@ -5,7 +5,7 @@ import { SessionSaveData } from "../system/game-data";
 import { TextStyle, addTextObject, addBBCodeTextObject, getTextColor } from "./text";
 import { Mode } from "./ui";
 import { addWindow } from "./ui-theme";
-import { getPokeballAtlasKey } from "../data/pokeball";
+import { getPokeballAtlasKey } from "#app/data/pokeball";
 import * as Utils from "../utils";
 import PokemonData from "../system/pokemon-data";
 import i18next from "i18next";
@@ -24,7 +24,7 @@ import { Species } from "#enums/species";
 import { PlayerGender } from "#enums/player-gender";
 import { SettingKeyboard } from "#app/system/settings/settings-keyboard";
 import { getBiomeName } from "#app/data/balance/biomes";
-import { MysteryEncounterType } from "#app/enums/mystery-encounter-type";
+import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 
 /**
  * RunInfoUiMode indicates possible overlays of RunInfoUiHandler.
@@ -247,8 +247,8 @@ export default class RunInfoUiHandler extends UiHandler {
   }
 
   /**
-   * This function is used when the Run Info UI is used to preview a Session
-   * It edits runResultContainer, but most importantly - does not display the negative results of a Mystery Encounter or any details of a trainer's party
+   * This function is used when the Run Info UI is used to preview a Session.
+   * It edits {@linkcode runResultContainer}, but most importantly - does not display the negative results of a Mystery Encounter or any details of a trainer's party.
    * Trainer Parties are replaced with their sprites, names, and their party size.
    * Mystery Encounters contain sprites associated with MEs + the title of the specific ME.
    */
@@ -256,17 +256,12 @@ export default class RunInfoUiHandler extends UiHandler {
     const runStatusText = addTextObject(this.scene, 6, 5, `${i18next.t("saveSlotSelectUiHandler:wave")} ${this.runInfo.waveIndex} - ${getBiomeName(this.runInfo.arena.biome)}`, TextStyle.WINDOW, {fontSize : "65px", lineSpacing: 0.1});
 
     const enemyContainer = this.scene.add.container(0, 0);
-    // Wild - Single and Doubles
+
     if (this.runInfo.battleType === BattleType.WILD) {
-      switch (this.runInfo.enemyParty.length) {
-      case 1:
-        // Wild - Singles
+      if (this.runInfo.enemyParty.length === 1) {
         this.parseWildSingleDefeat(enemyContainer);
-        break;
-      case 2:
-        // Wild - Doubles
+      } else if (this.runInfo.enemyParty.length === 2) {
         this.parseWildDoubleDefeat(enemyContainer);
-        break;
       }
     } else if (this.runInfo.battleType === BattleType.TRAINER) {
       this.showTrainerSprites(enemyContainer);
@@ -299,7 +294,7 @@ export default class RunInfoUiHandler extends UiHandler {
       const subSprite = this.scene.add.sprite(56, -106, "pkmn__sub");
       subSprite.setScale(0.65);
       subSprite.setPosition(34, 46);
-      const mysteryEncounterTitle = i18next.t(this.scene.getMysteryEncounter(this.runInfo.mysteryEncounterType as MysteryEncounterType, true).localizationKey+":title");
+      const mysteryEncounterTitle = i18next.t(this.scene.getMysteryEncounter(this.runInfo.mysteryEncounterType as MysteryEncounterType, true).localizationKey + ":title");
       const descContainer = this.scene.add.container(0, 0);
       const textBox = addTextObject(this.scene, 0, 0, mysteryEncounterTitle, TextStyle.WINDOW, { fontSize : "45px", wordWrap: {width: 160} });
       descContainer.add(textBox);
@@ -364,8 +359,8 @@ export default class RunInfoUiHandler extends UiHandler {
 
   /**
    * This loads the enemy sprites, positions, and scales them according to the current display mode of the RunInfo UI and then adds them to the container parameter.
-   * Used by parseRunStatus and parseTrainerDefeat
-   * @param {Phaser.GameObjects.Container} enemyContainer a Phaser Container that should hold enemy sprites
+   * Used by {@linkcode parseRunStatus} and {@linkcode parseTrainerDefeat}
+   * @param enemyContainer a Phaser Container that should hold enemy sprites
    */
   private showTrainerSprites(enemyContainer: Phaser.GameObjects.Container) {
     // Creating the trainer sprite and adding it to enemyContainer
@@ -396,7 +391,7 @@ export default class RunInfoUiHandler extends UiHandler {
         enemyContainer.add(doubleContainer);
       } else {
         const scale = (this.runDisplayMode === RunDisplayMode.RUN_HISTORY) ? 0.35 : 0.65;
-        const position = (this.runDisplayMode === RunDisplayMode.RUN_HISTORY) ? [12, 28] : [32, 36];
+        const position = (this.runDisplayMode === RunDisplayMode.RUN_HISTORY) ? [ 12, 28 ] : [ 32, 36 ];
         tObjSprite.setScale(scale, scale);
         tObjSprite.setPosition(position[0], position[1]);
         enemyContainer.add(tObjSprite);
@@ -406,11 +401,11 @@ export default class RunInfoUiHandler extends UiHandler {
 
   /**
    * This edits a container to represent a loss from a defeat by a trainer battle.
-   * @param enemyContainer - container holding enemy visuals and level information
    * The trainers are placed to the left of their party.
    * Depending on the trainer icon, there may be overlap between the edges of the box or their party. (Capes...)
    *
    * Party Pokemon have their icons, terastalization status, and level shown.
+   * @param enemyContainer - container holding enemy visuals and level information
    */
   private parseTrainerDefeat(enemyContainer: Phaser.GameObjects.Container) {
     // Loads and adds trainer sprites to the UI
