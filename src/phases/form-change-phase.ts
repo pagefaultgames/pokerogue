@@ -1,6 +1,5 @@
 import BattleScene from "../battle-scene";
 import * as Utils from "../utils";
-import { SpeciesFormKey } from "../data/pokemon-species";
 import { achvs } from "../system/achv";
 import { SpeciesFormChange, getSpeciesFormChangeMessage } from "../data/pokemon-forms";
 import { PlayerPokemon } from "../field/pokemon";
@@ -9,6 +8,8 @@ import PartyUiHandler from "../ui/party-ui-handler";
 import { getPokemonNameWithAffix } from "../messages";
 import { EndEvolutionPhase } from "./end-evolution-phase";
 import { EvolutionPhase } from "./evolution-phase";
+import { BattlerTagType } from "#app/enums/battler-tag-type";
+import { SpeciesFormKey } from "#enums/species-form-key";
 
 export class FormChangePhase extends EvolutionPhase {
   private formChange: SpeciesFormChange;
@@ -157,6 +158,7 @@ export class FormChangePhase extends EvolutionPhase {
   }
 
   end(): void {
+    this.pokemon.findAndRemoveTags(t => t.tagType === BattlerTagType.AUTOTOMIZED);
     if (this.modal) {
       this.scene.ui.revertMode().then(() => {
         if (this.scene.ui.getMode() === Mode.PARTY) {

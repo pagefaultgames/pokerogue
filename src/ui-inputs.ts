@@ -1,11 +1,11 @@
 import Phaser from "phaser";
-import {Mode} from "./ui/ui";
-import {InputsController} from "./inputs-controller";
+import { Mode } from "./ui/ui";
+import { InputsController } from "./inputs-controller";
 import MessageUiHandler from "./ui/message-ui-handler";
 import StarterSelectUiHandler from "./ui/starter-select-ui-handler";
-import {Setting, SettingKeys, settingIndex} from "./system/settings/settings";
+import { Setting, SettingKeys, settingIndex } from "./system/settings/settings";
 import SettingsUiHandler from "./ui/settings/settings-ui-handler";
-import {Button} from "#enums/buttons";
+import { Button } from "#enums/buttons";
 import SettingsGamepadUiHandler from "./ui/settings/settings-gamepad-ui-handler";
 import SettingsKeyboardUiHandler from "#app/ui/settings/settings-keyboard-ui-handler";
 import BattleScene from "./battle-scene";
@@ -142,7 +142,7 @@ export class UiInputs {
   }
 
   buttonGoToFilter(button: Button): void {
-    const whitelist = [StarterSelectUiHandler];
+    const whitelist = [ StarterSelectUiHandler ];
     const uiHandler = this.scene.ui?.getHandler();
     if (whitelist.some(handler => uiHandler instanceof handler)) {
       this.scene.ui.processInput(button);
@@ -169,12 +169,14 @@ export class UiInputs {
     }
     switch (this.scene.ui?.getMode()) {
     case Mode.MESSAGE:
-      if (!(this.scene.ui.getHandler() as MessageUiHandler).pendingPrompt) {
+      const messageHandler = this.scene.ui.getHandler<MessageUiHandler>();
+      if (!messageHandler.pendingPrompt || messageHandler.isTextAnimationInProgress()) {
         return;
       }
     case Mode.TITLE:
     case Mode.COMMAND:
     case Mode.MODIFIER_SELECT:
+    case Mode.MYSTERY_ENCOUNTER:
       this.scene.ui.setOverlayMode(Mode.MENU);
       break;
     case Mode.STARTER_SELECT:
@@ -190,7 +192,7 @@ export class UiInputs {
   }
 
   buttonCycleOption(button: Button): void {
-    const whitelist = [StarterSelectUiHandler, SettingsUiHandler, RunInfoUiHandler, SettingsDisplayUiHandler, SettingsAudioUiHandler, SettingsGamepadUiHandler, SettingsKeyboardUiHandler];
+    const whitelist = [ StarterSelectUiHandler, SettingsUiHandler, RunInfoUiHandler, SettingsDisplayUiHandler, SettingsAudioUiHandler, SettingsGamepadUiHandler, SettingsKeyboardUiHandler ];
     const uiHandler = this.scene.ui?.getHandler();
     if (whitelist.some(handler => uiHandler instanceof handler)) {
       this.scene.ui.processInput(button);

@@ -15,9 +15,9 @@ import { PokemonMove } from "#app/field/pokemon";
 import { Moves } from "#enums/moves";
 import { MysteryEncounterPhase } from "#app/phases/mystery-encounter-phases";
 
-const namespace = "mysteryEncounter:partTimer";
+const namespace = "mysteryEncounters/partTimer";
 // Pyukumuku for lowest speed, Regieleki for highest speed, Feebas for lowest "bulk", Melmetal for highest "bulk"
-const defaultParty = [Species.PYUKUMUKU, Species.REGIELEKI, Species.FEEBAS, Species.MELMETAL];
+const defaultParty = [ Species.PYUKUMUKU, Species.REGIELEKI, Species.FEEBAS, Species.MELMETAL ];
 const defaultBiome = Biome.PLAINS;
 const defaultWave = 37;
 
@@ -39,10 +39,10 @@ describe("Part-Timer - Mystery Encounter", () => {
     game.override.disableTrainerWaves();
 
     const biomeMap = new Map<Biome, MysteryEncounterType[]>([
-      [Biome.VOLCANO, [MysteryEncounterType.MYSTERIOUS_CHALLENGERS]],
+      [ Biome.VOLCANO, [ MysteryEncounterType.MYSTERIOUS_CHALLENGERS ]],
     ]);
     CIVILIZATION_ENCOUNTER_BIOMES.forEach(biome => {
-      biomeMap.set(biome, [MysteryEncounterType.PART_TIMER]);
+      biomeMap.set(biome, [ MysteryEncounterType.PART_TIMER ]);
     });
     vi.spyOn(MysteryEncounters, "mysteryEncountersByBiome", "get").mockReturnValue(biomeMap);
   });
@@ -60,15 +60,15 @@ describe("Part-Timer - Mystery Encounter", () => {
     expect(PartTimerEncounter.encounterTier).toBe(MysteryEncounterTier.COMMON);
     expect(PartTimerEncounter.dialogue).toBeDefined();
     expect(PartTimerEncounter.dialogue.intro).toStrictEqual([
-      { text: `${namespace}.intro` },
+      { text: `${namespace}:intro` },
       {
-        speaker: `${namespace}.speaker`,
-        text: `${namespace}.intro_dialogue`,
+        speaker: `${namespace}:speaker`,
+        text: `${namespace}:intro_dialogue`,
       }
     ]);
-    expect(PartTimerEncounter.dialogue.encounterOptionsDialogue?.title).toBe(`${namespace}.title`);
-    expect(PartTimerEncounter.dialogue.encounterOptionsDialogue?.description).toBe(`${namespace}.description`);
-    expect(PartTimerEncounter.dialogue.encounterOptionsDialogue?.query).toBe(`${namespace}.query`);
+    expect(PartTimerEncounter.dialogue.encounterOptionsDialogue?.title).toBe(`${namespace}:title`);
+    expect(PartTimerEncounter.dialogue.encounterOptionsDialogue?.description).toBe(`${namespace}:description`);
+    expect(PartTimerEncounter.dialogue.encounterOptionsDialogue?.query).toBe(`${namespace}:query`);
     expect(PartTimerEncounter.options.length).toBe(3);
   });
 
@@ -86,11 +86,11 @@ describe("Part-Timer - Mystery Encounter", () => {
       expect(option.optionMode).toBe(MysteryEncounterOptionMode.DEFAULT);
       expect(option.dialogue).toBeDefined();
       expect(option.dialogue).toStrictEqual({
-        buttonLabel: `${namespace}.option.1.label`,
-        buttonTooltip: `${namespace}.option.1.tooltip`,
+        buttonLabel: `${namespace}:option.1.label`,
+        buttonTooltip: `${namespace}:option.1.tooltip`,
         selected: [
           {
-            text: `${namespace}.option.1.selected`
+            text: `${namespace}:option.1.selected`
           }
         ]
       });
@@ -122,7 +122,7 @@ describe("Part-Timer - Mystery Encounter", () => {
       // Override party levels to 50 so stats can be fully reflective
       scene.getParty().forEach(p => {
         p.level = 50;
-        p.ivs = [20, 20, 20, 20, 20, 20];
+        p.ivs = [ 20, 20, 20, 20, 20, 20 ];
         p.calculateStats();
       });
       await runMysteryEncounterToEnd(game, 1, { pokemonNo: 2 });
@@ -151,11 +151,11 @@ describe("Part-Timer - Mystery Encounter", () => {
       expect(option.optionMode).toBe(MysteryEncounterOptionMode.DEFAULT);
       expect(option.dialogue).toBeDefined();
       expect(option.dialogue).toStrictEqual({
-        buttonLabel: `${namespace}.option.2.label`,
-        buttonTooltip: `${namespace}.option.2.tooltip`,
+        buttonLabel: `${namespace}:option.2.label`,
+        buttonTooltip: `${namespace}:option.2.tooltip`,
         selected: [
           {
-            text: `${namespace}.option.2.selected`
+            text: `${namespace}:option.2.selected`
           }
         ]
       });
@@ -187,7 +187,7 @@ describe("Part-Timer - Mystery Encounter", () => {
       // Override party levels to 50 so stats can be fully reflective
       scene.getParty().forEach(p => {
         p.level = 50;
-        p.ivs = [20, 20, 20, 20, 20, 20];
+        p.ivs = [ 20, 20, 20, 20, 20, 20 ];
         p.calculateStats();
       });
       await runMysteryEncounterToEnd(game, 2, { pokemonNo: 4 });
@@ -216,12 +216,12 @@ describe("Part-Timer - Mystery Encounter", () => {
       expect(option.optionMode).toBe(MysteryEncounterOptionMode.DISABLED_OR_SPECIAL);
       expect(option.dialogue).toBeDefined();
       expect(option.dialogue).toStrictEqual({
-        buttonLabel: `${namespace}.option.3.label`,
-        buttonTooltip: `${namespace}.option.3.tooltip`,
-        disabledButtonTooltip: `${namespace}.option.3.disabled_tooltip`,
+        buttonLabel: `${namespace}:option.3.label`,
+        buttonTooltip: `${namespace}:option.3.tooltip`,
+        disabledButtonTooltip: `${namespace}:option.3.disabled_tooltip`,
         selected: [
           {
-            text: `${namespace}.option.3.selected`
+            text: `${namespace}:option.3.selected`
           }
         ]
       });
@@ -256,7 +256,7 @@ describe("Part-Timer - Mystery Encounter", () => {
 
       await game.runToMysteryEncounter(MysteryEncounterType.PART_TIMER, defaultParty);
       // Mock moveset
-      scene.getParty()[0].moveset = [new PokemonMove(Moves.ATTRACT)];
+      scene.getParty()[0].moveset = [ new PokemonMove(Moves.ATTRACT) ];
       await runMysteryEncounterToEnd(game, 3);
 
       expect(EncounterPhaseUtils.updatePlayerMoney).toHaveBeenCalledWith(scene, scene.getWaveMoneyAmount(2.5), true, false);

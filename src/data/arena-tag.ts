@@ -1,14 +1,15 @@
-import { Arena } from "../field/arena";
-import { Type } from "./type";
-import * as Utils from "../utils";
-import { MoveCategory, allMoves, MoveTarget, IncrementMovePriorityAttr, applyMoveAttrs } from "./move";
-import { getPokemonNameWithAffix } from "../messages";
-import Pokemon, { HitResult, PokemonMove } from "../field/pokemon";
-import { StatusEffect } from "./status-effect";
-import { BattlerIndex } from "../battle";
-import { BlockNonDirectDamageAbAttr, ChangeMovePriorityAbAttr, ProtectStatAbAttr, applyAbAttrs } from "./ability";
+import { Arena } from "#app/field/arena";
+import BattleScene from "#app/battle-scene";
+import { Type } from "#app/data/type";
+import * as Utils from "#app/utils";
+import { MoveCategory, allMoves, MoveTarget, IncrementMovePriorityAttr, applyMoveAttrs } from "#app/data/move";
+import { getPokemonNameWithAffix } from "#app/messages";
+import Pokemon, { HitResult, PlayerPokemon, PokemonMove, EnemyPokemon } from "#app/field/pokemon";
+import { StatusEffect } from "#app/data/status-effect";
+import { BattlerIndex } from "#app/battle";
+import { BlockNonDirectDamageAbAttr, ChangeMovePriorityAbAttr, ProtectStatAbAttr, applyAbAttrs } from "#app/data/ability";
 import { Stat } from "#enums/stat";
-import { CommonAnim, CommonBattleAnim } from "./battle-anims";
+import { CommonAnim, CommonBattleAnim } from "#app/data/battle-anims";
 import i18next from "i18next";
 import { Abilities } from "#enums/abilities";
 import { ArenaTagType } from "#enums/arena-tag-type";
@@ -18,6 +19,7 @@ import { MoveEffectPhase } from "#app/phases/move-effect-phase";
 import { PokemonHealPhase } from "#app/phases/pokemon-heal-phase";
 import { ShowAbilityPhase } from "#app/phases/show-ability-phase";
 import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
+import { CommonAnimPhase } from "#app/phases/common-anim-phase";
 
 export enum ArenaTagSide {
   BOTH,
@@ -134,7 +136,7 @@ export class WeakenMoveScreenTag extends ArenaTag {
    */
   apply(arena: Arena, args: any[]): boolean {
     if (this.weakenedCategories.includes((args[0] as MoveCategory))) {
-      (args[2] as Utils.NumberHolder).value = (args[1] as boolean) ? 2732/4096 : 0.5;
+      (args[2] as Utils.NumberHolder).value = (args[1] as boolean) ? 2732 / 4096 : 0.5;
       return true;
     }
     return false;
@@ -147,7 +149,7 @@ export class WeakenMoveScreenTag extends ArenaTag {
  */
 class ReflectTag extends WeakenMoveScreenTag {
   constructor(turnCount: integer, sourceId: integer, side: ArenaTagSide) {
-    super(ArenaTagType.REFLECT, turnCount, Moves.REFLECT, sourceId, side, [MoveCategory.PHYSICAL]);
+    super(ArenaTagType.REFLECT, turnCount, Moves.REFLECT, sourceId, side, [ MoveCategory.PHYSICAL ]);
   }
 
   onAdd(arena: Arena, quiet: boolean = false): void {
@@ -163,7 +165,7 @@ class ReflectTag extends WeakenMoveScreenTag {
  */
 class LightScreenTag extends WeakenMoveScreenTag {
   constructor(turnCount: integer, sourceId: integer, side: ArenaTagSide) {
-    super(ArenaTagType.LIGHT_SCREEN, turnCount, Moves.LIGHT_SCREEN, sourceId, side, [MoveCategory.SPECIAL]);
+    super(ArenaTagType.LIGHT_SCREEN, turnCount, Moves.LIGHT_SCREEN, sourceId, side, [ MoveCategory.SPECIAL ]);
   }
 
   onAdd(arena: Arena, quiet: boolean = false): void {
@@ -179,7 +181,7 @@ class LightScreenTag extends WeakenMoveScreenTag {
  */
 class AuroraVeilTag extends WeakenMoveScreenTag {
   constructor(turnCount: integer, sourceId: integer, side: ArenaTagSide) {
-    super(ArenaTagType.AURORA_VEIL, turnCount, Moves.AURORA_VEIL, sourceId, side, [MoveCategory.SPECIAL, MoveCategory.PHYSICAL]);
+    super(ArenaTagType.AURORA_VEIL, turnCount, Moves.AURORA_VEIL, sourceId, side, [ MoveCategory.SPECIAL, MoveCategory.PHYSICAL ]);
   }
 
   onAdd(arena: Arena, quiet: boolean = false): void {
@@ -507,6 +509,40 @@ class WaterSportTag extends WeakenMoveTypeTag {
 
   onRemove(arena: Arena): void {
     arena.scene.queueMessage(i18next.t("arenaTag:waterSportOnRemove"));
+  }
+}
+
+/**
+ * Arena Tag class for {@link https://bulbapedia.bulbagarden.net/wiki/Ion_Deluge_(move) | Ion Deluge}
+ * and the secondary effect of {@link https://bulbapedia.bulbagarden.net/wiki/Plasma_Fists_(move) | Plasma Fists}.
+ * Converts Normal-type moves to Electric type for the rest of the turn.
+ */
+export class IonDelugeTag extends ArenaTag {
+  constructor(sourceMove?: Moves) {
+    super(ArenaTagType.ION_DELUGE, 1, sourceMove);
+  }
+
+  /** Queues an on-add message */
+  onAdd(arena: Arena): void {
+    arena.scene.queueMessage(i18next.t("arenaTag:plasmaFistsOnAdd"));
+  }
+
+  onRemove(arena: Arena): void { } // Removes default on-remove message
+
+  /**
+   * Converts Normal-type moves to Electric type
+   * @param arena n/a
+   * @param args
+   * - `[0]` {@linkcode Utils.NumberHolder} A container with a move's {@linkcode Type}
+   * @returns `true` if the given move type changed; `false` otherwise.
+   */
+  apply(arena: Arena, args: any[]): boolean {
+    const moveType = args[0];
+    if (moveType instanceof Utils.NumberHolder && moveType.value === Type.NORMAL) {
+      moveType.value = Type.ELECTRIC;
+      return true;
+    }
+    return false;
   }
 }
 
@@ -919,6 +955,152 @@ class SafeguardTag extends ArenaTag {
   }
 }
 
+/**
+ * This arena tag facilitates the application of the move Imprison
+ * Imprison remains in effect as long as the source Pokemon is active and present on the field.
+ * Imprison will apply to any opposing Pokemon that switch onto the field as well.
+ */
+class ImprisonTag extends ArenaTrapTag {
+  private source: Pokemon;
+
+  constructor(sourceId: number, side: ArenaTagSide) {
+    super(ArenaTagType.IMPRISON, Moves.IMPRISON, sourceId, side, 1);
+  }
+
+  /**
+   * Helper function that retrieves the Pokemon affected
+   * @param {BattleScene} scene medium to retrieve the involved Pokemon
+   * @returns list of PlayerPokemon or EnemyPokemon on the field
+   */
+  private retrieveField(scene: BattleScene): PlayerPokemon[] | EnemyPokemon[] {
+    if (!this.source.isPlayer()) {
+      return scene.getPlayerField() ?? [];
+    }
+    return scene.getEnemyField() ?? [];
+  }
+
+  /**
+   * This function applies the effects of Imprison to the opposing Pokemon already present on the field.
+   * @param arena
+   */
+  override onAdd({ scene }: Arena) {
+    this.source = scene.getPokemonById(this.sourceId!)!;
+    if (this.source) {
+      const party = this.retrieveField(scene);
+      party?.forEach((p: PlayerPokemon | EnemyPokemon ) => {
+        p.addTag(BattlerTagType.IMPRISON, 1, Moves.IMPRISON, this.sourceId);
+      });
+      scene.queueMessage(i18next.t("battlerTags:imprisonOnAdd", { pokemonNameWithAffix: getPokemonNameWithAffix(this.source) }));
+    }
+  }
+
+  /**
+   * Checks if the source Pokemon is still active on the field
+   * @param _arena
+   * @returns `true` if the source of the tag is still active on the field | `false` if not
+   */
+  override lapse(_arena: Arena): boolean {
+    return this.source.isActive(true);
+  }
+
+  /**
+   * This applies the effects of Imprison to any opposing Pokemon that switch into the field while the source Pokemon is still active
+   * @param {Pokemon} pokemon the Pokemon Imprison is applied to
+   * @returns `true`
+   */
+  override activateTrap(pokemon: Pokemon): boolean {
+    if (this.source.isActive(true)) {
+      pokemon.addTag(BattlerTagType.IMPRISON, 1, Moves.IMPRISON, this.sourceId);
+    }
+    return true;
+  }
+
+  /**
+   * When the arena tag is removed, it also attempts to remove any related Battler Tags if they haven't already been removed from the affected Pokemon
+   * @param arena
+   */
+  override onRemove({ scene }: Arena): void {
+    const party = this.retrieveField(scene);
+    party?.forEach((p: PlayerPokemon | EnemyPokemon) => {
+      p.removeTag(BattlerTagType.IMPRISON);
+    });
+  }
+}
+
+/**
+ * Arena Tag implementing the "sea of fire" effect from the combination
+ * of {@link https://bulbapedia.bulbagarden.net/wiki/Fire_Pledge_(move) | Fire Pledge}
+ * and {@link https://bulbapedia.bulbagarden.net/wiki/Grass_Pledge_(move) | Grass Pledge}.
+ * Damages all non-Fire-type Pokemon on the given side of the field at the end
+ * of each turn for 4 turns.
+ */
+class FireGrassPledgeTag extends ArenaTag {
+  constructor(sourceId: number, side: ArenaTagSide) {
+    super(ArenaTagType.FIRE_GRASS_PLEDGE, 4, Moves.FIRE_PLEDGE, sourceId, side);
+  }
+
+  override onAdd(arena: Arena): void {
+    // "A sea of fire enveloped your/the opposing team!"
+    arena.scene.queueMessage(i18next.t(`arenaTag:fireGrassPledgeOnAdd${this.side === ArenaTagSide.PLAYER ? "Player" : this.side === ArenaTagSide.ENEMY ? "Enemy" : ""}`));
+  }
+
+  override lapse(arena: Arena): boolean {
+    const field: Pokemon[] = (this.side === ArenaTagSide.PLAYER)
+      ? arena.scene.getPlayerField()
+      : arena.scene.getEnemyField();
+
+    field.filter(pokemon => !pokemon.isOfType(Type.FIRE)).forEach(pokemon => {
+      // "{pokemonNameWithAffix} was hurt by the sea of fire!"
+      pokemon.scene.queueMessage(i18next.t("arenaTag:fireGrassPledgeLapse", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }));
+      // TODO: Replace this with a proper animation
+      pokemon.scene.unshiftPhase(new CommonAnimPhase(pokemon.scene, pokemon.getBattlerIndex(), pokemon.getBattlerIndex(), CommonAnim.MAGMA_STORM));
+      pokemon.damageAndUpdate(Utils.toDmgValue(pokemon.getMaxHp() / 8));
+    });
+
+    return super.lapse(arena);
+  }
+}
+
+/**
+ * Arena Tag implementing the "rainbow" effect from the combination
+ * of {@link https://bulbapedia.bulbagarden.net/wiki/Water_Pledge_(move) | Water Pledge}
+ * and {@link https://bulbapedia.bulbagarden.net/wiki/Fire_Pledge_(move) | Fire Pledge}.
+ * Doubles the secondary effect chance of moves from Pokemon on the
+ * given side of the field for 4 turns.
+ */
+class WaterFirePledgeTag extends ArenaTag {
+  constructor(sourceId: number, side: ArenaTagSide) {
+    super(ArenaTagType.WATER_FIRE_PLEDGE, 4, Moves.WATER_PLEDGE, sourceId, side);
+  }
+
+  override onAdd(arena: Arena): void {
+    // "A rainbow appeared in the sky on your/the opposing team's side!"
+    arena.scene.queueMessage(i18next.t(`arenaTag:waterFirePledgeOnAdd${this.side === ArenaTagSide.PLAYER ? "Player" : this.side === ArenaTagSide.ENEMY ? "Enemy" : ""}`));
+  }
+
+  override apply(arena: Arena, args: any[]): boolean {
+    const moveChance = args[0] as Utils.NumberHolder;
+    moveChance.value *= 2;
+    return true;
+  }
+}
+
+/**
+ * Arena Tag implementing the "swamp" effect from the combination
+ * of {@link https://bulbapedia.bulbagarden.net/wiki/Grass_Pledge_(move) | Grass Pledge}
+ * and {@link https://bulbapedia.bulbagarden.net/wiki/Water_Pledge_(move) | Water Pledge}.
+ * Quarters the Speed of Pokemon on the given side of the field for 4 turns.
+ */
+class GrassWaterPledgeTag extends ArenaTag {
+  constructor(sourceId: number, side: ArenaTagSide) {
+    super(ArenaTagType.GRASS_WATER_PLEDGE, 4, Moves.GRASS_PLEDGE, sourceId, side);
+  }
+
+  override onAdd(arena: Arena): void {
+    // "A swamp enveloped your/the opposing team!"
+    arena.scene.queueMessage(i18next.t(`arenaTag:grassWaterPledgeOnAdd${this.side === ArenaTagSide.PLAYER ? "Player" : this.side === ArenaTagSide.ENEMY ? "Enemy" : ""}`));
+  }
+}
 
 export function getArenaTag(tagType: ArenaTagType, turnCount: integer, sourceMove: Moves | undefined, sourceId: integer, targetIndex?: BattlerIndex, side: ArenaTagSide = ArenaTagSide.BOTH): ArenaTag | null {
   switch (tagType) {
@@ -938,6 +1120,8 @@ export function getArenaTag(tagType: ArenaTagType, turnCount: integer, sourceMov
     return new MudSportTag(turnCount, sourceId);
   case ArenaTagType.WATER_SPORT:
     return new WaterSportTag(turnCount, sourceId);
+  case ArenaTagType.ION_DELUGE:
+    return new IonDelugeTag(sourceMove);
   case ArenaTagType.SPIKES:
     return new SpikesTag(sourceId, side);
   case ArenaTagType.TOXIC_SPIKES:
@@ -967,6 +1151,14 @@ export function getArenaTag(tagType: ArenaTagType, turnCount: integer, sourceMov
     return new HappyHourTag(turnCount, sourceId, side);
   case ArenaTagType.SAFEGUARD:
     return new SafeguardTag(turnCount, sourceId, side);
+  case ArenaTagType.IMPRISON:
+    return new ImprisonTag(sourceId, side);
+  case ArenaTagType.FIRE_GRASS_PLEDGE:
+    return new FireGrassPledgeTag(sourceId, side);
+  case ArenaTagType.WATER_FIRE_PLEDGE:
+    return new WaterFirePledgeTag(sourceId, side);
+  case ArenaTagType.GRASS_WATER_PLEDGE:
+    return new GrassWaterPledgeTag(sourceId, side);
   default:
     return null;
   }

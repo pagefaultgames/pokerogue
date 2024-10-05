@@ -35,7 +35,7 @@ describe("Moves - BELLY DRUM", () => {
       .enemySpecies(Species.SNORLAX)
       .startingLevel(100)
       .enemyLevel(100)
-      .moveset([Moves.BELLY_DRUM])
+      .moveset([ Moves.BELLY_DRUM ])
       .enemyMoveset(Moves.SPLASH)
       .enemyAbility(Abilities.BALL_FETCH);
   });
@@ -44,7 +44,7 @@ describe("Moves - BELLY DRUM", () => {
 
   test("raises the user's ATK stat stage to its max, at the cost of 1/2 of its maximum HP",
     async() => {
-      await game.startBattle([Species.MAGIKARP]);
+      await game.startBattle([ Species.MAGIKARP ]);
 
       const leadPokemon = game.scene.getPlayerPokemon()!;
       const hpLost = toDmgValue(leadPokemon.getMaxHp() / RATIO);
@@ -59,7 +59,7 @@ describe("Moves - BELLY DRUM", () => {
 
   test("will still take effect if an uninvolved stat stage is at max",
     async() => {
-      await game.startBattle([Species.MAGIKARP]);
+      await game.startBattle([ Species.MAGIKARP ]);
 
       const leadPokemon = game.scene.getPlayerPokemon()!;
       const hpLost = toDmgValue(leadPokemon.getMaxHp() / RATIO);
@@ -79,7 +79,7 @@ describe("Moves - BELLY DRUM", () => {
 
   test("fails if the pokemon's ATK stat stage is at its maximum",
     async() => {
-      await game.startBattle([Species.MAGIKARP]);
+      await game.startBattle([ Species.MAGIKARP ]);
 
       const leadPokemon = game.scene.getPlayerPokemon()!;
 
@@ -95,7 +95,7 @@ describe("Moves - BELLY DRUM", () => {
 
   test("fails if the user's health is less than 1/2",
     async() => {
-      await game.startBattle([Species.MAGIKARP]);
+      await game.startBattle([ Species.MAGIKARP ]);
 
       const leadPokemon = game.scene.getPlayerPokemon()!;
       const hpLost = toDmgValue(leadPokemon.getMaxHp() / RATIO);
