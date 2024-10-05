@@ -253,10 +253,10 @@ export default class RunInfoUiHandler extends UiHandler {
    * Mystery Encounters contain sprites associated with MEs + the title of the specific ME.
    */
   private parseRunStatus() {
-    const runStatusText = addTextObject(this.scene, 6, 5, `${i18next.t("saveSlotSelectUiHandler:wave")} ${this.runInfo.waveIndex} - ${getBiomeName(this.runInfo.arena.biome)}`, TextStyle.WINDOW, {fontSize : "65px", lineSpacing: 0.1});
+    const runStatusText = addTextObject(this.scene, 6, 5, `${i18next.t("saveSlotSelectUiHandler:wave")} ${this.runInfo.waveIndex} - ${getBiomeName(this.runInfo.arena.biome)}`, TextStyle.WINDOW, { fontSize : "65px", lineSpacing: 0.1 });
 
     const enemyContainer = this.scene.add.container(0, 0);
-
+    this.runResultContainer.add(enemyContainer);
     if (this.runInfo.battleType === BattleType.WILD) {
       if (this.runInfo.enemyParty.length === 1) {
         this.parseWildSingleDefeat(enemyContainer);
@@ -283,7 +283,7 @@ export default class RunInfoUiHandler extends UiHandler {
       }
       const boxString = i18next.t(trainerObj.variant !== TrainerVariant.DOUBLE ? "battle:trainerAppeared" : "battle:trainerAppearedDouble", { trainerName: trainerName }).replace(/\n/g, " ");
       const descContainer = this.scene.add.container(0, 0);
-      const textBox = addTextObject(this.scene, 0, 0, boxString, TextStyle.WINDOW, { fontSize : "35px", wordWrap: {width: 200} });
+      const textBox = addTextObject(this.scene, 0, 0, boxString, TextStyle.WINDOW, { fontSize : "35px", wordWrap: { width: 200 }});
       descContainer.add(textBox);
       descContainer.setPosition(52, 29);
       this.runResultContainer.add(descContainer);
@@ -296,12 +296,12 @@ export default class RunInfoUiHandler extends UiHandler {
       subSprite.setPosition(34, 46);
       const mysteryEncounterTitle = i18next.t(this.scene.getMysteryEncounter(this.runInfo.mysteryEncounterType as MysteryEncounterType, true).localizationKey + ":title");
       const descContainer = this.scene.add.container(0, 0);
-      const textBox = addTextObject(this.scene, 0, 0, mysteryEncounterTitle, TextStyle.WINDOW, { fontSize : "45px", wordWrap: {width: 160} });
+      const textBox = addTextObject(this.scene, 0, 0, mysteryEncounterTitle, TextStyle.WINDOW, { fontSize : "45px", wordWrap: { width: 160 }});
       descContainer.add(textBox);
       descContainer.setPosition(47, 37);
-      this.runResultContainer.add([encounterExclaim, subSprite, descContainer]);
+      this.runResultContainer.add([ encounterExclaim, subSprite, descContainer ]);
     }
-    this.runResultContainer.add(enemyContainer);
+
     this.runResultContainer.add(runStatusText);
     this.runContainer.add(this.runResultContainer);
   }
@@ -369,7 +369,7 @@ export default class RunInfoUiHandler extends UiHandler {
     tObj.config.loadAssets(this.scene, this.runInfo.trainer.variant).then(() => {
       const tObjSpriteKey = tObj.config.getSpriteKey(this.runInfo.trainer.variant === TrainerVariant.FEMALE, false);
       const tObjSprite = this.scene.add.sprite(0, 5, tObjSpriteKey);
-      if (this.runInfo.trainer.variant === TrainerVariant.DOUBLE) {
+      if (this.runInfo.trainer.variant === TrainerVariant.DOUBLE && !tObj.config.doubleOnly) {
         const doubleContainer = this.scene.add.container(5, 8);
         tObjSprite.setPosition(-3, -3);
         const tObjPartnerSpriteKey = tObj.config.getSpriteKey(true, true);
@@ -385,7 +385,7 @@ export default class RunInfoUiHandler extends UiHandler {
           tObjSprite.setScale(0.55);
           tObjSprite.setPosition(-9, -3);
           tObjPartnerSprite.setScale(0.55);
-          doubleContainer.add([tObjSprite, tObjPartnerSprite]);
+          doubleContainer.add([ tObjSprite, tObjPartnerSprite ]);
           doubleContainer.setPosition(28, 40);
         }
         enemyContainer.add(doubleContainer);
