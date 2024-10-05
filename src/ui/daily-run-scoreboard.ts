@@ -192,9 +192,9 @@ export class DailyRunScoreboard extends Phaser.GameObjects.Container {
     }
 
     Utils.executeIf(category !== this.category || this.pageCount === undefined,
-      () =>  pokerogueApi.daily.getRankingsPageCount(category).then(count => this.pageCount = count)
+      () =>  pokerogueApi.daily.getRankingsPageCount({ category }).then(count => this.pageCount = count)
     ).then(() => {
-      pokerogueApi.daily.getRankings(category, page)
+      pokerogueApi.daily.getRankings({ category, page })
         .then(rankings => {
           this.page = page;
           this.category = category;
