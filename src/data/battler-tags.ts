@@ -964,6 +964,11 @@ export class IngrainTag extends TrappedTag {
     super(BattlerTagType.INGRAIN, BattlerTagLapseType.TURN_END, 1, Moves.INGRAIN, sourceId);
   }
 
+  override onAdd(pokemon: Pokemon) {
+    super.onAdd(pokemon);
+    pokemon.addTag(BattlerTagType.IGNORE_FLYING, undefined, Moves.INGRAIN, this.sourceId);
+  }
+
   /**
    * Check if the Ingrain tag can be added to the pokemon
    * @param pokemon {@linkcode Pokemon} The pokemon to check if the tag can be added to
@@ -991,6 +996,11 @@ export class IngrainTag extends TrappedTag {
     }
 
     return ret;
+  }
+
+  override onRemove(pokemon: Pokemon) {
+    super.onRemove(pokemon);
+    pokemon.removeTag(BattlerTagType.IGNORE_FLYING);
   }
 
   getTrapMessage(pokemon: Pokemon): string {
@@ -2686,16 +2696,10 @@ export class TelekinesisTag extends BattlerTag {
     pokemon.addTag(BattlerTagType.FLOATING, 3, this.sourceMove);
   }
 
-  override lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
-    return --this.turnCount > 0;
-  }
-
   override onRemove(pokemon: Pokemon) {
     pokemon.removeTag(BattlerTagType.TELEKINESIS);
     pokemon.removeTag(BattlerTagType.FLOATING);
   }
-
-
 }
 
 /**
