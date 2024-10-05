@@ -2,7 +2,7 @@ import { Species } from "#enums/species";
 import { EggTier } from "#enums/egg-type";
 
 /**
- * Map of all starters and their respective {@link EggTier}, which determines which type of egg the starter hatches from.
+ * Map of all starters and their respective {@linkcode EggTier}, which determines the type of egg the starter hatches from.
  */
 export const speciesEggTiers = {
   [Species.BULBASAUR]: EggTier.COMMON,

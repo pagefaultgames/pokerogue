@@ -12,7 +12,6 @@ import { Species } from "#enums/species";
 import { EggSourceType } from "#enums/egg-source-types";
 import { MANAPHY_EGG_MANAPHY_RATE, SAME_SPECIES_EGG_HA_RATE, GACHA_EGG_HA_RATE, GACHA_DEFAULT_RARE_EGGMOVE_RATE, SAME_SPECIES_EGG_RARE_EGGMOVE_RATE, GACHA_MOVE_UP_RARE_EGGMOVE_RATE, GACHA_DEFAULT_SHINY_RATE, GACHA_SHINY_UP_SHINY_RATE, SAME_SPECIES_EGG_SHINY_RATE, EGG_PITY_LEGENDARY_THRESHOLD, EGG_PITY_EPIC_THRESHOLD, EGG_PITY_RARE_THRESHOLD, SHINY_VARIANT_CHANCE, SHINY_EPIC_CHANCE, GACHA_DEFAULT_COMMON_EGG_THRESHOLD, GACHA_DEFAULT_RARE_EGG_THRESHOLD, GACHA_DEFAULT_EPIC_EGG_THRESHOLD, GACHA_LEGENDARY_UP_THRESHOLD_OFFSET, HATCH_WAVES_MANAPHY_EGG, HATCH_WAVES_COMMON_EGG, HATCH_WAVES_RARE_EGG, HATCH_WAVES_EPIC_EGG, HATCH_WAVES_LEGENDARY_EGG } from "#app/data/balance/rates";
 import { speciesEggTiers } from "#app/data/balance/species-egg-tiers";
-import { clampNumber } from "#app/utils";
 
 export const EGG_SEED = 1073741824;
 
@@ -433,7 +432,7 @@ export class Egg {
     const speciesWeights : number[] = [];
     for (const speciesId of speciesPool) {
       // Accounts for species that have starter costs outside of the normal range for their EggTier
-      const speciesCostClamped = clampNumber(speciesStarterCosts[speciesId], minStarterValue, maxStarterValue);
+      const speciesCostClamped = Phaser.Math.Clamp(speciesStarterCosts[speciesId], minStarterValue, maxStarterValue);
       let weight = Math.floor((((maxStarterValue - speciesCostClamped) / ((maxStarterValue - minStarterValue) + 1)) * 1.5 + 1) * 100);
       const species = getPokemonSpecies(speciesId);
       if (species.isRegional()) {

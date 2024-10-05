@@ -38,16 +38,6 @@ export function shiftCharCodes(str: string, shiftCount: integer) {
   return newStr;
 }
 
-/**
- * Clamps a number
- * @param value
- * @param min
- * @param max
- */
-export function clampNumber(value: number, min: number, max: number): number {
-  return Math.min(Math.max(value, min), max);
-}
-
 export function randGauss(stdev: number, mean: number = 0): number {
   if (!stdev) {
     return 0;
