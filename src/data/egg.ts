@@ -263,11 +263,11 @@ export class Egg {
       return "Manaphy";
     }
     switch (this.tier) {
-    case EggTier.GREAT:
+    case EggTier.RARE:
       return i18next.t("egg:greatTier");
-    case EggTier.ULTRA:
+    case EggTier.EPIC:
       return i18next.t("egg:ultraTier");
-    case EggTier.MASTER:
+    case EggTier.LEGENDARY:
       return i18next.t("egg:masterTier");
     default:
       return i18next.t("egg:defaultTier");
@@ -338,9 +338,9 @@ export class Egg {
     switch (eggTier ?? this._tier) {
     case EggTier.COMMON:
       return HATCH_WAVES_COMMON_EGG;
-    case EggTier.GREAT:
+    case EggTier.RARE:
       return HATCH_WAVES_RARE_EGG;
-    case EggTier.ULTRA:
+    case EggTier.EPIC:
       return HATCH_WAVES_EPIC_EGG;
     }
     return HATCH_WAVES_LEGENDARY_EGG;
@@ -349,7 +349,7 @@ export class Egg {
   private rollEggTier(): EggTier {
     const tierValueOffset = this._sourceType === EggSourceType.GACHA_LEGENDARY ? GACHA_LEGENDARY_UP_THRESHOLD_OFFSET : 0;
     const tierValue = Utils.randInt(256);
-    return tierValue >= GACHA_DEFAULT_COMMON_EGG_THRESHOLD + tierValueOffset ? EggTier.COMMON : tierValue >= GACHA_DEFAULT_RARE_EGG_THRESHOLD + tierValueOffset ? EggTier.GREAT : tierValue >= GACHA_DEFAULT_EPIC_EGG_THRESHOLD + tierValueOffset ? EggTier.ULTRA : EggTier.MASTER;
+    return tierValue >= GACHA_DEFAULT_COMMON_EGG_THRESHOLD + tierValueOffset ? EggTier.COMMON : tierValue >= GACHA_DEFAULT_RARE_EGG_THRESHOLD + tierValueOffset ? EggTier.RARE : tierValue >= GACHA_DEFAULT_EPIC_EGG_THRESHOLD + tierValueOffset ? EggTier.EPIC : EggTier.LEGENDARY;
   }
 
   private rollSpecies(scene: BattleScene): Species | null {
@@ -369,7 +369,7 @@ export class Egg {
        */
       const rand = (Utils.randSeedInt(MANAPHY_EGG_MANAPHY_RATE) !== 1);
       return rand ? Species.PHIONE : Species.MANAPHY;
-    } else if (this.tier === EggTier.MASTER
+    } else if (this.tier === EggTier.LEGENDARY
       && this._sourceType === EggSourceType.GACHA_LEGENDARY) {
       if (!Utils.randSeedInt(2)) {
         return getLegendaryGachaSpeciesForTimestamp(scene, this.timestamp);
@@ -380,15 +380,15 @@ export class Egg {
     let maxStarterValue: integer;
 
     switch (this.tier) {
-    case EggTier.GREAT:
+    case EggTier.RARE:
       minStarterValue = 4;
       maxStarterValue = 5;
       break;
-    case EggTier.ULTRA:
+    case EggTier.EPIC:
       minStarterValue = 6;
       maxStarterValue = 7;
       break;
-    case EggTier.MASTER:
+    case EggTier.LEGENDARY:
       minStarterValue = 8;
       maxStarterValue = 9;
       break;
@@ -502,16 +502,16 @@ export class Egg {
 
   private checkForPityTierOverrides(scene: BattleScene): void {
     const tierValueOffset = this._sourceType === EggSourceType.GACHA_LEGENDARY ? GACHA_LEGENDARY_UP_THRESHOLD_OFFSET : 0;
-    scene.gameData.eggPity[EggTier.GREAT] += 1;
-    scene.gameData.eggPity[EggTier.ULTRA] += 1;
-    scene.gameData.eggPity[EggTier.MASTER] += 1 + tierValueOffset;
+    scene.gameData.eggPity[EggTier.RARE] += 1;
+    scene.gameData.eggPity[EggTier.EPIC] += 1;
+    scene.gameData.eggPity[EggTier.LEGENDARY] += 1 + tierValueOffset;
     // These numbers are roughly the 80% mark. That is, 80% of the time you'll get an egg before this gets triggered.
-    if (scene.gameData.eggPity[EggTier.MASTER] >= EGG_PITY_LEGENDARY_THRESHOLD && this._tier === EggTier.COMMON) {
-      this._tier = EggTier.MASTER;
-    } else if (scene.gameData.eggPity[EggTier.ULTRA] >= EGG_PITY_EPIC_THRESHOLD && this._tier === EggTier.COMMON) {
-      this._tier = EggTier.ULTRA;
-    } else if (scene.gameData.eggPity[EggTier.GREAT] >= EGG_PITY_RARE_THRESHOLD && this._tier === EggTier.COMMON) {
-      this._tier = EggTier.GREAT;
+    if (scene.gameData.eggPity[EggTier.LEGENDARY] >= EGG_PITY_LEGENDARY_THRESHOLD && this._tier === EggTier.COMMON) {
+      this._tier = EggTier.LEGENDARY;
+    } else if (scene.gameData.eggPity[EggTier.EPIC] >= EGG_PITY_EPIC_THRESHOLD && this._tier === EggTier.COMMON) {
+      this._tier = EggTier.EPIC;
+    } else if (scene.gameData.eggPity[EggTier.RARE] >= EGG_PITY_RARE_THRESHOLD && this._tier === EggTier.COMMON) {
+      this._tier = EggTier.RARE;
     }
     scene.gameData.eggPity[this._tier] = 0;
   }
@@ -520,17 +520,17 @@ export class Egg {
     scene.gameData.gameStats.eggsPulled++;
     if (this.isManaphyEgg()) {
       scene.gameData.gameStats.manaphyEggsPulled++;
-      this._hatchWaves = this.getEggTierDefaultHatchWaves(EggTier.ULTRA);
+      this._hatchWaves = this.getEggTierDefaultHatchWaves(EggTier.EPIC);
       return;
     }
     switch (this.tier) {
-    case EggTier.GREAT:
+    case EggTier.RARE:
       scene.gameData.gameStats.rareEggsPulled++;
       break;
-    case EggTier.ULTRA:
+    case EggTier.EPIC:
       scene.gameData.gameStats.epicEggsPulled++;
       break;
-    case EggTier.MASTER:
+    case EggTier.LEGENDARY:
       scene.gameData.gameStats.legendaryEggsPulled++;
       break;
     }
@@ -547,7 +547,7 @@ export class Egg {
 
 export function getLegendaryGachaSpeciesForTimestamp(scene: BattleScene, timestamp: number): Species {
   const legendarySpecies = Object.entries(speciesEggTiers)
-    .filter(s => s[1] === EggTier.MASTER)
+    .filter(s => s[1] === EggTier.LEGENDARY)
     .map(s => parseInt(s[0]))
     .filter(s => getPokemonSpecies(s).isObtainable());
 

@@ -126,7 +126,7 @@ describe("A Trainer's Test - Mystery Encounter", () => {
       expect(eggsAfter).toBeDefined();
       expect(eggsBeforeLength + 1).toBe(eggsAfter.length);
       const eggTier = eggsAfter[eggsAfter.length - 1].tier;
-      expect(eggTier === EggTier.ULTRA || eggTier === EggTier.MASTER).toBeTruthy();
+      expect(eggTier === EggTier.EPIC || eggTier === EggTier.LEGENDARY).toBeTruthy();
     });
   });
 
@@ -174,7 +174,7 @@ describe("A Trainer's Test - Mystery Encounter", () => {
       expect(eggsAfter).toBeDefined();
       expect(eggsBeforeLength + 1).toBe(eggsAfter.length);
       const eggTier = eggsAfter[eggsAfter.length - 1].tier;
-      expect(eggTier).toBe(EggTier.GREAT);
+      expect(eggTier).toBe(EggTier.RARE);
     });
 
     it("should leave encounter without battle", async () => {

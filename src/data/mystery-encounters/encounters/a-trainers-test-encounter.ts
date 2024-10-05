@@ -149,7 +149,7 @@ export const ATrainersTestEncounter: MysteryEncounter =
           pulled: false,
           sourceType: EggSourceType.EVENT,
           eggDescriptor: encounter.misc.trainerEggDescription,
-          tier: EggTier.ULTRA
+          tier: EggTier.EPIC
         };
         encounter.setDialogueToken("eggType", i18next.t(`${namespace}:eggTypes.epic`));
         setEncounterRewards(scene, { guaranteedModifierTypeFuncs: [ modifierTypes.SACRED_ASH ], guaranteedModifierTiers: [ ModifierTier.ROGUE, ModifierTier.ULTRA ], fillRemaining: true }, [ eggOptions ]);
@@ -171,7 +171,7 @@ export const ATrainersTestEncounter: MysteryEncounter =
           pulled: false,
           sourceType: EggSourceType.EVENT,
           eggDescriptor: encounter.misc.trainerEggDescription,
-          tier: EggTier.GREAT
+          tier: EggTier.RARE
         };
         encounter.setDialogueToken("eggType", i18next.t(`${namespace}:eggTypes.rare`));
         setEncounterRewards(scene, { fillRemaining: false, rerollMultiplier: -1 }, [ eggOptions ]);

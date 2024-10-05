@@ -470,9 +470,9 @@ export default class EggGachaUiHandler extends MessageUiHandler {
   getGuaranteedEggTierFromPullCount(pullCount: number): EggTier {
     switch (pullCount) {
     case 10:
-      return EggTier.GREAT;
+      return EggTier.RARE;
     case 25:
-      return EggTier.ULTRA;
+      return EggTier.EPIC;
     default:
       return EggTier.COMMON;
     }
@@ -508,7 +508,7 @@ export default class EggGachaUiHandler extends MessageUiHandler {
 
           const eggText = addTextObject(this.scene, 0, 14, egg.getEggDescriptor(), TextStyle.PARTY, { align: "center" });
           eggText.setOrigin(0.5, 0);
-          eggText.setTint(getEggTierTextTint(!egg.isManaphyEgg() ? egg.tier : EggTier.ULTRA));
+          eggText.setTint(getEggTierTextTint(!egg.isManaphyEgg() ? egg.tier : EggTier.EPIC));
           ret.add(eggText);
 
           this.eggGachaSummaryContainer.addAt(ret, 0);
