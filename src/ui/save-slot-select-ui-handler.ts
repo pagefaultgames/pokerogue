@@ -223,7 +223,7 @@ export default class SaveSlotSelectUiHandler extends MessageUiHandler {
       const rightArrow = this.scene.add.image(0, 0, "cursor");
       rightArrow.setPosition(160, 0);
       rightArrow.setName("rightArrow");
-      this.cursorObj.add([cursorBox, rightArrow]);
+      this.cursorObj.add([ cursorBox, rightArrow ]);
       this.sessionSlotsContainer.add(this.cursorObj);
     }
     const cursorPosition = cursor + this.scrollCursor;
