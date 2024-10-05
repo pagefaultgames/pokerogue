@@ -636,8 +636,8 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
 
   /**
    * Sets the localization key used by the encounter
-   * @param localizationKey the localizationKey used for the encounter
-   * @returns
+   * @param localizationKey the string used as the key
+   * @returns `this`
    */
   setLocalizationKey(localizationKey: string): this {
     this.localizationKey = localizationKey;
