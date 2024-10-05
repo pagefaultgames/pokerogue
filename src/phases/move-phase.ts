@@ -375,11 +375,7 @@ export class MovePhase extends BattlePhase {
   protected resolveCounterAttackTarget() {
     if (this.targets.length === 1 && this.targets[0] === BattlerIndex.ATTACKER) {
       if (this.pokemon.turnData.attacksReceived.length) {
-        const attacker = this.pokemon.scene.getPokemonById(this.pokemon.turnData.attacksReceived[0].sourceId);
-
-        if (attacker?.isActive(true)) {
-          this.targets[0] = attacker.getBattlerIndex();
-        }
+        this.targets[0] = this.pokemon.turnData.attacksReceived[0].sourceBattlerIndex;
 
         // account for metal burst and comeuppance hitting remaining targets in double battles
         // counterattack will redirect to remaining ally if original attacker faints
