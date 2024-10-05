@@ -162,7 +162,7 @@ export class Egg {
 
       // Override egg tier and hatchwaves if species was given
       if (eggOptions?.species) {
-        this._tier = this.getEggTierFromSpeciesStarterValue();
+        this._tier = this.getEggTier();
         this._hatchWaves = eggOptions.hatchWaves ?? this.getEggTierDefaultHatchWaves();
       }
       // If species has no variant, set variantTier to common. This needs to
@@ -536,22 +536,8 @@ export class Egg {
     }
   }
 
-  private getEggTierFromSpeciesStarterValue(): EggTier {
-    const speciesStartValue = speciesStarterCosts[this.species];
-    if (speciesStartValue >= 1 && speciesStartValue <= 3) {
-      return EggTier.COMMON;
-    }
-    if (speciesStartValue >= 4 && speciesStartValue <= 5) {
-      return EggTier.GREAT;
-    }
-    if (speciesStartValue >= 6 && speciesStartValue <= 7) {
-      return EggTier.ULTRA;
-    }
-    if (speciesStartValue >= 8) {
-      return EggTier.MASTER;
-    }
-
-    return EggTier.COMMON;
+  private getEggTier(): EggTier {
+    return speciesEggTiers[this.species];
   }
 
   ////
@@ -560,8 +546,8 @@ export class Egg {
 }
 
 export function getLegendaryGachaSpeciesForTimestamp(scene: BattleScene, timestamp: number): Species {
-  const legendarySpecies = Object.entries(speciesStarterCosts)
-    .filter(s => s[1] >= 8 && s[1] <= 9)
+  const legendarySpecies = Object.entries(speciesEggTiers)
+    .filter(s => s[1] === EggTier.MASTER)
     .map(s => parseInt(s[0]))
     .filter(s => getPokemonSpecies(s).isObtainable());
 
@@ -583,17 +569,9 @@ export function getLegendaryGachaSpeciesForTimestamp(scene: BattleScene, timesta
 
 /**
  * Check for a given species EggTier Value
- * @param species - Species for wich we will check the egg tier it belongs to
+ * @param pokemonSpecies - Species for wich we will check the egg tier it belongs to
  * @returns The egg tier of a given pokemon species
  */
 export function getEggTierForSpecies(pokemonSpecies :PokemonSpecies): EggTier {
-  const speciesBaseValue = speciesStarterCosts[pokemonSpecies.getRootSpeciesId()];
-  if (speciesBaseValue <= 3) {
-    return EggTier.COMMON;
-  } else if (speciesBaseValue <= 5) {
-    return EggTier.GREAT;
-  } else if (speciesBaseValue <= 7) {
-    return EggTier.ULTRA;
-  }
-  return EggTier.MASTER;
+  return speciesEggTiers[pokemonSpecies.getRootSpeciesId()];
 }
