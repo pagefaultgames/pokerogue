@@ -1,4 +1,3 @@
-
 export enum BattlerTagType {
   NONE = "NONE",
   RECHARGING = "RECHARGING",
@@ -86,5 +85,6 @@ export enum BattlerTagType {
   TAUNT = "TAUNT",
   IMPRISON = "IMPRISON",
   SYRUP_BOMB = "SYRUP_BOMB",
+  ELECTRIFIED = "ELECTRIFIED",
   TELEKINESIS = "TELEKINESIS"
 }
