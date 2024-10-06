@@ -881,6 +881,81 @@ export class SelfStatusMove extends Move {
   }
 }
 
+type SubMove = new (...args: any[]) => Move;
+
+function ChargeMove<TBase extends SubMove>(Base: TBase) {
+  return class ChargingMove extends Base {
+    /** The animation to play during the move's charging phase */
+    public readonly chargeAnim: ChargeAnim = ChargeAnim[`${Moves[this.id]}_CHARGING`];
+    /** The message to show during the move's charging phase */
+    private _chargeText: string;
+
+    /** Move attributes that apply during the move's charging phase */
+    public chargeAttrs: MoveAttr[] = [];
+
+    /**
+     * Sets the text to be displayed during this move's charging phase.
+     * References to the user Pokemon should be written as "{USER}", and
+     * references to the target Pokemon should be written as "{TARGET}".
+     * @param chargeText the text to set
+     * @returns this {@linkcode Move} (for chaining API purposes)
+     */
+    chargeText(chargeText: string): this {
+      this._chargeText = chargeText;
+      return this;
+    }
+
+    /**
+     * Queues the charge text to display to the player
+     * @param user the {@linkcode Pokemon} using this move
+     * @param target the {@linkcode Pokemon} targeted by this move (optional)
+     */
+    showChargeText(user: Pokemon, target?: Pokemon): void {
+      user.scene.queueMessage(this._chargeText
+        .replace("{USER}", getPokemonNameWithAffix(user))
+        .replace("{TARGET}", getPokemonNameWithAffix(target))
+      );
+    }
+
+    /**
+     * Gets all charge attributes of the given attribute type.
+     * @param attrType any attribute that extends {@linkcode MoveAttr}
+     * @returns Array of attributes that match `attrType`, or an empty array if
+     * no matches are found.
+     */
+    getChargeAttrs<T extends MoveAttr>(attrType: Constructor<T>): T[] {
+      return this.chargeAttrs.filter((attr): attr is T => attr instanceof attrType);
+    }
+
+    /**
+     * Checks if this move has an attribute of the given type.
+     * @param attrType any attribute that extends {@linkcode MoveAttr}
+     * @returns `true` if a matching attribute is found; `false` otherwise
+     */
+    hasChargeAttr<T extends MoveAttr>(attrType: Constructor<T>): boolean {
+      return this.chargeAttrs.some((attr) => attr instanceof attrType);
+    }
+
+    /**
+     * Adds an attribute to this move to be applied during the move's charging phase
+     * @param ChargeAttrType the type of {@linkcode MoveAttr} being added
+     * @param args the parameters to construct the given {@linkcode MoveAttr} with
+     * @returns this {@linkcode Move} (for chaining API purposes)
+     */
+    chargeAttr<T extends Constructor<MoveAttr>>(ChargeAttrType: T, ...args: ConstructorParameters<T>): this {
+      const chargeAttr = new ChargeAttrType(...args);
+      this.chargeAttrs.push(chargeAttr);
+
+      return this;
+    }
+  };
+}
+
+export class ChargingAttackMove extends ChargeMove(AttackMove) {}
+export class ChargingSelfStatusMove extends ChargeMove(SelfStatusMove) {}
+
+export type ChargingMove = ChargingAttackMove | ChargingSelfStatusMove;
+
 /**
  * Base class defining all {@linkcode Move} Attributes
  * @abstract
@@ -2550,6 +2625,43 @@ export class OneHitKOAttr extends MoveAttr {
   }
 }
 
+export class InstantChargeAttr extends MoveAttr {
+  protected readonly condition: UserMoveConditionFunc;
+
+  constructor(condition: UserMoveConditionFunc) {
+    super(true);
+    this.condition = condition;
+  }
+
+  override apply(user: Pokemon, target: Pokemon | null, move: Move, args: any[]): boolean {
+    const instantCharge = args[0];
+    if (!(instantCharge instanceof Utils.BooleanHolder)) {
+      return false;
+    }
+
+    if (this.condition(user, move)) {
+      instantCharge.value = true;
+      return true;
+    }
+    return false;
+  }
+}
+
+export class WeatherInstantChargeAttr extends InstantChargeAttr {
+  constructor(weatherTypes: WeatherType[]) {
+    super((user, move) => {
+      const currentWeather = user.scene.arena.weather;
+
+      if (Utils.isNullOrUndefined(currentWeather?.weatherType)) {
+        return false;
+      } else {
+        return !currentWeather?.isEffectSuppressed(user.scene)
+          && weatherTypes.includes(currentWeather?.weatherType);
+      }
+    });
+  }
+}
+
 export class OverrideMoveEffectAttr extends MoveAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean | Promise<boolean> {
     //const overridden = args[0] as Utils.BooleanHolder;
@@ -2606,60 +2718,6 @@ export class ChargeAttr extends OverrideMoveEffectAttr {
     // Account for move history being populated when this function is called
     const lastMoves = user.getLastXMoves(2);
     return lastMoves.length === 2 && lastMoves[1].move === move.id && lastMoves[1].result === MoveResult.OTHER;
-  }
-}
-
-export class SunlightChargeAttr extends ChargeAttr {
-  constructor(chargeAnim: ChargeAnim, chargeText: string) {
-    super(chargeAnim, chargeText);
-  }
-
-  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): Promise<boolean> {
-    return new Promise(resolve => {
-      const weatherType = user.scene.arena.weather?.weatherType;
-      if (!user.scene.arena.weather?.isEffectSuppressed(user.scene) && (weatherType === WeatherType.SUNNY || weatherType === WeatherType.HARSH_SUN)) {
-        resolve(false);
-      } else {
-        super.apply(user, target, move, args).then(result => resolve(result));
-      }
-    });
-  }
-}
-
-export class ElectroShotChargeAttr extends ChargeAttr {
-  private statIncreaseApplied: boolean;
-  constructor() {
-    super(ChargeAnim.ELECTRO_SHOT_CHARGING, i18next.t("moveTriggers:absorbedElectricity", { pokemonName: "{USER}" }), null, true);
-    // Add a flag because ChargeAttr skills use themselves twice instead of once over one-to-two turns
-    this.statIncreaseApplied = false;
-  }
-
-  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): Promise<boolean> {
-    return new Promise(resolve => {
-      const weatherType = user.scene.arena.weather?.weatherType;
-      if (!user.scene.arena.weather?.isEffectSuppressed(user.scene) && (weatherType === WeatherType.RAIN || weatherType === WeatherType.HEAVY_RAIN)) {
-        // Apply the SPATK increase every call when used in the rain
-        const statChangeAttr = new StatStageChangeAttr([ Stat.SPATK ], 1, true);
-        statChangeAttr.apply(user, target, move, args);
-        // After the SPATK is raised, execute the move resolution e.g. deal damage
-        resolve(false);
-      } else {
-        if (!this.statIncreaseApplied) {
-          // Apply the SPATK increase only if it hasn't been applied before e.g. on the first turn charge up animation
-          const statChangeAttr = new StatStageChangeAttr([ Stat.SPATK ], 1, true);
-          statChangeAttr.apply(user, target, move, args);
-          // Set the flag to true so that on the following turn it doesn't raise SPATK a second time
-          this.statIncreaseApplied = true;
-        }
-        super.apply(user, target, move, args).then(result => {
-          if (!result) {
-            // On the second turn, reset the statIncreaseApplied flag without applying the SPATK increase
-            this.statIncreaseApplied = false;
-          }
-          resolve(result);
-        });
-      }
-    });
   }
 }
 
@@ -6797,12 +6855,30 @@ function applyMoveAttrsInternal(attrFilter: MoveAttrFilter, user: Pokemon | null
   });
 }
 
+function applyMoveChargeAttrsInternal(attrFilter: MoveAttrFilter, user: Pokemon | null, target: Pokemon | null, move: ChargingMove, args: any[]): Promise<void> {
+  return new Promise(resolve => {
+    const chargeAttrPromises: Promise<boolean>[] = [];
+    const chargeMoveAttrs = move.chargeAttrs.filter(a => attrFilter(a));
+    for (const attr of chargeMoveAttrs) {
+      const result = attr.apply(user, target, move, args);
+      if (result instanceof Promise) {
+        chargeAttrPromises.push(result);
+      }
+    }
+    Promise.allSettled(chargeAttrPromises).then(() => resolve());
+  });
+}
+
 export function applyMoveAttrs(attrType: Constructor<MoveAttr>, user: Pokemon | null, target: Pokemon | null, move: Move, ...args: any[]): Promise<void> {
   return applyMoveAttrsInternal((attr: MoveAttr) => attr instanceof attrType, user, target, move, args);
 }
 
 export function applyFilteredMoveAttrs(attrFilter: MoveAttrFilter, user: Pokemon, target: Pokemon | null, move: Move, ...args: any[]): Promise<void> {
   return applyMoveAttrsInternal(attrFilter, user, target, move, args);
+}
+
+export function applyMoveChargeAttrs(attrType: Constructor<MoveAttr>, user: Pokemon | null, target: Pokemon | null, move: ChargingMove, ...args: any[]): Promise<void> {
+  return applyMoveChargeAttrsInternal((attr: MoveAttr) => attr instanceof attrType, user, target, move, args);
 }
 
 export class MoveCondition {
@@ -7049,8 +7125,8 @@ export function initMoves() {
     new AttackMove(Moves.GUILLOTINE, Type.NORMAL, MoveCategory.PHYSICAL, 200, 30, 5, -1, 0, 1)
       .attr(OneHitKOAttr)
       .attr(OneHitKOAccuracyAttr),
-    new AttackMove(Moves.RAZOR_WIND, Type.NORMAL, MoveCategory.SPECIAL, 80, 100, 10, -1, 0, 1)
-      .attr(ChargeAttr, ChargeAnim.RAZOR_WIND_CHARGING, i18next.t("moveTriggers:whippedUpAWhirlwind", { pokemonName: "{USER}" }))
+    new ChargingAttackMove(Moves.RAZOR_WIND, Type.NORMAL, MoveCategory.SPECIAL, 80, 100, 10, -1, 0, 1)
+      .chargeText(i18next.t("moveTriggers:whippedUpAWhirlwind", { pokemonName: "{USER}" }))
       .attr(HighCritAttr)
       .windMove()
       .ignoresVirtual()
@@ -7069,8 +7145,10 @@ export function initMoves() {
       .ignoresSubstitute()
       .hidesTarget()
       .windMove(),
-    new AttackMove(Moves.FLY, Type.FLYING, MoveCategory.PHYSICAL, 90, 95, 15, -1, 0, 1)
-      .attr(ChargeAttr, ChargeAnim.FLY_CHARGING, i18next.t("moveTriggers:flewUpHigh", { pokemonName: "{USER}" }), BattlerTagType.FLYING)
+    new ChargingAttackMove(Moves.FLY, Type.FLYING, MoveCategory.PHYSICAL, 90, 95, 15, -1, 0, 1)
+      .chargeText(i18next.t("moveTriggers:flewUpHigh", { pokemonName: "{USER}" }))
+      .chargeAttr(AddBattlerTagAttr, BattlerTagType.FLYING, true)
+      // TODO: double check Gravity interactions
       .condition(failOnGravityCondition)
       .ignoresVirtual(),
     new AttackMove(Moves.BIND, Type.NORMAL, MoveCategory.PHYSICAL, 15, 85, 20, -1, 0, 1)
@@ -7218,8 +7296,9 @@ export function initMoves() {
       .makesContact(false)
       .slicingMove()
       .target(MoveTarget.ALL_NEAR_ENEMIES),
-    new AttackMove(Moves.SOLAR_BEAM, Type.GRASS, MoveCategory.SPECIAL, 120, 100, 10, -1, 0, 1)
-      .attr(SunlightChargeAttr, ChargeAnim.SOLAR_BEAM_CHARGING, i18next.t("moveTriggers:tookInSunlight", { pokemonName: "{USER}" }))
+    new ChargingAttackMove(Moves.SOLAR_BEAM, Type.GRASS, MoveCategory.SPECIAL, 120, 100, 10, -1, 0, 1)
+      .chargeText(i18next.t("moveTriggers:tookInSunlight", { pokemonName: "{USER}" }))
+      .chargeAttr(WeatherInstantChargeAttr, [ WeatherType.SUNNY, WeatherType.HARSH_SUN ])
       .attr(AntiSunlightPowerDecreaseAttr)
       .ignoresVirtual(),
     new StatusMove(Moves.POISON_POWDER, Type.POISON, 75, 35, -1, 0, 1)
@@ -7268,8 +7347,9 @@ export function initMoves() {
       .attr(OneHitKOAccuracyAttr)
       .attr(HitsTagAttr, BattlerTagType.UNDERGROUND)
       .makesContact(false),
-    new AttackMove(Moves.DIG, Type.GROUND, MoveCategory.PHYSICAL, 80, 100, 10, -1, 0, 1)
-      .attr(ChargeAttr, ChargeAnim.DIG_CHARGING, i18next.t("moveTriggers:dugAHole", { pokemonName: "{USER}" }), BattlerTagType.UNDERGROUND)
+    new ChargingAttackMove(Moves.DIG, Type.GROUND, MoveCategory.PHYSICAL, 80, 100, 10, -1, 0, 1)
+      .chargeText(i18next.t("moveTriggers:dugAHole", { pokemonName: "{USER}" }))
+      .chargeAttr(AddBattlerTagAttr, BattlerTagType.UNDERGROUND, true)
       .ignoresVirtual(),
     new StatusMove(Moves.TOXIC, Type.POISON, 90, 10, -1, 0, 1)
       .attr(StatusEffectAttr, StatusEffect.TOXIC)
@@ -7365,9 +7445,9 @@ export function initMoves() {
       .attr(TrapAttr, BattlerTagType.CLAMP),
     new AttackMove(Moves.SWIFT, Type.NORMAL, MoveCategory.SPECIAL, 60, -1, 20, -1, 0, 1)
       .target(MoveTarget.ALL_NEAR_ENEMIES),
-    new AttackMove(Moves.SKULL_BASH, Type.NORMAL, MoveCategory.PHYSICAL, 130, 100, 10, -1, 0, 1)
-      .attr(ChargeAttr, ChargeAnim.SKULL_BASH_CHARGING, i18next.t("moveTriggers:loweredItsHead", { pokemonName: "{USER}" }), null, true)
-      .attr(StatStageChangeAttr, [ Stat.DEF ], 1, true)
+    new ChargingAttackMove(Moves.SKULL_BASH, Type.NORMAL, MoveCategory.PHYSICAL, 130, 100, 10, -1, 0, 1)
+      .chargeText(i18next.t("moveTriggers:loweredItsHead", { pokemonName: "{USER}" }))
+      .chargeAttr(StatStageChangeAttr, [ Stat.DEF ], 1, true)
       .ignoresVirtual(),
     new AttackMove(Moves.SPIKE_CANNON, Type.NORMAL, MoveCategory.PHYSICAL, 20, 100, 15, -1, 0, 1)
       .attr(MultiHitAttr)
@@ -7404,8 +7484,8 @@ export function initMoves() {
       .triageMove(),
     new StatusMove(Moves.LOVELY_KISS, Type.NORMAL, 75, 10, -1, 0, 1)
       .attr(StatusEffectAttr, StatusEffect.SLEEP),
-    new AttackMove(Moves.SKY_ATTACK, Type.FLYING, MoveCategory.PHYSICAL, 140, 90, 5, 30, 0, 1)
-      .attr(ChargeAttr, ChargeAnim.SKY_ATTACK_CHARGING, i18next.t("moveTriggers:isGlowing", { pokemonName: "{USER}" }))
+    new ChargingAttackMove(Moves.SKY_ATTACK, Type.FLYING, MoveCategory.PHYSICAL, 140, 90, 5, 30, 0, 1)
+      .chargeText(i18next.t("moveTriggers:isGlowing", { pokemonName: "{USER}" }))
       .attr(HighCritAttr)
       .attr(FlinchAttr)
       .makesContact(false)
@@ -7866,9 +7946,10 @@ export function initMoves() {
     new AttackMove(Moves.SECRET_POWER, Type.NORMAL, MoveCategory.PHYSICAL, 70, 100, 20, 30, 0, 3)
       .makesContact(false)
       .partial(),
-    new AttackMove(Moves.DIVE, Type.WATER, MoveCategory.PHYSICAL, 80, 100, 10, -1, 0, 3)
-      .attr(ChargeAttr, ChargeAnim.DIVE_CHARGING, i18next.t("moveTriggers:hidUnderwater", { pokemonName: "{USER}" }), BattlerTagType.UNDERWATER, true)
-      .attr(GulpMissileTagAttr)
+    new ChargingAttackMove(Moves.DIVE, Type.WATER, MoveCategory.PHYSICAL, 80, 100, 10, -1, 0, 3)
+      .chargeText(i18next.t("moveTriggers:hidUnderwater", { pokemonName: "{USER}" }))
+      .chargeAttr(AddBattlerTagAttr, BattlerTagType.UNDERWATER, true)
+      .chargeAttr(GulpMissileTagAttr)
       .ignoresVirtual(),
     new AttackMove(Moves.ARM_THRUST, Type.FIGHTING, MoveCategory.PHYSICAL, 15, 100, 20, -1, 0, 3)
       .attr(MultiHitAttr),
@@ -8001,8 +8082,9 @@ export function initMoves() {
       .attr(RechargeAttr),
     new SelfStatusMove(Moves.BULK_UP, Type.FIGHTING, -1, 20, -1, 0, 3)
       .attr(StatStageChangeAttr, [ Stat.ATK, Stat.DEF ], 1, true),
-    new AttackMove(Moves.BOUNCE, Type.FLYING, MoveCategory.PHYSICAL, 85, 85, 5, 30, 0, 3)
-      .attr(ChargeAttr, ChargeAnim.BOUNCE_CHARGING, i18next.t("moveTriggers:sprangUp", { pokemonName: "{USER}" }), BattlerTagType.FLYING)
+    new ChargingAttackMove(Moves.BOUNCE, Type.FLYING, MoveCategory.PHYSICAL, 85, 85, 5, 30, 0, 3)
+      .chargeText(i18next.t("moveTriggers:sprangUp", { pokemonName: "{USER}" }))
+      .chargeAttr(AddBattlerTagAttr, BattlerTagType.FLYING, true)
       .attr(StatusEffectAttr, StatusEffect.PARALYSIS)
       .condition(failOnGravityCondition)
       .ignoresVirtual(),
@@ -8357,8 +8439,9 @@ export function initMoves() {
     new AttackMove(Moves.OMINOUS_WIND, Type.GHOST, MoveCategory.SPECIAL, 60, 100, 5, 10, 0, 4)
       .attr(StatStageChangeAttr, [ Stat.ATK, Stat.DEF, Stat.SPATK, Stat.SPDEF, Stat.SPD ], 1, true)
       .windMove(),
-    new AttackMove(Moves.SHADOW_FORCE, Type.GHOST, MoveCategory.PHYSICAL, 120, 100, 5, -1, 0, 4)
-      .attr(ChargeAttr, ChargeAnim.SHADOW_FORCE_CHARGING, i18next.t("moveTriggers:vanishedInstantly", { pokemonName: "{USER}" }), BattlerTagType.HIDDEN)
+    new ChargingAttackMove(Moves.SHADOW_FORCE, Type.GHOST, MoveCategory.PHYSICAL, 120, 100, 5, -1, 0, 4)
+      .chargeText(i18next.t("moveTriggers:vanishedInstantly", { pokemonName: "{USER}" }))
+      .chargeAttr(AddBattlerTagAttr, BattlerTagType.HIDDEN, true)
       .ignoresProtect()
       .ignoresVirtual(),
     new SelfStatusMove(Moves.HONE_CLAWS, Type.DARK, -1, 15, -1, 0, 5)
@@ -8477,12 +8560,13 @@ export function initMoves() {
       .attr(
         MovePowerMultiplierAttr,
         (user, target, move) =>  target.status || target.hasAbility(Abilities.COMATOSE) ? 2 : 1),
-    new AttackMove(Moves.SKY_DROP, Type.FLYING, MoveCategory.PHYSICAL, 60, 100, 10, -1, 0, 5)
-      .partial() // Should immobilize the target, Flying types should take no damage. cf https://bulbapedia.bulbagarden.net/wiki/Sky_Drop_(move) and https://www.smogon.com/dex/sv/moves/sky-drop/
-      .attr(ChargeAttr, ChargeAnim.SKY_DROP_CHARGING, i18next.t("moveTriggers:tookTargetIntoSky", { pokemonName: "{USER}", targetName: "{TARGET}" }), BattlerTagType.FLYING) // TODO: Add 2nd turn message
+    new ChargingAttackMove(Moves.SKY_DROP, Type.FLYING, MoveCategory.PHYSICAL, 60, 100, 10, -1, 0, 5)
+      .chargeText(i18next.t("moveTriggers:tookTargetIntoSky", { pokemonName: "{USER}", targetName: "{TARGET}" }))
+      .chargeAttr(AddBattlerTagAttr, BattlerTagType.FLYING, true)
       .condition(failOnGravityCondition)
       .condition((user, target, move) => !target.getTag(BattlerTagType.SUBSTITUTE))
-      .ignoresVirtual(),
+      .ignoresVirtual()
+      .partial(), // Should immobilize the target, Flying types should take no damage. cf https://bulbapedia.bulbagarden.net/wiki/Sky_Drop_(move) and https://www.smogon.com/dex/sv/moves/sky-drop/
     new SelfStatusMove(Moves.SHIFT_GEAR, Type.STEEL, -1, 10, -1, 0, 5)
       .attr(StatStageChangeAttr, [ Stat.ATK ], 1, true)
       .attr(StatStageChangeAttr, [ Stat.SPD ], 2, true),
@@ -8630,12 +8714,12 @@ export function initMoves() {
     new AttackMove(Moves.FIERY_DANCE, Type.FIRE, MoveCategory.SPECIAL, 80, 100, 10, 50, 0, 5)
       .attr(StatStageChangeAttr, [ Stat.SPATK ], 1, true)
       .danceMove(),
-    new AttackMove(Moves.FREEZE_SHOCK, Type.ICE, MoveCategory.PHYSICAL, 140, 90, 5, 30, 0, 5)
-      .attr(ChargeAttr, ChargeAnim.FREEZE_SHOCK_CHARGING, i18next.t("moveTriggers:becameCloakedInFreezingLight", { pokemonName: "{USER}" }))
+    new ChargingAttackMove(Moves.FREEZE_SHOCK, Type.ICE, MoveCategory.PHYSICAL, 140, 90, 5, 30, 0, 5)
+      .chargeText(i18next.t("moveTriggers:becameCloakedInFreezingLight", { pokemonName: "{USER}" }))
       .attr(StatusEffectAttr, StatusEffect.PARALYSIS)
       .makesContact(false),
-    new AttackMove(Moves.ICE_BURN, Type.ICE, MoveCategory.SPECIAL, 140, 90, 5, 30, 0, 5)
-      .attr(ChargeAttr, ChargeAnim.ICE_BURN_CHARGING, i18next.t("moveTriggers:becameCloakedInFreezingAir", { pokemonName: "{USER}" }))
+    new ChargingAttackMove(Moves.ICE_BURN, Type.ICE, MoveCategory.SPECIAL, 140, 90, 5, 30, 0, 5)
+      .chargeText(i18next.t("moveTriggers:becameCloakedInFreezingAir", { pokemonName: "{USER}" }))
       .attr(StatusEffectAttr, StatusEffect.BURN)
       .ignoresVirtual(),
     new AttackMove(Moves.SNARL, Type.DARK, MoveCategory.SPECIAL, 55, 95, 15, 100, 0, 5)
@@ -8677,8 +8761,9 @@ export function initMoves() {
       .target(MoveTarget.ENEMY_SIDE),
     new AttackMove(Moves.FELL_STINGER, Type.BUG, MoveCategory.PHYSICAL, 50, 100, 25, -1, 0, 6)
       .attr(PostVictoryStatStageChangeAttr, [ Stat.ATK ], 3, true ),
-    new AttackMove(Moves.PHANTOM_FORCE, Type.GHOST, MoveCategory.PHYSICAL, 90, 100, 10, -1, 0, 6)
-      .attr(ChargeAttr, ChargeAnim.PHANTOM_FORCE_CHARGING, i18next.t("moveTriggers:vanishedInstantly", { pokemonName: "{USER}" }), BattlerTagType.HIDDEN)
+    new ChargingAttackMove(Moves.PHANTOM_FORCE, Type.GHOST, MoveCategory.PHYSICAL, 90, 100, 10, -1, 0, 6)
+      .chargeText(i18next.t("moveTriggers:vanishedInstantly", { pokemonName: "{USER}" }))
+      .chargeAttr(AddBattlerTagAttr, BattlerTagType.HIDDEN, true)
       .ignoresProtect()
       .ignoresVirtual(),
     new StatusMove(Moves.TRICK_OR_TREAT, Type.GHOST, 100, 20, -1, 0, 6)
@@ -8788,8 +8873,8 @@ export function initMoves() {
       .ignoresSubstitute()
       .powderMove()
       .unimplemented(),
-    new SelfStatusMove(Moves.GEOMANCY, Type.FAIRY, -1, 10, -1, 0, 6)
-      .attr(ChargeAttr, ChargeAnim.GEOMANCY_CHARGING, i18next.t("moveTriggers:isChargingPower", { pokemonName: "{USER}" }))
+    new ChargingSelfStatusMove(Moves.GEOMANCY, Type.FAIRY, -1, 10, -1, 0, 6)
+      .chargeText(i18next.t("moveTriggers:isChargingPower", { pokemonName: "{USER}" }))
       .attr(StatStageChangeAttr, [ Stat.SPATK, Stat.SPDEF, Stat.SPD ], 2, true)
       .ignoresVirtual(),
     new StatusMove(Moves.MAGNETIC_FLUX, Type.ELECTRIC, -1, 20, -1, 0, 6)
@@ -8998,8 +9083,9 @@ export function initMoves() {
       .attr(StatStageChangeAttr, [ Stat.ATK ], -1)
       .condition((user, target, move) => target.getStatStage(Stat.ATK) > -6)
       .triageMove(),
-    new AttackMove(Moves.SOLAR_BLADE, Type.GRASS, MoveCategory.PHYSICAL, 125, 100, 10, -1, 0, 7)
-      .attr(SunlightChargeAttr, ChargeAnim.SOLAR_BLADE_CHARGING, i18next.t("moveTriggers:isGlowing", { pokemonName: "{USER}" }))
+    new ChargingAttackMove(Moves.SOLAR_BLADE, Type.GRASS, MoveCategory.PHYSICAL, 125, 100, 10, -1, 0, 7)
+      .chargeText(i18next.t("moveTriggers:isGlowing", { pokemonName: "{USER}" }))
+      .chargeAttr(WeatherInstantChargeAttr, [ WeatherType.SUNNY, WeatherType.HARSH_SUN ])
       .attr(AntiSunlightPowerDecreaseAttr)
       .slicingMove(),
     new AttackMove(Moves.LEAFAGE, Type.GRASS, MoveCategory.PHYSICAL, 40, 100, 40, -1, 0, 7)
@@ -9425,9 +9511,9 @@ export function initMoves() {
       .attr(StatStageChangeAttr, [ Stat.DEF ], -1, true, null, true, false, MoveEffectTrigger.HIT, false, true)
       .attr(MultiHitAttr)
       .makesContact(false),
-    new AttackMove(Moves.METEOR_BEAM, Type.ROCK, MoveCategory.SPECIAL, 120, 90, 10, 100, 0, 8)
-      .attr(ChargeAttr, ChargeAnim.METEOR_BEAM_CHARGING, i18next.t("moveTriggers:isOverflowingWithSpacePower", { pokemonName: "{USER}" }), null, true)
-      .attr(StatStageChangeAttr, [ Stat.SPATK ], 1, true)
+    new ChargingAttackMove(Moves.METEOR_BEAM, Type.ROCK, MoveCategory.SPECIAL, 120, 90, 10, 100, 0, 8)
+      .chargeText(i18next.t("moveTriggers:isOverflowingWithSpacePower", { pokemonName: "{USER}" }))
+      .chargeAttr(StatStageChangeAttr, [ Stat.SPATK ], 1, true)
       .ignoresVirtual(),
     new AttackMove(Moves.SHELL_SIDE_ARM, Type.POISON, MoveCategory.SPECIAL, 90, 100, 10, 20, 0, 8)
       .attr(ShellSideArmCategoryAttr)
@@ -9880,8 +9966,10 @@ export function initMoves() {
       .attr(IvyCudgelTypeAttr)
       .attr(HighCritAttr)
       .makesContact(false),
-    new AttackMove(Moves.ELECTRO_SHOT, Type.ELECTRIC, MoveCategory.SPECIAL, 130, 100, 10, 100, 0, 9)
-      .attr(ElectroShotChargeAttr)
+    new ChargingAttackMove(Moves.ELECTRO_SHOT, Type.ELECTRIC, MoveCategory.SPECIAL, 130, 100, 10, 100, 0, 9)
+      .chargeText(i18next.t("moveTriggers:absorbedElectricity", { pokemonName: "{USER}" }))
+      .chargeAttr(StatStageChangeAttr, [ Stat.SPATK ], 1)
+      .chargeAttr(WeatherInstantChargeAttr, [ WeatherType.RAIN, WeatherType.HEAVY_RAIN ])
       .ignoresVirtual(),
     new AttackMove(Moves.TERA_STARSTORM, Type.NORMAL, MoveCategory.SPECIAL, 120, 100, 5, -1, 0, 9)
       .attr(TeraMoveCategoryAttr)
