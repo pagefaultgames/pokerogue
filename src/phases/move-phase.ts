@@ -331,22 +331,30 @@ export class MovePhase extends BattlePhase {
       // check move redirection abilities of every pokemon *except* the user.
       this.scene.getField(true).filter(p => p !== this.pokemon).forEach(p => applyAbAttrs(RedirectMoveAbAttr, p, null, false, this.move.moveId, redirectTarget));
 
+      /** `true` if an Ability is responsible for redirecting the move to another target; `false` otherwise */
+      let redirectedByAbility = (currentTarget !== redirectTarget.value);
+
       // check for center-of-attention tags (note that this will override redirect abilities)
       this.pokemon.getOpponents().forEach(p => {
-        const redirectTag = p.getTag(CenterOfAttentionTag) as CenterOfAttentionTag;
+        const redirectTag = p.getTag(CenterOfAttentionTag);
 
         // TODO: don't hardcode this interaction.
         // Handle interaction between the rage powder center-of-attention tag and moves used by grass types/overcoat-havers (which are immune to RP's redirect)
         if (redirectTag && (!redirectTag.powder || (!this.pokemon.isOfType(Type.GRASS) && !this.pokemon.hasAbility(Abilities.OVERCOAT)))) {
           redirectTarget.value = p.getBattlerIndex();
+          redirectedByAbility = false;
         }
       });
 
       if (currentTarget !== redirectTarget.value) {
-        if (this.move.getMove().hasAttr(BypassRedirectAttr)) {
-          redirectTarget.value = currentTarget;
+        const bypassRedirectAttrs = this.move.getMove().getAttrs(BypassRedirectAttr);
+        bypassRedirectAttrs.forEach((attr) => {
+          if (!attr.abilitiesOnly || redirectedByAbility) {
+            redirectTarget.value = currentTarget;
+          }
+        });
 
-        } else if (this.pokemon.hasAbilityWithAttr(BlockRedirectAbAttr)) {
+        if (this.pokemon.hasAbilityWithAttr(BlockRedirectAbAttr)) {
           redirectTarget.value = currentTarget;
           this.scene.unshiftPhase(new ShowAbilityPhase(this.scene, this.pokemon.getBattlerIndex(), this.pokemon.getPassiveAbility().hasAttr(BlockRedirectAbAttr)));
         }

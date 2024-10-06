@@ -3,7 +3,7 @@ import BattleScene, { AnySound } from "#app/battle-scene";
 import { Variant, VariantSet, variantColorCache } from "#app/data/variant";
 import { variantData } from "#app/data/variant";
 import BattleInfo, { PlayerBattleInfo, EnemyBattleInfo } from "#app/ui/battle-info";
-import Move, { HighCritAttr, HitsTagAttr, applyMoveAttrs, FixedDamageAttr, VariableAtkAttr, allMoves, MoveCategory, TypelessAttr, CritOnlyAttr, getMoveTargets, OneHitKOAttr, VariableMoveTypeAttr, VariableDefAttr, AttackMove, ModifiedDamageAttr, VariableMoveTypeMultiplierAttr, IgnoreOpponentStatStagesAttr, SacrificialAttr, VariableMoveCategoryAttr, CounterDamageAttr, StatStageChangeAttr, RechargeAttr, ChargeAttr, IgnoreWeatherTypeDebuffAttr, BypassBurnDamageReductionAttr, SacrificialAttrOnHit, OneHitKOAccuracyAttr, RespectAttackTypeImmunityAttr, MoveTarget } from "#app/data/move";
+import Move, { HighCritAttr, HitsTagAttr, applyMoveAttrs, FixedDamageAttr, VariableAtkAttr, allMoves, MoveCategory, TypelessAttr, CritOnlyAttr, getMoveTargets, OneHitKOAttr, VariableMoveTypeAttr, VariableDefAttr, AttackMove, ModifiedDamageAttr, VariableMoveTypeMultiplierAttr, IgnoreOpponentStatStagesAttr, SacrificialAttr, VariableMoveCategoryAttr, CounterDamageAttr, StatStageChangeAttr, RechargeAttr, ChargeAttr, IgnoreWeatherTypeDebuffAttr, BypassBurnDamageReductionAttr, SacrificialAttrOnHit, OneHitKOAccuracyAttr, RespectAttackTypeImmunityAttr, MoveTarget, CombinedPledgeStabBoostAttr } from "#app/data/move";
 import { default as PokemonSpecies, PokemonSpeciesForm, getFusedSpeciesName, getPokemonSpecies, getPokemonSpeciesForm } from "#app/data/pokemon-species";
 import { getStarterValueFriendshipCap, speciesStarterCosts } from "#app/data/balance/starters";
 import { starterPassiveAbilities } from "#app/data/balance/passives";
@@ -924,10 +924,12 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       }
       break;
     case Stat.SPD:
-      // Check both the player and enemy to see if Tailwind should be multiplying the speed of the Pokemon
-      if    ((this.isPlayer() && this.scene.arena.getTagOnSide(ArenaTagType.TAILWIND, ArenaTagSide.PLAYER))
-          ||  (!this.isPlayer() && this.scene.arena.getTagOnSide(ArenaTagType.TAILWIND, ArenaTagSide.ENEMY))) {
+      const side = this.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY;
+      if (this.scene.arena.getTagOnSide(ArenaTagType.TAILWIND, side)) {
         ret *= 2;
+      }
+      if (this.scene.arena.getTagOnSide(ArenaTagType.GRASS_WATER_PLEDGE, side)) {
+        ret >>= 2;
       }
 
       if (this.getTag(BattlerTagType.SLOW_START)) {
@@ -1525,7 +1527,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     applyMoveAttrs(VariableMoveTypeAttr, this, null, move, moveTypeHolder);
     applyPreAttackAbAttrs(MoveTypeChangeAbAttr, this, null, move, simulated, moveTypeHolder);
 
-    this.scene.arena.applyTags(ArenaTagType.PLASMA_FISTS, moveTypeHolder);
+    this.scene.arena.applyTags(ArenaTagType.ION_DELUGE, moveTypeHolder);
+    if (this.getTag(BattlerTagType.ELECTRIFIED)) {
+      moveTypeHolder.value = Type.ELECTRIC;
+    }
 
     return moveTypeHolder.value as Type;
   }
@@ -1702,7 +1707,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     if (pokemonEvolutions.hasOwnProperty(this.species.speciesId)) {
       const evolutions = pokemonEvolutions[this.species.speciesId];
       for (const e of evolutions) {
-        if (!e.item && this.level >= e.level && (!e.preFormKey || this.getFormKey() === e.preFormKey)) {
+        if (!e.item && this.level >= e.level && (isNullOrUndefined(e.preFormKey) || this.getFormKey() === e.preFormKey)) {
           if (e.condition === null || (e.condition as SpeciesEvolutionCondition).predicate(this)) {
             return e;
           }
@@ -1713,7 +1718,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     if (this.isFusion() && this.fusionSpecies && pokemonEvolutions.hasOwnProperty(this.fusionSpecies.speciesId)) {
       const fusionEvolutions = pokemonEvolutions[this.fusionSpecies.speciesId].map(e => new FusionSpeciesFormEvolution(this.species.speciesId, e));
       for (const fe of fusionEvolutions) {
-        if (!fe.item && this.level >= fe.level && (!fe.preFormKey || this.getFusionFormKey() === fe.preFormKey)) {
+        if (!fe.item && this.level >= fe.level && (isNullOrUndefined(fe.preFormKey) || this.getFusionFormKey() === fe.preFormKey)) {
           if (fe.condition === null || (fe.condition as SpeciesEvolutionCondition).predicate(this)) {
             return fe;
           }
@@ -2562,6 +2567,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     if (matchesSourceType) {
       stabMultiplier.value += 0.5;
     }
+    applyMoveAttrs(CombinedPledgeStabBoostAttr, source, this, move, stabMultiplier);
     if (sourceTeraType !== Type.UNKNOWN && sourceTeraType === moveType) {
       stabMultiplier.value += 0.5;
     }
@@ -5041,6 +5047,7 @@ export class PokemonTurnData {
   public statStagesIncreased: boolean = false;
   public statStagesDecreased: boolean = false;
   public moveEffectiveness: TypeDamageMultiplier | null = null;
+  public combiningPledge?: Moves;
 }
 
 export enum AiType {
