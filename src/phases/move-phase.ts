@@ -22,6 +22,7 @@ import { MoveEndPhase } from "#app/phases/move-end-phase";
 import { ShowAbilityPhase } from "#app/phases/show-ability-phase";
 import * as Utils from "#app/utils";
 import i18next from "i18next";
+import { MoveChargePhase } from "./move-charge-phase";
 
 export class MovePhase extends BattlePhase {
   protected _pokemon: Pokemon;
@@ -132,6 +133,8 @@ export class MovePhase extends BattlePhase {
 
     if (this.cancelled || this.failed) {
       this.handlePreMoveFailures();
+    } else if (this.move.getMove().isChargingMove() && !this.pokemon.getTag(BattlerTagType.CHARGING)) {
+      this.chargeMove();
     } else {
       this.useMove();
     }
@@ -293,6 +296,11 @@ export class MovePhase extends BattlePhase {
         applyPostMoveUsedAbAttrs(PostMoveUsedAbAttr, pokemon, this.move, this.pokemon, this.targets);
       });
     }
+  }
+
+  /** Queues a {@linkcode MoveChargePhase} for this phase's invoked move. */
+  protected chargeMove() {
+    this.scene.unshiftPhase(new MoveChargePhase(this.scene, this.pokemon.getBattlerIndex(), this.targets[0], this.move));
   }
 
   /**

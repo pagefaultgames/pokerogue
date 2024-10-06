@@ -289,10 +289,9 @@ export default class Move implements Localizable {
   }
 
   /**
-   * Getter function that returns if the move targets itself or an ally
+   * Getter function that returns if the move targets the user or its ally
    * @returns boolean
    */
-
   isAllyTarget(): boolean {
     switch (this.moveTarget) {
     case MoveTarget.USER:
@@ -303,6 +302,10 @@ export default class Move implements Localizable {
     case MoveTarget.USER_SIDE:
       return true;
     }
+    return false;
+  }
+
+  isChargingMove(): this is ChargingMove {
     return false;
   }
 
@@ -884,7 +887,7 @@ export class SelfStatusMove extends Move {
 type SubMove = new (...args: any[]) => Move;
 
 function ChargeMove<TBase extends SubMove>(Base: TBase) {
-  return class ChargingMove extends Base {
+  return class extends Base {
     /** The animation to play during the move's charging phase */
     public readonly chargeAnim: ChargeAnim = ChargeAnim[`${Moves[this.id]}_CHARGING`];
     /** The message to show during the move's charging phase */
@@ -892,6 +895,10 @@ function ChargeMove<TBase extends SubMove>(Base: TBase) {
 
     /** Move attributes that apply during the move's charging phase */
     public chargeAttrs: MoveAttr[] = [];
+
+    override isChargingMove(): this is ChargingMove {
+      return true;
+    }
 
     /**
      * Sets the text to be displayed during this move's charging phase.

@@ -1,7 +1,7 @@
 import BattleScene from "#app/battle-scene";
 import { BattlerIndex } from "#app/battle";
 import { MoveChargeAnim } from "#app/data/battle-anims";
-import { ChargingAttackMove, ChargingSelfStatusMove, applyMoveChargeAttrs, MoveEffectAttr, InstantChargeAttr } from "#app/data/move";
+import { applyMoveChargeAttrs, MoveEffectAttr, InstantChargeAttr } from "#app/data/move";
 import Pokemon, { PokemonMove } from "#app/field/pokemon";
 import { BooleanHolder } from "#app/utils";
 import { MovePhase } from "#app/phases/move-phase";
@@ -31,18 +31,13 @@ export class MoveChargePhase extends PokemonPhase {
     }
 
     const move = this.move.getMove();
-    if (!(move instanceof ChargingAttackMove || move instanceof ChargingSelfStatusMove)) {
+    if (!(move.isChargingMove())) {
       return this.end();
     }
 
     new MoveChargeAnim(move.chargeAnim, move.id, user).play(this.scene, false, () => {
       move.showChargeText(user, target);
       user.getMoveQueue().push({ move: move.id, targets: [ target?.getBattlerIndex() ]});
-
-      if (move instanceof ChargingSelfStatusMove) {
-        user.addTag(BattlerTagType.CHARGING, 1, move.id, user.id);
-        return this.end();
-      }
 
       applyMoveChargeAttrs(MoveEffectAttr, user, target, move).then(() => {
         user.addTag(BattlerTagType.CHARGING, 1, move.id, user.id);
@@ -51,11 +46,12 @@ export class MoveChargePhase extends PokemonPhase {
     });
   }
 
+  /** Checks the move's instant charge conditions, then ends this phase. */
   end() {
     const user = this.getUserPokemon();
     const move = this.move.getMove();
 
-    if (move instanceof ChargingAttackMove || move instanceof ChargingSelfStatusMove) {
+    if (move.isChargingMove()) {
       const instantCharge = new BooleanHolder(false);
 
       applyMoveChargeAttrs(InstantChargeAttr, user, null, move, instantCharge);
@@ -69,11 +65,11 @@ export class MoveChargePhase extends PokemonPhase {
     super.end();
   }
 
-  getUserPokemon(): Pokemon {
+  protected getUserPokemon(): Pokemon {
     return (this.player ? this.scene.getPlayerField() : this.scene.getEnemyField())[this.fieldIndex];
   }
 
-  getTargetPokemon(): Pokemon | undefined {
+  protected getTargetPokemon(): Pokemon | undefined {
     return this.scene.getField(true).find((p) => this.targetIndex === p.getBattlerIndex());
   }
 }
