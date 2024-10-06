@@ -114,9 +114,9 @@ export default class AdminUiHandler extends FormModalUiHandler {
         } else if (this.adminMode === AdminMode.SEARCH) {
           const results = this.adminSearch(adminSearchResult)
             .then(response => {
-              console.log("RESONSE: " + response);
+              console.log("RESPONSE: " + response);
               response?.adminSearchResult;
-              console.log("RESONSE.adminSearchResult: " + response?.adminSearchResult);
+              console.log("RESPONSE.adminSearchResult: " + response?.adminSearchResult);
               this.updateAdminPanelInfo(adminSearchResult);
             });
           console.log(results);
@@ -242,19 +242,21 @@ export default class AdminUiHandler extends FormModalUiHandler {
 
   async adminSearch(adminSearchResult: AdminSearchInfo): Promise<{ adminSearchResult?: AdminSearchInfo, error: boolean, errorType?: string }> {
     try {
-      const response = await Utils.apiFetch(`admin/account/admin-search?username=${encodeURIComponent(adminSearchResult.username)}`, true);
-      if (!response.ok) { // error
-        console.error(response);
-        console.log(adminSearchResult);
-        return { adminSearchResult: adminSearchResult, error: true, errorType: "Error" };
-      } else if (response.status === this.httpUserNotFoundErrorCode) { // username doesn't exist
-        console.log(adminSearchResult);
-        return { adminSearchResult: adminSearchResult, error: true, errorType: "UsernameNotFound" };
-      }
-      response.json().then(jsonResponse => {
-        console.log(jsonResponse);
-        return { adminSearchResult: jsonResponse, error: false };
-      });
+      await Utils.apiFetch(`admin/account/admin-search?username=${encodeURIComponent(adminSearchResult.username)}`, true)
+        .then(response => {
+          if (!response.ok) { // error
+            console.error(response);
+            console.log(adminSearchResult);
+            return { adminSearchResult: adminSearchResult, error: true, errorType: "Error" };
+          } else if (response.status === this.httpUserNotFoundErrorCode) { // username doesn't exist
+            console.log(adminSearchResult);
+            return { adminSearchResult: adminSearchResult, error: true, errorType: "UsernameNotFound" };
+          }
+          response.json().then(jsonResponse => {
+            console.log(jsonResponse);
+            return { adminSearchResult: jsonResponse, error: false };
+          });
+        });
     } catch (err) {
       console.error(err);
       return { error: true, errorType: err };
