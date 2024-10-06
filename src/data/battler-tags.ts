@@ -2311,6 +2311,21 @@ export class TarShotTag extends BattlerTag {
 }
 
 /**
+ * Battler Tag implementing the type-changing effect of {@link https://bulbapedia.bulbagarden.net/wiki/Electrify_(move) | Electrify}.
+ * While this tag is in effect, the afflicted Pokemon's moves are changed to Electric type.
+ */
+export class ElectrifiedTag extends BattlerTag {
+  constructor() {
+    super(BattlerTagType.ELECTRIFIED, BattlerTagLapseType.TURN_END, 1, Moves.ELECTRIFY);
+  }
+
+  override onAdd(pokemon: Pokemon): void {
+    // "{pokemonNameWithAffix}'s moves have been electrified!"
+    pokemon.scene.queueMessage(i18next.t("battlerTags:electrifiedOnAdd", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }));
+  }
+}
+
+/**
  * Battler Tag that keeps track of how many times the user has Autotomized
  * Each count of Autotomization reduces the weight by 100kg
  */
@@ -2811,6 +2826,8 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: number, source
     return new GulpMissileTag(tagType, sourceMove);
   case BattlerTagType.TAR_SHOT:
     return new TarShotTag();
+  case BattlerTagType.ELECTRIFIED:
+    return new ElectrifiedTag();
   case BattlerTagType.THROAT_CHOPPED:
     return new ThroatChoppedTag();
   case BattlerTagType.GORILLA_TACTICS:
