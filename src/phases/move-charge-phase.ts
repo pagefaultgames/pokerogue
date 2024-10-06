@@ -57,7 +57,7 @@ export class MoveChargePhase extends PokemonPhase {
       applyMoveChargeAttrs(InstantChargeAttr, user, null, move, instantCharge);
 
       if (instantCharge.value) {
-        this.scene.unshiftPhase(new MovePhase(this.scene, user, [ this.targetIndex ], this.move, true));
+        this.scene.unshiftPhase(new MovePhase(this.scene, user, [ this.targetIndex ], this.move, false));
       } else {
         user.getMoveQueue().push({ move: move.id, targets: [ this.targetIndex ]});
       }

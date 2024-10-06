@@ -4759,6 +4759,23 @@ export const frenzyMissFunc: UserMoveConditionFunc = (user: Pokemon, move: Move)
   return true;
 };
 
+export class SemiInvulnerableAttr extends MoveEffectAttr {
+  public tagType: BattlerTagType;
+
+  constructor(tagType: BattlerTagType) {
+    super(true);
+    this.tagType = tagType;
+  }
+
+  override apply(user: Pokemon, target: Pokemon, move: Move, args?: any[]): boolean {
+    if (!super.apply(user, target, move, args)) {
+      return false;
+    }
+
+    return user.addTag(this.tagType, 1, move.id, user.id);
+  }
+}
+
 export class AddBattlerTagAttr extends MoveEffectAttr {
   public tagType: BattlerTagType;
   public turnCountMin: integer;
@@ -7154,7 +7171,7 @@ export function initMoves() {
       .windMove(),
     new ChargingAttackMove(Moves.FLY, Type.FLYING, MoveCategory.PHYSICAL, 90, 95, 15, -1, 0, 1)
       .chargeText(i18next.t("moveTriggers:flewUpHigh", { pokemonName: "{USER}" }))
-      .chargeAttr(AddBattlerTagAttr, BattlerTagType.FLYING, true)
+      .chargeAttr(SemiInvulnerableAttr, BattlerTagType.FLYING)
       // TODO: double check Gravity interactions
       .condition(failOnGravityCondition)
       .ignoresVirtual(),
@@ -7356,7 +7373,7 @@ export function initMoves() {
       .makesContact(false),
     new ChargingAttackMove(Moves.DIG, Type.GROUND, MoveCategory.PHYSICAL, 80, 100, 10, -1, 0, 1)
       .chargeText(i18next.t("moveTriggers:dugAHole", { pokemonName: "{USER}" }))
-      .chargeAttr(AddBattlerTagAttr, BattlerTagType.UNDERGROUND, true)
+      .chargeAttr(SemiInvulnerableAttr, BattlerTagType.UNDERGROUND)
       .ignoresVirtual(),
     new StatusMove(Moves.TOXIC, Type.POISON, 90, 10, -1, 0, 1)
       .attr(StatusEffectAttr, StatusEffect.TOXIC)
@@ -7955,7 +7972,7 @@ export function initMoves() {
       .partial(),
     new ChargingAttackMove(Moves.DIVE, Type.WATER, MoveCategory.PHYSICAL, 80, 100, 10, -1, 0, 3)
       .chargeText(i18next.t("moveTriggers:hidUnderwater", { pokemonName: "{USER}" }))
-      .chargeAttr(AddBattlerTagAttr, BattlerTagType.UNDERWATER, true)
+      .chargeAttr(SemiInvulnerableAttr, BattlerTagType.UNDERWATER)
       .chargeAttr(GulpMissileTagAttr)
       .ignoresVirtual(),
     new AttackMove(Moves.ARM_THRUST, Type.FIGHTING, MoveCategory.PHYSICAL, 15, 100, 20, -1, 0, 3)
@@ -8091,7 +8108,7 @@ export function initMoves() {
       .attr(StatStageChangeAttr, [ Stat.ATK, Stat.DEF ], 1, true),
     new ChargingAttackMove(Moves.BOUNCE, Type.FLYING, MoveCategory.PHYSICAL, 85, 85, 5, 30, 0, 3)
       .chargeText(i18next.t("moveTriggers:sprangUp", { pokemonName: "{USER}" }))
-      .chargeAttr(AddBattlerTagAttr, BattlerTagType.FLYING, true)
+      .chargeAttr(SemiInvulnerableAttr, BattlerTagType.FLYING)
       .attr(StatusEffectAttr, StatusEffect.PARALYSIS)
       .condition(failOnGravityCondition)
       .ignoresVirtual(),
@@ -8448,7 +8465,7 @@ export function initMoves() {
       .windMove(),
     new ChargingAttackMove(Moves.SHADOW_FORCE, Type.GHOST, MoveCategory.PHYSICAL, 120, 100, 5, -1, 0, 4)
       .chargeText(i18next.t("moveTriggers:vanishedInstantly", { pokemonName: "{USER}" }))
-      .chargeAttr(AddBattlerTagAttr, BattlerTagType.HIDDEN, true)
+      .chargeAttr(SemiInvulnerableAttr, BattlerTagType.HIDDEN)
       .ignoresProtect()
       .ignoresVirtual(),
     new SelfStatusMove(Moves.HONE_CLAWS, Type.DARK, -1, 15, -1, 0, 5)
@@ -8569,7 +8586,7 @@ export function initMoves() {
         (user, target, move) =>  target.status || target.hasAbility(Abilities.COMATOSE) ? 2 : 1),
     new ChargingAttackMove(Moves.SKY_DROP, Type.FLYING, MoveCategory.PHYSICAL, 60, 100, 10, -1, 0, 5)
       .chargeText(i18next.t("moveTriggers:tookTargetIntoSky", { pokemonName: "{USER}", targetName: "{TARGET}" }))
-      .chargeAttr(AddBattlerTagAttr, BattlerTagType.FLYING, true)
+      .chargeAttr(SemiInvulnerableAttr, BattlerTagType.FLYING)
       .condition(failOnGravityCondition)
       .condition((user, target, move) => !target.getTag(BattlerTagType.SUBSTITUTE))
       .ignoresVirtual()
@@ -8770,7 +8787,7 @@ export function initMoves() {
       .attr(PostVictoryStatStageChangeAttr, [ Stat.ATK ], 3, true ),
     new ChargingAttackMove(Moves.PHANTOM_FORCE, Type.GHOST, MoveCategory.PHYSICAL, 90, 100, 10, -1, 0, 6)
       .chargeText(i18next.t("moveTriggers:vanishedInstantly", { pokemonName: "{USER}" }))
-      .chargeAttr(AddBattlerTagAttr, BattlerTagType.HIDDEN, true)
+      .chargeAttr(SemiInvulnerableAttr, BattlerTagType.HIDDEN)
       .ignoresProtect()
       .ignoresVirtual(),
     new StatusMove(Moves.TRICK_OR_TREAT, Type.GHOST, 100, 20, -1, 0, 6)
@@ -9973,7 +9990,7 @@ export function initMoves() {
       .attr(IvyCudgelTypeAttr)
       .attr(HighCritAttr)
       .makesContact(false),
-    new ChargingAttackMove(Moves.ELECTRO_SHOT, Type.ELECTRIC, MoveCategory.SPECIAL, 130, 100, 10, 100, 0, 9)
+    new ChargingAttackMove(Moves.ELECTRO_SHOT, Type.ELECTRIC, MoveCategory.SPECIAL, 130, 100, 10, -1, 0, 9)
       .chargeText(i18next.t("moveTriggers:absorbedElectricity", { pokemonName: "{USER}" }))
       .chargeAttr(StatStageChangeAttr, [ Stat.SPATK ], 1)
       .chargeAttr(WeatherInstantChargeAttr, [ WeatherType.RAIN, WeatherType.HEAVY_RAIN ])
