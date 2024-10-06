@@ -285,11 +285,11 @@ export default abstract class MessageUiHandler extends AwaitableUiHandler {
     const textWrapped = () => this.message.getWrappedText(text);
     const textSize = () => Phaser.GameObjects.GetTextSize(this.message, this.message.style.getTextMetrics(), textWrapped());
 
-    const xToPaddingLeft = ((this.message.x ** 2) - this.message.x / 2); // Approximate equivalent to what the padding.left should be
-    const paddingX = (xToPaddingLeft * 1.5) / (this.message.x * scale) - this.message.x || 0; // If it's too large, scale it down to maintain aspect ratio with x
+    const xToPaddingX = ((this.message.x ** 2) - this.message.x / 2) * 2; // Approximate equivalent to what the padding.x (padding.left + padding.right) should be
+    const paddingX = (xToPaddingX * 1.5) / (this.message.x * scale) - this.message.x * 8 || 0; // If it's too large, scale it down to maintain aspect ratio with x
 
     const yToPaddingY = ((this.message.y ** 2) - this.message.y / 2) * 2; // Approximate equivalent to what the padding.y (padding.top + padding.bottom) should be
-    const paddingY = (yToPaddingY * 1.5) / (this.message.y * scale) - (this.message.y * 2) || 0; // If it's too large, scale it down to maintain aspect ratio with y
+    const paddingY = (yToPaddingY * 1.5) / (this.message.y * scale) - this.message.y * 2 || 0; // If it's too large, scale it down to maintain aspect ratio with y
 
     // FontSize adjust
     let fontDecrement = fontSize;
