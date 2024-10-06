@@ -1,6 +1,7 @@
 import * as BattleScene from "#app/battle-scene";
 import { SessionSaveData } from "#app/system/game-data";
 import { Abilities } from "#enums/abilities";
+import { GameDataType } from "#enums/game-data-type";
 import { Moves } from "#enums/moves";
 import GameManager from "#test/utils/gameManager";
 import { http, HttpResponse } from "msw";
@@ -84,6 +85,65 @@ describe("System - Game Data", () => {
 
       expect(result).toEqual([ false, false ]);
       expect(account.updateUserInfo).toHaveBeenCalled();
+    });
+  });
+
+  describe("getDataToExport", () => {
+    it("should get default settings", async () => {
+      const defaultSettings = "{\"PLAYER_GENDER\":0,\"gameVersion\":\"1.0.4\"}";
+      localStorage.setItem("settings", defaultSettings);
+
+      const result = await game.scene.gameData.getDataToExport(GameDataType.SETTINGS);
+
+      expect(result).toEqual(defaultSettings);
+    });
+
+    it("should get undefined when there is no settings", async () => {
+      const result = await game.scene.gameData.getDataToExport(GameDataType.SETTINGS);
+
+      expect(result).toBeUndefined();
+    });
+  });
+
+  describe("setImportedData", () => {
+    it("should set settings in local storage", () => {
+      const settings = "{\"PLAYER_GENDER\":0,\"gameVersion\":\"1.0.4\"}";
+      game.scene.gameData.setImportedData(settings, GameDataType.SETTINGS);
+
+      expect(localStorage.getItem("settings")).toEqual(settings);
+    });
+
+    it("should override default settings", () => {
+      const defaultSettings = "{\"PLAYER_GENDER\":0,\"gameVersion\":\"1.0.4\"}";
+      localStorage.setItem("settings", defaultSettings);
+
+      const newSettings = "{\"PLAYER_GENDER\":1,\"gameVersion\":\"1.0.7\",\"GAME_SPEED\":7}";
+      game.scene.gameData.setImportedData(newSettings, GameDataType.SETTINGS);
+
+      expect(localStorage.getItem("settings")).toEqual(newSettings);
+    });
+  });
+
+  describe("validateDataToImport", () => {
+    it("should be true when the setting data is valid", async () => {
+      const settings = "{\"PLAYER_GENDER\":0,\"gameVersion\":\"1.0.4\"}";
+      const result = await game.scene.gameData.validateDataToImport(settings, GameDataType.SETTINGS);
+
+      expect(result).toBeTruthy();
+    });
+
+    it("should be false when the setting data is an invalid JSON", async () => {
+      const settings = "";
+      const result = await game.scene.gameData.validateDataToImport(settings, GameDataType.SETTINGS);
+
+      expect(result).toBeFalsy();
+    });
+
+    it("should be false when the setting data contains an unknow value", async () => {
+      const settings = "{\"PLAYER_GENDER\":0,\"gameVersion\":\"1.0.4\",\"GAME_SPEED\":999}";
+      const result = await game.scene.gameData.validateDataToImport(settings, GameDataType.SETTINGS);
+
+      expect(result).toBeFalsy();
     });
   });
 });
