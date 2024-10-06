@@ -3,7 +3,7 @@ import BattleScene from "#app/battle-scene";
 import { applyAbAttrs, applyPostMoveUsedAbAttrs, applyPreAttackAbAttrs, BlockRedirectAbAttr, IncreasePpAbAttr, PokemonTypeChangeAbAttr, PostMoveUsedAbAttr, RedirectMoveAbAttr } from "#app/data/ability";
 import { CommonAnim } from "#app/data/battle-anims";
 import { BattlerTagLapseType, CenterOfAttentionTag } from "#app/data/battler-tags";
-import { allMoves, applyMoveAttrs, BypassRedirectAttr, BypassSleepAttr, ChargeAttr, CopyMoveAttr, HealStatusEffectAttr, MoveFlags, PreMoveMessageAttr } from "#app/data/move";
+import { allMoves, applyMoveAttrs, BypassRedirectAttr, BypassSleepAttr, CopyMoveAttr, HealStatusEffectAttr, MoveFlags, PreMoveMessageAttr } from "#app/data/move";
 import { SpeciesFormChangePreMoveTrigger } from "#app/data/pokemon-forms";
 import { getStatusEffectActivationText, getStatusEffectHealText } from "#app/data/status-effect";
 import { Type } from "#app/data/type";
@@ -13,7 +13,7 @@ import { BattlerTagType } from "#app/enums/battler-tag-type";
 import { Moves } from "#app/enums/moves";
 import { StatusEffect } from "#app/enums/status-effect";
 import { MoveUsedEvent } from "#app/events/battle-scene";
-import Pokemon, { MoveResult, PokemonMove, TurnMove } from "#app/field/pokemon";
+import Pokemon, { MoveResult, PokemonMove } from "#app/field/pokemon";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { BattlePhase } from "#app/phases/battle-phase";
 import { CommonAnimPhase } from "#app/phases/common-anim-phase";
@@ -456,18 +456,7 @@ export class MovePhase extends BattlePhase {
       return;
     }
 
-    if (this.move.getMove().hasAttr(ChargeAttr)) {
-      const lastMove = this.pokemon.getLastXMoves() as TurnMove[];
-      if (!lastMove.length || lastMove[0].move !== this.move.getMove().id || lastMove[0].result !== MoveResult.OTHER) {
-        this.scene.queueMessage(i18next.t("battle:useMove", {
-          pokemonNameWithAffix: getPokemonNameWithAffix(this.pokemon),
-          moveName: this.move.getName()
-        }), 500);
-        return;
-      }
-    }
-
-    if (this.pokemon.getTag(BattlerTagType.RECHARGING || BattlerTagType.INTERRUPTED)) {
+    if (this.pokemon.getTag(BattlerTagType.RECHARGING) || this.pokemon.getTag(BattlerTagType.INTERRUPTED)) {
       return;
     }
 

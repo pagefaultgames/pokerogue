@@ -2677,57 +2677,6 @@ export class OverrideMoveEffectAttr extends MoveAttr {
   }
 }
 
-export class ChargeAttr extends OverrideMoveEffectAttr {
-  public chargeAnim: ChargeAnim;
-  private chargeText: string;
-  private tagType: BattlerTagType | null;
-  private chargeEffect: boolean;
-  public followUpPriority: integer | null;
-
-  constructor(chargeAnim: ChargeAnim, chargeText: string, tagType?: BattlerTagType | null, chargeEffect: boolean = false) {
-    super();
-
-    this.chargeAnim = chargeAnim;
-    this.chargeText = chargeText;
-    this.tagType = tagType!; // TODO: is this bang correct?
-    this.chargeEffect = chargeEffect;
-  }
-
-  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): Promise<boolean> {
-    return new Promise(resolve => {
-      const lastMove = user.getLastXMoves().find(() => true);
-      if (!lastMove || lastMove.move !== move.id || (lastMove.result !== MoveResult.OTHER && lastMove.turn !== user.scene.currentBattle.turn)) {
-        (args[0] as Utils.BooleanHolder).value = true;
-        new MoveChargeAnim(this.chargeAnim, move.id, user).play(user.scene, false, () => {
-          user.scene.queueMessage(this.chargeText.replace("{TARGET}", getPokemonNameWithAffix(target)).replace("{USER}", getPokemonNameWithAffix(user)));
-          if (this.tagType) {
-            user.addTag(this.tagType, 1, move.id, user.id);
-          }
-          if (this.chargeEffect) {
-            applyMoveAttrs(MoveEffectAttr, user, target, move);
-          }
-          user.pushMoveHistory({ move: move.id, targets: [ target.getBattlerIndex() ], result: MoveResult.OTHER });
-          user.getMoveQueue().push({ move: move.id, targets: [ target.getBattlerIndex() ], ignorePP: true });
-          user.addTag(BattlerTagType.CHARGING, 1, move.id, user.id);
-          resolve(true);
-        });
-      } else {
-        user.lapseTag(BattlerTagType.CHARGING);
-        resolve(false);
-      }
-    });
-  }
-
-  usedChargeEffect(user: Pokemon, target: Pokemon | null, move: Move): boolean {
-    if (!this.chargeEffect) {
-      return false;
-    }
-    // Account for move history being populated when this function is called
-    const lastMoves = user.getLastXMoves(2);
-    return lastMoves.length === 2 && lastMoves[1].move === move.id && lastMoves[1].result === MoveResult.OTHER;
-  }
-}
-
 export class DelayedAttackAttr extends OverrideMoveEffectAttr {
   public tagType: ArenaTagType;
   public chargeAnim: ChargeAnim;
@@ -6035,7 +5984,7 @@ const lastMoveCopiableCondition: MoveConditionFunc = (user, target, move) => {
     return false;
   }
 
-  if (allMoves[copiableMove].hasAttr(ChargeAttr)) {
+  if (allMoves[copiableMove].isChargingMove()) {
     return false;
   }
 
@@ -6180,10 +6129,6 @@ const targetMoveCopiableCondition: MoveConditionFunc = (user, target, move) => {
   const copiableMove = targetMoves[0];
 
   if (!copiableMove.move) {
-    return false;
-  }
-
-  if (allMoves[copiableMove.move].hasAttr(ChargeAttr) && copiableMove.result === MoveResult.OTHER) {
     return false;
   }
 

@@ -7,7 +7,7 @@ import { Weather, WeatherType } from "./weather";
 import { BattlerTag, GroundedTag } from "./battler-tags";
 import { StatusEffect, getNonVolatileStatusEffects, getStatusEffectDescriptor, getStatusEffectHealText } from "./status-effect";
 import { Gender } from "./gender";
-import Move, { AttackMove, MoveCategory, MoveFlags, MoveTarget, FlinchAttr, OneHitKOAttr, HitHealAttr, allMoves, StatusMove, SelfStatusMove, VariablePowerAttr, applyMoveAttrs, IncrementMovePriorityAttr, VariableMoveTypeAttr, RandomMovesetMoveAttr, RandomMoveAttr, NaturePowerAttr, CopyMoveAttr, MoveAttr, MultiHitAttr, ChargeAttr, SacrificialAttr, SacrificialAttrOnHit, NeutralDamageAgainstFlyingTypeMultiplierAttr, FixedDamageAttr } from "./move";
+import Move, { AttackMove, MoveCategory, MoveFlags, MoveTarget, FlinchAttr, OneHitKOAttr, HitHealAttr, allMoves, StatusMove, SelfStatusMove, VariablePowerAttr, applyMoveAttrs, IncrementMovePriorityAttr, VariableMoveTypeAttr, RandomMovesetMoveAttr, RandomMoveAttr, NaturePowerAttr, CopyMoveAttr, MoveAttr, MultiHitAttr, SacrificialAttr, SacrificialAttrOnHit, NeutralDamageAgainstFlyingTypeMultiplierAttr, FixedDamageAttr } from "./move";
 import { ArenaTagSide, ArenaTrapTag } from "./arena-tag";
 import { BerryModifier, PokemonHeldItemModifier } from "../modifier/modifier";
 import { TerrainType } from "./terrain";
@@ -1313,7 +1313,6 @@ export class AddSecondStrikeAbAttr extends PreAttackAbAttr {
      */
     const exceptAttrs: Constructor<MoveAttr>[] = [
       MultiHitAttr,
-      ChargeAttr,
       SacrificialAttr,
       SacrificialAttrOnHit
     ];
@@ -1329,6 +1328,7 @@ export class AddSecondStrikeAbAttr extends PreAttackAbAttr {
 
     /** Also check if this move is an Attack move and if it's only targeting one Pokemon */
     return numTargets === 1
+      && !move.isChargingMove()
       && !exceptAttrs.some(attr => move.hasAttr(attr))
       && !exceptMoves.some(id => move.id === id)
       && move.category !== MoveCategory.STATUS;
