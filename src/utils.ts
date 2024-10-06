@@ -125,18 +125,6 @@ export function randSeedWeightedItem<T>(items: T[]): T {
     : Phaser.Math.RND.weightedPick(items);
 }
 
-export function randSeedEasedWeightedItem<T>(items: T[], easingFunction: string = "Sine.easeIn"): T | null {
-  if (!items.length) {
-    return null;
-  }
-  if (items.length === 1) {
-    return items[0];
-  }
-  const value = Phaser.Math.RND.realInRange(0, 1);
-  const easedValue = Phaser.Tweens.Builders.GetEaseFunction(easingFunction)(value);
-  return items[Math.floor(easedValue * items.length)];
-}
-
 /**
  * Shuffle a list using the seeded rng. Utilises the Fisher-Yates algorithm.
  * @param {Array} items An array of items.
@@ -384,18 +372,21 @@ export class NumberHolder {
   }
 }
 
+/** @deprecated Use {@linkcode NumberHolder} */
 export class IntegerHolder extends NumberHolder {
   constructor(value: integer) {
     super(value);
   }
 }
 
+/** @deprecated Use {@linkcode NumberHolder}*/
 export class FixedInt extends IntegerHolder {
   constructor(value: integer) {
     super(value);
   }
 }
 
+/** @deprecated */
 export function fixedInt(value: integer): integer {
   return new FixedInt(value) as unknown as integer;
 }
@@ -478,14 +469,16 @@ export function hslToHex(h: number, s: number, l: number): string {
   return `#${f(0)}${f(8)}${f(4)}`;
 }
 
-/*This function returns true if the current lang is available for some functions
-If the lang is not in the function, it usually means that lang is going to use the default english version
-This function is used in:
-- summary-ui-handler.ts: If the lang is not available, it'll use types.json (english)
-English itself counts as not available
+/**
+ * This function returns `true` if the current lang is available for some functions.
+ * If the lang is not in the function, it usually means that lang is going to use the default english version
+ *
+ * This function is used in:
+ * - `summary-ui-handler.ts`: If the lang is not available, it'll use `types.json` (english).
+ *   English itself counts as not available
 */
 export function verifyLang(lang?: string): boolean {
-  //IMPORTANT - ONLY ADD YOUR LANG HERE IF YOU'VE ALREADY ADDED ALL THE NECESSARY IMAGES
+  // IMPORTANT - ONLY ADD YOUR LANG HERE IF YOU'VE ALREADY ADDED ALL THE NECESSARY IMAGES
   if (!lang) {
     lang = i18next.resolvedLanguage;
   }
@@ -507,7 +500,7 @@ export function verifyLang(lang?: string): boolean {
 }
 
 /**
- * Prints the type and name of all game objects in a container for debuggin purposes
+ * Prints the type and name of all game objects in a container for debugging purposes
  * @param container container with game objects inside it
  */
 export function printContainerList(container: Phaser.GameObjects.Container): void {
@@ -582,17 +575,12 @@ export function capitalizeString(str: string, sep: string, lowerFirstChar: boole
   return null;
 }
 
-/**
- * Returns if an object is null or undefined
- * @param object
- */
 export function isNullOrUndefined(object: any): object is undefined | null {
   return null === object || undefined === object;
 }
 
 /**
  * Capitalizes the first letter of a string
- * @param str
  */
 export function capitalizeFirstLetter(str: string) {
   return str.charAt(0).toUpperCase() + str.slice(1);
@@ -626,7 +614,7 @@ export function getLocalizedSpriteKey(baseKey: string) {
  * @param num the number to check
  * @param min the minimum value (included)
  * @param max the maximum value (included)
- * @returns true if number is **inclusive** between min and max
+ * @returns `true` if number is **inclusive** between min and max
  */
 export function isBetween(num: number, min: number, max: number): boolean {
   return num >= min && num <= max;
