@@ -8386,12 +8386,11 @@ export function initMoves() {
     new SelfStatusMove(Moves.RAGE_POWDER, Type.BUG, -1, 20, -1, 2, 5)
       .powderMove()
       .attr(AddBattlerTagAttr, BattlerTagType.CENTER_OF_ATTENTION, true),
-    new StatusMove(Moves.TELEKINESIS, Type.PSYCHIC, -1, 15, -1, 0, 5)
+    new StatusMove(Moves.TELEKINESIS, Type.PSYCHIC, 100, 15, -1, 0, 5)
       .condition(failOnGravityCondition)
       .condition((_user, target, _move) => ![ Species.DIGLETT, Species.DUGTRIO, Species.ALOLA_DIGLETT, Species.ALOLA_DUGTRIO, Species.SANDYGAST, Species.PALOSSAND, Species.WIGLETT, Species.WUGTRIO ].includes(target.species.speciesId))
-      .condition((_user, target, _move) => !(target.species.speciesId !== Species.GENGAR && target.getFormKey() !== "mega"))
-      .condition((_user, target, _move) => !(target.getTag(BattlerTagType.INGRAIN) || target.getTag(BattlerTagType.IGNORE_FLYING)))
-      .attr(AddBattlerTagAttr, BattlerTagType.FLYING, false, false, 3)
+      .condition((_user, target, _move) => (target.species.speciesId !== Species.GENGAR && target.getFormKey() !== "mega"))
+      //.condition((_user, target, _move) => target.getTag(BattlerTagType.INGRAIN) || target.getTag(BattlerTagType.IGNORE_FLYING)
       .attr(AddBattlerTagAttr, BattlerTagType.TELEKINESIS, false, false, 3),
     new StatusMove(Moves.MAGIC_ROOM, Type.PSYCHIC, -1, 10, -1, 0, 5)
       .ignoresProtect()
