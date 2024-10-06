@@ -1010,7 +1010,14 @@ export class MoveEffectAttr extends MoveAttr {
    */
   getMoveChance(user: Pokemon, target: Pokemon, move: Move, selfEffect?: Boolean, showAbility?: Boolean): integer {
     const moveChance = new Utils.NumberHolder(move.chance);
+
     applyAbAttrs(MoveEffectChanceMultiplierAbAttr, user, null, false, moveChance, move, target, selfEffect, showAbility);
+
+    if (!move.hasAttr(FlinchAttr) || moveChance.value <= move.chance) {
+      const userSide = user.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY;
+      user.scene.arena.applyTagsForSide(ArenaTagType.WATER_FIRE_PLEDGE, userSide, moveChance);
+    }
+
     if (!selfEffect) {
       applyPreDefendAbAttrs(IgnoreMoveEffectsAbAttr, target, user, null, null, false, moveChance);
     }
@@ -2688,6 +2695,62 @@ export class DelayedAttackAttr extends OverrideMoveEffectAttr {
 }
 
 /**
+ * Attribute that cancels the associated move's effects when set to be combined with the user's ally's
+ * subsequent move this turn. Used for Grass Pledge, Water Pledge, and Fire Pledge.
+ * @extends OverrideMoveEffectAttr
+ */
+export class AwaitCombinedPledgeAttr extends OverrideMoveEffectAttr {
+  constructor() {
+    super(true);
+  }
+  /**
+   * If the user's ally is set to use a different move with this attribute,
+   * defer this move's effects for a combined move on the ally's turn.
+   * @param user the {@linkcode Pokemon} using this move
+   * @param target n/a
+   * @param move the {@linkcode Move} being used
+   * @param args
+   * - [0] a {@linkcode Utils.BooleanHolder} indicating whether the move's base
+   * effects should be overridden this turn.
+   * @returns `true` if base move effects were overridden; `false` otherwise
+   */
+  override apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    if (user.turnData.combiningPledge) {
+      // "The two moves have become one!\nIt's a combined move!"
+      user.scene.queueMessage(i18next.t("moveTriggers:combiningPledge"));
+      return false;
+    }
+
+    const overridden = args[0] as Utils.BooleanHolder;
+
+    const allyMovePhase = user.scene.findPhase<MovePhase>((phase) => phase instanceof MovePhase && phase.pokemon.isPlayer() === user.isPlayer());
+    if (allyMovePhase) {
+      const allyMove = allyMovePhase.move.getMove();
+      if (allyMove !== move && allyMove.hasAttr(AwaitCombinedPledgeAttr)) {
+        [ user, allyMovePhase.pokemon ].forEach((p) => p.turnData.combiningPledge = move.id);
+
+        // "{userPokemonName} is waiting for {allyPokemonName}'s move..."
+        user.scene.queueMessage(i18next.t("moveTriggers:awaitingPledge", {
+          userPokemonName: getPokemonNameWithAffix(user),
+          allyPokemonName: getPokemonNameWithAffix(allyMovePhase.pokemon)
+        }));
+
+        // Move the ally's MovePhase (if needed) so that the ally moves next
+        const allyMovePhaseIndex = user.scene.phaseQueue.indexOf(allyMovePhase);
+        const firstMovePhaseIndex = user.scene.phaseQueue.findIndex((phase) => phase instanceof MovePhase);
+        if (allyMovePhaseIndex !== firstMovePhaseIndex) {
+          user.scene.prependToPhase(user.scene.phaseQueue.splice(allyMovePhaseIndex, 1)[0], MovePhase);
+        }
+
+        overridden.value = true;
+        return true;
+      }
+    }
+    return false;
+  }
+}
+
+/**
  * Attribute used for moves that change stat stages
  * @param stats {@linkcode BattleStat} array of stats to be changed
  * @param stages stages by which to change the stats, from -6 to 6
@@ -3762,6 +3825,45 @@ export class LastMoveDoublePowerAttr extends VariablePowerAttr {
   }
 }
 
+/**
+ * Changes a Pledge move's power to 150 when combined with another unique Pledge
+ * move from an ally.
+ */
+export class CombinedPledgePowerAttr extends VariablePowerAttr {
+  override apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    const power = args[0];
+    if (!(power instanceof Utils.NumberHolder)) {
+      return false;
+    }
+    const combinedPledgeMove = user.turnData.combiningPledge;
+
+    if (combinedPledgeMove && combinedPledgeMove !== move.id) {
+      power.value *= 150 / 80;
+      return true;
+    }
+    return false;
+  }
+}
+
+/**
+ * Applies STAB to the given Pledge move if the move is part of a combined attack.
+ */
+export class CombinedPledgeStabBoostAttr extends MoveAttr {
+  override apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    const stabMultiplier = args[0];
+    if (!(stabMultiplier instanceof Utils.NumberHolder)) {
+      return false;
+    }
+    const combinedPledgeMove = user.turnData.combiningPledge;
+
+    if (combinedPledgeMove && combinedPledgeMove !== move.id) {
+      stabMultiplier.value = 1.5;
+      return true;
+    }
+    return false;
+  }
+}
+
 export class VariableAtkAttr extends MoveAttr {
   constructor() {
     super();
@@ -4358,6 +4460,47 @@ export class MatchUserTypeAttr extends VariableMoveTypeAttr {
   }
 }
 
+/**
+ * Changes the type of a Pledge move based on the Pledge move combined with it.
+ * @extends VariableMoveTypeAttr
+ */
+export class CombinedPledgeTypeAttr extends VariableMoveTypeAttr {
+  override apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    const moveType = args[0];
+    if (!(moveType instanceof Utils.NumberHolder)) {
+      return false;
+    }
+
+    const combinedPledgeMove = user.turnData.combiningPledge;
+    if (!combinedPledgeMove) {
+      return false;
+    }
+
+    switch (move.id) {
+    case Moves.FIRE_PLEDGE:
+      if (combinedPledgeMove === Moves.WATER_PLEDGE) {
+        moveType.value = Type.WATER;
+        return true;
+      }
+      return false;
+    case Moves.WATER_PLEDGE:
+      if (combinedPledgeMove === Moves.GRASS_PLEDGE) {
+        moveType.value = Type.GRASS;
+        return true;
+      }
+      return false;
+    case Moves.GRASS_PLEDGE:
+      if (combinedPledgeMove === Moves.FIRE_PLEDGE) {
+        moveType.value = Type.FIRE;
+        return true;
+      }
+      return false;
+    default:
+      return false;
+    }
+  }
+}
+
 export class VariableMoveTypeMultiplierAttr extends MoveAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     return false;
@@ -4505,7 +4648,15 @@ export class TypelessAttr extends MoveAttr { }
 * Attribute used for moves which ignore redirection effects, and always target their original target, i.e. Snipe Shot
 * Bypasses Storm Drain, Follow Me, Ally Switch, and the like.
 */
-export class BypassRedirectAttr extends MoveAttr { }
+export class BypassRedirectAttr extends MoveAttr {
+  /** `true` if this move only bypasses redirection from Abilities */
+  public readonly abilitiesOnly: boolean;
+
+  constructor(abilitiesOnly: boolean = false) {
+    super();
+    this.abilitiesOnly = abilitiesOnly;
+  }
+}
 
 export class FrenzyAttr extends MoveEffectAttr {
   constructor() {
@@ -5193,6 +5344,32 @@ export class SwapArenaTagsAttr extends MoveEffectAttr {
 
     user.scene.queueMessage(i18next.t("moveTriggers:swapArenaTags", { pokemonName: getPokemonNameWithAffix(user) }));
     return true;
+  }
+}
+
+/**
+ * Attribute that adds a secondary effect to the field when two unique Pledge moves
+ * are combined. The effect added varies based on the two Pledge moves combined.
+ */
+export class AddPledgeEffectAttr extends AddArenaTagAttr {
+  private readonly requiredPledge: Moves;
+
+  constructor(tagType: ArenaTagType, requiredPledge: Moves, selfSideTarget: boolean = false) {
+    super(tagType, 4, false, selfSideTarget);
+
+    this.requiredPledge = requiredPledge;
+  }
+
+  override apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    // TODO: add support for `HIT` effect triggering in AddArenaTagAttr to remove the need for this check
+    if (user.getLastXMoves(1)[0].result !== MoveResult.SUCCESS) {
+      return false;
+    }
+
+    if (user.turnData.combiningPledge === this.requiredPledge) {
+      return super.apply(user, target, move, args);
+    }
+    return false;
   }
 }
 
@@ -8341,11 +8518,29 @@ export function initMoves() {
     new AttackMove(Moves.INFERNO, Type.FIRE, MoveCategory.SPECIAL, 100, 50, 5, 100, 0, 5)
       .attr(StatusEffectAttr, StatusEffect.BURN),
     new AttackMove(Moves.WATER_PLEDGE, Type.WATER, MoveCategory.SPECIAL, 80, 100, 10, -1, 0, 5)
-      .partial(),
+      .attr(AwaitCombinedPledgeAttr)
+      .attr(CombinedPledgeTypeAttr)
+      .attr(CombinedPledgePowerAttr)
+      .attr(CombinedPledgeStabBoostAttr)
+      .attr(AddPledgeEffectAttr, ArenaTagType.WATER_FIRE_PLEDGE, Moves.FIRE_PLEDGE, true)
+      .attr(AddPledgeEffectAttr, ArenaTagType.GRASS_WATER_PLEDGE, Moves.GRASS_PLEDGE)
+      .attr(BypassRedirectAttr, true),
     new AttackMove(Moves.FIRE_PLEDGE, Type.FIRE, MoveCategory.SPECIAL, 80, 100, 10, -1, 0, 5)
-      .partial(),
+      .attr(AwaitCombinedPledgeAttr)
+      .attr(CombinedPledgeTypeAttr)
+      .attr(CombinedPledgePowerAttr)
+      .attr(CombinedPledgeStabBoostAttr)
+      .attr(AddPledgeEffectAttr, ArenaTagType.FIRE_GRASS_PLEDGE, Moves.GRASS_PLEDGE)
+      .attr(AddPledgeEffectAttr, ArenaTagType.WATER_FIRE_PLEDGE, Moves.WATER_PLEDGE, true)
+      .attr(BypassRedirectAttr, true),
     new AttackMove(Moves.GRASS_PLEDGE, Type.GRASS, MoveCategory.SPECIAL, 80, 100, 10, -1, 0, 5)
-      .partial(),
+      .attr(AwaitCombinedPledgeAttr)
+      .attr(CombinedPledgeTypeAttr)
+      .attr(CombinedPledgePowerAttr)
+      .attr(CombinedPledgeStabBoostAttr)
+      .attr(AddPledgeEffectAttr, ArenaTagType.GRASS_WATER_PLEDGE, Moves.WATER_PLEDGE)
+      .attr(AddPledgeEffectAttr, ArenaTagType.FIRE_GRASS_PLEDGE, Moves.FIRE_PLEDGE)
+      .attr(BypassRedirectAttr, true),
     new AttackMove(Moves.VOLT_SWITCH, Type.ELECTRIC, MoveCategory.SPECIAL, 70, 100, 20, -1, 0, 5)
       .attr(ForceSwitchOutAttr, true),
     new AttackMove(Moves.STRUGGLE_BUG, Type.BUG, MoveCategory.SPECIAL, 50, 100, 20, 100, 0, 5)
@@ -8493,8 +8688,8 @@ export function initMoves() {
       .attr(StatStageChangeAttr, [ Stat.ATK, Stat.SPATK ], -1)
       .soundBased(),
     new StatusMove(Moves.ION_DELUGE, Type.ELECTRIC, -1, 25, -1, 1, 6)
-      .target(MoveTarget.BOTH_SIDES)
-      .unimplemented(),
+      .attr(AddArenaTagAttr, ArenaTagType.ION_DELUGE)
+      .target(MoveTarget.BOTH_SIDES),
     new AttackMove(Moves.PARABOLIC_CHARGE, Type.ELECTRIC, MoveCategory.SPECIAL, 65, 100, 20, -1, 0, 6)
       .attr(HitHealAttr)
       .target(MoveTarget.ALL_NEAR_OTHERS)
@@ -8537,7 +8732,7 @@ export function initMoves() {
       .attr(TerrainChangeAttr, TerrainType.MISTY)
       .target(MoveTarget.BOTH_SIDES),
     new StatusMove(Moves.ELECTRIFY, Type.ELECTRIC, -1, 20, -1, 0, 6)
-      .unimplemented(),
+      .attr(AddBattlerTagAttr, BattlerTagType.ELECTRIFIED, false, true),
     new AttackMove(Moves.PLAY_ROUGH, Type.FAIRY, MoveCategory.PHYSICAL, 90, 90, 10, 10, 0, 6)
       .attr(StatStageChangeAttr, [ Stat.ATK ], -1),
     new AttackMove(Moves.FAIRY_WIND, Type.FAIRY, MoveCategory.SPECIAL, 40, 100, 30, -1, 0, 6)
@@ -8561,7 +8756,7 @@ export function initMoves() {
       .attr(StatStageChangeAttr, [ Stat.SPATK ], -1)
       .soundBased(),
     new AttackMove(Moves.DIAMOND_STORM, Type.ROCK, MoveCategory.PHYSICAL, 100, 95, 5, 50, 0, 6)
-      .attr(StatStageChangeAttr, [ Stat.DEF ], 2, true)
+      .attr(StatStageChangeAttr, [ Stat.DEF ], 2, true, undefined, undefined, undefined, undefined, true)
       .makesContact(false)
       .target(MoveTarget.ALL_NEAR_ENEMIES),
     new AttackMove(Moves.STEAM_ERUPTION, Type.WATER, MoveCategory.SPECIAL, 110, 95, 5, 30, 0, 6)
@@ -8963,7 +9158,7 @@ export function initMoves() {
       .attr(HalfSacrificialAttr)
       .target(MoveTarget.ALL_NEAR_OTHERS),
     new AttackMove(Moves.PLASMA_FISTS, Type.ELECTRIC, MoveCategory.PHYSICAL, 100, 100, 15, -1, 0, 7)
-      .attr(AddArenaTagAttr, ArenaTagType.PLASMA_FISTS, 1)
+      .attr(AddArenaTagAttr, ArenaTagType.ION_DELUGE, 1)
       .punchingMove(),
     new AttackMove(Moves.PHOTON_GEYSER, Type.PSYCHIC, MoveCategory.SPECIAL, 100, 100, 5, -1, 0, 7)
       .attr(PhotonGeyserCategoryAttr)
@@ -8988,7 +9183,7 @@ export function initMoves() {
       .makesContact(false)
       .ignoresVirtual(),
     new AttackMove(Moves.CLANGOROUS_SOULBLAZE, Type.DRAGON, MoveCategory.SPECIAL, 185, -1, 1, 100, 0, 7)
-      .attr(StatStageChangeAttr, [ Stat.ATK, Stat.DEF, Stat.SPATK, Stat.SPDEF, Stat.SPD ], 1, true)
+      .attr(StatStageChangeAttr, [ Stat.ATK, Stat.DEF, Stat.SPATK, Stat.SPDEF, Stat.SPD ], 1, true, undefined, undefined, undefined, undefined, true)
       .soundBased()
       .target(MoveTarget.ALL_NEAR_ENEMIES)
       .partial()

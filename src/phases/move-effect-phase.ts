@@ -70,7 +70,7 @@ export class MoveEffectPhase extends PokemonPhase {
        * resolve the move's total hit count. This block combines the
        * effects of the move itself, Parental Bond, and Multi-Lens to do so.
        */
-      if (user.turnData.hitsLeft === undefined) {
+      if (user.turnData.hitsLeft === -1) {
         const hitCount = new NumberHolder(1);
         // Assume single target for multi hit
         applyMoveAttrs(MultiHitAttr, user, this.getFirstTarget() ?? null, move, hitCount);

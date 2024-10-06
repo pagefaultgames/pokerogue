@@ -4631,7 +4631,7 @@ async function applyAbAttrsInternal<TAttr extends AbAttr>(
   messages: string[] = [],
 ) {
   for (const passive of [ false, true ]) {
-    if (!pokemon?.canApplyAbility(passive)) {
+    if (!pokemon?.canApplyAbility(passive) || (passive && pokemon.getPassiveAbility().id === pokemon.getAbility().id)) {
       continue;
     }
 

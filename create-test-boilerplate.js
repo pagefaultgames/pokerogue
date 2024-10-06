@@ -49,7 +49,7 @@ async function promptFileName(selectedType) {
     {
       type: "input",
       name: "userInput",
-      message: `Please provide a file name for the ${selectedType} test:`,
+      message: `Please provide the name of the ${selectedType}:`,
     },
   ]);
 
@@ -110,7 +110,7 @@ import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, it, expect } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("${description}", () => {
   let phaserGame: Phaser.Game;
@@ -129,15 +129,22 @@ describe("${description}", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([Moves.SPLASH])
+      .moveset([ Moves.SPLASH ])
+      .ability(Abilities.BALL_FETCH)
       .battleType("single")
+      .disableCrits()
+      .enemySpecies(Species.MAGIKARP)
       .enemyAbility(Abilities.BALL_FETCH)
       .enemyMoveset(Moves.SPLASH);
   });
 
-  it("test case", async () => {
-    // await game.classicMode.startBattle([Species.MAGIKARP]);
-    // game.move.select(Moves.SPLASH);
+  it("should do X", async () => {
+    await game.classicMode.startBattle([ Species.FEEBAS ]);
+
+    game.move.select(Moves.SPLASH);
+    await game.phaseInterceptor.to("BerryPhase");
+
+    expect(true).toBe(true);
   });
 });
 `;
