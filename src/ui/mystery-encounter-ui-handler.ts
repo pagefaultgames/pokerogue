@@ -18,6 +18,8 @@ import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
 
 export default class MysteryEncounterUiHandler extends UiHandler {
+  private encounterUiContainer: Phaser.GameObjects.Container;
+
   private cursorContainer: Phaser.GameObjects.Container;
   private cursorObj?: Phaser.GameObjects.Image;
 
@@ -53,22 +55,32 @@ export default class MysteryEncounterUiHandler extends UiHandler {
 
   override setup() {
     const ui = this.getUi();
+    this.encounterUiContainer = this.scene.add.container();
+    this.encounterUiContainer.setName("mystery_encounter_ui");
+    ui.add(this.encounterUiContainer);
+
+    // Ensure this UI is lower on Z axis than party summary UI
+    // Allows using ui.setModeWithoutClear() to view party and not have this UI stay on screen
+    const partySummaryContainer = ui.list.find(c => c.name === "party");
+    if (partySummaryContainer) {
+      ui.moveBelow(this.encounterUiContainer, partySummaryContainer);
+    }
 
     this.cursorContainer = this.scene.add.container(18, -38.7);
     this.cursorContainer.setVisible(false);
-    ui.add(this.cursorContainer);
+    this.encounterUiContainer.add(this.cursorContainer);
     this.optionsContainer = this.scene.add.container(12, -38.7);
     this.optionsContainer.setVisible(false);
-    ui.add(this.optionsContainer);
+    this.encounterUiContainer.add(this.optionsContainer);
     this.dexProgressContainer = this.scene.add.container(214, -43);
     this.dexProgressContainer.setVisible(false);
-    ui.add(this.dexProgressContainer);
+    this.encounterUiContainer.add(this.dexProgressContainer);
     this.descriptionContainer = this.scene.add.container(0, -152);
     this.descriptionContainer.setVisible(false);
-    ui.add(this.descriptionContainer);
+    this.encounterUiContainer.add(this.descriptionContainer);
     this.tooltipContainer = this.scene.add.container(210, -48);
     this.tooltipContainer.setVisible(false);
-    ui.add(this.tooltipContainer);
+    this.encounterUiContainer.add(this.tooltipContainer);
 
     this.setCursor(this.getCursor());
 
@@ -138,7 +150,7 @@ export default class MysteryEncounterUiHandler extends UiHandler {
             ...this.overrideSettings,
             slideInDescription: false
           };
-          this.scene.ui.setMode(Mode.PARTY, PartyUiMode.CHECK, -1, () => {
+          this.scene.ui.setModeWithoutClear(Mode.PARTY, PartyUiMode.CHECK, -1, () => {
             this.scene.ui.setMode(Mode.MYSTERY_ENCOUNTER, overrideSettings);
             setTimeout(() => {
               this.setCursor(this.viewPartyIndex);
