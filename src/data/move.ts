@@ -1935,12 +1935,19 @@ export class IncrementMovePriorityAttr extends MoveAttr {
  * @see {@linkcode apply}
  */
 export class MultiHitAttr extends MoveAttr {
-  private multiHitType: MultiHitType;
+  private _intrinsicMultiHitType: MultiHitType;
+  private _multiHitType: MultiHitType;
+
+  // Must be publicly readable for battle_bond.test.ts
+  get multiHitType(): MultiHitType {
+    return this._multiHitType;
+  }
 
   constructor(multiHitType?: MultiHitType) {
     super();
 
-    this.multiHitType = multiHitType !== undefined ? multiHitType : MultiHitType._2_TO_5;
+    this._intrinsicMultiHitType = multiHitType !== undefined ? multiHitType : MultiHitType._2_TO_5;
+    this._multiHitType = this._intrinsicMultiHitType;
   }
 
   /**
@@ -1954,9 +1961,9 @@ export class MultiHitAttr extends MoveAttr {
    * @returns True
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    const hitType = new Utils.NumberHolder(this.multiHitType);
+    const hitType = new Utils.NumberHolder(this._intrinsicMultiHitType);
     applyMoveAttrs(ChangeMultiHitTypeAttr, user, target, move, hitType);
-    this.multiHitType = hitType.value;
+    this._multiHitType = hitType.value;
 
     (args[0] as Utils.NumberHolder).value = this.getHitCount(user, target);
     return true;
