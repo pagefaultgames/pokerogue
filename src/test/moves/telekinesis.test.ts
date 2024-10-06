@@ -32,7 +32,7 @@ describe("Moves - Telekinesis", () => {
       .enemyMoveset(Moves.SPLASH);
   });
 
-  it("test case", async () => {
+  it("Telekinesis makes the affected airborne and vulnerable to most attacking moves regardless of accuracy", async () => {
     await game.classicMode.startBattle([ Species.MAGIKARP ]);
 
     const enemyOpponent = game.scene.getEnemyPokemon();
