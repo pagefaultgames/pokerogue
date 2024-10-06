@@ -567,6 +567,7 @@ export default class MysteryEncounterUiHandler extends UiHandler {
 
   override clear(): void {
     super.clear();
+    this.blockInput = true;
     this.overrideSettings = undefined;
     this.optionsContainer.setVisible(false);
     this.optionsContainer.removeAll(true);
