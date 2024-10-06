@@ -6932,8 +6932,8 @@ export class SwapHeldItemsAttr extends MoveEffectAttr {
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
 
-    const targetHeldItems = target.getHeldItems().filter(i => i.isTransferrable);
-    const userHeldItems = user.getHeldItems().filter(i => i.isTransferrable);
+    const targetHeldItems = target.getHeldItems().filter(i => i.isTransferable);
+    const userHeldItems = user.getHeldItems().filter(i => i.isTransferable);
 
     if (!user.hasTrainer() || target.hasAbility(Abilities.STICKY_HOLD) || (!userHeldItems.length && !targetHeldItems.length)) {
       user.scene.queueMessage(i18next.t("battle:attackFailed"));
