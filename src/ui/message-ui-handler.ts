@@ -4,11 +4,6 @@ import { Mode } from "./ui";
 import * as Utils from "../utils";
 import i18next from "i18next";
 
-type argsAjustText = {
-  ignoreTextBalance?:Array<string>|"all";
-  ignoreLanguages?:Array<string>;
-};
-
 export default abstract class MessageUiHandler extends AwaitableUiHandler {
   protected textTimer: Phaser.Time.TimerEvent | null;
   protected textCallbackTimer: Phaser.Time.TimerEvent | null;
@@ -16,6 +11,7 @@ export default abstract class MessageUiHandler extends AwaitableUiHandler {
 
   public message: Phaser.GameObjects.Text;
   public prompt: Phaser.GameObjects.Sprite;
+  protected promptOut: { x: number, y: number } | null;
 
   constructor(scene: BattleScene, mode: Mode | null = null) {
     super(scene, mode);
@@ -195,15 +191,18 @@ export default abstract class MessageUiHandler extends AwaitableUiHandler {
   }
 
   showPrompt(callback?: Function | null, callbackDelay?: integer | null) {
-    const wrappedTextLines = this.message.runWordWrap(this.message.text).split(/\n/g);
-    const textLinesCount = wrappedTextLines.length;
-    const lastTextLine = wrappedTextLines[wrappedTextLines.length - 1];
-    const lastLineTest = this.scene.add.text(0, 0, lastTextLine, { font: "96px emerald" });
-    lastLineTest.setScale(this.message.scale);
-    const lastLineWidth = lastLineTest.displayWidth;
-    lastLineTest.destroy();
     if (this.prompt) {
-      this.prompt.setPosition(this.message.x + lastLineWidth + 2, this.message.y + (textLinesCount - 1) * 18 + 2);
+      this.prompt.setScale(parseInt(this.message.style.fontSize.toString()) / 100 + 0.04);
+      const textSize = Phaser.GameObjects.GetTextSize(this.message, this.message.style.getTextMetrics(), this.message.getWrappedText(this.message.text));
+      const lastLineWidth = textSize.lineWidths[textSize.lineWidths.length - 1];
+      let x = lastLineWidth * this.message.scale + this.message.x + 2;
+      let y = this.message.y + (textSize.height * this.message.scale / (20 - textSize.lines) - 0.5) * 18;
+      if (this.promptOut) {
+        x = this.promptOut.x * this.message.scale - (this.message.x * 2) + 2;
+        y = (this.promptOut.y - (this.message.y * 2)) * this.message.scale / 1.3;
+        this.promptOut = null;
+      }
+      this.prompt.setPosition(x, y);
       this.prompt.play("prompt");
     }
     this.pendingPrompt = false;
@@ -239,49 +238,156 @@ export default abstract class MessageUiHandler extends AwaitableUiHandler {
   }
 
   /**
+   * Use before showText(), ex:
+   * ``` ts
+   *  // Handler extends MessageUiHandler.ts...
+   *  const ui = this.getUi();
+   *  this.tryAdjustText(text, opts); // Or ui.getMessageHandler().tryAdjustText()...
+   *  ui.showText(...);
+   *
+   *  // Or in showText():
+   *  showText(...) {
+   *    this.tryAdjustText(text, opts);
+   *    super.showText(...);
+   *  }
+   * ```
    * @param text
-   * @param textObject
-   * @param maxWidth
    * @param opts options additional
-   * @argument ignoreLanguages ignore adjust for some language.
-   * @argument ignoreBalanceText ignore Text Balance for some languages or for all.
-   * @argument padding default 0.
+   * @argument ignoreLanguages ignore adjust for some languages or for all.
+   * @argument maxWidth default this.message.style.wordWrapWidth or this.message.parentContainer.getBounds().width.
+   * @argument guideHeight default this.message.parentContainer, If the container has many elements or `this.message` does not have a clear guide, use the parent container as a reference guide by default.
    */
 
-  adjustText(text: string, textObject: Phaser.GameObjects.Text, maxWidth: number, opts: argsAjustText = {}): void {
+  tryAdjustText(text: string, opts?: argsAdjustText): void {
     const currentLanguage = i18next.resolvedLanguage!;
-    if (opts.ignoreLanguages && opts.ignoreLanguages[0] && !opts.ignoreLanguages.some(localKey => localKey === currentLanguage)) {
+    if (opts?.ignoreLanguages && opts.ignoreLanguages[0] && (opts.ignoreLanguages === "all" || !opts.ignoreLanguages.some(localKey => localKey === currentLanguage))) {
       return;
     }
 
-    const fontSizeToNumber = (FS: number | string): number => {
-      return parseInt(FS.toString().replace("px", ""));
+    const referenceGuide = opts?.guideHeight ?? this.message.parentContainer;
+
+    // If any style changes were made in previous tryAdjustText() calls, revert to the original data.
+    // [Note] Be aware that if dynamic styles are being applied to the same this.message from another source for attributes such as fontSize, maxLines, wordWrap, this may cause issues.
+    if (this.message.getData("originalMaxLines")) {
+      this.message.style.setMaxLines(this.message.getData("originalMaxLines"));
+      this.message.data.remove("originalMaxLines");
+    }
+    const maxWidth = this.message.getData("originalMaxWidth") ?? Math.floor(opts?.maxWidth ?? this.message.style.wordWrapWidth ?? referenceGuide.getBounds().width);
+    this.message.setData("originalMaxWidth", this.message.getData("originalMaxWidth") ?? maxWidth);
+    this.message.setWordWrapWidth(maxWidth);
+
+    const fontSize = this.message.getData("originalFontSize") ?? parseInt(this.message.style.fontSize.toString());
+    this.message.setData("originalFontSize", fontSize);
+    this.message.setFontSize(fontSize);
+
+    const scale = this.message.scale;
+
+    const textWrapped = () => this.message.getWrappedText(text);
+    const textSize = () => Phaser.GameObjects.GetTextSize(this.message, this.message.style.getTextMetrics(), textWrapped());
+
+    const xToPaddingLeft = ((this.message.x ** 2) - this.message.x / 2); // Approximate equivalent to what the padding.left should be
+    const paddingX = (xToPaddingLeft * 1.5) / (this.message.x * scale) - this.message.x || 0; // If it's too large, scale it down to maintain aspect ratio with x
+
+    const yToPaddingY = ((this.message.y ** 2) - this.message.y / 2) * 2; // Approximate equivalent to what the padding.y (padding.top + padding.bottom) should be
+    const paddingY = (yToPaddingY * 1.5) / (this.message.y * scale) - (this.message.y * 2) || 0; // If it's too large, scale it down to maintain aspect ratio with y
+
+    // FontSize adjust
+    let fontDecrement = fontSize;
+    const adjustFontSize = (condition: () => boolean = () => (textWrapped().length > this.message.style.maxLines)): void => {
+      if (Utils.isNullOrUndefined(text) || text === "") {
+        return;
+      }
+      const minFontSize = 40;
+      while (condition() && fontDecrement > minFontSize) {
+        fontDecrement--;
+        this.message.setFontSize(fontDecrement);
+
+        // If the text has been shrunk so much that another line can fit in the text, add it
+        // This is to preserve the maximum possible font size.
+        if ((textSize().height + textSize().lineHeight + paddingY) < referenceGuide.getBounds().height) {
+          const linesNeed = Math.round((textSize().height + paddingY) / textSize().lineHeight);
+          if (linesNeed > this.message.style.maxLines) {
+            if (!this.message.getData("originalMaxLines")) {
+              // We save the current value as it will be modified, so we can return it in the next showText()
+              this.message.setData("originalMaxLines", this.message.style.maxLines);
+            }
+            this.message.style.setMaxLines(linesNeed);
+          }
+        }
+
+        if (textSize().height + paddingY - 15 > referenceGuide.getBounds().height) {
+          if (!this.message.getData("originalMaxLines")) {
+            // We save the current value as it will be modified, so we can return it in the next showText()
+            this.message.setData("originalMaxLines", this.message.style.maxLines);
+          }
+          this.message.style.setMaxLines(--this.message.style.maxLines);
+          adjustFontSize();
+          break;
+        }
+
+        // checking the maximum width
+        this.message.setWordWrapWidth(maxWidth);
+        adjustWordWrap();
+      }
+
     };
 
-    // If fontSize was modified before, revert to original
-    const fontSize = textObject.getData("originalFontSize") ?? fontSizeToNumber(textObject.style.fontSize);
-    textObject.setData("originalFontSize", textObject.getData("originalFontSize") ?? fontSize);
-    textObject.setFontSize(fontSize);
-
-    const textWrapped = () => textObject.getWrappedText(text);
-    const textSize = () => Phaser.GameObjects.GetTextSize(textObject, textObject.style.getTextMetrics(), textWrapped());
-    const balanceText = typeof opts.ignoreTextBalance === "string" ? opts.ignoreTextBalance === "all" : (opts.ignoreTextBalance && opts.ignoreTextBalance[0] && opts.ignoreTextBalance.some(localKey => localKey === currentLanguage));
-
-    // Text Balance
-    if (!balanceText && textWrapped()[1] && textWrapped().length <= textObject.style.maxLines && textWrapped()[0].length * 0.25 > textWrapped()[1].length) {
-      textObject.setWordWrapWidth(maxWidth * 0.65);
-    }
-
-    // Text ajust
-    if (textWrapped().length > textObject.style.maxLines || (textSize().width + textObject.x) > maxWidth) {
-
-      let fontDecrement = fontSize;
-      while (textWrapped().length > textObject.style.maxLines || (textSize().width + textObject.x) > maxWidth) {
-        fontDecrement -= 1;
-        textObject.setFontSize(fontDecrement);
+    // wordWrapWidth adjust
+    let widthDecrement = maxWidth;
+    const adjustWordWrap = (): void => {
+      if (Utils.isNullOrUndefined(text) || text === "") {
+        return;
       }
-      textObject.setFontSize(fontDecrement - textObject.x / 2);
+
+      if (textSize().width + paddingX + Math.round((widthDecrement - textSize().width) / 1.15) >= maxWidth) {
+        while (textSize().width + paddingX + Math.round((widthDecrement - textSize().width) / 1.15) >= maxWidth && widthDecrement > 100) {
+          widthDecrement--;
+          this.message.setWordWrapWidth(widthDecrement);
+        }
+
+      }
+
+      // If after trying to adjust the wordWrapWidth it remains the same, it means that..
+      //.. there is no space between words, so the fontSize is adjusted to fit.
+      if (textSize().width + (paddingX * 1.2) >= maxWidth) {
+        this.message.setWordWrapWidth(maxWidth);
+        adjustFontSize(() => textSize().width + (paddingX * 1.2) >= maxWidth);
+      }
+    };
+    adjustWordWrap();
+
+    if (textWrapped().length > this.message.style.maxLines) {
+
+      adjustFontSize();
+
+      adjustWordWrap(); // after adjustFontSize, respect "padding"
+
+      // Some line breaks (\n) may also prevent the text from being displayed..
+      //.. so if the text is still too large due to the previous issue, adjust it.
+      if (textSize().height + paddingY - 15 > referenceGuide.getBounds().height) {
+        adjustFontSize(() => (textSize().height + paddingY - 15 > referenceGuide.getBounds().height));
+      }
 
     }
+
+    const lastLine = textSize().lineWidths[textSize().lineWidths.length - 1];
+
+    // If when adjusting the text the prompt goes outside..
+    // .. save the data to put the prompt in the bottom right corner
+    if (!this.promptOut && lastLine + (paddingX * 1.5) >= maxWidth) {
+      this.promptOut = {
+        x: maxWidth,
+        y: referenceGuide.getBounds().height
+      };
+    } else {
+      this.promptOut = null;
+    }
+
   }
+}
+
+interface argsAdjustText {
+  ignoreLanguages?: Array<string> | "all" | null;
+  maxWidth?: number;
+  guideHeight?: Phaser.GameObjects.Container | Phaser.GameObjects.Sprite | Phaser.GameObjects.NineSlice
 }

@@ -35,12 +35,9 @@ const donateUrl = "https://github.com/sponsors/patapancakes";
 
 export default class MenuUiHandler extends MessageUiHandler {
   private readonly textPadding = 8;
-  private readonly defaultMessageBoxWidth = 220;
-  private readonly defaultWordWrapWidth = 1224;
 
   private menuContainer: Phaser.GameObjects.Container;
   private menuMessageBoxContainer: Phaser.GameObjects.Container;
-  private messageBoxBg: Phaser.GameObjects.NineSlice;
   private menuOverlay: Phaser.GameObjects.Rectangle;
 
   private menuBg: Phaser.GameObjects.NineSlice;
@@ -57,6 +54,7 @@ export default class MenuUiHandler extends MessageUiHandler {
   // Windows for the default message box and the message box for testing dialogue
   private menuMessageBox: Phaser.GameObjects.NineSlice;
   private dialogueMessageBox: Phaser.GameObjects.NineSlice;
+  private isTestDialog: boolean;
 
   protected scale: number = 0.1666666667;
 
@@ -144,14 +142,10 @@ export default class MenuUiHandler extends MessageUiHandler {
     this.menuMessageBoxContainer.setVisible(false);
 
     // Window for general messages
-    this.menuMessageBox = addWindow(this.scene, 0, 0, this.defaultMessageBoxWidth, 48);
+    this.menuMessageBox = addWindow(this.scene, 0, 0, (this.scene.game.canvas.width / 6) - this.menuBg.width - 1, 48);
     this.menuMessageBox.setOrigin(0, 0);
     this.menuMessageBoxContainer.add(this.menuMessageBox);
 
-    const menuMessageBox = addWindow(this.scene, 0, -0, (this.scene.game.canvas.width / 6) - this.menuBg.width - 1, 48);
-    menuMessageBox.setOrigin(0, 0);
-    this.menuMessageBoxContainer.add(menuMessageBox);
-    this.messageBoxBg = menuMessageBox;
     // Full-width window used for testing dialog messages in debug mode
     this.dialogueMessageBox = addWindow(this.scene, -this.textPadding, 0, this.scene.game.canvas.width / 6 + this.textPadding * 2, 49, false, false, 0, 0, WindowVariant.THIN);
     this.dialogueMessageBox.setOrigin(0, 0);
@@ -160,7 +154,6 @@ export default class MenuUiHandler extends MessageUiHandler {
     const menuMessageText = addTextObject(this.scene, this.textPadding, this.textPadding, "", TextStyle.WINDOW, { maxLines: 2 });
     menuMessageText.setName("menu-message");
     menuMessageText.setOrigin(0, 0);
-    menuMessageText.setWordWrapWidth(menuMessageBox.getBounds().width * 0.95);
 
     this.menuMessageBoxContainer.add(menuMessageText);
 
@@ -665,13 +658,12 @@ export default class MenuUiHandler extends MessageUiHandler {
     this.message.setWordWrapWidth(isDialogMode ? this.scene.ui.getMessageHandler().wordWrapWidth : this.defaultWordWrapWidth);
     this.message.setX(isDialogMode ? this.textPadding + 1 : this.textPadding);
     this.message.setY(isDialogMode ? this.textPadding + 0.4 : this.textPadding);
+    this.isTestDialog = isDialogMode;
   }
 
   showText(text: string, delay?: number, callback?: Function, callbackDelay?: number, prompt?: boolean, promptDelay?: number): void {
     this.menuMessageBoxContainer.setVisible(!!text);
-    this.adjustText(text, this.message, this.messageBoxBg.getBounds().width, {
-      ignoreTextBalance: "all"
-    });
+    this.tryAdjustText(text, { ignoreLanguages: this.isTestDialog ? "all" : null });
 
     super.showText(text, delay, callback, callbackDelay, prompt, promptDelay);
   }
@@ -696,6 +688,7 @@ export default class MenuUiHandler extends MessageUiHandler {
     this.menuContainer.setVisible(false);
     this.bgmBar.toggleBgmBar(false);
     this.eraseCursor();
+    this.showText("");
   }
 
   eraseCursor() {
@@ -703,6 +696,10 @@ export default class MenuUiHandler extends MessageUiHandler {
       this.cursorObj.destroy();
     }
     this.cursorObj = null;
+  }
+
+  get defaultWordWrapWidth() {
+    return this.menuMessageBox.getBounds().width / this.scale;
   }
 }
 
