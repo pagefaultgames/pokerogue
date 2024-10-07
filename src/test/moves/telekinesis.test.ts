@@ -3,6 +3,7 @@ import { allMoves } from "#app/data/move";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
+import { MoveResult } from "#app/field/pokemon";
 import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, it, expect, vi } from "vitest";
@@ -79,6 +80,7 @@ describe("Moves - Telekinesis", () => {
     await game.phaseInterceptor.to("TurnEndPhase");
     expect(enemyOpponent?.getTag(BattlerTagType.TELEKINESIS)).toBeDefined();
     expect(enemyOpponent?.getTag(BattlerTagType.FLOATING)).toBeDefined();
+    expect(enemyOpponent?.summonData.speciesForm?.speciesId).toBe(Species.DIGLETT);
   });
 
   it("Moves like Smack Down and 1000 Arrows remove all effects of Telekinesis from the target Pokemon", async () => {
@@ -103,11 +105,12 @@ describe("Moves - Telekinesis", () => {
     game.override.enemyMoveset([ Moves.SPLASH, Moves.INGRAIN ]);
     await game.classicMode.startBattle([ Species.MAGIKARP ]);
 
+    const playerPokemon = game.scene.getPlayerPokemon();
     const enemyOpponent = game.scene.getEnemyPokemon();
     expect(enemyOpponent).toBeDefined();
 
     game.move.select(Moves.TELEKINESIS);
-    game.forceEnemyMove(Moves.SPLASH);
+    await game.forceEnemyMove(Moves.SPLASH);
     await game.phaseInterceptor.to("TurnEndPhase");
     expect(enemyOpponent?.getTag(BattlerTagType.TELEKINESIS)).toBeDefined();
     expect(enemyOpponent?.getTag(BattlerTagType.FLOATING)).toBeDefined();
@@ -115,13 +118,13 @@ describe("Moves - Telekinesis", () => {
     await game.toNextTurn();
     vi.spyOn(allMoves[Moves.MUD_SHOT], "accuracy", "get").mockReturnValue(0);
     game.move.select(Moves.MUD_SHOT);
-    game.forceEnemyMove(Moves.INGRAIN);
+    await game.forceEnemyMove(Moves.INGRAIN);
     await game.phaseInterceptor.to("TurnEndPhase");
     expect(enemyOpponent?.getTag(BattlerTagType.TELEKINESIS)).toBeDefined();
     expect(enemyOpponent?.getTag(BattlerTagType.INGRAIN)).toBeDefined();
     expect(enemyOpponent?.getTag(BattlerTagType.IGNORE_FLYING)).toBeDefined();
     expect(enemyOpponent?.getTag(BattlerTagType.FLOATING)).toBeUndefined();
-    expect(enemyOpponent?.hp).toBeLessThan(enemyOpponent!.getMaxHp());
+    const lastMoveResult = playerPokemon?.getLastXMoves()[0].result;
+    expect(lastMoveResult).toBe(MoveResult.SUCCESS);
   });
-
 });
