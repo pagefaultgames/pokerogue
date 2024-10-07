@@ -4,7 +4,7 @@ import PartyUiHandler, { PartyUiMode } from "./party-ui-handler";
 import { Mode } from "./ui";
 import UiHandler from "./ui-handler";
 import i18next from "i18next";
-import {Button} from "#enums/buttons";
+import { Button } from "#enums/buttons";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { CommandPhase } from "#app/phases/command-phase";
 
@@ -68,7 +68,7 @@ export default class CommandUiHandler extends UiHandler {
     messageHandler.movesWindowContainer.setVisible(false);
 
     const messageMaxWidth = this.scene.game.canvas.width - messageHandler.commandWindow.getBounds().width - messageHandler.message.getBounds().x;
-    const commandMessage = i18next.t("commandUiHandler:actionMessage", { pokemonName: getPokemonNameWithAffix(commandPhase.getPokemon()) });
+    const commandMessage = i18next.t("commandUiHandler:actionMessage", {  pokemonName: getPokemonNameWithAffix(commandPhase.getPokemon())  });
     messageHandler.tryAdjustText(commandMessage, {
       maxWidth: messageMaxWidth,
       guideHeight: messageHandler.bg

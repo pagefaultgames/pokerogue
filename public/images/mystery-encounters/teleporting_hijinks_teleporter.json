@@ -1,0 +1,41 @@
+{
+	"textures": [
+		{
+			"image": "teleporting_hijinks_teleporter.png",
+			"format": "RGBA8888",
+			"size": {
+				"w": 74,
+				"h": 79
+			},
+			"scale": 1,
+			"frames": [
+				{
+					"filename": "0001.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 74,
+						"h": 79
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 74,
+						"h": 79
+					},
+					"frame": {
+						"x": 0,
+						"y": 0,
+						"w": 74,
+						"h": 79
+					}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "https://www.codeandweb.com/texturepacker",
+		"version": "3.0",
+		"smartupdate": "$TexturePacker:SmartUpdate:937d8502b98f79720118061b6021e108:2b4f9db00d5b0997b42a5466f808509b:ce1615396ce7b0a146766d50b319bb81$"
+	}
+}

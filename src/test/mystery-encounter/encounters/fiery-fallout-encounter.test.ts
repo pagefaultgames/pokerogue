@@ -23,9 +23,9 @@ import { CommandPhase } from "#app/phases/command-phase";
 import { MovePhase } from "#app/phases/move-phase";
 import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
 
-const namespace = "mysteryEncounter:fieryFallout";
+const namespace = "mysteryEncounters/fieryFallout";
 /** Arcanine and Ninetails for 2 Fire types. Lapras, Gengar, Abra for burnable mon. */
-const defaultParty = [Species.ARCANINE, Species.NINETALES, Species.LAPRAS, Species.GENGAR, Species.ABRA];
+const defaultParty = [ Species.ARCANINE, Species.NINETALES, Species.LAPRAS, Species.GENGAR, Species.ABRA ];
 const defaultBiome = Biome.VOLCANO;
 const defaultWave = 56;
 
@@ -48,8 +48,8 @@ describe("Fiery Fallout - Mystery Encounter", () => {
 
     vi.spyOn(MysteryEncounters, "mysteryEncountersByBiome", "get").mockReturnValue(
       new Map<Biome, MysteryEncounterType[]>([
-        [Biome.VOLCANO, [MysteryEncounterType.FIERY_FALLOUT]],
-        [Biome.MOUNTAIN, [MysteryEncounterType.MYSTERIOUS_CHALLENGERS]],
+        [ Biome.VOLCANO, [ MysteryEncounterType.FIERY_FALLOUT ]],
+        [ Biome.MOUNTAIN, [ MysteryEncounterType.MYSTERIOUS_CHALLENGERS ]],
       ])
     );
   });
@@ -66,10 +66,10 @@ describe("Fiery Fallout - Mystery Encounter", () => {
     expect(FieryFalloutEncounter.encounterType).toBe(MysteryEncounterType.FIERY_FALLOUT);
     expect(FieryFalloutEncounter.encounterTier).toBe(MysteryEncounterTier.COMMON);
     expect(FieryFalloutEncounter.dialogue).toBeDefined();
-    expect(FieryFalloutEncounter.dialogue.intro).toStrictEqual([{ text: `${namespace}.intro` }]);
-    expect(FieryFalloutEncounter.dialogue.encounterOptionsDialogue?.title).toBe(`${namespace}.title`);
-    expect(FieryFalloutEncounter.dialogue.encounterOptionsDialogue?.description).toBe(`${namespace}.description`);
-    expect(FieryFalloutEncounter.dialogue.encounterOptionsDialogue?.query).toBe(`${namespace}.query`);
+    expect(FieryFalloutEncounter.dialogue.intro).toStrictEqual([{ text: `${namespace}:intro` }]);
+    expect(FieryFalloutEncounter.dialogue.encounterOptionsDialogue?.title).toBe(`${namespace}:title`);
+    expect(FieryFalloutEncounter.dialogue.encounterOptionsDialogue?.description).toBe(`${namespace}:description`);
+    expect(FieryFalloutEncounter.dialogue.encounterOptionsDialogue?.query).toBe(`${namespace}:query`);
     expect(FieryFalloutEncounter.options.length).toBe(3);
   });
 
@@ -132,11 +132,11 @@ describe("Fiery Fallout - Mystery Encounter", () => {
       expect(option1.optionMode).toBe(MysteryEncounterOptionMode.DEFAULT);
       expect(option1.dialogue).toBeDefined();
       expect(option1.dialogue).toStrictEqual({
-        buttonLabel: `${namespace}.option.1.label`,
-        buttonTooltip: `${namespace}.option.1.tooltip`,
+        buttonLabel: `${namespace}:option.1.label`,
+        buttonTooltip: `${namespace}:option.1.tooltip`,
         selected: [
           {
-            text: `${namespace}.option.1.selected`,
+            text: `${namespace}:option.1.selected`,
           },
         ],
       });
@@ -182,11 +182,11 @@ describe("Fiery Fallout - Mystery Encounter", () => {
       expect(option1.optionMode).toBe(MysteryEncounterOptionMode.DEFAULT);
       expect(option1.dialogue).toBeDefined();
       expect(option1.dialogue).toStrictEqual({
-        buttonLabel: `${namespace}.option.2.label`,
-        buttonTooltip: `${namespace}.option.2.tooltip`,
+        buttonLabel: `${namespace}:option.2.label`,
+        buttonTooltip: `${namespace}:option.2.tooltip`,
         selected: [
           {
-            text: `${namespace}.option.2.selected`,
+            text: `${namespace}:option.2.selected`,
           },
         ],
       });
@@ -205,7 +205,7 @@ describe("Fiery Fallout - Mystery Encounter", () => {
 
       const burnablePokemon = party.filter((pkm) => pkm.isAllowedInBattle() && !pkm.getTypes().includes(Type.FIRE));
       const notBurnablePokemon = party.filter((pkm) => !pkm.isAllowedInBattle() || pkm.getTypes().includes(Type.FIRE));
-      expect(scene.currentBattle.mysteryEncounter?.dialogueTokens["burnedPokemon"]).toBe("Gengar");
+      expect(scene.currentBattle.mysteryEncounter?.dialogueTokens["burnedPokemon"]).toBe("pokemon:gengar");
       burnablePokemon.forEach((pkm) => {
         expect(pkm.hp, `${pkm.name} should have received 20% damage: ${pkm.hp} / ${pkm.getMaxHp()} HP`).toBe(pkm.getMaxHp() - Math.floor(pkm.getMaxHp() * 0.2));
       });
@@ -229,12 +229,12 @@ describe("Fiery Fallout - Mystery Encounter", () => {
       expect(option1.optionMode).toBe(MysteryEncounterOptionMode.DISABLED_OR_SPECIAL);
       expect(option1.dialogue).toBeDefined();
       expect(option1.dialogue).toStrictEqual({
-        buttonLabel: `${namespace}.option.3.label`,
-        buttonTooltip: `${namespace}.option.3.tooltip`,
-        disabledButtonTooltip: `${namespace}.option.3.disabled_tooltip`,
+        buttonLabel: `${namespace}:option.3.label`,
+        buttonTooltip: `${namespace}:option.3.tooltip`,
+        disabledButtonTooltip: `${namespace}:option.3.disabled_tooltip`,
         selected: [
           {
-            text: `${namespace}.option.3.selected`,
+            text: `${namespace}:option.3.selected`,
           },
         ],
       });
@@ -263,7 +263,7 @@ describe("Fiery Fallout - Mystery Encounter", () => {
     });
 
     it("should be disabled if not enough FIRE types are in party", async () => {
-      await game.runToMysteryEncounter(MysteryEncounterType.FIERY_FALLOUT, [Species.MAGIKARP, Species.ARCANINE]);
+      await game.runToMysteryEncounter(MysteryEncounterType.FIERY_FALLOUT, [ Species.MAGIKARP, Species.ARCANINE ]);
       await game.phaseInterceptor.to(MysteryEncounterPhase, false);
 
       const encounterPhase = scene.getCurrentPhase();

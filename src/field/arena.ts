@@ -1,26 +1,26 @@
-import BattleScene from "../battle-scene";
-import { biomePokemonPools, BiomePoolTier, BiomeTierTrainerPools, biomeTrainerPools, PokemonPools } from "../data/biomes";
+import BattleScene from "#app/battle-scene";
+import { biomePokemonPools, BiomePoolTier, BiomeTierTrainerPools, biomeTrainerPools, PokemonPools } from "#app/data/balance/biomes";
 import { Constructor } from "#app/utils";
-import * as Utils from "../utils";
-import PokemonSpecies, { getPokemonSpecies } from "../data/pokemon-species";
-import { getTerrainClearMessage, getTerrainStartMessage, getWeatherClearMessage, getWeatherStartMessage, Weather, WeatherType } from "../data/weather";
-import { CommonAnim } from "../data/battle-anims";
-import { Type } from "../data/type";
-import Move from "../data/move";
-import { ArenaTag, ArenaTagSide, ArenaTrapTag, getArenaTag } from "../data/arena-tag";
-import { BattlerIndex } from "../battle";
-import { Terrain, TerrainType } from "../data/terrain";
-import { applyPostTerrainChangeAbAttrs, applyPostWeatherChangeAbAttrs, PostTerrainChangeAbAttr, PostWeatherChangeAbAttr } from "../data/ability";
-import Pokemon from "./pokemon";
+import * as Utils from "#app/utils";
+import PokemonSpecies, { getPokemonSpecies } from "#app/data/pokemon-species";
+import { getTerrainClearMessage, getTerrainStartMessage, getWeatherClearMessage, getWeatherStartMessage, Weather, WeatherType } from "#app/data/weather";
+import { CommonAnim } from "#app/data/battle-anims";
+import { Type } from "#app/data/type";
+import Move from "#app/data/move";
+import { ArenaTag, ArenaTagSide, ArenaTrapTag, getArenaTag } from "#app/data/arena-tag";
+import { BattlerIndex } from "#app/battle";
+import { Terrain, TerrainType } from "#app/data/terrain";
+import { applyPostTerrainChangeAbAttrs, applyPostWeatherChangeAbAttrs, PostTerrainChangeAbAttr, PostWeatherChangeAbAttr } from "#app/data/ability";
+import Pokemon from "#app/field/pokemon";
 import Overrides from "#app/overrides";
-import { TagAddedEvent, TagRemovedEvent, TerrainChangedEvent, WeatherChangedEvent } from "../events/arena";
+import { TagAddedEvent, TagRemovedEvent, TerrainChangedEvent, WeatherChangedEvent } from "#app/events/arena";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { Biome } from "#enums/biome";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import { TimeOfDay } from "#enums/time-of-day";
 import { TrainerType } from "#enums/trainer-type";
-import { Abilities } from "#app/enums/abilities";
+import { Abilities } from "#enums/abilities";
 import { SpeciesFormChangeRevertWeatherFormTrigger, SpeciesFormChangeWeatherTrigger } from "#app/data/pokemon-forms";
 import { CommonAnimPhase } from "#app/phases/common-anim-phase";
 import { ShowAbilityPhase } from "#app/phases/show-ability-phase";
@@ -33,6 +33,7 @@ export class Arena {
   public tags: ArenaTag[];
   public bgm: string;
   public ignoreAbilities: boolean;
+  public ignoringEffectSource: BattlerIndex | null;
 
   private lastTimeOfDay: TimeOfDay;
 
@@ -391,16 +392,16 @@ export class Arena {
     return true;
   }
 
-  isMoveWeatherCancelled(user: Pokemon, move: Move) {
-    return this.weather && !this.weather.isEffectSuppressed(this.scene) && this.weather.isMoveWeatherCancelled(user, move);
+  public isMoveWeatherCancelled(user: Pokemon, move: Move): boolean {
+    return !!this.weather && !this.weather.isEffectSuppressed(this.scene) && this.weather.isMoveWeatherCancelled(user, move);
   }
 
-  isMoveTerrainCancelled(user: Pokemon, targets: BattlerIndex[], move: Move) {
-    return this.terrain && this.terrain.isMoveTerrainCancelled(user, targets, move);
+  public isMoveTerrainCancelled(user: Pokemon, targets: BattlerIndex[], move: Move): boolean {
+    return !!this.terrain && this.terrain.isMoveTerrainCancelled(user, targets, move);
   }
 
-  getTerrainType() : TerrainType {
-    return this.terrain?.terrainType || TerrainType.NONE;
+  public getTerrainType(): TerrainType {
+    return this.terrain?.terrainType ?? TerrainType.NONE;
   }
 
   getAttackTypeMultiplier(attackType: Type, grounded: boolean): number {
@@ -569,8 +570,9 @@ export class Arena {
     }
   }
 
-  setIgnoreAbilities(ignoreAbilities: boolean = true): void {
+  setIgnoreAbilities(ignoreAbilities: boolean, ignoringEffectSource: BattlerIndex | null = null): void {
     this.ignoreAbilities = ignoreAbilities;
+    this.ignoringEffectSource = ignoreAbilities ? ignoringEffectSource : null;
   }
 
   /**

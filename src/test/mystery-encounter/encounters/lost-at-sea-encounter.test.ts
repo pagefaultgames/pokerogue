@@ -16,9 +16,9 @@ import { MysteryEncounterPhase } from "#app/phases/mystery-encounter-phases";
 import { PartyExpPhase } from "#app/phases/party-exp-phase";
 
 
-const namespace = "mysteryEncounter:lostAtSea";
+const namespace = "mysteryEncounters/lostAtSea";
 /** Blastoise for surf. Pidgeot for fly. Abra for none. */
-const defaultParty = [Species.BLASTOISE, Species.PIDGEOT, Species.ABRA];
+const defaultParty = [ Species.BLASTOISE, Species.PIDGEOT, Species.ABRA ];
 const defaultBiome = Biome.SEA;
 const defaultWave = 33;
 
@@ -41,8 +41,8 @@ describe("Lost at Sea - Mystery Encounter", () => {
 
     vi.spyOn(MysteryEncounters, "mysteryEncountersByBiome", "get").mockReturnValue(
       new Map<Biome, MysteryEncounterType[]>([
-        [Biome.SEA, [MysteryEncounterType.LOST_AT_SEA]],
-        [Biome.MOUNTAIN, [MysteryEncounterType.MYSTERIOUS_CHALLENGERS]],
+        [ Biome.SEA, [ MysteryEncounterType.LOST_AT_SEA ]],
+        [ Biome.MOUNTAIN, [ MysteryEncounterType.MYSTERIOUS_CHALLENGERS ]],
       ])
     );
   });
@@ -59,10 +59,10 @@ describe("Lost at Sea - Mystery Encounter", () => {
     expect(LostAtSeaEncounter.encounterType).toBe(MysteryEncounterType.LOST_AT_SEA);
     expect(LostAtSeaEncounter.encounterTier).toBe(MysteryEncounterTier.COMMON);
     expect(LostAtSeaEncounter.dialogue).toBeDefined();
-    expect(LostAtSeaEncounter.dialogue.intro).toStrictEqual([{ text: `${namespace}.intro` }]);
-    expect(LostAtSeaEncounter.dialogue.encounterOptionsDialogue?.title).toBe(`${namespace}.title`);
-    expect(LostAtSeaEncounter.dialogue.encounterOptionsDialogue?.description).toBe(`${namespace}.description`);
-    expect(LostAtSeaEncounter.dialogue.encounterOptionsDialogue?.query).toBe(`${namespace}.query`);
+    expect(LostAtSeaEncounter.dialogue.intro).toStrictEqual([{ text: `${namespace}:intro` }]);
+    expect(LostAtSeaEncounter.dialogue.encounterOptionsDialogue?.title).toBe(`${namespace}:title`);
+    expect(LostAtSeaEncounter.dialogue.encounterOptionsDialogue?.description).toBe(`${namespace}:description`);
+    expect(LostAtSeaEncounter.dialogue.encounterOptionsDialogue?.query).toBe(`${namespace}:query`);
     expect(LostAtSeaEncounter.options.length).toBe(3);
   });
 
@@ -86,8 +86,8 @@ describe("Lost at Sea - Mystery Encounter", () => {
     const onInitResult = onInit!(scene);
 
     expect(LostAtSeaEncounter.dialogueTokens?.damagePercentage).toBe("25");
-    expect(LostAtSeaEncounter.dialogueTokens?.option1RequiredMove).toBe("Surf");
-    expect(LostAtSeaEncounter.dialogueTokens?.option2RequiredMove).toBe("Fly");
+    expect(LostAtSeaEncounter.dialogueTokens?.option1RequiredMove).toBe("move:surf.name");
+    expect(LostAtSeaEncounter.dialogueTokens?.option2RequiredMove).toBe("move:fly.name");
     expect(onInitResult).toBe(true);
   });
 
@@ -97,13 +97,13 @@ describe("Lost at Sea - Mystery Encounter", () => {
       expect(option1.optionMode).toBe(MysteryEncounterOptionMode.DISABLED_OR_DEFAULT);
       expect(option1.dialogue).toBeDefined();
       expect(option1.dialogue).toStrictEqual({
-        buttonLabel: `${namespace}.option.1.label`,
-        disabledButtonLabel: `${namespace}.option.1.label_disabled`,
-        buttonTooltip: `${namespace}.option.1.tooltip`,
-        disabledButtonTooltip: `${namespace}.option.1.tooltip_disabled`,
+        buttonLabel: `${namespace}:option.1.label`,
+        disabledButtonLabel: `${namespace}:option.1.label_disabled`,
+        buttonTooltip: `${namespace}:option.1.tooltip`,
+        disabledButtonTooltip: `${namespace}:option.1.tooltip_disabled`,
         selected: [
           {
-            text: `${namespace}.option.1.selected`,
+            text: `${namespace}:option.1.selected`,
           },
         ],
       });
@@ -134,7 +134,7 @@ describe("Lost at Sea - Mystery Encounter", () => {
     });
 
     it("should be disabled if no surfable PKM is in party", async () => {
-      await game.runToMysteryEncounter(MysteryEncounterType.LOST_AT_SEA, [Species.ARCANINE]);
+      await game.runToMysteryEncounter(MysteryEncounterType.LOST_AT_SEA, [ Species.ARCANINE ]);
       await game.phaseInterceptor.to(MysteryEncounterPhase, false);
 
       const encounterPhase = scene.getCurrentPhase();
@@ -160,13 +160,13 @@ describe("Lost at Sea - Mystery Encounter", () => {
       expect(option2.optionMode).toBe(MysteryEncounterOptionMode.DISABLED_OR_DEFAULT);
       expect(option2.dialogue).toBeDefined();
       expect(option2.dialogue).toStrictEqual({
-        buttonLabel: `${namespace}.option.2.label`,
-        disabledButtonLabel: `${namespace}.option.2.label_disabled`,
-        buttonTooltip: `${namespace}.option.2.tooltip`,
-        disabledButtonTooltip: `${namespace}.option.2.tooltip_disabled`,
+        buttonLabel: `${namespace}:option.2.label`,
+        disabledButtonLabel: `${namespace}:option.2.label_disabled`,
+        buttonTooltip: `${namespace}:option.2.tooltip`,
+        disabledButtonTooltip: `${namespace}:option.2.tooltip_disabled`,
         selected: [
           {
-            text: `${namespace}.option.2.selected`,
+            text: `${namespace}:option.2.selected`,
           },
         ],
       });
@@ -199,7 +199,7 @@ describe("Lost at Sea - Mystery Encounter", () => {
     });
 
     it("should be disabled if no flyable PKM is in party", async () => {
-      await game.runToMysteryEncounter(MysteryEncounterType.LOST_AT_SEA, [Species.ARCANINE]);
+      await game.runToMysteryEncounter(MysteryEncounterType.LOST_AT_SEA, [ Species.ARCANINE ]);
       await game.phaseInterceptor.to(MysteryEncounterPhase, false);
 
       const encounterPhase = scene.getCurrentPhase();
@@ -225,11 +225,11 @@ describe("Lost at Sea - Mystery Encounter", () => {
       expect(option3.optionMode).toBe(MysteryEncounterOptionMode.DEFAULT);
       expect(option3.dialogue).toBeDefined();
       expect(option3.dialogue).toStrictEqual({
-        buttonLabel: `${namespace}.option.3.label`,
-        buttonTooltip: `${namespace}.option.3.tooltip`,
+        buttonLabel: `${namespace}:option.3.label`,
+        buttonTooltip: `${namespace}:option.3.tooltip`,
         selected: [
           {
-            text: `${namespace}.option.3.selected`,
+            text: `${namespace}:option.3.selected`,
           },
         ],
       });

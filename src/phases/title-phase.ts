@@ -60,7 +60,7 @@ export class TitlePhase extends Phase {
     const options: OptionSelectItem[] = [];
     if (loggedInUser && loggedInUser.lastSessionSlot > -1) {
       options.push({
-        label: i18next.t("continue", {ns: "menu"}),
+        label: i18next.t("continue", { ns: "menu" }),
         handler: () => {
           this.loadSaveSlot(this.lastSessionData || !loggedInUser ? -1 : loggedInUser.lastSessionSlot);
           return true;
@@ -76,7 +76,8 @@ export class TitlePhase extends Phase {
           this.scene.ui.clearText();
           this.end();
         };
-        if (this.scene.gameData.unlocks[Unlockables.ENDLESS_MODE]) {
+        const { gameData } = this.scene;
+        if (gameData.isUnlocked(Unlockables.ENDLESS_MODE)) {
           const options: OptionSelectItem[] = [
             {
               label: GameMode.getModeName(GameModes.CLASSIC),
@@ -100,7 +101,7 @@ export class TitlePhase extends Phase {
               }
             }
           ];
-          if (this.scene.gameData.unlocks[Unlockables.SPLICED_ENDLESS_MODE]) {
+          if (gameData.isUnlocked(Unlockables.SPLICED_ENDLESS_MODE)) {
             options.push({
               label: GameMode.getModeName(GameModes.SPLICED_ENDLESS),
               handler: () => {
@@ -220,6 +221,7 @@ export class TitlePhase extends Phase {
 
         const modifiers: Modifier[] = Array(3).fill(null).map(() => modifierTypes.EXP_SHARE().withIdFromFunc(modifierTypes.EXP_SHARE).newModifier())
           .concat(Array(3).fill(null).map(() => modifierTypes.GOLDEN_EXP_CHARM().withIdFromFunc(modifierTypes.GOLDEN_EXP_CHARM).newModifier()))
+          .concat([ modifierTypes.MAP().withIdFromFunc(modifierTypes.MAP).newModifier() ])
           .concat(getDailyRunStarterModifiers(party))
           .filter((m) => m !== null);
 
