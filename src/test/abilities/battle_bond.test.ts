@@ -1,4 +1,4 @@
-import Move, { allMoves, MultiHitAttr, MultiHitType } from "#app/data/move";
+import { allMoves, MultiHitAttr, MultiHitType } from "#app/data/move";
 import { Status, StatusEffect } from "#app/data/status-effect";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
@@ -10,6 +10,9 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vite
 describe("Abilities - BATTLE BOND", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
+
+  const baseForm = 1;
+  const ashForm = 2;
 
   beforeAll(() => {
     phaserGame = new Phaser.Game({
@@ -24,29 +27,25 @@ describe("Abilities - BATTLE BOND", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override.battleType("single")
+      .startingWave(4) // Leads to arena reset on Wave 5 trainer battle
       .ability(Abilities.BATTLE_BOND)
+      .starterForms({ [Species.GRENINJA]: ashForm, })
       .moveset([ Moves.SPLASH, Moves.WATER_SHURIKEN ])
       .enemySpecies(Species.BULBASAUR)
+      .enemyMoveset(Moves.SPLASH)
       .startingLevel(100) // Avoid levelling up
       .enemyLevel(1000); // Avoid opponent dying before `doKillOpponents()`
   });
 
   it("check if fainted pokemon switches to base form on arena reset", async () => {
-    const baseForm = 1;
-    const ashForm = 2;
-    game.override.startingWave(4)
-      .starterForms({ [Species.GRENINJA]: ashForm, })
-      .enemyMoveset([ Moves.TACKLE, Moves.TACKLE, Moves.TACKLE, Moves.TACKLE ]);
-
     await game.classicMode.startBattle([ Species.MAGIKARP, Species.GRENINJA ]);
 
-    const greninja = game.scene.getParty().find((p) => p.species.speciesId === Species.GRENINJA);
-    expect(greninja).toBeDefined();
-    expect(greninja!.formIndex).toBe(ashForm);
+    const greninja = game.scene.getParty()[1];
+    expect(greninja.formIndex).toBe(ashForm);
 
-    greninja!.hp = 0;
-    greninja!.status = new Status(StatusEffect.FAINT);
-    expect(greninja!.isFainted()).toBe(true);
+    greninja.hp = 0;
+    greninja.status = new Status(StatusEffect.FAINT);
+    expect(greninja.isFainted()).toBe(true);
 
     game.move.select(Moves.SPLASH);
     await game.doKillOpponents();
@@ -54,28 +53,25 @@ describe("Abilities - BATTLE BOND", () => {
     game.doSelectModifier();
     await game.phaseInterceptor.to("QuietFormChangePhase");
 
-    expect(greninja!.formIndex).toBe(baseForm);
+    expect(greninja.formIndex).toBe(baseForm);
   });
 
-  it("should not keep buffing Water Shuriken after Greninja switches to base form", async () => {
-    const ashForm = 2;
-    game.override.startingWave(4)
-      .starterForms({ [Species.GRENINJA]: ashForm, })
-      .enemyMoveset(Moves.SPLASH);
+  it("should not keep buffing Water Shuriken after Greninja switches to base form", { repeats: 10 }, async () => {
     await game.classicMode.startBattle([ Species.GRENINJA ]);
-    // Wave 4: Use Water Shuriken in Ash form
-    let expectedBattlePower = 20;
-    let expectedMultiHitType = MultiHitType._3;
 
-    const waterShuriken = allMoves.find(move => move.id === Moves.WATER_SHURIKEN) as Move;
+    const waterShuriken = allMoves[Moves.WATER_SHURIKEN];
     vi.spyOn(waterShuriken, "calculateBattlePower");
 
-    let actualMultiHitType : MultiHitType | null = null;
-    const multiHitAttr = waterShuriken.getAttrs(MultiHitAttr)[0] as MultiHitAttr;
+    let actualMultiHitType: MultiHitType | null = null;
+    const multiHitAttr = waterShuriken.getAttrs(MultiHitAttr)[0];
     vi.spyOn(multiHitAttr, "getHitCount").mockImplementation(() => {
       actualMultiHitType = multiHitAttr.multiHitType;
       return 3;
     });
+
+    // Wave 4: Use Water Shuriken in Ash form
+    let expectedBattlePower = 20;
+    let expectedMultiHitType = MultiHitType._3;
 
     game.move.select(Moves.WATER_SHURIKEN);
     await game.phaseInterceptor.to("BerryPhase", false);
@@ -84,6 +80,7 @@ describe("Abilities - BATTLE BOND", () => {
 
     await game.doKillOpponents();
     await game.toNextWave();
+
     // Wave 5: Use Water Shuriken in base form
     expectedBattlePower = 15;
     expectedMultiHitType = MultiHitType._2_TO_5;
