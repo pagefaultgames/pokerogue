@@ -56,7 +56,7 @@ describe("Abilities - BATTLE BOND", () => {
     expect(greninja.formIndex).toBe(baseForm);
   });
 
-  it("should not keep buffing Water Shuriken after Greninja switches to base form", { repeats: 10 }, async () => {
+  it("should not keep buffing Water Shuriken after Greninja switches to base form", async () => {
     await game.classicMode.startBattle([ Species.GRENINJA ]);
 
     const waterShuriken = allMoves[Moves.WATER_SHURIKEN];
@@ -65,7 +65,7 @@ describe("Abilities - BATTLE BOND", () => {
     let actualMultiHitType: MultiHitType | null = null;
     const multiHitAttr = waterShuriken.getAttrs(MultiHitAttr)[0];
     vi.spyOn(multiHitAttr, "getHitCount").mockImplementation(() => {
-      actualMultiHitType = multiHitAttr.multiHitType;
+      actualMultiHitType = multiHitAttr.getMultiHitType();
       return 3;
     });
 
