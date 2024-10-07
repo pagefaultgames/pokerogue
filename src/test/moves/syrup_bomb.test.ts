@@ -30,7 +30,7 @@ describe("Moves - SYRUP BOMB", () => {
       .enemySpecies(Species.SNORLAX)
       .startingLevel(30)
       .enemyLevel(100)
-      .moveset([Moves.SYRUP_BOMB, Moves.SPLASH])
+      .moveset([ Moves.SYRUP_BOMB, Moves.SPLASH ])
       .enemyMoveset(Moves.SPLASH);
     vi.spyOn(allMoves[Moves.SYRUP_BOMB], "accuracy", "get").mockReturnValue(100);
   });
@@ -39,13 +39,13 @@ describe("Moves - SYRUP BOMB", () => {
 
   it("decreases the target Pokemon's speed stat once per turn for 3 turns",
     async () => {
-      await game.startBattle([Species.MAGIKARP]);
+      await game.startBattle([ Species.MAGIKARP ]);
 
       const targetPokemon = game.scene.getEnemyPokemon()!;
       expect(targetPokemon.getStatStage(Stat.SPD)).toBe(0);
 
       game.move.select(Moves.SYRUP_BOMB);
-      await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+      await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY ]);
       await game.move.forceHit();
       await game.toNextTurn();
       expect(targetPokemon.getTag(BattlerTagType.SYRUP_BOMB)).toBeDefined();
@@ -66,12 +66,12 @@ describe("Moves - SYRUP BOMB", () => {
   it("does not affect Pokemon with the ability Bulletproof",
     async () => {
       game.override.enemyAbility(Abilities.BULLETPROOF);
-      await game.startBattle([Species.MAGIKARP]);
+      await game.startBattle([ Species.MAGIKARP ]);
 
       const targetPokemon = game.scene.getEnemyPokemon()!;
 
       game.move.select(Moves.SYRUP_BOMB);
-      await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+      await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY ]);
       await game.move.forceHit();
       await game.toNextTurn();
       expect(targetPokemon.isFullHp()).toBe(true);

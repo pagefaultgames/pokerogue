@@ -34,8 +34,8 @@ describe("Items - Toxic orb", () => {
     game.override.ability(Abilities.INSOMNIA);
     game.override.enemyAbility(Abilities.INSOMNIA);
     game.override.startingLevel(2000);
-    game.override.moveset([moveToUse]);
-    game.override.enemyMoveset([oppMoveToUse, oppMoveToUse, oppMoveToUse, oppMoveToUse]);
+    game.override.moveset([ moveToUse ]);
+    game.override.enemyMoveset([ oppMoveToUse, oppMoveToUse, oppMoveToUse, oppMoveToUse ]);
     game.override.startingHeldItems([{
       name: "TOXIC_ORB",
     }]);

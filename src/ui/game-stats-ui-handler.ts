@@ -247,7 +247,7 @@ export default class GameStatsUiHandler extends UiHandler {
     const [ statsBgLeft, statsBgRight ] = new Array(2).fill(null).map((_, i) => {
       const width = statsBgWidth + 2;
       const height = Math.floor((this.scene.game.canvas.height / 6) - headerBg.height - 2);
-      const statsBg = addWindow(this.scene, (statsBgWidth - 2) * i, headerBg.height, width, height, false, false, i>0?-3:0, 1);
+      const statsBg = addWindow(this.scene, (statsBgWidth - 2) * i, headerBg.height, width, height, false, false, i > 0 ? -3 : 0, 1);
       statsBg.setOrigin(0, 0);
       return statsBg;
     });
@@ -276,9 +276,9 @@ export default class GameStatsUiHandler extends UiHandler {
 
     // arrows to show that we can scroll through the stats
     const isLegacyTheme = this.scene.uiTheme === UiTheme.LEGACY;
-    this.arrowDown = this.scene.add.sprite(statsBgWidth, this.scene.game.canvas.height / 6 - (isLegacyTheme? 9 : 5), "prompt");
+    this.arrowDown = this.scene.add.sprite(statsBgWidth, this.scene.game.canvas.height / 6 - (isLegacyTheme ? 9 : 5), "prompt");
     this.gameStatsContainer.add(this.arrowDown);
-    this.arrowUp = this.scene.add.sprite(statsBgWidth, headerBg.height + (isLegacyTheme? 7 : 3), "prompt");
+    this.arrowUp = this.scene.add.sprite(statsBgWidth, headerBg.height + (isLegacyTheme ? 7 : 3), "prompt");
     this.arrowUp.flipY = true;
     this.gameStatsContainer.add(this.arrowUp);
 

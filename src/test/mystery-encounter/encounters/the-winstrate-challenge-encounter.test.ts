@@ -27,7 +27,7 @@ import { PartyHealPhase } from "#app/phases/party-heal-phase";
 import { VictoryPhase } from "#app/phases/victory-phase";
 
 const namespace = "mysteryEncounters/theWinstrateChallenge";
-const defaultParty = [Species.LAPRAS, Species.GENGAR, Species.ABRA];
+const defaultParty = [ Species.LAPRAS, Species.GENGAR, Species.ABRA ];
 const defaultBiome = Biome.CAVE;
 const defaultWave = 45;
 
@@ -49,10 +49,10 @@ describe("The Winstrate Challenge - Mystery Encounter", () => {
     game.override.disableTrainerWaves();
 
     const biomeMap = new Map<Biome, MysteryEncounterType[]>([
-      [Biome.VOLCANO, [MysteryEncounterType.FIGHT_OR_FLIGHT]],
+      [ Biome.VOLCANO, [ MysteryEncounterType.FIGHT_OR_FLIGHT ]],
     ]);
     HUMAN_TRANSITABLE_BIOMES.forEach(biome => {
-      biomeMap.set(biome, [MysteryEncounterType.THE_WINSTRATE_CHALLENGE]);
+      biomeMap.set(biome, [ MysteryEncounterType.THE_WINSTRATE_CHALLENGE ]);
     });
     vi.spyOn(MysteryEncounters, "mysteryEncountersByBiome", "get").mockReturnValue(biomeMap);
   });
@@ -114,7 +114,7 @@ describe("The Winstrate Challenge - Mystery Encounter", () => {
             isBoss: false,
             abilityIndex: 0, // Soundproof
             nature: Nature.MODEST,
-            moveSet: [Moves.THUNDERBOLT, Moves.GIGA_DRAIN, Moves.FOUL_PLAY, Moves.THUNDER_WAVE],
+            moveSet: [ Moves.THUNDERBOLT, Moves.GIGA_DRAIN, Moves.FOUL_PLAY, Moves.THUNDER_WAVE ],
             modifierConfigs: expect.any(Array)
           },
           {
@@ -122,7 +122,7 @@ describe("The Winstrate Challenge - Mystery Encounter", () => {
             isBoss: false,
             abilityIndex: 2, // Gluttony
             nature: Nature.QUIET,
-            moveSet: [Moves.SLUDGE_BOMB, Moves.GIGA_DRAIN, Moves.ICE_BEAM, Moves.EARTHQUAKE],
+            moveSet: [ Moves.SLUDGE_BOMB, Moves.GIGA_DRAIN, Moves.ICE_BEAM, Moves.EARTHQUAKE ],
             modifierConfigs: expect.any(Array)
           },
           {
@@ -130,7 +130,7 @@ describe("The Winstrate Challenge - Mystery Encounter", () => {
             isBoss: false,
             abilityIndex: 2, // Tangled Feet
             nature: Nature.JOLLY,
-            moveSet: [Moves.DRILL_PECK, Moves.QUICK_ATTACK, Moves.THRASH, Moves.KNOCK_OFF],
+            moveSet: [ Moves.DRILL_PECK, Moves.QUICK_ATTACK, Moves.THRASH, Moves.KNOCK_OFF ],
             modifierConfigs: expect.any(Array)
           },
           {
@@ -138,7 +138,7 @@ describe("The Winstrate Challenge - Mystery Encounter", () => {
             isBoss: false,
             formIndex: 1,
             nature: Nature.BOLD,
-            moveSet: [Moves.PSYCHIC, Moves.SHADOW_BALL, Moves.FOCUS_BLAST, Moves.THUNDERBOLT],
+            moveSet: [ Moves.PSYCHIC, Moves.SHADOW_BALL, Moves.FOCUS_BLAST, Moves.THUNDERBOLT ],
             modifierConfigs: expect.any(Array)
           },
           {
@@ -146,7 +146,7 @@ describe("The Winstrate Challenge - Mystery Encounter", () => {
             isBoss: false,
             abilityIndex: 0, // Sheer Force
             nature: Nature.IMPISH,
-            moveSet: [Moves.EARTHQUAKE, Moves.U_TURN, Moves.FLARE_BLITZ, Moves.ROCK_SLIDE],
+            moveSet: [ Moves.EARTHQUAKE, Moves.U_TURN, Moves.FLARE_BLITZ, Moves.ROCK_SLIDE ],
             modifierConfigs: expect.any(Array)
           }
         ]
@@ -159,7 +159,7 @@ describe("The Winstrate Challenge - Mystery Encounter", () => {
             isBoss: false,
             formIndex: 1,
             nature: Nature.IMPISH,
-            moveSet: [Moves.AXE_KICK, Moves.ICE_PUNCH, Moves.ZEN_HEADBUTT, Moves.BULLET_PUNCH],
+            moveSet: [ Moves.AXE_KICK, Moves.ICE_PUNCH, Moves.ZEN_HEADBUTT, Moves.BULLET_PUNCH ],
             modifierConfigs: expect.any(Array)
           }
         ]
@@ -172,7 +172,7 @@ describe("The Winstrate Challenge - Mystery Encounter", () => {
             isBoss: false,
             abilityIndex: 3, // Lightning Rod
             nature: Nature.ADAMANT,
-            moveSet: [Moves.WATERFALL, Moves.MEGAHORN, Moves.KNOCK_OFF, Moves.REST],
+            moveSet: [ Moves.WATERFALL, Moves.MEGAHORN, Moves.KNOCK_OFF, Moves.REST ],
             modifierConfigs: expect.any(Array)
           },
           {
@@ -180,7 +180,7 @@ describe("The Winstrate Challenge - Mystery Encounter", () => {
             isBoss: false,
             abilityIndex: 1, // Poison Heal
             nature: Nature.JOLLY,
-            moveSet: [Moves.SPORE, Moves.SWORDS_DANCE, Moves.SEED_BOMB, Moves.DRAIN_PUNCH],
+            moveSet: [ Moves.SPORE, Moves.SWORDS_DANCE, Moves.SEED_BOMB, Moves.DRAIN_PUNCH ],
             modifierConfigs: expect.any(Array)
           },
           {
@@ -188,7 +188,7 @@ describe("The Winstrate Challenge - Mystery Encounter", () => {
             isBoss: false,
             formIndex: 1,
             nature: Nature.CALM,
-            moveSet: [Moves.EARTH_POWER, Moves.FIRE_BLAST, Moves.YAWN, Moves.PROTECT],
+            moveSet: [ Moves.EARTH_POWER, Moves.FIRE_BLAST, Moves.YAWN, Moves.PROTECT ],
             modifierConfigs: expect.any(Array)
           }
         ]
@@ -201,7 +201,7 @@ describe("The Winstrate Challenge - Mystery Encounter", () => {
             isBoss: false,
             abilityIndex: 0, // Natural Cure
             nature: Nature.CALM,
-            moveSet: [Moves.SYNTHESIS, Moves.SLUDGE_BOMB, Moves.GIGA_DRAIN, Moves.SLEEP_POWDER],
+            moveSet: [ Moves.SYNTHESIS, Moves.SLUDGE_BOMB, Moves.GIGA_DRAIN, Moves.SLEEP_POWDER ],
             modifierConfigs: expect.any(Array)
           },
           {
@@ -209,7 +209,7 @@ describe("The Winstrate Challenge - Mystery Encounter", () => {
             isBoss: false,
             formIndex: 1,
             nature: Nature.TIMID,
-            moveSet: [Moves.PSYSHOCK, Moves.MOONBLAST, Moves.SHADOW_BALL, Moves.WILL_O_WISP],
+            moveSet: [ Moves.PSYSHOCK, Moves.MOONBLAST, Moves.SHADOW_BALL, Moves.WILL_O_WISP ],
             modifierConfigs: expect.any(Array)
           }
         ]
@@ -222,7 +222,7 @@ describe("The Winstrate Challenge - Mystery Encounter", () => {
             isBoss: false,
             abilityIndex: 0, // Guts
             nature: Nature.ADAMANT,
-            moveSet: [Moves.FACADE, Moves.BRAVE_BIRD, Moves.PROTECT, Moves.QUICK_ATTACK],
+            moveSet: [ Moves.FACADE, Moves.BRAVE_BIRD, Moves.PROTECT, Moves.QUICK_ATTACK ],
             modifierConfigs: expect.any(Array)
           },
           {
@@ -230,7 +230,7 @@ describe("The Winstrate Challenge - Mystery Encounter", () => {
             isBoss: false,
             abilityIndex: 1, // Guts
             nature: Nature.ADAMANT,
-            moveSet: [Moves.FACADE, Moves.OBSTRUCT, Moves.NIGHT_SLASH, Moves.FIRE_PUNCH],
+            moveSet: [ Moves.FACADE, Moves.OBSTRUCT, Moves.NIGHT_SLASH, Moves.FIRE_PUNCH ],
             modifierConfigs: expect.any(Array)
           }
         ]

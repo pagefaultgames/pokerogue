@@ -26,7 +26,7 @@ describe("Items - Lock Capsule", () => {
     game.override
       .battleType("single")
       .startingLevel(200)
-      .moveset([Moves.SURF])
+      .moveset([ Moves.SURF ])
       .enemyAbility(Abilities.BALL_FETCH)
       .startingModifier([{ name: "LOCK_CAPSULE" }]);
   });
@@ -39,7 +39,7 @@ describe("Items - Lock Capsule", () => {
 
     const rewards = game.scene.getCurrentPhase() as SelectModifierPhase;
     const potion = new ModifierTypeOption(modifierTypes.POTION(), 0, 40); // Common tier item
-    const rerollCost = rewards.getRerollCost([potion, potion, potion], true);
+    const rerollCost = rewards.getRerollCost([ potion, potion, potion ], true);
 
     expect(rerollCost).toBe(150);
   }, 20000);

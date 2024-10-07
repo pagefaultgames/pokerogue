@@ -24,7 +24,7 @@ describe("Moves - Heal Bell", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([Moves.HEAL_BELL, Moves.SPLASH])
+      .moveset([ Moves.HEAL_BELL, Moves.SPLASH ])
       .statusEffect(StatusEffect.BURN)
       .battleType("double")
       .enemyAbility(Abilities.BALL_FETCH)
@@ -32,8 +32,8 @@ describe("Moves - Heal Bell", () => {
   });
 
   it("should cure status effect of the user, its ally, and all party pokemon", async () => {
-    await game.classicMode.startBattle([Species.RATTATA, Species.RATTATA, Species.RATTATA]);
-    const [leftPlayer, rightPlayer, partyPokemon] = game.scene.getParty();
+    await game.classicMode.startBattle([ Species.RATTATA, Species.RATTATA, Species.RATTATA ]);
+    const [ leftPlayer, rightPlayer, partyPokemon ] = game.scene.getParty();
 
     vi.spyOn(leftPlayer, "resetStatus");
     vi.spyOn(rightPlayer, "resetStatus");
@@ -55,8 +55,8 @@ describe("Moves - Heal Bell", () => {
 
   it("should not cure status effect of the target/target's allies", async () => {
     game.override.enemyStatusEffect(StatusEffect.BURN);
-    await game.classicMode.startBattle([Species.RATTATA, Species.RATTATA]);
-    const [leftOpp, rightOpp] = game.scene.getEnemyField();
+    await game.classicMode.startBattle([ Species.RATTATA, Species.RATTATA ]);
+    const [ leftOpp, rightOpp ] = game.scene.getEnemyField();
 
     vi.spyOn(leftOpp, "resetStatus");
     vi.spyOn(rightOpp, "resetStatus");
@@ -78,8 +78,8 @@ describe("Moves - Heal Bell", () => {
 
   it("should not cure status effect of allies ON FIELD with Soundproof, should still cure allies in party", async () => {
     game.override.ability(Abilities.SOUNDPROOF);
-    await game.classicMode.startBattle([Species.RATTATA, Species.RATTATA, Species.RATTATA]);
-    const [leftPlayer, rightPlayer, partyPokemon] = game.scene.getParty();
+    await game.classicMode.startBattle([ Species.RATTATA, Species.RATTATA, Species.RATTATA ]);
+    const [ leftPlayer, rightPlayer, partyPokemon ] = game.scene.getParty();
 
     vi.spyOn(leftPlayer, "resetStatus");
     vi.spyOn(rightPlayer, "resetStatus");
