@@ -8390,7 +8390,7 @@ export function initMoves() {
       .condition(failOnGravityCondition)
       .condition((_user, target, _move) => ![ Species.DIGLETT, Species.DUGTRIO, Species.ALOLA_DIGLETT, Species.ALOLA_DUGTRIO, Species.SANDYGAST, Species.PALOSSAND, Species.WIGLETT, Species.WUGTRIO ].includes(target.species.speciesId))
       .condition((_user, target, _move) => (target.species.speciesId !== Species.GENGAR && target.getFormKey() !== "mega"))
-      //.condition((_user, target, _move) => target.getTag(BattlerTagType.INGRAIN) || target.getTag(BattlerTagType.IGNORE_FLYING)
+      .condition((_user, target, _move) => Utils.isNullOrUndefined(target.getTag(BattlerTagType.INGRAIN)) && Utils.isNullOrUndefined(target.getTag(BattlerTagType.IGNORE_FLYING)))
       .attr(AddBattlerTagAttr, BattlerTagType.TELEKINESIS, false, false, 3),
     new StatusMove(Moves.MAGIC_ROOM, Type.PSYCHIC, -1, 10, -1, 0, 5)
       .ignoresProtect()
