@@ -199,11 +199,11 @@ export const WeirdDreamEncounter: MysteryEncounter =
     )
     .withSimpleOption(
       {
-        buttonLabel: `${namespace}.option.2.label`,
-        buttonTooltip: `${namespace}.option.2.tooltip`,
+        buttonLabel: `${namespace}.option.3.label`,
+        buttonTooltip: `${namespace}.option.3.tooltip`,
         selected: [
           {
-            text: `${namespace}.option.2.selected`,
+            text: `${namespace}.option.3.selected`,
           },
         ],
       },
