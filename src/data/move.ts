@@ -7121,7 +7121,6 @@ export function initMoves() {
     new ChargingAttackMove(Moves.FLY, Type.FLYING, MoveCategory.PHYSICAL, 90, 95, 15, -1, 0, 1)
       .chargeText(i18next.t("moveTriggers:flewUpHigh", { pokemonName: "{USER}" }))
       .chargeAttr(SemiInvulnerableAttr, BattlerTagType.FLYING)
-      // TODO: double check Gravity interactions
       .condition(failOnGravityCondition)
       .ignoresVirtual(),
     new AttackMove(Moves.BIND, Type.NORMAL, MoveCategory.PHYSICAL, 15, 85, 20, -1, 0, 1)
