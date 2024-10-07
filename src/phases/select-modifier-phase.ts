@@ -16,23 +16,25 @@ export class SelectModifierPhase extends BattlePhase {
   private rerollCount: integer;
   private modifierTiers?: ModifierTier[];
   private customModifierSettings?: CustomModifierSettings;
+  private isCopy: boolean;
 
   private typeOptions: ModifierTypeOption[];
 
-  constructor(scene: BattleScene, rerollCount: integer = 0, modifierTiers?: ModifierTier[], customModifierSettings?: CustomModifierSettings) {
+  constructor(scene: BattleScene, rerollCount: integer = 0, modifierTiers?: ModifierTier[], customModifierSettings?: CustomModifierSettings, isCopy: boolean = false) {
     super(scene);
 
     this.rerollCount = rerollCount;
     this.modifierTiers = modifierTiers;
     this.customModifierSettings = customModifierSettings;
+    this.isCopy = isCopy;
   }
 
   start() {
     super.start();
 
-    if (!this.rerollCount) {
+    if (!this.rerollCount && !this.isCopy) {
       this.updateSeed();
-    } else {
+    } else if (this.rerollCount) {
       this.scene.reroll = false;
     }
 
@@ -282,7 +284,7 @@ export class SelectModifierPhase extends BattlePhase {
   }
 
   copy(): SelectModifierPhase {
-    return new SelectModifierPhase(this.scene, this.rerollCount, this.modifierTiers, { guaranteedModifierTypeOptions: this.typeOptions, allowLuckUpgrades: false });
+    return new SelectModifierPhase(this.scene, this.rerollCount, this.modifierTiers, { guaranteedModifierTypeOptions: this.typeOptions, allowLuckUpgrades: false }, true);
   }
 
   addModifier(modifier: Modifier): Promise<boolean> {
