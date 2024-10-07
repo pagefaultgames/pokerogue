@@ -939,7 +939,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         ret >>= 1;
       }
       if (this.getTag(BattlerTagType.UNBURDEN)) {
-        ret *=2;
+        ret *= 2;
       }
       break;
     }
