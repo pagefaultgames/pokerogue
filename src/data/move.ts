@@ -6132,6 +6132,10 @@ const targetMoveCopiableCondition: MoveConditionFunc = (user, target, move) => {
     return false;
   }
 
+  if (allMoves[copiableMove.move].isChargingMove() && copiableMove.result === MoveResult.OTHER) {
+    return false;
+  }
+
   // TODO: Add last turn of Bide
 
   return true;

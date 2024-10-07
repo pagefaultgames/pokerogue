@@ -2,7 +2,7 @@ import BattleScene from "#app/battle-scene";
 import { BattlerIndex } from "#app/battle";
 import { MoveChargeAnim } from "#app/data/battle-anims";
 import { applyMoveChargeAttrs, MoveEffectAttr, InstantChargeAttr } from "#app/data/move";
-import Pokemon, { PokemonMove } from "#app/field/pokemon";
+import Pokemon, { MoveResult, PokemonMove } from "#app/field/pokemon";
 import { BooleanHolder } from "#app/utils";
 import { MovePhase } from "#app/phases/move-phase";
 import { PokemonPhase } from "#app/phases/pokemon-phase";
@@ -26,13 +26,10 @@ export class MoveChargePhase extends PokemonPhase {
 
     const user = this.getUserPokemon();
     const target = this.getTargetPokemon();
-    if (!target) {
-      return this.end();
-    }
-
     const move = this.move.getMove();
-    if (!(move.isChargingMove())) {
-      return this.end();
+
+    if (!target || !(move.isChargingMove())) {
+      return super.end();
     }
 
     new MoveChargeAnim(move.chargeAnim, move.id, user).play(this.scene, false, () => {
@@ -61,6 +58,9 @@ export class MoveChargePhase extends PokemonPhase {
       } else {
         user.getMoveQueue().push({ move: move.id, targets: [ this.targetIndex ]});
       }
+
+      // Add this move's charging phase to the user's move history
+      user.pushMoveHistory({ move: this.move.moveId, targets: [ this.targetIndex ], result: MoveResult.OTHER });
     }
     super.end();
   }

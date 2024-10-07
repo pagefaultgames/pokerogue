@@ -303,6 +303,7 @@ export class MovePhase extends BattlePhase {
     // Protean and Libero apply on the charging turn of charge moves
     applyPreAttackAbAttrs(PokemonTypeChangeAbAttr, this.pokemon, null, this.move.getMove());
 
+    this.showMoveText();
     this.scene.unshiftPhase(new MoveChargePhase(this.scene, this.pokemon.getBattlerIndex(), this.targets[0], this.move));
   }
 
