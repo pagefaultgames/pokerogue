@@ -24,7 +24,7 @@ describe("Moves - Dragon Tail", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override.battleType("single")
-      .moveset([Moves.DRAGON_TAIL, Moves.SPLASH, Moves.FLAMETHROWER])
+      .moveset([ Moves.DRAGON_TAIL, Moves.SPLASH, Moves.FLAMETHROWER ])
       .enemySpecies(Species.WAILORD)
       .enemyMoveset(Moves.SPLASH)
       .startingLevel(5)
@@ -34,7 +34,7 @@ describe("Moves - Dragon Tail", () => {
   });
 
   it("should cause opponent to flee, and not crash", async () => {
-    await game.classicMode.startBattle([Species.DRATINI]);
+    await game.classicMode.startBattle([ Species.DRATINI ]);
 
     const enemyPokemon = game.scene.getEnemyPokemon()!;
 
@@ -52,7 +52,7 @@ describe("Moves - Dragon Tail", () => {
 
   it("should cause opponent to flee, display ability, and not crash", async () => {
     game.override.enemyAbility(Abilities.ROUGH_SKIN);
-    await game.classicMode.startBattle([Species.DRATINI]);
+    await game.classicMode.startBattle([ Species.DRATINI ]);
 
     const leadPokemon = game.scene.getPlayerPokemon()!;
     const enemyPokemon = game.scene.getEnemyPokemon()!;
@@ -71,7 +71,7 @@ describe("Moves - Dragon Tail", () => {
     game.override
       .battleType("double").enemyMoveset(Moves.SPLASH)
       .enemyAbility(Abilities.ROUGH_SKIN);
-    await game.classicMode.startBattle([Species.DRATINI, Species.DRATINI, Species.WAILORD, Species.WAILORD]);
+    await game.classicMode.startBattle([ Species.DRATINI, Species.DRATINI, Species.WAILORD, Species.WAILORD ]);
 
     const leadPokemon = game.scene.getParty()[0]!;
 
@@ -103,7 +103,7 @@ describe("Moves - Dragon Tail", () => {
       .battleType("double")
       .enemyMoveset(Moves.SPLASH)
       .enemyAbility(Abilities.ROUGH_SKIN);
-    await game.classicMode.startBattle([Species.DRATINI, Species.DRATINI, Species.WAILORD, Species.WAILORD]);
+    await game.classicMode.startBattle([ Species.DRATINI, Species.DRATINI, Species.WAILORD, Species.WAILORD ]);
 
     const leadPokemon = game.scene.getParty()[0]!;
     const secPokemon = game.scene.getParty()[1]!;
@@ -130,7 +130,7 @@ describe("Moves - Dragon Tail", () => {
 
   it("doesn't switch out if the target has suction cups", async () => {
     game.override.enemyAbility(Abilities.SUCTION_CUPS);
-    await game.classicMode.startBattle([Species.REGIELEKI]);
+    await game.classicMode.startBattle([ Species.REGIELEKI ]);
 
     const enemy = game.scene.getEnemyPokemon()!;
 

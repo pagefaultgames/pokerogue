@@ -185,7 +185,7 @@ export abstract class Challenge {
    */
   getDescription(overrideValue?: number): string {
     const value = overrideValue ?? this.value;
-    return `${i18next.t([`challenges:${this.geti18nKey()}.desc.${value}`, `challenges:${this.geti18nKey()}.desc`])}`;
+    return `${i18next.t([ `challenges:${this.geti18nKey()}.desc.${value}`, `challenges:${this.geti18nKey()}.desc` ])}`;
   }
 
   /**
@@ -414,9 +414,9 @@ export class SingleGenerationChallenge extends Challenge {
   }
 
   applyStarterChoice(pokemon: PokemonSpecies, valid: Utils.BooleanHolder, dexAttr: DexAttrProps, soft: boolean = false): boolean {
-    const generations = [pokemon.generation];
+    const generations = [ pokemon.generation ];
     if (soft) {
-      const speciesToCheck = [pokemon.speciesId];
+      const speciesToCheck = [ pokemon.speciesId ];
       while (speciesToCheck.length) {
         const checking = speciesToCheck.pop();
         if (checking && pokemonEvolutions.hasOwnProperty(checking)) {
@@ -455,7 +455,7 @@ export class SingleGenerationChallenge extends Challenge {
       trainerTypes = [ TrainerType.BRUNO, TrainerType.KOGA, TrainerType.PHOEBE, TrainerType.BERTHA, TrainerType.MARSHAL, TrainerType.SIEBOLD, TrainerType.OLIVIA, TrainerType.NESSA_ELITE, TrainerType.POPPY ];
       break;
     case 186:
-      trainerTypes = [ TrainerType.AGATHA, TrainerType.BRUNO, TrainerType.GLACIA, TrainerType.FLINT, TrainerType.GRIMSLEY, TrainerType.WIKSTROM, TrainerType.ACEROLA, Utils.randSeedItem([TrainerType.BEA_ELITE, TrainerType.ALLISTER_ELITE]), TrainerType.LARRY_ELITE ];
+      trainerTypes = [ TrainerType.AGATHA, TrainerType.BRUNO, TrainerType.GLACIA, TrainerType.FLINT, TrainerType.GRIMSLEY, TrainerType.WIKSTROM, TrainerType.ACEROLA, Utils.randSeedItem([ TrainerType.BEA_ELITE, TrainerType.ALLISTER_ELITE ]), TrainerType.LARRY_ELITE ];
       break;
     case 188:
       trainerTypes = [ TrainerType.LANCE, TrainerType.KAREN, TrainerType.DRAKE, TrainerType.LUCIAN, TrainerType.CAITLIN, TrainerType.DRASNA, TrainerType.KAHILI, TrainerType.RAIHAN_ELITE, TrainerType.HASSEL ];
@@ -528,10 +528,10 @@ interface monotypeOverride {
  */
 export class SingleTypeChallenge extends Challenge {
   private static TYPE_OVERRIDES: monotypeOverride[] = [
-    {species: Species.CASTFORM, type: Type.NORMAL, fusion: false},
+    { species: Species.CASTFORM, type: Type.NORMAL, fusion: false },
   ];
   // TODO: Find a solution for all Pokemon with this ssui issue, including Basculin and Burmy
-  private static SPECIES_OVERRIDES: Species[] = [Species.MELOETTA];
+  private static SPECIES_OVERRIDES: Species[] = [ Species.MELOETTA ];
 
   constructor() {
     super(Challenges.SINGLE_TYPE, 18);
@@ -539,9 +539,9 @@ export class SingleTypeChallenge extends Challenge {
 
   override applyStarterChoice(pokemon: PokemonSpecies, valid: Utils.BooleanHolder, dexAttr: DexAttrProps, soft: boolean = false): boolean {
     const speciesForm = getPokemonSpeciesForm(pokemon.speciesId, dexAttr.formIndex);
-    const types = [speciesForm.type1, speciesForm.type2];
+    const types = [ speciesForm.type1, speciesForm.type2 ];
     if (soft && !SingleTypeChallenge.SPECIES_OVERRIDES.includes(pokemon.speciesId)) {
-      const speciesToCheck = [pokemon.speciesId];
+      const speciesToCheck = [ pokemon.speciesId ];
       while (speciesToCheck.length) {
         const checking = speciesToCheck.pop();
         if (checking && pokemonEvolutions.hasOwnProperty(checking)) {
@@ -606,9 +606,9 @@ export class SingleTypeChallenge extends Challenge {
       overrideValue = this.value;
     }
     const type = i18next.t(`pokemonInfo:Type.${Type[this.value - 1]}`);
-    const typeColor = `[color=${TypeColor[Type[this.value-1]]}][shadow=${TypeShadow[Type[this.value-1]]}]${type}[/shadow][/color]`;
+    const typeColor = `[color=${TypeColor[Type[this.value - 1]]}][shadow=${TypeShadow[Type[this.value - 1]]}]${type}[/shadow][/color]`;
     const defaultDesc = i18next.t("challenges:singleType.desc_default");
-    const typeDesc = i18next.t("challenges:singleType.desc", {type: typeColor});
+    const typeDesc = i18next.t("challenges:singleType.desc", { type: typeColor });
     return this.value === 0 ? defaultDesc : typeDesc;
   }
 
@@ -653,7 +653,7 @@ export class FreshStartChallenge extends Challenge {
     pokemon.shiny = false; // Not shiny
     pokemon.variant = 0; // Not shiny
     pokemon.formIndex = 0; // Froakie should be base form
-    pokemon.ivs = [10, 10, 10, 10, 10, 10]; // Default IVs of 10 for all stats
+    pokemon.ivs = [ 10, 10, 10, 10, 10, 10 ]; // Default IVs of 10 for all stats
     return true;
   }
 

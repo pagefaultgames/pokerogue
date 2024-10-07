@@ -25,13 +25,13 @@ describe("Moves - Taunt", () => {
     game.override
       .battleType("single")
       .enemyAbility(Abilities.BALL_FETCH)
-      .enemyMoveset([Moves.TAUNT, Moves.SPLASH])
+      .enemyMoveset([ Moves.TAUNT, Moves.SPLASH ])
       .enemySpecies(Species.SHUCKLE)
-      .moveset([Moves.GROWL]);
+      .moveset([ Moves.GROWL ]);
   });
 
   it("Pokemon should not be able to use Status Moves", async () => {
-    await game.classicMode.startBattle([Species.REGIELEKI]);
+    await game.classicMode.startBattle([ Species.REGIELEKI ]);
 
     const playerPokemon = game.scene.getPlayerPokemon()!;
 
