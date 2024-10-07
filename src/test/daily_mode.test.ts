@@ -5,6 +5,7 @@ import { Moves } from "#app/enums/moves";
 import { Biome } from "#app/enums/biome";
 import { Mode } from "#app/ui/ui";
 import ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
+import { Species } from "#enums/species";
 
 //const TIMEOUT = 20 * 1000;
 
@@ -53,12 +54,11 @@ describe("Shop modifications", async () => {
 
     game.override
       .startingWave(9)
-      .startingBiome(Biome.ICE_CAVE) // Will lead to Snowy Forest with randomly generated weather
+      .startingBiome(Biome.ICE_CAVE)
       .battleType("single")
       .startingLevel(100) // Avoid levelling up
-      .enemyLevel(1000) // Avoid opponent dying before game.doKillOpponents()
       .disableTrainerWaves()
-      .moveset([ Moves.KOWTOW_CLEAVE ])
+      .moveset([ Moves.SPLASH ])
       .enemyMoveset(Moves.SPLASH);
     game.modifiers
       .addCheck("EVIOLITE")
@@ -71,9 +71,8 @@ describe("Shop modifications", async () => {
   });
 
   it("should not have Eviolite and Mini Black Hole available in Classic if not unlocked", async () => {
-    await game.classicMode.startBattle();
-    game.move.select(Moves.KOWTOW_CLEAVE);
-    await game.phaseInterceptor.to("DamagePhase");
+    await game.classicMode.startBattle([ Species.BULBASAUR ]);
+    game.move.select(Moves.SPLASH);
     await game.doKillOpponents();
     await game.phaseInterceptor.to("BattleEndPhase");
     game.onNextPrompt("SelectModifierPhase", Mode.MODIFIER_SELECT, () => {
@@ -86,8 +85,7 @@ describe("Shop modifications", async () => {
 
   it("should have Eviolite and Mini Black Hole available in Daily", async () => {
     await game.dailyMode.startBattle();
-    game.move.select(Moves.KOWTOW_CLEAVE);
-    await game.phaseInterceptor.to("DamagePhase");
+    game.move.select(Moves.SPLASH);
     await game.doKillOpponents();
     await game.phaseInterceptor.to("BattleEndPhase");
     game.onNextPrompt("SelectModifierPhase", Mode.MODIFIER_SELECT, () => {

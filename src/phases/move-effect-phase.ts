@@ -1,20 +1,20 @@
-import BattleScene from "#app/battle-scene";
 import { BattlerIndex } from "#app/battle";
-import { applyPreAttackAbAttrs, AddSecondStrikeAbAttr, IgnoreMoveEffectsAbAttr, applyPostDefendAbAttrs, PostDefendAbAttr, applyPostAttackAbAttrs, PostAttackAbAttr, MaxMultiHitAbAttr, AlwaysHitAbAttr, TypeImmunityAbAttr } from "#app/data/ability";
+import BattleScene from "#app/battle-scene";
+import { AddSecondStrikeAbAttr, AlwaysHitAbAttr, applyPostAttackAbAttrs, applyPostDefendAbAttrs, applyPreAttackAbAttrs, IgnoreMoveEffectsAbAttr, MaxMultiHitAbAttr, PostAttackAbAttr, PostDefendAbAttr, TypeImmunityAbAttr } from "#app/data/ability";
 import { ArenaTagSide, ConditionalProtectTag } from "#app/data/arena-tag";
 import { MoveAnim } from "#app/data/battle-anims";
 import { BattlerTagLapseType, DamageProtectedTag, ProtectedTag, SemiInvulnerableTag, SubstituteTag } from "#app/data/battler-tags";
-import { MoveTarget, applyMoveAttrs, OverrideMoveEffectAttr, MultiHitAttr, AttackMove, FixedDamageAttr, VariableTargetAttr, MissEffectAttr, MoveFlags, applyFilteredMoveAttrs, MoveAttr, MoveEffectAttr, MoveEffectTrigger, ChargeAttr, MoveCategory, NoEffectAttr, HitsTagAttr, DelayedAttackAttr, ToxicAccuracyAttr } from "#app/data/move";
+import { applyFilteredMoveAttrs, applyMoveAttrs, AttackMove, ChargeAttr, DelayedAttackAttr, FixedDamageAttr, HitsTagAttr, MissEffectAttr, MoveAttr, MoveCategory, MoveEffectAttr, MoveEffectTrigger, MoveFlags, MoveTarget, MultiHitAttr, NoEffectAttr, OverrideMoveEffectAttr, ToxicAccuracyAttr, VariableTargetAttr } from "#app/data/move";
 import { SpeciesFormChangePostMoveTrigger } from "#app/data/pokemon-forms";
+import { Type } from "#app/data/type";
+import Pokemon, { HitResult, MoveResult, PokemonMove } from "#app/field/pokemon";
+import { getPokemonNameWithAffix } from "#app/messages";
+import { ContactHeldItemTransferChanceModifier, EnemyAttackStatusEffectChanceModifier, FlinchChanceModifier, HitHealModifier, PokemonMultiHitModifier } from "#app/modifier/modifier";
+import { PokemonPhase } from "#app/phases/pokemon-phase";
+import * as Utils from "#app/utils";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { Moves } from "#enums/moves";
-import Pokemon, { PokemonMove, MoveResult, HitResult } from "#app/field/pokemon";
-import { getPokemonNameWithAffix } from "#app/messages";
-import { PokemonMultiHitModifier, FlinchChanceModifier, EnemyAttackStatusEffectChanceModifier, ContactHeldItemTransferChanceModifier, HitHealModifier } from "#app/modifier/modifier";
 import i18next from "i18next";
-import * as Utils from "#app/utils";
-import { PokemonPhase } from "#app/phases/pokemon-phase";
-import { Type } from "#app/data/type";
 
 export class MoveEffectPhase extends PokemonPhase {
   public move: PokemonMove;
@@ -75,7 +75,7 @@ export class MoveEffectPhase extends PokemonPhase {
        * resolve the move's total hit count. This block combines the
        * effects of the move itself, Parental Bond, and Multi-Lens to do so.
        */
-      if (user.turnData.hitsLeft === undefined) {
+      if (user.turnData.hitsLeft === -1) {
         const hitCount = new Utils.IntegerHolder(1);
         // Assume single target for multi hit
         applyMoveAttrs(MultiHitAttr, user, this.getTarget() ?? null, move, hitCount);
