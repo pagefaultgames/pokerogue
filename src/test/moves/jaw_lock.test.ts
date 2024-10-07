@@ -12,7 +12,6 @@ import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 
-
 describe("Moves - Jaw Lock", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
@@ -35,7 +34,7 @@ describe("Moves - Jaw Lock", () => {
       .enemySpecies(Species.SNORLAX)
       .enemyAbility(Abilities.INSOMNIA)
       .enemyMoveset(Moves.SPLASH)
-      .moveset([Moves.JAW_LOCK, Moves.SPLASH])
+      .moveset([ Moves.JAW_LOCK, Moves.SPLASH ])
       .startingLevel(100)
       .enemyLevel(100)
       .disableCrits();
@@ -44,13 +43,13 @@ describe("Moves - Jaw Lock", () => {
   it(
     "should trap the move's user and target",
     async () => {
-      await game.startBattle([Species.BULBASAUR]);
+      await game.startBattle([ Species.BULBASAUR ]);
 
       const leadPokemon = game.scene.getPlayerPokemon()!;
       const enemyPokemon = game.scene.getEnemyPokemon()!;
 
       game.move.select(Moves.JAW_LOCK);
-      await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+      await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY ]);
 
       await game.phaseInterceptor.to(MoveEffectPhase, false);
 
@@ -68,13 +67,13 @@ describe("Moves - Jaw Lock", () => {
     "should not trap either pokemon if the target faints",
     async () => {
       game.override.enemyLevel(1);
-      await game.startBattle([Species.BULBASAUR]);
+      await game.startBattle([ Species.BULBASAUR ]);
 
       const leadPokemon = game.scene.getPlayerPokemon()!;
       const enemyPokemon = game.scene.getEnemyPokemon()!;
 
       game.move.select(Moves.JAW_LOCK);
-      await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+      await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY ]);
 
       await game.phaseInterceptor.to(MoveEffectPhase, false);
 
@@ -96,13 +95,13 @@ describe("Moves - Jaw Lock", () => {
   it(
     "should only trap the user until the target faints",
     async () => {
-      await game.startBattle([Species.BULBASAUR]);
+      await game.startBattle([ Species.BULBASAUR ]);
 
       const leadPokemon = game.scene.getPlayerPokemon()!;
       const enemyPokemon = game.scene.getEnemyPokemon()!;
 
       game.move.select(Moves.JAW_LOCK);
-      await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+      await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY ]);
 
       await game.phaseInterceptor.to(MoveEffectPhase);
 
@@ -122,14 +121,14 @@ describe("Moves - Jaw Lock", () => {
     async () => {
       game.override.battleType("double");
 
-      await game.startBattle([Species.CHARMANDER, Species.BULBASAUR]);
+      await game.startBattle([ Species.CHARMANDER, Species.BULBASAUR ]);
 
       const playerPokemon = game.scene.getPlayerField();
       const enemyPokemon = game.scene.getEnemyField();
 
       game.move.select(Moves.JAW_LOCK, 0, BattlerIndex.ENEMY);
       game.move.select(Moves.SPLASH, 1);
-      await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
+      await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2 ]);
 
       await game.phaseInterceptor.to(MoveEffectPhase);
 
@@ -152,9 +151,9 @@ describe("Moves - Jaw Lock", () => {
   it(
     "should not trap either pokemon if the target is protected",
     async () => {
-      game.override.enemyMoveset([Moves.PROTECT]);
+      game.override.enemyMoveset([ Moves.PROTECT ]);
 
-      await game.startBattle([Species.BULBASAUR]);
+      await game.startBattle([ Species.BULBASAUR ]);
 
       const playerPokemon = game.scene.getPlayerPokemon()!;
       const enemyPokemon = game.scene.getEnemyPokemon()!;

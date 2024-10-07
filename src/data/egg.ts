@@ -288,7 +288,7 @@ export class Egg {
   public getEggTypeDescriptor(scene: BattleScene): string {
     switch (this.sourceType) {
     case EggSourceType.SAME_SPECIES_EGG:
-      return this._eggDescriptor ?? i18next.t("egg:sameSpeciesEgg", { species: getPokemonSpecies(this._species).getName()});
+      return this._eggDescriptor ?? i18next.t("egg:sameSpeciesEgg", { species: getPokemonSpecies(this._species).getName() });
     case EggSourceType.GACHA_LEGENDARY:
       return this._eggDescriptor ?? `${i18next.t("egg:gachaTypeLegendary")} (${getPokemonSpecies(getLegendaryGachaSpeciesForTimestamp(scene, this.timestamp)).getName()})`;
     case EggSourceType.GACHA_SHINY:
@@ -396,7 +396,7 @@ export class Egg {
       break;
     }
 
-    const ignoredSpecies = [Species.PHIONE, Species.MANAPHY, Species.ETERNATUS];
+    const ignoredSpecies = [ Species.PHIONE, Species.MANAPHY, Species.ETERNATUS ];
 
     let speciesPool = Object.keys(speciesStarterCosts)
       .filter(s => speciesStarterCosts[s] >= minStarterValue && speciesStarterCosts[s] <= maxStarterValue)

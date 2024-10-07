@@ -265,7 +265,7 @@ export default class MysteryEncounter implements IMysteryEncounter {
     }
     this.encounterTier = this.encounterTier ?? MysteryEncounterTier.COMMON;
     this.dialogue = this.dialogue ?? {};
-    this.spriteConfigs = this.spriteConfigs ? [...this.spriteConfigs] : [];
+    this.spriteConfigs = this.spriteConfigs ? [ ...this.spriteConfigs ] : [];
     // Default max is 1 for ROGUE encounters, 2 for others
     this.maxAllowedEncounters = this.maxAllowedEncounters ?? this.encounterTier === MysteryEncounterTier.ROGUE ? DEFAULT_MAX_ALLOWED_ROGUE_ENCOUNTERS : DEFAULT_MAX_ALLOWED_ENCOUNTERS;
     this.encounterMode = MysteryEncounterMode.DEFAULT;
@@ -573,7 +573,7 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
    */
   withOption(option: MysteryEncounterOption): this & Pick<IMysteryEncounter, "options"> {
     if (!this.options) {
-      const options = [option];
+      const options = [ option ];
       return Object.assign(this, { options });
     } else {
       this.options.push(option);
@@ -624,11 +624,11 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
   }
 
   withIntroDialogue(dialogue: MysteryEncounterDialogue["intro"] = []): this {
-    this.dialogue = {...this.dialogue, intro: dialogue };
+    this.dialogue = { ...this.dialogue, intro: dialogue };
     return this;
   }
 
-  withIntro({spriteConfigs, dialogue} : {spriteConfigs: MysteryEncounterSpriteConfig[], dialogue?:  MysteryEncounterDialogue["intro"]}) {
+  withIntro({ spriteConfigs, dialogue } : {spriteConfigs: MysteryEncounterSpriteConfig[], dialogue?:  MysteryEncounterDialogue["intro"]}) {
     return this.withIntroSpriteConfigs(spriteConfigs).withIntroDialogue(dialogue);
   }
 
@@ -660,7 +660,7 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
    * @returns
    */
   withAnimations(...encounterAnimations: EncounterAnim[]): this & Required<Pick<IMysteryEncounter, "encounterAnimations">> {
-    const animations = Array.isArray(encounterAnimations) ? encounterAnimations : [encounterAnimations];
+    const animations = Array.isArray(encounterAnimations) ? encounterAnimations : [ encounterAnimations ];
     return Object.assign(this, { encounterAnimations: animations });
   }
 
@@ -670,7 +670,7 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
    * @param disallowedGameModes
    */
   withDisallowedGameModes(...disallowedGameModes: GameModes[]): this & Required<Pick<IMysteryEncounter, "disallowedGameModes">> {
-    const gameModes = Array.isArray(disallowedGameModes) ? disallowedGameModes : [disallowedGameModes];
+    const gameModes = Array.isArray(disallowedGameModes) ? disallowedGameModes : [ disallowedGameModes ];
     return Object.assign(this, { disallowedGameModes: gameModes });
   }
 
@@ -680,7 +680,7 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
    * @param disallowedChallenges
    */
   withDisallowedChallenges(...disallowedChallenges: Challenges[]): this & Required<Pick<IMysteryEncounter, "disallowedChallenges">> {
-    const challenges = Array.isArray(disallowedChallenges) ? disallowedChallenges : [disallowedChallenges];
+    const challenges = Array.isArray(disallowedChallenges) ? disallowedChallenges : [ disallowedChallenges ];
     return Object.assign(this, { disallowedChallenges: challenges });
   }
 
@@ -755,7 +755,7 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
    * @returns
    */
   withSceneWaveRangeRequirement(min: number, max?: number): this & Required<Pick<IMysteryEncounter, "requirements">> {
-    return this.withSceneRequirement(new WaveRangeRequirement([min, max ?? min]));
+    return this.withSceneRequirement(new WaveRangeRequirement([ min, max ?? min ]));
   }
 
   /**
@@ -767,7 +767,7 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
    * @returns
    */
   withScenePartySizeRequirement(min: number, max?: number, excludeDisallowedPokemon: boolean = false): this & Required<Pick<IMysteryEncounter, "requirements">> {
-    return this.withSceneRequirement(new PartySizeRequirement([min, max ?? min], excludeDisallowedPokemon));
+    return this.withSceneRequirement(new PartySizeRequirement([ min, max ?? min ], excludeDisallowedPokemon));
   }
 
   /**
@@ -982,7 +982,7 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
    * @returns
    */
   withOutroDialogue(dialogue: MysteryEncounterDialogue["outro"] = []): this {
-    this.dialogue = {...this.dialogue, outro: dialogue };
+    this.dialogue = { ...this.dialogue, outro: dialogue };
     return this;
   }
 

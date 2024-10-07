@@ -25,7 +25,7 @@ export default class TestDialogueUiHandler extends FormModalUiHandler {
           // If the value is an object, execute the same process
           // si el valor es un objeto ejecuta el mismo proceso
 
-          return flattenKeys(value, topKey ?? t, topKey ? midleKey ? [...midleKey, t] : [t] : undefined).filter((t) => t.length > 0);
+          return flattenKeys(value, topKey ?? t, topKey ? midleKey ? [ ...midleKey, t ] : [ t ] : undefined).filter((t) => t.length > 0);
         } else if (typeof value === "string" || isNullOrUndefined(value)) { // we check for null or undefined here as per above - the typeof is still an object but the value is null so we need to exit out of this and pass the null key
 
           // Return in the format expected by i18next
@@ -74,7 +74,7 @@ export default class TestDialogueUiHandler extends FormModalUiHandler {
     input.setMaxLength(255);
 
     input.on("keydown", (inputObject, evt: KeyboardEvent) => {
-      if (["escape", "space"].some((v) => v === evt.key.toLowerCase() || v === evt.code.toLowerCase()) && ui.getMode() === Mode.AUTO_COMPLETE) {
+      if ([ "escape", "space" ].some((v) => v === evt.key.toLowerCase() || v === evt.code.toLowerCase()) && ui.getMode() === Mode.AUTO_COMPLETE) {
         // Delete autocomplete list and recovery focus.
         inputObject.on("blur", () => inputObject.node.focus(), { once: true });
         ui.revertMode();

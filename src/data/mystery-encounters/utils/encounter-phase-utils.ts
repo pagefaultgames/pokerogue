@@ -373,7 +373,7 @@ export async function initBattleWithEnemyConfig(scene: BattleScene, partyConfig:
  * @param moves
  */
 export function loadCustomMovesForEncounter(scene: BattleScene, moves: Moves | Moves[]) {
-  moves = Array.isArray(moves) ? moves : [moves];
+  moves = Array.isArray(moves) ? moves : [ moves ];
   return Promise.all(moves.map(move => initMoveAnim(scene, move)))
     .then(() => loadMoveAnimAssets(scene, moves));
 }
@@ -663,7 +663,7 @@ export function setEncounterRewards(scene: BattleScene, customShopRewards?: Cust
  * @param useWaveIndex - set to false when directly passing the the full exp value instead of baseExpValue
  */
 export function setEncounterExp(scene: BattleScene, participantId: number | number[], baseExpValue: number, useWaveIndex: boolean = true) {
-  const participantIds = Array.isArray(participantId) ? participantId : [participantId];
+  const participantIds = Array.isArray(participantId) ? participantId : [ participantId ];
 
   scene.currentBattle.mysteryEncounter!.doEncounterExp = (scene: BattleScene) => {
     scene.unshiftPhase(new PartyExpPhase(scene, baseExpValue, useWaveIndex, new Set(participantIds)));
@@ -800,8 +800,8 @@ export function transitionMysteryEncounterIntroVisuals(scene: BattleScene, hide:
 
       // Transition
       scene.tweens.add({
-        targets: [introVisuals, enemyPokemon],
-        x: `${hide? "+" : "-"}=16`,
+        targets: [ introVisuals, enemyPokemon ],
+        x: `${hide ? "+" : "-"}=16`,
         y: `${hide ? "-" : "+"}=16`,
         alpha: hide ? 0 : 1,
         ease: "Sine.easeInOut",
@@ -888,14 +888,14 @@ export function calculateMEAggregateStats(scene: BattleScene, baseSpawnWeight: n
   const numRuns = 1000;
   let run = 0;
   const biomes = Object.keys(Biome).filter(key => isNaN(Number(key)));
-  const alwaysPickTheseBiomes = [Biome.ISLAND, Biome.ABYSS, Biome.WASTELAND, Biome.FAIRY_CAVE, Biome.TEMPLE, Biome.LABORATORY, Biome.SPACE, Biome.WASTELAND];
+  const alwaysPickTheseBiomes = [ Biome.ISLAND, Biome.ABYSS, Biome.WASTELAND, Biome.FAIRY_CAVE, Biome.TEMPLE, Biome.LABORATORY, Biome.SPACE, Biome.WASTELAND ];
 
   const calculateNumEncounters = (): any[] => {
     let encounterRate = baseSpawnWeight; // BASE_MYSTERY_ENCOUNTER_SPAWN_WEIGHT
-    const numEncounters = [0, 0, 0, 0];
+    const numEncounters = [ 0, 0, 0, 0 ];
     let mostRecentEncounterWave = 0;
-    const encountersByBiome = new Map<string, number>(biomes.map(b => [b, 0]));
-    const validMEfloorsByBiome = new Map<string, number>(biomes.map(b => [b, 0]));
+    const encountersByBiome = new Map<string, number>(biomes.map(b => [ b, 0 ]));
+    const validMEfloorsByBiome = new Map<string, number>(biomes.map(b => [ b, 0 ]));
     let currentBiome = Biome.TOWN;
     let currentArena = scene.newArena(currentBiome);
     scene.setSeed(Utils.randomString(24));
@@ -968,7 +968,7 @@ export function calculateMEAggregateStats(scene: BattleScene, baseSpawnWeight: n
 
         // Calculate encounter rarity
         // Common / Uncommon / Rare / Super Rare (base is out of 128)
-        const tierWeights = [66, 40, 19, 3];
+        const tierWeights = [ 66, 40, 19, 3 ];
 
         // Adjust tier weights by currently encountered events (pity system that lowers odds of multiple Common/Great)
         tierWeights[0] = tierWeights[0] - 6 * numEncounters[0];
@@ -987,7 +987,7 @@ export function calculateMEAggregateStats(scene: BattleScene, baseSpawnWeight: n
       }
     }
 
-    return [numEncounters, encountersByBiome, validMEfloorsByBiome];
+    return [ numEncounters, encountersByBiome, validMEfloorsByBiome ];
   };
 
   const encounterRuns: number[][] = [];
@@ -995,7 +995,7 @@ export function calculateMEAggregateStats(scene: BattleScene, baseSpawnWeight: n
   const validFloorsByBiome: Map<string, number>[] = [];
   while (run < numRuns) {
     scene.executeWithSeedOffset(() => {
-      const [numEncounters, encountersByBiome, validMEfloorsByBiome] = calculateNumEncounters();
+      const [ numEncounters, encountersByBiome, validMEfloorsByBiome ] = calculateNumEncounters();
       encounterRuns.push(numEncounters);
       encountersByBiomeRuns.push(encountersByBiome);
       validFloorsByBiome.push(validMEfloorsByBiome);
@@ -1036,7 +1036,7 @@ export function calculateMEAggregateStats(scene: BattleScene, baseSpawnWeight: n
 
   let stats = `Starting weight: ${baseSpawnWeight}\nAverage MEs per run: ${totalMean}\nStandard Deviation: ${totalStd}\nAvg Commons: ${commonMean}\nAvg Greats: ${uncommonMean}\nAvg Ultras: ${rareMean}\nAvg Rogues: ${superRareMean}\n`;
 
-  const meanEncountersPerRunPerBiomeSorted = [...meanEncountersPerRunPerBiome.entries()].sort((e1, e2) => e2[1] - e1[1]);
+  const meanEncountersPerRunPerBiomeSorted = [ ...meanEncountersPerRunPerBiome.entries() ].sort((e1, e2) => e2[1] - e1[1]);
   meanEncountersPerRunPerBiomeSorted.forEach(value => stats = stats + `${value[0]}: avg valid floors ${meanMEFloorsPerRunPerBiome.get(value[0])}, avg MEs ${value[1]},\n`);
 
   console.log(stats);
@@ -1054,7 +1054,7 @@ export function calculateRareSpawnAggregateStats(scene: BattleScene, luckValue: 
   let run = 0;
 
   const calculateNumRareEncounters = (): any[] => {
-    const bossEncountersByRarity = [0, 0, 0, 0];
+    const bossEncountersByRarity = [ 0, 0, 0, 0 ];
     scene.setSeed(Utils.randomString(24));
     scene.resetSeed();
     // There are 12 wild boss floors

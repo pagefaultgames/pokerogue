@@ -81,57 +81,57 @@ export default class PhaseInterceptor {
    * List of phases with their corresponding start methods.
    */
   private PHASES = [
-    [LoginPhase, this.startPhase],
-    [TitlePhase, this.startPhase],
-    [SelectGenderPhase, this.startPhase],
-    [EncounterPhase, this.startPhase],
-    [NewBiomeEncounterPhase, this.startPhase],
-    [SelectStarterPhase, this.startPhase],
-    [PostSummonPhase, this.startPhase],
-    [SummonPhase, this.startPhase],
-    [ToggleDoublePositionPhase, this.startPhase],
-    [CheckSwitchPhase, this.startPhase],
-    [ShowAbilityPhase, this.startPhase],
-    [MessagePhase, this.startPhase],
-    [TurnInitPhase, this.startPhase],
-    [CommandPhase, this.startPhase],
-    [EnemyCommandPhase, this.startPhase],
-    [TurnStartPhase, this.startPhase],
-    [MovePhase, this.startPhase],
-    [MoveEffectPhase, this.startPhase],
-    [DamagePhase, this.startPhase],
-    [FaintPhase, this.startPhase],
-    [BerryPhase, this.startPhase],
-    [TurnEndPhase, this.startPhase],
-    [BattleEndPhase, this.startPhase],
-    [EggLapsePhase, this.startPhase],
-    [SelectModifierPhase, this.startPhase],
-    [NextEncounterPhase, this.startPhase],
-    [NewBattlePhase, this.startPhase],
-    [VictoryPhase, this.startPhase],
-    [LearnMovePhase, this.startPhase],
-    [MoveEndPhase, this.startPhase],
-    [StatStageChangePhase, this.startPhase],
-    [ShinySparklePhase, this.startPhase],
-    [SelectTargetPhase, this.startPhase],
-    [UnavailablePhase, this.startPhase],
-    [QuietFormChangePhase, this.startPhase],
-    [SwitchPhase, this.startPhase],
-    [SwitchSummonPhase, this.startPhase],
-    [PartyHealPhase, this.startPhase],
-    [EvolutionPhase, this.startPhase],
-    [EndEvolutionPhase, this.startPhase],
-    [LevelCapPhase, this.startPhase],
-    [AttemptRunPhase, this.startPhase],
-    [SelectBiomePhase, this.startPhase],
-    [MysteryEncounterPhase, this.startPhase],
-    [MysteryEncounterOptionSelectedPhase, this.startPhase],
-    [MysteryEncounterBattlePhase, this.startPhase],
-    [MysteryEncounterRewardsPhase, this.startPhase],
-    [PostMysteryEncounterPhase, this.startPhase],
-    [ModifierRewardPhase, this.startPhase],
-    [PartyExpPhase, this.startPhase],
-    [ExpPhase, this.startPhase],
+    [ LoginPhase, this.startPhase ],
+    [ TitlePhase, this.startPhase ],
+    [ SelectGenderPhase, this.startPhase ],
+    [ EncounterPhase, this.startPhase ],
+    [ NewBiomeEncounterPhase, this.startPhase ],
+    [ SelectStarterPhase, this.startPhase ],
+    [ PostSummonPhase, this.startPhase ],
+    [ SummonPhase, this.startPhase ],
+    [ ToggleDoublePositionPhase, this.startPhase ],
+    [ CheckSwitchPhase, this.startPhase ],
+    [ ShowAbilityPhase, this.startPhase ],
+    [ MessagePhase, this.startPhase ],
+    [ TurnInitPhase, this.startPhase ],
+    [ CommandPhase, this.startPhase ],
+    [ EnemyCommandPhase, this.startPhase ],
+    [ TurnStartPhase, this.startPhase ],
+    [ MovePhase, this.startPhase ],
+    [ MoveEffectPhase, this.startPhase ],
+    [ DamagePhase, this.startPhase ],
+    [ FaintPhase, this.startPhase ],
+    [ BerryPhase, this.startPhase ],
+    [ TurnEndPhase, this.startPhase ],
+    [ BattleEndPhase, this.startPhase ],
+    [ EggLapsePhase, this.startPhase ],
+    [ SelectModifierPhase, this.startPhase ],
+    [ NextEncounterPhase, this.startPhase ],
+    [ NewBattlePhase, this.startPhase ],
+    [ VictoryPhase, this.startPhase ],
+    [ LearnMovePhase, this.startPhase ],
+    [ MoveEndPhase, this.startPhase ],
+    [ StatStageChangePhase, this.startPhase ],
+    [ ShinySparklePhase, this.startPhase ],
+    [ SelectTargetPhase, this.startPhase ],
+    [ UnavailablePhase, this.startPhase ],
+    [ QuietFormChangePhase, this.startPhase ],
+    [ SwitchPhase, this.startPhase ],
+    [ SwitchSummonPhase, this.startPhase ],
+    [ PartyHealPhase, this.startPhase ],
+    [ EvolutionPhase, this.startPhase ],
+    [ EndEvolutionPhase, this.startPhase ],
+    [ LevelCapPhase, this.startPhase ],
+    [ AttemptRunPhase, this.startPhase ],
+    [ SelectBiomePhase, this.startPhase ],
+    [ MysteryEncounterPhase, this.startPhase ],
+    [ MysteryEncounterOptionSelectedPhase, this.startPhase ],
+    [ MysteryEncounterBattlePhase, this.startPhase ],
+    [ MysteryEncounterRewardsPhase, this.startPhase ],
+    [ PostMysteryEncounterPhase, this.startPhase ],
+    [ ModifierRewardPhase, this.startPhase ],
+    [ PartyExpPhase, this.startPhase ],
+    [ ExpPhase, this.startPhase ],
   ];
 
   private endBySetMode = [
@@ -297,7 +297,7 @@ export default class PhaseInterceptor {
     this.originalSuperEnd = Phase.prototype.end;
     UI.prototype.setMode = (mode, ...args) => this.setMode.call(this, mode, ...args);
     Phase.prototype.end = () => this.superEndPhase.call(this);
-    for (const [phase, methodStart] of this.PHASES) {
+    for (const [ phase, methodStart ] of this.PHASES) {
       const originalStart = phase.prototype.start;
       this.phases[phase.name] = {
         start: originalStart,
@@ -346,7 +346,7 @@ export default class PhaseInterceptor {
     const currentPhase = this.scene.getCurrentPhase();
     const instance = this.scene.ui;
     console.log("setMode", `${Mode[mode]} (=${mode})`, args);
-    const ret = this.originalSetMode.apply(instance, [mode, ...args]);
+    const ret = this.originalSetMode.apply(instance, [ mode, ...args ]);
     if (!this.phases[currentPhase.constructor.name]) {
       throw new Error(`missing ${currentPhase.constructor.name} in phaseInterceptor PHASES list  ---  Add it to PHASES inside of /test/utils/phaseInterceptor.ts`);
 
@@ -406,7 +406,7 @@ export default class PhaseInterceptor {
    * function stored in `this.phases`. Additionally, it clears the `promptInterval` and `interval`.
    */
   restoreOg() {
-    for (const [phase] of this.PHASES) {
+    for (const [ phase ] of this.PHASES) {
       phase.prototype.start = this.phases[phase.name].start;
     }
     UI.prototype.setMode = this.originalSetMode;

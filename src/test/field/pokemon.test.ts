@@ -24,7 +24,7 @@ describe("Spec - Pokemon", () => {
   });
 
   it("should not crash when trying to set status of undefined", async () => {
-    await game.classicMode.runToSummon([Species.ABRA]);
+    await game.classicMode.runToSummon([ Species.ABRA ]);
 
     const pkm = game.scene.getPlayerPokemon()!;
     expect(pkm).toBeDefined();
@@ -37,7 +37,7 @@ describe("Spec - Pokemon", () => {
 
     beforeEach(async () => {
       game.override.enemySpecies(Species.ZUBAT);
-      await game.classicMode.runToSummon([Species.ABRA, Species.ABRA, Species.ABRA, Species.ABRA, Species.ABRA]); // 5 Abra, only 1 slot left
+      await game.classicMode.runToSummon([ Species.ABRA, Species.ABRA, Species.ABRA, Species.ABRA, Species.ABRA ]); // 5 Abra, only 1 slot left
       scene = game.scene;
     });
 
@@ -68,7 +68,7 @@ describe("Spec - Pokemon", () => {
   it("should not share tms between different forms", async () => {
     game.override.starterForms({ [Species.ROTOM]: 4 });
 
-    await game.classicMode.startBattle([Species.ROTOM]);
+    await game.classicMode.startBattle([ Species.ROTOM ]);
 
     const fanRotom = game.scene.getPlayerPokemon()!;
 
