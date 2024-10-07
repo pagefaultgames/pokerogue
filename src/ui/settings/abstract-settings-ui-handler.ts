@@ -149,7 +149,7 @@ export default class AbstractSettingsUiHandler extends MessageUiHandler {
     this.settingsMessageBoxContainer.setName("settings-message-box");
     this.settingsMessageBoxContainer.setVisible(false);
 
-    const settingsMessageBox = addWindow(this.scene, 0, 0, (this.scene.game.canvas.width/6) - 2, 48);
+    const settingsMessageBox = addWindow(this.scene, 0, 0, (this.scene.game.canvas.width / 6) - 2, 48);
     this.settingsMessageBoxContainer.add(settingsMessageBox);
 
     const messageText = addTextObject(this.scene, 8, 8, "", TextStyle.WINDOW, { maxLines: 2 });
@@ -254,14 +254,14 @@ export default class AbstractSettingsUiHandler extends MessageUiHandler {
             this.scene.ui.revertMode();
           }, () => {
             // if user don't want accept losing progress for reload, revert options with reloadRequired for no reload.
-            this.reloadSettings.forEach((s,i) => {
+            this.reloadSettings.forEach((s, i) => {
               if (s !== null && s !== this.optionCursors[i]) {
-                this.setOptionCursor(i,s,true);
+                this.setOptionCursor(i, s, true);
               }
             });
             this.scene.ui.revertMode();
             this.showText("", 0);
-          }, false, 0,0);
+          }, false, 0, 0);
         });
         return false;
       }
@@ -410,7 +410,7 @@ export default class AbstractSettingsUiHandler extends MessageUiHandler {
 
     if (save) {
       this.scene.gameData.saveSetting(setting.key, cursor);
-      this.reloadRequired = this.reloadSettings.some((s,i)=>
+      this.reloadRequired = this.reloadSettings.some((s, i)=>
         s !== null && s !== this.optionCursors[i]
       );
     }
