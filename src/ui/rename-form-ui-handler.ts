@@ -5,9 +5,8 @@ import { PlayerPokemon } from "#app/field/pokemon";
 import { Mode } from "./ui";
 import { OptionSelectItem } from "./abstact-option-select-ui-handler";
 import { addWindow } from "./ui-theme";
-import { addTextObject, getTextStyleOptions, TextStyle } from "./text";
+import { addTextObject, TextStyle } from "./text";
 import InputText from "phaser3-rex-plugins/plugins/inputtext";
-import BattleScene from "#app/battle-scene";
 import { OptionSelectConfigAC } from "./autocomplete-ui-handler";
 import emojisAvailable from "#app/data/emoji";
 import { emojiRegex } from "#app/data/emoji";
@@ -77,15 +76,14 @@ export default class RenameFormUiHandler extends FormModalUiHandler {
     const helpEmojiListContainer = this.scene.add.container(0, this.getHeight());
     const helpEmojiListBg = addWindow(this.scene, 0, 0, this.getWidth(), 52);
     helpEmojiListContainer.add(helpEmojiListBg);
-    const scale = getTextStyleOptions(TextStyle.WINDOW, (this.scene as BattleScene).uiTheme).scale ?? 0.1666666667;
 
-    const helpEmojiListText = addTextObject(this.scene, 8, 4, i18next.t("menu:renameHelpEmoji"), TextStyle.TOOLTIP_CONTENT, {
+    const helpEmojiListText = addTextObject(this.scene, 8, 6, i18next.t("menu:renameHelpEmoji"), TextStyle.TOOLTIP_CONTENT, {
       fontSize: "80px",
     });
     helpEmojiListText.setWordWrapWidth(890);
     if (this.scene.game.renderer.type === Phaser.WEBGL) { // TODO: this bang is correct? With this the tests do not fail
-      const height = ((Math.min((helpEmojiListText.getWrappedText(helpEmojiListText.text)).length, 99)) * (80 + helpEmojiListText.y) * scale) + helpEmojiListText.y;
-      helpEmojiListBg.setSize(helpEmojiListBg.width, height);
+      const textSize = Phaser.GameObjects.GetTextSize(helpEmojiListText, helpEmojiListText.style.getTextMetrics(), helpEmojiListText.getWrappedText(helpEmojiListText.text));
+      helpEmojiListBg.setSize(helpEmojiListBg.width, textSize.height * helpEmojiListText.scale + (helpEmojiListText.y * 2) + 1);
     }
 
     helpEmojiListContainer.add(helpEmojiListText);
