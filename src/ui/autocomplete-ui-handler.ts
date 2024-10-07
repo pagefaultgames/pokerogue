@@ -111,21 +111,21 @@ export default class AutoCompleteUiHandler extends AbstractOptionSelectUiHandler
   handlerKeyDown (inputObject: InputText, evt: KeyboardEvent): void {
     // Don't move inputText cursor
     // TODO: cursor move fast for this
-    if (["arrowup"].some((key) => key === (evt.code || evt.key).toLowerCase())) {
+    if ([ "arrowup" ].some((key) => key === (evt.code || evt.key).toLowerCase())) {
       evt.preventDefault();
       this.processInput(Button.UP);
-    } else if (["arrowdown"].some((key) => key === (evt.code || evt.key).toLowerCase())) {
+    } else if ([ "arrowdown" ].some((key) => key === (evt.code || evt.key).toLowerCase())) {
       evt.preventDefault();
       this.processInput(Button.DOWN);
     }
 
     // Revert Mode if not press...
-    if (!["enter", "arrowup", "arrowdown", "shift", "control", "alt"].some((key) => (evt.code || evt.key).toLowerCase().includes(key))) {
+    if (![ "enter", "arrowup", "arrowdown", "shift", "control", "alt" ].some((key) => (evt.code || evt.key).toLowerCase().includes(key))) {
       this.revertAutoCompleteMode();
     }
 
     // Recovery focus
-    if (["escape"].some((key) => key === (evt.code || evt.key).toLowerCase())) {
+    if ([ "escape" ].some((key) => key === (evt.code || evt.key).toLowerCase())) {
       const recoveryFocus = () => {
         inputObject.setFocus();
         inputObject.off("blur", recoveryFocus);
