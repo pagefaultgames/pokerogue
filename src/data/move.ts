@@ -1935,19 +1935,21 @@ export class IncrementMovePriorityAttr extends MoveAttr {
  * @see {@linkcode apply}
  */
 export class MultiHitAttr extends MoveAttr {
-  private _intrinsicMultiHitType: MultiHitType;
-  private _multiHitType: MultiHitType;
-
-  // Must be publicly readable for battle_bond.test.ts
-  get multiHitType(): MultiHitType {
-    return this._multiHitType;
-  }
+  /** This move's intrinsic multi-hit type. It should never be modified. */
+  private intrinsicMultiHitType: MultiHitType;
+  /** This move's current multi-hit type. It may be temporarily modified by abilities (e.g., Battle Bond). */
+  private multiHitType: MultiHitType;
 
   constructor(multiHitType?: MultiHitType) {
     super();
 
-    this._intrinsicMultiHitType = multiHitType !== undefined ? multiHitType : MultiHitType._2_TO_5;
-    this._multiHitType = this._intrinsicMultiHitType;
+    this.intrinsicMultiHitType = multiHitType !== undefined ? multiHitType : MultiHitType._2_TO_5;
+    this.multiHitType = this.intrinsicMultiHitType;
+  }
+
+  // Currently used by `battle_bond.test.ts`
+  getMultiHitType(): MultiHitType {
+    return this.multiHitType;
   }
 
   /**
@@ -1961,9 +1963,9 @@ export class MultiHitAttr extends MoveAttr {
    * @returns True
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    const hitType = new Utils.NumberHolder(this._intrinsicMultiHitType);
+    const hitType = new Utils.NumberHolder(this.intrinsicMultiHitType);
     applyMoveAttrs(ChangeMultiHitTypeAttr, user, target, move, hitType);
-    this._multiHitType = hitType.value;
+    this.multiHitType = hitType.value;
 
     (args[0] as Utils.NumberHolder).value = this.getHitCount(user, target);
     return true;
