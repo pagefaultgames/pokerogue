@@ -9,8 +9,7 @@ export class PokerogueAdminApi extends ApiBase {
    */
   public async linkAccountToDiscord(params: LinkAccountToDiscordIdRequest) {
     try {
-      const urlSearchParams = this.toUrlSearchParams(params);
-      const response = await this.doPost("/admin/account/discord-link", urlSearchParams, "form-urlencoded");
+      const response = await this.doPost("/admin/account/discord-link", params, "form-urlencoded");
 
       if (response.ok) {
         return true;

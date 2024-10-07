@@ -40,7 +40,7 @@ export abstract class ApiBase {
         headers["Content-Type"] = "application/json";
       } else if (dataType === "form-urlencoded") {
         if (bodyData instanceof Object) {
-          body = new URLSearchParams(Object.entries<any>(bodyData).map(([ k, v ]) => [ k, v.toString() ])).toString();
+          body = this.toUrlSearchParams(bodyData).toString();
         } else {
           console.warn("Could not add body data to form-urlencoded!", bodyData);
         }
