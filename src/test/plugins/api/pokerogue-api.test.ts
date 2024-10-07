@@ -1,10 +1,11 @@
 import type { TitleStatsResponse } from "#app/@types/PokerogueApi";
 import { pokerogueApi } from "#app/plugins/api/pokerogue-api";
+import { getApiBaseUrl } from "#app/test/utils/testUtils";
 import { http, HttpResponse } from "msw";
 import { setupServer } from "msw/node";
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
-const apiBase = import.meta.env.VITE_API_BASE_URL ?? "http://localhost:8001";
+const apiBase = getApiBaseUrl();
 const server = setupServer();
 
 beforeAll(() => {
@@ -83,7 +84,6 @@ describe("Pokerogue API", () => {
 
       expect(success).toBe(true);
     });
-
 
     it("should return false and report a warning on FAILURE", async () => {
       server.use(http.post(`${apiBase}/auth/google/logout`, () => new HttpResponse("", { status: 401 })));
