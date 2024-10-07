@@ -14,7 +14,7 @@ import { GameModes, getGameMode } from "#app/game-mode";
 import { BattleType } from "#app/battle";
 import TrainerData from "#app/system/trainer-data";
 import { trainerConfigs } from "#app/data/trainer-config";
-import { resetSettings, setSetting, SettingKeys } from "#app/system/settings/settings";
+import { resetSettings, setSetting, Setting, settingIndex, SettingKeys } from "#app/system/settings/settings";
 import { achvs } from "#app/system/achv";
 import EggData from "#app/system/egg-data";
 import { Egg } from "#app/data/egg";
@@ -65,16 +65,12 @@ export const defaultStarterSpecies: Species[] = [
 
 const saveKey = "x0i2O7WRiANTqPmZ"; // Temporary; secure encryption is not yet necessary
 
-export function getDataTypeKey(dataType: GameDataType, slotId: integer = 0): string {
+export function getDataTypeKey(dataType: GameDataType, slotId: integer = 0, username?: string): string {
   switch (dataType) {
   case GameDataType.SYSTEM:
-    return "data";
+    return `data_${username}`;
   case GameDataType.SESSION:
-    let ret = "sessionData";
-    if (slotId) {
-      ret += slotId;
-    }
-    return ret;
+    return `sessionData${slotId || ""}_${username}`;
   case GameDataType.SETTINGS:
     return "settings";
   case GameDataType.TUTORIALS:
@@ -82,7 +78,7 @@ export function getDataTypeKey(dataType: GameDataType, slotId: integer = 0): str
   case GameDataType.SEEN_DIALOGUES:
     return "seenDialogues";
   case GameDataType.RUN_HISTORY:
-    return "runHistoryData";
+    return `runHistoryData_${username}`;
   }
 }
 
@@ -1357,9 +1353,29 @@ export class GameData {
     });
   }
 
+  public getDataToExport(dataType: GameDataType, slotId: integer = 0): Promise<string | null> {
+    return new Promise<string | null>(resolve => {
+      if (!bypassLogin && dataType < GameDataType.SETTINGS) {
+        Utils.apiFetch(`savedata/${dataType === GameDataType.SYSTEM ? "system" : "session"}/get?clientSessionId=${clientSessionId}${dataType === GameDataType.SESSION ? `&slot=${slotId}` : ""}`, true)
+          .then(response => response.text())
+          .then(response => {
+            if (!response.length || response[0] !== "{") {
+              console.error(response);
+              resolve(null);
+            }
+            resolve(response);
+          });
+      } else {
+        const dataKey: string = getDataTypeKey(dataType, slotId, loggedInUser?.username);
+        const data = localStorage.getItem(dataKey);
+        resolve((!data || dataType === GameDataType.SETTINGS) ? data : decrypt(data, bypassLogin));
+      }
+    });
+  }
+
   public tryExportData(dataType: GameDataType, slotId: integer = 0): Promise<boolean> {
     return new Promise<boolean>(resolve => {
-      const dataKey: string = `${getDataTypeKey(dataType, slotId)}_${loggedInUser?.username}`;
+      const dataKey: string = getDataTypeKey(dataType, slotId, loggedInUser?.username);
       const handleData = (dataStr: string) => {
         switch (dataType) {
         case GameDataType.SYSTEM:
@@ -1374,32 +1390,56 @@ export class GameData {
         link.click();
         link.remove();
       };
-      if (!bypassLogin && dataType < GameDataType.SETTINGS) {
-        Utils.apiFetch(`savedata/${dataType === GameDataType.SYSTEM ? "system" : "session"}/get?clientSessionId=${clientSessionId}${dataType === GameDataType.SESSION ? `&slot=${slotId}` : ""}`, true)
-          .then(response => response.text())
-          .then(response => {
-            if (!response.length || response[0] !== "{") {
-              console.error(response);
-              resolve(false);
-              return;
-            }
-
-            handleData(response);
-            resolve(true);
-          });
-      } else {
-        const data = localStorage.getItem(dataKey);
-        if (data) {
-          handleData(decrypt(data, bypassLogin));
-        }
-        resolve(!!data);
-      }
+      this.getDataToExport(dataType, slotId)
+        .then(data => {
+          if (data) {
+            handleData(data);
+          }
+          resolve(!!data);
+        });
     });
   }
 
-  public importData(dataType: GameDataType, slotId: integer = 0): void {
-    const dataKey = `${getDataTypeKey(dataType, slotId)}_${loggedInUser?.username}`;
+  public validateDataToImport(dataStr: string, dataType: GameDataType): boolean {
+    try {
+      switch (dataType) {
+      case GameDataType.SYSTEM:
+        dataStr = this.convertSystemDataStr(dataStr);
+        const systemData = this.parseSystemData(dataStr);
+        return !!systemData.dexData && !!systemData.timestamp;
+      case GameDataType.SESSION:
+        const sessionData = this.parseSessionData(dataStr);
+        return !!sessionData.party && !!sessionData.enemyParty && !!sessionData.timestamp;
+      case GameDataType.RUN_HISTORY:
+        const data = JSON.parse(dataStr);
+        const keys = Object.keys(data);
+        return keys.every((key) => {
+          const entryKeys = Object.keys(data[key]);
+          return [ "isFavorite", "isVictory", "entry" ].every(v => entryKeys.includes(v)) && entryKeys.length === 3;
+        });
+      case GameDataType.SETTINGS:
+        return Object.entries(JSON.parse(dataStr))
+          .every(([ k, v ]: [string, number]) => {
+            const index: number = settingIndex(k);
+            return index === -1 || Setting[index].options.length > v;
+          });
+      case GameDataType.TUTORIALS:
+      case GameDataType.SEEN_DIALOGUES:
+        return true;
+      }
+    } catch (ex) {
+      console.error(ex);
+      return false;
+    }
+  }
 
+  public setImportedData(dataStr: string, dataType: GameDataType, slotId: integer = 0) {
+    const dataKey = getDataTypeKey(dataType, slotId, loggedInUser?.username);
+    const encryptedData = (dataType === GameDataType.SETTINGS) ? dataStr : encrypt(dataStr, bypassLogin);
+    localStorage.setItem(dataKey, encryptedData);
+  }
+
+  public importData(dataType: GameDataType, slotId: integer = 0): void {
     let saveFile: any = document.getElementById("saveFile");
     if (saveFile) {
       saveFile.remove();
@@ -1416,41 +1456,13 @@ export class GameData {
 
         reader.onload = (_ => {
           return e => {
-            let dataName: string;
-            let dataStr = AES.decrypt(e.target?.result?.toString()!, saveKey).toString(enc.Utf8); // TODO: is this bang correct?
-            let valid = false;
-            try {
-              dataName = GameDataType[dataType].toLowerCase();
-              switch (dataType) {
-              case GameDataType.SYSTEM:
-                dataStr = this.convertSystemDataStr(dataStr);
-                const systemData = this.parseSystemData(dataStr);
-                valid = !!systemData.dexData && !!systemData.timestamp;
-                break;
-              case GameDataType.SESSION:
-                const sessionData = this.parseSessionData(dataStr);
-                valid = !!sessionData.party && !!sessionData.enemyParty && !!sessionData.timestamp;
-                break;
-              case GameDataType.RUN_HISTORY:
-                const data = JSON.parse(dataStr);
-                const keys = Object.keys(data);
-                dataName = i18next.t("menuUiHandler:RUN_HISTORY").toLowerCase();
-                keys.forEach((key) => {
-                  const entryKeys = Object.keys(data[key]);
-                  valid = [ "isFavorite", "isVictory", "entry" ].every(v => entryKeys.includes(v)) && entryKeys.length === 3;
-                });
-                break;
-              case GameDataType.SETTINGS:
-              case GameDataType.TUTORIALS:
-                valid = true;
-                break;
-              }
-            } catch (ex) {
-              console.error(ex);
-            }
+            const dataName = (dataType === GameDataType.RUN_HISTORY)
+              ? i18next.t("menuUiHandler:RUN_HISTORY").toLowerCase()
+              : GameDataType[dataType].toLowerCase();
+            const dataStr = AES.decrypt(e.target?.result?.toString()!, saveKey).toString(enc.Utf8); // TODO: is this bang correct?
+            const valid = this.validateDataToImport(dataStr, dataType);
 
             const displayError = (error: string) => this.scene.ui.showText(error, null, () => this.scene.ui.showText("", 0), Utils.fixedInt(1500));
-            dataName = dataName!; // tell TS compiler that dataName is defined!
 
             if (!valid) {
               return this.scene.ui.showText(`Your ${dataName} data could not be loaded. It may be corrupted.`, null, () => this.scene.ui.showText("", 0), Utils.fixedInt(1500));
@@ -1458,7 +1470,7 @@ export class GameData {
 
             this.scene.ui.showText(`Your ${dataName} data will be overridden and the page will reload. Proceed?`, null, () => {
               this.scene.ui.setOverlayMode(Mode.CONFIRM, () => {
-                localStorage.setItem(dataKey, encrypt(dataStr, bypassLogin));
+                this.setImportedData(dataStr, dataType, slotId);
 
                 if (!bypassLogin && dataType < GameDataType.SETTINGS) {
                   updateUserInfo().then(success => {
