@@ -93,7 +93,7 @@ export class PokerogueAccountApi extends ApiBase {
         throw new Error(`${response.status}: ${response.statusText}`);
       }
     } catch (err) {
-      console.error("Log out failed!", err);
+      console.warn("Log out failed!", err);
     }
 
     removeCookie(SESSION_ID_COOKIE_NAME); // we are always clearing the cookie.
