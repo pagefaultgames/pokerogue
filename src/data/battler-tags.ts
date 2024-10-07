@@ -2608,8 +2608,7 @@ export class ImprisonTag extends MoveRestrictionBattlerTag {
   /**
    * Checks if the source of Imprison is still active
    * @override
-   * @param _pokemon
-   * @param _lapseType
+   * @param pokemon The pokemon this tag is attached to
    * @returns `true` if the source is still active
    */
   public override lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
