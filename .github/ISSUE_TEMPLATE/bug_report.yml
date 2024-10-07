@@ -1,7 +1,7 @@
 name: Bug Report
 description: Create a report to help us improve
 title: "[Bug] "
-labels: ["Bug"]
+labels: ["Bug", "Triage"]
 body:
   - type: markdown
     attributes:
@@ -19,21 +19,12 @@ body:
       value: |
         ---
   - type: textarea
-    id: session-file
+    id: repro
     attributes:
-      label: Session export file
-      description: Open Menu → ManageData → Export Session → Select slot. The file should now be in your `/Downloads` directory. Change the file extension type from `.prsv` to `.txt` (How to [Windows](https://www.guidingtech.com/how-to-change-file-type-on-windows/) | [Mac](https://support.apple.com/guide/mac-help/show-or-hide-filename-extensions-on-mac-mchlp2304/mac) | [iOS](https://www.guidingtech.com/change-file-type-extension-on-iphone/)).
-      placeholder: Focus me and then drop your file here (or use the upload button at the bottom)
+      label: Reproduction
+      description: Describe the steps to reproduce this bug. If applicable attach user/session data at the bottom
     validations:
-      required: false
-  - type: textarea
-    id: data-file
-    attributes:
-      label: User data export file
-      description: Open Menu → ManageData → Export Data. The file should now be in your `/Downloads` directory. Change the file extension type from `.prsv` to `.txt` (How to [Windows](https://www.guidingtech.com/how-to-change-file-type-on-windows/) | [Mac](https://support.apple.com/guide/mac-help/show-or-hide-filename-extensions-on-mac-mchlp2304/mac) | [iOS](https://www.guidingtech.com/change-file-type-extension-on-iphone/)).
-      placeholder: Focus me and then drop your file here (or use the upload button at the bottom)
-    validations:
-      required: false
+      required: true
   - type: markdown
     attributes:
       value: |
@@ -60,48 +51,20 @@ body:
     attributes:
       value: |
         ---
-  - type: dropdown
-    id: os
+  - type: textarea
+    id: session-file
     attributes:
-      label: What OS did you observe the bug on?
-      multiple: true
-      options:
-        - PC/Windows
-        - Mac/OSX
-        - Linux
-        - iOS
-        - Android
-        - Other
-    validations:
-      required: true
-  - type: input
-    id: os-other
-    attributes:
-      label: If other please specify
+      label: Session export file
+      description: Open Menu → ManageData → Export Session → Select slot. The file should now be in your `/Downloads` directory. Change the file extension type from `.prsv` to `.txt` (How to [Windows](https://www.guidingtech.com/how-to-change-file-type-on-windows/) | [Mac](https://support.apple.com/guide/mac-help/show-or-hide-filename-extensions-on-mac-mchlp2304/mac) | [iOS](https://www.guidingtech.com/change-file-type-extension-on-iphone/)).
+      placeholder: Focus me and then drop your file here (or use the upload button at the bottom)
     validations:
       required: false
-  - type: markdown
+  - type: textarea
+    id: data-file
     attributes:
-      value: |
-        ---
-  - type: dropdown
-    id: browser
-    attributes:
-      label: Which browser do you use?
-      multiple: true
-      options:
-        - Chrome
-        - Firefox
-        - Safari
-        - Edge
-        - Opera
-        - Other
-    validations:
-      required: true
-  - type: input
-    id: browser-other
-    attributes:
-      label: If other please specify
+      label: User data export file
+      description: Open Menu → ManageData → Export Data. The file should now be in your `/Downloads` directory. Change the file extension type from `.prsv` to `.txt` (How to [Windows](https://www.guidingtech.com/how-to-change-file-type-on-windows/) | [Mac](https://support.apple.com/guide/mac-help/show-or-hide-filename-extensions-on-mac-mchlp2304/mac) | [iOS](https://www.guidingtech.com/change-file-type-extension-on-iphone/)).
+      placeholder: Focus me and then drop your file here (or use the upload button at the bottom)
     validations:
       required: false
   - type: markdown

@@ -1,10 +1,10 @@
-import { applyAbAttrs, PreventBerryUseAbAttr, HealFromBerryUseAbAttr } from "#app/data/ability.js";
-import { CommonAnim } from "#app/data/battle-anims.js";
-import { BerryUsedEvent } from "#app/events/battle-scene.js";
-import { getPokemonNameWithAffix } from "#app/messages.js";
-import { BerryModifier } from "#app/modifier/modifier.js";
+import { applyAbAttrs, PreventBerryUseAbAttr, HealFromBerryUseAbAttr } from "#app/data/ability";
+import { CommonAnim } from "#app/data/battle-anims";
+import { BerryUsedEvent } from "#app/events/battle-scene";
+import { getPokemonNameWithAffix } from "#app/messages";
+import { BerryModifier } from "#app/modifier/modifier";
 import i18next from "i18next";
-import * as Utils from "#app/utils.js";
+import * as Utils from "#app/utils";
 import { FieldPhase } from "./field-phase";
 import { CommonAnimPhase } from "./common-anim-phase";
 
@@ -15,7 +15,7 @@ export class BerryPhase extends FieldPhase {
 
     this.executeForAll((pokemon) => {
       const hasUsableBerry = !!this.scene.findModifier((m) => {
-        return m instanceof BerryModifier && m.shouldApply([pokemon]);
+        return m instanceof BerryModifier && m.shouldApply(pokemon);
       }, pokemon.isPlayer());
 
       if (hasUsableBerry) {
@@ -29,7 +29,7 @@ export class BerryPhase extends FieldPhase {
             new CommonAnimPhase(this.scene, pokemon.getBattlerIndex(), pokemon.getBattlerIndex(), CommonAnim.USE_ITEM)
           );
 
-          for (const berryModifier of this.scene.applyModifiers(BerryModifier, pokemon.isPlayer(), pokemon) as BerryModifier[]) {
+          for (const berryModifier of this.scene.applyModifiers(BerryModifier, pokemon.isPlayer(), pokemon)) {
             if (berryModifier.consumed) {
               if (!--berryModifier.stackCount) {
                 this.scene.removeModifier(berryModifier);

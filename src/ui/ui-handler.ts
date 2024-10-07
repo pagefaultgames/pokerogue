@@ -1,7 +1,7 @@
 import BattleScene from "../battle-scene";
 import { TextStyle, getTextColor } from "./text";
 import { Mode } from "./ui";
-import {Button} from "#enums/buttons";
+import { Button } from "#enums/buttons";
 
 /**
  * A basic abstract class to act as a holder and processor for UI elements.
@@ -50,6 +50,15 @@ export default abstract class UiHandler {
     }
 
     return changed;
+  }
+
+  /**
+   * Changes the style of the mouse cursor.
+   * @see {@link https://developer.mozilla.org/en-US/docs/Web/CSS/cursor}
+   * @param cursorStyle cursor style to apply
+   */
+  protected setMouseCursorStyle(cursorStyle: "pointer" | "default") {
+    this.scene.input.manager.canvas.style.cursor = cursorStyle;
   }
 
   clear() {

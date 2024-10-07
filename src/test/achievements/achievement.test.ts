@@ -1,7 +1,7 @@
-import { TurnHeldItemTransferModifier } from "#app/modifier/modifier.js";
+import { TurnHeldItemTransferModifier } from "#app/modifier/modifier";
 import { Achv, AchvTier, DamageAchv, HealAchv, LevelAchv, ModifierAchv, MoneyAchv, RibbonAchv, achvs } from "#app/system/achv";
+import { IntegerHolder, NumberHolder } from "#app/utils";
 import GameManager from "#test/utils/gameManager";
-import { IntegerHolder, NumberHolder } from "#app/utils.js";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import BattleScene from "../../battle-scene";
@@ -61,8 +61,8 @@ describe("Achv", () => {
     const conditionFunc = vi.fn((scene: BattleScene, args: any[]) => args[0] === 10);
     const achv = new Achv("", "Test Achievement", "Test Description", "test_icon", 10, conditionFunc);
 
-    expect(achv.validate(new BattleScene(), [5])).toBe(false);
-    expect(achv.validate(new BattleScene(), [10])).toBe(true);
+    expect(achv.validate(new BattleScene(), [ 5 ])).toBe(false);
+    expect(achv.validate(new BattleScene(), [ 10 ])).toBe(true);
     expect(conditionFunc).toHaveBeenCalledTimes(2);
   });
 });
@@ -141,10 +141,10 @@ describe("DamageAchv", () => {
     const scene = new BattleScene();
     const numberHolder = new NumberHolder(200);
 
-    expect(damageAchv.validate(scene, [numberHolder])).toBe(false);
+    expect(damageAchv.validate(scene, [ numberHolder ])).toBe(false);
 
     numberHolder.value = 300;
-    expect(damageAchv.validate(scene, [numberHolder])).toBe(true);
+    expect(damageAchv.validate(scene, [ numberHolder ])).toBe(true);
   });
 });
 
@@ -160,10 +160,10 @@ describe("HealAchv", () => {
     const scene = new BattleScene();
     const numberHolder = new NumberHolder(200);
 
-    expect(healAchv.validate(scene, [numberHolder])).toBe(false);
+    expect(healAchv.validate(scene, [ numberHolder ])).toBe(false);
 
     numberHolder.value = 300;
-    expect(healAchv.validate(scene, [numberHolder])).toBe(true);
+    expect(healAchv.validate(scene, [ numberHolder ])).toBe(true);
   });
 });
 
@@ -179,10 +179,10 @@ describe("LevelAchv", () => {
     const scene = new BattleScene();
     const integerHolder = new IntegerHolder(50);
 
-    expect(levelAchv.validate(scene, [integerHolder])).toBe(false);
+    expect(levelAchv.validate(scene, [ integerHolder ])).toBe(false);
 
     integerHolder.value = 150;
-    expect(levelAchv.validate(scene, [integerHolder])).toBe(true);
+    expect(levelAchv.validate(scene, [ integerHolder ])).toBe(true);
   });
 });
 
@@ -198,7 +198,7 @@ describe("ModifierAchv", () => {
     const scene = new BattleScene();
     const modifier = new TurnHeldItemTransferModifier(null!, 3, 1);
 
-    expect(modifierAchv.validate(scene, [modifier])).toBe(true);
+    expect(modifierAchv.validate(scene, [ modifier ])).toBe(true);
   });
 });
 
@@ -224,7 +224,7 @@ describe("achvs", () => {
     expect(achvs._50_RIBBONS).toBeInstanceOf(RibbonAchv);
     expect(achvs._75_RIBBONS).toBeInstanceOf(RibbonAchv);
     expect(achvs._100_RIBBONS).toBeInstanceOf(RibbonAchv);
-    expect(achvs.TRANSFER_MAX_BATTLE_STAT).toBeInstanceOf(Achv);
+    expect(achvs.TRANSFER_MAX_STAT_STAGE).toBeInstanceOf(Achv);
     expect(achvs.MAX_FRIENDSHIP).toBeInstanceOf(Achv);
     expect(achvs.MEGA_EVOLVE).toBeInstanceOf(Achv);
     expect(achvs.GIGANTAMAX).toBeInstanceOf(Achv);

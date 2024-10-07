@@ -1,14 +1,12 @@
-import { allAbilities } from "#app/data/ability.js";
-import { allMoves } from "#app/data/move.js";
-import { MoveEffectPhase } from "#app/phases/move-effect-phase.js";
-import GameManager from "#test/utils/gameManager";
-import { getMovePosition } from "#test/utils/gameManagerUtils";
+import { allAbilities } from "#app/data/ability";
+import { allMoves } from "#app/data/move";
+import { MoveEffectPhase } from "#app/phases/move-effect-phase";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
+import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import { SPLASH_ONLY } from "#test/utils/testUtils";
 
 describe("Abilities - Wonder Skin", () => {
   let phaserGame: Phaser.Game;
@@ -27,11 +25,11 @@ describe("Abilities - Wonder Skin", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override.battleType("single");
-    game.override.moveset([Moves.TACKLE, Moves.CHARM]);
+    game.override.moveset([ Moves.TACKLE, Moves.CHARM ]);
     game.override.ability(Abilities.BALL_FETCH);
     game.override.enemySpecies(Species.SHUCKLE);
     game.override.enemyAbility(Abilities.WONDER_SKIN);
-    game.override.enemyMoveset(SPLASH_ONLY);
+    game.override.enemyMoveset(Moves.SPLASH);
   });
 
   it("lowers accuracy of status moves to 50%", async () => {
@@ -39,8 +37,8 @@ describe("Abilities - Wonder Skin", () => {
 
     vi.spyOn(moveToCheck, "calculateBattleAccuracy");
 
-    await game.startBattle([Species.PIKACHU]);
-    game.doAttack(getMovePosition(game.scene, 0, Moves.CHARM));
+    await game.startBattle([ Species.PIKACHU ]);
+    game.move.select(Moves.CHARM);
     await game.phaseInterceptor.to(MoveEffectPhase);
 
     expect(moveToCheck.calculateBattleAccuracy).toHaveReturnedWith(50);
@@ -51,14 +49,14 @@ describe("Abilities - Wonder Skin", () => {
 
     vi.spyOn(moveToCheck, "calculateBattleAccuracy");
 
-    await game.startBattle([Species.PIKACHU]);
-    game.doAttack(getMovePosition(game.scene, 0, Moves.TACKLE));
+    await game.startBattle([ Species.PIKACHU ]);
+    game.move.select(Moves.TACKLE);
     await game.phaseInterceptor.to(MoveEffectPhase);
 
     expect(moveToCheck.calculateBattleAccuracy).toHaveReturnedWith(100);
   });
 
-  const bypassAbilities = [Abilities.MOLD_BREAKER, Abilities.TERAVOLT, Abilities.TURBOBLAZE];
+  const bypassAbilities = [ Abilities.MOLD_BREAKER, Abilities.TERAVOLT, Abilities.TURBOBLAZE ];
 
   bypassAbilities.forEach(ability => {
     it(`does not affect pokemon with ${allAbilities[ability].name}`, async () => {
@@ -67,8 +65,8 @@ describe("Abilities - Wonder Skin", () => {
       game.override.ability(ability);
       vi.spyOn(moveToCheck, "calculateBattleAccuracy");
 
-      await game.startBattle([Species.PIKACHU]);
-      game.doAttack(getMovePosition(game.scene, 0, Moves.CHARM));
+      await game.startBattle([ Species.PIKACHU ]);
+      game.move.select(Moves.CHARM);
       await game.phaseInterceptor.to(MoveEffectPhase);
 
       expect(moveToCheck.calculateBattleAccuracy).toHaveReturnedWith(100);

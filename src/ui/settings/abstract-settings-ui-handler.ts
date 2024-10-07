@@ -1,12 +1,13 @@
-import BattleScene from "../../battle-scene";
-import { hasTouchscreen, isMobile } from "../../touch-controls";
-import { TextStyle, addTextObject } from "../text";
-import { Mode } from "../ui";
-import MessageUiHandler from "../message-ui-handler";
-import { addWindow } from "../ui-theme";
-import {Button} from "#enums/buttons";
-import {InputsIcons} from "#app/ui/settings/abstract-control-settings-ui-handler.js";
-import NavigationMenu, {NavigationManager} from "#app/ui/settings/navigationMenu";
+import BattleScene from "#app/battle-scene";
+import { hasTouchscreen, isMobile } from "#app/touch-controls";
+import { TextStyle, addTextObject } from "#app/ui/text";
+import { Mode } from "#app/ui/ui";
+import MessageUiHandler from "#app/ui/message-ui-handler";
+import { addWindow } from "#app/ui/ui-theme";
+import { ScrollBar } from "#app/ui/scroll-bar";
+import { Button } from "#enums/buttons";
+import { InputsIcons } from "#app/ui/settings/abstract-control-settings-ui-handler";
+import NavigationMenu, { NavigationManager } from "#app/ui/settings/navigationMenu";
 import { Setting, SettingKeys, SettingType } from "#app/system/settings/settings";
 import i18next from "i18next";
 
@@ -20,11 +21,12 @@ export default class AbstractSettingsUiHandler extends MessageUiHandler {
   private navigationContainer: NavigationMenu;
   private settingsMessageBoxContainer: Phaser.GameObjects.Container;
 
-  private scrollCursor: integer;
+  private scrollCursor: number;
+  private scrollBar: ScrollBar;
 
   private optionsBg: Phaser.GameObjects.NineSlice;
 
-  private optionCursors: integer[];
+  private optionCursors: number[];
 
   private settingLabels: Phaser.GameObjects.Text[];
   private optionValueLabels: Phaser.GameObjects.Text[][];
@@ -76,7 +78,7 @@ export default class AbstractSettingsUiHandler extends MessageUiHandler {
 
     const actionText = addTextObject(this.scene, 0, 0, i18next.t("settings:action"), TextStyle.SETTINGS_LABEL);
     actionText.setOrigin(0, 0.15);
-    actionText.setPositionRelative(iconAction, -actionText.width/6-2, 0);
+    actionText.setPositionRelative(iconAction, -actionText.width / 6 - 2, 0);
 
     const iconCancel = this.scene.add.sprite(0, 0, "keyboard");
     iconCancel.setOrigin(0, -0.1);
@@ -85,7 +87,7 @@ export default class AbstractSettingsUiHandler extends MessageUiHandler {
 
     const cancelText = addTextObject(this.scene, 0, 0, i18next.t("settings:back"), TextStyle.SETTINGS_LABEL);
     cancelText.setOrigin(0, 0.15);
-    cancelText.setPositionRelative(iconCancel, -cancelText.width/6-2, 0);
+    cancelText.setPositionRelative(iconCancel, -cancelText.width / 6 - 2, 0);
 
     this.optionsContainer = this.scene.add.container(0, 0);
 
@@ -117,7 +119,7 @@ export default class AbstractSettingsUiHandler extends MessageUiHandler {
 
         const labelWidth =  Math.max(78, this.settingLabels[s].displayWidth + 8);
 
-        const totalSpace = (300 - labelWidth) - totalWidth / 6;
+        const totalSpace = (297 - labelWidth) - totalWidth / 6;
         const optionSpacing = Math.floor(totalSpace / (this.optionValueLabels[s].length - 1));
 
         let xOffset = 0;
@@ -130,7 +132,11 @@ export default class AbstractSettingsUiHandler extends MessageUiHandler {
 
     this.optionCursors = this.settings.map(setting => setting.default);
 
+    this.scrollBar = new ScrollBar(this.scene, this.optionsBg.width - 9, this.optionsBg.y + 5, 4, this.optionsBg.height - 11, this.rowsToDisplay);
+    this.scrollBar.setTotalRows(this.settings.length);
+
     this.settingsContainer.add(this.optionsBg);
+    this.settingsContainer.add(this.scrollBar);
     this.settingsContainer.add(this.navigationContainer);
     this.settingsContainer.add(actionsBg);
     this.settingsContainer.add(this.optionsContainer);
@@ -208,6 +214,7 @@ export default class AbstractSettingsUiHandler extends MessageUiHandler {
 
     this.settingsContainer.setVisible(true);
     this.setCursor(0);
+    this.setScrollCursor(0);
 
     this.getUi().moveTo(this.settingsContainer, this.getUi().length - 1);
 
@@ -358,11 +365,12 @@ export default class AbstractSettingsUiHandler extends MessageUiHandler {
    * @param cursor - The cursor position to set.
    * @returns `true` if the cursor was set successfully.
    */
-  setCursor(cursor: integer): boolean {
+  setCursor(cursor: number): boolean {
     const ret = super.setCursor(cursor);
 
     if (!this.cursorObj) {
-      this.cursorObj = this.scene.add.nineslice(0, 0, "summary_moves_cursor", undefined, (this.scene.game.canvas.width / 6) - 10, 16, 1, 1, 1, 1);
+      const cursorWidth = (this.scene.game.canvas.width / 6) - (this.scrollBar.visible ? 16 : 10);
+      this.cursorObj = this.scene.add.nineslice(0, 0, "summary_moves_cursor", undefined, cursorWidth, 16, 1, 1, 1, 1);
       this.cursorObj.setOrigin(0, 0);
       this.optionsContainer.add(this.cursorObj);
     }
@@ -380,7 +388,7 @@ export default class AbstractSettingsUiHandler extends MessageUiHandler {
    * @param save - Whether to save the setting to local storage.
    * @returns `true` if the option cursor was set successfully.
    */
-  setOptionCursor(settingIndex: integer, cursor: integer, save?: boolean): boolean {
+  setOptionCursor(settingIndex: number, cursor: number, save?: boolean): boolean {
     const setting = this.settings[settingIndex];
 
     if (setting.key === SettingKeys.Touch_Controls && cursor && hasTouchscreen() && isMobile()) {
@@ -416,12 +424,13 @@ export default class AbstractSettingsUiHandler extends MessageUiHandler {
    * @param scrollCursor - The scroll cursor position to set.
    * @returns `true` if the scroll cursor was set successfully.
    */
-  setScrollCursor(scrollCursor: integer): boolean {
+  setScrollCursor(scrollCursor: number): boolean {
     if (scrollCursor === this.scrollCursor) {
       return false;
     }
 
     this.scrollCursor = scrollCursor;
+    this.scrollBar.setScrollCursor(this.scrollCursor);
 
     this.updateSettingsScroll();
 
@@ -451,6 +460,7 @@ export default class AbstractSettingsUiHandler extends MessageUiHandler {
   clear() {
     super.clear();
     this.settingsContainer.setVisible(false);
+    this.setScrollCursor(0);
     this.eraseCursor();
     this.getUi().bgmBar.toggleBgmBar(this.scene.showBgmBar);
     if (this.reloadRequired) {

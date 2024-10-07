@@ -1,14 +1,12 @@
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import Phaser from "phaser";
-import GameManager from "#test/utils/gameManager";
-import { Species } from "#enums/species";
+import { allAbilities } from "#app/data/ability";
+import { Abilities } from "#app/enums/abilities";
+import Pokemon from "#app/field/pokemon";
+import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { Moves } from "#enums/moves";
-import { getMovePosition } from "#test/utils/gameManagerUtils";
-import { Abilities } from "#app/enums/abilities.js";
-import { allAbilities } from "#app/data/ability.js";
-import Pokemon from "#app/field/pokemon.js";
-import { SelectTargetPhase } from "#app/phases/select-target-phase.js";
-import { TurnEndPhase } from "#app/phases/turn-end-phase.js";
+import { Species } from "#enums/species";
+import GameManager from "#test/utils/gameManager";
+import Phaser from "phaser";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Moves - Flame Burst", () => {
   let phaserGame: Phaser.Game;
@@ -22,7 +20,7 @@ describe("Moves - Flame Burst", () => {
    * @returns Effect damage of Flame Burst
    */
   const getEffectDamage = (pokemon: Pokemon): number => {
-    return Math.max(1, Math.floor(pokemon.getMaxHp() * 1/16));
+    return Math.max(1, Math.floor(pokemon.getMaxHp() * 1 / 16));
   };
 
   beforeAll(() => {
@@ -38,23 +36,21 @@ describe("Moves - Flame Burst", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override.battleType("double");
-    game.override.moveset([Moves.FLAME_BURST, Moves.SPLASH]);
+    game.override.moveset([ Moves.FLAME_BURST, Moves.SPLASH ]);
     game.override.disableCrits();
     game.override.ability(Abilities.UNNERVE);
     game.override.startingWave(4);
     game.override.enemySpecies(Species.SHUCKLE);
     game.override.enemyAbility(Abilities.BALL_FETCH);
-    game.override.enemyMoveset(new Array(4).fill(Moves.SPLASH));
+    game.override.enemyMoveset([ Moves.SPLASH ]);
   });
 
   it("inflicts damage to the target's ally equal to 1/16 of its max HP", async () => {
-    await game.startBattle([Species.PIKACHU, Species.PIKACHU]);
+    await game.startBattle([ Species.PIKACHU, Species.PIKACHU ]);
     const [ leftEnemy, rightEnemy ] = game.scene.getEnemyField();
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.FLAME_BURST));
-    await game.phaseInterceptor.to(SelectTargetPhase, false);
-    game.doSelectTarget(leftEnemy.getBattlerIndex());
-    game.doAttack(getMovePosition(game.scene, 1, Moves.SPLASH));
+    game.move.select(Moves.FLAME_BURST, 0, leftEnemy.getBattlerIndex());
+    game.move.select(Moves.SPLASH, 1);
     await game.phaseInterceptor.to(TurnEndPhase);
 
     expect(leftEnemy.hp).toBeLessThan(leftEnemy.getMaxHp());
@@ -64,13 +60,11 @@ describe("Moves - Flame Burst", () => {
   it("does not inflict damage to the target's ally if the target was not affected by Flame Burst", async () => {
     game.override.enemyAbility(Abilities.FLASH_FIRE);
 
-    await game.startBattle([Species.PIKACHU, Species.PIKACHU]);
+    await game.startBattle([ Species.PIKACHU, Species.PIKACHU ]);
     const [ leftEnemy, rightEnemy ] = game.scene.getEnemyField();
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.FLAME_BURST));
-    await game.phaseInterceptor.to(SelectTargetPhase, false);
-    game.doSelectTarget(leftEnemy.getBattlerIndex());
-    game.doAttack(getMovePosition(game.scene, 1, Moves.SPLASH));
+    game.move.select(Moves.FLAME_BURST, 0, leftEnemy.getBattlerIndex());
+    game.move.select(Moves.SPLASH, 1);
     await game.phaseInterceptor.to(TurnEndPhase);
 
     expect(leftEnemy.hp).toBe(leftEnemy.getMaxHp());
@@ -78,15 +72,13 @@ describe("Moves - Flame Burst", () => {
   });
 
   it("does not interact with the target ally's abilities", async () => {
-    await game.startBattle([Species.PIKACHU, Species.PIKACHU]);
+    await game.startBattle([ Species.PIKACHU, Species.PIKACHU ]);
     const [ leftEnemy, rightEnemy ] = game.scene.getEnemyField();
 
     vi.spyOn(rightEnemy, "getAbility").mockReturnValue(allAbilities[Abilities.FLASH_FIRE]);
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.FLAME_BURST));
-    await game.phaseInterceptor.to(SelectTargetPhase, false);
-    game.doSelectTarget(leftEnemy.getBattlerIndex());
-    game.doAttack(getMovePosition(game.scene, 1, Moves.SPLASH));
+    game.move.select(Moves.FLAME_BURST, 0, leftEnemy.getBattlerIndex());
+    game.move.select(Moves.SPLASH, 1);
     await game.phaseInterceptor.to(TurnEndPhase);
 
     expect(leftEnemy.hp).toBeLessThan(leftEnemy.getMaxHp());
@@ -94,15 +86,13 @@ describe("Moves - Flame Burst", () => {
   });
 
   it("effect damage is prevented by Magic Guard", async () => {
-    await game.startBattle([Species.PIKACHU, Species.PIKACHU]);
+    await game.startBattle([ Species.PIKACHU, Species.PIKACHU ]);
     const [ leftEnemy, rightEnemy ] = game.scene.getEnemyField();
 
     vi.spyOn(rightEnemy, "getAbility").mockReturnValue(allAbilities[Abilities.MAGIC_GUARD]);
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.FLAME_BURST));
-    await game.phaseInterceptor.to(SelectTargetPhase, false);
-    game.doSelectTarget(leftEnemy.getBattlerIndex());
-    game.doAttack(getMovePosition(game.scene, 1, Moves.SPLASH));
+    game.move.select(Moves.FLAME_BURST, 0, leftEnemy.getBattlerIndex());
+    game.move.select(Moves.SPLASH, 1);
     await game.phaseInterceptor.to(TurnEndPhase);
 
     expect(leftEnemy.hp).toBeLessThan(leftEnemy.getMaxHp());

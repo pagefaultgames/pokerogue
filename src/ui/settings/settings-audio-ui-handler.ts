@@ -1,6 +1,6 @@
 import BattleScene from "../../battle-scene";
 import { Mode } from "../ui";
-"#app/inputs-controller.js";
+"#app/inputs-controller";
 import AbstractSettingsUiHandler from "./abstract-settings-ui-handler";
 import { SettingType } from "#app/system/settings/settings";
 
@@ -15,6 +15,6 @@ export default class SettingsAudioUiHandler extends AbstractSettingsUiHandler {
     super(scene, SettingType.AUDIO, mode);
     this.title = "Audio";
     this.localStorageKey = "settings";
-    this.rowsToDisplay = 4;
+    this.rowsToDisplay = 6;
   }
 }

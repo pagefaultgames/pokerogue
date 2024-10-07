@@ -17,22 +17,45 @@ body {
   background: #484050;
 }
 
-#links {
-  width: 90%;
-  text-align: center;
-  position: fixed;
-  bottom: 0;
-  display: flex;
-  justify-content: space-around;
+@media (display-mode: fullscreen) {
+  body {
+    background: #000000;
+  }
 }
 
 #app {
   display: flex;
   justify-content: center;
+  align-items: center;
 }
 
 #app > div:first-child {
-  transform-origin: top !important;
+  transform-origin: center !important;
+}
+
+/*
+  Supports automatic vertical centering as suggested in PR#1114, but only via CSS
+
+  Condition factorized to deduce CSS rules:
+  true if (isLandscape && !isMobile() && !hasTouchscreen() || (hasTouchscreen() && !isTouchControlsEnabled))
+*/
+
+/* isLandscape && !isMobile() && !hasTouchscreen() */
+@media (orientation: landscape) and (pointer: fine) {
+  #app {
+    align-items: center;
+  }
+}
+
+@media (pointer: coarse) {
+  /* hasTouchscreen() && !isTouchControlsEnabled */
+  body:has(> #touchControls[class=visible]) #app {
+    align-items: start;
+  }
+
+  body:has(> #touchControls[class=visible]) #app > div:first-child {
+    transform-origin: top !important;
+  }
 }
 
 #layout:fullscreen #dpad, #layout:fullscreen {
@@ -87,7 +110,7 @@ input:-internal-autofill-selected {
 
 @media (orientation: landscape) {
   #touchControls {
-    --controls-size: 20vh; 
+    --controls-size: 20vh;
     --text-shadow-size: 1.3vh;
     --small-button-offset: 4vh;
   }
@@ -142,10 +165,10 @@ input:-internal-autofill-selected {
 
 /* Show cycle buttons only on STARTER_SELECT and on touch configuration panel */
 #touchControls:not(.config-mode):not([data-ui-mode='STARTER_SELECT']) #apadOpenFilters,
-#touchControls:not(.config-mode):not([data-ui-mode='STARTER_SELECT']) #apadCycleForm,
-#touchControls:not(.config-mode):not([data-ui-mode='STARTER_SELECT']) #apadCycleShiny,
+#touchControls:not(.config-mode):not([data-ui-mode='STARTER_SELECT'], [data-ui-mode='RUN_INFO']) #apadCycleForm,
+#touchControls:not(.config-mode):not([data-ui-mode='STARTER_SELECT'], [data-ui-mode='RUN_INFO']) #apadCycleShiny,
 #touchControls:not(.config-mode):not([data-ui-mode='STARTER_SELECT']) #apadCycleNature,
-#touchControls:not(.config-mode):not([data-ui-mode='STARTER_SELECT']) #apadCycleAbility,
+#touchControls:not(.config-mode):not([data-ui-mode='STARTER_SELECT'], [data-ui-mode='RUN_INFO']) #apadCycleAbility,
 #touchControls:not(.config-mode):not([data-ui-mode='STARTER_SELECT']) #apadCycleGender,
 #touchControls:not(.config-mode):not([data-ui-mode='STARTER_SELECT']) #apadCycleVariant {
  display: none;

@@ -1,8 +1,8 @@
-import BattleScene from "#app/battle-scene.js";
-import { ArenaTagType } from "#app/enums/arena-tag-type.js";
-import { MoneyMultiplierModifier } from "#app/modifier/modifier.js";
+import BattleScene from "#app/battle-scene";
+import { ArenaTagType } from "#app/enums/arena-tag-type";
+import { MoneyMultiplierModifier } from "#app/modifier/modifier";
 import i18next from "i18next";
-import * as Utils from "#app/utils.js";
+import * as Utils from "#app/utils";
 import { BattlePhase } from "./battle-phase";
 
 export class MoneyRewardPhase extends BattlePhase {
