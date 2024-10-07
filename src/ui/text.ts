@@ -243,7 +243,7 @@ export function getBBCodeFrag(content: string, textStyle: TextStyle, uiTheme: Ui
 export function getTextWithColors(content: string, primaryStyle: TextStyle, uiTheme: UiTheme = UiTheme.DEFAULT): string {
   // Apply primary styling before anything else
   let text = getBBCodeFrag(content, primaryStyle, uiTheme) + "[/color][/shadow]";
-  const primaryStyleString = [...text.match(new RegExp(/\[color=[^\[]*\]\[shadow=[^\[]*\]/i))!][0];
+  const primaryStyleString = [ ...text.match(new RegExp(/\[color=[^\[]*\]\[shadow=[^\[]*\]/i))! ][0];
 
   // Set custom colors
   text = text.replace(/@\[([^{]*)\]{([^}]*)}/gi, (substring, textStyle: string, textToColor: string) => {

@@ -164,7 +164,7 @@ export const DarkDealEncounter: MysteryEncounter =
           // Starter egg tier, 35/50/10/5 %odds for tiers 6/7/8/9+
           const roll = randSeedInt(100);
           const starterTier: number | [number, number] =
-            roll >= 65 ? 6 : roll >= 15 ? 7 : roll >= 5 ? 8 : [9, 10];
+            roll >= 65 ? 6 : roll >= 15 ? 7 : roll >= 5 ? 8 : [ 9, 10 ];
           const bossSpecies = getPokemonSpecies(getRandomSpeciesByStarterTier(starterTier, excludedBosses, bossTypes));
           const pokemonConfig: EnemyPokemonConfig = {
             species: bossSpecies,
@@ -179,7 +179,7 @@ export const DarkDealEncounter: MysteryEncounter =
             pokemonConfig.formIndex = 0;
           }
           const config: EnemyPartyConfig = {
-            pokemonConfigs: [pokemonConfig],
+            pokemonConfigs: [ pokemonConfig ],
           };
           return initBattleWithEnemyConfig(scene, config);
         })

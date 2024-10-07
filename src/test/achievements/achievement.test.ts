@@ -61,8 +61,8 @@ describe("Achv", () => {
     const conditionFunc = vi.fn((scene: BattleScene, args: any[]) => args[0] === 10);
     const achv = new Achv("", "Test Achievement", "Test Description", "test_icon", 10, conditionFunc);
 
-    expect(achv.validate(new BattleScene(), [5])).toBe(false);
-    expect(achv.validate(new BattleScene(), [10])).toBe(true);
+    expect(achv.validate(new BattleScene(), [ 5 ])).toBe(false);
+    expect(achv.validate(new BattleScene(), [ 10 ])).toBe(true);
     expect(conditionFunc).toHaveBeenCalledTimes(2);
   });
 });
@@ -141,10 +141,10 @@ describe("DamageAchv", () => {
     const scene = new BattleScene();
     const numberHolder = new NumberHolder(200);
 
-    expect(damageAchv.validate(scene, [numberHolder])).toBe(false);
+    expect(damageAchv.validate(scene, [ numberHolder ])).toBe(false);
 
     numberHolder.value = 300;
-    expect(damageAchv.validate(scene, [numberHolder])).toBe(true);
+    expect(damageAchv.validate(scene, [ numberHolder ])).toBe(true);
   });
 });
 
@@ -160,10 +160,10 @@ describe("HealAchv", () => {
     const scene = new BattleScene();
     const numberHolder = new NumberHolder(200);
 
-    expect(healAchv.validate(scene, [numberHolder])).toBe(false);
+    expect(healAchv.validate(scene, [ numberHolder ])).toBe(false);
 
     numberHolder.value = 300;
-    expect(healAchv.validate(scene, [numberHolder])).toBe(true);
+    expect(healAchv.validate(scene, [ numberHolder ])).toBe(true);
   });
 });
 
@@ -179,10 +179,10 @@ describe("LevelAchv", () => {
     const scene = new BattleScene();
     const integerHolder = new IntegerHolder(50);
 
-    expect(levelAchv.validate(scene, [integerHolder])).toBe(false);
+    expect(levelAchv.validate(scene, [ integerHolder ])).toBe(false);
 
     integerHolder.value = 150;
-    expect(levelAchv.validate(scene, [integerHolder])).toBe(true);
+    expect(levelAchv.validate(scene, [ integerHolder ])).toBe(true);
   });
 });
 
@@ -198,7 +198,7 @@ describe("ModifierAchv", () => {
     const scene = new BattleScene();
     const modifier = new TurnHeldItemTransferModifier(null!, 3, 1);
 
-    expect(modifierAchv.validate(scene, [modifier])).toBe(true);
+    expect(modifierAchv.validate(scene, [ modifier ])).toBe(true);
   });
 });
 

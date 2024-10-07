@@ -9,7 +9,6 @@ import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest";
 
 
-
 describe("Moves - Purify", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
@@ -30,11 +29,11 @@ describe("Moves - Purify", () => {
 
     game.override.starterSpecies(Species.PYUKUMUKU);
     game.override.startingLevel(10);
-    game.override.moveset([Moves.PURIFY, Moves.SIZZLY_SLIDE]);
+    game.override.moveset([ Moves.PURIFY, Moves.SIZZLY_SLIDE ]);
 
     game.override.enemySpecies(Species.MAGIKARP);
     game.override.enemyLevel(10);
-    game.override.enemyMoveset([Moves.SPLASH, Moves.NONE, Moves.NONE, Moves.NONE]);
+    game.override.enemyMoveset([ Moves.SPLASH, Moves.NONE, Moves.NONE, Moves.NONE ]);
   });
 
   test(
@@ -49,7 +48,7 @@ describe("Moves - Purify", () => {
       enemyPokemon.status = new Status(StatusEffect.BURN);
 
       game.move.select(Moves.PURIFY);
-      await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+      await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY ]);
       await game.phaseInterceptor.to(MoveEndPhase);
 
       expect(enemyPokemon.status).toBeNull();
@@ -68,7 +67,7 @@ describe("Moves - Purify", () => {
       const playerInitialHp = playerPokemon.hp;
 
       game.move.select(Moves.PURIFY);
-      await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+      await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY ]);
       await game.phaseInterceptor.to(MoveEndPhase);
 
       expect(playerPokemon.hp).toBe(playerInitialHp);

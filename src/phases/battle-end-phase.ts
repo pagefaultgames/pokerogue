@@ -57,7 +57,7 @@ export class BattleEndPhase extends BattlePhase {
       if (m instanceof LapsingPokemonHeldItemModifier) {
         args.push(this.scene.getPokemonById(m.pokemonId));
       }
-      if (!m.lapse(args)) {
+      if (!m.lapse(...args)) {
         this.scene.removeModifier(m);
       }
     }

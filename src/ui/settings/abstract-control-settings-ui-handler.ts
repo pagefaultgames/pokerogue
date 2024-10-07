@@ -120,7 +120,7 @@ export default abstract class AbstractControlSettingsUiHandler extends UiHandler
 
     const actionText = addTextObject(this.scene, 0, 0, i18next.t("settings:action"), TextStyle.SETTINGS_LABEL);
     actionText.setOrigin(0, 0.15);
-    actionText.setPositionRelative(iconAction, -actionText.width/6-2, 0);
+    actionText.setPositionRelative(iconAction, -actionText.width / 6 - 2, 0);
 
     const iconCancel = this.scene.add.sprite(0, 0, "keyboard");
     iconCancel.setOrigin(0, -0.1);
@@ -129,7 +129,7 @@ export default abstract class AbstractControlSettingsUiHandler extends UiHandler
 
     const cancelText = addTextObject(this.scene, 0, 0, i18next.t("settings:back"), TextStyle.SETTINGS_LABEL);
     cancelText.setOrigin(0, 0.15);
-    cancelText.setPositionRelative(iconCancel, -cancelText.width/6-2, 0);
+    cancelText.setPositionRelative(iconCancel, -cancelText.width / 6 - 2, 0);
 
     const iconReset = this.scene.add.sprite(0, 0, "keyboard");
     iconReset.setOrigin(0, -0.1);
@@ -138,7 +138,7 @@ export default abstract class AbstractControlSettingsUiHandler extends UiHandler
 
     const resetText = addTextObject(this.scene, 0, 0, i18next.t("settings:reset"), TextStyle.SETTINGS_LABEL);
     resetText.setOrigin(0, 0.15);
-    resetText.setPositionRelative(iconReset, -resetText.width/6-2, 0);
+    resetText.setPositionRelative(iconReset, -resetText.width / 6 - 2, 0);
 
     this.settingsContainer.add(this.optionsBg);
     this.settingsContainer.add(this.actionsBg);
@@ -174,7 +174,7 @@ export default abstract class AbstractControlSettingsUiHandler extends UiHandler
       // Fetch common setting keys such as 'Controller' and 'Gamepad Support' from gamepad settings.
       const commonSettingKeys = Object.keys(this.setting).slice(0, this.commonSettingsCount).map(key => this.setting[key]);
       // Combine common and specific bindings into a single array.
-      const specificBindingKeys = [...commonSettingKeys, ...Object.keys(config.settings)];
+      const specificBindingKeys = [ ...commonSettingKeys, ...Object.keys(config.settings) ];
       // Fetch default values for these settings and prepare to highlight selected options.
       const optionCursors = Object.values(Object.keys(this.settingDeviceDefaults).filter(s => specificBindingKeys.includes(s)).map(k => this.settingDeviceDefaults[k]));
       // Filter out settings that are not relevant to the current gamepad configuration.
@@ -203,7 +203,7 @@ export default abstract class AbstractControlSettingsUiHandler extends UiHandler
         const valueLabels: Phaser.GameObjects.GameObject[] = [];
 
         // Process each option for the current setting.
-        for (const [o, option] of this.settingDeviceOptions[this.setting[setting]].entries()) {
+        for (const [ o, option ] of this.settingDeviceOptions[this.setting[setting]].entries()) {
           // Check if the current setting is for binding keys.
           if (bindingSettings.includes(this.setting[setting])) {
             // Create a label for non-null options, typically indicating actionable options like 'change'.
@@ -556,7 +556,7 @@ export default abstract class AbstractControlSettingsUiHandler extends UiHandler
 
     // Check if the cursor object exists, if not, create it.
     if (!this.cursorObj) {
-      const cursorWidth = (this.scene.game.canvas.width / 6) - (this.scrollBar.visible? 16 : 10);
+      const cursorWidth = (this.scene.game.canvas.width / 6) - (this.scrollBar.visible ? 16 : 10);
       this.cursorObj = this.scene.add.nineslice(0, 0, "summary_moves_cursor", undefined, cursorWidth, 16, 1, 1, 1, 1);
       this.cursorObj.setOrigin(0, 0); // Set the origin to the top-left corner.
       this.optionsContainer.add(this.cursorObj); // Add the cursor to the options container.
