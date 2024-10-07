@@ -19,14 +19,14 @@ export default class TestDialogueUiHandler extends FormModalUiHandler {
   setup() {
     super.setup();
 
-    const flattenKeys = (object, topKey?: string, midleKey?: string[]): Array<any> => {
-      return Object.keys(object).map((t, i) => {
+    const flattenKeys = (object?: any, topKey?: string, midleKey?: string[]): Array<any> => {
+      return Object.keys(object ?? {}).map((t, i) => {
         const value = Object.values(object)[i];
 
         if (typeof value === "object" && !isNullOrUndefined(value)) { // we check for not null or undefined here because if the language json file has a null key, the typeof will still be an object, but that object will be null, causing issues
           // If the value is an object, execute the same process
 
-          return flattenKeys(value, topKey ?? t, topKey ? midleKey ? [...midleKey, t] : [t] : undefined).filter((t) => t.length > 0);
+          return flattenKeys(value, topKey ?? t, topKey ? midleKey ? [ ...midleKey, t ] : [ t ] : undefined).filter((t) => t.length > 0);
         } else if (typeof value === "string" || isNullOrUndefined(value)) { // we check for null or undefined here as per above - the typeof is still an object but the value is null so we need to exit out of this and pass the null key
 
           // Return in the format expected by i18next

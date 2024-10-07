@@ -12,6 +12,7 @@ import { type PokeballCounts } from "./battle-scene";
 import { Gender } from "./data/gender";
 import { Variant } from "./data/variant";
 import { type ModifierOverride } from "./modifier/modifier-type";
+import { Unlockables } from "./system/unlockables";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 
@@ -70,8 +71,10 @@ class DefaultOverrides {
       [PokeballType.MASTER_BALL]: 0,
     },
   };
+  /** Forces an item to be UNLOCKED */
+  readonly ITEM_UNLOCK_OVERRIDE: Unlockables[] = [];
   /** Set to `true` to show all tutorials */
-  readonly BYPASS_TUTORIAL_SKIP: boolean = false;
+  readonly BYPASS_TUTORIAL_SKIP_OVERRIDE: boolean = false;
 
   // ----------------
   // PLAYER OVERRIDES
@@ -97,6 +100,14 @@ class DefaultOverrides {
    * @example SPECIES_OVERRIDE = Species.Bulbasaur;
    */
   readonly STARTER_SPECIES_OVERRIDE: Species | number = 0;
+  /**
+   * This will force your starter to be a random fusion
+   */
+  readonly STARTER_FUSION_OVERRIDE: boolean = false;
+  /**
+   * This will override the species of the fusion
+   */
+  readonly STARTER_FUSION_SPECIES_OVERRIDE: Species | integer = 0;
   readonly ABILITY_OVERRIDE: Abilities = Abilities.NONE;
   readonly PASSIVE_ABILITY_OVERRIDE: Abilities = Abilities.NONE;
   readonly STATUS_OVERRIDE: StatusEffect = StatusEffect.NONE;
@@ -109,6 +120,14 @@ class DefaultOverrides {
   // OPPONENT / ENEMY OVERRIDES
   // --------------------------
   readonly OPP_SPECIES_OVERRIDE: Species | number = 0;
+  /**
+   * This will make all opponents fused Pokemon
+   */
+  readonly OPP_FUSION_OVERRIDE: boolean = false;
+  /**
+   * This will override the species of the fusion only when the opponent is already a fusion
+   */
+  readonly OPP_FUSION_SPECIES_OVERRIDE: Species | integer = 0;
   readonly OPP_LEVEL_OVERRIDE: number = 0;
   readonly OPP_ABILITY_OVERRIDE: Abilities = Abilities.NONE;
   readonly OPP_PASSIVE_ABILITY_OVERRIDE: Abilities = Abilities.NONE;

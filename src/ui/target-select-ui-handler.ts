@@ -4,7 +4,7 @@ import { Mode } from "./ui";
 import UiHandler from "./ui-handler";
 import * as Utils from "../utils";
 import { getMoveTargets } from "../data/move";
-import {Button} from "#enums/buttons";
+import { Button } from "#enums/buttons";
 import { Moves } from "#enums/moves";
 import Pokemon from "#app/field/pokemon";
 import { ModifierBar } from "#app/modifier/modifier";
@@ -64,7 +64,7 @@ export default class TargetSelectUiHandler extends UiHandler {
     let success = false;
 
     if (button === Button.ACTION || button === Button.CANCEL) {
-      const targetIndexes: BattlerIndex[] = this.isMultipleTargets ? this.targets : [this.cursor];
+      const targetIndexes: BattlerIndex[] = this.isMultipleTargets ? this.targets : [ this.cursor ];
       this.targetSelectCallback(button === Button.ACTION ? targetIndexes : []);
       success = true;
     } else if (this.isMultipleTargets) {

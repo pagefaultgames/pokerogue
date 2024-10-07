@@ -34,6 +34,7 @@ import { doTrainerExclamation } from "#app/data/mystery-encounters/utils/encount
 import { getEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
 import { MysteryEncounterPhase } from "#app/phases/mystery-encounter-phases";
 import { getGoldenBugNetSpecies } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
+import { Biome } from "#enums/biome";
 
 export class EncounterPhase extends BattlePhase {
   private loaded: boolean;
@@ -62,7 +63,13 @@ export class EncounterPhase extends BattlePhase {
 
     const battle = this.scene.currentBattle;
 
-    // Init Mystery Encounter if there is one
+    // Generate and Init Mystery Encounter
+    if (battle.isBattleMysteryEncounter() && !battle.mysteryEncounter) {
+      this.scene.executeWithSeedOffset(() => {
+        const currentSessionEncounterType = battle.mysteryEncounterType;
+        battle.mysteryEncounter = this.scene.getMysteryEncounter(currentSessionEncounterType);
+      }, battle.waveIndex << 4);
+    }
     const mysteryEncounter = battle.mysteryEncounter;
     if (mysteryEncounter) {
       // If ME has an onInit() function, call it
@@ -73,7 +80,7 @@ export class EncounterPhase extends BattlePhase {
           mysteryEncounter.onInit(this.scene);
         }
         mysteryEncounter.populateDialogueTokensFromRequirements(this.scene);
-      }, this.scene.currentBattle.waveIndex);
+      }, battle.waveIndex);
 
       // Add any special encounter animations to load
       if (mysteryEncounter.encounterAnimations && mysteryEncounter.encounterAnimations.length > 0) {
@@ -88,7 +95,7 @@ export class EncounterPhase extends BattlePhase {
     let totalBst = 0;
 
     battle.enemyLevels?.every((level, e) => {
-      if (battle.battleType === BattleType.MYSTERY_ENCOUNTER) {
+      if (battle.isBattleMysteryEncounter()) {
         // Skip enemy loading for MEs, those are loaded elsewhere
         return false;
       }
@@ -97,9 +104,12 @@ export class EncounterPhase extends BattlePhase {
           battle.enemyParty[e] = battle.trainer?.genPartyMember(e)!; // TODO:: is the bang correct here?
         } else {
           let enemySpecies = this.scene.randomSpecies(battle.waveIndex, level, true);
-          // If player has golden bug net, rolls 10% chance to replace with species from the golden bug net bug pool
-          if (this.scene.findModifier(m => m instanceof BoostBugSpawnModifier) && randSeedInt(10) === 0) {
-            enemySpecies = getGoldenBugNetSpecies();
+          // If player has golden bug net, rolls 10% chance to replace non-boss wave wild species from the golden bug net bug pool
+          if (this.scene.findModifier(m => m instanceof BoostBugSpawnModifier)
+            && !this.scene.gameMode.isBoss(battle.waveIndex)
+            && this.scene.arena.biomeType !== Biome.END
+            && randSeedInt(10) === 0) {
+            enemySpecies = getGoldenBugNetSpecies(level);
           }
           battle.enemyParty[e] = this.scene.addEnemyPokemon(enemySpecies, level, TrainerSlot.NONE, !!this.scene.getEncounterBossSegments(battle.waveIndex, level, enemySpecies));
           if (this.scene.currentBattle.battleSpec === BattleSpec.FINAL_BOSS) {
@@ -141,7 +151,7 @@ export class EncounterPhase extends BattlePhase {
 
       loadEnemyAssets.push(enemyPokemon.loadAssets());
 
-      console.log(getPokemonNameWithAffix(enemyPokemon), enemyPokemon.species.speciesId, enemyPokemon.stats);
+      console.log(`Pokemon: ${getPokemonNameWithAffix(enemyPokemon)}`, `Species ID: ${enemyPokemon.species.speciesId}`, `Stats: ${enemyPokemon.stats}`, `Ability: ${enemyPokemon.getAbility().name}`, `Passive Ability: ${enemyPokemon.getPassiveAbility().name}`);
       return true;
     });
 
@@ -151,20 +161,17 @@ export class EncounterPhase extends BattlePhase {
 
     if (battle.battleType === BattleType.TRAINER) {
       loadEnemyAssets.push(battle.trainer?.loadAssets().then(() => battle.trainer?.initSprite())!); // TODO: is this bang correct?
-    } else if (battle.battleType === BattleType.MYSTERY_ENCOUNTER) {
-      if (!battle.mysteryEncounter) {
-        battle.mysteryEncounter = this.scene.getMysteryEncounter(mysteryEncounter?.encounterType);
-      }
-      if (battle.mysteryEncounter.introVisuals) {
+    } else if (battle.isBattleMysteryEncounter()) {
+      if (battle.mysteryEncounter?.introVisuals) {
         loadEnemyAssets.push(battle.mysteryEncounter.introVisuals.loadAssets().then(() => battle.mysteryEncounter!.introVisuals!.initSprite()));
       }
-      if (battle.mysteryEncounter.loadAssets.length > 0) {
+      if (battle.mysteryEncounter?.loadAssets && battle.mysteryEncounter.loadAssets.length > 0) {
         loadEnemyAssets.push(...battle.mysteryEncounter.loadAssets);
       }
       // Load Mystery Encounter Exclamation bubble and sfx
       loadEnemyAssets.push(new Promise<void>(resolve => {
         this.scene.loadSe("GEN8- Exclaim", "battle_anims", "GEN8- Exclaim.wav");
-        this.scene.loadImage("exclaim", "mystery-encounters");
+        this.scene.loadImage("encounter_exclaim", "mystery-encounters");
         this.scene.load.once(Phaser.Loader.Events.COMPLETE, () => resolve());
         if (!this.scene.load.isLoading()) {
           this.scene.load.start();
@@ -186,7 +193,7 @@ export class EncounterPhase extends BattlePhase {
 
     Promise.all(loadEnemyAssets).then(() => {
       battle.enemyParty.every((enemyPokemon, e) => {
-        if (battle.battleType === BattleType.MYSTERY_ENCOUNTER) {
+        if (battle.isBattleMysteryEncounter()) {
           return false;
         }
         if (e < (battle.double ? 2 : 1)) {
@@ -252,7 +259,7 @@ export class EncounterPhase extends BattlePhase {
 
     const enemyField = this.scene.getEnemyField();
     this.scene.tweens.add({
-      targets: [this.scene.arenaEnemy, this.scene.currentBattle.trainer, enemyField, this.scene.arenaPlayer, this.scene.trainer].flat(),
+      targets: [ this.scene.arenaEnemy, this.scene.currentBattle.trainer, enemyField, this.scene.arenaPlayer, this.scene.trainer ].flat(),
       x: (_target, _key, value, fieldIndex: integer) => fieldIndex < 2 + (enemyField.length) ? value + 300 : value - 300,
       duration: 2000,
       onComplete: () => {
@@ -280,7 +287,7 @@ export class EncounterPhase extends BattlePhase {
     const enemyField = this.scene.getEnemyField();
 
     if (this.scene.currentBattle.battleSpec === BattleSpec.FINAL_BOSS) {
-      return i18next.t("battle:bossAppeared", { bossName: getPokemonNameWithAffix(enemyField[0])});
+      return i18next.t("battle:bossAppeared", { bossName: getPokemonNameWithAffix(enemyField[0]) });
     }
 
     if (this.scene.currentBattle.battleType === BattleType.TRAINER) {
@@ -360,7 +367,7 @@ export class EncounterPhase extends BattlePhase {
           showDialogueAndSummon();
         }
       }
-    } else if (this.scene.currentBattle.battleType === BattleType.MYSTERY_ENCOUNTER && this.scene.currentBattle.mysteryEncounter) {
+    } else if (this.scene.currentBattle.isBattleMysteryEncounter() && this.scene.currentBattle.mysteryEncounter) {
       const encounter = this.scene.currentBattle.mysteryEncounter;
       const introVisuals = encounter.introVisuals;
       introVisuals?.playAnim();
@@ -429,7 +436,7 @@ export class EncounterPhase extends BattlePhase {
       }
     });
 
-    if (![BattleType.TRAINER, BattleType.MYSTERY_ENCOUNTER].includes(this.scene.currentBattle.battleType)) {
+    if (![ BattleType.TRAINER, BattleType.MYSTERY_ENCOUNTER ].includes(this.scene.currentBattle.battleType)) {
       enemyField.map(p => this.scene.pushConditionalPhase(new PostSummonPhase(this.scene, p.getBattlerIndex()), () => {
         // if there is not a player party, we can't continue
         if (!this.scene.getParty()?.length) {
@@ -498,7 +505,7 @@ export class EncounterPhase extends BattlePhase {
         } else {
           const count = 5643853 + this.scene.gameData.gameStats.classicSessionsPlayed;
           // The line below checks if an English ordinal is necessary or not based on whether an entry for encounterLocalizationKey exists in the language or not.
-          const ordinalUsed = !i18next.exists(localizationKey, {fallbackLng: []}) || i18next.resolvedLanguage === "en" ? i18next.t("battleSpecDialogue:key", { count: count, ordinal: true }) : "";
+          const ordinalUsed = !i18next.exists(localizationKey, { fallbackLng: []}) || i18next.resolvedLanguage === "en" ? i18next.t("battleSpecDialogue:key", { count: count, ordinal: true }) : "";
           const cycleCount = count.toLocaleString() + ordinalUsed;
           const genderIndex = this.scene.gameData.gender ?? PlayerGender.UNSET;
           const genderStr = PlayerGender[genderIndex].toLowerCase();

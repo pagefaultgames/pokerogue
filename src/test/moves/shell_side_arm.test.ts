@@ -5,11 +5,14 @@ import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, it, expect, vi } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Moves - Shell Side Arm", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
+  const shellSideArm = allMoves[Moves.SHELL_SIDE_ARM];
+  const shellSideArmAttr = shellSideArm.getAttrs(ShellSideArmCategoryAttr)[0];
+
   beforeAll(() => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
@@ -23,7 +26,7 @@ describe("Moves - Shell Side Arm", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([Moves.SHELL_SIDE_ARM])
+      .moveset([ Moves.SHELL_SIDE_ARM ])
       .battleType("single")
       .startingLevel(100)
       .enemyLevel(100)
@@ -34,14 +37,11 @@ describe("Moves - Shell Side Arm", () => {
   it("becomes a physical attack if forecasted to deal more damage as physical", async () => {
     game.override.enemySpecies(Species.SNORLAX);
 
-    await game.classicMode.startBattle([Species.MANAPHY]);
+    await game.classicMode.startBattle([ Species.RAMPARDOS ]);
 
-    const shellSideArm = allMoves[Moves.SHELL_SIDE_ARM];
-    const shellSideArmAttr = shellSideArm.getAttrs(ShellSideArmCategoryAttr)[0];
     vi.spyOn(shellSideArmAttr, "apply");
 
     game.move.select(Moves.SHELL_SIDE_ARM);
-
     await game.phaseInterceptor.to("MoveEffectPhase");
 
     expect(shellSideArmAttr.apply).toHaveLastReturnedWith(true);
@@ -50,14 +50,11 @@ describe("Moves - Shell Side Arm", () => {
   it("remains a special attack if forecasted to deal more damage as special", async () => {
     game.override.enemySpecies(Species.SLOWBRO);
 
-    await game.classicMode.startBattle([Species.MANAPHY]);
+    await game.classicMode.startBattle([ Species.XURKITREE ]);
 
-    const shellSideArm = allMoves[Moves.SHELL_SIDE_ARM];
-    const shellSideArmAttr = shellSideArm.getAttrs(ShellSideArmCategoryAttr)[0];
     vi.spyOn(shellSideArmAttr, "apply");
 
     game.move.select(Moves.SHELL_SIDE_ARM);
-
     await game.phaseInterceptor.to("MoveEffectPhase");
 
     expect(shellSideArmAttr.apply).toHaveLastReturnedWith(false);
@@ -68,16 +65,12 @@ describe("Moves - Shell Side Arm", () => {
       .enemySpecies(Species.SNORLAX)
       .enemyMoveset(Moves.COTTON_GUARD);
 
-    await game.classicMode.startBattle([Species.MANAPHY]);
+    await game.classicMode.startBattle([ Species.MANAPHY ]);
 
-    const shellSideArm = allMoves[Moves.SHELL_SIDE_ARM];
-    const shellSideArmAttr = shellSideArm.getAttrs(ShellSideArmCategoryAttr)[0];
     vi.spyOn(shellSideArmAttr, "apply");
 
     game.move.select(Moves.SHELL_SIDE_ARM);
-
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
-
+    await game.setTurnOrder([ BattlerIndex.ENEMY, BattlerIndex.PLAYER ]);
     await game.phaseInterceptor.to("BerryPhase", false);
 
     expect(shellSideArmAttr.apply).toHaveLastReturnedWith(false);

@@ -22,6 +22,8 @@ export class ScrollBar extends Phaser.GameObjects.Container {
     super(scene, x, y);
 
     this.maxRows = maxRows;
+    this.totalRows = maxRows;
+    this.currentRow = 0;
 
     const borderSize = 2;
     width = Math.max(width, 4);
@@ -46,8 +48,7 @@ export class ScrollBar extends Phaser.GameObjects.Container {
    */
   setScrollCursor(scrollCursor: number): void {
     this.currentRow = scrollCursor;
-    this.handleBody.y = 1 + (this.bg.displayHeight - 1 - this.handleBottom.displayHeight) / this.totalRows * this.currentRow;
-    this.handleBottom.y = this.handleBody.y + this.handleBody.displayHeight;
+    this.updateHandlePosition();
   }
 
   /**
@@ -59,7 +60,13 @@ export class ScrollBar extends Phaser.GameObjects.Container {
   setTotalRows(rows: number): void {
     this.totalRows = rows;
     this.handleBody.height = (this.bg.displayHeight - 1 - this.handleBottom.displayHeight) * this.maxRows / this.totalRows;
+    this.updateHandlePosition();
 
     this.setVisible(this.totalRows > this.maxRows);
+  }
+
+  private updateHandlePosition(): void {
+    this.handleBody.y = 1 + (this.bg.displayHeight - 1 - this.handleBottom.displayHeight) / this.totalRows * this.currentRow;
+    this.handleBottom.y = this.handleBody.y + this.handleBody.displayHeight;
   }
 }

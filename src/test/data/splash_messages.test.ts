@@ -51,8 +51,8 @@ function testSeason(startDate: Date, endDate: Date, prefix: string) {
   const afterDate = new Date(endDate);
   afterDate.setDate(endDate.getDate() + 1);
 
-  const dates: Date[] = [beforeDate, startDate, endDate, afterDate];
-  const [before, start, end, after] = dates.map((date) => {
+  const dates: Date[] = [ beforeDate, startDate, endDate, afterDate ];
+  const [ before, start, end, after ] = dates.map((date) => {
     vi.setSystemTime(date);
     console.log("System time set to", date);
     const count = getSplashMessages().filter(filterFn).length;

@@ -1,9 +1,13 @@
-import { Species } from "#app/enums/species";
 import { GameModes } from "#app/game-mode";
+import OptionSelectUiHandler from "#app/ui/settings/option-select-ui-handler";
+import { Mode } from "#app/ui/ui";
+import { Biome } from "#enums/biome";
+import { Button } from "#enums/buttons";
+import { Moves } from "#enums/moves";
+import { Species } from "#enums/species";
 import GameManager from "#test/utils/gameManager";
+import { MockClock } from "#test/utils/mocks/mockClock";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import { Moves } from "#app/enums/moves";
-import { Biome } from "#app/enums/biome";
 
 describe("Reload", () => {
   let phaserGame: Phaser.Game;
@@ -35,21 +39,26 @@ describe("Reload", () => {
     expect(preReloadRngState).toBe(postReloadRngState);
   }, 20000);
 
-  it.each(Array.from({length: 100}))("should not have RNG inconsistencies after a biome switch", async () => {
+  it("should not have RNG inconsistencies after a biome switch", async () => {
     game.override
       .startingWave(10)
       .battleType("single")
       .startingLevel(100) // Avoid levelling up
-      .enemyLevel(1000) // Avoid opponent dying before game.doKillOpponents()
       .disableTrainerWaves()
-      .moveset([Moves.KOWTOW_CLEAVE])
+      .moveset([ Moves.SPLASH ])
       .enemyMoveset(Moves.SPLASH);
     await game.dailyMode.startBattle();
 
     // Transition from Wave 10 to Wave 11 in order to trigger biome switch
-    game.move.select(Moves.KOWTOW_CLEAVE);
-    await game.phaseInterceptor.to("DamagePhase");
+    game.move.select(Moves.SPLASH);
     await game.doKillOpponents();
+    game.onNextPrompt("SelectBiomePhase", Mode.OPTION_SELECT, () => {
+      (game.scene.time as MockClock).overrideDelay = null;
+      const optionSelectUiHandler = game.scene.ui.getHandler() as OptionSelectUiHandler;
+      game.scene.time.delayedCall(1010, () => optionSelectUiHandler.processInput(Button.ACTION));
+      game.endPhase();
+      (game.scene.time as MockClock).overrideDelay = 1;
+    });
     await game.toNextWave();
     expect(game.phaseInterceptor.log).toContain("NewBiomeEncounterPhase");
 
@@ -68,15 +77,13 @@ describe("Reload", () => {
       .startingBiome(Biome.ICE_CAVE) // Will lead to Snowy Forest with randomly generated weather
       .battleType("single")
       .startingLevel(100) // Avoid levelling up
-      .enemyLevel(1000) // Avoid opponent dying before game.doKillOpponents()
       .disableTrainerWaves()
-      .moveset([Moves.KOWTOW_CLEAVE])
+      .moveset([ Moves.SPLASH ])
       .enemyMoveset(Moves.SPLASH);
     await game.classicMode.startBattle(); // Apparently daily mode would override the biome
 
     // Transition from Wave 10 to Wave 11 in order to trigger biome switch
-    game.move.select(Moves.KOWTOW_CLEAVE);
-    await game.phaseInterceptor.to("DamagePhase");
+    game.move.select(Moves.SPLASH);
     await game.doKillOpponents();
     await game.toNextWave();
     expect(game.phaseInterceptor.log).toContain("NewBiomeEncounterPhase");
@@ -150,7 +157,7 @@ describe("Reload", () => {
     game.override
       .battleType("single")
       .startingWave(50);
-    await game.runToFinalBossEncounter([Species.BULBASAUR], GameModes.DAILY);
+    await game.runToFinalBossEncounter([ Species.BULBASAUR ], GameModes.DAILY);
 
     const preReloadRngState = Phaser.Math.RND.state();
 

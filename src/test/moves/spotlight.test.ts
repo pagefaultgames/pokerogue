@@ -7,7 +7,6 @@ import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest";
 
 
-
 describe("Moves - Spotlight", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
@@ -29,14 +28,14 @@ describe("Moves - Spotlight", () => {
     game.override.enemySpecies(Species.SNORLAX);
     game.override.startingLevel(100);
     game.override.enemyLevel(100);
-    game.override.moveset([Moves.FOLLOW_ME, Moves.RAGE_POWDER, Moves.SPOTLIGHT, Moves.QUICK_ATTACK]);
-    game.override.enemyMoveset([Moves.FOLLOW_ME, Moves.SPLASH]);
+    game.override.moveset([ Moves.FOLLOW_ME, Moves.RAGE_POWDER, Moves.SPOTLIGHT, Moves.QUICK_ATTACK ]);
+    game.override.enemyMoveset([ Moves.FOLLOW_ME, Moves.SPLASH ]);
   });
 
   test(
     "move should redirect attacks to the target",
     async () => {
-      await game.classicMode.startBattle([Species.AMOONGUSS, Species.CHARIZARD]);
+      await game.classicMode.startBattle([ Species.AMOONGUSS, Species.CHARIZARD ]);
 
       const enemyPokemon = game.scene.getEnemyField();
 
@@ -56,7 +55,7 @@ describe("Moves - Spotlight", () => {
   test(
     "move should cause other redirection moves to fail",
     async () => {
-      await game.classicMode.startBattle([Species.AMOONGUSS, Species.CHARIZARD]);
+      await game.classicMode.startBattle([ Species.AMOONGUSS, Species.CHARIZARD ]);
 
       const enemyPokemon = game.scene.getEnemyField();
 

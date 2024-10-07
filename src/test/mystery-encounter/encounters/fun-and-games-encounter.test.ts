@@ -22,8 +22,8 @@ import { Moves } from "#enums/moves";
 import { Command } from "#app/ui/command-ui-handler";
 import * as EncounterPhaseUtils from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 
-const namespace = "mysteryEncounter:funAndGames";
-const defaultParty = [Species.LAPRAS, Species.GENGAR, Species.ABRA];
+const namespace = "mysteryEncounters/funAndGames";
+const defaultParty = [ Species.LAPRAS, Species.GENGAR, Species.ABRA ];
 const defaultBiome = Biome.CAVE;
 const defaultWave = 45;
 
@@ -45,10 +45,10 @@ describe("Fun And Games! - Mystery Encounter", () => {
     game.override.disableTrainerWaves();
 
     const biomeMap = new Map<Biome, MysteryEncounterType[]>([
-      [Biome.VOLCANO, [MysteryEncounterType.FIGHT_OR_FLIGHT]],
+      [ Biome.VOLCANO, [ MysteryEncounterType.FIGHT_OR_FLIGHT ]],
     ]);
     HUMAN_TRANSITABLE_BIOMES.forEach(biome => {
-      biomeMap.set(biome, [MysteryEncounterType.FUN_AND_GAMES]);
+      biomeMap.set(biome, [ MysteryEncounterType.FUN_AND_GAMES ]);
     });
     vi.spyOn(MysteryEncounters, "mysteryEncountersByBiome", "get").mockReturnValue(biomeMap);
   });
@@ -67,13 +67,13 @@ describe("Fun And Games! - Mystery Encounter", () => {
     expect(FunAndGamesEncounter.dialogue).toBeDefined();
     expect(FunAndGamesEncounter.dialogue.intro).toStrictEqual([
       {
-        speaker: `${namespace}.speaker`,
-        text: `${namespace}.intro_dialogue`,
+        speaker: `${namespace}:speaker`,
+        text: `${namespace}:intro_dialogue`,
       }
     ]);
-    expect(FunAndGamesEncounter.dialogue.encounterOptionsDialogue?.title).toBe(`${namespace}.title`);
-    expect(FunAndGamesEncounter.dialogue.encounterOptionsDialogue?.description).toBe(`${namespace}.description`);
-    expect(FunAndGamesEncounter.dialogue.encounterOptionsDialogue?.query).toBe(`${namespace}.query`);
+    expect(FunAndGamesEncounter.dialogue.encounterOptionsDialogue?.title).toBe(`${namespace}:title`);
+    expect(FunAndGamesEncounter.dialogue.encounterOptionsDialogue?.description).toBe(`${namespace}:description`);
+    expect(FunAndGamesEncounter.dialogue.encounterOptionsDialogue?.query).toBe(`${namespace}:query`);
     expect(FunAndGamesEncounter.options.length).toBe(2);
   });
 
@@ -105,11 +105,11 @@ describe("Fun And Games! - Mystery Encounter", () => {
       expect(option.optionMode).toBe(MysteryEncounterOptionMode.DISABLED_OR_DEFAULT);
       expect(option.dialogue).toBeDefined();
       expect(option.dialogue).toStrictEqual({
-        buttonLabel: `${namespace}.option.1.label`,
-        buttonTooltip: `${namespace}.option.1.tooltip`,
+        buttonLabel: `${namespace}:option.1.label`,
+        buttonTooltip: `${namespace}:option.1.tooltip`,
         selected: [
           {
-            text: `${namespace}.option.1.selected`,
+            text: `${namespace}:option.1.selected`,
           },
         ],
       });
@@ -137,13 +137,13 @@ describe("Fun And Games! - Mystery Encounter", () => {
 
     it("should get 3 turns to attack the Wobbuffet for a reward", async () => {
       scene.money = 20000;
-      game.override.moveset([Moves.TACKLE]);
+      game.override.moveset([ Moves.TACKLE ]);
       await game.runToMysteryEncounter(MysteryEncounterType.FUN_AND_GAMES, defaultParty);
       await runMysteryEncounterToEnd(game, 1, { pokemonNo: 1 }, true);
 
       expect(scene.getCurrentPhase()?.constructor.name).toBe(CommandPhase.name);
       expect(scene.getEnemyPokemon()?.species.speciesId).toBe(Species.WOBBUFFET);
-      expect(scene.getEnemyPokemon()?.ivs).toEqual([0, 0, 0, 0, 0, 0]);
+      expect(scene.getEnemyPokemon()?.ivs).toEqual([ 0, 0, 0, 0, 0, 0 ]);
       expect(scene.getEnemyPokemon()?.nature).toBe(Nature.MILD);
 
       game.onNextPrompt("MessagePhase", Mode.MESSAGE, () => {
@@ -192,7 +192,7 @@ describe("Fun And Games! - Mystery Encounter", () => {
 
     it("should have Wide Lens item in rewards if Wubboffet is at 15-33% HP remaining", async () => {
       scene.money = 20000;
-      game.override.moveset([Moves.SPLASH]);
+      game.override.moveset([ Moves.SPLASH ]);
       await game.runToMysteryEncounter(MysteryEncounterType.FUN_AND_GAMES, defaultParty);
       await runMysteryEncounterToEnd(game, 1, { pokemonNo: 1 }, true);
 
@@ -220,7 +220,7 @@ describe("Fun And Games! - Mystery Encounter", () => {
 
     it("should have Scope Lens item in rewards if Wubboffet is at 3-15% HP remaining", async () => {
       scene.money = 20000;
-      game.override.moveset([Moves.SPLASH]);
+      game.override.moveset([ Moves.SPLASH ]);
       await game.runToMysteryEncounter(MysteryEncounterType.FUN_AND_GAMES, defaultParty);
       await runMysteryEncounterToEnd(game, 1, { pokemonNo: 1 }, true);
 
@@ -248,7 +248,7 @@ describe("Fun And Games! - Mystery Encounter", () => {
 
     it("should have Multi Lens item in rewards if Wubboffet is at <3% HP remaining", async () => {
       scene.money = 20000;
-      game.override.moveset([Moves.SPLASH]);
+      game.override.moveset([ Moves.SPLASH ]);
       await game.runToMysteryEncounter(MysteryEncounterType.FUN_AND_GAMES, defaultParty);
       await runMysteryEncounterToEnd(game, 1, { pokemonNo: 1 }, true);
 

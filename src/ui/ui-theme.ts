@@ -55,8 +55,8 @@ export function addWindow(scene: BattleScene, x: number, y: number, width: numbe
      */
     const maskRect = new Phaser.GameObjects.Rectangle(
       scene,
-      6*(x  - (mergeMaskLeft ? 2 : 0) - (maskOffsetX || 0)),
-      6*(y + (mergeMaskTop ? 2 : 0) + (maskOffsetY || 0)),
+      6 * (x  - (mergeMaskLeft ? 2 : 0) - (maskOffsetX || 0)),
+      6 * (y + (mergeMaskTop ? 2 : 0) + (maskOffsetY || 0)),
       width - (mergeMaskLeft ? 2 : 0),
       height - (mergeMaskTop ? 2 : 0),
       0xffffff

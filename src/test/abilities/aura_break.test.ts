@@ -25,7 +25,7 @@ describe("Abilities - Aura Break", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override.battleType("single");
-    game.override.moveset([Moves.MOONBLAST, Moves.DARK_PULSE, Moves.MOONBLAST, Moves.DARK_PULSE]);
+    game.override.moveset([ Moves.MOONBLAST, Moves.DARK_PULSE, Moves.MOONBLAST, Moves.DARK_PULSE ]);
     game.override.enemyMoveset(Moves.SPLASH);
     game.override.enemyAbility(Abilities.AURA_BREAK);
     game.override.enemySpecies(Species.SHUCKLE);
@@ -38,7 +38,7 @@ describe("Abilities - Aura Break", () => {
     game.override.ability(Abilities.FAIRY_AURA);
     vi.spyOn(moveToCheck, "calculateBattlePower");
 
-    await game.classicMode.startBattle([Species.PIKACHU]);
+    await game.classicMode.startBattle([ Species.PIKACHU ]);
     game.move.select(Moves.MOONBLAST);
     await game.phaseInterceptor.to("MoveEffectPhase");
 
@@ -52,7 +52,7 @@ describe("Abilities - Aura Break", () => {
     game.override.ability(Abilities.DARK_AURA);
     vi.spyOn(moveToCheck, "calculateBattlePower");
 
-    await game.classicMode.startBattle([Species.PIKACHU]);
+    await game.classicMode.startBattle([ Species.PIKACHU ]);
     game.move.select(Moves.DARK_PULSE);
     await game.phaseInterceptor.to("MoveEffectPhase");
 
@@ -66,7 +66,7 @@ describe("Abilities - Aura Break", () => {
     game.override.ability(Abilities.BALL_FETCH);
     vi.spyOn(moveToCheck, "calculateBattlePower");
 
-    await game.classicMode.startBattle([Species.PIKACHU]);
+    await game.classicMode.startBattle([ Species.PIKACHU ]);
     game.move.select(Moves.MOONBLAST);
     await game.phaseInterceptor.to("MoveEffectPhase");
 

@@ -1,4 +1,4 @@
-import { pokemonEvolutions, SpeciesFormEvolution, SpeciesWildEvolutionDelay } from "#app/data/pokemon-evolutions";
+import { pokemonEvolutions, SpeciesFormEvolution, SpeciesWildEvolutionDelay } from "#app/data/balance/pokemon-evolutions";
 import { Abilities } from "#app/enums/abilities";
 import { Moves } from "#app/enums/moves";
 import { Species } from "#app/enums/species";
@@ -33,7 +33,7 @@ describe("Evolution", () => {
   });
 
   it("should keep hidden ability after evolving", async () => {
-    await game.classicMode.runToSummon([Species.EEVEE, Species.TRAPINCH]);
+    await game.classicMode.runToSummon([ Species.EEVEE, Species.TRAPINCH ]);
 
     const eevee = game.scene.getParty()[0];
     const trapinch = game.scene.getParty()[1];
@@ -48,7 +48,7 @@ describe("Evolution", () => {
   });
 
   it("should keep same ability slot after evolving", async () => {
-    await game.classicMode.runToSummon([Species.BULBASAUR, Species.CHARMANDER]);
+    await game.classicMode.runToSummon([ Species.BULBASAUR, Species.CHARMANDER ]);
 
     const bulbasaur = game.scene.getParty()[0];
     const charmander = game.scene.getParty()[1];
@@ -63,7 +63,7 @@ describe("Evolution", () => {
   });
 
   it("should handle illegal abilityIndex values", async () => {
-    await game.classicMode.runToSummon([Species.SQUIRTLE]);
+    await game.classicMode.runToSummon([ Species.SQUIRTLE ]);
 
     const squirtle = game.scene.getPlayerPokemon()!;
     squirtle.abilityIndex = 5;
@@ -73,7 +73,7 @@ describe("Evolution", () => {
   });
 
   it("should handle nincada's unique evolution", async () => {
-    await game.classicMode.runToSummon([Species.NINCADA]);
+    await game.classicMode.runToSummon([ Species.NINCADA ]);
 
     const nincada = game.scene.getPlayerPokemon()!;
     nincada.abilityIndex = 2;
@@ -95,14 +95,14 @@ describe("Evolution", () => {
   });
 
   it("should increase both HP and max HP when evolving", async () => {
-    game.override.moveset([Moves.SURF])
+    game.override.moveset([ Moves.SURF ])
       .enemySpecies(Species.GOLEM)
       .enemyMoveset(Moves.SPLASH)
       .startingWave(21)
       .startingLevel(16)
       .enemyLevel(50);
 
-    await game.startBattle([Species.TOTODILE]);
+    await game.startBattle([ Species.TOTODILE ]);
 
     const totodile = game.scene.getPlayerPokemon()!;
     const hpBefore = totodile.hp;
@@ -122,14 +122,14 @@ describe("Evolution", () => {
   });
 
   it("should not fully heal HP when evolving", async () => {
-    game.override.moveset([Moves.SURF])
+    game.override.moveset([ Moves.SURF ])
       .enemySpecies(Species.GOLEM)
       .enemyMoveset(Moves.SPLASH)
       .startingWave(21)
       .startingLevel(13)
       .enemyLevel(30);
 
-    await game.startBattle([Species.CYNDAQUIL]);
+    await game.startBattle([ Species.CYNDAQUIL ]);
 
     const cyndaquil = game.scene.getPlayerPokemon()!;
     cyndaquil.hp = Math.floor(cyndaquil.getMaxHp() / 2);
@@ -162,7 +162,7 @@ describe("Evolution", () => {
      * If the value is 0, it's a 3 family maushold, whereas if the value is
      * 1, 2 or 3, it's a 4 family maushold
      */
-    await game.startBattle([Species.TANDEMAUS]); // starts us off with a tandemaus
+    await game.startBattle([ Species.TANDEMAUS ]); // starts us off with a tandemaus
     const playerPokemon = game.scene.getPlayerPokemon()!;
     playerPokemon.level = 25; // tandemaus evolves at level 25
     vi.spyOn(Utils, "randSeedInt").mockReturnValue(0); // setting the random generator to be 0 to force a three family maushold

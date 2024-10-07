@@ -38,7 +38,7 @@ describe("Ability Timing", () => {
     initI18n();
     i18next.changeLanguage("en");
     game.settings.battleStyle = BattleStyle.SWITCH;
-    await game.classicMode.runToSummon([Species.EEVEE, Species.FEEBAS]);
+    await game.classicMode.runToSummon([ Species.EEVEE, Species.FEEBAS ]);
 
     game.onNextPrompt("CheckSwitchPhase", Mode.CONFIRM, () => {
       game.setMode(Mode.MESSAGE);
@@ -47,6 +47,6 @@ describe("Ability Timing", () => {
 
     await game.phaseInterceptor.to("MessagePhase");
     const message = game.textInterceptor.getLatestMessage();
-    expect(message).toContain("Attack fell");
+    expect(message).toContain("battle:statFell");
   }, 5000);
 });

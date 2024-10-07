@@ -24,7 +24,7 @@ import { EncounterAnim } from "#enums/encounter-anims";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
 
 /** the i18n namespace for the encounter */
-const namespace = "mysteryEncounter:fieryFallout";
+const namespace = "mysteryEncounters/fieryFallout";
 
 /**
  * Damage percentage taken when suffering the heat.
@@ -46,9 +46,10 @@ export const FieryFalloutEncounter: MysteryEncounter =
     .withIntroSpriteConfigs([]) // Set in onInit()
     .withAnimations(EncounterAnim.MAGMA_BG, EncounterAnim.MAGMA_SPOUT)
     .withAutoHideIntroVisuals(false)
+    .withFleeAllowed(false)
     .withIntroDialogue([
       {
-        text: `${namespace}.intro`,
+        text: `${namespace}:intro`,
       },
     ])
     .withOnInit((scene: BattleScene) => {
@@ -72,7 +73,7 @@ export const FieryFalloutEncounter: MysteryEncounter =
         doubleBattle: true,
         disableSwitch: true
       };
-      encounter.enemyPartyConfigs = [config];
+      encounter.enemyPartyConfigs = [ config ];
 
       // Load hidden Volcarona sprites
       encounter.spriteConfigs = [
@@ -98,7 +99,7 @@ export const FieryFalloutEncounter: MysteryEncounter =
       ];
 
       // Load animations/sfx for Volcarona moves
-      loadCustomMovesForEncounter(scene, [Moves.FIRE_SPIN, Moves.QUIVER_DANCE]);
+      loadCustomMovesForEncounter(scene, [ Moves.FIRE_SPIN, Moves.QUIVER_DANCE ]);
 
       scene.arena.trySetWeather(WeatherType.SUNNY, true);
 
@@ -121,16 +122,16 @@ export const FieryFalloutEncounter: MysteryEncounter =
 
       return true;
     })
-    .withTitle(`${namespace}.title`)
-    .withDescription(`${namespace}.description`)
-    .withQuery(`${namespace}.query`)
+    .withTitle(`${namespace}:title`)
+    .withDescription(`${namespace}:description`)
+    .withQuery(`${namespace}:query`)
     .withSimpleOption(
       {
-        buttonLabel: `${namespace}.option.1.label`,
-        buttonTooltip: `${namespace}.option.1.tooltip`,
+        buttonLabel: `${namespace}:option.1.label`,
+        buttonTooltip: `${namespace}:option.1.tooltip`,
         selected: [
           {
-            text: `${namespace}.option.1.selected`,
+            text: `${namespace}:option.1.selected`,
           },
         ],
       },
@@ -142,25 +143,25 @@ export const FieryFalloutEncounter: MysteryEncounter =
         encounter.startOfBattleEffects.push(
           {
             sourceBattlerIndex: BattlerIndex.ENEMY,
-            targets: [BattlerIndex.PLAYER],
+            targets: [ BattlerIndex.PLAYER ],
             move: new PokemonMove(Moves.FIRE_SPIN),
             ignorePp: true
           },
           {
             sourceBattlerIndex: BattlerIndex.ENEMY_2,
-            targets: [BattlerIndex.PLAYER_2],
+            targets: [ BattlerIndex.PLAYER_2 ],
             move: new PokemonMove(Moves.FIRE_SPIN),
             ignorePp: true
           },
           {
             sourceBattlerIndex: BattlerIndex.ENEMY,
-            targets: [BattlerIndex.ENEMY],
+            targets: [ BattlerIndex.ENEMY ],
             move: new PokemonMove(Moves.QUIVER_DANCE),
             ignorePp: true
           },
           {
             sourceBattlerIndex: BattlerIndex.ENEMY_2,
-            targets: [BattlerIndex.ENEMY_2],
+            targets: [ BattlerIndex.ENEMY_2 ],
             move: new PokemonMove(Moves.QUIVER_DANCE),
             ignorePp: true
           });
@@ -169,11 +170,11 @@ export const FieryFalloutEncounter: MysteryEncounter =
     )
     .withSimpleOption(
       {
-        buttonLabel: `${namespace}.option.2.label`,
-        buttonTooltip: `${namespace}.option.2.tooltip`,
+        buttonLabel: `${namespace}:option.2.label`,
+        buttonTooltip: `${namespace}:option.2.tooltip`,
         selected: [
           {
-            text: `${namespace}.option.2.selected`,
+            text: `${namespace}:option.2.selected`,
           },
         ],
       },
@@ -189,14 +190,14 @@ export const FieryFalloutEncounter: MysteryEncounter =
         }
 
         // Burn random member
-        const burnable = nonFireTypes.filter(p => isNullOrUndefined(p.status) || isNullOrUndefined(p.status!.effect) || p.status?.effect === StatusEffect.BURN);
+        const burnable = nonFireTypes.filter(p => isNullOrUndefined(p.status) || isNullOrUndefined(p.status.effect) || p.status.effect === StatusEffect.NONE);
         if (burnable?.length > 0) {
           const roll = randSeedInt(burnable.length);
           const chosenPokemon = burnable[roll];
           if (chosenPokemon.trySetStatus(StatusEffect.BURN)) {
             // Burn applied
             encounter.setDialogueToken("burnedPokemon", chosenPokemon.getNameToRender());
-            queueEncounterMessage(scene, `${namespace}.option.2.target_burned`);
+            queueEncounterMessage(scene, `${namespace}:option.2.target_burned`);
           }
         }
 
@@ -210,12 +211,12 @@ export const FieryFalloutEncounter: MysteryEncounter =
         .withPrimaryPokemonRequirement(new TypeRequirement(Type.FIRE, true, 1)) // Will set option3PrimaryName dialogue token automatically
         .withSecondaryPokemonRequirement(new TypeRequirement(Type.FIRE, true, 1)) // Will set option3SecondaryName dialogue token automatically
         .withDialogue({
-          buttonLabel: `${namespace}.option.3.label`,
-          buttonTooltip: `${namespace}.option.3.tooltip`,
-          disabledButtonTooltip: `${namespace}.option.3.disabled_tooltip`,
+          buttonLabel: `${namespace}:option.3.label`,
+          buttonTooltip: `${namespace}:option.3.tooltip`,
+          disabledButtonTooltip: `${namespace}:option.3.disabled_tooltip`,
           selected: [
             {
-              text: `${namespace}.option.3.selected`,
+              text: `${namespace}:option.3.selected`,
             },
           ],
         })
@@ -236,7 +237,7 @@ export const FieryFalloutEncounter: MysteryEncounter =
           const primary = encounter.options[2].primaryPokemon!;
           const secondary = encounter.options[2].secondaryPokemon![0];
 
-          setEncounterExp(scene, [primary.id, secondary.id], getPokemonSpecies(Species.VOLCARONA).baseExp * 2);
+          setEncounterExp(scene, [ primary.id, secondary.id ], getPokemonSpecies(Species.VOLCARONA).baseExp * 2);
           leaveEncounterWithoutBattle(scene);
         })
         .build()
@@ -247,9 +248,9 @@ function giveLeadPokemonCharcoal(scene: BattleScene) {
   // Give first party pokemon Charcoal for free at end of battle
   const leadPokemon = scene.getParty()?.[0];
   if (leadPokemon) {
-    const charcoal = generateModifierType(scene, modifierTypes.ATTACK_TYPE_BOOSTER, [Type.FIRE]) as AttackTypeBoosterModifierType;
+    const charcoal = generateModifierType(scene, modifierTypes.ATTACK_TYPE_BOOSTER, [ Type.FIRE ]) as AttackTypeBoosterModifierType;
     applyModifierTypeToPlayerPokemon(scene, leadPokemon, charcoal);
     scene.currentBattle.mysteryEncounter!.setDialogueToken("leadPokemon", leadPokemon.getNameToRender());
-    queueEncounterMessage(scene, `${namespace}.found_charcoal`);
+    queueEncounterMessage(scene, `${namespace}:found_charcoal`);
   }
 }

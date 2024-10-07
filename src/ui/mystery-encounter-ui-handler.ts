@@ -95,8 +95,8 @@ export default class MysteryEncounterUiHandler extends UiHandler {
     super.show(args);
 
     this.overrideSettings = args[0] as OptionSelectSettings ?? {};
-    const showDescriptionContainer = isNullOrUndefined(this.overrideSettings?.hideDescription) ? true : !this.overrideSettings?.hideDescription;
-    const slideInDescription = isNullOrUndefined(this.overrideSettings?.slideInDescription) ? true : this.overrideSettings?.slideInDescription;
+    const showDescriptionContainer = isNullOrUndefined(this.overrideSettings?.hideDescription) ? true : !this.overrideSettings.hideDescription;
+    const slideInDescription = isNullOrUndefined(this.overrideSettings?.slideInDescription) ? true : this.overrideSettings.slideInDescription;
     const startingCursorIndex = this.overrideSettings?.startingCursorIndex ?? 0;
 
     this.cursorContainer.setVisible(true);
@@ -438,7 +438,7 @@ export default class MysteryEncounterUiHandler extends UiHandler {
     const ballType = getPokeballAtlasKey(index);
     this.rarityBall.setTexture("pb", ballType);
 
-    const descriptionTextObject = addBBCodeTextObject(this.scene, 6, 25, descriptionText ?? "", TextStyle.TOOLTIP_CONTENT, { wordWrap: { width: 830 } });
+    const descriptionTextObject = addBBCodeTextObject(this.scene, 6, 25, descriptionText ?? "", TextStyle.TOOLTIP_CONTENT, { wordWrap: { width: 830 }});
 
     // Sets up the mask that hides the description text to give an illusion of scrolling
     const descriptionTextMaskRect = this.scene.make.graphics({});
@@ -472,7 +472,7 @@ export default class MysteryEncounterUiHandler extends UiHandler {
 
     this.descriptionContainer.add(descriptionTextObject);
 
-    const queryTextObject = addBBCodeTextObject(this.scene, 0, 0, queryText ?? "", TextStyle.TOOLTIP_CONTENT, { wordWrap: { width: 830 } });
+    const queryTextObject = addBBCodeTextObject(this.scene, 0, 0, queryText ?? "", TextStyle.TOOLTIP_CONTENT, { wordWrap: { width: 830 }});
     this.descriptionContainer.add(queryTextObject);
     queryTextObject.setPosition(75 - queryTextObject.displayWidth / 2, 90);
 
@@ -518,7 +518,7 @@ export default class MysteryEncounterUiHandler extends UiHandler {
 
     // Auto-color options green/blue for good/bad by looking for (+)/(-)
     if (text) {
-      const primaryStyleString = [...text.match(new RegExp(/\[color=[^\[]*\]\[shadow=[^\[]*\]/i))!][0];
+      const primaryStyleString = [ ...text.match(new RegExp(/\[color=[^\[]*\]\[shadow=[^\[]*\]/i))! ][0];
       text = text.replace(/(\(\+\)[^\(\[]*)/gi, substring => "[/color][/shadow]" + getBBCodeFrag(substring, TextStyle.SUMMARY_GREEN) + "[/color][/shadow]" + primaryStyleString);
       text = text.replace(/(\(\-\)[^\(\[]*)/gi, substring => "[/color][/shadow]" + getBBCodeFrag(substring, TextStyle.SUMMARY_BLUE) + "[/color][/shadow]" + primaryStyleString);
     }
