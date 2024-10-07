@@ -31,7 +31,10 @@ import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
  * }
  * ```
  */
-const overrides = {} satisfies Partial<InstanceType<typeof DefaultOverrides>>;
+const overrides = {
+  MYSTERY_ENCOUNTER_RATE_OVERRIDE: 256,
+  MYSTERY_ENCOUNTER_OVERRIDE: MysteryEncounterType.WEIRD_DREAM
+} satisfies Partial<InstanceType<typeof DefaultOverrides>>;
 
 /**
  * If you need to add Overrides values for local testing do that inside {@linkcode overrides}

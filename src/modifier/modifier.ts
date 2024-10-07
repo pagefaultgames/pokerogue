@@ -2180,7 +2180,7 @@ export class PokemonNatureChangeModifier extends ConsumablePokemonModifier {
    * @returns
    */
   override apply(playerPokemon: PlayerPokemon): boolean {
-    playerPokemon.natureOverride = this.nature;
+    playerPokemon.customPokemonData.nature = this.nature;
     let speciesId = playerPokemon.species.speciesId;
     playerPokemon.scene.gameData.dexData[speciesId].natureAttr |= 1 << (this.nature + 1);
 

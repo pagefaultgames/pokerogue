@@ -163,7 +163,7 @@ export const TheExpertPokemonBreederEncounter: MysteryEncounter =
       if (pokemon2CommonEggs > 0) {
         const eggsText = i18next.t(`${namespace}:numEggs`, { count: pokemon2CommonEggs, rarity: i18next.t("egg:defaultTier") });
         pokemon2Tooltip += i18next.t(`${namespace}:eggs_tooltip`, { eggs: eggsText });
-        encounter.setDialogueToken("pokemon1CommonEggs", eggsText);
+        encounter.setDialogueToken("pokemon2CommonEggs", eggsText);
       }
       encounter.options[1].dialogue!.buttonTooltip = pokemon2Tooltip;
 

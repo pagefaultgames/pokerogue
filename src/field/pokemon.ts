@@ -62,7 +62,7 @@ import { ToggleDoublePositionPhase } from "#app/phases/toggle-double-position-ph
 import { Challenges } from "#enums/challenges";
 import { PokemonAnimType } from "#enums/pokemon-anim-type";
 import { PLAYER_PARTY_MAX_SIZE } from "#app/constants";
-import { MysteryEncounterPokemonData } from "#app/data/mystery-encounters/mystery-encounter-pokemon-data";
+import { CustomPokemonData } from "#app/data/custom-pokemon-data";
 import { SwitchType } from "#enums/switch-type";
 import { SpeciesFormKey } from "#enums/species-form-key";
 import { BASE_HIDDEN_ABILITY_CHANCE, BASE_SHINY_CHANCE, SHINY_EPIC_CHANCE, SHINY_VARIANT_CHANCE } from "#app/data/balance/rates";
@@ -114,7 +114,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   public fusionVariant: Variant;
   public fusionGender: Gender;
   public fusionLuck: integer;
-  public fusionMysteryEncounterPokemonData: MysteryEncounterPokemonData | null;
+  public fusionCustomPokemonData: CustomPokemonData | null;
 
   private summonDataPrimer: PokemonSummonData | null;
 
@@ -122,7 +122,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   public battleData: PokemonBattleData;
   public battleSummonData: PokemonBattleSummonData;
   public turnData: PokemonTurnData;
-  public mysteryEncounterPokemonData: MysteryEncounterPokemonData;
+  public customPokemonData: CustomPokemonData;
 
   /** Used by Mystery Encounters to execute pokemon-specific logic (such as stat boosts) at start of battle */
   public mysteryEncounterBattleEffects?: (pokemon: Pokemon) => void;
@@ -193,7 +193,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       }
       this.nature = dataSource.nature || 0 as Nature;
       this.nickname = dataSource.nickname;
-      this.natureOverride = dataSource.natureOverride !== undefined ? dataSource.natureOverride : -1;
       this.moveset = dataSource.moveset;
       this.status = dataSource.status!; // TODO: is this bang correct?
       this.friendship = dataSource.friendship !== undefined ? dataSource.friendship : this.species.baseFriendship;
@@ -212,9 +211,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       this.fusionVariant = dataSource.fusionVariant || 0;
       this.fusionGender = dataSource.fusionGender;
       this.fusionLuck = dataSource.fusionLuck;
-      this.fusionMysteryEncounterPokemonData = dataSource.fusionMysteryEncounterPokemonData;
+      this.fusionCustomPokemonData = dataSource.fusionCustomPokemonData;
       this.usedTMs = dataSource.usedTMs ?? [];
-      this.mysteryEncounterPokemonData = new MysteryEncounterPokemonData(dataSource.mysteryEncounterPokemonData);
+      this.customPokemonData = new CustomPokemonData(dataSource.customPokemonData);
     } else {
       this.id = Utils.randSeedInt(4294967296);
       this.ivs = ivs || Utils.getIvsFromId(this.id);
@@ -235,15 +234,13 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         this.variant = this.shiny ? this.generateVariant() : 0;
       }
 
-      this.mysteryEncounterPokemonData = new MysteryEncounterPokemonData();
+      this.customPokemonData = new CustomPokemonData();
 
       if (nature !== undefined) {
         this.setNature(nature);
       } else {
         this.generateNature();
       }
-
-      this.natureOverride = -1;
 
       this.friendship = species.baseFriendship;
       this.metLevel = level;
@@ -593,8 +590,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     const formKey = this.getFormKey();
     if (this.isMax() === true || formKey === "segin-starmobile" || formKey === "schedar-starmobile" || formKey === "navi-starmobile" || formKey === "ruchbah-starmobile" || formKey === "caph-starmobile") {
       return 1.5;
-    } else if (this.mysteryEncounterPokemonData.spriteScale > 0) {
-      return this.mysteryEncounterPokemonData.spriteScale;
+    } else if (this.customPokemonData.spriteScale > 0) {
+      return this.customPokemonData.spriteScale;
     }
     return 1;
   }
@@ -1012,7 +1009,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   getNature(): Nature {
-    return this.natureOverride !== -1 ? this.natureOverride : this.nature;
+    return this.customPokemonData.nature !== -1 ? this.customPokemonData.nature : this.nature;
   }
 
   setNature(nature: Nature): void {
@@ -1187,15 +1184,15 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     if (!types.length || !includeTeraType) {
       if (!ignoreOverride && this.summonData?.types && this.summonData.types.length > 0) {
         this.summonData.types.forEach(t => types.push(t));
-      } else if (this.mysteryEncounterPokemonData.types && this.mysteryEncounterPokemonData.types.length > 0) {
+      } else if (this.customPokemonData.types && this.customPokemonData.types.length > 0) {
         // "Permanent" override for a Pokemon's normal types, currently only used by Mystery Encounters
-        types.push(this.mysteryEncounterPokemonData.types[0]);
+        types.push(this.customPokemonData.types[0]);
 
         // Fusing a Pokemon onto something with "permanently changed" types will still apply the fusion's types as normal
         const fusionSpeciesForm = this.getFusionSpeciesForm(ignoreOverride);
         if (fusionSpeciesForm) {
           // Check if the fusion Pokemon also had "permanently changed" types
-          const fusionMETypes = this.fusionMysteryEncounterPokemonData?.types;
+          const fusionMETypes = this.fusionCustomPokemonData?.types;
           if (fusionMETypes && fusionMETypes.length >= 2 && fusionMETypes[1] !== types[0]) {
             types.push(fusionMETypes[1]);
           } else if (fusionMETypes && fusionMETypes.length === 1 && fusionMETypes[0] !== types[0]) {
@@ -1207,8 +1204,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           }
         }
 
-        if (types.length === 1 && this.mysteryEncounterPokemonData.types.length >= 2) {
-          types.push(this.mysteryEncounterPokemonData.types[1]);
+        if (types.length === 1 && this.customPokemonData.types.length >= 2) {
+          types.push(this.customPokemonData.types[1]);
         }
       } else {
         const speciesForm = this.getSpeciesForm(ignoreOverride);
@@ -1219,7 +1216,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         if (fusionSpeciesForm) {
           // Check if the fusion Pokemon also had "permanently changed" types
           // Otherwise, use standard fusion type logic
-          const fusionMETypes = this.fusionMysteryEncounterPokemonData?.types;
+          const fusionMETypes = this.fusionCustomPokemonData?.types;
           if (fusionMETypes && fusionMETypes.length >= 2 && fusionMETypes[1] !== types[0]) {
             types.push(fusionMETypes[1]);
           } else if (fusionMETypes && fusionMETypes.length === 1 && fusionMETypes[0] !== types[0]) {
@@ -1251,6 +1248,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       }
     }
 
+    // If both types are the same (can happen in weird custom typing scenarios), reduce to single type
+    if (types.length > 1 && types[0] === types[1]) {
+      types.splice(0, 1);
+    }
+
     return types;
   }
 
@@ -1277,14 +1279,14 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       return allAbilities[Overrides.OPP_ABILITY_OVERRIDE];
     }
     if (this.isFusion()) {
-      if (!isNullOrUndefined(this.fusionMysteryEncounterPokemonData?.ability) && this.fusionMysteryEncounterPokemonData.ability !== -1) {
-        return allAbilities[this.fusionMysteryEncounterPokemonData.ability];
+      if (!isNullOrUndefined(this.fusionCustomPokemonData?.ability) && this.fusionCustomPokemonData.ability !== -1) {
+        return allAbilities[this.fusionCustomPokemonData.ability];
       } else {
         return allAbilities[this.getFusionSpeciesForm(ignoreOverride).getAbility(this.fusionAbilityIndex)];
       }
     }
-    if (!isNullOrUndefined(this.mysteryEncounterPokemonData.ability) && this.mysteryEncounterPokemonData.ability !== -1) {
-      return allAbilities[this.mysteryEncounterPokemonData.ability];
+    if (!isNullOrUndefined(this.customPokemonData.ability) && this.customPokemonData.ability !== -1) {
+      return allAbilities[this.customPokemonData.ability];
     }
     let abilityId = this.getSpeciesForm(ignoreOverride).getAbility(this.abilityIndex);
     if (abilityId === Abilities.NONE) {
@@ -1307,8 +1309,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     if (Overrides.OPP_PASSIVE_ABILITY_OVERRIDE && !this.isPlayer()) {
       return allAbilities[Overrides.OPP_PASSIVE_ABILITY_OVERRIDE];
     }
-    if (!isNullOrUndefined(this.mysteryEncounterPokemonData.passive) && this.mysteryEncounterPokemonData.passive !== -1) {
-      return allAbilities[this.mysteryEncounterPokemonData.passive];
+    if (!isNullOrUndefined(this.customPokemonData.passive) && this.customPokemonData.passive !== -1) {
+      return allAbilities[this.customPokemonData.passive];
     }
 
     let starterSpeciesId = this.species.speciesId;
@@ -2007,7 +2009,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     this.fusionVariant = 0;
     this.fusionGender = 0;
     this.fusionLuck = 0;
-    this.fusionMysteryEncounterPokemonData = null;
+    this.fusionCustomPokemonData = null;
 
     this.generateName();
     this.calculateStats();
@@ -4274,12 +4276,33 @@ export class PlayerPokemon extends Pokemon {
 
   changeForm(formChange: SpeciesFormChange): Promise<void> {
     return new Promise(resolve => {
+      const previousFormIndex = this.formIndex;
       this.formIndex = Math.max(this.species.forms.findIndex(f => f.formKey === formChange.formKey), 0);
       this.generateName();
       const abilityCount = this.getSpeciesForm().getAbilityCount();
       if (this.abilityIndex >= abilityCount) { // Shouldn't happen
         this.abilityIndex = abilityCount - 1;
       }
+
+      // In cases where a form change updates the type of a Pokemon from its previous form (Arceus, Silvally, Castform, etc.),
+      // persist that type change in customPokemonData if necessary
+      const baseForm = this.species.forms[previousFormIndex];
+      const baseFormTypes = [ baseForm.type1, baseForm.type2 ];
+      if (this.customPokemonData.types.length > 0) {
+        if (this.getSpeciesForm().type1 !== baseFormTypes[0]) {
+          this.customPokemonData.types[0] = this.getSpeciesForm().type1;
+        }
+
+        const type2 = this.getSpeciesForm().type2;
+        if (!isNullOrUndefined(type2) && type2 !== baseFormTypes[1]) {
+          if (this.customPokemonData.types.length > 1) {
+            this.customPokemonData.types[1] = type2;
+          } else {
+            this.customPokemonData.types.push(type2);
+          }
+        }
+      }
+
       this.compatibleTms.splice(0, this.compatibleTms.length);
       this.generateCompatibleTms();
       const updateAndResolve = () => {
@@ -4316,7 +4339,7 @@ export class PlayerPokemon extends Pokemon {
       this.fusionVariant = pokemon.variant;
       this.fusionGender = pokemon.gender;
       this.fusionLuck = pokemon.luck;
-      this.fusionMysteryEncounterPokemonData = pokemon.mysteryEncounterPokemonData;
+      this.fusionCustomPokemonData = pokemon.customPokemonData;
       if ((pokemon.pauseEvolutions) || (this.pauseEvolutions)) {
         this.pauseEvolutions = true;
       }

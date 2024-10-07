@@ -41,7 +41,7 @@ import { AttackTypeBoosterModifierType, ModifierTypeOption, modifierTypes } from
 import {
   AttackTypeBoosterModifier,
   BypassSpeedChanceModifier,
-  ContactHeldItemTransferChanceModifier,
+  ContactHeldItemTransferChanceModifier, GigantamaxAccessModifier, MegaEvolutionAccessModifier,
   PokemonHeldItemModifier
 } from "#app/modifier/modifier";
 import i18next from "i18next";
@@ -355,10 +355,16 @@ export const BugTypeSuperfanEncounter: MysteryEncounter =
             },
           ];
         } else {
-          // If player has any evolution/form change items that are valid for their party, will spawn one of those items in addition to a Master Ball
-          const modifierOptions: ModifierTypeOption[] = [ generateModifierTypeOption(scene, modifierTypes.MASTER_BALL)!, generateModifierTypeOption(scene, modifierTypes.MAX_LURE)! ];
+          // If player has any evolution/form change items that are valid for their party, will spawn one of those items in addition to Dynamax Band, Mega Band, and Master Ball
+          const modifierOptions: ModifierTypeOption[] = [ generateModifierTypeOption(scene, modifierTypes.MASTER_BALL)! ];
           const specialOptions: ModifierTypeOption[] = [];
 
+          if (!scene.findModifier(m => m instanceof MegaEvolutionAccessModifier)) {
+            specialOptions.push(generateModifierTypeOption(scene, modifierTypes.MEGA_BRACELET)!);
+          }
+          if (!scene.findModifier(m => m instanceof GigantamaxAccessModifier)) {
+            specialOptions.push(generateModifierTypeOption(scene, modifierTypes.DYNAMAX_BAND)!);
+          }
           const nonRareEvolutionModifier = generateModifierTypeOption(scene, modifierTypes.EVOLUTION_ITEM);
           if (nonRareEvolutionModifier) {
             specialOptions.push(nonRareEvolutionModifier);
