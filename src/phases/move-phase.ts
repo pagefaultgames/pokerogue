@@ -17,7 +17,7 @@ import { CommonAnimPhase } from "#app/phases/common-anim-phase";
 import { MoveEffectPhase } from "#app/phases/move-effect-phase";
 import { MoveEndPhase } from "#app/phases/move-end-phase";
 import { ShowAbilityPhase } from "#app/phases/show-ability-phase";
-import * as Utils from "#app/utils";
+import { BooleanHolder, NumberHolder } from "#app/utils";
 import { Abilities } from "#enums/abilities";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { BattlerTagType } from "#enums/battler-tag-type";
@@ -303,7 +303,7 @@ export class MovePhase extends BattlePhase {
       this.pokemon.pushMoveHistory({ move: this.move.moveId, targets: this.targets, result: MoveResult.FAIL, virtual: this.move.virtual });
 
       let failedText: string | undefined;
-      const failureMessage = move.getFailedText(this.pokemon, targets[0], move, new Utils.BooleanHolder(false));
+      const failureMessage = move.getFailedText(this.pokemon, targets[0], move, new BooleanHolder(false));
 
       if (failureMessage) {
         failedText = failureMessage;
@@ -354,7 +354,7 @@ export class MovePhase extends BattlePhase {
   protected resolveRedirectTarget() {
     if (this.targets.length === 1) {
       const currentTarget = this.targets[0];
-      const redirectTarget = new Utils.NumberHolder(currentTarget);
+      const redirectTarget = new NumberHolder(currentTarget);
 
       // check move redirection abilities of every pokemon *except* the user.
       this.scene.getField(true).filter(p => p !== this.pokemon).forEach(p => applyAbAttrs(RedirectMoveAbAttr, p, null, false, this.move.moveId, redirectTarget));
