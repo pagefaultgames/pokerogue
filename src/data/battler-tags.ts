@@ -2697,8 +2697,9 @@ export class TelekinesisTag extends BattlerTag {
   }
 
   override onRemove(pokemon: Pokemon) {
-    pokemon.removeTag(BattlerTagType.TELEKINESIS);
-    pokemon.removeTag(BattlerTagType.FLOATING);
+    if (pokemon.getTag(BattlerTagType.FLOATING)) {
+      pokemon.removeTag(BattlerTagType.FLOATING);
+    }
   }
 }
 
