@@ -53,8 +53,7 @@ describe("Moves - Telekinesis", () => {
   it("Telekinesis makes the affected airborne and immune to most Ground-moves", async () => {
     await game.classicMode.startBattle([ Species.MAGIKARP ]);
 
-    const enemyOpponent = game.scene.getEnemyPokemon();
-    expect(enemyOpponent).toBeDefined();
+    const enemyOpponent = game.scene.getEnemyPokemon()!;
 
     game.move.select(Moves.TELEKINESIS);
     await game.phaseInterceptor.to("TurnEndPhase");
