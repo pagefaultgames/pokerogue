@@ -68,7 +68,7 @@ export class PokerogueApi extends ApiBase {
       if (response.ok) {
         return true;
       } else {
-        console.warn(`Google Unlink failed (${response.status}: ${response.statusText})`);
+        console.warn(`Google unlink failed (${response.status}: ${response.statusText})`);
       }
     } catch (err) {
       console.warn("Could not unlink Google!", err);
