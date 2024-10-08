@@ -2656,13 +2656,14 @@ export class SyrupBombTag extends BattlerTag {
    * Applies the single-stage speed down to the target Pokemon and decrements the tag's turn count
    * @param pokemon - The target {@linkcode Pokemon}
    * @param _lapseType - N/A
-   * @returns `true` if the turnCount is still greater than 0 | `false` if the turnCount is 0 or the target Pokemon has been removed from the field
+   * @returns `true` if the `turnCount` is still greater than `0`; `false` if the `turnCount` is `0` or the target or source Pokemon has been removed from the field
    */
   override lapse(pokemon: Pokemon, _lapseType: BattlerTagLapseType): boolean {
-    if (!pokemon.isActive(true) || (this.sourceId && !pokemon.scene.getPokemonById(this.sourceId)?.isActive(true))) {
+    if (this.sourceId && !pokemon.scene.getPokemonById(this.sourceId)?.isActive(true)) {
       return false;
     }
-    pokemon.scene.queueMessage(i18next.t("battlerTags:syrupBombLapse", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) })); // Custom message in lieu of an animation in mainline
+    // Custom message in lieu of an animation in mainline
+    pokemon.scene.queueMessage(i18next.t("battlerTags:syrupBombLapse", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }));
     pokemon.scene.unshiftPhase(new StatStageChangePhase(
       pokemon.scene, pokemon.getBattlerIndex(), true,
       [ Stat.SPD ], -1, true, false, true
