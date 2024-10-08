@@ -82,13 +82,14 @@ describe("Moves - Dig", () => {
     await game.classicMode.startBattle([ Species.MAGIKARP ]);
 
     const playerPokemon = game.scene.getPlayerPokemon()!;
-    const playerDig = playerPokemon.getMoveset().find(mv => mv && mv.moveId === Moves.DIG);
 
     game.move.select(Moves.DIG);
 
     await game.phaseInterceptor.to("TurnEndPhase");
     expect(playerPokemon.getTag(BattlerTagType.UNDERGROUND)).toBeUndefined();
     expect(playerPokemon.status?.effect).toBe(StatusEffect.SLEEP);
+
+    const playerDig = playerPokemon.getMoveset().find(mv => mv && mv.moveId === Moves.DIG);
     expect(playerDig?.ppUsed).toBe(0);
   });
 

@@ -82,13 +82,14 @@ describe("Moves - Dive", () => {
     await game.classicMode.startBattle([ Species.MAGIKARP ]);
 
     const playerPokemon = game.scene.getPlayerPokemon()!;
-    const playerDive = playerPokemon.getMoveset().find(mv => mv && mv.moveId === Moves.DIVE);
 
     game.move.select(Moves.DIVE);
 
     await game.phaseInterceptor.to("TurnEndPhase");
     expect(playerPokemon.getTag(BattlerTagType.UNDERWATER)).toBeUndefined();
     expect(playerPokemon.status?.effect).toBe(StatusEffect.SLEEP);
+
+    const playerDive = playerPokemon.getMoveset().find(mv => mv && mv.moveId === Moves.DIVE);
     expect(playerDive?.ppUsed).toBe(0);
   });
 
@@ -119,8 +120,6 @@ describe("Moves - Dive", () => {
     const playerPokemon = game.scene.getPlayerPokemon()!;
     const enemyPokemon = game.scene.getEnemyPokemon()!;
 
-    const playerDive = playerPokemon.getMoveset().find(mv => mv && mv.moveId === Moves.DIVE);
-
     game.move.select(Moves.DIVE);
 
     await game.phaseInterceptor.to("TurnEndPhase");
@@ -131,6 +130,8 @@ describe("Moves - Dive", () => {
     expect(playerPokemon.getLastXMoves(1)[0].result).toBe(MoveResult.FAIL);
     expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp());
     expect(playerPokemon.getTag(BattlerTagType.UNDERWATER)).toBeUndefined();
+
+    const playerDive = playerPokemon.getMoveset().find(mv => mv && mv.moveId === Moves.DIVE);
     expect(playerDive?.ppUsed).toBe(0);
   });
 });

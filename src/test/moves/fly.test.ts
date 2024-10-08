@@ -85,13 +85,14 @@ describe("Moves - Fly", () => {
     await game.classicMode.startBattle([ Species.MAGIKARP ]);
 
     const playerPokemon = game.scene.getPlayerPokemon()!;
-    const playerFly = playerPokemon.getMoveset().find(mv => mv && mv.moveId === Moves.FLY);
 
     game.move.select(Moves.FLY);
 
     await game.phaseInterceptor.to("TurnEndPhase");
     expect(playerPokemon.getTag(BattlerTagType.FLYING)).toBeUndefined();
     expect(playerPokemon.status?.effect).toBe(StatusEffect.SLEEP);
+
+    const playerFly = playerPokemon.getMoveset().find(mv => mv && mv.moveId === Moves.FLY);
     expect(playerFly?.ppUsed).toBe(0);
   });
 
@@ -102,8 +103,6 @@ describe("Moves - Fly", () => {
 
     const playerPokemon = game.scene.getPlayerPokemon()!;
     const enemyPokemon = game.scene.getEnemyPokemon()!;
-
-    const playerFly = playerPokemon.getMoveset().find(mv => mv && mv.moveId === Moves.FLY);
 
     game.move.select(Moves.FLY);
 
@@ -116,6 +115,8 @@ describe("Moves - Fly", () => {
     await game.phaseInterceptor.to("TurnEndPhase");
     expect(playerPokemon.getLastXMoves(1)[0].result).toBe(MoveResult.FAIL);
     expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp());
+
+    const playerFly = playerPokemon.getMoveset().find(mv => mv && mv.moveId === Moves.FLY);
     expect(playerFly?.ppUsed).toBe(0);
   });
 });

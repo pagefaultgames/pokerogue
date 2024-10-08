@@ -219,9 +219,12 @@ export class MovePhase extends BattlePhase {
 
     this.showMoveText();
 
-    // TODO: Clean up implementation of two-turn moves.
     if (moveQueue.length > 0) { // Using .shift here clears out two turn moves once they've been used
       this.ignorePp = moveQueue.shift()?.ignorePP ?? false;
+    }
+
+    if (this.pokemon.getTag(BattlerTagType.CHARGING)?.sourceMove === this.move.moveId) {
+      this.pokemon.lapseTag(BattlerTagType.CHARGING);
     }
 
     // "commit" to using the move, deducting PP.
