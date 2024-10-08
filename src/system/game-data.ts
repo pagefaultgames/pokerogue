@@ -1123,10 +1123,16 @@ export class GameData {
     });
   }
 
+  /**
+   * Delete the session data at the given slot when overwriting a save file
+   * For deleting the session of a finished run, use {@linkcode tryClearSession}
+   * @param slotId the slot to clear
+   * @returns Promise with result `true` if the session was deleted successfully, `false` otherwise
+   */
   deleteSession(slotId: integer): Promise<boolean> {
     return new Promise<boolean>(resolve => {
       if (bypassLogin) {
-        localStorage.removeItem(`sessionData${this.scene.sessionSlotId ? this.scene.sessionSlotId : ""}_${loggedInUser?.username}`);
+        localStorage.removeItem(`sessionData${slotId ? slotId : ""}_${loggedInUser?.username}`);
         return resolve(true);
       }
 
@@ -1147,7 +1153,7 @@ export class GameData {
               loggedInUser.lastSessionSlot = -1;
             }
 
-            localStorage.removeItem(`sessionData${slotId > 0 ? slotId : ""}_${loggedInUser?.username}`);
+            localStorage.removeItem(`sessionData${slotId ? slotId : ""}_${loggedInUser?.username}`);
             resolve(true);
 
           }
@@ -1188,7 +1194,9 @@ export class GameData {
 
 
   /**
-   * Attempt to clear session data. After session data is removed, attempt to update user info so the menu updates
+   * Attempt to clear session data after the end of a run
+   * After session data is removed, attempt to update user info so the menu updates
+   * To delete an unfinished run instead, use {@linkcode deleteSession}
    */
   async tryClearSession(scene: BattleScene, slotId: integer): Promise<[success: boolean, newClear: boolean]> {
     let result: [boolean, boolean] = [ false, false ];
@@ -1206,7 +1214,7 @@ export class GameData {
         if (loggedInUser) {
           loggedInUser!.lastSessionSlot = -1;
         }
-        localStorage.removeItem(`sessionData${slotId > 0 ? slotId : ""}_${loggedInUser?.username}`);
+        localStorage.removeItem(`sessionData${slotId ? slotId : ""}_${loggedInUser?.username}`);
       } else {
         if (jsonResponse && jsonResponse.error?.startsWith("session out of date")) {
           this.scene.clearPhaseQueue();
