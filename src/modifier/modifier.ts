@@ -3188,7 +3188,7 @@ export class TurnHeldItemTransferModifier extends HeldItemTransferModifier {
  * @see {@linkcode HeldItemTransferModifier}
  */
 export class ContactHeldItemTransferChanceModifier extends HeldItemTransferModifier {
-  private chance: number;
+  public chance: number;
 
   constructor(type: ModifierType, pokemonId: number, chancePercent: number, stackCount?: number) {
     super(type, pokemonId, stackCount);

@@ -1,15 +1,12 @@
 import { BattlerIndex } from "#app/battle";
-import { allMoves } from "#app/data/move";
-import { Abilities } from "#app/enums/abilities";
-import { BerryType } from "#app/enums/berry-type";
-import { Moves } from "#app/enums/moves";
-import { Species } from "#app/enums/species";
-import { MoveEndPhase } from "#app/phases/move-end-phase";
+import { ContactHeldItemTransferChanceModifier } from "#app/modifier/modifier";
+import { Abilities } from "#enums/abilities";
+import { BerryType } from "#enums/berry-type";
+import { Moves } from "#enums/moves";
+import { Species } from "#enums/species";
 import GameManager from "#test/utils/gameManager";
 import Phase from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-
-// 20 seconds
 
 describe("Items - Grip Claw", () => {
   let phaserGame: Phaser.Game;
@@ -30,39 +27,47 @@ describe("Items - Grip Claw", () => {
 
     game.override
       .battleType("double")
-      .moveset([ Moves.POPULATION_BOMB, Moves.SPLASH ])
+      .moveset([ Moves.TACKLE, Moves.SPLASH ])
       .startingHeldItems([
-        { name: "GRIP_CLAW", count: 5 }, // TODO: Find a way to mock the steal chance of grip claw
-        { name: "MULTI_LENS", count: 3 },
+        { name: "GRIP_CLAW", count: 1 },
       ])
       .enemySpecies(Species.SNORLAX)
-      .ability(Abilities.KLUTZ)
+      .enemyAbility(Abilities.UNNERVE)
+      .ability(Abilities.UNNERVE)
       .enemyMoveset(Moves.SPLASH)
       .enemyHeldItems([
         { name: "BERRY", type: BerryType.SITRUS, count: 2 },
         { name: "BERRY", type: BerryType.LUM, count: 2 },
       ])
-      .startingLevel(100)
       .enemyLevel(100);
 
-    vi.spyOn(allMoves[Moves.POPULATION_BOMB], "accuracy", "get").mockReturnValue(100);
   });
 
-  it(
-    "should only steal items from the attack target",
-    async () => {
-      await game.startBattle([ Species.PANSEAR, Species.ROWLET ]);
+  it("should steal items on contact and only from the attack target", async () => {
+    await game.classicMode.startBattle([ Species.FEEBAS, Species.MILOTIC ]);
 
-      const enemyPokemon = game.scene.getEnemyField();
+    const [ player, ] = game.scene.getPlayerField();
+    const gripClaw = player.getHeldItems()[0] as ContactHeldItemTransferChanceModifier;
+    vi.spyOn(gripClaw, "chance", "get").mockReturnValue(100);
 
-      const enemyHeldItemCt = enemyPokemon.map(p => p.getHeldItems.length);
+    const enemyPokemon = game.scene.getEnemyField();
 
-      game.move.select(Moves.POPULATION_BOMB, 0, BattlerIndex.ENEMY);
-      game.move.select(Moves.SPLASH, 1);
+    const enemy1HeldItemCounts = enemyPokemon[0].getHeldItems().map((item) => item.getStackCount());
+    const enemy1HeldItemTotal = enemy1HeldItemCounts[0] + enemy1HeldItemCounts[1];
+    const enemy2HeldItemCounts = enemyPokemon[1].getHeldItems().map((item) => item.getStackCount());
+    const enemy2HeldItemTotal = enemy2HeldItemCounts[0] + enemy2HeldItemCounts[1];
 
-      await game.phaseInterceptor.to(MoveEndPhase, false);
+    game.move.select(Moves.TACKLE, 0, BattlerIndex.ENEMY_2);
+    game.move.select(Moves.SPLASH, 1);
 
-      expect(enemyPokemon[1].getHeldItems.length).toBe(enemyHeldItemCt[1]);
-    }
-  );
+    await game.phaseInterceptor.to("BerryPhase", false);
+
+    const enemy1HeldItemCountsAfter = enemyPokemon[0].getHeldItems().map((item) => item.getStackCount());
+    const enemy1HeldItemTotalAfter = enemy1HeldItemCountsAfter[0] + enemy1HeldItemCountsAfter[1];
+    const enemy2HeldItemCountsAfter = enemyPokemon[1].getHeldItems().map((item) => item.getStackCount());
+    const enemy2HeldItemTotalAfter = enemy2HeldItemCountsAfter[0] + enemy2HeldItemCountsAfter[1];
+
+    expect(enemy1HeldItemTotalAfter).toBe(enemy1HeldItemTotal);
+    expect(enemy2HeldItemTotalAfter).toBe(enemy2HeldItemTotal - 1);
+  });
 });
