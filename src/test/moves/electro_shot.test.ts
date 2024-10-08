@@ -1,5 +1,5 @@
-import { allMoves } from "#app/data/move";
 import { BattlerTagType } from "#enums/battler-tag-type";
+import { Stat } from "#enums/stat";
 import { WeatherType } from "#enums/weather-type";
 import { MoveResult } from "#app/field/pokemon";
 import { Abilities } from "#enums/abilities";
@@ -7,9 +7,9 @@ import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, it, expect, vi } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, it, expect } from "vitest";
 
-describe("Moves - Solar Beam", () => {
+describe("Moves - Electro Shot", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
 
@@ -26,7 +26,7 @@ describe("Moves - Solar Beam", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset(Moves.SOLAR_BEAM)
+      .moveset(Moves.ELECTRO_SHOT)
       .battleType("single")
       .startingLevel(100)
       .enemySpecies(Species.SNORLAX)
@@ -35,33 +35,35 @@ describe("Moves - Solar Beam", () => {
       .enemyMoveset(Moves.SPLASH);
   });
 
-  it("should deal damage in two turns if no weather is active", async () => {
+  it("should increase the user's Sp. Atk on the first turn, then attack on the second turn", async () => {
     await game.classicMode.startBattle([ Species.MAGIKARP ]);
 
     const playerPokemon = game.scene.getPlayerPokemon()!;
     const enemyPokemon = game.scene.getEnemyPokemon()!;
 
-    game.move.select(Moves.SOLAR_BEAM);
+    game.move.select(Moves.ELECTRO_SHOT);
 
     await game.phaseInterceptor.to("TurnEndPhase");
     expect(playerPokemon.getTag(BattlerTagType.CHARGING)).toBeDefined();
     expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp());
     expect(playerPokemon.getLastXMoves(1)[0].result).toBe(MoveResult.OTHER);
+    expect(playerPokemon.getStatStage(Stat.SPATK)).toBe(1);
 
     await game.phaseInterceptor.to("TurnEndPhase");
     expect(playerPokemon.getTag(BattlerTagType.CHARGING)).toBeUndefined();
     expect(enemyPokemon.hp).toBeLessThan(enemyPokemon.getMaxHp());
     expect(playerPokemon.getMoveHistory()).toHaveLength(2);
+    expect(playerPokemon.getStatStage(Stat.SPATK)).toBe(1);
     expect(playerPokemon.getLastXMoves(1)[0].result).toBe(MoveResult.SUCCESS);
 
-    const playerSolarBeam = playerPokemon.getMoveset().find(mv => mv && mv.moveId === Moves.SOLAR_BEAM);
-    expect(playerSolarBeam?.ppUsed).toBe(1);
+    const playerElectroShot = playerPokemon.getMoveset().find(mv => mv && mv.moveId === Moves.ELECTRO_SHOT);
+    expect(playerElectroShot?.ppUsed).toBe(1);
   });
 
   it.each([
-    { weatherType: WeatherType.SUNNY, name: "Sun" },
-    { weatherType: WeatherType.HARSH_SUN, name: "Harsh Sun" }
-  ])("should deal damage in one turn if $name is active", async ({ weatherType }) => {
+    { weatherType: WeatherType.RAIN, name: "Rain" },
+    { weatherType: WeatherType.HEAVY_RAIN, name: "Heavy Rain" }
+  ])("should fully resolve in one turn if $name is active", async ({ weatherType }) => {
     game.override.weather(weatherType);
 
     await game.classicMode.startBattle([ Species.MAGIKARP ]);
@@ -69,34 +71,16 @@ describe("Moves - Solar Beam", () => {
     const playerPokemon = game.scene.getPlayerPokemon()!;
     const enemyPokemon = game.scene.getEnemyPokemon()!;
 
-    game.move.select(Moves.SOLAR_BEAM);
+    game.move.select(Moves.ELECTRO_SHOT);
 
-    await game.phaseInterceptor.to("TurnEndPhase");
+    await game.phaseInterceptor.to("MoveEndPhase");
     expect(playerPokemon.getTag(BattlerTagType.CHARGING)).toBeUndefined();
     expect(enemyPokemon.hp).toBeLessThan(enemyPokemon.getMaxHp());
     expect(playerPokemon.getMoveHistory()).toHaveLength(2);
+    expect(playerPokemon.getStatStage(Stat.SPATK)).toBe(1);
     expect(playerPokemon.getLastXMoves(1)[0].result).toBe(MoveResult.SUCCESS);
 
-    const playerSolarBeam = playerPokemon.getMoveset().find(mv => mv && mv.moveId === Moves.SOLAR_BEAM);
-    expect(playerSolarBeam?.ppUsed).toBe(1);
-  });
-
-  it.each([
-    { weatherType: WeatherType.RAIN, name: "Rain" },
-    { weatherType: WeatherType.HEAVY_RAIN, name: "Heavy Rain" }
-  ])("should have its power halved in $name", async ({ weatherType }) => {
-    game.override.weather(weatherType);
-
-    await game.classicMode.startBattle([ Species.MAGIKARP ]);
-
-    const solarBeam = allMoves[Moves.SOLAR_BEAM];
-
-    vi.spyOn(solarBeam, "calculateBattlePower");
-
-    game.move.select(Moves.SOLAR_BEAM);
-
-    await game.phaseInterceptor.to("TurnEndPhase");
-    await game.phaseInterceptor.to("TurnEndPhase");
-    expect(solarBeam.calculateBattlePower).toHaveLastReturnedWith(60);
+    const playerElectroShot = playerPokemon.getMoveset().find(mv => mv && mv.moveId === Moves.ELECTRO_SHOT);
+    expect(playerElectroShot?.ppUsed).toBe(1);
   });
 });

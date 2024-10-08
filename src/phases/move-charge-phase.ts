@@ -7,6 +7,7 @@ import { BooleanHolder } from "#app/utils";
 import { MovePhase } from "#app/phases/move-phase";
 import { PokemonPhase } from "#app/phases/pokemon-phase";
 import { BattlerTagType } from "#enums/battler-tag-type";
+import { MoveEndPhase } from "./move-end-phase";
 
 
 export class MoveChargePhase extends PokemonPhase {
@@ -54,6 +55,9 @@ export class MoveChargePhase extends PokemonPhase {
       applyMoveChargeAttrs(InstantChargeAttr, user, null, move, instantCharge);
 
       if (instantCharge.value) {
+        // this MoveEndPhase will be duplicated by the queued MovePhase if not removed
+        this.scene.tryRemovePhase((phase) => phase instanceof MoveEndPhase && phase.getPokemon() === user);
+        // queue a new MovePhase for this move's attack phase
         this.scene.unshiftPhase(new MovePhase(this.scene, user, [ this.targetIndex ], this.move, false));
       } else {
         user.getMoveQueue().push({ move: move.id, targets: [ this.targetIndex ]});
