@@ -132,6 +132,6 @@ describe("Moves - Dive", () => {
     expect(playerPokemon.getTag(BattlerTagType.UNDERWATER)).toBeUndefined();
 
     const playerDive = playerPokemon.getMoveset().find(mv => mv && mv.moveId === Moves.DIVE);
-    expect(playerDive?.ppUsed).toBe(0);
+    expect(playerDive?.ppUsed).toBe(1);
   });
 });
