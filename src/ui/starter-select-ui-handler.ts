@@ -1694,6 +1694,10 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
                     const name = decodeURIComponent(escape(atob(starterAttributes.nickname)));
                     if (name.length > 0) {
                       this.pokemonNameText.setText(name);
+                      while (this.pokemonNameText.displayWidth > 90) {
+                        const displayName = `${this.pokemonNameText.text.slice(0, this.pokemonNameText.text.endsWith(".") ? -2 : -1).trimEnd()}.`;
+                        this.pokemonNameText.setText(displayName);
+                      }
                     } else {
                       this.pokemonNameText.setText(this.lastSpecies.name);
                     }
@@ -2764,6 +2768,10 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       if (starterAttributes?.nickname) {
         const name = decodeURIComponent(escape(atob(starterAttributes.nickname)));
         this.pokemonNameText.setText(name);
+        while (this.pokemonNameText.displayWidth > 90) {
+          const displayName = `${this.pokemonNameText.text.slice(0, this.pokemonNameText.text.endsWith(".") ? -2 : -1).trimEnd()}.`;
+          this.pokemonNameText.setText(displayName);
+        }
       } else {
         this.pokemonNameText.setText(species.name);
       }
