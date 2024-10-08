@@ -7,7 +7,7 @@ import { BooleanHolder } from "#app/utils";
 import { MovePhase } from "#app/phases/move-phase";
 import { PokemonPhase } from "#app/phases/pokemon-phase";
 import { BattlerTagType } from "#enums/battler-tag-type";
-import { MoveEndPhase } from "./move-end-phase";
+import { MoveEndPhase } from "#app/phases/move-end-phase";
 
 
 export class MoveChargePhase extends PokemonPhase {
