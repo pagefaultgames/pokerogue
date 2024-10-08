@@ -287,6 +287,9 @@ export class MovePhase extends BattlePhase {
       }
 
       this.showFailedText(failedText);
+
+      // Remove the user from its semi-invulnerable state (if applicable)
+      this.pokemon.lapseTags(BattlerTagLapseType.MOVE_EFFECT);
     }
 
     // Handle Dancer, which triggers immediately after a move is used (rather than waiting on `this.end()`).

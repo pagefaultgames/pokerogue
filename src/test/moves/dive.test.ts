@@ -6,11 +6,10 @@ import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, it, expect, vi } from "vitest";
-import { BattlerIndex } from "#app/battle";
-import { allMoves } from "#app/data/move";
+import { afterEach, beforeAll, beforeEach, describe, it, expect } from "vitest";
+import { WeatherType } from "#enums/weather-type";
 
-describe("Moves - Fly", () => {
+describe("Moves - Dive", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
 
@@ -27,15 +26,13 @@ describe("Moves - Fly", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset(Moves.FLY)
+      .moveset(Moves.DIVE)
       .battleType("single")
       .startingLevel(100)
       .enemySpecies(Species.SNORLAX)
       .enemyLevel(100)
       .enemyAbility(Abilities.BALL_FETCH)
       .enemyMoveset(Moves.TACKLE);
-
-    vi.spyOn(allMoves[Moves.FLY], "accuracy", "get").mockReturnValue(100);
   });
 
   it("should make the user semi-invulnerable, then attack over 2 turns", async () => {
@@ -44,22 +41,22 @@ describe("Moves - Fly", () => {
     const playerPokemon = game.scene.getPlayerPokemon()!;
     const enemyPokemon = game.scene.getEnemyPokemon()!;
 
-    game.move.select(Moves.FLY);
+    game.move.select(Moves.DIVE);
 
     await game.phaseInterceptor.to("TurnEndPhase");
-    expect(playerPokemon.getTag(BattlerTagType.FLYING)).toBeDefined();
+    expect(playerPokemon.getTag(BattlerTagType.UNDERWATER)).toBeDefined();
     expect(enemyPokemon.getLastXMoves(1)[0].result).toBe(MoveResult.MISS);
     expect(playerPokemon.hp).toBe(playerPokemon.getMaxHp());
     expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp());
-    expect(playerPokemon.getMoveQueue()[0].move).toBe(Moves.FLY);
+    expect(playerPokemon.getMoveQueue()[0].move).toBe(Moves.DIVE);
 
     await game.phaseInterceptor.to("TurnEndPhase");
-    expect(playerPokemon.getTag(BattlerTagType.FLYING)).toBeUndefined();
+    expect(playerPokemon.getTag(BattlerTagType.UNDERWATER)).toBeUndefined();
     expect(enemyPokemon.hp).toBeLessThan(enemyPokemon.getMaxHp());
     expect(playerPokemon.getMoveHistory()).toHaveLength(2);
 
-    const playerFly = playerPokemon.getMoveset().find(mv => mv && mv.moveId === Moves.FLY);
-    expect(playerFly?.ppUsed).toBe(1);
+    const playerDive = playerPokemon.getMoveset().find(mv => mv && mv.moveId === Moves.DIVE);
+    expect(playerDive?.ppUsed).toBe(1);
   });
 
   it("should not allow the user to evade attacks from Pokemon with No Guard", async () => {
@@ -70,7 +67,7 @@ describe("Moves - Fly", () => {
     const playerPokemon = game.scene.getPlayerPokemon()!;
     const enemyPokemon = game.scene.getEnemyPokemon()!;
 
-    game.move.select(Moves.FLY);
+    game.move.select(Moves.DIVE);
 
     await game.phaseInterceptor.to("TurnEndPhase");
     expect(playerPokemon.hp).toBeLessThan(playerPokemon.getMaxHp());
@@ -85,37 +82,55 @@ describe("Moves - Fly", () => {
     await game.classicMode.startBattle([ Species.MAGIKARP ]);
 
     const playerPokemon = game.scene.getPlayerPokemon()!;
-    const playerFly = playerPokemon.getMoveset().find(mv => mv && mv.moveId === Moves.FLY);
+    const playerDive = playerPokemon.getMoveset().find(mv => mv && mv.moveId === Moves.DIVE);
 
-    game.move.select(Moves.FLY);
+    game.move.select(Moves.DIVE);
 
     await game.phaseInterceptor.to("TurnEndPhase");
-    expect(playerPokemon.getTag(BattlerTagType.FLYING)).toBeUndefined();
+    expect(playerPokemon.getTag(BattlerTagType.UNDERWATER)).toBeUndefined();
     expect(playerPokemon.status?.effect).toBe(StatusEffect.SLEEP);
-    expect(playerFly?.ppUsed).toBe(0);
+    expect(playerDive?.ppUsed).toBe(0);
   });
 
-  it("should be cancelled when another Pokemon uses Gravity", async () => {
-    game.override.enemyMoveset([ Moves.SPLASH, Moves.GRAVITY ]);
+  it("should trigger on-contact post-defend ability effects", async () => {
+    game.override
+      .enemyAbility(Abilities.ROUGH_SKIN)
+      .enemyMoveset(Moves.SPLASH);
 
     await game.classicMode.startBattle([ Species.MAGIKARP ]);
 
     const playerPokemon = game.scene.getPlayerPokemon()!;
     const enemyPokemon = game.scene.getEnemyPokemon()!;
 
-    const playerFly = playerPokemon.getMoveset().find(mv => mv && mv.moveId === Moves.FLY);
-
-    game.move.select(Moves.FLY);
-
-    await game.forceEnemyMove(Moves.SPLASH);
-
-    await game.toNextTurn();
-    await game.forceEnemyMove(Moves.GRAVITY);
-    await game.setTurnOrder([ BattlerIndex.ENEMY, BattlerIndex.PLAYER ]);
+    game.move.select(Moves.DIVE);
 
     await game.phaseInterceptor.to("TurnEndPhase");
+
+    await game.phaseInterceptor.to("MoveEndPhase");
+    expect(playerPokemon.hp).toBeLessThan(playerPokemon.getMaxHp());
+    expect(enemyPokemon.battleData.abilitiesApplied[0]).toBe(Abilities.ROUGH_SKIN);
+  });
+
+  it("should cancel attack after Harsh Sunlight is set", async () => {
+    game.override.enemyMoveset(Moves.SPLASH);
+
+    await game.classicMode.startBattle([ Species.MAGIKARP ]);
+
+    const playerPokemon = game.scene.getPlayerPokemon()!;
+    const enemyPokemon = game.scene.getEnemyPokemon()!;
+
+    const playerDive = playerPokemon.getMoveset().find(mv => mv && mv.moveId === Moves.DIVE);
+
+    game.move.select(Moves.DIVE);
+
+    await game.phaseInterceptor.to("TurnEndPhase");
+    await game.phaseInterceptor.to("TurnStartPhase", false);
+    game.scene.arena.trySetWeather(WeatherType.HARSH_SUN, false);
+
+    await game.phaseInterceptor.to("MoveEndPhase");
     expect(playerPokemon.getLastXMoves(1)[0].result).toBe(MoveResult.FAIL);
     expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp());
-    expect(playerFly?.ppUsed).toBe(0);
+    expect(playerPokemon.getTag(BattlerTagType.UNDERWATER)).toBeUndefined();
+    expect(playerDive?.ppUsed).toBe(0);
   });
 });
