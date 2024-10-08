@@ -192,7 +192,7 @@ export class MoveEffectPhase extends PokemonPhase {
              * made visible to the user until the resulting {@linkcode DamagePhase}
              * is invoked.
              */
-          const moveCategory = new Utils.IntegerHolder(move.category);
+          const moveCategory = new Utils.NumberHolder(move.category);
           applyMoveAttrs(VariableMoveCategoryAttr, user, target, move, moveCategory);
           const hitResult = !isProtected ? target.apply(user, move, moveCategory.value) : HitResult.NO_EFFECT;
 
