@@ -46,6 +46,7 @@ import { StarterContainer } from "#app/ui/starter-container";
 import { DropDownColumn, FilterBar } from "#app/ui/filter-bar";
 import { ScrollBar } from "#app/ui/scroll-bar";
 import { SelectChallengePhase } from "#app/phases/select-challenge-phase";
+import { EncounterPhase } from "#app/phases/encounter-phase";
 import { TitlePhase } from "#app/phases/title-phase";
 import { Abilities } from "#enums/abilities";
 import { getPassiveCandyCount, getValueReductionCandyCounts, getSameSpeciesEggCandyCounts } from "#app/data/balance/starters";
@@ -3468,6 +3469,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         this.scene.clearPhaseQueue();
         if (this.scene.gameMode.isChallenge) {
           this.scene.pushPhase(new SelectChallengePhase(this.scene));
+          this.scene.pushPhase(new EncounterPhase(this.scene, false));
         } else {
           this.scene.pushPhase(new TitlePhase(this.scene));
         }
