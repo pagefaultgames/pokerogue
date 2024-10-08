@@ -2680,11 +2680,12 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * Applies the results of a move to this pokemon
    * @param source The {@linkcode Pokemon} using the move
    * @param move The {@linkcode Move} being used
+   * @param moveCategory the {@linkcode MoveCategory} of the move used
    * @returns The {@linkcode HitResult} of the attack
    */
-  apply(source: Pokemon, move: Move): HitResult {
+  apply(source: Pokemon, move: Move, moveCategory: MoveCategory): HitResult {
     const defendingSide = this.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY;
-    if (move.category === MoveCategory.STATUS) {
+    if (moveCategory === MoveCategory.STATUS) {
       const cancelled = new Utils.BooleanHolder(false);
       const typeMultiplier = this.getMoveEffectiveness(source, move, false, false, cancelled);
 
