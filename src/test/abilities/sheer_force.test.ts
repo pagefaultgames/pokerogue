@@ -165,7 +165,7 @@ describe("Abilities - Sheer Force", () => {
 
     applyAbAttrs(MoveEffectChanceMultiplierAbAttr, user, null, false, chance, move, target, false);
     applyPreAttackAbAttrs(MovePowerBoostAbAttr, user, target, move, false, power);
-    applyPostDefendAbAttrs(PostDefendTypeChangeAbAttr, target, user, move, target.apply(user, move));
+    applyPostDefendAbAttrs(PostDefendTypeChangeAbAttr, target, user, move, target.apply(user, move, move.category));
 
     expect(chance.value).toBe(0);
     expect(power.value).toBe(move.power * 5461 / 4096);
