@@ -3084,11 +3084,12 @@ export abstract class HeldItemTransferModifier extends PokemonHeldItemModifier {
    * Steals an item from a set of target Pokemon.
    * This prioritizes high-tier held items when selecting the item to steal.
    * @param pokemon The {@linkcode Pokemon} holding this item
+   * @param target The {@linkcode Pokemon} to steal from (optional)
    * @param _args N/A
    * @returns `true` if an item was stolen; false otherwise.
    */
-  override apply(pokemon: Pokemon, ..._args: unknown[]): boolean {
-    const opponents = this.getTargets(pokemon);
+  override apply(pokemon: Pokemon, target?:Pokemon, ..._args: unknown[]): boolean {
+    const opponents = this.getTargets(pokemon, target);
 
     if (!opponents.length) {
       return false;
