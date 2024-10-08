@@ -82,7 +82,7 @@ const namespaceMap = {
   battleSpecDialogue: "dialogue-final-boss",
   doubleBattleDialogue: "dialogue-double-battle",
   splashMessages: "splash-texts",
-  mysteryEncounterMessages: "mystery-encounter-messages",
+  mysteryEncounterMessages: "mystery-encounter-texts",
 };
 
 //#region Functions
