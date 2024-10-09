@@ -8,7 +8,6 @@ import {
 import Pokemon, { EnemyPokemon, PlayerPokemon } from "#app/field/pokemon";
 import {
   BerryModifierType,
-  getPartyLuckValue,
   ModifierPoolType,
   ModifierTypeOption, modifierTypes,
   regenerateModifierPoolThresholds,
@@ -31,6 +30,8 @@ import { BerryType } from "#enums/berry-type";
 import { PERMANENT_STATS, Stat } from "#enums/stat";
 import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
+import { getPokemonSpecies } from "#app/data/pokemon-species";
+import { Species } from "#enums/species";
 
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounters/berriesAbound";
@@ -58,7 +59,8 @@ export const BerriesAboundEncounter: MysteryEncounter =
 
       // Calculate boss mon
       const level = getEncounterPokemonLevelForWave(scene, STANDARD_ENCOUNTER_BOOSTED_LEVEL_MODIFIER);
-      const bossSpecies = scene.arena.randomSpecies(scene.currentBattle.waveIndex, level, 0, getPartyLuckValue(scene.getParty()), true);
+      // const bossSpecies = scene.arena.randomSpecies(scene.currentBattle.waveIndex, level, 0, getPartyLuckValue(scene.getParty()), true);
+      const bossSpecies = getPokemonSpecies(Species.KELDEO);
       const bossPokemon = new EnemyPokemon(scene, bossSpecies, level, TrainerSlot.NONE, true);
       encounter.setDialogueToken("enemyPokemon", getPokemonNameWithAffix(bossPokemon));
       const config: EnemyPartyConfig = {

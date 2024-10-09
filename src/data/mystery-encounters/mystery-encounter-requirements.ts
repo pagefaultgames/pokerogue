@@ -476,9 +476,11 @@ export class MoveRequirement extends EncounterPokemonRequirement {
   requiredMoves: Moves[] = [];
   minNumberOfPokemon: number;
   invertQuery: boolean;
+  excludeDisallowedPokemon: boolean;
 
-  constructor(moves: Moves | Moves[], minNumberOfPokemon: number = 1, invertQuery: boolean = false) {
+  constructor(moves: Moves | Moves[], excludeDisallowedPokemon: boolean, minNumberOfPokemon: number = 1, invertQuery: boolean = false) {
     super();
+    this.excludeDisallowedPokemon = excludeDisallowedPokemon;
     this.minNumberOfPokemon = minNumberOfPokemon;
     this.invertQuery = invertQuery;
     this.requiredMoves = Array.isArray(moves) ? moves : [ moves ];
@@ -559,9 +561,11 @@ export class AbilityRequirement extends EncounterPokemonRequirement {
   requiredAbilities: Abilities[];
   minNumberOfPokemon: number;
   invertQuery: boolean;
+  excludeDisallowedPokemon: boolean;
 
-  constructor(abilities: Abilities | Abilities[], minNumberOfPokemon: number = 1, invertQuery: boolean = false) {
+  constructor(abilities: Abilities | Abilities[], excludeDisallowedPokemon: boolean, minNumberOfPokemon: number = 1, invertQuery: boolean = false) {
     super();
+    this.excludeDisallowedPokemon = excludeDisallowedPokemon;
     this.minNumberOfPokemon = minNumberOfPokemon;
     this.invertQuery = invertQuery;
     this.requiredAbilities = Array.isArray(abilities) ? abilities : [ abilities ];
