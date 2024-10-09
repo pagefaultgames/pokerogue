@@ -22,7 +22,7 @@ afterEach(() => {
   server.resetHandlers();
 });
 
-describe("Pokerogue Admin API", () => {
+describe("Pokerogue Daily API", () => {
   beforeEach(() => {
     vi.spyOn(console, "warn");
   });

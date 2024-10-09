@@ -21,7 +21,7 @@ afterEach(() => {
   server.resetHandlers();
 });
 
-describe("Pokerogue Admin API", () => {
+describe("Pokerogue Savedata API", () => {
   beforeEach(() => {
     vi.spyOn(console, "warn");
   });
