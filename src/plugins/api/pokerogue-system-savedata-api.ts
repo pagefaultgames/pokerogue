@@ -35,23 +35,22 @@ export class PokerogueSystemSavedataApi extends ApiBase {
    * If not the {@linkcode SystemSaveData} is returned.
    * @param params The {@linkcode VerifySystemSavedataRequest} to send
    * @returns A {@linkcode SystemSaveData} if **NOT** valid, otherwise `null`.
+   *
+   * TODO: add handling for errors
    */
   public async verify(params: VerifySystemSavedataRequest) {
-    try {
-      const urlSearchParams = this.toUrlSearchParams(params);
-      const response = await this.doGet(`/savedata/system/verify?${urlSearchParams}`);
+    const urlSearchParams = this.toUrlSearchParams(params);
+    const response = await this.doGet(`/savedata/system/verify?${urlSearchParams}`);
 
-      if (response.ok) {
-        const verifySavedata = (await response.json()) as VerifySystemSavedataResponse;
+    if (response.ok) {
+      const verifySavedata = (await response.json()) as VerifySystemSavedataResponse;
 
-        if (!verifySavedata.valid) {
-          return verifySavedata.systemData;
-        } else {
-          console.warn("Invalid system savedata!");
-        }
+      if (!verifySavedata.valid) {
+        console.warn("Invalid system savedata!");
+        return verifySavedata.systemData;
       }
-    } catch (err) {
-      console.warn("Could not verify system savedata!", err);
+    } else {
+      console.warn("System savedata verification failed!", response.status, response.statusText);
     }
 
     return null;
@@ -73,6 +72,6 @@ export class PokerogueSystemSavedataApi extends ApiBase {
       console.warn("Could not update system savedata!", err);
     }
 
-    return null;
+    return "Unknown Error";
   }
 }
