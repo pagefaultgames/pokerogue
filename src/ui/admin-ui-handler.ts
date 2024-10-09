@@ -42,7 +42,7 @@ export default class AdminUiHandler extends FormModalUiHandler {
     case AdminMode.SEARCH:
       return ["Username"];
     case AdminMode.ADMIN:
-      return ["Username", "Discord ID", "Google ID", "Last played"];
+      return ["Username", "Discord ID", "Google ID", "Last played", "Registered"];
     default:
       return [""];
     }
@@ -79,7 +79,7 @@ export default class AdminUiHandler extends FormModalUiHandler {
   show(args: any[]): boolean {
     this.config = args[0] as ModalConfig;
     this.adminMode = args[1] as AdminMode;
-    this.adminResult = args[2] ?? { username: "", discordId: "", googleId: "", lastLoggedIn: "" };
+    this.adminResult = args[2] ?? { username: "", discordId: "", googleId: "", lastLoggedIn: "", registered: "" };
     const isMessageError = args[3];
 
     const fields = this.getFields();
@@ -154,7 +154,7 @@ export default class AdminUiHandler extends FormModalUiHandler {
       this.inputs[0].setText(adminResult.username);
       break;
     case AdminMode.ADMIN:
-      const lockedFields: string[] = ["username", "lastLoggedIn"];
+      const lockedFields: string[] = ["username", "lastLoggedIn", "registered"];
       Object.keys(adminResult).forEach((aR, i) => {
         this.inputs[i].setText(adminResult[aR]);
         if (aR === "discordId" || aR === "googleId") {
@@ -226,7 +226,8 @@ export default class AdminUiHandler extends FormModalUiHandler {
       username: this.inputs[0]?.node ? this.inputs[0].text : "",
       discordId: this.inputs[1]?.node ? this.inputs[1]?.text : "",
       googleId: this.inputs[2]?.node ? this.inputs[2]?.text : "",
-      lastLoggedIn: this.inputs[3]?.node ? this.inputs[3]?.text : ""
+      lastLoggedIn: this.inputs[3]?.node ? this.inputs[3]?.text : "",
+      registered: this.inputs[4]?.node ? this.inputs[4]?.text : ""
     };
   }
 
@@ -339,4 +340,5 @@ export interface AdminSearchInfo {
   discordId: string;
   googleId: string;
   lastLoggedIn: string;
+  registered: string;
 }
