@@ -2689,8 +2689,8 @@ export default class BattleScene extends SceneBase {
   /**
     * Removes all modifiers from enemy of PokemonHeldItemModifier type
     */
-  clearEnemyHeldItemModifiers(): void {
-    const modifiersToRemove = this.enemyModifiers.filter(m => m instanceof PokemonHeldItemModifier);
+  clearEnemyHeldItemModifiers(pokemon?: Pokemon): void {
+    const modifiersToRemove = this.enemyModifiers.filter(m => m instanceof PokemonHeldItemModifier && (!pokemon || m.getPokemon(this) === pokemon));
     for (const m of modifiersToRemove) {
       this.enemyModifiers.splice(this.enemyModifiers.indexOf(m), 1);
     }
