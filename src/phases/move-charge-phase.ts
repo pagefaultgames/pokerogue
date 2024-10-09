@@ -35,7 +35,6 @@ export class MoveChargePhase extends PokemonPhase {
 
     new MoveChargeAnim(move.chargeAnim, move.id, user).play(this.scene, false, () => {
       move.showChargeText(user, target);
-      user.getMoveQueue().push({ move: move.id, targets: [ target?.getBattlerIndex() ]});
 
       applyMoveChargeAttrs(MoveEffectAttr, user, target, move).then(() => {
         user.addTag(BattlerTagType.CHARGING, 1, move.id, user.id);
