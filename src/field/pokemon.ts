@@ -2761,7 +2761,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
         if (damage > 0) {
           if (source.isPlayer()) {
-            this.scene.validateAchvs(DamageAchv, damage);
+            this.scene.validateAchvs(DamageAchv, new Utils.NumberHolder(damage));
             if (damage > this.scene.gameData.gameStats.highestDamage) {
               this.scene.gameData.gameStats.highestDamage = damage;
             }
