@@ -35,7 +35,7 @@ export class PokerogueSavedataApi extends ApiBase {
       return await response.text();
     } catch (err) {
       console.warn("Could not update all savedata!", err);
-      return null;
+      return "Unknown error";
     }
   }
 }
