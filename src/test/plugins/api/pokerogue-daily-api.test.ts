@@ -3,20 +3,11 @@ import { PokerogueDailyApi } from "#app/plugins/api/pokerogue-daily-api";
 import { getApiBaseUrl } from "#app/test/utils/testUtils";
 import { ScoreboardCategory, type RankingEntry } from "#app/ui/daily-run-scoreboard";
 import { http, HttpResponse } from "msw";
-import { setupServer } from "msw/node";
-import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 const apiBase = getApiBaseUrl();
 const dailyApi = new PokerogueDailyApi(apiBase);
-const server = setupServer();
-
-beforeAll(() => {
-  server.listen({ onUnhandledRequest: "error" });
-});
-
-afterAll(() => {
-  server.close();
-});
+const { server } = global;
 
 afterEach(() => {
   server.resetHandlers();

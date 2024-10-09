@@ -8,20 +8,11 @@ import { PokerogueSystemSavedataApi } from "#app/plugins/api/pokerogue-system-sa
 import type { SystemSaveData } from "#app/system/game-data";
 import { getApiBaseUrl } from "#app/test/utils/testUtils";
 import { http, HttpResponse } from "msw";
-import { setupServer } from "msw/node";
-import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 const apiBase = getApiBaseUrl();
-const systemSavedataApi = new PokerogueSystemSavedataApi(apiBase);
-const server = setupServer();
-
-beforeAll(() => {
-  server.listen({ onUnhandledRequest: "error" });
-});
-
-afterAll(() => {
-  server.close();
-});
+const systemSavedataApi = new PokerogueSystemSavedataApi(getApiBaseUrl());
+const { server } = global;
 
 afterEach(() => {
   server.resetHandlers();

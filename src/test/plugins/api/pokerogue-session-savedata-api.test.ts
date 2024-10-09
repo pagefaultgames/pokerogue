@@ -10,20 +10,11 @@ import { PokerogueSessionSavedataApi } from "#app/plugins/api/pokerogue-session-
 import type { SessionSaveData } from "#app/system/game-data";
 import { getApiBaseUrl } from "#app/test/utils/testUtils";
 import { http, HttpResponse } from "msw";
-import { setupServer } from "msw/node";
-import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 const apiBase = getApiBaseUrl();
 const sessionSavedataApi = new PokerogueSessionSavedataApi(apiBase);
-const server = setupServer();
-
-beforeAll(() => {
-  server.listen({ onUnhandledRequest: "error" });
-});
-
-afterAll(() => {
-  server.close();
-});
+const { server } = global;
 
 afterEach(() => {
   server.resetHandlers();

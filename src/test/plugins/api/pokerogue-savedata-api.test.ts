@@ -2,20 +2,11 @@ import type { UpdateAllSavedataRequest } from "#app/@types/PokerogueSavedataApi"
 import { PokerogueSavedataApi } from "#app/plugins/api/pokerogue-savedata-api";
 import { getApiBaseUrl } from "#app/test/utils/testUtils";
 import { http, HttpResponse } from "msw";
-import { setupServer } from "msw/node";
-import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 const apiBase = getApiBaseUrl();
 const savedataApi = new PokerogueSavedataApi(apiBase);
-const server = setupServer();
-
-beforeAll(() => {
-  server.listen({ onUnhandledRequest: "error" });
-});
-
-afterAll(() => {
-  server.close();
-});
+const { server } = global;
 
 afterEach(() => {
   server.resetHandlers();
