@@ -1,6 +1,9 @@
 // When changing the file, the server restarts because of the namespaces-18n-plugin.ts
 
-/** maps namespaces that deviate from the file-name */
+/**
+ * ### maps namespaces that deviate from the file-name
+ * @description expects file-name as value and custom-namespace as key
+ * */
 export const namespaceMap = {
   titles: "trainer-titles",
   moveTriggers: "move-trigger",

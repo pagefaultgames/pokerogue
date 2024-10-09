@@ -130,7 +130,9 @@ export async function initI18n(): Promise<void> {
    *    Don't forget to declare new language in `supportedLngs` i18next initializer
    *
    * Q: How do I add a new namespace?
-   * A: To add a new namespace, create a new file in each language folder with the translations.
+   * A: To add a new namespace, create a new file .json in each language folder with the translations.
+   *    The expected format for the files is kebab-case {@link https://developer.mozilla.org/en-US/docs/Glossary/Kebab_case}
+   *    If you want the namespace name to be different from the file name, configure it in namespacemap.ts.
    *    Then update the config file for that language in its locale directory
    *    and the CustomTypeOptions interface in the @types/i18next.d.ts file.
    *
