@@ -77,13 +77,13 @@ export default class AdminUiHandler extends FormModalUiHandler {
   }
 
   show(args: any[]): boolean {
+    this.config = args[0] as ModalConfig;
     this.adminMode = args[1] as AdminMode;
     this.adminResult = args[2] ?? { username: "", discordId: "", googleId: "", lastLoggedIn: "" };
     const isMessageError = args[3];
 
     const fields = this.getFields();
     const hasTitle = !!this.getModalTitle();
-    this.config = args[0] as ModalConfig;
     this.updateFields(fields, hasTitle);
     this.updateContainer(this.config);
 
@@ -165,18 +165,20 @@ export default class AdminUiHandler extends FormModalUiHandler {
           img.setScale(0.5);
           img.setInteractive();
           img.on("pointerdown", () => {
-            this.adminLinkUnlink(this.convertInputsToAdmin(), "discord", adminResult[aR] === "" ? "link" : "unlink").then(response => {
-              console.log(response);
+            this.adminLinkUnlink(this.convertInputsToAdmin(), aR.includes("discord") ? "discord" : "google", adminResult[aR] === "" ? "link" : "unlink").then(response => {
+              if (response.error) {
+                return this.showMessage(response.errorType, adminResult, true);
+              } else {
+                this.scene.ui.setMode(Mode.LOADING, { buttonActions: [] });
+                this.adminSearch(adminResult)
+                  .then(response => {
+                    if (response.error) {
+                      return this.showMessage(response.errorType, adminResult, true);
+                    }
+                    this.updateAdminPanelInfo(response.adminSearchResult ?? adminResult);
+                  });
+              }
             });
-            this.scene.ui.setMode(Mode.LOADING, { buttonActions: [] });
-            //this.updateAdminPanelInfo(adminResult);
-            this.adminSearch(adminResult)
-              .then(response => {
-                if (response.error) {
-                  return this.showMessage(response.errorType, adminResult, true);
-                }
-                this.updateAdminPanelInfo(response.adminSearchResult ?? adminResult);
-              });
           });
           this.addInteractionHoverEffect(img);
           this.modalContainer.add(img);
@@ -250,7 +252,7 @@ export default class AdminUiHandler extends FormModalUiHandler {
 
   async adminLinkUnlink(adminSearchResult: AdminSearchInfo, service: string, mode: string) {
     try {
-      const response = await Utils.apiPost(`admin/account/${service}-${mode}`, `username=${encodeURIComponent(adminSearchResult.username)}&discordId=${encodeURIComponent(adminSearchResult.discordId)}`, "application/x-www-form-urlencoded", true);
+      const response = await Utils.apiPost(`admin/account/${service}-${mode}`, `username=${encodeURIComponent(adminSearchResult.username)}&${service}Id=${encodeURIComponent(service === "discord" ? adminSearchResult.discordId : adminSearchResult.googleId)}`, "application/x-www-form-urlencoded", true);
       //.then(response => {
       if (!response.ok) {
         console.error(response);
