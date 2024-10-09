@@ -10,8 +10,18 @@ export default class AdminUiHandler extends FormModalUiHandler {
 
   private adminMode: AdminMode;
   private adminResult: AdminSearchInfo; // this is the username that we're looking for
+  private config: ModalConfig;
   private readonly httpUserNotFoundErrorCode: number = 204; // this is the http response from the server when a username isn't found in the server. This has to be the same error the server is giving
   private readonly buttonGap = 10;
+  private readonly ERR_REQUIRED_USERNAME: string = "Username is required";
+  private readonly ERR_REQUIRED_DISCORD: string = "Discord Id is required";
+  private readonly ERR_REQUIRED_USERNAME_OR_DISCORD: string = "Username  or discord Id is required";
+  private readonly SUCCESS_DISCORD_LINKED: string = "Username and discord successfully linked";
+  private readonly SUCCESS_DISCORD_UNLINKED: string = "Username and discord successfully unlinked";
+  private readonly SUCCESS_GOOGLE_LINKED: string = "Username and google successfully linked";
+  private readonly SUCCESS_GOOGLE_UNLINKED: string = "Username and google successfully unlinked";
+  private readonly ERR_USERNAME_NOT_FOUND: string = "Username not found!";
+  private readonly ERR_GENERIC_ERROR: string = "There was an error";
 
   constructor(scene: BattleScene, mode: Mode | null = null) {
     super(scene, mode);
@@ -73,8 +83,9 @@ export default class AdminUiHandler extends FormModalUiHandler {
 
     const fields = this.getFields();
     const hasTitle = !!this.getModalTitle();
+    this.config = args[0] as ModalConfig;
     this.updateFields(fields, hasTitle);
-    this.updateContainer(args[0]);
+    this.updateContainer(this.config);
 
     const labels = this.getButtonLabels();
     for (let i = 0; i < labels.length; i++) {
@@ -92,34 +103,55 @@ export default class AdminUiHandler extends FormModalUiHandler {
 
     if (super.show(args)) {
       this.populateFields(this.adminMode, this.adminResult);
-      const config = args[0] as ModalConfig;
       const originalSubmitAction = this.submitAction;
       this.submitAction = (_) => {
         this.submitAction = originalSubmitAction;
-        const showMessage = (message, adminResult: AdminSearchInfo, isError: boolean) => {
-          this.scene.ui.setMode(Mode.ADMIN, Object.assign(config, { errorMessage: message?.trim() }), this.adminMode, adminResult, isError);
-          this.scene.ui.playError();
-        };
+        //const showMessage = (message, adminResult: AdminSearchInfo, isError: boolean) => {
+        //  this.scene.ui.setMode(Mode.ADMIN, Object.assign(config, { errorMessage: message?.trim() }), this.adminMode, adminResult, isError);
+        //  this.scene.ui.playError();
+        //};
         const adminSearchResult: AdminSearchInfo = this.convertInputsToAdmin(); // this converts the input texts into a single object for use later
         const validFields = this.areFieldsValid(this.adminMode);
         if (validFields.error) {
           this.scene.ui.setMode(Mode.LOADING, { buttonActions: [] }); // this is here to force a loading screen to allow the admin tool to reopen again if there's an error
-          return showMessage(validFields.errorMessage, adminSearchResult, true);
+          return this.showMessage(validFields.errorMessage, adminSearchResult, true);
         }
         this.scene.ui.setMode(Mode.LOADING, { buttonActions: [] });
         if (this.adminMode === AdminMode.LINK) {
           this.adminLinkUnlink(adminSearchResult, "discord", "link");
           /*this.updateAdminPanelInfo(adminSearchResult, AdminMode.LINK);*/
-          return showMessage("Username and discord successfully linked", adminSearchResult, false);
+          //return this.showMessage(this.SUCCESS_DISCORD_LINKED, adminSearchResult, false, config);
         } else if (this.adminMode === AdminMode.SEARCH) {
-          const results = this.adminSearch(adminSearchResult)
+          //let adminResult: { adminSearchResult?: AdminSearchInfo, error: boolean, errorType?: string };
+          this.adminSearch(adminSearchResult)
             .then(response => {
-              console.log("RESPONSE: " + response);
-              response?.adminSearchResult;
-              console.log("RESPONSE.adminSearchResult: " + response?.adminSearchResult);
-              this.updateAdminPanelInfo(adminSearchResult);
+              //console.log("RESPONSE: " + response);
+              //response?.adminSearchResult;
+              //adminResult.adminSearchResult = response?.adminSearchResult && null;
+              //adminResult.error = response?.error && false;
+              //adminResult.errorType = response?.errorType && ""
+              if (response.error) {
+                let errorString: string;
+                switch (response.errorType) {
+                case "Error":
+                  errorString = this.ERR_GENERIC_ERROR;
+                  break;
+                case "UsernameNotFound":
+                  errorString = this.ERR_USERNAME_NOT_FOUND;
+                  break;
+                default:
+                  errorString = this.ERR_GENERIC_ERROR;
+                  break;
+                }
+                return this.showMessage(errorString, adminSearchResult, true);
+              }
+              console.log("RESPONSE.username: " + response?.adminSearchResult.username);
+              console.log("RESPONSE.discordId: " + response?.adminSearchResult.discordId);
+              console.log("RESPONSE.googleId: " + response?.adminSearchResult.googleId);
+              console.log("RESPONSE.lastLoggedIn: " + response?.adminSearchResult.lastLoggedIn);
+              this.updateAdminPanelInfo(response.adminSearchResult);
             });
-          console.log(results);
+          //console.log(results);
           //this.updateAdminPanelInfo(adminSearchResult);
           //});
           //response.then(value => {
@@ -163,6 +195,11 @@ export default class AdminUiHandler extends FormModalUiHandler {
     }
     return false;
 
+  }
+
+  showMessage(message: string, adminResult: AdminSearchInfo, isError: boolean) {
+    this.scene.ui.setMode(Mode.ADMIN, Object.assign(this.config, { errorMessage: message?.trim() }), this.adminMode, adminResult, isError);
+    this.scene.ui.playError();
   }
 
   populateFields(adminMode: AdminMode, adminResult: AdminSearchInfo) {
@@ -209,20 +246,20 @@ export default class AdminUiHandler extends FormModalUiHandler {
       if (!this.inputs[0].text) {
         return {
           error: true,
-          errorMessage: "Username is required"
+          errorMessage: this.ERR_REQUIRED_USERNAME
         };
       }
       if (!this.inputs[1].text) {
         return {
           error: true,
-          errorMessage: "Discord Id is required"
+          errorMessage: this.ERR_REQUIRED_DISCORD
         };
       }
     case AdminMode.SEARCH:
       if (!this.inputs[0].text) {
         return {
           error: true,
-          errorMessage: "Username  or discord Id is required"
+          errorMessage: this.ERR_REQUIRED_USERNAME_OR_DISCORD
         };
       }
     }
@@ -240,23 +277,59 @@ export default class AdminUiHandler extends FormModalUiHandler {
     };
   }
 
-  async adminSearch(adminSearchResult: AdminSearchInfo): Promise<{ adminSearchResult?: AdminSearchInfo, error: boolean, errorType?: string }> {
+  async adminSearch(adminSearchResult: AdminSearchInfo)/*: Promise<{ adminSearchResult?: AdminSearchInfo, error: boolean, errorType?: string }>*/ {
     try {
-      await Utils.apiFetch(`admin/account/admin-search?username=${encodeURIComponent(adminSearchResult.username)}`, true)
-        .then(response => {
-          if (!response.ok) { // error
-            console.error(response);
-            console.log(adminSearchResult);
-            return { adminSearchResult: adminSearchResult, error: true, errorType: "Error" };
-          } else if (response.status === this.httpUserNotFoundErrorCode) { // username doesn't exist
-            console.log(adminSearchResult);
-            return { adminSearchResult: adminSearchResult, error: true, errorType: "UsernameNotFound" };
-          }
-          response.json().then(jsonResponse => {
-            console.log(jsonResponse);
-            return { adminSearchResult: jsonResponse, error: false };
-          });
-        });
+      //const response = await Utils.apiFetch(`admin/account/admin-search?username=${encodeURIComponent(adminSearchResult.username)}`, true);
+
+      const adminInfo = await Utils.apiFetch(`admin/account/admin-search?username=${encodeURIComponent(adminSearchResult.username)}`, true);
+      if (!adminInfo.ok) {
+        console.error(adminInfo);
+        console.log(adminSearchResult);
+        return { adminSearchResult: adminSearchResult, error: true, errorType: "Error" };
+      } else if (adminInfo.status === this.httpUserNotFoundErrorCode) { // username doesn't exist
+        console.log(adminSearchResult);
+        return { adminSearchResult: adminSearchResult, error: true, errorType: "UsernameNotFound" };
+      } else {
+        const adminInfoJson = await adminInfo.json();
+        return { adminSearchResult: adminInfoJson, error: false };
+      }
+
+
+      //return await Utils.apiFetch(`admin/account/admin-search?username=${encodeURIComponent(adminSearchResult.username)}`, true)
+      //  .then(response => {
+      //    if (!response.ok) {
+      //      console.error(response);
+      //      console.log(adminSearchResult);
+      //      return { adminSearchResult: adminSearchResult, error: true, errorType: "Error" };
+      //    } else if (response.status === this.httpUserNotFoundErrorCode) { // username doesn't exist
+      //      console.log(adminSearchResult);
+      //      return { adminSearchResult: adminSearchResult, error: true, errorType: "UsernameNotFound" };
+      //    }
+      //    console.log(response);
+      //    //const searchResults: AdminSearchInfo =
+      //    return response.json().then(jsonResponse => {
+      //      return jsonResponse() as AdminSearchInfo;
+      //      //console.log(searchResults);
+      //    });
+      //    //return { adminSearchResult: searchResults, error: false };
+      //  });
+
+
+
+      //.then(response => {
+      //  if (!response.ok) { // error
+      //    console.error(response);
+      //    console.log(adminSearchResult);
+      //    return { adminSearchResult: adminSearchResult, error: true, errorType: "Error" };
+      //  } else if (response.status === this.httpUserNotFoundErrorCode) { // username doesn't exist
+      //    console.log(adminSearchResult);
+      //    return { adminSearchResult: adminSearchResult, error: true, errorType: "UsernameNotFound" };
+      //  }
+      //  response.json().then(jsonResponse => {
+      //    console.log(jsonResponse);
+      //    return { adminSearchResult: jsonResponse, error: false };
+      //  });
+      //});
     } catch (err) {
       console.error(err);
       return { error: true, errorType: err };
@@ -293,6 +366,18 @@ export default class AdminUiHandler extends FormModalUiHandler {
       .then(response => {
         if (!response.ok) {
           console.error(response);
+          return this.showMessage(this.ERR_GENERIC_ERROR, adminSearchResult, true);
+        } else if (response.status === this.httpUserNotFoundErrorCode) { // username doesn't exist
+          //console.log(adminSearchResult);
+          return this.showMessage(this.ERR_USERNAME_NOT_FOUND, adminSearchResult, true);
+        } else {
+          let successString: string;
+          if (service === "discord") {
+            successString = mode === "link" ? this.SUCCESS_DISCORD_LINKED : this.SUCCESS_DISCORD_UNLINKED;
+          } else if (service === "google") {
+            successString = mode === "link" ? this.SUCCESS_GOOGLE_LINKED : this.SUCCESS_GOOGLE_UNLINKED;
+          }
+          return this.showMessage(successString, adminSearchResult, false);
         }
         //// we double revert here and below to go back 2 layers of menus
         //this.scene.ui.revertMode();
