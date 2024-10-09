@@ -67,7 +67,7 @@ export class PokerogueSessionSavedataApi extends ApiBase {
       console.warn("Could not update session savedata!", err);
     }
 
-    return null;
+    return "Unknown Error!";
   }
 
   /**
@@ -86,7 +86,7 @@ export class PokerogueSessionSavedataApi extends ApiBase {
         return await response.text();
       }
     } catch (err) {
-      console.warn("Could not get session savedata!", err);
+      console.warn("Could not delete session savedata!", err);
       return "Unknown error";
     }
   }
