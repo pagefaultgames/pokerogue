@@ -3088,7 +3088,7 @@ export abstract class HeldItemTransferModifier extends PokemonHeldItemModifier {
    * @param _args N/A
    * @returns `true` if an item was stolen; false otherwise.
    */
-  override apply(pokemon: Pokemon, target?:Pokemon, ..._args: unknown[]): boolean {
+  override apply(pokemon: Pokemon, target?: Pokemon, ..._args: unknown[]): boolean {
     const opponents = this.getTargets(pokemon, target);
 
     if (!opponents.length) {
@@ -3188,7 +3188,7 @@ export class TurnHeldItemTransferModifier extends HeldItemTransferModifier {
  * @see {@linkcode HeldItemTransferModifier}
  */
 export class ContactHeldItemTransferChanceModifier extends HeldItemTransferModifier {
-  public chance: number;
+  public readonly chance: number;
 
   constructor(type: ModifierType, pokemonId: number, chancePercent: number, stackCount?: number) {
     super(type, pokemonId, stackCount);
