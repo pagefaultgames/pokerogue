@@ -114,26 +114,21 @@ export default class AdminUiHandler extends FormModalUiHandler {
         }
         this.scene.ui.setMode(Mode.LOADING, { buttonActions: [] });
         if (this.adminMode === AdminMode.LINK) {
-          this.adminLinkUnlink(adminSearchResult, "discord", "link");
+          this.adminLinkUnlink(adminSearchResult, "discord", "link")
+            .then(response => {
+              if (response.error) {
+                return this.showMessage(response.errorType, adminSearchResult, true);
+              } else {
+                return this.showMessage(this.SUCCESS_DISCORD_LINKED, adminSearchResult, false);
+              }
+            });
         } else if (this.adminMode === AdminMode.SEARCH) {
           this.adminSearch(adminSearchResult)
             .then(response => {
               if (response.error) {
-                let errorString: string;
-                switch (response.errorType) {
-                case "Error":
-                  errorString = this.ERR_GENERIC_ERROR;
-                  break;
-                case "UsernameNotFound":
-                  errorString = this.ERR_USERNAME_NOT_FOUND;
-                  break;
-                default:
-                  errorString = this.ERR_GENERIC_ERROR;
-                  break;
-                }
-                return this.showMessage(errorString, adminSearchResult, true);
+                return this.showMessage(response.errorType, adminSearchResult, true);
               }
-              this.updateAdminPanelInfo(response.adminSearchResult);
+              this.updateAdminPanelInfo(response.adminSearchResult ?? adminSearchResult);
             });
         }
 
@@ -170,9 +165,18 @@ export default class AdminUiHandler extends FormModalUiHandler {
           img.setScale(0.5);
           img.setInteractive();
           img.on("pointerdown", () => {
-            this.adminLinkUnlink(this.convertInputsToAdmin(), "discord", adminResult[aR] === "" ? "link" : "unlink");
+            this.adminLinkUnlink(this.convertInputsToAdmin(), "discord", adminResult[aR] === "" ? "link" : "unlink").then(response => {
+              console.log(response);
+            });
             this.scene.ui.setMode(Mode.LOADING, { buttonActions: [] });
-            this.updateAdminPanelInfo(adminResult);
+            //this.updateAdminPanelInfo(adminResult);
+            this.adminSearch(adminResult)
+              .then(response => {
+                if (response.error) {
+                  return this.showMessage(response.errorType, adminResult, true);
+                }
+                this.updateAdminPanelInfo(response.adminSearchResult ?? adminResult);
+              });
           });
           this.addInteractionHoverEffect(img);
           this.modalContainer.add(img);
@@ -230,10 +234,10 @@ export default class AdminUiHandler extends FormModalUiHandler {
       if (!adminInfo.ok) {
         console.error(adminInfo);
         console.log(adminSearchResult);
-        return { adminSearchResult: adminSearchResult, error: true, errorType: "Error" };
+        return { adminSearchResult: adminSearchResult, error: true, errorType: this.ERR_GENERIC_ERROR };
       } else if (adminInfo.status === this.httpUserNotFoundErrorCode) { // username doesn't exist
         console.log(adminSearchResult);
-        return { adminSearchResult: adminSearchResult, error: true, errorType: "UsernameNotFound" };
+        return { adminSearchResult: adminSearchResult, error: true, errorType: this.ERR_USERNAME_NOT_FOUND };
       } else {
         const adminInfoJson: AdminSearchInfo = await adminInfo.json();
         return { adminSearchResult: adminInfoJson, error: false };
@@ -244,30 +248,29 @@ export default class AdminUiHandler extends FormModalUiHandler {
     }
   }
 
-  adminLinkUnlink(adminSearchResult: AdminSearchInfo, service: string, mode: string) {
-    Utils.apiPost(`admin/account/${service}-${mode}`, `username=${encodeURIComponent(adminSearchResult.username)}&discordId=${encodeURIComponent(adminSearchResult.discordId)}`, "application/x-www-form-urlencoded", true)
-      .then(response => {
-        if (!response.ok) {
-          console.error(response);
-          return this.showMessage(this.ERR_GENERIC_ERROR, adminSearchResult, true);
-        } else if (response.status === this.httpUserNotFoundErrorCode) { // username doesn't exist
-          //console.log(adminSearchResult);
-          return this.showMessage(this.ERR_USERNAME_NOT_FOUND, adminSearchResult, true);
-        } else {
-          let successString: string = "";
-          if (service === "discord") {
-            successString = mode === "link" ? this.SUCCESS_DISCORD_LINKED : this.SUCCESS_DISCORD_UNLINKED;
-          } else if (service === "google") {
-            successString = mode === "link" ? this.SUCCESS_GOOGLE_LINKED : this.SUCCESS_GOOGLE_UNLINKED;
-          }
-          return this.showMessage(successString, adminSearchResult, false);
-        }
-      })
-      .catch((err) => {
-        console.error(err);
-        this.scene.ui.revertMode();
-        this.scene.ui.revertMode();
-      });
+  async adminLinkUnlink(adminSearchResult: AdminSearchInfo, service: string, mode: string) {
+    try {
+      const response = await Utils.apiPost(`admin/account/${service}-${mode}`, `username=${encodeURIComponent(adminSearchResult.username)}&discordId=${encodeURIComponent(adminSearchResult.discordId)}`, "application/x-www-form-urlencoded", true);
+      //.then(response => {
+      if (!response.ok) {
+        console.error(response);
+        return { adminSearchResult: adminSearchResult, error: true, errorType: this.ERR_GENERIC_ERROR };
+      } else if (response.status === this.httpUserNotFoundErrorCode) { // username doesn't exist
+        return { adminSearchResult: adminSearchResult, error: true, errorType: this.ERR_USERNAME_NOT_FOUND };
+      } else {
+        //let successString: string = "";
+        //if (service === "discord") {
+        //  successString = mode === "link" ? this.SUCCESS_DISCORD_LINKED : this.SUCCESS_DISCORD_UNLINKED;
+        //} else if (service === "google") {
+        //  successString = mode === "link" ? this.SUCCESS_GOOGLE_LINKED : this.SUCCESS_GOOGLE_UNLINKED;
+        //}
+        return { adminSearchResult: adminSearchResult, error: false };
+      }
+      //})
+    } catch (err) {
+      console.error(err);
+      return { error: true, errorType: err };
+    }
   }
 
   updateAdminPanelInfo(adminSearchResult: AdminSearchInfo, mode?: AdminMode) {
