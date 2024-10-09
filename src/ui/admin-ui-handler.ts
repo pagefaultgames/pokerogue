@@ -106,30 +106,18 @@ export default class AdminUiHandler extends FormModalUiHandler {
       const originalSubmitAction = this.submitAction;
       this.submitAction = (_) => {
         this.submitAction = originalSubmitAction;
-        //const showMessage = (message, adminResult: AdminSearchInfo, isError: boolean) => {
-        //  this.scene.ui.setMode(Mode.ADMIN, Object.assign(config, { errorMessage: message?.trim() }), this.adminMode, adminResult, isError);
-        //  this.scene.ui.playError();
-        //};
         const adminSearchResult: AdminSearchInfo = this.convertInputsToAdmin(); // this converts the input texts into a single object for use later
         const validFields = this.areFieldsValid(this.adminMode);
         if (validFields.error) {
           this.scene.ui.setMode(Mode.LOADING, { buttonActions: [] }); // this is here to force a loading screen to allow the admin tool to reopen again if there's an error
-          return this.showMessage(validFields.errorMessage, adminSearchResult, true);
+          return this.showMessage(validFields.errorMessage ?? "", adminSearchResult, true);
         }
         this.scene.ui.setMode(Mode.LOADING, { buttonActions: [] });
         if (this.adminMode === AdminMode.LINK) {
           this.adminLinkUnlink(adminSearchResult, "discord", "link");
-          /*this.updateAdminPanelInfo(adminSearchResult, AdminMode.LINK);*/
-          //return this.showMessage(this.SUCCESS_DISCORD_LINKED, adminSearchResult, false, config);
         } else if (this.adminMode === AdminMode.SEARCH) {
-          //let adminResult: { adminSearchResult?: AdminSearchInfo, error: boolean, errorType?: string };
           this.adminSearch(adminSearchResult)
             .then(response => {
-              //console.log("RESPONSE: " + response);
-              //response?.adminSearchResult;
-              //adminResult.adminSearchResult = response?.adminSearchResult && null;
-              //adminResult.error = response?.error && false;
-              //adminResult.errorType = response?.errorType && ""
               if (response.error) {
                 let errorString: string;
                 switch (response.errorType) {
@@ -145,48 +133,8 @@ export default class AdminUiHandler extends FormModalUiHandler {
                 }
                 return this.showMessage(errorString, adminSearchResult, true);
               }
-              console.log("RESPONSE.username: " + response?.adminSearchResult.username);
-              console.log("RESPONSE.discordId: " + response?.adminSearchResult.discordId);
-              console.log("RESPONSE.googleId: " + response?.adminSearchResult.googleId);
-              console.log("RESPONSE.lastLoggedIn: " + response?.adminSearchResult.lastLoggedIn);
               this.updateAdminPanelInfo(response.adminSearchResult);
             });
-          //console.log(results);
-          //this.updateAdminPanelInfo(adminSearchResult);
-          //});
-          //response.then(value => {
-          //  adminResult = value;
-          //  console.log(adminResult);
-          //  this.updateAdminPanelInfo(adminResult);
-          //});
-
-          //.then(value => {
-          //  adminResult = value;
-          //  this.updateAdminPanelInfo(adminResult);
-          //});
-
-
-          //Utils.apiFetch(`admin/account/admin-search?username=${encodeURIComponent(adminSearchResult.username)}`, true)
-          //  .then(response => {
-          //    if (!response.ok) { // error
-          //      console.error(response);
-          //    } else if (response.status === this.httpUserNotFoundErrorCode) { // username doesn't exist
-          //      return showMessage("Username not found in the database", adminSearchResult, true);
-          //    } else { // success
-          //      response.json().then(jsonResponse => {
-          //        adminSearchResult = jsonResponse;
-          //        // we double revert here and below to go back 2 layers of menus
-          //        //this.scene.ui.revertMode();
-          //        //this.scene.ui.revertMode();
-          //        this.updateAdminPanelInfo(adminSearchResult);
-          //      });
-          //    }
-          //  })
-          //  .catch((err) => {
-          //    console.error(err);
-          //    this.scene.ui.revertMode();
-          //    this.scene.ui.revertMode();
-          //  });
         }
 
         return false;
@@ -194,7 +142,6 @@ export default class AdminUiHandler extends FormModalUiHandler {
       return true;
     }
     return false;
-
   }
 
   showMessage(message: string, adminResult: AdminSearchInfo, isError: boolean) {
@@ -277,10 +224,8 @@ export default class AdminUiHandler extends FormModalUiHandler {
     };
   }
 
-  async adminSearch(adminSearchResult: AdminSearchInfo)/*: Promise<{ adminSearchResult?: AdminSearchInfo, error: boolean, errorType?: string }>*/ {
+  async adminSearch(adminSearchResult: AdminSearchInfo) {
     try {
-      //const response = await Utils.apiFetch(`admin/account/admin-search?username=${encodeURIComponent(adminSearchResult.username)}`, true);
-
       const adminInfo = await Utils.apiFetch(`admin/account/admin-search?username=${encodeURIComponent(adminSearchResult.username)}`, true);
       if (!adminInfo.ok) {
         console.error(adminInfo);
@@ -290,75 +235,13 @@ export default class AdminUiHandler extends FormModalUiHandler {
         console.log(adminSearchResult);
         return { adminSearchResult: adminSearchResult, error: true, errorType: "UsernameNotFound" };
       } else {
-        const adminInfoJson = await adminInfo.json();
+        const adminInfoJson: AdminSearchInfo = await adminInfo.json();
         return { adminSearchResult: adminInfoJson, error: false };
       }
-
-
-      //return await Utils.apiFetch(`admin/account/admin-search?username=${encodeURIComponent(adminSearchResult.username)}`, true)
-      //  .then(response => {
-      //    if (!response.ok) {
-      //      console.error(response);
-      //      console.log(adminSearchResult);
-      //      return { adminSearchResult: adminSearchResult, error: true, errorType: "Error" };
-      //    } else if (response.status === this.httpUserNotFoundErrorCode) { // username doesn't exist
-      //      console.log(adminSearchResult);
-      //      return { adminSearchResult: adminSearchResult, error: true, errorType: "UsernameNotFound" };
-      //    }
-      //    console.log(response);
-      //    //const searchResults: AdminSearchInfo =
-      //    return response.json().then(jsonResponse => {
-      //      return jsonResponse() as AdminSearchInfo;
-      //      //console.log(searchResults);
-      //    });
-      //    //return { adminSearchResult: searchResults, error: false };
-      //  });
-
-
-
-      //.then(response => {
-      //  if (!response.ok) { // error
-      //    console.error(response);
-      //    console.log(adminSearchResult);
-      //    return { adminSearchResult: adminSearchResult, error: true, errorType: "Error" };
-      //  } else if (response.status === this.httpUserNotFoundErrorCode) { // username doesn't exist
-      //    console.log(adminSearchResult);
-      //    return { adminSearchResult: adminSearchResult, error: true, errorType: "UsernameNotFound" };
-      //  }
-      //  response.json().then(jsonResponse => {
-      //    console.log(jsonResponse);
-      //    return { adminSearchResult: jsonResponse, error: false };
-      //  });
-      //});
     } catch (err) {
       console.error(err);
       return { error: true, errorType: err };
     }
-    //Utils.apiFetch(`admin/account/admin-search?username=${encodeURIComponent(adminSearchResult.username)}`, true)
-    //  .then(response => {
-    //    if (!response.ok) { // error
-    //      console.error(response);
-    //      return { adminSearchResult: adminSearchResult, error: true, errorType: "Error" };
-    //    } else if (response.status === this.httpUserNotFoundErrorCode) { // username doesn't exist
-    //      //return showMessage("Username not found in the database", adminSearchResult, true);
-    //      return { adminSearchResult: adminSearchResult, error: true, errorType: "UsernameNotFound" };
-    //    } else { // success
-    //      response.json().then(jsonResponse => {
-    //        adminSearchResult = jsonResponse;
-    //        //this.updateAdminPanelInfo(adminSearchResult);
-    //        return { adminSearchResult: adminSearchResult, error: false };
-    //      });
-    //    }
-    //  })
-    //  //.then(adminSearchResult => {
-    //  //  return { adminSearchResult: adminSearchResult, error: true, errorType: "Weird spot" };
-    //  //})
-    //  .catch((err) => {
-    //    console.error(err);
-    //    this.scene.ui.revertMode();
-    //    this.scene.ui.revertMode();
-    //    return { adminSearchResult: adminSearchResult, error: true, errorType: err };
-    //  });
   }
 
   adminLinkUnlink(adminSearchResult: AdminSearchInfo, service: string, mode: string) {
@@ -371,7 +254,7 @@ export default class AdminUiHandler extends FormModalUiHandler {
           //console.log(adminSearchResult);
           return this.showMessage(this.ERR_USERNAME_NOT_FOUND, adminSearchResult, true);
         } else {
-          let successString: string;
+          let successString: string = "";
           if (service === "discord") {
             successString = mode === "link" ? this.SUCCESS_DISCORD_LINKED : this.SUCCESS_DISCORD_UNLINKED;
           } else if (service === "google") {
@@ -379,9 +262,6 @@ export default class AdminUiHandler extends FormModalUiHandler {
           }
           return this.showMessage(successString, adminSearchResult, false);
         }
-        //// we double revert here and below to go back 2 layers of menus
-        //this.scene.ui.revertMode();
-        //this.scene.ui.revertMode();
       })
       .catch((err) => {
         console.error(err);
@@ -413,8 +293,6 @@ export default class AdminUiHandler extends FormModalUiHandler {
     // this is used to remove the existing fields on the admin panel so they can be updated
 
     const itemsToRemove: string[] = ["formLabel", "adminBtn"]; // this is the start of the names for each element we want to remove
-
-    //this.modalContainer.list = this.modalContainer.list.filter(mC => !itemsToRemove.some(iTR => mC.name.includes(iTR)));
     const removeArray: any[] = [];
     const mC = this.modalContainer.list;
     for (let i = mC.length - 1; i >= 0; i--) {
