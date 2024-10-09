@@ -73,14 +73,32 @@ describe("Moves - Electro Shot", () => {
 
     game.move.select(Moves.ELECTRO_SHOT);
 
+    await game.phaseInterceptor.to("MoveEffectPhase", false);
+    expect(playerPokemon.getStatStage(Stat.SPATK)).toBe(1);
+
     await game.phaseInterceptor.to("MoveEndPhase");
     expect(playerPokemon.getTag(BattlerTagType.CHARGING)).toBeUndefined();
     expect(enemyPokemon.hp).toBeLessThan(enemyPokemon.getMaxHp());
     expect(playerPokemon.getMoveHistory()).toHaveLength(2);
-    expect(playerPokemon.getStatStage(Stat.SPATK)).toBe(1);
     expect(playerPokemon.getLastXMoves(1)[0].result).toBe(MoveResult.SUCCESS);
 
     const playerElectroShot = playerPokemon.getMoveset().find(mv => mv && mv.moveId === Moves.ELECTRO_SHOT);
     expect(playerElectroShot?.ppUsed).toBe(1);
+  });
+
+  it("should only increase Sp. Atk once with Multi-Lens", async () => {
+    game.override
+      .weather(WeatherType.RAIN)
+      .startingHeldItems([{ name: "MULTI_LENS", count: 1 }]);
+
+    await game.classicMode.startBattle([ Species.MAGIKARP ]);
+
+    const playerPokemon = game.scene.getPlayerPokemon()!;
+
+    game.move.select(Moves.ELECTRO_SHOT);
+
+    await game.phaseInterceptor.to("MoveEndPhase");
+    expect(playerPokemon.turnData.hitCount).toBe(2);
+    expect(playerPokemon.getStatStage(Stat.SPATK)).toBe(1);
   });
 });
