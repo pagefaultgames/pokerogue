@@ -1,15 +1,10 @@
 import { normalizePath, type Plugin as VitePlugin } from "vite";
 import fs from "fs";
 import path from "path";
+import { namespaceMap } from "../namespacemap";
+import { kebabCaseToCamelCase, objectSwap } from "../../utils";
 
-function kebabCaseToCamelCase(str: string): string {
-  return str.split("-").map((text, index) => {
-    if (index > 0) {
-      return text.split("").map((char, i) => i === 0 ? char.toUpperCase() : char).join("");
-    }
-    return text;
-  }).join("");
-}
+const namespaceMapSwap = objectSwap(namespaceMap);
 
 function getNameSpaces(dir: string) {
   const namespace: string[] = [];
@@ -23,13 +18,19 @@ function getNameSpaces(dir: string) {
       const subnamespace = getNameSpaces(filePath);
       for (let i = 0; i < subnamespace.length; i++) {
         let ns = subnamespace[i];
-        if (kebabCaseToCamelCase(file).replace(".json", "").startsWith("mysteryEncounters")) {
+        if (namespaceMapSwap[file.replace(".json", "")]) {
+          ns = namespaceMapSwap[file.replace(".json", "")];
+        } else  if (kebabCaseToCamelCase(file).replace(".json", "").startsWith("mysteryEncounters")) {
           ns = subnamespace[i].replace(/Dialogue$/, "");
         }
         namespace.push(`${kebabCaseToCamelCase(file).replace(".json", "")}/${ns}`);
       }
     } else if (path.extname(file) === ".json") {
-      namespace.push(kebabCaseToCamelCase(file).replace(".json", ""));
+      let ns = kebabCaseToCamelCase(file).replace(".json", "");
+      if (namespaceMapSwap[file.replace(".json", "")]) {
+        ns = namespaceMapSwap[file.replace(".json", "")];
+      }
+      namespace.push(ns);
     }
   }
 

@@ -1,5 +1,7 @@
-import { MoneyFormat } from "#enums/money-format";
-import { Moves } from "#enums/moves";
+// So that the utils.ts is also accessible to plugins/vite, it's important that the paths are relative and not aliases ..
+// Although, due to this, any change made to the file will cause a server restart
+import { MoneyFormat } from "./enums/money-format";
+import { Moves } from "./enums/moves";
 import i18next from "i18next";
 
 export type nil = null | undefined;
@@ -270,23 +272,23 @@ export function executeIf<T>(condition: boolean, promiseFunc: () => Promise<T>):
 export const sessionIdKey = "pokerogue_sessionId";
 // Check if the current hostname is 'localhost' or an IP address, and ensure a port is specified
 export const isLocal = (
-  (window.location.hostname === "localhost" ||
-   /^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$/.test(window.location.hostname)) &&
-  window.location.port !== "") || window.location.hostname === "";
+  (globalThis.location?.hostname === "localhost" ||
+   /^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$/.test(globalThis.location?.hostname)) &&
+  globalThis.location?.port !== "") || globalThis.location?.hostname === "";
 
-export const localServerUrl = import.meta.env.VITE_SERVER_URL ?? `http://${window.location.hostname}:${window.location.port + 1}`;
+export const localServerUrl = import.meta.env?.VITE_SERVER_URL ?? `http://${globalThis.location?.hostname}:${globalThis.location?.port + 1}`;
 
 // Set the server URL based on whether it's local or not
 export const apiUrl = localServerUrl ?? "https://api.pokerogue.net";
 // used to disable api calls when isLocal is true and a server is not found
 export let isLocalServerConnected = true;
 
-export const isBeta = import.meta.env.MODE === "beta"; // this checks to see if the env mode is development. Technically this gives the same value for beta AND for dev envs
+export const isBeta = import.meta.env?.MODE === "beta"; // this checks to see if the env mode is development. Technically this gives the same value for beta AND for dev envs
 
 export function setCookie(cName: string, cValue: string): void {
   const expiration = new Date();
   expiration.setTime(new Date().getTime() + 3600000 * 24 * 30 * 3/*7*/);
-  document.cookie = `${cName}=${cValue};Secure;SameSite=Strict;Domain=${window.location.hostname};Path=/;Expires=${expiration.toUTCString()}`;
+  document.cookie = `${cName}=${cValue};Secure;SameSite=Strict;Domain=${globalThis.location.hostname};Path=/;Expires=${expiration.toUTCString()}`;
 }
 
 export function removeCookie(cName: string): void {
@@ -294,7 +296,7 @@ export function removeCookie(cName: string): void {
     document.cookie = `${cName}=;Secure;SameSite=Strict;Domain=pokerogue.net;Path=/;Max-Age=-1`; // we need to remove the cookie from the main domain as well
   }
 
-  document.cookie = `${cName}=;Secure;SameSite=Strict;Domain=${window.location.hostname};Path=/;Max-Age=-1`;
+  document.cookie = `${cName}=;Secure;SameSite=Strict;Domain=${globalThis.location.hostname};Path=/;Max-Age=-1`;
   document.cookie = `${cName}=;Secure;SameSite=Strict;Path=/;Max-Age=-1`; // legacy cookie without domain, for older cookies to prevent a login loop
 }
 
@@ -650,4 +652,30 @@ export function animationFileName(move: Moves): string {
  */
 export function camelCaseToKebabCase(str: string): string {
   return str.replace(/[A-Z]+(?![a-z])|[A-Z]/g, (s, o) => (o ? "-" : "") + s.toLowerCase());
+}
+
+/**
+ * Transforms a kebab-case string into a camelCase string
+ * @param str The kebabCase string
+ * @returns A camelCase string
+ *
+ * @source {@link https://stackoverflow.com/a/23013726}
+ */
+export function kebabCaseToCamelCase(str: string): string {
+  return str.replace(/-./g, (x)=> x[1].toUpperCase());
+}
+
+/**
+ * Swap the value with the key and the key with the value
+ * @param json type {[key: string]: string}
+ * @returns [value]: key
+ *
+ * @source {@link https://stackoverflow.com/a/23013726}
+ */
+export function objectSwap(json: {[key: string]: string}): {[value: string]: string} {
+  const ret = {};
+  for (const key in json) {
+    ret[json[key]] = key;
+  }
+  return ret;
 }
