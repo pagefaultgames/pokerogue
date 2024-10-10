@@ -106,7 +106,7 @@ class DefaultOverrides {
   // --------------------------
   // OPPONENT / ENEMY OVERRIDES
   // --------------------------
-  readonly OPP_SPECIES_OVERRIDE: Species | number = 0;
+  readonly OPP_SPECIES_OVERRIDE: Species | number = Species.ZOROARK;
   readonly OPP_LEVEL_OVERRIDE: number = 0;
   readonly OPP_ABILITY_OVERRIDE: Abilities = Abilities.NONE;
   readonly OPP_PASSIVE_ABILITY_OVERRIDE: Abilities = Abilities.NONE;

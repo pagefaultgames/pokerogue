@@ -451,6 +451,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         active: true,
         available: true,
         species: randomIllusion,
+        formIndex: randomIllusion.formIndex,
         name: this.name,
         shiny: this.shiny,
         variant: this.variant,
@@ -686,6 +687,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    */
   getSpeciesForm(ignoreOverride?: boolean, useIllusion: boolean = false): PokemonSpeciesForm {
     const species: PokemonSpecies = useIllusion && this.battleData.illusion.active ? this.battleData.illusion.species! : this.species;
+    
     const formIndex: integer = useIllusion && this.battleData.illusion.active ? this.battleData.illusion.formIndex! : this.formIndex;
 
     if (!ignoreOverride && this.summonData?.speciesForm) {
@@ -1194,7 +1196,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * @param {boolean} useIllusion - Whether we want the gender of the illusion or not.
    */
   getGender(ignoreOverride?: boolean, useIllusion: boolean = false): Gender {
-    console.log("ALLLO", this.battleData.illusion.active);
     if (useIllusion && this.battleData.illusion.active) {
       return this.battleData.illusion.gender!;
     } else if (!ignoreOverride && this.summonData?.gender !== undefined) {

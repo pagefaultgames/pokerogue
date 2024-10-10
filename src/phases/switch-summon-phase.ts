@@ -1,5 +1,5 @@
 import BattleScene from "#app/battle-scene";
-import { applyPreSummonAbAttrs, applyPreSwitchOutAbAttrs, PreSummonAbAttr, PreSwitchOutAbAttr } from "#app/data/ability.js";
+import { applyPreSummonAbAttrs, applyPreSwitchOutAbAttrs, PreSummonAbAttr, PreSwitchOutAbAttr } from "#app/data/ability";
 import { allMoves, ForceSwitchOutAttr } from "#app/data/move";
 import { getPokeballTintColor } from "#app/data/pokeball";
 import { SpeciesFormChangeActiveTrigger } from "#app/data/pokemon-forms";
