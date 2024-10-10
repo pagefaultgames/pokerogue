@@ -2139,6 +2139,10 @@ export class GulpMissileTag extends BattlerTag {
         return false;
       }
 
+      if (moveEffectPhase.move.getMove().hitsSubstitute(attacker, pokemon)) {
+        return true;
+      }
+
       const cancelled = new Utils.BooleanHolder(false);
       applyAbAttrs(BlockNonDirectDamageAbAttr, attacker, cancelled);
 
