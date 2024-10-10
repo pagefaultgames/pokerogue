@@ -966,7 +966,6 @@ export class IngrainTag extends TrappedTag {
 
   override onAdd(pokemon: Pokemon) {
     super.onAdd(pokemon);
-    pokemon.addTag(BattlerTagType.IGNORE_FLYING, undefined, Moves.INGRAIN, this.sourceId);
   }
 
   /**
@@ -2692,12 +2691,6 @@ export class TelekinesisTag extends BattlerTag {
 
   override onAdd(pokemon: Pokemon)  {
     pokemon.scene.queueMessage(i18next.t("battlerTags:telekinesisOnAdd", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }));
-    pokemon.addTag(BattlerTagType.TELEKINESIS, 3, this.sourceMove);
-    pokemon.addTag(BattlerTagType.FLOATING, 3, this.sourceMove);
-  }
-
-  override onRemove(pokemon: Pokemon) {
-    pokemon.removeTag(BattlerTagType.FLOATING);
   }
 }
 
