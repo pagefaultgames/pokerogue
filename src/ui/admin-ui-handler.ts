@@ -138,7 +138,6 @@ export default class AdminUiHandler extends FormModalUiHandler {
         } else if (this.adminMode === AdminMode.ADMIN) {
           this.updateAdminPanelInfo(adminSearchResult, AdminMode.SEARCH);
         }
-
         return false;
       };
       return true;
@@ -327,7 +326,12 @@ export default class AdminUiHandler extends FormModalUiHandler {
     }
 
     while (removeArray.length > 0) {
-      this.modalContainer.remove(removeArray.pop(), true);
+      const removedElement = removeArray.pop();
+      //if (removedElement.type === "Container") {
+      //  this.inputContainers = this.inputContainers.filter(iC => iC !== removedElement);
+      //  this.inputs = this.inputs.filter(i => i !== removedElement.list.find(rE => rE.type === "rexInputText"));
+      //}
+      this.modalContainer.remove(removedElement, true);
     }
   }
 }
