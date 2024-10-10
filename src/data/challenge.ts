@@ -16,6 +16,7 @@ import { Moves } from "#enums/moves";
 import { TypeColor, TypeShadow } from "#enums/color";
 import { pokemonEvolutions } from "#app/data/balance/pokemon-evolutions";
 import { pokemonFormChanges } from "#app/data/pokemon-forms";
+import { ModifierTier } from "#app/modifier/modifier-tier";
 
 /** A constant for the default max cost of the starting party before a run */
 const DEFAULT_PARTY_MAX_COST = 10;
@@ -447,7 +448,183 @@ export class SingleGenerationChallenge extends Challenge {
 
   applyFixedBattle(waveIndex: Number, battleConfig: FixedBattleConfig): boolean {
     let trainerTypes: TrainerType[] = [];
+    const rand = Utils.randSeedInt(2, 1);
     switch (waveIndex) {
+    case 35:
+      trainerTypes = [ TrainerType.ROCKET_GRUNT, TrainerType.ROCKET_GRUNT, TrainerType.UNKNOWN, TrainerType.GALACTIC_GRUNT, TrainerType.PLASMA_GRUNT, TrainerType.FLARE_GRUNT, TrainerType.UNKNOWN, TrainerType.MACRO_GRUNT, TrainerType.STAR_GRUNT ];
+      if (this.value === 3) {
+        if (rand !== 2) {
+          trainerTypes = [ TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.MAGMA_GRUNT ];
+          break;
+        } else {
+          trainerTypes = [ TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.AQUA_GRUNT ];
+          break;
+        }
+      }
+      if (this.value === 7) {
+        if (rand !== 2) {
+          trainerTypes = [ TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.AETHER_GRUNT ];
+          break;
+        } else {
+          trainerTypes = [ TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.SKULL_GRUNT ];
+          break;
+        }
+      }
+      break;
+    case 62:
+      battleConfig.setSeedOffsetWave(35);
+      trainerTypes = [ TrainerType.ROCKET_GRUNT, TrainerType.ROCKET_GRUNT, TrainerType.UNKNOWN, TrainerType.GALACTIC_GRUNT, TrainerType.PLASMA_GRUNT, TrainerType.FLARE_GRUNT, TrainerType.UNKNOWN, TrainerType.MACRO_GRUNT, TrainerType.STAR_GRUNT ];
+      if (this.value === 3) {
+        if (rand !== 2) {
+          trainerTypes = [ TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.MAGMA_GRUNT ];
+          break;
+        } else {
+          trainerTypes = [ TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.AQUA_GRUNT ];
+          break;
+        }
+      }
+      if (this.value === 7) {
+        if (rand !== 2) {
+          trainerTypes = [ TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.AETHER_GRUNT ];
+          break;
+        } else {
+          trainerTypes = [ TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.SKULL_GRUNT ];
+          break;
+        }
+      }
+      break;
+    case 64:
+      battleConfig.setSeedOffsetWave(35);
+      trainerTypes = [ TrainerType.ROCKET_GRUNT, TrainerType.ROCKET_GRUNT, TrainerType.UNKNOWN, TrainerType.GALACTIC_GRUNT, TrainerType.PLASMA_GRUNT, TrainerType.FLARE_GRUNT, TrainerType.UNKNOWN, TrainerType.MACRO_GRUNT, TrainerType.STAR_GRUNT ];
+      if (this.value === 3) {
+        if (rand !== 2) {
+          trainerTypes = [ TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.MAGMA_GRUNT ];
+          break;
+        } else {
+          trainerTypes = [ TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.AQUA_GRUNT ];
+          break;
+        }
+      }
+      if (this.value === 7) {
+        if (rand !== 2) {
+          trainerTypes = [ TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.AETHER_GRUNT ];
+          break;
+        } else {
+          trainerTypes = [ TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.SKULL_GRUNT ];
+          break;
+        }
+      }
+      break;
+    case 66:
+      battleConfig.setSeedOffsetWave(35);
+      trainerTypes = [ Utils.randSeedItem([ TrainerType.ARCHER, TrainerType.ARIANA, TrainerType.PROTON, TrainerType.PETREL ]), Utils.randSeedItem([ TrainerType.ARCHER, TrainerType.ARIANA, TrainerType.PROTON, TrainerType.PETREL ]), TrainerType.UNKNOWN, Utils.randSeedItem([ TrainerType.JUPITER, TrainerType.MARS, TrainerType.SATURN ]), Utils.randSeedItem([ TrainerType.ZINZOLIN, TrainerType.ROOD ]), Utils.randSeedItem([ TrainerType.XEROSIC, TrainerType.BRYONY ]), TrainerType.UNKNOWN, TrainerType.OLEANA, Utils.randSeedItem([ TrainerType.GIACOMO, TrainerType.MELA, TrainerType.ATTICUS, TrainerType.ORTEGA, TrainerType.ERI ]) ];
+      if (this.value === 3) {
+        if (rand !== 2) {
+          trainerTypes = [ TrainerType.UNKNOWN, TrainerType.UNKNOWN, Utils.randSeedItem([ TrainerType.TABITHA, TrainerType.COURTNEY ]) ];
+          break;
+        } else {
+          trainerTypes = [ TrainerType.UNKNOWN, TrainerType.UNKNOWN, Utils.randSeedItem([ TrainerType.MATT, TrainerType.SHELLY ]) ];
+          break;
+        }
+      }
+      if (this.value === 7) {
+        if (rand !== 2) {
+          trainerTypes = [ TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.FABA ];
+          break;
+        } else {
+          trainerTypes = [ TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.PLUMERIA ];
+          break;
+        }
+      }
+      break;
+    case 112:
+      battleConfig.setSeedOffsetWave(35);
+      trainerTypes = [ TrainerType.ROCKET_GRUNT, TrainerType.ROCKET_GRUNT, TrainerType.UNKNOWN, TrainerType.GALACTIC_GRUNT, TrainerType.PLASMA_GRUNT, TrainerType.FLARE_GRUNT, Utils.randSeedItem([ TrainerType.AETHER_GRUNT, TrainerType.SKULL_GRUNT ]), TrainerType.MACRO_GRUNT, TrainerType.STAR_GRUNT ];
+      if (this.value === 3) {
+        if (rand !== 2) {
+          trainerTypes = [ TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.MAGMA_GRUNT ];
+          break;
+        } else {
+          trainerTypes = [ TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.AQUA_GRUNT ];
+          break;
+        }
+      }
+      if (this.value === 7) {
+        if (rand !== 2) {
+          trainerTypes = [ TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.AETHER_GRUNT ];
+          break;
+        } else {
+          trainerTypes = [ TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.SKULL_GRUNT ];
+          break;
+        }
+      }
+      break;
+    case 114:
+      battleConfig.setSeedOffsetWave(35);
+      trainerTypes = [ Utils.randSeedItem([ TrainerType.ARCHER, TrainerType.ARIANA, TrainerType.PROTON, TrainerType.PETREL ]), Utils.randSeedItem([ TrainerType.ARCHER, TrainerType.ARIANA, TrainerType.PROTON, TrainerType.PETREL ]), TrainerType.UNKNOWN, Utils.randSeedItem([ TrainerType.JUPITER, TrainerType.MARS, TrainerType.SATURN ]), Utils.randSeedItem([ TrainerType.ZINZOLIN, TrainerType.ROOD ]), Utils.randSeedItem([ TrainerType.XEROSIC, TrainerType.BRYONY ]), Utils.randSeedItem([ TrainerType.FABA, TrainerType.PLUMERIA ]), TrainerType.OLEANA, Utils.randSeedItem([ TrainerType.GIACOMO, TrainerType.MELA, TrainerType.ATTICUS, TrainerType.ORTEGA, TrainerType.ERI ]) ];
+      if (this.value === 3) {
+        if (rand !== 2) {
+          trainerTypes = [ TrainerType.UNKNOWN, TrainerType.UNKNOWN, Utils.randSeedItem([ TrainerType.TABITHA, TrainerType.COURTNEY ]) ];
+          break;
+        } else {
+          trainerTypes = [ TrainerType.UNKNOWN, TrainerType.UNKNOWN, Utils.randSeedItem([ TrainerType.MATT, TrainerType.SHELLY ]) ];
+          break;
+        }
+      }
+      if (this.value === 7) {
+        if (rand !== 2) {
+          trainerTypes = [ TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.FABA ];
+          break;
+        } else {
+          trainerTypes = [ TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.PLUMERIA ];
+          break;
+        }
+      }
+      break;
+    case 115:
+      battleConfig.setSeedOffsetWave(35).setCustomModifierRewards({ guaranteedModifierTiers: [ ModifierTier.ROGUE, ModifierTier.ROGUE, ModifierTier.ULTRA, ModifierTier.ULTRA, ModifierTier.ULTRA ], allowLuckUpgrades: false });
+      trainerTypes = [ TrainerType.ROCKET_BOSS_GIOVANNI_1, TrainerType.ROCKET_BOSS_GIOVANNI_1, TrainerType.UNKNOWN, TrainerType.CYRUS, TrainerType.GHETSIS, TrainerType.LYSANDRE, TrainerType.UNKNOWN, TrainerType.ROSE, TrainerType.PENNY ];
+      if (this.value === 3) {
+        if (rand !== 2) {
+          trainerTypes = [ TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.MAXIE ];
+          break;
+        } else {
+          trainerTypes = [ TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.ARCHIE ];
+          break;
+        }
+      }
+      if (this.value === 7) {
+        if (rand !== 2) {
+          trainerTypes = [ TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.LUSAMINE ];
+          break;
+        } else {
+          trainerTypes = [ TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.GUZMA ];
+          break;
+        }
+      }
+      break;
+    case 165:
+      battleConfig.setSeedOffsetWave(35).setCustomModifierRewards({ guaranteedModifierTiers: [ ModifierTier.ROGUE, ModifierTier.ROGUE, ModifierTier.ULTRA, ModifierTier.ULTRA, ModifierTier.ULTRA, ModifierTier.ULTRA ], allowLuckUpgrades: false });
+      trainerTypes = [ TrainerType.ROCKET_BOSS_GIOVANNI_2, TrainerType.ROCKET_BOSS_GIOVANNI_2, TrainerType.UNKNOWN, TrainerType.CYRUS_2, TrainerType.GHETSIS_2, TrainerType.LYSANDRE_2, TrainerType.UNKNOWN, TrainerType.ROSE_2, TrainerType.PENNY_2 ];
+      if (this.value === 3) {
+        if (rand !== 2) {
+          trainerTypes = [ TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.MAXIE_2 ];
+          break;
+        } else {
+          trainerTypes = [ TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.ARCHIE_2 ];
+          break;
+        }
+      }
+      if (this.value === 7) {
+        if (rand !== 2) {
+          trainerTypes = [ TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.LUSAMINE_2 ];
+          break;
+        } else {
+          trainerTypes = [ TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.GUZMA_2 ];
+          break;
+        }
+      }
+      break;
     case 182:
       trainerTypes = [ TrainerType.LORELEI, TrainerType.WILL, TrainerType.SIDNEY, TrainerType.AARON, TrainerType.SHAUNTAL, TrainerType.MALVA, Utils.randSeedItem([ TrainerType.HALA, TrainerType.MOLAYNE ]), TrainerType.MARNIE_ELITE, TrainerType.RIKA ];
       break;
