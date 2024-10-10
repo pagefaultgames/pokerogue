@@ -4,7 +4,7 @@ import { applyPreAttackAbAttrs, AddSecondStrikeAbAttr, IgnoreMoveEffectsAbAttr, 
 import { ArenaTagSide, ConditionalProtectTag } from "#app/data/arena-tag";
 import { MoveAnim } from "#app/data/battle-anims";
 import { BattlerTagLapseType, DamageProtectedTag, ProtectedTag, SemiInvulnerableTag, SubstituteTag } from "#app/data/battler-tags";
-import { MoveTarget, applyMoveAttrs, OverrideMoveEffectAttr, MultiHitAttr, AttackMove, FixedDamageAttr, VariableTargetAttr, MissEffectAttr, MoveFlags, applyFilteredMoveAttrs, MoveAttr, MoveEffectAttr, MoveEffectTrigger, ChargeAttr, MoveCategory, NoEffectAttr, HitsTagAttr, ToxicAccuracyAttr, VariableMoveCategoryAttr } from "#app/data/move";
+import { MoveTarget, applyMoveAttrs, OverrideMoveEffectAttr, MultiHitAttr, AttackMove, FixedDamageAttr, VariableTargetAttr, MissEffectAttr, MoveFlags, applyFilteredMoveAttrs, MoveAttr, MoveEffectAttr, MoveEffectTrigger, ChargeAttr, MoveCategory, NoEffectAttr, HitsTagAttr, ToxicAccuracyAttr } from "#app/data/move";
 import { SpeciesFormChangePostMoveTrigger } from "#app/data/pokemon-forms";
 import { BattlerTagType } from "#app/enums/battler-tag-type";
 import { Moves } from "#app/enums/moves";
@@ -192,9 +192,7 @@ export class MoveEffectPhase extends PokemonPhase {
              * made visible to the user until the resulting {@linkcode DamagePhase}
              * is invoked.
              */
-          const moveCategory = new Utils.NumberHolder(move.category);
-          applyMoveAttrs(VariableMoveCategoryAttr, user, target, move, moveCategory);
-          const hitResult = !isProtected ? target.apply(user, move, moveCategory.value) : HitResult.NO_EFFECT;
+          const hitResult = !isProtected ? target.apply(user, move) : HitResult.NO_EFFECT;
 
           /** Does {@linkcode hitResult} indicate that damage was dealt to the target? */
           const dealsDamage = [
