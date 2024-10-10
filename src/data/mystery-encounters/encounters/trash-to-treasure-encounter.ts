@@ -54,6 +54,7 @@ export const TrashToTreasureEncounter: MysteryEncounter =
         text: `${namespace}:intro`,
       },
     ])
+    .setLocalizationKey(`${namespace}`)
     .withTitle(`${namespace}:title`)
     .withDescription(`${namespace}:description`)
     .withQuery(`${namespace}:query`)

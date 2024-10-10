@@ -356,11 +356,11 @@ export function getEggTierTextTint(tier: EggTier): integer {
   switch (tier) {
   case EggTier.COMMON:
     return getModifierTierTextTint(ModifierTier.COMMON);
-  case EggTier.GREAT:
+  case EggTier.RARE:
     return getModifierTierTextTint(ModifierTier.GREAT);
-  case EggTier.ULTRA:
+  case EggTier.EPIC:
     return getModifierTierTextTint(ModifierTier.ULTRA);
-  case EggTier.MASTER:
+  case EggTier.LEGENDARY:
     return getModifierTierTextTint(ModifierTier.MASTER);
   }
 }

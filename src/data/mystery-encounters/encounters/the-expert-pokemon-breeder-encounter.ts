@@ -196,6 +196,7 @@ export const TheExpertPokemonBreederEncounter: MysteryEncounter =
 
       return true;
     })
+    .setLocalizationKey(`${namespace}`)
     .withTitle(`${namespace}:title`)
     .withDescription(`${namespace}:description`)
     .withQuery(`${namespace}:query`)
@@ -493,7 +494,7 @@ function getEggOptions(scene: BattleScene, commonEggs: number, rareEggs: number)
         pulled: false,
         sourceType: EggSourceType.EVENT,
         eggDescriptor: eggDescription,
-        tier: EggTier.GREAT
+        tier: EggTier.RARE
       });
     }
   }
