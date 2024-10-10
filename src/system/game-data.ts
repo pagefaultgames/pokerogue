@@ -1378,7 +1378,7 @@ export class GameData {
         link.remove();
       };
       if (!bypassLogin && dataType < GameDataType.SETTINGS) {
-        let promise: Promise<any> = Promise.resolve(null);
+        let promise: Promise<string | null> = Promise.resolve(null);
 
         if (dataType === GameDataType.SYSTEM) {
           promise = pokerogueApi.savedata.system.get({ clientSessionId });
@@ -1386,18 +1386,16 @@ export class GameData {
           promise = pokerogueApi.savedata.session.get({ slot: slotId, clientSessionId });
         }
 
-        promise
-          .then(response => response.text())
-          .then(response => {
-            if (!response.length || response[0] !== "{") {
-              console.error(response);
-              resolve(false);
-              return;
-            }
+        promise.then(response => {
+          if (!response?.length || response[0] !== "{") {
+            console.error(response);
+            resolve(false);
+            return;
+          }
 
-            handleData(response);
-            resolve(true);
-          });
+          handleData(response);
+          resolve(true);
+        });
       } else {
         const data = localStorage.getItem(dataKey);
         if (data) {
