@@ -156,6 +156,7 @@ class DefaultOverrides {
   readonly EGG_VARIANT_OVERRIDE: VariantTier | null = null;
   readonly EGG_FREE_GACHA_PULLS_OVERRIDE: boolean = false;
   readonly EGG_GACHA_PULL_COUNT_OVERRIDE: number = 0;
+  readonly UNLIMITED_EGG_COUNT_OVERRIDE: boolean = false;
 
   // -------------------------
   // MYSTERY ENCOUNTER OVERRIDES

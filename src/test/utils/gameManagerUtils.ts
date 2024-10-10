@@ -86,7 +86,7 @@ export function waitUntil(truth) {
 export function getMovePosition(scene: BattleScene, pokemonIndex: 0 | 1, move: Moves) {
   const playerPokemon = scene.getPlayerField()[pokemonIndex];
   const moveSet = playerPokemon.getMoveset();
-  const index = moveSet.findIndex((m) => m?.moveId === move);
+  const index = moveSet.findIndex((m) => m?.moveId === move && m?.ppUsed < m?.getMovePp());
   console.log(`Move position for ${Moves[move]} (=${move}):`, index);
   return index;
 }

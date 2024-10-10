@@ -196,7 +196,7 @@ export class TitlePhase extends Phase {
         this.scene.gameMode = getGameMode(GameModes.DAILY);
 
         this.scene.setSeed(seed);
-        this.scene.resetSeed(1);
+        this.scene.resetSeed(0);
 
         this.scene.money = this.scene.gameMode.getStartingMoney();
 

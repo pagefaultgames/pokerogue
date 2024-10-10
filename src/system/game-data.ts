@@ -1121,10 +1121,16 @@ export class GameData {
     });
   }
 
+  /**
+   * Delete the session data at the given slot when overwriting a save file
+   * For deleting the session of a finished run, use {@linkcode tryClearSession}
+   * @param slotId the slot to clear
+   * @returns Promise with result `true` if the session was deleted successfully, `false` otherwise
+   */
   deleteSession(slotId: integer): Promise<boolean> {
     return new Promise<boolean>(resolve => {
       if (bypassLogin) {
-        localStorage.removeItem(`sessionData${this.scene.sessionSlotId ? this.scene.sessionSlotId : ""}_${loggedInUser?.username}`);
+        localStorage.removeItem(`sessionData${slotId ? slotId : ""}_${loggedInUser?.username}`);
         return resolve(true);
       }
 
@@ -1135,7 +1141,7 @@ export class GameData {
         Utils.apiFetch(`savedata/session/delete?slot=${slotId}&clientSessionId=${clientSessionId}`, true).then(response => {
           if (response.ok) {
             loggedInUser!.lastSessionSlot = -1; // TODO: is the bang correct?
-            localStorage.removeItem(`sessionData${this.scene.sessionSlotId ? this.scene.sessionSlotId : ""}_${loggedInUser?.username}`);
+            localStorage.removeItem(`sessionData${slotId ? slotId : ""}_${loggedInUser?.username}`);
             resolve(true);
           }
           return response.text();
@@ -1186,7 +1192,9 @@ export class GameData {
 
 
   /**
-   * Attempt to clear session data. After session data is removed, attempt to update user info so the menu updates
+   * Attempt to clear session data after the end of a run
+   * After session data is removed, attempt to update user info so the menu updates
+   * To delete an unfinished run instead, use {@linkcode deleteSession}
    */
   async tryClearSession(scene: BattleScene, slotId: integer): Promise<[success: boolean, newClear: boolean]> {
     let result: [boolean, boolean] = [ false, false ];
@@ -1200,7 +1208,7 @@ export class GameData {
 
       if (response.ok) {
           loggedInUser!.lastSessionSlot = -1; // TODO: is the bang correct?
-          localStorage.removeItem(`sessionData${this.scene.sessionSlotId ? this.scene.sessionSlotId : ""}_${loggedInUser?.username}`);
+          localStorage.removeItem(`sessionData${slotId ? slotId : ""}_${loggedInUser?.username}`);
       }
 
       const jsonResponse: PokerogueApiClearSessionData = await response.json();

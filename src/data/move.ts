@@ -970,13 +970,16 @@ export class MoveEffectAttr extends MoveAttr {
   public lastHitOnly: boolean;
   /** Should this effect only apply on the first target hit? */
   public firstTargetOnly: boolean;
+  /** Overrides the secondary effect chance for this attr if set. */
+  public effectChanceOverride?: number;
 
-  constructor(selfTarget?: boolean, trigger?: MoveEffectTrigger, firstHitOnly: boolean = false, lastHitOnly: boolean = false, firstTargetOnly: boolean = false) {
+  constructor(selfTarget?: boolean, trigger?: MoveEffectTrigger, firstHitOnly: boolean = false, lastHitOnly: boolean = false, firstTargetOnly: boolean = false, effectChanceOverride?: number) {
     super(selfTarget);
-    this.trigger = trigger !== undefined ? trigger : MoveEffectTrigger.POST_APPLY;
+    this.trigger = trigger ?? MoveEffectTrigger.POST_APPLY;
     this.firstHitOnly = firstHitOnly;
     this.lastHitOnly = lastHitOnly;
     this.firstTargetOnly = firstTargetOnly;
+    this.effectChanceOverride = effectChanceOverride;
   }
 
   /**
@@ -1001,15 +1004,15 @@ export class MoveEffectAttr extends MoveAttr {
 
   /**
    * Gets the used move's additional effect chance.
-   * If user's ability has MoveEffectChanceMultiplierAbAttr or IgnoreMoveEffectsAbAttr modifies the base chance.
+   * Chance is modified by {@linkcode MoveEffectChanceMultiplierAbAttr} and {@linkcode IgnoreMoveEffectsAbAttr}.
    * @param user {@linkcode Pokemon} using this move
-   * @param target {@linkcode Pokemon} target of this move
+   * @param target {@linkcode Pokemon | Target} of this move
    * @param move {@linkcode Move} being used
-   * @param selfEffect {@linkcode Boolean} if move targets user.
-   * @returns Move chance value.
+   * @param selfEffect `true` if move targets user.
+   * @returns Move effect chance value.
    */
   getMoveChance(user: Pokemon, target: Pokemon, move: Move, selfEffect?: Boolean, showAbility?: Boolean): integer {
-    const moveChance = new Utils.NumberHolder(move.chance);
+    const moveChance = new Utils.NumberHolder(this.effectChanceOverride ?? move.chance);
 
     applyAbAttrs(MoveEffectChanceMultiplierAbAttr, user, null, false, moveChance, move, target, selfEffect, showAbility);
 
@@ -1935,12 +1938,21 @@ export class IncrementMovePriorityAttr extends MoveAttr {
  * @see {@linkcode apply}
  */
 export class MultiHitAttr extends MoveAttr {
+  /** This move's intrinsic multi-hit type. It should never be modified. */
+  private readonly intrinsicMultiHitType: MultiHitType;
+  /** This move's current multi-hit type. It may be temporarily modified by abilities (e.g., Battle Bond). */
   private multiHitType: MultiHitType;
 
   constructor(multiHitType?: MultiHitType) {
     super();
 
-    this.multiHitType = multiHitType !== undefined ? multiHitType : MultiHitType._2_TO_5;
+    this.intrinsicMultiHitType = multiHitType !== undefined ? multiHitType : MultiHitType._2_TO_5;
+    this.multiHitType = this.intrinsicMultiHitType;
+  }
+
+  // Currently used by `battle_bond.test.ts`
+  getMultiHitType(): MultiHitType {
+    return this.multiHitType;
   }
 
   /**
@@ -1954,7 +1966,7 @@ export class MultiHitAttr extends MoveAttr {
    * @returns True
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    const hitType = new Utils.NumberHolder(this.multiHitType);
+    const hitType = new Utils.NumberHolder(this.intrinsicMultiHitType);
     applyMoveAttrs(ChangeMultiHitTypeAttr, user, target, move, hitType);
     this.multiHitType = hitType.value;
 
@@ -2752,14 +2764,17 @@ export class AwaitCombinedPledgeAttr extends OverrideMoveEffectAttr {
 
 /**
  * Attribute used for moves that change stat stages
- * @param stats {@linkcode BattleStat} array of stats to be changed
- * @param stages stages by which to change the stats, from -6 to 6
- * @param selfTarget whether the changes are applied to the user (true) or the target (false)
- * @param condition {@linkcode MoveConditionFunc} optional condition to trigger the stat change
- * @param firstHitOnly whether the stat change only applies on the first hit of a multi hit move
- * @param moveEffectTrigger {@linkcode MoveEffectTrigger} the trigger for the effect to take place
- * @param firstTargetOnly whether, if this is a multi target move, to only apply the effect after the first target is hit, rather than once for each target
- * @param lastHitOnly whether the effect should only apply after the last hit of a multi hit move
+ *
+ * @param stats {@linkcode BattleStat} Array of stat(s) to change
+ * @param stages How many stages to change the stat(s) by, [-6, 6]
+ * @param selfTarget `true` if the move is self-targetting
+ * @param condition {@linkcode MoveConditionFunc} Optional condition to be checked in order to apply the changes
+ * @param showMessage `true` to display a message; default `true`
+ * @param firstHitOnly `true` if only the first hit of a multi hit move should cause a stat stage change; default `false`
+ * @param moveEffectTrigger {@linkcode MoveEffectTrigger} When the stat change should trigger; default {@linkcode MoveEffectTrigger.HIT}
+ * @param firstTargetOnly `true` if a move that hits multiple pokemon should only trigger the stat change if it hits at least one pokemon, rather than once per hit pokemon; default `false`
+ * @param lastHitOnly `true` if the effect should only apply after the last hit of a multi hit move; default `false`
+ * @param effectChanceOverride Will override the move's normal secondary effect chance if specified
  *
  * @extends MoveEffectAttr
  * @see {@linkcode apply}
@@ -2767,14 +2782,14 @@ export class AwaitCombinedPledgeAttr extends OverrideMoveEffectAttr {
 export class StatStageChangeAttr extends MoveEffectAttr {
   public stats: BattleStat[];
   public stages: integer;
-  private condition: MoveConditionFunc | null;
+  private condition?: MoveConditionFunc | null;
   private showMessage: boolean;
 
-  constructor(stats: BattleStat[], stages: integer, selfTarget?: boolean, condition?: MoveConditionFunc | null, showMessage: boolean = true, firstHitOnly: boolean = false, moveEffectTrigger: MoveEffectTrigger = MoveEffectTrigger.HIT, firstTargetOnly: boolean = false, lastHitOnly: boolean = false) {
-    super(selfTarget, moveEffectTrigger, firstHitOnly, lastHitOnly, firstTargetOnly);
+  constructor(stats: BattleStat[], stages: integer, selfTarget?: boolean, condition?: MoveConditionFunc | null, showMessage: boolean = true, firstHitOnly: boolean = false, moveEffectTrigger: MoveEffectTrigger = MoveEffectTrigger.HIT, firstTargetOnly: boolean = false, lastHitOnly: boolean = false, effectChanceOverride?: number) {
+    super(selfTarget, moveEffectTrigger, firstHitOnly, lastHitOnly, firstTargetOnly, effectChanceOverride);
     this.stats = stats;
     this.stages = stages;
-    this.condition = condition!; // TODO: is this bang correct?
+    this.condition = condition;
     this.showMessage = showMessage;
   }
 
@@ -4101,11 +4116,11 @@ export class StatusCategoryOnAllyAttr extends VariableMoveCategoryAttr {
    * @param user {@linkcode Pokemon} using the move
    * @param target {@linkcode Pokemon} target of the move
    * @param move {@linkcode Move} with this attribute
-   * @param args [0] {@linkcode Utils.IntegerHolder} The category of the move
+   * @param args [0] {@linkcode Utils.NumberHolder} The category of the move
    * @returns true if the function succeeds
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    const category = (args[0] as Utils.IntegerHolder);
+    const category = (args[0] as Utils.NumberHolder);
 
     if (user.getAlly() === target) {
       category.value = MoveCategory.STATUS;
@@ -4829,14 +4844,14 @@ export class GulpMissileTagAttr extends MoveEffectAttr {
 
   /**
    * Adds BattlerTagType from GulpMissileTag based on the Pokemon's HP ratio.
-   * @param {Pokemon} user The Pokemon using the move.
-   * @param {Pokemon} target The Pokemon being targeted by the move.
-   * @param {Move} move The move being used.
-   * @param {any[]} args Additional arguments, if any.
+   * @param user The Pokemon using the move.
+   * @param _target N/A
+   * @param move The move being used.
+   * @param _args N/A
    * @returns Whether the BattlerTag is applied.
    */
-  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean | Promise<boolean> {
-    if (!super.apply(user, target, move, args)) {
+  apply(user: Pokemon, _target: Pokemon, move: Move, _args: any[]): boolean {
+    if (!super.apply(user, _target, move, _args)) {
       return false;
     }
 
@@ -9556,9 +9571,8 @@ export function initMoves() {
     new AttackMove(Moves.TRIPLE_ARROWS, Type.FIGHTING, MoveCategory.PHYSICAL, 90, 100, 10, 30, 0, 8)
       .makesContact(false)
       .attr(HighCritAttr)
-      .attr(StatStageChangeAttr, [ Stat.DEF ], -1)
-      .attr(FlinchAttr)
-      .partial(),
+      .attr(StatStageChangeAttr, [ Stat.DEF ], -1, undefined, undefined, undefined, undefined, undefined, undefined, undefined, 50)
+      .attr(FlinchAttr),
     new AttackMove(Moves.INFERNAL_PARADE, Type.GHOST, MoveCategory.SPECIAL, 60, 100, 15, 30, 0, 8)
       .attr(StatusEffectAttr, StatusEffect.BURN)
       .attr(MovePowerMultiplierAttr, (user, target, move) => target.status ? 2 : 1),

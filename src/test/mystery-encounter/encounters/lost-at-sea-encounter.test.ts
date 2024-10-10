@@ -14,6 +14,7 @@ import { initSceneWithoutEncounterPhase } from "#test/utils/gameManagerUtils";
 import BattleScene from "#app/battle-scene";
 import { MysteryEncounterPhase } from "#app/phases/mystery-encounter-phases";
 import { PartyExpPhase } from "#app/phases/party-exp-phase";
+import i18next from "i18next";
 
 
 const namespace = "mysteryEncounters/lostAtSea";
@@ -86,8 +87,8 @@ describe("Lost at Sea - Mystery Encounter", () => {
     const onInitResult = onInit!(scene);
 
     expect(LostAtSeaEncounter.dialogueTokens?.damagePercentage).toBe("25");
-    expect(LostAtSeaEncounter.dialogueTokens?.option1RequiredMove).toBe("move:surf.name");
-    expect(LostAtSeaEncounter.dialogueTokens?.option2RequiredMove).toBe("move:fly.name");
+    expect(LostAtSeaEncounter.dialogueTokens?.option1RequiredMove).toBe(i18next.t("move:surf.name"));
+    expect(LostAtSeaEncounter.dialogueTokens?.option2RequiredMove).toBe(i18next.t("move:fly.name"));
     expect(onInitResult).toBe(true);
   });
 

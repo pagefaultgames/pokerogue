@@ -38,10 +38,6 @@ export function shiftCharCodes(str: string, shiftCount: integer) {
   return newStr;
 }
 
-export function clampInt(value: integer, min: integer, max: integer): integer {
-  return Math.min(Math.max(value, min), max);
-}
-
 export function randGauss(stdev: number, mean: number = 0): number {
   if (!stdev) {
     return 0;
