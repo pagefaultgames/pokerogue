@@ -178,14 +178,14 @@ export default class PartyUiHandler extends MessageUiHandler {
 
   public static FilterNonFainted = (pokemon: PlayerPokemon) => {
     if (pokemon.isFainted()) {
-      return i18next.t("partyUiHandler:noEnergy", { pokemonName: getPokemonNameWithAffix(pokemon) });
+      return i18next.t("partyUiHandler:noEnergy", { pokemonName: getPokemonNameWithAffix(pokemon, false) });
     }
     return null;
   };
 
   public static FilterFainted = (pokemon: PlayerPokemon) => {
     if (!pokemon.isFainted()) {
-      return i18next.t("partyUiHandler:hasEnergy", { pokemonName: getPokemonNameWithAffix(pokemon) });
+      return i18next.t("partyUiHandler:hasEnergy", { pokemonName: getPokemonNameWithAffix(pokemon, false) });
     }
     return null;
   };
@@ -199,7 +199,7 @@ export default class PartyUiHandler extends MessageUiHandler {
     const challengeAllowed = new Utils.BooleanHolder(true);
     applyChallenges(this.scene.gameMode, ChallengeType.POKEMON_IN_BATTLE, pokemon, challengeAllowed);
     if (!challengeAllowed.value) {
-      return i18next.t("partyUiHandler:cantBeUsed", { pokemonName: getPokemonNameWithAffix(pokemon) });
+      return i18next.t("partyUiHandler:cantBeUsed", { pokemonName: getPokemonNameWithAffix(pokemon, false) });
     }
     return null;
   };
@@ -209,7 +209,7 @@ export default class PartyUiHandler extends MessageUiHandler {
   public static FilterItemMaxStacks = (pokemon: PlayerPokemon, modifier: PokemonHeldItemModifier) => {
     const matchingModifier = pokemon.scene.findModifier(m => m instanceof PokemonHeldItemModifier && m.pokemonId === pokemon.id && m.matchType(modifier)) as PokemonHeldItemModifier;
     if (matchingModifier && matchingModifier.stackCount === matchingModifier.getMaxStackCount(pokemon.scene)) {
-      return i18next.t("partyUiHandler:tooManyItems", { pokemonName: getPokemonNameWithAffix(pokemon) });
+      return i18next.t("partyUiHandler:tooManyItems", { pokemonName: getPokemonNameWithAffix(pokemon, false) });
     }
     return null;
   };
@@ -468,18 +468,18 @@ export default class PartyUiHandler extends MessageUiHandler {
           this.clearOptions();
           ui.playSelect();
           pokemon.pauseEvolutions = !pokemon.pauseEvolutions;
-          this.showText(i18next.t(pokemon.pauseEvolutions ? "partyUiHandler:pausedEvolutions" : "partyUiHandler:unpausedEvolutions", { pokemonName: getPokemonNameWithAffix(pokemon) }), undefined, () => this.showText("", 0), null, true);
+          this.showText(i18next.t(pokemon.pauseEvolutions ? "partyUiHandler:pausedEvolutions" : "partyUiHandler:unpausedEvolutions", { pokemonName: getPokemonNameWithAffix(pokemon, false) }), undefined, () => this.showText("", 0), null, true);
         } else if (option === PartyOption.UNSPLICE) {
           this.clearOptions();
           ui.playSelect();
-          this.showText(i18next.t("partyUiHandler:unspliceConfirmation", { fusionName: pokemon.fusionSpecies?.name, pokemonName: pokemon.name }), null, () => {
+          this.showText(i18next.t("partyUiHandler:unspliceConfirmation", { fusionName: pokemon.fusionSpecies?.name, pokemonName: pokemon.getName() }), null, () => {
             ui.setModeWithoutClear(Mode.CONFIRM, () => {
-              const fusionName = pokemon.name;
+              const fusionName = pokemon.getName(false);
               pokemon.unfuse().then(() => {
                 this.clearPartySlots();
                 this.populatePartySlots();
                 ui.setMode(Mode.PARTY);
-                this.showText(i18next.t("partyUiHandler:wasReverted", { fusionName: fusionName, pokemonName: pokemon.name }), undefined, () => {
+                this.showText(i18next.t("partyUiHandler:wasReverted", { fusionName: fusionName, pokemonName: pokemon.getName() }), undefined, () => {
                   ui.setMode(Mode.PARTY);
                   this.showText("", 0);
                 }, null, true);
@@ -494,7 +494,7 @@ export default class PartyUiHandler extends MessageUiHandler {
           ui.playSelect();
           if (this.cursor >= this.scene.currentBattle.getBattlerCount() || !pokemon.isAllowedInBattle()) {
             this.blockInput = true;
-            this.showText(i18next.t("partyUiHandler:releaseConfirmation", { pokemonName: getPokemonNameWithAffix(pokemon) }), null, () => {
+            this.showText(i18next.t("partyUiHandler:releaseConfirmation", { pokemonName: getPokemonNameWithAffix(pokemon, false) }), null, () => {
               this.blockInput = false;
               ui.setModeWithoutClear(Mode.CONFIRM, () => {
                 ui.setMode(Mode.PARTY);
@@ -1056,7 +1056,7 @@ export default class PartyUiHandler extends MessageUiHandler {
   }
 
   doRelease(slotIndex: integer): void {
-    this.showText(this.getReleaseMessage(getPokemonNameWithAffix(this.scene.getParty()[slotIndex])), null, () => {
+    this.showText(this.getReleaseMessage(getPokemonNameWithAffix(this.scene.getParty()[slotIndex], false)), null, () => {
       this.clearPartySlots();
       this.scene.removePartyMemberModifiers(slotIndex);
       const releasedPokemon = this.scene.getParty().splice(slotIndex, 1)[0];
@@ -1214,7 +1214,7 @@ class PartySlot extends Phaser.GameObjects.Container {
     const slotInfoContainer = this.scene.add.container(0, 0);
     this.add(slotInfoContainer);
 
-    let displayName = this.pokemon.getNameToRender();
+    let displayName = this.pokemon.getNameToRender(false);
     let nameTextWidth: number;
 
     const nameSizeTest = addTextObject(this.scene, 0, 0, displayName, TextStyle.PARTY);
@@ -1281,12 +1281,12 @@ class PartySlot extends Phaser.GameObjects.Container {
     }
 
     if (this.pokemon.isShiny()) {
-      const doubleShiny = this.pokemon.isFusion() && this.pokemon.shiny && this.pokemon.fusionShiny;
+      const doubleShiny = this.pokemon.isDoubleShiny(false);
 
       const shinyStar = this.scene.add.image(0, 0, `shiny_star_small${doubleShiny ? "_1" : ""}`);
       shinyStar.setOrigin(0, 0);
       shinyStar.setPositionRelative(this.slotName, -9, 3);
-      shinyStar.setTint(getVariantTint(!doubleShiny ? this.pokemon.getVariant() : this.pokemon.variant));
+      shinyStar.setTint(getVariantTint(this.pokemon.getBaseVariant(doubleShiny)));
 
       slotInfoContainer.add(shinyStar);
 
@@ -1294,7 +1294,7 @@ class PartySlot extends Phaser.GameObjects.Container {
         const fusionShinyStar = this.scene.add.image(0, 0, "shiny_star_small_2");
         fusionShinyStar.setOrigin(0, 0);
         fusionShinyStar.setPosition(shinyStar.x, shinyStar.y);
-        fusionShinyStar.setTint(getVariantTint(this.pokemon.fusionVariant));
+        fusionShinyStar.setTint(getVariantTint(this.pokemon.illusion.fusionVariant ?? this.pokemon.fusionVariant));
 
         slotInfoContainer.add(fusionShinyStar);
       }
