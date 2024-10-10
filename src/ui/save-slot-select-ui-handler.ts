@@ -10,6 +10,7 @@ import MessageUiHandler from "./message-ui-handler";
 import { TextStyle, addTextObject } from "./text";
 import { Mode } from "./ui";
 import { addWindow } from "./ui-theme";
+import { RunDisplayMode } from "#app/ui/run-info-ui-handler";
 
 const sessionSlotCount = 5;
 
@@ -33,7 +34,7 @@ export default class SaveSlotSelectUiHandler extends MessageUiHandler {
 
   private scrollCursor: integer = 0;
 
-  private cursorObj: Phaser.GameObjects.NineSlice | null;
+  private cursorObj: Phaser.GameObjects.Container | null;
 
   private sessionSlotsContainerInitialY: number;
 
@@ -83,9 +84,11 @@ export default class SaveSlotSelectUiHandler extends MessageUiHandler {
     this.saveSlotSelectCallback = args[1] as SaveSlotSelectCallback;
 
     this.saveSlotSelectContainer.setVisible(true);
-    this.populateSessionSlots();
-    this.setScrollCursor(0);
-    this.setCursor(0);
+    this.populateSessionSlots()
+      .then(() => {
+        this.setScrollCursor(0);
+        this.setCursor(0);
+      });
 
     return true;
   }
@@ -147,21 +150,28 @@ export default class SaveSlotSelectUiHandler extends MessageUiHandler {
         success = true;
       }
     } else {
+      const cursorPosition = this.cursor + this.scrollCursor;
       switch (button) {
       case Button.UP:
         if (this.cursor) {
-          success = this.setCursor(this.cursor - 1);
+          // Check to prevent cursor from accessing a negative index
+          success = (this.cursor === 0) ? this.setCursor(this.cursor) : this.setCursor(this.cursor - 1, cursorPosition);
         } else if (this.scrollCursor) {
-          success = this.setScrollCursor(this.scrollCursor - 1);
+          success = this.setScrollCursor(this.scrollCursor - 1, cursorPosition);
         }
         break;
       case Button.DOWN:
         if (this.cursor < 2) {
-          success = this.setCursor(this.cursor + 1);
+          success = this.setCursor(this.cursor + 1, this.cursor);
         } else if (this.scrollCursor < sessionSlotCount - 3) {
-          success = this.setScrollCursor(this.scrollCursor + 1);
+          success = this.setScrollCursor(this.scrollCursor + 1, cursorPosition);
         }
         break;
+      case Button.RIGHT:
+        if (this.sessionSlots[cursorPosition].hasData && this.sessionSlots[cursorPosition].saveData) {
+          this.scene.ui.setOverlayMode(Mode.RUN_INFO, this.sessionSlots[cursorPosition].saveData, RunDisplayMode.SESSION_PREVIEW);
+          success = true;
+        }
       }
     }
 
@@ -174,10 +184,10 @@ export default class SaveSlotSelectUiHandler extends MessageUiHandler {
     return success || error;
   }
 
-  populateSessionSlots() {
+  async populateSessionSlots() {
     for (let s = 0; s < sessionSlotCount; s++) {
       const sessionSlot = new SessionSlot(this.scene, s);
-      sessionSlot.load();
+      await sessionSlot.load();
       this.scene.add.existing(sessionSlot);
       this.sessionSlotsContainer.add(sessionSlot);
       this.sessionSlots.push(sessionSlot);
@@ -198,25 +208,74 @@ export default class SaveSlotSelectUiHandler extends MessageUiHandler {
     this.saveSlotSelectMessageBoxContainer.setVisible(!!text?.length);
   }
 
-  setCursor(cursor: integer): boolean {
+  /**
+   * setCursor takes user navigation as an input and positions the cursor accordingly
+   * @param cursor the index provided to the cursor
+   * @param prevCursor the previous index occupied by the cursor - optional
+   * @returns `true` if the cursor position has changed | `false` if it has not
+   */
+  override setCursor(cursor: integer, prevCursor?: integer): boolean {
     const changed = super.setCursor(cursor);
 
     if (!this.cursorObj) {
-      this.cursorObj = this.scene.add.nineslice(0, 0, "select_cursor_highlight_thick", undefined, 296, 44, 6, 6, 6, 6);
-      this.cursorObj.setOrigin(0, 0);
+      this.cursorObj = this.scene.add.container(0, 0);
+      const cursorBox = this.scene.add.nineslice(0, 0, "select_cursor_highlight_thick", undefined, 296, 44, 6, 6, 6, 6);
+      const rightArrow = this.scene.add.image(0, 0, "cursor");
+      rightArrow.setPosition(160, 0);
+      rightArrow.setName("rightArrow");
+      this.cursorObj.add([ cursorBox, rightArrow ]);
       this.sessionSlotsContainer.add(this.cursorObj);
     }
-    this.cursorObj.setPosition(4, 4 + (cursor + this.scrollCursor) * 56);
+    const cursorPosition = cursor + this.scrollCursor;
+    const cursorIncrement = cursorPosition * 56;
+    if (this.sessionSlots[cursorPosition] && this.cursorObj) {
+      const hasData = this.sessionSlots[cursorPosition].hasData;
+      // If the session slot lacks session data, it does not move from its default, central position.
+      // Only session slots with session data will move leftwards and have a visible arrow.
+      if (!hasData) {
+        this.cursorObj.setPosition(151, 26 + cursorIncrement);
+        this.sessionSlots[cursorPosition].setPosition(0, cursorIncrement);
+      } else {
+        this.cursorObj.setPosition(145, 26 + cursorIncrement);
+        this.sessionSlots[cursorPosition].setPosition(-6, cursorIncrement);
+      }
+      this.setArrowVisibility(hasData);
+    }
+    if (!Utils.isNullOrUndefined(prevCursor)) {
+      this.revertSessionSlot(prevCursor);
+    }
 
     return changed;
   }
 
-  setScrollCursor(scrollCursor: integer): boolean {
+  /**
+   * Helper function that resets the session slot position to its default central position
+   * @param prevCursor the previous location of the cursor
+   */
+  revertSessionSlot(prevCursor: integer): void {
+    const sessionSlot = this.sessionSlots[prevCursor];
+    if (sessionSlot) {
+      sessionSlot.setPosition(0, prevCursor * 56);
+    }
+  }
+
+  /**
+   * Helper function that checks if the session slot involved holds data or not
+   * @param hasData `true` if session slot contains data | 'false' if not
+   */
+  setArrowVisibility(hasData: boolean): void {
+    if (this.cursorObj) {
+      const rightArrow = this.cursorObj?.getByName("rightArrow") as Phaser.GameObjects.Image;
+      rightArrow.setVisible(hasData);
+    }
+  }
+
+  setScrollCursor(scrollCursor: integer, priorCursor?: integer): boolean {
     const changed = scrollCursor !== this.scrollCursor;
 
     if (changed) {
       this.scrollCursor = scrollCursor;
-      this.setCursor(this.cursor);
+      this.setCursor(this.cursor, priorCursor);
       this.scene.tweens.add({
         targets: this.sessionSlotsContainer,
         y: this.sessionSlotsContainerInitialY - 56 * scrollCursor,
@@ -253,6 +312,8 @@ class SessionSlot extends Phaser.GameObjects.Container {
   public slotId: integer;
   public hasData: boolean;
   private loadingLabel: Phaser.GameObjects.Text;
+
+  public saveData: SessionSaveData;
 
   constructor(scene: BattleScene, slotId: integer) {
     super(scene, 0, slotId * 56);
@@ -337,6 +398,7 @@ class SessionSlot extends Phaser.GameObjects.Container {
           return;
         }
         this.hasData = true;
+        this.saveData = sessionData;
         await this.setupWithData(sessionData);
         resolve(true);
       });
