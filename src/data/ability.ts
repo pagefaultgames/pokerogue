@@ -3793,7 +3793,7 @@ export class PostDancingMoveAbAttr extends PostMoveUsedAbAttr {
 }
 
 /**
- * Ability attribute for Unburden, triggers upon berry consumption
+ * Ability attribute for Unburden, triggers when a Pokemon consumes a berry they are holding
  * @extends PostTurnAbAttr
  * @see {@linkcode applyPostTurn}
  * @see {@linkcode getCondition}

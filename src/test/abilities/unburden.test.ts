@@ -29,7 +29,7 @@ describe("Abilities - Unburden", () => {
       .battleType("single")
       .starterSpecies(Species.TREECKO)
       .startingLevel(1)
-      .moveset([Moves.POPULATION_BOMB, Moves.KNOCK_OFF, Moves.PLUCK, Moves.THIEF])
+      .moveset([ Moves.POPULATION_BOMB, Moves.KNOCK_OFF, Moves.PLUCK, Moves.THIEF ])
       .ability(Abilities.UNBURDEN)
       .startingHeldItems([
         { name: "BERRY", count: 1, type: BerryType.SITRUS },
@@ -38,7 +38,7 @@ describe("Abilities - Unburden", () => {
       ])
       .enemySpecies(Species.NINJASK)
       .enemyLevel(100)
-      .enemyMoveset([Moves.FALSE_SWIPE])
+      .enemyMoveset([ Moves.FALSE_SWIPE ])
       .enemyAbility(Abilities.UNBURDEN)
       .enemyHeldItems([
         { name: "BERRY", type: BerryType.SITRUS, count: 1 },
@@ -99,7 +99,7 @@ describe("Abilities - Unburden", () => {
       .enemyAbility(Abilities.PICKPOCKET)
       .startingHeldItems([
         { name: "MULTI_LENS", count: 3 },
-        { name: "SOUL_DEW", count: 1},
+        { name: "SOUL_DEW", count: 1 },
         { name: "LUCKY_EGG", count: 1 },
       ]);
     await game.classicMode.startBattle();
@@ -113,7 +113,7 @@ describe("Abilities - Unburden", () => {
     expect(playerPokemon.getEffectiveStat(Stat.SPD)).toBeCloseTo(initialPlayerSpeed * 2);
   });
   it("should activate when an item is stolen via move", async () => {
-    vi.spyOn(allMoves[Moves.THIEF], "attrs", "get").mockReturnValue([new StealHeldItemChanceAttr(1.0)]); // give Thief 100% steal rate
+    vi.spyOn(allMoves[Moves.THIEF], "attrs", "get").mockReturnValue([ new StealHeldItemChanceAttr(1.0) ]); // give Thief 100% steal rate
     game.override.startingHeldItems([
       { name: "MULTI_LENS", count: 3 },
     ]);
@@ -165,5 +165,16 @@ describe("Abilities - Unburden", () => {
     await game.toNextTurn();
     expect(playerPokemon.getHeldItems().length).toBeLessThan(playerHeldItems);
     expect(playerPokemon.getEffectiveStat(Stat.SPD)).toBeCloseTo(initialPlayerSpeed);
+  });
+  it("should activate when a move that consumes a berry is used", async () => {
+    game.override.enemyMoveset([ Moves.STUFF_CHEEKS ]);
+    await game.classicMode.startBattle();
+    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const enemyHeldItemCt = enemyPokemon.getHeldItems().length;
+    const initialEnemySpeed = enemyPokemon.getStat(Stat.SPD);
+    game.move.select(Moves.STUFF_CHEEKS);
+    await game.toNextTurn();
+    expect(enemyPokemon.getHeldItems().length).toBeLessThan(enemyHeldItemCt);
+    expect(enemyPokemon.getEffectiveStat(Stat.SPD)).toBeCloseTo(initialEnemySpeed * 2);
   });
 });
