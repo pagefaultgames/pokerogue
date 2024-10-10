@@ -438,7 +438,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     } else {
       let availables: Species[] = [];
       if (this.isBoss()) {
-        availables = [Species.ENTEI, Species.RAIKOU, Species.SUICUNE];
+        availables = [ Species.ENTEI, Species.RAIKOU, Species.SUICUNE ];
       } else {
         const area: Species[] = [
           Species.HOUNDOUR, Species.SABLEYE, Species.PURRLOIN, Species.PAWNIARD, Species.NICKIT,
@@ -485,7 +485,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     this.variant = this.battleData.illusion.variant!;
     this.fusionVariant = this.battleData.illusion.fusionVariant!;
     this.fusionShiny = this.battleData.illusion.fusionShiny!;
-    this.battleData.illusion = {active: false, available: false};
+    this.battleData.illusion = { active: false, available: false };
     if (this.isOnField()) {
       this.scene.playSound("PRSFX- Transform");
     }

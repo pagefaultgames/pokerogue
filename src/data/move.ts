@@ -6245,7 +6245,7 @@ export class AbilityChangeAttr extends MoveEffectAttr {
     if (pokemon.breakIllusion()) {
       pokemon.scene.queueMessage(i18next.t("abilityTriggers:illusionBreak", { pokemonName: getPokemonNameWithAffix(pokemon) }));
     }
-    user.scene.queueMessage(i18next.t("moveTriggers:acquiredAbility", {pokemonName: getPokemonNameWithAffix(pokemon), abilityName: allAbilities[this.ability].name}));
+    user.scene.queueMessage(i18next.t("moveTriggers:acquiredAbility", { pokemonName: getPokemonNameWithAffix(pokemon), abilityName: allAbilities[this.ability].name }));
     return true;
   }
 
