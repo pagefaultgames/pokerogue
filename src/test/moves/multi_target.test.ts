@@ -7,7 +7,6 @@ import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
-const TIMEOUT = 20 * 1000;
 
 describe("Multi-target damage reduction", () => {
   let phaserGame: Phaser.Game;
@@ -33,18 +32,18 @@ describe("Multi-target damage reduction", () => {
       .enemySpecies(Species.POLIWAG)
       .enemyMoveset(Moves.SPLASH)
       .enemyAbility(Abilities.BALL_FETCH)
-      .moveset([Moves.TACKLE, Moves.DAZZLING_GLEAM, Moves.EARTHQUAKE, Moves.SPLASH])
+      .moveset([ Moves.TACKLE, Moves.DAZZLING_GLEAM, Moves.EARTHQUAKE, Moves.SPLASH ])
       .ability(Abilities.BALL_FETCH);
   });
 
   it("should reduce d.gleam damage when multiple enemies but not tackle", async () => {
-    await game.startBattle([Species.MAGIKARP, Species.FEEBAS]);
+    await game.startBattle([ Species.MAGIKARP, Species.FEEBAS ]);
 
-    const [enemy1, enemy2] = game.scene.getEnemyField();
+    const [ enemy1, enemy2 ] = game.scene.getEnemyField();
 
     game.move.select(Moves.DAZZLING_GLEAM);
     game.move.select(Moves.TACKLE, 1, BattlerIndex.ENEMY);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
+    await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2 ]);
     await game.phaseInterceptor.to("MoveEndPhase");
 
     const gleam1 = enemy1.getMaxHp() - enemy1.hp;
@@ -60,7 +59,7 @@ describe("Multi-target damage reduction", () => {
 
     game.move.select(Moves.DAZZLING_GLEAM);
     game.move.select(Moves.TACKLE, 1, BattlerIndex.ENEMY);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY]);
+    await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY ]);
 
     await game.phaseInterceptor.to("MoveEndPhase");
 
@@ -75,17 +74,17 @@ describe("Multi-target damage reduction", () => {
     // Moves that target all enemies get reduced if there's more than one enemy
     expect(gleam1).toBeLessThanOrEqual(Utils.toDmgValue(gleam2 * 0.75) + 1);
     expect(gleam1).toBeGreaterThanOrEqual(Utils.toDmgValue(gleam2 * 0.75) - 1);
-  }, TIMEOUT);
+  });
 
   it("should reduce earthquake when more than one pokemon other than user is not fainted", async () => {
-    await game.startBattle([Species.MAGIKARP, Species.FEEBAS]);
+    await game.startBattle([ Species.MAGIKARP, Species.FEEBAS ]);
 
     const player2 = game.scene.getParty()[1];
-    const [enemy1, enemy2] = game.scene.getEnemyField();
+    const [ enemy1, enemy2 ] = game.scene.getEnemyField();
 
     game.move.select(Moves.EARTHQUAKE);
     game.move.select(Moves.SPLASH, 1);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
+    await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2 ]);
 
     await game.phaseInterceptor.to("MoveEndPhase");
 
@@ -100,7 +99,7 @@ describe("Multi-target damage reduction", () => {
 
     game.move.select(Moves.EARTHQUAKE);
     game.move.select(Moves.SPLASH, 1);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY]);
+    await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY ]);
 
     await game.phaseInterceptor.to("MoveEndPhase");
 
@@ -118,7 +117,7 @@ describe("Multi-target damage reduction", () => {
     await game.toNextTurn();
 
     game.move.select(Moves.EARTHQUAKE);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY ]);
 
     await game.phaseInterceptor.to("MoveEndPhase");
 
@@ -126,5 +125,5 @@ describe("Multi-target damage reduction", () => {
     // Turn 3: 1 target, should be no damage reduction
     expect(damageEnemy1Turn1).toBeLessThanOrEqual(Utils.toDmgValue(damageEnemy1Turn3 * 0.75) + 1);
     expect(damageEnemy1Turn1).toBeGreaterThanOrEqual(Utils.toDmgValue(damageEnemy1Turn3 * 0.75) - 1);
-  }, TIMEOUT);
+  });
 });

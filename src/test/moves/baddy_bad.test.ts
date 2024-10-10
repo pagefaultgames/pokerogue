@@ -8,8 +8,6 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 describe("Moves - Baddy Bad", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
-  const TIMEOUT = 20 * 1000;
-
   beforeAll(() => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
@@ -23,7 +21,7 @@ describe("Moves - Baddy Bad", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([Moves.SPLASH])
+      .moveset([ Moves.SPLASH ])
       .battleType("single")
       .enemySpecies(Species.MAGIKARP)
       .enemyAbility(Abilities.BALL_FETCH)
@@ -33,11 +31,11 @@ describe("Moves - Baddy Bad", () => {
 
   it("should not activate Reflect if the move fails due to Protect", async () => {
     game.override.enemyMoveset(Moves.PROTECT);
-    await game.classicMode.startBattle([Species.FEEBAS]);
+    await game.classicMode.startBattle([ Species.FEEBAS ]);
 
     game.move.select(Moves.BADDY_BAD);
     await game.phaseInterceptor.to("BerryPhase");
 
     expect(game.scene.arena.tags.length).toBe(0);
-  }, TIMEOUT);
+  });
 });

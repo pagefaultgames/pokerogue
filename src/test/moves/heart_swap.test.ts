@@ -11,8 +11,6 @@ import { MoveEndPhase } from "#app/phases/move-end-phase";
 describe("Moves - Heart Swap", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
-  const TIMEOUT = 20 * 1000;
-
   beforeAll(() => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
@@ -60,5 +58,5 @@ describe("Moves - Heart Swap", () => {
       expect(enemy.getStatStage(s)).toBe(0);
       expect(player.getStatStage(s)).toBe(1);
     }
-  }, TIMEOUT);
+  });
 });

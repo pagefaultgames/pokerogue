@@ -26,16 +26,16 @@ describe("Moves - Retaliate", () => {
     game.override
       .battleType("single")
       .enemySpecies(Species.SNORLAX)
-      .enemyMoveset([Moves.RETALIATE, Moves.RETALIATE, Moves.RETALIATE, Moves.RETALIATE])
+      .enemyMoveset([ Moves.RETALIATE, Moves.RETALIATE, Moves.RETALIATE, Moves.RETALIATE ])
       .enemyLevel(100)
-      .moveset([Moves.RETALIATE, Moves.SPLASH])
+      .moveset([ Moves.RETALIATE, Moves.SPLASH ])
       .startingLevel(80)
       .disableCrits();
   });
 
   it("increases power if ally died previous turn", async () => {
     vi.spyOn(retaliate, "calculateBattlePower");
-    await game.startBattle([Species.ABRA, Species.COBALION]);
+    await game.startBattle([ Species.ABRA, Species.COBALION ]);
     game.move.select(Moves.RETALIATE);
     await game.phaseInterceptor.to("TurnEndPhase");
     expect(retaliate.calculateBattlePower).toHaveLastReturnedWith(70);
