@@ -2676,7 +2676,7 @@ export default class BattleScene extends SceneBase {
   }
 
   /**
-    * Removes all modifiers from enemy of PersistentModifier type
+    * Removes all modifiers from enemy pokemon of {@linkcode PersistentModifier} type
     */
   clearEnemyModifiers(): void {
     const modifiersToRemove = this.enemyModifiers.filter(m => m instanceof PersistentModifier);
@@ -2687,10 +2687,11 @@ export default class BattleScene extends SceneBase {
   }
 
   /**
-    * Removes all modifiers from enemy of PokemonHeldItemModifier type
+    * Removes all modifiers from enemy pokemon of {@linkcode PokemonHeldItemModifier} type
+    * @param pokemon - If specified, only removes held items from that {@linkcode Pokemon}
     */
-  clearEnemyHeldItemModifiers(): void {
-    const modifiersToRemove = this.enemyModifiers.filter(m => m instanceof PokemonHeldItemModifier);
+  clearEnemyHeldItemModifiers(pokemon?: Pokemon): void {
+    const modifiersToRemove = this.enemyModifiers.filter(m => m instanceof PokemonHeldItemModifier && (!pokemon || m.getPokemon(this) === pokemon));
     for (const m of modifiersToRemove) {
       this.enemyModifiers.splice(this.enemyModifiers.indexOf(m), 1);
     }

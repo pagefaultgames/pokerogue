@@ -3635,7 +3635,7 @@ export function overrideHeldItems(scene: BattleScene, pokemon: Pokemon, isPlayer
   }
 
   if (!isPlayer) {
-    scene.clearEnemyHeldItemModifiers();
+    scene.clearEnemyHeldItemModifiers(pokemon);
   }
 
   heldItemsOverride.forEach(item => {
