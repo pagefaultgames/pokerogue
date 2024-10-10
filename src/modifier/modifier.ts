@@ -11,7 +11,7 @@ import Pokemon, { type PlayerPokemon } from "#app/field/pokemon";
 import { getPokemonNameWithAffix } from "#app/messages";
 import Overrides from "#app/overrides";
 import { EvolutionPhase } from "#app/phases/evolution-phase";
-import { LearnMovePhase } from "#app/phases/learn-move-phase";
+import { LearnMovePhase, LearnMoveType } from "#app/phases/learn-move-phase";
 import { LevelUpPhase } from "#app/phases/level-up-phase";
 import { PokemonHealPhase } from "#app/phases/pokemon-heal-phase";
 import { achvs } from "#app/system/achv";
@@ -2235,7 +2235,7 @@ export class TmModifier extends ConsumablePokemonModifier {
    */
   override apply(playerPokemon: PlayerPokemon): boolean {
 
-    playerPokemon.scene.unshiftPhase(new LearnMovePhase(playerPokemon.scene, playerPokemon.scene.getParty().indexOf(playerPokemon), this.type.moveId, true));
+    playerPokemon.scene.unshiftPhase(new LearnMovePhase(playerPokemon.scene, playerPokemon.scene.getParty().indexOf(playerPokemon), this.type.moveId, LearnMoveType.TM));
 
     return true;
   }
@@ -2255,8 +2255,9 @@ export class RememberMoveModifier extends ConsumablePokemonModifier {
    * @param playerPokemon The {@linkcode PlayerPokemon} that should remember the move
    * @returns always `true`
    */
-  override apply(playerPokemon: PlayerPokemon): boolean {
-    playerPokemon.scene.unshiftPhase(new LearnMovePhase(playerPokemon.scene, playerPokemon.scene.getParty().indexOf(playerPokemon), playerPokemon.getLearnableLevelMoves()[this.levelMoveIndex]));
+  override apply(playerPokemon: PlayerPokemon, cost?: number): boolean {
+
+    playerPokemon.scene.unshiftPhase(new LearnMovePhase(playerPokemon.scene, playerPokemon.scene.getParty().indexOf(playerPokemon), playerPokemon.getLearnableLevelMoves()[this.levelMoveIndex], LearnMoveType.MEMORY, cost));
 
     return true;
   }
