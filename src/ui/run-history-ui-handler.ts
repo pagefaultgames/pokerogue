@@ -12,6 +12,7 @@ import { BattleType } from "../battle";
 import { RunEntry } from "../system/game-data";
 import { PlayerGender } from "#enums/player-gender";
 import { TrainerVariant } from "../field/trainer";
+import { RunDisplayMode } from "#app/ui/run-info-ui-handler";
 
 export type RunSelectCallback = (cursor: number) => void;
 
@@ -104,7 +105,7 @@ export default class RunHistoryUiHandler extends MessageUiHandler {
       if (button === Button.ACTION) {
         const cursor = this.cursor + this.scrollCursor;
         if (this.runs[cursor]) {
-          this.scene.ui.setOverlayMode(Mode.RUN_INFO, this.runs[cursor].entryData, true);
+          this.scene.ui.setOverlayMode(Mode.RUN_INFO, this.runs[cursor].entryData, RunDisplayMode.RUN_HISTORY, true);
         } else {
           return false;
         }

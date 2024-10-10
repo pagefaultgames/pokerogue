@@ -34,6 +34,7 @@ export default class EggGachaUiHandler extends MessageUiHandler {
   private cursorObj: Phaser.GameObjects.Image;
   private transitioning: boolean;
   private transitionCancelled: boolean;
+  private summaryFinished: boolean;
   private defaultText: string;
 
   private scale: number = 0.1666666667;
@@ -470,16 +471,21 @@ export default class EggGachaUiHandler extends MessageUiHandler {
   getGuaranteedEggTierFromPullCount(pullCount: number): EggTier {
     switch (pullCount) {
     case 10:
-      return EggTier.GREAT;
+      return EggTier.RARE;
     case 25:
-      return EggTier.ULTRA;
+      return EggTier.EPIC;
     default:
       return EggTier.COMMON;
     }
   }
 
   showSummary(eggs: Egg[]): void {
-    this.transitioning = false;
+    // the overlay will appear faster if the egg pulling animation was skipped
+    const overlayEaseInDuration = this.getDelayValue(750);
+
+    this.summaryFinished = false;
+    this.transitionCancelled = false;
+    this.setTransitioning(true);
     this.eggGachaSummaryContainer.setVisible(true);
 
     const eggScale = eggs.length < 20 ? 1 : 0.5;
@@ -488,12 +494,14 @@ export default class EggGachaUiHandler extends MessageUiHandler {
       targets: this.eggGachaOverlay,
       alpha: 0.5,
       ease: "Sine.easeOut",
-      duration: 750,
+      duration: overlayEaseInDuration,
       onComplete: () => {
         const rowItems = 5;
         const rows = Math.ceil(eggs.length / rowItems);
         const cols = Math.min(eggs.length, rowItems);
         const height = this.eggGachaOverlay.displayHeight - this.eggGachaMessageBox.displayHeight;
+
+        // Create sprites for each egg
         const eggContainers = eggs.map((egg, t) => {
           const col = t % rowItems;
           const row = Math.floor(t / rowItems);
@@ -508,21 +516,31 @@ export default class EggGachaUiHandler extends MessageUiHandler {
 
           const eggText = addTextObject(this.scene, 0, 14, egg.getEggDescriptor(), TextStyle.PARTY, { align: "center" });
           eggText.setOrigin(0.5, 0);
-          eggText.setTint(getEggTierTextTint(!egg.isManaphyEgg() ? egg.tier : EggTier.ULTRA));
+          eggText.setTint(getEggTierTextTint(!egg.isManaphyEgg() ? egg.tier : EggTier.EPIC));
           ret.add(eggText);
 
           this.eggGachaSummaryContainer.addAt(ret, 0);
           return ret;
         });
 
-        eggContainers.forEach((eggContainer, e) => {
-          this.scene.tweens.add({
-            targets: eggContainer,
-            delay: this.getDelayValue(e * 100),
-            duration: this.getDelayValue(350),
-            scale: eggScale,
-            ease: "Sine.easeOut"
-          });
+        // If action/cancel was pressed when the overlay was easing in, show all eggs at once
+        // Otherwise show the eggs one by one with a small delay between each
+        eggContainers.forEach((eggContainer, index) => {
+          const delay = !this.transitionCancelled ? this.getDelayValue(index * 100) : 0;
+          this.scene.time.delayedCall(delay, () =>
+            this.scene.tweens.add({
+              targets: eggContainer,
+              duration: this.getDelayValue(350),
+              scale: eggScale,
+              ease: "Sine.easeOut",
+              onComplete: () => {
+                if (index === eggs.length - 1) {
+                  this.setTransitioning(false);
+                  this.summaryFinished = true;
+                }
+              }
+            }));
+
         });
       }
     });
@@ -540,6 +558,7 @@ export default class EggGachaUiHandler extends MessageUiHandler {
         this.eggGachaSummaryContainer.setAlpha(1);
         this.eggGachaSummaryContainer.removeAll(true);
         this.setTransitioning(false);
+        this.summaryFinished = false;
         this.eggGachaOptionsContainer.setVisible(true);
       }
     });
@@ -613,7 +632,7 @@ export default class EggGachaUiHandler extends MessageUiHandler {
     } else {
 
       if (this.eggGachaSummaryContainer.visible) {
-        if (button === Button.ACTION || button === Button.CANCEL) {
+        if (this.summaryFinished && (button === Button.ACTION || button === Button.CANCEL)) {
           this.hideSummary();
           success = true;
         }
@@ -625,7 +644,7 @@ export default class EggGachaUiHandler extends MessageUiHandler {
             if (!this.scene.gameData.voucherCounts[VoucherType.REGULAR] && !Overrides.EGG_FREE_GACHA_PULLS_OVERRIDE) {
               error = true;
               this.showError(i18next.t("egg:notEnoughVouchers"));
-            } else if (this.scene.gameData.eggs.length < 99) {
+            } else if (this.scene.gameData.eggs.length < 99 || Overrides.UNLIMITED_EGG_COUNT_OVERRIDE) {
               if (!Overrides.EGG_FREE_GACHA_PULLS_OVERRIDE) {
                 this.consumeVouchers(VoucherType.REGULAR, 1);
               }
@@ -640,7 +659,7 @@ export default class EggGachaUiHandler extends MessageUiHandler {
             if (!this.scene.gameData.voucherCounts[VoucherType.PLUS] && !Overrides.EGG_FREE_GACHA_PULLS_OVERRIDE) {
               error = true;
               this.showError(i18next.t("egg:notEnoughVouchers"));
-            } else if (this.scene.gameData.eggs.length < 95) {
+            } else if (this.scene.gameData.eggs.length < 95 || Overrides.UNLIMITED_EGG_COUNT_OVERRIDE) {
               if (!Overrides.EGG_FREE_GACHA_PULLS_OVERRIDE) {
                 this.consumeVouchers(VoucherType.PLUS, 1);
               }
@@ -657,7 +676,7 @@ export default class EggGachaUiHandler extends MessageUiHandler {
                   || (this.cursor === 3 && !this.scene.gameData.voucherCounts[VoucherType.PREMIUM] && !Overrides.EGG_FREE_GACHA_PULLS_OVERRIDE)) {
               error = true;
               this.showError(i18next.t("egg:notEnoughVouchers"));
-            } else if (this.scene.gameData.eggs.length < 90) {
+            } else if (this.scene.gameData.eggs.length < 90 || Overrides.UNLIMITED_EGG_COUNT_OVERRIDE) {
               if (this.cursor === 3) {
                 if (!Overrides.EGG_FREE_GACHA_PULLS_OVERRIDE) {
                   this.consumeVouchers(VoucherType.PREMIUM, 1);
@@ -678,7 +697,7 @@ export default class EggGachaUiHandler extends MessageUiHandler {
             if (!this.scene.gameData.voucherCounts[VoucherType.GOLDEN] && !Overrides.EGG_FREE_GACHA_PULLS_OVERRIDE) {
               error = true;
               this.showError(i18next.t("egg:notEnoughVouchers"));
-            } else if (this.scene.gameData.eggs.length < 75) {
+            } else if (this.scene.gameData.eggs.length < 75 || Overrides.UNLIMITED_EGG_COUNT_OVERRIDE) {
               if (!Overrides.EGG_FREE_GACHA_PULLS_OVERRIDE) {
                 this.consumeVouchers(VoucherType.GOLDEN, 1);
               }

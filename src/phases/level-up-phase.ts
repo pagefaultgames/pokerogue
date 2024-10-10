@@ -28,7 +28,7 @@ export class LevelUpPhase extends PlayerPartyMemberPokemonPhase {
       this.scene.gameData.gameStats.highestLevel = this.level;
     }
 
-    this.scene.validateAchvs(LevelAchv, new Utils.IntegerHolder(this.level));
+    this.scene.validateAchvs(LevelAchv, new Utils.NumberHolder(this.level));
 
     const pokemon = this.getPokemon();
     const prevStats = pokemon.stats.slice(0);
