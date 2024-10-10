@@ -964,10 +964,6 @@ export class IngrainTag extends TrappedTag {
     super(BattlerTagType.INGRAIN, BattlerTagLapseType.TURN_END, 1, Moves.INGRAIN, sourceId);
   }
 
-  override onAdd(pokemon: Pokemon) {
-    super.onAdd(pokemon);
-  }
-
   /**
    * Check if the Ingrain tag can be added to the pokemon
    * @param pokemon {@linkcode Pokemon} The pokemon to check if the tag can be added to
