@@ -1,5 +1,6 @@
 import { BattlerIndex } from "#app/battle";
 import { Stat } from "#app/enums/stat";
+import { MoveResult } from "#app/field/pokemon";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
@@ -24,7 +25,7 @@ describe("Moves - Assist", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([ Moves.SPLASH ])
+      .moveset([ Moves.ASSIST, Moves.SKETCH, Moves.FLY, Moves.DRAGON_TAIL ]) // These are all moves Assist cannot call; Sketch will be used to test that it can call other moves properly
       .ability(Abilities.BALL_FETCH)
       .battleType("single")
       .disableCrits()
@@ -36,7 +37,6 @@ describe("Moves - Assist", () => {
   it("should be able to use an ally's moves", async () => {
     game.override
       .battleType("double")
-      .moveset([ Moves.ASSIST, Moves.SKETCH, Moves.FLY, Moves.DRAGON_TAIL ]) // Populate movesets with moves Assist cannot call
       .enemyMoveset(Moves.SWORDS_DANCE);
     await game.classicMode.startBattle([ Species.FEEBAS, Species.SHUCKLE ]);
     const leftPlayer = game.scene.getPlayerPokemon()!;
@@ -48,5 +48,13 @@ describe("Moves - Assist", () => {
     await game.toNextTurn();
 
     expect(leftPlayer.getStatStage(Stat.ATK)).toBe(2); // Stat raised from Assist -> Swords Dance
+  });
+
+  it("should fail if there are no usable moves", async () => {
+    await game.classicMode.startBattle([ Species.FEEBAS ]);
+    // Moves above are already unusable by Assist
+    game.move.select(Moves.ASSIST, 0);
+    await game.toNextTurn();
+    expect(game.scene.getPlayerPokemon()!.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
   });
 });
