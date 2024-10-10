@@ -2428,7 +2428,7 @@ export class PostSummonTransformAbAttr extends PostSummonAbAttr {
       target = targets[0];
     }
 
-    if (target.battleData.illusion.active) {
+    if (target.illusion.active) {
       return false;
     }
     pokemon.summonData.speciesForm = target.getSpeciesForm();
@@ -4562,13 +4562,14 @@ export class IllusionPreSummonAbAttr extends PreSummonAbAttr {
    */
   applyPreSummon(pokemon: Pokemon, passive: boolean, args: any[]): boolean {
     let suppressed = false;
+    console.log("PRESUMMONILLUSION : ", pokemon.name)
     pokemon.scene.getField(true).filter(p => p !== pokemon).map(p => {
       if ((p.getAbility().hasAttr(SuppressFieldAbilitiesAbAttr) && p.canApplyAbility()) || (p.getPassiveAbility().hasAttr(SuppressFieldAbilitiesAbAttr) && p.canApplyAbility(true))) {
         suppressed = true;
       }
     });
 
-    if (pokemon.battleData.illusion.available && !suppressed) {
+    if (pokemon.illusion.available && !suppressed) {
       return pokemon.generateIllusion();
     } else {
       return false;
@@ -4610,7 +4611,7 @@ export class IllusionPostBattleAbAttr extends PostBattleAbAttr {
    */
   applyPostBattle(pokemon: Pokemon, passive: boolean, simulated:boolean, args: any[]): boolean {
     pokemon.breakIllusion();
-    pokemon.battleData.illusion.available = true;
+    pokemon.illusion.available = true;
     return true;
   }
 }
@@ -4626,7 +4627,7 @@ export class IllusionDisableAbAttr extends PostSummonAbAttr {
    * @returns {boolean}
    */
   applyPostSummon(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
-    pokemon.battleData.illusion.available = false;
+    pokemon.illusion.available = false;
     return true;
   }
 }
@@ -5412,9 +5413,9 @@ export function initAbilities() {
       .attr(UncopiableAbilityAbAttr)
       .attr(UnswappableAbilityAbAttr)
       //The pokemon generate an illusion if it's available
-      .conditionalAttr((pokemon) => pokemon.battleData.illusion.available, IllusionPreSummonAbAttr, false)
+      .conditionalAttr((pokemon) => pokemon.illusion.available, IllusionPreSummonAbAttr, false)
       //The pokemon loses his illusion when he is damaged by a move
-      .conditionalAttr((pokemon) => pokemon.battleData.illusion.active, IllusionBreakAbAttr, true)
+      .conditionalAttr((pokemon) => pokemon.illusion.active, IllusionBreakAbAttr, true)
       //Illusion is available again after a battle
       .conditionalAttr((pokemon) => pokemon.isAllowedInBattle(), IllusionPostBattleAbAttr, false)
       //Illusion is not available after summon

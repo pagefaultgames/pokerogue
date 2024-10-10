@@ -43,9 +43,9 @@ describe("Abilities - Illusion", () => {
     const zoroark = game.scene.getPlayerPokemon()!;
     const zorua = game.scene.getEnemyPokemon()!;
 
-    expect(zoroark.battleData.illusion.active).equals(true);
-    expect(zorua.battleData.illusion.active).equals(true);
-    expect(zoroark.battleData.illusion.available).equals(false);
+    expect(zoroark.illusion.active).equals(true);
+    expect(zorua.illusion.active).equals(true);
+    expect(zoroark.illusion.available).equals(false);
   });
 
   it("break after receiving damaging move", async () => {
@@ -56,7 +56,7 @@ describe("Abilities - Illusion", () => {
 
     const zorua = game.scene.getEnemyPokemon()!;
 
-    expect(zorua.battleData.illusion.active).equals(false);
+    expect(zorua.illusion.active).equals(false);
   });
 
   it("break after getting ability changed", async () => {
@@ -67,7 +67,7 @@ describe("Abilities - Illusion", () => {
 
     const zorua = game.scene.getEnemyPokemon()!;
 
-    expect(zorua.battleData.illusion.active).equals(false);
+    expect(zorua.illusion.active).equals(false);
   });
 
   it("break if the ability is suppressed", async () => {
@@ -76,7 +76,7 @@ describe("Abilities - Illusion", () => {
 
     const zorua = game.scene.getEnemyPokemon()!;
 
-    expect(zorua.battleData.illusion.active).equals(false);
+    expect(zorua.illusion.active).equals(false);
   });
 
   it("trick the enemy AI for moves effectiveness using ILLUSION type instead of actual type", async () => {
@@ -107,7 +107,7 @@ describe("Abilities - Illusion", () => {
 
     const zoroark = game.scene.getPlayerPokemon()!;
 
-    expect(zoroark.battleData.illusion.active).equals(true);
+    expect(zoroark.illusion.active).equals(true);
   });
 
   it("copy the the name, the nickname, the gender, the shininess and the pokeball of the pokemon", async () => {
@@ -126,10 +126,11 @@ describe("Abilities - Illusion", () => {
     await game.phaseInterceptor.to(TurnEndPhase);
 
     const zoroark = game.scene.getPlayerPokemon()!;
+    console.log(zoroark.illusion)
     expect(zoroark.name).equals("Axew");
     expect(zoroark.getNameToRender()).equals("axew nickname");
     expect(zoroark.getGender(false, true)).equals(Gender.FEMALE);
     expect(zoroark.isShiny(true)).equals(true);
-    expect(zoroark.battleData.illusion.pokeball).equals(PokeballType.GREAT_BALL);
+    expect(zoroark.illusion.pokeball).equals(PokeballType.GREAT_BALL);
   });
 });

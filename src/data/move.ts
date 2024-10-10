@@ -6402,7 +6402,7 @@ export class SuppressAbilitiesIfActedAttr extends MoveEffectAttr {
 export class TransformAttr extends MoveEffectAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): Promise<boolean> {
     return new Promise(resolve => {
-      if (!super.apply(user, target, move, args) || target.battleData.illusion.active || user.battleData.illusion.active) {
+      if (!super.apply(user, target, move, args) || target.illusion.active || user.illusion.active) {
         user.scene.queueMessage(i18next.t("battle:attackFailed"));
         return resolve(false);
       }

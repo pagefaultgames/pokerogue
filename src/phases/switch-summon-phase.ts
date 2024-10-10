@@ -88,7 +88,7 @@ export class SwitchSummonPhase extends SummonPhase {
     );
     this.scene.playSound("se/pb_rel");
     pokemon.hideInfo();
-    pokemon.tint(getPokeballTintColor(pokemon.battleData.illusion.pokeball ?? pokemon.pokeball), 1, 250, "Sine.easeIn");
+    pokemon.tint(getPokeballTintColor(pokemon.illusion.pokeball ?? pokemon.pokeball), 1, 250, "Sine.easeIn");
     this.scene.tweens.add({
       targets: pokemon,
       duration: 250,
