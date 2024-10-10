@@ -9,26 +9,24 @@ import { PokemonPhase } from "./pokemon-phase";
 import { PostTurnStatusEffectPhase } from "./post-turn-status-effect-phase";
 
 export class ObtainStatusEffectPhase extends PokemonPhase {
-  private statusEffect?: StatusEffect | undefined;
-  private cureTurn?: integer | null;
-  private sourceText?: string | null;
-  private sourcePokemon?: Pokemon | null;
 
-  constructor(scene: BattleScene, battlerIndex: BattlerIndex, statusEffect?: StatusEffect, cureTurn?: integer | null, sourceText?: string | null, sourcePokemon?: Pokemon | null) {
+  constructor(
+    scene: BattleScene,
+    battlerIndex: BattlerIndex,
+    private statusEffect?: StatusEffect,
+    private turnsRemaining?: number,
+    private sourceText?: string | null,
+    private sourcePokemon?: Pokemon | null
+  ) {
     super(scene, battlerIndex);
-
-    this.statusEffect = statusEffect;
-    this.cureTurn = cureTurn;
-    this.sourceText = sourceText;
-    this.sourcePokemon = sourcePokemon; // For tracking which Pokemon caused the status effect
   }
 
   start() {
     const pokemon = this.getPokemon();
     if (pokemon && !pokemon.status) {
       if (pokemon.trySetStatus(this.statusEffect, false, this.sourcePokemon)) {
-        if (this.cureTurn) {
-          pokemon.status!.cureTurn = this.cureTurn; // TODO: is this bang correct?
+        if (this.turnsRemaining) {
+          pokemon.status!.turnsRemaining = this.turnsRemaining;
         }
         pokemon.updateInfo(true);
         new CommonBattleAnim(CommonAnim.POISON + (this.statusEffect! - 1), pokemon).play(this.scene, false, () => {

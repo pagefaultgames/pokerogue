@@ -2037,16 +2037,13 @@ export class WaterShurikenMultiHitTypeAttr extends ChangeMultiHitTypeAttr {
 }
 
 export class StatusEffectAttr extends MoveEffectAttr {
-  public effect: StatusEffect;
-  public cureTurn: integer | null;
-  public overrideStatus: boolean;
-
-  constructor(effect: StatusEffect, selfTarget?: boolean, cureTurn?: integer, overrideStatus?: boolean) {
+  constructor(
+    public effect: StatusEffect,
+    selfTarget?: boolean,
+    public turnsRemaining?: number,
+    public overrideStatus: boolean = false
+  ) {
     super(selfTarget, MoveEffectTrigger.HIT);
-
-    this.effect = effect;
-    this.cureTurn = cureTurn!; // TODO: is this bang correct?
-    this.overrideStatus = !!overrideStatus;
   }
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
@@ -2073,7 +2070,7 @@ export class StatusEffectAttr extends MoveEffectAttr {
         return false;
       }
       if ((!pokemon.status || (pokemon.status.effect === this.effect && moveChance < 0))
-        && pokemon.trySetStatus(this.effect, true, user, this.cureTurn)) {
+        && pokemon.trySetStatus(this.effect, true, user, this.turnsRemaining)) {
         applyPostAttackAbAttrs(ConfusionOnStatusEffectAbAttr, user, target, move, null, false, this.effect);
         return true;
       }
@@ -2090,8 +2087,8 @@ export class StatusEffectAttr extends MoveEffectAttr {
 export class MultiStatusEffectAttr extends StatusEffectAttr {
   public effects: StatusEffect[];
 
-  constructor(effects: StatusEffect[], selfTarget?: boolean, cureTurn?: integer, overrideStatus?: boolean) {
-    super(effects[0], selfTarget, cureTurn, overrideStatus);
+  constructor(effects: StatusEffect[], selfTarget?: boolean, turnsRemaining?: number, overrideStatus?: boolean) {
+    super(effects[0], selfTarget, turnsRemaining, overrideStatus);
     this.effects = effects;
   }
 

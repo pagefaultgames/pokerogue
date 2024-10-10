@@ -1,22 +1,23 @@
-import * as Utils from "../utils";
+import { randIntRange } from "#app/utils";
 import { StatusEffect } from "#enums/status-effect";
 import i18next, { ParseKeys } from "i18next";
 
 export { StatusEffect };
 
 export class Status {
-  public effect: StatusEffect;
-  public turnCount: integer;
-  public cureTurn: integer | null;
-
-  constructor(effect: StatusEffect, turnCount: integer = 0, cureTurn?: integer) {
-    this.effect = effect;
-    this.turnCount = turnCount === undefined ? 0 : turnCount;
-    this.cureTurn = cureTurn!; // TODO: is this bang correct?
-  }
+  constructor(
+    public effect: StatusEffect,
+    /** Only used by the Toxic status effect */
+    public turnCount: number = 0,
+    /** Only used by the Sleep status effect */
+    public turnsRemaining?: number
+  ) {}
 
   incrementTurn(): void {
     this.turnCount++;
+    if (this.turnsRemaining) {
+      this.turnsRemaining--;
+    }
   }
 
   isPostTurn(): boolean {
@@ -107,7 +108,7 @@ export function getStatusEffectCatchRateMultiplier(statusEffect: StatusEffect): 
 * Returns a random non-volatile StatusEffect
 */
 export function generateRandomStatusEffect(): StatusEffect {
-  return Utils.randIntRange(1, 6);
+  return randIntRange(1, 6);
 }
 
 /**
@@ -123,7 +124,7 @@ export function getRandomStatusEffect(statusEffectA: StatusEffect, statusEffectB
     return statusEffectA;
   }
 
-  return Utils.randIntRange(0, 2) ? statusEffectA : statusEffectB;
+  return randIntRange(0, 2) ? statusEffectA : statusEffectB;
 }
 
 /**
@@ -140,7 +141,7 @@ export function getRandomStatus(statusA: Status | null, statusB: Status | null):
   }
 
 
-  return Utils.randIntRange(0, 2) ? statusA : statusB;
+  return randIntRange(0, 2) ? statusA : statusB;
 }
 
 /**
