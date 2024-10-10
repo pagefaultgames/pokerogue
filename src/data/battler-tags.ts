@@ -1381,7 +1381,7 @@ export class ContactStatStageChangeProtectedTag extends DamageProtectedTag {
       const effectPhase = pokemon.scene.getCurrentPhase();
       if (effectPhase instanceof MoveEffectPhase && effectPhase.move.getMove().hasFlag(MoveFlags.MAKES_CONTACT)) {
         const attacker = effectPhase.getPokemon();
-        pokemon.scene.unshiftPhase(new StatStageChangePhase(pokemon.scene, attacker.getBattlerIndex(), true, [ this.stat ], this.levels));
+        pokemon.scene.unshiftPhase(new StatStageChangePhase(pokemon.scene, attacker.getBattlerIndex(), false, [ this.stat ], this.levels));
       }
     }
 
@@ -2146,6 +2146,10 @@ export class GulpMissileTag extends BattlerTag {
 
       if (!attacker) {
         return false;
+      }
+
+      if (moveEffectPhase.move.getMove().hitsSubstitute(attacker, pokemon)) {
+        return true;
       }
 
       const cancelled = new Utils.BooleanHolder(false);
