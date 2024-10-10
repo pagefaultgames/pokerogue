@@ -4107,11 +4107,11 @@ export class StatusCategoryOnAllyAttr extends VariableMoveCategoryAttr {
    * @param user {@linkcode Pokemon} using the move
    * @param target {@linkcode Pokemon} target of the move
    * @param move {@linkcode Move} with this attribute
-   * @param args [0] {@linkcode Utils.IntegerHolder} The category of the move
+   * @param args [0] {@linkcode Utils.NumberHolder} The category of the move
    * @returns true if the function succeeds
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    const category = (args[0] as Utils.IntegerHolder);
+    const category = (args[0] as Utils.NumberHolder);
 
     if (user.getAlly() === target) {
       category.value = MoveCategory.STATUS;

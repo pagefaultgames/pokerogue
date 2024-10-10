@@ -2684,7 +2684,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    */
   apply(source: Pokemon, move: Move): HitResult {
     const defendingSide = this.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY;
-    if (move.category === MoveCategory.STATUS) {
+    const moveCategory = new Utils.NumberHolder(move.category);
+    applyMoveAttrs(VariableMoveCategoryAttr, source, this, move, moveCategory);
+    if (moveCategory.value === MoveCategory.STATUS) {
       const cancelled = new Utils.BooleanHolder(false);
       const typeMultiplier = this.getMoveEffectiveness(source, move, false, false, cancelled);
 
