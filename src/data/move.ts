@@ -1936,7 +1936,7 @@ export class IncrementMovePriorityAttr extends MoveAttr {
  */
 export class MultiHitAttr extends MoveAttr {
   /** This move's intrinsic multi-hit type. It should never be modified. */
-  private intrinsicMultiHitType: MultiHitType;
+  private readonly intrinsicMultiHitType: MultiHitType;
   /** This move's current multi-hit type. It may be temporarily modified by abilities (e.g., Battle Bond). */
   private multiHitType: MultiHitType;
 
