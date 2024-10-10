@@ -33,7 +33,7 @@ describe("Moves - Heal Bell", () => {
 
   it("should cure status effect of the user, its ally, and all party pokemon", async () => {
     await game.classicMode.startBattle([ Species.RATTATA, Species.RATTATA, Species.RATTATA ]);
-    const [ leftPlayer, rightPlayer, partyPokemon ] = game.scene.getParty();
+    const [ leftPlayer, rightPlayer, partyPokemon ] = game.scene.getPlayerParty();
 
     vi.spyOn(leftPlayer, "resetStatus");
     vi.spyOn(rightPlayer, "resetStatus");
@@ -79,7 +79,7 @@ describe("Moves - Heal Bell", () => {
   it("should not cure status effect of allies ON FIELD with Soundproof, should still cure allies in party", async () => {
     game.override.ability(Abilities.SOUNDPROOF);
     await game.classicMode.startBattle([ Species.RATTATA, Species.RATTATA, Species.RATTATA ]);
-    const [ leftPlayer, rightPlayer, partyPokemon ] = game.scene.getParty();
+    const [ leftPlayer, rightPlayer, partyPokemon ] = game.scene.getPlayerParty();
 
     vi.spyOn(leftPlayer, "resetStatus");
     vi.spyOn(rightPlayer, "resetStatus");

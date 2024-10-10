@@ -35,7 +35,7 @@ describe("Items - Light Ball", () => {
       Species.PIKACHU
     ]);
 
-    const partyMember = game.scene.getParty()[0];
+    const partyMember = game.scene.getPlayerParty()[0];
 
     // Checking console log to make sure Light Ball is applied when getEffectiveStat (with the appropriate stat) is called
     partyMember.getEffectiveStat(Stat.DEF);
@@ -68,7 +68,7 @@ describe("Items - Light Ball", () => {
       Species.PIKACHU
     ]);
 
-    const partyMember = game.scene.getParty()[0];
+    const partyMember = game.scene.getPlayerParty()[0];
 
     const atkStat = partyMember.getStat(Stat.ATK);
     const spAtkStat = partyMember.getStat(Stat.SPATK);
@@ -97,8 +97,8 @@ describe("Items - Light Ball", () => {
       Species.MAROWAK
     ]);
 
-    const partyMember = game.scene.getParty()[0];
-    const ally = game.scene.getParty()[1];
+    const partyMember = game.scene.getPlayerParty()[0];
+    const ally = game.scene.getPlayerParty()[1];
 
     // Fuse party members (taken from PlayerPokemon.fuse(...) function)
     partyMember.fusionSpecies = ally.species;
@@ -136,8 +136,8 @@ describe("Items - Light Ball", () => {
       Species.PIKACHU
     ]);
 
-    const partyMember = game.scene.getParty()[0];
-    const ally = game.scene.getParty()[1];
+    const partyMember = game.scene.getPlayerParty()[0];
+    const ally = game.scene.getPlayerParty()[1];
 
     // Fuse party members (taken from PlayerPokemon.fuse(...) function)
     partyMember.fusionSpecies = ally.species;
@@ -174,7 +174,7 @@ describe("Items - Light Ball", () => {
       Species.MAROWAK
     ]);
 
-    const partyMember = game.scene.getParty()[0];
+    const partyMember = game.scene.getPlayerParty()[0];
 
     const atkStat = partyMember.getStat(Stat.ATK);
     const spAtkStat = partyMember.getStat(Stat.SPATK);

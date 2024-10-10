@@ -140,7 +140,7 @@ export const TheStrongStuffEncounter: MysteryEncounter =
 
         // -15 to all base stats of highest BST (halved for HP), +10 to all base stats of rest of party (halved for HP)
         // Sort party by bst
-        const sortedParty = scene.getParty().slice(0)
+        const sortedParty = scene.getPlayerParty().slice(0)
           .sort((pokemon1, pokemon2) => {
             const pokemon1Bst = pokemon1.calculateBaseStats().reduce((a, b) => a + b, 0);
             const pokemon2Bst = pokemon2.calculateBaseStats().reduce((a, b) => a + b, 0);

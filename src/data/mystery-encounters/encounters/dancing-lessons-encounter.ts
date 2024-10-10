@@ -1,32 +1,32 @@
-import { EnemyPartyConfig, initBattleWithEnemyConfig, leaveEncounterWithoutBattle, selectPokemonForOption, setEncounterRewards } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
-import Pokemon, { EnemyPokemon, PlayerPokemon, PokemonMove } from "#app/field/pokemon";
-import { MysteryEncounterType } from "#enums/mystery-encounter-type";
-import { Species } from "#enums/species";
+import { BattlerIndex } from "#app/battle";
 import BattleScene from "#app/battle-scene";
+import { EncounterBattleAnim } from "#app/data/battle-anims";
 import MysteryEncounter, { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-encounter";
 import { MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/mystery-encounter-option";
-import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
-import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
-import { getPokemonSpecies } from "#app/data/pokemon-species";
-import { Moves } from "#enums/moves";
-import { TrainerSlot } from "#app/data/trainer-config";
-import PokemonData from "#app/system/pokemon-data";
-import { Biome } from "#enums/biome";
-import { EncounterBattleAnim } from "#app/data/battle-anims";
-import { BattlerTagType } from "#enums/battler-tag-type";
-import { getEncounterText, queueEncounterMessage } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
 import { MoveRequirement } from "#app/data/mystery-encounters/mystery-encounter-requirements";
 import { DANCING_MOVES } from "#app/data/mystery-encounters/requirements/requirement-groups";
-import { OptionSelectItem } from "#app/ui/abstact-option-select-ui-handler";
-import { BattlerIndex } from "#app/battle";
+import { getEncounterText, queueEncounterMessage } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
+import { EnemyPartyConfig, initBattleWithEnemyConfig, leaveEncounterWithoutBattle, selectPokemonForOption, setEncounterRewards } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import { catchPokemon, getEncounterPokemonLevelForWave, STANDARD_ENCOUNTER_BOOSTED_LEVEL_MODIFIER } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
-import { PokeballType } from "#enums/pokeball";
+import { getPokemonSpecies } from "#app/data/pokemon-species";
+import { TrainerSlot } from "#app/data/trainer-config";
+import Pokemon, { EnemyPokemon, PlayerPokemon, PokemonMove } from "#app/field/pokemon";
+import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
 import { modifierTypes } from "#app/modifier/modifier-type";
 import { LearnMovePhase } from "#app/phases/learn-move-phase";
 import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
-import { Stat } from "#enums/stat";
+import PokemonData from "#app/system/pokemon-data";
+import { OptionSelectItem } from "#app/ui/abstact-option-select-ui-handler";
+import { BattlerTagType } from "#enums/battler-tag-type";
+import { Biome } from "#enums/biome";
 import { EncounterAnim } from "#enums/encounter-anims";
-import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
+import { Moves } from "#enums/moves";
+import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
+import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
+import { MysteryEncounterType } from "#enums/mystery-encounter-type";
+import { PokeballType } from "#enums/pokeball";
+import { Species } from "#enums/species";
+import { Stat } from "#enums/stat";
 import i18next from "i18next";
 
 /** the i18n namespace for this encounter */
@@ -92,7 +92,7 @@ export const DancingLessonsEncounter: MysteryEncounter =
     .withCatchAllowed(true)
     .withFleeAllowed(false)
     .withOnVisualsStart((scene: BattleScene) => {
-      const danceAnim = new EncounterBattleAnim(EncounterAnim.DANCE, scene.getEnemyPokemon()!, scene.getParty()[0]);
+      const danceAnim = new EncounterBattleAnim(EncounterAnim.DANCE, scene.getEnemyPokemon()!, scene.getPlayerPokemon()!);
       danceAnim.play(scene);
 
       return true;
@@ -217,7 +217,7 @@ export const DancingLessonsEncounter: MysteryEncounter =
 
           const onPokemonSelected = (pokemon: PlayerPokemon) => {
             encounter.setDialogueToken("selectedPokemon", pokemon.getNameToRender());
-            scene.unshiftPhase(new LearnMovePhase(scene, scene.getParty().indexOf(pokemon), Moves.REVELATION_DANCE));
+            scene.unshiftPhase(new LearnMovePhase(scene, scene.getPlayerParty().indexOf(pokemon), Moves.REVELATION_DANCE));
 
             // Play animation again to "learn" the dance
             const danceAnim = new EncounterBattleAnim(EncounterAnim.DANCE, scene.getEnemyPokemon()!, scene.getPlayerPokemon());

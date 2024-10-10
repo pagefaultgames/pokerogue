@@ -61,6 +61,6 @@ describe("Items - Toxic orb", () => {
 
     await game.phaseInterceptor.run(MessagePhase);
     expect(i18next.t).toHaveBeenCalledWith("statusEffect:toxic.activation", expect.anything());
-    expect(game.scene.getParty()[0].status!.effect).toBe(StatusEffect.TOXIC);
+    expect(game.scene.getPlayerParty()[0].status!.effect).toBe(StatusEffect.TOXIC);
   }, 20000);
 });

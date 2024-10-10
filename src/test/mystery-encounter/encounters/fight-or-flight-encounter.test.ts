@@ -151,7 +151,7 @@ describe("Fight or Flight - Mystery Encounter", () => {
 
     it("should NOT be selectable if the player doesn't have a Stealing move", async () => {
       await game.runToMysteryEncounter(MysteryEncounterType.FIGHT_OR_FLIGHT, defaultParty);
-      scene.getParty().forEach(p => p.moveset = []);
+      scene.getPlayerParty().forEach(p => p.moveset = []);
       await game.phaseInterceptor.to(MysteryEncounterPhase, false);
 
       const encounterPhase = scene.getCurrentPhase();
@@ -175,7 +175,7 @@ describe("Fight or Flight - Mystery Encounter", () => {
       await game.runToMysteryEncounter(MysteryEncounterType.FIGHT_OR_FLIGHT, defaultParty);
 
       // Mock moveset
-      scene.getParty()[0].moveset = [ new PokemonMove(Moves.KNOCK_OFF) ];
+      scene.getPlayerParty()[0].moveset = [ new PokemonMove(Moves.KNOCK_OFF) ];
       const item = game.scene.currentBattle.mysteryEncounter!.misc;
 
       await runMysteryEncounterToEnd(game, 2);
