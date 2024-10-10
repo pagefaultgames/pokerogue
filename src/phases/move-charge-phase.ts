@@ -9,7 +9,10 @@ import { PokemonPhase } from "#app/phases/pokemon-phase";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { MoveEndPhase } from "#app/phases/move-end-phase";
 
-
+/**
+ * Phase for the "charging turn" of two-turn moves (e.g. Dig).
+ * @extends PokemonPhase
+ */
 export class MoveChargePhase extends PokemonPhase {
   /** The move instance that this phase applies */
   public move: PokemonMove;
@@ -29,7 +32,10 @@ export class MoveChargePhase extends PokemonPhase {
     const target = this.getTargetPokemon();
     const move = this.move.getMove();
 
+    // If the target is somehow not defined, or the move is somehow not a ChargingMove,
+    // immediately end this phase.
     if (!target || !(move.isChargingMove())) {
+      console.warn("Invalid parameters for MoveChargePhase");
       return super.end();
     }
 

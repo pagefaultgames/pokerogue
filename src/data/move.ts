@@ -2644,7 +2644,13 @@ export class OneHitKOAttr extends MoveAttr {
   }
 }
 
+/**
+ * Attribute that allows charge moves to resolve in 1 turn under a given condition.
+ * Should only be used for {@linkcode ChargingMove | ChargingMoves} as a `chargeAttr`.
+ * @extends MoveAttr
+ */
 export class InstantChargeAttr extends MoveAttr {
+  /** The condition in which the move with this attribute instantly charges */
   protected readonly condition: UserMoveConditionFunc;
 
   constructor(condition: UserMoveConditionFunc) {
@@ -2652,6 +2658,15 @@ export class InstantChargeAttr extends MoveAttr {
     this.condition = condition;
   }
 
+  /**
+   * Flags the move with this attribute as instantly charged if this attribute's condition is met.
+   * @param user the {@linkcode Pokemon} using the move
+   * @param target n/a
+   * @param move the {@linkcode Move} associated with this attribute
+   * @param args
+   *  - `[0]` a {@linkcode Utils.BooleanHolder | BooleanHolder} for the "instant charge" flag
+   * @returns `true` if the instant charge condition is met; `false` otherwise.
+   */
   override apply(user: Pokemon, target: Pokemon | null, move: Move, args: any[]): boolean {
     const instantCharge = args[0];
     if (!(instantCharge instanceof Utils.BooleanHolder)) {
@@ -2666,6 +2681,11 @@ export class InstantChargeAttr extends MoveAttr {
   }
 }
 
+/**
+ * Attribute that allows charge moves to resolve in 1 turn while specific {@linkcode WeatherType | Weather}
+ * is active. Should only be used for {@linkcode ChargingMove | ChargingMoves} as a `chargeAttr`.
+ * @extends InstantChargeAttr
+ */
 export class WeatherInstantChargeAttr extends InstantChargeAttr {
   constructor(weatherTypes: WeatherType[]) {
     super((user, move) => {
@@ -4723,7 +4743,13 @@ export const frenzyMissFunc: UserMoveConditionFunc = (user: Pokemon, move: Move)
   return true;
 };
 
+/**
+ * Attribute that grants {@link https://bulbapedia.bulbagarden.net/wiki/Semi-invulnerable_turn | semi-invulnerability} to the user during
+ * the associated move's charging phase. Should only be used for {@linkcode ChargingMove | ChargingMoves} as a `chargeAttr`.
+ * @extends MoveEffectAttr
+ */
 export class SemiInvulnerableAttr extends MoveEffectAttr {
+  /** The type of {@linkcode SemiInvulnerableTag} to grant to the user */
   public tagType: BattlerTagType;
 
   constructor(tagType: BattlerTagType) {
@@ -4731,6 +4757,14 @@ export class SemiInvulnerableAttr extends MoveEffectAttr {
     this.tagType = tagType;
   }
 
+  /**
+   * Grants a {@linkcode SemiInvulnerableTag} to the associated move's user.
+   * @param user the {@linkcode Pokemon} using the move
+   * @param target n/a
+   * @param move the {@linkcode Move} being used
+   * @param args n/a
+   * @returns `true` if semi-invulnerability was successfully granted; `false` otherwise.
+   */
   override apply(user: Pokemon, target: Pokemon, move: Move, args?: any[]): boolean {
     if (!super.apply(user, target, move, args)) {
       return false;
@@ -9498,7 +9532,7 @@ export function initMoves() {
       .attr(StatStageChangeAttr, [ Stat.DEF ], -1, true, null, true, false, MoveEffectTrigger.HIT, false, true)
       .attr(MultiHitAttr)
       .makesContact(false),
-    new ChargingAttackMove(Moves.METEOR_BEAM, Type.ROCK, MoveCategory.SPECIAL, 120, 90, 10, 100, 0, 8)
+    new ChargingAttackMove(Moves.METEOR_BEAM, Type.ROCK, MoveCategory.SPECIAL, 120, 90, 10, -1, 0, 8)
       .chargeText(i18next.t("moveTriggers:isOverflowingWithSpacePower", { pokemonName: "{USER}" }))
       .chargeAttr(StatStageChangeAttr, [ Stat.SPATK ], 1, true)
       .ignoresVirtual(),
