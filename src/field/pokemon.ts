@@ -983,7 +983,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         this.scene.applyModifier(PokemonIncrementingStatModifier, this.isPlayer(), this, s, statHolder);
       }
 
-      statHolder.value = Utils.clampInt(statHolder.value, 1, Number.MAX_SAFE_INTEGER);
+      statHolder.value = Phaser.Math.Clamp(statHolder.value, 1, Number.MAX_SAFE_INTEGER);
 
       this.setStat(s, statHolder.value);
     }
@@ -1424,10 +1424,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * @returns {boolean} Whether the ability is present and active
    */
   public hasAbility(ability: Abilities, canApply: boolean = true, ignoreOverride?: boolean): boolean {
-    if ((!canApply || this.canApplyAbility()) && this.getAbility(ignoreOverride).id === ability) {
+    if (this.getAbility(ignoreOverride).id === ability && (!canApply || this.canApplyAbility())) {
       return true;
     }
-    if (this.hasPassive() && (!canApply || this.canApplyAbility(true)) && this.getPassiveAbility().id === ability) {
+    if (this.getPassiveAbility().id === ability && this.hasPassive() && (!canApply || this.canApplyAbility(true))) {
       return true;
     }
     return false;
@@ -2707,7 +2707,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    */
   apply(source: Pokemon, move: Move): HitResult {
     const defendingSide = this.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY;
-    if (move.category === MoveCategory.STATUS) {
+    const moveCategory = new Utils.NumberHolder(move.category);
+    applyMoveAttrs(VariableMoveCategoryAttr, source, this, move, moveCategory);
+    if (moveCategory.value === MoveCategory.STATUS) {
       const cancelled = new Utils.BooleanHolder(false);
       const typeMultiplier = this.getMoveEffectiveness(source, move, false, false, cancelled);
 
@@ -2781,7 +2783,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
         if (damage > 0) {
           if (source.isPlayer()) {
-            this.scene.validateAchvs(DamageAchv, damage);
+            this.scene.validateAchvs(DamageAchv, new Utils.NumberHolder(damage));
             if (damage > this.scene.gameData.gameStats.highestDamage) {
               this.scene.gameData.gameStats.highestDamage = damage;
             }
