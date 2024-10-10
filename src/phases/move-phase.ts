@@ -1,6 +1,6 @@
 import { BattlerIndex } from "#app/battle";
 import BattleScene from "#app/battle-scene";
-import { applyAbAttrs, applyPostMoveUsedAbAttrs, applyPreAttackAbAttrs, BlockRedirectAbAttr, IncreasePpAbAttr, PokemonTypeChangeAbAttr, PostMoveUsedAbAttr, RedirectMoveAbAttr } from "#app/data/ability";
+import { applyAbAttrs, applyPostMoveUsedAbAttrs, applyPreAttackAbAttrs, BlockRedirectAbAttr, IncreasePpAbAttr, PokemonTypeChangeAbAttr, PostMoveUsedAbAttr, RedirectMoveAbAttr, ReduceStatusEffectDurationAbAttr } from "#app/data/ability";
 import { CommonAnim } from "#app/data/battle-anims";
 import { BattlerTagLapseType, CenterOfAttentionTag } from "#app/data/battler-tags";
 import { allMoves, applyMoveAttrs, BypassRedirectAttr, BypassSleepAttr, ChargeAttr, CopyMoveAttr, HealStatusEffectAttr, MoveFlags, PreMoveMessageAttr } from "#app/data/move";
@@ -172,7 +172,10 @@ export class MovePhase extends BattlePhase {
         break;
       case StatusEffect.SLEEP:
         applyMoveAttrs(BypassSleepAttr, this.pokemon, null, this.move.getMove());
-        healed = this.pokemon.status.turnCount === this.pokemon.status.cureTurn;
+        const turnsRemaining = new NumberHolder(this.pokemon.status.turnsRemaining ?? 0);
+        applyAbAttrs(ReduceStatusEffectDurationAbAttr, this.pokemon, null, false, this.pokemon.status.effect, turnsRemaining);
+        this.pokemon.status.turnsRemaining = turnsRemaining.value;
+        healed = this.pokemon.status.turnsRemaining <= 0;
         activated = !healed && !this.pokemon.getTag(BattlerTagType.BYPASS_SLEEP);
         this.cancelled = activated;
         break;

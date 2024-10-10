@@ -4192,18 +4192,31 @@ export class RedirectTypeMoveAbAttr extends RedirectMoveAbAttr {
 
 export class BlockRedirectAbAttr extends AbAttr { }
 
+/**
+ * Used by Early Bird
+ * @param statusEffect - The {@linkcode StatusEffect} to check for
+ * @see {@linkcode apply}
+ */
 export class ReduceStatusEffectDurationAbAttr extends AbAttr {
-  private statusEffect: StatusEffect;
-
-  constructor(statusEffect: StatusEffect) {
+  constructor(
+    private statusEffect: StatusEffect
+  ) {
     super(true);
-
-    this.statusEffect = statusEffect;
   }
 
-  apply(pokemon: Pokemon, passive: boolean, simulated: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean {
+  /**
+   * Applies the duration reduction of the `AbAttr`
+   * @param args - The args passed to the `AbAttr`:
+   * - `[0]` - The {@linkcode StatusEffect} of the Pokemon
+   * - `[1]` - The number of turns remaining until the status is healed
+   * @returns `true` if the ability was applied
+   */
+  apply(_pokemon: Pokemon, _passive: boolean, _simulated: boolean, _cancelled: Utils.BooleanHolder, args: any[]): boolean {
+    if (!(args[1] instanceof Utils.NumberHolder)) {
+      return false;
+    }
     if (args[0] === this.statusEffect) {
-      (args[1] as Utils.IntegerHolder).value = Utils.toDmgValue((args[1] as Utils.IntegerHolder).value / 2);
+      args[1].value -= 1;
       return true;
     }
 
