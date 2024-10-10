@@ -11,15 +11,18 @@ export default class AdminUiHandler extends FormModalUiHandler {
   private adminMode: AdminMode;
   private adminResult: AdminSearchInfo; // this is the username that we're looking for
   private config: ModalConfig;
-  private readonly httpUserNotFoundErrorCode: number = 204; // this is the http response from the server when a username isn't found in the server. This has to be the same error the server is giving
+  private readonly httpUserNotFoundErrorCode: number = 404; // this is the http response from the server when a username isn't found in the server. This has to be the same error the server is giving
   private readonly buttonGap = 10;
-  private readonly ERR_REQUIRED_USERNAME: string = "Username is required";
-  private readonly ERR_REQUIRED_DISCORD: string = "Discord Id is required";
-  private readonly ERR_REQUIRED_USERNAME_OR_DISCORD: string = "Username  or discord Id is required";
-  private readonly SUCCESS_DISCORD_LINKED: string = "Username and discord successfully linked";
-  private readonly SUCCESS_DISCORD_UNLINKED: string = "Username and discord successfully unlinked";
-  private readonly SUCCESS_GOOGLE_LINKED: string = "Username and google successfully linked";
-  private readonly SUCCESS_GOOGLE_UNLINKED: string = "Username and google successfully unlinked";
+  private readonly ERR_REQUIRED_FIELD = (field: string) => {
+    if (field === "username") {
+      return `${Utils.formatText(field)} is required`;
+    } else {
+      return `${Utils.formatText(field)} Id is required`;
+    }
+  };
+  private readonly SUCCESS_SERVICE_MODE = (service: string, mode: string) => { // this returns a string saying whether a username has been successfully linked/unlinked to discord/google
+    return `Username and ${service} successfully ${mode}ed`;
+  };
   private readonly ERR_USERNAME_NOT_FOUND: string = "Username not found!";
   private readonly ERR_GENERIC_ERROR: string = "There was an error";
 
@@ -62,6 +65,8 @@ export default class AdminUiHandler extends FormModalUiHandler {
       return ["Link Account", "Cancel"];
     case AdminMode.SEARCH:
       return ["Find account", "Cancel"];
+    case AdminMode.ADMIN:
+      return ["Back to search", "Cancel"];
     default:
       return ["Activate ADMIN", "Cancel"];
     }
@@ -119,7 +124,7 @@ export default class AdminUiHandler extends FormModalUiHandler {
               if (response.error) {
                 return this.showMessage(response.errorType, adminSearchResult, true);
               } else {
-                return this.showMessage(this.SUCCESS_DISCORD_LINKED, adminSearchResult, false);
+                return this.showMessage(this.SUCCESS_SERVICE_MODE("discord", "link"), adminSearchResult, false);
               }
             });
         } else if (this.adminMode === AdminMode.SEARCH) {
@@ -130,6 +135,8 @@ export default class AdminUiHandler extends FormModalUiHandler {
               }
               this.updateAdminPanelInfo(response.adminSearchResult ?? adminSearchResult);
             });
+        } else if (this.adminMode === AdminMode.ADMIN) {
+          this.updateAdminPanelInfo(adminSearchResult, AdminMode.SEARCH);
         }
 
         return false;
@@ -165,7 +172,14 @@ export default class AdminUiHandler extends FormModalUiHandler {
           img.setScale(0.5);
           img.setInteractive();
           img.on("pointerdown", () => {
-            this.adminLinkUnlink(this.convertInputsToAdmin(), aR.includes("discord") ? "discord" : "google", adminResult[aR] === "" ? "link" : "unlink").then(response => {
+            const service = aR.toLowerCase().replace("id", ""); // this takes our key (discordId or googleId) and removes the "Id" at the end to make it more url friendly
+            const mode = adminResult[aR] === "" ? "link" : "unlink"; // this figures out if we're linking or unlinking a service
+            const validFields = this.areFieldsValid(this.adminMode, service);
+            if (validFields.error) {
+              this.scene.ui.setMode(Mode.LOADING, { buttonActions: [] }); // this is here to force a loading screen to allow the admin tool to reopen again if there's an error
+              return this.showMessage(validFields.errorMessage ?? "", adminResult, true);
+            }
+            this.adminLinkUnlink(this.convertInputsToAdmin(), service, mode).then(response => {
               if (response.error) {
                 return this.showMessage(response.errorType, adminResult, true);
               } else {
@@ -175,7 +189,7 @@ export default class AdminUiHandler extends FormModalUiHandler {
                     if (response.error) {
                       return this.showMessage(response.errorType, adminResult, true);
                     }
-                    this.updateAdminPanelInfo(response.adminSearchResult ?? adminResult);
+                    return this.showMessage(this.SUCCESS_SERVICE_MODE(service, mode), response.adminSearchResult ?? adminResult, false);
                   });
               }
             });
@@ -193,28 +207,44 @@ export default class AdminUiHandler extends FormModalUiHandler {
     }
   }
 
-  areFieldsValid(adminMode: AdminMode): { error: boolean; errorMessage?: string; } {
+  areFieldsValid(adminMode: AdminMode, service?: string): { error: boolean; errorMessage?: string; } {
     switch (adminMode) {
     case AdminMode.LINK:
-      if (!this.inputs[0].text) {
+      if (!this.inputs[0].text) { // username missing from link panel
         return {
           error: true,
-          errorMessage: this.ERR_REQUIRED_USERNAME
+          errorMessage: this.ERR_REQUIRED_FIELD("username")
         };
       }
-      if (!this.inputs[1].text) {
+      if (!this.inputs[1].text) { // discordId missing from linking panel
         return {
           error: true,
-          errorMessage: this.ERR_REQUIRED_DISCORD
+          errorMessage: this.ERR_REQUIRED_FIELD("discord")
         };
       }
+      break;
     case AdminMode.SEARCH:
-      if (!this.inputs[0].text) {
+      if (!this.inputs[0].text) { // either username or discordId missing from search panel
         return {
           error: true,
-          errorMessage: this.ERR_REQUIRED_USERNAME_OR_DISCORD
+          errorMessage: this.ERR_REQUIRED_FIELD("username or discord")
         };
       }
+      break;
+    case AdminMode.ADMIN:
+      if (!this.inputs[1].text && service === "discord") { // discordId missing from admin panel
+        return {
+          error: true,
+          errorMessage: this.ERR_REQUIRED_FIELD(service)
+        };
+      }
+      if (!this.inputs[2].text && service === "google") { // googleId missing from admin panel
+        return {
+          error: true,
+          errorMessage: this.ERR_REQUIRED_FIELD(service)
+        };
+      }
+      break;
     }
     return {
       error: false
@@ -234,14 +264,9 @@ export default class AdminUiHandler extends FormModalUiHandler {
   async adminSearch(adminSearchResult: AdminSearchInfo) {
     try {
       const adminInfo = await Utils.apiFetch(`admin/account/admin-search?username=${encodeURIComponent(adminSearchResult.username)}`, true);
-      if (!adminInfo.ok) {
-        console.error(adminInfo);
-        console.log(adminSearchResult);
-        return { adminSearchResult: adminSearchResult, error: true, errorType: this.ERR_GENERIC_ERROR };
-      } else if (adminInfo.status === this.httpUserNotFoundErrorCode) { // username doesn't exist
-        console.log(adminSearchResult);
-        return { adminSearchResult: adminSearchResult, error: true, errorType: this.ERR_USERNAME_NOT_FOUND };
-      } else {
+      if (!adminInfo.ok) { // error - if adminInfo.status === this.httpUserNotFoundErrorCode that means the username can't be found in the db
+        return { adminSearchResult: adminSearchResult, error: true, errorType: adminInfo.status === this.httpUserNotFoundErrorCode ? this.ERR_USERNAME_NOT_FOUND : this.ERR_GENERIC_ERROR };
+      } else { // success
         const adminInfoJson: AdminSearchInfo = await adminInfo.json();
         return { adminSearchResult: adminInfoJson, error: false };
       }
@@ -254,22 +279,11 @@ export default class AdminUiHandler extends FormModalUiHandler {
   async adminLinkUnlink(adminSearchResult: AdminSearchInfo, service: string, mode: string) {
     try {
       const response = await Utils.apiPost(`admin/account/${service}-${mode}`, `username=${encodeURIComponent(adminSearchResult.username)}&${service}Id=${encodeURIComponent(service === "discord" ? adminSearchResult.discordId : adminSearchResult.googleId)}`, "application/x-www-form-urlencoded", true);
-      //.then(response => {
-      if (!response.ok) {
-        console.error(response);
-        return { adminSearchResult: adminSearchResult, error: true, errorType: this.ERR_GENERIC_ERROR };
-      } else if (response.status === this.httpUserNotFoundErrorCode) { // username doesn't exist
-        return { adminSearchResult: adminSearchResult, error: true, errorType: this.ERR_USERNAME_NOT_FOUND };
-      } else {
-        //let successString: string = "";
-        //if (service === "discord") {
-        //  successString = mode === "link" ? this.SUCCESS_DISCORD_LINKED : this.SUCCESS_DISCORD_UNLINKED;
-        //} else if (service === "google") {
-        //  successString = mode === "link" ? this.SUCCESS_GOOGLE_LINKED : this.SUCCESS_GOOGLE_UNLINKED;
-        //}
+      if (!response.ok) { // error - if response.status === this.httpUserNotFoundErrorCode that means the username can't be found in the db
+        return { adminSearchResult: adminSearchResult, error: true, errorType: response.status === this.httpUserNotFoundErrorCode ? this.ERR_USERNAME_NOT_FOUND : this.ERR_GENERIC_ERROR };
+      } else { // success!
         return { adminSearchResult: adminSearchResult, error: false };
       }
-      //})
     } catch (err) {
       console.error(err);
       return { error: true, errorType: err };
