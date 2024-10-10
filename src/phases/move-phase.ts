@@ -22,7 +22,7 @@ import { BattlerTagType } from "#enums/battler-tag-type";
 import { Moves } from "#enums/moves";
 import { StatusEffect } from "#enums/status-effect";
 import i18next from "i18next";
-import { MoveChargePhase } from "./move-charge-phase";
+import { MoveChargePhase } from "#app/phases/move-charge-phase";
 
 export class MovePhase extends BattlePhase {
   protected _pokemon: Pokemon;
