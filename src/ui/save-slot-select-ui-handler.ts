@@ -12,7 +12,7 @@ import { Mode } from "./ui";
 import { addWindow } from "./ui-theme";
 import { RunDisplayMode } from "#app/ui/run-info-ui-handler";
 
-const sessionSlotCount = 5;
+const SESSION_SLOTS_COUNT = 5;
 
 export enum SaveSlotUiMode {
   LOAD,
@@ -84,12 +84,10 @@ export default class SaveSlotSelectUiHandler extends MessageUiHandler {
     this.saveSlotSelectCallback = args[1] as SaveSlotSelectCallback;
 
     this.saveSlotSelectContainer.setVisible(true);
-    this.populateSessionSlots()
-      .then(() => {
-        this.setScrollCursor(0);
-        this.setCursor(0);
-      });
+    this.populateSessionSlots();
 
+    this.setScrollCursor(0);
+    this.setCursor(0);
     return true;
   }
 
@@ -163,7 +161,7 @@ export default class SaveSlotSelectUiHandler extends MessageUiHandler {
       case Button.DOWN:
         if (this.cursor < 2) {
           success = this.setCursor(this.cursor + 1, this.cursor);
-        } else if (this.scrollCursor < sessionSlotCount - 3) {
+        } else if (this.scrollCursor < SESSION_SLOTS_COUNT - 3) {
           success = this.setScrollCursor(this.scrollCursor + 1, cursorPosition);
         }
         break;
@@ -184,13 +182,19 @@ export default class SaveSlotSelectUiHandler extends MessageUiHandler {
     return success || error;
   }
 
-  async populateSessionSlots() {
-    for (let s = 0; s < sessionSlotCount; s++) {
+  populateSessionSlots() {
+    for (let s = 0; s < SESSION_SLOTS_COUNT; s++) {
       const sessionSlot = new SessionSlot(this.scene, s);
-      await sessionSlot.load();
       this.scene.add.existing(sessionSlot);
       this.sessionSlotsContainer.add(sessionSlot);
       this.sessionSlots.push(sessionSlot);
+      sessionSlot.load().then((success) => {
+        // If the cursor was moved to this slot while the session was loading
+        // call setCursor again to shift the slot position and show the arrow for save preview
+        if (success && (this.cursor + this.scrollCursor) === s) {
+          this.setCursor(s);
+        }
+      });
     }
   }
 
@@ -391,6 +395,10 @@ class SessionSlot extends Phaser.GameObjects.Container {
   load(): Promise<boolean> {
     return new Promise<boolean>(resolve => {
       this.scene.gameData.getSession(this.slotId).then(async sessionData => {
+        // Ignore the results if the view was exited
+        if (!this.active) {
+          return;
+        }
         if (!sessionData) {
           this.hasData = false;
           this.loadingLabel.setText(i18next.t("saveSlotSelectUiHandler:empty"));
