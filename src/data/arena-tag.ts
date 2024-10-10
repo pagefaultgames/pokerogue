@@ -7,7 +7,7 @@ import { getPokemonNameWithAffix } from "#app/messages";
 import Pokemon, { HitResult, PlayerPokemon, PokemonMove, EnemyPokemon } from "#app/field/pokemon";
 import { StatusEffect } from "#app/data/status-effect";
 import { BattlerIndex } from "#app/battle";
-import { BlockNonDirectDamageAbAttr, ChangeMovePriorityAbAttr, ProtectStatAbAttr, applyAbAttrs } from "#app/data/ability";
+import { BlockNonDirectDamageAbAttr, ChangeMovePriorityAbAttr, InfiltratorAbAttr, ProtectStatAbAttr, applyAbAttrs } from "#app/data/ability";
 import { Stat } from "#enums/stat";
 import { CommonAnim, CommonBattleAnim } from "#app/data/battle-anims";
 import i18next from "i18next";
@@ -92,10 +92,20 @@ export class MistTag extends ArenaTag {
   }
 
   apply(arena: Arena, args: any[]): boolean {
-    (args[0] as Utils.BooleanHolder).value = true;
+    const [ attacker, cancelled ] = [
+      args[0] as Pokemon,
+      args[1] as Utils.BooleanHolder
+    ];
 
+    const bypassed = new Utils.BooleanHolder(false);
+    // TODO: Allow this to be simulated
+    applyAbAttrs(InfiltratorAbAttr, attacker, null, false, bypassed);
+    if (bypassed.value) {
+      return false;
+    }
+
+    cancelled.value = true;
     arena.scene.queueMessage(i18next.t("arenaTag:mistApply"));
-
     return true;
   }
 }
@@ -126,16 +136,22 @@ export class WeakenMoveScreenTag extends ArenaTag {
   /**
    * Applies the weakening effect to the move.
    *
-   * @param arena - The arena where the move is applied.
-   * @param args - The arguments for the move application.
-   * @param args[0] - The category of the move.
-   * @param args[1] - A boolean indicating whether it is a double battle.
-   * @param args[2] - An object of type `Utils.NumberHolder` that holds the damage multiplier
+   * @param arena The {@linkcode Arena} where the move is applied.
+   * @param args Additional parameters for the effect's application:
+   * - `[0]` The attacking {@linkcode Pokemon}
+   * - `[1]` The category of the move.
+   * - `[2]` A boolean indicating whether it is a double battle.
+   * - `[3]` An object of type `Utils.NumberHolder` that holds the damage multiplier
    *
    * @returns True if the move was weakened, otherwise false.
    */
   apply(arena: Arena, args: any[]): boolean {
-    if (this.weakenedCategories.includes((args[0] as MoveCategory))) {
+    const attacker = args[0] as Pokemon;
+    const bypassed = new Utils.BooleanHolder(false);
+    // TODO: allow this to be simulated
+    applyAbAttrs(InfiltratorAbAttr, attacker, null, false, bypassed);
+
+    if (!bypassed.value && this.weakenedCategories.includes((args[0] as MoveCategory))) {
       (args[2] as Utils.NumberHolder).value = (args[1] as boolean) ? 2732 / 4096 : 0.5;
       return true;
     }
