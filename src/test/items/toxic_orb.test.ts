@@ -1,11 +1,11 @@
 import { StatusEffect } from "#app/data/status-effect";
-import i18next, { initI18n } from "#app/plugins/i18n";
+import i18next from "#app/plugins/i18n";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 const TIMEOUT = 20 * 1000;
 
@@ -30,17 +30,17 @@ describe("Items - Toxic orb", () => {
       .enemySpecies(Species.RATTATA)
       .ability(Abilities.BALL_FETCH)
       .enemyAbility(Abilities.BALL_FETCH)
-      .moveset([Moves.SPLASH])
+      .moveset([ Moves.SPLASH ])
       .enemyMoveset(Moves.SPLASH)
       .startingHeldItems([{
         name: "TOXIC_ORB",
       }]);
+
+    vi.spyOn(i18next, "t");
   });
 
   it("badly poisons the holder", async () => {
-    initI18n();
-    i18next.changeLanguage("en");
-    await game.classicMode.startBattle([Species.MIGHTYENA]);
+    await game.classicMode.startBattle([ Species.MIGHTYENA ]);
 
     const player = game.scene.getPlayerField()[0];
 
@@ -49,8 +49,10 @@ describe("Items - Toxic orb", () => {
     await game.phaseInterceptor.to("TurnEndPhase");
     // Toxic orb should trigger here
     await game.phaseInterceptor.run("MessagePhase");
-    const message = game.textInterceptor.getLatestMessage();
-    expect(message).toContain("was badly poisoned by the Toxic Orb");
+    expect(i18next.t).toHaveBeenCalledWith("statusEffect:toxic.obtainSource", expect.anything());
+
+    await game.toNextTurn();
+
     expect(player.status?.effect).toBe(StatusEffect.TOXIC);
     // Damage should not have ticked yet.
     expect(player.status?.turnCount).toBe(0);

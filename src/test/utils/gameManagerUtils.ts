@@ -7,6 +7,7 @@ import { PlayerPokemon } from "#app/field/pokemon";
 import { GameModes, getGameMode } from "#app/game-mode";
 import { Starter } from "#app/ui/starter-select-ui-handler";
 import { Species } from "#enums/species";
+import Battle, { BattleType } from "#app/battle";
 
 /** Function to convert Blob to string */
 export function blobToString(blob) {
@@ -88,4 +89,24 @@ export function getMovePosition(scene: BattleScene, pokemonIndex: 0 | 1, move: M
   const index = moveSet.findIndex((m) => m?.moveId === move);
   console.log(`Move position for ${Moves[move]} (=${move}):`, index);
   return index;
+}
+
+/**
+ * Useful for populating party, wave index, etc. without having to spin up and run through an entire EncounterPhase
+ * @param scene
+ * @param species
+ */
+export function initSceneWithoutEncounterPhase(scene: BattleScene, species?: Species[]) {
+  const starters = generateStarter(scene, species);
+  starters.forEach((starter) => {
+    const starterProps = scene.gameData.getSpeciesDexAttrProps(starter.species, starter.dexAttr);
+    const starterFormIndex = Math.min(starterProps.formIndex, Math.max(starter.species.forms.length - 1, 0));
+    const starterGender = Gender.MALE;
+    const starterIvs = scene.gameData.dexData[starter.species.speciesId].ivs.slice(0);
+    const starterPokemon = scene.addPlayerPokemon(starter.species, scene.gameMode.getStartingLevel(), starter.abilityIndex, starterFormIndex, starterGender, starterProps.shiny, starterProps.variant, starterIvs, starter.nature);
+    starter.moveset && starterPokemon.tryPopulateMoveset(starter.moveset);
+    scene.getParty().push(starterPokemon);
+  });
+
+  scene.currentBattle = new Battle(getGameMode(GameModes.CLASSIC), 5, BattleType.WILD, undefined, false);
 }

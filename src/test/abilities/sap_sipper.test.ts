@@ -148,8 +148,8 @@ describe("Abilities - Sap Sipper", () => {
     const moveToUse = Moves.METRONOME;
     const enemyAbility = Abilities.SAP_SIPPER;
 
-    game.override.moveset([moveToUse]);
-    game.override.enemyMoveset([Moves.SPLASH, Moves.NONE, Moves.NONE, Moves.NONE]);
+    game.override.moveset([ moveToUse ]);
+    game.override.enemyMoveset([ Moves.SPLASH, Moves.NONE, Moves.NONE, Moves.NONE ]);
     game.override.enemySpecies(Species.RATTATA);
     game.override.enemyAbility(enemyAbility);
 
@@ -163,6 +163,24 @@ describe("Abilities - Sap Sipper", () => {
     await game.phaseInterceptor.to(TurnEndPhase);
 
     expect(initialEnemyHp - enemyPokemon.hp).toBe(0);
+    expect(enemyPokemon.getStatStage(Stat.ATK)).toBe(1);
+  });
+
+  it("still activates regardless of accuracy check", async () => {
+    game.override.moveset(Moves.LEAF_BLADE);
+    game.override.enemyMoveset(Moves.SPLASH);
+    game.override.enemySpecies(Species.MAGIKARP);
+    game.override.enemyAbility(Abilities.SAP_SIPPER);
+
+    await game.classicMode.startBattle();
+
+    const enemyPokemon = game.scene.getEnemyPokemon()!;
+
+    game.move.select(Moves.LEAF_BLADE);
+    await game.phaseInterceptor.to("MoveEffectPhase");
+
+    await game.move.forceMiss();
+    await game.phaseInterceptor.to("BerryPhase", false);
     expect(enemyPokemon.getStatStage(Stat.ATK)).toBe(1);
   });
 });

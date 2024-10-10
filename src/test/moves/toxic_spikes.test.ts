@@ -34,11 +34,11 @@ describe("Moves - Toxic Spikes", () => {
       .enemyAbility(Abilities.BALL_FETCH)
       .ability(Abilities.BALL_FETCH)
       .enemyMoveset(Moves.SPLASH)
-      .moveset([Moves.TOXIC_SPIKES, Moves.SPLASH, Moves.ROAR]);
+      .moveset([ Moves.TOXIC_SPIKES, Moves.SPLASH, Moves.ROAR ]);
   });
 
   it("should not affect the opponent if they do not switch", async() => {
-    await game.classicMode.runToSummon([Species.MIGHTYENA, Species.POOCHYENA]);
+    await game.classicMode.runToSummon([ Species.MIGHTYENA, Species.POOCHYENA ]);
 
     const enemy = game.scene.getEnemyField()[0];
 
@@ -54,7 +54,7 @@ describe("Moves - Toxic Spikes", () => {
   }, TIMEOUT);
 
   it("should poison the opponent if they switch into 1 layer", async() => {
-    await game.classicMode.runToSummon([Species.MIGHTYENA]);
+    await game.classicMode.runToSummon([ Species.MIGHTYENA ]);
 
     game.move.select(Moves.TOXIC_SPIKES);
     await game.phaseInterceptor.to("TurnEndPhase");
@@ -68,7 +68,7 @@ describe("Moves - Toxic Spikes", () => {
   }, TIMEOUT);
 
   it("should badly poison the opponent if they switch into 2 layers", async() => {
-    await game.classicMode.runToSummon([Species.MIGHTYENA]);
+    await game.classicMode.runToSummon([ Species.MIGHTYENA ]);
 
     game.move.select(Moves.TOXIC_SPIKES);
     await game.phaseInterceptor.to("TurnEndPhase");
@@ -84,7 +84,7 @@ describe("Moves - Toxic Spikes", () => {
 
   it("should be removed if a grounded poison pokemon switches in", async() => {
     game.override.enemySpecies(Species.GRIMER);
-    await game.classicMode.runToSummon([Species.MIGHTYENA]);
+    await game.classicMode.runToSummon([ Species.MIGHTYENA ]);
 
     game.move.select(Moves.TOXIC_SPIKES);
     await game.phaseInterceptor.to("TurnEndPhase");
@@ -101,7 +101,7 @@ describe("Moves - Toxic Spikes", () => {
   }, TIMEOUT);
 
   it("shouldn't create multiple layers per use in doubles", async() => {
-    await game.classicMode.runToSummon([Species.MIGHTYENA, Species.POOCHYENA]);
+    await game.classicMode.runToSummon([ Species.MIGHTYENA, Species.POOCHYENA ]);
 
     game.move.select(Moves.TOXIC_SPIKES);
     await game.phaseInterceptor.to("TurnEndPhase");
@@ -116,7 +116,7 @@ describe("Moves - Toxic Spikes", () => {
     const scene = game.scene;
     const gameData = new GameData(scene);
 
-    await game.classicMode.runToSummon([Species.MIGHTYENA]);
+    await game.classicMode.runToSummon([ Species.MIGHTYENA ]);
 
     game.move.select(Moves.TOXIC_SPIKES);
     await game.phaseInterceptor.to("TurnEndPhase");
