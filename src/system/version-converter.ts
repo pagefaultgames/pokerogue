@@ -1,6 +1,7 @@
 import { allSpecies } from "#app/data/pokemon-species";
 import { AbilityAttr, defaultStarterSpecies, DexAttr, SessionSaveData, SystemSaveData } from "./game-data";
 import { SettingKeys } from "./settings/settings";
+import { CustomPokemonData } from "#app/data/custom-pokemon-data";
 
 const LATEST_VERSION = "1.0.5";
 
@@ -75,6 +76,20 @@ export function applySessionDataPatches(data: SessionSaveData) {
 
     data.gameVersion = LATEST_VERSION;
   }
+
+  // Fix Pokemon nature overrides and custom data migration
+  data.party.forEach(pokemon => {
+    if (pokemon["mysteryEncounterData"]) {
+      pokemon.customPokemonData = new CustomPokemonData(pokemon["mysteryEncounterData"]);
+    }
+    if (pokemon["fusionMysteryEncounterData"]) {
+      pokemon.fusionCustomPokemonData = new CustomPokemonData(pokemon["fusionMysteryEncounterData"]);
+    }
+    pokemon.customPokemonData = pokemon.customPokemonData ?? new CustomPokemonData();
+    if (pokemon["natureOverride"]) {
+      pokemon.customPokemonData.nature = pokemon["natureOverride"];
+    }
+  });
 }
 
 export function applySystemDataPatches(data: SystemSaveData) {
