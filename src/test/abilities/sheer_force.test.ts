@@ -176,7 +176,7 @@ describe("Abilities - Sheer Force", () => {
       Species.PIDGEOT
     ]);
 
-    const pidgeot = game.scene.getParty()[0];
+    const pidgeot = game.scene.getPlayerParty()[0];
     const onix = game.scene.getEnemyParty()[0];
 
     pidgeot.stats[Stat.DEF] = 10000;
