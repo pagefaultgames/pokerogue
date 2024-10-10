@@ -40,7 +40,9 @@ export default class AchvsUiHandler extends MessageUiHandler {
   private iconsBg: Phaser.GameObjects.NineSlice;
   private icons: Phaser.GameObjects.Sprite[];
 
+  private titleBg: Phaser.GameObjects.NineSlice;
   private titleText: Phaser.GameObjects.Text;
+  private scoreContainer: Phaser.GameObjects.Container;
   private scoreText: Phaser.GameObjects.Text;
   private unlockText: Phaser.GameObjects.Text;
 
@@ -114,29 +116,31 @@ export default class AchvsUiHandler extends MessageUiHandler {
 
     const titleBg = addWindow(this.scene, 0, this.headerBg.height + this.iconsBg.height, 174, 24);
     titleBg.setOrigin(0, 0);
+    this.titleBg = titleBg;
 
     this.titleText = addTextObject(this.scene, 0, 0, "", TextStyle.WINDOW);
     const textSize = languageSettings[i18next.language]?.TextSize ?? this.titleText.style.fontSize;
     this.titleText.setFontSize(textSize);
-    this.titleText.setOrigin(0, 0);
     const titleBgCenterX = titleBg.x + titleBg.width / 2;
     const titleBgCenterY = titleBg.y + titleBg.height / 2;
     this.titleText.setOrigin(0.5, 0.5);
     this.titleText.setPosition(titleBgCenterX, titleBgCenterY);
 
-    const scoreBg = addWindow(this.scene, titleBg.x + titleBg.width, titleBg.y, 46, 24);
+    this.scoreContainer = this.scene.add.container(titleBg.x + titleBg.width, titleBg.y);
+    const scoreBg = addWindow(this.scene, 0, 0, 46, 24);
     scoreBg.setOrigin(0, 0);
+    this.scoreContainer.add(scoreBg);
 
-    this.scoreText = addTextObject(this.scene, 0, 0, "", TextStyle.WINDOW);
-    this.scoreText.setOrigin(0, 0);
-    this.scoreText.setPositionRelative(scoreBg, 8, 4);
+    this.scoreText = addTextObject(this.scene, scoreBg.width / 2, scoreBg.height / 2, "", TextStyle.WINDOW);
+    this.scoreText.setOrigin(0.5, 0.5);
+    this.scoreContainer.add(this.scoreText);
 
-    const unlockBg = addWindow(this.scene, scoreBg.x + scoreBg.width, scoreBg.y, 98, 24);
+    const unlockBg = addWindow(this.scene, this.scoreContainer.x + scoreBg.width, titleBg.y, 98, 24);
     unlockBg.setOrigin(0, 0);
 
     this.unlockText = addTextObject(this.scene, 0, 0, "", TextStyle.WINDOW);
-    this.unlockText.setOrigin(0, 0);
-    this.unlockText.setPositionRelative(unlockBg, 8, 4);
+    this.unlockText.setOrigin(0.5, 0.5);
+    this.unlockText.setPositionRelative(unlockBg, unlockBg.width / 2, unlockBg.height / 2);
 
     const descriptionBg = addWindow(this.scene, 0, titleBg.y + titleBg.height, (this.scene.game.canvas.width / 6) - 2, 42);
     descriptionBg.setOrigin(0, 0);
@@ -157,8 +161,7 @@ export default class AchvsUiHandler extends MessageUiHandler {
     this.mainContainer.add(this.iconsContainer);
     this.mainContainer.add(titleBg);
     this.mainContainer.add(this.titleText);
-    this.mainContainer.add(scoreBg);
-    this.mainContainer.add(this.scoreText);
+    this.mainContainer.add(this.scoreContainer);
     this.mainContainer.add(unlockBg);
     this.mainContainer.add(this.unlockText);
     this.mainContainer.add(descriptionBg);
@@ -167,8 +170,6 @@ export default class AchvsUiHandler extends MessageUiHandler {
     ui.add(this.mainContainer);
 
     this.currentPage = Page.ACHIEVEMENTS;
-    this.setCursor(0);
-    this.setScrollCursor(0);
 
     this.mainContainer.setVisible(false);
   }
@@ -316,9 +317,19 @@ export default class AchvsUiHandler extends MessageUiHandler {
     if (update || pageChange) {
       switch (this.currentPage) {
       case Page.ACHIEVEMENTS:
+        if (pageChange) {
+          this.titleBg.width = 174;
+          this.titleText.x = this.titleBg.width / 2;
+          this.scoreContainer.setVisible(true);
+        }
         this.showAchv(achvs[Object.keys(achvs)[cursor + this.scrollCursor * this.COLS]]);
         break;
       case Page.VOUCHERS:
+        if (pageChange) {
+          this.titleBg.width = 220;
+          this.titleText.x = this.titleBg.width / 2;
+          this.scoreContainer.setVisible(false);
+        }
         this.showVoucher(vouchers[Object.keys(vouchers)[cursor + this.scrollCursor * this.COLS]]);
         break;
       }
@@ -442,6 +453,7 @@ export default class AchvsUiHandler extends MessageUiHandler {
     this.currentPage = Page.ACHIEVEMENTS;
     this.mainContainer.setVisible(false);
     this.setScrollCursor(0);
+    this.setCursor(0, true);
     this.eraseCursor();
   }
 
