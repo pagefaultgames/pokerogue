@@ -399,10 +399,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    */
   generateIllusion(): boolean {
     if (this.hasTrainer()) {
-      console.log("GENERATEILLUSION() : ", this.name)
+      console.log("GENERATEILLUSION() : ", this.name);
       const party: Pokemon[] = (this.isPlayer() ? this.scene.getParty() : this.scene.getEnemyParty()).filter(p => p.isAllowedInBattle());
       const lastPokemon: Pokemon = party.filter(p => p !== this).at(-1) || this;
-      console.log(lastPokemon.name)
+      console.log(lastPokemon.name);
       const speciesId = lastPokemon.species.speciesId;
 
       if ( lastPokemon === this || this.illusion.active ||
@@ -475,12 +475,12 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       this.name = randomIllusion.name;
       this.loadAssets(false, true).then(() => this.playAnim());
     }
-    console.log("L'ILLUSION : ", this.illusion)
+    console.log("L'ILLUSION : ", this.illusion);
     return true;
   }
 
   breakIllusion(): boolean {
-    console.log("BREAKILLUSION")
+    console.log("BREAKILLUSION");
     if (!this.illusion.active) {
       return false;
     }
