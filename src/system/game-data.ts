@@ -31,7 +31,7 @@ import { TrainerVariant } from "#app/field/trainer";
 import { Variant } from "#app/data/variant";
 import { setSettingGamepad, SettingGamepad, settingGamepadDefaults } from "#app/system/settings/settings-gamepad";
 import { setSettingKeyboard, SettingKeyboard } from "#app/system/settings/settings-keyboard";
-import { TerrainChangedEvent, WeatherChangedEvent } from "#app/events/arena";
+import { TagAddedEvent, TerrainChangedEvent, WeatherChangedEvent } from "#app/events/arena";
 import * as Modifier from "#app/modifier/modifier";
 import { StatusEffect } from "#app/data/status-effect";
 import ChallengeData from "#app/system/challenge-data";
@@ -50,6 +50,7 @@ import { applySessionDataPatches, applySettingsDataPatches, applySystemDataPatch
 import { MysteryEncounterSaveData } from "#app/data/mystery-encounters/mystery-encounter-save-data";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { PokerogueApiClearSessionData } from "#app/@types/pokerogue-api";
+import { ArenaTrapTag } from "#app/data/arena-tag";
 
 export const defaultStarterSpecies: Species[] = [
   Species.BULBASAUR, Species.CHARMANDER, Species.SQUIRTLE,
@@ -1085,8 +1086,18 @@ export class GameData {
 
           scene.arena.terrain = sessionData.arena.terrain;
           scene.arena.eventTarget.dispatchEvent(new TerrainChangedEvent(TerrainType.NONE, scene.arena.terrain?.terrainType!, scene.arena.terrain?.turnsLeft!)); // TODO: is this bang correct?
-          // TODO
-          //scene.arena.tags = sessionData.arena.tags;
+
+          scene.arena.tags = sessionData.arena.tags;
+          if (scene.arena.tags) {
+            for (const tag of scene.arena.tags) {
+              if (tag instanceof ArenaTrapTag) {
+                const { tagType, side, turnCount, layers, maxLayers } = tag as ArenaTrapTag;
+                scene.arena.eventTarget.dispatchEvent(new TagAddedEvent(tagType, side, turnCount, layers, maxLayers));
+              } else {
+                scene.arena.eventTarget.dispatchEvent(new TagAddedEvent(tag.tagType, tag.side, tag.turnCount));
+              }
+            }
+          }
 
           for (const modifierData of sessionData.modifiers) {
             const modifier = modifierData.toModifier(scene, Modifier[modifierData.className]);
