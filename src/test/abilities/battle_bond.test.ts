@@ -7,7 +7,6 @@ import { Species } from "#enums/species";
 import GameManager from "#test/utils/gameManager";
 import { afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest";
 
-const TIMEOUT = 20 * 1000;
 
 describe("Abilities - BATTLE BOND", () => {
   let phaserGame: Phaser.Game;
@@ -28,8 +27,8 @@ describe("Abilities - BATTLE BOND", () => {
     const moveToUse = Moves.SPLASH;
     game.override.battleType("single");
     game.override.ability(Abilities.BATTLE_BOND);
-    game.override.moveset([moveToUse]);
-    game.override.enemyMoveset([Moves.TACKLE, Moves.TACKLE, Moves.TACKLE, Moves.TACKLE]);
+    game.override.moveset([ moveToUse ]);
+    game.override.enemyMoveset([ Moves.TACKLE, Moves.TACKLE, Moves.TACKLE, Moves.TACKLE ]);
   });
 
   test(
@@ -42,7 +41,7 @@ describe("Abilities - BATTLE BOND", () => {
         [Species.GRENINJA]: ashForm,
       });
 
-      await game.startBattle([Species.MAGIKARP, Species.GRENINJA]);
+      await game.startBattle([ Species.MAGIKARP, Species.GRENINJA ]);
 
       const greninja = game.scene.getParty().find((p) => p.species.speciesId === Species.GRENINJA);
       expect(greninja).toBeDefined();
@@ -60,6 +59,5 @@ describe("Abilities - BATTLE BOND", () => {
 
       expect(greninja!.formIndex).toBe(baseForm);
     },
-    TIMEOUT
   );
 });

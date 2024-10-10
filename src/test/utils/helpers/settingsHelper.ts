@@ -27,7 +27,7 @@ export class SettingsHelper extends GameManagerHelper {
    */
   typeHints(enable: boolean): void {
     this.game.scene.typeHints = enable;
-    this.log(`Type Hints ${enable? "enabled" : "disabled"}` );
+    this.log(`Type Hints ${enable ? "enabled" : "disabled"}` );
   }
 
   /**

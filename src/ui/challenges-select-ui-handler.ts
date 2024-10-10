@@ -3,7 +3,7 @@ import { TextStyle, addTextObject } from "./text";
 import { Mode } from "./ui";
 import UiHandler from "./ui-handler";
 import { addWindow } from "./ui-theme";
-import {Button} from "#enums/buttons";
+import { Button } from "#enums/buttons";
 import i18next from "i18next";
 import { Challenge } from "#app/data/challenge";
 import * as Utils from "../utils";
@@ -28,7 +28,7 @@ export default class GameChallengesUiHandler extends UiHandler {
 
   private descriptionText: BBCodeText;
 
-  private challengeLabels: Array<{ label: Phaser.GameObjects.Text, value: Phaser.GameObjects.Text }>;
+  private challengeLabels: Array<{ label: Phaser.GameObjects.Text, value: Phaser.GameObjects.Text, leftArrow: Phaser.GameObjects.Image, rightArrow: Phaser.GameObjects.Image }>;
   private monoTypeValue: Phaser.GameObjects.Sprite;
 
   private cursorObj: Phaser.GameObjects.NineSlice | null;
@@ -40,12 +40,19 @@ export default class GameChallengesUiHandler extends UiHandler {
 
   private optionsWidth: number;
 
+  private widestTextBox: number;
+
+  private readonly leftArrowGap: number = 90; // distance from the label to the left arrow
+  private readonly arrowSpacing: number = 3; // distance between the arrows and the value area
+
   constructor(scene: BattleScene, mode: Mode | null = null) {
     super(scene, mode);
   }
 
   setup() {
     const ui = this.getUi();
+
+    this.widestTextBox = 0;
 
     this.challengesContainer = this.scene.add.container(1, -(this.scene.game.canvas.height / 6) + 1);
     this.challengesContainer.setName("challenges");
@@ -103,7 +110,7 @@ export default class GameChallengesUiHandler extends UiHandler {
     });
     this.descriptionText.setName("text-desc");
     this.scene.add.existing(this.descriptionText);
-    this.descriptionText.setScale(1/6);
+    this.descriptionText.setScale(1 / 6);
     this.descriptionText.setShadow(4, 5, ShadowColor.ORANGE);
     this.descriptionText.setOrigin(0, 0);
 
@@ -135,6 +142,20 @@ export default class GameChallengesUiHandler extends UiHandler {
 
       this.valuesContainer.add(label);
 
+      const leftArrow = this.scene.add.image(0, 0, "cursor_reverse");
+      leftArrow.setName(`challenge-left-arrow-${i}`);
+      leftArrow.setOrigin(0, 0);
+      leftArrow.setVisible(false);
+      leftArrow.setScale(0.75);
+      this.valuesContainer.add(leftArrow);
+
+      const rightArrow = this.scene.add.image(0, 0, "cursor");
+      rightArrow.setName(`challenge-right-arrow-${i}`);
+      rightArrow.setOrigin(0, 0);
+      rightArrow.setScale(0.75);
+      rightArrow.setVisible(false);
+      this.valuesContainer.add(rightArrow);
+
       const value = addTextObject(this.scene, 0, 28 + i * 16, "", TextStyle.SETTINGS_LABEL);
       value.setName(`challenge-value-text-${i}`);
       value.setPositionRelative(label, 100, 0);
@@ -142,7 +163,9 @@ export default class GameChallengesUiHandler extends UiHandler {
 
       this.challengeLabels[i] = {
         label: label,
-        value: value
+        value: value,
+        leftArrow: leftArrow,
+        rightArrow: rightArrow
       };
     }
 
@@ -187,10 +210,26 @@ export default class GameChallengesUiHandler extends UiHandler {
    */
   initLabels(): void {
     this.setDescription(this.scene.gameMode.challenges[0].getDescription());
+    this.widestTextBox = 0;
     for (let i = 0; i < 9; i++) {
       if (i < this.scene.gameMode.challenges.length) {
         this.challengeLabels[i].label.setVisible(true);
         this.challengeLabels[i].value.setVisible(true);
+        this.challengeLabels[i].leftArrow.setVisible(true);
+        this.challengeLabels[i].rightArrow.setVisible(true);
+
+        const tempText = addTextObject(this.scene, 0, 0, "", TextStyle.SETTINGS_LABEL); // this is added here to get the widest text object for this language, which will be used for the arrow placement
+
+        for (let j = 0; j <= this.scene.gameMode.challenges[i].maxValue; j++) { // this goes through each challenge's value to find out what the max width will be
+          if (this.scene.gameMode.challenges[i].id !== Challenges.SINGLE_TYPE) {
+            tempText.setText(this.scene.gameMode.challenges[i].getValue(j));
+            if (tempText.displayWidth > this.widestTextBox) {
+              this.widestTextBox = tempText.displayWidth;
+            }
+          }
+        }
+
+        tempText.destroy();
       }
     }
   }
@@ -203,16 +242,33 @@ export default class GameChallengesUiHandler extends UiHandler {
     let monoTypeVisible = false;
     for (let i = 0; i < Math.min(9, this.scene.gameMode.challenges.length); i++) {
       const challenge = this.scene.gameMode.challenges[this.scrollCursor + i];
-      this.challengeLabels[i].label.setText(challenge.getName());
+      const challengeLabel = this.challengeLabels[i];
+      challengeLabel.label.setText(challenge.getName());
+      challengeLabel.leftArrow.setPositionRelative(challengeLabel.label, this.leftArrowGap, 4.5);
+      challengeLabel.leftArrow.setVisible(challenge.value !== 0);
+      challengeLabel.rightArrow.setPositionRelative(challengeLabel.leftArrow, Math.max(this.monoTypeValue.width, this.widestTextBox) + challengeLabel.leftArrow.displayWidth + 2 * this.arrowSpacing, 0);
+      challengeLabel.rightArrow.setVisible(challenge.value !== challenge.maxValue);
+
+      // this check looks to make sure that the arrows and value textbox don't take up too much space that they'll clip the right edge of the options background
+      if (challengeLabel.rightArrow.x + challengeLabel.rightArrow.width + this.optionsBg.rightWidth + this.arrowSpacing > this.optionsWidth) {
+        // if we go out of bounds of the box, set the x position as far right as we can without going past the box, with this.arrowSpacing to allow a small gap between the arrow and border
+        challengeLabel.rightArrow.setX(this.optionsWidth - this.arrowSpacing - this.optionsBg.rightWidth);
+      }
+
+      // this line of code gets the center point between the left and right arrows from their left side (Arrow.x gives middle point), taking into account the width of the arrows
+      const xLocation = Math.round((challengeLabel.leftArrow.x + challengeLabel.rightArrow.x + challengeLabel.leftArrow.displayWidth) / 2);
       if (challenge.id === Challenges.SINGLE_TYPE) {
-        this.monoTypeValue.setPositionRelative(this.challengeLabels[i].label, 113, 8);
+        this.monoTypeValue.setX(xLocation);
+        this.monoTypeValue.setY(challengeLabel.label.y + 8);
         this.monoTypeValue.setFrame(challenge.getValue());
         this.monoTypeValue.setVisible(true);
-        this.challengeLabels[i].value.setVisible(false);
+        challengeLabel.value.setVisible(false);
         monoTypeVisible = true;
       } else {
-        this.challengeLabels[i].value.setText(challenge.getValue());
-        this.challengeLabels[i].value.setVisible(true);
+        challengeLabel.value.setText(challenge.getValue());
+        challengeLabel.value.setX(xLocation);
+        challengeLabel.value.setOrigin(0.5, 0);
+        challengeLabel.value.setVisible(true);
       }
     }
     if (!monoTypeVisible) {
@@ -244,6 +300,7 @@ export default class GameChallengesUiHandler extends UiHandler {
     super.show(args);
 
     this.startCursor.setVisible(false);
+    this.updateChallengeArrows(false);
     this.challengesContainer.setVisible(true);
     // Should always be false at the start
     this.hasSelectedChallenge = this.scene.gameMode.challenges.some(c => c.value !== 0);
@@ -257,6 +314,21 @@ export default class GameChallengesUiHandler extends UiHandler {
     this.getUi().hideTooltip();
 
     return true;
+  }
+
+  /* This code updates the challenge starter arrows to be tinted/not tinted when the start button is selected to show they can't be changed
+   */
+  updateChallengeArrows(tinted: boolean) {
+    for (let i = 0; i < Math.min(9, this.scene.gameMode.challenges.length); i++) {
+      const challengeLabel = this.challengeLabels[i];
+      if (tinted) {
+        challengeLabel.leftArrow.setTint(0x808080);
+        challengeLabel.rightArrow.setTint(0x808080);
+      } else {
+        challengeLabel.leftArrow.clearTint();
+        challengeLabel.rightArrow.clearTint();
+      }
+    }
   }
 
   /**
@@ -280,6 +352,7 @@ export default class GameChallengesUiHandler extends UiHandler {
         // If the user presses cancel when the start cursor has been activated, the game deactivates the start cursor and allows typical challenge selection behavior
         this.startCursor.setVisible(false);
         this.cursorObj?.setVisible(true);
+        this.updateChallengeArrows(this.startCursor.visible);
       } else {
         this.scene.clearPhaseQueue();
         this.scene.pushPhase(new TitlePhase(this.scene));
@@ -294,6 +367,7 @@ export default class GameChallengesUiHandler extends UiHandler {
         } else {
           this.startCursor.setVisible(true);
           this.cursorObj?.setVisible(false);
+          this.updateChallengeArrows(this.startCursor.visible);
         }
         success = true;
       } else {

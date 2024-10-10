@@ -1,0 +1,41 @@
+{
+	"textures": [
+		{
+			"image": "penny.png",
+			"format": "RGBA8888",
+			"size": {
+				"w": 75,
+				"h": 75
+			},
+			"scale": 1,
+			"frames": [
+				{
+					"filename": "0001.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 80,
+						"h": 80
+					},
+					"spriteSourceSize": {
+						"x": 24,
+						"y": 4,
+						"w": 34,
+						"h": 75
+					},
+					"frame": {
+						"x": 0,
+						"y": 0,
+						"w": 34,
+						"h": 75
+					}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "https://www.codeandweb.com/texturepacker",
+		"version": "3.0",
+		"smartupdate": "$TexturePacker:SmartUpdate:54f184bf1995a94a78aff33c9a851e6b:a6c9b3fe428b0cd0344b5cf14b999f36:cf221da9747cb8cb356053d3042d8d22$"
+	}
+}

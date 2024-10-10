@@ -38,8 +38,9 @@ export default class PokemonData {
   public status: Status | null;
   public friendship: integer;
   public metLevel: integer;
-  public metBiome: Biome | -1;
+  public metBiome: Biome | -1;        // -1 for starters
   public metSpecies: Species;
+  public metWave: number;            // 0 for unknown (previous saves), -1 for starters
   public luck: integer;
   public pauseEvolutions: boolean;
   public pokerus: boolean;
@@ -53,6 +54,7 @@ export default class PokemonData {
   public fusionVariant: Variant;
   public fusionGender: Gender;
   public fusionLuck: integer;
+  public fusionMysteryEncounterPokemonData: MysteryEncounterPokemonData;
 
   public boss: boolean;
   public bossSegments?: integer;
@@ -90,13 +92,13 @@ export default class PokemonData {
     this.metLevel = source.metLevel || 5;
     this.metBiome = source.metBiome !== undefined ? source.metBiome : -1;
     this.metSpecies = source.metSpecies;
+    this.metWave = source.metWave ?? (this.metBiome === -1 ? -1 : 0);
     this.luck = source.luck !== undefined ? source.luck : (source.shiny ? (source.variant + 1) : 0);
     if (!forHistory) {
       this.pauseEvolutions = !!source.pauseEvolutions;
+      this.evoCounter = source.evoCounter ?? 0;
     }
     this.pokerus = !!source.pokerus;
-
-    this.evoCounter = source.evoCounter ?? 0;
 
     this.fusionSpecies = sourcePokemon ? sourcePokemon.fusionSpecies?.speciesId : source.fusionSpecies;
     this.fusionFormIndex = source.fusionFormIndex;

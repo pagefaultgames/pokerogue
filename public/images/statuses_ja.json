@@ -1,0 +1,188 @@
+{
+	"textures": [
+		{
+			"image": "statuses_ja.png",
+			"format": "RGBA8888",
+			"size": {
+				"w": 22,
+				"h": 64
+			},
+			"scale": 1,
+			"frames": [
+				{
+					"filename": "pokerus",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 22,
+						"h": 8
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 22,
+						"h": 8
+					},
+					"frame": {
+						"x": 0,
+						"y": 0,
+						"w": 22,
+						"h": 8
+					}
+				},
+				{
+					"filename": "burn",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 20,
+						"h": 8
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 20,
+						"h": 8
+					},
+					"frame": {
+						"x": 0,
+						"y": 8,
+						"w": 20,
+						"h": 8
+					}
+				},
+				{
+					"filename": "faint",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 20,
+						"h": 8
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 20,
+						"h": 8
+					},
+					"frame": {
+						"x": 0,
+						"y": 16,
+						"w": 20,
+						"h": 8
+					}
+				},
+				{
+					"filename": "freeze",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 20,
+						"h": 8
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 20,
+						"h": 8
+					},
+					"frame": {
+						"x": 0,
+						"y": 24,
+						"w": 20,
+						"h": 8
+					}
+				},
+				{
+					"filename": "paralysis",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 20,
+						"h": 8
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 20,
+						"h": 8
+					},
+					"frame": {
+						"x": 0,
+						"y": 32,
+						"w": 20,
+						"h": 8
+					}
+				},
+				{
+					"filename": "poison",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 20,
+						"h": 8
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 20,
+						"h": 8
+					},
+					"frame": {
+						"x": 0,
+						"y": 40,
+						"w": 20,
+						"h": 8
+					}
+				},
+				{
+					"filename": "sleep",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 20,
+						"h": 8
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 20,
+						"h": 8
+					},
+					"frame": {
+						"x": 0,
+						"y": 48,
+						"w": 20,
+						"h": 8
+					}
+				},
+				{
+					"filename": "toxic",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 20,
+						"h": 8
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 20,
+						"h": 8
+					},
+					"frame": {
+						"x": 0,
+						"y": 56,
+						"w": 20,
+						"h": 8
+					}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "https://www.codeandweb.com/texturepacker",
+		"version": "3.0",
+		"smartupdate": "$TexturePacker:SmartUpdate:37686e85605d17b806f22d43081c1139:70535ffee63ba61b3397d8470c2c8982:e6649238c018d3630e55681417c698ca$"
+	}
+}

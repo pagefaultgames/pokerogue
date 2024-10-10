@@ -11,8 +11,6 @@ import { MoveEndPhase } from "#app/phases/move-end-phase";
 describe("Moves - Power Swap", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
-  const TIMEOUT = 20 * 1000;
-
   beforeAll(() => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
@@ -65,5 +63,5 @@ describe("Moves - Power Swap", () => {
         expect(enemy.getStatStage(s)).toBe(1);
       }
     }
-  }, TIMEOUT);
+  });
 });

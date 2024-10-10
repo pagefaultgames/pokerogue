@@ -162,7 +162,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
     this.splicedIcon.setInteractive(new Phaser.Geom.Rectangle(0, 0, 12, 15), Phaser.Geom.Rectangle.Contains);
     this.add(this.splicedIcon);
 
-    this.statusIndicator = this.scene.add.sprite(0, 0, "statuses");
+    this.statusIndicator = this.scene.add.sprite(0, 0, Utils.getLocalizedSpriteKey("statuses"));
     this.statusIndicator.setName("icon_status");
     this.statusIndicator.setVisible(false);
     this.statusIndicator.setOrigin(0, 0);
@@ -326,7 +326,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
     this.teraIcon.setVisible(this.lastTeraType !== Type.UNKNOWN);
     this.teraIcon.on("pointerover", () => {
       if (this.lastTeraType !== Type.UNKNOWN) {
-        (this.scene as BattleScene).ui.showTooltip("", i18next.t("fightUiHandler:teraHover", {type: i18next.t(`pokemonInfo:Type.${Type[this.lastTeraType]}`) }));
+        (this.scene as BattleScene).ui.showTooltip("", i18next.t("fightUiHandler:teraHover", { type: i18next.t(`pokemonInfo:Type.${Type[this.lastTeraType]}`) }));
       }
     });
     this.teraIcon.on("pointerout", () => (this.scene as BattleScene).ui.hideTooltip());
@@ -381,17 +381,8 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
 
       const ownedAbilityAttrs = pokemon.scene.gameData.starterData[pokemon.species.getRootSpeciesId()].abilityAttr;
 
-      let playerOwnsThisAbility = false;
       // Check if the player owns ability for the root form
-      if ((ownedAbilityAttrs & 1) > 0 && pokemon.hasSameAbilityInRootForm(0)) {
-        playerOwnsThisAbility = true;
-      }
-      if ((ownedAbilityAttrs & 2) > 0 && pokemon.hasSameAbilityInRootForm(1)) {
-        playerOwnsThisAbility = true;
-      }
-      if ((ownedAbilityAttrs & 4) > 0 && pokemon.hasSameAbilityInRootForm(2)) {
-        playerOwnsThisAbility = true;
-      }
+      const playerOwnsThisAbility = pokemon.checkIfPlayerHasAbilityOfStarter(ownedAbilityAttrs);
 
       if (missingDexAttrs || !playerOwnsThisAbility) {
         this.ownedIcon.setTint(0x808080);
