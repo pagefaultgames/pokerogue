@@ -383,7 +383,7 @@ export default class Trainer extends Phaser.GameObjects.Container {
     const battle = this.scene.currentBattle;
     const template = this.getPartyTemplate();
 
-    let species: PokemonSpecies;
+    let baseSpecies: PokemonSpecies;
     if (this.config.speciesPools) {
       const tierValue = Utils.randSeedInt(512);
       let tier = tierValue >= 156 ? TrainerPoolTier.COMMON : tierValue >= 32 ? TrainerPoolTier.UNCOMMON : tierValue >= 6 ? TrainerPoolTier.RARE : tierValue >= 1 ? TrainerPoolTier.SUPER_RARE : TrainerPoolTier.ULTRA_RARE;
@@ -393,17 +393,17 @@ export default class Trainer extends Phaser.GameObjects.Container {
         tier--;
       }
       const tierPool = this.config.speciesPools[tier];
-      species = getPokemonSpecies(Utils.randSeedItem(tierPool));
+      baseSpecies = getPokemonSpecies(Utils.randSeedItem(tierPool));
     } else {
-      species = this.scene.randomSpecies(battle.waveIndex, level, false, this.config.speciesFilter);
+      baseSpecies = this.scene.randomSpecies(battle.waveIndex, level, false, this.config.speciesFilter);
     }
 
-    let ret = getPokemonSpecies(species.getTrainerSpeciesForLevel(level, true, strength, this.scene.currentBattle.waveIndex));
+    let ret = getPokemonSpecies(baseSpecies.getTrainerSpeciesForLevel(level, true, strength, this.scene.currentBattle.waveIndex));
     let retry = false;
 
     console.log(ret.getName());
 
-    if (pokemonPrevolutions.hasOwnProperty(species.speciesId) && ret.speciesId !== species.speciesId) {
+    if (pokemonPrevolutions.hasOwnProperty(baseSpecies.speciesId) && ret.speciesId !== baseSpecies.speciesId) {
       retry = true;
     } else if (template.isBalanced(battle.enemyParty.length)) {
       const partyMemberTypes = battle.enemyParty.map(p => p.getTypes(true)).flat();
@@ -417,7 +417,7 @@ export default class Trainer extends Phaser.GameObjects.Container {
       console.log("Attempting reroll of species evolution to fit specialty type...");
       let evoAttempt = 0;
       while (retry && evoAttempt++ < 10) {
-        ret = getPokemonSpecies(species.getTrainerSpeciesForLevel(level, true, strength, this.scene.currentBattle.waveIndex));
+        ret = getPokemonSpecies(baseSpecies.getTrainerSpeciesForLevel(level, true, strength, this.scene.currentBattle.waveIndex));
         console.log(ret.name);
         if (this.config.specialtyTypes.find(t => ret.isOfType(t))) {
           retry = false;
@@ -426,7 +426,7 @@ export default class Trainer extends Phaser.GameObjects.Container {
     }
 
     // Prompts reroll of party member species if species already present in the enemy party
-    if (this.checkDuplicateSpecies(ret)) {
+    if (this.checkDuplicateSpecies(ret, baseSpecies)) {
       console.log("Duplicate species detected, prompting reroll...");
       retry = true;
     }
@@ -442,13 +442,16 @@ export default class Trainer extends Phaser.GameObjects.Container {
   /**
    * Checks if the enemy trainer already has the Pokemon species in their party
    * @param {PokemonSpecies} species {@linkcode PokemonSpecies}
+   * @param {PokemonSpecies} baseSpecies {@linkcode PokemonSpecies} - baseSpecies of the Pokemon if species is forced to evolve
    * @returns `true` if the species is already present in the party
    */
-  checkDuplicateSpecies(species: PokemonSpecies): boolean {
+  checkDuplicateSpecies(species: PokemonSpecies, baseSpecies: PokemonSpecies): boolean {
+    const staticPartyPokemon = (signatureSpecies[TrainerType[this.config.trainerType]] ?? []).flat(1);
+
     const currentPartySpecies = this.scene.getEnemyParty().map(p => {
       return p.species.speciesId;
     });
-    return currentPartySpecies.includes(species.speciesId);
+    return currentPartySpecies.includes(species.speciesId) || staticPartyPokemon.includes(baseSpecies.speciesId);
   }
 
   getPartyMemberMatchupScores(trainerSlot: TrainerSlot = TrainerSlot.NONE, forSwitch: boolean = false): [integer, integer][] {
