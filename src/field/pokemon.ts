@@ -1417,10 +1417,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * @returns {boolean} Whether the ability is present and active
    */
   hasAbility(ability: Abilities, canApply: boolean = true, ignoreOverride?: boolean): boolean {
-    if ((!canApply || this.canApplyAbility()) && this.getAbility(ignoreOverride).id === ability) {
+    if (this.getAbility(ignoreOverride).id === ability && (!canApply || this.canApplyAbility())) {
       return true;
     }
-    if (this.hasPassive() && (!canApply || this.canApplyAbility(true)) && this.getPassiveAbility().id === ability) {
+    if (this.getPassiveAbility().id === ability && this.hasPassive() && (!canApply || this.canApplyAbility(true))) {
       return true;
     }
     return false;
