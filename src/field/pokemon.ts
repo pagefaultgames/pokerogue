@@ -687,7 +687,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    */
   getSpeciesForm(ignoreOverride?: boolean, useIllusion: boolean = false): PokemonSpeciesForm {
     const species: PokemonSpecies = useIllusion && this.battleData.illusion.active ? this.battleData.illusion.species! : this.species;
-    
+
     const formIndex: integer = useIllusion && this.battleData.illusion.active ? this.battleData.illusion.formIndex! : this.formIndex;
 
     if (!ignoreOverride && this.summonData?.speciesForm) {
