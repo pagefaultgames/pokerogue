@@ -97,7 +97,7 @@ export class BattlerTag {
    * @param scene medium to retrieve the source Pokemon
    * @returns The source {@linkcode Pokemon} or `null` if none is found
    */
-  retrieveSource(scene: BattleScene): Pokemon | null {
+  public retrieveSource(scene: BattleScene): Pokemon | null {
     return this.sourceId ? scene.getPokemonById(this.sourceId) : null;
   }
 }
@@ -146,9 +146,9 @@ export abstract class MoveRestrictionBattlerTag extends BattlerTag {
   /**
    * Gets whether this tag is restricting a move.
    *
-   * @param {Moves} move {@linkcode Moves} ID to check restriction for.
-   * @param {Pokemon} user {@linkcode Pokemon} the Pokemon involved
-   * @returns {boolean} `true` if the move is restricted by this tag, otherwise `false`.
+   * @param move - {@linkcode Moves} ID to check restriction for.
+   * @param user - The {@linkcode Pokemon} involved
+   * @returns `true` if the move is restricted by this tag, otherwise `false`.
    */
   public abstract isMoveRestricted(move: Moves, user?: Pokemon): boolean;
 

@@ -77,16 +77,16 @@ export abstract class ArenaTag {
    * @param scene medium to retrieve the source Pokemon
    * @returns The source {@linkcode Pokemon} or `null` if none is found
    */
-  retrieveSource(scene: BattleScene): Pokemon | null {
+  public retrieveSource(scene: BattleScene): Pokemon | null {
     return this.sourceId ? scene.getPokemonById(this.sourceId) : null;
   }
 
   /**
    * Helper function that retrieves the Pokemon affected
-   * @param {BattleScene} scene medium to retrieve the involved Pokemon
+   * @param scene - medium to retrieve the involved Pokemon
    * @returns list of PlayerPokemon or EnemyPokemon on the field
    */
-  retrieveField(scene: BattleScene): Pokemon[] {
+  public retrieveField(scene: BattleScene): Pokemon[] {
     switch (this.side) {
     case ArenaTagSide.PLAYER:
       return scene.getPlayerField() ?? [];
@@ -1015,7 +1015,7 @@ class ImprisonTag extends ArenaTrapTag {
     const source = this.retrieveSource(scene);
     if (source) {
       const party = this.retrieveField(scene);
-      party?.forEach((p: Pokemon ) => {
+      party?.forEach((p: Pokemon) => {
         if (p.isAllowedInBattle()) {
           p.addTag(BattlerTagType.IMPRISON, 1, Moves.IMPRISON, this.sourceId);
         }
