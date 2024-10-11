@@ -109,7 +109,7 @@ export class DamageAchv extends Achv {
   damageAmount: integer;
 
   constructor(localizationKey: string, name: string, damageAmount: integer, iconImage: string, score: integer) {
-    super(localizationKey, name, "", iconImage, score, (_scene: BattleScene, args: any[]) => (args[0] as Utils.NumberHolder).value >= this.damageAmount);
+    super(localizationKey, name, "", iconImage, score, (_scene: BattleScene, args: any[]) => (args[0] instanceof Utils.NumberHolder ? args[0].value : args[0]) >= this.damageAmount);
     this.damageAmount = damageAmount;
   }
 }
@@ -118,7 +118,7 @@ export class HealAchv extends Achv {
   healAmount: integer;
 
   constructor(localizationKey: string, name: string, healAmount: integer, iconImage: string, score: integer) {
-    super(localizationKey, name, "", iconImage, score, (_scene: BattleScene, args: any[]) => (args[0] as Utils.NumberHolder).value >= this.healAmount);
+    super(localizationKey, name, "", iconImage, score, (_scene: BattleScene, args: any[]) => (args[0] instanceof Utils.NumberHolder ? args[0].value : args[0]) >= this.healAmount);
     this.healAmount = healAmount;
   }
 }
@@ -127,7 +127,7 @@ export class LevelAchv extends Achv {
   level: integer;
 
   constructor(localizationKey: string, name: string, level: integer, iconImage: string, score: integer) {
-    super(localizationKey, name, "", iconImage, score, (scene: BattleScene, args: any[]) => (args[0] as Utils.IntegerHolder).value >= this.level);
+    super(localizationKey, name, "", iconImage, score, (scene: BattleScene, args: any[]) => (args[0] instanceof Utils.NumberHolder ? args[0].value : args[0]) >= this.level);
     this.level = level;
   }
 }
