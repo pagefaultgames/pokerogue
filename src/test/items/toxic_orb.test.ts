@@ -7,7 +7,6 @@ import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
-
 describe("Items - Toxic orb", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
@@ -45,12 +44,12 @@ describe("Items - Toxic orb", () => {
     expect(player.getHeldItems()[0].type.id).toBe("TOXIC_ORB");
 
     game.move.select(Moves.SPLASH);
+
     await game.phaseInterceptor.to("TurnEndPhase");
     await game.phaseInterceptor.to("MessagePhase");
     expect(i18next.t).toHaveBeenCalledWith("statusEffect:toxic.obtainSource", expect.anything());
 
-    await game.phaseInterceptor.to("MessagePhase");
-    expect(i18next.t).toHaveBeenCalledWith("statusEffect:toxic.activation", expect.anything());
     expect(player.status?.effect).toBe(StatusEffect.TOXIC);
-  }, 20000);
+    expect(player.status?.toxicTurnCount).toBe(0);
+  });
 });
