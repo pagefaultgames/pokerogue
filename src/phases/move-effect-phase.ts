@@ -130,6 +130,10 @@ export class MoveEffectPhase extends PokemonPhase {
         /** Has the move successfully hit a target (for damage) yet? */
         let hasHit: boolean = false;
         for (const target of targets) {
+          // Prevent ENEMY_SIDE targeted moves from occurring twice in double battles
+          if (move.moveTarget === MoveTarget.ENEMY_SIDE && target !== targets[targets.length - 1]) {
+            continue;
+          }
 
           /** The {@linkcode ArenaTagSide} to which the target belongs */
           const targetSide = target.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY;
