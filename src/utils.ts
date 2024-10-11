@@ -466,14 +466,13 @@ export function hslToHex(h: number, s: number, l: number): string {
 }
 
 /**
- * This function returns `true` if the current lang is available for some functions.
+ * This function returns `true` if all localized images used by the game have been added for the given language.
+ *
  * If the lang is not in the function, it usually means that lang is going to use the default english version
  *
- * This function is used in:
- * - `summary-ui-handler.ts`: If the lang is not available, it'll use `types.json` (english).
- *   English itself counts as not available
+ * English itself counts as not available
 */
-export function verifyLang(lang?: string): boolean {
+export function hasAllLocalizedSprites(lang?: string): boolean {
   // IMPORTANT - ONLY ADD YOUR LANG HERE IF YOU'VE ALREADY ADDED ALL THE NECESSARY IMAGES
   if (!lang) {
     lang = i18next.resolvedLanguage;
@@ -602,7 +601,7 @@ export function toDmgValue(value: number, minValue: number = 1) {
  * @returns the localized sprite key
  */
 export function getLocalizedSpriteKey(baseKey: string) {
-  return `${baseKey}${verifyLang(i18next.resolvedLanguage) ? `_${i18next.resolvedLanguage}` : ""}`;
+  return `${baseKey}${hasAllLocalizedSprites(i18next.resolvedLanguage) ? `_${i18next.resolvedLanguage}` : ""}`;
 }
 
 /**
