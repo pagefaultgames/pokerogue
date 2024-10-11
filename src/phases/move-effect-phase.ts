@@ -290,7 +290,7 @@ export class MoveEffectPhase extends PokemonPhase {
                                * steal an item from the target granted by Grip Claw
                                */
                             if (this.move.getMove() instanceof AttackMove) {
-                              this.scene.applyModifiers(ContactHeldItemTransferChanceModifier, this.player, user, target);
+                              this.scene.applyModifiers(ContactHeldItemTransferChanceModifier, this.isPlayer, user, target);
                             }
                             resolve();
                           });
@@ -360,7 +360,7 @@ export class MoveEffectPhase extends PokemonPhase {
           // If there are multiple hits, or if there are hits of the multi-hit move left
           this.scene.queueMessage(i18next.t("battle:attackHitsCount", { count: hitsTotal }));
         }
-        this.scene.applyModifiers(HitHealModifier, this.player, user);
+        this.scene.applyModifiers(HitHealModifier, this.isPlayer, user);
         // Clear all cached move effectiveness values among targets
         this.getTargets().forEach((target) => target.turnData.moveEffectiveness = null);
       }
@@ -429,7 +429,7 @@ export class MoveEffectPhase extends PokemonPhase {
     if (this.battlerIndex > BattlerIndex.ENEMY_2) {
       return this.scene.getPokemonById(this.battlerIndex) ?? undefined;
     }
-    return (this.player ? this.scene.getPlayerField() : this.scene.getEnemyField())[this.fieldIndex];
+    return (this.isPlayer ? this.scene.getPlayerField() : this.scene.getEnemyField())[this.fieldIndex];
   }
 
   /** Returns an array of all {@linkcode Pokemon} targeted by this phase's invoked move */
