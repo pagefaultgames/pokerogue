@@ -350,7 +350,7 @@ export default class Move implements Localizable {
     // TODO: Allow this to be simulated
     applyAbAttrs(InfiltratorAbAttr, user, null, false, bypassed);
 
-    return !user.hasAbility(Abilities.INFILTRATOR)
+    return !bypassed.value
         && !this.hasFlag(MoveFlags.SOUND_BASED)
         && !this.hasFlag(MoveFlags.IGNORE_SUBSTITUTE);
   }
