@@ -885,7 +885,8 @@ export class GravityTag extends ArenaTag {
     arena.scene.queueMessage(i18next.t("arenaTag:gravityOnAdd"));
     arena.scene.getField(true).forEach((pokemon) => {
       if (pokemon !== null) {
-        pokemon.removeTag(BattlerTagType.MAGNET_RISEN);
+        pokemon.removeTag(BattlerTagType.FLOATING);
+        pokemon.removeTag(BattlerTagType.TELEKINESIS);
       }
     });
   }
