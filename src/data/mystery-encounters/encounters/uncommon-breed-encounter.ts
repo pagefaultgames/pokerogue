@@ -25,7 +25,7 @@ import { Stat } from "#enums/stat";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
 
 /** the i18n namespace for the encounter */
-const namespace = "mysteryEncounter:uncommonBreed";
+const namespace = "mysteryEncounters/uncommonBreed";
 
 /**
  * Uncommon Breed encounter.
@@ -38,10 +38,11 @@ export const UncommonBreedEncounter: MysteryEncounter =
     .withSceneWaveRangeRequirement(...CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES)
     .withCatchAllowed(true)
     .withHideWildIntroMessage(true)
+    .withFleeAllowed(false)
     .withIntroSpriteConfigs([]) // Set in onInit()
     .withIntroDialogue([
       {
-        text: `${namespace}.intro`,
+        text: `${namespace}:intro`,
       },
     ])
     .withOnInit((scene: BattleScene) => {
@@ -59,21 +60,22 @@ export const UncommonBreedEncounter: MysteryEncounter =
         const eggMoveIndex = randSeedInt(4);
         const randomEggMove: Moves = eggMoves[eggMoveIndex];
         encounter.misc = {
-          eggMove: randomEggMove
+          eggMove: randomEggMove,
+          pokemon: pokemon
         };
         if (pokemon.moveset.length < 4) {
           pokemon.moveset.push(new PokemonMove(randomEggMove));
         } else {
           pokemon.moveset[0] = new PokemonMove(randomEggMove);
         }
+      } else {
+        encounter.misc.pokemon = pokemon;
       }
-
-      encounter.misc.pokemon = pokemon;
 
       // Defense/Spd buffs below wave 50, +1 to all stats otherwise
       const statChangesForBattle: (Stat.ATK | Stat.DEF | Stat.SPATK | Stat.SPDEF | Stat.SPD | Stat.ACC | Stat.EVA)[] = scene.currentBattle.waveIndex < 50 ?
-        [Stat.DEF, Stat.SPDEF, Stat.SPD] :
-        [Stat.ATK, Stat.DEF, Stat.SPATK, Stat.SPDEF, Stat.SPD];
+        [ Stat.DEF, Stat.SPDEF, Stat.SPD ] :
+        [ Stat.ATK, Stat.DEF, Stat.SPATK, Stat.SPDEF, Stat.SPD ];
 
       const config: EnemyPartyConfig = {
         pokemonConfigs: [{
@@ -81,14 +83,14 @@ export const UncommonBreedEncounter: MysteryEncounter =
           species: species,
           dataSource: new PokemonData(pokemon),
           isBoss: false,
-          tags: [BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON],
+          tags: [ BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON ],
           mysteryEncounterBattleEffects: (pokemon: Pokemon) => {
-            queueEncounterMessage(pokemon.scene, `${namespace}.option.1.stat_boost`);
+            queueEncounterMessage(pokemon.scene, `${namespace}:option.1.stat_boost`);
             pokemon.scene.unshiftPhase(new StatStageChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, statChangesForBattle, 1));
           }
         }],
       };
-      encounter.enemyPartyConfigs = [config];
+      encounter.enemyPartyConfigs = [ config ];
 
       const { spriteKey, fileRoot } = getSpriteKeysFromPokemon(pokemon);
       encounter.spriteConfigs = [
@@ -123,16 +125,17 @@ export const UncommonBreedEncounter: MysteryEncounter =
       scene.time.delayedCall(500, () => scene.playSound("battle_anims/PRSFX- Spotlight2"));
       return true;
     })
-    .withTitle(`${namespace}.title`)
-    .withDescription(`${namespace}.description`)
-    .withQuery(`${namespace}.query`)
+    .setLocalizationKey(`${namespace}`)
+    .withTitle(`${namespace}:title`)
+    .withDescription(`${namespace}:description`)
+    .withQuery(`${namespace}:query`)
     .withSimpleOption(
       {
-        buttonLabel: `${namespace}.option.1.label`,
-        buttonTooltip: `${namespace}.option.1.tooltip`,
+        buttonLabel: `${namespace}:option.1.label`,
+        buttonTooltip: `${namespace}:option.1.tooltip`,
         selected: [
           {
-            text: `${namespace}.option.1.selected`,
+            text: `${namespace}:option.1.selected`,
           },
         ],
       },
@@ -150,7 +153,7 @@ export const UncommonBreedEncounter: MysteryEncounter =
           encounter.startOfBattleEffects.push(
             {
               sourceBattlerIndex: BattlerIndex.ENEMY,
-              targets: [target],
+              targets: [ target ],
               move: pokemonMove,
               ignorePp: true
             });
@@ -165,12 +168,12 @@ export const UncommonBreedEncounter: MysteryEncounter =
         .newOptionWithMode(MysteryEncounterOptionMode.DISABLED_OR_SPECIAL)
         .withSceneRequirement(new PersistentModifierRequirement("BerryModifier", 4)) // Will set option2PrimaryName and option2PrimaryMove dialogue tokens automatically
         .withDialogue({
-          buttonLabel: `${namespace}.option.2.label`,
-          buttonTooltip: `${namespace}.option.2.tooltip`,
-          disabledButtonTooltip: `${namespace}.option.2.disabled_tooltip`,
+          buttonLabel: `${namespace}:option.2.label`,
+          buttonTooltip: `${namespace}:option.2.tooltip`,
+          disabledButtonTooltip: `${namespace}:option.2.disabled_tooltip`,
           selected: [
             {
-              text: `${namespace}.option.2.selected`
+              text: `${namespace}:option.2.selected`
             }
           ]
         })
@@ -179,7 +182,7 @@ export const UncommonBreedEncounter: MysteryEncounter =
 
           // Remove 4 random berries from player's party
           // Get all player berry items, remove from party, and store reference
-          const berryItems: BerryModifier[]= scene.findModifiers(m => m instanceof BerryModifier) as BerryModifier[];
+          const berryItems: BerryModifier[] = scene.findModifiers(m => m instanceof BerryModifier) as BerryModifier[];
           for (let i = 0; i < 4; i++) {
             const index = randSeedInt(berryItems.length);
             const randBerry = berryItems[index];
@@ -209,12 +212,12 @@ export const UncommonBreedEncounter: MysteryEncounter =
         .newOptionWithMode(MysteryEncounterOptionMode.DISABLED_OR_SPECIAL)
         .withPrimaryPokemonRequirement(new MoveRequirement(CHARMING_MOVES)) // Will set option2PrimaryName and option2PrimaryMove dialogue tokens automatically
         .withDialogue({
-          buttonLabel: `${namespace}.option.3.label`,
-          buttonTooltip: `${namespace}.option.3.tooltip`,
-          disabledButtonTooltip: `${namespace}.option.3.disabled_tooltip`,
+          buttonLabel: `${namespace}:option.3.label`,
+          buttonTooltip: `${namespace}:option.3.tooltip`,
+          disabledButtonTooltip: `${namespace}:option.3.disabled_tooltip`,
           selected: [
             {
-              text: `${namespace}.option.3.selected`
+              text: `${namespace}:option.3.selected`
             }
           ]
         })

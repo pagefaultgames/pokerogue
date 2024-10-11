@@ -1,9 +1,7 @@
 /**
- * This script creates a test boilerplate file for a move or ability.
- * @param {string} type - The type of test to create. Either "move", "ability",
- * or "item".
- * @param {string} fileName - The name of the file to create.
- * @example npm run create-test move tackle
+ * This script creates a test boilerplate file in the appropriate 
+ * directory based on the type selected.
+ * @example npm run create-test
  */
 
 import fs from "fs";
@@ -34,7 +32,7 @@ async function promptTestType() {
     console.log("Exiting...");
     return process.exit();
   } else if (!typeChoices.includes(typeAnswer.selectedOption)) {
-    console.error('Please provide a valid type ("move", "ability", or "item")!');
+    console.error(`Please provide a valid type (${typeChoices.join(", ")})!`);
     return await promptTestType();
   }
 
@@ -51,7 +49,7 @@ async function promptFileName(selectedType) {
     {
       type: "input",
       name: "userInput",
-      message: `Please provide a file name for the ${selectedType} test:`,
+      message: `Please provide the name of the ${selectedType}:`,
     },
   ]);
 
@@ -102,7 +100,7 @@ async function runInteractive() {
       description = `Mystery Encounter - ${formattedName}`;
       break;
     default:
-      console.error('Invalid type. Please use "move", "ability", or "item".');
+      console.error(`Invalid type. Please use one of the following: ${typeChoices.join(", ")}.`);
       process.exit(1);
   }
 
@@ -112,7 +110,7 @@ import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, it, expect } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("${description}", () => {
   let phaserGame: Phaser.Game;
@@ -131,15 +129,22 @@ describe("${description}", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([Moves.SPLASH])
+      .moveset([ Moves.SPLASH ])
+      .ability(Abilities.BALL_FETCH)
       .battleType("single")
+      .disableCrits()
+      .enemySpecies(Species.MAGIKARP)
       .enemyAbility(Abilities.BALL_FETCH)
       .enemyMoveset(Moves.SPLASH);
   });
 
-  it("test case", async () => {
-    // await game.classicMode.startBattle([Species.MAGIKARP]);
-    // game.move.select(Moves.SPLASH);
+  it("should do X", async () => {
+    await game.classicMode.startBattle([ Species.FEEBAS ]);
+
+    game.move.select(Moves.SPLASH);
+    await game.phaseInterceptor.to("BerryPhase");
+
+    expect(true).toBe(true);
   });
 });
 `;

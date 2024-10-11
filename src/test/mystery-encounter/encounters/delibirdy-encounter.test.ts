@@ -17,8 +17,8 @@ import { generateModifierType } from "#app/data/mystery-encounters/utils/encount
 import { modifierTypes } from "#app/modifier/modifier-type";
 import { BerryType } from "#enums/berry-type";
 
-const namespace = "mysteryEncounter:delibirdy";
-const defaultParty = [Species.LAPRAS, Species.GENGAR, Species.ABRA];
+const namespace = "mysteryEncounters/delibirdy";
+const defaultParty = [ Species.LAPRAS, Species.GENGAR, Species.ABRA ];
 const defaultBiome = Biome.CAVE;
 const defaultWave = 45;
 
@@ -41,7 +41,7 @@ describe("Delibird-y - Mystery Encounter", () => {
 
     vi.spyOn(MysteryEncounters, "mysteryEncountersByBiome", "get").mockReturnValue(
       new Map<Biome, MysteryEncounterType[]>([
-        [Biome.CAVE, [MysteryEncounterType.DELIBIRDY]],
+        [ Biome.CAVE, [ MysteryEncounterType.DELIBIRDY ]],
       ])
     );
   });
@@ -58,11 +58,11 @@ describe("Delibird-y - Mystery Encounter", () => {
     expect(DelibirdyEncounter.encounterType).toBe(MysteryEncounterType.DELIBIRDY);
     expect(DelibirdyEncounter.encounterTier).toBe(MysteryEncounterTier.GREAT);
     expect(DelibirdyEncounter.dialogue).toBeDefined();
-    expect(DelibirdyEncounter.dialogue.intro).toStrictEqual([{ text: `${namespace}.intro` }]);
-    expect(DelibirdyEncounter.dialogue.outro).toStrictEqual([{ text: `${namespace}.outro` }]);
-    expect(DelibirdyEncounter.dialogue.encounterOptionsDialogue?.title).toBe(`${namespace}.title`);
-    expect(DelibirdyEncounter.dialogue.encounterOptionsDialogue?.description).toBe(`${namespace}.description`);
-    expect(DelibirdyEncounter.dialogue.encounterOptionsDialogue?.query).toBe(`${namespace}.query`);
+    expect(DelibirdyEncounter.dialogue.intro).toStrictEqual([{ text: `${namespace}:intro` }]);
+    expect(DelibirdyEncounter.dialogue.outro).toStrictEqual([{ text: `${namespace}:outro` }]);
+    expect(DelibirdyEncounter.dialogue.encounterOptionsDialogue?.title).toBe(`${namespace}:title`);
+    expect(DelibirdyEncounter.dialogue.encounterOptionsDialogue?.description).toBe(`${namespace}:description`);
+    expect(DelibirdyEncounter.dialogue.encounterOptionsDialogue?.query).toBe(`${namespace}:query`);
     expect(DelibirdyEncounter.options.length).toBe(3);
   });
 
@@ -80,11 +80,11 @@ describe("Delibird-y - Mystery Encounter", () => {
       expect(option1.optionMode).toBe(MysteryEncounterOptionMode.DISABLED_OR_DEFAULT);
       expect(option1.dialogue).toBeDefined();
       expect(option1.dialogue).toStrictEqual({
-        buttonLabel: `${namespace}.option.1.label`,
-        buttonTooltip: `${namespace}.option.1.tooltip`,
+        buttonLabel: `${namespace}:option.1.label`,
+        buttonTooltip: `${namespace}:option.1.tooltip`,
         selected: [
           {
-            text: `${namespace}.option.1.selected`,
+            text: `${namespace}:option.1.selected`,
           },
         ],
       });
@@ -174,12 +174,12 @@ describe("Delibird-y - Mystery Encounter", () => {
       expect(option.optionMode).toBe(MysteryEncounterOptionMode.DISABLED_OR_DEFAULT);
       expect(option.dialogue).toBeDefined();
       expect(option.dialogue).toStrictEqual({
-        buttonLabel: `${namespace}.option.2.label`,
-        buttonTooltip: `${namespace}.option.2.tooltip`,
-        secondOptionPrompt: `${namespace}.option.2.select_prompt`,
+        buttonLabel: `${namespace}:option.2.label`,
+        buttonTooltip: `${namespace}:option.2.tooltip`,
+        secondOptionPrompt: `${namespace}:option.2.select_prompt`,
         selected: [
           {
-            text: `${namespace}.option.2.selected`,
+            text: `${namespace}:option.2.selected`,
           },
         ],
       });
@@ -190,13 +190,13 @@ describe("Delibird-y - Mystery Encounter", () => {
 
       // Set 2 Sitrus berries on party lead
       scene.modifiers = [];
-      const sitrus = generateModifierType(scene, modifierTypes.BERRY, [BerryType.SITRUS])!;
+      const sitrus = generateModifierType(scene, modifierTypes.BERRY, [ BerryType.SITRUS ])!;
       const sitrusMod = sitrus.newModifier(scene.getParty()[0]) as BerryModifier;
       sitrusMod.stackCount = 2;
       await scene.addModifier(sitrusMod, true, false, false, true);
       await scene.updateModifiers(true);
 
-      await runMysteryEncounterToEnd(game, 2, { pokemonNo: 1, optionNo: 1});
+      await runMysteryEncounterToEnd(game, 2, { pokemonNo: 1, optionNo: 1 });
 
       const sitrusAfter = scene.findModifier(m => m instanceof BerryModifier);
       const candyJarAfter = scene.findModifier(m => m instanceof LevelIncrementBoosterModifier);
@@ -217,7 +217,7 @@ describe("Delibird-y - Mystery Encounter", () => {
       await scene.addModifier(modifier, true, false, false, true);
       await scene.updateModifiers(true);
 
-      await runMysteryEncounterToEnd(game, 2, { pokemonNo: 1, optionNo: 1});
+      await runMysteryEncounterToEnd(game, 2, { pokemonNo: 1, optionNo: 1 });
 
       const reviverSeedAfter = scene.findModifier(m => m instanceof PokemonInstantReviveModifier);
       const healingCharmAfter = scene.findModifier(m => m instanceof HealingBoosterModifier);
@@ -235,7 +235,7 @@ describe("Delibird-y - Mystery Encounter", () => {
       const candyJar = generateModifierType(scene, modifierTypes.CANDY_JAR)!.newModifier() as LevelIncrementBoosterModifier;
       candyJar.stackCount = 99;
       await scene.addModifier(candyJar, true, false, false, true);
-      const sitrus = generateModifierType(scene, modifierTypes.BERRY, [BerryType.SITRUS])!;
+      const sitrus = generateModifierType(scene, modifierTypes.BERRY, [ BerryType.SITRUS ])!;
 
       // Sitrus berries on party
       const sitrusMod = sitrus.newModifier(scene.getParty()[0]) as BerryModifier;
@@ -243,7 +243,7 @@ describe("Delibird-y - Mystery Encounter", () => {
       await scene.addModifier(sitrusMod, true, false, false, true);
       await scene.updateModifiers(true);
 
-      await runMysteryEncounterToEnd(game, 2, { pokemonNo: 1, optionNo: 1});
+      await runMysteryEncounterToEnd(game, 2, { pokemonNo: 1, optionNo: 1 });
 
       const sitrusAfter = scene.findModifier(m => m instanceof BerryModifier);
       const candyJarAfter = scene.findModifier(m => m instanceof LevelIncrementBoosterModifier);
@@ -272,7 +272,7 @@ describe("Delibird-y - Mystery Encounter", () => {
       await scene.addModifier(modifier, true, false, false, true);
       await scene.updateModifiers(true);
 
-      await runMysteryEncounterToEnd(game, 2, { pokemonNo: 1, optionNo: 1});
+      await runMysteryEncounterToEnd(game, 2, { pokemonNo: 1, optionNo: 1 });
 
       const reviverSeedAfter = scene.findModifier(m => m instanceof PokemonInstantReviveModifier);
       const healingCharmAfter = scene.findModifier(m => m instanceof HealingBoosterModifier);
@@ -324,7 +324,7 @@ describe("Delibird-y - Mystery Encounter", () => {
       await scene.addModifier(modifier, true, false, false, true);
       await scene.updateModifiers(true);
 
-      await runMysteryEncounterToEnd(game, 2, { pokemonNo: 1, optionNo: 1});
+      await runMysteryEncounterToEnd(game, 2, { pokemonNo: 1, optionNo: 1 });
 
       expect(leaveEncounterWithoutBattleSpy).toBeCalled();
     });
@@ -336,12 +336,12 @@ describe("Delibird-y - Mystery Encounter", () => {
       expect(option.optionMode).toBe(MysteryEncounterOptionMode.DISABLED_OR_DEFAULT);
       expect(option.dialogue).toBeDefined();
       expect(option.dialogue).toStrictEqual({
-        buttonLabel: `${namespace}.option.3.label`,
-        buttonTooltip: `${namespace}.option.3.tooltip`,
-        secondOptionPrompt: `${namespace}.option.3.select_prompt`,
+        buttonLabel: `${namespace}:option.3.label`,
+        buttonTooltip: `${namespace}:option.3.tooltip`,
+        secondOptionPrompt: `${namespace}:option.3.select_prompt`,
         selected: [
           {
-            text: `${namespace}.option.3.selected`,
+            text: `${namespace}:option.3.selected`,
           },
         ],
       });
@@ -358,7 +358,7 @@ describe("Delibird-y - Mystery Encounter", () => {
       await scene.addModifier(modifier, true, false, false, true);
       await scene.updateModifiers(true);
 
-      await runMysteryEncounterToEnd(game, 3, { pokemonNo: 1, optionNo: 1});
+      await runMysteryEncounterToEnd(game, 3, { pokemonNo: 1, optionNo: 1 });
 
       const soulDewAfter = scene.findModifier(m => m instanceof PokemonNatureWeightModifier);
       const berryPouchAfter = scene.findModifier(m => m instanceof PreserveBerryModifier);
@@ -379,7 +379,7 @@ describe("Delibird-y - Mystery Encounter", () => {
       await scene.addModifier(modifier, true, false, false, true);
       await scene.updateModifiers(true);
 
-      await runMysteryEncounterToEnd(game, 3, { pokemonNo: 1, optionNo: 1});
+      await runMysteryEncounterToEnd(game, 3, { pokemonNo: 1, optionNo: 1 });
 
       const soulDewAfter = scene.findModifier(m => m instanceof PokemonNatureWeightModifier);
       const berryPouchAfter = scene.findModifier(m => m instanceof PreserveBerryModifier);
@@ -405,7 +405,7 @@ describe("Delibird-y - Mystery Encounter", () => {
       await scene.addModifier(modifier, true, false, false, true);
       await scene.updateModifiers(true);
 
-      await runMysteryEncounterToEnd(game, 3, { pokemonNo: 1, optionNo: 1});
+      await runMysteryEncounterToEnd(game, 3, { pokemonNo: 1, optionNo: 1 });
 
       const soulDewAfter = scene.findModifier(m => m instanceof PokemonNatureWeightModifier);
       const berryPouchAfter = scene.findModifier(m => m instanceof PreserveBerryModifier);
@@ -458,7 +458,7 @@ describe("Delibird-y - Mystery Encounter", () => {
       await scene.addModifier(modifier, true, false, false, true);
       await scene.updateModifiers(true);
 
-      await runMysteryEncounterToEnd(game, 3, { pokemonNo: 1, optionNo: 1});
+      await runMysteryEncounterToEnd(game, 3, { pokemonNo: 1, optionNo: 1 });
 
       expect(leaveEncounterWithoutBattleSpy).toBeCalled();
     });

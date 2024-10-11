@@ -43,20 +43,17 @@ export class TurnStartPhase extends FieldPhase {
       orderedTargets = Utils.randSeedShuffle(orderedTargets);
     }, this.scene.currentBattle.turn, this.scene.waveSeed);
 
-    orderedTargets.sort((a: Pokemon, b: Pokemon) => {
-      const aSpeed = a?.getEffectiveStat(Stat.SPD) || 0;
-      const bSpeed = b?.getEffectiveStat(Stat.SPD) || 0;
-
-      return bSpeed - aSpeed;
-    });
-
-    // Next, a check for Trick Room is applied. If Trick Room is present, the order is reversed.
+    // Next, a check for Trick Room is applied to determine sort order.
     const speedReversed = new Utils.BooleanHolder(false);
     this.scene.arena.applyTags(TrickRoomTag, speedReversed);
 
-    if (speedReversed.value) {
-      orderedTargets = orderedTargets.reverse();
-    }
+    // Adjust the sort function based on whether Trick Room is active.
+    orderedTargets.sort((a: Pokemon, b: Pokemon) => {
+      const aSpeed = a?.getEffectiveStat(Stat.SPD) ?? 0;
+      const bSpeed = b?.getEffectiveStat(Stat.SPD) ?? 0;
+
+      return speedReversed.value ? aSpeed - bSpeed : bSpeed - aSpeed;
+    });
 
     return orderedTargets.map(t => t.getFieldIndex() + (!t.isPlayer() ? BattlerIndex.ENEMY : BattlerIndex.PLAYER));
   }
@@ -161,7 +158,7 @@ export class TurnStartPhase extends FieldPhase {
         if (!queuedMove) {
           continue;
         }
-        const move = pokemon.getMoveset().find(m => m?.moveId === queuedMove.move) || new PokemonMove(queuedMove.move);
+        const move = pokemon.getMoveset().find(m => m?.moveId === queuedMove.move && m?.ppUsed < m?.getMovePp()) || new PokemonMove(queuedMove.move);
         if (move.getMove().hasAttr(MoveHeaderAttr)) {
           this.scene.unshiftPhase(new MoveHeaderPhase(this.scene, pokemon, move));
         }

@@ -26,6 +26,7 @@ jobs:
       - name: Checkout repository for Typedoc
         uses: actions/checkout@v3
         with:
+          submodules: 'recursive'
           path: pokerogue_docs
 
       - name: Install OS package

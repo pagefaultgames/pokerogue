@@ -283,7 +283,7 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
       });
 
       this.scene.tweens.add({
-        targets: [this.rerollButtonContainer, this.lockRarityButtonContainer],
+        targets: [ this.rerollButtonContainer, this.lockRarityButtonContainer ],
         alpha: this.rerollCost < 0 ? 0.5 : 1,
         duration: 250
       });
@@ -576,6 +576,10 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
     this.onActionInput = null;
     this.getUi().clearText();
     this.eraseCursor();
+
+    // Reset cursor positions
+    this.cursor = 0;
+    this.rowCursor = 0;
 
     /* Multiplies the fade time duration by the speed parameter so that it is always constant, and avoids "flashbangs" at game speed x5 */
     this.scene.hideShopOverlay(750 * this.scene.gameSpeed);

@@ -326,7 +326,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
     this.teraIcon.setVisible(this.lastTeraType !== Type.UNKNOWN);
     this.teraIcon.on("pointerover", () => {
       if (this.lastTeraType !== Type.UNKNOWN) {
-        (this.scene as BattleScene).ui.showTooltip("", i18next.t("fightUiHandler:teraHover", {type: i18next.t(`pokemonInfo:Type.${Type[this.lastTeraType]}`) }));
+        (this.scene as BattleScene).ui.showTooltip("", i18next.t("fightUiHandler:teraHover", { type: i18next.t(`pokemonInfo:Type.${Type[this.lastTeraType]}`) }));
       }
     });
     this.teraIcon.on("pointerout", () => (this.scene as BattleScene).ui.hideTooltip());
@@ -593,7 +593,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
       };
 
       const updatePokemonHp = () => {
-        let duration = !instant ? Utils.clampInt(Math.abs((this.lastHp) - pokemon.hp) * 5, 250, 5000) : 0;
+        let duration = !instant ? Phaser.Math.Clamp(Math.abs((this.lastHp) - pokemon.hp) * 5, 250, 5000) : 0;
         const speed = (this.scene as BattleScene).hpBarSpeed;
         if (speed) {
           duration = speed >= 3 ? 0 : duration / Math.pow(2, speed);
