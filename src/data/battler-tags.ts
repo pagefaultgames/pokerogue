@@ -1714,8 +1714,7 @@ export class TypeImmuneTag extends BattlerTag {
 }
 
 /**
- * Battler Tag that lifts the affected in the air and provides immunity to Ground Type Moves
- * Moves that provide this effect are Magnet Rise and Telekinesis
+ * Battler Tag that lifts the affected Pokemon into the air and provides immunity to Ground type moves.
  * @see {@link https://bulbapedia.bulbagarden.net/wiki/Magnet_Rise_(move) | Moves.MAGNET_RISE}
  * @see {@link https://bulbapedia.bulbagarden.net/wiki/Telekinesis_(move) | Moves.TELEKINESIS}
  */
