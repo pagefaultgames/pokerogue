@@ -1,12 +1,16 @@
 import { normalizePath, type Plugin as VitePlugin } from "vite";
 import fs from "fs";
 import path from "path";
-import { namespaceMap } from "../namespacemap";
-import { kebabCaseToCamelCase, objectSwap } from "../../utils";
+import * as Utils from "../utils-plugins";
 
-const namespaceMapSwap = objectSwap(namespaceMap);
-
-function getNameSpaces(dir: string) {
+const namespaceMapSwap = Utils.objectSwap(Utils.namespaceMap);
+/**
+ * Crawl a directory recursively for json files to returns her name with camelCase format...
+ * Also if file is in directory returns format "dir/fileName" format
+ * @param dir the directory to crawl
+ * @returns {string[]}
+ */
+function getNameSpaces(dir: string): string[] {
   const namespace: string[] = [];
   const files = fs.readdirSync(dir);
 
@@ -20,13 +24,13 @@ function getNameSpaces(dir: string) {
         let ns = subnamespace[i];
         if (namespaceMapSwap[file.replace(".json", "")]) {
           ns = namespaceMapSwap[file.replace(".json", "")];
-        } else  if (kebabCaseToCamelCase(file).replace(".json", "").startsWith("mysteryEncounters")) {
+        } else  if (Utils.kebabCaseToCamelCase(file).replace(".json", "").startsWith("mysteryEncounters")) {
           ns = subnamespace[i].replace(/Dialogue$/, "");
         }
-        namespace.push(`${kebabCaseToCamelCase(file).replace(".json", "")}/${ns}`);
+        namespace.push(`${Utils.kebabCaseToCamelCase(file).replace(".json", "")}/${ns}`);
       }
     } else if (path.extname(file) === ".json") {
-      let ns = kebabCaseToCamelCase(file).replace(".json", "");
+      let ns = Utils.kebabCaseToCamelCase(file).replace(".json", "");
       if (namespaceMapSwap[file.replace(".json", "")]) {
         ns = namespaceMapSwap[file.replace(".json", "")];
       }
@@ -37,41 +41,41 @@ function getNameSpaces(dir: string) {
   return namespace;
 }
 
-function isFileInsideDir(file, dir) {
-  const filePath = path.normalize(file);
-  const dirPath = path.normalize(dir);
-  return filePath.startsWith(dirPath);
-}
 
 export function LocaleNamespace(): VitePlugin {
-  const nsLocation = "./public/locales";
-  const nsEn = `${nsLocation}/en`; // Default namespace
+  const nsRelativePath = "./public/locales";
+  const nsEn = `${nsRelativePath}/en`; // Default namespace
   let namespaces = getNameSpaces(nsEn);
-  //   const nsEnRegex = new RegExp(`^${nsEn.replace(/\//g, "\\/")}.*\\.json$`);
-  const nsAbsolutePath = path.resolve(process.cwd(), nsLocation); // Convert to absolute path
+  const nsAbsolutePath = path.resolve(process.cwd(), nsRelativePath);
 
   return {
     name: "namespaces-i18next",
     buildStart() {
       if (process.env.NODE_ENV === "production") {
-        console.log("Assign namespace to constant nsEn");
+        console.log("Collect namespaces");
       }
     },
     configureServer(server) {
       const restartHandler = async (file, action: string) => {
-        if (isFileInsideDir(file, nsAbsolutePath) && file.endsWith(".json")) {
+        /**
+         * If any JSON file in {@linkcode nsLocation} is created/modified..
+         * refresh the page to update the namespaces of i18next
+         */
+        if (Utils.isFileInsideDir(file, nsAbsolutePath) && file.endsWith(".json")) {
           console.log(`\x1b[34m${normalizePath(file.replace(nsAbsolutePath, ""))}\x1b[0m ${action}, reloading page...`);
 
           namespaces = await getNameSpaces(nsEn);
           await server.moduleGraph.invalidateAll();
           await server.ws.send({
-            type: "full-reload",
+            type: "full-reload"
           });
         }
       };
-      server.watcher.on("change", (file) => restartHandler(file, "updated"));
-      server.watcher.on("add", (file) => restartHandler(file, "added"));
-      server.watcher.on("unlink", (file) => restartHandler(file, "removed"));
+
+      server.watcher
+        .on("change", (file) => restartHandler(file, "updated"))
+        .on("add", (file) => restartHandler(file, "added"))
+        .on("unlink", (file) => restartHandler(file, "removed"));
     },
     transform: {
       handler(code, id) {
