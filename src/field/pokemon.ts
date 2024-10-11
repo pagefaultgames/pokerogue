@@ -3710,10 +3710,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   resetBattleData(): void {
-    const illusionActive: boolean = this.battleData?.illusion.active ?? false
+    const illusionActive: boolean = this.battleData?.illusion.active ?? false;
     this.breakIllusion();
     this.battleData = new PokemonBattleData();
-    illusionActive ? this.generateIllusion() : null
+    illusionActive ? this.generateIllusion() : null;
   }
 
   resetBattleSummonData(): void {
@@ -5304,7 +5304,7 @@ export class PokemonBattleData {
   public berriesEaten: BerryType[] = [];
   public abilitiesApplied: Abilities[] = [];
   public abilityRevealed: boolean = false;
-  public illusion: Illusion = {active: false, available: true}
+  public illusion: Illusion = { active: false, available: true };
 }
 
 export class PokemonBattleSummonData {
