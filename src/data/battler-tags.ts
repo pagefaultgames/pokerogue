@@ -993,11 +993,6 @@ export class IngrainTag extends TrappedTag {
     return ret;
   }
 
-  override onRemove(pokemon: Pokemon) {
-    super.onRemove(pokemon);
-    pokemon.removeTag(BattlerTagType.IGNORE_FLYING);
-  }
-
   getTrapMessage(pokemon: Pokemon): string {
     return i18next.t("battlerTags:ingrainOnTrap", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) });
   }
