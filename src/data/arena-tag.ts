@@ -97,11 +97,15 @@ export class MistTag extends ArenaTag {
       args[1] as Utils.BooleanHolder
     ];
 
-    const bypassed = new Utils.BooleanHolder(false);
-    // TODO: Allow this to be simulated
-    applyAbAttrs(InfiltratorAbAttr, attacker, null, false, bypassed);
-    if (bypassed.value) {
-      return false;
+    // `StatStageChangePhase` currently doesn't have a reference to the source of stat drops,
+    // so this code currently has no effect on gameplay.
+    if (attacker) {
+      const bypassed = new Utils.BooleanHolder(false);
+      // TODO: Allow this to be simulated
+      applyAbAttrs(InfiltratorAbAttr, attacker, null, false, bypassed);
+      if (bypassed.value) {
+        return false;
+      }
     }
 
     cancelled.value = true;
@@ -146,13 +150,19 @@ export class WeakenMoveScreenTag extends ArenaTag {
    * @returns True if the move was weakened, otherwise false.
    */
   apply(arena: Arena, args: any[]): boolean {
-    const attacker = args[0] as Pokemon;
+    // TODO: replace this with safer type inference
+    const [ attacker, moveCategory, isDoubleBattle, damageMultiplier ] = [
+      args[0] as Pokemon,
+      args[1] as MoveCategory,
+      args[2] as boolean,
+      args[3] as Utils.NumberHolder
+    ];
     const bypassed = new Utils.BooleanHolder(false);
     // TODO: allow this to be simulated
     applyAbAttrs(InfiltratorAbAttr, attacker, null, false, bypassed);
 
-    if (!bypassed.value && this.weakenedCategories.includes((args[0] as MoveCategory))) {
-      (args[2] as Utils.NumberHolder).value = (args[1] as boolean) ? 2732 / 4096 : 0.5;
+    if (!bypassed.value && this.weakenedCategories.includes(moveCategory)) {
+      damageMultiplier.value = isDoubleBattle ? 2732 / 4096 : 0.5;
       return true;
     }
     return false;

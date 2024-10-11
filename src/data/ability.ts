@@ -5329,7 +5329,8 @@ export function initAbilities() {
       .attr(PostSummonTransformAbAttr)
       .attr(UncopiableAbilityAbAttr),
     new Ability(Abilities.INFILTRATOR, 5)
-      .attr(InfiltratorAbAttr),
+      .attr(InfiltratorAbAttr)
+      .partial(), // does not bypass Mist
     new Ability(Abilities.MUMMY, 5)
       .attr(PostDefendAbilityGiveAbAttr, Abilities.MUMMY)
       .bypassFaint(),
