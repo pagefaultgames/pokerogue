@@ -1,6 +1,7 @@
 import { MoneyFormat } from "#enums/money-format";
 import { Moves } from "#enums/moves";
 import i18next from "i18next";
+import { pokerogueApi } from "#app/plugins/api/pokerogue-api";
 
 export type nil = null | undefined;
 
@@ -319,46 +320,12 @@ export function getCookie(cName: string): string {
  * with a GET request to verify if a server is running,
  * sets isLocalServerConnected based on results
  */
-export function localPing() {
+export async function localPing() {
   if (isLocal) {
-    apiFetch("game/titlestats")
-      .then(resolved => isLocalServerConnected = true,
-        rejected => isLocalServerConnected = false
-      );
+    const titleStats = await pokerogueApi.getGameTitleStats();
+    isLocalServerConnected = !!titleStats;
+    console.log("isLocalServerConnected:", isLocalServerConnected);
   }
-}
-
-export function apiFetch(path: string, authed: boolean = false): Promise<Response> {
-  return (isLocal && isLocalServerConnected) || !isLocal ? new Promise((resolve, reject) => {
-    const request = {};
-    if (authed) {
-      const sId = getCookie(sessionIdKey);
-      if (sId) {
-        request["headers"] = { "Authorization": sId };
-      }
-    }
-    fetch(`${apiUrl}/${path}`, request)
-      .then(response => resolve(response))
-      .catch(err => reject(err));
-  }) : new Promise(() => {});
-}
-
-export function apiPost(path: string, data?: any, contentType: string = "application/json", authed: boolean = false): Promise<Response> {
-  return (isLocal && isLocalServerConnected) || !isLocal ? new Promise((resolve, reject) => {
-    const headers = {
-      "Accept": contentType,
-      "Content-Type": contentType,
-    };
-    if (authed) {
-      const sId = getCookie(sessionIdKey);
-      if (sId) {
-        headers["Authorization"] = sId;
-      }
-    }
-    fetch(`${apiUrl}/${path}`, { method: "POST", headers: headers, body: data })
-      .then(response => resolve(response))
-      .catch(err => reject(err));
-  }) : new Promise(() => {});
 }
 
 /** Alias for the constructor of a class */

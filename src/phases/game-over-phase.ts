@@ -23,6 +23,7 @@ import * as Utils from "#app/utils";
 import { PlayerGender } from "#enums/player-gender";
 import { TrainerType } from "#enums/trainer-type";
 import i18next from "i18next";
+import { pokerogueApi } from "#app/plugins/api/pokerogue-api";
 
 export class GameOverPhase extends BattlePhase {
   private victory: boolean;
@@ -176,10 +177,9 @@ export class GameOverPhase extends BattlePhase {
       If Online, execute apiFetch as intended
       If Offline, execute offlineNewClear(), a localStorage implementation of newClear daily run checks */
     if (this.victory) {
-      if (!Utils.isLocal) {
-        Utils.apiFetch(`savedata/session/newclear?slot=${this.scene.sessionSlotId}&clientSessionId=${clientSessionId}`, true)
-          .then(response => response.json())
-          .then(newClear => doGameOver(newClear));
+      if (!Utils.isLocal || Utils.isLocalServerConnected) {
+        pokerogueApi.savedata.session.newclear({ slot: this.scene.sessionSlotId, clientSessionId })
+          .then((success) => doGameOver(!!success));
       } else {
         this.scene.gameData.offlineNewClear(this.scene).then(result => {
           doGameOver(result);
