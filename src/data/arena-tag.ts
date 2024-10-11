@@ -71,7 +71,7 @@ export abstract class ArenaTag {
     this.sourceId = source.sourceId;
     this.side = source.side;
   }
-  
+
   /**
    * Helper function that retrieves the source Pokemon
    * @param scene medium to retrieve the source Pokemon
