@@ -5505,7 +5505,7 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
 
       // Don't allow wild mons to flee with U-turn et al
       if (this.selfSwitch && !user.isPlayer() && move.category !== MoveCategory.STATUS) {
-        return true;
+        return false;
       }
 
       // Switch out logic for everything else (eg: WILD battles)
