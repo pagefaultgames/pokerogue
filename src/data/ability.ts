@@ -4193,7 +4193,7 @@ export class RedirectTypeMoveAbAttr extends RedirectMoveAbAttr {
 export class BlockRedirectAbAttr extends AbAttr { }
 
 /**
- * Used by Early Bird
+ * Used by Early Bird, makes the pokemon wake up faster
  * @param statusEffect - The {@linkcode StatusEffect} to check for
  * @see {@linkcode apply}
  */
@@ -4205,7 +4205,7 @@ export class ReduceStatusEffectDurationAbAttr extends AbAttr {
   }
 
   /**
-   * Applies the duration reduction of the `AbAttr`
+   * Reduces the number of sleep turns remaining by an extra 1 when applied
    * @param args - The args passed to the `AbAttr`:
    * - `[0]` - The {@linkcode StatusEffect} of the Pokemon
    * - `[1]` - The number of turns remaining until the status is healed

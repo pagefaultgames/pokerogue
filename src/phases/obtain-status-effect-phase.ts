@@ -26,7 +26,7 @@ export class ObtainStatusEffectPhase extends PokemonPhase {
     if (pokemon && !pokemon.status) {
       if (pokemon.trySetStatus(this.statusEffect, false, this.sourcePokemon)) {
         if (this.turnsRemaining) {
-          pokemon.status!.turnsRemaining = this.turnsRemaining;
+          pokemon.status!.sleepTurnsRemaining = this.turnsRemaining;
         }
         pokemon.updateInfo(true);
         new CommonBattleAnim(CommonAnim.POISON + (this.statusEffect! - 1), pokemon).play(this.scene, false, () => {

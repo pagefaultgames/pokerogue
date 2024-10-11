@@ -172,10 +172,10 @@ export class MovePhase extends BattlePhase {
         break;
       case StatusEffect.SLEEP:
         applyMoveAttrs(BypassSleepAttr, this.pokemon, null, this.move.getMove());
-        const turnsRemaining = new NumberHolder(this.pokemon.status.turnsRemaining ?? 0);
+        const turnsRemaining = new NumberHolder(this.pokemon.status.sleepTurnsRemaining ?? 0);
         applyAbAttrs(ReduceStatusEffectDurationAbAttr, this.pokemon, null, false, this.pokemon.status.effect, turnsRemaining);
-        this.pokemon.status.turnsRemaining = turnsRemaining.value;
-        healed = this.pokemon.status.turnsRemaining <= 0;
+        this.pokemon.status.sleepTurnsRemaining = turnsRemaining.value;
+        healed = this.pokemon.status.sleepTurnsRemaining <= 0;
         activated = !healed && !this.pokemon.getTag(BattlerTagType.BYPASS_SLEEP);
         this.cancelled = activated;
         break;
