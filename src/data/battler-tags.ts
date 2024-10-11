@@ -1388,7 +1388,7 @@ export class ContactStatStageChangeProtectedTag extends DamageProtectedTag {
       const effectPhase = pokemon.scene.getCurrentPhase();
       if (effectPhase instanceof MoveEffectPhase && effectPhase.move.getMove().hasFlag(MoveFlags.MAKES_CONTACT)) {
         const attacker = effectPhase.getPokemon();
-        pokemon.scene.unshiftPhase(new StatStageChangePhase(pokemon.scene, attacker.getBattlerIndex(), true, [ this.stat ], this.levels));
+        pokemon.scene.unshiftPhase(new StatStageChangePhase(pokemon.scene, attacker.getBattlerIndex(), false, [ this.stat ], this.levels));
       }
     }
 
@@ -2151,6 +2151,10 @@ export class GulpMissileTag extends BattlerTag {
         return false;
       }
 
+      if (moveEffectPhase.move.getMove().hitsSubstitute(attacker, pokemon)) {
+        return true;
+      }
+
       const cancelled = new Utils.BooleanHolder(false);
       applyAbAttrs(BlockNonDirectDamageAbAttr, attacker, cancelled);
 
@@ -2659,16 +2663,16 @@ export class ImprisonTag extends MoveRestrictionBattlerTag {
 /**
  * Battler Tag that applies the effects of Syrup Bomb to the target Pokemon.
  * For three turns, starting from the turn of hit, at the end of each turn, the target Pokemon's speed will decrease by 1.
- * The tag can also expire by taking the target Pokemon off the field.
+ * The tag can also expire by taking the target Pokemon off the field, or the Pokemon that originally used the move.
  */
 export class SyrupBombTag extends BattlerTag {
-  constructor() {
-    super(BattlerTagType.SYRUP_BOMB, BattlerTagLapseType.TURN_END, 3, Moves.SYRUP_BOMB);
+  constructor(sourceId: number) {
+    super(BattlerTagType.SYRUP_BOMB, BattlerTagLapseType.TURN_END, 3, Moves.SYRUP_BOMB, sourceId);
   }
 
   /**
    * Adds the Syrup Bomb battler tag to the target Pokemon.
-   * @param {Pokemon} pokemon the target Pokemon
+   * @param pokemon - The target {@linkcode Pokemon}
    */
   override onAdd(pokemon: Pokemon) {
     super.onAdd(pokemon);
@@ -2677,15 +2681,16 @@ export class SyrupBombTag extends BattlerTag {
 
   /**
    * Applies the single-stage speed down to the target Pokemon and decrements the tag's turn count
-   * @param {Pokemon} pokemon the target Pokemon
-   * @param {BattlerTagLapseType} _lapseType
-   * @returns `true` if the turnCount is still greater than 0 | `false` if the turnCount is 0 or the target Pokemon has been removed from the field
+   * @param pokemon - The target {@linkcode Pokemon}
+   * @param _lapseType - N/A
+   * @returns `true` if the `turnCount` is still greater than `0`; `false` if the `turnCount` is `0` or the target or source Pokemon has been removed from the field
    */
   override lapse(pokemon: Pokemon, _lapseType: BattlerTagLapseType): boolean {
-    if (!pokemon.isActive(true)) {
+    if (this.sourceId && !pokemon.scene.getPokemonById(this.sourceId)?.isActive(true)) {
       return false;
     }
-    pokemon.scene.queueMessage(i18next.t("battlerTags:syrupBombLapse", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) })); // Custom message in lieu of an animation in mainline
+    // Custom message in lieu of an animation in mainline
+    pokemon.scene.queueMessage(i18next.t("battlerTags:syrupBombLapse", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }));
     pokemon.scene.unshiftPhase(new StatStageChangePhase(
       pokemon.scene, pokemon.getBattlerIndex(), true,
       [ Stat.SPD ], -1, true, false, true
@@ -2696,12 +2701,8 @@ export class SyrupBombTag extends BattlerTag {
 
 /**
  * Retrieves a {@linkcode BattlerTag} based on the provided tag type, turn count, source move, and source ID.
- *
- * @param {BattlerTagType} tagType the type of the {@linkcode BattlerTagType}.
- * @param turnCount the turn count.
- * @param {Moves} sourceMove the source {@linkcode Moves}.
- * @param sourceId the source ID.
- * @returns {BattlerTag} the corresponding {@linkcode BattlerTag} object.
+ * @param sourceId - The ID of the pokemon adding the tag
+ * @returns The corresponding {@linkcode BattlerTag} object.
  */
 export function getBattlerTag(tagType: BattlerTagType, turnCount: number, sourceMove: Moves, sourceId: number): BattlerTag {
   switch (tagType) {
@@ -2870,7 +2871,7 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: number, source
   case BattlerTagType.IMPRISON:
     return new ImprisonTag(sourceId);
   case BattlerTagType.SYRUP_BOMB:
-    return new SyrupBombTag();
+    return new SyrupBombTag(sourceId);
   case BattlerTagType.NONE:
   default:
     return new BattlerTag(tagType, BattlerTagLapseType.CUSTOM, turnCount, sourceMove, sourceId);
