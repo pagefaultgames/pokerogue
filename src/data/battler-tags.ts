@@ -91,6 +91,15 @@ export class BattlerTag {
     this.sourceMove = source.sourceMove;
     this.sourceId = source.sourceId;
   }
+
+  /**
+   * Helper function that retrieves the source Pokemon object
+   * @param scene medium to retrieve the source Pokemon
+   * @returns The source {@linkcode Pokemon} or `null` if none is found
+   */
+  retrieveSource(scene: BattleScene): Pokemon | null {
+    return this.sourceId ? scene.getPokemonById(this.sourceId) : null;
+  }
 }
 
 export interface WeatherBattlerTag {
@@ -2648,15 +2657,6 @@ export class ImprisonTag extends MoveRestrictionBattlerTag {
 
   override interruptedText(pokemon: Pokemon, move: Moves): string {
     return i18next.t("battle:moveDisabledImprison", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), moveName: allMoves[move].name });
-  }
-
-  /**
-   * Helper function that retrieves the source Pokemon object
-   * @param scene medium to retrieve the source Pokemon
-   * @returns The source {@linkcode Pokemon} or `null` if none is found
-   */
-  private retrieveSource(scene: BattleScene): Pokemon | null {
-    return this.sourceId ? scene.getPokemonById(this.sourceId) : null;
   }
 }
 
