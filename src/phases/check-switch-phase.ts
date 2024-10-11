@@ -50,7 +50,7 @@ export class CheckSwitchPhase extends BattlePhase {
     this.scene.ui.showText(i18next.t("battle:switchQuestion", { pokemonName: this.useName ? getPokemonNameWithAffix(pokemon) : i18next.t("battle:pokemon") }), null, () => {
       this.scene.ui.setMode(Mode.CONFIRM, () => {
         this.scene.ui.setMode(Mode.MESSAGE);
-        this.scene.tryRemovePhase(p => p instanceof PostSummonPhase && p.player && p.fieldIndex === this.fieldIndex);
+        this.scene.tryRemovePhase(p => p instanceof PostSummonPhase && p.isPlayer && p.fieldIndex === this.fieldIndex);
         this.scene.unshiftPhase(new SwitchPhase(this.scene, SwitchType.SWITCH, this.fieldIndex, false, true));
         this.end();
       }, () => {

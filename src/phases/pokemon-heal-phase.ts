@@ -61,7 +61,7 @@ export class PokemonHealPhase extends CommonAnimPhase {
     } else if (healOrDamage) {
       const hpRestoreMultiplier = new Utils.IntegerHolder(1);
       if (!this.revive) {
-        this.scene.applyModifiers(HealingBoosterModifier, this.player, hpRestoreMultiplier);
+        this.scene.applyModifiers(HealingBoosterModifier, this.isPlayer, hpRestoreMultiplier);
       }
       const healAmount = new Utils.NumberHolder(Math.floor(this.hpHealed * hpRestoreMultiplier.value));
       if (healAmount.value < 0) {
