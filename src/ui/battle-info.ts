@@ -534,7 +534,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
         return resolve();
       }
 
-      const gender: Gender = pokemon.illusion.active ? pokemon.illusion.gender! : pokemon.gender;
+      const gender: Gender = pokemon.battleData.illusion.active ? pokemon.battleData.illusion.gender! : pokemon.gender;
 
       this.genderText.setText(getGenderSymbol(gender));
       this.genderText.setColor(getGenderColor(gender));
@@ -682,7 +682,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
     const nameSizeTest = addTextObject(this.scene, 0, 0, displayName, TextStyle.BATTLE_INFO);
     nameTextWidth = nameSizeTest.displayWidth;
 
-    const gender: Gender = pokemon.illusion.active ? pokemon.illusion.gender! : pokemon.gender;
+    const gender: Gender = pokemon.battleData.illusion.active ? pokemon.battleData.illusion.gender! : pokemon.gender;
     while (nameTextWidth > (this.player || !this.boss ? 60 : 98) - ((gender !== Gender.GENDERLESS ? 6 : 0) + (pokemon.fusionSpecies ? 8 : 0) + (pokemon.isShiny() ? 8 : 0) + (Math.min(pokemon.level.toString().length, 3) - 3) * 8)) {
       displayName = `${displayName.slice(0, displayName.endsWith(".") ? -2 : -1).trimEnd()}.`;
       nameSizeTest.setText(displayName);
