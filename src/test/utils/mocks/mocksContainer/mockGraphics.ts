@@ -1,9 +1,6 @@
-import { MockGameObject } from "../mockGameObject";
-
-export default class MockGraphics implements MockGameObject {
+export default class MockGraphics {
   private scene;
-  public list: MockGameObject[] = [];
-  public name: string;
+  public list = [];
   constructor(textureManager, config) {
     this.scene = textureManager.scene;
   }

@@ -3,6 +3,5 @@ export enum Challenges {
     SINGLE_TYPE,
     LOWER_MAX_STARTER_COST,
     LOWER_STARTER_POINTS,
-    FRESH_START,
-    INVERSE_BATTLE,
+    FRESH_START
 }

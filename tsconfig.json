@@ -5,7 +5,7 @@
 		"moduleResolution": "bundler",
 		"resolveJsonModule": true,
 		"esModuleInterop": true,
-		"strictNullChecks": true,
+		"strictNullChecks": false,
 		"sourceMap": false,
 		"strict": false,
 		"rootDir": "./src",
@@ -29,7 +29,6 @@
 		"node_modules",
 		"dist",
 		"vite.config.ts",
-		"vitest.config.ts",
-		"vitest.workspace.ts",
+		"vitest.config.ts"
 	]
 }

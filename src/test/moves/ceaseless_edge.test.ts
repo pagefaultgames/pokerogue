@@ -1,16 +1,20 @@
-import { ArenaTagSide, ArenaTrapTag } from "#app/data/arena-tag";
-import { allMoves } from "#app/data/move";
-import { Abilities } from "#app/enums/abilities";
-import { ArenaTagType } from "#app/enums/arena-tag-type";
-import { MoveEffectPhase } from "#app/phases/move-effect-phase";
-import { TurnEndPhase } from "#app/phases/turn-end-phase";
+import {afterEach, beforeAll, beforeEach, describe, expect, test, vi} from "vitest";
+import Phaser from "phaser";
+import GameManager from "#app/test/utils/gameManager";
+import * as overrides from "#app/overrides";
+import {
+  MoveEffectPhase,
+  TurnEndPhase
+} from "#app/phases";
+import {getMovePosition} from "#app/test/utils/gameManagerUtils";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
-import GameManager from "#test/utils/gameManager";
-import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { ArenaTagType } from "#app/enums/arena-tag-type";
+import { allMoves } from "#app/data/move";
+import { ArenaTagSide, ArenaTrapTag } from "#app/data/arena-tag";
+import { Abilities } from "#app/enums/abilities";
 
-
+const TIMEOUT = 20 * 1000;
 
 describe("Moves - Ceaseless Edge", () => {
   let phaserGame: Phaser.Game;
@@ -28,14 +32,14 @@ describe("Moves - Ceaseless Edge", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.battleType("single");
-    game.override.enemySpecies(Species.RATTATA);
-    game.override.enemyAbility(Abilities.RUN_AWAY);
-    game.override.enemyPassiveAbility(Abilities.RUN_AWAY);
-    game.override.startingLevel(100);
-    game.override.enemyLevel(100);
-    game.override.moveset([Moves.CEASELESS_EDGE, Moves.SPLASH, Moves.ROAR]);
-    game.override.enemyMoveset([Moves.SPLASH, Moves.SPLASH, Moves.SPLASH, Moves.SPLASH]);
+    vi.spyOn(overrides, "SINGLE_BATTLE_OVERRIDE", "get").mockReturnValue(true);
+    vi.spyOn(overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.RATTATA);
+    vi.spyOn(overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.RUN_AWAY);
+    vi.spyOn(overrides, "OPP_PASSIVE_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.RUN_AWAY);
+    vi.spyOn(overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(100);
+    vi.spyOn(overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(100);
+    vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([ Moves.CEASELESS_EDGE, Moves.SPLASH, Moves.ROAR ]);
+    vi.spyOn(overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH,Moves.SPLASH,Moves.SPLASH,Moves.SPLASH]);
     vi.spyOn(allMoves[Moves.CEASELESS_EDGE], "accuracy", "get").mockReturnValue(100);
 
   });
@@ -43,13 +47,17 @@ describe("Moves - Ceaseless Edge", () => {
   test(
     "move should hit and apply spikes",
     async () => {
-      await game.startBattle([Species.ILLUMISE]);
+      await game.startBattle([ Species.ILLUMISE ]);
 
-      const enemyPokemon = game.scene.getEnemyPokemon()!;
+      const leadPokemon = game.scene.getPlayerPokemon();
+      expect(leadPokemon).toBeDefined();
+
+      const enemyPokemon = game.scene.getEnemyPokemon();
+      expect(enemyPokemon).toBeDefined();
 
       const enemyStartingHp = enemyPokemon.hp;
 
-      game.move.select(Moves.CEASELESS_EDGE);
+      game.doAttack(getMovePosition(game.scene, 0, Moves.CEASELESS_EDGE));
 
       await game.phaseInterceptor.to(MoveEffectPhase, false);
       // Spikes should not have any layers before move effect is applied
@@ -61,20 +69,24 @@ describe("Moves - Ceaseless Edge", () => {
       expect(tagAfter instanceof ArenaTrapTag).toBeTruthy();
       expect(tagAfter.layers).toBe(1);
       expect(enemyPokemon.hp).toBeLessThan(enemyStartingHp);
-    }
+    }, TIMEOUT
   );
 
   test(
     "move should hit twice with multi lens and apply two layers of spikes",
     async () => {
-      game.override.startingHeldItems([{ name: "MULTI_LENS" }]);
-      await game.startBattle([Species.ILLUMISE]);
+      vi.spyOn(overrides, "STARTING_HELD_ITEMS_OVERRIDE", "get").mockReturnValue([{name: "MULTI_LENS"}]);
+      await game.startBattle([ Species.ILLUMISE ]);
 
-      const enemyPokemon = game.scene.getEnemyPokemon()!;
+      const leadPokemon = game.scene.getPlayerPokemon();
+      expect(leadPokemon).toBeDefined();
+
+      const enemyPokemon = game.scene.getEnemyPokemon();
+      expect(enemyPokemon).toBeDefined();
 
       const enemyStartingHp = enemyPokemon.hp;
 
-      game.move.select(Moves.CEASELESS_EDGE);
+      game.doAttack(getMovePosition(game.scene, 0, Moves.CEASELESS_EDGE));
 
       await game.phaseInterceptor.to(MoveEffectPhase, false);
       // Spikes should not have any layers before move effect is applied
@@ -86,18 +98,24 @@ describe("Moves - Ceaseless Edge", () => {
       expect(tagAfter instanceof ArenaTrapTag).toBeTruthy();
       expect(tagAfter.layers).toBe(2);
       expect(enemyPokemon.hp).toBeLessThan(enemyStartingHp);
-    }
+    }, TIMEOUT
   );
 
   test(
     "trainer - move should hit twice, apply two layers of spikes, force switch opponent - opponent takes damage",
     async () => {
-      game.override.startingHeldItems([{ name: "MULTI_LENS" }]);
-      game.override.startingWave(5);
+      vi.spyOn(overrides, "STARTING_HELD_ITEMS_OVERRIDE", "get").mockReturnValue([{name: "MULTI_LENS"}]);
+      vi.spyOn(overrides, "STARTING_WAVE_OVERRIDE", "get").mockReturnValue(5);
 
-      await game.startBattle([Species.ILLUMISE]);
+      await game.startBattle([ Species.ILLUMISE ]);
 
-      game.move.select(Moves.CEASELESS_EDGE);
+      const leadPokemon = game.scene.getPlayerPokemon();
+      expect(leadPokemon).toBeDefined();
+
+      const enemyPokemon = game.scene.getEnemyPokemon();
+      expect(enemyPokemon).toBeDefined();
+
+      game.doAttack(getMovePosition(game.scene, 0, Moves.CEASELESS_EDGE));
       await game.phaseInterceptor.to(MoveEffectPhase, false);
       // Spikes should not have any layers before move effect is applied
       const tagBefore = game.scene.arena.getTagOnSide(ArenaTagType.SPIKES, ArenaTagSide.ENEMY) as ArenaTrapTag;
@@ -110,10 +128,10 @@ describe("Moves - Ceaseless Edge", () => {
 
       const hpBeforeSpikes = game.scene.currentBattle.enemyParty[1].hp;
       // Check HP of pokemon that WILL BE switched in (index 1)
-      game.forceEnemyToSwitch();
-      game.move.select(Moves.SPLASH);
+      game.forceOpponentToSwitch();
+      game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
       await game.phaseInterceptor.to(TurnEndPhase, false);
       expect(game.scene.currentBattle.enemyParty[0].hp).toBeLessThan(hpBeforeSpikes);
-    }
+    }, TIMEOUT
   );
 });

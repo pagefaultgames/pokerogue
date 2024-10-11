@@ -1,9 +1,9 @@
-import { initI18n } from "#app/plugins/i18n";
-import { Species } from "#enums/species";
-import GameManager from "#test/utils/gameManager";
-import i18next from "i18next";
+import {afterEach, beforeAll, describe, expect, it} from "vitest";
 import Phaser from "phaser";
-import { afterEach, beforeAll, describe, expect, it } from "vitest";
+import GameManager from "#app/test/utils/gameManager";
+import {Species} from "#enums/species";
+import i18next from "i18next";
+import {initI18n} from "#app/plugins/i18n";
 
 describe("Lokalization - french", () => {
   let phaserGame: Phaser.Game;

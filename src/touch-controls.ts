@@ -8,10 +8,6 @@ export default class TouchControl {
   events: EventEmitter;
   private buttonLock: string[] = new Array();
   private inputInterval: NodeJS.Timeout[] = new Array();
-  /** Whether touch controls are disabled */
-  private disabled: boolean = false;
-  /** Whether the last touch event has finished before disabling */
-  private finishedLastTouch: boolean = false;
 
   constructor(scene: BattleScene) {
     this.events = scene.game.events;
@@ -19,27 +15,11 @@ export default class TouchControl {
   }
 
   /**
-   * Disable touch controls
-   */
-  disable() {
-    this.disabled = true;
-	  this.finishedLastTouch = false;
-  }
-
-  /**
-   * Enable touch controls
-	 */
-  enable() {
-    this.disabled = false;
-    this.finishedLastTouch = false;
-  }
-
-  /**
    * Initialize touch controls by binding keys to buttons.
    */
   init() {
     this.preventElementZoom(document.querySelector("#dpad"));
-    document.querySelectorAll(".apad-button").forEach((element) => this.preventElementZoom(element as HTMLElement));
+    this.preventElementZoom(document.querySelector("#apad"));
     // Select all elements with the 'data-key' attribute and bind keys to them
     for (const button of document.querySelectorAll("[data-key]")) {
       // @ts-ignore - Bind the key to the button using the dataset key
@@ -68,7 +48,7 @@ export default class TouchControl {
 
     node.addEventListener("touchend", event => {
       event.preventDefault();
-      this.touchButtonUp(node, key, event.target?.["id"]);
+      this.touchButtonUp(node, key, event.target["id"]);
     });
   }
 
@@ -76,14 +56,10 @@ export default class TouchControl {
     if (this.buttonLock.includes(key)) {
       return;
     }
-    if (!this.simulateKeyboardEvent("keydown", key)) {
-      return;
-    }
+    this.simulateKeyboardEvent("keydown", key);
     clearInterval(this.inputInterval[key]);
     this.inputInterval[key] = setInterval(() => {
-      if (!this.simulateKeyboardEvent("keydown", key)) {
-        clearInterval(this.inputInterval[key]);
-      }
+      this.simulateKeyboardEvent("keydown", key);
     }, repeatInputDelayMillis);
     this.buttonLock.push(key);
     node.classList.add("active");
@@ -91,11 +67,11 @@ export default class TouchControl {
   }
 
   touchButtonUp(node: HTMLElement, key: string, id: string) {
-    if (!this.buttonLock.includes(key) || this.disabled && this.finishedLastTouch) {
+    if (!this.buttonLock.includes(key)) {
       return;
     }
-    this.finishedLastTouch = true;
     this.simulateKeyboardEvent("keyup", key);
+
     node.classList.remove("active");
 
     document.getElementById(id)?.classList.remove("active");
@@ -105,19 +81,18 @@ export default class TouchControl {
   }
 
   /**
-   * Simulates a keyboard event on the canvas if the button is not disabled.
+   * Simulates a keyboard event on the canvas.
    *
    * @param eventType - The type of the keyboard event ('keydown' or 'keyup').
    * @param key - The key to simulate.
-   * @returns Whether the simulation was successful.
+   *
    * @remarks
    * This function checks if the key exists in the Button enum. If it does, it retrieves the corresponding button
    * and emits the appropriate event ('input_down' or 'input_up') based on the event type.
    */
-  simulateKeyboardEvent(eventType: string, key: string): boolean {
-    console.log("simulateKeyboardEvent", eventType, key);
-    if (!Button.hasOwnProperty(key) || this.disabled) {
-      return false;
+  simulateKeyboardEvent(eventType: string, key: string) {
+    if (!Button.hasOwnProperty(key)) {
+      return;
     }
     const button = Button[key];
 
@@ -137,7 +112,6 @@ export default class TouchControl {
       });
       break;
     }
-    return true;
   }
 
   /**
@@ -146,7 +120,7 @@ export default class TouchControl {
    * Prevent zoom on specified element
    * @param {HTMLElement} element
    */
-  preventElementZoom(element: HTMLElement | null): void {
+  preventElementZoom(element: HTMLElement): void {
     if (!element) {
       return;
     }

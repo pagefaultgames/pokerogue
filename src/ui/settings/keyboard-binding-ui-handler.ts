@@ -8,12 +8,11 @@ import {addTextObject, TextStyle} from "#app/ui/text";
 
 export default class KeyboardBindingUiHandler extends AbstractBindingUiHandler {
 
-  constructor(scene: BattleScene, mode: Mode | null = null) {
+  constructor(scene: BattleScene, mode?: Mode) {
     super(scene, mode);
     // Listen to gamepad button down events to initiate binding.
-    scene.input.keyboard?.on("keydown", this.onKeyDown, this);
+    scene.input.keyboard.on("keydown", this.onKeyDown, this);
   }
-
   setup() {
     super.setup();
 

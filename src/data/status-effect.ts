@@ -1,18 +1,26 @@
 import * as Utils from "../utils";
-import { StatusEffect } from "#enums/status-effect";
 import i18next, { ParseKeys } from "i18next";
 
-export { StatusEffect };
+export enum StatusEffect {
+  NONE,
+  POISON,
+  TOXIC,
+  PARALYSIS,
+  SLEEP,
+  FREEZE,
+  BURN,
+  FAINT
+}
 
 export class Status {
   public effect: StatusEffect;
   public turnCount: integer;
-  public cureTurn: integer | null;
+  public cureTurn: integer;
 
   constructor(effect: StatusEffect, turnCount: integer = 0, cureTurn?: integer) {
     this.effect = effect;
     this.turnCount = turnCount === undefined ? 0 : turnCount;
-    this.cureTurn = cureTurn!; // TODO: is this bang correct?
+    this.cureTurn = cureTurn;
   }
 
   incrementTurn(): void {
@@ -24,7 +32,7 @@ export class Status {
   }
 }
 
-function getStatusEffectMessageKey(statusEffect: StatusEffect | undefined): string {
+function getStatusEffectMessageKey(statusEffect: StatusEffect): string {
   switch (statusEffect) {
   case StatusEffect.POISON:
     return "statusEffect:poison";
@@ -43,11 +51,7 @@ function getStatusEffectMessageKey(statusEffect: StatusEffect | undefined): stri
   }
 }
 
-export function getStatusEffectObtainText(statusEffect: StatusEffect | undefined, pokemonNameWithAffix: string, sourceText?: string): string {
-  if (statusEffect === StatusEffect.NONE) {
-    return "";
-  }
-
+export function getStatusEffectObtainText(statusEffect: StatusEffect, pokemonNameWithAffix: string, sourceText?: string): string {
   if (!sourceText) {
     const i18nKey = `${getStatusEffectMessageKey(statusEffect)}.obtain`as ParseKeys;
     return i18next.t(i18nKey, { pokemonNameWithAffix: pokemonNameWithAffix });
@@ -57,33 +61,21 @@ export function getStatusEffectObtainText(statusEffect: StatusEffect | undefined
 }
 
 export function getStatusEffectActivationText(statusEffect: StatusEffect, pokemonNameWithAffix: string): string {
-  if (statusEffect === StatusEffect.NONE) {
-    return "";
-  }
   const i18nKey = `${getStatusEffectMessageKey(statusEffect)}.activation` as ParseKeys;
   return i18next.t(i18nKey, { pokemonNameWithAffix: pokemonNameWithAffix });
 }
 
 export function getStatusEffectOverlapText(statusEffect: StatusEffect, pokemonNameWithAffix: string): string {
-  if (statusEffect === StatusEffect.NONE) {
-    return "";
-  }
   const i18nKey = `${getStatusEffectMessageKey(statusEffect)}.overlap` as ParseKeys;
   return i18next.t(i18nKey, { pokemonNameWithAffix: pokemonNameWithAffix });
 }
 
 export function getStatusEffectHealText(statusEffect: StatusEffect, pokemonNameWithAffix: string): string {
-  if (statusEffect === StatusEffect.NONE) {
-    return "";
-  }
   const i18nKey = `${getStatusEffectMessageKey(statusEffect)}.heal` as ParseKeys;
   return i18next.t(i18nKey, { pokemonNameWithAffix: pokemonNameWithAffix });
 }
 
 export function getStatusEffectDescriptor(statusEffect: StatusEffect): string {
-  if (statusEffect === StatusEffect.NONE) {
-    return "";
-  }
   const i18nKey = `${getStatusEffectMessageKey(statusEffect)}.description` as ParseKeys;
   return i18next.t(i18nKey);
 }
@@ -131,11 +123,11 @@ export function getRandomStatusEffect(statusEffectA: StatusEffect, statusEffectB
 * @param statusA The first Status
 * @param statusB The second Status
 */
-export function getRandomStatus(statusA: Status | null, statusB: Status | null): Status | null {
-  if (!statusA || statusA.effect === StatusEffect.NONE || statusA.effect === StatusEffect.FAINT) {
+export function getRandomStatus(statusA: Status, statusB: Status): Status {
+  if (statusA === undefined || statusA.effect === StatusEffect.NONE || statusA.effect === StatusEffect.FAINT) {
     return statusB;
   }
-  if (!statusB || statusB.effect === StatusEffect.NONE || statusB.effect === StatusEffect.FAINT) {
+  if (statusB === undefined || statusB.effect === StatusEffect.NONE || statusB.effect === StatusEffect.FAINT) {
     return statusA;
   }
 

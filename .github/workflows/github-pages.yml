@@ -7,9 +7,6 @@ on:
   pull_request:
     branches:
       - main
-      - beta
-  merge_group:
-    types: [checks_requested]
 
 jobs:
   pages:
@@ -55,7 +52,7 @@ jobs:
         working-directory: ${{env.api-dir}}
         run: |
           cd pokerogue_docs
-          npm run docs -- --out /tmp/docs --githubPages false --entryPoints ./src/
+          npx typedoc --out /tmp/docs --githubPages false --entryPoints ./src/
 
       - name: Commit & Push docs
         if: github.event_name == 'push'

@@ -1,10 +1,15 @@
-import { Stat } from "#enums/stat";
-import GameManager from "#test/utils/gameManager";
-import { Abilities } from "#enums/abilities";
-import { Moves } from "#enums/moves";
-import { Species } from "#enums/species";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import GameManager from "#app/test/utils/gameManager";
+import * as overrides from "#app/overrides";
+import { Species } from "#enums/species";
+import {
+  TurnEndPhase,
+} from "#app/phases";
+import { Moves } from "#enums/moves";
+import { getMovePosition } from "#app/test/utils/gameManagerUtils";
+import { Abilities } from "#enums/abilities";
+import { BattleStat } from "#app/data/battle-stat.js";
 
 describe("Abilities - Wind Rider", () => {
   let phaserGame: Phaser.Game;
@@ -22,99 +27,94 @@ describe("Abilities - Wind Rider", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override
-      .battleType("single")
-      .enemySpecies(Species.SHIFTRY)
-      .enemyAbility(Abilities.WIND_RIDER)
-      .moveset([Moves.TAILWIND, Moves.SPLASH, Moves.PETAL_BLIZZARD, Moves.SANDSTORM])
-      .enemyMoveset(Moves.SPLASH);
+    vi.spyOn(overrides, "SINGLE_BATTLE_OVERRIDE", "get").mockReturnValue(true);
+    vi.spyOn(overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.SHIFTRY);
+    vi.spyOn(overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.WIND_RIDER);
+    vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.TAILWIND, Moves.SPLASH, Moves.PETAL_BLIZZARD, Moves.SANDSTORM]);
+    vi.spyOn(overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH, Moves.SPLASH, Moves.SPLASH, Moves.SPLASH]);
   });
 
-  it("takes no damage from wind moves and its ATK stat stage is raised by 1 when hit by one", async () => {
-    await game.classicMode.startBattle([ Species.MAGIKARP ]);
-    const shiftry = game.scene.getEnemyPokemon()!;
+  it("takes no damage from wind moves and its Attack is increased by one stage when hit by one", async () => {
+    await game.startBattle([Species.MAGIKARP]);
+    const shiftry = game.scene.getEnemyPokemon();
 
-    expect(shiftry.getStatStage(Stat.ATK)).toBe(0);
+    expect(shiftry.summonData.battleStats[BattleStat.ATK]).toBe(0);
 
-    game.move.select(Moves.PETAL_BLIZZARD);
+    game.doAttack(getMovePosition(game.scene, 0, Moves.PETAL_BLIZZARD));
 
-    await game.phaseInterceptor.to("TurnEndPhase");
+    await game.phaseInterceptor.to(TurnEndPhase);
 
-    expect(shiftry.isFullHp()).toBe(true);
-    expect(shiftry.getStatStage(Stat.ATK)).toBe(1);
+    expect(shiftry.hp).equals(shiftry.getMaxHp());
+    expect(shiftry.summonData.battleStats[BattleStat.ATK]).toBe(1);
   });
 
-  it("ATK stat stage is raised by 1 when Tailwind is present on its side", async () => {
-    game.override
-      .enemySpecies(Species.MAGIKARP)
-      .ability(Abilities.WIND_RIDER);
+  it("Attack is increased by one stage when Tailwind is present on its side", async () => {
+    vi.spyOn(overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.WIND_RIDER);
+    vi.spyOn(overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.MAGIKARP);
 
-    await game.classicMode.startBattle([Species.SHIFTRY]);
-    const shiftry = game.scene.getPlayerPokemon()!;
+    await game.startBattle([Species.SHIFTRY]);
+    const shiftry = game.scene.getPlayerPokemon();
 
-    expect(shiftry.getStatStage(Stat.ATK)).toBe(0);
+    expect(shiftry.summonData.battleStats[BattleStat.ATK]).toBe(0);
 
-    game.move.select(Moves.TAILWIND);
+    game.doAttack(getMovePosition(game.scene, 0, Moves.TAILWIND));
 
-    await game.phaseInterceptor.to("TurnEndPhase");
+    await game.phaseInterceptor.to(TurnEndPhase);
 
-    expect(shiftry.getStatStage(Stat.ATK)).toBe(1);
+    expect(shiftry.summonData.battleStats[BattleStat.ATK]).toBe(1);
   });
 
-  it("does not raise ATK stat stage when Tailwind is present on opposing side", async () => {
-    game.override
-      .enemySpecies(Species.MAGIKARP)
-      .ability(Abilities.WIND_RIDER);
+  it("does not increase Attack when Tailwind is present on opposing side", async () => {
+    vi.spyOn(overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.WIND_RIDER);
+    vi.spyOn(overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.MAGIKARP);
 
-    await game.classicMode.startBattle([Species.SHIFTRY]);
-    const magikarp = game.scene.getEnemyPokemon()!;
-    const shiftry = game.scene.getPlayerPokemon()!;
+    await game.startBattle([Species.SHIFTRY]);
+    const magikarp = game.scene.getEnemyPokemon();
+    const shiftry = game.scene.getPlayerPokemon();
 
-    expect(shiftry.getStatStage(Stat.ATK)).toBe(0);
-    expect(magikarp.getStatStage(Stat.ATK)).toBe(0);
+    expect(shiftry.summonData.battleStats[BattleStat.ATK]).toBe(0);
+    expect(magikarp.summonData.battleStats[BattleStat.ATK]).toBe(0);
 
-    game.move.select(Moves.TAILWIND);
+    game.doAttack(getMovePosition(game.scene, 0, Moves.TAILWIND));
 
-    await game.phaseInterceptor.to("TurnEndPhase");
+    await game.phaseInterceptor.to(TurnEndPhase);
 
-    expect(shiftry.getStatStage(Stat.ATK)).toBe(1);
-    expect(magikarp.getStatStage(Stat.ATK)).toBe(0);
+    expect(shiftry.summonData.battleStats[BattleStat.ATK]).toBe(1);
+    expect(magikarp.summonData.battleStats[BattleStat.ATK]).toBe(0);
   });
 
-  it("does not raise ATK stat stage when Tailwind is present on opposing side", async () => {
-    game.override
-      .enemySpecies(Species.MAGIKARP)
-      .ability(Abilities.WIND_RIDER);
+  it("does not increase Attack when Tailwind is present on opposing side", async () => {
+    vi.spyOn(overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.MAGIKARP);
 
-    await game.classicMode.startBattle([Species.SHIFTRY]);
-    const magikarp = game.scene.getEnemyPokemon()!;
-    const shiftry = game.scene.getPlayerPokemon()!;
+    await game.startBattle([Species.SHIFTRY]);
+    const magikarp = game.scene.getEnemyPokemon();
+    const shiftry = game.scene.getPlayerPokemon();
 
-    expect(shiftry.getStatStage(Stat.ATK)).toBe(0);
-    expect(magikarp.getStatStage(Stat.ATK)).toBe(0);
+    expect(shiftry.summonData.battleStats[BattleStat.ATK]).toBe(0);
+    expect(magikarp.summonData.battleStats[BattleStat.ATK]).toBe(0);
 
-    game.move.select(Moves.TAILWIND);
+    game.doAttack(getMovePosition(game.scene, 0, Moves.TAILWIND));
 
-    await game.phaseInterceptor.to("TurnEndPhase");
+    await game.phaseInterceptor.to(TurnEndPhase);
 
-    expect(shiftry.getStatStage(Stat.ATK)).toBe(1);
-    expect(magikarp.getStatStage(Stat.ATK)).toBe(0);
+    expect(shiftry.summonData.battleStats[BattleStat.ATK]).toBe(1);
+    expect(magikarp.summonData.battleStats[BattleStat.ATK]).toBe(0);
   });
 
   it("does not interact with Sandstorm", async () => {
-    game.override.enemySpecies(Species.MAGIKARP);
+    vi.spyOn(overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.MAGIKARP);
 
-    await game.classicMode.startBattle([Species.SHIFTRY]);
-    const shiftry = game.scene.getPlayerPokemon()!;
+    await game.startBattle([Species.SHIFTRY]);
+    const shiftry = game.scene.getPlayerPokemon();
 
-    expect(shiftry.getStatStage(Stat.ATK)).toBe(0);
-    expect(shiftry.isFullHp()).toBe(true);
+    expect(shiftry.summonData.battleStats[BattleStat.ATK]).toBe(0);
+    expect(shiftry.hp).equals(shiftry.getMaxHp());
 
-    game.move.select(Moves.SANDSTORM);
+    game.doAttack(getMovePosition(game.scene, 0, Moves.SANDSTORM));
 
-    await game.phaseInterceptor.to("TurnEndPhase");
+    await game.phaseInterceptor.to(TurnEndPhase);
 
-    expect(shiftry.getStatStage(Stat.ATK)).toBe(0);
+    expect(shiftry.summonData.battleStats[BattleStat.ATK]).toBe(0);
     expect(shiftry.hp).lessThan(shiftry.getMaxHp());
   });
 });

@@ -1,8 +1,8 @@
 import BattleScene from "../../battle-scene";
 import { Mode } from "../ui";
-"#app/inputs-controller";
+"#app/inputs-controller.js";
 import AbstractSettingsUiHandler from "./abstract-settings-ui-handler";
-import { SettingKeys, SettingType } from "#app/system/settings/settings";
+import { Setting, SettingKeys, SettingType } from "#app/system/settings/settings";
 
 export default class SettingsDisplayUiHandler extends AbstractSettingsUiHandler {
   /**
@@ -11,9 +11,10 @@ export default class SettingsDisplayUiHandler extends AbstractSettingsUiHandler 
    * @param scene - The BattleScene instance.
    * @param mode - The UI mode, optional.
    */
-  constructor(scene: BattleScene, mode: Mode | null = null) {
-    super(scene, SettingType.DISPLAY, mode);
+  constructor(scene: BattleScene, mode?: Mode) {
+    super(scene, mode);
     this.title = "Display";
+    this.settings = Setting.filter(s => s.type === SettingType.DISPLAY);
 
     /**
      * Update to current language from default value.
@@ -76,18 +77,6 @@ export default class SettingsDisplayUiHandler extends AbstractSettingsUiHandler 
         this.settings[languageIndex].options[0] = {
           value: "한국어",
           label: "한국어",
-        };
-        break;
-      case "ja":
-        this.settings[languageIndex].options[0] = {
-          value: "日本語",
-          label: "日本語",
-        };
-        break;
-      case "ca-ES":
-        this.settings[languageIndex].options[0] = {
-          value: "Català",
-          label: "Català",
         };
         break;
       default:

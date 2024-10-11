@@ -1,10 +1,7 @@
-import { MockGameObject } from "../mockGameObject";
-
-export default class MockRectangle implements MockGameObject {
+export default class MockRectangle {
   private fillColor;
   private scene;
-  public list: MockGameObject[] = [];
-  public name: string;
+  public list = [];
 
   constructor(textureManager, x, y, width, height, fillColor) {
     this.fillColor = fillColor;

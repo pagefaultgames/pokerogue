@@ -1,7 +1,14 @@
-import { StatusEffect, getStatusEffectActivationText, getStatusEffectDescriptor, getStatusEffectHealText, getStatusEffectObtainText, getStatusEffectOverlapText } from "#app/data/status-effect";
-import { mockI18next } from "#test/utils/testUtils";
+import { beforeAll, describe, afterEach, expect, it, vi } from "vitest";
+import {
+  StatusEffect,
+  getStatusEffectActivationText,
+  getStatusEffectDescriptor,
+  getStatusEffectHealText,
+  getStatusEffectObtainText,
+  getStatusEffectOverlapText,
+} from "#app/data/status-effect";
 import i18next from "i18next";
-import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
+import { mockI18next } from "../utils/testUtils";
 
 const pokemonName = "PKM";
 const sourceText = "SOURCE";
@@ -18,45 +25,44 @@ describe("status-effect", () => {
       mockI18next();
 
       const text = getStatusEffectObtainText(statusEffect, pokemonName);
-      console.log("text:", text);
-      expect(text).toBe("");
+      expect(text).toBe("statusEffect:none.obtain");
 
       const emptySourceText = getStatusEffectObtainText(statusEffect, pokemonName, "");
-      expect(emptySourceText).toBe("");
+      expect(emptySourceText).toBe("statusEffect:none.obtain");
     });
 
     it("should return the source-obtain text", () => {
       mockI18next();
 
       const text = getStatusEffectObtainText(statusEffect, pokemonName, sourceText);
-      expect(text).toBe("");
+      expect(text).toBe("statusEffect:none.obtainSource");
 
       const emptySourceText = getStatusEffectObtainText(statusEffect, pokemonName, "");
-      expect(emptySourceText).toBe("");
+      expect(emptySourceText).not.toBe("statusEffect:none.obtainSource");
     });
 
     it("should return the activation text", () => {
       mockI18next();
       const text = getStatusEffectActivationText(statusEffect, pokemonName);
-      expect(text).toBe("");
+      expect(text).toBe("statusEffect:none.activation");
     });
 
     it("should return the overlap text", () => {
       mockI18next();
       const text = getStatusEffectOverlapText(statusEffect, pokemonName);
-      expect(text).toBe("");
+      expect(text).toBe("statusEffect:none.overlap");
     });
 
     it("should return the heal text", () => {
       mockI18next();
       const text = getStatusEffectHealText(statusEffect, pokemonName);
-      expect(text).toBe("");
+      expect(text).toBe("statusEffect:none.heal");
     });
 
     it("should return the descriptor", () => {
       mockI18next();
       const text = getStatusEffectDescriptor(statusEffect);
-      expect(text).toBe("");
+      expect(text).toBe("statusEffect:none.description");
     });
   });
 

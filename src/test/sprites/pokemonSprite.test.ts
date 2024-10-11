@@ -1,21 +1,20 @@
-import { getAppRootDir } from "#test/sprites/spritesUtils";
+import {beforeAll, describe, expect, it} from "vitest";
+import _masterlist from "../../../public/images/pokemon/variant/_masterlist.json";
 import fs from "fs";
 import path from "path";
-import { beforeAll, describe, expect, it } from "vitest";
-import _masterlist from "../../../public/images/pokemon/variant/_masterlist.json";
+import {getAppRootDir} from "#app/test/sprites/spritesUtils";
 
-type PokemonVariantMasterlist = typeof _masterlist;
-
-const deepCopy = (data: any) => {
+const deepCopy = (data) => {
   return JSON.parse(JSON.stringify(data));
 };
 
+
 describe("check if every variant's sprite are correctly set", () => {
-  let masterlist: PokemonVariantMasterlist;
-  let expVariant: PokemonVariantMasterlist["exp"];
-  let femaleVariant: PokemonVariantMasterlist["female"];
-  let backVariant: PokemonVariantMasterlist["back"];
-  let rootDir: string;
+  let masterlist;
+  let expVariant;
+  let femaleVariant;
+  let backVariant;
+  let rootDir;
 
   beforeAll(() => {
     rootDir = `${getAppRootDir()}${path.sep}public${path.sep}images${path.sep}pokemon${path.sep}variant${path.sep}`;
@@ -23,26 +22,23 @@ describe("check if every variant's sprite are correctly set", () => {
     expVariant = masterlist.exp;
     femaleVariant = masterlist.female;
     backVariant = masterlist.back;
-    //@ts-ignore
-    delete masterlist.exp; //TODO: resolve ts-ignore
-    //@ts-ignore
-    delete masterlist.female; //TODO: resolve ts-ignore
-    //@ts-ignore
-    delete masterlist.back; //TODO: resolve ts-ignore
+    delete masterlist.exp;
+    delete masterlist.female;
+    delete masterlist.back;
   });
 
   it("data should not be undefined", () => {
-    expect(masterlist).toBeDefined();
-    expect(expVariant).toBeDefined();
-    expect(femaleVariant).toBeDefined();
-    expect(backVariant).toBeDefined();
+    expect(masterlist).not.toBeUndefined();
+    expect(expVariant).not.toBeUndefined();
+    expect(femaleVariant).not.toBeUndefined();
+    expect(backVariant).not.toBeUndefined();
   });
 
-  function getMissingMasterlist(mlist: any, dirpath: string, excludes: string[] = []): string[] {
-    const errors: string[] = [];
+  function getMissingMasterlist(mlist, dirpath, excludes = []) {
+    const errors = [];
     const trimmedDirpath = `variant${path.sep}${dirpath.split(rootDir)[1]}`;
     if (fs.existsSync(dirpath)) {
-      const files = fs.readdirSync(dirpath).filter((filename) => !/^\..*/.test(filename));
+      const files = fs.readdirSync(dirpath);
       for (const filename of files) {
         const filePath = `${dirpath}${filename}`;
         const trimmedFilePath = `${trimmedDirpath}${filename}`;
@@ -105,12 +101,12 @@ describe("check if every variant's sprite are correctly set", () => {
     return errors;
   }
 
-  function getMissingFiles(keys: Record<string, any>, dirPath: string): string[] {
-    const errors: string[] = [];
+  function getMissingFiles(keys, dirPath) {
+    const errors = [];
     for (const key of Object.keys(keys)) {
       const row = keys[key];
       for (const [index, elm] of row.entries()) {
-        let url: string;
+        let url;
         if (elm === 0) {
           continue;
         } else if (elm === 1) {

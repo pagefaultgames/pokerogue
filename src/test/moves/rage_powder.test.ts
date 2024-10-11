@@ -1,12 +1,19 @@
-import { BattlerIndex } from "#app/battle";
+import {afterEach, beforeAll, beforeEach, describe, expect, test, vi} from "vitest";
+import Phaser from "phaser";
+import GameManager from "#app/test/utils/gameManager";
+import * as overrides from "#app/overrides";
+import {
+  CommandPhase,
+  SelectTargetPhase,
+  TurnEndPhase,
+} from "#app/phases";
+import {getMovePosition} from "#app/test/utils/gameManagerUtils";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
-import GameManager from "#test/utils/gameManager";
-import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest";
+import { BattlerIndex } from "#app/battle.js";
 
-
+const TIMEOUT = 20 * 1000;
 
 describe("Moves - Rage Powder", () => {
   let phaserGame: Phaser.Game;
@@ -24,58 +31,80 @@ describe("Moves - Rage Powder", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.battleType("double");
-    game.override.enemySpecies(Species.SNORLAX);
-    game.override.startingLevel(100);
-    game.override.enemyLevel(100);
-    game.override.moveset([Moves.FOLLOW_ME, Moves.RAGE_POWDER, Moves.SPOTLIGHT, Moves.QUICK_ATTACK]);
-    game.override.enemyMoveset([Moves.RAGE_POWDER, Moves.TACKLE, Moves.SPLASH]);
+    vi.spyOn(overrides, "DOUBLE_BATTLE_OVERRIDE", "get").mockReturnValue(true);
+    vi.spyOn(overrides, "STARTER_SPECIES_OVERRIDE", "get").mockReturnValue(Species.AMOONGUSS);
+    vi.spyOn(overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.SNORLAX);
+    vi.spyOn(overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(100);
+    vi.spyOn(overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(100);
+    vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([ Moves.FOLLOW_ME, Moves.RAGE_POWDER, Moves.SPOTLIGHT, Moves.QUICK_ATTACK ]);
+    vi.spyOn(overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.TACKLE,Moves.TACKLE,Moves.TACKLE,Moves.TACKLE]);
   });
 
   test(
     "move effect should be bypassed by Grass type",
     async () => {
-      await game.classicMode.startBattle([Species.AMOONGUSS, Species.VENUSAUR]);
+      vi.spyOn(overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([ Moves.RAGE_POWDER, Moves.RAGE_POWDER, Moves.RAGE_POWDER, Moves.RAGE_POWDER ]);
+
+      await game.startBattle([ Species.AMOONGUSS, Species.VENUSAUR ]);
+
+      const playerPokemon = game.scene.getPlayerField();
+      expect(playerPokemon.length).toBe(2);
+      playerPokemon.forEach(p => expect(p).not.toBe(undefined));
 
       const enemyPokemon = game.scene.getEnemyField();
+      expect(enemyPokemon.length).toBe(2);
+      enemyPokemon.forEach(p => expect(p).not.toBe(undefined));
 
-      game.move.select(Moves.QUICK_ATTACK, 0, BattlerIndex.ENEMY);
-      game.move.select(Moves.QUICK_ATTACK, 1, BattlerIndex.ENEMY_2);
+      const enemyStartingHp = enemyPokemon.map(p => p.hp);
 
-      await game.forceEnemyMove(Moves.RAGE_POWDER);
-      await game.forceEnemyMove(Moves.SPLASH);
+      game.doAttack(getMovePosition(game.scene, 0, Moves.QUICK_ATTACK));
+      await game.phaseInterceptor.to(SelectTargetPhase, false);
+      game.doSelectTarget(BattlerIndex.ENEMY);
+      await game.phaseInterceptor.to(CommandPhase);
 
-      await game.phaseInterceptor.to("BerryPhase", false);
+      game.doAttack(getMovePosition(game.scene, 1, Moves.QUICK_ATTACK));
+      await game.phaseInterceptor.to(SelectTargetPhase, false);
+      game.doSelectTarget(BattlerIndex.ENEMY_2);
+      await game.phaseInterceptor.to(TurnEndPhase, false);
 
       // If redirection was bypassed, both enemies should be damaged
-      expect(enemyPokemon[0].hp).toBeLessThan(enemyPokemon[0].getMaxHp());
-      expect(enemyPokemon[1].hp).toBeLessThan(enemyPokemon[0].getMaxHp());
-    }
+      expect(enemyPokemon[0].hp).toBeLessThan(enemyStartingHp[0]);
+      expect(enemyPokemon[1].hp).toBeLessThan(enemyStartingHp[1]);
+    }, TIMEOUT
   );
 
   test(
     "move effect should be bypassed by Overcoat",
     async () => {
-      game.override.ability(Abilities.OVERCOAT);
+      vi.spyOn(overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.OVERCOAT);
+      vi.spyOn(overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([ Moves.RAGE_POWDER, Moves.RAGE_POWDER, Moves.RAGE_POWDER, Moves.RAGE_POWDER ]);
 
       // Test with two non-Grass type player Pokemon
-      await game.classicMode.startBattle([Species.BLASTOISE, Species.CHARIZARD]);
+      await game.startBattle([ Species.BLASTOISE, Species.CHARIZARD ]);
+
+      const playerPokemon = game.scene.getPlayerField();
+      expect(playerPokemon.length).toBe(2);
+      playerPokemon.forEach(p => expect(p).not.toBe(undefined));
 
       const enemyPokemon = game.scene.getEnemyField();
+      expect(enemyPokemon.length).toBe(2);
+      enemyPokemon.forEach(p => expect(p).not.toBe(undefined));
 
       const enemyStartingHp = enemyPokemon.map(p => p.hp);
 
-      game.move.select(Moves.QUICK_ATTACK, 0, BattlerIndex.ENEMY);
-      game.move.select(Moves.QUICK_ATTACK, 1, BattlerIndex.ENEMY_2);
+      game.doAttack(getMovePosition(game.scene, 0, Moves.QUICK_ATTACK));
+      await game.phaseInterceptor.to(SelectTargetPhase, false);
+      game.doSelectTarget(BattlerIndex.ENEMY);
+      await game.phaseInterceptor.to(CommandPhase);
 
-      await game.forceEnemyMove(Moves.RAGE_POWDER);
-      await game.forceEnemyMove(Moves.SPLASH);
-
-      await game.phaseInterceptor.to("BerryPhase", false);
+      game.doAttack(getMovePosition(game.scene, 1, Moves.QUICK_ATTACK));
+      await game.phaseInterceptor.to(SelectTargetPhase, false);
+      game.doSelectTarget(BattlerIndex.ENEMY_2);
+      await game.phaseInterceptor.to(TurnEndPhase, false);
 
       // If redirection was bypassed, both enemies should be damaged
       expect(enemyPokemon[0].hp).toBeLessThan(enemyStartingHp[0]);
       expect(enemyPokemon[1].hp).toBeLessThan(enemyStartingHp[1]);
-    }
+    }, TIMEOUT
   );
 });

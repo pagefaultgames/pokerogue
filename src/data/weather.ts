@@ -1,5 +1,4 @@
 import { Biome } from "#enums/biome";
-import { WeatherType } from "#enums/weather-type";
 import { getPokemonNameWithAffix } from "../messages";
 import Pokemon from "../field/pokemon";
 import { Type } from "./type";
@@ -10,7 +9,19 @@ import { SuppressWeatherEffectAbAttr } from "./ability";
 import { TerrainType, getTerrainName } from "./terrain";
 import i18next from "i18next";
 
-export { WeatherType };
+export enum WeatherType {
+  NONE,
+  SUNNY,
+  RAIN,
+  SANDSTORM,
+  HAIL,
+  SNOW,
+  FOG,
+  HEAVY_RAIN,
+  HARSH_SUN,
+  STRONG_WINDS
+}
+
 export class Weather {
   public weatherType: WeatherType;
   public turnsLeft: integer;
@@ -88,14 +99,12 @@ export class Weather {
     return 1;
   }
 
-  isMoveWeatherCancelled(user: Pokemon, move: Move): boolean {
-    const moveType = user.getMoveType(move);
-
+  isMoveWeatherCancelled(move: Move): boolean {
     switch (this.weatherType) {
     case WeatherType.HARSH_SUN:
-      return move instanceof AttackMove && moveType === Type.WATER;
+      return move instanceof AttackMove && move.type === Type.WATER;
     case WeatherType.HEAVY_RAIN:
-      return move instanceof AttackMove && moveType === Type.FIRE;
+      return move instanceof AttackMove && move.type === Type.FIRE;
     }
 
     return false;
@@ -105,7 +114,7 @@ export class Weather {
     const field = scene.getField(true);
 
     for (const pokemon of field) {
-      let suppressWeatherEffectAbAttr: SuppressWeatherEffectAbAttr | null  = pokemon.getAbility().getAttrs(SuppressWeatherEffectAbAttr)[0];
+      let suppressWeatherEffectAbAttr = pokemon.getAbility().getAttrs(SuppressWeatherEffectAbAttr)[0];
       if (!suppressWeatherEffectAbAttr) {
         suppressWeatherEffectAbAttr = pokemon.hasPassive() ? pokemon.getPassiveAbility().getAttrs(SuppressWeatherEffectAbAttr)[0] : null;
       }
@@ -118,7 +127,7 @@ export class Weather {
   }
 }
 
-export function getWeatherStartMessage(weatherType: WeatherType): string | null {
+export function getWeatherStartMessage(weatherType: WeatherType): string {
   switch (weatherType) {
   case WeatherType.SUNNY:
     return i18next.t("weather:sunnyStartMessage");
@@ -143,7 +152,7 @@ export function getWeatherStartMessage(weatherType: WeatherType): string | null 
   return null;
 }
 
-export function getWeatherLapseMessage(weatherType: WeatherType): string | null {
+export function getWeatherLapseMessage(weatherType: WeatherType): string {
   switch (weatherType) {
   case WeatherType.SUNNY:
     return i18next.t("weather:sunnyLapseMessage");
@@ -168,7 +177,7 @@ export function getWeatherLapseMessage(weatherType: WeatherType): string | null 
   return null;
 }
 
-export function getWeatherDamageMessage(weatherType: WeatherType, pokemon: Pokemon): string | null {
+export function getWeatherDamageMessage(weatherType: WeatherType, pokemon: Pokemon): string {
   switch (weatherType) {
   case WeatherType.SANDSTORM:
     return i18next.t("weather:sandstormDamageMessage", {pokemonNameWithAffix: getPokemonNameWithAffix(pokemon)});
@@ -179,7 +188,7 @@ export function getWeatherDamageMessage(weatherType: WeatherType, pokemon: Pokem
   return null;
 }
 
-export function getWeatherClearMessage(weatherType: WeatherType): string | null {
+export function getWeatherClearMessage(weatherType: WeatherType): string {
   switch (weatherType) {
   case WeatherType.SUNNY:
     return i18next.t("weather:sunnyClearMessage");
@@ -204,7 +213,7 @@ export function getWeatherClearMessage(weatherType: WeatherType): string | null 
   return null;
 }
 
-export function getTerrainStartMessage(terrainType: TerrainType): string | null {
+export function getTerrainStartMessage(terrainType: TerrainType): string {
   switch (terrainType) {
   case TerrainType.MISTY:
     return i18next.t("terrain:mistyStartMessage");
@@ -214,13 +223,10 @@ export function getTerrainStartMessage(terrainType: TerrainType): string | null 
     return i18next.t("terrain:grassyStartMessage");
   case TerrainType.PSYCHIC:
     return i18next.t("terrain:psychicStartMessage");
-  default:
-    console.warn("getTerrainStartMessage not defined. Using default null");
-    return null;
   }
 }
 
-export function getTerrainClearMessage(terrainType: TerrainType): string | null {
+export function getTerrainClearMessage(terrainType: TerrainType): string {
   switch (terrainType) {
   case TerrainType.MISTY:
     return i18next.t("terrain:mistyClearMessage");
@@ -230,9 +236,6 @@ export function getTerrainClearMessage(terrainType: TerrainType): string | null 
     return i18next.t("terrain:grassyClearMessage");
   case TerrainType.PSYCHIC:
     return i18next.t("terrain:psychicClearMessage");
-  default:
-    console.warn("getTerrainClearMessage not defined. Using default null");
-    return null;
   }
 }
 

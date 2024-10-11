@@ -1,9 +1,12 @@
-import { Species } from "#app/enums/species";
-import { Abilities } from "#enums/abilities";
-import { Moves } from "#enums/moves";
-import GameManager from "#test/utils/gameManager";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import GameManager from "#app/test/utils/gameManager";
+import * as overrides from "#app/overrides";
+import { TurnEndPhase } from "#app/phases";
+import { Moves } from "#enums/moves";
+import { getMovePosition } from "#app/test/utils/gameManagerUtils";
+import { Abilities } from "#enums/abilities";
+import { Species } from "#app/enums/species.js";
 
 describe("Abilities - Dry Skin", () => {
   let phaserGame: Phaser.Game;
@@ -21,138 +24,140 @@ describe("Abilities - Dry Skin", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override
-      .battleType("single")
-      .disableCrits()
-      .enemyAbility(Abilities.DRY_SKIN)
-      .enemyMoveset(Moves.SPLASH)
-      .enemySpecies(Species.CHARMANDER)
-      .ability(Abilities.BALL_FETCH)
-      .moveset([Moves.SUNNY_DAY, Moves.RAIN_DANCE, Moves.SPLASH, Moves.WATER_GUN])
-      .starterSpecies(Species.CHANDELURE);
+    vi.spyOn(overrides, "SINGLE_BATTLE_OVERRIDE", "get").mockReturnValue(true);
+    vi.spyOn(overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.DRY_SKIN);
+    vi.spyOn(overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH, Moves.SPLASH, Moves.SPLASH, Moves.SPLASH]);
+    vi.spyOn(overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.CHARMANDER);
+    vi.spyOn(overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.UNNERVE);
+    vi.spyOn(overrides, "STARTER_SPECIES_OVERRIDE", "get").mockReturnValue(Species.CHANDELURE);
   });
 
   it("during sunlight, lose 1/8 of maximum health at the end of each turn", async () => {
-    await game.classicMode.startBattle();
+    vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SUNNY_DAY, Moves.SPLASH]);
 
-    const enemy = game.scene.getEnemyPokemon()!;
+    await game.startBattle();
+
+    const enemy = game.scene.getEnemyPokemon();
+    expect(enemy).not.toBe(undefined);
 
     // first turn
-    game.move.select(Moves.SUNNY_DAY);
-    await game.phaseInterceptor.to("TurnEndPhase");
-    expect(enemy.hp).toBeLessThan(enemy.getMaxHp());
+    let previousEnemyHp = enemy.hp;
+    game.doAttack(getMovePosition(game.scene, 0, Moves.SUNNY_DAY));
+    await game.phaseInterceptor.to(TurnEndPhase);
+    expect(enemy.hp).toBeLessThan(previousEnemyHp);
 
     // second turn
-    enemy.hp = enemy.getMaxHp();
-    game.move.select(Moves.SPLASH);
-    await game.phaseInterceptor.to("TurnEndPhase");
-    expect(enemy.hp).toBeLessThan(enemy.getMaxHp());
+    previousEnemyHp = enemy.hp;
+    game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
+    await game.phaseInterceptor.to(TurnEndPhase);
+    expect(enemy.hp).toBeLessThan(previousEnemyHp);
   });
 
   it("during rain, gain 1/8 of maximum health at the end of each turn", async () => {
-    await game.classicMode.startBattle();
+    vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.RAIN_DANCE, Moves.SPLASH]);
 
-    const enemy = game.scene.getEnemyPokemon()!;
+    await game.startBattle();
+
+    const enemy = game.scene.getEnemyPokemon();
+    expect(enemy).not.toBe(undefined);
 
     enemy.hp = 1;
 
     // first turn
-    game.move.select(Moves.RAIN_DANCE);
-    await game.phaseInterceptor.to("TurnEndPhase");
-    expect(enemy.hp).toBeGreaterThan(1);
+    let previousEnemyHp = enemy.hp;
+    game.doAttack(getMovePosition(game.scene, 0, Moves.RAIN_DANCE));
+    await game.phaseInterceptor.to(TurnEndPhase);
+    expect(enemy.hp).toBeGreaterThan(previousEnemyHp);
 
     // second turn
-    enemy.hp = 1;
-    game.move.select(Moves.SPLASH);
-    await game.phaseInterceptor.to("TurnEndPhase");
-    expect(enemy.hp).toBeGreaterThan(1);
+    previousEnemyHp = enemy.hp;
+    game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
+    await game.phaseInterceptor.to(TurnEndPhase);
+    expect(enemy.hp).toBeGreaterThan(previousEnemyHp);
   });
 
   it("opposing fire attacks do 25% more damage", async () => {
-    game.override.moveset([Moves.FLAMETHROWER]);
-    await game.classicMode.startBattle();
+    vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.EMBER]);
 
-    const enemy = game.scene.getEnemyPokemon()!;
-    const initialHP = 1000;
-    enemy.hp = initialHP;
+    // ensure the enemy doesn't die to this
+    vi.spyOn(overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(30);
+
+    await game.startBattle();
+
+    const enemy = game.scene.getEnemyPokemon();
+    expect(enemy).not.toBe(undefined);
 
     // first turn
-    game.move.select(Moves.FLAMETHROWER);
-    await game.phaseInterceptor.to("TurnEndPhase");
-    const fireDamageTakenWithDrySkin = initialHP - enemy.hp;
+    vi.spyOn(game.scene, "randBattleSeedInt").mockReturnValue(0); // this makes moves always deal 85% damage
+    game.doAttack(getMovePosition(game.scene, 0, Moves.EMBER));
+    await game.phaseInterceptor.to(TurnEndPhase);
+    const fireDamageTakenWithDrySkin = enemy.getMaxHp() - enemy.hp;
 
-    enemy.hp = initialHP;
-    game.override.enemyAbility(Abilities.NONE);
+    expect(enemy.hp > 0);
+    enemy.hp = enemy.getMaxHp();
+    vi.spyOn(overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.NONE);
 
     // second turn
-    game.move.select(Moves.FLAMETHROWER);
-    await game.phaseInterceptor.to("TurnEndPhase");
-    const fireDamageTakenWithoutDrySkin = initialHP - enemy.hp;
+    game.doAttack(getMovePosition(game.scene, 0, Moves.EMBER));
+    await game.phaseInterceptor.to(TurnEndPhase);
+    const fireDamageTakenWithoutDrySkin = enemy.getMaxHp() - enemy.hp;
 
     expect(fireDamageTakenWithDrySkin).toBeGreaterThan(fireDamageTakenWithoutDrySkin);
   });
 
   it("opposing water attacks heal 1/4 of maximum health and deal no damage", async () => {
-    await game.classicMode.startBattle();
+    vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.WATER_GUN]);
 
-    const enemy = game.scene.getEnemyPokemon()!;
+    await game.startBattle();
+
+    const enemy = game.scene.getEnemyPokemon();
+    expect(enemy).not.toBe(undefined);
 
     enemy.hp = 1;
 
-    game.move.select(Moves.WATER_GUN);
-    await game.phaseInterceptor.to("TurnEndPhase");
+    game.doAttack(getMovePosition(game.scene, 0, Moves.WATER_GUN));
+    await game.phaseInterceptor.to(TurnEndPhase);
     expect(enemy.hp).toBeGreaterThan(1);
   });
 
   it("opposing water attacks do not heal if they were protected from", async () => {
-    game.override.enemyMoveset([Moves.PROTECT]);
+    vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.WATER_GUN]);
 
-    await game.classicMode.startBattle();
+    await game.startBattle();
 
-    const enemy = game.scene.getEnemyPokemon()!;
+    const enemy = game.scene.getEnemyPokemon();
+    expect(enemy).not.toBe(undefined);
 
     enemy.hp = 1;
+    vi.spyOn(overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.PROTECT, Moves.PROTECT, Moves.PROTECT, Moves.PROTECT]);
 
-    game.move.select(Moves.WATER_GUN);
-    await game.phaseInterceptor.to("TurnEndPhase");
+    game.doAttack(getMovePosition(game.scene, 0, Moves.WATER_GUN));
+    await game.phaseInterceptor.to(TurnEndPhase);
     expect(enemy.hp).toBe(1);
   });
 
   it("multi-strike water attacks only heal once", async () => {
-    game.override.moveset([Moves.WATER_GUN, Moves.WATER_SHURIKEN]);
+    vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.WATER_GUN, Moves.WATER_SHURIKEN]);
 
-    await game.classicMode.startBattle();
+    await game.startBattle();
 
-    const enemy = game.scene.getEnemyPokemon()!;
+    const enemy = game.scene.getEnemyPokemon();
+    expect(enemy).not.toBe(undefined);
 
     enemy.hp = 1;
 
     // first turn
-    game.move.select(Moves.WATER_SHURIKEN);
-    await game.phaseInterceptor.to("TurnEndPhase");
+    game.doAttack(getMovePosition(game.scene, 0, Moves.WATER_SHURIKEN));
+    await game.phaseInterceptor.to(TurnEndPhase);
     const healthGainedFromWaterShuriken = enemy.hp - 1;
 
     enemy.hp = 1;
 
     // second turn
-    game.move.select(Moves.WATER_GUN);
-    await game.phaseInterceptor.to("TurnEndPhase");
+    game.doAttack(getMovePosition(game.scene, 0, Moves.WATER_GUN));
+    await game.phaseInterceptor.to(TurnEndPhase);
     const healthGainedFromWaterGun = enemy.hp - 1;
 
     expect(healthGainedFromWaterShuriken).toBe(healthGainedFromWaterGun);
-  });
-
-  it("opposing water moves still heal regardless of accuracy check", async () => {
-    await game.classicMode.startBattle();
-
-    const enemy = game.scene.getEnemyPokemon()!;
-
-    game.move.select(Moves.WATER_GUN);
-    enemy.hp = enemy.hp - 1;
-    await game.phaseInterceptor.to("MoveEffectPhase");
-
-    await game.move.forceMiss();
-    await game.phaseInterceptor.to("BerryPhase", false);
-    expect(enemy.hp).toBe(enemy.getMaxHp());
   });
 });

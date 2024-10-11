@@ -20,7 +20,7 @@ export function getKeyWithKeycode(config, keycode) {
  */
 export function getSettingNameWithKeycode(config, keycode) {
   const key = getKeyWithKeycode(config, keycode);
-  return key ? config.custom[key] : null;
+  return config.custom[key];
 }
 
 /**
@@ -32,7 +32,7 @@ export function getSettingNameWithKeycode(config, keycode) {
  */
 export function getIconWithKeycode(config, keycode) {
   const key = getKeyWithKeycode(config, keycode);
-  return key ? config.icons[key] : null;
+  return config.icons[key];
 }
 
 /**
@@ -122,21 +122,15 @@ export function assign(config, settingNameTarget, keycode): boolean {
   // if it was already bound, we delete the bind
   if (previousSettingName) {
     const previousKey = getKeyWithSettingName(config, previousSettingName);
-    if (previousKey) {
-      config.custom[previousKey] = -1;
-    }
+    config.custom[previousKey] = -1;
   }
   // then, we need to delete the current key for this settingName
   const currentKey = getKeyWithSettingName(config, settingNameTarget);
-  if (currentKey) {
-    config.custom[currentKey] = -1;
-  }
+  config.custom[currentKey] = -1;
 
   // then, the new key is assigned to the new settingName
   const newKey = getKeyWithKeycode(config, keycode);
-  if (newKey) {
-    config.custom[newKey] = settingNameTarget;
-  }
+  config.custom[newKey] = settingNameTarget;
   return true;
 }
 
@@ -151,12 +145,8 @@ export function swap(config, settingNameTarget, keycode) {
   const new_key = getKeyWithKeycode(config, keycode);
   const new_settingName = getSettingNameWithKey(config, new_key);
 
-  if (prev_key) {
-    config.custom[prev_key] = new_settingName;
-  }
-  if (new_key) {
-    config.custom[new_key] = prev_settingName;
-  }
+  config.custom[prev_key] = new_settingName;
+  config.custom[new_key] = prev_settingName;
   return true;
 }
 
@@ -171,9 +161,7 @@ export function deleteBind(config, settingName) {
   if (config.blacklist.includes(key)) {
     return false;
   }
-  if (key) {
-    config.custom[key] = -1;
-  }
+  config.custom[key] = -1;
   return true;
 }
 

@@ -1,3 +1,4 @@
+import { CommandPhase } from "../phases";
 import BattleScene from "../battle-scene";
 import { addTextObject, TextStyle } from "./text";
 import PartyUiHandler, { PartyUiMode } from "./party-ui-handler";
@@ -5,8 +6,6 @@ import { Mode } from "./ui";
 import UiHandler from "./ui-handler";
 import i18next from "i18next";
 import {Button} from "#enums/buttons";
-import { getPokemonNameWithAffix } from "#app/messages";
-import { CommandPhase } from "#app/phases/command-phase";
 
 export enum Command {
   FIGHT = 0,
@@ -17,7 +16,7 @@ export enum Command {
 
 export default class CommandUiHandler extends UiHandler {
   private commandsContainer: Phaser.GameObjects.Container;
-  private cursorObj: Phaser.GameObjects.Image | null;
+  private cursorObj: Phaser.GameObjects.Image;
 
   protected fieldIndex: integer = 0;
   protected cursor2: integer = 0;
@@ -67,12 +66,8 @@ export default class CommandUiHandler extends UiHandler {
     messageHandler.commandWindow.setVisible(true);
     messageHandler.movesWindowContainer.setVisible(false);
     messageHandler.message.setWordWrapWidth(1110);
-    messageHandler.showText(i18next.t("commandUiHandler:actionMessage", {pokemonName: getPokemonNameWithAffix(commandPhase.getPokemon())}), 0);
-    if (this.getCursor() === Command.POKEMON) {
-      this.setCursor(Command.FIGHT);
-    } else {
-      this.setCursor(this.getCursor());
-    }
+    messageHandler.showText(i18next.t("commandUiHandler:actionMessage", {pokemonName: commandPhase.getPokemon().name}), 0);
+    this.setCursor(this.getCursor());
 
     return true;
   }
@@ -89,7 +84,7 @@ export default class CommandUiHandler extends UiHandler {
       if (button === Button.ACTION) {
         switch (cursor) {
         // Fight
-        case Command.FIGHT:
+        case 0:
           if ((this.scene.getCurrentPhase() as CommandPhase).checkFightOverride()) {
             return true;
           }
@@ -97,17 +92,17 @@ export default class CommandUiHandler extends UiHandler {
           success = true;
           break;
           // Ball
-        case Command.BALL:
+        case 1:
           ui.setModeWithoutClear(Mode.BALL);
           success = true;
           break;
           // Pokemon
-        case Command.POKEMON:
+        case 2:
           ui.setMode(Mode.PARTY, PartyUiMode.SWITCH, (this.scene.getCurrentPhase() as CommandPhase).getPokemon().getFieldIndex(), null, PartyUiHandler.FilterNonFainted);
           success = true;
           break;
           // Run
-        case Command.RUN:
+        case 3:
           (this.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.RUN, 0);
           success = true;
           break;

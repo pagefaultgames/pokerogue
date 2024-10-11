@@ -1,10 +1,13 @@
-import { Stat } from "#enums/stat";
-import GameManager from "#test/utils/gameManager";
-import { CommandPhase } from "#app/phases/command-phase";
-import { Abilities } from "#enums/abilities";
-import { Species } from "#enums/species";
+import {afterEach, beforeAll, beforeEach, describe, expect, it, vi} from "vitest";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import GameManager from "#app/test/utils/gameManager";
+import * as overrides from "#app/overrides";
+import {Abilities} from "#enums/abilities";
+import {Species} from "#enums/species";
+import {
+  CommandPhase,
+} from "#app/phases";
+import {BattleStat} from "#app/data/battle-stat";
 
 
 describe("Abilities - Intrepid Sword", () => {
@@ -23,23 +26,20 @@ describe("Abilities - Intrepid Sword", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.battleType("single");
-    game.override.enemySpecies(Species.ZACIAN);
-    game.override.enemyAbility(Abilities.INTREPID_SWORD);
-    game.override.ability(Abilities.INTREPID_SWORD);
+    vi.spyOn(overrides, "SINGLE_BATTLE_OVERRIDE", "get").mockReturnValue(true);
+    vi.spyOn(overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.ZACIAN);
+    vi.spyOn(overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.INTREPID_SWORD);
+    vi.spyOn(overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.INTREPID_SWORD);
   });
 
-  it("should raise ATK stat stage by 1 on entry", async() => {
-    await game.classicMode.runToSummon([
+  it("INTREPID SWORD on player", async() => {
+    await game.runToSummon([
       Species.ZACIAN,
     ]);
-
-    const playerPokemon = game.scene.getPlayerPokemon()!;
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
-
     await game.phaseInterceptor.to(CommandPhase, false);
-
-    expect(playerPokemon.getStatStage(Stat.ATK)).toBe(1);
-    expect(enemyPokemon.getStatStage(Stat.ATK)).toBe(1);
+    const battleStatsPokemon = game.scene.getParty()[0].summonData.battleStats;
+    expect(battleStatsPokemon[BattleStat.ATK]).toBe(1);
+    const battleStatsOpponent = game.scene.currentBattle.enemyParty[0].summonData.battleStats;
+    expect(battleStatsOpponent[BattleStat.ATK]).toBe(1);
   }, 20000);
 });

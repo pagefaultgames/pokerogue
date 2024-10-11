@@ -1,13 +1,13 @@
 import BattleScene from "../battle-scene";
 import { PersistentModifier } from "../modifier/modifier";
-import { GeneratedPersistentModifierType, ModifierType, ModifierTypeGenerator, getModifierTypeFuncById } from "../modifier/modifier-type";
+import { GeneratedPersistentModifierType, ModifierTypeGenerator, getModifierTypeFuncById } from "../modifier/modifier-type";
 
 export default class ModifierData {
-  public player: boolean;
-  public typeId: string;
-  public typePregenArgs: any[];
-  public args: any[];
-  public stackCount: integer;
+  private player: boolean;
+  private typeId: string;
+  private typePregenArgs: any[];
+  private args: any[];
+  private stackCount: integer;
 
   public className: string;
 
@@ -27,14 +27,14 @@ export default class ModifierData {
     this.className = sourceModifier ? sourceModifier.constructor.name : source.className;
   }
 
-  toModifier(scene: BattleScene, constructor: any): PersistentModifier | null {
+  toModifier(scene: BattleScene, constructor: any): PersistentModifier {
     const typeFunc = getModifierTypeFuncById(this.typeId);
     if (!typeFunc) {
       return null;
     }
 
     try {
-      let type: ModifierType | null = typeFunc();
+      let type = typeFunc();
       type.id = this.typeId;
 
       if (type instanceof ModifierTypeGenerator) {

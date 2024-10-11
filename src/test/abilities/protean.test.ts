@@ -1,18 +1,20 @@
-import { allMoves } from "#app/data/move";
-import { Type } from "#app/data/type";
-import { Weather, WeatherType } from "#app/data/weather";
-import { PlayerPokemon } from "#app/field/pokemon";
-import { TurnEndPhase } from "#app/phases/turn-end-phase";
-import { Abilities } from "#enums/abilities";
-import { BattlerTagType } from "#enums/battler-tag-type";
-import { Biome } from "#enums/biome";
-import { Moves } from "#enums/moves";
-import { Species } from "#enums/species";
-import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import GameManager from "../utils/gameManager";
+import * as Overrides from "#app/overrides";
+import { Species } from "#enums/species";
+import { Abilities } from "#enums/abilities";
+import { Moves } from "#enums/moves";
+import { getMovePosition } from "../utils/gameManagerUtils";
+import { MoveEffectPhase, TurnEndPhase } from "#app/phases.js";
+import { allMoves } from "#app/data/move.js";
+import { BattlerTagType } from "#enums/battler-tag-type";
+import { Weather, WeatherType } from "#app/data/weather.js";
+import { Type } from "#app/data/type.js";
+import { Biome } from "#enums/biome";
+import { PlayerPokemon } from "#app/field/pokemon.js";
 
-
+const TIMEOUT = 20 * 1000;
 
 describe("Abilities - Protean", () => {
   let phaserGame: Phaser.Game;
@@ -30,51 +32,52 @@ describe("Abilities - Protean", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.battleType("single");
-    game.override.ability(Abilities.PROTEAN);
-    game.override.startingLevel(100);
-    game.override.enemySpecies(Species.RATTATA);
-    game.override.enemyMoveset([Moves.ENDURE, Moves.ENDURE, Moves.ENDURE, Moves.ENDURE]);
+    vi.spyOn(Overrides, "SINGLE_BATTLE_OVERRIDE", "get").mockReturnValue(true);
+    vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.PROTEAN);
+    vi.spyOn(Overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(100);
+    vi.spyOn(Overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.RATTATA);
+    vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.ENDURE, Moves.ENDURE, Moves.ENDURE, Moves.ENDURE]);
   });
 
   test(
     "ability applies and changes a pokemon's type",
     async () => {
-      game.override.moveset([Moves.SPLASH]);
+      vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH]);
 
       await game.startBattle([Species.MAGIKARP]);
 
-      const leadPokemon = game.scene.getPlayerPokemon()!;
+      const leadPokemon = game.scene.getPlayerPokemon();
       expect(leadPokemon).not.toBe(undefined);
 
-      game.move.select(Moves.SPLASH);
+      game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
       await game.phaseInterceptor.to(TurnEndPhase);
 
       testPokemonTypeMatchesDefaultMoveType(leadPokemon, Moves.SPLASH);
     },
+    TIMEOUT,
   );
 
   test.skip(
     "ability applies only once per switch in",
     async () => {
-      game.override.moveset([Moves.SPLASH, Moves.AGILITY]);
+      vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH, Moves.AGILITY]);
 
       await game.startBattle([Species.MAGIKARP, Species.BULBASAUR]);
 
-      let leadPokemon = game.scene.getPlayerPokemon()!;
+      let leadPokemon = game.scene.getPlayerPokemon();
       expect(leadPokemon).not.toBe(undefined);
 
-      game.move.select(Moves.SPLASH);
+      game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
       await game.phaseInterceptor.to(TurnEndPhase);
 
       testPokemonTypeMatchesDefaultMoveType(leadPokemon, Moves.SPLASH);
 
-      game.move.select(Moves.AGILITY);
+      game.doAttack(getMovePosition(game.scene, 0, Moves.AGILITY));
       await game.phaseInterceptor.to(TurnEndPhase);
 
       expect(leadPokemon.summonData.abilitiesApplied.filter((a) => a === Abilities.PROTEAN)).toHaveLength(1);
       const leadPokemonType = Type[leadPokemon.getTypes()[0]];
-      const moveType = Type[allMoves[Moves.AGILITY].type];
+      const moveType = Type[allMoves[Moves.AGILITY].defaultType];
       expect(leadPokemonType).not.toBe(moveType);
 
       await game.toNextTurn();
@@ -83,28 +86,29 @@ describe("Abilities - Protean", () => {
       game.doSwitchPokemon(1);
       await game.toNextTurn();
 
-      leadPokemon = game.scene.getPlayerPokemon()!;
+      leadPokemon = game.scene.getPlayerPokemon();
       expect(leadPokemon).not.toBe(undefined);
 
-      game.move.select(Moves.SPLASH);
+      game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
       await game.phaseInterceptor.to(TurnEndPhase);
 
       testPokemonTypeMatchesDefaultMoveType(leadPokemon, Moves.SPLASH);
     },
+    TIMEOUT,
   );
 
   test(
     "ability applies correctly even if the pokemon's move has a variable type",
     async () => {
-      game.override.moveset([Moves.WEATHER_BALL]);
+      vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.WEATHER_BALL]);
 
       await game.startBattle([Species.MAGIKARP]);
 
-      const leadPokemon = game.scene.getPlayerPokemon()!;
+      const leadPokemon = game.scene.getPlayerPokemon();
       expect(leadPokemon).not.toBe(undefined);
 
       game.scene.arena.weather = new Weather(WeatherType.SUNNY);
-      game.move.select(Moves.WEATHER_BALL);
+      game.doAttack(getMovePosition(game.scene, 0, Moves.WEATHER_BALL));
       await game.phaseInterceptor.to(TurnEndPhase);
 
       expect(leadPokemon.summonData.abilitiesApplied).toContain(Abilities.PROTEAN);
@@ -113,20 +117,21 @@ describe("Abilities - Protean", () => {
         moveType = Type[Type.FIRE];
       expect(leadPokemonType).toBe(moveType);
     },
+    TIMEOUT,
   );
 
   test(
     "ability applies correctly even if the type has changed by another ability",
     async () => {
-      game.override.moveset([Moves.TACKLE]);
-      game.override.passiveAbility(Abilities.REFRIGERATE);
+      vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.TACKLE]);
+      vi.spyOn(Overrides, "PASSIVE_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.REFRIGERATE);
 
       await game.startBattle([Species.MAGIKARP]);
 
-      const leadPokemon = game.scene.getPlayerPokemon()!;
+      const leadPokemon = game.scene.getPlayerPokemon();
       expect(leadPokemon).not.toBe(undefined);
 
-      game.move.select(Moves.TACKLE);
+      game.doAttack(getMovePosition(game.scene, 0, Moves.TACKLE));
       await game.phaseInterceptor.to(TurnEndPhase);
 
       expect(leadPokemon.summonData.abilitiesApplied).toContain(Abilities.PROTEAN);
@@ -135,205 +140,218 @@ describe("Abilities - Protean", () => {
         moveType = Type[Type.ICE];
       expect(leadPokemonType).toBe(moveType);
     },
+    TIMEOUT,
   );
 
   test(
     "ability applies correctly even if the pokemon's move calls another move",
     async () => {
-      game.override.moveset([Moves.NATURE_POWER]);
+      vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.NATURE_POWER]);
 
       await game.startBattle([Species.MAGIKARP]);
 
-      const leadPokemon = game.scene.getPlayerPokemon()!;
+      const leadPokemon = game.scene.getPlayerPokemon();
       expect(leadPokemon).not.toBe(undefined);
 
       game.scene.arena.biomeType = Biome.MOUNTAIN;
-      game.move.select(Moves.NATURE_POWER);
+      game.doAttack(getMovePosition(game.scene, 0, Moves.NATURE_POWER));
       await game.phaseInterceptor.to(TurnEndPhase);
 
       testPokemonTypeMatchesDefaultMoveType(leadPokemon, Moves.AIR_SLASH);
     },
+    TIMEOUT,
   );
 
   test(
     "ability applies correctly even if the pokemon's move is delayed / charging",
     async () => {
-      game.override.moveset([Moves.DIG]);
+      vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.DIG]);
 
       await game.startBattle([Species.MAGIKARP]);
 
-      const leadPokemon = game.scene.getPlayerPokemon()!;
+      const leadPokemon = game.scene.getPlayerPokemon();
       expect(leadPokemon).not.toBe(undefined);
 
-      game.move.select(Moves.DIG);
+      game.doAttack(getMovePosition(game.scene, 0, Moves.DIG));
       await game.phaseInterceptor.to(TurnEndPhase);
 
       testPokemonTypeMatchesDefaultMoveType(leadPokemon, Moves.DIG);
     },
+    TIMEOUT,
   );
 
   test(
     "ability applies correctly even if the pokemon's move misses",
     async () => {
-      game.override.moveset([Moves.TACKLE]);
-      game.override.enemyMoveset(Moves.SPLASH);
+      vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.TACKLE]);
+      vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH, Moves.SPLASH, Moves.SPLASH, Moves.SPLASH]);
 
       await game.startBattle([Species.MAGIKARP]);
 
-      const leadPokemon = game.scene.getPlayerPokemon()!;
+      const leadPokemon = game.scene.getPlayerPokemon();
       expect(leadPokemon).not.toBe(undefined);
 
-      game.move.select(Moves.TACKLE);
-      await game.move.forceMiss();
+      game.doAttack(getMovePosition(game.scene, 0, Moves.TACKLE));
+      await game.phaseInterceptor.to(MoveEffectPhase, false);
+      vi.spyOn(game.scene.getCurrentPhase() as MoveEffectPhase, "hitCheck").mockReturnValueOnce(false);
       await game.phaseInterceptor.to(TurnEndPhase);
 
-      const enemyPokemon = game.scene.getEnemyPokemon()!;
-      expect(enemyPokemon.isFullHp()).toBe(true);
+      const enemyPokemon = game.scene.getEnemyPokemon();
+      expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp());
       testPokemonTypeMatchesDefaultMoveType(leadPokemon, Moves.TACKLE);
     },
+    TIMEOUT,
   );
 
   test(
     "ability applies correctly even if the pokemon's move is protected against",
     async () => {
-      game.override.moveset([Moves.TACKLE]);
-      game.override.enemyMoveset([Moves.PROTECT, Moves.PROTECT, Moves.PROTECT, Moves.PROTECT]);
+      vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.TACKLE]);
+      vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.PROTECT, Moves.PROTECT, Moves.PROTECT, Moves.PROTECT]);
 
       await game.startBattle([Species.MAGIKARP]);
 
-      const leadPokemon = game.scene.getPlayerPokemon()!;
+      const leadPokemon = game.scene.getPlayerPokemon();
       expect(leadPokemon).not.toBe(undefined);
 
-      game.move.select(Moves.TACKLE);
+      game.doAttack(getMovePosition(game.scene, 0, Moves.TACKLE));
       await game.phaseInterceptor.to(TurnEndPhase);
 
       testPokemonTypeMatchesDefaultMoveType(leadPokemon, Moves.TACKLE);
     },
+    TIMEOUT,
   );
 
   test(
     "ability applies correctly even if the pokemon's move fails because of type immunity",
     async () => {
-      game.override.moveset([Moves.TACKLE]);
-      game.override.enemySpecies(Species.GASTLY);
+      vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.TACKLE]);
+      vi.spyOn(Overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.GASTLY);
 
       await game.startBattle([Species.MAGIKARP]);
 
-      const leadPokemon = game.scene.getPlayerPokemon()!;
+      const leadPokemon = game.scene.getPlayerPokemon();
       expect(leadPokemon).not.toBe(undefined);
 
-      game.move.select(Moves.TACKLE);
+      game.doAttack(getMovePosition(game.scene, 0, Moves.TACKLE));
       await game.phaseInterceptor.to(TurnEndPhase);
 
       testPokemonTypeMatchesDefaultMoveType(leadPokemon, Moves.TACKLE);
     },
+    TIMEOUT,
   );
 
   test(
     "ability is not applied if pokemon's type is the same as the move's type",
     async () => {
-      game.override.moveset([Moves.SPLASH]);
+      vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH]);
 
       await game.startBattle([Species.MAGIKARP]);
 
-      const leadPokemon = game.scene.getPlayerPokemon()!;
+      const leadPokemon = game.scene.getPlayerPokemon();
       expect(leadPokemon).not.toBe(undefined);
 
-      leadPokemon.summonData.types = [allMoves[Moves.SPLASH].type];
-      game.move.select(Moves.SPLASH);
+      leadPokemon.summonData.types = [allMoves[Moves.SPLASH].defaultType];
+      game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
       await game.phaseInterceptor.to(TurnEndPhase);
 
       expect(leadPokemon.summonData.abilitiesApplied).not.toContain(Abilities.PROTEAN);
     },
+    TIMEOUT,
   );
 
   test(
     "ability is not applied if pokemon is terastallized",
     async () => {
-      game.override.moveset([Moves.SPLASH]);
+      vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH]);
 
       await game.startBattle([Species.MAGIKARP]);
 
-      const leadPokemon = game.scene.getPlayerPokemon()!;
+      const leadPokemon = game.scene.getPlayerPokemon();
       expect(leadPokemon).not.toBe(undefined);
 
       vi.spyOn(leadPokemon, "isTerastallized").mockReturnValue(true);
 
-      game.move.select(Moves.SPLASH);
+      game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
       await game.phaseInterceptor.to(TurnEndPhase);
 
       expect(leadPokemon.summonData.abilitiesApplied).not.toContain(Abilities.PROTEAN);
     },
+    TIMEOUT,
   );
 
   test(
     "ability is not applied if pokemon uses struggle",
     async () => {
-      game.override.moveset([Moves.STRUGGLE]);
+      vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.STRUGGLE]);
 
       await game.startBattle([Species.MAGIKARP]);
 
-      const leadPokemon = game.scene.getPlayerPokemon()!;
+      const leadPokemon = game.scene.getPlayerPokemon();
       expect(leadPokemon).not.toBe(undefined);
 
-      game.move.select(Moves.STRUGGLE);
+      game.doAttack(getMovePosition(game.scene, 0, Moves.STRUGGLE));
       await game.phaseInterceptor.to(TurnEndPhase);
 
       expect(leadPokemon.summonData.abilitiesApplied).not.toContain(Abilities.PROTEAN);
     },
+    TIMEOUT,
   );
 
   test(
     "ability is not applied if the pokemon's move fails",
     async () => {
-      game.override.moveset([Moves.BURN_UP]);
+      vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.BURN_UP]);
 
       await game.startBattle([Species.MAGIKARP]);
 
-      const leadPokemon = game.scene.getPlayerPokemon()!;
+      const leadPokemon = game.scene.getPlayerPokemon();
       expect(leadPokemon).not.toBe(undefined);
 
-      game.move.select(Moves.BURN_UP);
+      game.doAttack(getMovePosition(game.scene, 0, Moves.BURN_UP));
       await game.phaseInterceptor.to(TurnEndPhase);
 
       expect(leadPokemon.summonData.abilitiesApplied).not.toContain(Abilities.PROTEAN);
     },
+    TIMEOUT,
   );
 
   test(
     "ability applies correctly even if the pokemon's Trick-or-Treat fails",
     async () => {
-      game.override.moveset([Moves.TRICK_OR_TREAT]);
-      game.override.enemySpecies(Species.GASTLY);
+      vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.TRICK_OR_TREAT]);
+      vi.spyOn(Overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.GASTLY);
 
       await game.startBattle([Species.MAGIKARP]);
 
-      const leadPokemon = game.scene.getPlayerPokemon()!;
+      const leadPokemon = game.scene.getPlayerPokemon();
       expect(leadPokemon).not.toBe(undefined);
 
-      game.move.select(Moves.TRICK_OR_TREAT);
+      game.doAttack(getMovePosition(game.scene, 0, Moves.TRICK_OR_TREAT));
       await game.phaseInterceptor.to(TurnEndPhase);
 
       testPokemonTypeMatchesDefaultMoveType(leadPokemon, Moves.TRICK_OR_TREAT);
     },
+    TIMEOUT,
   );
 
   test(
     "ability applies correctly and the pokemon curses itself",
     async () => {
-      game.override.moveset([Moves.CURSE]);
+      vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.CURSE]);
 
       await game.startBattle([Species.MAGIKARP]);
 
-      const leadPokemon = game.scene.getPlayerPokemon()!;
+      const leadPokemon = game.scene.getPlayerPokemon();
       expect(leadPokemon).not.toBe(undefined);
 
-      game.move.select(Moves.CURSE);
+      game.doAttack(getMovePosition(game.scene, 0, Moves.CURSE));
       await game.phaseInterceptor.to(TurnEndPhase);
 
       testPokemonTypeMatchesDefaultMoveType(leadPokemon, Moves.CURSE);
       expect(leadPokemon.getTag(BattlerTagType.CURSED)).not.toBe(undefined);
     },
+    TIMEOUT,
   );
 });
 
@@ -341,6 +359,6 @@ function testPokemonTypeMatchesDefaultMoveType(pokemon: PlayerPokemon, move: Mov
   expect(pokemon.summonData.abilitiesApplied).toContain(Abilities.PROTEAN);
   expect(pokemon.getTypes()).toHaveLength(1);
   const pokemonType = Type[pokemon.getTypes()[0]],
-    moveType = Type[allMoves[move].type];
+    moveType = Type[allMoves[move].defaultType];
   expect(pokemonType).toBe(moveType);
 }

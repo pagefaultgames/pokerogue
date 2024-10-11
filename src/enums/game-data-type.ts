@@ -6,6 +6,5 @@ export enum GameDataType {
   SESSION,
   SETTINGS,
   TUTORIALS,
-  SEEN_DIALOGUES,
-  RUN_HISTORY
+  SEEN_DIALOGUES
 }

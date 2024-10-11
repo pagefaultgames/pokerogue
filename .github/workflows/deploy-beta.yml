@@ -1,9 +1,8 @@
 name: Deploy Beta
 
 on:
-  push:
-    branches:
-      - beta
+  push: {}
+  pull_request: {}
 
 jobs:
   deploy:
@@ -21,6 +20,7 @@ jobs:
         env:
           NODE_ENV: production
       - name: Set up SSH
+        if: github.event_name == 'push' && github.ref_name == github.event.repository.default_branch
         run: |
           mkdir ~/.ssh
           echo "${{ secrets.BETA_SSH_PUBLIC_KEY }}" > ~/.ssh/id_ed25519.pub
@@ -28,5 +28,6 @@ jobs:
           chmod 600 ~/.ssh/*
           ssh-keyscan -H ${{ secrets.BETA_SSH_HOST }} >> ~/.ssh/known_hosts
       - name: Deploy build on server
+        if: github.event_name == 'push' && github.ref_name == github.event.repository.default_branch
         run: | 
           rsync --del --no-times --checksum -vrm dist/* ${{ secrets.BETA_SSH_USER }}@${{ secrets.BETA_SSH_HOST }}:${{ secrets.BETA_DESTINATION_DIR }}

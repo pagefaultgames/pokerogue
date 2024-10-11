@@ -1,5 +1,5 @@
 import * as Utils from "../utils";
-import BattleScene from "#app/battle-scene";
+import BattleScene from "#app/battle-scene.js";
 import { BattleSceneEventType } from "../events/battle-scene";
 import { EaseType } from "#enums/ease-type";
 import { TimeOfDay } from "#enums/time-of-day";
@@ -147,10 +147,7 @@ export default class TimeOfDayWidget extends Phaser.GameObjects.Container {
     // Swaps all elements of the icon arrays by shifting the first element onto the end of the array
     // This ensures index[0] is always the new time of day icon and index[1] is always the current one
     this.timeOfDayIconPairs.forEach(
-      icons => {
-        const shifted = icons.shift();
-        shifted && icons.push(shifted);
-      });
+      icons => icons.push(icons.shift()));
   }
 
   /**

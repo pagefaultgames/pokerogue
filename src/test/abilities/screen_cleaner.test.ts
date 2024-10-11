@@ -1,12 +1,13 @@
-import { ArenaTagType } from "#app/enums/arena-tag-type";
-import { PostSummonPhase } from "#app/phases/post-summon-phase";
-import { TurnEndPhase } from "#app/phases/turn-end-phase";
-import { Abilities } from "#enums/abilities";
-import { Moves } from "#enums/moves";
-import { Species } from "#enums/species";
-import GameManager from "#test/utils/gameManager";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import GameManager from "#app/test/utils/gameManager";
+import * as overrides from "#app/overrides";
+import { Species } from "#enums/species";
+import { PostSummonPhase, TurnEndPhase, } from "#app/phases";
+import { Moves } from "#enums/moves";
+import { getMovePosition } from "#app/test/utils/gameManagerUtils";
+import { Abilities } from "#enums/abilities";
+import { ArenaTagType } from "#app/enums/arena-tag-type.js";
 
 describe("Abilities - Screen Cleaner", () => {
   let phaserGame: Phaser.Game;
@@ -24,18 +25,18 @@ describe("Abilities - Screen Cleaner", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.battleType("single");
-    game.override.ability(Abilities.SCREEN_CLEANER);
-    game.override.enemySpecies(Species.SHUCKLE);
+    vi.spyOn(overrides, "SINGLE_BATTLE_OVERRIDE", "get").mockReturnValue(true);
+    vi.spyOn(overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.SCREEN_CLEANER);
+    vi.spyOn(overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.SHUCKLE);
   });
 
   it("removes Aurora Veil", async () => {
-    game.override.moveset([Moves.HAIL]);
-    game.override.enemyMoveset([Moves.AURORA_VEIL, Moves.AURORA_VEIL, Moves.AURORA_VEIL, Moves.AURORA_VEIL]);
+    vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.HAIL]);
+    vi.spyOn(overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.AURORA_VEIL, Moves.AURORA_VEIL, Moves.AURORA_VEIL, Moves.AURORA_VEIL]);
 
     await game.startBattle([Species.MAGIKARP, Species.MAGIKARP]);
 
-    game.move.select(Moves.HAIL);
+    game.doAttack(getMovePosition(game.scene, 0, Moves.HAIL));
     await game.phaseInterceptor.to(TurnEndPhase);
 
     expect(game.scene.arena.getTag(ArenaTagType.AURORA_VEIL)).toBeDefined();
@@ -48,11 +49,11 @@ describe("Abilities - Screen Cleaner", () => {
   });
 
   it("removes Light Screen", async () => {
-    game.override.enemyMoveset([Moves.LIGHT_SCREEN, Moves.LIGHT_SCREEN, Moves.LIGHT_SCREEN, Moves.LIGHT_SCREEN]);
+    vi.spyOn(overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.LIGHT_SCREEN, Moves.LIGHT_SCREEN, Moves.LIGHT_SCREEN, Moves.LIGHT_SCREEN]);
 
     await game.startBattle([Species.MAGIKARP, Species.MAGIKARP]);
 
-    game.move.select(Moves.SPLASH);
+    game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
     await game.phaseInterceptor.to(TurnEndPhase);
 
     expect(game.scene.arena.getTag(ArenaTagType.LIGHT_SCREEN)).toBeDefined();
@@ -65,11 +66,11 @@ describe("Abilities - Screen Cleaner", () => {
   });
 
   it("removes Reflect", async () => {
-    game.override.enemyMoveset([Moves.REFLECT, Moves.REFLECT, Moves.REFLECT, Moves.REFLECT]);
+    vi.spyOn(overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.REFLECT, Moves.REFLECT, Moves.REFLECT, Moves.REFLECT]);
 
     await game.startBattle([Species.MAGIKARP, Species.MAGIKARP]);
 
-    game.move.select(Moves.SPLASH);
+    game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
     await game.phaseInterceptor.to(TurnEndPhase);
 
     expect(game.scene.arena.getTag(ArenaTagType.REFLECT)).toBeDefined();

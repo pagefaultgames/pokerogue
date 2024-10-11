@@ -1,16 +1,18 @@
-import { Stat } from "#enums/stat";
-import { StatusEffect } from "#app/data/status-effect";
-import { Type } from "#app/data/type";
-import { BattlerTagType } from "#app/enums/battler-tag-type";
-import { toDmgValue } from "#app/utils";
+import Phaser from "phaser";
+import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import GameManager from "../utils/gameManager";
+import * as Overrides from "#app/overrides";
+import { Species } from "#enums/species";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
-import { Species } from "#enums/species";
-import GameManager from "#test/utils/gameManager";
-import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { getMovePosition } from "../utils/gameManagerUtils";
+import { BerryPhase, CommandPhase, DamagePhase, MoveEffectPhase, MoveEndPhase, TurnEndPhase } from "#app/phases.js";
+import { BattleStat } from "#app/data/battle-stat.js";
+import { Type } from "#app/data/type.js";
+import { BattlerTagType } from "#app/enums/battler-tag-type.js";
+import { StatusEffect } from "#app/data/status-effect.js";
 
-
+const TIMEOUT = 20 * 1000;
 
 describe("Abilities - Parental Bond", () => {
   let phaserGame: Phaser.Game;
@@ -28,497 +30,621 @@ describe("Abilities - Parental Bond", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.battleType("single");
-    game.override.disableCrits();
-    game.override.ability(Abilities.PARENTAL_BOND);
-    game.override.enemySpecies(Species.SNORLAX);
-    game.override.enemyAbility(Abilities.FUR_COAT);
-    game.override.enemyMoveset(Moves.SPLASH);
-    game.override.startingLevel(100);
-    game.override.enemyLevel(100);
+    vi.spyOn(Overrides, "SINGLE_BATTLE_OVERRIDE", "get").mockReturnValue(true);
+    vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.PARENTAL_BOND);
+    vi.spyOn(Overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.SNORLAX);
+    vi.spyOn(Overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.INSOMNIA);
+    vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH, Moves.SPLASH, Moves.SPLASH, Moves.SPLASH]);
+    vi.spyOn(Overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(100);
+    vi.spyOn(Overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(100);
   });
 
-  it(
-    "should add second strike to attack move",
+  test(
+    "ability should add second strike to attack move",
     async () => {
-      game.override.moveset([Moves.TACKLE]);
+      vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.TACKLE]);
 
-      await game.classicMode.startBattle([Species.MAGIKARP]);
+      await game.startBattle([Species.CHARIZARD]);
 
-      const leadPokemon = game.scene.getPlayerPokemon()!;
-      const enemyPokemon = game.scene.getEnemyPokemon()!;
+      const leadPokemon = game.scene.getPlayerPokemon();
+      expect(leadPokemon).not.toBe(undefined);
+
+      const enemyPokemon = game.scene.getEnemyPokemon();
+      expect(enemyPokemon).not.toBe(undefined);
 
       let enemyStartingHp = enemyPokemon.hp;
 
-      game.move.select(Moves.TACKLE);
+      game.doAttack(getMovePosition(game.scene, 0, Moves.TACKLE));
 
-      await game.phaseInterceptor.to("DamagePhase");
+      await game.phaseInterceptor.to(MoveEffectPhase, false);
+      vi.spyOn(game.scene, "randBattleSeedInt").mockReturnValue(15);
+
+      await game.phaseInterceptor.to(DamagePhase);
       const firstStrikeDamage = enemyStartingHp - enemyPokemon.hp;
       enemyStartingHp = enemyPokemon.hp;
 
-      await game.phaseInterceptor.to("BerryPhase", false);
+      await game.phaseInterceptor.to(BerryPhase, false);
 
       const secondStrikeDamage = enemyStartingHp - enemyPokemon.hp;
 
       expect(leadPokemon.turnData.hitCount).toBe(2);
-      expect(secondStrikeDamage).toBe(toDmgValue(0.25 * firstStrikeDamage));
-    }
+      expect(secondStrikeDamage).toBe(Math.ceil(0.25 * firstStrikeDamage));
+    }, TIMEOUT
   );
 
-  it(
-    "should apply secondary effects to both strikes",
+  test(
+    "ability should apply secondary effects to both strikes",
     async () => {
-      game.override.moveset([Moves.POWER_UP_PUNCH]);
-      game.override.enemySpecies(Species.AMOONGUSS);
+      vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.POWER_UP_PUNCH]);
+      vi.spyOn(Overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.AMOONGUSS);
 
-      await game.classicMode.startBattle([Species.MAGIKARP]);
+      await game.startBattle([Species.CHARIZARD]);
 
-      const leadPokemon = game.scene.getPlayerPokemon()!;
+      const leadPokemon = game.scene.getPlayerPokemon();
+      expect(leadPokemon).not.toBe(undefined);
 
-      game.move.select(Moves.POWER_UP_PUNCH);
+      const enemyPokemon = game.scene.getEnemyPokemon();
+      expect(enemyPokemon).not.toBe(undefined);
 
-      await game.phaseInterceptor.to("BerryPhase", false);
+      game.doAttack(getMovePosition(game.scene, 0, Moves.POWER_UP_PUNCH));
+
+      await game.phaseInterceptor.to(BerryPhase, false);
 
       expect(leadPokemon.turnData.hitCount).toBe(2);
-      expect(leadPokemon.getStatStage(Stat.ATK)).toBe(2);
-    }
+      expect(leadPokemon.summonData.battleStats[BattleStat.ATK]).toBe(2);
+    }, TIMEOUT
   );
 
-  it(
-    "should not apply to Status moves",
+  test(
+    "ability should not apply to Status moves",
     async () => {
-      game.override.moveset([Moves.BABY_DOLL_EYES]);
+      vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.BABY_DOLL_EYES]);
 
-      await game.classicMode.startBattle([Species.MAGIKARP]);
+      await game.startBattle([Species.CHARIZARD]);
 
-      const enemyPokemon = game.scene.getEnemyPokemon()!;
+      const leadPokemon = game.scene.getPlayerPokemon();
+      expect(leadPokemon).not.toBe(undefined);
 
-      game.move.select(Moves.BABY_DOLL_EYES);
+      const enemyPokemon = game.scene.getEnemyPokemon();
+      expect(enemyPokemon).not.toBe(undefined);
 
-      await game.phaseInterceptor.to("BerryPhase", false);
+      game.doAttack(getMovePosition(game.scene, 0, Moves.BABY_DOLL_EYES));
+      await game.phaseInterceptor.to(BerryPhase, false);
 
-      expect(enemyPokemon.getStatStage(Stat.ATK)).toBe(-1);
-    }
+      expect(enemyPokemon.summonData.battleStats[BattleStat.ATK]).toBe(-1);
+    }, TIMEOUT
   );
 
-  it(
-    "should not apply to multi-hit moves",
+  test(
+    "ability should not apply to multi-hit moves",
     async () => {
-      game.override.moveset([Moves.DOUBLE_HIT]);
+      vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.DOUBLE_HIT]);
 
-      await game.classicMode.startBattle([Species.MAGIKARP]);
+      await game.startBattle([Species.CHARIZARD]);
 
-      const leadPokemon = game.scene.getPlayerPokemon()!;
+      const leadPokemon = game.scene.getPlayerPokemon();
+      expect(leadPokemon).not.toBe(undefined);
 
-      game.move.select(Moves.DOUBLE_HIT);
-      await game.move.forceHit();
+      const enemyPokemon = game.scene.getEnemyPokemon();
+      expect(enemyPokemon).not.toBe(undefined);
 
-      await game.phaseInterceptor.to("BerryPhase", false);
+      game.doAttack(getMovePosition(game.scene, 0, Moves.DOUBLE_HIT));
+
+      await game.phaseInterceptor.to(MoveEffectPhase, false);
+
+      vi.spyOn(game.scene.getCurrentPhase() as MoveEffectPhase, "hitCheck").mockReturnValue(true);
+
+      await game.phaseInterceptor.to(BerryPhase, false);
 
       expect(leadPokemon.turnData.hitCount).toBe(2);
-    }
+    }, TIMEOUT
   );
 
-  it(
-    "should not apply to self-sacrifice moves",
+  test(
+    "ability should not apply to self-sacrifice moves",
     async () => {
-      game.override.moveset([Moves.SELF_DESTRUCT]);
+      vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SELF_DESTRUCT]);
 
-      await game.classicMode.startBattle([Species.MAGIKARP]);
+      await game.startBattle([Species.CHARIZARD]);
 
-      const leadPokemon = game.scene.getPlayerPokemon()!;
+      const leadPokemon = game.scene.getPlayerPokemon();
+      expect(leadPokemon).not.toBe(undefined);
 
-      game.move.select(Moves.SELF_DESTRUCT);
+      const enemyPokemon = game.scene.getEnemyPokemon();
+      expect(enemyPokemon).not.toBe(undefined);
 
-      await game.phaseInterceptor.to("DamagePhase", false);
+      game.doAttack(getMovePosition(game.scene, 0, Moves.SELF_DESTRUCT));
+
+      await game.phaseInterceptor.to(DamagePhase, false);
 
       expect(leadPokemon.turnData.hitCount).toBe(1);
-    }
+    }, TIMEOUT
   );
 
-  it(
-    "should not apply to Rollout",
+  test(
+    "ability should not apply to Rollout",
     async () => {
-      game.override.moveset([Moves.ROLLOUT]);
+      vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.ROLLOUT]);
 
-      await game.classicMode.startBattle([Species.MAGIKARP]);
+      await game.startBattle([Species.CHARIZARD]);
 
-      const leadPokemon = game.scene.getPlayerPokemon()!;
+      const leadPokemon = game.scene.getPlayerPokemon();
+      expect(leadPokemon).not.toBe(undefined);
 
-      game.move.select(Moves.ROLLOUT);
-      await game.move.forceHit();
+      const enemyPokemon = game.scene.getEnemyPokemon();
+      expect(enemyPokemon).not.toBe(undefined);
 
-      await game.phaseInterceptor.to("DamagePhase", false);
+      game.doAttack(getMovePosition(game.scene, 0, Moves.ROLLOUT));
+
+      await game.phaseInterceptor.to(MoveEffectPhase, false);
+      vi.spyOn(game.scene.getCurrentPhase() as MoveEffectPhase, "hitCheck").mockReturnValue(true);
+
+      await game.phaseInterceptor.to(DamagePhase, false);
 
       expect(leadPokemon.turnData.hitCount).toBe(1);
-    }
+    }, TIMEOUT
   );
 
-  it(
-    "should not apply multiplier to fixed-damage moves",
+  test(
+    "ability should not apply multiplier to fixed-damage moves",
     async () => {
-      game.override.moveset([Moves.DRAGON_RAGE]);
+      vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.DRAGON_RAGE]);
 
-      await game.classicMode.startBattle([Species.MAGIKARP]);
+      await game.startBattle([Species.CHARIZARD]);
 
-      const enemyPokemon = game.scene.getEnemyPokemon()!;
+      const leadPokemon = game.scene.getPlayerPokemon();
+      expect(leadPokemon).not.toBe(undefined);
 
-      game.move.select(Moves.DRAGON_RAGE);
-      await game.phaseInterceptor.to("BerryPhase", false);
+      const enemyPokemon = game.scene.getEnemyPokemon();
+      expect(enemyPokemon).not.toBe(undefined);
 
-      expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp() - 80);
-    }
+      const enemyStartingHp = enemyPokemon.hp;
+
+      game.doAttack(getMovePosition(game.scene, 0, Moves.DRAGON_RAGE));
+      await game.phaseInterceptor.to(BerryPhase, false);
+
+      expect(enemyPokemon.hp).toBe(enemyStartingHp - 80);
+    }, TIMEOUT
   );
 
-  it(
-    "should not apply multiplier to counter moves",
+  test(
+    "ability should not apply multiplier to counter moves",
     async () => {
-      game.override.moveset([Moves.COUNTER]);
-      game.override.enemyMoveset([Moves.TACKLE]);
+      vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.COUNTER]);
+      vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.TACKLE,Moves.TACKLE,Moves.TACKLE,Moves.TACKLE]);
 
-      await game.classicMode.startBattle([Species.SHUCKLE]);
+      await game.startBattle([Species.CHARIZARD]);
 
-      const leadPokemon = game.scene.getPlayerPokemon()!;
-      const enemyPokemon = game.scene.getEnemyPokemon()!;
+      const leadPokemon = game.scene.getPlayerPokemon();
+      expect(leadPokemon).not.toBe(undefined);
 
-      game.move.select(Moves.COUNTER);
-      await game.phaseInterceptor.to("DamagePhase");
+      const enemyPokemon = game.scene.getEnemyPokemon();
+      expect(enemyPokemon).not.toBe(undefined);
 
-      const playerDamage = leadPokemon.getMaxHp() - leadPokemon.hp;
+      const playerStartingHp = leadPokemon.hp;
+      const enemyStartingHp = enemyPokemon.hp;
 
-      await game.phaseInterceptor.to("BerryPhase", false);
+      game.doAttack(getMovePosition(game.scene, 0, Moves.COUNTER));
+      await game.phaseInterceptor.to(DamagePhase);
 
-      expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp() - 4 * playerDamage);
-    }
+      const playerDamage = playerStartingHp - leadPokemon.hp;
+
+      await game.phaseInterceptor.to(BerryPhase, false);
+
+      expect(enemyPokemon.hp).toBe(enemyStartingHp - 4*playerDamage);
+    }, TIMEOUT
   );
 
-  it(
-    "should not apply to multi-target moves",
+  test(
+    "ability should not apply to multi-target moves",
     async () => {
-      game.override.battleType("double");
-      game.override.moveset([Moves.EARTHQUAKE]);
-      game.override.passiveAbility(Abilities.LEVITATE);
+      vi.spyOn(Overrides, "DOUBLE_BATTLE_OVERRIDE", "get").mockReturnValue(true);
+      vi.spyOn(Overrides, "SINGLE_BATTLE_OVERRIDE", "get").mockReturnValue(false);
+      vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.EARTHQUAKE]);
 
-      await game.classicMode.startBattle([Species.MAGIKARP, Species.FEEBAS]);
+      await game.startBattle([Species.CHARIZARD, Species.PIDGEOT]);
 
       const playerPokemon = game.scene.getPlayerField();
+      expect(playerPokemon.length).toBe(2);
+      playerPokemon.forEach(p => expect(p).not.toBe(undefined));
 
-      game.move.select(Moves.EARTHQUAKE);
-      game.move.select(Moves.EARTHQUAKE, 1);
+      const enemyPokemon = game.scene.getEnemyField();
+      expect(enemyPokemon.length).toBe(2);
+      enemyPokemon.forEach(p => expect(p).not.toBe(undefined));
 
-      await game.phaseInterceptor.to("BerryPhase", false);
+      game.doAttack(getMovePosition(game.scene, 0, Moves.EARTHQUAKE));
+      await game.phaseInterceptor.to(CommandPhase);
+
+      game.doAttack(getMovePosition(game.scene, 1, Moves.EARTHQUAKE));
+      await game.phaseInterceptor.to(BerryPhase, false);
 
       playerPokemon.forEach(p => expect(p.turnData.hitCount).toBe(1));
-    }
+    }, TIMEOUT
   );
 
-  it(
-    "should apply to multi-target moves when hitting only one target",
+  test(
+    "ability should apply to multi-target moves when hitting only one target",
     async () => {
-      game.override.moveset([Moves.EARTHQUAKE]);
+      vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.EARTHQUAKE]);
 
-      await game.classicMode.startBattle([Species.MAGIKARP]);
+      await game.startBattle([Species.CHARIZARD]);
 
-      const leadPokemon = game.scene.getPlayerPokemon()!;
+      const leadPokemon = game.scene.getPlayerPokemon();
+      expect(leadPokemon).not.toBe(undefined);
 
-      game.move.select(Moves.EARTHQUAKE);
-      await game.phaseInterceptor.to("DamagePhase", false);
+      const enemyPokemon = game.scene.getEnemyPokemon();
+      expect(enemyPokemon).not.toBe(undefined);
+
+      game.doAttack(getMovePosition(game.scene, 0, Moves.EARTHQUAKE));
+      await game.phaseInterceptor.to(DamagePhase, false);
 
       expect(leadPokemon.turnData.hitCount).toBe(2);
-    }
+    }, TIMEOUT
   );
 
-  it(
-    "should only trigger post-target move effects once",
+  test(
+    "ability should only trigger post-target move effects once",
     async () => {
-      game.override.moveset([Moves.MIND_BLOWN]);
+      vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.MIND_BLOWN]);
 
-      await game.classicMode.startBattle([Species.MAGIKARP]);
+      await game.startBattle([Species.PIDGEOT]);
 
-      const leadPokemon = game.scene.getPlayerPokemon()!;
+      const leadPokemon = game.scene.getPlayerPokemon();
+      expect(leadPokemon).not.toBe(undefined);
 
-      game.move.select(Moves.MIND_BLOWN);
+      const enemyPokemon = game.scene.getEnemyPokemon();
+      expect(enemyPokemon).not.toBe(undefined);
 
-      await game.phaseInterceptor.to("DamagePhase", false);
+      game.doAttack(getMovePosition(game.scene, 0, Moves.MIND_BLOWN));
+
+      await game.phaseInterceptor.to(DamagePhase, false);
 
       expect(leadPokemon.turnData.hitCount).toBe(2);
 
       // This test will time out if the user faints
-      await game.phaseInterceptor.to("BerryPhase", false);
+      await game.phaseInterceptor.to(BerryPhase, false);
 
-      expect(leadPokemon.hp).toBe(Math.ceil(leadPokemon.getMaxHp() / 2));
-    }
+      expect(leadPokemon.hp).toBe(Math.floor(leadPokemon.getMaxHp()/2));
+    }, TIMEOUT
   );
 
-  it(
-    "Burn Up only removes type after the second strike",
+  test(
+    "Burn Up only removes type after second strike with this ability",
     async () => {
-      game.override.moveset([Moves.BURN_UP]);
+      vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.BURN_UP]);
 
-      await game.classicMode.startBattle([Species.CHARIZARD]);
+      await game.startBattle([Species.CHARIZARD]);
 
-      const leadPokemon = game.scene.getPlayerPokemon()!;
-      const enemyPokemon = game.scene.getEnemyPokemon()!;
+      const leadPokemon = game.scene.getPlayerPokemon();
+      expect(leadPokemon).not.toBe(undefined);
 
-      game.move.select(Moves.BURN_UP);
+      const enemyPokemon = game.scene.getEnemyPokemon();
+      expect(enemyPokemon).not.toBe(undefined);
 
-      await game.phaseInterceptor.to("MoveEffectPhase");
+      game.doAttack(getMovePosition(game.scene, 0, Moves.BURN_UP));
+
+      await game.phaseInterceptor.to(DamagePhase);
 
       expect(leadPokemon.turnData.hitCount).toBe(2);
       expect(enemyPokemon.hp).toBeGreaterThan(0);
       expect(leadPokemon.isOfType(Type.FIRE)).toBe(true);
 
-      await game.phaseInterceptor.to("BerryPhase", false);
+      await game.phaseInterceptor.to(BerryPhase, false);
 
       expect(leadPokemon.isOfType(Type.FIRE)).toBe(false);
-    }
+    }, TIMEOUT
   );
 
-  it(
+  test(
     "Moves boosted by this ability and Multi-Lens should strike 4 times",
     async () => {
-      game.override.moveset([Moves.TACKLE]);
-      game.override.startingHeldItems([{ name: "MULTI_LENS", count: 1 }]);
+      vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.TACKLE]);
+      vi.spyOn(Overrides, "STARTING_HELD_ITEMS_OVERRIDE", "get").mockReturnValue([{name: "MULTI_LENS", count: 1}]);
 
-      await game.classicMode.startBattle([Species.MAGIKARP]);
+      await game.startBattle([Species.CHARIZARD]);
 
-      const leadPokemon = game.scene.getPlayerPokemon()!;
+      const leadPokemon = game.scene.getPlayerPokemon();
+      expect(leadPokemon).not.toBe(undefined);
 
-      game.move.select(Moves.TACKLE);
+      const enemyPokemon = game.scene.getEnemyPokemon();
+      expect(enemyPokemon).not.toBe(undefined);
 
-      await game.phaseInterceptor.to("DamagePhase");
+      game.doAttack(getMovePosition(game.scene, 0, Moves.TACKLE));
+
+      await game.phaseInterceptor.to(DamagePhase);
 
       expect(leadPokemon.turnData.hitCount).toBe(4);
-    }
+    }, TIMEOUT
   );
 
-  it(
+  test(
     "Super Fang boosted by this ability and Multi-Lens should strike twice",
     async () => {
-      game.override.moveset([Moves.SUPER_FANG]);
-      game.override.startingHeldItems([{ name: "MULTI_LENS", count: 1 }]);
+      vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SUPER_FANG]);
+      vi.spyOn(Overrides, "STARTING_HELD_ITEMS_OVERRIDE", "get").mockReturnValue([{name: "MULTI_LENS", count: 1}]);
 
-      await game.classicMode.startBattle([Species.MAGIKARP]);
+      await game.startBattle([Species.CHARIZARD]);
 
-      const leadPokemon = game.scene.getPlayerPokemon()!;
-      const enemyPokemon = game.scene.getEnemyPokemon()!;
+      const leadPokemon = game.scene.getPlayerPokemon();
+      expect(leadPokemon).not.toBe(undefined);
 
-      game.move.select(Moves.SUPER_FANG);
-      await game.move.forceHit();
-
-      await game.phaseInterceptor.to("DamagePhase");
-
-      expect(leadPokemon.turnData.hitCount).toBe(2);
-
-      await game.phaseInterceptor.to("MoveEndPhase", false);
-
-      expect(enemyPokemon.hp).toBe(Math.ceil(enemyPokemon.getMaxHp() * 0.25));
-    }
-  );
-
-  it(
-    "Seismic Toss boosted by this ability and Multi-Lens should strike twice",
-    async () => {
-      game.override.moveset([Moves.SEISMIC_TOSS]);
-      game.override.startingHeldItems([{ name: "MULTI_LENS", count: 1 }]);
-
-      await game.classicMode.startBattle([Species.MAGIKARP]);
-
-      const leadPokemon = game.scene.getPlayerPokemon()!;
-      const enemyPokemon = game.scene.getEnemyPokemon()!;
+      const enemyPokemon = game.scene.getEnemyPokemon();
+      expect(enemyPokemon).not.toBe(undefined);
 
       const enemyStartingHp = enemyPokemon.hp;
 
-      game.move.select(Moves.SEISMIC_TOSS);
-      await game.move.forceHit();
+      game.doAttack(getMovePosition(game.scene, 0, Moves.SUPER_FANG));
 
-      await game.phaseInterceptor.to("DamagePhase");
+      await game.phaseInterceptor.to(MoveEffectPhase, false);
+      vi.spyOn(game.scene.getCurrentPhase() as MoveEffectPhase, "hitCheck").mockReturnValue(true);
+
+      await game.phaseInterceptor.to(DamagePhase);
 
       expect(leadPokemon.turnData.hitCount).toBe(2);
 
-      await game.phaseInterceptor.to("MoveEndPhase", false);
+      await game.phaseInterceptor.to(MoveEndPhase, false);
 
-      expect(enemyPokemon.hp).toBe(enemyStartingHp - 200);
-    }
+      expect(enemyPokemon.hp).toBe(Math.ceil(enemyStartingHp * 0.25));
+    }, TIMEOUT
   );
 
-  it(
+  test(
+    "Seismic Toss boosted by this ability and Multi-Lens should strike twice",
+    async () => {
+      vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SEISMIC_TOSS]);
+      vi.spyOn(Overrides, "STARTING_HELD_ITEMS_OVERRIDE", "get").mockReturnValue([{name: "MULTI_LENS", count: 1}]);
+
+      await game.startBattle([Species.CHARIZARD]);
+
+      const leadPokemon = game.scene.getPlayerPokemon();
+      expect(leadPokemon).not.toBe(undefined);
+
+      const enemyPokemon = game.scene.getEnemyPokemon();
+      expect(enemyPokemon).not.toBe(undefined);
+
+      const enemyStartingHp = enemyPokemon.hp;
+
+      game.doAttack(getMovePosition(game.scene, 0, Moves.SEISMIC_TOSS));
+
+      await game.phaseInterceptor.to(MoveEffectPhase, false);
+      vi.spyOn(game.scene.getCurrentPhase() as MoveEffectPhase, "hitCheck").mockReturnValue(true);
+
+      await game.phaseInterceptor.to(DamagePhase);
+
+      expect(leadPokemon.turnData.hitCount).toBe(2);
+
+      await game.phaseInterceptor.to(MoveEndPhase, false);
+
+      expect(enemyPokemon.hp).toBe(enemyStartingHp - 200);
+    }, TIMEOUT
+  );
+
+  test(
     "Hyper Beam boosted by this ability should strike twice, then recharge",
     async () => {
-      game.override.moveset([Moves.HYPER_BEAM]);
+      vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.HYPER_BEAM]);
 
-      await game.classicMode.startBattle([Species.MAGIKARP]);
+      await game.startBattle([Species.CHARIZARD]);
 
-      const leadPokemon = game.scene.getPlayerPokemon()!;
+      const leadPokemon = game.scene.getPlayerPokemon();
+      expect(leadPokemon).not.toBe(undefined);
 
-      game.move.select(Moves.HYPER_BEAM);
-      await game.move.forceHit();
+      const enemyPokemon = game.scene.getEnemyPokemon();
+      expect(enemyPokemon).not.toBe(undefined);
 
-      await game.phaseInterceptor.to("DamagePhase");
+      game.doAttack(getMovePosition(game.scene, 0, Moves.HYPER_BEAM));
+
+      await game.phaseInterceptor.to(MoveEffectPhase, false);
+      vi.spyOn(game.scene.getCurrentPhase() as MoveEffectPhase, "hitCheck").mockReturnValue(true);
+
+      await game.phaseInterceptor.to(DamagePhase);
 
       expect(leadPokemon.turnData.hitCount).toBe(2);
       expect(leadPokemon.getTag(BattlerTagType.RECHARGING)).toBeUndefined();
 
-      await game.phaseInterceptor.to("TurnEndPhase");
+      await game.phaseInterceptor.to(TurnEndPhase);
 
       expect(leadPokemon.getTag(BattlerTagType.RECHARGING)).toBeDefined();
-    }
+    }, TIMEOUT
   );
 
-  it(
+  /** TODO: Fix TRAPPED tag lapsing incorrectly, then run this test */
+  test.skip(
     "Anchor Shot boosted by this ability should only trap the target after the second hit",
     async () => {
-      game.override.moveset([Moves.ANCHOR_SHOT]);
+      vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.ANCHOR_SHOT]);
 
-      await game.classicMode.startBattle([Species.MAGIKARP]);
+      await game.startBattle([Species.CHARIZARD]);
 
-      const leadPokemon = game.scene.getPlayerPokemon()!;
-      const enemyPokemon = game.scene.getEnemyPokemon()!;
+      const leadPokemon = game.scene.getPlayerPokemon();
+      expect(leadPokemon).not.toBe(undefined);
 
-      game.move.select(Moves.ANCHOR_SHOT);
-      await game.move.forceHit();
+      const enemyPokemon = game.scene.getEnemyPokemon();
+      expect(enemyPokemon).not.toBe(undefined);
 
-      await game.phaseInterceptor.to("DamagePhase");
+      game.doAttack(getMovePosition(game.scene, 0, Moves.ANCHOR_SHOT));
+
+      await game.phaseInterceptor.to(MoveEffectPhase, false);
+      vi.spyOn(game.scene.getCurrentPhase() as MoveEffectPhase, "hitCheck").mockReturnValue(true);
+
+      await game.phaseInterceptor.to(DamagePhase);
 
       expect(leadPokemon.turnData.hitCount).toBe(2);
-      expect(enemyPokemon.getTag(BattlerTagType.TRAPPED)).toBeUndefined();
+      expect(enemyPokemon.getTag(BattlerTagType.TRAPPED)).toBeUndefined(); // Passes
 
-      await game.phaseInterceptor.to("MoveEndPhase");
-      expect(enemyPokemon.getTag(BattlerTagType.TRAPPED)).toBeDefined();
+      await game.phaseInterceptor.to(MoveEndPhase);
+      expect(enemyPokemon.getTag(BattlerTagType.TRAPPED)).toBeDefined(); // Passes
 
-      await game.phaseInterceptor.to("TurnEndPhase");
+      await game.phaseInterceptor.to(TurnEndPhase);
 
-      expect(enemyPokemon.getTag(BattlerTagType.TRAPPED)).toBeDefined();
-    }
+      expect(enemyPokemon.getTag(BattlerTagType.TRAPPED)).toBeDefined(); // Fails :(
+    }, TIMEOUT
   );
 
-  it(
+  test(
     "Smack Down boosted by this ability should only ground the target after the second hit",
     async () => {
-      game.override.moveset([Moves.SMACK_DOWN]);
+      vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SMACK_DOWN]);
 
-      await game.classicMode.startBattle([Species.MAGIKARP]);
+      await game.startBattle([Species.CHARIZARD]);
 
-      const leadPokemon = game.scene.getPlayerPokemon()!;
-      const enemyPokemon = game.scene.getEnemyPokemon()!;
+      const leadPokemon = game.scene.getPlayerPokemon();
+      expect(leadPokemon).not.toBe(undefined);
 
-      game.move.select(Moves.SMACK_DOWN);
-      await game.move.forceHit();
+      const enemyPokemon = game.scene.getEnemyPokemon();
+      expect(enemyPokemon).not.toBe(undefined);
 
-      await game.phaseInterceptor.to("DamagePhase");
+      game.doAttack(getMovePosition(game.scene, 0, Moves.SMACK_DOWN));
+
+      await game.phaseInterceptor.to(MoveEffectPhase, false);
+      vi.spyOn(game.scene.getCurrentPhase() as MoveEffectPhase, "hitCheck").mockReturnValue(true);
+
+      await game.phaseInterceptor.to(DamagePhase);
 
       expect(leadPokemon.turnData.hitCount).toBe(2);
       expect(enemyPokemon.getTag(BattlerTagType.IGNORE_FLYING)).toBeUndefined();
 
-      await game.phaseInterceptor.to("TurnEndPhase");
+      await game.phaseInterceptor.to(TurnEndPhase);
 
       expect(enemyPokemon.getTag(BattlerTagType.IGNORE_FLYING)).toBeDefined();
-    }
+    }, TIMEOUT
   );
 
-  it(
+  test(
     "U-turn boosted by this ability should strike twice before forcing a switch",
     async () => {
-      game.override.moveset([Moves.U_TURN]);
+      vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.U_TURN]);
 
-      await game.classicMode.startBattle([Species.MAGIKARP, Species.BLASTOISE]);
+      await game.startBattle([Species.CHARIZARD, Species.BLASTOISE]);
 
-      const leadPokemon = game.scene.getPlayerPokemon()!;
+      const leadPokemon = game.scene.getPlayerPokemon();
+      expect(leadPokemon).not.toBe(undefined);
 
-      game.move.select(Moves.U_TURN);
-      await game.move.forceHit();
+      const enemyPokemon = game.scene.getEnemyPokemon();
+      expect(enemyPokemon).not.toBe(undefined);
 
-      await game.phaseInterceptor.to("MoveEffectPhase");
+      game.doAttack(getMovePosition(game.scene, 0, Moves.U_TURN));
+
+      await game.phaseInterceptor.to(MoveEffectPhase, false);
+      vi.spyOn(game.scene.getCurrentPhase() as MoveEffectPhase, "hitCheck").mockReturnValue(true);
+
+      await game.phaseInterceptor.to(MoveEffectPhase);
       expect(leadPokemon.turnData.hitCount).toBe(2);
 
       // This will cause this test to time out if the switch was forced on the first hit.
-      await game.phaseInterceptor.to("MoveEffectPhase", false);
-    }
+      await game.phaseInterceptor.to(MoveEffectPhase, false);
+    }, TIMEOUT
   );
 
-  it(
+  test(
     "Wake-Up Slap boosted by this ability should only wake up the target after the second hit",
     async () => {
-      game.override.moveset([Moves.WAKE_UP_SLAP]).enemyStatusEffect(StatusEffect.SLEEP);
+      vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.WAKE_UP_SLAP]);
+      vi.spyOn(Overrides, "OPP_STATUS_OVERRIDE", "get").mockReturnValue(StatusEffect.SLEEP);
 
-      await game.classicMode.startBattle([Species.MAGIKARP]);
+      await game.startBattle([Species.CHARIZARD]);
 
-      const leadPokemon = game.scene.getPlayerPokemon()!;
-      const enemyPokemon = game.scene.getEnemyPokemon()!;
+      const leadPokemon = game.scene.getPlayerPokemon();
+      expect(leadPokemon).not.toBe(undefined);
 
-      game.move.select(Moves.WAKE_UP_SLAP);
-      await game.move.forceHit();
+      const enemyPokemon = game.scene.getEnemyPokemon();
+      expect(enemyPokemon).not.toBe(undefined);
 
-      await game.phaseInterceptor.to("DamagePhase");
+      game.doAttack(getMovePosition(game.scene, 0, Moves.WAKE_UP_SLAP));
+
+      await game.phaseInterceptor.to(MoveEffectPhase, false);
+      vi.spyOn(game.scene.getCurrentPhase() as MoveEffectPhase, "hitCheck").mockReturnValue(true);
+
+      await game.phaseInterceptor.to(DamagePhase);
 
       expect(leadPokemon.turnData.hitCount).toBe(2);
       expect(enemyPokemon.status?.effect).toBe(StatusEffect.SLEEP);
 
-      await game.phaseInterceptor.to("BerryPhase", false);
+      await game.phaseInterceptor.to(BerryPhase, false);
 
       expect(enemyPokemon.status?.effect).toBeUndefined();
-    }
+    }, TIMEOUT
   );
 
-  it(
-    "should not cause user to hit into King's Shield more than once",
+  test(
+    "ability should not cause user to hit into King's Shield more than once",
     async () => {
-      game.override.moveset([Moves.TACKLE]);
-      game.override.enemyMoveset([Moves.KINGS_SHIELD]);
+      vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.TACKLE]);
+      vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.KINGS_SHIELD,Moves.KINGS_SHIELD,Moves.KINGS_SHIELD,Moves.KINGS_SHIELD]);
 
-      await game.classicMode.startBattle([Species.MAGIKARP]);
+      await game.startBattle([Species.CHARIZARD]);
 
-      const leadPokemon = game.scene.getPlayerPokemon()!;
+      const leadPokemon = game.scene.getPlayerPokemon();
+      expect(leadPokemon).not.toBe(undefined);
 
-      game.move.select(Moves.TACKLE);
+      const enemyPokemon = game.scene.getEnemyPokemon();
+      expect(enemyPokemon).not.toBe(undefined);
 
-      await game.phaseInterceptor.to("BerryPhase", false);
+      game.doAttack(getMovePosition(game.scene, 0, Moves.TACKLE));
 
-      expect(leadPokemon.getStatStage(Stat.ATK)).toBe(-1);
-    }
+      await game.phaseInterceptor.to(BerryPhase, false);
+
+      expect(leadPokemon.summonData.battleStats[BattleStat.ATK]).toBe(-1);
+    }, TIMEOUT
   );
 
-  it(
-    "should not cause user to hit into Storm Drain more than once",
+  test(
+    "ability should not cause user to hit into Storm Drain more than once",
     async () => {
-      game.override.moveset([Moves.WATER_GUN]);
-      game.override.enemyAbility(Abilities.STORM_DRAIN);
+      vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.WATER_GUN]);
+      vi.spyOn(Overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.STORM_DRAIN);
 
-      await game.classicMode.startBattle([Species.MAGIKARP]);
+      await game.startBattle([Species.CHARIZARD]);
 
-      const enemyPokemon = game.scene.getEnemyPokemon()!;
+      const leadPokemon = game.scene.getPlayerPokemon();
+      expect(leadPokemon).not.toBe(undefined);
 
-      game.move.select(Moves.WATER_GUN);
+      const enemyPokemon = game.scene.getEnemyPokemon();
+      expect(enemyPokemon).not.toBe(undefined);
 
-      await game.phaseInterceptor.to("BerryPhase", false);
+      game.doAttack(getMovePosition(game.scene, 0, Moves.WATER_GUN));
 
-      expect(enemyPokemon.getStatStage(Stat.SPATK)).toBe(1);
-    }
+      await game.phaseInterceptor.to(BerryPhase, false);
+
+      expect(enemyPokemon.summonData.battleStats[BattleStat.SPATK]).toBe(1);
+    }, TIMEOUT
   );
 
-  it(
-    "should not apply to multi-target moves with Multi-Lens",
+  test(
+    "ability should not apply to multi-target moves with Multi-Lens",
     async () => {
-      game.override.battleType("double");
-      game.override.moveset([Moves.EARTHQUAKE, Moves.SPLASH]);
-      game.override.passiveAbility(Abilities.LEVITATE);
-      game.override.startingHeldItems([{ name: "MULTI_LENS", count: 1 }]);
+      vi.spyOn(Overrides, "DOUBLE_BATTLE_OVERRIDE", "get").mockReturnValue(true);
+      vi.spyOn(Overrides, "SINGLE_BATTLE_OVERRIDE", "get").mockReturnValue(false);
+      vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.EARTHQUAKE, Moves.SPLASH]);
+      vi.spyOn(Overrides, "STARTING_HELD_ITEMS_OVERRIDE", "get").mockReturnValue([{name: "MULTI_LENS", count: 1}]);
 
-      await game.classicMode.startBattle([Species.MAGIKARP, Species.FEEBAS]);
+      await game.startBattle([Species.CHARIZARD, Species.PIDGEOT]);
+
+      const playerPokemon = game.scene.getPlayerField();
+      expect(playerPokemon.length).toBe(2);
+      playerPokemon.forEach(p => expect(p).not.toBe(undefined));
 
       const enemyPokemon = game.scene.getEnemyField();
+      expect(enemyPokemon.length).toBe(2);
+      enemyPokemon.forEach(p => expect(p).not.toBe(undefined));
 
       const enemyStartingHp = enemyPokemon.map(p => p.hp);
 
-      game.move.select(Moves.EARTHQUAKE);
-      game.move.select(Moves.SPLASH, 1);
+      game.doAttack(getMovePosition(game.scene, 0, Moves.EARTHQUAKE));
+      await game.phaseInterceptor.to(CommandPhase);
 
-      await game.phaseInterceptor.to("DamagePhase");
+      game.doAttack(getMovePosition(game.scene, 1, Moves.SPLASH));
+
+      await game.phaseInterceptor.to(MoveEffectPhase, false);
+      vi.spyOn(game.scene, "randBattleSeedInt").mockReturnValue(15);
+
+      await game.phaseInterceptor.to(DamagePhase);
       const enemyFirstHitDamage = enemyStartingHp.map((hp, i) => hp - enemyPokemon[i].hp);
 
-      await game.phaseInterceptor.to("BerryPhase", false);
+      await game.phaseInterceptor.to(BerryPhase, false);
 
-      enemyPokemon.forEach((p, i) => expect(enemyStartingHp[i] - p.hp).toBe(2 * enemyFirstHitDamage[i]));
-    }
+      enemyPokemon.forEach((p, i) => expect(enemyStartingHp[i] - p.hp).toBe(2*enemyFirstHitDamage[i]));
+
+    }, TIMEOUT
   );
 });
