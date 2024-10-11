@@ -1938,12 +1938,21 @@ export class IncrementMovePriorityAttr extends MoveAttr {
  * @see {@linkcode apply}
  */
 export class MultiHitAttr extends MoveAttr {
+  /** This move's intrinsic multi-hit type. It should never be modified. */
+  private readonly intrinsicMultiHitType: MultiHitType;
+  /** This move's current multi-hit type. It may be temporarily modified by abilities (e.g., Battle Bond). */
   private multiHitType: MultiHitType;
 
   constructor(multiHitType?: MultiHitType) {
     super();
 
-    this.multiHitType = multiHitType !== undefined ? multiHitType : MultiHitType._2_TO_5;
+    this.intrinsicMultiHitType = multiHitType !== undefined ? multiHitType : MultiHitType._2_TO_5;
+    this.multiHitType = this.intrinsicMultiHitType;
+  }
+
+  // Currently used by `battle_bond.test.ts`
+  getMultiHitType(): MultiHitType {
+    return this.multiHitType;
   }
 
   /**
@@ -1957,7 +1966,7 @@ export class MultiHitAttr extends MoveAttr {
    * @returns True
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    const hitType = new Utils.NumberHolder(this.multiHitType);
+    const hitType = new Utils.NumberHolder(this.intrinsicMultiHitType);
     applyMoveAttrs(ChangeMultiHitTypeAttr, user, target, move, hitType);
     this.multiHitType = hitType.value;
 
@@ -4107,11 +4116,11 @@ export class StatusCategoryOnAllyAttr extends VariableMoveCategoryAttr {
    * @param user {@linkcode Pokemon} using the move
    * @param target {@linkcode Pokemon} target of the move
    * @param move {@linkcode Move} with this attribute
-   * @param args [0] {@linkcode Utils.IntegerHolder} The category of the move
+   * @param args [0] {@linkcode Utils.NumberHolder} The category of the move
    * @returns true if the function succeeds
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    const category = (args[0] as Utils.IntegerHolder);
+    const category = (args[0] as Utils.NumberHolder);
 
     if (user.getAlly() === target) {
       category.value = MoveCategory.STATUS;
@@ -4547,18 +4556,19 @@ export class WaterSuperEffectTypeMultiplierAttr extends VariableMoveTypeMultipli
 export class IceNoEffectTypeAttr extends VariableMoveTypeMultiplierAttr {
   /**
    * Checks to see if the Target is Ice-Type or not. If so, the move will have no effect.
-   * @param {Pokemon} user N/A
-   * @param {Pokemon} target Pokemon that is being checked whether Ice-Type or not.
-   * @param {Move} move N/A
-   * @param {any[]} args Sets to false if the target is Ice-Type, so it should do no damage/no effect.
-   * @returns {boolean} Returns true if move is successful, false if Ice-Type.
+   * @param user n/a
+   * @param target The {@linkcode Pokemon} targeted by the move
+   * @param move n/a
+   * @param args `[0]` a {@linkcode Utils.NumberHolder | NumberHolder} containing a type effectiveness multiplier
+   * @returns `true` if this Ice-type immunity applies; `false` otherwise
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    const multiplier = args[0] as Utils.NumberHolder;
     if (target.isOfType(Type.ICE)) {
-      (args[0] as Utils.BooleanHolder).value = false;
-      return false;
+      multiplier.value = 0;
+      return true;
     }
-    return true;
+    return false;
   }
 }
 
@@ -4835,14 +4845,14 @@ export class GulpMissileTagAttr extends MoveEffectAttr {
 
   /**
    * Adds BattlerTagType from GulpMissileTag based on the Pokemon's HP ratio.
-   * @param {Pokemon} user The Pokemon using the move.
-   * @param {Pokemon} target The Pokemon being targeted by the move.
-   * @param {Move} move The move being used.
-   * @param {any[]} args Additional arguments, if any.
+   * @param user The Pokemon using the move.
+   * @param _target N/A
+   * @param move The move being used.
+   * @param _args N/A
    * @returns Whether the BattlerTag is applied.
    */
-  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean | Promise<boolean> {
-    if (!super.apply(user, target, move, args)) {
+  apply(user: Pokemon, _target: Pokemon, move: Move, _args: any[]): boolean {
+    if (!super.apply(user, _target, move, _args)) {
       return false;
     }
 
@@ -7833,7 +7843,9 @@ export function initMoves() {
       .attr(RandomMovesetMoveAttr, true)
       .ignoresVirtual(),
     new SelfStatusMove(Moves.INGRAIN, Type.GRASS, -1, 20, -1, 0, 3)
-      .attr(AddBattlerTagAttr, BattlerTagType.INGRAIN, true, true),
+      .attr(AddBattlerTagAttr, BattlerTagType.INGRAIN, true, true)
+      .attr(AddBattlerTagAttr, BattlerTagType.IGNORE_FLYING, true, true)
+      .attr(RemoveBattlerTagAttr, [ BattlerTagType.FLOATING ], true),
     new AttackMove(Moves.SUPERPOWER, Type.FIGHTING, MoveCategory.PHYSICAL, 120, 100, 5, -1, 0, 3)
       .attr(StatStageChangeAttr, [ Stat.ATK, Stat.DEF ], -1, true),
     new SelfStatusMove(Moves.MAGIC_COAT, Type.PSYCHIC, -1, 15, -1, 4, 3)
@@ -8167,8 +8179,8 @@ export function initMoves() {
     new SelfStatusMove(Moves.AQUA_RING, Type.WATER, -1, 20, -1, 0, 4)
       .attr(AddBattlerTagAttr, BattlerTagType.AQUA_RING, true, true),
     new SelfStatusMove(Moves.MAGNET_RISE, Type.ELECTRIC, -1, 10, -1, 0, 4)
-      .attr(AddBattlerTagAttr, BattlerTagType.MAGNET_RISEN, true, true)
-      .condition((user, target, move) => !user.scene.arena.getTag(ArenaTagType.GRAVITY) && [ BattlerTagType.MAGNET_RISEN, BattlerTagType.IGNORE_FLYING, BattlerTagType.INGRAIN ].every((tag) => !user.getTag(tag))),
+      .attr(AddBattlerTagAttr, BattlerTagType.FLOATING, true, true)
+      .condition((user, target, move) => !user.scene.arena.getTag(ArenaTagType.GRAVITY) && [ BattlerTagType.FLOATING, BattlerTagType.IGNORE_FLYING, BattlerTagType.INGRAIN ].every((tag) => !user.getTag(tag))),
     new AttackMove(Moves.FLARE_BLITZ, Type.FIRE, MoveCategory.PHYSICAL, 120, 100, 15, 10, 0, 4)
       .attr(RecoilAttr, false, 0.33)
       .attr(HealStatusEffectAttr, true, StatusEffect.FREEZE)
@@ -8393,7 +8405,11 @@ export function initMoves() {
       .attr(AddBattlerTagAttr, BattlerTagType.CENTER_OF_ATTENTION, true),
     new StatusMove(Moves.TELEKINESIS, Type.PSYCHIC, -1, 15, -1, 0, 5)
       .condition(failOnGravityCondition)
-      .unimplemented(),
+      .condition((_user, target, _move) => ![ Species.DIGLETT, Species.DUGTRIO, Species.ALOLA_DIGLETT, Species.ALOLA_DUGTRIO, Species.SANDYGAST, Species.PALOSSAND, Species.WIGLETT, Species.WUGTRIO ].includes(target.species.speciesId))
+      .condition((_user, target, _move) => !(target.species.speciesId === Species.GENGAR && target.getFormKey() === "mega"))
+      .condition((_user, target, _move) => Utils.isNullOrUndefined(target.getTag(BattlerTagType.INGRAIN)) && Utils.isNullOrUndefined(target.getTag(BattlerTagType.IGNORE_FLYING)))
+      .attr(AddBattlerTagAttr, BattlerTagType.TELEKINESIS, false, true, 3)
+      .attr(AddBattlerTagAttr, BattlerTagType.FLOATING, false, true, 3),
     new StatusMove(Moves.MAGIC_ROOM, Type.PSYCHIC, -1, 10, -1, 0, 5)
       .ignoresProtect()
       .target(MoveTarget.BOTH_SIDES)
@@ -8401,7 +8417,7 @@ export function initMoves() {
     new AttackMove(Moves.SMACK_DOWN, Type.ROCK, MoveCategory.PHYSICAL, 50, 100, 15, 100, 0, 5)
       .attr(AddBattlerTagAttr, BattlerTagType.IGNORE_FLYING, false, false, 1, 1, true)
       .attr(AddBattlerTagAttr, BattlerTagType.INTERRUPTED)
-      .attr(RemoveBattlerTagAttr, [ BattlerTagType.FLYING, BattlerTagType.MAGNET_RISEN ])
+      .attr(RemoveBattlerTagAttr, [ BattlerTagType.FLYING, BattlerTagType.FLOATING, BattlerTagType.TELEKINESIS ])
       .attr(HitsTagAttr, BattlerTagType.FLYING)
       .makesContact(false),
     new AttackMove(Moves.STORM_THROW, Type.FIGHTING, MoveCategory.PHYSICAL, 60, 100, 10, -1, 0, 5)
@@ -8834,9 +8850,9 @@ export function initMoves() {
       .attr(NeutralDamageAgainstFlyingTypeMultiplierAttr)
       .attr(AddBattlerTagAttr, BattlerTagType.IGNORE_FLYING, false, false, 1, 1, true)
       .attr(HitsTagAttr, BattlerTagType.FLYING)
-      .attr(HitsTagAttr, BattlerTagType.MAGNET_RISEN)
+      .attr(HitsTagAttr, BattlerTagType.FLOATING)
       .attr(AddBattlerTagAttr, BattlerTagType.INTERRUPTED)
-      .attr(RemoveBattlerTagAttr, [ BattlerTagType.FLYING, BattlerTagType.MAGNET_RISEN ])
+      .attr(RemoveBattlerTagAttr, [ BattlerTagType.FLYING, BattlerTagType.FLOATING, BattlerTagType.TELEKINESIS ])
       .makesContact(false)
       .target(MoveTarget.ALL_NEAR_ENEMIES),
     new AttackMove(Moves.THOUSAND_WAVES, Type.GROUND, MoveCategory.PHYSICAL, 90, 100, 10, -1, 0, 6)

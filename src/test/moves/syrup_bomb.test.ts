@@ -1,4 +1,3 @@
-import { allMoves } from "#app/data/move";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import { Abilities } from "#enums/abilities";
@@ -7,7 +6,7 @@ import { Stat } from "#enums/stat";
 import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { BattlerIndex } from "#app/battle";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Moves - SYRUP BOMB", () => {
   let phaserGame: Phaser.Game;
@@ -26,20 +25,21 @@ describe("Moves - SYRUP BOMB", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .starterSpecies(Species.MAGIKARP)
+      .battleType("single")
       .enemySpecies(Species.SNORLAX)
+      .enemyAbility(Abilities.BALL_FETCH)
+      .ability(Abilities.BALL_FETCH)
       .startingLevel(30)
       .enemyLevel(100)
       .moveset([ Moves.SYRUP_BOMB, Moves.SPLASH ])
       .enemyMoveset(Moves.SPLASH);
-    vi.spyOn(allMoves[Moves.SYRUP_BOMB], "accuracy", "get").mockReturnValue(100);
   });
 
   //Bulbapedia Reference: https://bulbapedia.bulbagarden.net/wiki/syrup_bomb_(move)
 
   it("decreases the target Pokemon's speed stat once per turn for 3 turns",
     async () => {
-      await game.startBattle([ Species.MAGIKARP ]);
+      await game.classicMode.startBattle([ Species.MAGIKARP ]);
 
       const targetPokemon = game.scene.getEnemyPokemon()!;
       expect(targetPokemon.getStatStage(Stat.SPD)).toBe(0);
@@ -66,7 +66,7 @@ describe("Moves - SYRUP BOMB", () => {
   it("does not affect Pokemon with the ability Bulletproof",
     async () => {
       game.override.enemyAbility(Abilities.BULLETPROOF);
-      await game.startBattle([ Species.MAGIKARP ]);
+      await game.classicMode.startBattle([ Species.MAGIKARP ]);
 
       const targetPokemon = game.scene.getEnemyPokemon()!;
 
@@ -79,4 +79,18 @@ describe("Moves - SYRUP BOMB", () => {
       expect(targetPokemon.getStatStage(Stat.SPD)).toBe(0);
     }
   );
+
+  it("stops lowering the target's speed if the user leaves the field", async () => {
+    await game.classicMode.startBattle([ Species.FEEBAS, Species.MILOTIC ]);
+
+    game.move.select(Moves.SYRUP_BOMB);
+    await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY ]);
+    await game.move.forceHit();
+    await game.toNextTurn();
+
+    game.doSwitchPokemon(1);
+    await game.toNextTurn();
+
+    expect(game.scene.getEnemyPokemon()!.getStatStage(Stat.SPD)).toBe(-1);
+  });
 });
