@@ -77,7 +77,7 @@ export abstract class ArenaTag {
    * @param scene medium to retrieve the source Pokemon
    * @returns The source {@linkcode Pokemon} or `null` if none is found
    */
-  public retrieveSource(scene: BattleScene): Pokemon | null {
+  getSourcePokemon(scene: BattleScene): Pokemon | null {
     return this.sourceId ? scene.getPokemonById(this.sourceId) : null;
   }
 
@@ -86,7 +86,7 @@ export abstract class ArenaTag {
    * @param scene - medium to retrieve the involved Pokemon
    * @returns list of PlayerPokemon or EnemyPokemon on the field
    */
-  public retrieveField(scene: BattleScene): Pokemon[] {
+  getAffectedPokemon(scene: BattleScene): Pokemon[] {
     switch (this.side) {
     case ArenaTagSide.PLAYER:
       return scene.getPlayerField() ?? [];
@@ -1012,10 +1012,10 @@ class ImprisonTag extends ArenaTrapTag {
    * @param arena
    */
   override onAdd({ scene }: Arena) {
-    const source = this.retrieveSource(scene);
+    const source = this.getSourcePokemon(scene);
     if (source) {
-      const party = this.retrieveField(scene);
-      party?.forEach((p: Pokemon) => {
+      const party = this.getAffectedPokemon(scene);
+      party?.forEach((p: Pokemon ) => {
         if (p.isAllowedInBattle()) {
           p.addTag(BattlerTagType.IMPRISON, 1, Moves.IMPRISON, this.sourceId);
         }
@@ -1030,7 +1030,7 @@ class ImprisonTag extends ArenaTrapTag {
    * @returns `true` if the source of the tag is still active on the field | `false` if not
    */
   override lapse({ scene }: Arena): boolean {
-    const source = this.retrieveSource(scene);
+    const source = this.getSourcePokemon(scene);
     return source ? source.isActive(true) : false;
   }
 
@@ -1040,7 +1040,7 @@ class ImprisonTag extends ArenaTrapTag {
    * @returns `true`
    */
   override activateTrap(pokemon: Pokemon): boolean {
-    const source = this.retrieveSource(pokemon.scene);
+    const source = this.getSourcePokemon(pokemon.scene);
     if (source && source.isActive(true) && pokemon.isAllowedInBattle()) {
       pokemon.addTag(BattlerTagType.IMPRISON, 1, Moves.IMPRISON, this.sourceId);
     }
@@ -1052,7 +1052,7 @@ class ImprisonTag extends ArenaTrapTag {
    * @param arena
    */
   override onRemove({ scene }: Arena): void {
-    const party = this.retrieveField(scene);
+    const party = this.getAffectedPokemon(scene);
     party?.forEach((p: Pokemon) => {
       p.removeTag(BattlerTagType.IMPRISON);
     });

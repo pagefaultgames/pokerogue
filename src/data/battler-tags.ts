@@ -97,7 +97,7 @@ export class BattlerTag {
    * @param scene medium to retrieve the source Pokemon
    * @returns The source {@linkcode Pokemon} or `null` if none is found
    */
-  public retrieveSource(scene: BattleScene): Pokemon | null {
+  getSourcePokemon(scene: BattleScene): Pokemon | null {
     return this.sourceId ? scene.getPokemonById(this.sourceId) : null;
   }
 }
@@ -2625,7 +2625,7 @@ export class ImprisonTag extends MoveRestrictionBattlerTag {
    * @returns `true` if the source is still active
    */
   public override lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
-    const source = this.retrieveSource(pokemon.scene);
+    const source = this.getSourcePokemon(pokemon.scene);
     if (source) {
       if (lapseType === BattlerTagLapseType.PRE_MOVE) {
         return super.lapse(pokemon, lapseType) && source.isActive(true);
@@ -2643,7 +2643,7 @@ export class ImprisonTag extends MoveRestrictionBattlerTag {
    * @returns `false` if either condition is not met
    */
   public override isMoveRestricted(move: Moves, user: Pokemon): boolean {
-    const source = this.retrieveSource(user.scene);
+    const source = this.getSourcePokemon(user.scene);
     if (source) {
       const sourceMoveset = source.getMoveset().map(m => m!.moveId);
       return sourceMoveset?.includes(move) && source.isActive(true);
