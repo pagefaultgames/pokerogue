@@ -5152,7 +5152,7 @@ export class AddArenaTagAttr extends MoveEffectAttr {
   private removeOnOverlap: boolean;
   public selfSideTarget: boolean;
 
-  constructor(tagType: ArenaTagType, turnCount?: integer | null, failOnOverlap: boolean = false, selfSideTarget: boolean = false, removeOnOverlap: boolean = false) {
+  constructor(tagType: ArenaTagType, turnCount?: integer | null, failOnOverlap: boolean = false, removeOnOverlap: boolean = false, selfSideTarget: boolean = false) {
     super(true, MoveEffectTrigger.POST_APPLY);
 
     this.tagType = tagType;
@@ -5169,11 +5169,11 @@ export class AddArenaTagAttr extends MoveEffectAttr {
 
     if (this.removeOnOverlap && user.scene.arena.getTag(this.tagType)) {
       user.scene.arena.removeTag(this.tagType);
-    } else {
-      if ((move.chance < 0 || move.chance === 100 || user.randSeedInt(100) < move.chance) && user.getLastXMoves(1)[0].result === MoveResult.SUCCESS) {
-        user.scene.arena.addTag(this.tagType, this.turnCount, move.id, user.id, (this.selfSideTarget ? user : target).isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY);
-        return true;
-      }
+    }
+
+    if ((move.chance < 0 || move.chance === 100 || user.randSeedInt(100) < move.chance) && user.getLastXMoves(1)[0].result === MoveResult.SUCCESS) {
+      user.scene.arena.addTag(this.tagType, this.turnCount, move.id, user.id, (this.selfSideTarget ? user : target).isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY);
+      return true;
     }
 
     return false;
@@ -8288,7 +8288,7 @@ export function initMoves() {
       .attr(RemoveScreensAttr, false)
       .attr(RemoveArenaTrapAttr, true),
     new StatusMove(Moves.TRICK_ROOM, Type.PSYCHIC, -1, 5, -1, -7, 4)
-      .attr(AddArenaTagAttr, ArenaTagType.TRICK_ROOM, 5, false, false, true)
+      .attr(AddArenaTagAttr, ArenaTagType.TRICK_ROOM, 5, false, true)
       .ignoresProtect()
       .target(MoveTarget.BOTH_SIDES),
     new AttackMove(Moves.DRACO_METEOR, Type.DRAGON, MoveCategory.SPECIAL, 130, 90, 5, -1, 0, 4)
