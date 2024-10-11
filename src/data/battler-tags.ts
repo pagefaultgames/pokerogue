@@ -97,7 +97,7 @@ export class BattlerTag {
    * @param scene medium to retrieve the source Pokemon
    * @returns The source {@linkcode Pokemon} or `null` if none is found
    */
-  getSourcePokemon(scene: BattleScene): Pokemon | null {
+  public getSourcePokemon(scene: BattleScene): Pokemon | null {
     return this.sourceId ? scene.getPokemonById(this.sourceId) : null;
   }
 }
