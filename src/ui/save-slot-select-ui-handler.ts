@@ -13,6 +13,7 @@ import { addWindow } from "./ui-theme";
 import { RunDisplayMode } from "#app/ui/run-info-ui-handler";
 
 const SESSION_SLOTS_COUNT = 5;
+const SLOTS_ON_SCREEN = 3;
 
 export enum SaveSlotUiMode {
   LOAD,
@@ -159,9 +160,9 @@ export default class SaveSlotSelectUiHandler extends MessageUiHandler {
         }
         break;
       case Button.DOWN:
-        if (this.cursor < 2) {
-          success = this.setCursor(this.cursor + 1, this.cursor);
-        } else if (this.scrollCursor < SESSION_SLOTS_COUNT - 3) {
+        if (this.cursor < (SLOTS_ON_SCREEN - 1)) {
+          success = this.setCursor(this.cursor + 1, cursorPosition);
+        } else if (this.scrollCursor < SESSION_SLOTS_COUNT - SLOTS_ON_SCREEN) {
           success = this.setScrollCursor(this.scrollCursor + 1, cursorPosition);
         }
         break;
@@ -213,12 +214,12 @@ export default class SaveSlotSelectUiHandler extends MessageUiHandler {
   }
 
   /**
-   * setCursor takes user navigation as an input and positions the cursor accordingly
-   * @param cursor the index provided to the cursor
-   * @param prevCursor the previous index occupied by the cursor - optional
+   * Move the cursor to a new position and update the view accordingly
+   * @param cursor the new cursor position, between `0` and `SLOTS_ON_SCREEN - 1`
+   * @param prevSlotIndex index of the previous session occupied by the cursor, between `0` and `SESSION_SLOTS_COUNT - 1` - optional
    * @returns `true` if the cursor position has changed | `false` if it has not
    */
-  override setCursor(cursor: integer, prevCursor?: integer): boolean {
+  override setCursor(cursor: integer, prevSlotIndex?: integer): boolean {
     const changed = super.setCursor(cursor);
 
     if (!this.cursorObj) {
@@ -245,21 +246,20 @@ export default class SaveSlotSelectUiHandler extends MessageUiHandler {
       }
       this.setArrowVisibility(hasData);
     }
-    if (!Utils.isNullOrUndefined(prevCursor)) {
-      this.revertSessionSlot(prevCursor);
+    if (!Utils.isNullOrUndefined(prevSlotIndex)) {
+      this.revertSessionSlot(prevSlotIndex);
     }
 
     return changed;
   }
 
   /**
-   * Helper function that resets the session slot position to its default central position
-   * @param prevCursor the previous location of the cursor
+   * Helper function that resets the given session slot to its default central position
    */
-  revertSessionSlot(prevCursor: integer): void {
-    const sessionSlot = this.sessionSlots[prevCursor];
+  revertSessionSlot(slotIndex: integer): void {
+    const sessionSlot = this.sessionSlots[slotIndex];
     if (sessionSlot) {
-      sessionSlot.setPosition(0, prevCursor * 56);
+      sessionSlot.setPosition(0, slotIndex * 56);
     }
   }
 
@@ -274,12 +274,18 @@ export default class SaveSlotSelectUiHandler extends MessageUiHandler {
     }
   }
 
-  setScrollCursor(scrollCursor: integer, priorCursor?: integer): boolean {
+  /**
+   * Move the scrolling cursor to a new position and update the view accordingly
+   * @param scrollCursor the new cursor position, between `0` and `SESSION_SLOTS_COUNT - SLOTS_ON_SCREEN`
+   * @param prevSlotIndex index of the previous slot occupied by the cursor, between `0` and `SESSION_SLOTS_COUNT-1` - optional
+   * @returns `true` if the cursor position has changed | `false` if it has not
+   */
+  setScrollCursor(scrollCursor: integer, prevSlotIndex?: integer): boolean {
     const changed = scrollCursor !== this.scrollCursor;
 
     if (changed) {
       this.scrollCursor = scrollCursor;
-      this.setCursor(this.cursor, priorCursor);
+      this.setCursor(this.cursor, prevSlotIndex);
       this.scene.tweens.add({
         targets: this.sessionSlotsContainer,
         y: this.sessionSlotsContainerInitialY - 56 * scrollCursor,
@@ -294,6 +300,7 @@ export default class SaveSlotSelectUiHandler extends MessageUiHandler {
   clear() {
     super.clear();
     this.saveSlotSelectContainer.setVisible(false);
+    this.setScrollCursor(0);
     this.eraseCursor();
     this.saveSlotSelectCallback = null;
     this.clearSessionSlots();
