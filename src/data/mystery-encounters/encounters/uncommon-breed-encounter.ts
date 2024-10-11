@@ -125,6 +125,7 @@ export const UncommonBreedEncounter: MysteryEncounter =
       scene.time.delayedCall(500, () => scene.playSound("battle_anims/PRSFX- Spotlight2"));
       return true;
     })
+    .setLocalizationKey(`${namespace}`)
     .withTitle(`${namespace}:title`)
     .withDescription(`${namespace}:description`)
     .withQuery(`${namespace}:query`)
