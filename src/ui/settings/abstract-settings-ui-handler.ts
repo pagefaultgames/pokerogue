@@ -2,7 +2,7 @@ import BattleScene from "#app/battle-scene";
 import { hasTouchscreen, isMobile } from "#app/touch-controls";
 import { TextStyle, addTextObject } from "#app/ui/text";
 import { Mode } from "#app/ui/ui";
-import UiHandler from "#app/ui/ui-handler";
+import MessageUiHandler from "#app/ui/message-ui-handler";
 import { addWindow } from "#app/ui/ui-theme";
 import { ScrollBar } from "#app/ui/scroll-bar";
 import { Button } from "#enums/buttons";
@@ -15,10 +15,11 @@ import i18next from "i18next";
 /**
  * Abstract class for handling UI elements related to settings.
  */
-export default class AbstractSettingsUiHandler extends UiHandler {
+export default class AbstractSettingsUiHandler extends MessageUiHandler {
   private settingsContainer: Phaser.GameObjects.Container;
   private optionsContainer: Phaser.GameObjects.Container;
   private navigationContainer: NavigationMenu;
+  private settingsMessageBoxContainer: Phaser.GameObjects.Container;
 
   private scrollCursor: number;
   private scrollBar: ScrollBar;
@@ -34,7 +35,7 @@ export default class AbstractSettingsUiHandler extends UiHandler {
 
   private cursorObj: Phaser.GameObjects.NineSlice | null;
 
-  private reloadSettings: Array<Setting>;
+  private reloadSettings: Array<number | null>;
   private reloadRequired: boolean;
 
   protected rowsToDisplay: number;
@@ -93,7 +94,6 @@ export default class AbstractSettingsUiHandler extends UiHandler {
     this.settingLabels = [];
     this.optionValueLabels = [];
 
-    this.reloadSettings = this.settings.filter(s => s?.requireReload);
 
     this.settings
       .forEach((setting, s) => {
@@ -145,6 +145,22 @@ export default class AbstractSettingsUiHandler extends UiHandler {
     this.settingsContainer.add(actionText);
     this.settingsContainer.add(cancelText);
 
+    this.settingsMessageBoxContainer = this.scene.add.container(0, 130);
+    this.settingsMessageBoxContainer.setName("settings-message-box");
+    this.settingsMessageBoxContainer.setVisible(false);
+
+    const settingsMessageBox = addWindow(this.scene, 0, 0, (this.scene.game.canvas.width / 6) - 2, 48);
+    this.settingsMessageBoxContainer.add(settingsMessageBox);
+
+    const messageText = addTextObject(this.scene, 8, 8, "", TextStyle.WINDOW, { maxLines: 2 });
+    messageText.setWordWrapWidth(this.scene.game.canvas.width - 2);
+    messageText.setName("settings-message");
+    messageText.setOrigin(0, 0);
+
+    this.settingsMessageBoxContainer.add(messageText);
+    this.message = messageText;
+    this.settingsContainer.add(this.settingsMessageBoxContainer);
+
     ui.add(this.settingsContainer);
 
     this.setCursor(0);
@@ -189,6 +205,12 @@ export default class AbstractSettingsUiHandler extends UiHandler {
     const settings: object = localStorage.hasOwnProperty(this.localStorageKey) ? JSON.parse(localStorage.getItem(this.localStorageKey)!) : {}; // TODO: is this bang correct?
 
     this.settings.forEach((setting, s) => this.setOptionCursor(s, settings.hasOwnProperty(setting.key) ? settings[setting.key] : this.settings[s].default));
+    this.reloadSettings = this.settings.map((setting, s) => {
+      if (setting.requireReload) {
+        return settings.hasOwnProperty(setting.key) ? settings[setting.key] : this.settings[s].default;
+      }
+      return null;
+    });
 
     this.settingsContainer.setVisible(true);
     this.setCursor(0);
@@ -216,11 +238,44 @@ export default class AbstractSettingsUiHandler extends UiHandler {
 
     let success = false;
 
+    /**
+      * Checks if the game is in a state where progress may be lost due to changes options with reloadRequired while at battle.
+      * @returns `false` if the warning process is triggered, `true` otherwise.
+    */
+    const progressLosing = (): boolean => {
+      if (this.reloadRequired && this.scene.currentBattle && this.scene.currentBattle.turn > 1) {
+
+        this.showText(i18next.t("menuUiHandler:losingProgressionWarning"), null, () => {
+          ui.setOverlayMode(Mode.CONFIRM, () => {
+            NavigationManager.getInstance().reset();
+            // revert confirm mode.
+            this.scene.ui.revertMode();
+            // revert settings mode.
+            this.scene.ui.revertMode();
+          }, () => {
+            // if user don't want accept losing progress for reload, revert options with reloadRequired for no reload.
+            this.reloadSettings.forEach((s, i) => {
+              if (s !== null && s !== this.optionCursors[i]) {
+                this.setOptionCursor(i, s, true);
+              }
+            });
+            this.scene.ui.revertMode();
+            this.showText("", 0);
+          }, false, 0, 0);
+        });
+        return false;
+      }
+      return true;
+
+    };
+
     if (button === Button.CANCEL) {
       success = true;
-      NavigationManager.getInstance().reset();
-      // Reverts UI to its previous state on cancel.
-      this.scene.ui.revertMode();
+      if (progressLosing()) {
+        NavigationManager.getInstance().reset();
+        // Reverts UI to its previous state on cancel.
+        this.scene.ui.revertMode();
+      }
     } else {
       const cursor = this.cursor + this.scrollCursor;
       switch (button) {
@@ -269,7 +324,9 @@ export default class AbstractSettingsUiHandler extends UiHandler {
         break;
       case Button.CYCLE_FORM:
       case Button.CYCLE_SHINY:
-        success = this.navigationContainer.navigate(button);
+        if (progressLosing()) {
+          success = this.navigationContainer.navigate(button);
+        }
         break;
       case Button.ACTION:
         const setting: Setting = this.settings[cursor];
@@ -353,9 +410,9 @@ export default class AbstractSettingsUiHandler extends UiHandler {
 
     if (save) {
       this.scene.gameData.saveSetting(setting.key, cursor);
-      if (this.reloadSettings.includes(setting)) {
-        this.reloadRequired = true;
-      }
+      this.reloadRequired = this.reloadSettings.some((s, i)=>
+        s !== null && s !== this.optionCursors[i]
+      );
     }
 
     return true;
@@ -420,5 +477,11 @@ export default class AbstractSettingsUiHandler extends UiHandler {
       this.cursorObj.destroy();
     }
     this.cursorObj = null;
+  }
+
+  showText(text: string, delay?: number|null, callback?: Function, callbackDelay?: number, prompt?: boolean, promptDelay?: number): void {
+    this.settingsMessageBoxContainer.setVisible(text.length > 0);
+
+    super.showText(text, delay, callback, callbackDelay, prompt, promptDelay);
   }
 }
