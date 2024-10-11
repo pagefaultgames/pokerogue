@@ -27,6 +27,7 @@ function getNameSpaces(dir: string): string[] {
         } else  if (Utils.kebabCaseToCamelCase(file).replace(".json", "").startsWith("mysteryEncounters")) {
           ns = subnamespace[i].replace(/Dialogue$/, "");
         }
+        // format "directory/namespace" for namespace in folder
         namespace.push(`${Utils.kebabCaseToCamelCase(file).replace(".json", "")}/${ns}`);
       }
     } else if (path.extname(file) === ".json") {
@@ -62,7 +63,9 @@ export function LocaleNamespace(): VitePlugin {
          * refresh the page to update the namespaces of i18next
          */
         if (Utils.isFileInsideDir(file, nsAbsolutePath) && file.endsWith(".json")) {
-          console.log(`\x1b[34m${normalizePath(file.replace(nsAbsolutePath, ""))}\x1b[0m ${action}, reloading page...`);
+          const timestamp = new Date().toLocaleTimeString();
+          const filePath = nsRelativePath.replace(/^\.\/(?=.*)/, "") + normalizePath(file.replace(nsAbsolutePath, ""));
+          console.info(`${timestamp} \x1b[36m\x1b[1m[ns-plugin]\x1b[0m reloading page, \x1b[32m${filePath}\x1b[0m ${action}...`);
 
           namespaces = await getNameSpaces(nsEn);
           await server.moduleGraph.invalidateAll();
