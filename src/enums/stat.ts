@@ -50,7 +50,7 @@ export function getStatStageChangeDescriptionKey(stages: number, isIncrease: boo
     return isIncrease ? "battle:statRose" : "battle:statFell";
   } else if (stages === 2) {
     return isIncrease ? "battle:statSharplyRose" : "battle:statHarshlyFell";
-  } else if (stages <= 6) {
+  } else if (stages > 2 && stages <= 6) {
     return isIncrease ? "battle:statRoseDrastically" : "battle:statSeverelyFell";
   }
   return isIncrease ? "battle:statWontGoAnyHigher" : "battle:statWontGoAnyLower";
