@@ -94,7 +94,7 @@ const getMockedMoveDamage = (defender: Pokemon, attacker: Pokemon, move: Move) =
   const side = defender.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY;
 
   if (defender.scene.arena.getTagOnSide(ArenaTagType.REFLECT, side)) {
-    defender.scene.arena.applyTagsForSide(ArenaTagType.REFLECT, side, move.category, defender.scene.currentBattle.double, multiplierHolder);
+    defender.scene.arena.applyTagsForSide(ArenaTagType.REFLECT, side, attacker, move.category, defender.scene.currentBattle.double, multiplierHolder);
   }
 
   return move.power * multiplierHolder.value;
