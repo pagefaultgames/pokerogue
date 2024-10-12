@@ -2867,6 +2867,43 @@ export class StatStageChangeAttr extends MoveEffectAttr {
   }
 }
 
+export class BiomeBasedSecondaryEffectAttr extends MoveEffectAttr {
+  constructor() {
+    super(false);
+  }
+
+  apply(user: Pokemon, target: Pokemon, move: Move, args?: any[] | undefined): boolean | Promise<boolean> {
+    let secondaryEffect: MoveAttr;
+    const terrain = user.scene.arena.getTerrainType();
+    if (terrain !== TerrainType.NONE) {
+      switch (terrain) {
+      case TerrainType.ELECTRIC:
+        secondaryEffect = new StatusEffectAttr(StatusEffect.PARALYSIS, false);
+        return secondaryEffect.apply(user, target, move, []);
+      case TerrainType.MISTY:
+        secondaryEffect = new StatStageChangeAttr([ Stat.SPATK ], -1, false);
+        return secondaryEffect.apply(user, target, move, []);
+      case TerrainType.GRASSY:
+        secondaryEffect = new StatusEffectAttr(StatusEffect.SLEEP, false);
+        return secondaryEffect.apply(user, target, move, []);
+      case TerrainType.PSYCHIC:
+        secondaryEffect = new StatStageChangeAttr([ Stat.SPD ], -1, false);
+        return secondaryEffect.apply(user, target, move, []);
+      }
+    }
+    const biome = user.scene.arena.biomeType;
+    switch (biome) {
+    case Biome.TOWN:
+    case Biome.PLAINS:
+      secondaryEffect = new StatusEffectAttr(StatusEffect.SLEEP, false);
+      return secondaryEffect.apply(user, target, move, []);
+    default:
+      break;
+    }
+    return true;
+  }
+}
+
 export class PostVictoryStatStageChangeAttr extends MoveAttr {
   private stats: BattleStat[];
   private stages: number;
@@ -7883,7 +7920,7 @@ export function initMoves() {
       .unimplemented(),
     new AttackMove(Moves.SECRET_POWER, Type.NORMAL, MoveCategory.PHYSICAL, 70, 100, 20, 30, 0, 3)
       .makesContact(false)
-      .partial(),
+      .attr(BiomeBasedSecondaryEffectAttr),
     new AttackMove(Moves.DIVE, Type.WATER, MoveCategory.PHYSICAL, 80, 100, 10, -1, 0, 3)
       .attr(ChargeAttr, ChargeAnim.DIVE_CHARGING, i18next.t("moveTriggers:hidUnderwater", { pokemonName: "{USER}" }), BattlerTagType.UNDERWATER, true)
       .attr(GulpMissileTagAttr)
