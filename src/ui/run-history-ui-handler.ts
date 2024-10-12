@@ -10,7 +10,7 @@ import i18next from "i18next";
 import { Button } from "../enums/buttons";
 import { BattleType } from "../battle";
 import { RunEntry } from "../system/game-data";
-import { PlayerGender } from "#enums/player-gender";
+import { CharacterGender } from "#app/enums/character-gender";
 import { TrainerVariant } from "../field/trainer";
 import { RunDisplayMode } from "#app/ui/run-info-ui-handler";
 
@@ -288,8 +288,8 @@ class RunEntryContainer extends Phaser.GameObjects.Container {
       const gameOutcomeLabel = addTextObject(this.scene, 8, 5, `${i18next.t("runHistory:victory")}`, TextStyle.WINDOW);
       this.add(gameOutcomeLabel);
     } else { // Run Result: Defeats
-      const genderIndex = this.scene.gameData.gender ?? PlayerGender.UNSET;
-      const genderStr = PlayerGender[genderIndex].toLowerCase();
+      const genderIndex = this.scene.gameData.gender ?? CharacterGender.UNSET;
+      const genderStr = CharacterGender[genderIndex].toLowerCase();
       // Defeats from wild Pokemon battles will show the Pokemon responsible by the text of the run result.
       if (data.battleType === BattleType.WILD || (data.battleType === BattleType.MYSTERY_ENCOUNTER && !data.trainer)) {
         const enemyContainer = this.scene.add.container(8, 5);

@@ -5,7 +5,7 @@ import { SettingKeys } from "#app/system/settings/settings";
 import { Mode } from "#app/ui/ui";
 import i18next from "i18next";
 
-export class SelectGenderPhase extends Phase {
+export class SelectRivalGenderPhase extends Phase {
   constructor(scene: BattleScene) {
     super(scene);
   }
@@ -13,7 +13,7 @@ export class SelectGenderPhase extends Phase {
   start(): void {
     super.start();
 
-    this.scene.ui.showText(i18next.t("menu:boyOrGirl"), null, () => {
+    this.scene.ui.showText(i18next.t("menu:rivalBoyOrGirl"), null, () => {
       this.scene.ui.setMode(Mode.OPTION_SELECT, {
         options: [
           {

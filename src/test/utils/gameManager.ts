@@ -31,7 +31,7 @@ import TargetSelectUiHandler from "#app/ui/target-select-ui-handler";
 import { Mode } from "#app/ui/ui";
 import { Button } from "#enums/buttons";
 import { ExpNotification } from "#enums/exp-notification";
-import { PlayerGender } from "#enums/player-gender";
+import { CharacterGender } from "#app/enums/character-gender";
 import { Species } from "#enums/species";
 import { generateStarter, waitUntil } from "#test/utils/gameManagerUtils";
 import GameWrapper from "#test/utils/gameWrapper";
@@ -155,7 +155,8 @@ export default class GameManager {
     this.scene.expParty = ExpNotification.SKIP;
     this.scene.hpBarSpeed = 3;
     this.scene.enableTutorials = false;
-    this.scene.gameData.gender = PlayerGender.MALE; // set initial player gender
+    this.scene.gameData.gender = CharacterGender.MALE; // set initial player gender
+    this.scene.gameData.rivalGender = CharacterGender.FEMALE; // set initial rival gender
     this.scene.battleStyle = this.settings.battleStyle;
   }
 

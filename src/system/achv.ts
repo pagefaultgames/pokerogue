@@ -4,7 +4,7 @@ import { TurnHeldItemTransferModifier } from "../modifier/modifier";
 import { pokemonEvolutions } from "#app/data/balance/pokemon-evolutions";
 import i18next from "i18next";
 import * as Utils from "../utils";
-import { PlayerGender } from "#enums/player-gender";
+import { CharacterGender } from "#app/enums/character-gender";
 import { Challenge, FreshStartChallenge, SingleGenerationChallenge, SingleTypeChallenge, InverseBattleChallenge } from "#app/data/challenge";
 import { ConditionFn } from "#app/@types/common";
 import { Stat, getShortenedStatKey } from "#app/enums/stat";
@@ -43,11 +43,11 @@ export class Achv {
 
   /**
    * Get the name of the achievement based on the gender of the player
-   * @param playerGender - the gender of the player (default: {@linkcode PlayerGender.UNSET})
+   * @param playerGender - the gender of the player (default: {@linkcode CharacterGender.UNSET})
    * @returns the name of the achievement localized for the player gender
    */
-  getName(playerGender: PlayerGender = PlayerGender.UNSET): string {
-    const genderStr = PlayerGender[playerGender].toLowerCase();
+  getName(playerGender: CharacterGender = CharacterGender.UNSET): string {
+    const genderStr = CharacterGender[playerGender].toLowerCase();
     // Localization key is used to get the name of the achievement
     return i18next.t(`achv:${this.localizationKey}.name`, { context: genderStr });
   }
@@ -152,8 +152,8 @@ export class ChallengeAchv extends Achv {
  */
 export function getAchievementDescription(localizationKey: string): string {
   // We need to get the player gender from the game data to add the correct prefix to the achievement name
-  const genderIndex = this?.scene?.gameData?.gender ?? PlayerGender.MALE; //TODO: why is `this` being used here!? We are not inside a scope (copied from original)
-  const genderStr = PlayerGender[genderIndex].toLowerCase();
+  const genderIndex = this?.scene?.gameData?.gender ?? CharacterGender.MALE; //TODO: why is `this` being used here!? We are not inside a scope (copied from original)
+  const genderStr = CharacterGender[genderIndex].toLowerCase();
 
   switch (localizationKey) {
   case "10K_MONEY":

@@ -8,7 +8,7 @@ import { addTextObject, TextStyle } from "#app/ui/text";
 import { Mode } from "#app/ui/ui";
 import { addWindow } from "#app/ui/ui-theme";
 import { ScrollBar } from "#app/ui/scroll-bar";
-import { PlayerGender } from "#enums/player-gender";
+import { CharacterGender } from "#app/enums/character-gender";
 
 enum Page {
   ACHIEVEMENTS,
@@ -86,8 +86,8 @@ export default class AchvsUiHandler extends MessageUiHandler {
     this.headerActionText.setPositionRelative(this.headerBg, 264, 8);
 
     // We need to get the player gender from the game data to add the correct prefix to the achievement name
-    const genderIndex = this.scene.gameData.gender ?? PlayerGender.MALE;
-    const genderStr = PlayerGender[genderIndex].toLowerCase();
+    const genderIndex = this.scene.gameData.gender ?? CharacterGender.MALE;
+    const genderStr = CharacterGender[genderIndex].toLowerCase();
 
     this.achvsName = i18next.t("achv:Achievements.name", { context: genderStr });
     this.vouchersName = i18next.t("voucher:vouchers");
@@ -195,8 +195,8 @@ export default class AchvsUiHandler extends MessageUiHandler {
 
   protected showAchv(achv: Achv) {
     // We need to get the player gender from the game data to add the correct prefix to the achievement name
-    const genderIndex = this.scene.gameData.gender ?? PlayerGender.MALE;
-    const genderStr = PlayerGender[genderIndex].toLowerCase();
+    const genderIndex = this.scene.gameData.gender ?? CharacterGender.MALE;
+    const genderStr = CharacterGender[genderIndex].toLowerCase();
 
     achv.name = i18next.t(`achv:${achv.localizationKey}.name`, { context: genderStr });
     achv.description = getAchievementDescription(achv.localizationKey);

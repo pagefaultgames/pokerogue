@@ -21,7 +21,7 @@ import { Button } from "#enums/buttons";
 import { Ability } from "#app/data/ability";
 import i18next from "i18next";
 import { modifierSortFunc } from "#app/modifier/modifier";
-import { PlayerGender } from "#enums/player-gender";
+import { CharacterGender } from "#app/enums/character-gender";
 import { Stat, PERMANENT_STATS, getStatKey } from "#enums/stat";
 
 enum Page {
@@ -735,7 +735,7 @@ export default class SummaryUiHandler extends UiHandler {
       pageContainer.add(profileContainer);
 
       // TODO: should add field for original trainer name to Pokemon object, to support gift/traded Pokemon from MEs
-      const trainerText = addBBCodeTextObject(this.scene, 7, 12, `${i18next.t("pokemonSummary:ot")}/${getBBCodeFrag(loggedInUser?.username || i18next.t("pokemonSummary:unknown"), this.scene.gameData.gender === PlayerGender.FEMALE ? TextStyle.SUMMARY_PINK : TextStyle.SUMMARY_BLUE)}`, TextStyle.SUMMARY_ALT);
+      const trainerText = addBBCodeTextObject(this.scene, 7, 12, `${i18next.t("pokemonSummary:ot")}/${getBBCodeFrag(loggedInUser?.username || i18next.t("pokemonSummary:unknown"), this.scene.gameData.gender === CharacterGender.FEMALE ? TextStyle.SUMMARY_PINK : TextStyle.SUMMARY_BLUE)}`, TextStyle.SUMMARY_ALT);
       trainerText.setOrigin(0, 0);
       profileContainer.add(trainerText);
 

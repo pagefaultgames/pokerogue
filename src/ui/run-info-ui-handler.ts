@@ -21,7 +21,7 @@ import { getNatureStatMultiplier, getNatureName } from "../data/nature";
 import { getVariantTint } from "#app/data/variant";
 import * as Modifier from "../modifier/modifier";
 import { Species } from "#enums/species";
-import { PlayerGender } from "#enums/player-gender";
+import { CharacterGender } from "#app/enums/character-gender";
 import { SettingKeyboard } from "#app/system/settings/settings-keyboard";
 import { getBiomeName } from "#app/data/balance/biomes";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
@@ -194,8 +194,8 @@ export default class RunInfoUiHandler extends UiHandler {
    *
    */
   private async parseRunResult() {
-    const genderIndex = this.scene.gameData.gender ?? PlayerGender.UNSET;
-    const genderStr = PlayerGender[genderIndex];
+    const genderIndex = this.scene.gameData.gender ?? CharacterGender.UNSET;
+    const genderStr = CharacterGender[genderIndex];
     const runResultTextStyle = this.isVictory ? TextStyle.PERFECT_IV : TextStyle.SUMMARY_RED;
     const runResultTitle = this.isVictory ? i18next.t("runHistory:victory") : i18next.t("runHistory:defeated", { context: genderStr });
     const runResultText = addTextObject(this.scene, 6, 5, `${runResultTitle} - ${i18next.t("saveSlotSelectUiHandler:wave")} ${this.runInfo.waveIndex}`, runResultTextStyle, { fontSize : "65px", lineSpacing: 0.1 });
@@ -823,9 +823,9 @@ export default class RunInfoUiHandler extends UiHandler {
    */
   private createVictorySplash(): void {
     this.endCardContainer = this.scene.add.container(0, 0);
-    const genderIndex = this.scene.gameData.gender ?? PlayerGender.UNSET;
-    const isFemale = genderIndex === PlayerGender.FEMALE;
-    const endCard = this.scene.add.image(0, 0, `end_${isFemale ? "f" : "m"}`);
+    const genderIndex = this.scene.gameData.gender ?? CharacterGender.UNSET;
+    const rivalGenderIndex = this.scene.gameData.gender ?? CharacterGender.UNSET;
+    const endCard = this.scene.add.image(0, 0, `end_${genderIndex === CharacterGender.FEMALE ? "f" : "m"}_${rivalGenderIndex === CharacterGender.FEMALE ? "f" : "m"}`);
     endCard.setOrigin(0);
     endCard.setScale(0.5);
     const text = addTextObject(this.scene, this.scene.game.canvas.width / 12, (this.scene.game.canvas.height / 6) - 16, i18next.t("battle:congratulations"), TextStyle.SUMMARY, { fontSize: "128px" });
@@ -839,9 +839,9 @@ export default class RunInfoUiHandler extends UiHandler {
    * This could be adapted into a public-facing method for victory screens. Perhaps.
    */
   private createHallofFame(): void {
-    const genderIndex = this.scene.gameData.gender ?? PlayerGender.UNSET;
-    const isFemale = genderIndex === PlayerGender.FEMALE;
-    const genderStr = PlayerGender[genderIndex].toLowerCase();
+    const genderIndex = this.scene.gameData.gender ?? CharacterGender.UNSET;
+    const isFemale = genderIndex === CharacterGender.FEMALE;
+    const genderStr = CharacterGender[genderIndex].toLowerCase();
     // Issue Note (08-05-2024): It seems as if fused pokemon do not appear with the averaged color b/c pokemonData's loadAsset requires there to be some active battle?
     // As an alternative, the icons of the second/bottom fused Pokemon have been placed next to their fellow fused Pokemon in Hall of Fame
     this.hallofFameContainer = this.scene.add.container(0, 0);

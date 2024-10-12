@@ -13,7 +13,7 @@ import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode
 import { Species } from "#enums/species";
 import i18next from "i18next";
 import { getPokemonNameWithAffix } from "#app/messages";
-import { PlayerGender } from "#enums/player-gender";
+import { CharacterGender } from "#app/enums/character-gender";
 import { getPokeballAtlasKey, getPokeballTintColor } from "#app/data/pokeball";
 import { addPokeballOpenParticles } from "#app/field/anims";
 import { ShinySparklePhase } from "#app/phases/shiny-sparkle-phase";
@@ -177,7 +177,7 @@ async function summonPlayerPokemon(scene: BattleScene) {
     let playerAnimationPromise: Promise<void> | undefined;
     scene.ui.showText(i18next.t("battle:playerGo", { pokemonName: getPokemonNameWithAffix(playerPokemon) }));
     scene.pbTray.hide();
-    scene.trainer.setTexture(`trainer_${scene.gameData.gender === PlayerGender.FEMALE ? "f" : "m"}_back_pb`);
+    scene.trainer.setTexture(`trainer_${scene.gameData.gender === CharacterGender.FEMALE ? "f" : "m"}_back_pb`);
     scene.time.delayedCall(562, () => {
       scene.trainer.setFrame("2");
       scene.time.delayedCall(64, () => {

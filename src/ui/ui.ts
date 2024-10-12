@@ -43,7 +43,7 @@ import SettingsKeyboardUiHandler from "#app/ui/settings/settings-keyboard-ui-han
 import KeyboardBindingUiHandler from "#app/ui/settings/keyboard-binding-ui-handler";
 import SettingsDisplayUiHandler from "./settings/settings-display-ui-handler";
 import SettingsAudioUiHandler from "./settings/settings-audio-ui-handler";
-import { PlayerGender } from "#enums/player-gender";
+import { CharacterGender } from "#app/enums/character-gender";
 import BgmBar from "#app/ui/bgm-bar";
 import RenameFormUiHandler from "./rename-form-ui-handler";
 import AdminUiHandler from "./admin-ui-handler";
@@ -326,8 +326,8 @@ export default class UI extends Phaser.GameObjects.Container {
     // Get localized dialogue (if available)
     let hasi18n = false;
     let text = keyOrText;
-    const genderIndex = battleScene.gameData.gender ?? PlayerGender.UNSET;
-    const genderStr = PlayerGender[genderIndex].toLowerCase();
+    const genderIndex = battleScene.gameData.gender ?? CharacterGender.UNSET;
+    const genderStr = CharacterGender[genderIndex].toLowerCase();
 
     if (i18next.exists(keyOrText) ) {
       const i18nKey = keyOrText;

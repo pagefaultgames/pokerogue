@@ -2,7 +2,7 @@ import BattleScene from "../battle-scene";
 import { Achv, getAchievementDescription } from "../system/achv";
 import { Voucher } from "../system/voucher";
 import { TextStyle, addTextObject } from "./text";
-import { PlayerGender } from "#enums/player-gender";
+import { CharacterGender } from "#app/enums/character-gender";
 
 export default class AchvBar extends Phaser.GameObjects.Container {
   private defaultWidth: number;
@@ -15,7 +15,7 @@ export default class AchvBar extends Phaser.GameObjects.Container {
   private descriptionText: Phaser.GameObjects.Text;
 
   private queue: (Achv | Voucher)[] = [];
-  private playerGender: PlayerGender;
+  private playerGender: CharacterGender;
 
   public shown: boolean;
 
@@ -105,7 +105,7 @@ export default class AchvBar extends Phaser.GameObjects.Container {
     this.shown = true;
   }
 
-  protected hide(playerGender: PlayerGender): void {
+  protected hide(playerGender: CharacterGender): void {
     if (!this.shown) {
       return;
     }

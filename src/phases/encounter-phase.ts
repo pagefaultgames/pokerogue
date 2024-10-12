@@ -5,7 +5,7 @@ import { getCharVariantFromDialogue } from "#app/data/dialogue";
 import { TrainerSlot } from "#app/data/trainer-config";
 import { getRandomWeatherType } from "#app/data/weather";
 import { BattleSpec } from "#app/enums/battle-spec";
-import { PlayerGender } from "#app/enums/player-gender";
+import { CharacterGender } from "#app/enums/character-gender";
 import { Species } from "#app/enums/species";
 import { EncounterPhaseEvent } from "#app/events/battle-scene";
 import Pokemon, { FieldPosition } from "#app/field/pokemon";
@@ -507,8 +507,8 @@ export class EncounterPhase extends BattlePhase {
           // The line below checks if an English ordinal is necessary or not based on whether an entry for encounterLocalizationKey exists in the language or not.
           const ordinalUsed = !i18next.exists(localizationKey, { fallbackLng: []}) || i18next.resolvedLanguage === "en" ? i18next.t("battleSpecDialogue:key", { count: count, ordinal: true }) : "";
           const cycleCount = count.toLocaleString() + ordinalUsed;
-          const genderIndex = this.scene.gameData.gender ?? PlayerGender.UNSET;
-          const genderStr = PlayerGender[genderIndex].toLowerCase();
+          const genderIndex = this.scene.gameData.gender ?? CharacterGender.UNSET;
+          const genderStr = CharacterGender[genderIndex].toLowerCase();
           const encounterDialogue = i18next.t(localizationKey, { context: genderStr, cycleCount: cycleCount });
           if (!this.scene.gameData.getSeenDialogues()[localizationKey]) {
             this.scene.gameData.saveSeenDialogue(localizationKey);

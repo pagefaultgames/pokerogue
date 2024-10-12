@@ -4,7 +4,7 @@ import { isNullOrUndefined, randSeedInt } from "#app/utils";
 import { PokemonHeldItemModifier } from "#app/modifier/modifier";
 import Pokemon, { EnemyPokemon, PlayerPokemon } from "#app/field/pokemon";
 import { doPokeballBounceAnim, getPokeballAtlasKey, getPokeballCatchMultiplier, getPokeballTintColor, PokeballType } from "#app/data/pokeball";
-import { PlayerGender } from "#enums/player-gender";
+import { CharacterGender } from "#app/enums/character-gender";
 import { addPokeballCaptureStars, addPokeballOpenParticles } from "#app/field/anims";
 import { getStatusEffectCatchRateMultiplier, StatusEffect } from "#app/data/status-effect";
 import { achvs } from "#app/system/achv";
@@ -388,7 +388,7 @@ export function trainerThrowPokeball(scene: BattleScene, pokemon: EnemyPokemon, 
   });
 
   return new Promise(resolve => {
-    scene.trainer.setTexture(`trainer_${scene.gameData.gender === PlayerGender.FEMALE ? "f" : "m"}_back_pb`);
+    scene.trainer.setTexture(`trainer_${scene.gameData.gender === CharacterGender.FEMALE ? "f" : "m"}_back_pb`);
     scene.time.delayedCall(512, () => {
       scene.playSound("se/pb_throw");
 
@@ -397,7 +397,7 @@ export function trainerThrowPokeball(scene: BattleScene, pokemon: EnemyPokemon, 
       scene.time.delayedCall(256, () => {
         scene.trainer.setFrame("3");
         scene.time.delayedCall(768, () => {
-          scene.trainer.setTexture(`trainer_${scene.gameData.gender === PlayerGender.FEMALE ? "f" : "m"}_back`);
+          scene.trainer.setTexture(`trainer_${scene.gameData.gender === CharacterGender.FEMALE ? "f" : "m"}_back`);
         });
       });
 

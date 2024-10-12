@@ -6,6 +6,7 @@ import { Mode } from "#app/ui/ui";
 import i18next, { t } from "i18next";
 import * as Utils from "#app/utils";
 import { SelectGenderPhase } from "./select-gender-phase";
+import { SelectRivalGenderPhase } from "./select-rival-gender-phase";
 import { UnavailablePhase } from "./unavailable-phase";
 
 export class LoginPhase extends Phase {
@@ -109,6 +110,10 @@ export class LoginPhase extends Phase {
 
     if (!this.scene.gameData.gender) {
       this.scene.unshiftPhase(new SelectGenderPhase(this.scene));
+    }
+
+    if (!this.scene.gameData.rivalGender) {
+      this.scene.unshiftPhase(new SelectRivalGenderPhase(this.scene));
     }
 
     handleTutorial(this.scene, Tutorial.Intro).then(() => super.end());

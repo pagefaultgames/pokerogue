@@ -59,7 +59,7 @@ import { Biome } from "#enums/biome";
 import { ExpNotification } from "#enums/exp-notification";
 import { MoneyFormat } from "#enums/money-format";
 import { Moves } from "#enums/moves";
-import { PlayerGender } from "#enums/player-gender";
+import { CharacterGender } from "#app/enums/character-gender";
 import { Species } from "#enums/species";
 import { UiTheme } from "#enums/ui-theme";
 import { TimedEventManager } from "#app/timed-event-manager";
@@ -565,7 +565,7 @@ export default class BattleScene extends SceneBase {
       field.add(a);
     });
 
-    const trainer = this.addFieldSprite(0, 0, `trainer_${this.gameData.gender === PlayerGender.FEMALE ? "f" : "m"}_back`);
+    const trainer = this.addFieldSprite(0, 0, `trainer_${this.gameData.gender === CharacterGender.FEMALE ? "f" : "m"}_back`);
     trainer.setOrigin(0.5, 1);
     trainer.setName("sprite-trainer");
 
@@ -1106,7 +1106,7 @@ export default class BattleScene extends SceneBase {
 
     this.arena.init();
 
-    this.trainer.setTexture(`trainer_${this.gameData.gender === PlayerGender.FEMALE ? "f" : "m"}_back`);
+    this.trainer.setTexture(`trainer_${this.gameData.gender === CharacterGender.FEMALE ? "f" : "m"}_back`);
     this.trainer.setPosition(406, 186);
     this.trainer.setVisible(true);
 

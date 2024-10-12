@@ -7,7 +7,7 @@ import { CandyUpgradeNotificationChangedEvent } from "../../events/battle-scene"
 import SettingsUiHandler from "#app/ui/settings/settings-ui-handler";
 import { EaseType } from "#enums/ease-type";
 import { MoneyFormat } from "#enums/money-format";
-import { PlayerGender } from "#enums/player-gender";
+import { CharacterGender } from "#app/enums/character-gender";
 import { getIsInitialized, initI18n } from "#app/plugins/i18n";
 import { ShopCursorTarget } from "#app/enums/shop-cursor-target";
 
@@ -151,6 +151,7 @@ export const SettingKeys = {
   Sprite_Set: "SPRITE_SET",
   Fusion_Palette_Swaps: "FUSION_PALETTE_SWAPS",
   Player_Gender: "PLAYER_GENDER",
+  Rival_Gender: "RIVAL_GENDER",
   Type_Hints: "TYPE_HINTS",
   Master_Volume: "MASTER_VOLUME",
   BGM_Volume: "BGM_VOLUME",
@@ -573,6 +574,22 @@ export const Setting: Array<Setting> = [
     type: SettingType.DISPLAY
   },
   {
+    key: SettingKeys.Rival_Gender,
+    label: i18next.t("settings:rivalGender"),
+    options: [
+      {
+        value: "Boy",
+        label: i18next.t("settings:boy")
+      },
+      {
+        value: "Girl",
+        label: i18next.t("settings:girl")
+      }
+    ],
+    default: 1,
+    type: SettingType.DISPLAY
+  },
+  {
     key: SettingKeys.Type_Hints,
     label: i18next.t("settings:typeHints"),
     options: OFF_ON,
@@ -820,8 +837,16 @@ export function setSetting(scene: BattleScene, setting: string, value: integer):
   case SettingKeys.Player_Gender:
     if (scene.gameData) {
       const female = Setting[index].options[value].value === "Girl";
-      scene.gameData.gender = female ? PlayerGender.FEMALE : PlayerGender.MALE;
+      scene.gameData.gender = female ? CharacterGender.FEMALE : CharacterGender.MALE;
       scene.trainer.setTexture(scene.trainer.texture.key.replace(female ? "m" : "f", female ? "f" : "m"));
+    } else {
+      return false;
+    }
+    break;
+  case SettingKeys.Rival_Gender:
+    if (scene.gameData) {
+      const female = Setting[index].options[value].value === "Girl";
+      scene.gameData.rivalGender = female ? CharacterGender.FEMALE : CharacterGender.MALE;
     } else {
       return false;
     }

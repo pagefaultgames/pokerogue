@@ -20,7 +20,7 @@ import { achvs, ChallengeAchv } from "#app/system/achv";
 import { Unlockables } from "#app/system/unlockables";
 import { Mode } from "#app/ui/ui";
 import * as Utils from "#app/utils";
-import { PlayerGender } from "#enums/player-gender";
+import { CharacterGender } from "#app/enums/character-gender";
 import { TrainerType } from "#enums/trainer-type";
 import i18next from "i18next";
 
@@ -51,8 +51,8 @@ export class GameOverPhase extends BattlePhase {
     // Otherwise, continue standard Game Over logic
 
     if (this.victory && this.scene.gameMode.isEndless) {
-      const genderIndex = this.scene.gameData.gender ?? PlayerGender.UNSET;
-      const genderStr = PlayerGender[genderIndex].toLowerCase();
+      const genderIndex = this.scene.gameData.gender ?? CharacterGender.UNSET;
+      const genderStr = CharacterGender[genderIndex].toLowerCase();
       this.scene.ui.showDialogue(i18next.t("miscDialogue:ending_endless", { context: genderStr }), i18next.t("miscDialogue:ending_name"), 0, () => this.handleGameOver());
     } else if (this.victory || !this.scene.enableRetries) {
       this.handleGameOver();
@@ -144,12 +144,12 @@ export class GameOverPhase extends BattlePhase {
 
             if (!this.scene.ui.shouldSkipDialogue(dialogueKey)) {
               this.scene.ui.fadeIn(500).then(() => {
-                const genderIndex = this.scene.gameData.gender ?? PlayerGender.UNSET;
-                const genderStr = PlayerGender[genderIndex].toLowerCase();
+                const genderIndex = this.scene.gameData.rivalGender ?? CharacterGender.UNSET;
+                const genderStr = CharacterGender[genderIndex].toLowerCase();
                 // Dialogue has to be retrieved so that the rival's expressions can be loaded and shown via getCharVariantFromDialogue
                 const dialogue = i18next.t(dialogueKey, { context: genderStr });
-                this.scene.charSprite.showCharacter(`rival_${this.scene.gameData.gender === PlayerGender.FEMALE ? "m" : "f"}`, getCharVariantFromDialogue(dialogue)).then(() => {
-                  this.scene.ui.showDialogue(dialogueKey, this.scene.gameData.gender === PlayerGender.FEMALE ? trainerConfigs[TrainerType.RIVAL].name : trainerConfigs[TrainerType.RIVAL].nameFemale, null, () => {
+                this.scene.charSprite.showCharacter(`rival_${this.scene.gameData.gender === CharacterGender.MALE ? "m" : "f"}`, getCharVariantFromDialogue(dialogue)).then(() => {
+                  this.scene.ui.showDialogue(dialogueKey, this.scene.gameData.gender === CharacterGender.MALE ? trainerConfigs[TrainerType.RIVAL].name : trainerConfigs[TrainerType.RIVAL].nameFemale, null, () => {
                     this.scene.ui.fadeOut(500).then(() => {
                       this.scene.charSprite.hide().then(() => {
                         const endCardPhase = new EndCardPhase(this.scene);

@@ -3,7 +3,7 @@ import { BattleType } from "#app/battle";
 import { getPokeballAtlasKey, getPokeballTintColor } from "#app/data/pokeball";
 import { SpeciesFormChangeActiveTrigger } from "#app/data/pokemon-forms";
 import { TrainerSlot } from "#app/data/trainer-config";
-import { PlayerGender } from "#app/enums/player-gender";
+import { CharacterGender } from "#app/enums/character-gender";
 import { addPokeballOpenParticles } from "#app/field/anims";
 import Pokemon, { FieldPosition } from "#app/field/pokemon";
 import { getPokemonNameWithAffix } from "#app/messages";
@@ -66,7 +66,7 @@ export class SummonPhase extends PartyMemberPokemonPhase {
       if (this.player) {
         this.scene.pbTray.hide();
       }
-      this.scene.trainer.setTexture(`trainer_${this.scene.gameData.gender === PlayerGender.FEMALE ? "f" : "m"}_back_pb`);
+      this.scene.trainer.setTexture(`trainer_${this.scene.gameData.gender === CharacterGender.FEMALE ? "f" : "m"}_back_pb`);
       this.scene.time.delayedCall(562, () => {
         this.scene.trainer.setFrame("2");
         this.scene.time.delayedCall(64, () => {

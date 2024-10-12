@@ -25,6 +25,7 @@ import { NextEncounterPhase } from "#app/phases/next-encounter-phase";
 import { PostSummonPhase } from "#app/phases/post-summon-phase";
 import { QuietFormChangePhase } from "#app/phases/quiet-form-change-phase";
 import { SelectGenderPhase } from "#app/phases/select-gender-phase";
+import { SelectRivalGenderPhase } from "#app/phases/select-rival-gender-phase";
 import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
 import { SelectStarterPhase } from "#app/phases/select-starter-phase";
 import { SelectTargetPhase } from "#app/phases/select-target-phase";
@@ -67,6 +68,7 @@ type PhaseClass =
   | typeof LoginPhase
   | typeof TitlePhase
   | typeof SelectGenderPhase
+  | typeof SelectRivalGenderPhase
   | typeof EncounterPhase
   | typeof NewBiomeEncounterPhase
   | typeof SelectStarterPhase
@@ -120,6 +122,7 @@ type PhaseString =
   | "LoginPhase"
   | "TitlePhase"
   | "SelectGenderPhase"
+  | "SelectRivalGenderPhase"
   | "EncounterPhase"
   | "NewBiomeEncounterPhase"
   | "SelectStarterPhase"
@@ -192,6 +195,7 @@ export default class PhaseInterceptor {
     [ LoginPhase, this.startPhase ],
     [ TitlePhase, this.startPhase ],
     [ SelectGenderPhase, this.startPhase ],
+    [ SelectRivalGenderPhase, this.startPhase ],
     [ EncounterPhase, this.startPhase ],
     [ NewBiomeEncounterPhase, this.startPhase ],
     [ SelectStarterPhase, this.startPhase ],
@@ -243,7 +247,7 @@ export default class PhaseInterceptor {
   ];
 
   private endBySetMode = [
-    TitlePhase, SelectGenderPhase, CommandPhase, SelectModifierPhase, MysteryEncounterPhase, PostMysteryEncounterPhase
+    TitlePhase, SelectGenderPhase, SelectRivalGenderPhase, CommandPhase, SelectModifierPhase, MysteryEncounterPhase, PostMysteryEncounterPhase
   ];
 
   /**

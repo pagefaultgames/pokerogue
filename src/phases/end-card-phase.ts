@@ -1,5 +1,5 @@
 import BattleScene from "#app/battle-scene";
-import { PlayerGender } from "#app/enums/player-gender";
+import { CharacterGender } from "#app/enums/character-gender";
 import { Phase } from "#app/phase";
 import { addTextObject, TextStyle } from "#app/ui/text";
 import i18next from "i18next";
@@ -18,7 +18,7 @@ export class EndCardPhase extends Phase {
     this.scene.ui.getMessageHandler().bg.setVisible(false);
     this.scene.ui.getMessageHandler().nameBoxContainer.setVisible(false);
 
-    this.endCard = this.scene.add.image(0, 0, `end_${this.scene.gameData.gender === PlayerGender.FEMALE ? "f" : "m"}`);
+    this.endCard = this.scene.add.image(0, 0, `end_${this.scene.gameData.gender === CharacterGender.FEMALE ? "f" : "m"}_${this.scene.gameData.rivalGender === CharacterGender.FEMALE ? "f" : "m"}`);
     this.endCard.setOrigin(0);
     this.endCard.setScale(0.5);
     this.scene.field.add(this.endCard);

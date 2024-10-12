@@ -38,7 +38,7 @@ import ChallengeData from "#app/system/challenge-data";
 import { Device } from "#enums/devices";
 import { GameDataType } from "#enums/game-data-type";
 import { Moves } from "#enums/moves";
-import { PlayerGender } from "#enums/player-gender";
+import { CharacterGender } from "#app/enums/character-gender";
 import { Species } from "#enums/species";
 import { applyChallenges, ChallengeType } from "#app/data/challenge";
 import { WeatherType } from "#enums/weather-type";
@@ -102,7 +102,8 @@ export function decrypt(data: string, bypassLogin: boolean): string {
 export interface SystemSaveData {
   trainerId: integer;
   secretId: integer;
-  gender: PlayerGender;
+  gender: CharacterGender;
+  rivalGender: CharacterGender;
   dexData: DexData;
   starterData: StarterData;
   gameStats: GameStats;
@@ -304,7 +305,8 @@ export class GameData {
   public trainerId: integer;
   public secretId: integer;
 
-  public gender: PlayerGender;
+  public gender: CharacterGender;
+  public rivalGender: CharacterGender;
 
   public dexData: DexData;
   private defaultDexData: DexData | null;
@@ -360,6 +362,7 @@ export class GameData {
       trainerId: this.trainerId,
       secretId: this.secretId,
       gender: this.gender,
+      rivalGender: this.rivalGender,
       dexData: this.dexData,
       starterData: this.starterData,
       gameStats: this.gameStats,
@@ -488,8 +491,10 @@ export class GameData {
         this.secretId = systemData.secretId;
 
         this.gender = systemData.gender;
+        this.rivalGender = systemData.rivalGender;
 
-        this.saveSetting(SettingKeys.Player_Gender, systemData.gender === PlayerGender.FEMALE ? 1 : 0);
+        this.saveSetting(SettingKeys.Player_Gender, systemData.gender === CharacterGender.FEMALE ? 1 : 0);
+        this.saveSetting(SettingKeys.Rival_Gender, systemData.rivalGender === CharacterGender.FEMALE ? 1 : 0);
 
         if (!systemData.starterData) {
           this.initStarterData();

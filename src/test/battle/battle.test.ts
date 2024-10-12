@@ -21,7 +21,7 @@ import { generateStarter } from "#app/test/utils/gameManagerUtils";
 import { Mode } from "#app/ui/ui";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
-import { PlayerGender } from "#enums/player-gender";
+import { CharacterGender } from "#app/enums/character-gender";
 import { Species } from "#enums/species";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
@@ -50,7 +50,7 @@ describe("Test Battle Phase", () => {
     await game.phaseInterceptor.run(LoginPhase);
 
     game.onNextPrompt("SelectGenderPhase", Mode.OPTION_SELECT, () => {
-      game.scene.gameData.gender = PlayerGender.MALE;
+      game.scene.gameData.gender = CharacterGender.MALE;
       game.endPhase();
     });
 
@@ -61,14 +61,14 @@ describe("Test Battle Phase", () => {
 
 
     expect(game.scene.ui?.getMode()).toBe(Mode.TITLE);
-    expect(game.scene.gameData.gender).toBe(PlayerGender.MALE);
+    expect(game.scene.gameData.gender).toBe(CharacterGender.MALE);
   }, 20000);
 
   it("test phase interceptor with prompt with preparation for a future prompt", async () => {
     await game.phaseInterceptor.run(LoginPhase);
 
     game.onNextPrompt("SelectGenderPhase", Mode.OPTION_SELECT, () => {
-      game.scene.gameData.gender = PlayerGender.MALE;
+      game.scene.gameData.gender = CharacterGender.MALE;
       game.endPhase();
     });
 
@@ -83,7 +83,7 @@ describe("Test Battle Phase", () => {
 
 
     expect(game.scene.ui?.getMode()).toBe(Mode.TITLE);
-    expect(game.scene.gameData.gender).toBe(PlayerGender.MALE);
+    expect(game.scene.gameData.gender).toBe(CharacterGender.MALE);
   }, 20000);
 
   it("newGame one-liner", async () => {
@@ -163,7 +163,7 @@ describe("Test Battle Phase", () => {
   it("good run", async () => {
     await game.phaseInterceptor.run(LoginPhase);
     game.onNextPrompt("SelectGenderPhase", Mode.OPTION_SELECT, () => {
-      game.scene.gameData.gender = PlayerGender.MALE;
+      game.scene.gameData.gender = CharacterGender.MALE;
       game.endPhase();
     }, () => game.isCurrentPhase(TitlePhase));
     await game.phaseInterceptor.run(SelectGenderPhase, () => game.isCurrentPhase(TitlePhase));
@@ -173,7 +173,7 @@ describe("Test Battle Phase", () => {
   it("good run from select gender to title", async () => {
     await game.phaseInterceptor.run(LoginPhase);
     game.onNextPrompt("SelectGenderPhase", Mode.OPTION_SELECT, () => {
-      game.scene.gameData.gender = PlayerGender.MALE;
+      game.scene.gameData.gender = CharacterGender.MALE;
       game.endPhase();
     }, () => game.isCurrentPhase(TitlePhase));
     await game.phaseInterceptor.runFrom(SelectGenderPhase).to(TitlePhase);
@@ -182,7 +182,7 @@ describe("Test Battle Phase", () => {
   it("good run to SummonPhase phase", async () => {
     await game.phaseInterceptor.run(LoginPhase);
     game.onNextPrompt("SelectGenderPhase", Mode.OPTION_SELECT, () => {
-      game.scene.gameData.gender = PlayerGender.MALE;
+      game.scene.gameData.gender = CharacterGender.MALE;
       game.endPhase();
     }, () => game.isCurrentPhase(TitlePhase));
     game.onNextPrompt("TitlePhase", Mode.TITLE, () => {

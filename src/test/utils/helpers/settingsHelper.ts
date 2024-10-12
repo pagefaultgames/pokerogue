@@ -1,4 +1,4 @@
-import { PlayerGender } from "#app/enums/player-gender";
+import { CharacterGender } from "#app/enums/character-gender";
 import { BattleStyle } from "#app/enums/battle-style";
 import { GameManagerHelper } from "./gameManagerHelper";
 import { ExpGainsSpeed } from "#app/enums/exp-gains-speed";
@@ -32,12 +32,22 @@ export class SettingsHelper extends GameManagerHelper {
 
   /**
    * Change the player gender
-   * @param gender the {@linkcode PlayerGender} to set
+   * @param gender the {@linkcode CharacterGender} to set
    */
-  playerGender(gender: PlayerGender) {
+  playerGender(gender: CharacterGender) {
     this.game.scene.gameData.gender = gender;
-    this.log(`Gender set to: ${PlayerGender[gender]} (=${gender})` );
+    this.log(`Player Gender set to: ${CharacterGender[gender]} (=${gender})` );
   }
+
+  /**
+   * Change the rival gender
+   * @param gender the {@linkcode CharacterGender} to set
+   */
+  rivalGender(gender: CharacterGender) {
+    this.game.scene.gameData.rivalGender = gender;
+    this.log(`Rival Gender set to: ${CharacterGender[gender]} (=${gender})` );
+  }
+
 
   /**
    * Change the exp gains speed
