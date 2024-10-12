@@ -26,7 +26,7 @@ describe("Abilities - Wind Rider", () => {
       .battleType("single")
       .enemySpecies(Species.SHIFTRY)
       .enemyAbility(Abilities.WIND_RIDER)
-      .moveset([Moves.TAILWIND, Moves.SPLASH, Moves.PETAL_BLIZZARD, Moves.SANDSTORM])
+      .moveset([ Moves.TAILWIND, Moves.SPLASH, Moves.PETAL_BLIZZARD, Moves.SANDSTORM ])
       .enemyMoveset(Moves.SPLASH);
   });
 
@@ -49,7 +49,7 @@ describe("Abilities - Wind Rider", () => {
       .enemySpecies(Species.MAGIKARP)
       .ability(Abilities.WIND_RIDER);
 
-    await game.classicMode.startBattle([Species.SHIFTRY]);
+    await game.classicMode.startBattle([ Species.SHIFTRY ]);
     const shiftry = game.scene.getPlayerPokemon()!;
 
     expect(shiftry.getStatStage(Stat.ATK)).toBe(0);
@@ -66,7 +66,7 @@ describe("Abilities - Wind Rider", () => {
       .enemySpecies(Species.MAGIKARP)
       .ability(Abilities.WIND_RIDER);
 
-    await game.classicMode.startBattle([Species.SHIFTRY]);
+    await game.classicMode.startBattle([ Species.SHIFTRY ]);
     const magikarp = game.scene.getEnemyPokemon()!;
     const shiftry = game.scene.getPlayerPokemon()!;
 
@@ -86,7 +86,7 @@ describe("Abilities - Wind Rider", () => {
       .enemySpecies(Species.MAGIKARP)
       .ability(Abilities.WIND_RIDER);
 
-    await game.classicMode.startBattle([Species.SHIFTRY]);
+    await game.classicMode.startBattle([ Species.SHIFTRY ]);
     const magikarp = game.scene.getEnemyPokemon()!;
     const shiftry = game.scene.getPlayerPokemon()!;
 
@@ -104,7 +104,7 @@ describe("Abilities - Wind Rider", () => {
   it("does not interact with Sandstorm", async () => {
     game.override.enemySpecies(Species.MAGIKARP);
 
-    await game.classicMode.startBattle([Species.SHIFTRY]);
+    await game.classicMode.startBattle([ Species.SHIFTRY ]);
     const shiftry = game.scene.getPlayerPokemon()!;
 
     expect(shiftry.getStatStage(Stat.ATK)).toBe(0);

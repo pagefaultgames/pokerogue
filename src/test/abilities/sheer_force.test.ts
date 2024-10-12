@@ -9,6 +9,7 @@ import { Species } from "#enums/species";
 import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { allMoves } from "#app/data/move";
 
 
 describe("Abilities - Sheer Force", () => {
@@ -27,12 +28,12 @@ describe("Abilities - Sheer Force", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    const movesToUse = [Moves.AIR_SLASH, Moves.BIND, Moves.CRUSH_CLAW, Moves.TACKLE];
+    const movesToUse = [ Moves.AIR_SLASH, Moves.BIND, Moves.CRUSH_CLAW, Moves.TACKLE ];
     game.override.battleType("single");
     game.override.enemySpecies(Species.ONIX);
     game.override.startingLevel(100);
     game.override.moveset(movesToUse);
-    game.override.enemyMoveset([Moves.TACKLE, Moves.TACKLE, Moves.TACKLE, Moves.TACKLE]);
+    game.override.enemyMoveset([ Moves.TACKLE, Moves.TACKLE, Moves.TACKLE, Moves.TACKLE ]);
   });
 
   it("Sheer Force", async () => {
@@ -48,7 +49,7 @@ describe("Abilities - Sheer Force", () => {
 
     game.move.select(moveToUse);
 
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY ]);
     await game.phaseInterceptor.to(MoveEffectPhase, false);
 
     const phase = game.scene.getCurrentPhase() as MoveEffectPhase;
@@ -81,7 +82,7 @@ describe("Abilities - Sheer Force", () => {
 
     game.move.select(moveToUse);
 
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY ]);
     await game.phaseInterceptor.to(MoveEffectPhase, false);
 
     const phase = game.scene.getCurrentPhase() as MoveEffectPhase;
@@ -114,7 +115,7 @@ describe("Abilities - Sheer Force", () => {
 
     game.move.select(moveToUse);
 
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY ]);
     await game.phaseInterceptor.to(MoveEffectPhase, false);
 
     const phase = game.scene.getCurrentPhase() as MoveEffectPhase;
@@ -149,7 +150,7 @@ describe("Abilities - Sheer Force", () => {
 
     game.move.select(moveToUse);
 
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY ]);
     await game.phaseInterceptor.to(MoveEffectPhase, false);
 
     const phase = game.scene.getCurrentPhase() as MoveEffectPhase;
@@ -173,6 +174,32 @@ describe("Abilities - Sheer Force", () => {
     expect(target.getTypes()[0]).toBe(opponentType);
 
   }, 20000);
+
+  it("Two Pokemon with abilities disabled by Sheer Force hitting each other should not cause a crash", async () => {
+    const moveToUse = Moves.CRUNCH;
+    game.override.enemyAbility(Abilities.COLOR_CHANGE)
+      .ability(Abilities.COLOR_CHANGE)
+      .moveset(moveToUse)
+      .enemyMoveset(moveToUse);
+
+    await game.classicMode.startBattle([
+      Species.PIDGEOT
+    ]);
+
+    const pidgeot = game.scene.getParty()[0];
+    const onix = game.scene.getEnemyParty()[0];
+
+    pidgeot.stats[Stat.DEF] = 10000;
+    onix.stats[Stat.DEF] = 10000;
+
+    game.move.select(moveToUse);
+    await game.toNextTurn();
+
+    // Check that both Pokemon's Color Change activated
+    const expectedTypes = [ allMoves[moveToUse].type ];
+    expect(pidgeot.getTypes()).toStrictEqual(expectedTypes);
+    expect(onix.getTypes()).toStrictEqual(expectedTypes);
+  });
 
   //TODO King's Rock Interaction Unit Test
 });

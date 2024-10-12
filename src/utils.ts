@@ -2,6 +2,8 @@ import { MoneyFormat } from "#enums/money-format";
 import { Moves } from "#enums/moves";
 import i18next from "i18next";
 
+export type nil = null | undefined;
+
 export const MissingTextureKey = "__MISSING";
 
 export function toReadableString(str: string): string {
@@ -34,10 +36,6 @@ export function shiftCharCodes(str: string, shiftCount: integer) {
   }
 
   return newStr;
-}
-
-export function clampInt(value: integer, min: integer, max: integer): integer {
-  return Math.min(Math.max(value, min), max);
 }
 
 export function randGauss(stdev: number, mean: number = 0): number {
@@ -147,7 +145,7 @@ export function randSeedShuffle<T>(items: T[]): T[] {
   const newArray = items.slice(0);
   for (let i = items.length - 1; i > 0; i--) {
     const j = Phaser.Math.RND.integerInRange(0, i);
-    [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+    [ newArray[i], newArray[j] ] = [ newArray[j], newArray[i] ];
   }
   return newArray;
 }
@@ -223,7 +221,7 @@ export function formatLargeNumber(count: integer, threshold: integer): string {
 }
 
 // Abbreviations from 10^0 to 10^33
-const AbbreviationsLargeNumber: string[] = ["", "K", "M", "B", "t", "q", "Q", "s", "S", "o", "n", "d"];
+const AbbreviationsLargeNumber: string[] = [ "", "K", "M", "B", "t", "q", "Q", "s", "S", "o", "n", "d" ];
 
 export function formatFancyLargeNumber(number: number, rounded: number = 3): string {
   let exponent: number;
@@ -272,7 +270,7 @@ export const isLocal = (
    /^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$/.test(window.location.hostname)) &&
   window.location.port !== "") || window.location.hostname === "";
 
-export const localServerUrl = import.meta.env.VITE_SERVER_URL ?? `http://${window.location.hostname}:${window.location.port+1}`;
+export const localServerUrl = import.meta.env.VITE_SERVER_URL ?? `http://${window.location.hostname}:${window.location.port + 1}`;
 
 // Set the server URL based on whether it's local or not
 export const apiUrl = localServerUrl ?? "https://api.pokerogue.net";
@@ -423,7 +421,7 @@ export function rgbToHsv(r: integer, g: integer, b: integer) {
   const v = Math.max(r, g, b);
   const c = v - Math.min(r, g, b);
   const h = c && ((v === r) ? (g - b) / c : ((v === g) ? 2 + (b - r) / c : 4 + (r - g) / c));
-  return [ 60 * (h < 0 ? h + 6 : h), v && c / v, v];
+  return [ 60 * (h < 0 ? h + 6 : h), v && c / v, v ];
 }
 
 /**
@@ -443,7 +441,7 @@ export function deltaRgb(rgb1: integer[], rgb2: integer[]): integer {
 }
 
 export function rgbHexToRgba(hex: string) {
-  const color = hex.match(/^([\da-f]{2})([\da-f]{2})([\da-f]{2})$/i)!; // TODO: is this bang correct?
+  const color = hex.match(/^([\da-f]{2})([\da-f]{2})([\da-f]{2})$/i) ?? [ "000000", "00", "00", "00" ];
   return {
     r: parseInt(color[1], 16),
     g: parseInt(color[2], 16),
@@ -510,7 +508,7 @@ export function verifyLang(lang?: string): boolean {
  */
 export function printContainerList(container: Phaser.GameObjects.Container): void {
   console.log(container.list.map(go => {
-    return {type: go.type, name: go.name};
+    return { type: go.type, name: go.name };
   }));
 }
 
@@ -584,7 +582,7 @@ export function capitalizeString(str: string, sep: string, lowerFirstChar: boole
  * Returns if an object is null or undefined
  * @param object
  */
-export function isNullOrUndefined(object: any): boolean {
+export function isNullOrUndefined(object: any): object is undefined | null {
   return null === object || undefined === object;
 }
 
@@ -637,4 +635,15 @@ export function isBetween(num: number, min: number, max: number): boolean {
  */
 export function animationFileName(move: Moves): string {
   return Moves[move].toLowerCase().replace(/\_/g, "-");
+}
+
+/**
+ * Transforms a camelCase string into a kebab-case string
+ * @param str The camelCase string
+ * @returns A kebab-case string
+ *
+ * @source {@link https://stackoverflow.com/a/67243723/}
+ */
+export function camelCaseToKebabCase(str: string): string {
+  return str.replace(/[A-Z]+(?![a-z])|[A-Z]/g, (s, o) => (o ? "-" : "") + s.toLowerCase());
 }

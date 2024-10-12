@@ -208,7 +208,7 @@ export class MysteryEncounterOptionBuilder implements Partial<IMysteryEncounterO
     return Object.assign(this, { requirements: this.requirements });
   }
 
-  withSceneMoneyRequirement(requiredMoney?: number, scalingMultiplier?: number) {
+  withSceneMoneyRequirement(requiredMoney: number, scalingMultiplier?: number) {
     return this.withSceneRequirement(new MoneyRequirement(requiredMoney, scalingMultiplier));
   }
 

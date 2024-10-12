@@ -1,12 +1,11 @@
 import Phaser from "phaser";
-import BattleScene from "./battle-scene";
 import InvertPostFX from "./pipelines/invert";
 import { version } from "../package.json";
 import UIPlugin from "phaser3-rex-plugins/templates/ui/ui-plugin";
 import BBCodeTextPlugin from "phaser3-rex-plugins/plugins/bbcodetext-plugin";
 import InputTextPlugin from "phaser3-rex-plugins/plugins/inputtext-plugin";
 import TransitionImagePackPlugin from "phaser3-rex-plugins/templates/transitionimagepack/transitionimagepack-plugin";
-import { LoadingScene } from "./loading-scene";
+import { initI18n } from "./plugins/i18n";
 
 
 // Catch global errors and display them in an alert so users can report the issue.
@@ -24,52 +23,6 @@ window.addEventListener("unhandledrejection", (event) => {
   console.error(event.reason);
   //alert(errorString);
 });
-
-const config: Phaser.Types.Core.GameConfig = {
-  type: Phaser.WEBGL,
-  parent: "app",
-  scale: {
-    width: 1920,
-    height: 1080,
-    mode: Phaser.Scale.FIT
-  },
-  plugins: {
-    global: [{
-      key: "rexInputTextPlugin",
-      plugin: InputTextPlugin,
-      start: true
-    }, {
-      key: "rexBBCodeTextPlugin",
-      plugin: BBCodeTextPlugin,
-      start: true
-    }, {
-      key: "rexTransitionImagePackPlugin",
-      plugin: TransitionImagePackPlugin,
-      start: true
-    }],
-    scene: [{
-      key: "rexUI",
-      plugin: UIPlugin,
-      mapping: "rexUI"
-    }]
-  },
-  input: {
-    mouse: {
-      target: "app"
-    },
-    touch: {
-      target: "app"
-    },
-    gamepad: true
-  },
-  dom: {
-    createContainer: true
-  },
-  pixelArt: true,
-  pipeline: [ InvertPostFX ] as unknown as Phaser.Types.Core.PipelineConfig,
-  scene: [ LoadingScene, BattleScene ],
-  version: version
-};
 
 /**
  * Sets this object's position relative to another object with a given offset
@@ -91,8 +44,55 @@ document.fonts.load("16px emerald").then(() => document.fonts.load("10px pkmnems
 
 let game;
 
-const startGame = () => {
-  game = new Phaser.Game(config);
+const startGame = async () => {
+  await initI18n();
+  const LoadingScene = (await import("./loading-scene")).LoadingScene;
+  const BattleScene = (await import("./battle-scene")).default;
+  game = new Phaser.Game({
+    type: Phaser.WEBGL,
+    parent: "app",
+    scale: {
+      width: 1920,
+      height: 1080,
+      mode: Phaser.Scale.FIT
+    },
+    plugins: {
+      global: [{
+        key: "rexInputTextPlugin",
+        plugin: InputTextPlugin,
+        start: true
+      }, {
+        key: "rexBBCodeTextPlugin",
+        plugin: BBCodeTextPlugin,
+        start: true
+      }, {
+        key: "rexTransitionImagePackPlugin",
+        plugin: TransitionImagePackPlugin,
+        start: true
+      }],
+      scene: [{
+        key: "rexUI",
+        plugin: UIPlugin,
+        mapping: "rexUI"
+      }]
+    },
+    input: {
+      mouse: {
+        target: "app"
+      },
+      touch: {
+        target: "app"
+      },
+      gamepad: true
+    },
+    dom: {
+      createContainer: true
+    },
+    pixelArt: true,
+    pipeline: [ InvertPostFX ] as unknown as Phaser.Types.Core.PipelineConfig,
+    scene: [ LoadingScene, BattleScene ],
+    version: version
+  });
   game.sound.pauseOnBlur = false;
 };
 
