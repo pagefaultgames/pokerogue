@@ -8713,7 +8713,7 @@ export function initMoves() {
       .ignoresVirtual(),
     new StatusMove(Moves.TRICK_OR_TREAT, Type.GHOST, 100, 20, -1, 0, 6)
       .attr(AddTypeAttr, Type.GHOST)
-      .edgeCase(), // Weird interaction with Forest's Curseh, reflect type, burn up
+      .edgeCase(), // Weird interaction with Forest's Curse, reflect type, burn up
     new StatusMove(Moves.NOBLE_ROAR, Type.NORMAL, 100, 30, -1, 0, 6)
       .attr(StatStageChangeAttr, [ Stat.ATK, Stat.SPATK ], -1)
       .soundBased(),
@@ -9166,10 +9166,10 @@ export function initMoves() {
       .partial(), // Does not steal stats
     new AttackMove(Moves.SUNSTEEL_STRIKE, Type.STEEL, MoveCategory.PHYSICAL, 100, 100, 5, -1, 0, 7)
       .ignoresAbilities()
-      .edgeCase(), // Does not ignore abilities when called virtually (metronome)
+      .edgeCase(), // Should not ignore abilities when called virtually (metronome)
     new AttackMove(Moves.MOONGEIST_BEAM, Type.GHOST, MoveCategory.SPECIAL, 100, 100, 5, -1, 0, 7)
       .ignoresAbilities()
-      .edgeCase(), // Does not ignore abilities when called virtually (metronome)
+      .edgeCase(), // Should not ignore abilities when called virtually (metronome)
     new StatusMove(Moves.TEARFUL_LOOK, Type.NORMAL, -1, 20, -1, 0, 7)
       .attr(StatStageChangeAttr, [ Stat.ATK, Stat.SPATK ], -1),
     new AttackMove(Moves.ZING_ZAP, Type.ELECTRIC, MoveCategory.PHYSICAL, 80, 100, 10, 30, 0, 7)
