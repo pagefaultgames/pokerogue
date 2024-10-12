@@ -46,6 +46,7 @@ import { StarterContainer } from "#app/ui/starter-container";
 import { DropDownColumn, FilterBar } from "#app/ui/filter-bar";
 import { ScrollBar } from "#app/ui/scroll-bar";
 import { SelectChallengePhase } from "#app/phases/select-challenge-phase";
+import { EncounterPhase } from "#app/phases/encounter-phase";
 import { TitlePhase } from "#app/phases/title-phase";
 import { Abilities } from "#enums/abilities";
 import { getPassiveCandyCount, getValueReductionCandyCounts, getSameSpeciesEggCandyCounts } from "#app/data/balance/starters";
@@ -1788,7 +1789,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
             options.push({
               label: `x${sameSpeciesEggCost} ${i18next.t("starterSelectUiHandler:sameSpeciesEgg")}`,
               handler: () => {
-                if (this.scene.gameData.eggs.length < 99 && (Overrides.FREE_CANDY_UPGRADE_OVERRIDE || candyCount >= sameSpeciesEggCost)) {
+                if ((this.scene.gameData.eggs.length < 99 || Overrides.UNLIMITED_EGG_COUNT_OVERRIDE)
+                  && (Overrides.FREE_CANDY_UPGRADE_OVERRIDE || candyCount >= sameSpeciesEggCost)) {
                   if (!Overrides.FREE_CANDY_UPGRADE_OVERRIDE) {
                     starterData.candyCount -= sameSpeciesEggCost;
                   }
@@ -2961,8 +2963,12 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.natureCursor = -1;
 
     if (this.activeTooltip === "CANDY") {
-      const { currentFriendship, friendshipCap } = this.getFriendship(this.lastSpecies.speciesId);
-      this.scene.ui.editTooltip("", `${currentFriendship}/${friendshipCap}`);
+      if (this.lastSpecies) {
+        const { currentFriendship, friendshipCap } = this.getFriendship(this.lastSpecies.speciesId);
+        this.scene.ui.editTooltip("", `${currentFriendship}/${friendshipCap}`);
+      } else {
+        this.scene.ui.hideTooltip();
+      }
     }
 
     if (species?.forms?.find(f => f.formKey === "female")) {
@@ -3468,6 +3474,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         this.scene.clearPhaseQueue();
         if (this.scene.gameMode.isChallenge) {
           this.scene.pushPhase(new SelectChallengePhase(this.scene));
+          this.scene.pushPhase(new EncounterPhase(this.scene, false));
         } else {
           this.scene.pushPhase(new TitlePhase(this.scene));
         }
@@ -3652,6 +3659,9 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     StarterPrefs.save(this.starterPreferences);
     this.cursor = -1;
     this.hideInstructions();
+    this.activeTooltip = undefined;
+    this.scene.ui.hideTooltip();
+
     this.starterSelectContainer.setVisible(false);
     this.blockInput = false;
 
