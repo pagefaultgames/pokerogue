@@ -33,7 +33,7 @@ describe("Moves - Safeguard", () => {
       .enemyLevel(5)
       .starterSpecies(Species.DRATINI)
       .moveset([ Moves.NUZZLE, Moves.SPORE, Moves.YAWN, Moves.SPLASH ])
-      .ability(Abilities.BALL_FETCH);
+      .ability(Abilities.UNNERVE); // Stop wild Pokemon from potentially eating Lum Berry
   });
 
   it("protects from damaging moves with additional effects", async () => {

@@ -85,13 +85,13 @@ describe("Moves - Thousand Arrows", () => {
 
       const enemyPokemon = game.scene.getEnemyPokemon()!;
 
-      enemyPokemon.addTag(BattlerTagType.MAGNET_RISEN, undefined, Moves.MAGNET_RISE);
+      enemyPokemon.addTag(BattlerTagType.FLOATING, undefined, Moves.MAGNET_RISE);
 
       game.move.select(Moves.THOUSAND_ARROWS);
 
       await game.phaseInterceptor.to(BerryPhase, false);
 
-      expect(enemyPokemon.getTag(BattlerTagType.MAGNET_RISEN)).toBeUndefined();
+      expect(enemyPokemon.getTag(BattlerTagType.FLOATING)).toBeUndefined();
       expect(enemyPokemon.getTag(BattlerTagType.IGNORE_FLYING)).toBeDefined();
       expect(enemyPokemon.hp).toBeLessThan(enemyPokemon.getMaxHp());
     }

@@ -4,14 +4,14 @@ import { AddSecondStrikeAbAttr, AlwaysHitAbAttr, applyPostAttackAbAttrs, applyPo
 import { ArenaTagSide, ConditionalProtectTag } from "#app/data/arena-tag";
 import { MoveAnim } from "#app/data/battle-anims";
 import { BattlerTagLapseType, DamageProtectedTag, ProtectedTag, SemiInvulnerableTag, SubstituteTag } from "#app/data/battler-tags";
-import { applyFilteredMoveAttrs, applyMoveAttrs, AttackMove, ChargeAttr, DelayedAttackAttr, FixedDamageAttr, HitsTagAttr, MissEffectAttr, MoveAttr, MoveCategory, MoveEffectAttr, MoveEffectTrigger, MoveFlags, MoveTarget, MultiHitAttr, NoEffectAttr, OverrideMoveEffectAttr, ToxicAccuracyAttr, VariableTargetAttr } from "#app/data/move";
+import { applyFilteredMoveAttrs, applyMoveAttrs, AttackMove, ChargeAttr, DelayedAttackAttr, FixedDamageAttr, HitsTagAttr, MissEffectAttr, MoveAttr, MoveCategory, MoveEffectAttr, MoveEffectTrigger, MoveFlags, MoveTarget, MultiHitAttr, NoEffectAttr, OneHitKOAttr, OverrideMoveEffectAttr, ToxicAccuracyAttr, VariableTargetAttr } from "#app/data/move";
 import { SpeciesFormChangePostMoveTrigger } from "#app/data/pokemon-forms";
 import { Type } from "#app/data/type";
 import Pokemon, { HitResult, MoveResult, PokemonMove } from "#app/field/pokemon";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { ContactHeldItemTransferChanceModifier, EnemyAttackStatusEffectChanceModifier, FlinchChanceModifier, HitHealModifier, PokemonMultiHitModifier } from "#app/modifier/modifier";
 import { PokemonPhase } from "#app/phases/pokemon-phase";
-import { BooleanHolder, NumberHolder, executeIf } from "#app/utils";
+import { BooleanHolder, executeIf, NumberHolder } from "#app/utils";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { Moves } from "#enums/moves";
 import i18next from "i18next";
@@ -406,6 +406,10 @@ export class MoveEffectPhase extends PokemonPhase {
     }
 
     if (target.getTag(BattlerTagType.ALWAYS_GET_HIT)) {
+      return true;
+    }
+
+    if (target.getTag(BattlerTagType.TELEKINESIS) && !target.getTag(SemiInvulnerableTag) && !this.move.getMove().hasAttr(OneHitKOAttr)) {
       return true;
     }
 

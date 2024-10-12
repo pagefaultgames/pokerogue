@@ -2963,8 +2963,12 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.natureCursor = -1;
 
     if (this.activeTooltip === "CANDY") {
-      const { currentFriendship, friendshipCap } = this.getFriendship(this.lastSpecies.speciesId);
-      this.scene.ui.editTooltip("", `${currentFriendship}/${friendshipCap}`);
+      if (this.lastSpecies) {
+        const { currentFriendship, friendshipCap } = this.getFriendship(this.lastSpecies.speciesId);
+        this.scene.ui.editTooltip("", `${currentFriendship}/${friendshipCap}`);
+      } else {
+        this.scene.ui.hideTooltip();
+      }
     }
 
     if (species?.forms?.find(f => f.formKey === "female")) {
@@ -3655,6 +3659,9 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     StarterPrefs.save(this.starterPreferences);
     this.cursor = -1;
     this.hideInstructions();
+    this.activeTooltip = undefined;
+    this.scene.ui.hideTooltip();
+
     this.starterSelectContainer.setVisible(false);
     this.blockInput = false;
 
