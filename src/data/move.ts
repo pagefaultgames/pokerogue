@@ -2867,7 +2867,7 @@ export class StatStageChangeAttr extends MoveEffectAttr {
   }
 }
 
-export class BiomeBasedSecondaryEffectAttr extends MoveEffectAttr {
+export class SecretPowerAttr extends MoveEffectAttr {
   constructor() {
     super(false);
   }
@@ -7920,7 +7920,7 @@ export function initMoves() {
       .unimplemented(),
     new AttackMove(Moves.SECRET_POWER, Type.NORMAL, MoveCategory.PHYSICAL, 70, 100, 20, 30, 0, 3)
       .makesContact(false)
-      .attr(BiomeBasedSecondaryEffectAttr),
+      .attr(SecretPowerAttr),
     new AttackMove(Moves.DIVE, Type.WATER, MoveCategory.PHYSICAL, 80, 100, 10, -1, 0, 3)
       .attr(ChargeAttr, ChargeAnim.DIVE_CHARGING, i18next.t("moveTriggers:hidUnderwater", { pokemonName: "{USER}" }), BattlerTagType.UNDERWATER, true)
       .attr(GulpMissileTagAttr)
