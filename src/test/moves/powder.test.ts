@@ -1,14 +1,14 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import Phaser from "phaser";
 import GameManager from "#test/utils/gameManager";
-import { Abilities } from "#app/enums/abilities";
-import { Moves } from "#app/enums/moves";
-import { Species } from "#app/enums/species";
+import { Abilities } from "#enums/abilities";
+import { Moves } from "#enums/moves";
+import { Species } from "#enums/species";
 import { BerryPhase } from "#app/phases/berry-phase";
 import { MoveResult } from "#app/field/pokemon";
 import { Type } from "#app/data/type";
 import { MoveEffectPhase } from "#app/phases/move-effect-phase";
-import { StatusEffect } from "#app/enums/status-effect";
+import { StatusEffect } from "#enums/status-effect";
 
 const TIMEOUT = 20 * 1000;
 
