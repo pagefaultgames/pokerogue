@@ -5243,7 +5243,8 @@ export function initAbilities() {
     new Ability(Abilities.SHEER_FORCE, 5)
       .attr(MovePowerBoostAbAttr, (user, target, move) => move.chance >= 1, 5461 / 4096)
       .attr(MoveEffectChanceMultiplierAbAttr, 0)
-      .edgeCase(), // Does not work with Meloetta relic song, life orb, eject button, red card, shell bell, kee/maranga berry, color change, pickpocket, wimp out, emergency exit, berserk, anger shell
+      .edgeCase() // Should disable shell bell and Meloetta's relic song transformation
+      .edgeCase(), // Should disable life orb, eject button, red card, kee/maranga berry if they get implemented
     new Ability(Abilities.CONTRARY, 5)
       .attr(StatStageChangeMultiplierAbAttr, -1)
       .ignorable(),
@@ -5544,9 +5545,9 @@ export function initAbilities() {
       .attr(NoFusionAbilityAbAttr)
       .bypassFaint()
       .partial(),
-    new Ability(Abilities.CORROSION, 7) // TODO: Test Corrosion against Magic Bounce once it is implemented
+    new Ability(Abilities.CORROSION, 7)
       .attr(IgnoreTypeStatusEffectImmunityAbAttr, [ StatusEffect.POISON, StatusEffect.TOXIC ], [ Type.STEEL, Type.POISON ])
-      .edgeCase(),
+      .edgeCase(), // Should interact correctly with magic coat/bounce (not yet implemented), fling with toxic orb (not implemented yet), and synchronize (not fully implemented yet)
     new Ability(Abilities.COMATOSE, 7)
       .attr(UncopiableAbilityAbAttr)
       .attr(UnswappableAbilityAbAttr)
