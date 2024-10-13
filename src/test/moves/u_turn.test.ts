@@ -96,4 +96,19 @@ describe("Moves - U-turn", () => {
     expect(game.scene.getEnemyPokemon()!.battleData.abilityRevealed).toBe(true); // proxy for asserting ability activated
     expect(game.phaseInterceptor.log).not.toContain("SwitchSummonPhase");
   }, 20000);
+
+  it("still forces a switch if u-turn KO's the opponent", async () => {
+    game.override.startingLevel(1000); // Ensure that U-Turn KO's the opponent
+    await game.classicMode.startBattle([
+      Species.RAICHU,
+      Species.SHUCKLE
+    ]);
+
+    game.move.select(Moves.U_TURN);
+    game.doSelectPartyPokemon(1);
+    await game.phaseInterceptor.to(TurnEndPhase);
+
+    expect(game.phaseInterceptor.log).toContain("SwitchSummonPhase");
+    expect(game.scene.getPlayerPokemon()!.species.speciesId).toBe(Species.SHUCKLE);
+  });
 });
