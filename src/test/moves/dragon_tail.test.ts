@@ -152,7 +152,7 @@ describe("Moves - Dragon Tail", () => {
     // Make sure the enemy switched to a healthy Pokemon
     const enemy = game.scene.getEnemyPokemon()!;
     expect(enemy).toBeDefined();
-    expect(enemy.isFullHp).toBeTruthy();
+    expect(enemy.isFullHp()).toBe(true);
 
     // Make sure the enemy has a fainted Pokemon in their party
     const faintedEnemy = game.scene.getEnemyParty().find(p => !p.isAllowedInBattle());

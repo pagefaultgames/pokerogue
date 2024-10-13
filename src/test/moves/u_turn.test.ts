@@ -103,11 +103,15 @@ describe("Moves - U-turn", () => {
       Species.RAICHU,
       Species.SHUCKLE
     ]);
+    const enemy = game.scene.getEnemyPokemon()!;
 
+    // KO the opponent with U-Turn
     game.move.select(Moves.U_TURN);
     game.doSelectPartyPokemon(1);
     await game.phaseInterceptor.to(TurnEndPhase);
+    expect(enemy.isFainted()).toBe(true);
 
+    // Check that U-Turn forced a switch
     expect(game.phaseInterceptor.log).toContain("SwitchSummonPhase");
     expect(game.scene.getPlayerPokemon()!.species.speciesId).toBe(Species.SHUCKLE);
   });
