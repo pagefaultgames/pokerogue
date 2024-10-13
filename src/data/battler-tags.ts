@@ -1709,7 +1709,12 @@ export class TypeImmuneTag extends BattlerTag {
   }
 }
 
-export class MagnetRisenTag extends TypeImmuneTag {
+/**
+ * Battler Tag that lifts the affected Pokemon into the air and provides immunity to Ground type moves.
+ * @see {@link https://bulbapedia.bulbagarden.net/wiki/Magnet_Rise_(move) | Moves.MAGNET_RISE}
+ * @see {@link https://bulbapedia.bulbagarden.net/wiki/Telekinesis_(move) | Moves.TELEKINESIS}
+ */
+export class FloatingTag extends TypeImmuneTag {
   constructor(tagType: BattlerTagType, sourceMove: Moves) {
     super(tagType, sourceMove, Type.GROUND, 5);
   }
@@ -1717,13 +1722,17 @@ export class MagnetRisenTag extends TypeImmuneTag {
   onAdd(pokemon: Pokemon): void {
     super.onAdd(pokemon);
 
-    pokemon.scene.queueMessage(i18next.t("battlerTags:magnetRisenOnAdd", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }));
+    if (this.sourceMove === Moves.MAGNET_RISE) {
+      pokemon.scene.queueMessage(i18next.t("battlerTags:magnetRisenOnAdd", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }));
+    }
+
   }
 
   onRemove(pokemon: Pokemon): void {
     super.onRemove(pokemon);
-
-    pokemon.scene.queueMessage(i18next.t("battlerTags:magnetRisenOnRemove", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }));
+    if (this.sourceMove === Moves.MAGNET_RISE) {
+      pokemon.scene.queueMessage(i18next.t("battlerTags:magnetRisenOnRemove", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }));
+    }
   }
 }
 
@@ -2673,6 +2682,22 @@ export class SyrupBombTag extends BattlerTag {
 }
 
 /**
+ * Telekinesis raises the target into the air for three turns and causes all moves used against the target (aside from OHKO moves) to hit the target unless the target is in a semi-invulnerable state from Fly/Dig.
+ * The first effect is provided by {@linkcode FloatingTag}, the accuracy-bypass effect is provided by TelekinesisTag
+ * The effects of Telekinesis can be baton passed to a teammate. Unlike the mainline games, Telekinesis can be baton-passed to Mega Gengar.
+ * @see {@link https://bulbapedia.bulbagarden.net/wiki/Telekinesis_(move) | Moves.TELEKINESIS}
+ */
+export class TelekinesisTag extends BattlerTag {
+  constructor(sourceMove: Moves) {
+    super(BattlerTagType.TELEKINESIS, [ BattlerTagLapseType.PRE_MOVE, BattlerTagLapseType.AFTER_MOVE ], 3, sourceMove, undefined, true);
+  }
+
+  override onAdd(pokemon: Pokemon)  {
+    pokemon.scene.queueMessage(i18next.t("battlerTags:telekinesisOnAdd", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }));
+  }
+}
+
+/**
  * Retrieves a {@linkcode BattlerTag} based on the provided tag type, turn count, source move, and source ID.
  * @param sourceId - The ID of the pokemon adding the tag
  * @returns The corresponding {@linkcode BattlerTag} object.
@@ -2798,8 +2823,8 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: number, source
     return new CursedTag(sourceId);
   case BattlerTagType.CHARGED:
     return new TypeBoostTag(tagType, sourceMove, Type.ELECTRIC, 2, true);
-  case BattlerTagType.MAGNET_RISEN:
-    return new MagnetRisenTag(tagType, sourceMove);
+  case BattlerTagType.FLOATING:
+    return new FloatingTag(tagType, sourceMove);
   case BattlerTagType.MINIMIZED:
     return new MinimizeTag();
   case BattlerTagType.DESTINY_BOND:
@@ -2845,6 +2870,8 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: number, source
     return new ImprisonTag(sourceId);
   case BattlerTagType.SYRUP_BOMB:
     return new SyrupBombTag(sourceId);
+  case BattlerTagType.TELEKINESIS:
+    return new TelekinesisTag(sourceMove);
   case BattlerTagType.NONE:
   default:
     return new BattlerTag(tagType, BattlerTagLapseType.CUSTOM, turnCount, sourceMove, sourceId);

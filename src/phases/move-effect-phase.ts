@@ -4,7 +4,7 @@ import { applyPreAttackAbAttrs, AddSecondStrikeAbAttr, IgnoreMoveEffectsAbAttr, 
 import { ArenaTagSide, ConditionalProtectTag } from "#app/data/arena-tag";
 import { MoveAnim } from "#app/data/battle-anims";
 import { BattlerTagLapseType, DamageProtectedTag, ProtectedTag, SemiInvulnerableTag, SubstituteTag } from "#app/data/battler-tags";
-import { MoveTarget, applyMoveAttrs, OverrideMoveEffectAttr, MultiHitAttr, AttackMove, FixedDamageAttr, VariableTargetAttr, MissEffectAttr, MoveFlags, applyFilteredMoveAttrs, MoveAttr, MoveEffectAttr, MoveEffectTrigger, MoveCategory, NoEffectAttr, HitsTagAttr, ToxicAccuracyAttr } from "#app/data/move";
+import { MoveTarget, applyMoveAttrs, OverrideMoveEffectAttr, MultiHitAttr, AttackMove, FixedDamageAttr, VariableTargetAttr, MissEffectAttr, MoveFlags, applyFilteredMoveAttrs, MoveAttr, MoveEffectAttr, OneHitKOAttr, MoveEffectTrigger, MoveCategory, NoEffectAttr, HitsTagAttr, ToxicAccuracyAttr } from "#app/data/move";
 import { SpeciesFormChangePostMoveTrigger } from "#app/data/pokemon-forms";
 import { BattlerTagType } from "#app/enums/battler-tag-type";
 import { Moves } from "#app/enums/moves";
@@ -398,6 +398,10 @@ export class MoveEffectPhase extends PokemonPhase {
     }
 
     if (target.getTag(BattlerTagType.ALWAYS_GET_HIT)) {
+      return true;
+    }
+
+    if (target.getTag(BattlerTagType.TELEKINESIS) && !target.getTag(SemiInvulnerableTag) && !this.move.getMove().hasAttr(OneHitKOAttr)) {
       return true;
     }
 

@@ -749,9 +749,16 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       const relX = newOffset[0] - initialOffset[0];
       const relY = newOffset[1] - initialOffset[1];
 
+      const subTag = this.getTag(SubstituteTag);
+
       if (duration) {
+        // TODO: can this use stricter typing?
+        const targets: any[] = [ this ];
+        if (subTag?.sprite) {
+          targets.push(subTag.sprite);
+        }
         this.scene.tweens.add({
-          targets: this,
+          targets: targets,
           x: (_target, _key, value: number) => value + relX,
           y: (_target, _key, value: number) => value + relY,
           duration: duration,
@@ -761,6 +768,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       } else {
         this.x += relX;
         this.y += relY;
+        if (subTag?.sprite) {
+          subTag.sprite.x += relX;
+          subTag.sprite.y += relY;
+        }
       }
     });
   }
@@ -1488,7 +1499,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   isGrounded(): boolean {
-    return !!this.getTag(GroundedTag) || (!this.isOfType(Type.FLYING, true, true) && !this.hasAbility(Abilities.LEVITATE) && !this.getTag(BattlerTagType.MAGNET_RISEN) && !this.getTag(SemiInvulnerableTag));
+    return !!this.getTag(GroundedTag) || (!this.isOfType(Type.FLYING, true, true) && !this.hasAbility(Abilities.LEVITATE) && !this.getTag(BattlerTagType.FLOATING) && !this.getTag(SemiInvulnerableTag));
   }
 
   /**
