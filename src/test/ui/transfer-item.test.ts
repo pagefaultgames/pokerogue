@@ -37,11 +37,11 @@ describe("UI - Transfer Items", () => {
       { name: "BERRY", count: 2, type: BerryType.APICOT },
       { name: "BERRY", count: 2, type: BerryType.LUM },
     ]);
-    game.override.moveset([Moves.DRAGON_CLAW]);
+    game.override.moveset([ Moves.DRAGON_CLAW ]);
     game.override.enemySpecies(Species.MAGIKARP);
-    game.override.enemyMoveset([Moves.SPLASH]);
+    game.override.enemyMoveset([ Moves.SPLASH ]);
 
-    await game.startBattle([Species.RAYQUAZA, Species.RAYQUAZA, Species.RAYQUAZA]);
+    await game.startBattle([ Species.RAYQUAZA, Species.RAYQUAZA, Species.RAYQUAZA ]);
 
     game.move.select(Moves.DRAGON_CLAW);
 

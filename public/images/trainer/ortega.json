@@ -1,0 +1,41 @@
+{
+	"textures": [
+		{
+			"image": "ortega.png",
+			"format": "RGBA8888",
+			"size": {
+				"w": 69,
+				"h": 69
+			},
+			"scale": 1,
+			"frames": [
+				{
+					"filename": "0001.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 80,
+						"h": 80
+					},
+					"spriteSourceSize": {
+						"x": 8,
+						"y": 10,
+						"w": 53,
+						"h": 69
+					},
+					"frame": {
+						"x": 0,
+						"y": 0,
+						"w": 53,
+						"h": 69
+					}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "https://www.codeandweb.com/texturepacker",
+		"version": "3.0",
+		"smartupdate": "$TexturePacker:SmartUpdate:c6ff92d90ed884222095de81d1db9166:a91cf3c83a063f549c52afb42f7ba3b0:c3f9fcec121c8bc93f2b230b20b79c57$"
+	}
+}

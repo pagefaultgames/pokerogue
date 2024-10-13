@@ -7,7 +7,6 @@ import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import GameManager from "../utils/gameManager";
 
-const TIMEOUT = 20 * 1000;
 
 describe("Moves - Lucky Chant", () => {
   let phaserGame: Phaser.Game;
@@ -28,10 +27,10 @@ describe("Moves - Lucky Chant", () => {
 
     game.override
       .battleType("single")
-      .moveset([Moves.LUCKY_CHANT, Moves.SPLASH, Moves.FOLLOW_ME])
+      .moveset([ Moves.LUCKY_CHANT, Moves.SPLASH, Moves.FOLLOW_ME ])
       .enemySpecies(Species.SNORLAX)
       .enemyAbility(Abilities.INSOMNIA)
-      .enemyMoveset([Moves.FLOWER_TRICK])
+      .enemyMoveset([ Moves.FLOWER_TRICK ])
       .startingLevel(100)
       .enemyLevel(100);
   });
@@ -39,7 +38,7 @@ describe("Moves - Lucky Chant", () => {
   it(
     "should prevent critical hits from moves",
     async () => {
-      await game.startBattle([Species.CHARIZARD]);
+      await game.startBattle([ Species.CHARIZARD ]);
 
       const playerPokemon = game.scene.getPlayerPokemon()!;
 
@@ -55,7 +54,7 @@ describe("Moves - Lucky Chant", () => {
 
       const secondTurnDamage = playerPokemon.getMaxHp() - playerPokemon.hp - firstTurnDamage;
       expect(secondTurnDamage).toBeLessThan(firstTurnDamage);
-    }, TIMEOUT
+    }
   );
 
   it(
@@ -63,7 +62,7 @@ describe("Moves - Lucky Chant", () => {
     async () => {
       game.override.battleType("double");
 
-      await game.startBattle([Species.CHARIZARD, Species.BLASTOISE]);
+      await game.startBattle([ Species.CHARIZARD, Species.BLASTOISE ]);
 
       const playerPokemon = game.scene.getPlayerField();
 
@@ -81,15 +80,15 @@ describe("Moves - Lucky Chant", () => {
 
       const secondTurnDamage = playerPokemon[0].getMaxHp() - playerPokemon[0].hp - firstTurnDamage;
       expect(secondTurnDamage).toBeLessThan(firstTurnDamage);
-    }, TIMEOUT
+    }
   );
 
   it(
     "should prevent critical hits from field effects",
     async () => {
-      game.override.enemyMoveset([Moves.TACKLE]);
+      game.override.enemyMoveset([ Moves.TACKLE ]);
 
-      await game.startBattle([Species.CHARIZARD]);
+      await game.startBattle([ Species.CHARIZARD ]);
 
       const playerPokemon = game.scene.getPlayerPokemon()!;
       const enemyPokemon = game.scene.getEnemyPokemon()!;
@@ -108,6 +107,6 @@ describe("Moves - Lucky Chant", () => {
 
       const secondTurnDamage = playerPokemon.getMaxHp() - playerPokemon.hp - firstTurnDamage;
       expect(secondTurnDamage).toBeLessThan(firstTurnDamage);
-    }, TIMEOUT
+    }
   );
 });
