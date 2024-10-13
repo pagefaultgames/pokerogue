@@ -17,9 +17,9 @@ interface BuildInteractableImageOpts {
 
 export default class LoginFormUiHandler extends FormModalUiHandler {
   private readonly ERR_USERNAME: string = "invalid username";
-  private readonly ERR_PASSWORD: string =  "invalid password";
-  private readonly ERR_ACCOUNT_EXIST: string =  "account doesn't exist";
-  private readonly ERR_PASSWORD_MATCH: string =  "password doesn't match";
+  private readonly ERR_PASSWORD: string = "invalid password";
+  private readonly ERR_ACCOUNT_EXIST: string = "account doesn't exist";
+  private readonly ERR_PASSWORD_MATCH: string = "password doesn't match";
   private readonly ERR_NO_SAVES: string = "No save files found";
   private readonly ERR_TOO_MANY_SAVES: string = "Too many save files found";
 
@@ -76,7 +76,7 @@ export default class LoginFormUiHandler extends FormModalUiHandler {
   }
 
   override getFields(_config?: ModalConfig): string[] {
-    return [ i18next.t("menu:username"), i18next.t("menu:password") ];
+    return [i18next.t("menu:username"), i18next.t("menu:password")];
   }
 
   override getWidth(_config?: ModalConfig): number {
@@ -84,11 +84,11 @@ export default class LoginFormUiHandler extends FormModalUiHandler {
   }
 
   override getMargin(_config?: ModalConfig): [number, number, number, number] {
-    return [ 0, 0, 48, 0 ];
+    return [0, 0, 48, 0];
   }
 
   override getButtonLabels(_config?: ModalConfig): string[] {
-    return [ i18next.t("menu:login"), i18next.t("menu:register")];
+    return [i18next.t("menu:login"), i18next.t("menu:register")];
   }
 
   override getReadableErrorMessage(error: string): string {
@@ -106,9 +106,9 @@ export default class LoginFormUiHandler extends FormModalUiHandler {
     case this.ERR_PASSWORD_MATCH:
       return i18next.t("menu:unmatchingPassword");
     case this.ERR_NO_SAVES:
-      return i18next.t("menu:noSaves");
+      return "P01: " + i18next.t("menu:noSaves");
     case this.ERR_TOO_MANY_SAVES:
-      return i18next.t("menu:tooManySaves");
+      return "P02: " + i18next.t("menu:tooManySaves");
     }
 
     return super.getReadableErrorMessage(error);
@@ -164,16 +164,16 @@ export default class LoginFormUiHandler extends FormModalUiHandler {
     [this.discordImage, this.googleImage, this.usernameInfoImage].forEach((img) => img.off("pointerdown"));
   }
 
-  private processExternalProvider(config: ModalConfig) : void {
+  private processExternalProvider(config: ModalConfig): void {
     this.externalPartyTitle.setText(i18next.t("menu:orUse") ?? "");
-    this.externalPartyTitle.setX(20+this.externalPartyTitle.text.length);
+    this.externalPartyTitle.setX(20 + this.externalPartyTitle.text.length);
     this.externalPartyTitle.setVisible(true);
     this.externalPartyContainer.setPositionRelative(this.modalContainer, 175, 0);
     this.externalPartyContainer.setVisible(true);
     this.externalPartyBg.setSize(this.externalPartyTitle.text.length + 50, this.modalBg.height);
     this.getUi().moveTo(this.externalPartyContainer, this.getUi().length - 1);
-    this.googleImage.setPosition(this.externalPartyBg.width/3.1, this.externalPartyBg.height-60);
-    this.discordImage.setPosition(this.externalPartyBg.width/3.1, this.externalPartyBg.height-40);
+    this.googleImage.setPosition(this.externalPartyBg.width / 3.1, this.externalPartyBg.height - 60);
+    this.discordImage.setPosition(this.externalPartyBg.width / 3.1, this.externalPartyBg.height - 40);
 
     this.infoContainer.setPosition(5, -76);
     this.infoContainer.setVisible(true);

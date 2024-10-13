@@ -70,6 +70,10 @@ export default class TestDialogueUiHandler extends FormModalUiHandler {
 
   show(args: any[]): boolean {
     const ui = this.getUi();
+    const fields = this.getFields();
+    const hasTitle = !!this.getModalTitle();
+    this.updateFields(fields, hasTitle);
+    this.updateContainer(args[0] as ModalConfig);
     const input = this.inputs[0];
     input.setMaxLength(255);
 
