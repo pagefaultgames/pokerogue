@@ -2948,10 +2948,13 @@ export class SecretPowerAttr extends MoveEffectAttr {
     case Biome.WASTELAND:
       secondaryEffect = new AddBattlerTagAttr(BattlerTagType.FLINCHED, false, true);
       break;
+    case Biome.SPACE:
+      secondaryEffect = new StatStageChangeAttr([ Stat.DEF ], -1, false);
+      break;
     case Biome.GRAVEYARD:
     case Biome.RUINS:
     case Biome.ABYSS:
-    case Biome.SPACE:
+
     case Biome.TEMPLE:
     case Biome.END:
     default:
