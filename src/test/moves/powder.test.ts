@@ -36,13 +36,13 @@ describe("Moves - Powder", () => {
       .enemyMoveset(Array(4).fill(Moves.EMBER))
       .enemyAbility(Abilities.INSOMNIA)
       .startingLevel(100)
-      .moveset([Moves.POWDER, Moves.SPLASH, Moves.FIERY_DANCE]);
+      .moveset([ Moves.POWDER, Moves.SPLASH, Moves.FIERY_DANCE ]);
   });
 
   it(
     "should cancel the target's Fire-type move and damage the target",
     async () => {
-      await game.classicMode.startBattle([Species.CHARIZARD]);
+      await game.classicMode.startBattle([ Species.CHARIZARD ]);
 
       const enemyPokemon = game.scene.getEnemyPokemon()!;
 
@@ -67,7 +67,7 @@ describe("Moves - Powder", () => {
     async () => {
       game.override.enemySpecies(Species.AMOONGUSS);
 
-      await game.classicMode.startBattle([Species.CHARIZARD]);
+      await game.classicMode.startBattle([ Species.CHARIZARD ]);
 
       const enemyPokemon = game.scene.getEnemyPokemon()!;
 
@@ -84,7 +84,7 @@ describe("Moves - Powder", () => {
     async () => {
       game.override.enemyAbility(Abilities.OVERCOAT);
 
-      await game.classicMode.startBattle([Species.CHARIZARD]);
+      await game.classicMode.startBattle([ Species.CHARIZARD ]);
 
       const enemyPokemon = game.scene.getEnemyPokemon()!;
 
@@ -101,7 +101,7 @@ describe("Moves - Powder", () => {
     async () => {
       game.override.enemyAbility(Abilities.MAGIC_GUARD);
 
-      await game.classicMode.startBattle([Species.CHARIZARD]);
+      await game.classicMode.startBattle([ Species.CHARIZARD ]);
 
       const enemyPokemon = game.scene.getEnemyPokemon()!;
 
@@ -120,7 +120,7 @@ describe("Moves - Powder", () => {
         .enemyMoveset(Array(4).fill(Moves.FLAME_WHEEL))
         .enemyStatusEffect(StatusEffect.FREEZE);
 
-      await game.classicMode.startBattle([Species.CHARIZARD]);
+      await game.classicMode.startBattle([ Species.CHARIZARD ]);
 
       const enemyPokemon = game.scene.getEnemyPokemon()!;
 
@@ -138,7 +138,7 @@ describe("Moves - Powder", () => {
     async () => {
       game.override.enemyAbility(Abilities.PROTEAN);
 
-      await game.classicMode.startBattle([Species.CHARIZARD]);
+      await game.classicMode.startBattle([ Species.CHARIZARD ]);
 
       const enemyPokemon = game.scene.getEnemyPokemon()!;
 
@@ -159,7 +159,7 @@ describe("Moves - Powder", () => {
         .enemySpecies(Species.BLASTOISE)
         .enemyAbility(Abilities.DANCER);
 
-      await game.classicMode.startBattle([Species.CHARIZARD]);
+      await game.classicMode.startBattle([ Species.CHARIZARD ]);
 
       const playerPokemon = game.scene.getPlayerPokemon()!;
       const enemyPokemon = game.scene.getEnemyPokemon()!;
@@ -173,7 +173,7 @@ describe("Moves - Powder", () => {
       // player should not take damage
       expect(playerPokemon.hp).toBe(playerPokemon.getMaxHp());
       // enemy should have taken damage from player's Fiery Dance + 2 Powder procs
-      expect(enemyPokemon.hp).toBe(enemyStartingHp - 2*Math.floor(enemyPokemon.getMaxHp() / 4));
+      expect(enemyPokemon.hp).toBe(enemyStartingHp - 2 * Math.floor(enemyPokemon.getMaxHp() / 4));
     }, TIMEOUT
   );
 
@@ -184,7 +184,7 @@ describe("Moves - Powder", () => {
         .enemySpecies(Species.CHARIZARD)
         .enemyMoveset(Array(4).fill(Moves.REVELATION_DANCE));
 
-      await game.classicMode.startBattle([Species.CHARIZARD]);
+      await game.classicMode.startBattle([ Species.CHARIZARD ]);
 
       const enemyPokemon = game.scene.getEnemyPokemon()!;
 
@@ -201,7 +201,7 @@ describe("Moves - Powder", () => {
     async () => {
       game.override.enemyMoveset(Array(4).fill(Moves.SHELL_TRAP));
 
-      await game.classicMode.startBattle([Species.CHARIZARD]);
+      await game.classicMode.startBattle([ Species.CHARIZARD ]);
 
       const enemyPokemon = game.scene.getEnemyPokemon()!;
 
