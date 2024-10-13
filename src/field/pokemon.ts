@@ -3062,8 +3062,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    *
    * @see {@linkcode MoveRestrictionBattlerTag}
    */
-  isMoveRestricted(moveId: Moves): boolean {
-    return this.getRestrictingTag(moveId) !== null;
+  public isMoveRestricted(moveId: Moves, pokemon?: Pokemon): boolean {
+    return this.getRestrictingTag(moveId, pokemon) !== null;
   }
 
   /**
@@ -3096,7 +3096,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    */
   getRestrictingTag(moveId: Moves, user?: Pokemon, target?: Pokemon): MoveRestrictionBattlerTag | null {
     for (const tag of this.findTags(t => t instanceof MoveRestrictionBattlerTag)) {
-      if ((tag as MoveRestrictionBattlerTag).isMoveRestricted(moveId)) {
+      if ((tag as MoveRestrictionBattlerTag).isMoveRestricted(moveId, user)) {
         return tag as MoveRestrictionBattlerTag;
       } else if (user && target && (tag as MoveRestrictionBattlerTag).isMoveTargetRestricted(moveId, user, target)) {
         return tag as MoveRestrictionBattlerTag;
@@ -5139,7 +5139,7 @@ export class PokemonMove {
    * @returns `true` if the move can be selected and used by the Pokemon, otherwise `false`.
    */
   isUsable(pokemon: Pokemon, ignorePp: boolean = false, ignoreRestrictionTags: boolean = false): boolean {
-    if (this.moveId && !ignoreRestrictionTags && pokemon.isMoveRestricted(this.moveId)) {
+    if (this.moveId && !ignoreRestrictionTags && pokemon.isMoveRestricted(this.moveId, pokemon)) {
       return false;
     }
 
