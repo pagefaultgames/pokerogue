@@ -2897,6 +2897,39 @@ export class SecretPowerAttr extends MoveEffectAttr {
     case Biome.PLAINS:
       secondaryEffect = new StatusEffectAttr(StatusEffect.SLEEP, false);
       return secondaryEffect.apply(user, target, move, []);
+    case Biome.GRASS:
+    case Biome.TALL_GRASS:
+    case Biome.METROPOLIS:
+    case Biome.FOREST:
+    case Biome.SEA:
+    case Biome.SWAMP:
+    case Biome.BEACH:
+    case Biome.LAKE:
+    case Biome.SEABED:
+    case Biome.MOUNTAIN:
+    case Biome.BADLANDS:
+    case Biome.CAVE:
+    case Biome.DESERT:
+    case Biome.ICE_CAVE:
+    case Biome.MEADOW:
+    case Biome.POWER_PLANT:
+    case Biome.VOLCANO:
+    case Biome.GRAVEYARD:
+    case Biome.DOJO:
+    case Biome.FACTORY:
+    case Biome.RUINS:
+    case Biome.WASTELAND:
+    case Biome.ABYSS:
+    case Biome.SPACE:
+    case Biome.CONSTRUCTION_SITE:
+    case Biome.JUNGLE:
+    case Biome.FAIRY_CAVE:
+    case Biome.TEMPLE:
+    case Biome.SLUM:
+    case Biome.SNOWY_FOREST:
+    case Biome.ISLAND:
+    case Biome.LABORATORY:
+    case Biome.END:
     default:
       break;
     }
