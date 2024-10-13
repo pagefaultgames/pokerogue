@@ -147,7 +147,7 @@ describe("Moves - Dragon Tail", () => {
 
     game.move.select(Moves.DRAGON_TAIL);
 
-    await game.toNextWave();
+    await game.toNextTurn();
 
     // Make sure the enemy switched to a healthy Pokemon
     const enemy = game.scene.getEnemyPokemon()!;
@@ -167,7 +167,7 @@ describe("Moves - Dragon Tail", () => {
 
     game.move.select(Moves.DRAGON_TAIL);
 
-    await game.toNextWave();
+    await game.toNextTurn();
 
     // Make sure the enemy field is not empty and has a revived Pokemon
     const enemy = game.scene.getEnemyPokemon()!;
@@ -183,7 +183,7 @@ describe("Moves - Dragon Tail", () => {
 
     game.move.select(Moves.SPLASH);
 
-    await game.toNextWave();
+    await game.toNextTurn();
 
     // Make sure the player's field is not empty and has a revived Pokemon
     const dratini = game.scene.getPlayerPokemon()!;
