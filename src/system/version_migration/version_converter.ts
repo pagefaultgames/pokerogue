@@ -6,6 +6,16 @@ import * as v1_0_4 from "./versions/v1_0_4";
 
 const LATEST_VERSION = version.split(".").map(value => parseInt(value));
 
+/**
+ * Converts incoming {@linkcode SystemSaveData} that has a version below the
+ * current version number listed in `package.json`.
+ *
+ * Note that no transforms act on the {@linkcode data} if its version matches
+ * the current version or if there are no migrations made between its version up
+ * to the current version.
+ * @param data {@linkcode SystemSaveData}
+ * @see {@link SystemVersionConverter}
+ */
 export function applySystemVersionMigration(data: SystemSaveData) {
   const curVersion = data.gameVersion.split(".").map(value => parseInt(value));
 
@@ -16,6 +26,16 @@ export function applySystemVersionMigration(data: SystemSaveData) {
   }
 }
 
+/**
+ * Converts incoming {@linkcode SessionSavaData} that has a version below the
+ * current version number listed in `package.json`.
+ *
+ * Note that no transforms act on the {@linkcode data} if its version matches
+ * the current version or if there are no migrations made between its version up
+ * to the current version.
+ * @param data {@linkcode SessionSaveData}
+ * @see {@link SessionVersionConverter}
+ */
 export function applySessionVersionMigration(data: SessionSaveData) {
   const curVersion = data.gameVersion.split(".").map(value => parseInt(value));
 
@@ -26,6 +46,16 @@ export function applySessionVersionMigration(data: SessionSaveData) {
   }
 }
 
+/**
+ * Converts incoming settings data that has a version below the
+ * current version number listed in `package.json`.
+ *
+ * Note that no transforms act on the {@linkcode data} if its version matches
+ * the current version or if there are no migrations made between its version up
+ * to the current version.
+ * @param data Settings data object
+ * @see {@link SettingsVersionConverter}
+ */
 export function applySettingsVersionMigration(data: Object) {
   const gameVersion: string = data.hasOwnProperty("gameVersion") ? data["gameVersion"] : "1.0.0";
   const curVersion = gameVersion.split(".").map(value => parseInt(value));
@@ -37,6 +67,16 @@ export function applySettingsVersionMigration(data: Object) {
   }
 }
 
+/**
+ * Abstract class encapsulating the logic for migrating data from a given version up to
+ * the current version listed in `package.json`.
+ *
+ * Note that, for any version converter, the corresponding `applyMigration`
+ * function would only need to be changed once when the first migration for a
+ * given version is introduced. Similarly, a version file (within the `versions`
+ * folder) would only need to be created for a version once with the appropriate
+ * array nomenclature.
+ */
 abstract class VersionConverter {
   /**
    * Iterates through an array of designated migration functions that are each
@@ -70,6 +110,11 @@ abstract class VersionConverter {
   abstract applyMigration(data: any, curVersion: number[]): void;
 }
 
+/**
+ * Class encapsulating the logic for migrating {@linkcode SessionSaveData} from
+ * a given version up to the current version listed in `package.json`.
+ * @extends VersionConverter
+ */
 class SessionVersionConverter extends VersionConverter {
   override applyStaticPreprocessors(data: SessionSaveData): void {
     // Always sanitize money as a safeguard
@@ -92,6 +137,11 @@ class SessionVersionConverter extends VersionConverter {
   }
 }
 
+/**
+ * Class encapsulating the logic for migrating {@linkcode SystemSaveData} from
+ * a given version up to the current version listed in `package.json`.
+ * @extends VersionConverter
+ */
 class SystemVersionConverter extends VersionConverter {
   override applyMigration(data: SystemSaveData, curVersion: number[]): void {
     const [ curMajor, curMinor, curPatch ] = curVersion;
@@ -109,6 +159,11 @@ class SystemVersionConverter extends VersionConverter {
   }
 }
 
+/**
+ * Class encapsulating the logic for migrating settings data from
+ * a given version up to the current version listed in `package.json`.
+ * @extends VersionConverter
+ */
 class SettingsVersionConverter extends VersionConverter {
   override applyMigration(data: Object, curVersion: number[]): void {
     const [ curMajor, curMinor, curPatch ] = curVersion;
