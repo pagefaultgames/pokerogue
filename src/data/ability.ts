@@ -4914,7 +4914,7 @@ export function initAbilities() {
       .ignorable(),
     new Ability(Abilities.SHIELD_DUST, 3)
       .attr(IgnoreMoveEffectsAbAttr)
-      .edgeCase(), // Does not work with secret power (uimplemented)
+      .edgeCase(), // Does not work with secret power (unimplemented)
     new Ability(Abilities.OWN_TEMPO, 3)
       .attr(BattlerTagImmunityAbAttr, BattlerTagType.CONFUSED)
       .attr(IntimidateImmunityAbAttr)
