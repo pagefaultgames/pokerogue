@@ -896,9 +896,16 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       const relX = newOffset[0] - initialOffset[0];
       const relY = newOffset[1] - initialOffset[1];
 
+      const subTag = this.getTag(SubstituteTag);
+
       if (duration) {
+        // TODO: can this use stricter typing?
+        const targets: any[] = [ this ];
+        if (subTag?.sprite) {
+          targets.push(subTag.sprite);
+        }
         this.scene.tweens.add({
-          targets: this,
+          targets: targets,
           x: (_target, _key, value: number) => value + relX,
           y: (_target, _key, value: number) => value + relY,
           duration: duration,
@@ -908,6 +915,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       } else {
         this.x += relX;
         this.y += relY;
+        if (subTag?.sprite) {
+          subTag.sprite.x += relX;
+          subTag.sprite.y += relY;
+        }
       }
     });
   }
@@ -3246,8 +3257,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    *
    * @see {@linkcode MoveRestrictionBattlerTag}
    */
-  isMoveRestricted(moveId: Moves): boolean {
-    return this.getRestrictingTag(moveId) !== null;
+  public isMoveRestricted(moveId: Moves, pokemon?: Pokemon): boolean {
+    return this.getRestrictingTag(moveId, pokemon) !== null;
   }
 
   /**
@@ -3280,7 +3291,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    */
   getRestrictingTag(moveId: Moves, user?: Pokemon, target?: Pokemon): MoveRestrictionBattlerTag | null {
     for (const tag of this.findTags(t => t instanceof MoveRestrictionBattlerTag)) {
-      if ((tag as MoveRestrictionBattlerTag).isMoveRestricted(moveId)) {
+      if ((tag as MoveRestrictionBattlerTag).isMoveRestricted(moveId, user)) {
         return tag as MoveRestrictionBattlerTag;
       } else if (user && target && (tag as MoveRestrictionBattlerTag).isMoveTargetRestricted(moveId, user, target)) {
         return tag as MoveRestrictionBattlerTag;
@@ -5412,7 +5423,7 @@ export class PokemonMove {
    * @returns `true` if the move can be selected and used by the Pokemon, otherwise `false`.
    */
   isUsable(pokemon: Pokemon, ignorePp: boolean = false, ignoreRestrictionTags: boolean = false): boolean {
-    if (this.moveId && !ignoreRestrictionTags && pokemon.isMoveRestricted(this.moveId)) {
+    if (this.moveId && !ignoreRestrictionTags && pokemon.isMoveRestricted(this.moveId, pokemon)) {
       return false;
     }
 

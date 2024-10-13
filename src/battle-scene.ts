@@ -2316,7 +2316,10 @@ export default class BattleScene extends SceneBase {
       }
     }
 
-    this.currentPhase?.start();
+    if (this.currentPhase) {
+      console.log(`%cStart Phase ${this.currentPhase.constructor.name}`, "color:green;");
+      this.currentPhase.start();
+    }
   }
 
   overridePhase(phase: Phase): boolean {
@@ -2326,6 +2329,7 @@ export default class BattleScene extends SceneBase {
 
     this.standbyPhase = this.currentPhase;
     this.currentPhase = phase;
+    console.log(`%cStart Phase ${phase.constructor.name}`, "color:green;");
     phase.start();
 
     return true;
