@@ -176,10 +176,12 @@ describe("Berries Abound - Mystery Encounter", () => {
       const encounterTextSpy = vi.spyOn(EncounterDialogueUtils, "showEncounterText");
       await game.runToMysteryEncounter(MysteryEncounterType.BERRIES_ABOUND, defaultParty);
 
+      scene.getParty().forEach(pkm => {
+        vi.spyOn(pkm, "getStat").mockReturnValue(1); // for ease return for every stat
+      });
+
       const config = game.scene.currentBattle.mysteryEncounter!.enemyPartyConfigs[0];
       const speciesToSpawn = config.pokemonConfigs?.[0].species.speciesId;
-      // Setting enemy's level arbitrarily high to outspeed
-      config.pokemonConfigs![0].dataSource!.level = 1000;
 
       await runMysteryEncounterToEnd(game, 2, undefined, true);
 
@@ -198,10 +200,12 @@ describe("Berries Abound - Mystery Encounter", () => {
       const encounterTextSpy = vi.spyOn(EncounterDialogueUtils, "showEncounterText");
       await game.runToMysteryEncounter(MysteryEncounterType.BERRIES_ABOUND, defaultParty);
 
+      scene.getParty().forEach(pkm => {
+        vi.spyOn(pkm, "getStat").mockReturnValue(1); // for ease return for every stat
+      });
+
       const config = game.scene.currentBattle.mysteryEncounter!.enemyPartyConfigs[0];
       const speciesToSpawn = config.pokemonConfigs?.[0].species.speciesId;
-      // Setting enemy's level arbitrarily high to outspeed
-      config.pokemonConfigs![0].dataSource!.level = 1000;
 
       await runMysteryEncounterToEnd(game, 2, undefined, true);
 
