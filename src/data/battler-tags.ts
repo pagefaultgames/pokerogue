@@ -828,6 +828,7 @@ export class PowderTag extends BattlerTag {
   onAdd(pokemon: Pokemon): void {
     super.onAdd(pokemon);
 
+    // "{Pokemon} is covered in powder!"
     pokemon.scene.queueMessage(i18next.t("battlerTags:powderOnAdd", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }));
   }
 
@@ -854,6 +855,7 @@ export class PowderTag extends BattlerTag {
             pokemon.damageAndUpdate(Math.floor(pokemon.getMaxHp() / 4), HitResult.OTHER);
           }
 
+          // "When the flame touched the powder\non the Pokémon, it exploded!"
           pokemon.scene.queueMessage(i18next.t("battlerTags:powderLapse"));
         }
       }
