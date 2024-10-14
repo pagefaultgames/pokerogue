@@ -26,12 +26,12 @@ describe("Moves - Power Trick", () => {
     game = new GameManager(phaserGame);
     game.override
       .battleType("single")
-      .enemyAbility(Abilities.NONE)
+      .enemyAbility(Abilities.BALL_FETCH)
       .enemyMoveset(Moves.SPLASH)
       .enemySpecies(Species.MEW)
       .enemyLevel(200)
       .moveset([ Moves.POWER_TRICK ])
-      .ability(Abilities.NONE);
+      .ability(Abilities.BALL_FETCH);
   });
 
   it("swaps the user's ATK and DEF stats", async () => {
@@ -48,7 +48,7 @@ describe("Moves - Power Trick", () => {
     expect(player.getStat(Stat.ATK, false)).toBe(baseDEF);
     expect(player.getStat(Stat.DEF, false)).toBe(baseATK);
     expect(player.getTag(BattlerTagType.POWER_TRICK)).toBeDefined();
-  }, 20000);
+  });
 
   it("resets initial ATK and DEF stat swap when used consecutively", async () => {
     await game.classicMode.startBattle([ Species.SHUCKLE ]);
@@ -68,7 +68,7 @@ describe("Moves - Power Trick", () => {
     expect(player.getStat(Stat.ATK, false)).toBe(baseATK);
     expect(player.getStat(Stat.DEF, false)).toBe(baseDEF);
     expect(player.getTag(BattlerTagType.POWER_TRICK)).toBeUndefined();
-  }, 20000);
+  });
 
   it("should pass effect when using BATON_PASS", async () => {
     await game.classicMode.startBattle([ Species.SHUCKLE, Species.SHUCKLE ]);
@@ -89,5 +89,5 @@ describe("Moves - Power Trick", () => {
     expect(switchedPlayer.getStat(Stat.ATK, false)).toBe(baseDEF);
     expect(switchedPlayer.getStat(Stat.DEF, false)).toBe(baseATK);
     expect(switchedPlayer.getTag(BattlerTagType.POWER_TRICK)).toBeDefined();
-  }, 20000);
+  });
 });
