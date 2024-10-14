@@ -90,4 +90,24 @@ describe("Moves - Power Trick", () => {
     expect(switchedPlayer.getStat(Stat.DEF, false)).toBe(baseATK);
     expect(switchedPlayer.getTag(BattlerTagType.POWER_TRICK)).toBeDefined();
   });
+
+  it("should remove effect after using Transform", async () => {
+    await game.classicMode.startBattle([ Species.SHUCKLE, Species.SHUCKLE ]);
+    await game.override.moveset([ Moves.POWER_TRICK, Moves.TRANSFORM ]);
+
+    const player = game.scene.getPlayerPokemon()!;
+    player.addTag(BattlerTagType.POWER_TRICK);
+
+    game.move.select(Moves.TRANSFORM);
+
+    await game.phaseInterceptor.to(TurnEndPhase);
+
+    const enemy = game.scene.getEnemyPokemon()!;
+    const baseATK = enemy.getStat(Stat.ATK);
+    const baseDEF = enemy.getStat(Stat.DEF);
+
+    expect(player.getStat(Stat.ATK, false)).toBe(baseATK);
+    expect(player.getStat(Stat.DEF, false)).toBe(baseDEF);
+    expect(player.getTag(BattlerTagType.POWER_TRICK)).toBeUndefined();
+  });
 });
