@@ -155,7 +155,7 @@ describe("The Expert Pokémon Breeder - Mystery Encounter", () => {
       expect(eggsAfter).toBeDefined();
       expect(eggsBeforeLength + commonEggs + rareEggs).toBe(eggsAfter.length);
       expect(eggsAfter.filter(egg => egg.tier === EggTier.COMMON).length).toBe(commonEggs);
-      expect(eggsAfter.filter(egg => egg.tier === EggTier.GREAT).length).toBe(rareEggs);
+      expect(eggsAfter.filter(egg => egg.tier === EggTier.RARE).length).toBe(rareEggs);
 
       game.phaseInterceptor.superEndPhase();
       await game.phaseInterceptor.to(PostMysteryEncounterPhase);
@@ -213,7 +213,7 @@ describe("The Expert Pokémon Breeder - Mystery Encounter", () => {
       expect(eggsAfter).toBeDefined();
       expect(eggsBeforeLength + commonEggs + rareEggs).toBe(eggsAfter.length);
       expect(eggsAfter.filter(egg => egg.tier === EggTier.COMMON).length).toBe(commonEggs);
-      expect(eggsAfter.filter(egg => egg.tier === EggTier.GREAT).length).toBe(rareEggs);
+      expect(eggsAfter.filter(egg => egg.tier === EggTier.RARE).length).toBe(rareEggs);
 
       game.phaseInterceptor.superEndPhase();
       await game.phaseInterceptor.to(PostMysteryEncounterPhase);
@@ -271,7 +271,7 @@ describe("The Expert Pokémon Breeder - Mystery Encounter", () => {
       expect(eggsAfter).toBeDefined();
       expect(eggsBeforeLength + commonEggs + rareEggs).toBe(eggsAfter.length);
       expect(eggsAfter.filter(egg => egg.tier === EggTier.COMMON).length).toBe(commonEggs);
-      expect(eggsAfter.filter(egg => egg.tier === EggTier.GREAT).length).toBe(rareEggs);
+      expect(eggsAfter.filter(egg => egg.tier === EggTier.RARE).length).toBe(rareEggs);
 
       game.phaseInterceptor.superEndPhase();
       await game.phaseInterceptor.to(PostMysteryEncounterPhase);

@@ -749,9 +749,16 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       const relX = newOffset[0] - initialOffset[0];
       const relY = newOffset[1] - initialOffset[1];
 
+      const subTag = this.getTag(SubstituteTag);
+
       if (duration) {
+        // TODO: can this use stricter typing?
+        const targets: any[] = [ this ];
+        if (subTag?.sprite) {
+          targets.push(subTag.sprite);
+        }
         this.scene.tweens.add({
-          targets: this,
+          targets: targets,
           x: (_target, _key, value: number) => value + relX,
           y: (_target, _key, value: number) => value + relY,
           duration: duration,
@@ -761,6 +768,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       } else {
         this.x += relX;
         this.y += relY;
+        if (subTag?.sprite) {
+          subTag.sprite.x += relX;
+          subTag.sprite.y += relY;
+        }
       }
     });
   }
@@ -986,7 +997,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         this.scene.applyModifier(PokemonIncrementingStatModifier, this.isPlayer(), this, s, statHolder);
       }
 
-      statHolder.value = Utils.clampInt(statHolder.value, 1, Number.MAX_SAFE_INTEGER);
+      statHolder.value = Phaser.Math.Clamp(statHolder.value, 1, Number.MAX_SAFE_INTEGER);
 
       this.setStat(s, statHolder.value);
     }
@@ -1420,10 +1431,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * @returns {boolean} Whether the ability is present and active
    */
   hasAbility(ability: Abilities, canApply: boolean = true, ignoreOverride?: boolean): boolean {
-    if ((!canApply || this.canApplyAbility()) && this.getAbility(ignoreOverride).id === ability) {
+    if (this.getAbility(ignoreOverride).id === ability && (!canApply || this.canApplyAbility())) {
       return true;
     }
-    if (this.hasPassive() && (!canApply || this.canApplyAbility(true)) && this.getPassiveAbility().id === ability) {
+    if (this.getPassiveAbility().id === ability && this.hasPassive() && (!canApply || this.canApplyAbility(true))) {
       return true;
     }
     return false;
@@ -1491,7 +1502,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   isGrounded(): boolean {
-    return !!this.getTag(GroundedTag) || (!this.isOfType(Type.FLYING, true, true) && !this.hasAbility(Abilities.LEVITATE) && !this.getTag(BattlerTagType.MAGNET_RISEN) && !this.getTag(SemiInvulnerableTag));
+    return !!this.getTag(GroundedTag) || (!this.isOfType(Type.FLYING, true, true) && !this.hasAbility(Abilities.LEVITATE) && !this.getTag(BattlerTagType.FLOATING) && !this.getTag(SemiInvulnerableTag));
   }
 
   /**
@@ -2687,7 +2698,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    */
   apply(source: Pokemon, move: Move): HitResult {
     const defendingSide = this.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY;
-    if (move.category === MoveCategory.STATUS) {
+    const moveCategory = new Utils.NumberHolder(move.category);
+    applyMoveAttrs(VariableMoveCategoryAttr, source, this, move, moveCategory);
+    if (moveCategory.value === MoveCategory.STATUS) {
       const cancelled = new Utils.BooleanHolder(false);
       const typeMultiplier = this.getMoveEffectiveness(source, move, false, false, cancelled);
 
@@ -3052,8 +3065,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    *
    * @see {@linkcode MoveRestrictionBattlerTag}
    */
-  isMoveRestricted(moveId: Moves): boolean {
-    return this.getRestrictingTag(moveId) !== null;
+  public isMoveRestricted(moveId: Moves, pokemon?: Pokemon): boolean {
+    return this.getRestrictingTag(moveId, pokemon) !== null;
   }
 
   /**
@@ -3086,7 +3099,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    */
   getRestrictingTag(moveId: Moves, user?: Pokemon, target?: Pokemon): MoveRestrictionBattlerTag | null {
     for (const tag of this.findTags(t => t instanceof MoveRestrictionBattlerTag)) {
-      if ((tag as MoveRestrictionBattlerTag).isMoveRestricted(moveId)) {
+      if ((tag as MoveRestrictionBattlerTag).isMoveRestricted(moveId, user)) {
         return tag as MoveRestrictionBattlerTag;
       } else if (user && target && (tag as MoveRestrictionBattlerTag).isMoveTargetRestricted(moveId, user, target)) {
         return tag as MoveRestrictionBattlerTag;
@@ -5130,7 +5143,7 @@ export class PokemonMove {
    * @returns `true` if the move can be selected and used by the Pokemon, otherwise `false`.
    */
   isUsable(pokemon: Pokemon, ignorePp: boolean = false, ignoreRestrictionTags: boolean = false): boolean {
-    if (this.moveId && !ignoreRestrictionTags && pokemon.isMoveRestricted(this.moveId)) {
+    if (this.moveId && !ignoreRestrictionTags && pokemon.isMoveRestricted(this.moveId, pokemon)) {
       return false;
     }
 
