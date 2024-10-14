@@ -223,10 +223,10 @@ export default class AdminUiHandler extends FormModalUiHandler {
       }
       break;
     case AdminMode.SEARCH:
-      if (!this.inputs[0].text) { // either username or discordId missing from search panel
+      if (!this.inputs[0].text) { // username missing from search panel
         return {
           error: true,
-          errorMessage: this.ERR_REQUIRED_FIELD("username or discord")
+          errorMessage: this.ERR_REQUIRED_FIELD("username")
         };
       }
       break;
