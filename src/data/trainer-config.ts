@@ -1896,7 +1896,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setPartyMemberFunc(0, getRandomPartyMemberFunc([ Species.PERSIAN, Species.ALOLA_PERSIAN ], TrainerSlot.TRAINER, true, p => {
       p.generateAndPopulateMoveset();
       p.gender = Gender.MALE;
-    })),
+    }))
     .setPartyMemberFunc(1, getRandomPartyMemberFunc([ Species.DUGTRIO, Species.ALOLA_DUGTRIO ]))
     .setPartyMemberFunc(2, getRandomPartyMemberFunc([ Species.HONCHKROW ]))
     .setPartyMemberFunc(3, getRandomPartyMemberFunc([ Species.NIDOKING, Species.NIDOQUEEN ]))
