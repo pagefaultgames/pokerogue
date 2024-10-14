@@ -38,16 +38,16 @@ describe("Moves - Secret Power", () => {
   });
 
   it("Secret Power checks for an active terrain first then looks at the biome for its secondary effect", async () => {
-    game.override.startingBiome(Biome.METROPOLIS);
+    game.override.startingBiome(Biome.VOLCANO);
     await game.classicMode.startBattle([ Species.FEEBAS ]);
 
     const enemyPokemon  = game.scene.getEnemyPokemon()!;
 
-    // No Terrain + Biome.METROPOLIS --> Paralysis
+    // No Terrain + Biome.VOLCANO --> Burn
     game.move.select(Moves.SECRET_POWER);
     await game.forceEnemyMove(Moves.SPLASH);
     await game.phaseInterceptor.to("TurnEndPhase");
-    expect(enemyPokemon.status?.effect).toBe(StatusEffect.PARALYSIS);
+    expect(enemyPokemon.status?.effect).toBe(StatusEffect.BURN);
 
     // Misty Terrain --> SpAtk -1
     game.move.select(Moves.SECRET_POWER);
