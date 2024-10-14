@@ -33,13 +33,13 @@ export class FaintPhase extends PokemonPhase {
     super.start();
 
     if (!this.preventEndure) {
-      const instantReviveModifier = this.scene.applyModifier(PokemonInstantReviveModifier, this.player, this.getPokemon()) as PokemonInstantReviveModifier;
+      const instantReviveModifier = this.scene.applyModifier(PokemonInstantReviveModifier, this.isPlayer, this.getPokemon()) as PokemonInstantReviveModifier;
 
       if (instantReviveModifier) {
         if (!--instantReviveModifier.stackCount) {
           this.scene.removeModifier(instantReviveModifier);
         }
-        this.scene.updateModifiers(this.player);
+        this.scene.updateModifiers(this.isPlayer);
         return this.end();
       }
     }
@@ -88,7 +88,7 @@ export class FaintPhase extends PokemonPhase {
       }
     }
 
-    if (this.player) {
+    if (this.isPlayer) {
       /** The total number of Pokemon in the player's party that can legally fight */
       const legalPlayerPokemon = this.scene.getParty().filter(p => p.isAllowedInBattle());
       /** The total number of legal player Pokemon that aren't currently on the field */
@@ -159,7 +159,7 @@ export class FaintPhase extends PokemonPhase {
   tryOverrideForBattleSpec(): boolean {
     switch (this.scene.currentBattle.battleSpec) {
     case BattleSpec.FINAL_BOSS:
-      if (!this.player) {
+      if (!this.isPlayer) {
         const enemy = this.getPokemon();
         if (enemy.formIndex) {
           this.scene.ui.showDialogue(battleSpecDialogue[BattleSpec.FINAL_BOSS].secondStageWin, enemy.species.name, null, () => this.doFaint());

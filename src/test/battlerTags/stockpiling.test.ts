@@ -1,10 +1,10 @@
 import BattleScene from "#app/battle-scene";
-import { beforeEach, describe, expect, it, vi } from "vitest";
-import Pokemon, { PokemonSummonData } from "#app/field/pokemon";
 import { StockpilingTag } from "#app/data/battler-tags";
-import { Stat } from "#enums/stat";
+import Pokemon, { PokemonSummonData } from "#app/field/pokemon";
 import * as messages from "#app/messages";
 import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
+import { Stat } from "#enums/stat";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
 beforeEach(() => {
   vi.spyOn(messages, "getPokemonNameWithAffix").mockImplementation(() => "");
@@ -27,7 +27,7 @@ describe("BattlerTag - StockpilingTag", () => {
         expect((phase as StatStageChangePhase)["stages"]).toEqual(1);
         expect((phase as StatStageChangePhase)["stats"]).toEqual(expect.arrayContaining([ Stat.DEF, Stat.SPDEF ]));
 
-        (phase as StatStageChangePhase)["onChange"]!(mockPokemon, [ Stat.DEF, Stat.SPDEF ], [ 1, 1 ]);
+        (phase as StatStageChangePhase)["onChange"]!([ Stat.DEF, Stat.SPDEF ], [ 1, 1 ], mockPokemon);
       });
 
       subject.onAdd(mockPokemon);
@@ -54,7 +54,7 @@ describe("BattlerTag - StockpilingTag", () => {
         expect((phase as StatStageChangePhase)["stages"]).toEqual(1);
         expect((phase as StatStageChangePhase)["stats"]).toEqual(expect.arrayContaining([ Stat.DEF, Stat.SPDEF ]));
 
-        (phase as StatStageChangePhase)["onChange"]!(mockPokemon, [ Stat.DEF, Stat.SPDEF ], [ 1, 1 ]);
+        (phase as StatStageChangePhase)["onChange"]!([ Stat.DEF, Stat.SPDEF ], [ 1, 1 ], mockPokemon);
       });
 
       subject.onAdd(mockPokemon);
@@ -79,7 +79,7 @@ describe("BattlerTag - StockpilingTag", () => {
         expect((phase as StatStageChangePhase)["stages"]).toEqual(1);
         expect((phase as StatStageChangePhase)["stats"]).toEqual(expect.arrayContaining([ Stat.DEF, Stat.SPDEF ]));
 
-        (phase as StatStageChangePhase)["onChange"]!(mockPokemon, [ Stat.DEF, Stat.SPDEF ], [ 1, 1 ]);
+        (phase as StatStageChangePhase)["onChange"]!([ Stat.DEF, Stat.SPDEF ], [ 1, 1 ], mockPokemon);
       });
 
       subject.onOverlap(mockPokemon);
@@ -109,7 +109,7 @@ describe("BattlerTag - StockpilingTag", () => {
         expect((phase as StatStageChangePhase)["stats"]).toEqual(expect.arrayContaining([ Stat.DEF, Stat.SPDEF ]));
 
         // def doesn't change
-        (phase as StatStageChangePhase)["onChange"]!(mockPokemon, [ Stat.SPDEF ], [ 1 ]);
+        (phase as StatStageChangePhase)["onChange"]!([ Stat.SPDEF ], [ 1 ], mockPokemon);
       });
 
       subject.onAdd(mockPokemon);
@@ -121,7 +121,7 @@ describe("BattlerTag - StockpilingTag", () => {
         expect((phase as StatStageChangePhase)["stats"]).toEqual(expect.arrayContaining([ Stat.DEF, Stat.SPDEF ]));
 
         // def doesn't change
-        (phase as StatStageChangePhase)["onChange"]!(mockPokemon, [ Stat.SPDEF ], [ 1 ]);
+        (phase as StatStageChangePhase)["onChange"]!([ Stat.SPDEF ], [ 1 ], mockPokemon);
       });
 
       subject.onOverlap(mockPokemon);
