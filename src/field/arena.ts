@@ -589,7 +589,7 @@ export class Arena {
     if (side !== ArenaTagSide.BOTH) {
       tags = tags.filter(t => t.side === side);
     }
-    tags.forEach(t => t.apply(this, simulated, args));
+    tags.forEach(t => t.apply(this, simulated, ...args));
   }
 
   /**

@@ -36,7 +36,7 @@ export abstract class ArenaTag {
     public side: ArenaTagSide = ArenaTagSide.BOTH
   ) {}
 
-  apply(arena: Arena, simulated: boolean, ...args: any[]): boolean {
+  apply(arena: Arena, simulated: boolean, ...args: unknown[]): boolean {
     return true;
   }
 
