@@ -601,7 +601,7 @@ export class TrainerConfig {
     }
     case "flare": {
       return {
-        [TrainerPoolTier.COMMON]: [ Species.FLETCHLING, Species.LITLEO, Species.FOONGUS, Species.HELIOPTILE, Species.ELECTRIKE, Species.SKORUPI, Species.PURRLOIN, Species.CLAWITZER, Species.PANCHAM, Species.ESPURR, Species.BUNNELBY ],
+        [TrainerPoolTier.COMMON]: [ Species.FLETCHLING, Species.LITLEO, Species.INKAY, Species.FOONGUS, Species.HELIOPTILE, Species.ELECTRIKE, Species.SKORUPI, Species.PURRLOIN, Species.CLAWITZER, Species.PANCHAM, Species.ESPURR, Species.BUNNELBY ],
         [TrainerPoolTier.UNCOMMON]: [ Species.LITWICK, Species.SNEASEL, Species.PUMPKABOO, Species.PHANTUMP, Species.HONEDGE, Species.BINACLE, Species.HOUNDOUR, Species.SKRELP, Species.SLIGGOO ],
         [TrainerPoolTier.RARE]: [ Species.NOIBAT, Species.HISUI_AVALUGG, Species.HISUI_SLIGGOO ]
       };
@@ -2277,6 +2277,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setPartyMemberFunc(4, getRandomPartyMemberFunc([ Species.SYLVEON ], TrainerSlot.TRAINER, true, p => {
       p.generateAndPopulateMoveset();
       p.abilityIndex = 2; // Pixilate
+      p.gender = Gender.FEMALE;
     }))
     .setPartyMemberFunc(5, getRandomPartyMemberFunc([ Species.EEVEE ], TrainerSlot.TRAINER, true, p => {
       p.setBoss(true, 2);
@@ -2290,20 +2291,21 @@ export const trainerConfigs: TrainerConfigs = {
       return [ modifierTypes.TERA_SHARD().generateType([], [ teraPokemon.species.type1 ])!.withIdFromFunc(modifierTypes.TERA_SHARD).newModifier(teraPokemon) as PersistentModifier ]; //TODO: is the bang correct?
     }),
   [TrainerType.PENNY_2]: new TrainerConfig(++t).setName("Cassiopeia").initForEvilTeamLeader("Star Boss", [], true).setMixedBattleBgm("battle_star_boss").setVictoryBgm("victory_team_plasma")
-    .setPartyMemberFunc(0, getRandomPartyMemberFunc([ Species.REVAVROOM ], TrainerSlot.TRAINER, true, p => {
-      p.setBoss(true, 2);
-      p.formIndex = Utils.randSeedInt(5, 1); //Random Starmobile form
+    .setPartyMemberFunc(0, getRandomPartyMemberFunc([ Species.SYLVEON ], TrainerSlot.TRAINER, true, p => {
       p.generateAndPopulateMoveset();
-      p.pokeball = PokeballType.ULTRA_BALL;
+      p.abilityIndex = 2; // Pixilate
+      p.gender = Gender.FEMALE;
     }))
     .setPartyMemberFunc(1, getRandomPartyMemberFunc([ Species.ENTEI, Species.RAIKOU, Species.SUICUNE ], TrainerSlot.TRAINER, true, p => {
       p.generateAndPopulateMoveset();
       p.pokeball = PokeballType.ULTRA_BALL;
     }))
     .setPartyMemberFunc(2, getRandomPartyMemberFunc([ Species.WALKING_WAKE, Species.GOUGING_FIRE, Species.RAGING_BOLT ]))
-    .setPartyMemberFunc(3, getRandomPartyMemberFunc([ Species.SYLVEON ], TrainerSlot.TRAINER, true, p => {
+    .setPartyMemberFunc(3, getRandomPartyMemberFunc([ Species.REVAVROOM ], TrainerSlot.TRAINER, true, p => {
+      p.setBoss(true, 2);
+      p.formIndex = Utils.randSeedInt(5, 1); //Random Starmobile form
       p.generateAndPopulateMoveset();
-      p.abilityIndex = 2; // Pixilate
+      p.pokeball = PokeballType.ULTRA_BALL;
     }))
     .setPartyMemberFunc(4, getRandomPartyMemberFunc([ Species.EEVEE ], TrainerSlot.TRAINER, true, p => {
       p.setBoss(true, 2);
@@ -2318,7 +2320,7 @@ export const trainerConfigs: TrainerConfigs = {
       p.pokeball = PokeballType.MASTER_BALL;
     }))
     .setGenModifiersFunc(party => {
-      const teraPokemon = party[3];
+      const teraPokemon = party[0];
       return [ modifierTypes.TERA_SHARD().generateType([], [ teraPokemon.species.type1 ])!.withIdFromFunc(modifierTypes.TERA_SHARD).newModifier(teraPokemon) as PersistentModifier ]; //TODO: is the bang correct?
     }),
   [TrainerType.BUCK]: new TrainerConfig(++t).setName("Buck").initForStatTrainer([], true)
