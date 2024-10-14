@@ -7980,7 +7980,7 @@ export function initMoves() {
       .unimplemented(),
     new SelfStatusMove(Moves.SNATCH, Type.DARK, -1, 10, -1, 4, 3)
       .unimplemented(),
-    new AttackMove(Moves.SECRET_POWER, Type.NORMAL, MoveCategory.PHYSICAL, 70, 100, 20, 100, 0, 3)
+    new AttackMove(Moves.SECRET_POWER, Type.NORMAL, MoveCategory.PHYSICAL, 70, 100, 20, 30, 0, 3)
       .makesContact(false)
       .attr(SecretPowerAttr),
     new AttackMove(Moves.DIVE, Type.WATER, MoveCategory.PHYSICAL, 80, 100, 10, -1, 0, 3)
