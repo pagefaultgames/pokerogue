@@ -132,7 +132,7 @@ export class RechargingTag extends BattlerTag {
  */
 export class BeakBlastChargingTag extends BattlerTag {
   constructor() {
-    super(BattlerTagType.BEAK_BLAST_CHARGING, [BattlerTagLapseType.PRE_MOVE, BattlerTagLapseType.TURN_END, BattlerTagLapseType.ON_GET_HIT], 1, Moves.BEAK_BLAST);
+    super(BattlerTagType.BEAK_BLAST_CHARGING, [BattlerTagLapseType.PRE_MOVE, BattlerTagLapseType.TURN_END, BattlerTagLapseType.AFTER_HIT], 1, Moves.BEAK_BLAST);
   }
 
   onAdd(pokemon: Pokemon): void {
@@ -151,7 +151,7 @@ export class BeakBlastChargingTag extends BattlerTag {
    * @returns `true` if invoked with the ON_GET_HIT lapse type; `false` otherwise
    */
   lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
-    if (lapseType === BattlerTagLapseType.ON_GET_HIT) {
+    if (lapseType === BattlerTagLapseType.AFTER_HIT) {
       const phaseData = getMoveEffectPhaseData(pokemon);
       if (phaseData?.move.hasFlag(MoveFlags.MAKES_CONTACT)) {
         phaseData.attacker.trySetStatus(StatusEffect.BURN, true, pokemon);
@@ -171,7 +171,7 @@ export class ShellTrapTag extends BattlerTag {
   public activated: boolean;
 
   constructor() {
-    super(BattlerTagType.SHELL_TRAP, [BattlerTagLapseType.TURN_END, BattlerTagLapseType.ON_GET_HIT], 1);
+    super(BattlerTagType.SHELL_TRAP, [BattlerTagLapseType.TURN_END, BattlerTagLapseType.AFTER_HIT], 1);
     this.activated = false;
   }
 
@@ -186,11 +186,11 @@ export class ShellTrapTag extends BattlerTag {
    * @returns `true` if invoked with the `CUSTOM` lapse type; `false` otherwise
    */
   lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
-    if (lapseType === BattlerTagLapseType.ON_GET_HIT) {
+    if (lapseType === BattlerTagLapseType.AFTER_HIT) {
       const phaseData = getMoveEffectPhaseData(pokemon);
 
       /* Trap should only be triggered by opponent's Physical moves */
-      if (phaseData?.move.category === MoveCategory.PHYSICAL && pokemon.isOpponentTo(phaseData.attacker)) {
+      if (phaseData?.move.category === MoveCategory.PHYSICAL && pokemon.isOpponent(phaseData.attacker)) {
         this.triggerTrap(pokemon);
       }
 
