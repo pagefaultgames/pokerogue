@@ -76,7 +76,7 @@ export default class LoginFormUiHandler extends FormModalUiHandler {
   }
 
   override getFields(_config?: ModalConfig): string[] {
-    return [i18next.t("menu:username"), i18next.t("menu:password")];
+    return [ i18next.t("menu:username"), i18next.t("menu:password") ];
   }
 
   override getWidth(_config?: ModalConfig): number {
@@ -84,11 +84,11 @@ export default class LoginFormUiHandler extends FormModalUiHandler {
   }
 
   override getMargin(_config?: ModalConfig): [number, number, number, number] {
-    return [0, 0, 48, 0];
+    return [ 0, 0, 48, 0 ];
   }
 
   override getButtonLabels(_config?: ModalConfig): string[] {
-    return [i18next.t("menu:login"), i18next.t("menu:register")];
+    return [ i18next.t("menu:login"), i18next.t("menu:register") ];
   }
 
   override getReadableErrorMessage(error: string): string {
