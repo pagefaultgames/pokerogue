@@ -139,4 +139,58 @@ describe("Moves - Dragon Tail", () => {
 
     expect(enemy.isFullHp()).toBe(false);
   });
+
+  it("should force a switch upon fainting an opponent normally", async () => {
+    game.override.startingWave(5)
+      .startingLevel(1000); // To make sure Dragon Tail KO's the opponent
+    await game.classicMode.startBattle([ Species.DRATINI ]);
+
+    game.move.select(Moves.DRAGON_TAIL);
+
+    await game.toNextTurn();
+
+    // Make sure the enemy switched to a healthy Pokemon
+    const enemy = game.scene.getEnemyPokemon()!;
+    expect(enemy).toBeDefined();
+    expect(enemy.isFullHp()).toBe(true);
+
+    // Make sure the enemy has a fainted Pokemon in their party and not on the field
+    const faintedEnemy = game.scene.getEnemyParty().find(p => !p.isAllowedInBattle());
+    expect(faintedEnemy).toBeDefined();
+    expect(game.scene.getEnemyField().length).toBe(1);
+  });
+
+  it("should not cause a softlock when activating an opponent trainer's reviver seed", async () => {
+    game.override.startingWave(5)
+      .enemyHeldItems([{ name: "REVIVER_SEED" }])
+      .startingLevel(1000); // To make sure Dragon Tail KO's the opponent
+    await game.classicMode.startBattle([ Species.DRATINI ]);
+
+    game.move.select(Moves.DRAGON_TAIL);
+
+    await game.toNextTurn();
+
+    // Make sure the enemy field is not empty and has a revived Pokemon
+    const enemy = game.scene.getEnemyPokemon()!;
+    expect(enemy).toBeDefined();
+    expect(enemy.hp).toBe(Math.floor(enemy.getMaxHp() / 2));
+    expect(game.scene.getEnemyField().length).toBe(1);
+  });
+
+  it("should not cause a softlock when activating a player's reviver seed", async () => {
+    game.override.startingHeldItems([{ name: "REVIVER_SEED" }])
+      .enemyMoveset(Moves.DRAGON_TAIL)
+      .enemyLevel(1000); // To make sure Dragon Tail KO's the player
+    await game.classicMode.startBattle([ Species.DRATINI, Species.BULBASAUR ]);
+
+    game.move.select(Moves.SPLASH);
+
+    await game.toNextTurn();
+
+    // Make sure the player's field is not empty and has a revived Pokemon
+    const dratini = game.scene.getPlayerPokemon()!;
+    expect(dratini).toBeDefined();
+    expect(dratini.hp).toBe(Math.floor(dratini.getMaxHp() / 2));
+    expect(game.scene.getPlayerField().length).toBe(1);
+  });
 });

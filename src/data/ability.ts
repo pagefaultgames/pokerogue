@@ -118,6 +118,14 @@ export class Ability implements Localizable {
     this.nameAppend += " (N)";
     return this;
   }
+
+  /**
+   * Internal flag used for developers to document edge cases. When using this, please be sure to document the edge case.
+   * @returns the ability
+   */
+  edgeCase(): this {
+    return this;
+  }
 }
 
 type AbAttrApplyFunc<TAttr extends AbAttr> = (attr: TAttr, passive: boolean) => boolean | Promise<boolean>;
@@ -4906,7 +4914,7 @@ export function initAbilities() {
       .ignorable(),
     new Ability(Abilities.SHIELD_DUST, 3)
       .attr(IgnoreMoveEffectsAbAttr)
-      .partial(),
+      .edgeCase(), // Does not work with secret power (unimplemented)
     new Ability(Abilities.OWN_TEMPO, 3)
       .attr(BattlerTagImmunityAbAttr, BattlerTagType.CONFUSED)
       .attr(IntimidateImmunityAbAttr)
@@ -4951,7 +4959,7 @@ export function initAbilities() {
       .ignorable(),
     new Ability(Abilities.SERENE_GRACE, 3)
       .attr(MoveEffectChanceMultiplierAbAttr, 2)
-      .partial(),
+      .edgeCase(), // does not work with secret power (unimplemented)
     new Ability(Abilities.SWIFT_SWIM, 3)
       .attr(StatMultiplierAbAttr, Stat.SPD, 2)
       .condition(getWeatherCondition(WeatherType.RAIN, WeatherType.HEAVY_RAIN)),
@@ -5235,7 +5243,8 @@ export function initAbilities() {
     new Ability(Abilities.SHEER_FORCE, 5)
       .attr(MovePowerBoostAbAttr, (user, target, move) => move.chance >= 1, 5461 / 4096)
       .attr(MoveEffectChanceMultiplierAbAttr, 0)
-      .partial(),
+      .edgeCase() // Should disable shell bell and Meloetta's relic song transformation
+      .edgeCase(), // Should disable life orb, eject button, red card, kee/maranga berry if they get implemented
     new Ability(Abilities.CONTRARY, 5)
       .attr(StatStageChangeMultiplierAbAttr, -1)
       .ignorable(),
@@ -5278,7 +5287,7 @@ export function initAbilities() {
         /** Rate is doubled when under sun {@link https://dex.pokemonshowdown.com/abilities/harvest} */
         (pokemon) => 0.5 * (getWeatherCondition(WeatherType.SUNNY, WeatherType.HARSH_SUN)(pokemon) ? 2 : 1)
       )
-      .partial(),
+      .edgeCase(), // Cannot recover berries used up by fling or natural gift (unimplemented)
     new Ability(Abilities.TELEPATHY, 5)
       .attr(MoveImmunityAbAttr, (pokemon, attacker, move) => pokemon.getAlly() === attacker && move instanceof AttackMove)
       .ignorable(),
@@ -5357,7 +5366,7 @@ export function initAbilities() {
       .bypassFaint(),
     new Ability(Abilities.VICTORY_STAR, 5)
       .attr(StatMultiplierAbAttr, Stat.ACC, 1.1)
-      .partial(),
+      .partial(), // Does not boost ally's accuracy
     new Ability(Abilities.TURBOBLAZE, 5)
       .attr(PostSummonMessageAbAttr, (pokemon: Pokemon) => i18next.t("abilityTriggers:postSummonTurboblaze", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }))
       .attr(MoveAbilityBypassAbAttr),
@@ -5468,7 +5477,7 @@ export function initAbilities() {
       .attr(UnsuppressableAbilityAbAttr)
       .attr(NoFusionAbilityAbAttr)
       .bypassFaint()
-      .partial(),
+      .partial(), // Meteor form should protect against status effects and yawn
     new Ability(Abilities.STAKEOUT, 7)
       .attr(MovePowerBoostAbAttr, (user, target, move) => user?.scene.currentBattle.turnCommands[target?.getBattlerIndex() ?? BattlerIndex.ATTACKER]?.command === Command.POKEMON, 2),
     new Ability(Abilities.WATER_BUBBLE, 7)
@@ -5536,9 +5545,9 @@ export function initAbilities() {
       .attr(NoFusionAbilityAbAttr)
       .bypassFaint()
       .partial(),
-    new Ability(Abilities.CORROSION, 7) // TODO: Test Corrosion against Magic Bounce once it is implemented
+    new Ability(Abilities.CORROSION, 7)
       .attr(IgnoreTypeStatusEffectImmunityAbAttr, [ StatusEffect.POISON, StatusEffect.TOXIC ], [ Type.STEEL, Type.POISON ])
-      .partial(),
+      .edgeCase(), // Should interact correctly with magic coat/bounce (not yet implemented), fling with toxic orb (not implemented yet), and synchronize (not fully implemented yet)
     new Ability(Abilities.COMATOSE, 7)
       .attr(UncopiableAbilityAbAttr)
       .attr(UnswappableAbilityAbAttr)
@@ -5693,7 +5702,7 @@ export function initAbilities() {
     new Ability(Abilities.WANDERING_SPIRIT, 8)
       .attr(PostDefendAbilitySwapAbAttr)
       .bypassFaint()
-      .partial(),
+      .edgeCase(), //  interacts incorrectly with rock head. It's meant to switch abilities before recoil would apply so that a pokemon with rock head would lose rock head first and still take the recoil
     new Ability(Abilities.GORILLA_TACTICS, 8)
       .attr(GorillaTacticsAbAttr),
     new Ability(Abilities.NEUTRALIZING_GAS, 8)
@@ -5702,7 +5711,7 @@ export function initAbilities() {
       .attr(UnswappableAbilityAbAttr)
       .attr(NoTransformAbilityAbAttr)
       .attr(PostSummonMessageAbAttr, (pokemon: Pokemon) => i18next.t("abilityTriggers:postSummonNeutralizingGas", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }))
-      .partial(),
+      .partial(), // A bunch of weird interactions with other abilities being suppressed then unsuppressed
     new Ability(Abilities.PASTEL_VEIL, 8)
       .attr(PostSummonUserFieldRemoveStatusEffectAbAttr, StatusEffect.POISON, StatusEffect.TOXIC)
       .attr(UserFieldStatusEffectImmunityAbAttr, StatusEffect.POISON, StatusEffect.TOXIC)
@@ -5807,7 +5816,7 @@ export function initAbilities() {
     new Ability(Abilities.GOOD_AS_GOLD, 9)
       .attr(MoveImmunityAbAttr, (pokemon, attacker, move) => pokemon !== attacker && move.category === MoveCategory.STATUS)
       .ignorable()
-      .partial(),
+      .partial(), // Lots of weird interactions with moves and abilities such as negating status moves that target the field
     new Ability(Abilities.VESSEL_OF_RUIN, 9)
       .attr(FieldMultiplyStatAbAttr, Stat.SPATK, 0.75)
       .attr(PostSummonMessageAbAttr, (user) => i18next.t("abilityTriggers:postSummonVesselOfRuin", { pokemonNameWithAffix: getPokemonNameWithAffix(user), statName: i18next.t(getStatKey(Stat.SPATK)) }))
@@ -5840,7 +5849,7 @@ export function initAbilities() {
       .attr(MovePowerBoostAbAttr, (user, target, move) => move.hasFlag(MoveFlags.SLICING_MOVE), 1.5),
     new Ability(Abilities.SUPREME_OVERLORD, 9)
       .attr(VariableMovePowerBoostAbAttr, (user, target, move) => 1 + 0.1 * Math.min(user.isPlayer() ? user.scene.currentBattle.playerFaints : user.scene.currentBattle.enemyFaints, 5))
-      .partial(),
+      .partial(), // Counter resets every wave
     new Ability(Abilities.COSTAR, 9)
       .attr(PostSummonCopyAllyStatsAbAttr),
     new Ability(Abilities.TOXIC_DEBRIS, 9)
@@ -5873,25 +5882,25 @@ export function initAbilities() {
       .attr(UncopiableAbilityAbAttr)
       .attr(UnswappableAbilityAbAttr)
       .attr(NoTransformAbilityAbAttr)
-      .partial(),
+      .partial(), // Ogerpon tera interactions
     new Ability(Abilities.EMBODY_ASPECT_WELLSPRING, 9)
       .attr(PostBattleInitStatStageChangeAbAttr, [ Stat.SPDEF ], 1, true)
       .attr(UncopiableAbilityAbAttr)
       .attr(UnswappableAbilityAbAttr)
       .attr(NoTransformAbilityAbAttr)
-      .partial(),
+      .partial(),  // Ogerpon tera interactions
     new Ability(Abilities.EMBODY_ASPECT_HEARTHFLAME, 9)
       .attr(PostBattleInitStatStageChangeAbAttr, [ Stat.ATK ], 1, true)
       .attr(UncopiableAbilityAbAttr)
       .attr(UnswappableAbilityAbAttr)
       .attr(NoTransformAbilityAbAttr)
-      .partial(),
+      .partial(),  // Ogerpon tera interactions
     new Ability(Abilities.EMBODY_ASPECT_CORNERSTONE, 9)
       .attr(PostBattleInitStatStageChangeAbAttr, [ Stat.DEF ], 1, true)
       .attr(UncopiableAbilityAbAttr)
       .attr(UnswappableAbilityAbAttr)
       .attr(NoTransformAbilityAbAttr)
-      .partial(),
+      .partial(),  // Ogerpon tera interactions
     new Ability(Abilities.TERA_SHIFT, 9)
       .attr(PostSummonFormChangeAbAttr, p => p.getFormKey() ? 0 : 1)
       .attr(UncopiableAbilityAbAttr)
