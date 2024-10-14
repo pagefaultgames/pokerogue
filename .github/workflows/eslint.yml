@@ -22,6 +22,8 @@ jobs:
     steps:
       - name: Check out Git repository  # Step to check out the repository
         uses: actions/checkout@v4  # Use the checkout action version 4
+        with:
+          submodules: 'recursive'
 
       - name: Set up Node.js  # Step to set up Node.js environment
         uses: actions/setup-node@v4  # Use the setup-node action version 4

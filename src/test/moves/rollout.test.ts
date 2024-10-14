@@ -35,7 +35,7 @@ describe("Moves - Rollout", () => {
   });
 
   it("should double it's dmg on sequential uses but reset after 5", async () => {
-    game.override.moveset([Moves.ROLLOUT]);
+    game.override.moveset([ Moves.ROLLOUT ]);
     vi.spyOn(allMoves[Moves.ROLLOUT], "accuracy", "get").mockReturnValue(100); //always hit
 
     const variance = 5;
@@ -45,10 +45,10 @@ describe("Moves - Rollout", () => {
     await game.startBattle();
 
     const playerPkm = game.scene.getParty()[0];
-    vi.spyOn(playerPkm, "stats", "get").mockReturnValue([500000, 1, 1, 1, 1, 1]); // HP, ATK, DEF, SPATK, SPDEF, SPD
+    vi.spyOn(playerPkm, "stats", "get").mockReturnValue([ 500000, 1, 1, 1, 1, 1 ]); // HP, ATK, DEF, SPATK, SPDEF, SPD
 
     const enemyPkm = game.scene.getEnemyParty()[0];
-    vi.spyOn(enemyPkm, "stats", "get").mockReturnValue([500000, 1, 1, 1, 1, 1]); // HP, ATK, DEF, SPATK, SPDEF, SPD
+    vi.spyOn(enemyPkm, "stats", "get").mockReturnValue([ 500000, 1, 1, 1, 1, 1 ]); // HP, ATK, DEF, SPATK, SPDEF, SPD
     vi.spyOn(enemyPkm, "getHeldItems").mockReturnValue([]); //no berries
 
     enemyPkm.hp = enemyPkm.getMaxHp();
@@ -62,7 +62,7 @@ describe("Moves - Rollout", () => {
       previousHp = enemyPkm.hp;
     }
 
-    const [turn1Dmg, turn2Dmg, turn3Dmg, turn4Dmg, turn5Dmg, turn6Dmg] = dmgHistory;
+    const [ turn1Dmg, turn2Dmg, turn3Dmg, turn4Dmg, turn5Dmg, turn6Dmg ] = dmgHistory;
 
     expect(turn2Dmg).toBeGreaterThanOrEqual(turn1Dmg * 2 - variance);
     expect(turn2Dmg).toBeLessThanOrEqual(turn1Dmg * 2 + variance);

@@ -17,7 +17,7 @@ describe("account", () => {
     it("should set loggedInUser! to Guest if bypassLogin is true", async () => {
       vi.spyOn(battleScene, "bypassLogin", "get").mockReturnValue(true);
 
-      const [success, status] = await updateUserInfo();
+      const [ success, status ] = await updateUserInfo();
 
       expect(success).toBe(true);
       expect(status).toBe(200);
@@ -39,7 +39,7 @@ describe("account", () => {
         )
       );
 
-      const [success, status] = await updateUserInfo();
+      const [ success, status ] = await updateUserInfo();
 
       expect(success).toBe(true);
       expect(status).toBe(200);
@@ -53,7 +53,7 @@ describe("account", () => {
         new Response(null, { status: 401 })
       );
 
-      const [success, status] = await updateUserInfo();
+      const [ success, status ] = await updateUserInfo();
 
       expect(success).toBe(false);
       expect(status).toBe(401);
@@ -64,7 +64,7 @@ describe("account", () => {
       vi.spyOn(battleScene, "bypassLogin", "get").mockReturnValue(false);
       vi.spyOn(utils, "apiFetch").mockRejectedValue(new Error("Api failed!"));
 
-      const [success, status] = await updateUserInfo();
+      const [ success, status ] = await updateUserInfo();
 
       expect(success).toBe(false);
       expect(status).toBe(500);

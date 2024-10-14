@@ -10,7 +10,6 @@ import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
-const TIMEOUT = 20 * 1000;
 
 describe("Moves - Ceaseless Edge", () => {
   let phaserGame: Phaser.Game;
@@ -34,8 +33,8 @@ describe("Moves - Ceaseless Edge", () => {
     game.override.enemyPassiveAbility(Abilities.RUN_AWAY);
     game.override.startingLevel(100);
     game.override.enemyLevel(100);
-    game.override.moveset([Moves.CEASELESS_EDGE, Moves.SPLASH, Moves.ROAR]);
-    game.override.enemyMoveset([Moves.SPLASH, Moves.SPLASH, Moves.SPLASH, Moves.SPLASH]);
+    game.override.moveset([ Moves.CEASELESS_EDGE, Moves.SPLASH, Moves.ROAR ]);
+    game.override.enemyMoveset([ Moves.SPLASH, Moves.SPLASH, Moves.SPLASH, Moves.SPLASH ]);
     vi.spyOn(allMoves[Moves.CEASELESS_EDGE], "accuracy", "get").mockReturnValue(100);
 
   });
@@ -43,7 +42,7 @@ describe("Moves - Ceaseless Edge", () => {
   test(
     "move should hit and apply spikes",
     async () => {
-      await game.startBattle([Species.ILLUMISE]);
+      await game.startBattle([ Species.ILLUMISE ]);
 
       const enemyPokemon = game.scene.getEnemyPokemon()!;
 
@@ -61,14 +60,14 @@ describe("Moves - Ceaseless Edge", () => {
       expect(tagAfter instanceof ArenaTrapTag).toBeTruthy();
       expect(tagAfter.layers).toBe(1);
       expect(enemyPokemon.hp).toBeLessThan(enemyStartingHp);
-    }, TIMEOUT
+    }
   );
 
   test(
     "move should hit twice with multi lens and apply two layers of spikes",
     async () => {
       game.override.startingHeldItems([{ name: "MULTI_LENS" }]);
-      await game.startBattle([Species.ILLUMISE]);
+      await game.startBattle([ Species.ILLUMISE ]);
 
       const enemyPokemon = game.scene.getEnemyPokemon()!;
 
@@ -86,7 +85,7 @@ describe("Moves - Ceaseless Edge", () => {
       expect(tagAfter instanceof ArenaTrapTag).toBeTruthy();
       expect(tagAfter.layers).toBe(2);
       expect(enemyPokemon.hp).toBeLessThan(enemyStartingHp);
-    }, TIMEOUT
+    }
   );
 
   test(
@@ -95,7 +94,7 @@ describe("Moves - Ceaseless Edge", () => {
       game.override.startingHeldItems([{ name: "MULTI_LENS" }]);
       game.override.startingWave(5);
 
-      await game.startBattle([Species.ILLUMISE]);
+      await game.startBattle([ Species.ILLUMISE ]);
 
       game.move.select(Moves.CEASELESS_EDGE);
       await game.phaseInterceptor.to(MoveEffectPhase, false);
@@ -114,6 +113,6 @@ describe("Moves - Ceaseless Edge", () => {
       game.move.select(Moves.SPLASH);
       await game.phaseInterceptor.to(TurnEndPhase, false);
       expect(game.scene.currentBattle.enemyParty[0].hp).toBeLessThan(hpBeforeSpikes);
-    }, TIMEOUT
+    }
   );
 });

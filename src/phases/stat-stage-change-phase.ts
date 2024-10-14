@@ -6,7 +6,7 @@ import Pokemon from "#app/field/pokemon";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { ResetNegativeStatStageModifier } from "#app/modifier/modifier";
 import { handleTutorial, Tutorial } from "#app/tutorial";
-import * as Utils from "#app/utils";
+import { NumberHolder, BooleanHolder } from "#app/utils";
 import i18next from "i18next";
 import { PokemonPhase } from "./pokemon-phase";
 import { Stat, type BattleStat, getStatKey, getStatStageChangeDescriptionKey } from "#enums/stat";
@@ -36,23 +36,39 @@ export class StatStageChangePhase extends PokemonPhase {
   }
 
   start() {
+
+    // Check if multiple stats are being changed at the same time, then run SSCPhase for each of them
+    if (this.stats.length > 1) {
+      for (let i = 0; i < this.stats.length; i++) {
+        const stat = [ this.stats[i] ];
+        this.scene.unshiftPhase(new StatStageChangePhase(this.scene, this.battlerIndex, this.selfTarget, stat, this.stages, this.showMessage, this.ignoreAbilities, this.canBeCopied, this.onChange));
+      }
+      return this.end();
+    }
+
     const pokemon = this.getPokemon();
 
     if (!pokemon.isActive(true)) {
       return this.end();
     }
 
+    const stages = new NumberHolder(this.stages);
+
+    if (!this.ignoreAbilities) {
+      applyAbAttrs(StatStageChangeMultiplierAbAttr, pokemon, null, false, stages);
+    }
+
     let simulate = false;
 
     const filteredStats = this.stats.filter(stat => {
-      const cancelled = new Utils.BooleanHolder(false);
+      const cancelled = new BooleanHolder(false);
 
-      if (!this.selfTarget && this.stages < 0) {
+      if (!this.selfTarget && stages.value < 0) {
         // TODO: Include simulate boolean when tag applications can be simulated
         this.scene.arena.applyTagsForSide(MistTag, pokemon.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY, cancelled);
       }
 
-      if (!cancelled.value && !this.selfTarget && this.stages < 0) {
+      if (!cancelled.value && !this.selfTarget && stages.value < 0) {
         applyPreStatStageChangeAbAttrs(ProtectStatAbAttr, pokemon, stat, cancelled, simulate);
       }
 
@@ -63,12 +79,6 @@ export class StatStageChangePhase extends PokemonPhase {
 
       return !cancelled.value;
     });
-
-    const stages = new Utils.IntegerHolder(this.stages);
-
-    if (!this.ignoreAbilities) {
-      applyAbAttrs(StatStageChangeMultiplierAbAttr, pokemon, null, false, stages);
-    }
 
     const relLevels = filteredStats.map(s => (stages.value >= 1 ? Math.min(pokemon.getStatStage(s) + stages.value, 6) : Math.max(pokemon.getStatStage(s) + stages.value, -6)) - pokemon.getStatStage(s));
 

@@ -22,7 +22,7 @@ export class LoginPhase extends Phase {
 
     const hasSession = !!Utils.getCookie(Utils.sessionIdKey);
 
-    this.scene.ui.setMode(Mode.LOADING, { buttonActions: [] });
+    this.scene.ui.setMode(Mode.LOADING, { buttonActions: []});
     Utils.executeIf(bypassLogin || hasSession, updateUserInfo).then(response => {
       const success = response ? response[0] : false;
       const statusCode = response ? response[1] : null;

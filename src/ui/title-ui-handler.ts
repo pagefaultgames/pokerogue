@@ -3,16 +3,21 @@ import OptionSelectUiHandler from "./settings/option-select-ui-handler";
 import { Mode } from "./ui";
 import * as Utils from "../utils";
 import { TextStyle, addTextObject, getTextStyleOptions } from "./text";
-import { getBattleCountSplashMessage, getSplashMessages } from "../data/splash-messages";
+import { getSplashMessages } from "../data/splash-messages";
 import i18next from "i18next";
 import { TimedEventDisplay } from "#app/timed-event-manager";
+import { version } from "../../package.json";
 
 export default class TitleUiHandler extends OptionSelectUiHandler {
+  /** If the stats can not be retrieved, use this fallback value */
+  private static readonly BATTLES_WON_FALLBACK: number = -99999999;
+
   private titleContainer: Phaser.GameObjects.Container;
   private playerCountLabel: Phaser.GameObjects.Text;
   private splashMessage: string;
   private splashMessageText: Phaser.GameObjects.Text;
   private eventDisplay: TimedEventDisplay;
+  private appVersionText: Phaser.GameObjects.Text;
 
   private titleStatsTimer: NodeJS.Timeout | null;
 
@@ -65,6 +70,11 @@ export default class TitleUiHandler extends OptionSelectUiHandler {
       loop: -1,
       yoyo: true,
     });
+
+    this.appVersionText = addTextObject(this.scene, logo.x - 60, logo.y + logo.displayHeight + 4, "", TextStyle.MONEY, { fontSize: "54px" });
+    this.appVersionText.setOrigin(0.5, 0.5);
+    this.appVersionText.setAngle(0);
+    this.titleContainer.add(this.appVersionText);
   }
 
   updateTitleStats(): void {
@@ -72,8 +82,8 @@ export default class TitleUiHandler extends OptionSelectUiHandler {
       .then(request => request.json())
       .then(stats => {
         this.playerCountLabel.setText(`${stats.playerCount} ${i18next.t("menu:playersOnline")}`);
-        if (this.splashMessage === getBattleCountSplashMessage()) {
-          this.splashMessageText.setText(getBattleCountSplashMessage().replace("{COUNT}", stats.battleCount.toLocaleString("en-US")));
+        if (this.splashMessage === "splashMessages:battlesWon") {
+          this.splashMessageText.setText(i18next.t(this.splashMessage, { count: stats.battleCount }));
         }
       })
       .catch(err => {
@@ -86,7 +96,9 @@ export default class TitleUiHandler extends OptionSelectUiHandler {
 
     if (ret) {
       this.splashMessage = Utils.randItem(getSplashMessages());
-      this.splashMessageText.setText(this.splashMessage.replace("{COUNT}", "?"));
+      this.splashMessageText.setText(i18next.t(this.splashMessage, { count: TitleUiHandler.BATTLES_WON_FALLBACK }));
+
+      this.appVersionText.setText("v" + version);
 
       const ui = this.getUi();
 
