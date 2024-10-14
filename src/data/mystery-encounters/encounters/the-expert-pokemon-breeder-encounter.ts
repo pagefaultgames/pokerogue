@@ -245,7 +245,7 @@ export const TheExpertPokemonBreederEncounter: MysteryEncounter =
           }
 
           encounter.onGameOver = onGameOver;
-          initBattleWithEnemyConfig(scene, config);
+          return initBattleWithEnemyConfig(scene, config);
         })
         .withPostOptionPhase(async (scene: BattleScene) => {
           await doPostEncounterCleanup(scene);
@@ -297,7 +297,7 @@ export const TheExpertPokemonBreederEncounter: MysteryEncounter =
           }
 
           encounter.onGameOver = onGameOver;
-          initBattleWithEnemyConfig(scene, config);
+          return initBattleWithEnemyConfig(scene, config);
         })
         .withPostOptionPhase(async (scene: BattleScene) => {
           await doPostEncounterCleanup(scene);
@@ -349,7 +349,7 @@ export const TheExpertPokemonBreederEncounter: MysteryEncounter =
           }
 
           encounter.onGameOver = onGameOver;
-          initBattleWithEnemyConfig(scene, config);
+          return initBattleWithEnemyConfig(scene, config);
         })
         .withPostOptionPhase(async (scene: BattleScene) => {
           await doPostEncounterCleanup(scene);
