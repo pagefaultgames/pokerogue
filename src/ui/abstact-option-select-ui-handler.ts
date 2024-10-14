@@ -165,6 +165,7 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
     if (this.config.delay) {
       this.blockInput = true;
       this.optionSelectText.setAlpha(0.5);
+      this.cursorObj?.setAlpha(0.8);
       this.scene.time.delayedCall(Utils.fixedInt(this.config.delay), () => this.unblockInput());
     }
 
@@ -256,6 +257,7 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
 
     this.blockInput = false;
     this.optionSelectText.setAlpha(1);
+    this.cursorObj?.setAlpha(1);
   }
 
   getOptionsWithScroll(): OptionSelectItem[] {
