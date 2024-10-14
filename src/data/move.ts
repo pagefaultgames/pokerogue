@@ -2898,71 +2898,70 @@ export class SecretPowerAttr extends MoveEffectAttr {
         secondaryEffect = new StatStageChangeAttr([ Stat.SPD ], -1, false);
         break;
       }
-    }
-    const biome = user.scene.arena.biomeType;
-    switch (biome) {
-    case Biome.TOWN:
-    case Biome.METROPOLIS:
-    case Biome.SLUM:
-    case Biome.DOJO:
-    case Biome.FACTORY:
-    case Biome.CONSTRUCTION_SITE:
-    case Biome.LABORATORY:
-    case Biome.POWER_PLANT:
-      secondaryEffect = new StatusEffectAttr(StatusEffect.PARALYSIS, false);
-      break;
-    case Biome.PLAINS:
-    case Biome.GRASS:
-    case Biome.TALL_GRASS:
-    case Biome.FOREST:
-    case Biome.JUNGLE:
-    case Biome.MEADOW:
-      secondaryEffect = new StatusEffectAttr(StatusEffect.SLEEP, false);
-      break;
-    case Biome.SWAMP:
-      secondaryEffect = new StatStageChangeAttr([ Stat.SPD ], -1, false);
-      break;
-    case Biome.ICE_CAVE:
-    case Biome.SNOWY_FOREST:
-      secondaryEffect = new StatusEffectAttr(StatusEffect.FREEZE, false);
-      break;
-    case Biome.VOLCANO:
-      secondaryEffect = new StatusEffectAttr(StatusEffect.BURN, false);
-      break;
-    case Biome.FAIRY_CAVE:
-      secondaryEffect = new StatStageChangeAttr([ Stat.SPATK ], -1, false);
-      break;
-    case Biome.DESERT:
-      secondaryEffect = new StatStageChangeAttr([ Stat.ACC ], -1, false);
-      break;
-    case Biome.SEA:
-    case Biome.BEACH:
-    case Biome.LAKE:
-    case Biome.ISLAND:
-    case Biome.SEABED:
-      secondaryEffect = new StatStageChangeAttr([ Stat.ATK ], -1, false);
-      break;
-    case Biome.MOUNTAIN:
-    case Biome.BADLANDS:
-    case Biome.CAVE:
-    case Biome.WASTELAND:
-      secondaryEffect = new AddBattlerTagAttr(BattlerTagType.FLINCHED, false, true);
-      break;
-    case Biome.SPACE:
-      secondaryEffect = new StatStageChangeAttr([ Stat.DEF ], -1, false);
-      break;
-    case Biome.GRAVEYARD:
-    case Biome.RUINS:
-    case Biome.ABYSS:
-
-    case Biome.TEMPLE:
-    case Biome.END:
-    default:
-      return true;
+    } else {
+      const biome = user.scene.arena.biomeType;
+      switch (biome) {
+      case Biome.TOWN:
+      case Biome.METROPOLIS:
+      case Biome.SLUM:
+      case Biome.DOJO:
+      case Biome.FACTORY:
+      case Biome.CONSTRUCTION_SITE:
+      case Biome.LABORATORY:
+      case Biome.POWER_PLANT:
+        secondaryEffect = new StatusEffectAttr(StatusEffect.PARALYSIS, false);
+        break;
+      case Biome.PLAINS:
+      case Biome.GRASS:
+      case Biome.TALL_GRASS:
+      case Biome.FOREST:
+      case Biome.JUNGLE:
+      case Biome.MEADOW:
+        secondaryEffect = new StatusEffectAttr(StatusEffect.SLEEP, false);
+        break;
+      case Biome.SWAMP:
+        secondaryEffect = new StatStageChangeAttr([ Stat.SPD ], -1, false);
+        break;
+      case Biome.ICE_CAVE:
+      case Biome.SNOWY_FOREST:
+        secondaryEffect = new StatusEffectAttr(StatusEffect.FREEZE, false);
+        break;
+      case Biome.VOLCANO:
+        secondaryEffect = new StatusEffectAttr(StatusEffect.BURN, false);
+        break;
+      case Biome.FAIRY_CAVE:
+        secondaryEffect = new StatStageChangeAttr([ Stat.SPATK ], -1, false);
+        break;
+      case Biome.DESERT:
+        secondaryEffect = new StatStageChangeAttr([ Stat.ACC ], -1, false);
+        break;
+      case Biome.SEA:
+      case Biome.BEACH:
+      case Biome.LAKE:
+      case Biome.ISLAND:
+      case Biome.SEABED:
+        secondaryEffect = new StatStageChangeAttr([ Stat.ATK ], -1, false);
+        break;
+      case Biome.MOUNTAIN:
+      case Biome.BADLANDS:
+      case Biome.CAVE:
+      case Biome.WASTELAND:
+        secondaryEffect = new AddBattlerTagAttr(BattlerTagType.FLINCHED, false, true);
+        break;
+      case Biome.SPACE:
+        secondaryEffect = new StatStageChangeAttr([ Stat.DEF ], -1, false);
+        break;
+      case Biome.GRAVEYARD:
+      case Biome.RUINS:
+      case Biome.ABYSS:
+      case Biome.TEMPLE:
+      case Biome.END:
+      default:
+        return true;
+      }
     }
     return secondaryEffect.apply(user, target, move, []);
   }
-
 }
 
 export class PostVictoryStatStageChangeAttr extends MoveAttr {
@@ -7981,7 +7980,7 @@ export function initMoves() {
       .unimplemented(),
     new SelfStatusMove(Moves.SNATCH, Type.DARK, -1, 10, -1, 4, 3)
       .unimplemented(),
-    new AttackMove(Moves.SECRET_POWER, Type.NORMAL, MoveCategory.PHYSICAL, 70, 100, 20, 30, 0, 3)
+    new AttackMove(Moves.SECRET_POWER, Type.NORMAL, MoveCategory.PHYSICAL, 70, 100, 20, 100, 0, 3)
       .makesContact(false)
       .attr(SecretPowerAttr),
     new AttackMove(Moves.DIVE, Type.WATER, MoveCategory.PHYSICAL, 80, 100, 10, -1, 0, 3)
