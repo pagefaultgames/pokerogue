@@ -21,8 +21,8 @@ import MysteryEncounter from "#app/data/mystery-encounters/mystery-encounter";
 import { CommandPhase } from "#app/phases/command-phase";
 import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
 
-const namespace = "mysteryEncounter:mysteriousChallengers";
-const defaultParty = [Species.LAPRAS, Species.GENGAR, Species.ABRA];
+const namespace = "mysteryEncounters/mysteriousChallengers";
+const defaultParty = [ Species.LAPRAS, Species.GENGAR, Species.ABRA ];
 const defaultBiome = Biome.CAVE;
 const defaultWave = 45;
 
@@ -44,10 +44,10 @@ describe("Mysterious Challengers - Mystery Encounter", () => {
     game.override.disableTrainerWaves();
 
     const biomeMap = new Map<Biome, MysteryEncounterType[]>([
-      [Biome.VOLCANO, [MysteryEncounterType.FIGHT_OR_FLIGHT]],
+      [ Biome.VOLCANO, [ MysteryEncounterType.FIGHT_OR_FLIGHT ]],
     ]);
     HUMAN_TRANSITABLE_BIOMES.forEach(biome => {
-      biomeMap.set(biome, [MysteryEncounterType.MYSTERIOUS_CHALLENGERS]);
+      biomeMap.set(biome, [ MysteryEncounterType.MYSTERIOUS_CHALLENGERS ]);
     });
     vi.spyOn(MysteryEncounters, "mysteryEncountersByBiome", "get").mockReturnValue(biomeMap);
   });
@@ -64,10 +64,10 @@ describe("Mysterious Challengers - Mystery Encounter", () => {
     expect(MysteriousChallengersEncounter.encounterType).toBe(MysteryEncounterType.MYSTERIOUS_CHALLENGERS);
     expect(MysteriousChallengersEncounter.encounterTier).toBe(MysteryEncounterTier.GREAT);
     expect(MysteriousChallengersEncounter.dialogue).toBeDefined();
-    expect(MysteriousChallengersEncounter.dialogue.intro).toStrictEqual([{ text: `${namespace}.intro` }]);
-    expect(MysteriousChallengersEncounter.dialogue.encounterOptionsDialogue?.title).toBe(`${namespace}.title`);
-    expect(MysteriousChallengersEncounter.dialogue.encounterOptionsDialogue?.description).toBe(`${namespace}.description`);
-    expect(MysteriousChallengersEncounter.dialogue.encounterOptionsDialogue?.query).toBe(`${namespace}.query`);
+    expect(MysteriousChallengersEncounter.dialogue.intro).toStrictEqual([{ text: `${namespace}:intro` }]);
+    expect(MysteriousChallengersEncounter.dialogue.encounterOptionsDialogue?.title).toBe(`${namespace}:title`);
+    expect(MysteriousChallengersEncounter.dialogue.encounterOptionsDialogue?.description).toBe(`${namespace}:description`);
+    expect(MysteriousChallengersEncounter.dialogue.encounterOptionsDialogue?.query).toBe(`${namespace}:query`);
     expect(MysteriousChallengersEncounter.options.length).toBe(3);
   });
 
@@ -130,11 +130,11 @@ describe("Mysterious Challengers - Mystery Encounter", () => {
       expect(option.optionMode).toBe(MysteryEncounterOptionMode.DEFAULT);
       expect(option.dialogue).toBeDefined();
       expect(option.dialogue).toStrictEqual({
-        buttonLabel: `${namespace}.option.1.label`,
-        buttonTooltip: `${namespace}.option.1.tooltip`,
+        buttonLabel: `${namespace}:option.1.label`,
+        buttonTooltip: `${namespace}:option.1.tooltip`,
         selected: [
           {
-            text: `${namespace}.option.selected`,
+            text: `${namespace}:option.selected`,
           },
         ],
       });
@@ -172,11 +172,11 @@ describe("Mysterious Challengers - Mystery Encounter", () => {
       expect(option.optionMode).toBe(MysteryEncounterOptionMode.DEFAULT);
       expect(option.dialogue).toBeDefined();
       expect(option.dialogue).toStrictEqual({
-        buttonLabel: `${namespace}.option.2.label`,
-        buttonTooltip: `${namespace}.option.2.tooltip`,
+        buttonLabel: `${namespace}:option.2.label`,
+        buttonTooltip: `${namespace}:option.2.tooltip`,
         selected: [
           {
-            text: `${namespace}.option.selected`,
+            text: `${namespace}:option.selected`,
           },
         ],
       });
@@ -215,11 +215,11 @@ describe("Mysterious Challengers - Mystery Encounter", () => {
       expect(option.optionMode).toBe(MysteryEncounterOptionMode.DEFAULT);
       expect(option.dialogue).toBeDefined();
       expect(option.dialogue).toStrictEqual({
-        buttonLabel: `${namespace}.option.3.label`,
-        buttonTooltip: `${namespace}.option.3.tooltip`,
+        buttonLabel: `${namespace}:option.3.label`,
+        buttonTooltip: `${namespace}:option.3.tooltip`,
         selected: [
           {
-            text: `${namespace}.option.selected`,
+            text: `${namespace}:option.selected`,
           },
         ],
       });
