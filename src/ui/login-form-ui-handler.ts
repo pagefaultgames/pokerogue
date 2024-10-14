@@ -124,7 +124,7 @@ export default class LoginFormUiHandler extends FormModalUiHandler {
         // Prevent overlapping overrides on action modification
         this.submitAction = originalLoginAction;
         this.sanitizeInputs();
-        this.scene.ui.setMode(Mode.LOADING, { buttonActions: [] });
+        this.scene.ui.setMode(Mode.LOADING, { buttonActions: []});
         const onFail = error => {
           this.scene.ui.setMode(Mode.LOGIN_FORM, Object.assign(config, { errorMessage: error?.trim() }));
           this.scene.ui.playError();
@@ -161,7 +161,7 @@ export default class LoginFormUiHandler extends FormModalUiHandler {
     this.infoContainer.setVisible(false);
     this.setMouseCursorStyle("default"); //reset cursor
 
-    [this.discordImage, this.googleImage, this.usernameInfoImage].forEach((img) => img.off("pointerdown"));
+    [ this.discordImage, this.googleImage, this.usernameInfoImage ].forEach((img) => img.off("pointerdown"));
   }
 
   private processExternalProvider(config: ModalConfig): void {
@@ -195,7 +195,7 @@ export default class LoginFormUiHandler extends FormModalUiHandler {
     });
 
     const onFail = error => {
-      this.scene.ui.setMode(Mode.LOADING, { buttonActions: [] });
+      this.scene.ui.setMode(Mode.LOADING, { buttonActions: []});
       this.scene.ui.setModeForceTransition(Mode.LOGIN_FORM, Object.assign(config, { errorMessage: error?.trim() }));
       this.scene.ui.playError();
     };

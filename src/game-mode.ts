@@ -33,8 +33,8 @@ interface GameModeConfig {
 }
 
 // Describes min and max waves for MEs in specific game modes
-export const CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES: [number, number] = [10, 180];
-export const CHALLENGE_MODE_MYSTERY_ENCOUNTER_WAVES: [number, number] = [10, 180];
+export const CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES: [number, number] = [ 10, 180 ];
+export const CHALLENGE_MODE_MYSTERY_ENCOUNTER_WAVES: [number, number] = [ 10, 180 ];
 
 export class GameMode implements GameModeConfig {
   public modeId: GameModes;
@@ -330,7 +330,7 @@ export class GameMode implements GameModeConfig {
   getMysteryEncounterLegalWaves(): [number, number] {
     switch (this.modeId) {
     default:
-      return [0, 0];
+      return [ 0, 0 ];
     case GameModes.CLASSIC:
       return CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES;
     case GameModes.CHALLENGE:

@@ -109,7 +109,7 @@ export class DamageAchv extends Achv {
   damageAmount: integer;
 
   constructor(localizationKey: string, name: string, damageAmount: integer, iconImage: string, score: integer) {
-    super(localizationKey, name, "", iconImage, score, (_scene: BattleScene, args: any[]) => (args[0] as Utils.NumberHolder).value >= this.damageAmount);
+    super(localizationKey, name, "", iconImage, score, (_scene: BattleScene, args: any[]) => (args[0] instanceof Utils.NumberHolder ? args[0].value : args[0]) >= this.damageAmount);
     this.damageAmount = damageAmount;
   }
 }
@@ -118,7 +118,7 @@ export class HealAchv extends Achv {
   healAmount: integer;
 
   constructor(localizationKey: string, name: string, healAmount: integer, iconImage: string, score: integer) {
-    super(localizationKey, name, "", iconImage, score, (_scene: BattleScene, args: any[]) => (args[0] as Utils.NumberHolder).value >= this.healAmount);
+    super(localizationKey, name, "", iconImage, score, (_scene: BattleScene, args: any[]) => (args[0] instanceof Utils.NumberHolder ? args[0].value : args[0]) >= this.healAmount);
     this.healAmount = healAmount;
   }
 }
@@ -127,7 +127,7 @@ export class LevelAchv extends Achv {
   level: integer;
 
   constructor(localizationKey: string, name: string, level: integer, iconImage: string, score: integer) {
-    super(localizationKey, name, "", iconImage, score, (scene: BattleScene, args: any[]) => (args[0] as Utils.IntegerHolder).value >= this.level);
+    super(localizationKey, name, "", iconImage, score, (scene: BattleScene, args: any[]) => (args[0] instanceof Utils.NumberHolder ? args[0].value : args[0]) >= this.level);
     this.level = level;
   }
 }
@@ -157,45 +157,45 @@ export function getAchievementDescription(localizationKey: string): string {
 
   switch (localizationKey) {
   case "10K_MONEY":
-    return i18next.t("achv:MoneyAchv.description", {context: genderStr, "moneyAmount": achvs._10K_MONEY.moneyAmount.toLocaleString("en-US")});
+    return i18next.t("achv:MoneyAchv.description", { context: genderStr, "moneyAmount": achvs._10K_MONEY.moneyAmount.toLocaleString("en-US") });
   case "100K_MONEY":
-    return i18next.t("achv:MoneyAchv.description", {context: genderStr, "moneyAmount": achvs._100K_MONEY.moneyAmount.toLocaleString("en-US")});
+    return i18next.t("achv:MoneyAchv.description", { context: genderStr, "moneyAmount": achvs._100K_MONEY.moneyAmount.toLocaleString("en-US") });
   case "1M_MONEY":
-    return i18next.t("achv:MoneyAchv.description", {context: genderStr, "moneyAmount": achvs._1M_MONEY.moneyAmount.toLocaleString("en-US")});
+    return i18next.t("achv:MoneyAchv.description", { context: genderStr, "moneyAmount": achvs._1M_MONEY.moneyAmount.toLocaleString("en-US") });
   case "10M_MONEY":
-    return i18next.t("achv:MoneyAchv.description", {context: genderStr, "moneyAmount": achvs._10M_MONEY.moneyAmount.toLocaleString("en-US")});
+    return i18next.t("achv:MoneyAchv.description", { context: genderStr, "moneyAmount": achvs._10M_MONEY.moneyAmount.toLocaleString("en-US") });
   case "250_DMG":
-    return i18next.t("achv:DamageAchv.description", {context: genderStr, "damageAmount": achvs._250_DMG.damageAmount.toLocaleString("en-US")});
+    return i18next.t("achv:DamageAchv.description", { context: genderStr, "damageAmount": achvs._250_DMG.damageAmount.toLocaleString("en-US") });
   case "1000_DMG":
-    return i18next.t("achv:DamageAchv.description", {context: genderStr, "damageAmount": achvs._1000_DMG.damageAmount.toLocaleString("en-US")});
+    return i18next.t("achv:DamageAchv.description", { context: genderStr, "damageAmount": achvs._1000_DMG.damageAmount.toLocaleString("en-US") });
   case "2500_DMG":
-    return i18next.t("achv:DamageAchv.description", {context: genderStr, "damageAmount": achvs._2500_DMG.damageAmount.toLocaleString("en-US")});
+    return i18next.t("achv:DamageAchv.description", { context: genderStr, "damageAmount": achvs._2500_DMG.damageAmount.toLocaleString("en-US") });
   case "10000_DMG":
-    return i18next.t("achv:DamageAchv.description", {context: genderStr, "damageAmount": achvs._10000_DMG.damageAmount.toLocaleString("en-US")});
+    return i18next.t("achv:DamageAchv.description", { context: genderStr, "damageAmount": achvs._10000_DMG.damageAmount.toLocaleString("en-US") });
   case "250_HEAL":
-    return i18next.t("achv:HealAchv.description", {context: genderStr, "healAmount": achvs._250_HEAL.healAmount.toLocaleString("en-US"), "HP": i18next.t(getShortenedStatKey(Stat.HP))});
+    return i18next.t("achv:HealAchv.description", { context: genderStr, "healAmount": achvs._250_HEAL.healAmount.toLocaleString("en-US"), "HP": i18next.t(getShortenedStatKey(Stat.HP)) });
   case "1000_HEAL":
-    return i18next.t("achv:HealAchv.description", {context: genderStr, "healAmount": achvs._1000_HEAL.healAmount.toLocaleString("en-US"), "HP": i18next.t(getShortenedStatKey(Stat.HP))});
+    return i18next.t("achv:HealAchv.description", { context: genderStr, "healAmount": achvs._1000_HEAL.healAmount.toLocaleString("en-US"), "HP": i18next.t(getShortenedStatKey(Stat.HP)) });
   case "2500_HEAL":
-    return i18next.t("achv:HealAchv.description", {context: genderStr, "healAmount": achvs._2500_HEAL.healAmount.toLocaleString("en-US"), "HP": i18next.t(getShortenedStatKey(Stat.HP))});
+    return i18next.t("achv:HealAchv.description", { context: genderStr, "healAmount": achvs._2500_HEAL.healAmount.toLocaleString("en-US"), "HP": i18next.t(getShortenedStatKey(Stat.HP)) });
   case "10000_HEAL":
-    return i18next.t("achv:HealAchv.description", {context: genderStr, "healAmount": achvs._10000_HEAL.healAmount.toLocaleString("en-US"), "HP": i18next.t(getShortenedStatKey(Stat.HP))});
+    return i18next.t("achv:HealAchv.description", { context: genderStr, "healAmount": achvs._10000_HEAL.healAmount.toLocaleString("en-US"), "HP": i18next.t(getShortenedStatKey(Stat.HP)) });
   case "LV_100":
-    return i18next.t("achv:LevelAchv.description", {context: genderStr, "level": achvs.LV_100.level});
+    return i18next.t("achv:LevelAchv.description", { context: genderStr, "level": achvs.LV_100.level });
   case "LV_250":
-    return i18next.t("achv:LevelAchv.description", {context: genderStr, "level": achvs.LV_250.level});
+    return i18next.t("achv:LevelAchv.description", { context: genderStr, "level": achvs.LV_250.level });
   case "LV_1000":
-    return i18next.t("achv:LevelAchv.description", {context: genderStr, "level": achvs.LV_1000.level});
+    return i18next.t("achv:LevelAchv.description", { context: genderStr, "level": achvs.LV_1000.level });
   case "10_RIBBONS":
-    return i18next.t("achv:RibbonAchv.description", {context: genderStr, "ribbonAmount": achvs._10_RIBBONS.ribbonAmount.toLocaleString("en-US")});
+    return i18next.t("achv:RibbonAchv.description", { context: genderStr, "ribbonAmount": achvs._10_RIBBONS.ribbonAmount.toLocaleString("en-US") });
   case "25_RIBBONS":
-    return i18next.t("achv:RibbonAchv.description", {context: genderStr, "ribbonAmount": achvs._25_RIBBONS.ribbonAmount.toLocaleString("en-US")});
+    return i18next.t("achv:RibbonAchv.description", { context: genderStr, "ribbonAmount": achvs._25_RIBBONS.ribbonAmount.toLocaleString("en-US") });
   case "50_RIBBONS":
-    return i18next.t("achv:RibbonAchv.description", {context: genderStr, "ribbonAmount": achvs._50_RIBBONS.ribbonAmount.toLocaleString("en-US")});
+    return i18next.t("achv:RibbonAchv.description", { context: genderStr, "ribbonAmount": achvs._50_RIBBONS.ribbonAmount.toLocaleString("en-US") });
   case "75_RIBBONS":
-    return i18next.t("achv:RibbonAchv.description", {context: genderStr, "ribbonAmount": achvs._75_RIBBONS.ribbonAmount.toLocaleString("en-US")});
+    return i18next.t("achv:RibbonAchv.description", { context: genderStr, "ribbonAmount": achvs._75_RIBBONS.ribbonAmount.toLocaleString("en-US") });
   case "100_RIBBONS":
-    return i18next.t("achv:RibbonAchv.description", {context: genderStr, "ribbonAmount": achvs._100_RIBBONS.ribbonAmount.toLocaleString("en-US")});
+    return i18next.t("achv:RibbonAchv.description", { context: genderStr, "ribbonAmount": achvs._100_RIBBONS.ribbonAmount.toLocaleString("en-US") });
   case "TRANSFER_MAX_STAT_STAGE":
     return i18next.t("achv:TRANSFER_MAX_STAT_STAGE.description", { context: genderStr });
   case "MAX_FRIENDSHIP":

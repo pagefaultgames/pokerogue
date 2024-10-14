@@ -31,7 +31,7 @@ import { TrainerVariant } from "#app/field/trainer";
 import { Variant } from "#app/data/variant";
 import { setSettingGamepad, SettingGamepad, settingGamepadDefaults } from "#app/system/settings/settings-gamepad";
 import { setSettingKeyboard, SettingKeyboard } from "#app/system/settings/settings-keyboard";
-import { TerrainChangedEvent, WeatherChangedEvent } from "#app/events/arena";
+import { TagAddedEvent, TerrainChangedEvent, WeatherChangedEvent } from "#app/events/arena";
 import * as Modifier from "#app/modifier/modifier";
 import { StatusEffect } from "#app/data/status-effect";
 import ChallengeData from "#app/system/challenge-data";
@@ -50,6 +50,7 @@ import { applySessionDataPatches, applySettingsDataPatches, applySystemDataPatch
 import { MysteryEncounterSaveData } from "#app/data/mystery-encounters/mystery-encounter-save-data";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { PokerogueApiClearSessionData } from "#app/@types/pokerogue-api";
+import { ArenaTrapTag } from "#app/data/arena-tag";
 
 export const defaultStarterSpecies: Species[] = [
   Species.BULBASAUR, Species.CHARMANDER, Species.SQUIRTLE,
@@ -348,8 +349,8 @@ export class GameData {
       [VoucherType.GOLDEN]: 0
     };
     this.eggs = [];
-    this.eggPity = [0, 0, 0, 0];
-    this.unlockPity = [0, 0, 0, 0];
+    this.eggPity = [ 0, 0, 0, 0 ];
+    this.unlockPity = [ 0, 0, 0, 0 ];
     this.initDexData();
     this.initStarterData();
   }
@@ -560,8 +561,8 @@ export class GameData {
           ? systemData.eggs.map(e => e.toEgg())
           : [];
 
-        this.eggPity = systemData.eggPity ? systemData.eggPity.slice(0) : [0, 0, 0, 0];
-        this.unlockPity = systemData.unlockPity ? systemData.unlockPity.slice(0) : [0, 0, 0, 0];
+        this.eggPity = systemData.eggPity ? systemData.eggPity.slice(0) : [ 0, 0, 0, 0 ];
+        this.unlockPity = systemData.unlockPity ? systemData.unlockPity.slice(0) : [ 0, 0, 0, 0 ];
 
         this.dexData = Object.assign(this.dexData, systemData.dexData);
         this.consolidateDexData(this.dexData);
@@ -1085,8 +1086,18 @@ export class GameData {
 
           scene.arena.terrain = sessionData.arena.terrain;
           scene.arena.eventTarget.dispatchEvent(new TerrainChangedEvent(TerrainType.NONE, scene.arena.terrain?.terrainType!, scene.arena.terrain?.turnsLeft!)); // TODO: is this bang correct?
-          // TODO
-          //scene.arena.tags = sessionData.arena.tags;
+
+          scene.arena.tags = sessionData.arena.tags;
+          if (scene.arena.tags) {
+            for (const tag of scene.arena.tags) {
+              if (tag instanceof ArenaTrapTag) {
+                const { tagType, side, turnCount, layers, maxLayers } = tag as ArenaTrapTag;
+                scene.arena.eventTarget.dispatchEvent(new TagAddedEvent(tagType, side, turnCount, layers, maxLayers));
+              } else {
+                scene.arena.eventTarget.dispatchEvent(new TagAddedEvent(tag.tagType, tag.side, tag.turnCount));
+              }
+            }
+          }
 
           for (const modifierData of sessionData.modifiers) {
             const modifier = modifierData.toModifier(scene, Modifier[modifierData.className]);
@@ -1125,10 +1136,16 @@ export class GameData {
     });
   }
 
+  /**
+   * Delete the session data at the given slot when overwriting a save file
+   * For deleting the session of a finished run, use {@linkcode tryClearSession}
+   * @param slotId the slot to clear
+   * @returns Promise with result `true` if the session was deleted successfully, `false` otherwise
+   */
   deleteSession(slotId: integer): Promise<boolean> {
     return new Promise<boolean>(resolve => {
       if (bypassLogin) {
-        localStorage.removeItem(`sessionData${this.scene.sessionSlotId ? this.scene.sessionSlotId : ""}_${loggedInUser?.username}`);
+        localStorage.removeItem(`sessionData${slotId ? slotId : ""}_${loggedInUser?.username}`);
         return resolve(true);
       }
 
@@ -1139,7 +1156,7 @@ export class GameData {
         Utils.apiFetch(`savedata/session/delete?slot=${slotId}&clientSessionId=${clientSessionId}`, true).then(response => {
           if (response.ok) {
             loggedInUser!.lastSessionSlot = -1; // TODO: is the bang correct?
-            localStorage.removeItem(`sessionData${this.scene.sessionSlotId ? this.scene.sessionSlotId : ""}_${loggedInUser?.username}`);
+            localStorage.removeItem(`sessionData${slotId ? slotId : ""}_${loggedInUser?.username}`);
             resolve(true);
           }
           return response.text();
@@ -1190,27 +1207,29 @@ export class GameData {
 
 
   /**
-   * Attempt to clear session data. After session data is removed, attempt to update user info so the menu updates
+   * Attempt to clear session data after the end of a run
+   * After session data is removed, attempt to update user info so the menu updates
+   * To delete an unfinished run instead, use {@linkcode deleteSession}
    */
   async tryClearSession(scene: BattleScene, slotId: integer): Promise<[success: boolean, newClear: boolean]> {
-    let result: [boolean, boolean] = [false, false];
+    let result: [boolean, boolean] = [ false, false ];
 
     if (bypassLogin) {
       localStorage.removeItem(`sessionData${slotId ? slotId : ""}_${loggedInUser?.username}`);
-      result = [true, true];
+      result = [ true, true ];
     } else {
       const sessionData = this.getSessionSaveData(scene);
       const response = await Utils.apiPost(`savedata/session/clear?slot=${slotId}&trainerId=${this.trainerId}&secretId=${this.secretId}&clientSessionId=${clientSessionId}`, JSON.stringify(sessionData), undefined, true);
 
       if (response.ok) {
           loggedInUser!.lastSessionSlot = -1; // TODO: is the bang correct?
-          localStorage.removeItem(`sessionData${this.scene.sessionSlotId ? this.scene.sessionSlotId : ""}_${loggedInUser?.username}`);
+          localStorage.removeItem(`sessionData${slotId ? slotId : ""}_${loggedInUser?.username}`);
       }
 
       const jsonResponse: PokerogueApiClearSessionData = await response.json();
 
       if (!jsonResponse.error) {
-        result = [true, jsonResponse.success ?? false];
+        result = [ true, jsonResponse.success ?? false ];
       } else {
         if (jsonResponse && jsonResponse.error?.startsWith("session out of date")) {
           this.scene.clearPhaseQueue();
@@ -1218,7 +1237,7 @@ export class GameData {
         }
 
         console.error(jsonResponse);
-        result = [false, false];
+        result = [ false, false ];
       }
     }
 
@@ -1367,7 +1386,7 @@ export class GameData {
           break;
         }
         const encryptedData = AES.encrypt(dataStr, saveKey);
-        const blob = new Blob([ encryptedData.toString() ], {type: "text/json"});
+        const blob = new Blob([ encryptedData.toString() ], { type: "text/json" });
         const link = document.createElement("a");
         link.href = window.URL.createObjectURL(blob);
         link.download = `${dataKey}.prsv`;
@@ -1437,7 +1456,7 @@ export class GameData {
                 dataName = i18next.t("menuUiHandler:RUN_HISTORY").toLowerCase();
                 keys.forEach((key) => {
                   const entryKeys = Object.keys(data[key]);
-                  valid = ["isFavorite", "isVictory", "entry"].every(v => entryKeys.includes(v)) && entryKeys.length === 3;
+                  valid = [ "isFavorite", "isVictory", "entry" ].every(v => entryKeys.includes(v)) && entryKeys.length === 3;
                 });
                 break;
               case GameDataType.SETTINGS:

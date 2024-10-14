@@ -23,12 +23,12 @@ describe("Moves - Fusion Bolt", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.moveset([fusionBolt]);
+    game.override.moveset([ fusionBolt ]);
     game.override.startingLevel(1);
 
     game.override.enemySpecies(Species.RESHIRAM);
     game.override.enemyAbility(Abilities.ROUGH_SKIN);
-    game.override.enemyMoveset([Moves.SPLASH, Moves.SPLASH, Moves.SPLASH, Moves.SPLASH]);
+    game.override.enemyMoveset([ Moves.SPLASH, Moves.SPLASH, Moves.SPLASH, Moves.SPLASH ]);
 
     game.override.battleType("single");
     game.override.startingWave(97);

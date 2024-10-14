@@ -4,7 +4,7 @@ import PokemonIconAnimHandler, { PokemonIconAnimMode } from "#app/ui/pokemon-ico
 import { TextStyle, addTextObject } from "#app/ui/text";
 import MessageUiHandler from "#app/ui/message-ui-handler";
 import { addWindow } from "#app/ui/ui-theme";
-import {Button} from "#enums/buttons";
+import { Button } from "#enums/buttons";
 import i18next from "i18next";
 import ScrollableGridUiHandler from "#app/ui/scrollable-grid-handler";
 import { ScrollBar } from "#app/ui/scroll-bar";

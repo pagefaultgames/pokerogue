@@ -25,15 +25,15 @@ describe("Abilities - Gorilla Tactics", () => {
     game.override
       .battleType("single")
       .enemyAbility(Abilities.BALL_FETCH)
-      .enemyMoveset([Moves.SPLASH, Moves.DISABLE])
+      .enemyMoveset([ Moves.SPLASH, Moves.DISABLE ])
       .enemySpecies(Species.MAGIKARP)
       .enemyLevel(30)
-      .moveset([Moves.SPLASH, Moves.TACKLE, Moves.GROWL])
+      .moveset([ Moves.SPLASH, Moves.TACKLE, Moves.GROWL ])
       .ability(Abilities.GORILLA_TACTICS);
   });
 
   it("boosts the Pokémon's Attack by 50%, but limits the Pokémon to using only one move", async () => {
-    await game.classicMode.startBattle([Species.GALAR_DARMANITAN]);
+    await game.classicMode.startBattle([ Species.GALAR_DARMANITAN ]);
 
     const darmanitan = game.scene.getPlayerPokemon()!;
     const initialAtkStat = darmanitan.getStat(Stat.ATK);
@@ -50,7 +50,7 @@ describe("Abilities - Gorilla Tactics", () => {
   });
 
   it("should struggle if the only usable move is disabled", async () => {
-    await game.classicMode.startBattle([Species.GALAR_DARMANITAN]);
+    await game.classicMode.startBattle([ Species.GALAR_DARMANITAN ]);
 
     const darmanitan = game.scene.getPlayerPokemon()!;
     const enemy = game.scene.getEnemyPokemon()!;
@@ -64,7 +64,7 @@ describe("Abilities - Gorilla Tactics", () => {
 
     game.move.select(Moves.GROWL);
     await game.forceEnemyMove(Moves.DISABLE);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+    await game.setTurnOrder([ BattlerIndex.ENEMY, BattlerIndex.PLAYER ]);
 
     await game.phaseInterceptor.to("TurnEndPhase");
     expect(enemy.getStatStage(Stat.ATK)).toBe(-1); // Only the effect of the first Growl should be applied
@@ -73,7 +73,7 @@ describe("Abilities - Gorilla Tactics", () => {
     await game.toNextTurn();
 
     game.move.select(Moves.TACKLE);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY ]);
 
     await game.phaseInterceptor.to("MoveEndPhase");
     expect(darmanitan.hp).toBeLessThan(darmanitan.getMaxHp());

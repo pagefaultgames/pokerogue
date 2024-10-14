@@ -16,7 +16,7 @@ import { initSceneWithoutEncounterPhase } from "#test/utils/gameManagerUtils";
 import { MysteryEncounterPhase } from "#app/phases/mystery-encounter-phases";
 
 const namespace = "mysteryEncounters/thePokemonSalesman";
-const defaultParty = [Species.LAPRAS, Species.GENGAR, Species.ABRA];
+const defaultParty = [ Species.LAPRAS, Species.GENGAR, Species.ABRA ];
 const defaultBiome = Biome.CAVE;
 const defaultWave = 45;
 
@@ -38,10 +38,10 @@ describe("The Pokemon Salesman - Mystery Encounter", () => {
     game.override.disableTrainerWaves();
 
     const biomeMap = new Map<Biome, MysteryEncounterType[]>([
-      [Biome.VOLCANO, [MysteryEncounterType.MYSTERIOUS_CHALLENGERS]],
+      [ Biome.VOLCANO, [ MysteryEncounterType.MYSTERIOUS_CHALLENGERS ]],
     ]);
     HUMAN_TRANSITABLE_BIOMES.forEach(biome => {
-      biomeMap.set(biome, [MysteryEncounterType.THE_POKEMON_SALESMAN]);
+      biomeMap.set(biome, [ MysteryEncounterType.THE_POKEMON_SALESMAN ]);
     });
     vi.spyOn(MysteryEncounters, "mysteryEncountersByBiome", "get").mockReturnValue(biomeMap);
   });
@@ -147,8 +147,8 @@ describe("The Pokemon Salesman - Mystery Encounter", () => {
 
       expect(scene.getParty().length).toBe(initialPartySize + 1);
 
-      const newlyPurchasedPokemon = scene.getParty().find(p => p.name === pokemonName);
-      expect(newlyPurchasedPokemon).toBeDefined();
+      const newlyPurchasedPokemon = scene.getParty()[scene.getParty().length - 1];
+      expect(newlyPurchasedPokemon.name).toBe(pokemonName);
       expect(newlyPurchasedPokemon!.moveset.length > 0).toBeTruthy();
     });
 

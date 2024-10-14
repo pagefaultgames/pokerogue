@@ -16,7 +16,7 @@ import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
 
 const namespace = "mysteryEncounters/departmentStoreSale";
-const defaultParty = [Species.LAPRAS, Species.GENGAR, Species.ABRA];
+const defaultParty = [ Species.LAPRAS, Species.GENGAR, Species.ABRA ];
 const defaultBiome = Biome.PLAINS;
 const defaultWave = 37;
 
@@ -38,10 +38,10 @@ describe("Department Store Sale - Mystery Encounter", () => {
     game.override.disableTrainerWaves();
 
     const biomeMap = new Map<Biome, MysteryEncounterType[]>([
-      [Biome.VOLCANO, [MysteryEncounterType.MYSTERIOUS_CHALLENGERS]],
+      [ Biome.VOLCANO, [ MysteryEncounterType.MYSTERIOUS_CHALLENGERS ]],
     ]);
     CIVILIZATION_ENCOUNTER_BIOMES.forEach(biome => {
-      biomeMap.set(biome, [MysteryEncounterType.DEPARTMENT_STORE_SALE]);
+      biomeMap.set(biome, [ MysteryEncounterType.DEPARTMENT_STORE_SALE ]);
     });
     vi.spyOn(MysteryEncounters, "mysteryEncountersByBiome", "get").mockReturnValue(biomeMap);
   });

@@ -66,8 +66,8 @@ export default class MenuUiHandler extends MessageUiHandler {
     super(scene, mode);
 
     this.excludedMenus = () => [
-      { condition: [Mode.COMMAND, Mode.TITLE].includes(mode ?? Mode.TITLE), options: [MenuOptions.EGG_GACHA, MenuOptions.EGG_LIST] },
-      { condition: bypassLogin, options: [MenuOptions.LOG_OUT] }
+      { condition: [ Mode.COMMAND, Mode.TITLE ].includes(mode ?? Mode.TITLE), options: [ MenuOptions.EGG_GACHA, MenuOptions.EGG_LIST ]},
+      { condition: bypassLogin, options: [ MenuOptions.LOG_OUT ]}
     ];
 
     this.menuOptions = Utils.getEnumKeys(MenuOptions)
@@ -81,7 +81,7 @@ export default class MenuUiHandler extends MessageUiHandler {
     const ui = this.getUi();
     // wiki url directs based on languges available on wiki
     const lang = i18next.resolvedLanguage?.substring(0, 2)!; // TODO: is this bang correct?
-    if (["de", "fr", "ko", "zh"].includes(lang)) {
+    if ([ "de", "fr", "ko", "zh" ].includes(lang)) {
       wikiUrl = `https://wiki.pokerogue.net/${lang}:start`;
     }
 
@@ -109,8 +109,8 @@ export default class MenuUiHandler extends MessageUiHandler {
   render() {
     const ui = this.getUi();
     this.excludedMenus = () => [
-      { condition: this.scene.getCurrentPhase() instanceof SelectModifierPhase, options: [MenuOptions.EGG_GACHA, MenuOptions.EGG_LIST] },
-      { condition: bypassLogin, options: [MenuOptions.LOG_OUT] }
+      { condition: this.scene.getCurrentPhase() instanceof SelectModifierPhase, options: [ MenuOptions.EGG_GACHA, MenuOptions.EGG_LIST ]},
+      { condition: bypassLogin, options: [ MenuOptions.LOG_OUT ]}
     ];
 
     this.menuOptions = Utils.getEnumKeys(MenuOptions)
