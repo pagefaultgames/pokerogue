@@ -2319,6 +2319,7 @@ export const trainerConfigs: TrainerConfigs = {
     }),
   [TrainerType.PENNY_2]: new TrainerConfig(++t).setName("Cassiopeia").initForEvilTeamLeader("Star Boss", [], true).setMixedBattleBgm("battle_star_boss").setVictoryBgm("victory_team_plasma")
     .setPartyMemberFunc(0, getRandomPartyMemberFunc([ Species.SYLVEON ], TrainerSlot.TRAINER, true, p => {
+      p.setBoss(true, 2);
       p.abilityIndex = 2; // Pixilate
       p.generateAndPopulateMoveset();
       p.gender = Gender.FEMALE;
