@@ -6430,6 +6430,9 @@ export class TransformAttr extends MoveEffectAttr {
       user.summonData.gender = target.getGender();
       user.summonData.fusionGender = target.getFusionGender();
 
+      // Power Trick's effect will not preserved after using Transform
+      user.removeTag(BattlerTagType.POWER_TRICK);
+
       // Copy all stats (except HP)
       for (const s of EFFECTIVE_STATS) {
         user.setStat(s, target.getStat(s, false), false);
@@ -8153,7 +8156,7 @@ export function initMoves() {
       .attr(OpponentHighHpPowerAttr, 120)
       .makesContact(),
     new SelfStatusMove(Moves.POWER_TRICK, Type.PSYCHIC, -1, 10, -1, 0, 4)
-      .unimplemented(),
+      .attr(AddBattlerTagAttr, BattlerTagType.POWER_TRICK, true),
     new StatusMove(Moves.GASTRO_ACID, Type.POISON, 100, 10, -1, 0, 4)
       .attr(SuppressAbilitiesAttr),
     new StatusMove(Moves.LUCKY_CHANT, Type.NORMAL, -1, 30, -1, 0, 4)
