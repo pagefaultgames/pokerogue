@@ -1,15 +1,31 @@
 import { BattlerIndex } from "#app/battle";
 import BattleScene from "#app/battle-scene";
-import { AddSecondStrikeAbAttr, AlwaysHitAbAttr, IgnoreMoveEffectsAbAttr, MaxMultiHitAbAttr, PostAttackAbAttr, PostDefendAbAttr, TypeImmunityAbAttr, applyPostAttackAbAttrs, applyPostDefendAbAttrs, applyPreAttackAbAttrs } from "#app/data/ability";
+import {
+  AddSecondStrikeAbAttr, AlwaysHitAbAttr,
+  IgnoreMoveEffectsAbAttr, MaxMultiHitAbAttr,
+  PostAttackAbAttr, PostDefendAbAttr,
+  TypeImmunityAbAttr, applyPostAttackAbAttrs,
+  applyPostDefendAbAttrs, applyPreAttackAbAttrs
+} from "#app/data/ability";
 import { ArenaTagSide, ConditionalProtectTag } from "#app/data/arena-tag";
 import { MoveAnim } from "#app/data/battle-anims";
 import { BattlerTagLapseType, DamageProtectedTag, ProtectedTag, SemiInvulnerableTag, SubstituteTag } from "#app/data/battler-tags";
-import { AttackMove, ChargeAttr, FixedDamageAttr, HitsTagAttr, MissEffectAttr, MoveAttr, MoveCategory, MoveEffectAttr, MoveEffectTrigger, MoveFlags, MoveTarget, MultiHitAttr, NoEffectAttr, OverrideMoveEffectAttr, ToxicAccuracyAttr, VariableTargetAttr, applyFilteredMoveAttrs, applyMoveAttrs } from "#app/data/move";
+import {
+  AttackMove, ChargeAttr, FixedDamageAttr, HitsTagAttr,
+  MissEffectAttr, MoveAttr, MoveCategory, MoveEffectAttr,
+  MoveEffectTrigger, MoveFlags, MoveTarget, MultiHitAttr,
+  NoEffectAttr, OneHitKOAttr, OverrideMoveEffectAttr,
+  ToxicAccuracyAttr, VariableTargetAttr,
+  applyFilteredMoveAttrs, applyMoveAttrs
+} from "#app/data/move";
 import { SpeciesFormChangePostMoveTrigger } from "#app/data/pokemon-forms";
 import { Type } from "#app/data/type";
 import Pokemon, { HitResult, MoveResult, PokemonMove } from "#app/field/pokemon";
 import { getPokemonNameWithAffix } from "#app/messages";
-import { ContactHeldItemTransferChanceModifier, EnemyAttackStatusEffectChanceModifier, FlinchChanceModifier, HitHealModifier, PokemonMultiHitModifier } from "#app/modifier/modifier";
+import {
+  ContactHeldItemTransferChanceModifier, EnemyAttackStatusEffectChanceModifier,
+  FlinchChanceModifier, HitHealModifier, PokemonMultiHitModifier
+} from "#app/modifier/modifier";
 import { PokemonPhase } from "#app/phases/pokemon-phase";
 import { BooleanHolder, NumberHolder, executeIf } from "#app/utils";
 import { BattlerTagType } from "#enums/battler-tag-type";
@@ -400,6 +416,10 @@ export class MoveEffectPhase extends PokemonPhase {
     }
 
     if (target.getTag(BattlerTagType.ALWAYS_GET_HIT)) {
+      return true;
+    }
+
+    if (target.getTag(BattlerTagType.TELEKINESIS) && !target.getTag(SemiInvulnerableTag) && !this.move.getMove().hasAttr(OneHitKOAttr)) {
       return true;
     }
 
