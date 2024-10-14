@@ -261,12 +261,11 @@ export class ConditionalProtectTag extends ArenaTag {
    * and protects the target if conditions are met
    * @param arena the {@linkcode Arena} containing this tag
    * @param simulated `true` if the tag is applied quietly; `false` otherwise.
-   * @param args the arguments for this tag's application:
-   * - `[0]` a {@linkcode Utils.BooleanHolder | BooleanHolder} used to flag if the move is protected against
-   * - `[1]` the attacking {@linkcode Pokemon}
-   * - `[2]` the defending {@linkcode Pokemon}
-   * - `[3]` the {@linkcode Moves | identifier} for the move being used
-   * - `[4]` a {@linkcode Utils.BooleanHolder | BooleanHolder} used to flag if a protection effect supercedes effects that ignore protection
+   * @param isProtected a {@linkcode Utils.BooleanHolder | BooleanHolder} used to flag if the move is protected against
+   * @param attacker the attacking {@linkcode Pokemon}
+   * @param defender the defending {@linkcode Pokemon}
+   * @param moveId the {@linkcode Moves | identifier} for the move being used
+   * @param ignoresProtectBypass a {@linkcode Utils.BooleanHolder | BooleanHolder} used to flag if a protection effect supercedes effects that ignore protection
    * @returns `true` if this tag protected against the attack; `false` otherwise
    */
   override apply(arena: Arena, simulated: boolean, isProtected: Utils.BooleanHolder, attacker: Pokemon, defender: Pokemon,
@@ -619,6 +618,13 @@ export class ArenaTrapTag extends ArenaTag {
     }
   }
 
+  /**
+   * Activates the hazard effect onto a Pokemon when it enters the field
+   * @param arena the {@linkcode Arena} containing this tag
+   * @param simulated if `true`, only checks if the hazard would activate.
+   * @param pokemon the {@linkcode Pokemon} triggering this hazard
+   * @returns `true` if this hazard affects the given Pokemon; `false` otherwise.
+   */
   override apply(arena: Arena, simulated: boolean, pokemon: Pokemon): boolean {
     if (this.sourceId === pokemon.id || (this.side === ArenaTagSide.PLAYER) !== pokemon.isPlayer()) {
       return false;
@@ -1145,6 +1151,14 @@ class WaterFirePledgeTag extends ArenaTag {
     arena.scene.queueMessage(i18next.t(`arenaTag:waterFirePledgeOnAdd${this.side === ArenaTagSide.PLAYER ? "Player" : this.side === ArenaTagSide.ENEMY ? "Enemy" : ""}`));
   }
 
+  /**
+   * Doubles the chance for the given move's secondary effect(s) to trigger
+   * @param arena the {@linkcode Arena} containing this tag
+   * @param simulated n/a
+   * @param moveChance a {@linkcode Utils.NumberHolder | NumberHolder} containing
+   * the move's current effect chance
+   * @returns `true` if the move's effect chance was doubled (currently always `true`)
+   */
   override apply(arena: Arena, simulated: boolean, moveChance: Utils.NumberHolder): boolean {
     moveChance.value *= 2;
     return true;
