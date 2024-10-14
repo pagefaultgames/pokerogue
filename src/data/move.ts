@@ -5484,37 +5484,38 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
      */
     const switchOutTarget = this.selfSwitch ? user : target;
     if (switchOutTarget instanceof PlayerPokemon) {
+      // Switch out logic for the player's Pokemon
       if (switchOutTarget.scene.getParty().filter((p) => p.isAllowedInBattle() && !p.isOnField()).length < 1) {
         return false;
       }
-      switchOutTarget.leaveField(this.switchType === SwitchType.SWITCH);
 
       if (switchOutTarget.hp > 0) {
+        switchOutTarget.leaveField(this.switchType === SwitchType.SWITCH);
         user.scene.prependToPhase(new SwitchPhase(user.scene, this.switchType, switchOutTarget.getFieldIndex(), true, true), MoveEndPhase);
         return true;
       }
       return false;
     } else if (user.scene.currentBattle.battleType !== BattleType.WILD) {
+      // Switch out logic for trainer battles
       if (switchOutTarget.scene.getEnemyParty().filter((p) => p.isAllowedInBattle() && !p.isOnField()).length < 1) {
         return false;
       }
-      // Switch out logic for trainer battles
-      switchOutTarget.leaveField(this.switchType === SwitchType.SWITCH);
 
       if (switchOutTarget.hp > 0) {
         // for opponent switching out
+        switchOutTarget.leaveField(this.switchType === SwitchType.SWITCH);
         user.scene.prependToPhase(new SwitchSummonPhase(user.scene, this.switchType, switchOutTarget.getFieldIndex(),
           (user.scene.currentBattle.trainer ? user.scene.currentBattle.trainer.getNextSummonIndex((switchOutTarget as EnemyPokemon).trainerSlot) : 0),
           false, false), MoveEndPhase);
       }
     } else {
+      // Switch out logic for everything else (eg: WILD battles)
       if (user.scene.currentBattle.waveIndex % 10 === 0) {
         return false;
       }
-      // Switch out logic for everything else (eg: WILD battles)
-      switchOutTarget.leaveField(false);
 
-      if (switchOutTarget.hp) {
+      if (switchOutTarget.hp > 0) {
+        switchOutTarget.leaveField(false);
         user.scene.queueMessage(i18next.t("moveTriggers:fled", { pokemonName: getPokemonNameWithAffix(switchOutTarget) }), null, true, 500);
 
         // in double battles redirect potential moves off fled pokemon
