@@ -4198,10 +4198,12 @@ export class BlockRedirectAbAttr extends AbAttr { }
  * @see {@linkcode apply}
  */
 export class ReduceStatusEffectDurationAbAttr extends AbAttr {
-  constructor(
-    private statusEffect: StatusEffect
-  ) {
+  private statusEffect: StatusEffect;
+
+  constructor(statusEffect: StatusEffect) {
     super(true);
+
+    this.statusEffect = statusEffect;
   }
 
   /**

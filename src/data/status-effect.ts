@@ -5,12 +5,16 @@ import i18next, { ParseKeys } from "i18next";
 export { StatusEffect };
 
 export class Status {
-  constructor(
-    public effect: StatusEffect,
-    /** Toxic damage is `1/16 max HP * toxicTurnCount` */
-    public toxicTurnCount: number = 0,
-    public sleepTurnsRemaining?: number
-  ) {}
+  public effect: StatusEffect;
+  /** Toxic damage is `1/16 max HP * toxicTurnCount` */
+  public toxicTurnCount: number = 0;
+  public sleepTurnsRemaining?: number;
+
+  constructor(effect: StatusEffect, toxicTurnCount: number = 0, sleepTurnsRemaining?: number) {
+    this.effect = effect;
+    this.toxicTurnCount = toxicTurnCount;
+    this.sleepTurnsRemaining = sleepTurnsRemaining;
+  }
 
   incrementTurn(): void {
     this.toxicTurnCount++;

@@ -2037,13 +2037,16 @@ export class WaterShurikenMultiHitTypeAttr extends ChangeMultiHitTypeAttr {
 }
 
 export class StatusEffectAttr extends MoveEffectAttr {
-  constructor(
-    public effect: StatusEffect,
-    selfTarget?: boolean,
-    public turnsRemaining?: number,
-    public overrideStatus: boolean = false
-  ) {
+  public effect: StatusEffect;
+  public turnsRemaining?: number;
+  public overrideStatus: boolean = false;
+
+  constructor(effect: StatusEffect, selfTarget?: boolean, turnsRemaining?: number, overrideStatus: boolean = false) {
     super(selfTarget, MoveEffectTrigger.HIT);
+
+    this.effect = effect;
+    this.turnsRemaining = turnsRemaining;
+    this.overrideStatus = overrideStatus;
   }
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {

@@ -8,16 +8,18 @@ import { getPokemonNameWithAffix } from "#app/messages";
 import { PokemonPhase } from "./pokemon-phase";
 
 export class ObtainStatusEffectPhase extends PokemonPhase {
+  private statusEffect?: StatusEffect;
+  private turnsRemaining?: number;
+  private sourceText?: string | null;
+  private sourcePokemon?: Pokemon | null;
 
-  constructor(
-    scene: BattleScene,
-    battlerIndex: BattlerIndex,
-    private statusEffect?: StatusEffect,
-    private turnsRemaining?: number,
-    private sourceText?: string | null,
-    private sourcePokemon?: Pokemon | null
-  ) {
+  constructor(scene: BattleScene, battlerIndex: BattlerIndex, statusEffect?: StatusEffect, turnsRemaining?: number, sourceText?: string | null, sourcePokemon?: Pokemon | null) {
     super(scene, battlerIndex);
+
+    this.statusEffect = statusEffect;
+    this.turnsRemaining = turnsRemaining;
+    this.sourceText = sourceText;
+    this.sourcePokemon = sourcePokemon;
   }
 
   start() {
