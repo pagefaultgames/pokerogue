@@ -1,4 +1,3 @@
-
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import Phaser from "phaser";
 import GameManager from "#app/test/utils/gameManager";
@@ -36,7 +35,7 @@ describe("Moves - Power Trick", () => {
   });
 
   it("swaps the user's ATK and DEF stats", async () => {
-    await game.classicMode.startBattle([Species.SHUCKLE]);
+    await game.classicMode.startBattle([ Species.SHUCKLE ]);
 
     const player = game.scene.getPlayerPokemon()!;
     const baseATK = player.getStat(Stat.ATK, false);
@@ -52,7 +51,7 @@ describe("Moves - Power Trick", () => {
   }, 20000);
 
   it("resets initial ATK and DEF stat swap when used consecutively", async () => {
-    await game.classicMode.startBattle([Species.SHUCKLE]);
+    await game.classicMode.startBattle([ Species.SHUCKLE ]);
 
     const player = game.scene.getPlayerPokemon()!;
     const baseATK = player.getStat(Stat.ATK, false);
@@ -72,8 +71,8 @@ describe("Moves - Power Trick", () => {
   }, 20000);
 
   it("should pass effect when using BATON_PASS", async () => {
-    await game.classicMode.startBattle([Species.SHUCKLE, Species.SHUCKLE]);
-    await game.override.moveset([Moves.POWER_TRICK, Moves.BATON_PASS]);
+    await game.classicMode.startBattle([ Species.SHUCKLE, Species.SHUCKLE ]);
+    await game.override.moveset([ Moves.POWER_TRICK, Moves.BATON_PASS ]);
 
     const player = game.scene.getPlayerPokemon()!;
     player.addTag(BattlerTagType.POWER_TRICK);
