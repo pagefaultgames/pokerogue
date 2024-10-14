@@ -2906,7 +2906,6 @@ export class SecretPowerAttr extends MoveEffectAttr {
       case Biome.SLUM:
       case Biome.DOJO:
       case Biome.FACTORY:
-      case Biome.CONSTRUCTION_SITE:
       case Biome.LABORATORY:
       case Biome.POWER_PLANT:
         secondaryEffect = new StatusEffectAttr(StatusEffect.PARALYSIS, false);
@@ -2933,6 +2932,7 @@ export class SecretPowerAttr extends MoveEffectAttr {
         secondaryEffect = new StatStageChangeAttr([ Stat.SPATK ], -1, false);
         break;
       case Biome.DESERT:
+      case Biome.CONSTRUCTION_SITE:
         secondaryEffect = new StatStageChangeAttr([ Stat.ACC ], -1, false);
         break;
       case Biome.SEA:
