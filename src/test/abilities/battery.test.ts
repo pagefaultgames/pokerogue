@@ -1,14 +1,12 @@
-import { allMoves } from "#app/data/move.js";
-import { Abilities } from "#app/enums/abilities.js";
-import GameManager from "#test/utils/gameManager";
-import { getMovePosition } from "#test/utils/gameManagerUtils";
+import { allMoves } from "#app/data/move";
+import { Abilities } from "#app/enums/abilities";
+import { MoveEffectPhase } from "#app/phases/move-effect-phase";
+import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
+import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import { SPLASH_ONLY } from "#test/utils/testUtils";
-import { MoveEffectPhase } from "#app/phases/move-effect-phase.js";
-import { TurnEndPhase } from "#app/phases/turn-end-phase.js";
 
 describe("Abilities - Battery", () => {
   let phaserGame: Phaser.Game;
@@ -31,8 +29,8 @@ describe("Abilities - Battery", () => {
     game.override.battleType("double");
     game.override.enemySpecies(Species.SHUCKLE);
     game.override.enemyAbility(Abilities.BALL_FETCH);
-    game.override.moveset([Moves.TACKLE, Moves.BREAKING_SWIPE, Moves.SPLASH, Moves.DAZZLING_GLEAM]);
-    game.override.enemyMoveset(SPLASH_ONLY);
+    game.override.moveset([ Moves.TACKLE, Moves.BREAKING_SWIPE, Moves.SPLASH, Moves.DAZZLING_GLEAM ]);
+    game.override.enemyMoveset(Moves.SPLASH);
   });
 
   it("raises the power of allies' special moves by 30%", async () => {
@@ -41,10 +39,10 @@ describe("Abilities - Battery", () => {
 
     vi.spyOn(moveToCheck, "calculateBattlePower");
 
-    await game.startBattle([Species.PIKACHU, Species.CHARJABUG]);
+    await game.startBattle([ Species.PIKACHU, Species.CHARJABUG ]);
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.DAZZLING_GLEAM));
-    game.doAttack(getMovePosition(game.scene, 1, Moves.SPLASH));
+    game.move.select(Moves.DAZZLING_GLEAM);
+    game.move.select(Moves.SPLASH, 1);
     await game.phaseInterceptor.to(MoveEffectPhase);
 
     expect(moveToCheck.calculateBattlePower).toHaveReturnedWith(basePower * batteryMultiplier);
@@ -56,10 +54,10 @@ describe("Abilities - Battery", () => {
 
     vi.spyOn(moveToCheck, "calculateBattlePower");
 
-    await game.startBattle([Species.PIKACHU, Species.CHARJABUG]);
+    await game.startBattle([ Species.PIKACHU, Species.CHARJABUG ]);
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.BREAKING_SWIPE));
-    game.doAttack(getMovePosition(game.scene, 1, Moves.SPLASH));
+    game.move.select(Moves.BREAKING_SWIPE);
+    game.move.select(Moves.SPLASH, 1);
     await game.phaseInterceptor.to(MoveEffectPhase);
 
     expect(moveToCheck.calculateBattlePower).toHaveReturnedWith(basePower);
@@ -71,10 +69,10 @@ describe("Abilities - Battery", () => {
 
     vi.spyOn(moveToCheck, "calculateBattlePower");
 
-    await game.startBattle([Species.CHARJABUG, Species.PIKACHU]);
+    await game.startBattle([ Species.CHARJABUG, Species.PIKACHU ]);
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.DAZZLING_GLEAM));
-    game.doAttack(getMovePosition(game.scene, 1, Moves.SPLASH));
+    game.move.select(Moves.DAZZLING_GLEAM);
+    game.move.select(Moves.SPLASH, 1);
     await game.phaseInterceptor.to(TurnEndPhase);
 
     expect(moveToCheck.calculateBattlePower).toHaveReturnedWith(basePower);

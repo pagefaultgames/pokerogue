@@ -52,10 +52,10 @@ export default class UnavailableModalUiHandler extends ModalUiHandler {
 
   tryReconnect(): void {
     updateUserInfo().then(response => {
-      if (response[0] || [200, 400].includes(response[1])) {
+      if (response[0] || [ 200, 400 ].includes(response[1])) {
         this.reconnectTimer = null;
         this.reconnectDuration = this.minTime;
-        this.scene.playSound("pb_bounce_1");
+        this.scene.playSound("se/pb_bounce_1");
         this.reconnectCallback();
       } else if (response[1] === 401) {
         Utils.removeCookie(Utils.sessionIdKey);

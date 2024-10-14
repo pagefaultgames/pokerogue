@@ -1,7 +1,7 @@
-import { Abilities } from "#app/enums/abilities.js";
-import { PokemonExpBoosterModifier } from "#app/modifier/modifier.js";
-import GameManager from "#test/utils/gameManager";
+import { Abilities } from "#app/enums/abilities";
+import { PokemonExpBoosterModifier } from "#app/modifier/modifier";
 import * as Utils from "#app/utils";
+import GameManager from "#test/utils/gameManager";
 import Phase from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
@@ -28,7 +28,7 @@ describe("EXP Modifier Items", () => {
   });
 
   it("EXP booster items stack multiplicatively", async() => {
-    game.override.startingHeldItems([{name: "LUCKY_EGG", count: 3}, {name: "GOLDEN_EGG"}]);
+    game.override.startingHeldItems([{ name: "LUCKY_EGG", count: 3 }, { name: "GOLDEN_EGG" }]);
     await game.startBattle();
 
     const partyMember = game.scene.getPlayerPokemon()!;

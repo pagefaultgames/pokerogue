@@ -1,10 +1,10 @@
-import { BattleStat } from "#app/data/battle-stat";
+import { Stat } from "#enums/stat";
 import GameManager from "#test/utils/gameManager";
+import { CommandPhase } from "#app/phases/command-phase";
 import { Abilities } from "#enums/abilities";
 import { Species } from "#enums/species";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import { CommandPhase } from "#app/phases/command-phase.js";
 
 
 describe("Abilities - Intrepid Sword", () => {
@@ -29,14 +29,17 @@ describe("Abilities - Intrepid Sword", () => {
     game.override.ability(Abilities.INTREPID_SWORD);
   });
 
-  it("INTREPID SWORD on player", async() => {
+  it("should raise ATK stat stage by 1 on entry", async() => {
     await game.classicMode.runToSummon([
       Species.ZACIAN,
     ]);
+
+    const playerPokemon = game.scene.getPlayerPokemon()!;
+    const enemyPokemon = game.scene.getEnemyPokemon()!;
+
     await game.phaseInterceptor.to(CommandPhase, false);
-    const battleStatsPokemon = game.scene.getParty()[0].summonData.battleStats;
-    expect(battleStatsPokemon[BattleStat.ATK]).toBe(1);
-    const battleStatsOpponent = game.scene.currentBattle.enemyParty[0].summonData.battleStats;
-    expect(battleStatsOpponent[BattleStat.ATK]).toBe(1);
+
+    expect(playerPokemon.getStatStage(Stat.ATK)).toBe(1);
+    expect(enemyPokemon.getStatStage(Stat.ATK)).toBe(1);
   }, 20000);
 });

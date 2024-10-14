@@ -1,0 +1,7 @@
+# Order is important; the last matching pattern takes the most precedence.
+
+# everything (whole code-base) - Junior Devs
+* @pagefaultgames/junior-dev-team
+
+# github actions/templates etc. - Dev Leads
+/.github @pagefaultgames/dev-leads

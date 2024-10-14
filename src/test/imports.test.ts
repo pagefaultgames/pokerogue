@@ -1,5 +1,5 @@
-import { describe, expect, it } from "vitest";
 import { initStatsKeys } from "#app/ui/game-stats-ui-handler";
+import { describe, expect, it } from "vitest";
 
 async function importModule() {
   try {

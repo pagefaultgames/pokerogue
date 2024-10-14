@@ -1,6 +1,5 @@
 import BattleScene from "../battle-scene";
 import * as Utils from "../utils";
-import { SpeciesFormKey } from "../data/pokemon-species";
 import { achvs } from "../system/achv";
 import { SpeciesFormChange, getSpeciesFormChangeMessage } from "../data/pokemon-forms";
 import { PlayerPokemon } from "../field/pokemon";
@@ -9,6 +8,8 @@ import PartyUiHandler from "../ui/party-ui-handler";
 import { getPokemonNameWithAffix } from "../messages";
 import { EndEvolutionPhase } from "./end-evolution-phase";
 import { EvolutionPhase } from "./evolution-phase";
+import { BattlerTagType } from "#app/enums/battler-tag-type";
+import { SpeciesFormKey } from "#enums/species-form-key";
 
 export class FormChangePhase extends EvolutionPhase {
   private formChange: SpeciesFormChange;
@@ -68,7 +69,7 @@ export class FormChangePhase extends EvolutionPhase {
               this.evolutionBg.setVisible(true);
               this.evolutionBg.play();
             });
-            this.scene.playSound("charge");
+            this.scene.playSound("se/charge");
             this.doSpiralUpward();
             this.scene.tweens.addCounter({
               from: 0,
@@ -80,13 +81,13 @@ export class FormChangePhase extends EvolutionPhase {
               onComplete: () => {
                 this.pokemonSprite.setVisible(false);
                 this.scene.time.delayedCall(1100, () => {
-                  this.scene.playSound("beam");
+                  this.scene.playSound("se/beam");
                   this.doArcDownward();
                   this.scene.time.delayedCall(1000, () => {
                     this.pokemonEvoTintSprite.setScale(0.25);
                     this.pokemonEvoTintSprite.setVisible(true);
                     this.doCycle(1, 1).then(_success => {
-                      this.scene.playSound("sparkle");
+                      this.scene.playSound("se/sparkle");
                       this.pokemonEvoSprite.setVisible(true);
                       this.doCircleInward();
                       this.scene.time.delayedCall(900, () => {
@@ -95,7 +96,7 @@ export class FormChangePhase extends EvolutionPhase {
                             this.scene.unshiftPhase(new EndEvolutionPhase(this.scene));
                           }
 
-                          this.scene.playSound("shine");
+                          this.scene.playSound("se/shine");
                           this.doSpray();
                           this.scene.tweens.add({
                             targets: this.evolutionOverlay,
@@ -157,6 +158,7 @@ export class FormChangePhase extends EvolutionPhase {
   }
 
   end(): void {
+    this.pokemon.findAndRemoveTags(t => t.tagType === BattlerTagType.AUTOTOMIZED);
     if (this.modal) {
       this.scene.ui.revertMode().then(() => {
         if (this.scene.ui.getMode() === Mode.PARTY) {

@@ -1,0 +1,41 @@
+{
+	"textures": [
+		{
+			"image": "fun_and_games_wobbuffet.png",
+			"format": "RGBA8888",
+			"size": {
+				"w": 45,
+				"h": 55
+			},
+			"scale": 1,
+			"frames": [
+				{
+					"filename": "0001.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 45,
+						"h": 55
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 45,
+						"h": 55
+					},
+					"frame": {
+						"x": 0,
+						"y": 0,
+						"w": 45,
+						"h": 55
+					}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "https://www.codeandweb.com/texturepacker",
+		"version": "3.0",
+		"smartupdate": "$TexturePacker:SmartUpdate:879de17da906ea52e5a71afacb88fcf6:90f64e8eaac4ff1e67373f60c3d98d36:a090cb3294ca1218a4f90ecb97df81d7$"
+	}
+}

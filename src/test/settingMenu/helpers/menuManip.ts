@@ -1,6 +1,6 @@
-import { expect } from "vitest";
-import { deleteBind, getIconWithKeycode, getIconWithSettingName, getKeyWithKeycode, getKeyWithSettingName, assign, getSettingNameWithKeycode, canIAssignThisKey, canIDeleteThisKey, canIOverrideThisSetting } from "#app/configs/inputs/configHandler";
+import { assign, canIAssignThisKey, canIDeleteThisKey, canIOverrideThisSetting, deleteBind, getIconWithKeycode, getIconWithSettingName, getKeyWithKeycode, getKeyWithSettingName, getSettingNameWithKeycode } from "#app/configs/inputs/configHandler";
 import { SettingKeyboard } from "#app/system/settings/settings-keyboard";
+import { expect } from "vitest";
 
 export class MenuManip {
   private config;
@@ -72,7 +72,7 @@ export class MenuManip {
     const icon = getIconWithKeycode(this.config, this.keycode);
     const key = getKeyWithKeycode(this.config, this.keycode)!; // TODO: is this bang correct?
     const _keys = key.toLowerCase().split("_");
-    const iconIdentifier = _keys[_keys.length-1];
+    const iconIdentifier = _keys[_keys.length - 1];
     expect(icon.toLowerCase().includes(iconIdentifier)).toEqual(true);
     return this;
   }

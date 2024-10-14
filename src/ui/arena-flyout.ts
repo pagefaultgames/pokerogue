@@ -1,15 +1,15 @@
 import { addTextObject, TextStyle } from "./text";
-import BattleScene from "#app/battle-scene.js";
-import { ArenaTagSide, ArenaTrapTag } from "#app/data/arena-tag.js";
-import { WeatherType } from "#app/data/weather.js";
-import { TerrainType } from "#app/data/terrain.js";
+import BattleScene from "#app/battle-scene";
+import { ArenaTagSide, ArenaTrapTag } from "#app/data/arena-tag";
+import { WeatherType } from "#app/data/weather";
+import { TerrainType } from "#app/data/terrain";
 import { addWindow, WindowVariant } from "./ui-theme";
-import { ArenaEvent, ArenaEventType, TagAddedEvent, TagRemovedEvent, TerrainChangedEvent, WeatherChangedEvent } from "#app/events/arena.js";
+import { ArenaEvent, ArenaEventType, TagAddedEvent, TagRemovedEvent, TerrainChangedEvent, WeatherChangedEvent } from "#app/events/arena";
 import { BattleSceneEventType, TurnEndEvent } from "../events/battle-scene";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import TimeOfDayWidget from "./time-of-day-widget";
 import * as Utils from "../utils";
-import i18next, {ParseKeys} from "i18next";
+import i18next, { ParseKeys } from "i18next";
 
 /** Enum used to differentiate {@linkcode Arena} effects */
 enum ArenaEffectType {
@@ -196,7 +196,6 @@ export class ArenaFlyout extends Phaser.GameObjects.Container {
   }
 
 
-
   /** Clears out the current string stored in all arena effect texts */
   private clearText() {
     this.flyoutTextPlayer.text = "";
@@ -316,9 +315,9 @@ export class ArenaFlyout extends Phaser.GameObjects.Container {
           ? ArenaEffectType.WEATHER
           : ArenaEffectType.TERRAIN,
         maxDuration: fieldEffectChangedEvent.duration,
-        duration: fieldEffectChangedEvent.duration};
+        duration: fieldEffectChangedEvent.duration };
 
-      foundIndex = this.fieldEffectInfo.findIndex(info => [newInfo.name, oldName].includes(info.name));
+      foundIndex = this.fieldEffectInfo.findIndex(info => [ newInfo.name, oldName ].includes(info.name));
       if (foundIndex === -1) {
         if (newInfo.name !== undefined) {
           this.fieldEffectInfo.push(newInfo); // Adds the info to the array if it doesn't already exist and is defined

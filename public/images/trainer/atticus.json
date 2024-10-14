@@ -1,0 +1,41 @@
+{
+	"textures": [
+		{
+			"image": "atticus.png",
+			"format": "RGBA8888",
+			"size": {
+				"w": 46,
+				"h": 46
+			},
+			"scale": 1,
+			"frames": [
+				{
+					"filename": "0001.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 80,
+						"h": 80
+					},
+					"spriteSourceSize": {
+						"x": 21,
+						"y": 33,
+						"w": 43,
+						"h": 46
+					},
+					"frame": {
+						"x": 0,
+						"y": 0,
+						"w": 43,
+						"h": 46
+					}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "https://www.codeandweb.com/texturepacker",
+		"version": "3.0",
+		"smartupdate": "$TexturePacker:SmartUpdate:6dcd7c3d3982793cbca0d6fcd1f9260e:19c44634629fadd9d039d23dc71ec987:d26ede35f15aa571d5a7a2dd2fb868e1$"
+	}
+}

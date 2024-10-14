@@ -1,13 +1,13 @@
-import { beforeEach, describe, expect, it } from "vitest";
-import { deepCopy } from "#app/utils";
-import { getKeyWithKeycode, getKeyWithSettingName } from "#app/configs/inputs/configHandler";
-import { MenuManip } from "#test/settingMenu/helpers/menuManip";
-import { InGameManip } from "#test/settingMenu/helpers/inGameManip";
-import { InterfaceConfig } from "#app/inputs-controller";
 import cfg_keyboard_qwerty from "#app/configs/inputs/cfg_keyboard_qwerty";
+import { getKeyWithKeycode, getKeyWithSettingName } from "#app/configs/inputs/configHandler";
+import { InterfaceConfig } from "#app/inputs-controller";
 import { SettingKeyboard } from "#app/system/settings/settings-keyboard";
-import { Device } from "#enums/devices";
+import { deepCopy } from "#app/utils";
 import { Button } from "#enums/buttons";
+import { Device } from "#enums/devices";
+import { InGameManip } from "#test/settingMenu/helpers/inGameManip";
+import { MenuManip } from "#test/settingMenu/helpers/menuManip";
+import { beforeEach, describe, expect, it } from "vitest";
 
 
 describe("Test Rebinding", () => {
@@ -22,7 +22,7 @@ describe("Test Rebinding", () => {
 
   beforeEach(() => {
     config = deepCopy(cfg_keyboard_qwerty);
-    config.custom = {...config.default};
+    config.custom = { ...config.default };
     configs["default"] = config;
     inGame = new InGameManip(configs, config, selectedDevice);
     inTheSettingMenu = new MenuManip(config);

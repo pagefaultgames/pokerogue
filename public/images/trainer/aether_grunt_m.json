@@ -1,0 +1,41 @@
+{
+	"textures": [
+		{
+			"image": "aether_grunt_m.png",
+			"format": "RGBA8888",
+			"size": {
+				"w": 65,
+				"h": 65
+			},
+			"scale": 1,
+			"frames": [
+				{
+					"filename": "0001.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 80,
+						"h": 80
+					},
+					"spriteSourceSize": {
+						"x": 16,
+						"y": 14,
+						"w": 47,
+						"h": 65
+					},
+					"frame": {
+						"x": 0,
+						"y": 0,
+						"w": 47,
+						"h": 65
+					}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "https://www.codeandweb.com/texturepacker",
+		"version": "3.0",
+		"smartupdate": "$TexturePacker:SmartUpdate:963887cf29549ad3c123b8055cb4d701:68004c4a6e04c93bd21c26a6f8921f0c:d2241fc11d0fc31b26ecbedae6da74f4$"
+	}
+}

@@ -1,9 +1,9 @@
-import { CommandPhase } from "#app/phases/command-phase.js";
-import GameManager from "#test/utils/gameManager";
+import { CommandPhase } from "#app/phases/command-phase";
 import { Mode } from "#app/ui/ui";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
+import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
@@ -25,10 +25,10 @@ describe("Test Battle Phase", () => {
     game = new GameManager(phaserGame);
     game.override.enemySpecies(Species.RATTATA);
     game.override.startingLevel(2000);
-    game.override.moveset([Moves.TACKLE]);
+    game.override.moveset([ Moves.TACKLE ]);
     game.override.enemyAbility(Abilities.HYDRATION);
     game.override.ability(Abilities.HYDRATION);
-    game.override.enemyMoveset([Moves.TACKLE, Moves.TACKLE, Moves.TACKLE, Moves.TACKLE]);
+    game.override.enemyMoveset([ Moves.TACKLE, Moves.TACKLE, Moves.TACKLE, Moves.TACKLE ]);
   });
 
   it("startBattle 2vs1 boss", async() => {

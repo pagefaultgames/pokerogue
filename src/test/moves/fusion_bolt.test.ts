@@ -1,10 +1,9 @@
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import Phaser from "phaser";
-import GameManager from "#test/utils/gameManager";
-import { getMovePosition } from "#test/utils/gameManagerUtils";
-import { Species } from "#enums/species";
-import { Moves } from "#enums/moves";
 import { Abilities } from "#enums/abilities";
+import { Moves } from "#enums/moves";
+import { Species } from "#enums/species";
+import GameManager from "#test/utils/gameManager";
+import Phaser from "phaser";
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Moves - Fusion Bolt", () => {
   let phaserGame: Phaser.Game;
@@ -36,7 +35,7 @@ describe("Moves - Fusion Bolt", () => {
     game.override.disableCrits();
   });
 
-  it("should not make contact", async() => {
+  it("should not make contact", async () => {
     await game.startBattle([
       Species.ZEKROM,
     ]);
@@ -44,7 +43,7 @@ describe("Moves - Fusion Bolt", () => {
     const partyMember = game.scene.getPlayerPokemon()!;
     const initialHp = partyMember.hp;
 
-    game.doAttack(getMovePosition(game.scene, 0, fusionBolt));
+    game.move.select(fusionBolt);
 
     await game.toNextTurn();
 

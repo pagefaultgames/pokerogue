@@ -1,10 +1,10 @@
-import { updateUserInfo } from "#app/account.js";
-import BattleScene, { bypassLogin } from "#app/battle-scene.js";
-import { Phase } from "#app/phase.js";
-import { handleTutorial, Tutorial } from "#app/tutorial.js";
-import { Mode } from "#app/ui/ui.js";
+import { updateUserInfo } from "#app/account";
+import BattleScene, { bypassLogin } from "#app/battle-scene";
+import { Phase } from "#app/phase";
+import { handleTutorial, Tutorial } from "#app/tutorial";
+import { Mode } from "#app/ui/ui";
 import i18next, { t } from "i18next";
-import * as Utils from "#app/utils.js";
+import * as Utils from "#app/utils";
 import { SelectGenderPhase } from "./select-gender-phase";
 import { UnavailablePhase } from "./unavailable-phase";
 
@@ -22,7 +22,7 @@ export class LoginPhase extends Phase {
 
     const hasSession = !!Utils.getCookie(Utils.sessionIdKey);
 
-    this.scene.ui.setMode(Mode.LOADING, { buttonActions: [] });
+    this.scene.ui.setMode(Mode.LOADING, { buttonActions: []});
     Utils.executeIf(bypassLogin || hasSession, updateUserInfo).then(response => {
       const success = response ? response[0] : false;
       const statusCode = response ? response[1] : null;

@@ -1,14 +1,14 @@
-import { Button } from "#app/enums/buttons.js";
+import { Button } from "#app/enums/buttons";
 import { Moves } from "#app/enums/moves";
 import { Species } from "#app/enums/species";
-import FightUiHandler from "#app/ui/fight-ui-handler.js";
-import { Mode } from "#app/ui/ui.js";
+import { CommandPhase } from "#app/phases/command-phase";
+import FightUiHandler from "#app/ui/fight-ui-handler";
+import { Mode } from "#app/ui/ui";
 import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import MockText from "../utils/mocks/mocksContainer/mockText";
-import { SPLASH_ONLY } from "../utils/testUtils";
-import { CommandPhase } from "#app/phases/command-phase.js";
+import MockText from "#test/utils/mocks/mocksContainer/mockText";
+import i18next from "i18next";
 
 describe("UI - Type Hints", () => {
   let phaserGame: Phaser.Game;
@@ -27,7 +27,7 @@ describe("UI - Type Hints", () => {
   beforeEach(async () => {
     game = new GameManager(phaserGame);
     game.settings.typeHints(true); //activate type hints
-    game.override.battleType("single").startingLevel(100).startingWave(1).enemyMoveset(SPLASH_ONLY);
+    game.override.battleType("single").startingLevel(100).startingWave(1).enemyMoveset(Moves.SPLASH);
   });
 
   it("check immunity color", async () => {
@@ -36,11 +36,11 @@ describe("UI - Type Hints", () => {
       .startingLevel(100)
       .startingWave(1)
       .enemySpecies(Species.FLORGES)
-      .enemyMoveset(SPLASH_ONLY)
-      .moveset([Moves.DRAGON_CLAW]);
+      .enemyMoveset(Moves.SPLASH)
+      .moveset([ Moves.DRAGON_CLAW ]);
     game.settings.typeHints(true); //activate type hints
 
-    await game.startBattle([Species.RAYQUAZA]);
+    await game.startBattle([ Species.RAYQUAZA ]);
 
     game.onNextPrompt("CommandPhase", Mode.COMMAND, () => {
       const { ui } = game.scene;
@@ -54,7 +54,7 @@ describe("UI - Type Hints", () => {
       const movesContainer = ui.getByName<Phaser.GameObjects.Container>(FightUiHandler.MOVES_CONTAINER_NAME);
       const dragonClawText = movesContainer
         .getAll<Phaser.GameObjects.Text>()
-        .find((text) => text.text === "Dragon Claw")! as unknown as MockText;
+        .find((text) => text.text === i18next.t("move:dragonClaw.name"))! as unknown as MockText;
 
       expect.soft(dragonClawText.color).toBe("#929292");
       ui.getHandler().processInput(Button.ACTION);
@@ -63,9 +63,9 @@ describe("UI - Type Hints", () => {
   });
 
   it("check status move color", async () => {
-    game.override.enemySpecies(Species.FLORGES).moveset([Moves.GROWL]);
+    game.override.enemySpecies(Species.FLORGES).moveset([ Moves.GROWL ]);
 
-    await game.startBattle([Species.RAYQUAZA]);
+    await game.startBattle([ Species.RAYQUAZA ]);
 
     game.onNextPrompt("CommandPhase", Mode.COMMAND, () => {
       const { ui } = game.scene;
@@ -79,7 +79,7 @@ describe("UI - Type Hints", () => {
       const movesContainer = ui.getByName<Phaser.GameObjects.Container>(FightUiHandler.MOVES_CONTAINER_NAME);
       const growlText = movesContainer
         .getAll<Phaser.GameObjects.Text>()
-        .find((text) => text.text === "Growl")! as unknown as MockText;
+        .find((text) => text.text === i18next.t("move:growl.name"))! as unknown as MockText;
 
       expect.soft(growlText.color).toBe(undefined);
       ui.getHandler().processInput(Button.ACTION);

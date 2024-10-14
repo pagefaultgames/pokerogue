@@ -1,0 +1,41 @@
+{
+	"textures": [
+		{
+			"image": "bug_type_superfan.png",
+			"format": "RGBA8888",
+			"size": {
+				"w": 71,
+				"h": 71
+			},
+			"scale": 1,
+			"frames": [
+				{
+					"filename": "0001.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 80,
+						"h": 80
+					},
+					"spriteSourceSize": {
+						"x": 4,
+						"y": 9,
+						"w": 71,
+						"h": 71
+					},
+					"frame": {
+						"x": 0,
+						"y": 0,
+						"w": 71,
+						"h": 71
+					}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "https://www.codeandweb.com/texturepacker",
+		"version": "3.0",
+		"smartupdate": "$TexturePacker:SmartUpdate:d051332055512f245ae68e912a28cd81:4926ba3fd9fe432bb535d13f4df1df4e:621aca0914900a3b9e235ebf0431ce2b$"
+	}
+}
