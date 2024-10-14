@@ -151,7 +151,7 @@ export class MoveEffectPhase extends PokemonPhase {
 
           /** Is the pokemon immune due to an ablility, and also not in a semi invulnerable state?  */
           const isImmune = target.hasAbilityWithAttr(TypeImmunityAbAttr) && (target.getAbility()?.getAttrs(TypeImmunityAbAttr)?.[0]?.getImmuneType() === user.getMoveType(move))
-              && !targets[0].getTag(SemiInvulnerableTag);
+              && !target.getTag(SemiInvulnerableTag);
 
           /**
              * If the move missed a target, stop all future hits against that target
