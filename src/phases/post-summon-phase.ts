@@ -20,7 +20,7 @@ export class PostSummonPhase extends PokemonPhase {
     if (pokemon.status?.effect === StatusEffect.TOXIC) {
       pokemon.status.turnCount = 0;
     }
-    this.scene.arena.applyTags(ArenaTrapTag, pokemon);
+    this.scene.arena.applyTags(ArenaTrapTag, false, pokemon);
 
     // If this is mystery encounter and has post summon phase tag, apply post summon effects
     if (this.scene.currentBattle.isBattleMysteryEncounter() && pokemon.findTags(t => t instanceof MysteryEncounterPostSummonTag).length > 0) {

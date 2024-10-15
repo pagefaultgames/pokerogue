@@ -141,7 +141,7 @@ export class MoveEffectPhase extends PokemonPhase {
           const bypassIgnoreProtect = new Utils.BooleanHolder(false);
           /** If the move is not targeting a Pokemon on the user's side, try to apply conditional protection effects */
           if (!this.move.getMove().isAllyTarget()) {
-            this.scene.arena.applyTagsForSide(ConditionalProtectTag, targetSide, hasConditionalProtectApplied, user, target, move.id, bypassIgnoreProtect);
+            this.scene.arena.applyTagsForSide(ConditionalProtectTag, targetSide, false, hasConditionalProtectApplied, user, target, move.id, bypassIgnoreProtect);
           }
 
           /** Is the target protected by Protect, etc. or a relevant conditional protection effect? */
