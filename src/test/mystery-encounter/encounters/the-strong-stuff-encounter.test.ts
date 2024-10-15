@@ -143,10 +143,10 @@ describe("The Strong Stuff - Mystery Encounter", () => {
     it("should lower stats of 2 highest BST and raise stats for rest of party", async () => {
       await game.runToMysteryEncounter(MysteryEncounterType.THE_STRONG_STUFF, defaultParty);
 
-      const bstsPrior = scene.getParty().map(p => p.getSpeciesForm().getBaseStatTotal());
+      const bstsPrior = scene.getPlayerParty().map(p => p.getSpeciesForm().getBaseStatTotal());
       await runMysteryEncounterToEnd(game, 1);
 
-      const bstsAfter = scene.getParty().map(p => {
+      const bstsAfter = scene.getPlayerParty().map(p => {
         const baseStats = p.getSpeciesForm().baseStats.slice(0);
         scene.applyModifiers(PokemonBaseStatTotalModifier, true, p, baseStats);
         return baseStats.reduce((a, b) => a + b);

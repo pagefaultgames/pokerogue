@@ -35,8 +35,8 @@ describe("Evolution", () => {
   it("should keep hidden ability after evolving", async () => {
     await game.classicMode.runToSummon([ Species.EEVEE, Species.TRAPINCH ]);
 
-    const eevee = game.scene.getParty()[0];
-    const trapinch = game.scene.getParty()[1];
+    const eevee = game.scene.getPlayerParty()[0];
+    const trapinch = game.scene.getPlayerParty()[1];
     eevee.abilityIndex = 2;
     trapinch.abilityIndex = 2;
 
@@ -50,8 +50,8 @@ describe("Evolution", () => {
   it("should keep same ability slot after evolving", async () => {
     await game.classicMode.runToSummon([ Species.BULBASAUR, Species.CHARMANDER ]);
 
-    const bulbasaur = game.scene.getParty()[0];
-    const charmander = game.scene.getParty()[1];
+    const bulbasaur = game.scene.getPlayerParty()[0];
+    const charmander = game.scene.getPlayerParty()[1];
     bulbasaur.abilityIndex = 0;
     charmander.abilityIndex = 1;
 
@@ -80,8 +80,8 @@ describe("Evolution", () => {
     nincada.metBiome = -1;
 
     nincada.evolve(pokemonEvolutions[Species.NINCADA][0], nincada.getSpeciesForm());
-    const ninjask = game.scene.getParty()[0];
-    const shedinja = game.scene.getParty()[1];
+    const ninjask = game.scene.getPlayerParty()[0];
+    const shedinja = game.scene.getPlayerParty()[1];
     expect(ninjask.abilityIndex).toBe(2);
     expect(shedinja.abilityIndex).toBe(1);
     // Regression test for https://github.com/pagefaultgames/pokerogue/issues/3842

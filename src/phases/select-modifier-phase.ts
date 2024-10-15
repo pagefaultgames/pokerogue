@@ -34,7 +34,7 @@ export class SelectModifierPhase extends BattlePhase {
       this.scene.reroll = false;
     }
 
-    const party = this.scene.getParty();
+    const party = this.scene.getPlayerParty();
     regenerateModifierPoolThresholds(party, this.getPoolType(), this.rerollCount);
     const modifierCount = new Utils.IntegerHolder(3);
     if (this.isPlayer()) {
@@ -268,7 +268,7 @@ export class SelectModifierPhase extends BattlePhase {
   }
 
   getModifierTypeOptions(modifierCount: integer): ModifierTypeOption[] {
-    return getPlayerModifierTypeOptions(modifierCount, this.scene.getParty(), this.scene.lockModifierTiers ? this.modifierTiers : undefined, this.customModifierSettings);
+    return getPlayerModifierTypeOptions(modifierCount, this.scene.getPlayerParty(), this.scene.lockModifierTiers ? this.modifierTiers : undefined, this.customModifierSettings);
   }
 
   addModifier(modifier: Modifier): Promise<boolean> {

@@ -46,7 +46,7 @@ describe("Moves - Spikes", () => {
     game.doSwitchPokemon(1);
     await game.toNextTurn();
 
-    const player = game.scene.getParty()[0];
+    const player = game.scene.getPlayerParty()[0];
     expect(player.hp).toBe(player.getMaxHp());
   }, 20000);
 

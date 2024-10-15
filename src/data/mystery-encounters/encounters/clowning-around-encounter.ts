@@ -245,7 +245,7 @@ export const ClowningAroundEncounter: MysteryEncounter =
           // So Vitamins, form change items, etc. are not included
           const encounter = scene.currentBattle.mysteryEncounter!;
 
-          const party = scene.getParty();
+          const party = scene.getPlayerParty();
           let mostHeldItemsPokemon = party[0];
           let count = mostHeldItemsPokemon.getHeldItems()
             .filter(m => m.isTransferable && !(m instanceof BerryModifier))
@@ -328,7 +328,7 @@ export const ClowningAroundEncounter: MysteryEncounter =
         .withPreOptionPhase(async (scene: BattleScene) => {
           // Randomize the second type of all player's pokemon
           // If the pokemon does not normally have a second type, it will gain 1
-          for (const pokemon of scene.getParty()) {
+          for (const pokemon of scene.getPlayerParty()) {
             const originalTypes = pokemon.getTypes(false, false, true);
 
             // If the Pokemon has non-status moves that don't match the Pokemon's type, prioritizes those as the new type

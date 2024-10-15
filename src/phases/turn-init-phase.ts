@@ -1,15 +1,15 @@
-import BattleScene from "#app/battle-scene";
 import { BattlerIndex } from "#app/battle";
+import BattleScene from "#app/battle-scene";
+import { handleMysteryEncounterBattleStartEffects, handleMysteryEncounterTurnStartEffects } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import { TurnInitEvent } from "#app/events/battle-scene";
 import { PlayerPokemon } from "#app/field/pokemon";
 import i18next from "i18next";
-import { FieldPhase } from "./field-phase";
-import { ToggleDoublePositionPhase } from "./toggle-double-position-phase";
 import { CommandPhase } from "./command-phase";
 import { EnemyCommandPhase } from "./enemy-command-phase";
+import { FieldPhase } from "./field-phase";
 import { GameOverPhase } from "./game-over-phase";
+import { ToggleDoublePositionPhase } from "./toggle-double-position-phase";
 import { TurnStartPhase } from "./turn-start-phase";
-import { handleMysteryEncounterBattleStartEffects, handleMysteryEncounterTurnStartEffects } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 
 export class TurnInitPhase extends FieldPhase {
   constructor(scene: BattleScene) {
@@ -24,7 +24,7 @@ export class TurnInitPhase extends FieldPhase {
       if (p.isOnField() && !p.isAllowedInBattle()) {
         this.scene.queueMessage(i18next.t("challenges:illegalEvolution", { "pokemon": p.name }), null, true);
 
-        const allowedPokemon = this.scene.getParty().filter(p => p.isAllowedInBattle());
+        const allowedPokemon = this.scene.getPokemonAllowedInBattle();
 
         if (!allowedPokemon.length) {
           // If there are no longer any legal pokemon in the party, game over.
