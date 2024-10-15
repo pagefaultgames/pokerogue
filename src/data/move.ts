@@ -808,7 +808,7 @@ export default class Move implements Localizable {
     source.scene.applyModifiers(PokemonMultiHitModifier, source.isPlayer(), source, new Utils.IntegerHolder(0), power);
 
     if (!this.hasAttr(TypelessAttr)) {
-      source.scene.arena.applyTags(WeakenMoveTypeTag, this.type, power);
+      source.scene.arena.applyTags(WeakenMoveTypeTag, simulated, this.type, power);
       source.scene.applyModifiers(AttackTypeBoosterModifier, source.isPlayer(), source, this.type, power);
     }
 
@@ -1026,7 +1026,7 @@ export class MoveEffectAttr extends MoveAttr {
 
     if (!move.hasAttr(FlinchAttr) || moveChance.value <= move.chance) {
       const userSide = user.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY;
-      user.scene.arena.applyTagsForSide(ArenaTagType.WATER_FIRE_PLEDGE, userSide, moveChance);
+      user.scene.arena.applyTagsForSide(ArenaTagType.WATER_FIRE_PLEDGE, userSide, false, moveChance);
     }
 
     if (!selfEffect) {
@@ -6430,6 +6430,9 @@ export class TransformAttr extends MoveEffectAttr {
     user.summonData.gender = target.getGender();
     user.summonData.fusionGender = target.getFusionGender();
 
+      // Power Trick's effect will not preserved after using Transform
+      user.removeTag(BattlerTagType.POWER_TRICK);
+
     // Copy all stats (except HP)
     for (const s of EFFECTIVE_STATS) {
       user.setStat(s, target.getStat(s, false), false);
@@ -6441,7 +6444,7 @@ export class TransformAttr extends MoveEffectAttr {
     }
 
     user.summonData.moveset = target.getMoveset().map(m => {
-      const pp = m?.getMove().pp!;
+      const pp = m?.getMove().pp ?? 0;
       // if PP value is less than 5, do nothing. If greater, we need to reduce the value to 5 using a negative ppUp value.
       const ppUp = pp <= 5 ? 0 : (5 - pp) / Math.max(Math.floor(pp / 5), 1);
       return new PokemonMove(m?.moveId!, 0, ppUp);
@@ -8160,7 +8163,7 @@ export function initMoves() {
       .attr(OpponentHighHpPowerAttr, 120)
       .makesContact(),
     new SelfStatusMove(Moves.POWER_TRICK, Type.PSYCHIC, -1, 10, -1, 0, 4)
-      .unimplemented(),
+      .attr(AddBattlerTagAttr, BattlerTagType.POWER_TRICK, true),
     new StatusMove(Moves.GASTRO_ACID, Type.POISON, 100, 10, -1, 0, 4)
       .attr(SuppressAbilitiesAttr),
     new StatusMove(Moves.LUCKY_CHANT, Type.NORMAL, -1, 30, -1, 0, 4)
