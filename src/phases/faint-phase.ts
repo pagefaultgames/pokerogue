@@ -30,12 +30,12 @@ export class FaintPhase extends PokemonPhase {
   /**
    * Destiny Bond tag belonging to the currently fainting Pokemon, if applicable
    */
-  private destinyTag: DestinyBondTag | undefined;
+  private destinyTag?: DestinyBondTag;
 
   /**
-   * The source that dealt fatal damage and should get KO'd by Destiny Bond, if applicable
+   * The source Pokemon that dealt fatal damage and should get KO'd by Destiny Bond, if applicable
    */
-  private source: Pokemon | undefined;
+  private source?: Pokemon;
 
   constructor(scene: BattleScene, battlerIndex: BattlerIndex, preventEndure: boolean = false, destinyTag?: DestinyBondTag, source?: Pokemon) {
     super(scene, battlerIndex);
