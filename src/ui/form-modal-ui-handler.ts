@@ -31,6 +31,9 @@ export abstract class FormModalUiHandler extends ModalUiHandler {
 
   abstract getFields(): string[];
 
+  // this function takes any args and uses it to make an array of InputFieldConfigs, which has extra support for the input text field
+  // It currently has support for a field's label, whether it's a password field, and whether the field should be read only, but by expanding the InputFieldConfig interface
+  // any extra details can be passed on to the field during creation
   abstract getInputFieldConfigs(args?: any): InputFieldConfigs[];
 
   getHeight(config?: ModalConfig): number {
@@ -48,7 +51,6 @@ export abstract class FormModalUiHandler extends ModalUiHandler {
   setup(): void {
     super.setup();
 
-    //const fields = this.getFields();
     const config = this.getInputFieldConfigs();
 
     const hasTitle = !!this.getModalTitle();
@@ -64,7 +66,6 @@ export abstract class FormModalUiHandler extends ModalUiHandler {
     this.modalContainer.add(this.errorMessage);
   }
 
-  //updateFields(fields: string[], hasTitle: boolean) {
   updateFields(fieldsConfig: InputFieldConfigs[], hasTitle: boolean) {
     this.inputContainers = [];
     this.inputs = [];
