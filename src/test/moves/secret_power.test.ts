@@ -7,9 +7,9 @@ import { Species } from "#enums/species";
 import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import { StatusEffect } from "#app/enums/status-effect";
+import { StatusEffect } from "#enums/status-effect";
 import { BattlerIndex } from "#app/battle";
-import { ArenaTagType } from "#app/enums/arena-tag-type";
+import { ArenaTagType } from "#enums/arena-tag-type";
 import { ArenaTagSide } from "#app/data/arena-tag";
 
 describe("Moves - Secret Power", () => {
