@@ -2875,23 +2875,42 @@ export class StatStageChangeAttr extends MoveEffectAttr {
   }
 }
 
+/**
+ * Attribute used to determine the Biome/Terrain-based secondary effect of Secret Power
+ */
 export class SecretPowerAttr extends MoveEffectAttr {
   constructor() {
     super(false);
   }
 
+  /**
+   * Used to determine if the move should apply a secondary effect based on Secret Power's 30% chance
+   * @param user
+   * @param target
+   * @param move
+   * @param args
+   * @returns `true` if the move should | `false` if the roll fails and the move should not
+   */
   override canApply(user: Pokemon, target: Pokemon, move: Move, args?: any[]): boolean {
     this.effectChanceOverride = move.chance;
     const moveChance = this.getMoveChance(user, target, move, this.selfTarget);
     if (moveChance < 0 || moveChance === 100 || user.randSeedInt(100) < moveChance) {
-      this.effectChanceOverride = 100;
+      this.effectChanceOverride = 100; // effectChanceOverride used in the application of the actual secondary effect
       return true;
     } else {
       return false;
     }
   }
 
-  apply(user: Pokemon, target: Pokemon, move: Move, args?: any[] | undefined): boolean | Promise<boolean> {
+  /**
+   * Used to apply the secondary effect to the target Pokemon
+   * @param user
+   * @param target
+   * @param move
+   * @param args
+   * @returns `true` if a secondary effect is successfully applied | 'false' if not
+   */
+  override apply(user: Pokemon, target: Pokemon, move: Move, args?: any[] | undefined): boolean | Promise<boolean> {
     if (!super.apply(user, target, move, args)) {
       return false;
     }
@@ -2906,6 +2925,16 @@ export class SecretPowerAttr extends MoveEffectAttr {
     return secondaryEffect!.apply(user, target, move, []);
   }
 
+  /**
+   * Determines the secondary effect based on terrain
+   * Takes precedence over biome
+   * Electric Terrain | Paralysis
+   * Misty Terrain    | SpAtk -1
+   * Grassy Terrain   | Sleep
+   * Psychic Terrain  | Speed -1
+   * @param terrain {@linkcode TerrainType}the current terrain
+   * @returns the chosen secondary effect {@linkcode MoveEffectAttr}
+   */
   private determineTerrainEffect(terrain: TerrainType): MoveEffectAttr {
     let secondaryEffect: MoveEffectAttr;
     switch (terrain) {
@@ -2925,6 +2954,21 @@ export class SecretPowerAttr extends MoveEffectAttr {
     return secondaryEffect!;
   }
 
+  /**
+   * Determines the secondary effect based on biome
+   * Town, Metropolis, Slum, Dojo, Laboratory, Power Plant + Default | Paralysis
+   * Plains, Grass, Tall Grass, Forest, Jungle, Meadow               | Sleep
+   * Swamp, Mountain, Temple, Ruins                                  | Speed -1
+   * Ice Cave, Snowy Forest                                          | Freeze
+   * Volcano                                                         | Burn
+   * Fairy Cave                                                      | SpAtk -1
+   * Desert, Construction Site, Beach, Island, Badlands              | Accuracy -1
+   * Sea, Lake, Seabed                                               | Atk -1
+   * Cave, Wasteland, Graveyard, Abyss, Space                        | Flinch
+   * End                                                             | Def -1
+   * @param biome {@linkcode Biome} the current biome the battle is set in
+   * @returns the chosen secondary effect {@linkcode MoveEffectAttr}
+   */
   private determineBiomeEffect(biome: Biome): MoveEffectAttr {
     let secondaryEffect: MoveEffectAttr;
     switch (biome) {
