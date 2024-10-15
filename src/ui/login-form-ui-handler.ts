@@ -1,4 +1,4 @@
-import { FormModalUiHandler } from "./form-modal-ui-handler";
+import { FormModalUiHandler, InputFieldConfigs } from "./form-modal-ui-handler";
 import { ModalConfig } from "./modal-ui-handler";
 import * as Utils from "../utils";
 import { Mode } from "./ui";
@@ -112,6 +112,18 @@ export default class LoginFormUiHandler extends FormModalUiHandler {
     }
 
     return super.getReadableErrorMessage(error);
+  }
+
+  override getInputFieldConfigs(): InputFieldConfigs[] {
+    const inputFieldConfigs: InputFieldConfigs[] = [];
+    const fields = this.getFields();
+    fields.forEach((field, i) => {
+      inputFieldConfigs.push({
+        label: field,
+        isPassword: field.includes(i18next.t("menu:password")) || field.includes(i18next.t("menu:confirmPassword"))
+      });
+    });
+    return inputFieldConfigs;
   }
 
   override show(args: any[]): boolean {

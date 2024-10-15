@@ -1,4 +1,4 @@
-import { FormModalUiHandler } from "./form-modal-ui-handler";
+import { FormModalUiHandler, InputFieldConfigs } from "./form-modal-ui-handler";
 import { ModalConfig } from "./modal-ui-handler";
 import i18next from "i18next";
 import { PlayerPokemon } from "#app/field/pokemon";
@@ -68,11 +68,22 @@ export default class TestDialogueUiHandler extends FormModalUiHandler {
     return super.getReadableErrorMessage(error);
   }
 
+  override getInputFieldConfigs(): InputFieldConfigs[] {
+    const inputFieldConfigs: InputFieldConfigs[] = [];
+    const fields = this.getFields();
+    fields.forEach((field, i) => {
+      inputFieldConfigs.push({
+        label: field
+      });
+    });
+    return inputFieldConfigs;
+  }
+
   show(args: any[]): boolean {
     const ui = this.getUi();
-    const fields = this.getFields();
+    //const fields = this.getFields();
     const hasTitle = !!this.getModalTitle();
-    this.updateFields(fields, hasTitle);
+    this.updateFields(this.getInputFieldConfigs(), hasTitle);
     this.updateContainer(args[0] as ModalConfig);
     const input = this.inputs[0];
     input.setMaxLength(255);

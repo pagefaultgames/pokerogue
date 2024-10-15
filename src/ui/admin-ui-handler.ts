@@ -2,7 +2,7 @@ import BattleScene from "#app/battle-scene";
 import { ModalConfig } from "./modal-ui-handler";
 import { Mode } from "./ui";
 import * as Utils from "../utils";
-import { FormModalUiHandler } from "./form-modal-ui-handler";
+import { FormModalUiHandler, InputFieldConfigs } from "./form-modal-ui-handler";
 import { Button } from "#app/enums/buttons";
 import { TextStyle } from "./text";
 
@@ -41,13 +41,13 @@ export default class AdminUiHandler extends FormModalUiHandler {
   getFields(config?: ModalConfig): string[] {
     switch (this.adminMode) {
     case AdminMode.LINK:
-      return ["Username", "Discord ID"];
+      return [ "Username", "Discord ID" ];
     case AdminMode.SEARCH:
-      return ["Username"];
+      return [ "Username" ];
     case AdminMode.ADMIN:
-      return ["Username", "Discord ID", "Google ID", "Last played", "Registered"];
+      return [ "Username", "Discord ID", "Google ID", "Last played", "Registered" ];
     default:
-      return [""];
+      return [ "" ];
     }
   }
 
@@ -56,20 +56,36 @@ export default class AdminUiHandler extends FormModalUiHandler {
   }
 
   getMargin(config?: ModalConfig): [number, number, number, number] {
-    return [0, 0, 0, 0];
+    return [ 0, 0, 0, 0 ];
   }
 
   getButtonLabels(config?: ModalConfig): string[] {
     switch (this.adminMode) {
     case AdminMode.LINK:
-      return ["Link Account", "Cancel"];
+      return [ "Link Account", "Cancel" ];
     case AdminMode.SEARCH:
-      return ["Find account", "Cancel"];
+      return [ "Find account", "Cancel" ];
     case AdminMode.ADMIN:
-      return ["Back to search", "Cancel"];
+      return [ "Back to search", "Cancel" ];
     default:
-      return ["Activate ADMIN", "Cancel"];
+      return [ "Activate ADMIN", "Cancel" ];
     }
+  }
+
+  override getInputFieldConfigs(adminResult: AdminSearchInfo): InputFieldConfigs[] {
+    const inputFieldConfigs: InputFieldConfigs[] = [];
+    adminResult = adminResult ?? { username: "", discordId: "", googleId: "", lastLoggedIn: "", registered: "" };
+    const adminKeys = Object.keys(adminResult);
+    const fields = this.getFields();
+    const lockedFields: string[] = [ "username", "lastLoggedIn", "registered" ];
+    fields.forEach((field, i) => {
+      const readOnly = (this.adminMode === AdminMode.ADMIN && (lockedFields.includes(adminKeys[i]) || adminResult[adminKeys[i]] !== ""));
+      inputFieldConfigs.push({
+        label: field,
+        isReadOnly: readOnly
+      });
+    });
+    return inputFieldConfigs;
   }
 
   processInput(button: Button): boolean {
@@ -89,7 +105,8 @@ export default class AdminUiHandler extends FormModalUiHandler {
 
     const fields = this.getFields();
     const hasTitle = !!this.getModalTitle();
-    this.updateFields(fields, hasTitle);
+
+    this.updateFields(this.getInputFieldConfigs(this.adminResult), hasTitle);
     this.updateContainer(this.config);
 
     const labels = this.getButtonLabels();
@@ -114,10 +131,10 @@ export default class AdminUiHandler extends FormModalUiHandler {
         const adminSearchResult: AdminSearchInfo = this.convertInputsToAdmin(); // this converts the input texts into a single object for use later
         const validFields = this.areFieldsValid(this.adminMode);
         if (validFields.error) {
-          this.scene.ui.setMode(Mode.LOADING, { buttonActions: [] }); // this is here to force a loading screen to allow the admin tool to reopen again if there's an error
+          this.scene.ui.setMode(Mode.LOADING, { buttonActions: []}); // this is here to force a loading screen to allow the admin tool to reopen again if there's an error
           return this.showMessage(validFields.errorMessage ?? "", adminSearchResult, true);
         }
-        this.scene.ui.setMode(Mode.LOADING, { buttonActions: [] });
+        this.scene.ui.setMode(Mode.LOADING, { buttonActions: []});
         if (this.adminMode === AdminMode.LINK) {
           this.adminLinkUnlink(adminSearchResult, "discord", "link")
             .then(response => {
@@ -160,12 +177,11 @@ export default class AdminUiHandler extends FormModalUiHandler {
       this.inputs[0].setText(adminResult.username);
       break;
     case AdminMode.ADMIN:
-      const lockedFields: string[] = ["username", "lastLoggedIn", "registered"];
       Object.keys(adminResult).forEach((aR, i) => {
         this.inputs[i].setText(adminResult[aR]);
         if (aR === "discordId" || aR === "googleId") {
           const nineSlice = this.inputContainers[i].list.find(iC => iC.type === "NineSlice");
-          const img = this.scene.add.image(this.inputContainers[i].x + nineSlice.width + this.buttonGap, this.inputContainers[i].y + (Math.floor(nineSlice.height / 2)), adminResult[aR] === "" ? "link_icon" : "unlink_icon");
+          const img = this.scene.add.image(this.inputContainers[i].x + nineSlice!.width + this.buttonGap, this.inputContainers[i].y + (Math.floor(nineSlice!.height / 2)), adminResult[aR] === "" ? "link_icon" : "unlink_icon");
           img.setName(`adminBtn_${aR}`);
           img.setOrigin(0.5, 0.5);
           //img.setScale(0.5);
@@ -175,14 +191,14 @@ export default class AdminUiHandler extends FormModalUiHandler {
             const mode = adminResult[aR] === "" ? "link" : "unlink"; // this figures out if we're linking or unlinking a service
             const validFields = this.areFieldsValid(this.adminMode, service);
             if (validFields.error) {
-              this.scene.ui.setMode(Mode.LOADING, { buttonActions: [] }); // this is here to force a loading screen to allow the admin tool to reopen again if there's an error
+              this.scene.ui.setMode(Mode.LOADING, { buttonActions: []}); // this is here to force a loading screen to allow the admin tool to reopen again if there's an error
               return this.showMessage(validFields.errorMessage ?? "", adminResult, true);
             }
             this.adminLinkUnlink(this.convertInputsToAdmin(), service, mode).then(response => {
               if (response.error) {
                 return this.showMessage(response.errorType, adminResult, true);
               } else {
-                this.scene.ui.setMode(Mode.LOADING, { buttonActions: [] });
+                this.scene.ui.setMode(Mode.LOADING, { buttonActions: []});
                 this.adminSearch(adminResult)
                   .then(response => {
                     if (response.error) {
@@ -195,11 +211,6 @@ export default class AdminUiHandler extends FormModalUiHandler {
           });
           this.addInteractionHoverEffect(img);
           this.modalContainer.add(img);
-        }
-        if (lockedFields.includes(aR) || adminResult[aR] !== "") {
-          this.inputs[i].setReadOnly(true);
-        } else {
-          this.inputs[i].setReadOnly(false);
         }
       });
       break;
@@ -311,7 +322,7 @@ export default class AdminUiHandler extends FormModalUiHandler {
 
     // this is used to remove the existing fields on the admin panel so they can be updated
 
-    const itemsToRemove: string[] = ["formLabel", "adminBtn"]; // this is the start of the names for each element we want to remove
+    const itemsToRemove: string[] = [ "formLabel", "adminBtn" ]; // this is the start of the names for each element we want to remove
     const removeArray: any[] = [];
     const mC = this.modalContainer.list;
     for (let i = mC.length - 1; i >= 0; i--) {
@@ -320,7 +331,7 @@ export default class AdminUiHandler extends FormModalUiHandler {
        * It then also checks for any containers that are within this.modalContainer, and checks if any of its child elements are of type rexInputText
        * and if either of these conditions are met, the element is destroyed
        */
-      if (itemsToRemove.some(iTR => mC[i].name.includes(iTR)) || (mC[i].type === "Container" && mC[i].list.find(m => m.type === "rexInputText"))) {
+      if (itemsToRemove.some(iTR => mC[i].name.includes(iTR)) || (mC[i].type === "Container" && (mC[i] as Phaser.GameObjects.Container).list.find(m => m.type === "rexInputText"))) {
         removeArray.push(mC[i]);
       }
     }
