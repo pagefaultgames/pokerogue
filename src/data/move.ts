@@ -2880,87 +2880,112 @@ export class SecretPowerAttr extends MoveEffectAttr {
     super(false);
   }
 
+  override canApply(user: Pokemon, target: Pokemon, move: Move, args?: any[]): boolean {
+    this.effectChanceOverride = move.chance;
+    const moveChance = this.getMoveChance(user, target, move, this.selfTarget);
+    if (moveChance < 0 || moveChance === 100 || user.randSeedInt(100) < moveChance) {
+      this.effectChanceOverride = 100;
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   apply(user: Pokemon, target: Pokemon, move: Move, args?: any[] | undefined): boolean | Promise<boolean> {
-    let secondaryEffect: MoveAttr;
+    if (!super.apply(user, target, move, args)) {
+      return false;
+    }
+    let secondaryEffect: MoveEffectAttr;
     const terrain = user.scene.arena.getTerrainType();
     if (terrain !== TerrainType.NONE) {
-      switch (terrain) {
-      case TerrainType.ELECTRIC:
-        secondaryEffect = new StatusEffectAttr(StatusEffect.PARALYSIS, false);
-        break;
-      case TerrainType.MISTY:
-        secondaryEffect = new StatStageChangeAttr([ Stat.SPATK ], -1, false);
-        break;
-      case TerrainType.GRASSY:
-        secondaryEffect = new StatusEffectAttr(StatusEffect.SLEEP, false);
-        break;
-      case TerrainType.PSYCHIC:
-        secondaryEffect = new StatStageChangeAttr([ Stat.SPD ], -1, false);
-        break;
-      }
+      secondaryEffect = this.determineTerrainEffect(terrain);
     } else {
       const biome = user.scene.arena.biomeType;
-      switch (biome) {
-      case Biome.TOWN:
-      case Biome.METROPOLIS:
-      case Biome.SLUM:
-      case Biome.DOJO:
-      case Biome.FACTORY:
-      case Biome.LABORATORY:
-      case Biome.POWER_PLANT:
-        secondaryEffect = new StatusEffectAttr(StatusEffect.PARALYSIS, false);
-        break;
-      case Biome.PLAINS:
-      case Biome.GRASS:
-      case Biome.TALL_GRASS:
-      case Biome.FOREST:
-      case Biome.JUNGLE:
-      case Biome.MEADOW:
-        secondaryEffect = new StatusEffectAttr(StatusEffect.SLEEP, false);
-        break;
-      case Biome.SWAMP:
-        secondaryEffect = new StatStageChangeAttr([ Stat.SPD ], -1, false);
-        break;
-      case Biome.ICE_CAVE:
-      case Biome.SNOWY_FOREST:
-        secondaryEffect = new StatusEffectAttr(StatusEffect.FREEZE, false);
-        break;
-      case Biome.VOLCANO:
-        secondaryEffect = new StatusEffectAttr(StatusEffect.BURN, false);
-        break;
-      case Biome.FAIRY_CAVE:
-        secondaryEffect = new StatStageChangeAttr([ Stat.SPATK ], -1, false);
-        break;
-      case Biome.DESERT:
-      case Biome.CONSTRUCTION_SITE:
-        secondaryEffect = new StatStageChangeAttr([ Stat.ACC ], -1, false);
-        break;
-      case Biome.SEA:
-      case Biome.BEACH:
-      case Biome.LAKE:
-      case Biome.ISLAND:
-      case Biome.SEABED:
-        secondaryEffect = new StatStageChangeAttr([ Stat.ATK ], -1, false);
-        break;
-      case Biome.MOUNTAIN:
-      case Biome.BADLANDS:
-      case Biome.CAVE:
-      case Biome.WASTELAND:
-        secondaryEffect = new AddBattlerTagAttr(BattlerTagType.FLINCHED, false, true);
-        break;
-      case Biome.SPACE:
-        secondaryEffect = new StatStageChangeAttr([ Stat.DEF ], -1, false);
-        break;
-      case Biome.GRAVEYARD:
-      case Biome.RUINS:
-      case Biome.ABYSS:
-      case Biome.TEMPLE:
-      case Biome.END:
-      default:
-        return true;
-      }
+      secondaryEffect = this.determineBiomeEffect(biome);
     }
-    return secondaryEffect.apply(user, target, move, []);
+    return secondaryEffect!.apply(user, target, move, []);
+  }
+
+  private determineTerrainEffect(terrain: TerrainType): MoveEffectAttr {
+    let secondaryEffect: MoveEffectAttr;
+    switch (terrain) {
+    case TerrainType.ELECTRIC:
+      secondaryEffect = new StatusEffectAttr(StatusEffect.PARALYSIS, false);
+      break;
+    case TerrainType.MISTY:
+      secondaryEffect = new StatStageChangeAttr([ Stat.SPATK ], -1, false);
+      break;
+    case TerrainType.GRASSY:
+      secondaryEffect = new StatusEffectAttr(StatusEffect.SLEEP, false);
+      break;
+    case TerrainType.PSYCHIC:
+      secondaryEffect = new StatStageChangeAttr([ Stat.SPD ], -1, false);
+      break;
+    }
+    return secondaryEffect!;
+  }
+
+  private determineBiomeEffect(biome: Biome): MoveEffectAttr {
+    let secondaryEffect: MoveEffectAttr;
+    switch (biome) {
+    case Biome.PLAINS:
+    case Biome.GRASS:
+    case Biome.TALL_GRASS:
+    case Biome.FOREST:
+    case Biome.JUNGLE:
+    case Biome.MEADOW:
+      secondaryEffect = new StatusEffectAttr(StatusEffect.SLEEP, false);
+      break;
+    case Biome.SWAMP:
+    case Biome.MOUNTAIN:
+    case Biome.TEMPLE:
+    case Biome.RUINS:
+      secondaryEffect = new StatStageChangeAttr([ Stat.SPD ], -1, false);
+      break;
+    case Biome.ICE_CAVE:
+    case Biome.SNOWY_FOREST:
+      secondaryEffect = new StatusEffectAttr(StatusEffect.FREEZE, false);
+      break;
+    case Biome.VOLCANO:
+      secondaryEffect = new StatusEffectAttr(StatusEffect.BURN, false);
+      break;
+    case Biome.FAIRY_CAVE:
+      secondaryEffect = new StatStageChangeAttr([ Stat.SPATK ], -1, false);
+      break;
+    case Biome.DESERT:
+    case Biome.CONSTRUCTION_SITE:
+    case Biome.BEACH:
+    case Biome.ISLAND:
+    case Biome.BADLANDS:
+      secondaryEffect = new StatStageChangeAttr([ Stat.ACC ], -1, false);
+      break;
+    case Biome.SEA:
+    case Biome.LAKE:
+    case Biome.SEABED:
+      secondaryEffect = new StatStageChangeAttr([ Stat.ATK ], -1, false);
+      break;
+    case Biome.CAVE:
+    case Biome.WASTELAND:
+    case Biome.GRAVEYARD:
+    case Biome.ABYSS:
+    case Biome.SPACE:
+      secondaryEffect = new AddBattlerTagAttr(BattlerTagType.FLINCHED, false, true);
+      break;
+    case Biome.END:
+      secondaryEffect = new StatStageChangeAttr([ Stat.DEF ], -1, false);
+      break;
+    case Biome.TOWN:
+    case Biome.METROPOLIS:
+    case Biome.SLUM:
+    case Biome.DOJO:
+    case Biome.FACTORY:
+    case Biome.LABORATORY:
+    case Biome.POWER_PLANT:
+    default:
+      secondaryEffect = new StatusEffectAttr(StatusEffect.PARALYSIS, false);
+      break;
+    }
+    return secondaryEffect;
   }
 }
 
