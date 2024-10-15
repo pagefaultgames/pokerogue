@@ -147,6 +147,7 @@ export class MovePhase extends BattlePhase {
     const moveQueue = this.pokemon.getMoveQueue();
 
     if (targets.length === 0 || (moveQueue.length && moveQueue[0].move === Moves.NONE)) {
+      this.showMoveText();
       this.showFailedText();
       this.cancelled = true;
     }
