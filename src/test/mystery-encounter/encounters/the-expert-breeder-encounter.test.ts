@@ -140,7 +140,7 @@ describe("The Expert Pokémon Breeder - Mystery Encounter", () => {
           }));
         }
 
-        return scene.currentBattle?.enemyParty || [];
+        return scene.currentBattle?.enemyParty ?? [];
       });
 
       await runMysteryEncounterToEnd(game, 1, undefined, true);
@@ -219,7 +219,7 @@ describe("The Expert Pokémon Breeder - Mystery Encounter", () => {
           }));
         }
 
-        return scene.currentBattle?.enemyParty || [];
+        return scene.currentBattle?.enemyParty ?? [];
       });
 
       await runMysteryEncounterToEnd(game, 2, undefined, true);
@@ -298,7 +298,7 @@ describe("The Expert Pokémon Breeder - Mystery Encounter", () => {
           }));
         }
 
-        return scene.currentBattle?.enemyParty || [];
+        return scene.currentBattle?.enemyParty ?? [];
       });
 
       await runMysteryEncounterToEnd(game, 3, undefined, true);
