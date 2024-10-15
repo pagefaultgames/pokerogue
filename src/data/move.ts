@@ -6430,8 +6430,8 @@ export class TransformAttr extends MoveEffectAttr {
     user.summonData.gender = target.getGender();
     user.summonData.fusionGender = target.getFusionGender();
 
-      // Power Trick's effect will not preserved after using Transform
-      user.removeTag(BattlerTagType.POWER_TRICK);
+    // Power Trick's effect will not preserved after using Transform
+    user.removeTag(BattlerTagType.POWER_TRICK);
 
     // Copy all stats (except HP)
     for (const s of EFFECTIVE_STATS) {
