@@ -1,5 +1,5 @@
 import { Abilities } from "#enums/abilities";
-import { Biome } from "#app/enums/biome";
+import { Biome } from "#enums/biome";
 import { Moves } from "#enums/moves";
 import { Stat } from "#enums/stat";
 import { allMoves, SecretPowerAttr } from "#app/data/move";
@@ -7,9 +7,9 @@ import { Species } from "#enums/species";
 import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import { StatusEffect } from "#app/enums/status-effect";
+import { StatusEffect } from "#enums/status-effect";
 import { BattlerIndex } from "#app/battle";
-import { ArenaTagType } from "#app/enums/arena-tag-type";
+import { ArenaTagType } from "#enums/arena-tag-type";
 import { ArenaTagSide } from "#app/data/arena-tag";
 
 describe("Moves - Secret Power", () => {
