@@ -1185,6 +1185,11 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ RELEARN_MOVE, Moves.SWALLOW ],
     [ RELEARN_MOVE, Moves.SPIT_UP ],
     [ RELEARN_MOVE, Moves.GASTRO_ACID ],
+    [ RELEARN_MOVE, Moves.WRAP ], // Custom
+    [ RELEARN_MOVE, Moves.GROWTH ], // Custom
+    [ RELEARN_MOVE, Moves.KNOCK_OFF ], // Custom
+    [ RELEARN_MOVE, Moves.POISON_JAB ], // Custom
+    [ RELEARN_MOVE, Moves.SLAM ],
     [ RELEARN_MOVE, Moves.POWER_WHIP ],
     [ 1, Moves.VINE_WHIP ],
     [ 1, Moves.SLEEP_POWDER ],
@@ -4997,6 +5002,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ 38, Moves.PLAY_ROUGH ],
   ],
   [Species.VIGOROTH]: [
+    [ RELEARN_MOVE, Moves.PLAY_ROUGH ], // Custom Relearn
     [ 1, Moves.SCRATCH ],
     [ 1, Moves.FOCUS_ENERGY ],
     [ 1, Moves.ENCORE ],
@@ -5011,6 +5017,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
   ],
   [Species.SLAKING]: [
     [ EVOLVE_MOVE, Moves.SWAGGER ],
+    [ RELEARN_MOVE, Moves.PLAY_ROUGH ], // Custom Relearn
     [ 1, Moves.SUCKER_PUNCH ],
     [ 1, Moves.SCRATCH ],
     [ 1, Moves.YAWN ],
@@ -10482,6 +10489,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
   ],
   [Species.EELEKTRIK]: [
     [ EVOLVE_MOVE, Moves.CRUNCH ],
+    [ RELEARN_MOVE, Moves.TACKLE ], // Custom Relearn
     [ 1, Moves.HEADBUTT ],
     [ 1, Moves.THUNDER_WAVE ],
     [ 1, Moves.SPARK ],
@@ -10499,6 +10507,13 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ 74, Moves.THRASH ],
   ],
   [Species.EELEKTROSS]: [
+    // Custom Relearn Learnset
+    [ RELEARN_MOVE, Moves.TACKLE ],
+    [ RELEARN_MOVE, Moves.BIND ],
+    [ RELEARN_MOVE, Moves.ION_DELUGE ],
+    [ RELEARN_MOVE, Moves.SPARK ],
+    [ RELEARN_MOVE, Moves.CHARGE_BEAM ],
+    [ RELEARN_MOVE, Moves.THUNDERBOLT ],
     [ 1, Moves.HEADBUTT ],
     [ 1, Moves.THRASH ],
     [ 1, Moves.ACID ],
