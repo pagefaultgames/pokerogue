@@ -16,7 +16,7 @@ import { ShopCursorTarget } from "#app/enums/shop-cursor-target";
 import { IntegerHolder } from "./../utils";
 import Phaser from "phaser";
 
-export const SHOP_OPTIONS_ROW_LIMIT = 6;
+export const SHOP_OPTIONS_ROW_LIMIT = 7;
 
 export default class ModifierSelectUiHandler extends AwaitableUiHandler {
   private modifierContainer: Phaser.GameObjects.Container;
@@ -211,7 +211,7 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
       const row = m < SHOP_OPTIONS_ROW_LIMIT ? 0 : 1;
       const col = m < SHOP_OPTIONS_ROW_LIMIT ? m : m - SHOP_OPTIONS_ROW_LIMIT;
       const rowOptions = shopTypeOptions.slice(row ? SHOP_OPTIONS_ROW_LIMIT : 0, row ? undefined : SHOP_OPTIONS_ROW_LIMIT);
-      const sliceWidth = (this.scene.game.canvas.width / SHOP_OPTIONS_ROW_LIMIT) / (rowOptions.length + 2);
+      const sliceWidth = (this.scene.game.canvas.width / 6) / (rowOptions.length + 2);
       const option = new ModifierOption(this.scene, sliceWidth * (col + 1) + (sliceWidth * 0.5), ((-this.scene.game.canvas.height / 12) - (this.scene.game.canvas.height / 32) - (40 - (28 * row - 1))), shopTypeOptions[m]);
       option.setScale(0.375);
       this.scene.add.existing(option);
