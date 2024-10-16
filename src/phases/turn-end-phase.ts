@@ -10,6 +10,7 @@ import { TurnHealModifier, EnemyTurnHealModifier, EnemyStatusEffectHealChanceMod
 import i18next from "i18next";
 import { FieldPhase } from "./field-phase";
 import { PokemonHealPhase } from "./pokemon-heal-phase";
+import { Abilities } from "#app/enums/abilities";
 
 export class TurnEndPhase extends FieldPhase {
   constructor(scene: BattleScene) {
@@ -37,7 +38,16 @@ export class TurnEndPhase extends FieldPhase {
         this.scene.applyModifier(EnemyStatusEffectHealChanceModifier, false, pokemon);
       }
 
-      applyPostTurnAbAttrs(PostTurnAbAttr, pokemon);
+      if (!pokemon.hasAbility(Abilities.SPEED_BOOST)) {
+        applyPostTurnAbAttrs(PostTurnAbAttr, pokemon);
+      } else if (pokemon.hasAbility(Abilities.SPEED_BOOST) && !pokemon.switchedInThisTurn && !pokemon.failedRunAway) {
+        pokemon.setSwitchedInStatus(false);
+        pokemon.failedRunAway = false;
+        applyPostTurnAbAttrs(PostTurnAbAttr, pokemon);
+      } else {
+        pokemon.failedRunAway = false;
+        pokemon.setSwitchedInStatus(false);
+      }
 
       this.scene.applyModifiers(TurnStatusEffectModifier, pokemon.isPlayer(), pokemon);
 

@@ -51,6 +51,7 @@ export class AttemptRunPhase extends PokemonPhase {
       this.scene.pushPhase(new BattleEndPhase(this.scene));
       this.scene.pushPhase(new NewBattlePhase(this.scene));
     } else {
+      playerPokemon.failedRunAway = true;
       this.scene.queueMessage(i18next.t("battle:runAwayCannotEscape"), null, true, 500);
     }
 

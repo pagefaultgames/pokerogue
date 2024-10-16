@@ -105,6 +105,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   public pauseEvolutions: boolean;
   public pokerus: boolean;
   public switchOutStatus: boolean;
+  public switchedInThisTurn: boolean;
+  public failedRunAway: boolean;
   public evoCounter: integer;
 
   public fusionSpecies: PokemonSpecies | null;
@@ -152,6 +154,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     this.pokeball = dataSource?.pokeball || PokeballType.POKEBALL;
     this.level = level;
     this.switchOutStatus = false;
+    this.switchedInThisTurn = false;
 
     // Determine the ability index
     if (abilityIndex !== undefined) {
@@ -2249,6 +2252,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    */
   setSwitchOutStatus(status: boolean): void {
     this.switchOutStatus = status;
+  }
+
+  setSwitchedInStatus(status: boolean): void {
+    this.switchedInThisTurn = status;
   }
 
   updateInfo(instant?: boolean): Promise<void> {
