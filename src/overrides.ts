@@ -6,13 +6,15 @@ import { PokeballType } from "#enums/pokeball";
 import { Species } from "#enums/species";
 import { StatusEffect } from "#enums/status-effect";
 import { TimeOfDay } from "#enums/time-of-day";
-import { VariantTier } from "#enums/variant-tiers";
+import { VariantTier } from "#enums/variant-tier";
 import { WeatherType } from "#enums/weather-type";
 import { type PokeballCounts } from "./battle-scene";
 import { Gender } from "./data/gender";
-import { allSpecies } from "./data/pokemon-species"; // eslint-disable-line @typescript-eslint/no-unused-vars
 import { Variant } from "./data/variant";
 import { type ModifierOverride } from "./modifier/modifier-type";
+import { Unlockables } from "./system/unlockables";
+import { MysteryEncounterType } from "#enums/mystery-encounter-type";
+import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 
 /**
  * Overrides that are using when testing different in game situations
@@ -69,6 +71,10 @@ class DefaultOverrides {
       [PokeballType.MASTER_BALL]: 0,
     },
   };
+  /** Forces an item to be UNLOCKED */
+  readonly ITEM_UNLOCK_OVERRIDE: Unlockables[] = [];
+  /** Set to `true` to show all tutorials */
+  readonly BYPASS_TUTORIAL_SKIP_OVERRIDE: boolean = false;
 
   // ----------------
   // PLAYER OVERRIDES
@@ -94,11 +100,19 @@ class DefaultOverrides {
    * @example SPECIES_OVERRIDE = Species.Bulbasaur;
    */
   readonly STARTER_SPECIES_OVERRIDE: Species | number = 0;
+  /**
+   * This will force your starter to be a random fusion
+   */
+  readonly STARTER_FUSION_OVERRIDE: boolean = false;
+  /**
+   * This will override the species of the fusion
+   */
+  readonly STARTER_FUSION_SPECIES_OVERRIDE: Species | integer = 0;
   readonly ABILITY_OVERRIDE: Abilities = Abilities.NONE;
   readonly PASSIVE_ABILITY_OVERRIDE: Abilities = Abilities.NONE;
   readonly STATUS_OVERRIDE: StatusEffect = StatusEffect.NONE;
   readonly GENDER_OVERRIDE: Gender | null = null;
-  readonly MOVESET_OVERRIDE: Array<Moves> = [];
+  readonly MOVESET_OVERRIDE: Moves | Array<Moves> = [];
   readonly SHINY_OVERRIDE: boolean = false;
   readonly VARIANT_OVERRIDE: Variant = 0;
 
@@ -106,16 +120,32 @@ class DefaultOverrides {
   // OPPONENT / ENEMY OVERRIDES
   // --------------------------
   readonly OPP_SPECIES_OVERRIDE: Species | number = 0;
+  /**
+   * This will make all opponents fused Pokemon
+   */
+  readonly OPP_FUSION_OVERRIDE: boolean = false;
+  /**
+   * This will override the species of the fusion only when the opponent is already a fusion
+   */
+  readonly OPP_FUSION_SPECIES_OVERRIDE: Species | integer = 0;
   readonly OPP_LEVEL_OVERRIDE: number = 0;
   readonly OPP_ABILITY_OVERRIDE: Abilities = Abilities.NONE;
   readonly OPP_PASSIVE_ABILITY_OVERRIDE: Abilities = Abilities.NONE;
   readonly OPP_STATUS_OVERRIDE: StatusEffect = StatusEffect.NONE;
   readonly OPP_GENDER_OVERRIDE: Gender | null = null;
-  readonly OPP_MOVESET_OVERRIDE: Array<Moves> = [];
+  readonly OPP_MOVESET_OVERRIDE: Moves | Array<Moves> = [];
   readonly OPP_SHINY_OVERRIDE: boolean = false;
   readonly OPP_VARIANT_OVERRIDE: Variant = 0;
   readonly OPP_IVS_OVERRIDE: number | number[] = [];
   readonly OPP_FORM_OVERRIDES: Partial<Record<Species, number>> = {};
+  /**
+   * Override to give the enemy Pokemon a given amount of health segments
+   *
+   * 0 (default): the health segments will be handled normally based on wave, level and species
+   * 1: the Pokemon will have a single health segment and therefore will not be a boss
+   * 2+: the Pokemon will be a boss with the given number of health segments
+   */
+  readonly OPP_HEALTH_SEGMENTS_OVERRIDE: number = 0;
 
   // -------------
   // EGG OVERRIDES
@@ -126,6 +156,16 @@ class DefaultOverrides {
   readonly EGG_VARIANT_OVERRIDE: VariantTier | null = null;
   readonly EGG_FREE_GACHA_PULLS_OVERRIDE: boolean = false;
   readonly EGG_GACHA_PULL_COUNT_OVERRIDE: number = 0;
+  readonly UNLIMITED_EGG_COUNT_OVERRIDE: boolean = false;
+
+  // -------------------------
+  // MYSTERY ENCOUNTER OVERRIDES
+  // -------------------------
+
+  /** 1 to 256, set to null to ignore */
+  readonly MYSTERY_ENCOUNTER_RATE_OVERRIDE: number | null = null;
+  readonly MYSTERY_ENCOUNTER_TIER_OVERRIDE: MysteryEncounterTier | null = null;
+  readonly MYSTERY_ENCOUNTER_OVERRIDE: MysteryEncounterType | null = null;
 
   // -------------------------
   // MODIFIER / ITEM OVERRIDES

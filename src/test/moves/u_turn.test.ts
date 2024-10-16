@@ -7,7 +7,6 @@ import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import { SPLASH_ONLY } from "../utils/testUtils";
 
 describe("Moves - U-turn", () => {
   let phaserGame: Phaser.Game;
@@ -30,8 +29,8 @@ describe("Moves - U-turn", () => {
       .enemySpecies(Species.GENGAR)
       .startingLevel(90)
       .startingWave(97)
-      .moveset([Moves.U_TURN])
-      .enemyMoveset(SPLASH_ONLY)
+      .moveset([ Moves.U_TURN ])
+      .enemyMoveset(Moves.SPLASH)
       .disableCrits();
   });
 
@@ -97,4 +96,23 @@ describe("Moves - U-turn", () => {
     expect(game.scene.getEnemyPokemon()!.battleData.abilityRevealed).toBe(true); // proxy for asserting ability activated
     expect(game.phaseInterceptor.log).not.toContain("SwitchSummonPhase");
   }, 20000);
+
+  it("still forces a switch if u-turn KO's the opponent", async () => {
+    game.override.startingLevel(1000); // Ensure that U-Turn KO's the opponent
+    await game.classicMode.startBattle([
+      Species.RAICHU,
+      Species.SHUCKLE
+    ]);
+    const enemy = game.scene.getEnemyPokemon()!;
+
+    // KO the opponent with U-Turn
+    game.move.select(Moves.U_TURN);
+    game.doSelectPartyPokemon(1);
+    await game.phaseInterceptor.to(TurnEndPhase);
+    expect(enemy.isFainted()).toBe(true);
+
+    // Check that U-Turn forced a switch
+    expect(game.phaseInterceptor.log).toContain("SwitchSummonPhase");
+    expect(game.scene.getPlayerPokemon()!.species.speciesId).toBe(Species.SHUCKLE);
+  });
 });

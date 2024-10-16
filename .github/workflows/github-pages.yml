@@ -8,6 +8,8 @@ on:
     branches:
       - main
       - beta
+  merge_group:
+    types: [checks_requested]
 
 jobs:
   pages:
@@ -24,6 +26,7 @@ jobs:
       - name: Checkout repository for Typedoc
         uses: actions/checkout@v3
         with:
+          submodules: 'recursive'
           path: pokerogue_docs
 
       - name: Install OS package

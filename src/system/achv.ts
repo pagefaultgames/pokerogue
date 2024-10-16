@@ -1,13 +1,14 @@
 import { Modifier } from "typescript";
 import BattleScene from "../battle-scene";
 import { TurnHeldItemTransferModifier } from "../modifier/modifier";
-import { pokemonEvolutions } from "#app/data/pokemon-evolutions";
+import { pokemonEvolutions } from "#app/data/balance/pokemon-evolutions";
 import i18next from "i18next";
 import * as Utils from "../utils";
 import { PlayerGender } from "#enums/player-gender";
-import { Challenge, FreshStartChallenge, InverseBattleChallenge, SingleGenerationChallenge, SingleTypeChallenge } from "#app/data/challenge";
-import { Challenges } from "#app/enums/challenges";
+import { Challenge, FreshStartChallenge, SingleGenerationChallenge, SingleTypeChallenge, InverseBattleChallenge } from "#app/data/challenge";
 import { ConditionFn } from "#app/@types/common";
+import { Stat, getShortenedStatKey } from "#app/enums/stat";
+import { Challenges } from "#app/enums/challenges";
 
 export enum AchvTier {
   COMMON,
@@ -108,7 +109,7 @@ export class DamageAchv extends Achv {
   damageAmount: integer;
 
   constructor(localizationKey: string, name: string, damageAmount: integer, iconImage: string, score: integer) {
-    super(localizationKey, name, "", iconImage, score, (_scene: BattleScene, args: any[]) => (args[0] as Utils.NumberHolder).value >= this.damageAmount);
+    super(localizationKey, name, "", iconImage, score, (_scene: BattleScene, args: any[]) => (args[0] instanceof Utils.NumberHolder ? args[0].value : args[0]) >= this.damageAmount);
     this.damageAmount = damageAmount;
   }
 }
@@ -117,7 +118,7 @@ export class HealAchv extends Achv {
   healAmount: integer;
 
   constructor(localizationKey: string, name: string, healAmount: integer, iconImage: string, score: integer) {
-    super(localizationKey, name, "", iconImage, score, (_scene: BattleScene, args: any[]) => (args[0] as Utils.NumberHolder).value >= this.healAmount);
+    super(localizationKey, name, "", iconImage, score, (_scene: BattleScene, args: any[]) => (args[0] instanceof Utils.NumberHolder ? args[0].value : args[0]) >= this.healAmount);
     this.healAmount = healAmount;
   }
 }
@@ -126,7 +127,7 @@ export class LevelAchv extends Achv {
   level: integer;
 
   constructor(localizationKey: string, name: string, level: integer, iconImage: string, score: integer) {
-    super(localizationKey, name, "", iconImage, score, (scene: BattleScene, args: any[]) => (args[0] as Utils.IntegerHolder).value >= this.level);
+    super(localizationKey, name, "", iconImage, score, (scene: BattleScene, args: any[]) => (args[0] instanceof Utils.NumberHolder ? args[0].value : args[0]) >= this.level);
     this.level = level;
   }
 }
@@ -156,47 +157,47 @@ export function getAchievementDescription(localizationKey: string): string {
 
   switch (localizationKey) {
   case "10K_MONEY":
-    return i18next.t("achv:MoneyAchv.description", {context: genderStr, "moneyAmount": achvs._10K_MONEY.moneyAmount.toLocaleString("en-US")});
+    return i18next.t("achv:MoneyAchv.description", { context: genderStr, "moneyAmount": achvs._10K_MONEY.moneyAmount.toLocaleString("en-US") });
   case "100K_MONEY":
-    return i18next.t("achv:MoneyAchv.description", {context: genderStr, "moneyAmount": achvs._100K_MONEY.moneyAmount.toLocaleString("en-US")});
+    return i18next.t("achv:MoneyAchv.description", { context: genderStr, "moneyAmount": achvs._100K_MONEY.moneyAmount.toLocaleString("en-US") });
   case "1M_MONEY":
-    return i18next.t("achv:MoneyAchv.description", {context: genderStr, "moneyAmount": achvs._1M_MONEY.moneyAmount.toLocaleString("en-US")});
+    return i18next.t("achv:MoneyAchv.description", { context: genderStr, "moneyAmount": achvs._1M_MONEY.moneyAmount.toLocaleString("en-US") });
   case "10M_MONEY":
-    return i18next.t("achv:MoneyAchv.description", {context: genderStr, "moneyAmount": achvs._10M_MONEY.moneyAmount.toLocaleString("en-US")});
+    return i18next.t("achv:MoneyAchv.description", { context: genderStr, "moneyAmount": achvs._10M_MONEY.moneyAmount.toLocaleString("en-US") });
   case "250_DMG":
-    return i18next.t("achv:DamageAchv.description", {context: genderStr, "damageAmount": achvs._250_DMG.damageAmount.toLocaleString("en-US")});
+    return i18next.t("achv:DamageAchv.description", { context: genderStr, "damageAmount": achvs._250_DMG.damageAmount.toLocaleString("en-US") });
   case "1000_DMG":
-    return i18next.t("achv:DamageAchv.description", {context: genderStr, "damageAmount": achvs._1000_DMG.damageAmount.toLocaleString("en-US")});
+    return i18next.t("achv:DamageAchv.description", { context: genderStr, "damageAmount": achvs._1000_DMG.damageAmount.toLocaleString("en-US") });
   case "2500_DMG":
-    return i18next.t("achv:DamageAchv.description", {context: genderStr, "damageAmount": achvs._2500_DMG.damageAmount.toLocaleString("en-US")});
+    return i18next.t("achv:DamageAchv.description", { context: genderStr, "damageAmount": achvs._2500_DMG.damageAmount.toLocaleString("en-US") });
   case "10000_DMG":
-    return i18next.t("achv:DamageAchv.description", {context: genderStr, "damageAmount": achvs._10000_DMG.damageAmount.toLocaleString("en-US")});
+    return i18next.t("achv:DamageAchv.description", { context: genderStr, "damageAmount": achvs._10000_DMG.damageAmount.toLocaleString("en-US") });
   case "250_HEAL":
-    return i18next.t("achv:HealAchv.description", {context: genderStr, "healAmount": achvs._250_HEAL.healAmount.toLocaleString("en-US"), "HP": i18next.t("pokemonInfo:Stat.HPshortened")});
+    return i18next.t("achv:HealAchv.description", { context: genderStr, "healAmount": achvs._250_HEAL.healAmount.toLocaleString("en-US"), "HP": i18next.t(getShortenedStatKey(Stat.HP)) });
   case "1000_HEAL":
-    return i18next.t("achv:HealAchv.description", {context: genderStr, "healAmount": achvs._1000_HEAL.healAmount.toLocaleString("en-US"), "HP": i18next.t("pokemonInfo:Stat.HPshortened")});
+    return i18next.t("achv:HealAchv.description", { context: genderStr, "healAmount": achvs._1000_HEAL.healAmount.toLocaleString("en-US"), "HP": i18next.t(getShortenedStatKey(Stat.HP)) });
   case "2500_HEAL":
-    return i18next.t("achv:HealAchv.description", {context: genderStr, "healAmount": achvs._2500_HEAL.healAmount.toLocaleString("en-US"), "HP": i18next.t("pokemonInfo:Stat.HPshortened")});
+    return i18next.t("achv:HealAchv.description", { context: genderStr, "healAmount": achvs._2500_HEAL.healAmount.toLocaleString("en-US"), "HP": i18next.t(getShortenedStatKey(Stat.HP)) });
   case "10000_HEAL":
-    return i18next.t("achv:HealAchv.description", {context: genderStr, "healAmount": achvs._10000_HEAL.healAmount.toLocaleString("en-US"), "HP": i18next.t("pokemonInfo:Stat.HPshortened")});
+    return i18next.t("achv:HealAchv.description", { context: genderStr, "healAmount": achvs._10000_HEAL.healAmount.toLocaleString("en-US"), "HP": i18next.t(getShortenedStatKey(Stat.HP)) });
   case "LV_100":
-    return i18next.t("achv:LevelAchv.description", {context: genderStr, "level": achvs.LV_100.level});
+    return i18next.t("achv:LevelAchv.description", { context: genderStr, "level": achvs.LV_100.level });
   case "LV_250":
-    return i18next.t("achv:LevelAchv.description", {context: genderStr, "level": achvs.LV_250.level});
+    return i18next.t("achv:LevelAchv.description", { context: genderStr, "level": achvs.LV_250.level });
   case "LV_1000":
-    return i18next.t("achv:LevelAchv.description", {context: genderStr, "level": achvs.LV_1000.level});
+    return i18next.t("achv:LevelAchv.description", { context: genderStr, "level": achvs.LV_1000.level });
   case "10_RIBBONS":
-    return i18next.t("achv:RibbonAchv.description", {context: genderStr, "ribbonAmount": achvs._10_RIBBONS.ribbonAmount.toLocaleString("en-US")});
+    return i18next.t("achv:RibbonAchv.description", { context: genderStr, "ribbonAmount": achvs._10_RIBBONS.ribbonAmount.toLocaleString("en-US") });
   case "25_RIBBONS":
-    return i18next.t("achv:RibbonAchv.description", {context: genderStr, "ribbonAmount": achvs._25_RIBBONS.ribbonAmount.toLocaleString("en-US")});
+    return i18next.t("achv:RibbonAchv.description", { context: genderStr, "ribbonAmount": achvs._25_RIBBONS.ribbonAmount.toLocaleString("en-US") });
   case "50_RIBBONS":
-    return i18next.t("achv:RibbonAchv.description", {context: genderStr, "ribbonAmount": achvs._50_RIBBONS.ribbonAmount.toLocaleString("en-US")});
+    return i18next.t("achv:RibbonAchv.description", { context: genderStr, "ribbonAmount": achvs._50_RIBBONS.ribbonAmount.toLocaleString("en-US") });
   case "75_RIBBONS":
-    return i18next.t("achv:RibbonAchv.description", {context: genderStr, "ribbonAmount": achvs._75_RIBBONS.ribbonAmount.toLocaleString("en-US")});
+    return i18next.t("achv:RibbonAchv.description", { context: genderStr, "ribbonAmount": achvs._75_RIBBONS.ribbonAmount.toLocaleString("en-US") });
   case "100_RIBBONS":
-    return i18next.t("achv:RibbonAchv.description", {context: genderStr, "ribbonAmount": achvs._100_RIBBONS.ribbonAmount.toLocaleString("en-US")});
-  case "TRANSFER_MAX_BATTLE_STAT":
-    return i18next.t("achv:TRANSFER_MAX_BATTLE_STAT.description", { context: genderStr });
+    return i18next.t("achv:RibbonAchv.description", { context: genderStr, "ribbonAmount": achvs._100_RIBBONS.ribbonAmount.toLocaleString("en-US") });
+  case "TRANSFER_MAX_STAT_STAGE":
+    return i18next.t("achv:TRANSFER_MAX_STAT_STAGE.description", { context: genderStr });
   case "MAX_FRIENDSHIP":
     return i18next.t("achv:MAX_FRIENDSHIP.description", { context: genderStr });
   case "MEGA_EVOLVE":
@@ -278,6 +279,8 @@ export function getAchievementDescription(localizationKey: string): string {
     return i18next.t("achv:FRESH_START.description", { context: genderStr });
   case "INVERSE_BATTLE":
     return i18next.t("achv:INVERSE_BATTLE.description", { context: genderStr });
+  case "BREEDERS_IN_SPACE":
+    return i18next.t("achv:BREEDERS_IN_SPACE.description", { context: genderStr });
   default:
     return "";
   }
@@ -305,7 +308,7 @@ export const achvs = {
   _50_RIBBONS: new RibbonAchv("50_RIBBONS", "", 50, "ultra_ribbon", 50).setSecret(true),
   _75_RIBBONS: new RibbonAchv("75_RIBBONS", "", 75, "rogue_ribbon", 75).setSecret(true),
   _100_RIBBONS: new RibbonAchv("100_RIBBONS", "", 100, "master_ribbon", 100).setSecret(true),
-  TRANSFER_MAX_BATTLE_STAT: new Achv("TRANSFER_MAX_BATTLE_STAT", "",  "TRANSFER_MAX_BATTLE_STAT.description", "baton", 20),
+  TRANSFER_MAX_STAT_STAGE: new Achv("TRANSFER_MAX_STAT_STAGE", "",  "TRANSFER_MAX_STAT_STAGE.description", "baton", 20),
   MAX_FRIENDSHIP: new Achv("MAX_FRIENDSHIP", "", "MAX_FRIENDSHIP.description", "soothe_bell", 25),
   MEGA_EVOLVE: new Achv("MEGA_EVOLVE", "", "MEGA_EVOLVE.description", "mega_bracelet", 50),
   GIGANTAMAX: new Achv("GIGANTAMAX", "", "GIGANTAMAX.description", "dynamax_band", 50),
@@ -355,6 +358,7 @@ export const achvs = {
   MONO_FAIRY: new ChallengeAchv("MONO_FAIRY", "", "MONO_FAIRY.description", "fairy_feather", 100, (c, scene) => c instanceof SingleTypeChallenge && c.value === 18 && !scene.gameMode.challenges.some(c => c.id === Challenges.INVERSE_BATTLE && c.value > 0)),
   FRESH_START: new ChallengeAchv("FRESH_START", "", "FRESH_START.description", "reviver_seed", 100, (c, scene) => c instanceof FreshStartChallenge && c.value > 0 && !scene.gameMode.challenges.some(c => c.id === Challenges.INVERSE_BATTLE && c.value > 0)),
   INVERSE_BATTLE: new ChallengeAchv("INVERSE_BATTLE", "", "INVERSE_BATTLE.description", "inverse", 100, c => c instanceof InverseBattleChallenge && c.value > 0),
+  BREEDERS_IN_SPACE: new Achv("BREEDERS_IN_SPACE", "", "BREEDERS_IN_SPACE.description", "moon_stone", 100).setSecret(),
 };
 
 export function initAchievements() {
