@@ -2992,7 +2992,7 @@ export class OrderUpStatBoostAttr extends MoveEffectAttr {
       break;
     }
 
-    user.scene.unshiftPhase(new StatStageChangePhase(user.scene, user.getBattlerIndex(), this.selfTarget, [ increasedStat ], 2));
+    user.scene.unshiftPhase(new StatStageChangePhase(user.scene, user.getBattlerIndex(), this.selfTarget, [ increasedStat ], 1));
     return true;
   }
 }
