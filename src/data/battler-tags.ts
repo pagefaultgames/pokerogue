@@ -2085,7 +2085,9 @@ export class CommanderTag extends BattlerTag {
 
   /** Triggers an {@linkcode PokemonAnimType | animation} of the tagged Pokemon "spitting out" Tatsugiri */
   override onRemove(pokemon: Pokemon): void {
-    pokemon.scene.triggerPokemonBattleAnim(pokemon, PokemonAnimType.COMMANDER_REMOVE);
+    if (this.getSourcePokemon(pokemon.scene)?.isActive(true)) {
+      pokemon.scene.triggerPokemonBattleAnim(pokemon, PokemonAnimType.COMMANDER_REMOVE);
+    }
   }
 }
 

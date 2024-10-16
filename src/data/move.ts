@@ -707,6 +707,10 @@ export default class Move implements Localizable {
   getTargetBenefitScore(user: Pokemon, target: Pokemon, move: Move): integer {
     let score = 0;
 
+    if (target.getAlly()?.getTag(BattlerTagType.COMMANDER)?.getSourcePokemon(target.scene) === target) {
+      return 20 * (target.isPlayer() === user.isPlayer() ? -1 : 1); // always -20 with how the AI handles this score
+    }
+
     for (const attr of this.attrs) {
       // conditionals to check if the move is self targeting (if so then you are applying the move to yourself, not the target)
       score += attr.getTargetBenefitScore(user, !attr.selfTarget ? target : user, move) * (target !== user && attr.selfTarget ? -1 : 1);

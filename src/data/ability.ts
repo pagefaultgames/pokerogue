@@ -2550,7 +2550,7 @@ export class CommanderAbAttr extends AbAttr {
 
   override apply(pokemon: Pokemon, passive: boolean, simulated: boolean, cancelled: null, args: any[]): boolean {
     if (pokemon.scene.currentBattle?.double && pokemon.getAlly().species.speciesId === Species.DONDOZO) {
-      if (pokemon.getAlly().getTag(BattlerTagType.COMMANDER)) {
+      if (!pokemon.getAlly().isFainted() && pokemon.getAlly().getTag(BattlerTagType.COMMANDER)) {
         return false;
       }
 
