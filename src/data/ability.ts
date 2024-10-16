@@ -2550,6 +2550,7 @@ export class CommanderAbAttr extends AbAttr {
   }
 
   override apply(pokemon: Pokemon, passive: boolean, simulated: boolean, cancelled: null, args: any[]): boolean {
+    // TODO: figure out how this works with X + Dondozo fusions
     if (pokemon.scene.currentBattle?.double && pokemon.getAlly().species.speciesId === Species.DONDOZO) {
       // If the ally Dondozo is fainted or was previously "commanded" by
       // another Pokemon, this effect cannot apply.
