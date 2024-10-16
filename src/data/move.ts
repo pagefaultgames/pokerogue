@@ -2901,10 +2901,6 @@ export class SecretPowerAttr extends MoveEffectAttr {
 
   /**
    * Used to apply the secondary effect to the target Pokemon
-   * @param user
-   * @param target
-   * @param move
-   * @param args
    * @returns `true` if a secondary effect is successfully applied
    */
   override apply(user: Pokemon, target: Pokemon, move: Move, args?: any[]): boolean | Promise<boolean> {
