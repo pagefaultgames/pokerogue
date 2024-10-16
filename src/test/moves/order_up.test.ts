@@ -51,7 +51,7 @@ describe("Moves - Order Up", () => {
     const [ tatsugiri, dondozo ] = game.scene.getPlayerField();
 
     expect(game.scene.triggerPokemonBattleAnim).toHaveBeenLastCalledWith(tatsugiri, PokemonAnimType.COMMANDER_APPLY);
-    expect(dondozo.getTag(BattlerTagType.COMMANDER)).toBeDefined();
+    expect(dondozo.getTag(BattlerTagType.COMMANDED)).toBeDefined();
 
     game.move.select(Moves.ORDER_UP, 1, BattlerIndex.ENEMY);
     expect(game.scene.currentBattle.turnCommands[0]?.skip).toBeTruthy();
@@ -72,7 +72,7 @@ describe("Moves - Order Up", () => {
     const [ tatsugiri, dondozo ] = game.scene.getPlayerField();
 
     expect(game.scene.triggerPokemonBattleAnim).toHaveBeenLastCalledWith(tatsugiri, PokemonAnimType.COMMANDER_APPLY);
-    expect(dondozo.getTag(BattlerTagType.COMMANDER)).toBeDefined();
+    expect(dondozo.getTag(BattlerTagType.COMMANDED)).toBeDefined();
 
     game.move.select(Moves.ORDER_UP, 1, BattlerIndex.ENEMY);
     expect(game.scene.currentBattle.turnCommands[0]?.skip).toBeTruthy();

@@ -1274,7 +1274,7 @@ export default class BattleScene extends SceneBase {
       if (resetArenaState) {
         this.arena.resetArenaEffects();
 
-        playerField.forEach((pokemon) => pokemon.lapseTag(BattlerTagType.COMMANDER));
+        playerField.forEach((pokemon) => pokemon.lapseTag(BattlerTagType.COMMANDED));
 
         playerField.forEach((pokemon, p) => {
           if (pokemon.isOnField()) {

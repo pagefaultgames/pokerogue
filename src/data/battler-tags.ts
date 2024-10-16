@@ -2064,11 +2064,11 @@ export class IceFaceBlockDamageTag extends FormBlockDamageTag {
  * Battler tag indicating a Tatsugiri with {@link https://bulbapedia.bulbagarden.net/wiki/Commander_(Ability) | Commander}
  * has entered the tagged Pokemon's mouth.
  */
-export class CommanderTag extends BattlerTag {
+export class CommandedTag extends BattlerTag {
   private _tatsugiriFormKey: string;
 
   constructor(sourceId: number) {
-    super(BattlerTagType.COMMANDER, BattlerTagLapseType.CUSTOM, 0, Moves.NONE, sourceId);
+    super(BattlerTagType.COMMANDED, BattlerTagLapseType.CUSTOM, 0, Moves.NONE, sourceId);
   }
 
   public get tatsugiriFormKey(): string {
@@ -2929,8 +2929,8 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: number, source
     return new IceFaceBlockDamageTag(tagType);
   case BattlerTagType.DISGUISE:
     return new FormBlockDamageTag(tagType);
-  case BattlerTagType.COMMANDER:
-    return new CommanderTag(sourceId);
+  case BattlerTagType.COMMANDED:
+    return new CommandedTag(sourceId);
   case BattlerTagType.STOCKPILING:
     return new StockpilingTag(sourceMove);
   case BattlerTagType.OCTOLOCK:

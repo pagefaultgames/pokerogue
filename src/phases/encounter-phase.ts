@@ -475,7 +475,7 @@ export class EncounterPhase extends BattlePhase {
         }
       } else {
         if (availablePartyMembers.length > 1 && availablePartyMembers[1].isOnField()) {
-          this.scene.getPlayerField().forEach((pokemon) => pokemon.lapseTag(BattlerTagType.COMMANDER));
+          this.scene.getPlayerField().forEach((pokemon) => pokemon.lapseTag(BattlerTagType.COMMANDED));
           this.scene.pushPhase(new ReturnPhase(this.scene, 1));
         }
         this.scene.pushPhase(new ToggleDoublePositionPhase(this.scene, false));

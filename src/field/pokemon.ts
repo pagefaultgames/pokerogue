@@ -1511,8 +1511,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * @returns
    */
   isTrapped(trappedAbMessages: string[] = [], simulated: boolean = true): boolean {
-    const commanderTag = this.getTag(BattlerTagType.COMMANDER);
-    if (commanderTag?.getSourcePokemon(this.scene)?.isActive(true)) {
+    const commandedTag = this.getTag(BattlerTagType.COMMANDED);
+    if (commandedTag?.getSourcePokemon(this.scene)?.isActive(true)) {
       return true;
     }
 
@@ -2817,7 +2817,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         this.scene.setPhaseQueueSplice();
         this.scene.unshiftPhase(new FaintPhase(this.scene, this.getBattlerIndex(), isOneHitKo));
         this.destroySubstitute();
-        this.lapseTag(BattlerTagType.COMMANDER);
+        this.lapseTag(BattlerTagType.COMMANDED);
         this.resetSummonData();
       }
 
@@ -2870,7 +2870,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       this.scene.setPhaseQueueSplice();
       this.scene.unshiftPhase(new FaintPhase(this.scene, this.getBattlerIndex(), preventEndure));
       this.destroySubstitute();
-      this.lapseTag(BattlerTagType.COMMANDER);
+      this.lapseTag(BattlerTagType.COMMANDED);
       this.resetSummonData();
     }
 

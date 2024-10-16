@@ -188,7 +188,7 @@ function endTrainerBattleAndShowDialogue(scene: BattleScene): Promise<void> {
     } else {
       scene.arena.resetArenaEffects();
       const playerField = scene.getPlayerField();
-      playerField.forEach((pokemon) => pokemon.lapseTag(BattlerTagType.COMMANDER));
+      playerField.forEach((pokemon) => pokemon.lapseTag(BattlerTagType.COMMANDED));
       playerField.forEach((_, p) => scene.unshiftPhase(new ReturnPhase(scene, p)));
 
       for (const pokemon of scene.getParty()) {

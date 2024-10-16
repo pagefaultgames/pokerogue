@@ -154,7 +154,7 @@ export class MoveEffectPhase extends PokemonPhase {
               && !target.getTag(SemiInvulnerableTag);
 
           /** Is the target hidden by the effects of its Commander ability? */
-          const isCommanding = this.scene.currentBattle.double && target.getAlly()?.getTag(BattlerTagType.COMMANDER)?.getSourcePokemon(this.scene) === target;
+          const isCommanding = this.scene.currentBattle.double && target.getAlly()?.getTag(BattlerTagType.COMMANDED)?.getSourcePokemon(this.scene) === target;
 
           /**
              * If the move missed a target, stop all future hits against that target

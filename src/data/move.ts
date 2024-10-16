@@ -1,5 +1,5 @@
 import { ChargeAnim, initMoveAnim, loadMoveAnimAssets, MoveChargeAnim } from "./battle-anims";
-import { CommanderTag, EncoreTag, GulpMissileTag, HelpingHandTag, SemiInvulnerableTag, ShellTrapTag, StockpilingTag, SubstituteTag, TrappedTag, TypeBoostTag } from "./battler-tags";
+import { CommandedTag, EncoreTag, GulpMissileTag, HelpingHandTag, SemiInvulnerableTag, ShellTrapTag, StockpilingTag, SubstituteTag, TrappedTag, TypeBoostTag } from "./battler-tags";
 import { getPokemonNameWithAffix } from "../messages";
 import Pokemon, { AttackMoveResult, EnemyPokemon, HitResult, MoveResult, PlayerPokemon, PokemonMove, TurnMove } from "../field/pokemon";
 import { getNonVolatileStatusEffects, getStatusEffectHealText, isNonVolatileStatusEffect, StatusEffect } from "./status-effect";
@@ -707,7 +707,7 @@ export default class Move implements Localizable {
   getTargetBenefitScore(user: Pokemon, target: Pokemon, move: Move): integer {
     let score = 0;
 
-    if (target.getAlly()?.getTag(BattlerTagType.COMMANDER)?.getSourcePokemon(target.scene) === target) {
+    if (target.getAlly()?.getTag(BattlerTagType.COMMANDED)?.getSourcePokemon(target.scene) === target) {
       return 20 * (target.isPlayer() === user.isPlayer() ? -1 : 1); // always -20 with how the AI handles this score
     }
 
@@ -2974,13 +2974,13 @@ export class OrderUpStatBoostAttr extends MoveEffectAttr {
   }
 
   override apply(user: Pokemon, target: Pokemon, move: Move, args?: any[]): boolean {
-    const commanderTag = user.getTag(CommanderTag);
-    if (!commanderTag) {
+    const commandedTag = user.getTag(CommandedTag);
+    if (!commandedTag) {
       return false;
     }
 
     let increasedStat: EffectiveStat = Stat.ATK;
-    switch (commanderTag.tatsugiriFormKey) {
+    switch (commandedTag.tatsugiriFormKey) {
     case "curly":
       increasedStat = Stat.ATK;
       break;
@@ -5522,7 +5522,7 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
 
     // If the switch-out target is a Dondozo with a Tatsugiri in its mouth
     // (e.g. when it uses Flip Turn), make it spit out the Tatsugiri before switching out.
-    switchOutTarget.lapseTag(BattlerTagType.COMMANDER);
+    switchOutTarget.lapseTag(BattlerTagType.COMMANDED);
 
     if (switchOutTarget instanceof PlayerPokemon) {
       // Switch out logic for the player's Pokemon
@@ -5600,8 +5600,8 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
         }
 
         // Dondozo with an allied Tatsugiri in its mouth cannot be forced out
-        const commanderTag = switchOutTarget.getTag(BattlerTagType.COMMANDER);
-        if (commanderTag?.getSourcePokemon(switchOutTarget.scene)?.isActive(true)) {
+        const commandedTag = switchOutTarget.getTag(BattlerTagType.COMMANDED);
+        if (commandedTag?.getSourcePokemon(switchOutTarget.scene)?.isActive(true)) {
           return false;
         }
 

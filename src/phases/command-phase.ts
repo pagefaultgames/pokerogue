@@ -44,7 +44,7 @@ export class CommandPhase extends FieldPhase {
     }
 
     // If the Pokemon has applied Commander's effects to its ally, skip this command
-    if (this.scene.currentBattle?.double && this.getPokemon().getAlly()?.getTag(BattlerTagType.COMMANDER)?.getSourcePokemon(this.scene) === this.getPokemon()) {
+    if (this.scene.currentBattle?.double && this.getPokemon().getAlly()?.getTag(BattlerTagType.COMMANDED)?.getSourcePokemon(this.scene) === this.getPokemon()) {
       this.scene.currentBattle.turnCommands[this.fieldIndex] = { command: Command.FIGHT, move: { move: Moves.NONE, targets: []}, skip: true };
     }
 

@@ -417,7 +417,7 @@ export class MysteryEncounterBattlePhase extends Phase {
       }
     } else {
       if (availablePartyMembers.length > 1 && availablePartyMembers[1].isOnField()) {
-        scene.getPlayerField().forEach((pokemon) => pokemon.lapseTag(BattlerTagType.COMMANDER));
+        scene.getPlayerField().forEach((pokemon) => pokemon.lapseTag(BattlerTagType.COMMANDED));
         scene.pushPhase(new ReturnPhase(scene, 1));
       }
       scene.pushPhase(new ToggleDoublePositionPhase(scene, false));
