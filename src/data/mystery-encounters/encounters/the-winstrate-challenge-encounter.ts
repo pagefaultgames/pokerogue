@@ -112,8 +112,8 @@ export const TheWinstrateChallengeEncounter: MysteryEncounter =
       },
       async (scene: BattleScene) => {
         // Spawn 5 trainer battles back to back with Macho Brace in rewards
-        scene.currentBattle.mysteryEncounter!.doContinueEncounter = (scene: BattleScene) => {
-          return endTrainerBattleAndShowDialogue(scene);
+        scene.currentBattle.mysteryEncounter!.doContinueEncounter = async (scene: BattleScene) => {
+          await endTrainerBattleAndShowDialogue(scene);
         };
         await transitionMysteryEncounterIntroVisuals(scene, true, false);
         await spawnNextTrainerOrEndEncounter(scene);

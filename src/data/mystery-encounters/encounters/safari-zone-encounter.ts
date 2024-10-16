@@ -303,13 +303,11 @@ async function summonSafariPokemon(scene: BattleScene) {
   scene.unshiftPhase(new SummonPhase(scene, 0, false));
 
   encounter.setDialogueToken("pokemonName", getPokemonNameWithAffix(pokemon));
-  showEncounterText(scene, getEncounterText(scene, "battle:singleWildAppeared") ?? "", null, 1500, false)
-    .then(() => {
-      const ivScannerModifier = scene.findModifier(m => m instanceof IvScannerModifier);
-      if (ivScannerModifier) {
-        scene.pushPhase(new ScanIvsPhase(scene, pokemon.getBattlerIndex(), Math.min(ivScannerModifier.getStackCount() * 2, 6)));
-      }
-    });
+
+  const ivScannerModifier = scene.findModifier(m => m instanceof IvScannerModifier);
+  if (ivScannerModifier) {
+    scene.pushPhase(new ScanIvsPhase(scene, pokemon.getBattlerIndex(), Math.min(ivScannerModifier.getStackCount() * 2, 6)));
+  }
 }
 
 function throwPokeball(scene: BattleScene, pokemon: EnemyPokemon): Promise<boolean> {
