@@ -1,7 +1,7 @@
 import { Arena } from "#app/field/arena";
 import BattleScene from "#app/battle-scene";
 import { Type } from "#app/data/type";
-import * as Utils from "#app/utils";
+import { BooleanHolder, NumberHolder, toDmgValue } from "#app/utils";
 import { MoveCategory, allMoves, MoveTarget, IncrementMovePriorityAttr, applyMoveAttrs } from "#app/data/move";
 import { getPokemonNameWithAffix } from "#app/messages";
 import Pokemon, { HitResult, PokemonMove } from "#app/field/pokemon";
@@ -36,7 +36,7 @@ export abstract class ArenaTag {
     public side: ArenaTagSide = ArenaTagSide.BOTH
   ) {}
 
-  apply(arena: Arena, args: any[]): boolean {
+  apply(arena: Arena, simulated: boolean, ...args: unknown[]): boolean {
     return true;
   }
 
@@ -122,10 +122,20 @@ export class MistTag extends ArenaTag {
     }
   }
 
-  apply(arena: Arena, args: any[]): boolean {
-    (args[0] as Utils.BooleanHolder).value = true;
+  /**
+   * Cancels the lowering of stats
+   * @param arena the {@linkcode Arena} containing this effect
+   * @param simulated `true` if the effect should be applied quietly
+   * @param cancelled a {@linkcode BooleanHolder} whose value is set to `true`
+   * to flag the stat reduction as cancelled
+   * @returns `true` if a stat reduction was cancelled; `false` otherwise
+   */
+  override apply(arena: Arena, simulated: boolean, cancelled: BooleanHolder): boolean {
+    cancelled.value = true;
 
-    arena.scene.queueMessage(i18next.t("arenaTag:mistApply"));
+    if (!simulated) {
+      arena.scene.queueMessage(i18next.t("arenaTag:mistApply"));
+    }
 
     return true;
   }
@@ -157,17 +167,15 @@ export class WeakenMoveScreenTag extends ArenaTag {
   /**
    * Applies the weakening effect to the move.
    *
-   * @param arena - The arena where the move is applied.
-   * @param args - The arguments for the move application.
-   * @param args[0] - The category of the move.
-   * @param args[1] - A boolean indicating whether it is a double battle.
-   * @param args[2] - An object of type `Utils.NumberHolder` that holds the damage multiplier
-   *
-   * @returns True if the move was weakened, otherwise false.
+   * @param arena the {@linkcode Arena} where the move is applied.
+   * @param simulated n/a
+   * @param moveCategory the attacking move's {@linkcode MoveCategory}.
+   * @param damageMultiplier A {@linkcode NumberHolder} containing the damage multiplier
+   * @returns `true` if the attacking move was weakened; `false` otherwise.
    */
-  apply(arena: Arena, args: any[]): boolean {
-    if (this.weakenedCategories.includes((args[0] as MoveCategory))) {
-      (args[2] as Utils.NumberHolder).value = (args[1] as boolean) ? 2732 / 4096 : 0.5;
+  override apply(arena: Arena, simulated: boolean, moveCategory: MoveCategory, damageMultiplier: NumberHolder): boolean {
+    if (this.weakenedCategories.includes(moveCategory)) {
+      damageMultiplier.value = arena.scene.currentBattle.double ? 2732 / 4096 : 0.5;
       return true;
     }
     return false;
@@ -249,38 +257,34 @@ export class ConditionalProtectTag extends ArenaTag {
   onRemove(arena: Arena): void { }
 
   /**
-   * apply(): Checks incoming moves against the condition function
+   * Checks incoming moves against the condition function
    * and protects the target if conditions are met
-   * @param arena The arena containing this tag
-   * @param args\[0\] (Utils.BooleanHolder) Signals if the move is cancelled
-   * @param args\[1\] (Pokemon) The Pokemon using the move
-   * @param args\[2\] (Pokemon) The intended target of the move
-   * @param args\[3\] (Moves) The parameters to the condition function
-   * @param args\[4\] (Utils.BooleanHolder) Signals if the applied protection supercedes protection-ignoring effects
-   * @returns
+   * @param arena the {@linkcode Arena} containing this tag
+   * @param simulated `true` if the tag is applied quietly; `false` otherwise.
+   * @param isProtected a {@linkcode BooleanHolder} used to flag if the move is protected against
+   * @param attacker the attacking {@linkcode Pokemon}
+   * @param defender the defending {@linkcode Pokemon}
+   * @param moveId the {@linkcode Moves | identifier} for the move being used
+   * @param ignoresProtectBypass a {@linkcode BooleanHolder} used to flag if a protection effect supercedes effects that ignore protection
+   * @returns `true` if this tag protected against the attack; `false` otherwise
    */
-  apply(arena: Arena, args: any[]): boolean {
-    const [ cancelled, user, target, moveId, ignoresBypass ] = args;
+  override apply(arena: Arena, simulated: boolean, isProtected: BooleanHolder, attacker: Pokemon, defender: Pokemon,
+    moveId: Moves, ignoresProtectBypass: BooleanHolder): boolean {
 
-    if (cancelled instanceof Utils.BooleanHolder
-        && user instanceof Pokemon
-        && target instanceof Pokemon
-        && typeof moveId === "number"
-        && ignoresBypass instanceof Utils.BooleanHolder) {
+    if ((this.side === ArenaTagSide.PLAYER) === defender.isPlayer()
+        && this.protectConditionFunc(arena, moveId)) {
+      if (!isProtected.value) {
+        isProtected.value = true;
+        if (!simulated) {
+          attacker.stopMultiHit(defender);
 
-      if ((this.side === ArenaTagSide.PLAYER) === target.isPlayer()
-          && this.protectConditionFunc(arena, moveId)) {
-        if (!cancelled.value) {
-          cancelled.value = true;
-          user.stopMultiHit(target);
-
-          new CommonBattleAnim(CommonAnim.PROTECT, target).play(arena.scene);
-          arena.scene.queueMessage(i18next.t("arenaTag:conditionalProtectApply", { moveName: super.getMoveName(), pokemonNameWithAffix: getPokemonNameWithAffix(target) }));
+          new CommonBattleAnim(CommonAnim.PROTECT, defender).play(arena.scene);
+          arena.scene.queueMessage(i18next.t("arenaTag:conditionalProtectApply", { moveName: super.getMoveName(), pokemonNameWithAffix: getPokemonNameWithAffix(defender) }));
         }
-
-        ignoresBypass.value = ignoresBypass.value || this.ignoresBypass;
-        return true;
       }
+
+      ignoresProtectBypass.value = ignoresProtectBypass.value || this.ignoresBypass;
+      return true;
     }
     return false;
   }
@@ -296,7 +300,7 @@ export class ConditionalProtectTag extends ArenaTag {
  */
 const QuickGuardConditionFunc: ProtectConditionFunc = (arena, moveId) => {
   const move = allMoves[moveId];
-  const priority = new Utils.NumberHolder(move.priority);
+  const priority = new NumberHolder(move.priority);
   const effectPhase = arena.scene.getCurrentPhase();
 
   if (effectPhase instanceof MoveEffectPhase) {
@@ -460,7 +464,7 @@ class WishTag extends ArenaTag {
       if (user) {
         this.battlerIndex = user.getBattlerIndex();
         this.triggerMessage = i18next.t("arenaTag:wishTagOnAdd", { pokemonNameWithAffix: getPokemonNameWithAffix(user) });
-        this.healHp = Utils.toDmgValue(user.getMaxHp() / 2);
+        this.healHp = toDmgValue(user.getMaxHp() / 2);
       } else {
         console.warn("Failed to get source for WishTag onAdd");
       }
@@ -497,12 +501,19 @@ export class WeakenMoveTypeTag extends ArenaTag {
     this.weakenedType = type;
   }
 
-  apply(arena: Arena, args: any[]): boolean {
-    if ((args[0] as Type) === this.weakenedType) {
-      (args[1] as Utils.NumberHolder).value *= 0.33;
+  /**
+   * Reduces an attack's power by 0.33x if it matches this tag's weakened type.
+   * @param arena n/a
+   * @param simulated n/a
+   * @param type the attack's {@linkcode Type}
+   * @param power a {@linkcode NumberHolder} containing the attack's power
+   * @returns `true` if the attack's power was reduced; `false` otherwise.
+   */
+  override apply(arena: Arena, simulated: boolean, type: Type, power: NumberHolder): boolean {
+    if (type === this.weakenedType) {
+      power.value *= 0.33;
       return true;
     }
-
     return false;
   }
 }
@@ -563,13 +574,12 @@ export class IonDelugeTag extends ArenaTag {
   /**
    * Converts Normal-type moves to Electric type
    * @param arena n/a
-   * @param args
-   * - `[0]` {@linkcode Utils.NumberHolder} A container with a move's {@linkcode Type}
+   * @param simulated n/a
+   * @param moveType a {@linkcode NumberHolder} containing a move's {@linkcode Type}
    * @returns `true` if the given move type changed; `false` otherwise.
    */
-  apply(arena: Arena, args: any[]): boolean {
-    const moveType = args[0];
-    if (moveType instanceof Utils.NumberHolder && moveType.value === Type.NORMAL) {
+  override apply(arena: Arena, simulated: boolean, moveType: NumberHolder): boolean {
+    if (moveType.value === Type.NORMAL) {
       moveType.value = Type.ELECTRIC;
       return true;
     }
@@ -608,16 +618,22 @@ export class ArenaTrapTag extends ArenaTag {
     }
   }
 
-  apply(arena: Arena, args: any[]): boolean {
-    const pokemon = args[0] as Pokemon;
+  /**
+   * Activates the hazard effect onto a Pokemon when it enters the field
+   * @param arena the {@linkcode Arena} containing this tag
+   * @param simulated if `true`, only checks if the hazard would activate.
+   * @param pokemon the {@linkcode Pokemon} triggering this hazard
+   * @returns `true` if this hazard affects the given Pokemon; `false` otherwise.
+   */
+  override apply(arena: Arena, simulated: boolean, pokemon: Pokemon): boolean {
     if (this.sourceId === pokemon.id || (this.side === ArenaTagSide.PLAYER) !== pokemon.isPlayer()) {
       return false;
     }
 
-    return this.activateTrap(pokemon);
+    return this.activateTrap(pokemon, simulated);
   }
 
-  activateTrap(pokemon: Pokemon): boolean {
+  activateTrap(pokemon: Pokemon, simulated: boolean): boolean {
     return false;
   }
 
@@ -651,14 +667,18 @@ class SpikesTag extends ArenaTrapTag {
     }
   }
 
-  activateTrap(pokemon: Pokemon): boolean {
+  override activateTrap(pokemon: Pokemon, simulated: boolean): boolean {
     if (pokemon.isGrounded()) {
-      const cancelled = new Utils.BooleanHolder(false);
+      const cancelled = new BooleanHolder(false);
       applyAbAttrs(BlockNonDirectDamageAbAttr, pokemon, cancelled);
+
+      if (simulated) {
+        return !cancelled.value;
+      }
 
       if (!cancelled.value) {
         const damageHpRatio = 1 / (10 - 2 * this.layers);
-        const damage = Utils.toDmgValue(pokemon.getMaxHp() * damageHpRatio);
+        const damage = toDmgValue(pokemon.getMaxHp() * damageHpRatio);
 
         pokemon.scene.queueMessage(i18next.t("arenaTag:spikesActivateTrap", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }));
         pokemon.damageAndUpdate(damage, HitResult.OTHER);
@@ -702,8 +722,11 @@ class ToxicSpikesTag extends ArenaTrapTag {
     }
   }
 
-  activateTrap(pokemon: Pokemon): boolean {
+  override activateTrap(pokemon: Pokemon, simulated: boolean): boolean {
     if (pokemon.isGrounded()) {
+      if (simulated) {
+        return true;
+      }
       if (pokemon.isOfType(Type.POISON)) {
         this.neutralized = true;
         if (pokemon.scene.arena.removeTag(this.tagType)) {
@@ -807,8 +830,8 @@ class StealthRockTag extends ArenaTrapTag {
     return damageHpRatio;
   }
 
-  activateTrap(pokemon: Pokemon): boolean {
-    const cancelled = new Utils.BooleanHolder(false);
+  override activateTrap(pokemon: Pokemon, simulated: boolean): boolean {
+    const cancelled = new BooleanHolder(false);
     applyAbAttrs(BlockNonDirectDamageAbAttr,  pokemon, cancelled);
 
     if (cancelled.value) {
@@ -818,12 +841,16 @@ class StealthRockTag extends ArenaTrapTag {
     const damageHpRatio = this.getDamageHpRatio(pokemon);
 
     if (damageHpRatio) {
-      const damage = Utils.toDmgValue(pokemon.getMaxHp() * damageHpRatio);
+      if (simulated) {
+        return true;
+      }
+      const damage = toDmgValue(pokemon.getMaxHp() * damageHpRatio);
       pokemon.scene.queueMessage(i18next.t("arenaTag:stealthRockActivateTrap", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }));
       pokemon.damageAndUpdate(damage, HitResult.OTHER);
       if (pokemon.turnData) {
         pokemon.turnData.damageTaken += damage;
       }
+      return true;
     }
 
     return false;
@@ -853,14 +880,20 @@ class StickyWebTag extends ArenaTrapTag {
     }
   }
 
-  activateTrap(pokemon: Pokemon): boolean {
+  override activateTrap(pokemon: Pokemon, simulated: boolean): boolean {
     if (pokemon.isGrounded()) {
-      const cancelled = new Utils.BooleanHolder(false);
+      const cancelled = new BooleanHolder(false);
       applyAbAttrs(ProtectStatAbAttr, pokemon, cancelled);
+
+      if (simulated) {
+        return !cancelled.value;
+      }
+
       if (!cancelled.value) {
         pokemon.scene.queueMessage(i18next.t("arenaTag:stickyWebActivateTrap", { pokemonName: pokemon.getNameToRender() }));
-        const stages = new Utils.NumberHolder(-1);
+        const stages = new NumberHolder(-1);
         pokemon.scene.unshiftPhase(new StatStageChangePhase(pokemon.scene, pokemon.getBattlerIndex(), false, [ Stat.SPD ], stages.value));
+        return true;
       }
     }
 
@@ -879,8 +912,15 @@ export class TrickRoomTag extends ArenaTag {
     super(ArenaTagType.TRICK_ROOM, turnCount, Moves.TRICK_ROOM, sourceId);
   }
 
-  apply(arena: Arena, args: any[]): boolean {
-    const speedReversed = args[0] as Utils.BooleanHolder;
+  /**
+   * Reverses Speed-based turn order for all Pokemon on the field
+   * @param arena n/a
+   * @param simulated n/a
+   * @param speedReversed a {@linkcode BooleanHolder} used to flag if Speed-based
+   * turn order should be reversed.
+   * @returns `true` if turn order is successfully reversed; `false` otherwise
+   */
+  override apply(arena: Arena, simulated: boolean, speedReversed: BooleanHolder): boolean {
     speedReversed.value = !speedReversed.value;
     return true;
   }
@@ -1087,7 +1127,7 @@ class FireGrassPledgeTag extends ArenaTag {
       pokemon.scene.queueMessage(i18next.t("arenaTag:fireGrassPledgeLapse", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }));
       // TODO: Replace this with a proper animation
       pokemon.scene.unshiftPhase(new CommonAnimPhase(pokemon.scene, pokemon.getBattlerIndex(), pokemon.getBattlerIndex(), CommonAnim.MAGMA_STORM));
-      pokemon.damageAndUpdate(Utils.toDmgValue(pokemon.getMaxHp() / 8));
+      pokemon.damageAndUpdate(toDmgValue(pokemon.getMaxHp() / 8));
     });
 
     return super.lapse(arena);
@@ -1111,8 +1151,15 @@ class WaterFirePledgeTag extends ArenaTag {
     arena.scene.queueMessage(i18next.t(`arenaTag:waterFirePledgeOnAdd${this.side === ArenaTagSide.PLAYER ? "Player" : this.side === ArenaTagSide.ENEMY ? "Enemy" : ""}`));
   }
 
-  override apply(arena: Arena, args: any[]): boolean {
-    const moveChance = args[0] as Utils.NumberHolder;
+  /**
+   * Doubles the chance for the given move's secondary effect(s) to trigger
+   * @param arena the {@linkcode Arena} containing this tag
+   * @param simulated n/a
+   * @param moveChance a {@linkcode NumberHolder} containing
+   * the move's current effect chance
+   * @returns `true` if the move's effect chance was doubled (currently always `true`)
+   */
+  override apply(arena: Arena, simulated: boolean, moveChance: NumberHolder): boolean {
     moveChance.value *= 2;
     return true;
   }
