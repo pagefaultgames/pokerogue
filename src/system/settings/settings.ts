@@ -163,6 +163,11 @@ export const SettingKeys = {
   Shop_Overlay_Opacity: "SHOP_OVERLAY_OPACITY"
 };
 
+export enum MusicPreference {
+  CONSISTENT,
+  MIXED
+}
+
 /**
  * All Settings not related to controls
  */
