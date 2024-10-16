@@ -1,5 +1,5 @@
 import { ChargeAnim, initMoveAnim, loadMoveAnimAssets, MoveChargeAnim } from "./battle-anims";
-import { EncoreTag, GulpMissileTag, HelpingHandTag, SemiInvulnerableTag, ShellTrapTag, StockpilingTag, SubstituteTag, TrappedTag, TypeBoostTag } from "./battler-tags";
+import { CommanderTag, EncoreTag, GulpMissileTag, HelpingHandTag, SemiInvulnerableTag, ShellTrapTag, StockpilingTag, SubstituteTag, TrappedTag, TypeBoostTag } from "./battler-tags";
 import { getPokemonNameWithAffix } from "../messages";
 import Pokemon, { AttackMoveResult, EnemyPokemon, HitResult, MoveResult, PlayerPokemon, PokemonMove, TurnMove } from "../field/pokemon";
 import { getNonVolatileStatusEffects, getStatusEffectHealText, isNonVolatileStatusEffect, StatusEffect } from "./status-effect";
@@ -2959,6 +2959,41 @@ export class CutHpStatStageBoostAttr extends StatStageChangeAttr {
 
   getCondition(): MoveConditionFunc {
     return (user, _target, _move) => user.getHpRatio() > 1 / this.cutRatio && this.stats.some(s => user.getStatStage(s) < 6);
+  }
+}
+
+/**
+ * Attribute implementing the stat boosting effect of {@link https://bulbapedia.bulbagarden.net/wiki/Order_Up_(move) | Order Up}.
+ * If the user has a Pokemon with {@link https://bulbapedia.bulbagarden.net/wiki/Commander_(Ability) | Commander} in their mouth,
+ * one of the user's stats are increased by 1 stage, depending on the "commanding" Pokemon's form. This effect does not respect
+ * effect chance, but Order Up itself may be boosted by Sheer Force.
+ */
+export class OrderUpStatBoostAttr extends MoveEffectAttr {
+  constructor() {
+    super(true, MoveEffectTrigger.HIT);
+  }
+
+  override apply(user: Pokemon, target: Pokemon, move: Move, args?: any[]): boolean {
+    const commanderTag = user.getTag(CommanderTag);
+    if (!commanderTag) {
+      return false;
+    }
+
+    let increasedStat: EffectiveStat = Stat.ATK;
+    switch (commanderTag.tatsugiriFormKey) {
+    case "curly":
+      increasedStat = Stat.ATK;
+      break;
+    case "droopy":
+      increasedStat = Stat.DEF;
+      break;
+    case "stretchy":
+      increasedStat = Stat.SPD;
+      break;
+    }
+
+    user.scene.unshiftPhase(new StatStageChangePhase(user.scene, user.getBattlerIndex(), this.selfTarget, [ increasedStat ], 2));
+    return true;
   }
 }
 
@@ -9759,8 +9794,8 @@ export function initMoves() {
     new AttackMove(Moves.LUMINA_CRASH, Type.PSYCHIC, MoveCategory.SPECIAL, 80, 100, 10, 100, 0, 9)
       .attr(StatStageChangeAttr, [ Stat.SPDEF ], -2),
     new AttackMove(Moves.ORDER_UP, Type.DRAGON, MoveCategory.PHYSICAL, 80, 100, 10, 100, 0, 9)
-      .makesContact(false)
-      .partial(), // No effect implemented (requires Commander)
+      .attr(OrderUpStatBoostAttr)
+      .makesContact(false),
     new AttackMove(Moves.JET_PUNCH, Type.WATER, MoveCategory.PHYSICAL, 60, 100, 15, -1, 1, 9)
       .punchingMove(),
     new StatusMove(Moves.SPICY_EXTRACT, Type.GRASS, -1, 15, -1, 0, 9)
