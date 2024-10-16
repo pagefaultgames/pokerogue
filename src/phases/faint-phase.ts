@@ -128,7 +128,7 @@ export class FaintPhase extends PokemonPhase {
 
     pokemon.faintCry(() => {
       if (pokemon instanceof PlayerPokemon) {
-        pokemon.addFriendship(FRIENDSHIP_LOSS_FROM_FAINT);
+        pokemon.addFriendship(-FRIENDSHIP_LOSS_FROM_FAINT);
       }
       pokemon.hideInfo();
       this.scene.playSound("se/faint");
