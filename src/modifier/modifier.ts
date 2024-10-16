@@ -11,7 +11,7 @@ import Pokemon, { type PlayerPokemon } from "#app/field/pokemon";
 import { getPokemonNameWithAffix } from "#app/messages";
 import Overrides from "#app/overrides";
 import { EvolutionPhase } from "#app/phases/evolution-phase";
-import { LearnMovePhase } from "#app/phases/learn-move-phase";
+import { LearnMovePhase, LearnMoveType } from "#app/phases/learn-move-phase";
 import { LevelUpPhase } from "#app/phases/level-up-phase";
 import { PokemonHealPhase } from "#app/phases/pokemon-heal-phase";
 import { achvs } from "#app/system/achv";
@@ -2235,7 +2235,7 @@ export class TmModifier extends ConsumablePokemonModifier {
    */
   override apply(playerPokemon: PlayerPokemon): boolean {
 
-    playerPokemon.scene.unshiftPhase(new LearnMovePhase(playerPokemon.scene, playerPokemon.scene.getParty().indexOf(playerPokemon), this.type.moveId, true));
+    playerPokemon.scene.unshiftPhase(new LearnMovePhase(playerPokemon.scene, playerPokemon.scene.getParty().indexOf(playerPokemon), this.type.moveId, LearnMoveType.TM));
 
     return true;
   }
@@ -2255,8 +2255,9 @@ export class RememberMoveModifier extends ConsumablePokemonModifier {
    * @param playerPokemon The {@linkcode PlayerPokemon} that should remember the move
    * @returns always `true`
    */
-  override apply(playerPokemon: PlayerPokemon): boolean {
-    playerPokemon.scene.unshiftPhase(new LearnMovePhase(playerPokemon.scene, playerPokemon.scene.getParty().indexOf(playerPokemon), playerPokemon.getLearnableLevelMoves()[this.levelMoveIndex]));
+  override apply(playerPokemon: PlayerPokemon, cost?: number): boolean {
+
+    playerPokemon.scene.unshiftPhase(new LearnMovePhase(playerPokemon.scene, playerPokemon.scene.getParty().indexOf(playerPokemon), playerPokemon.getLearnableLevelMoves()[this.levelMoveIndex], LearnMoveType.MEMORY, cost));
 
     return true;
   }
@@ -3084,11 +3085,12 @@ export abstract class HeldItemTransferModifier extends PokemonHeldItemModifier {
    * Steals an item from a set of target Pokemon.
    * This prioritizes high-tier held items when selecting the item to steal.
    * @param pokemon The {@linkcode Pokemon} holding this item
+   * @param target The {@linkcode Pokemon} to steal from (optional)
    * @param _args N/A
    * @returns `true` if an item was stolen; false otherwise.
    */
-  override apply(pokemon: Pokemon, ..._args: unknown[]): boolean {
-    const opponents = this.getTargets(pokemon);
+  override apply(pokemon: Pokemon, target?: Pokemon, ..._args: unknown[]): boolean {
+    const opponents = this.getTargets(pokemon, target);
 
     if (!opponents.length) {
       return false;
@@ -3187,7 +3189,7 @@ export class TurnHeldItemTransferModifier extends HeldItemTransferModifier {
  * @see {@linkcode HeldItemTransferModifier}
  */
 export class ContactHeldItemTransferChanceModifier extends HeldItemTransferModifier {
-  private chance: number;
+  public readonly chance: number;
 
   constructor(type: ModifierType, pokemonId: number, chancePercent: number, stackCount?: number) {
     super(type, pokemonId, stackCount);
@@ -3634,7 +3636,7 @@ export function overrideHeldItems(scene: BattleScene, pokemon: Pokemon, isPlayer
   }
 
   if (!isPlayer) {
-    scene.clearEnemyHeldItemModifiers();
+    scene.clearEnemyHeldItemModifiers(pokemon);
   }
 
   heldItemsOverride.forEach(item => {

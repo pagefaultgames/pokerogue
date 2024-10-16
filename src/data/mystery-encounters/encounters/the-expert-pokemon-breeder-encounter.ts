@@ -196,6 +196,7 @@ export const TheExpertPokemonBreederEncounter: MysteryEncounter =
 
       return true;
     })
+    .setLocalizationKey(`${namespace}`)
     .withTitle(`${namespace}:title`)
     .withDescription(`${namespace}:description`)
     .withQuery(`${namespace}:query`)
@@ -244,7 +245,7 @@ export const TheExpertPokemonBreederEncounter: MysteryEncounter =
           }
 
           encounter.onGameOver = onGameOver;
-          initBattleWithEnemyConfig(scene, config);
+          await initBattleWithEnemyConfig(scene, config);
         })
         .withPostOptionPhase(async (scene: BattleScene) => {
           await doPostEncounterCleanup(scene);
@@ -296,7 +297,7 @@ export const TheExpertPokemonBreederEncounter: MysteryEncounter =
           }
 
           encounter.onGameOver = onGameOver;
-          initBattleWithEnemyConfig(scene, config);
+          await initBattleWithEnemyConfig(scene, config);
         })
         .withPostOptionPhase(async (scene: BattleScene) => {
           await doPostEncounterCleanup(scene);
@@ -348,7 +349,7 @@ export const TheExpertPokemonBreederEncounter: MysteryEncounter =
           }
 
           encounter.onGameOver = onGameOver;
-          initBattleWithEnemyConfig(scene, config);
+          await initBattleWithEnemyConfig(scene, config);
         })
         .withPostOptionPhase(async (scene: BattleScene) => {
           await doPostEncounterCleanup(scene);
@@ -493,7 +494,7 @@ function getEggOptions(scene: BattleScene, commonEggs: number, rareEggs: number)
         pulled: false,
         sourceType: EggSourceType.EVENT,
         eggDescriptor: eggDescription,
-        tier: EggTier.GREAT
+        tier: EggTier.RARE
       });
     }
   }

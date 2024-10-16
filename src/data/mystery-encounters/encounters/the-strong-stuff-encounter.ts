@@ -117,6 +117,7 @@ export const TheStrongStuffEncounter: MysteryEncounter =
 
       return true;
     })
+    .setLocalizationKey(`${namespace}`)
     .withTitle(`${namespace}:title`)
     .withDescription(`${namespace}:description`)
     .withQuery(`${namespace}:query`)
@@ -200,7 +201,7 @@ export const TheStrongStuffEncounter: MysteryEncounter =
           });
 
         encounter.dialogue.outro = [];
-        transitionMysteryEncounterIntroVisuals(scene, true, true, 500);
+        await transitionMysteryEncounterIntroVisuals(scene, true, true, 500);
         await initBattleWithEnemyConfig(scene, encounter.enemyPartyConfigs[0]);
       }
     )
