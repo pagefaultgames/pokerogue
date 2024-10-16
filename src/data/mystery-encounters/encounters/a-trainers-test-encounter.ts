@@ -154,7 +154,7 @@ export const ATrainersTestEncounter: MysteryEncounter =
         };
         encounter.setDialogueToken("eggType", i18next.t(`${namespace}:eggTypes.epic`));
         setEncounterRewards(scene, { guaranteedModifierTypeFuncs: [ modifierTypes.SACRED_ASH ], guaranteedModifierTiers: [ ModifierTier.ROGUE, ModifierTier.ULTRA ], fillRemaining: true }, [ eggOptions ]);
-        return initBattleWithEnemyConfig(scene, config);
+        await initBattleWithEnemyConfig(scene, config);
       }
     )
     .withSimpleOption(

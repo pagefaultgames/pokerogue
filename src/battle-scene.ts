@@ -789,7 +789,7 @@ export default class BattleScene extends SceneBase {
   }
 
   getEnemyParty(): EnemyPokemon[] {
-    return this.currentBattle?.enemyParty || [];
+    return this.currentBattle?.enemyParty ?? [];
   }
 
   getEnemyPokemon(): EnemyPokemon | undefined {
