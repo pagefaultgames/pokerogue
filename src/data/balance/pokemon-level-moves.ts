@@ -4931,6 +4931,8 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ 38, Moves.STICKY_WEB ],
   ],
   [Species.MASQUERAIN]: [
+    [ RELEARN_MOVE, Moves.STICKY_WEB ], // Custom Relearn
+    [ RELEARN_MOVE, Moves.BATON_PASS ], // Custom Relearn
     [ 1, Moves.WHIRLWIND ],
     [ 1, Moves.WATER_GUN ],
     [ 1, Moves.QUICK_ATTACK ],
@@ -6794,6 +6796,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
   ],
   [Species.MONFERNO]: [
     [ EVOLVE_MOVE, Moves.MACH_PUNCH ],
+    [ RELEARN_MOVE, Moves.NASTY_PLOT ], // Custom Relearn
     [ 1, Moves.SCRATCH ],
     [ 1, Moves.LEER ],
     [ 1, Moves.EMBER ],
@@ -6812,6 +6815,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ EVOLVE_MOVE, Moves.CLOSE_COMBAT ],
     [ RELEARN_MOVE, Moves.TAUNT ],
     [ RELEARN_MOVE, Moves.SLACK_OFF ],
+    [ RELEARN_MOVE, Moves.NASTY_PLOT ], // Custom Relearn
     [ 1, Moves.SCRATCH ],
     [ 1, Moves.LEER ],
     [ 1, Moves.EMBER ],
