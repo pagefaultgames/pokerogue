@@ -20,6 +20,7 @@ import { VictoryPhase } from "./victory-phase";
 import { SpeciesFormChangeActiveTrigger } from "#app/data/pokemon-forms";
 import { SwitchType } from "#enums/switch-type";
 import { isNullOrUndefined } from "#app/utils";
+import { FRIENDSHIP_LOSS_FROM_FAINT } from "#app/data/balance/starters";
 
 export class FaintPhase extends PokemonPhase {
   /**
@@ -147,7 +148,7 @@ export class FaintPhase extends PokemonPhase {
 
     pokemon.faintCry(() => {
       if (pokemon instanceof PlayerPokemon) {
-        pokemon.addFriendship(-10);
+        pokemon.addFriendship(-FRIENDSHIP_LOSS_FROM_FAINT);
       }
       pokemon.hideInfo();
       this.scene.playSound("se/faint");
