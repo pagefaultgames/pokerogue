@@ -30,7 +30,7 @@ import { StatusEffect } from "#enums/status-effect";
 import i18next from "i18next";
 import { type DoubleBattleChanceBoosterModifierType, type EvolutionItemModifierType, type FormChangeItemModifierType, type ModifierOverride, type ModifierType, type PokemonBaseStatTotalModifierType, type PokemonExpBoosterModifierType, type PokemonFriendshipBoosterModifierType, type PokemonMoveAccuracyBoosterModifierType, type PokemonMultiHitModifierType, type TerastallizeModifierType, type TmModifierType, getModifierType, ModifierPoolType, ModifierTypeGenerator, modifierTypes, PokemonHeldItemModifierType } from "./modifier-type";
 import { Color, ShadowColor } from "#enums/color";
-import { FRIENDSHIP_GAIN_RARE_CANDY } from "#app/data/balance/starters";
+import { FRIENDSHIP_GAIN_FROM_RARE_CANDY } from "#app/data/balance/starters";
 
 export type ModifierPredicate = (modifier: Modifier) => boolean;
 
@@ -2214,7 +2214,7 @@ export class PokemonLevelIncrementModifier extends ConsumablePokemonModifier {
       playerPokemon.levelExp = 0;
     }
 
-    playerPokemon.addFriendship(FRIENDSHIP_GAIN_RARE_CANDY);
+    playerPokemon.addFriendship(FRIENDSHIP_GAIN_FROM_RARE_CANDY);
 
     playerPokemon.scene.unshiftPhase(new LevelUpPhase(playerPokemon.scene, playerPokemon.scene.getParty().indexOf(playerPokemon), playerPokemon.level - levelCount.value, playerPokemon.level));
 
