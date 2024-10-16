@@ -34,9 +34,9 @@ describe("Abilities - Volt Absorb", () => {
     const moveToUse = Moves.CHARGE;
     const ability = Abilities.VOLT_ABSORB;
 
-    game.override.moveset([moveToUse]);
+    game.override.moveset([ moveToUse ]);
     game.override.ability(ability);
-    game.override.enemyMoveset([Moves.SPLASH, Moves.NONE, Moves.NONE, Moves.NONE]);
+    game.override.enemyMoveset([ Moves.SPLASH, Moves.NONE, Moves.NONE, Moves.NONE ]);
     game.override.enemySpecies(Species.DUSKULL);
     game.override.enemyAbility(Abilities.BALL_FETCH);
 
@@ -64,11 +64,30 @@ describe("Abilities - Volt Absorb", () => {
 
     game.move.select(Moves.THUNDERBOLT);
     enemyPokemon.hp = enemyPokemon.hp - 1;
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+    await game.setTurnOrder([ BattlerIndex.ENEMY, BattlerIndex.PLAYER ]);
     await game.phaseInterceptor.to("MoveEffectPhase");
 
     await game.move.forceMiss();
     await game.phaseInterceptor.to("BerryPhase", false);
     expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp());
+  });
+  it("regardless of accuracy should not trigger on pokemon in semi invulnerable state", async () => {
+    game.override.moveset(Moves.THUNDERBOLT);
+    game.override.enemyMoveset(Moves.DIVE);
+    game.override.enemySpecies(Species.MAGIKARP);
+    game.override.enemyAbility(Abilities.VOLT_ABSORB);
+
+    await game.classicMode.startBattle();
+
+    const enemyPokemon = game.scene.getEnemyPokemon()!;
+
+    game.move.select(Moves.THUNDERBOLT);
+    enemyPokemon.hp = enemyPokemon.hp - 1;
+    await game.setTurnOrder([ BattlerIndex.ENEMY, BattlerIndex.PLAYER ]);
+    await game.phaseInterceptor.to("MoveEffectPhase");
+
+    await game.move.forceMiss();
+    await game.phaseInterceptor.to("BerryPhase", false);
+    expect(enemyPokemon.hp).toBeLessThan(enemyPokemon.getMaxHp());
   });
 });

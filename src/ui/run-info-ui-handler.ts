@@ -5,10 +5,11 @@ import { SessionSaveData } from "../system/game-data";
 import { TextStyle, addTextObject, addBBCodeTextObject, getTextColor } from "./text";
 import { Mode } from "./ui";
 import { addWindow } from "./ui-theme";
+import { getPokeballAtlasKey } from "#app/data/pokeball";
 import * as Utils from "../utils";
 import PokemonData from "../system/pokemon-data";
 import i18next from "i18next";
-import {Button} from "../enums/buttons";
+import { Button } from "../enums/buttons";
 import { BattleType } from "../battle";
 import { TrainerVariant } from "../field/trainer";
 import { Challenges } from "#enums/challenges";
@@ -22,6 +23,8 @@ import * as Modifier from "../modifier/modifier";
 import { Species } from "#enums/species";
 import { PlayerGender } from "#enums/player-gender";
 import { SettingKeyboard } from "#app/system/settings/settings-keyboard";
+import { getBiomeName } from "#app/data/balance/biomes";
+import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 
 /**
  * RunInfoUiMode indicates possible overlays of RunInfoUiHandler.
@@ -34,6 +37,11 @@ enum RunInfoUiMode {
   ENDING_ART
 }
 
+export enum RunDisplayMode {
+  RUN_HISTORY,
+  SESSION_PREVIEW
+}
+
 /**
  * Some variables are protected because this UI class will most likely be extended in the future to display more information.
  * These variables will most likely be shared across 'classes' aka pages.
@@ -41,6 +49,7 @@ enum RunInfoUiMode {
  * For now, I leave as is.
  */
 export default class RunInfoUiHandler extends UiHandler {
+  protected runDisplayMode: RunDisplayMode;
   protected runInfo: SessionSaveData;
   protected isVictory: boolean;
   protected pageMode: RunInfoUiMode;
@@ -66,6 +75,7 @@ export default class RunInfoUiHandler extends UiHandler {
     // The import of the modifiersModule is loaded here to sidestep async/await issues.
     this.modifiersModule = Modifier;
     this.runContainer.setVisible(false);
+    this.scene.loadImage("encounter_exclaim", "mystery-encounters");
  	}
 
   /**
@@ -87,9 +97,15 @@ export default class RunInfoUiHandler extends UiHandler {
     this.runContainer.add(gameStatsBg);
 
     const run = args[0];
+    this.runDisplayMode = args[1];
+    if (this.runDisplayMode === RunDisplayMode.RUN_HISTORY) {
+      this.runInfo = this.scene.gameData.parseSessionData(JSON.stringify(run.entry));
+      this.isVictory = run.isVictory ?? false;
+    } else if (this.runDisplayMode === RunDisplayMode.SESSION_PREVIEW) {
+      this.runInfo = args[0];
+    }
     // Assigning information necessary for the UI's creation
-    this.runInfo = this.scene.gameData.parseSessionData(JSON.stringify(run.entry));
-    this.isVictory = run.isVictory;
+
     this.pageMode = RunInfoUiMode.MAIN;
 
     // Creates Header and adds to this.runContainer
@@ -99,20 +115,24 @@ export default class RunInfoUiHandler extends UiHandler {
 
     // Creates Run Result Container
     this.runResultContainer = this.scene.add.container(0, 24);
-    const runResultWindow = addWindow(this.scene, 0, 0, this.statsBgWidth-11, 65);
+    const runResultWindow = addWindow(this.scene, 0, 0, this.statsBgWidth - 11, 65);
     runResultWindow.setOrigin(0, 0);
     this.runResultContainer.add(runResultWindow);
-    this.parseRunResult();
+    if (this.runDisplayMode === RunDisplayMode.RUN_HISTORY) {
+      this.parseRunResult();
+    } else if (this.runDisplayMode === RunDisplayMode.SESSION_PREVIEW) {
+      this.parseRunStatus();
+    }
 
     // Creates Run Info Container
     this.runInfoContainer = this.scene.add.container(0, 89);
-    const runInfoWindow = addWindow(this.scene, 0, 0, this.statsBgWidth-11, 90);
+    const runInfoWindow = addWindow(this.scene, 0, 0, this.statsBgWidth - 11, 90);
     const runInfoWindowCoords = runInfoWindow.getBottomRight();
     this.runInfoContainer.add(runInfoWindow);
  		this.parseRunInfo(runInfoWindowCoords.x, runInfoWindowCoords.y);
 
     // Creates Player Party Container
-    this.partyContainer = this.scene.add.container(this.statsBgWidth-10, 23);
+    this.partyContainer = this.scene.add.container(this.statsBgWidth - 10, 23);
     this.parsePartyInfo();
     this.showParty(true);
 
@@ -147,7 +167,7 @@ export default class RunInfoUiHandler extends UiHandler {
     if (this.runInfo.modifiers.length !== 0) {
       const headerBgCoords = headerBg.getTopRight();
       const abilityButtonContainer = this.scene.add.container(0, 0);
-      const abilityButtonText = addTextObject(this.scene, 8, 0, i18next.t("runHistory:viewHeldItems"), TextStyle.WINDOW, {fontSize:"34px"});
+      const abilityButtonText = addTextObject(this.scene, 8, 0, i18next.t("runHistory:viewHeldItems"), TextStyle.WINDOW, { fontSize:"34px" });
       const gamepadType = this.getUi().getGamepadType();
       let abilityButtonElement: Phaser.GameObjects.Sprite;
       if (gamepadType === "touch") {
@@ -155,7 +175,7 @@ export default class RunInfoUiHandler extends UiHandler {
       } else {
         abilityButtonElement = new Phaser.GameObjects.Sprite(this.scene, 0, 2, gamepadType, this.scene.inputController?.getIconForLatestInputRecorded(SettingKeyboard.Button_Cycle_Ability));
       }
-      abilityButtonContainer.add([abilityButtonText, abilityButtonElement]);
+      abilityButtonContainer.add([ abilityButtonText, abilityButtonElement ]);
       abilityButtonContainer.setPosition(headerBgCoords.x - abilityButtonText.displayWidth - abilityButtonElement.displayWidth - 8, 10);
       this.runContainer.add(abilityButtonContainer);
     }
@@ -178,12 +198,12 @@ export default class RunInfoUiHandler extends UiHandler {
     const genderStr = PlayerGender[genderIndex];
     const runResultTextStyle = this.isVictory ? TextStyle.PERFECT_IV : TextStyle.SUMMARY_RED;
     const runResultTitle = this.isVictory ? i18next.t("runHistory:victory") : i18next.t("runHistory:defeated", { context: genderStr });
-    const runResultText = addTextObject(this.scene, 6, 5, `${runResultTitle} - ${i18next.t("saveSlotSelectUiHandler:wave")} ${this.runInfo.waveIndex}`, runResultTextStyle, {fontSize : "65px", lineSpacing: 0.1});
+    const runResultText = addTextObject(this.scene, 6, 5, `${runResultTitle} - ${i18next.t("saveSlotSelectUiHandler:wave")} ${this.runInfo.waveIndex}`, runResultTextStyle, { fontSize : "65px", lineSpacing: 0.1 });
 
     if (this.isVictory) {
       const hallofFameInstructionContainer = this.scene.add.container(0, 0);
-      const shinyButtonText = addTextObject(this.scene, 8, 0, i18next.t("runHistory:viewHallOfFame"), TextStyle.WINDOW, {fontSize:"65px"});
-      const formButtonText = addTextObject(this.scene, 8, 12, i18next.t("runHistory:viewEndingSplash"), TextStyle.WINDOW, {fontSize:"65px"});
+      const shinyButtonText = addTextObject(this.scene, 8, 0, i18next.t("runHistory:viewHallOfFame"), TextStyle.WINDOW, { fontSize:"65px" });
+      const formButtonText = addTextObject(this.scene, 8, 12, i18next.t("runHistory:viewEndingSplash"), TextStyle.WINDOW, { fontSize:"65px" });
       const gamepadType = this.getUi().getGamepadType();
       let shinyButtonElement: Phaser.GameObjects.Sprite;
       let formButtonElement: Phaser.GameObjects.Sprite;
@@ -194,9 +214,9 @@ export default class RunInfoUiHandler extends UiHandler {
         shinyButtonElement = new Phaser.GameObjects.Sprite(this.scene, 0, 4, gamepadType, this.scene.inputController?.getIconForLatestInputRecorded(SettingKeyboard.Button_Cycle_Shiny));
         formButtonElement = new Phaser.GameObjects.Sprite(this.scene, 0, 16, gamepadType, this.scene.inputController?.getIconForLatestInputRecorded(SettingKeyboard.Button_Cycle_Form));
       }
-      hallofFameInstructionContainer.add([shinyButtonText, shinyButtonElement]);
+      hallofFameInstructionContainer.add([ shinyButtonText, shinyButtonElement ]);
 
-      hallofFameInstructionContainer.add([formButtonText, formButtonElement]);
+      hallofFameInstructionContainer.add([ formButtonText, formButtonElement ]);
 
       hallofFameInstructionContainer.setPosition(12, 25);
       this.runResultContainer.add(hallofFameInstructionContainer);
@@ -223,6 +243,66 @@ export default class RunInfoUiHandler extends UiHandler {
       }
       this.runResultContainer.add(enemyContainer);
     }
+    this.runContainer.add(this.runResultContainer);
+  }
+
+  /**
+   * This function is used when the Run Info UI is used to preview a Session.
+   * It edits {@linkcode runResultContainer}, but most importantly - does not display the negative results of a Mystery Encounter or any details of a trainer's party.
+   * Trainer Parties are replaced with their sprites, names, and their party size.
+   * Mystery Encounters contain sprites associated with MEs + the title of the specific ME.
+   */
+  private parseRunStatus() {
+    const runStatusText = addTextObject(this.scene, 6, 5, `${i18next.t("saveSlotSelectUiHandler:wave")} ${this.runInfo.waveIndex} - ${getBiomeName(this.runInfo.arena.biome)}`, TextStyle.WINDOW, { fontSize : "65px", lineSpacing: 0.1 });
+
+    const enemyContainer = this.scene.add.container(0, 0);
+    this.runResultContainer.add(enemyContainer);
+    if (this.runInfo.battleType === BattleType.WILD) {
+      if (this.runInfo.enemyParty.length === 1) {
+        this.parseWildSingleDefeat(enemyContainer);
+      } else if (this.runInfo.enemyParty.length === 2) {
+        this.parseWildDoubleDefeat(enemyContainer);
+      }
+    } else if (this.runInfo.battleType === BattleType.TRAINER) {
+      this.showTrainerSprites(enemyContainer);
+      const row_limit = 3;
+      this.runInfo.enemyParty.forEach((p, i) => {
+        const pokeball = this.scene.add.sprite(0, 0, "pb");
+        pokeball.setFrame(getPokeballAtlasKey(p.pokeball));
+        pokeball.setScale(0.5);
+        pokeball.setPosition(52 + ((i % row_limit) * 8), (i <= 2) ? 18 : 25);
+        enemyContainer.add(pokeball);
+      });
+      const trainerObj = this.runInfo.trainer.toTrainer(this.scene);
+      const RIVAL_TRAINER_ID_THRESHOLD = 375;
+      let trainerName = "";
+      if (this.runInfo.trainer.trainerType >= RIVAL_TRAINER_ID_THRESHOLD) {
+        trainerName = (trainerObj.variant === TrainerVariant.FEMALE) ? i18next.t("trainerNames:rival_female") : i18next.t("trainerNames:rival");
+      } else {
+        trainerName = trainerObj.getName(0, true);
+      }
+      const boxString = i18next.t(trainerObj.variant !== TrainerVariant.DOUBLE ? "battle:trainerAppeared" : "battle:trainerAppearedDouble", { trainerName: trainerName }).replace(/\n/g, " ");
+      const descContainer = this.scene.add.container(0, 0);
+      const textBox = addTextObject(this.scene, 0, 0, boxString, TextStyle.WINDOW, { fontSize : "35px", wordWrap: { width: 200 }});
+      descContainer.add(textBox);
+      descContainer.setPosition(52, 29);
+      this.runResultContainer.add(descContainer);
+    } else if (this.runInfo.battleType === BattleType.MYSTERY_ENCOUNTER) {
+      const encounterExclaim = this.scene.add.sprite(0, 0, "encounter_exclaim");
+      encounterExclaim.setPosition(34, 26);
+      encounterExclaim.setScale(0.65);
+      const subSprite = this.scene.add.sprite(56, -106, "pkmn__sub");
+      subSprite.setScale(0.65);
+      subSprite.setPosition(34, 46);
+      const mysteryEncounterTitle = i18next.t(this.scene.getMysteryEncounter(this.runInfo.mysteryEncounterType as MysteryEncounterType, true).localizationKey + ":title");
+      const descContainer = this.scene.add.container(0, 0);
+      const textBox = addTextObject(this.scene, 0, 0, mysteryEncounterTitle, TextStyle.WINDOW, { fontSize : "45px", wordWrap: { width: 160 }});
+      descContainer.add(textBox);
+      descContainer.setPosition(47, 37);
+      this.runResultContainer.add([ encounterExclaim, subSprite, descContainer ]);
+    }
+
+    this.runResultContainer.add(runStatusText);
     this.runContainer.add(this.runResultContainer);
   }
 
@@ -270,7 +350,7 @@ export default class RunInfoUiHandler extends UiHandler {
       enemyLevel.setOrigin(1, 0);
       enemyIconContainer.add(enemyIcon);
       enemyIconContainer.add(enemyLevel);
-      enemyIconContainer.setPosition(e*35, 0);
+      enemyIconContainer.setPosition(e * 35, 0);
       enemyContainer.add(enemyIconContainer);
       enemy.destroy();
     });
@@ -278,40 +358,58 @@ export default class RunInfoUiHandler extends UiHandler {
   }
 
   /**
-   * This edits a container to represent a loss from a defeat by a trainer battle.
-   * @param enemyContainer - container holding enemy visuals and level information
-   * The trainers are placed to the left of their party.
-   * Depending on the trainer icon, there may be overlap between the edges of the box or their party. (Capes...)
-   *
-   * Party Pokemon have their icons, terastalization status, and level shown.
+   * This loads the enemy sprites, positions, and scales them according to the current display mode of the RunInfo UI and then adds them to the container parameter.
+   * Used by {@linkcode parseRunStatus} and {@linkcode parseTrainerDefeat}
+   * @param enemyContainer a Phaser Container that should hold enemy sprites
    */
-  private parseTrainerDefeat(enemyContainer: Phaser.GameObjects.Container) {
+  private showTrainerSprites(enemyContainer: Phaser.GameObjects.Container) {
     // Creating the trainer sprite and adding it to enemyContainer
     const tObj = this.runInfo.trainer.toTrainer(this.scene);
-
     // Loads trainer assets on demand, as they are not loaded by default in the scene
     tObj.config.loadAssets(this.scene, this.runInfo.trainer.variant).then(() => {
       const tObjSpriteKey = tObj.config.getSpriteKey(this.runInfo.trainer.variant === TrainerVariant.FEMALE, false);
       const tObjSprite = this.scene.add.sprite(0, 5, tObjSpriteKey);
-      if (this.runInfo.trainer.variant === TrainerVariant.DOUBLE) {
+      if (this.runInfo.trainer.variant === TrainerVariant.DOUBLE && !tObj.config.doubleOnly) {
         const doubleContainer = this.scene.add.container(5, 8);
         tObjSprite.setPosition(-3, -3);
         const tObjPartnerSpriteKey = tObj.config.getSpriteKey(true, true);
         const tObjPartnerSprite = this.scene.add.sprite(5, -3, tObjPartnerSpriteKey);
         // Double Trainers have smaller sprites than Single Trainers
-        tObjPartnerSprite.setScale(0.20);
-        tObjSprite.setScale(0.20);
-        doubleContainer.add(tObjSprite);
-        doubleContainer.add(tObjPartnerSprite);
-        doubleContainer.setPosition(12, 38);
+        if (this.runDisplayMode === RunDisplayMode.RUN_HISTORY) {
+          tObjPartnerSprite.setScale(0.20);
+          tObjSprite.setScale(0.20);
+          doubleContainer.add(tObjSprite);
+          doubleContainer.add(tObjPartnerSprite);
+          doubleContainer.setPosition(12, 38);
+        } else {
+          tObjSprite.setScale(0.55);
+          tObjSprite.setPosition(-9, -3);
+          tObjPartnerSprite.setScale(0.55);
+          doubleContainer.add([ tObjSprite, tObjPartnerSprite ]);
+          doubleContainer.setPosition(28, 40);
+        }
         enemyContainer.add(doubleContainer);
       } else {
-        tObjSprite.setScale(0.35, 0.35);
-        tObjSprite.setPosition(12, 28);
+        const scale = (this.runDisplayMode === RunDisplayMode.RUN_HISTORY) ? 0.35 : 0.65;
+        const position = (this.runDisplayMode === RunDisplayMode.RUN_HISTORY) ? [ 12, 28 ] : [ 32, 36 ];
+        tObjSprite.setScale(scale, scale);
+        tObjSprite.setPosition(position[0], position[1]);
         enemyContainer.add(tObjSprite);
       }
     });
+  }
 
+  /**
+   * This edits a container to represent a loss from a defeat by a trainer battle.
+   * The trainers are placed to the left of their party.
+   * Depending on the trainer icon, there may be overlap between the edges of the box or their party. (Capes...)
+   *
+   * Party Pokemon have their icons, terastalization status, and level shown.
+   * @param enemyContainer - container holding enemy visuals and level information
+   */
+  private parseTrainerDefeat(enemyContainer: Phaser.GameObjects.Container) {
+    // Loads and adds trainer sprites to the UI
+    this.showTrainerSprites(enemyContainer);
     // Determining which Terastallize Modifier belongs to which Pokemon
     // Creates a dictionary {PokemonId: TeraShardType}
     const teraPokemon = {};
@@ -328,7 +426,7 @@ export default class RunInfoUiHandler extends UiHandler {
     // 2 Rows x 3 Columns
     const enemyPartyContainer = this.scene.add.container(0, 0);
     this.runInfo.enemyParty.forEach((enemyData, e) => {
-      const pokemonRowHeight = Math.floor(e/3);
+      const pokemonRowHeight = Math.floor(e / 3);
       const enemyIconContainer = this.scene.add.container(0, 0);
       enemyIconContainer.setScale(0.6);
       const isBoss = enemyData.boss;
@@ -348,8 +446,8 @@ export default class RunInfoUiHandler extends UiHandler {
           enemySprite2.setTint(teraColor.color);
         }
       }
-      enemyIcon.setPosition(39*(e%3)+5, (35*pokemonRowHeight));
-      const enemyLevel = addTextObject(this.scene, 43*(e%3), (27*(pokemonRowHeight+1)), `${i18next.t("saveSlotSelectUiHandler:lv")}${Utils.formatLargeNumber(enemy.level, 1000)}`, isBoss ? TextStyle.PARTY_RED : TextStyle.PARTY, { fontSize: "54px" });
+      enemyIcon.setPosition(39 * (e % 3) + 5, (35 * pokemonRowHeight));
+      const enemyLevel = addTextObject(this.scene, 43 * (e % 3), (27 * (pokemonRowHeight + 1)), `${i18next.t("saveSlotSelectUiHandler:lv")}${Utils.formatLargeNumber(enemy.level, 1000)}`, isBoss ? TextStyle.PARTY_RED : TextStyle.PARTY, { fontSize: "54px" });
       enemyLevel.setShadow(0, 0, undefined);
       enemyLevel.setStroke("#424242", 14);
       enemyLevel.setOrigin(0, 0);
@@ -372,9 +470,9 @@ export default class RunInfoUiHandler extends UiHandler {
   private async parseRunInfo(windowX: number, windowY: number) {
     // Parsing and displaying the mode.
     // In the future, parsing Challenges + Challenge Rules may have to be reworked as PokeRogue adds additional challenges and users can stack these challenges in various ways.
-    const modeText = addBBCodeTextObject(this.scene, 7, 0, "", TextStyle.WINDOW, {fontSize : "50px", lineSpacing:3});
+    const modeText = addBBCodeTextObject(this.scene, 7, 0, "", TextStyle.WINDOW, { fontSize : "50px", lineSpacing:3 });
     modeText.setPosition(7, 5);
-    modeText.appendText(i18next.t("runHistory:mode")+": ", false);
+    modeText.appendText(i18next.t("runHistory:mode") + ": ", false);
     switch (this.runInfo.gameMode) {
     case GameModes.DAILY:
       modeText.appendText(`${i18next.t("gameMode:dailyRun")}`, false);
@@ -415,25 +513,25 @@ export default class RunInfoUiHandler extends UiHandler {
     const runInfoTextContainer = this.scene.add.container(0, 0);
     // Japanese is set to a greater line spacing of 35px in addBBCodeTextObject() if lineSpacing < 12.
     const lineSpacing = (i18next.resolvedLanguage === "ja") ? 12 : 3;
-    const runInfoText = addBBCodeTextObject(this.scene, 7, 0, "", TextStyle.WINDOW, {fontSize: "50px", lineSpacing: lineSpacing});
+    const runInfoText = addBBCodeTextObject(this.scene, 7, 0, "", TextStyle.WINDOW, { fontSize: "50px", lineSpacing: lineSpacing });
     const runTime = Utils.getPlayTimeString(this.runInfo.playTime);
     runInfoText.appendText(`${i18next.t("runHistory:runLength")}: ${runTime}`, false);
     const runMoney = Utils.formatMoney(this.scene.moneyFormat, this.runInfo.money);
-    runInfoText.appendText(`[color=${getTextColor(TextStyle.MONEY)}]${i18next.t("battleScene:moneyOwned", {formattedMoney : runMoney})}[/color]`);
+    runInfoText.appendText(`[color=${getTextColor(TextStyle.MONEY)}]${i18next.t("battleScene:moneyOwned", { formattedMoney : runMoney })}[/color]`);
     runInfoText.setPosition(7, 70);
     runInfoTextContainer.add(runInfoText);
     // Luck
     // Uses the parameters windowX and windowY to dynamically position the luck value neatly into the bottom right corner
-    const luckText = addBBCodeTextObject(this.scene, 0, 0, "", TextStyle.WINDOW, {fontSize: "55px"});
+    const luckText = addBBCodeTextObject(this.scene, 0, 0, "", TextStyle.WINDOW, { fontSize: "55px" });
     const luckValue = Phaser.Math.Clamp(this.runInfo.party.map(p => p.toPokemon(this.scene).getLuck()).reduce((total: integer, value: integer) => total += value, 0), 0, 14);
-    let luckInfo = i18next.t("runHistory:luck")+": "+getLuckString(luckValue);
+    let luckInfo = i18next.t("runHistory:luck") + ": " + getLuckString(luckValue);
     if (luckValue < 14) {
-      luckInfo = "[color=#"+(getLuckTextTint(luckValue)).toString(16)+"]"+luckInfo+"[/color]";
+      luckInfo = "[color=#" + (getLuckTextTint(luckValue)).toString(16) + "]" + luckInfo + "[/color]";
     } else {
       luckText.setTint(0xffef5c, 0x47ff69, 0x6b6bff, 0xff6969);
     }
-    luckText.appendText("[align=right]"+luckInfo+"[/align]", false);
-    luckText.setPosition(windowX-luckText.displayWidth-5, windowY-13);
+    luckText.appendText("[align=right]" + luckInfo + "[/align]", false);
+    luckText.setPosition(windowX - luckText.displayWidth - 5, windowY - 13);
     runInfoTextContainer.add(luckText);
 
     // Player Held Items
@@ -450,8 +548,8 @@ export default class RunInfoUiHandler extends UiHandler {
         }
         const icon = modifier?.getIcon(this.scene, false);
         if (icon) {
-          const rowHeightModifier = Math.floor(visibleModifierIndex/7);
-          icon.setPosition(24 * (visibleModifierIndex%7), 20 + (35 * rowHeightModifier));
+          const rowHeightModifier = Math.floor(visibleModifierIndex / 7);
+          icon.setPosition(24 * (visibleModifierIndex % 7), 20 + (35 * rowHeightModifier));
           modifierIconsContainer.add(icon);
         }
 
@@ -483,18 +581,18 @@ export default class RunInfoUiHandler extends UiHandler {
           rules.push(i18next.t(`runHistory:challengeMonoGen${this.runInfo.challenges[i].value}`));
           break;
         case Challenges.SINGLE_TYPE:
-          const typeRule = Type[this.runInfo.challenges[i].value-1];
+          const typeRule = Type[this.runInfo.challenges[i].value - 1];
           const typeTextColor = `[color=${TypeColor[typeRule]}]`;
           const typeShadowColor = `[shadow=${TypeShadow[typeRule]}]`;
-          const typeText = typeTextColor + typeShadowColor + i18next.t(`pokemonInfo:Type.${typeRule}`)!+"[/color]"+"[/shadow]";
+          const typeText = typeTextColor + typeShadowColor + i18next.t(`pokemonInfo:Type.${typeRule}`)! + "[/color]" + "[/shadow]";
           rules.push(typeText);
           break;
-        case Challenges.FRESH_START:
-          rules.push(i18next.t("challenges:freshStart.name"));
-          break;
         case Challenges.INVERSE_BATTLE:
-          //
           rules.push(i18next.t("challenges:inverseBattle.shortName"));
+          break;
+        default:
+          const localisationKey = Challenges[this.runInfo.challenges[i].id].split("_").map((f, i) => i ? `${f[0]}${f.slice(1).toLowerCase()}` : f.toLowerCase()).join("");
+          rules.push(i18next.t(`challenges:${localisationKey}.name`));
           break;
         }
       }
@@ -510,13 +608,13 @@ export default class RunInfoUiHandler extends UiHandler {
  	private parsePartyInfo(): void {
     const party = this.runInfo.party;
     const currentLanguage = i18next.resolvedLanguage ?? "en";
- 		const windowHeight = ((this.scene.game.canvas.height / 6) - 23)/6;
+ 		const windowHeight = ((this.scene.game.canvas.height / 6) - 23) / 6;
 
  		party.forEach((p: PokemonData, i: integer) => {
-      const pokemonInfoWindow = new RoundRectangle(this.scene, 0, 14, (this.statsBgWidth*2)+10, windowHeight-2, 3);
+      const pokemonInfoWindow = new RoundRectangle(this.scene, 0, 14, (this.statsBgWidth * 2) + 10, windowHeight - 2, 3);
 
  			const pokemon = p.toPokemon(this.scene);
- 			const pokemonInfoContainer = this.scene.add.container(this.statsBgWidth+5, (windowHeight-0.5)*i);
+ 			const pokemonInfoContainer = this.scene.add.container(this.statsBgWidth + 5, (windowHeight - 0.5) * i);
 
  			const types = pokemon.getTypes();
  			const type1 = getTypeRgb(types[0]);
@@ -544,18 +642,18 @@ export default class RunInfoUiHandler extends UiHandler {
       const pName = pokemon.getNameToRender();
       //With the exception of Korean/Traditional Chinese/Simplified Chinese, the code shortens the terms for ability and passive to their first letter.
       //These languages are exempted because they are already short enough.
-      const exemptedLanguages = ["ko", "zh_CN", "zh_TW"];
+      const exemptedLanguages = [ "ko", "zh_CN", "zh_TW" ];
       let passiveLabel = i18next.t("starterSelectUiHandler:passive") ?? "-";
       let abilityLabel = i18next.t("starterSelectUiHandler:ability") ?? "-";
       if (!exemptedLanguages.includes(currentLanguage)) {
         passiveLabel = passiveLabel.charAt(0);
         abilityLabel = abilityLabel.charAt(0);
       }
-      const pPassiveInfo = pokemon.passive ? passiveLabel+": "+pokemon.getPassiveAbility().name : "";
+      const pPassiveInfo = pokemon.passive ? passiveLabel + ": " + pokemon.getPassiveAbility().name : "";
       const pAbilityInfo = abilityLabel + ": " + pokemon.getAbility().name;
       // Japanese is set to a greater line spacing of 35px in addBBCodeTextObject() if lineSpacing < 12.
       const lineSpacing = (i18next.resolvedLanguage === "ja") ? 12 : 3;
-      const pokeInfoText = addBBCodeTextObject(this.scene, 0, 0, pName, TextStyle.SUMMARY, {fontSize: textContainerFontSize, lineSpacing: lineSpacing});
+      const pokeInfoText = addBBCodeTextObject(this.scene, 0, 0, pName, TextStyle.SUMMARY, { fontSize: textContainerFontSize, lineSpacing: lineSpacing });
       pokeInfoText.appendText(`${i18next.t("saveSlotSelectUiHandler:lv")}${Utils.formatFancyLargeNumber(pokemon.level, 1)} - ${pNatureName}`);
       pokeInfoText.appendText(pAbilityInfo);
       pokeInfoText.appendText(pPassiveInfo);
@@ -564,27 +662,27 @@ export default class RunInfoUiHandler extends UiHandler {
       // Pokemon Stats
       // Colored Arrows (Red/Blue) are placed by stats that are boosted from natures
       const pokeStatTextContainer = this.scene.add.container(-35, 6);
-      const pStats : string[]= [];
+      const pStats : string[] = [];
       pokemon.stats.forEach((element) => pStats.push(Utils.formatFancyLargeNumber(element, 1)));
       for (let i = 0; i < pStats.length; i++) {
         const isMult = getNatureStatMultiplier(pNature, i);
         pStats[i] = (isMult < 1) ? pStats[i] + "[color=#40c8f8]↓[/color]" : pStats[i];
         pStats[i] = (isMult > 1) ? pStats[i] + "[color=#f89890]↑[/color]" : pStats[i];
       }
-      const hp = i18next.t("pokemonInfo:Stat.HPshortened")+": "+pStats[0];
-      const atk = i18next.t("pokemonInfo:Stat.ATKshortened")+": "+pStats[1];
-      const def = i18next.t("pokemonInfo:Stat.DEFshortened")+": "+pStats[2];
-      const spatk = i18next.t("pokemonInfo:Stat.SPATKshortened")+": "+pStats[3];
-      const spdef = i18next.t("pokemonInfo:Stat.SPDEFshortened")+": "+pStats[4];
-      const speedLabel = (currentLanguage==="es"||currentLanguage==="pt_BR") ? i18next.t("runHistory:SPDshortened") : i18next.t("pokemonInfo:Stat.SPDshortened");
-      const speed = speedLabel+": "+pStats[5];
+      const hp = i18next.t("pokemonInfo:Stat.HPshortened") + ": " + pStats[0];
+      const atk = i18next.t("pokemonInfo:Stat.ATKshortened") + ": " + pStats[1];
+      const def = i18next.t("pokemonInfo:Stat.DEFshortened") + ": " + pStats[2];
+      const spatk = i18next.t("pokemonInfo:Stat.SPATKshortened") + ": " + pStats[3];
+      const spdef = i18next.t("pokemonInfo:Stat.SPDEFshortened") + ": " + pStats[4];
+      const speedLabel = (currentLanguage === "es" || currentLanguage === "pt_BR") ? i18next.t("runHistory:SPDshortened") : i18next.t("pokemonInfo:Stat.SPDshortened");
+      const speed = speedLabel + ": " + pStats[5];
       // Column 1: HP Atk Def
-      const pokeStatText1 = addBBCodeTextObject(this.scene, -5, 0, hp, TextStyle.SUMMARY, {fontSize: textContainerFontSize, lineSpacing: lineSpacing});
+      const pokeStatText1 = addBBCodeTextObject(this.scene, -5, 0, hp, TextStyle.SUMMARY, { fontSize: textContainerFontSize, lineSpacing: lineSpacing });
       pokeStatText1.appendText(atk);
       pokeStatText1.appendText(def);
       pokeStatTextContainer.add(pokeStatText1);
       // Column 2: SpAtk SpDef Speed
-      const pokeStatText2 = addBBCodeTextObject(this.scene, 25, 0, spatk, TextStyle.SUMMARY, {fontSize: textContainerFontSize, lineSpacing: lineSpacing});
+      const pokeStatText2 = addBBCodeTextObject(this.scene, 25, 0, spatk, TextStyle.SUMMARY, { fontSize: textContainerFontSize, lineSpacing: lineSpacing });
       pokeStatText2.appendText(spdef);
       pokeStatText2.appendText(speed);
       pokeStatTextContainer.add(pokeStatText2);
@@ -612,7 +710,7 @@ export default class RunInfoUiHandler extends UiHandler {
           const fusionShinyStar = this.scene.add.image(0, 0, "shiny_star_small_2");
           fusionShinyStar.setOrigin(0, 0);
           fusionShinyStar.setScale(0.5);
-          fusionShinyStar.setPosition(shinyStar.x+1, shinyStar.y+1);
+          fusionShinyStar.setPosition(shinyStar.x + 1, shinyStar.y + 1);
           fusionShinyStar.setTint(getVariantTint(pokemon.fusionVariant));
           marksContainer.add(fusionShinyStar);
           this.getUi().bringToTop(fusionShinyStar);
@@ -625,7 +723,7 @@ export default class RunInfoUiHandler extends UiHandler {
       const movesetContainer = this.scene.add.container(70, -29);
       const pokemonMoveBgs : Phaser.GameObjects.NineSlice[] = [];
       const pokemonMoveLabels : Phaser.GameObjects.Text[] = [];
-      const movePos = [[-6.5, 35.5], [37, 35.5], [-6.5, 43.5], [37, 43.5]];
+      const movePos = [[ -6.5, 35.5 ], [ 37, 35.5 ], [ -6.5, 43.5 ], [ 37, 43.5 ]];
       for (let m = 0; m < pokemonMoveset?.length; m++) {
       	const moveContainer = this.scene.add.container(movePos[m][0], movePos[m][1]);
         moveContainer.setScale(0.5);
@@ -660,7 +758,7 @@ export default class RunInfoUiHandler extends UiHandler {
         if (heldItemsList.length > 0) {
           (heldItemsList as Modifier.PokemonHeldItemModifier[]).sort(Modifier.modifierSortFunc);
           let row = 0;
-          for (const [index, item] of heldItemsList.entries()) {
+          for (const [ index, item ] of heldItemsList.entries()) {
             if ( index > 36 ) {
               const overflowIcon = addTextObject(this.scene, 182, 4, "+", TextStyle.WINDOW);
               heldItemsContainer.add(overflowIcon);
@@ -671,7 +769,7 @@ export default class RunInfoUiHandler extends UiHandler {
               itemIcon.list[1].clearTint();
             }
             itemIcon.setScale(heldItemsScale);
-            itemIcon.setPosition((index%19) * 10, row * 10);
+            itemIcon.setPosition((index % 19) * 10, row * 10);
             heldItemsContainer.add(itemIcon);
             if (index !== 0 && index % 18 === 0) {
               row++;
@@ -754,15 +852,15 @@ export default class RunInfoUiHandler extends UiHandler {
     endCard.setScale(0.5);
     const endCardCoords = endCard.getBottomCenter();
     const overlayColor = isFemale ? "red" : "blue";
-    const hallofFameBg = this.scene.add.image(0, 0, "hall_of_fame_"+overlayColor);
+    const hallofFameBg = this.scene.add.image(0, 0, "hall_of_fame_" + overlayColor);
     hallofFameBg.setPosition(159, 89);
-    hallofFameBg.setSize(this.scene.game.canvas.width, this.scene.game.canvas.height+10);
+    hallofFameBg.setSize(this.scene.game.canvas.width, this.scene.game.canvas.height + 10);
     hallofFameBg.setAlpha(0.8);
     this.hallofFameContainer.add(endCard);
     this.hallofFameContainer.add(hallofFameBg);
 
     const hallofFameText = addTextObject(this.scene, 0, 0, i18next.t("runHistory:hallofFameText", { context: genderStr }), TextStyle.WINDOW);
-    hallofFameText.setPosition(endCardCoords.x-(hallofFameText.displayWidth/2), 164);
+    hallofFameText.setPosition(endCardCoords.x - (hallofFameText.displayWidth / 2), 164);
     this.hallofFameContainer.add(hallofFameText);
     this.runInfo.party.forEach((p, i) => {
       const pkmn = p.toPokemon(this.scene);

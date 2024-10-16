@@ -42,6 +42,9 @@ export default class EggSummaryUiHandler extends MessageUiHandler {
   private scrollGridHandler : ScrollableGridUiHandler;
   private cursorObj: Phaser.GameObjects.Image;
 
+  /** used to add a delay before which it is not possible to exit the summary */
+  private blockExit: boolean;
+
   /**
    * Allows subscribers to listen for events
    *
@@ -99,8 +102,9 @@ export default class EggSummaryUiHandler extends MessageUiHandler {
 
   clear() {
     super.clear();
-    this.cursor = -1;
     this.scrollGridHandler.reset();
+    this.cursor = -1;
+
     this.summaryContainer.setVisible(false);
     this.pokemonIconsContainer.removeAll(true);
     this.pokemonContainers = [];
@@ -164,9 +168,16 @@ export default class EggSummaryUiHandler extends MessageUiHandler {
 
     this.scrollGridHandler.setTotalElements(this.eggHatchData.length);
     this.updatePokemonIcons();
-
     this.setCursor(0);
+
     this.scene.playSoundWithoutBgm("evolution_fanfare");
+
+    // Prevent exiting the egg summary for 2 seconds if the egg hatching
+    // was skipped automatically and for 1 second otherwise
+    const exitBlockingDuration = (this.scene.eggSkipPreference === 2) ? 2000 : 1000;
+    this.blockExit = true;
+    this.scene.time.delayedCall(exitBlockingDuration, () => this.blockExit = false);
+
     return true;
   }
 
@@ -202,13 +213,17 @@ export default class EggSummaryUiHandler extends MessageUiHandler {
     const ui = this.getUi();
 
     let success = false;
-    const error = false;
+    let error = false;
     if (button === Button.CANCEL) {
-      const phase = this.scene.getCurrentPhase();
-      if (phase instanceof EggSummaryPhase) {
-        phase.end();
+      if (!this.blockExit) {
+        const phase = this.scene.getCurrentPhase();
+        if (phase instanceof EggSummaryPhase) {
+          phase.end();
+        }
+        success = true;
+      } else {
+        error = true;
       }
-      success = true;
     } else {
       this.scrollGridHandler.processInput(button);
     }

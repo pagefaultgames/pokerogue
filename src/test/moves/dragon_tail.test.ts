@@ -24,7 +24,7 @@ describe("Moves - Dragon Tail", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override.battleType("single")
-      .moveset([Moves.DRAGON_TAIL, Moves.SPLASH, Moves.FLAMETHROWER])
+      .moveset([ Moves.DRAGON_TAIL, Moves.SPLASH, Moves.FLAMETHROWER ])
       .enemySpecies(Species.WAILORD)
       .enemyMoveset(Moves.SPLASH)
       .startingLevel(5)
@@ -34,7 +34,7 @@ describe("Moves - Dragon Tail", () => {
   });
 
   it("should cause opponent to flee, and not crash", async () => {
-    await game.classicMode.startBattle([Species.DRATINI]);
+    await game.classicMode.startBattle([ Species.DRATINI ]);
 
     const enemyPokemon = game.scene.getEnemyPokemon()!;
 
@@ -52,7 +52,7 @@ describe("Moves - Dragon Tail", () => {
 
   it("should cause opponent to flee, display ability, and not crash", async () => {
     game.override.enemyAbility(Abilities.ROUGH_SKIN);
-    await game.classicMode.startBattle([Species.DRATINI]);
+    await game.classicMode.startBattle([ Species.DRATINI ]);
 
     const leadPokemon = game.scene.getPlayerPokemon()!;
     const enemyPokemon = game.scene.getEnemyPokemon()!;
@@ -71,7 +71,7 @@ describe("Moves - Dragon Tail", () => {
     game.override
       .battleType("double").enemyMoveset(Moves.SPLASH)
       .enemyAbility(Abilities.ROUGH_SKIN);
-    await game.classicMode.startBattle([Species.DRATINI, Species.DRATINI, Species.WAILORD, Species.WAILORD]);
+    await game.classicMode.startBattle([ Species.DRATINI, Species.DRATINI, Species.WAILORD, Species.WAILORD ]);
 
     const leadPokemon = game.scene.getParty()[0]!;
 
@@ -103,7 +103,7 @@ describe("Moves - Dragon Tail", () => {
       .battleType("double")
       .enemyMoveset(Moves.SPLASH)
       .enemyAbility(Abilities.ROUGH_SKIN);
-    await game.classicMode.startBattle([Species.DRATINI, Species.DRATINI, Species.WAILORD, Species.WAILORD]);
+    await game.classicMode.startBattle([ Species.DRATINI, Species.DRATINI, Species.WAILORD, Species.WAILORD ]);
 
     const leadPokemon = game.scene.getParty()[0]!;
     const secPokemon = game.scene.getParty()[1]!;
@@ -130,7 +130,7 @@ describe("Moves - Dragon Tail", () => {
 
   it("doesn't switch out if the target has suction cups", async () => {
     game.override.enemyAbility(Abilities.SUCTION_CUPS);
-    await game.classicMode.startBattle([Species.REGIELEKI]);
+    await game.classicMode.startBattle([ Species.REGIELEKI ]);
 
     const enemy = game.scene.getEnemyPokemon()!;
 
@@ -138,5 +138,59 @@ describe("Moves - Dragon Tail", () => {
     await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(enemy.isFullHp()).toBe(false);
+  });
+
+  it("should force a switch upon fainting an opponent normally", async () => {
+    game.override.startingWave(5)
+      .startingLevel(1000); // To make sure Dragon Tail KO's the opponent
+    await game.classicMode.startBattle([ Species.DRATINI ]);
+
+    game.move.select(Moves.DRAGON_TAIL);
+
+    await game.toNextTurn();
+
+    // Make sure the enemy switched to a healthy Pokemon
+    const enemy = game.scene.getEnemyPokemon()!;
+    expect(enemy).toBeDefined();
+    expect(enemy.isFullHp()).toBe(true);
+
+    // Make sure the enemy has a fainted Pokemon in their party and not on the field
+    const faintedEnemy = game.scene.getEnemyParty().find(p => !p.isAllowedInBattle());
+    expect(faintedEnemy).toBeDefined();
+    expect(game.scene.getEnemyField().length).toBe(1);
+  });
+
+  it("should not cause a softlock when activating an opponent trainer's reviver seed", async () => {
+    game.override.startingWave(5)
+      .enemyHeldItems([{ name: "REVIVER_SEED" }])
+      .startingLevel(1000); // To make sure Dragon Tail KO's the opponent
+    await game.classicMode.startBattle([ Species.DRATINI ]);
+
+    game.move.select(Moves.DRAGON_TAIL);
+
+    await game.toNextTurn();
+
+    // Make sure the enemy field is not empty and has a revived Pokemon
+    const enemy = game.scene.getEnemyPokemon()!;
+    expect(enemy).toBeDefined();
+    expect(enemy.hp).toBe(Math.floor(enemy.getMaxHp() / 2));
+    expect(game.scene.getEnemyField().length).toBe(1);
+  });
+
+  it("should not cause a softlock when activating a player's reviver seed", async () => {
+    game.override.startingHeldItems([{ name: "REVIVER_SEED" }])
+      .enemyMoveset(Moves.DRAGON_TAIL)
+      .enemyLevel(1000); // To make sure Dragon Tail KO's the player
+    await game.classicMode.startBattle([ Species.DRATINI, Species.BULBASAUR ]);
+
+    game.move.select(Moves.SPLASH);
+
+    await game.toNextTurn();
+
+    // Make sure the player's field is not empty and has a revived Pokemon
+    const dratini = game.scene.getPlayerPokemon()!;
+    expect(dratini).toBeDefined();
+    expect(dratini.hp).toBe(Math.floor(dratini.getMaxHp() / 2));
+    expect(game.scene.getPlayerField().length).toBe(1);
   });
 });
