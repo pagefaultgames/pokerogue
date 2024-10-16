@@ -35,6 +35,7 @@ import { getEncounterText } from "#app/data/mystery-encounters/utils/encounter-d
 import { MysteryEncounterPhase } from "#app/phases/mystery-encounter-phases";
 import { getGoldenBugNetSpecies } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
 import { Biome } from "#enums/biome";
+import { BattlerTagType } from "#enums/battler-tag-type";
 
 export class EncounterPhase extends BattlePhase {
   private loaded: boolean;
@@ -474,6 +475,7 @@ export class EncounterPhase extends BattlePhase {
         }
       } else {
         if (availablePartyMembers.length > 1 && availablePartyMembers[1].isOnField()) {
+          this.scene.getPlayerField().forEach((pokemon) => pokemon.lapseTag(BattlerTagType.COMMANDER));
           this.scene.pushPhase(new ReturnPhase(this.scene, 1));
         }
         this.scene.pushPhase(new ToggleDoublePositionPhase(this.scene, false));

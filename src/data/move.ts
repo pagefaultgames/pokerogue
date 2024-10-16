@@ -5478,11 +5478,13 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
       return false;
     }
 
-    /**
-     * Move the switch out logic inside the conditional block
-     * This ensures that the switch out only happens when the conditions are met
-     */
+    /** The {@linkcode Pokemon} to be switched out with this effect */
     const switchOutTarget = this.selfSwitch ? user : target;
+
+    // If the switch-out target is a Dondozo with a Tatsugiri in its mouth
+    // (e.g. when it uses Flip Turn), make it spit out the Tatsugiri before switching out.
+    switchOutTarget.lapseTag(BattlerTagType.COMMANDER);
+
     if (switchOutTarget instanceof PlayerPokemon) {
       // Switch out logic for the player's Pokemon
       if (switchOutTarget.scene.getParty().filter((p) => p.isAllowedInBattle() && !p.isOnField()).length < 1) {
@@ -5555,6 +5557,12 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
 
       if (!this.selfSwitch) {
         if (move.hitsSubstitute(user, target)) {
+          return false;
+        }
+
+        // Dondozo with an allied Tatsugiri in its mouth cannot be forced out
+        const commanderTag = switchOutTarget.getTag(BattlerTagType.COMMANDER);
+        if (commanderTag?.getSourcePokemon(switchOutTarget.scene)?.isActive(true)) {
           return false;
         }
 

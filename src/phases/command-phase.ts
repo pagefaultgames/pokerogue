@@ -47,6 +47,11 @@ export class CommandPhase extends FieldPhase {
       return this.end();
     }
 
+    // If the Pokemon has applied Commander's effects to its ally, skip this command
+    if (this.scene.currentBattle?.double && this.getPokemon().getAlly()?.getTag(BattlerTagType.COMMANDER)?.getSourcePokemon(this.scene) === this.getPokemon()) {
+      return this.end();
+    }
+
     const playerPokemon = this.scene.getPlayerField()[this.fieldIndex];
 
     const moveQueue = playerPokemon.getMoveQueue();
@@ -81,7 +86,7 @@ export class CommandPhase extends FieldPhase {
 
   handleCommand(command: Command, cursor: integer, ...args: any[]): boolean {
     const playerPokemon = this.scene.getPlayerField()[this.fieldIndex];
-    let success: boolean;
+    let success: boolean = false;
 
     switch (command) {
     case Command.FIGHT:
@@ -220,11 +225,8 @@ export class CommandPhase extends FieldPhase {
         } else {
           const trapTag = playerPokemon.getTag(TrappedTag);
 
-          // trapTag should be defined at this point, but just in case...
           if (!trapTag) {
-            currentBattle.turnCommands[this.fieldIndex] = isSwitch
-              ? { command: Command.POKEMON, cursor: cursor, args: args }
-              : { command: Command.RUN };
+            i18next.t(`battle:noEscape${isSwitch ? "Switch" : "Flee"}`);
             break;
           }
 
@@ -250,11 +252,11 @@ export class CommandPhase extends FieldPhase {
       break;
     }
 
-    if (success!) { // TODO: is the bang correct?
+    if (success) {
       this.end();
     }
 
-    return success!; // TODO: is the bang correct?
+    return success;
   }
 
   cancel() {

@@ -29,6 +29,7 @@ import { PokemonHealPhase } from "#app/phases/pokemon-heal-phase";
 import { ShowAbilityPhase } from "#app/phases/show-ability-phase";
 import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
 import BattleScene from "#app/battle-scene";
+import { PokemonAnimType } from "#enums/pokemon-anim-type";
 
 export class Ability implements Localizable {
   public id: Abilities;
@@ -2531,6 +2532,36 @@ export class PostSummonFormChangeByWeatherAbAttr extends PostSummonAbAttr {
       pokemon.scene.triggerPokemonFormChange(pokemon, SpeciesFormChangeWeatherTrigger);
       pokemon.scene.triggerPokemonFormChange(pokemon, SpeciesFormChangeRevertWeatherFormTrigger);
       queueShowAbility(pokemon, passive);
+      return true;
+    }
+    return false;
+  }
+}
+
+/**
+ * Attribute implementing the effects of {@link https://bulbapedia.bulbagarden.net/wiki/Commander_(Ability) | Commander}.
+ * When the source of an ability with this attribute detects a Dondozo as their active ally, the source "jumps
+ * into the Dondozo's mouth," sharply boosting the Dondozo's stats, cancelling
+ */
+export class CommanderAbAttr extends AbAttr {
+  constructor() {
+    super(true);
+  }
+
+  override apply(pokemon: Pokemon, passive: boolean, simulated: boolean, cancelled: null, args: any[]): boolean {
+    if (pokemon.scene.currentBattle?.double && pokemon.getAlly().species.speciesId === Species.DONDOZO) {
+      if (pokemon.getAlly().getTag(BattlerTagType.COMMANDER)) {
+        return false;
+      }
+
+      if (!simulated) {
+        /** Play an animation of the source jumping into the ally Dondozo's mouth */
+        pokemon.scene.triggerPokemonBattleAnim(pokemon, PokemonAnimType.COMMANDER_APPLY);
+        /** Apply boosts from this effect to the ally Dondozo */
+        pokemon.getAlly().addTag(BattlerTagType.COMMANDER, 0, Moves.NONE, pokemon.id);
+        /** Cancel the source Pokemon's next move (if a move is queued) */
+        pokemon.scene.tryRemovePhase((phase) => phase instanceof MovePhase && phase.pokemon === pokemon);
+      }
       return true;
     }
     return false;
@@ -5796,9 +5827,9 @@ export function initAbilities() {
       .attr(PreSwitchOutFormChangeAbAttr, (pokemon) => !pokemon.isFainted() ? 1 : pokemon.formIndex)
       .bypassFaint(),
     new Ability(Abilities.COMMANDER, 9)
+      .attr(CommanderAbAttr)
       .attr(UncopiableAbilityAbAttr)
-      .attr(UnswappableAbilityAbAttr)
-      .unimplemented(),
+      .attr(UnswappableAbilityAbAttr),
     new Ability(Abilities.ELECTROMORPHOSIS, 9)
       .attr(PostDefendApplyBattlerTagAbAttr, (target, user, move) => move.category !== MoveCategory.STATUS, BattlerTagType.CHARGED),
     new Ability(Abilities.PROTOSYNTHESIS, 9)

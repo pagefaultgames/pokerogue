@@ -95,6 +95,7 @@ import { ExpPhase } from "#app/phases/exp-phase";
 import { ShowPartyExpBarPhase } from "#app/phases/show-party-exp-bar-phase";
 import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
 import { ExpGainsSpeed } from "#enums/exp-gains-speed";
+import { BattlerTagType } from "#enums/battler-tag-type";
 
 export const bypassLogin = import.meta.env.VITE_BYPASS_LOGIN === "1";
 
@@ -1272,6 +1273,8 @@ export default class BattleScene extends SceneBase {
       }
       if (resetArenaState) {
         this.arena.resetArenaEffects();
+
+        playerField.forEach((pokemon) => pokemon.lapseTag(BattlerTagType.COMMANDER));
 
         playerField.forEach((pokemon, p) => {
           if (pokemon.isOnField()) {

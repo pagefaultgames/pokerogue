@@ -153,11 +153,14 @@ export class MoveEffectPhase extends PokemonPhase {
           const isImmune = target.hasAbilityWithAttr(TypeImmunityAbAttr) && (target.getAbility()?.getAttrs(TypeImmunityAbAttr)?.[0]?.getImmuneType() === user.getMoveType(move))
               && !target.getTag(SemiInvulnerableTag);
 
+          /** Is the target hidden by the effects of its Commander ability? */
+          const isCommanding = this.scene.currentBattle.double && target.getAlly()?.getTag(BattlerTagType.COMMANDER)?.getSourcePokemon(this.scene) === target;
+
           /**
              * If the move missed a target, stop all future hits against that target
              * and move on to the next target (if there is one).
              */
-          if (!isImmune && !isProtected && !targetHitChecks[target.getBattlerIndex()]) {
+          if (isCommanding || (!isImmune && !isProtected && !targetHitChecks[target.getBattlerIndex()])) {
             this.stopMultiHit(target);
             this.scene.queueMessage(i18next.t("battle:attackMissed", { pokemonNameWithAffix: getPokemonNameWithAffix(target) }));
             if (moveHistoryEntry.result === MoveResult.PENDING) {
