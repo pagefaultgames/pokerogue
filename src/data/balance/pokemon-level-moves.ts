@@ -9141,7 +9141,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ RELEARN_MOVE, Moves.BRINE ],
     [ RELEARN_MOVE, Moves.RECYCLE ],
     [ RELEARN_MOVE, Moves.NATURAL_GIFT ],
-    [ RELEARN_MOVE, Moves.CRUNCH ], 
+    [ RELEARN_MOVE, Moves.CRUNCH ],
     [ 1, Moves.LEER ],
     [ 1, Moves.LICK ],
     [ 1, Moves.FURY_SWIPES ],
