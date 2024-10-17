@@ -57,7 +57,7 @@ describe("Abilities - Serene Grace", () => {
 
     const chance = new Utils.IntegerHolder(move.chance);
     console.log(move.chance + " Their ability is " + phase.getUserPokemon()!.getAbility().name);
-    applyAbAttrs(MoveEffectChanceMultiplierAbAttr, phase.getUserPokemon()!, null, false, chance, move, phase.getTarget(), false);
+    applyAbAttrs(MoveEffectChanceMultiplierAbAttr, phase.getUserPokemon()!, null, false, chance, move, phase.getFirstTarget(), false);
     expect(chance.value).toBe(30);
 
   }, 20000);
@@ -83,7 +83,7 @@ describe("Abilities - Serene Grace", () => {
     expect(move.id).toBe(Moves.AIR_SLASH);
 
     const chance = new Utils.IntegerHolder(move.chance);
-    applyAbAttrs(MoveEffectChanceMultiplierAbAttr, phase.getUserPokemon()!, null, false, chance, move, phase.getTarget(), false);
+    applyAbAttrs(MoveEffectChanceMultiplierAbAttr, phase.getUserPokemon()!, null, false, chance, move, phase.getFirstTarget(), false);
     expect(chance.value).toBe(60);
 
   }, 20000);
