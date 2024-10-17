@@ -23,6 +23,7 @@ import { PokemonHealPhase } from "#app/phases/pokemon-heal-phase";
 import { ShowAbilityPhase } from "#app/phases/show-ability-phase";
 import { StatStageChangePhase, StatStageChangeCallback } from "#app/phases/stat-stage-change-phase";
 import { PokemonAnimType } from "#app/enums/pokemon-anim-type";
+import BattleScene from "#app/battle-scene";
 
 export enum BattlerTagLapseType {
   FAINT,
@@ -90,6 +91,15 @@ export class BattlerTag {
     this.sourceMove = source.sourceMove;
     this.sourceId = source.sourceId;
   }
+
+  /**
+   * Helper function that retrieves the source Pokemon object
+   * @param scene medium to retrieve the source Pokemon
+   * @returns The source {@linkcode Pokemon} or `null` if none is found
+   */
+  public getSourcePokemon(scene: BattleScene): Pokemon | null {
+    return this.sourceId ? scene.getPokemonById(this.sourceId) : null;
+  }
 }
 
 export interface WeatherBattlerTag {
@@ -120,7 +130,7 @@ export abstract class MoveRestrictionBattlerTag extends BattlerTag {
       const phase = pokemon.scene.getCurrentPhase() as MovePhase;
       const move = phase.move;
 
-      if (this.isMoveRestricted(move.moveId)) {
+      if (this.isMoveRestricted(move.moveId, pokemon)) {
         if (this.interruptedText(pokemon, move.moveId)) {
           pokemon.scene.queueMessage(this.interruptedText(pokemon, move.moveId));
         }
@@ -136,10 +146,11 @@ export abstract class MoveRestrictionBattlerTag extends BattlerTag {
   /**
    * Gets whether this tag is restricting a move.
    *
-   * @param {Moves} move {@linkcode Moves} ID to check restriction for.
-   * @returns {boolean} `true` if the move is restricted by this tag, otherwise `false`.
+   * @param move - {@linkcode Moves} ID to check restriction for.
+   * @param user - The {@linkcode Pokemon} involved
+   * @returns `true` if the move is restricted by this tag, otherwise `false`.
    */
-  abstract isMoveRestricted(move: Moves): boolean;
+  public abstract isMoveRestricted(move: Moves, user?: Pokemon): boolean;
 
   /**
    * Checks if this tag is restricting a move based on a user's decisions during the target selection phase
@@ -325,6 +336,16 @@ export class GorillaTacticsTag extends MoveRestrictionBattlerTag {
 
     this.moveId = lastValidMove;
     pokemon.setStat(Stat.ATK, pokemon.getStat(Stat.ATK, false) * 1.5, false);
+  }
+
+  /**
+   * Loads the Gorilla Tactics Battler Tag along with its unique class variable moveId
+   * @override
+   * @param source Gorilla Tactics' {@linkcode BattlerTag} information
+   */
+  public override loadTag(source: BattlerTag | any): void {
+    super.loadTag(source);
+    this.moveId = source.moveId;
   }
 
   /**
@@ -2510,8 +2531,6 @@ export class MysteryEncounterPostSummonTag extends BattlerTag {
  * Torment does not interrupt the move if the move is performed consecutively in the same turn and right after Torment is applied
  */
 export class TormentTag extends MoveRestrictionBattlerTag {
-  private target: Pokemon;
-
   constructor(sourceId: number) {
     super(BattlerTagType.TORMENT, BattlerTagLapseType.AFTER_MOVE, 1, Moves.TORMENT, sourceId);
   }
@@ -2523,7 +2542,6 @@ export class TormentTag extends MoveRestrictionBattlerTag {
    */
   override onAdd(pokemon: Pokemon) {
     super.onAdd(pokemon);
-    this.target = pokemon;
     pokemon.scene.queueMessage(i18next.t("battlerTags:tormentOnAdd", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }), 1500);
   }
 
@@ -2542,15 +2560,18 @@ export class TormentTag extends MoveRestrictionBattlerTag {
    * @param {Moves} move the move under investigation
    * @returns `true` if there is valid consecutive usage | `false` if the moves are different from each other
    */
-  override isMoveRestricted(move: Moves): boolean {
-    const lastMove = this.target.getLastXMoves(1)[0];
+  public override isMoveRestricted(move: Moves, user: Pokemon): boolean {
+    if (!user) {
+      return false;
+    }
+    const lastMove = user.getLastXMoves(1)[0];
     if ( !lastMove ) {
       return false;
     }
     // This checks for locking / momentum moves like Rollout and Hydro Cannon + if the user is under the influence of BattlerTagType.FRENZY
     // Because Uproar's unique behavior is not implemented, it does not check for Uproar. Torment has been marked as partial in moves.ts
     const moveObj = allMoves[lastMove.move];
-    const isUnaffected = moveObj.hasAttr(ConsecutiveUseDoublePowerAttr) || this.target.getTag(BattlerTagType.FRENZY) || moveObj.hasAttr(ChargeAttr);
+    const isUnaffected = moveObj.hasAttr(ConsecutiveUseDoublePowerAttr) || user.getTag(BattlerTagType.FRENZY) || moveObj.hasAttr(ChargeAttr);
     const validLastMoveResult = (lastMove.result === MoveResult.SUCCESS) || (lastMove.result === MoveResult.MISS);
     if (lastMove.move === move && validLastMoveResult && lastMove.move !== Moves.STRUGGLE && !isUnaffected) {
       return true;
@@ -2602,37 +2623,39 @@ export class TauntTag extends MoveRestrictionBattlerTag {
  * The tag is only removed when the source-user is removed from the field.
  */
 export class ImprisonTag extends MoveRestrictionBattlerTag {
-  private source: Pokemon | null;
-
   constructor(sourceId: number) {
     super(BattlerTagType.IMPRISON, [ BattlerTagLapseType.PRE_MOVE, BattlerTagLapseType.AFTER_MOVE ], 1, Moves.IMPRISON, sourceId);
   }
 
-  override onAdd(pokemon: Pokemon) {
-    if (this.sourceId) {
-      this.source = pokemon.scene.getPokemonById(this.sourceId);
-    }
-  }
-
   /**
    * Checks if the source of Imprison is still active
-   * @param _pokemon
-   * @param _lapseType
+   * @override
+   * @param pokemon The pokemon this tag is attached to
    * @returns `true` if the source is still active
    */
-  override lapse(_pokemon: Pokemon, _lapseType: BattlerTagLapseType): boolean {
-    return this.source?.isActive(true) ?? false;
+  public override lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
+    const source = this.getSourcePokemon(pokemon.scene);
+    if (source) {
+      if (lapseType === BattlerTagLapseType.PRE_MOVE) {
+        return super.lapse(pokemon, lapseType) && source.isActive(true);
+      } else {
+        return source.isActive(true);
+      }
+    }
+    return false;
   }
 
   /**
    * Checks if the source of the tag has the parameter move in its moveset and that the source is still active
+   * @override
    * @param {Moves} move the move under investigation
    * @returns `false` if either condition is not met
    */
-  override isMoveRestricted(move: Moves): boolean {
-    if (this.source) {
-      const sourceMoveset = this.source.getMoveset().map(m => m!.moveId);
-      return sourceMoveset?.includes(move) && this.source.isActive(true);
+  public override isMoveRestricted(move: Moves, user: Pokemon): boolean {
+    const source = this.getSourcePokemon(user.scene);
+    if (source) {
+      const sourceMoveset = source.getMoveset().map(m => m!.moveId);
+      return sourceMoveset?.includes(move) && source.isActive(true);
     }
     return false;
   }
@@ -2698,6 +2721,44 @@ export class TelekinesisTag extends BattlerTag {
 
   override onAdd(pokemon: Pokemon)  {
     pokemon.scene.queueMessage(i18next.t("battlerTags:telekinesisOnAdd", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }));
+  }
+}
+
+/**
+ * Tag that swaps the user's base ATK stat with its base DEF stat.
+ * @extends BattlerTag
+ */
+export class PowerTrickTag extends BattlerTag {
+  constructor(sourceMove: Moves, sourceId: number) {
+    super(BattlerTagType.POWER_TRICK, BattlerTagLapseType.CUSTOM, 0, sourceMove, sourceId, true);
+  }
+
+  onAdd(pokemon: Pokemon): void {
+    this.swapStat(pokemon);
+    pokemon.scene.queueMessage(i18next.t("battlerTags:powerTrickActive", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }));
+  }
+
+  onRemove(pokemon: Pokemon): void {
+    this.swapStat(pokemon);
+    pokemon.scene.queueMessage(i18next.t("battlerTags:powerTrickActive", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }));
+  }
+
+  /**
+   * Removes the Power Trick tag and reverts any stat changes if the tag is already applied.
+   * @param {Pokemon} pokemon The {@linkcode Pokemon} that already has the Power Trick tag.
+   */
+  onOverlap(pokemon: Pokemon): void {
+    pokemon.removeTag(this.tagType);
+  }
+
+  /**
+   * Swaps the user's base ATK stat with its base DEF stat.
+   * @param {Pokemon} pokemon The {@linkcode Pokemon} whose stats will be swapped.
+   */
+  swapStat(pokemon: Pokemon): void {
+    const temp = pokemon.getStat(Stat.ATK, false);
+    pokemon.setStat(Stat.ATK, pokemon.getStat(Stat.DEF, false), false);
+    pokemon.setStat(Stat.DEF, temp, false);
   }
 }
 
@@ -2876,6 +2937,8 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: number, source
     return new SyrupBombTag(sourceId);
   case BattlerTagType.TELEKINESIS:
     return new TelekinesisTag(sourceMove);
+  case BattlerTagType.POWER_TRICK:
+    return new PowerTrickTag(sourceMove, sourceId);
   case BattlerTagType.NONE:
   default:
     return new BattlerTag(tagType, BattlerTagLapseType.CUSTOM, turnCount, sourceMove, sourceId);
