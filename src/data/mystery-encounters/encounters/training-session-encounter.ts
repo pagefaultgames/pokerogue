@@ -162,7 +162,7 @@ export const TrainingSessionEncounter: MysteryEncounter =
 
           setEncounterRewards(scene, { fillRemaining: true }, undefined, onBeforeRewardsPhase);
 
-          return initBattleWithEnemyConfig(scene, config);
+          await initBattleWithEnemyConfig(scene, config);
         })
         .build()
     )
@@ -238,7 +238,7 @@ export const TrainingSessionEncounter: MysteryEncounter =
 
           setEncounterRewards(scene, { fillRemaining: true }, undefined, onBeforeRewardsPhase);
 
-          return initBattleWithEnemyConfig(scene, config);
+          await initBattleWithEnemyConfig(scene, config);
         })
         .build()
     )
@@ -351,7 +351,7 @@ export const TrainingSessionEncounter: MysteryEncounter =
 
           setEncounterRewards(scene, { fillRemaining: true }, undefined, onBeforeRewardsPhase);
 
-          return initBattleWithEnemyConfig(scene, config);
+          await initBattleWithEnemyConfig(scene, config);
         })
         .build()
     )

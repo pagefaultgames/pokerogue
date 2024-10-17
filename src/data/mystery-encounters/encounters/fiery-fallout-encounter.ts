@@ -222,12 +222,13 @@ export const FieryFalloutEncounter: MysteryEncounter =
           ],
         })
         .withPreOptionPhase(async (scene: BattleScene) => {
+          // Do NOT await this, to prevent player from repeatedly pressing options
           transitionMysteryEncounterIntroVisuals(scene, false, false, 2000);
         })
         .withOptionPhase(async (scene: BattleScene) => {
           // Fire types help calm the Volcarona
           const encounter = scene.currentBattle.mysteryEncounter!;
-          transitionMysteryEncounterIntroVisuals(scene);
+          await transitionMysteryEncounterIntroVisuals(scene);
           setEncounterRewards(scene,
             { fillRemaining: true },
             undefined,
