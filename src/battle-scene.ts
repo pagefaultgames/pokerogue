@@ -4,7 +4,7 @@ import Pokemon, { EnemyPokemon, PlayerPokemon } from "#app/field/pokemon";
 import PokemonSpecies, { allSpecies, getPokemonSpecies, PokemonSpeciesFilter } from "#app/data/pokemon-species";
 import { Constructor, isNullOrUndefined, randSeedInt } from "#app/utils";
 import * as Utils from "#app/utils";
-import { ConsumableModifier, ConsumablePokemonModifier, DoubleBattleChanceBoosterModifier, ExpBalanceModifier, ExpShareModifier, FusePokemonModifier, HealingBoosterModifier, Modifier, ModifierBar, ModifierPredicate, MultipleParticipantExpBonusModifier, overrideHeldItems, overrideModifiers, PersistentModifier, PokemonExpBoosterModifier, PokemonFormChangeItemModifier, PokemonHeldItemModifier, PokemonHpRestoreModifier, PokemonIncrementingStatModifier, TerastallizeModifier, TurnHeldItemTransferModifier } from "./modifier/modifier";
+import { ConsumableModifier, ConsumablePokemonModifier, DoubleBattleChanceBoosterModifier, ExpBalanceModifier, ExpShareModifier, FusePokemonModifier, HealingBoosterModifier, Modifier, ModifierBar, ModifierPredicate, MultipleParticipantExpBonusModifier, overrideHeldItems, overrideModifiers, PersistentModifier, PokemonExpBoosterModifier, PokemonFormChangeItemModifier, PokemonHeldItemModifier, PokemonHpRestoreModifier, PokemonIncrementingStatModifier, RememberMoveModifier, TerastallizeModifier, TurnHeldItemTransferModifier } from "./modifier/modifier";
 import { PokeballType } from "#app/data/pokeball";
 import { initCommonAnims, initMoveAnim, loadCommonAnimAssets, loadMoveAnimAssets, populateAnims } from "#app/data/battle-anims";
 import { Phase } from "#app/phase";
@@ -95,6 +95,7 @@ import { ExpPhase } from "#app/phases/exp-phase";
 import { ShowPartyExpBarPhase } from "#app/phases/show-party-exp-bar-phase";
 import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
 import { ExpGainsSpeed } from "#enums/exp-gains-speed";
+import { FRIENDSHIP_GAIN_FROM_BATTLE } from "#app/data/balance/starters";
 
 export const bypassLogin = import.meta.env.VITE_BYPASS_LOGIN === "1";
 
@@ -789,7 +790,7 @@ export default class BattleScene extends SceneBase {
   }
 
   getEnemyParty(): EnemyPokemon[] {
-    return this.currentBattle?.enemyParty || [];
+    return this.currentBattle?.enemyParty ?? [];
   }
 
   getEnemyPokemon(): EnemyPokemon | undefined {
@@ -1389,7 +1390,7 @@ export default class BattleScene extends SceneBase {
     case Species.GRENINJA:
       return Utils.randSeedInt(2);
     case Species.ZYGARDE:
-      return Utils.randSeedInt(3);
+      return Utils.randSeedInt(4);
     case Species.MINIOR:
       return Utils.randSeedInt(6);
     case Species.ALCREMIE:
@@ -2316,7 +2317,10 @@ export default class BattleScene extends SceneBase {
       }
     }
 
-    this.currentPhase?.start();
+    if (this.currentPhase) {
+      console.log(`%cStart Phase ${this.currentPhase.constructor.name}`, "color:green;");
+      this.currentPhase.start();
+    }
   }
 
   overridePhase(phase: Phase): boolean {
@@ -2326,6 +2330,7 @@ export default class BattleScene extends SceneBase {
 
     this.standbyPhase = this.currentPhase;
     this.currentPhase = phase;
+    console.log(`%cStart Phase ${phase.constructor.name}`, "color:green;");
     phase.start();
 
     return true;
@@ -2421,7 +2426,7 @@ export default class BattleScene extends SceneBase {
     return Math.floor(moneyValue / 10) * 10;
   }
 
-  addModifier(modifier: Modifier | null, ignoreUpdate?: boolean, playSound?: boolean, virtual?: boolean, instant?: boolean): Promise<boolean> {
+  addModifier(modifier: Modifier | null, ignoreUpdate?: boolean, playSound?: boolean, virtual?: boolean, instant?: boolean, cost?: number): Promise<boolean> {
     if (!modifier) {
       return Promise.resolve(false);
     }
@@ -2478,6 +2483,8 @@ export default class BattleScene extends SceneBase {
               }
             } else if (modifier instanceof FusePokemonModifier) {
               args.push(this.getPokemonById(modifier.fusePokemonId) as PlayerPokemon);
+            } else if (modifier instanceof RememberMoveModifier && !Utils.isNullOrUndefined(cost)) {
+              args.push(cost);
             }
 
             if (modifier.shouldApply(pokemon, ...args)) {
@@ -2676,7 +2683,7 @@ export default class BattleScene extends SceneBase {
   }
 
   /**
-    * Removes all modifiers from enemy of PersistentModifier type
+    * Removes all modifiers from enemy pokemon of {@linkcode PersistentModifier} type
     */
   clearEnemyModifiers(): void {
     const modifiersToRemove = this.enemyModifiers.filter(m => m instanceof PersistentModifier);
@@ -2687,10 +2694,11 @@ export default class BattleScene extends SceneBase {
   }
 
   /**
-    * Removes all modifiers from enemy of PokemonHeldItemModifier type
+    * Removes all modifiers from enemy pokemon of {@linkcode PokemonHeldItemModifier} type
+    * @param pokemon - If specified, only removes held items from that {@linkcode Pokemon}
     */
-  clearEnemyHeldItemModifiers(): void {
-    const modifiersToRemove = this.enemyModifiers.filter(m => m instanceof PokemonHeldItemModifier);
+  clearEnemyHeldItemModifiers(pokemon?: Pokemon): void {
+    const modifiersToRemove = this.enemyModifiers.filter(m => m instanceof PokemonHeldItemModifier && (!pokemon || m.getPokemon(this) === pokemon));
     for (const m of modifiersToRemove) {
       this.enemyModifiers.splice(this.enemyModifiers.indexOf(m), 1);
     }
@@ -3047,7 +3055,7 @@ export default class BattleScene extends SceneBase {
         const pId = partyMember.id;
         const participated = participantIds.has(pId);
         if (participated && pokemonDefeated) {
-          partyMember.addFriendship(2);
+          partyMember.addFriendship(FRIENDSHIP_GAIN_FROM_BATTLE);
           const machoBraceModifier = partyMember.getHeldItems().find(m => m instanceof PokemonIncrementingStatModifier);
           if (machoBraceModifier && machoBraceModifier.stackCount < machoBraceModifier.getMaxStackCount(this)) {
             machoBraceModifier.stackCount++;

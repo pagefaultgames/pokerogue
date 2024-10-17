@@ -31,7 +31,7 @@ import { TrainerVariant } from "#app/field/trainer";
 import { Variant } from "#app/data/variant";
 import { setSettingGamepad, SettingGamepad, settingGamepadDefaults } from "#app/system/settings/settings-gamepad";
 import { setSettingKeyboard, SettingKeyboard } from "#app/system/settings/settings-keyboard";
-import { TerrainChangedEvent, WeatherChangedEvent } from "#app/events/arena";
+import { TagAddedEvent, TerrainChangedEvent, WeatherChangedEvent } from "#app/events/arena";
 import * as Modifier from "#app/modifier/modifier";
 import { StatusEffect } from "#app/data/status-effect";
 import ChallengeData from "#app/system/challenge-data";
@@ -43,13 +43,13 @@ import { Species } from "#enums/species";
 import { applyChallenges, ChallengeType } from "#app/data/challenge";
 import { WeatherType } from "#enums/weather-type";
 import { TerrainType } from "#app/data/terrain";
-import { OutdatedPhase } from "#app/phases/outdated-phase";
 import { ReloadSessionPhase } from "#app/phases/reload-session-phase";
 import { RUN_HISTORY_LIMIT } from "#app/ui/run-history-ui-handler";
-import { applySessionDataPatches, applySettingsDataPatches, applySystemDataPatches } from "#app/system/version-converter";
+import { applySessionVersionMigration, applySystemVersionMigration, applySettingsVersionMigration } from "./version_migration/version_converter";
 import { MysteryEncounterSaveData } from "#app/data/mystery-encounters/mystery-encounter-save-data";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { PokerogueApiClearSessionData } from "#app/@types/pokerogue-api";
+import { ArenaTrapTag } from "#app/data/arena-tag";
 
 export const defaultStarterSpecies: Species[] = [
   Species.BULBASAUR, Species.CHARMANDER, Species.SQUIRTLE,
@@ -402,10 +402,7 @@ export class GameData {
           .then(error => {
             this.scene.ui.savingIcon.hide();
             if (error) {
-              if (error.startsWith("client version out of date")) {
-                this.scene.clearPhaseQueue();
-                this.scene.unshiftPhase(new OutdatedPhase(this.scene));
-              } else if (error.startsWith("session out of date")) {
+              if (error.startsWith("session out of date")) {
                 this.scene.clearPhaseQueue();
                 this.scene.unshiftPhase(new ReloadSessionPhase(this.scene));
               }
@@ -481,7 +478,7 @@ export class GameData {
           localStorage.setItem(lsItemKey, "");
         }
 
-        applySystemDataPatches(systemData);
+        applySystemVersionMigration(systemData);
 
         this.trainerId = systemData.trainerId;
         this.secretId = systemData.secretId;
@@ -856,7 +853,7 @@ export class GameData {
 
     const settings = JSON.parse(localStorage.getItem("settings")!); // TODO: is this bang correct?
 
-    applySettingsDataPatches(settings);
+    applySettingsVersionMigration(settings);
 
     for (const setting of Object.keys(settings)) {
       setSetting(this.scene, setting, settings[setting]);
@@ -1085,8 +1082,18 @@ export class GameData {
 
           scene.arena.terrain = sessionData.arena.terrain;
           scene.arena.eventTarget.dispatchEvent(new TerrainChangedEvent(TerrainType.NONE, scene.arena.terrain?.terrainType!, scene.arena.terrain?.turnsLeft!)); // TODO: is this bang correct?
-          // TODO
-          //scene.arena.tags = sessionData.arena.tags;
+
+          scene.arena.tags = sessionData.arena.tags;
+          if (scene.arena.tags) {
+            for (const tag of scene.arena.tags) {
+              if (tag instanceof ArenaTrapTag) {
+                const { tagType, side, turnCount, layers, maxLayers } = tag as ArenaTrapTag;
+                scene.arena.eventTarget.dispatchEvent(new TagAddedEvent(tagType, side, turnCount, layers, maxLayers));
+              } else {
+                scene.arena.eventTarget.dispatchEvent(new TagAddedEvent(tag.tagType, tag.side, tag.turnCount));
+              }
+            }
+          }
 
           for (const modifierData of sessionData.modifiers) {
             const modifier = modifierData.toModifier(scene, Modifier[modifierData.className]);
@@ -1302,7 +1309,7 @@ export class GameData {
       return v;
     }) as SessionSaveData;
 
-    applySessionDataPatches(sessionData);
+    applySessionVersionMigration(sessionData);
 
     return sessionData;
   }
@@ -1343,10 +1350,7 @@ export class GameData {
                 this.scene.ui.savingIcon.hide();
               }
               if (error) {
-                if (error.startsWith("client version out of date")) {
-                  this.scene.clearPhaseQueue();
-                  this.scene.unshiftPhase(new OutdatedPhase(this.scene));
-                } else if (error.startsWith("session out of date")) {
+                if (error.startsWith("session out of date")) {
                   this.scene.clearPhaseQueue();
                   this.scene.unshiftPhase(new ReloadSessionPhase(this.scene));
                 }
