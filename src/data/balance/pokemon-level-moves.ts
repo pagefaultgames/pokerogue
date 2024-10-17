@@ -6981,6 +6981,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ 1, Moves.TACKLE ],
     [ 1, Moves.GROWL ],
     [ 1, Moves.WATER_GUN ],
+    [ 1, Moves.CHARM ], // Previous Stage Move
     [ 1, Moves.METAL_CLAW ],
     [ 11, Moves.SWORDS_DANCE ],
     [ 15, Moves.PECK ],
