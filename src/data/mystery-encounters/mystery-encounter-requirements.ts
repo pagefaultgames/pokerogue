@@ -15,6 +15,7 @@ import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { AttackTypeBoosterModifier } from "#app/modifier/modifier";
 import { AttackTypeBoosterModifierType } from "#app/modifier/modifier-type";
 import { SpeciesFormKey } from "#enums/species-form-key";
+import { Ability } from "#app/data/ability";
 
 export interface EncounterRequirement {
   meetsRequirement(scene: BattleScene): boolean; // Boolean to see if a requirement is met
@@ -587,18 +588,19 @@ export class AbilityRequirement extends EncounterPokemonRequirement {
     if (!this.invertQuery) {
       return partyPokemon.filter((pokemon) =>
         (!this.excludeDisallowedPokemon || pokemon.isAllowedInBattle())
-        && this.requiredAbilities.some((ability) => pokemon.getAbility().id === ability || pokemon.getPassiveAbility().id === ability));
+        && this.requiredAbilities.some((ability) => pokemon.hasAbility(ability, false)));
     } else {
       // for an inverted query, we only want to get the pokemon that don't have ANY of the listed abilities
       return partyPokemon.filter((pokemon) =>
         (!this.excludeDisallowedPokemon || pokemon.isAllowedInBattle())
-        && this.requiredAbilities.filter((ability) => pokemon.getAbility().id === ability || pokemon.getPassiveAbility().id === ability).length === 0);
+        && this.requiredAbilities.filter((ability) => pokemon.hasAbility(ability, false)).length === 0);
     }
   }
 
   override getDialogueToken(scene: BattleScene, pokemon?: PlayerPokemon): [string, string] {
-    if (pokemon?.getAbility().id && this.requiredAbilities.some(a => pokemon.getAbility().id === a)) {
-      return [ "ability", pokemon.getAbility().name ];
+    const matchingAbility = this.requiredAbilities.find(a => pokemon?.hasAbility(a, false));
+    if (!isNullOrUndefined(matchingAbility)) {
+      return [ "ability", new Ability(matchingAbility, 3).name ];
     }
     return [ "ability", "" ];
   }

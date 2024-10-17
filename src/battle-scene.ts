@@ -2363,8 +2363,8 @@ export default class BattleScene extends SceneBase {
   }
 
   /**
-   * Will search for a specific phase via filter, and remove the first result if a match is found.
-   * @param phaseFilter
+   * Will search for a specific phase in {@linkcode phaseQueuePrepend} via filter, and remove the first result if a match is found.
+   * @param phaseFilter filter function
    */
   tryRemoveUnshiftedPhase(phaseFilter: (phase: Phase) => boolean): boolean {
     const phaseIndex = this.phaseQueuePrepend.findIndex(phaseFilter);
