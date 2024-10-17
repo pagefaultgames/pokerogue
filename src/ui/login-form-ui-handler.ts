@@ -1,4 +1,4 @@
-import { FormModalUiHandler } from "./form-modal-ui-handler";
+import { FormModalUiHandler, InputFieldConfigs } from "./form-modal-ui-handler";
 import { ModalConfig } from "./modal-ui-handler";
 import * as Utils from "../utils";
 import { Mode } from "./ui";
@@ -17,9 +17,9 @@ interface BuildInteractableImageOpts {
 
 export default class LoginFormUiHandler extends FormModalUiHandler {
   private readonly ERR_USERNAME: string = "invalid username";
-  private readonly ERR_PASSWORD: string =  "invalid password";
-  private readonly ERR_ACCOUNT_EXIST: string =  "account doesn't exist";
-  private readonly ERR_PASSWORD_MATCH: string =  "password doesn't match";
+  private readonly ERR_PASSWORD: string = "invalid password";
+  private readonly ERR_ACCOUNT_EXIST: string = "account doesn't exist";
+  private readonly ERR_PASSWORD_MATCH: string = "password doesn't match";
   private readonly ERR_NO_SAVES: string = "No save files found";
   private readonly ERR_TOO_MANY_SAVES: string = "Too many save files found";
 
@@ -106,12 +106,24 @@ export default class LoginFormUiHandler extends FormModalUiHandler {
     case this.ERR_PASSWORD_MATCH:
       return i18next.t("menu:unmatchingPassword");
     case this.ERR_NO_SAVES:
-      return i18next.t("menu:noSaves");
+      return "P01: " + i18next.t("menu:noSaves");
     case this.ERR_TOO_MANY_SAVES:
-      return i18next.t("menu:tooManySaves");
+      return "P02: " + i18next.t("menu:tooManySaves");
     }
 
     return super.getReadableErrorMessage(error);
+  }
+
+  override getInputFieldConfigs(): InputFieldConfigs[] {
+    const inputFieldConfigs: InputFieldConfigs[] = [];
+    const fields = this.getFields();
+    fields.forEach((field, i) => {
+      inputFieldConfigs.push({
+        label: field,
+        isPassword: field.includes(i18next.t("menu:password")) || field.includes(i18next.t("menu:confirmPassword"))
+      });
+    });
+    return inputFieldConfigs;
   }
 
   override show(args: any[]): boolean {
@@ -164,7 +176,7 @@ export default class LoginFormUiHandler extends FormModalUiHandler {
     [ this.discordImage, this.googleImage, this.usernameInfoImage ].forEach((img) => img.off("pointerdown"));
   }
 
-  private processExternalProvider(config: ModalConfig) : void {
+  private processExternalProvider(config: ModalConfig): void {
     this.externalPartyTitle.setText(i18next.t("menu:orUse") ?? "");
     this.externalPartyTitle.setX(20 + this.externalPartyTitle.text.length);
     this.externalPartyTitle.setVisible(true);

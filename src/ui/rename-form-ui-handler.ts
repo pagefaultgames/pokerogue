@@ -1,4 +1,4 @@
-import { FormModalUiHandler } from "./form-modal-ui-handler";
+import { FormModalUiHandler, InputFieldConfigs } from "./form-modal-ui-handler";
 import { ModalConfig } from "./modal-ui-handler";
 import i18next from "i18next";
 import { PlayerPokemon } from "#app/field/pokemon";
@@ -31,6 +31,17 @@ export default class RenameFormUiHandler extends FormModalUiHandler {
     }
 
     return super.getReadableErrorMessage(error);
+  }
+
+  override getInputFieldConfigs(): InputFieldConfigs[] {
+    const inputFieldConfigs: InputFieldConfigs[] = [];
+    const fields = this.getFields();
+    fields.forEach((field, i) => {
+      inputFieldConfigs.push({
+        label: field
+      });
+    });
+    return inputFieldConfigs;
   }
 
   show(args: any[]): boolean {
