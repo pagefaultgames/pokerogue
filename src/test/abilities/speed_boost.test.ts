@@ -5,6 +5,9 @@ import { Species } from "#enums/species";
 import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { CommandPhase } from "#app/phases/command-phase";
+import { Command } from "#app/ui/command-ui-handler";
+import { AttemptRunPhase } from "#app/phases/attempt-run-phase";
 
 describe("Abilities - Speed Boost", () => {
   let phaserGame: Phaser.Game;
@@ -93,6 +96,26 @@ describe("Abilities - Speed Boost", () => {
 
       game.doSwitchPokemon(1);
       await game.toNextTurn();
+      const playerPokemon = game.scene.getPlayerPokemon()!;
+      expect(playerPokemon.getStatStage(Stat.SPD)).toBe(0);
+
+      game.move.select(Moves.SPLASH);
+      await game.toNextTurn();
+      expect(playerPokemon.getStatStage(Stat.SPD)).toBe(1);
+    });
+
+  it("should not trigger if pokemon fails to escape",
+    async () => {
+      game.override.enemySpecies(Species.REGIELEKI);
+      await game.classicMode.startBattle([ Species.SHUCKLE ]);
+
+      const commandPhase = game.scene.getCurrentPhase() as CommandPhase;
+      commandPhase.handleCommand(Command.RUN, 0);
+      const runPhase = game.scene.getCurrentPhase() as AttemptRunPhase;
+      runPhase.forceFailEscape = true;
+      await game.phaseInterceptor.to(AttemptRunPhase);
+      await game.toNextTurn();
+
       const playerPokemon = game.scene.getPlayerPokemon()!;
       expect(playerPokemon.getStatStage(Stat.SPD)).toBe(0);
 

@@ -14,6 +14,9 @@ export class AttemptRunPhase extends PokemonPhase {
     super(scene, fieldIndex);
   }
 
+  /** For testing purposes: this is to force the pokemon to fail and escape */
+  public forceFailEscape = false;
+
   start() {
     super.start();
 
@@ -28,7 +31,7 @@ export class AttemptRunPhase extends PokemonPhase {
 
     applyAbAttrs(RunSuccessAbAttr, playerPokemon, null, false, escapeChance);
 
-    if (playerPokemon.randSeedInt(100) < escapeChance.value) {
+    if (playerPokemon.randSeedInt(100) < escapeChance.value && !this.forceFailEscape) {
       this.scene.playSound("se/flee");
       this.scene.queueMessage(i18next.t("battle:runAwaySuccess"), null, true, 500);
 
