@@ -253,8 +253,8 @@ export class EncounterPhase extends BattlePhase {
         this.scene.updateModifiers(true);
       }*/
 
-    const { battleType, waveIndex, isBattleMysteryEncounter } = this.scene.currentBattle;
-    if (this.scene.isMysteryEncounterValidForWave(battleType,  waveIndex) && !isBattleMysteryEncounter()) {
+    const { battleType, waveIndex } = this.scene.currentBattle;
+    if (this.scene.isMysteryEncounterValidForWave(battleType,  waveIndex) && !this.scene.currentBattle.isBattleMysteryEncounter()) {
       // Increment ME spawn chance if an ME could have spawned but did not
       // Only do this AFTER session has been saved to avoid duplicating increments
       this.scene.mysteryEncounterSaveData.encounterSpawnChance += WEIGHT_INCREMENT_ON_SPAWN_MISS;
