@@ -2891,8 +2891,6 @@ export class SecretPowerAttr extends MoveEffectAttr {
     this.effectChanceOverride = move.chance;
     const moveChance = this.getMoveChance(user, target, move, this.selfTarget);
     if (moveChance < 0 || moveChance === 100 || user.randSeedInt(100) < moveChance) {
-      // effectChanceOverride used in the application of the actual secondary effect
-      this.effectChanceOverride = 100;
       return true;
     } else {
       return false;
@@ -2915,6 +2913,8 @@ export class SecretPowerAttr extends MoveEffectAttr {
       const biome = user.scene.arena.biomeType;
       secondaryEffect = this.determineBiomeEffect(biome);
     }
+    // effectChanceOverride used in the application of the actual secondary effect
+    secondaryEffect.effectChanceOverride = 100;
     return secondaryEffect.apply(user, target, move, []);
   }
 

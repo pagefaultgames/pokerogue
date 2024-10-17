@@ -4913,8 +4913,7 @@ export function initAbilities() {
       .attr(TypeImmunityAddBattlerTagAbAttr, Type.FIRE, BattlerTagType.FIRE_BOOST, 1)
       .ignorable(),
     new Ability(Abilities.SHIELD_DUST, 3)
-      .attr(IgnoreMoveEffectsAbAttr)
-      .edgeCase(), // Does not work with secret power (unimplemented)
+      .attr(IgnoreMoveEffectsAbAttr),
     new Ability(Abilities.OWN_TEMPO, 3)
       .attr(BattlerTagImmunityAbAttr, BattlerTagType.CONFUSED)
       .attr(IntimidateImmunityAbAttr)
@@ -4958,8 +4957,7 @@ export function initAbilities() {
       .attr(TypeImmunityStatStageChangeAbAttr, Type.ELECTRIC, Stat.SPATK, 1)
       .ignorable(),
     new Ability(Abilities.SERENE_GRACE, 3)
-      .attr(MoveEffectChanceMultiplierAbAttr, 2)
-      .edgeCase(), // does not work with secret power (unimplemented)
+      .attr(MoveEffectChanceMultiplierAbAttr, 2),
     new Ability(Abilities.SWIFT_SWIM, 3)
       .attr(StatMultiplierAbAttr, Stat.SPD, 2)
       .condition(getWeatherCondition(WeatherType.RAIN, WeatherType.HEAVY_RAIN)),
