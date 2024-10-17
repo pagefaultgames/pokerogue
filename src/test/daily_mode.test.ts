@@ -1,13 +1,11 @@
-import { MapModifier } from "#app/modifier/modifier";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import GameManager from "./utils/gameManager";
-import { Moves } from "#app/enums/moves";
 import { Biome } from "#app/enums/biome";
-import { Mode } from "#app/ui/ui";
+import { Moves } from "#app/enums/moves";
+import { MapModifier } from "#app/modifier/modifier";
 import ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
+import { Mode } from "#app/ui/ui";
 import { Species } from "#enums/species";
-
-//const TIMEOUT = 20 * 1000;
+import GameManager from "#test/utils/gameManager";
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Daily Mode", () => {
   let phaserGame: Phaser.Game;

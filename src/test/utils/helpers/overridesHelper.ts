@@ -1,19 +1,20 @@
 import { StatusEffect } from "#app/data/status-effect";
+import { Variant } from "#app/data/variant";
 import { Weather, WeatherType } from "#app/data/weather";
-import { Abilities } from "#app/enums/abilities";
-import { Biome } from "#app/enums/biome";
-import { Moves } from "#app/enums/moves";
-import { Species } from "#app/enums/species";
 import * as GameMode from "#app/game-mode";
 import { GameModes, getGameMode } from "#app/game-mode";
 import { ModifierOverride } from "#app/modifier/modifier-type";
 import Overrides from "#app/overrides";
-import { vi } from "vitest";
-import { GameManagerHelper } from "./gameManagerHelper";
 import { Unlockables } from "#app/system/unlockables";
-import { Variant } from "#app/data/variant";
-import { MysteryEncounterType } from "#enums/mystery-encounter-type";
+import { Abilities } from "#enums/abilities";
+import { Biome } from "#enums/biome";
+import { Moves } from "#enums/moves";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
+import { MysteryEncounterType } from "#enums/mystery-encounter-type";
+import { PokeballType } from "#enums/pokeball";
+import { Species } from "#enums/species";
+import { GameManagerHelper } from "#test/utils/helpers/gameManagerHelper";
+import { vi } from "vitest";
 
 /**
  * Helper to handle overrides in tests
@@ -22,18 +23,18 @@ export class OverridesHelper extends GameManagerHelper {
   /**
    * Override the starting biome
    * @warning Any event listeners that are attached to [NewArenaEvent](events\battle-scene.ts) may need to be handled down the line
-   * @param biome the biome to set
+   * @param biome The {@linkcode Biome} to set
+   * @returns `this`
    */
   startingBiome(biome: Biome): this {
     this.game.scene.newArena(biome);
     this.log(`Starting biome set to ${Biome[biome]} (=${biome})!`);
     return this;
   }
-
   /**
    * Override the starting wave (index)
    * @param wave the wave (index) to set. Classic: `1`-`200`
-   * @returns this
+   * @returns `this`
    */
   startingWave(wave: number): this {
     vi.spyOn(Overrides, "STARTING_WAVE_OVERRIDE", "get").mockReturnValue(wave);
@@ -42,9 +43,9 @@ export class OverridesHelper extends GameManagerHelper {
   }
 
   /**
-   * Override the player (pokemon) starting level
-   * @param level the (pokemon) level to set
-   * @returns this
+   * Override the player pokemon's starting level
+   * @param level the level to set
+   * @returns `this`
    */
   startingLevel(level: Species | number): this {
     vi.spyOn(Overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(level);
@@ -64,20 +65,47 @@ export class OverridesHelper extends GameManagerHelper {
   }
 
   /**
-   * Override the player (pokemon) starting held items
-   * @param items the items to hold
-   * @returns this
+   * Override the player pokemon's starting held items
+   * @param items the {@linkcode ModifierOverride | items} to hold
+   * @returns `this`
    */
-  startingHeldItems(items: ModifierOverride[]) {
+  startingHeldItems(items: ModifierOverride[]): this {
     vi.spyOn(Overrides, "STARTING_HELD_ITEMS_OVERRIDE", "get").mockReturnValue(items);
     this.log("Player Pokemon starting held items set to:", items);
     return this;
   }
 
   /**
-   * Override the player (pokemon) {@linkcode Species | species}
-   * @param species the (pokemon) {@linkcode Species | species} to set
-   * @returns this
+   * Override the player's pokeball inventory
+   * @param pokeballs Array specifying the amount of each pokeball to set, or `null` if disabling the override
+   * @param enable Whether to enable or disable the override, default `true`
+   * @returns `this`
+   */
+  pokeballs(pokeballs: [number, number, number, number, number] | null, enable: boolean = true): this {
+    if (!pokeballs) {
+      pokeballs = [ 5, 0, 0, 0, 0 ];
+    }
+    pokeballs = pokeballs!;
+    const pokeballOverride = {
+      active: enable,
+      pokeballs: {
+        [PokeballType.POKEBALL]: pokeballs[0],
+        [PokeballType.GREAT_BALL]: pokeballs[1],
+        [PokeballType.ULTRA_BALL]: pokeballs[2],
+        [PokeballType.ROGUE_BALL]: pokeballs[3],
+        [PokeballType.MASTER_BALL]: pokeballs[4],
+      },
+    };
+    vi.spyOn(Overrides, "POKEBALL_OVERRIDE", "get").mockReturnValue(pokeballOverride);
+    this.log(`Pokeball override ${enable ? `set to [${pokeballs}]!` : "disabled!"}`);
+    return this;
+  }
+
+  /**
+   * Override the player pokemon's species.
+   * It's preferred to use `startBattle([Species.PKMN1, Species.PKMN2, ...])` if possible.
+   * @param species the {@linkcode Species} to set
+   * @returns `this`
    */
   starterSpecies(species: Species | number): this {
     vi.spyOn(Overrides, "STARTER_SPECIES_OVERRIDE", "get").mockReturnValue(species);
@@ -107,9 +135,16 @@ export class OverridesHelper extends GameManagerHelper {
   }
 
   /**
-   * Override the player (pokemons) forms
-   * @param forms the (pokemon) forms to set
-   * @returns this
+   * Override the player pokemons' forms
+   * @param forms the forms to set
+   * @example
+   * ```ts
+   * game.override.starterForms({
+   *   [Species.KYOGRE]: 1,
+   *   [Species.PIKACHU]: 3,
+   * });
+   * ```
+   * @returns `this`
    */
   starterForms(forms: Partial<Record<Species, number>>): this {
     vi.spyOn(Overrides, "STARTER_FORM_OVERRIDES", "get").mockReturnValue(forms);
@@ -122,8 +157,8 @@ export class OverridesHelper extends GameManagerHelper {
 
   /**
    * Override the player's starting modifiers
-   * @param modifiers the modifiers to set
-   * @returns this
+   * @param modifiers the {@linkcode ModifierOverride | modifiers} to set
+   * @returns `this`
    */
   startingModifier(modifiers: ModifierOverride[]): this {
     vi.spyOn(Overrides, "STARTING_MODIFIER_OVERRIDE", "get").mockReturnValue(modifiers);
@@ -132,9 +167,9 @@ export class OverridesHelper extends GameManagerHelper {
   }
 
   /**
-   * Override the player (pokemon) {@linkcode Abilities | ability}
-   * @param ability the (pokemon) {@linkcode Abilities | ability} to set
-   * @returns this
+   * Override the player pokemon's ability
+   * @param ability the {@linkcode Abilities | ability} to set
+   * @returns `this`
    */
   ability(ability: Abilities): this {
     vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(ability);
@@ -143,8 +178,8 @@ export class OverridesHelper extends GameManagerHelper {
   }
 
   /**
-   * Override the player (pokemon) **passive** {@linkcode Abilities | ability}
-   * @param passiveAbility the (pokemon) **passive** {@linkcode Abilities | ability} to set
+   * Override the player pokemon's **passive** ability
+   * @param passiveAbility the **passive** {@linkcode Abilities | ability} to set
    * @returns this
    */
   passiveAbility(passiveAbility: Abilities): this {
@@ -154,9 +189,9 @@ export class OverridesHelper extends GameManagerHelper {
   }
 
   /**
-   * Override the player (pokemon) {@linkcode Moves | moves}set
-   * @param moveset the {@linkcode Moves | moves}set to set
-   * @returns this
+   * Override the player pokemon's moveset
+   * @param moveset the {@linkcode Moves | moveset} to set
+   * @returns `this`
    */
   moveset(moveset: Moves | Moves[]): this {
     vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue(moveset);
@@ -169,9 +204,9 @@ export class OverridesHelper extends GameManagerHelper {
   }
 
   /**
-   * Override the player (pokemon) {@linkcode StatusEffect | status-effect}
-   * @param statusEffect the {@linkcode StatusEffect | status-effect} to set
-   * @returns
+   * Override the player pokemon's status effect
+   * @param statusEffect the {@linkcode StatusEffect | status effect} to set
+   * @returns `this`
    */
   statusEffect(statusEffect: StatusEffect): this {
     vi.spyOn(Overrides, "STATUS_OVERRIDE", "get").mockReturnValue(statusEffect);
@@ -181,7 +216,7 @@ export class OverridesHelper extends GameManagerHelper {
 
   /**
    * Override each wave to not have standard trainer battles
-   * @returns this
+   * @returns `this`
    */
   disableTrainerWaves(): this {
     const realFn = getGameMode;
@@ -196,18 +231,18 @@ export class OverridesHelper extends GameManagerHelper {
 
   /**
    * Override each wave to not have critical hits
-   * @returns this
+   * @returns `this`
    */
-  disableCrits() {
+  disableCrits(): this {
     vi.spyOn(Overrides, "NEVER_CRIT_OVERRIDE", "get").mockReturnValue(true);
     this.log("Critical hits are disabled!");
     return this;
   }
 
   /**
-   * Override the {@linkcode WeatherType | weather (type)}
-   * @param type {@linkcode WeatherType | weather type} to set
-   * @returns this
+   * Override the weather
+   * @param type The {@linkcode WeatherType} to set
+   * @returns `this`
    */
   weather(type: WeatherType): this {
     vi.spyOn(Overrides, "WEATHER_OVERRIDE", "get").mockReturnValue(type);
@@ -218,7 +253,7 @@ export class OverridesHelper extends GameManagerHelper {
   /**
    * Override the seed
    * @param seed the seed to set
-   * @returns this
+   * @returns `this`
    */
   seed(seed: string): this {
     vi.spyOn(this.game.scene, "resetSeed").mockImplementation(() => {
@@ -232,9 +267,9 @@ export class OverridesHelper extends GameManagerHelper {
   }
 
   /**
-   * Override the battle type (single or double)
-   * @param battleType battle type to set
-   * @returns this
+   * Override the battle type
+   * @param battleType battle type to set ("single" or "double"), `null` to disable
+   * @returns `this`
    */
   battleType(battleType: "single" | "double" | null): this {
     vi.spyOn(Overrides, "BATTLE_TYPE_OVERRIDE", "get").mockReturnValue(battleType);
@@ -243,9 +278,9 @@ export class OverridesHelper extends GameManagerHelper {
   }
 
   /**
-   * Override the enemy (pokemon) {@linkcode Species | species}
-   * @param species the (pokemon) {@linkcode Species | species} to set
-   * @returns this
+   * Override the enemy pokemon's species
+   * @param species the {@linkcode Species | species} to set
+   * @returns `this`
    */
   enemySpecies(species: Species | number): this {
     vi.spyOn(Overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(species);
@@ -275,9 +310,9 @@ export class OverridesHelper extends GameManagerHelper {
   }
 
   /**
-   * Override the enemy (pokemon) {@linkcode Abilities | ability}
+   * Override the enemy pokemon's ability
    * @param ability the (pokemon) {@linkcode Abilities | ability} to set
-   * @returns this
+   * @returns `this`
    */
   enemyAbility(ability: Abilities): this {
     vi.spyOn(Overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(ability);
@@ -286,9 +321,9 @@ export class OverridesHelper extends GameManagerHelper {
   }
 
   /**
-   * Override the enemy (pokemon) **passive** {@linkcode Abilities | ability}
-   * @param passiveAbility the (pokemon) **passive** {@linkcode Abilities | ability} to set
-   * @returns this
+   * Override the enemy pokemon's **passive** ability
+   * @param passiveAbility the **passive** {@linkcode Abilities | ability} to set
+   * @returns `this`
    */
   enemyPassiveAbility(passiveAbility: Abilities): this {
     vi.spyOn(Overrides, "OPP_PASSIVE_ABILITY_OVERRIDE", "get").mockReturnValue(passiveAbility);
@@ -297,9 +332,9 @@ export class OverridesHelper extends GameManagerHelper {
   }
 
   /**
-   * Override the enemy (pokemon) {@linkcode Moves | moves}set
-   * @param moveset the {@linkcode Moves | moves}set to set
-   * @returns this
+   * Override the enemy pokemon's moveset
+   * @param moveset the {@linkcode Moves | moveset} to set
+   * @returns `this`
    */
   enemyMoveset(moveset: Moves | Moves[]): this {
     vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue(moveset);
@@ -312,9 +347,9 @@ export class OverridesHelper extends GameManagerHelper {
   }
 
   /**
-   * Override the enemy (pokemon) level
+   * Override the enemy pokemon's level
    * @param level the level to set
-   * @returns this
+   * @returns `this`
    */
   enemyLevel(level: number): this {
     vi.spyOn(Overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(level);
@@ -323,8 +358,8 @@ export class OverridesHelper extends GameManagerHelper {
   }
 
   /**
-   * Override the enemy (pokemon) {@linkcode StatusEffect | status-effect}
-   * @param statusEffect the {@linkcode StatusEffect | status-effect} to set
+   * Override the enemy pokemon's status effect
+   * @param statusEffect the {@linkcode StatusEffect} to set
    * @returns
    */
   enemyStatusEffect(statusEffect: StatusEffect): this {
@@ -334,11 +369,11 @@ export class OverridesHelper extends GameManagerHelper {
   }
 
   /**
-   * Override the enemy (pokemon) held items
-   * @param items the items to hold
-   * @returns this
+   * Override the enemy pokemon's held items
+   * @param items the {@linkcode ModifierOverride items} to hold
+   * @returns `this`
    */
-  enemyHeldItems(items: ModifierOverride[]) {
+  enemyHeldItems(items: ModifierOverride[]): this {
     vi.spyOn(Overrides, "OPP_HELD_ITEMS_OVERRIDE", "get").mockReturnValue(items);
     this.log("Enemy Pokemon held items set to:", items);
     return this;
@@ -357,10 +392,10 @@ export class OverridesHelper extends GameManagerHelper {
 
   /**
    * Override the items rolled at the end of a battle
-   * @param items the items to be rolled
-   * @returns this
+   * @param items the {@linkcode ModifierOverride items} to be rolled
+   * @returns `this`
    */
-  itemRewards(items: ModifierOverride[]) {
+  itemRewards(items: ModifierOverride[]): this {
     vi.spyOn(Overrides, "ITEM_REWARD_OVERRIDE", "get").mockReturnValue(items);
     this.log("Item rewards set to:", items);
     return this;
@@ -386,14 +421,14 @@ export class OverridesHelper extends GameManagerHelper {
   }
 
   /**
-   * Override the enemy (Pokemon) to have the given amount of health segments
+   * Override the enemy Pokemon to have the given amount of health segments
    * @param healthSegments the number of segments to give
-   *    default: 0, the health segments will be handled like in the game based on wave, level and species
-   *    1: the Pokemon will not be a boss
-   *    2+: the Pokemon will be a boss with the given number of health segments
-   * @returns this
+   *  - default: `0`, the health segments will be handled like in the game based on wave, level and species
+   *  - `1`: the Pokemon will not be a boss
+   *  - `2`+: the Pokemon will be a boss with the given number of health segments
+   * @returns `this`
    */
-  enemyHealthSegments(healthSegments: number) {
+  enemyHealthSegments(healthSegments: number): this {
     vi.spyOn(Overrides, "OPP_HEALTH_SEGMENTS_OVERRIDE", "get").mockReturnValue(healthSegments);
     this.log("Enemy Pokemon health segments set to:", healthSegments);
     return this;
@@ -402,9 +437,9 @@ export class OverridesHelper extends GameManagerHelper {
   /**
    * Override the encounter chance for a mystery encounter.
    * @param percentage the encounter chance in %
-   * @returns spy instance
+   * @returns `this`
    */
-  mysteryEncounterChance(percentage: number) {
+  mysteryEncounterChance(percentage: number): this {
     const maxRate: number = 256; // 100%
     const rate = maxRate * (percentage / 100);
     vi.spyOn(Overrides, "MYSTERY_ENCOUNTER_RATE_OVERRIDE", "get").mockReturnValue(rate);
@@ -413,11 +448,11 @@ export class OverridesHelper extends GameManagerHelper {
   }
 
   /**
-   * Override the encounter chance for a mystery encounter.
-   * @returns spy instance
-   * @param tier
+   * Override the encounter tier for a mystery encounter.
+   * @param tier What {@linkcode MysteryEncounterTier | tier} of encounter to set
+   * @returns `this`
    */
-  mysteryEncounterTier(tier: MysteryEncounterTier) {
+  mysteryEncounterTier(tier: MysteryEncounterTier): this {
     vi.spyOn(Overrides, "MYSTERY_ENCOUNTER_TIER_OVERRIDE", "get").mockReturnValue(tier);
     this.log(`Mystery encounter tier set to ${tier}!`);
     return this;
@@ -425,10 +460,10 @@ export class OverridesHelper extends GameManagerHelper {
 
   /**
    * Override the encounter that spawns for the scene
-   * @param encounterType
-   * @returns spy instance
+   * @param encounterType What {@linkcode MysteryEncounterType | type} of encounter to set
+   * @returns `this`
    */
-  mysteryEncounter(encounterType: MysteryEncounterType) {
+  mysteryEncounter(encounterType: MysteryEncounterType): this {
     vi.spyOn(Overrides, "MYSTERY_ENCOUNTER_OVERRIDE", "get").mockReturnValue(encounterType);
     this.log(`Mystery encounter override set to ${encounterType}!`);
     return this;
