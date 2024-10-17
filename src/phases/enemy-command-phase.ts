@@ -2,6 +2,8 @@ import BattleScene from "#app/battle-scene";
 import { BattlerIndex } from "#app/battle";
 import { Command } from "#app/ui/command-ui-handler";
 import { FieldPhase } from "./field-phase";
+import { Abilities } from "#enums/abilities";
+import { BattlerTagType } from "#enums/battler-tag-type";
 
 /**
  * Phase for determining an enemy AI's action for the next turn.
@@ -33,6 +35,11 @@ export class EnemyCommandPhase extends FieldPhase {
     const battle = this.scene.currentBattle;
 
     const trainer = battle.trainer;
+
+    if (battle.double && enemyPokemon.hasAbility(Abilities.COMMANDER)
+        && enemyPokemon.getAlly().getTag(BattlerTagType.COMMANDED)) {
+      this.skipTurn = true;
+    }
 
     /**
        * If the enemy has a trainer, decide whether or not the enemy should switch
