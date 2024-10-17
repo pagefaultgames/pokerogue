@@ -405,7 +405,6 @@ export abstract class LapsingPersistentModifier extends PersistentModifier {
 
   /**
    * Updates an existing modifier with a new `maxBattles` and `battleCount`.
-   * @param count
    */
   setNewBattleCount(count: number): void {
     this.maxBattles = count;
