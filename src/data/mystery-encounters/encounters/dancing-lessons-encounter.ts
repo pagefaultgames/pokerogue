@@ -102,6 +102,7 @@ export const DancingLessonsEncounter: MysteryEncounter =
         text: `${namespace}:intro`,
       }
     ])
+    .setLocalizationKey(`${namespace}`)
     .withTitle(`${namespace}:title`)
     .withDescription(`${namespace}:description`)
     .withQuery(`${namespace}:query`)
@@ -227,7 +228,7 @@ export const DancingLessonsEncounter: MysteryEncounter =
         })
         .withOptionPhase(async (scene: BattleScene) => {
           // Learn its Dance
-          hideOricorioPokemon(scene);
+          await hideOricorioPokemon(scene);
           leaveEncounterWithoutBattle(scene, true);
         })
         .build()
@@ -302,7 +303,7 @@ export const DancingLessonsEncounter: MysteryEncounter =
             }
           }
 
-          hideOricorioPokemon(scene);
+          await hideOricorioPokemon(scene);
           await catchPokemon(scene, oricorio, null, PokeballType.POKEBALL, false);
           leaveEncounterWithoutBattle(scene, true);
         })

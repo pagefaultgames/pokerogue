@@ -64,6 +64,7 @@ export const AnOfferYouCantRefuseEncounter: MysteryEncounter =
         speaker: `${namespace}:speaker`,
       },
     ])
+    .setLocalizationKey(`${namespace}`)
     .withTitle(`${namespace}:title`)
     .withDescription(`${namespace}:description`)
     .withQuery(`${namespace}:query`)

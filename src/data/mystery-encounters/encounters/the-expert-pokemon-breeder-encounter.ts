@@ -62,7 +62,7 @@ const POOL_1_POKEMON: (Species | BreederSpeciesEvolution)[][] = [
 const POOL_2_POKEMON: (Species | BreederSpeciesEvolution)[][] = [
   [ Species.PICHU, new BreederSpeciesEvolution(Species.PIKACHU, FIRST_STAGE_EVOLUTION_WAVE), new BreederSpeciesEvolution(Species.RAICHU, FINAL_STAGE_EVOLUTION_WAVE) ],
   [ Species.PICHU, new BreederSpeciesEvolution(Species.PIKACHU, FIRST_STAGE_EVOLUTION_WAVE), new BreederSpeciesEvolution(Species.ALOLA_RAICHU, FINAL_STAGE_EVOLUTION_WAVE) ],
-  [ Species.JYNX ],
+  [ Species.SMOOCHUM, new BreederSpeciesEvolution(Species.JYNX, SECOND_STAGE_EVOLUTION_WAVE) ],
   [ Species.TYROGUE, new BreederSpeciesEvolution(Species.HITMONLEE, SECOND_STAGE_EVOLUTION_WAVE) ],
   [ Species.TYROGUE, new BreederSpeciesEvolution(Species.HITMONCHAN, SECOND_STAGE_EVOLUTION_WAVE) ],
   [ Species.TYROGUE, new BreederSpeciesEvolution(Species.HITMONTOP, SECOND_STAGE_EVOLUTION_WAVE) ],
@@ -197,6 +197,7 @@ export const TheExpertPokemonBreederEncounter: MysteryEncounter =
 
       return true;
     })
+    .setLocalizationKey(`${namespace}`)
     .withTitle(`${namespace}:title`)
     .withDescription(`${namespace}:description`)
     .withQuery(`${namespace}:query`)
@@ -245,7 +246,7 @@ export const TheExpertPokemonBreederEncounter: MysteryEncounter =
           }
 
           encounter.onGameOver = onGameOver;
-          initBattleWithEnemyConfig(scene, config);
+          await initBattleWithEnemyConfig(scene, config);
         })
         .build()
     )
@@ -294,7 +295,7 @@ export const TheExpertPokemonBreederEncounter: MysteryEncounter =
           }
 
           encounter.onGameOver = onGameOver;
-          initBattleWithEnemyConfig(scene, config);
+          await initBattleWithEnemyConfig(scene, config);
         })
         .build()
     )
@@ -343,7 +344,7 @@ export const TheExpertPokemonBreederEncounter: MysteryEncounter =
           }
 
           encounter.onGameOver = onGameOver;
-          initBattleWithEnemyConfig(scene, config);
+          await initBattleWithEnemyConfig(scene, config);
         })
         .build()
     )
@@ -485,7 +486,7 @@ function getEggOptions(scene: BattleScene, commonEggs: number, rareEggs: number)
         pulled: false,
         sourceType: EggSourceType.EVENT,
         eggDescriptor: eggDescription,
-        tier: EggTier.GREAT
+        tier: EggTier.RARE
       });
     }
   }
