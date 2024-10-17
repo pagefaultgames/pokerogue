@@ -839,8 +839,6 @@ export function isPokemonValidForEncounterOptionSelection(pokemon: Pokemon, scen
 /**
  * Permanently overrides the ability (not passive) of a pokemon.
  * If the pokemon is a fusion, instead overrides the fused pokemon's ability.
- * @param pokemon
- * @param ability
  */
 export function applyAbilityOverrideToPokemon(pokemon: Pokemon, ability: Abilities) {
   if (pokemon.isFusion()) {
