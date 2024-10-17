@@ -8226,9 +8226,9 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ RELEARN_MOVE, Moves.HYPNOSIS ],
     [ 1, Moves.TACKLE ],
     [ 1, Moves.DOUBLE_TEAM ],
-    [ 1, Moves.AIR_CUTTER ], // Prior Stage Move
+    [ 1, Moves.AIR_CUTTER ], // Previous Stage Move
     [ 1, Moves.NIGHT_SLASH ],
-    [ 1, Moves.WING_ATTACK ], // Prior Stage Move
+    [ 1, Moves.WING_ATTACK ], // Previous Stage Move
     [ 1, Moves.AIR_SLASH ],
     [ 1, Moves.BUG_BUZZ ],
     [ 14, Moves.QUICK_ATTACK ],
@@ -10152,7 +10152,6 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ 48, Moves.MAGIC_ROOM ],
   ],
   [Species.GOTHORITA]: [
-    [ RELEARN_MOVE, Moves.PSYCHIC ], // Previous Stage Move
     [ 1, Moves.POUND ],
     [ 1, Moves.CONFUSION ],
     [ 1, Moves.TICKLE ],
@@ -10164,6 +10163,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ 28, Moves.FAKE_TEARS ],
     [ 34, Moves.HEAL_BLOCK ],
     [ 35, Moves.PSYCH_UP ],
+    [ 40, Moves.PSYCHIC ], // Previous Stage Move, Gothitelle Level
     [ 46, Moves.FLATTER ],
     [ 52, Moves.FUTURE_SIGHT ],
     [ 58, Moves.MAGIC_ROOM ],
