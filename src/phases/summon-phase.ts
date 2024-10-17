@@ -238,10 +238,7 @@ export class SummonPhase extends PartyMemberPokemonPhase {
       this.scene.unshiftPhase(new ShinySparklePhase(this.scene, pokemon.getBattlerIndex()));
     }
 
-    /** Switch in status is set before the pokemon is summoned and the new turn begins, so it is preserved from switch-summon-phase */
-    const switchedInStatus = pokemon.turnData?.switchedInThisTurn;
     pokemon.resetTurnData();
-    pokemon.turnData.switchedInThisTurn = switchedInStatus;
 
     if (!this.loaded || [ BattleType.TRAINER, BattleType.MYSTERY_ENCOUNTER ].includes(this.scene.currentBattle.battleType) || (this.scene.currentBattle.waveIndex % 10) === 1) {
       this.scene.triggerPokemonFormChange(pokemon, SpeciesFormChangeActiveTrigger, true);

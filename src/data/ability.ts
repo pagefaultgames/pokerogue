@@ -3596,8 +3596,10 @@ export class PostTurnStatStageChangeAbAttr extends PostTurnAbAttr {
     if (!simulated) {
       if (!pokemon.hasAbility(Abilities.SPEED_BOOST)) {
         pokemon.scene.unshiftPhase(new StatStageChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, this.stats, this.stages));
+        this.showAbility = true;
       } else if (pokemon.hasAbility(Abilities.SPEED_BOOST) && !pokemon.turnData.switchedInThisTurn && !pokemon.turnData.failedRunAway) {
         pokemon.scene.unshiftPhase(new StatStageChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, this.stats, this.stages));
+        this.showAbility = true;
       } else {
         this.showAbility = false;
       }
