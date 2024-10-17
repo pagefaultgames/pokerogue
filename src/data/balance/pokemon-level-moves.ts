@@ -17335,7 +17335,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ 18, Moves.FOCUS_ENERGY ],
     [ 24, Moves.BITE ],
     [ 29, Moves.ICE_FANG ],
-    [ 35, Moves.DRAGON_CLAW ], // Previous Stage Move, Baxcalibur Level
+    [ 32, Moves.DRAGON_CLAW ], // Previous Stage Move, Frigibax Level
     [ 40, Moves.TAKE_DOWN ],
     [ 45, Moves.ICE_BEAM ],
     [ 50, Moves.CRUNCH ],
