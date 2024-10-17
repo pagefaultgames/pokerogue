@@ -65,7 +65,7 @@ export class SwitchSummonPhase extends SummonPhase {
 
     const pokemon = this.getPokemon();
 
-    if (this.switchType === SwitchType.SWITCH) {
+    if (this.switchType === SwitchType.SWITCH || this.switchType === SwitchType.INITIAL_SWITCH) {
       (this.player ? this.scene.getEnemyField() : this.scene.getPlayerField()).forEach(enemyPokemon => enemyPokemon.removeTagsBySourceId(pokemon.id));
       const substitute = pokemon.getTag(SubstituteTag);
       if (substitute) {
@@ -183,6 +183,11 @@ export class SwitchSummonPhase extends SummonPhase {
       if (subTag) {
         pokemon.summonData.tags.push(subTag);
       }
+    }
+
+    if (this.switchType !== SwitchType.INITIAL_SWITCH) {
+      pokemon.resetTurnData();
+      pokemon.turnData.switchedInThisTurn = true;
     }
 
     this.lastPokemon?.resetSummonData();
