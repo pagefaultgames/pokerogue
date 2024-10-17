@@ -1,7 +1,6 @@
 import { SettingKeys } from "../../settings/settings";
 import { AbilityAttr, defaultStarterSpecies, DexAttr, SystemSaveData, SessionSaveData  } from "../../game-data";
 import { allSpecies } from "../../../data/pokemon-species";
-import { CustomPokemonData } from "#app/data/custom-pokemon-data";
 
 export const systemMigrators = [
   /**
@@ -130,20 +129,6 @@ export const sessionMigrators = [
         m.className = "BaseStatModifier";
       } else if (m.className === "PokemonResetNegativeStatStageModifier") {
         m.className = "ResetNegativeStatStageModifier";
-      }
-    });
-
-    // Fix Pokemon nature overrides and custom data migration
-    data.party.forEach(pokemon => {
-      if (pokemon["mysteryEncounterData"]) {
-        pokemon.customPokemonData = new CustomPokemonData(pokemon["mysteryEncounterData"]);
-      }
-      if (pokemon["fusionMysteryEncounterData"]) {
-        pokemon.fusionCustomPokemonData = new CustomPokemonData(pokemon["fusionMysteryEncounterData"]);
-      }
-      pokemon.customPokemonData = pokemon.customPokemonData ?? new CustomPokemonData();
-      if (pokemon["natureOverride"]) {
-        pokemon.customPokemonData.nature = pokemon["natureOverride"];
       }
     });
   }

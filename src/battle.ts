@@ -19,6 +19,7 @@ import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
 import { CustomModifierSettings } from "#app/modifier/modifier-type";
 import { ModifierTier } from "#app/modifier/modifier-tier";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
+import { isNullOrUndefined } from "./utils";
 
 export enum ClassicFixedBossWaves {
   // TODO: other fixed wave battles should be added here
@@ -414,7 +415,7 @@ export default class Battle {
    * Returns if the battle is of type {@linkcode BattleType.MYSTERY_ENCOUNTER}
    */
   isBattleMysteryEncounter(): boolean {
-    return this.battleType === BattleType.MYSTERY_ENCOUNTER;
+    return !isNullOrUndefined(this.battleType) && this.battleType === BattleType.MYSTERY_ENCOUNTER;
   }
 }
 

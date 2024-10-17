@@ -361,10 +361,10 @@ export const BugTypeSuperfanEncounter: MysteryEncounter =
           const specialOptions: ModifierTypeOption[] = [];
 
           if (!scene.findModifier(m => m instanceof MegaEvolutionAccessModifier)) {
-            specialOptions.push(generateModifierTypeOption(scene, modifierTypes.MEGA_BRACELET)!);
+            modifierOptions.push(generateModifierTypeOption(scene, modifierTypes.MEGA_BRACELET)!);
           }
           if (!scene.findModifier(m => m instanceof GigantamaxAccessModifier)) {
-            specialOptions.push(generateModifierTypeOption(scene, modifierTypes.DYNAMAX_BAND)!);
+            modifierOptions.push(generateModifierTypeOption(scene, modifierTypes.DYNAMAX_BAND)!);
           }
           const nonRareEvolutionModifier = generateModifierTypeOption(scene, modifierTypes.EVOLUTION_ITEM);
           if (nonRareEvolutionModifier) {
