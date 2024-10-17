@@ -4347,6 +4347,15 @@ export class IgnoreProtectOnContactAbAttr extends AbAttr { }
  * Allows the source's moves to bypass the effects of opposing Light Screen, Reflect, Aurora Veil, Safeguard, Mist, and Substitute.
  */
 export class InfiltratorAbAttr extends AbAttr {
+  /**
+   * Sets a flag to bypass screens, Substitute, Safeguard, and Mist
+   * @param pokemon n/a
+   * @param passive n/a
+   * @param simulated n/a
+   * @param cancelled n/a
+   * @param args `[0]` a {@linkcode Utils.BooleanHolder | BooleanHolder} containing the flag
+   * @returns `true` if the bypass flag was successfully set; `false` otherwise.
+   */
   override apply(pokemon: Pokemon, passive: boolean, simulated: boolean, cancelled: null, args: any[]): boolean {
     const bypassed = args[0];
     if (args[0] instanceof Utils.BooleanHolder) {
