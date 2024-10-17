@@ -106,9 +106,9 @@ export class SwitchSummonPhase extends SummonPhase {
     const switchedInPokemon = party[this.slotIndex];
     this.lastPokemon = this.getPokemon();
     if (this.switchType !== SwitchType.INITIAL_SWITCH) {
-      switchedInPokemon.setSwitchedInStatus(true);
+      switchedInPokemon.resetTurnData();
+      switchedInPokemon.turnData.switchedInThisTurn = true;
     }
-    this.lastPokemon.setSwitchedInStatus(false);
     applyPreSwitchOutAbAttrs(PreSwitchOutAbAttr, this.lastPokemon);
     if (this.switchType === SwitchType.BATON_PASS && switchedInPokemon) {
       (this.player ? this.scene.getEnemyField() : this.scene.getPlayerField()).forEach(enemyPokemon => enemyPokemon.transferTagsBySourceId(this.lastPokemon.id, switchedInPokemon.id));
