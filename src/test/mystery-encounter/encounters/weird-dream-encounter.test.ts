@@ -122,7 +122,7 @@ describe("Weird Dream - Mystery Encounter", () => {
       for (let i = 0; i < pokemonAfter.length; i++) {
         const newPokemon = pokemonAfter[i];
         expect(newPokemon.getSpeciesForm().speciesId).not.toBe(pokemonPrior[i].getSpeciesForm().speciesId);
-        expect(newPokemon.mysteryEncounterPokemonData?.types.length).toBe(2);
+        expect(newPokemon.customPokemonData?.types.length).toBe(2);
       }
 
       const plus90To110 = bstDiff.filter(bst => bst > 80);

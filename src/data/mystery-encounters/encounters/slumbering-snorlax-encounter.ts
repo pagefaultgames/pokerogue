@@ -18,7 +18,7 @@ import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode
 import { PartyHealPhase } from "#app/phases/party-heal-phase";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
 import { BerryType } from "#enums/berry-type";
-import { MysteryEncounterPokemonData } from "#app/data/mystery-encounters/mystery-encounter-pokemon-data";
+import { CustomPokemonData } from "#app/data/custom-pokemon-data";
 
 /** i18n namespace for the encounter */
 const namespace = "mysteryEncounters/slumberingSnorlax";
@@ -72,7 +72,7 @@ export const SlumberingSnorlaxEncounter: MysteryEncounter =
             stackCount: 2
           },
         ],
-        mysteryEncounterPokemonData: new MysteryEncounterPokemonData({ spriteScale: 1.25 }),
+        customPokemonData: new CustomPokemonData({ spriteScale: 1.25 }),
         aiType: AiType.SMART // Required to ensure Snorlax uses Sleep Talk while it is asleep
       };
       const config: EnemyPartyConfig = {
@@ -143,7 +143,7 @@ export const SlumberingSnorlaxEncounter: MysteryEncounter =
     .withOption(
       MysteryEncounterOptionBuilder
         .newOptionWithMode(MysteryEncounterOptionMode.DISABLED_OR_SPECIAL)
-        .withPrimaryPokemonRequirement(new MoveRequirement(STEALING_MOVES))
+        .withPrimaryPokemonRequirement(new MoveRequirement(STEALING_MOVES, true))
         .withDialogue({
           buttonLabel: `${namespace}:option.3.label`,
           buttonTooltip: `${namespace}:option.3.tooltip`,
