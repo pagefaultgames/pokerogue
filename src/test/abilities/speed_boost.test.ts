@@ -106,7 +106,6 @@ describe("Abilities - Speed Boost", () => {
 
   it("should not trigger if pokemon fails to escape",
     async () => {
-      game.override.enemySpecies(Species.REGIELEKI);
       await game.classicMode.startBattle([ Species.SHUCKLE ]);
 
       const commandPhase = game.scene.getCurrentPhase() as CommandPhase;
