@@ -2302,6 +2302,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
   ],
   [Species.VAPOREON]: [
     [ EVOLVE_MOVE, Moves.BOUNCY_BUBBLE ],
+    [ RELEARN_MOVE, Moves.VEEVEE_VOLLEY ], // Custom
     [ 1, Moves.TACKLE ],
     [ 1, Moves.TAKE_DOWN ],
     [ 1, Moves.DOUBLE_EDGE ],
@@ -2329,6 +2330,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
   ],
   [Species.JOLTEON]: [
     [ EVOLVE_MOVE, Moves.BUZZY_BUZZ ],
+    [ RELEARN_MOVE, Moves.VEEVEE_VOLLEY ], // Custom
     [ 1, Moves.TACKLE ],
     [ 1, Moves.TAKE_DOWN ],
     [ 1, Moves.DOUBLE_EDGE ],
@@ -2356,6 +2358,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
   ],
   [Species.FLAREON]: [
     [ EVOLVE_MOVE, Moves.SIZZLY_SLIDE ],
+    [ RELEARN_MOVE, Moves.VEEVEE_VOLLEY ], // Custom
     [ 1, Moves.TACKLE ],
     [ 1, Moves.TAKE_DOWN ],
     [ 1, Moves.DOUBLE_EDGE ],
@@ -2487,6 +2490,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ 1, Moves.TACKLE ],
     [ 1, Moves.SCREECH ],
     [ 1, Moves.DEFENSE_CURL ],
+    [ 1, Moves.ODOR_SLEUTH ], // Custom
     [ 1, Moves.METRONOME ],
     [ 1, Moves.LICK ],
     [ 1, Moves.FLAIL ],
@@ -3411,6 +3415,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
   ],
   [Species.ESPEON]: [
     [ EVOLVE_MOVE, Moves.GLITZY_GLOW ],
+    [ RELEARN_MOVE, Moves.VEEVEE_VOLLEY ], // Custom
     [ 1, Moves.TACKLE ],
     [ 1, Moves.TAKE_DOWN ],
     [ 1, Moves.DOUBLE_EDGE ],
@@ -3437,6 +3442,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
   ],
   [Species.UMBREON]: [
     [ EVOLVE_MOVE, Moves.BADDY_BAD ],
+    [ RELEARN_MOVE, Moves.VEEVEE_VOLLEY ], // Custom
     [ 1, Moves.TACKLE ],
     [ 1, Moves.TAKE_DOWN ],
     [ 1, Moves.DOUBLE_EDGE ],
@@ -3481,6 +3487,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
   [Species.SLOWKING]: [
     [ RELEARN_MOVE, Moves.FUTURE_SIGHT ],
     [ RELEARN_MOVE, Moves.CHILLY_RECEPTION ],
+    [ 1, Moves.ZEN_HEADBUTT ], // Custom
     [ 1, Moves.POWER_GEM ],
     [ 1, Moves.NASTY_PLOT ],
     [ 1, Moves.SWAGGER ],
@@ -3796,8 +3803,11 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ 1, Moves.SCRATCH ],
     [ 1, Moves.LEER ],
     [ 1, Moves.LICK ],
+    [ 1, Moves.BABY_DOLL_EYES ], // Custom
     [ 1, Moves.FAKE_TEARS ],
+    [ 1, Moves.CHARM ], // Custom
     [ 1, Moves.COVET ],
+    [ 1, Moves.FLING ], // Custom
     [ 8, Moves.FURY_SWIPES ],
     [ 13, Moves.PAYBACK ],
     [ 17, Moves.SWEET_SCENT ],
@@ -4060,10 +4070,14 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ 1, Moves.TACKLE ], // Custom
     [ 1, Moves.HORN_ATTACK ],
     [ 1, Moves.FLAIL ], // Custom
+    [ 1, Moves.TAKE_DOWN ], // Custom
+    [ 1, Moves.CHARM ], // Custom
     [ 1, Moves.LAST_RESORT ], // Custom
     [ 1, Moves.DOUBLE_EDGE ], // Custom
     [ 1, Moves.GROWL ],
     [ 1, Moves.DEFENSE_CURL ],
+    [ 1, Moves.ODOR_SLEUTH ], // Custom
+    [ 1, Moves.ENDURE ], // Custom
     [ 1, Moves.THUNDER_FANG ],
     [ 1, Moves.FIRE_FANG ],
     [ 1, Moves.BULLDOZE ],
@@ -4670,10 +4684,15 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
   ],
   [Species.SILCOON]: [
     [ EVOLVE_MOVE, Moves.HARDEN ],
+    [ RELEARN_MOVE, Moves.TACKLE ], // Previous Stage Move
+    [ RELEARN_MOVE, Moves.STRING_SHOT ], // Previous Stage Move
+    [ RELEARN_MOVE, Moves.POISON_STING ], // Previous Stage Move
+    [ RELEARN_MOVE, Moves.BUG_BITE ], // Previous Stage Move
     [ 1, Moves.HARDEN ],
   ],
   [Species.BEAUTIFLY]: [
     [ EVOLVE_MOVE, Moves.GUST ],
+    [ RELEARN_MOVE, Moves.TACKLE ], // Previous Stage Move
     [ 1, Moves.BUG_BITE ],
     [ 1, Moves.GUST ],
     [ 1, Moves.HARDEN ],
@@ -4694,10 +4713,15 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
   ],
   [Species.CASCOON]: [
     [ EVOLVE_MOVE, Moves.HARDEN ],
+    [ RELEARN_MOVE, Moves.TACKLE ], // Previous Stage Move
+    [ RELEARN_MOVE, Moves.STRING_SHOT ], // Previous Stage Move
+    [ RELEARN_MOVE, Moves.POISON_STING ], // Previous Stage Move
+    [ RELEARN_MOVE, Moves.BUG_BITE ], // Previous Stage Move
     [ 1, Moves.HARDEN ],
   ],
   [Species.DUSTOX]: [
     [ EVOLVE_MOVE, Moves.GUST ],
+    [ RELEARN_MOVE, Moves.TACKLE ], // Previous Stage Move
     [ 1, Moves.BUG_BITE ],
     [ 1, Moves.GUST ],
     [ 1, Moves.HARDEN ],
@@ -4764,7 +4788,8 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ RELEARN_MOVE, Moves.ASTONISH ],
     [ RELEARN_MOVE, Moves.ENERGY_BALL ],
     [ RELEARN_MOVE, Moves.ZEN_HEADBUTT ],
-    [ RELEARN_MOVE, Moves.LEECH_SEED ], // Custom Relearn
+    [ RELEARN_MOVE, Moves.LEECH_SEED ], // Previous Stage Move
+    [ RELEARN_MOVE, Moves.GIGA_DRAIN ], // Previous Stage Move
     [ 1, Moves.FAKE_OUT ],
     [ 1, Moves.BUBBLE_BEAM ],
     [ 1, Moves.RAIN_DANCE ],
@@ -4794,8 +4819,10 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ 1, Moves.EXPLOSION ],
     [ 1, Moves.TACKLE ],
     [ 1, Moves.HARDEN ],
+    [ 1, Moves.BIDE ], // Seedot
     [ 1, Moves.ABSORB ],
     [ 1, Moves.ASTONISH ],
+    [ 1, Moves.HEADBUTT ], // Seedot
     [ 9, Moves.GROWTH ],
     [ 12, Moves.ROLLOUT ],
     [ 18, Moves.MEGA_DRAIN ],
@@ -4810,11 +4837,13 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ EVOLVE_MOVE, Moves.LEAF_BLADE ],
     [ RELEARN_MOVE, Moves.WHIRLWIND ],
     [ RELEARN_MOVE, Moves.TACKLE ],
+    [ RELEARN_MOVE, Moves.BIDE ], // Seedot
     [ RELEARN_MOVE, Moves.ABSORB ],
     [ RELEARN_MOVE, Moves.MEGA_DRAIN ],
     [ RELEARN_MOVE, Moves.GROWTH ],
     [ RELEARN_MOVE, Moves.RAZOR_LEAF ],
     [ RELEARN_MOVE, Moves.HARDEN ],
+    [ RELEARN_MOVE, Moves.HEADBUTT ], // Seedot
     [ RELEARN_MOVE, Moves.EXPLOSION ],
     [ RELEARN_MOVE, Moves.ROLLOUT ],
     [ RELEARN_MOVE, Moves.SWAGGER ],
@@ -4967,16 +4996,17 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ 38, Moves.STICKY_WEB ],
   ],
   [Species.MASQUERAIN]: [
-    [ 1, Moves.STICKY_WEB ], // Custom Relearn
-    [ 1, Moves.BATON_PASS ], // Custom Relearn
+    [ RELEARN_MOVE, Moves.BATON_PASS ], // Previous Stage Move
+    [ RELEARN_MOVE, Moves.STICKY_WEB ], // Previous Stage Move
     [ 1, Moves.WHIRLWIND ],
     [ 1, Moves.WATER_GUN ],
-    [ 1, Moves.BUBBLE_BEAM ], // Custom
-    [ 1, Moves.MIST ], // Custom
-    [ 1, Moves.HAZE ], // Custom
     [ 1, Moves.QUICK_ATTACK ],
     [ 1, Moves.SWEET_SCENT ],
     [ 1, Moves.SOAK ],
+    [ 1, Moves.BUBBLE_BEAM ], // Previous Stage Move
+    [ 1, Moves.AGILITY ], // Previous Stage Move
+    [ 1, Moves.MIST ], // Previous Stage Move
+    [ 1, Moves.HAZE ], // Previous Stage Move
     [ 1, Moves.OMINOUS_WIND ],
     [ 17, Moves.GUST ],
     [ 22, Moves.SCARY_FACE ],
@@ -5005,6 +5035,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ EVOLVE_MOVE, Moves.MACH_PUNCH ],
     [ RELEARN_MOVE, Moves.SPORE ],
     [ 1, Moves.POISON_POWDER ],
+    [ 1, Moves.GIGA_DRAIN ], // Previous Stage Move
     [ 1, Moves.GROWTH ],
     [ 1, Moves.TOXIC ],
     [ 1, Moves.ABSORB ],
@@ -5036,8 +5067,9 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ 38, Moves.PLAY_ROUGH ],
   ],
   [Species.VIGOROTH]: [
-    [ RELEARN_MOVE, Moves.PLAY_ROUGH ], // Custom Relearn
+    [ RELEARN_MOVE, Moves.PLAY_ROUGH ], // Previous Stage Move
     [ 1, Moves.SCRATCH ],
+    [ 1, Moves.YAWN ], // Previous Stage Move
     [ 1, Moves.FOCUS_ENERGY ],
     [ 1, Moves.ENCORE ],
     [ 1, Moves.UPROAR ],
@@ -5051,17 +5083,17 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
   ],
   [Species.SLAKING]: [
     [ EVOLVE_MOVE, Moves.SWAGGER ],
-    [ 1, Moves.PLAY_ROUGH ], // Custom Relearn
-    [ 1, Moves.FOCUS_ENERGY ], // Custom
+    [ RELEARN_MOVE, Moves.PLAY_ROUGH ], // Previous Stage Move
+    [ RELEARN_MOVE, Moves.FOCUS_PUNCH ], // Previous Stage Move
     [ 1, Moves.SUCKER_PUNCH ],
-    [ 1, Moves.FOCUS_PUNCH ], // Custom
-    [ 1, Moves.UPROAR ], // Custom
     [ 1, Moves.SCRATCH ],
-    [ 1, Moves.FALSE_SWIPE ], // Custom
-    [ 1, Moves.HEADBUTT ], // Custom
     [ 1, Moves.YAWN ],
+    [ 1, Moves.FOCUS_ENERGY ], // Previous Stage Move
     [ 1, Moves.ENCORE ],
     [ 1, Moves.SLACK_OFF ],
+    [ 1, Moves.UPROAR ], // Previous Stage Move
+    [ 1, Moves.FURY_SWIPES ], // Previous Stage Move
+    [ 1, Moves.HEADBUTT ], // Previous Stage Move
     [ 17, Moves.AMNESIA ],
     [ 23, Moves.COVET ],
     [ 27, Moves.THROAT_CHOP ],
@@ -5197,6 +5229,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ 1, Moves.BRINE ],
     [ 1, Moves.TACKLE ],
     [ 1, Moves.FOCUS_ENERGY ],
+    [ 1, Moves.SAND_ATTACK ], // Previous Stage Move
     [ 1, Moves.ARM_THRUST ],
     [ 10, Moves.FAKE_OUT ],
     [ 13, Moves.FORCE_PALM ],
@@ -5400,6 +5433,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ 1, Moves.DETECT ],
     [ 1, Moves.WORK_UP ],
     [ 1, Moves.BIDE ],
+    [ 1, Moves.REVERSAL ], // Previous Stage Move
     [ 12, Moves.ENDURE ],
     [ 15, Moves.FEINT ],
     [ 17, Moves.FORCE_PALM ],
@@ -5568,8 +5602,8 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ 1, Moves.YAWN ],
     [ 1, Moves.POISON_GAS ],
     [ 1, Moves.WRING_OUT ],
-    [ 1, Moves.PAIN_SPLIT ], // Custom
     [ 1, Moves.SLUDGE ],
+    [ 1, Moves.PAIN_SPLIT ], // Previous Stage Move
     [ 12, Moves.AMNESIA ],
     [ 17, Moves.ACID_SPRAY ],
     [ 20, Moves.ENCORE ],
@@ -5636,6 +5670,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ 1, Moves.SOAK ],
     [ 1, Moves.NOBLE_ROAR ],
     [ 1, Moves.SPLASH ],
+    [ 1, Moves.TACKLE ], // Previous Stage Move, Custom
     [ 1, Moves.GROWL ],
     [ 1, Moves.ASTONISH ],
     [ 1, Moves.WATER_GUN ],
@@ -5670,6 +5705,8 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
   ],
   [Species.CAMERUPT]: [
     [ EVOLVE_MOVE, Moves.ROCK_SLIDE ],
+    [ RELEARN_MOVE, Moves.FLAMETHROWER ], // Previous Stage Move
+    [ RELEARN_MOVE, Moves.DOUBLE_EDGE ], // Previous Stage Move
     [ 1, Moves.FISSURE ],
     [ 1, Moves.ERUPTION ],
     [ 1, Moves.DOUBLE_EDGE ], // Custom
@@ -5727,8 +5764,8 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ 1, Moves.BELCH ],
     [ 1, Moves.SPLASH ],
     [ 1, Moves.CONFUSION ],
+    [ 1, Moves.GROWL ], // Previous Stage Move
     [ 1, Moves.PSYBEAM ],
-    [ 1, Moves.GROWL ], // Custom
     [ 18, Moves.PSYCH_UP ],
     [ 22, Moves.CONFUSE_RAY ],
     [ 26, Moves.ZEN_HEADBUTT ],
@@ -6235,6 +6272,8 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
   ],
   [Species.BANETTE]: [
     [ EVOLVE_MOVE, Moves.KNOCK_OFF ],
+    [ 1, Moves.ASTONISH ], // Previous Stage Move
+    [ 1, Moves.PURSUIT ], // Previous Stage Move, Custom
     [ 1, Moves.SCREECH ],
     [ 1, Moves.NIGHT_SHADE ],
     [ 1, Moves.SPITE ],
@@ -6273,6 +6312,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ 1, Moves.BIND ],
     [ 1, Moves.ASTONISH ],
     [ 1, Moves.LEER ],
+    [ 1, Moves.PURSUIT ], // Previous Stage Move, Custom
     [ 1, Moves.DISABLE ],
     [ 1, Moves.SHADOW_SNEAK ],
     [ 12, Moves.CONFUSE_RAY ],
@@ -6304,7 +6344,10 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
   ],
   [Species.CHIMECHO]: [
     [ 1, Moves.HEALING_WISH ],
+    [ 1, Moves.LAST_RESORT ], // Previous Stage Move
+    [ 1, Moves.ENTRAINMENT ], // Previous Stage Move
     [ 1, Moves.WRAP ],
+    [ 1, Moves.PSYWAVE ], // Previous Stage Move, Custom
     [ 1, Moves.GROWL ],
     [ 1, Moves.ASTONISH ],
     [ 1, Moves.CONFUSION ],
@@ -6444,6 +6487,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ 50, Moves.SHELL_SMASH ],
   ],
   [Species.HUNTAIL]: [
+    [ 1, Moves.CLAMP ], // Previous Stage Move
     [ 1, Moves.WATER_GUN ],
     [ 1, Moves.IRON_DEFENSE ],
     [ 1, Moves.SHELL_SMASH ],
@@ -6464,6 +6508,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ 50, Moves.HYDRO_PUMP ],
   ],
   [Species.GOREBYSS]: [
+    [ 1, Moves.CLAMP ], // Previous Stage Move
     [ 1, Moves.WATER_GUN ],
     [ 1, Moves.IRON_DEFENSE ],
     [ 1, Moves.SHELL_SMASH ],
@@ -6549,6 +6594,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
   ],
   [Species.SALAMENCE]: [
     [ EVOLVE_MOVE, Moves.FLY ],
+    [ RELEARN_MOVE, Moves.OUTRAGE ], // Previous Stage Move
     [ 1, Moves.PROTECT ],
     [ 1, Moves.DRAGON_TAIL ],
     [ 1, Moves.DUAL_WINGBEAT ],
@@ -6800,6 +6846,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ 1, Moves.ABSORB ],
     [ 1, Moves.WITHDRAW ],
     [ 1, Moves.LEAFAGE ],
+    [ 1, Moves.GROWTH ], // Previous Stage Move
     [ 13, Moves.RAZOR_LEAF ],
     [ 17, Moves.CURSE ],
     [ 22, Moves.BITE ],
@@ -6815,6 +6862,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ 1, Moves.TACKLE ],
     [ 1, Moves.ABSORB ],
     [ 1, Moves.LEAFAGE ],
+    [ 1, Moves.GROWTH ], // Previous Stage Move
     [ 1, Moves.RAZOR_LEAF ],
     [ 1, Moves.WITHDRAW ],
     [ 1, Moves.WOOD_HAMMER ],
@@ -6845,7 +6893,9 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
   ],
   [Species.MONFERNO]: [
     [ EVOLVE_MOVE, Moves.MACH_PUNCH ],
-    [ RELEARN_MOVE, Moves.NASTY_PLOT ], // Custom Relearn
+    [ RELEARN_MOVE, Moves.NASTY_PLOT ], // Previous Stage Move
+    [ RELEARN_MOVE, Moves.FACADE ], // Previous Stage Move
+    [ RELEARN_MOVE, Moves.FLAMETHROWER ], // Previous Stage Move
     [ 1, Moves.SCRATCH ],
     [ 1, Moves.LEER ],
     [ 1, Moves.EMBER ],
@@ -6863,8 +6913,10 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
   [Species.INFERNAPE]: [
     [ EVOLVE_MOVE, Moves.CLOSE_COMBAT ],
     [ RELEARN_MOVE, Moves.TAUNT ],
+    [ RELEARN_MOVE, Moves.NASTY_PLOT ], // Previous Stage Move
+    [ RELEARN_MOVE, Moves.FACADE ], // Previous Stage Move
     [ RELEARN_MOVE, Moves.SLACK_OFF ],
-    [ RELEARN_MOVE, Moves.NASTY_PLOT ], // Custom Relearn
+    [ RELEARN_MOVE, Moves.FLAMETHROWER ], // Previous Stage Move
     [ 1, Moves.SCRATCH ],
     [ 1, Moves.LEER ],
     [ 1, Moves.EMBER ],
@@ -6899,6 +6951,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ 1, Moves.TACKLE ],
     [ 1, Moves.GROWL ],
     [ 1, Moves.WATER_GUN ],
+    [ 1, Moves.CHARM ], // Previous Stage Move
     [ 15, Moves.PECK ],
     [ 19, Moves.BUBBLE_BEAM ],
     [ 24, Moves.SWAGGER ],
@@ -7017,7 +7070,8 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ 1, Moves.TACKLE ],
     [ 1, Moves.GROWL ],
     [ 1, Moves.BIDE ],
-    [ 1, Moves.BUG_BITE ], // Custom
+    [ 1, Moves.STRUGGLE_BUG ], // Previous Stage Move
+    [ 1, Moves.BUG_BITE ], // Previous Stage Move
     [ 14, Moves.ABSORB ],
     [ 18, Moves.SING ],
     [ 22, Moves.FOCUS_ENERGY ],
@@ -7175,6 +7229,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
   ],
   [Species.WORMADAM]: [
     [ EVOLVE_MOVE, Moves.QUIVER_DANCE ],
+    [ 1, Moves.STRUGGLE_BUG ], // Previous Stage Move, Custom
     [ 1, Moves.TACKLE ],
     [ 1, Moves.PROTECT ],
     [ 1, Moves.SUCKER_PUNCH ],
@@ -7195,6 +7250,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
   ],
   [Species.MOTHIM]: [
     [ EVOLVE_MOVE, Moves.QUIVER_DANCE ],
+    [ 1, Moves.STRUGGLE_BUG ], // Previous Stage Move
     [ 1, Moves.TACKLE ],
     [ 1, Moves.PROTECT ],
     [ 1, Moves.BUG_BITE ],
@@ -7276,7 +7332,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ 49, Moves.WAVE_CRASH ],
   ],
   [Species.FLOATZEL]: [
-    [ 1, Moves.TACKLE ], // Custom
+    [ 1, Moves.TACKLE ], // Previous Stage Move
     [ 1, Moves.GROWL ],
     [ 1, Moves.QUICK_ATTACK ],
     [ 1, Moves.CRUNCH ],
@@ -7424,6 +7480,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
   ],
   [Species.LOPUNNY]: [
     [ EVOLVE_MOVE, Moves.RETURN ],
+    [ 1, Moves.FRUSTRATION ], // Previous Stage Move
     [ 1, Moves.POUND ],
     [ 1, Moves.DEFENSE_CURL ],
     [ 1, Moves.SPLASH ],
@@ -7445,7 +7502,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ 56, Moves.HIGH_JUMP_KICK ],
   ],
   [Species.MISMAGIUS]: [
-    // Custom Relearn Learnset
+    // Previous Stage Relearn Learnset
     [ RELEARN_MOVE, Moves.CONFUSION ],
     [ RELEARN_MOVE, Moves.CONFUSE_RAY ],
     [ RELEARN_MOVE, Moves.MEAN_LOOK ],
@@ -7466,17 +7523,19 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ 1, Moves.MYSTICAL_FIRE ],
   ],
   [Species.HONCHKROW]: [
-    [ 1, Moves.PECK ], // Custom
-    [ 1, Moves.GUST ], // Custom
-    [ 1, Moves.WING_ATTACK ],
-    [ 1, Moves.HAZE ],
-    [ 1, Moves.ASSURANCE ], // Custom
+    [ 1, Moves.PECK ], // Previous Stage Move
     [ 1, Moves.ASTONISH ],
+    [ 1, Moves.GUST ], // Previous Stage Move
+    [ 1, Moves.HAZE ],
+    [ 1, Moves.WING_ATTACK ],
+    [ 1, Moves.NIGHT_SHADE ], // Previous Stage Move
+    [ 1, Moves.ASSURANCE ], // Previous Stage Move
+    [ 1, Moves.TAUNT ], // Previous Stage Move
+    [ 1, Moves.MEAN_LOOK ], // Previous Stage Move
     [ 1, Moves.SUCKER_PUNCH ],
     [ 1, Moves.NIGHT_SLASH ],
+    [ 1, Moves.TORMENT ], // Previous Stage Move
     [ 1, Moves.QUASH ],
-    [ 1, Moves.MEAN_LOOK ], // Custom
-    [ 1, Moves.TORMENT ], // Custom
     [ 1, Moves.PURSUIT ],
     [ 25, Moves.SWAGGER ],
     [ 35, Moves.NASTY_PLOT ],
@@ -7553,6 +7612,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ 1, Moves.SMOKESCREEN ],
     [ 1, Moves.POISON_GAS ],
     [ 1, Moves.FEINT ],
+    [ 1, Moves.ACID_SPRAY ], // Previous Stage Move
     [ 12, Moves.FURY_SWIPES ],
     [ 15, Moves.FOCUS_ENERGY ],
     [ 18, Moves.BITE ],
@@ -7767,6 +7827,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
   [Species.LUCARIO]: [
     [ EVOLVE_MOVE, Moves.AURA_SPHERE ],
     [ 1, Moves.QUICK_ATTACK ],
+    [ 1, Moves.ENDURE ], // Previous Stage Move
     [ 1, Moves.SCREECH ],
     [ 1, Moves.REVERSAL ],
     [ 1, Moves.DETECT ],
@@ -8157,8 +8218,10 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
   [Species.YANMEGA]: [
     [ RELEARN_MOVE, Moves.HYPNOSIS ],
     [ 1, Moves.TACKLE ],
+    [ 1, Moves.WING_ATTACK ], // Custom
     [ 1, Moves.DOUBLE_TEAM ],
     [ 1, Moves.NIGHT_SLASH ],
+    [ 1, Moves.AIR_CUTTER ], // Custom
     [ 1, Moves.AIR_SLASH ],
     [ 1, Moves.BUG_BUZZ ],
     [ 14, Moves.QUICK_ATTACK ],
@@ -8174,6 +8237,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
   ],
   [Species.LEAFEON]: [
     [ EVOLVE_MOVE, Moves.SAPPY_SEED ],
+    [ RELEARN_MOVE, Moves.VEEVEE_VOLLEY ], // Custom
     [ 1, Moves.TACKLE ],
     [ 1, Moves.TAKE_DOWN ],
     [ 1, Moves.DOUBLE_EDGE ],
@@ -8201,6 +8265,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
   ],
   [Species.GLACEON]: [
     [ EVOLVE_MOVE, Moves.FREEZY_FROST ],
+    [ RELEARN_MOVE, Moves.VEEVEE_VOLLEY ], // Custom
     [ 1, Moves.TACKLE ],
     [ 1, Moves.TAKE_DOWN ],
     [ 1, Moves.DOUBLE_EDGE ],
@@ -8226,9 +8291,12 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ 60, Moves.LAST_RESORT ],
   ],
   [Species.GLISCOR]: [
+    [ 1, Moves.POISON_STING ],
     [ 1, Moves.SAND_ATTACK ],
     [ 1, Moves.HARDEN ],
-    [ 1, Moves.POISON_JAB ],
+    [ 1, Moves.POISON_TAIL ],
+    [ 1, Moves.POISON_JAB ], // Custom
+    [ 1, Moves.SLASH ], // Custom
     [ 1, Moves.THUNDER_FANG ],
     [ 1, Moves.ICE_FANG ],
     [ 1, Moves.FIRE_FANG ],
@@ -8320,8 +8388,10 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
   [Species.PROBOPASS]: [
     [ EVOLVE_MOVE, Moves.TRI_ATTACK ],
     [ 1, Moves.TACKLE ],
+    [ 1, Moves.HARDEN ], // Previous Stage Move
     [ 1, Moves.IRON_DEFENSE ],
     [ 1, Moves.BLOCK ],
+    [ 1, Moves.ROCK_THROW ], // Previous Stage Move
     [ 1, Moves.GRAVITY ],
     [ 1, Moves.MAGNET_RISE ],
     [ 1, Moves.WIDE_GUARD ],
@@ -8347,6 +8417,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ 1, Moves.LEER ],
     [ 1, Moves.DISABLE ],
     [ 1, Moves.ASTONISH ],
+    [ 1, Moves.PURSUIT ], // Previous Stage Move, Custom
     [ 1, Moves.SHADOW_PUNCH ],
     [ 1, Moves.GRAVITY ],
     [ 1, Moves.SHADOW_SNEAK ],
@@ -8363,7 +8434,6 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
   ],
   [Species.FROSLASS]: [
     [ EVOLVE_MOVE, Moves.HEX ],
-    [ 1, Moves.WEATHER_BALL ], // Custom
     [ 1, Moves.HEADBUTT ],
     [ 1, Moves.LEER ],
     [ 1, Moves.BITE ],
@@ -8371,6 +8441,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ 1, Moves.POWDER_SNOW ],
     [ 1, Moves.PROTECT ],
     [ 1, Moves.DESTINY_BOND ],
+    [ 1, Moves.WEATHER_BALL ], // Previous Stage Move
     [ 1, Moves.CRUNCH ],
     [ 1, Moves.ASTONISH ],
     [ 1, Moves.ICE_FANG ],
@@ -8849,6 +8920,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
   ],
   [Species.WATCHOG]: [
     [ EVOLVE_MOVE, Moves.CONFUSE_RAY ],
+    [ RELEARN_MOVE, Moves.WORK_UP ], // Previous Stage Move
     [ 1, Moves.TACKLE ],
     [ 1, Moves.LEER ],
     [ 1, Moves.BITE ],
@@ -8968,7 +9040,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ 43, Moves.CRUNCH ],
   ],
   [Species.SIMISAGE]: [
-    // Custom Relearn Learnset
+    // Previous Stage Relearn Learnset
     [ RELEARN_MOVE, Moves.SCRATCH ],
     [ RELEARN_MOVE, Moves.PLAY_NICE ],
     [ RELEARN_MOVE, Moves.VINE_WHIP ],
@@ -9005,7 +9077,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ 43, Moves.CRUNCH ],
   ],
   [Species.SIMISEAR]: [
-    // Custom Relearn Learnset
+    // Previous Stage Relearn Learnset
     [ RELEARN_MOVE, Moves.SCRATCH ],
     [ RELEARN_MOVE, Moves.PLAY_NICE ],
     [ RELEARN_MOVE, Moves.INCINERATE ],
@@ -9042,7 +9114,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ 43, Moves.CRUNCH ],
   ],
   [Species.SIMIPOUR]: [
-    // Custom Relearn Learnset
+    // Previous Stage Relearn Learnset
     [ RELEARN_MOVE, Moves.SCRATCH ],
     [ RELEARN_MOVE, Moves.PLAY_NICE ],
     [ RELEARN_MOVE, Moves.WATER_GUN ],
@@ -9079,6 +9151,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ 52, Moves.WONDER_ROOM ],
   ],
   [Species.MUSHARNA]: [
+    [ 1, Moves.PSYWAVE ], // Previous Stage Move
     [ 1, Moves.PSYBEAM ],
     [ 1, Moves.PSYCHIC ],
     [ 1, Moves.HYPNOSIS ],
@@ -9467,9 +9540,15 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
   [Species.LEAVANNY]: [
     [ EVOLVE_MOVE, Moves.SLASH ],
     [ RELEARN_MOVE, Moves.BUG_BITE ],
+    [ RELEARN_MOVE, Moves.STICKY_WEB ], // Previous Stage Move
+    [ RELEARN_MOVE, Moves.BUG_BUZZ ], // Previous Stage Move
+    [ 1, Moves.PROTECT ], // Previous Stage Move
     [ 1, Moves.TACKLE ],
     [ 1, Moves.RAZOR_LEAF ],
     [ 1, Moves.STRING_SHOT ],
+    [ 1, Moves.GRASS_WHISTLE ], // Previous Stage Move
+    [ 1, Moves.ENDURE ], // Previous Stage Move
+    [ 1, Moves.FLAIL ], // Previous Stage Move
     [ 1, Moves.FALSE_SWIPE ],
     [ 22, Moves.STRUGGLE_BUG ],
     [ 29, Moves.FELL_STINGER ],
@@ -10002,6 +10081,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ 1, Moves.TORMENT ],
     [ 1, Moves.U_TURN ],
     [ 1, Moves.HONE_CLAWS ],
+    [ 1, Moves.SCARY_FACE ], // Previous Stage Move
     [ 1, Moves.PURSUIT ],
     [ 12, Moves.FURY_SWIPES ],
     [ 20, Moves.TAUNT ],
@@ -10065,6 +10145,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ 48, Moves.MAGIC_ROOM ],
   ],
   [Species.GOTHORITA]: [
+    [ RELEARN_MOVE, Moves.PSYCHIC ], // Previous Stage Move
     [ 1, Moves.POUND ],
     [ 1, Moves.CONFUSION ],
     [ 1, Moves.TICKLE ],
@@ -10212,6 +10293,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ 1, Moves.HARDEN ],
     [ 1, Moves.TAUNT ],
     [ 1, Moves.ASTONISH ],
+    [ 1, Moves.POWDER_SNOW ], // Previous Stage Move, Custom
     [ 12, Moves.ICY_WIND ],
     [ 16, Moves.AVALANCHE ],
     [ 20, Moves.HAIL ],
@@ -10228,6 +10310,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ 1, Moves.HARDEN ],
     [ 1, Moves.TAUNT ],
     [ 1, Moves.ASTONISH ],
+    [ 1, Moves.POWDER_SNOW ], // Previous Stage Move, Custom
     [ 1, Moves.WEATHER_BALL ],
     [ 1, Moves.ICICLE_CRASH ],
     [ 1, Moves.FREEZE_DRY ],
@@ -10540,7 +10623,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
   ],
   [Species.EELEKTRIK]: [
     [ EVOLVE_MOVE, Moves.CRUNCH ],
-    [ RELEARN_MOVE, Moves.TACKLE ], // Custom Relearn
+    [ 1, Moves.TACKLE ], // Previous Stage Move
     [ 1, Moves.HEADBUTT ],
     [ 1, Moves.THUNDER_WAVE ],
     [ 1, Moves.SPARK ],
@@ -10558,14 +10641,15 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ 74, Moves.THRASH ],
   ],
   [Species.EELEKTROSS]: [
-    // Custom Relearn Learnset
-    [ RELEARN_MOVE, Moves.TACKLE ],
-    [ RELEARN_MOVE, Moves.BIND ],
-    [ RELEARN_MOVE, Moves.ION_DELUGE ],
-    [ RELEARN_MOVE, Moves.SPARK ],
-    [ RELEARN_MOVE, Moves.CHARGE_BEAM ],
-    [ RELEARN_MOVE, Moves.THUNDERBOLT ],
+    [ RELEARN_MOVE, Moves.THUNDERBOLT ], // Previous Stage Move
+    [ RELEARN_MOVE, Moves.ACID_SPRAY ], // Previous Stage Move
+    [ 1, Moves.TACKLE ], // Previous Stage Move
     [ 1, Moves.HEADBUTT ],
+    [ 1, Moves.THUNDER_WAVE ], // Previous Stage Move
+    [ 1, Moves.SPARK ], // Previous Stage Move
+    [ 1, Moves.CHARGE_BEAM ], // Previous Stage Move
+    [ 1, Moves.ION_DELUGE ], // Previous Stage Move
+    [ 1, Moves.BIND ], // Previous Stage Move
     [ 1, Moves.THRASH ],
     [ 1, Moves.ACID ],
     [ 1, Moves.ZAP_CANNON ],
@@ -10808,6 +10892,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ 1, Moves.BODY_SLAM ],
     [ 1, Moves.ACID ],
     [ 1, Moves.ABSORB ],
+    [ 1, Moves.PROTECT ], // Previous Stage Move
     [ 1, Moves.QUICK_ATTACK ],
     [ 1, Moves.DOUBLE_TEAM ],
     [ 1, Moves.ACID_ARMOR ],
@@ -11001,6 +11086,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
   ],
   [Species.BRAVIARY]: [
     [ EVOLVE_MOVE, Moves.SUPERPOWER ],
+    [ RELEARN_MOVE, Moves.BRAVE_BIRD ], // Previous Stage Move
     [ 1, Moves.WING_ATTACK ],
     [ 1, Moves.LEER ],
     [ 1, Moves.PECK ],
@@ -11542,6 +11628,10 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ 1, Moves.GROWL ],
     [ 1, Moves.WATER_GUN ],
     [ 1, Moves.QUICK_ATTACK ],
+    [ 1, Moves.ROUND ], // Previous Stage Move
+    [ 1, Moves.FLING ], // Previous Stage Move
+    [ 1, Moves.SMACK_DOWN ], // Previous Stage Move
+    [ 1, Moves.BOUNCE ], // Previous Stage Move
     [ 1, Moves.HAZE ],
     [ 1, Moves.MAT_BLOCK ],
     [ 1, Moves.ROLE_PLAY ],
@@ -11653,15 +11743,16 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
   ],
   [Species.VIVILLON]: [
     [ EVOLVE_MOVE, Moves.GUST ],
-    [ 1, Moves.TACKLE ], // Custom
+    [ 1, Moves.TACKLE ], // Previous Stage Move
+    [ 1, Moves.STRING_SHOT ], // Previous Stage Move
+    [ 1, Moves.HARDEN ], // Previous Stage Move
+    [ 1, Moves.PROTECT ], // Previous Stage Move
     [ 1, Moves.POISON_POWDER ],
     [ 1, Moves.STUN_SPORE ],
     [ 1, Moves.SLEEP_POWDER ],
+    [ 1, Moves.BUG_BITE ], // Previous Stage Move
     [ 1, Moves.STRUGGLE_BUG ],
     [ 1, Moves.POWDER ],
-    [ 1, Moves.HARDEN ], // Custom
-    [ 1, Moves.STRING_SHOT ], // Custom
-    [ 1, Moves.BUG_BITE ], // Custom
     [ 12, Moves.LIGHT_SCREEN ],
     [ 17, Moves.PSYBEAM ],
     [ 21, Moves.SUPERSONIC ],
@@ -11739,10 +11830,10 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ 58, Moves.SOLAR_BEAM ],
   ],
   [Species.FLORGES]: [
-    [ 1, Moves.TACKLE ], // Custom
-    [ 1, Moves.VINE_WHIP ], // Custom
-    [ 1, Moves.FAIRY_WIND ], // Custom
-    [ 1, Moves.RAZOR_LEAF ], // Custom
+    [ 1, Moves.VINE_WHIP ], // Previous Stage Move
+    [ 1, Moves.TACKLE ], // Previous Stage Move
+    [ 1, Moves.FAIRY_WIND ], // Previous Stage Move
+    [ 1, Moves.RAZOR_LEAF ], // Previous Stage Move
     [ 1, Moves.SOLAR_BEAM ],
     [ 1, Moves.PETAL_DANCE ],
     [ 1, Moves.SAFEGUARD ],
@@ -12234,6 +12325,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
   ],
   [Species.SYLVEON]: [
     [ EVOLVE_MOVE, Moves.SPARKLY_SWIRL ],
+    [ RELEARN_MOVE, Moves.VEEVEE_VOLLEY ], // Custom
     [ 1, Moves.TACKLE ],
     [ 1, Moves.TAKE_DOWN ],
     [ 1, Moves.DOUBLE_EDGE ],
@@ -12341,19 +12433,21 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
   ],
   [Species.GOODRA]: [
     [ EVOLVE_MOVE, Moves.AQUA_TAIL ],
+    [ RELEARN_MOVE, Moves.DRAGON_PULSE ], // Previous Stage Move
     [ 1, Moves.TACKLE ],
     [ 1, Moves.WATER_GUN ],
     [ 1, Moves.ABSORB ],
+    [ 1, Moves.ACID_ARMOR ], // Previous Stage Move
     [ 1, Moves.DRAGON_BREATH ],
     [ 1, Moves.POISON_TAIL ],
     [ 1, Moves.FEINT ],
     [ 1, Moves.ACID_SPRAY ],
-    [ 1, Moves.ACID_ARMOR ], // Custom
     [ 1, Moves.TEARFUL_LOOK ],
     [ 15, Moves.PROTECT ],
     [ 20, Moves.FLAIL ],
     [ 25, Moves.WATER_PULSE ],
     [ 30, Moves.RAIN_DANCE ],
+    [ 35, Moves.DRAGON_PULSE ], // Previous Stage Move, NatDex
     [ 43, Moves.CURSE ],
     [ 49, Moves.BODY_SLAM ],
     [ 58, Moves.MUDDY_WATER ],
@@ -12431,6 +12525,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ 1, Moves.CONFUSE_RAY ],
     [ 1, Moves.EXPLOSION ],
     [ 1, Moves.ASTONISH ],
+    [ 1, Moves.LEAFAGE ], // Previous Stage Move, Custom
     [ 1, Moves.SHADOW_SNEAK ],
     [ 1, Moves.TRICK_OR_TREAT ],
     [ 1, Moves.MOONBLAST ],
@@ -12942,14 +13037,14 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
   ],
   [Species.CRABOMINABLE]: [
     [ EVOLVE_MOVE, Moves.ICE_PUNCH ],
-    [ RELEARN_MOVE, Moves.CRABHAMMER ], // Custom Relearn
-    [ 1, Moves.VISE_GRIP ], // Custom
+    [ RELEARN_MOVE, Moves.CRABHAMMER ], // Previous Stage Move
+    [ 1, Moves.VISE_GRIP ], // Previous Stage Move
     [ 1, Moves.LEER ],
     [ 1, Moves.PROTECT ],
     [ 1, Moves.ROCK_SMASH ],
     [ 1, Moves.BUBBLE ],
     [ 1, Moves.PURSUIT ],
-    [ 1, Moves.PAYBACK ], // Custom
+    [ 1, Moves.PAYBACK ], // Previous Stage Move
     [ 17, Moves.BUBBLE_BEAM ],
     [ 22, Moves.BRICK_BREAK ],
     [ 25, Moves.SLAM ],
@@ -13138,6 +13233,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ 1, Moves.BUG_BITE ],
     [ 1, Moves.WIDE_GUARD ],
     [ 1, Moves.INFESTATION ],
+    [ 1, Moves.WATER_SPORT ], // Previous Stage Move
     [ 1, Moves.SPIDER_WEB ],
     [ 12, Moves.BUBBLE_BEAM ],
     [ 16, Moves.AQUA_RING ],
@@ -13297,6 +13393,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ 32, Moves.AROMATIC_MIST ],
   ],
   [Species.STEENEE]: [
+    [ 1, Moves.LEAFAGE ], // Previous Stage Move, Custom
     [ 1, Moves.RAZOR_LEAF ],
     [ 1, Moves.SPLASH ],
     [ 1, Moves.FLAIL ],
@@ -13311,6 +13408,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
   ],
   [Species.TSAREENA]: [
     [ EVOLVE_MOVE, Moves.TROP_KICK ],
+    [ 1, Moves.LEAFAGE ], // Previous Stage Move, Custom
     [ 1, Moves.RAZOR_LEAF ],
     [ 1, Moves.SPLASH ],
     [ 1, Moves.FLAIL ],
@@ -13766,10 +13864,14 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
   [Species.COSMOEM]: [
     [ EVOLVE_MOVE, Moves.COSMIC_POWER ],
     [ 1, Moves.TELEPORT ],
+    [ 1, Moves.SPLASH ], // Previous Stage Move
+    [ 1, Moves.STORED_POWER ], // Previous Stage Move, Custom
   ],
   [Species.SOLGALEO]: [
     [ EVOLVE_MOVE, Moves.SUNSTEEL_STRIKE ],
     [ 1, Moves.TELEPORT ],
+    [ 1, Moves.SPLASH ], // Previous Stage Move
+    [ 1, Moves.STORED_POWER ], // Previous Stage Move, Custom
     [ 1, Moves.METAL_CLAW ],
     [ 1, Moves.COSMIC_POWER ],
     [ 1, Moves.NOBLE_ROAR ],
@@ -13792,6 +13894,8 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ 1, Moves.CONFUSION ],
     [ 1, Moves.HYPNOSIS ],
     [ 1, Moves.TELEPORT ],
+    [ 1, Moves.SPLASH ], // Previous Stage Move
+    [ 1, Moves.STORED_POWER ], // Previous Stage Move, Custom
     [ 1, Moves.COSMIC_POWER ],
     [ 7, Moves.NIGHT_SHADE ],
     [ 14, Moves.CONFUSE_RAY ],
@@ -14536,6 +14640,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
   ],
   [Species.FLAPPLE]: [
     [ EVOLVE_MOVE, Moves.WING_ATTACK ],
+    [ 1, Moves.LEAFAGE ], // Previous Stage Move, Custom
     [ 1, Moves.GROWTH ],
     [ 1, Moves.WITHDRAW ],
     [ 1, Moves.TWISTER ],
@@ -14555,6 +14660,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
   ],
   [Species.APPLETUN]: [
     [ EVOLVE_MOVE, Moves.HEADBUTT ],
+    [ 1, Moves.LEAFAGE ], // Previous Stage Move, Custom
     [ 1, Moves.GROWTH ],
     [ 1, Moves.WITHDRAW ],
     [ 1, Moves.SWEET_SCENT ],
@@ -14590,6 +14696,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
   [Species.SANDACONDA]: [
     [ 1, Moves.SAND_ATTACK ],
     [ 1, Moves.WRAP ],
+    [ 1, Moves.MUD_SLAP ], // Previous Stage Move, Custom
     [ 1, Moves.MINIMIZE ],
     [ 1, Moves.BRUTAL_SWING ],
     [ 15, Moves.BULLDOZE ],
@@ -15267,6 +15374,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
   ],
   [Species.DRAGAPULT]: [
     [ EVOLVE_MOVE, Moves.DRAGON_DARTS ],
+    [ RELEARN_MOVE, Moves.DRAGON_PULSE ], // Previous Stage Move
     [ 1, Moves.BITE ],
     [ 1, Moves.QUICK_ATTACK ],
     [ 1, Moves.DRAGON_BREATH ],
@@ -15473,6 +15581,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
   [Species.WYRDEER]: [
     [ EVOLVE_MOVE, Moves.PSYSHIELD_BASH ],
     [ 1, Moves.TACKLE ],
+    [ 1, Moves.ME_FIRST ], //Stantler
     [ 3, Moves.LEER ],
     [ 7, Moves.ASTONISH ],
     [ 10, Moves.HYPNOSIS ],
@@ -15511,8 +15620,10 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ 1, Moves.LEER ],
     [ 1, Moves.LICK ],
     [ 1, Moves.FAKE_TEARS ],
+    [ 1, Moves.CHARM ], // Custom
     [ 1, Moves.COVET ],
     [ 1, Moves.BABY_DOLL_EYES ], // Custom
+    [ 1, Moves.FLING ], // Custom
     [ 8, Moves.FURY_SWIPES ],
     [ 13, Moves.PAYBACK ],
     [ 17, Moves.SWEET_SCENT ],
@@ -16086,11 +16197,12 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
   ],
   [Species.GARGANACL]: [
     [ EVOLVE_MOVE, Moves.HAMMER_ARM ],
+    [ RELEARN_MOVE, Moves.IRON_DEFENSE ], // Previous Stage Move
     [ 1, Moves.TACKLE ],
     [ 1, Moves.HARDEN ],
     [ 1, Moves.BLOCK ],
     [ 1, Moves.ROCK_BLAST ],
-    [ 1, Moves.SMACK_DOWN ], // Custom
+    [ 1, Moves.SMACK_DOWN ], // Previous Stage Move
     [ 1, Moves.WIDE_GUARD ],
     [ 5, Moves.ROCK_THROW ],
     [ 7, Moves.MUD_SHOT ],
@@ -16277,8 +16389,8 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
   [Species.GRAFAIAI]: [
     [ EVOLVE_MOVE, Moves.DOODLE ],
     [ 1, Moves.SCRATCH ],
-    [ 1, Moves.BITE ], // Custom
     [ 1, Moves.LEER ],
+    [ 1, Moves.BITE ], // Previous Stage Move
     [ 5, Moves.ACID_SPRAY ],
     [ 8, Moves.FURY_SWIPES ],
     [ 11, Moves.SWITCHEROO ],
@@ -16433,6 +16545,8 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ 1, Moves.TACKLE ],
     [ 1, Moves.CONFUSION ],
     [ 1, Moves.DEFENSE_CURL ],
+    [ 1, Moves.MUD_SHOT ], // Previous Stage Move
+    [ 1, Moves.DIG ], // Previous Stage Move
     [ 4, Moves.SAND_ATTACK ],
     [ 7, Moves.STRUGGLE_BUG ],
     [ 11, Moves.ROLLOUT ],
@@ -16874,6 +16988,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
   ],
   [Species.CLODSIRE]: [
     [ EVOLVE_MOVE, Moves.AMNESIA ],
+    [ 1, Moves.TACKLE ], // Previous Stage Move
     [ 1, Moves.TAIL_WHIP ],
     [ 1, Moves.POISON_STING ],
     [ 4, Moves.TOXIC_SPIKES ],
@@ -17198,6 +17313,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ 18, Moves.FOCUS_ENERGY ],
     [ 24, Moves.BITE ],
     [ 29, Moves.ICE_FANG ],
+    [ 35, Moves.DRAGON_CLAW ], // Previous Stage Move, Baxcalibur Level
     [ 40, Moves.TAKE_DOWN ],
     [ 45, Moves.ICE_BEAM ],
     [ 50, Moves.CRUNCH ],
@@ -17477,6 +17593,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
   ],
   [Species.SINISTCHA]: [
     [ EVOLVE_MOVE, Moves.MATCHA_GOTCHA ],
+    [ RELEARN_MOVE, Moves.GIGA_DRAIN ], // Previous Stage Move
     [ 1, Moves.STUN_SPORE ],
     [ 1, Moves.WITHDRAW ],
     [ 1, Moves.ASTONISH ],
@@ -17559,6 +17676,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
   ],
   [Species.ARCHALUDON]: [
     [ EVOLVE_MOVE, Moves.ELECTRO_SHOT ],
+    [ RELEARN_MOVE, Moves.LASER_FOCUS ], // Previous Stage Move
     [ 1, Moves.LEER ],
     [ 1, Moves.METAL_CLAW ],
     [ 6, Moves.ROCK_SMASH ],
@@ -17578,6 +17696,8 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ RELEARN_MOVE, Moves.YAWN ],
     [ RELEARN_MOVE, Moves.DOUBLE_HIT ],
     [ RELEARN_MOVE, Moves.INFESTATION ],
+    [ RELEARN_MOVE, Moves.DRAGON_CHEER ], // Previous Stage Move, Custom
+    [ 1, Moves.LEAFAGE ], // Previous Stage Move, Custom
     [ 1, Moves.WITHDRAW ],
     [ 1, Moves.SWEET_SCENT ],
     [ 1, Moves.RECYCLE ],
@@ -18553,6 +18673,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ 1, Moves.TACKLE ],
     [ 1, Moves.TAIL_WHIP ],
     [ 1, Moves.WATER_GUN ],
+    [ 1, Moves.SOAK ], // Previous Stage Move
     [ 1, Moves.SLASH ],
     [ 1, Moves.MEGAHORN ],
     [ 1, Moves.SUCKER_PUNCH ],
@@ -18578,6 +18699,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ 1, Moves.STUN_SPORE ],
     [ 1, Moves.SLEEP_POWDER ],
     [ 1, Moves.GIGA_DRAIN ],
+    [ 1, Moves.CHARM ], // Previous Stage Move
     [ 1, Moves.SYNTHESIS ],
     [ 1, Moves.SUNNY_DAY ],
     [ 1, Moves.HELPING_HAND ],
@@ -18629,6 +18751,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
   ],
   [Species.HISUI_BRAVIARY]: [
     [ EVOLVE_MOVE, Moves.ESPER_WING ],
+    [ RELEARN_MOVE, Moves.BRAVE_BIRD ], // Previous Stage Move
     [ 1, Moves.WING_ATTACK ],
     [ 1, Moves.LEER ],
     [ 1, Moves.PECK ],
@@ -18667,10 +18790,10 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ 1, Moves.TACKLE ],
     [ 1, Moves.WATER_GUN ],
     [ 1, Moves.ABSORB ],
+    [ 1, Moves.ACID_ARMOR ], // Previous Stage Move
     [ 1, Moves.DRAGON_BREATH ],
     [ 1, Moves.FEINT ],
     [ 1, Moves.ACID_SPRAY ],
-    [ 1, Moves.ACID_ARMOR ], // Custom
     [ 1, Moves.TEARFUL_LOOK ],
     [ 1, Moves.SHELTER ],
     [ 15, Moves.PROTECT ],
@@ -18708,9 +18831,11 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
   ],
   [Species.HISUI_DECIDUEYE]: [
     [ EVOLVE_MOVE, Moves.TRIPLE_ARROWS ],
+    [ RELEARN_MOVE, Moves.NASTY_PLOT ], // Previous Stage Move
     [ 1, Moves.TACKLE ],
     [ 1, Moves.GROWL ],
     [ 1, Moves.U_TURN ],
+    [ 1, Moves.ASTONISH ], // Previous Stage Move
     [ 1, Moves.LEAF_STORM ],
     [ 1, Moves.LEAFAGE ],
     [ 9, Moves.PECK ],
@@ -19083,6 +19208,7 @@ export const pokemonFormLevelMoves: PokemonSpeciesFormLevelMoves = {
   [Species.WORMADAM]: {
     1: [
       [ EVOLVE_MOVE, Moves.QUIVER_DANCE ],
+      [ 1, Moves.STRUGGLE_BUG ], // Previous Stage Move, Custom
       [ 1, Moves.TACKLE ],
       [ 1, Moves.PROTECT ],
       [ 1, Moves.SUCKER_PUNCH ],
@@ -19103,6 +19229,7 @@ export const pokemonFormLevelMoves: PokemonSpeciesFormLevelMoves = {
     ],
     2: [
       [ EVOLVE_MOVE, Moves.QUIVER_DANCE ],
+      [ 1, Moves.STRUGGLE_BUG ], // Previous Stage Move, Custom
       [ 1, Moves.METAL_BURST ],
       [ 1, Moves.TACKLE ],
       [ 1, Moves.PROTECT ],
@@ -19309,6 +19436,10 @@ export const pokemonFormLevelMoves: PokemonSpeciesFormLevelMoves = {
       [ 1, Moves.GROWL ],
       [ 1, Moves.WATER_GUN ],
       [ 1, Moves.QUICK_ATTACK ],
+      [ 1, Moves.ROUND ], // Previous Stage Move
+      [ 1, Moves.FLING ], // Previous Stage Move
+      [ 1, Moves.SMACK_DOWN ], // Previous Stage Move
+      [ 1, Moves.BOUNCE ], // Previous Stage Move
       [ 1, Moves.HAZE ],
       [ 1, Moves.ROLE_PLAY ],
       [ 1, Moves.NIGHT_SLASH ],
