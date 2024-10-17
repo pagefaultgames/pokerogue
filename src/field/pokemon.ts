@@ -949,6 +949,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       if (this.status && this.status.effect === StatusEffect.PARALYSIS) {
         ret >>= 1;
       }
+      if (this.getTag(BattlerTagType.UNBURDEN)) {
+        ret *= 2;
+      }
       break;
     }
 
@@ -5065,6 +5068,7 @@ export class PokemonTurnData {
   public statStagesIncreased: boolean = false;
   public statStagesDecreased: boolean = false;
   public moveEffectiveness: TypeDamageMultiplier | null = null;
+  public itemsLost: number = 0;
   public combiningPledge?: Moves;
 }
 
