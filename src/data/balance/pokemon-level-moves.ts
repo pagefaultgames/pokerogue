@@ -4693,7 +4693,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ RELEARN_MOVE, Moves.TACKLE ], // Previous Stage Move
     [ RELEARN_MOVE, Moves.STRING_SHOT ], // Previous Stage Move
     [ RELEARN_MOVE, Moves.POISON_STING ], // Previous Stage Move
-    [ RLEARN_MOVE, Moves.BUG_BITE ], // Previous Stage Move
+    [ RELEARN_MOVE, Moves.BUG_BITE ], // Previous Stage Move
     [ 1, Moves.HARDEN ],
   ],
   [Species.BEAUTIFLY]: [
@@ -4722,7 +4722,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ RELEARN_MOVE, Moves.TACKLE ], // Previous Stage Move
     [ RELEARN_MOVE, Moves.STRING_SHOT ], // Previous Stage Move
     [ RELEARN_MOVE, Moves.POISON_STING ], // Previous Stage Move
-    [ RLEARN_MOVE, Moves.BUG_BITE ], // Previous Stage Move
+    [ RELEARN_MOVE, Moves.BUG_BITE ], // Previous Stage Move
     [ 1, Moves.HARDEN ],
   ],
   [Species.DUSTOX]: [
@@ -7526,7 +7526,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ RELEARN_MOVE, Moves.PAIN_SPLIT ],
     [ RELEARN_MOVE, Moves.PAYBACK ],
     [ RELEARN_MOVE, Moves.SHADOW_BALL ],
-    [ RELEARN_MOVE, Moves.PERISH_SONG ],  
+    [ RELEARN_MOVE, Moves.PERISH_SONG ],
     [ 1, Moves.GROWL ],
     [ 1, Moves.SPITE ],
     [ 1, Moves.PSYWAVE ],
@@ -9104,7 +9104,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ RELEARN_MOVE, Moves.FIRE_BLAST ],
     [ RELEARN_MOVE, Moves.RECYCLE ],
     [ RELEARN_MOVE, Moves.NATURAL_GIFT ],
-    [ RELEARN_MOVE, Moves.CRUNCH ],    
+    [ RELEARN_MOVE, Moves.CRUNCH ],
     [ 1, Moves.LEER ],
     [ 1, Moves.LICK ],
     [ 1, Moves.FURY_SWIPES ],
@@ -9141,7 +9141,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ RELEARN_MOVE, Moves.BRINE ],
     [ RELEARN_MOVE, Moves.RECYCLE ],
     [ RELEARN_MOVE, Moves.NATURAL_GIFT ],
-    [ RELEARN_MOVE, Moves.CRUNCH ],    
+    [ RELEARN_MOVE, Moves.CRUNCH ], 
     [ 1, Moves.LEER ],
     [ 1, Moves.LICK ],
     [ 1, Moves.FURY_SWIPES ],
@@ -11757,7 +11757,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ RELEARN_MOVE, Moves.TACKLE ], // Previous Stage Move
     [ RELEARN_MOVE, Moves.STRING_SHOT ], // Previous Stage Move
     [ RELEARN_MOVE, Moves.STUN_SPORE ], // Previous Stage Move
-    [ RLEARN_MOVE, Moves.BUG_BITE ], // Previous Stage Move
+    [ RELEARN_MOVE, Moves.BUG_BITE ], // Previous Stage Move
     [ 1, Moves.HARDEN ],
   ],
   [Species.VIVILLON]: [
