@@ -3338,9 +3338,9 @@ export class TempExtraModifierModifier extends LapsingPersistentModifier {
   }
 
   /**
-   * Increases the current rewards in the battle by the stackCount.
-   * @returns true if the shop reward number modifier applies successfully
-   * @param count {@linkcode Utils.IntegerHolder} that holds the resulting shop item reward count
+   * Increases the current rewards in the battle by the `stackCount`.
+   * @returns `true` if the shop reward number modifier applies successfully
+   * @param count {@linkcode NumberHolder} that holds the resulting shop item reward count
    */
   apply(count: NumberHolder): boolean {
     count.value += this.getStackCount();
