@@ -467,7 +467,12 @@ class TypeImmunityAddBattlerTagAbAttr extends TypeImmunityAbAttr {
     if (ret) {
       cancelled.value = true; // Suppresses "No Effect" message
       if (!simulated) {
-        pokemon.addTag(this.tagType, this.turnCount, undefined, pokemon.id);
+        if (!pokemon.getTag(this.tagType)) {
+          pokemon.addTag(this.tagType, this.turnCount, undefined, pokemon.id);
+          pokemon.scene.queueMessage(i18next.t("abilityTriggers:typeImmunityPowerBoost", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), typeName: i18next.t(`pokemonInfo:Type.${Type[attacker.getMoveType(move)]}`) }));
+        } else {
+          pokemon.scene.queueMessage(i18next.t("abilityTriggers:moveImmunity", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }));
+        }
       }
     }
 
