@@ -427,6 +427,21 @@ export class MovePhase extends BattlePhase {
         this.scene.eventTarget.dispatchEvent(new MoveUsedEvent(this.pokemon?.id, this.move.getMove(), ppUsed));
       }
 
+      if (this.cancelled) {
+        const moves = this.pokemon.getMoveQueue()[0];
+        const tags = this.pokemon.summonData.tags;
+        const tag = tags.find(t => t.tagType === BattlerTagType.FRENZY);
+        if (tag) {
+          //remove BattlerTags
+          tag.onRemove(this.pokemon);
+          tags.splice(tags.indexOf(tag), 1);
+          //remove moves in moveQueue
+          while (this.pokemon.getMoveQueue().length && this.pokemon.getMoveQueue()[0].move === moves.move) {
+            this.pokemon.getMoveQueue().shift();
+          }
+        }
+      }
+
       this.pokemon.pushMoveHistory({ move: Moves.NONE, result: MoveResult.FAIL });
 
       this.pokemon.lapseTags(BattlerTagLapseType.MOVE_EFFECT);
