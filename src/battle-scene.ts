@@ -3038,6 +3038,7 @@ export default class BattleScene extends SceneBase {
     const expPartyMembers = nonFaintedPartyMembers.filter(p => p.level < this.getMaxExpLevel());
     const partyMemberExp: number[] = [];
     // EXP value calculation is based off Pokemon.getExpValue
+    console.log("PARTIPADOS", this.currentBattle.playerParticipantIds);
     if (useWaveIndexMultiplier) {
       expValue = Math.floor(expValue * this.currentBattle.waveIndex / 5 + 1);
     }
@@ -3116,6 +3117,14 @@ export default class BattleScene extends SceneBase {
 
         if (exp) {
           const partyMemberIndex = party.indexOf(expPartyMembers[pm]);
+          // Maybe here?
+          /*
+            I think that this hyper specific bug is because initally, the pokemon being switched in right before opposing pokemons death is not counted as participant,
+            and not in the expPartyMembers maybe?
+
+            in the other cause where I switched both in but swapped last second before toxic death, then both had already been involved in fight
+
+          */
           this.unshiftPhase(expPartyMembers[pm].isOnField() ? new ExpPhase(this, partyMemberIndex, exp) : new ShowPartyExpBarPhase(this, partyMemberIndex, exp));
         }
       }
