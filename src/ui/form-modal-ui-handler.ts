@@ -29,9 +29,6 @@ export abstract class FormModalUiHandler extends ModalUiHandler {
     this.formLabels = [];
   }
 
-  // this function takes any args and uses it to make an array of InputFieldConfigs, which has extra support for the input text field
-  // It currently has support for a field's label, whether it's a password field, and whether the field should be read only, but by expanding the InputFieldConfig interface
-  // any extra details can be passed on to the field during creation
   /**
    * Get all information for each field to display in the modal
    * @returns array of {@linkcode InputFieldConfig}
