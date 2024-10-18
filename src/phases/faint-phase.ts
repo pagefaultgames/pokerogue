@@ -50,7 +50,6 @@ export class FaintPhase extends PokemonPhase {
         if (pokemon.isPlayer()) {
           this.scene.currentBattle.addParticipant(pokemon as PlayerPokemon);
         }
-        pokemon.resetTurnData();
       }
     });
 
