@@ -16,8 +16,8 @@ export enum Command {
 }
 
 export default class CommandUiHandler extends UiHandler {
-  private commandsContainer: Phaser.GameObjects.Container;
-  private cursorObj: Phaser.GameObjects.Image | null;
+  public commandsContainer: Phaser.GameObjects.Container;
+  public cursorObj: Phaser.GameObjects.Image | null;
 
   protected fieldIndex: integer = 0;
   protected cursor2: integer = 0;
@@ -69,6 +69,13 @@ export default class CommandUiHandler extends UiHandler {
     messageHandler.message.setWordWrapWidth(1110);
     messageHandler.showText(i18next.t("commandUiHandler:actionMessage", { pokemonName: getPokemonNameWithAffix(commandPhase.getPokemon()) }), 0);
 
+    if (!this.cursorObj) {
+      this.cursorObj = this.scene.add.image(0, 0, "cursor");
+      this.commandsContainer.add(this.cursorObj);
+    }
+
+    const cursorPosition = this.getCursor() === Command.POKEMON ? Command.FIGHT : this.getCursor();
+    this.cursorObj.setPosition(-5 + (cursorPosition % 2 === 1 ? 56 : 0), 8 + (cursorPosition >= 2 ? 16 : 0));
     return true;
   }
 
