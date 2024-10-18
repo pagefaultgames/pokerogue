@@ -1248,6 +1248,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       }
     }
 
+    // the type added to Pokemon from moves like Forest's Curse or Trick Or Treat
+    if (this.summonData?.addedType) {
+      types.push(this.summonData?.addedType);
+    }
+
     // this.scene potentially can be undefined for a fainted pokemon in doubles
     // use optional chaining to avoid runtime errors
 
@@ -5029,6 +5034,7 @@ export class PokemonSummonData {
   public moveset: (PokemonMove | null)[];
   // If not initialized this value will not be populated from save data.
   public types: Type[] = [];
+  public addedType: Type | null = null;
 }
 
 export class PokemonBattleData {
