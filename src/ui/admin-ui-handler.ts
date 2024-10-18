@@ -2,17 +2,19 @@ import BattleScene from "#app/battle-scene";
 import { ModalConfig } from "./modal-ui-handler";
 import { Mode } from "./ui";
 import * as Utils from "../utils";
-import { FormModalUiHandler, InputFieldConfigs } from "./form-modal-ui-handler";
+import { FormModalUiHandler, InputFieldConfig } from "./form-modal-ui-handler";
 import { Button } from "#app/enums/buttons";
 import { TextStyle } from "./text";
 
 export default class AdminUiHandler extends FormModalUiHandler {
 
   private adminMode: AdminMode;
-  private adminResult: AdminSearchInfo; // this is the username that we're looking for
+  private adminResult: AdminSearchInfo;
   private config: ModalConfig;
-  private readonly httpUserNotFoundErrorCode: number = 404; // this is the http response from the server when a username isn't found in the server. This has to be the same error the server is giving
+
   private readonly buttonGap = 10;
+  // http response from the server when a username isn't found in the server
+  private readonly httpUserNotFoundErrorCode: number = 404;
   private readonly ERR_REQUIRED_FIELD = (field: string) => {
     if (field === "username") {
       return `${Utils.formatText(field)} is required`;
@@ -20,7 +22,8 @@ export default class AdminUiHandler extends FormModalUiHandler {
       return `${Utils.formatText(field)} Id is required`;
     }
   };
-  private readonly SUCCESS_SERVICE_MODE = (service: string, mode: string) => { // this returns a string saying whether a username has been successfully linked/unlinked to discord/google
+  // returns a string saying whether a username has been successfully linked/unlinked to discord/google
+  private readonly SUCCESS_SERVICE_MODE = (service: string, mode: string) => {
     return `Username and ${service} successfully ${mode.toLowerCase()}ed`;
   };
   private readonly ERR_USERNAME_NOT_FOUND: string = "Username not found!";
@@ -30,36 +33,19 @@ export default class AdminUiHandler extends FormModalUiHandler {
     super(scene, mode);
   }
 
-  setup(): void {
-    super.setup();
-  }
-
-  getModalTitle(config?: ModalConfig): string {
+  override getModalTitle(): string {
     return "Admin panel";
   }
 
-  getFields(config?: ModalConfig): string[] {
-    switch (this.adminMode) {
-    case AdminMode.LINK:
-      return [ "Username", "Discord ID" ];
-    case AdminMode.SEARCH:
-      return [ "Username" ];
-    case AdminMode.ADMIN:
-      return [ "Username", "Discord ID", "Google ID", "Last played", "Registered" ];
-    default:
-      return [ "" ];
-    }
-  }
-
-  getWidth(config?: ModalConfig): number {
+  override getWidth(): number {
     return this.adminMode === AdminMode.ADMIN ? 180 : 160;
   }
 
-  getMargin(config?: ModalConfig): [number, number, number, number] {
+  override getMargin(): [number, number, number, number] {
     return [ 0, 0, 0, 0 ];
   }
 
-  getButtonLabels(config?: ModalConfig): string[] {
+  override getButtonLabels(): string[] {
     switch (this.adminMode) {
     case AdminMode.LINK:
       return [ "Link Account", "Cancel" ];
@@ -72,19 +58,26 @@ export default class AdminUiHandler extends FormModalUiHandler {
     }
   }
 
-  override getInputFieldConfigs(adminResult: AdminSearchInfo): InputFieldConfigs[] {
-    const inputFieldConfigs: InputFieldConfigs[] = [];
-    adminResult = adminResult ?? { username: "", discordId: "", googleId: "", lastLoggedIn: "", registered: "" }; // we use this to check what fields we need to be locking, if any
-    const adminKeys = Object.keys(adminResult);
-    const fields = this.getFields();
-    const lockedFields: string[] = [ "username", "lastLoggedIn", "registered" ]; // this is the list of fields that will always be locked when this.adminMode === AdminMode.ADMIN
-    fields.forEach((field, i) => {
-      const readOnly = (this.adminMode === AdminMode.ADMIN && (lockedFields.includes(adminKeys[i]) || adminResult[adminKeys[i]] !== ""));
-      inputFieldConfigs.push({
-        label: field,
-        isReadOnly: readOnly
-      });
-    });
+  override getInputFieldConfigs(): InputFieldConfig[] {
+    const inputFieldConfigs: InputFieldConfig[] = [];
+    switch (this.adminMode) {
+    case AdminMode.LINK:
+      inputFieldConfigs.push( { label: "Username" });
+      inputFieldConfigs.push( { label: "Discord ID" });
+      break;
+    case AdminMode.SEARCH:
+      inputFieldConfigs.push( { label: "Username" });
+      break;
+    case AdminMode.ADMIN:
+      const adminResult = this.adminResult ?? { username: "", discordId: "", googleId: "", lastLoggedIn: "", registered: "" };
+      // Discord and Google ID fields that are not empty get locked, other fields are all locked
+      inputFieldConfigs.push( { label: "Username", isReadOnly: true });
+      inputFieldConfigs.push( { label: "Discord ID", isReadOnly: adminResult.discordId !== "" });
+      inputFieldConfigs.push( { label: "Google ID", isReadOnly: adminResult.googleId !== "" });
+      inputFieldConfigs.push( { label: "Last played", isReadOnly: true });
+      inputFieldConfigs.push( { label: "Registered", isReadOnly: true });
+      break;
+    }
     return inputFieldConfigs;
   }
 
@@ -103,10 +96,10 @@ export default class AdminUiHandler extends FormModalUiHandler {
     this.adminResult = args[2] ?? { username: "", discordId: "", googleId: "", lastLoggedIn: "", registered: "" }; // admin result, if any
     const isMessageError = args[3]; // is the message shown a success or error
 
-    const fields = this.getFields();
+    const fields = this.getInputFieldConfigs();
     const hasTitle = !!this.getModalTitle();
 
-    this.updateFields(this.getInputFieldConfigs(this.adminResult), hasTitle);
+    this.updateFields(fields, hasTitle);
     this.updateContainer(this.config);
 
     const labels = this.getButtonLabels();
@@ -164,7 +157,11 @@ export default class AdminUiHandler extends FormModalUiHandler {
 
   showMessage(message: string, adminResult: AdminSearchInfo, isError: boolean) {
     this.scene.ui.setMode(Mode.ADMIN, Object.assign(this.config, { errorMessage: message?.trim() }), this.adminMode, adminResult, isError);
-    this.scene.ui.playError();
+    if (isError) {
+      this.scene.ui.playError();
+    } else {
+      this.scene.ui.playSelect();
+    }
   }
 
   // this is used to update the fields' text when loading a new admin ui handler. It uses the adminResult to update the input text fields depending on the adminMode
@@ -359,7 +356,7 @@ export function getAdminModeName(adminMode: AdminMode): string {
   }
 }
 
-export interface AdminSearchInfo {
+interface AdminSearchInfo {
   username: string;
   discordId: string;
   googleId: string;

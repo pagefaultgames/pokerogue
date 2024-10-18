@@ -1,4 +1,4 @@
-import { FormModalUiHandler, InputFieldConfigs } from "./form-modal-ui-handler";
+import { FormModalUiHandler, InputFieldConfig } from "./form-modal-ui-handler";
 import { ModalConfig } from "./modal-ui-handler";
 import * as Utils from "../utils";
 import { Mode } from "./ui";
@@ -75,10 +75,6 @@ export default class LoginFormUiHandler extends FormModalUiHandler {
     return i18next.t("menu:login");
   }
 
-  override getFields(_config?: ModalConfig): string[] {
-    return [ i18next.t("menu:username"), i18next.t("menu:password") ];
-  }
-
   override getWidth(_config?: ModalConfig): number {
     return 160;
   }
@@ -114,15 +110,10 @@ export default class LoginFormUiHandler extends FormModalUiHandler {
     return super.getReadableErrorMessage(error);
   }
 
-  override getInputFieldConfigs(): InputFieldConfigs[] {
-    const inputFieldConfigs: InputFieldConfigs[] = [];
-    const fields = this.getFields();
-    fields.forEach((field, i) => {
-      inputFieldConfigs.push({
-        label: field,
-        isPassword: field.includes(i18next.t("menu:password")) || field.includes(i18next.t("menu:confirmPassword"))
-      });
-    });
+  override getInputFieldConfigs(): InputFieldConfig[] {
+    const inputFieldConfigs: InputFieldConfig[] = [];
+    inputFieldConfigs.push({ label: i18next.t("menu:username") });
+    inputFieldConfigs.push({ label: i18next.t("menu:password"), isPassword: true });
     return inputFieldConfigs;
   }
 

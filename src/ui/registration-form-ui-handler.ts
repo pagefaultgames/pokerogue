@@ -1,4 +1,4 @@
-import { FormModalUiHandler, InputFieldConfigs } from "./form-modal-ui-handler";
+import { FormModalUiHandler, InputFieldConfig } from "./form-modal-ui-handler";
 import { ModalConfig } from "./modal-ui-handler";
 import * as Utils from "../utils";
 import { Mode } from "./ui";
@@ -22,10 +22,6 @@ const languageSettings: { [key: string]: LanguageSetting } = {
 export default class RegistrationFormUiHandler extends FormModalUiHandler {
   getModalTitle(config?: ModalConfig): string {
     return i18next.t("menu:register");
-  }
-
-  getFields(config?: ModalConfig): string[] {
-    return [ i18next.t("menu:username"), i18next.t("menu:password"), i18next.t("menu:confirmPassword") ];
   }
 
   getWidth(config?: ModalConfig): number {
@@ -61,15 +57,11 @@ export default class RegistrationFormUiHandler extends FormModalUiHandler {
     return super.getReadableErrorMessage(error);
   }
 
-  override getInputFieldConfigs(): InputFieldConfigs[] {
-    const inputFieldConfigs: InputFieldConfigs[] = [];
-    const fields = this.getFields();
-    fields.forEach((field, i) => {
-      inputFieldConfigs.push({
-        label: field,
-        isPassword: field.includes(i18next.t("menu:password")) || field.includes(i18next.t("menu:confirmPassword"))
-      });
-    });
+  override getInputFieldConfigs(): InputFieldConfig[] {
+    const inputFieldConfigs: InputFieldConfig[] = [];
+    inputFieldConfigs.push({ label: i18next.t("menu:username") });
+    inputFieldConfigs.push({ label: i18next.t("menu:password"), isPassword: true });
+    inputFieldConfigs.push({ label: i18next.t("menu:confirmPassword"), isPassword: true });
     return inputFieldConfigs;
   }
 

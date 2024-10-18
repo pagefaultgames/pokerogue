@@ -1,4 +1,4 @@
-import { FormModalUiHandler, InputFieldConfigs } from "./form-modal-ui-handler";
+import { FormModalUiHandler, InputFieldConfig } from "./form-modal-ui-handler";
 import { ModalConfig } from "./modal-ui-handler";
 import i18next from "i18next";
 import { PlayerPokemon } from "#app/field/pokemon";
@@ -6,10 +6,6 @@ import { PlayerPokemon } from "#app/field/pokemon";
 export default class RenameFormUiHandler extends FormModalUiHandler {
   getModalTitle(config?: ModalConfig): string {
     return i18next.t("menu:renamePokemon");
-  }
-
-  getFields(config?: ModalConfig): string[] {
-    return [ i18next.t("menu:nickname") ];
   }
 
   getWidth(config?: ModalConfig): number {
@@ -33,15 +29,8 @@ export default class RenameFormUiHandler extends FormModalUiHandler {
     return super.getReadableErrorMessage(error);
   }
 
-  override getInputFieldConfigs(): InputFieldConfigs[] {
-    const inputFieldConfigs: InputFieldConfigs[] = [];
-    const fields = this.getFields();
-    fields.forEach((field, i) => {
-      inputFieldConfigs.push({
-        label: field
-      });
-    });
-    return inputFieldConfigs;
+  override getInputFieldConfigs(): InputFieldConfig[] {
+    return [{ label: i18next.t("menu:nickname") }];
   }
 
   show(args: any[]): boolean {
