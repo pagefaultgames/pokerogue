@@ -671,6 +671,9 @@ export default class PartyUiHandler extends MessageUiHandler {
     } else if (this.cursor === 6) {
       this.partyCancelButton.select();
     }
+    if (this.lastCursor < 6 && this.lastCursor >= party.length) {
+      this.lastCursor = party.length - 1;
+    }
 
     for (const p in party) {
       const slotIndex = parseInt(p);

@@ -182,7 +182,7 @@ export const DarkDealEncounter: MysteryEncounter =
           const config: EnemyPartyConfig = {
             pokemonConfigs: [ pokemonConfig ],
           };
-          return initBattleWithEnemyConfig(scene, config);
+          await initBattleWithEnemyConfig(scene, config);
         })
         .build()
     )

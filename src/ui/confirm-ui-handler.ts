@@ -76,7 +76,8 @@ export default class ConfirmUiHandler extends AbstractOptionSelectUiHandler {
             }
           }
         ],
-        delay: args.length >= 6 && args[5] !== null ? args[5] as integer : 0
+        delay: args.length >= 6 && args[5] !== null ? args[5] as number : 0,
+        noCancel: args.length >= 7 && args[6] !== null ? args[6] as boolean : false,
       };
 
       super.show([ config ]);
@@ -96,7 +97,7 @@ export default class ConfirmUiHandler extends AbstractOptionSelectUiHandler {
   }
 
   processInput(button: Button): boolean {
-    if (button === Button.CANCEL && this.blockInput) {
+    if (button === Button.CANCEL && this.blockInput && !this.config?.noCancel) {
       this.unblockInput();
     }
 
