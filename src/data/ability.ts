@@ -4665,6 +4665,9 @@ export class TerrainEventTypeChangeAbAttr extends PostSummonAbAttr {
       }
     }
     if (typeChange.length !== 0) {
+      if (pokemon.summonData.addedType && typeChange.includes(pokemon.summonData.addedType)) {
+        pokemon.summonData.addedType = null;
+      }
       pokemon.summonData.types = typeChange;
       pokemon.updateInfo();
     }
