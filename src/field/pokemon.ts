@@ -1245,7 +1245,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     }
 
     // the type added to Pokemon from moves like Forest's Curse or Trick Or Treat
-    if (this.summonData?.addedType) {
+    if (this.summonData?.addedType && !types.includes(this.summonData?.addedType)) {
       types.push(this.summonData?.addedType);
     }
 
