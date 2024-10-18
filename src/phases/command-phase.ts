@@ -35,7 +35,7 @@ export class CommandPhase extends FieldPhase {
       if (this.scene.currentBattle.turn === 1 || commandUiHandler.getCursor() === Command.POKEMON) {
         commandUiHandler.setCursor(Command.FIGHT);
       } else {
-        commandUiHandler.setCursor(commandUiHandler.getCursor());
+        commandUiHandler.setCursor(commandUiHandler.getCursor() !== 0 ? commandUiHandler.getCursor() : Command.FIGHT);
       }
     }
 
