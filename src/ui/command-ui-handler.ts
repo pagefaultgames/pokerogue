@@ -68,11 +68,6 @@ export default class CommandUiHandler extends UiHandler {
     messageHandler.movesWindowContainer.setVisible(false);
     messageHandler.message.setWordWrapWidth(1110);
     messageHandler.showText(i18next.t("commandUiHandler:actionMessage", { pokemonName: getPokemonNameWithAffix(commandPhase.getPokemon()) }), 0);
-    if ((this.scene.currentBattle.turn <= 1 && !this.scene.currentBattle.started) || this.getCursor() === Command.POKEMON) {
-      this.setCursor(Command.FIGHT);
-    } else {
-      this.setCursor(this.getCursor());
-    }
 
     return true;
   }
