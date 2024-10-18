@@ -3177,6 +3177,9 @@ export default class BattleScene extends SceneBase {
     let encounter: MysteryEncounter | null;
     if (!isNullOrUndefined(Overrides.MYSTERY_ENCOUNTER_OVERRIDE) && allMysteryEncounters.hasOwnProperty(Overrides.MYSTERY_ENCOUNTER_OVERRIDE)) {
       encounter = allMysteryEncounters[Overrides.MYSTERY_ENCOUNTER_OVERRIDE];
+      if (canBypass) {
+        return encounter;
+      }
     } else if (canBypass) {
       encounter = allMysteryEncounters[encounterType ?? -1];
       return encounter;
