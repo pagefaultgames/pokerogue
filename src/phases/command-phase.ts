@@ -10,7 +10,7 @@ import { Moves } from "#app/enums/moves";
 import { PokeballType } from "#app/enums/pokeball";
 import { FieldPosition, PlayerPokemon } from "#app/field/pokemon";
 import { getPokemonNameWithAffix } from "#app/messages";
-import CommandUiHandler, { Command } from "#app/ui/command-ui-handler";
+import { Command } from "#app/ui/command-ui-handler";
 import { Mode } from "#app/ui/ui";
 import i18next from "i18next";
 import { FieldPhase } from "./field-phase";
@@ -30,7 +30,14 @@ export class CommandPhase extends FieldPhase {
   start() {
     super.start();
 
-    this.repositionCursor();
+    const commandUiHandler = this.scene.ui.handlers[Mode.COMMAND];
+    if (commandUiHandler) {
+      if (this.scene.currentBattle.turn === 1 || commandUiHandler.getCursor() === Command.POKEMON) {
+        commandUiHandler.setCursor(Command.FIGHT);
+      } else {
+        commandUiHandler.setCursor(commandUiHandler.getCursor());
+      }
+    }
 
     if (this.fieldIndex) {
       // If we somehow are attempting to check the right pokemon but there's only one pokemon out
@@ -257,18 +264,6 @@ export class CommandPhase extends FieldPhase {
     }
 
     return success!; // TODO: is the bang correct?
-  }
-
-  repositionCursor() {
-    const commandUiHandler = this.scene.ui.handlers[Mode.COMMAND] as CommandUiHandler;
-    if (commandUiHandler) {
-      if (this.scene.currentBattle.turn === 1 || commandUiHandler.getCursor() === Command.POKEMON) {
-        commandUiHandler.setCursor(Command.FIGHT);
-      } else {
-        commandUiHandler.setCursor(commandUiHandler.getCursor());
-      }
-
-    }
   }
 
   cancel() {
