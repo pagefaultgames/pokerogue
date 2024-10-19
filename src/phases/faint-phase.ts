@@ -1,12 +1,12 @@
 import BattleScene from "#app/battle-scene";
 import { BattlerIndex, BattleType } from "#app/battle";
 import { applyPostFaintAbAttrs, PostFaintAbAttr, applyPostKnockOutAbAttrs, PostKnockOutAbAttr, applyPostVictoryAbAttrs, PostVictoryAbAttr } from "#app/data/ability";
-import { BattlerTagLapseType } from "#app/data/battler-tags";
+import { BattlerTagLapseType, DestinyBondTag } from "#app/data/battler-tags";
 import { battleSpecDialogue } from "#app/data/dialogue";
 import { allMoves, PostVictoryStatStageChangeAttr } from "#app/data/move";
 import { BattleSpec } from "#app/enums/battle-spec";
 import { StatusEffect } from "#app/enums/status-effect";
-import { PokemonMove, EnemyPokemon, PlayerPokemon, HitResult } from "#app/field/pokemon";
+import Pokemon, { PokemonMove, EnemyPokemon, PlayerPokemon, HitResult } from "#app/field/pokemon";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { PokemonInstantReviveModifier } from "#app/modifier/modifier";
 import i18next from "i18next";
@@ -18,18 +18,40 @@ import { GameOverPhase } from "./game-over-phase";
 import { SwitchPhase } from "./switch-phase";
 import { VictoryPhase } from "./victory-phase";
 import { SpeciesFormChangeActiveTrigger } from "#app/data/pokemon-forms";
+import { SwitchType } from "#enums/switch-type";
+import { isNullOrUndefined } from "#app/utils";
+import { FRIENDSHIP_LOSS_FROM_FAINT } from "#app/data/balance/starters";
 
 export class FaintPhase extends PokemonPhase {
+  /**
+   * Whether or not enduring (for this phase's purposes, Reviver Seed) should be prevented
+   */
   private preventEndure: boolean;
 
-  constructor(scene: BattleScene, battlerIndex: BattlerIndex, preventEndure?: boolean) {
+  /**
+   * Destiny Bond tag belonging to the currently fainting Pokemon, if applicable
+   */
+  private destinyTag?: DestinyBondTag;
+
+  /**
+   * The source Pokemon that dealt fatal damage and should get KO'd by Destiny Bond, if applicable
+   */
+  private source?: Pokemon;
+
+  constructor(scene: BattleScene, battlerIndex: BattlerIndex, preventEndure: boolean = false, destinyTag?: DestinyBondTag, source?: Pokemon) {
     super(scene, battlerIndex);
 
-    this.preventEndure = preventEndure!; // TODO: is this bang correct?
+    this.preventEndure = preventEndure;
+    this.destinyTag = destinyTag;
+    this.source = source;
   }
 
   start() {
     super.start();
+
+    if (!isNullOrUndefined(this.destinyTag) && !isNullOrUndefined(this.source)) {
+      this.destinyTag.lapse(this.source, BattlerTagLapseType.CUSTOM);
+    }
 
     if (!this.preventEndure) {
       const instantReviveModifier = this.scene.applyModifier(PokemonInstantReviveModifier, this.player, this.getPokemon()) as PokemonInstantReviveModifier;
@@ -106,14 +128,14 @@ export class FaintPhase extends PokemonPhase {
          * If previous conditions weren't met, and the player has at least 1 legal Pokemon off the field,
          * push a phase that prompts the player to summon a Pokemon from their party.
          */
-        this.scene.pushPhase(new SwitchPhase(this.scene, this.fieldIndex, true, false));
+        this.scene.pushPhase(new SwitchPhase(this.scene, SwitchType.SWITCH, this.fieldIndex, true, false));
       }
     } else {
       this.scene.unshiftPhase(new VictoryPhase(this.scene, this.battlerIndex));
-      if ([BattleType.TRAINER, BattleType.MYSTERY_ENCOUNTER].includes(this.scene.currentBattle.battleType)) {
+      if ([ BattleType.TRAINER, BattleType.MYSTERY_ENCOUNTER ].includes(this.scene.currentBattle.battleType)) {
         const hasReservePartyMember = !!this.scene.getEnemyParty().filter(p => p.isActive() && !p.isOnField() && p.trainerSlot === (pokemon as EnemyPokemon).trainerSlot).length;
         if (hasReservePartyMember) {
-          this.scene.pushPhase(new SwitchSummonPhase(this.scene, this.fieldIndex, -1, false, false, false));
+          this.scene.pushPhase(new SwitchSummonPhase(this.scene, SwitchType.SWITCH, this.fieldIndex, -1, false, false));
         }
       }
     }
@@ -126,7 +148,7 @@ export class FaintPhase extends PokemonPhase {
 
     pokemon.faintCry(() => {
       if (pokemon instanceof PlayerPokemon) {
-        pokemon.addFriendship(-10);
+        pokemon.addFriendship(-FRIENDSHIP_LOSS_FROM_FAINT);
       }
       pokemon.hideInfo();
       this.scene.playSound("se/faint");

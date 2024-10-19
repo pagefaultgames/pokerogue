@@ -104,11 +104,11 @@ export class FilterBar extends Phaser.GameObjects.Container {
       totalWidth += label.displayWidth + cursorOffset;
     });
     const spacing = (this.width - totalWidth) / (this.labels.length - 1);
-    for (let i=0; i<this.labels.length; i++) {
+    for (let i = 0; i < this.labels.length; i++) {
       if (i === 0) {
         this.labels[i].x = paddingX + cursorOffset;
       } else {
-        const lastRight = this.labels[i-1].x + this.labels[i-1].displayWidth;
+        const lastRight = this.labels[i - 1].x + this.labels[i - 1].displayWidth;
         this.labels[i].x = lastRight + spacing + cursorOffset;
       }
 
@@ -121,7 +121,7 @@ export class FilterBar extends Phaser.GameObjects.Container {
    * Move the leftmost dropdown to the left of the FilterBar instead of below it
    */
   offsetHybridFilters(): void {
-    for (let i=0; i<this.dropDowns.length; i++) {
+    for (let i = 0; i < this.dropDowns.length; i++) {
       if (this.dropDowns[i].dropDownType === DropDownType.HYBRID) {
         this.dropDowns[i].autoSize();
         this.dropDowns[i].x = - this.dropDowns[i].getWidth();
@@ -197,7 +197,7 @@ export class FilterBar extends Phaser.GameObjects.Container {
     const midx = container.x + container.icon.displayWidth / 2;
     let nearest = 0;
     let nearestDist = 1000;
-    for (let i=0; i < this.labels.length; i++) {
+    for (let i = 0; i < this.labels.length; i++) {
       const dist = Math.abs(midx - (this.labels[i].x + this.labels[i].displayWidth / 3));
       if (dist < nearestDist) {
         nearest = i;

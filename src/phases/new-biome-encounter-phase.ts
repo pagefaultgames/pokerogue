@@ -17,14 +17,12 @@ export class NewBiomeEncounterPhase extends NextEncounterPhase {
       }
     }
 
-    this.scene.arena.trySetWeather(getRandomWeatherType(this.scene.arena), false);
-
     for (const pokemon of this.scene.getParty().filter(p => p.isOnField())) {
       applyAbAttrs(PostBiomeChangeAbAttr, pokemon, null);
     }
 
     const enemyField = this.scene.getEnemyField();
-    const moveTargets: any[]  = [this.scene.arenaEnemy, enemyField];
+    const moveTargets: any[]  = [ this.scene.arenaEnemy, enemyField ];
     const mysteryEncounter = this.scene.currentBattle?.mysteryEncounter?.introVisuals;
     if (mysteryEncounter) {
       moveTargets.push(mysteryEncounter);
@@ -40,5 +38,12 @@ export class NewBiomeEncounterPhase extends NextEncounterPhase {
         }
       }
     });
+  }
+
+  /**
+   * Set biome weather.
+   */
+  trySetWeatherIfNewBiome(): void {
+    this.scene.arena.trySetWeather(getRandomWeatherType(this.scene.arena), false);
   }
 }
