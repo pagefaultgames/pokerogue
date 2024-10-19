@@ -29,15 +29,14 @@ export abstract class FormModalUiHandler extends ModalUiHandler {
     this.formLabels = [];
   }
 
-  abstract getFields(): string[];
-
-  // this function takes any args and uses it to make an array of InputFieldConfigs, which has extra support for the input text field
-  // It currently has support for a field's label, whether it's a password field, and whether the field should be read only, but by expanding the InputFieldConfig interface
-  // any extra details can be passed on to the field during creation
-  abstract getInputFieldConfigs(args?: any): InputFieldConfigs[];
+  /**
+   * Get all information for each field to display in the modal
+   * @returns array of {@linkcode InputFieldConfig}
+   */
+  abstract getInputFieldConfigs(): InputFieldConfig[];
 
   getHeight(config?: ModalConfig): number {
-    return 20 * this.getFields().length + (this.getModalTitle() ? 26 : 0) + ((config as FormModalConfig)?.errorMessage ? 12 : 0) + this.getButtonTopMargin() + 28;
+    return 20 * this.getInputFieldConfigs().length + (this.getModalTitle() ? 26 : 0) + ((config as FormModalConfig)?.errorMessage ? 12 : 0) + this.getButtonTopMargin() + 28;
   }
 
   getReadableErrorMessage(error: string): string {
@@ -66,7 +65,7 @@ export abstract class FormModalUiHandler extends ModalUiHandler {
     this.modalContainer.add(this.errorMessage);
   }
 
-  updateFields(fieldsConfig: InputFieldConfigs[], hasTitle: boolean) {
+  updateFields(fieldsConfig: InputFieldConfig[], hasTitle: boolean) {
     this.inputContainers = [];
     this.inputs = [];
     this.formLabels = [];
@@ -169,7 +168,7 @@ export abstract class FormModalUiHandler extends ModalUiHandler {
   }
 }
 
-export interface InputFieldConfigs {
+export interface InputFieldConfig {
   label: string,
   isPassword?: boolean,
   isReadOnly?: boolean
