@@ -173,18 +173,12 @@ export class MovePhase extends BattlePhase {
         if (this.statusActivationOverride === false) {
           break;
         }
-        if (!this.pokemon.randSeedInt(4) || this.statusActivationOverride) {
-          activated = true;
-          this.cancel();
-        }
+        activated = (!this.pokemon.randSeedInt(4) || this.statusActivationOverride === true);
         break;
       case StatusEffect.SLEEP:
         applyMoveAttrs(BypassSleepAttr, this.pokemon, null, this.move.getMove());
         healed = this.pokemon.status.turnCount === this.pokemon.status.cureTurn;
         activated = !healed && !this.pokemon.getTag(BattlerTagType.BYPASS_SLEEP);
-        if (activated) {
-          this.cancel();
-        }
         break;
       case StatusEffect.FREEZE:
         healed =
@@ -192,19 +186,15 @@ export class MovePhase extends BattlePhase {
             attr instanceof HealStatusEffectAttr
             && attr.selfTarget
             && attr.isOfEffect(StatusEffect.FREEZE))
-          || (!this.pokemon.randSeedInt(5) && this.statusActivationOverride !== true);
+          || (!this.pokemon.randSeedInt(5) && this.statusActivationOverride !== true)
+          || this.statusActivationOverride === false;
 
-        if (this.statusActivationOverride === false) {
-          healed = true;
-        }
         activated = !healed;
-        if (activated) {
-          this.cancel();
-        }
         break;
       }
 
       if (activated) {
+        this.cancel();
         this.scene.queueMessage(getStatusEffectActivationText(this.pokemon.status.effect, getPokemonNameWithAffix(this.pokemon)));
         this.scene.unshiftPhase(new CommonAnimPhase(this.scene, this.pokemon.getBattlerIndex(), undefined, CommonAnim.POISON + (this.pokemon.status.effect - 1)));
       } else if (healed) {
