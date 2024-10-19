@@ -24,6 +24,8 @@ import { StatusEffect } from "#enums/status-effect";
 import i18next from "i18next";
 
 export class MovePhase extends BattlePhase {
+  /** Used for tests, allows paralysis and freeze to be forced to activate */
+  public statusActivationOverride: boolean | null = null;
   protected _pokemon: Pokemon;
   protected _move: PokemonMove;
   protected _targets: BattlerIndex[];
@@ -168,21 +170,37 @@ export class MovePhase extends BattlePhase {
 
       switch (this.pokemon.status.effect) {
       case StatusEffect.PARALYSIS:
-        if (!this.pokemon.randSeedInt(4)) {
+        if (this.statusActivationOverride === false) {
+          break;
+        }
+        if (!this.pokemon.randSeedInt(4) || this.statusActivationOverride) {
           activated = true;
-          this.cancelled = true;
+          this.cancel();
         }
         break;
       case StatusEffect.SLEEP:
         applyMoveAttrs(BypassSleepAttr, this.pokemon, null, this.move.getMove());
         healed = this.pokemon.status.turnCount === this.pokemon.status.cureTurn;
         activated = !healed && !this.pokemon.getTag(BattlerTagType.BYPASS_SLEEP);
-        this.cancelled = activated;
+        if (activated) {
+          this.cancel();
+        }
         break;
       case StatusEffect.FREEZE:
-        healed = !!this.move.getMove().findAttr(attr => attr instanceof HealStatusEffectAttr && attr.selfTarget && attr.isOfEffect(StatusEffect.FREEZE)) || !this.pokemon.randSeedInt(5);
+        healed =
+          !!this.move.getMove().findAttr((attr) =>
+            attr instanceof HealStatusEffectAttr
+            && attr.selfTarget
+            && attr.isOfEffect(StatusEffect.FREEZE))
+          || (!this.pokemon.randSeedInt(5) && this.statusActivationOverride !== true);
+
+        if (this.statusActivationOverride === false) {
+          healed = true;
+        }
         activated = !healed;
-        this.cancelled = activated;
+        if (activated) {
+          this.cancel();
+        }
         break;
       }
 
