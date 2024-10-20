@@ -97,18 +97,18 @@ export default class LoginFormUiHandler extends FormModalUiHandler {
       error = error.slice(0, colonIndex);
     }
     switch (error) {
-    case this.ERR_USERNAME:
-      return i18next.t("menu:invalidLoginUsername");
-    case this.ERR_PASSWORD:
-      return i18next.t("menu:invalidLoginPassword");
-    case this.ERR_ACCOUNT_EXIST:
-      return i18next.t("menu:accountNonExistent");
-    case this.ERR_PASSWORD_MATCH:
-      return i18next.t("menu:unmatchingPassword");
-    case this.ERR_NO_SAVES:
-      return i18next.t("menu:noSaves");
-    case this.ERR_TOO_MANY_SAVES:
-      return i18next.t("menu:tooManySaves");
+      case this.ERR_USERNAME:
+        return i18next.t("menu:invalidLoginUsername");
+      case this.ERR_PASSWORD:
+        return i18next.t("menu:invalidLoginPassword");
+      case this.ERR_ACCOUNT_EXIST:
+        return i18next.t("menu:accountNonExistent");
+      case this.ERR_PASSWORD_MATCH:
+        return i18next.t("menu:unmatchingPassword");
+      case this.ERR_NO_SAVES:
+        return i18next.t("menu:noSaves");
+      case this.ERR_TOO_MANY_SAVES:
+        return i18next.t("menu:tooManySaves");
     }
 
     return super.getReadableErrorMessage(error);
