@@ -39,12 +39,12 @@ export default class PokemonIconAnimHandler {
 
   getModeYDelta(mode: PokemonIconAnimMode): number {
     switch (mode) {
-    case PokemonIconAnimMode.NONE:
-      return 0;
-    case PokemonIconAnimMode.PASSIVE:
-      return -1;
-    case PokemonIconAnimMode.ACTIVE:
-      return -2;
+      case PokemonIconAnimMode.NONE:
+        return 0;
+      case PokemonIconAnimMode.PASSIVE:
+        return -1;
+      case PokemonIconAnimMode.ACTIVE:
+        return -2;
     }
   }
 

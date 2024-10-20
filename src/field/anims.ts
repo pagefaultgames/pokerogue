@@ -4,21 +4,21 @@ import * as Utils from "../utils";
 
 export function addPokeballOpenParticles(scene: BattleScene, x: number, y: number, pokeballType: PokeballType): void {
   switch (pokeballType) {
-  case PokeballType.POKEBALL:
-    doDefaultPbOpenParticles(scene, x, y, 48);
-    break;
-  case PokeballType.GREAT_BALL:
-    doDefaultPbOpenParticles(scene, x, y, 96);
-    break;
-  case PokeballType.ULTRA_BALL:
-    doUbOpenParticles(scene, x, y, 8);
-    break;
-  case PokeballType.ROGUE_BALL:
-    doUbOpenParticles(scene, x, y, 10);
-    break;
-  case PokeballType.MASTER_BALL:
-    doMbOpenParticles(scene, x, y);
-    break;
+    case PokeballType.POKEBALL:
+      doDefaultPbOpenParticles(scene, x, y, 48);
+      break;
+    case PokeballType.GREAT_BALL:
+      doDefaultPbOpenParticles(scene, x, y, 96);
+      break;
+    case PokeballType.ULTRA_BALL:
+      doUbOpenParticles(scene, x, y, 8);
+      break;
+    case PokeballType.ROGUE_BALL:
+      doUbOpenParticles(scene, x, y, 10);
+      break;
+    case PokeballType.MASTER_BALL:
+      doMbOpenParticles(scene, x, y);
+      break;
   }
 }
 

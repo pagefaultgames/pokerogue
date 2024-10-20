@@ -494,31 +494,31 @@ export class EncounterPhase extends BattlePhase {
 
   tryOverrideForBattleSpec(): boolean {
     switch (this.scene.currentBattle.battleSpec) {
-    case BattleSpec.FINAL_BOSS:
-      const enemy = this.scene.getEnemyPokemon();
-      this.scene.ui.showText(this.getEncounterMessage(), null, () => {
-        const localizationKey = "battleSpecDialogue:encounter";
-        if (this.scene.ui.shouldSkipDialogue(localizationKey)) {
+      case BattleSpec.FINAL_BOSS:
+        const enemy = this.scene.getEnemyPokemon();
+        this.scene.ui.showText(this.getEncounterMessage(), null, () => {
+          const localizationKey = "battleSpecDialogue:encounter";
+          if (this.scene.ui.shouldSkipDialogue(localizationKey)) {
           // Logging mirrors logging found in dialogue-ui-handler
-          console.log(`Dialogue ${localizationKey} skipped`);
-          this.doEncounterCommon(false);
-        } else {
-          const count = 5643853 + this.scene.gameData.gameStats.classicSessionsPlayed;
-          // The line below checks if an English ordinal is necessary or not based on whether an entry for encounterLocalizationKey exists in the language or not.
-          const ordinalUsed = !i18next.exists(localizationKey, { fallbackLng: []}) || i18next.resolvedLanguage === "en" ? i18next.t("battleSpecDialogue:key", { count: count, ordinal: true }) : "";
-          const cycleCount = count.toLocaleString() + ordinalUsed;
-          const genderIndex = this.scene.gameData.gender ?? PlayerGender.UNSET;
-          const genderStr = PlayerGender[genderIndex].toLowerCase();
-          const encounterDialogue = i18next.t(localizationKey, { context: genderStr, cycleCount: cycleCount });
-          if (!this.scene.gameData.getSeenDialogues()[localizationKey]) {
-            this.scene.gameData.saveSeenDialogue(localizationKey);
-          }
-          this.scene.ui.showDialogue(encounterDialogue, enemy?.species.name, null, () => {
+            console.log(`Dialogue ${localizationKey} skipped`);
             this.doEncounterCommon(false);
-          });
-        }
-      }, 1500, true);
-      return true;
+          } else {
+            const count = 5643853 + this.scene.gameData.gameStats.classicSessionsPlayed;
+            // The line below checks if an English ordinal is necessary or not based on whether an entry for encounterLocalizationKey exists in the language or not.
+            const ordinalUsed = !i18next.exists(localizationKey, { fallbackLng: []}) || i18next.resolvedLanguage === "en" ? i18next.t("battleSpecDialogue:key", { count: count, ordinal: true }) : "";
+            const cycleCount = count.toLocaleString() + ordinalUsed;
+            const genderIndex = this.scene.gameData.gender ?? PlayerGender.UNSET;
+            const genderStr = PlayerGender[genderIndex].toLowerCase();
+            const encounterDialogue = i18next.t(localizationKey, { context: genderStr, cycleCount: cycleCount });
+            if (!this.scene.gameData.getSeenDialogues()[localizationKey]) {
+              this.scene.gameData.saveSeenDialogue(localizationKey);
+            }
+            this.scene.ui.showDialogue(encounterDialogue, enemy?.species.name, null, () => {
+              this.doEncounterCommon(false);
+            });
+          }
+        }, 1500, true);
+        return true;
     }
     return false;
   }

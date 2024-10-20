@@ -1695,12 +1695,12 @@ export class TurnStatusEffectModifier extends PokemonHeldItemModifier {
     super(type, pokemonId, stackCount);
 
     switch (type.id) {
-    case "TOXIC_ORB":
-      this.effect = StatusEffect.TOXIC;
-      break;
-    case "FLAME_ORB":
-      this.effect = StatusEffect.BURN;
-      break;
+      case "TOXIC_ORB":
+        this.effect = StatusEffect.TOXIC;
+        break;
+      case "FLAME_ORB":
+        this.effect = StatusEffect.BURN;
+        break;
     }
   }
 
@@ -2684,15 +2684,15 @@ export class PokemonMultiHitModifier extends PokemonHeldItemModifier {
     count.value *= (this.getStackCount() + 1);
 
     switch (this.getStackCount()) {
-    case 1:
-      power.value *= 0.4;
-      break;
-    case 2:
-      power.value *= 0.25;
-      break;
-    case 3:
-      power.value *= 0.175;
-      break;
+      case 1:
+        power.value *= 0.4;
+        break;
+      case 2:
+        power.value *= 0.25;
+        break;
+      case 3:
+        power.value *= 0.175;
+        break;
     }
 
     return true;

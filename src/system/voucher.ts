@@ -45,41 +45,41 @@ export class Voucher {
 
   getTier(): AchvTier {
     switch (this.voucherType) {
-    case VoucherType.REGULAR:
-      return AchvTier.COMMON;
-    case VoucherType.PLUS:
-      return AchvTier.GREAT;
-    case VoucherType.PREMIUM:
-      return AchvTier.ULTRA;
-    case VoucherType.GOLDEN:
-      return AchvTier.ROGUE;
+      case VoucherType.REGULAR:
+        return AchvTier.COMMON;
+      case VoucherType.PLUS:
+        return AchvTier.GREAT;
+      case VoucherType.PREMIUM:
+        return AchvTier.ULTRA;
+      case VoucherType.GOLDEN:
+        return AchvTier.ROGUE;
     }
   }
 }
 
 export function getVoucherTypeName(voucherType: VoucherType): string {
   switch (voucherType) {
-  case VoucherType.REGULAR:
-    return i18next.t("voucher:eggVoucher");
-  case VoucherType.PLUS:
-    return i18next.t("voucher:eggVoucherPlus");
-  case VoucherType.PREMIUM:
-    return i18next.t("voucher:eggVoucherPremium");
-  case VoucherType.GOLDEN:
-    return i18next.t("voucher:eggVoucherGold");
+    case VoucherType.REGULAR:
+      return i18next.t("voucher:eggVoucher");
+    case VoucherType.PLUS:
+      return i18next.t("voucher:eggVoucherPlus");
+    case VoucherType.PREMIUM:
+      return i18next.t("voucher:eggVoucherPremium");
+    case VoucherType.GOLDEN:
+      return i18next.t("voucher:eggVoucherGold");
   }
 }
 
 export function getVoucherTypeIcon(voucherType: VoucherType): string {
   switch (voucherType) {
-  case VoucherType.REGULAR:
-    return "coupon";
-  case VoucherType.PLUS:
-    return "pair_of_tickets";
-  case VoucherType.PREMIUM:
-    return "mystic_ticket";
-  case VoucherType.GOLDEN:
-    return "golden_mystic_ticket";
+    case VoucherType.REGULAR:
+      return "coupon";
+    case VoucherType.PLUS:
+      return "pair_of_tickets";
+    case VoucherType.PREMIUM:
+      return "mystic_ticket";
+    case VoucherType.GOLDEN:
+      return "golden_mystic_ticket";
   }
 }
 

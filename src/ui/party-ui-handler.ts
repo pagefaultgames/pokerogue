@@ -539,42 +539,42 @@ export default class PartyUiHandler extends MessageUiHandler {
         return true;
       } else {
         switch (button) {
-        case Button.LEFT:
+          case Button.LEFT:
           /** Decrease quantity for the current item and update UI */
-          if (this.partyUiMode === PartyUiMode.MODIFIER_TRANSFER) {
-            this.transferQuantities[option] = this.transferQuantities[option] === 1 ? this.transferQuantitiesMax[option] : this.transferQuantities[option] - 1;
-            this.updateOptions();
-            success = this.setCursor(this.optionsCursor); /** Place again the cursor at the same position. Necessary, otherwise the cursor disappears */
-          }
-          break;
-        case Button.RIGHT:
+            if (this.partyUiMode === PartyUiMode.MODIFIER_TRANSFER) {
+              this.transferQuantities[option] = this.transferQuantities[option] === 1 ? this.transferQuantitiesMax[option] : this.transferQuantities[option] - 1;
+              this.updateOptions();
+              success = this.setCursor(this.optionsCursor); /** Place again the cursor at the same position. Necessary, otherwise the cursor disappears */
+            }
+            break;
+          case Button.RIGHT:
           /** Increase quantity for the current item and update UI */
-          if (this.partyUiMode === PartyUiMode.MODIFIER_TRANSFER) {
-            this.transferQuantities[option] = this.transferQuantities[option] === this.transferQuantitiesMax[option] ? 1 : this.transferQuantities[option] + 1;
-            this.updateOptions();
-            success = this.setCursor(this.optionsCursor); /** Place again the cursor at the same position. Necessary, otherwise the cursor disappears */
-          }
-          break;
-        case Button.UP:
-          /** If currently selecting items to transfer, reset quantity selection */
-          if (this.partyUiMode === PartyUiMode.MODIFIER_TRANSFER) {
-            if (option !== PartyOption.ALL) {
-              this.transferQuantities[option] = this.transferQuantitiesMax[option];
+            if (this.partyUiMode === PartyUiMode.MODIFIER_TRANSFER) {
+              this.transferQuantities[option] = this.transferQuantities[option] === this.transferQuantitiesMax[option] ? 1 : this.transferQuantities[option] + 1;
+              this.updateOptions();
+              success = this.setCursor(this.optionsCursor); /** Place again the cursor at the same position. Necessary, otherwise the cursor disappears */
             }
-            this.updateOptions();
-          }
-          success = this.setCursor(this.optionsCursor ? this.optionsCursor - 1 : this.options.length - 1); /** Move cursor */
-          break;
-        case Button.DOWN:
+            break;
+          case Button.UP:
           /** If currently selecting items to transfer, reset quantity selection */
-          if (this.partyUiMode === PartyUiMode.MODIFIER_TRANSFER) {
-            if (option !== PartyOption.ALL) {
-              this.transferQuantities[option] = this.transferQuantitiesMax[option];
+            if (this.partyUiMode === PartyUiMode.MODIFIER_TRANSFER) {
+              if (option !== PartyOption.ALL) {
+                this.transferQuantities[option] = this.transferQuantitiesMax[option];
+              }
+              this.updateOptions();
             }
-            this.updateOptions();
-          }
-          success = this.setCursor(this.optionsCursor < this.options.length - 1 ? this.optionsCursor + 1 : 0); /** Move cursor */
-          break;
+            success = this.setCursor(this.optionsCursor ? this.optionsCursor - 1 : this.options.length - 1); /** Move cursor */
+            break;
+          case Button.DOWN:
+          /** If currently selecting items to transfer, reset quantity selection */
+            if (this.partyUiMode === PartyUiMode.MODIFIER_TRANSFER) {
+              if (option !== PartyOption.ALL) {
+                this.transferQuantities[option] = this.transferQuantitiesMax[option];
+              }
+              this.updateOptions();
+            }
+            success = this.setCursor(this.optionsCursor < this.options.length - 1 ? this.optionsCursor + 1 : 0); /** Move cursor */
+            break;
         }
 
         // show move description
@@ -631,28 +631,28 @@ export default class PartyUiHandler extends MessageUiHandler {
       const battlerCount = this.scene.currentBattle.getBattlerCount();
 
       switch (button) {
-      case Button.UP:
-        success = this.setCursor(this.cursor ? this.cursor < 6 ? this.cursor - 1 : slotCount - 1 : 6);
-        break;
-      case Button.DOWN:
-        success = this.setCursor(this.cursor < 6 ? this.cursor < slotCount - 1 ? this.cursor + 1 : 6 : 0);
-        break;
-      case Button.LEFT:
-        if (this.cursor >= battlerCount && this.cursor <= 6) {
-          success = this.setCursor(0);
-        }
-        break;
-      case Button.RIGHT:
-        if (slotCount === battlerCount) {
-          success = this.setCursor(6);
+        case Button.UP:
+          success = this.setCursor(this.cursor ? this.cursor < 6 ? this.cursor - 1 : slotCount - 1 : 6);
           break;
-        } else if (battlerCount >= 2 && slotCount > battlerCount && this.getCursor() === 0 && this.lastCursor === 1) {
-          success = this.setCursor(2);
+        case Button.DOWN:
+          success = this.setCursor(this.cursor < 6 ? this.cursor < slotCount - 1 ? this.cursor + 1 : 6 : 0);
           break;
-        } else if (slotCount > battlerCount && this.cursor < battlerCount) {
-          success = this.setCursor(this.lastCursor < 6 ? this.lastCursor ||  battlerCount : battlerCount);
+        case Button.LEFT:
+          if (this.cursor >= battlerCount && this.cursor <= 6) {
+            success = this.setCursor(0);
+          }
           break;
-        }
+        case Button.RIGHT:
+          if (slotCount === battlerCount) {
+            success = this.setCursor(6);
+            break;
+          } else if (battlerCount >= 2 && slotCount > battlerCount && this.getCursor() === 0 && this.lastCursor === 1) {
+            success = this.setCursor(2);
+            break;
+          } else if (slotCount > battlerCount && this.cursor < battlerCount) {
+            success = this.setCursor(this.lastCursor < 6 ? this.lastCursor ||  battlerCount : battlerCount);
+            break;
+          }
       }
     }
 
@@ -773,19 +773,19 @@ export default class PartyUiHandler extends MessageUiHandler {
     let optionsMessage = i18next.t("partyUiHandler:doWhatWithThisPokemon");
 
     switch (this.partyUiMode) {
-    case PartyUiMode.MOVE_MODIFIER:
-      optionsMessage = i18next.t("partyUiHandler:selectAMove");
-      break;
-    case PartyUiMode.MODIFIER_TRANSFER:
-      if (!this.transferMode) {
-        optionsMessage = i18next.t("partyUiHandler:changeQuantity");
-      }
-      break;
-    case PartyUiMode.SPLICE:
-      if (!this.transferMode) {
-        optionsMessage = i18next.t("partyUiHandler:selectAnotherPokemonToSplice");
-      }
-      break;
+      case PartyUiMode.MOVE_MODIFIER:
+        optionsMessage = i18next.t("partyUiHandler:selectAMove");
+        break;
+      case PartyUiMode.MODIFIER_TRANSFER:
+        if (!this.transferMode) {
+          optionsMessage = i18next.t("partyUiHandler:changeQuantity");
+        }
+        break;
+      case PartyUiMode.SPLICE:
+        if (!this.transferMode) {
+          optionsMessage = i18next.t("partyUiHandler:selectAnotherPokemonToSplice");
+        }
+        break;
     }
 
     this.showText(optionsMessage, 0);
@@ -829,64 +829,64 @@ export default class PartyUiHandler extends MessageUiHandler {
 
     if (this.partyUiMode !== PartyUiMode.MOVE_MODIFIER && this.partyUiMode !== PartyUiMode.REMEMBER_MOVE_MODIFIER && (this.transferMode || this.partyUiMode !== PartyUiMode.MODIFIER_TRANSFER)) {
       switch (this.partyUiMode) {
-      case PartyUiMode.SWITCH:
-      case PartyUiMode.FAINT_SWITCH:
-      case PartyUiMode.POST_BATTLE_SWITCH:
-        if (this.cursor >= this.scene.currentBattle.getBattlerCount()) {
-          const allowBatonModifierSwitch =
+        case PartyUiMode.SWITCH:
+        case PartyUiMode.FAINT_SWITCH:
+        case PartyUiMode.POST_BATTLE_SWITCH:
+          if (this.cursor >= this.scene.currentBattle.getBattlerCount()) {
+            const allowBatonModifierSwitch =
             this.partyUiMode !== PartyUiMode.FAINT_SWITCH
               && this.scene.findModifier(m => m instanceof SwitchEffectTransferModifier
               && (m as SwitchEffectTransferModifier).pokemonId === this.scene.getPlayerField()[this.fieldIndex].id);
 
-          const moveHistory = this.scene.getPlayerField()[this.fieldIndex].getMoveHistory();
-          const isBatonPassMove = this.partyUiMode === PartyUiMode.FAINT_SWITCH && moveHistory.length && allMoves[moveHistory[moveHistory.length - 1].move].getAttrs(ForceSwitchOutAttr)[0]?.isBatonPass() && moveHistory[moveHistory.length - 1].result === MoveResult.SUCCESS;
+            const moveHistory = this.scene.getPlayerField()[this.fieldIndex].getMoveHistory();
+            const isBatonPassMove = this.partyUiMode === PartyUiMode.FAINT_SWITCH && moveHistory.length && allMoves[moveHistory[moveHistory.length - 1].move].getAttrs(ForceSwitchOutAttr)[0]?.isBatonPass() && moveHistory[moveHistory.length - 1].result === MoveResult.SUCCESS;
 
-          // isBatonPassMove and allowBatonModifierSwitch shouldn't ever be true
-          // at the same time, because they both explicitly check for a mutually
-          // exclusive partyUiMode. But better safe than sorry.
-          this.options.push(isBatonPassMove && !allowBatonModifierSwitch ? PartyOption.PASS_BATON : PartyOption.SEND_OUT);
-          if (allowBatonModifierSwitch && !isBatonPassMove) {
+            // isBatonPassMove and allowBatonModifierSwitch shouldn't ever be true
+            // at the same time, because they both explicitly check for a mutually
+            // exclusive partyUiMode. But better safe than sorry.
+            this.options.push(isBatonPassMove && !allowBatonModifierSwitch ? PartyOption.PASS_BATON : PartyOption.SEND_OUT);
+            if (allowBatonModifierSwitch && !isBatonPassMove) {
             // the BATON modifier gives an extra switch option for
             // pokemon-command switches, allowing buffs to be optionally passed
-            this.options.push(PartyOption.PASS_BATON);
+              this.options.push(PartyOption.PASS_BATON);
+            }
           }
-        }
-        break;
-      case PartyUiMode.REVIVAL_BLESSING:
-        this.options.push(PartyOption.REVIVE);
-        break;
-      case PartyUiMode.MODIFIER:
-        this.options.push(PartyOption.APPLY);
-        break;
-      case PartyUiMode.TM_MODIFIER:
-        this.options.push(PartyOption.TEACH);
-        break;
-      case PartyUiMode.MODIFIER_TRANSFER:
-        this.options.push(PartyOption.TRANSFER);
-        break;
-      case PartyUiMode.SPLICE:
-        if (this.transferMode) {
-          if (this.cursor !== this.transferCursor) {
-            this.options.push(PartyOption.SPLICE);
-          }
-        } else {
+          break;
+        case PartyUiMode.REVIVAL_BLESSING:
+          this.options.push(PartyOption.REVIVE);
+          break;
+        case PartyUiMode.MODIFIER:
           this.options.push(PartyOption.APPLY);
-        }
-        break;
-      case PartyUiMode.RELEASE:
-        this.options.push(PartyOption.RELEASE);
-        break;
-      case PartyUiMode.CHECK:
-        if (this.scene.getCurrentPhase() instanceof SelectModifierPhase) {
-          formChangeItemModifiers = this.getFormChangeItemsModifiers(pokemon);
-          for (let i = 0; i < formChangeItemModifiers.length; i++) {
-            this.options.push(PartyOption.FORM_CHANGE_ITEM + i);
+          break;
+        case PartyUiMode.TM_MODIFIER:
+          this.options.push(PartyOption.TEACH);
+          break;
+        case PartyUiMode.MODIFIER_TRANSFER:
+          this.options.push(PartyOption.TRANSFER);
+          break;
+        case PartyUiMode.SPLICE:
+          if (this.transferMode) {
+            if (this.cursor !== this.transferCursor) {
+              this.options.push(PartyOption.SPLICE);
+            }
+          } else {
+            this.options.push(PartyOption.APPLY);
           }
-        }
-        break;
-      case PartyUiMode.SELECT:
-        this.options.push(PartyOption.SELECT);
-        break;
+          break;
+        case PartyUiMode.RELEASE:
+          this.options.push(PartyOption.RELEASE);
+          break;
+        case PartyUiMode.CHECK:
+          if (this.scene.getCurrentPhase() instanceof SelectModifierPhase) {
+            formChangeItemModifiers = this.getFormChangeItemsModifiers(pokemon);
+            for (let i = 0; i < formChangeItemModifiers.length; i++) {
+              this.options.push(PartyOption.FORM_CHANGE_ITEM + i);
+            }
+          }
+          break;
+        case PartyUiMode.SELECT:
+          this.options.push(PartyOption.SELECT);
+          break;
       }
 
       this.options.push(PartyOption.SUMMARY);
@@ -962,33 +962,33 @@ export default class PartyUiHandler extends MessageUiHandler {
         optionName = "↓";
       } else if ((this.partyUiMode !== PartyUiMode.REMEMBER_MOVE_MODIFIER && (this.partyUiMode !== PartyUiMode.MODIFIER_TRANSFER || this.transferMode)) || option === PartyOption.CANCEL) {
         switch (option) {
-        case PartyOption.MOVE_1:
-        case PartyOption.MOVE_2:
-        case PartyOption.MOVE_3:
-        case PartyOption.MOVE_4:
-          const move = pokemon.moveset[option - PartyOption.MOVE_1]!; // TODO: is the bang correct?
-          if (this.showMovePp) {
-            const maxPP = move.getMovePp();
-            const currPP = maxPP - move.ppUsed;
-            optionName = `${move.getName()} ${currPP}/${maxPP}`;
-          } else {
-            optionName = move.getName();
-          }
-          break;
-        default:
-          if (formChangeItemModifiers && option >= PartyOption.FORM_CHANGE_ITEM) {
-            const modifier = formChangeItemModifiers[option - PartyOption.FORM_CHANGE_ITEM];
-            optionName = `${modifier.active ? i18next.t("partyUiHandler:DEACTIVATE") : i18next.t("partyUiHandler:ACTIVATE")} ${modifier.type.name}`;
-          } else if (option === PartyOption.UNPAUSE_EVOLUTION) {
-            optionName = `${pokemon.pauseEvolutions ? i18next.t("partyUiHandler:UNPAUSE_EVOLUTION") : i18next.t("partyUiHandler:PAUSE_EVOLUTION")}`;
-          } else {
-            if (this.localizedOptions.includes(option)) {
-              optionName = i18next.t(`partyUiHandler:${PartyOption[option]}`);
+          case PartyOption.MOVE_1:
+          case PartyOption.MOVE_2:
+          case PartyOption.MOVE_3:
+          case PartyOption.MOVE_4:
+            const move = pokemon.moveset[option - PartyOption.MOVE_1]!; // TODO: is the bang correct?
+            if (this.showMovePp) {
+              const maxPP = move.getMovePp();
+              const currPP = maxPP - move.ppUsed;
+              optionName = `${move.getName()} ${currPP}/${maxPP}`;
             } else {
-              optionName = Utils.toReadableString(PartyOption[option]);
+              optionName = move.getName();
             }
-          }
-          break;
+            break;
+          default:
+            if (formChangeItemModifiers && option >= PartyOption.FORM_CHANGE_ITEM) {
+              const modifier = formChangeItemModifiers[option - PartyOption.FORM_CHANGE_ITEM];
+              optionName = `${modifier.active ? i18next.t("partyUiHandler:DEACTIVATE") : i18next.t("partyUiHandler:ACTIVATE")} ${modifier.type.name}`;
+            } else if (option === PartyOption.UNPAUSE_EVOLUTION) {
+              optionName = `${pokemon.pauseEvolutions ? i18next.t("partyUiHandler:UNPAUSE_EVOLUTION") : i18next.t("partyUiHandler:PAUSE_EVOLUTION")}`;
+            } else {
+              if (this.localizedOptions.includes(option)) {
+                optionName = i18next.t(`partyUiHandler:${PartyOption[option]}`);
+              } else {
+                optionName = Utils.toReadableString(PartyOption[option]);
+              }
+            }
+            break;
         }
       } else if (this.partyUiMode === PartyUiMode.REMEMBER_MOVE_MODIFIER) {
         const move = learnableLevelMoves[option];

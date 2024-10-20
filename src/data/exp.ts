@@ -28,24 +28,24 @@ export function getLevelTotalExp(level: integer, growthRate: GrowthRate): intege
   let ret: integer;
 
   switch (growthRate) {
-  case GrowthRate.ERRATIC:
-    ret = (Math.pow(level, 4) + (Math.pow(level, 3) * 2000)) / 3500;
-    break;
-  case GrowthRate.FAST:
-    ret = Math.pow(level, 3) * 4 / 5;
-    break;
-  case GrowthRate.MEDIUM_FAST:
-    ret = Math.pow(level, 3);
-    break;
-  case GrowthRate.MEDIUM_SLOW:
-    ret = (Math.pow(level, 3) * 6 / 5) - (15 * Math.pow(level, 2)) + (100 * level) - 140;
-    break;
-  case GrowthRate.SLOW:
-    ret = Math.pow(level, 3) * 5 / 4;
-    break;
-  case GrowthRate.FLUCTUATING:
-    ret = (Math.pow(level, 3) * ((level / 2) + 8)) * 4 / (100 + level);
-    break;
+    case GrowthRate.ERRATIC:
+      ret = (Math.pow(level, 4) + (Math.pow(level, 3) * 2000)) / 3500;
+      break;
+    case GrowthRate.FAST:
+      ret = Math.pow(level, 3) * 4 / 5;
+      break;
+    case GrowthRate.MEDIUM_FAST:
+      ret = Math.pow(level, 3);
+      break;
+    case GrowthRate.MEDIUM_SLOW:
+      ret = (Math.pow(level, 3) * 6 / 5) - (15 * Math.pow(level, 2)) + (100 * level) - 140;
+      break;
+    case GrowthRate.SLOW:
+      ret = Math.pow(level, 3) * 5 / 4;
+      break;
+    case GrowthRate.FLUCTUATING:
+      ret = (Math.pow(level, 3) * ((level / 2) + 8)) * 4 / (100 + level);
+      break;
   }
 
   if (growthRate !== GrowthRate.MEDIUM_FAST) {
@@ -61,17 +61,17 @@ export function getLevelRelExp(level: integer, growthRate: GrowthRate): number {
 
 export function getGrowthRateColor(growthRate: GrowthRate, shadow?: boolean) {
   switch (growthRate) {
-  case GrowthRate.ERRATIC:
-    return !shadow ? "#f85888" : "#906060";
-  case GrowthRate.FAST:
-    return !shadow ? "#f8d030" : "#b8a038";
-  case GrowthRate.MEDIUM_FAST:
-    return !shadow ? "#78c850" : "#588040";
-  case GrowthRate.MEDIUM_SLOW:
-    return !shadow ? "#6890f0" : "#807870";
-  case GrowthRate.SLOW:
-    return !shadow ? "#f08030" : "#c03028";
-  case GrowthRate.FLUCTUATING:
-    return !shadow ? "#a040a0" : "#483850";
+    case GrowthRate.ERRATIC:
+      return !shadow ? "#f85888" : "#906060";
+    case GrowthRate.FAST:
+      return !shadow ? "#f8d030" : "#b8a038";
+    case GrowthRate.MEDIUM_FAST:
+      return !shadow ? "#78c850" : "#588040";
+    case GrowthRate.MEDIUM_SLOW:
+      return !shadow ? "#6890f0" : "#807870";
+    case GrowthRate.SLOW:
+      return !shadow ? "#f08030" : "#c03028";
+    case GrowthRate.FLUCTUATING:
+      return !shadow ? "#a040a0" : "#483850";
   }
 }
