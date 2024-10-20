@@ -168,26 +168,26 @@ export class UiInputs {
       return;
     }
     switch (this.scene.ui?.getMode()) {
-    case Mode.MESSAGE:
-      const messageHandler = this.scene.ui.getHandler<MessageUiHandler>();
-      if (!messageHandler.pendingPrompt || messageHandler.isTextAnimationInProgress()) {
+      case Mode.MESSAGE:
+        const messageHandler = this.scene.ui.getHandler<MessageUiHandler>();
+        if (!messageHandler.pendingPrompt || messageHandler.isTextAnimationInProgress()) {
+          return;
+        }
+      case Mode.TITLE:
+      case Mode.COMMAND:
+      case Mode.MODIFIER_SELECT:
+      case Mode.MYSTERY_ENCOUNTER:
+        this.scene.ui.setOverlayMode(Mode.MENU);
+        break;
+      case Mode.STARTER_SELECT:
+        this.buttonTouch();
+        break;
+      case Mode.MENU:
+        this.scene.ui.revertMode();
+        this.scene.playSound("ui/select");
+        break;
+      default:
         return;
-      }
-    case Mode.TITLE:
-    case Mode.COMMAND:
-    case Mode.MODIFIER_SELECT:
-    case Mode.MYSTERY_ENCOUNTER:
-      this.scene.ui.setOverlayMode(Mode.MENU);
-      break;
-    case Mode.STARTER_SELECT:
-      this.buttonTouch();
-      break;
-    case Mode.MENU:
-      this.scene.ui.revertMode();
-      this.scene.playSound("ui/select");
-      break;
-    default:
-      return;
     }
   }
 

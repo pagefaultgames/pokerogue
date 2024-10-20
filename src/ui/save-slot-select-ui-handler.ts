@@ -106,40 +106,40 @@ export default class SaveSlotSelectUiHandler extends MessageUiHandler {
           error = true;
         } else {
           switch (this.uiMode) {
-          case SaveSlotUiMode.LOAD:
-            this.saveSlotSelectCallback = null;
-            originalCallback && originalCallback(cursor);
-            break;
-          case SaveSlotUiMode.SAVE:
-            const saveAndCallback = () => {
-              const originalCallback = this.saveSlotSelectCallback;
+            case SaveSlotUiMode.LOAD:
               this.saveSlotSelectCallback = null;
-              ui.revertMode();
-              ui.showText("", 0);
-              ui.setMode(Mode.MESSAGE);
               originalCallback && originalCallback(cursor);
-            };
-            if (this.sessionSlots[cursor].hasData) {
-              ui.showText(i18next.t("saveSlotSelectUiHandler:overwriteData"), null, () => {
-                ui.setOverlayMode(Mode.CONFIRM, () => {
-                  this.scene.gameData.deleteSession(cursor).then(response => {
-                    if (response === false) {
-                      this.scene.reset(true);
-                    } else {
-                      saveAndCallback();
-                    }
-                  });
-                }, () => {
-                  ui.revertMode();
-                  ui.showText("", 0);
-                }, false, 0, 19, 2000);
-              });
-            } else if (this.sessionSlots[cursor].hasData === false) {
-              saveAndCallback();
-            } else {
-              return false;
-            }
-            break;
+              break;
+            case SaveSlotUiMode.SAVE:
+              const saveAndCallback = () => {
+                const originalCallback = this.saveSlotSelectCallback;
+                this.saveSlotSelectCallback = null;
+                ui.revertMode();
+                ui.showText("", 0);
+                ui.setMode(Mode.MESSAGE);
+                originalCallback && originalCallback(cursor);
+              };
+              if (this.sessionSlots[cursor].hasData) {
+                ui.showText(i18next.t("saveSlotSelectUiHandler:overwriteData"), null, () => {
+                  ui.setOverlayMode(Mode.CONFIRM, () => {
+                    this.scene.gameData.deleteSession(cursor).then(response => {
+                      if (response === false) {
+                        this.scene.reset(true);
+                      } else {
+                        saveAndCallback();
+                      }
+                    });
+                  }, () => {
+                    ui.revertMode();
+                    ui.showText("", 0);
+                  }, false, 0, 19, 2000);
+                });
+              } else if (this.sessionSlots[cursor].hasData === false) {
+                saveAndCallback();
+              } else {
+                return false;
+              }
+              break;
           }
           success = true;
         }
@@ -151,26 +151,26 @@ export default class SaveSlotSelectUiHandler extends MessageUiHandler {
     } else {
       const cursorPosition = this.cursor + this.scrollCursor;
       switch (button) {
-      case Button.UP:
-        if (this.cursor) {
+        case Button.UP:
+          if (this.cursor) {
           // Check to prevent cursor from accessing a negative index
-          success = (this.cursor === 0) ? this.setCursor(this.cursor) : this.setCursor(this.cursor - 1, cursorPosition);
-        } else if (this.scrollCursor) {
-          success = this.setScrollCursor(this.scrollCursor - 1, cursorPosition);
-        }
-        break;
-      case Button.DOWN:
-        if (this.cursor < (SLOTS_ON_SCREEN - 1)) {
-          success = this.setCursor(this.cursor + 1, cursorPosition);
-        } else if (this.scrollCursor < SESSION_SLOTS_COUNT - SLOTS_ON_SCREEN) {
-          success = this.setScrollCursor(this.scrollCursor + 1, cursorPosition);
-        }
-        break;
-      case Button.RIGHT:
-        if (this.sessionSlots[cursorPosition].hasData && this.sessionSlots[cursorPosition].saveData) {
-          this.scene.ui.setOverlayMode(Mode.RUN_INFO, this.sessionSlots[cursorPosition].saveData, RunDisplayMode.SESSION_PREVIEW);
-          success = true;
-        }
+            success = (this.cursor === 0) ? this.setCursor(this.cursor) : this.setCursor(this.cursor - 1, cursorPosition);
+          } else if (this.scrollCursor) {
+            success = this.setScrollCursor(this.scrollCursor - 1, cursorPosition);
+          }
+          break;
+        case Button.DOWN:
+          if (this.cursor < (SLOTS_ON_SCREEN - 1)) {
+            success = this.setCursor(this.cursor + 1, cursorPosition);
+          } else if (this.scrollCursor < SESSION_SLOTS_COUNT - SLOTS_ON_SCREEN) {
+            success = this.setScrollCursor(this.scrollCursor + 1, cursorPosition);
+          }
+          break;
+        case Button.RIGHT:
+          if (this.sessionSlots[cursorPosition].hasData && this.sessionSlots[cursorPosition].saveData) {
+            this.scene.ui.setOverlayMode(Mode.RUN_INFO, this.sessionSlots[cursorPosition].saveData, RunDisplayMode.SESSION_PREVIEW);
+            success = true;
+          }
       }
     }
 

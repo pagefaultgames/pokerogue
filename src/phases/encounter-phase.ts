@@ -35,6 +35,7 @@ import { getEncounterText } from "#app/data/mystery-encounters/utils/encounter-d
 import { MysteryEncounterPhase } from "#app/phases/mystery-encounter-phases";
 import { getGoldenBugNetSpecies } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
 import { Biome } from "#enums/biome";
+import { WEIGHT_INCREMENT_ON_SPAWN_MISS } from "#app/data/mystery-encounters/mystery-encounters";
 
 export class EncounterPhase extends BattlePhase {
   private loaded: boolean;
@@ -68,7 +69,7 @@ export class EncounterPhase extends BattlePhase {
       this.scene.executeWithSeedOffset(() => {
         const currentSessionEncounterType = battle.mysteryEncounterType;
         battle.mysteryEncounter = this.scene.getMysteryEncounter(currentSessionEncounterType);
-      }, battle.waveIndex << 4);
+      }, battle.waveIndex * 16);
     }
     const mysteryEncounter = battle.mysteryEncounter;
     if (mysteryEncounter) {
@@ -250,6 +251,13 @@ export class EncounterPhase extends BattlePhase {
           this.scene.addModifier(getPlayerModifierTypeOptionsForWave((m + 1) * 10, 1, this.scene.getParty())[0].type.newModifier(), true);
         this.scene.updateModifiers(true);
       }*/
+
+    const { battleType, waveIndex } = this.scene.currentBattle;
+    if (this.scene.isMysteryEncounterValidForWave(battleType,  waveIndex) && !this.scene.currentBattle.isBattleMysteryEncounter()) {
+      // Increment ME spawn chance if an ME could have spawned but did not
+      // Only do this AFTER session has been saved to avoid duplicating increments
+      this.scene.mysteryEncounterSaveData.encounterSpawnChance += WEIGHT_INCREMENT_ON_SPAWN_MISS;
+    }
 
     for (const pokemon of this.scene.getParty()) {
       if (pokemon) {
@@ -494,31 +502,31 @@ export class EncounterPhase extends BattlePhase {
 
   tryOverrideForBattleSpec(): boolean {
     switch (this.scene.currentBattle.battleSpec) {
-    case BattleSpec.FINAL_BOSS:
-      const enemy = this.scene.getEnemyPokemon();
-      this.scene.ui.showText(this.getEncounterMessage(), null, () => {
-        const localizationKey = "battleSpecDialogue:encounter";
-        if (this.scene.ui.shouldSkipDialogue(localizationKey)) {
+      case BattleSpec.FINAL_BOSS:
+        const enemy = this.scene.getEnemyPokemon();
+        this.scene.ui.showText(this.getEncounterMessage(), null, () => {
+          const localizationKey = "battleSpecDialogue:encounter";
+          if (this.scene.ui.shouldSkipDialogue(localizationKey)) {
           // Logging mirrors logging found in dialogue-ui-handler
-          console.log(`Dialogue ${localizationKey} skipped`);
-          this.doEncounterCommon(false);
-        } else {
-          const count = 5643853 + this.scene.gameData.gameStats.classicSessionsPlayed;
-          // The line below checks if an English ordinal is necessary or not based on whether an entry for encounterLocalizationKey exists in the language or not.
-          const ordinalUsed = !i18next.exists(localizationKey, { fallbackLng: []}) || i18next.resolvedLanguage === "en" ? i18next.t("battleSpecDialogue:key", { count: count, ordinal: true }) : "";
-          const cycleCount = count.toLocaleString() + ordinalUsed;
-          const genderIndex = this.scene.gameData.gender ?? PlayerGender.UNSET;
-          const genderStr = PlayerGender[genderIndex].toLowerCase();
-          const encounterDialogue = i18next.t(localizationKey, { context: genderStr, cycleCount: cycleCount });
-          if (!this.scene.gameData.getSeenDialogues()[localizationKey]) {
-            this.scene.gameData.saveSeenDialogue(localizationKey);
-          }
-          this.scene.ui.showDialogue(encounterDialogue, enemy?.species.name, null, () => {
+            console.log(`Dialogue ${localizationKey} skipped`);
             this.doEncounterCommon(false);
-          });
-        }
-      }, 1500, true);
-      return true;
+          } else {
+            const count = 5643853 + this.scene.gameData.gameStats.classicSessionsPlayed;
+            // The line below checks if an English ordinal is necessary or not based on whether an entry for encounterLocalizationKey exists in the language or not.
+            const ordinalUsed = !i18next.exists(localizationKey, { fallbackLng: []}) || i18next.resolvedLanguage === "en" ? i18next.t("battleSpecDialogue:key", { count: count, ordinal: true }) : "";
+            const cycleCount = count.toLocaleString() + ordinalUsed;
+            const genderIndex = this.scene.gameData.gender ?? PlayerGender.UNSET;
+            const genderStr = PlayerGender[genderIndex].toLowerCase();
+            const encounterDialogue = i18next.t(localizationKey, { context: genderStr, cycleCount: cycleCount });
+            if (!this.scene.gameData.getSeenDialogues()[localizationKey]) {
+              this.scene.gameData.saveSeenDialogue(localizationKey);
+            }
+            this.scene.ui.showDialogue(encounterDialogue, enemy?.species.name, null, () => {
+              this.doEncounterCommon(false);
+            });
+          }
+        }, 1500, true);
+        return true;
     }
     return false;
   }

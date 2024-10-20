@@ -351,16 +351,16 @@ export default class GameStatsUiHandler extends UiHandler {
       this.scene.ui.revertMode();
     } else {
       switch (button) {
-      case Button.UP:
-        if (this.cursor) {
-          success = this.setCursor(this.cursor - 1);
-        }
-        break;
-      case Button.DOWN:
-        if (this.cursor < Math.ceil((Object.keys(displayStats).length - 18) / 2)) {
-          success = this.setCursor(this.cursor + 1);
-        }
-        break;
+        case Button.UP:
+          if (this.cursor) {
+            success = this.setCursor(this.cursor - 1);
+          }
+          break;
+        case Button.DOWN:
+          if (this.cursor < Math.ceil((Object.keys(displayStats).length - 18) / 2)) {
+            success = this.setCursor(this.cursor + 1);
+          }
+          break;
       }
     }
 
