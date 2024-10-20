@@ -2837,8 +2837,8 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: number, source
     case BattlerTagType.SEEDED:
       return new SeedTag(sourceId);
     case BattlerTagType.POWDER:
-    return new PowderTag();
-  case BattlerTagType.NIGHTMARE:
+      return new PowderTag();
+    case BattlerTagType.NIGHTMARE:
       return new NightmareTag();
     case BattlerTagType.FRENZY:
       return new FrenzyTag(turnCount, sourceMove, sourceId);
