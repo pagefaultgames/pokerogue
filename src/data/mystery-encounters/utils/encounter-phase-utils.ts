@@ -1069,19 +1069,19 @@ export function calculateRareSpawnAggregateStats(scene: BattleScene, luckValue: 
       const tier = tierValue >= 20 ? BiomePoolTier.BOSS : tierValue >= 6 ? BiomePoolTier.BOSS_RARE : tierValue >= 1 ? BiomePoolTier.BOSS_SUPER_RARE : BiomePoolTier.BOSS_ULTRA_RARE;
 
       switch (tier) {
-      default:
-      case BiomePoolTier.BOSS:
-        ++bossEncountersByRarity[0];
-        break;
-      case BiomePoolTier.BOSS_RARE:
-        ++bossEncountersByRarity[1];
-        break;
-      case BiomePoolTier.BOSS_SUPER_RARE:
-        ++bossEncountersByRarity[2];
-        break;
-      case BiomePoolTier.BOSS_ULTRA_RARE:
-        ++bossEncountersByRarity[3];
-        break;
+        default:
+        case BiomePoolTier.BOSS:
+          ++bossEncountersByRarity[0];
+          break;
+        case BiomePoolTier.BOSS_RARE:
+          ++bossEncountersByRarity[1];
+          break;
+        case BiomePoolTier.BOSS_SUPER_RARE:
+          ++bossEncountersByRarity[2];
+          break;
+        case BiomePoolTier.BOSS_ULTRA_RARE:
+          ++bossEncountersByRarity[3];
+          break;
       }
     }
 

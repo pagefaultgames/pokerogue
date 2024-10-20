@@ -449,78 +449,78 @@ export default abstract class AbstractControlSettingsUiHandler extends UiHandler
       const cursor = this.cursor + this.scrollCursor; // Calculate the absolute cursor position.
       const setting = this.setting[Object.keys(this.setting)[cursor]];
       switch (button) {
-      case Button.ACTION:
-        if (!this.optionCursors || !this.optionValueLabels) {
-          return false; // TODO: is false correct as default? (previously was `undefined`)
-        }
-        if (this.settingBlacklisted.includes(setting) || !setting.includes("BUTTON_")) {
-          success = false;
-        } else {
-          success = this.setSetting(this.scene, setting, 1);
-        }
-        break;
-      case Button.UP: // Move up in the menu.
-        if (!this.optionValueLabels) {
-          return false;
-        }
-        if (cursor) { // If not at the top, move the cursor up.
-          if (this.cursor) {
-            success = this.setCursor(this.cursor - 1);
-          } else {// If at the top of the visible items, scroll up.
-            success = this.setScrollCursor(this.scrollCursor - 1);
+        case Button.ACTION:
+          if (!this.optionCursors || !this.optionValueLabels) {
+            return false; // TODO: is false correct as default? (previously was `undefined`)
           }
-        } else {
+          if (this.settingBlacklisted.includes(setting) || !setting.includes("BUTTON_")) {
+            success = false;
+          } else {
+            success = this.setSetting(this.scene, setting, 1);
+          }
+          break;
+        case Button.UP: // Move up in the menu.
+          if (!this.optionValueLabels) {
+            return false;
+          }
+          if (cursor) { // If not at the top, move the cursor up.
+            if (this.cursor) {
+              success = this.setCursor(this.cursor - 1);
+            } else {// If at the top of the visible items, scroll up.
+              success = this.setScrollCursor(this.scrollCursor - 1);
+            }
+          } else {
           // When at the top of the menu and pressing UP, move to the bottommost item.
           // First, set the cursor to the last visible element, preparing for the scroll to the end.
-          const successA = this.setCursor(this.rowsToDisplay - 1);
-          // Then, adjust the scroll to display the bottommost elements of the menu.
-          const successB = this.setScrollCursor(this.optionValueLabels.length - this.rowsToDisplay);
-          success = successA && successB; // success is just there to play the little validation sound effect
-        }
-        break;
-      case Button.DOWN: // Move down in the menu.
-        if (!this.optionValueLabels) {
-          return false;
-        }
-        if (cursor < this.optionValueLabels.length - 1) {
-          if (this.cursor < this.rowsToDisplay - 1) {
-            success = this.setCursor(this.cursor + 1);
-          } else if (this.scrollCursor < this.optionValueLabels.length - this.rowsToDisplay) {
-            success = this.setScrollCursor(this.scrollCursor + 1);
+            const successA = this.setCursor(this.rowsToDisplay - 1);
+            // Then, adjust the scroll to display the bottommost elements of the menu.
+            const successB = this.setScrollCursor(this.optionValueLabels.length - this.rowsToDisplay);
+            success = successA && successB; // success is just there to play the little validation sound effect
           }
-        } else {
+          break;
+        case Button.DOWN: // Move down in the menu.
+          if (!this.optionValueLabels) {
+            return false;
+          }
+          if (cursor < this.optionValueLabels.length - 1) {
+            if (this.cursor < this.rowsToDisplay - 1) {
+              success = this.setCursor(this.cursor + 1);
+            } else if (this.scrollCursor < this.optionValueLabels.length - this.rowsToDisplay) {
+              success = this.setScrollCursor(this.scrollCursor + 1);
+            }
+          } else {
           // When at the bottom of the menu and pressing DOWN, move to the topmost item.
           // First, set the cursor to the first visible element, resetting the scroll to the top.
-          const successA = this.setCursor(0);
-          // Then, reset the scroll to start from the first element of the menu.
-          const successB = this.setScrollCursor(0);
-          success = successA && successB; // Indicates a successful cursor and scroll adjustment.
-        }
-        break;
-      case Button.LEFT: // Move selection left within the current option set.
-        if (!this.optionCursors || !this.optionValueLabels) {
-          return false; // TODO: is false correct as default? (previously was `undefined`)
-        }
-        if (this.settingBlacklisted.includes(setting) || setting.includes("BUTTON_")) {
-          success = false;
-        } else if (this.optionCursors[cursor]) {
-          success = this.setOptionCursor(cursor, this.optionCursors[cursor] - 1, true);
-        }
-        break;
-      case Button.RIGHT: // Move selection right within the current option set.
-        if (!this.optionCursors || !this.optionValueLabels) {
-          return false; // TODO: is false correct as default? (previously was `undefined`)
-        }
-        if (this.settingBlacklisted.includes(setting) || setting.includes("BUTTON_")) {
-          success = false;
-        } else if (this.optionCursors[cursor] < this.optionValueLabels[cursor].length - 1) {
-          success = this.setOptionCursor(cursor, this.optionCursors[cursor] + 1, true);
-        }
-        break;
-      case Button.CYCLE_FORM:
-      case Button.CYCLE_SHINY:
-        success = this.navigationContainer.navigate(button);
-        break;
+            const successA = this.setCursor(0);
+            // Then, reset the scroll to start from the first element of the menu.
+            const successB = this.setScrollCursor(0);
+            success = successA && successB; // Indicates a successful cursor and scroll adjustment.
+          }
+          break;
+        case Button.LEFT: // Move selection left within the current option set.
+          if (!this.optionCursors || !this.optionValueLabels) {
+            return false; // TODO: is false correct as default? (previously was `undefined`)
+          }
+          if (this.settingBlacklisted.includes(setting) || setting.includes("BUTTON_")) {
+            success = false;
+          } else if (this.optionCursors[cursor]) {
+            success = this.setOptionCursor(cursor, this.optionCursors[cursor] - 1, true);
+          }
+          break;
+        case Button.RIGHT: // Move selection right within the current option set.
+          if (!this.optionCursors || !this.optionValueLabels) {
+            return false; // TODO: is false correct as default? (previously was `undefined`)
+          }
+          if (this.settingBlacklisted.includes(setting) || setting.includes("BUTTON_")) {
+            success = false;
+          } else if (this.optionCursors[cursor] < this.optionValueLabels[cursor].length - 1) {
+            success = this.setOptionCursor(cursor, this.optionCursors[cursor] + 1, true);
+          }
+          break;
+        case Button.CYCLE_FORM:
+        case Button.CYCLE_SHINY:
+          success = this.navigationContainer.navigate(button);
+          break;
       }
     }
 

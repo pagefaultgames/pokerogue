@@ -108,15 +108,15 @@ export const sessionMigrators = [
       } else if (m.className === "DoubleBattleChanceBoosterModifier" && m.args.length === 1) {
         let maxBattles: number;
         switch (m.typeId) {
-        case "MAX_LURE":
-          maxBattles = 30;
-          break;
-        case "SUPER_LURE":
-          maxBattles = 15;
-          break;
-        default:
-          maxBattles = 10;
-          break;
+          case "MAX_LURE":
+            maxBattles = 30;
+            break;
+          case "SUPER_LURE":
+            maxBattles = 15;
+            break;
+          default:
+            maxBattles = 10;
+            break;
         }
 
         // From [ battlesLeft ] to [ maxBattles, battleCount ]
