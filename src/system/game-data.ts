@@ -43,10 +43,9 @@ import { Species } from "#enums/species";
 import { applyChallenges, ChallengeType } from "#app/data/challenge";
 import { WeatherType } from "#enums/weather-type";
 import { TerrainType } from "#app/data/terrain";
-import { OutdatedPhase } from "#app/phases/outdated-phase";
 import { ReloadSessionPhase } from "#app/phases/reload-session-phase";
 import { RUN_HISTORY_LIMIT } from "#app/ui/run-history-ui-handler";
-import { applySessionDataPatches, applySettingsDataPatches, applySystemDataPatches } from "#app/system/version-converter";
+import { applySessionVersionMigration, applySystemVersionMigration, applySettingsVersionMigration } from "./version_migration/version_converter";
 import { MysteryEncounterSaveData } from "#app/data/mystery-encounters/mystery-encounter-save-data";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { PokerogueApiClearSessionData } from "#app/@types/pokerogue-api";
@@ -68,22 +67,22 @@ const saveKey = "x0i2O7WRiANTqPmZ"; // Temporary; secure encryption is not yet n
 
 export function getDataTypeKey(dataType: GameDataType, slotId: integer = 0): string {
   switch (dataType) {
-  case GameDataType.SYSTEM:
-    return "data";
-  case GameDataType.SESSION:
-    let ret = "sessionData";
-    if (slotId) {
-      ret += slotId;
-    }
-    return ret;
-  case GameDataType.SETTINGS:
-    return "settings";
-  case GameDataType.TUTORIALS:
-    return "tutorials";
-  case GameDataType.SEEN_DIALOGUES:
-    return "seenDialogues";
-  case GameDataType.RUN_HISTORY:
-    return "runHistoryData";
+    case GameDataType.SYSTEM:
+      return "data";
+    case GameDataType.SESSION:
+      let ret = "sessionData";
+      if (slotId) {
+        ret += slotId;
+      }
+      return ret;
+    case GameDataType.SETTINGS:
+      return "settings";
+    case GameDataType.TUTORIALS:
+      return "tutorials";
+    case GameDataType.SEEN_DIALOGUES:
+      return "seenDialogues";
+    case GameDataType.RUN_HISTORY:
+      return "runHistoryData";
   }
 }
 
@@ -403,10 +402,7 @@ export class GameData {
           .then(error => {
             this.scene.ui.savingIcon.hide();
             if (error) {
-              if (error.startsWith("client version out of date")) {
-                this.scene.clearPhaseQueue();
-                this.scene.unshiftPhase(new OutdatedPhase(this.scene));
-              } else if (error.startsWith("session out of date")) {
+              if (error.startsWith("session out of date")) {
                 this.scene.clearPhaseQueue();
                 this.scene.unshiftPhase(new ReloadSessionPhase(this.scene));
               }
@@ -482,7 +478,7 @@ export class GameData {
           localStorage.setItem(lsItemKey, "");
         }
 
-        applySystemDataPatches(systemData);
+        applySystemVersionMigration(systemData);
 
         this.trainerId = systemData.trainerId;
         this.secretId = systemData.secretId;
@@ -857,7 +853,7 @@ export class GameData {
 
     const settings = JSON.parse(localStorage.getItem("settings")!); // TODO: is this bang correct?
 
-    applySettingsDataPatches(settings);
+    applySettingsVersionMigration(settings);
 
     for (const setting of Object.keys(settings)) {
       setSetting(this.scene, setting, settings[setting]);
@@ -1313,7 +1309,7 @@ export class GameData {
       return v;
     }) as SessionSaveData;
 
-    applySessionDataPatches(sessionData);
+    applySessionVersionMigration(sessionData);
 
     return sessionData;
   }
@@ -1354,10 +1350,7 @@ export class GameData {
                 this.scene.ui.savingIcon.hide();
               }
               if (error) {
-                if (error.startsWith("client version out of date")) {
-                  this.scene.clearPhaseQueue();
-                  this.scene.unshiftPhase(new OutdatedPhase(this.scene));
-                } else if (error.startsWith("session out of date")) {
+                if (error.startsWith("session out of date")) {
                   this.scene.clearPhaseQueue();
                   this.scene.unshiftPhase(new ReloadSessionPhase(this.scene));
                 }
@@ -1381,9 +1374,9 @@ export class GameData {
       const dataKey: string = `${getDataTypeKey(dataType, slotId)}_${loggedInUser?.username}`;
       const handleData = (dataStr: string) => {
         switch (dataType) {
-        case GameDataType.SYSTEM:
-          dataStr = this.convertSystemDataStr(dataStr, true);
-          break;
+          case GameDataType.SYSTEM:
+            dataStr = this.convertSystemDataStr(dataStr, true);
+            break;
         }
         const encryptedData = AES.encrypt(dataStr, saveKey);
         const blob = new Blob([ encryptedData.toString() ], { type: "text/json" });
@@ -1441,28 +1434,28 @@ export class GameData {
             try {
               dataName = GameDataType[dataType].toLowerCase();
               switch (dataType) {
-              case GameDataType.SYSTEM:
-                dataStr = this.convertSystemDataStr(dataStr);
-                const systemData = this.parseSystemData(dataStr);
-                valid = !!systemData.dexData && !!systemData.timestamp;
-                break;
-              case GameDataType.SESSION:
-                const sessionData = this.parseSessionData(dataStr);
-                valid = !!sessionData.party && !!sessionData.enemyParty && !!sessionData.timestamp;
-                break;
-              case GameDataType.RUN_HISTORY:
-                const data = JSON.parse(dataStr);
-                const keys = Object.keys(data);
-                dataName = i18next.t("menuUiHandler:RUN_HISTORY").toLowerCase();
-                keys.forEach((key) => {
-                  const entryKeys = Object.keys(data[key]);
-                  valid = [ "isFavorite", "isVictory", "entry" ].every(v => entryKeys.includes(v)) && entryKeys.length === 3;
-                });
-                break;
-              case GameDataType.SETTINGS:
-              case GameDataType.TUTORIALS:
-                valid = true;
-                break;
+                case GameDataType.SYSTEM:
+                  dataStr = this.convertSystemDataStr(dataStr);
+                  const systemData = this.parseSystemData(dataStr);
+                  valid = !!systemData.dexData && !!systemData.timestamp;
+                  break;
+                case GameDataType.SESSION:
+                  const sessionData = this.parseSessionData(dataStr);
+                  valid = !!sessionData.party && !!sessionData.enemyParty && !!sessionData.timestamp;
+                  break;
+                case GameDataType.RUN_HISTORY:
+                  const data = JSON.parse(dataStr);
+                  const keys = Object.keys(data);
+                  dataName = i18next.t("menuUiHandler:RUN_HISTORY").toLowerCase();
+                  keys.forEach((key) => {
+                    const entryKeys = Object.keys(data[key]);
+                    valid = [ "isFavorite", "isVictory", "entry" ].every(v => entryKeys.includes(v)) && entryKeys.length === 3;
+                  });
+                  break;
+                case GameDataType.SETTINGS:
+                case GameDataType.TUTORIALS:
+                  valid = true;
+                  break;
               }
             } catch (ex) {
               console.error(ex);

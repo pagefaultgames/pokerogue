@@ -479,18 +479,18 @@ export class LoadingScene extends SceneBase {
     this.load.on(this.LOAD_EVENTS.FILE_COMPLETE, (key: string) => {
       assetText.setText(i18next.t("menu:loadingAsset", { assetName: key }));
       switch (key) {
-      case "loading_bg":
-        bg.setTexture("loading_bg");
-        if (mobile) {
-          bg.setVisible(true);
-        }
-        break;
-      case "logo":
-        logo.setTexture("logo");
-        if (mobile) {
-          logo.setVisible(true);
-        }
-        break;
+        case "loading_bg":
+          bg.setTexture("loading_bg");
+          if (mobile) {
+            bg.setVisible(true);
+          }
+          break;
+        case "logo":
+          logo.setTexture("logo");
+          if (mobile) {
+            logo.setVisible(true);
+          }
+          break;
       }
     });
 
