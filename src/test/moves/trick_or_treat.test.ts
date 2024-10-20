@@ -6,7 +6,7 @@ import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
-describe("Moves - Forest's Curse", () => {
+describe("Moves - Trick Or Treat", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
 
@@ -32,16 +32,16 @@ describe("Moves - Forest's Curse", () => {
       .enemyMoveset(Moves.SPLASH);
   });
 
-  it("Using Forest's Curse on a Pokemon affected by Trick Or Treat will replace the Ghost-type with Grass", async () => {
+  it("Using Trick Or Treat on a Pokemon affected by Forest's Curse will replace the Grass-type with Ghost", async () => {
     await game.classicMode.startBattle([ Species.FEEBAS ]);
 
     const enemyPokemon = game.scene.getEnemyPokemon();
-    game.move.select(Moves.TRICK_OR_TREAT);
-    await game.phaseInterceptor.to("TurnEndPhase");
-    expect(enemyPokemon!.summonData.addedType).toBe(Type.GHOST);
-
     game.move.select(Moves.FORESTS_CURSE);
     await game.phaseInterceptor.to("TurnEndPhase");
-    expect(enemyPokemon?.summonData.addedType).toBe(Type.GRASS);
+    expect(enemyPokemon!.summonData.addedType).toBe(Type.GRASS);
+
+    game.move.select(Moves.TRICK_OR_TREAT);
+    await game.phaseInterceptor.to("TurnEndPhase");
+    expect(enemyPokemon?.summonData.addedType).toBe(Type.GHOST);
   });
 });
