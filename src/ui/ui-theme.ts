@@ -10,12 +10,12 @@ export enum WindowVariant {
 
 export function getWindowVariantSuffix(windowVariant: WindowVariant): string {
   switch (windowVariant) {
-  case WindowVariant.THIN:
-    return "_thin";
-  case WindowVariant.XTHIN:
-    return "_xthin";
-  default:
-    return "";
+    case WindowVariant.THIN:
+      return "_thin";
+    case WindowVariant.XTHIN:
+      return "_xthin";
+    default:
+      return "";
   }
 }
 
