@@ -2190,7 +2190,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     }
 
     // Trigger FormChange, except for enemy Pokemon during Mystery Encounters, to avoid crashes
-    if (this.isPlayer() || !this.scene.currentBattle.isBattleMysteryEncounter() || !this.scene.currentBattle.mysteryEncounter) {
+    if (this.isPlayer() || !this.scene.currentBattle?.isBattleMysteryEncounter() || !this.scene.currentBattle?.mysteryEncounter) {
       this.scene.triggerPokemonFormChange(this, SpeciesFormChangeMoveLearnedTrigger);
     }
   }
