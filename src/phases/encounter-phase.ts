@@ -36,7 +36,6 @@ import { MysteryEncounterPhase } from "#app/phases/mystery-encounter-phases";
 import { getGoldenBugNetSpecies } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
 import { Biome } from "#enums/biome";
 import { WEIGHT_INCREMENT_ON_SPAWN_MISS } from "#app/data/mystery-encounters/mystery-encounters";
-import { QuietFormChangePhase } from "#app/phases/quiet-form-change-phase";
 
 export class EncounterPhase extends BattlePhase {
   private loaded: boolean;
@@ -383,12 +382,6 @@ export class EncounterPhase extends BattlePhase {
 
       if (encounter.onVisualsStart) {
         encounter.onVisualsStart(this.scene);
-      }
-
-      // Clear any lingering QuietFormChangePhases which can be inadvertently added by certain wild Pokemon forms
-      let phaseRemoved: boolean = true;
-      while (phaseRemoved) {
-        phaseRemoved = this.scene.tryRemoveUnshiftedPhase(phase => phase instanceof QuietFormChangePhase);
       }
 
       const doEncounter = () => {

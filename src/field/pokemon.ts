@@ -2189,7 +2189,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       this.moveset.push(new PokemonMove(movePool[index][0], 0, 0));
     }
 
-    this.scene.triggerPokemonFormChange(this, SpeciesFormChangeMoveLearnedTrigger);
+    // Trigger FormChange, except for enemy Pokemon during Mystery Encounters, to avoid crashes
+    if (this.isPlayer() || !this.scene.currentBattle.isBattleMysteryEncounter() || !this.scene.currentBattle.mysteryEncounter) {
+      this.scene.triggerPokemonFormChange(this, SpeciesFormChangeMoveLearnedTrigger);
+    }
   }
 
   trySelectMove(moveIndex: integer, ignorePp?: boolean): boolean {
