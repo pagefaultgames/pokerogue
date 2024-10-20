@@ -33,7 +33,6 @@ export default class PokemonData {
   public stats: integer[];
   public ivs: integer[];
   public nature: Nature;
-  public natureOverride: Nature | -1;
   public moveset: (PokemonMove | null)[];
   public status: Status | null;
   public friendship: integer;
@@ -54,14 +53,20 @@ export default class PokemonData {
   public fusionVariant: Variant;
   public fusionGender: Gender;
   public fusionLuck: integer;
-  public fusionCustomPokemonData: CustomPokemonData;
 
   public boss: boolean;
   public bossSegments?: integer;
 
   public summonData: PokemonSummonData;
+
   /** Data that can customize a Pokemon in non-standard ways from its Species */
   public customPokemonData: CustomPokemonData;
+  public fusionCustomPokemonData: CustomPokemonData;
+
+  // Deprecated attributes, needed for now to allow SessionData migration (see PR#4619 comments)
+  public natureOverride: Nature | -1;
+  public mysteryEncounterPokemonData: CustomPokemonData | null;
+  public fusionMysteryEncounterPokemonData: CustomPokemonData | null;
 
   constructor(source: Pokemon | any, forHistory: boolean = false) {
     const sourcePokemon = source instanceof Pokemon ? source : null;
@@ -111,6 +116,9 @@ export default class PokemonData {
     this.usedTMs = source.usedTMs ?? [];
 
     this.customPokemonData = new CustomPokemonData(source.customPokemonData);
+
+    this.mysteryEncounterPokemonData = new CustomPokemonData(source.mysteryEncounterPokemonData);
+    this.fusionMysteryEncounterPokemonData = new CustomPokemonData(source.fusionMysteryEncounterPokemonData);
 
     if (!forHistory) {
       this.boss = (source instanceof EnemyPokemon && !!source.bossSegments) || (!this.player && !!source.boss);

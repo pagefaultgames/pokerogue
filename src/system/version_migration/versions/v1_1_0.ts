@@ -14,15 +14,18 @@ export const sessionMigrators = [
   function migrateCustomPokemonDataAndNatureOverrides(data: SessionSaveData) {
     // Fix Pokemon nature overrides and custom data migration
     data.party.forEach(pokemon => {
-      if (pokemon["mysteryEncounterData"]) {
-        pokemon.customPokemonData = new CustomPokemonData(pokemon["mysteryEncounterData"]);
+      if (pokemon["mysteryEncounterPokemonData"]) {
+        pokemon.customPokemonData = new CustomPokemonData(pokemon["mysteryEncounterPokemonData"]);
+        pokemon["mysteryEncounterPokemonData"] = null;
       }
-      if (pokemon["fusionMysteryEncounterData"]) {
-        pokemon.fusionCustomPokemonData = new CustomPokemonData(pokemon["fusionMysteryEncounterData"]);
+      if (pokemon["fusionMysteryEncounterPokemonData"]) {
+        pokemon.fusionCustomPokemonData = new CustomPokemonData(pokemon["fusionMysteryEncounterPokemonData"]);
+        pokemon["fusionMysteryEncounterPokemonData"] = null;
       }
       pokemon.customPokemonData = pokemon.customPokemonData ?? new CustomPokemonData();
-      if (pokemon["natureOverride"]) {
+      if (pokemon["natureOverride"] && pokemon["natureOverride"] >= 0) {
         pokemon.customPokemonData.nature = pokemon["natureOverride"];
+        pokemon["natureOverride"] = -1;
       }
     });
   }
