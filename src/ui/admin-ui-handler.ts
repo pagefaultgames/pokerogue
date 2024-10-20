@@ -164,7 +164,12 @@ export default class AdminUiHandler extends FormModalUiHandler {
     }
   }
 
-  // this is used to update the fields' text when loading a new admin ui handler. It uses the adminResult to update the input text fields depending on the adminMode
+  /**
+   * This is used to update the fields' text when loading in a new admin ui handler. It uses the {@linkcode adminResult}
+   * to update the input text based on the {@linkcode adminMode}. For a linking adminMode, it sets the username and discord.
+   * For a search adminMode, it sets the username. For an admin adminMode, it sets all the info from adminResult in the
+   * appropriate text boxes, and also sets the link/unlink icons for discord/google depending on the result
+   */
   private populateFields(adminMode: AdminMode, adminResult: AdminSearchInfo) {
     switch (adminMode) {
     case AdminMode.LINK:
