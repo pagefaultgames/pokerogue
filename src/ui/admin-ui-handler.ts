@@ -47,36 +47,36 @@ export default class AdminUiHandler extends FormModalUiHandler {
 
   override getButtonLabels(): string[] {
     switch (this.adminMode) {
-    case AdminMode.LINK:
-      return [ "Link Account", "Cancel" ];
-    case AdminMode.SEARCH:
-      return [ "Find account", "Cancel" ];
-    case AdminMode.ADMIN:
-      return [ "Back to search", "Cancel" ];
-    default:
-      return [ "Activate ADMIN", "Cancel" ];
+      case AdminMode.LINK:
+        return [ "Link Account", "Cancel" ];
+      case AdminMode.SEARCH:
+        return [ "Find account", "Cancel" ];
+      case AdminMode.ADMIN:
+        return [ "Back to search", "Cancel" ];
+      default:
+        return [ "Activate ADMIN", "Cancel" ];
     }
   }
 
   override getInputFieldConfigs(): InputFieldConfig[] {
     const inputFieldConfigs: InputFieldConfig[] = [];
     switch (this.adminMode) {
-    case AdminMode.LINK:
-      inputFieldConfigs.push( { label: "Username" });
-      inputFieldConfigs.push( { label: "Discord ID" });
-      break;
-    case AdminMode.SEARCH:
-      inputFieldConfigs.push( { label: "Username" });
-      break;
-    case AdminMode.ADMIN:
-      const adminResult = this.adminResult ?? { username: "", discordId: "", googleId: "", lastLoggedIn: "", registered: "" };
-      // Discord and Google ID fields that are not empty get locked, other fields are all locked
-      inputFieldConfigs.push( { label: "Username", isReadOnly: true });
-      inputFieldConfigs.push( { label: "Discord ID", isReadOnly: adminResult.discordId !== "" });
-      inputFieldConfigs.push( { label: "Google ID", isReadOnly: adminResult.googleId !== "" });
-      inputFieldConfigs.push( { label: "Last played", isReadOnly: true });
-      inputFieldConfigs.push( { label: "Registered", isReadOnly: true });
-      break;
+      case AdminMode.LINK:
+        inputFieldConfigs.push( { label: "Username" });
+        inputFieldConfigs.push( { label: "Discord ID" });
+        break;
+      case AdminMode.SEARCH:
+        inputFieldConfigs.push( { label: "Username" });
+        break;
+      case AdminMode.ADMIN:
+        const adminResult = this.adminResult ?? { username: "", discordId: "", googleId: "", lastLoggedIn: "", registered: "" };
+        // Discord and Google ID fields that are not empty get locked, other fields are all locked
+        inputFieldConfigs.push( { label: "Username", isReadOnly: true });
+        inputFieldConfigs.push( { label: "Discord ID", isReadOnly: adminResult.discordId !== "" });
+        inputFieldConfigs.push( { label: "Google ID", isReadOnly: adminResult.googleId !== "" });
+        inputFieldConfigs.push( { label: "Last played", isReadOnly: true });
+        inputFieldConfigs.push( { label: "Registered", isReadOnly: true });
+        break;
     }
     return inputFieldConfigs;
   }
@@ -172,91 +172,91 @@ export default class AdminUiHandler extends FormModalUiHandler {
    */
   private populateFields(adminMode: AdminMode, adminResult: AdminSearchInfo) {
     switch (adminMode) {
-    case AdminMode.LINK:
-      this.inputs[0].setText(adminResult.username);
-      this.inputs[1].setText(adminResult.discordId);
-      break;
-    case AdminMode.SEARCH:
-      this.inputs[0].setText(adminResult.username);
-      break;
-    case AdminMode.ADMIN:
-      Object.keys(adminResult).forEach((aR, i) => {
-        this.inputs[i].setText(adminResult[aR]);
-        if (aR === "discordId" || aR === "googleId") { // this is here to add the icons for linking/unlinking of google/discord IDs
-          const nineSlice = this.inputContainers[i].list.find(iC => iC.type === "NineSlice");
-          const img = this.scene.add.image(this.inputContainers[i].x + nineSlice!.width + this.buttonGap, this.inputContainers[i].y + (Math.floor(nineSlice!.height / 2)), adminResult[aR] === "" ? "link_icon" : "unlink_icon");
-          img.setName(`adminBtn_${aR}`);
-          img.setOrigin(0.5, 0.5);
-          img.setInteractive();
-          img.on("pointerdown", () => {
-            const service = aR.toLowerCase().replace("id", ""); // this takes our key (discordId or googleId) and removes the "Id" at the end to make it more url friendly
-            const mode = adminResult[aR] === "" ? "Link" : "Unlink"; // this figures out if we're linking or unlinking a service
-            const validFields = this.areFieldsValid(this.adminMode, service);
-            if (validFields.error) {
-              this.scene.ui.setMode(Mode.LOADING, { buttonActions: []}); // this is here to force a loading screen to allow the admin tool to reopen again if there's an error
-              return this.showMessage(validFields.errorMessage ?? "", adminResult, true);
-            }
-            this.adminLinkUnlink(this.convertInputsToAdmin(), service, mode).then(response => { // attempts to link/unlink depending on the service
-              if (response.error) {
-                return this.showMessage(response.errorType, adminResult, true); // fail
-              } else { // success, reload panel with new results
-                this.scene.ui.setMode(Mode.LOADING, { buttonActions: []});
-                this.adminSearch(adminResult)
-                  .then(response => {
-                    if (response.error) {
-                      return this.showMessage(response.errorType, adminResult, true);
-                    }
-                    return this.showMessage(this.SUCCESS_SERVICE_MODE(service, mode), response.adminSearchResult ?? adminResult, false);
-                  });
+      case AdminMode.LINK:
+        this.inputs[0].setText(adminResult.username);
+        this.inputs[1].setText(adminResult.discordId);
+        break;
+      case AdminMode.SEARCH:
+        this.inputs[0].setText(adminResult.username);
+        break;
+      case AdminMode.ADMIN:
+        Object.keys(adminResult).forEach((aR, i) => {
+          this.inputs[i].setText(adminResult[aR]);
+          if (aR === "discordId" || aR === "googleId") { // this is here to add the icons for linking/unlinking of google/discord IDs
+            const nineSlice = this.inputContainers[i].list.find(iC => iC.type === "NineSlice");
+            const img = this.scene.add.image(this.inputContainers[i].x + nineSlice!.width + this.buttonGap, this.inputContainers[i].y + (Math.floor(nineSlice!.height / 2)), adminResult[aR] === "" ? "link_icon" : "unlink_icon");
+            img.setName(`adminBtn_${aR}`);
+            img.setOrigin(0.5, 0.5);
+            img.setInteractive();
+            img.on("pointerdown", () => {
+              const service = aR.toLowerCase().replace("id", ""); // this takes our key (discordId or googleId) and removes the "Id" at the end to make it more url friendly
+              const mode = adminResult[aR] === "" ? "Link" : "Unlink"; // this figures out if we're linking or unlinking a service
+              const validFields = this.areFieldsValid(this.adminMode, service);
+              if (validFields.error) {
+                this.scene.ui.setMode(Mode.LOADING, { buttonActions: []}); // this is here to force a loading screen to allow the admin tool to reopen again if there's an error
+                return this.showMessage(validFields.errorMessage ?? "", adminResult, true);
               }
+              this.adminLinkUnlink(this.convertInputsToAdmin(), service, mode).then(response => { // attempts to link/unlink depending on the service
+                if (response.error) {
+                  return this.showMessage(response.errorType, adminResult, true); // fail
+                } else { // success, reload panel with new results
+                  this.scene.ui.setMode(Mode.LOADING, { buttonActions: []});
+                  this.adminSearch(adminResult)
+                    .then(response => {
+                      if (response.error) {
+                        return this.showMessage(response.errorType, adminResult, true);
+                      }
+                      return this.showMessage(this.SUCCESS_SERVICE_MODE(service, mode), response.adminSearchResult ?? adminResult, false);
+                    });
+                }
+              });
             });
-          });
-          this.addInteractionHoverEffect(img);
-          this.modalContainer.add(img);
-        }
-      });
-      break;
+            this.addInteractionHoverEffect(img);
+            this.modalContainer.add(img);
+          }
+        });
+        break;
     }
   }
 
   private areFieldsValid(adminMode: AdminMode, service?: string): { error: boolean; errorMessage?: string; } {
     switch (adminMode) {
-    case AdminMode.LINK:
-      if (!this.inputs[0].text) { // username missing from link panel
-        return {
-          error: true,
-          errorMessage: this.ERR_REQUIRED_FIELD("username")
-        };
-      }
-      if (!this.inputs[1].text) { // discordId missing from linking panel
-        return {
-          error: true,
-          errorMessage: this.ERR_REQUIRED_FIELD("discord")
-        };
-      }
-      break;
-    case AdminMode.SEARCH:
-      if (!this.inputs[0].text) { // username missing from search panel
-        return {
-          error: true,
-          errorMessage: this.ERR_REQUIRED_FIELD("username")
-        };
-      }
-      break;
-    case AdminMode.ADMIN:
-      if (!this.inputs[1].text && service === "discord") { // discordId missing from admin panel
-        return {
-          error: true,
-          errorMessage: this.ERR_REQUIRED_FIELD(service)
-        };
-      }
-      if (!this.inputs[2].text && service === "google") { // googleId missing from admin panel
-        return {
-          error: true,
-          errorMessage: this.ERR_REQUIRED_FIELD(service)
-        };
-      }
-      break;
+      case AdminMode.LINK:
+        if (!this.inputs[0].text) { // username missing from link panel
+          return {
+            error: true,
+            errorMessage: this.ERR_REQUIRED_FIELD("username")
+          };
+        }
+        if (!this.inputs[1].text) { // discordId missing from linking panel
+          return {
+            error: true,
+            errorMessage: this.ERR_REQUIRED_FIELD("discord")
+          };
+        }
+        break;
+      case AdminMode.SEARCH:
+        if (!this.inputs[0].text) { // username missing from search panel
+          return {
+            error: true,
+            errorMessage: this.ERR_REQUIRED_FIELD("username")
+          };
+        }
+        break;
+      case AdminMode.ADMIN:
+        if (!this.inputs[1].text && service === "discord") { // discordId missing from admin panel
+          return {
+            error: true,
+            errorMessage: this.ERR_REQUIRED_FIELD(service)
+          };
+        }
+        if (!this.inputs[2].text && service === "google") { // googleId missing from admin panel
+          return {
+            error: true,
+            errorMessage: this.ERR_REQUIRED_FIELD(service)
+          };
+        }
+        break;
     }
     return {
       error: false
@@ -352,12 +352,12 @@ export enum AdminMode {
 
 export function getAdminModeName(adminMode: AdminMode): string {
   switch (adminMode) {
-  case AdminMode.LINK:
-    return "Link";
-  case AdminMode.SEARCH:
-    return "Search";
-  default:
-    return "";
+    case AdminMode.LINK:
+      return "Link";
+    case AdminMode.SEARCH:
+      return "Search";
+    default:
+      return "";
   }
 }
 
