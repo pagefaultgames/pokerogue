@@ -4679,20 +4679,21 @@ export class PreventBypassSpeedChanceAbAttr extends AbAttr {
   }
 }
 
+/**
+ * This applies a terrain-based type change to the Pokemon.
+ */
 export class TerrainEventTypeChangeAbAttr extends PostSummonAbAttr {
   constructor() {
     super(true);
   }
 
-  /**
-   * This applies a terrain-based type change to the Pokemon.
-   */
   apply(pokemon: Pokemon, passive: boolean, simulated: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean {
     if (pokemon.isTerastallized()) {
       return false;
     }
     const currentTerrain = pokemon.scene.arena.getTerrainType();
     const typeChange: Type[] = [];
+    let isRevert: boolean = false;
     if (currentTerrain !== TerrainType.NONE) {
       switch (currentTerrain) {
       case TerrainType.ELECTRIC:
@@ -4711,6 +4712,7 @@ export class TerrainEventTypeChangeAbAttr extends PostSummonAbAttr {
         pokemon.getTypes(false, false, true).forEach(t => {
           typeChange.push(t);
         });
+        isRevert = true;
         break;
       }
     }
@@ -4721,6 +4723,15 @@ export class TerrainEventTypeChangeAbAttr extends PostSummonAbAttr {
       pokemon.summonData.types = typeChange;
       pokemon.updateInfo();
     }
+    let message: string = "";
+    const pokemonName = getPokemonNameWithAffix(pokemon);
+    if (isRevert) {
+      message = i18next.t("abilityTriggers:pokemonTypeChangeRevert", { pokemonNameWithAffix: pokemonName });
+    } else {
+      const typeName = i18next.t(`pokemonInfo:Type.${Type[typeChange[0]]})`);
+      message = i18next.t("abilityTriggers:pokemonTypeChange", { pokemonNameWithAffix: pokemonName, typeName: typeName });
+    }
+    pokemon.scene.queueMessage(message);
     return true;
   }
 }
