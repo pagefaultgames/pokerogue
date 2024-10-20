@@ -4694,23 +4694,23 @@ export class TerrainEventTypeChangeAbAttr extends PostSummonAbAttr {
     const currentTerrain = pokemon.scene.arena.getTerrainType();
     const typeChange: Type[] = [];
     switch (currentTerrain) {
-    case TerrainType.ELECTRIC:
-      typeChange.push(Type.ELECTRIC);
-      break;
-    case TerrainType.MISTY:
-      typeChange.push(Type.FAIRY);
-      break;
-    case TerrainType.GRASSY:
-      typeChange.push(Type.GRASS);
-      break;
-    case TerrainType.PSYCHIC:
-      typeChange.push(Type.PSYCHIC);
-      break;
-    default:
-      pokemon.getTypes(false, false, true).forEach(t => {
-        typeChange.push(t);
-      });
-      break;
+      case TerrainType.ELECTRIC:
+        typeChange.push(Type.ELECTRIC);
+        break;
+      case TerrainType.MISTY:
+        typeChange.push(Type.FAIRY);
+        break;
+      case TerrainType.GRASSY:
+        typeChange.push(Type.GRASS);
+        break;
+      case TerrainType.PSYCHIC:
+        typeChange.push(Type.PSYCHIC);
+        break;
+      default:
+        pokemon.getTypes(false, false, true).forEach(t => {
+          typeChange.push(t);
+        });
+        break;
     }
     if (typeChange.length !== 0) {
       if (pokemon.summonData.addedType && typeChange.includes(pokemon.summonData.addedType)) {
