@@ -198,6 +198,7 @@ export default class AdminUiHandler extends FormModalUiHandler {
               }
               this.adminLinkUnlink(this.convertInputsToAdmin(), service, mode).then(response => { // attempts to link/unlink depending on the service
                 if (response.error) {
+                  this.scene.ui.setMode(Mode.LOADING, { buttonActions: []});
                   return this.showMessage(response.errorType, adminResult, true); // fail
                 } else { // success, reload panel with new results
                   this.scene.ui.setMode(Mode.LOADING, { buttonActions: []});
