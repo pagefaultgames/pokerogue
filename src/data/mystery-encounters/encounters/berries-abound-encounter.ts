@@ -7,7 +7,8 @@ import {
 } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import Pokemon, { EnemyPokemon, PlayerPokemon } from "#app/field/pokemon";
 import {
-  BerryModifierType, getPartyLuckValue,
+  BerryModifierType,
+  getPartyLuckValue,
   ModifierPoolType,
   ModifierTypeOption, modifierTypes,
   regenerateModifierPoolThresholds,

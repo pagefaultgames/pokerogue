@@ -15,7 +15,7 @@ import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { AttackTypeBoosterModifier } from "#app/modifier/modifier";
 import { AttackTypeBoosterModifierType } from "#app/modifier/modifier-type";
 import { SpeciesFormKey } from "#enums/species-form-key";
-import { Ability } from "#app/data/ability";
+import { allAbilities } from "#app/data/ability";
 
 export interface EncounterRequirement {
   meetsRequirement(scene: BattleScene): boolean; // Boolean to see if a requirement is met
@@ -497,14 +497,15 @@ export class MoveRequirement extends EncounterPokemonRequirement {
 
   override queryParty(partyPokemon: PlayerPokemon[]): PlayerPokemon[] {
     if (!this.invertQuery) {
+      // get the Pokemon with at least one move in the required moves list
       return partyPokemon.filter((pokemon) =>
         (!this.excludeDisallowedPokemon || pokemon.isAllowedInBattle())
-        && this.requiredMoves.filter((reqMove) => pokemon.moveset.filter((move) => move?.moveId === reqMove).length > 0).length > 0);
+        && pokemon.moveset.some((move) => move?.moveId && this.requiredMoves.includes(move.moveId)));
     } else {
       // for an inverted query, we only want to get the pokemon that don't have ANY of the listed moves
       return partyPokemon.filter((pokemon) =>
         (!this.excludeDisallowedPokemon || pokemon.isAllowedInBattle())
-        && this.requiredMoves.filter((reqMove) => pokemon.moveset.filter((move) => move?.moveId === reqMove).length === 0).length === 0);
+        && !pokemon.moveset.some((move) => move?.moveId && this.requiredMoves.includes(move.moveId)));
     }
   }
 
@@ -597,10 +598,10 @@ export class AbilityRequirement extends EncounterPokemonRequirement {
     }
   }
 
-  override getDialogueToken(scene: BattleScene, pokemon?: PlayerPokemon): [string, string] {
+  override getDialogueToken(_scene: BattleScene, pokemon?: PlayerPokemon): [string, string] {
     const matchingAbility = this.requiredAbilities.find(a => pokemon?.hasAbility(a, false));
     if (!isNullOrUndefined(matchingAbility)) {
-      return [ "ability", new Ability(matchingAbility, 3).name ];
+      return [ "ability", allAbilities[matchingAbility].name ];
     }
     return [ "ability", "" ];
   }
