@@ -165,7 +165,7 @@ export default class AdminUiHandler extends FormModalUiHandler {
   }
 
   // this is used to update the fields' text when loading a new admin ui handler. It uses the adminResult to update the input text fields depending on the adminMode
-  populateFields(adminMode: AdminMode, adminResult: AdminSearchInfo) {
+  private populateFields(adminMode: AdminMode, adminResult: AdminSearchInfo) {
     switch (adminMode) {
     case AdminMode.LINK:
       this.inputs[0].setText(adminResult.username);
@@ -214,7 +214,7 @@ export default class AdminUiHandler extends FormModalUiHandler {
     }
   }
 
-  areFieldsValid(adminMode: AdminMode, service?: string): { error: boolean; errorMessage?: string; } {
+  private areFieldsValid(adminMode: AdminMode, service?: string): { error: boolean; errorMessage?: string; } {
     switch (adminMode) {
     case AdminMode.LINK:
       if (!this.inputs[0].text) { // username missing from link panel
@@ -258,7 +258,7 @@ export default class AdminUiHandler extends FormModalUiHandler {
     };
   }
 
-  convertInputsToAdmin(): AdminSearchInfo {
+  private convertInputsToAdmin(): AdminSearchInfo {
     return {
       username: this.inputs[0]?.node ? this.inputs[0].text : "",
       discordId: this.inputs[1]?.node ? this.inputs[1]?.text : "",
@@ -268,7 +268,7 @@ export default class AdminUiHandler extends FormModalUiHandler {
     };
   }
 
-  async adminSearch(adminSearchResult: AdminSearchInfo) {
+  private async adminSearch(adminSearchResult: AdminSearchInfo) {
     try {
       const adminInfo = await Utils.apiFetch(`admin/account/adminSearch?username=${encodeURIComponent(adminSearchResult.username)}`, true);
       if (!adminInfo.ok) { // error - if adminInfo.status === this.httpUserNotFoundErrorCode that means the username can't be found in the db
@@ -283,7 +283,7 @@ export default class AdminUiHandler extends FormModalUiHandler {
     }
   }
 
-  async adminLinkUnlink(adminSearchResult: AdminSearchInfo, service: string, mode: string) {
+  private async adminLinkUnlink(adminSearchResult: AdminSearchInfo, service: string, mode: string) {
     try {
       const response = await Utils.apiPost(`admin/account/${service}${mode}`, `username=${encodeURIComponent(adminSearchResult.username)}&${service}Id=${encodeURIComponent(service === "discord" ? adminSearchResult.discordId : adminSearchResult.googleId)}`, "application/x-www-form-urlencoded", true);
       if (!response.ok) { // error - if response.status === this.httpUserNotFoundErrorCode that means the username can't be found in the db
@@ -297,7 +297,7 @@ export default class AdminUiHandler extends FormModalUiHandler {
     }
   }
 
-  updateAdminPanelInfo(adminSearchResult: AdminSearchInfo, mode?: AdminMode) {
+  private updateAdminPanelInfo(adminSearchResult: AdminSearchInfo, mode?: AdminMode) {
     mode = mode ?? AdminMode.ADMIN;
     this.scene.ui.setMode(Mode.ADMIN, {
       buttonActions: [

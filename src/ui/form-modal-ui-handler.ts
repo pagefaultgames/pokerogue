@@ -30,7 +30,8 @@ export abstract class FormModalUiHandler extends ModalUiHandler {
   }
 
   /**
-   * Get all information for each field to display in the modal
+   * Get configuration for all fields that should be part of the modal
+   * Gets used by {@linkcode updateFields} to add the proper text inputs and labels to the view
    * @returns array of {@linkcode InputFieldConfig}
    */
   abstract getInputFieldConfigs(): InputFieldConfig[];
@@ -65,7 +66,7 @@ export abstract class FormModalUiHandler extends ModalUiHandler {
     this.modalContainer.add(this.errorMessage);
   }
 
-  updateFields(fieldsConfig: InputFieldConfig[], hasTitle: boolean) {
+  protected updateFields(fieldsConfig: InputFieldConfig[], hasTitle: boolean) {
     this.inputContainers = [];
     this.inputs = [];
     this.formLabels = [];
@@ -90,7 +91,7 @@ export abstract class FormModalUiHandler extends ModalUiHandler {
       inputContainer.add(input);
 
       this.inputContainers.push(inputContainer);
-      this.modalContainer.add(this.inputContainers[this.inputContainers.length - 1]);
+      this.modalContainer.add(inputContainer);
 
       this.inputs.push(input);
     });
