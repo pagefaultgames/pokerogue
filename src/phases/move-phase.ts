@@ -310,11 +310,31 @@ export class MovePhase extends BattlePhase {
 
   /** Queues a {@linkcode MoveChargePhase} for this phase's invoked move. */
   protected chargeMove() {
-    // Protean and Libero apply on the charging turn of charge moves
-    applyPreAttackAbAttrs(PokemonTypeChangeAbAttr, this.pokemon, null, this.move.getMove());
+    const move = this.move.getMove();
+    const targets = this.getActiveTargetPokemon();
 
-    this.showMoveText();
-    this.scene.unshiftPhase(new MoveChargePhase(this.scene, this.pokemon.getBattlerIndex(), this.targets[0], this.move));
+    if (move.applyConditions(this.pokemon, targets[0], move)) {
+      // Protean and Libero apply on the charging turn of charge moves
+      applyPreAttackAbAttrs(PokemonTypeChangeAbAttr, this.pokemon, null, this.move.getMove());
+
+      this.showMoveText();
+      this.scene.unshiftPhase(new MoveChargePhase(this.scene, this.pokemon.getBattlerIndex(), this.targets[0], this.move));
+    } else {
+      // Copied from useMove()
+      this.pokemon.pushMoveHistory({ move: this.move.moveId, targets: this.targets, result: MoveResult.FAIL, virtual: this.move.virtual });
+
+      let failedText: string | undefined;
+      const failureMessage = move.getFailedText(this.pokemon, targets[0], move, new BooleanHolder(false));
+
+      if (failureMessage) {
+        failedText = failureMessage;
+      }
+
+      this.showFailedText(failedText);
+
+      // Remove the user from its semi-invulnerable state (if applicable)
+      this.pokemon.lapseTags(BattlerTagLapseType.MOVE_EFFECT);
+    }
   }
 
   /**
