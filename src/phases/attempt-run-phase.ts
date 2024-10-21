@@ -10,12 +10,13 @@ import { NewBattlePhase } from "./new-battle-phase";
 import { PokemonPhase } from "./pokemon-phase";
 
 export class AttemptRunPhase extends PokemonPhase {
-  constructor(scene: BattleScene, fieldIndex: number) {
-    super(scene, fieldIndex);
-  }
 
   /** For testing purposes: this is to force the pokemon to fail and escape */
   public forceFailEscape = false;
+
+  constructor(scene: BattleScene, fieldIndex: number) {
+    super(scene, fieldIndex);
+  }
 
   start() {
     super.start();
