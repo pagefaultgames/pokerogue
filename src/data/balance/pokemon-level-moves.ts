@@ -4093,6 +4093,9 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ 1, Moves.FOCUS_ENERGY ],
     [ 1, Moves.FAKE_OUT ],
     [ 1, Moves.HELPING_HAND ],
+    [ 10, Moves.LOW_SWEEP ], // Custom
+    [ 10, Moves.MACH_PUNCH ], // Custom
+    [ 10, Moves.RAPID_SPIN ], // Custom
   ],
   [Species.HITMONTOP]: [
     [ EVOLVE_MOVE, Moves.TRIPLE_KICK ],
