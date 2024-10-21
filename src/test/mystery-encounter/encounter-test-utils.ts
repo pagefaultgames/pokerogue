@@ -97,20 +97,20 @@ export async function runSelectMysteryEncounterOption(game: GameManager, optionN
   uiHandler.unblockInput(); // input are blocked by 1s to prevent accidental input. Tests need to handle that
 
   switch (optionNo) {
-  default:
-  case 1:
+    default:
+    case 1:
     // no movement needed. Default cursor position
-    break;
-  case 2:
-    uiHandler.processInput(Button.RIGHT);
-    break;
-  case 3:
-    uiHandler.processInput(Button.DOWN);
-    break;
-  case 4:
-    uiHandler.processInput(Button.RIGHT);
-    uiHandler.processInput(Button.DOWN);
-    break;
+      break;
+    case 2:
+      uiHandler.processInput(Button.RIGHT);
+      break;
+    case 3:
+      uiHandler.processInput(Button.DOWN);
+      break;
+    case 4:
+      uiHandler.processInput(Button.RIGHT);
+      uiHandler.processInput(Button.DOWN);
+      break;
   }
 
   if (!isNullOrUndefined(secondaryOptionSelect?.pokemonNo)) {
