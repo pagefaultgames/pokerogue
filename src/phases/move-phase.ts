@@ -1,9 +1,29 @@
 import { BattlerIndex } from "#app/battle";
 import BattleScene from "#app/battle-scene";
-import { applyAbAttrs, applyPostMoveUsedAbAttrs, applyPreAttackAbAttrs, BlockRedirectAbAttr, IncreasePpAbAttr, PokemonTypeChangeAbAttr, PostMoveUsedAbAttr, RedirectMoveAbAttr } from "#app/data/ability";
+import {
+  applyAbAttrs,
+  applyPostMoveUsedAbAttrs,
+  applyPreAttackAbAttrs,
+  BlockRedirectAbAttr,
+  IncreasePpAbAttr,
+  PokemonTypeChangeAbAttr,
+  PostMoveUsedAbAttr,
+  RedirectMoveAbAttr
+} from "#app/data/ability";
 import { CommonAnim } from "#app/data/battle-anims";
 import { BattlerTagLapseType, CenterOfAttentionTag } from "#app/data/battler-tags";
-import { allMoves, applyMoveAttrs, BypassRedirectAttr, BypassSleepAttr, ChargeAttr, CopyMoveAttr, HealStatusEffectAttr, MoveFlags, PreMoveMessageAttr } from "#app/data/move";
+import {
+  allMoves,
+  applyMoveAttrs,
+  BypassRedirectAttr,
+  BypassSleepAttr,
+  ChargeAttr,
+  CopyMoveAttr,
+  DelayedAttackAttr,
+  HealStatusEffectAttr,
+  MoveFlags,
+  PreMoveMessageAttr
+} from "#app/data/move";
 import { SpeciesFormChangePreMoveTrigger } from "#app/data/pokemon-forms";
 import { getStatusEffectActivationText, getStatusEffectHealText } from "#app/data/status-effect";
 import { Type } from "#app/data/type";
@@ -22,6 +42,8 @@ import { BattlerTagType } from "#enums/battler-tag-type";
 import { Moves } from "#enums/moves";
 import { StatusEffect } from "#enums/status-effect";
 import i18next from "i18next";
+import { ArenaTagType } from "#enums/arena-tag-type";
+import { DelayedAttackTag } from "#app/data/arena-tag";
 
 export class MovePhase extends BattlePhase {
   protected _pokemon: Pokemon;
@@ -216,6 +238,32 @@ export class MovePhase extends BattlePhase {
 
     // form changes happen even before we know that the move wll execute.
     this.scene.triggerPokemonFormChange(this.pokemon, SpeciesFormChangePreMoveTrigger);
+
+    const isDelayedAttack = this.move.getMove().hasAttr(DelayedAttackAttr);
+    if (isDelayedAttack) {
+      // Check the player side arena if future sight is active
+      const futureSightTags = this.scene.arena.findTags(t => t.tagType ===  ArenaTagType.FUTURE_SIGHT);
+      const doomDesireTags = this.scene.arena.findTags(t => t.tagType === ArenaTagType.DOOM_DESIRE);
+      let fail = false;
+      const currentTargetIndex = targets[0].getBattlerIndex();
+      for (const tag of futureSightTags) {
+        if ((tag as DelayedAttackTag).targetIndex === currentTargetIndex) {
+          fail = true;
+          break;
+        }
+      }
+      for (const tag of doomDesireTags) {
+        if ((tag as DelayedAttackTag).targetIndex === currentTargetIndex) {
+          fail = true;
+          break;
+        }
+      }
+      if (fail) {
+        this.showMoveText();
+        this.showFailedText();
+        return this.end();
+      }
+    }
 
     this.showMoveText();
 
