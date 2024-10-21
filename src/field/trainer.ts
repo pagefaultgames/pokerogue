@@ -65,16 +65,16 @@ export default class Trainer extends Phaser.GameObjects.Container {
     }
 
     switch (this.variant) {
-    case TrainerVariant.FEMALE:
-      if (!this.config.hasGenders) {
-        variant = TrainerVariant.DEFAULT;
-      }
-      break;
-    case TrainerVariant.DOUBLE:
-      if (!this.config.hasDouble) {
-        variant = TrainerVariant.DEFAULT;
-      }
-      break;
+      case TrainerVariant.FEMALE:
+        if (!this.config.hasGenders) {
+          variant = TrainerVariant.DEFAULT;
+        }
+        break;
+      case TrainerVariant.DOUBLE:
+        if (!this.config.hasDouble) {
+          variant = TrainerVariant.DEFAULT;
+        }
+        break;
     }
 
     console.log(Object.keys(trainerPartyTemplates)[Object.values(trainerPartyTemplates).indexOf(this.getPartyTemplate())]);
@@ -229,21 +229,21 @@ export default class Trainer extends Phaser.GameObjects.Container {
       const strength = partyTemplate.getStrength(i);
 
       switch (strength) {
-      case PartyMemberStrength.WEAKER:
-        multiplier = 0.95;
-        break;
-      case PartyMemberStrength.WEAK:
-        multiplier = 1.0;
-        break;
-      case PartyMemberStrength.AVERAGE:
-        multiplier = 1.1;
-        break;
-      case PartyMemberStrength.STRONG:
-        multiplier = 1.2;
-        break;
-      case PartyMemberStrength.STRONGER:
-        multiplier = 1.25;
-        break;
+        case PartyMemberStrength.WEAKER:
+          multiplier = 0.95;
+          break;
+        case PartyMemberStrength.WEAK:
+          multiplier = 1.0;
+          break;
+        case PartyMemberStrength.AVERAGE:
+          multiplier = 1.1;
+          break;
+        case PartyMemberStrength.STRONG:
+          multiplier = 1.2;
+          break;
+        case PartyMemberStrength.STRONGER:
+          multiplier = 1.25;
+          break;
       }
 
       let levelOffset = 0;
@@ -515,19 +515,19 @@ export default class Trainer extends Phaser.GameObjects.Container {
 
   getPartyMemberModifierChanceMultiplier(index: integer): number {
     switch (this.getPartyTemplate().getStrength(index)) {
-    case PartyMemberStrength.WEAKER:
-      return 0.75;
-    case PartyMemberStrength.WEAK:
-      return 0.675;
-    case PartyMemberStrength.AVERAGE:
-      return 0.5625;
-    case PartyMemberStrength.STRONG:
-      return 0.45;
-    case PartyMemberStrength.STRONGER:
-      return 0.375;
-    default:
-      console.warn("getPartyMemberModifierChanceMultiplier not defined. Using default 0");
-      return 0;
+      case PartyMemberStrength.WEAKER:
+        return 0.75;
+      case PartyMemberStrength.WEAK:
+        return 0.675;
+      case PartyMemberStrength.AVERAGE:
+        return 0.5625;
+      case PartyMemberStrength.STRONG:
+        return 0.45;
+      case PartyMemberStrength.STRONGER:
+        return 0.375;
+      default:
+        console.warn("getPartyMemberModifierChanceMultiplier not defined. Using default 0");
+        return 0;
     }
   }
 
