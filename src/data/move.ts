@@ -8,7 +8,7 @@ import { Constructor, NumberHolder } from "#app/utils";
 import * as Utils from "../utils";
 import { WeatherType } from "./weather";
 import { ArenaTagSide, ArenaTrapTag, WeakenMoveTypeTag } from "./arena-tag";
-import { allAbilities, AllyMoveCategoryPowerBoostAbAttr, applyAbAttrs, applyPostAttackAbAttrs, applyPreAttackAbAttrs, applyPreDefendAbAttrs, BlockItemTheftAbAttr, BlockNonDirectDamageAbAttr, BlockOneHitKOAbAttr, BlockRecoilDamageAttr, ConfusionOnStatusEffectAbAttr, FieldMoveTypePowerBoostAbAttr, FieldPreventExplosiveMovesAbAttr, ForceSwitchOutImmunityAbAttr, HealFromBerryUseAbAttr, IgnoreContactAbAttr, IgnoreMoveEffectsAbAttr, IgnoreProtectOnContactAbAttr, MaxMultiHitAbAttr, MoveAbilityBypassAbAttr, MoveEffectChanceMultiplierAbAttr, MoveTypeChangeAbAttr, ReverseDrainAbAttr, UncopiableAbilityAbAttr, UnsuppressableAbilityAbAttr, UnswappableAbilityAbAttr, UserFieldMoveTypePowerBoostAbAttr, VariableMovePowerAbAttr, WonderSkinAbAttr } from "./ability";
+import { allAbilities, AllyMoveCategoryPowerBoostAbAttr, applyAbAttrs, applyPostAttackAbAttrs, applyPreAttackAbAttrs, applyPreDefendAbAttrs, BlockItemTheftAbAttr, BlockNonDirectDamageAbAttr, BlockOneHitKOAbAttr, BlockRecoilDamageAttr, ConfusionOnStatusEffectAbAttr, FieldMoveTypePowerBoostAbAttr, FieldPreventExplosiveMovesAbAttr, ForceSwitchOutImmunityAbAttr, HealFromBerryUseAbAttr, IgnoreContactAbAttr, IgnoreMoveEffectsAbAttr, IgnoreProtectOnContactAbAttr, MaxMultiHitAbAttr, MoveAbilityBypassAbAttr, MoveEffectChanceMultiplierAbAttr, MoveTypeChangeAbAttr, PostDefendForceSwitchOutAttr, ReverseDrainAbAttr, UncopiableAbilityAbAttr, UnsuppressableAbilityAbAttr, UnswappableAbilityAbAttr, UserFieldMoveTypePowerBoostAbAttr, VariableMovePowerAbAttr, WonderSkinAbAttr } from "./ability";
 import { AttackTypeBoosterModifier, BerryModifier, PokemonHeldItemModifier, PokemonMoveAccuracyBoosterModifier, PokemonMultiHitModifier, PreserveBerryModifier } from "../modifier/modifier";
 import { BattlerIndex, BattleType } from "../battle";
 import { TerrainType } from "./terrain";
@@ -5460,6 +5460,21 @@ export class RevivalBlessingAttr extends MoveEffectAttr {
   }
 }
 
+/**
+* Helper function to check if the Pokémon's health is below half after taking damage
+* Used for an edge case interaction with Wimp Out/Emergency Exit
+* If the Ability activates due to being hit by U-turn or Volt Switch, the user of that move will not be switched out.
+*/
+function shouldPreventSwitchOut(target: Pokemon): boolean {
+  const pokemonHealth = target.hp;
+  const maxPokemonHealth = target.getMaxHp();
+  const damageTaken = target.turnData.damageTaken;
+  const initialHealth = pokemonHealth + damageTaken;
+
+  // Check if the Pokémon's health has dropped below half after the damage
+  return initialHealth >= maxPokemonHealth / 2 && pokemonHealth < maxPokemonHealth / 2;
+}
+
 export class ForceSwitchOutAttr extends MoveEffectAttr {
   constructor(
     private selfSwitch: boolean = false,
@@ -5479,11 +5494,17 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
     }
 
     /**
-     * Move the switch out logic inside the conditional block
-     * This ensures that the switch out only happens when the conditions are met
-     */
+    * Check if Wimp Out/Emergency Exit activates due to being hit by U-turn or Volt Switch
+    * If it did, the user of U-turn or Volt Switch will not be switched out.
+    */
     const switchOutTarget = this.selfSwitch ? user : target;
     if (switchOutTarget instanceof PlayerPokemon) {
+      if (target.getAbility().hasAttr(PostDefendForceSwitchOutAttr) &&
+          (move.id === Moves.U_TURN || move.id === Moves.VOLT_SWITCH)) {
+        if (shouldPreventSwitchOut(target)) {
+          return false;
+        }
+      }
       // Switch out logic for the player's Pokemon
       if (switchOutTarget.scene.getParty().filter((p) => p.isAllowedInBattle() && !p.isOnField()).length < 1) {
         return false;
@@ -5509,6 +5530,17 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
           false, false), MoveEndPhase);
       }
     } else {
+      /**
+      * Check if Wimp Out/Emergency Exit activates due to being hit by U-turn or Volt Switch
+      * If it did, the user of U-turn or Volt Switch will not be switched out.
+      */
+      if (target.getAbility().hasAttr(PostDefendForceSwitchOutAttr) &&
+          (move.id === Moves.U_TURN || move.id === Moves.VOLT_SWITCH)) {
+        if (shouldPreventSwitchOut(target)) {
+          return false;
+        }
+      }
+
       // Switch out logic for everything else (eg: WILD battles)
       if (user.scene.currentBattle.waveIndex % 10 === 0) {
         return false;
