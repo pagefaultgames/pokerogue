@@ -4629,6 +4629,66 @@ export class PreventBypassSpeedChanceAbAttr extends AbAttr {
   }
 }
 
+/**
+ * This applies a terrain-based type change to the Pokemon.
+ */
+export class TerrainEventTypeChangeAbAttr extends PostSummonAbAttr {
+  constructor() {
+    super(true);
+  }
+
+  apply(pokemon: Pokemon, passive: boolean, simulated: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean {
+    if (pokemon.isTerastallized()) {
+      return false;
+    }
+    const currentTerrain = pokemon.scene.arena.getTerrainType();
+    const typeChange: Type[] = [];
+    switch (currentTerrain) {
+      case TerrainType.ELECTRIC:
+        typeChange.push(Type.ELECTRIC);
+        break;
+      case TerrainType.MISTY:
+        typeChange.push(Type.FAIRY);
+        break;
+      case TerrainType.GRASSY:
+        typeChange.push(Type.GRASS);
+        break;
+      case TerrainType.PSYCHIC:
+        typeChange.push(Type.PSYCHIC);
+        break;
+      default:
+        pokemon.getTypes(false, false, true).forEach(t => {
+          typeChange.push(t);
+        });
+        break;
+    }
+    if (typeChange.length !== 0) {
+      if (pokemon.summonData.addedType && typeChange.includes(pokemon.summonData.addedType)) {
+        pokemon.summonData.addedType = null;
+      }
+      pokemon.summonData.types = typeChange;
+      pokemon.updateInfo();
+    }
+    let message: string = "";
+    const pokemonName = getPokemonNameWithAffix(pokemon);
+    if (currentTerrain === TerrainType.NONE) {
+      message = i18next.t("abilityTriggers:pokemonTypeChangeRevert", { pokemonNameWithAffix: pokemonName });
+    } else {
+      const typeName = i18next.t(`pokemonInfo:Type.${Type[typeChange[0]]})`);
+      message = i18next.t("abilityTriggers:pokemonTypeChange", { pokemonNameWithAffix: pokemonName, moveType: typeName });
+    }
+    pokemon.scene.queueMessage(message);
+    return true;
+  }
+
+  applyPostSummon(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean | Promise<boolean> {
+    if (pokemon.scene.arena.getTerrainType() !== TerrainType.NONE) {
+      return this.apply(pokemon, passive, simulated, new Utils.BooleanHolder(false), []);
+    }
+    return false;
+  }
+}
+
 async function applyAbAttrsInternal<TAttr extends AbAttr>(
   attrType: Constructor<TAttr>,
   pokemon: Pokemon | null,
@@ -5692,7 +5752,7 @@ export function initAbilities() {
     new Ability(Abilities.POWER_SPOT, 8)
       .attr(AllyMoveCategoryPowerBoostAbAttr, [ MoveCategory.SPECIAL, MoveCategory.PHYSICAL ], 1.3),
     new Ability(Abilities.MIMICRY, 8)
-      .unimplemented(),
+      .attr(TerrainEventTypeChangeAbAttr),
     new Ability(Abilities.SCREEN_CLEANER, 8)
       .attr(PostSummonRemoveArenaTagAbAttr, [ ArenaTagType.AURORA_VEIL, ArenaTagType.LIGHT_SCREEN, ArenaTagType.REFLECT ]),
     new Ability(Abilities.STEELY_SPIRIT, 8)
