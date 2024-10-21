@@ -15,6 +15,7 @@ import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { AttackTypeBoosterModifier } from "#app/modifier/modifier";
 import { AttackTypeBoosterModifierType } from "#app/modifier/modifier-type";
 import { SpeciesFormKey } from "#enums/species-form-key";
+import { allAbilities } from "#app/data/ability";
 
 export interface EncounterRequirement {
   meetsRequirement(scene: BattleScene): boolean; // Boolean to see if a requirement is met
@@ -476,9 +477,11 @@ export class MoveRequirement extends EncounterPokemonRequirement {
   requiredMoves: Moves[] = [];
   minNumberOfPokemon: number;
   invertQuery: boolean;
+  excludeDisallowedPokemon: boolean;
 
-  constructor(moves: Moves | Moves[], minNumberOfPokemon: number = 1, invertQuery: boolean = false) {
+  constructor(moves: Moves | Moves[], excludeDisallowedPokemon: boolean, minNumberOfPokemon: number = 1, invertQuery: boolean = false) {
     super();
+    this.excludeDisallowedPokemon = excludeDisallowedPokemon;
     this.minNumberOfPokemon = minNumberOfPokemon;
     this.invertQuery = invertQuery;
     this.requiredMoves = Array.isArray(moves) ? moves : [ moves ];
@@ -494,10 +497,15 @@ export class MoveRequirement extends EncounterPokemonRequirement {
 
   override queryParty(partyPokemon: PlayerPokemon[]): PlayerPokemon[] {
     if (!this.invertQuery) {
-      return partyPokemon.filter((pokemon) => this.requiredMoves.filter((reqMove) => pokemon.moveset.filter((move) => move?.moveId === reqMove).length > 0).length > 0);
+      // get the Pokemon with at least one move in the required moves list
+      return partyPokemon.filter((pokemon) =>
+        (!this.excludeDisallowedPokemon || pokemon.isAllowedInBattle())
+        && pokemon.moveset.some((move) => move?.moveId && this.requiredMoves.includes(move.moveId)));
     } else {
       // for an inverted query, we only want to get the pokemon that don't have ANY of the listed moves
-      return partyPokemon.filter((pokemon) => this.requiredMoves.filter((reqMove) => pokemon.moveset.filter((move) => move?.moveId === reqMove).length === 0).length === 0);
+      return partyPokemon.filter((pokemon) =>
+        (!this.excludeDisallowedPokemon || pokemon.isAllowedInBattle())
+        && !pokemon.moveset.some((move) => move?.moveId && this.requiredMoves.includes(move.moveId)));
     }
   }
 
@@ -559,9 +567,11 @@ export class AbilityRequirement extends EncounterPokemonRequirement {
   requiredAbilities: Abilities[];
   minNumberOfPokemon: number;
   invertQuery: boolean;
+  excludeDisallowedPokemon: boolean;
 
-  constructor(abilities: Abilities | Abilities[], minNumberOfPokemon: number = 1, invertQuery: boolean = false) {
+  constructor(abilities: Abilities | Abilities[], excludeDisallowedPokemon: boolean, minNumberOfPokemon: number = 1, invertQuery: boolean = false) {
     super();
+    this.excludeDisallowedPokemon = excludeDisallowedPokemon;
     this.minNumberOfPokemon = minNumberOfPokemon;
     this.invertQuery = invertQuery;
     this.requiredAbilities = Array.isArray(abilities) ? abilities : [ abilities ];
@@ -577,16 +587,21 @@ export class AbilityRequirement extends EncounterPokemonRequirement {
 
   override queryParty(partyPokemon: PlayerPokemon[]): PlayerPokemon[] {
     if (!this.invertQuery) {
-      return partyPokemon.filter((pokemon) => this.requiredAbilities.some((ability) => pokemon.getAbility().id === ability));
+      return partyPokemon.filter((pokemon) =>
+        (!this.excludeDisallowedPokemon || pokemon.isAllowedInBattle())
+        && this.requiredAbilities.some((ability) => pokemon.hasAbility(ability, false)));
     } else {
-      // for an inverted query, we only want to get the pokemon that don't have ANY of the listed abilitiess
-      return partyPokemon.filter((pokemon) => this.requiredAbilities.filter((ability) => pokemon.getAbility().id === ability).length === 0);
+      // for an inverted query, we only want to get the pokemon that don't have ANY of the listed abilities
+      return partyPokemon.filter((pokemon) =>
+        (!this.excludeDisallowedPokemon || pokemon.isAllowedInBattle())
+        && this.requiredAbilities.filter((ability) => pokemon.hasAbility(ability, false)).length === 0);
     }
   }
 
-  override getDialogueToken(scene: BattleScene, pokemon?: PlayerPokemon): [string, string] {
-    if (pokemon?.getAbility().id && this.requiredAbilities.some(a => pokemon.getAbility().id === a)) {
-      return [ "ability", pokemon.getAbility().name ];
+  override getDialogueToken(_scene: BattleScene, pokemon?: PlayerPokemon): [string, string] {
+    const matchingAbility = this.requiredAbilities.find(a => pokemon?.hasAbility(a, false));
+    if (!isNullOrUndefined(matchingAbility)) {
+      return [ "ability", allAbilities[matchingAbility].name ];
     }
     return [ "ability", "" ];
   }

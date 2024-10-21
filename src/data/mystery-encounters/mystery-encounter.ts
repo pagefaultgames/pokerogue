@@ -325,7 +325,7 @@ export default class MysteryEncounter implements IMysteryEncounter {
       if (activeMon.length > 0) {
         this.primaryPokemon = activeMon[0];
       } else {
-        this.primaryPokemon = scene.getParty().filter(p => !p.isFainted())[0];
+        this.primaryPokemon = scene.getParty().filter(p => p.isAllowedInBattle())[0];
       }
       return true;
     }
