@@ -170,22 +170,22 @@ export default abstract class AbstractBindingUiHandler extends UiHandler {
     const ui = this.getUi();
     let success = false;
     switch (button) {
-    case Button.LEFT:
-    case Button.RIGHT:
+      case Button.LEFT:
+      case Button.RIGHT:
       // Toggle between action and cancel options.
-      const cursor = this.cursor ? 0 : 1;
-      success = this.setCursor(cursor);
-      break;
-    case Button.ACTION:
+        const cursor = this.cursor ? 0 : 1;
+        success = this.setCursor(cursor);
+        break;
+      case Button.ACTION:
       // Process actions based on current cursor position.
-      if (this.cursor === 0) {
-        this.cancelFn && this.cancelFn();
-      } else {
-        success = this.swapAction();
-        NavigationManager.getInstance().updateIcons();
-        this.cancelFn && this.cancelFn(success);
-      }
-      break;
+        if (this.cursor === 0) {
+          this.cancelFn && this.cancelFn();
+        } else {
+          success = this.swapAction();
+          NavigationManager.getInstance().updateIcons();
+          this.cancelFn && this.cancelFn(success);
+        }
+        break;
     }
 
     // Plays a select sound effect if an action was successfully processed.
