@@ -115,18 +115,18 @@ export class DropDownOption extends Phaser.GameObjects.Container {
    */
   private updateToggleIconColor(): void {
     switch (this.state) {
-    case DropDownState.ON:
-      this.toggle.setTint(this.onColor);
-      break;
-    case DropDownState.OFF:
-      this.toggle.setTint(this.offColor);
-      break;
-    case DropDownState.EXCLUDE:
-      this.toggle.setTint(this.excludeColor);
-      break;
-    case DropDownState.UNLOCKABLE:
-      this.toggle.setTint(this.unlockableColor);
-      break;
+      case DropDownState.ON:
+        this.toggle.setTint(this.onColor);
+        break;
+      case DropDownState.OFF:
+        this.toggle.setTint(this.offColor);
+        break;
+      case DropDownState.EXCLUDE:
+        this.toggle.setTint(this.excludeColor);
+        break;
+      case DropDownState.UNLOCKABLE:
+        this.toggle.setTint(this.unlockableColor);
+        break;
     }
   }
 
@@ -500,18 +500,18 @@ export class DropDown extends Phaser.GameObjects.Container {
     };
 
     switch (this.dropDownType) {
-    case DropDownType.MULTI:
-    case DropDownType.RADIAL:
-      return compareValues([ "val", "state" ]);
+      case DropDownType.MULTI:
+      case DropDownType.RADIAL:
+        return compareValues([ "val", "state" ]);
 
-    case DropDownType.HYBRID:
-      return compareValues([ "val", "state", "cursor" ]);
+      case DropDownType.HYBRID:
+        return compareValues([ "val", "state", "cursor" ]);
 
-    case DropDownType.SINGLE:
-      return compareValues([ "val", "state", "dir" ]);
+      case DropDownType.SINGLE:
+        return compareValues([ "val", "state", "dir" ]);
 
-    default:
-      return false;
+      default:
+        return false;
     }
   }
 

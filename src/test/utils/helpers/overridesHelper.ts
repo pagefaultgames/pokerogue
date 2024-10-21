@@ -19,6 +19,11 @@ import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
  * Helper to handle overrides in tests
  */
 export class OverridesHelper extends GameManagerHelper {
+  /** If `true`, removes the starting items from enemies at the start of each test; default `true` */
+  public removeEnemyStartingItems: boolean = true;
+  /** If `true`, sets the shiny overrides to disable shinies at the start of each test; default `true` */
+  public disableShinies: boolean = true;
+
   /**
    * Override the starting biome
    * @warning Any event listeners that are attached to [NewArenaEvent](events\battle-scene.ts) may need to be handled down the line
@@ -368,20 +373,47 @@ export class OverridesHelper extends GameManagerHelper {
 
   /**
    * Override player shininess
-   * @param shininess Whether the player's Pokemon should be shiny.
+   * @param shininess - `true` or `false` to force the player's pokemon to be shiny or not shiny,
+   *   `null` to disable the override and re-enable RNG shinies.
    */
-  shinyLevel(shininess: boolean): this {
+  shiny(shininess: boolean | null): this {
     vi.spyOn(Overrides, "SHINY_OVERRIDE", "get").mockReturnValue(shininess);
-    this.log(`Set player Pokemon as ${shininess ? "" : "not "}shiny!`);
+    if (shininess === null) {
+      this.log("Disabled player Pokemon shiny override!");
+    } else {
+      this.log(`Set player Pokemon to be ${shininess ? "" : "not "}shiny!`);
+    }
     return this;
   }
+
   /**
    * Override player shiny variant
-   * @param variant The player's shiny variant.
+   * @param variant - The player's shiny variant.
    */
-  variantLevel(variant: Variant): this {
+  shinyVariant(variant: Variant): this {
     vi.spyOn(Overrides, "VARIANT_OVERRIDE", "get").mockReturnValue(variant);
     this.log(`Set player Pokemon's shiny variant to ${variant}!`);
+    return this;
+  }
+
+  /**
+   * Override enemy shininess
+   * @param shininess - `true` or `false` to force the enemy's pokemon to be shiny or not shiny,
+   *   `null` to disable the override and re-enable RNG shinies.
+   * @param variant - (Optional) The enemy's shiny {@linkcode Variant}.
+   */
+  enemyShiny(shininess: boolean | null, variant?: Variant): this {
+    vi.spyOn(Overrides, "OPP_SHINY_OVERRIDE", "get").mockReturnValue(shininess);
+    if (shininess === null) {
+      this.log("Disabled enemy Pokemon shiny override!");
+    } else {
+      this.log(`Set enemy Pokemon to be ${shininess ? "" : "not "}shiny!`);
+    }
+
+    if (variant !== undefined) {
+      vi.spyOn(Overrides, "OPP_VARIANT_OVERRIDE", "get").mockReturnValue(variant);
+      this.log(`Set enemy shiny variant to be ${variant}!`);
+    }
     return this;
   }
 
