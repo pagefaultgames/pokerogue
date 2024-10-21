@@ -238,8 +238,8 @@ export abstract class PokemonSpeciesForm {
 
   isRareRegional(): boolean {
     switch (this.getRegion()) {
-    case Region.HISUI:
-      return true;
+      case Region.HISUI:
+        return true;
     }
 
     return false;
@@ -265,14 +265,14 @@ export abstract class PokemonSpeciesForm {
   getBaseExp(): number {
     let ret = this.baseExp;
     switch (this.getFormSpriteKey()) {
-    case SpeciesFormKey.MEGA:
-    case SpeciesFormKey.MEGA_X:
-    case SpeciesFormKey.MEGA_Y:
-    case SpeciesFormKey.PRIMAL:
-    case SpeciesFormKey.GIGANTAMAX:
-    case SpeciesFormKey.ETERNAMAX:
-      ret *= 1.5;
-      break;
+      case SpeciesFormKey.MEGA:
+      case SpeciesFormKey.MEGA_X:
+      case SpeciesFormKey.MEGA_Y:
+      case SpeciesFormKey.PRIMAL:
+      case SpeciesFormKey.GIGANTAMAX:
+      case SpeciesFormKey.ETERNAMAX:
+        ret *= 1.5;
+        break;
     }
     return ret;
   }
@@ -346,29 +346,29 @@ export abstract class PokemonSpeciesForm {
     }
 
     switch (this.speciesId) {
-    case Species.HIPPOPOTAS:
-    case Species.HIPPOWDON:
-    case Species.UNFEZANT:
-    case Species.FRILLISH:
-    case Species.JELLICENT:
-    case Species.PYROAR:
-      ret += female ? "-f" : "";
-      break;
+      case Species.HIPPOPOTAS:
+      case Species.HIPPOWDON:
+      case Species.UNFEZANT:
+      case Species.FRILLISH:
+      case Species.JELLICENT:
+      case Species.PYROAR:
+        ret += female ? "-f" : "";
+        break;
     }
 
     let formSpriteKey = this.getFormSpriteKey(formIndex);
     if (formSpriteKey) {
       switch (this.speciesId) {
-      case Species.DUDUNSPARCE:
-        break;
-      case Species.ZACIAN:
-      case Species.ZAMAZENTA:
-        if (formSpriteKey.startsWith("behemoth")) {
-          formSpriteKey = "crowned";
-        }
-      default:
-        ret += `-${formSpriteKey}`;
-        break;
+        case Species.DUDUNSPARCE:
+          break;
+        case Species.ZACIAN:
+        case Species.ZAMAZENTA:
+          if (formSpriteKey.startsWith("behemoth")) {
+            formSpriteKey = "crowned";
+          }
+        default:
+          ret += `-${formSpriteKey}`;
+          break;
       }
     }
 
@@ -383,15 +383,15 @@ export abstract class PokemonSpeciesForm {
     let speciesId = this.speciesId;
     if (this.speciesId > 2000) {
       switch (this.speciesId) {
-      case Species.GALAR_SLOWPOKE:
-        break;
-      case Species.ETERNAL_FLOETTE:
-        break;
-      case Species.BLOODMOON_URSALUNA:
-        break;
-      default:
-        speciesId = speciesId % 2000;
-        break;
+        case Species.GALAR_SLOWPOKE:
+          break;
+        case Species.ETERNAL_FLOETTE:
+          break;
+        case Species.BLOODMOON_URSALUNA:
+          break;
+        default:
+          speciesId = speciesId % 2000;
+          break;
       }
     }
     let ret = speciesId.toString();
@@ -403,43 +403,43 @@ export abstract class PokemonSpeciesForm {
       }
       const formKey = forms[formIndex || 0].formKey;
       switch (formKey) {
-      case SpeciesFormKey.MEGA:
-      case SpeciesFormKey.MEGA_X:
-      case SpeciesFormKey.MEGA_Y:
-      case SpeciesFormKey.GIGANTAMAX:
-      case SpeciesFormKey.GIGANTAMAX_SINGLE:
-      case SpeciesFormKey.GIGANTAMAX_RAPID:
-      case "white":
-      case "black":
-      case "therian":
-      case "sky":
-      case "gorging":
-      case "gulping":
-      case "no-ice":
-      case "hangry":
-      case "crowned":
-      case "eternamax":
-      case "four":
-      case "droopy":
-      case "stretchy":
-      case "hero":
-      case "roaming":
-      case "complete":
-      case "10":
-      case "10-pc":
-      case "super":
-      case "unbound":
-      case "pau":
-      case "pompom":
-      case "sensu":
-      case "dusk":
-      case "midnight":
-      case "school":
-      case "dawn-wings":
-      case "dusk-mane":
-      case "ultra":
-        ret += `-${formKey}`;
-        break;
+        case SpeciesFormKey.MEGA:
+        case SpeciesFormKey.MEGA_X:
+        case SpeciesFormKey.MEGA_Y:
+        case SpeciesFormKey.GIGANTAMAX:
+        case SpeciesFormKey.GIGANTAMAX_SINGLE:
+        case SpeciesFormKey.GIGANTAMAX_RAPID:
+        case "white":
+        case "black":
+        case "therian":
+        case "sky":
+        case "gorging":
+        case "gulping":
+        case "no-ice":
+        case "hangry":
+        case "crowned":
+        case "eternamax":
+        case "four":
+        case "droopy":
+        case "stretchy":
+        case "hero":
+        case "roaming":
+        case "complete":
+        case "10":
+        case "10-pc":
+        case "super":
+        case "unbound":
+        case "pau":
+        case "pompom":
+        case "sensu":
+        case "dusk":
+        case "midnight":
+        case "school":
+        case "dawn-wings":
+        case "dusk-mane":
+        case "ultra":
+          ret += `-${formKey}`;
+          break;
       }
     }
     return ret;
@@ -635,19 +635,19 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
       const form = this.forms[formIndex];
       let key: string | null;
       switch (form.formKey) {
-      case SpeciesFormKey.MEGA:
-      case SpeciesFormKey.PRIMAL:
-      case SpeciesFormKey.ETERNAMAX:
-      case SpeciesFormKey.MEGA_X:
-      case SpeciesFormKey.MEGA_Y:
-        key = form.formKey;
-        break;
-      default:
-        if (form.formKey.indexOf(SpeciesFormKey.GIGANTAMAX) > -1) {
-          key = "gigantamax";
-        } else {
-          key = null;
-        }
+        case SpeciesFormKey.MEGA:
+        case SpeciesFormKey.PRIMAL:
+        case SpeciesFormKey.ETERNAMAX:
+        case SpeciesFormKey.MEGA_X:
+        case SpeciesFormKey.MEGA_Y:
+          key = form.formKey;
+          break;
+        default:
+          if (form.formKey.indexOf(SpeciesFormKey.GIGANTAMAX) > -1) {
+            key = "gigantamax";
+          } else {
+            key = null;
+          }
       }
 
       if (key) {
@@ -689,18 +689,18 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
    */
   private getStrengthLevelDiff(strength: PartyMemberStrength): integer {
     switch (Math.min(strength, PartyMemberStrength.STRONGER)) {
-    case PartyMemberStrength.WEAKEST:
-      return 60;
-    case PartyMemberStrength.WEAKER:
-      return 40;
-    case PartyMemberStrength.WEAK:
-      return 20;
-    case PartyMemberStrength.AVERAGE:
-      return 8;
-    case PartyMemberStrength.STRONG:
-      return 4;
-    default:
-      return 0;
+      case PartyMemberStrength.WEAKEST:
+        return 60;
+      case PartyMemberStrength.WEAKER:
+        return 40;
+      case PartyMemberStrength.WEAK:
+        return 20;
+      case PartyMemberStrength.AVERAGE:
+        return 8;
+      case PartyMemberStrength.STRONG:
+        return 4;
+      default:
+        return 0;
     }
   }
 

@@ -1366,69 +1366,69 @@ export default class BattleScene extends SceneBase {
     }
 
     switch (species.speciesId) {
-    case Species.UNOWN:
-    case Species.SHELLOS:
-    case Species.GASTRODON:
-    case Species.BASCULIN:
-    case Species.DEERLING:
-    case Species.SAWSBUCK:
-    case Species.FROAKIE:
-    case Species.FROGADIER:
-    case Species.SCATTERBUG:
-    case Species.SPEWPA:
-    case Species.VIVILLON:
-    case Species.FLABEBE:
-    case Species.FLOETTE:
-    case Species.FLORGES:
-    case Species.FURFROU:
-    case Species.PUMPKABOO:
-    case Species.GOURGEIST:
-    case Species.ORICORIO:
-    case Species.MAGEARNA:
-    case Species.ZARUDE:
-    case Species.SQUAWKABILLY:
-    case Species.TATSUGIRI:
-    case Species.PALDEA_TAUROS:
-      return Utils.randSeedInt(species.forms.length);
-    case Species.PIKACHU:
-      return Utils.randSeedInt(8);
-    case Species.EEVEE:
-      return Utils.randSeedInt(2);
-    case Species.GRENINJA:
-      return Utils.randSeedInt(2);
-    case Species.ZYGARDE:
-      return Utils.randSeedInt(3);
-    case Species.MINIOR:
-      return Utils.randSeedInt(6);
-    case Species.ALCREMIE:
-      return Utils.randSeedInt(9);
-    case Species.MEOWSTIC:
-    case Species.INDEEDEE:
-    case Species.BASCULEGION:
-    case Species.OINKOLOGNE:
-      return gender === Gender.FEMALE ? 1 : 0;
-    case Species.TOXTRICITY:
-      const lowkeyNatures = [ Nature.LONELY, Nature.BOLD, Nature.RELAXED, Nature.TIMID, Nature.SERIOUS, Nature.MODEST, Nature.MILD, Nature.QUIET, Nature.BASHFUL, Nature.CALM, Nature.GENTLE, Nature.CAREFUL ];
-      if (nature !== undefined && lowkeyNatures.indexOf(nature) > -1) {
-        return 1;
-      }
-      return 0;
-    case Species.GIMMIGHOUL:
-      // Chest form can only be found in Mysterious Chest Encounter, if this is a game mode with MEs
-      if (this.gameMode.hasMysteryEncounters) {
-        return 1; // Wandering form
-      } else {
+      case Species.UNOWN:
+      case Species.SHELLOS:
+      case Species.GASTRODON:
+      case Species.BASCULIN:
+      case Species.DEERLING:
+      case Species.SAWSBUCK:
+      case Species.FROAKIE:
+      case Species.FROGADIER:
+      case Species.SCATTERBUG:
+      case Species.SPEWPA:
+      case Species.VIVILLON:
+      case Species.FLABEBE:
+      case Species.FLOETTE:
+      case Species.FLORGES:
+      case Species.FURFROU:
+      case Species.PUMPKABOO:
+      case Species.GOURGEIST:
+      case Species.ORICORIO:
+      case Species.MAGEARNA:
+      case Species.ZARUDE:
+      case Species.SQUAWKABILLY:
+      case Species.TATSUGIRI:
+      case Species.PALDEA_TAUROS:
         return Utils.randSeedInt(species.forms.length);
-      }
+      case Species.PIKACHU:
+        return Utils.randSeedInt(8);
+      case Species.EEVEE:
+        return Utils.randSeedInt(2);
+      case Species.GRENINJA:
+        return Utils.randSeedInt(2);
+      case Species.ZYGARDE:
+        return Utils.randSeedInt(3);
+      case Species.MINIOR:
+        return Utils.randSeedInt(6);
+      case Species.ALCREMIE:
+        return Utils.randSeedInt(9);
+      case Species.MEOWSTIC:
+      case Species.INDEEDEE:
+      case Species.BASCULEGION:
+      case Species.OINKOLOGNE:
+        return gender === Gender.FEMALE ? 1 : 0;
+      case Species.TOXTRICITY:
+        const lowkeyNatures = [ Nature.LONELY, Nature.BOLD, Nature.RELAXED, Nature.TIMID, Nature.SERIOUS, Nature.MODEST, Nature.MILD, Nature.QUIET, Nature.BASHFUL, Nature.CALM, Nature.GENTLE, Nature.CAREFUL ];
+        if (nature !== undefined && lowkeyNatures.indexOf(nature) > -1) {
+          return 1;
+        }
+        return 0;
+      case Species.GIMMIGHOUL:
+      // Chest form can only be found in Mysterious Chest Encounter, if this is a game mode with MEs
+        if (this.gameMode.hasMysteryEncounters) {
+          return 1; // Wandering form
+        } else {
+          return Utils.randSeedInt(species.forms.length);
+        }
     }
 
     if (ignoreArena) {
       switch (species.speciesId) {
-      case Species.BURMY:
-      case Species.WORMADAM:
-      case Species.ROTOM:
-      case Species.LYCANROC:
-        return Utils.randSeedInt(species.forms.length);
+        case Species.BURMY:
+        case Species.WORMADAM:
+        case Species.ROTOM:
+        case Species.LYCANROC:
+          return Utils.randSeedInt(species.forms.length);
       }
       return 0;
     }
@@ -1893,17 +1893,17 @@ export default class BattleScene extends SceneBase {
           const soundDetails = sound.key.split("/");
           switch (soundDetails[0]) {
 
-          case "battle_anims":
-          case "cry":
-            if (soundDetails[1].startsWith("PRSFX- ")) {
-              sound.setVolume(this.masterVolume * this.fieldVolume * 0.5);
-            } else {
-              sound.setVolume(this.masterVolume * this.fieldVolume);
-            }
-            break;
-          case "se":
-          case "ui":
-            sound.setVolume(this.masterVolume * this.seVolume);
+            case "battle_anims":
+            case "cry":
+              if (soundDetails[1].startsWith("PRSFX- ")) {
+                sound.setVolume(this.masterVolume * this.fieldVolume * 0.5);
+              } else {
+                sound.setVolume(this.masterVolume * this.fieldVolume);
+              }
+              break;
+            case "se":
+            case "ui":
+              sound.setVolume(this.masterVolume * this.seVolume);
           }
         }
       }
@@ -1943,31 +1943,31 @@ export default class BattleScene extends SceneBase {
       const keyDetails = key.split("/");
       config["volume"] = config["volume"] ?? 1;
       switch (keyDetails[0]) {
-      case "level_up_fanfare":
-      case "item_fanfare":
-      case "minor_fanfare":
-      case "heal":
-      case "evolution":
-      case "evolution_fanfare":
+        case "level_up_fanfare":
+        case "item_fanfare":
+        case "minor_fanfare":
+        case "heal":
+        case "evolution":
+        case "evolution_fanfare":
         // These sounds are loaded in as BGM, but played as sound effects
         // When these sounds are updated in updateVolume(), they are treated as BGM however because they are placed in the BGM Cache through being called by playSoundWithoutBGM()
-        config["volume"] *= (this.masterVolume * this.bgmVolume);
-        break;
-      case "battle_anims":
-      case "cry":
-        config["volume"] *= (this.masterVolume * this.fieldVolume);
-        //PRSFX sound files are unusually loud
-        if (keyDetails[1].startsWith("PRSFX- ")) {
-          config["volume"] *= 0.5;
-        }
-        break;
-      case "ui":
+          config["volume"] *= (this.masterVolume * this.bgmVolume);
+          break;
+        case "battle_anims":
+        case "cry":
+          config["volume"] *= (this.masterVolume * this.fieldVolume);
+          //PRSFX sound files are unusually loud
+          if (keyDetails[1].startsWith("PRSFX- ")) {
+            config["volume"] *= 0.5;
+          }
+          break;
+        case "ui":
         //As of, right now this applies to the "select", "menu_open", "error" sound effects
-        config["volume"] *= (this.masterVolume * this.uiVolume);
-        break;
-      case "se":
-        config["volume"] *= (this.masterVolume * this.seVolume);
-        break;
+          config["volume"] *= (this.masterVolume * this.uiVolume);
+          break;
+        case "se":
+          config["volume"] *= (this.masterVolume * this.seVolume);
+          break;
       }
       this.sound.play(key, config);
       return this.sound.get(key) as AnySound;
@@ -1996,208 +1996,208 @@ export default class BattleScene extends SceneBase {
 
   getBgmLoopPoint(bgmName: string): number {
     switch (bgmName) {
-    case "battle_kanto_champion": //B2W2 Kanto Champion Battle
-      return 13.950;
-    case "battle_johto_champion": //B2W2 Johto Champion Battle
-      return 23.498;
-    case "battle_hoenn_champion_g5": //B2W2 Hoenn Champion Battle
-      return 11.328;
-    case "battle_hoenn_champion_g6": //ORAS Hoenn Champion Battle
-      return 11.762;
-    case "battle_sinnoh_champion": //B2W2 Sinnoh Champion Battle
-      return 12.235;
-    case "battle_champion_alder": //BW Unova Champion Battle
-      return 27.653;
-    case "battle_champion_iris": //B2W2 Unova Champion Battle
-      return 10.145;
-    case "battle_kalos_champion": //XY Kalos Champion Battle
-      return 10.380;
-    case "battle_alola_champion": //USUM Alola Champion Battle
-      return 13.025;
-    case "battle_galar_champion": //SWSH Galar Champion Battle
-      return 61.635;
-    case "battle_champion_geeta": //SV Champion Geeta Battle
-      return 37.447;
-    case "battle_champion_nemona": //SV Champion Nemona Battle
-      return 14.914;
-    case "battle_champion_kieran": //SV Champion Kieran Battle
-      return 7.206;
-    case "battle_hoenn_elite": //ORAS Elite Four Battle
-      return 11.350;
-    case "battle_unova_elite": //BW Elite Four Battle
-      return 17.730;
-    case "battle_kalos_elite": //XY Elite Four Battle
-      return 12.340;
-    case "battle_alola_elite": //SM Elite Four Battle
-      return 19.212;
-    case "battle_galar_elite": //SWSH League Tournament Battle
-      return 164.069;
-    case "battle_paldea_elite": //SV Elite Four Battle
-      return 12.770;
-    case "battle_bb_elite": //SV BB League Elite Four Battle
-      return 19.434;
-    case "battle_final_encounter": //PMD RTDX Rayquaza's Domain
-      return 19.159;
-    case "battle_final": //BW Ghetsis Battle
-      return 16.453;
-    case "battle_kanto_gym": //B2W2 Kanto Gym Battle
-      return 13.857;
-    case "battle_johto_gym": //B2W2 Johto Gym Battle
-      return 12.911;
-    case "battle_hoenn_gym": //B2W2 Hoenn Gym Battle
-      return 12.379;
-    case "battle_sinnoh_gym": //B2W2 Sinnoh Gym Battle
-      return 13.122;
-    case "battle_unova_gym": //BW Unova Gym Battle
-      return 19.145;
-    case "battle_kalos_gym": //XY Kalos Gym Battle
-      return 44.810;
-    case "battle_galar_gym": //SWSH Galar Gym Battle
-      return 171.262;
-    case "battle_paldea_gym": //SV Paldea Gym Battle
-      return 127.489;
-    case "battle_legendary_kanto": //XY Kanto Legendary Battle
-      return 32.966;
-    case "battle_legendary_raikou": //HGSS Raikou Battle
-      return 12.632;
-    case "battle_legendary_entei": //HGSS Entei Battle
-      return 2.905;
-    case "battle_legendary_suicune": //HGSS Suicune Battle
-      return 12.636;
-    case "battle_legendary_lugia": //HGSS Lugia Battle
-      return 19.770;
-    case "battle_legendary_ho_oh": //HGSS Ho-oh Battle
-      return 17.668;
-    case "battle_legendary_regis_g5": //B2W2 Legendary Titan Battle
-      return 49.500;
-    case "battle_legendary_regis_g6": //ORAS Legendary Titan Battle
-      return 21.130;
-    case "battle_legendary_gro_kyo": //ORAS Groudon & Kyogre Battle
-      return 10.547;
-    case "battle_legendary_rayquaza": //ORAS Rayquaza Battle
-      return 10.495;
-    case "battle_legendary_deoxys": //ORAS Deoxys Battle
-      return 13.333;
-    case "battle_legendary_lake_trio": //ORAS Lake Guardians Battle
-      return 16.887;
-    case "battle_legendary_sinnoh": //ORAS Sinnoh Legendary Battle
-      return 22.770;
-    case "battle_legendary_dia_pal": //ORAS Dialga & Palkia Battle
-      return 16.009;
-    case "battle_legendary_origin_forme": //LA Origin Dialga & Palkia Battle
-      return 18.961;
-    case "battle_legendary_giratina": //ORAS Giratina Battle
-      return 10.451;
-    case "battle_legendary_arceus": //HGSS Arceus Battle
-      return 9.595;
-    case "battle_legendary_unova": //BW Unova Legendary Battle
-      return 13.855;
-    case "battle_legendary_kyurem": //BW Kyurem Battle
-      return 18.314;
-    case "battle_legendary_res_zek": //BW Reshiram & Zekrom Battle
-      return 18.329;
-    case "battle_legendary_xern_yvel": //XY Xerneas & Yveltal Battle
-      return 26.468;
-    case "battle_legendary_tapu": //SM Tapu Battle
-      return 0.000;
-    case "battle_legendary_sol_lun": //SM Solgaleo & Lunala Battle
-      return 6.525;
-    case "battle_legendary_ub": //SM Ultra Beast Battle
-      return 9.818;
-    case "battle_legendary_dusk_dawn": //USUM Dusk Mane & Dawn Wings Necrozma Battle
-      return 5.211;
-    case "battle_legendary_ultra_nec": //USUM Ultra Necrozma Battle
-      return 10.344;
-    case "battle_legendary_zac_zam": //SWSH Zacian & Zamazenta Battle
-      return 11.424;
-    case "battle_legendary_glas_spec": //SWSH Glastrier & Spectrier Battle
-      return 12.503;
-    case "battle_legendary_calyrex": //SWSH Calyrex Battle
-      return 50.641;
-    case "battle_legendary_riders": //SWSH Ice & Shadow Rider Calyrex Battle
-      return 18.155;
-    case "battle_legendary_birds_galar": //SWSH Galarian Legendary Birds Battle
-      return 0.175;
-    case "battle_legendary_ruinous": //SV Treasures of Ruin Battle
-      return 6.333;
-    case "battle_legendary_kor_mir": //SV Depths of Area Zero Battle
-      return 6.442;
-    case "battle_legendary_loyal_three": //SV Loyal Three Battle
-      return 6.500;
-    case "battle_legendary_ogerpon": //SV Ogerpon Battle
-      return 14.335;
-    case "battle_legendary_terapagos": //SV Terapagos Battle
-      return 24.377;
-    case "battle_legendary_pecharunt": //SV Pecharunt Battle
-      return 6.508;
-    case "battle_rival": //BW Rival Battle
-      return 14.110;
-    case "battle_rival_2": //BW N Battle
-      return 17.714;
-    case "battle_rival_3": //BW Final N Battle
-      return 17.586;
-    case "battle_trainer": //BW Trainer Battle
-      return 13.686;
-    case "battle_wild": //BW Wild Battle
-      return 12.703;
-    case "battle_wild_strong": //BW Strong Wild Battle
-      return 13.940;
-    case "end_summit": //PMD RTDX Sky Tower Summit
-      return 30.025;
-    case "battle_rocket_grunt": //HGSS Team Rocket Battle
-      return 12.707;
-    case "battle_aqua_magma_grunt": //ORAS Team Aqua & Magma Battle
-      return 12.062;
-    case "battle_galactic_grunt": //BDSP Team Galactic Battle
-      return 13.043;
-    case "battle_plasma_grunt": //BW Team Plasma Battle
-      return 12.974;
-    case "battle_flare_grunt": //XY Team Flare Battle
-      return 4.228;
-    case "battle_aether_grunt": // SM Aether Foundation Battle
-      return 16.00;
-    case "battle_skull_grunt": // SM Team Skull Battle
-      return 20.87;
-    case "battle_macro_grunt": // SWSH Trainer Battle
-      return 11.56;
-    case "battle_star_grunt": //SV Team Star Battle
-      return 133.362;
-    case "battle_galactic_admin": //BDSP Team Galactic Admin Battle
-      return 11.997;
-    case "battle_skull_admin": //SM Team Skull Admin Battle
-      return 15.463;
-    case "battle_oleana": //SWSH Oleana Battle
-      return 14.110;
-    case "battle_star_admin": //SV Team Star Boss Battle
-      return 9.493;
-    case "battle_rocket_boss": //USUM Giovanni Battle
-      return 9.115;
-    case "battle_aqua_magma_boss": //ORAS Archie & Maxie Battle
-      return 14.847;
-    case "battle_galactic_boss": //BDSP Cyrus Battle
-      return 106.962;
-    case "battle_plasma_boss": //B2W2 Ghetsis Battle
-      return 25.624;
-    case "battle_flare_boss": //XY Lysandre Battle
-      return 8.085;
-    case "battle_aether_boss": //SM Lusamine Battle
-      return 11.33;
-    case "battle_skull_boss": //SM Guzma Battle
-      return 13.13;
-    case "battle_macro_boss": //SWSH Rose Battle
-      return 11.42;
-    case "battle_star_boss": //SV Cassiopeia Battle
-      return 25.764;
-    case "mystery_encounter_gen_5_gts": // BW GTS
-      return 8.52;
-    case "mystery_encounter_gen_6_gts": // XY GTS
-      return 9.24;
-    case "mystery_encounter_fun_and_games": // EoS Guildmaster Wigglytuff
-      return 4.78;
-    case "mystery_encounter_weird_dream": // EoS Temporal Spire
-      return 41.42;
-    case "mystery_encounter_delibirdy": // Firel Delibirdy
-      return 82.28;
+      case "battle_kanto_champion": //B2W2 Kanto Champion Battle
+        return 13.950;
+      case "battle_johto_champion": //B2W2 Johto Champion Battle
+        return 23.498;
+      case "battle_hoenn_champion_g5": //B2W2 Hoenn Champion Battle
+        return 11.328;
+      case "battle_hoenn_champion_g6": //ORAS Hoenn Champion Battle
+        return 11.762;
+      case "battle_sinnoh_champion": //B2W2 Sinnoh Champion Battle
+        return 12.235;
+      case "battle_champion_alder": //BW Unova Champion Battle
+        return 27.653;
+      case "battle_champion_iris": //B2W2 Unova Champion Battle
+        return 10.145;
+      case "battle_kalos_champion": //XY Kalos Champion Battle
+        return 10.380;
+      case "battle_alola_champion": //USUM Alola Champion Battle
+        return 13.025;
+      case "battle_galar_champion": //SWSH Galar Champion Battle
+        return 61.635;
+      case "battle_champion_geeta": //SV Champion Geeta Battle
+        return 37.447;
+      case "battle_champion_nemona": //SV Champion Nemona Battle
+        return 14.914;
+      case "battle_champion_kieran": //SV Champion Kieran Battle
+        return 7.206;
+      case "battle_hoenn_elite": //ORAS Elite Four Battle
+        return 11.350;
+      case "battle_unova_elite": //BW Elite Four Battle
+        return 17.730;
+      case "battle_kalos_elite": //XY Elite Four Battle
+        return 12.340;
+      case "battle_alola_elite": //SM Elite Four Battle
+        return 19.212;
+      case "battle_galar_elite": //SWSH League Tournament Battle
+        return 164.069;
+      case "battle_paldea_elite": //SV Elite Four Battle
+        return 12.770;
+      case "battle_bb_elite": //SV BB League Elite Four Battle
+        return 19.434;
+      case "battle_final_encounter": //PMD RTDX Rayquaza's Domain
+        return 19.159;
+      case "battle_final": //BW Ghetsis Battle
+        return 16.453;
+      case "battle_kanto_gym": //B2W2 Kanto Gym Battle
+        return 13.857;
+      case "battle_johto_gym": //B2W2 Johto Gym Battle
+        return 12.911;
+      case "battle_hoenn_gym": //B2W2 Hoenn Gym Battle
+        return 12.379;
+      case "battle_sinnoh_gym": //B2W2 Sinnoh Gym Battle
+        return 13.122;
+      case "battle_unova_gym": //BW Unova Gym Battle
+        return 19.145;
+      case "battle_kalos_gym": //XY Kalos Gym Battle
+        return 44.810;
+      case "battle_galar_gym": //SWSH Galar Gym Battle
+        return 171.262;
+      case "battle_paldea_gym": //SV Paldea Gym Battle
+        return 127.489;
+      case "battle_legendary_kanto": //XY Kanto Legendary Battle
+        return 32.966;
+      case "battle_legendary_raikou": //HGSS Raikou Battle
+        return 12.632;
+      case "battle_legendary_entei": //HGSS Entei Battle
+        return 2.905;
+      case "battle_legendary_suicune": //HGSS Suicune Battle
+        return 12.636;
+      case "battle_legendary_lugia": //HGSS Lugia Battle
+        return 19.770;
+      case "battle_legendary_ho_oh": //HGSS Ho-oh Battle
+        return 17.668;
+      case "battle_legendary_regis_g5": //B2W2 Legendary Titan Battle
+        return 49.500;
+      case "battle_legendary_regis_g6": //ORAS Legendary Titan Battle
+        return 21.130;
+      case "battle_legendary_gro_kyo": //ORAS Groudon & Kyogre Battle
+        return 10.547;
+      case "battle_legendary_rayquaza": //ORAS Rayquaza Battle
+        return 10.495;
+      case "battle_legendary_deoxys": //ORAS Deoxys Battle
+        return 13.333;
+      case "battle_legendary_lake_trio": //ORAS Lake Guardians Battle
+        return 16.887;
+      case "battle_legendary_sinnoh": //ORAS Sinnoh Legendary Battle
+        return 22.770;
+      case "battle_legendary_dia_pal": //ORAS Dialga & Palkia Battle
+        return 16.009;
+      case "battle_legendary_origin_forme": //LA Origin Dialga & Palkia Battle
+        return 18.961;
+      case "battle_legendary_giratina": //ORAS Giratina Battle
+        return 10.451;
+      case "battle_legendary_arceus": //HGSS Arceus Battle
+        return 9.595;
+      case "battle_legendary_unova": //BW Unova Legendary Battle
+        return 13.855;
+      case "battle_legendary_kyurem": //BW Kyurem Battle
+        return 18.314;
+      case "battle_legendary_res_zek": //BW Reshiram & Zekrom Battle
+        return 18.329;
+      case "battle_legendary_xern_yvel": //XY Xerneas & Yveltal Battle
+        return 26.468;
+      case "battle_legendary_tapu": //SM Tapu Battle
+        return 0.000;
+      case "battle_legendary_sol_lun": //SM Solgaleo & Lunala Battle
+        return 6.525;
+      case "battle_legendary_ub": //SM Ultra Beast Battle
+        return 9.818;
+      case "battle_legendary_dusk_dawn": //USUM Dusk Mane & Dawn Wings Necrozma Battle
+        return 5.211;
+      case "battle_legendary_ultra_nec": //USUM Ultra Necrozma Battle
+        return 10.344;
+      case "battle_legendary_zac_zam": //SWSH Zacian & Zamazenta Battle
+        return 11.424;
+      case "battle_legendary_glas_spec": //SWSH Glastrier & Spectrier Battle
+        return 12.503;
+      case "battle_legendary_calyrex": //SWSH Calyrex Battle
+        return 50.641;
+      case "battle_legendary_riders": //SWSH Ice & Shadow Rider Calyrex Battle
+        return 18.155;
+      case "battle_legendary_birds_galar": //SWSH Galarian Legendary Birds Battle
+        return 0.175;
+      case "battle_legendary_ruinous": //SV Treasures of Ruin Battle
+        return 6.333;
+      case "battle_legendary_kor_mir": //SV Depths of Area Zero Battle
+        return 6.442;
+      case "battle_legendary_loyal_three": //SV Loyal Three Battle
+        return 6.500;
+      case "battle_legendary_ogerpon": //SV Ogerpon Battle
+        return 14.335;
+      case "battle_legendary_terapagos": //SV Terapagos Battle
+        return 24.377;
+      case "battle_legendary_pecharunt": //SV Pecharunt Battle
+        return 6.508;
+      case "battle_rival": //BW Rival Battle
+        return 14.110;
+      case "battle_rival_2": //BW N Battle
+        return 17.714;
+      case "battle_rival_3": //BW Final N Battle
+        return 17.586;
+      case "battle_trainer": //BW Trainer Battle
+        return 13.686;
+      case "battle_wild": //BW Wild Battle
+        return 12.703;
+      case "battle_wild_strong": //BW Strong Wild Battle
+        return 13.940;
+      case "end_summit": //PMD RTDX Sky Tower Summit
+        return 30.025;
+      case "battle_rocket_grunt": //HGSS Team Rocket Battle
+        return 12.707;
+      case "battle_aqua_magma_grunt": //ORAS Team Aqua & Magma Battle
+        return 12.062;
+      case "battle_galactic_grunt": //BDSP Team Galactic Battle
+        return 13.043;
+      case "battle_plasma_grunt": //BW Team Plasma Battle
+        return 12.974;
+      case "battle_flare_grunt": //XY Team Flare Battle
+        return 4.228;
+      case "battle_aether_grunt": // SM Aether Foundation Battle
+        return 16.00;
+      case "battle_skull_grunt": // SM Team Skull Battle
+        return 20.87;
+      case "battle_macro_grunt": // SWSH Trainer Battle
+        return 11.56;
+      case "battle_star_grunt": //SV Team Star Battle
+        return 133.362;
+      case "battle_galactic_admin": //BDSP Team Galactic Admin Battle
+        return 11.997;
+      case "battle_skull_admin": //SM Team Skull Admin Battle
+        return 15.463;
+      case "battle_oleana": //SWSH Oleana Battle
+        return 14.110;
+      case "battle_star_admin": //SV Team Star Boss Battle
+        return 9.493;
+      case "battle_rocket_boss": //USUM Giovanni Battle
+        return 9.115;
+      case "battle_aqua_magma_boss": //ORAS Archie & Maxie Battle
+        return 14.847;
+      case "battle_galactic_boss": //BDSP Cyrus Battle
+        return 106.962;
+      case "battle_plasma_boss": //B2W2 Ghetsis Battle
+        return 25.624;
+      case "battle_flare_boss": //XY Lysandre Battle
+        return 8.085;
+      case "battle_aether_boss": //SM Lusamine Battle
+        return 11.33;
+      case "battle_skull_boss": //SM Guzma Battle
+        return 13.13;
+      case "battle_macro_boss": //SWSH Rose Battle
+        return 11.42;
+      case "battle_star_boss": //SV Cassiopeia Battle
+        return 25.764;
+      case "mystery_encounter_gen_5_gts": // BW GTS
+        return 8.52;
+      case "mystery_encounter_gen_6_gts": // XY GTS
+        return 9.24;
+      case "mystery_encounter_fun_and_games": // EoS Guildmaster Wigglytuff
+        return 4.78;
+      case "mystery_encounter_weird_dream": // EoS Temporal Spire
+        return 41.42;
+      case "mystery_encounter_delibirdy": // Firel Delibirdy
+        return 82.28;
     }
 
     return 0;

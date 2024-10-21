@@ -44,32 +44,32 @@ export const ATrainersTestEncounter: MysteryEncounter =
       let spriteKeys;
       let trainerNameKey: string;
       switch (randSeedInt(5)) {
-      default:
-      case 0:
-        trainerType = TrainerType.BUCK;
-        spriteKeys = getSpriteKeysFromSpecies(Species.CLAYDOL);
-        trainerNameKey = "buck";
-        break;
-      case 1:
-        trainerType = TrainerType.CHERYL;
-        spriteKeys = getSpriteKeysFromSpecies(Species.BLISSEY);
-        trainerNameKey = "cheryl";
-        break;
-      case 2:
-        trainerType = TrainerType.MARLEY;
-        spriteKeys = getSpriteKeysFromSpecies(Species.ARCANINE);
-        trainerNameKey = "marley";
-        break;
-      case 3:
-        trainerType = TrainerType.MIRA;
-        spriteKeys = getSpriteKeysFromSpecies(Species.ALAKAZAM, false, 1);
-        trainerNameKey = "mira";
-        break;
-      case 4:
-        trainerType = TrainerType.RILEY;
-        spriteKeys = getSpriteKeysFromSpecies(Species.LUCARIO, false, 1);
-        trainerNameKey = "riley";
-        break;
+        default:
+        case 0:
+          trainerType = TrainerType.BUCK;
+          spriteKeys = getSpriteKeysFromSpecies(Species.CLAYDOL);
+          trainerNameKey = "buck";
+          break;
+        case 1:
+          trainerType = TrainerType.CHERYL;
+          spriteKeys = getSpriteKeysFromSpecies(Species.BLISSEY);
+          trainerNameKey = "cheryl";
+          break;
+        case 2:
+          trainerType = TrainerType.MARLEY;
+          spriteKeys = getSpriteKeysFromSpecies(Species.ARCANINE);
+          trainerNameKey = "marley";
+          break;
+        case 3:
+          trainerType = TrainerType.MIRA;
+          spriteKeys = getSpriteKeysFromSpecies(Species.ALAKAZAM, false, 1);
+          trainerNameKey = "mira";
+          break;
+        case 4:
+          trainerType = TrainerType.RILEY;
+          spriteKeys = getSpriteKeysFromSpecies(Species.LUCARIO, false, 1);
+          trainerNameKey = "riley";
+          break;
       }
 
       // Dialogue and tokens for trainer

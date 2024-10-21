@@ -354,79 +354,79 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
       }
     } else {
       switch (button) {
-      case Button.UP:
-        if (this.rowCursor === 0 && this.cursor === 3) {
-          success = this.setCursor(0);
-        } else if (this.rowCursor < this.shopOptionsRows.length + 1) {
-          success = this.setRowCursor(this.rowCursor + 1);
-        }
-        break;
-      case Button.DOWN:
-        if (this.rowCursor) {
-          success = this.setRowCursor(this.rowCursor - 1);
-        } else if (this.lockRarityButtonContainer.visible && this.cursor === 0) {
-          success = this.setCursor(3);
-        }
-        break;
-      case Button.LEFT:
-        if (!this.rowCursor) {
-          switch (this.cursor) {
-          case 0:
-            success = false;
-            break;
-          case 1:
-            if (this.lockRarityButtonContainer.visible) {
-              success = this.setCursor(3);
-            } else {
-              success = this.rerollButtonContainer.visible && this.setCursor(0);
-            }
-            break;
-          case 2:
-            if (this.transferButtonContainer.visible) {
-              success = this.setCursor(1);
-            } else if (this.rerollButtonContainer.visible) {
-              success = this.setCursor(0);
-            } else {
-              success = false;
-            }
-            break;
+        case Button.UP:
+          if (this.rowCursor === 0 && this.cursor === 3) {
+            success = this.setCursor(0);
+          } else if (this.rowCursor < this.shopOptionsRows.length + 1) {
+            success = this.setRowCursor(this.rowCursor + 1);
           }
-        } else if (this.cursor) {
-          success = this.setCursor(this.cursor - 1);
-        } else if (this.rowCursor === 1 && this.rerollButtonContainer.visible) {
-          success = this.setRowCursor(0);
-        }
-        break;
-      case Button.RIGHT:
-        if (!this.rowCursor) {
-          switch (this.cursor) {
-          case 0:
-            if (this.transferButtonContainer.visible) {
-              success = this.setCursor(1);
-            } else {
-              success = this.setCursor(2);
-            }
-            break;
-          case 1:
-            success = this.setCursor(2);
-            break;
-          case 2:
-            success = false;
-            break;
-          case 3:
-            if (this.transferButtonContainer.visible) {
-              success = this.setCursor(1);
-            } else {
-              success = this.setCursor(2);
-            }
-            break;
+          break;
+        case Button.DOWN:
+          if (this.rowCursor) {
+            success = this.setRowCursor(this.rowCursor - 1);
+          } else if (this.lockRarityButtonContainer.visible && this.cursor === 0) {
+            success = this.setCursor(3);
           }
-        } else if (this.cursor < this.getRowItems(this.rowCursor) - 1) {
-          success = this.setCursor(this.cursor + 1);
-        } else if (this.rowCursor === 1 && this.transferButtonContainer.visible) {
-          success = this.setRowCursor(0);
-        }
-        break;
+          break;
+        case Button.LEFT:
+          if (!this.rowCursor) {
+            switch (this.cursor) {
+              case 0:
+                success = false;
+                break;
+              case 1:
+                if (this.lockRarityButtonContainer.visible) {
+                  success = this.setCursor(3);
+                } else {
+                  success = this.rerollButtonContainer.visible && this.setCursor(0);
+                }
+                break;
+              case 2:
+                if (this.transferButtonContainer.visible) {
+                  success = this.setCursor(1);
+                } else if (this.rerollButtonContainer.visible) {
+                  success = this.setCursor(0);
+                } else {
+                  success = false;
+                }
+                break;
+            }
+          } else if (this.cursor) {
+            success = this.setCursor(this.cursor - 1);
+          } else if (this.rowCursor === 1 && this.rerollButtonContainer.visible) {
+            success = this.setRowCursor(0);
+          }
+          break;
+        case Button.RIGHT:
+          if (!this.rowCursor) {
+            switch (this.cursor) {
+              case 0:
+                if (this.transferButtonContainer.visible) {
+                  success = this.setCursor(1);
+                } else {
+                  success = this.setCursor(2);
+                }
+                break;
+              case 1:
+                success = this.setCursor(2);
+                break;
+              case 2:
+                success = false;
+                break;
+              case 3:
+                if (this.transferButtonContainer.visible) {
+                  success = this.setCursor(1);
+                } else {
+                  success = this.setCursor(2);
+                }
+                break;
+            }
+          } else if (this.cursor < this.getRowItems(this.rowCursor) - 1) {
+            success = this.setCursor(this.cursor + 1);
+          } else if (this.rowCursor === 1 && this.transferButtonContainer.visible) {
+            success = this.setRowCursor(0);
+          }
+          break;
       }
     }
 
@@ -522,12 +522,12 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
 
   private getRowItems(rowCursor: integer): integer {
     switch (rowCursor) {
-    case 0:
-      return 3;
-    case 1:
-      return this.options.length;
-    default:
-      return this.shopOptionsRows[this.shopOptionsRows.length - (rowCursor - 1)].length;
+      case 0:
+        return 3;
+      case 1:
+        return this.options.length;
+      default:
+        return this.shopOptionsRows[this.shopOptionsRows.length - (rowCursor - 1)].length;
     }
   }
 

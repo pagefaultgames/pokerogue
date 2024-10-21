@@ -164,23 +164,23 @@ export class MovePhase extends BattlePhase {
       let healed = false;
 
       switch (this.pokemon.status.effect) {
-      case StatusEffect.PARALYSIS:
-        if (!this.pokemon.randSeedInt(4)) {
-          activated = true;
-          this.cancelled = true;
-        }
-        break;
-      case StatusEffect.SLEEP:
-        applyMoveAttrs(BypassSleepAttr, this.pokemon, null, this.move.getMove());
-        healed = this.pokemon.status.turnCount === this.pokemon.status.cureTurn;
-        activated = !healed && !this.pokemon.getTag(BattlerTagType.BYPASS_SLEEP);
-        this.cancelled = activated;
-        break;
-      case StatusEffect.FREEZE:
-        healed = !!this.move.getMove().findAttr(attr => attr instanceof HealStatusEffectAttr && attr.selfTarget && attr.isOfEffect(StatusEffect.FREEZE)) || !this.pokemon.randSeedInt(5);
-        activated = !healed;
-        this.cancelled = activated;
-        break;
+        case StatusEffect.PARALYSIS:
+          if (!this.pokemon.randSeedInt(4)) {
+            activated = true;
+            this.cancelled = true;
+          }
+          break;
+        case StatusEffect.SLEEP:
+          applyMoveAttrs(BypassSleepAttr, this.pokemon, null, this.move.getMove());
+          healed = this.pokemon.status.turnCount === this.pokemon.status.cureTurn;
+          activated = !healed && !this.pokemon.getTag(BattlerTagType.BYPASS_SLEEP);
+          this.cancelled = activated;
+          break;
+        case StatusEffect.FREEZE:
+          healed = !!this.move.getMove().findAttr(attr => attr instanceof HealStatusEffectAttr && attr.selfTarget && attr.isOfEffect(StatusEffect.FREEZE)) || !this.pokemon.randSeedInt(5);
+          activated = !healed;
+          this.cancelled = activated;
+          break;
       }
 
       if (activated) {

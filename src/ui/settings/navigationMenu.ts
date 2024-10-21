@@ -198,12 +198,12 @@ export default class NavigationMenu extends Phaser.GameObjects.Container {
   navigate(button: Button): boolean {
     const navigationManager = NavigationManager.getInstance();
     switch (button) {
-    case Button.CYCLE_FORM:
-      navigationManager.navigate(this.scene, LEFT);
-      return true;
-    case Button.CYCLE_SHINY:
-      navigationManager.navigate(this.scene, RIGHT);
-      return true;
+      case Button.CYCLE_FORM:
+        navigationManager.navigate(this.scene, LEFT);
+        return true;
+      case Button.CYCLE_SHINY:
+        navigationManager.navigate(this.scene, RIGHT);
+        return true;
     }
     return false;
   }

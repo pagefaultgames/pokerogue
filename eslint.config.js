@@ -1,5 +1,5 @@
 import tseslint from '@typescript-eslint/eslint-plugin';
-import stylisticTs from '@stylistic/eslint-plugin-ts'
+import stylisticTs from '@stylistic/eslint-plugin-ts';
 import parser from '@typescript-eslint/parser';
 import importX from 'eslint-plugin-import-x';
 
@@ -17,7 +17,7 @@ export default [
         },
         rules: {
             "eqeqeq": ["error", "always"], // Enforces the use of === and !== instead of == and !=
-            "indent": ["error", 2], // Enforces a 2-space indentation
+            "indent": ["error", 2, { "SwitchCase": 1 }], // Enforces a 2-space indentation
             "quotes": ["error", "double"], // Enforces the use of double quotes for strings
             "no-var": "error", // Disallows the use of var, enforcing let or const instead
             "prefer-const": "error", // Prefers the use of const for variables that are never reassigned
