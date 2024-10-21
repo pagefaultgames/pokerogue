@@ -19,7 +19,6 @@ import i18next from "#app/plugins/i18n";
 import { doPokemonTransformationSequence, TransformationScreenPosition } from "#app/data/mystery-encounters/utils/encounter-transformation-sequence";
 import { getLevelTotalExp } from "#app/data/exp";
 import { Stat } from "#enums/stat";
-import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
 import { Challenges } from "#enums/challenges";
 import { ModifierTier } from "#app/modifier/modifier-tier";
 import { PlayerGender } from "#enums/player-gender";
@@ -113,7 +112,7 @@ export const WeirdDreamEncounter: MysteryEncounter =
     .withEncounterTier(MysteryEncounterTier.ROGUE)
     .withDisallowedChallenges(Challenges.SINGLE_TYPE, Challenges.SINGLE_GENERATION)
     // TODO: should reset minimum wave to 10 when there are more Rogue tiers in pool. Matching Dark Deal minimum for now.
-    .withSceneWaveRangeRequirement(30, CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES[1])
+    .withSceneWaveRangeRequirement(30, 140)
     .withIntroSpriteConfigs([
       {
         spriteKey: "weird_dream_woman",
