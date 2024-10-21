@@ -12,6 +12,7 @@ import { BattleType } from "../battle";
 import { RunEntry } from "../system/game-data";
 import { PlayerGender } from "#enums/player-gender";
 import { TrainerVariant } from "../field/trainer";
+import { RunDisplayMode } from "#app/ui/run-info-ui-handler";
 
 export type RunSelectCallback = (cursor: number) => void;
 
@@ -104,7 +105,7 @@ export default class RunHistoryUiHandler extends MessageUiHandler {
       if (button === Button.ACTION) {
         const cursor = this.cursor + this.scrollCursor;
         if (this.runs[cursor]) {
-          this.scene.ui.setOverlayMode(Mode.RUN_INFO, this.runs[cursor].entryData, true);
+          this.scene.ui.setOverlayMode(Mode.RUN_INFO, this.runs[cursor].entryData, RunDisplayMode.RUN_HISTORY, true);
         } else {
           return false;
         }
@@ -117,28 +118,28 @@ export default class RunHistoryUiHandler extends MessageUiHandler {
       }
     } else if (this.runs.length > 0) {
       switch (button) {
-      case Button.UP:
-        if (this.cursor) {
-          success = this.setCursor(this.cursor - 1);
-        } else if (this.scrollCursor) {
-          success = this.setScrollCursor(this.scrollCursor - 1);
-        } else if (this.runs.length > 1) {
+        case Button.UP:
+          if (this.cursor) {
+            success = this.setCursor(this.cursor - 1);
+          } else if (this.scrollCursor) {
+            success = this.setScrollCursor(this.scrollCursor - 1);
+          } else if (this.runs.length > 1) {
           // wrap around to the bottom
-          success = this.setCursor(Math.min(this.runs.length - 1, this.maxRows - 1));
-          success = this.setScrollCursor(Math.max(0, this.runs.length - this.maxRows)) || success;
-        }
-        break;
-      case Button.DOWN:
-        if (this.cursor < Math.min(this.maxRows - 1, this.runs.length - this.scrollCursor - 1)) {
-          success = this.setCursor(this.cursor + 1);
-        } else if (this.scrollCursor < this.runs.length - this.maxRows) {
-          success = this.setScrollCursor(this.scrollCursor + 1);
-        } else if (this.runs.length > 1) {
+            success = this.setCursor(Math.min(this.runs.length - 1, this.maxRows - 1));
+            success = this.setScrollCursor(Math.max(0, this.runs.length - this.maxRows)) || success;
+          }
+          break;
+        case Button.DOWN:
+          if (this.cursor < Math.min(this.maxRows - 1, this.runs.length - this.scrollCursor - 1)) {
+            success = this.setCursor(this.cursor + 1);
+          } else if (this.scrollCursor < this.runs.length - this.maxRows) {
+            success = this.setScrollCursor(this.scrollCursor + 1);
+          } else if (this.runs.length > 1) {
           // wrap around to the top
-          success = this.setCursor(0);
-          success = this.setScrollCursor(0) || success;
-        }
-        break;
+            success = this.setCursor(0);
+            success = this.setScrollCursor(0) || success;
+          }
+          break;
       }
     }
 
@@ -332,19 +333,19 @@ class RunEntryContainer extends Phaser.GameObjects.Container {
     const gameModeLabel = addTextObject(this.scene, 8, 19, "", TextStyle.WINDOW);
     let mode = "";
     switch (data.gameMode) {
-    case GameModes.DAILY:
-      mode = i18next.t("gameMode:dailyRun");
-      break;
-    case GameModes.SPLICED_ENDLESS:
-    case GameModes.ENDLESS:
-      mode = i18next.t("gameMode:endless");
-      break;
-    case GameModes.CLASSIC:
-      mode = i18next.t("gameMode:classic");
-      break;
-    case GameModes.CHALLENGE:
-      mode = i18next.t("gameMode:challenge");
-      break;
+      case GameModes.DAILY:
+        mode = i18next.t("gameMode:dailyRun");
+        break;
+      case GameModes.SPLICED_ENDLESS:
+      case GameModes.ENDLESS:
+        mode = i18next.t("gameMode:endless");
+        break;
+      case GameModes.CLASSIC:
+        mode = i18next.t("gameMode:classic");
+        break;
+      case GameModes.CHALLENGE:
+        mode = i18next.t("gameMode:challenge");
+        break;
     }
     gameModeLabel.appendText(mode, false);
     if (data.gameMode === GameModes.SPLICED_ENDLESS) {

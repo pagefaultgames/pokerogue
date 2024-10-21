@@ -8,10 +8,6 @@ import { SpeciesFormChangePreMoveTrigger } from "#app/data/pokemon-forms";
 import { getStatusEffectActivationText, getStatusEffectHealText } from "#app/data/status-effect";
 import { Type } from "#app/data/type";
 import { getTerrainBlockMessage } from "#app/data/weather";
-import { Abilities } from "#app/enums/abilities";
-import { BattlerTagType } from "#app/enums/battler-tag-type";
-import { Moves } from "#app/enums/moves";
-import { StatusEffect } from "#app/enums/status-effect";
 import { MoveUsedEvent } from "#app/events/battle-scene";
 import Pokemon, { MoveResult, PokemonMove, TurnMove } from "#app/field/pokemon";
 import { getPokemonNameWithAffix } from "#app/messages";
@@ -20,7 +16,11 @@ import { CommonAnimPhase } from "#app/phases/common-anim-phase";
 import { MoveEffectPhase } from "#app/phases/move-effect-phase";
 import { MoveEndPhase } from "#app/phases/move-end-phase";
 import { ShowAbilityPhase } from "#app/phases/show-ability-phase";
-import * as Utils from "#app/utils";
+import { BooleanHolder, NumberHolder } from "#app/utils";
+import { Abilities } from "#enums/abilities";
+import { BattlerTagType } from "#enums/battler-tag-type";
+import { Moves } from "#enums/moves";
+import { StatusEffect } from "#enums/status-effect";
 import i18next from "i18next";
 
 export class MovePhase extends BattlePhase {
@@ -89,7 +89,7 @@ export class MovePhase extends BattlePhase {
     this.cancelled = true;
   }
 
-  public start() {
+  public start(): void {
     super.start();
 
     console.log(Moves[this.move.moveId]);
@@ -128,7 +128,9 @@ export class MovePhase extends BattlePhase {
 
     this.lapsePreMoveAndMoveTags();
 
-    this.resolveFinalPreMoveCancellationChecks();
+    if (!(this.failed || this.cancelled)) {
+      this.resolveFinalPreMoveCancellationChecks();
+    }
 
     if (this.cancelled || this.failed) {
       this.handlePreMoveFailures();
@@ -140,47 +142,48 @@ export class MovePhase extends BattlePhase {
   }
 
   /** Check for cancellation edge cases - no targets remaining, or {@linkcode Moves.NONE} is in the queue */
-  protected resolveFinalPreMoveCancellationChecks() {
+  protected resolveFinalPreMoveCancellationChecks(): void {
     const targets = this.getActiveTargetPokemon();
     const moveQueue = this.pokemon.getMoveQueue();
 
     if (targets.length === 0 || (moveQueue.length && moveQueue[0].move === Moves.NONE)) {
+      this.showMoveText();
       this.showFailedText();
-      this.cancelled = true;
+      this.cancel();
     }
   }
 
-  public getActiveTargetPokemon() {
+  public getActiveTargetPokemon(): Pokemon[] {
     return this.scene.getField(true).filter(p => this.targets.includes(p.getBattlerIndex()));
   }
 
   /**
    * Handles {@link StatusEffect.SLEEP Sleep}/{@link StatusEffect.PARALYSIS Paralysis}/{@link StatusEffect.FREEZE Freeze} rolls and side effects.
    */
-  protected resolvePreMoveStatusEffects() {
+  protected resolvePreMoveStatusEffects(): void {
     if (!this.followUp && this.pokemon.status && !this.pokemon.status.isPostTurn()) {
       this.pokemon.status.incrementTurn();
       let activated = false;
       let healed = false;
 
       switch (this.pokemon.status.effect) {
-      case StatusEffect.PARALYSIS:
-        if (!this.pokemon.randSeedInt(4)) {
-          activated = true;
-          this.cancelled = true;
-        }
-        break;
-      case StatusEffect.SLEEP:
-        applyMoveAttrs(BypassSleepAttr, this.pokemon, null, this.move.getMove());
-        healed = this.pokemon.status.turnCount === this.pokemon.status.cureTurn;
-        activated = !healed && !this.pokemon.getTag(BattlerTagType.BYPASS_SLEEP);
-        this.cancelled = activated;
-        break;
-      case StatusEffect.FREEZE:
-        healed = !!this.move.getMove().findAttr(attr => attr instanceof HealStatusEffectAttr && attr.selfTarget && attr.isOfEffect(StatusEffect.FREEZE)) || !this.pokemon.randSeedInt(5);
-        activated = !healed;
-        this.cancelled = activated;
-        break;
+        case StatusEffect.PARALYSIS:
+          if (!this.pokemon.randSeedInt(4)) {
+            activated = true;
+            this.cancelled = true;
+          }
+          break;
+        case StatusEffect.SLEEP:
+          applyMoveAttrs(BypassSleepAttr, this.pokemon, null, this.move.getMove());
+          healed = this.pokemon.status.turnCount === this.pokemon.status.cureTurn;
+          activated = !healed && !this.pokemon.getTag(BattlerTagType.BYPASS_SLEEP);
+          this.cancelled = activated;
+          break;
+        case StatusEffect.FREEZE:
+          healed = !!this.move.getMove().findAttr(attr => attr instanceof HealStatusEffectAttr && attr.selfTarget && attr.isOfEffect(StatusEffect.FREEZE)) || !this.pokemon.randSeedInt(5);
+          activated = !healed;
+          this.cancelled = activated;
+          break;
       }
 
       if (activated) {
@@ -198,7 +201,7 @@ export class MovePhase extends BattlePhase {
    * Lapse {@linkcode BattlerTagLapseType.PRE_MOVE PRE_MOVE} tags that trigger before a move is used, regardless of whether or not it failed.
    * Also lapse {@linkcode BattlerTagLapseType.MOVE MOVE} tags if the move should be successful.
    */
-  protected lapsePreMoveAndMoveTags() {
+  protected lapsePreMoveAndMoveTags(): void {
     this.pokemon.lapseTags(BattlerTagLapseType.PRE_MOVE);
 
     // TODO: does this intentionally happen before the no targets/Moves.NONE on queue cancellation case is checked?
@@ -207,7 +210,7 @@ export class MovePhase extends BattlePhase {
     }
   }
 
-  protected useMove() {
+  protected useMove(): void {
     const targets = this.getActiveTargetPokemon();
     const moveQueue = this.pokemon.getMoveQueue();
 
@@ -217,7 +220,8 @@ export class MovePhase extends BattlePhase {
     this.showMoveText();
 
     // TODO: Clean up implementation of two-turn moves.
-    if (moveQueue.length > 0) { // Using .shift here clears out two turn moves once they've been used
+    if (moveQueue.length > 0) {
+      // Using .shift here clears out two turn moves once they've been used
       this.ignorePp = moveQueue.shift()?.ignorePP ?? false;
     }
 
@@ -226,7 +230,7 @@ export class MovePhase extends BattlePhase {
       const ppUsed = 1 + this.getPpIncreaseFromPressure(targets);
 
       this.move.usePp(ppUsed);
-      this.scene.eventTarget.dispatchEvent(new MoveUsedEvent(this.pokemon?.id, this.move.getMove(), ppUsed));
+      this.scene.eventTarget.dispatchEvent(new MoveUsedEvent(this.pokemon?.id, this.move.getMove(), this.move.ppUsed));
     }
 
     // Update the battle's "last move" pointer, unless we're currently mimicking a move.
@@ -275,7 +279,7 @@ export class MovePhase extends BattlePhase {
       this.pokemon.pushMoveHistory({ move: this.move.moveId, targets: this.targets, result: MoveResult.FAIL, virtual: this.move.virtual });
 
       let failedText: string | undefined;
-      const failureMessage = move.getFailedText(this.pokemon, targets[0], move, new Utils.BooleanHolder(false));
+      const failureMessage = move.getFailedText(this.pokemon, targets[0], move, new BooleanHolder(false));
 
       if (failureMessage) {
         failedText = failureMessage;
@@ -299,7 +303,7 @@ export class MovePhase extends BattlePhase {
    * Queues a {@linkcode MoveEndPhase} if the move wasn't a {@linkcode followUp} and {@linkcode canMove()} returns `true`,
    * then ends the phase.
    */
-  public end() {
+  public end(): void {
     if (!this.followUp && this.canMove()) {
       this.scene.unshiftPhase(new MoveEndPhase(this.scene, this.pokemon.getBattlerIndex()));
     }
@@ -313,7 +317,7 @@ export class MovePhase extends BattlePhase {
    *
    * TODO: This hardcodes the PP increase at 1 per opponent, rather than deferring to the ability.
    */
-  public getPpIncreaseFromPressure(targets: Pokemon[]) {
+  public getPpIncreaseFromPressure(targets: Pokemon[]): number {
     const foesWithPressure = this.pokemon.getOpponents().filter(o => targets.includes(o) && o.isActive(true) && o.hasAbilityWithAttr(IncreasePpAbAttr));
     return foesWithPressure.length;
   }
@@ -323,10 +327,10 @@ export class MovePhase extends BattlePhase {
    * - Move redirection abilities, effects, etc.
    * - Counterattacks, which pass a special value into the `targets` constructor param (`[`{@linkcode BattlerIndex.ATTACKER}`]`).
    */
-  protected resolveRedirectTarget() {
+  protected resolveRedirectTarget(): void {
     if (this.targets.length === 1) {
       const currentTarget = this.targets[0];
-      const redirectTarget = new Utils.NumberHolder(currentTarget);
+      const redirectTarget = new NumberHolder(currentTarget);
 
       // check move redirection abilities of every pokemon *except* the user.
       this.scene.getField(true).filter(p => p !== this.pokemon).forEach(p => applyAbAttrs(RedirectMoveAbAttr, p, null, false, this.move.moveId, redirectTarget));
@@ -372,7 +376,7 @@ export class MovePhase extends BattlePhase {
    * If there is no last attacker, or they are no longer on the field, a message is displayed and the
    * move is marked for failure.
    */
-  protected resolveCounterAttackTarget() {
+  protected resolveCounterAttackTarget(): void {
     if (this.targets.length === 1 && this.targets[0] === BattlerIndex.ATTACKER) {
       if (this.pokemon.turnData.attacksReceived.length) {
         this.targets[0] = this.pokemon.turnData.attacksReceived[0].sourceBattlerIndex;
@@ -411,7 +415,7 @@ export class MovePhase extends BattlePhase {
    *
    *   TODO: handle charge moves more gracefully
    */
-  protected handlePreMoveFailures() {
+  protected handlePreMoveFailures(): void {
     if (this.cancelled || this.failed) {
       if (this.failed) {
         const ppUsed = this.ignorePp ? 0 : 1;

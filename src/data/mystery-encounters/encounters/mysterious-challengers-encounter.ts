@@ -125,6 +125,7 @@ export const MysteriousChallengersEncounter: MysteryEncounter =
 
       return true;
     })
+    .setLocalizationKey(`${namespace}`)
     .withTitle(`${namespace}:title`)
     .withDescription(`${namespace}:description`)
     .withQuery(`${namespace}:query`)
@@ -146,11 +147,11 @@ export const MysteriousChallengersEncounter: MysteryEncounter =
         setEncounterRewards(scene, { guaranteedModifierTypeFuncs: [ modifierTypes.TM_COMMON, modifierTypes.TM_GREAT, modifierTypes.MEMORY_MUSHROOM ], fillRemaining: true });
 
         // Seed offsets to remove possibility of different trainers having exact same teams
-        let ret;
+        let initBattlePromise: Promise<void>;
         scene.executeWithSeedOffset(() => {
-          ret = initBattleWithEnemyConfig(scene, config);
+          initBattlePromise = initBattleWithEnemyConfig(scene, config);
         }, scene.currentBattle.waveIndex * 10);
-        return ret;
+        await initBattlePromise!;
       }
     )
     .withSimpleOption(
@@ -171,11 +172,11 @@ export const MysteriousChallengersEncounter: MysteryEncounter =
         setEncounterRewards(scene, { guaranteedModifierTiers: [ ModifierTier.ULTRA, ModifierTier.ULTRA, ModifierTier.GREAT, ModifierTier.GREAT ], fillRemaining: true });
 
         // Seed offsets to remove possibility of different trainers having exact same teams
-        let ret;
+        let initBattlePromise: Promise<void>;
         scene.executeWithSeedOffset(() => {
-          ret = initBattleWithEnemyConfig(scene, config);
+          initBattlePromise = initBattleWithEnemyConfig(scene, config);
         }, scene.currentBattle.waveIndex * 100);
-        return ret;
+        await initBattlePromise!;
       }
     )
     .withSimpleOption(
@@ -199,11 +200,11 @@ export const MysteriousChallengersEncounter: MysteryEncounter =
         setEncounterRewards(scene, { guaranteedModifierTiers: [ ModifierTier.ROGUE, ModifierTier.ROGUE, ModifierTier.ULTRA, ModifierTier.GREAT ], fillRemaining: true });
 
         // Seed offsets to remove possibility of different trainers having exact same teams
-        let ret;
+        let initBattlePromise: Promise<void>;
         scene.executeWithSeedOffset(() => {
-          ret = initBattleWithEnemyConfig(scene, config);
+          initBattlePromise = initBattleWithEnemyConfig(scene, config);
         }, scene.currentBattle.waveIndex * 1000);
-        return ret;
+        await initBattlePromise!;
       }
     )
     .withOutroDialogue([

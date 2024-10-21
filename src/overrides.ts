@@ -113,8 +113,8 @@ class DefaultOverrides {
   readonly STATUS_OVERRIDE: StatusEffect = StatusEffect.NONE;
   readonly GENDER_OVERRIDE: Gender | null = null;
   readonly MOVESET_OVERRIDE: Moves | Array<Moves> = [];
-  readonly SHINY_OVERRIDE: boolean = false;
-  readonly VARIANT_OVERRIDE: Variant = 0;
+  readonly SHINY_OVERRIDE: boolean | null = null;
+  readonly VARIANT_OVERRIDE: Variant | null = null;
 
   // --------------------------
   // OPPONENT / ENEMY OVERRIDES
@@ -134,8 +134,8 @@ class DefaultOverrides {
   readonly OPP_STATUS_OVERRIDE: StatusEffect = StatusEffect.NONE;
   readonly OPP_GENDER_OVERRIDE: Gender | null = null;
   readonly OPP_MOVESET_OVERRIDE: Moves | Array<Moves> = [];
-  readonly OPP_SHINY_OVERRIDE: boolean = false;
-  readonly OPP_VARIANT_OVERRIDE: Variant = 0;
+  readonly OPP_SHINY_OVERRIDE: boolean | null = null;
+  readonly OPP_VARIANT_OVERRIDE: Variant | null = null;
   readonly OPP_IVS_OVERRIDE: number | number[] = [];
   readonly OPP_FORM_OVERRIDES: Partial<Record<Species, number>> = {};
   /**
@@ -156,6 +156,7 @@ class DefaultOverrides {
   readonly EGG_VARIANT_OVERRIDE: VariantTier | null = null;
   readonly EGG_FREE_GACHA_PULLS_OVERRIDE: boolean = false;
   readonly EGG_GACHA_PULL_COUNT_OVERRIDE: number = 0;
+  readonly UNLIMITED_EGG_COUNT_OVERRIDE: boolean = false;
 
   // -------------------------
   // MYSTERY ENCOUNTER OVERRIDES

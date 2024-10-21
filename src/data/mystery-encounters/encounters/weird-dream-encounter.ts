@@ -12,7 +12,7 @@ import { IntegerHolder, isNullOrUndefined, randSeedInt, randSeedShuffle } from "
 import PokemonSpecies, { allSpecies, getPokemonSpecies } from "#app/data/pokemon-species";
 import { HiddenAbilityRateBoosterModifier, PokemonFormChangeItemModifier, PokemonHeldItemModifier } from "#app/modifier/modifier";
 import { achvs } from "#app/system/achv";
-import { MysteryEncounterPokemonData } from "#app/data/mystery-encounters/mystery-encounter-pokemon-data";
+import { CustomPokemonData } from "#app/data/custom-pokemon-data";
 import { showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
 import { modifierTypes } from "#app/modifier/modifier-type";
 import i18next from "#app/plugins/i18n";
@@ -125,6 +125,7 @@ export const WeirdDreamEncounter: MysteryEncounter =
         text: `${namespace}:intro_dialogue`,
       },
     ])
+    .setLocalizationKey(`${namespace}`)
     .withTitle(`${namespace}:title`)
     .withDescription(`${namespace}:description`)
     .withQuery(`${namespace}:query`)
@@ -378,10 +379,10 @@ async function doNewTeamPostProcess(scene: BattleScene, transformations: Pokemon
       newType = randSeedInt(18) as Type;
     }
     newTypes.push(newType);
-    if (!newPokemon.mysteryEncounterPokemonData) {
-      newPokemon.mysteryEncounterPokemonData = new MysteryEncounterPokemonData();
+    if (!newPokemon.customPokemonData) {
+      newPokemon.customPokemonData = new CustomPokemonData();
     }
-    newPokemon.mysteryEncounterPokemonData.types = newTypes;
+    newPokemon.customPokemonData.types = newTypes;
 
     for (const item of transformation.heldItems) {
       item.pokemonId = newPokemon.id;

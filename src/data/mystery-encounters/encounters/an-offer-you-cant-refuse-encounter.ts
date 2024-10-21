@@ -64,6 +64,7 @@ export const AnOfferYouCantRefuseEncounter: MysteryEncounter =
         speaker: `${namespace}:speaker`,
       },
     ])
+    .setLocalizationKey(`${namespace}`)
     .withTitle(`${namespace}:title`)
     .withDescription(`${namespace}:description`)
     .withQuery(`${namespace}:query`)
@@ -132,8 +133,8 @@ export const AnOfferYouCantRefuseEncounter: MysteryEncounter =
       MysteryEncounterOptionBuilder
         .newOptionWithMode(MysteryEncounterOptionMode.DISABLED_OR_SPECIAL)
         .withPrimaryPokemonRequirement(new CombinationPokemonRequirement(
-          new MoveRequirement(EXTORTION_MOVES),
-          new AbilityRequirement(EXTORTION_ABILITIES))
+          new MoveRequirement(EXTORTION_MOVES, true),
+          new AbilityRequirement(EXTORTION_ABILITIES, true))
         )
         .withDialogue({
           buttonLabel: `${namespace}:option.2.label`,

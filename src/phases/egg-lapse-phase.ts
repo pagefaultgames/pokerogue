@@ -33,7 +33,7 @@ export class EggLapsePhase extends Phase {
     if (eggsToHatchCount > 0) {
       if (eggsToHatchCount >= this.minEggsToSkip && this.scene.eggSkipPreference === 1) {
         this.scene.ui.showText(i18next.t("battle:eggHatching"), 0, () => {
-          // show prompt for skip
+          // show prompt for skip, blocking inputs for 1 second
           this.scene.ui.showText(i18next.t("battle:eggSkipPrompt"), 0);
           this.scene.ui.setModeWithoutClear(Mode.CONFIRM, () => {
             this.hatchEggsSkipped(eggsToHatch);
@@ -41,7 +41,8 @@ export class EggLapsePhase extends Phase {
           }, () => {
             this.hatchEggsRegular(eggsToHatch);
             this.end();
-          }
+          },
+          null, null, null, 1000, true
           );
         }, 100, true);
       } else if (eggsToHatchCount >= this.minEggsToSkip && this.scene.eggSkipPreference === 2) {
