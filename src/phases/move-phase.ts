@@ -24,6 +24,8 @@ import { StatusEffect } from "#enums/status-effect";
 import i18next from "i18next";
 
 export class MovePhase extends BattlePhase {
+  /** Used for tests, allows paralysis and freeze to be forced to activate */
+  public statusActivationOverride: boolean | null = null;
   protected _pokemon: Pokemon;
   protected _move: PokemonMove;
   protected _targets: BattlerIndex[];
@@ -168,25 +170,31 @@ export class MovePhase extends BattlePhase {
 
       switch (this.pokemon.status.effect) {
         case StatusEffect.PARALYSIS:
-          if (!this.pokemon.randSeedInt(4)) {
-            activated = true;
-            this.cancelled = true;
+          if (this.statusActivationOverride === false) {
+            break;
           }
+          activated = (!this.pokemon.randSeedInt(4) || this.statusActivationOverride === true);
           break;
         case StatusEffect.SLEEP:
           applyMoveAttrs(BypassSleepAttr, this.pokemon, null, this.move.getMove());
           healed = this.pokemon.status.turnCount === this.pokemon.status.cureTurn;
           activated = !healed && !this.pokemon.getTag(BattlerTagType.BYPASS_SLEEP);
-          this.cancelled = activated;
           break;
         case StatusEffect.FREEZE:
-          healed = !!this.move.getMove().findAttr(attr => attr instanceof HealStatusEffectAttr && attr.selfTarget && attr.isOfEffect(StatusEffect.FREEZE)) || !this.pokemon.randSeedInt(5);
+          healed =
+            !!this.move.getMove().findAttr((attr) =>
+              attr instanceof HealStatusEffectAttr
+              && attr.selfTarget
+              && attr.isOfEffect(StatusEffect.FREEZE))
+            || (!this.pokemon.randSeedInt(5) && this.statusActivationOverride !== true)
+            || this.statusActivationOverride === false;
+
           activated = !healed;
-          this.cancelled = activated;
           break;
       }
 
       if (activated) {
+        this.cancel();
         this.scene.queueMessage(getStatusEffectActivationText(this.pokemon.status.effect, getPokemonNameWithAffix(this.pokemon)));
         this.scene.unshiftPhase(new CommonAnimPhase(this.scene, this.pokemon.getBattlerIndex(), undefined, CommonAnim.POISON + (this.pokemon.status.effect - 1)));
       } else if (healed) {
