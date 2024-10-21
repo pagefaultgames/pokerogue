@@ -155,16 +155,16 @@ export default class BattleMessageUiHandler extends MessageUiHandler {
 
   clearText(): void {
     super.clearText();
-    if (this.message.getData("originalMaxLines")) {
-      this.message.setMaxLines(this.message.getData("originalMaxLines"));
+    if (this.message.data?.values?.originalMaxLines) {
+      this.message.setMaxLines(this.message.data?.values?.originalMaxLines);
       this.message.data.remove("originalMaxLines");
     }
-    if (this.message.getData("originalMaxWidth")) {
-      this.message.setWordWrapWidth(this.message.getData("originalMaxWidth"));
+    if (this.message.data?.values?.originalMaxWidth) {
+      this.message.setWordWrapWidth(this.message.data?.values?.originalMaxWidth);
       this.message.data.remove("originalMaxWidth");
     }
-    if (this.message.getData("originalFontSize")) {
-      this.message.setFontSize(this.message.getData("originalFontSize"));
+    if (this.message.data?.values?.originalFontSize) {
+      this.message.setFontSize(this.message.data?.values?.originalFontSize);
       this.message.data.remove("originalFontSize");
     }
   }

@@ -97,7 +97,7 @@ export default abstract class MessageUiHandler extends AwaitableUiHandler {
         }
       }
 
-      const wasTextAdjusted = this.message.getData("originalMaxWidth") || this.message.getData("originalFontSize") || this.message.getData("originalMaxLines");
+      const wasTextAdjusted = this.message.data?.values?.originalMaxWidth || this.message.data?.values?.originalFontSize || this.message.data?.values?.originalMaxLines;
       if (!!wasTextAdjusted) {
         const isWidthOverflow = (this.message.style.wordWrapWidth && this.textSize(newText).width > this.message.style.wordWrapWidth);
         const isHeightOverflow = (this.textHeight(newText) + (this.message.y / this.message.scale) > this.textHeight(text));
@@ -303,8 +303,8 @@ export default abstract class MessageUiHandler extends AwaitableUiHandler {
 
     // If any style changes were made in previous tryAdjustText() calls, revert to the original data.
     // [Note] Be aware that if dynamic styles are being applied to the same this.message from another source for attributes such as fontSize, maxLines, wordWrap, this may cause issues.
-    if (this.message.getData("originalMaxLines")) {
-      this.message.style.setMaxLines(this.message.getData("originalMaxLines"));
+    if (this.message.data?.values?.originalMaxLines) {
+      this.message.style.setMaxLines(this.message.data?.values?.originalMaxLines);
       this.message.data.remove("originalMaxLines");
     }
 
@@ -312,11 +312,11 @@ export default abstract class MessageUiHandler extends AwaitableUiHandler {
     const paddingY = posY / this.message.scale - this.message.lineSpacing;
 
     const maxHeight = referenceGuide.getBounds().height - (paddingY * 2);
-    const maxWidth = this.message.getData("originalMaxWidth") ?? Math.floor(opts?.maxWidth ?? this.message.style.wordWrapWidth ?? referenceGuide.getBounds().width) - paddingX;
-    this.message.setData("originalMaxWidth", this.message.getData("originalMaxWidth") ?? maxWidth);
+    const maxWidth = this.message.data?.values?.originalMaxWidth ?? Math.floor(opts?.maxWidth ?? this.message.style.wordWrapWidth ?? referenceGuide.getBounds().width) - paddingX;
+    this.message.setData("originalMaxWidth", this.message.data?.values?.originalMaxWidth ?? maxWidth);
     this.message.setWordWrapWidth(maxWidth);
 
-    const fontSize = this.message.getData("originalFontSize") ?? parseInt(this.message.style.fontSize.toString());
+    const fontSize = this.message.data?.values?.originalFontSize ?? parseInt(this.message.style.fontSize.toString());
     this.message.setData("originalFontSize", fontSize);
     this.message.setFontSize(fontSize);
 
@@ -362,7 +362,7 @@ export default abstract class MessageUiHandler extends AwaitableUiHandler {
       ) {
         this.message.setFontSize(getFontSize() - 1);
 
-        if (!this.message.getData("originalMaxLines")) {
+        if (!this.message.data?.values?.originalMaxLines) {
           this.message.setData("originalMaxLines", this.message.style.maxLines);
         }
         this.message.setMaxLines(Math.ceil(this.textHeight(text) / (this.textSize(text).lineHeight + posY + this.textWrapped(text).length)));
