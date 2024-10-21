@@ -56,7 +56,13 @@ export const MysteriousChallengersEncounter: MysteryEncounter =
 
       // Hard difficulty trainer is another random trainer, but with AVERAGE_BALANCED config
       // Number of mons is based off wave: 1-20 is 2, 20-40 is 3, etc. capping at 6 after wave 100
-      const hardTrainerType = scene.arena.randomTrainerType(scene.currentBattle.waveIndex);
+      let retries = 0;
+      let hardTrainerType = scene.arena.randomTrainerType(scene.currentBattle.waveIndex);
+      while (retries < 5 && hardTrainerType === normalTrainerType) {
+        // Will try to use a different trainer from the normal trainer type
+        hardTrainerType = scene.arena.randomTrainerType(scene.currentBattle.waveIndex);
+        retries++;
+      }
       const hardTemplate = new TrainerPartyCompoundTemplate(
         new TrainerPartyTemplate(1, PartyMemberStrength.STRONGER, false, true),
         new TrainerPartyTemplate(
