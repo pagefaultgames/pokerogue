@@ -217,7 +217,7 @@ export const FieryFalloutEncounter: MysteryEncounter =
         .newOptionWithMode(MysteryEncounterOptionMode.DISABLED_OR_SPECIAL)
         .withPrimaryPokemonRequirement(new CombinationPokemonRequirement(
           new TypeRequirement(Type.FIRE, true, 1),
-          new AbilityRequirement(FIRE_RESISTANT_ABILITIES)
+          new AbilityRequirement(FIRE_RESISTANT_ABILITIES, true)
         )) // Will set option3PrimaryName dialogue token automatically
         .withDialogue({
           buttonLabel: `${namespace}:option.3.label`,
