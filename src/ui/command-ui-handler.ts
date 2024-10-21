@@ -71,8 +71,13 @@ export default class CommandUiHandler extends UiHandler {
     const commandMessage = i18next.t("commandUiHandler:actionMessage", {  pokemonName: getPokemonNameWithAffix(commandPhase.getPokemon())  });
     messageHandler.tryAdjustText(commandMessage, {
       maxWidth: messageMaxWidth,
-      guideHeight: messageHandler.bg
+      guideHeight: messageHandler.movesWindowContainer,
+      padding: {
+        right: 0,
+        bottom: 8
+      }
     });
+    console.log(messageHandler.message);
 
     messageHandler.showText(commandMessage, 0);
 
