@@ -50,12 +50,12 @@ export default class RegistrationFormUiHandler extends FormModalUiHandler {
       error = error.slice(0, colonIndex);
     }
     switch (error) {
-    case "invalid username":
-      return i18next.t("menu:invalidRegisterUsername");
-    case "invalid password":
-      return i18next.t("menu:invalidRegisterPassword");
-    case "failed to add account record":
-      return i18next.t("menu:usernameAlreadyUsed");
+      case "invalid username":
+        return i18next.t("menu:invalidRegisterUsername");
+      case "invalid password":
+        return i18next.t("menu:invalidRegisterPassword");
+      case "failed to add account record":
+        return i18next.t("menu:usernameAlreadyUsed");
     }
 
     return super.getReadableErrorMessage(error);

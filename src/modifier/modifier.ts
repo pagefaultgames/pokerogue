@@ -11,7 +11,7 @@ import Pokemon, { type PlayerPokemon } from "#app/field/pokemon";
 import { getPokemonNameWithAffix } from "#app/messages";
 import Overrides from "#app/overrides";
 import { EvolutionPhase } from "#app/phases/evolution-phase";
-import { LearnMovePhase } from "#app/phases/learn-move-phase";
+import { LearnMovePhase, LearnMoveType } from "#app/phases/learn-move-phase";
 import { LevelUpPhase } from "#app/phases/level-up-phase";
 import { PokemonHealPhase } from "#app/phases/pokemon-heal-phase";
 import { achvs } from "#app/system/achv";
@@ -30,6 +30,7 @@ import { StatusEffect } from "#enums/status-effect";
 import i18next from "i18next";
 import { type DoubleBattleChanceBoosterModifierType, type EvolutionItemModifierType, type FormChangeItemModifierType, type ModifierOverride, type ModifierType, type PokemonBaseStatTotalModifierType, type PokemonExpBoosterModifierType, type PokemonFriendshipBoosterModifierType, type PokemonMoveAccuracyBoosterModifierType, type PokemonMultiHitModifierType, type TerastallizeModifierType, type TmModifierType, getModifierType, ModifierPoolType, ModifierTypeGenerator, modifierTypes, PokemonHeldItemModifierType } from "./modifier-type";
 import { Color, ShadowColor } from "#enums/color";
+import { FRIENDSHIP_GAIN_FROM_RARE_CANDY } from "#app/data/balance/starters";
 
 export type ModifierPredicate = (modifier: Modifier) => boolean;
 
@@ -1694,12 +1695,12 @@ export class TurnStatusEffectModifier extends PokemonHeldItemModifier {
     super(type, pokemonId, stackCount);
 
     switch (type.id) {
-    case "TOXIC_ORB":
-      this.effect = StatusEffect.TOXIC;
-      break;
-    case "FLAME_ORB":
-      this.effect = StatusEffect.BURN;
-      break;
+      case "TOXIC_ORB":
+        this.effect = StatusEffect.TOXIC;
+        break;
+      case "FLAME_ORB":
+        this.effect = StatusEffect.BURN;
+        break;
     }
   }
 
@@ -2180,7 +2181,7 @@ export class PokemonNatureChangeModifier extends ConsumablePokemonModifier {
    * @returns
    */
   override apply(playerPokemon: PlayerPokemon): boolean {
-    playerPokemon.natureOverride = this.nature;
+    playerPokemon.customPokemonData.nature = this.nature;
     let speciesId = playerPokemon.species.speciesId;
     playerPokemon.scene.gameData.dexData[speciesId].natureAttr |= 1 << (this.nature + 1);
 
@@ -2213,7 +2214,7 @@ export class PokemonLevelIncrementModifier extends ConsumablePokemonModifier {
       playerPokemon.levelExp = 0;
     }
 
-    playerPokemon.addFriendship(5);
+    playerPokemon.addFriendship(FRIENDSHIP_GAIN_FROM_RARE_CANDY);
 
     playerPokemon.scene.unshiftPhase(new LevelUpPhase(playerPokemon.scene, playerPokemon.scene.getParty().indexOf(playerPokemon), playerPokemon.level - levelCount.value, playerPokemon.level));
 
@@ -2235,7 +2236,7 @@ export class TmModifier extends ConsumablePokemonModifier {
    */
   override apply(playerPokemon: PlayerPokemon): boolean {
 
-    playerPokemon.scene.unshiftPhase(new LearnMovePhase(playerPokemon.scene, playerPokemon.scene.getParty().indexOf(playerPokemon), this.type.moveId, true));
+    playerPokemon.scene.unshiftPhase(new LearnMovePhase(playerPokemon.scene, playerPokemon.scene.getParty().indexOf(playerPokemon), this.type.moveId, LearnMoveType.TM));
 
     return true;
   }
@@ -2255,8 +2256,9 @@ export class RememberMoveModifier extends ConsumablePokemonModifier {
    * @param playerPokemon The {@linkcode PlayerPokemon} that should remember the move
    * @returns always `true`
    */
-  override apply(playerPokemon: PlayerPokemon): boolean {
-    playerPokemon.scene.unshiftPhase(new LearnMovePhase(playerPokemon.scene, playerPokemon.scene.getParty().indexOf(playerPokemon), playerPokemon.getLearnableLevelMoves()[this.levelMoveIndex]));
+  override apply(playerPokemon: PlayerPokemon, cost?: number): boolean {
+
+    playerPokemon.scene.unshiftPhase(new LearnMovePhase(playerPokemon.scene, playerPokemon.scene.getParty().indexOf(playerPokemon), playerPokemon.getLearnableLevelMoves()[this.levelMoveIndex], LearnMoveType.MEMORY, cost));
 
     return true;
   }
@@ -2682,15 +2684,15 @@ export class PokemonMultiHitModifier extends PokemonHeldItemModifier {
     count.value *= (this.getStackCount() + 1);
 
     switch (this.getStackCount()) {
-    case 1:
-      power.value *= 0.4;
-      break;
-    case 2:
-      power.value *= 0.25;
-      break;
-    case 3:
-      power.value *= 0.175;
-      break;
+      case 1:
+        power.value *= 0.4;
+        break;
+      case 2:
+        power.value *= 0.25;
+        break;
+      case 3:
+        power.value *= 0.175;
+        break;
     }
 
     return true;
@@ -3635,7 +3637,7 @@ export function overrideHeldItems(scene: BattleScene, pokemon: Pokemon, isPlayer
   }
 
   if (!isPlayer) {
-    scene.clearEnemyHeldItemModifiers();
+    scene.clearEnemyHeldItemModifiers(pokemon);
   }
 
   heldItemsOverride.forEach(item => {

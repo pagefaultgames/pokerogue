@@ -147,8 +147,8 @@ describe("The Pokemon Salesman - Mystery Encounter", () => {
 
       expect(scene.getParty().length).toBe(initialPartySize + 1);
 
-      const newlyPurchasedPokemon = scene.getParty().find(p => p.name === pokemonName);
-      expect(newlyPurchasedPokemon).toBeDefined();
+      const newlyPurchasedPokemon = scene.getParty()[scene.getParty().length - 1];
+      expect(newlyPurchasedPokemon.name).toBe(pokemonName);
       expect(newlyPurchasedPokemon!.moveset.length > 0).toBeTruthy();
     });
 

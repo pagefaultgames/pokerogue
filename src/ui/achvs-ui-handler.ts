@@ -40,7 +40,9 @@ export default class AchvsUiHandler extends MessageUiHandler {
   private iconsBg: Phaser.GameObjects.NineSlice;
   private icons: Phaser.GameObjects.Sprite[];
 
+  private titleBg: Phaser.GameObjects.NineSlice;
   private titleText: Phaser.GameObjects.Text;
+  private scoreContainer: Phaser.GameObjects.Container;
   private scoreText: Phaser.GameObjects.Text;
   private unlockText: Phaser.GameObjects.Text;
 
@@ -114,29 +116,31 @@ export default class AchvsUiHandler extends MessageUiHandler {
 
     const titleBg = addWindow(this.scene, 0, this.headerBg.height + this.iconsBg.height, 174, 24);
     titleBg.setOrigin(0, 0);
+    this.titleBg = titleBg;
 
     this.titleText = addTextObject(this.scene, 0, 0, "", TextStyle.WINDOW);
     const textSize = languageSettings[i18next.language]?.TextSize ?? this.titleText.style.fontSize;
     this.titleText.setFontSize(textSize);
-    this.titleText.setOrigin(0, 0);
     const titleBgCenterX = titleBg.x + titleBg.width / 2;
     const titleBgCenterY = titleBg.y + titleBg.height / 2;
     this.titleText.setOrigin(0.5, 0.5);
     this.titleText.setPosition(titleBgCenterX, titleBgCenterY);
 
-    const scoreBg = addWindow(this.scene, titleBg.x + titleBg.width, titleBg.y, 46, 24);
+    this.scoreContainer = this.scene.add.container(titleBg.x + titleBg.width, titleBg.y);
+    const scoreBg = addWindow(this.scene, 0, 0, 46, 24);
     scoreBg.setOrigin(0, 0);
+    this.scoreContainer.add(scoreBg);
 
-    this.scoreText = addTextObject(this.scene, 0, 0, "", TextStyle.WINDOW);
-    this.scoreText.setOrigin(0, 0);
-    this.scoreText.setPositionRelative(scoreBg, 8, 4);
+    this.scoreText = addTextObject(this.scene, scoreBg.width / 2, scoreBg.height / 2, "", TextStyle.WINDOW);
+    this.scoreText.setOrigin(0.5, 0.5);
+    this.scoreContainer.add(this.scoreText);
 
-    const unlockBg = addWindow(this.scene, scoreBg.x + scoreBg.width, scoreBg.y, 98, 24);
+    const unlockBg = addWindow(this.scene, this.scoreContainer.x + scoreBg.width, titleBg.y, 98, 24);
     unlockBg.setOrigin(0, 0);
 
     this.unlockText = addTextObject(this.scene, 0, 0, "", TextStyle.WINDOW);
-    this.unlockText.setOrigin(0, 0);
-    this.unlockText.setPositionRelative(unlockBg, 8, 4);
+    this.unlockText.setOrigin(0.5, 0.5);
+    this.unlockText.setPositionRelative(unlockBg, unlockBg.width / 2, unlockBg.height / 2);
 
     const descriptionBg = addWindow(this.scene, 0, titleBg.y + titleBg.height, (this.scene.game.canvas.width / 6) - 2, 42);
     descriptionBg.setOrigin(0, 0);
@@ -157,8 +161,7 @@ export default class AchvsUiHandler extends MessageUiHandler {
     this.mainContainer.add(this.iconsContainer);
     this.mainContainer.add(titleBg);
     this.mainContainer.add(this.titleText);
-    this.mainContainer.add(scoreBg);
-    this.mainContainer.add(this.scoreText);
+    this.mainContainer.add(this.scoreContainer);
     this.mainContainer.add(unlockBg);
     this.mainContainer.add(this.unlockText);
     this.mainContainer.add(descriptionBg);
@@ -167,8 +170,6 @@ export default class AchvsUiHandler extends MessageUiHandler {
     ui.add(this.mainContainer);
 
     this.currentPage = Page.ACHIEVEMENTS;
-    this.setCursor(0);
-    this.setScrollCursor(0);
 
     this.mainContainer.setVisible(false);
   }
@@ -244,51 +245,51 @@ export default class AchvsUiHandler extends MessageUiHandler {
       const rowIndex = Math.floor(this.cursor / this.COLS);
       const itemOffset = (this.scrollCursor * this.COLS);
       switch (button) {
-      case Button.UP:
-        if (this.cursor < this.COLS) {
-          if (this.scrollCursor) {
-            success = this.setScrollCursor(this.scrollCursor - 1);
-          } else {
+        case Button.UP:
+          if (this.cursor < this.COLS) {
+            if (this.scrollCursor) {
+              success = this.setScrollCursor(this.scrollCursor - 1);
+            } else {
             // Wrap around to the last row
-            success = this.setScrollCursor(Math.ceil(this.currentTotal / this.COLS) - this.ROWS);
-            let newCursorIndex = this.cursor + (this.ROWS - 1) * this.COLS;
-            if (newCursorIndex > this.currentTotal - this.scrollCursor * this.COLS - 1) {
-              newCursorIndex -= this.COLS;
+              success = this.setScrollCursor(Math.ceil(this.currentTotal / this.COLS) - this.ROWS);
+              let newCursorIndex = this.cursor + (this.ROWS - 1) * this.COLS;
+              if (newCursorIndex > this.currentTotal - this.scrollCursor * this.COLS - 1) {
+                newCursorIndex -= this.COLS;
+              }
+              success = success && this.setCursor(newCursorIndex);
             }
-            success = success && this.setCursor(newCursorIndex);
-          }
-        } else {
-          success = this.setCursor(this.cursor - this.COLS);
-        }
-        break;
-      case Button.DOWN:
-        const canMoveDown = itemOffset + 1 < this.currentTotal;
-        if (rowIndex >= this.ROWS - 1) {
-          if (this.scrollCursor < Math.ceil(this.currentTotal / this.COLS) - this.ROWS && canMoveDown) {
-            // scroll down one row
-            success = this.setScrollCursor(this.scrollCursor + 1);
           } else {
-            // wrap back to the first row
-            success = this.setScrollCursor(0) && this.setCursor(this.cursor % this.COLS);
+            success = this.setCursor(this.cursor - this.COLS);
           }
-        } else if (canMoveDown) {
-          success = this.setCursor(Math.min(this.cursor + this.COLS, this.currentTotal - itemOffset - 1));
-        }
-        break;
-      case Button.LEFT:
-        if (this.cursor % this.COLS === 0) {
-          success = this.setCursor(Math.min(this.cursor + this.COLS - 1, this.currentTotal - itemOffset - 1));
-        } else {
-          success = this.setCursor(this.cursor - 1);
-        }
-        break;
-      case Button.RIGHT:
-        if ((this.cursor + 1) % this.COLS === 0 || (this.cursor + itemOffset) === (this.currentTotal - 1)) {
-          success = this.setCursor(this.cursor - this.cursor % this.COLS);
-        } else {
-          success = this.setCursor(this.cursor + 1);
-        }
-        break;
+          break;
+        case Button.DOWN:
+          const canMoveDown = itemOffset + 1 < this.currentTotal;
+          if (rowIndex >= this.ROWS - 1) {
+            if (this.scrollCursor < Math.ceil(this.currentTotal / this.COLS) - this.ROWS && canMoveDown) {
+            // scroll down one row
+              success = this.setScrollCursor(this.scrollCursor + 1);
+            } else {
+            // wrap back to the first row
+              success = this.setScrollCursor(0) && this.setCursor(this.cursor % this.COLS);
+            }
+          } else if (canMoveDown) {
+            success = this.setCursor(Math.min(this.cursor + this.COLS, this.currentTotal - itemOffset - 1));
+          }
+          break;
+        case Button.LEFT:
+          if (this.cursor % this.COLS === 0) {
+            success = this.setCursor(Math.min(this.cursor + this.COLS - 1, this.currentTotal - itemOffset - 1));
+          } else {
+            success = this.setCursor(this.cursor - 1);
+          }
+          break;
+        case Button.RIGHT:
+          if ((this.cursor + 1) % this.COLS === 0 || (this.cursor + itemOffset) === (this.currentTotal - 1)) {
+            success = this.setCursor(this.cursor - this.cursor % this.COLS);
+          } else {
+            success = this.setCursor(this.cursor + 1);
+          }
+          break;
       }
     }
 
@@ -315,12 +316,22 @@ export default class AchvsUiHandler extends MessageUiHandler {
 
     if (update || pageChange) {
       switch (this.currentPage) {
-      case Page.ACHIEVEMENTS:
-        this.showAchv(achvs[Object.keys(achvs)[cursor + this.scrollCursor * this.COLS]]);
-        break;
-      case Page.VOUCHERS:
-        this.showVoucher(vouchers[Object.keys(vouchers)[cursor + this.scrollCursor * this.COLS]]);
-        break;
+        case Page.ACHIEVEMENTS:
+          if (pageChange) {
+            this.titleBg.width = 174;
+            this.titleText.x = this.titleBg.width / 2;
+            this.scoreContainer.setVisible(true);
+          }
+          this.showAchv(achvs[Object.keys(achvs)[cursor + this.scrollCursor * this.COLS]]);
+          break;
+        case Page.VOUCHERS:
+          if (pageChange) {
+            this.titleBg.width = 220;
+            this.titleText.x = this.titleBg.width / 2;
+            this.scoreContainer.setVisible(false);
+          }
+          this.showVoucher(vouchers[Object.keys(vouchers)[cursor + this.scrollCursor * this.COLS]]);
+          break;
       }
     }
     return ret;
@@ -347,14 +358,14 @@ export default class AchvsUiHandler extends MessageUiHandler {
     }
 
     switch (this.currentPage) {
-    case Page.ACHIEVEMENTS:
-      this.updateAchvIcons();
-      this.showAchv(achvs[Object.keys(achvs)[this.cursor + this.scrollCursor * this.COLS]]);
-      break;
-    case Page.VOUCHERS:
-      this.updateVoucherIcons();
-      this.showVoucher(vouchers[Object.keys(vouchers)[this.cursor + this.scrollCursor * this.COLS]]);
-      break;
+      case Page.ACHIEVEMENTS:
+        this.updateAchvIcons();
+        this.showAchv(achvs[Object.keys(achvs)[this.cursor + this.scrollCursor * this.COLS]]);
+        break;
+      case Page.VOUCHERS:
+        this.updateVoucherIcons();
+        this.showVoucher(vouchers[Object.keys(vouchers)[this.cursor + this.scrollCursor * this.COLS]]);
+        break;
     }
     return true;
   }
@@ -442,6 +453,7 @@ export default class AchvsUiHandler extends MessageUiHandler {
     this.currentPage = Page.ACHIEVEMENTS;
     this.mainContainer.setVisible(false);
     this.setScrollCursor(0);
+    this.setCursor(0, true);
     this.eraseCursor();
   }
 

@@ -12,7 +12,8 @@ import { Mode } from "./ui";
 import { addWindow } from "./ui-theme";
 import { RunDisplayMode } from "#app/ui/run-info-ui-handler";
 
-const sessionSlotCount = 5;
+const SESSION_SLOTS_COUNT = 5;
+const SLOTS_ON_SCREEN = 3;
 
 export enum SaveSlotUiMode {
   LOAD,
@@ -84,12 +85,10 @@ export default class SaveSlotSelectUiHandler extends MessageUiHandler {
     this.saveSlotSelectCallback = args[1] as SaveSlotSelectCallback;
 
     this.saveSlotSelectContainer.setVisible(true);
-    this.populateSessionSlots()
-      .then(() => {
-        this.setScrollCursor(0);
-        this.setCursor(0);
-      });
+    this.populateSessionSlots();
 
+    this.setScrollCursor(0);
+    this.setCursor(0);
     return true;
   }
 
@@ -107,40 +106,40 @@ export default class SaveSlotSelectUiHandler extends MessageUiHandler {
           error = true;
         } else {
           switch (this.uiMode) {
-          case SaveSlotUiMode.LOAD:
-            this.saveSlotSelectCallback = null;
-            originalCallback && originalCallback(cursor);
-            break;
-          case SaveSlotUiMode.SAVE:
-            const saveAndCallback = () => {
-              const originalCallback = this.saveSlotSelectCallback;
+            case SaveSlotUiMode.LOAD:
               this.saveSlotSelectCallback = null;
-              ui.revertMode();
-              ui.showText("", 0);
-              ui.setMode(Mode.MESSAGE);
               originalCallback && originalCallback(cursor);
-            };
-            if (this.sessionSlots[cursor].hasData) {
-              ui.showText(i18next.t("saveSlotSelectUiHandler:overwriteData"), null, () => {
-                ui.setOverlayMode(Mode.CONFIRM, () => {
-                  this.scene.gameData.deleteSession(cursor).then(response => {
-                    if (response === false) {
-                      this.scene.reset(true);
-                    } else {
-                      saveAndCallback();
-                    }
-                  });
-                }, () => {
-                  ui.revertMode();
-                  ui.showText("", 0);
-                }, false, 0, 19, 2000);
-              });
-            } else if (this.sessionSlots[cursor].hasData === false) {
-              saveAndCallback();
-            } else {
-              return false;
-            }
-            break;
+              break;
+            case SaveSlotUiMode.SAVE:
+              const saveAndCallback = () => {
+                const originalCallback = this.saveSlotSelectCallback;
+                this.saveSlotSelectCallback = null;
+                ui.revertMode();
+                ui.showText("", 0);
+                ui.setMode(Mode.MESSAGE);
+                originalCallback && originalCallback(cursor);
+              };
+              if (this.sessionSlots[cursor].hasData) {
+                ui.showText(i18next.t("saveSlotSelectUiHandler:overwriteData"), null, () => {
+                  ui.setOverlayMode(Mode.CONFIRM, () => {
+                    this.scene.gameData.deleteSession(cursor).then(response => {
+                      if (response === false) {
+                        this.scene.reset(true);
+                      } else {
+                        saveAndCallback();
+                      }
+                    });
+                  }, () => {
+                    ui.revertMode();
+                    ui.showText("", 0);
+                  }, false, 0, 19, 2000);
+                });
+              } else if (this.sessionSlots[cursor].hasData === false) {
+                saveAndCallback();
+              } else {
+                return false;
+              }
+              break;
           }
           success = true;
         }
@@ -152,26 +151,26 @@ export default class SaveSlotSelectUiHandler extends MessageUiHandler {
     } else {
       const cursorPosition = this.cursor + this.scrollCursor;
       switch (button) {
-      case Button.UP:
-        if (this.cursor) {
+        case Button.UP:
+          if (this.cursor) {
           // Check to prevent cursor from accessing a negative index
-          success = (this.cursor === 0) ? this.setCursor(this.cursor) : this.setCursor(this.cursor - 1, cursorPosition);
-        } else if (this.scrollCursor) {
-          success = this.setScrollCursor(this.scrollCursor - 1, cursorPosition);
-        }
-        break;
-      case Button.DOWN:
-        if (this.cursor < 2) {
-          success = this.setCursor(this.cursor + 1, this.cursor);
-        } else if (this.scrollCursor < sessionSlotCount - 3) {
-          success = this.setScrollCursor(this.scrollCursor + 1, cursorPosition);
-        }
-        break;
-      case Button.RIGHT:
-        if (this.sessionSlots[cursorPosition].hasData && this.sessionSlots[cursorPosition].saveData) {
-          this.scene.ui.setOverlayMode(Mode.RUN_INFO, this.sessionSlots[cursorPosition].saveData, RunDisplayMode.SESSION_PREVIEW);
-          success = true;
-        }
+            success = (this.cursor === 0) ? this.setCursor(this.cursor) : this.setCursor(this.cursor - 1, cursorPosition);
+          } else if (this.scrollCursor) {
+            success = this.setScrollCursor(this.scrollCursor - 1, cursorPosition);
+          }
+          break;
+        case Button.DOWN:
+          if (this.cursor < (SLOTS_ON_SCREEN - 1)) {
+            success = this.setCursor(this.cursor + 1, cursorPosition);
+          } else if (this.scrollCursor < SESSION_SLOTS_COUNT - SLOTS_ON_SCREEN) {
+            success = this.setScrollCursor(this.scrollCursor + 1, cursorPosition);
+          }
+          break;
+        case Button.RIGHT:
+          if (this.sessionSlots[cursorPosition].hasData && this.sessionSlots[cursorPosition].saveData) {
+            this.scene.ui.setOverlayMode(Mode.RUN_INFO, this.sessionSlots[cursorPosition].saveData, RunDisplayMode.SESSION_PREVIEW);
+            success = true;
+          }
       }
     }
 
@@ -184,13 +183,19 @@ export default class SaveSlotSelectUiHandler extends MessageUiHandler {
     return success || error;
   }
 
-  async populateSessionSlots() {
-    for (let s = 0; s < sessionSlotCount; s++) {
+  populateSessionSlots() {
+    for (let s = 0; s < SESSION_SLOTS_COUNT; s++) {
       const sessionSlot = new SessionSlot(this.scene, s);
-      await sessionSlot.load();
       this.scene.add.existing(sessionSlot);
       this.sessionSlotsContainer.add(sessionSlot);
       this.sessionSlots.push(sessionSlot);
+      sessionSlot.load().then((success) => {
+        // If the cursor was moved to this slot while the session was loading
+        // call setCursor again to shift the slot position and show the arrow for save preview
+        if (success && (this.cursor + this.scrollCursor) === s) {
+          this.setCursor(s);
+        }
+      });
     }
   }
 
@@ -209,12 +214,12 @@ export default class SaveSlotSelectUiHandler extends MessageUiHandler {
   }
 
   /**
-   * setCursor takes user navigation as an input and positions the cursor accordingly
-   * @param cursor the index provided to the cursor
-   * @param prevCursor the previous index occupied by the cursor - optional
+   * Move the cursor to a new position and update the view accordingly
+   * @param cursor the new cursor position, between `0` and `SLOTS_ON_SCREEN - 1`
+   * @param prevSlotIndex index of the previous session occupied by the cursor, between `0` and `SESSION_SLOTS_COUNT - 1` - optional
    * @returns `true` if the cursor position has changed | `false` if it has not
    */
-  override setCursor(cursor: integer, prevCursor?: integer): boolean {
+  override setCursor(cursor: integer, prevSlotIndex?: integer): boolean {
     const changed = super.setCursor(cursor);
 
     if (!this.cursorObj) {
@@ -241,21 +246,20 @@ export default class SaveSlotSelectUiHandler extends MessageUiHandler {
       }
       this.setArrowVisibility(hasData);
     }
-    if (!Utils.isNullOrUndefined(prevCursor)) {
-      this.revertSessionSlot(prevCursor);
+    if (!Utils.isNullOrUndefined(prevSlotIndex)) {
+      this.revertSessionSlot(prevSlotIndex);
     }
 
     return changed;
   }
 
   /**
-   * Helper function that resets the session slot position to its default central position
-   * @param prevCursor the previous location of the cursor
+   * Helper function that resets the given session slot to its default central position
    */
-  revertSessionSlot(prevCursor: integer): void {
-    const sessionSlot = this.sessionSlots[prevCursor];
+  revertSessionSlot(slotIndex: integer): void {
+    const sessionSlot = this.sessionSlots[slotIndex];
     if (sessionSlot) {
-      sessionSlot.setPosition(0, prevCursor * 56);
+      sessionSlot.setPosition(0, slotIndex * 56);
     }
   }
 
@@ -270,12 +274,18 @@ export default class SaveSlotSelectUiHandler extends MessageUiHandler {
     }
   }
 
-  setScrollCursor(scrollCursor: integer, priorCursor?: integer): boolean {
+  /**
+   * Move the scrolling cursor to a new position and update the view accordingly
+   * @param scrollCursor the new cursor position, between `0` and `SESSION_SLOTS_COUNT - SLOTS_ON_SCREEN`
+   * @param prevSlotIndex index of the previous slot occupied by the cursor, between `0` and `SESSION_SLOTS_COUNT-1` - optional
+   * @returns `true` if the cursor position has changed | `false` if it has not
+   */
+  setScrollCursor(scrollCursor: integer, prevSlotIndex?: integer): boolean {
     const changed = scrollCursor !== this.scrollCursor;
 
     if (changed) {
       this.scrollCursor = scrollCursor;
-      this.setCursor(this.cursor, priorCursor);
+      this.setCursor(this.cursor, prevSlotIndex);
       this.scene.tweens.add({
         targets: this.sessionSlotsContainer,
         y: this.sessionSlotsContainerInitialY - 56 * scrollCursor,
@@ -290,6 +300,7 @@ export default class SaveSlotSelectUiHandler extends MessageUiHandler {
   clear() {
     super.clear();
     this.saveSlotSelectContainer.setVisible(false);
+    this.setScrollCursor(0);
     this.eraseCursor();
     this.saveSlotSelectCallback = null;
     this.clearSessionSlots();
@@ -391,6 +402,10 @@ class SessionSlot extends Phaser.GameObjects.Container {
   load(): Promise<boolean> {
     return new Promise<boolean>(resolve => {
       this.scene.gameData.getSession(this.slotId).then(async sessionData => {
+        // Ignore the results if the view was exited
+        if (!this.active) {
+          return;
+        }
         if (!sessionData) {
           this.hasData = false;
           this.loadingLabel.setText(i18next.t("saveSlotSelectUiHandler:empty"));
