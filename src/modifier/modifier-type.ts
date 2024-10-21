@@ -80,18 +80,18 @@ export class ModifierType {
     }
     let poolTypes: ModifierPoolType[];
     switch (poolType) {
-    case ModifierPoolType.PLAYER:
-      poolTypes = [ poolType, ModifierPoolType.TRAINER, ModifierPoolType.WILD ];
-      break;
-    case ModifierPoolType.WILD:
-      poolTypes = [ poolType, ModifierPoolType.PLAYER, ModifierPoolType.TRAINER ];
-      break;
-    case ModifierPoolType.TRAINER:
-      poolTypes = [ poolType, ModifierPoolType.PLAYER, ModifierPoolType.WILD ];
-      break;
-    default:
-      poolTypes = [ poolType ];
-      break;
+      case ModifierPoolType.PLAYER:
+        poolTypes = [ poolType, ModifierPoolType.TRAINER, ModifierPoolType.WILD ];
+        break;
+      case ModifierPoolType.WILD:
+        poolTypes = [ poolType, ModifierPoolType.PLAYER, ModifierPoolType.TRAINER ];
+        break;
+      case ModifierPoolType.TRAINER:
+        poolTypes = [ poolType, ModifierPoolType.PLAYER, ModifierPoolType.WILD ];
+        break;
+      default:
+        poolTypes = [ poolType ];
+        break;
     }
     // Try multiple pool types in case of stolen items
     for (const type of poolTypes) {
@@ -504,42 +504,42 @@ export class BerryModifierType extends PokemonHeldItemModifierType implements Ge
 
 function getAttackTypeBoosterItemName(type: Type) {
   switch (type) {
-  case Type.NORMAL:
-    return "Silk Scarf";
-  case Type.FIGHTING:
-    return "Black Belt";
-  case Type.FLYING:
-    return "Sharp Beak";
-  case Type.POISON:
-    return "Poison Barb";
-  case Type.GROUND:
-    return "Soft Sand";
-  case Type.ROCK:
-    return "Hard Stone";
-  case Type.BUG:
-    return "Silver Powder";
-  case Type.GHOST:
-    return "Spell Tag";
-  case Type.STEEL:
-    return "Metal Coat";
-  case Type.FIRE:
-    return "Charcoal";
-  case Type.WATER:
-    return "Mystic Water";
-  case Type.GRASS:
-    return "Miracle Seed";
-  case Type.ELECTRIC:
-    return "Magnet";
-  case Type.PSYCHIC:
-    return "Twisted Spoon";
-  case Type.ICE:
-    return "Never-Melt Ice";
-  case Type.DRAGON:
-    return "Dragon Fang";
-  case Type.DARK:
-    return "Black Glasses";
-  case Type.FAIRY:
-    return "Fairy Feather";
+    case Type.NORMAL:
+      return "Silk Scarf";
+    case Type.FIGHTING:
+      return "Black Belt";
+    case Type.FLYING:
+      return "Sharp Beak";
+    case Type.POISON:
+      return "Poison Barb";
+    case Type.GROUND:
+      return "Soft Sand";
+    case Type.ROCK:
+      return "Hard Stone";
+    case Type.BUG:
+      return "Silver Powder";
+    case Type.GHOST:
+      return "Spell Tag";
+    case Type.STEEL:
+      return "Metal Coat";
+    case Type.FIRE:
+      return "Charcoal";
+    case Type.WATER:
+      return "Mystic Water";
+    case Type.GRASS:
+      return "Miracle Seed";
+    case Type.ELECTRIC:
+      return "Magnet";
+    case Type.PSYCHIC:
+      return "Twisted Spoon";
+    case Type.ICE:
+      return "Never-Melt Ice";
+    case Type.DRAGON:
+      return "Dragon Fang";
+    case Type.DARK:
+      return "Black Glasses";
+    case Type.FAIRY:
+      return "Fairy Feather";
   }
 }
 
@@ -1016,10 +1016,10 @@ class TempStatStageBoosterModifierTypeGenerator extends ModifierTypeGenerator {
 class SpeciesStatBoosterModifierTypeGenerator extends ModifierTypeGenerator {
   /** Object comprised of the currently available species-based stat boosting held items */
   public static readonly items = {
-    LIGHT_BALL: { stats: [Stat.ATK, Stat.SPATK], multiplier: 2, species: [Species.PIKACHU] },
-    THICK_CLUB: { stats: [Stat.ATK], multiplier: 2, species: [Species.CUBONE, Species.MAROWAK, Species.ALOLA_MAROWAK] },
-    METAL_POWDER: { stats: [Stat.DEF], multiplier: 2, species: [Species.DITTO] },
-    QUICK_POWDER: { stats: [Stat.SPD], multiplier: 2, species: [Species.DITTO] },
+    LIGHT_BALL: { stats: [ Stat.ATK, Stat.SPATK ], multiplier: 2, species: [ Species.PIKACHU ]},
+    THICK_CLUB: { stats: [ Stat.ATK ], multiplier: 2, species: [ Species.CUBONE, Species.MAROWAK, Species.ALOLA_MAROWAK ]},
+    METAL_POWDER: { stats: [ Stat.DEF ], multiplier: 2, species: [ Species.DITTO ]},
+    QUICK_POWDER: { stats: [ Stat.SPD ], multiplier: 2, species: [ Species.DITTO ]},
   };
 
   constructor() {
@@ -1134,7 +1134,7 @@ class FormChangeItemModifierTypeGenerator extends ModifierTypeGenerator {
         return new FormChangeItemModifierType(pregenArgs[0] as FormChangeItem);
       }
 
-      const formChangeItemPool = [...new Set(party.filter(p => pokemonFormChanges.hasOwnProperty(p.species.speciesId)).map(p => {
+      const formChangeItemPool = [ ...new Set(party.filter(p => pokemonFormChanges.hasOwnProperty(p.species.speciesId)).map(p => {
         const formChanges = pokemonFormChanges[p.species.speciesId];
         let formChangeItemTriggers = formChanges.filter(fc => ((fc.formKey.indexOf(SpeciesFormKey.MEGA) === -1 && fc.formKey.indexOf(SpeciesFormKey.PRIMAL) === -1) || party[0].scene.getModifiers(MegaEvolutionAccessModifier).length)
           && ((fc.formKey.indexOf(SpeciesFormKey.GIGANTAMAX) === -1 && fc.formKey.indexOf(SpeciesFormKey.ETERNAMAX) === -1) || party[0].scene.getModifiers(GigantamaxAccessModifier).length)
@@ -1151,15 +1151,15 @@ class FormChangeItemModifierTypeGenerator extends ModifierTypeGenerator {
             foundN_SOLAR = false;
           formChangeItemTriggers.forEach((fc, i) => {
             switch (fc.item) {
-            case FormChangeItem.ULTRANECROZIUM_Z:
-              foundULTRA_Z = true;
-              break;
-            case FormChangeItem.N_LUNARIZER:
-              foundN_LUNA = true;
-              break;
-            case FormChangeItem.N_SOLARIZER:
-              foundN_SOLAR = true;
-              break;
+              case FormChangeItem.ULTRANECROZIUM_Z:
+                foundULTRA_Z = true;
+                break;
+              case FormChangeItem.N_LUNARIZER:
+                foundN_LUNA = true;
+                break;
+              case FormChangeItem.N_SOLARIZER:
+                foundN_SOLAR = true;
+                break;
             }
           });
           if (foundULTRA_Z && foundN_LUNA && foundN_SOLAR) {
@@ -1509,9 +1509,9 @@ export const modifierTypes = {
   SOOTHE_BELL: () => new PokemonFriendshipBoosterModifierType("modifierType:ModifierType.SOOTHE_BELL", "soothe_bell"),
 
   SCOPE_LENS: () => new PokemonHeldItemModifierType("modifierType:ModifierType.SCOPE_LENS", "scope_lens", (type, args) => new CritBoosterModifier(type, (args[0] as Pokemon).id, 1)),
-  LEEK: () => new PokemonHeldItemModifierType("modifierType:ModifierType.LEEK", "leek", (type, args) => new SpeciesCritBoosterModifier(type, (args[0] as Pokemon).id, 2, [Species.FARFETCHD, Species.GALAR_FARFETCHD, Species.SIRFETCHD])),
+  LEEK: () => new PokemonHeldItemModifierType("modifierType:ModifierType.LEEK", "leek", (type, args) => new SpeciesCritBoosterModifier(type, (args[0] as Pokemon).id, 2, [ Species.FARFETCHD, Species.GALAR_FARFETCHD, Species.SIRFETCHD ])),
 
-  EVIOLITE: () => new PokemonHeldItemModifierType("modifierType:ModifierType.EVIOLITE", "eviolite", (type, args) => new EvolutionStatBoosterModifier(type, (args[0] as Pokemon).id, [Stat.DEF, Stat.SPDEF], 1.5)),
+  EVIOLITE: () => new PokemonHeldItemModifierType("modifierType:ModifierType.EVIOLITE", "eviolite", (type, args) => new EvolutionStatBoosterModifier(type, (args[0] as Pokemon).id, [ Stat.DEF, Stat.SPDEF ], 1.5)),
 
   SOUL_DEW: () => new PokemonHeldItemModifierType("modifierType:ModifierType.SOUL_DEW", "soul_dew", (type, args) => new PokemonNatureWeightModifier(type, (args[0] as Pokemon).id)),
 
@@ -1586,7 +1586,7 @@ export const modifierTypes = {
     if (pregenArgs) {
       return new PokemonBaseStatFlatModifierType(pregenArgs[0] as number, pregenArgs[1] as Stat[]);
     }
-    return new PokemonBaseStatFlatModifierType(randSeedInt(20), [Stat.HP, Stat.ATK, Stat.DEF]);
+    return new PokemonBaseStatFlatModifierType(randSeedInt(20), [ Stat.HP, Stat.ATK, Stat.DEF ]);
   }),
   MYSTERY_ENCOUNTER_BLACK_SLUDGE: () => new ModifierTypeGenerator((party: Pokemon[], pregenArgs?: any[]) => {
     if (pregenArgs) {
@@ -1736,22 +1736,22 @@ const modifierPool: ModifierPool = {
         || (p.isFusion() && checkedSpecies.includes(p.getFusionSpeciesForm(true).speciesId)))) ? 12 : 0;
     }, 12),
     new WeightedModifierType(modifierTypes.TOXIC_ORB, (party: Pokemon[]) => {
-      const checkedAbilities = [Abilities.QUICK_FEET, Abilities.GUTS, Abilities.MARVEL_SCALE, Abilities.TOXIC_BOOST, Abilities.POISON_HEAL, Abilities.MAGIC_GUARD];
-      const checkedMoves = [Moves.FACADE, Moves.TRICK, Moves.FLING, Moves.SWITCHEROO, Moves.PSYCHO_SHIFT];
+      const checkedAbilities = [ Abilities.QUICK_FEET, Abilities.GUTS, Abilities.MARVEL_SCALE, Abilities.TOXIC_BOOST, Abilities.POISON_HEAL, Abilities.MAGIC_GUARD ];
+      const checkedMoves = [ Moves.FACADE, Moves.TRICK, Moves.FLING, Moves.SWITCHEROO, Moves.PSYCHO_SHIFT ];
       // If a party member doesn't already have one of these two orbs and has one of the above moves or abilities, the orb can appear
       return party.some(p => !p.getHeldItems().some(i => i instanceof TurnStatusEffectModifier)
         && (checkedAbilities.some(a => p.hasAbility(a, false, true))
         || p.getMoveset(true).some(m => m && checkedMoves.includes(m.moveId)))) ? 10 : 0;
     }, 10),
     new WeightedModifierType(modifierTypes.FLAME_ORB, (party: Pokemon[]) => {
-      const checkedAbilities = [Abilities.QUICK_FEET, Abilities.GUTS, Abilities.MARVEL_SCALE, Abilities.FLARE_BOOST, Abilities.MAGIC_GUARD];
-      const checkedMoves = [Moves.FACADE, Moves.TRICK, Moves.FLING, Moves.SWITCHEROO, Moves.PSYCHO_SHIFT];
+      const checkedAbilities = [ Abilities.QUICK_FEET, Abilities.GUTS, Abilities.MARVEL_SCALE, Abilities.FLARE_BOOST, Abilities.MAGIC_GUARD ];
+      const checkedMoves = [ Moves.FACADE, Moves.TRICK, Moves.FLING, Moves.SWITCHEROO, Moves.PSYCHO_SHIFT ];
       // If a party member doesn't already have one of these two orbs and has one of the above moves or abilities, the orb can appear
       return party.some(p => !p.getHeldItems().some(i => i instanceof TurnStatusEffectModifier)
         && (checkedAbilities.some(a => p.hasAbility(a, false, true)) || p.getMoveset(true).some(m => m && checkedMoves.includes(m.moveId)))) ? 10 : 0;
     }, 10),
     new WeightedModifierType(modifierTypes.WHITE_HERB, (party: Pokemon[]) => {
-      const checkedAbilities = [Abilities.WEAK_ARMOR, Abilities.CONTRARY, Abilities.MOODY, Abilities.ANGER_SHELL, Abilities.COMPETITIVE, Abilities.DEFIANT];
+      const checkedAbilities = [ Abilities.WEAK_ARMOR, Abilities.CONTRARY, Abilities.MOODY, Abilities.ANGER_SHELL, Abilities.COMPETITIVE, Abilities.DEFIANT ];
       const weightMultiplier = party.filter(
         p => !p.getHeldItems().some(i => i instanceof ResetNegativeStatStageModifier && i.stackCount >= i.getMaxHeldItemCount(p)) &&
           (checkedAbilities.some(a => p.hasAbility(a, false, true)) || p.getMoveset(true).some(m => m && selfStatLowerMoves.includes(m.moveId)))).length;
@@ -1978,21 +1978,21 @@ let enemyBuffIgnoredPoolIndexes = {}; // eslint-disable-line @typescript-eslint/
 export function getModifierPoolForType(poolType: ModifierPoolType): ModifierPool {
   let pool: ModifierPool;
   switch (poolType) {
-  case ModifierPoolType.PLAYER:
-    pool = modifierPool;
-    break;
-  case ModifierPoolType.WILD:
-    pool = wildModifierPool;
-    break;
-  case ModifierPoolType.TRAINER:
-    pool = trainerModifierPool;
-    break;
-  case ModifierPoolType.ENEMY_BUFF:
-    pool = enemyBuffModifierPool;
-    break;
-  case ModifierPoolType.DAILY_STARTER:
-    pool = dailyStarterModifierPool;
-    break;
+    case ModifierPoolType.PLAYER:
+      pool = modifierPool;
+      break;
+    case ModifierPoolType.WILD:
+      pool = wildModifierPool;
+      break;
+    case ModifierPoolType.TRAINER:
+      pool = trainerModifierPool;
+      break;
+    case ModifierPoolType.ENEMY_BUFF:
+      pool = enemyBuffModifierPool;
+      break;
+    case ModifierPoolType.DAILY_STARTER:
+      pool = dailyStarterModifierPool;
+      break;
   }
   return pool;
 }
@@ -2063,23 +2063,23 @@ export function regenerateModifierPoolThresholds(party: Pokemon[], poolType: Mod
     console.table(modifierTableData);
   }
   switch (poolType) {
-  case ModifierPoolType.PLAYER:
-    modifierPoolThresholds = thresholds;
-    ignoredPoolIndexes = ignoredIndexes;
-    break;
-  case ModifierPoolType.WILD:
-  case ModifierPoolType.TRAINER:
-    enemyModifierPoolThresholds = thresholds;
-    enemyIgnoredPoolIndexes = ignoredIndexes;
-    break;
-  case ModifierPoolType.ENEMY_BUFF:
-    enemyBuffModifierPoolThresholds = thresholds;
-    enemyBuffIgnoredPoolIndexes = ignoredIndexes;
-    break;
-  case ModifierPoolType.DAILY_STARTER:
-    dailyStarterModifierPoolThresholds = thresholds;
-    ignoredDailyStarterPoolIndexes = ignoredIndexes;
-    break;
+    case ModifierPoolType.PLAYER:
+      modifierPoolThresholds = thresholds;
+      ignoredPoolIndexes = ignoredIndexes;
+      break;
+    case ModifierPoolType.WILD:
+    case ModifierPoolType.TRAINER:
+      enemyModifierPoolThresholds = thresholds;
+      enemyIgnoredPoolIndexes = ignoredIndexes;
+      break;
+    case ModifierPoolType.ENEMY_BUFF:
+      enemyBuffModifierPoolThresholds = thresholds;
+      enemyBuffIgnoredPoolIndexes = ignoredIndexes;
+      break;
+    case ModifierPoolType.DAILY_STARTER:
+      dailyStarterModifierPoolThresholds = thresholds;
+      ignoredDailyStarterPoolIndexes = ignoredIndexes;
+      break;
   }
 }
 
@@ -2199,7 +2199,7 @@ export function overridePlayerModifierTypeOptions(options: ModifierTypeOption[],
     let modifierType: ModifierType | null = modifierFunc();
 
     if (modifierType instanceof ModifierTypeGenerator) {
-      const pregenArgs = ("type" in override) && (override.type !== null) ? [override.type] : undefined;
+      const pregenArgs = ("type" in override) && (override.type !== null) ? [ override.type ] : undefined;
       modifierType = modifierType.generateType(party, pregenArgs);
     }
 
@@ -2230,7 +2230,8 @@ export function getPlayerShopModifierTypeOptionsForWave(waveIndex: integer, base
     ],
     [
       new ModifierTypeOption(modifierTypes.HYPER_POTION(), 0, baseCost * 0.8),
-      new ModifierTypeOption(modifierTypes.MAX_REVIVE(), 0, baseCost * 2.75)
+      new ModifierTypeOption(modifierTypes.MAX_REVIVE(), 0, baseCost * 2.75),
+      new ModifierTypeOption(modifierTypes.MEMORY_MUSHROOM(), 0, baseCost * 4)
     ],
     [
       new ModifierTypeOption(modifierTypes.MAX_POTION(), 0, baseCost * 1.5),
@@ -2249,15 +2250,15 @@ export function getPlayerShopModifierTypeOptionsForWave(waveIndex: integer, base
 export function getEnemyBuffModifierForWave(tier: ModifierTier, enemyModifiers: PersistentModifier[], scene: BattleScene): EnemyPersistentModifier {
   let tierStackCount: number;
   switch (tier) {
-  case ModifierTier.ULTRA:
-    tierStackCount = 5;
-    break;
-  case ModifierTier.GREAT:
-    tierStackCount = 3;
-    break;
-  default:
-    tierStackCount = 1;
-    break;
+    case ModifierTier.ULTRA:
+      tierStackCount = 5;
+      break;
+    case ModifierTier.GREAT:
+      tierStackCount = 3;
+      break;
+    default:
+      tierStackCount = 1;
+      break;
   }
 
   const retryCount = 50;
@@ -2323,21 +2324,21 @@ function getNewModifierTypeOption(party: Pokemon[], poolType: ModifierPoolType, 
   const pool = getModifierPoolForType(poolType);
   let thresholds: object;
   switch (poolType) {
-  case ModifierPoolType.PLAYER:
-    thresholds = modifierPoolThresholds;
-    break;
-  case ModifierPoolType.WILD:
-    thresholds = enemyModifierPoolThresholds;
-    break;
-  case ModifierPoolType.TRAINER:
-    thresholds = enemyModifierPoolThresholds;
-    break;
-  case ModifierPoolType.ENEMY_BUFF:
-    thresholds = enemyBuffModifierPoolThresholds;
-    break;
-  case ModifierPoolType.DAILY_STARTER:
-    thresholds = dailyStarterModifierPoolThresholds;
-    break;
+    case ModifierPoolType.PLAYER:
+      thresholds = modifierPoolThresholds;
+      break;
+    case ModifierPoolType.WILD:
+      thresholds = enemyModifierPoolThresholds;
+      break;
+    case ModifierPoolType.TRAINER:
+      thresholds = enemyModifierPoolThresholds;
+      break;
+    case ModifierPoolType.ENEMY_BUFF:
+      thresholds = enemyBuffModifierPoolThresholds;
+      break;
+    case ModifierPoolType.DAILY_STARTER:
+      thresholds = dailyStarterModifierPoolThresholds;
+      break;
   }
   if (tier === undefined) {
     const tierValue = randSeedInt(1024);

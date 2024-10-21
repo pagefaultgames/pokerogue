@@ -87,7 +87,7 @@ export const FieryFalloutEncounter: MysteryEncounter =
         doubleBattle: true,
         disableSwitch: true,
       };
-      encounter.enemyPartyConfigs = [config];
+      encounter.enemyPartyConfigs = [ config ];
 
       // Load hidden Volcarona sprites
       encounter.spriteConfigs = [
@@ -113,7 +113,7 @@ export const FieryFalloutEncounter: MysteryEncounter =
       ];
 
       // Load animations/sfx for Volcarona moves
-      loadCustomMovesForEncounter(scene, [Moves.FIRE_SPIN, Moves.QUIVER_DANCE]);
+      loadCustomMovesForEncounter(scene, [ Moves.FIRE_SPIN, Moves.QUIVER_DANCE ]);
 
       scene.arena.trySetWeather(WeatherType.SUNNY, true);
 
@@ -136,6 +136,7 @@ export const FieryFalloutEncounter: MysteryEncounter =
 
       return true;
     })
+    .setLocalizationKey(`${namespace}`)
     .withTitle(`${namespace}:title`)
     .withDescription(`${namespace}:description`)
     .withQuery(`${namespace}:query`)
@@ -157,13 +158,13 @@ export const FieryFalloutEncounter: MysteryEncounter =
         encounter.startOfBattleEffects.push(
           {
             sourceBattlerIndex: BattlerIndex.ENEMY,
-            targets: [BattlerIndex.PLAYER],
+            targets: [ BattlerIndex.PLAYER ],
             move: new PokemonMove(Moves.FIRE_SPIN),
             ignorePp: true
           },
           {
             sourceBattlerIndex: BattlerIndex.ENEMY_2,
-            targets: [BattlerIndex.PLAYER_2],
+            targets: [ BattlerIndex.PLAYER_2 ],
             move: new PokemonMove(Moves.FIRE_SPIN),
             ignorePp: true
           });
@@ -229,12 +230,13 @@ export const FieryFalloutEncounter: MysteryEncounter =
           ],
         })
         .withPreOptionPhase(async (scene: BattleScene) => {
+          // Do NOT await this, to prevent player from repeatedly pressing options
           transitionMysteryEncounterIntroVisuals(scene, false, false, 2000);
         })
         .withOptionPhase(async (scene: BattleScene) => {
           // Fire types help calm the Volcarona
           const encounter = scene.currentBattle.mysteryEncounter!;
-          transitionMysteryEncounterIntroVisuals(scene);
+          await transitionMysteryEncounterIntroVisuals(scene);
           setEncounterRewards(scene,
             { fillRemaining: true },
             undefined,
@@ -244,7 +246,7 @@ export const FieryFalloutEncounter: MysteryEncounter =
 
           const primary = encounter.options[2].primaryPokemon!;
 
-          setEncounterExp(scene, [primary.id], getPokemonSpecies(Species.VOLCARONA).baseExp * 2);
+          setEncounterExp(scene, [ primary.id ], getPokemonSpecies(Species.VOLCARONA).baseExp * 2);
           leaveEncounterWithoutBattle(scene);
         })
         .build()

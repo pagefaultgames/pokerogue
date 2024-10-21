@@ -20,7 +20,7 @@ import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
 import { Abilities } from "#enums/abilities";
 
 const namespace = "mysteryEncounters/berriesAbound";
-const defaultParty = [Species.PYUKUMUKU, Species.MAGIKARP, Species.PIKACHU];
+const defaultParty = [ Species.PYUKUMUKU, Species.MAGIKARP, Species.PIKACHU ];
 const defaultBiome = Biome.CAVE;
 const defaultWave = 45;
 
@@ -48,7 +48,7 @@ describe("Berries Abound - Mystery Encounter", () => {
 
     vi.spyOn(MysteryEncounters, "mysteryEncountersByBiome", "get").mockReturnValue(
       new Map<Biome, MysteryEncounterType[]>([
-        [Biome.CAVE, [MysteryEncounterType.BERRIES_ABOUND]],
+        [ Biome.CAVE, [ MysteryEncounterType.BERRIES_ABOUND ]],
       ])
     );
   });
@@ -176,10 +176,12 @@ describe("Berries Abound - Mystery Encounter", () => {
       const encounterTextSpy = vi.spyOn(EncounterDialogueUtils, "showEncounterText");
       await game.runToMysteryEncounter(MysteryEncounterType.BERRIES_ABOUND, defaultParty);
 
+      scene.getParty().forEach(pkm => {
+        vi.spyOn(pkm, "getStat").mockReturnValue(1); // for ease return for every stat
+      });
+
       const config = game.scene.currentBattle.mysteryEncounter!.enemyPartyConfigs[0];
       const speciesToSpawn = config.pokemonConfigs?.[0].species.speciesId;
-      // Setting enemy's level arbitrarily high to outspeed
-      config.pokemonConfigs![0].dataSource!.level = 1000;
 
       await runMysteryEncounterToEnd(game, 2, undefined, true);
 
@@ -189,7 +191,7 @@ describe("Berries Abound - Mystery Encounter", () => {
       expect(enemyField[0].species.speciesId).toBe(speciesToSpawn);
 
       // Should be enraged
-      expect(enemyField[0].summonData.statStages).toEqual([0, 1, 0, 1, 1, 0, 0]);
+      expect(enemyField[0].summonData.statStages).toEqual([ 0, 1, 0, 1, 1, 0, 0 ]);
       expect(encounterTextSpy).toHaveBeenCalledWith(expect.any(BattleScene), `${namespace}:option.2.selected_bad`);
     });
 
@@ -198,10 +200,12 @@ describe("Berries Abound - Mystery Encounter", () => {
       const encounterTextSpy = vi.spyOn(EncounterDialogueUtils, "showEncounterText");
       await game.runToMysteryEncounter(MysteryEncounterType.BERRIES_ABOUND, defaultParty);
 
+      scene.getParty().forEach(pkm => {
+        vi.spyOn(pkm, "getStat").mockReturnValue(1); // for ease return for every stat
+      });
+
       const config = game.scene.currentBattle.mysteryEncounter!.enemyPartyConfigs[0];
       const speciesToSpawn = config.pokemonConfigs?.[0].species.speciesId;
-      // Setting enemy's level arbitrarily high to outspeed
-      config.pokemonConfigs![0].dataSource!.level = 1000;
 
       await runMysteryEncounterToEnd(game, 2, undefined, true);
 
@@ -211,7 +215,7 @@ describe("Berries Abound - Mystery Encounter", () => {
       expect(enemyField[0].species.speciesId).toBe(speciesToSpawn);
 
       // Should be enraged
-      expect(enemyField[0].summonData.statStages).toEqual([1, 1, 1, 1, 1, 0, 0]);
+      expect(enemyField[0].summonData.statStages).toEqual([ 1, 1, 1, 1, 1, 0, 0 ]);
       expect(encounterTextSpy).toHaveBeenCalledWith(expect.any(BattleScene), `${namespace}:option.2.selected_bad`);
     });
 

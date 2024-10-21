@@ -96,12 +96,12 @@ const PERCENT_LEVEL_LOSS_ON_REFUSE = 10;
  * Value ranges of the resulting species BST transformations after adding values to original species
  * 2 Pokemon in the party use this range
  */
-const HIGH_BST_TRANSFORM_BASE_VALUES: [number, number] = [90, 110];
+const HIGH_BST_TRANSFORM_BASE_VALUES: [number, number] = [ 90, 110 ];
 /**
  * Value ranges of the resulting species BST transformations after adding values to original species
  * All remaining Pokemon in the party use this range
  */
-const STANDARD_BST_TRANSFORM_BASE_VALUES: [number, number] = [40, 50];
+const STANDARD_BST_TRANSFORM_BASE_VALUES: [number, number] = [ 40, 50 ];
 
 /**
  * Weird Dream encounter.
@@ -133,6 +133,7 @@ export const WeirdDreamEncounter: MysteryEncounter =
         text: `${namespace}:intro_dialogue`,
       },
     ])
+    .setLocalizationKey(`${namespace}`)
     .withTitle(`${namespace}:title`)
     .withDescription(`${namespace}:description`)
     .withQuery(`${namespace}:query`)
@@ -206,7 +207,7 @@ export const WeirdDreamEncounter: MysteryEncounter =
           await showEncounterText(scene, `${namespace}:option.1.dream_complete`);
 
           await doNewTeamPostProcess(scene, transformations);
-          setEncounterRewards(scene, { guaranteedModifierTypeFuncs: [modifierTypes.MEMORY_MUSHROOM, modifierTypes.ROGUE_BALL, modifierTypes.MINT, modifierTypes.MINT, modifierTypes.MINT], fillRemaining: false });
+          setEncounterRewards(scene, { guaranteedModifierTypeFuncs: [ modifierTypes.MEMORY_MUSHROOM, modifierTypes.ROGUE_BALL, modifierTypes.MINT, modifierTypes.MINT, modifierTypes.MINT ], fillRemaining: false });
           leaveEncounterWithoutBattle(scene, true);
         })
         .build()
@@ -671,7 +672,7 @@ async function addEggMoveToNewPokemonMoveset(scene: BattleScene, newPokemon: Pla
   let eggMoveIndex: null | number = null;
   const eggMoves = newPokemon.getEggMoves()?.slice(0);
   if (eggMoves) {
-    const eggMoveIndices = randSeedShuffle([0, 1, 2, 3]);
+    const eggMoveIndices = randSeedShuffle([ 0, 1, 2, 3 ]);
     let randomEggMoveIndex = eggMoveIndices.pop();
     let randomEggMove = !isNullOrUndefined(randomEggMoveIndex) ? eggMoves[randomEggMoveIndex] : null;
     let retries = 0;

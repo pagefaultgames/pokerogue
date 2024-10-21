@@ -54,6 +54,7 @@ export const TrashToTreasureEncounter: MysteryEncounter =
         text: `${namespace}:intro`,
       },
     ])
+    .setLocalizationKey(`${namespace}`)
     .withTitle(`${namespace}:title`)
     .withDescription(`${namespace}:description`)
     .withQuery(`${namespace}:query`)
@@ -67,17 +68,17 @@ export const TrashToTreasureEncounter: MysteryEncounter =
         isBoss: true,
         formIndex: 1, // Gmax
         bossSegmentModifier: 1, // +1 Segment from normal
-        moveSet: [Moves.PAYBACK, Moves.GUNK_SHOT, Moves.STOMPING_TANTRUM, Moves.DRAIN_PUNCH]
+        moveSet: [ Moves.PAYBACK, Moves.GUNK_SHOT, Moves.STOMPING_TANTRUM, Moves.DRAIN_PUNCH ]
       };
       const config: EnemyPartyConfig = {
         levelAdditiveModifier: 0.5,
-        pokemonConfigs: [pokemonConfig],
+        pokemonConfigs: [ pokemonConfig ],
         disableSwitch: true
       };
-      encounter.enemyPartyConfigs = [config];
+      encounter.enemyPartyConfigs = [ config ];
 
       // Load animations/sfx for Garbodor fight start moves
-      loadCustomMovesForEncounter(scene, [Moves.TOXIC, Moves.AMNESIA]);
+      loadCustomMovesForEncounter(scene, [ Moves.TOXIC, Moves.AMNESIA ]);
 
       scene.loadSe("PRSFX- Dig2", "battle_anims", "PRSFX- Dig2.wav");
       scene.loadSe("PRSFX- Venom Drench", "battle_anims", "PRSFX- Venom Drench.wav");
@@ -104,10 +105,10 @@ export const TrashToTreasureEncounter: MysteryEncounter =
         })
         .withOptionPhase(async (scene: BattleScene) => {
           // Gain 2 Leftovers and 2 Shell Bell
-          transitionMysteryEncounterIntroVisuals(scene);
+          await transitionMysteryEncounterIntroVisuals(scene);
           await tryApplyDigRewardItems(scene);
 
-          const blackSludge = generateModifierType(scene, modifierTypes.MYSTERY_ENCOUNTER_BLACK_SLUDGE, [SHOP_ITEM_COST_MULTIPLIER]);
+          const blackSludge = generateModifierType(scene, modifierTypes.MYSTERY_ENCOUNTER_BLACK_SLUDGE, [ SHOP_ITEM_COST_MULTIPLIER ]);
           const modifier = blackSludge?.newModifier();
           if (modifier) {
             await scene.addModifier(modifier, false, false, false, true);
@@ -135,21 +136,21 @@ export const TrashToTreasureEncounter: MysteryEncounter =
           // Investigate garbage, battle Gmax Garbodor
           scene.setFieldScale(0.75);
           await showEncounterText(scene, `${namespace}:option.2.selected_2`);
-          transitionMysteryEncounterIntroVisuals(scene);
+          await transitionMysteryEncounterIntroVisuals(scene);
 
           const encounter = scene.currentBattle.mysteryEncounter!;
 
-          setEncounterRewards(scene, { guaranteedModifierTiers: [ModifierTier.ROGUE, ModifierTier.ROGUE, ModifierTier.ULTRA, ModifierTier.GREAT], fillRemaining: true });
+          setEncounterRewards(scene, { guaranteedModifierTiers: [ ModifierTier.ROGUE, ModifierTier.ROGUE, ModifierTier.ULTRA, ModifierTier.GREAT ], fillRemaining: true });
           encounter.startOfBattleEffects.push(
             {
               sourceBattlerIndex: BattlerIndex.ENEMY,
-              targets: [BattlerIndex.PLAYER],
+              targets: [ BattlerIndex.PLAYER ],
               move: new PokemonMove(Moves.TOXIC),
               ignorePp: true
             },
             {
               sourceBattlerIndex: BattlerIndex.ENEMY,
-              targets: [BattlerIndex.ENEMY],
+              targets: [ BattlerIndex.ENEMY ],
               move: new PokemonMove(Moves.AMNESIA),
               ignorePp: true
             });
@@ -221,7 +222,7 @@ async function tryApplyDigRewardItems(scene: BattleScene) {
   await showEncounterText(scene, i18next.t("battle:rewardGainCount", { modifierName: shellBell.name, count: 2 }), null, undefined, true);
 }
 
-async function doGarbageDig(scene: BattleScene) {
+function doGarbageDig(scene: BattleScene) {
   scene.playSound("battle_anims/PRSFX- Dig2");
   scene.time.delayedCall(SOUND_EFFECT_WAIT_TIME, () => {
     scene.playSound("battle_anims/PRSFX- Dig2");

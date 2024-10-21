@@ -65,8 +65,8 @@ export default class MenuUiHandler extends MessageUiHandler {
     super(scene, mode);
 
     this.excludedMenus = () => [
-      { condition: [Mode.COMMAND, Mode.TITLE].includes(mode ?? Mode.TITLE), options: [MenuOptions.EGG_GACHA, MenuOptions.EGG_LIST] },
-      { condition: bypassLogin, options: [MenuOptions.LOG_OUT] }
+      { condition: [ Mode.COMMAND, Mode.TITLE ].includes(mode ?? Mode.TITLE), options: [ MenuOptions.EGG_GACHA, MenuOptions.EGG_LIST ]},
+      { condition: bypassLogin, options: [ MenuOptions.LOG_OUT ]}
     ];
 
     this.menuOptions = Utils.getEnumKeys(MenuOptions)
@@ -80,7 +80,7 @@ export default class MenuUiHandler extends MessageUiHandler {
     const ui = this.getUi();
     // wiki url directs based on languges available on wiki
     const lang = i18next.resolvedLanguage?.substring(0, 2)!; // TODO: is this bang correct?
-    if (["de", "fr", "ko", "zh"].includes(lang)) {
+    if ([ "de", "fr", "ko", "zh" ].includes(lang)) {
       wikiUrl = `https://wiki.pokerogue.net/${lang}:start`;
     }
 
@@ -108,8 +108,8 @@ export default class MenuUiHandler extends MessageUiHandler {
   render() {
     const ui = this.getUi();
     this.excludedMenus = () => [
-      { condition: this.scene.getCurrentPhase() instanceof SelectModifierPhase, options: [MenuOptions.EGG_GACHA, MenuOptions.EGG_LIST] },
-      { condition: bypassLogin, options: [MenuOptions.LOG_OUT] }
+      { condition: this.scene.getCurrentPhase() instanceof SelectModifierPhase, options: [ MenuOptions.EGG_GACHA, MenuOptions.EGG_LIST ]},
+      { condition: bypassLogin, options: [ MenuOptions.LOG_OUT ]}
     ];
 
     this.menuOptions = Utils.getEnumKeys(MenuOptions)
@@ -468,148 +468,148 @@ export default class MenuUiHandler extends MessageUiHandler {
       }
       this.showText("", 0);
       switch (adjustedCursor) {
-      case MenuOptions.GAME_SETTINGS:
-        ui.setOverlayMode(Mode.SETTINGS);
-        success = true;
-        break;
-      case MenuOptions.ACHIEVEMENTS:
-        ui.setOverlayMode(Mode.ACHIEVEMENTS);
-        success = true;
-        break;
-      case MenuOptions.STATS:
-        ui.setOverlayMode(Mode.GAME_STATS);
-        success = true;
-        break;
-      case MenuOptions.RUN_HISTORY:
-        ui.setOverlayMode(Mode.RUN_HISTORY);
-        success = true;
-        break;
-      case MenuOptions.EGG_LIST:
-        if (this.scene.gameData.eggs.length) {
+        case MenuOptions.GAME_SETTINGS:
+          ui.setOverlayMode(Mode.SETTINGS);
+          success = true;
+          break;
+        case MenuOptions.ACHIEVEMENTS:
+          ui.setOverlayMode(Mode.ACHIEVEMENTS);
+          success = true;
+          break;
+        case MenuOptions.STATS:
+          ui.setOverlayMode(Mode.GAME_STATS);
+          success = true;
+          break;
+        case MenuOptions.RUN_HISTORY:
+          ui.setOverlayMode(Mode.RUN_HISTORY);
+          success = true;
+          break;
+        case MenuOptions.EGG_LIST:
+          if (this.scene.gameData.eggs.length) {
+            ui.revertMode();
+            ui.setOverlayMode(Mode.EGG_LIST);
+            success = true;
+          } else {
+            ui.showText(i18next.t("menuUiHandler:noEggs"), null, () => ui.showText(""), Utils.fixedInt(1500));
+            error = true;
+          }
+          break;
+        case MenuOptions.EGG_GACHA:
           ui.revertMode();
-          ui.setOverlayMode(Mode.EGG_LIST);
+          ui.setOverlayMode(Mode.EGG_GACHA);
           success = true;
-        } else {
-          ui.showText(i18next.t("menuUiHandler:noEggs"), null, () => ui.showText(""), Utils.fixedInt(1500));
-          error = true;
-        }
-        break;
-      case MenuOptions.EGG_GACHA:
-        ui.revertMode();
-        ui.setOverlayMode(Mode.EGG_GACHA);
-        success = true;
-        break;
-      case MenuOptions.MANAGE_DATA:
-        if (!bypassLogin && !this.manageDataConfig.options.some(o => o.label === i18next.t("menuUiHandler:linkDiscord") || o.label === i18next.t("menuUiHandler:unlinkDiscord"))) {
-          this.manageDataConfig.options.splice(this.manageDataConfig.options.length - 1, 0,
-            {
-              label: loggedInUser?.discordId === "" ? i18next.t("menuUiHandler:linkDiscord") : i18next.t("menuUiHandler:unlinkDiscord"),
-              handler: () => {
-                if (loggedInUser?.discordId === "") {
-                  const token = Utils.getCookie(Utils.sessionIdKey);
-                  const redirectUri = encodeURIComponent(`${import.meta.env.VITE_SERVER_URL}/auth/discord/callback`);
-                  const discordId = import.meta.env.VITE_DISCORD_CLIENT_ID;
-                  const discordUrl = `https://discord.com/api/oauth2/authorize?client_id=${discordId}&redirect_uri=${redirectUri}&response_type=code&scope=identify&state=${token}&prompt=none`;
-                  window.open(discordUrl, "_self");
-                  return true;
-                } else {
-                  Utils.apiPost("/auth/discord/logout", undefined, undefined, true).then(res => {
-                    if (!res.ok) {
-                      console.error(`Unlink failed (${res.status}: ${res.statusText})`);
-                    }
-                    updateUserInfo().then(() => this.scene.reset(true, true));
-                  });
-                  return true;
+          break;
+        case MenuOptions.MANAGE_DATA:
+          if (!bypassLogin && !this.manageDataConfig.options.some(o => o.label === i18next.t("menuUiHandler:linkDiscord") || o.label === i18next.t("menuUiHandler:unlinkDiscord"))) {
+            this.manageDataConfig.options.splice(this.manageDataConfig.options.length - 1, 0,
+              {
+                label: loggedInUser?.discordId === "" ? i18next.t("menuUiHandler:linkDiscord") : i18next.t("menuUiHandler:unlinkDiscord"),
+                handler: () => {
+                  if (loggedInUser?.discordId === "") {
+                    const token = Utils.getCookie(Utils.sessionIdKey);
+                    const redirectUri = encodeURIComponent(`${import.meta.env.VITE_SERVER_URL}/auth/discord/callback`);
+                    const discordId = import.meta.env.VITE_DISCORD_CLIENT_ID;
+                    const discordUrl = `https://discord.com/api/oauth2/authorize?client_id=${discordId}&redirect_uri=${redirectUri}&response_type=code&scope=identify&state=${token}&prompt=none`;
+                    window.open(discordUrl, "_self");
+                    return true;
+                  } else {
+                    Utils.apiPost("/auth/discord/logout", undefined, undefined, true).then(res => {
+                      if (!res.ok) {
+                        console.error(`Unlink failed (${res.status}: ${res.statusText})`);
+                      }
+                      updateUserInfo().then(() => this.scene.reset(true, true));
+                    });
+                    return true;
+                  }
                 }
-              }
-            },
-            {
-              label: loggedInUser?.googleId === "" ? i18next.t("menuUiHandler:linkGoogle") : i18next.t("menuUiHandler:unlinkGoogle"),
-              handler: () => {
-                if (loggedInUser?.googleId === "") {
-                  const token = Utils.getCookie(Utils.sessionIdKey);
-                  const redirectUri = encodeURIComponent(`${import.meta.env.VITE_SERVER_URL}/auth/google/callback`);
-                  const googleId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
-                  const googleUrl = `https://accounts.google.com/o/oauth2/auth?client_id=${googleId}&response_type=code&redirect_uri=${redirectUri}&scope=openid&state=${token}`;
-                  window.open(googleUrl, "_self");
-                  return true;
-                } else {
-                  Utils.apiPost("/auth/google/logout", undefined, undefined, true).then(res => {
-                    if (!res.ok) {
-                      console.error(`Unlink failed (${res.status}: ${res.statusText})`);
-                    }
-                    updateUserInfo().then(() => this.scene.reset(true, true));
-                  });
-                  return true;
+              },
+              {
+                label: loggedInUser?.googleId === "" ? i18next.t("menuUiHandler:linkGoogle") : i18next.t("menuUiHandler:unlinkGoogle"),
+                handler: () => {
+                  if (loggedInUser?.googleId === "") {
+                    const token = Utils.getCookie(Utils.sessionIdKey);
+                    const redirectUri = encodeURIComponent(`${import.meta.env.VITE_SERVER_URL}/auth/google/callback`);
+                    const googleId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+                    const googleUrl = `https://accounts.google.com/o/oauth2/auth?client_id=${googleId}&response_type=code&redirect_uri=${redirectUri}&scope=openid&state=${token}`;
+                    window.open(googleUrl, "_self");
+                    return true;
+                  } else {
+                    Utils.apiPost("/auth/google/logout", undefined, undefined, true).then(res => {
+                      if (!res.ok) {
+                        console.error(`Unlink failed (${res.status}: ${res.statusText})`);
+                      }
+                      updateUserInfo().then(() => this.scene.reset(true, true));
+                    });
+                    return true;
+                  }
                 }
-              }
-            });
-        }
-        ui.setOverlayMode(Mode.MENU_OPTION_SELECT, this.manageDataConfig);
-        success = true;
-        break;
-      case MenuOptions.COMMUNITY:
-        ui.setOverlayMode(Mode.MENU_OPTION_SELECT, this.communityConfig);
-        success = true;
-        break;
-      case MenuOptions.SAVE_AND_QUIT:
-        if (this.scene.currentBattle) {
+              });
+          }
+          ui.setOverlayMode(Mode.MENU_OPTION_SELECT, this.manageDataConfig);
           success = true;
-          const doSaveQuit = () => {
-            ui.setMode(Mode.LOADING, {
-              buttonActions: [], fadeOut: () =>
-                this.scene.gameData.saveAll(this.scene, true, true, true, true).then(() => {
+          break;
+        case MenuOptions.COMMUNITY:
+          ui.setOverlayMode(Mode.MENU_OPTION_SELECT, this.communityConfig);
+          success = true;
+          break;
+        case MenuOptions.SAVE_AND_QUIT:
+          if (this.scene.currentBattle) {
+            success = true;
+            const doSaveQuit = () => {
+              ui.setMode(Mode.LOADING, {
+                buttonActions: [], fadeOut: () =>
+                  this.scene.gameData.saveAll(this.scene, true, true, true, true).then(() => {
 
-                  this.scene.reset(true);
-                })
+                    this.scene.reset(true);
+                  })
+              });
+            };
+            if (this.scene.currentBattle.turn > 1) {
+              ui.showText(i18next.t("menuUiHandler:losingProgressionWarning"), null, () => {
+                if (!this.active) {
+                  this.showText("", 0);
+                  return;
+                }
+                ui.setOverlayMode(Mode.CONFIRM, doSaveQuit, () => {
+                  ui.revertMode();
+                  this.showText("", 0);
+                }, false, -98);
+              });
+            } else {
+              doSaveQuit();
+            }
+          } else {
+            error = true;
+          }
+          break;
+        case MenuOptions.LOG_OUT:
+          success = true;
+          const doLogout = () => {
+            ui.setMode(Mode.LOADING, {
+              buttonActions: [], fadeOut: () => Utils.apiFetch("account/logout", true).then(res => {
+                if (!res.ok) {
+                  console.error(`Log out failed (${res.status}: ${res.statusText})`);
+                }
+                Utils.removeCookie(Utils.sessionIdKey);
+                updateUserInfo().then(() => this.scene.reset(true, true));
+              })
             });
           };
-          if (this.scene.currentBattle.turn > 1) {
+          if (this.scene.currentBattle) {
             ui.showText(i18next.t("menuUiHandler:losingProgressionWarning"), null, () => {
               if (!this.active) {
                 this.showText("", 0);
                 return;
               }
-              ui.setOverlayMode(Mode.CONFIRM, doSaveQuit, () => {
+              ui.setOverlayMode(Mode.CONFIRM, doLogout, () => {
                 ui.revertMode();
                 this.showText("", 0);
               }, false, -98);
             });
           } else {
-            doSaveQuit();
+            doLogout();
           }
-        } else {
-          error = true;
-        }
-        break;
-      case MenuOptions.LOG_OUT:
-        success = true;
-        const doLogout = () => {
-          ui.setMode(Mode.LOADING, {
-            buttonActions: [], fadeOut: () => Utils.apiFetch("account/logout", true).then(res => {
-              if (!res.ok) {
-                console.error(`Log out failed (${res.status}: ${res.statusText})`);
-              }
-              Utils.removeCookie(Utils.sessionIdKey);
-              updateUserInfo().then(() => this.scene.reset(true, true));
-            })
-          });
-        };
-        if (this.scene.currentBattle) {
-          ui.showText(i18next.t("menuUiHandler:losingProgressionWarning"), null, () => {
-            if (!this.active) {
-              this.showText("", 0);
-              return;
-            }
-            ui.setOverlayMode(Mode.CONFIRM, doLogout, () => {
-              ui.revertMode();
-              this.showText("", 0);
-            }, false, -98);
-          });
-        } else {
-          doLogout();
-        }
-        break;
+          break;
       }
     } else if (button === Button.CANCEL) {
       success = true;
@@ -620,20 +620,20 @@ export default class MenuUiHandler extends MessageUiHandler {
       });
     } else {
       switch (button) {
-      case Button.UP:
-        if (this.cursor) {
-          success = this.setCursor(this.cursor - 1);
-        } else {
-          success = this.setCursor(this.menuOptions.length - 1);
-        }
-        break;
-      case Button.DOWN:
-        if (this.cursor + 1 < this.menuOptions.length) {
-          success = this.setCursor(this.cursor + 1);
-        } else {
-          success = this.setCursor(0);
-        }
-        break;
+        case Button.UP:
+          if (this.cursor) {
+            success = this.setCursor(this.cursor - 1);
+          } else {
+            success = this.setCursor(this.menuOptions.length - 1);
+          }
+          break;
+        case Button.DOWN:
+          if (this.cursor + 1 < this.menuOptions.length) {
+            success = this.setCursor(this.cursor + 1);
+          } else {
+            success = this.setCursor(0);
+          }
+          break;
       }
     }
 

@@ -19,7 +19,7 @@ import { CommandPhase } from "#app/phases/command-phase";
 import { ModifierTier } from "#app/modifier/modifier-tier";
 
 const namespace = "mysteryEncounters/weirdDream";
-const defaultParty = [Species.MAGBY, Species.HAUNTER, Species.ABRA];
+const defaultParty = [ Species.MAGBY, Species.HAUNTER, Species.ABRA ];
 const defaultBiome = Biome.CAVE;
 const defaultWave = 45;
 
@@ -43,7 +43,7 @@ describe("Weird Dream - Mystery Encounter", () => {
 
     vi.spyOn(MysteryEncounters, "mysteryEncountersByBiome", "get").mockReturnValue(
       new Map<Biome, MysteryEncounterType[]>([
-        [Biome.CAVE, [MysteryEncounterType.WEIRD_DREAM]],
+        [ Biome.CAVE, [ MysteryEncounterType.WEIRD_DREAM ]],
       ])
     );
   });

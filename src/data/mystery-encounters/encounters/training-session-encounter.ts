@@ -52,6 +52,7 @@ export const TrainingSessionEncounter: MysteryEncounter =
         text: `${namespace}:intro`,
       }
     ])
+    .setLocalizationKey(`${namespace}`)
     .withTitle(`${namespace}:title`)
     .withDescription(`${namespace}:description`)
     .withQuery(`${namespace}:query`)
@@ -161,7 +162,7 @@ export const TrainingSessionEncounter: MysteryEncounter =
 
           setEncounterRewards(scene, { fillRemaining: true }, undefined, onBeforeRewardsPhase);
 
-          return initBattleWithEnemyConfig(scene, config);
+          await initBattleWithEnemyConfig(scene, config);
         })
         .build()
     )
@@ -237,7 +238,7 @@ export const TrainingSessionEncounter: MysteryEncounter =
 
           setEncounterRewards(scene, { fillRemaining: true }, undefined, onBeforeRewardsPhase);
 
-          return initBattleWithEnemyConfig(scene, config);
+          await initBattleWithEnemyConfig(scene, config);
         })
         .build()
     )
@@ -350,7 +351,7 @@ export const TrainingSessionEncounter: MysteryEncounter =
 
           setEncounterRewards(scene, { fillRemaining: true }, undefined, onBeforeRewardsPhase);
 
-          return initBattleWithEnemyConfig(scene, config);
+          await initBattleWithEnemyConfig(scene, config);
         })
         .build()
     )

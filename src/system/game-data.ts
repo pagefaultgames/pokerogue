@@ -31,7 +31,7 @@ import { TrainerVariant } from "#app/field/trainer";
 import { Variant } from "#app/data/variant";
 import { setSettingGamepad, SettingGamepad, settingGamepadDefaults } from "#app/system/settings/settings-gamepad";
 import { setSettingKeyboard, SettingKeyboard } from "#app/system/settings/settings-keyboard";
-import { TerrainChangedEvent, WeatherChangedEvent } from "#app/events/arena";
+import { TagAddedEvent, TerrainChangedEvent, WeatherChangedEvent } from "#app/events/arena";
 import * as Modifier from "#app/modifier/modifier";
 import { StatusEffect } from "#app/data/status-effect";
 import ChallengeData from "#app/system/challenge-data";
@@ -43,13 +43,13 @@ import { Species } from "#enums/species";
 import { applyChallenges, ChallengeType } from "#app/data/challenge";
 import { WeatherType } from "#enums/weather-type";
 import { TerrainType } from "#app/data/terrain";
-import { OutdatedPhase } from "#app/phases/outdated-phase";
 import { ReloadSessionPhase } from "#app/phases/reload-session-phase";
 import { RUN_HISTORY_LIMIT } from "#app/ui/run-history-ui-handler";
-import { applySessionDataPatches, applySettingsDataPatches, applySystemDataPatches } from "#app/system/version-converter";
+import { applySessionVersionMigration, applySystemVersionMigration, applySettingsVersionMigration } from "./version_migration/version_converter";
 import { MysteryEncounterSaveData } from "#app/data/mystery-encounters/mystery-encounter-save-data";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { PokerogueApiClearSessionData } from "#app/@types/pokerogue-api";
+import { ArenaTrapTag } from "#app/data/arena-tag";
 
 export const defaultStarterSpecies: Species[] = [
   Species.BULBASAUR, Species.CHARMANDER, Species.SQUIRTLE,
@@ -67,22 +67,22 @@ const saveKey = "x0i2O7WRiANTqPmZ"; // Temporary; secure encryption is not yet n
 
 export function getDataTypeKey(dataType: GameDataType, slotId: integer = 0): string {
   switch (dataType) {
-  case GameDataType.SYSTEM:
-    return "data";
-  case GameDataType.SESSION:
-    let ret = "sessionData";
-    if (slotId) {
-      ret += slotId;
-    }
-    return ret;
-  case GameDataType.SETTINGS:
-    return "settings";
-  case GameDataType.TUTORIALS:
-    return "tutorials";
-  case GameDataType.SEEN_DIALOGUES:
-    return "seenDialogues";
-  case GameDataType.RUN_HISTORY:
-    return "runHistoryData";
+    case GameDataType.SYSTEM:
+      return "data";
+    case GameDataType.SESSION:
+      let ret = "sessionData";
+      if (slotId) {
+        ret += slotId;
+      }
+      return ret;
+    case GameDataType.SETTINGS:
+      return "settings";
+    case GameDataType.TUTORIALS:
+      return "tutorials";
+    case GameDataType.SEEN_DIALOGUES:
+      return "seenDialogues";
+    case GameDataType.RUN_HISTORY:
+      return "runHistoryData";
   }
 }
 
@@ -348,8 +348,8 @@ export class GameData {
       [VoucherType.GOLDEN]: 0
     };
     this.eggs = [];
-    this.eggPity = [0, 0, 0, 0];
-    this.unlockPity = [0, 0, 0, 0];
+    this.eggPity = [ 0, 0, 0, 0 ];
+    this.unlockPity = [ 0, 0, 0, 0 ];
     this.initDexData();
     this.initStarterData();
   }
@@ -402,10 +402,7 @@ export class GameData {
           .then(error => {
             this.scene.ui.savingIcon.hide();
             if (error) {
-              if (error.startsWith("client version out of date")) {
-                this.scene.clearPhaseQueue();
-                this.scene.unshiftPhase(new OutdatedPhase(this.scene));
-              } else if (error.startsWith("session out of date")) {
+              if (error.startsWith("session out of date")) {
                 this.scene.clearPhaseQueue();
                 this.scene.unshiftPhase(new ReloadSessionPhase(this.scene));
               }
@@ -481,7 +478,7 @@ export class GameData {
           localStorage.setItem(lsItemKey, "");
         }
 
-        applySystemDataPatches(systemData);
+        applySystemVersionMigration(systemData);
 
         this.trainerId = systemData.trainerId;
         this.secretId = systemData.secretId;
@@ -560,8 +557,8 @@ export class GameData {
           ? systemData.eggs.map(e => e.toEgg())
           : [];
 
-        this.eggPity = systemData.eggPity ? systemData.eggPity.slice(0) : [0, 0, 0, 0];
-        this.unlockPity = systemData.unlockPity ? systemData.unlockPity.slice(0) : [0, 0, 0, 0];
+        this.eggPity = systemData.eggPity ? systemData.eggPity.slice(0) : [ 0, 0, 0, 0 ];
+        this.unlockPity = systemData.unlockPity ? systemData.unlockPity.slice(0) : [ 0, 0, 0, 0 ];
 
         this.dexData = Object.assign(this.dexData, systemData.dexData);
         this.consolidateDexData(this.dexData);
@@ -856,7 +853,7 @@ export class GameData {
 
     const settings = JSON.parse(localStorage.getItem("settings")!); // TODO: is this bang correct?
 
-    applySettingsDataPatches(settings);
+    applySettingsVersionMigration(settings);
 
     for (const setting of Object.keys(settings)) {
       setSetting(this.scene, setting, settings[setting]);
@@ -1085,8 +1082,18 @@ export class GameData {
 
           scene.arena.terrain = sessionData.arena.terrain;
           scene.arena.eventTarget.dispatchEvent(new TerrainChangedEvent(TerrainType.NONE, scene.arena.terrain?.terrainType!, scene.arena.terrain?.turnsLeft!)); // TODO: is this bang correct?
-          // TODO
-          //scene.arena.tags = sessionData.arena.tags;
+
+          scene.arena.tags = sessionData.arena.tags;
+          if (scene.arena.tags) {
+            for (const tag of scene.arena.tags) {
+              if (tag instanceof ArenaTrapTag) {
+                const { tagType, side, turnCount, layers, maxLayers } = tag as ArenaTrapTag;
+                scene.arena.eventTarget.dispatchEvent(new TagAddedEvent(tagType, side, turnCount, layers, maxLayers));
+              } else {
+                scene.arena.eventTarget.dispatchEvent(new TagAddedEvent(tag.tagType, tag.side, tag.turnCount));
+              }
+            }
+          }
 
           for (const modifierData of sessionData.modifiers) {
             const modifier = modifierData.toModifier(scene, Modifier[modifierData.className]);
@@ -1125,10 +1132,16 @@ export class GameData {
     });
   }
 
+  /**
+   * Delete the session data at the given slot when overwriting a save file
+   * For deleting the session of a finished run, use {@linkcode tryClearSession}
+   * @param slotId the slot to clear
+   * @returns Promise with result `true` if the session was deleted successfully, `false` otherwise
+   */
   deleteSession(slotId: integer): Promise<boolean> {
     return new Promise<boolean>(resolve => {
       if (bypassLogin) {
-        localStorage.removeItem(`sessionData${this.scene.sessionSlotId ? this.scene.sessionSlotId : ""}_${loggedInUser?.username}`);
+        localStorage.removeItem(`sessionData${slotId ? slotId : ""}_${loggedInUser?.username}`);
         return resolve(true);
       }
 
@@ -1139,7 +1152,7 @@ export class GameData {
         Utils.apiFetch(`savedata/session/delete?slot=${slotId}&clientSessionId=${clientSessionId}`, true).then(response => {
           if (response.ok) {
             loggedInUser!.lastSessionSlot = -1; // TODO: is the bang correct?
-            localStorage.removeItem(`sessionData${this.scene.sessionSlotId ? this.scene.sessionSlotId : ""}_${loggedInUser?.username}`);
+            localStorage.removeItem(`sessionData${slotId ? slotId : ""}_${loggedInUser?.username}`);
             resolve(true);
           }
           return response.text();
@@ -1190,27 +1203,29 @@ export class GameData {
 
 
   /**
-   * Attempt to clear session data. After session data is removed, attempt to update user info so the menu updates
+   * Attempt to clear session data after the end of a run
+   * After session data is removed, attempt to update user info so the menu updates
+   * To delete an unfinished run instead, use {@linkcode deleteSession}
    */
   async tryClearSession(scene: BattleScene, slotId: integer): Promise<[success: boolean, newClear: boolean]> {
-    let result: [boolean, boolean] = [false, false];
+    let result: [boolean, boolean] = [ false, false ];
 
     if (bypassLogin) {
       localStorage.removeItem(`sessionData${slotId ? slotId : ""}_${loggedInUser?.username}`);
-      result = [true, true];
+      result = [ true, true ];
     } else {
       const sessionData = this.getSessionSaveData(scene);
       const response = await Utils.apiPost(`savedata/session/clear?slot=${slotId}&trainerId=${this.trainerId}&secretId=${this.secretId}&clientSessionId=${clientSessionId}`, JSON.stringify(sessionData), undefined, true);
 
       if (response.ok) {
           loggedInUser!.lastSessionSlot = -1; // TODO: is the bang correct?
-          localStorage.removeItem(`sessionData${this.scene.sessionSlotId ? this.scene.sessionSlotId : ""}_${loggedInUser?.username}`);
+          localStorage.removeItem(`sessionData${slotId ? slotId : ""}_${loggedInUser?.username}`);
       }
 
       const jsonResponse: PokerogueApiClearSessionData = await response.json();
 
       if (!jsonResponse.error) {
-        result = [true, jsonResponse.success ?? false];
+        result = [ true, jsonResponse.success ?? false ];
       } else {
         if (jsonResponse && jsonResponse.error?.startsWith("session out of date")) {
           this.scene.clearPhaseQueue();
@@ -1218,7 +1233,7 @@ export class GameData {
         }
 
         console.error(jsonResponse);
-        result = [false, false];
+        result = [ false, false ];
       }
     }
 
@@ -1294,7 +1309,7 @@ export class GameData {
       return v;
     }) as SessionSaveData;
 
-    applySessionDataPatches(sessionData);
+    applySessionVersionMigration(sessionData);
 
     return sessionData;
   }
@@ -1335,10 +1350,7 @@ export class GameData {
                 this.scene.ui.savingIcon.hide();
               }
               if (error) {
-                if (error.startsWith("client version out of date")) {
-                  this.scene.clearPhaseQueue();
-                  this.scene.unshiftPhase(new OutdatedPhase(this.scene));
-                } else if (error.startsWith("session out of date")) {
+                if (error.startsWith("session out of date")) {
                   this.scene.clearPhaseQueue();
                   this.scene.unshiftPhase(new ReloadSessionPhase(this.scene));
                 }
@@ -1362,12 +1374,12 @@ export class GameData {
       const dataKey: string = `${getDataTypeKey(dataType, slotId)}_${loggedInUser?.username}`;
       const handleData = (dataStr: string) => {
         switch (dataType) {
-        case GameDataType.SYSTEM:
-          dataStr = this.convertSystemDataStr(dataStr, true);
-          break;
+          case GameDataType.SYSTEM:
+            dataStr = this.convertSystemDataStr(dataStr, true);
+            break;
         }
         const encryptedData = AES.encrypt(dataStr, saveKey);
-        const blob = new Blob([ encryptedData.toString() ], {type: "text/json"});
+        const blob = new Blob([ encryptedData.toString() ], { type: "text/json" });
         const link = document.createElement("a");
         link.href = window.URL.createObjectURL(blob);
         link.download = `${dataKey}.prsv`;
@@ -1422,28 +1434,28 @@ export class GameData {
             try {
               dataName = GameDataType[dataType].toLowerCase();
               switch (dataType) {
-              case GameDataType.SYSTEM:
-                dataStr = this.convertSystemDataStr(dataStr);
-                const systemData = this.parseSystemData(dataStr);
-                valid = !!systemData.dexData && !!systemData.timestamp;
-                break;
-              case GameDataType.SESSION:
-                const sessionData = this.parseSessionData(dataStr);
-                valid = !!sessionData.party && !!sessionData.enemyParty && !!sessionData.timestamp;
-                break;
-              case GameDataType.RUN_HISTORY:
-                const data = JSON.parse(dataStr);
-                const keys = Object.keys(data);
-                dataName = i18next.t("menuUiHandler:RUN_HISTORY").toLowerCase();
-                keys.forEach((key) => {
-                  const entryKeys = Object.keys(data[key]);
-                  valid = ["isFavorite", "isVictory", "entry"].every(v => entryKeys.includes(v)) && entryKeys.length === 3;
-                });
-                break;
-              case GameDataType.SETTINGS:
-              case GameDataType.TUTORIALS:
-                valid = true;
-                break;
+                case GameDataType.SYSTEM:
+                  dataStr = this.convertSystemDataStr(dataStr);
+                  const systemData = this.parseSystemData(dataStr);
+                  valid = !!systemData.dexData && !!systemData.timestamp;
+                  break;
+                case GameDataType.SESSION:
+                  const sessionData = this.parseSessionData(dataStr);
+                  valid = !!sessionData.party && !!sessionData.enemyParty && !!sessionData.timestamp;
+                  break;
+                case GameDataType.RUN_HISTORY:
+                  const data = JSON.parse(dataStr);
+                  const keys = Object.keys(data);
+                  dataName = i18next.t("menuUiHandler:RUN_HISTORY").toLowerCase();
+                  keys.forEach((key) => {
+                    const entryKeys = Object.keys(data[key]);
+                    valid = [ "isFavorite", "isVictory", "entry" ].every(v => entryKeys.includes(v)) && entryKeys.length === 3;
+                  });
+                  break;
+                case GameDataType.SETTINGS:
+                case GameDataType.TUTORIALS:
+                  valid = true;
+                  break;
               }
             } catch (ex) {
               console.error(ex);

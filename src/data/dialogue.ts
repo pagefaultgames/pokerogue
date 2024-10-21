@@ -3123,44 +3123,44 @@ export const trainerTypeDialogue: TrainerTypeDialogue = {
 
 export const doubleBattleDialogue = {
   "blue_red_double": {
-    encounter: ["doubleBattleDialogue:blue_red_double.encounter.1"],
-    victory: ["doubleBattleDialogue:blue_red_double.victory.1"]
+    encounter: [ "doubleBattleDialogue:blue_red_double.encounter.1" ],
+    victory: [ "doubleBattleDialogue:blue_red_double.victory.1" ]
   },
   "red_blue_double": {
-    encounter: ["doubleBattleDialogue:red_blue_double.encounter.1"],
-    victory: ["doubleBattleDialogue:red_blue_double.victory.1"]
+    encounter: [ "doubleBattleDialogue:red_blue_double.encounter.1" ],
+    victory: [ "doubleBattleDialogue:red_blue_double.victory.1" ]
   },
   "tate_liza_double": {
-    encounter: ["doubleBattleDialogue:tate_liza_double.encounter.1"],
-    victory: ["doubleBattleDialogue:tate_liza_double.victory.1"]
+    encounter: [ "doubleBattleDialogue:tate_liza_double.encounter.1" ],
+    victory: [ "doubleBattleDialogue:tate_liza_double.victory.1" ]
   },
   "liza_tate_double": {
-    encounter: ["doubleBattleDialogue:liza_tate_double.encounter.1"],
-    victory: [ "doubleBattleDialogue:liza_tate_double.victory.1"]
+    encounter: [ "doubleBattleDialogue:liza_tate_double.encounter.1" ],
+    victory: [ "doubleBattleDialogue:liza_tate_double.victory.1" ]
   },
   "wallace_steven_double": {
-    encounter: [ "doubleBattleDialogue:wallace_steven_double.encounter.1"],
-    victory: [ "doubleBattleDialogue:wallace_steven_double.victory.1"]
+    encounter: [ "doubleBattleDialogue:wallace_steven_double.encounter.1" ],
+    victory: [ "doubleBattleDialogue:wallace_steven_double.victory.1" ]
   },
   "steven_wallace_double": {
-    encounter: [ "doubleBattleDialogue:steven_wallace_double.encounter.1"],
-    victory: [ "doubleBattleDialogue:steven_wallace_double.victory.1"]
+    encounter: [ "doubleBattleDialogue:steven_wallace_double.encounter.1" ],
+    victory: [ "doubleBattleDialogue:steven_wallace_double.victory.1" ]
   },
   "alder_iris_double": {
-    encounter: [ "doubleBattleDialogue:alder_iris_double.encounter.1"],
-    victory: [ "doubleBattleDialogue:alder_iris_double.victory.1"]
+    encounter: [ "doubleBattleDialogue:alder_iris_double.encounter.1" ],
+    victory: [ "doubleBattleDialogue:alder_iris_double.victory.1" ]
   },
   "iris_alder_double": {
-    encounter: [ "doubleBattleDialogue:iris_alder_double.encounter.1"],
-    victory: [ "doubleBattleDialogue:iris_alder_double.victory.1"]
+    encounter: [ "doubleBattleDialogue:iris_alder_double.encounter.1" ],
+    victory: [ "doubleBattleDialogue:iris_alder_double.victory.1" ]
   },
   "marnie_piers_double": {
-    encounter: [ "doubleBattleDialogue:marnie_piers_double.encounter.1"],
-    victory: [ "doubleBattleDialogue:marnie_piers_double.victory.1"]
+    encounter: [ "doubleBattleDialogue:marnie_piers_double.encounter.1" ],
+    victory: [ "doubleBattleDialogue:marnie_piers_double.victory.1" ]
   },
   "piers_marnie_double": {
-    encounter: [ "doubleBattleDialogue:piers_marnie_double.encounter.1"],
-    victory: [ "doubleBattleDialogue:piers_marnie_double.victory.1"]
+    encounter: [ "doubleBattleDialogue:piers_marnie_double.encounter.1" ],
+    victory: [ "doubleBattleDialogue:piers_marnie_double.victory.1" ]
   },
 
 
@@ -3193,7 +3193,7 @@ export function initTrainerTypeDialogue(): void {
   const trainerTypes = Object.keys(trainerTypeDialogue).map(t => parseInt(t) as TrainerType);
   for (const trainerType of trainerTypes) {
     const messages = trainerTypeDialogue[trainerType];
-    const messageTypes = ["encounter", "victory", "defeat"];
+    const messageTypes = [ "encounter", "victory", "defeat" ];
     for (const messageType of messageTypes) {
       if (Array.isArray(messages)) {
         if (messages[0][messageType]) {
