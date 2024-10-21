@@ -10,6 +10,10 @@ import { NewBattlePhase } from "./new-battle-phase";
 import { PokemonPhase } from "./pokemon-phase";
 
 export class AttemptRunPhase extends PokemonPhase {
+
+  /** For testing purposes: this is to force the pokemon to fail and escape */
+  public forceFailEscape = false;
+
   constructor(scene: BattleScene, fieldIndex: number) {
     super(scene, fieldIndex);
   }
@@ -28,7 +32,7 @@ export class AttemptRunPhase extends PokemonPhase {
 
     applyAbAttrs(RunSuccessAbAttr, playerPokemon, null, false, escapeChance);
 
-    if (playerPokemon.randSeedInt(100) < escapeChance.value) {
+    if (playerPokemon.randSeedInt(100) < escapeChance.value && !this.forceFailEscape) {
       this.scene.playSound("se/flee");
       this.scene.queueMessage(i18next.t("battle:runAwaySuccess"), null, true, 500);
 
@@ -51,6 +55,7 @@ export class AttemptRunPhase extends PokemonPhase {
       this.scene.pushPhase(new BattleEndPhase(this.scene));
       this.scene.pushPhase(new NewBattlePhase(this.scene));
     } else {
+      playerPokemon.turnData.failedRunAway = true;
       this.scene.queueMessage(i18next.t("battle:runAwayCannotEscape"), null, true, 500);
     }
 
