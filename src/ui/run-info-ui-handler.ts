@@ -587,12 +587,12 @@ export default class RunInfoUiHandler extends UiHandler {
             const typeText = typeTextColor + typeShadowColor + i18next.t(`pokemonInfo:Type.${typeRule}`)! + "[/color]" + "[/shadow]";
             rules.push(typeText);
             break;
-          case Challenges.FRESH_START:
-            rules.push(i18next.t("challenges:freshStart.name"));
-            break;
           case Challenges.INVERSE_BATTLE:
-          //
             rules.push(i18next.t("challenges:inverseBattle.shortName"));
+            break;
+          default:
+            const localisationKey = Challenges[this.runInfo.challenges[i].id].split("_").map((f, i) => i ? `${f[0]}${f.slice(1).toLowerCase()}` : f.toLowerCase()).join("");
+            rules.push(i18next.t(`challenges:${localisationKey}.name`));
             break;
         }
       }

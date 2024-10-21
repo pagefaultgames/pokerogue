@@ -425,6 +425,7 @@ export abstract class PokemonSpeciesForm {
         case "hero":
         case "roaming":
         case "complete":
+        case "10-complete":
         case "10":
         case "10-pc":
         case "super":
@@ -2135,7 +2136,8 @@ export function initSpecies() {
       new PokemonForm("10% Forme", "10", Type.DRAGON, Type.GROUND, 1.2, 33.5, Abilities.AURA_BREAK, Abilities.NONE, Abilities.NONE, 486, 54, 100, 71, 61, 85, 115, 3, 0, 300, false, null, true),
       new PokemonForm("50% Forme Power Construct", "50-pc", Type.DRAGON, Type.GROUND, 5, 305, Abilities.POWER_CONSTRUCT, Abilities.NONE, Abilities.NONE, 600, 108, 100, 121, 81, 95, 95, 3, 0, 300, false, "", true),
       new PokemonForm("10% Forme Power Construct", "10-pc", Type.DRAGON, Type.GROUND, 1.2, 33.5, Abilities.POWER_CONSTRUCT, Abilities.NONE, Abilities.NONE, 486, 54, 100, 71, 61, 85, 115, 3, 0, 300, false, "10", true),
-      new PokemonForm("Complete Forme", "complete", Type.DRAGON, Type.GROUND, 4.5, 610, Abilities.POWER_CONSTRUCT, Abilities.NONE, Abilities.NONE, 708, 216, 100, 121, 91, 95, 85, 3, 0, 300),
+      new PokemonForm("Complete Forme (50% PC)", "complete", Type.DRAGON, Type.GROUND, 4.5, 610, Abilities.POWER_CONSTRUCT, Abilities.NONE, Abilities.NONE, 708, 216, 100, 121, 91, 95, 85, 3, 0, 300),
+      new PokemonForm("Complete Forme (10% PC)", "10-complete", Type.DRAGON, Type.GROUND, 4.5, 610, Abilities.POWER_CONSTRUCT, Abilities.NONE, Abilities.NONE, 708, 216, 100, 121, 91, 95, 85, 3, 0, 300, false, "complete"),
     ),
     new PokemonSpecies(Species.DIANCIE, 6, false, false, true, "Jewel Pokémon", Type.ROCK, Type.FAIRY, 0.7, 8.8, Abilities.CLEAR_BODY, Abilities.NONE, Abilities.NONE, 600, 50, 100, 150, 100, 150, 50, 3, 50, 300, GrowthRate.SLOW, null, false, true,
       new PokemonForm("Normal", "", Type.ROCK, Type.FAIRY, 0.7, 8.8, Abilities.CLEAR_BODY, Abilities.NONE, Abilities.NONE, 600, 50, 100, 150, 100, 150, 50, 3, 50, 300, false, null, true),

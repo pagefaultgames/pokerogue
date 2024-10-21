@@ -63,11 +63,11 @@ describe("SelectModifierPhase", () => {
       new ModifierTypeOption(modifierTypes.REVIVE(), 0, 1000)
     ];
 
-    const selectModifierPhase1 = new SelectModifierPhase(scene);
-    const selectModifierPhase2 = new SelectModifierPhase(scene, 0, undefined, { rerollMultiplier: 2 });
+    const selectModifierPhase1 = new SelectModifierPhase(scene, 0, undefined, { guaranteedModifierTypeOptions: options });
+    const selectModifierPhase2 = new SelectModifierPhase(scene, 0, undefined, { guaranteedModifierTypeOptions: options, rerollMultiplier: 2 });
 
-    const cost1 = selectModifierPhase1.getRerollCost(options, false);
-    const cost2 = selectModifierPhase2.getRerollCost(options, false);
+    const cost1 = selectModifierPhase1.getRerollCost(false);
+    const cost2 = selectModifierPhase2.getRerollCost(false);
     expect(cost2).toEqual(cost1 * 2);
   });
 

@@ -399,7 +399,7 @@ export const GlobalTradeSystemEncounter: MysteryEncounter =
           if (modifier.stackCount === 0) {
             scene.removeModifier(modifier);
           }
-          scene.updateModifiers(true, true);
+          await scene.updateModifiers(true, true);
 
           // Generate a trainer name
           const traderName = generateRandomTraderName();

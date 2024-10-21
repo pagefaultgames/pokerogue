@@ -152,7 +152,7 @@ export const FunAndGamesEncounter: MysteryEncounter =
       },
       async (scene: BattleScene) => {
         // Leave encounter with no rewards or exp
-        transitionMysteryEncounterIntroVisuals(scene, true, true);
+        await transitionMysteryEncounterIntroVisuals(scene, true, true);
         leaveEncounterWithoutBattle(scene, true);
         return true;
       }

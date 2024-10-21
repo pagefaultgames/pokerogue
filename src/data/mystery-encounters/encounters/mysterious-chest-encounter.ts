@@ -184,7 +184,7 @@ export const MysteriousChestEncounter: MysteryEncounter =
               scene.unshiftPhase(new GameOverPhase(scene));
             } else {
               // Show which Pokemon was KOed, then start battle against Gimmighoul
-              transitionMysteryEncounterIntroVisuals(scene, true, true, 500);
+              await transitionMysteryEncounterIntroVisuals(scene, true, true, 500);
               setEncounterRewards(scene, { fillRemaining: true });
               await initBattleWithEnemyConfig(scene, encounter.enemyPartyConfigs[0]);
             }

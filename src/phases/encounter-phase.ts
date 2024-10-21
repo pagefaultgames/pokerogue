@@ -35,6 +35,7 @@ import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
 import { PlayerGender } from "#enums/player-gender";
 import { Species } from "#enums/species";
 import i18next from "i18next";
+import { WEIGHT_INCREMENT_ON_SPAWN_MISS } from "#app/data/mystery-encounters/mystery-encounters";
 
 export class EncounterPhase extends BattlePhase {
   private loaded: boolean;
@@ -68,7 +69,7 @@ export class EncounterPhase extends BattlePhase {
       this.scene.executeWithSeedOffset(() => {
         const currentSessionEncounterType = battle.mysteryEncounterType;
         battle.mysteryEncounter = this.scene.getMysteryEncounter(currentSessionEncounterType);
-      }, battle.waveIndex << 4);
+      }, battle.waveIndex * 16);
     }
     const mysteryEncounter = battle.mysteryEncounter;
     if (mysteryEncounter) {
@@ -250,6 +251,13 @@ export class EncounterPhase extends BattlePhase {
           this.scene.addModifier(getPlayerModifierTypeOptionsForWave((m + 1) * 10, 1, this.scene.getPlayerParty())[0].type.newModifier(), true);
         this.scene.updateModifiers(true);
       }*/
+
+    const { battleType, waveIndex } = this.scene.currentBattle;
+    if (this.scene.isMysteryEncounterValidForWave(battleType,  waveIndex) && !this.scene.currentBattle.isBattleMysteryEncounter()) {
+      // Increment ME spawn chance if an ME could have spawned but did not
+      // Only do this AFTER session has been saved to avoid duplicating increments
+      this.scene.mysteryEncounterSaveData.encounterSpawnChance += WEIGHT_INCREMENT_ON_SPAWN_MISS;
+    }
 
     for (const pokemon of this.scene.getPlayerParty()) {
       if (pokemon) {

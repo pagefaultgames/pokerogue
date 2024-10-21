@@ -1,13 +1,13 @@
 import { BattlerIndex, BattleType } from "#app/battle";
 import BattleScene from "#app/battle-scene";
 import { applyPostFaintAbAttrs, applyPostKnockOutAbAttrs, applyPostVictoryAbAttrs, PostFaintAbAttr, PostKnockOutAbAttr, PostVictoryAbAttr } from "#app/data/ability";
-import { BattlerTagLapseType } from "#app/data/battler-tags";
+import { BattlerTagLapseType, DestinyBondTag } from "#app/data/battler-tags";
 import { battleSpecDialogue } from "#app/data/dialogue";
 import { allMoves, PostVictoryStatStageChangeAttr } from "#app/data/move";
 import { SpeciesFormChangeActiveTrigger } from "#app/data/pokemon-forms";
 import { BattleSpec } from "#app/enums/battle-spec";
 import { StatusEffect } from "#app/enums/status-effect";
-import { EnemyPokemon, HitResult, PlayerPokemon, PokemonMove } from "#app/field/pokemon";
+import Pokemon, { EnemyPokemon, HitResult, PlayerPokemon, PokemonMove } from "#app/field/pokemon";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { PokemonInstantReviveModifier } from "#app/modifier/modifier";
 import { SwitchType } from "#enums/switch-type";
@@ -19,18 +19,39 @@ import { SwitchPhase } from "./switch-phase";
 import { SwitchSummonPhase } from "./switch-summon-phase";
 import { ToggleDoublePositionPhase } from "./toggle-double-position-phase";
 import { VictoryPhase } from "./victory-phase";
+import { isNullOrUndefined } from "#app/utils";
+import { FRIENDSHIP_LOSS_FROM_FAINT } from "#app/data/balance/starters";
 
 export class FaintPhase extends PokemonPhase {
+  /**
+   * Whether or not enduring (for this phase's purposes, Reviver Seed) should be prevented
+   */
   private preventEndure: boolean;
 
-  constructor(scene: BattleScene, battlerIndex: BattlerIndex, preventEndure?: boolean) {
+  /**
+   * Destiny Bond tag belonging to the currently fainting Pokemon, if applicable
+   */
+  private destinyTag?: DestinyBondTag;
+
+  /**
+   * The source Pokemon that dealt fatal damage and should get KO'd by Destiny Bond, if applicable
+   */
+  private source?: Pokemon;
+
+  constructor(scene: BattleScene, battlerIndex: BattlerIndex, preventEndure: boolean = false, destinyTag?: DestinyBondTag, source?: Pokemon) {
     super(scene, battlerIndex);
 
-    this.preventEndure = preventEndure!; // TODO: is this bang correct?
+    this.preventEndure = preventEndure;
+    this.destinyTag = destinyTag;
+    this.source = source;
   }
 
   start() {
     super.start();
+
+    if (!isNullOrUndefined(this.destinyTag) && !isNullOrUndefined(this.source)) {
+      this.destinyTag.lapse(this.source, BattlerTagLapseType.CUSTOM);
+    }
 
     if (!this.preventEndure) {
       const instantReviveModifier = this.scene.applyModifier(PokemonInstantReviveModifier, this.player, this.getPokemon()) as PokemonInstantReviveModifier;
@@ -127,7 +148,7 @@ export class FaintPhase extends PokemonPhase {
 
     pokemon.faintCry(() => {
       if (pokemon instanceof PlayerPokemon) {
-        pokemon.addFriendship(-10);
+        pokemon.addFriendship(-FRIENDSHIP_LOSS_FROM_FAINT);
       }
       pokemon.hideInfo();
       this.scene.playSound("se/faint");
