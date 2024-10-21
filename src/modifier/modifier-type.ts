@@ -1128,7 +1128,7 @@ class EvolutionItemModifierTypeGenerator extends ModifierTypeGenerator {
 }
 
 class FormChangeItemModifierTypeGenerator extends ModifierTypeGenerator {
-  constructor(rare: boolean) {
+  constructor(isRareFormChangeItem: boolean) {
     super((party: Pokemon[], pregenArgs?: any[]) => {
       if (pregenArgs && (pregenArgs.length === 1) && (pregenArgs[0] in FormChangeItem)) {
         return new FormChangeItemModifierType(pregenArgs[0] as FormChangeItem);
@@ -1169,7 +1169,7 @@ class FormChangeItemModifierTypeGenerator extends ModifierTypeGenerator {
         }
         return formChangeItemTriggers;
       }).flat())
-      ].flat().flatMap(fc => fc.item).filter(i => (i && i < 100) === rare);
+      ].flat().flatMap(fc => fc.item).filter(i => (i && i < 100) === isRareFormChangeItem);
       // convert it into a set to remove duplicate values, which can appear when the same species with a potential form change is in the party.
 
       if (!formChangeItemPool.length) {

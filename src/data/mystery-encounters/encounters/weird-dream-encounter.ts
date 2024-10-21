@@ -12,7 +12,7 @@ import { IntegerHolder, isNullOrUndefined, randSeedInt, randSeedShuffle } from "
 import PokemonSpecies, { allSpecies, getPokemonSpecies } from "#app/data/pokemon-species";
 import { HiddenAbilityRateBoosterModifier, PokemonBaseStatFlatModifier, PokemonFormChangeItemModifier, PokemonHeldItemModifier } from "#app/modifier/modifier";
 import { achvs } from "#app/system/achv";
-import { CustomPokemonData } from "#app/data/mystery-encounters/custom-pokemon-data";
+import { CustomPokemonData } from "#app/data/custom-pokemon-data";
 import { showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
 import { modifierTypes, PokemonHeldItemModifierType } from "#app/modifier/modifier-type";
 import i18next from "#app/plugins/i18n";

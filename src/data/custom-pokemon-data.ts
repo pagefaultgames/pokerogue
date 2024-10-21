@@ -5,7 +5,7 @@ import { Nature } from "#enums/nature";
 
 /**
  * Data that can customize a Pokemon in non-standard ways from its Species
- * Currently only used by Mystery Encounters and Mints
+ * Currently only used by Mystery Encounters and Mints.
  */
 export class CustomPokemonData {
   public spriteScale: number;

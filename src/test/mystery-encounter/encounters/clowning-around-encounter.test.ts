@@ -118,11 +118,11 @@ describe("Clowning Around - Mystery Encounter", () => {
     });
     expect(config.pokemonConfigs?.[1]).toEqual({
       species: getPokemonSpecies(Species.BLACEPHALON),
-      mysteryEncounterPokemonData: expect.anything(),
+      customPokemonData: expect.anything(),
       isBoss: true,
       moveSet: [ Moves.TRICK, Moves.HYPNOSIS, Moves.SHADOW_BALL, Moves.MIND_BLOWN ]
     });
-    expect(config.pokemonConfigs?.[1].mysteryEncounterPokemonData?.types.length).toBe(2);
+    expect(config.pokemonConfigs?.[1].customPokemonData?.types.length).toBe(2);
     expect([
       Abilities.STURDY,
       Abilities.PICKUP,
@@ -139,8 +139,8 @@ describe("Clowning Around - Mystery Encounter", () => {
       Abilities.MAGICIAN,
       Abilities.SHEER_FORCE,
       Abilities.PRANKSTER
-    ]).toContain(config.pokemonConfigs?.[1].mysteryEncounterPokemonData?.ability);
-    expect(ClowningAroundEncounter.misc.ability).toBe(config.pokemonConfigs?.[1].mysteryEncounterPokemonData?.ability);
+    ]).toContain(config.pokemonConfigs?.[1].customPokemonData?.ability);
+    expect(ClowningAroundEncounter.misc.ability).toBe(config.pokemonConfigs?.[1].customPokemonData?.ability);
     await vi.waitFor(() => expect(moveInitSpy).toHaveBeenCalled());
     await vi.waitFor(() => expect(moveLoadSpy).toHaveBeenCalled());
     expect(onInitResult).toBe(true);

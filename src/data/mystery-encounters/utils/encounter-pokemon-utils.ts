@@ -21,7 +21,7 @@ import { Gender } from "#app/data/gender";
 import { PermanentStat } from "#enums/stat";
 import { VictoryPhase } from "#app/phases/victory-phase";
 import { SummaryUiMode } from "#app/ui/summary-ui-handler";
-import { CustomPokemonData } from "#app/data/mystery-encounters/custom-pokemon-data";
+import { CustomPokemonData } from "#app/data/custom-pokemon-data";
 import { Abilities } from "#enums/abilities";
 
 /** Will give +1 level every 10 waves */

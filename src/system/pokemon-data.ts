@@ -12,7 +12,7 @@ import { loadBattlerTag } from "../data/battler-tags";
 import { Biome } from "#enums/biome";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
-import { CustomPokemonData } from "#app/data/mystery-encounters/custom-pokemon-data";
+import { CustomPokemonData } from "#app/data/custom-pokemon-data";
 
 export default class PokemonData {
   public id: integer;
@@ -53,14 +53,20 @@ export default class PokemonData {
   public fusionVariant: Variant;
   public fusionGender: Gender;
   public fusionLuck: integer;
-  public fusionCustomPokemonData: CustomPokemonData;
 
   public boss: boolean;
   public bossSegments?: integer;
 
   public summonData: PokemonSummonData;
+
   /** Data that can customize a Pokemon in non-standard ways from its Species */
   public customPokemonData: CustomPokemonData;
+  public fusionCustomPokemonData: CustomPokemonData;
+
+  // Deprecated attributes, needed for now to allow SessionData migration (see PR#4619 comments)
+  public natureOverride: Nature | -1;
+  public mysteryEncounterPokemonData: CustomPokemonData | null;
+  public fusionMysteryEncounterPokemonData: CustomPokemonData | null;
 
   constructor(source: Pokemon | any, forHistory: boolean = false) {
     const sourcePokemon = source instanceof Pokemon ? source : null;
@@ -105,10 +111,13 @@ export default class PokemonData {
     this.fusionVariant = source.fusionVariant;
     this.fusionGender = source.fusionGender;
     this.fusionLuck = source.fusionLuck !== undefined ? source.fusionLuck : (source.fusionShiny ? source.fusionVariant + 1 : 0);
-    this.fusionCustomPokemonData = new CustomPokemonData(source.fusionMysteryEncounterPokemonData);
+    this.fusionCustomPokemonData = new CustomPokemonData(source.fusionCustomPokemonData);
     this.usedTMs = source.usedTMs ?? [];
 
     this.customPokemonData = new CustomPokemonData(source.customPokemonData);
+
+    this.mysteryEncounterPokemonData = new CustomPokemonData(source.mysteryEncounterPokemonData);
+    this.fusionMysteryEncounterPokemonData = new CustomPokemonData(source.fusionMysteryEncounterPokemonData);
 
     if (!forHistory) {
       this.boss = (source instanceof EnemyPokemon && !!source.bossSegments) || (!this.player && !!source.boss);

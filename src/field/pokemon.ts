@@ -62,7 +62,7 @@ import { ToggleDoublePositionPhase } from "#app/phases/toggle-double-position-ph
 import { Challenges } from "#enums/challenges";
 import { PokemonAnimType } from "#enums/pokemon-anim-type";
 import { PLAYER_PARTY_MAX_SIZE } from "#app/constants";
-import { CustomPokemonData } from "#app/data/mystery-encounters/custom-pokemon-data";
+import { CustomPokemonData } from "#app/data/custom-pokemon-data";
 import { SwitchType } from "#enums/switch-type";
 import { SpeciesFormKey } from "#enums/species-form-key";
 import { BASE_HIDDEN_ABILITY_CHANCE, BASE_SHINY_CHANCE, SHINY_EPIC_CHANCE, SHINY_VARIANT_CHANCE } from "#app/data/balance/rates";
@@ -1258,6 +1258,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       }
     }
 
+    // If both types are the same (can happen in weird custom typing scenarios), reduce to single type
+    if (types.length > 1 && types[0] === types[1]) {
+      types.splice(0, 1);
+    }
+
     return types;
   }
 
@@ -2183,7 +2188,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       this.moveset.push(new PokemonMove(movePool[index][0], 0, 0));
     }
 
-    this.scene.triggerPokemonFormChange(this, SpeciesFormChangeMoveLearnedTrigger);
+    // Trigger FormChange, except for enemy Pokemon during Mystery Encounters, to avoid crashes
+    if (this.isPlayer() || !this.scene.currentBattle?.isBattleMysteryEncounter() || !this.scene.currentBattle?.mysteryEncounter) {
+      this.scene.triggerPokemonFormChange(this, SpeciesFormChangeMoveLearnedTrigger);
+    }
   }
 
   trySelectMove(moveIndex: integer, ignorePp?: boolean): boolean {
@@ -4287,12 +4295,33 @@ export class PlayerPokemon extends Pokemon {
 
   changeForm(formChange: SpeciesFormChange): Promise<void> {
     return new Promise(resolve => {
+      const previousFormIndex = this.formIndex;
       this.formIndex = Math.max(this.species.forms.findIndex(f => f.formKey === formChange.formKey), 0);
       this.generateName();
       const abilityCount = this.getSpeciesForm().getAbilityCount();
       if (this.abilityIndex >= abilityCount) { // Shouldn't happen
         this.abilityIndex = abilityCount - 1;
       }
+
+      // In cases where a form change updates the type of a Pokemon from its previous form (Arceus, Silvally, Castform, etc.),
+      // persist that type change in customPokemonData if necessary
+      const baseForm = this.species.forms[previousFormIndex];
+      const baseFormTypes = [ baseForm.type1, baseForm.type2 ];
+      if (this.customPokemonData.types.length > 0) {
+        if (this.getSpeciesForm().type1 !== baseFormTypes[0]) {
+          this.customPokemonData.types[0] = this.getSpeciesForm().type1;
+        }
+
+        const type2 = this.getSpeciesForm().type2;
+        if (!isNullOrUndefined(type2) && type2 !== baseFormTypes[1]) {
+          if (this.customPokemonData.types.length > 1) {
+            this.customPokemonData.types[1] = type2;
+          } else {
+            this.customPokemonData.types.push(type2);
+          }
+        }
+      }
+
       this.compatibleTms.splice(0, this.compatibleTms.length);
       this.generateCompatibleTms();
       const updateAndResolve = () => {

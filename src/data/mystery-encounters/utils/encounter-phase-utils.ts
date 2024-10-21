@@ -27,7 +27,7 @@ import { Status, StatusEffect } from "#app/data/status-effect";
 import { TrainerConfig, trainerConfigs, TrainerSlot } from "#app/data/trainer-config";
 import PokemonSpecies from "#app/data/pokemon-species";
 import { Egg, IEggOptions } from "#app/data/egg";
-import { CustomPokemonData } from "#app/data/mystery-encounters/custom-pokemon-data";
+import { CustomPokemonData } from "#app/data/custom-pokemon-data";
 import HeldModifierConfig from "#app/interfaces/held-modifier-config";
 import { MovePhase } from "#app/phases/move-phase";
 import { EggLapsePhase } from "#app/phases/egg-lapse-phase";
@@ -71,7 +71,7 @@ export interface EnemyPokemonConfig {
   nickname?: string;
   bossSegments?: number;
   bossSegmentModifier?: number; // Additive to the determined segment number
-  mysteryEncounterPokemonData?: CustomPokemonData;
+  customPokemonData?: CustomPokemonData;
   formIndex?: number;
   abilityIndex?: number;
   level?: number;
@@ -250,8 +250,8 @@ export async function initBattleWithEnemyConfig(scene: BattleScene, partyConfig:
       }
 
       // Set custom mystery encounter data fields (such as sprite scale, custom abilities, types, etc.)
-      if (!isNullOrUndefined(config.mysteryEncounterPokemonData)) {
-        enemyPokemon.customPokemonData = config.mysteryEncounterPokemonData;
+      if (!isNullOrUndefined(config.customPokemonData)) {
+        enemyPokemon.customPokemonData = config.customPokemonData;
       }
 
       // Set Boss
