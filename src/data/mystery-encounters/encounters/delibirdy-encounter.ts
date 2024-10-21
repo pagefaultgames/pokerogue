@@ -45,10 +45,13 @@ export const DelibirdyEncounter: MysteryEncounter =
     .withEncounterTier(MysteryEncounterTier.GREAT)
     .withSceneWaveRangeRequirement(...CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES)
     .withSceneRequirement(new MoneyRequirement(0, DELIBIRDY_MONEY_PRICE_MULTIPLIER)) // Must have enough money for it to spawn at the very least
-    .withPrimaryPokemonRequirement(new CombinationPokemonRequirement( // Must also have either option 2 or 3 available to spawn
-      new HeldItemRequirement(OPTION_2_ALLOWED_MODIFIERS),
-      new HeldItemRequirement(OPTION_3_DISALLOWED_MODIFIERS, 1, true)
-    ))
+    .withPrimaryPokemonRequirement(
+      CombinationPokemonRequirement.Some(
+        // Must also have either option 2 or 3 available to spawn
+        new HeldItemRequirement(OPTION_2_ALLOWED_MODIFIERS),
+        new HeldItemRequirement(OPTION_3_DISALLOWED_MODIFIERS, 1, true)
+      )
+    )
     .withIntroSpriteConfigs([
       {
         spriteKey: "",

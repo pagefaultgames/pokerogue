@@ -215,10 +215,12 @@ export const FieryFalloutEncounter: MysteryEncounter =
     .withOption(
       MysteryEncounterOptionBuilder
         .newOptionWithMode(MysteryEncounterOptionMode.DISABLED_OR_SPECIAL)
-        .withPrimaryPokemonRequirement(new CombinationPokemonRequirement(
-          new TypeRequirement(Type.FIRE, true, 1),
-          new AbilityRequirement(FIRE_RESISTANT_ABILITIES, true)
-        )) // Will set option3PrimaryName dialogue token automatically
+        .withPrimaryPokemonRequirement(
+          CombinationPokemonRequirement.Some(
+            new TypeRequirement(Type.FIRE, true, 1),
+            new AbilityRequirement(FIRE_RESISTANT_ABILITIES, true)
+          )
+        ) // Will set option3PrimaryName dialogue token automatically
         .withDialogue({
           buttonLabel: `${namespace}:option.3.label`,
           buttonTooltip: `${namespace}:option.3.tooltip`,

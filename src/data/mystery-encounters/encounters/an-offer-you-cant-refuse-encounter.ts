@@ -135,9 +135,11 @@ export const AnOfferYouCantRefuseEncounter: MysteryEncounter =
     .withOption(
       MysteryEncounterOptionBuilder
         .newOptionWithMode(MysteryEncounterOptionMode.DISABLED_OR_SPECIAL)
-        .withPrimaryPokemonRequirement(new CombinationPokemonRequirement(
-          new MoveRequirement(EXTORTION_MOVES, true),
-          new AbilityRequirement(EXTORTION_ABILITIES, true))
+        .withPrimaryPokemonRequirement(
+          CombinationPokemonRequirement.Some(
+            new MoveRequirement(EXTORTION_MOVES, true),
+            new AbilityRequirement(EXTORTION_ABILITIES, true)
+          )
         )
         .withDialogue({
           buttonLabel: `${namespace}:option.2.label`,
