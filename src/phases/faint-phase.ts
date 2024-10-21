@@ -50,7 +50,7 @@ export class FaintPhase extends PokemonPhase {
      * involved in combat, it needs to be counted as a participant so the other party pokemon can get their EXP,
      * so the fainted pokemon has been included.
     */
-    this.scene.getField().forEach((pokemon, i) => {
+    this.scene.getPlayerField().forEach((pokemon, i) => {
       if (pokemon?.isActive() || pokemon?.isFainted()) {
         if (pokemon.isPlayer()) {
           this.scene.currentBattle.addParticipant(pokemon as PlayerPokemon);
