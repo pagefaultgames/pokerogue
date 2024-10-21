@@ -3982,10 +3982,14 @@ export class PlayerPokemon extends Pokemon {
     if (Overrides.SHINY_OVERRIDE) {
       this.shiny = true;
       this.initShinySparkle();
-      if (Overrides.VARIANT_OVERRIDE) {
-        this.variant = Overrides.VARIANT_OVERRIDE;
-      }
+    } else if (Overrides.SHINY_OVERRIDE === false) {
+      this.shiny = false;
     }
+
+    if (Overrides.VARIANT_OVERRIDE !== null && this.shiny) {
+      this.variant = Overrides.VARIANT_OVERRIDE;
+    }
+
     if (!dataSource) {
       if (this.scene.gameMode.isDaily) {
         this.generateAndPopulateMoveset();
@@ -4474,10 +4478,13 @@ export class EnemyPokemon extends Pokemon {
       if (Overrides.OPP_SHINY_OVERRIDE) {
         this.shiny = true;
         this.initShinySparkle();
+      } else if (Overrides.OPP_SHINY_OVERRIDE === false) {
+        this.shiny = false;
       }
+
       if (this.shiny) {
         this.variant = this.generateVariant();
-        if (Overrides.OPP_VARIANT_OVERRIDE) {
+        if (Overrides.OPP_VARIANT_OVERRIDE !== null) {
           this.variant = Overrides.OPP_VARIANT_OVERRIDE;
         }
       }
