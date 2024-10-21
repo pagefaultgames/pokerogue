@@ -555,52 +555,52 @@ export default class MenuUiHandler extends MessageUiHandler {
                 buttonActions: [], fadeOut: () =>
                   this.scene.gameData.saveAll(this.scene, true, true, true, true).then(() => {
 
-                  this.scene.reset(true);
-                })
+                    this.scene.reset(true);
+                  })
+              });
+            };
+            if (this.scene.currentBattle.turn > 1) {
+              ui.showText(i18next.t("menuUiHandler:losingProgressionWarning"), null, () => {
+                if (!this.active) {
+                  this.showText("", 0);
+                  return;
+                }
+                ui.setOverlayMode(Mode.CONFIRM, doSaveQuit, () => {
+                  ui.revertMode();
+                  this.showText("", 0);
+                }, false, -98);
+              });
+            } else {
+              doSaveQuit();
+            }
+          } else {
+            error = true;
+          }
+          break;
+        case MenuOptions.LOG_OUT:
+          success = true;
+          const doLogout = () => {
+            ui.setMode(Mode.LOADING, {
+              buttonActions: [], fadeOut: () => pokerogueApi.account.logout().then(() => {
+                updateUserInfo().then(() => this.scene.reset(true, true));
+              })
             });
           };
-          if (this.scene.currentBattle.turn > 1) {
+          if (this.scene.currentBattle) {
             ui.showText(i18next.t("menuUiHandler:losingProgressionWarning"), null, () => {
               if (!this.active) {
                 this.showText("", 0);
                 return;
               }
-              ui.setOverlayMode(Mode.CONFIRM, doSaveQuit, () => {
+              ui.setOverlayMode(Mode.CONFIRM, doLogout, () => {
                 ui.revertMode();
                 this.showText("", 0);
               }, false, -98);
             });
           } else {
-            doSaveQuit();
+            doLogout();
           }
-        } else {
-          error = true;
-        }
-        break;
-      case MenuOptions.LOG_OUT:
-        success = true;
-        const doLogout = () => {
-          ui.setMode(Mode.LOADING, {
-            buttonActions: [], fadeOut: () => pokerogueApi.account.logout().then(() => {
-              updateUserInfo().then(() => this.scene.reset(true, true));
-            })
-          });
-        };
-        if (this.scene.currentBattle) {
-          ui.showText(i18next.t("menuUiHandler:losingProgressionWarning"), null, () => {
-            if (!this.active) {
-              this.showText("", 0);
-              return;
-            }
-            ui.setOverlayMode(Mode.CONFIRM, doLogout, () => {
-              ui.revertMode();
-              this.showText("", 0);
-            }, false, -98);
-          });
-        } else {
-          doLogout();
-        }
-        break;
+          break;
       }
     } else if (button === Button.CANCEL) {
       success = true;
