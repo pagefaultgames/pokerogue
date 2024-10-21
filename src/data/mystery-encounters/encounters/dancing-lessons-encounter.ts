@@ -228,7 +228,7 @@ export const DancingLessonsEncounter: MysteryEncounter =
         })
         .withOptionPhase(async (scene: BattleScene) => {
           // Learn its Dance
-          hideOricorioPokemon(scene);
+          await hideOricorioPokemon(scene);
           leaveEncounterWithoutBattle(scene, true);
         })
         .build()
@@ -236,7 +236,7 @@ export const DancingLessonsEncounter: MysteryEncounter =
     .withOption(
       MysteryEncounterOptionBuilder
         .newOptionWithMode(MysteryEncounterOptionMode.DISABLED_OR_SPECIAL)
-        .withPrimaryPokemonRequirement(new MoveRequirement(DANCING_MOVES)) // Will set option3PrimaryName and option3PrimaryMove dialogue tokens automatically
+        .withPrimaryPokemonRequirement(new MoveRequirement(DANCING_MOVES, true)) // Will set option3PrimaryName and option3PrimaryMove dialogue tokens automatically
         .withDialogue({
           buttonLabel: `${namespace}:option.3.label`,
           buttonTooltip: `${namespace}:option.3.tooltip`,
@@ -303,7 +303,7 @@ export const DancingLessonsEncounter: MysteryEncounter =
             }
           }
 
-          hideOricorioPokemon(scene);
+          await hideOricorioPokemon(scene);
           await catchPokemon(scene, oricorio, null, PokeballType.POKEBALL, false);
           leaveEncounterWithoutBattle(scene, true);
         })

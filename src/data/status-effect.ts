@@ -30,20 +30,20 @@ export class Status {
 
 function getStatusEffectMessageKey(statusEffect: StatusEffect | undefined): string {
   switch (statusEffect) {
-  case StatusEffect.POISON:
-    return "statusEffect:poison";
-  case StatusEffect.TOXIC:
-    return "statusEffect:toxic";
-  case StatusEffect.PARALYSIS:
-    return "statusEffect:paralysis";
-  case StatusEffect.SLEEP:
-    return "statusEffect:sleep";
-  case StatusEffect.FREEZE:
-    return "statusEffect:freeze";
-  case StatusEffect.BURN:
-    return "statusEffect:burn";
-  default:
-    return "statusEffect:none";
+    case StatusEffect.POISON:
+      return "statusEffect:poison";
+    case StatusEffect.TOXIC:
+      return "statusEffect:toxic";
+    case StatusEffect.PARALYSIS:
+      return "statusEffect:paralysis";
+    case StatusEffect.SLEEP:
+      return "statusEffect:sleep";
+    case StatusEffect.FREEZE:
+      return "statusEffect:freeze";
+    case StatusEffect.BURN:
+      return "statusEffect:burn";
+    default:
+      return "statusEffect:none";
   }
 }
 
@@ -94,14 +94,14 @@ export function getStatusEffectDescriptor(statusEffect: StatusEffect): string {
 
 export function getStatusEffectCatchRateMultiplier(statusEffect: StatusEffect): number {
   switch (statusEffect) {
-  case StatusEffect.POISON:
-  case StatusEffect.TOXIC:
-  case StatusEffect.PARALYSIS:
-  case StatusEffect.BURN:
-    return 1.5;
-  case StatusEffect.SLEEP:
-  case StatusEffect.FREEZE:
-    return 2.5;
+    case StatusEffect.POISON:
+    case StatusEffect.TOXIC:
+    case StatusEffect.PARALYSIS:
+    case StatusEffect.BURN:
+      return 1.5;
+    case StatusEffect.SLEEP:
+    case StatusEffect.FREEZE:
+      return 2.5;
   }
 
   return 1;
