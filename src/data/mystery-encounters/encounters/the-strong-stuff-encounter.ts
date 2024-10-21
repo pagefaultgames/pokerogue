@@ -201,7 +201,7 @@ export const TheStrongStuffEncounter: MysteryEncounter =
           });
 
         encounter.dialogue.outro = [];
-        transitionMysteryEncounterIntroVisuals(scene, true, true, 500);
+        await transitionMysteryEncounterIntroVisuals(scene, true, true, 500);
         await initBattleWithEnemyConfig(scene, encounter.enemyPartyConfigs[0]);
       }
     )
