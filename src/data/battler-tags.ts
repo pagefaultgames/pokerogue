@@ -437,7 +437,7 @@ export class BeakBlastChargingTag extends BattlerTag {
    * to be removed after the source makes a move (or the turn ends, whichever comes first)
    * @param pokemon {@linkcode Pokemon} the owner of this tag
    * @param lapseType {@linkcode BattlerTagLapseType} the type of functionality invoked in battle
-   * @returns `true` if invoked with the `AFTER_HIT` lapse type; `false` otherwise
+   * @returns `true` if invoked with the `AFTER_HIT` lapse type
    */
   lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
     if (lapseType === BattlerTagLapseType.AFTER_HIT) {
@@ -457,11 +457,10 @@ export class BeakBlastChargingTag extends BattlerTag {
  * @see {@link https://bulbapedia.bulbagarden.net/wiki/Shell_Trap_(move) | Shell Trap}
  */
 export class ShellTrapTag extends BattlerTag {
-  public activated: boolean;
+  public activated: boolean = false;
 
   constructor() {
     super(BattlerTagType.SHELL_TRAP, [ BattlerTagLapseType.TURN_END, BattlerTagLapseType.AFTER_HIT ], 1);
-    this.activated = false;
   }
 
   onAdd(pokemon: Pokemon): void {
@@ -472,36 +471,34 @@ export class ShellTrapTag extends BattlerTag {
    * "Activates" the shell trap, causing the tag owner to move next.
    * @param pokemon {@linkcode Pokemon} the owner of this tag
    * @param lapseType {@linkcode BattlerTagLapseType} the type of functionality invoked in battle
-   * @returns `true` if invoked with the `CUSTOM` lapse type; `false` otherwise
+   * @returns `true` if invoked with the `AFTER_HIT` lapse type
    */
   lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
     if (lapseType === BattlerTagLapseType.AFTER_HIT) {
       const phaseData = getMoveEffectPhaseData(pokemon);
 
-      /* Trap should only be triggered by opponent's Physical moves */
+      // Trap should only be triggered by opponent's Physical moves
       if (phaseData?.move.category === MoveCategory.PHYSICAL && pokemon.isOpponent(phaseData.attacker)) {
-        this.triggerTrap(pokemon);
+        const shellTrapPhaseIndex = pokemon.scene.phaseQueue.findIndex(
+          phase => phase instanceof MovePhase && phase.pokemon === pokemon
+        );
+        const firstMovePhaseIndex = pokemon.scene.phaseQueue.findIndex(
+          phase => phase instanceof MovePhase
+        );
+
+        // Only shift MovePhase timing if it's not already next up
+        if (shellTrapPhaseIndex !== -1 && shellTrapPhaseIndex !== firstMovePhaseIndex) {
+          const shellTrapMovePhase = pokemon.scene.phaseQueue.splice(shellTrapPhaseIndex, 1)[0];
+          pokemon.scene.prependToPhase(shellTrapMovePhase, MovePhase);
+        }
+
+        this.activated = true;
       }
 
       return true;
     }
+
     return super.lapse(pokemon, lapseType);
-  }
-
-  private triggerTrap(pokemon: Pokemon) {
-    const shellTrapPhaseIndex = pokemon.scene.phaseQueue.findIndex(
-      phase => phase instanceof MovePhase && phase.pokemon === pokemon
-    );
-    const firstMovePhaseIndex = pokemon.scene.phaseQueue.findIndex(
-      phase => phase instanceof MovePhase
-    );
-
-    if (shellTrapPhaseIndex !== -1 && shellTrapPhaseIndex !== firstMovePhaseIndex) {
-      const shellTrapMovePhase = pokemon.scene.phaseQueue.splice(shellTrapPhaseIndex, 1)[0];
-      pokemon.scene.prependToPhase(shellTrapMovePhase, MovePhase);
-    }
-
-    this.activated = true;
   }
 }
 
