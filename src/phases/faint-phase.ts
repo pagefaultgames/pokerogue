@@ -188,19 +188,19 @@ export class FaintPhase extends PokemonPhase {
 
   tryOverrideForBattleSpec(): boolean {
     switch (this.scene.currentBattle.battleSpec) {
-    case BattleSpec.FINAL_BOSS:
-      if (!this.player) {
-        const enemy = this.getPokemon();
-        if (enemy.formIndex) {
-          this.scene.ui.showDialogue(battleSpecDialogue[BattleSpec.FINAL_BOSS].secondStageWin, enemy.species.name, null, () => this.doFaint());
-        } else {
+      case BattleSpec.FINAL_BOSS:
+        if (!this.player) {
+          const enemy = this.getPokemon();
+          if (enemy.formIndex) {
+            this.scene.ui.showDialogue(battleSpecDialogue[BattleSpec.FINAL_BOSS].secondStageWin, enemy.species.name, null, () => this.doFaint());
+          } else {
           // Final boss' HP threshold has been bypassed; cancel faint and force check for 2nd phase
-          enemy.hp++;
-          this.scene.unshiftPhase(new DamagePhase(this.scene, enemy.getBattlerIndex(), 0, HitResult.OTHER));
-          this.end();
+            enemy.hp++;
+            this.scene.unshiftPhase(new DamagePhase(this.scene, enemy.getBattlerIndex(), 0, HitResult.OTHER));
+            this.end();
+          }
+          return true;
         }
-        return true;
-      }
     }
 
     return false;

@@ -106,48 +106,48 @@ export default class ScrollableGridUiHandler {
     const itemOffset = this.scrollCursor * this.COLUMNS;
     const lastVisibleIndex = Math.min(this.totalElements - 1, this.totalElements - maxScrollCursor * this.COLUMNS - 1);
     switch (button) {
-    case Button.UP:
-      if (currentRowIndex > 0) {
-        success = this.setCursor(this.cursor - this.COLUMNS);
-      } else if (this.scrollCursor > 0) {
-        success = this.setScrollCursor(this.scrollCursor - 1);
-      } else {
+      case Button.UP:
+        if (currentRowIndex > 0) {
+          success = this.setCursor(this.cursor - this.COLUMNS);
+        } else if (this.scrollCursor > 0) {
+          success = this.setScrollCursor(this.scrollCursor - 1);
+        } else {
         // wrap around to the last row
-        let newCursor = this.cursor + (onScreenRows - 1) * this.COLUMNS;
-        if (newCursor > lastVisibleIndex) {
-          newCursor -= this.COLUMNS;
+          let newCursor = this.cursor + (onScreenRows - 1) * this.COLUMNS;
+          if (newCursor > lastVisibleIndex) {
+            newCursor -= this.COLUMNS;
+          }
+          success = this.setScrollCursor(maxScrollCursor, newCursor);
         }
-        success = this.setScrollCursor(maxScrollCursor, newCursor);
-      }
-      break;
-    case Button.DOWN:
-      if (currentRowIndex < onScreenRows - 1) {
+        break;
+      case Button.DOWN:
+        if (currentRowIndex < onScreenRows - 1) {
         // Go down one row
-        success = this.setCursor(Math.min(this.cursor + this.COLUMNS, this.totalElements - itemOffset - 1));
-      } else if (this.scrollCursor < maxScrollCursor) {
+          success = this.setCursor(Math.min(this.cursor + this.COLUMNS, this.totalElements - itemOffset - 1));
+        } else if (this.scrollCursor < maxScrollCursor) {
         // Scroll down one row
-        success = this.setScrollCursor(this.scrollCursor + 1);
-      } else {
+          success = this.setScrollCursor(this.scrollCursor + 1);
+        } else {
         // Wrap around to the top row
-        success = this.setScrollCursor(0, this.cursor % this.COLUMNS);
-      }
-      break;
-    case Button.LEFT:
-      if (currentColumnIndex > 0) {
-        success = this.setCursor(this.cursor - 1);
-      } else if (this.scrollCursor === maxScrollCursor && currentRowIndex === onScreenRows - 1) {
-        success = this.setCursor(lastVisibleIndex);
-      } else {
-        success = this.setCursor(this.cursor + this.COLUMNS - 1);
-      }
-      break;
-    case Button.RIGHT:
-      if (currentColumnIndex < this.COLUMNS - 1 && this.cursor + itemOffset < this.totalElements - 1) {
-        success = this.setCursor(this.cursor + 1);
-      } else {
-        success = this.setCursor(this.cursor - currentColumnIndex);
-      }
-      break;
+          success = this.setScrollCursor(0, this.cursor % this.COLUMNS);
+        }
+        break;
+      case Button.LEFT:
+        if (currentColumnIndex > 0) {
+          success = this.setCursor(this.cursor - 1);
+        } else if (this.scrollCursor === maxScrollCursor && currentRowIndex === onScreenRows - 1) {
+          success = this.setCursor(lastVisibleIndex);
+        } else {
+          success = this.setCursor(this.cursor + this.COLUMNS - 1);
+        }
+        break;
+      case Button.RIGHT:
+        if (currentColumnIndex < this.COLUMNS - 1 && this.cursor + itemOffset < this.totalElements - 1) {
+          success = this.setCursor(this.cursor + 1);
+        } else {
+          success = this.setCursor(this.cursor - currentColumnIndex);
+        }
+        break;
     }
     return success;
   }
