@@ -2295,7 +2295,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * @param target the {@linkcode Pokemon} to compare against.
    * @returns `true` if the two pokemon are allies, `false` otherwise
    */
-  isOpponent(target: Pokemon): boolean {
+  public isOpponent(target: Pokemon): boolean {
     return this.isPlayer() !== target.isPlayer();
   }
 

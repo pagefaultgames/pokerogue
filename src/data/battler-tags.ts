@@ -1,35 +1,44 @@
-import { ChargeAnim, CommonAnim, CommonBattleAnim, MoveChargeAnim } from "#app/data/battle-anims";
-import { getPokemonNameWithAffix } from "#app/messages";
-import Pokemon, { MoveResult, HitResult } from "#app/field/pokemon";
-import { StatusEffect } from "#app/data/status-effect";
-import { toDmgValue, BooleanHolder, getFrameMs, NumberHolder } from "#app/utils";
-import Move, {
-  ChargeAttr, MoveFlags, allMoves, MoveCategory, applyMoveAttrs,
-  StatusCategoryOnAllyAttr, HealOnAllyAttr, ConsecutiveUseDoublePowerAttr
-} from "#app/data/move";
-import { Type } from "#app/data/type";
+import BattleScene from "#app/battle-scene";
 import {
-  BlockNonDirectDamageAbAttr, FlinchEffectAbAttr,
-  ReverseDrainAbAttr, applyAbAttrs, ProtectStatAbAttr
+  allAbilities,
+  applyAbAttrs,
+  BlockNonDirectDamageAbAttr,
+  FlinchEffectAbAttr,
+  ProtectStatAbAttr,
+  ReverseDrainAbAttr
 } from "#app/data/ability";
-import { TerrainType } from "#app/data/terrain";
-import { WeatherType } from "#app/data/weather";
-import { allAbilities } from "#app/data/ability";
+import { ChargeAnim, CommonAnim, CommonBattleAnim, MoveChargeAnim } from "#app/data/battle-anims";
+import Move, {
+  allMoves,
+  applyMoveAttrs,
+  ChargeAttr,
+  ConsecutiveUseDoublePowerAttr,
+  HealOnAllyAttr,
+  MoveCategory,
+  MoveFlags,
+  StatusCategoryOnAllyAttr
+} from "#app/data/move";
 import { SpeciesFormChangeManualTrigger } from "#app/data/pokemon-forms";
-import { Abilities } from "#enums/abilities";
-import { BattlerTagType } from "#enums/battler-tag-type";
-import { Moves } from "#enums/moves";
-import { Species } from "#enums/species";
-import i18next from "#app/plugins/i18n";
-import { Stat, type BattleStat, type EffectiveStat, EFFECTIVE_STATS, getStatKey } from "#enums/stat";
+import { StatusEffect } from "#app/data/status-effect";
+import { TerrainType } from "#app/data/terrain";
+import { Type } from "#app/data/type";
+import { WeatherType } from "#app/data/weather";
+import Pokemon, { HitResult, MoveResult } from "#app/field/pokemon";
+import { getPokemonNameWithAffix } from "#app/messages";
 import { CommonAnimPhase } from "#app/phases/common-anim-phase";
 import { MoveEffectPhase } from "#app/phases/move-effect-phase";
 import { MovePhase } from "#app/phases/move-phase";
 import { PokemonHealPhase } from "#app/phases/pokemon-heal-phase";
 import { ShowAbilityPhase } from "#app/phases/show-ability-phase";
-import { StatStageChangePhase, StatStageChangeCallback } from "#app/phases/stat-stage-change-phase";
+import { StatStageChangeCallback, StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
+import i18next from "#app/plugins/i18n";
+import { BooleanHolder, getFrameMs, NumberHolder, toDmgValue } from "#app/utils";
+import { Abilities } from "#enums/abilities";
+import { BattlerTagType } from "#enums/battler-tag-type";
+import { Moves } from "#enums/moves";
 import { PokemonAnimType } from "#enums/pokemon-anim-type";
-import BattleScene from "#app/battle-scene";
+import { Species } from "#enums/species";
+import { EFFECTIVE_STATS, getStatKey, Stat, type BattleStat, type EffectiveStat } from "#enums/stat";
 
 export enum BattlerTagLapseType {
   FAINT,
@@ -428,7 +437,7 @@ export class BeakBlastChargingTag extends BattlerTag {
    * to be removed after the source makes a move (or the turn ends, whichever comes first)
    * @param pokemon {@linkcode Pokemon} the owner of this tag
    * @param lapseType {@linkcode BattlerTagLapseType} the type of functionality invoked in battle
-   * @returns `true` if invoked with the ON_GET_HIT lapse type; `false` otherwise
+   * @returns `true` if invoked with the `AFTER_HIT` lapse type; `false` otherwise
    */
   lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
     if (lapseType === BattlerTagLapseType.AFTER_HIT) {
