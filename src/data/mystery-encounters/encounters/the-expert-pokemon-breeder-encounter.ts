@@ -222,9 +222,9 @@ export const TheExpertPokemonBreederEncounter: MysteryEncounter =
           encounter.misc.chosenPokemon = pokemon1;
           encounter.setDialogueToken("chosenPokemon", pokemon1.getNameToRender());
           const eggOptions = getEggOptions(scene, pokemon1CommonEggs, pokemon1RareEggs);
-          setEncounterRewards(scene, 
-            { guaranteedModifierTypeFuncs: [modifierTypes.SOOTHE_BELL], fillRemaining: true }, 
-            eggOptions, 
+          setEncounterRewards(scene,
+            { guaranteedModifierTypeFuncs: [ modifierTypes.SOOTHE_BELL ], fillRemaining: true },
+            eggOptions,
             () => doPostEncounterCleanup(scene));
 
           // Remove all Pokemon from the party except the chosen Pokemon
@@ -275,7 +275,7 @@ export const TheExpertPokemonBreederEncounter: MysteryEncounter =
           encounter.setDialogueToken("chosenPokemon", pokemon2.getNameToRender());
           const eggOptions = getEggOptions(scene, pokemon2CommonEggs, pokemon2RareEggs);
           setEncounterRewards(scene,
-            { guaranteedModifierTypeFuncs: [modifierTypes.SOOTHE_BELL], fillRemaining: true },
+            { guaranteedModifierTypeFuncs: [ modifierTypes.SOOTHE_BELL ], fillRemaining: true },
             eggOptions,
             () => doPostEncounterCleanup(scene));
 
@@ -327,7 +327,7 @@ export const TheExpertPokemonBreederEncounter: MysteryEncounter =
           encounter.setDialogueToken("chosenPokemon", pokemon3.getNameToRender());
           const eggOptions = getEggOptions(scene, pokemon3CommonEggs, pokemon3RareEggs);
           setEncounterRewards(scene,
-            { guaranteedModifierTypeFuncs: [modifierTypes.SOOTHE_BELL], fillRemaining: true },
+            { guaranteedModifierTypeFuncs: [ modifierTypes.SOOTHE_BELL ], fillRemaining: true },
             eggOptions,
             () => doPostEncounterCleanup(scene));
 

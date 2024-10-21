@@ -69,18 +69,18 @@ export const FieryFalloutEncounter: MysteryEncounter =
             species: volcaronaSpecies,
             isBoss: false,
             gender: Gender.MALE,
-            tags: [BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON],
+            tags: [ BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON ],
             mysteryEncounterBattleEffects: (pokemon: Pokemon) => {
-              pokemon.scene.unshiftPhase(new StatStageChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [Stat.SPDEF, Stat.SPD], 2));
+              pokemon.scene.unshiftPhase(new StatStageChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [ Stat.SPDEF, Stat.SPD ], 2));
             }
           },
           {
             species: volcaronaSpecies,
             isBoss: false,
             gender: Gender.FEMALE,
-            tags: [BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON],
+            tags: [ BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON ],
             mysteryEncounterBattleEffects: (pokemon: Pokemon) => {
-              pokemon.scene.unshiftPhase(new StatStageChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [Stat.SPDEF, Stat.SPD], 2));
+              pokemon.scene.unshiftPhase(new StatStageChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [ Stat.SPDEF, Stat.SPD ], 2));
             }
           }
         ],

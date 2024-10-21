@@ -48,7 +48,7 @@ describe("Fiery Fallout - Mystery Encounter", () => {
       .startingWave(defaultWave)
       .startingBiome(defaultBiome)
       .disableTrainerWaves()
-      .moveset([Moves.PAYBACK, Moves.THUNDERBOLT]); // Required for attack type booster item generation
+      .moveset([ Moves.PAYBACK, Moves.THUNDERBOLT ]); // Required for attack type booster item generation
 
     vi.spyOn(MysteryEncounters, "mysteryEncountersByBiome", "get").mockReturnValue(
       new Map<Biome, MysteryEncounterType[]>([
@@ -113,14 +113,14 @@ describe("Fiery Fallout - Mystery Encounter", () => {
             species: getPokemonSpecies(Species.VOLCARONA),
             isBoss: false,
             gender: Gender.MALE,
-            tags: [BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON],
+            tags: [ BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON ],
             mysteryEncounterBattleEffects: expect.any(Function)
           },
           {
             species: getPokemonSpecies(Species.VOLCARONA),
             isBoss: false,
             gender: Gender.FEMALE,
-            tags: [BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON],
+            tags: [ BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON ],
             mysteryEncounterBattleEffects: expect.any(Function)
           }
         ],

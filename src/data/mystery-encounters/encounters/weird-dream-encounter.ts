@@ -287,7 +287,7 @@ export const WeirdDreamEncounter: MysteryEncounter =
           }
         };
 
-        setEncounterRewards(scene, { guaranteedModifierTiers: [ModifierTier.ROGUE, ModifierTier.ROGUE, ModifierTier.ULTRA, ModifierTier.ULTRA, ModifierTier.GREAT, ModifierTier.GREAT], fillRemaining: false }, undefined, onBeforeRewards);
+        setEncounterRewards(scene, { guaranteedModifierTiers: [ ModifierTier.ROGUE, ModifierTier.ROGUE, ModifierTier.ULTRA, ModifierTier.ULTRA, ModifierTier.GREAT, ModifierTier.GREAT ], fillRemaining: false }, undefined, onBeforeRewards);
 
         await showEncounterText(scene, `${namespace}:option.2.selected_2`, null, undefined, true);
         await initBattleWithEnemyConfig(scene, enemyPartyConfig);
@@ -451,7 +451,7 @@ async function postProcessTransformedPokemon(scene: BattleScene, previousPokemon
   });
 
   // Roll a neutral nature
-  newPokemon.nature = [Nature.HARDY, Nature.DOCILE, Nature.BASHFUL, Nature.QUIRKY, Nature.SERIOUS][randSeedInt(5)];
+  newPokemon.nature = [ Nature.HARDY, Nature.DOCILE, Nature.BASHFUL, Nature.QUIRKY, Nature.SERIOUS ][randSeedInt(5)];
 
   // For pokemon at/below 570 BST or any shiny pokemon, unlock it permanently as if you had caught it
   if (!forBattle && (newPokemon.getSpeciesForm().getBaseStatTotal() <= NON_LEGENDARY_BST_THRESHOLD || newPokemon.isShiny())) {
@@ -509,7 +509,7 @@ async function postProcessTransformedPokemon(scene: BattleScene, previousPokemon
 
   // Randomize the second type of the pokemon
   // If the pokemon does not normally have a second type, it will gain 1
-  const newTypes = [newPokemon.getTypes()[0]];
+  const newTypes = [ newPokemon.getTypes()[0] ];
   let newType = randSeedInt(18) as Type;
   while (newType === newTypes[0]) {
     newType = randSeedInt(18) as Type;
@@ -531,7 +531,7 @@ async function postProcessTransformedPokemon(scene: BattleScene, previousPokemon
     // Def or SpDef
     stats.push(baseStats[Stat.DEF] < baseStats[Stat.SPDEF] ? Stat.DEF : Stat.SPDEF);
     const modType = modifierTypes.MYSTERY_ENCOUNTER_OLD_GATEAU()
-      .generateType(scene.getParty(), [20, stats])
+      .generateType(scene.getParty(), [ 20, stats ])
       ?.withIdFromFunc(modifierTypes.MYSTERY_ENCOUNTER_OLD_GATEAU);
     const modifier = modType?.newModifier(newPokemon);
     if (modifier) {
