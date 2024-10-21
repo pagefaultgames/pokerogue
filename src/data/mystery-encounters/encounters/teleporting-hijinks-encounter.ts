@@ -149,7 +149,7 @@ export const TeleportingHijinksEncounter: MysteryEncounter =
         const magnet = generateModifierTypeOption(scene, modifierTypes.ATTACK_TYPE_BOOSTER, [ Type.STEEL ])!;
         const metalCoat = generateModifierTypeOption(scene, modifierTypes.ATTACK_TYPE_BOOSTER, [ Type.ELECTRIC ])!;
         setEncounterRewards(scene, { guaranteedModifierTypeOptions: [ magnet, metalCoat ], fillRemaining: true });
-        transitionMysteryEncounterIntroVisuals(scene, true, true);
+        await transitionMysteryEncounterIntroVisuals(scene, true, true);
         await initBattleWithEnemyConfig(scene, config);
       }
     )
