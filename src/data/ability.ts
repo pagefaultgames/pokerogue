@@ -3580,22 +3580,15 @@ export class MoodyAbAttr extends PostTurnAbAttr {
 }
 
 export class SpeedBoostAbAttr extends PostTurnAbAttr {
-  private stats: BattleStat[];
-  private stages: number;
 
   constructor() {
     super(true);
-
-    this.stats = Array.isArray([ Stat.SPD ])
-      ? [ Stat.SPD ]
-      : [  Stat.SPD  ];
-    this.stages = 1;
   }
 
   applyPostTurn(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
     if (!simulated) {
       if (!pokemon.turnData.switchedInThisTurn && !pokemon.turnData.failedRunAway) {
-        pokemon.scene.unshiftPhase(new StatStageChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, this.stats, this.stages));
+        pokemon.scene.unshiftPhase(new StatStageChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [ Stat.SPD ], 1));
       } else {
         return false;
       }
