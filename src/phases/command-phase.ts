@@ -30,6 +30,15 @@ export class CommandPhase extends FieldPhase {
   start() {
     super.start();
 
+    const commandUiHandler = this.scene.ui.handlers[Mode.COMMAND];
+    if (commandUiHandler) {
+      if (this.scene.currentBattle.turn === 1 || commandUiHandler.getCursor() === Command.POKEMON) {
+        commandUiHandler.setCursor(Command.FIGHT);
+      } else {
+        commandUiHandler.setCursor(commandUiHandler.getCursor());
+      }
+    }
+
     if (this.fieldIndex) {
       // If we somehow are attempting to check the right pokemon but there's only one pokemon out
       // Switch back to the center pokemon. This can happen rarely in double battles with mid turn switching
