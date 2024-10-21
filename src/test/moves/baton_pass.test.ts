@@ -95,7 +95,7 @@ describe("Moves - Baton Pass", () => {
     game.override.enemyMoveset([ Moves.SALT_CURE ]);
     await game.classicMode.startBattle([ Species.PIKACHU, Species.FEEBAS ]);
 
-    const [ player1, player2 ] = game.scene.getParty();
+    const [ player1, player2 ] = game.scene.getPlayerParty();
 
     game.move.select(Moves.BATON_PASS);
     await game.setTurnOrder([ BattlerIndex.ENEMY, BattlerIndex.PLAYER ]);

@@ -88,7 +88,7 @@ export default class MysteryEncounterOption implements IMysteryEncounterOption {
    * @param pokemon
    */
   pokemonMeetsPrimaryRequirements(scene: BattleScene, pokemon: Pokemon): boolean {
-    return !this.primaryPokemonRequirements.some(req => !req.queryParty(scene.getParty()).map(p => p.id).includes(pokemon.id));
+    return !this.primaryPokemonRequirements.some(req => !req.queryParty(scene.getPlayerParty()).map(p => p.id).includes(pokemon.id));
   }
 
   /**
@@ -102,10 +102,10 @@ export default class MysteryEncounterOption implements IMysteryEncounterOption {
     if (!this.primaryPokemonRequirements || this.primaryPokemonRequirements.length === 0) {
       return true;
     }
-    let qualified: PlayerPokemon[] = scene.getParty();
+    let qualified: PlayerPokemon[] = scene.getPlayerParty();
     for (const req of this.primaryPokemonRequirements) {
       if (req.meetsRequirement(scene)) {
-        const queryParty = req.queryParty(scene.getParty());
+        const queryParty = req.queryParty(scene.getPlayerParty());
         qualified = qualified.filter(pkmn => queryParty.includes(pkmn));
       } else {
         this.primaryPokemon = undefined;
@@ -162,10 +162,10 @@ export default class MysteryEncounterOption implements IMysteryEncounterOption {
       return true;
     }
 
-    let qualified: PlayerPokemon[] = scene.getParty();
+    let qualified: PlayerPokemon[] = scene.getPlayerParty();
     for (const req of this.secondaryPokemonRequirements) {
       if (req.meetsRequirement(scene)) {
-        const queryParty = req.queryParty(scene.getParty());
+        const queryParty = req.queryParty(scene.getPlayerParty());
         qualified = qualified.filter(pkmn => queryParty.includes(pkmn));
       } else {
         this.secondaryPokemon = [];

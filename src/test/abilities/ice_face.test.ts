@@ -192,7 +192,7 @@ describe("Abilities - Ice Face", () => {
     game.doSwitchPokemon(1);
 
     await game.phaseInterceptor.to(TurnEndPhase);
-    eiscue = game.scene.getParty()[1];
+    eiscue = game.scene.getPlayerParty()[1];
 
     expect(eiscue.formIndex).toBe(noiceForm);
     expect(eiscue.getTag(BattlerTagType.ICE_FACE)).toBeUndefined();

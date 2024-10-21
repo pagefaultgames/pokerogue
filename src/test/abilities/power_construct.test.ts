@@ -43,7 +43,7 @@ describe("Abilities - POWER CONSTRUCT", () => {
 
       await game.classicMode.startBattle([ Species.MAGIKARP, Species.ZYGARDE ]);
 
-      const zygarde = game.scene.getParty().find((p) => p.species.speciesId === Species.ZYGARDE);
+      const zygarde = game.scene.getPlayerParty().find((p) => p.species.speciesId === Species.ZYGARDE);
       expect(zygarde).not.toBe(undefined);
       expect(zygarde!.formIndex).toBe(completeForm);
 
@@ -73,7 +73,7 @@ describe("Abilities - POWER CONSTRUCT", () => {
 
       await game.classicMode.startBattle([ Species.MAGIKARP, Species.ZYGARDE ]);
 
-      const zygarde = game.scene.getParty().find((p) => p.species.speciesId === Species.ZYGARDE);
+      const zygarde = game.scene.getPlayerParty().find((p) => p.species.speciesId === Species.ZYGARDE);
       expect(zygarde).not.toBe(undefined);
       expect(zygarde!.formIndex).toBe(completeForm);
 

@@ -114,7 +114,7 @@ describe("Lost at Sea - Mystery Encounter", () => {
       const laprasSpecies = getPokemonSpecies(Species.LAPRAS);
 
       await game.runToMysteryEncounter(MysteryEncounterType.LOST_AT_SEA, defaultParty);
-      const party = game.scene.getParty();
+      const party = game.scene.getPlayerParty();
       const blastoise = party.find((pkm) => pkm.species.speciesId === Species.BLASTOISE);
       const expBefore = blastoise!.exp;
 
@@ -179,7 +179,7 @@ describe("Lost at Sea - Mystery Encounter", () => {
       game.override.startingWave(wave);
 
       await game.runToMysteryEncounter(MysteryEncounterType.LOST_AT_SEA, defaultParty);
-      const party = game.scene.getParty();
+      const party = game.scene.getPlayerParty();
       const pidgeot = party.find((pkm) => pkm.species.speciesId === Species.PIDGEOT);
       const expBefore = pidgeot!.exp;
 
@@ -241,7 +241,7 @@ describe("Lost at Sea - Mystery Encounter", () => {
 
       await game.runToMysteryEncounter(MysteryEncounterType.LOST_AT_SEA, defaultParty);
 
-      const party = game.scene.getParty();
+      const party = game.scene.getPlayerParty();
       const abra = party.find((pkm) => pkm.species.speciesId === Species.ABRA)!;
       vi.spyOn(abra, "isAllowedInBattle").mockReturnValue(false);
 

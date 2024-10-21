@@ -949,7 +949,7 @@ export class GameData {
       seed: scene.seed,
       playTime: scene.sessionPlayTime,
       gameMode: scene.gameMode.modeId,
-      party: scene.getParty().map(p => new PokemonData(p)),
+      party: scene.getPlayerParty().map(p => new PokemonData(p)),
       enemyParty: scene.getEnemyParty().map(p => new PokemonData(p)),
       modifiers: scene.findModifiers(() => true).map(m => new PersistentModifierData(m, true)),
       enemyModifiers: scene.findModifiers(() => true, false).map(m => new PersistentModifierData(m, false)),
@@ -1028,7 +1028,7 @@ export class GameData {
 
           const loadPokemonAssets: Promise<void>[] = [];
 
-          const party = scene.getParty();
+          const party = scene.getPlayerParty();
           party.splice(0, party.length);
 
           for (const p of sessionData.party) {
