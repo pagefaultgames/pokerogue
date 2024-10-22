@@ -99,8 +99,9 @@ export class MoveEffectPhase extends PokemonPhase {
       const targetHitChecks = Object.fromEntries(targets.map(p => [ p.getBattlerIndex(), this.hitCheck(p) ]));
       const hasActiveTargets = targets.some(t => t.isActive(true));
 
-      /** Check if the target is immune via ability to the attacking move */
-      const isImmune = targets[0].hasAbilityWithAttr(TypeImmunityAbAttr) && (targets[0].getAbility()?.getAttrs(TypeImmunityAbAttr)?.[0]?.getImmuneType() === user.getMoveType(move));
+      /** Check if the target is immune via ability to the attacking move, and NOT in semi invulnerable state */
+      const isImmune = targets[0].hasAbilityWithAttr(TypeImmunityAbAttr) && (targets[0].getAbility()?.getAttrs(TypeImmunityAbAttr)?.[0]?.getImmuneType() === user.getMoveType(move))
+          && !targets[0].getTag(SemiInvulnerableTag);
 
       /**
          * If no targets are left for the move to hit (FAIL), or the invoked move is single-target
@@ -140,7 +141,7 @@ export class MoveEffectPhase extends PokemonPhase {
           const bypassIgnoreProtect = new Utils.BooleanHolder(false);
           /** If the move is not targeting a Pokemon on the user's side, try to apply conditional protection effects */
           if (!this.move.getMove().isAllyTarget()) {
-            this.scene.arena.applyTagsForSide(ConditionalProtectTag, targetSide, hasConditionalProtectApplied, user, target, move.id, bypassIgnoreProtect);
+            this.scene.arena.applyTagsForSide(ConditionalProtectTag, targetSide, false, hasConditionalProtectApplied, user, target, move.id, bypassIgnoreProtect);
           }
 
           /** Is the target protected by Protect, etc. or a relevant conditional protection effect? */
@@ -148,8 +149,9 @@ export class MoveEffectPhase extends PokemonPhase {
               && (hasConditionalProtectApplied.value || (!target.findTags(t => t instanceof DamageProtectedTag).length && target.findTags(t => t instanceof ProtectedTag).find(t => target.lapseTag(t.tagType)))
               || (this.move.getMove().category !== MoveCategory.STATUS && target.findTags(t => t instanceof DamageProtectedTag).find(t => target.lapseTag(t.tagType))));
 
-          /** Is the pokemon immune due to an ablility?  */
-          const isImmune = target.hasAbilityWithAttr(TypeImmunityAbAttr) && (target.getAbility()?.getAttrs(TypeImmunityAbAttr)?.[0]?.getImmuneType() === user.getMoveType(move));
+          /** Is the pokemon immune due to an ablility, and also not in a semi invulnerable state?  */
+          const isImmune = target.hasAbilityWithAttr(TypeImmunityAbAttr) && (target.getAbility()?.getAttrs(TypeImmunityAbAttr)?.[0]?.getImmuneType() === user.getMoveType(move))
+              && !target.getTag(SemiInvulnerableTag);
 
           /**
              * If the move missed a target, stop all future hits against that target
@@ -278,10 +280,8 @@ export class MoveEffectPhase extends PokemonPhase {
                           if (!user.isPlayer() && this.move.getMove() instanceof AttackMove) {
                             user.scene.applyShuffledModifiers(this.scene, EnemyAttackStatusEffectChanceModifier, false, target);
                           }
-                          target.lapseTag(BattlerTagType.BEAK_BLAST_CHARGING);
-                          if (move.category === MoveCategory.PHYSICAL && user.isPlayer() !== target.isPlayer()) {
-                            target.lapseTag(BattlerTagType.SHELL_TRAP);
-                          }
+                          target.lapseTags(BattlerTagLapseType.AFTER_HIT);
+
                         })).then(() => {
                           // Apply the user's post-attack ability effects
                           applyPostAttackAbAttrs(PostAttackAbAttr, user, target, this.move.getMove(), hitResult).then(() => {

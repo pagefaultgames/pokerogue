@@ -1,6 +1,6 @@
 import { BattlerIndex } from "#app/battle";
 import BattleScene from "#app/battle-scene";
-import { applyAbAttrs, applyPostMoveUsedAbAttrs, applyPreAttackAbAttrs, BlockRedirectAbAttr, IncreasePpAbAttr, PokemonTypeChangeAbAttr, PostMoveUsedAbAttr, RedirectMoveAbAttr } from "#app/data/ability";
+import { applyAbAttrs, applyPostMoveUsedAbAttrs, applyPreAttackAbAttrs, BlockRedirectAbAttr, IncreasePpAbAttr, PokemonTypeChangeAbAttr, PostMoveUsedAbAttr, RedirectMoveAbAttr, ReduceStatusEffectDurationAbAttr } from "#app/data/ability";
 import { CommonAnim } from "#app/data/battle-anims";
 import { BattlerTagLapseType, CenterOfAttentionTag } from "#app/data/battler-tags";
 import { allMoves, applyMoveAttrs, BypassRedirectAttr, BypassSleepAttr, ChargeAttr, CopyMoveAttr, HealStatusEffectAttr, MoveFlags, PreMoveMessageAttr } from "#app/data/move";
@@ -128,7 +128,9 @@ export class MovePhase extends BattlePhase {
 
     this.lapsePreMoveAndMoveTags();
 
-    this.resolveFinalPreMoveCancellationChecks();
+    if (!(this.failed || this.cancelled)) {
+      this.resolveFinalPreMoveCancellationChecks();
+    }
 
     if (this.cancelled || this.failed) {
       this.handlePreMoveFailures();
@@ -145,8 +147,9 @@ export class MovePhase extends BattlePhase {
     const moveQueue = this.pokemon.getMoveQueue();
 
     if (targets.length === 0 || (moveQueue.length && moveQueue[0].move === Moves.NONE)) {
+      this.showMoveText();
       this.showFailedText();
-      this.cancelled = true;
+      this.cancel();
     }
   }
 
@@ -164,23 +167,26 @@ export class MovePhase extends BattlePhase {
       let healed = false;
 
       switch (this.pokemon.status.effect) {
-      case StatusEffect.PARALYSIS:
-        if (!this.pokemon.randSeedInt(4)) {
-          activated = true;
-          this.cancelled = true;
-        }
-        break;
-      case StatusEffect.SLEEP:
-        applyMoveAttrs(BypassSleepAttr, this.pokemon, null, this.move.getMove());
-        healed = this.pokemon.status.turnCount === this.pokemon.status.cureTurn;
-        activated = !healed && !this.pokemon.getTag(BattlerTagType.BYPASS_SLEEP);
-        this.cancelled = activated;
-        break;
-      case StatusEffect.FREEZE:
-        healed = !!this.move.getMove().findAttr(attr => attr instanceof HealStatusEffectAttr && attr.selfTarget && attr.isOfEffect(StatusEffect.FREEZE)) || !this.pokemon.randSeedInt(5);
-        activated = !healed;
-        this.cancelled = activated;
-        break;
+        case StatusEffect.PARALYSIS:
+          if (!this.pokemon.randSeedInt(4)) {
+            activated = true;
+            this.cancelled = true;
+          }
+          break;
+        case StatusEffect.SLEEP:
+          applyMoveAttrs(BypassSleepAttr, this.pokemon, null, this.move.getMove());
+          const turnsRemaining = new NumberHolder(this.pokemon.status.sleepTurnsRemaining ?? 0);
+          applyAbAttrs(ReduceStatusEffectDurationAbAttr, this.pokemon, null, false, this.pokemon.status.effect, turnsRemaining);
+          this.pokemon.status.sleepTurnsRemaining = turnsRemaining.value;
+          healed = this.pokemon.status.sleepTurnsRemaining <= 0;
+          activated = !healed && !this.pokemon.getTag(BattlerTagType.BYPASS_SLEEP);
+          this.cancelled = activated;
+          break;
+        case StatusEffect.FREEZE:
+          healed = !!this.move.getMove().findAttr(attr => attr instanceof HealStatusEffectAttr && attr.selfTarget && attr.isOfEffect(StatusEffect.FREEZE)) || !this.pokemon.randSeedInt(5);
+          activated = !healed;
+          this.cancelled = activated;
+          break;
       }
 
       if (activated) {
