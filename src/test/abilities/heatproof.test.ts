@@ -33,7 +33,7 @@ describe("Abilities - Heatproof", () => {
       .enemyLevel(100)
       .starterSpecies(Species.CHANDELURE)
       .ability(Abilities.BALL_FETCH)
-      .moveset([Moves.FLAMETHROWER, Moves.SPLASH])
+      .moveset([ Moves.FLAMETHROWER, Moves.SPLASH ])
       .startingLevel(100);
   });
 

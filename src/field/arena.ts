@@ -1,26 +1,26 @@
-import BattleScene from "../battle-scene";
-import { biomePokemonPools, BiomePoolTier, BiomeTierTrainerPools, biomeTrainerPools, PokemonPools } from "../data/biomes";
+import BattleScene from "#app/battle-scene";
+import { biomePokemonPools, BiomePoolTier, BiomeTierTrainerPools, biomeTrainerPools, PokemonPools } from "#app/data/balance/biomes";
 import { Constructor } from "#app/utils";
-import * as Utils from "../utils";
-import PokemonSpecies, { getPokemonSpecies } from "../data/pokemon-species";
-import { getTerrainClearMessage, getTerrainStartMessage, getWeatherClearMessage, getWeatherStartMessage, Weather, WeatherType } from "../data/weather";
-import { CommonAnim } from "../data/battle-anims";
-import { Type } from "../data/type";
-import Move from "../data/move";
-import { ArenaTag, ArenaTagSide, ArenaTrapTag, getArenaTag } from "../data/arena-tag";
-import { BattlerIndex } from "../battle";
-import { Terrain, TerrainType } from "../data/terrain";
-import { applyPostTerrainChangeAbAttrs, applyPostWeatherChangeAbAttrs, PostTerrainChangeAbAttr, PostWeatherChangeAbAttr } from "../data/ability";
-import Pokemon from "./pokemon";
+import * as Utils from "#app/utils";
+import PokemonSpecies, { getPokemonSpecies } from "#app/data/pokemon-species";
+import { getTerrainClearMessage, getTerrainStartMessage, getWeatherClearMessage, getWeatherStartMessage, Weather, WeatherType } from "#app/data/weather";
+import { CommonAnim } from "#app/data/battle-anims";
+import { Type } from "#app/data/type";
+import Move from "#app/data/move";
+import { ArenaTag, ArenaTagSide, ArenaTrapTag, getArenaTag } from "#app/data/arena-tag";
+import { BattlerIndex } from "#app/battle";
+import { Terrain, TerrainType } from "#app/data/terrain";
+import { applyPostTerrainChangeAbAttrs, applyPostWeatherChangeAbAttrs, PostTerrainChangeAbAttr, PostWeatherChangeAbAttr } from "#app/data/ability";
+import Pokemon from "#app/field/pokemon";
 import Overrides from "#app/overrides";
-import { TagAddedEvent, TagRemovedEvent, TerrainChangedEvent, WeatherChangedEvent } from "../events/arena";
+import { TagAddedEvent, TagRemovedEvent, TerrainChangedEvent, WeatherChangedEvent } from "#app/events/arena";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { Biome } from "#enums/biome";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import { TimeOfDay } from "#enums/time-of-day";
 import { TrainerType } from "#enums/trainer-type";
-import { Abilities } from "#app/enums/abilities";
+import { Abilities } from "#enums/abilities";
 import { SpeciesFormChangeRevertWeatherFormTrigger, SpeciesFormChangeWeatherTrigger } from "#app/data/pokemon-forms";
 import { CommonAnimPhase } from "#app/phases/common-anim-phase";
 import { ShowAbilityPhase } from "#app/phases/show-ability-phase";
@@ -392,16 +392,16 @@ export class Arena {
     return true;
   }
 
-  isMoveWeatherCancelled(user: Pokemon, move: Move) {
-    return this.weather && !this.weather.isEffectSuppressed(this.scene) && this.weather.isMoveWeatherCancelled(user, move);
+  public isMoveWeatherCancelled(user: Pokemon, move: Move): boolean {
+    return !!this.weather && !this.weather.isEffectSuppressed(this.scene) && this.weather.isMoveWeatherCancelled(user, move);
   }
 
-  isMoveTerrainCancelled(user: Pokemon, targets: BattlerIndex[], move: Move) {
-    return this.terrain && this.terrain.isMoveTerrainCancelled(user, targets, move);
+  public isMoveTerrainCancelled(user: Pokemon, targets: BattlerIndex[], move: Move): boolean {
+    return !!this.terrain && this.terrain.isMoveTerrainCancelled(user, targets, move);
   }
 
-  getTerrainType() : TerrainType {
-    return this.terrain?.terrainType || TerrainType.NONE;
+  public getTerrainType(): TerrainType {
+    return this.terrain?.terrainType ?? TerrainType.NONE;
   }
 
   getAttackTypeMultiplier(attackType: Type, grounded: boolean): number {
@@ -579,26 +579,28 @@ export class Arena {
    * Applies each `ArenaTag` in this Arena, based on which side (self, enemy, or both) is passed in as a parameter
    * @param tagType Either an {@linkcode ArenaTagType} string, or an actual {@linkcode ArenaTag} class to filter which ones to apply
    * @param side {@linkcode ArenaTagSide} which side's arena tags to apply
+   * @param simulated if `true`, this applies arena tags without changing game state
    * @param args array of parameters that the called upon tags may need
    */
-  applyTagsForSide(tagType: ArenaTagType | Constructor<ArenaTag>, side: ArenaTagSide, ...args: unknown[]): void {
+  applyTagsForSide(tagType: ArenaTagType | Constructor<ArenaTag>, side: ArenaTagSide, simulated: boolean, ...args: unknown[]): void {
     let tags = typeof tagType === "string"
       ? this.tags.filter(t => t.tagType === tagType)
       : this.tags.filter(t => t instanceof tagType);
     if (side !== ArenaTagSide.BOTH) {
       tags = tags.filter(t => t.side === side);
     }
-    tags.forEach(t => t.apply(this, args));
+    tags.forEach(t => t.apply(this, simulated, ...args));
   }
 
   /**
    * Applies the specified tag to both sides (ie: both user and trainer's tag that match the Tag specified)
    * by calling {@linkcode applyTagsForSide()}
    * @param tagType Either an {@linkcode ArenaTagType} string, or an actual {@linkcode ArenaTag} class to filter which ones to apply
+   * @param simulated if `true`, this applies arena tags without changing game state
    * @param args array of parameters that the called upon tags may need
    */
-  applyTags(tagType: ArenaTagType | Constructor<ArenaTag>, ...args: unknown[]): void {
-    this.applyTagsForSide(tagType, ArenaTagSide.BOTH, ...args);
+  applyTags(tagType: ArenaTagType | Constructor<ArenaTag>, simulated: boolean, ...args: unknown[]): void {
+    this.applyTagsForSide(tagType, ArenaTagSide.BOTH, simulated, ...args);
   }
 
   /**

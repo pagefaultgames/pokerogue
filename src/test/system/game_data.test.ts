@@ -11,13 +11,15 @@ import * as account from "../../account";
 
 const apiBase = import.meta.env.VITE_API_BASE_URL ?? "http://localhost:8001";
 
-export const server = setupServer();
+/** We need a custom server. For some reasons I can't extend the listeners of {@linkcode global.i18nServer} with {@linkcode global.i18nServer.use} */
+const server = setupServer();
 
 describe("System - Game Data", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
 
   beforeAll(() => {
+    global.i18nServer.close();
     server.listen();
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
@@ -26,12 +28,13 @@ describe("System - Game Data", () => {
 
   afterAll(() => {
     server.close();
+    global.i18nServer.listen();
   });
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([Moves.SPLASH])
+      .moveset([ Moves.SPLASH ])
       .battleType("single")
       .enemyAbility(Abilities.BALL_FETCH)
       .enemyMoveset(Moves.SPLASH);
@@ -46,7 +49,7 @@ describe("System - Game Data", () => {
     beforeEach(() => {
       vi.spyOn(BattleScene, "bypassLogin", "get").mockReturnValue(false);
       vi.spyOn(game.scene.gameData, "getSessionSaveData").mockReturnValue({} as SessionSaveData);
-      vi.spyOn(account, "updateUserInfo").mockImplementation(async () => [true, 1]);
+      vi.spyOn(account, "updateUserInfo").mockImplementation(async () => [ true, 1 ]);
     });
 
     it("should return [true, true] if bypassLogin is true", async () => {
@@ -54,7 +57,7 @@ describe("System - Game Data", () => {
 
       const result = await game.scene.gameData.tryClearSession(game.scene, 0);
 
-      expect(result).toEqual([true, true]);
+      expect(result).toEqual([ true, true ]);
     });
 
     it("should return [true, true] if successful", async () => {
@@ -62,7 +65,7 @@ describe("System - Game Data", () => {
 
       const result = await game.scene.gameData.tryClearSession(game.scene, 0);
 
-      expect(result).toEqual([true, true]);
+      expect(result).toEqual([ true, true ]);
       expect(account.updateUserInfo).toHaveBeenCalled();
     });
 
@@ -71,7 +74,7 @@ describe("System - Game Data", () => {
 
       const result = await game.scene.gameData.tryClearSession(game.scene, 0);
 
-      expect(result).toEqual([true, false]);
+      expect(result).toEqual([ true, false ]);
       expect(account.updateUserInfo).toHaveBeenCalled();
     });
 
@@ -82,7 +85,7 @@ describe("System - Game Data", () => {
 
       const result = await game.scene.gameData.tryClearSession(game.scene, 0);
 
-      expect(result).toEqual([false, false]);
+      expect(result).toEqual([ false, false ]);
       expect(account.updateUserInfo).toHaveBeenCalled();
     });
   });

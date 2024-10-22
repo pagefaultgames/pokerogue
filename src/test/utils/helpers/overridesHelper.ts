@@ -86,6 +86,27 @@ export class OverridesHelper extends GameManagerHelper {
   }
 
   /**
+   * Override the player (pokemon) to be a random fusion
+   * @returns this
+   */
+  enableStarterFusion(): this {
+    vi.spyOn(Overrides, "STARTER_FUSION_OVERRIDE", "get").mockReturnValue(true);
+    this.log("Player Pokemon is a random fusion!");
+    return this;
+  }
+
+  /**
+   * Override the player (pokemon) fusion species
+   * @param species the fusion species to set
+   * @returns this
+   */
+  starterFusionSpecies(species: Species | number): this {
+    vi.spyOn(Overrides, "STARTER_FUSION_SPECIES_OVERRIDE", "get").mockReturnValue(species);
+    this.log(`Player Pokemon fusion species set to ${Species[species]} (=${species})!`);
+    return this;
+  }
+
+  /**
    * Override the player (pokemons) forms
    * @param forms the (pokemon) forms to set
    * @returns this
@@ -93,7 +114,7 @@ export class OverridesHelper extends GameManagerHelper {
   starterForms(forms: Partial<Record<Species, number>>): this {
     vi.spyOn(Overrides, "STARTER_FORM_OVERRIDES", "get").mockReturnValue(forms);
     const formsStr = Object.entries(forms)
-      .map(([speciesId, formIndex]) => `${Species[speciesId]}=${formIndex}`)
+      .map(([ speciesId, formIndex ]) => `${Species[speciesId]}=${formIndex}`)
       .join(", ");
     this.log(`Player Pokemon form set to: ${formsStr}!`);
     return this;
@@ -140,7 +161,7 @@ export class OverridesHelper extends GameManagerHelper {
   moveset(moveset: Moves | Moves[]): this {
     vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue(moveset);
     if (!Array.isArray(moveset)) {
-      moveset = [moveset];
+      moveset = [ moveset ];
     }
     const movesetStr = moveset.map((moveId) => Moves[moveId]).join(", ");
     this.log(`Player Pokemon moveset set to ${movesetStr} (=[${moveset.join(", ")}])!`);
@@ -202,7 +223,7 @@ export class OverridesHelper extends GameManagerHelper {
   seed(seed: string): this {
     vi.spyOn(this.game.scene, "resetSeed").mockImplementation(() => {
       this.game.scene.waveSeed = seed;
-      Phaser.Math.RND.sow([seed]);
+      Phaser.Math.RND.sow([ seed ]);
       this.game.scene.rngCounter = 0;
     });
     this.game.scene.resetSeed();
@@ -229,6 +250,27 @@ export class OverridesHelper extends GameManagerHelper {
   enemySpecies(species: Species | number): this {
     vi.spyOn(Overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(species);
     this.log(`Enemy Pokemon species set to ${Species[species]} (=${species})!`);
+    return this;
+  }
+
+  /**
+   * Override the enemy (pokemon) to be a random fusion
+   * @returns this
+   */
+  enableEnemyFusion(): this {
+    vi.spyOn(Overrides, "OPP_FUSION_OVERRIDE", "get").mockReturnValue(true);
+    this.log("Enemy Pokemon is a random fusion!");
+    return this;
+  }
+
+  /**
+   * Override the enemy (pokemon) fusion species
+   * @param species the fusion species to set
+   * @returns this
+   */
+  enemyFusionSpecies(species: Species | number): this {
+    vi.spyOn(Overrides, "OPP_FUSION_SPECIES_OVERRIDE", "get").mockReturnValue(species);
+    this.log(`Enemy Pokemon fusion species set to ${Species[species]} (=${species})!`);
     return this;
   }
 
@@ -262,7 +304,7 @@ export class OverridesHelper extends GameManagerHelper {
   enemyMoveset(moveset: Moves | Moves[]): this {
     vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue(moveset);
     if (!Array.isArray(moveset)) {
-      moveset = [moveset];
+      moveset = [ moveset ];
     }
     const movesetStr = moveset.map((moveId) => Moves[moveId]).join(", ");
     this.log(`Enemy Pokemon moveset set to ${movesetStr} (=[${moveset.join(", ")}])!`);

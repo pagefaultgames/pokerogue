@@ -853,14 +853,14 @@
     "spriteSourceSize": { "x": 7, "y": 2, "w": 27, "h": 26 },
     "sourceSize": { "w": 40, "h": 30 }
    },
-   "981_2.png": {
+   "981_2": {
     "frame": { "x": 108, "y": 87, "w": 23, "h": 30 },
     "rotated": false,
     "trimmed": true,
     "spriteSourceSize": { "x": 9, "y": 0, "w": 23, "h": 30 },
     "sourceSize": { "w": 40, "h": 30 }
    },
-   "981_3.png": {
+   "981_3": {
     "frame": { "x": 246, "y": 86, "w": 23, "h": 30 },
     "rotated": false,
     "trimmed": true,

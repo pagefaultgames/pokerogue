@@ -14,3 +14,8 @@ pre-push:
     eslint:
       glob: "*.{js,ts,jsx,tsx}"
       run: npx eslint --fix {push_files}
+      
+post-merge:
+  commands:
+    update-submodules:
+      run: git submodule update --init --recursive
