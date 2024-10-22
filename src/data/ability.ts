@@ -3260,6 +3260,9 @@ function calculateSleepDamage(pokemon: Pokemon): number {
       damageTaken += Utils.toDmgValue(pokemon.getMaxHp() / 8);
     }
   }
+  if (pokemon.getTag(BattlerTagType.NIGHTMARE)) {
+    damageTaken += Utils.toDmgValue(pokemon.getMaxHp() / 4);
+  }
   return damageTaken;
 }
 

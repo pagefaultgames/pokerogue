@@ -651,4 +651,28 @@ describe("Abilities - Wimp Out", () => {
     expect(game.phaseInterceptor.log).not.toContain("MovePhase");
     expect(game.phaseInterceptor.log).toContain("BattleEndPhase");
   });
+  it("Wimp Out will activate due to Nightmare", async () => {
+    // arrange
+    game.override
+      .moveset([ Moves.SPLASH ])
+      .enemyMoveset([ Moves.NIGHTMARE ])
+      .statusEffect(StatusEffect.SLEEP);
+    await game.startBattle([
+      Species.WIMPOD,
+      Species.TYRUNT
+    ]);
+    const playerHp = game.scene.getPlayerPokemon()!.hp;
+    game.scene.getPlayerPokemon()!.hp = playerHp * 0.65;
+
+    // act
+    game.move.select(Moves.NIGHTMARE);
+    game.doSelectPartyPokemon(1);
+    await game.toNextTurn();
+
+    // assert
+    expect(game.scene.getParty()[1].getHpRatio()).toBeGreaterThan(0);
+    expect(game.scene.getParty()[1].getHpRatio()).toBeLessThan(0.5);
+    expect(game.phaseInterceptor.log).toContain("SwitchSummonPhase");
+    expect(game.scene.getPlayerPokemon()!.species.speciesId).toBe(Species.TYRUNT);
+  });
 });
