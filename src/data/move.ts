@@ -5873,16 +5873,29 @@ export class AddTypeAttr extends MoveEffectAttr {
 
   constructor(type: Type) {
     super(false, MoveEffectTrigger.HIT);
-
     this.type = type;
   }
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    const types = target.getTypes().slice(0, 2).filter(t => t !== Type.UNKNOWN); // TODO: Figure out some way to actually check if another version of this effect is already applied
-    if (this.type !== Type.UNKNOWN) {
-      types.push(this.type);
+    let currentTypes = target.getTypes().slice(0, 2).filter(t => t !== Type.UNKNOWN) as Type[];
+    const baseTypes = target.getTypes(false, false, true);
+    const forestsCurseApplied: boolean = currentTypes.includes(Type.GRASS) && !baseTypes.includes(Type.GRASS);
+    const trickOrTreatApplied: boolean = currentTypes.includes(Type.GHOST) && !baseTypes.includes(Type.GHOST);
+
+    if (move.id === Moves.TRICK_OR_TREAT && forestsCurseApplied) {
+      // Has extra grass type, remove that and append ghost type
+      currentTypes = currentTypes.filter(type => type !== Type.GRASS);
+      currentTypes.push(this.type);
+    } else if (move.id === Moves.FORESTS_CURSE && trickOrTreatApplied) {
+      // Has extra ghost type, remove that and append grass type
+      currentTypes = currentTypes.filter(type => type !== Type.GHOST);
+      currentTypes.push(this.type);
+    } else if (this.type !== Type.UNKNOWN) {
+      currentTypes = currentTypes;
+      currentTypes.push(this.type);
     }
-    target.summonData.types = types;
+
+    target.summonData.types = currentTypes;
     target.updateInfo();
 
     user.scene.queueMessage(i18next.t("moveTriggers:addType", { typeName: i18next.t(`pokemonInfo:Type.${Type[this.type]}`), pokemonName: getPokemonNameWithAffix(target) }));
@@ -8877,8 +8890,7 @@ export function initMoves() {
       .ignoresProtect()
       .ignoresVirtual(),
     new StatusMove(Moves.TRICK_OR_TREAT, Type.GHOST, 100, 20, -1, 0, 6)
-      .attr(AddTypeAttr, Type.GHOST)
-      .edgeCase(), // Weird interaction with Forest's Curse, reflect type, burn up
+      .attr(AddTypeAttr, Type.GHOST),
     new StatusMove(Moves.NOBLE_ROAR, Type.NORMAL, 100, 30, -1, 0, 6)
       .attr(StatStageChangeAttr, [ Stat.ATK, Stat.SPATK ], -1)
       .soundBased(),
@@ -8890,8 +8902,7 @@ export function initMoves() {
       .target(MoveTarget.ALL_NEAR_OTHERS)
       .triageMove(),
     new StatusMove(Moves.FORESTS_CURSE, Type.GRASS, 100, 20, -1, 0, 6)
-      .attr(AddTypeAttr, Type.GRASS)
-      .edgeCase(), // Weird interaction with Trick or Treat, reflect type, burn up
+      .attr(AddTypeAttr, Type.GRASS),
     new AttackMove(Moves.PETAL_BLIZZARD, Type.GRASS, MoveCategory.PHYSICAL, 90, 100, 15, -1, 0, 6)
       .windMove()
       .makesContact(false)
