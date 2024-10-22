@@ -5,7 +5,7 @@ import { Species } from "#enums/species";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { BattlerIndex } from "#app/battle";
-import { StatusEffect } from "#app/enums/status-effect";
+import { StatusEffect } from "#enums/status-effect";
 
 
 describe("Moves - Baneful Bunker", () => {

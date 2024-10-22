@@ -2,8 +2,8 @@ import BattleScene from "#app/battle-scene";
 import { SwitchType } from "#enums/switch-type";
 import PartyUiHandler, { PartyUiMode, PartyOption } from "#app/ui/party-ui-handler";
 import { Mode } from "#app/ui/ui";
-import { BattlePhase } from "./battle-phase";
-import { SwitchSummonPhase } from "./switch-summon-phase";
+import { BattlePhase } from "#phases/battle-phase";
+import { SwitchSummonPhase } from "#phases/switch-summon-phase";
 
 /**
  * Opens the party selector UI and transitions into a {@linkcode SwitchSummonPhase}

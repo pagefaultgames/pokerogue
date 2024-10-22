@@ -1,6 +1,6 @@
-import BattleScene from "../battle-scene";
-import { TerrainType, getTerrainColor } from "../data/terrain";
-import * as Utils from "../utils";
+import BattleScene from "#app/battle-scene";
+import { TerrainType, getTerrainColor } from "#app/data/terrain";
+import { getCurrentTime } from "#app/utils";
 
 const spriteFragShader = `
 #ifdef GL_FRAGMENT_PRECISION_HIGH
@@ -235,7 +235,7 @@ export default class FieldSpritePipeline extends Phaser.Renderer.WebGL.Pipelines
 
     const time = scene.currentBattle?.waveIndex
       ? ((scene.currentBattle.waveIndex + scene.waveCycleOffset) % 40) / 40 // ((new Date().getSeconds() * 1000 + new Date().getMilliseconds()) % 10000) / 10000
-      : Utils.getCurrentTime();
+      : getCurrentTime();
     this.set1f("time", time);
     this.set1i("ignoreTimeTint", ignoreTimeTint ? 1 : 0);
     this.set1i("isOutside", scene.arena.isOutside() ? 1 : 0);

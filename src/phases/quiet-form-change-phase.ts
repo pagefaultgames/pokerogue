@@ -2,13 +2,13 @@ import BattleScene from "#app/battle-scene";
 import { SemiInvulnerableTag } from "#app/data/battler-tags";
 import { SpeciesFormChange, getSpeciesFormChangeMessage } from "#app/data/pokemon-forms";
 import { getTypeRgb } from "#app/data/type";
-import { BattleSpec } from "#app/enums/battle-spec";
-import { BattlerTagType } from "#app/enums/battler-tag-type";
+import { BattleSpec } from "#enums/battle-spec";
+import { BattlerTagType } from "#enums/battler-tag-type";
 import Pokemon, { EnemyPokemon } from "#app/field/pokemon";
 import { getPokemonNameWithAffix } from "#app/messages";
-import { BattlePhase } from "./battle-phase";
-import { MovePhase } from "./move-phase";
-import { PokemonHealPhase } from "./pokemon-heal-phase";
+import { BattlePhase } from "#phases/battle-phase";
+import { MovePhase } from "#phases/move-phase";
+import { PokemonHealPhase } from "#phases/pokemon-heal-phase";
 
 export class QuietFormChangePhase extends BattlePhase {
   protected pokemon: Pokemon;

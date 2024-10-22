@@ -1,6 +1,6 @@
-import { EnemyCommandPhase } from "#app/phases/enemy-command-phase";
-import { SelectTargetPhase } from "#app/phases/select-target-phase";
-import { TurnStartPhase } from "#app/phases/turn-start-phase";
+import { EnemyCommandPhase } from "#phases/enemy-command-phase";
+import { SelectTargetPhase } from "#phases/select-target-phase";
+import { TurnStartPhase } from "#phases/turn-start-phase";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";

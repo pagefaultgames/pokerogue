@@ -1,6 +1,6 @@
 import BattleScene from "#app/battle-scene";
-import { PlayerGender } from "#app/enums/player-gender";
-import { BattlePhase } from "./battle-phase";
+import { PlayerGender } from "#enums/player-gender";
+import { BattlePhase } from "#phases/battle-phase";
 
 export class ShowTrainerPhase extends BattlePhase {
   constructor(scene: BattleScene) {

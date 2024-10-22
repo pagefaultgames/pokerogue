@@ -1,5 +1,5 @@
 import { StatusEffect } from "#app/data/status-effect";
-import { TurnStartPhase } from "#app/phases/turn-start-phase";
+import { TurnStartPhase } from "#phases/turn-start-phase";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/utils/gameManager";

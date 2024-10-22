@@ -1,5 +1,5 @@
 import BattleScene from "#app/battle-scene";
-import { MessagePhase } from "./message-phase";
+import { MessagePhase } from "#phases/message-phase";
 
 export class TestMessagePhase extends MessagePhase {
   constructor(scene: BattleScene, message: string) {

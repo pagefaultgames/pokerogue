@@ -1,7 +1,7 @@
 import { Egg, getLegendaryGachaSpeciesForTimestamp } from "#app/data/egg";
-import { EggSourceType } from "#app/enums/egg-source-types";
-import { EggTier } from "#app/enums/egg-type";
-import { VariantTier } from "#app/enums/variant-tier";
+import { EggSourceType } from "#enums/egg-source-types";
+import { EggTier } from "#enums/egg-type";
+import { VariantTier } from "#enums/variant-tier";
 import EggData from "#app/system/egg-data";
 import * as Utils from "#app/utils";
 import { Species } from "#enums/species";

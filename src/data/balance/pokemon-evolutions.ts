@@ -3,7 +3,7 @@ import { PokeballType } from "#app/data/pokeball";
 import Pokemon from "#app/field/pokemon";
 import { Stat } from "#enums/stat";
 import { Type } from "#app/data/type";
-import * as Utils from "#app/utils";
+import { randSeedInt } from "#app/utils";
 import { WeatherType } from "#app/data/weather";
 import { Nature } from "#app/data/nature";
 import { Biome } from "#enums/biome";
@@ -1172,7 +1172,7 @@ export const pokemonEvolutions: PokemonEvolutions = {
   [Species.TANDEMAUS]: [
     new SpeciesFormEvolution(Species.MAUSHOLD, "", "three", 25, null, new SpeciesEvolutionCondition(p => {
       let ret = false;
-      p.scene.executeWithSeedOffset(() => ret = !Utils.randSeedInt(4), p.id);
+      p.scene.executeWithSeedOffset(() => ret = !randSeedInt(4), p.id);
       return ret;
     })),
     new SpeciesEvolution(Species.MAUSHOLD, 25, null, null)
@@ -1340,7 +1340,7 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesFormEvolution(Species.DUDUNSPARCE, "", "three-segment", 32, null, new SpeciesEvolutionCondition(p => {
       let ret = false;
       if (p.moveset.filter(m => m?.moveId === Moves.HYPER_DRILL).length > 0) {
-        p.scene.executeWithSeedOffset(() => ret = !Utils.randSeedInt(4), p.id);
+        p.scene.executeWithSeedOffset(() => ret = !randSeedInt(4), p.id);
       }
       return ret;
     }), SpeciesWildEvolutionDelay.LONG),

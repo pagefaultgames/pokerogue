@@ -1,13 +1,13 @@
 import BattleScene from "#app/battle-scene";
-import { BattleStyle } from "#app/enums/battle-style";
-import { BattlerTagType } from "#app/enums/battler-tag-type";
+import { BattleStyle } from "#enums/battle-style";
+import { BattlerTagType } from "#enums/battler-tag-type";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { Mode } from "#app/ui/ui";
 import i18next from "i18next";
-import { BattlePhase } from "./battle-phase";
-import { PostSummonPhase } from "./post-summon-phase";
-import { SummonMissingPhase } from "./summon-missing-phase";
-import { SwitchPhase } from "./switch-phase";
+import { BattlePhase } from "#phases/battle-phase";
+import { PostSummonPhase } from "#phases/post-summon-phase";
+import { SummonMissingPhase } from "#phases/summon-missing-phase";
+import { SwitchPhase } from "#phases/switch-phase";
 import { SwitchType } from "#enums/switch-type";
 
 export class CheckSwitchPhase extends BattlePhase {

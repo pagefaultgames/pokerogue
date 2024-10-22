@@ -11,6 +11,9 @@
 		"rootDir": "./src",
 		"baseUrl": "./src",
 		"paths": {
+			"#mystery-encounters/*": ["./data/mystery-encounters/*.ts"],
+			"#phases/*": ["./phases/*.ts"],
+			"#balance/*": ["./data/balance/*.ts"],
 			"#enums/*": ["./enums/*.ts"],
 			"#app/*": ["*.ts"],
 			"#app": ["."],

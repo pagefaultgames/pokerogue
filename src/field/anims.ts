@@ -1,6 +1,6 @@
-import BattleScene from "../battle-scene";
-import { PokeballType } from "../data/pokeball";
-import * as Utils from "../utils";
+import BattleScene from "#app/battle-scene";
+import { PokeballType } from "#app/data/pokeball";
+import { getFrameMs, randGauss } from "#app/utils";
 
 export function addPokeballOpenParticles(scene: BattleScene, x: number, y: number, pokeballType: PokeballType): void {
   switch (pokeballType) {
@@ -127,7 +127,7 @@ function doFanOutParticle(scene: BattleScene, trigIndex: integer, x: integer, y:
 
   const particleTimer = scene.tweens.addCounter({
     repeat: -1,
-    duration: Utils.getFrameMs(1),
+    duration: getFrameMs(1),
     onRepeat: () => {
       updateParticle();
     }
@@ -159,7 +159,7 @@ export function addPokeballCaptureStars(scene: BattleScene, pokeball: Phaser.Gam
       }
     });
 
-    const dist = Utils.randGauss(25);
+    const dist = randGauss(25);
     scene.tweens.add({
       targets: particle,
       x: pokeball.x + dist,

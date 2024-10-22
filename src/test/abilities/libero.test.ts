@@ -2,7 +2,7 @@ import { allMoves } from "#app/data/move";
 import { Type } from "#app/data/type";
 import { Weather, WeatherType } from "#app/data/weather";
 import { PlayerPokemon } from "#app/field/pokemon";
-import { TurnEndPhase } from "#app/phases/turn-end-phase";
+import { TurnEndPhase } from "#phases/turn-end-phase";
 import { Abilities } from "#enums/abilities";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { Biome } from "#enums/biome";

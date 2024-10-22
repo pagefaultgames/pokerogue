@@ -1,4 +1,4 @@
-import { Moves } from "#app/enums/moves";
+import { Moves } from "#enums/moves";
 import { Abilities } from "#enums/abilities";
 import { Species } from "#enums/species";
 import { Stat } from "#enums/stat";

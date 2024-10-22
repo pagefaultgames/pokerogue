@@ -3,11 +3,11 @@ import { Egg, EGG_SEED } from "#app/data/egg";
 import { Phase } from "#app/phase";
 import i18next from "i18next";
 import Overrides from "#app/overrides";
-import { EggHatchPhase } from "./egg-hatch-phase";
+import { EggHatchPhase } from "#phases/egg-hatch-phase";
 import { Mode } from "#app/ui/ui";
 import { achvs } from "#app/system/achv";
 import { PlayerPokemon } from "#app/field/pokemon";
-import { EggSummaryPhase } from "./egg-summary-phase";
+import { EggSummaryPhase } from "#phases/egg-summary-phase";
 import { EggHatchData } from "#app/data/egg-hatch-data";
 
 /**

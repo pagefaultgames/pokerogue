@@ -1,8 +1,8 @@
 import { MapModifier } from "#app/modifier/modifier";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import GameManager from "./utils/gameManager";
-import { Moves } from "#app/enums/moves";
-import { Biome } from "#app/enums/biome";
+import { Moves } from "#enums/moves";
+import { Biome } from "#enums/biome";
 import { Mode } from "#app/ui/ui";
 import ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
 import { Species } from "#enums/species";

@@ -3,15 +3,15 @@ import { BattleType } from "#app/battle";
 import { getPokeballAtlasKey, getPokeballTintColor } from "#app/data/pokeball";
 import { SpeciesFormChangeActiveTrigger } from "#app/data/pokemon-forms";
 import { TrainerSlot } from "#app/data/trainer-config";
-import { PlayerGender } from "#app/enums/player-gender";
+import { PlayerGender } from "#enums/player-gender";
 import { addPokeballOpenParticles } from "#app/field/anims";
 import Pokemon, { FieldPosition } from "#app/field/pokemon";
 import { getPokemonNameWithAffix } from "#app/messages";
 import i18next from "i18next";
-import { PartyMemberPokemonPhase } from "./party-member-pokemon-phase";
-import { PostSummonPhase } from "./post-summon-phase";
-import { GameOverPhase } from "./game-over-phase";
-import { ShinySparklePhase } from "./shiny-sparkle-phase";
+import { PartyMemberPokemonPhase } from "#phases/party-member-pokemon-phase";
+import { PostSummonPhase } from "#phases/post-summon-phase";
+import { GameOverPhase } from "#phases/game-over-phase";
+import { ShinySparklePhase } from "#phases/shiny-sparkle-phase";
 import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
 
 export class SummonPhase extends PartyMemberPokemonPhase {

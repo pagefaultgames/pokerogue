@@ -2,7 +2,7 @@ import { BattlerIndex } from "#app/battle";
 import { Stat } from "#enums/stat";
 import { allMoves } from "#app/data/move";
 import { Type } from "#app/data/type";
-import { Abilities } from "#app/enums/abilities";
+import { Abilities } from "#enums/abilities";
 import { HitResult } from "#app/field/pokemon";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";

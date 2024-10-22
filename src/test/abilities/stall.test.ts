@@ -4,7 +4,7 @@ import { Species } from "#enums/species";
 import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import { TurnStartPhase } from "#app/phases/turn-start-phase";
+import { TurnStartPhase } from "#phases/turn-start-phase";
 
 describe("Abilities - Stall", () => {
   let phaserGame: Phaser.Game;

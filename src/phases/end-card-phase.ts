@@ -1,5 +1,5 @@
 import BattleScene from "#app/battle-scene";
-import { PlayerGender } from "#app/enums/player-gender";
+import { PlayerGender } from "#enums/player-gender";
 import { Phase } from "#app/phase";
 import { addTextObject, TextStyle } from "#app/ui/text";
 import i18next from "i18next";

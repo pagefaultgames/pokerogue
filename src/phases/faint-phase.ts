@@ -1,26 +1,33 @@
 import BattleScene from "#app/battle-scene";
 import { BattlerIndex, BattleType } from "#app/battle";
-import { applyPostFaintAbAttrs, PostFaintAbAttr, applyPostKnockOutAbAttrs, PostKnockOutAbAttr, applyPostVictoryAbAttrs, PostVictoryAbAttr } from "#app/data/ability";
+import {
+  applyPostFaintAbAttrs,
+  PostFaintAbAttr,
+  applyPostKnockOutAbAttrs,
+  PostKnockOutAbAttr,
+  applyPostVictoryAbAttrs,
+  PostVictoryAbAttr,
+} from "#app/data/ability";
 import { BattlerTagLapseType, DestinyBondTag } from "#app/data/battler-tags";
 import { battleSpecDialogue } from "#app/data/dialogue";
 import { allMoves, PostVictoryStatStageChangeAttr } from "#app/data/move";
-import { BattleSpec } from "#app/enums/battle-spec";
-import { StatusEffect } from "#app/enums/status-effect";
+import { BattleSpec } from "#enums/battle-spec";
+import { StatusEffect } from "#enums/status-effect";
 import Pokemon, { PokemonMove, EnemyPokemon, PlayerPokemon, HitResult } from "#app/field/pokemon";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { PokemonInstantReviveModifier } from "#app/modifier/modifier";
 import i18next from "i18next";
-import { DamagePhase } from "./damage-phase";
-import { PokemonPhase } from "./pokemon-phase";
-import { SwitchSummonPhase } from "./switch-summon-phase";
-import { ToggleDoublePositionPhase } from "./toggle-double-position-phase";
-import { GameOverPhase } from "./game-over-phase";
-import { SwitchPhase } from "./switch-phase";
-import { VictoryPhase } from "./victory-phase";
+import { DamagePhase } from "#phases/damage-phase";
+import { PokemonPhase } from "#phases/pokemon-phase";
+import { SwitchSummonPhase } from "#phases/switch-summon-phase";
+import { ToggleDoublePositionPhase } from "#phases/toggle-double-position-phase";
+import { GameOverPhase } from "#phases/game-over-phase";
+import { SwitchPhase } from "#phases/switch-phase";
+import { VictoryPhase } from "#phases/victory-phase";
 import { SpeciesFormChangeActiveTrigger } from "#app/data/pokemon-forms";
 import { SwitchType } from "#enums/switch-type";
 import { isNullOrUndefined } from "#app/utils";
-import { FRIENDSHIP_LOSS_FROM_FAINT } from "#app/data/balance/starters";
+import { FRIENDSHIP_LOSS_FROM_FAINT } from "#balance/starters";
 
 export class FaintPhase extends PokemonPhase {
   /**

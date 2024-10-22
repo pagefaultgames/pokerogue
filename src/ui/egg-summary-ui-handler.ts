@@ -5,7 +5,7 @@ import MessageUiHandler from "./message-ui-handler";
 import { getEggTierForSpecies } from "../data/egg";
 import { Button } from "#enums/buttons";
 import PokemonHatchInfoContainer from "./pokemon-hatch-info-container";
-import { EggSummaryPhase } from "#app/phases/egg-summary-phase";
+import { EggSummaryPhase } from "#phases/egg-summary-phase";
 import { EggHatchData } from "#app/data/egg-hatch-data";
 import ScrollableGridUiHandler from "./scrollable-grid-handler";
 import { HatchedPokemonContainer } from "./hatched-pokemon-container";

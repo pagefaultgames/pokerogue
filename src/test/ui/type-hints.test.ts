@@ -1,7 +1,7 @@
-import { Button } from "#app/enums/buttons";
-import { Moves } from "#app/enums/moves";
-import { Species } from "#app/enums/species";
-import { CommandPhase } from "#app/phases/command-phase";
+import { Button } from "#enums/buttons";
+import { Moves } from "#enums/moves";
+import { Species } from "#enums/species";
+import { CommandPhase } from "#phases/command-phase";
 import FightUiHandler from "#app/ui/fight-ui-handler";
 import { Mode } from "#app/ui/ui";
 import GameManager from "#test/utils/gameManager";

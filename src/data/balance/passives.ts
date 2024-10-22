@@ -1,5 +1,5 @@
-import { Abilities } from "#app/enums/abilities";
-import { Species } from "#app/enums/species";
+import { Abilities } from "#enums/abilities";
+import { Species } from "#enums/species";
 
 export const starterPassiveAbilities = {
   [Species.BULBASAUR]: Abilities.GRASSY_SURGE,

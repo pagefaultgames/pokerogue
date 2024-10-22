@@ -1,9 +1,9 @@
 import { BattlerIndex } from "#app/battle";
 import { StatusEffect } from "#app/data/status-effect";
-import { BattlerTagType } from "#app/enums/battler-tag-type";
-import { Species } from "#app/enums/species";
-import { MovePhase } from "#app/phases/move-phase";
-import { TurnEndPhase } from "#app/phases/turn-end-phase";
+import { BattlerTagType } from "#enums/battler-tag-type";
+import { Species } from "#enums/species";
+import { MovePhase } from "#phases/move-phase";
+import { TurnEndPhase } from "#phases/turn-end-phase";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import GameManager from "#test/utils/gameManager";

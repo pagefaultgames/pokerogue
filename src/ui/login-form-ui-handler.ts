@@ -1,6 +1,6 @@
 import { FormModalUiHandler } from "./form-modal-ui-handler";
 import { ModalConfig } from "./modal-ui-handler";
-import * as Utils from "../utils";
+import { apiPost, setCookie, sessionIdKey, fixedInt } from "#app/utils";
 import { Mode } from "./ui";
 import i18next from "i18next";
 import BattleScene from "#app/battle-scene";
@@ -132,7 +132,7 @@ export default class LoginFormUiHandler extends FormModalUiHandler {
         if (!this.inputs[0].text) {
           return onFail(i18next.t("menu:emptyUsername"));
         }
-        Utils.apiPost("account/login", `username=${encodeURIComponent(this.inputs[0].text)}&password=${encodeURIComponent(this.inputs[1].text)}`, "application/x-www-form-urlencoded")
+        apiPost("account/login", `username=${encodeURIComponent(this.inputs[0].text)}&password=${encodeURIComponent(this.inputs[1].text)}`, "application/x-www-form-urlencoded")
           .then(response => {
             if (!response.ok) {
               return response.text();
@@ -141,7 +141,7 @@ export default class LoginFormUiHandler extends FormModalUiHandler {
           })
           .then(response => {
             if (response.hasOwnProperty("token")) {
-              Utils.setCookie(Utils.sessionIdKey, response.token);
+              setCookie(sessionIdKey, response.token);
               originalLoginAction && originalLoginAction();
             } else {
               onFail(response);
@@ -233,7 +233,7 @@ export default class LoginFormUiHandler extends FormModalUiHandler {
     this.externalPartyContainer.setAlpha(0);
     this.scene.tweens.add({
       targets: this.externalPartyContainer,
-      duration: Utils.fixedInt(1000),
+      duration: fixedInt(1000),
       ease: "Sine.easeInOut",
       y: "-=24",
       alpha: 1
@@ -242,7 +242,7 @@ export default class LoginFormUiHandler extends FormModalUiHandler {
     this.infoContainer.setAlpha(0);
     this.scene.tweens.add({
       targets: this.infoContainer,
-      duration: Utils.fixedInt(1000),
+      duration: fixedInt(1000),
       ease: "Sine.easeInOut",
       y: "-=24",
       alpha: 1

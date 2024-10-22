@@ -1,4 +1,4 @@
-import { GameModes } from "../game-mode";
+import { GameModes } from "#app/game-mode";
 import PokemonData from "./pokemon-data";
 import PersistentModifierData from "./modifier-data";
 

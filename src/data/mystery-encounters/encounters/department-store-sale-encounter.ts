@@ -1,7 +1,7 @@
 import {
   leaveEncounterWithoutBattle,
   setEncounterRewards,
-} from "#app/data/mystery-encounters/utils/encounter-phase-utils";
+} from "#mystery-encounters/utils/encounter-phase-utils";
 import { ModifierTypeFunc, modifierTypes } from "#app/modifier/modifier-type";
 import { randSeedInt } from "#app/utils";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
@@ -9,7 +9,7 @@ import { Species } from "#enums/species";
 import BattleScene from "#app/battle-scene";
 import MysteryEncounter, {
   MysteryEncounterBuilder,
-} from "#app/data/mystery-encounters/mystery-encounter";
+} from "#mystery-encounters/mystery-encounter";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
 

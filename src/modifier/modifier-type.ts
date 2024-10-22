@@ -1,23 +1,115 @@
 import BattleScene from "#app/battle-scene";
-import { EvolutionItem, pokemonEvolutions } from "#app/data/balance/pokemon-evolutions";
-import { tmPoolTiers, tmSpecies } from "#app/data/balance/tms";
+import { EvolutionItem, pokemonEvolutions } from "#balance/pokemon-evolutions";
+import { tmPoolTiers, tmSpecies } from "#balance/tms";
 import { getBerryEffectDescription, getBerryName } from "#app/data/berry";
 import { allMoves, AttackMove, selfStatLowerMoves } from "#app/data/move";
 import { getNatureName, getNatureStatMultiplier, Nature } from "#app/data/nature";
 import { getPokeballCatchMultiplier, getPokeballName, MAX_PER_TYPE_POKEBALLS, PokeballType } from "#app/data/pokeball";
-import { FormChangeItem, pokemonFormChanges, SpeciesFormChangeCondition, SpeciesFormChangeItemTrigger } from "#app/data/pokemon-forms";
+import {
+  FormChangeItem,
+  pokemonFormChanges,
+  SpeciesFormChangeCondition,
+  SpeciesFormChangeItemTrigger,
+} from "#app/data/pokemon-forms";
 import { getStatusEffectDescriptor, StatusEffect } from "#app/data/status-effect";
 import { Type } from "#app/data/type";
 import Pokemon, { EnemyPokemon, PlayerPokemon, PokemonMove } from "#app/field/pokemon";
 import { getPokemonNameWithAffix } from "#app/messages";
-import { AddPokeballModifier, AddVoucherModifier, AttackTypeBoosterModifier, BaseStatModifier, BerryModifier, BoostBugSpawnModifier, BypassSpeedChanceModifier, ContactHeldItemTransferChanceModifier, CritBoosterModifier, DamageMoneyRewardModifier, DoubleBattleChanceBoosterModifier, EnemyAttackStatusEffectChanceModifier, EnemyDamageBoosterModifier, EnemyDamageReducerModifier, EnemyEndureChanceModifier, EnemyFusionChanceModifier, EnemyStatusEffectHealChanceModifier, EnemyTurnHealModifier, EvolutionItemModifier, EvolutionStatBoosterModifier, EvoTrackerModifier, ExpBalanceModifier, ExpBoosterModifier, ExpShareModifier, ExtraModifierModifier, FlinchChanceModifier, FusePokemonModifier, GigantamaxAccessModifier, HealingBoosterModifier, HealShopCostModifier, HiddenAbilityRateBoosterModifier, HitHealModifier, IvScannerModifier, LevelIncrementBoosterModifier, LockModifierTiersModifier, MapModifier, MegaEvolutionAccessModifier, MoneyInterestModifier, MoneyMultiplierModifier, MoneyRewardModifier, MultipleParticipantExpBonusModifier, PokemonAllMovePpRestoreModifier, PokemonBaseStatFlatModifier, PokemonBaseStatTotalModifier, PokemonExpBoosterModifier, PokemonFormChangeItemModifier, PokemonFriendshipBoosterModifier, PokemonHeldItemModifier, PokemonHpRestoreModifier, PokemonIncrementingStatModifier, PokemonInstantReviveModifier, PokemonLevelIncrementModifier, PokemonMoveAccuracyBoosterModifier, PokemonMultiHitModifier, PokemonNatureChangeModifier, PokemonNatureWeightModifier, PokemonPpRestoreModifier, PokemonPpUpModifier, PokemonStatusHealModifier, PreserveBerryModifier, RememberMoveModifier, ResetNegativeStatStageModifier, ShinyRateBoosterModifier, SpeciesCritBoosterModifier, SpeciesStatBoosterModifier, SurviveDamageModifier, SwitchEffectTransferModifier, TempCritBoosterModifier, TempStatStageBoosterModifier, TerastallizeAccessModifier, TerastallizeModifier, TmModifier, TurnHealModifier, TurnHeldItemTransferModifier, TurnStatusEffectModifier, type EnemyPersistentModifier, type Modifier, type PersistentModifier } from "#app/modifier/modifier";
+import {
+  AddPokeballModifier,
+  AddVoucherModifier,
+  AttackTypeBoosterModifier,
+  BaseStatModifier,
+  BerryModifier,
+  BoostBugSpawnModifier,
+  BypassSpeedChanceModifier,
+  ContactHeldItemTransferChanceModifier,
+  CritBoosterModifier,
+  DamageMoneyRewardModifier,
+  DoubleBattleChanceBoosterModifier,
+  EnemyAttackStatusEffectChanceModifier,
+  EnemyDamageBoosterModifier,
+  EnemyDamageReducerModifier,
+  EnemyEndureChanceModifier,
+  EnemyFusionChanceModifier,
+  EnemyStatusEffectHealChanceModifier,
+  EnemyTurnHealModifier,
+  EvolutionItemModifier,
+  EvolutionStatBoosterModifier,
+  EvoTrackerModifier,
+  ExpBalanceModifier,
+  ExpBoosterModifier,
+  ExpShareModifier,
+  ExtraModifierModifier,
+  FlinchChanceModifier,
+  FusePokemonModifier,
+  GigantamaxAccessModifier,
+  HealingBoosterModifier,
+  HealShopCostModifier,
+  HiddenAbilityRateBoosterModifier,
+  HitHealModifier,
+  IvScannerModifier,
+  LevelIncrementBoosterModifier,
+  LockModifierTiersModifier,
+  MapModifier,
+  MegaEvolutionAccessModifier,
+  MoneyInterestModifier,
+  MoneyMultiplierModifier,
+  MoneyRewardModifier,
+  MultipleParticipantExpBonusModifier,
+  PokemonAllMovePpRestoreModifier,
+  PokemonBaseStatFlatModifier,
+  PokemonBaseStatTotalModifier,
+  PokemonExpBoosterModifier,
+  PokemonFormChangeItemModifier,
+  PokemonFriendshipBoosterModifier,
+  PokemonHeldItemModifier,
+  PokemonHpRestoreModifier,
+  PokemonIncrementingStatModifier,
+  PokemonInstantReviveModifier,
+  PokemonLevelIncrementModifier,
+  PokemonMoveAccuracyBoosterModifier,
+  PokemonMultiHitModifier,
+  PokemonNatureChangeModifier,
+  PokemonNatureWeightModifier,
+  PokemonPpRestoreModifier,
+  PokemonPpUpModifier,
+  PokemonStatusHealModifier,
+  PreserveBerryModifier,
+  RememberMoveModifier,
+  ResetNegativeStatStageModifier,
+  ShinyRateBoosterModifier,
+  SpeciesCritBoosterModifier,
+  SpeciesStatBoosterModifier,
+  SurviveDamageModifier,
+  SwitchEffectTransferModifier,
+  TempCritBoosterModifier,
+  TempStatStageBoosterModifier,
+  TerastallizeAccessModifier,
+  TerastallizeModifier,
+  TmModifier,
+  TurnHealModifier,
+  TurnHeldItemTransferModifier,
+  TurnStatusEffectModifier,
+  type EnemyPersistentModifier,
+  type Modifier,
+  type PersistentModifier,
+} from "#app/modifier/modifier";
 import { ModifierTier } from "#app/modifier/modifier-tier";
 import Overrides from "#app/overrides";
 import { Unlockables } from "#app/system/unlockables";
 import { getVoucherTypeIcon, getVoucherTypeName, VoucherType } from "#app/system/voucher";
 import PartyUiHandler, { PokemonMoveSelectFilter, PokemonSelectFilter } from "#app/ui/party-ui-handler";
 import { getModifierTierTextTint } from "#app/ui/text";
-import { formatMoney, getEnumKeys, getEnumValues, IntegerHolder, NumberHolder, padInt, randSeedInt, randSeedItem } from "#app/utils";
+import {
+  formatMoney,
+  getEnumKeys,
+  getEnumValues,
+  NumberHolder,
+  padInt,
+  randSeedInt,
+  randSeedItem,
+} from "#app/utils";
 import { Abilities } from "#enums/abilities";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { BerryType } from "#enums/berry-type";
@@ -725,7 +817,7 @@ export class MoneyRewardModifierType extends ModifierType {
   }
 
   getDescription(scene: BattleScene): string {
-    const moneyAmount = new IntegerHolder(scene.getWaveMoneyAmount(this.moneyMultiplier));
+    const moneyAmount = new NumberHolder(scene.getWaveMoneyAmount(this.moneyMultiplier));
     scene.applyModifiers(MoneyMultiplierModifier, true, moneyAmount);
     const formattedMoney = formatMoney(scene.moneyFormat, moneyAmount.value);
 

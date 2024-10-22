@@ -2,7 +2,7 @@ import BattleScene from "#app/battle-scene";
 import { SubstituteTag } from "#app/data/battler-tags";
 import { PokemonAnimType } from "#enums/pokemon-anim-type";
 import Pokemon from "#app/field/pokemon";
-import { BattlePhase } from "#app/phases/battle-phase";
+import { BattlePhase } from "#phases/battle-phase";
 
 
 export class PokemonAnimPhase extends BattlePhase {

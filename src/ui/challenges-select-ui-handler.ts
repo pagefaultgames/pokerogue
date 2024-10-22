@@ -1,4 +1,4 @@
-import BattleScene from "../battle-scene";
+import BattleScene from "#app/battle-scene";
 import { TextStyle, addTextObject } from "./text";
 import { Mode } from "./ui";
 import UiHandler from "./ui-handler";
@@ -6,12 +6,12 @@ import { addWindow } from "./ui-theme";
 import { Button } from "#enums/buttons";
 import i18next from "i18next";
 import { Challenge } from "#app/data/challenge";
-import * as Utils from "../utils";
-import { Challenges } from "#app/enums/challenges";
+import { getLocalizedSpriteKey } from "#app/utils";
+import { Challenges } from "#enums/challenges";
 import BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
-import { Color, ShadowColor } from "#app/enums/color";
-import { SelectStarterPhase } from "#app/phases/select-starter-phase";
-import { TitlePhase } from "#app/phases/title-phase";
+import { Color, ShadowColor } from "#enums/color";
+import { SelectStarterPhase } from "#phases/select-starter-phase";
+import { TitlePhase } from "#phases/title-phase";
 
 /**
  * Handles all the UI for choosing optional challenges.
@@ -169,7 +169,7 @@ export default class GameChallengesUiHandler extends UiHandler {
       };
     }
 
-    this.monoTypeValue = this.scene.add.sprite(8, 98, Utils.getLocalizedSpriteKey("types"));
+    this.monoTypeValue = this.scene.add.sprite(8, 98, getLocalizedSpriteKey("types"));
     this.monoTypeValue.setName("challenge-value-monotype-sprite");
     this.monoTypeValue.setScale(0.86);
     this.monoTypeValue.setVisible(false);

@@ -1,6 +1,6 @@
-import { BattleStyle } from "#app/enums/battle-style";
-import { CommandPhase } from "#app/phases/command-phase";
-import { TurnInitPhase } from "#app/phases/turn-init-phase";
+import { BattleStyle } from "#enums/battle-style";
+import { CommandPhase } from "#phases/command-phase";
+import { TurnInitPhase } from "#phases/turn-init-phase";
 import i18next from "#app/plugins/i18n";
 import { Mode } from "#app/ui/ui";
 import { Abilities } from "#enums/abilities";

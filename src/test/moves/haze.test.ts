@@ -5,7 +5,7 @@ import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import { TurnInitPhase } from "#app/phases/turn-init-phase";
+import { TurnInitPhase } from "#phases/turn-init-phase";
 
 describe("Moves - Haze", () => {
   describe("integration tests", () => {

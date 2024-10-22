@@ -1,5 +1,5 @@
-import { TurnEndPhase } from "#app/phases/turn-end-phase";
-import { TurnStartPhase } from "#app/phases/turn-start-phase";
+import { TurnEndPhase } from "#phases/turn-end-phase";
+import { TurnStartPhase } from "#phases/turn-start-phase";
 import GameManager from "#test/utils/gameManager";
 import { Abilities } from "#enums/abilities";
 import { Stat } from "#enums/stat";

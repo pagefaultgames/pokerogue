@@ -1,17 +1,17 @@
-import { EnemyPokemon, default as Pokemon } from "../field/pokemon";
-import { getLevelTotalExp, getLevelRelExp } from "../data/exp";
-import * as Utils from "../utils";
+import { EnemyPokemon, default as Pokemon } from "#app/field/pokemon";
+import { getLevelTotalExp, getLevelRelExp } from "#app/data/exp";
+import { getLocalizedSpriteKey, fixedInt } from "#app/utils";
 import { addTextObject, TextStyle } from "./text";
-import { getGenderSymbol, getGenderColor, Gender } from "../data/gender";
-import { StatusEffect } from "../data/status-effect";
-import BattleScene from "../battle-scene";
-import { Type, getTypeRgb } from "../data/type";
+import { getGenderSymbol, getGenderColor, Gender } from "#app/data/gender";
+import { StatusEffect } from "#app/data/status-effect";
+import BattleScene from "#app/battle-scene";
+import { Type, getTypeRgb } from "#app/data/type";
 import { getVariantTint } from "#app/data/variant";
 import { Stat } from "#enums/stat";
 import BattleFlyout from "./battle-flyout";
 import { WindowVariant, addWindow } from "./ui-theme";
 import i18next from "i18next";
-import { ExpGainsSpeed } from "#app/enums/exp-gains-speed";
+import { ExpGainsSpeed } from "#enums/exp-gains-speed";
 
 export default class BattleInfo extends Phaser.GameObjects.Container {
   public static readonly EXP_GAINS_DURATION_BASE = 1650;
@@ -162,7 +162,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
     this.splicedIcon.setInteractive(new Phaser.Geom.Rectangle(0, 0, 12, 15), Phaser.Geom.Rectangle.Contains);
     this.add(this.splicedIcon);
 
-    this.statusIndicator = this.scene.add.sprite(0, 0, Utils.getLocalizedSpriteKey("statuses"));
+    this.statusIndicator = this.scene.add.sprite(0, 0, getLocalizedSpriteKey("statuses"));
     this.statusIndicator.setName("icon_status");
     this.statusIndicator.setVisible(false);
     this.statusIndicator.setOrigin(0, 0);
@@ -470,7 +470,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
   toggleStats(visible: boolean): void {
     this.scene.tweens.add({
       targets: this.statsContainer,
-      duration: Utils.fixedInt(125),
+      duration: fixedInt(125),
       ease: "Sine.easeInOut",
       alpha: visible ? 1 : 0
     });

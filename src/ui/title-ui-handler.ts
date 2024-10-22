@@ -1,9 +1,9 @@
-import BattleScene from "../battle-scene";
+import BattleScene from "#app/battle-scene";
 import OptionSelectUiHandler from "./settings/option-select-ui-handler";
 import { Mode } from "./ui";
-import * as Utils from "../utils";
+import { fixedInt, apiFetch, randItem } from "#app/utils";
 import { TextStyle, addTextObject, getTextStyleOptions } from "./text";
-import { getSplashMessages } from "../data/splash-messages";
+import { getSplashMessages } from "#app/data/splash-messages";
 import i18next from "i18next";
 import { TimedEventDisplay } from "#app/timed-event-manager";
 import { version } from "../../package.json";
@@ -65,7 +65,7 @@ export default class TitleUiHandler extends OptionSelectUiHandler {
 
     this.scene.tweens.add({
       targets: this.splashMessageText,
-      duration: Utils.fixedInt(350),
+      duration: fixedInt(350),
       scale: originalSplashMessageScale * 1.25,
       loop: -1,
       yoyo: true,
@@ -78,7 +78,7 @@ export default class TitleUiHandler extends OptionSelectUiHandler {
   }
 
   updateTitleStats(): void {
-    Utils.apiFetch("game/titlestats")
+    apiFetch("game/titlestats")
       .then(request => request.json())
       .then(stats => {
         this.playerCountLabel.setText(`${stats.playerCount} ${i18next.t("menu:playersOnline")}`);
@@ -95,7 +95,7 @@ export default class TitleUiHandler extends OptionSelectUiHandler {
     const ret = super.show(args);
 
     if (ret) {
-      this.splashMessage = Utils.randItem(getSplashMessages());
+      this.splashMessage = randItem(getSplashMessages());
       this.splashMessageText.setText(i18next.t(this.splashMessage, { count: TitleUiHandler.BATTLES_WON_FALLBACK }));
 
       this.appVersionText.setText("v" + version);
@@ -114,7 +114,7 @@ export default class TitleUiHandler extends OptionSelectUiHandler {
 
       this.scene.tweens.add({
         targets: [ this.titleContainer, ui.getMessageHandler().bg ],
-        duration: Utils.fixedInt(325),
+        duration: fixedInt(325),
         alpha: (target: any) => target === this.titleContainer ? 1 : 0,
         ease: "Sine.easeInOut"
       });
@@ -135,7 +135,7 @@ export default class TitleUiHandler extends OptionSelectUiHandler {
 
     this.scene.tweens.add({
       targets: [ this.titleContainer, ui.getMessageHandler().bg ],
-      duration: Utils.fixedInt(325),
+      duration: fixedInt(325),
       alpha: (target: any) => target === this.titleContainer ? 0 : 1,
       ease: "Sine.easeInOut"
     });

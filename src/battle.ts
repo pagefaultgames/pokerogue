@@ -1,10 +1,18 @@
 import BattleScene from "./battle-scene";
-import { Command } from "./ui/command-ui-handler";
-import * as Utils from "./utils";
+import { Command } from "#app/ui/command-ui-handler";
+import {
+  randomString,
+  getEnumValues,
+  NumberHolder,
+  randSeedInt,
+  shiftCharCodes,
+  randSeedItem,
+  randInt,
+} from "#app/utils";
 import Trainer, { TrainerVariant } from "./field/trainer";
-import { GameMode } from "./game-mode";
-import { MoneyMultiplierModifier, PokemonHeldItemModifier } from "./modifier/modifier";
-import { PokeballType } from "./data/pokeball";
+import { GameMode } from "#app/game-mode";
+import { MoneyMultiplierModifier, PokemonHeldItemModifier } from "#app/modifier/modifier";
+import { PokeballType } from "#app/data/pokeball";
 import { trainerConfigs } from "#app/data/trainer-config";
 import Pokemon, { EnemyPokemon, PlayerPokemon, QueuedMove } from "#app/field/pokemon";
 import { ArenaTagType } from "#enums/arena-tag-type";
@@ -14,7 +22,7 @@ import { PlayerGender } from "#enums/player-gender";
 import { Species } from "#enums/species";
 import { TrainerType } from "#enums/trainer-type";
 import i18next from "#app/plugins/i18n";
-import MysteryEncounter from "#app/data/mystery-encounters/mystery-encounter";
+import MysteryEncounter from "#mystery-encounters/mystery-encounter";
 import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
 import { CustomModifierSettings } from "#app/modifier/modifier-type";
 import { ModifierTier } from "#app/modifier/modifier-tier";
@@ -78,7 +86,7 @@ export default class Battle {
   public postBattleLoot: PokemonHeldItemModifier[] = [];
   public escapeAttempts: number = 0;
   public lastMove: Moves;
-  public battleSeed: string = Utils.randomString(16, true);
+  public battleSeed: string = randomString(16, true);
   private battleSeedState: string | null = null;
   public moneyScattered: number = 0;
   public lastUsedPokeball: PokeballType | null = null;
@@ -154,7 +162,7 @@ export default class Battle {
 
   incrementTurn(scene: BattleScene): void {
     this.turn++;
-    this.turnCommands = Object.fromEntries(Utils.getEnumValues(BattlerIndex).map(bt => [ bt, null ]));
+    this.turnCommands = Object.fromEntries(getEnumValues(BattlerIndex).map(bt => [ bt, null ]));
     this.battleSeedState = null;
   }
 
@@ -176,7 +184,7 @@ export default class Battle {
   }
 
   pickUpScatteredMoney(scene: BattleScene): void {
-    const moneyAmount = new Utils.IntegerHolder(scene.currentBattle.moneyScattered);
+    const moneyAmount = new NumberHolder(scene.currentBattle.moneyScattered);
     scene.applyModifiers(MoneyMultiplierModifier, true, moneyAmount);
 
     if (scene.arena.getTag(ArenaTagType.HAPPY_HOUR)) {
@@ -382,7 +390,7 @@ export default class Battle {
   }
 
   /**
-   * Generates a random number using the current battle's seed. Calls {@linkcode Utils.randSeedInt}
+   * Generates a random number using the current battle's seed. Calls {@linkcode randSeedInt}
    * @param range How large of a range of random numbers to choose from. If {@linkcode range} <= 1, returns {@linkcode min}
    * @param min The minimum integer to pick, default `0`
    * @returns A random integer between {@linkcode min} and ({@linkcode min} + {@linkcode range} - 1)
@@ -397,12 +405,12 @@ export default class Battle {
     if (this.battleSeedState) {
       Phaser.Math.RND.state(this.battleSeedState);
     } else {
-      Phaser.Math.RND.sow([ Utils.shiftCharCodes(this.battleSeed, this.turn << 6) ]);
+      Phaser.Math.RND.sow([ shiftCharCodes(this.battleSeed, this.turn << 6) ]);
       console.log("Battle Seed:", this.battleSeed);
     }
     scene.rngCounter = this.rngCounter++;
     scene.rngSeedOverride = this.battleSeed;
-    const ret = Utils.randSeedInt(range, min);
+    const ret = randSeedInt(range, min);
     this.battleSeedState = Phaser.Math.RND.state();
     Phaser.Math.RND.state(state);
     scene.rngCounter = tempRngCounter;
@@ -479,13 +487,13 @@ export class FixedBattleConfig {
  */
 function getRandomTrainerFunc(trainerPool: (TrainerType | TrainerType[])[], randomGender: boolean = false, seedOffset: number  = 0): GetTrainerFunc {
   return (scene: BattleScene) => {
-    const rand = Utils.randSeedInt(trainerPool.length);
+    const rand = randSeedInt(trainerPool.length);
     const trainerTypes: TrainerType[] = [];
 
     scene.executeWithSeedOffset(() => {
       for (const trainerPoolEntry of trainerPool) {
         const trainerType = Array.isArray(trainerPoolEntry)
-          ? Utils.randSeedItem(trainerPoolEntry)
+          ? randSeedItem(trainerPoolEntry)
           : trainerPoolEntry;
         trainerTypes.push(trainerType);
       }
@@ -493,7 +501,7 @@ function getRandomTrainerFunc(trainerPool: (TrainerType | TrainerType[])[], rand
 
     let trainerGender = TrainerVariant.DEFAULT;
     if (randomGender) {
-      trainerGender = (Utils.randInt(2) === 0) ? TrainerVariant.FEMALE : TrainerVariant.DEFAULT;
+      trainerGender = (randInt(2) === 0) ? TrainerVariant.FEMALE : TrainerVariant.DEFAULT;
     }
 
     /* 1/3 chance for evil team grunts to be double battles */
@@ -501,7 +509,7 @@ function getRandomTrainerFunc(trainerPool: (TrainerType | TrainerType[])[], rand
     const isEvilTeamGrunt = evilTeamGrunts.includes(trainerTypes[rand]);
 
     if (trainerConfigs[trainerTypes[rand]].hasDouble && isEvilTeamGrunt) {
-      return new Trainer(scene, trainerTypes[rand], (Utils.randInt(3) === 0) ? TrainerVariant.DOUBLE : trainerGender);
+      return new Trainer(scene, trainerTypes[rand], (randInt(3) === 0) ? TrainerVariant.DOUBLE : trainerGender);
     }
 
     return new Trainer(scene, trainerTypes[rand], trainerGender);
@@ -522,7 +530,7 @@ export interface FixedBattleConfigs {
  */
 export const classicFixedBattles: FixedBattleConfigs = {
   [5]: new FixedBattleConfig().setBattleType(BattleType.TRAINER)
-    .setGetTrainerFunc(scene => new Trainer(scene, TrainerType.YOUNGSTER, Utils.randSeedInt(2) ? TrainerVariant.FEMALE : TrainerVariant.DEFAULT)),
+    .setGetTrainerFunc(scene => new Trainer(scene, TrainerType.YOUNGSTER, randSeedInt(2) ? TrainerVariant.FEMALE : TrainerVariant.DEFAULT)),
   [8]: new FixedBattleConfig().setBattleType(BattleType.TRAINER)
     .setGetTrainerFunc(scene => new Trainer(scene, TrainerType.RIVAL, scene.gameData.gender === PlayerGender.MALE ? TrainerVariant.FEMALE : TrainerVariant.DEFAULT)),
   [25]: new FixedBattleConfig().setBattleType(BattleType.TRAINER)

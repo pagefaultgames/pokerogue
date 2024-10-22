@@ -1,5 +1,5 @@
 import BattleScene from "#app/battle-scene";
-import { PlayerGender } from "#app/enums/player-gender";
+import { PlayerGender } from "#enums/player-gender";
 import { Phase } from "#app/phase";
 import { SettingKeys } from "#app/system/settings/settings";
 import { Mode } from "#app/ui/ui";

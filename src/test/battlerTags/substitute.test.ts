@@ -2,11 +2,11 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import Pokemon, { MoveResult, PokemonTurnData, TurnMove, PokemonMove } from "#app/field/pokemon";
 import BattleScene from "#app/battle-scene";
 import { BattlerTagLapseType, BindTag, SubstituteTag } from "#app/data/battler-tags";
-import { Moves } from "#app/enums/moves";
-import { PokemonAnimType } from "#app/enums/pokemon-anim-type";
+import { Moves } from "#enums/moves";
+import { PokemonAnimType } from "#enums/pokemon-anim-type";
 import * as messages from "#app/messages";
 import { allMoves } from "#app/data/move";
-import { MoveEffectPhase } from "#app/phases/move-effect-phase";
+import { MoveEffectPhase } from "#phases/move-effect-phase";
 
 vi.mock("#app/battle-scene.js");
 

@@ -1,11 +1,11 @@
 import i18next from "i18next";
-import BattleScene from "../battle-scene";
+import BattleScene from "#app/battle-scene";
 import { Button } from "#enums/buttons";
-import { GameMode } from "../game-mode";
-import * as Modifier from "../modifier/modifier";
-import { SessionSaveData } from "../system/game-data";
-import PokemonData from "../system/pokemon-data";
-import * as Utils from "../utils";
+import { GameMode } from "#app/game-mode";
+import * as Modifier from "#app/modifier/modifier";
+import { SessionSaveData } from "#app/system/game-data";
+import PokemonData from "#app/system/pokemon-data";
+import { isNullOrUndefined, fixedInt, getPlayTimeString, formatLargeNumber } from "#app/utils";
 import MessageUiHandler from "./message-ui-handler";
 import { TextStyle, addTextObject } from "./text";
 import { Mode } from "./ui";
@@ -246,7 +246,7 @@ export default class SaveSlotSelectUiHandler extends MessageUiHandler {
       }
       this.setArrowVisibility(hasData);
     }
-    if (!Utils.isNullOrUndefined(prevSlotIndex)) {
+    if (!isNullOrUndefined(prevSlotIndex)) {
       this.revertSessionSlot(prevSlotIndex);
     }
 
@@ -289,7 +289,7 @@ export default class SaveSlotSelectUiHandler extends MessageUiHandler {
       this.scene.tweens.add({
         targets: this.sessionSlotsContainer,
         y: this.sessionSlotsContainerInitialY - 56 * scrollCursor,
-        duration: Utils.fixedInt(325),
+        duration: fixedInt(325),
         ease: "Sine.easeInOut"
       });
     }
@@ -352,7 +352,7 @@ class SessionSlot extends Phaser.GameObjects.Container {
     const timestampLabel = addTextObject(this.scene, 8, 19, new Date(data.timestamp).toLocaleString(), TextStyle.WINDOW);
     this.add(timestampLabel);
 
-    const playTimeLabel = addTextObject(this.scene, 8, 33, Utils.getPlayTimeString(data.playTime), TextStyle.WINDOW);
+    const playTimeLabel = addTextObject(this.scene, 8, 33, getPlayTimeString(data.playTime), TextStyle.WINDOW);
     this.add(playTimeLabel);
 
     const pokemonIconsContainer = this.scene.add.container(144, 4);
@@ -363,7 +363,7 @@ class SessionSlot extends Phaser.GameObjects.Container {
       const pokemon = p.toPokemon(this.scene);
       const icon = this.scene.addPokemonIcon(pokemon, 0, 0, 0, 0);
 
-      const text = addTextObject(this.scene, 32, 20, `${i18next.t("saveSlotSelectUiHandler:lv")}${Utils.formatLargeNumber(pokemon.level, 1000)}`, TextStyle.PARTY, { fontSize: "54px", color: "#f8f8f8" });
+      const text = addTextObject(this.scene, 32, 20, `${i18next.t("saveSlotSelectUiHandler:lv")}${formatLargeNumber(pokemon.level, 1000)}`, TextStyle.PARTY, { fontSize: "54px", color: "#f8f8f8" });
       text.setShadow(0, 0, undefined);
       text.setStroke("#424242", 14);
       text.setOrigin(1, 0);

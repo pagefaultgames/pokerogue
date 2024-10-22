@@ -6,7 +6,7 @@ import { addWindow } from "./ui-theme";
 import BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
 import { Button } from "#enums/buttons";
 import i18next from "i18next";
-import { Stat, PERMANENT_STATS, getStatKey } from "#app/enums/stat";
+import { Stat, PERMANENT_STATS, getStatKey } from "#enums/stat";
 
 export default class BattleMessageUiHandler extends MessageUiHandler {
   private levelUpStatsContainer: Phaser.GameObjects.Container;

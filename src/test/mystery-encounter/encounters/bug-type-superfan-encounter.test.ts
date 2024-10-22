@@ -1,7 +1,7 @@
-import * as MysteryEncounters from "#app/data/mystery-encounters/mystery-encounters";
-import { Biome } from "#app/enums/biome";
-import { MysteryEncounterType } from "#app/enums/mystery-encounter-type";
-import { Species } from "#app/enums/species";
+import * as MysteryEncounters from "#mystery-encounters/mystery-encounters";
+import { Biome } from "#enums/biome";
+import { MysteryEncounterType } from "#enums/mystery-encounter-type";
+import { Species } from "#enums/species";
 import GameManager from "#app/test/utils/gameManager";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { runMysteryEncounterToEnd, runSelectMysteryEncounterOption, skipBattleRunMysteryEncounterRewardsPhase } from "#test/mystery-encounter/encounter-test-utils";
@@ -13,12 +13,12 @@ import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { initSceneWithoutEncounterPhase } from "#test/utils/gameManagerUtils";
 import { TrainerType } from "#enums/trainer-type";
-import { MysteryEncounterPhase, MysteryEncounterRewardsPhase } from "#app/phases/mystery-encounter-phases";
+import { MysteryEncounterPhase, MysteryEncounterRewardsPhase } from "#phases/mystery-encounter-phases";
 import { ContactHeldItemTransferChanceModifier } from "#app/modifier/modifier";
-import { CommandPhase } from "#app/phases/command-phase";
-import { BugTypeSuperfanEncounter } from "#app/data/mystery-encounters/encounters/bug-type-superfan-encounter";
-import * as encounterPhaseUtils from "#app/data/mystery-encounters/utils/encounter-phase-utils";
-import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
+import { CommandPhase } from "#phases/command-phase";
+import { BugTypeSuperfanEncounter } from "#mystery-encounters/encounters/bug-type-superfan-encounter";
+import * as encounterPhaseUtils from "#mystery-encounters/utils/encounter-phase-utils";
+import { SelectModifierPhase } from "#phases/select-modifier-phase";
 import ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
 
 const namespace = "mysteryEncounters/bugTypeSuperfan";

@@ -1,13 +1,13 @@
 import BattleScene from "#app/battle-scene";
-import { TeleportingHijinksEncounter } from "#app/data/mystery-encounters/encounters/teleporting-hijinks-encounter";
-import * as MysteryEncounters from "#app/data/mystery-encounters/mystery-encounters";
+import { TeleportingHijinksEncounter } from "#mystery-encounters/encounters/teleporting-hijinks-encounter";
+import * as MysteryEncounters from "#mystery-encounters/mystery-encounters";
 import { Abilities } from "#enums/abilities";
 import { Biome } from "#enums/biome";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { Species } from "#enums/species";
-import { CommandPhase } from "#app/phases/command-phase";
-import { MysteryEncounterPhase } from "#app/phases/mystery-encounter-phases";
-import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
+import { CommandPhase } from "#phases/command-phase";
+import { MysteryEncounterPhase } from "#phases/mystery-encounter-phases";
+import { SelectModifierPhase } from "#phases/select-modifier-phase";
 import GameManager from "#test/utils/gameManager";
 import ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
 import { Mode } from "#app/ui/ui";

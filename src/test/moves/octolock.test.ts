@@ -1,8 +1,8 @@
 import { Stat } from "#enums/stat";
 import { TrappedTag } from "#app/data/battler-tags";
-import { CommandPhase } from "#app/phases/command-phase";
-import { MoveEndPhase } from "#app/phases/move-end-phase";
-import { TurnInitPhase } from "#app/phases/turn-init-phase";
+import { CommandPhase } from "#phases/command-phase";
+import { MoveEndPhase } from "#phases/move-end-phase";
+import { TurnInitPhase } from "#phases/turn-init-phase";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";

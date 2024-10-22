@@ -1,7 +1,7 @@
 import { BattlerIndex } from "#app/battle";
-import { Abilities } from "#app/enums/abilities";
-import { Stat } from "#app/enums/stat";
-import { WeatherType } from "#app/enums/weather-type";
+import { Abilities } from "#enums/abilities";
+import { Stat } from "#enums/stat";
+import { WeatherType } from "#enums/weather-type";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/utils/gameManager";

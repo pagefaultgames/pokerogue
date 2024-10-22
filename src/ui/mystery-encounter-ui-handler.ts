@@ -1,17 +1,16 @@
-import BattleScene from "../battle-scene";
+import BattleScene from "#app/battle-scene";
 import { addBBCodeTextObject, getBBCodeFrag, TextStyle } from "./text";
 import { Mode } from "./ui";
 import UiHandler from "./ui-handler";
 import { Button } from "#enums/buttons";
 import { addWindow, WindowVariant } from "./ui-theme";
-import { MysteryEncounterPhase } from "../phases/mystery-encounter-phases";
+import { MysteryEncounterPhase } from "#phases/mystery-encounter-phases";
 import { PartyUiMode } from "./party-ui-handler";
-import MysteryEncounterOption from "#app/data/mystery-encounters/mystery-encounter-option";
-import * as Utils from "../utils";
-import { isNullOrUndefined } from "../utils";
-import { getPokeballAtlasKey } from "../data/pokeball";
-import { OptionSelectSettings } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
-import { getEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
+import MysteryEncounterOption from "#mystery-encounters/mystery-encounter-option";
+import { fixedInt, isNullOrUndefined } from "#app/utils";
+import { getPokeballAtlasKey } from "#app/data/pokeball";
+import { OptionSelectSettings } from "#mystery-encounters/utils/encounter-phase-utils";
+import { getEncounterText } from "#mystery-encounters/utils/encounter-dialogue-utils";
 import i18next from "i18next";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
@@ -408,10 +407,10 @@ export default class MysteryEncounterUiHandler extends UiHandler {
       if (optionTextWidth > nonScrollWidth) {
         this.optionScrollTweens[i] = this.scene.tweens.add({
           targets: optionText,
-          delay: Utils.fixedInt(2000),
+          delay: fixedInt(2000),
           loop: -1,
-          hold: Utils.fixedInt(2000),
-          duration: Utils.fixedInt((optionTextWidth - nonScrollWidth) / 15 * 2000),
+          hold: fixedInt(2000),
+          duration: fixedInt((optionTextWidth - nonScrollWidth) / 15 * 2000),
           x: `-=${(optionTextWidth - nonScrollWidth)}`
         });
       }
@@ -462,10 +461,10 @@ export default class MysteryEncounterUiHandler extends UiHandler {
     if (descriptionLineCount > 6) {
       this.descriptionScrollTween = this.scene.tweens.add({
         targets: descriptionTextObject,
-        delay: Utils.fixedInt(2000),
+        delay: fixedInt(2000),
         loop: -1,
-        hold: Utils.fixedInt(2000),
-        duration: Utils.fixedInt((descriptionLineCount - 6) * 2000),
+        hold: fixedInt(2000),
+        duration: fixedInt((descriptionLineCount - 6) * 2000),
         y: `-=${10 * (descriptionLineCount - 6)}`
       });
     }
@@ -548,10 +547,10 @@ export default class MysteryEncounterUiHandler extends UiHandler {
       if (tooltipLineCount > 3) {
         this.tooltipScrollTween = this.scene.tweens.add({
           targets: tooltipTextObject,
-          delay: Utils.fixedInt(1200),
+          delay: fixedInt(1200),
           loop: -1,
-          hold: Utils.fixedInt(1200),
-          duration: Utils.fixedInt((tooltipLineCount - 3) * 1200),
+          hold: fixedInt(1200),
+          duration: fixedInt((tooltipLineCount - 3) * 1200),
           y: `-=${11.2 * (tooltipLineCount - 3)}`
         });
       }

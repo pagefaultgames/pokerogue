@@ -1,6 +1,6 @@
 import i18next from "i18next";
-import BattleScene from "../battle-scene";
-import * as Utils from "../utils";
+import BattleScene from "#app/battle-scene";
+import { getEnumKeys, executeIf, apiFetch } from "#app/utils";
 import { TextStyle, addTextObject } from "./text";
 import { WindowVariant, addWindow } from "./ui-theme";
 
@@ -82,7 +82,7 @@ export class DailyRunScoreboard extends Phaser.GameObjects.Container {
 
     this.prevCategoryButton.setInteractive(new Phaser.Geom.Rectangle(0, 0, 6, 10), Phaser.Geom.Rectangle.Contains);
     this.prevCategoryButton.on("pointerup", () => {
-      this.update(this.category ? this.category - 1 : Utils.getEnumKeys(ScoreboardCategory).length - 1);
+      this.update(this.category ? this.category - 1 : getEnumKeys(ScoreboardCategory).length - 1);
     });
 
     this.nextCategoryButton = this.scene.add.sprite(window.displayWidth - 4, 4, "cursor");
@@ -91,7 +91,7 @@ export class DailyRunScoreboard extends Phaser.GameObjects.Container {
 
     this.nextCategoryButton.setInteractive(new Phaser.Geom.Rectangle(0, 0, 6, 10), Phaser.Geom.Rectangle.Contains);
     this.nextCategoryButton.on("pointerup", () => {
-      this.update(this.category < Utils.getEnumKeys(ScoreboardCategory).length - 1 ? this.category + 1 : 0);
+      this.update(this.category < getEnumKeys(ScoreboardCategory).length - 1 ? this.category + 1 : 0);
     });
 
     this.prevPageButton = this.scene.add.sprite(window.displayWidth / 2 - 16, titleWindow.displayHeight + window.displayHeight - 15, "cursor_reverse");
@@ -190,10 +190,10 @@ export class DailyRunScoreboard extends Phaser.GameObjects.Container {
       this.page = page = 1;
     }
 
-    Utils.executeIf(category !== this.category || this.pageCount === undefined,
-      () => Utils.apiFetch(`daily/rankingpagecount?category=${category}`).then(response => response.json()).then(count => this.pageCount = count)
+    executeIf(category !== this.category || this.pageCount === undefined,
+      () => apiFetch(`daily/rankingpagecount?category=${category}`).then(response => response.json()).then(count => this.pageCount = count)
     ).then(() => {
-      Utils.apiFetch(`daily/rankings?category=${category}&page=${page}`)
+      apiFetch(`daily/rankings?category=${category}&page=${page}`)
         .then(response => response.json())
         .then(jsonResponse => {
           this.page = page;

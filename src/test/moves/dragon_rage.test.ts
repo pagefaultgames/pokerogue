@@ -1,9 +1,9 @@
 import { Stat } from "#enums/stat";
 import { Type } from "#app/data/type";
-import { Species } from "#app/enums/species";
+import { Species } from "#enums/species";
 import { EnemyPokemon, PlayerPokemon } from "#app/field/pokemon";
 import { modifierTypes } from "#app/modifier/modifier-type";
-import { TurnEndPhase } from "#app/phases/turn-end-phase";
+import { TurnEndPhase } from "#phases/turn-end-phase";
 import { Abilities } from "#enums/abilities";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { Moves } from "#enums/moves";

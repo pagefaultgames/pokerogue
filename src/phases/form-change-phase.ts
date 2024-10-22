@@ -1,14 +1,14 @@
-import BattleScene from "../battle-scene";
-import * as Utils from "../utils";
-import { achvs } from "../system/achv";
-import { SpeciesFormChange, getSpeciesFormChangeMessage } from "../data/pokemon-forms";
-import { PlayerPokemon } from "../field/pokemon";
-import { Mode } from "../ui/ui";
-import PartyUiHandler from "../ui/party-ui-handler";
-import { getPokemonNameWithAffix } from "../messages";
-import { EndEvolutionPhase } from "./end-evolution-phase";
-import { EvolutionPhase } from "./evolution-phase";
-import { BattlerTagType } from "#app/enums/battler-tag-type";
+import BattleScene from "#app/battle-scene";
+import { fixedInt } from "#app/utils";
+import { achvs } from "#app/system/achv";
+import { SpeciesFormChange, getSpeciesFormChangeMessage } from "#app/data/pokemon-forms";
+import { PlayerPokemon } from "#app/field/pokemon";
+import { Mode } from "#app/ui/ui";
+import PartyUiHandler from "#app/ui/party-ui-handler";
+import { getPokemonNameWithAffix } from "#app/messages";
+import { EndEvolutionPhase } from "#phases/end-evolution-phase";
+import { EvolutionPhase } from "#phases/evolution-phase";
+import { BattlerTagType } from "#enums/battler-tag-type";
 import { SpeciesFormKey } from "#enums/species-form-key";
 
 export class FormChangePhase extends EvolutionPhase {
@@ -134,8 +134,8 @@ export class FormChangePhase extends EvolutionPhase {
                                           this.scene.playSoundWithoutBgm(playEvolutionFanfare ? "evolution_fanfare" : "minor_fanfare");
 
                                           transformedPokemon.destroy();
-                                          this.scene.ui.showText(getSpeciesFormChangeMessage(this.pokemon, this.formChange, preName), null, () => this.end(), null, true, Utils.fixedInt(delay));
-                                          this.scene.time.delayedCall(Utils.fixedInt(delay + 250), () => this.scene.playBgm());
+                                          this.scene.ui.showText(getSpeciesFormChangeMessage(this.pokemon, this.formChange, preName), null, () => this.end(), null, true, fixedInt(delay));
+                                          this.scene.time.delayedCall(fixedInt(delay + 250), () => this.scene.playBgm());
                                         });
                                       });
                                     }

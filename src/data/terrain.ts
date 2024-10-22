@@ -1,7 +1,7 @@
-import Pokemon from "../field/pokemon";
+import Pokemon from "#app/field/pokemon";
 import Move from "./move";
 import { Type } from "./type";
-import * as Utils from "../utils";
+import { NumberHolder } from "#app/utils";
 import { ChangeMovePriorityAbAttr, applyAbAttrs } from "./ability";
 import { ProtectAttr } from "./move";
 import { BattlerIndex } from "#app/battle";
@@ -58,7 +58,7 @@ export class Terrain {
     switch (this.terrainType) {
       case TerrainType.PSYCHIC:
         if (!move.hasAttr(ProtectAttr)) {
-          const priority = new Utils.IntegerHolder(move.priority);
+          const priority = new NumberHolder(move.priority);
           applyAbAttrs(ChangeMovePriorityAbAttr, user, null, false, move, priority);
           // Cancels move if the move has positive priority and targets a Pokemon grounded on the Psychic Terrain
           return priority.value > 0 && user.getOpponents().some(o => targets.includes(o.getBattlerIndex()) && o.isGrounded());

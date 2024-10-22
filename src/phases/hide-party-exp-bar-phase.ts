@@ -1,5 +1,5 @@
 import BattleScene from "#app/battle-scene";
-import { BattlePhase } from "./battle-phase";
+import { BattlePhase } from "#phases/battle-phase";
 
 export class HidePartyExpBarPhase extends BattlePhase {
   constructor(scene: BattleScene) {

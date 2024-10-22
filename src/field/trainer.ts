@@ -1,5 +1,5 @@
 import BattleScene from "#app/battle-scene";
-import { pokemonPrevolutions } from "#app/data/balance/pokemon-evolutions";
+import { pokemonPrevolutions } from "#balance/pokemon-evolutions";
 import PokemonSpecies, { getPokemonSpecies } from "#app/data/pokemon-species";
 import {
   TrainerConfig,
@@ -12,7 +12,7 @@ import {
   signatureSpecies
 } from "#app/data/trainer-config";
 import { EnemyPokemon } from "#app/field/pokemon";
-import * as Utils from "#app/utils";
+import { randSeedWeightedItem, randSeedItem, randSeedInt } from "#app/utils";
 import { PersistentModifier } from "#app/modifier/modifier";
 import { trainerNamePools } from "#app/data/trainer-names";
 import { ArenaTagSide, ArenaTrapTag } from "#app/data/arena-tag";
@@ -46,11 +46,11 @@ export default class Trainer extends Phaser.GameObjects.Container {
     }
 
     this.variant = variant;
-    this.partyTemplateIndex = Math.min(partyTemplateIndex !== undefined ? partyTemplateIndex : Utils.randSeedWeightedItem(this.config.partyTemplates.map((_, i) => i)),
+    this.partyTemplateIndex = Math.min(partyTemplateIndex !== undefined ? partyTemplateIndex : randSeedWeightedItem(this.config.partyTemplates.map((_, i) => i)),
       this.config.partyTemplates.length - 1);
     if (trainerNamePools.hasOwnProperty(trainerType)) {
       const namePool = trainerNamePools[trainerType];
-      this.name = name || Utils.randSeedItem(Array.isArray(namePool[0]) ? namePool[variant === TrainerVariant.FEMALE ? 1 : 0] : namePool);
+      this.name = name || randSeedItem(Array.isArray(namePool[0]) ? namePool[variant === TrainerVariant.FEMALE ? 1 : 0] : namePool);
       if (variant === TrainerVariant.DOUBLE) {
         if (this.config.doubleOnly) {
           if (partnerName) {
@@ -59,7 +59,7 @@ export default class Trainer extends Phaser.GameObjects.Container {
             [ this.name, this.partnerName ] = this.name.split(" & ");
           }
         } else {
-          this.partnerName = partnerName || Utils.randSeedItem(Array.isArray(namePool[0]) ? namePool[1] : namePool);
+          this.partnerName = partnerName || randSeedItem(Array.isArray(namePool[0]) ? namePool[1] : namePool);
         }
       }
     }
@@ -362,7 +362,7 @@ export default class Trainer extends Phaser.GameObjects.Container {
 
       // If useNewSpeciesPool is true, we need to generate a new species from the new species pool, otherwise we generate a random species
       let species = useNewSpeciesPool
-        ? getPokemonSpecies(newSpeciesPool[Math.floor(Utils.randSeedInt(newSpeciesPool.length))])
+        ? getPokemonSpecies(newSpeciesPool[Math.floor(randSeedInt(newSpeciesPool.length))])
         : template.isSameSpecies(index) && index > offset
           ? getPokemonSpecies(battle.enemyParty[offset].species.getTrainerSpeciesForLevel(level, false, template.getStrength(offset), this.scene.currentBattle.waveIndex))
           : this.genNewPartyMemberSpecies(level, strength);
@@ -385,7 +385,7 @@ export default class Trainer extends Phaser.GameObjects.Container {
 
     let baseSpecies: PokemonSpecies;
     if (this.config.speciesPools) {
-      const tierValue = Utils.randSeedInt(512);
+      const tierValue = randSeedInt(512);
       let tier = tierValue >= 156 ? TrainerPoolTier.COMMON : tierValue >= 32 ? TrainerPoolTier.UNCOMMON : tierValue >= 6 ? TrainerPoolTier.RARE : tierValue >= 1 ? TrainerPoolTier.SUPER_RARE : TrainerPoolTier.ULTRA_RARE;
       console.log(TrainerPoolTier[tier]);
       while (!this.config.speciesPools.hasOwnProperty(tier) || !this.config.speciesPools[tier].length) {
@@ -393,7 +393,7 @@ export default class Trainer extends Phaser.GameObjects.Container {
         tier--;
       }
       const tierPool = this.config.speciesPools[tier];
-      baseSpecies = getPokemonSpecies(Utils.randSeedItem(tierPool));
+      baseSpecies = getPokemonSpecies(randSeedItem(tierPool));
     } else {
       baseSpecies = this.scene.randomSpecies(battle.waveIndex, level, false, this.config.speciesFilter);
     }
@@ -506,7 +506,7 @@ export default class Trainer extends Phaser.GameObjects.Container {
 
     if (maxScorePartyMemberIndexes.length > 1) {
       let rand: integer;
-      this.scene.executeWithSeedOffset(() => rand = Utils.randSeedInt(maxScorePartyMemberIndexes.length), this.scene.currentBattle.turn << 2);
+      this.scene.executeWithSeedOffset(() => rand = randSeedInt(maxScorePartyMemberIndexes.length), this.scene.currentBattle.turn << 2);
       return maxScorePartyMemberIndexes[rand!];
     }
 

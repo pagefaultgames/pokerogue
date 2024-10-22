@@ -1,8 +1,8 @@
 import { Stat } from "#enums/stat";
-import { Species } from "#app/enums/species";
+import { Species } from "#enums/species";
 import { EnemyPokemon, PlayerPokemon } from "#app/field/pokemon";
-import { DamagePhase } from "#app/phases/damage-phase";
-import { TurnEndPhase } from "#app/phases/turn-end-phase";
+import { DamagePhase } from "#phases/damage-phase";
+import { TurnEndPhase } from "#phases/turn-end-phase";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import GameManager from "#test/utils/gameManager";

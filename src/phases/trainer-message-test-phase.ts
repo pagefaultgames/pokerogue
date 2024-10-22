@@ -1,8 +1,8 @@
 import BattleScene from "#app/battle-scene";
 import { trainerConfigs } from "#app/data/trainer-config";
-import { TrainerType } from "#app/enums/trainer-type";
-import { BattlePhase } from "./battle-phase";
-import { TestMessagePhase } from "./test-message-phase";
+import { TrainerType } from "#enums/trainer-type";
+import { BattlePhase } from "#phases/battle-phase";
+import { TestMessagePhase } from "#phases/test-message-phase";
 
 export class TrainerMessageTestPhase extends BattlePhase {
   private trainerTypes: TrainerType[];

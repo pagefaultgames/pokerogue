@@ -1,14 +1,14 @@
-import * as Utils from "../utils";
-import { TextStyle, getBBCodeFrag } from "../ui/text";
+import { toReadableString } from "#app/utils";
+import { TextStyle, getBBCodeFrag } from "#app/ui/text";
 import { Nature } from "#enums/nature";
 import { UiTheme } from "#enums/ui-theme";
 import i18next from "i18next";
-import { Stat, EFFECTIVE_STATS, getShortenedStatKey } from "#app/enums/stat";
+import { Stat, EFFECTIVE_STATS, getShortenedStatKey } from "#enums/stat";
 
 export { Nature };
 
 export function getNatureName(nature: Nature, includeStatEffects: boolean = false, forStarterSelect: boolean = false, ignoreBBCode: boolean = false, uiTheme: UiTheme = UiTheme.DEFAULT): string {
-  let ret = Utils.toReadableString(Nature[nature]);
+  let ret = toReadableString(Nature[nature]);
   //Translating nature
   if (i18next.exists("nature:" + ret)) {
     ret = i18next.t("nature:" + ret as any);

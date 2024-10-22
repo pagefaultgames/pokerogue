@@ -1,11 +1,11 @@
-import { BattleStyle } from "#app/enums/battle-style";
-import { Species } from "#app/enums/species";
+import { BattleStyle } from "#enums/battle-style";
+import { Species } from "#enums/species";
 import { GameModes, getGameMode } from "#app/game-mode";
 import overrides from "#app/overrides";
-import { CommandPhase } from "#app/phases/command-phase";
-import { EncounterPhase } from "#app/phases/encounter-phase";
-import { SelectStarterPhase } from "#app/phases/select-starter-phase";
-import { TurnInitPhase } from "#app/phases/turn-init-phase";
+import { CommandPhase } from "#phases/command-phase";
+import { EncounterPhase } from "#phases/encounter-phase";
+import { SelectStarterPhase } from "#phases/select-starter-phase";
+import { TurnInitPhase } from "#phases/turn-init-phase";
 import { Mode } from "#app/ui/ui";
 import { generateStarter } from "../gameManagerUtils";
 import { GameManagerHelper } from "./gameManagerHelper";

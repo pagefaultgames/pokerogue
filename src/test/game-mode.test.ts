@@ -1,6 +1,6 @@
 import { GameMode, GameModes, getGameMode } from "#app/game-mode";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import * as Utils from "../utils";
+import * as Utils from "#app/utils";
 import GameManager from "./utils/gameManager";
 
 describe("game-mode", () => {

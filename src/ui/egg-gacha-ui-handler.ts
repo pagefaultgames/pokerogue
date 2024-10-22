@@ -1,16 +1,16 @@
-import BattleScene from "../battle-scene";
+import BattleScene from "#app/battle-scene";
 import { Mode } from "./ui";
 import { TextStyle, addTextObject, getEggTierTextTint, getTextStyleOptions } from "./text";
 import MessageUiHandler from "./message-ui-handler";
-import * as Utils from "../utils";
-import { Egg, getLegendaryGachaSpeciesForTimestamp, IEggOptions } from "../data/egg";
-import { VoucherType, getVoucherTypeIcon } from "../system/voucher";
-import { getPokemonSpecies } from "../data/pokemon-species";
+import { getEnumValues, getEnumKeys, fixedInt, randSeedShuffle } from "#app/utils";
+import { Egg, getLegendaryGachaSpeciesForTimestamp, IEggOptions } from "#app/data/egg";
+import { VoucherType, getVoucherTypeIcon } from "#app/system/voucher";
+import { getPokemonSpecies } from "#app/data/pokemon-species";
 import { addWindow } from "./ui-theme";
-import { Tutorial, handleTutorial } from "../tutorial";
+import { Tutorial, handleTutorial } from "#app/tutorial";
 import { Button } from "#enums/buttons";
 import Overrides from "#app/overrides";
-import { GachaType } from "#app/enums/gacha-types";
+import { GachaType } from "#enums/gacha-types";
 import i18next from "i18next";
 import { EggTier } from "#enums/egg-type";
 
@@ -82,7 +82,7 @@ export default class EggGachaUiHandler extends MessageUiHandler {
       });
     }
 
-    Utils.getEnumValues(GachaType).forEach((gachaType, g) => {
+    getEnumValues(GachaType).forEach((gachaType, g) => {
       const gachaTypeKey = GachaType[gachaType].toString().toLowerCase();
       const gachaContainer = this.scene.add.container(180 * g, 18);
 
@@ -254,7 +254,7 @@ export default class EggGachaUiHandler extends MessageUiHandler {
 
     this.eggGachaContainer.add(this.eggGachaOptionsContainer);
 
-    new Array(Utils.getEnumKeys(VoucherType).length).fill(null).map((_, i) => {
+    new Array(getEnumKeys(VoucherType).length).fill(null).map((_, i) => {
       const container = this.scene.add.container((this.scene.game.canvas.width / 6) - 56 * i, 0);
 
       const bg = addWindow(this.scene, 0, 0, 56, 22);
@@ -335,7 +335,7 @@ export default class EggGachaUiHandler extends MessageUiHandler {
     if (this.transitioning && this.transitionCancelled) {
       delay = Math.ceil(delay / 5);
     }
-    return Utils.fixedInt(delay);
+    return fixedInt(delay);
   }
 
   pull(pullCount: integer = 0, count: integer = 0, eggs?: Egg[]): void {
@@ -453,7 +453,7 @@ export default class EggGachaUiHandler extends MessageUiHandler {
         eggs.push(egg);
       }
       // Shuffle the eggs in case the guaranteed one got added as last egg
-      eggs = Utils.randSeedShuffle<Egg>(eggs);
+      eggs = randSeedShuffle<Egg>(eggs);
 
 
       (this.scene.currentBattle ? this.scene.gameData.saveAll(this.scene, true, true, true) : this.scene.gameData.saveSystem()).then(success => {
@@ -605,7 +605,7 @@ export default class EggGachaUiHandler extends MessageUiHandler {
   }
 
   showError(text: string): void {
-    this.showText(text, undefined, () => this.showText(this.defaultText), Utils.fixedInt(1500));
+    this.showText(text, undefined, () => this.showText(this.defaultText), fixedInt(1500));
   }
 
   setTransitioning(transitioning: boolean): void {
@@ -734,7 +734,7 @@ export default class EggGachaUiHandler extends MessageUiHandler {
             }
             break;
           case Button.RIGHT:
-            if (this.gachaCursor < Utils.getEnumKeys(GachaType).length - 1) {
+            if (this.gachaCursor < getEnumKeys(GachaType).length - 1) {
               success = this.setGachaCursor(this.gachaCursor + 1);
             }
             break;

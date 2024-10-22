@@ -1,5 +1,5 @@
 import { StatusEffect } from "#app/data/status-effect";
-import { Abilities } from "#app/enums/abilities";
+import { Abilities } from "#enums/abilities";
 import { EnemyPokemon } from "#app/field/pokemon";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";

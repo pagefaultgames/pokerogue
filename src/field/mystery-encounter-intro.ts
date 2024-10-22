@@ -3,7 +3,7 @@ import BattleScene from "../battle-scene";
 import MysteryEncounter from "../data/mystery-encounters/mystery-encounter";
 import { Species } from "#enums/species";
 import { isNullOrUndefined } from "#app/utils";
-import { getSpriteKeysFromSpecies } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
+import { getSpriteKeysFromSpecies } from "#mystery-encounters/utils/encounter-pokemon-utils";
 import PlayAnimationConfig = Phaser.Types.Animations.PlayAnimationConfig;
 
 type KnownFileRoot =

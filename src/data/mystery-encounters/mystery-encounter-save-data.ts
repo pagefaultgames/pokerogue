@@ -1,5 +1,5 @@
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
-import { BASE_MYSTERY_ENCOUNTER_SPAWN_WEIGHT } from "#app/data/mystery-encounters/mystery-encounters";
+import { BASE_MYSTERY_ENCOUNTER_SPAWN_WEIGHT } from "#mystery-encounters/mystery-encounters";
 import { isNullOrUndefined } from "#app/utils";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 

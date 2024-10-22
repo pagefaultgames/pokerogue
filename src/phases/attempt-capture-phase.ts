@@ -1,9 +1,14 @@
 import BattleScene from "#app/battle-scene";
 import { BattlerIndex } from "#app/battle";
-import { getPokeballCatchMultiplier, getPokeballAtlasKey, getPokeballTintColor, doPokeballBounceAnim } from "#app/data/pokeball";
+import {
+  getPokeballCatchMultiplier,
+  getPokeballAtlasKey,
+  getPokeballTintColor,
+  doPokeballBounceAnim,
+} from "#app/data/pokeball";
 import { getStatusEffectCatchRateMultiplier } from "#app/data/status-effect";
-import { PokeballType } from "#app/enums/pokeball";
-import { StatusEffect } from "#app/enums/status-effect";
+import { PokeballType } from "#enums/pokeball";
+import { StatusEffect } from "#enums/status-effect";
 import { addPokeballOpenParticles, addPokeballCaptureStars } from "#app/field/anims";
 import { EnemyPokemon } from "#app/field/pokemon";
 import { getPokemonNameWithAffix } from "#app/messages";
@@ -13,8 +18,8 @@ import { PartyUiMode, PartyOption } from "#app/ui/party-ui-handler";
 import { SummaryUiMode } from "#app/ui/summary-ui-handler";
 import { Mode } from "#app/ui/ui";
 import i18next from "i18next";
-import { PokemonPhase } from "./pokemon-phase";
-import { VictoryPhase } from "./victory-phase";
+import { PokemonPhase } from "#phases/pokemon-phase";
+import { VictoryPhase } from "#phases/victory-phase";
 import { SubstituteTag } from "#app/data/battler-tags";
 
 export class AttemptCapturePhase extends PokemonPhase {

@@ -11,7 +11,7 @@ import { TimeOfDay } from "#enums/time-of-day";
 import { getPokemonNameWithAffix } from "#app/messages";
 import i18next from "i18next";
 import { WeatherType } from "./weather";
-import { Challenges } from "#app/enums/challenges";
+import { Challenges } from "#enums/challenges";
 import { SpeciesFormKey } from "#enums/species-form-key";
 
 export enum FormChangeItem {

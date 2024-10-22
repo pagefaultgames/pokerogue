@@ -2,7 +2,7 @@ import { Stat } from "#enums/stat";
 import { SpeciesStatBoosterModifier } from "#app/modifier/modifier";
 import { modifierTypes } from "#app/modifier/modifier-type";
 import i18next from "#app/plugins/i18n";
-import * as Utils from "#app/utils";
+import { NumberHolder } from "#app/utils";
 import { Species } from "#enums/species";
 import GameManager from "#test/utils/gameManager";
 import Phase from "phaser";
@@ -73,7 +73,7 @@ describe("Items - Metal Powder", () => {
     const defStat = partyMember.getStat(Stat.DEF);
 
     // Making sure modifier is not applied without holding item
-    const defValue = new Utils.NumberHolder(defStat);
+    const defValue = new NumberHolder(defStat);
     partyMember.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.DEF, defValue);
 
     expect(defValue.value / defStat).toBe(1);
@@ -106,7 +106,7 @@ describe("Items - Metal Powder", () => {
     const defStat = partyMember.getStat(Stat.DEF);
 
     // Making sure modifier is not applied without holding item
-    const defValue = new Utils.NumberHolder(defStat);
+    const defValue = new NumberHolder(defStat);
     partyMember.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.DEF, defValue);
 
     expect(defValue.value / defStat).toBe(1);
@@ -139,7 +139,7 @@ describe("Items - Metal Powder", () => {
     const defStat = partyMember.getStat(Stat.DEF);
 
     // Making sure modifier is not applied without holding item
-    const defValue = new Utils.NumberHolder(defStat);
+    const defValue = new NumberHolder(defStat);
     partyMember.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.DEF, defValue);
 
     expect(defValue.value / defStat).toBe(1);
@@ -161,7 +161,7 @@ describe("Items - Metal Powder", () => {
     const defStat = partyMember.getStat(Stat.DEF);
 
     // Making sure modifier is not applied without holding item
-    const defValue = new Utils.NumberHolder(defStat);
+    const defValue = new NumberHolder(defStat);
     partyMember.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.DEF, defValue);
 
     expect(defValue.value / defStat).toBe(1);

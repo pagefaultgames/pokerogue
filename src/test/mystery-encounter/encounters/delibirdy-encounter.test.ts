@@ -1,19 +1,19 @@
-import { Biome } from "#app/enums/biome";
-import { MysteryEncounterType } from "#app/enums/mystery-encounter-type";
-import { Species } from "#app/enums/species";
+import { Biome } from "#enums/biome";
+import { MysteryEncounterType } from "#enums/mystery-encounter-type";
+import { Species } from "#enums/species";
 import GameManager from "#app/test/utils/gameManager";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import * as EncounterPhaseUtils from "#app/data/mystery-encounters/utils/encounter-phase-utils";
+import * as EncounterPhaseUtils from "#mystery-encounters/utils/encounter-phase-utils";
 import { runMysteryEncounterToEnd, runSelectMysteryEncounterOption } from "#test/mystery-encounter/encounter-test-utils";
 import BattleScene from "#app/battle-scene";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
-import { DelibirdyEncounter } from "#app/data/mystery-encounters/encounters/delibirdy-encounter";
-import * as MysteryEncounters from "#app/data/mystery-encounters/mystery-encounters";
-import { MoneyRequirement } from "#app/data/mystery-encounters/mystery-encounter-requirements";
+import { DelibirdyEncounter } from "#mystery-encounters/encounters/delibirdy-encounter";
+import * as MysteryEncounters from "#mystery-encounters/mystery-encounters";
+import { MoneyRequirement } from "#mystery-encounters/mystery-encounter-requirements";
 import { BerryModifier, HealingBoosterModifier, HitHealModifier, LevelIncrementBoosterModifier, MoneyMultiplierModifier, PokemonInstantReviveModifier, PokemonNatureWeightModifier, PreserveBerryModifier } from "#app/modifier/modifier";
-import { MysteryEncounterPhase } from "#app/phases/mystery-encounter-phases";
-import { generateModifierType } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
+import { MysteryEncounterPhase } from "#phases/mystery-encounter-phases";
+import { generateModifierType } from "#mystery-encounters/utils/encounter-phase-utils";
 import { modifierTypes } from "#app/modifier/modifier-type";
 import { BerryType } from "#enums/berry-type";
 

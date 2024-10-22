@@ -1,9 +1,9 @@
-import { BerryType } from "#app/enums/berry-type";
-import { Button } from "#app/enums/buttons";
-import { Moves } from "#app/enums/moves";
-import { Species } from "#app/enums/species";
-import { BattleEndPhase } from "#app/phases/battle-end-phase";
-import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
+import { BerryType } from "#enums/berry-type";
+import { Button } from "#enums/buttons";
+import { Moves } from "#enums/moves";
+import { Species } from "#enums/species";
+import { BattleEndPhase } from "#phases/battle-end-phase";
+import { SelectModifierPhase } from "#phases/select-modifier-phase";
 import ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
 import PartyUiHandler, { PartyUiMode } from "#app/ui/party-ui-handler";
 import { Mode } from "#app/ui/ui";

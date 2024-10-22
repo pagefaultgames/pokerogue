@@ -1,14 +1,20 @@
 import { Modifier } from "typescript";
-import BattleScene from "../battle-scene";
-import { TurnHeldItemTransferModifier } from "../modifier/modifier";
-import { pokemonEvolutions } from "#app/data/balance/pokemon-evolutions";
+import BattleScene from "#app/battle-scene";
+import { TurnHeldItemTransferModifier } from "#app/modifier/modifier";
+import { pokemonEvolutions } from "#balance/pokemon-evolutions";
 import i18next from "i18next";
-import * as Utils from "../utils";
+import { NumberHolder } from "#app/utils";
 import { PlayerGender } from "#enums/player-gender";
-import { Challenge, FreshStartChallenge, SingleGenerationChallenge, SingleTypeChallenge, InverseBattleChallenge } from "#app/data/challenge";
+import {
+  Challenge,
+  FreshStartChallenge,
+  SingleGenerationChallenge,
+  SingleTypeChallenge,
+  InverseBattleChallenge,
+} from "#app/data/challenge";
 import { ConditionFn } from "#app/@types/common";
-import { Stat, getShortenedStatKey } from "#app/enums/stat";
-import { Challenges } from "#app/enums/challenges";
+import { Stat, getShortenedStatKey } from "#enums/stat";
+import { Challenges } from "#enums/challenges";
 
 export enum AchvTier {
   COMMON,
@@ -109,7 +115,7 @@ export class DamageAchv extends Achv {
   damageAmount: integer;
 
   constructor(localizationKey: string, name: string, damageAmount: integer, iconImage: string, score: integer) {
-    super(localizationKey, name, "", iconImage, score, (_scene: BattleScene, args: any[]) => (args[0] instanceof Utils.NumberHolder ? args[0].value : args[0]) >= this.damageAmount);
+    super(localizationKey, name, "", iconImage, score, (_scene: BattleScene, args: any[]) => (args[0] instanceof NumberHolder ? args[0].value : args[0]) >= this.damageAmount);
     this.damageAmount = damageAmount;
   }
 }
@@ -118,7 +124,7 @@ export class HealAchv extends Achv {
   healAmount: integer;
 
   constructor(localizationKey: string, name: string, healAmount: integer, iconImage: string, score: integer) {
-    super(localizationKey, name, "", iconImage, score, (_scene: BattleScene, args: any[]) => (args[0] instanceof Utils.NumberHolder ? args[0].value : args[0]) >= this.healAmount);
+    super(localizationKey, name, "", iconImage, score, (_scene: BattleScene, args: any[]) => (args[0] instanceof NumberHolder ? args[0].value : args[0]) >= this.healAmount);
     this.healAmount = healAmount;
   }
 }
@@ -127,7 +133,7 @@ export class LevelAchv extends Achv {
   level: integer;
 
   constructor(localizationKey: string, name: string, level: integer, iconImage: string, score: integer) {
-    super(localizationKey, name, "", iconImage, score, (scene: BattleScene, args: any[]) => (args[0] instanceof Utils.NumberHolder ? args[0].value : args[0]) >= this.level);
+    super(localizationKey, name, "", iconImage, score, (scene: BattleScene, args: any[]) => (args[0] instanceof NumberHolder ? args[0].value : args[0]) >= this.level);
     this.level = level;
   }
 }

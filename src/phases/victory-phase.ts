@@ -1,16 +1,16 @@
 import BattleScene from "#app/battle-scene";
 import { BattlerIndex, BattleType, ClassicFixedBossWaves } from "#app/battle";
 import { CustomModifierSettings, modifierTypes } from "#app/modifier/modifier-type";
-import { BattleEndPhase } from "./battle-end-phase";
-import { NewBattlePhase } from "./new-battle-phase";
-import { PokemonPhase } from "./pokemon-phase";
-import { AddEnemyBuffModifierPhase } from "./add-enemy-buff-modifier-phase";
-import { EggLapsePhase } from "./egg-lapse-phase";
-import { GameOverPhase } from "./game-over-phase";
-import { ModifierRewardPhase } from "./modifier-reward-phase";
-import { SelectModifierPhase } from "./select-modifier-phase";
-import { TrainerVictoryPhase } from "./trainer-victory-phase";
-import { handleMysteryEncounterVictory } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
+import { BattleEndPhase } from "#phases/battle-end-phase";
+import { NewBattlePhase } from "#phases/new-battle-phase";
+import { PokemonPhase } from "#phases/pokemon-phase";
+import { AddEnemyBuffModifierPhase } from "#phases/add-enemy-buff-modifier-phase";
+import { EggLapsePhase } from "#phases/egg-lapse-phase";
+import { GameOverPhase } from "#phases/game-over-phase";
+import { ModifierRewardPhase } from "#phases/modifier-reward-phase";
+import { SelectModifierPhase } from "#phases/select-modifier-phase";
+import { TrainerVictoryPhase } from "#phases/trainer-victory-phase";
+import { handleMysteryEncounterVictory } from "#mystery-encounters/utils/encounter-phase-utils";
 
 export class VictoryPhase extends PokemonPhase {
   /** If true, indicates that the phase is intended for EXP purposes only, and not to continue a battle to next phase */

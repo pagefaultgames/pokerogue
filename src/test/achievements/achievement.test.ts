@@ -1,10 +1,10 @@
 import { TurnHeldItemTransferModifier } from "#app/modifier/modifier";
 import { Achv, AchvTier, DamageAchv, HealAchv, LevelAchv, ModifierAchv, MoneyAchv, RibbonAchv, achvs } from "#app/system/achv";
-import { IntegerHolder, NumberHolder } from "#app/utils";
+import { NumberHolder } from "#app/utils";
 import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import BattleScene from "../../battle-scene";
+import BattleScene from "#app/battle-scene";
 
 describe("check some Achievement related stuff", () => {
   it ("should check Achievement creation", () => {
@@ -177,12 +177,12 @@ describe("LevelAchv", () => {
   it("should validate the achievement based on the level", () => {
     const levelAchv = new LevelAchv("", "Test Level Achievement", 100, "level_icon", 10);
     const scene = new BattleScene();
-    const integerHolder = new IntegerHolder(50);
+    const numberHolder = new NumberHolder(50);
 
-    expect(levelAchv.validate(scene, [ integerHolder ])).toBe(false);
+    expect(levelAchv.validate(scene, [ numberHolder ])).toBe(false);
 
-    integerHolder.value = 150;
-    expect(levelAchv.validate(scene, [ integerHolder ])).toBe(true);
+    numberHolder.value = 150;
+    expect(levelAchv.validate(scene, [ numberHolder ])).toBe(true);
   });
 });
 

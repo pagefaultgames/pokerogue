@@ -1,6 +1,6 @@
 import { Stat } from "#enums/stat";
 import GameManager from "#test/utils/gameManager";
-import { CommandPhase } from "#app/phases/command-phase";
+import { CommandPhase } from "#phases/command-phase";
 import { Abilities } from "#enums/abilities";
 import { Species } from "#enums/species";
 import Phaser from "phaser";
