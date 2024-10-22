@@ -251,8 +251,11 @@ export class PokemonAnimPhase extends BattlePhase {
       return this.end();
     }
 
+    const tatsugiriX = this.pokemon.x + this.pokemon.getSprite().x;
+    const tatsugiriY = this.pokemon.y + this.pokemon.getSprite().y;
+
     const getSourceSprite = () => {
-      const sprite = this.scene.addPokemonSprite(this.pokemon, this.pokemon.x + this.pokemon.getSprite().x, this.pokemon.y + this.pokemon.getSprite().y, this.pokemon.getSprite().texture, this.pokemon.getSprite()!.frame.name, true);
+      const sprite = this.scene.addPokemonSprite(this.pokemon, tatsugiriX, tatsugiriY, this.pokemon.getSprite().texture, this.pokemon.getSprite()!.frame.name, true);
       [ "spriteColors", "fusionSpriteColors" ].map(k => sprite.pipelineData[k] = this.pokemon.getSprite().pipelineData[k]);
       sprite.setPipelineData("spriteKey", this.pokemon.getBattleSpriteKey());
       sprite.setPipelineData("shiny", this.pokemon.shiny);
@@ -276,19 +279,17 @@ export class PokemonAnimPhase extends BattlePhase {
     this.scene.tweens.add({
       targets: sourceSprite,
       duration: 375,
-      ease: "Cubic.easeOut",
       scale: 0.5,
-      x: (_target, _key, value: number) => value + (dondozoFpOffset[0] - sourceFpOffset[0]) / 2,
-      y: (this.pokemon.isPlayer() ? 100 : 65) + sourceFpOffset[1],
+      x: { value: tatsugiriX + (dondozoFpOffset[0] - sourceFpOffset[0]) / 2, ease: "Linear" },
+      y: { value: (this.pokemon.isPlayer() ? 100 : 65) + sourceFpOffset[1], ease: "Sine.easeOut" },
       onComplete: () => {
         this.scene.field.bringToTop(dondozo);
         this.scene.tweens.add({
           targets: sourceSprite,
           duration: 375,
-          ease: "Cubic.easeIn",
           scale: 0.01,
-          x: (_target, _key, value: number) => value + (dondozoFpOffset[0] - sourceFpOffset[0]) / 2,
-          y: dondozo.y + dondozo.height / 2,
+          x: { value: dondozo.x, ease: "Linear" },
+          y: { value: dondozo.y + dondozo.height / 2, ease: "Sine.easeIn" },
           onComplete: () => {
             sourceSprite.destroy();
             this.scene.playSound("battle_anims/PRSFX- Liquidation1.wav");
