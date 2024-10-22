@@ -90,12 +90,12 @@ export default class BallUiHandler extends UiHandler {
       }
     } else {
       switch (button) {
-      case Button.UP:
-        success = this.setCursor(this.cursor ? this.cursor - 1 : pokeballTypeCount);
-        break;
-      case Button.DOWN:
-        success = this.setCursor(this.cursor < pokeballTypeCount ? this.cursor + 1 : 0);
-        break;
+        case Button.UP:
+          success = this.setCursor(this.cursor ? this.cursor - 1 : pokeballTypeCount);
+          break;
+        case Button.DOWN:
+          success = this.setCursor(this.cursor < pokeballTypeCount ? this.cursor + 1 : 0);
+          break;
       }
     }
 

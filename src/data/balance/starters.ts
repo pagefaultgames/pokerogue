@@ -15,25 +15,25 @@ export const FRIENDSHIP_LOSS_FROM_FAINT = 10;
  */
 export function getStarterValueFriendshipCap(starterCost: number): number {
   switch (starterCost) {
-  case 1:
-    return 20;
-  case 2:
-    return 40;
-  case 3:
-    return 60;
-  case 4:
-    return 100;
-  case 5:
-    return 140;
-  case 6:
-    return 200;
-  case 7:
-    return 280;
-  case 8:
-  case 9:
-    return 450;
-  default:
-    return 600;
+    case 1:
+      return 20;
+    case 2:
+      return 40;
+    case 3:
+      return 60;
+    case 4:
+      return 100;
+    case 5:
+      return 140;
+    case 6:
+      return 200;
+    case 7:
+      return 280;
+    case 8:
+    case 9:
+      return 450;
+    default:
+      return 600;
   }
 }
 
