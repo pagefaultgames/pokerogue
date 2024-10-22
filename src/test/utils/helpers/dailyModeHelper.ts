@@ -21,6 +21,10 @@ export class DailyModeHelper extends GameManagerHelper {
   async runToSummon() {
     await this.game.runToTitle();
 
+    if (this.game.override.disableShinies) {
+      this.game.override.shiny(false).enemyShiny(false);
+    }
+
     this.game.onNextPrompt("TitlePhase", Mode.TITLE, () => {
       const titlePhase = new TitlePhase(this.game.scene);
       titlePhase.initDailyRun();
@@ -33,7 +37,7 @@ export class DailyModeHelper extends GameManagerHelper {
 
     await this.game.phaseInterceptor.to(EncounterPhase);
 
-    if (overrides.OPP_HELD_ITEMS_OVERRIDE.length === 0) {
+    if (overrides.OPP_HELD_ITEMS_OVERRIDE.length === 0 && this.game.override.removeEnemyStartingItems) {
       this.game.removeEnemyHeldItems();
     }
   }
