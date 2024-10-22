@@ -32,7 +32,6 @@ describe("Arena - Gravity", () => {
       .enemyAbility(Abilities.BALL_FETCH)
       .enemySpecies(Species.SHUCKLE)
       .enemyMoveset(Moves.SPLASH)
-      .startingLevel(5)
       .enemyLevel(5);
   });
 

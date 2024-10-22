@@ -11,7 +11,7 @@ import { MoveEndPhase } from "#app/phases/move-end-phase";
 
 /**
  * Phase for the "charging turn" of two-turn moves (e.g. Dig).
- * @extends PokemonPhase
+ * @extends {@linkcode PokemonPhase}
  */
 export class MoveChargePhase extends PokemonPhase {
   /** The move instance that this phase applies */
@@ -25,7 +25,7 @@ export class MoveChargePhase extends PokemonPhase {
     this.targetIndex = targetIndex;
   }
 
-  start() {
+  public override start() {
     super.start();
 
     const user = this.getUserPokemon();
@@ -50,7 +50,7 @@ export class MoveChargePhase extends PokemonPhase {
   }
 
   /** Checks the move's instant charge conditions, then ends this phase. */
-  end() {
+  public override end() {
     const user = this.getUserPokemon();
     const move = this.move.getMove();
 
@@ -74,11 +74,11 @@ export class MoveChargePhase extends PokemonPhase {
     super.end();
   }
 
-  protected getUserPokemon(): Pokemon {
+  public getUserPokemon(): Pokemon {
     return (this.player ? this.scene.getPlayerField() : this.scene.getEnemyField())[this.fieldIndex];
   }
 
-  protected getTargetPokemon(): Pokemon | undefined {
+  public getTargetPokemon(): Pokemon | undefined {
     return this.scene.getField(true).find((p) => this.targetIndex === p.getBattlerIndex());
   }
 }
