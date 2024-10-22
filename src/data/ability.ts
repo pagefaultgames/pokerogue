@@ -3117,7 +3117,7 @@ function getHealthKnockedBelowHalf(): AbAttrCondition {
 
     // Helper function to check if health has dropped below half
     const isHealthBelowHalf = (initialHealth: number, currentHealth: number) =>
-      initialHealth > maxPokemonHealth / 2 && currentHealth < maxPokemonHealth / 2;
+      initialHealth >= maxPokemonHealth / 2 && currentHealth < maxPokemonHealth / 2;
 
     // PostSummonPhase
     /**
@@ -5267,7 +5267,6 @@ export class PostWeatherForceSwitchOutAttr extends PostWeatherLapseAbAttr {
    */
 
   applyPostWeatherLapse(pokemon: Pokemon, passive: boolean, simulated: boolean, weather: Weather, args: any[]): boolean {
-    const scene = pokemon.scene;
     if (pokemon.hasAbilityWithAttr(BlockNonDirectDamageAbAttr)) {
       return false;
     }
@@ -5280,16 +5279,17 @@ export class PostWeatherForceSwitchOutAttr extends PostWeatherLapseAbAttr {
       pokemon.removeTag(BattlerTagType.TRAPPED);
     }
     const damageAmount = Utils.toDmgValue(pokemon.getMaxHp() / (16 / this.damageFactor));
-    if (pokemon.getHpRatio() > 0.5 && (pokemon.hp - damageAmount) / 2 < pokemon.getMaxHp()) {
-      if (getWeatherCondition(WeatherType.HAIL)) {
-        scene.queueMessage(i18next.t("weather:hailDamageMessage", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }));
-      } else {
-        scene.queueMessage(i18next.t("weather:sandstormDamageMessage", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }));
 
+    if (pokemon.hp + damageAmount >= pokemon.getMaxHp() / 2) {
+      if (pokemon.hp < pokemon.getMaxHp() / 2) {
+        return this.helper.switchOutLogic(pokemon);
+      } else {
+        return false;
       }
-      pokemon.damageAndUpdate(Utils.toDmgValue(pokemon.getMaxHp() / (16 / this.damageFactor)), HitResult.OTHER);
+    } else {
+      return false;
     }
-    return this.helper.switchOutLogic(pokemon);
+
   }
 
   getFailedText(user: Pokemon, target: Pokemon, move: Move, cancelled: Utils.BooleanHolder): string | null {
