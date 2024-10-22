@@ -4200,6 +4200,11 @@ export class RedirectTypeMoveAbAttr extends RedirectMoveAbAttr {
 
 export class BlockRedirectAbAttr extends AbAttr { }
 
+/**
+ * Used by Early Bird, makes the pokemon wake up faster
+ * @param statusEffect - The {@linkcode StatusEffect} to check for
+ * @see {@linkcode apply}
+ */
 export class ReduceStatusEffectDurationAbAttr extends AbAttr {
   private statusEffect: StatusEffect;
 
@@ -4209,9 +4214,19 @@ export class ReduceStatusEffectDurationAbAttr extends AbAttr {
     this.statusEffect = statusEffect;
   }
 
-  apply(pokemon: Pokemon, passive: boolean, simulated: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean {
+  /**
+   * Reduces the number of sleep turns remaining by an extra 1 when applied
+   * @param args - The args passed to the `AbAttr`:
+   * - `[0]` - The {@linkcode StatusEffect} of the Pokemon
+   * - `[1]` - The number of turns remaining until the status is healed
+   * @returns `true` if the ability was applied
+   */
+  apply(_pokemon: Pokemon, _passive: boolean, _simulated: boolean, _cancelled: Utils.BooleanHolder, args: any[]): boolean {
+    if (!(args[1] instanceof Utils.NumberHolder)) {
+      return false;
+    }
     if (args[0] === this.statusEffect) {
-      (args[1] as Utils.IntegerHolder).value = Utils.toDmgValue((args[1] as Utils.IntegerHolder).value / 2);
+      args[1].value -= 1;
       return true;
     }
 
@@ -4341,6 +4356,30 @@ export class AlwaysHitAbAttr extends AbAttr { }
 
 /** Attribute for abilities that allow moves that make contact to ignore protection (i.e. Unseen Fist) */
 export class IgnoreProtectOnContactAbAttr extends AbAttr { }
+
+/**
+ * Attribute implementing the effects of {@link https://bulbapedia.bulbagarden.net/wiki/Infiltrator_(Ability) | Infiltrator}.
+ * Allows the source's moves to bypass the effects of opposing Light Screen, Reflect, Aurora Veil, Safeguard, Mist, and Substitute.
+ */
+export class InfiltratorAbAttr extends AbAttr {
+  /**
+   * Sets a flag to bypass screens, Substitute, Safeguard, and Mist
+   * @param pokemon n/a
+   * @param passive n/a
+   * @param simulated n/a
+   * @param cancelled n/a
+   * @param args `[0]` a {@linkcode Utils.BooleanHolder | BooleanHolder} containing the flag
+   * @returns `true` if the bypass flag was successfully set; `false` otherwise.
+   */
+  override apply(pokemon: Pokemon, passive: boolean, simulated: boolean, cancelled: null, args: any[]): boolean {
+    const bypassed = args[0];
+    if (args[0] instanceof Utils.BooleanHolder) {
+      bypassed.value = true;
+      return true;
+    }
+    return false;
+  }
+}
 
 export class UncopiableAbilityAbAttr extends AbAttr {
   constructor() {
@@ -5321,7 +5360,8 @@ export function initAbilities() {
       .attr(PostSummonTransformAbAttr)
       .attr(UncopiableAbilityAbAttr),
     new Ability(Abilities.INFILTRATOR, 5)
-      .unimplemented(),
+      .attr(InfiltratorAbAttr)
+      .partial(), // does not bypass Mist
     new Ability(Abilities.MUMMY, 5)
       .attr(PostDefendAbilityGiveAbAttr, Abilities.MUMMY)
       .bypassFaint(),
