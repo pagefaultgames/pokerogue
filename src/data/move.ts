@@ -3141,15 +3141,15 @@ export class OrderUpStatBoostAttr extends MoveEffectAttr {
 
     let increasedStat: EffectiveStat = Stat.ATK;
     switch (commandedTag.tatsugiriFormKey) {
-    case "curly":
-      increasedStat = Stat.ATK;
-      break;
-    case "droopy":
-      increasedStat = Stat.DEF;
-      break;
-    case "stretchy":
-      increasedStat = Stat.SPD;
-      break;
+      case "curly":
+        increasedStat = Stat.ATK;
+        break;
+      case "droopy":
+        increasedStat = Stat.DEF;
+        break;
+      case "stretchy":
+        increasedStat = Stat.SPD;
+        break;
     }
 
     user.scene.unshiftPhase(new StatStageChangePhase(user.scene, user.getBattlerIndex(), this.selfTarget, [ increasedStat ], 1));
