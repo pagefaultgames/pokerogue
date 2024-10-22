@@ -13,21 +13,21 @@ export function getPokemonNameWithAffix(pokemon: Pokemon | undefined, useIllusio
   }
 
   switch (pokemon.scene.currentBattle.battleSpec) {
-  case BattleSpec.DEFAULT:
-    return !pokemon.isPlayer()
-      ? pokemon.hasTrainer()
-        ? i18next.t("battle:foePokemonWithAffix", {
-          pokemonName: pokemon.getNameToRender(useIllusion),
-        })
-        : i18next.t("battle:wildPokemonWithAffix", {
-          pokemonName: pokemon.getNameToRender(useIllusion),
-        })
-      : pokemon.getNameToRender(useIllusion);
-  case BattleSpec.FINAL_BOSS:
-    return !pokemon.isPlayer()
-      ? i18next.t("battle:foePokemonWithAffix", { pokemonName: pokemon.getNameToRender(useIllusion) })
-      : pokemon.getNameToRender(useIllusion);
-  default:
-    return pokemon.getNameToRender(useIllusion);
+    case BattleSpec.DEFAULT:
+      return !pokemon.isPlayer()
+        ? pokemon.hasTrainer()
+          ? i18next.t("battle:foePokemonWithAffix", {
+            pokemonName: pokemon.getNameToRender(useIllusion),
+          })
+          : i18next.t("battle:wildPokemonWithAffix", {
+            pokemonName: pokemon.getNameToRender(useIllusion),
+          })
+        : pokemon.getNameToRender(useIllusion);
+    case BattleSpec.FINAL_BOSS:
+      return !pokemon.isPlayer()
+        ? i18next.t("battle:foePokemonWithAffix", { pokemonName: pokemon.getNameToRender(useIllusion) })
+        : pokemon.getNameToRender(useIllusion);
+    default:
+      return pokemon.getNameToRender(useIllusion);
   }
 }
