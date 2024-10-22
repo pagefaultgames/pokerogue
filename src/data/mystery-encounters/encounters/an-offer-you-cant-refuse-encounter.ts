@@ -99,8 +99,8 @@ export const AnOfferYouCantRefuseEncounter: MysteryEncounter =
         }
       }
 
-      const silverPokeball = generateModifierType(scene, modifierTypes.SILVER_POKEBALL);
-      encounter.setDialogueToken("itemName", silverPokeball?.name ?? i18next.t("modifierType:ModifierType.SILVER_POKEBALL.name"));
+      const shinyCharm = generateModifierType(scene, modifierTypes.SHINY_CHARM);
+      encounter.setDialogueToken("itemName", shinyCharm?.name ?? i18next.t("modifierType:ModifierType.SHINY_CHARM.name"));
       encounter.setDialogueToken("liepardName", getPokemonSpecies(Species.LIEPARD).getName());
 
       return true;
@@ -126,8 +126,8 @@ export const AnOfferYouCantRefuseEncounter: MysteryEncounter =
           return true;
         })
         .withOptionPhase(async (scene: BattleScene) => {
-          // Give the player a Silver Pokeball
-          scene.unshiftPhase(new ModifierRewardPhase(scene, modifierTypes.SILVER_POKEBALL));
+          // Give the player a Shiny Charm
+          scene.unshiftPhase(new ModifierRewardPhase(scene, modifierTypes.SHINY_CHARM));
           leaveEncounterWithoutBattle(scene, true);
         })
         .build()

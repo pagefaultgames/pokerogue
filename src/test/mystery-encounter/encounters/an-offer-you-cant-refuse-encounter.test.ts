@@ -15,7 +15,7 @@ import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { initSceneWithoutEncounterPhase } from "#test/utils/gameManagerUtils";
 import { getPokemonSpecies } from "#app/data/pokemon-species";
 import { Moves } from "#enums/moves";
-import { TempExtraModifierModifier } from "#app/modifier/modifier";
+import { ShinyRateBoosterModifier } from "#app/modifier/modifier";
 import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
 import i18next from "i18next";
 import { Abilities } from "#enums/abilities";
@@ -103,7 +103,7 @@ describe("An Offer You Can't Refuse - Mystery Encounter", () => {
     expect(onInitResult).toBe(true);
   });
 
-  describe("Option 1 - Sell your Pokemon for money and a Silver Pokeball", () => {
+  describe("Option 1 - Sell your Pokemon for money and a Shiny Charm", () => {
     it("should have the correct properties", () => {
       const option = AnOfferYouCantRefuseEncounter.options[0];
       expect(option.optionMode).toBe(MysteryEncounterOptionMode.DEFAULT);
@@ -134,11 +134,11 @@ describe("An Offer You Can't Refuse - Mystery Encounter", () => {
       expect(scene.money).toBe(initialMoney + price);
     });
 
-    it("Should give the player a Silver Pokeball", async () => {
+    it("Should give the player a Shiny Charm", async () => {
       await game.runToMysteryEncounter(MysteryEncounterType.AN_OFFER_YOU_CANT_REFUSE, defaultParty);
       await runMysteryEncounterToEnd(game, 1);
 
-      const itemModifier = scene.findModifier(m => m instanceof TempExtraModifierModifier) as TempExtraModifierModifier;
+      const itemModifier = scene.findModifier(m => m instanceof ShinyRateBoosterModifier) as ShinyRateBoosterModifier;
 
       expect(itemModifier).toBeDefined();
       expect(itemModifier?.stackCount).toBe(1);
