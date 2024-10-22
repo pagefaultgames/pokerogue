@@ -8,7 +8,7 @@ import { Constructor, NumberHolder } from "#app/utils";
 import * as Utils from "../utils";
 import { WeatherType } from "./weather";
 import { ArenaTagSide, ArenaTrapTag, WeakenMoveTypeTag } from "./arena-tag";
-import { allAbilities, AllyMoveCategoryPowerBoostAbAttr, applyAbAttrs, applyPostAttackAbAttrs, applyPreAttackAbAttrs, applyPreDefendAbAttrs, BlockItemTheftAbAttr, BlockNonDirectDamageAbAttr, BlockOneHitKOAbAttr, BlockRecoilDamageAttr, ConfusionOnStatusEffectAbAttr, FieldMoveTypePowerBoostAbAttr, FieldPreventExplosiveMovesAbAttr, ForceSwitchOutImmunityAbAttr, HealFromBerryUseAbAttr, IgnoreContactAbAttr, IgnoreMoveEffectsAbAttr, IgnoreProtectOnContactAbAttr, MaxMultiHitAbAttr, MoveAbilityBypassAbAttr, MoveEffectChanceMultiplierAbAttr, MoveTypeChangeAbAttr, ReverseDrainAbAttr, UncopiableAbilityAbAttr, UnsuppressableAbilityAbAttr, UnswappableAbilityAbAttr, UserFieldMoveTypePowerBoostAbAttr, VariableMovePowerAbAttr, WonderSkinAbAttr } from "./ability";
+import { allAbilities, AllyMoveCategoryPowerBoostAbAttr, applyAbAttrs, applyPostAttackAbAttrs, applyPreAttackAbAttrs, applyPreDefendAbAttrs, BlockItemTheftAbAttr, BlockNonDirectDamageAbAttr, BlockOneHitKOAbAttr, BlockRecoilDamageAttr, ConfusionOnStatusEffectAbAttr, FieldMoveTypePowerBoostAbAttr, FieldPreventExplosiveMovesAbAttr, ForceSwitchOutImmunityAbAttr, HealFromBerryUseAbAttr, IgnoreContactAbAttr, IgnoreMoveEffectsAbAttr, IgnoreProtectOnContactAbAttr, InfiltratorAbAttr, MaxMultiHitAbAttr, MoveAbilityBypassAbAttr, MoveEffectChanceMultiplierAbAttr, MoveTypeChangeAbAttr, ReverseDrainAbAttr, UncopiableAbilityAbAttr, UnsuppressableAbilityAbAttr, UnswappableAbilityAbAttr, UserFieldMoveTypePowerBoostAbAttr, VariableMovePowerAbAttr, WonderSkinAbAttr } from "./ability";
 import { AttackTypeBoosterModifier, BerryModifier, PokemonHeldItemModifier, PokemonMoveAccuracyBoosterModifier, PokemonMultiHitModifier, PreserveBerryModifier } from "../modifier/modifier";
 import { BattlerIndex, BattleType } from "../battle";
 import { TerrainType } from "./terrain";
@@ -346,7 +346,11 @@ export default class Move implements Localizable {
       return false;
     }
 
-    return !user.hasAbility(Abilities.INFILTRATOR)
+    const bypassed = new Utils.BooleanHolder(false);
+    // TODO: Allow this to be simulated
+    applyAbAttrs(InfiltratorAbAttr, user, null, false, bypassed);
+
+    return !bypassed.value
         && !this.hasFlag(MoveFlags.SOUND_BASED)
         && !this.hasFlag(MoveFlags.IGNORE_SUBSTITUTE);
   }
@@ -2046,15 +2050,15 @@ export class WaterShurikenMultiHitTypeAttr extends ChangeMultiHitTypeAttr {
 
 export class StatusEffectAttr extends MoveEffectAttr {
   public effect: StatusEffect;
-  public cureTurn: integer | null;
-  public overrideStatus: boolean;
+  public turnsRemaining?: number;
+  public overrideStatus: boolean = false;
 
-  constructor(effect: StatusEffect, selfTarget?: boolean, cureTurn?: integer, overrideStatus?: boolean) {
+  constructor(effect: StatusEffect, selfTarget?: boolean, turnsRemaining?: number, overrideStatus: boolean = false) {
     super(selfTarget, MoveEffectTrigger.HIT);
 
     this.effect = effect;
-    this.cureTurn = cureTurn!; // TODO: is this bang correct?
-    this.overrideStatus = !!overrideStatus;
+    this.turnsRemaining = turnsRemaining;
+    this.overrideStatus = overrideStatus;
   }
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
@@ -2074,14 +2078,14 @@ export class StatusEffectAttr extends MoveEffectAttr {
         }
       }
 
-      if (user !== target && target.scene.arena.getTagOnSide(ArenaTagType.SAFEGUARD, target.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY)) {
+      if (user !== target && target.isSafeguarded(user)) {
         if (move.category === MoveCategory.STATUS) {
           user.scene.queueMessage(i18next.t("moveTriggers:safeguard", { targetName: getPokemonNameWithAffix(target) }));
         }
         return false;
       }
       if ((!pokemon.status || (pokemon.status.effect === this.effect && moveChance < 0))
-        && pokemon.trySetStatus(this.effect, true, user, this.cureTurn)) {
+        && pokemon.trySetStatus(this.effect, true, user, this.turnsRemaining)) {
         applyPostAttackAbAttrs(ConfusionOnStatusEffectAbAttr, user, target, move, null, false, this.effect);
         return true;
       }
@@ -2098,8 +2102,8 @@ export class StatusEffectAttr extends MoveEffectAttr {
 export class MultiStatusEffectAttr extends StatusEffectAttr {
   public effects: StatusEffect[];
 
-  constructor(effects: StatusEffect[], selfTarget?: boolean, cureTurn?: integer, overrideStatus?: boolean) {
-    super(effects[0], selfTarget, cureTurn, overrideStatus);
+  constructor(effects: StatusEffect[], selfTarget?: boolean, turnsRemaining?: number, overrideStatus?: boolean) {
+    super(effects[0], selfTarget, turnsRemaining, overrideStatus);
     this.effects = effects;
   }
 
@@ -5161,7 +5165,7 @@ export class ConfuseAttr extends AddBattlerTagAttr {
   }
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    if (!this.selfTarget && target.scene.arena.getTagOnSide(ArenaTagType.SAFEGUARD, target.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY)) {
+    if (!this.selfTarget && target.isSafeguarded(user)) {
       if (move.category === MoveCategory.STATUS) {
         user.scene.queueMessage(i18next.t("moveTriggers:safeguard", { targetName: getPokemonNameWithAffix(target) }));
       }
@@ -7598,6 +7602,7 @@ export function initMoves() {
       .ignoresVirtual(),
     new StatusMove(Moves.TRANSFORM, Type.NORMAL, -1, 10, -1, 0, 1)
       .attr(TransformAttr)
+      .condition((user, target, move) => !target.getTag(BattlerTagType.SUBSTITUTE))
       .ignoresProtect(),
     new AttackMove(Moves.BUBBLE, Type.WATER, MoveCategory.SPECIAL, 40, 100, 30, 10, 0, 1)
       .attr(StatStageChangeAttr, [ Stat.SPD ], -1)
@@ -8028,7 +8033,7 @@ export function initMoves() {
       .attr(RemoveScreensAttr),
     new StatusMove(Moves.YAWN, Type.NORMAL, -1, 10, -1, 0, 3)
       .attr(AddBattlerTagAttr, BattlerTagType.DROWSY, false, true)
-      .condition((user, target, move) => !target.status && !target.scene.arena.getTagOnSide(ArenaTagType.SAFEGUARD, target.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY)),
+      .condition((user, target, move) => !target.status && !target.isSafeguarded(user)),
     new AttackMove(Moves.KNOCK_OFF, Type.DARK, MoveCategory.PHYSICAL, 65, 100, 20, -1, 0, 3)
       .attr(MovePowerMultiplierAttr, (user, target, move) => target.getHeldItems().filter(i => i.isTransferable).length > 0 ? 1.5 : 1)
       .attr(RemoveHeldItemAttr, false),
