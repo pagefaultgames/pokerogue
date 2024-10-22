@@ -1580,13 +1580,13 @@ export const modifierTypes = {
     if (pregenArgs) {
       return new PokemonBaseStatTotalModifierType(pregenArgs[0] as number);
     }
-    return new PokemonBaseStatTotalModifierType(randSeedInt(20));
+    return new PokemonBaseStatTotalModifierType(randSeedInt(20, 1));
   }),
   MYSTERY_ENCOUNTER_OLD_GATEAU: () => new ModifierTypeGenerator((party: Pokemon[], pregenArgs?: any[]) => {
     if (pregenArgs) {
       return new PokemonBaseStatFlatModifierType(pregenArgs[0] as number, pregenArgs[1] as Stat[]);
     }
-    return new PokemonBaseStatFlatModifierType(randSeedInt(20), [ Stat.HP, Stat.ATK, Stat.DEF ]);
+    return new PokemonBaseStatFlatModifierType(randSeedInt(20, 1), [ Stat.HP, Stat.ATK, Stat.DEF ]);
   }),
   MYSTERY_ENCOUNTER_BLACK_SLUDGE: () => new ModifierTypeGenerator((party: Pokemon[], pregenArgs?: any[]) => {
     if (pregenArgs) {

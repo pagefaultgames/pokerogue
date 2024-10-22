@@ -7,10 +7,10 @@ import { MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/myst
 import { EnemyPartyConfig, EnemyPokemonConfig, generateModifierType, initBattleWithEnemyConfig, leaveEncounterWithoutBattle, setEncounterRewards, } from "../utils/encounter-phase-utils";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
-import { PlayerPokemon, PokemonMove } from "#app/field/pokemon";
+import Pokemon, { PlayerPokemon, PokemonMove } from "#app/field/pokemon";
 import { IntegerHolder, isNullOrUndefined, randSeedInt, randSeedShuffle } from "#app/utils";
 import PokemonSpecies, { allSpecies, getPokemonSpecies } from "#app/data/pokemon-species";
-import { HiddenAbilityRateBoosterModifier, PokemonBaseStatFlatModifier, PokemonFormChangeItemModifier, PokemonHeldItemModifier } from "#app/modifier/modifier";
+import { HiddenAbilityRateBoosterModifier, PokemonFormChangeItemModifier, PokemonHeldItemModifier } from "#app/modifier/modifier";
 import { achvs } from "#app/system/achv";
 import { CustomPokemonData } from "#app/data/custom-pokemon-data";
 import { showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
@@ -87,6 +87,8 @@ const EXCLUDED_TRANSFORMATION_SPECIES = [
 
 const SUPER_LEGENDARY_BST_THRESHOLD = 600;
 const NON_LEGENDARY_BST_THRESHOLD = 570;
+
+const OLD_GATEAU_STATS_UP = 20;
 
 /** 0-100 */
 const PERCENT_LEVEL_LOSS_ON_REFUSE = 10;
@@ -236,20 +238,20 @@ export const WeirdDreamEncounter: MysteryEncounter =
           const dataSource = new PokemonData(newPokemon);
           dataSource.player = false;
 
-          // Copy all held items
-          const heldItems = previousPokemon.getHeldItems();
-          const newPokemonHeldItemConfigs: HeldModifierConfig[] = heldItems.map(previousMod => {
-            return {
-              modifier: previousMod.clone() as PokemonHeldItemModifier,
-              stackCount: previousMod.getStackCount(),
-              isTransferable: false
-            };
-          });
-
-          if (newPokemonHeldItemConfigs.filter(config => config.modifier instanceof PokemonBaseStatFlatModifier).length === 0) {
-            // Also add Old Gateau (even on transformed mons that shouldn't normally get it)
+          // Copy held items to new pokemon
+          const newPokemonHeldItemConfigs: HeldModifierConfig[] = [];
+          for (const item of transformation.heldItems) {
             newPokemonHeldItemConfigs.push({
-              modifier: generateModifierType(scene, modifierTypes.MYSTERY_ENCOUNTER_OLD_GATEAU) as PokemonHeldItemModifierType,
+              modifier: item.clone() as PokemonHeldItemModifier,
+              stackCount: item.getStackCount(),
+              isTransferable: false
+            });
+          }
+          // Any pokemon that is below 570 BST gets +20 permanent BST to 3 stats
+          if (shouldGetOldGateau(newPokemon)) {
+            const stats = getOldGateauBoostedStats(newPokemon);
+            newPokemonHeldItemConfigs.push({
+              modifier: generateModifierType(scene, modifierTypes.MYSTERY_ENCOUNTER_OLD_GATEAU, [ OLD_GATEAU_STATS_UP, stats ]) as PokemonHeldItemModifierType,
               stackCount: 1,
               isTransferable: false
             });
@@ -398,6 +400,17 @@ async function doNewTeamPostProcess(scene: BattleScene, transformations: Pokemon
       item.pokemonId = newPokemon.id;
       await scene.addModifier(item, false, false, false, true);
     }
+    // Any pokemon that is below 570 BST gets +20 permanent BST to 3 stats
+    if (shouldGetOldGateau(newPokemon)) {
+      const stats = getOldGateauBoostedStats(newPokemon);
+      const modType = modifierTypes.MYSTERY_ENCOUNTER_OLD_GATEAU()
+        .generateType(scene.getParty(), [ OLD_GATEAU_STATS_UP, stats ])
+        ?.withIdFromFunc(modifierTypes.MYSTERY_ENCOUNTER_OLD_GATEAU);
+      const modifier = modType?.newModifier(newPokemon);
+      if (modifier) {
+        await scene.addModifier(modifier, false, false, false, true);
+      }
+    }
 
     newPokemon.calculateStats();
     await newPokemon.updateInfo();
@@ -424,7 +437,7 @@ async function doNewTeamPostProcess(scene: BattleScene, transformations: Pokemon
  * @param previousPokemon
  * @param newPokemon
  * @param speciesRootForm
- * @param forBattle Default `false`. If true, will perform notifications and dex unlocks for the player.
+ * @param forBattle Default `false`. If false, will perform achievements and dex unlocks for the player.
  */
 async function postProcessTransformedPokemon(scene: BattleScene, previousPokemon: PlayerPokemon, newPokemon: PlayerPokemon, speciesRootForm: Species, forBattle: boolean = false): Promise<boolean> {
   let isNewStarter = false;
@@ -519,30 +532,35 @@ async function postProcessTransformedPokemon(scene: BattleScene, previousPokemon
   }
   newPokemon.customPokemonData.types = newTypes;
 
-  // Any pokemon that is below 570 BST gets +20 permanent BST to 3 stats:  lowest of HP/Spd, lowest of Atk/SpAtk, and lowest of Def/SpDef
-  if (newPokemon.getSpeciesForm().getBaseStatTotal() < NON_LEGENDARY_BST_THRESHOLD) {
-    const stats: Stat[] = [];
-    const baseStats = newPokemon.getSpeciesForm().baseStats.slice(0);
-    // HP or Speed
-    stats.push(baseStats[Stat.HP] < baseStats[Stat.SPD] ? Stat.HP : Stat.SPD);
-    // Attack or SpAtk
-    stats.push(baseStats[Stat.ATK] < baseStats[Stat.SPATK] ? Stat.ATK : Stat.SPATK);
-    // Def or SpDef
-    stats.push(baseStats[Stat.DEF] < baseStats[Stat.SPDEF] ? Stat.DEF : Stat.SPDEF);
-    const modType = modifierTypes.MYSTERY_ENCOUNTER_OLD_GATEAU()
-      .generateType(scene.getParty(), [ 20, stats ])
-      ?.withIdFromFunc(modifierTypes.MYSTERY_ENCOUNTER_OLD_GATEAU);
-    const modifier = modType?.newModifier(newPokemon);
-    if (modifier) {
-      await scene.addModifier(modifier, false, false, false, true);
-    }
-  }
-
   // Enable passive if previous had it
   newPokemon.passive = previousPokemon.passive;
 
   return isNewStarter;
 }
+
+/**
+ * @returns `true` if a given Pokemon has valid BST to be given an Old Gateau
+ */
+function shouldGetOldGateau(pokemon: Pokemon): boolean {
+  return pokemon.getSpeciesForm().getBaseStatTotal() < NON_LEGENDARY_BST_THRESHOLD;
+}
+
+/**
+ * Get the lowest of HP/Spd, lowest of Atk/SpAtk, and lowest of Def/SpDef
+ * @returns Array of 3 {@linkcode Stat}s to boost
+ */
+function getOldGateauBoostedStats(pokemon: Pokemon): Stat[] {
+  const stats: Stat[] = [];
+  const baseStats = pokemon.getSpeciesForm().baseStats.slice(0);
+  // HP or Speed
+  stats.push(baseStats[Stat.HP] < baseStats[Stat.SPD] ? Stat.HP : Stat.SPD);
+  // Attack or SpAtk
+  stats.push(baseStats[Stat.ATK] < baseStats[Stat.SPATK] ? Stat.ATK : Stat.SPATK);
+  // Def or SpDef
+  stats.push(baseStats[Stat.DEF] < baseStats[Stat.SPDEF] ? Stat.DEF : Stat.SPDEF);
+  return stats;
+}
+
 
 function getTransformedSpecies(originalBst: number, bstSearchRange: [number, number], hasPokemonBstHigherThan600: boolean, hasPokemonBstBetween570And600: boolean, alreadyUsedSpecies: PokemonSpecies[]): PokemonSpecies {
   let newSpecies: PokemonSpecies | undefined;
