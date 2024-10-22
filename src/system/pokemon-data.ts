@@ -116,6 +116,8 @@ export default class PokemonData {
 
     this.customPokemonData = new CustomPokemonData(source.customPokemonData);
 
+    // Deprecated, but needed for session data migration
+    this.natureOverride = source.natureOverride;
     this.mysteryEncounterPokemonData = new CustomPokemonData(source.mysteryEncounterPokemonData);
     this.fusionMysteryEncounterPokemonData = new CustomPokemonData(source.fusionMysteryEncounterPokemonData);
 

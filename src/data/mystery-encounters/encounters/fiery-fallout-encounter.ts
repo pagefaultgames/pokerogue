@@ -71,7 +71,7 @@ export const FieryFalloutEncounter: MysteryEncounter =
             gender: Gender.MALE,
             tags: [ BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON ],
             mysteryEncounterBattleEffects: (pokemon: Pokemon) => {
-              pokemon.scene.unshiftPhase(new StatStageChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [ Stat.SPDEF, Stat.SPD ], 2));
+              pokemon.scene.unshiftPhase(new StatStageChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [ Stat.SPDEF, Stat.SPD ], 1));
             }
           },
           {
@@ -80,7 +80,7 @@ export const FieryFalloutEncounter: MysteryEncounter =
             gender: Gender.FEMALE,
             tags: [ BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON ],
             mysteryEncounterBattleEffects: (pokemon: Pokemon) => {
-              pokemon.scene.unshiftPhase(new StatStageChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [ Stat.SPDEF, Stat.SPD ], 2));
+              pokemon.scene.unshiftPhase(new StatStageChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [ Stat.SPDEF, Stat.SPD ], 1));
             }
           }
         ],
@@ -259,9 +259,14 @@ function giveLeadPokemonAttackTypeBoostItem(scene: BattleScene) {
   // Give first party pokemon attack type boost item for free at end of battle
   const leadPokemon = scene.getParty()?.[0];
   if (leadPokemon) {
-    const encounter = scene.currentBattle.mysteryEncounter!;
-    const boosterModifierType = generateModifierType(scene, modifierTypes.ATTACK_TYPE_BOOSTER) as AttackTypeBoosterModifierType;
+    // Generate type booster held item, default to Charcoal if item fails to generate
+    let boosterModifierType = generateModifierType(scene, modifierTypes.ATTACK_TYPE_BOOSTER) as AttackTypeBoosterModifierType;
+    if (!boosterModifierType) {
+      boosterModifierType = generateModifierType(scene, modifierTypes.ATTACK_TYPE_BOOSTER, [ Type.FIRE ]) as AttackTypeBoosterModifierType;
+    }
     applyModifierTypeToPlayerPokemon(scene, leadPokemon, boosterModifierType);
+
+    const encounter = scene.currentBattle.mysteryEncounter!;
     encounter.setDialogueToken("itemName", boosterModifierType.name);
     encounter.setDialogueToken("leadPokemon", leadPokemon.getNameToRender());
     queueEncounterMessage(scene, `${namespace}:found_item`);

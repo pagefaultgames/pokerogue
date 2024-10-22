@@ -199,7 +199,7 @@ export const DelibirdyEncounter: MysteryEncounter =
           const encounter = scene.currentBattle.mysteryEncounter!;
           const modifier: BerryModifier | HealingBoosterModifier = encounter.misc.chosenModifier;
 
-          // Give the player a Candy Jar if they gave a Berry, and a Healing Charm for Reviver Seed
+          // Give the player a Candy Jar if they gave a Berry, and a Berry Pouch for Reviver Seed
           if (modifier instanceof BerryModifier) {
             // Check if the player has max stacks of that Candy Jar already
             const existing = scene.findModifier(m => m instanceof LevelIncrementBoosterModifier) as LevelIncrementBoosterModifier;
@@ -214,7 +214,7 @@ export const DelibirdyEncounter: MysteryEncounter =
               scene.unshiftPhase(new ModifierRewardPhase(scene, modifierTypes.CANDY_JAR));
             }
           } else {
-            // Check if the player has max stacks of that Healing Charm already
+            // Check if the player has max stacks of that Berry Pouch already
             const existing = scene.findModifier(m => m instanceof PreserveBerryModifier) as PreserveBerryModifier;
 
             if (existing && existing.getStackCount() >= existing.getMaxStackCount(scene)) {

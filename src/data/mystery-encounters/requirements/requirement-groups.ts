@@ -130,5 +130,8 @@ export const FIRE_RESISTANT_ABILITIES = [
   Abilities.THERMAL_EXCHANGE,
   Abilities.THICK_FAT,
   Abilities.WATER_BUBBLE,
-  Abilities.MAGMA_ARMOR
+  Abilities.MAGMA_ARMOR,
+  Abilities.WATER_VEIL,
+  Abilities.STEAM_ENGINE,
+  Abilities.PRIMORDIAL_SEA
 ];

@@ -276,7 +276,7 @@ export class SelectModifierPhase extends BattlePhase {
       multiplier = this.customModifierSettings.rerollMultiplier;
     }
 
-    const baseMultiplier = Math.min(Math.ceil(this.scene.currentBattle.waveIndex / 10) * baseValue * (this.rerollCount ** 2) * multiplier, Number.MAX_SAFE_INTEGER);
+    const baseMultiplier = Math.min(Math.ceil(this.scene.currentBattle.waveIndex / 10) * baseValue * (2 ** this.rerollCount) * multiplier, Number.MAX_SAFE_INTEGER);
 
     // Apply Black Sludge to reroll cost
     const modifiedRerollCost = new NumberHolder(baseMultiplier);

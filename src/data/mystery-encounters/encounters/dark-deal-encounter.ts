@@ -164,9 +164,9 @@ export const DarkDealEncounter: MysteryEncounter =
           // Start encounter with random legendary (7-10 starter strength) that has level additive
           // If this is a mono-type challenge, always ensure the required type is filtered for
           let bossTypes: Type[] = encounter.misc.removedTypes;
-          const singleTypeChallenges = scene.gameMode.challenges.filter(c => c.id === Challenges.SINGLE_TYPE);
+          const singleTypeChallenges = scene.gameMode.challenges.filter(c => c.value && c.id === Challenges.SINGLE_TYPE);
           if (scene.gameMode.isChallenge && singleTypeChallenges.length > 0) {
-            bossTypes = singleTypeChallenges.map(c => c.value as Type);
+            bossTypes = singleTypeChallenges.map(c => (c.value - 1) as Type);
           }
 
           const bossModifiers: PokemonHeldItemModifier[] = encounter.misc.modifiers;
