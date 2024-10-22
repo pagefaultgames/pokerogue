@@ -5858,6 +5858,9 @@ export class RemoveTypeAttr extends MoveEffectAttr {
 
     const userTypes = user.getTypes(true);
     const modifiedTypes = userTypes.filter(type => type !== this.removedType);
+    if (modifiedTypes.length === 0) {
+      modifiedTypes.push(Type.UNKNOWN);
+    }
     user.summonData.types = modifiedTypes;
     user.updateInfo();
 
@@ -5880,7 +5883,11 @@ export class CopyTypeAttr extends MoveEffectAttr {
       return false;
     }
 
-    user.summonData.types = target.getTypes(true);
+    const targetTypes = target.getTypes(true);
+    if (targetTypes.includes(Type.UNKNOWN) && targetTypes.indexOf(Type.UNKNOWN) > -1) {
+      targetTypes[targetTypes.indexOf(Type.UNKNOWN)] = Type.NORMAL;
+    }
+    user.summonData.types = targetTypes;
     user.updateInfo();
 
     user.scene.queueMessage(i18next.t("moveTriggers:copyType", { pokemonName: getPokemonNameWithAffix(user), targetPokemonName: getPokemonNameWithAffix(target) }));

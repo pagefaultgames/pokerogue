@@ -1244,11 +1244,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       }
     }
 
-    // the type added to Pokemon from moves like Forest's Curse or Trick Or Treat
-    if (this.summonData && this.summonData.addedType && !types.includes(this.summonData.addedType)) {
-      types.push(this.summonData.addedType);
-    }
-
     // this.scene potentially can be undefined for a fainted pokemon in doubles
     // use optional chaining to avoid runtime errors
 
@@ -1261,6 +1256,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       if (index !== -1) {
         types.splice(index, 1);
       }
+    }
+
+    // the type added to Pokemon from moves like Forest's Curse or Trick Or Treat
+    if (this.summonData && this.summonData.addedType && !types.includes(this.summonData.addedType)) {
+      types.push(this.summonData.addedType);
     }
 
     // If both types are the same (can happen in weird custom typing scenarios), reduce to single type
