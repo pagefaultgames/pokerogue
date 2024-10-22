@@ -1810,6 +1810,8 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ 1, Moves.LOW_SWEEP ],
     [ 1, Moves.JUMP_KICK ],
     [ 1, Moves.ROLLING_KICK ],
+    [ 1, Moves.MACH_PUNCH ], // Previous Stage Move, Custom
+    [ 1, Moves.RAPID_SPIN ], // Previous Stage Move, Custom
     [ 4, Moves.DOUBLE_KICK ],
     [ 8, Moves.LOW_KICK ],
     [ 12, Moves.ENDURE ],
@@ -1832,6 +1834,8 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ 1, Moves.FEINT ],
     [ 1, Moves.PURSUIT ],
     [ 1, Moves.COMET_PUNCH ],
+    [ 1, Moves.LOW_SWEEP ], // Previous Stage Move, Custom
+    [ 1, Moves.RAPID_SPIN ], // Previous Stage Move, Custom
     [ 4, Moves.MACH_PUNCH ],
     [ 8, Moves.VACUUM_WAVE ],
     [ 12, Moves.DETECT ],
@@ -4107,6 +4111,8 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ 1, Moves.FEINT ],
     [ 1, Moves.PURSUIT ],
     [ 1, Moves.ROLLING_KICK ],
+    [ 1, Moves.LOW_SWEEP ], // Previous Stage Move, Custom
+    [ 1, Moves.MACH_PUNCH ], // Previous Stage Move, Custom
     [ 4, Moves.QUICK_ATTACK ],
     [ 8, Moves.GYRO_BALL ],
     [ 12, Moves.DETECT ],
