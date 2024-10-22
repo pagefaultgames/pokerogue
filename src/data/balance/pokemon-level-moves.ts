@@ -15600,7 +15600,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
   [Species.WYRDEER]: [
     [ EVOLVE_MOVE, Moves.PSYSHIELD_BASH ],
     [ 1, Moves.TACKLE ],
-    [ 1, Moves.ME_FIRST ], //Stantler
+    [ 1, Moves.ME_FIRST ], // Previous Stage Move
     [ 3, Moves.LEER ],
     [ 7, Moves.ASTONISH ],
     [ 10, Moves.HYPNOSIS ],
@@ -17583,6 +17583,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
   [Species.DIPPLIN]: [
     [ EVOLVE_MOVE, Moves.DOUBLE_HIT ],
     [ RELEARN_MOVE, Moves.DRAGON_CHEER ], // Custom
+    [ 1, Moves.LEAFAGE ],
     [ 1, Moves.WITHDRAW ],
     [ 1, Moves.SWEET_SCENT ],
     [ 1, Moves.RECYCLE ],
