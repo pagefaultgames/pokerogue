@@ -56,18 +56,18 @@ export default abstract class MessageUiHandler extends AwaitableUiHandler {
     let actionMatch: RegExpExecArray | null;
     while ((actionMatch = actionPattern.exec(text))) {
       switch (actionMatch[1]) {
-      case "c":
-        charVarMap.set(actionMatch.index, actionMatch[2]);
-        break;
-      case "d":
-        delayMap.set(actionMatch.index, parseInt(actionMatch[2]));
-        break;
-      case "s":
-        soundMap.set(actionMatch.index, actionMatch[2]);
-        break;
-      case "f":
-        fadeMap.set(actionMatch.index, parseInt(actionMatch[2]));
-        break;
+        case "c":
+          charVarMap.set(actionMatch.index, actionMatch[2]);
+          break;
+        case "d":
+          delayMap.set(actionMatch.index, parseInt(actionMatch[2]));
+          break;
+        case "s":
+          soundMap.set(actionMatch.index, actionMatch[2]);
+          break;
+        case "f":
+          fadeMap.set(actionMatch.index, parseInt(actionMatch[2]));
+          break;
       }
       text = text.slice(0, actionMatch.index) + text.slice(actionMatch.index + actionMatch[2].length + 4);
     }
