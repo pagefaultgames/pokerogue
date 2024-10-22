@@ -3213,15 +3213,15 @@ function calculateTurnEndDamage(pokemon: Pokemon): number {
 
   if (pokemon.status?.isPostTurn()) {
     switch (pokemon.status.effect) {
-    case StatusEffect.POISON:
-      damageTaken += Math.max(maxHp >> 3, 1); // Poison damage
-      break;
-    case StatusEffect.TOXIC:
-      damageTaken += Math.max(Math.floor((maxHp / 16) * pokemon.status.turnCount), 1); // Toxic damage
-      break;
-    case StatusEffect.BURN:
-      damageTaken += Math.max(maxHp >> 4, 1); // Burn damage
-      break;
+      case StatusEffect.POISON:
+        damageTaken += Math.max(maxHp >> 3, 1); // Poison damage
+        break;
+      case StatusEffect.TOXIC:
+        damageTaken += Math.max(Math.floor((maxHp / 16) * pokemon.status.turnCount), 1); // Toxic damage
+        break;
+      case StatusEffect.BURN:
+        damageTaken += Math.max(maxHp >> 4, 1); // Burn damage
+        break;
     }
   }
 

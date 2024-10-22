@@ -67,7 +67,7 @@ describe("Abilities - Wimp Out", () => {
     // arrange
     game.override
       .enemyMoveset(Moves.SLUDGE_BOMB)
-      .startingLevel(90);
+      .startingLevel(95);
     await game.startBattle([
       Species.WIMPOD,
       Species.TYRUNT
