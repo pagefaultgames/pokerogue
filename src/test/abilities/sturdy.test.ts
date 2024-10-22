@@ -1,6 +1,6 @@
 import { EnemyPokemon } from "#app/field/pokemon";
-import { DamagePhase } from "#app/phases/damage-phase";
-import { MoveEndPhase } from "#app/phases/move-end-phase";
+import { DamagePhase } from "#phases/damage-phase";
+import { MoveEndPhase } from "#phases/move-end-phase";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";

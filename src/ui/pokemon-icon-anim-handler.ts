@@ -1,5 +1,5 @@
-import BattleScene from "../battle-scene";
-import * as Utils from "../utils";
+import BattleScene from "#app/battle-scene";
+import { fixedInt } from "#app/utils";
 
 export enum PokemonIconAnimMode {
   NONE,
@@ -27,7 +27,7 @@ export default class PokemonIconAnimHandler {
       }
     };
     scene.tweens.addCounter({
-      duration: Utils.fixedInt(200),
+      duration: fixedInt(200),
       from: 0,
       to: 1,
       yoyo: true,

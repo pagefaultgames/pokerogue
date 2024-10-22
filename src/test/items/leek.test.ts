@@ -1,5 +1,5 @@
-import { TurnEndPhase } from "#app/phases/turn-end-phase";
-import * as Utils from "#app/utils";
+import { TurnEndPhase } from "#phases/turn-end-phase";
+import { randInt } from "#app/utils";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/utils/gameManager";
@@ -85,7 +85,7 @@ describe("Items - Leek", () => {
     const species = [ Species.FARFETCHD, Species.GALAR_FARFETCHD, Species.SIRFETCHD ];
 
     await game.startBattle([
-      species[Utils.randInt(species.length)],
+      species[randInt(species.length)],
       Species.PIKACHU,
     ]);
 
@@ -117,7 +117,7 @@ describe("Items - Leek", () => {
 
     await game.startBattle([
       Species.PIKACHU,
-      species[Utils.randInt(species.length)]
+      species[randInt(species.length)]
     ]);
 
     const [ partyMember, ally ] = game.scene.getParty();

@@ -1,4 +1,4 @@
-import { default as BattleScene } from "../battle-scene";
+import { default as BattleScene } from "#app/battle-scene";
 import UiHandler from "./ui-handler";
 import BattleMessageUiHandler from "./battle-message-ui-handler";
 import CommandUiHandler from "./command-ui-handler";
@@ -27,7 +27,7 @@ import { addWindow } from "./ui-theme";
 import LoginFormUiHandler from "./login-form-ui-handler";
 import RegistrationFormUiHandler from "./registration-form-ui-handler";
 import LoadingModalUiHandler from "./loading-modal-ui-handler";
-import * as Utils from "../utils";
+import { executeIf } from "#app/utils";
 import GameStatsUiHandler from "./game-stats-ui-handler";
 import AwaitableUiHandler from "./awaitable-ui-handler";
 import SaveSlotSelectUiHandler from "./save-slot-select-ui-handler";
@@ -573,7 +573,7 @@ export default class UI extends Phaser.GameObjects.Container {
       if (!this?.modeChain?.length) {
         return resolve();
       }
-      this.revertMode().then(success => Utils.executeIf(success, this.revertModes).then(() => resolve()));
+      this.revertMode().then(success => executeIf(success, this.revertModes).then(() => resolve()));
     });
   }
 

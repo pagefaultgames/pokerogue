@@ -2,7 +2,7 @@ import BattleScene from "#app/battle-scene";
 import { getDailyRunStarters } from "#app/data/daily-run";
 import { Gender } from "#app/data/gender";
 import { getPokemonSpecies, getPokemonSpeciesForm } from "#app/data/pokemon-species";
-import { Moves } from "#app/enums/moves";
+import { Moves } from "#enums/moves";
 import { PlayerPokemon } from "#app/field/pokemon";
 import { GameModes, getGameMode } from "#app/game-mode";
 import { Starter } from "#app/ui/starter-select-ui-handler";

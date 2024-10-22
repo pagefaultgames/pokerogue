@@ -1,10 +1,10 @@
-import { BattleStyle } from "#app/enums/battle-style";
-import { Button } from "#app/enums/buttons";
+import { BattleStyle } from "#enums/battle-style";
+import { Button } from "#enums/buttons";
 import overrides from "#app/overrides";
-import { CommandPhase } from "#app/phases/command-phase";
-import { EncounterPhase } from "#app/phases/encounter-phase";
-import { TitlePhase } from "#app/phases/title-phase";
-import { TurnInitPhase } from "#app/phases/turn-init-phase";
+import { CommandPhase } from "#phases/command-phase";
+import { EncounterPhase } from "#phases/encounter-phase";
+import { TitlePhase } from "#phases/title-phase";
+import { TurnInitPhase } from "#phases/turn-init-phase";
 import SaveSlotSelectUiHandler from "#app/ui/save-slot-select-ui-handler";
 import { Mode } from "#app/ui/ui";
 import { GameManagerHelper } from "./gameManagerHelper";

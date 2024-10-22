@@ -1,7 +1,7 @@
 import { Stat } from "#enums/stat";
 import { StatusEffect } from "#app/data/status-effect";
 import { Type } from "#app/data/type";
-import { BattlerTagType } from "#app/enums/battler-tag-type";
+import { BattlerTagType } from "#enums/battler-tag-type";
 import { toDmgValue } from "#app/utils";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";

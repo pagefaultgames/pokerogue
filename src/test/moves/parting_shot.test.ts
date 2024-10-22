@@ -5,10 +5,10 @@ import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, test } from "vitest";
 import GameManager from "../utils/gameManager";
 import { Stat } from "#enums/stat";
-import { BerryPhase } from "#app/phases/berry-phase";
-import { FaintPhase } from "#app/phases/faint-phase";
-import { MessagePhase } from "#app/phases/message-phase";
-import { TurnInitPhase } from "#app/phases/turn-init-phase";
+import { BerryPhase } from "#phases/berry-phase";
+import { FaintPhase } from "#phases/faint-phase";
+import { MessagePhase } from "#phases/message-phase";
+import { TurnInitPhase } from "#phases/turn-init-phase";
 
 
 describe("Moves - Parting Shot", () => {

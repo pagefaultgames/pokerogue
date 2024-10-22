@@ -9,10 +9,10 @@ import { TimeOfDay } from "#enums/time-of-day";
 import { VariantTier } from "#enums/variant-tier";
 import { WeatherType } from "#enums/weather-type";
 import { type PokeballCounts } from "./battle-scene";
-import { Gender } from "./data/gender";
-import { Variant } from "./data/variant";
-import { type ModifierOverride } from "./modifier/modifier-type";
-import { Unlockables } from "./system/unlockables";
+import { Gender } from "#app/data/gender";
+import { Variant } from "#app/data/variant";
+import { type ModifierOverride } from "#app/modifier/modifier-type";
+import { Unlockables } from "#app/system/unlockables";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 

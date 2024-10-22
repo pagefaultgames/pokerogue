@@ -1,10 +1,10 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import GameManager from "./utils/gameManager";
-import { Species } from "#app/enums/species";
+import { Species } from "#enums/species";
 import { getPokemonSpecies } from "#app/data/pokemon-species";
-import { Abilities } from "#app/enums/abilities";
-import { Moves } from "#app/enums/moves";
-import { EFFECTIVE_STATS } from "#app/enums/stat";
+import { Abilities } from "#enums/abilities";
+import { Moves } from "#enums/moves";
+import { EFFECTIVE_STATS } from "#enums/stat";
 import { EnemyPokemon } from "#app/field/pokemon";
 import { toDmgValue } from "#app/utils";
 

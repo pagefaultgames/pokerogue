@@ -4,9 +4,9 @@ import { BerryUsedEvent } from "#app/events/battle-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { BerryModifier } from "#app/modifier/modifier";
 import i18next from "i18next";
-import * as Utils from "#app/utils";
-import { FieldPhase } from "./field-phase";
-import { CommonAnimPhase } from "./common-anim-phase";
+import { BooleanHolder } from "#app/utils";
+import { FieldPhase } from "#phases/field-phase";
+import { CommonAnimPhase } from "#phases/common-anim-phase";
 
 /** The phase after attacks where the pokemon eat berries */
 export class BerryPhase extends FieldPhase {
@@ -19,7 +19,7 @@ export class BerryPhase extends FieldPhase {
       }, pokemon.isPlayer());
 
       if (hasUsableBerry) {
-        const cancelled = new Utils.BooleanHolder(false);
+        const cancelled = new BooleanHolder(false);
         pokemon.getOpponents().map((opp) => applyAbAttrs(PreventBerryUseAbAttr, opp, cancelled));
 
         if (cancelled.value) {
@@ -42,7 +42,7 @@ export class BerryPhase extends FieldPhase {
 
           this.scene.updateModifiers(pokemon.isPlayer());
 
-          applyAbAttrs(HealFromBerryUseAbAttr, pokemon, new Utils.BooleanHolder(false));
+          applyAbAttrs(HealFromBerryUseAbAttr, pokemon, new BooleanHolder(false));
         }
       }
     });

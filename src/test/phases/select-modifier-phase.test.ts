@@ -4,14 +4,14 @@ import GameManager from "#app/test/utils/gameManager";
 import { initSceneWithoutEncounterPhase } from "#app/test/utils/gameManagerUtils";
 import ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
 import { ModifierTier } from "#app/modifier/modifier-tier";
-import * as Utils from "#app/utils";
+import { shiftCharCodes } from "#app/utils";
 import { CustomModifierSettings, ModifierTypeOption, modifierTypes } from "#app/modifier/modifier-type";
 import BattleScene from "#app/battle-scene";
 import { Species } from "#enums/species";
 import { Mode } from "#app/ui/ui";
 import { PlayerPokemon } from "#app/field/pokemon";
 import { getPokemonSpecies } from "#app/data/pokemon-species";
-import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
+import { SelectModifierPhase } from "#phases/select-modifier-phase";
 
 describe("SelectModifierPhase", () => {
   let phaserGame: Phaser.Game;
@@ -93,7 +93,7 @@ describe("SelectModifierPhase", () => {
   it("should generate random modifiers of same tier for reroll with reroll lock", async () => {
     // Just use fully random seed for this test
     vi.spyOn(scene, "resetSeed").mockImplementation(() => {
-      scene.waveSeed = Utils.shiftCharCodes(scene.seed, 5);
+      scene.waveSeed = shiftCharCodes(scene.seed, 5);
       Phaser.Math.RND.sow([ scene.waveSeed ]);
       console.log("Wave Seed:", scene.waveSeed, 5);
       scene.rngCounter = 0;

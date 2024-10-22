@@ -1,9 +1,9 @@
 import { StatusEffect } from "#app/data/status-effect";
 import { Weather, WeatherType } from "#app/data/weather";
-import { Abilities } from "#app/enums/abilities";
-import { Biome } from "#app/enums/biome";
-import { Moves } from "#app/enums/moves";
-import { Species } from "#app/enums/species";
+import { Abilities } from "#enums/abilities";
+import { Biome } from "#enums/biome";
+import { Moves } from "#enums/moves";
+import { Species } from "#enums/species";
 import * as GameMode from "#app/game-mode";
 import { GameModes, getGameMode } from "#app/game-mode";
 import { ModifierOverride } from "#app/modifier/modifier-type";

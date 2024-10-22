@@ -1,7 +1,7 @@
 import BattleScene from "#app/battle-scene";
 import { BattlerIndex } from "#app/battle";
 import { CommonAnim, CommonBattleAnim } from "#app/data/battle-anims";
-import { PokemonPhase } from "./pokemon-phase";
+import { PokemonPhase } from "#phases/pokemon-phase";
 
 export class CommonAnimPhase extends PokemonPhase {
   private anim: CommonAnim | null;

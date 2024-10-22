@@ -1,19 +1,24 @@
 import type BattleScene from "#app/battle-scene";
-import { FusionSpeciesFormEvolution, pokemonEvolutions, pokemonPrevolutions } from "#app/data/balance/pokemon-evolutions";
+import { FusionSpeciesFormEvolution, pokemonEvolutions, pokemonPrevolutions } from "#balance/pokemon-evolutions";
 import { getBerryEffectFunc, getBerryPredicate } from "#app/data/berry";
 import { getLevelTotalExp } from "#app/data/exp";
 import { allMoves } from "#app/data/move";
 import { MAX_PER_TYPE_POKEBALLS } from "#app/data/pokeball";
-import { type FormChangeItem, SpeciesFormChangeItemTrigger, SpeciesFormChangeLapseTeraTrigger, SpeciesFormChangeTeraTrigger } from "#app/data/pokemon-forms";
+import {
+  type FormChangeItem,
+  SpeciesFormChangeItemTrigger,
+  SpeciesFormChangeLapseTeraTrigger,
+  SpeciesFormChangeTeraTrigger,
+} from "#app/data/pokemon-forms";
 import { getStatusEffectHealText } from "#app/data/status-effect";
 import { Type } from "#app/data/type";
 import Pokemon, { type PlayerPokemon } from "#app/field/pokemon";
 import { getPokemonNameWithAffix } from "#app/messages";
 import Overrides from "#app/overrides";
-import { EvolutionPhase } from "#app/phases/evolution-phase";
-import { LearnMovePhase, LearnMoveType } from "#app/phases/learn-move-phase";
-import { LevelUpPhase } from "#app/phases/level-up-phase";
-import { PokemonHealPhase } from "#app/phases/pokemon-heal-phase";
+import { EvolutionPhase } from "#phases/evolution-phase";
+import { LearnMovePhase, LearnMoveType } from "#phases/learn-move-phase";
+import { LevelUpPhase } from "#phases/level-up-phase";
+import { PokemonHealPhase } from "#phases/pokemon-heal-phase";
 import { achvs } from "#app/system/achv";
 import type { VoucherType } from "#app/system/voucher";
 import { Command } from "#app/ui/command-ui-handler";
@@ -28,9 +33,27 @@ import { Species } from "#enums/species";
 import { type PermanentStat, type TempBattleStat, BATTLE_STATS, Stat, TEMP_BATTLE_STATS } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
 import i18next from "i18next";
-import { type DoubleBattleChanceBoosterModifierType, type EvolutionItemModifierType, type FormChangeItemModifierType, type ModifierOverride, type ModifierType, type PokemonBaseStatTotalModifierType, type PokemonExpBoosterModifierType, type PokemonFriendshipBoosterModifierType, type PokemonMoveAccuracyBoosterModifierType, type PokemonMultiHitModifierType, type TerastallizeModifierType, type TmModifierType, getModifierType, ModifierPoolType, ModifierTypeGenerator, modifierTypes, PokemonHeldItemModifierType } from "./modifier-type";
+import {
+  type DoubleBattleChanceBoosterModifierType,
+  type EvolutionItemModifierType,
+  type FormChangeItemModifierType,
+  type ModifierOverride,
+  type ModifierType,
+  type PokemonBaseStatTotalModifierType,
+  type PokemonExpBoosterModifierType,
+  type PokemonFriendshipBoosterModifierType,
+  type PokemonMoveAccuracyBoosterModifierType,
+  type PokemonMultiHitModifierType,
+  type TerastallizeModifierType,
+  type TmModifierType,
+  getModifierType,
+  ModifierPoolType,
+  ModifierTypeGenerator,
+  modifierTypes,
+  PokemonHeldItemModifierType,
+} from "#app/modifier/modifier-type";
 import { Color, ShadowColor } from "#enums/color";
-import { FRIENDSHIP_GAIN_FROM_RARE_CANDY } from "#app/data/balance/starters";
+import { FRIENDSHIP_GAIN_FROM_RARE_CANDY } from "#balance/starters";
 
 export type ModifierPredicate = (modifier: Modifier) => boolean;
 

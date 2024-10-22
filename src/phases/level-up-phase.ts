@@ -1,13 +1,13 @@
 import BattleScene from "#app/battle-scene";
-import { ExpNotification } from "#app/enums/exp-notification";
-import { EvolutionPhase } from "#app/phases/evolution-phase";
+import { ExpNotification } from "#enums/exp-notification";
+import { EvolutionPhase } from "#phases/evolution-phase";
 import { PlayerPokemon } from "#app/field/pokemon";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { LevelAchv } from "#app/system/achv";
 import i18next from "i18next";
-import * as Utils from "#app/utils";
-import { PlayerPartyMemberPokemonPhase } from "./player-party-member-pokemon-phase";
-import { LearnMovePhase } from "./learn-move-phase";
+import { NumberHolder } from "#app/utils";
+import { PlayerPartyMemberPokemonPhase } from "#phases/player-party-member-pokemon-phase";
+import { LearnMovePhase } from "#phases/learn-move-phase";
 
 export class LevelUpPhase extends PlayerPartyMemberPokemonPhase {
   private lastLevel: integer;
@@ -28,7 +28,7 @@ export class LevelUpPhase extends PlayerPartyMemberPokemonPhase {
       this.scene.gameData.gameStats.highestLevel = this.level;
     }
 
-    this.scene.validateAchvs(LevelAchv, new Utils.NumberHolder(this.level));
+    this.scene.validateAchvs(LevelAchv, new NumberHolder(this.level));
 
     const pokemon = this.getPokemon();
     const prevStats = pokemon.stats.slice(0);

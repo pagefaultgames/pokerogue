@@ -1,6 +1,6 @@
 import BattleScene from "#app/battle-scene";
 import Pokemon from "#app/field/pokemon";
-import { FieldPhase } from "./field-phase";
+import { FieldPhase } from "#phases/field-phase";
 
 export abstract class PartyMemberPokemonPhase extends FieldPhase {
   protected partyMemberIndex: integer;

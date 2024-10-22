@@ -1,4 +1,4 @@
-import { PostTurnStatusEffectPhase } from "#app/phases/post-turn-status-effect-phase";
+import { PostTurnStatusEffectPhase } from "#phases/post-turn-status-effect-phase";
 import { Phase } from "#app/phase";
 import { BattlerIndex } from "#app/battle";
 import BattleScene from "#app/battle-scene";

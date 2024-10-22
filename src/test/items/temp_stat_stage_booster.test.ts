@@ -3,14 +3,14 @@ import GameManager from "#test/utils/gameManager";
 import { Species } from "#enums/species";
 import Phase from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import { Moves } from "#app/enums/moves";
-import { TurnEndPhase } from "#app/phases/turn-end-phase";
-import { Abilities } from "#app/enums/abilities";
+import { Moves } from "#enums/moves";
+import { TurnEndPhase } from "#phases/turn-end-phase";
+import { Abilities } from "#enums/abilities";
 import { TempStatStageBoosterModifier } from "#app/modifier/modifier";
 import { Mode } from "#app/ui/ui";
-import { Button } from "#app/enums/buttons";
+import { Button } from "#enums/buttons";
 import ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
-import { ShopCursorTarget } from "#app/enums/shop-cursor-target";
+import { ShopCursorTarget } from "#enums/shop-cursor-target";
 
 
 describe("Items - Temporary Stat Stage Boosters", () => {

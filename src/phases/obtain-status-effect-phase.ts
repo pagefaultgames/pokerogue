@@ -2,10 +2,10 @@ import BattleScene from "#app/battle-scene";
 import { BattlerIndex } from "#app/battle";
 import { CommonBattleAnim, CommonAnim } from "#app/data/battle-anims";
 import { getStatusEffectObtainText, getStatusEffectOverlapText } from "#app/data/status-effect";
-import { StatusEffect } from "#app/enums/status-effect";
+import { StatusEffect } from "#enums/status-effect";
 import Pokemon from "#app/field/pokemon";
 import { getPokemonNameWithAffix } from "#app/messages";
-import { PokemonPhase } from "./pokemon-phase";
+import { PokemonPhase } from "#phases/pokemon-phase";
 
 export class ObtainStatusEffectPhase extends PokemonPhase {
   private statusEffect?: StatusEffect | undefined;

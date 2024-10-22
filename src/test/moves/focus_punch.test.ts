@@ -1,8 +1,8 @@
-import { BerryPhase } from "#app/phases/berry-phase";
-import { MessagePhase } from "#app/phases/message-phase";
-import { MoveHeaderPhase } from "#app/phases/move-header-phase";
-import { SwitchSummonPhase } from "#app/phases/switch-summon-phase";
-import { TurnStartPhase } from "#app/phases/turn-start-phase";
+import { BerryPhase } from "#phases/berry-phase";
+import { MessagePhase } from "#phases/message-phase";
+import { MoveHeaderPhase } from "#phases/move-header-phase";
+import { SwitchSummonPhase } from "#phases/switch-summon-phase";
+import { TurnStartPhase } from "#phases/turn-start-phase";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";

@@ -1,7 +1,7 @@
-import BattleScene, { starterColors } from "../battle-scene";
+import BattleScene, { starterColors } from "#app/battle-scene";
 import { TextStyle, addTextObject } from "./text";
 import { argbFromRgba } from "@material/material-color-utilities";
-import * as Utils from "../utils";
+import { rgbHexToRgba } from "#app/utils";
 import { Species } from "#enums/species";
 
 export default class CandyBar extends Phaser.GameObjects.Container {
@@ -58,8 +58,8 @@ export default class CandyBar extends Phaser.GameObjects.Container {
 
       const colorScheme = starterColors[starterSpeciesId];
 
-      this.candyIcon.setTint(argbFromRgba(Utils.rgbHexToRgba(colorScheme[0])));
-      this.candyOverlayIcon.setTint(argbFromRgba(Utils.rgbHexToRgba(colorScheme[1])));
+      this.candyIcon.setTint(argbFromRgba(rgbHexToRgba(colorScheme[0])));
+      this.candyOverlayIcon.setTint(argbFromRgba(rgbHexToRgba(colorScheme[1])));
 
       this.countText.setText(`${(this.scene as BattleScene).gameData.starterData[starterSpeciesId].candyCount + count} (+${count.toString()})`);
 

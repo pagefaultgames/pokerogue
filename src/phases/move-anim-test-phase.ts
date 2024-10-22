@@ -1,9 +1,9 @@
 import BattleScene from "#app/battle-scene";
 import { initMoveAnim, loadMoveAnimAssets, MoveAnim } from "#app/data/battle-anims";
 import { allMoves, SelfStatusMove } from "#app/data/move";
-import { Moves } from "#app/enums/moves";
-import * as Utils from "#app/utils";
-import { BattlePhase } from "./battle-phase";
+import { Moves } from "#enums/moves";
+import { getEnumValues } from "#app/utils";
+import { BattlePhase } from "#phases/battle-phase";
 
 export class MoveAnimTestPhase extends BattlePhase {
   private moveQueue: Moves[];
@@ -11,7 +11,7 @@ export class MoveAnimTestPhase extends BattlePhase {
   constructor(scene: BattleScene, moveQueue?: Moves[]) {
     super(scene);
 
-    this.moveQueue = moveQueue || Utils.getEnumValues(Moves).slice(1);
+    this.moveQueue = moveQueue || getEnumValues(Moves).slice(1);
   }
 
   start() {

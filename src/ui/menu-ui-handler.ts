@@ -1,18 +1,28 @@
-import BattleScene, { bypassLogin } from "../battle-scene";
+import BattleScene, { bypassLogin } from "#app/battle-scene";
 import { TextStyle, addTextObject, getTextStyleOptions } from "./text";
 import { Mode } from "./ui";
-import * as Utils from "../utils";
+import {
+  getEnumKeys,
+  isLocal,
+  isBeta,
+  fixedInt,
+  getCookie,
+  sessionIdKey,
+  apiPost,
+  apiFetch,
+  removeCookie,
+} from "#app/utils";
 import { addWindow, WindowVariant } from "./ui-theme";
 import MessageUiHandler from "./message-ui-handler";
 import { OptionSelectConfig, OptionSelectItem } from "./abstact-option-select-ui-handler";
-import { Tutorial, handleTutorial } from "../tutorial";
-import { loggedInUser, updateUserInfo } from "../account";
+import { Tutorial, handleTutorial } from "#app/tutorial";
+import { loggedInUser, updateUserInfo } from "#app/account";
 import i18next from "i18next";
 import { Button } from "#enums/buttons";
 import { GameDataType } from "#enums/game-data-type";
 import BgmBar from "#app/ui/bgm-bar";
 import AwaitableUiHandler from "./awaitable-ui-handler";
-import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
+import { SelectModifierPhase } from "#phases/select-modifier-phase";
 
 enum MenuOptions {
   GAME_SETTINGS,
@@ -69,7 +79,7 @@ export default class MenuUiHandler extends MessageUiHandler {
       { condition: bypassLogin, options: [ MenuOptions.LOG_OUT ]}
     ];
 
-    this.menuOptions = Utils.getEnumKeys(MenuOptions)
+    this.menuOptions = getEnumKeys(MenuOptions)
       .map(m => parseInt(MenuOptions[m]) as MenuOptions)
       .filter(m => {
         return !this.excludedMenus().some(exclusion => exclusion.condition && exclusion.options.includes(m));
@@ -112,7 +122,7 @@ export default class MenuUiHandler extends MessageUiHandler {
       { condition: bypassLogin, options: [ MenuOptions.LOG_OUT ]}
     ];
 
-    this.menuOptions = Utils.getEnumKeys(MenuOptions)
+    this.menuOptions = getEnumKeys(MenuOptions)
       .map(m => parseInt(MenuOptions[m]) as MenuOptions)
       .filter(m => {
         return !this.excludedMenus().some(exclusion => exclusion.condition && exclusion.options.includes(m));
@@ -197,7 +207,7 @@ export default class MenuUiHandler extends MessageUiHandler {
       });
     };
 
-    if (Utils.isLocal || Utils.isBeta) {
+    if (isLocal || isBeta) {
       manageDataOptions.push({
         label: i18next.t("menuUiHandler:importSession"),
         handler: () => {
@@ -244,7 +254,7 @@ export default class MenuUiHandler extends MessageUiHandler {
       },
       keepOpen: true
     });
-    if (Utils.isLocal || Utils.isBeta) {
+    if (isLocal || isBeta) {
       manageDataOptions.push({
         label: i18next.t("menuUiHandler:importData"),
         handler: () => {
@@ -278,7 +288,7 @@ export default class MenuUiHandler extends MessageUiHandler {
       },
       keepOpen: true
     });
-    if (Utils.isLocal || Utils.isBeta) { // this should make sure we don't have this option in live
+    if (isLocal || isBeta) { // this should make sure we don't have this option in live
       manageDataOptions.push({
         label: "Test Dialogue",
         handler: () => {
@@ -421,7 +431,7 @@ export default class MenuUiHandler extends MessageUiHandler {
     this.render();
     super.show(args);
 
-    this.menuOptions = Utils.getEnumKeys(MenuOptions)
+    this.menuOptions = getEnumKeys(MenuOptions)
       .map(m => parseInt(MenuOptions[m]) as MenuOptions)
       .filter(m => {
         return !this.excludedMenus().some(exclusion => exclusion.condition && exclusion.options.includes(m));
@@ -490,7 +500,7 @@ export default class MenuUiHandler extends MessageUiHandler {
             ui.setOverlayMode(Mode.EGG_LIST);
             success = true;
           } else {
-            ui.showText(i18next.t("menuUiHandler:noEggs"), null, () => ui.showText(""), Utils.fixedInt(1500));
+            ui.showText(i18next.t("menuUiHandler:noEggs"), null, () => ui.showText(""), fixedInt(1500));
             error = true;
           }
           break;
@@ -506,14 +516,14 @@ export default class MenuUiHandler extends MessageUiHandler {
                 label: loggedInUser?.discordId === "" ? i18next.t("menuUiHandler:linkDiscord") : i18next.t("menuUiHandler:unlinkDiscord"),
                 handler: () => {
                   if (loggedInUser?.discordId === "") {
-                    const token = Utils.getCookie(Utils.sessionIdKey);
+                    const token = getCookie(sessionIdKey);
                     const redirectUri = encodeURIComponent(`${import.meta.env.VITE_SERVER_URL}/auth/discord/callback`);
                     const discordId = import.meta.env.VITE_DISCORD_CLIENT_ID;
                     const discordUrl = `https://discord.com/api/oauth2/authorize?client_id=${discordId}&redirect_uri=${redirectUri}&response_type=code&scope=identify&state=${token}&prompt=none`;
                     window.open(discordUrl, "_self");
                     return true;
                   } else {
-                    Utils.apiPost("/auth/discord/logout", undefined, undefined, true).then(res => {
+                    apiPost("/auth/discord/logout", undefined, undefined, true).then(res => {
                       if (!res.ok) {
                         console.error(`Unlink failed (${res.status}: ${res.statusText})`);
                       }
@@ -527,14 +537,14 @@ export default class MenuUiHandler extends MessageUiHandler {
                 label: loggedInUser?.googleId === "" ? i18next.t("menuUiHandler:linkGoogle") : i18next.t("menuUiHandler:unlinkGoogle"),
                 handler: () => {
                   if (loggedInUser?.googleId === "") {
-                    const token = Utils.getCookie(Utils.sessionIdKey);
+                    const token = getCookie(sessionIdKey);
                     const redirectUri = encodeURIComponent(`${import.meta.env.VITE_SERVER_URL}/auth/google/callback`);
                     const googleId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
                     const googleUrl = `https://accounts.google.com/o/oauth2/auth?client_id=${googleId}&response_type=code&redirect_uri=${redirectUri}&scope=openid&state=${token}`;
                     window.open(googleUrl, "_self");
                     return true;
                   } else {
-                    Utils.apiPost("/auth/google/logout", undefined, undefined, true).then(res => {
+                    apiPost("/auth/google/logout", undefined, undefined, true).then(res => {
                       if (!res.ok) {
                         console.error(`Unlink failed (${res.status}: ${res.statusText})`);
                       }
@@ -586,11 +596,11 @@ export default class MenuUiHandler extends MessageUiHandler {
           success = true;
           const doLogout = () => {
             ui.setMode(Mode.LOADING, {
-              buttonActions: [], fadeOut: () => Utils.apiFetch("account/logout", true).then(res => {
+              buttonActions: [], fadeOut: () => apiFetch("account/logout", true).then(res => {
                 if (!res.ok) {
                   console.error(`Log out failed (${res.status}: ${res.statusText})`);
                 }
-                Utils.removeCookie(Utils.sessionIdKey);
+                removeCookie(sessionIdKey);
                 updateUserInfo().then(() => this.scene.reset(true, true));
               })
             });

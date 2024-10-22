@@ -5,9 +5,9 @@ import { Species } from "#enums/species";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Stat } from "#enums/stat";
-import { BattlerTagType } from "#app/enums/battler-tag-type";
-import { BerryPhase } from "#app/phases/berry-phase";
-import { CommandPhase } from "#app/phases/command-phase";
+import { BattlerTagType } from "#enums/battler-tag-type";
+import { BerryPhase } from "#phases/berry-phase";
+import { CommandPhase } from "#phases/command-phase";
 
 
 describe("Moves - Crafty Shield", () => {

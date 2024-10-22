@@ -1,4 +1,4 @@
-import * as Utils from "../utils";
+import { randIntRange } from "#app/utils";
 import { StatusEffect } from "#enums/status-effect";
 import i18next, { ParseKeys } from "i18next";
 
@@ -107,7 +107,7 @@ export function getStatusEffectCatchRateMultiplier(statusEffect: StatusEffect): 
 * Returns a random non-volatile StatusEffect
 */
 export function generateRandomStatusEffect(): StatusEffect {
-  return Utils.randIntRange(1, 6);
+  return randIntRange(1, 6);
 }
 
 /**
@@ -123,7 +123,7 @@ export function getRandomStatusEffect(statusEffectA: StatusEffect, statusEffectB
     return statusEffectA;
   }
 
-  return Utils.randIntRange(0, 2) ? statusEffectA : statusEffectB;
+  return randIntRange(0, 2) ? statusEffectA : statusEffectB;
 }
 
 /**
@@ -140,7 +140,7 @@ export function getRandomStatus(statusA: Status | null, statusB: Status | null):
   }
 
 
-  return Utils.randIntRange(0, 2) ? statusA : statusB;
+  return randIntRange(0, 2) ? statusA : statusB;
 }
 
 /**

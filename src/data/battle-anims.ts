@@ -1,13 +1,20 @@
 //import { battleAnimRawData } from "./battle-anim-raw-data";
-import BattleScene from "../battle-scene";
-import { AttackMove, BeakBlastHeaderAttr, ChargeAttr, DelayedAttackAttr, MoveFlags, SelfStatusMove, allMoves } from "./move";
-import Pokemon from "../field/pokemon";
-import * as Utils from "../utils";
-import { BattlerIndex } from "../battle";
+import BattleScene from "#app/battle-scene";
+import {
+  AttackMove,
+  BeakBlastHeaderAttr,
+  ChargeAttr,
+  DelayedAttackAttr,
+  MoveFlags,
+  SelfStatusMove,
+  allMoves,
+} from "./move";
+import Pokemon from "#app/field/pokemon";
+import { getFrameMs, getEnumKeys, getEnumValues, animationFileName, isNullOrUndefined } from "#app/utils";
+import { BattlerIndex } from "#app/battle";
 import { Element } from "json-stable-stringify";
 import { Moves } from "#enums/moves";
 import { SubstituteTag } from "./battler-tags";
-import { isNullOrUndefined } from "../utils";
 import Phaser from "phaser";
 import { EncounterAnim } from "#enums/encounter-anims";
 //import fs from 'vite-plugin-fs/browser';
@@ -401,7 +408,7 @@ class AnimTimedUpdateBgEvent extends AnimTimedBgEvent {
     if (Object.keys(tweenProps).length) {
       scene.tweens.add(Object.assign({
         targets: moveAnim.bgSprite,
-        duration: Utils.getFrameMs(this.duration * 3)
+        duration: getFrameMs(this.duration * 3)
       }, tweenProps));
     }
     return this.duration * 2;
@@ -437,7 +444,7 @@ class AnimTimedAddBgEvent extends AnimTimedBgEvent {
 
     scene.tweens.add({
       targets: moveAnim.bgSprite,
-      duration: Utils.getFrameMs(this.duration * 3)
+      duration: getFrameMs(this.duration * 3)
     });
 
     return this.duration * 2;
@@ -455,8 +462,8 @@ export const encounterAnims = new Map<EncounterAnim, AnimConfig>();
 
 export function initCommonAnims(scene: BattleScene): Promise<void> {
   return new Promise(resolve => {
-    const commonAnimNames = Utils.getEnumKeys(CommonAnim);
-    const commonAnimIds = Utils.getEnumValues(CommonAnim);
+    const commonAnimNames = getEnumKeys(CommonAnim);
+    const commonAnimIds = getEnumValues(CommonAnim);
     const commonAnimFetches: Promise<Map<CommonAnim, AnimConfig>>[] = [];
     for (let ca = 0; ca < commonAnimIds.length; ca++) {
       const commonAnimId = commonAnimIds[ca];
@@ -490,7 +497,7 @@ export function initMoveAnim(scene: BattleScene, move: Moves): Promise<void> {
       const defaultMoveAnim = allMoves[move] instanceof AttackMove ? Moves.TACKLE : allMoves[move] instanceof SelfStatusMove ? Moves.FOCUS_ENERGY : Moves.TAIL_WHIP;
 
       const fetchAnimAndResolve = (move: Moves) => {
-        scene.cachedFetch(`./battle-anims/${Utils.animationFileName(move)}.json`)
+        scene.cachedFetch(`./battle-anims/${animationFileName(move)}.json`)
           .then(response => {
             const contentType = response.headers.get("content-type");
             if (!response.ok || contentType?.indexOf("application/json") === -1) {
@@ -546,7 +553,7 @@ function useDefaultAnim(move: Moves, defaultMoveAnim: Moves) {
  * @remarks use {@linkcode useDefaultAnim} to use a default animation
  */
 function logMissingMoveAnim(move: Moves, ...optionalParams: any[]) {
-  const moveName = Utils.animationFileName(move);
+  const moveName = animationFileName(move);
   console.warn(`Could not load animation file for move '${moveName}'`, ...optionalParams);
 }
 
@@ -557,7 +564,7 @@ function logMissingMoveAnim(move: Moves, ...optionalParams: any[]) {
  */
 export async function initEncounterAnims(scene: BattleScene, encounterAnim: EncounterAnim | EncounterAnim[]): Promise<void> {
   const anims = Array.isArray(encounterAnim) ? encounterAnim : [ encounterAnim ];
-  const encounterAnimNames = Utils.getEnumKeys(EncounterAnim);
+  const encounterAnimNames = getEnumKeys(EncounterAnim);
   const encounterAnimFetches: Promise<Map<EncounterAnim, AnimConfig>>[] = [];
   for (const anim of anims) {
     if (encounterAnims.has(anim) && !isNullOrUndefined(encounterAnims.get(anim))) {
@@ -919,7 +926,7 @@ export abstract class BattleAnim {
       let f = 0;
 
       scene.tweens.addCounter({
-        duration: Utils.getFrameMs(3),
+        duration: getFrameMs(3),
         repeat: anim?.frames.length ?? 0,
         onRepeat: () => {
           if (!f) {
@@ -1053,7 +1060,7 @@ export abstract class BattleAnim {
               r = Math.max((anim.frames.length - f) + event.execute(scene, this), r);
             }
           }
-          const targets = Utils.getEnumValues(AnimFrameTarget);
+          const targets = getEnumValues(AnimFrameTarget);
           for (const i of targets) {
             const count = i === AnimFrameTarget.GRAPHIC ? g : i === AnimFrameTarget.USER ? u : t;
             if (count < spriteCache[i].length) {
@@ -1081,7 +1088,7 @@ export abstract class BattleAnim {
           }
           if (r) {
             scene.tweens.addCounter({
-              duration: Utils.getFrameMs(r),
+              duration: getFrameMs(r),
               onComplete: () => cleanUpAndComplete()
             });
           } else {
@@ -1165,7 +1172,7 @@ export abstract class BattleAnim {
       let existingFieldSprites = scene.field.getAll().slice(0);
 
       scene.tweens.addCounter({
-        duration: Utils.getFrameMs(3) * frameTimeMult,
+        duration: getFrameMs(3) * frameTimeMult,
         repeat: anim!.frames.length,
         onRepeat: () => {
           existingFieldSprites = scene.field.getAll().slice(0);
@@ -1218,7 +1225,7 @@ export abstract class BattleAnim {
               totalFrames = Math.max((anim.frames.length - frameCount) + event.execute(scene, this, frameTimedEventPriority), totalFrames);
             }
           }
-          const targets = Utils.getEnumValues(AnimFrameTarget);
+          const targets = getEnumValues(AnimFrameTarget);
           for (const i of targets) {
             const count = graphicFrameCount;
             if (count < spriteCache[i].length) {
@@ -1243,7 +1250,7 @@ export abstract class BattleAnim {
           }
           if (totalFrames) {
             scene.tweens.addCounter({
-              duration: Utils.getFrameMs(totalFrames),
+              duration: getFrameMs(totalFrames),
               onComplete: () => cleanUpAndComplete()
             });
           } else {
@@ -1341,15 +1348,15 @@ export class EncounterBattleAnim extends BattleAnim {
 }
 
 export async function populateAnims() {
-  const commonAnimNames = Utils.getEnumKeys(CommonAnim).map(k => k.toLowerCase());
+  const commonAnimNames = getEnumKeys(CommonAnim).map(k => k.toLowerCase());
   const commonAnimMatchNames = commonAnimNames.map(k => k.replace(/\_/g, ""));
-  const commonAnimIds = Utils.getEnumValues(CommonAnim) as CommonAnim[];
-  const chargeAnimNames = Utils.getEnumKeys(ChargeAnim).map(k => k.toLowerCase());
+  const commonAnimIds = getEnumValues(CommonAnim) as CommonAnim[];
+  const chargeAnimNames = getEnumKeys(ChargeAnim).map(k => k.toLowerCase());
   const chargeAnimMatchNames = chargeAnimNames.map(k => k.replace(/\_/g, " "));
-  const chargeAnimIds = Utils.getEnumValues(ChargeAnim) as ChargeAnim[];
+  const chargeAnimIds = getEnumValues(ChargeAnim) as ChargeAnim[];
   const commonNamePattern = /name: (?:Common:)?(Opp )?(.*)/;
   const moveNameToId = {};
-  for (const move of Utils.getEnumValues(Moves).slice(1)) {
+  for (const move of getEnumValues(Moves).slice(1)) {
     const moveName = Moves[move].toUpperCase().replace(/\_/g, "");
     moveNameToId[moveName] = move;
   }

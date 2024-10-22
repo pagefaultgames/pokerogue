@@ -1,7 +1,7 @@
 import BattleScene from "#app/battle-scene";
 import { BattlerIndex } from "#app/battle";
 import { Command } from "#app/ui/command-ui-handler";
-import { FieldPhase } from "./field-phase";
+import { FieldPhase } from "#phases/field-phase";
 
 /**
  * Phase for determining an enemy AI's action for the next turn.

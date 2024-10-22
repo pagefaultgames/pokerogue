@@ -1,11 +1,11 @@
 import i18next from "i18next";
 import { classicFixedBattles, FixedBattleConfig, FixedBattleConfigs } from "./battle";
 import BattleScene from "./battle-scene";
-import { allChallenges, applyChallenges, Challenge, ChallengeType, copyChallenge } from "./data/challenge";
-import PokemonSpecies, { allSpecies } from "./data/pokemon-species";
+import { allChallenges, applyChallenges, Challenge, ChallengeType, copyChallenge } from "#app/data/challenge";
+import PokemonSpecies, { allSpecies } from "#app/data/pokemon-species";
 import { Arena } from "./field/arena";
 import Overrides from "#app/overrides";
-import * as Utils from "./utils";
+import { randSeedInt, randSeedItem } from "#app/utils";
 import { Biome } from "#enums/biome";
 import { Species } from "#enums/species";
 import { Challenges } from "./enums/challenges";
@@ -169,7 +169,7 @@ export class GameMode implements GameModeConfig {
           } else if (w < waveIndex) {
             arena.scene.executeWithSeedOffset(() => {
               const waveTrainerChance = arena.getTrainerChance();
-              if (!Utils.randSeedInt(waveTrainerChance)) {
+              if (!randSeedInt(waveTrainerChance)) {
                 allowTrainerBattle = false;
               }
             }, w);
@@ -179,7 +179,7 @@ export class GameMode implements GameModeConfig {
           }
         }
       }
-      return Boolean(allowTrainerBattle && trainerChance && !Utils.randSeedInt(trainerChance));
+      return Boolean(allowTrainerBattle && trainerChance && !randSeedInt(trainerChance));
     }
     return false;
   }
@@ -197,7 +197,7 @@ export class GameMode implements GameModeConfig {
     if (this.isDaily && this.isWaveFinal(waveIndex)) {
       const allFinalBossSpecies = allSpecies.filter(s => (s.subLegendary || s.legendary || s.mythical)
         && s.baseTotal >= 600 && s.speciesId !== Species.ETERNATUS && s.speciesId !== Species.ARCEUS);
-      return Utils.randSeedItem(allFinalBossSpecies);
+      return randSeedItem(allFinalBossSpecies);
     }
 
     return null;

@@ -1,7 +1,7 @@
 import BattleScene from "#app/battle-scene";
 import { Phase } from "#app/phase";
-import { EndCardPhase } from "./end-card-phase";
-import { TitlePhase } from "./title-phase";
+import { EndCardPhase } from "#phases/end-card-phase";
+import { TitlePhase } from "#phases/title-phase";
 
 export class PostGameOverPhase extends Phase {
   private endCardPhase: EndCardPhase | null;

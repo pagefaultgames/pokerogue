@@ -1,18 +1,18 @@
-import { Button } from "#app/enums/buttons";
-import { MysteryEncounterBattlePhase, MysteryEncounterOptionSelectedPhase, MysteryEncounterPhase, MysteryEncounterRewardsPhase } from "#app/phases/mystery-encounter-phases";
+import { Button } from "#enums/buttons";
+import { MysteryEncounterBattlePhase, MysteryEncounterOptionSelectedPhase, MysteryEncounterPhase, MysteryEncounterRewardsPhase } from "#phases/mystery-encounter-phases";
 import MysteryEncounterUiHandler from "#app/ui/mystery-encounter-ui-handler";
 import { Mode } from "#app/ui/ui";
 import GameManager from "../utils/gameManager";
 import MessageUiHandler from "#app/ui/message-ui-handler";
 import { Status, StatusEffect } from "#app/data/status-effect";
 import { expect, vi } from "vitest";
-import * as EncounterPhaseUtils from "#app/data/mystery-encounters/utils/encounter-phase-utils";
+import * as EncounterPhaseUtils from "#mystery-encounters/utils/encounter-phase-utils";
 import PartyUiHandler from "#app/ui/party-ui-handler";
 import OptionSelectUiHandler from "#app/ui/settings/option-select-ui-handler";
 import { isNullOrUndefined } from "#app/utils";
-import { CommandPhase } from "#app/phases/command-phase";
-import { VictoryPhase } from "#app/phases/victory-phase";
-import { MessagePhase } from "#app/phases/message-phase";
+import { CommandPhase } from "#phases/command-phase";
+import { VictoryPhase } from "#phases/victory-phase";
+import { MessagePhase } from "#phases/message-phase";
 
 /**
  * Runs a {@linkcode MysteryEncounter} to either the start of a battle, or to the {@linkcode MysteryEncounterRewardsPhase}, depending on the option selected

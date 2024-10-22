@@ -1,10 +1,10 @@
-import BattleScene from "../battle-scene";
+import BattleScene from "#app/battle-scene";
 import { variantColorCache } from "#app/data/variant";
-import Pokemon from "../field/pokemon";
-import Trainer from "../field/trainer";
+import Pokemon from "#app/field/pokemon";
+import Trainer from "#app/field/trainer";
 import FieldSpritePipeline from "./field-sprite";
-import * as Utils from "../utils";
-import MysteryEncounterIntroVisuals from "../field/mystery-encounter-intro";
+import { rgbHexToRgba } from "#app/utils";
+import MysteryEncounterIntroVisuals from "#app/field/mystery-encounter-intro";
 
 const spriteFragShader = `
 #ifdef GL_FRAGMENT_PRECISION_HIGH
@@ -421,8 +421,8 @@ export default class SpritePipeline extends FieldSpritePipeline {
         const baseColors = Object.keys(variantColors[variant]);
         for (let c = 0; c < 32; c++) {
           if (c < baseColors.length) {
-            const baseColor = Array.from(Object.values(Utils.rgbHexToRgba(baseColors[c])));
-            const variantColor = Array.from(Object.values(Utils.rgbHexToRgba(variantColors[variant][baseColors[c]])));
+            const baseColor = Array.from(Object.values(rgbHexToRgba(baseColors[c])));
+            const variantColor = Array.from(Object.values(rgbHexToRgba(variantColors[variant][baseColors[c]])));
             flatBaseColors.splice(flatBaseColors.length, 0, ...baseColor);
             flatVariantColors.splice(flatVariantColors.length, 0, ...variantColor.map(c => c / 255.0));
           } else {

@@ -1,7 +1,7 @@
 import { allMoves, MoveCategory } from "#app/data/move";
-import { Abilities } from "#app/enums/abilities";
-import { Moves } from "#app/enums/moves";
-import { Species } from "#app/enums/species";
+import { Abilities } from "#enums/abilities";
+import { Moves } from "#enums/moves";
+import { Species } from "#enums/species";
 import { AiType, EnemyPokemon } from "#app/field/pokemon";
 import { randSeedInt } from "#app/utils";
 import GameManager from "#test/utils/gameManager";

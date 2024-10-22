@@ -1,8 +1,8 @@
 import { BattlerIndex } from "#app/battle";
 import { applyAbAttrs, applyPostDefendAbAttrs, applyPreAttackAbAttrs, MoveEffectChanceMultiplierAbAttr, MovePowerBoostAbAttr, PostDefendTypeChangeAbAttr } from "#app/data/ability";
 import { Stat } from "#enums/stat";
-import { MoveEffectPhase } from "#app/phases/move-effect-phase";
-import * as Utils from "#app/utils";
+import { MoveEffectPhase } from "#phases/move-effect-phase";
+import { NumberHolder } from "#app/utils";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
@@ -57,8 +57,8 @@ describe("Abilities - Sheer Force", () => {
     expect(move.id).toBe(Moves.AIR_SLASH);
 
     //Verify the move is boosted and has no chance of secondary effects
-    const power = new Utils.IntegerHolder(move.power);
-    const chance = new Utils.IntegerHolder(move.chance);
+    const power = new NumberHolder(move.power);
+    const chance = new NumberHolder(move.chance);
 
     applyAbAttrs(MoveEffectChanceMultiplierAbAttr, phase.getUserPokemon()!, null, false, chance, move, phase.getTarget(), false);
     applyPreAttackAbAttrs(MovePowerBoostAbAttr, phase.getUserPokemon()!, phase.getTarget()!, move, false, power);
@@ -90,8 +90,8 @@ describe("Abilities - Sheer Force", () => {
     expect(move.id).toBe(Moves.BIND);
 
     //Binding moves and other exceptions are not affected by Sheer Force and have a chance.value of -1
-    const power = new Utils.IntegerHolder(move.power);
-    const chance = new Utils.IntegerHolder(move.chance);
+    const power = new NumberHolder(move.power);
+    const chance = new NumberHolder(move.chance);
 
     applyAbAttrs(MoveEffectChanceMultiplierAbAttr, phase.getUserPokemon()!, null, false, chance, move, phase.getTarget(), false);
     applyPreAttackAbAttrs(MovePowerBoostAbAttr, phase.getUserPokemon()!, phase.getTarget()!, move, false, power);
@@ -123,8 +123,8 @@ describe("Abilities - Sheer Force", () => {
     expect(move.id).toBe(Moves.TACKLE);
 
     //Binding moves and other exceptions are not affected by Sheer Force and have a chance.value of -1
-    const power = new Utils.IntegerHolder(move.power);
-    const chance = new Utils.IntegerHolder(move.chance);
+    const power = new NumberHolder(move.power);
+    const chance = new NumberHolder(move.chance);
 
     applyAbAttrs(MoveEffectChanceMultiplierAbAttr, phase.getUserPokemon()!, null, false, chance, move, phase.getTarget(), false);
     applyPreAttackAbAttrs(MovePowerBoostAbAttr, phase.getUserPokemon()!, phase.getTarget()!, move, false, power);
@@ -158,8 +158,8 @@ describe("Abilities - Sheer Force", () => {
     expect(move.id).toBe(Moves.CRUSH_CLAW);
 
     //Disable color change due to being hit by Sheer Force
-    const power = new Utils.IntegerHolder(move.power);
-    const chance = new Utils.IntegerHolder(move.chance);
+    const power = new NumberHolder(move.power);
+    const chance = new NumberHolder(move.chance);
     const user = phase.getUserPokemon()!;
     const target = phase.getTarget()!;
     const opponentType = target.getTypes()[0];

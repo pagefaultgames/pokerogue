@@ -1,7 +1,7 @@
-import BattleScene from "../battle-scene";
+import BattleScene from "#app/battle-scene";
 import AwaitableUiHandler from "./awaitable-ui-handler";
 import { Mode } from "./ui";
-import * as Utils from "../utils";
+import { getFrameMs } from "#app/utils";
 
 export default abstract class MessageUiHandler extends AwaitableUiHandler {
   protected textTimer: Phaser.Time.TimerEvent | null;
@@ -152,7 +152,7 @@ export default abstract class MessageUiHandler extends AwaitableUiHandler {
           if (charDelay) {
             this.textTimer!.paused = true; // TODO: is the bang correct?
             this.scene.tweens.addCounter({
-              duration: Utils.getFrameMs(charDelay),
+              duration: getFrameMs(charDelay),
               onComplete: () => {
                 this.textTimer!.paused = false; // TODO: is the bang correct?
                 advance();
@@ -162,7 +162,7 @@ export default abstract class MessageUiHandler extends AwaitableUiHandler {
             this.textTimer!.paused = true;
             this.scene.time.delayedCall(150, () => {
               this.scene.ui.fadeOut(750).then(() => {
-                const delay = Utils.getFrameMs(charFade);
+                const delay = getFrameMs(charFade);
                 this.scene.time.delayedCall(delay, () => {
                   this.scene.ui.fadeIn(500).then(() => {
                     this.textTimer!.paused = false;

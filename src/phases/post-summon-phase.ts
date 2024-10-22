@@ -2,8 +2,8 @@ import BattleScene from "#app/battle-scene";
 import { BattlerIndex } from "#app/battle";
 import { applyPostSummonAbAttrs, PostSummonAbAttr } from "#app/data/ability";
 import { ArenaTrapTag } from "#app/data/arena-tag";
-import { StatusEffect } from "#app/enums/status-effect";
-import { PokemonPhase } from "./pokemon-phase";
+import { StatusEffect } from "#enums/status-effect";
+import { PokemonPhase } from "#phases/pokemon-phase";
 import { MysteryEncounterPostSummonTag } from "#app/data/battler-tags";
 import { BattlerTagType } from "#enums/battler-tag-type";
 

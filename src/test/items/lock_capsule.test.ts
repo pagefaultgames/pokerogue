@@ -1,7 +1,7 @@
-import { Abilities } from "#app/enums/abilities";
-import { Moves } from "#app/enums/moves";
+import { Abilities } from "#enums/abilities";
+import { Moves } from "#enums/moves";
 import { ModifierTier } from "#app/modifier/modifier-tier";
-import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
+import { SelectModifierPhase } from "#phases/select-modifier-phase";
 import { Mode } from "#app/ui/ui";
 import GameManager from "#test/utils/gameManager";
 import Phase from "phaser";

@@ -1,6 +1,6 @@
 import BattleScene from "#app/battle-scene";
 import { BattlerIndex } from "#app/battle";
-import { PokemonPhase } from "./pokemon-phase";
+import { PokemonPhase } from "#phases/pokemon-phase";
 
 export class ShinySparklePhase extends PokemonPhase {
   constructor(scene: BattleScene, battlerIndex: BattlerIndex) {

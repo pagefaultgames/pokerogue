@@ -1,29 +1,28 @@
 import i18next from "i18next";
-import BattleScene from "../battle-scene";
-import { Phase } from "../phase";
-import { Mode } from "../ui/ui";
-import { transitionMysteryEncounterIntroVisuals, OptionSelectSettings } from "../data/mystery-encounters/utils/encounter-phase-utils";
-import MysteryEncounterOption, { OptionPhaseCallback } from "#app/data/mystery-encounters/mystery-encounter-option";
-import { getCharVariantFromDialogue } from "../data/dialogue";
-import { TrainerSlot } from "../data/trainer-config";
+import BattleScene from "#app/battle-scene";
+import { Phase } from "#app/phase";
+import { Mode } from "#app/ui/ui";
+import { transitionMysteryEncounterIntroVisuals, OptionSelectSettings } from "#mystery-encounters/utils/encounter-phase-utils";
+import MysteryEncounterOption, { OptionPhaseCallback } from "#mystery-encounters/mystery-encounter-option";
+import { getCharVariantFromDialogue } from "#app/data/dialogue";
+import { TrainerSlot } from "#app/data/trainer-config";
 import { BattleSpec } from "#enums/battle-spec";
-import { IvScannerModifier } from "../modifier/modifier";
-import * as Utils from "../utils";
-import { isNullOrUndefined } from "../utils";
-import { getEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
+import { IvScannerModifier } from "#app/modifier/modifier";
+import { isNullOrUndefined, randSeedItem } from "#app/utils";
+import { getEncounterText } from "#mystery-encounters/utils/encounter-dialogue-utils";
 import { BattlerTagLapseType } from "#app/data/battler-tags";
 import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
-import { PostTurnStatusEffectPhase } from "#app/phases/post-turn-status-effect-phase";
-import { SummonPhase } from "#app/phases/summon-phase";
-import { ScanIvsPhase } from "#app/phases/scan-ivs-phase";
-import { ToggleDoublePositionPhase } from "#app/phases/toggle-double-position-phase";
-import { ReturnPhase } from "#app/phases/return-phase";
-import { CheckSwitchPhase } from "#app/phases/check-switch-phase";
-import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
-import { NewBattlePhase } from "#app/phases/new-battle-phase";
-import { GameOverPhase } from "#app/phases/game-over-phase";
-import { SwitchPhase } from "#app/phases/switch-phase";
-import { SeenEncounterData } from "#app/data/mystery-encounters/mystery-encounter-save-data";
+import { PostTurnStatusEffectPhase } from "#phases/post-turn-status-effect-phase";
+import { SummonPhase } from "#phases/summon-phase";
+import { ScanIvsPhase } from "#phases/scan-ivs-phase";
+import { ToggleDoublePositionPhase } from "#phases/toggle-double-position-phase";
+import { ReturnPhase } from "#phases/return-phase";
+import { CheckSwitchPhase } from "#phases/check-switch-phase";
+import { SelectModifierPhase } from "#phases/select-modifier-phase";
+import { NewBattlePhase } from "#phases/new-battle-phase";
+import { GameOverPhase } from "#phases/game-over-phase";
+import { SwitchPhase } from "#phases/switch-phase";
+import { SeenEncounterData } from "#mystery-encounters/mystery-encounter-save-data";
 import { SwitchType } from "#enums/switch-type";
 import { BattlerTagType } from "#enums/battler-tag-type";
 
@@ -368,7 +367,7 @@ export class MysteryEncounterBattlePhase extends Phase {
       } else {
         const trainer = this.scene.currentBattle.trainer;
         let message: string;
-        scene.executeWithSeedOffset(() => message = Utils.randSeedItem(encounterMessages), this.scene.currentBattle.mysteryEncounter?.getSeedOffset());
+        scene.executeWithSeedOffset(() => message = randSeedItem(encounterMessages), this.scene.currentBattle.mysteryEncounter?.getSeedOffset());
         message = message!; // tell TS compiler it's defined now
         const showDialogueAndSummon = () => {
           scene.ui.showDialogue(message, trainer?.getName(TrainerSlot.NONE, true), null, () => {

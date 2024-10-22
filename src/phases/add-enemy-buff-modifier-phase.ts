@@ -1,6 +1,10 @@
 import BattleScene from "#app/battle-scene";
 import { ModifierTier } from "#app/modifier/modifier-tier";
-import { regenerateModifierPoolThresholds, ModifierPoolType, getEnemyBuffModifierForWave } from "#app/modifier/modifier-type";
+import {
+  regenerateModifierPoolThresholds,
+  ModifierPoolType,
+  getEnemyBuffModifierForWave,
+} from "#app/modifier/modifier-type";
 import { EnemyPersistentModifier } from "#app/modifier/modifier";
 import { Phase } from "#app/phase";
 

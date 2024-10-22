@@ -2,21 +2,21 @@ import { Type } from "#app/data/type";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { Species } from "#enums/species";
 import BattleScene from "#app/battle-scene";
-import MysteryEncounter, { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-encounter";
-import { MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/mystery-encounter-option";
+import MysteryEncounter, { MysteryEncounterBuilder } from "#mystery-encounters/mystery-encounter";
+import { MysteryEncounterOptionBuilder } from "#mystery-encounters/mystery-encounter-option";
 import { leaveEncounterWithoutBattle, setEncounterRewards, } from "../utils/encounter-phase-utils";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { PlayerPokemon, PokemonMove } from "#app/field/pokemon";
-import { IntegerHolder, isNullOrUndefined, randSeedInt, randSeedShuffle } from "#app/utils";
+import { NumberHolder, isNullOrUndefined, randSeedInt, randSeedShuffle } from "#app/utils";
 import PokemonSpecies, { allSpecies, getPokemonSpecies } from "#app/data/pokemon-species";
 import { HiddenAbilityRateBoosterModifier, PokemonFormChangeItemModifier, PokemonHeldItemModifier } from "#app/modifier/modifier";
 import { achvs } from "#app/system/achv";
 import { CustomPokemonData } from "#app/data/custom-pokemon-data";
-import { showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
+import { showEncounterText } from "#mystery-encounters/utils/encounter-dialogue-utils";
 import { modifierTypes } from "#app/modifier/modifier-type";
 import i18next from "#app/plugins/i18n";
-import { doPokemonTransformationSequence, TransformationScreenPosition } from "#app/data/mystery-encounters/utils/encounter-transformation-sequence";
+import { doPokemonTransformationSequence, TransformationScreenPosition } from "#mystery-encounters/utils/encounter-transformation-sequence";
 import { getLevelTotalExp } from "#app/data/exp";
 import { Stat } from "#enums/stat";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
@@ -300,7 +300,7 @@ async function doNewTeamPostProcess(scene: BattleScene, transformations: Pokemon
     if (newPokemon.species.abilityHidden) {
       const hiddenIndex = newPokemon.species.ability2 ? 2 : 1;
       if (newPokemon.abilityIndex < hiddenIndex) {
-        const hiddenAbilityChance = new IntegerHolder(256);
+        const hiddenAbilityChance = new NumberHolder(256);
         scene.applyModifiers(HiddenAbilityRateBoosterModifier, true, hiddenAbilityChance);
 
         const hasHiddenAbility = !randSeedInt(hiddenAbilityChance.value);

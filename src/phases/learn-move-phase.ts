@@ -9,9 +9,9 @@ import EvolutionSceneHandler from "#app/ui/evolution-scene-handler";
 import { SummaryUiMode } from "#app/ui/summary-ui-handler";
 import { Mode } from "#app/ui/ui";
 import i18next from "i18next";
-import { PlayerPartyMemberPokemonPhase } from "#app/phases/player-party-member-pokemon-phase";
+import { PlayerPartyMemberPokemonPhase } from "#phases/player-party-member-pokemon-phase";
 import Pokemon from "#app/field/pokemon";
-import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
+import { SelectModifierPhase } from "#phases/select-modifier-phase";
 
 export enum LearnMoveType {
   /** For learning a move via level-up, evolution, or other non-item-based event */

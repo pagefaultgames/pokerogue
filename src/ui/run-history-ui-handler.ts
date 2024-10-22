@@ -1,17 +1,17 @@
-import BattleScene from "../battle-scene";
-import { GameModes } from "../game-mode";
+import BattleScene from "#app/battle-scene";
+import { GameModes } from "#app/game-mode";
 import { TextStyle, addTextObject } from "./text";
 import { Mode } from "./ui";
 import { addWindow } from "./ui-theme";
-import * as Utils from "../utils";
-import PokemonData from "../system/pokemon-data";
+import { fixedInt, formatLargeNumber } from "#app/utils";
+import PokemonData from "#app/system/pokemon-data";
 import MessageUiHandler from "./message-ui-handler";
 import i18next from "i18next";
-import { Button } from "../enums/buttons";
-import { BattleType } from "../battle";
-import { RunEntry } from "../system/game-data";
+import { Button } from "#enums/buttons";
+import { BattleType } from "#app/battle";
+import { RunEntry } from "#app/system/game-data";
 import { PlayerGender } from "#enums/player-gender";
-import { TrainerVariant } from "../field/trainer";
+import { TrainerVariant } from "#app/field/trainer";
 import { RunDisplayMode } from "#app/ui/run-info-ui-handler";
 
 export type RunSelectCallback = (cursor: number) => void;
@@ -213,7 +213,7 @@ export default class RunHistoryUiHandler extends MessageUiHandler {
       this.scene.tweens.add({
         targets: this.runsContainer,
         y: this.runContainerInitialY - 56 * scrollCursor,
-        duration: Utils.fixedInt(325),
+        duration: fixedInt(325),
         ease: "Sine.easeInOut"
       });
     }
@@ -302,7 +302,7 @@ class RunEntryContainer extends Phaser.GameObjects.Container {
           enemyData["player"] = true;
           const enemy = enemyData.toPokemon(this.scene);
           const enemyIcon = this.scene.addPokemonIcon(enemy, 0, 0, 0, 0);
-          const enemyLevel = addTextObject(this.scene, 32, 20, `${i18next.t("saveSlotSelectUiHandler:lv")}${Utils.formatLargeNumber(enemy.level, 1000)}`, TextStyle.PARTY, { fontSize: "54px", color: "#f8f8f8" });
+          const enemyLevel = addTextObject(this.scene, 32, 20, `${i18next.t("saveSlotSelectUiHandler:lv")}${formatLargeNumber(enemy.level, 1000)}`, TextStyle.PARTY, { fontSize: "54px", color: "#f8f8f8" });
           enemyLevel.setShadow(0, 0, undefined);
           enemyLevel.setStroke("#424242", 14);
           enemyLevel.setOrigin(1, 0);
@@ -376,7 +376,7 @@ class RunEntryContainer extends Phaser.GameObjects.Container {
       const pokemon = p.toPokemon(this.scene);
       const icon = this.scene.addPokemonIcon(pokemon, 0, 0, 0, 0);
 
-      const text = addTextObject(this.scene, 32, 20, `${i18next.t("saveSlotSelectUiHandler:lv")}${Utils.formatLargeNumber(pokemon.level, 1000)}`, TextStyle.PARTY, { fontSize: "54px", color: "#f8f8f8" });
+      const text = addTextObject(this.scene, 32, 20, `${i18next.t("saveSlotSelectUiHandler:lv")}${formatLargeNumber(pokemon.level, 1000)}`, TextStyle.PARTY, { fontSize: "54px", color: "#f8f8f8" });
       text.setShadow(0, 0, undefined);
       text.setStroke("#424242", 14);
       text.setOrigin(1, 0);

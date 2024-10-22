@@ -2,7 +2,7 @@ import { Stat } from "#enums/stat";
 import { Species } from "#enums/species";
 import GameManager from "#test/utils/gameManager";
 import Phase from "phaser";
-import * as Utils from "#app/utils";
+import { NumberHolder, randItem } from "#app/utils";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { StatBoosterModifier } from "#app/modifier/modifier";
 
@@ -35,7 +35,7 @@ describe("Items - Eviolite", () => {
     const partyMember = game.scene.getPlayerPokemon()!;
 
     vi.spyOn(partyMember, "getEffectiveStat").mockImplementation((stat, _opponent?, _move?, _isCritical?) => {
-      const statValue = new Utils.NumberHolder(partyMember.getStat(stat, false));
+      const statValue = new NumberHolder(partyMember.getStat(stat, false));
       game.scene.applyModifiers(StatBoosterModifier, partyMember.isPlayer(), partyMember, stat, statValue);
 
       // Ignore other calculations for simplicity
@@ -58,7 +58,7 @@ describe("Items - Eviolite", () => {
     const partyMember = game.scene.getParty()[0];
 
     vi.spyOn(partyMember, "getEffectiveStat").mockImplementation((stat, _opponent?, _move?, _isCritical?) => {
-      const statValue = new Utils.NumberHolder(partyMember.getStat(stat, false));
+      const statValue = new NumberHolder(partyMember.getStat(stat, false));
       game.scene.applyModifiers(StatBoosterModifier, partyMember.isPlayer(), partyMember, stat, statValue);
 
       // Ignore other calculations for simplicity
@@ -92,7 +92,7 @@ describe("Items - Eviolite", () => {
     partyMember.fusionLuck = ally.luck;
 
     vi.spyOn(partyMember, "getEffectiveStat").mockImplementation((stat, _opponent?, _move?, _isCritical?) => {
-      const statValue = new Utils.NumberHolder(partyMember.getStat(stat, false));
+      const statValue = new NumberHolder(partyMember.getStat(stat, false));
       game.scene.applyModifiers(StatBoosterModifier, partyMember.isPlayer(), partyMember, stat, statValue);
 
       // Ignore other calculations for simplicity
@@ -125,7 +125,7 @@ describe("Items - Eviolite", () => {
     partyMember.fusionLuck = ally.luck;
 
     vi.spyOn(partyMember, "getEffectiveStat").mockImplementation((stat, _opponent?, _move?, _isCritical?) => {
-      const statValue = new Utils.NumberHolder(partyMember.getStat(stat, false));
+      const statValue = new NumberHolder(partyMember.getStat(stat, false));
       game.scene.applyModifiers(StatBoosterModifier, partyMember.isPlayer(), partyMember, stat, statValue);
 
       // Ignore other calculations for simplicity
@@ -158,7 +158,7 @@ describe("Items - Eviolite", () => {
     partyMember.fusionLuck = ally.luck;
 
     vi.spyOn(partyMember, "getEffectiveStat").mockImplementation((stat, _opponent?, _move?, _isCritical?) => {
-      const statValue = new Utils.NumberHolder(partyMember.getStat(stat, false));
+      const statValue = new NumberHolder(partyMember.getStat(stat, false));
       game.scene.applyModifiers(StatBoosterModifier, partyMember.isPlayer(), partyMember, stat, statValue);
 
       // Ignore other calculations for simplicity
@@ -191,7 +191,7 @@ describe("Items - Eviolite", () => {
     partyMember.fusionLuck = ally.luck;
 
     vi.spyOn(partyMember, "getEffectiveStat").mockImplementation((stat, _opponent?, _move?, _isCritical?) => {
-      const statValue = new Utils.NumberHolder(partyMember.getStat(stat, false));
+      const statValue = new NumberHolder(partyMember.getStat(stat, false));
       game.scene.applyModifiers(StatBoosterModifier, partyMember.isPlayer(), partyMember, stat, statValue);
 
       // Ignore other calculations for simplicity
@@ -217,13 +217,13 @@ describe("Items - Eviolite", () => {
     const gMaxablePokemon = [ Species.PIKACHU, Species.EEVEE, Species.DURALUDON, Species.MEOWTH ];
 
     await game.classicMode.startBattle([
-      Utils.randItem(gMaxablePokemon)
+      randItem(gMaxablePokemon)
     ]);
 
     const partyMember = game.scene.getPlayerPokemon()!;
 
     vi.spyOn(partyMember, "getEffectiveStat").mockImplementation((stat, _opponent?, _move?, _isCritical?) => {
-      const statValue = new Utils.NumberHolder(partyMember.getStat(stat, false));
+      const statValue = new NumberHolder(partyMember.getStat(stat, false));
       game.scene.applyModifiers(StatBoosterModifier, partyMember.isPlayer(), partyMember, stat, statValue);
 
       // Ignore other calculations for simplicity

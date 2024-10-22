@@ -2,14 +2,20 @@ import BattleScene from "#app/battle-scene";
 import { applyPostTurnAbAttrs, PostTurnAbAttr } from "#app/data/ability";
 import { BattlerTagLapseType } from "#app/data/battler-tags";
 import { TerrainType } from "#app/data/terrain";
-import { WeatherType } from "#app/enums/weather-type";
+import { WeatherType } from "#enums/weather-type";
 import { TurnEndEvent } from "#app/events/battle-scene";
 import Pokemon from "#app/field/pokemon";
 import { getPokemonNameWithAffix } from "#app/messages";
-import { TurnHealModifier, EnemyTurnHealModifier, EnemyStatusEffectHealChanceModifier, TurnStatusEffectModifier, TurnHeldItemTransferModifier } from "#app/modifier/modifier";
+import {
+  TurnHealModifier,
+  EnemyTurnHealModifier,
+  EnemyStatusEffectHealChanceModifier,
+  TurnStatusEffectModifier,
+  TurnHeldItemTransferModifier,
+} from "#app/modifier/modifier";
 import i18next from "i18next";
-import { FieldPhase } from "./field-phase";
-import { PokemonHealPhase } from "./pokemon-heal-phase";
+import { FieldPhase } from "#phases/field-phase";
+import { PokemonHealPhase } from "#phases/pokemon-heal-phase";
 
 export class TurnEndPhase extends FieldPhase {
   constructor(scene: BattleScene) {

@@ -5,8 +5,8 @@ import { Species } from "#enums/species";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Stat } from "#enums/stat";
-import { BerryPhase } from "#app/phases/berry-phase";
-import { CommandPhase } from "#app/phases/command-phase";
+import { BerryPhase } from "#phases/berry-phase";
+import { CommandPhase } from "#phases/command-phase";
 
 
 describe("Moves - Wide Guard", () => {

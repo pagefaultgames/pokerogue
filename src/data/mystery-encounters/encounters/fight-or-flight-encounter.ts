@@ -1,11 +1,11 @@
-import { MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/mystery-encounter-option";
+import { MysteryEncounterOptionBuilder } from "#mystery-encounters/mystery-encounter-option";
 import {
   EnemyPartyConfig,
   initBattleWithEnemyConfig,
   leaveEncounterWithoutBattle, setEncounterExp,
   setEncounterRewards
-} from "#app/data/mystery-encounters/utils/encounter-phase-utils";
-import { STEALING_MOVES } from "#app/data/mystery-encounters/requirements/requirement-groups";
+} from "#mystery-encounters/utils/encounter-phase-utils";
+import { STEALING_MOVES } from "#mystery-encounters/requirements/requirement-groups";
 import Pokemon, { EnemyPokemon } from "#app/field/pokemon";
 import { ModifierTier } from "#app/modifier/modifier-tier";
 import {
@@ -17,17 +17,17 @@ import {
 } from "#app/modifier/modifier-type";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import BattleScene from "#app/battle-scene";
-import MysteryEncounter, { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-encounter";
-import { MoveRequirement } from "#app/data/mystery-encounters/mystery-encounter-requirements";
+import MysteryEncounter, { MysteryEncounterBuilder } from "#mystery-encounters/mystery-encounter";
+import { MoveRequirement } from "#mystery-encounters/mystery-encounter-requirements";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { TrainerSlot } from "#app/data/trainer-config";
-import { getEncounterPokemonLevelForWave, getSpriteKeysFromPokemon, STANDARD_ENCOUNTER_BOOSTED_LEVEL_MODIFIER } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
+import { getEncounterPokemonLevelForWave, getSpriteKeysFromPokemon, STANDARD_ENCOUNTER_BOOSTED_LEVEL_MODIFIER } from "#mystery-encounters/utils/encounter-pokemon-utils";
 import PokemonData from "#app/system/pokemon-data";
 import { BattlerTagType } from "#enums/battler-tag-type";
-import { queueEncounterMessage } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
+import { queueEncounterMessage } from "#mystery-encounters/utils/encounter-dialogue-utils";
 import { randSeedInt } from "#app/utils";
-import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
+import { StatStageChangePhase } from "#phases/stat-stage-change-phase";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
 
 /** the i18n namespace for the encounter */

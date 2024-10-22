@@ -1,6 +1,6 @@
-import { Species } from "#app/enums/species";
-import { StatusEffect } from "#app/enums/status-effect";
-import { TurnEndPhase } from "#app/phases/turn-end-phase";
+import { Species } from "#enums/species";
+import { StatusEffect } from "#enums/status-effect";
+import { TurnEndPhase } from "#phases/turn-end-phase";
 import { toDmgValue } from "#app/utils";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";

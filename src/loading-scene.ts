@@ -4,10 +4,10 @@ import CacheBustedLoaderPlugin from "#app/plugins/cache-busted-loader-plugin";
 import { SceneBase } from "#app/scene-base";
 import { WindowVariant, getWindowVariantSuffix } from "#app/ui/ui-theme";
 import { isMobile } from "#app/touch-controls";
-import * as Utils from "#app/utils";
-import { initPokemonPrevolutions } from "#app/data/balance/pokemon-evolutions";
-import { initBiomes } from "#app/data/balance/biomes";
-import { initEggMoves } from "#app/data/balance/egg-moves";
+import { localPing, getEnumValues, verifyLang, getEnumKeys } from "#app/utils";
+import { initPokemonPrevolutions } from "#balance/pokemon-evolutions";
+import { initBiomes } from "#balance/biomes";
+import { initEggMoves } from "#balance/egg-moves";
 import { initPokemonForms } from "#app/data/pokemon-forms";
 import { initSpecies } from "#app/data/pokemon-species";
 import { initMoves } from "#app/data/move";
@@ -19,7 +19,7 @@ import i18next from "i18next";
 import { initStatsKeys } from "#app/ui/game-stats-ui-handler";
 import { initVouchers } from "#app/system/voucher";
 import { Biome } from "#enums/biome";
-import { initMysteryEncounters } from "#app/data/mystery-encounters/mystery-encounters";
+import { initMysteryEncounters } from "#mystery-encounters/mystery-encounters";
 
 export class LoadingScene extends SceneBase {
   public static readonly KEY = "loading";
@@ -33,7 +33,7 @@ export class LoadingScene extends SceneBase {
   }
 
   preload() {
-    Utils.localPing();
+    localPing();
     this.load["manifest"] = this.game["manifest"];
 
     this.loadImage("loading_bg", "arenas");
@@ -48,7 +48,7 @@ export class LoadingScene extends SceneBase {
     this.loadImage("friendship_overlay", "ui");
     this.loadImage("cursor", "ui");
     this.loadImage("cursor_reverse", "ui");
-    for (const wv of Utils.getEnumValues(WindowVariant)) {
+    for (const wv of getEnumValues(WindowVariant)) {
       for (let w = 1; w <= 5; w++) {
         this.loadImage(`window_${w}${getWindowVariantSuffix(wv)}`, "ui/windows");
       }
@@ -168,7 +168,7 @@ export class LoadingScene extends SceneBase {
 
     this.loadImage("default_bg", "arenas");
     // Load arena images
-    Utils.getEnumValues(Biome).map(bt => {
+    getEnumValues(Biome).map(bt => {
       const btKey = Biome[bt].toLowerCase();
       const isBaseAnimated = btKey === "end";
       const baseAKey = `${btKey}_a`;
@@ -230,7 +230,7 @@ export class LoadingScene extends SceneBase {
     // Get current lang and load the types atlas for it. English will only load types while all other languages will load types and types_<lang>
     const lang = i18next.resolvedLanguage;
     if (lang !== "en") {
-      if (Utils.verifyLang(lang)) {
+      if (verifyLang(lang)) {
         this.loadAtlas(`statuses_${lang}`, "");
         this.loadAtlas(`types_${lang}`, "");
       } else {
@@ -257,7 +257,7 @@ export class LoadingScene extends SceneBase {
     this.loadAtlas("egg_icons", "egg");
     this.loadAtlas("egg_shard", "egg");
     this.loadAtlas("egg_lightrays", "egg");
-    Utils.getEnumKeys(GachaType).forEach(gt => {
+    getEnumKeys(GachaType).forEach(gt => {
       const key = gt.toLowerCase();
       this.loadImage(`gacha_${key}`, "egg");
       this.loadAtlas(`gacha_underlay_${key}`, "egg");

@@ -11,7 +11,7 @@ import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import { Stat } from "#enums/stat";
 import { MoveResult } from "#app/field/pokemon";
-import { CommandPhase } from "#app/phases/command-phase";
+import { CommandPhase } from "#phases/command-phase";
 import GameManager from "#app/test/utils/gameManager";
 import { Command } from "#app/ui/command-ui-handler";
 import { Mode } from "#app/ui/ui";

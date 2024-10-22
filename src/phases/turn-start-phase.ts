@@ -1,22 +1,27 @@
 import BattleScene from "#app/battle-scene";
-import { applyAbAttrs, BypassSpeedChanceAbAttr, PreventBypassSpeedChanceAbAttr, ChangeMovePriorityAbAttr } from "#app/data/ability";
+import {
+  applyAbAttrs,
+  BypassSpeedChanceAbAttr,
+  PreventBypassSpeedChanceAbAttr,
+  ChangeMovePriorityAbAttr,
+} from "#app/data/ability";
 import { allMoves, applyMoveAttrs, IncrementMovePriorityAttr, MoveHeaderAttr } from "#app/data/move";
-import { Abilities } from "#app/enums/abilities";
-import { Stat } from "#app/enums/stat";
+import { Abilities } from "#enums/abilities";
+import { Stat } from "#enums/stat";
 import Pokemon, { PokemonMove } from "#app/field/pokemon";
 import { BypassSpeedChanceModifier } from "#app/modifier/modifier";
 import { Command } from "#app/ui/command-ui-handler";
-import * as Utils from "#app/utils";
-import { AttemptCapturePhase } from "./attempt-capture-phase";
-import { AttemptRunPhase } from "./attempt-run-phase";
-import { BerryPhase } from "./berry-phase";
-import { FieldPhase } from "./field-phase";
-import { MoveHeaderPhase } from "./move-header-phase";
-import { MovePhase } from "./move-phase";
-import { SwitchSummonPhase } from "./switch-summon-phase";
-import { TurnEndPhase } from "./turn-end-phase";
-import { WeatherEffectPhase } from "./weather-effect-phase";
-import { CheckStatusEffectPhase } from "#app/phases/check-status-effect-phase";
+import { randSeedShuffle, BooleanHolder, NumberHolder } from "#app/utils";
+import { AttemptCapturePhase } from "#phases/attempt-capture-phase";
+import { AttemptRunPhase } from "#phases/attempt-run-phase";
+import { BerryPhase } from "#phases/berry-phase";
+import { FieldPhase } from "#phases/field-phase";
+import { MoveHeaderPhase } from "#phases/move-header-phase";
+import { MovePhase } from "#phases/move-phase";
+import { SwitchSummonPhase } from "#phases/switch-summon-phase";
+import { TurnEndPhase } from "#phases/turn-end-phase";
+import { WeatherEffectPhase } from "#phases/weather-effect-phase";
+import { CheckStatusEffectPhase } from "#phases/check-status-effect-phase";
 import { BattlerIndex } from "#app/battle";
 import { TrickRoomTag } from "#app/data/arena-tag";
 import { SwitchType } from "#enums/switch-type";
@@ -40,11 +45,11 @@ export class TurnStartPhase extends FieldPhase {
     // We seed it with the current turn to prevent an inconsistency where it
     // was varying based on how long since you last reloaded
     this.scene.executeWithSeedOffset(() => {
-      orderedTargets = Utils.randSeedShuffle(orderedTargets);
+      orderedTargets = randSeedShuffle(orderedTargets);
     }, this.scene.currentBattle.turn, this.scene.waveSeed);
 
     // Next, a check for Trick Room is applied to determine sort order.
-    const speedReversed = new Utils.BooleanHolder(false);
+    const speedReversed = new BooleanHolder(false);
     this.scene.arena.applyTags(TrickRoomTag, false, speedReversed);
 
     // Adjust the sort function based on whether Trick Room is active.
@@ -71,8 +76,8 @@ export class TurnStartPhase extends FieldPhase {
     const battlerBypassSpeed = {};
 
     this.scene.getField(true).filter(p => p.summonData).map(p => {
-      const bypassSpeed = new Utils.BooleanHolder(false);
-      const canCheckHeldItems = new Utils.BooleanHolder(true);
+      const bypassSpeed = new BooleanHolder(false);
+      const canCheckHeldItems = new BooleanHolder(true);
       applyAbAttrs(BypassSpeedChanceAbAttr, p, null, false, bypassSpeed);
       applyAbAttrs(PreventBypassSpeedChanceAbAttr, p, null, false, bypassSpeed, canCheckHeldItems);
       if (canCheckHeldItems.value) {
@@ -99,8 +104,8 @@ export class TurnStartPhase extends FieldPhase {
         const bMove = allMoves[bCommand!.move!.move];
 
         // The game now considers priority and applies the relevant move and ability attributes
-        const aPriority = new Utils.IntegerHolder(aMove.priority);
-        const bPriority = new Utils.IntegerHolder(bMove.priority);
+        const aPriority = new NumberHolder(aMove.priority);
+        const bPriority = new NumberHolder(bMove.priority);
 
         applyMoveAttrs(IncrementMovePriorityAttr, this.scene.getField().find(p => p?.isActive() && p.getBattlerIndex() === a)!, null, aMove, aPriority);
         applyMoveAttrs(IncrementMovePriorityAttr, this.scene.getField().find(p => p?.isActive() && p.getBattlerIndex() === b)!, null, bMove, bPriority);

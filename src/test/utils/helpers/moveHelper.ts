@@ -1,7 +1,7 @@
 import { BattlerIndex } from "#app/battle";
-import { Moves } from "#app/enums/moves";
-import { CommandPhase } from "#app/phases/command-phase";
-import { MoveEffectPhase } from "#app/phases/move-effect-phase";
+import { Moves } from "#enums/moves";
+import { CommandPhase } from "#phases/command-phase";
+import { MoveEffectPhase } from "#phases/move-effect-phase";
 import { Command } from "#app/ui/command-ui-handler";
 import { Mode } from "#app/ui/ui";
 import { vi } from "vitest";

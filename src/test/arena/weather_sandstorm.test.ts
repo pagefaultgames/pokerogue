@@ -1,6 +1,6 @@
 import { WeatherType } from "#app/data/weather";
-import { Abilities } from "#app/enums/abilities";
-import { Stat } from "#app/enums/stat";
+import { Abilities } from "#enums/abilities";
+import { Stat } from "#enums/stat";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/utils/gameManager";

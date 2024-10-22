@@ -1,7 +1,7 @@
 import { Stat } from "#enums/stat";
 import { TerrainType } from "#app/data/terrain";
-import { MoveEndPhase } from "#app/phases/move-end-phase";
-import { TurnEndPhase } from "#app/phases/turn-end-phase";
+import { MoveEndPhase } from "#phases/move-end-phase";
+import { TurnEndPhase } from "#phases/turn-end-phase";
 import { Abilities } from "#enums/abilities";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { Moves } from "#enums/moves";

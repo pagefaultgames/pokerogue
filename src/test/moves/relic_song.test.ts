@@ -1,5 +1,5 @@
 import { Type } from "#app/data/type";
-import { Challenges } from "#app/enums/challenges";
+import { Challenges } from "#enums/challenges";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";

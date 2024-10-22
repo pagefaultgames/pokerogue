@@ -7,16 +7,16 @@ import i18next from "i18next";
 import BattleScene, { AnySound } from "#app/battle-scene";
 import { GameMode } from "#app/game-mode";
 import { StarterMoveset } from "#app/system/game-data";
-import * as Utils from "#app/utils";
-import { uncatchableSpecies } from "#app/data/balance/biomes";
-import { speciesEggMoves } from "#app/data/balance/egg-moves";
+import { randSeedInt, randSeedGauss, randSeedItem } from "#app/utils";
+import { uncatchableSpecies } from "#balance/biomes";
+import { speciesEggMoves } from "#balance/egg-moves";
 import { GrowthRate } from "#app/data/exp";
-import { EvolutionLevel, SpeciesWildEvolutionDelay, pokemonEvolutions, pokemonPrevolutions } from "#app/data/balance/pokemon-evolutions";
+import { EvolutionLevel, SpeciesWildEvolutionDelay, pokemonEvolutions, pokemonPrevolutions } from "#balance/pokemon-evolutions";
 import { Type } from "#app/data/type";
-import { LevelMoves, pokemonFormLevelMoves, pokemonFormLevelMoves as pokemonSpeciesFormLevelMoves, pokemonSpeciesLevelMoves } from "#app/data/balance/pokemon-level-moves";
+import { LevelMoves, pokemonFormLevelMoves, pokemonFormLevelMoves as pokemonSpeciesFormLevelMoves, pokemonSpeciesLevelMoves } from "#balance/pokemon-level-moves";
 import { Stat } from "#enums/stat";
 import { Variant, VariantSet, variantColorCache, variantData } from "#app/data/variant";
-import { speciesStarterCosts, POKERUS_STARTER_COUNT } from "#app/data/balance/starters";
+import { speciesStarterCosts, POKERUS_STARTER_COUNT } from "#balance/starters";
 import { SpeciesFormKey } from "#enums/species-form-key";
 
 export enum Region {
@@ -793,7 +793,7 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
       return this.speciesId;
     }
 
-    const randValue = evolutionPool.size === 1 ? 0 : Utils.randSeedInt(totalWeight);
+    const randValue = evolutionPool.size === 1 ? 0 : randSeedInt(totalWeight);
 
     for (const weight of evolutionPool.keys()) {
       if (randValue < weight) {
@@ -855,11 +855,11 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
       ret.push([ prevolutionLevels[0][0], 1 ]);
       for (let l = 1; l < prevolutionLevels.length; l++) {
         const evolution = pokemonEvolutions[prevolutionLevels[l - 1][0]].find(e => e.speciesId === prevolutionLevels[l][0]);
-        ret.push([ prevolutionLevels[l][0], Math.min(Math.max((evolution?.level!) + Math.round(Utils.randSeedGauss(0.5, 1 + levelDiff * 0.2) * Math.max((evolution?.wildDelay!), 0.5) * 5) - 1, 2, (evolution?.level!)), currentLevel - 1) ]); // TODO: are those bangs correct?
+        ret.push([ prevolutionLevels[l][0], Math.min(Math.max((evolution?.level!) + Math.round(randSeedGauss(0.5, 1 + levelDiff * 0.2) * Math.max((evolution?.wildDelay!), 0.5) * 5) - 1, 2, (evolution?.level!)), currentLevel - 1) ]); // TODO: are those bangs correct?
       }
       const lastPrevolutionLevel = ret[prevolutionLevels.length - 1][1];
       const evolution = pokemonEvolutions[prevolutionLevels[prevolutionLevels.length - 1][0]].find(e => e.speciesId === this.speciesId);
-      ret.push([ this.speciesId, Math.min(Math.max(lastPrevolutionLevel + Math.round(Utils.randSeedGauss(0.5, 1 + levelDiff * 0.2) * Math.max((evolution?.wildDelay!), 0.5) * 5), lastPrevolutionLevel + 1, (evolution?.level!)), currentLevel) ]); // TODO: are those bangs correct?
+      ret.push([ this.speciesId, Math.min(Math.max(lastPrevolutionLevel + Math.round(randSeedGauss(0.5, 1 + levelDiff * 0.2) * Math.max((evolution?.wildDelay!), 0.5) * 5), lastPrevolutionLevel + 1, (evolution?.level!)), currentLevel) ]); // TODO: are those bangs correct?
     } else {
       ret.push([ this.speciesId, 1 ]);
     }
@@ -957,7 +957,7 @@ export function getPokerusStarters(scene: BattleScene): PokemonSpecies[] {
   date.setUTCHours(0, 0, 0, 0);
   scene.executeWithSeedOffset(() => {
     while (pokerusStarters.length < POKERUS_STARTER_COUNT) {
-      const randomSpeciesId = parseInt(Utils.randSeedItem(Object.keys(speciesStarterCosts)), 10);
+      const randomSpeciesId = parseInt(randSeedItem(Object.keys(speciesStarterCosts)), 10);
       const species = getPokemonSpecies(randomSpeciesId);
       if (!pokerusStarters.includes(species)) {
         pokerusStarters.push(species);

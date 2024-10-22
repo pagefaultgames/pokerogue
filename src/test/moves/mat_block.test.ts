@@ -5,9 +5,9 @@ import { Species } from "#enums/species";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Stat } from "#enums/stat";
-import { BerryPhase } from "#app/phases/berry-phase";
-import { CommandPhase } from "#app/phases/command-phase";
-import { TurnEndPhase } from "#app/phases/turn-end-phase";
+import { BerryPhase } from "#phases/berry-phase";
+import { CommandPhase } from "#phases/command-phase";
+import { TurnEndPhase } from "#phases/turn-end-phase";
 
 
 describe("Moves - Mat Block", () => {

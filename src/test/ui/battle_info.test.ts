@@ -1,6 +1,6 @@
-import { ExpGainsSpeed } from "#app/enums/exp-gains-speed";
-import { Species } from "#app/enums/species";
-import { ExpPhase } from "#app/phases/exp-phase";
+import { ExpGainsSpeed } from "#enums/exp-gains-speed";
+import { Species } from "#enums/species";
+import { ExpPhase } from "#phases/exp-phase";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import GameManager from "#test/utils/gameManager";

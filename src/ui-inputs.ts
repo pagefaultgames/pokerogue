@@ -1,17 +1,17 @@
 import Phaser from "phaser";
-import { Mode } from "./ui/ui";
+import { Mode } from "#app/ui/ui";
 import { InputsController } from "./inputs-controller";
-import MessageUiHandler from "./ui/message-ui-handler";
-import StarterSelectUiHandler from "./ui/starter-select-ui-handler";
-import { Setting, SettingKeys, settingIndex } from "./system/settings/settings";
-import SettingsUiHandler from "./ui/settings/settings-ui-handler";
+import MessageUiHandler from "#app/ui/message-ui-handler";
+import StarterSelectUiHandler from "#app/ui/starter-select-ui-handler";
+import { Setting, SettingKeys, settingIndex } from "#app/system/settings/settings";
+import SettingsUiHandler from "#app/ui/settings/settings-ui-handler";
 import { Button } from "#enums/buttons";
-import SettingsGamepadUiHandler from "./ui/settings/settings-gamepad-ui-handler";
+import SettingsGamepadUiHandler from "#app/ui/settings/settings-gamepad-ui-handler";
 import SettingsKeyboardUiHandler from "#app/ui/settings/settings-keyboard-ui-handler";
 import BattleScene from "./battle-scene";
-import SettingsDisplayUiHandler from "./ui/settings/settings-display-ui-handler";
-import SettingsAudioUiHandler from "./ui/settings/settings-audio-ui-handler";
-import RunInfoUiHandler from "./ui/run-info-ui-handler";
+import SettingsDisplayUiHandler from "#app/ui/settings/settings-display-ui-handler";
+import SettingsAudioUiHandler from "#app/ui/settings/settings-audio-ui-handler";
+import RunInfoUiHandler from "#app/ui/run-info-ui-handler";
 
 type ActionKeys = Record<Button, () => void>;
 

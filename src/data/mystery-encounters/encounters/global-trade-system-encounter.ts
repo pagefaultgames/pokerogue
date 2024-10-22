@@ -1,30 +1,44 @@
-import { leaveEncounterWithoutBattle, selectPokemonForOption, setEncounterRewards } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
+import {
+  leaveEncounterWithoutBattle,
+  selectPokemonForOption,
+  setEncounterRewards,
+} from "#mystery-encounters/utils/encounter-phase-utils";
 import { TrainerSlot, } from "#app/data/trainer-config";
 import { ModifierTier } from "#app/modifier/modifier-tier";
-import { getPlayerModifierTypeOptions, ModifierPoolType, ModifierTypeOption, regenerateModifierPoolThresholds } from "#app/modifier/modifier-type";
+import {
+  getPlayerModifierTypeOptions,
+  ModifierPoolType,
+  ModifierTypeOption,
+  regenerateModifierPoolThresholds,
+} from "#app/modifier/modifier-type";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import BattleScene from "#app/battle-scene";
-import MysteryEncounter, { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-encounter";
+import MysteryEncounter, { MysteryEncounterBuilder } from "#mystery-encounters/mystery-encounter";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { Species } from "#enums/species";
 import PokemonSpecies, { allSpecies, getPokemonSpecies } from "#app/data/pokemon-species";
 import { getTypeRgb } from "#app/data/type";
-import { MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/mystery-encounter-option";
+import { MysteryEncounterOptionBuilder } from "#mystery-encounters/mystery-encounter-option";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
-import * as Utils from "#app/utils";
-import { IntegerHolder, isNullOrUndefined, randInt, randSeedInt, randSeedShuffle } from "#app/utils";
+import { isNullOrUndefined, NumberHolder, randInt, randSeedInt, randSeedShuffle } from "#app/utils";
 import Pokemon, { EnemyPokemon, PlayerPokemon, PokemonMove } from "#app/field/pokemon";
-import { HiddenAbilityRateBoosterModifier, PokemonFormChangeItemModifier, PokemonHeldItemModifier, ShinyRateBoosterModifier, SpeciesStatBoosterModifier } from "#app/modifier/modifier";
+import {
+  HiddenAbilityRateBoosterModifier,
+  PokemonFormChangeItemModifier,
+  PokemonHeldItemModifier,
+  ShinyRateBoosterModifier,
+  SpeciesStatBoosterModifier,
+} from "#app/modifier/modifier";
 import { OptionSelectItem } from "#app/ui/abstact-option-select-ui-handler";
 import PokemonData from "#app/system/pokemon-data";
 import i18next from "i18next";
 import { Gender, getGenderSymbol } from "#app/data/gender";
 import { getNatureName } from "#app/data/nature";
 import { getPokeballAtlasKey, getPokeballTintColor, PokeballType } from "#app/data/pokeball";
-import { getEncounterText, showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
+import { getEncounterText, showEncounterText } from "#mystery-encounters/utils/encounter-dialogue-utils";
 import { trainerNamePools } from "#app/data/trainer-names";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
-import { addPokemonDataToDexAndValidateAchievements } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
+import { addPokemonDataToDexAndValidateAchievements } from "#mystery-encounters/utils/encounter-pokemon-utils";
 
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounters/globalTradeSystem";
@@ -228,7 +242,7 @@ export const GlobalTradeSystemEncounter: MysteryEncounter =
             const tradePokemon = new EnemyPokemon(scene, randomTradeOption, pokemon.level, TrainerSlot.NONE, false);
             // Extra shiny roll at 1/128 odds (boosted by events and charms)
             if (!tradePokemon.shiny) {
-              const shinyThreshold = new Utils.IntegerHolder(WONDER_TRADE_SHINY_CHANCE);
+              const shinyThreshold = new NumberHolder(WONDER_TRADE_SHINY_CHANCE);
               if (scene.eventManager.isEventActive()) {
                 shinyThreshold.value *= scene.eventManager.getShinyMultiplier();
               }
@@ -245,7 +259,7 @@ export const GlobalTradeSystemEncounter: MysteryEncounter =
             const hiddenIndex = tradePokemon.species.ability2 ? 2 : 1;
             if (tradePokemon.species.abilityHidden) {
               if (tradePokemon.abilityIndex < hiddenIndex) {
-                const hiddenAbilityChance = new IntegerHolder(64);
+                const hiddenAbilityChance = new NumberHolder(64);
                 scene.applyModifiers(HiddenAbilityRateBoosterModifier, true, hiddenAbilityChance);
 
                 const hasHiddenAbility = !randSeedInt(hiddenAbilityChance.value);

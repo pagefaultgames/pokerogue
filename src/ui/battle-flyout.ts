@@ -1,9 +1,9 @@
-import { default as Pokemon } from "../field/pokemon";
+import { default as Pokemon } from "#app/field/pokemon";
 import { addTextObject, TextStyle } from "./text";
-import * as Utils from "../utils";
+import { fixedInt } from "#app/utils";
 import BattleScene from "#app/battle-scene";
 import Move from "#app/data/move";
-import { BattleSceneEventType, BerryUsedEvent, MoveUsedEvent } from "../events/battle-scene";
+import { BattleSceneEventType, BerryUsedEvent, MoveUsedEvent } from "#app/events/battle-scene";
 import { BerryType } from "#enums/berry-type";
 import { Moves } from "#enums/moves";
 import { UiTheme } from "#enums/ui-theme";
@@ -179,7 +179,7 @@ export default class BattleFlyout extends Phaser.GameObjects.Container {
     this.scene.tweens.add({
       targets: this.flyoutParent,
       x: visible ? this.anchorX : this.anchorX - this.translationX,
-      duration: Utils.fixedInt(125),
+      duration: fixedInt(125),
       ease: "Sine.easeInOut",
       alpha: visible ? 1 : 0,
     });

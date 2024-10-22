@@ -1,12 +1,12 @@
 import BattleScene from "#app/battle-scene";
 import { BattlerIndex } from "#app/battle";
 import { CommonBattleAnim, CommonAnim } from "#app/data/battle-anims";
-import { Stat } from "#app/enums/stat";
+import { Stat } from "#enums/stat";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { getTextColor, TextStyle } from "#app/ui/text";
 import { Mode } from "#app/ui/ui";
 import i18next from "i18next";
-import { PokemonPhase } from "./pokemon-phase";
+import { PokemonPhase } from "#phases/pokemon-phase";
 
 export class ScanIvsPhase extends PokemonPhase {
   private shownIvs: integer;

@@ -1,7 +1,7 @@
 import { BattlerIndex } from "#app/battle";
-import { Abilities } from "#app/enums/abilities";
+import { Abilities } from "#enums/abilities";
 import { MoveResult } from "#app/field/pokemon";
-import { MovePhase } from "#app/phases/move-phase";
+import { MovePhase } from "#phases/move-phase";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/utils/gameManager";

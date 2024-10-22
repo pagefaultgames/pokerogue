@@ -6,7 +6,7 @@ import UiHandler from "./ui-handler";
 import i18next from "i18next";
 import { Button } from "#enums/buttons";
 import { getPokemonNameWithAffix } from "#app/messages";
-import { CommandPhase } from "#app/phases/command-phase";
+import { CommandPhase } from "#phases/command-phase";
 
 export enum Command {
   FIGHT = 0,

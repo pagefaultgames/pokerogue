@@ -1,7 +1,7 @@
-import { Abilities } from "#app/enums/abilities";
-import { StatusEffect } from "#app/enums/status-effect";
-import { SwitchPhase } from "#app/phases/switch-phase";
-import { TurnEndPhase } from "#app/phases/turn-end-phase";
+import { Abilities } from "#enums/abilities";
+import { StatusEffect } from "#enums/status-effect";
+import { SwitchPhase } from "#phases/switch-phase";
+import { TurnEndPhase } from "#phases/turn-end-phase";
 import GameManager from "#app/test/utils/gameManager";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";

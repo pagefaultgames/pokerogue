@@ -5,13 +5,13 @@ import { initSceneWithoutEncounterPhase } from "#test/utils/gameManagerUtils";
 import { Species } from "#enums/species";
 import BattleScene from "#app/battle-scene";
 import { StatusEffect } from "#app/data/status-effect";
-import MysteryEncounter from "#app/data/mystery-encounters/mystery-encounter";
+import MysteryEncounter from "#mystery-encounters/mystery-encounter";
 import { getPokemonSpecies } from "#app/data/pokemon-species";
-import { speciesStarterCosts } from "#app/data/balance/starters";
+import { speciesStarterCosts } from "#balance/starters";
 import { Type } from "#app/data/type";
-import { getHighestLevelPlayerPokemon, getLowestLevelPlayerPokemon, getRandomPlayerPokemon, getRandomSpeciesByStarterTier, koPlayerPokemon } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
-import { getEncounterText, queueEncounterMessage, showEncounterDialogue, showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
-import { MessagePhase } from "#app/phases/message-phase";
+import { getHighestLevelPlayerPokemon, getLowestLevelPlayerPokemon, getRandomPlayerPokemon, getRandomSpeciesByStarterTier, koPlayerPokemon } from "#mystery-encounters/utils/encounter-pokemon-utils";
+import { getEncounterText, queueEncounterMessage, showEncounterDialogue, showEncounterText } from "#mystery-encounters/utils/encounter-dialogue-utils";
+import { MessagePhase } from "#phases/message-phase";
 
 describe("Mystery Encounter Utils", () => {
   let phaserGame: Phaser.Game;

@@ -1,7 +1,7 @@
-import { pokemonEvolutions, SpeciesFormEvolution, SpeciesWildEvolutionDelay } from "#app/data/balance/pokemon-evolutions";
-import { Abilities } from "#app/enums/abilities";
-import { Moves } from "#app/enums/moves";
-import { Species } from "#app/enums/species";
+import { pokemonEvolutions, SpeciesFormEvolution, SpeciesWildEvolutionDelay } from "#balance/pokemon-evolutions";
+import { Abilities } from "#enums/abilities";
+import { Moves } from "#enums/moves";
+import { Species } from "#enums/species";
 import * as Utils from "#app/utils";
 import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";

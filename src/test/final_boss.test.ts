@@ -1,8 +1,8 @@
 import { StatusEffect } from "#app/data/status-effect";
-import { Abilities } from "#app/enums/abilities";
-import { Biome } from "#app/enums/biome";
-import { Moves } from "#app/enums/moves";
-import { Species } from "#app/enums/species";
+import { Abilities } from "#enums/abilities";
+import { Biome } from "#enums/biome";
+import { Moves } from "#enums/moves";
+import { Species } from "#enums/species";
 import { GameModes } from "#app/game-mode";
 import { TurnHeldItemTransferModifier } from "#app/modifier/modifier";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";

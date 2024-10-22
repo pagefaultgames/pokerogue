@@ -1,4 +1,4 @@
-import { BattlePhase } from "./battle-phase";
+import { BattlePhase } from "#phases/battle-phase";
 
 export class NewBattlePhase extends BattlePhase {
   start() {

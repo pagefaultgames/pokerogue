@@ -1,44 +1,44 @@
-import BattleScene from "#app/battle-scene";
+import { ChargeAnim, CommonAnim, CommonBattleAnim, MoveChargeAnim } from "./battle-anims";
+import { getPokemonNameWithAffix } from "#app/messages";
+import Pokemon, { MoveResult, HitResult } from "#app/field/pokemon";
+import { StatusEffect } from "./status-effect";
+import { toDmgValue, BooleanHolder, getFrameMs, NumberHolder } from "#app/utils";
+import Move, {
+  ChargeAttr,
+  MoveFlags,
+  allMoves,
+  MoveCategory,
+  applyMoveAttrs,
+  StatusCategoryOnAllyAttr,
+  HealOnAllyAttr,
+  ConsecutiveUseDoublePowerAttr,
+} from "./move";
+import { Type } from "./type";
 import {
-  allAbilities,
-  applyAbAttrs,
   BlockNonDirectDamageAbAttr,
   FlinchEffectAbAttr,
+  ReverseDrainAbAttr,
+  applyAbAttrs,
   ProtectStatAbAttr,
-  ReverseDrainAbAttr
-} from "#app/data/ability";
-import { ChargeAnim, CommonAnim, CommonBattleAnim, MoveChargeAnim } from "#app/data/battle-anims";
-import Move, {
-  allMoves,
-  applyMoveAttrs,
-  ChargeAttr,
-  ConsecutiveUseDoublePowerAttr,
-  HealOnAllyAttr,
-  MoveCategory,
-  MoveFlags,
-  StatusCategoryOnAllyAttr
-} from "#app/data/move";
-import { SpeciesFormChangeManualTrigger } from "#app/data/pokemon-forms";
-import { StatusEffect } from "#app/data/status-effect";
-import { TerrainType } from "#app/data/terrain";
-import { Type } from "#app/data/type";
-import { WeatherType } from "#app/data/weather";
-import Pokemon, { HitResult, MoveResult } from "#app/field/pokemon";
-import { getPokemonNameWithAffix } from "#app/messages";
-import { CommonAnimPhase } from "#app/phases/common-anim-phase";
-import { MoveEffectPhase } from "#app/phases/move-effect-phase";
-import { MovePhase } from "#app/phases/move-phase";
-import { PokemonHealPhase } from "#app/phases/pokemon-heal-phase";
-import { ShowAbilityPhase } from "#app/phases/show-ability-phase";
-import { StatStageChangeCallback, StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
-import i18next from "#app/plugins/i18n";
-import { BooleanHolder, getFrameMs, NumberHolder, toDmgValue } from "#app/utils";
+} from "./ability";
+import { TerrainType } from "./terrain";
+import { WeatherType } from "./weather";
+import { allAbilities } from "./ability";
+import { SpeciesFormChangeManualTrigger } from "./pokemon-forms";
 import { Abilities } from "#enums/abilities";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { Moves } from "#enums/moves";
-import { PokemonAnimType } from "#enums/pokemon-anim-type";
 import { Species } from "#enums/species";
-import { EFFECTIVE_STATS, getStatKey, Stat, type BattleStat, type EffectiveStat } from "#enums/stat";
+import i18next from "#app/plugins/i18n";
+import { Stat, type BattleStat, type EffectiveStat, EFFECTIVE_STATS, getStatKey } from "#enums/stat";
+import { CommonAnimPhase } from "#phases/common-anim-phase";
+import { MoveEffectPhase } from "#phases/move-effect-phase";
+import { MovePhase } from "#phases/move-phase";
+import { PokemonHealPhase } from "#phases/pokemon-heal-phase";
+import { ShowAbilityPhase } from "#phases/show-ability-phase";
+import { StatStageChangePhase, StatStageChangeCallback } from "#phases/stat-stage-change-phase";
+import { PokemonAnimType } from "#enums/pokemon-anim-type";
+import BattleScene from "#app/battle-scene";
 
 export enum BattlerTagLapseType {
   FAINT,

@@ -1,5 +1,5 @@
-import BattleScene from "../battle-scene";
-import * as Utils from "../utils";
+import BattleScene from "#app/battle-scene";
+import { MissingTextureKey } from "#app/utils";
 
 export default class CharSprite extends Phaser.GameObjects.Container {
   private sprite: Phaser.GameObjects.Sprite;
@@ -57,7 +57,7 @@ export default class CharSprite extends Phaser.GameObjects.Container {
         }
       });
 
-      this.setVisible(this.scene.textures.get(key).key !== Utils.MissingTextureKey);
+      this.setVisible(this.scene.textures.get(key).key !== MissingTextureKey);
       this.shown = true;
 
       this.key = key;

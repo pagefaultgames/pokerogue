@@ -1,6 +1,6 @@
 import BattleScene from "#app/battle-scene";
 import { FieldPosition } from "#app/field/pokemon";
-import { BattlePhase } from "./battle-phase";
+import { BattlePhase } from "#phases/battle-phase";
 
 export class ToggleDoublePositionPhase extends BattlePhase {
   private double: boolean;

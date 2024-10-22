@@ -1,5 +1,5 @@
 import { Stat } from "#enums/stat";
-import { TurnEndPhase } from "#app/phases/turn-end-phase";
+import { TurnEndPhase } from "#phases/turn-end-phase";
 import { Abilities } from "#enums/abilities";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { Moves } from "#enums/moves";

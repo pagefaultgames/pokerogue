@@ -1,8 +1,8 @@
 import { allMoves } from "#app/data/move";
-import { Abilities } from "#app/enums/abilities";
-import { ArenaTagType } from "#app/enums/arena-tag-type";
-import { MoveEffectPhase } from "#app/phases/move-effect-phase";
-import { TurnEndPhase } from "#app/phases/turn-end-phase";
+import { Abilities } from "#enums/abilities";
+import { ArenaTagType } from "#enums/arena-tag-type";
+import { MoveEffectPhase } from "#phases/move-effect-phase";
+import { TurnEndPhase } from "#phases/turn-end-phase";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/utils/gameManager";

@@ -3,7 +3,7 @@ import { applyChallenges, ChallengeType } from "#app/data/challenge";
 import { Gender } from "#app/data/gender";
 import { SpeciesFormChangeMoveLearnedTrigger } from "#app/data/pokemon-forms";
 import { getPokemonSpecies } from "#app/data/pokemon-species";
-import { Species } from "#app/enums/species";
+import { Species } from "#enums/species";
 import { PlayerPokemon } from "#app/field/pokemon";
 import { overrideModifiers, overrideHeldItems } from "#app/modifier/modifier";
 import { Phase } from "#app/phase";
@@ -11,7 +11,7 @@ import { SaveSlotUiMode } from "#app/ui/save-slot-select-ui-handler";
 import { Starter } from "#app/ui/starter-select-ui-handler";
 import { Mode } from "#app/ui/ui";
 import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
-import { TitlePhase } from "./title-phase";
+import { TitlePhase } from "#phases/title-phase";
 import Overrides from "#app/overrides";
 
 export class SelectStarterPhase extends Phase {

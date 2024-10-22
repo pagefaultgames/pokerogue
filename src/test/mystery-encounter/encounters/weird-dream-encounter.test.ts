@@ -1,10 +1,10 @@
-import * as MysteryEncounters from "#app/data/mystery-encounters/mystery-encounters";
-import { Biome } from "#app/enums/biome";
-import { MysteryEncounterType } from "#app/enums/mystery-encounter-type";
-import { Species } from "#app/enums/species";
+import * as MysteryEncounters from "#mystery-encounters/mystery-encounters";
+import { Biome } from "#enums/biome";
+import { MysteryEncounterType } from "#enums/mystery-encounter-type";
+import { Species } from "#enums/species";
 import GameManager from "#app/test/utils/gameManager";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import * as EncounterPhaseUtils from "#app/data/mystery-encounters/utils/encounter-phase-utils";
+import * as EncounterPhaseUtils from "#mystery-encounters/utils/encounter-phase-utils";
 import { runMysteryEncounterToEnd } from "#test/mystery-encounter/encounter-test-utils";
 import BattleScene from "#app/battle-scene";
 import { Mode } from "#app/ui/ui";
@@ -12,9 +12,9 @@ import ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { initSceneWithoutEncounterPhase } from "#test/utils/gameManagerUtils";
-import { WeirdDreamEncounter } from "#app/data/mystery-encounters/encounters/weird-dream-encounter";
-import * as EncounterTransformationSequence from "#app/data/mystery-encounters/utils/encounter-transformation-sequence";
-import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
+import { WeirdDreamEncounter } from "#mystery-encounters/encounters/weird-dream-encounter";
+import * as EncounterTransformationSequence from "#mystery-encounters/utils/encounter-transformation-sequence";
+import { SelectModifierPhase } from "#phases/select-modifier-phase";
 
 const namespace = "mysteryEncounters/weirdDream";
 const defaultParty = [ Species.MAGBY, Species.HAUNTER, Species.ABRA ];

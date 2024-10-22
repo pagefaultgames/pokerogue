@@ -2,7 +2,7 @@ import BattleScene from "#app/battle-scene";
 import { ModifierTypeFunc } from "#app/modifier/modifier-type";
 import { Mode } from "#app/ui/ui";
 import i18next from "i18next";
-import { ModifierRewardPhase } from "./modifier-reward-phase";
+import { ModifierRewardPhase } from "#phases/modifier-reward-phase";
 
 export class GameOverModifierRewardPhase extends ModifierRewardPhase {
   constructor(scene: BattleScene, modifierTypeFunc: ModifierTypeFunc) {

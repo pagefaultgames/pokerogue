@@ -1,7 +1,7 @@
 import BattleScene from "./battle-scene";
-import AwaitableUiHandler from "./ui/awaitable-ui-handler";
-import UiHandler from "./ui/ui-handler";
-import { Mode } from "./ui/ui";
+import AwaitableUiHandler from "#app/ui/awaitable-ui-handler";
+import UiHandler from "#app/ui/ui-handler";
+import { Mode } from "#app/ui/ui";
 import i18next from "i18next";
 import Overrides from "#app/overrides";
 

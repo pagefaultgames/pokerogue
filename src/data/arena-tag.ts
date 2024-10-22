@@ -7,7 +7,13 @@ import { getPokemonNameWithAffix } from "#app/messages";
 import Pokemon, { HitResult, PokemonMove } from "#app/field/pokemon";
 import { StatusEffect } from "#app/data/status-effect";
 import { BattlerIndex } from "#app/battle";
-import { BlockNonDirectDamageAbAttr, ChangeMovePriorityAbAttr, InfiltratorAbAttr, ProtectStatAbAttr, applyAbAttrs } from "#app/data/ability";
+import {
+  BlockNonDirectDamageAbAttr,
+  ChangeMovePriorityAbAttr,
+  InfiltratorAbAttr,
+  ProtectStatAbAttr,
+  applyAbAttrs,
+} from "#app/data/ability";
 import { Stat } from "#enums/stat";
 import { CommonAnim, CommonBattleAnim } from "#app/data/battle-anims";
 import i18next from "i18next";
@@ -15,11 +21,11 @@ import { Abilities } from "#enums/abilities";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { Moves } from "#enums/moves";
-import { MoveEffectPhase } from "#app/phases/move-effect-phase";
-import { PokemonHealPhase } from "#app/phases/pokemon-heal-phase";
-import { ShowAbilityPhase } from "#app/phases/show-ability-phase";
-import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
-import { CommonAnimPhase } from "#app/phases/common-anim-phase";
+import { MoveEffectPhase } from "#phases/move-effect-phase";
+import { PokemonHealPhase } from "#phases/pokemon-heal-phase";
+import { ShowAbilityPhase } from "#phases/show-ability-phase";
+import { StatStageChangePhase } from "#phases/stat-stage-change-phase";
+import { CommonAnimPhase } from "#phases/common-anim-phase";
 
 export enum ArenaTagSide {
   BOTH,

@@ -2,15 +2,15 @@ import BattleScene from "#app/battle-scene";
 import { BattlerIndex } from "#app/battle";
 import { CommonAnim } from "#app/data/battle-anims";
 import { getStatusEffectHealText } from "#app/data/status-effect";
-import { StatusEffect } from "#app/enums/status-effect";
+import { StatusEffect } from "#enums/status-effect";
 import { HitResult, DamageResult } from "#app/field/pokemon";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { HealingBoosterModifier } from "#app/modifier/modifier";
 import { HealAchv } from "#app/system/achv";
 import i18next from "i18next";
-import * as Utils from "#app/utils";
-import { CommonAnimPhase } from "./common-anim-phase";
-import { BattlerTagType } from "#app/enums/battler-tag-type";
+import { NumberHolder } from "#app/utils";
+import { CommonAnimPhase } from "#phases/common-anim-phase";
+import { BattlerTagType } from "#enums/battler-tag-type";
 import { HealBlockTag } from "#app/data/battler-tags";
 
 export class PokemonHealPhase extends CommonAnimPhase {
@@ -59,11 +59,11 @@ export class PokemonHealPhase extends CommonAnimPhase {
       this.message = null;
       return super.end();
     } else if (healOrDamage) {
-      const hpRestoreMultiplier = new Utils.IntegerHolder(1);
+      const hpRestoreMultiplier = new NumberHolder(1);
       if (!this.revive) {
         this.scene.applyModifiers(HealingBoosterModifier, this.player, hpRestoreMultiplier);
       }
-      const healAmount = new Utils.NumberHolder(Math.floor(this.hpHealed * hpRestoreMultiplier.value));
+      const healAmount = new NumberHolder(Math.floor(this.hpHealed * hpRestoreMultiplier.value));
       if (healAmount.value < 0) {
         pokemon.damageAndUpdate(healAmount.value * -1, HitResult.HEAL as DamageResult);
         healAmount.value = 0;

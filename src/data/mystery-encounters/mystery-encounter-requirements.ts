@@ -6,7 +6,7 @@ import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import { TimeOfDay } from "#enums/time-of-day";
 import { Nature } from "#app/data/nature";
-import { EvolutionItem, pokemonEvolutions } from "#app/data/balance/pokemon-evolutions";
+import { EvolutionItem, pokemonEvolutions } from "#balance/pokemon-evolutions";
 import { FormChangeItem, pokemonFormChanges, SpeciesFormChangeItemTrigger } from "#app/data/pokemon-forms";
 import { StatusEffect } from "#app/data/status-effect";
 import { Type } from "#app/data/type";

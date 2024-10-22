@@ -3,7 +3,7 @@ import Phaser from "phaser";
 import GameManager from "#test/utils/gameManager";
 import { Species } from "#enums/species";
 import { Moves } from "#enums/moves";
-import { LearnMovePhase } from "#app/phases/learn-move-phase";
+import { LearnMovePhase } from "#phases/learn-move-phase";
 
 describe("Learn Move Phase", () => {
   let phaserGame: Phaser.Game;

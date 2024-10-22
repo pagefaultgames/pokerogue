@@ -1,5 +1,5 @@
 import BattleScene from "#app/battle-scene";
-import { EncounterPhase } from "./encounter-phase";
+import { EncounterPhase } from "#phases/encounter-phase";
 
 export class NextEncounterPhase extends EncounterPhase {
   constructor(scene: BattleScene) {

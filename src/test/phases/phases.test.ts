@@ -1,7 +1,7 @@
 import BattleScene from "#app/battle-scene";
-import { LoginPhase } from "#app/phases/login-phase";
-import { TitlePhase } from "#app/phases/title-phase";
-import { UnavailablePhase } from "#app/phases/unavailable-phase";
+import { LoginPhase } from "#phases/login-phase";
+import { TitlePhase } from "#phases/title-phase";
+import { UnavailablePhase } from "#phases/unavailable-phase";
 import { Mode } from "#app/ui/ui";
 import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";

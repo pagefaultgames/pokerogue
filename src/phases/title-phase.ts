@@ -5,7 +5,12 @@ import { getDailyRunStarters, fetchDailyRunSeed } from "#app/data/daily-run";
 import { Gender } from "#app/data/gender";
 import { getBiomeKey } from "#app/field/arena";
 import { GameModes, GameMode, getGameMode } from "#app/game-mode";
-import { regenerateModifierPoolThresholds, ModifierPoolType, modifierTypes, getDailyRunStarterModifiers } from "#app/modifier/modifier-type";
+import {
+  regenerateModifierPoolThresholds,
+  ModifierPoolType,
+  modifierTypes,
+  getDailyRunStarterModifiers,
+} from "#app/modifier/modifier-type";
 import { Phase } from "#app/phase";
 import { SessionSaveData } from "#app/system/game-data";
 import { Unlockables } from "#app/system/unlockables";
@@ -14,13 +19,13 @@ import { OptionSelectItem, OptionSelectConfig } from "#app/ui/abstact-option-sel
 import { SaveSlotUiMode } from "#app/ui/save-slot-select-ui-handler";
 import { Mode } from "#app/ui/ui";
 import i18next from "i18next";
-import * as Utils from "#app/utils";
+import { isLocal } from "#app/utils";
 import { Modifier } from "#app/modifier/modifier";
-import { CheckSwitchPhase } from "./check-switch-phase";
-import { EncounterPhase } from "./encounter-phase";
-import { SelectChallengePhase } from "./select-challenge-phase";
-import { SelectStarterPhase } from "./select-starter-phase";
-import { SummonPhase } from "./summon-phase";
+import { CheckSwitchPhase } from "#phases/check-switch-phase";
+import { EncounterPhase } from "#phases/encounter-phase";
+import { SelectChallengePhase } from "#phases/select-challenge-phase";
+import { SelectStarterPhase } from "#phases/select-starter-phase";
+import { SummonPhase } from "#phases/summon-phase";
 
 
 export class TitlePhase extends Phase {
@@ -243,7 +248,7 @@ export class TitlePhase extends Phase {
       };
 
       // If Online, calls seed fetch from db to generate daily run. If Offline, generates a daily run based on current date.
-      if (!Utils.isLocal) {
+      if (!isLocal) {
         fetchDailyRunSeed().then(seed => {
           if (seed) {
             generateDaily(seed);

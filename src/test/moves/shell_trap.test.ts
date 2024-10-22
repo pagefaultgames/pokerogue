@@ -1,11 +1,11 @@
 import { BattlerIndex } from "#app/battle";
 import { allMoves } from "#app/data/move";
-import { Moves } from "#app/enums/moves";
-import { Species } from "#app/enums/species";
+import { Moves } from "#enums/moves";
+import { Species } from "#enums/species";
 import { MoveResult } from "#app/field/pokemon";
-import { BerryPhase } from "#app/phases/berry-phase";
-import { MoveEndPhase } from "#app/phases/move-end-phase";
-import { MovePhase } from "#app/phases/move-phase";
+import { BerryPhase } from "#phases/berry-phase";
+import { MoveEndPhase } from "#phases/move-end-phase";
+import { MovePhase } from "#phases/move-phase";
 import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";

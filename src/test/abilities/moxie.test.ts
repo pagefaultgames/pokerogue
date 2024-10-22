@@ -6,9 +6,9 @@ import { Species } from "#enums/species";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { BattlerIndex } from "#app/battle";
-import { EnemyCommandPhase } from "#app/phases/enemy-command-phase";
-import { VictoryPhase } from "#app/phases/victory-phase";
-import { TurnEndPhase } from "#app/phases/turn-end-phase";
+import { EnemyCommandPhase } from "#phases/enemy-command-phase";
+import { VictoryPhase } from "#phases/victory-phase";
+import { TurnEndPhase } from "#phases/turn-end-phase";
 
 describe("Abilities - Moxie", () => {
   let phaserGame: Phaser.Game;

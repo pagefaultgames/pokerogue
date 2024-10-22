@@ -1,9 +1,9 @@
 import { BattlerIndex } from "#app/battle";
 import { allMoves } from "#app/data/move";
 import { Type } from "#app/data/type";
-import { Abilities } from "#app/enums/abilities";
-import { Moves } from "#app/enums/moves";
-import { Species } from "#app/enums/species";
+import { Abilities } from "#enums/abilities";
+import { Moves } from "#enums/moves";
+import { Species } from "#enums/species";
 import { HitResult } from "#app/field/pokemon";
 import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";

@@ -1,13 +1,18 @@
 import BattleScene from "#app/battle-scene";
 import { BattlerIndex } from "#app/battle";
-import { applyAbAttrs, BlockNonDirectDamageAbAttr, BlockStatusDamageAbAttr, ReduceBurnDamageAbAttr } from "#app/data/ability";
+import {
+  applyAbAttrs,
+  BlockNonDirectDamageAbAttr,
+  BlockStatusDamageAbAttr,
+  ReduceBurnDamageAbAttr,
+} from "#app/data/ability";
 import { CommonBattleAnim, CommonAnim } from "#app/data/battle-anims";
 import { getStatusEffectActivationText } from "#app/data/status-effect";
-import { BattleSpec } from "#app/enums/battle-spec";
-import { StatusEffect } from "#app/enums/status-effect";
+import { BattleSpec } from "#enums/battle-spec";
+import { StatusEffect } from "#enums/status-effect";
 import { getPokemonNameWithAffix } from "#app/messages";
-import * as Utils from "#app/utils";
-import { PokemonPhase } from "./pokemon-phase";
+import { BooleanHolder, NumberHolder } from "#app/utils";
+import { PokemonPhase } from "#phases/pokemon-phase";
 
 export class PostTurnStatusEffectPhase extends PokemonPhase {
   constructor(scene: BattleScene, battlerIndex: BattlerIndex) {
@@ -18,13 +23,13 @@ export class PostTurnStatusEffectPhase extends PokemonPhase {
     const pokemon = this.getPokemon();
     if (pokemon?.isActive(true) && pokemon.status && pokemon.status.isPostTurn()) {
       pokemon.status.incrementTurn();
-      const cancelled = new Utils.BooleanHolder(false);
+      const cancelled = new BooleanHolder(false);
       applyAbAttrs(BlockNonDirectDamageAbAttr, pokemon, cancelled);
       applyAbAttrs(BlockStatusDamageAbAttr, pokemon, cancelled);
 
       if (!cancelled.value) {
         this.scene.queueMessage(getStatusEffectActivationText(pokemon.status.effect, getPokemonNameWithAffix(pokemon)));
-        const damage = new Utils.NumberHolder(0);
+        const damage = new NumberHolder(0);
         switch (pokemon.status.effect) {
           case StatusEffect.POISON:
             damage.value = Math.max(pokemon.getMaxHp() >> 3, 1);

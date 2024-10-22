@@ -2,8 +2,8 @@ import BattleScene from "#app/battle-scene";
 import { describe, expect, it, vi } from "vitest";
 import Pokemon from "#app/field/pokemon";
 import { BattlerTag, BattlerTagLapseType, OctolockTag, TrappedTag } from "#app/data/battler-tags";
-import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
-import { BattlerTagType } from "#app/enums/battler-tag-type";
+import { StatStageChangePhase } from "#phases/stat-stage-change-phase";
+import { BattlerTagType } from "#enums/battler-tag-type";
 import { Stat } from "#enums/stat";
 
 vi.mock("#app/battle-scene.js");

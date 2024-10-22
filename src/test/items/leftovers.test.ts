@@ -1,5 +1,5 @@
-import { DamagePhase } from "#app/phases/damage-phase";
-import { TurnEndPhase } from "#app/phases/turn-end-phase";
+import { DamagePhase } from "#phases/damage-phase";
+import { TurnEndPhase } from "#phases/turn-end-phase";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";

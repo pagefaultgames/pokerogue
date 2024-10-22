@@ -1,5 +1,5 @@
 import { allMoves } from "#app/data/move";
-import * as Utils from "#app/utils";
+import { getEnumKeys, getEnumValues } from "#app/utils";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 
@@ -579,8 +579,8 @@ export const speciesEggMoves = {
 function parseEggMoves(content: string): void {
   let output = "";
 
-  const speciesNames = Utils.getEnumKeys(Species);
-  const speciesValues = Utils.getEnumValues(Species);
+  const speciesNames = getEnumKeys(Species);
+  const speciesValues = getEnumValues(Species);
   const lines = content.split(/\n/g);
 
   lines.forEach((line, l) => {

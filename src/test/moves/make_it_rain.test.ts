@@ -5,8 +5,8 @@ import { Species } from "#enums/species";
 import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import { MoveEndPhase } from "#app/phases/move-end-phase";
-import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
+import { MoveEndPhase } from "#phases/move-end-phase";
+import { StatStageChangePhase } from "#phases/stat-stage-change-phase";
 
 
 describe("Moves - Make It Rain", () => {

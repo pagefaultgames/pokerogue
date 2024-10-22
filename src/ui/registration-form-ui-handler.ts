@@ -1,6 +1,6 @@
 import { FormModalUiHandler } from "./form-modal-ui-handler";
 import { ModalConfig } from "./modal-ui-handler";
-import * as Utils from "../utils";
+import { apiPost, setCookie, sessionIdKey } from "#app/utils";
 import { Mode } from "./ui";
 import { TextStyle, addTextObject } from "./text";
 import i18next from "i18next";
@@ -106,11 +106,11 @@ export default class RegistrationFormUiHandler extends FormModalUiHandler {
         if (this.inputs[1].text !== this.inputs[2].text) {
           return onFail(i18next.t("menu:passwordNotMatchingConfirmPassword"));
         }
-        Utils.apiPost("account/register", `username=${encodeURIComponent(this.inputs[0].text)}&password=${encodeURIComponent(this.inputs[1].text)}`, "application/x-www-form-urlencoded")
+        apiPost("account/register", `username=${encodeURIComponent(this.inputs[0].text)}&password=${encodeURIComponent(this.inputs[1].text)}`, "application/x-www-form-urlencoded")
           .then(response => response.text())
           .then(response => {
             if (!response) {
-              Utils.apiPost("account/login", `username=${encodeURIComponent(this.inputs[0].text)}&password=${encodeURIComponent(this.inputs[1].text)}`, "application/x-www-form-urlencoded")
+              apiPost("account/login", `username=${encodeURIComponent(this.inputs[0].text)}&password=${encodeURIComponent(this.inputs[1].text)}`, "application/x-www-form-urlencoded")
                 .then(response => {
                   if (!response.ok) {
                     return response.text();
@@ -119,7 +119,7 @@ export default class RegistrationFormUiHandler extends FormModalUiHandler {
                 })
                 .then(response => {
                   if (response.hasOwnProperty("token")) {
-                    Utils.setCookie(Utils.sessionIdKey, response.token);
+                    setCookie(sessionIdKey, response.token);
                     originalRegistrationAction && originalRegistrationAction();
                   } else {
                     onFail(response);

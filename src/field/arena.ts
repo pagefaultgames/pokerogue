@@ -1,16 +1,33 @@
 import BattleScene from "#app/battle-scene";
-import { biomePokemonPools, BiomePoolTier, BiomeTierTrainerPools, biomeTrainerPools, PokemonPools } from "#app/data/balance/biomes";
-import { Constructor } from "#app/utils";
-import * as Utils from "#app/utils";
+import {
+  biomePokemonPools,
+  BiomePoolTier,
+  BiomeTierTrainerPools,
+  biomeTrainerPools,
+  PokemonPools,
+} from "#balance/biomes";
+import { Constructor, randSeedInt } from "#app/utils";
 import PokemonSpecies, { getPokemonSpecies } from "#app/data/pokemon-species";
-import { getTerrainClearMessage, getTerrainStartMessage, getWeatherClearMessage, getWeatherStartMessage, Weather, WeatherType } from "#app/data/weather";
+import {
+  getTerrainClearMessage,
+  getTerrainStartMessage,
+  getWeatherClearMessage,
+  getWeatherStartMessage,
+  Weather,
+  WeatherType,
+} from "#app/data/weather";
 import { CommonAnim } from "#app/data/battle-anims";
 import { Type } from "#app/data/type";
 import Move from "#app/data/move";
 import { ArenaTag, ArenaTagSide, ArenaTrapTag, getArenaTag } from "#app/data/arena-tag";
 import { BattlerIndex } from "#app/battle";
 import { Terrain, TerrainType } from "#app/data/terrain";
-import { applyPostTerrainChangeAbAttrs, applyPostWeatherChangeAbAttrs, PostTerrainChangeAbAttr, PostWeatherChangeAbAttr } from "#app/data/ability";
+import {
+  applyPostTerrainChangeAbAttrs,
+  applyPostWeatherChangeAbAttrs,
+  PostTerrainChangeAbAttr,
+  PostWeatherChangeAbAttr,
+} from "#app/data/ability";
 import Pokemon from "#app/field/pokemon";
 import Overrides from "#app/overrides";
 import { TagAddedEvent, TagRemovedEvent, TerrainChangedEvent, WeatherChangedEvent } from "#app/events/arena";
@@ -22,8 +39,8 @@ import { TimeOfDay } from "#enums/time-of-day";
 import { TrainerType } from "#enums/trainer-type";
 import { Abilities } from "#enums/abilities";
 import { SpeciesFormChangeRevertWeatherFormTrigger, SpeciesFormChangeWeatherTrigger } from "#app/data/pokemon-forms";
-import { CommonAnimPhase } from "#app/phases/common-anim-phase";
-import { ShowAbilityPhase } from "#app/phases/show-ability-phase";
+import { CommonAnimPhase } from "#phases/common-anim-phase";
+import { ShowAbilityPhase } from "#phases/show-ability-phase";
 
 export class Arena {
   public scene: BattleScene;
@@ -90,7 +107,7 @@ export class Arena {
     if (typeof luckValue !== "undefined") {
       luckModifier = luckValue * (isBossSpecies ? 0.5 : 2);
     }
-    const tierValue = Utils.randSeedInt(randVal - luckModifier);
+    const tierValue = randSeedInt(randVal - luckModifier);
     let tier = !isBossSpecies
       ? tierValue >= 156 ? BiomePoolTier.COMMON : tierValue >= 32 ? BiomePoolTier.UNCOMMON : tierValue >= 6 ? BiomePoolTier.RARE : tierValue >= 1 ? BiomePoolTier.SUPER_RARE : BiomePoolTier.ULTRA_RARE
       : tierValue >= 20 ? BiomePoolTier.BOSS : tierValue >= 6 ? BiomePoolTier.BOSS_RARE : tierValue >= 1 ? BiomePoolTier.BOSS_SUPER_RARE : BiomePoolTier.BOSS_ULTRA_RARE;
@@ -105,7 +122,7 @@ export class Arena {
     if (!tierPool.length) {
       ret = this.scene.randomSpecies(waveIndex, level);
     } else {
-      const entry = tierPool[Utils.randSeedInt(tierPool.length)];
+      const entry = tierPool[randSeedInt(tierPool.length)];
       let species: Species;
       if (typeof entry === "number") {
         species = entry as Species;
@@ -116,7 +133,7 @@ export class Arena {
           if (level >= levelThreshold) {
             const speciesIds = entry[levelThreshold];
             if (speciesIds.length > 1) {
-              species = speciesIds[Utils.randSeedInt(speciesIds.length)];
+              species = speciesIds[randSeedInt(speciesIds.length)];
             } else {
               species = speciesIds[0];
             }
@@ -162,7 +179,7 @@ export class Arena {
     const isTrainerBoss = !!this.trainerPool[BiomePoolTier.BOSS].length
       && (this.scene.gameMode.isTrainerBoss(waveIndex, this.biomeType, this.scene.offsetGym) || isBoss);
     console.log(isBoss, this.trainerPool);
-    const tierValue = Utils.randSeedInt(!isTrainerBoss ? 512 : 64);
+    const tierValue = randSeedInt(!isTrainerBoss ? 512 : 64);
     let tier = !isTrainerBoss
       ? tierValue >= 156 ? BiomePoolTier.COMMON : tierValue >= 32 ? BiomePoolTier.UNCOMMON : tierValue >= 6 ? BiomePoolTier.RARE : tierValue >= 1 ? BiomePoolTier.SUPER_RARE : BiomePoolTier.ULTRA_RARE
       : tierValue >= 20 ? BiomePoolTier.BOSS : tierValue >= 6 ? BiomePoolTier.BOSS_RARE : tierValue >= 1 ? BiomePoolTier.BOSS_SUPER_RARE : BiomePoolTier.BOSS_ULTRA_RARE;
@@ -172,7 +189,7 @@ export class Arena {
       tier--;
     }
     const tierPool = this.trainerPool[tier] || [];
-    return !tierPool.length ? TrainerType.BREEDER : tierPool[Utils.randSeedInt(tierPool.length)];
+    return !tierPool.length ? TrainerType.BREEDER : tierPool[randSeedInt(tierPool.length)];
   }
 
   getSpeciesFormIndex(species: PokemonSpecies): integer {
@@ -912,7 +929,7 @@ export class ArenaBase extends Phaser.GameObjects.Container {
     if (!this.player) {
       (this.scene as BattleScene).executeWithSeedOffset(() => {
         this.propValue = propValue === undefined
-          ? hasProps ? Utils.randSeedInt(8) : 0
+          ? hasProps ? randSeedInt(8) : 0
           : propValue;
         this.props.forEach((prop, p) => {
           const propKey = `${biomeKey}_b${hasProps ? `_${p + 1}` : ""}`;

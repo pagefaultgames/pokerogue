@@ -1,5 +1,5 @@
 import { bypassLogin } from "./battle-scene";
-import * as Utils from "./utils";
+import { randomString, apiFetch } from "#app/utils";
 
 export interface UserInfo {
   username: string;
@@ -11,7 +11,7 @@ export interface UserInfo {
 
 export let loggedInUser: UserInfo | null = null;
 // This is a random string that is used to identify the client session - unique per session (tab or window) so that the game will only save on the one that the server is expecting
-export const clientSessionId = Utils.randomString(32);
+export const clientSessionId = randomString(32);
 
 export function initLoggedInUser(): void {
   loggedInUser = { username: "Guest", lastSessionSlot: -1, discordId: "", googleId: "", hasAdminRole: false };
@@ -43,7 +43,7 @@ export function updateUserInfo(): Promise<[boolean, integer]> {
       });
       return resolve([ true, 200 ]);
     }
-    Utils.apiFetch("account/info", true).then(response => {
+    apiFetch("account/info", true).then(response => {
       if (!response.ok) {
         resolve([ false, response.status ]);
         return;

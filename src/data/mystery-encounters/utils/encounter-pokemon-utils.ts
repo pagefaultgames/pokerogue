@@ -13,13 +13,13 @@ import { PartyOption, PartyUiMode } from "#app/ui/party-ui-handler";
 import { Species } from "#enums/species";
 import { Type } from "#app/data/type";
 import PokemonSpecies, { getPokemonSpecies } from "#app/data/pokemon-species";
-import { speciesStarterCosts } from "#app/data/balance/starters";
-import { getEncounterText, queueEncounterMessage, showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
+import { speciesStarterCosts } from "#balance/starters";
+import { getEncounterText, queueEncounterMessage, showEncounterText } from "#mystery-encounters/utils/encounter-dialogue-utils";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { modifierTypes, PokemonHeldItemModifierType } from "#app/modifier/modifier-type";
 import { Gender } from "#app/data/gender";
 import { PermanentStat } from "#enums/stat";
-import { VictoryPhase } from "#app/phases/victory-phase";
+import { VictoryPhase } from "#phases/victory-phase";
 import { SummaryUiMode } from "#app/ui/summary-ui-handler";
 
 /** Will give +1 level every 10 waves */

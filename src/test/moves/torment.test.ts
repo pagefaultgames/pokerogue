@@ -6,7 +6,7 @@ import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { MoveResult } from "#app/field/pokemon";
 import { BattlerTagType } from "#enums/battler-tag-type";
-import { TurnEndPhase } from "#app/phases/turn-end-phase";
+import { TurnEndPhase } from "#phases/turn-end-phase";
 
 describe("Moves - Torment", () => {
   let phaserGame: Phaser.Game;

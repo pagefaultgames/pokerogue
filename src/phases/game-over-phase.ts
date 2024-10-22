@@ -2,24 +2,24 @@ import { clientSessionId } from "#app/account";
 import { BattleType } from "#app/battle";
 import BattleScene from "#app/battle-scene";
 import { getCharVariantFromDialogue } from "#app/data/dialogue";
-import { pokemonEvolutions } from "#app/data/balance/pokemon-evolutions";
+import { pokemonEvolutions } from "#balance/pokemon-evolutions";
 import PokemonSpecies, { getPokemonSpecies } from "#app/data/pokemon-species";
 import { trainerConfigs } from "#app/data/trainer-config";
 import Pokemon from "#app/field/pokemon";
 import { modifierTypes } from "#app/modifier/modifier-type";
-import { BattlePhase } from "#app/phases/battle-phase";
-import { CheckSwitchPhase } from "#app/phases/check-switch-phase";
-import { EncounterPhase } from "#app/phases/encounter-phase";
-import { EndCardPhase } from "#app/phases/end-card-phase";
-import { GameOverModifierRewardPhase } from "#app/phases/game-over-modifier-reward-phase";
-import { PostGameOverPhase } from "#app/phases/post-game-over-phase";
-import { RibbonModifierRewardPhase } from "#app/phases/ribbon-modifier-reward-phase";
-import { SummonPhase } from "#app/phases/summon-phase";
-import { UnlockPhase } from "#app/phases/unlock-phase";
+import { BattlePhase } from "#phases/battle-phase";
+import { CheckSwitchPhase } from "#phases/check-switch-phase";
+import { EncounterPhase } from "#phases/encounter-phase";
+import { EndCardPhase } from "#phases/end-card-phase";
+import { GameOverModifierRewardPhase } from "#phases/game-over-modifier-reward-phase";
+import { PostGameOverPhase } from "#phases/post-game-over-phase";
+import { RibbonModifierRewardPhase } from "#phases/ribbon-modifier-reward-phase";
+import { SummonPhase } from "#phases/summon-phase";
+import { UnlockPhase } from "#phases/unlock-phase";
 import { achvs, ChallengeAchv } from "#app/system/achv";
 import { Unlockables } from "#app/system/unlockables";
 import { Mode } from "#app/ui/ui";
-import * as Utils from "#app/utils";
+import { isLocal, apiFetch } from "#app/utils";
 import { PlayerGender } from "#enums/player-gender";
 import { TrainerType } from "#enums/trainer-type";
 import i18next from "i18next";
@@ -176,8 +176,8 @@ export class GameOverPhase extends BattlePhase {
       If Online, execute apiFetch as intended
       If Offline, execute offlineNewClear(), a localStorage implementation of newClear daily run checks */
     if (this.victory) {
-      if (!Utils.isLocal) {
-        Utils.apiFetch(`savedata/session/newclear?slot=${this.scene.sessionSlotId}&clientSessionId=${clientSessionId}`, true)
+      if (!isLocal) {
+        apiFetch(`savedata/session/newclear?slot=${this.scene.sessionSlotId}&clientSessionId=${clientSessionId}`, true)
           .then(response => response.json())
           .then(newClear => doGameOver(newClear));
       } else {

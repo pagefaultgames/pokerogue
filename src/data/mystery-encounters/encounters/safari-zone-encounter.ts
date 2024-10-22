@@ -1,23 +1,23 @@
-import { initSubsequentOptionSelect, leaveEncounterWithoutBattle, transitionMysteryEncounterIntroVisuals, updatePlayerMoney, } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
+import { initSubsequentOptionSelect, leaveEncounterWithoutBattle, transitionMysteryEncounterIntroVisuals, updatePlayerMoney, } from "#mystery-encounters/utils/encounter-phase-utils";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import BattleScene from "#app/battle-scene";
-import MysteryEncounter, { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-encounter";
-import MysteryEncounterOption, { MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/mystery-encounter-option";
+import MysteryEncounter, { MysteryEncounterBuilder } from "#mystery-encounters/mystery-encounter";
+import MysteryEncounterOption, { MysteryEncounterOptionBuilder } from "#mystery-encounters/mystery-encounter-option";
 import { TrainerSlot } from "#app/data/trainer-config";
 import { HiddenAbilityRateBoosterModifier, IvScannerModifier } from "#app/modifier/modifier";
 import { EnemyPokemon } from "#app/field/pokemon";
 import { PokeballType } from "#app/data/pokeball";
 import { PlayerGender } from "#enums/player-gender";
-import { IntegerHolder, randSeedInt } from "#app/utils";
+import { NumberHolder, randSeedInt } from "#app/utils";
 import { getPokemonSpecies } from "#app/data/pokemon-species";
-import { MoneyRequirement } from "#app/data/mystery-encounters/mystery-encounter-requirements";
-import { doPlayerFlee, doPokemonFlee, getRandomSpeciesByStarterTier, trainerThrowPokeball } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
-import { getEncounterText, showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
+import { MoneyRequirement } from "#mystery-encounters/mystery-encounter-requirements";
+import { doPlayerFlee, doPokemonFlee, getRandomSpeciesByStarterTier, trainerThrowPokeball } from "#mystery-encounters/utils/encounter-pokemon-utils";
+import { getEncounterText, showEncounterText } from "#mystery-encounters/utils/encounter-dialogue-utils";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
-import { ScanIvsPhase } from "#app/phases/scan-ivs-phase";
-import { SummonPhase } from "#app/phases/summon-phase";
+import { ScanIvsPhase } from "#phases/scan-ivs-phase";
+import { SummonPhase } from "#phases/summon-phase";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
 
 /** the i18n namespace for the encounter */
@@ -275,7 +275,7 @@ async function summonSafariPokemon(scene: BattleScene) {
     if (pokemon.species.abilityHidden) {
       const hiddenIndex = pokemon.species.ability2 ? 2 : 1;
       if (pokemon.abilityIndex < hiddenIndex) {
-        const hiddenAbilityChance = new IntegerHolder(256);
+        const hiddenAbilityChance = new NumberHolder(256);
         scene.applyModifiers(HiddenAbilityRateBoosterModifier, true, hiddenAbilityChance);
 
         const hasHiddenAbility = !randSeedInt(hiddenAbilityChance.value);

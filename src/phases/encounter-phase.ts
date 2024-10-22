@@ -4,9 +4,9 @@ import { applyAbAttrs, SyncEncounterNatureAbAttr } from "#app/data/ability";
 import { getCharVariantFromDialogue } from "#app/data/dialogue";
 import { TrainerSlot } from "#app/data/trainer-config";
 import { getRandomWeatherType } from "#app/data/weather";
-import { BattleSpec } from "#app/enums/battle-spec";
-import { PlayerGender } from "#app/enums/player-gender";
-import { Species } from "#app/enums/species";
+import { BattleSpec } from "#enums/battle-spec";
+import { PlayerGender } from "#enums/player-gender";
+import { Species } from "#enums/species";
 import { EncounterPhaseEvent } from "#app/events/battle-scene";
 import Pokemon, { FieldPosition } from "#app/field/pokemon";
 import { getPokemonNameWithAffix } from "#app/messages";
@@ -16,26 +16,25 @@ import { achvs } from "#app/system/achv";
 import { handleTutorial, Tutorial } from "#app/tutorial";
 import { Mode } from "#app/ui/ui";
 import i18next from "i18next";
-import { BattlePhase } from "./battle-phase";
-import * as Utils from "#app/utils";
-import { randSeedInt } from "#app/utils";
-import { CheckSwitchPhase } from "./check-switch-phase";
-import { GameOverPhase } from "./game-over-phase";
-import { PostSummonPhase } from "./post-summon-phase";
-import { ReturnPhase } from "./return-phase";
-import { ScanIvsPhase } from "./scan-ivs-phase";
-import { ShinySparklePhase } from "./shiny-sparkle-phase";
-import { SummonPhase } from "./summon-phase";
-import { ToggleDoublePositionPhase } from "./toggle-double-position-phase";
+import { BattlePhase } from "#phases/battle-phase";
+import { randSeedInt, randSeedItem } from "#app/utils";
+import { CheckSwitchPhase } from "#phases/check-switch-phase";
+import { GameOverPhase } from "#phases/game-over-phase";
+import { PostSummonPhase } from "#phases/post-summon-phase";
+import { ReturnPhase } from "#phases/return-phase";
+import { ScanIvsPhase } from "#phases/scan-ivs-phase";
+import { ShinySparklePhase } from "#phases/shiny-sparkle-phase";
+import { SummonPhase } from "#phases/summon-phase";
+import { ToggleDoublePositionPhase } from "#phases/toggle-double-position-phase";
 import Overrides from "#app/overrides";
 import { initEncounterAnims, loadEncounterAnimAssets } from "#app/data/battle-anims";
 import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
-import { doTrainerExclamation } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
-import { getEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
-import { MysteryEncounterPhase } from "#app/phases/mystery-encounter-phases";
-import { getGoldenBugNetSpecies } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
+import { doTrainerExclamation } from "#mystery-encounters/utils/encounter-phase-utils";
+import { getEncounterText } from "#mystery-encounters/utils/encounter-dialogue-utils";
+import { MysteryEncounterPhase } from "#phases/mystery-encounter-phases";
+import { getGoldenBugNetSpecies } from "#mystery-encounters/utils/encounter-pokemon-utils";
 import { Biome } from "#enums/biome";
-import { WEIGHT_INCREMENT_ON_SPAWN_MISS } from "#app/data/mystery-encounters/mystery-encounters";
+import { WEIGHT_INCREMENT_ON_SPAWN_MISS } from "#mystery-encounters/mystery-encounters";
 
 export class EncounterPhase extends BattlePhase {
   private loaded: boolean;
@@ -362,7 +361,7 @@ export class EncounterPhase extends BattlePhase {
         doSummon();
       } else {
         let message: string;
-        this.scene.executeWithSeedOffset(() => message = Utils.randSeedItem(encounterMessages), this.scene.currentBattle.waveIndex);
+        this.scene.executeWithSeedOffset(() => message = randSeedItem(encounterMessages), this.scene.currentBattle.waveIndex);
         message = message!; // tell TS compiler it's defined now
         const showDialogueAndSummon = () => {
           this.scene.ui.showDialogue(message, trainer?.getName(TrainerSlot.NONE, true), null, () => {

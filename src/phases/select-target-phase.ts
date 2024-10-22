@@ -2,8 +2,8 @@ import BattleScene from "#app/battle-scene";
 import { BattlerIndex } from "#app/battle";
 import { Command } from "#app/ui/command-ui-handler";
 import { Mode } from "#app/ui/ui";
-import { CommandPhase } from "./command-phase";
-import { PokemonPhase } from "./pokemon-phase";
+import { CommandPhase } from "#phases/command-phase";
+import { PokemonPhase } from "#phases/pokemon-phase";
 import i18next from "#app/plugins/i18n";
 import { allMoves } from "#app/data/move";
 

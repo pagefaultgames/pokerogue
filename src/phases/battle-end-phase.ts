@@ -1,7 +1,7 @@
 import { applyPostBattleAbAttrs, PostBattleAbAttr } from "#app/data/ability";
 import { LapsingPersistentModifier, LapsingPokemonHeldItemModifier } from "#app/modifier/modifier";
-import { BattlePhase } from "./battle-phase";
-import { GameOverPhase } from "./game-over-phase";
+import { BattlePhase } from "#phases/battle-phase";
+import { GameOverPhase } from "#phases/game-over-phase";
 import BattleScene from "#app/battle-scene";
 
 export class BattleEndPhase extends BattlePhase {
