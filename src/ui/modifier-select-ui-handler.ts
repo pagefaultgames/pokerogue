@@ -17,6 +17,9 @@ import { IntegerHolder } from "./../utils";
 import Phaser from "phaser";
 
 export const SHOP_OPTIONS_ROW_LIMIT = 7;
+const SINGLE_SHOP_ROW_YOFFSET = 12;
+const DOUBLE_SHOP_ROW_YOFFSET = 24;
+const OPTION_BUTTON_YPOSITION = -62;
 
 export default class ModifierSelectUiHandler extends AwaitableUiHandler {
   private modifierContainer: Phaser.GameObjects.Container;
@@ -68,7 +71,7 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
       this.checkButtonWidth = context.measureText(i18next.t("modifierSelectUiHandler:checkTeam")).width;
     }
 
-    this.transferButtonContainer = this.scene.add.container((this.scene.game.canvas.width - this.checkButtonWidth) / 6 - 21, -64);
+    this.transferButtonContainer = this.scene.add.container((this.scene.game.canvas.width - this.checkButtonWidth) / 6 - 21, OPTION_BUTTON_YPOSITION);
     this.transferButtonContainer.setName("transfer-btn");
     this.transferButtonContainer.setVisible(false);
     ui.add(this.transferButtonContainer);
@@ -78,7 +81,7 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
     transferButtonText.setOrigin(1, 0);
     this.transferButtonContainer.add(transferButtonText);
 
-    this.checkButtonContainer = this.scene.add.container((this.scene.game.canvas.width) / 6 - 1, -64);
+    this.checkButtonContainer = this.scene.add.container((this.scene.game.canvas.width) / 6 - 1, OPTION_BUTTON_YPOSITION);
     this.checkButtonContainer.setName("use-btn");
     this.checkButtonContainer.setVisible(false);
     ui.add(this.checkButtonContainer);
@@ -88,7 +91,7 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
     checkButtonText.setOrigin(1, 0);
     this.checkButtonContainer.add(checkButtonText);
 
-    this.rerollButtonContainer = this.scene.add.container(16, -64);
+    this.rerollButtonContainer = this.scene.add.container(16, OPTION_BUTTON_YPOSITION);
     this.rerollButtonContainer.setName("reroll-brn");
     this.rerollButtonContainer.setVisible(false);
     ui.add(this.rerollButtonContainer);
@@ -104,7 +107,7 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
     this.rerollCostText.setPositionRelative(rerollButtonText, rerollButtonText.displayWidth + 5, 1);
     this.rerollButtonContainer.add(this.rerollCostText);
 
-    this.lockRarityButtonContainer = this.scene.add.container(16, -64);
+    this.lockRarityButtonContainer = this.scene.add.container(16, OPTION_BUTTON_YPOSITION);
     this.lockRarityButtonContainer.setVisible(false);
     ui.add(this.lockRarityButtonContainer);
 
@@ -191,7 +194,7 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
     const shopTypeOptions = !removeHealShop
       ? getPlayerShopModifierTypeOptionsForWave(this.scene.currentBattle.waveIndex, baseShopCost.value)
       : [];
-    const optionsYOffset = shopTypeOptions.length >= SHOP_OPTIONS_ROW_LIMIT ? -8 : -24;
+    const optionsYOffset = shopTypeOptions.length > SHOP_OPTIONS_ROW_LIMIT ? -SINGLE_SHOP_ROW_YOFFSET : -DOUBLE_SHOP_ROW_YOFFSET;
 
     for (let m = 0; m < typeOptions.length; m++) {
       const sliceWidth = (this.scene.game.canvas.width / 6) / (typeOptions.length + 2);
@@ -212,7 +215,7 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
       const col = m < SHOP_OPTIONS_ROW_LIMIT ? m : m - SHOP_OPTIONS_ROW_LIMIT;
       const rowOptions = shopTypeOptions.slice(row ? SHOP_OPTIONS_ROW_LIMIT : 0, row ? undefined : SHOP_OPTIONS_ROW_LIMIT);
       const sliceWidth = (this.scene.game.canvas.width / 6) / (rowOptions.length + 2);
-      const option = new ModifierOption(this.scene, sliceWidth * (col + 1) + (sliceWidth * 0.5), ((-this.scene.game.canvas.height / 12) - (this.scene.game.canvas.height / 32) - (40 - (28 * row - 1))), shopTypeOptions[m]);
+      const option = new ModifierOption(this.scene, sliceWidth * (col + 1) + (sliceWidth * 0.5), ((-this.scene.game.canvas.height / 12) - (this.scene.game.canvas.height / 32) - (42 - (28 * row - 1))), shopTypeOptions[m]);
       option.setScale(0.375);
       this.scene.add.existing(option);
       this.modifierContainer.add(option);
@@ -354,79 +357,79 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
       }
     } else {
       switch (button) {
-      case Button.UP:
-        if (this.rowCursor === 0 && this.cursor === 3) {
-          success = this.setCursor(0);
-        } else if (this.rowCursor < this.shopOptionsRows.length + 1) {
-          success = this.setRowCursor(this.rowCursor + 1);
-        }
-        break;
-      case Button.DOWN:
-        if (this.rowCursor) {
-          success = this.setRowCursor(this.rowCursor - 1);
-        } else if (this.lockRarityButtonContainer.visible && this.cursor === 0) {
-          success = this.setCursor(3);
-        }
-        break;
-      case Button.LEFT:
-        if (!this.rowCursor) {
-          switch (this.cursor) {
-          case 0:
-            success = false;
-            break;
-          case 1:
-            if (this.lockRarityButtonContainer.visible) {
-              success = this.setCursor(3);
-            } else {
-              success = this.rerollButtonContainer.visible && this.setCursor(0);
-            }
-            break;
-          case 2:
-            if (this.transferButtonContainer.visible) {
-              success = this.setCursor(1);
-            } else if (this.rerollButtonContainer.visible) {
-              success = this.setCursor(0);
-            } else {
-              success = false;
-            }
-            break;
+        case Button.UP:
+          if (this.rowCursor === 0 && this.cursor === 3) {
+            success = this.setCursor(0);
+          } else if (this.rowCursor < this.shopOptionsRows.length + 1) {
+            success = this.setRowCursor(this.rowCursor + 1);
           }
-        } else if (this.cursor) {
-          success = this.setCursor(this.cursor - 1);
-        } else if (this.rowCursor === 1 && this.rerollButtonContainer.visible) {
-          success = this.setRowCursor(0);
-        }
-        break;
-      case Button.RIGHT:
-        if (!this.rowCursor) {
-          switch (this.cursor) {
-          case 0:
-            if (this.transferButtonContainer.visible) {
-              success = this.setCursor(1);
-            } else {
-              success = this.setCursor(2);
-            }
-            break;
-          case 1:
-            success = this.setCursor(2);
-            break;
-          case 2:
-            success = false;
-            break;
-          case 3:
-            if (this.transferButtonContainer.visible) {
-              success = this.setCursor(1);
-            } else {
-              success = this.setCursor(2);
-            }
-            break;
+          break;
+        case Button.DOWN:
+          if (this.rowCursor) {
+            success = this.setRowCursor(this.rowCursor - 1);
+          } else if (this.lockRarityButtonContainer.visible && this.cursor === 0) {
+            success = this.setCursor(3);
           }
-        } else if (this.cursor < this.getRowItems(this.rowCursor) - 1) {
-          success = this.setCursor(this.cursor + 1);
-        } else if (this.rowCursor === 1 && this.transferButtonContainer.visible) {
-          success = this.setRowCursor(0);
-        }
-        break;
+          break;
+        case Button.LEFT:
+          if (!this.rowCursor) {
+            switch (this.cursor) {
+              case 0:
+                success = false;
+                break;
+              case 1:
+                if (this.lockRarityButtonContainer.visible) {
+                  success = this.setCursor(3);
+                } else {
+                  success = this.rerollButtonContainer.visible && this.setCursor(0);
+                }
+                break;
+              case 2:
+                if (this.transferButtonContainer.visible) {
+                  success = this.setCursor(1);
+                } else if (this.rerollButtonContainer.visible) {
+                  success = this.setCursor(0);
+                } else {
+                  success = false;
+                }
+                break;
+            }
+          } else if (this.cursor) {
+            success = this.setCursor(this.cursor - 1);
+          } else if (this.rowCursor === 1 && this.rerollButtonContainer.visible) {
+            success = this.setRowCursor(0);
+          }
+          break;
+        case Button.RIGHT:
+          if (!this.rowCursor) {
+            switch (this.cursor) {
+              case 0:
+                if (this.transferButtonContainer.visible) {
+                  success = this.setCursor(1);
+                } else {
+                  success = this.setCursor(2);
+                }
+                break;
+              case 1:
+                success = this.setCursor(2);
+                break;
+              case 2:
+                success = false;
+                break;
+              case 3:
+                if (this.transferButtonContainer.visible) {
+                  success = this.setCursor(1);
+                } else {
+                  success = this.setCursor(2);
+                }
+                break;
+            }
+          } else if (this.cursor < this.getRowItems(this.rowCursor) - 1) {
+            success = this.setCursor(this.cursor + 1);
+          } else if (this.rowCursor === 1 && this.transferButtonContainer.visible) {
+            success = this.setRowCursor(0);
+          }
+          break;
       }
     }
 
@@ -456,16 +459,18 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
       if (this.rowCursor === 1 && options.length === 0) {
         // Continue button when no shop items
         this.cursorObj.setScale(1.25);
-        this.cursorObj.setPosition((this.scene.game.canvas.width / 18) + 23, (-this.scene.game.canvas.height / 12) - (this.shopOptionsRows.length > 1 ? 6 : 22));
+        this.cursorObj.setPosition((this.scene.game.canvas.width / 18) + 23, (-this.scene.game.canvas.height / 12) - (this.shopOptionsRows.length > 1 ? SINGLE_SHOP_ROW_YOFFSET - 2 : DOUBLE_SHOP_ROW_YOFFSET - 2));
         ui.showText(i18next.t("modifierSelectUiHandler:continueNextWaveDescription"));
         return ret;
       }
 
       const sliceWidth = (this.scene.game.canvas.width / 6) / (options.length + 2);
       if (this.rowCursor < 2) {
-        this.cursorObj.setPosition(sliceWidth * (cursor + 1) + (sliceWidth * 0.5) - 20, (-this.scene.game.canvas.height / 12) - (this.shopOptionsRows.length > 1 ? 6 : 22));
+        // Cursor on free items
+        this.cursorObj.setPosition(sliceWidth * (cursor + 1) + (sliceWidth * 0.5) - 20, (-this.scene.game.canvas.height / 12) - (this.shopOptionsRows.length > 1 ? SINGLE_SHOP_ROW_YOFFSET - 2 : DOUBLE_SHOP_ROW_YOFFSET - 2));
       } else {
-        this.cursorObj.setPosition(sliceWidth * (cursor + 1) + (sliceWidth * 0.5) - 16, (-this.scene.game.canvas.height / 12 - this.scene.game.canvas.height / 32) - (-16 + 28 * (this.rowCursor - (this.shopOptionsRows.length - 1))));
+        // Cursor on paying items
+        this.cursorObj.setPosition(sliceWidth * (cursor + 1) + (sliceWidth * 0.5) - 16, (-this.scene.game.canvas.height / 12 - this.scene.game.canvas.height / 32) - (-14 + 28 * (this.rowCursor - (this.shopOptionsRows.length - 1))));
       }
 
       const type = options[this.cursor].modifierTypeOption.type;
@@ -475,16 +480,16 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
         this.moveInfoOverlay.show(allMoves[type.moveId]);
       }
     } else if (cursor === 0) {
-      this.cursorObj.setPosition(6, this.lockRarityButtonContainer.visible ? -72 : -60);
+      this.cursorObj.setPosition(6, this.lockRarityButtonContainer.visible ? OPTION_BUTTON_YPOSITION - 8 : OPTION_BUTTON_YPOSITION + 4);
       ui.showText(i18next.t("modifierSelectUiHandler:rerollDesc"));
     } else if (cursor === 1) {
-      this.cursorObj.setPosition((this.scene.game.canvas.width - this.transferButtonWidth - this.checkButtonWidth) / 6 - 30, -60);
+      this.cursorObj.setPosition((this.scene.game.canvas.width - this.transferButtonWidth - this.checkButtonWidth) / 6 - 30, OPTION_BUTTON_YPOSITION + 4);
       ui.showText(i18next.t("modifierSelectUiHandler:transferDesc"));
     } else if (cursor === 2) {
-      this.cursorObj.setPosition((this.scene.game.canvas.width - this.checkButtonWidth) / 6 - 10, -60);
+      this.cursorObj.setPosition((this.scene.game.canvas.width - this.checkButtonWidth) / 6 - 10, OPTION_BUTTON_YPOSITION + 4);
       ui.showText(i18next.t("modifierSelectUiHandler:checkTeamDesc"));
     } else {
-      this.cursorObj.setPosition(6, -60);
+      this.cursorObj.setPosition(6, OPTION_BUTTON_YPOSITION + 4);
       ui.showText(i18next.t("modifierSelectUiHandler:lockRaritiesDesc"));
     }
 
@@ -522,12 +527,12 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
 
   private getRowItems(rowCursor: integer): integer {
     switch (rowCursor) {
-    case 0:
-      return 3;
-    case 1:
-      return this.options.length;
-    default:
-      return this.shopOptionsRows[this.shopOptionsRows.length - (rowCursor - 1)].length;
+      case 0:
+        return 3;
+      case 1:
+        return this.options.length;
+      default:
+        return this.shopOptionsRows[this.shopOptionsRows.length - (rowCursor - 1)].length;
     }
   }
 

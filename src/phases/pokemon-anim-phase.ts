@@ -26,26 +26,26 @@ export class PokemonAnimPhase extends BattlePhase {
     super.start();
 
     switch (this.key) {
-    case PokemonAnimType.SUBSTITUTE_ADD:
-      this.doSubstituteAddAnim();
-      break;
-    case PokemonAnimType.SUBSTITUTE_PRE_MOVE:
-      this.doSubstitutePreMoveAnim();
-      break;
-    case PokemonAnimType.SUBSTITUTE_POST_MOVE:
-      this.doSubstitutePostMoveAnim();
-      break;
-    case PokemonAnimType.SUBSTITUTE_REMOVE:
-      this.doSubstituteRemoveAnim();
-      break;
-    case PokemonAnimType.COMMANDER_APPLY:
-      this.doCommanderApplyAnim();
-      break;
-    case PokemonAnimType.COMMANDER_REMOVE:
-      this.doCommanderRemoveAnim();
-      break;
-    default:
-      this.end();
+      case PokemonAnimType.SUBSTITUTE_ADD:
+        this.doSubstituteAddAnim();
+        break;
+      case PokemonAnimType.SUBSTITUTE_PRE_MOVE:
+        this.doSubstitutePreMoveAnim();
+        break;
+      case PokemonAnimType.SUBSTITUTE_POST_MOVE:
+        this.doSubstitutePostMoveAnim();
+        break;
+      case PokemonAnimType.SUBSTITUTE_REMOVE:
+        this.doSubstituteRemoveAnim();
+        break;
+      case PokemonAnimType.COMMANDER_APPLY:
+        this.doCommanderApplyAnim();
+        break;
+      case PokemonAnimType.COMMANDER_REMOVE:
+        this.doCommanderRemoveAnim();
+        break;
+      default:
+        this.end();
     }
   }
 

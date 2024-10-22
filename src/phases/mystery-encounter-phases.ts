@@ -402,7 +402,7 @@ export class MysteryEncounterBattlePhase extends Phase {
       }
     }
 
-    const availablePartyMembers = scene.getParty().filter(p => !p.isFainted());
+    const availablePartyMembers = scene.getParty().filter(p => p.isAllowedInBattle());
 
     if (!availablePartyMembers[0].isOnField()) {
       scene.pushPhase(new SummonPhase(scene, 0));

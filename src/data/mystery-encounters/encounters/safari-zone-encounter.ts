@@ -304,6 +304,11 @@ async function summonSafariPokemon(scene: BattleScene) {
 
   encounter.setDialogueToken("pokemonName", getPokemonNameWithAffix(pokemon));
 
+  // TODO: If we await showEncounterText here, then the text will display without
+  // the wild Pokemon on screen, but if we don't await it, then the text never
+  // shows up and the IV scanner breaks. For now, we place the IV scanner code
+  // separately so that at least the IV scanner works.
+
   const ivScannerModifier = scene.findModifier(m => m instanceof IvScannerModifier);
   if (ivScannerModifier) {
     scene.pushPhase(new ScanIvsPhase(scene, pokemon.getBattlerIndex(), Math.min(ivScannerModifier.getStackCount() * 2, 6)));

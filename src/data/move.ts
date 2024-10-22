@@ -8,7 +8,7 @@ import { Constructor, NumberHolder } from "#app/utils";
 import * as Utils from "../utils";
 import { WeatherType } from "./weather";
 import { ArenaTagSide, ArenaTrapTag, WeakenMoveTypeTag } from "./arena-tag";
-import { allAbilities, AllyMoveCategoryPowerBoostAbAttr, applyAbAttrs, applyPostAttackAbAttrs, applyPreAttackAbAttrs, applyPreDefendAbAttrs, BlockItemTheftAbAttr, BlockNonDirectDamageAbAttr, BlockOneHitKOAbAttr, BlockRecoilDamageAttr, ConfusionOnStatusEffectAbAttr, FieldMoveTypePowerBoostAbAttr, FieldPreventExplosiveMovesAbAttr, ForceSwitchOutImmunityAbAttr, HealFromBerryUseAbAttr, IgnoreContactAbAttr, IgnoreMoveEffectsAbAttr, IgnoreProtectOnContactAbAttr, MaxMultiHitAbAttr, MoveAbilityBypassAbAttr, MoveEffectChanceMultiplierAbAttr, MoveTypeChangeAbAttr, ReverseDrainAbAttr, UncopiableAbilityAbAttr, UnsuppressableAbilityAbAttr, UnswappableAbilityAbAttr, UserFieldMoveTypePowerBoostAbAttr, VariableMovePowerAbAttr, WonderSkinAbAttr } from "./ability";
+import { allAbilities, AllyMoveCategoryPowerBoostAbAttr, applyAbAttrs, applyPostAttackAbAttrs, applyPreAttackAbAttrs, applyPreDefendAbAttrs, BlockItemTheftAbAttr, BlockNonDirectDamageAbAttr, BlockOneHitKOAbAttr, BlockRecoilDamageAttr, ConfusionOnStatusEffectAbAttr, FieldMoveTypePowerBoostAbAttr, FieldPreventExplosiveMovesAbAttr, ForceSwitchOutImmunityAbAttr, HealFromBerryUseAbAttr, IgnoreContactAbAttr, IgnoreMoveEffectsAbAttr, IgnoreProtectOnContactAbAttr, InfiltratorAbAttr, MaxMultiHitAbAttr, MoveAbilityBypassAbAttr, MoveEffectChanceMultiplierAbAttr, MoveTypeChangeAbAttr, ReverseDrainAbAttr, UncopiableAbilityAbAttr, UnsuppressableAbilityAbAttr, UnswappableAbilityAbAttr, UserFieldMoveTypePowerBoostAbAttr, VariableMovePowerAbAttr, WonderSkinAbAttr } from "./ability";
 import { AttackTypeBoosterModifier, BerryModifier, PokemonHeldItemModifier, PokemonMoveAccuracyBoosterModifier, PokemonMultiHitModifier, PreserveBerryModifier } from "../modifier/modifier";
 import { BattlerIndex, BattleType } from "../battle";
 import { TerrainType } from "./terrain";
@@ -274,16 +274,16 @@ export default class Move implements Localizable {
    */
   isMultiTarget(): boolean {
     switch (this.moveTarget) {
-    case MoveTarget.ALL_OTHERS:
-    case MoveTarget.ALL_NEAR_OTHERS:
-    case MoveTarget.ALL_NEAR_ENEMIES:
-    case MoveTarget.ALL_ENEMIES:
-    case MoveTarget.USER_AND_ALLIES:
-    case MoveTarget.ALL:
-    case MoveTarget.USER_SIDE:
-    case MoveTarget.ENEMY_SIDE:
-    case MoveTarget.BOTH_SIDES:
-      return true;
+      case MoveTarget.ALL_OTHERS:
+      case MoveTarget.ALL_NEAR_OTHERS:
+      case MoveTarget.ALL_NEAR_ENEMIES:
+      case MoveTarget.ALL_ENEMIES:
+      case MoveTarget.USER_AND_ALLIES:
+      case MoveTarget.ALL:
+      case MoveTarget.USER_SIDE:
+      case MoveTarget.ENEMY_SIDE:
+      case MoveTarget.BOTH_SIDES:
+        return true;
     }
     return false;
   }
@@ -295,13 +295,13 @@ export default class Move implements Localizable {
 
   isAllyTarget(): boolean {
     switch (this.moveTarget) {
-    case MoveTarget.USER:
-    case MoveTarget.NEAR_ALLY:
-    case MoveTarget.ALLY:
-    case MoveTarget.USER_OR_NEAR_ALLY:
-    case MoveTarget.USER_AND_ALLIES:
-    case MoveTarget.USER_SIDE:
-      return true;
+      case MoveTarget.USER:
+      case MoveTarget.NEAR_ALLY:
+      case MoveTarget.ALLY:
+      case MoveTarget.USER_OR_NEAR_ALLY:
+      case MoveTarget.USER_AND_ALLIES:
+      case MoveTarget.USER_SIDE:
+        return true;
     }
     return false;
   }
@@ -320,16 +320,16 @@ export default class Move implements Localizable {
     }
 
     switch (type) {
-    case Type.GRASS:
-      if (this.hasFlag(MoveFlags.POWDER_MOVE)) {
-        return true;
-      }
-      break;
-    case Type.DARK:
-      if (user.hasAbility(Abilities.PRANKSTER) && this.category === MoveCategory.STATUS && (user.isPlayer() !== target.isPlayer())) {
-        return true;
-      }
-      break;
+      case Type.GRASS:
+        if (this.hasFlag(MoveFlags.POWDER_MOVE)) {
+          return true;
+        }
+        break;
+      case Type.DARK:
+        if (user.hasAbility(Abilities.PRANKSTER) && this.category === MoveCategory.STATUS && (user.isPlayer() !== target.isPlayer())) {
+          return true;
+        }
+        break;
     }
     return false;
   }
@@ -346,7 +346,11 @@ export default class Move implements Localizable {
       return false;
     }
 
-    return !user.hasAbility(Abilities.INFILTRATOR)
+    const bypassed = new Utils.BooleanHolder(false);
+    // TODO: Allow this to be simulated
+    applyAbAttrs(InfiltratorAbAttr, user, null, false, bypassed);
+
+    return !bypassed.value
         && !this.hasFlag(MoveFlags.SOUND_BASED)
         && !this.hasFlag(MoveFlags.IGNORE_SUBSTITUTE);
   }
@@ -616,26 +620,26 @@ export default class Move implements Localizable {
   checkFlag(flag: MoveFlags, user: Pokemon, target: Pokemon | null): boolean {
     // special cases below, eg: if the move flag is MAKES_CONTACT, and the user pokemon has an ability that ignores contact (like "Long Reach"), then overrides and move does not make contact
     switch (flag) {
-    case MoveFlags.MAKES_CONTACT:
-      if (user.hasAbilityWithAttr(IgnoreContactAbAttr) || this.hitsSubstitute(user, target)) {
-        return false;
-      }
-      break;
-    case MoveFlags.IGNORE_ABILITIES:
-      if (user.hasAbilityWithAttr(MoveAbilityBypassAbAttr)) {
-        const abilityEffectsIgnored = new Utils.BooleanHolder(false);
-        applyAbAttrs(MoveAbilityBypassAbAttr, user, abilityEffectsIgnored, false, this);
-        if (abilityEffectsIgnored.value) {
+      case MoveFlags.MAKES_CONTACT:
+        if (user.hasAbilityWithAttr(IgnoreContactAbAttr) || this.hitsSubstitute(user, target)) {
+          return false;
+        }
+        break;
+      case MoveFlags.IGNORE_ABILITIES:
+        if (user.hasAbilityWithAttr(MoveAbilityBypassAbAttr)) {
+          const abilityEffectsIgnored = new Utils.BooleanHolder(false);
+          applyAbAttrs(MoveAbilityBypassAbAttr, user, abilityEffectsIgnored, false, this);
+          if (abilityEffectsIgnored.value) {
+            return true;
+          }
+        }
+        break;
+      case MoveFlags.IGNORE_PROTECT:
+        if (user.hasAbilityWithAttr(IgnoreProtectOnContactAbAttr)
+          && this.checkFlag(MoveFlags.MAKES_CONTACT, user, null)) {
           return true;
         }
-      }
-      break;
-    case MoveFlags.IGNORE_PROTECT:
-      if (user.hasAbilityWithAttr(IgnoreProtectOnContactAbAttr)
-          && this.checkFlag(MoveFlags.MAKES_CONTACT, user, null)) {
-        return true;
-      }
-      break;
+        break;
     }
 
     return !!(this.flags & flag);
@@ -1749,17 +1753,17 @@ export abstract class WeatherHealAttr extends HealAttr {
 export class PlantHealAttr extends WeatherHealAttr {
   getWeatherHealRatio(weatherType: WeatherType): number {
     switch (weatherType) {
-    case WeatherType.SUNNY:
-    case WeatherType.HARSH_SUN:
-      return 2 / 3;
-    case WeatherType.RAIN:
-    case WeatherType.SANDSTORM:
-    case WeatherType.HAIL:
-    case WeatherType.SNOW:
-    case WeatherType.HEAVY_RAIN:
-      return 0.25;
-    default:
-      return 0.5;
+      case WeatherType.SUNNY:
+      case WeatherType.HARSH_SUN:
+        return 2 / 3;
+      case WeatherType.RAIN:
+      case WeatherType.SANDSTORM:
+      case WeatherType.HAIL:
+      case WeatherType.SNOW:
+      case WeatherType.HEAVY_RAIN:
+        return 0.25;
+      default:
+        return 0.5;
     }
   }
 }
@@ -1767,10 +1771,10 @@ export class PlantHealAttr extends WeatherHealAttr {
 export class SandHealAttr extends WeatherHealAttr {
   getWeatherHealRatio(weatherType: WeatherType): number {
     switch (weatherType) {
-    case WeatherType.SANDSTORM:
-      return 2 / 3;
-    default:
-      return 0.5;
+      case WeatherType.SANDSTORM:
+        return 2 / 3;
+      default:
+        return 0.5;
     }
   }
 }
@@ -2000,33 +2004,33 @@ export class MultiHitAttr extends MoveAttr {
    */
   getHitCount(user: Pokemon, target: Pokemon): integer {
     switch (this.multiHitType) {
-    case MultiHitType._2_TO_5:
-    {
-      const rand = user.randSeedInt(16);
-      const hitValue = new Utils.IntegerHolder(rand);
-      applyAbAttrs(MaxMultiHitAbAttr, user, null, false, hitValue);
-      if (hitValue.value >= 10) {
-        return 2;
-      } else if (hitValue.value >= 4) {
-        return 3;
-      } else if (hitValue.value >= 2) {
-        return 4;
-      } else {
-        return 5;
+      case MultiHitType._2_TO_5:
+      {
+        const rand = user.randSeedInt(16);
+        const hitValue = new Utils.IntegerHolder(rand);
+        applyAbAttrs(MaxMultiHitAbAttr, user, null, false, hitValue);
+        if (hitValue.value >= 10) {
+          return 2;
+        } else if (hitValue.value >= 4) {
+          return 3;
+        } else if (hitValue.value >= 2) {
+          return 4;
+        } else {
+          return 5;
+        }
       }
-    }
-    case MultiHitType._2:
-      return 2;
-    case MultiHitType._3:
-      return 3;
-    case MultiHitType._10:
-      return 10;
-    case MultiHitType.BEAT_UP:
-      const party = user.isPlayer() ? user.scene.getParty() : user.scene.getEnemyParty();
-      // No status means the ally pokemon can contribute to Beat Up
-      return party.reduce((total, pokemon) => {
-        return total + (pokemon.id === user.id ? 1 : pokemon?.status && pokemon.status.effect !== StatusEffect.NONE ? 0 : 1);
-      }, 0);
+      case MultiHitType._2:
+        return 2;
+      case MultiHitType._3:
+        return 3;
+      case MultiHitType._10:
+        return 10;
+      case MultiHitType.BEAT_UP:
+        const party = user.isPlayer() ? user.scene.getParty() : user.scene.getEnemyParty();
+        // No status means the ally pokemon can contribute to Beat Up
+        return party.reduce((total, pokemon) => {
+          return total + (pokemon.id === user.id ? 1 : pokemon?.status && pokemon.status.effect !== StatusEffect.NONE ? 0 : 1);
+        }, 0);
     }
   }
 }
@@ -2078,7 +2082,7 @@ export class StatusEffectAttr extends MoveEffectAttr {
         }
       }
 
-      if (user !== target && target.scene.arena.getTagOnSide(ArenaTagType.SAFEGUARD, target.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY)) {
+      if (user !== target && target.isSafeguarded(user)) {
         if (move.category === MoveCategory.STATUS) {
           user.scene.queueMessage(i18next.t("moveTriggers:safeguard", { targetName: getPokemonNameWithAffix(target) }));
         }
@@ -2849,26 +2853,26 @@ export class StatStageChangeAttr extends MoveEffectAttr {
       }
       let noEffect = false;
       switch (stat) {
-      case Stat.ATK:
-        if (this.selfTarget) {
-          noEffect = !user.getMoveset().find(m => m instanceof AttackMove && m.category === MoveCategory.PHYSICAL);
-        }
-        break;
-      case Stat.DEF:
-        if (!this.selfTarget) {
-          noEffect = !user.getMoveset().find(m => m instanceof AttackMove && m.category === MoveCategory.PHYSICAL);
-        }
-        break;
-      case Stat.SPATK:
-        if (this.selfTarget) {
-          noEffect = !user.getMoveset().find(m => m instanceof AttackMove && m.category === MoveCategory.SPECIAL);
-        }
-        break;
-      case Stat.SPDEF:
-        if (!this.selfTarget) {
-          noEffect = !user.getMoveset().find(m => m instanceof AttackMove && m.category === MoveCategory.SPECIAL);
-        }
-        break;
+        case Stat.ATK:
+          if (this.selfTarget) {
+            noEffect = !user.getMoveset().find(m => m instanceof AttackMove && m.category === MoveCategory.PHYSICAL);
+          }
+          break;
+        case Stat.DEF:
+          if (!this.selfTarget) {
+            noEffect = !user.getMoveset().find(m => m instanceof AttackMove && m.category === MoveCategory.PHYSICAL);
+          }
+          break;
+        case Stat.SPATK:
+          if (this.selfTarget) {
+            noEffect = !user.getMoveset().find(m => m instanceof AttackMove && m.category === MoveCategory.SPECIAL);
+          }
+          break;
+        case Stat.SPDEF:
+          if (!this.selfTarget) {
+            noEffect = !user.getMoveset().find(m => m instanceof AttackMove && m.category === MoveCategory.SPECIAL);
+          }
+          break;
       }
       if (noEffect) {
         continue;
@@ -2895,8 +2899,6 @@ export class SecretPowerAttr extends MoveEffectAttr {
     this.effectChanceOverride = move.chance;
     const moveChance = this.getMoveChance(user, target, move, this.selfTarget);
     if (moveChance < 0 || moveChance === 100 || user.randSeedInt(100) < moveChance) {
-      // effectChanceOverride used in the application of the actual secondary effect
-      this.effectChanceOverride = 100;
       return true;
     } else {
       return false;
@@ -2919,6 +2921,8 @@ export class SecretPowerAttr extends MoveEffectAttr {
       const biome = user.scene.arena.biomeType;
       secondaryEffect = this.determineBiomeEffect(biome);
     }
+    // effectChanceOverride used in the application of the actual secondary effect
+    secondaryEffect.effectChanceOverride = 100;
     return secondaryEffect.apply(user, target, move, []);
   }
 
@@ -2937,19 +2941,19 @@ export class SecretPowerAttr extends MoveEffectAttr {
   private determineTerrainEffect(terrain: TerrainType): MoveEffectAttr {
     let secondaryEffect: MoveEffectAttr;
     switch (terrain) {
-    case TerrainType.ELECTRIC:
-    default:
-      secondaryEffect = new StatusEffectAttr(StatusEffect.PARALYSIS, false);
-      break;
-    case TerrainType.MISTY:
-      secondaryEffect = new StatStageChangeAttr([ Stat.SPATK ], -1, false);
-      break;
-    case TerrainType.GRASSY:
-      secondaryEffect = new StatusEffectAttr(StatusEffect.SLEEP, false);
-      break;
-    case TerrainType.PSYCHIC:
-      secondaryEffect = new StatStageChangeAttr([ Stat.SPD ], -1, false);
-      break;
+      case TerrainType.ELECTRIC:
+      default:
+        secondaryEffect = new StatusEffectAttr(StatusEffect.PARALYSIS, false);
+        break;
+      case TerrainType.MISTY:
+        secondaryEffect = new StatStageChangeAttr([ Stat.SPATK ], -1, false);
+        break;
+      case TerrainType.GRASSY:
+        secondaryEffect = new StatusEffectAttr(StatusEffect.SLEEP, false);
+        break;
+      case TerrainType.PSYCHIC:
+        secondaryEffect = new StatStageChangeAttr([ Stat.SPD ], -1, false);
+        break;
     }
     return secondaryEffect;
   }
@@ -2974,62 +2978,62 @@ export class SecretPowerAttr extends MoveEffectAttr {
   private determineBiomeEffect(biome: Biome): MoveEffectAttr {
     let secondaryEffect: MoveEffectAttr;
     switch (biome) {
-    case Biome.PLAINS:
-    case Biome.GRASS:
-    case Biome.TALL_GRASS:
-    case Biome.FOREST:
-    case Biome.JUNGLE:
-    case Biome.MEADOW:
-      secondaryEffect = new StatusEffectAttr(StatusEffect.SLEEP, false);
-      break;
-    case Biome.SWAMP:
-    case Biome.MOUNTAIN:
-    case Biome.TEMPLE:
-    case Biome.RUINS:
-      secondaryEffect = new StatStageChangeAttr([ Stat.SPD ], -1, false);
-      break;
-    case Biome.ICE_CAVE:
-    case Biome.SNOWY_FOREST:
-      secondaryEffect = new StatusEffectAttr(StatusEffect.FREEZE, false);
-      break;
-    case Biome.VOLCANO:
-      secondaryEffect = new StatusEffectAttr(StatusEffect.BURN, false);
-      break;
-    case Biome.FAIRY_CAVE:
-      secondaryEffect = new StatStageChangeAttr([ Stat.SPATK ], -1, false);
-      break;
-    case Biome.DESERT:
-    case Biome.CONSTRUCTION_SITE:
-    case Biome.BEACH:
-    case Biome.ISLAND:
-    case Biome.BADLANDS:
-      secondaryEffect = new StatStageChangeAttr([ Stat.ACC ], -1, false);
-      break;
-    case Biome.SEA:
-    case Biome.LAKE:
-    case Biome.SEABED:
-      secondaryEffect = new StatStageChangeAttr([ Stat.ATK ], -1, false);
-      break;
-    case Biome.CAVE:
-    case Biome.WASTELAND:
-    case Biome.GRAVEYARD:
-    case Biome.ABYSS:
-    case Biome.SPACE:
-      secondaryEffect = new AddBattlerTagAttr(BattlerTagType.FLINCHED, false, true);
-      break;
-    case Biome.END:
-      secondaryEffect = new StatStageChangeAttr([ Stat.DEF ], -1, false);
-      break;
-    case Biome.TOWN:
-    case Biome.METROPOLIS:
-    case Biome.SLUM:
-    case Biome.DOJO:
-    case Biome.FACTORY:
-    case Biome.LABORATORY:
-    case Biome.POWER_PLANT:
-    default:
-      secondaryEffect = new StatusEffectAttr(StatusEffect.PARALYSIS, false);
-      break;
+      case Biome.PLAINS:
+      case Biome.GRASS:
+      case Biome.TALL_GRASS:
+      case Biome.FOREST:
+      case Biome.JUNGLE:
+      case Biome.MEADOW:
+        secondaryEffect = new StatusEffectAttr(StatusEffect.SLEEP, false);
+        break;
+      case Biome.SWAMP:
+      case Biome.MOUNTAIN:
+      case Biome.TEMPLE:
+      case Biome.RUINS:
+        secondaryEffect = new StatStageChangeAttr([ Stat.SPD ], -1, false);
+        break;
+      case Biome.ICE_CAVE:
+      case Biome.SNOWY_FOREST:
+        secondaryEffect = new StatusEffectAttr(StatusEffect.FREEZE, false);
+        break;
+      case Biome.VOLCANO:
+        secondaryEffect = new StatusEffectAttr(StatusEffect.BURN, false);
+        break;
+      case Biome.FAIRY_CAVE:
+        secondaryEffect = new StatStageChangeAttr([ Stat.SPATK ], -1, false);
+        break;
+      case Biome.DESERT:
+      case Biome.CONSTRUCTION_SITE:
+      case Biome.BEACH:
+      case Biome.ISLAND:
+      case Biome.BADLANDS:
+        secondaryEffect = new StatStageChangeAttr([ Stat.ACC ], -1, false);
+        break;
+      case Biome.SEA:
+      case Biome.LAKE:
+      case Biome.SEABED:
+        secondaryEffect = new StatStageChangeAttr([ Stat.ATK ], -1, false);
+        break;
+      case Biome.CAVE:
+      case Biome.WASTELAND:
+      case Biome.GRAVEYARD:
+      case Biome.ABYSS:
+      case Biome.SPACE:
+        secondaryEffect = new AddBattlerTagAttr(BattlerTagType.FLINCHED, false, true);
+        break;
+      case Biome.END:
+        secondaryEffect = new StatStageChangeAttr([ Stat.DEF ], -1, false);
+        break;
+      case Biome.TOWN:
+      case Biome.METROPOLIS:
+      case Biome.SLUM:
+      case Biome.DOJO:
+      case Biome.FACTORY:
+      case Biome.LABORATORY:
+      case Biome.POWER_PLANT:
+      default:
+        secondaryEffect = new StatusEffectAttr(StatusEffect.PARALYSIS, false);
+        break;
     }
     return secondaryEffect;
   }
@@ -3348,21 +3352,21 @@ export class LessPPMorePowerAttr extends VariablePowerAttr {
     const power = args[0] as Utils.NumberHolder;
 
     switch (ppRemains) {
-    case 0:
-      power.value = 200;
-      break;
-    case 1:
-      power.value = 80;
-      break;
-    case 2:
-      power.value = 60;
-      break;
-    case 3:
-      power.value = 50;
-      break;
-    default:
-      power.value = 40;
-      break;
+      case 0:
+        power.value = 200;
+        break;
+      case 1:
+        power.value = 80;
+        break;
+      case 2:
+        power.value = 60;
+        break;
+      case 3:
+        power.value = 50;
+        break;
+      default:
+        power.value = 40;
+        break;
     }
     return true;
   }
@@ -3582,24 +3586,24 @@ export class LowHpPowerAttr extends VariablePowerAttr {
     const hpRatio = user.getHpRatio();
 
     switch (true) {
-    case (hpRatio < 0.0417):
-      power.value = 200;
-      break;
-    case (hpRatio < 0.1042):
-      power.value = 150;
-      break;
-    case (hpRatio < 0.2083):
-      power.value = 100;
-      break;
-    case (hpRatio < 0.3542):
-      power.value = 80;
-      break;
-    case (hpRatio < 0.6875):
-      power.value = 40;
-      break;
-    default:
-      power.value = 20;
-      break;
+      case (hpRatio < 0.0417):
+        power.value = 200;
+        break;
+      case (hpRatio < 0.1042):
+        power.value = 150;
+        break;
+      case (hpRatio < 0.2083):
+        power.value = 100;
+        break;
+      case (hpRatio < 0.3542):
+        power.value = 80;
+        break;
+      case (hpRatio < 0.6875):
+        power.value = 40;
+        break;
+      default:
+        power.value = 20;
+        break;
     }
 
     return true;
@@ -3619,21 +3623,21 @@ export class CompareWeightPowerAttr extends VariablePowerAttr {
     const relativeWeight = (targetWeight / userWeight) * 100;
 
     switch (true) {
-    case (relativeWeight < 20.01):
-      power.value = 120;
-      break;
-    case (relativeWeight < 25.01):
-      power.value = 100;
-      break;
-    case (relativeWeight < 33.35):
-      power.value = 80;
-      break;
-    case (relativeWeight < 50.01):
-      power.value = 60;
-      break;
-    default:
-      power.value = 40;
-      break;
+      case (relativeWeight < 20.01):
+        power.value = 120;
+        break;
+      case (relativeWeight < 25.01):
+        power.value = 100;
+        break;
+      case (relativeWeight < 33.35):
+        power.value = 80;
+        break;
+      case (relativeWeight < 50.01):
+        power.value = 60;
+        break;
+      default:
+        power.value = 40;
+        break;
     }
 
     return true;
@@ -3749,13 +3753,13 @@ export class AntiSunlightPowerDecreaseAttr extends VariablePowerAttr {
       const power = args[0] as Utils.NumberHolder;
       const weatherType = user.scene.arena.weather?.weatherType || WeatherType.NONE;
       switch (weatherType) {
-      case WeatherType.RAIN:
-      case WeatherType.SANDSTORM:
-      case WeatherType.HAIL:
-      case WeatherType.SNOW:
-      case WeatherType.HEAVY_RAIN:
-        power.value *= 0.5;
-        return true;
+        case WeatherType.RAIN:
+        case WeatherType.SANDSTORM:
+        case WeatherType.HAIL:
+        case WeatherType.SNOW:
+        case WeatherType.HEAVY_RAIN:
+          power.value *= 0.5;
+          return true;
       }
     }
 
@@ -4152,14 +4156,14 @@ export class ThunderAccuracyAttr extends VariableAccuracyAttr {
       const accuracy = args[0] as Utils.NumberHolder;
       const weatherType = user.scene.arena.weather?.weatherType || WeatherType.NONE;
       switch (weatherType) {
-      case WeatherType.SUNNY:
-      case WeatherType.HARSH_SUN:
-        accuracy.value = 50;
-        return true;
-      case WeatherType.RAIN:
-      case WeatherType.HEAVY_RAIN:
-        accuracy.value = -1;
-        return true;
+        case WeatherType.SUNNY:
+        case WeatherType.HARSH_SUN:
+          accuracy.value = 50;
+          return true;
+        case WeatherType.RAIN:
+        case WeatherType.HEAVY_RAIN:
+          accuracy.value = -1;
+          return true;
       }
     }
 
@@ -4178,10 +4182,10 @@ export class StormAccuracyAttr extends VariableAccuracyAttr {
       const accuracy = args[0] as Utils.NumberHolder;
       const weatherType = user.scene.arena.weather?.weatherType || WeatherType.NONE;
       switch (weatherType) {
-      case WeatherType.RAIN:
-      case WeatherType.HEAVY_RAIN:
-        accuracy.value = -1;
-        return true;
+        case WeatherType.RAIN:
+        case WeatherType.HEAVY_RAIN:
+          accuracy.value = -1;
+          return true;
       }
     }
 
@@ -4411,21 +4415,21 @@ export class TechnoBlastTypeAttr extends VariableMoveTypeAttr {
       const form = user.species.speciesId === Species.GENESECT ? user.formIndex : user.fusionSpecies?.formIndex;
 
       switch (form) {
-      case 1: // Shock Drive
-        moveType.value = Type.ELECTRIC;
-        break;
-      case 2: // Burn Drive
-        moveType.value = Type.FIRE;
-        break;
-      case 3: // Chill Drive
-        moveType.value = Type.ICE;
-        break;
-      case 4: // Douse Drive
-        moveType.value = Type.WATER;
-        break;
-      default:
-        moveType.value = Type.NORMAL;
-        break;
+        case 1: // Shock Drive
+          moveType.value = Type.ELECTRIC;
+          break;
+        case 2: // Burn Drive
+          moveType.value = Type.FIRE;
+          break;
+        case 3: // Chill Drive
+          moveType.value = Type.ICE;
+          break;
+        case 4: // Douse Drive
+          moveType.value = Type.WATER;
+          break;
+        default:
+          moveType.value = Type.NORMAL;
+          break;
       }
       return true;
     }
@@ -4445,12 +4449,12 @@ export class AuraWheelTypeAttr extends VariableMoveTypeAttr {
       const form = user.species.speciesId === Species.MORPEKO ? user.formIndex : user.fusionSpecies?.formIndex;
 
       switch (form) {
-      case 1: // Hangry Mode
-        moveType.value = Type.DARK;
-        break;
-      default: // Full Belly Mode
-        moveType.value = Type.ELECTRIC;
-        break;
+        case 1: // Hangry Mode
+          moveType.value = Type.DARK;
+          break;
+        default: // Full Belly Mode
+          moveType.value = Type.ELECTRIC;
+          break;
       }
       return true;
     }
@@ -4470,15 +4474,15 @@ export class RagingBullTypeAttr extends VariableMoveTypeAttr {
       const form = user.species.speciesId === Species.PALDEA_TAUROS ? user.formIndex : user.fusionSpecies?.formIndex;
 
       switch (form) {
-      case 1: // Blaze breed
-        moveType.value = Type.FIRE;
-        break;
-      case 2: // Aqua breed
-        moveType.value = Type.WATER;
-        break;
-      default:
-        moveType.value = Type.FIGHTING;
-        break;
+        case 1: // Blaze breed
+          moveType.value = Type.FIRE;
+          break;
+        case 2: // Aqua breed
+          moveType.value = Type.WATER;
+          break;
+        default:
+          moveType.value = Type.FIGHTING;
+          break;
       }
       return true;
     }
@@ -4498,22 +4502,22 @@ export class IvyCudgelTypeAttr extends VariableMoveTypeAttr {
       const form = user.species.speciesId === Species.OGERPON ? user.formIndex : user.fusionSpecies?.formIndex;
 
       switch (form) {
-      case 1: // Wellspring Mask
-      case 5: // Wellspring Mask Tera
-        moveType.value = Type.WATER;
-        break;
-      case 2: // Hearthflame Mask
-      case 6: // Hearthflame Mask Tera
-        moveType.value = Type.FIRE;
-        break;
-      case 3: // Cornerstone Mask
-      case 7: // Cornerstone Mask Tera
-        moveType.value = Type.ROCK;
-        break;
-      case 4: // Teal Mask Tera
-      default:
-        moveType.value = Type.GRASS;
-        break;
+        case 1: // Wellspring Mask
+        case 5: // Wellspring Mask Tera
+          moveType.value = Type.WATER;
+          break;
+        case 2: // Hearthflame Mask
+        case 6: // Hearthflame Mask Tera
+          moveType.value = Type.FIRE;
+          break;
+        case 3: // Cornerstone Mask
+        case 7: // Cornerstone Mask Tera
+          moveType.value = Type.ROCK;
+          break;
+        case 4: // Teal Mask Tera
+        default:
+          moveType.value = Type.GRASS;
+          break;
       }
       return true;
     }
@@ -4531,23 +4535,23 @@ export class WeatherBallTypeAttr extends VariableMoveTypeAttr {
 
     if (!user.scene.arena.weather?.isEffectSuppressed(user.scene)) {
       switch (user.scene.arena.weather?.weatherType) {
-      case WeatherType.SUNNY:
-      case WeatherType.HARSH_SUN:
-        moveType.value = Type.FIRE;
-        break;
-      case WeatherType.RAIN:
-      case WeatherType.HEAVY_RAIN:
-        moveType.value = Type.WATER;
-        break;
-      case WeatherType.SANDSTORM:
-        moveType.value = Type.ROCK;
-        break;
-      case WeatherType.HAIL:
-      case WeatherType.SNOW:
-        moveType.value = Type.ICE;
-        break;
-      default:
-        return false;
+        case WeatherType.SUNNY:
+        case WeatherType.HARSH_SUN:
+          moveType.value = Type.FIRE;
+          break;
+        case WeatherType.RAIN:
+        case WeatherType.HEAVY_RAIN:
+          moveType.value = Type.WATER;
+          break;
+        case WeatherType.SANDSTORM:
+          moveType.value = Type.ROCK;
+          break;
+        case WeatherType.HAIL:
+        case WeatherType.SNOW:
+          moveType.value = Type.ICE;
+          break;
+        default:
+          return false;
       }
       return true;
     }
@@ -4582,20 +4586,20 @@ export class TerrainPulseTypeAttr extends VariableMoveTypeAttr {
 
     const currentTerrain = user.scene.arena.getTerrainType();
     switch (currentTerrain) {
-    case TerrainType.MISTY:
-      moveType.value = Type.FAIRY;
-      break;
-    case TerrainType.ELECTRIC:
-      moveType.value = Type.ELECTRIC;
-      break;
-    case TerrainType.GRASSY:
-      moveType.value = Type.GRASS;
-      break;
-    case TerrainType.PSYCHIC:
-      moveType.value = Type.PSYCHIC;
-      break;
-    default:
-      return false;
+      case TerrainType.MISTY:
+        moveType.value = Type.FAIRY;
+        break;
+      case TerrainType.ELECTRIC:
+        moveType.value = Type.ELECTRIC;
+        break;
+      case TerrainType.GRASSY:
+        moveType.value = Type.GRASS;
+        break;
+      case TerrainType.PSYCHIC:
+        moveType.value = Type.PSYCHIC;
+        break;
+      default:
+        return false;
     }
     return true;
   }
@@ -4695,26 +4699,26 @@ export class CombinedPledgeTypeAttr extends VariableMoveTypeAttr {
     }
 
     switch (move.id) {
-    case Moves.FIRE_PLEDGE:
-      if (combinedPledgeMove === Moves.WATER_PLEDGE) {
-        moveType.value = Type.WATER;
-        return true;
-      }
-      return false;
-    case Moves.WATER_PLEDGE:
-      if (combinedPledgeMove === Moves.GRASS_PLEDGE) {
-        moveType.value = Type.GRASS;
-        return true;
-      }
-      return false;
-    case Moves.GRASS_PLEDGE:
-      if (combinedPledgeMove === Moves.FIRE_PLEDGE) {
-        moveType.value = Type.FIRE;
-        return true;
-      }
-      return false;
-    default:
-      return false;
+      case Moves.FIRE_PLEDGE:
+        if (combinedPledgeMove === Moves.WATER_PLEDGE) {
+          moveType.value = Type.WATER;
+          return true;
+        }
+        return false;
+      case Moves.WATER_PLEDGE:
+        if (combinedPledgeMove === Moves.GRASS_PLEDGE) {
+          moveType.value = Type.GRASS;
+          return true;
+        }
+        return false;
+      case Moves.GRASS_PLEDGE:
+        if (combinedPledgeMove === Moves.FIRE_PLEDGE) {
+          moveType.value = Type.FIRE;
+          return true;
+        }
+        return false;
+      default:
+        return false;
     }
   }
 }
@@ -4959,48 +4963,48 @@ export class AddBattlerTagAttr extends MoveEffectAttr {
 
   getTagTargetBenefitScore(user: Pokemon, target: Pokemon, move: Move): integer | void {
     switch (this.tagType) {
-    case BattlerTagType.RECHARGING:
-    case BattlerTagType.PERISH_SONG:
-      return -16;
-    case BattlerTagType.FLINCHED:
-    case BattlerTagType.CONFUSED:
-    case BattlerTagType.INFATUATED:
-    case BattlerTagType.NIGHTMARE:
-    case BattlerTagType.DROWSY:
-    case BattlerTagType.DISABLED:
-    case BattlerTagType.HEAL_BLOCK:
-    case BattlerTagType.RECEIVE_DOUBLE_DAMAGE:
-      return -5;
-    case BattlerTagType.SEEDED:
-    case BattlerTagType.SALT_CURED:
-    case BattlerTagType.CURSED:
-    case BattlerTagType.FRENZY:
-    case BattlerTagType.TRAPPED:
-    case BattlerTagType.BIND:
-    case BattlerTagType.WRAP:
-    case BattlerTagType.FIRE_SPIN:
-    case BattlerTagType.WHIRLPOOL:
-    case BattlerTagType.CLAMP:
-    case BattlerTagType.SAND_TOMB:
-    case BattlerTagType.MAGMA_STORM:
-    case BattlerTagType.SNAP_TRAP:
-    case BattlerTagType.THUNDER_CAGE:
-    case BattlerTagType.INFESTATION:
-      return -3;
-    case BattlerTagType.ENCORE:
-      return -2;
-    case BattlerTagType.MINIMIZED:
-    case BattlerTagType.ALWAYS_GET_HIT:
-      return 0;
-    case BattlerTagType.INGRAIN:
-    case BattlerTagType.IGNORE_ACCURACY:
-    case BattlerTagType.AQUA_RING:
-      return 3;
-    case BattlerTagType.PROTECTED:
-    case BattlerTagType.FLYING:
-    case BattlerTagType.CRIT_BOOST:
-    case BattlerTagType.ALWAYS_CRIT:
-      return 5;
+      case BattlerTagType.RECHARGING:
+      case BattlerTagType.PERISH_SONG:
+        return -16;
+      case BattlerTagType.FLINCHED:
+      case BattlerTagType.CONFUSED:
+      case BattlerTagType.INFATUATED:
+      case BattlerTagType.NIGHTMARE:
+      case BattlerTagType.DROWSY:
+      case BattlerTagType.DISABLED:
+      case BattlerTagType.HEAL_BLOCK:
+      case BattlerTagType.RECEIVE_DOUBLE_DAMAGE:
+        return -5;
+      case BattlerTagType.SEEDED:
+      case BattlerTagType.SALT_CURED:
+      case BattlerTagType.CURSED:
+      case BattlerTagType.FRENZY:
+      case BattlerTagType.TRAPPED:
+      case BattlerTagType.BIND:
+      case BattlerTagType.WRAP:
+      case BattlerTagType.FIRE_SPIN:
+      case BattlerTagType.WHIRLPOOL:
+      case BattlerTagType.CLAMP:
+      case BattlerTagType.SAND_TOMB:
+      case BattlerTagType.MAGMA_STORM:
+      case BattlerTagType.SNAP_TRAP:
+      case BattlerTagType.THUNDER_CAGE:
+      case BattlerTagType.INFESTATION:
+        return -3;
+      case BattlerTagType.ENCORE:
+        return -2;
+      case BattlerTagType.MINIMIZED:
+      case BattlerTagType.ALWAYS_GET_HIT:
+        return 0;
+      case BattlerTagType.INGRAIN:
+      case BattlerTagType.IGNORE_ACCURACY:
+      case BattlerTagType.AQUA_RING:
+        return 3;
+      case BattlerTagType.PROTECTED:
+      case BattlerTagType.FLYING:
+      case BattlerTagType.CRIT_BOOST:
+      case BattlerTagType.ALWAYS_CRIT:
+        return 5;
     }
   }
 
@@ -5200,7 +5204,7 @@ export class ConfuseAttr extends AddBattlerTagAttr {
   }
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    if (!this.selfTarget && target.scene.arena.getTagOnSide(ArenaTagType.SAFEGUARD, target.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY)) {
+    if (!this.selfTarget && target.isSafeguarded(user)) {
       if (move.category === MoveCategory.STATUS) {
         user.scene.queueMessage(i18next.t("moveTriggers:safeguard", { targetName: getPokemonNameWithAffix(target) }));
       }
@@ -5981,19 +5985,19 @@ export class RandomMovesetMoveAttr extends OverrideMoveEffectAttr {
       }
       let selectTargets: BattlerIndex[];
       switch (true) {
-      case (moveTargets.multiple || moveTargets.targets.length === 1): {
-        selectTargets = moveTargets.targets;
-        break;
-      }
-      case (moveTargets.targets.indexOf(target.getBattlerIndex()) > -1): {
-        selectTargets = [ target.getBattlerIndex() ];
-        break;
-      }
-      default: {
-        moveTargets.targets.splice(moveTargets.targets.indexOf(user.getAlly().getBattlerIndex()));
-        selectTargets =  [ moveTargets.targets[user.randSeedInt(moveTargets.targets.length)] ];
-        break;
-      }
+        case (moveTargets.multiple || moveTargets.targets.length === 1): {
+          selectTargets = moveTargets.targets;
+          break;
+        }
+        case (moveTargets.targets.indexOf(target.getBattlerIndex()) > -1): {
+          selectTargets = [ target.getBattlerIndex() ];
+          break;
+        }
+        default: {
+          moveTargets.targets.splice(moveTargets.targets.indexOf(user.getAlly().getBattlerIndex()));
+          selectTargets =  [ moveTargets.targets[user.randSeedInt(moveTargets.targets.length)] ];
+          break;
+        }
       }
       const targets = selectTargets;
       user.getMoveQueue().push({ move: move?.moveId!, targets: targets, ignorePP: true }); // TODO: is this bang correct?
@@ -6037,131 +6041,131 @@ export class NaturePowerAttr extends OverrideMoveEffectAttr {
       let moveId;
       switch (user.scene.arena.getTerrainType()) {
       // this allows terrains to 'override' the biome move
-      case TerrainType.NONE:
-        switch (user.scene.arena.biomeType) {
-        case Biome.TOWN:
-          moveId = Moves.ROUND;
+        case TerrainType.NONE:
+          switch (user.scene.arena.biomeType) {
+            case Biome.TOWN:
+              moveId = Moves.ROUND;
+              break;
+            case Biome.METROPOLIS:
+              moveId = Moves.TRI_ATTACK;
+              break;
+            case Biome.SLUM:
+              moveId = Moves.SLUDGE_BOMB;
+              break;
+            case Biome.PLAINS:
+              moveId = Moves.SILVER_WIND;
+              break;
+            case Biome.GRASS:
+              moveId = Moves.GRASS_KNOT;
+              break;
+            case Biome.TALL_GRASS:
+              moveId = Moves.POLLEN_PUFF;
+              break;
+            case Biome.MEADOW:
+              moveId = Moves.GIGA_DRAIN;
+              break;
+            case Biome.FOREST:
+              moveId = Moves.BUG_BUZZ;
+              break;
+            case Biome.JUNGLE:
+              moveId = Moves.LEAF_STORM;
+              break;
+            case Biome.SEA:
+              moveId = Moves.HYDRO_PUMP;
+              break;
+            case Biome.SWAMP:
+              moveId = Moves.MUD_BOMB;
+              break;
+            case Biome.BEACH:
+              moveId = Moves.SCALD;
+              break;
+            case Biome.LAKE:
+              moveId = Moves.BUBBLE_BEAM;
+              break;
+            case Biome.SEABED:
+              moveId = Moves.BRINE;
+              break;
+            case Biome.ISLAND:
+              moveId = Moves.LEAF_TORNADO;
+              break;
+            case Biome.MOUNTAIN:
+              moveId = Moves.AIR_SLASH;
+              break;
+            case Biome.BADLANDS:
+              moveId = Moves.EARTH_POWER;
+              break;
+            case Biome.DESERT:
+              moveId = Moves.SCORCHING_SANDS;
+              break;
+            case Biome.WASTELAND:
+              moveId = Moves.DRAGON_PULSE;
+              break;
+            case Biome.CONSTRUCTION_SITE:
+              moveId = Moves.STEEL_BEAM;
+              break;
+            case Biome.CAVE:
+              moveId = Moves.POWER_GEM;
+              break;
+            case Biome.ICE_CAVE:
+              moveId = Moves.ICE_BEAM;
+              break;
+            case Biome.SNOWY_FOREST:
+              moveId = Moves.FROST_BREATH;
+              break;
+            case Biome.VOLCANO:
+              moveId = Moves.LAVA_PLUME;
+              break;
+            case Biome.GRAVEYARD:
+              moveId = Moves.SHADOW_BALL;
+              break;
+            case Biome.RUINS:
+              moveId = Moves.ANCIENT_POWER;
+              break;
+            case Biome.TEMPLE:
+              moveId = Moves.EXTRASENSORY;
+              break;
+            case Biome.DOJO:
+              moveId = Moves.FOCUS_BLAST;
+              break;
+            case Biome.FAIRY_CAVE:
+              moveId = Moves.ALLURING_VOICE;
+              break;
+            case Biome.ABYSS:
+              moveId = Moves.OMINOUS_WIND;
+              break;
+            case Biome.SPACE:
+              moveId = Moves.DRACO_METEOR;
+              break;
+            case Biome.FACTORY:
+              moveId = Moves.FLASH_CANNON;
+              break;
+            case Biome.LABORATORY:
+              moveId = Moves.ZAP_CANNON;
+              break;
+            case Biome.POWER_PLANT:
+              moveId = Moves.CHARGE_BEAM;
+              break;
+            case Biome.END:
+              moveId = Moves.ETERNABEAM;
+              break;
+          }
           break;
-        case Biome.METROPOLIS:
+        case TerrainType.MISTY:
+          moveId = Moves.MOONBLAST;
+          break;
+        case TerrainType.ELECTRIC:
+          moveId = Moves.THUNDERBOLT;
+          break;
+        case TerrainType.GRASSY:
+          moveId = Moves.ENERGY_BALL;
+          break;
+        case TerrainType.PSYCHIC:
+          moveId = Moves.PSYCHIC;
+          break;
+        default:
+        // Just in case there's no match
           moveId = Moves.TRI_ATTACK;
           break;
-        case Biome.SLUM:
-          moveId = Moves.SLUDGE_BOMB;
-          break;
-        case Biome.PLAINS:
-          moveId = Moves.SILVER_WIND;
-          break;
-        case Biome.GRASS:
-          moveId = Moves.GRASS_KNOT;
-          break;
-        case Biome.TALL_GRASS:
-          moveId = Moves.POLLEN_PUFF;
-          break;
-        case Biome.MEADOW:
-          moveId = Moves.GIGA_DRAIN;
-          break;
-        case Biome.FOREST:
-          moveId = Moves.BUG_BUZZ;
-          break;
-        case Biome.JUNGLE:
-          moveId = Moves.LEAF_STORM;
-          break;
-        case Biome.SEA:
-          moveId = Moves.HYDRO_PUMP;
-          break;
-        case Biome.SWAMP:
-          moveId = Moves.MUD_BOMB;
-          break;
-        case Biome.BEACH:
-          moveId = Moves.SCALD;
-          break;
-        case Biome.LAKE:
-          moveId = Moves.BUBBLE_BEAM;
-          break;
-        case Biome.SEABED:
-          moveId = Moves.BRINE;
-          break;
-        case Biome.ISLAND:
-          moveId = Moves.LEAF_TORNADO;
-          break;
-        case Biome.MOUNTAIN:
-          moveId = Moves.AIR_SLASH;
-          break;
-        case Biome.BADLANDS:
-          moveId = Moves.EARTH_POWER;
-          break;
-        case Biome.DESERT:
-          moveId = Moves.SCORCHING_SANDS;
-          break;
-        case Biome.WASTELAND:
-          moveId = Moves.DRAGON_PULSE;
-          break;
-        case Biome.CONSTRUCTION_SITE:
-          moveId = Moves.STEEL_BEAM;
-          break;
-        case Biome.CAVE:
-          moveId = Moves.POWER_GEM;
-          break;
-        case Biome.ICE_CAVE:
-          moveId = Moves.ICE_BEAM;
-          break;
-        case Biome.SNOWY_FOREST:
-          moveId = Moves.FROST_BREATH;
-          break;
-        case Biome.VOLCANO:
-          moveId = Moves.LAVA_PLUME;
-          break;
-        case Biome.GRAVEYARD:
-          moveId = Moves.SHADOW_BALL;
-          break;
-        case Biome.RUINS:
-          moveId = Moves.ANCIENT_POWER;
-          break;
-        case Biome.TEMPLE:
-          moveId = Moves.EXTRASENSORY;
-          break;
-        case Biome.DOJO:
-          moveId = Moves.FOCUS_BLAST;
-          break;
-        case Biome.FAIRY_CAVE:
-          moveId = Moves.ALLURING_VOICE;
-          break;
-        case Biome.ABYSS:
-          moveId = Moves.OMINOUS_WIND;
-          break;
-        case Biome.SPACE:
-          moveId = Moves.DRACO_METEOR;
-          break;
-        case Biome.FACTORY:
-          moveId = Moves.FLASH_CANNON;
-          break;
-        case Biome.LABORATORY:
-          moveId = Moves.ZAP_CANNON;
-          break;
-        case Biome.POWER_PLANT:
-          moveId = Moves.CHARGE_BEAM;
-          break;
-        case Biome.END:
-          moveId = Moves.ETERNABEAM;
-          break;
-        }
-        break;
-      case TerrainType.MISTY:
-        moveId = Moves.MOONBLAST;
-        break;
-      case TerrainType.ELECTRIC:
-        moveId = Moves.THUNDERBOLT;
-        break;
-      case TerrainType.GRASSY:
-        moveId = Moves.ENERGY_BALL;
-        break;
-      case TerrainType.PSYCHIC:
-        moveId = Moves.PSYCHIC;
-        break;
-      default:
-        // Just in case there's no match
-        moveId = Moves.TRI_ATTACK;
-        break;
       }
 
       user.getMoveQueue().push({ move: moveId, targets: [ target.getBattlerIndex() ], ignorePP: true });
@@ -7199,47 +7203,47 @@ export function getMoveTargets(user: Pokemon, move: Moves): MoveTargetSet {
   let multiple = false;
 
   switch (moveTarget) {
-  case MoveTarget.USER:
-  case MoveTarget.PARTY:
-    set = [ user ];
-    break;
-  case MoveTarget.NEAR_OTHER:
-  case MoveTarget.OTHER:
-  case MoveTarget.ALL_NEAR_OTHERS:
-  case MoveTarget.ALL_OTHERS:
-    set = (opponents.concat([ user.getAlly() ]));
-    multiple = moveTarget === MoveTarget.ALL_NEAR_OTHERS || moveTarget === MoveTarget.ALL_OTHERS;
-    break;
-  case MoveTarget.NEAR_ENEMY:
-  case MoveTarget.ALL_NEAR_ENEMIES:
-  case MoveTarget.ALL_ENEMIES:
-  case MoveTarget.ENEMY_SIDE:
-    set = opponents;
-    multiple = moveTarget !== MoveTarget.NEAR_ENEMY;
-    break;
-  case MoveTarget.RANDOM_NEAR_ENEMY:
-    set = [ opponents[user.randSeedInt(opponents.length)] ];
-    break;
-  case MoveTarget.ATTACKER:
-    return { targets: [ -1 as BattlerIndex ], multiple: false };
-  case MoveTarget.NEAR_ALLY:
-  case MoveTarget.ALLY:
-    set = [ user.getAlly() ];
-    break;
-  case MoveTarget.USER_OR_NEAR_ALLY:
-  case MoveTarget.USER_AND_ALLIES:
-  case MoveTarget.USER_SIDE:
-    set = [ user, user.getAlly() ];
-    multiple = moveTarget !== MoveTarget.USER_OR_NEAR_ALLY;
-    break;
-  case MoveTarget.ALL:
-  case MoveTarget.BOTH_SIDES:
-    set = [ user, user.getAlly() ].concat(opponents);
-    multiple = true;
-    break;
-  case MoveTarget.CURSE:
-    set = user.getTypes(true).includes(Type.GHOST) ? (opponents.concat([ user.getAlly() ])) : [ user ];
-    break;
+    case MoveTarget.USER:
+    case MoveTarget.PARTY:
+      set = [ user ];
+      break;
+    case MoveTarget.NEAR_OTHER:
+    case MoveTarget.OTHER:
+    case MoveTarget.ALL_NEAR_OTHERS:
+    case MoveTarget.ALL_OTHERS:
+      set = (opponents.concat([ user.getAlly() ]));
+      multiple = moveTarget === MoveTarget.ALL_NEAR_OTHERS || moveTarget === MoveTarget.ALL_OTHERS;
+      break;
+    case MoveTarget.NEAR_ENEMY:
+    case MoveTarget.ALL_NEAR_ENEMIES:
+    case MoveTarget.ALL_ENEMIES:
+    case MoveTarget.ENEMY_SIDE:
+      set = opponents;
+      multiple = moveTarget !== MoveTarget.NEAR_ENEMY;
+      break;
+    case MoveTarget.RANDOM_NEAR_ENEMY:
+      set = [ opponents[user.randSeedInt(opponents.length)] ];
+      break;
+    case MoveTarget.ATTACKER:
+      return { targets: [ -1 as BattlerIndex ], multiple: false };
+    case MoveTarget.NEAR_ALLY:
+    case MoveTarget.ALLY:
+      set = [ user.getAlly() ];
+      break;
+    case MoveTarget.USER_OR_NEAR_ALLY:
+    case MoveTarget.USER_AND_ALLIES:
+    case MoveTarget.USER_SIDE:
+      set = [ user, user.getAlly() ];
+      multiple = moveTarget !== MoveTarget.USER_OR_NEAR_ALLY;
+      break;
+    case MoveTarget.ALL:
+    case MoveTarget.BOTH_SIDES:
+      set = [ user, user.getAlly() ].concat(opponents);
+      multiple = true;
+      break;
+    case MoveTarget.CURSE:
+      set = user.getTypes(true).includes(Type.GHOST) ? (opponents.concat([ user.getAlly() ])) : [ user ];
+      break;
   }
 
   return { targets: set.filter(p => p?.isActive(true)).map(p => p.getBattlerIndex()).filter(t => t !== undefined), multiple };
@@ -7645,6 +7649,7 @@ export function initMoves() {
       .ignoresVirtual(),
     new StatusMove(Moves.TRANSFORM, Type.NORMAL, -1, 10, -1, 0, 1)
       .attr(TransformAttr)
+      .condition((user, target, move) => !target.getTag(BattlerTagType.SUBSTITUTE))
       .ignoresProtect(),
     new AttackMove(Moves.BUBBLE, Type.WATER, MoveCategory.SPECIAL, 40, 100, 30, 10, 0, 1)
       .attr(StatStageChangeAttr, [ Stat.SPD ], -1)
@@ -8075,7 +8080,7 @@ export function initMoves() {
       .attr(RemoveScreensAttr),
     new StatusMove(Moves.YAWN, Type.NORMAL, -1, 10, -1, 0, 3)
       .attr(AddBattlerTagAttr, BattlerTagType.DROWSY, false, true)
-      .condition((user, target, move) => !target.status && !target.scene.arena.getTagOnSide(ArenaTagType.SAFEGUARD, target.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY)),
+      .condition((user, target, move) => !target.status && !target.isSafeguarded(user)),
     new AttackMove(Moves.KNOCK_OFF, Type.DARK, MoveCategory.PHYSICAL, 65, 100, 20, -1, 0, 3)
       .attr(MovePowerMultiplierAttr, (user, target, move) => target.getHeldItems().filter(i => i.isTransferable).length > 0 ? 1.5 : 1)
       .attr(RemoveHeldItemAttr, false),
