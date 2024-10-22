@@ -4637,7 +4637,7 @@ export class TerrainEventTypeChangeAbAttr extends PostSummonAbAttr {
     super(true);
   }
 
-  apply(pokemon: Pokemon, passive: boolean, simulated: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean {
+  apply(pokemon: Pokemon, _passive: boolean, _simulated: boolean, _cancelled: Utils.BooleanHolder, _args: any[]): boolean {
     if (pokemon.isTerastallized()) {
       return false;
     }

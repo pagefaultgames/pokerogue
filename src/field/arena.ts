@@ -10,7 +10,14 @@ import Move from "#app/data/move";
 import { ArenaTag, ArenaTagSide, ArenaTrapTag, getArenaTag } from "#app/data/arena-tag";
 import { BattlerIndex } from "#app/battle";
 import { Terrain, TerrainType } from "#app/data/terrain";
-import { applyAbAttrs, applyPostTerrainChangeAbAttrs, applyPostWeatherChangeAbAttrs, PostTerrainChangeAbAttr, PostWeatherChangeAbAttr, TerrainEventTypeChangeAbAttr } from "#app/data/ability";
+import {
+  applyAbAttrs,
+  applyPostTerrainChangeAbAttrs,
+  applyPostWeatherChangeAbAttrs,
+  PostTerrainChangeAbAttr,
+  PostWeatherChangeAbAttr,
+  TerrainEventTypeChangeAbAttr
+} from "#app/data/ability";
 import Pokemon from "#app/field/pokemon";
 import Overrides from "#app/overrides";
 import { TagAddedEvent, TagRemovedEvent, TerrainChangedEvent, WeatherChangedEvent } from "#app/events/arena";
