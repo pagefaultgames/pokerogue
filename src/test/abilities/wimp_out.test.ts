@@ -62,29 +62,6 @@ describe("Abilities - Wimp Out", () => {
     expect(game.phaseInterceptor.log).toContain("SwitchSummonPhase");
     expect(game.scene.getPlayerPokemon()!.species.speciesId).toBe(Species.TYRUNT);
   });
-
-  it("triggers status on the wimp out user before a new pokemon is switched in", async () => {
-    // arrange
-    game.override
-      .enemyMoveset(Moves.SLUDGE_BOMB)
-      .startingLevel(85);
-    await game.startBattle([
-      Species.WIMPOD,
-      Species.TYRUNT
-    ]);
-    vi.spyOn(game.scene.getEnemyPokemon()!, "randSeedInt").mockReturnValue(0);
-
-    // act
-    game.move.select(Moves.SLUDGE_BOMB);
-    game.doSelectPartyPokemon(1);
-    await game.phaseInterceptor.to(TurnEndPhase);
-
-    // assert
-    const playerPkm = game.scene.getPlayerPokemon()!;
-    expect(game.scene.getParty()[1].status?.effect).toEqual(StatusEffect.POISON);
-    expect(playerPkm.species.speciesId).toEqual(Species.TYRUNT);
-    expect(game.phaseInterceptor.log).toContain("SwitchSummonPhase");
-  });
   it("It makes wild pokemon flee if triggered", async () => {
     // arrange
     game.override
@@ -127,30 +104,6 @@ describe("Abilities - Wimp Out", () => {
     expect(game.scene.getParty()[0].hp).toEqual(1);
     expect(game.phaseInterceptor.log).not.toContain("SwitchSummonPhase");
     expect(game.scene.getPlayerPokemon()!.species.speciesId).toBe(Species.WIMPOD);
-  });
-
-  it("triggers after last hit of multi hit move", async () => {
-    // arrange
-    game.override
-      .enemyMoveset(Moves.BULLET_SEED)
-      .enemyAbility(Abilities.SKILL_LINK)
-      .startingLevel(110)
-      .enemyLevel(80);
-    await game.startBattle([
-      Species.WIMPOD,
-      Species.TYRUNT
-    ]);
-
-    // act
-    game.move.select(Moves.BULLET_SEED);
-    game.doSelectPartyPokemon(1);
-    await game.phaseInterceptor.to(TurnEndPhase);
-
-
-    // assert
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
-    expect(enemyPokemon.turnData.hitsLeft).toBe(0);
-    expect(enemyPokemon.turnData.hitCount).toBe(5);
   });
   it("Trapping moves do not prevent Wimp Out from activating.", async () => {
     // arrange
@@ -674,5 +627,49 @@ describe("Abilities - Wimp Out", () => {
     expect(game.scene.getParty()[1].getHpRatio()).toBeLessThan(0.5);
     expect(game.phaseInterceptor.log).toContain("SwitchSummonPhase");
     expect(game.scene.getPlayerPokemon()!.species.speciesId).toBe(Species.TYRUNT);
+  });
+  it("triggers status on the wimp out user before a new pokemon is switched in", async () => {
+    // arrange
+    game.override
+      .enemyMoveset(Moves.SLUDGE_BOMB)
+      .startingLevel(80);
+    await game.startBattle([
+      Species.WIMPOD,
+      Species.TYRUNT
+    ]);
+    vi.spyOn(game.scene.getEnemyPokemon()!, "randSeedInt").mockReturnValue(0);
+
+    // act
+    game.move.select(Moves.SLUDGE_BOMB);
+    game.doSelectPartyPokemon(1);
+    await game.phaseInterceptor.to(TurnEndPhase);
+
+    // assert
+    const playerPkm = game.scene.getPlayerPokemon()!;
+    expect(game.scene.getParty()[1].status?.effect).toEqual(StatusEffect.POISON);
+    expect(playerPkm.species.speciesId).toEqual(Species.TYRUNT);
+    expect(game.phaseInterceptor.log).toContain("SwitchSummonPhase");
+  });
+  it("triggers after last hit of multi hit move", async () => {
+    // arrange
+    game.override
+      .enemyMoveset(Moves.BULLET_SEED)
+      .enemyAbility(Abilities.SKILL_LINK)
+      .startingLevel(110)
+      .enemyLevel(80);
+    await game.startBattle([
+      Species.WIMPOD,
+      Species.TYRUNT
+    ]);
+
+    // act
+    game.move.select(Moves.BULLET_SEED);
+    game.doSelectPartyPokemon(1);
+    await game.phaseInterceptor.to(TurnEndPhase);
+
+    // assert
+    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    expect(enemyPokemon.turnData.hitsLeft).toBe(0);
+    expect(enemyPokemon.turnData.hitCount).toBe(5);
   });
 });
