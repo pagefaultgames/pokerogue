@@ -38,16 +38,15 @@ describe("Abilities - Mimicry", () => {
     game.override.enemyAbility(Abilities.MISTY_SURGE);
     await game.classicMode.startBattle([ Species.FEEBAS, Species.ABRA ]);
 
-    const playerPokemon1 = game.scene.getPlayerPokemon();
+    const [ playerPokemon1, playerPokemon2 ] = game.scene.getParty();
     game.move.select(Moves.SPLASH);
     await game.toNextTurn();
-    expect(playerPokemon1?.getTypes().includes(Type.FAIRY)).toBe(true);
+    expect(playerPokemon1.getTypes().includes(Type.FAIRY)).toBe(true);
 
     game.doSwitchPokemon(1);
     await game.toNextTurn();
 
-    const playerPokemon2 = game.scene.getPlayerPokemon();
-    expect(playerPokemon2?.getTypes().includes(Type.FAIRY)).toBe(true);
+    expect(playerPokemon2.getTypes().includes(Type.FAIRY)).toBe(true);
   });
 
   it("Pokemon should revert back to its original, root type once terrain ends", async () => {
