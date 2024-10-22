@@ -35,8 +35,6 @@ const donateUrl = "https://github.com/sponsors/patapancakes";
 
 export default class MenuUiHandler extends MessageUiHandler {
   private readonly textPadding = 8;
-  private readonly defaultMessageBoxWidth = 220;
-  private readonly defaultWordWrapWidth = 1224;
 
   private menuContainer: Phaser.GameObjects.Container;
   private menuMessageBoxContainer: Phaser.GameObjects.Container;
@@ -56,6 +54,7 @@ export default class MenuUiHandler extends MessageUiHandler {
   // Windows for the default message box and the message box for testing dialogue
   private menuMessageBox: Phaser.GameObjects.NineSlice;
   private dialogueMessageBox: Phaser.GameObjects.NineSlice;
+  private isTestDialog: boolean;
 
   protected scale: number = 0.1666666667;
 
@@ -143,7 +142,7 @@ export default class MenuUiHandler extends MessageUiHandler {
     this.menuMessageBoxContainer.setVisible(false);
 
     // Window for general messages
-    this.menuMessageBox = addWindow(this.scene, 0, 0, this.defaultMessageBoxWidth, 48);
+    this.menuMessageBox = addWindow(this.scene, 0, 0, (this.scene.game.canvas.width / 6) - this.menuBg.width - 1, 48);
     this.menuMessageBox.setOrigin(0, 0);
     this.menuMessageBoxContainer.add(this.menuMessageBox);
 
@@ -155,11 +154,11 @@ export default class MenuUiHandler extends MessageUiHandler {
     const menuMessageText = addTextObject(this.scene, this.textPadding, this.textPadding, "", TextStyle.WINDOW, { maxLines: 2 });
     menuMessageText.setName("menu-message");
     menuMessageText.setOrigin(0, 0);
+
     this.menuMessageBoxContainer.add(menuMessageText);
 
     this.initTutorialOverlay(this.menuContainer);
     this.initPromptSprite(this.menuMessageBoxContainer);
-
     this.message = menuMessageText;
 
     // By default we use the general purpose message window
@@ -191,7 +190,7 @@ export default class MenuUiHandler extends MessageUiHandler {
               return true;
             }
           }]),
-          xOffset: 98
+          xOffset: this.menuBg.width
         };
         ui.setOverlayMode(Mode.MENU_OPTION_SELECT, config);
       });
@@ -336,7 +335,7 @@ export default class MenuUiHandler extends MessageUiHandler {
 
     //Thank you Vassiat
     this.manageDataConfig = {
-      xOffset: 98,
+      xOffset: this.menuBg.width,
       options: manageDataOptions,
       maxOptions: 7
     };
@@ -411,7 +410,7 @@ export default class MenuUiHandler extends MessageUiHandler {
       }
     });
     this.communityConfig = {
-      xOffset: 98,
+      xOffset: this.menuBg.width,
       options: communityOptions
     };
     this.setCursor(0);
@@ -573,7 +572,7 @@ export default class MenuUiHandler extends MessageUiHandler {
                 ui.setOverlayMode(Mode.CONFIRM, doSaveQuit, () => {
                   ui.revertMode();
                   this.showText("", 0);
-                }, false, -98);
+                }, false, this.menuBg.width * -1);
               });
             } else {
               doSaveQuit();
@@ -604,7 +603,7 @@ export default class MenuUiHandler extends MessageUiHandler {
               ui.setOverlayMode(Mode.CONFIRM, doLogout, () => {
                 ui.revertMode();
                 this.showText("", 0);
-              }, false, -98);
+              }, false, this.menuBg.width * -1);
             });
           } else {
             doLogout();
@@ -659,10 +658,12 @@ export default class MenuUiHandler extends MessageUiHandler {
     this.message.setWordWrapWidth(isDialogMode ? this.scene.ui.getMessageHandler().wordWrapWidth : this.defaultWordWrapWidth);
     this.message.setX(isDialogMode ? this.textPadding + 1 : this.textPadding);
     this.message.setY(isDialogMode ? this.textPadding + 0.4 : this.textPadding);
+    this.isTestDialog = isDialogMode;
   }
 
   showText(text: string, delay?: number, callback?: Function, callbackDelay?: number, prompt?: boolean, promptDelay?: number): void {
     this.menuMessageBoxContainer.setVisible(!!text);
+    this.tryAdjustText(text, { ignoreLanguages: this.isTestDialog ? "all" : null });
 
     super.showText(text, delay, callback, callbackDelay, prompt, promptDelay);
   }
@@ -687,6 +688,7 @@ export default class MenuUiHandler extends MessageUiHandler {
     this.menuContainer.setVisible(false);
     this.bgmBar.toggleBgmBar(false);
     this.eraseCursor();
+    this.showText("");
   }
 
   eraseCursor() {
@@ -694,6 +696,10 @@ export default class MenuUiHandler extends MessageUiHandler {
       this.cursorObj.destroy();
     }
     this.cursorObj = null;
+  }
+
+  get defaultWordWrapWidth() {
+    return this.menuMessageBox.getBounds().width / this.scale;
   }
 }
 
