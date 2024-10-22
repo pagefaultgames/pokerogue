@@ -6,6 +6,7 @@ import { Starter } from "#app/ui/starter-select-ui-handler";
 import * as Utils from "#app/utils";
 import PokemonSpecies, { PokemonSpeciesForm, getPokemonSpecies, getPokemonSpeciesForm } from "#app/data/pokemon-species";
 import { speciesStarterCosts } from "#app/data/balance/starters";
+import { pokerogueApi } from "#app/plugins/api/pokerogue-api";
 
 export interface DailyRunConfig {
   seed: integer;
@@ -14,14 +15,9 @@ export interface DailyRunConfig {
 
 export function fetchDailyRunSeed(): Promise<string | null> {
   return new Promise<string | null>((resolve, reject) => {
-    Utils.apiFetch("daily/seed").then(response => {
-      if (!response.ok) {
-        resolve(null);
-        return;
-      }
-      return response.text();
-    }).then(seed => resolve(seed ?? null))
-      .catch(err => reject(err));
+    pokerogueApi.daily.getSeed().then(dailySeed => {
+      resolve(dailySeed);
+    });
   });
 }
 
