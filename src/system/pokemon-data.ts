@@ -138,7 +138,7 @@ export default class PokemonData {
       this.moveset = (source.moveset || [ new PokemonMove(Moves.TACKLE), new PokemonMove(Moves.GROWL) ]).filter(m => m).map((m: any) => new PokemonMove(m.moveId, m.ppUsed, m.ppUp));
       if (!forHistory) {
         this.status = source.status
-          ? new Status(source.status.effect, source.status.turnCount, source.status.cureTurn)
+          ? new Status(source.status.effect, source.status.toxicTurnCount, source.status.sleepTurnsRemaining)
           : null;
       }
 
