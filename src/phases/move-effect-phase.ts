@@ -277,10 +277,8 @@ export class MoveEffectPhase extends PokemonPhase {
                           if (!user.isPlayer() && this.move.getMove() instanceof AttackMove) {
                             user.scene.applyShuffledModifiers(this.scene, EnemyAttackStatusEffectChanceModifier, false, target);
                           }
-                          target.lapseTag(BattlerTagType.BEAK_BLAST_CHARGING);
-                          if (move.category === MoveCategory.PHYSICAL && user.isPlayer() !== target.isPlayer()) {
-                            target.lapseTag(BattlerTagType.SHELL_TRAP);
-                          }
+                          target.lapseTags(BattlerTagLapseType.AFTER_HIT);
+
                         })).then(() => {
                           // Apply the user's post-attack ability effects
                           applyPostAttackAbAttrs(PostAttackAbAttr, user, target, this.move.getMove(), hitResult).then(() => {
