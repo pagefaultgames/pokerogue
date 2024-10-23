@@ -37,7 +37,7 @@ export class CheckSwitchPhase extends BattlePhase {
       return;
     }
 
-    if (!this.scene.getParty().slice(1).filter(p => p.isActive()).length) {
+    if (!this.scene.getPlayerParty().slice(1).filter(p => p.isActive()).length) {
       super.end();
       return;
     }

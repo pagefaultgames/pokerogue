@@ -143,7 +143,7 @@ describe("Absolute Avarice - Mystery Encounter", () => {
       await game.phaseInterceptor.to(SelectModifierPhase, false);
       expect(scene.getCurrentPhase()?.constructor.name).toBe(SelectModifierPhase.name);
 
-      for (const partyPokemon of scene.getParty()) {
+      for (const partyPokemon of scene.getPlayerParty()) {
         const pokemonId = partyPokemon.id;
         const pokemonItems = scene.findModifiers(m => m instanceof PokemonHeldItemModifier
           && (m as PokemonHeldItemModifier).pokemonId === pokemonId, true) as PokemonHeldItemModifier[];
@@ -230,13 +230,13 @@ describe("Absolute Avarice - Mystery Encounter", () => {
 
     it("should add Greedent to the party", async () => {
       await game.runToMysteryEncounter(MysteryEncounterType.ABSOLUTE_AVARICE, defaultParty);
-      const partyCountBefore = scene.getParty().length;
+      const partyCountBefore = scene.getPlayerParty().length;
 
       await runMysteryEncounterToEnd(game, 3);
-      const partyCountAfter = scene.getParty().length;
+      const partyCountAfter = scene.getPlayerParty().length;
 
       expect(partyCountBefore + 1).toBe(partyCountAfter);
-      const greedent = scene.getParty()[scene.getParty().length - 1];
+      const greedent = scene.getPlayerParty()[scene.getPlayerParty().length - 1];
       expect(greedent.species.speciesId).toBe(Species.GREEDENT);
       const moveset = greedent.moveset.map(m => m?.moveId);
       expect(moveset?.length).toBe(4);

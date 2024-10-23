@@ -136,9 +136,9 @@ describe("Test Battle Phase", () => {
       Species.CHANSEY,
       Species.MEW
     ]);
-    expect(game.scene.getParty()[0].species.speciesId).toBe(Species.CHARIZARD);
-    expect(game.scene.getParty()[1].species.speciesId).toBe(Species.CHANSEY);
-    expect(game.scene.getParty()[2].species.speciesId).toBe(Species.MEW);
+    expect(game.scene.getPlayerParty()[0].species.speciesId).toBe(Species.CHARIZARD);
+    expect(game.scene.getPlayerParty()[1].species.speciesId).toBe(Species.CHANSEY);
+    expect(game.scene.getPlayerParty()[2].species.speciesId).toBe(Species.MEW);
   }, 20000);
 
   it("test remove random battle seed int", async () => {

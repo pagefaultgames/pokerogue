@@ -1,19 +1,19 @@
-import { queueEncounterMessage, showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
-import { EnemyPartyConfig, initBattleWithEnemyConfig, leaveEncounterWithoutBattle, setEncounterRewards, transitionMysteryEncounterIntroVisuals } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
-import { getHighestLevelPlayerPokemon, koPlayerPokemon } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
-import { ModifierTier } from "#app/modifier/modifier-tier";
-import { randSeedInt } from "#app/utils";
-import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import BattleScene from "#app/battle-scene";
 import MysteryEncounter, { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-encounter";
 import { MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/mystery-encounter-option";
-import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
-import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
+import { queueEncounterMessage, showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
+import { EnemyPartyConfig, initBattleWithEnemyConfig, leaveEncounterWithoutBattle, setEncounterRewards, transitionMysteryEncounterIntroVisuals } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
+import { getHighestLevelPlayerPokemon, koPlayerPokemon } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
 import { getPokemonSpecies } from "#app/data/pokemon-species";
-import { Species } from "#enums/species";
-import { Moves } from "#enums/moves";
-import { GameOverPhase } from "#app/phases/game-over-phase";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
+import { ModifierTier } from "#app/modifier/modifier-tier";
+import { GameOverPhase } from "#app/phases/game-over-phase";
+import { randSeedInt } from "#app/utils";
+import { Moves } from "#enums/moves";
+import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
+import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
+import { MysteryEncounterType } from "#enums/mystery-encounter-type";
+import { Species } from "#enums/species";
 
 /** i18n namespace for encounter */
 const namespace = "mysteryEncounters/mysteriousChest";
@@ -177,7 +177,7 @@ export const MysteriousChestEncounter: MysteryEncounter =
             await showEncounterText(scene, `${namespace}:option.1.bad`);
 
             // Handle game over edge case
-            const allowedPokemon = scene.getParty().filter(p => p.isAllowedInBattle());
+            const allowedPokemon = scene.getPokemonAllowedInBattle();
             if (allowedPokemon.length === 0) {
               // If there are no longer any legal pokemon in the party, game over.
               scene.clearPhaseQueue();

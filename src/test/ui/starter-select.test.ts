@@ -91,10 +91,10 @@ describe("UI - Starter select", () => {
     });
     await game.phaseInterceptor.whenAboutToRun(EncounterPhase);
 
-    expect(game.scene.getParty()[0].species.speciesId).toBe(Species.BULBASAUR);
-    expect(game.scene.getParty()[0].shiny).toBe(true);
-    expect(game.scene.getParty()[0].variant).toBe(2);
-    expect(game.scene.getParty()[0].gender).toBe(Gender.MALE);
+    expect(game.scene.getPlayerParty()[0].species.speciesId).toBe(Species.BULBASAUR);
+    expect(game.scene.getPlayerParty()[0].shiny).toBe(true);
+    expect(game.scene.getPlayerParty()[0].variant).toBe(2);
+    expect(game.scene.getPlayerParty()[0].gender).toBe(Gender.MALE);
   }, 20000);
 
   it("Bulbasaur - shiny - variant 2 female hardy overgrow", async() => {
@@ -152,11 +152,11 @@ describe("UI - Starter select", () => {
     });
     await game.phaseInterceptor.whenAboutToRun(EncounterPhase);
 
-    expect(game.scene.getParty()[0].species.speciesId).toBe(Species.BULBASAUR);
-    expect(game.scene.getParty()[0].shiny).toBe(true);
-    expect(game.scene.getParty()[0].variant).toBe(2);
-    expect(game.scene.getParty()[0].nature).toBe(Nature.HARDY);
-    expect(game.scene.getParty()[0].getAbility().id).toBe(Abilities.OVERGROW);
+    expect(game.scene.getPlayerParty()[0].species.speciesId).toBe(Species.BULBASAUR);
+    expect(game.scene.getPlayerParty()[0].shiny).toBe(true);
+    expect(game.scene.getPlayerParty()[0].variant).toBe(2);
+    expect(game.scene.getPlayerParty()[0].nature).toBe(Nature.HARDY);
+    expect(game.scene.getPlayerParty()[0].getAbility().id).toBe(Abilities.OVERGROW);
   }, 20000);
 
   it("Bulbasaur - shiny - variant 2 female lonely chlorophyl", async() => {
@@ -216,12 +216,12 @@ describe("UI - Starter select", () => {
     });
     await game.phaseInterceptor.whenAboutToRun(EncounterPhase);
 
-    expect(game.scene.getParty()[0].species.speciesId).toBe(Species.BULBASAUR);
-    expect(game.scene.getParty()[0].shiny).toBe(true);
-    expect(game.scene.getParty()[0].variant).toBe(2);
-    expect(game.scene.getParty()[0].gender).toBe(Gender.FEMALE);
-    expect(game.scene.getParty()[0].nature).toBe(Nature.LONELY);
-    expect(game.scene.getParty()[0].getAbility().id).toBe(Abilities.CHLOROPHYLL);
+    expect(game.scene.getPlayerParty()[0].species.speciesId).toBe(Species.BULBASAUR);
+    expect(game.scene.getPlayerParty()[0].shiny).toBe(true);
+    expect(game.scene.getPlayerParty()[0].variant).toBe(2);
+    expect(game.scene.getPlayerParty()[0].gender).toBe(Gender.FEMALE);
+    expect(game.scene.getPlayerParty()[0].nature).toBe(Nature.LONELY);
+    expect(game.scene.getPlayerParty()[0].getAbility().id).toBe(Abilities.CHLOROPHYLL);
   }, 20000);
 
   it("Bulbasaur - shiny - variant 2 female", async() => {
@@ -279,10 +279,10 @@ describe("UI - Starter select", () => {
     });
     await game.phaseInterceptor.whenAboutToRun(EncounterPhase);
 
-    expect(game.scene.getParty()[0].species.speciesId).toBe(Species.BULBASAUR);
-    expect(game.scene.getParty()[0].shiny).toBe(true);
-    expect(game.scene.getParty()[0].variant).toBe(2);
-    expect(game.scene.getParty()[0].gender).toBe(Gender.FEMALE);
+    expect(game.scene.getPlayerParty()[0].species.speciesId).toBe(Species.BULBASAUR);
+    expect(game.scene.getPlayerParty()[0].shiny).toBe(true);
+    expect(game.scene.getPlayerParty()[0].variant).toBe(2);
+    expect(game.scene.getPlayerParty()[0].gender).toBe(Gender.FEMALE);
   }, 20000);
 
   it("Bulbasaur - not shiny", async() => {
@@ -340,9 +340,9 @@ describe("UI - Starter select", () => {
     });
     await game.phaseInterceptor.whenAboutToRun(EncounterPhase);
 
-    expect(game.scene.getParty()[0].species.speciesId).toBe(Species.BULBASAUR);
-    expect(game.scene.getParty()[0].shiny).toBe(false);
-    expect(game.scene.getParty()[0].variant).toBe(0);
+    expect(game.scene.getPlayerParty()[0].species.speciesId).toBe(Species.BULBASAUR);
+    expect(game.scene.getPlayerParty()[0].shiny).toBe(false);
+    expect(game.scene.getPlayerParty()[0].variant).toBe(0);
   }, 20000);
 
   it("Bulbasaur - shiny - variant 1", async() => {
@@ -401,9 +401,9 @@ describe("UI - Starter select", () => {
     });
     await game.phaseInterceptor.whenAboutToRun(EncounterPhase);
 
-    expect(game.scene.getParty()[0].species.speciesId).toBe(Species.BULBASAUR);
-    expect(game.scene.getParty()[0].shiny).toBe(true);
-    expect(game.scene.getParty()[0].variant).toBe(1);
+    expect(game.scene.getPlayerParty()[0].species.speciesId).toBe(Species.BULBASAUR);
+    expect(game.scene.getPlayerParty()[0].shiny).toBe(true);
+    expect(game.scene.getPlayerParty()[0].variant).toBe(1);
   }, 20000);
 
   it("Bulbasaur - shiny - variant 0", async() => {
@@ -461,9 +461,9 @@ describe("UI - Starter select", () => {
     });
     await game.phaseInterceptor.whenAboutToRun(EncounterPhase);
 
-    expect(game.scene.getParty()[0].species.speciesId).toBe(Species.BULBASAUR);
-    expect(game.scene.getParty()[0].shiny).toBe(true);
-    expect(game.scene.getParty()[0].variant).toBe(0);
+    expect(game.scene.getPlayerParty()[0].species.speciesId).toBe(Species.BULBASAUR);
+    expect(game.scene.getPlayerParty()[0].shiny).toBe(true);
+    expect(game.scene.getPlayerParty()[0].variant).toBe(0);
   }, 20000);
 
   it("Check if first pokemon in party is caterpie from gen 1 and 1rd row, 3rd column", async() => {
@@ -527,7 +527,7 @@ describe("UI - Starter select", () => {
       saveSlotSelectUiHandler.processInput(Button.ACTION);
     });
     await game.phaseInterceptor.whenAboutToRun(EncounterPhase);
-    expect(game.scene.getParty()[0].species.speciesId).toBe(Species.CATERPIE);
+    expect(game.scene.getPlayerParty()[0].species.speciesId).toBe(Species.CATERPIE);
   }, 20000);
 
   it("Check if first pokemon in party is nidoran_m from gen 1 and 2nd row, 4th column (cursor (9+4)-1)", async() => {
@@ -593,6 +593,6 @@ describe("UI - Starter select", () => {
       saveSlotSelectUiHandler.processInput(Button.ACTION);
     });
     await game.phaseInterceptor.whenAboutToRun(EncounterPhase);
-    expect(game.scene.getParty()[0].species.speciesId).toBe(Species.NIDORAN_M);
+    expect(game.scene.getPlayerParty()[0].species.speciesId).toBe(Species.NIDORAN_M);
   }, 20000);
 });

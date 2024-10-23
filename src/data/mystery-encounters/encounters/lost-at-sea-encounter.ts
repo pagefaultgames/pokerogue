@@ -104,7 +104,7 @@ export const LostAtSeaEncounter: MysteryEncounter = MysteryEncounterBuilder.with
       ],
     },
     async (scene: BattleScene) => {
-      const allowedPokemon = scene.getParty().filter((p) => p.isAllowedInBattle());
+      const allowedPokemon = scene.getPlayerParty().filter((p) => p.isAllowedInBattle());
 
       for (const pkm of allowedPokemon) {
         const percentage = DAMAGE_PERCENTAGE / 100;

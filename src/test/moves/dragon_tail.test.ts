@@ -73,7 +73,7 @@ describe("Moves - Dragon Tail", () => {
       .enemyAbility(Abilities.ROUGH_SKIN);
     await game.classicMode.startBattle([ Species.DRATINI, Species.DRATINI, Species.WAILORD, Species.WAILORD ]);
 
-    const leadPokemon = game.scene.getParty()[0]!;
+    const leadPokemon = game.scene.getPlayerParty()[0]!;
 
     const enemyLeadPokemon = game.scene.getEnemyParty()[0]!;
     const enemySecPokemon = game.scene.getEnemyParty()[1]!;
@@ -105,8 +105,8 @@ describe("Moves - Dragon Tail", () => {
       .enemyAbility(Abilities.ROUGH_SKIN);
     await game.classicMode.startBattle([ Species.DRATINI, Species.DRATINI, Species.WAILORD, Species.WAILORD ]);
 
-    const leadPokemon = game.scene.getParty()[0]!;
-    const secPokemon = game.scene.getParty()[1]!;
+    const leadPokemon = game.scene.getPlayerParty()[0]!;
+    const secPokemon = game.scene.getPlayerParty()[1]!;
 
     const enemyLeadPokemon = game.scene.getEnemyParty()[0]!;
     const enemySecPokemon = game.scene.getEnemyParty()[1]!;

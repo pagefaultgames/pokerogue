@@ -105,7 +105,7 @@ export function initSceneWithoutEncounterPhase(scene: BattleScene, species?: Spe
     const starterIvs = scene.gameData.dexData[starter.species.speciesId].ivs.slice(0);
     const starterPokemon = scene.addPlayerPokemon(starter.species, scene.gameMode.getStartingLevel(), starter.abilityIndex, starterFormIndex, starterGender, starterProps.shiny, starterProps.variant, starterIvs, starter.nature);
     starter.moveset && starterPokemon.tryPopulateMoveset(starter.moveset);
-    scene.getParty().push(starterPokemon);
+    scene.getPlayerParty().push(starterPokemon);
   });
 
   scene.currentBattle = new Battle(getGameMode(GameModes.CLASSIC), 5, BattleType.WILD, undefined, false);

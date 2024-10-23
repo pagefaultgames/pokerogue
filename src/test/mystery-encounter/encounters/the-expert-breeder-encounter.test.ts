@@ -152,7 +152,7 @@ describe("The Expert Pokémon Breeder - Mystery Encounter", () => {
       expect(scene.getCurrentPhase()?.constructor.name).toBe(CommandPhase.name);
       expect(scene.currentBattle.trainer).toBeDefined();
       expect(scene.currentBattle.mysteryEncounter?.encounterMode).toBe(MysteryEncounterMode.TRAINER_BATTLE);
-      expect(scene.getParty().length).toBe(1);
+      expect(scene.getPlayerParty().length).toBe(1);
     });
 
     it("Should reward the player with friendship and eggs based on pokemon selected", async () => {
@@ -231,7 +231,7 @@ describe("The Expert Pokémon Breeder - Mystery Encounter", () => {
       expect(scene.getCurrentPhase()?.constructor.name).toBe(CommandPhase.name);
       expect(scene.currentBattle.trainer).toBeDefined();
       expect(scene.currentBattle.mysteryEncounter?.encounterMode).toBe(MysteryEncounterMode.TRAINER_BATTLE);
-      expect(scene.getParty().length).toBe(1);
+      expect(scene.getPlayerParty().length).toBe(1);
     });
 
     it("Should reward the player with friendship and eggs based on pokemon selected", async () => {
@@ -310,7 +310,7 @@ describe("The Expert Pokémon Breeder - Mystery Encounter", () => {
       expect(scene.getCurrentPhase()?.constructor.name).toBe(CommandPhase.name);
       expect(scene.currentBattle.trainer).toBeDefined();
       expect(scene.currentBattle.mysteryEncounter?.encounterMode).toBe(MysteryEncounterMode.TRAINER_BATTLE);
-      expect(scene.getParty().length).toBe(1);
+      expect(scene.getPlayerParty().length).toBe(1);
     });
 
     it("Should reward the player with friendship and eggs based on pokemon selected", async () => {
