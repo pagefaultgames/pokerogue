@@ -1,4 +1,5 @@
 import {
+  Status,
   StatusEffect,
   getStatusEffectActivationText,
   getStatusEffectDescriptor,
@@ -341,6 +342,62 @@ describe("Status Effects", () => {
 
       expect(game.scene.getEnemyPokemon()!.isFullHp()).toBe(true);
       expect(game.scene.getPlayerPokemon()!.getLastXMoves(1)[0].result).toBe(MoveResult.FAIL);
+    });
+  });
+
+  describe("Sleep", () => {
+    let phaserGame: Phaser.Game;
+    let game: GameManager;
+
+    beforeAll(() => {
+      phaserGame = new Phaser.Game({
+        type: Phaser.HEADLESS,
+      });
+    });
+
+    afterEach(() => {
+      game.phaseInterceptor.restoreOg();
+    });
+
+    beforeEach(() => {
+      game = new GameManager(phaserGame);
+      game.override
+        .moveset([ Moves.SPLASH ])
+        .ability(Abilities.BALL_FETCH)
+        .battleType("single")
+        .disableCrits()
+        .enemySpecies(Species.MAGIKARP)
+        .enemyAbility(Abilities.BALL_FETCH)
+        .enemyMoveset(Moves.SPLASH);
+    });
+
+    it("should last the appropriate number of turns", async () => {
+      await game.classicMode.startBattle([ Species.FEEBAS ]);
+
+      const player = game.scene.getPlayerPokemon()!;
+      player.status = new Status(StatusEffect.SLEEP, 0, 4);
+
+      game.move.select(Moves.SPLASH);
+      await game.toNextTurn();
+
+      expect(player.status.effect).toBe(StatusEffect.SLEEP);
+
+      game.move.select(Moves.SPLASH);
+      await game.toNextTurn();
+
+      expect(player.status.effect).toBe(StatusEffect.SLEEP);
+
+      game.move.select(Moves.SPLASH);
+      await game.toNextTurn();
+
+      expect(player.status.effect).toBe(StatusEffect.SLEEP);
+      expect(player.getLastXMoves(1)[0].result).toBe(MoveResult.FAIL);
+
+      game.move.select(Moves.SPLASH);
+      await game.toNextTurn();
+
+      expect(player.status?.effect).toBeUndefined();
+      expect(player.getLastXMoves(1)[0].result).toBe(MoveResult.SUCCESS);
     });
   });
 });
