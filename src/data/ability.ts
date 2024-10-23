@@ -4692,6 +4692,24 @@ export class TerrainEventTypeChangeAbAttr extends PostSummonAbAttr {
       return false;
     }
     const currentTerrain = pokemon.scene.arena.getTerrainType();
+    const typeChange: Type[] = this.determineTypeChange(pokemon, currentTerrain);
+    if (typeChange.length !== 0) {
+      if (pokemon.summonData.addedType && typeChange.includes(pokemon.summonData.addedType)) {
+        pokemon.summonData.addedType = null;
+      }
+      pokemon.summonData.types = typeChange;
+      pokemon.updateInfo();
+    }
+    return true;
+  }
+
+  /**
+   * Retrieves the type(s) the Pokemon should change to in response to a terrain
+   * @param pokemon
+   * @param currentTerrain {@linkcode TerrainType}
+   * @returns a list of type(s)
+   */
+  private determineTypeChange(pokemon: Pokemon, currentTerrain: TerrainType): Type[] {
     const typeChange: Type[] = [];
     switch (currentTerrain) {
       case TerrainType.ELECTRIC:
@@ -4712,23 +4730,7 @@ export class TerrainEventTypeChangeAbAttr extends PostSummonAbAttr {
         });
         break;
     }
-    if (typeChange.length !== 0) {
-      if (pokemon.summonData.addedType && typeChange.includes(pokemon.summonData.addedType)) {
-        pokemon.summonData.addedType = null;
-      }
-      pokemon.summonData.types = typeChange;
-      pokemon.updateInfo();
-    }
-    let message: string = "";
-    const pokemonName = getPokemonNameWithAffix(pokemon);
-    if (currentTerrain === TerrainType.NONE) {
-      message = i18next.t("abilityTriggers:pokemonTypeChangeRevert", { pokemonNameWithAffix: pokemonName });
-    } else {
-      const typeName = i18next.t(`pokemonInfo:Type.${Type[typeChange[0]]})`);
-      message = i18next.t("abilityTriggers:pokemonTypeChange", { pokemonNameWithAffix: pokemonName, moveType: typeName });
-    }
-    pokemon.scene.queueMessage(message);
-    return true;
+    return typeChange;
   }
 
   applyPostSummon(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean | Promise<boolean> {
@@ -4736,6 +4738,16 @@ export class TerrainEventTypeChangeAbAttr extends PostSummonAbAttr {
       return this.apply(pokemon, passive, simulated, new Utils.BooleanHolder(false), []);
     }
     return false;
+  }
+
+  override getTriggerMessage(pokemon: Pokemon, abilityName: string, ...args: any[]) {
+    const currentTerrain = pokemon.scene.arena.getTerrainType();
+    if (currentTerrain === TerrainType.NONE) {
+      return i18next.t("abilityTriggers:pokemonTypeChangeRevert", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) });
+    } else {
+      const typeName = i18next.t(`pokemonInfo:Type.${Type[this.determineTypeChange(pokemon, currentTerrain)[0]]}`);
+      return i18next.t("abilityTriggers:pokemonTypeChange", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), moveType: typeName });
+    }
   }
 }
 
