@@ -967,7 +967,7 @@ export enum MoveEffectTrigger {
   POST_TARGET,
 }
 
-interface MoveEffectOptions {
+interface MoveEffectAttrOptions {
   /** Should this effect only apply on the first hit? */
   firstHitOnly?: boolean;
   /** Should this effect only apply on the last hit? */
@@ -983,30 +983,52 @@ interface MoveEffectOptions {
  * @see {@linkcode apply}
  */
 export class MoveEffectAttr extends MoveAttr {
-  /** Defines when this effect should trigger in the move's effect order
+  /**
+   * Defines when this effect should trigger in the move's effect order
    * @see {@linkcode phases.MoveEffectPhase.start}
    */
   public trigger: MoveEffectTrigger;
-  protected options?: MoveEffectOptions;
+  /**
+   * A container for this attribute's optional parameters
+   * @see {@linkcode MoveEffectAttrOptions} for supported params.
+   */
+  protected options?: MoveEffectAttrOptions;
 
-  constructor(selfTarget?: boolean, trigger?: MoveEffectTrigger, options?: MoveEffectOptions) {
+  constructor(selfTarget?: boolean, trigger?: MoveEffectTrigger, options?: MoveEffectAttrOptions) {
     super(selfTarget);
     this.trigger = trigger ?? MoveEffectTrigger.POST_APPLY;
     this.options = options;
   }
 
+  /**
+   * `true` if this effect should only trigger on the first hit of
+   * multi-hit moves. Defaults to `false`.
+   */
   public get firstHitOnly () {
     return this.options?.firstHitOnly ?? false;
   }
 
+  /**
+   * `true` if this effect should only trigger on the last hit of
+   * multi-hit moves. Defaults to `false`.
+   */
   public get lastHitOnly () {
     return this.options?.lastHitOnly ?? false;
   }
 
+  /**
+   * `true` if this effect should apply only upon hitting a target
+   * for the first time when targeting multiple {@linkcode Pokemon}.
+   * Defaults to `false`.
+   */
   public get firstTargetOnly () {
     return this.options?.firstTargetOnly ?? false;
   }
 
+  /**
+   * If defined, overrides the move's base chance for this
+   * secondary effect to trigger.
+   */
   public get effectChanceOverride () {
     return this.options?.effectChanceOverride;
   }
@@ -2791,13 +2813,16 @@ export class AwaitCombinedPledgeAttr extends OverrideMoveEffectAttr {
   }
 }
 
-interface StatStageChangeAttrOptions {
+/**
+ * Set of optional parameters that may be applied to stat stage changing effects
+ * @extends MoveEffectAttrOptions
+ * @see {@linkcode StatStageChangeAttr}
+ */
+interface StatStageChangeAttrOptions extends MoveEffectAttrOptions {
+  /** If defined, needs to be met in order for the stat change to apply */
   condition?: MoveConditionFunc,
-  showMessage?: boolean,
-  firstHitOnly?: boolean,
-  lastHitOnly?: boolean,
-  firstTargetOnly?: boolean,
-  effectChanceOverride?: number
+  /** `true` to display a message */
+  showMessage?: boolean
 }
 
 /**
@@ -2806,13 +2831,8 @@ interface StatStageChangeAttrOptions {
  * @param stats {@linkcode BattleStat} Array of stat(s) to change
  * @param stages How many stages to change the stat(s) by, [-6, 6]
  * @param selfTarget `true` if the move is self-targetting
- * @param condition {@linkcode MoveConditionFunc} Optional condition to be checked in order to apply the changes
- * @param showMessage `true` to display a message; default `true`
- * @param firstHitOnly `true` if only the first hit of a multi hit move should cause a stat stage change; default `false`
  * @param moveEffectTrigger {@linkcode MoveEffectTrigger} When the stat change should trigger; default {@linkcode MoveEffectTrigger.HIT}
- * @param firstTargetOnly `true` if a move that hits multiple pokemon should only trigger the stat change if it hits at least one pokemon, rather than once per hit pokemon; default `false`
- * @param lastHitOnly `true` if the effect should only apply after the last hit of a multi hit move; default `false`
- * @param effectChanceOverride Will override the move's normal secondary effect chance if specified
+ * @param options {@linkcode StatStageChangeAttrOptions} Container for any optional parameters for this attribute.
  *
  * @extends MoveEffectAttr
  * @see {@linkcode apply}
@@ -2820,6 +2840,10 @@ interface StatStageChangeAttrOptions {
 export class StatStageChangeAttr extends MoveEffectAttr {
   public stats: BattleStat[];
   public stages: integer;
+  /**
+   * Container for optional parameters to this attribute.
+   * @see {@linkcode StatStageChangeAttrOptions} for available optional params
+   */
   protected override options?: StatStageChangeAttrOptions;
 
   constructor(stats: BattleStat[], stages: integer, selfTarget?: boolean, moveEffectTrigger: MoveEffectTrigger = MoveEffectTrigger.HIT, options?: StatStageChangeAttrOptions) {
@@ -2829,10 +2853,18 @@ export class StatStageChangeAttr extends MoveEffectAttr {
     this.options = options;
   }
 
+  /**
+   * The condition required for the stat stage change to apply.
+   * Defaults to `null` (i.e. no condition required).
+   */
   private get condition () {
     return this.options?.condition ?? null;
   }
 
+  /**
+   * `true` to display a message for the stat change.
+   * Defaults to `true`.
+   */
   private get showMessage () {
     return this.options?.showMessage ?? true;
   }
@@ -8972,7 +9004,7 @@ export function initMoves() {
       .attr(StatStageChangeAttr, [ Stat.SPATK ], -1)
       .soundBased(),
     new AttackMove(Moves.DIAMOND_STORM, Type.ROCK, MoveCategory.PHYSICAL, 100, 95, 5, 50, 0, 6)
-      .attr(StatStageChangeAttr, [ Stat.DEF ], 2, true, undefined, { lastHitOnly: true })
+      .attr(StatStageChangeAttr, [ Stat.DEF ], 2, true, undefined, { firstTargetOnly: true })
       .makesContact(false)
       .target(MoveTarget.ALL_NEAR_ENEMIES),
     new AttackMove(Moves.STEAM_ERUPTION, Type.WATER, MoveCategory.SPECIAL, 110, 95, 5, 30, 0, 6)
