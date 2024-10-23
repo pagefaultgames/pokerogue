@@ -968,6 +968,11 @@ export enum MoveEffectTrigger {
 }
 
 interface MoveEffectAttrOptions {
+  /**
+   * Defines when this effect should trigger in the move's effect order
+   * @see {@linkcode MoveEffectPhase}
+   */
+  trigger?: MoveEffectTrigger;
   /** Should this effect only apply on the first hit? */
   firstHitOnly?: boolean;
   /** Should this effect only apply on the last hit? */
@@ -984,20 +989,23 @@ interface MoveEffectAttrOptions {
  */
 export class MoveEffectAttr extends MoveAttr {
   /**
-   * Defines when this effect should trigger in the move's effect order
-   * @see {@linkcode MoveEffectPhase}
-   */
-  public trigger: MoveEffectTrigger;
-  /**
    * A container for this attribute's optional parameters
    * @see {@linkcode MoveEffectAttrOptions} for supported params.
    */
   protected options?: MoveEffectAttrOptions;
 
-  constructor(selfTarget?: boolean, trigger?: MoveEffectTrigger, options?: MoveEffectAttrOptions) {
+  constructor(selfTarget?: boolean, options?: MoveEffectAttrOptions) {
     super(selfTarget);
-    this.trigger = trigger ?? MoveEffectTrigger.POST_APPLY;
     this.options = options;
+  }
+
+  /**
+   * Defines when this effect should trigger in the move's effect order.
+   * @default MoveEffectTrigger.POST_APPLY
+   * @see {@linkcode MoveEffectTrigger}
+   */
+  public get trigger () {
+    return this.options?.trigger ?? MoveEffectTrigger.POST_APPLY;
   }
 
   /**
@@ -1357,7 +1365,7 @@ export class RecoilAttr extends MoveEffectAttr {
   private unblockable: boolean;
 
   constructor(useHp: boolean = false, damageRatio: number = 0.25, unblockable: boolean = false) {
-    super(true, MoveEffectTrigger.POST_APPLY, { lastHitOnly: true });
+    super(true, { lastHitOnly: true });
 
     this.useHp = useHp;
     this.damageRatio = damageRatio;
@@ -1410,7 +1418,7 @@ export class RecoilAttr extends MoveEffectAttr {
  **/
 export class SacrificialAttr extends MoveEffectAttr {
   constructor() {
-    super(true, MoveEffectTrigger.POST_TARGET);
+    super(true, { trigger: MoveEffectTrigger.POST_TARGET });
   }
 
   /**
@@ -1443,7 +1451,7 @@ export class SacrificialAttr extends MoveEffectAttr {
  **/
 export class SacrificialAttrOnHit extends MoveEffectAttr {
   constructor() {
-    super(true, MoveEffectTrigger.HIT);
+    super(true, { trigger: MoveEffectTrigger.HIT });
   }
 
   /**
@@ -1482,7 +1490,7 @@ export class SacrificialAttrOnHit extends MoveEffectAttr {
  */
 export class HalfSacrificialAttr extends MoveEffectAttr {
   constructor() {
-    super(true, MoveEffectTrigger.POST_TARGET);
+    super(true, { trigger: MoveEffectTrigger.POST_TARGET });
   }
 
   /**
@@ -1886,7 +1894,7 @@ export class HitHealAttr extends MoveEffectAttr {
   private healStat: EffectiveStat | null;
 
   constructor(healRatio?: number | null, healStat?: EffectiveStat) {
-    super(true, MoveEffectTrigger.HIT);
+    super(true, { trigger: MoveEffectTrigger.HIT });
 
     this.healRatio = healRatio ?? 0.5;
     this.healStat = healStat ?? null;
@@ -2095,7 +2103,7 @@ export class StatusEffectAttr extends MoveEffectAttr {
   public overrideStatus: boolean = false;
 
   constructor(effect: StatusEffect, selfTarget?: boolean, turnsRemaining?: number, overrideStatus: boolean = false) {
-    super(selfTarget, MoveEffectTrigger.HIT);
+    super(selfTarget, { trigger: MoveEffectTrigger.HIT });
 
     this.effect = effect;
     this.turnsRemaining = turnsRemaining;
@@ -2162,7 +2170,7 @@ export class MultiStatusEffectAttr extends StatusEffectAttr {
 
 export class PsychoShiftEffectAttr extends MoveEffectAttr {
   constructor() {
-    super(false, MoveEffectTrigger.HIT);
+    super(false, { trigger: MoveEffectTrigger.HIT });
   }
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
@@ -2199,7 +2207,7 @@ export class StealHeldItemChanceAttr extends MoveEffectAttr {
   private chance: number;
 
   constructor(chance: number) {
-    super(false, MoveEffectTrigger.HIT);
+    super(false, { trigger: MoveEffectTrigger.HIT });
     this.chance = chance;
   }
 
@@ -2260,7 +2268,7 @@ export class RemoveHeldItemAttr extends MoveEffectAttr {
   private berriesOnly: boolean;
 
   constructor(berriesOnly: boolean) {
-    super(false, MoveEffectTrigger.HIT);
+    super(false, { trigger: MoveEffectTrigger.HIT });
     this.berriesOnly = berriesOnly;
   }
 
@@ -2334,7 +2342,7 @@ export class RemoveHeldItemAttr extends MoveEffectAttr {
 export class EatBerryAttr extends MoveEffectAttr {
   protected chosenBerry: BerryModifier | undefined;
   constructor() {
-    super(true, MoveEffectTrigger.HIT);
+    super(true, { trigger: MoveEffectTrigger.HIT });
   }
   /**
    * Causes the target to eat a berry.
@@ -2437,7 +2445,7 @@ export class HealStatusEffectAttr extends MoveEffectAttr {
    * @param ...effects - List of status effects to cure
    */
   constructor(selfTarget: boolean, ...effects: StatusEffect[]) {
-    super(selfTarget, MoveEffectTrigger.POST_APPLY, { lastHitOnly: true });
+    super(selfTarget, { lastHitOnly: true });
 
     this.effects = effects;
   }
@@ -2833,7 +2841,6 @@ interface StatStageChangeAttrOptions extends MoveEffectAttrOptions {
  * @param stats {@linkcode BattleStat} Array of stat(s) to change
  * @param stages How many stages to change the stat(s) by, [-6, 6]
  * @param selfTarget `true` if the move is self-targetting
- * @param moveEffectTrigger {@linkcode MoveEffectTrigger} When the stat change should trigger; default {@linkcode MoveEffectTrigger.HIT}
  * @param options {@linkcode StatStageChangeAttrOptions} Container for any optional parameters for this attribute.
  *
  * @extends MoveEffectAttr
@@ -2848,8 +2855,8 @@ export class StatStageChangeAttr extends MoveEffectAttr {
    */
   protected override options?: StatStageChangeAttrOptions;
 
-  constructor(stats: BattleStat[], stages: number, selfTarget?: boolean, moveEffectTrigger: MoveEffectTrigger = MoveEffectTrigger.HIT, options?: StatStageChangeAttrOptions) {
-    super(selfTarget, moveEffectTrigger, options);
+  constructor(stats: BattleStat[], stages: number, selfTarget?: boolean, options?: StatStageChangeAttrOptions) {
+    super(selfTarget, options);
     this.stats = stats;
     this.stages = stages;
     this.options = options;
@@ -2869,6 +2876,14 @@ export class StatStageChangeAttr extends MoveEffectAttr {
    */
   private get showMessage () {
     return this.options?.showMessage ?? true;
+  }
+
+  /**
+   * Indicates when the stat change should trigger
+   * @default MoveEffectTrigger.HIT
+   */
+  public override get trigger () {
+    return this.options?.trigger ?? MoveEffectTrigger.HIT;
   }
 
   /**
@@ -4894,7 +4909,7 @@ export class BypassRedirectAttr extends MoveAttr {
 
 export class FrenzyAttr extends MoveEffectAttr {
   constructor() {
-    super(true, MoveEffectTrigger.HIT, { lastHitOnly: true });
+    super(true, { trigger: MoveEffectTrigger.HIT, lastHitOnly: true });
   }
 
   canApply(user: Pokemon, target: Pokemon, move: Move, args: any[]) {
@@ -4936,7 +4951,7 @@ export class AddBattlerTagAttr extends MoveEffectAttr {
   private failOnOverlap: boolean;
 
   constructor(tagType: BattlerTagType, selfTarget: boolean = false, failOnOverlap: boolean = false, turnCountMin: integer = 0, turnCountMax?: integer, lastHitOnly: boolean = false, cancelOnFail: boolean = false) {
-    super(selfTarget, MoveEffectTrigger.POST_APPLY, { lastHitOnly: lastHitOnly });
+    super(selfTarget, { lastHitOnly: lastHitOnly });
 
     this.tagType = tagType;
     this.turnCountMin = turnCountMin;
@@ -5371,7 +5386,7 @@ export class AddArenaTagAttr extends MoveEffectAttr {
   public selfSideTarget: boolean;
 
   constructor(tagType: ArenaTagType, turnCount?: integer | null, failOnOverlap: boolean = false, selfSideTarget: boolean = false) {
-    super(true, MoveEffectTrigger.POST_APPLY);
+    super(true);
 
     this.tagType = tagType;
     this.turnCount = turnCount!; // TODO: is the bang correct?
@@ -5409,7 +5424,7 @@ export class RemoveArenaTagsAttr extends MoveEffectAttr {
   public selfSideTarget: boolean;
 
   constructor(tagTypes: ArenaTagType[], selfSideTarget: boolean) {
-    super(true, MoveEffectTrigger.POST_APPLY);
+    super(true);
 
     this.tagTypes = tagTypes;
     this.selfSideTarget = selfSideTarget;
@@ -5475,7 +5490,7 @@ export class RemoveArenaTrapAttr extends MoveEffectAttr {
   private targetBothSides: boolean;
 
   constructor(targetBothSides: boolean = false) {
-    super(true, MoveEffectTrigger.PRE_APPLY);
+    super(true, { trigger: MoveEffectTrigger.PRE_APPLY });
     this.targetBothSides = targetBothSides;
   }
 
@@ -5511,7 +5526,7 @@ export class RemoveScreensAttr extends MoveEffectAttr {
   private targetBothSides: boolean;
 
   constructor(targetBothSides: boolean = false) {
-    super(true, MoveEffectTrigger.PRE_APPLY);
+    super(true, { trigger: MoveEffectTrigger.PRE_APPLY });
     this.targetBothSides = targetBothSides;
   }
 
@@ -5549,7 +5564,7 @@ export class SwapArenaTagsAttr extends MoveEffectAttr {
 
 
   constructor(SwapTags: ArenaTagType[]) {
-    super(true, MoveEffectTrigger.POST_APPLY);
+    super(true);
     this.SwapTags = SwapTags;
   }
 
@@ -5675,7 +5690,7 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
     private selfSwitch: boolean = false,
     private switchType: SwitchType = SwitchType.SWITCH
   ) {
-    super(false, MoveEffectTrigger.POST_APPLY, { lastHitOnly: true });
+    super(false, { lastHitOnly: true });
   }
 
   isBatonPass() {
@@ -5826,7 +5841,7 @@ export class RemoveTypeAttr extends MoveEffectAttr {
   private messageCallback: ((user: Pokemon) => void) | undefined;
 
   constructor(removedType: Type, messageCallback?: (user: Pokemon) => void) {
-    super(true, MoveEffectTrigger.POST_TARGET);
+    super(true, { trigger: MoveEffectTrigger.POST_TARGET });
     this.removedType = removedType;
     this.messageCallback = messageCallback;
 
@@ -5903,7 +5918,7 @@ export class ChangeTypeAttr extends MoveEffectAttr {
   private type: Type;
 
   constructor(type: Type) {
-    super(false, MoveEffectTrigger.HIT);
+    super(false, { trigger: MoveEffectTrigger.HIT });
 
     this.type = type;
   }
@@ -5926,7 +5941,7 @@ export class AddTypeAttr extends MoveEffectAttr {
   private type: Type;
 
   constructor(type: Type) {
-    super(false, MoveEffectTrigger.HIT);
+    super(false, { trigger: MoveEffectTrigger.HIT });
 
     this.type = type;
   }
@@ -6457,7 +6472,7 @@ export class AbilityChangeAttr extends MoveEffectAttr {
   public ability: Abilities;
 
   constructor(ability: Abilities, selfTarget?: boolean) {
-    super(selfTarget, MoveEffectTrigger.HIT);
+    super(selfTarget, { trigger: MoveEffectTrigger.HIT });
 
     this.ability = ability;
   }
@@ -6486,7 +6501,7 @@ export class AbilityCopyAttr extends MoveEffectAttr {
   public copyToPartner: boolean;
 
   constructor(copyToPartner: boolean = false) {
-    super(false, MoveEffectTrigger.HIT);
+    super(false, { trigger: MoveEffectTrigger.HIT });
 
     this.copyToPartner = copyToPartner;
   }
@@ -6525,7 +6540,7 @@ export class AbilityGiveAttr extends MoveEffectAttr {
   public copyToPartner: boolean;
 
   constructor() {
-    super(false, MoveEffectTrigger.HIT);
+    super(false, { trigger: MoveEffectTrigger.HIT });
   }
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
@@ -6827,7 +6842,7 @@ export class DiscourageFrequentUseAttr extends MoveAttr {
 
 export class MoneyAttr extends MoveEffectAttr {
   constructor() {
-    super(true, MoveEffectTrigger.HIT, { firstHitOnly: true });
+    super(true, { trigger: MoveEffectTrigger.HIT, firstHitOnly: true });
   }
 
   apply(user: Pokemon, target: Pokemon, move: Move): boolean {
@@ -6844,7 +6859,7 @@ export class MoneyAttr extends MoveEffectAttr {
  */
 export class DestinyBondAttr extends MoveEffectAttr {
   constructor() {
-    super(true, MoveEffectTrigger.PRE_APPLY);
+    super(true, { trigger: MoveEffectTrigger.PRE_APPLY });
   }
 
   /**
@@ -6894,7 +6909,7 @@ export class StatusIfBoostedAttr extends MoveEffectAttr {
   public effect: StatusEffect;
 
   constructor(effect: StatusEffect) {
-    super(true, MoveEffectTrigger.HIT);
+    super(true, { trigger: MoveEffectTrigger.HIT });
     this.effect = effect;
   }
 
@@ -8921,7 +8936,7 @@ export function initMoves() {
         // If any fielded pokémon is grass-type and grounded.
         return [ ...user.scene.getEnemyParty(), ...user.scene.getParty() ].some((poke) => poke.isOfType(Type.GRASS) && poke.isGrounded());
       })
-      .attr(StatStageChangeAttr, [ Stat.ATK, Stat.SPATK ], 1, false, undefined, { condition: (user, target, move) => target.isOfType(Type.GRASS) && target.isGrounded() }),
+      .attr(StatStageChangeAttr, [ Stat.ATK, Stat.SPATK ], 1, false, { condition: (user, target, move) => target.isOfType(Type.GRASS) && target.isGrounded() }),
     new StatusMove(Moves.STICKY_WEB, Type.BUG, -1, 20, -1, 0, 6)
       .attr(AddArenaTrapTagAttr, ArenaTagType.STICKY_WEB)
       .target(MoveTarget.ENEMY_SIDE),
@@ -8959,7 +8974,7 @@ export function initMoves() {
       .soundBased()
       .target(MoveTarget.ALL_NEAR_ENEMIES),
     new StatusMove(Moves.PARTING_SHOT, Type.DARK, 100, 20, -1, 0, 6)
-      .attr(StatStageChangeAttr, [ Stat.ATK, Stat.SPATK ], -1, false, MoveEffectTrigger.PRE_APPLY)
+      .attr(StatStageChangeAttr, [ Stat.ATK, Stat.SPATK ], -1, false, { trigger: MoveEffectTrigger.PRE_APPLY })
       .attr(ForceSwitchOutAttr, true)
       .soundBased(),
     new StatusMove(Moves.TOPSY_TURVY, Type.DARK, -1, 20, -1, 0, 6)
@@ -8974,7 +8989,7 @@ export function initMoves() {
       .condition(failIfLastCondition),
     new StatusMove(Moves.FLOWER_SHIELD, Type.FAIRY, -1, 10, -1, 0, 6)
       .target(MoveTarget.ALL)
-      .attr(StatStageChangeAttr, [ Stat.DEF ], 1, false, undefined, { condition: (user, target, move) => target.getTypes().includes(Type.GRASS) && !target.getTag(SemiInvulnerableTag) }),
+      .attr(StatStageChangeAttr, [ Stat.DEF ], 1, false, { condition: (user, target, move) => target.getTypes().includes(Type.GRASS) && !target.getTag(SemiInvulnerableTag) }),
     new StatusMove(Moves.GRASSY_TERRAIN, Type.GRASS, -1, 10, -1, 0, 6)
       .attr(TerrainChangeAttr, TerrainType.GRASSY)
       .target(MoveTarget.BOTH_SIDES),
@@ -9006,7 +9021,7 @@ export function initMoves() {
       .attr(StatStageChangeAttr, [ Stat.SPATK ], -1)
       .soundBased(),
     new AttackMove(Moves.DIAMOND_STORM, Type.ROCK, MoveCategory.PHYSICAL, 100, 95, 5, 50, 0, 6)
-      .attr(StatStageChangeAttr, [ Stat.DEF ], 2, true, undefined, { firstTargetOnly: true })
+      .attr(StatStageChangeAttr, [ Stat.DEF ], 2, true, { firstTargetOnly: true })
       .makesContact(false)
       .target(MoveTarget.ALL_NEAR_ENEMIES),
     new AttackMove(Moves.STEAM_ERUPTION, Type.WATER, MoveCategory.SPECIAL, 110, 95, 5, 30, 0, 6)
@@ -9032,7 +9047,7 @@ export function initMoves() {
     new StatusMove(Moves.EERIE_IMPULSE, Type.ELECTRIC, 100, 15, -1, 0, 6)
       .attr(StatStageChangeAttr, [ Stat.SPATK ], -2),
     new StatusMove(Moves.VENOM_DRENCH, Type.POISON, 100, 20, -1, 0, 6)
-      .attr(StatStageChangeAttr, [ Stat.ATK, Stat.SPATK, Stat.SPD ], -1, false, undefined, { condition: (user, target, move) => target.status?.effect === StatusEffect.POISON || target.status?.effect === StatusEffect.TOXIC })
+      .attr(StatStageChangeAttr, [ Stat.ATK, Stat.SPATK, Stat.SPD ], -1, false, { condition: (user, target, move) => target.status?.effect === StatusEffect.POISON || target.status?.effect === StatusEffect.TOXIC })
       .target(MoveTarget.ALL_NEAR_ENEMIES),
     new StatusMove(Moves.POWDER, Type.BUG, 100, 20, -1, 1, 6)
       .ignoresSubstitute()
@@ -9043,7 +9058,7 @@ export function initMoves() {
       .attr(StatStageChangeAttr, [ Stat.SPATK, Stat.SPDEF, Stat.SPD ], 2, true)
       .ignoresVirtual(),
     new StatusMove(Moves.MAGNETIC_FLUX, Type.ELECTRIC, -1, 20, -1, 0, 6)
-      .attr(StatStageChangeAttr, [ Stat.DEF, Stat.SPDEF ], 1, false, undefined, { condition: (user, target, move) => !![ Abilities.PLUS, Abilities.MINUS ].find(a => target.hasAbility(a, false)) })
+      .attr(StatStageChangeAttr, [ Stat.DEF, Stat.SPDEF ], 1, false, { condition: (user, target, move) => !![ Abilities.PLUS, Abilities.MINUS ].find(a => target.hasAbility(a, false)) })
       .ignoresSubstitute()
       .target(MoveTarget.USER_AND_ALLIES)
       .condition((user, target, move) => !![ user, user.getAlly() ].filter(p => p?.isActive()).find(p => !![ Abilities.PLUS, Abilities.MINUS ].find(a => p.hasAbility(a, false)))),
@@ -9262,7 +9277,7 @@ export function initMoves() {
     new SelfStatusMove(Moves.LASER_FOCUS, Type.NORMAL, -1, 30, -1, 0, 7)
       .attr(AddBattlerTagAttr, BattlerTagType.ALWAYS_CRIT, true, false),
     new StatusMove(Moves.GEAR_UP, Type.STEEL, -1, 20, -1, 0, 7)
-      .attr(StatStageChangeAttr, [ Stat.ATK, Stat.SPATK ], 1, false, undefined, { condition: (user, target, move) => !![ Abilities.PLUS, Abilities.MINUS ].find(a => target.hasAbility(a, false)) })
+      .attr(StatStageChangeAttr, [ Stat.ATK, Stat.SPATK ], 1, false, { condition: (user, target, move) => !![ Abilities.PLUS, Abilities.MINUS ].find(a => target.hasAbility(a, false)) })
       .ignoresSubstitute()
       .target(MoveTarget.USER_AND_ALLIES)
       .condition((user, target, move) => !![ user, user.getAlly() ].filter(p => p?.isActive()).find(p => !![ Abilities.PLUS, Abilities.MINUS ].find(a => p.hasAbility(a, false)))),
@@ -9319,7 +9334,7 @@ export function initMoves() {
       .ballBombMove()
       .makesContact(false),
     new AttackMove(Moves.CLANGING_SCALES, Type.DRAGON, MoveCategory.SPECIAL, 110, 100, 5, -1, 0, 7)
-      .attr(StatStageChangeAttr, [ Stat.DEF ], -1, true, MoveEffectTrigger.HIT, { firstTargetOnly: true })
+      .attr(StatStageChangeAttr, [ Stat.DEF ], -1, true, { firstTargetOnly: true })
       .soundBased()
       .target(MoveTarget.ALL_NEAR_ENEMIES),
     new AttackMove(Moves.DRAGON_HAMMER, Type.DRAGON, MoveCategory.PHYSICAL, 90, 100, 15, -1, 0, 7),
@@ -9433,7 +9448,7 @@ export function initMoves() {
       .makesContact(false)
       .ignoresVirtual(),
     new AttackMove(Moves.CLANGOROUS_SOULBLAZE, Type.DRAGON, MoveCategory.SPECIAL, 185, -1, 1, 100, 0, 7)
-      .attr(StatStageChangeAttr, [ Stat.ATK, Stat.DEF, Stat.SPATK, Stat.SPDEF, Stat.SPD ], 1, true, undefined, { firstTargetOnly: true })
+      .attr(StatStageChangeAttr, [ Stat.ATK, Stat.DEF, Stat.SPATK, Stat.SPDEF, Stat.SPD ], 1, true, { firstTargetOnly: true })
       .soundBased()
       .target(MoveTarget.ALL_NEAR_ENEMIES)
       .edgeCase() // I assume it needs clanging scales and Kommo-O
@@ -9671,8 +9686,8 @@ export function initMoves() {
       .attr(ClearTerrainAttr)
       .condition((user, target, move) => !!user.scene.arena.terrain),
     new AttackMove(Moves.SCALE_SHOT, Type.DRAGON, MoveCategory.PHYSICAL, 25, 90, 20, -1, 0, 8)
-      .attr(StatStageChangeAttr, [ Stat.SPD ], 1, true, MoveEffectTrigger.HIT, { lastHitOnly: true })
-      .attr(StatStageChangeAttr, [ Stat.DEF ], -1, true, MoveEffectTrigger.HIT, { lastHitOnly: true })
+      .attr(StatStageChangeAttr, [ Stat.SPD ], 1, true, { lastHitOnly: true })
+      .attr(StatStageChangeAttr, [ Stat.DEF ], -1, true, { lastHitOnly: true })
       .attr(MultiHitAttr)
       .makesContact(false),
     new AttackMove(Moves.METEOR_BEAM, Type.ROCK, MoveCategory.SPECIAL, 120, 90, 10, 100, 0, 8)
@@ -9806,7 +9821,7 @@ export function initMoves() {
     new AttackMove(Moves.TRIPLE_ARROWS, Type.FIGHTING, MoveCategory.PHYSICAL, 90, 100, 10, 30, 0, 8)
       .makesContact(false)
       .attr(HighCritAttr)
-      .attr(StatStageChangeAttr, [ Stat.DEF ], -1, false, undefined, { effectChanceOverride: 50 })
+      .attr(StatStageChangeAttr, [ Stat.DEF ], -1, false, { effectChanceOverride: 50 })
       .attr(FlinchAttr),
     new AttackMove(Moves.INFERNAL_PARADE, Type.GHOST, MoveCategory.SPECIAL, 60, 100, 15, 30, 0, 8)
       .attr(StatusEffectAttr, StatusEffect.BURN)
@@ -9942,7 +9957,7 @@ export function initMoves() {
       .attr(TeraMoveCategoryAttr)
       .attr(TeraBlastTypeAttr)
       .attr(TeraBlastPowerAttr)
-      .attr(StatStageChangeAttr, [ Stat.ATK, Stat.SPATK ], -1, true, undefined, { condition: (user, target, move) => user.isTerastallized() && user.isOfType(Type.STELLAR) })
+      .attr(StatStageChangeAttr, [ Stat.ATK, Stat.SPATK ], -1, true, { condition: (user, target, move) => user.isTerastallized() && user.isOfType(Type.STELLAR) })
       .partial(), /** Does not ignore abilities that affect stats, relevant in determining the move's category {@see TeraMoveCategoryAttr} */
     new SelfStatusMove(Moves.SILK_TRAP, Type.BUG, -1, 10, -1, 4, 9)
       .attr(ProtectAttr, BattlerTagType.SILK_TRAP)
@@ -10025,7 +10040,7 @@ export function initMoves() {
       .attr(RemoveScreensAttr),
     new AttackMove(Moves.MAKE_IT_RAIN, Type.STEEL, MoveCategory.SPECIAL, 120, 100, 5, -1, 0, 9)
       .attr(MoneyAttr)
-      .attr(StatStageChangeAttr, [ Stat.SPATK ], -1, true, MoveEffectTrigger.HIT, { firstTargetOnly: true })
+      .attr(StatStageChangeAttr, [ Stat.SPATK ], -1, true, { firstTargetOnly: true })
       .target(MoveTarget.ALL_NEAR_ENEMIES),
     new AttackMove(Moves.PSYBLADE, Type.PSYCHIC, MoveCategory.PHYSICAL, 80, 100, 15, -1, 0, 9)
       .attr(MovePowerMultiplierAttr, (user, target, move) => user.scene.arena.getTerrainType() === TerrainType.ELECTRIC && user.isGrounded() ? 1.5 : 1)
