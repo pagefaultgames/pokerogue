@@ -985,7 +985,7 @@ interface MoveEffectAttrOptions {
 export class MoveEffectAttr extends MoveAttr {
   /**
    * Defines when this effect should trigger in the move's effect order
-   * @see {@linkcode phases.MoveEffectPhase.start}
+   * @see {@linkcode MoveEffectPhase}
    */
   public trigger: MoveEffectTrigger;
   /**
@@ -1002,7 +1002,8 @@ export class MoveEffectAttr extends MoveAttr {
 
   /**
    * `true` if this effect should only trigger on the first hit of
-   * multi-hit moves. Defaults to `false`.
+   * multi-hit moves.
+   * @default false
    */
   public get firstHitOnly () {
     return this.options?.firstHitOnly ?? false;
@@ -1010,7 +1011,8 @@ export class MoveEffectAttr extends MoveAttr {
 
   /**
    * `true` if this effect should only trigger on the last hit of
-   * multi-hit moves. Defaults to `false`.
+   * multi-hit moves.
+   * @default false
    */
   public get lastHitOnly () {
     return this.options?.lastHitOnly ?? false;
@@ -1019,7 +1021,7 @@ export class MoveEffectAttr extends MoveAttr {
   /**
    * `true` if this effect should apply only upon hitting a target
    * for the first time when targeting multiple {@linkcode Pokemon}.
-   * Defaults to `false`.
+   * @default false
    */
   public get firstTargetOnly () {
     return this.options?.firstTargetOnly ?? false;
@@ -2839,14 +2841,14 @@ interface StatStageChangeAttrOptions extends MoveEffectAttrOptions {
  */
 export class StatStageChangeAttr extends MoveEffectAttr {
   public stats: BattleStat[];
-  public stages: integer;
+  public stages: number;
   /**
    * Container for optional parameters to this attribute.
    * @see {@linkcode StatStageChangeAttrOptions} for available optional params
    */
   protected override options?: StatStageChangeAttrOptions;
 
-  constructor(stats: BattleStat[], stages: integer, selfTarget?: boolean, moveEffectTrigger: MoveEffectTrigger = MoveEffectTrigger.HIT, options?: StatStageChangeAttrOptions) {
+  constructor(stats: BattleStat[], stages: number, selfTarget?: boolean, moveEffectTrigger: MoveEffectTrigger = MoveEffectTrigger.HIT, options?: StatStageChangeAttrOptions) {
     super(selfTarget, moveEffectTrigger, options);
     this.stats = stats;
     this.stages = stages;
@@ -2863,7 +2865,7 @@ export class StatStageChangeAttr extends MoveEffectAttr {
 
   /**
    * `true` to display a message for the stat change.
-   * Defaults to `true`.
+   * @default true
    */
   private get showMessage () {
     return this.options?.showMessage ?? true;
