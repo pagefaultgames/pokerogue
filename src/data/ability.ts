@@ -4742,11 +4742,12 @@ export class TerrainEventTypeChangeAbAttr extends PostSummonAbAttr {
 
   override getTriggerMessage(pokemon: Pokemon, abilityName: string, ...args: any[]) {
     const currentTerrain = pokemon.scene.arena.getTerrainType();
+    const pokemonNameWithAffix = getPokemonNameWithAffix(pokemon);
     if (currentTerrain === TerrainType.NONE) {
-      return i18next.t("abilityTriggers:pokemonTypeChangeRevert", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) });
+      return i18next.t("abilityTriggers:pokemonTypeChangeRevert", { pokemonNameWithAffix });
     } else {
-      const typeName = i18next.t(`pokemonInfo:Type.${Type[this.determineTypeChange(pokemon, currentTerrain)[0]]}`);
-      return i18next.t("abilityTriggers:pokemonTypeChange", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), moveType: typeName });
+      const moveType = i18next.t(`pokemonInfo:Type.${Type[this.determineTypeChange(pokemon, currentTerrain)[0]]}`);
+      return i18next.t("abilityTriggers:pokemonTypeChange", { pokemonNameWithAffix, moveType });
     }
   }
 }
