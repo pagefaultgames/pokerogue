@@ -11,6 +11,7 @@ import { getTerrainBlockMessage } from "#app/data/weather";
 import { MoveUsedEvent } from "#app/events/battle-scene";
 import Pokemon, { MoveResult, PokemonMove, TurnMove } from "#app/field/pokemon";
 import { getPokemonNameWithAffix } from "#app/messages";
+import Overrides from "#app/overrides";
 import { BattlePhase } from "#app/phases/battle-phase";
 import { CommonAnimPhase } from "#app/phases/common-anim-phase";
 import { MoveEffectPhase } from "#app/phases/move-effect-phase";
@@ -168,10 +169,7 @@ export class MovePhase extends BattlePhase {
 
       switch (this.pokemon.status.effect) {
         case StatusEffect.PARALYSIS:
-          if (!this.pokemon.randSeedInt(4)) {
-            activated = true;
-            this.cancelled = true;
-          }
+          activated = (!this.pokemon.randSeedInt(4) || Overrides.STATUS_ACTIVATION_OVERRIDE === true) && Overrides.STATUS_ACTIVATION_OVERRIDE !== false;
           break;
         case StatusEffect.SLEEP:
           applyMoveAttrs(BypassSleepAttr, this.pokemon, null, this.move.getMove());
@@ -180,16 +178,22 @@ export class MovePhase extends BattlePhase {
           this.pokemon.status.sleepTurnsRemaining = turnsRemaining.value;
           healed = this.pokemon.status.sleepTurnsRemaining <= 0;
           activated = !healed && !this.pokemon.getTag(BattlerTagType.BYPASS_SLEEP);
-          this.cancelled = activated;
           break;
         case StatusEffect.FREEZE:
-          healed = !!this.move.getMove().findAttr(attr => attr instanceof HealStatusEffectAttr && attr.selfTarget && attr.isOfEffect(StatusEffect.FREEZE)) || !this.pokemon.randSeedInt(5);
+          healed =
+            !!this.move.getMove().findAttr((attr) =>
+              attr instanceof HealStatusEffectAttr
+              && attr.selfTarget
+              && attr.isOfEffect(StatusEffect.FREEZE))
+            || (!this.pokemon.randSeedInt(5) && Overrides.STATUS_ACTIVATION_OVERRIDE !== true)
+            || Overrides.STATUS_ACTIVATION_OVERRIDE === false;
+
           activated = !healed;
-          this.cancelled = activated;
           break;
       }
 
       if (activated) {
+        this.cancel();
         this.scene.queueMessage(getStatusEffectActivationText(this.pokemon.status.effect, getPokemonNameWithAffix(this.pokemon)));
         this.scene.unshiftPhase(new CommonAnimPhase(this.scene, this.pokemon.getBattlerIndex(), undefined, CommonAnim.POISON + (this.pokemon.status.effect - 1)));
       } else if (healed) {
