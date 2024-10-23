@@ -313,7 +313,7 @@ describe("Abilities - Wimp Out", () => {
     game.override
       .enemyAbility(Abilities.SHEER_FORCE)
       .enemyMoveset(Moves.SLUDGE_BOMB)
-      .startingLevel(90);
+      .startingLevel(95);
     await game.startBattle([
       Species.WIMPOD,
       Species.TYRUNT

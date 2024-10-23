@@ -4881,7 +4881,7 @@ function calculateShellBellRecovery(pokemon: Pokemon): number {
  * @extends AbAttr
  */
 export class PostDamageAbAttr extends AbAttr {
-  applyPostDamageAbAttrs(pokemon: Pokemon, damage: number, passive: boolean, simulated: boolean, args: any[]): boolean | Promise<boolean> {
+  applyPostDamage(pokemon: Pokemon, damage: number, passive: boolean, simulated: boolean, args: any[]): boolean | Promise<boolean> {
     return false;
   }
 }
@@ -4915,7 +4915,7 @@ export class PostDamageForceSwitchAttr extends PostDamageAbAttr {
    * @param {any[]} args N/A
    * @returns {boolean | Promise<boolean>} True if the switch-out logic was successfully applied, false otherwise.
    */
-  applyPostDamageAbAttrs(pokemon: Pokemon, damage: number, passive: boolean, simulated: boolean, args: any[]): boolean | Promise<boolean> {
+  applyPostDamage(pokemon: Pokemon, damage: number, passive: boolean, simulated: boolean, args: any[]): boolean | Promise<boolean> {
     const moveHistory = pokemon.getMoveHistory();
     // Will not activate when the Pokémon's HP is lowered by cutting its own HP
     const fordbiddenAttackingMoves = [ Moves.BELLY_DRUM, Moves.SUBSTITUTE, Moves.CURSE, Moves.PAIN_SPLIT ];
@@ -5007,9 +5007,9 @@ export function applyPostSetStatusAbAttrs(attrType: Constructor<PostSetStatusAbA
   return applyAbAttrsInternal<PostSetStatusAbAttr>(attrType, pokemon, (attr, passive) => attr.applyPostSetStatus(pokemon, sourcePokemon, passive, effect, simulated, args), args, false, simulated);
 }
 
-export function applyPostDamageAbAttrs(attrType: Constructor<PostDamageAbAttr>,
+export function applyPostDamage(attrType: Constructor<PostDamageAbAttr>,
   pokemon: Pokemon, damage: number, passive: boolean, simulated: boolean = false, args: any[]): Promise<void> {
-  return applyAbAttrsInternal<PostDamageAbAttr>(attrType, pokemon, (attr, passive) => attr.applyPostDamageAbAttrs(pokemon, damage, passive, simulated, args), args);
+  return applyAbAttrsInternal<PostDamageAbAttr>(attrType, pokemon, (attr, passive) => attr.applyPostDamage(pokemon, damage, passive, simulated, args), args);
 }
 
 /**
