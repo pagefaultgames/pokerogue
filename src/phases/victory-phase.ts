@@ -25,12 +25,17 @@ export class VictoryPhase extends PokemonPhase {
   start() {
     super.start();
 
-    this.scene.gameData.gameStats.pokemonDefeated++;
+    const isMysteryEncounter = this.scene.currentBattle.isBattleMysteryEncounter();
+
+    // update Pokemon defeated count except for MEs that disable it
+    if (!isMysteryEncounter || !this.scene.currentBattle.mysteryEncounter?.preventGameStatsUpdates) {
+      this.scene.gameData.gameStats.pokemonDefeated++;
+    }
 
     const expValue = this.getPokemon().getExpValue();
     this.scene.applyPartyExp(expValue, true);
 
-    if (this.scene.currentBattle.isBattleMysteryEncounter()) {
+    if (isMysteryEncounter) {
       handleMysteryEncounterVictory(this.scene, false, this.isExpOnly);
       return this.end();
     }
