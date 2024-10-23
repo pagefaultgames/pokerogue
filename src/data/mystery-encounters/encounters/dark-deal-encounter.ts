@@ -172,7 +172,8 @@ export const DarkDealEncounter: MysteryEncounter =
             isBoss: true,
             modifierConfigs: bossModifiers.map(m => {
               return {
-                modifier: m
+                modifier: m,
+                stackCount: m.getStackCount(),
               };
             })
           };
