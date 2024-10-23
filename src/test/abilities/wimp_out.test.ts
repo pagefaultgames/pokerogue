@@ -4,7 +4,6 @@ import { allMoves } from "#app/data/move";
 import { Abilities } from "#app/enums/abilities";
 import { ArenaTagType } from "#app/enums/arena-tag-type";
 import { BattlerTagType } from "#app/enums/battler-tag-type";
-import { Stat } from "#app/enums/stat";
 import { StatusEffect } from "#app/enums/status-effect";
 import { WeatherType } from "#app/enums/weather-type";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
@@ -476,35 +475,6 @@ describe("Abilities - Wimp Out", () => {
     expect(game.scene.getParty()[1].getHpRatio()).toBeLessThan(0.5);
     expect(game.phaseInterceptor.log).toContain("SwitchSummonPhase");
     expect(game.scene.getPlayerPokemon()!.species.speciesId).toBe(Species.TYRUNT);
-  });
-  it("Wimp Out will not activate if the Pokémon's HP falls below half due to hurting itself in confusion", async () => {
-    // arrange
-    game.override
-      .moveset([ Moves.SWORDS_DANCE ])
-      .enemyMoveset([ Moves.SWAGGER ]);
-    await game.startBattle([
-      Species.WIMPOD,
-      Species.TYRUNT
-    ]);
-    const playerPokemon = game.scene.getPlayerPokemon()!;
-    const playerHp = playerPokemon.hp;
-    playerPokemon.hp = playerHp * 0.51;
-    playerPokemon.setStatStage(Stat.ATK, 6);
-    playerPokemon.addTag(BattlerTagType.CONFUSED);
-    vi.spyOn(playerPokemon, "randSeedInt").mockReturnValue(0);
-    vi.spyOn(allMoves[Moves.SWAGGER], "accuracy", "get").mockReturnValue(100);
-
-    // act
-    while (playerPokemon.getHpRatio() > 0.49) {
-      game.move.select(Moves.SWORDS_DANCE);
-      game.move.select(Moves.SWAGGER);
-      await game.phaseInterceptor.to(TurnEndPhase);
-    }
-
-    // assert
-    expect(playerPokemon.getHpRatio()).toBeLessThan(0.5);
-    expect(game.phaseInterceptor.log).not.toContain("SwitchSummonPhase");
-    expect(playerPokemon.species.speciesId).toBe(Species.WIMPOD);
   });
   it("Magic Guard passive should not allow indirect damage to trigger Wimp Out", async () => {
     // arrange

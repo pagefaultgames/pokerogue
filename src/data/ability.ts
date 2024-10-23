@@ -4914,20 +4914,19 @@ export class PostDamageForceSwitchAttr extends PostDamageAbAttr {
     if (moveHistory.length > 0) {
       const lastMoveUsed = moveHistory[moveHistory.length - 1];
       // Will not activate if the Pokémon's HP falls below half while it is in the air during Sky Drop.
-      if (fordbiddenAttackingMoves.includes(lastMoveUsed.move) || (lastMoveUsed.move === Moves.SKY_DROP && lastMoveUsed.result === MoveResult.OTHER)) {
-        return false;
-      // Will not activate if the Pokémon's HP falls below half due to hurting itself in confusion
-      } else if (lastMoveUsed.move === 0 && pokemon.getTag(BattlerTagType.CONFUSED)) {
+      if (fordbiddenAttackingMoves.includes(lastMoveUsed.move)) {
         return false;
       }
     }
+
     // Dragon Tail and Circle Throw switch out Pokémon before the Ability activates.
     const fordbiddenDefendingMoves = [ Moves.DRAGON_TAIL, Moves.CIRCLE_THROW ];
-    for (const opponent of pokemon.getOpponents()) {
+    const getField = [ ...pokemon.getOpponents(), ...pokemon.getAlliedField() ];
+    for (const opponent of getField) {
       const enemyMoveHistory = opponent.getMoveHistory();
       if (enemyMoveHistory.length > 0) {
         const enemyLastMoveUsed = enemyMoveHistory[enemyMoveHistory.length - 1];
-        if (fordbiddenDefendingMoves.includes(enemyLastMoveUsed.move)) {
+        if (fordbiddenDefendingMoves.includes(enemyLastMoveUsed.move) || enemyLastMoveUsed.move === Moves.SKY_DROP && enemyLastMoveUsed.result === MoveResult.OTHER) {
           return false;
         // Will not activate if the Pokémon's HP falls below half by a move affected by Sheer Force.
         } else if (allMoves[enemyLastMoveUsed.move].chance >= 0 && opponent.hasAbility(Abilities.SHEER_FORCE)) {
@@ -5746,11 +5745,11 @@ export function initAbilities() {
     new Ability(Abilities.STAMINA, 7)
       .attr(PostDefendStatStageChangeAbAttr, (target, user, move) => move.category !== MoveCategory.STATUS, Stat.DEF, 1),
     new Ability(Abilities.WIMP_OUT, 7)
-      .attr(PostDamageForceSwitchAttr),
-    // .condition(getSheerForceHitDisableAbCondition()),
+      .attr(PostDamageForceSwitchAttr)
+      .edgeCase(), // Should not trigger when hurting itself in confusion
     new Ability(Abilities.EMERGENCY_EXIT, 7)
-      .attr(PostDamageForceSwitchAttr),
-    // .condition(getSheerForceHitDisableAbCondition()),
+      .attr(PostDamageForceSwitchAttr)
+      .edgeCase(), // Should not trigger when hurting itself in confusion
     new Ability(Abilities.WATER_COMPACTION, 7)
       .attr(PostDefendStatStageChangeAbAttr, (target, user, move) => user.getMoveType(move) === Type.WATER && move.category !== MoveCategory.STATUS, Stat.DEF, 2),
     new Ability(Abilities.MERCILESS, 7)
