@@ -8,10 +8,10 @@ import {
   getStatusEffectOverlapText,
 } from "#app/data/status-effect";
 import { MoveResult } from "#app/field/pokemon";
-import GameManager from "#app/test/utils/gameManager";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
+import GameManager from "#test/utils/gameManager";
 import { mockI18next } from "#test/utils/testUtils";
 import i18next from "i18next";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
@@ -306,58 +306,98 @@ describe("Status Effect Messages", () => {
   });
 });
 
-describe("Status Effects - Sleep", () => {
-  let phaserGame: Phaser.Game;
-  let game: GameManager;
+describe("Status Effects", () => {
+  describe("Paralysis", () => {
+    let phaserGame: Phaser.Game;
+    let game: GameManager;
 
-  beforeAll(() => {
-    phaserGame = new Phaser.Game({
-      type: Phaser.HEADLESS,
+    beforeAll(() => {
+      phaserGame = new Phaser.Game({
+        type: Phaser.HEADLESS,
+      });
+    });
+
+    afterEach(() => {
+      game.phaseInterceptor.restoreOg();
+    });
+
+    beforeEach(() => {
+      game = new GameManager(phaserGame);
+
+      game.override
+        .enemySpecies(Species.MAGIKARP)
+        .enemyMoveset(Moves.SPLASH)
+        .enemyAbility(Abilities.BALL_FETCH)
+        .moveset([ Moves.QUICK_ATTACK ])
+        .ability(Abilities.BALL_FETCH)
+        .statusEffect(StatusEffect.PARALYSIS);
+    });
+
+    it("causes the pokemon's move to fail when activated", async () => {
+      await game.classicMode.startBattle([ Species.FEEBAS ]);
+
+      game.move.select(Moves.QUICK_ATTACK);
+      await game.move.forceStatusActivation(true);
+      await game.toNextTurn();
+
+      expect(game.scene.getEnemyPokemon()!.isFullHp()).toBe(true);
+      expect(game.scene.getPlayerPokemon()!.getLastXMoves(1)[0].result).toBe(MoveResult.FAIL);
     });
   });
 
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
-  });
+  describe("Sleep", () => {
+    let phaserGame: Phaser.Game;
+    let game: GameManager;
 
-  beforeEach(() => {
-    game = new GameManager(phaserGame);
-    game.override
-      .moveset([ Moves.SPLASH ])
-      .ability(Abilities.BALL_FETCH)
-      .battleType("single")
-      .disableCrits()
-      .enemySpecies(Species.MAGIKARP)
-      .enemyAbility(Abilities.BALL_FETCH)
-      .enemyMoveset(Moves.SPLASH);
-  });
+    beforeAll(() => {
+      phaserGame = new Phaser.Game({
+        type: Phaser.HEADLESS,
+      });
+    });
 
-  it("should last the appropriate number of turns", async () => {
-    await game.classicMode.startBattle([ Species.FEEBAS ]);
+    afterEach(() => {
+      game.phaseInterceptor.restoreOg();
+    });
 
-    const player = game.scene.getPlayerPokemon()!;
-    player.status = new Status(StatusEffect.SLEEP, 0, 4);
+    beforeEach(() => {
+      game = new GameManager(phaserGame);
+      game.override
+        .moveset([ Moves.SPLASH ])
+        .ability(Abilities.BALL_FETCH)
+        .battleType("single")
+        .disableCrits()
+        .enemySpecies(Species.MAGIKARP)
+        .enemyAbility(Abilities.BALL_FETCH)
+        .enemyMoveset(Moves.SPLASH);
+    });
 
-    game.move.select(Moves.SPLASH);
-    await game.toNextTurn();
+    it("should last the appropriate number of turns", async () => {
+      await game.classicMode.startBattle([ Species.FEEBAS ]);
 
-    expect(player.status.effect).toBe(StatusEffect.SLEEP);
+      const player = game.scene.getPlayerPokemon()!;
+      player.status = new Status(StatusEffect.SLEEP, 0, 4);
 
-    game.move.select(Moves.SPLASH);
-    await game.toNextTurn();
+      game.move.select(Moves.SPLASH);
+      await game.toNextTurn();
 
-    expect(player.status.effect).toBe(StatusEffect.SLEEP);
+      expect(player.status.effect).toBe(StatusEffect.SLEEP);
 
-    game.move.select(Moves.SPLASH);
-    await game.toNextTurn();
+      game.move.select(Moves.SPLASH);
+      await game.toNextTurn();
 
-    expect(player.status.effect).toBe(StatusEffect.SLEEP);
-    expect(player.getLastXMoves(1)[0].result).toBe(MoveResult.FAIL);
+      expect(player.status.effect).toBe(StatusEffect.SLEEP);
 
-    game.move.select(Moves.SPLASH);
-    await game.toNextTurn();
+      game.move.select(Moves.SPLASH);
+      await game.toNextTurn();
 
-    expect(player.status?.effect).toBeUndefined();
-    expect(player.getLastXMoves(1)[0].result).toBe(MoveResult.SUCCESS);
+      expect(player.status.effect).toBe(StatusEffect.SLEEP);
+      expect(player.getLastXMoves(1)[0].result).toBe(MoveResult.FAIL);
+
+      game.move.select(Moves.SPLASH);
+      await game.toNextTurn();
+
+      expect(player.status?.effect).toBeUndefined();
+      expect(player.getLastXMoves(1)[0].result).toBe(MoveResult.SUCCESS);
+    });
   });
 });
