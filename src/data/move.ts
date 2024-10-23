@@ -6643,42 +6643,49 @@ export class SuppressAbilitiesIfActedAttr extends MoveEffectAttr {
 }
 
 export class TransformAttr extends MoveEffectAttr {
-  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): Promise<boolean> {
-    return new Promise(resolve => {
-      if (!super.apply(user, target, move, args)) {
-        return resolve(false);
-      }
+  async apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): Promise<boolean> {
+    if (!super.apply(user, target, move, args)) {
+      return false;
+    }
 
-      user.summonData.speciesForm = target.getSpeciesForm();
-      user.summonData.fusionSpeciesForm = target.getFusionSpeciesForm();
-      user.summonData.ability = target.getAbility().id;
-      user.summonData.gender = target.getGender();
-      user.summonData.fusionGender = target.getFusionGender();
+    const promises: Promise<void>[] = [];
+    user.summonData.speciesForm = target.getSpeciesForm();
+    user.summonData.fusionSpeciesForm = target.getFusionSpeciesForm();
+    user.summonData.ability = target.getAbility().id;
+    user.summonData.gender = target.getGender();
+    user.summonData.fusionGender = target.getFusionGender();
 
-      // Power Trick's effect will not preserved after using Transform
-      user.removeTag(BattlerTagType.POWER_TRICK);
+    // Power Trick's effect will not preserved after using Transform
+    user.removeTag(BattlerTagType.POWER_TRICK);
 
-      // Copy all stats (except HP)
-      for (const s of EFFECTIVE_STATS) {
-        user.setStat(s, target.getStat(s, false), false);
-      }
+    // Copy all stats (except HP)
+    for (const s of EFFECTIVE_STATS) {
+      user.setStat(s, target.getStat(s, false), false);
+    }
 
-      // Copy all stat stages
-      for (const s of BATTLE_STATS) {
-        user.setStatStage(s, target.getStatStage(s));
-      }
+    // Copy all stat stages
+    for (const s of BATTLE_STATS) {
+      user.setStatStage(s, target.getStatStage(s));
+    }
 
-      user.summonData.moveset = target.getMoveset().map(m => new PokemonMove(m?.moveId!, m?.ppUsed, m?.ppUp)); // TODO: is this bang correct?
-      user.summonData.types = target.getTypes();
-
-      user.scene.queueMessage(i18next.t("moveTriggers:transformedIntoTarget", { pokemonName: getPokemonNameWithAffix(user), targetName: getPokemonNameWithAffix(target) }));
-
-      user.loadAssets(false).then(() => {
-        user.playAnim();
-        user.updateInfo();
-        resolve(true);
-      });
+    user.summonData.moveset = target.getMoveset().map(m => {
+      const pp = m?.getMove().pp ?? 0;
+      // if PP value is less than 5, do nothing. If greater, we need to reduce the value to 5 using a negative ppUp value.
+      const ppUp = pp <= 5 ? 0 : (5 - pp) / Math.max(Math.floor(pp / 5), 1);
+      return new PokemonMove(m?.moveId!, 0, ppUp);
     });
+    user.summonData.types = target.getTypes();
+    promises.push(user.updateInfo());
+
+    user.scene.queueMessage(i18next.t("moveTriggers:transformedIntoTarget", { pokemonName: getPokemonNameWithAffix(user), targetName: getPokemonNameWithAffix(target) }));
+
+    promises.push(user.loadAssets(false).then(() => {
+      user.playAnim();
+      user.updateInfo();
+    }));
+
+    await Promise.all(promises);
+    return true;
   }
 }
 
