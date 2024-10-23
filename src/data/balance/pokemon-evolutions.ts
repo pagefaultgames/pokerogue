@@ -10,7 +10,7 @@ import { Biome } from "#enums/biome";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import { TimeOfDay } from "#enums/time-of-day";
-import { DamageMoneyRewardModifier, ExtraModifierModifier, MoneyMultiplierModifier } from "#app/modifier/modifier";
+import { DamageMoneyRewardModifier, ExtraModifierModifier, MoneyMultiplierModifier, TempExtraModifierModifier } from "#app/modifier/modifier";
 import { SpeciesFormKey } from "#enums/species-form-key";
 
 
@@ -1652,11 +1652,11 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesFormEvolution(Species.GHOLDENGO, "chest", "", 1, null, new SpeciesEvolutionCondition(p => p.evoCounter
       + p.getHeldItems().filter(m => m instanceof DamageMoneyRewardModifier).length
       + p.scene.findModifiers(m => m instanceof MoneyMultiplierModifier
-        || m instanceof ExtraModifierModifier).length > 9), SpeciesWildEvolutionDelay.VERY_LONG),
+        || m instanceof ExtraModifierModifier || m instanceof TempExtraModifierModifier).length > 9), SpeciesWildEvolutionDelay.VERY_LONG),
     new SpeciesFormEvolution(Species.GHOLDENGO, "roaming", "", 1, null, new SpeciesEvolutionCondition(p => p.evoCounter
       + p.getHeldItems().filter(m => m instanceof DamageMoneyRewardModifier).length
       + p.scene.findModifiers(m => m instanceof MoneyMultiplierModifier
-        || m instanceof ExtraModifierModifier).length > 9), SpeciesWildEvolutionDelay.VERY_LONG)
+        || m instanceof ExtraModifierModifier || m instanceof TempExtraModifierModifier).length > 9), SpeciesWildEvolutionDelay.VERY_LONG)
   ]
 };
 

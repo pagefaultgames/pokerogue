@@ -93,7 +93,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   public stats: integer[];
   public ivs: integer[];
   public nature: Nature;
-  public natureOverride: Nature | -1;
   public moveset: (PokemonMove | null)[];
   public status: Status | null;
   public friendship: integer;
@@ -4283,7 +4282,6 @@ export class PlayerPokemon extends Pokemon {
 
       if (newEvolution.condition?.predicate(this)) {
         const newPokemon = this.scene.addPlayerPokemon(this.species, this.level, this.abilityIndex, this.formIndex, undefined, this.shiny, this.variant, this.ivs, this.nature);
-        newPokemon.natureOverride = this.natureOverride;
         newPokemon.passive = this.passive;
         newPokemon.moveset = this.moveset.slice();
         newPokemon.moveset = this.copyMoveset();
