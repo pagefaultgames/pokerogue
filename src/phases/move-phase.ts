@@ -313,8 +313,6 @@ export class MovePhase extends BattlePhase {
     const move = this.move.getMove();
     const targets = this.getActiveTargetPokemon();
 
-    this.showMoveText();
-
     if (move.applyConditions(this.pokemon, targets[0], move)) {
       // Protean and Libero apply on the charging turn of charge moves
       applyPreAttackAbAttrs(PokemonTypeChangeAbAttr, this.pokemon, null, this.move.getMove());
@@ -322,7 +320,6 @@ export class MovePhase extends BattlePhase {
       this.showMoveText();
       this.scene.unshiftPhase(new MoveChargePhase(this.scene, this.pokemon.getBattlerIndex(), this.targets[0], this.move));
     } else {
-      // Copied from useMove()
       this.pokemon.pushMoveHistory({ move: this.move.moveId, targets: this.targets, result: MoveResult.FAIL, virtual: this.move.virtual });
 
       let failedText: string | undefined;
@@ -332,6 +329,7 @@ export class MovePhase extends BattlePhase {
         failedText = failureMessage;
       }
 
+      this.showMoveText();
       this.showFailedText(failedText);
 
       // Remove the user from its semi-invulnerable state (if applicable)
@@ -452,8 +450,6 @@ export class MovePhase extends BattlePhase {
    * - Lapses `AFTER_MOVE` tags:
    *   - This handles the effects of {@link Moves.SUBSTITUTE Substitute}
    * - Removes the second turn of charge moves
-   *
-   *   TODO: handle charge moves more gracefully
    */
   protected handlePreMoveFailures(): void {
     if (this.cancelled || this.failed) {
