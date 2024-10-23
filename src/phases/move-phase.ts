@@ -434,7 +434,7 @@ export class MovePhase extends BattlePhase {
         this.scene.eventTarget.dispatchEvent(new MoveUsedEvent(this.pokemon?.id, this.move.getMove(), ppUsed));
       }
 
-      this.pokemon.pushMoveHistory({ move: Moves.NONE, result: MoveResult.FAIL });
+      this.pokemon.pushMoveHistory({ move: Moves.NONE, result: MoveResult.FAIL, targets: this.targets });
 
       this.pokemon.lapseTags(BattlerTagLapseType.MOVE_EFFECT);
       this.pokemon.lapseTags(BattlerTagLapseType.AFTER_MOVE);

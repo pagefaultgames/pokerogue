@@ -3138,7 +3138,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return moveHistory.slice(turnCount >= 0 ? Math.max(moveHistory.length - (turnCount || 1), 0) : 0, moveHistory.length).reverse();
   }
 
-  getMoveQueue(): QueuedMove[] {
+  getMoveQueue(): TurnMove[] {
     return this.summonData.moveQueue;
   }
 
@@ -4597,17 +4597,19 @@ export class EnemyPokemon extends Pokemon {
    * the Pokemon the move will target.
    * @returns this Pokemon's next move in the format {move, moveTargets}
    */
-  getNextMove(): QueuedMove {
+  getNextMove(): TurnMove {
     // If this Pokemon has a move already queued, return it.
-    const queuedMove = this.getMoveQueue().length
-      ? this.getMoveset().find(m => m?.moveId === this.getMoveQueue()[0].move)
-      : null;
-    if (queuedMove) {
-      if (queuedMove.isUsable(this, this.getMoveQueue()[0].ignorePP)) {
-        return { move: queuedMove.moveId, targets: this.getMoveQueue()[0].targets, ignorePP: this.getMoveQueue()[0].ignorePP };
-      } else {
-        this.getMoveQueue().shift();
-        return this.getNextMove();
+    const moveQueue = this.getMoveQueue();
+    if (moveQueue.length !== 0) {
+      const queuedMove = moveQueue[0];
+      if (queuedMove) {
+        const moveIndex = this.getMoveset().findIndex(m => m?.moveId === moveQueue[0].move);
+        if ((moveIndex > -1 && this.getMoveset()[moveIndex]!.isUsable(this, queuedMove.ignorePP)) || queuedMove.virtual) {
+          return queuedMove;
+        } else {
+          this.getMoveQueue().shift();
+          return this.getNextMove();
+        }
       }
     }
 
@@ -5049,15 +5051,10 @@ export class EnemyPokemon extends Pokemon {
 
 export interface TurnMove {
   move: Moves;
-  targets?: BattlerIndex[];
-  result: MoveResult;
+  targets: BattlerIndex[];
+  result?: MoveResult;
   virtual?: boolean;
   turn?: number;
-}
-
-export interface QueuedMove {
-  move: Moves;
-  targets: BattlerIndex[];
   ignorePP?: boolean;
 }
 
@@ -5073,7 +5070,7 @@ export interface AttackMoveResult {
 export class PokemonSummonData {
   /** [Atk, Def, SpAtk, SpDef, Spd, Acc, Eva] */
   public statStages: number[] = [ 0, 0, 0, 0, 0, 0, 0 ];
-  public moveQueue: QueuedMove[] = [];
+  public moveQueue: TurnMove[] = [];
   public tags: BattlerTag[] = [];
   public abilitySuppressed: boolean = false;
   public abilitiesApplied: Abilities[] = [];
