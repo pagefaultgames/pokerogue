@@ -1,6 +1,7 @@
-import { Abilities } from "#app/enums/abilities";
-import { BattlerTagType } from "#app/enums/battler-tag-type";
-import { StatusEffect } from "#app/enums/status-effect";
+import { BattlerIndex } from "#app/battle";
+import { Abilities } from "#enums/abilities";
+import { BattlerTagType } from "#enums/battler-tag-type";
+import { StatusEffect } from "#enums/status-effect";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/utils/gameManager";
