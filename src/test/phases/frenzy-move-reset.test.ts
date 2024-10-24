@@ -1,6 +1,6 @@
+import { Abilities } from "#app/enums/abilities";
 import { BattlerTagType } from "#app/enums/battler-tag-type";
 import { StatusEffect } from "#app/enums/status-effect";
-import { VictoryPhase } from "#app/phases/victory-phase";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/utils/gameManager";
@@ -29,9 +29,10 @@ describe("Frenzy Move Reset", () => {
       .starterSpecies(Species.MAGIKARP)
       .moveset(Moves.THRASH)
       .statusEffect(StatusEffect.PARALYSIS)
-      .startingLevel(100)
-      .enemyMoveset([ Moves.SPLASH, Moves.SPLASH, Moves.SPLASH, Moves.SPLASH ])
-      .enemyLevel(1);
+      .enemyMoveset(Moves.SPLASH)
+      .enemyLevel(100)
+      .enemySpecies(Species.SHUCKLE)
+      .enemyAbility(Abilities.BALL_FETCH);
   });
 
   /*
@@ -54,15 +55,15 @@ describe("Frenzy Move Reset", () => {
 
     game.move.select(Moves.THRASH);
     await game.move.forceStatusActivation(false);
-    await game.phaseInterceptor.to(VictoryPhase);
+    await game.toNextTurn();
 
     expect(playerPokemon.summonData.moveQueue.length).toBe(2);
     expect(playerPokemon.summonData.tags.some(tag => tag.tagType === BattlerTagType.FRENZY)).toBe(true);
 
-    await game.toNextWave();
+    await game.toNextTurn();
 
     await game.move.forceStatusActivation(true);
-    await game.toNextWave();
+    await game.toNextTurn();
 
     expect(playerPokemon.summonData.moveQueue.length).toBe(0);
     expect(playerPokemon.summonData.tags.some(tag => tag.tagType === BattlerTagType.FRENZY)).toBe(false);
