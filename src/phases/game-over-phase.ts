@@ -222,6 +222,10 @@ export class GameOverPhase extends BattlePhase {
     }
   }
 
+  /**
+   * Retrieves the session's data to log its TBD
+   * @returns
+   */
   getRunHistoryEntry(): SessionSaveData {
     const preWaveSessionDataCached = localStorage.getItem(`sessionData${this.scene.sessionSlotId ? this.scene.sessionSlotId : ""}_${loggedInUser?.username}`);
     const preWaveSessionData = preWaveSessionDataCached ? this.scene.gameData.parseSessionData(preWaveSessionDataCached) : null;
