@@ -338,8 +338,14 @@ export class FriendGuardAbAttr extends PreDefendAbAttr {
     this.damageMultiplier = damageMultiplier;
   }
 
-  applyPreDefend(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker: Pokemon, move: Move, cancelled: Utils.BooleanHolder, args: any[]): boolean {
-    (args[0] as Utils.NumberHolder).value = Utils.toDmgValue((args[0] as Utils.NumberHolder).value * this.damageMultiplier);
+  /**
+   * Handles the damage reduction
+   * @param args
+   * - `[0]` {@linkcode Utils.NumberHolder} - The damage being dealt
+   */
+  override applyPreDefend(_pokemon: Pokemon, _passive: boolean, _simulated: boolean, _attacker: Pokemon, _move: Move, _cancelled: Utils.BooleanHolder, args: any[]): boolean {
+    const damage = args[0] as Utils.NumberHolder;
+    damage.value = Utils.toDmgValue(damage.value * this.damageMultiplier);
     return true;
   }
 }
