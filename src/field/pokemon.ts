@@ -3,7 +3,7 @@ import BattleScene, { AnySound } from "#app/battle-scene";
 import { Variant, VariantSet, variantColorCache } from "#app/data/variant";
 import { variantData } from "#app/data/variant";
 import BattleInfo, { PlayerBattleInfo, EnemyBattleInfo } from "#app/ui/battle-info";
-import Move, { HighCritAttr, HitsTagAttr, applyMoveAttrs, FixedDamageAttr, VariableAtkAttr, allMoves, MoveCategory, TypelessAttr, CritOnlyAttr, getMoveTargets, OneHitKOAttr, VariableMoveTypeAttr, VariableDefAttr, AttackMove, ModifiedDamageAttr, VariableMoveTypeMultiplierAttr, IgnoreOpponentStatStagesAttr, SacrificialAttr, VariableMoveCategoryAttr, CounterDamageAttr, StatStageChangeAttr, RechargeAttr, ChargeAttr, IgnoreWeatherTypeDebuffAttr, BypassBurnDamageReductionAttr, SacrificialAttrOnHit, OneHitKOAccuracyAttr, RespectAttackTypeImmunityAttr, MoveTarget, CombinedPledgeStabBoostAttr } from "#app/data/move";
+import Move, { HighCritAttr, HitsTagAttr, applyMoveAttrs, FixedDamageAttr, VariableAtkAttr, allMoves, MoveCategory, TypelessAttr, CritOnlyAttr, getMoveTargets, OneHitKOAttr, VariableMoveTypeAttr, VariableDefAttr, AttackMove, ModifiedDamageAttr, VariableMoveTypeMultiplierAttr, IgnoreOpponentStatStagesAttr, SacrificialAttr, VariableMoveCategoryAttr, CounterDamageAttr, StatStageChangeAttr, RechargeAttr, IgnoreWeatherTypeDebuffAttr, BypassBurnDamageReductionAttr, SacrificialAttrOnHit, OneHitKOAccuracyAttr, RespectAttackTypeImmunityAttr, MoveTarget, CombinedPledgeStabBoostAttr } from "#app/data/move";
 import { default as PokemonSpecies, PokemonSpeciesForm, getFusedSpeciesName, getPokemonSpecies, getPokemonSpeciesForm } from "#app/data/pokemon-species";
 import { CLASSIC_CANDY_FRIENDSHIP_MULTIPLIER, getStarterValueFriendshipCap, speciesStarterCosts } from "#app/data/balance/starters";
 import { starterPassiveAbilities } from "#app/data/balance/passives";
@@ -22,7 +22,7 @@ import { reverseCompatibleTms, tmSpecies, tmPoolTiers } from "#app/data/balance/
 import { BattlerTag, BattlerTagLapseType, EncoreTag, GroundedTag, HighestStatBoostTag, SubstituteTag, TypeImmuneTag, getBattlerTag, SemiInvulnerableTag, TypeBoostTag, MoveRestrictionBattlerTag, ExposedTag, DragonCheerTag, CritBoostTag, TrappedTag, TarShotTag, AutotomizedTag, PowerTrickTag } from "../data/battler-tags";
 import { WeatherType } from "#app/data/weather";
 import { ArenaTagSide, NoCritTag, WeakenMoveScreenTag } from "#app/data/arena-tag";
-import { Ability, AbAttr, StatMultiplierAbAttr, BlockCritAbAttr, BonusCritAbAttr, BypassBurnDamageReductionAbAttr, FieldPriorityMoveImmunityAbAttr, IgnoreOpponentStatStagesAbAttr, MoveImmunityAbAttr, PreDefendFullHpEndureAbAttr, ReceivedMoveDamageMultiplierAbAttr, ReduceStatusEffectDurationAbAttr, StabBoostAbAttr, StatusEffectImmunityAbAttr, TypeImmunityAbAttr, WeightMultiplierAbAttr, allAbilities, applyAbAttrs, applyStatMultiplierAbAttrs, applyPreApplyBattlerTagAbAttrs, applyPreAttackAbAttrs, applyPreDefendAbAttrs, applyPreSetStatusAbAttrs, UnsuppressableAbilityAbAttr, SuppressFieldAbilitiesAbAttr, NoFusionAbilityAbAttr, MultCritAbAttr, IgnoreTypeImmunityAbAttr, DamageBoostAbAttr, IgnoreTypeStatusEffectImmunityAbAttr, ConditionalCritAbAttr, applyFieldStatMultiplierAbAttrs, FieldMultiplyStatAbAttr, AddSecondStrikeAbAttr, UserFieldStatusEffectImmunityAbAttr, UserFieldBattlerTagImmunityAbAttr, BattlerTagImmunityAbAttr, MoveTypeChangeAbAttr, FullHpResistTypeAbAttr, applyCheckTrappedAbAttrs, CheckTrappedAbAttr, PostSetStatusAbAttr, applyPostSetStatusAbAttrs, FriendGuardAbAttr } from "#app/data/ability";
+import { Ability, AbAttr, StatMultiplierAbAttr, BlockCritAbAttr, BonusCritAbAttr, BypassBurnDamageReductionAbAttr, FieldPriorityMoveImmunityAbAttr, IgnoreOpponentStatStagesAbAttr, MoveImmunityAbAttr, PreDefendFullHpEndureAbAttr, ReceivedMoveDamageMultiplierAbAttr, ReduceStatusEffectDurationAbAttr, StabBoostAbAttr, StatusEffectImmunityAbAttr, TypeImmunityAbAttr, WeightMultiplierAbAttr, allAbilities, applyAbAttrs, applyStatMultiplierAbAttrs, applyPreApplyBattlerTagAbAttrs, applyPreAttackAbAttrs, applyPreDefendAbAttrs, applyPreSetStatusAbAttrs, UnsuppressableAbilityAbAttr, SuppressFieldAbilitiesAbAttr, NoFusionAbilityAbAttr, MultCritAbAttr, IgnoreTypeImmunityAbAttr, DamageBoostAbAttr, IgnoreTypeStatusEffectImmunityAbAttr, ConditionalCritAbAttr, applyFieldStatMultiplierAbAttrs, FieldMultiplyStatAbAttr, AddSecondStrikeAbAttr, UserFieldStatusEffectImmunityAbAttr, UserFieldBattlerTagImmunityAbAttr, BattlerTagImmunityAbAttr, MoveTypeChangeAbAttr, FullHpResistTypeAbAttr, applyCheckTrappedAbAttrs, CheckTrappedAbAttr, PostSetStatusAbAttr, applyPostSetStatusAbAttrs, InfiltratorAbAttr, FriendGuardAbAttr } from "#app/data/ability";
 import PokemonData from "#app/system/pokemon-data";
 import { BattlerIndex } from "#app/battle";
 import { Mode } from "#app/ui/ui";
@@ -93,7 +93,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   public stats: integer[];
   public ivs: integer[];
   public nature: Nature;
-  public natureOverride: Nature | -1;
   public moveset: (PokemonMove | null)[];
   public status: Status | null;
   public friendship: integer;
@@ -2121,7 +2120,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       // Trainers get a weight bump to stat buffing moves
       movePool = movePool.map(m => [ m[0], m[1] * (allMoves[m[0]].getAttrs(StatStageChangeAttr).some(a => a.stages > 1 && a.selfTarget) ? 1.25 : 1) ]);
       // Trainers get a weight decrease to multiturn moves
-      movePool = movePool.map(m => [ m[0], m[1] * (!!allMoves[m[0]].hasAttr(ChargeAttr) || !!allMoves[m[0]].hasAttr(RechargeAttr) ? 0.7 : 1) ]);
+      movePool = movePool.map(m => [ m[0], m[1] * (!!allMoves[m[0]].isChargingMove() || !!allMoves[m[0]].hasAttr(RechargeAttr) ? 0.7 : 1) ]);
     }
 
     // Weight towards higher power moves, by reducing the power of moves below the highest power.
@@ -2288,6 +2287,15 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       this.exp = Math.max(getLevelTotalExp(this.level, this.species.growthRate), initialExp);
     }
     this.levelExp = this.exp - getLevelTotalExp(this.level, this.species.growthRate);
+  }
+
+  /**
+   * Compares if `this` and {@linkcode target} are on the same team.
+   * @param target the {@linkcode Pokemon} to compare against.
+   * @returns `true` if the two pokemon are allies, `false` otherwise
+   */
+  public isOpponent(target: Pokemon): boolean {
+    return this.isPlayer() !== target.isPlayer();
   }
 
   getOpponent(targetIndex: integer): Pokemon | null {
@@ -2610,7 +2618,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
     /** Reduces damage if this Pokemon has a relevant screen (e.g. Light Screen for special attacks) */
     const screenMultiplier = new Utils.NumberHolder(1);
-    this.scene.arena.applyTagsForSide(WeakenMoveScreenTag, defendingSide, simulated, moveCategory, screenMultiplier);
+    this.scene.arena.applyTagsForSide(WeakenMoveScreenTag, defendingSide, simulated, source, moveCategory, screenMultiplier);
 
     /**
      * For each {@linkcode HitsTagAttr} the move has, doubles the damage of the move if:
@@ -3358,12 +3366,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       }
     }
 
-    const types = this.getTypes(true, true);
-
-    const defendingSide = this.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY;
-    if (sourcePokemon && sourcePokemon !== this && this.scene.arena.getTagOnSide(ArenaTagType.SAFEGUARD, defendingSide)) {
+    if (sourcePokemon && sourcePokemon !== this && this.isSafeguarded(sourcePokemon)) {
       return false;
     }
+
+    const types = this.getTypes(true, true);
 
     switch (effect) {
       case StatusEffect.POISON:
@@ -3428,7 +3435,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return true;
   }
 
-  trySetStatus(effect: StatusEffect | undefined, asPhase: boolean = false, sourcePokemon: Pokemon | null = null, cureTurn: integer | null = 0, sourceText: string | null = null): boolean {
+  trySetStatus(effect?: StatusEffect, asPhase: boolean = false, sourcePokemon: Pokemon | null = null, turnsRemaining: number = 0, sourceText: string | null = null): boolean {
     if (!this.canSetStatus(effect, asPhase, false, sourcePokemon)) {
       return false;
     }
@@ -3442,15 +3449,14 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     }
 
     if (asPhase) {
-      this.scene.unshiftPhase(new ObtainStatusEffectPhase(this.scene, this.getBattlerIndex(), effect, cureTurn, sourceText, sourcePokemon));
+      this.scene.unshiftPhase(new ObtainStatusEffectPhase(this.scene, this.getBattlerIndex(), effect, turnsRemaining, sourceText, sourcePokemon));
       return true;
     }
 
-    let statusCureTurn: Utils.IntegerHolder;
+    let sleepTurnsRemaining: Utils.NumberHolder;
 
     if (effect === StatusEffect.SLEEP) {
-      statusCureTurn = new Utils.IntegerHolder(this.randSeedIntRange(2, 4));
-      applyAbAttrs(ReduceStatusEffectDurationAbAttr, this, null, false, effect, statusCureTurn);
+      sleepTurnsRemaining = new Utils.NumberHolder(this.randSeedIntRange(2, 4));
 
       this.setFrameRate(4);
 
@@ -3470,9 +3476,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       }
     }
 
-    statusCureTurn = statusCureTurn!; // tell TS compiler it's defined
+    sleepTurnsRemaining = sleepTurnsRemaining!; // tell TS compiler it's defined
     effect = effect!; // If `effect` is undefined then `trySetStatus()` will have already returned early via the `canSetStatus()` call
-    this.status = new Status(effect, 0, statusCureTurn?.value);
+    this.status = new Status(effect, 0, sleepTurnsRemaining?.value);
 
     if (effect !== StatusEffect.FAINT) {
       this.scene.triggerPokemonFormChange(this, SpeciesFormChangeStatusEffectTrigger, true);
@@ -3508,6 +3514,23 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     if (reloadAssets) {
       this.loadAssets(false).then(() => this.playAnim());
     }
+  }
+
+  /**
+   * Checks if this Pokemon is protected by Safeguard
+   * @param attacker the {@linkcode Pokemon} inflicting status on this Pokemon
+   * @returns `true` if this Pokemon is protected by Safeguard; `false` otherwise.
+   */
+  isSafeguarded(attacker: Pokemon): boolean {
+    const defendingSide = this.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY;
+    if (this.scene.arena.getTagOnSide(ArenaTagType.SAFEGUARD, defendingSide)) {
+      const bypassed = new Utils.BooleanHolder(false);
+      if (attacker) {
+        applyAbAttrs(InfiltratorAbAttr, attacker, null, false, bypassed);
+      }
+      return !bypassed.value;
+    }
+    return false;
   }
 
   primeSummonData(summonDataPrimer: PokemonSummonData): void {
@@ -3982,7 +4005,7 @@ export class PlayerPokemon extends Pokemon {
     super(scene, 106, 148, species, level, abilityIndex, formIndex, gender, shiny, variant, ivs, nature, dataSource);
 
     if (Overrides.STATUS_OVERRIDE) {
-      this.status = new Status(Overrides.STATUS_OVERRIDE);
+      this.status = new Status(Overrides.STATUS_OVERRIDE, 0, 4);
     }
 
     if (Overrides.SHINY_OVERRIDE) {
@@ -4265,7 +4288,6 @@ export class PlayerPokemon extends Pokemon {
 
       if (newEvolution.condition?.predicate(this)) {
         const newPokemon = this.scene.addPlayerPokemon(this.species, this.level, this.abilityIndex, this.formIndex, undefined, this.shiny, this.variant, this.ivs, this.nature);
-        newPokemon.natureOverride = this.natureOverride;
         newPokemon.passive = this.passive;
         newPokemon.moveset = this.moveset.slice();
         newPokemon.moveset = this.copyMoveset();
@@ -4462,7 +4484,7 @@ export class EnemyPokemon extends Pokemon {
     }
 
     if (Overrides.OPP_STATUS_OVERRIDE) {
-      this.status = new Status(Overrides.OPP_STATUS_OVERRIDE);
+      this.status = new Status(Overrides.OPP_STATUS_OVERRIDE, 0, 4);
     }
 
     if (Overrides.OPP_GENDER_OVERRIDE) {
@@ -4471,9 +4493,11 @@ export class EnemyPokemon extends Pokemon {
 
     const speciesId = this.species.speciesId;
 
-    if (speciesId in Overrides.OPP_FORM_OVERRIDES
+    if (
+      speciesId in Overrides.OPP_FORM_OVERRIDES
       && Overrides.OPP_FORM_OVERRIDES[speciesId]
-      && this.species.forms[Overrides.OPP_FORM_OVERRIDES[speciesId]]) {
+      && this.species.forms[Overrides.OPP_FORM_OVERRIDES[speciesId]]
+    ) {
       this.formIndex = Overrides.OPP_FORM_OVERRIDES[speciesId] ?? 0;
     }
 
