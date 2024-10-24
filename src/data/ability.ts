@@ -4733,6 +4733,10 @@ export class TerrainEventTypeChangeAbAttr extends PostSummonAbAttr {
     return typeChange;
   }
 
+  /**
+   * Checks if the Pokemon should change types if summoned into an active terrain
+   * @returns `true` if there is an active terrain requiring a type change | `false` if not
+   */
   override applyPostSummon(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean | Promise<boolean> {
     if (pokemon.scene.arena.getTerrainType() !== TerrainType.NONE) {
       return this.apply(pokemon, passive, simulated, new Utils.BooleanHolder(false), []);
