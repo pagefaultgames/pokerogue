@@ -1,7 +1,6 @@
 import { Gender } from "#app/data/gender";
 import { PokeballType } from "#app/data/pokeball";
 import Pokemon from "#app/field/pokemon";
-import { Stat } from "#enums/stat";
 import { Type } from "#app/data/type";
 import * as Utils from "#app/utils";
 import { WeatherType } from "#app/data/weather";
@@ -271,9 +270,21 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(Species.MAROWAK, 28, null, new SpeciesEvolutionCondition(p => p.scene.arena.getTimeOfDay() === TimeOfDay.DAWN || p.scene.arena.getTimeOfDay() === TimeOfDay.DAY))
   ],
   [Species.TYROGUE]: [
-    new SpeciesEvolution(Species.HITMONLEE, 20, null, new SpeciesEvolutionCondition(p => p.stats[Stat.ATK] > p.stats[Stat.DEF])),
-    new SpeciesEvolution(Species.HITMONCHAN, 20, null, new SpeciesEvolutionCondition(p => p.stats[Stat.ATK] < p.stats[Stat.DEF])),
-    new SpeciesEvolution(Species.HITMONTOP, 20, null, new SpeciesEvolutionCondition(p => p.stats[Stat.ATK] === p.stats[Stat.DEF]))
+    /**
+     * Custom: Evolves into Hitmonlee, Hitmonchan or Hitmontop at level 20
+     * if it knows Low Sweep, Mach Punch, or Rapid Spin, respectively.
+     * If Tyrogue knows multiple of these moves, its evolution is based on
+     * the first qualifying move in its moveset.
+     */
+    new SpeciesEvolution(Species.HITMONLEE, 20, null, new SpeciesEvolutionCondition(p =>
+      p.getMoveset(true).find(move => move && [ Moves.LOW_SWEEP, Moves.MACH_PUNCH, Moves.RAPID_SPIN ].includes(move?.moveId))?.moveId === Moves.LOW_SWEEP
+    )),
+    new SpeciesEvolution(Species.HITMONCHAN, 20, null, new SpeciesEvolutionCondition(p =>
+      p.getMoveset(true).find(move => move && [ Moves.LOW_SWEEP, Moves.MACH_PUNCH, Moves.RAPID_SPIN ].includes(move?.moveId))?.moveId === Moves.MACH_PUNCH
+    )),
+    new SpeciesEvolution(Species.HITMONTOP, 20, null, new SpeciesEvolutionCondition(p =>
+      p.getMoveset(true).find(move => move && [ Moves.LOW_SWEEP, Moves.MACH_PUNCH, Moves.RAPID_SPIN ].includes(move?.moveId))?.moveId === Moves.RAPID_SPIN
+    )),
   ],
   [Species.KOFFING]: [
     new SpeciesEvolution(Species.GALAR_WEEZING, 35, null, new SpeciesEvolutionCondition(p => p.scene.arena.getTimeOfDay() === TimeOfDay.DUSK || p.scene.arena.getTimeOfDay() === TimeOfDay.NIGHT)),
