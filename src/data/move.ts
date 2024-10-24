@@ -1420,6 +1420,11 @@ export class RecoilAttr extends MoveEffectAttr {
       return false;
     }
 
+    // Chloroblast and Struggle should not deal recoil damage if the move was not successful
+    if (this.useHp && [ MoveResult.FAIL, MoveResult.MISS ].includes(user.getLastXMoves(1)[0].result)) {
+      return false;
+    }
+
     const damageValue = (!this.useHp ? user.turnData.damageDealt : user.getMaxHp()) * this.damageRatio;
     const minValue = user.turnData.damageDealt ? 1 : 0;
     const recoilDamage = Utils.toDmgValue(damageValue, minValue);
