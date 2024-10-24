@@ -19,7 +19,7 @@ export class SwitchSummonPhase extends SummonPhase {
   private readonly slotIndex: integer;
   private readonly doReturn: boolean;
 
-  private lastPokemon: Pokemon;
+  protected lastPokemon: Pokemon;
 
   /**
      * Constructor for creating a new SwitchSummonPhase
