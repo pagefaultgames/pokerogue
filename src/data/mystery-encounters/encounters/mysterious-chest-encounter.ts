@@ -34,6 +34,7 @@ export const MysteriousChestEncounter: MysteryEncounter =
   MysteryEncounterBuilder.withEncounterType(MysteryEncounterType.MYSTERIOUS_CHEST)
     .withEncounterTier(MysteryEncounterTier.COMMON)
     .withSceneWaveRangeRequirement(...CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES)
+    .withScenePartySizeRequirement(2, 6, true)
     .withAutoHideIntroVisuals(false)
     .withCatchAllowed(true)
     .withIntroSpriteConfigs([
