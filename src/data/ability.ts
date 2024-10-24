@@ -330,6 +330,10 @@ export class ReceivedMoveDamageMultiplierAbAttr extends PreDefendAbAttr {
   }
 }
 
+/**
+ * Reduces the damage dealt to an allied Pokemon. Used by Friend Guard.
+ * @see {@linkcode applyPreDefend}
+ */
 export class FriendGuardAbAttr extends PreDefendAbAttr {
   private damageMultiplier: number;
 
