@@ -59,7 +59,7 @@ describe("Moves - Friend Guard", () => {
 
   it("should NOT reduce damage to pokemon with friend guard", async () => {
     await game.classicMode.startBattle([ Species.BULBASAUR, Species.CHARMANDER ]);
-    const [ , player2 ] = game.scene.getPlayerField();
+    const player2  = game.scene.getPlayerField()[1];
     const maxHP = player2.hp;
     game.move.select(Moves.SPLASH);
     game.move.select(Moves.SPLASH, 1);
