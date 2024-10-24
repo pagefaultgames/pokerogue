@@ -334,7 +334,7 @@ export class ReceivedMoveDamageMultiplierAbAttr extends PreDefendAbAttr {
  * Reduces the damage dealt to an allied Pokemon. Used by Friend Guard.
  * @see {@linkcode applyPreDefend}
  */
-export class FriendGuardAbAttr extends PreDefendAbAttr {
+export class AlliedFieldDamageReductionAbAttr extends PreDefendAbAttr {
   private damageMultiplier: number;
 
   constructor(damageMultiplier: number) {
@@ -5331,7 +5331,7 @@ export function initAbilities() {
     new Ability(Abilities.HEALER, 5)
       .conditionalAttr(pokemon => pokemon.getAlly() && Utils.randSeedInt(10) < 3, PostTurnResetStatusAbAttr, true),
     new Ability(Abilities.FRIEND_GUARD, 5)
-      .attr(FriendGuardAbAttr, 0.75)
+      .attr(AlliedFieldDamageReductionAbAttr, 0.75)
       .ignorable(),
     new Ability(Abilities.WEAK_ARMOR, 5)
       .attr(PostDefendStatStageChangeAbAttr, (target, user, move) => move.category === MoveCategory.PHYSICAL, Stat.DEF, -1)
