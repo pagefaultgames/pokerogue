@@ -1352,6 +1352,7 @@ export class RecoilAttr extends MoveEffectAttr {
     user.damageAndUpdate(recoilDamage, HitResult.OTHER, false, true, true);
     user.scene.queueMessage(i18next.t("moveTriggers:hitWithRecoil", { pokemonName: getPokemonNameWithAffix(user) }));
     user.turnData.damageTaken += recoilDamage;
+    user.turnData.lastDmgSrc = user.id;
 
     return true;
   }

@@ -25,6 +25,7 @@ export class PostTurnStatusEffectPhase extends PokemonPhase {
       if (!cancelled.value) {
         this.scene.queueMessage(getStatusEffectActivationText(pokemon.status.effect, getPokemonNameWithAffix(pokemon)));
         const damage = new Utils.NumberHolder(0);
+        pokemon.turnData.lastDmgSrc = 0;
         switch (pokemon.status.effect) {
           case StatusEffect.POISON:
             damage.value = Math.max(pokemon.getMaxHp() >> 3, 1);
