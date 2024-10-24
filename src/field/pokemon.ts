@@ -2673,7 +2673,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       applyPreDefendAbAttrs(ReceivedMoveDamageMultiplierAbAttr, this, source, move, cancelled, simulated, damage);
 
       /** Additionally apply friend guard damage reduction if ally has it. */
-      if (this.scene.currentBattle.double && this.getAlly().isActive()) {
+      if (this.scene.currentBattle.double && this.getAlly()?.isActive(true)) {
         applyPreDefendAbAttrs(FriendGuardAbAttr, this.getAlly(), source, move, cancelled, simulated, damage);
       }
     }
