@@ -2,7 +2,7 @@ import { Abilities } from "#enums/abilities";
 import { Biome } from "#enums/biome";
 import { Moves } from "#enums/moves";
 import { Stat } from "#enums/stat";
-import { allMoves, SecretPowerAttr } from "#app/data/move";
+import { allMoves } from "#app/data/move";
 import { Species } from "#enums/species";
 import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
@@ -11,6 +11,7 @@ import { StatusEffect } from "#enums/status-effect";
 import { BattlerIndex } from "#app/battle";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { ArenaTagSide } from "#app/data/arena-tag";
+import { allAbilities, MoveEffectChanceMultiplierAbAttr } from "#app/data/ability";
 
 describe("Moves - Secret Power", () => {
   let phaserGame: Phaser.Game;
@@ -60,30 +61,38 @@ describe("Moves - Secret Power", () => {
     expect(enemyPokemon.getStatStage(Stat.SPATK)).toBe(-1);
   });
 
-  it("the 'rainbow' effect of fire+water pledge does not double the chance of secret power's secondary effect",
+  it("Secret Power's effect chance is doubled by Serene Grace, but not by the 'rainbow' effect from Fire/Water Pledge",
     async () => {
       game.override
         .moveset([ Moves.FIRE_PLEDGE, Moves.WATER_PLEDGE, Moves.SECRET_POWER, Moves.SPLASH ])
+        .ability(Abilities.SERENE_GRACE)
         .enemyMoveset([ Moves.SPLASH ])
         .battleType("double");
       await game.classicMode.startBattle([ Species.BLASTOISE, Species.CHARIZARD ]);
 
-      const secretPowerAttr = allMoves[Moves.SECRET_POWER].getAttrs(SecretPowerAttr)[0];
-      vi.spyOn(secretPowerAttr, "getMoveChance");
+      const sereneGraceAttr = allAbilities[Abilities.SERENE_GRACE].getAttrs(MoveEffectChanceMultiplierAbAttr)[0];
+      vi.spyOn(sereneGraceAttr, "apply");
 
       game.move.select(Moves.WATER_PLEDGE, 0, BattlerIndex.ENEMY);
       game.move.select(Moves.FIRE_PLEDGE, 1, BattlerIndex.ENEMY_2);
 
       await game.phaseInterceptor.to("TurnEndPhase");
 
-      expect(game.scene.arena.getTagOnSide(ArenaTagType.WATER_FIRE_PLEDGE, ArenaTagSide.PLAYER)).toBeDefined();
+      let rainbowEffect = game.scene.arena.getTagOnSide(ArenaTagType.WATER_FIRE_PLEDGE, ArenaTagSide.PLAYER);
+      expect(rainbowEffect).toBeDefined();
+
+      rainbowEffect = rainbowEffect!;
+      vi.spyOn(rainbowEffect, "apply");
 
       game.move.select(Moves.SECRET_POWER, 0, BattlerIndex.ENEMY);
       game.move.select(Moves.SPLASH, 1);
 
       await game.phaseInterceptor.to("BerryPhase", false);
 
-      expect(secretPowerAttr.getMoveChance).toHaveLastReturnedWith(30);
+      expect(sereneGraceAttr.apply).toHaveBeenCalledOnce();
+      expect(sereneGraceAttr.apply).toHaveLastReturnedWith(true);
+
+      expect(rainbowEffect.apply).toHaveBeenCalledTimes(0);
     }
   );
 });
