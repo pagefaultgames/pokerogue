@@ -391,12 +391,14 @@ export default class PartyUiHandler extends MessageUiHandler {
             this.clearOptions();
           } else {
             this.clearOptions();
-            this.showText(filterResult as string, undefined, () => this.showText("", 0), undefined, true);
+            this.showText(filterResult, undefined, () => this.showText("", 0), undefined, true);
           }
           ui.playSelect();
           return true;
-        } else if ((option !== PartyOption.SUMMARY && option !== PartyOption.UNPAUSE_EVOLUTION && option !== PartyOption.UNSPLICE && option !== PartyOption.RELEASE && option !== PartyOption.CANCEL && option !== PartyOption.RENAME)
-          || (option === PartyOption.RELEASE && this.partyUiMode === PartyUiMode.RELEASE)) {
+        } else if (
+          ![ PartyOption.SUMMARY, PartyOption.UNPAUSE_EVOLUTION, PartyOption.UNSPLICE, PartyOption.RELEASE, PartyOption.CANCEL, PartyOption.RENAME ].includes(option)
+          || (option === PartyOption.RELEASE && this.partyUiMode === PartyUiMode.RELEASE)
+        ) {
           let filterResult: string | null;
           const getTransferrableItemsFromPokemon = (pokemon: PlayerPokemon) =>
             this.scene.findModifiers(m => m instanceof PokemonHeldItemModifier && m.isTransferable && m.pokemonId === pokemon.id) as PokemonHeldItemModifier[];
@@ -834,7 +836,7 @@ export default class PartyUiHandler extends MessageUiHandler {
         case PartyUiMode.POST_BATTLE_SWITCH:
           if (this.cursor >= this.scene.currentBattle.getBattlerCount()) {
             const allowBatonModifierSwitch =
-            this.partyUiMode !== PartyUiMode.FAINT_SWITCH
+              this.partyUiMode !== PartyUiMode.FAINT_SWITCH
               && this.scene.findModifier(m => m instanceof SwitchEffectTransferModifier
               && (m as SwitchEffectTransferModifier).pokemonId === this.scene.getPlayerField()[this.fieldIndex].id);
 
@@ -865,6 +867,11 @@ export default class PartyUiHandler extends MessageUiHandler {
           this.options.push(PartyOption.TRANSFER);
           break;
         case PartyUiMode.SPLICE:
+          const isAllowedInChallenge = new Utils.BooleanHolder(true);
+          applyChallenges(this.scene.gameMode, ChallengeType.POKEMON_IN_BATTLE, pokemon, isAllowedInChallenge);
+          if (!isAllowedInChallenge.value) {
+            break;
+          }
           if (this.transferMode) {
             if (this.cursor !== this.transferCursor) {
               this.options.push(PartyOption.SPLICE);
