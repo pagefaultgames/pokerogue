@@ -330,6 +330,20 @@ export class ReceivedMoveDamageMultiplierAbAttr extends PreDefendAbAttr {
   }
 }
 
+export class FriendGuardAbAttr extends PreDefendAbAttr {
+  private damageMultiplier: number;
+
+  constructor(damageMultiplier: number) {
+    super();
+    this.damageMultiplier = damageMultiplier;
+  }
+
+  applyPreDefend(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker: Pokemon, move: Move, cancelled: Utils.BooleanHolder, args: any[]): boolean {
+    (args[0] as Utils.NumberHolder).value = Utils.toDmgValue((args[0] as Utils.NumberHolder).value * this.damageMultiplier);
+    return true;
+  }
+}
+
 export class ReceivedTypeDamageMultiplierAbAttr extends ReceivedMoveDamageMultiplierAbAttr {
   constructor(moveType: Type, damageMultiplier: number) {
     super((target, user, move) => user.getMoveType(move) === moveType, damageMultiplier);
@@ -5260,8 +5274,8 @@ export function initAbilities() {
     new Ability(Abilities.HEALER, 5)
       .conditionalAttr(pokemon => pokemon.getAlly() && Utils.randSeedInt(10) < 3, PostTurnResetStatusAbAttr, true),
     new Ability(Abilities.FRIEND_GUARD, 5)
-      .ignorable()
-      .unimplemented(),
+      .attr(FriendGuardAbAttr, .25)
+      .ignorable(),
     new Ability(Abilities.WEAK_ARMOR, 5)
       .attr(PostDefendStatStageChangeAbAttr, (target, user, move) => move.category === MoveCategory.PHYSICAL, Stat.DEF, -1)
       .attr(PostDefendStatStageChangeAbAttr, (target, user, move) => move.category === MoveCategory.PHYSICAL, Stat.SPD, 2),
