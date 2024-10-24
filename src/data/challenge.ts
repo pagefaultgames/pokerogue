@@ -1,22 +1,22 @@
-import { BattleType, FixedBattleConfig } from "#app/battle";
-import { pokemonEvolutions } from "#app/data/balance/pokemon-evolutions";
-import { speciesStarterCosts } from "#app/data/balance/starters";
-import { Nature } from "#app/data/nature";
-import { pokemonFormChanges } from "#app/data/pokemon-forms";
+import { BooleanHolder, NumberHolder, randSeedItem } from "#app/utils";
+import i18next from "i18next";
+import { defaultStarterSpecies, DexAttrProps, GameData } from "#app/system/game-data";
 import PokemonSpecies, { getPokemonSpecies, getPokemonSpeciesForm } from "#app/data/pokemon-species";
-import { Type } from "#app/data/type";
-import Pokemon, { EnemyPokemon, PlayerPokemon, PokemonMove } from "#app/field/pokemon";
+import { speciesStarterCosts } from "#app/data/balance/starters";
+import Pokemon, { type EnemyPokemon, PokemonMove, type PlayerPokemon } from "#app/field/pokemon";
+import { BattleType, FixedBattleConfig } from "#app/battle";
 import Trainer, { TrainerVariant } from "#app/field/trainer";
 import { GameMode } from "#app/game-mode";
-import { ModifierTypeOption } from "#app/modifier/modifier-type";
-import { defaultStarterSpecies, DexAttrProps, GameData } from "#app/system/game-data";
-import { BooleanHolder, NumberHolder, randSeedItem } from "#app/utils";
+import { Type } from "#app/data/type";
 import { Challenges } from "#enums/challenges";
-import { TypeColor, TypeShadow } from "#enums/color";
-import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import { TrainerType } from "#enums/trainer-type";
-import i18next from "i18next";
+import { Nature } from "#app/data/nature";
+import { Moves } from "#enums/moves";
+import { TypeColor, TypeShadow } from "#enums/color";
+import { pokemonEvolutions } from "#app/data/balance/pokemon-evolutions";
+import { pokemonFormChanges } from "#app/data/pokemon-forms";
+import type { ModifierTypeOption } from "#app/modifier/modifier-type";
 
 /** A constant for the default max cost of the starting party before a run */
 const DEFAULT_PARTY_MAX_COST = 10;
@@ -862,10 +862,16 @@ export class NoAutomaticHealChallenge extends Challenge {
 
 /** Challenge that removes the ability to revive fallen pokemon */
 export class HardcoreChallenge extends Challenge {
-  private itemBlackList = [ "modifierType:ModifierType.REVIVE", "modifierType:ModifierType.MAX_REVIVE", "modifierType:ModifierType.SACRED_ASH", "modifierType:ModifierType.REVIVER_SEED" ];
+  private readonly itemBlackList = [ "modifierType:ModifierType.REVIVE", "modifierType:ModifierType.MAX_REVIVE", "modifierType:ModifierType.SACRED_ASH", "modifierType:ModifierType.REVIVER_SEED" ];
+  private readonly moveBlacklist = [ Moves.REVIVAL_BLESSING ];
 
   constructor() {
     super(Challenges.HARDCORE, 1);
+  }
+
+  override applyPokemonInBattle(pokemon: Pokemon, valid: BooleanHolder): boolean {
+    valid.value = !pokemon.isFainted();
+    return true;
   }
 
   override applyRandomItemBlacklist(randomItem: ModifierTypeOption | null, isValid: BooleanHolder): boolean {
@@ -881,8 +887,7 @@ export class HardcoreChallenge extends Challenge {
   }
 
   override applyMoveBlacklist(move: PokemonMove, moveCanBeUsed: BooleanHolder): boolean {
-    const moveBlacklist = [ Moves.REVIVAL_BLESSING ];
-    moveCanBeUsed.value = !moveBlacklist.includes(move.moveId);
+    moveCanBeUsed.value = !this.moveBlacklist.includes(move.moveId);
     return true;
   }
 
