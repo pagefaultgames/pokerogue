@@ -1,4 +1,4 @@
-import { clientSessionId } from "#app/account";
+import { clientSessionId, loggedInUser } from "#app/account";
 import { BattleType } from "#app/battle";
 import BattleScene from "#app/battle-scene";
 import { getCharVariantFromDialogue } from "#app/data/dialogue";
@@ -23,6 +23,12 @@ import * as Utils from "#app/utils";
 import { PlayerGender } from "#enums/player-gender";
 import { TrainerType } from "#enums/trainer-type";
 import i18next from "i18next";
+import { SessionSaveData } from "#app/system/game-data";
+import PersistentModifierData from "#app/system/modifier-data";
+import PokemonData from "#app/system/pokemon-data";
+import ChallengeData from "#app/system/challenge-data";
+import TrainerData from "#app/system/trainer-data";
+import ArenaData from "#app/system/arena-data";
 
 export class GameOverPhase extends BattlePhase {
   private victory: boolean;
@@ -108,7 +114,7 @@ export class GameOverPhase extends BattlePhase {
             this.scene.gameData.gameStats.dailyRunSessionsWon++;
           }
         }
-        this.scene.gameData.saveRunHistory(this.scene, this.scene.gameData.getSessionSaveData(this.scene), this.victory);
+        this.scene.gameData.saveRunHistory(this.scene, this.getRunHistoryEntry(), this.victory);
         const fadeDuration = this.victory ? 10000 : 5000;
         this.scene.fadeOutBgm(fadeDuration, true);
         const activeBattlers = this.scene.getField().filter(p => p?.isActive(true));
@@ -214,6 +220,32 @@ export class GameOverPhase extends BattlePhase {
     if (speciesRibbonCount === 1) {
       this.firstRibbons.push(getPokemonSpecies(pokemon.species.getRootSpeciesId(forStarter)));
     }
+  }
+
+  getRunHistoryEntry(): SessionSaveData {
+    const preWaveSessionDataCached = localStorage.getItem(`sessionData${this.scene.sessionSlotId ? this.scene.sessionSlotId : ""}_${loggedInUser?.username}`);
+    const preWaveSessionData = preWaveSessionDataCached ? this.scene.gameData.parseSessionData(preWaveSessionDataCached) : null;
+    return {
+      seed: this.scene.seed,
+      playTime: this.scene.sessionPlayTime,
+      gameMode: this.scene.gameMode.modeId,
+      party: this.scene.getParty().map(p => new PokemonData(p)),
+      enemyParty: this.scene.getEnemyParty().map(p => new PokemonData(p)),
+      modifiers: preWaveSessionData ? preWaveSessionData.modifiers : this.scene.findModifiers(() => true).map(m => new PersistentModifierData(m, true)),
+      enemyModifiers: preWaveSessionData ? preWaveSessionData.enemyModifiers : this.scene.findModifiers(() => true, false).map(m => new PersistentModifierData(m, false)),
+      arena: new ArenaData(this.scene.arena),
+      pokeballCounts: this.scene.pokeballCounts,
+      money: Math.floor(this.scene.money),
+      score: this.scene.score,
+      waveIndex: this.scene.currentBattle.waveIndex,
+      battleType: this.scene.currentBattle.battleType,
+      trainer: this.scene.currentBattle.trainer ? new TrainerData(this.scene.currentBattle.trainer) : null,
+      gameVersion: this.scene.game.config.gameVersion,
+      timestamp: new Date().getTime(),
+      challenges: this.scene.gameMode.challenges.map(c => new ChallengeData(c)),
+      mysteryEncounterType: this.scene.currentBattle.mysteryEncounter?.encounterType ?? -1,
+      mysteryEncounterSaveData: this.scene.mysteryEncounterSaveData
+    } as SessionSaveData;
   }
 }
 
