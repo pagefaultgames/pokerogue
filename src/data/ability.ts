@@ -5007,7 +5007,7 @@ export function applyPostSetStatusAbAttrs(attrType: Constructor<PostSetStatusAbA
   return applyAbAttrsInternal<PostSetStatusAbAttr>(attrType, pokemon, (attr, passive) => attr.applyPostSetStatus(pokemon, sourcePokemon, passive, effect, simulated, args), args, false, simulated);
 }
 
-export function applyPostDamage(attrType: Constructor<PostDamageAbAttr>,
+export function applyPostDamageAbAttrs(attrType: Constructor<PostDamageAbAttr>,
   pokemon: Pokemon, damage: number, passive: boolean, simulated: boolean = false, args: any[]): Promise<void> {
   return applyAbAttrsInternal<PostDamageAbAttr>(attrType, pokemon, (attr, passive) => attr.applyPostDamage(pokemon, damage, passive, simulated, args), args);
 }
