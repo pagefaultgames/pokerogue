@@ -34,7 +34,7 @@ describe("Moves - Friend Guard", () => {
 
   it("first part of test, getting hp without friend guard", async () => {
     await game.classicMode.startBattle([ Species.BULBASAUR, Species.BULBASAUR ]);
-    const party = game.scene.getParty()! as PlayerPokemon[];
+    const [ player1, player2 ] = game.scene.getPlayerField();
     game.move.select(Moves.SPLASH);
     game.move.select(Moves.SPLASH, 1);
     await game.forceEnemyMove(Moves.TACKLE, BattlerIndex.PLAYER);
