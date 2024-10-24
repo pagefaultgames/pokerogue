@@ -193,12 +193,14 @@ const WAVE_LEVEL_BREAKPOINTS = [ 30, 50, 70, 100, 120, 140, 160 ];
 export const BugTypeSuperfanEncounter: MysteryEncounter =
   MysteryEncounterBuilder.withEncounterType(MysteryEncounterType.BUG_TYPE_SUPERFAN)
     .withEncounterTier(MysteryEncounterTier.GREAT)
-    .withPrimaryPokemonRequirement(new CombinationPokemonRequirement(
-      // Must have at least 1 Bug type on team, OR have a bug item somewhere on the team
-      new HeldItemRequirement([ "BypassSpeedChanceModifier", "ContactHeldItemTransferChanceModifier" ], 1),
-      new AttackTypeBoosterHeldItemTypeRequirement(Type.BUG, 1),
-      new TypeRequirement(Type.BUG, false, 1)
-    ))
+    .withPrimaryPokemonRequirement(
+      CombinationPokemonRequirement.Some(
+        // Must have at least 1 Bug type on team, OR have a bug item somewhere on the team
+        new HeldItemRequirement([ "BypassSpeedChanceModifier", "ContactHeldItemTransferChanceModifier" ], 1),
+        new AttackTypeBoosterHeldItemTypeRequirement(Type.BUG, 1),
+        new TypeRequirement(Type.BUG, false, 1)
+      )
+    )
     .withMaxAllowedEncounters(1)
     .withSceneWaveRangeRequirement(...CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES)
     .withIntroSpriteConfigs([]) // These are set in onInit()
@@ -405,11 +407,13 @@ export const BugTypeSuperfanEncounter: MysteryEncounter =
       .build())
     .withOption(MysteryEncounterOptionBuilder
       .newOptionWithMode(MysteryEncounterOptionMode.DISABLED_OR_DEFAULT)
-      .withPrimaryPokemonRequirement(new CombinationPokemonRequirement(
-        // Meets one or both of the below reqs
-        new HeldItemRequirement([ "BypassSpeedChanceModifier", "ContactHeldItemTransferChanceModifier" ], 1),
-        new AttackTypeBoosterHeldItemTypeRequirement(Type.BUG, 1)
-      ))
+      .withPrimaryPokemonRequirement(
+        CombinationPokemonRequirement.Some(
+          // Meets one or both of the below reqs
+          new HeldItemRequirement([ "BypassSpeedChanceModifier", "ContactHeldItemTransferChanceModifier" ], 1),
+          new AttackTypeBoosterHeldItemTypeRequirement(Type.BUG, 1)
+        )
+      )
       .withDialogue({
         buttonLabel: `${namespace}:option.3.label`,
         buttonTooltip: `${namespace}:option.3.tooltip`,

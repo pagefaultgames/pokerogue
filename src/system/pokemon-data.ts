@@ -92,7 +92,6 @@ export default class PokemonData {
     this.stats = source.stats;
     this.ivs = source.ivs;
     this.nature = source.nature !== undefined ? source.nature : 0 as Nature;
-    this.natureOverride = source.natureOverride !== undefined ? source.natureOverride : -1;
     this.friendship = source.friendship !== undefined ? source.friendship : getPokemonSpecies(this.species).baseFriendship;
     this.metLevel = source.metLevel || 5;
     this.metBiome = source.metBiome !== undefined ? source.metBiome : -1;
@@ -117,6 +116,8 @@ export default class PokemonData {
 
     this.customPokemonData = new CustomPokemonData(source.customPokemonData);
 
+    // Deprecated, but needed for session data migration
+    this.natureOverride = source.natureOverride;
     this.mysteryEncounterPokemonData = new CustomPokemonData(source.mysteryEncounterPokemonData);
     this.fusionMysteryEncounterPokemonData = new CustomPokemonData(source.fusionMysteryEncounterPokemonData);
 
@@ -137,7 +138,7 @@ export default class PokemonData {
       this.moveset = (source.moveset || [ new PokemonMove(Moves.TACKLE), new PokemonMove(Moves.GROWL) ]).filter(m => m).map((m: any) => new PokemonMove(m.moveId, m.ppUsed, m.ppUp));
       if (!forHistory) {
         this.status = source.status
-          ? new Status(source.status.effect, source.status.turnCount, source.status.cureTurn)
+          ? new Status(source.status.effect, source.status.toxicTurnCount, source.status.sleepTurnsRemaining)
           : null;
       }
 

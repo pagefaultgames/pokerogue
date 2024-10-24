@@ -45,10 +45,13 @@ export const DelibirdyEncounter: MysteryEncounter =
     .withEncounterTier(MysteryEncounterTier.GREAT)
     .withSceneWaveRangeRequirement(...CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES)
     .withSceneRequirement(new MoneyRequirement(0, DELIBIRDY_MONEY_PRICE_MULTIPLIER)) // Must have enough money for it to spawn at the very least
-    .withPrimaryPokemonRequirement(new CombinationPokemonRequirement( // Must also have either option 2 or 3 available to spawn
-      new HeldItemRequirement(OPTION_2_ALLOWED_MODIFIERS),
-      new HeldItemRequirement(OPTION_3_DISALLOWED_MODIFIERS, 1, true)
-    ))
+    .withPrimaryPokemonRequirement(
+      CombinationPokemonRequirement.Some(
+        // Must also have either option 2 or 3 available to spawn
+        new HeldItemRequirement(OPTION_2_ALLOWED_MODIFIERS),
+        new HeldItemRequirement(OPTION_3_DISALLOWED_MODIFIERS, 1, true)
+      )
+    )
     .withIntroSpriteConfigs([
       {
         spriteKey: "",
@@ -196,7 +199,7 @@ export const DelibirdyEncounter: MysteryEncounter =
           const encounter = scene.currentBattle.mysteryEncounter!;
           const modifier: BerryModifier | HealingBoosterModifier = encounter.misc.chosenModifier;
 
-          // Give the player a Candy Jar if they gave a Berry, and a Healing Charm for Reviver Seed
+          // Give the player a Candy Jar if they gave a Berry, and a Berry Pouch for Reviver Seed
           if (modifier instanceof BerryModifier) {
             // Check if the player has max stacks of that Candy Jar already
             const existing = scene.findModifier(m => m instanceof LevelIncrementBoosterModifier) as LevelIncrementBoosterModifier;
@@ -211,8 +214,8 @@ export const DelibirdyEncounter: MysteryEncounter =
               scene.unshiftPhase(new ModifierRewardPhase(scene, modifierTypes.CANDY_JAR));
             }
           } else {
-            // Check if the player has max stacks of that Healing Charm already
-            const existing = scene.findModifier(m => m instanceof HealingBoosterModifier) as HealingBoosterModifier;
+            // Check if the player has max stacks of that Berry Pouch already
+            const existing = scene.findModifier(m => m instanceof PreserveBerryModifier) as PreserveBerryModifier;
 
             if (existing && existing.getStackCount() >= existing.getMaxStackCount(scene)) {
               // At max stacks, give the first party pokemon a Shell Bell instead
@@ -221,7 +224,7 @@ export const DelibirdyEncounter: MysteryEncounter =
               scene.playSound("item_fanfare");
               await showEncounterText(scene, i18next.t("battle:rewardGain", { modifierName: shellBell.name }), null, undefined, true);
             } else {
-              scene.unshiftPhase(new ModifierRewardPhase(scene, modifierTypes.HEALING_CHARM));
+              scene.unshiftPhase(new ModifierRewardPhase(scene, modifierTypes.BERRY_POUCH));
             }
           }
 
@@ -290,8 +293,8 @@ export const DelibirdyEncounter: MysteryEncounter =
           const encounter = scene.currentBattle.mysteryEncounter!;
           const modifier = encounter.misc.chosenModifier;
 
-          // Check if the player has max stacks of Berry Pouch already
-          const existing = scene.findModifier(m => m instanceof PreserveBerryModifier) as PreserveBerryModifier;
+          // Check if the player has max stacks of Healing Charm already
+          const existing = scene.findModifier(m => m instanceof HealingBoosterModifier) as HealingBoosterModifier;
 
           if (existing && existing.getStackCount() >= existing.getMaxStackCount(scene)) {
             // At max stacks, give the first party pokemon a Shell Bell instead
@@ -300,7 +303,7 @@ export const DelibirdyEncounter: MysteryEncounter =
             scene.playSound("item_fanfare");
             await showEncounterText(scene, i18next.t("battle:rewardGain", { modifierName: shellBell.name }), null, undefined, true);
           } else {
-            scene.unshiftPhase(new ModifierRewardPhase(scene, modifierTypes.BERRY_POUCH));
+            scene.unshiftPhase(new ModifierRewardPhase(scene, modifierTypes.HEALING_CHARM));
           }
 
           // Remove the modifier if its stacks go to 0

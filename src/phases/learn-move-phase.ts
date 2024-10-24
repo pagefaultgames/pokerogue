@@ -170,13 +170,16 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
     pokemon.setMove(index, this.moveId);
     initMoveAnim(this.scene, this.moveId).then(() => {
       loadMoveAnimAssets(this.scene, [ this.moveId ], true);
-      this.scene.playSound("level_up_fanfare"); // Sound loaded into game as is
     });
     this.scene.ui.setMode(this.messageMode);
     const learnMoveText = i18next.t("battle:learnMove", { pokemonName: getPokemonNameWithAffix(pokemon), moveName: move.name });
-    textMessage = textMessage ? textMessage + "$" + learnMoveText : learnMoveText;
-    await this.scene.ui.showTextPromise(textMessage, this.messageMode === Mode.EVOLUTION_SCENE ? 1000 : undefined, true);
-    this.scene.triggerPokemonFormChange(pokemon, SpeciesFormChangeMoveLearnedTrigger, true);
-    this.end();
+    if (textMessage) {
+      await this.scene.ui.showTextPromise(textMessage);
+    }
+    this.scene.playSound("level_up_fanfare"); // Sound loaded into game as is
+    this.scene.ui.showText(learnMoveText, null, () => {
+      this.scene.triggerPokemonFormChange(pokemon, SpeciesFormChangeMoveLearnedTrigger, true);
+      this.end();
+    }, this.messageMode === Mode.EVOLUTION_SCENE ? 1000 : undefined, true);
   }
 }

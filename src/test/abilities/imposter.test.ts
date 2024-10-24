@@ -36,9 +36,7 @@ describe("Abilities - Imposter", () => {
   });
 
   it("should copy species, ability, gender, all stats except HP, all stat stages, moveset, and types of target", async () => {
-    await game.startBattle([
-      Species.DITTO
-    ]);
+    await game.classicMode.startBattle([ Species.DITTO ]);
 
     game.move.select(Moves.SPLASH);
     await game.phaseInterceptor.to(TurnEndPhase);
@@ -78,9 +76,7 @@ describe("Abilities - Imposter", () => {
   it("should copy in-battle overridden stats", async () => {
     game.override.enemyMoveset([ Moves.POWER_SPLIT ]);
 
-    await game.startBattle([
-      Species.DITTO
-    ]);
+    await game.classicMode.startBattle([ Species.DITTO ]);
 
     const player = game.scene.getPlayerPokemon()!;
     const enemy = game.scene.getEnemyPokemon()!;
@@ -96,5 +92,19 @@ describe("Abilities - Imposter", () => {
 
     expect(player.getStat(Stat.SPATK, false)).toBe(avgSpAtk);
     expect(enemy.getStat(Stat.SPATK, false)).toBe(avgSpAtk);
+  });
+
+  it("should set each move's pp to a maximum of 5", async () => {
+    game.override.enemyMoveset([ Moves.SWORDS_DANCE, Moves.GROWL, Moves.SKETCH, Moves.RECOVER ]);
+
+    await game.classicMode.startBattle([ Species.DITTO ]);
+    const player = game.scene.getPlayerPokemon()!;
+
+    game.move.select(Moves.TACKLE);
+    await game.phaseInterceptor.to(TurnEndPhase);
+
+    player.getMoveset().forEach(move => {
+      expect(move!.getMovePp()).toBeLessThanOrEqual(5);
+    });
   });
 });

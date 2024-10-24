@@ -222,7 +222,10 @@ export const TheExpertPokemonBreederEncounter: MysteryEncounter =
           encounter.misc.chosenPokemon = pokemon1;
           encounter.setDialogueToken("chosenPokemon", pokemon1.getNameToRender());
           const eggOptions = getEggOptions(scene, pokemon1CommonEggs, pokemon1RareEggs);
-          setEncounterRewards(scene, { fillRemaining: true }, eggOptions, () => doPostEncounterCleanup(scene));
+          setEncounterRewards(scene,
+            { guaranteedModifierTypeFuncs: [ modifierTypes.SOOTHE_BELL ], fillRemaining: true },
+            eggOptions,
+            () => doPostEncounterCleanup(scene));
 
           // Remove all Pokemon from the party except the chosen Pokemon
           removePokemonFromPartyAndStoreHeldItems(scene, encounter, pokemon1);
@@ -271,7 +274,10 @@ export const TheExpertPokemonBreederEncounter: MysteryEncounter =
           encounter.misc.chosenPokemon = pokemon2;
           encounter.setDialogueToken("chosenPokemon", pokemon2.getNameToRender());
           const eggOptions = getEggOptions(scene, pokemon2CommonEggs, pokemon2RareEggs);
-          setEncounterRewards(scene, { fillRemaining: true }, eggOptions, () => doPostEncounterCleanup(scene));
+          setEncounterRewards(scene,
+            { guaranteedModifierTypeFuncs: [ modifierTypes.SOOTHE_BELL ], fillRemaining: true },
+            eggOptions,
+            () => doPostEncounterCleanup(scene));
 
           // Remove all Pokemon from the party except the chosen Pokemon
           removePokemonFromPartyAndStoreHeldItems(scene, encounter, pokemon2);
@@ -320,7 +326,10 @@ export const TheExpertPokemonBreederEncounter: MysteryEncounter =
           encounter.misc.chosenPokemon = pokemon3;
           encounter.setDialogueToken("chosenPokemon", pokemon3.getNameToRender());
           const eggOptions = getEggOptions(scene, pokemon3CommonEggs, pokemon3RareEggs);
-          setEncounterRewards(scene, { fillRemaining: true }, eggOptions, () => doPostEncounterCleanup(scene));
+          setEncounterRewards(scene,
+            { guaranteedModifierTypeFuncs: [ modifierTypes.SOOTHE_BELL ], fillRemaining: true },
+            eggOptions,
+            () => doPostEncounterCleanup(scene));
 
           // Remove all Pokemon from the party except the chosen Pokemon
           removePokemonFromPartyAndStoreHeldItems(scene, encounter, pokemon3);
@@ -454,12 +463,16 @@ function calculateEggRewardsForPokemon(pokemon: PlayerPokemon): [number, number]
   }
 
   // Maximum of 30 points
-  const totalPoints = Math.min(pointsFromStarterTier + pointsFromBst, 30);
+  let totalPoints = Math.min(pointsFromStarterTier + pointsFromBst, 30);
 
-  // 1 Rare egg for every 6 points
-  const numRares = Math.floor(totalPoints / 6);
+  // First 5 points go to Common eggs
+  let numCommons = Math.min(totalPoints, 5);
+  totalPoints -= numCommons;
+
+  // Then, 1 Rare egg for every 4 points
+  const numRares = Math.floor(totalPoints / 4);
   // 1 Common egg for every point leftover
-  const numCommons = totalPoints % 6;
+  numCommons += totalPoints % 4;
 
   return [ numCommons, numRares ];
 }

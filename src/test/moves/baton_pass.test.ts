@@ -34,7 +34,7 @@ describe("Moves - Baton Pass", () => {
       .disableCrits();
   });
 
-  it("transfers all stat stages when player uses it", async() => {
+  it("transfers all stat stages when player uses it", async () => {
     // arrange
     await game.classicMode.startBattle([ Species.RAICHU, Species.SHUCKLE ]);
 
@@ -91,7 +91,7 @@ describe("Moves - Baton Pass", () => {
     ]);
   }, 20000);
 
-  it("doesn't transfer effects that aren't transferrable", async() => {
+  it("doesn't transfer effects that aren't transferrable", async () => {
     game.override.enemyMoveset([ Moves.SALT_CURE ]);
     await game.classicMode.startBattle([ Species.PIKACHU, Species.FEEBAS ]);
 
@@ -106,4 +106,28 @@ describe("Moves - Baton Pass", () => {
 
     expect(player2.findTag((t) => t.tagType === BattlerTagType.SALT_CURED)).toBeUndefined();
   }, 20000);
+
+  it("doesn't allow binding effects from the user to persist", async () => {
+    game.override.moveset([ Moves.FIRE_SPIN, Moves.BATON_PASS ]);
+
+    await game.classicMode.startBattle([ Species.MAGIKARP, Species.FEEBAS ]);
+
+    const enemy = game.scene.getEnemyPokemon()!;
+
+    game.move.select(Moves.FIRE_SPIN);
+    await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY ]);
+    await game.move.forceHit();
+
+    await game.toNextTurn();
+
+    expect(enemy.getTag(BattlerTagType.FIRE_SPIN)).toBeDefined();
+
+    game.move.select(Moves.BATON_PASS);
+    await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY ]);
+
+    game.doSelectPartyPokemon(1);
+    await game.toNextTurn();
+
+    expect(enemy.getTag(BattlerTagType.FIRE_SPIN)).toBeUndefined();
+  });
 });

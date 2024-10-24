@@ -38,6 +38,10 @@ export class ChallengeModeHelper extends GameManagerHelper {
   async runToSummon(species?: Species[]) {
     await this.game.runToTitle();
 
+    if (this.game.override.disableShinies) {
+      this.game.override.shiny(false).enemyShiny(false);
+    }
+
     this.game.onNextPrompt("TitlePhase", Mode.TITLE, () => {
       this.game.scene.gameMode.challenges = this.challenges;
       const starters = generateStarter(this.game.scene, species);
@@ -47,7 +51,7 @@ export class ChallengeModeHelper extends GameManagerHelper {
     });
 
     await this.game.phaseInterceptor.run(EncounterPhase);
-    if (overrides.OPP_HELD_ITEMS_OVERRIDE.length === 0) {
+    if (overrides.OPP_HELD_ITEMS_OVERRIDE.length === 0 && this.game.override.removeEnemyStartingItems) {
       this.game.removeEnemyHeldItems();
     }
   }
