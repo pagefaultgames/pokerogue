@@ -165,6 +165,7 @@ class DefaultOverrides {
   // -------------------------
 
   /** 1 to 256, set to null to ignore */
+  /** Requirement: STARTING_WAVE_OVERRIDE > 10 && STARTING_BIOME_OVERRIDE !== Biome.TOWN */
   readonly MYSTERY_ENCOUNTER_RATE_OVERRIDE: number | null = null;
   readonly MYSTERY_ENCOUNTER_TIER_OVERRIDE: MysteryEncounterTier | null = null;
   readonly MYSTERY_ENCOUNTER_OVERRIDE: MysteryEncounterType | null = null;
