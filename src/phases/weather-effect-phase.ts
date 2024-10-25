@@ -54,7 +54,9 @@ export class WeatherEffectPhase extends CommonAnimPhase {
           const immune = !pokemon || !!pokemon.getTypes(true, true).filter(t => this.weather?.isTypeDamageImmune(t)).length;
           if (!immune) {
             inflictDamage(pokemon);
-            pokemon.turnData.lastDmgSrc = 0;
+            if (this.weather?.weatherType) {
+              pokemon.turnData.lastDmgSrc = this.weather.weatherType;
+            }
           }
         });
       }
