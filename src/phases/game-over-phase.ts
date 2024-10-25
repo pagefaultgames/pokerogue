@@ -1,4 +1,4 @@
-import { clientSessionId, loggedInUser } from "#app/account";
+import { clientSessionId } from "#app/account";
 import { BattleType } from "#app/battle";
 import BattleScene from "#app/battle-scene";
 import { getCharVariantFromDialogue } from "#app/data/dialogue";
@@ -114,7 +114,9 @@ export class GameOverPhase extends BattlePhase {
             this.scene.gameData.gameStats.dailyRunSessionsWon++;
           }
         }
-        this.scene.gameData.saveRunHistory(this.scene, this.getRunHistoryEntry(), this.victory);
+        this.getRunHistoryEntry().then(runHistoryEntry => {
+          this.scene.gameData.saveRunHistory(this.scene, runHistoryEntry, this.victory);
+        });
         const fadeDuration = this.victory ? 10000 : 5000;
         this.scene.fadeOutBgm(fadeDuration, true);
         const activeBattlers = this.scene.getField().filter(p => p?.isActive(true));
@@ -226,9 +228,8 @@ export class GameOverPhase extends BattlePhase {
    * Retrieves the session's data to log its TBD
    * @returns
    */
-  getRunHistoryEntry(): SessionSaveData {
-    const preWaveSessionDataCached = localStorage.getItem(`sessionData${this.scene.sessionSlotId ? this.scene.sessionSlotId : ""}_${loggedInUser?.username}`);
-    const preWaveSessionData = preWaveSessionDataCached ? this.scene.gameData.parseSessionData(preWaveSessionDataCached) : null;
+  private async getRunHistoryEntry(): Promise<SessionSaveData> {
+    const preWaveSessionData = await this.scene.gameData.getSession(this.scene.sessionSlotId);
     return {
       seed: this.scene.seed,
       playTime: this.scene.sessionPlayTime,
