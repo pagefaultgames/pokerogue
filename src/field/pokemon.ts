@@ -4453,7 +4453,7 @@ export class PlayerPokemon extends Pokemon {
   copyMoveset(): PokemonMove[] {
     const newMoveset : PokemonMove[] = [];
     this.moveset.forEach(move =>
-      newMoveset.push(new PokemonMove(move!.moveId, 0, move!.ppUp, move!.virtual))); // TODO: are those bangs correct?
+      newMoveset.push(new PokemonMove(move!.moveId, 0, move!.ppUp, move!.virtual, move!.maxPpOverride))); // TODO: are those bangs correct?
 
     return newMoveset;
   }
@@ -5180,15 +5180,22 @@ export interface DamageCalculationResult {
  **/
 export class PokemonMove {
   public moveId: Moves;
-  public ppUsed: integer;
-  public ppUp: integer;
+  public ppUsed: number;
+  public ppUp: number;
   public virtual: boolean;
 
-  constructor(moveId: Moves, ppUsed?: integer, ppUp?: integer, virtual?: boolean) {
+  /**
+   * If defined and nonzero, overrides the maximum PP of the move (e.g., due to move being copied by Transform).
+   * This also nullifies all effects of `ppUp`.
+   */
+  public maxPpOverride?: number;
+
+  constructor(moveId: Moves, ppUsed?: number, ppUp?: number, virtual?: boolean, maxPpOverride?: number) {
     this.moveId = moveId;
     this.ppUsed = ppUsed || 0;
     this.ppUp = ppUp || 0;
     this.virtual = !!virtual;
+    this.maxPpOverride = maxPpOverride;
   }
 
   /**
@@ -5225,7 +5232,7 @@ export class PokemonMove {
   }
 
   getMovePp(): integer {
-    return this.getMove().pp + this.ppUp * Utils.toDmgValue(this.getMove().pp / 5);
+    return this.maxPpOverride || (this.getMove().pp + this.ppUp * Utils.toDmgValue(this.getMove().pp / 5));
   }
 
   getPpRatio(): number {
@@ -5242,6 +5249,6 @@ export class PokemonMove {
   * @return {PokemonMove} A valid pokemonmove object
   */
   static loadMove(source: PokemonMove | any): PokemonMove {
-    return new PokemonMove(source.moveId, source.ppUsed, source.ppUp, source.virtual);
+    return new PokemonMove(source.moveId, source.ppUsed, source.ppUp, source.virtual, source.maxPpOverride);
   }
 }

@@ -2166,7 +2166,7 @@ export class PokemonPpUpModifier extends ConsumablePokemonMoveModifier {
   override apply(playerPokemon: PlayerPokemon): boolean {
     const move = playerPokemon.getMoveset()[this.moveIndex];
 
-    if (move) {
+    if (move && !move.maxPpOverride) {
       move.ppUp = Math.min(move.ppUp + this.upPoints, 3);
     }
 

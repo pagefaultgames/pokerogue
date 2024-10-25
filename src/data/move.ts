@@ -6670,9 +6670,8 @@ export class TransformAttr extends MoveEffectAttr {
 
     user.summonData.moveset = target.getMoveset().map(m => {
       const pp = m?.getMove().pp ?? 0;
-      // if PP value is less than 5, do nothing. If greater, we need to reduce the value to 5 using a negative ppUp value.
-      const ppUp = pp <= 5 ? 0 : (5 - pp) / Math.max(Math.floor(pp / 5), 1);
-      return new PokemonMove(m?.moveId!, 0, ppUp);
+      // If PP value is less than 5, do nothing. If greater, we need to reduce the value to 5.
+      return new PokemonMove(m?.moveId!, 0, 0, false, Math.min(pp, 5));
     });
     user.summonData.types = target.getTypes();
     promises.push(user.updateInfo());
