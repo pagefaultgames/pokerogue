@@ -150,8 +150,8 @@ export default class AdminUiHandler extends FormModalUiHandler {
         } else if (this.adminMode === AdminMode.ADMIN) {
           this.updateAdminPanelInfo(adminSearchResult, AdminMode.SEARCH);
         }
-        const onFail = error => {
-          this.scene.ui.setMode(Mode.ADMIN, Object.assign(config, { errorMessage: error?.trim() }));
+        const onFail = (error: string) => {
+          this.scene.ui.setMode(Mode.ADMIN, Object.assign(this.config, { errorMessage: error?.trim() }));
           this.scene.ui.playError();
         };
         if (!this.inputs[0].text) {
