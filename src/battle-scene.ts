@@ -1390,7 +1390,7 @@ export default class BattleScene extends SceneBase {
       case Species.ZYGARDE:
         return Utils.randSeedInt(4);
       case Species.MINIOR:
-        return Utils.randSeedInt(6);
+        return Utils.randSeedInt(7);
       case Species.ALCREMIE:
         return Utils.randSeedInt(9);
       case Species.MEOWSTIC:
