@@ -29,7 +29,7 @@ describe("Moves - Reflect Type", () => {
       .enemyAbility(Abilities.BALL_FETCH);
   });
 
-  it("If a typeless Pokemon has additionally been affected by Forest's Curse or Trick-or-Treat, however, Reflect Type will cause the user to become a Normal type with an added Grass or Ghost type respectively", async () => {
+  it("will make the user Normal/Grass if targetting a typeless Pokemon affected by Forest's Curse", async () => {
     game.override
       .moveset([ Moves.FORESTS_CURSE, Moves.REFLECT_TYPE ])
       .startingLevel(60)

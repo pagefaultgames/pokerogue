@@ -32,7 +32,7 @@ describe("Moves - Forest's Curse", () => {
       .enemyMoveset(Moves.SPLASH);
   });
 
-  it("Using Forest's Curse on a Pokemon affected by Trick Or Treat will replace the Ghost-type with Grass", async () => {
+  it("will replace the added type from Trick Or Treat", async () => {
     await game.classicMode.startBattle([ Species.FEEBAS ]);
 
     const enemyPokemon = game.scene.getEnemyPokemon();

@@ -4681,6 +4681,7 @@ export class PreventBypassSpeedChanceAbAttr extends AbAttr {
 
 /**
  * This applies a terrain-based type change to the Pokemon.
+ * Used by Mimicry.
  */
 export class TerrainEventTypeChangeAbAttr extends PostSummonAbAttr {
   constructor() {
