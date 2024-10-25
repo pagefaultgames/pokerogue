@@ -31,9 +31,6 @@ describe("Abilities - Mimicry", () => {
       .enemyMoveset(Moves.SPLASH);
   });
 
-  // List of Tests (Work in Progress)
-  // Pokemon should return to original root type even when transformed when terrain ends
-  // The effect of Forest's Curse is removed when Mimicry activates in Grassy Terrain
   it("Mimicry activates after the Pokémon with Mimicry is switched in while terrain is present, or whenever there is a change in terrain", async () => {
     game.override.enemyAbility(Abilities.MISTY_SURGE);
     await game.classicMode.startBattle([ Species.FEEBAS, Species.ABRA ]);
