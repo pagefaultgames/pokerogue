@@ -2453,15 +2453,19 @@ export class PostSummonTransformAbAttr extends PostSummonAbAttr {
       pokemon.setStatStage(s, target.getStatStage(s));
     }
 
-    pokemon.summonData.moveset = target.getMoveset().map(m => {
-      const pp = m?.getMove().pp ?? 0;
-      // If PP value is less than 5, do nothing. If greater, we need to reduce the value to 5.
-      return new PokemonMove(m?.moveId!, 0, 0, false, Math.min(pp, 5));
+    pokemon.summonData.moveset = target.getMoveset().map((m) => {
+      if (m) {
+        // If PP value is less than 5, do nothing. If greater, we need to reduce the value to 5.
+        return new PokemonMove(m.moveId, 0, 0, false, Math.min(m.getMove().pp, 5));
+      } else {
+        console.warn(`Imposter: somehow iterating over a ${m} value when copying moveset!`);
+        return new PokemonMove(Moves.NONE);
+      }
     });
     pokemon.summonData.types = target.getTypes();
     promises.push(pokemon.updateInfo());
 
-    pokemon.scene.queueMessage(i18next.t("abilityTriggers:postSummonTransform", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), targetName: target!.name, }));
+    pokemon.scene.queueMessage(i18next.t("abilityTriggers:postSummonTransform", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), targetName: target.name, }));
     pokemon.scene.playSound("battle_anims/PRSFX- Transform");
     promises.push(pokemon.loadAssets(false).then(() => {
       pokemon.playAnim();

@@ -6668,10 +6668,14 @@ export class TransformAttr extends MoveEffectAttr {
       user.setStatStage(s, target.getStatStage(s));
     }
 
-    user.summonData.moveset = target.getMoveset().map(m => {
-      const pp = m?.getMove().pp ?? 0;
-      // If PP value is less than 5, do nothing. If greater, we need to reduce the value to 5.
-      return new PokemonMove(m?.moveId!, 0, 0, false, Math.min(pp, 5));
+    user.summonData.moveset = target.getMoveset().map((m) => {
+      if (m) {
+        // If PP value is less than 5, do nothing. If greater, we need to reduce the value to 5.
+        return new PokemonMove(m.moveId, 0, 0, false, Math.min(m.getMove().pp, 5));
+      } else {
+        console.warn(`Transform: somehow iterating over a ${m} value when copying moveset!`);
+        return new PokemonMove(Moves.NONE);
+      }
     });
     user.summonData.types = target.getTypes();
     promises.push(user.updateInfo());
