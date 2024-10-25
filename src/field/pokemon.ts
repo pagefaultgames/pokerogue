@@ -149,7 +149,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     }
 
     this.species = species;
-
     this.pokeball = dataSource?.pokeball || PokeballType.POKEBALL;
     this.level = level;
     this.switchOutStatus = false;
