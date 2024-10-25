@@ -6645,8 +6645,7 @@ export class SuppressAbilitiesIfActedAttr extends MoveEffectAttr {
 
 export class TransformAttr extends MoveEffectAttr {
   async apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): Promise<boolean> {
-    if (!super.apply(user, target, move, args) || target.battleData.illusion.active || user.battleData.illusion.active) {
-      this.getFailedText(user, target, move, new Utils.BooleanHolder(true));
+    if (!super.apply(user, target, move, args)) {
       return false;
     }
 
@@ -7698,6 +7697,7 @@ export function initMoves() {
     new StatusMove(Moves.TRANSFORM, Type.NORMAL, -1, 10, -1, 0, 1)
       .attr(TransformAttr)
       .condition((user, target, move) => !target.getTag(BattlerTagType.SUBSTITUTE))
+      .condition((user, target, move) => !target.battleData.illusion.active && !user.battleData.illusion.active)
       .ignoresProtect(),
     new AttackMove(Moves.BUBBLE, Type.WATER, MoveCategory.SPECIAL, 40, 100, 30, 10, 0, 1)
       .attr(StatStageChangeAttr, [ Stat.SPD ], -1)
