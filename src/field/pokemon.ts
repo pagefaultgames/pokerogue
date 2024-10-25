@@ -2796,6 +2796,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           this.battleData.hitCount++;
           const attackResult = { move: move.id, result: result as DamageResult, damage: damage, critical: isCritical, sourceId: source.id, sourceBattlerIndex: source.getBattlerIndex() };
           this.turnData.attacksReceived.unshift(attackResult);
+          this.turnData.lastDmgSrc = source;
           if (source.isPlayer() && !this.isPlayer()) {
             this.scene.applyModifiers(DamageMoneyRewardModifier, true, source, new Utils.NumberHolder(damage));
           }
@@ -5125,6 +5126,7 @@ export class PokemonTurnData {
   public statStagesDecreased: boolean = false;
   public moveEffectiveness: TypeDamageMultiplier | null = null;
   public combiningPledge?: Moves;
+  public lastDmgSrc: Pokemon | WeatherType | StatusEffect;
 }
 
 export enum AiType {
