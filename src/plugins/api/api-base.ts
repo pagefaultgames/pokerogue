@@ -6,6 +6,8 @@ type DataType = "json" | "form-urlencoded";
 export abstract class ApiBase {
   //#region Fields
 
+  public readonly ERR_GENERIC: string = "There was an error";
+
   protected readonly base: string;
 
   //#region Public

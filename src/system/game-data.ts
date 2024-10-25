@@ -1570,6 +1570,10 @@ export class GameData {
   }
 
   setPokemonSeen(pokemon: Pokemon, incrementCount: boolean = true, trainer: boolean = false): void {
+    // Some Mystery Encounters block updates to these stats
+    if (this.scene.currentBattle?.isBattleMysteryEncounter() && this.scene.currentBattle.mysteryEncounter?.preventGameStatsUpdates) {
+      return;
+    }
     const dexEntry = this.dexData[pokemon.species.speciesId];
     dexEntry.seenAttr |= pokemon.getDexAttr();
     if (incrementCount) {
