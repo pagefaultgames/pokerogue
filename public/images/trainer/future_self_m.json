@@ -1,0 +1,41 @@
+{
+	"textures": [
+		{
+			"image": "future_self_m.png",
+			"format": "RGBA8888",
+			"size": {
+				"w": 36,
+				"h": 73
+			},
+			"scale": 1,
+			"frames": [
+				{
+					"filename": "0001.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 73,
+						"h": 73
+					},
+					"spriteSourceSize": {
+						"x": 18,
+						"y": 0,
+						"w": 36,
+						"h": 73
+					},
+					"frame": {
+						"x": 0,
+						"y": 0,
+						"w": 36,
+						"h": 73
+					}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "https://www.codeandweb.com/texturepacker",
+		"version": "3.0",
+		"smartupdate": "$TexturePacker:SmartUpdate:0d8d68d06ae75bc93d72b54183a9df02:d3d509801da9ff5c0bd4793a05ece391:83c4b8c2ed25ea7d9795bec5c40c8602$"
+	}
+}
