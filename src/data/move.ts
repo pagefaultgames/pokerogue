@@ -14,7 +14,7 @@ import { BattlerIndex, BattleType } from "../battle";
 import { TerrainType } from "./terrain";
 import { ModifierPoolType } from "#app/modifier/modifier-type";
 import { Command } from "../ui/command-ui-handler";
-import i18next, { t } from "i18next";
+import i18next from "i18next";
 import { Localizable } from "#app/interfaces/locales";
 import { getBerryEffectFunc } from "./berry";
 import { Abilities } from "#enums/abilities";
@@ -6646,7 +6646,7 @@ export class SuppressAbilitiesIfActedAttr extends MoveEffectAttr {
 export class TransformAttr extends MoveEffectAttr {
   async apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): Promise<boolean> {
     if (!super.apply(user, target, move, args) || target.battleData.illusion.active || user.battleData.illusion.active) {
-      this.getFailedText(user, target, move, new Utils.BooleanHolder(true))
+      this.getFailedText(user, target, move, new Utils.BooleanHolder(true));
       return false;
     }
 
