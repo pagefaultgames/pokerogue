@@ -30,7 +30,6 @@ const timedEvents: TimedEvent[] = [
     eventType: EventType.NO_TIMER_DISPLAY,
     startDate: new Date(Date.UTC(2024, 8, 8, 0)),
     endDate: new Date(Date.UTC(2024, 8, 12, 0)),
-    bannerKey: "egg-update",
     bannerKey: "halloween2024-event-",
     scale: 0.21,
     availableLangs: [ "en", "de", "it", "fr", "ja", "ko", "es", "pt-BR", "zh-CN" ]
