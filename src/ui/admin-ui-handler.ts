@@ -150,17 +150,6 @@ export default class AdminUiHandler extends FormModalUiHandler {
         } else if (this.adminMode === AdminMode.ADMIN) {
           this.updateAdminPanelInfo(adminSearchResult, AdminMode.SEARCH);
         }
-        const onFail = (error: string) => {
-          this.scene.ui.setMode(Mode.ADMIN, Object.assign(this.config, { errorMessage: error?.trim() }));
-          this.scene.ui.playError();
-        };
-        if (!this.inputs[0].text) {
-          return onFail("Username is required");
-        }
-        if (!this.inputs[1].text) {
-          return onFail("Discord Id is required");
-        }
-        return false;
       };
       return true;
     }
@@ -288,7 +277,6 @@ export default class AdminUiHandler extends FormModalUiHandler {
 
   private async adminSearch(adminSearchResult: AdminSearchInfo) {
     try {
-      // const adminInfo = await Utils.apiFetch(`admin/account/adminSearch?username=${encodeURIComponent(adminSearchResult.username)}`, true);
       const [ adminInfo, errorType ] = await pokerogueApi.admin.searchAccount({ username: adminSearchResult.username });
       if (errorType || !adminInfo) { // error - if adminInfo.status === this.httpUserNotFoundErrorCode that means the username can't be found in the db
         return { adminSearchResult: adminSearchResult, error: true, errorType };
