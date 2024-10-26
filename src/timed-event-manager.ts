@@ -5,13 +5,13 @@ import i18next from "i18next";
 
 export enum EventType {
   SHINY,
-  GENERIC
+  NO_TIMER_DISPLAY
 }
 
 interface EventBanner {
   bannerKey?: string;
-  xPosition?: number;
-  yPosition?: number;
+  xOffset?: number;
+  yOffset?: number;
   scale?: number;
   availableLangs?: string[];
 }
@@ -27,12 +27,10 @@ interface TimedEvent extends EventBanner {
 const timedEvents: TimedEvent[] = [
   {
     name: "Egg Skip Update",
-    eventType: EventType.GENERIC,
+    eventType: EventType.NO_TIMER_DISPLAY,
     startDate: new Date(Date.UTC(2024, 8, 8, 0)),
     endDate: new Date(Date.UTC(2024, 8, 12, 0)),
     bannerKey: "egg-update",
-    xPosition: 19,
-    yPosition: 120,
     scale: 0.21,
     availableLangs: [ "en", "de", "it", "fr", "ja", "ko", "es", "pt-BR", "zh-CN" ]
   }
@@ -80,13 +78,31 @@ export class TimedEventDisplay extends Phaser.GameObjects.Container {
   private event: TimedEvent | nil;
   private eventTimerText: Phaser.GameObjects.Text;
   private banner: Phaser.GameObjects.Image;
-  private bannerShadow: Phaser.GameObjects.Rectangle;
+  private availableWidth: number;
   private eventTimer: NodeJS.Timeout | null;
 
   constructor(scene: BattleScene, x: number, y: number, event?: TimedEvent) {
     super(scene, x, y);
+    this.availableWidth = scene.scaledCanvas.width;
     this.event = event;
     this.setVisible(false);
+  }
+
+  /**
+   * Set the width that can be used to display the event timer and banner. By default
+   * these elements get centered horizontally in that space, in the bottom left of the screen
+   */
+  setWidth(width: number) {
+    if (width !== this.availableWidth) {
+      this.availableWidth = width;
+      const xPosition = this.availableWidth / 2 + (this.event?.xOffset ?? 0);
+      if (this.banner) {
+        this.banner.x = xPosition;
+      }
+      if (this.eventTimerText) {
+        this.eventTimerText.x = xPosition;
+      }
+    }
   }
 
   setup() {
@@ -101,21 +117,24 @@ export class TimedEventDisplay extends Phaser.GameObjects.Container {
         }
       }
       console.log(this.event.bannerKey);
-      this.banner = new Phaser.GameObjects.Image(this.scene, this.event.xPosition ?? 29, this.event.yPosition ?? 64, key);
+      const padding = 5;
+      const showTimer = this.event.eventType !== EventType.NO_TIMER_DISPLAY;
+      const yPosition = this.scene.game.canvas.height / 6 - padding - (showTimer ? 10 : 0) - (this.event.yOffset ?? 0);
+      this.banner = new Phaser.GameObjects.Image(this.scene, this.availableWidth / 2, yPosition - padding, key);
       this.banner.setName("img-event-banner");
-      this.banner.setOrigin(0.08, -0.35);
+      this.banner.setOrigin(0.5, 1);
       this.banner.setScale(this.event.scale ?? 0.18);
-      if (this.event.eventType !== EventType.GENERIC) {
+      if (showTimer) {
         this.eventTimerText = addTextObject(
           this.scene,
-          this.banner.x + 8,
-          this.banner.y + 100,
+          this.banner.x,
+          this.banner.y + 2,
           this.timeToGo(this.event.endDate),
           TextStyle.WINDOW
         );
         this.eventTimerText.setName("text-event-timer");
         this.eventTimerText.setScale(0.15);
-        this.eventTimerText.setOrigin(0, 0);
+        this.eventTimerText.setOrigin(0.5, 0);
 
         this.add(this.eventTimerText);
       }
@@ -161,7 +180,7 @@ export class TimedEventDisplay extends Phaser.GameObjects.Container {
   }
 
   updateCountdown() {
-    if (this.event && this.event.eventType !== EventType.GENERIC) {
+    if (this.event && this.event.eventType !== EventType.NO_TIMER_DISPLAY) {
       this.eventTimerText.setText(this.timeToGo(this.event.endDate));
     }
   }
