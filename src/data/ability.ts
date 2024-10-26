@@ -4950,7 +4950,7 @@ export class PostDamageForceSwitchAttr extends PostDamageAbAttr {
     if (pokemon.hp + damage >= pokemon.getMaxHp() * this.hpRatio) {
       // Activates if it falls below half and recovers back above half from a Shell Bell
       const shellBellHeal = calculateShellBellRecovery(pokemon);
-      if (pokemon.hp - shellBellHeal < pokemon.getMaxHp() / 2) {
+      if (pokemon.hp - shellBellHeal < pokemon.getMaxHp() * this.hpRatio) {
         for (const opponent of pokemon.getOpponents()) {
           if (!this.helper.getSwitchOutCondition(pokemon, opponent)) {
             return false;
