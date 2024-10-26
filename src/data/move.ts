@@ -9042,8 +9042,13 @@ export function initMoves() {
       .target(MoveTarget.ALL_NEAR_OTHERS),
     new StatusMove(Moves.FAIRY_LOCK, Type.FAIRY, -1, 10, -1, 0, 6)
       .ignoresSubstitute()
+      .ignoresProtect()
       .target(MoveTarget.BOTH_SIDES)
-      .unimplemented(),
+      .attr(AddArenaTagAttr, ArenaTagType.FAIRY_LOCK, 1, true)
+      .condition((user, target, move) => {
+        const turnMove = user.getLastXMoves(1);
+        return !turnMove.length || turnMove[0].move !== move.id || turnMove[0].result !== MoveResult.SUCCESS;
+      }),
     new SelfStatusMove(Moves.KINGS_SHIELD, Type.STEEL, -1, 10, -1, 4, 6)
       .attr(ProtectAttr, BattlerTagType.KINGS_SHIELD)
       .condition(failIfLastCondition),

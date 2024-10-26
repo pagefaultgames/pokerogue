@@ -1202,6 +1202,38 @@ class GrassWaterPledgeTag extends ArenaTag {
   }
 }
 
+export class FairyLockTag extends ArenaTag {
+  constructor(sourceId: number) {
+    super(ArenaTagType.FAIRY_LOCK, 1, Moves.FAIRY_LOCK, sourceId);
+  }
+
+  onAdd(arena: Arena): void {
+    arena.scene.queueMessage(i18next.t("arenaTag:fairyLockOnAdd"));
+  }
+
+  onRemove(arena: Arena): void { }
+
+  lapse(arena: Arena): boolean {
+    // const lockedIn = [...arena.scene.getEnemyField(), ...arena.scene.getPlayerField()];
+    // lockedIn?.forEach((p: Pokemon) => {
+    //   p.addTag(BattlerTagType.TIMED_TRAP, 1, Moves.FAIRY_LOCK, this.sourceId)
+    // });
+    // return super.lapse(arena);
+
+    const ret = super.lapse(arena);
+
+    if (!ret) {
+      const lockedIn = [ ...arena.scene.getEnemyField(), ...arena.scene.getPlayerField() ];
+      console.log(lockedIn);
+      lockedIn?.forEach((p: Pokemon) => {
+        p.addTag(BattlerTagType.TIMED_TRAP, 1, Moves.FAIRY_LOCK, this.sourceId);
+      });
+    }
+
+    return ret;
+  }
+}
+
 // TODO: swap `sourceMove` and `sourceId` and make `sourceMove` an optional parameter
 export function getArenaTag(tagType: ArenaTagType, turnCount: number, sourceMove: Moves | undefined, sourceId: number, targetIndex?: BattlerIndex, side: ArenaTagSide = ArenaTagSide.BOTH): ArenaTag | null {
   switch (tagType) {
@@ -1260,6 +1292,8 @@ export function getArenaTag(tagType: ArenaTagType, turnCount: number, sourceMove
       return new WaterFirePledgeTag(sourceId, side);
     case ArenaTagType.GRASS_WATER_PLEDGE:
       return new GrassWaterPledgeTag(sourceId, side);
+    case ArenaTagType.FAIRY_LOCK:
+      return new FairyLockTag(sourceId);
     default:
       return null;
   }

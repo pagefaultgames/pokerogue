@@ -2777,6 +2777,24 @@ export class PowerTrickTag extends BattlerTag {
   }
 }
 
+export class TimedTrap extends TrappedTag {
+  constructor(turnCount: number, sourceMove: Moves, sourceId: number) {
+    super(BattlerTagType.TRAPPED, BattlerTagLapseType.TURN_END, turnCount, sourceMove, sourceId);
+  }
+
+  onAdd(pokemon: Pokemon): void {}
+
+  onRemove(pokemon: Pokemon): void {}
+
+  lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
+    const ret = super.lapse(pokemon, lapseType);
+    if (!ret) {
+      pokemon.removeTag(BattlerTagType.TRAPPED);
+    }
+    return ret;
+  }
+
+}
 /**
  * Retrieves a {@linkcode BattlerTag} based on the provided tag type, turn count, source move, and source ID.
  * @param sourceId - The ID of the pokemon adding the tag
@@ -2954,6 +2972,8 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: number, source
       return new TelekinesisTag(sourceMove);
     case BattlerTagType.POWER_TRICK:
       return new PowerTrickTag(sourceMove, sourceId);
+    case BattlerTagType.TIMED_TRAP:
+      return new TimedTrap(turnCount, sourceMove, sourceId);
     case BattlerTagType.NONE:
     default:
       return new BattlerTag(tagType, BattlerTagLapseType.CUSTOM, turnCount, sourceMove, sourceId);
