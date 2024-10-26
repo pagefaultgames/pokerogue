@@ -103,7 +103,7 @@ fetch("/manifest.json")
     game["manifest"] = jsonResponse.manifest;
   }).catch(() => {
     // Manifest not found (likely local build)
-    startGame();
+    // startGame();
   });
 
 export default game;
