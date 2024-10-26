@@ -4,7 +4,6 @@ import { Species } from "#enums/species";
 import GameManager from "#test/utils/gameManager";
 import Phase from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import { SPLASH_ONLY } from "../utils/testUtils";
 import { BattleEndPhase } from "#app/phases/battle-end-phase";
 import { TempCritBoosterModifier } from "#app/modifier/modifier";
 import { Mode } from "#app/ui/ui";
@@ -34,7 +33,7 @@ describe("Items - Dire Hit", () => {
 
     game.override
       .enemySpecies(Species.MAGIKARP)
-      .enemyMoveset(SPLASH_ONLY)
+      .enemyMoveset(Moves.SPLASH)
       .moveset([ Moves.POUND ])
       .startingHeldItems([{ name: "DIRE_HIT" }])
       .battleType("single")

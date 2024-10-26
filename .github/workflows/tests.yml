@@ -15,91 +15,34 @@ on:
     types: [checks_requested]
 
 jobs:
-  run-misc-tests:  # Define a job named "run-tests"
-    name: Run misc tests  # Human-readable name for the job
-    runs-on: ubuntu-latest  # Specify the latest Ubuntu runner for the job
-
-    steps:
-      - name: Check out Git repository  # Step to check out the repository
-        uses: actions/checkout@v4  # Use the checkout action version 4
-
-      - name: Set up Node.js  # Step to set up Node.js environment
-        uses: actions/setup-node@v4  # Use the setup-node action version 4
-        with:
-          node-version: 20  # Specify Node.js version 20
-
-      - name: Install Node.js dependencies  # Step to install Node.js dependencies
-        run: npm ci  # Use 'npm ci' to install dependencies
-
-      - name: pre-test # pre-test to check overrides
-        run: npx vitest run --project pre 
-      - name: test misc
-        run: npx vitest --project misc
-
-  run-abilities-tests:
-    name: Run abilities tests
-    runs-on: ubuntu-latest 
+  pre-test:
+    name: Run Pre-test
+    runs-on: ubuntu-latest
     steps:
       - name: Check out Git repository
         uses: actions/checkout@v4
+        with:
+          submodules: 'recursive'
+          path: tests-action
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
       - name: Install Node.js dependencies
+        working-directory: tests-action
         run: npm ci
-      - name: pre-test
-        run: npx vitest run --project pre 
-      - name: test abilities
-        run: npx vitest --project abilities
+      - name: Run Pre-test
+        working-directory: tests-action
+        run: npx vitest run --project pre ${{ !runner.debug && '--silent' || '' }}
 
-  run-items-tests:
-    name: Run items tests
-    runs-on: ubuntu-latest 
-    steps:
-      - name: Check out Git repository
-        uses: actions/checkout@v4
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-      - name: Install Node.js dependencies
-        run: npm ci
-      - name: pre-test
-        run: npx vitest run --project pre 
-      - name: test items
-        run: npx vitest --project items
-
-  run-moves-tests:
-    name: Run moves tests
-    runs-on: ubuntu-latest 
-    steps:
-      - name: Check out Git repository
-        uses: actions/checkout@v4
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-      - name: Install Node.js dependencies
-        run: npm ci
-      - name: pre-test
-        run: npx vitest run --project pre 
-      - name: test moves
-        run: npx vitest --project moves
-
-  run-battle-tests:
-    name: Run battle tests
-    runs-on: ubuntu-latest 
-    steps:
-      - name: Check out Git repository
-        uses: actions/checkout@v4
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-      - name: Install Node.js dependencies
-        run: npm ci
-      - name: pre-test
-        run: npx vitest run --project pre 
-      - name: test battle
-        run: npx vitest --project battle
+  run-tests:
+    name: Run Tests 
+    needs: [pre-test]
+    strategy:
+      matrix:
+        shard: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+    uses: ./.github/workflows/test-shard-template.yml
+    with:
+      project: main
+      shard: ${{ matrix.shard }}
+      totalShards: 10

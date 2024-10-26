@@ -5,7 +5,6 @@ import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/utils/gameManager";
-import { SPLASH_ONLY } from "#test/utils/testUtils";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
@@ -26,12 +25,12 @@ describe("Moves - Tailwind", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override.battleType("double");
-    game.override.moveset([Moves.TAILWIND, Moves.SPLASH, Moves.PETAL_BLIZZARD, Moves.SANDSTORM]);
-    game.override.enemyMoveset(SPLASH_ONLY);
+    game.override.moveset([ Moves.TAILWIND, Moves.SPLASH, Moves.PETAL_BLIZZARD, Moves.SANDSTORM ]);
+    game.override.enemyMoveset(Moves.SPLASH);
   });
 
   it("doubles the Speed stat of the Pokemons on its side", async () => {
-    await game.startBattle([Species.MAGIKARP, Species.MEOWTH]);
+    await game.startBattle([ Species.MAGIKARP, Species.MEOWTH ]);
     const magikarp = game.scene.getPlayerField()[0];
     const meowth = game.scene.getPlayerField()[1];
 
@@ -54,7 +53,7 @@ describe("Moves - Tailwind", () => {
   it("lasts for 4 turns", async () => {
     game.override.battleType("single");
 
-    await game.startBattle([Species.MAGIKARP]);
+    await game.startBattle([ Species.MAGIKARP ]);
 
     game.move.select(Moves.TAILWIND);
     await game.toNextTurn();
@@ -77,7 +76,7 @@ describe("Moves - Tailwind", () => {
   it("does not affect the opposing side", async () => {
     game.override.battleType("single");
 
-    await game.startBattle([Species.MAGIKARP]);
+    await game.startBattle([ Species.MAGIKARP ]);
 
     const ally = game.scene.getPlayerPokemon()!;
     const enemy = game.scene.getEnemyPokemon()!;

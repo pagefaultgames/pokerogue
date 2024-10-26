@@ -1,6 +1,6 @@
-import BattleScene from "#app/battle-scene.js";
-import { TrainerSlot } from "#app/data/trainer-config.js";
-import { Phase } from "#app/phase.js";
+import BattleScene from "#app/battle-scene";
+import { TrainerSlot } from "#app/data/trainer-config";
+import { Phase } from "#app/phase";
 
 export class BattlePhase extends Phase {
   constructor(scene: BattleScene) {
@@ -12,7 +12,7 @@ export class BattlePhase extends Phase {
     const tintSprites = this.scene.currentBattle.trainer?.getTintSprites()!; // TODO: is this bang correct?
     for (let i = 0; i < sprites.length; i++) {
       const visible = !trainerSlot || !i === (trainerSlot === TrainerSlot.TRAINER) || sprites.length < 2;
-      [sprites[i], tintSprites[i]].map(sprite => {
+      [ sprites[i], tintSprites[i] ].map(sprite => {
         if (visible) {
           sprite.x = trainerSlot || sprites.length < 2 ? 0 : i ? 16 : -16;
         }

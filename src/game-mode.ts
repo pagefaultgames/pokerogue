@@ -29,7 +29,12 @@ interface GameModeConfig {
   hasRandomBosses?: boolean;
   isSplicedOnly?: boolean;
   isChallenge?: boolean;
+  hasMysteryEncounters?: boolean;
 }
+
+// Describes min and max waves for MEs in specific game modes
+export const CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES: [number, number] = [ 10, 180 ];
+export const CHALLENGE_MODE_MYSTERY_ENCOUNTER_WAVES: [number, number] = [ 10, 180 ];
 
 export class GameMode implements GameModeConfig {
   public modeId: GameModes;
@@ -45,6 +50,9 @@ export class GameMode implements GameModeConfig {
   public isChallenge: boolean;
   public challenges: Challenge[];
   public battleConfig: FixedBattleConfigs;
+  public hasMysteryEncounters: boolean;
+  public minMysteryEncounterWave: number;
+  public maxMysteryEncounterWave: number;
 
   constructor(modeId: GameModes, config: GameModeConfig, battleConfig?: FixedBattleConfigs) {
     this.modeId = modeId;
@@ -84,10 +92,10 @@ export class GameMode implements GameModeConfig {
       return Overrides.STARTING_LEVEL_OVERRIDE;
     }
     switch (this.modeId) {
-    case GameModes.DAILY:
-      return 20;
-    default:
-      return 5;
+      case GameModes.DAILY:
+        return 20;
+      default:
+        return 5;
     }
   }
 
@@ -109,19 +117,19 @@ export class GameMode implements GameModeConfig {
    */
   getStartingBiome(scene: BattleScene): Biome {
     switch (this.modeId) {
-    case GameModes.DAILY:
-      return scene.generateRandomBiome(this.getWaveForDifficulty(1));
-    default:
-      return Overrides.STARTING_BIOME_OVERRIDE || Biome.TOWN;
+      case GameModes.DAILY:
+        return scene.generateRandomBiome(this.getWaveForDifficulty(1));
+      default:
+        return Overrides.STARTING_BIOME_OVERRIDE || Biome.TOWN;
     }
   }
 
   getWaveForDifficulty(waveIndex: integer, ignoreCurveChanges: boolean = false): integer {
     switch (this.modeId) {
-    case GameModes.DAILY:
-      return waveIndex + 30 + (!ignoreCurveChanges ? Math.floor(waveIndex / 5) : 0);
-    default:
-      return waveIndex;
+      case GameModes.DAILY:
+        return waveIndex + 30 + (!ignoreCurveChanges ? Math.floor(waveIndex / 5) : 0);
+      default:
+        return waveIndex;
     }
   }
 
@@ -178,10 +186,10 @@ export class GameMode implements GameModeConfig {
 
   isTrainerBoss(waveIndex: integer, biomeType: Biome, offsetGym: boolean): boolean {
     switch (this.modeId) {
-    case GameModes.DAILY:
-      return waveIndex > 10 && waveIndex < 50 && !(waveIndex % 10);
-    default:
-      return (waveIndex % 30) === (offsetGym ? 0 : 20) && (biomeType !== Biome.END || this.isClassic || this.isWaveFinal(waveIndex));
+      case GameModes.DAILY:
+        return waveIndex > 10 && waveIndex < 50 && !(waveIndex % 10);
+      default:
+        return (waveIndex % 30) === (offsetGym ? 0 : 20) && (biomeType !== Biome.END || this.isClassic || this.isWaveFinal(waveIndex));
     }
   }
 
@@ -203,14 +211,14 @@ export class GameMode implements GameModeConfig {
    */
   isWaveFinal(waveIndex: integer, modeId: GameModes = this.modeId): boolean {
     switch (modeId) {
-    case GameModes.CLASSIC:
-    case GameModes.CHALLENGE:
-      return waveIndex === 200;
-    case GameModes.ENDLESS:
-    case GameModes.SPLICED_ENDLESS:
-      return !(waveIndex % 250);
-    case GameModes.DAILY:
-      return waveIndex === 50;
+      case GameModes.CLASSIC:
+      case GameModes.CHALLENGE:
+        return waveIndex === 200;
+      case GameModes.ENDLESS:
+      case GameModes.SPLICED_ENDLESS:
+        return !(waveIndex % 250);
+      case GameModes.DAILY:
+        return waveIndex === 50;
     }
   }
 
@@ -260,7 +268,6 @@ export class GameMode implements GameModeConfig {
   isFixedBattle(waveIndex: integer): boolean {
     const dummyConfig = new FixedBattleConfig();
     return this.battleConfig.hasOwnProperty(waveIndex) || applyChallenges(this, ChallengeType.FIXED_BATTLES, waveIndex, dummyConfig);
-
   }
 
   /**
@@ -280,70 +287,84 @@ export class GameMode implements GameModeConfig {
 
   getClearScoreBonus(): integer {
     switch (this.modeId) {
-    case GameModes.CLASSIC:
-    case GameModes.CHALLENGE:
-      return 5000;
-    case GameModes.DAILY:
-      return 2500;
-    default:
-      return 0;
+      case GameModes.CLASSIC:
+      case GameModes.CHALLENGE:
+        return 5000;
+      case GameModes.DAILY:
+        return 2500;
+      default:
+        return 0;
     }
   }
 
   getEnemyModifierChance(isBoss: boolean): integer {
     switch (this.modeId) {
-    case GameModes.CLASSIC:
-    case GameModes.CHALLENGE:
-    case GameModes.DAILY:
-      return !isBoss ? 18 : 6;
-    case GameModes.ENDLESS:
-    case GameModes.SPLICED_ENDLESS:
-      return !isBoss ? 12 : 4;
+      case GameModes.CLASSIC:
+      case GameModes.CHALLENGE:
+      case GameModes.DAILY:
+        return !isBoss ? 18 : 6;
+      case GameModes.ENDLESS:
+      case GameModes.SPLICED_ENDLESS:
+        return !isBoss ? 12 : 4;
     }
   }
 
   getName(): string {
     switch (this.modeId) {
-    case GameModes.CLASSIC:
-      return i18next.t("gameMode:classic");
-    case GameModes.ENDLESS:
-      return i18next.t("gameMode:endless");
-    case GameModes.SPLICED_ENDLESS:
-      return i18next.t("gameMode:endlessSpliced");
-    case GameModes.DAILY:
-      return i18next.t("gameMode:dailyRun");
-    case GameModes.CHALLENGE:
-      return i18next.t("gameMode:challenge");
+      case GameModes.CLASSIC:
+        return i18next.t("gameMode:classic");
+      case GameModes.ENDLESS:
+        return i18next.t("gameMode:endless");
+      case GameModes.SPLICED_ENDLESS:
+        return i18next.t("gameMode:endlessSpliced");
+      case GameModes.DAILY:
+        return i18next.t("gameMode:dailyRun");
+      case GameModes.CHALLENGE:
+        return i18next.t("gameMode:challenge");
+    }
+  }
+
+  /**
+   * Returns the wave range where MEs can spawn for the game mode [min, max]
+   */
+  getMysteryEncounterLegalWaves(): [number, number] {
+    switch (this.modeId) {
+      default:
+        return [ 0, 0 ];
+      case GameModes.CLASSIC:
+        return CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES;
+      case GameModes.CHALLENGE:
+        return CHALLENGE_MODE_MYSTERY_ENCOUNTER_WAVES;
     }
   }
 
   static getModeName(modeId: GameModes): string {
     switch (modeId) {
-    case GameModes.CLASSIC:
-      return i18next.t("gameMode:classic");
-    case GameModes.ENDLESS:
-      return i18next.t("gameMode:endless");
-    case GameModes.SPLICED_ENDLESS:
-      return i18next.t("gameMode:endlessSpliced");
-    case GameModes.DAILY:
-      return i18next.t("gameMode:dailyRun");
-    case GameModes.CHALLENGE:
-      return i18next.t("gameMode:challenge");
+      case GameModes.CLASSIC:
+        return i18next.t("gameMode:classic");
+      case GameModes.ENDLESS:
+        return i18next.t("gameMode:endless");
+      case GameModes.SPLICED_ENDLESS:
+        return i18next.t("gameMode:endlessSpliced");
+      case GameModes.DAILY:
+        return i18next.t("gameMode:dailyRun");
+      case GameModes.CHALLENGE:
+        return i18next.t("gameMode:challenge");
     }
   }
 }
 
 export function getGameMode(gameMode: GameModes): GameMode {
   switch (gameMode) {
-  case GameModes.CLASSIC:
-    return new GameMode(GameModes.CLASSIC, { isClassic: true, hasTrainers: true }, classicFixedBattles);
-  case GameModes.ENDLESS:
-    return new GameMode(GameModes.ENDLESS, { isEndless: true, hasShortBiomes: true, hasRandomBosses: true });
-  case GameModes.SPLICED_ENDLESS:
-    return new GameMode(GameModes.SPLICED_ENDLESS, { isEndless: true, hasShortBiomes: true, hasRandomBosses: true, isSplicedOnly: true });
-  case GameModes.DAILY:
-    return new GameMode(GameModes.DAILY, { isDaily: true, hasTrainers: true, hasNoShop: true });
-  case GameModes.CHALLENGE:
-    return new GameMode(GameModes.CHALLENGE, { isClassic: true, hasTrainers: true, isChallenge: true }, classicFixedBattles);
+    case GameModes.CLASSIC:
+      return new GameMode(GameModes.CLASSIC, { isClassic: true, hasTrainers: true, hasMysteryEncounters: true }, classicFixedBattles);
+    case GameModes.ENDLESS:
+      return new GameMode(GameModes.ENDLESS, { isEndless: true, hasShortBiomes: true, hasRandomBosses: true });
+    case GameModes.SPLICED_ENDLESS:
+      return new GameMode(GameModes.SPLICED_ENDLESS, { isEndless: true, hasShortBiomes: true, hasRandomBosses: true, isSplicedOnly: true });
+    case GameModes.DAILY:
+      return new GameMode(GameModes.DAILY, { isDaily: true, hasTrainers: true, hasNoShop: true });
+    case GameModes.CHALLENGE:
+      return new GameMode(GameModes.CHALLENGE, { isClassic: true, hasTrainers: true, isChallenge: true, hasMysteryEncounters: true }, classicFixedBattles);
   }
 }

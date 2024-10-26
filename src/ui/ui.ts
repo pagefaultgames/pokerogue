@@ -34,7 +34,6 @@ import SaveSlotSelectUiHandler from "./save-slot-select-ui-handler";
 import TitleUiHandler from "./title-ui-handler";
 import SavingIconHandler from "./saving-icon-handler";
 import UnavailableModalUiHandler from "./unavailable-modal-ui-handler";
-import OutdatedModalUiHandler from "./outdated-modal-ui-handler";
 import SessionReloadModalUiHandler from "./session-reload-modal-ui-handler";
 import { Button } from "#enums/buttons";
 import i18next from "i18next";
@@ -52,6 +51,8 @@ import RunInfoUiHandler from "./run-info-ui-handler";
 import EggSummaryUiHandler from "./egg-summary-ui-handler";
 import TestDialogueUiHandler from "#app/ui/test-dialogue-ui-handler";
 import AutoCompleteUiHandler from "./autocomplete-ui-handler";
+import { Device } from "#enums/devices";
+import MysteryEncounterUiHandler from "./mystery-encounter-ui-handler";
 
 export enum Mode {
   MESSAGE,
@@ -88,7 +89,6 @@ export enum Mode {
   LOADING,
   SESSION_RELOAD,
   UNAVAILABLE,
-  OUTDATED,
   CHALLENGE_SELECT,
   RENAME_POKEMON,
   RUN_HISTORY,
@@ -96,6 +96,7 @@ export enum Mode {
   TEST_DIALOGUE,
   AUTO_COMPLETE,
   ADMIN,
+  MYSTERY_ENCOUNTER
 }
 
 const transitionModes = [
@@ -131,11 +132,12 @@ const noTransitionModes = [
   Mode.LOADING,
   Mode.SESSION_RELOAD,
   Mode.UNAVAILABLE,
-  Mode.OUTDATED,
   Mode.RENAME_POKEMON,
   Mode.TEST_DIALOGUE,
   Mode.AUTO_COMPLETE,
   Mode.ADMIN,
+  Mode.MYSTERY_ENCOUNTER,
+  Mode.RUN_INFO
 ];
 
 export default class UI extends Phaser.GameObjects.Container {
@@ -195,7 +197,6 @@ export default class UI extends Phaser.GameObjects.Container {
       new LoadingModalUiHandler(scene),
       new SessionReloadModalUiHandler(scene),
       new UnavailableModalUiHandler(scene),
-      new OutdatedModalUiHandler(scene),
       new GameChallengesUiHandler(scene),
       new RenameFormUiHandler(scene),
       new RunHistoryUiHandler(scene),
@@ -203,6 +204,7 @@ export default class UI extends Phaser.GameObjects.Container {
       new TestDialogueUiHandler(scene, Mode.TEST_DIALOGUE),
       new AutoCompleteUiHandler(scene),
       new AdminUiHandler(scene),
+      new MysteryEncounterUiHandler(scene),
     ];
   }
 
@@ -244,7 +246,7 @@ export default class UI extends Phaser.GameObjects.Container {
 
     this.tooltipContent = addTextObject(this.scene, 6, 16, "", TextStyle.TOOLTIP_CONTENT);
     this.tooltipContent.setName("text-tooltip-content");
-    this.tooltipContent.setWordWrapWidth(696);
+    this.tooltipContent.setWordWrapWidth(850);
 
     this.tooltipContainer.add(this.tooltipBg);
     this.tooltipContainer.add(this.tooltipTitle);
@@ -267,7 +269,7 @@ export default class UI extends Phaser.GameObjects.Container {
     }
 
     const battleScene = this.scene as BattleScene;
-    if ([Mode.CONFIRM, Mode.COMMAND, Mode.FIGHT, Mode.MESSAGE].includes(this.mode)) {
+    if ([ Mode.CONFIRM, Mode.COMMAND, Mode.FIGHT, Mode.MESSAGE ].includes(this.mode)) {
       battleScene?.processInfoButton(pressed);
       return true;
     }
@@ -287,6 +289,12 @@ export default class UI extends Phaser.GameObjects.Container {
     }
 
     return handler.processInput(button);
+  }
+
+  showTextPromise(text: string, callbackDelay: number = 0, prompt: boolean = true, promptDelay?: integer | null): Promise<void> {
+    return new Promise<void>(resolve => {
+      this.showText(text ?? "", null, () => resolve(), callbackDelay, prompt, promptDelay);
+    });
   }
 
   showText(text: string, delay?: integer | null, callback?: Function | null, callbackDelay?: integer | null, prompt?: boolean | null, promptDelay?: integer | null): void {
@@ -362,19 +370,27 @@ export default class UI extends Phaser.GameObjects.Container {
     return false;
   }
 
+  getTooltip(): { visible: boolean; title: string; content: string } {
+    return { visible: this.tooltipContainer.visible, title: this.tooltipTitle.text, content: this.tooltipContent.text };
+  }
+
   showTooltip(title: string, content: string, overlap?: boolean): void {
     this.tooltipContainer.setVisible(true);
-    this.tooltipTitle.setText(title || "");
-    const wrappedContent = this.tooltipContent.runWordWrap(content);
-    this.tooltipContent.setText(wrappedContent);
-    this.tooltipContent.y = title ? 16 : 4;
-    this.tooltipBg.width = Math.min(Math.max(this.tooltipTitle.displayWidth, this.tooltipContent.displayWidth) + 12, 684);
-    this.tooltipBg.height = (title ? 31 : 19) + 10.5 * (wrappedContent.split("\n").length - 1);
+    this.editTooltip(title, content);
     if (overlap) {
       (this.scene as BattleScene).uiContainer.moveAbove(this.tooltipContainer, this);
     } else {
       (this.scene as BattleScene).uiContainer.moveBelow(this.tooltipContainer, this);
     }
+  }
+
+  editTooltip(title: string, content: string): void {
+    this.tooltipTitle.setText(title || "");
+    const wrappedContent = this.tooltipContent.runWordWrap(content);
+    this.tooltipContent.setText(wrappedContent);
+    this.tooltipContent.y = title ? 16 : 4;
+    this.tooltipBg.width = Math.min(Math.max(this.tooltipTitle.displayWidth, this.tooltipContent.displayWidth) + 12, 838);
+    this.tooltipBg.height = (title ? 31 : 19) + 10.5 * (wrappedContent.split("\n").length - 1);
   }
 
   hideTooltip(): void {
@@ -384,8 +400,12 @@ export default class UI extends Phaser.GameObjects.Container {
 
   update(): void {
     if (this.tooltipContainer.visible) {
-      const reverse = this.scene.game.input.mousePointer && this.scene.game.input.mousePointer.x >= this.scene.game.canvas.width - this.tooltipBg.width * 6 - 12;
-      this.tooltipContainer.setPosition(!reverse ? this.scene.game.input.mousePointer!.x / 6 + 2 : this.scene.game.input.mousePointer!.x / 6 - this.tooltipBg.width - 2, this.scene.game.input.mousePointer!.y / 6 + 2); // TODO: are these bangs correct?
+      const xReverse = this.scene.game.input.mousePointer && this.scene.game.input.mousePointer.x >= this.scene.game.canvas.width - this.tooltipBg.width * 6 - 12;
+      const yReverse = this.scene.game.input.mousePointer && this.scene.game.input.mousePointer.y >= this.scene.game.canvas.height - this.tooltipBg.height * 6 - 12;
+      this.tooltipContainer.setPosition(
+        !xReverse ? this.scene.game.input.mousePointer!.x / 6 + 2 : this.scene.game.input.mousePointer!.x / 6 - this.tooltipBg.width - 2,
+        !yReverse ? this.scene.game.input.mousePointer!.y / 6 + 2 : this.scene.game.input.mousePointer!.y / 6 - this.tooltipBg.height - 2,
+      );
     }
   }
 
@@ -559,5 +579,21 @@ export default class UI extends Phaser.GameObjects.Container {
 
   public getModeChain(): Mode[] {
     return this.modeChain;
+  }
+
+  /**
+   * getGamepadType - returns the type of gamepad being used
+   * inputMethod could be "keyboard" or "touch" or "gamepad"
+   * if inputMethod is "keyboard" or "touch", then the inputMethod is returned
+   * if inputMethod is "gamepad", then the gamepad type is returned it could be "xbox" or "dualshock"
+   * @returns gamepad type
+   */
+  public getGamepadType(): string {
+    const scene = this.scene as BattleScene;
+    if (scene.inputMethod === "gamepad") {
+      return scene.inputController.getConfig(scene.inputController.selectedDevice[Device.GAMEPAD]).padType;
+    } else {
+      return scene.inputMethod;
+    }
   }
 }

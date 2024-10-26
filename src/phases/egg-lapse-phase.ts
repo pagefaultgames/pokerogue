@@ -17,35 +17,38 @@ import { EggHatchData } from "#app/data/egg-hatch-data";
 export class EggLapsePhase extends Phase {
 
   private eggHatchData: EggHatchData[] = [];
-  private readonly minEggsToPromptSkip: number = 5;
+  private readonly minEggsToSkip: number = 2;
   constructor(scene: BattleScene) {
     super(scene);
   }
 
   start() {
     super.start();
-
     const eggsToHatch: Egg[] = this.scene.gameData.eggs.filter((egg: Egg) => {
       return Overrides.EGG_IMMEDIATE_HATCH_OVERRIDE ? true : --egg.hatchWaves < 1;
     });
     const eggsToHatchCount: number = eggsToHatch.length;
-    this.eggHatchData= [];
+    this.eggHatchData = [];
 
     if (eggsToHatchCount > 0) {
-
-      if (eggsToHatchCount >= this.minEggsToPromptSkip) {
+      if (eggsToHatchCount >= this.minEggsToSkip && this.scene.eggSkipPreference === 1) {
         this.scene.ui.showText(i18next.t("battle:eggHatching"), 0, () => {
-          // show prompt for skip
+          // show prompt for skip, blocking inputs for 1 second
           this.scene.ui.showText(i18next.t("battle:eggSkipPrompt"), 0);
           this.scene.ui.setModeWithoutClear(Mode.CONFIRM, () => {
             this.hatchEggsSkipped(eggsToHatch);
             this.showSummary();
           }, () => {
             this.hatchEggsRegular(eggsToHatch);
-            this.showSummary();
-          }
+            this.end();
+          },
+          null, null, null, 1000, true
           );
         }, 100, true);
+      } else if (eggsToHatchCount >= this.minEggsToSkip && this.scene.eggSkipPreference === 2) {
+        this.scene.queueMessage(i18next.t("battle:eggHatching"));
+        this.hatchEggsSkipped(eggsToHatch);
+        this.showSummary();
       } else {
         // regular hatches, no summary
         this.scene.queueMessage(i18next.t("battle:eggHatching"));

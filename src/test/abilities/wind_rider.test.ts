@@ -3,7 +3,6 @@ import GameManager from "#test/utils/gameManager";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
-import { SPLASH_ONLY } from "#test/utils/testUtils";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
@@ -27,8 +26,8 @@ describe("Abilities - Wind Rider", () => {
       .battleType("single")
       .enemySpecies(Species.SHIFTRY)
       .enemyAbility(Abilities.WIND_RIDER)
-      .moveset([Moves.TAILWIND, Moves.SPLASH, Moves.PETAL_BLIZZARD, Moves.SANDSTORM])
-      .enemyMoveset(SPLASH_ONLY);
+      .moveset([ Moves.TAILWIND, Moves.SPLASH, Moves.PETAL_BLIZZARD, Moves.SANDSTORM ])
+      .enemyMoveset(Moves.SPLASH);
   });
 
   it("takes no damage from wind moves and its ATK stat stage is raised by 1 when hit by one", async () => {
@@ -50,7 +49,7 @@ describe("Abilities - Wind Rider", () => {
       .enemySpecies(Species.MAGIKARP)
       .ability(Abilities.WIND_RIDER);
 
-    await game.classicMode.startBattle([Species.SHIFTRY]);
+    await game.classicMode.startBattle([ Species.SHIFTRY ]);
     const shiftry = game.scene.getPlayerPokemon()!;
 
     expect(shiftry.getStatStage(Stat.ATK)).toBe(0);
@@ -67,7 +66,7 @@ describe("Abilities - Wind Rider", () => {
       .enemySpecies(Species.MAGIKARP)
       .ability(Abilities.WIND_RIDER);
 
-    await game.classicMode.startBattle([Species.SHIFTRY]);
+    await game.classicMode.startBattle([ Species.SHIFTRY ]);
     const magikarp = game.scene.getEnemyPokemon()!;
     const shiftry = game.scene.getPlayerPokemon()!;
 
@@ -87,7 +86,7 @@ describe("Abilities - Wind Rider", () => {
       .enemySpecies(Species.MAGIKARP)
       .ability(Abilities.WIND_RIDER);
 
-    await game.classicMode.startBattle([Species.SHIFTRY]);
+    await game.classicMode.startBattle([ Species.SHIFTRY ]);
     const magikarp = game.scene.getEnemyPokemon()!;
     const shiftry = game.scene.getPlayerPokemon()!;
 
@@ -105,7 +104,7 @@ describe("Abilities - Wind Rider", () => {
   it("does not interact with Sandstorm", async () => {
     game.override.enemySpecies(Species.MAGIKARP);
 
-    await game.classicMode.startBattle([Species.SHIFTRY]);
+    await game.classicMode.startBattle([ Species.SHIFTRY ]);
     const shiftry = game.scene.getPlayerPokemon()!;
 
     expect(shiftry.getStatStage(Stat.ATK)).toBe(0);

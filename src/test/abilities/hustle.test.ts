@@ -4,7 +4,6 @@ import { Stat } from "#app/enums/stat";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/utils/gameManager";
-import { SPLASH_ONLY } from "#test/utils/testUtils";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -29,13 +28,13 @@ describe("Abilities - Hustle", () => {
       .moveset([ Moves.TACKLE, Moves.GIGA_DRAIN, Moves.FISSURE ])
       .disableCrits()
       .battleType("single")
-      .enemyMoveset(SPLASH_ONLY)
+      .enemyMoveset(Moves.SPLASH)
       .enemySpecies(Species.SHUCKLE)
       .enemyAbility(Abilities.BALL_FETCH);
   });
 
   it("increases the user's Attack stat by 50%", async () => {
-    await game.classicMode.startBattle([Species.PIKACHU]);
+    await game.classicMode.startBattle([ Species.PIKACHU ]);
     const pikachu = game.scene.getPlayerPokemon()!;
     const atk = pikachu.stats[Stat.ATK];
 
@@ -49,7 +48,7 @@ describe("Abilities - Hustle", () => {
   });
 
   it("lowers the accuracy of the user's physical moves by 20%", async () => {
-    await game.classicMode.startBattle([Species.PIKACHU]);
+    await game.classicMode.startBattle([ Species.PIKACHU ]);
     const pikachu = game.scene.getPlayerPokemon()!;
 
     vi.spyOn(pikachu, "getAccuracyMultiplier");
@@ -61,7 +60,7 @@ describe("Abilities - Hustle", () => {
   });
 
   it("does not affect non-physical moves", async () => {
-    await game.classicMode.startBattle([Species.PIKACHU]);
+    await game.classicMode.startBattle([ Species.PIKACHU ]);
     const pikachu = game.scene.getPlayerPokemon()!;
     const spatk = pikachu.stats[Stat.SPATK];
 
@@ -79,7 +78,7 @@ describe("Abilities - Hustle", () => {
     game.override.startingLevel(100);
     game.override.enemyLevel(30);
 
-    await game.classicMode.startBattle([Species.PIKACHU]);
+    await game.classicMode.startBattle([ Species.PIKACHU ]);
     const pikachu = game.scene.getPlayerPokemon()!;
     const enemyPokemon = game.scene.getEnemyPokemon()!;
 

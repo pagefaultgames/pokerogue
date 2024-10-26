@@ -4,7 +4,6 @@ import { Species } from "#enums/species";
 import GameManager from "#test/utils/gameManager";
 import Phase from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import { SPLASH_ONLY } from "../utils/testUtils";
 
 describe("Items - Scope Lens", () => {
   let phaserGame: Phaser.Game;
@@ -25,7 +24,7 @@ describe("Items - Scope Lens", () => {
 
     game.override
       .enemySpecies(Species.MAGIKARP)
-      .enemyMoveset(SPLASH_ONLY)
+      .enemyMoveset(Moves.SPLASH)
       .moveset([ Moves.POUND ])
       .startingHeldItems([{ name: "SCOPE_LENS" }])
       .battleType("single")

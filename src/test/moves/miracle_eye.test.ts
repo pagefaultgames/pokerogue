@@ -5,7 +5,6 @@ import { MoveEffectPhase } from "#app/phases/move-effect-phase";
 import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import { SPLASH_ONLY } from "../utils/testUtils";
 
 describe("Moves - Miracle Eye", () => {
   let phaserGame: Phaser.Game;
@@ -26,10 +25,10 @@ describe("Moves - Miracle Eye", () => {
     game.override
       .disableCrits()
       .enemySpecies(Species.UMBREON)
-      .enemyMoveset(SPLASH_ONLY)
+      .enemyMoveset(Moves.SPLASH)
       .enemyLevel(5)
       .starterSpecies(Species.MAGIKARP)
-      .moveset([Moves.MIRACLE_EYE, Moves.CONFUSION]);
+      .moveset([ Moves.MIRACLE_EYE, Moves.CONFUSION ]);
   });
 
   it("should allow Psychic moves to hit Dark types", async () => {
@@ -44,7 +43,7 @@ describe("Moves - Miracle Eye", () => {
     game.move.select(Moves.MIRACLE_EYE);
     await game.toNextTurn();
     game.move.select(Moves.CONFUSION);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY ]);
     await game.phaseInterceptor.to(MoveEffectPhase);
 
     expect(enemy.hp).toBeLessThan(enemy.getMaxHp());
