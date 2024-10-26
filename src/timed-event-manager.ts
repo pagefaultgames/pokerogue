@@ -27,24 +27,13 @@ interface TimedEvent extends EventBanner {
 
 const timedEvents: TimedEvent[] = [
   {
-    name: "Egg Skip Update",
-    eventType: EventType.NO_TIMER_DISPLAY,
-    startDate: new Date(Date.UTC(2024, 8, 8, 0)),
-    endDate: new Date(Date.UTC(2024, 8, 12, 0)),
-    bannerKey: "halloween2024-event-",
-    scale: 0.21,
-    availableLangs: [ "en", "de", "it", "fr", "ja", "ko", "es", "pt-BR", "zh-CN" ]
-  },
-  {
     name: "Halloween Update",
     eventType: EventType.SHINY,
     shinyMultiplier: 2,
     friendshipMultiplier: 2,
     startDate: new Date(Date.UTC(2024, 9, 25, 0)),
     endDate: new Date(Date.UTC(2024, 10, 4, 0)),
-    bannerKey: "halloween-banner",
-    xPosition: 19,
-    yPosition: 120,
+    bannerKey: "halloween2024-event-",
     scale: 0.21,
     availableLangs: [ "en", "de", "it", "fr", "ja", "ko", "es", "pt-BR", "zh-CN" ]
   }
