@@ -1,26 +1,25 @@
-import { GachaType } from "./enums/gacha-types";
-import { getBiomeHasProps } from "./field/arena";
-import CacheBustedLoaderPlugin from "./plugins/cache-busted-loader-plugin";
-import { SceneBase } from "./scene-base";
-import { WindowVariant, getWindowVariantSuffix } from "./ui/ui-theme";
-import { isMobile } from "./touch-controls";
-import * as Utils from "./utils";
-import { initI18n } from "./plugins/i18n";
-import { initPokemonPrevolutions } from "#app/data/pokemon-evolutions";
-import { initBiomes } from "#app/data/biomes";
-import { initEggMoves } from "#app/data/egg-moves";
+import { GachaType } from "#enums/gacha-types";
+import { getBiomeHasProps } from "#app/field/arena";
+import CacheBustedLoaderPlugin from "#app/plugins/cache-busted-loader-plugin";
+import { SceneBase } from "#app/scene-base";
+import { WindowVariant, getWindowVariantSuffix } from "#app/ui/ui-theme";
+import { isMobile } from "#app/touch-controls";
+import * as Utils from "#app/utils";
+import { initPokemonPrevolutions } from "#app/data/balance/pokemon-evolutions";
+import { initBiomes } from "#app/data/balance/biomes";
+import { initEggMoves } from "#app/data/balance/egg-moves";
 import { initPokemonForms } from "#app/data/pokemon-forms";
 import { initSpecies } from "#app/data/pokemon-species";
 import { initMoves } from "#app/data/move";
 import { initAbilities } from "#app/data/ability";
 import { initAchievements } from "#app/system/achv";
 import { initTrainerTypeDialogue } from "#app/data/dialogue";
-import { initChallenges } from "./data/challenge";
+import { initChallenges } from "#app/data/challenge";
 import i18next from "i18next";
-import { initStatsKeys } from "./ui/game-stats-ui-handler";
-import { initVouchers } from "./system/voucher";
+import { initStatsKeys } from "#app/ui/game-stats-ui-handler";
+import { initVouchers } from "#app/system/voucher";
 import { Biome } from "#enums/biome";
-import {initMysteryEncounters} from "#app/data/mystery-encounters/mystery-encounters";
+import { initMysteryEncounters } from "#app/data/mystery-encounters/mystery-encounters";
 
 export class LoadingScene extends SceneBase {
   public static readonly KEY = "loading";
@@ -31,7 +30,6 @@ export class LoadingScene extends SceneBase {
     super(LoadingScene.KEY);
 
     Phaser.Plugins.PluginCache.register("Loader", CacheBustedLoaderPlugin, "load");
-    initI18n();
   }
 
   preload() {
@@ -46,6 +44,8 @@ export class LoadingScene extends SceneBase {
     this.loadAtlas("prompt", "ui");
     this.loadImage("candy", "ui");
     this.loadImage("candy_overlay", "ui");
+    this.loadImage("friendship", "ui");
+    this.loadImage("friendship_overlay", "ui");
     this.loadImage("cursor", "ui");
     this.loadImage("cursor_reverse", "ui");
     for (const wv of Utils.getEnumValues(WindowVariant)) {
@@ -165,6 +165,8 @@ export class LoadingScene extends SceneBase {
     this.loadImage("discord", "ui");
     this.loadImage("google", "ui");
     this.loadImage("settings_icon", "ui");
+    this.loadImage("link_icon", "ui");
+    this.loadImage("unlink_icon", "ui");
 
     this.loadImage("default_bg", "arenas");
     // Load arena images
@@ -242,11 +244,11 @@ export class LoadingScene extends SceneBase {
       this.loadAtlas("statuses", "");
       this.loadAtlas("types", "");
     }
-    const availableLangs = ["en", "de", "it", "fr", "ja", "ko", "es", "pt-BR", "zh-CN"];
+    const availableLangs = [ "en", "de", "it", "fr", "ja", "ko", "es", "pt-BR", "zh-CN" ];
     if (lang && availableLangs.includes(lang)) {
-      this.loadImage("egg-update_"+lang, "events");
+      this.loadImage("halloween2024-event-" + lang, "events");
     } else {
-      this.loadImage("egg-update_en", "events");
+      this.loadImage("halloween2024-event-en", "events");
     }
 
     this.loadAtlas("statuses", "");
@@ -477,18 +479,18 @@ export class LoadingScene extends SceneBase {
     this.load.on(this.LOAD_EVENTS.FILE_COMPLETE, (key: string) => {
       assetText.setText(i18next.t("menu:loadingAsset", { assetName: key }));
       switch (key) {
-      case "loading_bg":
-        bg.setTexture("loading_bg");
-        if (mobile) {
-          bg.setVisible(true);
-        }
-        break;
-      case "logo":
-        logo.setTexture("logo");
-        if (mobile) {
-          logo.setVisible(true);
-        }
-        break;
+        case "loading_bg":
+          bg.setTexture("loading_bg");
+          if (mobile) {
+            bg.setVisible(true);
+          }
+          break;
+        case "logo":
+          logo.setTexture("logo");
+          if (mobile) {
+            logo.setVisible(true);
+          }
+          break;
       }
     });
 

@@ -20,8 +20,12 @@ export class ClassicModeHelper extends GameManagerHelper {
    * @param species - Optional array of species to summon.
    * @returns A promise that resolves when the summon phase is reached.
    */
-  async runToSummon(species?: Species[]) {
+  async runToSummon(species?: Species[]): Promise<void> {
     await this.game.runToTitle();
+
+    if (this.game.override.disableShinies) {
+      this.game.override.shiny(false).enemyShiny(false);
+    }
 
     this.game.onNextPrompt("TitlePhase", Mode.TITLE, () => {
       this.game.scene.gameMode = getGameMode(GameModes.CLASSIC);
@@ -32,7 +36,7 @@ export class ClassicModeHelper extends GameManagerHelper {
     });
 
     await this.game.phaseInterceptor.run(EncounterPhase);
-    if (overrides.OPP_HELD_ITEMS_OVERRIDE.length === 0) {
+    if (overrides.OPP_HELD_ITEMS_OVERRIDE.length === 0 && this.game.override.removeEnemyStartingItems) {
       this.game.removeEnemyHeldItems();
     }
   }
@@ -42,7 +46,7 @@ export class ClassicModeHelper extends GameManagerHelper {
    * @param species - Optional array of species to start the battle with.
    * @returns A promise that resolves when the battle is started.
    */
-  async startBattle(species?: Species[]) {
+  async startBattle(species?: Species[]): Promise<void> {
     await this.runToSummon(species);
 
     if (this.game.scene.battleStyle === BattleStyle.SWITCH) {

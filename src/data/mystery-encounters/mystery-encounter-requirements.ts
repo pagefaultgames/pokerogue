@@ -5,16 +5,17 @@ import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import { TimeOfDay } from "#enums/time-of-day";
-import { Nature } from "../nature";
-import { EvolutionItem, pokemonEvolutions } from "../pokemon-evolutions";
-import { FormChangeItem, pokemonFormChanges, SpeciesFormChangeItemTrigger } from "../pokemon-forms";
-import { SpeciesFormKey } from "../pokemon-species";
-import { StatusEffect } from "../status-effect";
-import { Type } from "../type";
-import { WeatherType } from "../weather";
+import { Nature } from "#app/data/nature";
+import { EvolutionItem, pokemonEvolutions } from "#app/data/balance/pokemon-evolutions";
+import { FormChangeItem, pokemonFormChanges, SpeciesFormChangeItemTrigger } from "#app/data/pokemon-forms";
+import { StatusEffect } from "#app/data/status-effect";
+import { Type } from "#app/data/type";
+import { WeatherType } from "#app/data/weather";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { AttackTypeBoosterModifier } from "#app/modifier/modifier";
 import { AttackTypeBoosterModifierType } from "#app/modifier/modifier-type";
+import { SpeciesFormKey } from "#enums/species-form-key";
+import { allAbilities } from "#app/data/ability";
 
 export interface EncounterRequirement {
   meetsRequirement(scene: BattleScene): boolean; // Boolean to see if a requirement is met
@@ -36,31 +37,58 @@ export abstract class EncounterSceneRequirement implements EncounterRequirement 
   abstract getDialogueToken(scene: BattleScene, pokemon?: PlayerPokemon): [string, string];
 }
 
+/**
+ * Combination of multiple {@linkcode EncounterSceneRequirement | EncounterSceneRequirements} (OR/AND possible. See {@linkcode isAnd})
+ */
 export class CombinationSceneRequirement extends EncounterSceneRequirement {
-  orRequirements: EncounterSceneRequirement[];
+  /** If `true`, all requirements must be met (AND). If `false`, any requirement must be met (OR) */
+  private isAnd: boolean;
+  requirements: EncounterSceneRequirement[];
 
-  constructor(... orRequirements: EncounterSceneRequirement[]) {
+  public static Some(...requirements: EncounterSceneRequirement[]): CombinationSceneRequirement {
+    return new CombinationSceneRequirement(false, ...requirements);
+  }
+
+  public static Every(...requirements: EncounterSceneRequirement[]): CombinationSceneRequirement {
+    return new CombinationSceneRequirement(true, ...requirements);
+  }
+
+  private constructor(isAnd: boolean, ...requirements: EncounterSceneRequirement[]) {
     super();
-    this.orRequirements = orRequirements;
+    this.isAnd = isAnd;
+    this.requirements = requirements;
   }
 
+  /**
+   * Checks if all/any requirements are met (depends on {@linkcode isAnd})
+   * @param scene The {@linkcode BattleScene} to check against
+   * @returns true if all/any requirements are met (depends on {@linkcode isAnd})
+   */
   override meetsRequirement(scene: BattleScene): boolean {
-    for (const req of this.orRequirements) {
-      if (req.meetsRequirement(scene)) {
-        return true;
-      }
-    }
-    return false;
+    return this.isAnd
+      ? this.requirements.every(req => req.meetsRequirement(scene))
+      : this.requirements.some(req => req.meetsRequirement(scene));
   }
 
+  /**
+   * Retrieves a dialogue token key/value pair for the given {@linkcode EncounterSceneRequirement | requirements}.
+   * @param scene The {@linkcode BattleScene} to check against
+   * @param pokemon The {@linkcode PlayerPokemon} to check against
+   * @returns A dialogue token key/value pair
+   * @throws An {@linkcode Error} if {@linkcode isAnd} is `true` (not supported)
+   */
   override getDialogueToken(scene: BattleScene, pokemon?: PlayerPokemon): [string, string] {
-    for (const req of this.orRequirements) {
-      if (req.meetsRequirement(scene)) {
-        return req.getDialogueToken(scene, pokemon);
+    if (this.isAnd) {
+      throw new Error("Not implemented (Sorry)");
+    } else {
+      for (const req of this.requirements) {
+        if (req.meetsRequirement(scene)) {
+          return req.getDialogueToken(scene, pokemon);
+        }
       }
-    }
 
-    return this.orRequirements[0].getDialogueToken(scene, pokemon);
+      return this.requirements[0].getDialogueToken(scene, pokemon);
+    }
   }
 }
 
@@ -89,44 +117,74 @@ export abstract class EncounterPokemonRequirement implements EncounterRequiremen
   abstract getDialogueToken(scene: BattleScene, pokemon?: PlayerPokemon): [string, string];
 }
 
+/**
+ * Combination of multiple {@linkcode EncounterPokemonRequirement | EncounterPokemonRequirements} (OR/AND possible. See {@linkcode isAnd})
+ */
 export class CombinationPokemonRequirement extends EncounterPokemonRequirement {
-  orRequirements: EncounterPokemonRequirement[];
+  /** If `true`, all requirements must be met (AND). If `false`, any requirement must be met (OR) */
+  private isAnd: boolean;
+  private requirements: EncounterPokemonRequirement[];
 
-  constructor(...orRequirements: EncounterPokemonRequirement[]) {
+  public static Some(...requirements: EncounterPokemonRequirement[]): CombinationPokemonRequirement {
+    return new CombinationPokemonRequirement(false, ...requirements);
+  }
+
+  public static Every(...requirements: EncounterPokemonRequirement[]): CombinationPokemonRequirement {
+    return new CombinationPokemonRequirement(true, ...requirements);
+  }
+
+  private constructor(isAnd: boolean, ...requirements: EncounterPokemonRequirement[]) {
     super();
+    this.isAnd = isAnd;
     this.invertQuery = false;
     this.minNumberOfPokemon = 1;
-    this.orRequirements = orRequirements;
+    this.requirements = requirements;
   }
 
+  /**
+   * Checks if all/any requirements are met (depends on {@linkcode isAnd})
+   * @param scene The {@linkcode BattleScene} to check against
+   * @returns true if all/any requirements are met (depends on {@linkcode isAnd})
+   */
   override meetsRequirement(scene: BattleScene): boolean {
-    for (const req of this.orRequirements) {
-      if (req.meetsRequirement(scene)) {
-        return true;
-      }
-    }
-    return false;
+    return this.isAnd
+      ? this.requirements.every(req => req.meetsRequirement(scene))
+      : this.requirements.some(req => req.meetsRequirement(scene));
   }
 
+  /**
+   * Queries the players party for all party members that are compatible with all/any requirements (depends on {@linkcode isAnd})
+   * @param partyPokemon The party of {@linkcode PlayerPokemon}
+   * @returns All party members that are compatible with all/any requirements (depends on {@linkcode isAnd})
+   */
   override queryParty(partyPokemon: PlayerPokemon[]): PlayerPokemon[] {
-    for (const req of this.orRequirements) {
-      const result = req.queryParty(partyPokemon);
-      if (result?.length > 0) {
-        return result;
-      }
+    if (this.isAnd) {
+      return this.requirements.reduce((relevantPokemon, req) => req.queryParty(relevantPokemon), partyPokemon);
+    } else {
+      const matchingRequirement = this.requirements.find(req => req.queryParty(partyPokemon).length > 0);
+      return matchingRequirement ? matchingRequirement.queryParty(partyPokemon) : [];
     }
-
-    return [];
   }
 
+  /**
+   * Retrieves a dialogue token key/value pair for the given {@linkcode EncounterPokemonRequirement | requirements}.
+   * @param scene The {@linkcode BattleScene} to check against
+   * @param pokemon The {@linkcode PlayerPokemon} to check against
+   * @returns A dialogue token key/value pair
+   * @throws An {@linkcode Error} if {@linkcode isAnd} is `true` (not supported)
+   */
   override getDialogueToken(scene: BattleScene, pokemon?: PlayerPokemon): [string, string] {
-    for (const req of this.orRequirements) {
-      if (req.meetsRequirement(scene)) {
-        return req.getDialogueToken(scene, pokemon);
+    if (this.isAnd) {
+      throw new Error("Not implemented (Sorry)");
+    } else {
+      for (const req of this.requirements) {
+        if (req.meetsRequirement(scene)) {
+          return req.getDialogueToken(scene, pokemon);
+        }
       }
-    }
 
-    return this.orRequirements[0].getDialogueToken(scene, pokemon);
+      return this.requirements[0].getDialogueToken(scene, pokemon);
+    }
   }
 }
 
@@ -147,7 +205,7 @@ export class PreviousEncounterRequirement extends EncounterSceneRequirement {
   }
 
   override getDialogueToken(scene: BattleScene, pokemon?: PlayerPokemon): [string, string] {
-    return ["previousEncounter", scene.mysteryEncounterSaveData.encounteredEvents.find(e => e.type === this.previousEncounterRequirement)?.[0].toString() ?? ""];
+    return [ "previousEncounter", scene.mysteryEncounterSaveData.encounteredEvents.find(e => e.type === this.previousEncounterRequirement)?.[0].toString() ?? "" ];
   }
 }
 
@@ -175,7 +233,7 @@ export class WaveRangeRequirement extends EncounterSceneRequirement {
   }
 
   override getDialogueToken(scene: BattleScene, pokemon?: PlayerPokemon): [string, string] {
-    return ["waveIndex", scene.currentBattle.waveIndex.toString()];
+    return [ "waveIndex", scene.currentBattle.waveIndex.toString() ];
   }
 }
 
@@ -204,7 +262,7 @@ export class WaveModulusRequirement extends EncounterSceneRequirement {
   }
 
   override getDialogueToken(scene: BattleScene, pokemon?: PlayerPokemon): [string, string] {
-    return ["waveIndex", scene.currentBattle.waveIndex.toString()];
+    return [ "waveIndex", scene.currentBattle.waveIndex.toString() ];
   }
 }
 
@@ -213,7 +271,7 @@ export class TimeOfDayRequirement extends EncounterSceneRequirement {
 
   constructor(timeOfDay: TimeOfDay | TimeOfDay[]) {
     super();
-    this.requiredTimeOfDay = Array.isArray(timeOfDay) ? timeOfDay : [timeOfDay];
+    this.requiredTimeOfDay = Array.isArray(timeOfDay) ? timeOfDay : [ timeOfDay ];
   }
 
   override meetsRequirement(scene: BattleScene): boolean {
@@ -226,7 +284,7 @@ export class TimeOfDayRequirement extends EncounterSceneRequirement {
   }
 
   override getDialogueToken(scene: BattleScene, pokemon?: PlayerPokemon): [string, string] {
-    return ["timeOfDay", TimeOfDay[scene.arena.getTimeOfDay()].toLocaleLowerCase()];
+    return [ "timeOfDay", TimeOfDay[scene.arena.getTimeOfDay()].toLocaleLowerCase() ];
   }
 }
 
@@ -235,7 +293,7 @@ export class WeatherRequirement extends EncounterSceneRequirement {
 
   constructor(weather: WeatherType | WeatherType[]) {
     super();
-    this.requiredWeather = Array.isArray(weather) ? weather : [weather];
+    this.requiredWeather = Array.isArray(weather) ? weather : [ weather ];
   }
 
   override meetsRequirement(scene: BattleScene): boolean {
@@ -253,7 +311,7 @@ export class WeatherRequirement extends EncounterSceneRequirement {
     if (!isNullOrUndefined(currentWeather)) {
       token = WeatherType[currentWeather].replace("_", " ").toLocaleLowerCase();
     }
-    return ["weather", token];
+    return [ "weather", token ];
   }
 }
 
@@ -285,7 +343,7 @@ export class PartySizeRequirement extends EncounterSceneRequirement {
   }
 
   override getDialogueToken(scene: BattleScene, pokemon?: PlayerPokemon): [string, string] {
-    return ["partySize", scene.getParty().length.toString()];
+    return [ "partySize", scene.getParty().length.toString() ];
   }
 }
 
@@ -296,7 +354,7 @@ export class PersistentModifierRequirement extends EncounterSceneRequirement {
   constructor(heldItem: string | string[], minNumberOfItems: number = 1) {
     super();
     this.minNumberOfItems = minNumberOfItems;
-    this.requiredHeldItemModifiers = Array.isArray(heldItem) ? heldItem : [heldItem];
+    this.requiredHeldItemModifiers = Array.isArray(heldItem) ? heldItem : [ heldItem ];
   }
 
   override meetsRequirement(scene: BattleScene): boolean {
@@ -318,7 +376,7 @@ export class PersistentModifierRequirement extends EncounterSceneRequirement {
   }
 
   override getDialogueToken(scene: BattleScene, pokemon?: PlayerPokemon): [string, string] {
-    return ["requiredItem", this.requiredHeldItemModifiers[0]];
+    return [ "requiredItem", this.requiredHeldItemModifiers[0] ];
   }
 }
 
@@ -346,7 +404,7 @@ export class MoneyRequirement extends EncounterSceneRequirement {
 
   override getDialogueToken(scene: BattleScene, pokemon?: PlayerPokemon): [string, string] {
     const value = this.scalingMultiplier > 0 ? scene.getWaveMoneyAmount(this.scalingMultiplier).toString() : this.requiredMoney.toString();
-    return ["money", value];
+    return [ "money", value ];
   }
 }
 
@@ -359,7 +417,7 @@ export class SpeciesRequirement extends EncounterPokemonRequirement {
     super();
     this.minNumberOfPokemon = minNumberOfPokemon;
     this.invertQuery = invertQuery;
-    this.requiredSpecies = Array.isArray(species) ? species : [species];
+    this.requiredSpecies = Array.isArray(species) ? species : [ species ];
   }
 
   override meetsRequirement(scene: BattleScene): boolean {
@@ -381,9 +439,9 @@ export class SpeciesRequirement extends EncounterPokemonRequirement {
 
   override getDialogueToken(scene: BattleScene, pokemon?: PlayerPokemon): [string, string] {
     if (pokemon?.species.speciesId && this.requiredSpecies.includes(pokemon.species.speciesId)) {
-      return ["species", Species[pokemon.species.speciesId]];
+      return [ "species", Species[pokemon.species.speciesId] ];
     }
-    return ["species", ""];
+    return [ "species", "" ];
   }
 }
 
@@ -397,7 +455,7 @@ export class NatureRequirement extends EncounterPokemonRequirement {
     super();
     this.minNumberOfPokemon = minNumberOfPokemon;
     this.invertQuery = invertQuery;
-    this.requiredNature = Array.isArray(nature) ? nature : [nature];
+    this.requiredNature = Array.isArray(nature) ? nature : [ nature ];
   }
 
   override meetsRequirement(scene: BattleScene): boolean {
@@ -419,9 +477,9 @@ export class NatureRequirement extends EncounterPokemonRequirement {
 
   override getDialogueToken(scene: BattleScene, pokemon?: PlayerPokemon): [string, string] {
     if (!isNullOrUndefined(pokemon?.nature) && this.requiredNature.includes(pokemon.nature)) {
-      return ["nature", Nature[pokemon.nature]];
+      return [ "nature", Nature[pokemon.nature] ];
     }
-    return ["nature", ""];
+    return [ "nature", "" ];
   }
 }
 
@@ -436,7 +494,7 @@ export class TypeRequirement extends EncounterPokemonRequirement {
     this.excludeFainted = excludeFainted;
     this.minNumberOfPokemon = minNumberOfPokemon;
     this.invertQuery = invertQuery;
-    this.requiredType = Array.isArray(type) ? type : [type];
+    this.requiredType = Array.isArray(type) ? type : [ type ];
   }
 
   override meetsRequirement(scene: BattleScene): boolean {
@@ -465,9 +523,9 @@ export class TypeRequirement extends EncounterPokemonRequirement {
   override getDialogueToken(scene: BattleScene, pokemon?: PlayerPokemon): [string, string] {
     const includedTypes = this.requiredType.filter((ty) => pokemon?.getTypes().includes(ty));
     if (includedTypes.length > 0) {
-      return ["type", Type[includedTypes[0]]];
+      return [ "type", Type[includedTypes[0]] ];
     }
-    return ["type", ""];
+    return [ "type", "" ];
   }
 }
 
@@ -476,12 +534,14 @@ export class MoveRequirement extends EncounterPokemonRequirement {
   requiredMoves: Moves[] = [];
   minNumberOfPokemon: number;
   invertQuery: boolean;
+  excludeDisallowedPokemon: boolean;
 
-  constructor(moves: Moves | Moves[], minNumberOfPokemon: number = 1, invertQuery: boolean = false) {
+  constructor(moves: Moves | Moves[], excludeDisallowedPokemon: boolean, minNumberOfPokemon: number = 1, invertQuery: boolean = false) {
     super();
+    this.excludeDisallowedPokemon = excludeDisallowedPokemon;
     this.minNumberOfPokemon = minNumberOfPokemon;
     this.invertQuery = invertQuery;
-    this.requiredMoves = Array.isArray(moves) ? moves : [moves];
+    this.requiredMoves = Array.isArray(moves) ? moves : [ moves ];
   }
 
   override meetsRequirement(scene: BattleScene): boolean {
@@ -494,19 +554,24 @@ export class MoveRequirement extends EncounterPokemonRequirement {
 
   override queryParty(partyPokemon: PlayerPokemon[]): PlayerPokemon[] {
     if (!this.invertQuery) {
-      return partyPokemon.filter((pokemon) => this.requiredMoves.filter((reqMove) => pokemon.moveset.filter((move) => move?.moveId === reqMove).length > 0).length > 0);
+      // get the Pokemon with at least one move in the required moves list
+      return partyPokemon.filter((pokemon) =>
+        (!this.excludeDisallowedPokemon || pokemon.isAllowedInBattle())
+        && pokemon.moveset.some((move) => move?.moveId && this.requiredMoves.includes(move.moveId)));
     } else {
       // for an inverted query, we only want to get the pokemon that don't have ANY of the listed moves
-      return partyPokemon.filter((pokemon) => this.requiredMoves.filter((reqMove) => pokemon.moveset.filter((move) => move?.moveId === reqMove).length === 0).length === 0);
+      return partyPokemon.filter((pokemon) =>
+        (!this.excludeDisallowedPokemon || pokemon.isAllowedInBattle())
+        && !pokemon.moveset.some((move) => move?.moveId && this.requiredMoves.includes(move.moveId)));
     }
   }
 
   override getDialogueToken(scene: BattleScene, pokemon?: PlayerPokemon): [string, string] {
     const includedMoves = pokemon?.moveset.filter((move) => move?.moveId && this.requiredMoves.includes(move.moveId));
     if (includedMoves && includedMoves.length > 0 && includedMoves[0]) {
-      return ["move", includedMoves[0].getName()];
+      return [ "move", includedMoves[0].getName() ];
     }
-    return ["move", ""];
+    return [ "move", "" ];
   }
 
 }
@@ -525,7 +590,7 @@ export class CompatibleMoveRequirement extends EncounterPokemonRequirement {
     super();
     this.minNumberOfPokemon = minNumberOfPokemon;
     this.invertQuery = invertQuery;
-    this.requiredMoves = Array.isArray(learnableMove) ? learnableMove : [learnableMove];
+    this.requiredMoves = Array.isArray(learnableMove) ? learnableMove : [ learnableMove ];
   }
 
   override meetsRequirement(scene: BattleScene): boolean {
@@ -548,9 +613,9 @@ export class CompatibleMoveRequirement extends EncounterPokemonRequirement {
   override getDialogueToken(scene: BattleScene, pokemon?: PlayerPokemon): [string, string] {
     const includedCompatMoves = this.requiredMoves.filter((reqMove) => pokemon?.compatibleTms.filter((tm) => !pokemon.moveset.find(m => m?.moveId === tm)).includes(reqMove));
     if (includedCompatMoves.length > 0) {
-      return ["compatibleMove", Moves[includedCompatMoves[0]]];
+      return [ "compatibleMove", Moves[includedCompatMoves[0]] ];
     }
-    return ["compatibleMove", ""];
+    return [ "compatibleMove", "" ];
   }
 
 }
@@ -559,12 +624,14 @@ export class AbilityRequirement extends EncounterPokemonRequirement {
   requiredAbilities: Abilities[];
   minNumberOfPokemon: number;
   invertQuery: boolean;
+  excludeDisallowedPokemon: boolean;
 
-  constructor(abilities: Abilities | Abilities[], minNumberOfPokemon: number = 1, invertQuery: boolean = false) {
+  constructor(abilities: Abilities | Abilities[], excludeDisallowedPokemon: boolean, minNumberOfPokemon: number = 1, invertQuery: boolean = false) {
     super();
+    this.excludeDisallowedPokemon = excludeDisallowedPokemon;
     this.minNumberOfPokemon = minNumberOfPokemon;
     this.invertQuery = invertQuery;
-    this.requiredAbilities = Array.isArray(abilities) ? abilities : [abilities];
+    this.requiredAbilities = Array.isArray(abilities) ? abilities : [ abilities ];
   }
 
   override meetsRequirement(scene: BattleScene): boolean {
@@ -577,18 +644,23 @@ export class AbilityRequirement extends EncounterPokemonRequirement {
 
   override queryParty(partyPokemon: PlayerPokemon[]): PlayerPokemon[] {
     if (!this.invertQuery) {
-      return partyPokemon.filter((pokemon) => this.requiredAbilities.some((ability) => pokemon.getAbility().id === ability));
+      return partyPokemon.filter((pokemon) =>
+        (!this.excludeDisallowedPokemon || pokemon.isAllowedInBattle())
+        && this.requiredAbilities.some((ability) => pokemon.hasAbility(ability, false)));
     } else {
-      // for an inverted query, we only want to get the pokemon that don't have ANY of the listed abilitiess
-      return partyPokemon.filter((pokemon) => this.requiredAbilities.filter((ability) => pokemon.getAbility().id === ability).length === 0);
+      // for an inverted query, we only want to get the pokemon that don't have ANY of the listed abilities
+      return partyPokemon.filter((pokemon) =>
+        (!this.excludeDisallowedPokemon || pokemon.isAllowedInBattle())
+        && this.requiredAbilities.filter((ability) => pokemon.hasAbility(ability, false)).length === 0);
     }
   }
 
-  override getDialogueToken(scene: BattleScene, pokemon?: PlayerPokemon): [string, string] {
-    if (pokemon?.getAbility().id && this.requiredAbilities.some(a => pokemon.getAbility().id === a)) {
-      return ["ability", pokemon.getAbility().name];
+  override getDialogueToken(_scene: BattleScene, pokemon?: PlayerPokemon): [string, string] {
+    const matchingAbility = this.requiredAbilities.find(a => pokemon?.hasAbility(a, false));
+    if (!isNullOrUndefined(matchingAbility)) {
+      return [ "ability", allAbilities[matchingAbility].name ];
     }
-    return ["ability", ""];
+    return [ "ability", "" ];
   }
 }
 
@@ -601,7 +673,7 @@ export class StatusEffectRequirement extends EncounterPokemonRequirement {
     super();
     this.minNumberOfPokemon = minNumberOfPokemon;
     this.invertQuery = invertQuery;
-    this.requiredStatusEffect = Array.isArray(statusEffect) ? statusEffect : [statusEffect];
+    this.requiredStatusEffect = Array.isArray(statusEffect) ? statusEffect : [ statusEffect ];
   }
 
   override meetsRequirement(scene: BattleScene): boolean {
@@ -649,9 +721,9 @@ export class StatusEffectRequirement extends EncounterPokemonRequirement {
       return pokemon!.status?.effect === a;
     });
     if (reqStatus.length > 0) {
-      return ["status", StatusEffect[reqStatus[0]]];
+      return [ "status", StatusEffect[reqStatus[0]] ];
     }
-    return ["status", ""];
+    return [ "status", "" ];
   }
 
 }
@@ -670,7 +742,7 @@ export class CanFormChangeWithItemRequirement extends EncounterPokemonRequiremen
     super();
     this.minNumberOfPokemon = minNumberOfPokemon;
     this.invertQuery = invertQuery;
-    this.requiredFormChangeItem = Array.isArray(formChangeItem) ? formChangeItem : [formChangeItem];
+    this.requiredFormChangeItem = Array.isArray(formChangeItem) ? formChangeItem : [ formChangeItem ];
   }
 
   override meetsRequirement(scene: BattleScene): boolean {
@@ -706,9 +778,9 @@ export class CanFormChangeWithItemRequirement extends EncounterPokemonRequiremen
   override getDialogueToken(scene: BattleScene, pokemon?: PlayerPokemon): [string, string] {
     const requiredItems = this.requiredFormChangeItem.filter((formChangeItem) => this.filterByForm(pokemon, formChangeItem));
     if (requiredItems.length > 0) {
-      return ["formChangeItem", FormChangeItem[requiredItems[0]]];
+      return [ "formChangeItem", FormChangeItem[requiredItems[0]] ];
     }
-    return ["formChangeItem", ""];
+    return [ "formChangeItem", "" ];
   }
 
 }
@@ -722,7 +794,7 @@ export class CanEvolveWithItemRequirement extends EncounterPokemonRequirement {
     super();
     this.minNumberOfPokemon = minNumberOfPokemon;
     this.invertQuery = invertQuery;
-    this.requiredEvolutionItem = Array.isArray(evolutionItems) ? evolutionItems : [evolutionItems];
+    this.requiredEvolutionItem = Array.isArray(evolutionItems) ? evolutionItems : [ evolutionItems ];
   }
 
   override meetsRequirement(scene: BattleScene): boolean {
@@ -756,9 +828,9 @@ export class CanEvolveWithItemRequirement extends EncounterPokemonRequirement {
   override getDialogueToken(scene: BattleScene, pokemon?: PlayerPokemon): [string, string] {
     const requiredItems = this.requiredEvolutionItem.filter((evoItem) => this.filterByEvo(pokemon, evoItem));
     if (requiredItems.length > 0) {
-      return ["evolutionItem", EvolutionItem[requiredItems[0]]];
+      return [ "evolutionItem", EvolutionItem[requiredItems[0]] ];
     }
-    return ["evolutionItem", ""];
+    return [ "evolutionItem", "" ];
   }
 }
 
@@ -772,7 +844,7 @@ export class HeldItemRequirement extends EncounterPokemonRequirement {
     super();
     this.minNumberOfPokemon = minNumberOfPokemon;
     this.invertQuery = invertQuery;
-    this.requiredHeldItemModifiers = Array.isArray(heldItem) ? heldItem : [heldItem];
+    this.requiredHeldItemModifiers = Array.isArray(heldItem) ? heldItem : [ heldItem ];
     this.requireTransferable = requireTransferable;
   }
 
@@ -807,9 +879,9 @@ export class HeldItemRequirement extends EncounterPokemonRequirement {
         && (!this.requireTransferable || it.isTransferable);
     });
     if (requiredItems && requiredItems.length > 0) {
-      return ["heldItem", requiredItems[0].type.name];
+      return [ "heldItem", requiredItems[0].type.name ];
     }
-    return ["heldItem", ""];
+    return [ "heldItem", "" ];
   }
 }
 
@@ -823,7 +895,7 @@ export class AttackTypeBoosterHeldItemTypeRequirement extends EncounterPokemonRe
     super();
     this.minNumberOfPokemon = minNumberOfPokemon;
     this.invertQuery = invertQuery;
-    this.requiredHeldItemTypes = Array.isArray(heldItemTypes) ? heldItemTypes : [heldItemTypes];
+    this.requiredHeldItemTypes = Array.isArray(heldItemTypes) ? heldItemTypes : [ heldItemTypes ];
     this.requireTransferable = requireTransferable;
   }
 
@@ -864,9 +936,9 @@ export class AttackTypeBoosterHeldItemTypeRequirement extends EncounterPokemonRe
         && (!this.requireTransferable || it.isTransferable);
     });
     if (requiredItems && requiredItems.length > 0) {
-      return ["heldItem", requiredItems[0].type.name];
+      return [ "heldItem", requiredItems[0].type.name ];
     }
-    return ["heldItem", ""];
+    return [ "heldItem", "" ];
   }
 }
 
@@ -904,7 +976,7 @@ export class LevelRequirement extends EncounterPokemonRequirement {
   }
 
   override getDialogueToken(scene: BattleScene, pokemon?: PlayerPokemon): [string, string] {
-    return ["level", pokemon?.level.toString() ?? ""];
+    return [ "level", pokemon?.level.toString() ?? "" ];
   }
 }
 
@@ -942,7 +1014,7 @@ export class FriendshipRequirement extends EncounterPokemonRequirement {
   }
 
   override getDialogueToken(scene: BattleScene, pokemon?: PlayerPokemon): [string, string] {
-    return ["friendship", pokemon?.friendship.toString() ?? ""];
+    return [ "friendship", pokemon?.friendship.toString() ?? "" ];
   }
 }
 
@@ -989,9 +1061,9 @@ export class HealthRatioRequirement extends EncounterPokemonRequirement {
   override getDialogueToken(scene: BattleScene, pokemon?: PlayerPokemon): [string, string] {
     const hpRatio = pokemon?.getHpRatio();
     if (!isNullOrUndefined(hpRatio)) {
-      return ["healthRatio", Math.floor(hpRatio * 100).toString() + "%"];
+      return [ "healthRatio", Math.floor(hpRatio * 100).toString() + "%" ];
     }
-    return ["healthRatio", ""];
+    return [ "healthRatio", "" ];
   }
 }
 
@@ -1029,8 +1101,7 @@ export class WeightRequirement extends EncounterPokemonRequirement {
   }
 
   override getDialogueToken(scene: BattleScene, pokemon?: PlayerPokemon): [string, string] {
-    return ["weight", pokemon?.getWeight().toString() ?? ""];
+    return [ "weight", pokemon?.getWeight().toString() ?? "" ];
   }
 }
-
 

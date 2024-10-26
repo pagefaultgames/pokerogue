@@ -11,7 +11,6 @@ import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 
-
 describe("Abilities - Parental Bond", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
@@ -41,9 +40,9 @@ describe("Abilities - Parental Bond", () => {
   it(
     "should add second strike to attack move",
     async () => {
-      game.override.moveset([Moves.TACKLE]);
+      game.override.moveset([ Moves.TACKLE ]);
 
-      await game.classicMode.startBattle([Species.MAGIKARP]);
+      await game.classicMode.startBattle([ Species.MAGIKARP ]);
 
       const leadPokemon = game.scene.getPlayerPokemon()!;
       const enemyPokemon = game.scene.getEnemyPokemon()!;
@@ -68,10 +67,10 @@ describe("Abilities - Parental Bond", () => {
   it(
     "should apply secondary effects to both strikes",
     async () => {
-      game.override.moveset([Moves.POWER_UP_PUNCH]);
+      game.override.moveset([ Moves.POWER_UP_PUNCH ]);
       game.override.enemySpecies(Species.AMOONGUSS);
 
-      await game.classicMode.startBattle([Species.MAGIKARP]);
+      await game.classicMode.startBattle([ Species.MAGIKARP ]);
 
       const leadPokemon = game.scene.getPlayerPokemon()!;
 
@@ -87,9 +86,9 @@ describe("Abilities - Parental Bond", () => {
   it(
     "should not apply to Status moves",
     async () => {
-      game.override.moveset([Moves.BABY_DOLL_EYES]);
+      game.override.moveset([ Moves.BABY_DOLL_EYES ]);
 
-      await game.classicMode.startBattle([Species.MAGIKARP]);
+      await game.classicMode.startBattle([ Species.MAGIKARP ]);
 
       const enemyPokemon = game.scene.getEnemyPokemon()!;
 
@@ -104,9 +103,9 @@ describe("Abilities - Parental Bond", () => {
   it(
     "should not apply to multi-hit moves",
     async () => {
-      game.override.moveset([Moves.DOUBLE_HIT]);
+      game.override.moveset([ Moves.DOUBLE_HIT ]);
 
-      await game.classicMode.startBattle([Species.MAGIKARP]);
+      await game.classicMode.startBattle([ Species.MAGIKARP ]);
 
       const leadPokemon = game.scene.getPlayerPokemon()!;
 
@@ -122,9 +121,9 @@ describe("Abilities - Parental Bond", () => {
   it(
     "should not apply to self-sacrifice moves",
     async () => {
-      game.override.moveset([Moves.SELF_DESTRUCT]);
+      game.override.moveset([ Moves.SELF_DESTRUCT ]);
 
-      await game.classicMode.startBattle([Species.MAGIKARP]);
+      await game.classicMode.startBattle([ Species.MAGIKARP ]);
 
       const leadPokemon = game.scene.getPlayerPokemon()!;
 
@@ -139,9 +138,9 @@ describe("Abilities - Parental Bond", () => {
   it(
     "should not apply to Rollout",
     async () => {
-      game.override.moveset([Moves.ROLLOUT]);
+      game.override.moveset([ Moves.ROLLOUT ]);
 
-      await game.classicMode.startBattle([Species.MAGIKARP]);
+      await game.classicMode.startBattle([ Species.MAGIKARP ]);
 
       const leadPokemon = game.scene.getPlayerPokemon()!;
 
@@ -157,9 +156,9 @@ describe("Abilities - Parental Bond", () => {
   it(
     "should not apply multiplier to fixed-damage moves",
     async () => {
-      game.override.moveset([Moves.DRAGON_RAGE]);
+      game.override.moveset([ Moves.DRAGON_RAGE ]);
 
-      await game.classicMode.startBattle([Species.MAGIKARP]);
+      await game.classicMode.startBattle([ Species.MAGIKARP ]);
 
       const enemyPokemon = game.scene.getEnemyPokemon()!;
 
@@ -173,10 +172,10 @@ describe("Abilities - Parental Bond", () => {
   it(
     "should not apply multiplier to counter moves",
     async () => {
-      game.override.moveset([Moves.COUNTER]);
-      game.override.enemyMoveset([Moves.TACKLE]);
+      game.override.moveset([ Moves.COUNTER ]);
+      game.override.enemyMoveset([ Moves.TACKLE ]);
 
-      await game.classicMode.startBattle([Species.SHUCKLE]);
+      await game.classicMode.startBattle([ Species.SHUCKLE ]);
 
       const leadPokemon = game.scene.getPlayerPokemon()!;
       const enemyPokemon = game.scene.getEnemyPokemon()!;
@@ -196,10 +195,10 @@ describe("Abilities - Parental Bond", () => {
     "should not apply to multi-target moves",
     async () => {
       game.override.battleType("double");
-      game.override.moveset([Moves.EARTHQUAKE]);
+      game.override.moveset([ Moves.EARTHQUAKE ]);
       game.override.passiveAbility(Abilities.LEVITATE);
 
-      await game.classicMode.startBattle([Species.MAGIKARP, Species.FEEBAS]);
+      await game.classicMode.startBattle([ Species.MAGIKARP, Species.FEEBAS ]);
 
       const playerPokemon = game.scene.getPlayerField();
 
@@ -215,9 +214,9 @@ describe("Abilities - Parental Bond", () => {
   it(
     "should apply to multi-target moves when hitting only one target",
     async () => {
-      game.override.moveset([Moves.EARTHQUAKE]);
+      game.override.moveset([ Moves.EARTHQUAKE ]);
 
-      await game.classicMode.startBattle([Species.MAGIKARP]);
+      await game.classicMode.startBattle([ Species.MAGIKARP ]);
 
       const leadPokemon = game.scene.getPlayerPokemon()!;
 
@@ -231,9 +230,9 @@ describe("Abilities - Parental Bond", () => {
   it(
     "should only trigger post-target move effects once",
     async () => {
-      game.override.moveset([Moves.MIND_BLOWN]);
+      game.override.moveset([ Moves.MIND_BLOWN ]);
 
-      await game.classicMode.startBattle([Species.MAGIKARP]);
+      await game.classicMode.startBattle([ Species.MAGIKARP ]);
 
       const leadPokemon = game.scene.getPlayerPokemon()!;
 
@@ -253,9 +252,9 @@ describe("Abilities - Parental Bond", () => {
   it(
     "Burn Up only removes type after the second strike",
     async () => {
-      game.override.moveset([Moves.BURN_UP]);
+      game.override.moveset([ Moves.BURN_UP ]);
 
-      await game.classicMode.startBattle([Species.CHARIZARD]);
+      await game.classicMode.startBattle([ Species.CHARIZARD ]);
 
       const leadPokemon = game.scene.getPlayerPokemon()!;
       const enemyPokemon = game.scene.getEnemyPokemon()!;
@@ -277,10 +276,10 @@ describe("Abilities - Parental Bond", () => {
   it(
     "Moves boosted by this ability and Multi-Lens should strike 4 times",
     async () => {
-      game.override.moveset([Moves.TACKLE]);
+      game.override.moveset([ Moves.TACKLE ]);
       game.override.startingHeldItems([{ name: "MULTI_LENS", count: 1 }]);
 
-      await game.classicMode.startBattle([Species.MAGIKARP]);
+      await game.classicMode.startBattle([ Species.MAGIKARP ]);
 
       const leadPokemon = game.scene.getPlayerPokemon()!;
 
@@ -295,10 +294,10 @@ describe("Abilities - Parental Bond", () => {
   it(
     "Super Fang boosted by this ability and Multi-Lens should strike twice",
     async () => {
-      game.override.moveset([Moves.SUPER_FANG]);
+      game.override.moveset([ Moves.SUPER_FANG ]);
       game.override.startingHeldItems([{ name: "MULTI_LENS", count: 1 }]);
 
-      await game.classicMode.startBattle([Species.MAGIKARP]);
+      await game.classicMode.startBattle([ Species.MAGIKARP ]);
 
       const leadPokemon = game.scene.getPlayerPokemon()!;
       const enemyPokemon = game.scene.getEnemyPokemon()!;
@@ -319,10 +318,10 @@ describe("Abilities - Parental Bond", () => {
   it(
     "Seismic Toss boosted by this ability and Multi-Lens should strike twice",
     async () => {
-      game.override.moveset([Moves.SEISMIC_TOSS]);
+      game.override.moveset([ Moves.SEISMIC_TOSS ]);
       game.override.startingHeldItems([{ name: "MULTI_LENS", count: 1 }]);
 
-      await game.classicMode.startBattle([Species.MAGIKARP]);
+      await game.classicMode.startBattle([ Species.MAGIKARP ]);
 
       const leadPokemon = game.scene.getPlayerPokemon()!;
       const enemyPokemon = game.scene.getEnemyPokemon()!;
@@ -345,9 +344,9 @@ describe("Abilities - Parental Bond", () => {
   it(
     "Hyper Beam boosted by this ability should strike twice, then recharge",
     async () => {
-      game.override.moveset([Moves.HYPER_BEAM]);
+      game.override.moveset([ Moves.HYPER_BEAM ]);
 
-      await game.classicMode.startBattle([Species.MAGIKARP]);
+      await game.classicMode.startBattle([ Species.MAGIKARP ]);
 
       const leadPokemon = game.scene.getPlayerPokemon()!;
 
@@ -368,9 +367,9 @@ describe("Abilities - Parental Bond", () => {
   it(
     "Anchor Shot boosted by this ability should only trap the target after the second hit",
     async () => {
-      game.override.moveset([Moves.ANCHOR_SHOT]);
+      game.override.moveset([ Moves.ANCHOR_SHOT ]);
 
-      await game.classicMode.startBattle([Species.MAGIKARP]);
+      await game.classicMode.startBattle([ Species.MAGIKARP ]);
 
       const leadPokemon = game.scene.getPlayerPokemon()!;
       const enemyPokemon = game.scene.getEnemyPokemon()!;
@@ -395,9 +394,9 @@ describe("Abilities - Parental Bond", () => {
   it(
     "Smack Down boosted by this ability should only ground the target after the second hit",
     async () => {
-      game.override.moveset([Moves.SMACK_DOWN]);
+      game.override.moveset([ Moves.SMACK_DOWN ]);
 
-      await game.classicMode.startBattle([Species.MAGIKARP]);
+      await game.classicMode.startBattle([ Species.MAGIKARP ]);
 
       const leadPokemon = game.scene.getPlayerPokemon()!;
       const enemyPokemon = game.scene.getEnemyPokemon()!;
@@ -419,9 +418,9 @@ describe("Abilities - Parental Bond", () => {
   it(
     "U-turn boosted by this ability should strike twice before forcing a switch",
     async () => {
-      game.override.moveset([Moves.U_TURN]);
+      game.override.moveset([ Moves.U_TURN ]);
 
-      await game.classicMode.startBattle([Species.MAGIKARP, Species.BLASTOISE]);
+      await game.classicMode.startBattle([ Species.MAGIKARP, Species.BLASTOISE ]);
 
       const leadPokemon = game.scene.getPlayerPokemon()!;
 
@@ -439,9 +438,9 @@ describe("Abilities - Parental Bond", () => {
   it(
     "Wake-Up Slap boosted by this ability should only wake up the target after the second hit",
     async () => {
-      game.override.moveset([Moves.WAKE_UP_SLAP]).enemyStatusEffect(StatusEffect.SLEEP);
+      game.override.moveset([ Moves.WAKE_UP_SLAP ]).enemyStatusEffect(StatusEffect.SLEEP);
 
-      await game.classicMode.startBattle([Species.MAGIKARP]);
+      await game.classicMode.startBattle([ Species.MAGIKARP ]);
 
       const leadPokemon = game.scene.getPlayerPokemon()!;
       const enemyPokemon = game.scene.getEnemyPokemon()!;
@@ -463,10 +462,10 @@ describe("Abilities - Parental Bond", () => {
   it(
     "should not cause user to hit into King's Shield more than once",
     async () => {
-      game.override.moveset([Moves.TACKLE]);
-      game.override.enemyMoveset([Moves.KINGS_SHIELD]);
+      game.override.moveset([ Moves.TACKLE ]);
+      game.override.enemyMoveset([ Moves.KINGS_SHIELD ]);
 
-      await game.classicMode.startBattle([Species.MAGIKARP]);
+      await game.classicMode.startBattle([ Species.MAGIKARP ]);
 
       const leadPokemon = game.scene.getPlayerPokemon()!;
 
@@ -481,10 +480,10 @@ describe("Abilities - Parental Bond", () => {
   it(
     "should not cause user to hit into Storm Drain more than once",
     async () => {
-      game.override.moveset([Moves.WATER_GUN]);
+      game.override.moveset([ Moves.WATER_GUN ]);
       game.override.enemyAbility(Abilities.STORM_DRAIN);
 
-      await game.classicMode.startBattle([Species.MAGIKARP]);
+      await game.classicMode.startBattle([ Species.MAGIKARP ]);
 
       const enemyPokemon = game.scene.getEnemyPokemon()!;
 
@@ -500,11 +499,11 @@ describe("Abilities - Parental Bond", () => {
     "should not apply to multi-target moves with Multi-Lens",
     async () => {
       game.override.battleType("double");
-      game.override.moveset([Moves.EARTHQUAKE, Moves.SPLASH]);
+      game.override.moveset([ Moves.EARTHQUAKE, Moves.SPLASH ]);
       game.override.passiveAbility(Abilities.LEVITATE);
       game.override.startingHeldItems([{ name: "MULTI_LENS", count: 1 }]);
 
-      await game.classicMode.startBattle([Species.MAGIKARP, Species.FEEBAS]);
+      await game.classicMode.startBattle([ Species.MAGIKARP, Species.FEEBAS ]);
 
       const enemyPokemon = game.scene.getEnemyField();
 

@@ -20,7 +20,7 @@ import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
 
 /** the i18n namespace for the encounter */
-const namespace = "mysteryEncounter:mysteriousChallengers";
+const namespace = "mysteryEncounters/mysteriousChallengers";
 
 /**
  * Mysterious Challengers encounter.
@@ -34,7 +34,7 @@ export const MysteriousChallengersEncounter: MysteryEncounter =
     .withIntroSpriteConfigs([]) // These are set in onInit()
     .withIntroDialogue([
       {
-        text: `${namespace}.intro`,
+        text: `${namespace}:intro`,
       },
     ])
     .withOnInit((scene: BattleScene) => {
@@ -56,7 +56,13 @@ export const MysteriousChallengersEncounter: MysteryEncounter =
 
       // Hard difficulty trainer is another random trainer, but with AVERAGE_BALANCED config
       // Number of mons is based off wave: 1-20 is 2, 20-40 is 3, etc. capping at 6 after wave 100
-      const hardTrainerType = scene.arena.randomTrainerType(scene.currentBattle.waveIndex);
+      let retries = 0;
+      let hardTrainerType = scene.arena.randomTrainerType(scene.currentBattle.waveIndex);
+      while (retries < 5 && hardTrainerType === normalTrainerType) {
+        // Will try to use a different trainer from the normal trainer type
+        hardTrainerType = scene.arena.randomTrainerType(scene.currentBattle.waveIndex);
+        retries++;
+      }
       const hardTemplate = new TrainerPartyCompoundTemplate(
         new TrainerPartyTemplate(1, PartyMemberStrength.STRONGER, false, true),
         new TrainerPartyTemplate(
@@ -125,16 +131,17 @@ export const MysteriousChallengersEncounter: MysteryEncounter =
 
       return true;
     })
-    .withTitle(`${namespace}.title`)
-    .withDescription(`${namespace}.description`)
-    .withQuery(`${namespace}.query`)
+    .setLocalizationKey(`${namespace}`)
+    .withTitle(`${namespace}:title`)
+    .withDescription(`${namespace}:description`)
+    .withQuery(`${namespace}:query`)
     .withSimpleOption(
       {
-        buttonLabel: `${namespace}.option.1.label`,
-        buttonTooltip: `${namespace}.option.1.tooltip`,
+        buttonLabel: `${namespace}:option.1.label`,
+        buttonTooltip: `${namespace}:option.1.tooltip`,
         selected: [
           {
-            text: `${namespace}.option.selected`,
+            text: `${namespace}:option.selected`,
           },
         ],
       },
@@ -143,23 +150,23 @@ export const MysteriousChallengersEncounter: MysteryEncounter =
         // Spawn standard trainer battle with memory mushroom reward
         const config: EnemyPartyConfig = encounter.enemyPartyConfigs[0];
 
-        setEncounterRewards(scene, { guaranteedModifierTypeFuncs: [modifierTypes.TM_COMMON, modifierTypes.TM_GREAT, modifierTypes.MEMORY_MUSHROOM], fillRemaining: true });
+        setEncounterRewards(scene, { guaranteedModifierTypeFuncs: [ modifierTypes.TM_COMMON, modifierTypes.TM_GREAT, modifierTypes.MEMORY_MUSHROOM ], fillRemaining: true });
 
         // Seed offsets to remove possibility of different trainers having exact same teams
-        let ret;
+        let initBattlePromise: Promise<void>;
         scene.executeWithSeedOffset(() => {
-          ret = initBattleWithEnemyConfig(scene, config);
+          initBattlePromise = initBattleWithEnemyConfig(scene, config);
         }, scene.currentBattle.waveIndex * 10);
-        return ret;
+        await initBattlePromise!;
       }
     )
     .withSimpleOption(
       {
-        buttonLabel: `${namespace}.option.2.label`,
-        buttonTooltip: `${namespace}.option.2.tooltip`,
+        buttonLabel: `${namespace}:option.2.label`,
+        buttonTooltip: `${namespace}:option.2.tooltip`,
         selected: [
           {
-            text: `${namespace}.option.selected`,
+            text: `${namespace}:option.selected`,
           },
         ],
       },
@@ -168,23 +175,23 @@ export const MysteriousChallengersEncounter: MysteryEncounter =
         // Spawn hard fight
         const config: EnemyPartyConfig = encounter.enemyPartyConfigs[1];
 
-        setEncounterRewards(scene, { guaranteedModifierTiers: [ModifierTier.ULTRA, ModifierTier.ULTRA, ModifierTier.GREAT, ModifierTier.GREAT], fillRemaining: true });
+        setEncounterRewards(scene, { guaranteedModifierTiers: [ ModifierTier.ULTRA, ModifierTier.ULTRA, ModifierTier.GREAT, ModifierTier.GREAT ], fillRemaining: true });
 
         // Seed offsets to remove possibility of different trainers having exact same teams
-        let ret;
+        let initBattlePromise: Promise<void>;
         scene.executeWithSeedOffset(() => {
-          ret = initBattleWithEnemyConfig(scene, config);
+          initBattlePromise = initBattleWithEnemyConfig(scene, config);
         }, scene.currentBattle.waveIndex * 100);
-        return ret;
+        await initBattlePromise!;
       }
     )
     .withSimpleOption(
       {
-        buttonLabel: `${namespace}.option.3.label`,
-        buttonTooltip: `${namespace}.option.3.tooltip`,
+        buttonLabel: `${namespace}:option.3.label`,
+        buttonTooltip: `${namespace}:option.3.tooltip`,
         selected: [
           {
-            text: `${namespace}.option.selected`,
+            text: `${namespace}:option.selected`,
           },
         ],
       },
@@ -196,19 +203,19 @@ export const MysteriousChallengersEncounter: MysteryEncounter =
         // To avoid player level snowballing from picking this option
         encounter.expMultiplier = 0.9;
 
-        setEncounterRewards(scene, { guaranteedModifierTiers: [ModifierTier.ROGUE, ModifierTier.ROGUE, ModifierTier.ULTRA, ModifierTier.GREAT], fillRemaining: true });
+        setEncounterRewards(scene, { guaranteedModifierTiers: [ ModifierTier.ROGUE, ModifierTier.ROGUE, ModifierTier.ULTRA, ModifierTier.GREAT ], fillRemaining: true });
 
         // Seed offsets to remove possibility of different trainers having exact same teams
-        let ret;
+        let initBattlePromise: Promise<void>;
         scene.executeWithSeedOffset(() => {
-          ret = initBattleWithEnemyConfig(scene, config);
+          initBattlePromise = initBattleWithEnemyConfig(scene, config);
         }, scene.currentBattle.waveIndex * 1000);
-        return ret;
+        await initBattlePromise!;
       }
     )
     .withOutroDialogue([
       {
-        text: `${namespace}.outro`,
+        text: `${namespace}:outro`,
       },
     ])
     .build();

@@ -65,8 +65,9 @@ export class SwitchSummonPhase extends SummonPhase {
 
     const pokemon = this.getPokemon();
 
+    (this.player ? this.scene.getEnemyField() : this.scene.getPlayerField()).forEach(enemyPokemon => enemyPokemon.removeTagsBySourceId(pokemon.id));
+
     if (this.switchType === SwitchType.SWITCH) {
-      (this.player ? this.scene.getEnemyField() : this.scene.getPlayerField()).forEach(enemyPokemon => enemyPokemon.removeTagsBySourceId(pokemon.id));
       const substitute = pokemon.getTag(SubstituteTag);
       if (substitute) {
         this.scene.tweens.add({
@@ -173,6 +174,7 @@ export class SwitchSummonPhase extends SummonPhase {
     // Or compensate for force switch move if switched out pokemon is not fainted
     if (currentCommand === Command.POKEMON || lastPokemonIsForceSwitchedAndNotFainted) {
       pokemon.battleSummonData.turnCount--;
+      pokemon.battleSummonData.waveTurnCount--;
     }
 
     if (this.switchType === SwitchType.BATON_PASS && pokemon) {

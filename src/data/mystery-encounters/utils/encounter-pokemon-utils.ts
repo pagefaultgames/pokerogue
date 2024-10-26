@@ -12,7 +12,8 @@ import { Mode } from "#app/ui/ui";
 import { PartyOption, PartyUiMode } from "#app/ui/party-ui-handler";
 import { Species } from "#enums/species";
 import { Type } from "#app/data/type";
-import PokemonSpecies, { getPokemonSpecies, speciesStarters } from "#app/data/pokemon-species";
+import PokemonSpecies, { getPokemonSpecies } from "#app/data/pokemon-species";
+import { speciesStarterCosts } from "#app/data/balance/starters";
 import { getEncounterText, queueEncounterMessage, showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { modifierTypes, PokemonHeldItemModifierType } from "#app/modifier/modifier-type";
@@ -20,6 +21,8 @@ import { Gender } from "#app/data/gender";
 import { PermanentStat } from "#enums/stat";
 import { VictoryPhase } from "#app/phases/victory-phase";
 import { SummaryUiMode } from "#app/ui/summary-ui-handler";
+import { CustomPokemonData } from "#app/data/custom-pokemon-data";
+import { Abilities } from "#enums/abilities";
 
 /** Will give +1 level every 10 waves */
 export const STANDARD_ENCOUNTER_BOOSTED_LEVEL_MODIFIER = 1;
@@ -206,8 +209,8 @@ export function getRandomSpeciesByStarterTier(starterTiers: number | [number, nu
   let min = Array.isArray(starterTiers) ? starterTiers[0] : starterTiers;
   let max = Array.isArray(starterTiers) ? starterTiers[1] : starterTiers;
 
-  let filteredSpecies: [PokemonSpecies, number][] = Object.keys(speciesStarters)
-    .map(s => [parseInt(s) as Species, speciesStarters[s] as number])
+  let filteredSpecies: [PokemonSpecies, number][] = Object.keys(speciesStarterCosts)
+    .map(s => [ parseInt(s) as Species, speciesStarterCosts[s] as number ])
     .filter(s => {
       const pokemonSpecies = getPokemonSpecies(s[0]);
       return pokemonSpecies && (!excludedSpecies || !excludedSpecies.includes(s[0]))
@@ -215,7 +218,7 @@ export function getRandomSpeciesByStarterTier(starterTiers: number | [number, nu
         && (allowLegendary || !pokemonSpecies.legendary)
         && (allowMythical || !pokemonSpecies.mythical);
     })
-    .map(s => [getPokemonSpecies(s[0]), s[1]]);
+    .map(s => [ getPokemonSpecies(s[0]), s[1] ]);
 
   if (types && types.length > 0) {
     filteredSpecies = filteredSpecies.filter(s => types.includes(s[0].type1) || (!isNullOrUndefined(s[0].type2) && types.includes(s[0].type2)));
@@ -312,7 +315,7 @@ export function applyHealToPokemon(scene: BattleScene, pokemon: PlayerPokemon, h
  */
 export async function modifyPlayerPokemonBST(pokemon: PlayerPokemon, value: number) {
   const modType = modifierTypes.MYSTERY_ENCOUNTER_SHUCKLE_JUICE()
-    .generateType(pokemon.scene.getParty(), [value])
+    .generateType(pokemon.scene.getParty(), [ value ])
     ?.withIdFromFunc(modifierTypes.MYSTERY_ENCOUNTER_SHUCKLE_JUICE);
   const modifier = modType?.newModifier(pokemon);
   if (modifier) {
@@ -601,7 +604,7 @@ export async function catchPokemon(scene: BattleScene, pokemon: EnemyPokemon, po
           }
         });
       };
-      Promise.all([pokemon.hideInfo(), scene.gameData.setPokemonCaught(pokemon)]).then(() => {
+      Promise.all([ pokemon.hideInfo(), scene.gameData.setPokemonCaught(pokemon) ]).then(() => {
         if (scene.getParty().length === 6) {
           const promptRelease = () => {
             scene.ui.showText(i18next.t("battle:partyFull", { pokemonName: pokemon.getNameToRender() }), null, () => {
@@ -727,33 +730,33 @@ export function doPlayerFlee(scene: BattleScene, pokemon: EnemyPokemon): Promise
  * Bug Species and their corresponding weights
  */
 const GOLDEN_BUG_NET_SPECIES_POOL: [Species, number][] = [
-  [Species.SCYTHER, 40],
-  [Species.SCIZOR, 40],
-  [Species.KLEAVOR, 40],
-  [Species.PINSIR, 40],
-  [Species.HERACROSS, 40],
-  [Species.YANMA, 40],
-  [Species.YANMEGA, 40],
-  [Species.SHUCKLE, 40],
-  [Species.ANORITH, 40],
-  [Species.ARMALDO, 40],
-  [Species.ESCAVALIER, 40],
-  [Species.ACCELGOR, 40],
-  [Species.JOLTIK, 40],
-  [Species.GALVANTULA, 40],
-  [Species.DURANT, 40],
-  [Species.LARVESTA, 40],
-  [Species.VOLCARONA, 40],
-  [Species.DEWPIDER, 40],
-  [Species.ARAQUANID, 40],
-  [Species.WIMPOD, 40],
-  [Species.GOLISOPOD, 40],
-  [Species.SIZZLIPEDE, 40],
-  [Species.CENTISKORCH, 40],
-  [Species.NYMBLE, 40],
-  [Species.LOKIX, 40],
-  [Species.BUZZWOLE, 1],
-  [Species.PHEROMOSA, 1],
+  [ Species.SCYTHER, 40 ],
+  [ Species.SCIZOR, 40 ],
+  [ Species.KLEAVOR, 40 ],
+  [ Species.PINSIR, 40 ],
+  [ Species.HERACROSS, 40 ],
+  [ Species.YANMA, 40 ],
+  [ Species.YANMEGA, 40 ],
+  [ Species.SHUCKLE, 40 ],
+  [ Species.ANORITH, 40 ],
+  [ Species.ARMALDO, 40 ],
+  [ Species.ESCAVALIER, 40 ],
+  [ Species.ACCELGOR, 40 ],
+  [ Species.JOLTIK, 40 ],
+  [ Species.GALVANTULA, 40 ],
+  [ Species.DURANT, 40 ],
+  [ Species.LARVESTA, 40 ],
+  [ Species.VOLCARONA, 40 ],
+  [ Species.DEWPIDER, 40 ],
+  [ Species.ARAQUANID, 40 ],
+  [ Species.WIMPOD, 40 ],
+  [ Species.GOLISOPOD, 40 ],
+  [ Species.SIZZLIPEDE, 40 ],
+  [ Species.CENTISKORCH, 40 ],
+  [ Species.NYMBLE, 40 ],
+  [ Species.LOKIX, 40 ],
+  [ Species.BUZZWOLE, 1 ],
+  [ Species.PHEROMOSA, 1 ],
 ];
 
 /**
@@ -831,4 +834,22 @@ export function isPokemonValidForEncounterOptionSelection(pokemon: Pokemon, scen
   }
 
   return null;
+}
+
+/**
+ * Permanently overrides the ability (not passive) of a pokemon.
+ * If the pokemon is a fusion, instead overrides the fused pokemon's ability.
+ */
+export function applyAbilityOverrideToPokemon(pokemon: Pokemon, ability: Abilities) {
+  if (pokemon.isFusion()) {
+    if (!pokemon.fusionCustomPokemonData) {
+      pokemon.fusionCustomPokemonData = new CustomPokemonData();
+    }
+    pokemon.fusionCustomPokemonData.ability = ability;
+  } else {
+    if (!pokemon.customPokemonData) {
+      pokemon.customPokemonData = new CustomPokemonData();
+    }
+    pokemon.customPokemonData.ability = ability;
+  }
 }

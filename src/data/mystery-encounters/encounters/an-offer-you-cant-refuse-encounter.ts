@@ -1,4 +1,4 @@
-import { leaveEncounterWithoutBattle, setEncounterExp, updatePlayerMoney, } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
+import { generateModifierType, leaveEncounterWithoutBattle, setEncounterExp, updatePlayerMoney, } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import { modifierTypes } from "#app/modifier/modifier-type";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { Species } from "#enums/species";
@@ -8,14 +8,16 @@ import { MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/myst
 import { AbilityRequirement, CombinationPokemonRequirement, MoveRequirement } from "#app/data/mystery-encounters/mystery-encounter-requirements";
 import { getHighestStatTotalPlayerPokemon } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
 import { EXTORTION_ABILITIES, EXTORTION_MOVES } from "#app/data/mystery-encounters/requirements/requirement-groups";
-import { getPokemonSpecies, speciesStarters } from "#app/data/pokemon-species";
+import { getPokemonSpecies } from "#app/data/pokemon-species";
+import { speciesStarterCosts } from "#app/data/balance/starters";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { ModifierRewardPhase } from "#app/phases/modifier-reward-phase";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
+import i18next from "i18next";
 
 /** the i18n namespace for this encounter */
-const namespace = "mysteryEncounter:offerYouCantRefuse";
+const namespace = "mysteryEncounters/anOfferYouCantRefuse";
 
 /**
  * Money offered starts at base value of Relic Gold, increasing linearly up to 3x Relic Gold based on the starter tier of the Pokemon being purchased
@@ -56,22 +58,23 @@ export const AnOfferYouCantRefuseEncounter: MysteryEncounter =
     ])
     .withIntroDialogue([
       {
-        text: `${namespace}.intro`,
+        text: `${namespace}:intro`,
       },
       {
-        text: `${namespace}.intro_dialogue`,
-        speaker: `${namespace}.speaker`,
+        text: `${namespace}:intro_dialogue`,
+        speaker: `${namespace}:speaker`,
       },
     ])
-    .withTitle(`${namespace}.title`)
-    .withDescription(`${namespace}.description`)
-    .withQuery(`${namespace}.query`)
+    .setLocalizationKey(`${namespace}`)
+    .withTitle(`${namespace}:title`)
+    .withDescription(`${namespace}:description`)
+    .withQuery(`${namespace}:query`)
     .withOnInit((scene: BattleScene) => {
       const encounter = scene.currentBattle.mysteryEncounter!;
       const pokemon = getHighestStatTotalPlayerPokemon(scene, true, true);
 
       const baseSpecies = pokemon.getSpeciesForm().getRootSpeciesId();
-      const starterValue: number = speciesStarters[baseSpecies] ?? 1;
+      const starterValue: number = speciesStarterCosts[baseSpecies] ?? 1;
       const multiplier = Math.max(MONEY_MAXIMUM_MULTIPLIER / 10 * starterValue, MONEY_MINIMUM_MULTIPLIER);
       const price = scene.getWaveMoneyAmount(multiplier);
 
@@ -96,6 +99,8 @@ export const AnOfferYouCantRefuseEncounter: MysteryEncounter =
         }
       }
 
+      const shinyCharm = generateModifierType(scene, modifierTypes.SHINY_CHARM);
+      encounter.setDialogueToken("itemName", shinyCharm?.name ?? i18next.t("modifierType:ModifierType.SHINY_CHARM.name"));
       encounter.setDialogueToken("liepardName", getPokemonSpecies(Species.LIEPARD).getName());
 
       return true;
@@ -104,12 +109,12 @@ export const AnOfferYouCantRefuseEncounter: MysteryEncounter =
       MysteryEncounterOptionBuilder
         .newOptionWithMode(MysteryEncounterOptionMode.DEFAULT)
         .withDialogue({
-          buttonLabel: `${namespace}.option.1.label`,
-          buttonTooltip: `${namespace}.option.1.tooltip`,
+          buttonLabel: `${namespace}:option.1.label`,
+          buttonTooltip: `${namespace}:option.1.tooltip`,
           selected: [
             {
-              text: `${namespace}.option.1.selected`,
-              speaker: `${namespace}.speaker`,
+              text: `${namespace}:option.1.selected`,
+              speaker: `${namespace}:speaker`,
             },
           ],
         })
@@ -121,7 +126,7 @@ export const AnOfferYouCantRefuseEncounter: MysteryEncounter =
           return true;
         })
         .withOptionPhase(async (scene: BattleScene) => {
-          // Give the player a Shiny charm
+          // Give the player a Shiny Charm
           scene.unshiftPhase(new ModifierRewardPhase(scene, modifierTypes.SHINY_CHARM));
           leaveEncounterWithoutBattle(scene, true);
         })
@@ -130,18 +135,20 @@ export const AnOfferYouCantRefuseEncounter: MysteryEncounter =
     .withOption(
       MysteryEncounterOptionBuilder
         .newOptionWithMode(MysteryEncounterOptionMode.DISABLED_OR_SPECIAL)
-        .withPrimaryPokemonRequirement(new CombinationPokemonRequirement(
-          new MoveRequirement(EXTORTION_MOVES),
-          new AbilityRequirement(EXTORTION_ABILITIES))
+        .withPrimaryPokemonRequirement(
+          CombinationPokemonRequirement.Some(
+            new MoveRequirement(EXTORTION_MOVES, true),
+            new AbilityRequirement(EXTORTION_ABILITIES, true)
+          )
         )
         .withDialogue({
-          buttonLabel: `${namespace}.option.2.label`,
-          buttonTooltip: `${namespace}.option.2.tooltip`,
-          disabledButtonTooltip: `${namespace}.option.2.tooltip_disabled`,
+          buttonLabel: `${namespace}:option.2.label`,
+          buttonTooltip: `${namespace}:option.2.tooltip`,
+          disabledButtonTooltip: `${namespace}:option.2.tooltip_disabled`,
           selected: [
             {
-              speaker: `${namespace}.speaker`,
-              text: `${namespace}.option.2.selected`,
+              speaker: `${namespace}:speaker`,
+              text: `${namespace}:option.2.selected`,
             },
           ],
         })
@@ -159,12 +166,12 @@ export const AnOfferYouCantRefuseEncounter: MysteryEncounter =
     )
     .withSimpleOption(
       {
-        buttonLabel: `${namespace}.option.3.label`,
-        buttonTooltip: `${namespace}.option.3.tooltip`,
+        buttonLabel: `${namespace}:option.3.label`,
+        buttonTooltip: `${namespace}:option.3.tooltip`,
         selected: [
           {
-            speaker: `${namespace}.speaker`,
-            text: `${namespace}.option.3.selected`,
+            speaker: `${namespace}:speaker`,
+            text: `${namespace}:option.3.selected`,
           },
         ],
       },

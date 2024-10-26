@@ -27,10 +27,16 @@ export class TrainerVictoryPhase extends BattlePhase {
       this.scene.unshiftPhase(new ModifierRewardPhase(this.scene, modifierRewardFunc));
     }
 
+    if (this.scene.eventManager.isEventActive()) {
+      for (const rewardFunc of this.scene.currentBattle.trainer?.config.eventRewardFuncs!) {
+        this.scene.unshiftPhase(new ModifierRewardPhase(this.scene, rewardFunc));
+      }
+    }
+
     const trainerType = this.scene.currentBattle.trainer?.config.trainerType!; // TODO: is this bang correct?
     if (vouchers.hasOwnProperty(TrainerType[trainerType])) {
       if (!this.scene.validateVoucher(vouchers[TrainerType[trainerType]]) && this.scene.currentBattle.trainer?.config.isBoss) {
-        this.scene.unshiftPhase(new ModifierRewardPhase(this.scene, [modifierTypes.VOUCHER, modifierTypes.VOUCHER, modifierTypes.VOUCHER_PLUS, modifierTypes.VOUCHER_PREMIUM][vouchers[TrainerType[trainerType]].voucherType]));
+        this.scene.unshiftPhase(new ModifierRewardPhase(this.scene, [ modifierTypes.VOUCHER, modifierTypes.VOUCHER, modifierTypes.VOUCHER_PLUS, modifierTypes.VOUCHER_PREMIUM ][vouchers[TrainerType[trainerType]].voucherType]));
       }
     }
 
