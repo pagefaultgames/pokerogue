@@ -970,6 +970,9 @@ export class GravityTag extends ArenaTag {
       if (pokemon !== null) {
         pokemon.removeTag(BattlerTagType.FLOATING);
         pokemon.removeTag(BattlerTagType.TELEKINESIS);
+        if (pokemon.getTag(BattlerTagType.FLYING)) {
+          pokemon.addTag(BattlerTagType.INTERRUPTED);
+        }
       }
     });
   }

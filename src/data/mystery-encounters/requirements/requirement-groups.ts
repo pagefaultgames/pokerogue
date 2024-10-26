@@ -118,3 +118,20 @@ export const EXTORTION_ABILITIES = [
   Abilities.SUCTION_CUPS,
   Abilities.STICKY_HOLD
 ];
+
+/**
+ * Abilities that signify resistance to fire
+ */
+export const FIRE_RESISTANT_ABILITIES = [
+  Abilities.FLAME_BODY,
+  Abilities.FLASH_FIRE,
+  Abilities.WELL_BAKED_BODY,
+  Abilities.HEATPROOF,
+  Abilities.THERMAL_EXCHANGE,
+  Abilities.THICK_FAT,
+  Abilities.WATER_BUBBLE,
+  Abilities.MAGMA_ARMOR,
+  Abilities.WATER_VEIL,
+  Abilities.STEAM_ENGINE,
+  Abilities.PRIMORDIAL_SEA
+];
