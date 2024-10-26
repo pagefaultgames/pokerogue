@@ -402,7 +402,7 @@ export class PokemonPpUpModifierType extends PokemonMoveModifierType {
       (_pokemon: PlayerPokemon) => {
         return null;
       }, (pokemonMove: PokemonMove) => {
-        if (pokemonMove.getMove().pp < 5 || pokemonMove.ppUp >= 3) {
+        if (pokemonMove.getMove().pp < 5 || pokemonMove.ppUp >= 3 || pokemonMove.maxPpOverride) {
           return PartyUiHandler.NoEffectMessage;
         }
         return null;

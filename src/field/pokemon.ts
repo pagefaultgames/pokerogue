@@ -4453,7 +4453,7 @@ export class PlayerPokemon extends Pokemon {
           this.scene.removePartyMemberModifiers(fusedPartyMemberIndex);
           this.scene.getParty().splice(fusedPartyMemberIndex, 1)[0];
           const newPartyMemberIndex = this.scene.getParty().indexOf(this);
-          pokemon.getMoveset(true).map(m => this.scene.unshiftPhase(new LearnMovePhase(this.scene, newPartyMemberIndex, m!.getMove().id))); // TODO: is the bang correct?
+          pokemon.getMoveset(true).map((m: PokemonMove) => this.scene.unshiftPhase(new LearnMovePhase(this.scene, newPartyMemberIndex, m.getMove().id)));
           pokemon.destroy();
           this.updateFusionPalette();
           resolve();
@@ -4474,8 +4474,12 @@ export class PlayerPokemon extends Pokemon {
   /** Returns a deep copy of this Pokemon's moveset array */
   copyMoveset(): PokemonMove[] {
     const newMoveset : PokemonMove[] = [];
-    this.moveset.forEach(move =>
-      newMoveset.push(new PokemonMove(move!.moveId, 0, move!.ppUp, move!.virtual))); // TODO: are those bangs correct?
+    this.moveset.forEach((move) => {
+      // TODO: refactor `moveset` to not accept `null`s
+      if (move) {
+        newMoveset.push(new PokemonMove(move.moveId, 0, move.ppUp, move.virtual, move.maxPpOverride));
+      }
+    });
 
     return newMoveset;
   }
@@ -5202,15 +5206,22 @@ export interface DamageCalculationResult {
  **/
 export class PokemonMove {
   public moveId: Moves;
-  public ppUsed: integer;
-  public ppUp: integer;
+  public ppUsed: number;
+  public ppUp: number;
   public virtual: boolean;
 
-  constructor(moveId: Moves, ppUsed?: integer, ppUp?: integer, virtual?: boolean) {
+  /**
+   * If defined and nonzero, overrides the maximum PP of the move (e.g., due to move being copied by Transform).
+   * This also nullifies all effects of `ppUp`.
+   */
+  public maxPpOverride?: number;
+
+  constructor(moveId: Moves, ppUsed: number = 0, ppUp: number = 0, virtual: boolean = false, maxPpOverride?: number) {
     this.moveId = moveId;
-    this.ppUsed = ppUsed || 0;
-    this.ppUp = ppUp || 0;
-    this.virtual = !!virtual;
+    this.ppUsed = ppUsed;
+    this.ppUp = ppUp;
+    this.virtual = virtual;
+    this.maxPpOverride = maxPpOverride;
   }
 
   /**
@@ -5247,7 +5258,7 @@ export class PokemonMove {
   }
 
   getMovePp(): integer {
-    return this.getMove().pp + this.ppUp * Utils.toDmgValue(this.getMove().pp / 5);
+    return this.maxPpOverride || (this.getMove().pp + this.ppUp * Utils.toDmgValue(this.getMove().pp / 5));
   }
 
   getPpRatio(): number {
@@ -5264,6 +5275,6 @@ export class PokemonMove {
   * @return {PokemonMove} A valid pokemonmove object
   */
   static loadMove(source: PokemonMove | any): PokemonMove {
-    return new PokemonMove(source.moveId, source.ppUsed, source.ppUp, source.virtual);
+    return new PokemonMove(source.moveId, source.ppUsed, source.ppUp, source.virtual, source.maxPpOverride);
   }
 }
