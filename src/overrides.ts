@@ -50,7 +50,7 @@ class DefaultOverrides {
   readonly BATTLE_TYPE_OVERRIDE: "double" | "single" | null = null;
   readonly STARTING_WAVE_OVERRIDE: number = 0;
   readonly STARTING_BIOME_OVERRIDE: Biome = Biome.TOWN;
-  readonly ARENA_TINT_OVERRIDE: TimeOfDay | null = TimeOfDay.DAY;
+  readonly ARENA_TINT_OVERRIDE: TimeOfDay | null = null;
   /** Multiplies XP gained by this value including 0. Set to null to ignore the override */
   readonly XP_MULTIPLIER_OVERRIDE: number | null = null;
   readonly NEVER_CRIT_OVERRIDE: boolean = false;
@@ -91,7 +91,7 @@ class DefaultOverrides {
    * }
    * ```
    */
-  readonly STARTER_FORM_OVERRIDES: Partial<Record<Species, number>> = { [Species.GRENINJA]: 1 };
+  readonly STARTER_FORM_OVERRIDES: Partial<Record<Species, number>> = {};
 
   /** default 5 or 20 for Daily */
   readonly STARTING_LEVEL_OVERRIDE: number = 0;
@@ -101,7 +101,7 @@ class DefaultOverrides {
    * default is 0 to not override
    * @example SPECIES_OVERRIDE = Species.Bulbasaur;
    */
-  readonly STARTER_SPECIES_OVERRIDE: Species | number = 658;
+  readonly STARTER_SPECIES_OVERRIDE: Species | number = 0;
   /**
    * This will force your starter to be a random fusion
    */
@@ -113,15 +113,15 @@ class DefaultOverrides {
   readonly ABILITY_OVERRIDE: Abilities = Abilities.NONE;
   readonly PASSIVE_ABILITY_OVERRIDE: Abilities = Abilities.NONE;
   readonly STATUS_OVERRIDE: StatusEffect = StatusEffect.NONE;
-  readonly GENDER_OVERRIDE: Gender | null = Gender.FEMALE;
+  readonly GENDER_OVERRIDE: Gender | null = null;
   readonly MOVESET_OVERRIDE: Moves | Array<Moves> = [];
-  readonly SHINY_OVERRIDE: boolean = true;
-  readonly VARIANT_OVERRIDE: Variant = 1;
+  readonly SHINY_OVERRIDE: boolean | null = null;
+  readonly VARIANT_OVERRIDE: Variant | null = null;
 
   // --------------------------
   // OPPONENT / ENEMY OVERRIDES
   // --------------------------
-  readonly OPP_SPECIES_OVERRIDE: Species | number = this.STARTER_SPECIES_OVERRIDE;
+  readonly OPP_SPECIES_OVERRIDE: Species | number = 0;
   /**
    * This will make all opponents fused Pokemon
    */
@@ -134,10 +134,10 @@ class DefaultOverrides {
   readonly OPP_ABILITY_OVERRIDE: Abilities = Abilities.NONE;
   readonly OPP_PASSIVE_ABILITY_OVERRIDE: Abilities = Abilities.NONE;
   readonly OPP_STATUS_OVERRIDE: StatusEffect = StatusEffect.NONE;
-  readonly OPP_GENDER_OVERRIDE: Gender | null = this.GENDER_OVERRIDE;
+  readonly OPP_GENDER_OVERRIDE: Gender | null = null;
   readonly OPP_MOVESET_OVERRIDE: Moves | Array<Moves> = [];
-  readonly OPP_SHINY_OVERRIDE: boolean = this.SHINY_OVERRIDE;
-  readonly OPP_VARIANT_OVERRIDE: Variant = this.VARIANT_OVERRIDE;
+  readonly OPP_SHINY_OVERRIDE: boolean | null = null;
+  readonly OPP_VARIANT_OVERRIDE: Variant | null = null;
   readonly OPP_IVS_OVERRIDE: number | number[] = [];
   readonly OPP_FORM_OVERRIDES: Partial<Record<Species, number>> = {};
   /**
