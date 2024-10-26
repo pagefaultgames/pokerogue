@@ -502,45 +502,25 @@ export class BerryModifierType extends PokemonHeldItemModifierType implements Ge
   }
 }
 
-function getAttackTypeBoosterItemName(type: Type) {
-  switch (type) {
-    case Type.NORMAL:
-      return "Silk Scarf";
-    case Type.FIGHTING:
-      return "Black Belt";
-    case Type.FLYING:
-      return "Sharp Beak";
-    case Type.POISON:
-      return "Poison Barb";
-    case Type.GROUND:
-      return "Soft Sand";
-    case Type.ROCK:
-      return "Hard Stone";
-    case Type.BUG:
-      return "Silver Powder";
-    case Type.GHOST:
-      return "Spell Tag";
-    case Type.STEEL:
-      return "Metal Coat";
-    case Type.FIRE:
-      return "Charcoal";
-    case Type.WATER:
-      return "Mystic Water";
-    case Type.GRASS:
-      return "Miracle Seed";
-    case Type.ELECTRIC:
-      return "Magnet";
-    case Type.PSYCHIC:
-      return "Twisted Spoon";
-    case Type.ICE:
-      return "Never-Melt Ice";
-    case Type.DRAGON:
-      return "Dragon Fang";
-    case Type.DARK:
-      return "Black Glasses";
-    case Type.FAIRY:
-      return "Fairy Feather";
-  }
+enum AttackTypeBoosterItem {
+  SILK_SCARF,
+  BLACK_BELT,
+  SHARP_BEAK,
+  POISON_BARB,
+  SOFT_SAND,
+  HARD_STONE,
+  SILVER_POWDER,
+  SPELL_TAG,
+  METAL_COAT,
+  CHARCOAL,
+  MYSTIC_WATER,
+  MIRACLE_SEED,
+  MAGNET,
+  TWISTED_SPOON,
+  NEVER_MELT_ICE,
+  DRAGON_FANG,
+  BLACK_GLASSES,
+  FAIRY_FEATHER
 }
 
 export class AttackTypeBoosterModifierType extends PokemonHeldItemModifierType implements GeneratedPersistentModifierType {
@@ -548,7 +528,7 @@ export class AttackTypeBoosterModifierType extends PokemonHeldItemModifierType i
   public boostPercent: integer;
 
   constructor(moveType: Type, boostPercent: integer) {
-    super("", `${getAttackTypeBoosterItemName(moveType)?.replace(/[ \-]/g, "_").toLowerCase()}`,
+    super("", `${AttackTypeBoosterItem[moveType]?.toLowerCase()}`,
       (_type, args) => new AttackTypeBoosterModifier(this, (args[0] as Pokemon).id, moveType, boostPercent));
 
     this.moveType = moveType;
@@ -556,7 +536,7 @@ export class AttackTypeBoosterModifierType extends PokemonHeldItemModifierType i
   }
 
   get name(): string {
-    return i18next.t(`modifierType:AttackTypeBoosterItem.${getAttackTypeBoosterItemName(this.moveType)?.replace(/[ \-]/g, "_").toLowerCase()}`);
+    return i18next.t(`modifierType:AttackTypeBoosterItem.${AttackTypeBoosterItem[this.moveType]?.toLowerCase()}`);
   }
 
   getDescription(scene: BattleScene): string {
