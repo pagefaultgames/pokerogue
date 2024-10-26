@@ -1,21 +1,23 @@
-import BattleScene from "#app/battle-scene";
 import { BattlerIndex } from "#app/battle";
-import { getPokeballCatchMultiplier, getPokeballAtlasKey, getPokeballTintColor, doPokeballBounceAnim } from "#app/data/pokeball";
+import BattleScene from "#app/battle-scene";
+import { SubstituteTag } from "#app/data/battler-tags";
+import { ChallengeType, applyChallenges } from "#app/data/challenge";
+import { doPokeballBounceAnim, getPokeballAtlasKey, getPokeballCatchMultiplier, getPokeballTintColor } from "#app/data/pokeball";
 import { getStatusEffectCatchRateMultiplier } from "#app/data/status-effect";
 import { PokeballType } from "#app/enums/pokeball";
 import { StatusEffect } from "#app/enums/status-effect";
-import { addPokeballOpenParticles, addPokeballCaptureStars } from "#app/field/anims";
+import { addPokeballCaptureStars, addPokeballOpenParticles } from "#app/field/anims";
 import { EnemyPokemon } from "#app/field/pokemon";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { PokemonHeldItemModifier } from "#app/modifier/modifier";
+import { PokemonPhase } from "#app/phases/pokemon-phase";
+import { VictoryPhase } from "#app/phases/victory-phase";
 import { achvs } from "#app/system/achv";
-import { PartyUiMode, PartyOption } from "#app/ui/party-ui-handler";
+import { PartyOption, PartyUiMode } from "#app/ui/party-ui-handler";
 import { SummaryUiMode } from "#app/ui/summary-ui-handler";
 import { Mode } from "#app/ui/ui";
+import { BooleanHolder } from "#app/utils";
 import i18next from "i18next";
-import { PokemonPhase } from "./pokemon-phase";
-import { VictoryPhase } from "./victory-phase";
-import { SubstituteTag } from "#app/data/battler-tags";
 
 export class AttemptCapturePhase extends PokemonPhase {
   private pokeballType: PokeballType;
@@ -249,6 +251,13 @@ export class AttemptCapturePhase extends PokemonPhase {
         });
       };
       Promise.all([ pokemon.hideInfo(), this.scene.gameData.setPokemonCaught(pokemon) ]).then(() => {
+        const challengeCanAddToParty = new BooleanHolder(true);
+        applyChallenges(this.scene.gameMode, ChallengeType.ADD_POKEMON_TO_PARTY, pokemon, this.scene.currentBattle.waveIndex, challengeCanAddToParty);
+        if (!challengeCanAddToParty.value) {
+          removePokemon();
+          end();
+          return;
+        }
         if (this.scene.getParty().length === 6) {
           const promptRelease = () => {
             this.scene.ui.showText(i18next.t("battle:partyFull", { pokemonName: pokemon.getNameToRender() }), null, () => {

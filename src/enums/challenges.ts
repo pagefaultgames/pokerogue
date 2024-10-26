@@ -5,4 +5,7 @@ export enum Challenges {
     LOWER_STARTER_POINTS,
     FRESH_START,
     INVERSE_BATTLE,
+    NO_AUTO_HEAL,
+    HARDCORE,
+    LIMITED_CATCH,
 }
