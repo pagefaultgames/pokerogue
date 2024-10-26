@@ -30,6 +30,7 @@ describe("Moves - Assist", () => {
       .battleType("single")
       .disableCrits()
       .enemySpecies(Species.MAGIKARP)
+      .enemyLevel(100)
       .enemyAbility(Abilities.BALL_FETCH)
       .enemyMoveset(Moves.SPLASH);
   });
@@ -39,7 +40,6 @@ describe("Moves - Assist", () => {
       .battleType("double")
       .enemyMoveset(Moves.SWORDS_DANCE);
     await game.classicMode.startBattle([ Species.FEEBAS, Species.SHUCKLE ]);
-    const leftPlayer = game.scene.getPlayerPokemon()!;
 
     game.move.select(Moves.ASSIST, 0);
     game.move.select(Moves.SKETCH, 1);
@@ -47,7 +47,7 @@ describe("Moves - Assist", () => {
     // Player_2 uses Sketch, copies Swords Dance, Player_1 uses Assist, uses Player_2's Sketched Swords Dance
     await game.toNextTurn();
 
-    expect(leftPlayer.getStatStage(Stat.ATK)).toBe(2); // Stat raised from Assist -> Swords Dance
+    expect(game.scene.getPlayerPokemon()!.getStatStage(Stat.ATK)).toBe(2); // Stat raised from Assist -> Swords Dance
   });
 
   it("should fail if there are no usable moves", async () => {
@@ -56,5 +56,15 @@ describe("Moves - Assist", () => {
     game.move.select(Moves.ASSIST, 0);
     await game.toNextTurn();
     expect(game.scene.getPlayerPokemon()!.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
+  });
+
+  it("should apply secondary effects of a move", async () => {
+    game.override.moveset([ Moves.ASSIST, Moves.WOOD_HAMMER, Moves.WOOD_HAMMER, Moves.WOOD_HAMMER ]);
+    await game.classicMode.startBattle([ Species.FEEBAS ]);
+
+    game.move.select(Moves.ASSIST, 0);
+    await game.toNextTurn();
+
+    expect(game.scene.getPlayerPokemon()!.isFullHp()).toBeFalsy(); // should receive recoil damage from Wood Hammer
   });
 });
