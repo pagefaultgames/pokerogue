@@ -31,7 +31,7 @@ const timedEvents: TimedEvent[] = [
     eventType: EventType.SHINY,
     shinyMultiplier: 2,
     friendshipMultiplier: 2,
-    startDate: new Date(Date.UTC(2024, 9, 25, 0)),
+    startDate: new Date(Date.UTC(2024, 9, 27, 0)),
     endDate: new Date(Date.UTC(2024, 10, 4, 0)),
     bannerKey: "halloween2024-event-",
     scale: 0.21,
