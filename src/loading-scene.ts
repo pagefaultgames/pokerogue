@@ -165,6 +165,8 @@ export class LoadingScene extends SceneBase {
     this.loadImage("discord", "ui");
     this.loadImage("google", "ui");
     this.loadImage("settings_icon", "ui");
+    this.loadImage("link_icon", "ui");
+    this.loadImage("unlink_icon", "ui");
 
     this.loadImage("default_bg", "arenas");
     // Load arena images
