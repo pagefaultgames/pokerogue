@@ -11,7 +11,7 @@ import { Species } from "#enums/species";
 import { TrainerType } from "#enums/trainer-type";
 import { getPokemonSpecies } from "#app/data/pokemon-species";
 import { Abilities } from "#enums/abilities";
-import { applyModifierTypeToPlayerPokemon } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
+import { applyAbilityOverrideToPokemon, applyModifierTypeToPlayerPokemon } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
 import { Type } from "#app/data/type";
 import { MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/mystery-encounter-option";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
@@ -425,17 +425,8 @@ function onYesAbilitySwap(scene: BattleScene, resolve) {
   const onPokemonSelected = (pokemon: PlayerPokemon) => {
     // Do ability swap
     const encounter = scene.currentBattle.mysteryEncounter!;
-    if (pokemon.isFusion()) {
-      if (!pokemon.fusionCustomPokemonData) {
-        pokemon.fusionCustomPokemonData = new CustomPokemonData();
-      }
-      pokemon.fusionCustomPokemonData.ability = encounter.misc.ability;
-    } else {
-      if (!pokemon.customPokemonData) {
-        pokemon.customPokemonData = new CustomPokemonData();
-      }
-      pokemon.customPokemonData.ability = encounter.misc.ability;
-    }
+
+    applyAbilityOverrideToPokemon(pokemon, encounter.misc.ability);
     encounter.setDialogueToken("chosenPokemon", pokemon.getNameToRender());
     scene.ui.setMode(Mode.MESSAGE).then(() => resolve(true));
   };
