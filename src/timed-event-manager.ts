@@ -20,6 +20,7 @@ interface TimedEvent extends EventBanner {
   name: string;
   eventType: EventType;
   shinyMultiplier?: number;
+  friendshipMultiplier?: number;
   startDate: Date;
   endDate: Date;
 }
@@ -31,6 +32,19 @@ const timedEvents: TimedEvent[] = [
     startDate: new Date(Date.UTC(2024, 8, 8, 0)),
     endDate: new Date(Date.UTC(2024, 8, 12, 0)),
     bannerKey: "egg-update",
+    xPosition: 19,
+    yPosition: 120,
+    scale: 0.21,
+    availableLangs: [ "en", "de", "it", "fr", "ja", "ko", "es", "pt-BR", "zh-CN" ]
+  },
+  {
+    name: "Halloween Update",
+    eventType: EventType.SHINY,
+    shinyMultiplier: 2,
+    friendshipMultiplier: 2,
+    startDate: new Date(Date.UTC(2024, 9, 25, 0)),
+    endDate: new Date(Date.UTC(2024, 10, 4, 0)),
+    bannerKey: "halloween-banner",
     xPosition: 19,
     yPosition: 120,
     scale: 0.21,
@@ -59,6 +73,16 @@ export class TimedEventManager {
   activeEventHasBanner(): boolean {
     const activeEvents = timedEvents.filter((te) => this.isActive(te) && te.hasOwnProperty("bannerFilename"));
     return activeEvents.length > 0;
+  }
+
+  getFriendshipMultiplier(): number {
+    let multiplier = 1;
+    const friendshipEvents = timedEvents.filter((te) => this.isActive(te));
+    friendshipEvents.forEach((fe) => {
+      multiplier *= fe.friendshipMultiplier ?? 1;
+    });
+
+    return multiplier;
   }
 
   getShinyMultiplier(): number {

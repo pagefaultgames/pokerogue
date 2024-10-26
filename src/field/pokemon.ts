@@ -4114,7 +4114,11 @@ export class PlayerPokemon extends Pokemon {
       fusionStarterSpeciesId ? this.scene.gameData.starterData[fusionStarterSpeciesId] : null
     ].filter(d => !!d);
     const amount = new Utils.IntegerHolder(friendship);
-    const starterAmount = new Utils.IntegerHolder(Math.floor(friendship * (this.scene.gameMode.isClassic && friendship > 0 ? CLASSIC_CANDY_FRIENDSHIP_MULTIPLIER : 1) / (fusionStarterSpeciesId ? 2 : 1)));
+    let candyFriendshipMultiplier = CLASSIC_CANDY_FRIENDSHIP_MULTIPLIER;
+    if (this.scene.eventManager.isEventActive()) {
+      candyFriendshipMultiplier *= this.scene.eventManager.getFriendshipMultiplier();
+    }
+    const starterAmount = new Utils.IntegerHolder(Math.floor(friendship * (this.scene.gameMode.isClassic && friendship > 0 ? candyFriendshipMultiplier : 1) / (fusionStarterSpeciesId ? 2 : 1)));
     if (amount.value > 0) {
       this.scene.applyModifier(PokemonFriendshipBoosterModifier, true, this, amount);
       this.scene.applyModifier(PokemonFriendshipBoosterModifier, true, this, starterAmount);
