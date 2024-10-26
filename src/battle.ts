@@ -88,6 +88,9 @@ export default class Battle {
   public enemyFaints: number = 0;
   public playerFaintsHistory: FaintLogEntry[] = [];
   public enemyFaintsHistory: FaintLogEntry[] = [];
+  /** The list of moves used since the beginning of the battle */
+  public moveHistory: TurnMove[] = [];
+
 
   public mysteryEncounterType?: MysteryEncounterType;
   /** If the current battle is a Mystery Encounter, this will always be defined */

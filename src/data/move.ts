@@ -6502,14 +6502,18 @@ export class CopyMoveAttr extends CallMoveAttr {
   }
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): Promise<boolean> {
-    const lastMove = this.mirrorMove ? user.turnData.attacksReceived[0]?.move : user.scene.currentBattle.lastMove;
-    return super.apply(user, target, allMoves[lastMove], args);
+    if (this.mirrorMove) {
+      const lastMove = user.scene.currentBattle.moveHistory.filter(m => m.targets.includes(user.getBattlerIndex()))[0].move;
+      return super.apply(user, target, allMoves[lastMove], args);
+    } else {
+      return super.apply(user, target, allMoves[user.scene.currentBattle.lastMove], args);
+    }
   }
 
   getCondition(): MoveConditionFunc {
     return (user, target, move) => {
       if (this.mirrorMove) {
-        if (user.turnData.attacksReceived.length === 0) {
+        if (user.scene.currentBattle.moveHistory.filter(m => m.targets.includes(user.getBattlerIndex())).length === 0) {
           return false;
         }
       } else if (user.scene.currentBattle.lastMove === undefined) {

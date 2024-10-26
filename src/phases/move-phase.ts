@@ -274,6 +274,10 @@ export class MovePhase extends BattlePhase {
       // The last move used is unaffected by moves that fail
       if (success) {
         this.scene.currentBattle.lastMove = this.move.moveId;
+        this.scene.currentBattle.moveHistory.unshift({
+          move: this.move.moveId,
+          targets: this.targets
+        });
       }
     }
 
