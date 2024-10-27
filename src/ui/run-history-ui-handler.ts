@@ -7,11 +7,12 @@ import * as Utils from "../utils";
 import PokemonData from "../system/pokemon-data";
 import MessageUiHandler from "./message-ui-handler";
 import i18next from "i18next";
-import {Button} from "../enums/buttons";
+import { Button } from "../enums/buttons";
 import { BattleType } from "../battle";
 import { RunEntry } from "../system/game-data";
 import { PlayerGender } from "#enums/player-gender";
 import { TrainerVariant } from "../field/trainer";
+import { RunDisplayMode } from "#app/ui/run-info-ui-handler";
 
 export type RunSelectCallback = (cursor: number) => void;
 
@@ -100,11 +101,11 @@ export default class RunHistoryUiHandler extends MessageUiHandler {
     let success = false;
     const error = false;
 
-    if ([Button.ACTION, Button.CANCEL].includes(button)) {
+    if ([ Button.ACTION, Button.CANCEL ].includes(button)) {
       if (button === Button.ACTION) {
         const cursor = this.cursor + this.scrollCursor;
         if (this.runs[cursor]) {
-          this.scene.ui.setOverlayMode(Mode.RUN_INFO, this.runs[cursor].entryData, true);
+          this.scene.ui.setOverlayMode(Mode.RUN_INFO, this.runs[cursor].entryData, RunDisplayMode.RUN_HISTORY, true);
         } else {
           return false;
         }
@@ -117,28 +118,28 @@ export default class RunHistoryUiHandler extends MessageUiHandler {
       }
     } else if (this.runs.length > 0) {
       switch (button) {
-      case Button.UP:
-        if (this.cursor) {
-          success = this.setCursor(this.cursor - 1);
-        } else if (this.scrollCursor) {
-          success = this.setScrollCursor(this.scrollCursor - 1);
-        } else if (this.runs.length > 1) {
+        case Button.UP:
+          if (this.cursor) {
+            success = this.setCursor(this.cursor - 1);
+          } else if (this.scrollCursor) {
+            success = this.setScrollCursor(this.scrollCursor - 1);
+          } else if (this.runs.length > 1) {
           // wrap around to the bottom
-          success = this.setCursor(Math.min(this.runs.length - 1, this.maxRows - 1));
-          success = this.setScrollCursor(Math.max(0, this.runs.length - this.maxRows)) || success;
-        }
-        break;
-      case Button.DOWN:
-        if (this.cursor < Math.min(this.maxRows - 1, this.runs.length - this.scrollCursor - 1)) {
-          success = this.setCursor(this.cursor + 1);
-        } else if (this.scrollCursor < this.runs.length - this.maxRows) {
-          success = this.setScrollCursor(this.scrollCursor + 1);
-        } else if (this.runs.length > 1) {
+            success = this.setCursor(Math.min(this.runs.length - 1, this.maxRows - 1));
+            success = this.setScrollCursor(Math.max(0, this.runs.length - this.maxRows)) || success;
+          }
+          break;
+        case Button.DOWN:
+          if (this.cursor < Math.min(this.maxRows - 1, this.runs.length - this.scrollCursor - 1)) {
+            success = this.setCursor(this.cursor + 1);
+          } else if (this.scrollCursor < this.runs.length - this.maxRows) {
+            success = this.setScrollCursor(this.scrollCursor + 1);
+          } else if (this.runs.length > 1) {
           // wrap around to the top
-          success = this.setCursor(0);
-          success = this.setScrollCursor(0) || success;
-        }
-        break;
+            success = this.setCursor(0);
+            success = this.setScrollCursor(0) || success;
+          }
+          break;
       }
     }
 
@@ -186,8 +187,8 @@ export default class RunHistoryUiHandler extends MessageUiHandler {
     const emptyWindow = addWindow(this.scene, 0, 0, 304, 165);
     this.runsContainer.add(emptyWindow);
     const emptyWindowCoordinates = emptyWindow.getCenter();
-    const emptyText = addTextObject(this.scene, 0, 0, i18next.t("saveSlotSelectUiHandler:empty"), TextStyle.WINDOW, {fontSize: "128px"});
-    emptyText.setPosition(emptyWindowCoordinates.x-18, emptyWindowCoordinates.y-15);
+    const emptyText = addTextObject(this.scene, 0, 0, i18next.t("saveSlotSelectUiHandler:empty"), TextStyle.WINDOW, { fontSize: "128px" });
+    emptyText.setPosition(emptyWindowCoordinates.x - 18, emptyWindowCoordinates.y - 15);
     this.runsContainer.add(emptyText);
   }
 
@@ -255,7 +256,7 @@ class RunEntryContainer extends Phaser.GameObjects.Container {
   public entryData: RunEntry;
 
   constructor(scene: BattleScene, entryData: RunEntry, slotId: number) {
-    super(scene, 0, slotId*56);
+    super(scene, 0, slotId * 56);
 
     this.slotId = slotId;
     this.entryData = entryData;
@@ -295,7 +296,7 @@ class RunEntryContainer extends Phaser.GameObjects.Container {
         const gameOutcomeLabel = addTextObject(this.scene, 0, 0, `${i18next.t("runHistory:defeatedWild", { context: genderStr })}`, TextStyle.WINDOW);
         enemyContainer.add(gameOutcomeLabel);
         data.enemyParty.forEach((enemyData, e) => {
-          const enemyIconContainer = this.scene.add.container(65+(e*25), -8);
+          const enemyIconContainer = this.scene.add.container(65 + (e * 25), -8);
           enemyIconContainer.setScale(0.75);
           enemyData.boss = false;
           enemyData["player"] = true;
@@ -332,33 +333,33 @@ class RunEntryContainer extends Phaser.GameObjects.Container {
     const gameModeLabel = addTextObject(this.scene, 8, 19, "", TextStyle.WINDOW);
     let mode = "";
     switch (data.gameMode) {
-    case GameModes.DAILY:
-      mode = i18next.t("gameMode:dailyRun");
-      break;
-    case GameModes.SPLICED_ENDLESS:
-    case GameModes.ENDLESS:
-      mode = i18next.t("gameMode:endless");
-      break;
-    case GameModes.CLASSIC:
-      mode = i18next.t("gameMode:classic");
-      break;
-    case GameModes.CHALLENGE:
-      mode = i18next.t("gameMode:challenge");
-      break;
+      case GameModes.DAILY:
+        mode = i18next.t("gameMode:dailyRun");
+        break;
+      case GameModes.SPLICED_ENDLESS:
+      case GameModes.ENDLESS:
+        mode = i18next.t("gameMode:endless");
+        break;
+      case GameModes.CLASSIC:
+        mode = i18next.t("gameMode:classic");
+        break;
+      case GameModes.CHALLENGE:
+        mode = i18next.t("gameMode:challenge");
+        break;
     }
     gameModeLabel.appendText(mode, false);
     if (data.gameMode === GameModes.SPLICED_ENDLESS) {
       const splicedIcon = this.scene.add.image(0, 0, "icon_spliced");
       splicedIcon.setScale(0.75);
       const coords = gameModeLabel.getTopRight();
-      splicedIcon.setPosition(coords.x+5, 27);
+      splicedIcon.setPosition(coords.x + 5, 27);
       this.add(splicedIcon);
       // 4 spaces of room for the Spliced icon
       gameModeLabel.appendText("    - ", false);
     } else {
       gameModeLabel.appendText(" - ", false);
     }
-    gameModeLabel.appendText(i18next.t("saveSlotSelectUiHandler:wave")+" "+data.waveIndex, false);
+    gameModeLabel.appendText(i18next.t("saveSlotSelectUiHandler:wave") + " " + data.waveIndex, false);
     this.add(gameModeLabel);
 
     const timestampLabel = addTextObject(this.scene, 8, 33, new Date(data.timestamp).toLocaleString(), TextStyle.WINDOW);

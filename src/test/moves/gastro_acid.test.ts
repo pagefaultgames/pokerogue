@@ -7,7 +7,6 @@ import GameManager from "#test/utils/gameManager";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 
-
 describe("Moves - Gastro Acid", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
@@ -28,7 +27,7 @@ describe("Moves - Gastro Acid", () => {
     game.override.startingLevel(1);
     game.override.enemyLevel(100);
     game.override.ability(Abilities.NONE);
-    game.override.moveset([Moves.GASTRO_ACID, Moves.WATER_GUN, Moves.SPLASH, Moves.CORE_ENFORCER]);
+    game.override.moveset([ Moves.GASTRO_ACID, Moves.WATER_GUN, Moves.SPLASH, Moves.CORE_ENFORCER ]);
     game.override.enemySpecies(Species.BIDOOF);
     game.override.enemyMoveset(Moves.SPLASH);
     game.override.enemyAbility(Abilities.WATER_ABSORB);
@@ -69,7 +68,7 @@ describe("Moves - Gastro Acid", () => {
 
     game.move.select(Moves.CORE_ENFORCER);
     // Force player to be slower to enable Core Enforcer to proc its suppression effect
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+    await game.setTurnOrder([ BattlerIndex.ENEMY, BattlerIndex.PLAYER ]);
 
     await game.phaseInterceptor.to("TurnInitPhase");
 
