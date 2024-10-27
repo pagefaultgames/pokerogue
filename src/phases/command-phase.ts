@@ -17,6 +17,8 @@ import { FieldPhase } from "./field-phase";
 import { SelectTargetPhase } from "./select-target-phase";
 import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
 import { isNullOrUndefined } from "#app/utils";
+import { ArenaTagSide } from "#app/data/arena-tag";
+import { ArenaTagType } from "#app/enums/arena-tag-type";
 
 export class CommandPhase extends FieldPhase {
   protected fieldIndex: integer;
@@ -228,23 +230,27 @@ export class CommandPhase extends FieldPhase {
             }, null, true);
           } else {
             const trapTag = playerPokemon.getTag(TrappedTag);
+            const fairyLockTag = playerPokemon.scene.arena.getTagOnSide(ArenaTagType.FAIRY_LOCK, ArenaTagSide.PLAYER);
 
             // trapTag should be defined at this point, but just in case...
-            if (!trapTag) {
+            if (!trapTag && !fairyLockTag) {
               currentBattle.turnCommands[this.fieldIndex] = isSwitch
                 ? { command: Command.POKEMON, cursor: cursor, args: args }
                 : { command: Command.RUN };
               break;
             }
-
             if (!isSwitch) {
               this.scene.ui.setMode(Mode.COMMAND, this.fieldIndex);
               this.scene.ui.setMode(Mode.MESSAGE);
             }
             this.scene.ui.showText(
               i18next.t("battle:noEscapePokemon", {
-                pokemonName:  trapTag.sourceId && this.scene.getPokemonById(trapTag.sourceId) ? getPokemonNameWithAffix(this.scene.getPokemonById(trapTag.sourceId)!) : "",
-                moveName: trapTag.getMoveName(),
+                pokemonName: trapTag && trapTag.sourceId && this.scene.getPokemonById(trapTag.sourceId)
+                  ? getPokemonNameWithAffix(this.scene.getPokemonById(trapTag.sourceId)!)
+                  : fairyLockTag && fairyLockTag.sourceId && this.scene.getPokemonById(fairyLockTag.sourceId)
+                    ? getPokemonNameWithAffix(this.scene.getPokemonById(fairyLockTag.sourceId)!)
+                    : "",
+                moveName: trapTag ? trapTag.getMoveName() : fairyLockTag ? fairyLockTag.getMoveName() : "",
                 escapeVerb: isSwitch ? i18next.t("battle:escapeVerbSwitch") : i18next.t("battle:escapeVerbFlee")
               }),
               null,

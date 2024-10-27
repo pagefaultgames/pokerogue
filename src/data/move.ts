@@ -9044,11 +9044,7 @@ export function initMoves() {
       .ignoresSubstitute()
       .ignoresProtect()
       .target(MoveTarget.BOTH_SIDES)
-      .attr(AddArenaTagAttr, ArenaTagType.FAIRY_LOCK, 2, true)
-      .condition((user, target, move) => {
-        const turnMove = user.getLastXMoves(1);
-        return !turnMove.length || turnMove[0].move !== move.id || turnMove[0].result !== MoveResult.SUCCESS;
-      }),
+      .attr(AddArenaTagAttr, ArenaTagType.FAIRY_LOCK, 2, true),
     new SelfStatusMove(Moves.KINGS_SHIELD, Type.STEEL, -1, 10, -1, 4, 6)
       .attr(ProtectAttr, BattlerTagType.KINGS_SHIELD)
       .condition(failIfLastCondition),
