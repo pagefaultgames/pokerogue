@@ -451,7 +451,7 @@ export class SingleGenerationChallenge extends Challenge {
 
   applyFixedBattle(waveIndex: Number, battleConfig: FixedBattleConfig): boolean {
     let trainerTypes: TrainerType[] = [];
-    if (this.rand === 0 && this.value === 3 || this.value === 7) {
+    if (this.rand === 0 && this.value === 3 || this.rand === 0 && this.value === 7) {
       /** Currently used for determining the evil team when there is more than one for a given generation. */
       const rand = Utils.randSeedInt(2, 1);
       this.rand = rand;
