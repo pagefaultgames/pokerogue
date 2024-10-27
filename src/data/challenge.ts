@@ -451,6 +451,11 @@ export class SingleGenerationChallenge extends Challenge {
 
   applyFixedBattle(waveIndex: Number, battleConfig: FixedBattleConfig): boolean {
     let trainerTypes: TrainerType[] = [];
+    if (this.rand === 0 && this.value === 3 || this.value === 7) {
+      /** Currently used for determining the evil team when there is more than one for a given generation. */
+      const rand = Utils.randSeedInt(2, 1);
+      this.rand = rand;
+    }
     switch (waveIndex) {
       case 35:
         trainerTypes = [ TrainerType.ROCKET_GRUNT, TrainerType.ROCKET_GRUNT, TrainerType.UNKNOWN, TrainerType.GALACTIC_GRUNT, TrainerType.PLASMA_GRUNT, TrainerType.FLARE_GRUNT, TrainerType.UNKNOWN, TrainerType.MACRO_GRUNT, TrainerType.STAR_GRUNT ];
@@ -689,8 +694,7 @@ export class SingleGenerationChallenge extends Challenge {
     const newChallenge = new SingleGenerationChallenge();
     newChallenge.value = source.value;
     newChallenge.severity = source.severity;
-    /** Currently used for determining the evil team when there is more than one for a given generation. */
-    newChallenge.rand = Utils.randSeedInt(2, 1);
+    newChallenge.rand = source.rand;
     return newChallenge;
   }
 }
