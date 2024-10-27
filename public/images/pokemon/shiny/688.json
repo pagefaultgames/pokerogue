@@ -1,19 +1,18 @@
 { "frames": [
    {
     "filename": "0001.png",
-    "frame": { "x": 0, "y": 0, "w": 59, "h": 63 },
+    "frame": { "x": 0, "y": 0, "w": 64, "h": 63 },
     "rotated": false,
-    "trimmed": true,
-    "spriteSourceSize": { "x": 4, "y": 0, "w": 59, "h": 63 },
-    "sourceSize": { "w": 69, "h": 63 }
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 64, "h": 63 },
+    "sourceSize": { "w": 64, "h": 63 },
    }
  ],
  "meta": {
   "app": "https://www.aseprite.org/",
-  "version": "1.3.7-dev",
-  "image": "688.png",
+  "version": "1.3.7-x64",
   "format": "I8",
-  "size": { "w": 59, "h": 63 },
+  "size": { "w": 64, "h": 63 },
   "scale": "1"
  }
 }
