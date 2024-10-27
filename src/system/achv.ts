@@ -360,8 +360,8 @@ export const achvs = {
   MONO_FAIRY: new ChallengeAchv("MONO_FAIRY", "", "MONO_FAIRY.description", "fairy_feather", 100, (c, { gameMode }) => c instanceof SingleTypeChallenge && c.value === 18 && !gameMode.hasChallenge(Challenges.INVERSE_BATTLE) && !gameMode.hasChallenge(Challenges.TRICK_ROOM)),
   FRESH_START: new ChallengeAchv("FRESH_START", "", "FRESH_START.description", "reviver_seed", 100, (c, { gameMode }) => c instanceof FreshStartChallenge && c.value > 0 && !gameMode.hasChallenge(Challenges.INVERSE_BATTLE) && !gameMode.hasChallenge(Challenges.TRICK_ROOM)),
   INVERSE_BATTLE: new ChallengeAchv("INVERSE_BATTLE", "", "INVERSE_BATTLE.description", "inverse", 100, c => c instanceof InverseBattleChallenge && c.value > 0),
-  TRICK_ROOM: new ChallengeAchv("TRICK_ROOM", "", "TRICK_ROOM.description", "room_service", 100, c => c instanceof TrickRoomChallenge && c.value > 0),
   BREEDERS_IN_SPACE: new Achv("BREEDERS_IN_SPACE", "", "BREEDERS_IN_SPACE.description", "moon_stone", 100).setSecret(),
+  TRICK_ROOM: new ChallengeAchv("TRICK_ROOM", "", "TRICK_ROOM.description", "room_service", 100, c => c instanceof TrickRoomChallenge && c.value > 0),
 };
 
 export function initAchievements() {
