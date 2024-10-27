@@ -86,7 +86,7 @@ import { ToggleDoublePositionPhase } from "#app/phases/toggle-double-position-ph
 import { TurnInitPhase } from "#app/phases/turn-init-phase";
 import { ShopCursorTarget } from "#app/enums/shop-cursor-target";
 import MysteryEncounter from "#app/data/mystery-encounters/mystery-encounter";
-import { allMysteryEncounters, ANTI_VARIANCE_WEIGHT_MODIFIER, AVERAGE_ENCOUNTERS_PER_RUN_TARGET, BASE_MYSTERY_ENCOUNTER_SPAWN_WEIGHT, MYSTERY_ENCOUNTER_SPAWN_MAX_WEIGHT, mysteryEncountersByBiome, WEIGHT_INCREMENT_ON_SPAWN_MISS } from "#app/data/mystery-encounters/mystery-encounters";
+import { allMysteryEncounters, ANTI_VARIANCE_WEIGHT_MODIFIER, AVERAGE_ENCOUNTERS_PER_RUN_TARGET, BASE_MYSTERY_ENCOUNTER_SPAWN_WEIGHT, MYSTERY_ENCOUNTER_SPAWN_MAX_WEIGHT, mysteryEncountersByBiome } from "#app/data/mystery-encounters/mystery-encounters";
 import { MysteryEncounterSaveData } from "#app/data/mystery-encounters/mystery-encounter-save-data";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
@@ -1191,10 +1191,7 @@ export default class BattleScene extends SceneBase {
         if (trainerConfigs[trainerType].doubleOnly) {
           doubleTrainer = true;
         } else if (trainerConfigs[trainerType].hasDouble) {
-          const doubleChance = new Utils.IntegerHolder(newWaveIndex % 10 === 0 ? 32 : 8);
-          this.applyModifiers(DoubleBattleChanceBoosterModifier, true, doubleChance);
-          playerField.forEach(p => applyAbAttrs(DoubleBattleChanceAbAttr, p, null, false, doubleChance));
-          doubleTrainer = !Utils.randSeedInt(doubleChance.value);
+          doubleTrainer = !Utils.randSeedInt(this.getDoubleBattleChance(newWaveIndex, playerField));
           // Add a check that special trainers can't be double except for tate and liza - they should use the normal double chance
           if (trainerConfigs[trainerType].trainerTypeDouble && ![ TrainerType.TATE, TrainerType.LIZA ].includes(trainerType)) {
             doubleTrainer = false;
@@ -1207,12 +1204,10 @@ export default class BattleScene extends SceneBase {
 
       // Check for mystery encounter
       // Can only occur in place of a standard (non-boss) wild battle, waves 10-180
-      if (this.isWaveMysteryEncounter(newBattleType, newWaveIndex, mysteryEncounterType) || newBattleType === BattleType.MYSTERY_ENCOUNTER) {
+      if (this.isWaveMysteryEncounter(newBattleType, newWaveIndex) || newBattleType === BattleType.MYSTERY_ENCOUNTER) {
         newBattleType = BattleType.MYSTERY_ENCOUNTER;
-        // Reset base spawn weight
+        // Reset to base spawn weight
         this.mysteryEncounterSaveData.encounterSpawnChance = BASE_MYSTERY_ENCOUNTER_SPAWN_WEIGHT;
-      } else if (newBattleType === BattleType.WILD) {
-        this.mysteryEncounterSaveData.encounterSpawnChance += WEIGHT_INCREMENT_ON_SPAWN_MISS;
       }
     }
 
@@ -1392,7 +1387,7 @@ export default class BattleScene extends SceneBase {
       case Species.ZYGARDE:
         return Utils.randSeedInt(4);
       case Species.MINIOR:
-        return Utils.randSeedInt(6);
+        return Utils.randSeedInt(7);
       case Species.ALCREMIE:
         return Utils.randSeedInt(9);
       case Species.MEOWSTIC:
@@ -2365,6 +2360,19 @@ export default class BattleScene extends SceneBase {
   }
 
   /**
+   * Will search for a specific phase in {@linkcode phaseQueuePrepend} via filter, and remove the first result if a match is found.
+   * @param phaseFilter filter function
+   */
+  tryRemoveUnshiftedPhase(phaseFilter: (phase: Phase) => boolean): boolean {
+    const phaseIndex = this.phaseQueuePrepend.findIndex(phaseFilter);
+    if (phaseIndex > -1) {
+      this.phaseQueuePrepend.splice(phaseIndex, 1);
+      return true;
+    }
+    return false;
+  }
+
+  /**
    * Tries to add the input phase to index before target phase in the phaseQueue, else simply calls unshiftPhase()
    * @param phase {@linkcode Phase} the phase to be added
    * @param targetPhase {@linkcode Phase} the type of phase to search for in phaseQueue
@@ -3126,17 +3134,25 @@ export default class BattleScene extends SceneBase {
   }
 
   /**
+   * Returns if a wave COULD spawn a {@linkcode MysteryEncounter}.
+   * Even if returns `true`, does not guarantee that a wave will actually be a ME.
+   * That check is made in {@linkcode BattleScene.isWaveMysteryEncounter} instead.
+   */
+  isMysteryEncounterValidForWave(battleType: BattleType, waveIndex: number): boolean {
+    const [ lowestMysteryEncounterWave, highestMysteryEncounterWave ] = this.gameMode.getMysteryEncounterLegalWaves();
+    return this.gameMode.hasMysteryEncounters && battleType === BattleType.WILD && !this.gameMode.isBoss(waveIndex) && waveIndex < highestMysteryEncounterWave && waveIndex > lowestMysteryEncounterWave;
+  }
+
+  /**
    * Determines whether a wave should randomly generate a {@linkcode MysteryEncounter}.
    * Currently, the only modes that MEs are allowed in are Classic and Challenge.
    * Additionally, MEs cannot spawn outside of waves 10-180 in those modes
-   *
    * @param newBattleType
    * @param waveIndex
-   * @param sessionDataEncounterType
    */
-  private isWaveMysteryEncounter(newBattleType: BattleType, waveIndex: number, sessionDataEncounterType?: MysteryEncounterType): boolean {
+  private isWaveMysteryEncounter(newBattleType: BattleType, waveIndex: number): boolean {
     const [ lowestMysteryEncounterWave, highestMysteryEncounterWave ] = this.gameMode.getMysteryEncounterLegalWaves();
-    if (this.gameMode.hasMysteryEncounters && newBattleType === BattleType.WILD && !this.gameMode.isBoss(waveIndex) && waveIndex < highestMysteryEncounterWave && waveIndex > lowestMysteryEncounterWave) {
+    if (this.isMysteryEncounterValidForWave(newBattleType, waveIndex)) {
       // Base spawn weight is BASE_MYSTERY_ENCOUNTER_SPAWN_WEIGHT/256, and increases by WEIGHT_INCREMENT_ON_SPAWN_MISS/256 for each missed attempt at spawning an encounter on a valid floor
       const sessionEncounterRate = this.mysteryEncounterSaveData.encounterSpawnChance;
       const encounteredEvents = this.mysteryEncounterSaveData.encounteredEvents;
