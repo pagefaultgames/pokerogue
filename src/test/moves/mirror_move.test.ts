@@ -34,15 +34,20 @@ describe("Moves - Mirror Move", () => {
       .enemyMoveset(Moves.SPLASH);
   });
 
-  it("should use the last move targeted at the user", async () => {
-    game.override.enemyMoveset(Moves.TACKLE);
-    await game.classicMode.startBattle([ Species.FEEBAS ]);
+  it("should use the last move that the target", async () => {
+    game.override
+      .battleType("double")
+      .enemyMoveset([ Moves.TACKLE, Moves.GROWL ]);
+    await game.classicMode.startBattle([ Species.FEEBAS, Species.MAGIKARP ]);
 
-    game.move.select(Moves.MIRROR_MOVE);
-    await game.setTurnOrder([ BattlerIndex.ENEMY, BattlerIndex.PLAYER ]);
+    game.move.select(Moves.MIRROR_MOVE, 0, BattlerIndex.ENEMY); // target's last move is Tackle, enemy should receive damage from Mirror Move copying Tackle
+    game.move.select(Moves.SPLASH, 1);
+    await game.forceEnemyMove(Moves.TACKLE, BattlerIndex.PLAYER_2);
+    await game.forceEnemyMove(Moves.GROWL, BattlerIndex.PLAYER_2);
+    await game.setTurnOrder([ BattlerIndex.ENEMY, BattlerIndex.ENEMY_2, BattlerIndex.PLAYER_2, BattlerIndex.PLAYER ]);
     await game.toNextTurn();
 
-    expect(game.scene.getEnemyPokemon()!.isFullHp()).toBeFalsy();
+    expect(game.scene.getEnemyField()[0].isFullHp()).toBeFalsy();
   });
 
   it("should apply secondary effects of a move", async () => {
@@ -56,24 +61,7 @@ describe("Moves - Mirror Move", () => {
     expect(game.scene.getEnemyPokemon()!.getStatStage(Stat.SPDEF)).toBe(-2);
   });
 
-  it("should fail if the user has never been targeted", { repeats: 10 }, async () => {
-    game.override
-      .battleType("double")
-      .startingLevel(100)
-      .enemyMoveset([ Moves.TACKLE, Moves.SPLASH ]);
-    await game.classicMode.startBattle([ Species.FEEBAS, Species.MAGIKARP ]);
-
-    game.move.select(Moves.MIRROR_MOVE);
-    game.move.select(Moves.SPLASH, 1);
-    await game.forceEnemyMove(Moves.TACKLE, BattlerIndex.PLAYER_2);
-    await game.forceEnemyMove(Moves.SPLASH);
-    await game.setTurnOrder([ BattlerIndex.ENEMY, BattlerIndex.ENEMY_2, BattlerIndex.PLAYER_2, BattlerIndex.PLAYER ]);
-    await game.toNextTurn();
-
-    expect(game.scene.getPlayerField()![0].getLastXMoves()[0].result).toBe(MoveResult.FAIL);
-  });
-
-  it("should copy status moves that target the user", async () => {
+  it("should be able to copy status moves", async () => {
     game.override.enemyMoveset(Moves.GROWL);
     await game.classicMode.startBattle([ Species.FEEBAS ]);
 
@@ -82,5 +70,15 @@ describe("Moves - Mirror Move", () => {
     await game.toNextTurn();
 
     expect(game.scene.getEnemyPokemon()!.getStatStage(Stat.ATK)).toBe(-1);
+  });
+
+  it("should fail if the target has not used any moves", async () => {
+    await game.classicMode.startBattle([ Species.FEEBAS ]);
+
+    game.move.select(Moves.MIRROR_MOVE);
+    await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY ]);
+    await game.toNextTurn();
+
+    expect(game.scene.getPlayerPokemon()!.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
   });
 });

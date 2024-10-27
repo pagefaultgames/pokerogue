@@ -5973,6 +5973,7 @@ export class FirstMoveTypeAttr extends MoveEffectAttr {
 
 export class CallMoveAttr extends OverrideMoveEffectAttr {
   protected invalidMoves: Moves[];
+  protected hasTarget: boolean;
   async apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): Promise<boolean> {
     const replaceMoveTarget = move.moveTarget === MoveTarget.NEAR_OTHER ? MoveTarget.NEAR_ENEMY : undefined;
     const moveTargets = getMoveTargets(user, move.id, replaceMoveTarget);
@@ -5981,7 +5982,7 @@ export class CallMoveAttr extends OverrideMoveEffectAttr {
     }
     const targets = moveTargets.multiple || moveTargets.targets.length === 1
       ? moveTargets.targets
-      : [ moveTargets.targets[user.randSeedInt(moveTargets.targets.length)] ];
+      : [ this.hasTarget ? target.getBattlerIndex() : moveTargets.targets[user.randSeedInt(moveTargets.targets.length)] ]; // account for Mirror Move having a target already
     user.getMoveQueue().push({ move: move.id, targets: targets, virtual: true, ignorePP: true });
     user.scene.unshiftPhase(new MovePhase(user.scene, user, targets, new PokemonMove(move.id, 0, 0, true), true, true));
 
@@ -6502,25 +6503,19 @@ export class CopyMoveAttr extends CallMoveAttr {
   }
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): Promise<boolean> {
-    if (this.mirrorMove) {
-      const lastMove = user.scene.currentBattle.moveHistory.filter(m => m.targets.includes(user.getBattlerIndex()))[0].move;
-      return super.apply(user, target, allMoves[lastMove], args);
-    } else {
-      return super.apply(user, target, allMoves[user.scene.currentBattle.lastMove], args);
-    }
+    this.hasTarget = this.mirrorMove;
+    const lastMove = this.mirrorMove ? target.getLastXMoves()[0].move : user.scene.currentBattle.lastMove;
+    return super.apply(user, target, allMoves[lastMove], args);
   }
 
   getCondition(): MoveConditionFunc {
     return (user, target, move) => {
       if (this.mirrorMove) {
-        if (user.scene.currentBattle.moveHistory.filter(m => m.targets.includes(user.getBattlerIndex())).length === 0) {
-          return false;
-        }
-      } else if (user.scene.currentBattle.lastMove === undefined) {
-        return false;
+        return target.getMoveHistory().length !== 0;
+      } else {
+        const lastMove = user.scene.currentBattle.lastMove;
+        return lastMove !== undefined && !this.invalidMoves.includes(lastMove);
       }
-      const lastMove = this.mirrorMove ? user.turnData.attacksReceived[0]?.move : user.scene.currentBattle.lastMove;
-      return !this.invalidMoves.includes(lastMove);
     };
   }
 }
@@ -7906,7 +7901,7 @@ export function initMoves() {
       .unimplemented(),
     new SelfStatusMove(Moves.METRONOME, Type.NORMAL, -1, 10, -1, 0, 1)
       .attr(RandomMoveAttr, invalidMetronomeMoves),
-    new SelfStatusMove(Moves.MIRROR_MOVE, Type.FLYING, -1, 20, -1, 0, 1)
+    new StatusMove(Moves.MIRROR_MOVE, Type.FLYING, -1, 20, -1, 0, 1)
       .attr(CopyMoveAttr, true),
     new AttackMove(Moves.SELF_DESTRUCT, Type.NORMAL, MoveCategory.PHYSICAL, 200, 100, 5, -1, 0, 1)
       .attr(SacrificialAttr)
