@@ -2776,6 +2776,7 @@ export class PowerTrickTag extends BattlerTag {
     pokemon.setStat(Stat.DEF, temp, false);
   }
 }
+
 /**
  * Retrieves a {@linkcode BattlerTag} based on the provided tag type, turn count, source move, and source ID.
  * @param sourceId - The ID of the pokemon adding the tag
