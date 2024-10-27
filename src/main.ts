@@ -43,6 +43,7 @@ Phaser.GameObjects.Rectangle.prototype.setPositionRelative = setPositionRelative
 document.fonts.load("16px emerald").then(() => document.fonts.load("10px pkmnems"));
 
 let game;
+let manifest;
 
 const startGame = async () => {
   await initI18n();
@@ -94,15 +95,19 @@ const startGame = async () => {
     version: version
   });
   game.sound.pauseOnBlur = false;
+  if (manifest) {
+    game["manifest"] = manifest;
+  }
 };
 
 fetch("/manifest.json")
   .then(res => res.json())
   .then(jsonResponse => {
-    startGame();
-    game["manifest"] = jsonResponse.manifest;
-  }).catch(() => {
-    // Manifest not found (likely local build)
+    manifest = jsonResponse.manifest;
+  }).catch(err => {
+    // Manifest not found (likely local build or error path on live)
+    console.log(`Manifest not found. ${err}`);
+  }).finally(() => {
     startGame();
   });
 
