@@ -99,16 +99,13 @@ const startGame = async (manifest?: any) => {
   }
 };
 
-let manifest: any;
 fetch("/manifest.json")
   .then(res => res.json())
   .then(jsonResponse => {
-    manifest = jsonResponse.manifest;
-  }).catch(err => {
-    // Manifest not found (likely local build or error path on live)
-    console.log(`Manifest not found. ${err}`);
-  }).finally(() => {
-    startGame(manifest);
+    startGame(jsonResponse.manifest);
+  }).catch(() => {
+    // Manifest not found (likely local build)
+    startGame();
   });
 
 export default game;
