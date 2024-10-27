@@ -1523,7 +1523,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       applyCheckTrappedAbAttrs(CheckTrappedAbAttr, opponent, trappedByAbility, this, trappedAbMessages, simulated)
     );
 
-    return (trappedByAbility.value || !!this.getTag(TrappedTag));
+    const side = this.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY;
+    return (trappedByAbility.value || !!this.getTag(TrappedTag) || !!this.scene.arena.getTagOnSide(ArenaTagType.FAIRY_LOCK, side));
   }
 
   /**

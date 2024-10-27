@@ -1,6 +1,5 @@
 import { ArenaTagSide } from "#app/data/arena-tag";
 import { ArenaTagType } from "#app/enums/arena-tag-type";
-import { BattlerTagType } from "#app/enums/battler-tag-type";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
@@ -54,18 +53,15 @@ describe("Moves - Fairy Lock", () => {
     await game.forceEnemyMove(Moves.SPLASH, 1);
     await game.forceEnemyMove(Moves.SPLASH, 1);
     await game.phaseInterceptor.to("BerryPhase");
-    expect(game.scene.arena.getTagOnSide(ArenaTagType.FAIRY_LOCK, ArenaTagSide.PLAYER)).not.toBeDefined();
-    expect(game.scene.arena.getTagOnSide(ArenaTagType.FAIRY_LOCK, ArenaTagSide.ENEMY)).not.toBeDefined();
-
-    expect(playerPokemon[0].getTag(BattlerTagType.TRAPPED)).toBeDefined();
-    expect(playerPokemon[1].getTag(BattlerTagType.TRAPPED)).toBeDefined();
-    expect(enemyField[0].getTag(BattlerTagType.TRAPPED)).toBeDefined();
-    expect(enemyField[1].getTag(BattlerTagType.TRAPPED)).toBeDefined();
+    expect(playerPokemon[0].isTrapped()).toEqual(true);
+    expect(playerPokemon[1].isTrapped()).toEqual(true);
+    expect(enemyField[0].isTrapped()).toEqual(true);
+    expect(enemyField[1].isTrapped()).toEqual(true);
 
     await game.toNextTurn();
-    expect(playerPokemon[0].getTag(BattlerTagType.TRAPPED)).not.toBeDefined();
-    expect(playerPokemon[1].getTag(BattlerTagType.TRAPPED)).not.toBeDefined();
-    expect(enemyField[0].getTag(BattlerTagType.TRAPPED)).not.toBeDefined();
-    expect(enemyField[1].getTag(BattlerTagType.TRAPPED)).not.toBeDefined();
+    expect(playerPokemon[0].isTrapped()).toEqual(false);
+    expect(playerPokemon[1].isTrapped()).toEqual(false);
+    expect(enemyField[0].isTrapped()).toEqual(false);
+    expect(enemyField[1].isTrapped()).toEqual(false);
   });
 });

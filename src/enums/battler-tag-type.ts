@@ -16,7 +16,6 @@ export enum BattlerTagType {
   AQUA_RING = "AQUA_RING",
   DROWSY = "DROWSY",
   TRAPPED = "TRAPPED",
-  TIMED_TRAP = "TIMED_TRAP",
   BIND = "BIND",
   WRAP = "WRAP",
   FIRE_SPIN = "FIRE_SPIN",
