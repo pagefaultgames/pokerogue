@@ -110,6 +110,7 @@ export abstract class Challenge {
   public maxValue: integer; // The maximum strength of the challenge.
   public severity: integer; // The current severity of the challenge. Some challenges have multiple severities in addition to strength.
   public maxSeverity: integer; // The maximum severity of the challenge.
+  public rand: integer; // A random number applied to the challenge.
 
   public conditions: ChallengeCondition[];
 
@@ -123,6 +124,7 @@ export abstract class Challenge {
     this.maxValue = maxValue;
     this.severity = 0;
     this.maxSeverity = 0;
+    this.rand = 0;
     this.conditions = [];
   }
 
@@ -132,6 +134,7 @@ export abstract class Challenge {
   reset(): void {
     this.value = 0;
     this.severity = 0;
+    this.rand = 0;
   }
 
   /**
@@ -448,12 +451,11 @@ export class SingleGenerationChallenge extends Challenge {
 
   applyFixedBattle(waveIndex: Number, battleConfig: FixedBattleConfig): boolean {
     let trainerTypes: TrainerType[] = [];
-    const rand = Utils.randSeedInt(2, 1);
     switch (waveIndex) {
       case 35:
         trainerTypes = [ TrainerType.ROCKET_GRUNT, TrainerType.ROCKET_GRUNT, TrainerType.UNKNOWN, TrainerType.GALACTIC_GRUNT, TrainerType.PLASMA_GRUNT, TrainerType.FLARE_GRUNT, TrainerType.UNKNOWN, TrainerType.MACRO_GRUNT, TrainerType.STAR_GRUNT ];
         if (this.value === 3) {
-          if (rand !== 2) {
+          if (this.rand !== 2) {
             trainerTypes = [ TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.MAGMA_GRUNT ];
             break;
           } else {
@@ -462,7 +464,7 @@ export class SingleGenerationChallenge extends Challenge {
           }
         }
         if (this.value === 7) {
-          if (rand !== 2) {
+          if (this.rand !== 2) {
             trainerTypes = [ TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.AETHER_GRUNT ];
             break;
           } else {
@@ -475,7 +477,7 @@ export class SingleGenerationChallenge extends Challenge {
         battleConfig.setSeedOffsetWave(35);
         trainerTypes = [ TrainerType.ROCKET_GRUNT, TrainerType.ROCKET_GRUNT, TrainerType.UNKNOWN, TrainerType.GALACTIC_GRUNT, TrainerType.PLASMA_GRUNT, TrainerType.FLARE_GRUNT, TrainerType.UNKNOWN, TrainerType.MACRO_GRUNT, TrainerType.STAR_GRUNT ];
         if (this.value === 3) {
-          if (rand !== 2) {
+          if (this.rand !== 2) {
             trainerTypes = [ TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.MAGMA_GRUNT ];
             break;
           } else {
@@ -484,7 +486,7 @@ export class SingleGenerationChallenge extends Challenge {
           }
         }
         if (this.value === 7) {
-          if (rand !== 2) {
+          if (this.rand !== 2) {
             trainerTypes = [ TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.AETHER_GRUNT ];
             break;
           } else {
@@ -497,7 +499,7 @@ export class SingleGenerationChallenge extends Challenge {
         battleConfig.setSeedOffsetWave(35);
         trainerTypes = [ TrainerType.ROCKET_GRUNT, TrainerType.ROCKET_GRUNT, TrainerType.UNKNOWN, TrainerType.GALACTIC_GRUNT, TrainerType.PLASMA_GRUNT, TrainerType.FLARE_GRUNT, TrainerType.UNKNOWN, TrainerType.MACRO_GRUNT, TrainerType.STAR_GRUNT ];
         if (this.value === 3) {
-          if (rand !== 2) {
+          if (this.rand !== 2) {
             trainerTypes = [ TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.MAGMA_GRUNT ];
             break;
           } else {
@@ -506,7 +508,7 @@ export class SingleGenerationChallenge extends Challenge {
           }
         }
         if (this.value === 7) {
-          if (rand !== 2) {
+          if (this.rand !== 2) {
             trainerTypes = [ TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.AETHER_GRUNT ];
             break;
           } else {
@@ -519,7 +521,7 @@ export class SingleGenerationChallenge extends Challenge {
         battleConfig.setSeedOffsetWave(35);
         trainerTypes = [ Utils.randSeedItem([ TrainerType.ARCHER, TrainerType.ARIANA, TrainerType.PROTON, TrainerType.PETREL ]), Utils.randSeedItem([ TrainerType.ARCHER, TrainerType.ARIANA, TrainerType.PROTON, TrainerType.PETREL ]), TrainerType.UNKNOWN, Utils.randSeedItem([ TrainerType.JUPITER, TrainerType.MARS, TrainerType.SATURN ]), Utils.randSeedItem([ TrainerType.ZINZOLIN, TrainerType.ROOD ]), Utils.randSeedItem([ TrainerType.XEROSIC, TrainerType.BRYONY ]), TrainerType.UNKNOWN, TrainerType.OLEANA, Utils.randSeedItem([ TrainerType.GIACOMO, TrainerType.MELA, TrainerType.ATTICUS, TrainerType.ORTEGA, TrainerType.ERI ]) ];
         if (this.value === 3) {
-          if (rand !== 2) {
+          if (this.rand !== 2) {
             trainerTypes = [ TrainerType.UNKNOWN, TrainerType.UNKNOWN, Utils.randSeedItem([ TrainerType.TABITHA, TrainerType.COURTNEY ]) ];
             break;
           } else {
@@ -528,7 +530,7 @@ export class SingleGenerationChallenge extends Challenge {
           }
         }
         if (this.value === 7) {
-          if (rand !== 2) {
+          if (this.rand !== 2) {
             trainerTypes = [ TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.FABA ];
             break;
           } else {
@@ -541,7 +543,7 @@ export class SingleGenerationChallenge extends Challenge {
         battleConfig.setSeedOffsetWave(35);
         trainerTypes = [ TrainerType.ROCKET_GRUNT, TrainerType.ROCKET_GRUNT, TrainerType.UNKNOWN, TrainerType.GALACTIC_GRUNT, TrainerType.PLASMA_GRUNT, TrainerType.FLARE_GRUNT, Utils.randSeedItem([ TrainerType.AETHER_GRUNT, TrainerType.SKULL_GRUNT ]), TrainerType.MACRO_GRUNT, TrainerType.STAR_GRUNT ];
         if (this.value === 3) {
-          if (rand !== 2) {
+          if (this.rand !== 2) {
             trainerTypes = [ TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.MAGMA_GRUNT ];
             break;
           } else {
@@ -550,7 +552,7 @@ export class SingleGenerationChallenge extends Challenge {
           }
         }
         if (this.value === 7) {
-          if (rand !== 2) {
+          if (this.rand !== 2) {
             trainerTypes = [ TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.AETHER_GRUNT ];
             break;
           } else {
@@ -563,7 +565,7 @@ export class SingleGenerationChallenge extends Challenge {
         battleConfig.setSeedOffsetWave(35);
         trainerTypes = [ Utils.randSeedItem([ TrainerType.ARCHER, TrainerType.ARIANA, TrainerType.PROTON, TrainerType.PETREL ]), Utils.randSeedItem([ TrainerType.ARCHER, TrainerType.ARIANA, TrainerType.PROTON, TrainerType.PETREL ]), TrainerType.UNKNOWN, Utils.randSeedItem([ TrainerType.JUPITER, TrainerType.MARS, TrainerType.SATURN ]), Utils.randSeedItem([ TrainerType.ZINZOLIN, TrainerType.ROOD ]), Utils.randSeedItem([ TrainerType.XEROSIC, TrainerType.BRYONY ]), Utils.randSeedItem([ TrainerType.FABA, TrainerType.PLUMERIA ]), TrainerType.OLEANA, Utils.randSeedItem([ TrainerType.GIACOMO, TrainerType.MELA, TrainerType.ATTICUS, TrainerType.ORTEGA, TrainerType.ERI ]) ];
         if (this.value === 3) {
-          if (rand !== 2) {
+          if (this.rand !== 2) {
             trainerTypes = [ TrainerType.UNKNOWN, TrainerType.UNKNOWN, Utils.randSeedItem([ TrainerType.TABITHA, TrainerType.COURTNEY ]) ];
             break;
           } else {
@@ -572,7 +574,7 @@ export class SingleGenerationChallenge extends Challenge {
           }
         }
         if (this.value === 7) {
-          if (rand !== 2) {
+          if (this.rand !== 2) {
             trainerTypes = [ TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.FABA ];
             break;
           } else {
@@ -585,7 +587,7 @@ export class SingleGenerationChallenge extends Challenge {
         battleConfig.setSeedOffsetWave(35).setCustomModifierRewards({ guaranteedModifierTiers: [ ModifierTier.ROGUE, ModifierTier.ROGUE, ModifierTier.ULTRA, ModifierTier.ULTRA, ModifierTier.ULTRA ], allowLuckUpgrades: false });
         trainerTypes = [ TrainerType.ROCKET_BOSS_GIOVANNI_1, TrainerType.ROCKET_BOSS_GIOVANNI_1, TrainerType.UNKNOWN, TrainerType.CYRUS, TrainerType.GHETSIS, TrainerType.LYSANDRE, TrainerType.UNKNOWN, TrainerType.ROSE, TrainerType.PENNY ];
         if (this.value === 3) {
-          if (rand !== 2) {
+          if (this.rand !== 2) {
             trainerTypes = [ TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.MAXIE ];
             break;
           } else {
@@ -594,7 +596,7 @@ export class SingleGenerationChallenge extends Challenge {
           }
         }
         if (this.value === 7) {
-          if (rand !== 2) {
+          if (this.rand !== 2) {
             trainerTypes = [ TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.LUSAMINE ];
             break;
           } else {
@@ -607,7 +609,7 @@ export class SingleGenerationChallenge extends Challenge {
         battleConfig.setSeedOffsetWave(35).setCustomModifierRewards({ guaranteedModifierTiers: [ ModifierTier.ROGUE, ModifierTier.ROGUE, ModifierTier.ULTRA, ModifierTier.ULTRA, ModifierTier.ULTRA, ModifierTier.ULTRA ], allowLuckUpgrades: false });
         trainerTypes = [ TrainerType.ROCKET_BOSS_GIOVANNI_2, TrainerType.ROCKET_BOSS_GIOVANNI_2, TrainerType.UNKNOWN, TrainerType.CYRUS_2, TrainerType.GHETSIS_2, TrainerType.LYSANDRE_2, TrainerType.UNKNOWN, TrainerType.ROSE_2, TrainerType.PENNY_2 ];
         if (this.value === 3) {
-          if (rand !== 2) {
+          if (this.rand !== 2) {
             trainerTypes = [ TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.MAXIE_2 ];
             break;
           } else {
@@ -616,7 +618,7 @@ export class SingleGenerationChallenge extends Challenge {
           }
         }
         if (this.value === 7) {
-          if (rand !== 2) {
+          if (this.rand !== 2) {
             trainerTypes = [ TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.LUSAMINE_2 ];
             break;
           } else {
@@ -687,6 +689,8 @@ export class SingleGenerationChallenge extends Challenge {
     const newChallenge = new SingleGenerationChallenge();
     newChallenge.value = source.value;
     newChallenge.severity = source.severity;
+    /** Currently used for determining the evil team when there is more than one for a given generation. */
+    newChallenge.rand = Utils.randSeedInt(2, 1);
     return newChallenge;
   }
 }
