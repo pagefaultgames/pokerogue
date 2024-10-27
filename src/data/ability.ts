@@ -4893,7 +4893,7 @@ export class PostDamageAbAttr extends AbAttr {
  *
  * @extends PostDamageAbAttr
  */
-export class PostDamageForceSwitchAttr extends PostDamageAbAttr {
+export class PostDamageForceSwitchAbAttr extends PostDamageAbAttr {
   private helper: ForceSwitchOutHelper;
   private hpRatio: number;
 
@@ -5753,10 +5753,10 @@ export function initAbilities() {
     new Ability(Abilities.STAMINA, 7)
       .attr(PostDefendStatStageChangeAbAttr, (target, user, move) => move.category !== MoveCategory.STATUS, Stat.DEF, 1),
     new Ability(Abilities.WIMP_OUT, 7)
-      .attr(PostDamageForceSwitchAttr)
+      .attr(PostDamageForceSwitchAbAttr)
       .edgeCase(), // Should not trigger when hurting itself in confusion
     new Ability(Abilities.EMERGENCY_EXIT, 7)
-      .attr(PostDamageForceSwitchAttr)
+      .attr(PostDamageForceSwitchAbAttr)
       .edgeCase(), // Should not trigger when hurting itself in confusion
     new Ability(Abilities.WATER_COMPACTION, 7)
       .attr(PostDefendStatStageChangeAbAttr, (target, user, move) => user.getMoveType(move) === Type.WATER && move.category !== MoveCategory.STATUS, Stat.DEF, 2),
