@@ -5063,7 +5063,6 @@ export class PokemonTurnData {
   public statStagesIncreased: boolean = false;
   public statStagesDecreased: boolean = false;
   public moveEffectiveness: TypeDamageMultiplier | null = null;
-  public itemsLost: number = 0;
   public combiningPledge?: Moves;
 }
 

@@ -1663,7 +1663,6 @@ export class PostAttackStealHeldItemAbAttr extends PostAttackAbAttr {
           const stolenItem = heldItems[pokemon.randSeedInt(heldItems.length)];
           pokemon.scene.tryTransferHeldItemModifier(stolenItem, pokemon, false).then(success => {
             if (success) {
-              defender.turnData.itemsLost += 1;
               pokemon.scene.queueMessage(i18next.t("abilityTriggers:postAttackStealHeldItem", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), defenderName: defender.name, stolenItemType: stolenItem.type.name }));
             }
             resolve(success);
@@ -1757,7 +1756,6 @@ export class PostDefendStealHeldItemAbAttr extends PostDefendAbAttr {
           const stolenItem = heldItems[pokemon.randSeedInt(heldItems.length)];
           pokemon.scene.tryTransferHeldItemModifier(stolenItem, pokemon, false).then(success => {
             if (success) {
-              attacker.turnData.itemsLost += 1;
               pokemon.scene.queueMessage(i18next.t("abilityTriggers:postDefendStealHeldItem", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), attackerName: attacker.name, stolenItemType: stolenItem.type.name }));
             }
             resolve(success);
@@ -3809,114 +3807,39 @@ export class PostDancingMoveAbAttr extends PostMoveUsedAbAttr {
 }
 
 /**
- * Ability attribute for Unburden, triggers when a Pokemon consumes a berry they are holding
- * @extends PostTurnAbAttr
- * @see {@linkcode applyPostTurn}
- * @see {@linkcode getCondition}
+ * Triggers after the Pokemon loses or consumes an item
+ * @extends AbAttr
  */
-export class UnburdenBerryRemovedAbAttr extends PostTurnAbAttr {
-
-  /**
-   *
-   * @param {Pokemon} pokemon the {@linkcode Pokemon} with this ability
-   * @param passive n/a
-   * @param simulated whether the ability is being simulated
-   * @param args n/a
-   * @returns `true` if the ability is applied
-   */
-  applyPostTurn(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
-    if (simulated) {
-      return simulated;
-    }
-
-    if (pokemon.getTag(BattlerTagType.UNBURDEN)) {
-      return false;
-    }
-
-    pokemon.addTag(BattlerTagType.UNBURDEN);
-    return true;
+export class PostItemLostAbAttr extends AbAttr {
+  applyPostItemLost(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean | Promise<boolean> {
+    return false;
   }
-
-  getCondition(): AbAttrCondition {
-    return (pokemon: Pokemon) => pokemon.battleData.berriesEaten.length !== 0;
-  }
-
 }
 
 /**
- * Ability attribute for Unburden, triggers upon an item being lost while defending (Knock Off, Thief, Pluck)
- * @extends PostDefendAbAttr
- * @see {@linkcode applyPostDefend}
- * @see {@linkcode getCondition}
+ * Applies a Battler Tag to the Pokemon after it loses or consumes item
+ * @extends PostItemLostAbAttr
  */
-export class UnburdenDefendingItemRemovedAbAttr extends PostDefendAbAttr {
-
+export class PostItemLostApplyBattlerTagAbAttr extends PostItemLostAbAttr {
+  private tagType: BattlerTagType;
+  constructor(tagType: BattlerTagType) {
+    super(true);
+    this.tagType = tagType;
+  }
   /**
-   *
-   * @param {Pokemon} pokemon the {@linkcode Pokemon} with this ability
-   * @param passive n/a
-   * @param simulated whether the ability is being simulated
-   * @param attacker n/a
-   * @param move n/a
-   * @param hitResult n/a
-   * @param args n/a
-   * @returns `true` if the ability is applied
+   * Adds the last used Pokeball back into the player's inventory
+   * @param pokemon {@linkcode Pokemon} with this ability
+   * @param passive N/A
+   * @param args N/A
+   * @returns true if BattlerTag was applied
    */
-  applyPostDefend(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker: Pokemon, move: Move, hitResult: HitResult, args: any[]): boolean {
-    if (simulated) {
-      return simulated;
+  applyPostItemLost(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean | Promise<boolean> {
+    if (!pokemon.getTag(this.tagType) && !simulated) {
+      pokemon.addTag(this.tagType);
+      return true;
     }
-
-    if (pokemon.getTag(BattlerTagType.UNBURDEN)) {
-      return false;
-    }
-
-    pokemon.addTag(BattlerTagType.UNBURDEN);
-    return true;
+    return false;
   }
-
-  getCondition(): AbAttrCondition {
-    return (pokemon: Pokemon) => pokemon.turnData.itemsLost > 0;
-  }
-
-}
-
-/**
- * Ability attribute for Unburden, triggers upon an item being lost while attacking (Pickpocket)
- * @extends PostAttackAbAttr
- * @see {@linkcode applyPostAttackAfterMoveTypeCheck}
- * @see {@linkcode getCondition}
- */
-export class UnburdenAttackingItemRemovedAbAttr extends PostAttackAbAttr {
-
-  /**
-   *
-   * @param {Pokemon} pokemon the {@linkcode Pokemon} with this ability
-   * @param passive n/a
-   * @param simulated whether the ability is being simulated
-   * @param defender n/a
-   * @param move n/a
-   * @param hitResult n/a
-   * @param args n/a
-   * @returns `true` if the ability is applied
-   */
-  applyPostAttackAfterMoveTypeCheck(pokemon: Pokemon, passive: boolean, simulated: boolean, defender: Pokemon, move: Move, hitResult: HitResult, args: any[]): boolean {
-    if (simulated) {
-      return simulated;
-    }
-
-    if (pokemon.getTag(BattlerTagType.UNBURDEN)) {
-      return false;
-    }
-
-    pokemon.addTag(BattlerTagType.UNBURDEN);
-    return true;
-  }
-
-  getCondition(): AbAttrCondition {
-    return (pokemon: Pokemon) => pokemon.turnData.itemsLost > 0;
-  }
-
 }
 
 export class StatStageChangeMultiplierAbAttr extends AbAttr {
@@ -4935,6 +4858,11 @@ export function applyPostFaintAbAttrs(attrType: Constructor<PostFaintAbAttr>,
   return applyAbAttrsInternal<PostFaintAbAttr>(attrType, pokemon, (attr, passive) => attr.applyPostFaint(pokemon, passive, simulated, attacker, move, hitResult, args), args, false, simulated);
 }
 
+export function applyPostItemLostAbAttrs(attrType: Constructor<PostItemLostAbAttr>,
+  pokemon: Pokemon, passive: boolean, simulated: boolean = false, args: any[]): Promise<void> {
+  return applyAbAttrsInternal<PostItemLostAbAttr>(attrType, pokemon, (attr, passive) => attr.applyPostItemLost(pokemon, passive, simulated, args), args);
+}
+
 function queueShowAbility(pokemon: Pokemon, passive: boolean): void {
   pokemon.scene.unshiftPhase(new ShowAbilityPhase(pokemon.scene, pokemon.id, passive));
   pokemon.scene.clearPhaseQueueSplice();
@@ -5230,9 +5158,7 @@ export function initAbilities() {
     new Ability(Abilities.ANGER_POINT, 4)
       .attr(PostDefendCritStatStageChangeAbAttr, Stat.ATK, 6),
     new Ability(Abilities.UNBURDEN, 4)
-      .attr(UnburdenBerryRemovedAbAttr)
-      .attr(UnburdenAttackingItemRemovedAbAttr)
-      .attr(UnburdenDefendingItemRemovedAbAttr),
+      .attr(PostItemLostApplyBattlerTagAbAttr, BattlerTagType.UNBURDEN),
     new Ability(Abilities.HEATPROOF, 4)
       .attr(ReceivedTypeDamageMultiplierAbAttr, Type.FIRE, 0.5)
       .attr(ReduceBurnDamageAbAttr, 0.5)

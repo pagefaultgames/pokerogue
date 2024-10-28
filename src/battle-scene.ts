@@ -15,7 +15,7 @@ import { addTextObject, getTextColor, TextStyle } from "#app/ui/text";
 import { allMoves } from "#app/data/move";
 import { getDefaultModifierTypeForTier, getEnemyModifierTypesForWave, getLuckString, getLuckTextTint, getModifierPoolForType, getModifierType, getPartyLuckValue, ModifierPoolType, modifierTypes, PokemonHeldItemModifierType } from "#app/modifier/modifier-type";
 import AbilityBar from "#app/ui/ability-bar";
-import { allAbilities, applyAbAttrs, applyPostBattleInitAbAttrs, BlockItemTheftAbAttr, DoubleBattleChanceAbAttr, PostBattleInitAbAttr } from "#app/data/ability";
+import { allAbilities, applyAbAttrs, applyPostBattleInitAbAttrs, applyPostItemLostAbAttrs, BlockItemTheftAbAttr, DoubleBattleChanceAbAttr, PostBattleInitAbAttr, PostItemLostAbAttr } from "#app/data/ability";
 import Battle, { BattleType, FixedBattleConfig } from "#app/battle";
 import { GameMode, GameModes, getGameMode } from "#app/game-mode";
 import FieldSpritePipeline from "#app/pipelines/field-sprite";
@@ -2582,9 +2582,21 @@ export default class BattleScene extends SceneBase {
           const addModifier = () => {
             if (!matchingModifier || this.removeModifier(matchingModifier, !target.isPlayer())) {
               if (target.isPlayer()) {
-                this.addModifier(newItemModifier, ignoreUpdate, playSound, false, instant).then(() => resolve(true));
+                this.addModifier(newItemModifier, ignoreUpdate, playSound, false, instant).then(() => {
+                  if (source) {
+                    console.log("Add Modifier, Player", source.name);
+                    applyPostItemLostAbAttrs(PostItemLostAbAttr, source, source.hasPassive(), false, []);
+                  }
+                  resolve(true);
+                });
               } else {
-                this.addEnemyModifier(newItemModifier, ignoreUpdate, instant).then(() => resolve(true));
+                this.addEnemyModifier(newItemModifier, ignoreUpdate, instant).then(() => {
+                  if (source) {
+                    console.log("Add Modifier, ENEMY", source.name);
+                    applyPostItemLostAbAttrs(PostItemLostAbAttr, source, source.hasPassive(), false, []);
+                  }
+                  resolve(true);
+                });
               }
             } else {
               resolve(false);

@@ -95,7 +95,7 @@ describe("Abilities - Unburden", () => {
   });
   it("should activate when an item is stolen via defending ability", async () => {
     game.override
-      .startingLevel(50)
+      .startingLevel(45)
       .enemyAbility(Abilities.PICKPOCKET)
       .startingHeldItems([
         { name: "MULTI_LENS", count: 3 },

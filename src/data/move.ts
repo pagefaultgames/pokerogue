@@ -8,7 +8,7 @@ import { Constructor, NumberHolder } from "#app/utils";
 import * as Utils from "../utils";
 import { WeatherType } from "./weather";
 import { ArenaTagSide, ArenaTrapTag, WeakenMoveTypeTag } from "./arena-tag";
-import { allAbilities, AllyMoveCategoryPowerBoostAbAttr, applyAbAttrs, applyPostAttackAbAttrs, applyPreAttackAbAttrs, applyPreDefendAbAttrs, BlockItemTheftAbAttr, BlockNonDirectDamageAbAttr, BlockOneHitKOAbAttr, BlockRecoilDamageAttr, ConfusionOnStatusEffectAbAttr, FieldMoveTypePowerBoostAbAttr, FieldPreventExplosiveMovesAbAttr, ForceSwitchOutImmunityAbAttr, HealFromBerryUseAbAttr, IgnoreContactAbAttr, IgnoreMoveEffectsAbAttr, IgnoreProtectOnContactAbAttr, MaxMultiHitAbAttr, MoveAbilityBypassAbAttr, MoveEffectChanceMultiplierAbAttr, MoveTypeChangeAbAttr, ReverseDrainAbAttr, UncopiableAbilityAbAttr, UnsuppressableAbilityAbAttr, UnswappableAbilityAbAttr, UserFieldMoveTypePowerBoostAbAttr, VariableMovePowerAbAttr, WonderSkinAbAttr } from "./ability";
+import { allAbilities, AllyMoveCategoryPowerBoostAbAttr, applyAbAttrs, applyPostAttackAbAttrs, applyPostItemLostAbAttrs, applyPreAttackAbAttrs, applyPreDefendAbAttrs, BlockItemTheftAbAttr, BlockNonDirectDamageAbAttr, BlockOneHitKOAbAttr, BlockRecoilDamageAttr, ConfusionOnStatusEffectAbAttr, FieldMoveTypePowerBoostAbAttr, FieldPreventExplosiveMovesAbAttr, ForceSwitchOutImmunityAbAttr, HealFromBerryUseAbAttr, IgnoreContactAbAttr, IgnoreMoveEffectsAbAttr, IgnoreProtectOnContactAbAttr, MaxMultiHitAbAttr, MoveAbilityBypassAbAttr, MoveEffectChanceMultiplierAbAttr, MoveTypeChangeAbAttr, PostItemLostAbAttr, ReverseDrainAbAttr, UncopiableAbilityAbAttr, UnsuppressableAbilityAbAttr, UnswappableAbilityAbAttr, UserFieldMoveTypePowerBoostAbAttr, VariableMovePowerAbAttr, WonderSkinAbAttr } from "./ability";
 import { AttackTypeBoosterModifier, BerryModifier, PokemonHeldItemModifier, PokemonMoveAccuracyBoosterModifier, PokemonMultiHitModifier, PreserveBerryModifier } from "../modifier/modifier";
 import { BattlerIndex, BattleType } from "../battle";
 import { TerrainType } from "./terrain";
@@ -2175,7 +2175,6 @@ export class StealHeldItemChanceAttr extends MoveEffectAttr {
         const stolenItem = tierHeldItems[user.randSeedInt(tierHeldItems.length)];
         user.scene.tryTransferHeldItemModifier(stolenItem, user, false).then(success => {
           if (success) {
-            target.turnData.itemsLost += 1;
             user.scene.queueMessage(i18next.t("moveTriggers:stoleItem", { pokemonName: getPokemonNameWithAffix(user), targetName: getPokemonNameWithAffix(target), itemName: stolenItem.type.name }));
           }
           resolve(success);
@@ -2257,7 +2256,8 @@ export class RemoveHeldItemAttr extends MoveEffectAttr {
       // Decrease item amount and update icon
       !--removedItem.stackCount;
       target.scene.updateModifiers(target.isPlayer());
-      target.turnData.itemsLost += 1;
+      applyPostItemLostAbAttrs(PostItemLostAbAttr, target, target.hasPassive(), false, []);
+
 
       if (this.berriesOnly) {
         user.scene.queueMessage(i18next.t("moveTriggers:incineratedItem", { pokemonName: getPokemonNameWithAffix(user), targetName: getPokemonNameWithAffix(target), itemName: removedItem.type.name }));
@@ -2337,6 +2337,7 @@ export class EatBerryAttr extends MoveEffectAttr {
   eatBerry(consumer: Pokemon) {
     getBerryEffectFunc(this.chosenBerry!.berryType)(consumer); // consumer eats the berry
     applyAbAttrs(HealFromBerryUseAbAttr, consumer, new Utils.BooleanHolder(false));
+    applyPostItemLostAbAttrs(PostItemLostAbAttr, consumer, consumer.hasPassive(), false, []);
   }
 }
 
@@ -2372,7 +2373,7 @@ export class StealEatBerryAttr extends EatBerryAttr {
     }
     // if the target has berries, pick a random berry and steal it
     this.chosenBerry = heldBerries[user.randSeedInt(heldBerries.length)];
-    target.turnData.itemsLost += 1;
+    applyPostItemLostAbAttrs(PostItemLostAbAttr, target, target.hasPassive(), false, []);
     const message = i18next.t("battle:stealEatBerry", { pokemonName: user.name, targetName: target.name, berryName: this.chosenBerry.type.name });
     user.scene.queueMessage(message);
     this.reduceBerryModifier(target);
