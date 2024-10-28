@@ -246,9 +246,9 @@ export class LoadingScene extends SceneBase {
     }
     const availableLangs = [ "en", "de", "it", "fr", "ja", "ko", "es", "pt-BR", "zh-CN" ];
     if (lang && availableLangs.includes(lang)) {
-      this.loadImage("egg-update_" + lang, "events");
+      this.loadImage("halloween2024-event-" + lang, "events");
     } else {
-      this.loadImage("egg-update_en", "events");
+      this.loadImage("halloween2024-event-en", "events");
     }
 
     this.loadAtlas("statuses", "");

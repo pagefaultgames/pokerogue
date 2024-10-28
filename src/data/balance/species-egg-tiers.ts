@@ -497,7 +497,7 @@ export const speciesEggTiers = {
   [Species.DREEPY]: EggTier.RARE,
   [Species.ZACIAN]: EggTier.LEGENDARY,
   [Species.ZAMAZENTA]: EggTier.LEGENDARY,
-  [Species.ETERNATUS]: EggTier.COMMON,
+  [Species.ETERNATUS]: EggTier.LEGENDARY,
   [Species.KUBFU]: EggTier.EPIC,
   [Species.ZARUDE]: EggTier.EPIC,
   [Species.REGIELEKI]: EggTier.EPIC,
