@@ -2595,7 +2595,6 @@ export default class BattleScene extends SceneBase {
               if (target.isPlayer()) {
                 this.addModifier(newItemModifier, ignoreUpdate, playSound, false, instant).then(() => {
                   if (source) {
-                    console.log("Add Modifier, Player", source.name);
                     applyPostItemLostAbAttrs(PostItemLostAbAttr, source, source.hasPassive(), false, []);
                   }
                   resolve(true);
@@ -2603,7 +2602,6 @@ export default class BattleScene extends SceneBase {
               } else {
                 this.addEnemyModifier(newItemModifier, ignoreUpdate, instant).then(() => {
                   if (source) {
-                    console.log("Add Modifier, ENEMY", source.name);
                     applyPostItemLostAbAttrs(PostItemLostAbAttr, source, source.hasPassive(), false, []);
                   }
                   resolve(true);
