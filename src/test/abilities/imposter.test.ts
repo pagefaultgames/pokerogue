@@ -60,18 +60,19 @@ describe("Abilities - Imposter", () => {
     const playerMoveset = player.getMoveset();
     const enemyMoveset = player.getMoveset();
 
+    expect(playerMoveset.length).toBe(enemyMoveset.length);
     for (let i = 0; i < playerMoveset.length && i < enemyMoveset.length; i++) {
-      // TODO: Checks for 5 PP should be done here when that gets addressed
       expect(playerMoveset[i]?.moveId).toBe(enemyMoveset[i]?.moveId);
     }
 
     const playerTypes = player.getTypes();
     const enemyTypes = enemy.getTypes();
 
+    expect(playerTypes.length).toBe(enemyTypes.length);
     for (let i = 0; i < playerTypes.length && i < enemyTypes.length; i++) {
       expect(playerTypes[i]).toBe(enemyTypes[i]);
     }
-  }, 20000);
+  });
 
   it("should copy in-battle overridden stats", async () => {
     game.override.enemyMoveset([ Moves.POWER_SPLIT ]);
@@ -104,7 +105,15 @@ describe("Abilities - Imposter", () => {
     await game.phaseInterceptor.to(TurnEndPhase);
 
     player.getMoveset().forEach(move => {
-      expect(move!.getMovePp()).toBeLessThanOrEqual(5);
+      // Should set correct maximum PP without touching `ppUp`
+      if (move) {
+        if (move.moveId === Moves.SKETCH) {
+          expect(move.getMovePp()).toBe(1);
+        } else {
+          expect(move.getMovePp()).toBe(5);
+        }
+        expect(move.ppUp).toBe(0);
+      }
     });
   });
 });

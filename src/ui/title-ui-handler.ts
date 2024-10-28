@@ -103,6 +103,7 @@ export default class TitleUiHandler extends OptionSelectUiHandler {
       const ui = this.getUi();
 
       if (this.scene.eventManager.isEventActive()) {
+        this.eventDisplay.setWidth(this.scene.scaledCanvas.width - this.optionSelectBg.width - this.optionSelectBg.x);
         this.eventDisplay.show();
       }
 
