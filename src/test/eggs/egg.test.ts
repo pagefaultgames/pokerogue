@@ -1,4 +1,7 @@
-import { Egg, getLegendaryGachaSpeciesForTimestamp } from "#app/data/egg";
+import { speciesEggTiers } from "#app/data/balance/species-egg-tiers";
+import { speciesStarterCosts } from "#app/data/balance/starters";
+import { Egg, getLegendaryGachaSpeciesForTimestamp, getValidLegendaryGachaSpecies } from "#app/data/egg";
+import { allSpecies } from "#app/data/pokemon-species";
 import { EggSourceType } from "#app/enums/egg-source-types";
 import { EggTier } from "#app/enums/egg-type";
 import { VariantTier } from "#app/enums/variant-tier";
@@ -63,6 +66,12 @@ describe("Egg Generation Tests", () => {
 
     expect(gachaSpeciesCount).toBeGreaterThan(0.4 * EGG_HATCH_COUNT);
     expect(gachaSpeciesCount).toBeLessThan(0.6 * EGG_HATCH_COUNT);
+  });
+  it("should never be allowed to generate Eternatus via the legendary gacha", () => {
+    const validLegendaryGachaSpecies = getValidLegendaryGachaSpecies();
+    expect(validLegendaryGachaSpecies.every(s => speciesEggTiers[s] === EggTier.LEGENDARY)).toBe(true);
+    expect(validLegendaryGachaSpecies.every(s => allSpecies[s].isObtainable())).toBe(true);
+    expect(validLegendaryGachaSpecies.includes(Species.ETERNATUS)).toBe(false);
   });
   it("should hatch an Arceus. Set from species", () => {
     const scene = game.scene;
@@ -375,5 +384,24 @@ describe("Egg Generation Tests", () => {
     expect(diffSpecies).toBe(false);
     expect(diffShiny).toBe(true);
     expect(diffAbility).toBe(true);
+  });
+
+  // For now, we are using this test to detect oversights in egg tiers.
+  // Delete this test if the balance team rebalances species costs independently of egg tiers.
+  it("should have correct egg tiers based on species costs", () => {
+    const getExpectedEggTier = (starterCost) =>
+      starterCost <= 3 ? EggTier.COMMON
+        : starterCost <= 5 ? EggTier.RARE
+          : starterCost <= 7 ? EggTier.EPIC
+            : EggTier.LEGENDARY;
+
+    allSpecies.forEach(pokemonSpecies => {
+      const rootSpecies = pokemonSpecies.getRootSpeciesId();
+      const speciesCost = speciesStarterCosts[rootSpecies];
+      const expectedEggTier = getExpectedEggTier(speciesCost);
+      const actualEggTier = speciesEggTiers[rootSpecies];
+
+      expect(actualEggTier).toBe(expectedEggTier);
+    });
   });
 });
