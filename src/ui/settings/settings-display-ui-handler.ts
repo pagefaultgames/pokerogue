@@ -89,7 +89,7 @@ export default class SettingsDisplayUiHandler extends AbstractSettingsUiHandler 
             value: "Català",
             label: "Català",
           };
-        break;
+          break;
         case "tr":
           this.settings[languageIndex].options[0] = {
             value: "Türkçe",
