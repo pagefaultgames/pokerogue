@@ -31,8 +31,8 @@ export default class SettingsDisplayUiHandler extends AbstractSettingsUiHandler 
           break;
         case "es":
           this.settings[languageIndex].options[0] = {
-            value: "Español",
-            label: "Español",
+            value: "Español (ES)",
+            label: "Español (ES)",
           };
           break;
         case "it":
