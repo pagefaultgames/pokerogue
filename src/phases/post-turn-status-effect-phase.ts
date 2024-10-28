@@ -26,16 +26,16 @@ export class PostTurnStatusEffectPhase extends PokemonPhase {
         this.scene.queueMessage(getStatusEffectActivationText(pokemon.status.effect, getPokemonNameWithAffix(pokemon)));
         const damage = new Utils.NumberHolder(0);
         switch (pokemon.status.effect) {
-        case StatusEffect.POISON:
-          damage.value = Math.max(pokemon.getMaxHp() >> 3, 1);
-          break;
-        case StatusEffect.TOXIC:
-          damage.value = Math.max(Math.floor((pokemon.getMaxHp() / 16) * pokemon.status.turnCount), 1);
-          break;
-        case StatusEffect.BURN:
-          damage.value = Math.max(pokemon.getMaxHp() >> 4, 1);
-          applyAbAttrs(ReduceBurnDamageAbAttr, pokemon, null, false, damage);
-          break;
+          case StatusEffect.POISON:
+            damage.value = Math.max(pokemon.getMaxHp() >> 3, 1);
+            break;
+          case StatusEffect.TOXIC:
+            damage.value = Math.max(Math.floor((pokemon.getMaxHp() / 16) * pokemon.status.toxicTurnCount), 1);
+            break;
+          case StatusEffect.BURN:
+            damage.value = Math.max(pokemon.getMaxHp() >> 4, 1);
+            applyAbAttrs(ReduceBurnDamageAbAttr, pokemon, null, false, damage);
+            break;
         }
         if (damage.value) {
           // Set preventEndure flag to avoid pokemon surviving thanks to focus band, sturdy, endure ...

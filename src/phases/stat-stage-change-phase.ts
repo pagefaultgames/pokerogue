@@ -64,8 +64,8 @@ export class StatStageChangePhase extends PokemonPhase {
       const cancelled = new BooleanHolder(false);
 
       if (!this.selfTarget && stages.value < 0) {
-        // TODO: Include simulate boolean when tag applications can be simulated
-        this.scene.arena.applyTagsForSide(MistTag, pokemon.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY, cancelled);
+        // TODO: add a reference to the source of the stat change to fix Infiltrator interaction
+        this.scene.arena.applyTagsForSide(MistTag, pokemon.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY, false, null, false, cancelled);
       }
 
       if (!cancelled.value && !this.selfTarget && stages.value < 0) {

@@ -150,7 +150,7 @@ describe("Abilities - Magic Guard", () => {
 
       const enemyPokemon = game.scene.getEnemyPokemon()!;
 
-      const toxicStartCounter = enemyPokemon.status!.turnCount;
+      const toxicStartCounter = enemyPokemon.status!.toxicTurnCount;
       //should be 0
 
       await game.phaseInterceptor.to(TurnEndPhase);
@@ -162,7 +162,7 @@ describe("Abilities - Magic Guard", () => {
        * - The enemy Pokemon's hypothetical CatchRateMultiplier should be 1.5
        */
       expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp());
-      expect(enemyPokemon.status!.turnCount).toBeGreaterThan(toxicStartCounter);
+      expect(enemyPokemon.status!.toxicTurnCount).toBeGreaterThan(toxicStartCounter);
       expect(getStatusEffectCatchRateMultiplier(enemyPokemon.status!.effect)).toBe(1.5);
     }
   );

@@ -1,4 +1,4 @@
-import { FormModalUiHandler } from "./form-modal-ui-handler";
+import { FormModalUiHandler, InputFieldConfig } from "./form-modal-ui-handler";
 import { ModalConfig } from "./modal-ui-handler";
 import * as Utils from "../utils";
 import { Mode } from "./ui";
@@ -24,10 +24,6 @@ export default class RegistrationFormUiHandler extends FormModalUiHandler {
     return i18next.t("menu:register");
   }
 
-  getFields(config?: ModalConfig): string[] {
-    return [ i18next.t("menu:username"), i18next.t("menu:password"), i18next.t("menu:confirmPassword") ];
-  }
-
   getWidth(config?: ModalConfig): number {
     return 160;
   }
@@ -50,15 +46,23 @@ export default class RegistrationFormUiHandler extends FormModalUiHandler {
       error = error.slice(0, colonIndex);
     }
     switch (error) {
-    case "invalid username":
-      return i18next.t("menu:invalidRegisterUsername");
-    case "invalid password":
-      return i18next.t("menu:invalidRegisterPassword");
-    case "failed to add account record":
-      return i18next.t("menu:usernameAlreadyUsed");
+      case "invalid username":
+        return i18next.t("menu:invalidRegisterUsername");
+      case "invalid password":
+        return i18next.t("menu:invalidRegisterPassword");
+      case "failed to add account record":
+        return i18next.t("menu:usernameAlreadyUsed");
     }
 
     return super.getReadableErrorMessage(error);
+  }
+
+  override getInputFieldConfigs(): InputFieldConfig[] {
+    const inputFieldConfigs: InputFieldConfig[] = [];
+    inputFieldConfigs.push({ label: i18next.t("menu:username") });
+    inputFieldConfigs.push({ label: i18next.t("menu:password"), isPassword: true });
+    inputFieldConfigs.push({ label: i18next.t("menu:confirmPassword"), isPassword: true });
+    return inputFieldConfigs;
   }
 
   setup(): void {

@@ -52,6 +52,7 @@ describe("Abilities - Volt Absorb", () => {
     expect(playerPokemon.getTag(BattlerTagType.CHARGED)).toBeDefined();
     expect(game.phaseInterceptor.log).not.toContain("ShowAbilityPhase");
   });
+
   it("should activate regardless of accuracy checks", async () => {
     game.override.moveset(Moves.THUNDERBOLT);
     game.override.enemyMoveset(Moves.SPLASH);
@@ -70,5 +71,23 @@ describe("Abilities - Volt Absorb", () => {
     await game.move.forceMiss();
     await game.phaseInterceptor.to("BerryPhase", false);
     expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp());
+  });
+
+  it("regardless of accuracy should not trigger on pokemon in semi invulnerable state", async () => {
+    game.override.moveset(Moves.THUNDERBOLT);
+    game.override.enemyMoveset(Moves.DIVE);
+    game.override.enemySpecies(Species.MAGIKARP);
+    game.override.enemyAbility(Abilities.VOLT_ABSORB);
+
+    await game.classicMode.startBattle();
+
+    const enemyPokemon = game.scene.getEnemyPokemon()!;
+
+    game.move.select(Moves.THUNDERBOLT);
+    enemyPokemon.hp = enemyPokemon.hp - 1;
+    await game.setTurnOrder([ BattlerIndex.ENEMY, BattlerIndex.PLAYER ]);
+
+    await game.phaseInterceptor.to("BerryPhase", false);
+    expect(enemyPokemon.hp).toBeLessThan(enemyPokemon.getMaxHp());
   });
 });
