@@ -76,7 +76,7 @@ export function getBerryEffectFunc(berryType: BerryType): BerryEffectFunc {
         pokemon.scene.unshiftPhase(new PokemonHealPhase(pokemon.scene, pokemon.getBattlerIndex(),
           hpHealed.value, i18next.t("battle:hpHealBerry", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), berryName: getBerryName(berryType) }), true));
         applyPostItemLostAbAttrs(PostItemLostAbAttr, pokemon, pokemon.hasPassive(), false, []);
-    };
+      };
     case BerryType.LUM:
       return (pokemon: Pokemon) => {
         if (pokemon.battleData) {
@@ -88,7 +88,7 @@ export function getBerryEffectFunc(berryType: BerryType): BerryEffectFunc {
         pokemon.resetStatus(true, true);
         pokemon.updateInfo();
         applyPostItemLostAbAttrs(PostItemLostAbAttr, pokemon, pokemon.hasPassive(), false, []);
-    };
+      };
     case BerryType.LIECHI:
     case BerryType.GANLON:
     case BerryType.PETAYA:
@@ -104,7 +104,7 @@ export function getBerryEffectFunc(berryType: BerryType): BerryEffectFunc {
         applyAbAttrs(DoubleBerryEffectAbAttr, pokemon, null, false, statStages);
         pokemon.scene.unshiftPhase(new StatStageChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [ stat ], statStages.value));
         applyPostItemLostAbAttrs(PostItemLostAbAttr, pokemon, pokemon.hasPassive(), false, []);
-    };
+      };
     case BerryType.LANSAT:
       return (pokemon: Pokemon) => {
         if (pokemon.battleData) {
@@ -112,7 +112,7 @@ export function getBerryEffectFunc(berryType: BerryType): BerryEffectFunc {
         }
         pokemon.addTag(BattlerTagType.CRIT_BOOST);
         applyPostItemLostAbAttrs(PostItemLostAbAttr, pokemon, pokemon.hasPassive(), false, []);
-    };
+      };
     case BerryType.STARF:
       return (pokemon: Pokemon) => {
         if (pokemon.battleData) {
@@ -123,7 +123,7 @@ export function getBerryEffectFunc(berryType: BerryType): BerryEffectFunc {
         applyAbAttrs(DoubleBerryEffectAbAttr, pokemon, null, false, stages);
         pokemon.scene.unshiftPhase(new StatStageChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [ randStat ], stages.value));
         applyPostItemLostAbAttrs(PostItemLostAbAttr, pokemon, pokemon.hasPassive(), false, []);
-    };
+      };
     case BerryType.LEPPA:
       return (pokemon: Pokemon) => {
         if (pokemon.battleData) {

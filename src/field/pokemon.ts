@@ -946,9 +946,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           ret >>= 1;
         }
         if (this.getTag(BattlerTagType.UNBURDEN)) {
-        ret *= 2;
-      }
-      break;
+          ret *= 2;
+        }
+        break;
     }
 
     const highestStatBoost = this.findTag(t => t instanceof HighestStatBoostTag && (t as HighestStatBoostTag).stat === stat) as HighestStatBoostTag;

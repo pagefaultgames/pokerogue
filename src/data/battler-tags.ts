@@ -2951,8 +2951,8 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: number, source
     case BattlerTagType.GORILLA_TACTICS:
       return new GorillaTacticsTag();
     case BattlerTagType.UNBURDEN:
-    return new UnburdenTag();
-  case BattlerTagType.SUBSTITUTE:
+      return new UnburdenTag();
+    case BattlerTagType.SUBSTITUTE:
       return new SubstituteTag(sourceMove, sourceId);
     case BattlerTagType.AUTOTOMIZED:
       return new AutotomizedTag();
