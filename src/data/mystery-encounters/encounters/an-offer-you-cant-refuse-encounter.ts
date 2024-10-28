@@ -1,4 +1,4 @@
-import { leaveEncounterWithoutBattle, setEncounterExp, updatePlayerMoney, } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
+import { generateModifierType, leaveEncounterWithoutBattle, setEncounterExp, updatePlayerMoney, } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import { modifierTypes } from "#app/modifier/modifier-type";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { Species } from "#enums/species";
@@ -14,6 +14,7 @@ import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { ModifierRewardPhase } from "#app/phases/modifier-reward-phase";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
+import i18next from "i18next";
 
 /** the i18n namespace for this encounter */
 const namespace = "mysteryEncounters/anOfferYouCantRefuse";
@@ -98,6 +99,8 @@ export const AnOfferYouCantRefuseEncounter: MysteryEncounter =
         }
       }
 
+      const shinyCharm = generateModifierType(scene, modifierTypes.SHINY_CHARM);
+      encounter.setDialogueToken("itemName", shinyCharm?.name ?? i18next.t("modifierType:ModifierType.SHINY_CHARM.name"));
       encounter.setDialogueToken("liepardName", getPokemonSpecies(Species.LIEPARD).getName());
 
       return true;
@@ -123,7 +126,7 @@ export const AnOfferYouCantRefuseEncounter: MysteryEncounter =
           return true;
         })
         .withOptionPhase(async (scene: BattleScene) => {
-          // Give the player a Shiny charm
+          // Give the player a Shiny Charm
           scene.unshiftPhase(new ModifierRewardPhase(scene, modifierTypes.SHINY_CHARM));
           leaveEncounterWithoutBattle(scene, true);
         })
@@ -132,9 +135,11 @@ export const AnOfferYouCantRefuseEncounter: MysteryEncounter =
     .withOption(
       MysteryEncounterOptionBuilder
         .newOptionWithMode(MysteryEncounterOptionMode.DISABLED_OR_SPECIAL)
-        .withPrimaryPokemonRequirement(new CombinationPokemonRequirement(
-          new MoveRequirement(EXTORTION_MOVES),
-          new AbilityRequirement(EXTORTION_ABILITIES))
+        .withPrimaryPokemonRequirement(
+          CombinationPokemonRequirement.Some(
+            new MoveRequirement(EXTORTION_MOVES, true),
+            new AbilityRequirement(EXTORTION_ABILITIES, true)
+          )
         )
         .withDialogue({
           buttonLabel: `${namespace}:option.2.label`,

@@ -7,7 +7,7 @@ import { getPokemonNameWithAffix } from "#app/messages";
 import Pokemon, { HitResult, PokemonMove } from "#app/field/pokemon";
 import { StatusEffect } from "#app/data/status-effect";
 import { BattlerIndex } from "#app/battle";
-import { BlockNonDirectDamageAbAttr, ChangeMovePriorityAbAttr, ProtectStatAbAttr, applyAbAttrs } from "#app/data/ability";
+import { BlockNonDirectDamageAbAttr, ChangeMovePriorityAbAttr, InfiltratorAbAttr, ProtectStatAbAttr, applyAbAttrs } from "#app/data/ability";
 import { Stat } from "#enums/stat";
 import { CommonAnim, CommonBattleAnim } from "#app/data/battle-anims";
 import i18next from "i18next";
@@ -88,13 +88,13 @@ export abstract class ArenaTag {
    */
   public getAffectedPokemon(scene: BattleScene): Pokemon[] {
     switch (this.side) {
-    case ArenaTagSide.PLAYER:
-      return scene.getPlayerField() ?? [];
-    case ArenaTagSide.ENEMY:
-      return scene.getEnemyField() ?? [];
-    case ArenaTagSide.BOTH:
-    default:
-      return scene.getField(true) ?? [];
+      case ArenaTagSide.PLAYER:
+        return scene.getPlayerField() ?? [];
+      case ArenaTagSide.ENEMY:
+        return scene.getEnemyField() ?? [];
+      case ArenaTagSide.BOTH:
+      default:
+        return scene.getField(true) ?? [];
     }
   }
 }
@@ -126,11 +126,23 @@ export class MistTag extends ArenaTag {
    * Cancels the lowering of stats
    * @param arena the {@linkcode Arena} containing this effect
    * @param simulated `true` if the effect should be applied quietly
+   * @param attacker the {@linkcode Pokemon} using a move into this effect.
    * @param cancelled a {@linkcode BooleanHolder} whose value is set to `true`
    * to flag the stat reduction as cancelled
    * @returns `true` if a stat reduction was cancelled; `false` otherwise
    */
-  override apply(arena: Arena, simulated: boolean, cancelled: BooleanHolder): boolean {
+  override apply(arena: Arena, simulated: boolean, attacker: Pokemon, cancelled: BooleanHolder): boolean {
+    // `StatStageChangePhase` currently doesn't have a reference to the source of stat drops,
+    // so this code currently has no effect on gameplay.
+    if (attacker) {
+      const bypassed = new BooleanHolder(false);
+      // TODO: Allow this to be simulated
+      applyAbAttrs(InfiltratorAbAttr, attacker, null, false, bypassed);
+      if (bypassed.value) {
+        return false;
+      }
+    }
+
     cancelled.value = true;
 
     if (!simulated) {
@@ -169,12 +181,18 @@ export class WeakenMoveScreenTag extends ArenaTag {
    *
    * @param arena the {@linkcode Arena} where the move is applied.
    * @param simulated n/a
+   * @param attacker the attacking {@linkcode Pokemon}
    * @param moveCategory the attacking move's {@linkcode MoveCategory}.
    * @param damageMultiplier A {@linkcode NumberHolder} containing the damage multiplier
    * @returns `true` if the attacking move was weakened; `false` otherwise.
    */
-  override apply(arena: Arena, simulated: boolean, moveCategory: MoveCategory, damageMultiplier: NumberHolder): boolean {
+  override apply(arena: Arena, simulated: boolean, attacker: Pokemon, moveCategory: MoveCategory, damageMultiplier: NumberHolder): boolean {
     if (this.weakenedCategories.includes(moveCategory)) {
+      const bypassed = new BooleanHolder(false);
+      applyAbAttrs(InfiltratorAbAttr, attacker, null, false, bypassed);
+      if (bypassed.value) {
+        return false;
+      }
       damageMultiplier.value = arena.scene.currentBattle.double ? 2732 / 4096 : 0.5;
       return true;
     }
@@ -332,11 +350,11 @@ const WideGuardConditionFunc: ProtectConditionFunc = (arena, moveId) : boolean =
   const move = allMoves[moveId];
 
   switch (move.moveTarget) {
-  case MoveTarget.ALL_ENEMIES:
-  case MoveTarget.ALL_NEAR_ENEMIES:
-  case MoveTarget.ALL_OTHERS:
-  case MoveTarget.ALL_NEAR_OTHERS:
-    return true;
+    case MoveTarget.ALL_ENEMIES:
+    case MoveTarget.ALL_NEAR_ENEMIES:
+    case MoveTarget.ALL_OTHERS:
+    case MoveTarget.ALL_NEAR_OTHERS:
+      return true;
   }
   return false;
 };
@@ -626,7 +644,7 @@ export class ArenaTrapTag extends ArenaTag {
    * @returns `true` if this hazard affects the given Pokemon; `false` otherwise.
    */
   override apply(arena: Arena, simulated: boolean, pokemon: Pokemon): boolean {
-    if (this.sourceId === pokemon.id || (this.side === ArenaTagSide.PLAYER) !== pokemon.isPlayer()) {
+    if ((this.side === ArenaTagSide.PLAYER) !== pokemon.isPlayer()) {
       return false;
     }
 
@@ -807,24 +825,24 @@ class StealthRockTag extends ArenaTrapTag {
     let damageHpRatio: number = 0;
 
     switch (effectiveness) {
-    case 0:
-      damageHpRatio = 0;
-      break;
-    case 0.25:
-      damageHpRatio = 0.03125;
-      break;
-    case 0.5:
-      damageHpRatio = 0.0625;
-      break;
-    case 1:
-      damageHpRatio = 0.125;
-      break;
-    case 2:
-      damageHpRatio = 0.25;
-      break;
-    case 4:
-      damageHpRatio = 0.5;
-      break;
+      case 0:
+        damageHpRatio = 0;
+        break;
+      case 0.25:
+        damageHpRatio = 0.03125;
+        break;
+      case 0.5:
+        damageHpRatio = 0.0625;
+        break;
+      case 1:
+        damageHpRatio = 0.125;
+        break;
+      case 2:
+        damageHpRatio = 0.25;
+        break;
+      case 4:
+        damageHpRatio = 0.5;
+        break;
     }
 
     return damageHpRatio;
@@ -953,6 +971,9 @@ export class GravityTag extends ArenaTag {
       if (pokemon !== null) {
         pokemon.removeTag(BattlerTagType.FLOATING);
         pokemon.removeTag(BattlerTagType.TELEKINESIS);
+        if (pokemon.getTag(BattlerTagType.FLYING)) {
+          pokemon.addTag(BattlerTagType.INTERRUPTED);
+        }
       }
     });
   }
@@ -1185,63 +1206,63 @@ class GrassWaterPledgeTag extends ArenaTag {
 // TODO: swap `sourceMove` and `sourceId` and make `sourceMove` an optional parameter
 export function getArenaTag(tagType: ArenaTagType, turnCount: number, sourceMove: Moves | undefined, sourceId: number, targetIndex?: BattlerIndex, side: ArenaTagSide = ArenaTagSide.BOTH): ArenaTag | null {
   switch (tagType) {
-  case ArenaTagType.MIST:
-    return new MistTag(turnCount, sourceId, side);
-  case ArenaTagType.QUICK_GUARD:
-    return new QuickGuardTag(sourceId, side);
-  case ArenaTagType.WIDE_GUARD:
-    return new WideGuardTag(sourceId, side);
-  case ArenaTagType.MAT_BLOCK:
-    return new MatBlockTag(sourceId, side);
-  case ArenaTagType.CRAFTY_SHIELD:
-    return new CraftyShieldTag(sourceId, side);
-  case ArenaTagType.NO_CRIT:
-    return new NoCritTag(turnCount, sourceMove!, sourceId, side); // TODO: is this bang correct?
-  case ArenaTagType.MUD_SPORT:
-    return new MudSportTag(turnCount, sourceId);
-  case ArenaTagType.WATER_SPORT:
-    return new WaterSportTag(turnCount, sourceId);
-  case ArenaTagType.ION_DELUGE:
-    return new IonDelugeTag(sourceMove);
-  case ArenaTagType.SPIKES:
-    return new SpikesTag(sourceId, side);
-  case ArenaTagType.TOXIC_SPIKES:
-    return new ToxicSpikesTag(sourceId, side);
-  case ArenaTagType.FUTURE_SIGHT:
-  case ArenaTagType.DOOM_DESIRE:
-    return new DelayedAttackTag(tagType, sourceMove, sourceId, targetIndex!); // TODO:questionable bang
-  case ArenaTagType.WISH:
-    return new WishTag(turnCount, sourceId, side);
-  case ArenaTagType.STEALTH_ROCK:
-    return new StealthRockTag(sourceId, side);
-  case ArenaTagType.STICKY_WEB:
-    return new StickyWebTag(sourceId, side);
-  case ArenaTagType.TRICK_ROOM:
-    return new TrickRoomTag(turnCount, sourceId);
-  case ArenaTagType.GRAVITY:
-    return new GravityTag(turnCount);
-  case ArenaTagType.REFLECT:
-    return new ReflectTag(turnCount, sourceId, side);
-  case ArenaTagType.LIGHT_SCREEN:
-    return new LightScreenTag(turnCount, sourceId, side);
-  case ArenaTagType.AURORA_VEIL:
-    return new AuroraVeilTag(turnCount, sourceId, side);
-  case ArenaTagType.TAILWIND:
-    return new TailwindTag(turnCount, sourceId, side);
-  case ArenaTagType.HAPPY_HOUR:
-    return new HappyHourTag(turnCount, sourceId, side);
-  case ArenaTagType.SAFEGUARD:
-    return new SafeguardTag(turnCount, sourceId, side);
-  case ArenaTagType.IMPRISON:
-    return new ImprisonTag(sourceId, side);
-  case ArenaTagType.FIRE_GRASS_PLEDGE:
-    return new FireGrassPledgeTag(sourceId, side);
-  case ArenaTagType.WATER_FIRE_PLEDGE:
-    return new WaterFirePledgeTag(sourceId, side);
-  case ArenaTagType.GRASS_WATER_PLEDGE:
-    return new GrassWaterPledgeTag(sourceId, side);
-  default:
-    return null;
+    case ArenaTagType.MIST:
+      return new MistTag(turnCount, sourceId, side);
+    case ArenaTagType.QUICK_GUARD:
+      return new QuickGuardTag(sourceId, side);
+    case ArenaTagType.WIDE_GUARD:
+      return new WideGuardTag(sourceId, side);
+    case ArenaTagType.MAT_BLOCK:
+      return new MatBlockTag(sourceId, side);
+    case ArenaTagType.CRAFTY_SHIELD:
+      return new CraftyShieldTag(sourceId, side);
+    case ArenaTagType.NO_CRIT:
+      return new NoCritTag(turnCount, sourceMove!, sourceId, side); // TODO: is this bang correct?
+    case ArenaTagType.MUD_SPORT:
+      return new MudSportTag(turnCount, sourceId);
+    case ArenaTagType.WATER_SPORT:
+      return new WaterSportTag(turnCount, sourceId);
+    case ArenaTagType.ION_DELUGE:
+      return new IonDelugeTag(sourceMove);
+    case ArenaTagType.SPIKES:
+      return new SpikesTag(sourceId, side);
+    case ArenaTagType.TOXIC_SPIKES:
+      return new ToxicSpikesTag(sourceId, side);
+    case ArenaTagType.FUTURE_SIGHT:
+    case ArenaTagType.DOOM_DESIRE:
+      return new DelayedAttackTag(tagType, sourceMove, sourceId, targetIndex!); // TODO:questionable bang
+    case ArenaTagType.WISH:
+      return new WishTag(turnCount, sourceId, side);
+    case ArenaTagType.STEALTH_ROCK:
+      return new StealthRockTag(sourceId, side);
+    case ArenaTagType.STICKY_WEB:
+      return new StickyWebTag(sourceId, side);
+    case ArenaTagType.TRICK_ROOM:
+      return new TrickRoomTag(turnCount, sourceId);
+    case ArenaTagType.GRAVITY:
+      return new GravityTag(turnCount);
+    case ArenaTagType.REFLECT:
+      return new ReflectTag(turnCount, sourceId, side);
+    case ArenaTagType.LIGHT_SCREEN:
+      return new LightScreenTag(turnCount, sourceId, side);
+    case ArenaTagType.AURORA_VEIL:
+      return new AuroraVeilTag(turnCount, sourceId, side);
+    case ArenaTagType.TAILWIND:
+      return new TailwindTag(turnCount, sourceId, side);
+    case ArenaTagType.HAPPY_HOUR:
+      return new HappyHourTag(turnCount, sourceId, side);
+    case ArenaTagType.SAFEGUARD:
+      return new SafeguardTag(turnCount, sourceId, side);
+    case ArenaTagType.IMPRISON:
+      return new ImprisonTag(sourceId, side);
+    case ArenaTagType.FIRE_GRASS_PLEDGE:
+      return new FireGrassPledgeTag(sourceId, side);
+    case ArenaTagType.WATER_FIRE_PLEDGE:
+      return new WaterFirePledgeTag(sourceId, side);
+    case ArenaTagType.GRASS_WATER_PLEDGE:
+      return new GrassWaterPledgeTag(sourceId, side);
+    default:
+      return null;
   }
 }
 
