@@ -238,8 +238,8 @@ export abstract class PokemonSpeciesForm {
 
   isRareRegional(): boolean {
     switch (this.getRegion()) {
-    case Region.HISUI:
-      return true;
+      case Region.HISUI:
+        return true;
     }
 
     return false;
@@ -265,14 +265,14 @@ export abstract class PokemonSpeciesForm {
   getBaseExp(): number {
     let ret = this.baseExp;
     switch (this.getFormSpriteKey()) {
-    case SpeciesFormKey.MEGA:
-    case SpeciesFormKey.MEGA_X:
-    case SpeciesFormKey.MEGA_Y:
-    case SpeciesFormKey.PRIMAL:
-    case SpeciesFormKey.GIGANTAMAX:
-    case SpeciesFormKey.ETERNAMAX:
-      ret *= 1.5;
-      break;
+      case SpeciesFormKey.MEGA:
+      case SpeciesFormKey.MEGA_X:
+      case SpeciesFormKey.MEGA_Y:
+      case SpeciesFormKey.PRIMAL:
+      case SpeciesFormKey.GIGANTAMAX:
+      case SpeciesFormKey.ETERNAMAX:
+        ret *= 1.5;
+        break;
     }
     return ret;
   }
@@ -346,29 +346,29 @@ export abstract class PokemonSpeciesForm {
     }
 
     switch (this.speciesId) {
-    case Species.HIPPOPOTAS:
-    case Species.HIPPOWDON:
-    case Species.UNFEZANT:
-    case Species.FRILLISH:
-    case Species.JELLICENT:
-    case Species.PYROAR:
-      ret += female ? "-f" : "";
-      break;
+      case Species.HIPPOPOTAS:
+      case Species.HIPPOWDON:
+      case Species.UNFEZANT:
+      case Species.FRILLISH:
+      case Species.JELLICENT:
+      case Species.PYROAR:
+        ret += female ? "-f" : "";
+        break;
     }
 
     let formSpriteKey = this.getFormSpriteKey(formIndex);
     if (formSpriteKey) {
       switch (this.speciesId) {
-      case Species.DUDUNSPARCE:
-        break;
-      case Species.ZACIAN:
-      case Species.ZAMAZENTA:
-        if (formSpriteKey.startsWith("behemoth")) {
-          formSpriteKey = "crowned";
-        }
-      default:
-        ret += `-${formSpriteKey}`;
-        break;
+        case Species.DUDUNSPARCE:
+          break;
+        case Species.ZACIAN:
+        case Species.ZAMAZENTA:
+          if (formSpriteKey.startsWith("behemoth")) {
+            formSpriteKey = "crowned";
+          }
+        default:
+          ret += `-${formSpriteKey}`;
+          break;
       }
     }
 
@@ -383,15 +383,15 @@ export abstract class PokemonSpeciesForm {
     let speciesId = this.speciesId;
     if (this.speciesId > 2000) {
       switch (this.speciesId) {
-      case Species.GALAR_SLOWPOKE:
-        break;
-      case Species.ETERNAL_FLOETTE:
-        break;
-      case Species.BLOODMOON_URSALUNA:
-        break;
-      default:
-        speciesId = speciesId % 2000;
-        break;
+        case Species.GALAR_SLOWPOKE:
+          break;
+        case Species.ETERNAL_FLOETTE:
+          break;
+        case Species.BLOODMOON_URSALUNA:
+          break;
+        default:
+          speciesId = speciesId % 2000;
+          break;
       }
     }
     let ret = speciesId.toString();
@@ -403,44 +403,44 @@ export abstract class PokemonSpeciesForm {
       }
       const formKey = forms[formIndex || 0].formKey;
       switch (formKey) {
-      case SpeciesFormKey.MEGA:
-      case SpeciesFormKey.MEGA_X:
-      case SpeciesFormKey.MEGA_Y:
-      case SpeciesFormKey.GIGANTAMAX:
-      case SpeciesFormKey.GIGANTAMAX_SINGLE:
-      case SpeciesFormKey.GIGANTAMAX_RAPID:
-      case "white":
-      case "black":
-      case "therian":
-      case "sky":
-      case "gorging":
-      case "gulping":
-      case "no-ice":
-      case "hangry":
-      case "crowned":
-      case "eternamax":
-      case "four":
-      case "droopy":
-      case "stretchy":
-      case "hero":
-      case "roaming":
-      case "complete":
-      case "10-complete":
-      case "10":
-      case "10-pc":
-      case "super":
-      case "unbound":
-      case "pau":
-      case "pompom":
-      case "sensu":
-      case "dusk":
-      case "midnight":
-      case "school":
-      case "dawn-wings":
-      case "dusk-mane":
-      case "ultra":
-        ret += `-${formKey}`;
-        break;
+        case SpeciesFormKey.MEGA:
+        case SpeciesFormKey.MEGA_X:
+        case SpeciesFormKey.MEGA_Y:
+        case SpeciesFormKey.GIGANTAMAX:
+        case SpeciesFormKey.GIGANTAMAX_SINGLE:
+        case SpeciesFormKey.GIGANTAMAX_RAPID:
+        case "white":
+        case "black":
+        case "therian":
+        case "sky":
+        case "gorging":
+        case "gulping":
+        case "no-ice":
+        case "hangry":
+        case "crowned":
+        case "eternamax":
+        case "four":
+        case "droopy":
+        case "stretchy":
+        case "hero":
+        case "roaming":
+        case "complete":
+        case "10-complete":
+        case "10":
+        case "10-pc":
+        case "super":
+        case "unbound":
+        case "pau":
+        case "pompom":
+        case "sensu":
+        case "dusk":
+        case "midnight":
+        case "school":
+        case "dawn-wings":
+        case "dusk-mane":
+        case "ultra":
+          ret += `-${formKey}`;
+          break;
       }
     }
     return ret;
@@ -636,19 +636,19 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
       const form = this.forms[formIndex];
       let key: string | null;
       switch (form.formKey) {
-      case SpeciesFormKey.MEGA:
-      case SpeciesFormKey.PRIMAL:
-      case SpeciesFormKey.ETERNAMAX:
-      case SpeciesFormKey.MEGA_X:
-      case SpeciesFormKey.MEGA_Y:
-        key = form.formKey;
-        break;
-      default:
-        if (form.formKey.indexOf(SpeciesFormKey.GIGANTAMAX) > -1) {
-          key = "gigantamax";
-        } else {
-          key = null;
-        }
+        case SpeciesFormKey.MEGA:
+        case SpeciesFormKey.PRIMAL:
+        case SpeciesFormKey.ETERNAMAX:
+        case SpeciesFormKey.MEGA_X:
+        case SpeciesFormKey.MEGA_Y:
+          key = form.formKey;
+          break;
+        default:
+          if (form.formKey.indexOf(SpeciesFormKey.GIGANTAMAX) > -1) {
+            key = "gigantamax";
+          } else {
+            key = null;
+          }
       }
 
       if (key) {
@@ -690,18 +690,18 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
    */
   private getStrengthLevelDiff(strength: PartyMemberStrength): integer {
     switch (Math.min(strength, PartyMemberStrength.STRONGER)) {
-    case PartyMemberStrength.WEAKEST:
-      return 60;
-    case PartyMemberStrength.WEAKER:
-      return 40;
-    case PartyMemberStrength.WEAK:
-      return 20;
-    case PartyMemberStrength.AVERAGE:
-      return 8;
-    case PartyMemberStrength.STRONG:
-      return 4;
-    default:
-      return 0;
+      case PartyMemberStrength.WEAKEST:
+        return 60;
+      case PartyMemberStrength.WEAKER:
+        return 40;
+      case PartyMemberStrength.WEAK:
+        return 20;
+      case PartyMemberStrength.AVERAGE:
+        return 8;
+      case PartyMemberStrength.STRONG:
+        return 4;
+      default:
+        return 0;
     }
   }
 
@@ -1864,7 +1864,7 @@ export function initSpecies() {
     new PokemonSpecies(Species.ALOMOMOLA, 5, false, false, false, "Caring Pokémon", Type.WATER, null, 1.2, 31.6, Abilities.HEALER, Abilities.HYDRATION, Abilities.REGENERATOR, 470, 165, 75, 80, 40, 45, 65, 75, 70, 165, GrowthRate.FAST, 50, false),
     new PokemonSpecies(Species.JOLTIK, 5, false, false, false, "Attaching Pokémon", Type.BUG, Type.ELECTRIC, 0.1, 0.6, Abilities.COMPOUND_EYES, Abilities.UNNERVE, Abilities.SWARM, 319, 50, 47, 50, 57, 50, 65, 190, 50, 64, GrowthRate.MEDIUM_FAST, 50, false),
     new PokemonSpecies(Species.GALVANTULA, 5, false, false, false, "EleSpider Pokémon", Type.BUG, Type.ELECTRIC, 0.8, 14.3, Abilities.COMPOUND_EYES, Abilities.UNNERVE, Abilities.SWARM, 472, 70, 77, 60, 97, 60, 108, 75, 50, 165, GrowthRate.MEDIUM_FAST, 50, false),
-    new PokemonSpecies(Species.FERROSEED, 5, false, false, false, "Thorn Seed Pokémon", Type.GRASS, Type.STEEL, 0.6, 18.8, Abilities.IRON_BARBS, Abilities.NONE, Abilities.IRON_BARBS, 305, 44, 50, 91, 24, 86, 10, 255, 50, 61, GrowthRate.MEDIUM_FAST, 50, false),
+    new PokemonSpecies(Species.FERROSEED, 5, false, false, false, "Thorn Seed Pokémon", Type.GRASS, Type.STEEL, 0.6, 18.8, Abilities.IRON_BARBS, Abilities.NONE, Abilities.ANTICIPATION, 305, 44, 50, 91, 24, 86, 10, 255, 50, 61, GrowthRate.MEDIUM_FAST, 50, false),
     new PokemonSpecies(Species.FERROTHORN, 5, false, false, false, "Thorn Pod Pokémon", Type.GRASS, Type.STEEL, 1, 110, Abilities.IRON_BARBS, Abilities.NONE, Abilities.ANTICIPATION, 489, 74, 94, 131, 54, 116, 20, 90, 50, 171, GrowthRate.MEDIUM_FAST, 50, false),
     new PokemonSpecies(Species.KLINK, 5, false, false, false, "Gear Pokémon", Type.STEEL, null, 0.3, 21, Abilities.PLUS, Abilities.MINUS, Abilities.CLEAR_BODY, 300, 40, 55, 70, 45, 60, 30, 130, 50, 60, GrowthRate.MEDIUM_SLOW, null, false),
     new PokemonSpecies(Species.KLANG, 5, false, false, false, "Gear Pokémon", Type.STEEL, null, 0.6, 51, Abilities.PLUS, Abilities.MINUS, Abilities.CLEAR_BODY, 440, 60, 80, 95, 70, 85, 50, 60, 50, 154, GrowthRate.MEDIUM_SLOW, null, false),
@@ -2580,11 +2580,11 @@ export function initSpecies() {
     new PokemonSpecies(Species.VAROOM, 9, false, false, false, "Single-Cyl Pokémon", Type.STEEL, Type.POISON, 1, 35, Abilities.OVERCOAT, Abilities.NONE, Abilities.SLOW_START, 300, 45, 70, 63, 30, 45, 47, 190, 50, 60, GrowthRate.MEDIUM_FAST, 50, false),
     new PokemonSpecies(Species.REVAVROOM, 9, false, false, false, "Multi-Cyl Pokémon", Type.STEEL, Type.POISON, 1.8, 120, Abilities.OVERCOAT, Abilities.NONE, Abilities.FILTER, 500, 80, 119, 90, 54, 67, 90, 75, 50, 175, GrowthRate.MEDIUM_FAST, 50, false, false,
       new PokemonForm("Normal", "", Type.STEEL, Type.POISON, 1.8, 120, Abilities.OVERCOAT, Abilities.NONE, Abilities.FILTER, 500, 80, 119, 90, 54, 67, 90, 75, 50, 175, false, null, true),
-      new PokemonForm("Segin Starmobile", "segin-starmobile", Type.STEEL, Type.DARK, 1.8, 240, Abilities.INTIMIDATE, Abilities.NONE, Abilities.INTIMIDATE, 600, 120, 129, 100, 59, 77, 115, 75, 50, 175),
-      new PokemonForm("Schedar Starmobile", "schedar-starmobile", Type.STEEL, Type.FIRE, 1.8, 240, Abilities.SPEED_BOOST, Abilities.NONE, Abilities.SPEED_BOOST, 600, 120, 129, 100, 59, 77, 115, 75, 50, 175),
-      new PokemonForm("Navi Starmobile", "navi-starmobile", Type.STEEL, Type.POISON, 1.8, 240, Abilities.TOXIC_DEBRIS, Abilities.NONE, Abilities.TOXIC_DEBRIS, 600, 120, 129, 100, 59, 77, 115, 75, 50, 175),
-      new PokemonForm("Ruchbah Starmobile", "ruchbah-starmobile", Type.STEEL, Type.FAIRY, 1.8, 240, Abilities.MISTY_SURGE, Abilities.NONE, Abilities.MISTY_SURGE, 600, 120, 129, 100, 59, 77, 115, 75, 50, 175),
-      new PokemonForm("Caph Starmobile", "caph-starmobile", Type.STEEL, Type.FIGHTING, 1.8, 240, Abilities.STAMINA, Abilities.NONE, Abilities.STAMINA, 600, 120, 129, 100, 59, 77, 115, 75, 50, 175),
+      new PokemonForm("Segin Starmobile", "segin-starmobile", Type.STEEL, Type.DARK, 1.8, 240, Abilities.INTIMIDATE, Abilities.NONE, Abilities.INTIMIDATE, 600, 110, 129, 100, 77, 79, 105, 75, 50, 175),
+      new PokemonForm("Schedar Starmobile", "schedar-starmobile", Type.STEEL, Type.FIRE, 1.8, 240, Abilities.SPEED_BOOST, Abilities.NONE, Abilities.SPEED_BOOST, 600, 110, 129, 100, 77, 79, 105, 75, 50, 175),
+      new PokemonForm("Navi Starmobile", "navi-starmobile", Type.STEEL, Type.POISON, 1.8, 240, Abilities.TOXIC_DEBRIS, Abilities.NONE, Abilities.TOXIC_DEBRIS, 600, 110, 129, 100, 77, 79, 105, 75, 50, 175),
+      new PokemonForm("Ruchbah Starmobile", "ruchbah-starmobile", Type.STEEL, Type.FAIRY, 1.8, 240, Abilities.MISTY_SURGE, Abilities.NONE, Abilities.MISTY_SURGE, 600, 110, 129, 100, 77, 79, 105, 75, 50, 175),
+      new PokemonForm("Caph Starmobile", "caph-starmobile", Type.STEEL, Type.FIGHTING, 1.8, 240, Abilities.STAMINA, Abilities.NONE, Abilities.STAMINA, 600, 110, 129, 100, 77, 79, 105, 75, 50, 175),
     ),
     new PokemonSpecies(Species.CYCLIZAR, 9, false, false, false, "Mount Pokémon", Type.DRAGON, Type.NORMAL, 1.6, 63, Abilities.SHED_SKIN, Abilities.NONE, Abilities.REGENERATOR, 501, 70, 95, 65, 85, 65, 121, 190, 50, 175, GrowthRate.MEDIUM_SLOW, 50, false),
     new PokemonSpecies(Species.ORTHWORM, 9, false, false, false, "Earthworm Pokémon", Type.STEEL, null, 2.5, 310, Abilities.EARTH_EATER, Abilities.NONE, Abilities.SAND_VEIL, 480, 70, 85, 145, 60, 55, 65, 25, 50, 240, GrowthRate.SLOW, 50, false),
