@@ -9497,8 +9497,8 @@ export function initMoves() {
       .attr(FlinchAttr),
     new AttackMove(Moves.PIKA_PAPOW, Type.ELECTRIC, MoveCategory.SPECIAL, -1, -1, 20, -1, 0, 7)
       .attr(FriendshipPowerAttr),
-    new AttackMove(Moves.BOUNCY_BUBBLE, Type.WATER, MoveCategory.SPECIAL, 60, 100, 20, -1, 0, 7) // Custom
-      .attr(HitHealAttr)
+    new AttackMove(Moves.BOUNCY_BUBBLE, Type.WATER, MoveCategory.SPECIAL, 60, 100, 20, -1, 0, 7)
+      .attr(HitHealAttr) // Custom
       .triageMove()
       .target(MoveTarget.ALL_NEAR_ENEMIES),
     new AttackMove(Moves.BUZZY_BUZZ, Type.ELECTRIC, MoveCategory.SPECIAL, 60, 100, 20, 100, 0, 7)
