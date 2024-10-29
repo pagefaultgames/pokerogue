@@ -89,7 +89,13 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   public exp: integer;
   public levelExp: integer;
   public gender: Gender;
-  public hp: integer;
+  private _hp: number;
+  public get hp() {
+    return this._hp;
+  }
+  public set hp(hp: number) {
+    this._hp = hp;
+  }
   public stats: integer[];
   public ivs: integer[];
   public nature: Nature;
@@ -181,6 +187,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     }
     this.exp = dataSource?.exp || getLevelTotalExp(this.level, species.growthRate);
     this.levelExp = dataSource?.levelExp || 0;
+
     if (dataSource) {
       this.id = dataSource.id;
       this.hp = dataSource.hp;

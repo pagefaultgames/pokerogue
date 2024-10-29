@@ -30,6 +30,8 @@ export class CommandPhase extends FieldPhase {
   start() {
     super.start();
 
+    this.scene.updateGameInfo();
+
     const commandUiHandler = this.scene.ui.handlers[Mode.COMMAND];
     if (commandUiHandler) {
       if (this.scene.currentBattle.turn === 1 || commandUiHandler.getCursor() === Command.POKEMON) {
