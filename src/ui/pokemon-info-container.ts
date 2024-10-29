@@ -219,14 +219,20 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
 
       const formKey = (pokemon.species?.forms?.[pokemon.formIndex!]?.formKey);
       const formText = Utils.capitalizeString(formKey, "-", false, false) || "";
-      const speciesName = Utils.capitalizeString(Species[pokemon.species.getRootSpeciesId()], "_", true, false);
+      const speciesName = Utils.capitalizeString(Species[pokemon.species.speciesId], "_", true, false);
 
       let formName = "";
       if (pokemon.species.speciesId === Species.ARCEUS) {
         formName = i18next.t(`pokemonInfo:Type.${formText?.toUpperCase()}`);
       } else {
         const i18key = `pokemonForm:${speciesName}${formText}`;
-        formName = i18next.exists(i18key) ? i18next.t(i18key) : formText;
+        if (i18next.exists(i18key)) {
+          formName = i18next.t(i18key);
+        } else {
+          const rootSpeciesName = Utils.capitalizeString(Species[pokemon.species.getRootSpeciesId()], "_", true, false);
+          const i18RootKey = `pokemonForm:${rootSpeciesName}${formText}`;
+          formName = i18next.exists(i18RootKey) ? i18next.t(i18RootKey) : formText;
+        }
       }
 
       if (formName) {

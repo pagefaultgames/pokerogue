@@ -1420,6 +1420,11 @@ export class RecoilAttr extends MoveEffectAttr {
       return false;
     }
 
+    // Chloroblast and Struggle should not deal recoil damage if the move was not successful
+    if (this.useHp && [ MoveResult.FAIL, MoveResult.MISS ].includes(user.getLastXMoves(1)[0]?.result)) {
+      return false;
+    }
+
     const damageValue = (!this.useHp ? user.turnData.damageDealt : user.getMaxHp()) * this.damageRatio;
     const minValue = user.turnData.damageDealt ? 1 : 0;
     const recoilDamage = Utils.toDmgValue(damageValue, minValue);
@@ -2177,7 +2182,10 @@ export class StatusEffectAttr extends MoveEffectAttr {
 
   getTargetBenefitScore(user: Pokemon, target: Pokemon, move: Move): number {
     const moveChance = this.getMoveChance(user, target, move, this.selfTarget, false);
-    return !(this.selfTarget ? user : target).status && (this.selfTarget ? user : target).canSetStatus(this.effect, true, false, user) ? Math.floor(moveChance * -0.1) : 0;
+    const score = (moveChance < 0) ? -10 : Math.floor(moveChance * -0.1);
+    const pokemon = this.selfTarget ? user : target;
+
+    return !pokemon.status && pokemon.canSetStatus(this.effect, true, false, user) ? score : 0;
   }
 }
 
@@ -2197,7 +2205,10 @@ export class MultiStatusEffectAttr extends StatusEffectAttr {
 
   getTargetBenefitScore(user: Pokemon, target: Pokemon, move: Move): number {
     const moveChance = this.getMoveChance(user, target, move, this.selfTarget, false);
-    return !(this.selfTarget ? user : target).status && (this.selfTarget ? user : target).canSetStatus(this.effect, true, false, user) ? Math.floor(moveChance * -0.1) : 0;
+    const score = (moveChance < 0) ? -10 : Math.floor(moveChance * -0.1);
+    const pokemon = this.selfTarget ? user : target;
+
+    return !pokemon.status && pokemon.canSetStatus(this.effect, true, false, user) ? score : 0;
   }
 }
 
@@ -2228,7 +2239,7 @@ export class PsychoShiftEffectAttr extends MoveEffectAttr {
   }
 
   getTargetBenefitScore(user: Pokemon, target: Pokemon, move: Move): number {
-    return !(this.selfTarget ? user : target).status && (this.selfTarget ? user : target).canSetStatus(user.status?.effect, true, false, user) ? Math.floor(move.chance * -0.1) : 0;
+    return !target.status && target.canSetStatus(user.status?.effect, true, false, user) ? -10 : 0;
   }
 }
 /**
