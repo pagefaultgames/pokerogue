@@ -106,18 +106,18 @@ export enum MoveSourceType {
 export abstract class Challenge {
   public id: Challenges; // The id of the challenge
 
-  public value: integer; // The "strength" of the challenge, all challenges have a numerical value.
-  public maxValue: integer; // The maximum strength of the challenge.
-  public severity: integer; // The current severity of the challenge. Some challenges have multiple severities in addition to strength.
-  public maxSeverity: integer; // The maximum severity of the challenge.
-  public rand: integer; // A random number applied to the challenge.
+  public value: number; // The "strength" of the challenge, all challenges have a numerical value.
+  public maxValue: number; // The maximum strength of the challenge.
+  public severity: number; // The current severity of the challenge. Some challenges have multiple severities in addition to strength.
+  public maxSeverity: number; // The maximum severity of the challenge.
+  public rand: number; // A random number applied to the challenge.
 
   public conditions: ChallengeCondition[];
 
   /**
    * @param id {@link Challenges} The enum value for the challenge
    */
-  constructor(id: Challenges, maxValue: integer = Number.MAX_SAFE_INTEGER) {
+  constructor(id: Challenges, maxValue: number = Number.MAX_SAFE_INTEGER) {
     this.id = id;
 
     this.value = 0;
@@ -174,7 +174,7 @@ export abstract class Challenge {
 
   /**
    * Returns the textual representation of a challenge's current value.
-   * @param overrideValue {@link integer} The value to check for. If undefined, gets the current value.
+   * @param overrideValue {@link number} The value to check for. If undefined, gets the current value.
    * @returns {@link string} The localised name for the current value.
    */
   getValue(overrideValue?: number): string {
@@ -184,7 +184,7 @@ export abstract class Challenge {
 
   /**
    * Returns the description of a challenge's current value.
-   * @param overrideValue {@link integer} The value to check for. If undefined, gets the current value.
+   * @param overrideValue {@link number} The value to check for. If undefined, gets the current value.
    * @returns {@link string} The localised description for the current value.
    */
   getDescription(overrideValue?: number): string {
@@ -249,17 +249,17 @@ export abstract class Challenge {
 
   /**
    * Gets the "difficulty" value of this challenge.
-   * @returns {@link integer} The difficulty value.
+   * @returns {@link number} The difficulty value.
    */
-  getDifficulty(): integer {
+  getDifficulty(): number {
     return this.value;
   }
 
   /**
    * Gets the minimum difficulty added by this challenge.
-   * @returns {@link integer} The difficulty value.
+   * @returns {@link number} The difficulty value.
    */
-  getMinDifficulty(): integer {
+  getMinDifficulty(): number {
     return 0;
   }
 
@@ -774,7 +774,7 @@ export class SingleTypeChallenge extends Challenge {
    * @param {value} overrideValue The value to check for. If undefined, gets the current value.
    * @returns {string} The localised name for the current value.
    */
-  getValue(overrideValue?: integer): string {
+  getValue(overrideValue?: number): string {
     if (overrideValue === undefined) {
       overrideValue = this.value;
     }
@@ -786,7 +786,7 @@ export class SingleTypeChallenge extends Challenge {
    * @param {value} overrideValue The value to check for. If undefined, gets the current value.
    * @returns {string} The localised description for the current value.
    */
-  getDescription(overrideValue?: integer): string {
+  getDescription(overrideValue?: number): string {
     if (overrideValue === undefined) {
       overrideValue = this.value;
     }
@@ -897,7 +897,7 @@ export class LowerStarterMaxCostChallenge extends Challenge {
   /**
    * @override
    */
-  getValue(overrideValue?: integer): string {
+  getValue(overrideValue?: number): string {
     if (overrideValue === undefined) {
       overrideValue = this.value;
     }
@@ -931,7 +931,7 @@ export class LowerStarterPointsChallenge extends Challenge {
   /**
    * @override
    */
-  getValue(overrideValue?: integer): string {
+  getValue(overrideValue?: number): string {
     if (overrideValue === undefined) {
       overrideValue = this.value;
     }
