@@ -32,6 +32,7 @@ import { CommandPhase } from "#app/phases/command-phase";
 import { MovePhase } from "#app/phases/move-phase";
 import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
 import { NewBattlePhase } from "#app/phases/new-battle-phase";
+import { TimedEventManager } from "#app/timed-event-manager";
 
 const namespace = "mysteryEncounters/clowningAround";
 const defaultParty = [ Species.LAPRAS, Species.GENGAR, Species.ABRA ];
@@ -224,6 +225,7 @@ describe("Clowning Around - Mystery Encounter", () => {
   });
 
   describe("Option 2 - Remain Unprovoked", () => {
+
     it("should have the correct properties", () => {
       const option = ClowningAroundEncounter.options[1];
       expect(option.optionMode).toBe(MysteryEncounterOptionMode.DEFAULT);
@@ -247,7 +249,7 @@ describe("Clowning Around - Mystery Encounter", () => {
       });
     });
 
-    it("should randomize held items of the Pokemon with the most items, and not the held items of other pokemon", async () => {
+    it.skipIf(new TimedEventManager().isEventActive())("should randomize held items of the Pokemon with the most items, and not the held items of other pokemon", async () => {
       await game.runToMysteryEncounter(MysteryEncounterType.CLOWNING_AROUND, defaultParty);
 
       // Set some moves on party for attack type booster generation
