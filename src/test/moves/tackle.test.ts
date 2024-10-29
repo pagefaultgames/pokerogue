@@ -1,4 +1,4 @@
-import { Stat } from "#app/data/pokemon-stat";
+import { Stat } from "#enums/stat";
 import { EnemyCommandPhase } from "#app/phases/enemy-command-phase";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { Moves } from "#enums/moves";
@@ -29,8 +29,8 @@ describe("Moves - Tackle", () => {
     game.override.enemySpecies(Species.MAGIKARP);
     game.override.startingLevel(1);
     game.override.startingWave(97);
-    game.override.moveset([moveToUse]);
-    game.override.enemyMoveset([Moves.GROWTH, Moves.GROWTH, Moves.GROWTH, Moves.GROWTH]);
+    game.override.moveset([ moveToUse ]);
+    game.override.enemyMoveset([ Moves.GROWTH, Moves.GROWTH, Moves.GROWTH, Moves.GROWTH ]);
     game.override.disableCrits();
   });
 

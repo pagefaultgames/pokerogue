@@ -1,23 +1,22 @@
-import BattleScene from "#app/battle-scene.js";
-import { TurnCommand, BattleType } from "#app/battle.js";
-import { applyCheckTrappedAbAttrs, CheckTrappedAbAttr } from "#app/data/ability.js";
-import { TrappedTag, EncoreTag } from "#app/data/battler-tags.js";
-import { MoveTargetSet, getMoveTargets } from "#app/data/move.js";
-import { speciesStarters } from "#app/data/pokemon-species.js";
-import { Type } from "#app/data/type.js";
-import { Abilities } from "#app/enums/abilities.js";
-import { BattlerTagType } from "#app/enums/battler-tag-type.js";
-import { Biome } from "#app/enums/biome.js";
-import { Moves } from "#app/enums/moves.js";
-import { PokeballType } from "#app/enums/pokeball.js";
-import { FieldPosition, PlayerPokemon } from "#app/field/pokemon.js";
-import { getPokemonNameWithAffix } from "#app/messages.js";
-import { Command } from "#app/ui/command-ui-handler.js";
-import { Mode } from "#app/ui/ui.js";
+import BattleScene from "#app/battle-scene";
+import { TurnCommand, BattleType } from "#app/battle";
+import { TrappedTag, EncoreTag } from "#app/data/battler-tags";
+import { MoveTargetSet, getMoveTargets } from "#app/data/move";
+import { speciesStarterCosts } from "#app/data/balance/starters";
+import { Abilities } from "#app/enums/abilities";
+import { BattlerTagType } from "#app/enums/battler-tag-type";
+import { Biome } from "#app/enums/biome";
+import { Moves } from "#app/enums/moves";
+import { PokeballType } from "#app/enums/pokeball";
+import { FieldPosition, PlayerPokemon } from "#app/field/pokemon";
+import { getPokemonNameWithAffix } from "#app/messages";
+import { Command } from "#app/ui/command-ui-handler";
+import { Mode } from "#app/ui/ui";
 import i18next from "i18next";
-import * as Utils from "#app/utils.js";
 import { FieldPhase } from "./field-phase";
 import { SelectTargetPhase } from "./select-target-phase";
+import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
+import { isNullOrUndefined } from "#app/utils";
 
 export class CommandPhase extends FieldPhase {
   protected fieldIndex: integer;
@@ -30,6 +29,15 @@ export class CommandPhase extends FieldPhase {
 
   start() {
     super.start();
+
+    const commandUiHandler = this.scene.ui.handlers[Mode.COMMAND];
+    if (commandUiHandler) {
+      if (this.scene.currentBattle.turn === 1 || commandUiHandler.getCursor() === Command.POKEMON) {
+        commandUiHandler.setCursor(Command.FIGHT);
+      } else {
+        commandUiHandler.setCursor(commandUiHandler.getCursor());
+      }
+    }
 
     if (this.fieldIndex) {
       // If we somehow are attempting to check the right pokemon but there's only one pokemon out
@@ -71,172 +79,184 @@ export class CommandPhase extends FieldPhase {
         }
       }
     } else {
-      this.scene.ui.setMode(Mode.COMMAND, this.fieldIndex);
+      if (this.scene.currentBattle.isBattleMysteryEncounter() && this.scene.currentBattle.mysteryEncounter?.skipToFightInput) {
+        this.scene.ui.clearText();
+        this.scene.ui.setMode(Mode.FIGHT, this.fieldIndex);
+      } else {
+        this.scene.ui.setMode(Mode.COMMAND, this.fieldIndex);
+      }
     }
   }
 
   handleCommand(command: Command, cursor: integer, ...args: any[]): boolean {
     const playerPokemon = this.scene.getPlayerField()[this.fieldIndex];
-    const enemyField = this.scene.getEnemyField();
     let success: boolean;
 
     switch (command) {
-    case Command.FIGHT:
-      let useStruggle = false;
-      if (cursor === -1 ||
+      case Command.FIGHT:
+        let useStruggle = false;
+        if (cursor === -1 ||
             playerPokemon.trySelectMove(cursor, args[0] as boolean) ||
             (useStruggle = cursor > -1 && !playerPokemon.getMoveset().filter(m => m?.isUsable(playerPokemon)).length)) {
-        const moveId = !useStruggle ? cursor > -1 ? playerPokemon.getMoveset()[cursor]!.moveId : Moves.NONE : Moves.STRUGGLE; // TODO: is the bang correct?
-        const turnCommand: TurnCommand = { command: Command.FIGHT, cursor: cursor, move: { move: moveId, targets: [], ignorePP: args[0] }, args: args };
-        const moveTargets: MoveTargetSet = args.length < 3 ? getMoveTargets(playerPokemon, moveId) : args[2];
-        if (!moveId) {
-          turnCommand.targets = [this.fieldIndex];
-        }
-        console.log(moveTargets, getPokemonNameWithAffix(playerPokemon));
-        if (moveTargets.targets.length > 1 && moveTargets.multiple) {
-          this.scene.unshiftPhase(new SelectTargetPhase(this.scene, this.fieldIndex));
-        }
-        if (moveTargets.targets.length <= 1 || moveTargets.multiple) {
+          const moveId = !useStruggle ? cursor > -1 ? playerPokemon.getMoveset()[cursor]!.moveId : Moves.NONE : Moves.STRUGGLE; // TODO: is the bang correct?
+          const turnCommand: TurnCommand = { command: Command.FIGHT, cursor: cursor, move: { move: moveId, targets: [], ignorePP: args[0] }, args: args };
+          const moveTargets: MoveTargetSet = args.length < 3 ? getMoveTargets(playerPokemon, moveId) : args[2];
+          if (!moveId) {
+            turnCommand.targets = [ this.fieldIndex ];
+          }
+          console.log(moveTargets, getPokemonNameWithAffix(playerPokemon));
+          if (moveTargets.targets.length > 1 && moveTargets.multiple) {
+            this.scene.unshiftPhase(new SelectTargetPhase(this.scene, this.fieldIndex));
+          }
+          if (moveTargets.targets.length <= 1 || moveTargets.multiple) {
             turnCommand.move!.targets = moveTargets.targets; //TODO: is the bang correct here?
-        } else if (playerPokemon.getTag(BattlerTagType.CHARGING) && playerPokemon.getMoveQueue().length >= 1) {
+          } else if (playerPokemon.getTag(BattlerTagType.CHARGING) && playerPokemon.getMoveQueue().length >= 1) {
             turnCommand.move!.targets = playerPokemon.getMoveQueue()[0].targets; //TODO: is the bang correct here?
-        } else {
-          this.scene.unshiftPhase(new SelectTargetPhase(this.scene, this.fieldIndex));
+          } else {
+            this.scene.unshiftPhase(new SelectTargetPhase(this.scene, this.fieldIndex));
+          }
+          this.scene.currentBattle.turnCommands[this.fieldIndex] = turnCommand;
+          success = true;
+        } else if (cursor < playerPokemon.getMoveset().length) {
+          const move = playerPokemon.getMoveset()[cursor]!; //TODO: is this bang correct?
+          this.scene.ui.setMode(Mode.MESSAGE);
+
+          // Decides between a Disabled, Not Implemented, or No PP translation message
+          const errorMessage =
+          playerPokemon.isMoveRestricted(move.moveId, playerPokemon)
+            ? playerPokemon.getRestrictingTag(move.moveId, playerPokemon)!.selectionDeniedText(playerPokemon, move.moveId)
+            : move.getName().endsWith(" (N)") ? "battle:moveNotImplemented" : "battle:moveNoPP";
+          const moveName = move.getName().replace(" (N)", ""); // Trims off the indicator
+
+          this.scene.ui.showText(i18next.t(errorMessage, { moveName: moveName }), null, () => {
+            this.scene.ui.clearText();
+            this.scene.ui.setMode(Mode.FIGHT, this.fieldIndex);
+          }, null, true);
         }
-        this.scene.currentBattle.turnCommands[this.fieldIndex] = turnCommand;
-        success = true;
-      } else if (cursor < playerPokemon.getMoveset().length) {
-        const move = playerPokemon.getMoveset()[cursor]!; //TODO: is this bang correct?
-        this.scene.ui.setMode(Mode.MESSAGE);
-
-        // Decides between a Disabled, Not Implemented, or No PP translation message
-        const errorMessage =
-              playerPokemon.summonData.disabledMove === move.moveId ? "battle:moveDisabled" :
-                move.getName().endsWith(" (N)") ? "battle:moveNotImplemented" : "battle:moveNoPP";
-        const moveName = move.getName().replace(" (N)", ""); // Trims off the indicator
-
-        this.scene.ui.showText(i18next.t(errorMessage, { moveName: moveName }), null, () => {
-          this.scene.ui.clearText();
-          this.scene.ui.setMode(Mode.FIGHT, this.fieldIndex);
-        }, null, true);
-      }
-      break;
-    case Command.BALL:
-      const notInDex = (this.scene.getEnemyField().filter(p => p.isActive(true)).some(p => !p.scene.gameData.dexData[p.species.speciesId].caughtAttr) && this.scene.gameData.getStarterCount(d => !!d.caughtAttr) < Object.keys(speciesStarters).length - 1);
-      if (this.scene.arena.biomeType === Biome.END && (!this.scene.gameMode.isClassic || this.scene.gameMode.isFreshStartChallenge() || notInDex )) {
-        this.scene.ui.setMode(Mode.COMMAND, this.fieldIndex);
-        this.scene.ui.setMode(Mode.MESSAGE);
-        this.scene.ui.showText(i18next.t("battle:noPokeballForce"), null, () => {
-          this.scene.ui.showText("", 0);
-          this.scene.ui.setMode(Mode.COMMAND, this.fieldIndex);
-        }, null, true);
-      } else if (this.scene.currentBattle.battleType === BattleType.TRAINER) {
-        this.scene.ui.setMode(Mode.COMMAND, this.fieldIndex);
-        this.scene.ui.setMode(Mode.MESSAGE);
-        this.scene.ui.showText(i18next.t("battle:noPokeballTrainer"), null, () => {
-          this.scene.ui.showText("", 0);
-          this.scene.ui.setMode(Mode.COMMAND, this.fieldIndex);
-        }, null, true);
-      } else {
-        const targets = this.scene.getEnemyField().filter(p => p.isActive(true)).map(p => p.getBattlerIndex());
-        if (targets.length > 1) {
+        break;
+      case Command.BALL:
+        const notInDex = (this.scene.getEnemyField().filter(p => p.isActive(true)).some(p => !p.scene.gameData.dexData[p.species.speciesId].caughtAttr) && this.scene.gameData.getStarterCount(d => !!d.caughtAttr) < Object.keys(speciesStarterCosts).length - 1);
+        if (this.scene.arena.biomeType === Biome.END && (!this.scene.gameMode.isClassic || this.scene.gameMode.isFreshStartChallenge() || notInDex )) {
           this.scene.ui.setMode(Mode.COMMAND, this.fieldIndex);
           this.scene.ui.setMode(Mode.MESSAGE);
-          this.scene.ui.showText(i18next.t("battle:noPokeballMulti"), null, () => {
+          this.scene.ui.showText(i18next.t("battle:noPokeballForce"), null, () => {
             this.scene.ui.showText("", 0);
             this.scene.ui.setMode(Mode.COMMAND, this.fieldIndex);
           }, null, true);
-        } else if (cursor < 5) {
-          const targetPokemon = this.scene.getEnemyField().find(p => p.isActive(true));
-          if (targetPokemon?.isBoss() && targetPokemon?.bossSegmentIndex >= 1 && !targetPokemon?.hasAbility(Abilities.WONDER_GUARD, false, true) && cursor < PokeballType.MASTER_BALL) {
+        } else if (this.scene.currentBattle.battleType === BattleType.TRAINER) {
+          this.scene.ui.setMode(Mode.COMMAND, this.fieldIndex);
+          this.scene.ui.setMode(Mode.MESSAGE);
+          this.scene.ui.showText(i18next.t("battle:noPokeballTrainer"), null, () => {
+            this.scene.ui.showText("", 0);
+            this.scene.ui.setMode(Mode.COMMAND, this.fieldIndex);
+          }, null, true);
+        } else if (this.scene.currentBattle.isBattleMysteryEncounter() && !this.scene.currentBattle.mysteryEncounter!.catchAllowed) {
+          this.scene.ui.setMode(Mode.COMMAND, this.fieldIndex);
+          this.scene.ui.setMode(Mode.MESSAGE);
+          this.scene.ui.showText(i18next.t("battle:noPokeballMysteryEncounter"), null, () => {
+            this.scene.ui.showText("", 0);
+            this.scene.ui.setMode(Mode.COMMAND, this.fieldIndex);
+          }, null, true);
+        } else {
+          const targets = this.scene.getEnemyField().filter(p => p.isActive(true)).map(p => p.getBattlerIndex());
+          if (targets.length > 1) {
             this.scene.ui.setMode(Mode.COMMAND, this.fieldIndex);
             this.scene.ui.setMode(Mode.MESSAGE);
-            this.scene.ui.showText(i18next.t("battle:noPokeballStrong"), null, () => {
+            this.scene.ui.showText(i18next.t("battle:noPokeballMulti"), null, () => {
               this.scene.ui.showText("", 0);
               this.scene.ui.setMode(Mode.COMMAND, this.fieldIndex);
             }, null, true);
-          } else {
-            this.scene.currentBattle.turnCommands[this.fieldIndex] = { command: Command.BALL, cursor: cursor };
+          } else if (cursor < 5) {
+            const targetPokemon = this.scene.getEnemyField().find(p => p.isActive(true));
+            if (targetPokemon?.isBoss() && targetPokemon?.bossSegmentIndex >= 1 && !targetPokemon?.hasAbility(Abilities.WONDER_GUARD, false, true) && cursor < PokeballType.MASTER_BALL) {
+              this.scene.ui.setMode(Mode.COMMAND, this.fieldIndex);
+              this.scene.ui.setMode(Mode.MESSAGE);
+              this.scene.ui.showText(i18next.t("battle:noPokeballStrong"), null, () => {
+                this.scene.ui.showText("", 0);
+                this.scene.ui.setMode(Mode.COMMAND, this.fieldIndex);
+              }, null, true);
+            } else {
+              this.scene.currentBattle.turnCommands[this.fieldIndex] = { command: Command.BALL, cursor: cursor };
               this.scene.currentBattle.turnCommands[this.fieldIndex]!.targets = targets;
               if (this.fieldIndex) {
                 this.scene.currentBattle.turnCommands[this.fieldIndex - 1]!.skip = true;
               }
               success = true;
+            }
           }
         }
-      }
-      break;
-    case Command.POKEMON:
-    case Command.RUN:
-      const isSwitch = command === Command.POKEMON;
-      if (!isSwitch && this.scene.arena.biomeType === Biome.END) {
-        this.scene.ui.setMode(Mode.COMMAND, this.fieldIndex);
-        this.scene.ui.setMode(Mode.MESSAGE);
-        this.scene.ui.showText(i18next.t("battle:noEscapeForce"), null, () => {
-          this.scene.ui.showText("", 0);
+        break;
+      case Command.POKEMON:
+      case Command.RUN:
+        const isSwitch = command === Command.POKEMON;
+        const { currentBattle, arena } = this.scene;
+        const mysteryEncounterFleeAllowed = currentBattle.mysteryEncounter?.fleeAllowed;
+        if (!isSwitch && (arena.biomeType === Biome.END || (!isNullOrUndefined(mysteryEncounterFleeAllowed) && !mysteryEncounterFleeAllowed))) {
           this.scene.ui.setMode(Mode.COMMAND, this.fieldIndex);
-        }, null, true);
-      } else if (!isSwitch && this.scene.currentBattle.battleType === BattleType.TRAINER) {
-        this.scene.ui.setMode(Mode.COMMAND, this.fieldIndex);
-        this.scene.ui.setMode(Mode.MESSAGE);
-        this.scene.ui.showText(i18next.t("battle:noEscapeTrainer"), null, () => {
-          this.scene.ui.showText("", 0);
+          this.scene.ui.setMode(Mode.MESSAGE);
+          this.scene.ui.showText(i18next.t("battle:noEscapeForce"), null, () => {
+            this.scene.ui.showText("", 0);
+            this.scene.ui.setMode(Mode.COMMAND, this.fieldIndex);
+          }, null, true);
+        } else if (!isSwitch && (currentBattle.battleType === BattleType.TRAINER || currentBattle.mysteryEncounter?.encounterMode === MysteryEncounterMode.TRAINER_BATTLE)) {
           this.scene.ui.setMode(Mode.COMMAND, this.fieldIndex);
-        }, null, true);
-      } else {
-        const trapTag = playerPokemon.findTag(t => t instanceof TrappedTag) as TrappedTag;
-        const trapped = new Utils.BooleanHolder(false);
-        const batonPass = isSwitch && args[0] as boolean;
-        const trappedAbMessages: string[] = [];
-        if (!batonPass) {
-          enemyField.forEach(enemyPokemon => applyCheckTrappedAbAttrs(CheckTrappedAbAttr, enemyPokemon, trapped, playerPokemon, trappedAbMessages, true));
-        }
-        if (batonPass || (!trapTag && !trapped.value)) {
-          this.scene.currentBattle.turnCommands[this.fieldIndex] = isSwitch
-            ? { command: Command.POKEMON, cursor: cursor, args: args }
-            : { command: Command.RUN };
-          success = true;
-          if (!isSwitch && this.fieldIndex) {
-              this.scene.currentBattle.turnCommands[this.fieldIndex - 1]!.skip = true;
-          }
-        } else if (trapTag) {
-          if (trapTag.sourceMove === Moves.INGRAIN && trapTag.sourceId && this.scene.getPokemonById(trapTag.sourceId)?.isOfType(Type.GHOST)) {
-            success = true;
-            this.scene.currentBattle.turnCommands[this.fieldIndex] = isSwitch
+          this.scene.ui.setMode(Mode.MESSAGE);
+          this.scene.ui.showText(i18next.t("battle:noEscapeTrainer"), null, () => {
+            this.scene.ui.showText("", 0);
+            this.scene.ui.setMode(Mode.COMMAND, this.fieldIndex);
+          }, null, true);
+        } else {
+          const batonPass = isSwitch && args[0] as boolean;
+          const trappedAbMessages: string[] = [];
+          if (batonPass || !playerPokemon.isTrapped(trappedAbMessages)) {
+            currentBattle.turnCommands[this.fieldIndex] = isSwitch
               ? { command: Command.POKEMON, cursor: cursor, args: args }
               : { command: Command.RUN };
-            break;
-          }
-          if (!isSwitch) {
-            this.scene.ui.setMode(Mode.COMMAND, this.fieldIndex);
-            this.scene.ui.setMode(Mode.MESSAGE);
-          }
-          this.scene.ui.showText(
-            i18next.t("battle:noEscapePokemon", {
-              pokemonName:  trapTag.sourceId && this.scene.getPokemonById(trapTag.sourceId) ? getPokemonNameWithAffix(this.scene.getPokemonById(trapTag.sourceId)!) : "",
-              moveName: trapTag.getMoveName(),
-              escapeVerb: isSwitch ? i18next.t("battle:escapeVerbSwitch") : i18next.t("battle:escapeVerbFlee")
-            }),
-            null,
-            () => {
+            success = true;
+            if (!isSwitch && this.fieldIndex) {
+            currentBattle.turnCommands[this.fieldIndex - 1]!.skip = true;
+            }
+          } else if (trappedAbMessages.length > 0) {
+            if (!isSwitch) {
+              this.scene.ui.setMode(Mode.MESSAGE);
+            }
+            this.scene.ui.showText(trappedAbMessages[0], null, () => {
               this.scene.ui.showText("", 0);
               if (!isSwitch) {
                 this.scene.ui.setMode(Mode.COMMAND, this.fieldIndex);
               }
             }, null, true);
-        } else if (trapped.value && trappedAbMessages.length > 0) {
-          if (!isSwitch) {
-            this.scene.ui.setMode(Mode.MESSAGE);
-          }
-          this.scene.ui.showText(trappedAbMessages[0], null, () => {
-            this.scene.ui.showText("", 0);
+          } else {
+            const trapTag = playerPokemon.getTag(TrappedTag);
+
+            // trapTag should be defined at this point, but just in case...
+            if (!trapTag) {
+              currentBattle.turnCommands[this.fieldIndex] = isSwitch
+                ? { command: Command.POKEMON, cursor: cursor, args: args }
+                : { command: Command.RUN };
+              break;
+            }
+
             if (!isSwitch) {
               this.scene.ui.setMode(Mode.COMMAND, this.fieldIndex);
+              this.scene.ui.setMode(Mode.MESSAGE);
             }
-          }, null, true);
+            this.scene.ui.showText(
+              i18next.t("battle:noEscapePokemon", {
+                pokemonName:  trapTag.sourceId && this.scene.getPokemonById(trapTag.sourceId) ? getPokemonNameWithAffix(this.scene.getPokemonById(trapTag.sourceId)!) : "",
+                moveName: trapTag.getMoveName(),
+                escapeVerb: isSwitch ? i18next.t("battle:escapeVerbSwitch") : i18next.t("battle:escapeVerbFlee")
+              }),
+              null,
+              () => {
+                this.scene.ui.showText("", 0);
+                if (!isSwitch) {
+                  this.scene.ui.setMode(Mode.COMMAND, this.fieldIndex);
+                }
+              }, null, true);
+          }
         }
-      }
-      break;
+        break;
     }
 
     if (success!) { // TODO: is the bang correct?

@@ -1,11 +1,11 @@
-import BattleScene from "#app/battle-scene.js";
-import { biomeLinks, getBiomeName } from "#app/data/biomes.js";
-import { Biome } from "#app/enums/biome.js";
-import { MoneyInterestModifier, MapModifier } from "#app/modifier/modifier.js";
-import { OptionSelectItem } from "#app/ui/abstact-option-select-ui-handler.js";
-import { Mode } from "#app/ui/ui.js";
+import BattleScene from "#app/battle-scene";
+import { biomeLinks, getBiomeName } from "#app/data/balance/biomes";
+import { Biome } from "#app/enums/biome";
+import { MoneyInterestModifier, MapModifier } from "#app/modifier/modifier";
+import { OptionSelectItem } from "#app/ui/abstact-option-select-ui-handler";
+import { Mode } from "#app/ui/ui";
 import { BattlePhase } from "./battle-phase";
-import * as Utils from "#app/utils.js";
+import * as Utils from "#app/utils";
 import { PartyHealPhase } from "./party-heal-phase";
 import { SwitchBiomePhase } from "./switch-biome-phase";
 
@@ -45,7 +45,7 @@ export class SelectBiomePhase extends BattlePhase {
         let biomeChoices: Biome[] = [];
         this.scene.executeWithSeedOffset(() => {
           biomeChoices = (!Array.isArray(biomeLinks[currentBiome])
-            ? [biomeLinks[currentBiome] as Biome]
+            ? [ biomeLinks[currentBiome] as Biome ]
             : biomeLinks[currentBiome] as (Biome | [Biome, integer])[])
             .filter((b, i) => !Array.isArray(b) || !Utils.randSeedInt(b[1]))
             .map(b => Array.isArray(b) ? b[0] : b);

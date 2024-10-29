@@ -1,21 +1,21 @@
-import { loggedInUser } from "#app/account.js";
-import BattleScene from "#app/battle-scene.js";
-import { BattleType } from "#app/battle.js";
-import { getDailyRunStarters, fetchDailyRunSeed } from "#app/data/daily-run.js";
-import { Gender } from "#app/data/gender.js";
-import { getBiomeKey } from "#app/field/arena.js";
-import { GameModes, GameMode, getGameMode } from "#app/game-mode.js";
-import { regenerateModifierPoolThresholds, ModifierPoolType, modifierTypes, getDailyRunStarterModifiers } from "#app/modifier/modifier-type.js";
-import { Phase } from "#app/phase.js";
-import { SessionSaveData } from "#app/system/game-data.js";
-import { Unlockables } from "#app/system/unlockables.js";
-import { vouchers } from "#app/system/voucher.js";
-import { OptionSelectItem, OptionSelectConfig } from "#app/ui/abstact-option-select-ui-handler.js";
-import { SaveSlotUiMode } from "#app/ui/save-slot-select-ui-handler.js";
-import { Mode } from "#app/ui/ui.js";
+import { loggedInUser } from "#app/account";
+import BattleScene from "#app/battle-scene";
+import { BattleType } from "#app/battle";
+import { getDailyRunStarters, fetchDailyRunSeed } from "#app/data/daily-run";
+import { Gender } from "#app/data/gender";
+import { getBiomeKey } from "#app/field/arena";
+import { GameModes, GameMode, getGameMode } from "#app/game-mode";
+import { regenerateModifierPoolThresholds, ModifierPoolType, modifierTypes, getDailyRunStarterModifiers } from "#app/modifier/modifier-type";
+import { Phase } from "#app/phase";
+import { SessionSaveData } from "#app/system/game-data";
+import { Unlockables } from "#app/system/unlockables";
+import { vouchers } from "#app/system/voucher";
+import { OptionSelectItem, OptionSelectConfig } from "#app/ui/abstact-option-select-ui-handler";
+import { SaveSlotUiMode } from "#app/ui/save-slot-select-ui-handler";
+import { Mode } from "#app/ui/ui";
 import i18next from "i18next";
-import * as Utils from "#app/utils.js";
-import { Modifier } from "#app/modifier/modifier.js";
+import * as Utils from "#app/utils";
+import { Modifier } from "#app/modifier/modifier";
 import { CheckSwitchPhase } from "./check-switch-phase";
 import { EncounterPhase } from "./encounter-phase";
 import { SelectChallengePhase } from "./select-challenge-phase";
@@ -60,7 +60,7 @@ export class TitlePhase extends Phase {
     const options: OptionSelectItem[] = [];
     if (loggedInUser && loggedInUser.lastSessionSlot > -1) {
       options.push({
-        label: i18next.t("continue", {ns: "menu"}),
+        label: i18next.t("continue", { ns: "menu" }),
         handler: () => {
           this.loadSaveSlot(this.lastSessionData || !loggedInUser ? -1 : loggedInUser.lastSessionSlot);
           return true;
@@ -76,7 +76,8 @@ export class TitlePhase extends Phase {
           this.scene.ui.clearText();
           this.end();
         };
-        if (this.scene.gameData.unlocks[Unlockables.ENDLESS_MODE]) {
+        const { gameData } = this.scene;
+        if (gameData.isUnlocked(Unlockables.ENDLESS_MODE)) {
           const options: OptionSelectItem[] = [
             {
               label: GameMode.getModeName(GameModes.CLASSIC),
@@ -100,7 +101,7 @@ export class TitlePhase extends Phase {
               }
             }
           ];
-          if (this.scene.gameData.unlocks[Unlockables.SPLICED_ENDLESS_MODE]) {
+          if (gameData.isUnlocked(Unlockables.SPLICED_ENDLESS_MODE)) {
             options.push({
               label: GameMode.getModeName(GameModes.SPLICED_ENDLESS),
               handler: () => {
@@ -195,7 +196,7 @@ export class TitlePhase extends Phase {
         this.scene.gameMode = getGameMode(GameModes.DAILY);
 
         this.scene.setSeed(seed);
-        this.scene.resetSeed(1);
+        this.scene.resetSeed(0);
 
         this.scene.money = this.scene.gameMode.getStartingMoney();
 
@@ -220,6 +221,7 @@ export class TitlePhase extends Phase {
 
         const modifiers: Modifier[] = Array(3).fill(null).map(() => modifierTypes.EXP_SHARE().withIdFromFunc(modifierTypes.EXP_SHARE).newModifier())
           .concat(Array(3).fill(null).map(() => modifierTypes.GOLDEN_EXP_CHARM().withIdFromFunc(modifierTypes.GOLDEN_EXP_CHARM).newModifier()))
+          .concat([ modifierTypes.MAP().withIdFromFunc(modifierTypes.MAP).newModifier() ])
           .concat(getDailyRunStarterModifiers(party))
           .filter((m) => m !== null);
 
@@ -293,7 +295,7 @@ export class TitlePhase extends Phase {
     }
 
     for (const achv of Object.keys(this.scene.gameData.achvUnlocks)) {
-      if (vouchers.hasOwnProperty(achv)) {
+      if (vouchers.hasOwnProperty(achv) && achv !== "CLASSIC_VICTORY") {
         this.scene.validateVoucher(vouchers[achv]);
       }
     }

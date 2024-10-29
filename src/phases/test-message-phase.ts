@@ -1,4 +1,4 @@
-import BattleScene from "#app/battle-scene.js";
+import BattleScene from "#app/battle-scene";
 import { MessagePhase } from "./message-phase";
 
 export class TestMessagePhase extends MessagePhase {

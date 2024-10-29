@@ -1,6 +1,6 @@
 export enum EggTier {
   COMMON,
-  GREAT,
-  ULTRA,
-  MASTER
+  RARE,
+  EPIC,
+  LEGENDARY
 }

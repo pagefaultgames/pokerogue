@@ -1,0 +1,41 @@
+{
+	"textures": [
+		{
+			"image": "part_timer_crate.png",
+			"format": "RGBA8888",
+			"size": {
+				"w": 71,
+				"h": 52
+			},
+			"scale": 1,
+			"frames": [
+				{
+					"filename": "0001.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 80,
+						"h": 56
+					},
+					"spriteSourceSize": {
+						"x": 5,
+						"y": 4,
+						"w": 71,
+						"h": 52
+					},
+					"frame": {
+						"x": 0,
+						"y": 0,
+						"w": 71,
+						"h": 52
+					}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "https://www.codeandweb.com/texturepacker",
+		"version": "3.0",
+		"smartupdate": "$TexturePacker:SmartUpdate:c8df5f0b35fb9c2a69b0e4aaa9fa9f91:f1d4643c26f2aed86ad77d354e669aaf:0c073e3c2048ea0779db9429e5e1d8bc$"
+	}
+}

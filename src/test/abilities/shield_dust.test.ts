@@ -1,6 +1,6 @@
 import { BattlerIndex } from "#app/battle";
 import { applyAbAttrs, applyPreDefendAbAttrs, IgnoreMoveEffectsAbAttr, MoveEffectChanceMultiplierAbAttr } from "#app/data/ability";
-import { Stat } from "#app/data/pokemon-stat";
+import { Stat } from "#enums/stat";
 import { MoveEffectPhase } from "#app/phases/move-effect-phase";
 import * as Utils from "#app/utils";
 import { Abilities } from "#enums/abilities";
@@ -27,13 +27,13 @@ describe("Abilities - Shield Dust", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    const movesToUse = [Moves.AIR_SLASH];
+    const movesToUse = [ Moves.AIR_SLASH ];
     game.override.battleType("single");
     game.override.enemySpecies(Species.ONIX);
     game.override.enemyAbility(Abilities.SHIELD_DUST);
     game.override.startingLevel(100);
     game.override.moveset(movesToUse);
-    game.override.enemyMoveset([Moves.TACKLE, Moves.TACKLE, Moves.TACKLE, Moves.TACKLE]);
+    game.override.enemyMoveset([ Moves.TACKLE, Moves.TACKLE, Moves.TACKLE, Moves.TACKLE ]);
   });
 
   it("Shield Dust", async () => {
@@ -48,7 +48,7 @@ describe("Abilities - Shield Dust", () => {
 
     game.move.select(moveToUse);
 
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY ]);
     await game.phaseInterceptor.to(MoveEffectPhase, false);
 
     // Shield Dust negates secondary effect

@@ -1,6 +1,6 @@
 import { BattlerIndex } from "#app/battle";
 import { applyAbAttrs, MoveEffectChanceMultiplierAbAttr } from "#app/data/ability";
-import { Stat } from "#app/data/pokemon-stat";
+import { Stat } from "#enums/stat";
 import { MoveEffectPhase } from "#app/phases/move-effect-phase";
 import * as Utils from "#app/utils";
 import { Abilities } from "#enums/abilities";
@@ -27,12 +27,12 @@ describe("Abilities - Serene Grace", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    const movesToUse = [Moves.AIR_SLASH, Moves.TACKLE];
+    const movesToUse = [ Moves.AIR_SLASH, Moves.TACKLE ];
     game.override.battleType("single");
     game.override.enemySpecies(Species.ONIX);
     game.override.startingLevel(100);
     game.override.moveset(movesToUse);
-    game.override.enemyMoveset([Moves.TACKLE, Moves.TACKLE, Moves.TACKLE, Moves.TACKLE]);
+    game.override.enemyMoveset([ Moves.TACKLE, Moves.TACKLE, Moves.TACKLE, Moves.TACKLE ]);
   });
 
   it("Move chance without Serene Grace", async () => {
@@ -47,7 +47,7 @@ describe("Abilities - Serene Grace", () => {
 
     game.move.select(moveToUse);
 
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY ]);
     await game.phaseInterceptor.to(MoveEffectPhase, false);
 
     // Check chance of Air Slash without Serene Grace
@@ -74,7 +74,7 @@ describe("Abilities - Serene Grace", () => {
 
     game.move.select(moveToUse);
 
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY ]);
     await game.phaseInterceptor.to(MoveEffectPhase, false);
 
     // Check chance of Air Slash with Serene Grace

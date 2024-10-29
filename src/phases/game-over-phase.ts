@@ -1,28 +1,28 @@
-import { clientSessionId } from "#app/account.js";
-import BattleScene from "#app/battle-scene.js";
-import { BattleType } from "#app/battle.js";
-import { miscDialogue, getCharVariantFromDialogue } from "#app/data/dialogue.js";
-import { pokemonEvolutions } from "#app/data/pokemon-evolutions.js";
-import PokemonSpecies, { getPokemonSpecies } from "#app/data/pokemon-species.js";
-import { trainerConfigs } from "#app/data/trainer-config.js";
-import { PlayerGender } from "#app/enums/player-gender.js";
-import { TrainerType } from "#app/enums/trainer-type.js";
-import Pokemon from "#app/field/pokemon.js";
-import { modifierTypes } from "#app/modifier/modifier-type.js";
-import { achvs, ChallengeAchv } from "#app/system/achv.js";
-import { Unlockables } from "#app/system/unlockables.js";
-import { Mode } from "#app/ui/ui.js";
+import { clientSessionId } from "#app/account";
+import { BattleType } from "#app/battle";
+import BattleScene from "#app/battle-scene";
+import { getCharVariantFromDialogue } from "#app/data/dialogue";
+import { pokemonEvolutions } from "#app/data/balance/pokemon-evolutions";
+import PokemonSpecies, { getPokemonSpecies } from "#app/data/pokemon-species";
+import { trainerConfigs } from "#app/data/trainer-config";
+import Pokemon from "#app/field/pokemon";
+import { modifierTypes } from "#app/modifier/modifier-type";
+import { BattlePhase } from "#app/phases/battle-phase";
+import { CheckSwitchPhase } from "#app/phases/check-switch-phase";
+import { EncounterPhase } from "#app/phases/encounter-phase";
+import { EndCardPhase } from "#app/phases/end-card-phase";
+import { GameOverModifierRewardPhase } from "#app/phases/game-over-modifier-reward-phase";
+import { PostGameOverPhase } from "#app/phases/post-game-over-phase";
+import { RibbonModifierRewardPhase } from "#app/phases/ribbon-modifier-reward-phase";
+import { SummonPhase } from "#app/phases/summon-phase";
+import { UnlockPhase } from "#app/phases/unlock-phase";
+import { achvs, ChallengeAchv } from "#app/system/achv";
+import { Unlockables } from "#app/system/unlockables";
+import { Mode } from "#app/ui/ui";
+import * as Utils from "#app/utils";
+import { PlayerGender } from "#enums/player-gender";
+import { TrainerType } from "#enums/trainer-type";
 import i18next from "i18next";
-import * as Utils from "#app/utils.js";
-import { BattlePhase } from "./battle-phase";
-import { CheckSwitchPhase } from "./check-switch-phase";
-import { EncounterPhase } from "./encounter-phase";
-import { GameOverModifierRewardPhase } from "./game-over-modifier-reward-phase";
-import { RibbonModifierRewardPhase } from "./ribbon-modifier-reward-phase";
-import { SummonPhase } from "./summon-phase";
-import { EndCardPhase } from "./end-card-phase";
-import { PostGameOverPhase } from "./post-game-over-phase";
-import { UnlockPhase } from "./unlock-phase";
 
 export class GameOverPhase extends BattlePhase {
   private victory: boolean;
@@ -42,8 +42,18 @@ export class GameOverPhase extends BattlePhase {
       this.victory = true;
     }
 
+    // Handle Mystery Encounter special Game Over cases
+    // Situations such as when player lost a battle, but it isn't treated as full Game Over
+    if (!this.victory && this.scene.currentBattle.mysteryEncounter?.onGameOver && !this.scene.currentBattle.mysteryEncounter.onGameOver(this.scene)) {
+      // Do not end the game
+      return this.end();
+    }
+    // Otherwise, continue standard Game Over logic
+
     if (this.victory && this.scene.gameMode.isEndless) {
-      this.scene.ui.showDialogue(i18next.t("PGMmiscDialogue:ending_endless"), i18next.t("PGMmiscDialogue:ending_name"), 0, () => this.handleGameOver());
+      const genderIndex = this.scene.gameData.gender ?? PlayerGender.UNSET;
+      const genderStr = PlayerGender[genderIndex].toLowerCase();
+      this.scene.ui.showDialogue(i18next.t("miscDialogue:ending_endless", { context: genderStr }), i18next.t("miscDialogue:ending_name"), 0, () => this.handleGameOver());
     } else if (this.victory || !this.scene.enableRetries) {
       this.handleGameOver();
     } else {
@@ -98,13 +108,7 @@ export class GameOverPhase extends BattlePhase {
             this.scene.gameData.gameStats.dailyRunSessionsWon++;
           }
         }
-        this.scene.gameData.getSession(this.scene.sessionSlotId).then(sessionData => {
-          if (sessionData) {
-            this.scene.gameData.saveRunHistory(this.scene, sessionData, this.victory);
-          }
-        }).catch(err => {
-          console.error("Failed to save run to history.", err);
-        });
+        this.scene.gameData.saveRunHistory(this.scene, this.scene.gameData.getSessionSaveData(this.scene), this.victory);
         const fadeDuration = this.victory ? 10000 : 5000;
         this.scene.fadeOutBgm(fadeDuration, true);
         const activeBattlers = this.scene.getField().filter(p => p?.isActive(true));
@@ -136,12 +140,16 @@ export class GameOverPhase extends BattlePhase {
           };
 
           if (this.victory && this.scene.gameMode.isClassic) {
-            const message = miscDialogue.ending[this.scene.gameData.gender === PlayerGender.FEMALE ? 0 : 1];
+            const dialogueKey = "miscDialogue:ending";
 
-            if (!this.scene.ui.shouldSkipDialogue(message)) {
+            if (!this.scene.ui.shouldSkipDialogue(dialogueKey)) {
               this.scene.ui.fadeIn(500).then(() => {
-                this.scene.charSprite.showCharacter(`rival_${this.scene.gameData.gender === PlayerGender.FEMALE ? "m" : "f"}`, getCharVariantFromDialogue(miscDialogue.ending[this.scene.gameData.gender === PlayerGender.FEMALE ? 0 : 1])).then(() => {
-                  this.scene.ui.showDialogue(message, this.scene.gameData.gender === PlayerGender.FEMALE ? trainerConfigs[TrainerType.RIVAL].name : trainerConfigs[TrainerType.RIVAL].nameFemale, null, () => {
+                const genderIndex = this.scene.gameData.gender ?? PlayerGender.UNSET;
+                const genderStr = PlayerGender[genderIndex].toLowerCase();
+                // Dialogue has to be retrieved so that the rival's expressions can be loaded and shown via getCharVariantFromDialogue
+                const dialogue = i18next.t(dialogueKey, { context: genderStr });
+                this.scene.charSprite.showCharacter(`rival_${this.scene.gameData.gender === PlayerGender.FEMALE ? "m" : "f"}`, getCharVariantFromDialogue(dialogue)).then(() => {
+                  this.scene.ui.showDialogue(dialogueKey, this.scene.gameData.gender === PlayerGender.FEMALE ? trainerConfigs[TrainerType.RIVAL].name : trainerConfigs[TrainerType.RIVAL].nameFemale, null, () => {
                     this.scene.ui.fadeOut(500).then(() => {
                       this.scene.charSprite.hide().then(() => {
                         const endCardPhase = new EndCardPhase(this.scene);
@@ -208,3 +216,4 @@ export class GameOverPhase extends BattlePhase {
     }
   }
 }
+

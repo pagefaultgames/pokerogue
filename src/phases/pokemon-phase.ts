@@ -1,6 +1,6 @@
-import BattleScene from "#app/battle-scene.js";
-import { BattlerIndex } from "#app/battle.js";
-import Pokemon from "#app/field/pokemon.js";
+import BattleScene from "#app/battle-scene";
+import { BattlerIndex } from "#app/battle";
+import Pokemon from "#app/field/pokemon";
 import { FieldPhase } from "./field-phase";
 
 export abstract class PokemonPhase extends FieldPhase {
