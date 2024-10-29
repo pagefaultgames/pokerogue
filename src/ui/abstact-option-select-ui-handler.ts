@@ -5,7 +5,7 @@ import UiHandler from "./ui-handler";
 import { addWindow } from "./ui-theme";
 import * as Utils from "../utils";
 import { argbFromRgba } from "@material/material-color-utilities";
-import {Button} from "#enums/buttons";
+import { Button } from "#enums/buttons";
 
 export interface OptionSelectConfig {
   xOffset?: number;
@@ -116,7 +116,7 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
 
     this.optionSelectBg.height = this.getWindowHeight();
 
-    this.optionSelectText.setPositionRelative(this.optionSelectBg, 12+24*this.scale, 2+42*this.scale);
+    this.optionSelectText.setPositionRelative(this.optionSelectBg, 12 + 24 * this.scale, 2 + 42 * this.scale);
 
     options.forEach((option: OptionSelectItem, i: integer) => {
       if (option.item) {
@@ -165,6 +165,7 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
     if (this.config.delay) {
       this.blockInput = true;
       this.optionSelectText.setAlpha(0.5);
+      this.cursorObj?.setAlpha(0.8);
       this.scene.time.delayedCall(Utils.fixedInt(this.config.delay), () => this.unblockInput());
     }
 
@@ -221,20 +222,20 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
       }
     } else {
       switch (button) {
-      case Button.UP:
-        if (this.cursor) {
-          success = this.setCursor(this.cursor - 1);
-        } else if (this.cursor === 0) {
-          success = this.setCursor(options.length -1);
-        }
-        break;
-      case Button.DOWN:
-        if (this.cursor < options.length - 1) {
-          success = this.setCursor(this.cursor + 1);
-        } else {
-          success = this.setCursor(0);
-        }
-        break;
+        case Button.UP:
+          if (this.cursor) {
+            success = this.setCursor(this.cursor - 1);
+          } else if (this.cursor === 0) {
+            success = this.setCursor(options.length - 1);
+          }
+          break;
+        case Button.DOWN:
+          if (this.cursor < options.length - 1) {
+            success = this.setCursor(this.cursor + 1);
+          } else {
+            success = this.setCursor(0);
+          }
+          break;
       }
       if (this.config?.supportHover) {
         // handle hover code if the element supports hover-handlers and the option has the optional hover-handler set.
@@ -256,6 +257,7 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
 
     this.blockInput = false;
     this.optionSelectText.setAlpha(1);
+    this.cursorObj?.setAlpha(1);
   }
 
   getOptionsWithScroll(): OptionSelectItem[] {
@@ -335,7 +337,7 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
     }
 
     this.cursorObj.setScale(this.scale * 6);
-    this.cursorObj.setPositionRelative(this.optionSelectBg, 12, 102*this.scale + this.cursor * (114 * this.scale - 3));
+    this.cursorObj.setPositionRelative(this.optionSelectBg, 12, 102 * this.scale + this.cursor * (114 * this.scale - 3));
 
     return changed;
   }

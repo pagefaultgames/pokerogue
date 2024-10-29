@@ -44,32 +44,32 @@ export const ATrainersTestEncounter: MysteryEncounter =
       let spriteKeys;
       let trainerNameKey: string;
       switch (randSeedInt(5)) {
-      default:
-      case 0:
-        trainerType = TrainerType.BUCK;
-        spriteKeys = getSpriteKeysFromSpecies(Species.CLAYDOL);
-        trainerNameKey = "buck";
-        break;
-      case 1:
-        trainerType = TrainerType.CHERYL;
-        spriteKeys = getSpriteKeysFromSpecies(Species.BLISSEY);
-        trainerNameKey = "cheryl";
-        break;
-      case 2:
-        trainerType = TrainerType.MARLEY;
-        spriteKeys = getSpriteKeysFromSpecies(Species.ARCANINE);
-        trainerNameKey = "marley";
-        break;
-      case 3:
-        trainerType = TrainerType.MIRA;
-        spriteKeys = getSpriteKeysFromSpecies(Species.ALAKAZAM, false, 1);
-        trainerNameKey = "mira";
-        break;
-      case 4:
-        trainerType = TrainerType.RILEY;
-        spriteKeys = getSpriteKeysFromSpecies(Species.LUCARIO, false, 1);
-        trainerNameKey = "riley";
-        break;
+        default:
+        case 0:
+          trainerType = TrainerType.BUCK;
+          spriteKeys = getSpriteKeysFromSpecies(Species.CLAYDOL);
+          trainerNameKey = "buck";
+          break;
+        case 1:
+          trainerType = TrainerType.CHERYL;
+          spriteKeys = getSpriteKeysFromSpecies(Species.BLISSEY);
+          trainerNameKey = "cheryl";
+          break;
+        case 2:
+          trainerType = TrainerType.MARLEY;
+          spriteKeys = getSpriteKeysFromSpecies(Species.ARCANINE);
+          trainerNameKey = "marley";
+          break;
+        case 3:
+          trainerType = TrainerType.MIRA;
+          spriteKeys = getSpriteKeysFromSpecies(Species.ALAKAZAM, false, 1);
+          trainerNameKey = "mira";
+          break;
+        case 4:
+          trainerType = TrainerType.RILEY;
+          spriteKeys = getSpriteKeysFromSpecies(Species.LUCARIO, false, 1);
+          trainerNameKey = "riley";
+          break;
       }
 
       // Dialogue and tokens for trainer
@@ -128,6 +128,7 @@ export const ATrainersTestEncounter: MysteryEncounter =
 
       return true;
     })
+    .setLocalizationKey(`${namespace}`)
     .withTitle(`${namespace}:title`)
     .withDescription(`${namespace}:description`)
     .withQuery(`${namespace}:query`)
@@ -149,11 +150,11 @@ export const ATrainersTestEncounter: MysteryEncounter =
           pulled: false,
           sourceType: EggSourceType.EVENT,
           eggDescriptor: encounter.misc.trainerEggDescription,
-          tier: EggTier.ULTRA
+          tier: EggTier.EPIC
         };
         encounter.setDialogueToken("eggType", i18next.t(`${namespace}:eggTypes.epic`));
-        setEncounterRewards(scene, { guaranteedModifierTypeFuncs: [modifierTypes.SACRED_ASH], guaranteedModifierTiers: [ModifierTier.ROGUE, ModifierTier.ULTRA], fillRemaining: true }, [eggOptions]);
-        return initBattleWithEnemyConfig(scene, config);
+        setEncounterRewards(scene, { guaranteedModifierTypeFuncs: [ modifierTypes.SACRED_ASH ], guaranteedModifierTiers: [ ModifierTier.ROGUE, ModifierTier.ULTRA ], fillRemaining: true }, [ eggOptions ]);
+        await initBattleWithEnemyConfig(scene, config);
       }
     )
     .withSimpleOption(
@@ -171,10 +172,10 @@ export const ATrainersTestEncounter: MysteryEncounter =
           pulled: false,
           sourceType: EggSourceType.EVENT,
           eggDescriptor: encounter.misc.trainerEggDescription,
-          tier: EggTier.GREAT
+          tier: EggTier.RARE
         };
         encounter.setDialogueToken("eggType", i18next.t(`${namespace}:eggTypes.rare`));
-        setEncounterRewards(scene, { fillRemaining: false, rerollMultiplier: -1 }, [eggOptions]);
+        setEncounterRewards(scene, { fillRemaining: false, rerollMultiplier: -1 }, [ eggOptions ]);
         leaveEncounterWithoutBattle(scene);
       }
     )

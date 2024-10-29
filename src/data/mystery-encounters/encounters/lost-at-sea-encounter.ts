@@ -10,7 +10,7 @@ import { applyDamageToPokemon } from "#app/data/mystery-encounters/utils/encount
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
-import {PokemonMove} from "#app/field/pokemon";
+import { PokemonMove } from "#app/field/pokemon";
 
 const OPTION_1_REQUIRED_MOVE = Moves.SURF;
 const OPTION_2_REQUIRED_MOVE = Moves.FLY;
@@ -50,6 +50,7 @@ export const LostAtSeaEncounter: MysteryEncounter = MysteryEncounterBuilder.with
 
     return true;
   })
+  .setLocalizationKey(`${namespace}`)
   .withTitle(`${namespace}:title`)
   .withDescription(`${namespace}:description`)
   .withQuery(`${namespace}:query`)
@@ -128,7 +129,7 @@ export const LostAtSeaEncounter: MysteryEncounter = MysteryEncounterBuilder.with
  *
  * @param scene Battle scene
  */
-async function handlePokemonGuidingYouPhase(scene: BattleScene) {
+function handlePokemonGuidingYouPhase(scene: BattleScene) {
   const laprasSpecies = getPokemonSpecies(Species.LAPRAS);
   const { mysteryEncounter } = scene.currentBattle;
 

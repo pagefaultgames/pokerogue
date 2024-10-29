@@ -27,11 +27,11 @@ describe("Moves - Dragon Cheer", () => {
       .enemyAbility(Abilities.BALL_FETCH)
       .enemyMoveset(Moves.SPLASH)
       .enemyLevel(20)
-      .moveset([Moves.DRAGON_CHEER, Moves.TACKLE, Moves.SPLASH]);
+      .moveset([ Moves.DRAGON_CHEER, Moves.TACKLE, Moves.SPLASH ]);
   });
 
   it("increases the user's allies' critical hit ratio by one stage", async () => {
-    await game.classicMode.startBattle([Species.DRAGONAIR, Species.MAGIKARP]);
+    await game.classicMode.startBattle([ Species.DRAGONAIR, Species.MAGIKARP ]);
 
     const enemy = game.scene.getEnemyField()[0];
 
@@ -40,7 +40,7 @@ describe("Moves - Dragon Cheer", () => {
     game.move.select(Moves.DRAGON_CHEER, 0);
     game.move.select(Moves.TACKLE, 1, BattlerIndex.ENEMY);
 
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
+    await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2 ]);
 
     // After Tackle
     await game.phaseInterceptor.to("TurnEndPhase");
@@ -48,7 +48,7 @@ describe("Moves - Dragon Cheer", () => {
   });
 
   it("increases the user's Dragon-type allies' critical hit ratio by two stages", async () => {
-    await game.classicMode.startBattle([Species.MAGIKARP, Species.DRAGONAIR]);
+    await game.classicMode.startBattle([ Species.MAGIKARP, Species.DRAGONAIR ]);
 
     const enemy = game.scene.getEnemyField()[0];
 
@@ -57,7 +57,7 @@ describe("Moves - Dragon Cheer", () => {
     game.move.select(Moves.DRAGON_CHEER, 0);
     game.move.select(Moves.TACKLE, 1, BattlerIndex.ENEMY);
 
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
+    await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2 ]);
 
     // After Tackle
     await game.phaseInterceptor.to("TurnEndPhase");
@@ -65,7 +65,7 @@ describe("Moves - Dragon Cheer", () => {
   });
 
   it("applies the effect based on the allies' type upon use of the move, and do not change if the allies' type changes later in battle", async () => {
-    await game.classicMode.startBattle([Species.DRAGONAIR, Species.MAGIKARP]);
+    await game.classicMode.startBattle([ Species.DRAGONAIR, Species.MAGIKARP ]);
 
     const magikarp = game.scene.getPlayerField()[1];
     const enemy = game.scene.getEnemyField()[0];
@@ -75,7 +75,7 @@ describe("Moves - Dragon Cheer", () => {
     game.move.select(Moves.DRAGON_CHEER, 0);
     game.move.select(Moves.TACKLE, 1, BattlerIndex.ENEMY);
 
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
+    await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2 ]);
 
     // After Tackle
     await game.phaseInterceptor.to("TurnEndPhase");
@@ -84,13 +84,13 @@ describe("Moves - Dragon Cheer", () => {
     await game.toNextTurn();
 
     // Change Magikarp's type to Dragon
-    vi.spyOn(magikarp, "getTypes").mockReturnValue([Type.DRAGON]);
-    expect(magikarp.getTypes()).toEqual([Type.DRAGON]);
+    vi.spyOn(magikarp, "getTypes").mockReturnValue([ Type.DRAGON ]);
+    expect(magikarp.getTypes()).toEqual([ Type.DRAGON ]);
 
     game.move.select(Moves.SPLASH, 0);
     game.move.select(Moves.TACKLE, 1, BattlerIndex.ENEMY);
 
-    await game.setTurnOrder([BattlerIndex.PLAYER_2, BattlerIndex.PLAYER, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
+    await game.setTurnOrder([ BattlerIndex.PLAYER_2, BattlerIndex.PLAYER, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2 ]);
 
     await game.phaseInterceptor.to("MoveEndPhase");
     expect(enemy.getCritStage).toHaveReturnedWith(1); // getCritStage is called on defender

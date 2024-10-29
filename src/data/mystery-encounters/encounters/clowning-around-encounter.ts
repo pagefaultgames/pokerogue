@@ -11,7 +11,7 @@ import { Species } from "#enums/species";
 import { TrainerType } from "#enums/trainer-type";
 import { getPokemonSpecies } from "#app/data/pokemon-species";
 import { Abilities } from "#enums/abilities";
-import { applyModifierTypeToPlayerPokemon } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
+import { applyAbilityOverrideToPokemon, applyModifierTypeToPlayerPokemon } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
 import { Type } from "#app/data/type";
 import { MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/mystery-encounter-option";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
@@ -28,7 +28,7 @@ import { BattlerIndex } from "#app/battle";
 import { Moves } from "#enums/moves";
 import { EncounterBattleAnim } from "#app/data/battle-anims";
 import { MoveCategory } from "#app/data/move";
-import { MysteryEncounterPokemonData } from "#app/data/mystery-encounters/mystery-encounter-pokemon-data";
+import { CustomPokemonData } from "#app/data/custom-pokemon-data";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
 import { EncounterAnim } from "#enums/encounter-anims";
 import { Challenges } from "#enums/challenges";
@@ -129,25 +129,26 @@ export const ClowningAroundEncounter: MysteryEncounter =
           {
             species: getPokemonSpecies(Species.MR_MIME),
             isBoss: true,
-            moveSet: [Moves.TEETER_DANCE, Moves.ALLY_SWITCH, Moves.DAZZLING_GLEAM, Moves.PSYCHIC]
+            moveSet: [ Moves.TEETER_DANCE, Moves.ALLY_SWITCH, Moves.DAZZLING_GLEAM, Moves.PSYCHIC ]
           },
           { // Blacephalon has the random ability from pool, and 2 entirely random types to fit with the theme of the encounter
             species: getPokemonSpecies(Species.BLACEPHALON),
-            mysteryEncounterPokemonData: new MysteryEncounterPokemonData({ ability: ability, types: [randSeedInt(18), randSeedInt(18)] }),
+            customPokemonData: new CustomPokemonData({ ability: ability, types: [ randSeedInt(18), randSeedInt(18) ]}),
             isBoss: true,
-            moveSet: [Moves.TRICK, Moves.HYPNOSIS, Moves.SHADOW_BALL, Moves.MIND_BLOWN]
+            moveSet: [ Moves.TRICK, Moves.HYPNOSIS, Moves.SHADOW_BALL, Moves.MIND_BLOWN ]
           },
         ],
         doubleBattle: true
       });
 
       // Load animations/sfx for start of fight moves
-      loadCustomMovesForEncounter(scene, [Moves.ROLE_PLAY, Moves.TAUNT]);
+      loadCustomMovesForEncounter(scene, [ Moves.ROLE_PLAY, Moves.TAUNT ]);
 
       encounter.setDialogueToken("blacephalonName", getPokemonSpecies(Species.BLACEPHALON).getName());
 
       return true;
     })
+    .setLocalizationKey(`${namespace}`)
     .withTitle(`${namespace}:title`)
     .withDescription(`${namespace}:description`)
     .withQuery(`${namespace}:query`)
@@ -175,19 +176,19 @@ export const ClowningAroundEncounter: MysteryEncounter =
           encounter.startOfBattleEffects.push(
             { // Mr. Mime copies the Blacephalon's random ability
               sourceBattlerIndex: BattlerIndex.ENEMY,
-              targets: [BattlerIndex.ENEMY_2],
+              targets: [ BattlerIndex.ENEMY_2 ],
               move: new PokemonMove(Moves.ROLE_PLAY),
               ignorePp: true
             },
             {
               sourceBattlerIndex: BattlerIndex.ENEMY_2,
-              targets: [BattlerIndex.PLAYER],
+              targets: [ BattlerIndex.PLAYER ],
               move: new PokemonMove(Moves.TAUNT),
               ignorePp: true
             },
             {
               sourceBattlerIndex: BattlerIndex.ENEMY_2,
-              targets: [BattlerIndex.PLAYER_2],
+              targets: [ BattlerIndex.PLAYER_2 ],
               move: new PokemonMove(Moves.TAUNT),
               ignorePp: true
             });
@@ -336,11 +337,11 @@ export const ClowningAroundEncounter: MysteryEncounter =
               .filter(move => move && !originalTypes.includes(move.getMove().type) && move.getMove().category !== MoveCategory.STATUS)
               .map(move => move!.getMove().type);
             if (priorityTypes?.length > 0) {
-              priorityTypes = [...new Set(priorityTypes)].sort();
+              priorityTypes = [ ...new Set(priorityTypes) ].sort();
               priorityTypes = randSeedShuffle(priorityTypes);
             }
 
-            const newTypes = [originalTypes[0]];
+            const newTypes = [ originalTypes[0] ];
             let secondType: Type | null = null;
             while (secondType === null || secondType === newTypes[0] || originalTypes.includes(secondType)) {
               if (priorityTypes.length > 0) {
@@ -352,15 +353,15 @@ export const ClowningAroundEncounter: MysteryEncounter =
             newTypes.push(secondType);
 
             // Apply the type changes (to both base and fusion, if pokemon is fused)
-            if (!pokemon.mysteryEncounterPokemonData) {
-              pokemon.mysteryEncounterPokemonData = new MysteryEncounterPokemonData();
+            if (!pokemon.customPokemonData) {
+              pokemon.customPokemonData = new CustomPokemonData();
             }
-            pokemon.mysteryEncounterPokemonData.types = newTypes;
+            pokemon.customPokemonData.types = newTypes;
             if (pokemon.isFusion()) {
-              if (!pokemon.fusionMysteryEncounterPokemonData) {
-                pokemon.fusionMysteryEncounterPokemonData = new MysteryEncounterPokemonData();
+              if (!pokemon.fusionCustomPokemonData) {
+                pokemon.fusionCustomPokemonData = new CustomPokemonData();
               }
-              pokemon.fusionMysteryEncounterPokemonData.types = newTypes;
+              pokemon.fusionCustomPokemonData.types = newTypes;
             }
           }
         })
@@ -424,17 +425,8 @@ function onYesAbilitySwap(scene: BattleScene, resolve) {
   const onPokemonSelected = (pokemon: PlayerPokemon) => {
     // Do ability swap
     const encounter = scene.currentBattle.mysteryEncounter!;
-    if (pokemon.isFusion()) {
-      if (!pokemon.fusionMysteryEncounterPokemonData) {
-        pokemon.fusionMysteryEncounterPokemonData = new MysteryEncounterPokemonData();
-      }
-      pokemon.fusionMysteryEncounterPokemonData.ability = encounter.misc.ability;
-    } else {
-      if (!pokemon.mysteryEncounterPokemonData) {
-        pokemon.mysteryEncounterPokemonData = new MysteryEncounterPokemonData();
-      }
-      pokemon.mysteryEncounterPokemonData.ability = encounter.misc.ability;
-    }
+
+    applyAbilityOverrideToPokemon(pokemon, encounter.misc.ability);
     encounter.setDialogueToken("chosenPokemon", pokemon.getNameToRender());
     scene.ui.setMode(Mode.MESSAGE).then(() => resolve(true));
   };
@@ -453,37 +445,37 @@ function generateItemsOfTier(scene: BattleScene, pokemon: PlayerPokemon, numItem
   // Pools have instances of the modifier type equal to the max stacks that modifier can be applied to any one pokemon
   // This is to prevent "over-generating" a random item of a certain type during item swaps
   const ultraPool = [
-    [modifierTypes.REVIVER_SEED, 1],
-    [modifierTypes.GOLDEN_PUNCH, 5],
-    [modifierTypes.ATTACK_TYPE_BOOSTER, 99],
-    [modifierTypes.QUICK_CLAW, 3],
-    [modifierTypes.WIDE_LENS, 3]
+    [ modifierTypes.REVIVER_SEED, 1 ],
+    [ modifierTypes.GOLDEN_PUNCH, 5 ],
+    [ modifierTypes.ATTACK_TYPE_BOOSTER, 99 ],
+    [ modifierTypes.QUICK_CLAW, 3 ],
+    [ modifierTypes.WIDE_LENS, 3 ]
   ];
 
   const roguePool = [
-    [modifierTypes.LEFTOVERS, 4],
-    [modifierTypes.SHELL_BELL, 4],
-    [modifierTypes.SOUL_DEW, 10],
-    [modifierTypes.SOOTHE_BELL, 3],
-    [modifierTypes.SCOPE_LENS, 1],
-    [modifierTypes.BATON, 1],
-    [modifierTypes.FOCUS_BAND, 5],
-    [modifierTypes.KINGS_ROCK, 3],
-    [modifierTypes.GRIP_CLAW, 5]
+    [ modifierTypes.LEFTOVERS, 4 ],
+    [ modifierTypes.SHELL_BELL, 4 ],
+    [ modifierTypes.SOUL_DEW, 10 ],
+    [ modifierTypes.SOOTHE_BELL, 3 ],
+    [ modifierTypes.SCOPE_LENS, 1 ],
+    [ modifierTypes.BATON, 1 ],
+    [ modifierTypes.FOCUS_BAND, 5 ],
+    [ modifierTypes.KINGS_ROCK, 3 ],
+    [ modifierTypes.GRIP_CLAW, 5 ]
   ];
 
   const berryPool = [
-    [BerryType.APICOT, 3],
-    [BerryType.ENIGMA, 2],
-    [BerryType.GANLON, 3],
-    [BerryType.LANSAT, 3],
-    [BerryType.LEPPA, 2],
-    [BerryType.LIECHI, 3],
-    [BerryType.LUM, 2],
-    [BerryType.PETAYA, 3],
-    [BerryType.SALAC, 2],
-    [BerryType.SITRUS, 2],
-    [BerryType.STARF, 3]
+    [ BerryType.APICOT, 3 ],
+    [ BerryType.ENIGMA, 2 ],
+    [ BerryType.GANLON, 3 ],
+    [ BerryType.LANSAT, 3 ],
+    [ BerryType.LEPPA, 2 ],
+    [ BerryType.LIECHI, 3 ],
+    [ BerryType.LUM, 2 ],
+    [ BerryType.PETAYA, 3 ],
+    [ BerryType.SALAC, 2 ],
+    [ BerryType.SITRUS, 2 ],
+    [ BerryType.STARF, 3 ]
   ];
 
   let pool: any[];
@@ -502,7 +494,7 @@ function generateItemsOfTier(scene: BattleScene, pokemon: PlayerPokemon, numItem
     const newItemType = pool[randIndex];
     let newMod: PokemonHeldItemModifierType;
     if (tier === "Berries") {
-      newMod = generateModifierType(scene, modifierTypes.BERRY, [newItemType[0]]) as PokemonHeldItemModifierType;
+      newMod = generateModifierType(scene, modifierTypes.BERRY, [ newItemType[0] ]) as PokemonHeldItemModifierType;
     } else {
       newMod = generateModifierType(scene, newItemType[0]) as PokemonHeldItemModifierType;
     }

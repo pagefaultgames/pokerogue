@@ -75,6 +75,8 @@ class DefaultOverrides {
   readonly ITEM_UNLOCK_OVERRIDE: Unlockables[] = [];
   /** Set to `true` to show all tutorials */
   readonly BYPASS_TUTORIAL_SKIP_OVERRIDE: boolean = false;
+  /** Set to `true` to force Paralysis and Freeze to always activate, or `false` to force them to not activate */
+  readonly STATUS_ACTIVATION_OVERRIDE: boolean | null = null;
 
   // ----------------
   // PLAYER OVERRIDES
@@ -100,26 +102,42 @@ class DefaultOverrides {
    * @example SPECIES_OVERRIDE = Species.Bulbasaur;
    */
   readonly STARTER_SPECIES_OVERRIDE: Species | number = 0;
+  /**
+   * This will force your starter to be a random fusion
+   */
+  readonly STARTER_FUSION_OVERRIDE: boolean = false;
+  /**
+   * This will override the species of the fusion
+   */
+  readonly STARTER_FUSION_SPECIES_OVERRIDE: Species | integer = 0;
   readonly ABILITY_OVERRIDE: Abilities = Abilities.NONE;
   readonly PASSIVE_ABILITY_OVERRIDE: Abilities = Abilities.NONE;
   readonly STATUS_OVERRIDE: StatusEffect = StatusEffect.NONE;
   readonly GENDER_OVERRIDE: Gender | null = null;
   readonly MOVESET_OVERRIDE: Moves | Array<Moves> = [];
-  readonly SHINY_OVERRIDE: boolean = false;
-  readonly VARIANT_OVERRIDE: Variant = 0;
+  readonly SHINY_OVERRIDE: boolean | null = null;
+  readonly VARIANT_OVERRIDE: Variant | null = null;
 
   // --------------------------
   // OPPONENT / ENEMY OVERRIDES
   // --------------------------
   readonly OPP_SPECIES_OVERRIDE: Species | number = 0;
+  /**
+   * This will make all opponents fused Pokemon
+   */
+  readonly OPP_FUSION_OVERRIDE: boolean = false;
+  /**
+   * This will override the species of the fusion only when the opponent is already a fusion
+   */
+  readonly OPP_FUSION_SPECIES_OVERRIDE: Species | integer = 0;
   readonly OPP_LEVEL_OVERRIDE: number = 0;
   readonly OPP_ABILITY_OVERRIDE: Abilities = Abilities.NONE;
   readonly OPP_PASSIVE_ABILITY_OVERRIDE: Abilities = Abilities.NONE;
   readonly OPP_STATUS_OVERRIDE: StatusEffect = StatusEffect.NONE;
   readonly OPP_GENDER_OVERRIDE: Gender | null = null;
   readonly OPP_MOVESET_OVERRIDE: Moves | Array<Moves> = [];
-  readonly OPP_SHINY_OVERRIDE: boolean = false;
-  readonly OPP_VARIANT_OVERRIDE: Variant = 0;
+  readonly OPP_SHINY_OVERRIDE: boolean | null = null;
+  readonly OPP_VARIANT_OVERRIDE: Variant | null = null;
   readonly OPP_IVS_OVERRIDE: number | number[] = [];
   readonly OPP_FORM_OVERRIDES: Partial<Record<Species, number>> = {};
   /**
@@ -140,6 +158,7 @@ class DefaultOverrides {
   readonly EGG_VARIANT_OVERRIDE: VariantTier | null = null;
   readonly EGG_FREE_GACHA_PULLS_OVERRIDE: boolean = false;
   readonly EGG_GACHA_PULL_COUNT_OVERRIDE: number = 0;
+  readonly UNLIMITED_EGG_COUNT_OVERRIDE: boolean = false;
 
   // -------------------------
   // MYSTERY ENCOUNTER OVERRIDES

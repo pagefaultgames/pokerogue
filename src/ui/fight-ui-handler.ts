@@ -7,7 +7,7 @@ import UiHandler from "./ui-handler";
 import * as Utils from "../utils";
 import { MoveCategory } from "#app/data/move";
 import i18next from "i18next";
-import {Button} from "#enums/buttons";
+import { Button } from "#enums/buttons";
 import Pokemon, { PokemonMove } from "#app/field/pokemon";
 import { CommandPhase } from "#app/phases/command-phase";
 import MoveInfoOverlay from "./move-info-overlay";
@@ -152,26 +152,26 @@ export default class FightUiHandler extends UiHandler implements InfoToggle {
       }
     } else {
       switch (button) {
-      case Button.UP:
-        if (cursor >= 2) {
-          success = this.setCursor(cursor - 2);
-        }
-        break;
-      case Button.DOWN:
-        if (cursor < 2) {
-          success = this.setCursor(cursor + 2);
-        }
-        break;
-      case Button.LEFT:
-        if (cursor % 2 === 1) {
-          success = this.setCursor(cursor - 1);
-        }
-        break;
-      case Button.RIGHT:
-        if (cursor % 2 === 0) {
-          success = this.setCursor(cursor + 1);
-        }
-        break;
+        case Button.UP:
+          if (cursor >= 2) {
+            success = this.setCursor(cursor - 2);
+          }
+          break;
+        case Button.DOWN:
+          if (cursor < 2) {
+            success = this.setCursor(cursor + 2);
+          }
+          break;
+        case Button.LEFT:
+          if (cursor % 2 === 1) {
+            success = this.setCursor(cursor - 1);
+          }
+          break;
+        case Button.RIGHT:
+          if (cursor % 2 === 0) {
+            success = this.setCursor(cursor + 1);
+          }
+          break;
       }
     }
 
@@ -188,7 +188,7 @@ export default class FightUiHandler extends UiHandler implements InfoToggle {
       this.cursorObj?.setVisible(false);
     }
     this.scene.tweens.add({
-      targets: [this.movesContainer, this.cursorObj],
+      targets: [ this.movesContainer, this.cursorObj ],
       duration: Utils.fixedInt(125),
       ease: "Sine.easeInOut",
       alpha: visible ? 0 : 1

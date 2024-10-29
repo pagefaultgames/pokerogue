@@ -69,6 +69,7 @@ export const PartTimerEncounter: MysteryEncounter =
 
       return true;
     })
+    .setLocalizationKey(`${namespace}`)
     .withTitle(`${namespace}:title`)
     .withDescription(`${namespace}:description`)
     .withQuery(`${namespace}:query`)
@@ -94,7 +95,7 @@ export const PartTimerEncounter: MysteryEncounter =
           // Calculation from Pokemon.calculateStats
           const baselineValue = Math.floor(((2 * 90 + 16) * pokemon.level) * 0.01) + 5;
           const percentDiff = (pokemon.getStat(Stat.SPD) - baselineValue) / baselineValue;
-          const moneyMultiplier = Math.min(Math.max(2.5 * (1+ percentDiff), 1), 4);
+          const moneyMultiplier = Math.min(Math.max(2.5 * (1 + percentDiff), 1), 4);
 
           encounter.misc = {
             moneyMultiplier
@@ -226,7 +227,7 @@ export const PartTimerEncounter: MysteryEncounter =
     .withOption(
       MysteryEncounterOptionBuilder
         .newOptionWithMode(MysteryEncounterOptionMode.DISABLED_OR_SPECIAL)
-        .withPrimaryPokemonRequirement(new MoveRequirement(CHARMING_MOVES)) // Will set option3PrimaryName and option3PrimaryMove dialogue tokens automatically
+        .withPrimaryPokemonRequirement(new MoveRequirement(CHARMING_MOVES, true)) // Will set option3PrimaryName and option3PrimaryMove dialogue tokens automatically
         .withDialogue({
           buttonLabel: `${namespace}:option.3.label`,
           buttonTooltip: `${namespace}:option.3.tooltip`,

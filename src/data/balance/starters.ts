@@ -2,6 +2,12 @@ import { Species } from "#enums/species";
 
 export const POKERUS_STARTER_COUNT = 5;
 
+// #region Friendship constants
+export const CLASSIC_CANDY_FRIENDSHIP_MULTIPLIER = 2;
+export const FRIENDSHIP_GAIN_FROM_BATTLE = 2;
+export const FRIENDSHIP_GAIN_FROM_RARE_CANDY = 5;
+export const FRIENDSHIP_LOSS_FROM_FAINT = 10;
+
 /**
  * Function to get the cumulative friendship threshold at which a candy is earned
  * @param starterCost The cost of the starter, found in {@linkcode speciesStarterCosts}
@@ -9,25 +15,25 @@ export const POKERUS_STARTER_COUNT = 5;
  */
 export function getStarterValueFriendshipCap(starterCost: number): number {
   switch (starterCost) {
-  case 1:
-    return 20;
-  case 2:
-    return 40;
-  case 3:
-    return 60;
-  case 4:
-    return 100;
-  case 5:
-    return 140;
-  case 6:
-    return 200;
-  case 7:
-    return 280;
-  case 8:
-  case 9:
-    return 450;
-  default:
-    return 600;
+    case 1:
+      return 20;
+    case 2:
+      return 40;
+    case 3:
+      return 60;
+    case 4:
+      return 100;
+    case 5:
+      return 140;
+    case 6:
+      return 200;
+    case 7:
+      return 280;
+    case 8:
+    case 9:
+      return 450;
+    default:
+      return 600;
   }
 }
 
@@ -630,16 +636,16 @@ export const speciesStarterCosts = {
 };
 
 const starterCandyCosts: { passive: number; costReduction: [number, number]; egg: number; }[] = [
-  { passive: 40, costReduction: [25, 60], egg: 30 }, // 1 Cost
-  { passive: 40, costReduction: [25, 60], egg: 30 }, // 2 Cost
-  { passive: 35, costReduction: [20, 50], egg: 25 }, // 3 Cost
-  { passive: 30, costReduction: [15, 40], egg: 20 }, // 4 Cost
-  { passive: 25, costReduction: [12, 35], egg: 18 }, // 5 Cost
-  { passive: 20, costReduction: [10, 30], egg: 15 }, // 6 Cost
-  { passive: 15, costReduction: [8, 20], egg: 12 }, // 7 Cost
-  { passive: 10, costReduction: [5, 15], egg: 10 }, // 8 Cost
-  { passive: 10, costReduction: [5, 15], egg: 10 }, // 9 Cost
-  { passive: 10, costReduction: [5, 15], egg: 10 }, // 10 Cost
+  { passive: 40, costReduction: [ 25, 60 ], egg: 30 }, // 1 Cost
+  { passive: 40, costReduction: [ 25, 60 ], egg: 30 }, // 2 Cost
+  { passive: 35, costReduction: [ 20, 50 ], egg: 25 }, // 3 Cost
+  { passive: 30, costReduction: [ 15, 40 ], egg: 20 }, // 4 Cost
+  { passive: 25, costReduction: [ 12, 35 ], egg: 18 }, // 5 Cost
+  { passive: 20, costReduction: [ 10, 30 ], egg: 15 }, // 6 Cost
+  { passive: 15, costReduction: [ 8, 20 ], egg: 12 }, // 7 Cost
+  { passive: 10, costReduction: [ 5, 15 ], egg: 10 }, // 8 Cost
+  { passive: 10, costReduction: [ 5, 15 ], egg: 10 }, // 9 Cost
+  { passive: 10, costReduction: [ 5, 15 ], egg: 10 }, // 10 Cost
 ];
 
 /**

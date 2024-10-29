@@ -23,7 +23,7 @@ import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounters/safariZone";
 
-const TRAINER_THROW_ANIMATION_TIMES = [512, 184, 768];
+const TRAINER_THROW_ANIMATION_TIMES = [ 512, 184, 768 ];
 
 const SAFARI_MONEY_MULTIPLIER = 2;
 
@@ -54,6 +54,7 @@ export const SafariZoneEncounter: MysteryEncounter =
         text: `${namespace}:intro`,
       },
     ])
+    .setLocalizationKey(`${namespace}`)
     .withTitle(`${namespace}:title`)
     .withDescription(`${namespace}:description`)
     .withQuery(`${namespace}:query`)
@@ -260,7 +261,7 @@ async function summonSafariPokemon(scene: BattleScene) {
   let enemySpecies;
   let pokemon;
   scene.executeWithSeedOffset(() => {
-    enemySpecies = getPokemonSpecies(getRandomSpeciesByStarterTier([0, 5], undefined, undefined, false, false, false));
+    enemySpecies = getPokemonSpecies(getRandomSpeciesByStarterTier([ 0, 5 ], undefined, undefined, false, false, false));
     const level = scene.currentBattle.getLevelForWave();
     enemySpecies = getPokemonSpecies(enemySpecies.getWildSpeciesForLevel(level, true, false, scene.gameMode));
     pokemon = scene.addEnemyPokemon(enemySpecies, level, TrainerSlot.NONE, false);
@@ -302,13 +303,16 @@ async function summonSafariPokemon(scene: BattleScene) {
   scene.unshiftPhase(new SummonPhase(scene, 0, false));
 
   encounter.setDialogueToken("pokemonName", getPokemonNameWithAffix(pokemon));
-  showEncounterText(scene, getEncounterText(scene, "battle:singleWildAppeared") ?? "", null, 1500, false)
-    .then(() => {
-      const ivScannerModifier = scene.findModifier(m => m instanceof IvScannerModifier);
-      if (ivScannerModifier) {
-        scene.pushPhase(new ScanIvsPhase(scene, pokemon.getBattlerIndex(), Math.min(ivScannerModifier.getStackCount() * 2, 6)));
-      }
-    });
+
+  // TODO: If we await showEncounterText here, then the text will display without
+  // the wild Pokemon on screen, but if we don't await it, then the text never
+  // shows up and the IV scanner breaks. For now, we place the IV scanner code
+  // separately so that at least the IV scanner works.
+
+  const ivScannerModifier = scene.findModifier(m => m instanceof IvScannerModifier);
+  if (ivScannerModifier) {
+    scene.pushPhase(new ScanIvsPhase(scene, pokemon.getBattlerIndex(), Math.min(ivScannerModifier.getStackCount() * 2, 6)));
+  }
 }
 
 function throwPokeball(scene: BattleScene, pokemon: EnemyPokemon): Promise<boolean> {
