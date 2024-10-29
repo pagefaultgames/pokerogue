@@ -118,8 +118,8 @@ export default class PokemonData {
 
     // Deprecated, but needed for session data migration
     this.natureOverride = source.natureOverride;
-    this.mysteryEncounterPokemonData = new CustomPokemonData(source.mysteryEncounterPokemonData);
-    this.fusionMysteryEncounterPokemonData = new CustomPokemonData(source.fusionMysteryEncounterPokemonData);
+    this.mysteryEncounterPokemonData = source.mysteryEncounterPokemonData ? new CustomPokemonData(source.mysteryEncounterPokemonData) : null;
+    this.fusionMysteryEncounterPokemonData = source.fusionMysteryEncounterPokemonData ? new CustomPokemonData(source.fusionMysteryEncounterPokemonData) : null;
 
     if (!forHistory) {
       this.boss = (source instanceof EnemyPokemon && !!source.bossSegments) || (!this.player && !!source.boss);

@@ -502,45 +502,25 @@ export class BerryModifierType extends PokemonHeldItemModifierType implements Ge
   }
 }
 
-function getAttackTypeBoosterItemName(type: Type) {
-  switch (type) {
-    case Type.NORMAL:
-      return "Silk Scarf";
-    case Type.FIGHTING:
-      return "Black Belt";
-    case Type.FLYING:
-      return "Sharp Beak";
-    case Type.POISON:
-      return "Poison Barb";
-    case Type.GROUND:
-      return "Soft Sand";
-    case Type.ROCK:
-      return "Hard Stone";
-    case Type.BUG:
-      return "Silver Powder";
-    case Type.GHOST:
-      return "Spell Tag";
-    case Type.STEEL:
-      return "Metal Coat";
-    case Type.FIRE:
-      return "Charcoal";
-    case Type.WATER:
-      return "Mystic Water";
-    case Type.GRASS:
-      return "Miracle Seed";
-    case Type.ELECTRIC:
-      return "Magnet";
-    case Type.PSYCHIC:
-      return "Twisted Spoon";
-    case Type.ICE:
-      return "Never-Melt Ice";
-    case Type.DRAGON:
-      return "Dragon Fang";
-    case Type.DARK:
-      return "Black Glasses";
-    case Type.FAIRY:
-      return "Fairy Feather";
-  }
+enum AttackTypeBoosterItem {
+  SILK_SCARF,
+  BLACK_BELT,
+  SHARP_BEAK,
+  POISON_BARB,
+  SOFT_SAND,
+  HARD_STONE,
+  SILVER_POWDER,
+  SPELL_TAG,
+  METAL_COAT,
+  CHARCOAL,
+  MYSTIC_WATER,
+  MIRACLE_SEED,
+  MAGNET,
+  TWISTED_SPOON,
+  NEVER_MELT_ICE,
+  DRAGON_FANG,
+  BLACK_GLASSES,
+  FAIRY_FEATHER
 }
 
 export class AttackTypeBoosterModifierType extends PokemonHeldItemModifierType implements GeneratedPersistentModifierType {
@@ -548,7 +528,7 @@ export class AttackTypeBoosterModifierType extends PokemonHeldItemModifierType i
   public boostPercent: integer;
 
   constructor(moveType: Type, boostPercent: integer) {
-    super("", `${getAttackTypeBoosterItemName(moveType)?.replace(/[ \-]/g, "_").toLowerCase()}`,
+    super("", `${AttackTypeBoosterItem[moveType]?.toLowerCase()}`,
       (_type, args) => new AttackTypeBoosterModifier(this, (args[0] as Pokemon).id, moveType, boostPercent));
 
     this.moveType = moveType;
@@ -556,7 +536,7 @@ export class AttackTypeBoosterModifierType extends PokemonHeldItemModifierType i
   }
 
   get name(): string {
-    return i18next.t(`modifierType:AttackTypeBoosterItem.${getAttackTypeBoosterItemName(this.moveType)?.replace(/[ \-]/g, "_").toLowerCase()}`);
+    return i18next.t(`modifierType:AttackTypeBoosterItem.${AttackTypeBoosterItem[this.moveType]?.toLowerCase()}`);
   }
 
   getDescription(scene: BattleScene): string {
@@ -1301,13 +1281,12 @@ function lureWeightFunc(maxBattles: number, weight: number): WeightedModifierTyp
     return !(party[0].scene.gameMode.isClassic && party[0].scene.currentBattle.waveIndex === 199) && (lures.length === 0 || lures.filter(m => m.getMaxBattles() === maxBattles && m.getBattleCount() >= maxBattles * 0.6).length === 0) ? weight : 0;
   };
 }
-
 class WeightedModifierType {
   public modifierType: ModifierType;
   public weight: integer | WeightedModifierTypeWeightFunc;
-  public maxWeight: integer;
+  public maxWeight: integer | WeightedModifierTypeWeightFunc;
 
-  constructor(modifierTypeFunc: ModifierTypeFunc, weight: integer | WeightedModifierTypeWeightFunc, maxWeight?: integer) {
+  constructor(modifierTypeFunc: ModifierTypeFunc, weight: integer | WeightedModifierTypeWeightFunc, maxWeight?: integer | WeightedModifierTypeWeightFunc) {
     this.modifierType = modifierTypeFunc();
     this.modifierType.id = Object.keys(modifierTypes).find(k => modifierTypes[k] === modifierTypeFunc)!; // TODO: is this bang correct?
     this.weight = weight;
@@ -1694,7 +1673,10 @@ const modifierPool: ModifierPool = {
     new WeightedModifierType(modifierTypes.EVOLUTION_ITEM, (party: Pokemon[]) => {
       return Math.min(Math.ceil(party[0].scene.currentBattle.waveIndex / 15), 8);
     }, 8),
-    new WeightedModifierType(modifierTypes.MAP, (party: Pokemon[]) => party[0].scene.gameMode.isClassic && party[0].scene.currentBattle.waveIndex < 180 ? 1 : 0, 1),
+    new WeightedModifierType(modifierTypes.MAP,
+      (party: Pokemon[]) => party[0].scene.gameMode.isClassic && party[0].scene.currentBattle.waveIndex < 180 ? party[0].scene.eventManager.isEventActive() ? 2 : 1 : 0,
+      (party: Pokemon[]) => party[0].scene.eventManager.isEventActive() ? 2 : 1),
+    new WeightedModifierType(modifierTypes.SOOTHE_BELL, (party: Pokemon[]) => party[0].scene.eventManager.isEventActive() ? 3 : 0),
     new WeightedModifierType(modifierTypes.TM_GREAT, 3),
     new WeightedModifierType(modifierTypes.MEMORY_MUSHROOM, (party: Pokemon[]) => {
       if (!party.find(p => p.getLearnableLevelMoves().length)) {
@@ -1762,7 +1744,7 @@ const modifierPool: ModifierPool = {
     new WeightedModifierType(modifierTypes.CANDY_JAR, skipInLastClassicWaveOrDefault(5)),
     new WeightedModifierType(modifierTypes.ATTACK_TYPE_BOOSTER, 9),
     new WeightedModifierType(modifierTypes.TM_ULTRA, 11),
-    new WeightedModifierType(modifierTypes.RARER_CANDY, 4),
+    new WeightedModifierType(modifierTypes.RARER_CANDY, (party: Pokemon[]) => party[0].scene.eventManager.isEventActive() ? 6 : 4),
     new WeightedModifierType(modifierTypes.GOLDEN_PUNCH, skipInLastClassicWaveOrDefault(2)),
     new WeightedModifierType(modifierTypes.IV_SCANNER, skipInLastClassicWaveOrDefault(4)),
     new WeightedModifierType(modifierTypes.EXP_CHARM, skipInLastClassicWaveOrDefault(8)),
@@ -1785,7 +1767,7 @@ const modifierPool: ModifierPool = {
     new WeightedModifierType(modifierTypes.BATON, 2),
     new WeightedModifierType(modifierTypes.SOUL_DEW, 7),
     //new WeightedModifierType(modifierTypes.OVAL_CHARM, 6),
-    new WeightedModifierType(modifierTypes.SOOTHE_BELL, 4),
+    new WeightedModifierType(modifierTypes.SOOTHE_BELL, (party: Pokemon[]) => party[0].scene.eventManager.isEventActive() ? 0 : 4),
     new WeightedModifierType(modifierTypes.ABILITY_CHARM, skipInClassicAfterWave(189, 6)),
     new WeightedModifierType(modifierTypes.FOCUS_BAND, 5),
     new WeightedModifierType(modifierTypes.KINGS_ROCK, 3),
