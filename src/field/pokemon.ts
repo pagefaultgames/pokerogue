@@ -3,7 +3,7 @@ import BattleScene, { AnySound } from "#app/battle-scene";
 import { Variant, VariantSet, variantColorCache } from "#app/data/variant";
 import { variantData } from "#app/data/variant";
 import BattleInfo, { PlayerBattleInfo, EnemyBattleInfo } from "#app/ui/battle-info";
-import Move, { HighCritAttr, HitsTagAttr, applyMoveAttrs, FixedDamageAttr, VariableAtkAttr, allMoves, MoveCategory, TypelessAttr, CritOnlyAttr, getMoveTargets, OneHitKOAttr, VariableMoveTypeAttr, VariableDefAttr, AttackMove, ModifiedDamageAttr, VariableMoveTypeMultiplierAttr, IgnoreOpponentStatStagesAttr, SacrificialAttr, VariableMoveCategoryAttr, CounterDamageAttr, StatStageChangeAttr, RechargeAttr, IgnoreWeatherTypeDebuffAttr, BypassBurnDamageReductionAttr, SacrificialAttrOnHit, OneHitKOAccuracyAttr, RespectAttackTypeImmunityAttr, MoveTarget, CombinedPledgeStabBoostAttr } from "#app/data/move";
+import Move, { HighCritAttr, HitsTagAttr, applyMoveAttrs, FixedDamageAttr, VariableAtkAttr, allMoves, MoveCategory, TypelessAttr, CritOnlyAttr, getMoveTargets, OneHitKOAttr, VariableMoveTypeAttr, VariableDefAttr, AttackMove, ModifiedDamageAttr, VariableMoveTypeMultiplierAttr, IgnoreOpponentStatStagesAttr, SacrificialAttr, VariableMoveCategoryAttr, CounterDamageAttr, StatStageChangeAttr, RechargeAttr, IgnoreWeatherTypeDebuffAttr, BypassBurnDamageReductionAttr, SacrificialAttrOnHit, OneHitKOAccuracyAttr, RespectAttackTypeImmunityAttr, MoveTarget, CombinedPledgeStabBoostAttr, ForceSwitchOutAttr } from "#app/data/move";
 import { default as PokemonSpecies, PokemonSpeciesForm, getFusedSpeciesName, getPokemonSpecies, getPokemonSpeciesForm } from "#app/data/pokemon-species";
 import { CLASSIC_CANDY_FRIENDSHIP_MULTIPLIER, getStarterValueFriendshipCap, speciesStarterCosts } from "#app/data/balance/starters";
 import { starterPassiveAbilities } from "#app/data/balance/passives";
@@ -349,8 +349,18 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return challengeAllowed.value;
   }
 
+  /**
+   * Checks if the Pokemon is allowed to be in battle and if it is on the field
+   * @param onField overrides if this Pokemon is on the field or not
+   * @returns returns false if there is no scene otherwise it returns true
+   *
+   * Does not work with Mystery Encounters
+   */
   isActive(onField?: boolean): boolean {
     if (!this.scene) {
+      return false;
+    }
+    if (this.switchOutStatus && !this.isPlayer && (!this.scene.currentBattle?.isBattleMysteryEncounter() || !this.scene.currentBattle?.mysteryEncounter)) {
       return false;
     }
     return this.isAllowedInBattle() && !!this.scene && (!onField || this.isOnField());
@@ -1517,7 +1527,13 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     }
 
     const trappedByAbility = new Utils.BooleanHolder(false);
-    const opposingField = this.isPlayer() ? this.scene.getEnemyField() : this.scene.getPlayerField();
+    /**
+     * Contains opposing Pokemon (Enemy/Player Pokemon) depending on perspective
+     * Afterwards, it filters out Pokemon that have been switched out of the field so trapped abilities/moves do not trigger
+     * This does not apply for Mystery Encounters
+     */
+    const opposingFieldUnfiltered = this.isPlayer() ? this.scene.getEnemyField() : this.scene.getPlayerField();
+    const opposingField = (!!this.scene.currentBattle?.isBattleMysteryEncounter() || !!this.scene.currentBattle?.mysteryEncounter) ? opposingFieldUnfiltered.filter(enemyPkm => enemyPkm.switchOutStatus === false) : opposingFieldUnfiltered;
 
     opposingField.forEach(opponent =>
       applyCheckTrappedAbAttrs(CheckTrappedAbAttr, opponent, trappedByAbility, this, trappedAbMessages, simulated)
@@ -2715,6 +2731,21 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   apply(source: Pokemon, move: Move): HitResult {
     const defendingSide = this.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY;
     const moveCategory = new Utils.NumberHolder(move.category);
+
+    /**
+         * Sets the switchOutStatus flag {@link Pokemon.switchOutStatus} on opposing Pokemon
+         * should a move such as Roar {@link Moves.ROAR} force the opposing Pokemon to leave thethe field
+        */
+    if (move.attrs.some(attr => attr instanceof ForceSwitchOutAttr)) {
+      /**
+       * this currently works only for Circle Throw = 509, Dragon Tail = 525, Roar = 46 and Whirlwind = 18 {@link Moves}
+       * Note: There needs to be a better way to track the target of the switch-out effect
+       */
+      if (move.id === 509 || move.id === 525 || move.id === 46 || move.id === 18) {
+        this.switchOutStatus = true;
+      }
+    }
+
     applyMoveAttrs(VariableMoveCategoryAttr, source, this, move, moveCategory);
     if (moveCategory.value === MoveCategory.STATUS) {
       const cancelled = new Utils.BooleanHolder(false);
