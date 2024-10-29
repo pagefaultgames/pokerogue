@@ -5858,6 +5858,9 @@ export class RemoveTypeAttr extends MoveEffectAttr {
 
     const userTypes = user.getTypes(true);
     const modifiedTypes = userTypes.filter(type => type !== this.removedType);
+    if (modifiedTypes.length === 0) {
+      modifiedTypes.push(Type.UNKNOWN);
+    }
     user.summonData.types = modifiedTypes;
     user.updateInfo();
 
@@ -5880,7 +5883,11 @@ export class CopyTypeAttr extends MoveEffectAttr {
       return false;
     }
 
-    user.summonData.types = target.getTypes(true);
+    const targetTypes = target.getTypes(true);
+    if (targetTypes.includes(Type.UNKNOWN) && targetTypes.indexOf(Type.UNKNOWN) > -1) {
+      targetTypes[targetTypes.indexOf(Type.UNKNOWN)] = Type.NORMAL;
+    }
+    user.summonData.types = targetTypes;
     user.updateInfo();
 
     user.scene.queueMessage(i18next.t("moveTriggers:copyType", { pokemonName: getPokemonNameWithAffix(user), targetPokemonName: getPokemonNameWithAffix(target) }));
@@ -5889,7 +5896,7 @@ export class CopyTypeAttr extends MoveEffectAttr {
   }
 
   getCondition(): MoveConditionFunc {
-    return (user, target, move) => target.getTypes()[0] !== Type.UNKNOWN;
+    return (user, target, move) => target.getTypes()[0] !== Type.UNKNOWN || target.summonData.addedType !== null;
   }
 }
 
@@ -5947,11 +5954,7 @@ export class AddTypeAttr extends MoveEffectAttr {
   }
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    const types = target.getTypes().slice(0, 2).filter(t => t !== Type.UNKNOWN); // TODO: Figure out some way to actually check if another version of this effect is already applied
-    if (this.type !== Type.UNKNOWN) {
-      types.push(this.type);
-    }
-    target.summonData.types = types;
+    target.summonData.addedType = this.type;
     target.updateInfo();
 
     user.scene.queueMessage(i18next.t("moveTriggers:addType", { typeName: i18next.t(`pokemonInfo:Type.${Type[this.type]}`), pokemonName: getPokemonNameWithAffix(target) }));
@@ -8983,8 +8986,7 @@ export function initMoves() {
       .ignoresProtect()
       .ignoresVirtual(),
     new StatusMove(Moves.TRICK_OR_TREAT, Type.GHOST, 100, 20, -1, 0, 6)
-      .attr(AddTypeAttr, Type.GHOST)
-      .edgeCase(), // Weird interaction with Forest's Curse, reflect type, burn up
+      .attr(AddTypeAttr, Type.GHOST),
     new StatusMove(Moves.NOBLE_ROAR, Type.NORMAL, 100, 30, -1, 0, 6)
       .attr(StatStageChangeAttr, [ Stat.ATK, Stat.SPATK ], -1)
       .soundBased(),
@@ -8996,8 +8998,7 @@ export function initMoves() {
       .target(MoveTarget.ALL_NEAR_OTHERS)
       .triageMove(),
     new StatusMove(Moves.FORESTS_CURSE, Type.GRASS, 100, 20, -1, 0, 6)
-      .attr(AddTypeAttr, Type.GRASS)
-      .edgeCase(), // Weird interaction with Trick or Treat, reflect type, burn up
+      .attr(AddTypeAttr, Type.GRASS),
     new AttackMove(Moves.PETAL_BLIZZARD, Type.GRASS, MoveCategory.PHYSICAL, 90, 100, 15, -1, 0, 6)
       .windMove()
       .makesContact(false)
@@ -9491,7 +9492,7 @@ export function initMoves() {
       .edgeCase() // I assume it needs clanging scales and Kommo-O
       .ignoresVirtual(),
     /* End Unused */
-    new AttackMove(Moves.ZIPPY_ZAP, Type.ELECTRIC, MoveCategory.PHYSICAL, 50, 100, 15, -1, 2, 7) //LGPE Implementation
+    new AttackMove(Moves.ZIPPY_ZAP, Type.ELECTRIC, MoveCategory.PHYSICAL, 50, 100, 15, -1, 2, 7) // LGPE Implementation
       .attr(CritOnlyAttr),
     new AttackMove(Moves.SPLISHY_SPLASH, Type.WATER, MoveCategory.SPECIAL, 90, 100, 15, 30, 0, 7)
       .attr(StatusEffectAttr, StatusEffect.PARALYSIS)
@@ -9501,7 +9502,7 @@ export function initMoves() {
     new AttackMove(Moves.PIKA_PAPOW, Type.ELECTRIC, MoveCategory.SPECIAL, -1, -1, 20, -1, 0, 7)
       .attr(FriendshipPowerAttr),
     new AttackMove(Moves.BOUNCY_BUBBLE, Type.WATER, MoveCategory.SPECIAL, 60, 100, 20, -1, 0, 7)
-      .attr(HitHealAttr, 1.0)
+      .attr(HitHealAttr) // Custom
       .triageMove()
       .target(MoveTarget.ALL_NEAR_ENEMIES),
     new AttackMove(Moves.BUZZY_BUZZ, Type.ELECTRIC, MoveCategory.SPECIAL, 60, 100, 20, 100, 0, 7)
@@ -10005,6 +10006,7 @@ export function initMoves() {
       .attr(ConfuseAttr)
       .recklessMove(),
     new AttackMove(Moves.LAST_RESPECTS, Type.GHOST, MoveCategory.PHYSICAL, 50, 100, 10, -1, 0, 9)
+      .partial() // Counter resets every wave instead of on arena reset
       .attr(MovePowerMultiplierAttr, (user, target, move) => 1 + Math.min(user.isPlayer() ? user.scene.currentBattle.playerFaints : user.scene.currentBattle.enemyFaints, 100))
       .makesContact(false),
     new AttackMove(Moves.LUMINA_CRASH, Type.PSYCHIC, MoveCategory.SPECIAL, 80, 100, 10, 100, 0, 9)

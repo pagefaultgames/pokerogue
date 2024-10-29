@@ -22,7 +22,7 @@ import { reverseCompatibleTms, tmSpecies, tmPoolTiers } from "#app/data/balance/
 import { BattlerTag, BattlerTagLapseType, EncoreTag, GroundedTag, HighestStatBoostTag, SubstituteTag, TypeImmuneTag, getBattlerTag, SemiInvulnerableTag, TypeBoostTag, MoveRestrictionBattlerTag, ExposedTag, DragonCheerTag, CritBoostTag, TrappedTag, TarShotTag, AutotomizedTag, PowerTrickTag } from "../data/battler-tags";
 import { WeatherType } from "#app/data/weather";
 import { ArenaTagSide, NoCritTag, WeakenMoveScreenTag } from "#app/data/arena-tag";
-import { Ability, AbAttr, StatMultiplierAbAttr, BlockCritAbAttr, BonusCritAbAttr, BypassBurnDamageReductionAbAttr, FieldPriorityMoveImmunityAbAttr, IgnoreOpponentStatStagesAbAttr, MoveImmunityAbAttr, PreDefendFullHpEndureAbAttr, ReceivedMoveDamageMultiplierAbAttr, StabBoostAbAttr, StatusEffectImmunityAbAttr, TypeImmunityAbAttr, WeightMultiplierAbAttr, allAbilities, applyAbAttrs, applyStatMultiplierAbAttrs, applyPreApplyBattlerTagAbAttrs, applyPreAttackAbAttrs, applyPreDefendAbAttrs, applyPreSetStatusAbAttrs, UnsuppressableAbilityAbAttr, SuppressFieldAbilitiesAbAttr, NoFusionAbilityAbAttr, MultCritAbAttr, IgnoreTypeImmunityAbAttr, DamageBoostAbAttr, IgnoreTypeStatusEffectImmunityAbAttr, ConditionalCritAbAttr, applyFieldStatMultiplierAbAttrs, FieldMultiplyStatAbAttr, AddSecondStrikeAbAttr, UserFieldStatusEffectImmunityAbAttr, UserFieldBattlerTagImmunityAbAttr, BattlerTagImmunityAbAttr, MoveTypeChangeAbAttr, FullHpResistTypeAbAttr, applyCheckTrappedAbAttrs, CheckTrappedAbAttr, PostSetStatusAbAttr, applyPostSetStatusAbAttrs, InfiltratorAbAttr } from "#app/data/ability";
+import { Ability, AbAttr, StatMultiplierAbAttr, BlockCritAbAttr, BonusCritAbAttr, BypassBurnDamageReductionAbAttr, FieldPriorityMoveImmunityAbAttr, IgnoreOpponentStatStagesAbAttr, MoveImmunityAbAttr, PreDefendFullHpEndureAbAttr, ReceivedMoveDamageMultiplierAbAttr, StabBoostAbAttr, StatusEffectImmunityAbAttr, TypeImmunityAbAttr, WeightMultiplierAbAttr, allAbilities, applyAbAttrs, applyStatMultiplierAbAttrs, applyPreApplyBattlerTagAbAttrs, applyPreAttackAbAttrs, applyPreDefendAbAttrs, applyPreSetStatusAbAttrs, UnsuppressableAbilityAbAttr, SuppressFieldAbilitiesAbAttr, NoFusionAbilityAbAttr, MultCritAbAttr, IgnoreTypeImmunityAbAttr, DamageBoostAbAttr, IgnoreTypeStatusEffectImmunityAbAttr, ConditionalCritAbAttr, applyFieldStatMultiplierAbAttrs, FieldMultiplyStatAbAttr, AddSecondStrikeAbAttr, UserFieldStatusEffectImmunityAbAttr, UserFieldBattlerTagImmunityAbAttr, BattlerTagImmunityAbAttr, MoveTypeChangeAbAttr, FullHpResistTypeAbAttr, applyCheckTrappedAbAttrs, CheckTrappedAbAttr, PostSetStatusAbAttr, applyPostSetStatusAbAttrs, InfiltratorAbAttr, AlliedFieldDamageReductionAbAttr } from "#app/data/ability";
 import PokemonData from "#app/system/pokemon-data";
 import { BattlerIndex } from "#app/battle";
 import { Mode } from "#app/ui/ui";
@@ -1256,6 +1256,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       if (index !== -1) {
         types.splice(index, 1);
       }
+    }
+
+    // the type added to Pokemon from moves like Forest's Curse or Trick Or Treat
+    if (!ignoreOverride && this.summonData && this.summonData.addedType && !types.includes(this.summonData.addedType)) {
+      types.push(this.summonData.addedType);
     }
 
     // If both types are the same (can happen in weird custom typing scenarios), reduce to single type
@@ -2667,9 +2672,15 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       this.scene.applyModifiers(EnemyDamageReducerModifier, false, damage);
     }
 
+
     /** Apply this Pokemon's post-calc defensive modifiers (e.g. Fur Coat) */
     if (!ignoreAbility) {
       applyPreDefendAbAttrs(ReceivedMoveDamageMultiplierAbAttr, this, source, move, cancelled, simulated, damage);
+
+      /** Additionally apply friend guard damage reduction if ally has it. */
+      if (this.scene.currentBattle.double && this.getAlly()?.isActive(true)) {
+        applyPreDefendAbAttrs(AlliedFieldDamageReductionAbAttr, this.getAlly(), source, move, cancelled, simulated, damage);
+      }
     }
 
     // This attribute may modify damage arbitrarily, so be careful about changing its order of application.
@@ -4114,7 +4125,11 @@ export class PlayerPokemon extends Pokemon {
       fusionStarterSpeciesId ? this.scene.gameData.starterData[fusionStarterSpeciesId] : null
     ].filter(d => !!d);
     const amount = new Utils.IntegerHolder(friendship);
-    const starterAmount = new Utils.IntegerHolder(Math.floor(friendship * (this.scene.gameMode.isClassic && friendship > 0 ? CLASSIC_CANDY_FRIENDSHIP_MULTIPLIER : 1) / (fusionStarterSpeciesId ? 2 : 1)));
+    let candyFriendshipMultiplier = CLASSIC_CANDY_FRIENDSHIP_MULTIPLIER;
+    if (this.scene.eventManager.isEventActive()) {
+      candyFriendshipMultiplier *= this.scene.eventManager.getFriendshipMultiplier();
+    }
+    const starterAmount = new Utils.IntegerHolder(Math.floor(friendship * (this.scene.gameMode.isClassic && friendship > 0 ? candyFriendshipMultiplier : 1) / (fusionStarterSpeciesId ? 2 : 1)));
     if (amount.value > 0) {
       this.scene.applyModifier(PokemonFriendshipBoosterModifier, true, this, amount);
       this.scene.applyModifier(PokemonFriendshipBoosterModifier, true, this, starterAmount);
@@ -5090,6 +5105,7 @@ export class PokemonSummonData {
   public moveset: (PokemonMove | null)[];
   // If not initialized this value will not be populated from save data.
   public types: Type[] = [];
+  public addedType: Type | null = null;
 }
 
 export class PokemonBattleData {
