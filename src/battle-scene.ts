@@ -2965,7 +2965,7 @@ export default class BattleScene extends SceneBase {
       biome: this.currentBattle ? getBiomeName(this.arena.biomeType) : "",
       wave: this.currentBattle?.waveIndex || 0,
       party: this.party ? this.party.map(p => {
-        return { name: p.name, level: p.level };
+        return { name: p.name, type: p.type[0], level: p.level, currentHP: p.hp, maxHP: p.stats[0], status: p.status };
       }) : [],
       modeChain: this.ui?.getModeChain() ?? [],
     };
