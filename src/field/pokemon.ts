@@ -353,14 +353,12 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * Checks if the Pokemon is allowed to be in battle and if it is on the field
    * @param onField overrides if this Pokemon is on the field or not
    * @returns returns false if there is no scene otherwise it returns true
-   *
-   * Does not work with Mystery Encounters
    */
   isActive(onField?: boolean): boolean {
     if (!this.scene) {
       return false;
     }
-    if (this.switchOutStatus && !this.isPlayer && (!this.scene.currentBattle?.isBattleMysteryEncounter() || !this.scene.currentBattle?.mysteryEncounter)) {
+    if (this.switchOutStatus && !this.isPlayer) {
       return false;
     }
     return this.isAllowedInBattle() && !!this.scene && (!onField || this.isOnField());
@@ -1530,10 +1528,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     /**
      * Contains opposing Pokemon (Enemy/Player Pokemon) depending on perspective
      * Afterwards, it filters out Pokemon that have been switched out of the field so trapped abilities/moves do not trigger
-     * This does not apply for Mystery Encounters
      */
     const opposingFieldUnfiltered = this.isPlayer() ? this.scene.getEnemyField() : this.scene.getPlayerField();
-    const opposingField = (!!this.scene.currentBattle?.isBattleMysteryEncounter() || !!this.scene.currentBattle?.mysteryEncounter) ? opposingFieldUnfiltered.filter(enemyPkm => enemyPkm.switchOutStatus === false) : opposingFieldUnfiltered;
+    const opposingField = opposingFieldUnfiltered.filter(enemyPkm => enemyPkm.switchOutStatus === false);
 
     opposingField.forEach(opponent =>
       applyCheckTrappedAbAttrs(CheckTrappedAbAttr, opponent, trappedByAbility, this, trappedAbMessages, simulated)
