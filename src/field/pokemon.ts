@@ -3,7 +3,7 @@ import BattleScene, { AnySound } from "#app/battle-scene";
 import { Variant, VariantSet, variantColorCache } from "#app/data/variant";
 import { variantData } from "#app/data/variant";
 import BattleInfo, { PlayerBattleInfo, EnemyBattleInfo } from "#app/ui/battle-info";
-import Move, { HighCritAttr, HitsTagAttr, applyMoveAttrs, FixedDamageAttr, VariableAtkAttr, allMoves, MoveCategory, TypelessAttr, CritOnlyAttr, getMoveTargets, OneHitKOAttr, VariableMoveTypeAttr, VariableDefAttr, AttackMove, ModifiedDamageAttr, VariableMoveTypeMultiplierAttr, IgnoreOpponentStatStagesAttr, SacrificialAttr, VariableMoveCategoryAttr, CounterDamageAttr, StatStageChangeAttr, RechargeAttr, IgnoreWeatherTypeDebuffAttr, BypassBurnDamageReductionAttr, SacrificialAttrOnHit, OneHitKOAccuracyAttr, RespectAttackTypeImmunityAttr, MoveTarget, CombinedPledgeStabBoostAttr, ForceSwitchOutAttr } from "#app/data/move";
+import Move, { HighCritAttr, HitsTagAttr, applyMoveAttrs, FixedDamageAttr, VariableAtkAttr, allMoves, MoveCategory, TypelessAttr, CritOnlyAttr, getMoveTargets, OneHitKOAttr, VariableMoveTypeAttr, VariableDefAttr, AttackMove, ModifiedDamageAttr, VariableMoveTypeMultiplierAttr, IgnoreOpponentStatStagesAttr, SacrificialAttr, VariableMoveCategoryAttr, CounterDamageAttr, StatStageChangeAttr, RechargeAttr, IgnoreWeatherTypeDebuffAttr, BypassBurnDamageReductionAttr, SacrificialAttrOnHit, OneHitKOAccuracyAttr, RespectAttackTypeImmunityAttr, MoveTarget, CombinedPledgeStabBoostAttr } from "#app/data/move";
 import { default as PokemonSpecies, PokemonSpeciesForm, getFusedSpeciesName, getPokemonSpecies, getPokemonSpeciesForm } from "#app/data/pokemon-species";
 import { CLASSIC_CANDY_FRIENDSHIP_MULTIPLIER, getStarterValueFriendshipCap, speciesStarterCosts } from "#app/data/balance/starters";
 import { starterPassiveAbilities } from "#app/data/balance/passives";
@@ -322,6 +322,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     if (!this.scene) {
       return false;
     }
+    if (this.switchOutStatus) {
+      return false;
+    }
     return this.scene.field.getIndex(this) > -1;
   }
 
@@ -356,9 +359,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    */
   isActive(onField?: boolean): boolean {
     if (!this.scene) {
-      return false;
-    }
-    if (this.switchOutStatus && !this.isPlayer) {
       return false;
     }
     return this.isAllowedInBattle() && !!this.scene && (!onField || this.isOnField());
@@ -2728,29 +2728,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   apply(source: Pokemon, move: Move): HitResult {
     const defendingSide = this.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY;
     const moveCategory = new Utils.NumberHolder(move.category);
-
-    /**
-         * Sets the switchOutStatus flag {@link Pokemon.switchOutStatus} on opposing Pokemon
-         * should a move such as Roar {@link Moves.ROAR} force the opposing Pokemon to leave thethe field
-        */
-    if (move.attrs.some(attr => attr instanceof ForceSwitchOutAttr)) {
-      /**
-       * this works only for Circle Throw = 509, Dragon Tail = 525, Roar = 46 and Whirlwind = 18 {@link Moves}
-       * and targets the enemy/target of the attack
-       *
-       * Note: There needs to be a better way to track the target of the switch-out effect
-       */
-      if (move.id === 509 || move.id === 525 || move.id === 46 || move.id === 18) {
-        this.switchOutStatus = true;
-      }
-      /**
-       * Teleport = 100, Baton Pass = 226, U-Turn = 369, Volt Switch = 521, Parting Shot = 575, Flip Turn = 812, Shed Tail = 880
-       */
-      if (move.id === 100 || move.id === 226 || move.id === 369 || move.id === 575 || move.id === 812 || move.id === 880) {
-        source.switchOutStatus = true;
-      }
-    }
-
     applyMoveAttrs(VariableMoveCategoryAttr, source, this, move, moveCategory);
     if (moveCategory.value === MoveCategory.STATUS) {
       const cancelled = new Utils.BooleanHolder(false);
