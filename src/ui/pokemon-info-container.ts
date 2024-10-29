@@ -21,24 +21,6 @@ interface LanguageSetting {
 }
 
 const languageSettings: { [key: string]: LanguageSetting } = {
-  "en": {
-    infoContainerTextSize: "64px"
-  },
-  "de": {
-    infoContainerTextSize: "64px",
-  },
-  "es": {
-    infoContainerTextSize: "64px"
-  },
-  "fr": {
-    infoContainerTextSize: "64px"
-  },
-  "it": {
-    infoContainerTextSize: "64px"
-  },
-  "zh": {
-    infoContainerTextSize: "64px"
-  },
   "pt": {
     infoContainerTextSize: "60px",
     infoContainerLabelXPos: -15,
