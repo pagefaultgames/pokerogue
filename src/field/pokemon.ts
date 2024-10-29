@@ -2738,11 +2738,19 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         */
     if (move.attrs.some(attr => attr instanceof ForceSwitchOutAttr)) {
       /**
-       * this currently works only for Circle Throw = 509, Dragon Tail = 525, Roar = 46 and Whirlwind = 18 {@link Moves}
+       * this works only for Circle Throw = 509, Dragon Tail = 525, Roar = 46 and Whirlwind = 18 {@link Moves}
+       * and targets the enemy/target of the attack
+       *
        * Note: There needs to be a better way to track the target of the switch-out effect
        */
       if (move.id === 509 || move.id === 525 || move.id === 46 || move.id === 18) {
         this.switchOutStatus = true;
+      }
+      /**
+       * Teleport = 100, Baton Pass = 226, U-Turn = 369, Volt Switch = 521, Parting Shot = 575, Flip Turn = 812, Shed Tail = 880
+       */
+      if (move.id === 100 || move.id === 226 || move.id === 369 || move.id === 575 || move.id === 812 || move.id === 880) {
+        source.switchOutStatus = true;
       }
     }
 
