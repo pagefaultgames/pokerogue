@@ -164,7 +164,7 @@ export async function initI18n(): Promise<void> {
         } else {
           fileName = camelCaseToKebabCase(ns);
         }
-        return `/locales/${lng}/${fileName}.json?v=${pkg.version}`;
+        return `./locales/${lng}/${fileName}.json?v=${pkg.version}`;
       },
     },
     defaultNS: "menu",
