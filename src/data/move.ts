@@ -5921,9 +5921,28 @@ export class CopyBiomeTypeAttr extends MoveEffectAttr {
       return false;
     }
 
-    const biomeType = user.scene.arena.getTypeForBiome();
+    const terrainType = user.scene.arena.getTerrainType();
+    let typeChange: Type;
+    switch (terrainType) {
+      case TerrainType.ELECTRIC:
+        typeChange = Type.ELECTRIC;
+        break;
+      case TerrainType.MISTY:
+        typeChange = Type.FAIRY;
+        break;
+      case TerrainType.GRASSY:
+        typeChange = Type.GRASS;
+        break;
+      case TerrainType.PSYCHIC:
+        typeChange = Type.PSYCHIC;
+        break;
+      case TerrainType.NONE:
+      default:
+        typeChange = user.scene.arena.getTypeForBiome();
+        break;
+    }
 
-    user.summonData.types = [ biomeType ];
+    user.summonData.types = [ typeChange ];
     user.updateInfo();
 
     user.scene.queueMessage(i18next.t("moveTriggers:transformedIntoType", { pokemonName: getPokemonNameWithAffix(user), typeName: i18next.t(`pokemonInfo:Type.${Type[biomeType]}`) }));
