@@ -3351,7 +3351,6 @@ export class PostWeatherLapseDamageAbAttr extends PostWeatherLapseAbAttr {
       const abilityName = (!passive ? pokemon.getAbility() : pokemon.getPassiveAbility()).name;
       scene.queueMessage(i18next.t("abilityTriggers:postWeatherLapseDamage", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), abilityName }));
       pokemon.damageAndUpdate(Utils.toDmgValue(pokemon.getMaxHp() / (16 / this.damageFactor)), HitResult.OTHER);
-      pokemon.turnData.lastDmgSrc = WeatherType.HARSH_SUN;
     }
 
     return true;

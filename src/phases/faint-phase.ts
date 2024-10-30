@@ -96,9 +96,9 @@ export class FaintPhase extends PokemonPhase {
     const alivePlayField = this.scene.getField(true);
     alivePlayField.forEach(p => applyPostKnockOutAbAttrs(PostKnockOutAbAttr, p, pokemon));
     if (pokemon.turnData?.attacksReceived?.length) {
-      const defeatSource = pokemon.turnData.lastDmgSrc;
+      const defeatSource = this.source;
 
-      if (defeatSource instanceof Pokemon && defeatSource?.isOnField()) {
+      if (defeatSource instanceof Pokemon && defeatSource.isOnField()) {
         applyPostVictoryAbAttrs(PostVictoryAbAttr, defeatSource);
         const pvmove = allMoves[pokemon.turnData.attacksReceived[0].move];
         const pvattrs = pvmove.getAttrs(PostVictoryStatStageChangeAttr);
