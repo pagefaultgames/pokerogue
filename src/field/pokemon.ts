@@ -89,13 +89,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   public exp: integer;
   public levelExp: integer;
   public gender: Gender;
-  private _hp: number;
-  public get hp() {
-    return this._hp;
-  }
-  public set hp(hp: number) {
-    this._hp = hp;
-  }
+  public hp: integer;
   public stats: integer[];
   public ivs: integer[];
   public nature: Nature;
