@@ -105,7 +105,7 @@ fetch("/manifest.json")
   .then(jsonResponse => {
     manifest = jsonResponse.manifest;
   }).catch(err => {
-    // Manifest not found (likely local build or error path on live)
+    // Manifest not found (likely local build or path error on live)
     console.log(`Manifest not found. ${err}`);
   }).finally(() => {
     startGame();
