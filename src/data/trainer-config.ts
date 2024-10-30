@@ -203,6 +203,7 @@ export class TrainerConfig {
   public modifierRewardFuncs: ModifierTypeFunc[] = [];
   public partyTemplates: TrainerPartyTemplate[];
   public partyTemplateFunc: PartyTemplateFunc;
+  public eventRewardFuncs: ModifierTypeFunc[] = [];
   public partyMemberFuncs: PartyMemberFuncs = {};
   public speciesPools: TrainerTierPools;
   public speciesFilter: PokemonSpeciesFilter;
@@ -545,6 +546,17 @@ export class TrainerConfig {
     this.genModifiersFunc = genModifiersFunc;
     return this;
   }
+
+  setEventModifierRewardFuncs(...modifierTypeFuncs: (() => ModifierTypeFunc)[]): TrainerConfig {
+    this.eventRewardFuncs = modifierTypeFuncs.map(func => () => {
+      const modifierTypeFunc = func();
+      const modifierType = modifierTypeFunc();
+      modifierType.withIdFromFunc(modifierTypeFunc);
+      return modifierType;
+    });
+    return this;
+  }
+
 
   setModifierRewardFuncs(...modifierTypeFuncs: (() => ModifierTypeFunc)[]): TrainerConfig {
     this.modifierRewardFuncs = modifierTypeFuncs.map(func => () => {
@@ -1828,10 +1840,12 @@ export const trainerConfigs: TrainerConfigs = {
 
   [TrainerType.RIVAL]: new TrainerConfig((t = TrainerType.RIVAL)).setName("Finn").setHasGenders("Ivy").setHasCharSprite().setTitle("Rival").setStaticParty().setEncounterBgm(TrainerType.RIVAL).setBattleBgm("battle_rival").setMixedBattleBgm("battle_rival").setPartyTemplates(trainerPartyTemplates.RIVAL)
     .setModifierRewardFuncs(() => modifierTypes.SUPER_EXP_CHARM, () => modifierTypes.EXP_SHARE)
+    .setEventModifierRewardFuncs(() => modifierTypes.SHINY_CHARM, () => modifierTypes.ABILITY_CHARM)
     .setPartyMemberFunc(0, getRandomPartyMemberFunc([ Species.BULBASAUR, Species.CHARMANDER, Species.SQUIRTLE, Species.CHIKORITA, Species.CYNDAQUIL, Species.TOTODILE, Species.TREECKO, Species.TORCHIC, Species.MUDKIP, Species.TURTWIG, Species.CHIMCHAR, Species.PIPLUP, Species.SNIVY, Species.TEPIG, Species.OSHAWOTT, Species.CHESPIN, Species.FENNEKIN, Species.FROAKIE, Species.ROWLET, Species.LITTEN, Species.POPPLIO, Species.GROOKEY, Species.SCORBUNNY, Species.SOBBLE, Species.SPRIGATITO, Species.FUECOCO, Species.QUAXLY ], TrainerSlot.TRAINER, true))
     .setPartyMemberFunc(1, getRandomPartyMemberFunc([ Species.PIDGEY, Species.HOOTHOOT, Species.TAILLOW, Species.STARLY, Species.PIDOVE, Species.FLETCHLING, Species.PIKIPEK, Species.ROOKIDEE, Species.WATTREL ], TrainerSlot.TRAINER, true)),
   [TrainerType.RIVAL_2]: new TrainerConfig(++t).setName("Finn").setHasGenders("Ivy").setHasCharSprite().setTitle("Rival").setStaticParty().setMoneyMultiplier(1.25).setEncounterBgm(TrainerType.RIVAL).setBattleBgm("battle_rival").setMixedBattleBgm("battle_rival").setPartyTemplates(trainerPartyTemplates.RIVAL_2)
     .setModifierRewardFuncs(() => modifierTypes.EXP_SHARE)
+    .setEventModifierRewardFuncs(() => modifierTypes.SHINY_CHARM)
     .setPartyMemberFunc(0, getRandomPartyMemberFunc([ Species.IVYSAUR, Species.CHARMELEON, Species.WARTORTLE, Species.BAYLEEF, Species.QUILAVA, Species.CROCONAW, Species.GROVYLE, Species.COMBUSKEN, Species.MARSHTOMP, Species.GROTLE, Species.MONFERNO, Species.PRINPLUP, Species.SERVINE, Species.PIGNITE, Species.DEWOTT, Species.QUILLADIN, Species.BRAIXEN, Species.FROGADIER, Species.DARTRIX, Species.TORRACAT, Species.BRIONNE, Species.THWACKEY, Species.RABOOT, Species.DRIZZILE, Species.FLORAGATO, Species.CROCALOR, Species.QUAXWELL ], TrainerSlot.TRAINER, true))
     .setPartyMemberFunc(1, getRandomPartyMemberFunc([ Species.PIDGEOTTO, Species.HOOTHOOT, Species.TAILLOW, Species.STARAVIA, Species.TRANQUILL, Species.FLETCHINDER, Species.TRUMBEAK, Species.CORVISQUIRE, Species.WATTREL ], TrainerSlot.TRAINER, true))
     .setPartyMemberFunc(2, getSpeciesFilterRandomPartyMemberFunc((species: PokemonSpecies) => !pokemonEvolutions.hasOwnProperty(species.speciesId) && !pokemonPrevolutions.hasOwnProperty(species.speciesId) && species.baseTotal >= 450)),
