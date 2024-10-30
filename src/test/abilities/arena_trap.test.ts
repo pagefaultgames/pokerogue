@@ -1,9 +1,10 @@
+import { allAbilities } from "#app/data/ability";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, it, expect } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, it, expect, vi } from "vitest";
 
 describe("Abilities - Arena Trap", () => {
   let phaserGame: Phaser.Game;
@@ -54,5 +55,41 @@ describe("Abilities - Arena Trap", () => {
     await game.classicMode.startBattle();
 
     expect(game.scene.getEnemyField().length).toBe(2);
+  });
+
+  /**
+   * This checks if the Player Pokemon is able to switch out/run away after the Enemy Pokemon with {@link Abilities.ARENA_TRAP}
+   * is forcefully moved out of the field from moves such as Roar {@link Moves.ROAR}
+   *
+   * Note: It should be able to switch out/run away
+   */
+  it("should lift if pokemon with this ability leaves the field", async () => {
+    game.override.battleType("double");
+    game.override.enemyMoveset(Moves.SPLASH);
+    game.override.moveset([ Moves.ROAR, Moves.SPLASH ]);
+    await game.classicMode.startBattle([ Species.MAGIKARP, Species.SUDOWOODO, Species.LUNATONE ]);
+
+    const enemy1 = game.scene.getEnemyField()[0];
+    const enemy2 = game.scene.getEnemyField()[1];
+    const player1 = game.scene.getPlayerField()[0];
+    const player2 = game.scene.getPlayerField()[1];
+
+    vi.spyOn(enemy1, "getAbility").mockReturnValue(allAbilities[Abilities.ARENA_TRAP]);
+    vi.spyOn(enemy2, "getAbility").mockReturnValue(allAbilities[Abilities.BALL_FETCH]);
+    vi.spyOn(player1, "getAbility").mockReturnValue(allAbilities[Abilities.BALL_FETCH]);
+    vi.spyOn(player2, "getAbility").mockReturnValue(allAbilities[Abilities.BALL_FETCH]);
+
+    game.move.select(Moves.ROAR);
+    game.move.select(Moves.SPLASH);
+
+    // This runs the fist command phase where the moves are selected
+    await game.toNextTurn();
+    // During the next command phase the player pokemons should not be trapped anymore
+    await game.toNextTurn();
+
+    expect(game.scene.getPlayerField()[0].isTrapped()).toBe(false);
+    expect(game.scene.getPlayerField()[1].isTrapped()).toBe(false);
+    expect(game.scene.getEnemyField()[0].isOnField()).toBe(false);
+    expect(game.scene.getEnemyField()[1].isOnField()).toBe(true);
   });
 });
